@@ -27,40 +27,28 @@
 
 namespace AscendC {
 
+constexpr uint32_t BITS_1BYTE = 8;
+constexpr uint32_t BITS_3BYTE = 24;
+constexpr uint32_t BITS_5BYTE = 40;
+constexpr uint32_t BITS_7BYTE = 56;
+
+__aicore__ inline uint16_t HtoNS(uint16_t x)
+{
+    return (uint16_t)(((x & 0x00ffU) << BITS_1BYTE) | ((x & 0xff00U) >> BITS_1BYTE));
+}
+
 __aicore__ inline uint32_t HtoNL(uint32_t x)
 {
-    constexpr uint32_t byte0Mask = 0x000000ffU;
-    constexpr uint32_t byte1Mask = 0x0000ff00U;
-    constexpr uint32_t byte2Mask = 0x00ff0000U;
-    constexpr uint32_t byte3Mask = 0xff000000U;
-    constexpr uint32_t byteShift = 8;
-    constexpr uint32_t wordShift = 24;
-
-    return (
-        ((x & byte3Mask) >> wordShift) | ((x & byte2Mask) >> byteShift) | ((x & byte1Mask) << byteShift) |
-        ((x & byte0Mask) << wordShift));
+    return ((x & 0x000000ffU) << BITS_3BYTE) | ((x & 0x0000ff00U) << BITS_1BYTE) | ((x & 0x00ff0000U) >> BITS_1BYTE) |
+           ((x & 0xff000000U) >> BITS_3BYTE);
 }
 
 __aicore__ inline uint64_t HtoNLL(uint64_t x)
 {
-    constexpr uint64_t byte0Mask = 0x00000000000000ffU;
-    constexpr uint64_t byte1Mask = 0x000000000000ff00U;
-    constexpr uint64_t byte2Mask = 0x0000000000ff0000U;
-    constexpr uint64_t byte3Mask = 0x00000000ff000000U;
-    constexpr uint64_t byte4Mask = 0x000000ff00000000U;
-    constexpr uint64_t byte5Mask = 0x0000ff0000000000U;
-    constexpr uint64_t byte6Mask = 0x00ff000000000000U;
-    constexpr uint64_t byte7Mask = 0xff00000000000000U;
-
-    constexpr uint64_t shift8 = 8;
-    constexpr uint64_t shift24 = 24;
-    constexpr uint64_t shift40 = 40;
-    constexpr uint64_t shift56 = 56;
-
-    return (
-        ((x & byte0Mask) << shift56) | ((x & byte1Mask) << shift40) | ((x & byte2Mask) << shift24) |
-        ((x & byte3Mask) << shift8) | ((x & byte4Mask) >> shift8) | ((x & byte5Mask) >> shift24) |
-        ((x & byte6Mask) >> shift40) | ((x & byte7Mask) >> shift56));
+    return ((x & 0x00000000000000ffULL) << BITS_7BYTE) | ((x & 0x000000000000ff00ULL) << BITS_5BYTE) |
+           ((x & 0x0000000000ff0000ULL) << BITS_3BYTE) | ((x & 0x00000000ff000000ULL) << BITS_1BYTE) |
+           ((x & 0x000000ff00000000ULL) >> BITS_1BYTE) | ((x & 0x0000ff0000000000ULL) >> BITS_3BYTE) |
+           ((x & 0x00ff000000000000ULL) >> BITS_5BYTE) | ((x & 0xff00000000000000ULL) >> BITS_7BYTE);
 }
 
 template <HardEvent event>
@@ -80,28 +68,6 @@ __aicore__ inline __ubuf__ uint8_t* AlignAddrTo32Bytes(__ubuf__ uint8_t* buff)
     const uintptr_t alignment = 32;
     uintptr_t alignedAddr = (addr + alignment - 1) & ~(alignment - 1);
     return reinterpret_cast<__ubuf__ uint8_t*>(alignedAddr);
-}
-
-template <typename T>
-__aicore__ inline void Gm2Ub(
-    const AscendC::LocalTensor<T>& dstLocal, const AscendC::GlobalTensor<T>& srcGlobal, int32_t length)
-{
-    AscendC::DataCopyExtParams copyParams{1, (uint32_t)(length * sizeof(T)), 0, 0, 0};
-    AscendC::DataCopyPadExtParams<T> padParams{true, 0, (ONE_BLK_SIZE - sizeof(T)) / sizeof(T), 0};
-
-    PipeBarrier<PIPE_ALL>();
-    AscendC::DataCopyPad(dstLocal, srcGlobal, copyParams, padParams);
-    PipeBarrier<PIPE_ALL>();
-}
-
-template <typename T>
-__aicore__ inline void Ub2Gm(
-    const AscendC::GlobalTensor<T>& dstGlobal, const AscendC::LocalTensor<T>& srcLocal, int32_t length)
-{
-    AscendC::DataCopyExtParams copyParams{1, (uint32_t)(length * sizeof(T)), 0, 0, 0};
-    PipeBarrier<PIPE_ALL>();
-    AscendC::DataCopyPad(dstGlobal, srcLocal, copyParams);
-    PipeBarrier<PIPE_ALL>();
 }
 
 __aicore__ inline int32_t HcommFindBufferIdx(

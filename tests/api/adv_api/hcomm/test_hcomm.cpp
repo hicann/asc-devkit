@@ -23,13 +23,12 @@ protected:
         blockIdxBak_ = block_idx;
         channel_.sqNum = 1;
         sqCtx_.contextInfo.roceSq.sqVa = (uint64_t)sqVa_;
-        sqCtx_.contextInfo.roceSq.dbVa = (uint64_t)dbVa_;
+        sqCtx_.contextInfo.roceSq.dbHwVa = (uint64_t)dbVa_;
         sqCtx_.contextInfo.roceSq.wqeSize = 48;
         sqCtx_.contextInfo.roceSq.depth = 10;
         sqCtx_.contextInfo.roceSq.qpn = 1;
         sqCtx_.contextInfo.roceSq.headAddr = (uint64_t)(&head_);
         sqCtx_.contextInfo.roceSq.tailAddr = (uint64_t)(&tail_);
-        sqCtx_.contextInfo.roceSq.dbMode = 0;
         sqCtx_.contextInfo.roceSq.sl = 1;
         channel_.sqContextAddr = &sqCtx_;
         channel_.localBufferNum = 1;
