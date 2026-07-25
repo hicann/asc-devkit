@@ -174,7 +174,7 @@
     AscendC::TPipe pipe;
     int dataSize = 32;
     int offset = 32; // 拷贝到spmBuffer时偏移32字节
-    ;
+    
     // writeLocal为UB上的half类型的LocalTensor
     pipe.WriteSpmBuffer(writeLocal, dataSize, offset); // 将UB上的连续传输数据块搬运到SPM Buffer
     ...

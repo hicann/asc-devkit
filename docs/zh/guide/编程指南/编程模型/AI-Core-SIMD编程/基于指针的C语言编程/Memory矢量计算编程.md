@@ -142,7 +142,7 @@ uint8_t left_padding_num = 2;
 // Right padding of transfer result (element count): value is 6 / sizeof(half) = 3
 uint8_t right_padding_num = 3;
 
-asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_padding_num, false, 0, src_stride, dst_stride);
+asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_padding_num, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, src_stride, dst_stride);
 ```
 > 📌 stride（前一块数据头到后一块数据头的间隔）为该接口从[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)引入，[NPU架构版本2201](../../../语言扩展层/SIMD-BuiltIn关键字.md)使用gap（前一个数据块结束地址与后一个数据块起始地址的差值）。
 
@@ -309,8 +309,8 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
     // ...
     // 1. Step 1: Data transfer in, execution pipeline is PIPE_MTE2
     asc_lock(PIPE_MTE2, mutex_id);
-    asc_copy_gm2ub_align(x_local, x_gm, 1, 48 * sizeof(half), 0, 0, false, 0, 0, 0);
-    asc_copy_gm2ub_align(y_local, y_gm, 1, 48 * sizeof(half), 0, 0, false, 0, 0, 0);
+    asc_copy_gm2ub_align(x_local, x_gm, 1, 48 * sizeof(half), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
+    asc_copy_gm2ub_align(y_local, y_gm, 1, 48 * sizeof(half), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     asc_unlock(PIPE_MTE2, mutex_id);
 
     // 2. Step 2: Compute, execution pipeline is PIPE_V
@@ -320,7 +320,7 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
     
     // 3. Step 3: Data transfer out, execution pipeline is PIPE_MTE3
     asc_lock(PIPE_MTE3, mutex_id);
-    asc_copy_ub2gm_align(z_gm, z_local, 1, 48 * sizeof(int8_t), 0, 0, 0);
+    asc_copy_ub2gm_align(z_gm, z_local, 1, 48 * sizeof(int8_t), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     asc_unlock(PIPE_MTE3, mutex_id);
 }
 ```

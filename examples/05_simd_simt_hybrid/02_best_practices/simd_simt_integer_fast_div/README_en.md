@@ -60,7 +60,7 @@ Both cases use the same data transfer flow: first transfer the data assigned to 
 The shared data transfer and SIMT invocation flow for both cases is as follows:
 
 ```cpp
-asc_copy_gm2ub_align(input_buf, input + block_offset, 1, blk_length, 0, 0, false, 0, 0, 0);
+asc_copy_gm2ub_align(input_buf, input + block_offset, 1, blk_length, 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
 
 if ASC_IS_AIV {
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
@@ -78,7 +78,7 @@ if ASC_IS_AIV {
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
 }
 
-asc_copy_ub2gm_align(output + block_offset, output_buf, 1, blk_length, 0, 0, 0);
+asc_copy_ub2gm_align(output + block_offset, output_buf, 1, blk_length, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
 ```
 
 ### Performance Metric Description

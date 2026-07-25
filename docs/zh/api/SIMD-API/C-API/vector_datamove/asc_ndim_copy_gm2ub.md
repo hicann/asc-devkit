@@ -182,5 +182,5 @@ pad_count_config.loop1_rp_count = loop1_rp_count;
 asc_set_ndim_pad_count(pad_count_config);
 
 asc_ndim_copy_gm2ub(dst, src, loop0_size, loop1_size, loop2_size, loop3_size, loop4_size,
-    loop0_lp_count, loop0_rp_count, padding_mode, 0);
+    loop0_lp_count, loop0_rp_count, padding_mode, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM);
 ```

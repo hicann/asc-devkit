@@ -103,7 +103,7 @@ private:
                 uint32_t curCols = (nIdx + tileN > n) ? (n - nIdx) : tileN;
                 asc_copy_gm2ub_align(
                     ubLocal, srcGlobal + mIdx * n + nIdx, (uint16_t)tileM, (uint32_t)(curCols * sizeof(half)), 0, 0, 0,
-                    0, (uint64_t)((n - curCols) * sizeof(half)), 0);
+                    asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, (uint64_t)((n - curCols) * sizeof(half)), 0);
             }
         }
     }
@@ -124,7 +124,8 @@ private:
                     uint32_t nIdx = nBlockIdx * tileN;
                     asc_copy_gm2ub_align(
                         ubLocal, srcGlobal + mIdx * n + nStart + nIdx, (uint16_t)tileM,
-                        (uint32_t)(tileN * sizeof(half)), 0, 0, 0, 0, (uint64_t)((n - tileN) * sizeof(half)), 0);
+                        (uint32_t)(tileN * sizeof(half)), 0, 0, 0, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM,
+                        (uint64_t)((n - tileN) * sizeof(half)), 0);
                 }
             }
         }
@@ -174,14 +175,20 @@ public:
      * 但 Add 的输入 x、y 均为流式数据（每个元素只读一次），写入 L2 是纯浪费的。
      * 与 Case 4 对比，展示 L2 bypass 对流式数据的优化效果。
      */
-    __aicore__ inline void ProcessDoubleBuffer() { ProcessDoubleBufferImpl(0); /* l2CacheMode = NORMAL */ }
+    __aicore__ inline void ProcessDoubleBuffer()
+    {
+        ProcessDoubleBufferImpl(asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM);
+    }
 
     /* !
      * \brief Case 4：Add 双缓冲 + L2 Cache DISABLE（L2 bypass）
      *
      * 设计意图：流式数据通过 L2 bypass 跳过 L2 Cache 写回，节省带宽。
      */
-    __aicore__ inline void ProcessDoubleBufferL2Bypass() { ProcessDoubleBufferImpl(4); /* l2CacheMode = DISABLE */ }
+    __aicore__ inline void ProcessDoubleBufferL2Bypass()
+    {
+        ProcessDoubleBufferImpl(asc_load_l2_cache_mode::NOTALLOC_KEEP);
+    }
 
 private:
     static constexpr uint32_t max_data_copy_len = 20992;
@@ -190,9 +197,9 @@ private:
 
     /* !
      * \brief 双缓冲核心流水线
-     * \param l2CacheMode  0=NORMAL, 4=DISABLE
+     * \param l2CacheMode
      */
-    __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
+    __aicore__ inline void ProcessDoubleBufferImpl(asc_load_l2_cache_mode l2CacheMode)
     {
         constexpr uint32_t totalBufSize = 6 * max_data_copy_len;
         __ubuf__ half ubBuf[totalBufSize];
@@ -243,7 +250,9 @@ private:
             asc_sync_notify(PIPE_V, PIPE_MTE3, eventID);
             asc_sync_wait(PIPE_V, PIPE_MTE3, eventID);
 
-            asc_copy_ub2gm_align(zGm + startElement, zLocal, 1, curLen * sizeof(half), 0, 0, 0);
+            asc_copy_ub2gm_align(
+                zGm + startElement, zLocal, 1, curLen * sizeof(half), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0,
+                0);
 
             asc_sync_notify(PIPE_MTE3, PIPE_V, eventID);
         }

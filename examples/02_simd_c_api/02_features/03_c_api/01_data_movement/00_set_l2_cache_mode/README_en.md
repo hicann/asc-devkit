@@ -5,12 +5,12 @@
 When MTE2 moves data from Global Memory (GM) to Unified Buffer (UB), the `l2_cache_mode` parameter of the `asc_copy_gm2ub_align` interface (this sample uses [pointer-based C programming](../../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程)) can explicitly configure the L2 Cache management strategy. This sample describes how to select the appropriate L2 Cache mode to optimize MTE2 data movement performance for **reuse data** and **streaming data** scenarios, and how to improve the L2 Cache hit rate through tiling strategies when L2 Cache is enabled.
 
 - **Reuse Data Scenario (data needs to be read multiple times)**
-  Case1: Repeat the entire block 4 times, `l2_cache_mode=0` (NORMAL) — the entire block far exceeds the L2 capacity, hit rate is extremely low, demonstrating the performance bottleneck without tiling.
-  Case2: Split into 4 tiles along the N direction, repeat each tile 4 times, `l2_cache_mode=0` (NORMAL) — after tiling, the working set per tile fits within the L2 capacity, improving the hit rate.
+  Case1: Repeat the entire block 4 times, `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` — the entire block far exceeds the L2 capacity, hit rate is extremely low, demonstrating the performance bottleneck without tiling.
+  Case2: Split into 4 tiles along the N direction, repeat each tile 4 times, `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` — after tiling, the working set per tile fits within the L2 capacity, improving the hit rate.
 
 - **Streaming Data Scenario (data is read only once)**
-  Case3: Add + double buffer, `l2_cache_mode=0` (NORMAL) (baseline).
-  Case4: Same as Case3, but set `l2_cache_mode` to 4 (DISABLE), bypassing L2 Cache — compare with Case3.
+  Case3: Add + double buffer, `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` (baseline).
+  Case4: Add + double buffer, `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP` bypassing L2 Cache — compare with Case3.
 
 ## Supported Products and CANN Software Versions
 
@@ -34,7 +34,7 @@ When MTE2 moves data from Global Memory (GM) to Unified Buffer (UB), the `l2_cac
 
 ## Sample Description
 
-The C-API GM→UB data movement interface uses the `l2_cache_mode` parameter to control how the data being moved is managed in the L2 Cache. For details on the values and their meanings, see the [asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/C-API/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md) interface documentation.
+The C-API GM→UB data movement interface [asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/C-API/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md) uses the `l2_cache_mode` parameter to control how the data being moved is managed in the L2 Cache. For details on the values and their meanings, see the  enum class [asc_load_l2_cache_mode](../../../../../../docs/zh/api/SIMD-API/C-API/) documentation.
 
 Based on the two scenarios described above, this sample designs 4 Cases for comparison and verification:
 
@@ -42,7 +42,7 @@ Based on the two scenarios described above, this sample designs 4 Cases for comp
   This group uses a half-type 2D matrix with shape [12288, 12288] as input. `asc_copy_gm2ub_align` moves data from GM to UB. By comparing the L2 Cache hit rate under different data movement strategies, observe the performance difference between whole-block repetition and tiled repetition. This group does not include computation logic and only performs data movement operations.
 
 - **Streaming data scenario (Case3-4)**
-  This group implements the addition of two half-type matrices (z = x + y) with shape [8192, 8192]. It uses double buffering (Ping-Pong) to pipeline data movement and vector computation. By comparing `l2_cache_mode=0` (NORMAL) vs `l2_cache_mode=4` (DISABLE), demonstrate the optimization effect of bypassing L2 Cache for streaming data.
+  This group implements the addition of two half-type matrices (z = x + y) with shape [8192, 8192]. It uses double buffering (Ping-Pong) to pipeline data movement and vector computation. By comparing `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` vs `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`, demonstrate the optimization effect of bypassing L2 Cache for streaming data.
 
 ## Sample Implementation
 
@@ -91,8 +91,8 @@ The data movement patterns between GM and UB for Case1 and Case2 are shown below
 ```text
 GM Matrix: [M, N]
 ┌─────────────────────────────── N ───────────────────────────────┐
-│                       All columns moved at once                  │
-└──────────────────────────────────────────────────────────────────┘
+│                    All columns moved at once                    │
+└─────────────────────────────────────────────────────────────────┘
 
 All cores start and move the entire matrix along the same path:
 Round 1: All cores read the entire matrix from GM to UB
@@ -107,8 +107,8 @@ Note: The working set in each round is the entire matrix, making it difficult fo
 ```text
 GM Matrix: [M, N]
 ┌─────── N/4 ────────┬─────── N/4 ────────┬─────── N/4 ────────┬─────── N/4 ────────┐
-│       Tile 0        │       Tile 1        │       Tile 2        │       Tile 3        │
-└─────────────────────┴─────────────────────┴─────────────────────┴─────────────────────┘
+│       Tile 0       │       Tile 1       │       Tile 2       │       Tile 3       │
+└────────────────────┴────────────────────┴────────────────────┴────────────────────┘
 
 All cores start, move Tile 0 data 4 times consecutively, then process the next tile:
 Tile 0: Round 1 reads from GM, Rounds 2-4 preferentially read from L2 Cache
@@ -118,7 +118,7 @@ Tile 3: Round 1 reads from GM, Rounds 2-4 preferentially read from L2 Cache
 Note: The working set per tile is smaller, making it easier to retain in L2 Cache during consecutive repeated accesses.
 ```
 
-### Case1: Repeat the entire matrix 4 times + `l2_cache_mode=0` (NORMAL)
+### Case1: Repeat the entire matrix 4 times + `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **Design intent**: The entire matrix (301.99MB) is larger than the L2 Cache capacity (approximately 128MB). Each full matrix movement causes old data to be evicted, resulting in a low L2 hit rate. Compare with Case2 (tiled repetition) to demonstrate the importance of controlling the working set size through tiling — even with L2 Cache enabled, if the single working set exceeds the L2 capacity, tiling is necessary to control the working set size.
 
@@ -128,7 +128,7 @@ Note: The working set per tile is smaller, making it easier to retain in L2 Cach
 - Total data moved: 301.99MB x 4 = 1207.96MB.
 - Tile: [64, 1024], each `asc_copy_gm2ub_align` moves 131,072B.
 
-**L2 strategy**: `l2_cache_mode=0` (NORMAL)
+**L2 strategy**: `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **Performance data**:
 
@@ -148,7 +148,7 @@ Note: The working set per tile is smaller, making it easier to retain in L2 Cach
 **Performance optimization suggestions**:
 - When the single working set far exceeds the L2 capacity, enabling L2 Cache alone cannot provide reuse benefits. Use tiling to control the working set size within the L2 capacity.
 
-### Case2: Split into 4 tiles along N + repeat each tile 4 times + `l2_cache_mode=0` (NORMAL)
+### Case2: Split into 4 tiles along N + repeat each tile 4 times + `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **Design intent**: For data that needs to be read multiple times, enabling L2 Cache caches the data read in the first access. Subsequent repeated accesses read directly from L2, significantly reducing MTE2 data movement latency. The input matrix (301.99MB) exceeds the L2 capacity (approximately 128MB), so the entire matrix cannot be fully cached. Splitting into 4 tiles along the N direction results in each tile being approximately 75.50MB, allowing each tile to achieve L2 hit rate improvements within a certain range.
 
@@ -158,7 +158,7 @@ Note: The working set per tile is smaller, making it easier to retain in L2 Cach
 - Total data moved: 301.99MB x 4 = 1207.96MB.
 - Tile: [64, 1024], each `asc_copy_gm2ub_align` moves 131,072B.
 
-**L2 strategy**: `l2_cache_mode=0` (NORMAL)
+**L2 strategy**: `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **Performance data**:
 
@@ -178,16 +178,16 @@ Note: The working set per tile is smaller, making it easier to retain in L2 Cach
 **Performance optimization suggestions**:
 - For repeated accesses to data exceeding the L2 capacity, first use tiling to control the single working set within the L2 capacity, then enable L2 Cache to obtain reuse benefits.
 
-### Case3: Add with double buffer + `l2_cache_mode=0` (NORMAL)
+### Case3: Add with double buffer + `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
-**Design intent**: The inputs x and y of the Add operator are both streaming data (each element is read only once). Double buffering is used for pipeline parallelism. With `l2_cache_mode=0` (NORMAL), MTE2 writes data to the L2 Cache while moving it to UB. However, the data is never accessed again, making the L2 write operations completely wasteful and consuming additional L2 controller management bandwidth.
+**Design intent**: The inputs x and y of the Add operator are both streaming data (each element is read only once). Double buffering is used for pipeline parallelism. With `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`, MTE2 writes data to the L2 Cache while moving it to UB. However, the data is never accessed again, making the L2 write operations completely wasteful and consuming additional L2 controller management bandwidth.
 
 **Sample configuration**:
 
 - Matrix: [8192, 8192], half type (128MB per matrix).
 - Evenly distributed across 64 AIV Cores.
 
-**L2 strategy**: `l2_cache_mode=0` (NORMAL)
+**L2 strategy**: `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **Performance data**:
 
@@ -200,21 +200,22 @@ Note: The working set per tile is smaller, making it easier to retain in L2 Cach
 
 **Principle**:
 - The inputs x and y of the Add operator are both streaming data. Each element is accessed only once and is never reused.
-- `l2_cache_mode=0` (NORMAL) causes MTE2 to perform additional L2 Cache write operations during GM to UB data movement. These writes do not help performance and instead consume L2 controller management bandwidth and pollute the L2 Cache space.
+- `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` causes MTE2 to perform additional L2 Cache write operations during GM to UB data movement. These writes do not help performance and instead consume L2 controller management bandwidth and pollute the L2 Cache space.
 
 **Performance optimization suggestions**:
-- For streaming data, configure `l2_cache_mode=4` (DISABLE) to bypass L2 Cache writes, eliminating unnecessary cache management overhead.
 
-### Case4: Add with double buffer + `l2_cache_mode=4` (DISABLE)
+- For streaming data, configure `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP` to bypass L2 Cache writes, eliminating unnecessary cache management overhead.
 
-**Design intent**: The only difference from Case3 is that `asc_copy_gm2ub_align` is called with `l2_cache_mode=4` (DISABLE) instead of `l2_cache_mode=0` (NORMAL). For streaming data that is read only once, disabling L2 Cache allows MTE2 to move data directly from GM to UB, avoiding unnecessary cache write overhead and preventing streaming data from occupying L2 space.
+### Case4: Add with double buffer + `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`
+
+**Design intent**: The only difference from Case3 is that `asc_copy_gm2ub_align` is called with `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP` instead of `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`. For streaming data that is read only once, disabling L2 Cache allows MTE2 to move data directly from GM to UB, avoiding unnecessary cache write overhead and preventing streaming data from occupying L2 space.
 
 **Key code**:
 
 ```cpp
-// Case 3 (l2_cache_mode=0, NORMAL) and Case 4 (l2_cache_mode=4, DISABLE)
+// Case 3 (l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM) and Case 4 (l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP)
 // The only difference is the l2_cache_mode parameter value
-__aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
+__aicore__ inline void ProcessDoubleBufferImpl(asc_load_l2_cache_mode l2CacheMode)
 {
     // ...
     asc_copy_gm2ub_align(xLocal, xGm + startElement,
@@ -227,7 +228,7 @@ __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
 }
 ```
 
-**L2 strategy**: `l2_cache_mode=4` (DISABLE)
+**L2 strategy**: `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`
 
 **Performance data**:
 
@@ -242,10 +243,12 @@ __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
 - aiv_vec_time remained nearly unchanged (83.14μs to 82.462μs, a change of **0.8%**), indicating that L2 Cache bypass does not affect vector computation time.
 
 **Principle**:
-- `l2_cache_mode=4` (DISABLE) bypasses L2 Cache writes. MTE2 moves data directly from GM to UB, eliminating unnecessary cache write operations and Cache Line allocation overhead.
+
+- `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP` bypasses L2 Cache writes. MTE2 moves data directly from GM to UB, eliminating unnecessary cache write operations and Cache Line allocation overhead.
 
 **Performance optimization suggestions**:
-- For large amounts of streaming data that are read only once (such as inputs to element-wise operators like Add and Mul), configure `l2_cache_mode=4` (DISABLE) in `asc_copy_gm2ub_align` to bypass unnecessary cache writes and improve MTE2 data movement efficiency.
+
+- For large amounts of streaming data that are read only once (such as inputs to element-wise operators like Add and Mul), configure `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP` in `asc_copy_gm2ub_align` to bypass unnecessary cache writes and improve MTE2 data movement efficiency.
 
 ## Optimization Summary
 
@@ -259,10 +262,10 @@ __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
 
 ```text
 Is the data read multiple times?
-  ├── Yes → Use l2_cache_mode=0 (NORMAL)
+  ├── Yes → Use l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM
   │         Single working set > L2 capacity?
-  │         └── Yes → Tile first, then use l2_cache_mode=0 (NORMAL) within each tile
-  └── No  → Use l2_cache_mode=4 (DISABLE, bypass for streaming data)
+  │         └── Yes → Tile first, then use l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM within each tile
+  └── No  → Use l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP (bypass for streaming data)
 ```
 
 ## Build and Run

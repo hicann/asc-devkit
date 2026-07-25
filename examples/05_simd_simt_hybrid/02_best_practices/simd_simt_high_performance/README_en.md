@@ -182,12 +182,12 @@ __aicore__ inline void process_tiles(
         uint32_t tile_offset = tile_idx * TILE_LENGTH;
         ...
 
-        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
-        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
+        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 0);
+        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 0);
         ...
         asc_vf_call<floor_mod_simd>(z_local, x_local, y_local, TILE_LENGTH);
         ...
-        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, 0, 0, 0);
+        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     }
     ...
 }
@@ -253,13 +253,13 @@ __aicore__ inline void process_tiles(
         uint32_t tile_offset = tile_idx * TILE_LENGTH;
         ...
 
-        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
-        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
+        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 0);
+        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 0);
         ...
         asc_vf_call<floor_mod_simt_non_contiguous>(dim3(THREAD_COUNT), x_local, y_local, z_local, TILE_LENGTH);
         asc_sync_data_barrier(mem_dsb_t::DSB_UB);
         ...
-        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, 0, 0, 0);
+        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     }
     ...
 }
@@ -325,13 +325,13 @@ __aicore__ inline void process_tiles(
         uint32_t tile_offset = tile_idx * TILE_LENGTH;
         ...
 
-        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
-        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
+        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 0);
+        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 0);
         ...
         asc_vf_call<floor_mod_simt_contiguous>(dim3(THREAD_COUNT), x_local, y_local, z_local, TILE_LENGTH);
         asc_sync_data_barrier(mem_dsb_t::DSB_UB);
         ...
-        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, 0, 0, 0);
+        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     }
     ...
 }

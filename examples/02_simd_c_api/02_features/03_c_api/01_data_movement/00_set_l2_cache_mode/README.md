@@ -5,12 +5,12 @@
 MTE2将数据从Global Memory（GM）搬运到Unified Buffer（UB）时，可通过`asc_copy_gm2ub_align`接口的`l2_cache_mode`参数（本样例使用[基于指针的C语言编程](../../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程)）显式配置数据在L2 Cache中的管理策略。本样例说明**复用数据**和**流式数据**两大类场景下，如何选择合适的L2 Cache模式来优化MTE2搬运性能，以及在启用L2 Cache的前提下如何通过分片策略提升L2 Cache命中率。
 
 - **复用数据场景（数据需多次读取）**
-  Case1: 整块重复搬4次，`l2_cache_mode=0`（NORMAL） → 整块数据远超L2容量，命中率极低，展示未分片时的性能瓶颈。
-  Case2: N方向切4份，每份连续搬4次，`l2_cache_mode=0`（NORMAL） → 分片后单份工作集降至L2容量以内，命中率提升。
+  Case1: 整块重复搬4次，`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` → 整块数据远超L2容量，命中率极低，展示未分片时的性能瓶颈。
+  Case2: N方向切4份，每份连续搬4次，`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` → 分片后单份工作集降至L2容量以内，命中率提升。
 
 - **流式数据场景（数据只读一次）**
-  Case3: Add + 双缓冲，`l2_cache_mode=0`（NORMAL）（基准）。
-  Case4: 同Case3，但将`l2_cache_mode`设为4（DISABLE），跳过L2 Cache → 与Case3对比。
+  Case3: Add + 双缓冲，`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`（基准）。
+  Case4: Add + 双缓冲，`l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`跳过L2 Cache → 与Case3对比。
 
 ## 本样例支持的产品及CANN软件版本
 
@@ -34,13 +34,15 @@ MTE2将数据从Global Memory（GM）搬运到Unified Buffer（UB）时，可通
 
 ## 样例描述
 
-C-API的GM→UB搬运接口通过入参`l2_cache_mode`来控制本次搬运数据在L2 Cache中的管理策略，取值及含义详见[asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/C-API/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)接口说明。
+C-API的GM→UB搬运接口[asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/C-API/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)通过入参`l2_cache_mode`来控制本次搬运数据在L2 Cache中的管理策略，取值及含义详见枚举类[asc_load_l2_cache_mode](../../../../../../docs/zh/api/SIMD-API/C-API/)的说明。
 
 围绕上述两类场景，本样例设计了4个Case进行对比验证：
-- 数据复用场景（Case1-2）
+
+- **数据复用场景（Case1-2）**
 本组场景输入为half类型二维矩阵，shape为[12288, 12288]。使用`asc_copy_gm2ub_align`将数据从GM搬运到UB，通过对比不同搬运策略下的L2 Cache命中率，观察整块重复vs分片重复的性能差异。本组场景不包含计算逻辑，仅执行数据搬运操作。
-- 流式数据场景（Case3-4）
-本组场景实现两个shape为[8192, 8192]的half类型矩阵相加（z = x + y），采用双缓冲（Ping-Pong）技术实现数据搬运与向量计算的流水线并行。通过对比`l2_cache_mode=0`（NORMAL）vs `l2_cache_mode=4`（DISABLE），展示bypass对流式数据的优化效果。
+
+- **流式数据场景（Case3-4）**
+本组场景实现两个shape为[8192, 8192]的half类型矩阵相加（z = x + y），采用双缓冲（Ping-Pong）技术实现数据搬运与向量计算的流水线并行。通过对比`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` vs `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`，展示bypass对流式数据的优化效果。
 
 ## 样例实现
 
@@ -89,8 +91,8 @@ Case1和Case2中数据在GM与UB之间的搬运模式如下：
 ```text
 GM 矩阵: [M, N]
 ┌─────────────────────────────── N ───────────────────────────────┐
-│                         全部列一次搬完                           │
-└──────────────────────────────────────────────────────────────────┘
+│                          全部列一次搬完                          │
+└─────────────────────────────────────────────────────────────────┘
 
 启动全部 core，按相同路径搬运完整矩阵:
 第 1 轮: 全部 core 从 GM 读取完整矩阵 -> UB
@@ -116,7 +118,7 @@ GM 矩阵: [M, N]
 说明: 单个分片工作集更小，连续重复访问时更容易保留在 L2 Cache 中
 ```
 
-### Case1: 整块连续重复搬运4次 + `l2_cache_mode=0`（NORMAL）
+### Case1: 整块连续重复搬运4次 + `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **设计意图**：整块矩阵（301.99MB）大于L2 Cache容量（约128MB），每次完整矩阵搬运都会导致旧数据被换出，L2命中率较低。与Case2（分片重复）对比，说明分片策略控制工作集大小的重要性——即使启用L2 Cache，如果单次工作集超出L2容量，也必须通过分片策略来控制工作集大小。
 
@@ -126,7 +128,7 @@ GM 矩阵: [M, N]
 - 总搬运数据量：301.99MB × 4 = 1207.96MB。
 - Tile：[64, 1024]，单次`asc_copy_gm2ub_align`搬运131,072B。
 
-**L2策略**：`l2_cache_mode=0`（NORMAL）
+**L2策略**：`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **性能数据**：
 
@@ -146,7 +148,7 @@ GM 矩阵: [M, N]
 **性能优化建议**：
 - 当单次工作集远超L2容量时，仅启用L2 Cache无法获得复用收益，应通过分片策略将单次工作集控制在L2容量以内。
 
-### Case2: N方向切4份 + 每份连续搬4次 + `l2_cache_mode=0`（NORMAL）
+### Case2: N方向切4份 + 每份连续搬4次 + `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **设计意图**：对于需要多次重复读取的数据，启用L2 Cache将首次读取的数据缓存起来，后续重复访问直接从L2读取，显著降低MTE2搬运耗时。输入矩阵301.99MB > L2容量（约128MB），整块无法被完整缓存，因此N方向切4份后每份约75.50MB，每个分片可在一定范围内获得L2命中率提升。
 
@@ -156,7 +158,7 @@ GM 矩阵: [M, N]
 - 总搬运数据量：301.99MB × 4 = 1207.96MB。
 - Tile：[64, 1024]，单次`asc_copy_gm2ub_align`搬运131,072B。
 
-**L2策略**：`l2_cache_mode=0`（NORMAL）
+**L2策略**：`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **性能数据**：
 
@@ -176,16 +178,16 @@ GM 矩阵: [M, N]
 **性能优化建议**：
 - 对于超L2容量的重复访问数据，应先通过分片将单次工作集控制在L2容量以内，再启用L2 Cache获得复用收益。
 
-### Case3: Add双缓冲 + `l2_cache_mode=0`（NORMAL）
+### Case3: Add双缓冲 + `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
-**设计意图**：Add算子的输入x、y均为流式数据（每个元素只读一次），采用双缓冲流水线并行。`l2_cache_mode=0`（NORMAL）时，MTE2将数据搬运到UB的同时会写入L2 Cache，但数据不会被再次访问，写入L2的操作是纯浪费的，额外消耗了L2控制器管理带宽。
+**设计意图**：Add算子的输入x、y均为流式数据（每个元素只读一次），采用双缓冲流水线并行。`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`时，MTE2将数据搬运到UB的同时会写入L2 Cache，但数据不会被再次访问，写入L2的操作是纯浪费的，额外消耗了L2控制器管理带宽。
 
 **样例配置**：
 
 - 矩阵：[8192, 8192]，half类型（128MB每矩阵）。
 - 均匀切分到64个AIV Core。
 
-**L2策略**：`l2_cache_mode=0`（NORMAL）
+**L2策略**：`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`
 
 **性能数据**：
 
@@ -198,21 +200,22 @@ GM 矩阵: [M, N]
 
 **原理说明**：
 - Add算子的输入x、y均为流式数据，每个元素仅被访问一次后不再复用。
-- `l2_cache_mode=0`（NORMAL）会使MTE2在GM→UB搬运时额外执行L2 Cache写入操作，这些写入对性能无帮助，反而占用L2控制器管理带宽并污染L2 Cache空间。
+- `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`会使MTE2在GM→UB搬运时额外执行L2 Cache写入操作，这些写入对性能无帮助，反而占用L2控制器管理带宽并污染L2 Cache空间。
 
 **性能优化建议**：
-- 对于流式访问的数据，应配置`l2_cache_mode=4`（DISABLE）跳过L2 Cache写入，省去不必要的cache管理开销。
 
-### Case4: Add双缓冲 + `l2_cache_mode=4`（DISABLE）
+- 对于流式访问的数据，应配置`l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`跳过L2 Cache写入，省去不必要的cache管理开销。
 
-**设计意图**：与Case3的区别仅在于`asc_copy_gm2ub_align`调用时传入`l2_cache_mode=4`（DISABLE模式）代替`l2_cache_mode=0`（NORMAL模式）。对于只读一次的流式数据，禁用L2 Cache后MTE2直接将数据从GM搬运到UB，避免了不必要的cache写开销，并可避免流式数据占据L2空间。
+### Case4: Add双缓冲 + `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`
+
+**设计意图**：与Case3的区别仅在于`asc_copy_gm2ub_align`调用时传入`l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`代替`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`。对于只读一次的流式数据，禁用L2 Cache后MTE2直接将数据从GM搬运到UB，避免了不必要的cache写开销，并可避免流式数据占据L2空间。
 
 **关键代码**：
 
 ```cpp
-// Case 3（l2_cache_mode=0，NORMAL）和 Case 4（l2_cache_mode=4，DISABLE）
+// Case 3（l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM）和 Case 4（l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP）
 // 唯一区别在于 l2_cache_mode 参数值
-__aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
+__aicore__ inline void ProcessDoubleBufferImpl(asc_load_l2_cache_mode l2CacheMode)
 {
     // ...
     asc_copy_gm2ub_align(xLocal, xGm + startElement,
@@ -225,7 +228,7 @@ __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
 }
 ```
 
-**L2策略**：`l2_cache_mode=4`（DISABLE）
+**L2策略**：`l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`
 
 **性能数据**：
 
@@ -240,10 +243,12 @@ __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
 - aiv_vec_time基本不变（83.14μs → 82.462μs，变化**0.8%**），说明L2 Cache bypass不影响向量计算部分的耗时。
 
 **原理说明**：
-- `l2_cache_mode=4`（DISABLE）跳过L2 Cache写入，MTE2直接将数据从GM搬运到UB，省去了不必要的cache写操作和Cache Line分配开销。
+
+- `l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`跳过L2 Cache写入，MTE2直接将数据从GM搬运到UB，省去了不必要的cache写操作和Cache Line分配开销。
 
 **性能优化建议**：
-- 对于数据量大且只读取一次的流式数据（如Add、Mul等逐元素算子的输入），建议在`asc_copy_gm2ub_align`中配置`l2_cache_mode=4`（DISABLE），跳过不必要的cache写入，提升MTE2搬运效率。
+
+- 对于数据量大且只读取一次的流式数据（如Add、Mul等逐元素算子的输入），建议在`asc_copy_gm2ub_align`中配置`l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP`，跳过不必要的cache写入，提升MTE2搬运效率。
 
 ## 优化要点总结
 
@@ -257,10 +262,10 @@ __aicore__ inline void ProcessDoubleBufferImpl(uint8_t l2CacheMode)
 
 ```text
 该数据会被多次读取吗？
-  ├── 是 → 使用 l2_cache_mode=0（NORMAL）
+  ├── 是 → 使用 l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM
   │         单次工作集 > L2 容量？
-  │         └── 是 → 先分片，再在每个分片内使用 l2_cache_mode=0（NORMAL）
-  └── 否 → 使用 l2_cache_mode=4（DISABLE，流式数据 bypass）
+  │         └── 是 → 先分片，再在每个分片内使用 l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM
+  └── 否 → 使用 l2_cache_mode = asc_load_l2_cache_mode::NOTALLOC_KEEP（流式数据 bypass）
 ```
 
 ## 编译运行

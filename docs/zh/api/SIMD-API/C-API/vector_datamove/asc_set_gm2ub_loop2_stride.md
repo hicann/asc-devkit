@@ -65,6 +65,6 @@ PIPE_S
 asc_set_gm2ub_loop_size(2, 2);
 asc_set_gm2ub_loop1_stride(96, 128);
 asc_set_gm2ub_loop2_stride(192, 288);
-asc_copy_gm2ub_align(dst, src, 2, 48 * sizeof(int8_t), 0, 0, false, 0, 48, 48);
+asc_copy_gm2ub_align(dst, src, 2, 48 * sizeof(int8_t), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 48, 48);
 asc_set_gm2ub_loop_size(1, 1);
 ```

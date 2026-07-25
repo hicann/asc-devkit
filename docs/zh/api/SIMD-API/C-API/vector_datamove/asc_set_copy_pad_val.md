@@ -72,7 +72,10 @@ PIPE_S
 ## 调用示例
 
 ```cpp
-// 源操作数非对齐，需要填补数据
+// src是外部输入的int8_t类型的GM地址。
+__ubuf__ int8_t dst[128];
+
 asc_set_copy_pad_val(0);
-asc_copy_gm2ub_align(dst, src, 2, 48 * sizeof(int8_t), 0, 0, true, 0, 0, 0);
+// 在搬运过程中，每个数据块左右两侧各补充8个int8_t的数据，补充的数据值为0。
+asc_copy_gm2ub_align(dst, src, 2, 48 * sizeof(int8_t), 8, 8, true, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 48 * sizeof(int8_t), 64 * sizeof(int8_t));
 ```

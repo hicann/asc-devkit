@@ -71,6 +71,6 @@ uint64_t loop2_dst_stride = 288;
 asc_set_ub2gm_loop_size(loop1_size, loop2_size);
 asc_set_ub2gm_loop1_stride(loop1_src_stride, loop1_dst_stride);
 asc_set_ub2gm_loop2_stride(loop2_src_stride, loop2_dst_stride);
-asc_copy_ub2gm_align(dst, src, 2, 48 * sizeof(int8_t), 0, 48, 48);
+asc_copy_ub2gm_align(dst, src, 2, 48 * sizeof(int8_t), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 48, 48);
 asc_set_ub2gm_loop_size(1, 1);
 ```

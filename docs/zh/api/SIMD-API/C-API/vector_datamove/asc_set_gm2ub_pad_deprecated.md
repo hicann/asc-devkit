@@ -64,6 +64,6 @@ asc_set_gm2ub_loop1_stride(96, 128);
 asc_set_gm2ub_loop2_stride(192, 288); 
 // 源操作数非对齐，需要填补数据 
 asc_set_gm2ub_pad(0); 
-asc_copy_gm2ub_align(dst, src, 2, 46 * sizeof(int8_t), 1, 1, true, 0, 48, 48); 
+asc_copy_gm2ub_align(dst, src, 2, 46 * sizeof(int8_t), 1, 1, true, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 48, 48); 
 asc_set_gm2ub_loop_size(1, 1); 
 ```
