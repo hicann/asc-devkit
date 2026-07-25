@@ -53,6 +53,12 @@ inline constexpr bool IsL0COutDNFormatV =
 template <typename TensorType>
 inline constexpr bool IsL0COutNZFormatV = IsSatisfiedPtnFormatV<TensorType, NZLayoutPtn>;
 
+// NC1HWC0 (N, C1, H, W, C0): a flat 5-dim layout with no pattern tag (depth 5 AND rank 5). Batched
+// NZ/ND/DN dst layouts are also depth 5 but nest to rank 2, so the rank check keeps them apart.
+template <typename TensorType>
+inline constexpr bool IsL0COutNC1HWC0V =
+    TensorType::layoutType::depth == FIVE_DIM_DATA && TensorType::layoutType::rank == FIVE_DIM_DATA;
+
 template <typename DstTensorType, typename SrcTensorType>
 inline constexpr bool IsL0COutBatchNZ2NZV =
     IsL0COutNZFormatV<DstTensorType> && IsL0COutNZFormatV<SrcTensorType> &&
@@ -89,7 +95,17 @@ template <typename T, typename U, typename DstLayout, typename SrcLayout>
 __aicore__ inline static constexpr L0COutCopyParams MakeL0COutCopyParams(
     const DstLayout& dstLayout, const SrcLayout& srcLayout)
 {
-    if constexpr (IsL0COutBatchNZ2NZV<T, U>) {
+    if constexpr (IsL0COutNC1HWC0V<T>) {
+        // dst NC1HWC0 (N, C1, H, W, C0), N == 1: nSize = Cout = C1*C0, mSize = Ho*Wo = H*W.
+        // dstStride is the C1-axis stride (= H*W*C0), i.e. the C0-block step without the NZ 16-row
+        // alignment padding. src is the non-batch NZ, so srcStride follows the plain NZ path.
+        auto dstShape = dstLayout.Shape();
+        return {
+            static_cast<uint32_t>(Get<1>(dstShape) * Get<4>(dstShape)),
+            static_cast<uint32_t>(Get<2>(dstShape) * Get<3>(dstShape)),
+            static_cast<uint32_t>(GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) / FRACTAL_FIXED),
+            static_cast<uint32_t>(Get<1>(dstLayout.Stride()))};
+    } else if constexpr (IsL0COutBatchNZ2NZV<T, U>) {
         auto srcNoBatchLayout = RemoveBatchDim(srcLayout);
         auto dstNoBatchLayout = RemoveBatchDim(dstLayout);
         return {

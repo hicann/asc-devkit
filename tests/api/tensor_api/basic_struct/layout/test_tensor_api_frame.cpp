@@ -523,3 +523,46 @@ TEST_F(Tensor_Api_Frame_Layout, ScaleAndZzNnBatchFrameLayout)
     EXPECT_EQ(AscendC::Std::get<0>(AscendC::Std::get<1>(GetShape<1>(zz))), 2);
     EXPECT_EQ(AscendC::Std::get<1>(AscendC::Std::get<1>(GetShape<1>(zz))), 32);
 }
+
+TEST_F(Tensor_Api_Frame_Layout, ConvFeatureMapLayouts)
+{
+    using namespace AscendC::Te;
+
+    // NCHW(N,C,H,W): row-major contiguous stride (C*H*W, H*W, W, 1).
+    auto nchw = MakeFrameLayout<NCHWLayoutPtn>(2, 3, 4, 5);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(nchw)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(nchw)), 3);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(nchw)), 4);
+    EXPECT_EQ(AscendC::Std::get<3>(GetShape(nchw)), 5);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(nchw)), 60);
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(nchw)), 20);
+    EXPECT_EQ(AscendC::Std::get<2>(GetStride(nchw)), 5);
+    EXPECT_EQ(AscendC::Std::get<3>(GetStride(nchw)), 1);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nchw)>, NCHWLayoutPtn>);
+
+    // NHWC(N,H,W,C): row-major contiguous stride (H*W*C, W*C, C, 1).
+    auto nhwc = MakeFrameLayout<NHWCLayoutPtn>(2, 4, 5, 3);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(nhwc)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(nhwc)), 4);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(nhwc)), 5);
+    EXPECT_EQ(AscendC::Std::get<3>(GetShape(nhwc)), 3);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(nhwc)), 60);
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(nhwc)), 15);
+    EXPECT_EQ(AscendC::Std::get<2>(GetStride(nhwc)), 3);
+    EXPECT_EQ(AscendC::Std::get<3>(GetStride(nhwc)), 1);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nhwc)>, NHWCLayoutPtn>);
+
+    // NC1HWC0(N,C1,H,W,C0): C0 supplied by caller, row-major contiguous stride.
+    auto nc1hwc0 = MakeFrameLayout<NC1HWC0LayoutPtn>(2, 3, 4, 5, 16);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(nc1hwc0)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(nc1hwc0)), 3);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(nc1hwc0)), 4);
+    EXPECT_EQ(AscendC::Std::get<3>(GetShape(nc1hwc0)), 5);
+    EXPECT_EQ(AscendC::Std::get<4>(GetShape(nc1hwc0)), 16);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(nc1hwc0)), 960);
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(nc1hwc0)), 320);
+    EXPECT_EQ(AscendC::Std::get<2>(GetStride(nc1hwc0)), 80);
+    EXPECT_EQ(AscendC::Std::get<3>(GetStride(nc1hwc0)), 16);
+    EXPECT_EQ(AscendC::Std::get<4>(GetStride(nc1hwc0)), 1);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nc1hwc0)>, NC1HWC0LayoutPtn>);
+}

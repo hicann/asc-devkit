@@ -40,19 +40,12 @@ using CopyL12L0AModeSet = TupleMap<
     Std::tuple<Std::tuple<_0, _0>, CopyMode::TRANS>,
     Std::tuple<Std::tuple<_0, _1>, CopyMode::TRANS_B8B4>>;
 
-struct CopyL12L0A {
+struct CopyL12L0ABase {
 public:
-    template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void Copy(const Args& ...args)
-    {
-        if ASCEND_IS_AIC {
-            LoadData<traits, Args...>(args...);
-        }
-    }
-
-private:
-    template<const CopyL12L0ATrait& trait = DEFAULT_COPY_L1_TO_L0A_TRAIT, typename T, typename U>
-    __aicore__ inline static void LoadData(const T& dst, const U& src)
+    template <
+        const CopyL12L0ATrait& trait = DEFAULT_COPY_L1_TO_L0A_TRAIT, typename T, typename U, typename PadT = int16_t>
+    __aicore__ inline static void LoadDataImpl(
+        const T& dst, const U& src, const Img2ColParams<PadT>& params = DEFAULT_IMG2COL_PARAMS)
     {
         using dstPos = GetMemLocation<T>;
         using srcPos = GetMemLocation<U>;
@@ -64,12 +57,42 @@ private:
         using SrcLayout = typename U::layoutType;
         using DstPattern = GetLayoutPattern<DstLayout>;
         using SrcPattern = GetLayoutPattern<SrcLayout>;
-        constexpr auto isB8B4Type = sizeof(typename T::elementType) == 1;
-        constexpr auto noTrans = Std::is_same_v<DstPattern, SrcPattern>;
-        using CopyL12L0AMode = typename CopyL12L0AModeSet::template Get<Std::tuple<Std::Int<noTrans>, Std::Int<isB8B4Type>>>;
-        static_assert(!Std::is_same_v<CopyL12L0AMode, Std::ignore_t>, "Unsupported CopyL12L0AMode.");
-        using CopyL12L0AImpl = typename CopyL12L0ARouting<CURRENT_ARCH_VERSION, DstPattern, SrcPattern, CopyL12L0AMode>::type;
-        CopyL12L0AImpl::template Run<trait, T, U>(dst, src);
+        if constexpr (Std::is_same_v<SrcPattern, NC1HWC0LayoutPtn>) {
+            using CopyL12L0AImpl =
+                typename CopyL12L0ARouting<CURRENT_ARCH_VERSION, DstPattern, SrcPattern, CopyMode::NORMAL>::type;
+            CopyL12L0AImpl::template Run<trait, T, U, PadT>(dst, src, params);
+        } else {
+            constexpr auto isB8B4Type = sizeof(typename T::elementType) == 1;
+            constexpr auto noTrans = Std::is_same_v<DstPattern, SrcPattern>;
+            using CopyL12L0AMode =
+                typename CopyL12L0AModeSet::template Get<Std::tuple<Std::Int<noTrans>, Std::Int<isB8B4Type>>>;
+            static_assert(!Std::is_same_v<CopyL12L0AMode, Std::ignore_t>, "Unsupported CopyL12L0AMode.");
+            using CopyL12L0AImpl =
+                typename CopyL12L0ARouting<CURRENT_ARCH_VERSION, DstPattern, SrcPattern, CopyL12L0AMode>::type;
+            CopyL12L0AImpl::template Run<trait, T, U>(dst, src);
+        }
+    }
+};
+
+struct CopyL12L0A : public CopyL12L0ABase {
+public:
+    template <typename Tp, const Tp& trait, typename... Args>
+    __aicore__ inline static void Copy(const Args&... args)
+    {
+        if ASCEND_IS_AIC {
+            LoadDataImpl<trait>(args...);
+        }
+    }
+};
+
+struct CopyL12L0AWith : public CopyL12L0ABase {
+public:
+    template <typename Tp, const Tp& trait, typename... Args>
+    __aicore__ inline static void Copy(const Args&... args)
+    {
+        if ASCEND_IS_AIC {
+            LoadDataImpl<trait>(args...);
+        }
     }
 };
 

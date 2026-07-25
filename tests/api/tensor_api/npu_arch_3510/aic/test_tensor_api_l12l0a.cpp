@@ -319,3 +319,57 @@ TEST_TENSOR_API_LOAD_DATA(int8_t, 32, 32, ZN, NZ, L1, L0A, cbuf, ca, true);
 TEST_TENSOR_API_LOAD_DATA(uint8_t, 32, 32, ZN, NZ, L1, L0A, cbuf, ca, true);
 TEST_TENSOR_API_LOAD_DATA(int16_t, 16, 16, ZN, NZ, L1, L0A, cbuf, ca, true);
 TEST_TENSOR_API_LOAD_DATA(uint16_t, 16, 16, ZN, NZ, L1, L0A, cbuf, ca, true);
+
+// ================= img2col (L1 NC1HWC0 -> L0A NZ) =================
+// The img2col instruction has 17 params, above mockcpp's API-hook arity limit, so this drives the
+// full copy path against the empty cce stub and checks it routes/compiles without a crash. The dst
+// NZ M/K (conv-unfolded, ceil-aligned) and the src NC1HWC0 axes exercise LoadDataL12L0AImg2Col::Run.
+namespace {
+template <typename T, size_t C0>
+auto MakeNc1hwc0Layout(int n, int c1, int h, int w)
+{
+    using namespace AscendC::Te;
+    return MakeFrameLayout<NC1HWC0LayoutPtn>(n, c1, h, w, static_cast<int>(C0));
+}
+} // namespace
+
+TEST_F(Tensor_Api_Cube_Copy_3510, CopyL12L0AImg2Col)
+{
+    using namespace AscendC::Te;
+
+    // src NC1HWC0: N=1, C1=2, H=5, W=5, C0=16 -> channelSize = C1*C0 = 32.
+    constexpr int N = 1;
+    constexpr int C1 = 2;
+    constexpr int H = 5;
+    constexpr int W = 5;
+    constexpr int C0 = 16;
+
+    // filter 3x3, stride 1, pad 1, dilation 1 -> Ho = Wo = 5, M = 25, K = 3*3*32 = 288.
+    constexpr int filterH = 3;
+    constexpr int filterW = 3;
+    constexpr int M = 25;
+    constexpr int K = filterH * filterW * C1 * C0; // 288
+    constexpr int mAlign = 32;                     // ceil(25, 16) * 16
+    constexpr int kAlign = 288;                    // already a multiple of C0
+
+    __cbuf__ int16_t src[N * C1 * H * W * C0] = {0};
+    __ca__ int16_t dst[mAlign * kAlign] = {0};
+
+    auto srcTensor = MakeTensor(MakeMemPtr<Location::L1>(src), MakeNc1hwc0Layout<int16_t, C0>(N, C1, H, W));
+    auto l0aTensor = MakeTensorAt<Location::L0A>(dst, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<int16_t>>(M, K));
+
+    // dst NZ ceil-aligned M/K, now provided by the caller via Img2ColParams.
+    Img2ColParams<int16_t> params;
+    params.mExtension = static_cast<uint16_t>(mAlign);
+    params.kExtension = static_cast<uint16_t>(kAlign);
+    params.filterW = filterW;
+    params.filterH = filterH;
+    params.strideW = 1;
+    params.strideH = 1;
+    params.padList[0] = params.padList[1] = params.padList[2] = params.padList[3] = 1;
+
+    auto atom = MakeCopy(CopyL12L0A{}, CopyL12L0ATraitDefault{});
+    Copy(atom.with(params), l0aTensor, srcTensor);
+
+    EXPECT_EQ(dst[0], 0);
+}
