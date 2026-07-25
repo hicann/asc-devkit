@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-用于设置性能数据采集信号启动，和asc\_prof\_stop配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用asc\_prof\_start和asc\_prof\_stop来指定需要调优的代码段范围。
+SIMD场景下，用于设置性能数据采集信号启动，和asc\_prof\_stop配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用asc\_prof\_start和asc\_prof\_stop来指定需要调优的代码段范围。
 
 ## 函数原型
 
