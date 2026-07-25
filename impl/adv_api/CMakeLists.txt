@@ -26,27 +26,8 @@ endif()
 
 add_subdirectory(tiling)
 
-if (BUILD_OPEN_PROJECT AND ENABLE_BUILD_DEVICE)
-  include(ExternalProject)
-  ExternalProject_Add(device_tiling
-    SOURCE_DIR ${CMAKE_SOURCE_DIR}/cmake/device
-    BINARY_DIR ${CMAKE_BINARY_DIR}/device_build
-    CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    -G ${CMAKE_GENERATOR}
-    -DCANN_3RD_LIB_PATH=${CANN_3RD_LIB_PATH}
-    -DBUILD_OPEN_PROJECT=${BUILD_OPEN_PROJECT}
-    -DINSTALL_LIBRARY_DIR=${INSTALL_LIBRARY_DIR}/lib64/device
-    -DASCEND_CANN_PACKAGE_PATH=${ASCEND_CANN_PACKAGE_PATH}
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-    -DSYS_VERSION=${SYS_VERSION}
-    -DCMAKE_C_COMPILER=${ASCEND_CANN_PACKAGE_PATH}/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-gcc
-    -DCMAKE_CXX_COMPILER=${ASCEND_CANN_PACKAGE_PATH}/toolkit/toolchain/hcc/bin/aarch64-target-linux-gnu-g++
-    -DPRODUCT_SIDE=device
-    -DCUSTOM_SIGN_SCRIPT=${CUSTOM_SIGN_SCRIPT}
-    -DENABLE_SIGN=${ENABLE_SIGN}
-    -DVERSION_INFO=${VERSION_INFO}
-    <SOURCE_DIR>
-    BUILD_ALWAYS 1)
+if (BUILD_OPEN_PROJECT)
+  add_cann_device_project(asc-devkit)
 endif()
 
 

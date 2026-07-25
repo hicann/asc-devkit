@@ -51,7 +51,8 @@ usage() {
         echo "Package Build Options:"
         echo $dotted_line
         echo "    --pkg                Compile package"
-        echo "    --pkg-type=<TYPE>    Specify package type (TYPE options: run/rpm/deb or comma-separated values, eg: deb,rpm), Default: run"
+        echo "    --pkg-type=<TYPE>    Specify package type (TYPE options: run/rpm/deb/all or comma-separated values, eg: deb,rpm), Default: run"
+        echo "                         all builds run, rpm and deb packages"
         echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann"
         echo "    -j                   Compile thread nums, default is 32, eg: -j 8"
         echo "    --cann_3rd_lib_path  Set the path for third-party library dependencies, eg: ./build"
@@ -62,6 +63,7 @@ usage() {
         echo "    bash build.sh --pkg --pkg-type=rpm -j 8"
         echo "    bash build.sh --pkg --pkg-type=deb -j 8"
         echo "    bash build.sh --pkg --pkg-type=deb,rpm -j 8"
+        echo "    bash build.sh --pkg --pkg-type=all -j 8"
         echo "    bash build.sh --pkg --asan -j 32"
         return
         ;;
@@ -118,7 +120,8 @@ usage() {
   echo "    --basic_test_four     Build and run the basic_four part of unit tests"
   echo "    --basic_test_five     Build and run the basic_five part of unit tests"
   echo "    --pkg                Compile package"
-  echo "    --pkg-type=<TYPE>    Specify package type (TYPE options: run/rpm/deb or comma-separated values, eg: deb,rpm), Default: run"
+  echo "    --pkg-type=<TYPE>    Specify package type (TYPE options: run/rpm/deb/all or comma-separated values, eg: deb,rpm), Default: run"
+  echo "                         all builds run, rpm and deb packages"
   echo "    --cann_3rd_lib_path  Set the path for third-party library dependencies, eg: ./build"
   echo "    --cov                Enable code coverage for unit tests"
   echo "    --asan               Enable ASAN (address Sanitizer)"
@@ -355,36 +358,17 @@ check_param_test_build_type() {
 }
 
 check_param_pkg_type() {
-  if [[ -z "${PACKAGE_TYPE}" || "${PACKAGE_TYPE}" == ","* || "${PACKAGE_TYPE}" == *"," || "${PACKAGE_TYPE}" == *",,"* ]]; then
-    log "[ERROR] --pkg-type cannot be empty."
-    exit 1
-  fi
-
-  local type_list="${PACKAGE_TYPE//,/ }"
-  local package_type=""
-  local package_type_count=0
-  local has_run=false
-
-  for package_type in ${type_list}; do
-    package_type_count=$((package_type_count + 1))
-    if [[ "$package_type" != "run" && "$package_type" != "rpm" && "$package_type" != "deb" ]]; then
-      log "[ERROR] --pkg-type must be run, rpm, deb or comma-separated values like deb,rpm."
+  case "${PACKAGE_TYPE}" in
+    run|rpm|deb|all)
+      ;;
+    deb,rpm|rpm,deb)
+      PACKAGE_TYPE="deb,rpm"
+      ;;
+    *)
+      log "[ERROR] --pkg-type must be run, rpm, deb, all or the combination deb,rpm."
       exit 1
-    fi
-    if [[ "$package_type" == "run" ]]; then
-      has_run=true
-    fi
-  done
-
-  if [[ "${package_type_count}" -eq 0 ]]; then
-    log "[ERROR] --pkg-type cannot be empty."
-    exit 1
-  fi
-
-  if [[ "${has_run}" == "true" && "${package_type_count}" -gt 1 ]]; then
-    log "[ERROR] --pkg-type=run cannot be combined with rpm or deb."
-    exit 1
-  fi
+      ;;
+  esac
 }
 
 check_param_pkg_type_usage() {
@@ -525,6 +509,12 @@ set_options() {
       clean
       exit 0
       ;;
+    -j)
+      require_option_value "$1" "$2"
+      THREAD_NUM="$2"
+      check_param_j
+      shift 2
+      ;;
     -j=*)
       THREAD_NUM="${1#*=}"
       check_param_j
@@ -534,12 +524,6 @@ set_options() {
       THREAD_NUM="${1#-j}"
       check_param_j
       shift
-      ;;
-    -j)
-      require_option_value "$1" "$2"
-      THREAD_NUM="$2"
-      check_param_j
-      shift 2
       ;;
     -f)
       require_option_value "$1" "$2"
@@ -647,12 +631,17 @@ function build_package(){
 
 function collect_package_artifacts()
 {
+  local package_types="${PACKAGE_TYPE}"
   local package_ext=""
   local copied=false
   local found=false
   local pkg_file=""
 
-  for package_ext in ${PACKAGE_TYPE//,/ }; do
+  if [ "${package_types}" == "all" ]; then
+    package_types="run,rpm,deb"
+  fi
+
+  for package_ext in ${package_types//,/ }; do
     found=false
     while IFS= read -r pkg_file; do
       if [ -f "${pkg_file}" ]; then
@@ -674,7 +663,7 @@ function collect_package_artifacts()
   done
 
   if [ "${copied}" != "true" ]; then
-    log "[ERROR] No ${PACKAGE_TYPE} package was found after build."
+    log "[ERROR] No ${package_types} package was found after build."
     exit 1
   fi
 }
