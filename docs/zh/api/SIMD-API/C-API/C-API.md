@@ -474,6 +474,8 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 | [asc_ne_scalar](reg/compare_and_select/asc_ne_scalar.md) | src中的每个元素逐个与标量value比较大小，如果src_i != value，则输出结果dst对应比特位为1，否则为0。 |
 | [asc_not](reg/logic_compute/asc_not.md) | 执行矢量非运算。 |
 | [asc_or](reg/logic_compute/asc_or.md) | 对源操作数src0和src1进行或（|）运算，将结果写入目的操作数dst。 |
+| [asc_pack_to_low](reg/data_compress/asc_pack_to_low.md) | 将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的低半部分（当数据类型为vector_bool时，每2bit选取其中的低位1bit）。 |
+| [asc_pack_to_high](reg/data_compress/asc_pack_to_high.md) | 将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的高半部分（当数据类型为vector_bool时，每2bit选取其中的低位1bit）。 |
 | [asc_pack（废弃）](reg/data_compress/asc_pack_deprecated.md) | 将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的低半部分或高半部分。 |
 | [asc_pair_reduce_sum](reg/reduce_compute/asc_pair_reduce_sum.md) | PairReduceSum：相邻两个（奇偶）元素求和，结果写入dst。 |
 | [asc_prelu](reg/arithmetic_compute/asc_prelu.md) | 源操作数src0大于0的情况下直接将src0写入目的操作数dst，否则将src0 * src1的结果写入dst。 |

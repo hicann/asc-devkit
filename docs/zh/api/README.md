@@ -1155,6 +1155,8 @@
                 -   [asc_reduce_sum](SIMD-API/C-API/reg/reduce_compute/asc_reduce_sum.md)
                 -   [asc_reduce_sum_datablock](SIMD-API/C-API/reg/reduce_compute/asc_reduce_sum_datablock.md)
             -   [数据压缩](SIMD-API/C-API/reg/data_compress/data_compress.md)
+                -   [asc_pack_to_low](SIMD-API/C-API/reg/data_compress/asc_pack_to_low.md)
+                -   [asc_pack_to_high](SIMD-API/C-API/reg/data_compress/asc_pack_to_high.md)
                 -   [asc_pack（废弃）](SIMD-API/C-API/reg/data_compress/asc_pack_deprecated.md)
                 -   [asc_unpack](SIMD-API/C-API/reg/data_compress/asc_unpack.md)
                 -   [asc_unsqueeze](SIMD-API/C-API/reg/data_compress/asc_unsqueeze.md)

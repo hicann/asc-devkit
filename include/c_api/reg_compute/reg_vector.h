@@ -1066,25 +1066,49 @@ __simd_callee__ inline void asc_add_scalar(vector_uint32_t& dst, vector_uint32_t
 __simd_callee__ inline void asc_add_scalar(vector_float& dst, vector_float src, float value, vector_bool mask);
 
 // ==========asc_pack(bool/uint16_t/int16_t/uint32_t/int32_t)==========
+[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
 __simd_callee__ inline void asc_pack(vector_uint8_t& dst, vector_uint16_t src);
 
+[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
 __simd_callee__ inline void asc_pack(vector_uint8_t& dst, vector_int16_t src);
 
+[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
 __simd_callee__ inline void asc_pack(vector_uint16_t& dst, vector_uint32_t src);
 
+[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
 __simd_callee__ inline void asc_pack(vector_uint16_t& dst, vector_int32_t src);
 
+[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
 __simd_callee__ inline void asc_pack(vector_bool& dst, vector_bool src);
 
+[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
 __simd_callee__ inline void asc_pack_v2(vector_uint8_t& dst, vector_uint16_t src);
 
+[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
 __simd_callee__ inline void asc_pack_v2(vector_uint8_t& dst, vector_int16_t src);
 
+[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
 __simd_callee__ inline void asc_pack_v2(vector_uint16_t& dst, vector_uint32_t src);
 
+[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
 __simd_callee__ inline void asc_pack_v2(vector_uint16_t& dst, vector_int32_t src);
 
+[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
 __simd_callee__ inline void asc_pack_v2(vector_bool& dst, vector_bool src);
+
+// ==========asc_pack_to_low(bool/uint16_t/uint32_t)==========
+__simd_callee__ inline void asc_pack_to_low(vector_uint8_t& dst, vector_uint16_t src);
+
+__simd_callee__ inline void asc_pack_to_low(vector_uint16_t& dst, vector_uint32_t src);
+
+__simd_callee__ inline void asc_pack_to_low(vector_bool& dst, vector_bool src);
+
+// ==========asc_pack_to_high(bool/uint16_t/uint32_t)==========
+__simd_callee__ inline void asc_pack_to_high(vector_uint8_t& dst, vector_uint16_t src);
+
+__simd_callee__ inline void asc_pack_to_high(vector_uint16_t& dst, vector_uint32_t src);
+
+__simd_callee__ inline void asc_pack_to_high(vector_bool& dst, vector_bool src);
 
 // ==========asc_exp_sub(half/float)==========
 __simd_callee__ inline void asc_exp_sub(vector_float& dst, vector_half src0, vector_half src1, vector_bool mask);
