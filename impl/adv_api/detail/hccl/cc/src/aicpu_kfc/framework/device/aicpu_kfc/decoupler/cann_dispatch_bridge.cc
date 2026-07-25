@@ -12,6 +12,7 @@
 
 #include <dlfcn.h>
 
+#include <atomic>
 #include <memory>
 #include <string>
 #include <vector>
@@ -26,14 +27,17 @@ constexpr const char* kDefaultCannLib = "libscatter_aicpu_kernel.so";
 constexpr const char* kSymInstance = "_ZN8ops_hccl21CollAlgExecRegistryV28InstanceEv";
 constexpr const char* kSymGetAlgExec = "_ZN8ops_hccl21CollAlgExecRegistryV210GetAlgExecE11HcclCMDTypeRKNSt7__cxx11"
                                        "12basic_stringIcSt11char_traitsIcESaIcEEE";
+constexpr const char* kSymInitBatchTransfer = "_ZN8ops_hccl39InitHcommBatchTransferOnThreadSupportedEb";
 
 using InstanceFn = void* (*)();
 using GetAlgExecFn = std::unique_ptr<InsCollAlgBase> (*)(void* self, HcclCMDType cmdType, const std::string& algName);
+using InitBatchTransferFn = HcclResult (*)(bool isSupported);
 
 struct CannSyms {
     void* handle = nullptr;
     InstanceFn instance = nullptr;
     GetAlgExecFn getAlgExec = nullptr;
+    InitBatchTransferFn initBatchTransfer = nullptr;
     bool ok = false;
 };
 
@@ -59,13 +63,49 @@ const CannSyms& LoadCannSyms()
                 reinterpret_cast<void*>(s.getAlgExec), dlerror());
             return s;
         }
+        dlerror();
+        s.initBatchTransfer = reinterpret_cast<InitBatchTransferFn>(dlsym(s.handle, kSymInitBatchTransfer));
+        const char* initBatchTransferError = dlerror();
+        if (s.initBatchTransfer == nullptr || initBatchTransferError != nullptr) {
+            s.initBatchTransfer = nullptr;
+            HCCL_DEBUG(
+                "[MC2_BATCH_TRANSFER][CannInit][SkipNoSymbol] symbol[%s], lib[%s], error[%s].", kSymInitBatchTransfer,
+                libName, initBatchTransferError == nullptr ? "none" : initBatchTransferError);
+        }
         s.ok = true;
         HCCL_RUN_INFO(
-            "[CannBridge] loaded %s handle=%p Instance=%p GetAlgExec=%p", libName, s.handle,
-            reinterpret_cast<void*>(s.instance), reinterpret_cast<void*>(s.getAlgExec));
+            "[CannBridge] loaded %s handle=%p Instance=%p GetAlgExec=%p InitBatchTransfer=%p", libName, s.handle,
+            reinterpret_cast<void*>(s.instance), reinterpret_cast<void*>(s.getAlgExec),
+            reinterpret_cast<void*>(s.initBatchTransfer));
         return s;
     }();
     return syms;
+}
+
+HcclResult InitCannBatchTransferIfSupported(
+    const CannSyms& syms, const OpParam& ascParam, const AlgResourceCtxSerializable& ascResCtx)
+{
+    if (syms.initBatchTransfer == nullptr) {
+        return HCCL_SUCCESS;
+    }
+
+    HcclResult ret = syms.initBatchTransfer(ascResCtx.isHcommBatchTransferOnThreadSupported);
+    if (ret != HCCL_SUCCESS) {
+        HCCL_ERROR(
+            "[MC2_BATCH_TRANSFER][CannInit] failed, ret[%d], opType[%u], algName[%s], supported[%d].",
+            static_cast<int>(ret), static_cast<u32>(ascParam.opType), ascParam.algName,
+            static_cast<int>(ascResCtx.isHcommBatchTransferOnThreadSupported));
+        return ret;
+    }
+
+    static std::atomic<bool> logged{false};
+    if (!logged.exchange(true)) {
+        HCCL_DEBUG(
+            "[MC2_BATCH_TRANSFER][CannInit] opType[%u], algName[%s], supported[%d], ret[%d].",
+            static_cast<u32>(ascParam.opType), ascParam.algName,
+            static_cast<int>(ascResCtx.isHcommBatchTransferOnThreadSupported), static_cast<int>(ret));
+    }
+    return HCCL_SUCCESS;
 }
 
 } // namespace
@@ -82,6 +122,7 @@ HcclResult LaunchViaCann(const OpParam& ascParam, const AlgResourceCtxSerializab
     }
 
     // 需要保证 OpParam / AlgResourceCtxSerializable 布局与 CANN 对齐，直接传入，无需逐字段转换。
+    CHK_RET(cann_abi::InitCannBatchTransferIfSupported(syms, ascParam, ascResCtx));
     void* self = syms.instance();
     std::unique_ptr<cann_abi::InsCollAlgBase> executor =
         syms.getAlgExec(self, ascParam.opType, std::string(ascParam.algName));

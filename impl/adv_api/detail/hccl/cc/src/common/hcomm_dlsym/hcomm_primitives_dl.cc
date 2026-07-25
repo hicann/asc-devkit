@@ -12,6 +12,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+using HcclHcommBatchTransferOnThreadFunc =
+    int32_t (*)(ThreadHandle, ChannelHandle, const HcclHcommBatchTransferDesc*, uint32_t);
+
+static bool g_HcommBatchTransferOnThreadSupported = false;
+static HcclHcommBatchTransferOnThreadFunc g_HcommBatchTransferOnThread = nullptr;
+
+extern "C" bool HcommIsSupportHcommBatchTransferOnThread(void) { return g_HcommBatchTransferOnThreadSupported; }
+
+extern "C" int32_t HcclHcommBatchTransferOnThread(
+    ThreadHandle thread, ChannelHandle channel, const HcclHcommBatchTransferDesc* transferDescs,
+    uint32_t transferDescNum)
+{
+    if (g_HcommBatchTransferOnThread == nullptr) {
+        HCCL_ERROR("[HcclWrapper] HcommBatchTransferOnThread not supported");
+        return -1;
+    }
+    return g_HcommBatchTransferOnThread(thread, channel, transferDescs, transferDescNum);
+}
+
 DEFINE_WEAK_FUNC(
     int32_t, HcommWriteWithNotifyOnThread, ThreadHandle thread, ChannelHandle channel, void* dst, const void* src,
     uint64_t len, uint32_t remoteNotifyIdx);
@@ -78,4 +97,17 @@ void HcommPrimitivesDlInit(void* libHcommHandle)
     INIT_SUPPORT_FLAG(libHcommHandle, HcommThreadJoin);
     INIT_SUPPORT_FLAG(libHcommHandle, HcclSymWinGetPeerPointer);
     INIT_SUPPORT_FLAG(libHcommHandle, HcclCommSymWinGet);
+
+    dlerror();
+    g_HcommBatchTransferOnThread =
+        reinterpret_cast<HcclHcommBatchTransferOnThreadFunc>(dlsym(libHcommHandle, "HcommBatchTransferOnThread"));
+    const char* batchTransferError = dlerror();
+    g_HcommBatchTransferOnThreadSupported = (g_HcommBatchTransferOnThread != nullptr && batchTransferError == nullptr);
+    if (!g_HcommBatchTransferOnThreadSupported) {
+        g_HcommBatchTransferOnThread = nullptr;
+    }
+    HCCL_DEBUG(
+        "[MC2_BATCH_TRANSFER][RuntimeSupport] supported[%d], func[%p], error[%s].",
+        static_cast<int>(g_HcommBatchTransferOnThreadSupported), reinterpret_cast<void*>(g_HcommBatchTransferOnThread),
+        batchTransferError == nullptr ? "none" : batchTransferError);
 }

@@ -237,9 +237,10 @@ HcclResult InsTempReduceScatterMesh1D::RunReduceScatter(
                 txSrcSlices.push_back(txSrcSlice);
                 txDstSlices.push_back(txDstSlice);
             }
-            SendRecvInfo sendRecvInfo{{linkSend, linkRecv}, {{txSrcSlices, txDstSlices}, {rxSrcSlices, rxDstSlices}}};
+            SendRecvInfo sendRecvInfo{
+                {linkSend, linkRecv}, {{txSrcSlices, txDstSlices}, {rxSrcSlices, rxDstSlices}}, dataType_};
             CHK_PRT_RET(
-                SendRecvWrite(sendRecvInfo, threads[queIdx]),
+                SendRecvBatchWrite(sendRecvInfo, threads[queIdx]),
                 HCCL_ERROR("[InsTempReduceScatterMesh1D] RunReduceScatter Send failed"), HcclResult::HCCL_E_INTERNAL);
             queIdx++;
         }

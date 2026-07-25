@@ -125,10 +125,10 @@ HcclResult InsTempAllGatherNHR::RunAllGatherNHR(
             // read 模式使用rx, tx地址不生效，仅使用对端link做Post/Wait
             TxRxSlicesList sendRecvSlicesList({txSrcSlices, txDstSlices}, {rxSrcSlices, rxDstSlices});
             TxRxChannels sendRecvChannels(channelSend, channelRecv);
-            SendRecvInfo sendRecvInfo(sendRecvChannels, sendRecvSlicesList);
+            SendRecvInfo sendRecvInfo(sendRecvChannels, sendRecvSlicesList, dataType_);
 
             CHK_PRT_RET(
-                SendRecvWrite(sendRecvInfo, threads[0]),
+                SendRecvBatchWrite(sendRecvInfo, threads[0]),
                 HCCL_ERROR("[InsTempAllGatherNHR] sendrecv failed (step=%u, rpt=%u)", step, rpt),
                 HcclResult::HCCL_E_INTERNAL);
         }

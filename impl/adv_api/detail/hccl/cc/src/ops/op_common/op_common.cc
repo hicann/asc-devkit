@@ -37,6 +37,7 @@
 #include "op_common.h"
 #include "dpu/kernel_launch.h"
 #include "hcomm_host_profiling_dl.h"
+#include "hcomm_primitives_dl.h"
 #include "hccl_rank_graph_dl.h"
 #include "rt.h"
 #include "dlhcomm_function.h"
@@ -325,6 +326,10 @@ HcclResult HcclExecOp(
 
     // 资源结构体
     std::unique_ptr<AlgResourceCtxSerializable> resCtxHost = std::make_unique<AlgResourceCtxSerializable>();
+    resCtxHost->isHcommBatchTransferOnThreadSupported = HcommIsSupportHcommBatchTransferOnThread();
+    HCCL_DEBUG(
+        "[MC2_BATCH_TRANSFER][HostSupport] opType[%u], algName[%s], supported[%d].", static_cast<u32>(param.opType),
+        algName.c_str(), static_cast<int>(resCtxHost->isHcommBatchTransferOnThreadSupported));
     // 资源序列化结果
     void* resCtxSequence = nullptr;
     bool isResourceReused = false;

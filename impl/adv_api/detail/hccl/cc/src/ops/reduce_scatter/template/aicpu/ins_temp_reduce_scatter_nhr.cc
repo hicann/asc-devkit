@@ -206,7 +206,7 @@ HcclResult InsTempReduceScatterNHR::RunNHR(const std::vector<ThreadHandle>& thre
                 {linkSend, linkRecv}, {{txSrcSlices, txDstSlices}, {rxSlices, rxSlices}}, dataType_, reduceOp_};
 
             CHK_PRT_RET(
-                SendRecvWriteReduce(info, threads[0]),
+                SendRecvBatchWriteReduce(info, threads[0]),
                 HCCL_ERROR(
                     "[RS-NHR][RunNHR] SendRecvReduce failed (step=%u, rpt=%llu)", st.step,
                     static_cast<unsigned long long>(rpt)),
