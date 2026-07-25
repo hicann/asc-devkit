@@ -62,9 +62,9 @@ __aicore__ inline void ConfusionTransposeImpl(
         SupportType<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>(),
         "Transpose only support int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float "
         "data type on current device!");
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Transpose");
-    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Transpose");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Transpose");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Transpose");
+    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Transpose");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Transpose");
 
     if (transposeType == TransposeType::TRANSPOSE_NZ2ND_0213 || transposeType == TransposeType::TRANSPOSE_NZ2NZ_0213) {
         CheckCompatibleTransposeTypeDataType<T>();

@@ -35,8 +35,8 @@ __aicore__ inline void SetFixPipeAddrImpl(const LocalTensor<T>& eleWise, uint16_
     const Hardware eleWiseHWPos = GetPhyType((TPosition)eleWise.GetPosition());
     if (eleWiseHWPos != Hardware::L1)
         ASCENDC_CHECK_TPOSITION(
-            false, "eleWise", "A1 / B1 / C1", "SetFixPipeAddr",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(eleWise.GetPosition())));
+            false, "eleWise", "L1 Buffer(A1/B1/C1)", "SetFixPipeAddr",
+            GetPositionDisplay(static_cast<TPosition>(eleWise.GetPosition())));
     uint64_t config = 0;
     config = config | c0ChStride; // ELT_SRC_PARA[15:0], C0 channel stride Size.
     config = config | ((static_cast<uint64_t>(eleWise.GetPhyAddr()) >> 5)
@@ -193,14 +193,15 @@ __aicore__ inline void CheckFixpipeL0C2UBParam(__ubuf__ T* dst, __cc__ U* src, c
 {
     CheckCommonFixpipeParam<T, U, config>(src, params);
     ASCENDC_CHECK_TENSOR_PTR_ALIGN(
-        dst, TPosition::VECCALC, ONE_BLK_SIZE, "dstLocal", "Fixpipe when dst position is VECIN/VECCALC/VECOUT");
+        dst, TPosition::VECCALC, ONE_BLK_SIZE, "dstLocal", "Fixpipe when dst position is UB(VECIN/VECCALC/VECOUT)");
     static_assert(
         (SupportType<
             Tuple<U, T>, Tuple<float, int8_t>, Tuple<float, uint8_t>, Tuple<float, half>, Tuple<float, bfloat16_t>,
             Tuple<float, float>, Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>,
             Tuple<int32_t, int32_t>>()),
         "Failed to check dtype in Fixpipe, when src position is "
-        "CO1 and dst position is GM, support dtype combinations are src: float, dst: int8_t / uint8_t / half / "
+        "L0C Buffer(CO1) and dst position is GM, support dtype combinations are src: float, dst: int8_t / uint8_t / "
+        "half / "
         "bfloat16_t / float; src: int32_t, dst: int8_t / uint8_t / half / int32_t");
     if constexpr (IsSameType<U, float>::value && IsSameType<T, float>::value) {
         ASCENDC_ASSERT((params.quantPre == QuantMode_t::NoQuant), {
@@ -234,18 +235,19 @@ template <typename T, typename U, const FixpipeConfig& config>
 __aicore__ inline void CheckFixpipeL0C2L1Param(__cbuf__ T* dst, __cc__ U* src, const FixpipeParamsM300& params)
 {
     CheckCommonFixpipeParam<T, U, config>(src, params);
-    ASCENDC_CHECK_TENSOR_PTR_ALIGN(dst, TPosition::C1, ONE_BLK_SIZE, "dstLocal", "Fixpipe when dst position is C1");
+    ASCENDC_CHECK_TENSOR_PTR_ALIGN(
+        dst, TPosition::C1, ONE_BLK_SIZE, "dstLocal", "Fixpipe when dst position is L1 Buffer(C1)");
     ASCENDC_DEBUG_ASSERT(
         (!(params.isChannelSplit)),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "Failed to check isChannelSplit in Fixpipe, when src position is "
-                          "CO1 and dst position is A1, isChannelSplit must be set as false \n"));
+                          "L0C Buffer(CO1) and dst position is L1 Buffer(A1), isChannelSplit must be set as false \n"));
     static_assert(
         (SupportType<
             Tuple<U, T>, Tuple<float, int8_t>, Tuple<float, uint8_t>, Tuple<float, half>, Tuple<float, bfloat16_t>,
             Tuple<float, float>, Tuple<int32_t, int32_t>, Tuple<float, int4b_t>, Tuple<int32_t, int4b_t>,
             Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
-        "Failed to check dtype in Fixpipe, when src position is CO1 and dst position is A1, "
+        "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is L1 Buffer(A1), "
         "support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t; src: int32_t, dst: "
         "int8_t / uint8_t / half");
 }
@@ -260,7 +262,7 @@ __aicore__ inline void CheckFixpipeL0C2GMParam(__gm__ T* dst, __cc__ U* src, con
             Tuple<U, T>, Tuple<float, int8_t>, Tuple<float, uint8_t>, Tuple<float, half>, Tuple<float, bfloat16_t>,
             Tuple<float, float>, Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>,
             Tuple<int32_t, int32_t>>()),
-        "Failed to check dtype in Fixpipe, when src position is CO1 "
+        "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) "
         "and dst position is GM, support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t "
         "/ float; src: int32_t, dst: int8_t / uint8_t / half / int32_t");
     if constexpr (IsSameType<U, float>::value && IsSameType<T, float>::value) {
@@ -360,7 +362,8 @@ __aicore__ inline void FixpipeL0C2L1Impl(__cbuf__ T* dst, __cc__ T* src, const F
         false,
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
-            "Failed to check dtype in Fixpipe, when src position is CO1 and dst position is A1, "
+            "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is "
+            "L1 Buffer(A1), "
             "support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t; src: int32_t, dst: "
             "int8_t / uint8_t / half\n"));
 }
@@ -373,7 +376,8 @@ __aicore__ inline void FixpipeL0C2L1Impl(
         false,
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
-            "Failed to check dtype in Fixpipe, when src position is CO1 and dst position is A1, "
+            "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is "
+            "L1 Buffer(A1), "
             "support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t; src: int32_t, dst: "
             "int8_t / uint8_t / half\n"));
 }

@@ -82,21 +82,23 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0ATransposeCal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParams& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadDataWithTranspose from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadDataWithTranspose from L1 Buffer(A1) to L0A Buffer(A2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DL12L0BTransposeCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParams& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadDataWithTranspose with LoadData2dTransposeParams from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(
+        false, "LoadDataWithTranspose with LoadData2dTransposeParams from L1 Buffer(B1) to L0B Buffer(B2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DL12L0BTransposeCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParamsV2& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadDataWithTranspose with LoadData2dTransposeParamsV2 from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(
+        false, "LoadDataWithTranspose with LoadData2dTransposeParamsV2 from L1 Buffer(B1) to L0B Buffer(B2)");
 }
 
 /* **************************************************************************************************
@@ -105,31 +107,31 @@ __aicore__ inline void LoadData2DL12L0BTransposeCal(
 template <typename T>
 __aicore__ inline void LoadData2DL12L0ACal(__ca__ T* dst, __cbuf__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from L1 Buffer(A1) to L0A Buffer(A2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from L1 Buffer(B1) to L0B Buffer(B2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DGM2L0ACal(__ca__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from GM to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from GM to L0A Buffer(A2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DGM2L0BCal(__cb__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from GM to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from GM to L0B Buffer(B2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DGM2L1Cal(__cbuf__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from GM to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData2DParamsV2 from GM to L1 Buffer(A1/B1)");
 }
 
 /* **************************************************************************************************
@@ -298,14 +300,14 @@ template <typename T>
 __aicore__ inline void LoadData3DV2L12L0ACal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2<T>& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from L1 Buffer(A1) to L0A Buffer(A2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2<T>& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from L1 Buffer(B1) to L0B Buffer(B2)");
 }
 
 template <typename T>
@@ -322,14 +324,14 @@ template <typename T>
 __aicore__ inline void LoadData3DV2L12L0ACal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(A1) to L0A Buffer(A2)");
 }
 
 template <typename T>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(B1) to L0B Buffer(B2)");
 }
 
 template <typename T>
@@ -345,7 +347,7 @@ __aicore__ inline void LoadData3DV2L12UBCal(
 template <typename T>
 __aicore__ inline void InitL1BufferCal(__cbuf__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in L1 Buffer(A1/B1)");
 }
 
 /* **************************************************************************************************

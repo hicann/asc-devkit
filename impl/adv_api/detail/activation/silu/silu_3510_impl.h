@@ -56,8 +56,8 @@ __aicore__ inline void SiluCompute(const LocalTensor<T>& dstLocal, const LocalTe
         return;
     }
     static_assert(SupportType<T, half, float>(), "Silu only support half/float data type on current device!");
-    CheckTensorPosition(dstLocal, "dstLocal", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcLocal, "srcLocal", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstLocal, "dstLocal", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcLocal, "srcLocal", "VECIN/VECOUT/VECCALC");
     CheckCalCount(count, "count", dstLocal, "dstLocal", "Silu");
     CheckCalCount(count, "count", srcLocal, "srcLocal", "Silu");
 

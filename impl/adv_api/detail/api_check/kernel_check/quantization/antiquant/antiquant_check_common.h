@@ -182,7 +182,7 @@ public:
 #endif
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dst, src, scale, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, scale));
@@ -222,7 +222,7 @@ public:
 #endif
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dst, src, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
         CheckAscendAntiQuantParamsClass::CheckAscendAntiQuantParams<InputDataType, OutputDataType, isTranspose>(K);
@@ -261,7 +261,7 @@ public:
 #endif
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dst, src, offset, scale, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, offset));
@@ -303,7 +303,7 @@ public:
 #endif
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dst, src, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECOUT, TPosition::VECIN, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECOUT, TPosition::VECIN, TPosition::VECCALC), "UB(VECOUT/VECIN/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
         CheckAscendAntiQuantParamsClass::CheckAscendAntiQuantParams<InputDataType, OutputDataType, isTranspose>(K);

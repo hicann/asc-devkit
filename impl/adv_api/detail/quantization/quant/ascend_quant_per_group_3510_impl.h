@@ -1455,10 +1455,10 @@ __aicore__ inline void AscendQuantImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN/VECOUT/VECCALC");
     static_assert(
         SupportType<srcT, half, float, bfloat16_t>(), "AscendQuant only support half/float/bfloat16_t input dtype");
     static_assert(
@@ -1510,9 +1510,9 @@ __aicore__ inline void AscendQuantImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN/VECOUT/VECCALC");
     static_assert(
         SupportType<srcT, half, float, bfloat16_t>(), "AscendQuant only support half/float/bfloat16_t input dtype");
     static_assert(

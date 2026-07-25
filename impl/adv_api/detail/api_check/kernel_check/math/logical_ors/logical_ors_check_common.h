@@ -55,7 +55,8 @@ public:
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src0, src1));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src0, src1),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src0));
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src1));
         } else if constexpr (TypeUtils::IsLocalTensorType<U>() && TypeUtils::IsInnerDefaultType<S>()) {
@@ -63,14 +64,16 @@ public:
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src0));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src0),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src0));
         } else if constexpr (TypeUtils::IsLocalTensorType<S>() && TypeUtils::IsInnerDefaultType<U>()) {
             CalCountCheckFuncBasicClass::CalCountVerifyingParameters(
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src1));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src1),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src1));
         }
     };

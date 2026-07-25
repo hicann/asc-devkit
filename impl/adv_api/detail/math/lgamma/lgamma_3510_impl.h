@@ -679,9 +679,9 @@ template <typename T, bool isReuseSource = false>
 __aicore__ inline void LgammaImpl(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& tmp, const uint32_t calCount)
 {
-    CheckTensorPosition(dst, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(tmp, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(tmp, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
 
     CheckCalCount(calCount, "calCount", src, "srcTensor", "Lgamma");
     CheckCalCount(calCount, "calCount", dst, "dstTensor", "Lgamma");

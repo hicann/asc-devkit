@@ -42,11 +42,11 @@ public:
         const LocalTensor<T1>& src, const LocalTensor<float>& workLocal, const SoftMaxTiling& tiling,
         const SoftMaxShapeInfo& softmaxShapeInfo)
     {
-        CheckTensorPos<float>(workLocal, Hardware::UB, "workLocal", "VECIN / VECCALC / VECOUT", "SoftMax");
-        CheckTensorPos<T1>(dst, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftMax");
-        CheckTensorPos<T2>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "SoftMax");
-        CheckTensorPos<T2>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftMax");
-        CheckTensorPos<T1>(src, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftMax");
+        CheckTensorPos<float>(workLocal, Hardware::UB, "workLocal", "VECIN/VECCALC/VECOUT", "SoftMax");
+        CheckTensorPos<T1>(dst, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftMax");
+        CheckTensorPos<T2>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "SoftMax");
+        CheckTensorPos<T2>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftMax");
+        CheckTensorPos<T1>(src, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftMax");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(T1) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });
@@ -72,9 +72,9 @@ public:
         const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<float>& workLocal,
         const SoftMaxTiling& tiling, const SoftMaxShapeInfo& softmaxShapeInfo)
     {
-        CheckTensorPos<float>(workLocal, Hardware::UB, "workLocal", "VECIN / VECCALC / VECOUT", "SoftMax");
-        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftMax");
-        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftMax");
+        CheckTensorPos<float>(workLocal, Hardware::UB, "workLocal", "VECIN/VECCALC/VECOUT", "SoftMax");
+        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftMax");
+        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftMax");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(T) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });

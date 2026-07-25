@@ -119,9 +119,9 @@ __aicore__ inline void MeanCheckParams(
     const MeanParams& meanParams)
 {
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Mean");
-    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Mean");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Mean");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Mean");
+    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Mean");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Mean");
     constexpr uint32_t meanInnerAlignLen = 32;
     ASCENDC_ASSERT((1 <= meanParams.n) && (meanParams.n <= meanParams.inner), {
         KERNEL_LOG(KERNEL_ERROR, "The value of n must be greater than or equal to 1 and less than or equal to inner.");

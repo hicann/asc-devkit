@@ -154,7 +154,7 @@ public:
 
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(outputMean, outputVariance, inputMean, inputVariance, inputX, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(outputMean, outputVariance, inputMean, sharedTmpBuffer));

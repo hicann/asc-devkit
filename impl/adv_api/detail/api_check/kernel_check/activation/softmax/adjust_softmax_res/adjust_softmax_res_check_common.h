@@ -102,7 +102,7 @@ public:
 
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(softMaxRes, maxTensor),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         CheckAdjustSoftMaxResParamsClass::CheckAdjustSoftMaxResParams<T1, T2, isDataFormatNZ, stepSizeMode>(
             softMaxRes, maxTensor, from, to, softmaxShapeInfo);

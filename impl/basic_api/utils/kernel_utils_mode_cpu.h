@@ -223,7 +223,7 @@ public:
         {TPosition::GM, Hardware::GM},      {TPosition::A1, Hardware::L1},    {TPosition::B1, Hardware::L1},
         {TPosition::TSCM, Hardware::L1},    {TPosition::VECIN, Hardware::UB}, {TPosition::VECOUT, Hardware::UB},
         {TPosition::VECCALC, Hardware::UB}, {TPosition::A2, Hardware::L0A},   {TPosition::B2, Hardware::L0B},
-        {TPosition::C1, Hardware::L1},      {TPosition::C2, Hardware::BIAS},  {TPosition::CO1, Hardware::L0C},
+        {TPosition::C1, Hardware::UB},      {TPosition::C2, Hardware::L0C},   {TPosition::CO1, Hardware::L0C},
         {TPosition::CO2, Hardware::UB},
     };
 #elif __NPU_ARCH__ == 2201
@@ -447,6 +447,52 @@ public:
 #endif
     }
 };
+
+inline std::string GetPositionDisplay(Hardware hardPos, const std::string& logicName)
+{
+    if (hardPos == Hardware::GM && logicName == "GM") {
+        return "GM";
+    }
+
+    const char* hardName = "UNKNOWN";
+    switch (hardPos) {
+        case Hardware::GM:
+            hardName = "GM";
+            break;
+        case Hardware::UB:
+            hardName = "UB";
+            break;
+        case Hardware::L1:
+            hardName = "L1 Buffer";
+            break;
+        case Hardware::L0A:
+            hardName = "L0A Buffer";
+            break;
+        case Hardware::L0B:
+            hardName = "L0B Buffer";
+            break;
+        case Hardware::L0C:
+            hardName = "L0C Buffer";
+            break;
+        case Hardware::BIAS:
+            hardName = "BiasTable Buffer";
+            break;
+        case Hardware::FIXBUF:
+            hardName = "Fixpipe Buffer";
+            break;
+        default:
+            break;
+    }
+    return std::string(hardName) + "(" + logicName + ")";
+}
+
+inline std::string GetPositionDisplay(TPosition pos)
+{
+    const auto& definer = ConstDefiner::Instance();
+    const auto hardPos = definer.positionHardMap.find(pos);
+    const Hardware hardware = hardPos == definer.positionHardMap.end() ? GetPhyType(pos) : hardPos->second;
+    return GetPositionDisplay(hardware, definer.logicNameMap.at(static_cast<uint8_t>(pos)));
+}
 #endif
 
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))

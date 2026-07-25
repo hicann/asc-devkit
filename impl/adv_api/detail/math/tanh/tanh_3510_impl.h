@@ -138,8 +138,8 @@ __aicore__ inline void TanhImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const uint32_t calCount)
 {
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
 
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Tanh");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Tanh");
@@ -163,7 +163,7 @@ __aicore__ inline void TanhImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     TanhImpl<T, isReuseSource, config>(dstTensor, srcTensor, calCount);
 }
 } // namespace AscendC

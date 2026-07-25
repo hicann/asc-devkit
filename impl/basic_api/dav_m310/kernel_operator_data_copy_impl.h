@@ -743,7 +743,8 @@ __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, cons
 {
     if constexpr (sizeof(T) > 4) {
         ASCENDC_ASSERT((false), {
-            KERNEL_LOG(KERNEL_ERROR, "unsupported dtype for data copy from TSCM to global on current device");
+            KERNEL_LOG(
+                KERNEL_ERROR, "unsupported dtype for data copy from L1 Buffer(TSCM) to global on current device");
         });
     }
     if constexpr (g_gm_overflow_check) {
@@ -760,7 +761,8 @@ __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, cons
 {
     if constexpr (sizeof(T) > 4) {
         ASCENDC_ASSERT((false), {
-            KERNEL_LOG(KERNEL_ERROR, "unsupported dtype for data copy from TSCM to global on current device");
+            KERNEL_LOG(
+                KERNEL_ERROR, "unsupported dtype for data copy from L1 Buffer(TSCM) to global on current device");
         });
     }
     if constexpr (g_gm_overflow_check) {
@@ -884,13 +886,16 @@ __aicore__ inline void DataCopyL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const D
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "can not move data from CO1 to A1 on current device!"); });
+    ASCENDC_ASSERT(false, {
+        KERNEL_LOG(KERNEL_ERROR, "can not move data from L0C Buffer(CO1) to L1 Buffer(A1) on current device!");
+    });
 }
 
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2GMImpl(__gm__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "can not move data from CO1 to GM on current device!"); });
+    ASCENDC_ASSERT(
+        false, { KERNEL_LOG(KERNEL_ERROR, "can not move data from L0C Buffer(CO1) to GM on current device!"); });
 }
 
 template <typename T>

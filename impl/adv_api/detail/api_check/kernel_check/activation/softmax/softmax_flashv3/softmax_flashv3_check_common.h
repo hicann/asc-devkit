@@ -174,7 +174,7 @@ public:
             VA_ARGS_TO_MAKE_TUPLE(
                 dstTensor, meanTensor, expSumTensor, maxTensor, srcTensor, expMaxTensor, inMeanTensor, inExpSumTensor,
                 inMaxTensor, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         CheckSoftMaxFlashV3ParamsClass::CheckSoftMaxFlashV3Params<
             T, U, isUpdate, isReuseSource, isBasicBlock, isDataFormatNZ, config>(

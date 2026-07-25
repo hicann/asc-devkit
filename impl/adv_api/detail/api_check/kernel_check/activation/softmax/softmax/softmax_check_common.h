@@ -163,7 +163,7 @@ public:
 
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dstTensor, srcTensor, sumTensor, maxTensor, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dstTensor, sumTensor, maxTensor));
@@ -295,7 +295,7 @@ public:
 
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dstTensor, srcTensor, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         CheckSoftMaxSameTParamsClass::CheckSoftMaxSameTParams<T, isReuseSource, isBasicBlock, config>(
             dstTensor, srcTensor, sharedTmpBuffer, tiling, softmaxShapeInfo);

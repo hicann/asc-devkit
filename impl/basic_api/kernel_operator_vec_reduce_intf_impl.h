@@ -68,8 +68,8 @@ __aicore__ inline void CheckReduceBaseParams(
             apiName));
     ReportNopWarning<int32_t>(repeatTime, "repeatTime", apiName);
     CheckValueRange<int32_t>(repeatTime, 0, 255, "repeatTime", apiName);
-    CheckTensorPhyPosition<Hardware::UB>(dst, "dst", "VECIN / VECCALC / VECOUT", apiName);
-    CheckTensorPhyPosition<Hardware::UB>(src, "src", "VECIN / VECCALC / VECOUT", apiName);
+    CheckTensorPhyPosition<Hardware::UB>(dst, "dst", "UB(VECIN/VECCALC/VECOUT)", apiName);
+    CheckTensorPhyPosition<Hardware::UB>(src, "src", "UB(VECIN/VECCALC/VECOUT)", apiName);
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", apiName);
 }
 
@@ -209,8 +209,8 @@ __aicore__ inline void CheckReduceRepeatParams(
 #if __NPU_ARCH__ == 3510
     CheckValueRange<int32_t>(repeatTime, 0, 255, "repeatTime", apiName);
     ReportNopWarning<int32_t>(repeatTime, "repeatTime", apiName);
-    CheckTensorPhyPosition<Hardware::UB>(dst, "dst", "VECIN / VECCALC / VECOUT", apiName);
-    CheckTensorPhyPosition<Hardware::UB>(src, "src", "VECIN / VECCALC / VECOUT", apiName);
+    CheckTensorPhyPosition<Hardware::UB>(dst, "dst", "UB(VECIN/VECCALC/VECOUT)", apiName);
+    CheckTensorPhyPosition<Hardware::UB>(src, "src", "UB(VECIN/VECCALC/VECOUT)", apiName);
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", apiName);
 #else
     CheckReduceBaseParams<T>(dst, src, repeatTime, apiName);

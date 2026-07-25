@@ -43,7 +43,7 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0ACal(__ca__ T* dst, __cbuf__ T* src, const LoadData2DParams& loadDataParam)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from L1 Buffer(A1) to L0A Buffer(A2)");
 #else
     CheckLoadData2DType<T>();
     if constexpr (IsSameType<T, int4b_t>::value) {
@@ -70,7 +70,7 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const LoadData2DParams& loadDataParam)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from L1 Buffer(B1) to L0B Buffer(B2)");
 #else
     CheckLoadData2DType<T>();
     if constexpr (IsSameType<T, int4b_t>::value) {
@@ -97,7 +97,7 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L0ACal(__ca__ T* dst, __gm__ T* src, const LoadData2DParams& loadDataParam)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from GM to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from GM to L0A Buffer(A2)");
 #else
     CheckLoadData2DType<T>();
     using U = typename Conditional<SupportType<T, uint16_t, int16_t>(), half, T>::type;
@@ -111,7 +111,7 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L0BCal(__cb__ T* dst, __gm__ T* src, const LoadData2DParams& loadDataParam)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from GM to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from GM to L0B Buffer(B2)");
 #else
     CheckLoadData2DType<T>();
     using U = typename Conditional<SupportType<T, uint16_t, int16_t>(), half, T>::type;
@@ -125,7 +125,7 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L1Cal(__cbuf__ T* dst, __gm__ T* src, const LoadData2DParams& loadDataParam)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from GM to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData from GM to L1 Buffer(A1/B1)");
 #else
     CheckLoadData2DType<T>();
     using U = typename Conditional<SupportType<T, uint16_t, int16_t>(), half, T>::type;
@@ -266,7 +266,7 @@ __aicore__ inline void LoadData3DV2L12L0ACal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2<T>& loadDataParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from L1 Buffer(A1) to L0A Buffer(A2)");
 #else
     if constexpr (IsSameType<T, int4b_t>::value) {
         img2colv2_cbuf_to_ca_s4(
@@ -289,7 +289,7 @@ __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2<T>& loadDataParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2 from L1 Buffer(B1) to L0B Buffer(B2)");
 #else
     if constexpr (IsSameType<T, int4b_t>::value) {
         img2colv2_cbuf_to_cb_s4(
@@ -328,7 +328,7 @@ __aicore__ inline void LoadData3DV2L12L0ACal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from A1 to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(A1) to L0A Buffer(A2)");
 #else
     if constexpr (IsSameType<T, int4b_t>::value) {
         img2colv2_cbuf_to_ca_s4(
@@ -357,7 +357,7 @@ __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from B1 to B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(B1) to L0B Buffer(B2)");
 #else
     if constexpr (IsSameType<T, int4b_t>::value) {
         img2colv2_cbuf_to_cb_s4(
@@ -392,14 +392,16 @@ template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from B1 to B2 with type int8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(
+        false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(B1) to L0B Buffer(B2) with type int8_t");
 }
 
 template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ uint8_t* dst, __cbuf__ uint8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from B1 to B2 with type uint8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(
+        false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(B1) to L0B Buffer(B2) with type uint8_t");
 }
 
 /* **************************************************************************************************
@@ -558,7 +560,7 @@ template <typename T>
 __aicore__ inline void InitL1BufferCal(__cbuf__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in L1 Buffer(A1/B1)");
 #else
     ASCENDC_CHECK_VALUE_RANGE(initConstValueParams.repeatTimes, 0, UINT8_MAX, "repeatTimes", "InitConstValue");
     int64_t repeatBit = initConstValueParams.repeatTimes;
@@ -583,7 +585,7 @@ template <typename T>
 __aicore__ inline void InitL0ANzMatrixCal(__ca__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in L0A Buffer(A2)");
 #else
     ASCENDC_CHECK_VALUE_RANGE(initConstValueParams.repeatTimes, 0, UINT8_MAX, "repeatTimes", "InitConstValue");
     int64_t repeatBit = initConstValueParams.repeatTimes;
@@ -608,7 +610,7 @@ template <typename T>
 __aicore__ inline void InitL0BNzMatrixCal(__cb__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in B2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "InitConstValue in L0B Buffer(B2)");
 #else
     ASCENDC_CHECK_VALUE_RANGE(initConstValueParams.repeatTimes, 0, UINT8_MAX, "repeatTimes", "InitConstValue");
     int64_t repeatBit = initConstValueParams.repeatTimes;
@@ -678,7 +680,7 @@ __aicore__ inline void LoadDataUnzipToL0BCal(__cb__ T* dst, __gm__ T* src)
 template <typename T>
 __aicore__ inline void LoadDataUnzipToL0ACal(__ca__ T* dst, __gm__ T* src)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadDataUnzip to A2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadDataUnzip to L0A Buffer(A2)");
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_MM_IMPL_H

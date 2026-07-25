@@ -37,7 +37,7 @@ __aicore__ inline void CommonCheckInputsValidness(
         ((TPosition)dstTensor.GetPosition() == TPosition::VECIN ||
          (TPosition)dstTensor.GetPosition() == TPosition::VECOUT ||
          (TPosition)dstTensor.GetPosition() == TPosition::VECCALC),
-        { KERNEL_LOG(KERNEL_ERROR, "dst position not support, just support position is VECIN, VECOUT, VECCALC."); });
+        { KERNEL_LOG(KERNEL_ERROR, "dst position not support, supported positions are UB(VECIN/VECOUT/VECCALC)."); });
 
     ASCENDC_ASSERT((calCount <= srcTensor.GetSize()), {
         KERNEL_LOG(

@@ -421,10 +421,10 @@ __aicore__ inline void FmodImpl(
         return;
     }
 
-    CheckTensorPos(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECOUT / VECCALC", "Fmod");
-    CheckTensorPos(src0Tensor, Hardware::UB, "src0Tensor", "VECIN / VECOUT / VECCALC", "Fmod");
-    CheckTensorPos(src1Tensor, Hardware::UB, "src1Tensor", "VECIN / VECOUT / VECCALC", "Fmod");
-    CheckTensorPos(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECOUT / VECCALC", "Fmod");
+    CheckTensorPos(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECOUT/VECCALC", "Fmod");
+    CheckTensorPos(src0Tensor, Hardware::UB, "src0Tensor", "VECIN/VECOUT/VECCALC", "Fmod");
+    CheckTensorPos(src1Tensor, Hardware::UB, "src1Tensor", "VECIN/VECOUT/VECCALC", "Fmod");
+    CheckTensorPos(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC", "Fmod");
 
     CheckCalCount(calCount, "calCount", src0Tensor, "src0Tensor", "Fmod");
     CheckCalCount(calCount, "calCount", src1Tensor, "src1Tensor", "Fmod");

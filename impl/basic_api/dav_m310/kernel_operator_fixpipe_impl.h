@@ -175,13 +175,14 @@ __aicore__ inline void CheckFixpipeL0C2UBParam(__ubuf__ T* dst, __cc__ U* src, c
 {
     CheckCommonFixpipeParam<T, U, config>(src, params);
     ASCENDC_CHECK_TENSOR_PTR_ALIGN(
-        dst, TPosition::VECCALC, ONE_BLK_SIZE, "dstLocal", "Fixpipe when dst position is VECIN/VECCALC/VECOUT");
+        dst, TPosition::VECCALC, ONE_BLK_SIZE, "dstLocal", "Fixpipe when dst position is UB(VECIN/VECCALC/VECOUT)");
     static_assert(
         (SupportType<
             Tuple<U, T>, Tuple<float, int8_t>, Tuple<float, uint8_t>, Tuple<float, half>, Tuple<float, float>,
             Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>, Tuple<int32_t, int32_t>>()),
         "Failed to check dtype in Fixpipe, when src position is "
-        "CO1 and dst position is GM, support dtype combinations are src: float, dst: int8_t / uint8_t / half "
+        "L0C Buffer(CO1) and dst position is GM, support dtype combinations are src: float, dst: int8_t / uint8_t / "
+        "half "
         "/ float; src: int32_t, dst: int8_t / uint8_t / half / int32_t");
     if constexpr (IsSameType<U, float>::value && IsSameType<T, float>::value) {
         ASCENDC_ASSERT((params.quantPre == QuantMode_t::NoQuant), {
@@ -221,20 +222,20 @@ __aicore__ inline void CheckFixpipeL0C2L1Param(__cbuf__ T* dst, __cc__ U* src, c
         KERNEL_LOG(
             KERNEL_ERROR,
             "Failed to check dstLocal start "
-            "address alignment in Fixpipe, when dst position is A1, its start address must align with 32B");
+            "address alignment in Fixpipe, when dst position is L1 Buffer(A1), its start address must align with 32B");
     });
 #endif
     ASCENDC_DEBUG_ASSERT(
         (!(params.isChannelSplit)),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "Failed to check isChannelSplit in Fixpipe, when src position is "
-                          "CO1 and dst position is A1, isChannelSplit must be set as false \n"));
+                          "L0C Buffer(CO1) and dst position is L1 Buffer(A1), isChannelSplit must be set as false \n"));
 
     static_assert(
         (SupportType<
             Tuple<U, T>, Tuple<float, int8_t>, Tuple<float, uint8_t>, Tuple<float, half>, Tuple<float, float>,
             Tuple<int32_t, int32_t>, Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
-        "Failed to check dtype in Fixpipe, when src position is CO1 and dst position is A1, "
+        "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is L1 Buffer(A1), "
         "support dtype combinations are src: float, dst: int8_t / uint8_t / half; src: int32_t, dst: "
         "int8_t / uint8_t / half");
 }
@@ -248,7 +249,7 @@ __aicore__ inline void CheckFixpipeL0C2GMParam(__gm__ T* dst, __cc__ U* src, con
         (SupportType<
             Tuple<U, T>, Tuple<float, int8_t>, Tuple<float, uint8_t>, Tuple<float, half>, Tuple<float, float>,
             Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>, Tuple<int32_t, int32_t>>()),
-        "Failed to check dtype in Fixpipe, when src position is CO1 "
+        "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) "
         "and dst position is GM, support dtype combinations are src: float, dst: int8_t / uint8_t / half "
         "/ float; src: int32_t, dst: int8_t / uint8_t / half / int32_t");
     if constexpr (IsSameType<U, float>::value && IsSameType<T, float>::value) {

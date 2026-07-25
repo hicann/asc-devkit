@@ -125,7 +125,8 @@ bool CheckFuncLoadDataTranspose(
     bool scopeMatch =
         (GetPhyType(static_cast<TPosition>(dst.GetPosition())) == Hardware::L0B &&
          GetPhyType(static_cast<TPosition>(src.GetPosition())) == Hardware::L1);
-    ASSERT(scopeMatch && "LoadDataWithTranspose without B1->B2 is not supported on current device");
+    ASSERT(
+        scopeMatch && "LoadDataWithTranspose without L1 Buffer(B1)->L0B Buffer(B2) is not supported on current device");
 #if __NPU_ARCH__ == 3102
     constexpr bool dtypeMatch =
         IsSameType<PrimT<T>, int4b_t>::value || sizeof(PrimT<T>) == sizeof(int8_t) || sizeof(PrimT<T>) == sizeof(half);

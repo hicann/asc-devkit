@@ -83,9 +83,9 @@ __aicore__ inline void CheckMmadTensorCommon(
     constexpr uint32_t align1024B = 1024;
 
     CheckMmadParamsCommon(mmadParams, apiName);
-    CheckTensorPhyPosition<Hardware::L0C>(dst, "dstLocal", "CO1", apiName);
-    CheckTensorPhyPosition<Hardware::L0A>(fm, "fmLocal", "A2", apiName);
-    CheckTensorPhyPosition<Hardware::L0B>(filter, "filterLocal", "B2", apiName);
+    CheckTensorPhyPosition<Hardware::L0C>(dst, "dstLocal", "L0C Buffer(CO1)", apiName);
+    CheckTensorPhyPosition<Hardware::L0A>(fm, "fmLocal", "L0A Buffer(A2)", apiName);
+    CheckTensorPhyPosition<Hardware::L0B>(filter, "filterLocal", "L0B Buffer(B2)", apiName);
     CheckTensorAlignment(dst, align1024B, "dst", apiName);
     CheckTensorAlignment(fm, VALUE_512, "fm", apiName);
     CheckTensorAlignment(filter, VALUE_512, "filter", apiName);
@@ -99,9 +99,10 @@ __aicore__ inline void CheckMmadTensorCommon(
     CheckMmadTensorCommon(dst, fm, filter, mmadParams, apiName);
     CheckTensorAlignment(bias, 128, "bias", apiName);
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 1001) || (__NPU_ARCH__ == 2002))
-    CheckTensorPhyPosition<Hardware::L0C>(bias, "bias", "CO1", apiName);
+    CheckTensorPhyPosition<Hardware::L0C>(bias, "bias", "L0C Buffer(CO1)", apiName);
 #else
-    CheckTensorPhyPosition<Hardware::L0C, Hardware::BIAS>(bias, "bias", "CO1 / C2", apiName);
+    CheckTensorPhyPosition<Hardware::L0C, Hardware::BIAS>(
+        bias, "bias", "L0C Buffer(CO1)/BiasTable Buffer(C2)", apiName);
 #endif
 }
 
@@ -252,7 +253,7 @@ __aicore__ inline void CheckFixpipeWorkspace(
         (SupportType<PrimT<T>, uint64_t>()),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "Failed to check cbufWorkspace dtype in %s, supported dtype is uint64_t.\n", apiName));
-    CheckTensorPhyPosition<Hardware::L1>(cbufWorkspace, "cbufWorkspace", "A1", apiName);
+    CheckTensorPhyPosition<Hardware::L1>(cbufWorkspace, "cbufWorkspace", "L1 Buffer(C1)", apiName);
 
     ASCENDC_DEBUG_ASSERT(
         (intriParams.quantPre == QuantMode_t::VDEQF16 || intriParams.quantPre == QuantMode_t::VQF322B8_PRE ||
@@ -270,11 +271,15 @@ __aicore__ inline void CheckFixpipeTensor(
     const __gm__ char* apiName)
 {
     CheckFixpipeParamsV220Common<T, U, config>(intriParams, apiName);
-    CheckTensorPhyPosition<Hardware::L0C>(src, "src", "CO1", apiName);
+    CheckTensorPhyPosition<Hardware::L0C>(src, "src", "L0C Buffer(CO1)", apiName);
     const uint32_t L0C_SRC_ALIGN = 16 * sizeof(float);
     CheckTensorAlignment(src, L0C_SRC_ALIGN, "src", apiName);
     CheckTensorAlignment(dst, ONE_BLK_SIZE, "dst", apiName);
-    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(dst, "dst", "A1", apiName);
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102))
+    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(dst, "dst", "L1 Buffer(C1)/UB(VECIN/VECOUT/VECCALC)", apiName);
+#else
+    CheckTensorPhyPosition<Hardware::L1>(dst, "dst", "L1 Buffer(C1)", apiName);
+#endif
 }
 
 template <typename T, typename U, const FixpipeConfig& config, typename S>
@@ -293,7 +298,7 @@ __aicore__ inline void CheckFixpipeTensor(
 {
     (void)dst;
     CheckFixpipeParamsV220Common<T, U, config>(intriParams, apiName);
-    CheckTensorPhyPosition<Hardware::L0C>(src, "src", "CO1", apiName);
+    CheckTensorPhyPosition<Hardware::L0C>(src, "src", "L0C Buffer(CO1)", apiName);
 }
 
 template <typename T, typename U, const FixpipeConfig& config, typename S>
@@ -338,8 +343,8 @@ template <typename T>
 __aicore__ static inline void CheckLoadData2dLocal2Local(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const __gm__ char* apiName)
 {
-    CheckTensorPhyPosition<Hardware::L1>(src, "src", "A1 / B1", apiName);
-    CheckTensorPhyPosition<Hardware::L0A, Hardware::L0B>(dst, "dst", "A2 / B2", apiName);
+    CheckTensorPhyPosition<Hardware::L1>(src, "src", "L1 Buffer(A1/B1)", apiName);
+    CheckTensorPhyPosition<Hardware::L0A, Hardware::L0B>(dst, "dst", "L0A Buffer(A2)/L0B Buffer(B2)", apiName);
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", apiName);
     CheckTensorAlignment(dst, VALUE_512, "dst", apiName);
 }
@@ -349,10 +354,11 @@ __aicore__ static inline void CheckLoadData2dGlobal2Local(const LocalTensor<T>& 
 {
 #if __NPU_ARCH__ == 3510
     // only support GM -> A1 / B1
-    CheckTensorPhyPosition<Hardware::L1>(dst, "dst", "A1 / B1", apiName);
+    CheckTensorPhyPosition<Hardware::L1>(dst, "dst", "L1 Buffer(A1/B1)", apiName);
     CheckTensorAlignment(dst, ONE_BLK_SIZE, "dst", apiName);
 #else
-    CheckTensorPhyPosition<Hardware::L1, Hardware::L0A, Hardware::L0B>(dst, "dst", "A1 / B1 / A2 / B2", apiName);
+    CheckTensorPhyPosition<Hardware::L1, Hardware::L0A, Hardware::L0B>(
+        dst, "dst", "L1 Buffer(A1/B1)/L0A Buffer(A2)/L0B Buffer(B2)", apiName);
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A || dstScope == Hardware::L0B) {
         CheckTensorAlignment(dst, VALUE_512, "dst", apiName);
@@ -385,7 +391,8 @@ __aicore__ static inline void CheckLoadData2dParams(const LoadData2DParams& load
             ASCENDC_DEBUG_WARNING(
                 (false), KERNEL_LOG_INTERNAL(
                              KERNEL_WARN, "ifTranspose is effective in LoadData with "
-                                          "LoadData2DParams when src->dst is A1->A2 / B1->B2.\n"));
+                                          "LoadData2DParams when src->dst is L1 Buffer(A1)->L0A Buffer(A2) / "
+                                          "L1 Buffer(B1)->L0B Buffer(B2).\n"));
         }
     }
 }
@@ -401,8 +408,7 @@ __aicore__ static inline void CheckLoadDataWithTransposeDtype(const __gm__ char*
                 KERNEL_ERROR,
                 "Failed to check dtype in %s, current api support dtype combination is "
                 "src and dst both: uint8_t / int8_t / half / bfloat16_t / uint32_t / int32_t / float when dst "
-                "TPosition "
-                "is A2.\n",
+                "position is L0A Buffer(A2).\n",
                 apiName));
     } else { // B1 -> B2
         ASCENDC_DEBUG_ASSERT(
@@ -411,7 +417,7 @@ __aicore__ static inline void CheckLoadDataWithTransposeDtype(const __gm__ char*
                 KERNEL_ERROR,
                 "Failed to check dtype in %s, current api support dtype "
                 "combination is src and dst both: uint8_t / int8_t / half / bfloat16_t / uint32_t / int32_t / float / "
-                "int4b_t when dst TPosition is B2.\n",
+                "int4b_t when dst position is L0B Buffer(B2).\n",
                 apiName));
     }
 #endif
@@ -423,8 +429,8 @@ __aicore__ static inline void CheckLoadDataWithTranspose(
 {
 // dav_c310 + dav_m510 + dav_m310 not support A1 -> A2
 #if __NPU_ARCH__ != 3510 && __NPU_ARCH__ != 5102 && __NPU_ARCH__ != 3102
-    CheckTensorPhyPosition<Hardware::L1>(src, "src", "A1 / B1", apiName);
-    CheckTensorPhyPosition<Hardware::L0A, Hardware::L0B>(dst, "dst", "A2 / B2", apiName);
+    CheckTensorPhyPosition<Hardware::L1>(src, "src", "L1 Buffer(A1/B1)", apiName);
+    CheckTensorPhyPosition<Hardware::L0A, Hardware::L0B>(dst, "dst", "L0A Buffer(A2)/L0B Buffer(B2)", apiName);
     if ((TPosition)dst.GetPosition() == TPosition::A2) {
         CheckLoadDataWithTransposeDtype<T>(apiName, true);
     } else {

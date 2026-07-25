@@ -1108,7 +1108,7 @@ __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const 
             Tuple<float, uint8_t>, Tuple<int32_t, int32_t>, Tuple<int32_t, int16_t>, Tuple<int32_t, int8_t>,
             Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
         "Failed to check dtype in "
-        "DataCopy from CO1 to A1 / B1, current api support dtype combination is "
+        "DataCopy from L0C Buffer(CO1) to L1 Buffer(A1/B1), current api support dtype combination is "
         "src: float, dst: half / bfloat16_t / float / int8_t / uint8_t; "
         "src: int32_t, dst: half / int32_t / int16_t / int8_t / uint8_t.");
     if (IsSupportQuantMode(intriParams.quantPre)) {
@@ -1124,10 +1124,10 @@ __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const 
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR,
-                "Failed to check quantPre value in DataCopy from CO1 "
-                "to A1 / B1, supported values are NoQuant / F322F16 / F322BF16 / DEQF16 / VDEQF16 / QF322B8_PRE / "
-                "VQF322B8_PRE / REQ8 / VREQ8.");
+                KERNEL_ERROR, "Failed to check quantPre value in DataCopy from L0C Buffer(CO1) "
+                              "to L1 Buffer(A1/B1), supported values are NoQuant / F322F16 / F322BF16 / DEQF16 / "
+                              "VDEQF16 / QF322B8_PRE / "
+                              "VQF322B8_PRE / REQ8 / VREQ8.");
         });
     }
 }
@@ -1142,7 +1142,7 @@ __aicore__ inline void DataCopyL0C2GMImpl(
             Tuple<float, uint8_t>, Tuple<int32_t, int32_t>, Tuple<int32_t, int16_t>, Tuple<int32_t, int8_t>,
             Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
         "Failed to check dtype in "
-        "DataCopy from CO1 to GM, current api support dtype combination is "
+        "DataCopy from L0C Buffer(CO1) to GM, current api support dtype combination is "
         "src: float, dst: half / bfloat16_t / float / int8_t / uint8_t; "
         "src: int32_t, dst: half / int32_t / int16_t / int8_t / uint8_t.");
     if (IsSupportQuantMode(intriParams.quantPre)) {
@@ -1159,7 +1159,7 @@ __aicore__ inline void DataCopyL0C2GMImpl(
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
                 KERNEL_ERROR,
-                "Failed to check quantPre value in DataCopy from CO1 "
+                "Failed to check quantPre value in DataCopy from L0C Buffer(CO1) "
                 "to GM, supported values are NoQuant / F322F16 / F322BF16 / DEQF16 / VDEQF16 / QF322B8_PRE / "
                 "VQF322B8_PRE / REQ8 / VREQ8.");
         });

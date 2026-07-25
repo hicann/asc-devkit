@@ -74,17 +74,15 @@ __aicore__ inline void ScmDataCopyND2NZMsg(
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "DataCopy from GM/UB to L1 with ND2NZ is not supported on current device.\n"));
     ASCENDC_DEBUG_ASSERT(
-        (dst != nullptr),
-        KERNEL_LOG_INTERNAL(
-            KERNEL_ERROR,
-            "Failed to check dst tensor address in DataCopy from GM to A1 / B1 / TSCM with Nd2NzParams, dst address is "
-            "nullptr.\n"));
+        (dst != nullptr), KERNEL_LOG_INTERNAL(
+                              KERNEL_ERROR, "Failed to check dst tensor address in DataCopy from GM to L1 "
+                                            "Buffer(A1/B1/TSCM) with Nd2NzParams, dst address is "
+                                            "nullptr.\n"));
     ASCENDC_DEBUG_ASSERT(
-        (src != nullptr),
-        KERNEL_LOG_INTERNAL(
-            KERNEL_ERROR,
-            "Failed to check src tensor address in DataCopy from GM to A1 / B1 / TSCM with Nd2NzParams, src address is "
-            "nullptr.\n"));
+        (src != nullptr), KERNEL_LOG_INTERNAL(
+                              KERNEL_ERROR, "Failed to check src tensor address in DataCopy from GM to L1 "
+                                            "Buffer(A1/B1/TSCM) with Nd2NzParams, src address is "
+                                            "nullptr.\n"));
     ASCENDC_DEBUG_ASSERT(
         (GetKfcClient() != nullptr),
         KERNEL_LOG_INTERNAL(

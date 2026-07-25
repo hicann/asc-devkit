@@ -70,7 +70,7 @@ __aicore__ inline constexpr void ValidateQueConfig()
     if constexpr (config.enableStaticEvtId) {
         static_assert(
             dstType == Hardware::L1 && srcType != Hardware::UB,
-            "enableStaticEvtId currently only supports A1/B1 que or TSCM from GM");
+            "enableStaticEvtId currently only supports GM to L1 Buffer(A1/B1/TSCM)");
     }
 }
 
@@ -253,11 +253,11 @@ __aicore__ inline bool TQueBind<src, dst, depth, mask>::EnQue(TBufHandle buf)
     static_assert(
         ((srcUserPos == TPosition::GM) || (srcUserPos == TPosition::VECIN) || (srcUserPos == TPosition::VECOUT) ||
          (srcUserPos == TPosition::VECCALC)) &&
-        "enque only support src position GM/VECIN/VECOUT/VECCALC currently.");
+        "enque only support src position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         ((dstUserPos == TPosition::GM) || (dstUserPos == TPosition::VECIN) || (dstUserPos == TPosition::VECOUT) ||
          (dstUserPos == TPosition::VECCALC)) &&
-        "enque only support dst position GM/VECIN/VECOUT/VECCALC currently.");
+        "enque only support dst position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         !((srcUserPos == TPosition::GM) && (dstUserPos == TPosition::GM)) &&
         "enque src and dst position cannot be GM at the same time.");
@@ -610,11 +610,11 @@ __aicore__ inline TBufHandle TQueBind<src, dst, depth, mask>::DeQue()
     static_assert(
         ((srcUserPos == TPosition::GM) || (srcUserPos == TPosition::VECIN) || (srcUserPos == TPosition::VECOUT) ||
          (srcUserPos == TPosition::VECCALC)),
-        "DeQue only support src position GM/VECIN/VECOUT/VECCALC currently.");
+        "DeQue only support src position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         ((dstUserPos == TPosition::GM) || (dstUserPos == TPosition::VECIN) || (dstUserPos == TPosition::VECOUT) ||
          (dstUserPos == TPosition::VECCALC)) &&
-        "DeQue only support dst position GM/VECIN/VECOUT/VECCALC currently.");
+        "DeQue only support dst position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         !((srcUserPos == TPosition::GM) && (dstUserPos == TPosition::GM)) &&
         "DeQue src and dst position cannot be GM at the same time.");
@@ -1275,7 +1275,7 @@ __aicore__ inline TBufPoolExtImpl<pos, bufIDSize>::TBufPoolExtImpl()
     constexpr auto pool = GetPhyType(pos);
     static_assert(
         (pool == Hardware::L1 || pool == Hardware::UB || pool == Hardware::L0C),
-        "TbufPool Position should be one of A1/B1/C1/VECIN/VECOUT/VECCALC");
+        "TbufPool Position should be one of L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT/VECCALC)");
     ResetPool(); // init buf size and other variables
     tBufPoolImpl.isReset_ = false;
 }

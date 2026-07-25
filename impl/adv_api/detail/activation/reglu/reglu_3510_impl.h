@@ -77,9 +77,9 @@ __aicore__ inline void ReGluImpl(
     static_assert(
         SupportType<T, half, float, bfloat16_t>(),
         "ReGlu only support half/float/bfloat16_t data type on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor0, "srcTensor0", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor1, "srcTensor1", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor0, "srcTensor0", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor1, "srcTensor1", "VECIN/VECOUT/VECCALC");
     CheckCalCount(count, "count", dstTensor, "dstTensor", "ReGlu");
     CheckCalCount(count, "count", srcTensor0, "srcTensor0", "ReGlu");
     CheckCalCount(count, "count", srcTensor1, "srcTensor1", "ReGlu");
@@ -95,7 +95,7 @@ __aicore__ inline void ReGluImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor0, const LocalTensor<T>& srcTensor1,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t count)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     ReGluImpl<T, isReuseSource>(dstTensor, srcTensor0, srcTensor1, count);
 }
 } // namespace AscendC

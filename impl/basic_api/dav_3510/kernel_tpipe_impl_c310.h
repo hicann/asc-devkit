@@ -218,7 +218,7 @@ __aicore__ inline bool TPipe::InitBuffer(T& que, const Std::tuple<U, V>& addr0, 
             KERNEL_ERROR, "buffer number is %u, which should be the same as TQueConfig::bufferNumber(%u)", num,
             que.config.bufferNumber);
     });
-    static_assert(T::dstPosition != TPosition::TSCM, "Init Buffer is not supported Postion TSCM");
+    static_assert(T::dstPosition != TPosition::TSCM, "Init Buffer is not supported Postion L1 Buffer(TSCM)");
     Hardware pool = GetBufferPos(T::srcPosition, T::dstPosition);
     que.bufStart = this->g_tpipeImpl.buf_ + this->g_tpipeImpl.curBufSize_;
     que.value = num;

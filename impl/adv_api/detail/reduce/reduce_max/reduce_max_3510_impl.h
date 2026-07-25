@@ -113,9 +113,9 @@ __aicore__ inline void ReduceMaxImpl(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t srcShape[], bool srcInnerPad)
 {
-    CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "ReduceMax");
-    CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "ReduceMax");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "ReduceMax");
+    CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "ReduceMax");
+    CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "ReduceMax");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "ReduceMax");
     static_assert(
         SupportType<
             T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t>(),

@@ -83,9 +83,9 @@ __aicore__ inline void SumCheckParams(
     const SumParams& sumParams)
 {
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Sum");
-    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Sum");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Sum");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Sum");
+    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Sum");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Sum");
     constexpr uint32_t sumInnerAlignLen = 32;
     ASCENDC_ASSERT((1 <= sumParams.n) && (sumParams.n <= sumParams.inner), {
         KERNEL_LOG(KERNEL_ERROR, "The value of n must be greater than or equal to 1 and less than or equal to inner.");

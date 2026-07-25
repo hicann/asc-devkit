@@ -40,12 +40,11 @@ public:
         const LocalTensor<T>& src, const LocalTensor<uint8_t>& sharedTmpBuffer, const LogSoftMaxTiling& tiling,
         const SoftMaxShapeInfo& softmaxShapeInfo = {})
     {
-        CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "LogSoftMax");
-        CheckTensorPos<T>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "LogSoftMax");
-        CheckTensorPos<T>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "LogSoftMax");
-        CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "LogSoftMax");
-        CheckTensorPos<uint8_t>(
-            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "LogSoftMax");
+        CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "LogSoftMax");
+        CheckTensorPos<T>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "LogSoftMax");
+        CheckTensorPos<T>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "LogSoftMax");
+        CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "LogSoftMax");
+        CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "LogSoftMax");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(T) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });

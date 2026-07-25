@@ -102,9 +102,9 @@ __aicore__ inline void AxpyImpl(
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
 {
     CHECK_FUNC_HIGHLEVEL_API(Axpy, (T, U, isReuseSource), (dstLocal, srcLocal, scalarValue, sharedTmpBuffer, calCount));
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(dstLocal, "dstLocal", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcLocal, "srcLocal", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(dstLocal, "dstLocal", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcLocal, "srcLocal", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", dstLocal, "dstLocal", "Axpy");
     CheckCalCount(calCount, "calCount", srcLocal, "srcLocal", "Axpy");
     static_assert(SupportType<T, half, float>(), "Axpy current dst data type is not supported on current device!");

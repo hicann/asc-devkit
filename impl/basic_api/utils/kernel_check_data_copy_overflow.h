@@ -40,9 +40,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t dstMaxOffsetBytes = 0;
     BlockMode mode = check::GetBlockMode({srcPos, dstPos});
     uint8_t biasConvFlag = 0;
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<T>>(
         repeatParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, DeqScale::DEQ_NONE, biasConvFlag);
@@ -65,9 +64,8 @@ bool CheckDataCopyTensorSizeOverflow(
                                  (DivCeil(intriParams.dValue * sizeof(PrimT<T>), DEFAULT_C0_SIZE) - 1) *
                                      intriParams.dstNzC0Stride * DEFAULT_C0_SIZE +
                                  DEFAULT_C0_SIZE;
-    std::string apiInfo = "DataCopy with Nd2NzParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy with Nd2NzParams from " + GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, 0, dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -91,8 +89,8 @@ bool CheckDataCopyTensorSizeOverflow(
                                      intriParams.dstNzC0Stride * DEFAULT_C0_SIZE +
                                  DEFAULT_C0_SIZE;
     std::string apiInfo = "DataCopy with Nd2NzParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes,
@@ -109,9 +107,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t dstMaxOffsetBytes = 0;
     BlockMode mode = check::GetBlockMode({srcPos, dstPos});
     uint8_t biasConvFlag = 0;
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<T>>(
         repeatParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, DeqScale::DEQ_NONE, biasConvFlag);
@@ -129,9 +126,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t dstMaxOffsetBytes = 0;
     BlockMode mode = check::GetBlockMode({srcPos, dstPos});
     uint8_t biasConvFlag = 0;
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<T>>(
         repeatParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, DeqScale::DEQ_NONE, biasConvFlag);
@@ -150,9 +146,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t dstMaxOffsetBytes = 0;
     BlockMode mode = check::GetBlockMode({srcPos, dstPos});
     uint8_t biasConvFlag = check::IsBiasConv({srcPos, dstPos}) && (sizeof(PrimT<U>) != sizeof(PrimT<T>));
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<U>, PrimT<T>>(
         repeatParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, DeqScale::DEQ_NONE, biasConvFlag);
@@ -170,9 +165,8 @@ bool CheckDataCopyTensorSizeOverflow(
     const Hardware dstPos = GetPhyType((TPosition)dst.GetPosition());
     uint64_t srcMaxOffsetBytes = 0;
     uint64_t dstMaxOffsetBytes = 1;
-    std::string apiInfo = "DataCopy with SliceInfo from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy with SliceInfo from " + GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     for (uint32_t i = 0; i < dimValue; i++) {
         dstMaxOffsetBytes *= dstSliceInfo[i].shapeValue;
@@ -192,8 +186,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t srcMaxOffsetBytes = 1;
     uint64_t dstMaxOffsetBytes = 0;
     std::string apiInfo = "DataCopy with SliceInfo from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     for (uint32_t i = 0; i < dimValue; i++) {
         srcMaxOffsetBytes *= dstSliceInfo[i].shapeValue;
@@ -210,9 +204,8 @@ bool CheckDataCopyTensorSizeOverflow(const LocalTensor<T>& dst, const GlobalTens
     const Hardware dstPos = GetPhyType((TPosition)dst.GetPosition());
     uint64_t srcMaxOffsetBytes = 0;
     uint64_t dstMaxOffsetBytes = count * sizeof(PrimT<T>);
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, 0, dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -225,9 +218,8 @@ bool CheckDataCopyTensorSizeOverflow(const LocalTensor<T>& dst, const LocalTenso
     const Hardware dstPos = GetPhyType((TPosition)dst.GetPosition());
     uint64_t srcMaxOffsetBytes = count * sizeof(PrimT<T>);
     uint64_t dstMaxOffsetBytes = count * sizeof(PrimT<T>);
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes,
@@ -241,9 +233,8 @@ bool CheckDataCopyTensorSizeOverflow(const GlobalTensor<T>& dst, const LocalTens
     const Hardware dstPos = Hardware::GM;
     uint64_t srcMaxOffsetBytes = count * sizeof(PrimT<T>);
     uint64_t dstMaxOffsetBytes = 0;
-    std::string apiInfo = "DataCopy from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+    std::string apiInfo = "DataCopy from " + GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), 0, srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -266,8 +257,8 @@ bool CheckDataCopyTensorSizeOverflow(
         nzWidth * intriParams.nValue * sizeof(PrimT<T>);
     uint64_t dstMaxOffsetBytes = 0;
     std::string apiInfo = "DataCopy with Nz2NdParamsFull from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), 0, srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -287,9 +278,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t dstMaxOffsetBytes = 0;
     BlockMode mode = check::GetBlockMode({srcPos, dstPos}, enhancedParams.blockMode);
     uint8_t biasConvFlag = 0;
-    std::string apiInfo = "DataCopy with DataCopyEnhancedParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+    std::string apiInfo = "DataCopy with DataCopyEnhancedParams from " + GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<T>>(
         intriParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, enhancedParams.deqScale, biasConvFlag);
@@ -312,8 +302,8 @@ bool CheckDataCopyTensorSizeOverflow(
     BlockMode mode = check::GetBlockMode({srcPos, dstPos}, enhancedParams.blockMode);
     uint8_t biasConvFlag = 0;
     std::string apiInfo = "DataCopy with DataCopyEnhancedParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<T>>(
         intriParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, enhancedParams.deqScale, biasConvFlag);
@@ -336,8 +326,8 @@ bool CheckDataCopyTensorSizeOverflow(
     BlockMode mode = check::GetBlockMode({srcPos, dstPos}, enhancedParams.blockMode);
     uint8_t biasConvFlag = 0;
     std::string apiInfo = "DataCopy with DataCopyEnhancedParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<T>>(
         intriParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, enhancedParams.deqScale, biasConvFlag);
@@ -358,8 +348,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t srcMaxOffsetBytes = 0;
     uint64_t dstMaxOffsetBytes = 0;
     std::string apiInfo = "DataCopy with DataCopyCO12DstParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<U>, PrimT<T>>(
         srcPos, dstPos, intriParams, srcMaxOffsetBytes, dstMaxOffsetBytes);
@@ -380,8 +370,8 @@ bool CheckDataCopyTensorSizeOverflow(
     uint64_t srcMaxOffsetBytes = 0;
     uint64_t dstMaxOffsetBytes = 0;
     std::string apiInfo = "DataCopy with DataCopyCO12DstParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     check::CalculateDataCopyMaxOffset<PrimT<U>, PrimT<T>>(
         srcPos, dstPos, intriParams, srcMaxOffsetBytes, dstMaxOffsetBytes);
@@ -404,8 +394,8 @@ bool CheckDataCopyTensorSizeOverflow(
     BlockMode mode = check::GetBlockMode({srcPos, dstPos}, enhancedParams.blockMode);
     uint8_t biasConvFlag = check::IsBiasConv({srcPos, dstPos}) && (sizeof(PrimT<T>) != sizeof(PrimT<U>));
     std::string apiInfo = "DataCopy with DataCopyEnhancedParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     check::CalculateDataCopyMaxOffset<PrimT<T>, PrimT<U>>(
         intriParams, srcPos, dstPos, mode, srcMaxOffsetBytes, dstMaxOffsetBytes, enhancedParams.deqScale, biasConvFlag,
@@ -431,8 +421,8 @@ bool CheckDataCopyPadTensorSizeOverflow(
         dataCopyParams.blockCount * AlignUp(dataCopyParams.blockLen + paddingSize, DEFAULT_C0_SIZE) +
         (dataCopyParams.blockCount - 1) * dataCopyParams.dstStride * DEFAULT_C0_SIZE;
     std::string apiInfo = "DataCopyPad with DataCopyParams and DataCopyPadParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, 0, dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -451,8 +441,8 @@ bool CheckDataCopyPadTensorSizeOverflow(
                                  (dataCopyParams.blockCount - 1) * dataCopyParams.srcStride * DEFAULT_C0_SIZE;
     uint64_t dstMaxOffsetBytes = 0;
     std::string apiInfo = "DataCopyPad with DataCopyParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), 0, srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -474,8 +464,8 @@ bool CheckDataCopyPadTensorSizeOverflow(
         dataCopyParams.blockCount * AlignUp(dataCopyParams.blockLen + paddingSize, DEFAULT_C0_SIZE) +
         (dataCopyParams.blockCount - 1) * dataCopyParams.dstStride * DEFAULT_C0_SIZE;
     std::string apiInfo = "DataCopyPad with DataCopyExtParams and DataCopyPadExtParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM)) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(TPosition::GM) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, 0, dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -494,8 +484,8 @@ bool CheckDataCopyPadTensorSizeOverflow(
                                  (dataCopyParams.blockCount - 1) * dataCopyParams.srcStride * DEFAULT_C0_SIZE;
     uint64_t dstMaxOffsetBytes = 0;
     std::string apiInfo = "DataCopyPad with DataCopyExtParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(TPosition::GM));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(TPosition::GM);
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), 0, srcMaxOffsetBytes, dstMaxOffsetBytes, apiInfo);
@@ -520,8 +510,8 @@ bool CheckDataCopyPadTensorSizeOverflow(
                                      nd2nzParams.dstNzC0Stride * DEFAULT_C0_SIZE +
                                  DEFAULT_C0_SIZE;
     std::string apiInfo = "DataCopyPad with DataCopyParams and Nd2NzParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes,
@@ -547,8 +537,8 @@ bool CheckDataCopyPadTensorSizeOverflow(
                                      nd2nzParams.dstNzC0Stride * DEFAULT_C0_SIZE +
                                  DEFAULT_C0_SIZE;
     std::string apiInfo = "DataCopyPad with DataCopyExtParams and Nd2NzParams from " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())) + " to " +
-                          ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition()));
+                          GetPositionDisplay(static_cast<TPosition>(src.GetPosition())) + " to " +
+                          GetPositionDisplay(static_cast<TPosition>(dst.GetPosition()));
 
     return check::ReportTensorSizeOverflow(
         srcPos, dstPos, src.GetSize() * sizeof(PrimT<T>), dst.GetSize() * sizeof(PrimT<T>), srcMaxOffsetBytes,

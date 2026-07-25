@@ -1059,10 +1059,10 @@ __aicore__ inline void AscendAntiQuantImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN/VECOUT/VECCALC");
     static_assert(SupportType<dstT, half, float>(), "AscendAntiQuant only support half/float output dtype");
     static_assert(SupportType<scaleT, half, float>(), "AscendAntiQuant only support half/float scale/offset dtype");
     static_assert(
@@ -1103,10 +1103,10 @@ __aicore__ inline void AscendAntiQuantImplCommon(
     const LocalTensor<DstType>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t k,
     const AntiQuantShapeInfo& shapeInfo = {})
 {
-    CheckTensorPosition(dst, "dst", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "src", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(offset, "offset", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scale, "scale", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dst", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "src", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(offset, "offset", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scale, "scale", "VECIN/VECOUT/VECCALC");
     AntiQuantPerchannelImpl<SrcType, DstType, isTranspose>(dst, src, offset, scale, sharedTmpBuffer, k, shapeInfo);
 }
 
@@ -1115,8 +1115,8 @@ __aicore__ inline void AscendAntiQuantImplCommon(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const DstType offset, const DstType scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t k, const AntiQuantShapeInfo& shapeInfo = {})
 {
-    CheckTensorPosition(dst, "dst", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "src", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dst", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "src", "VECIN/VECOUT/VECCALC");
     AntiQuantPertensorImpl<SrcType, DstType>(dst, src, offset, scale, sharedTmpBuffer, k, shapeInfo);
 }
 } // namespace AscendC

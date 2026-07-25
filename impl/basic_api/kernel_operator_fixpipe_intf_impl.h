@@ -194,7 +194,8 @@ __aicore__ inline void Fixpipe(
     ASCENDC_CHECK_TPOSITION(
         (GetPhyType((TPosition)dst.GetPosition()) == Hardware::L1) ||
             (GetPhyType((TPosition)dst.GetPosition()) == Hardware::UB),
-        "dst", "A1", "Fixpipe", ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+        "dst", "L1 Buffer(C1)/UB(VECIN/VECOUT/VECCALC)", "Fixpipe",
+        GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     if constexpr (config.isToUB) {
         FixpipeL0C2UBImpl<DstPrimType, SrcPrimType, config>(
             (__ubuf__ DstPrimType*)dst.GetPhyAddr(), (__cc__ SrcPrimType*)src.GetPhyAddr(), intriParams);
@@ -216,8 +217,9 @@ __aicore__ inline void Fixpipe(
     ASCENDC_CHECK_TPOSITION(
         (GetPhyType((TPosition)dst.GetPosition()) == Hardware::L1) ||
             (GetPhyType((TPosition)dst.GetPosition()) == Hardware::UB),
-        "dst", "A1", "Fixpipe", ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
-    CheckTensorPos(cbufWorkspace, Hardware::L1, "cbufWorkspace", "A1", "Fixpipe");
+        "dst", "L1 Buffer(C1)/UB(VECIN/VECOUT/VECCALC)", "Fixpipe",
+        GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
+    CheckTensorPos(cbufWorkspace, Hardware::L1, "cbufWorkspace", "C1", "Fixpipe");
     if constexpr (config.isToUB) {
         FixpipeL0C2UBImpl<DstPrimType, SrcPrimType, config>(
             (__ubuf__ DstPrimType*)dst.GetPhyAddr(), (__cc__ SrcPrimType*)src.GetPhyAddr(),

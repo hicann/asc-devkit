@@ -82,9 +82,9 @@ __aicore__ inline void SwiGLUImpl(
     ASCENDC_ASSERT((srcTensor0.GetSize() == srcTensor1.GetSize()), {
         KERNEL_LOG(KERNEL_ERROR, "Input params.GetSize must be equal with each other!");
     });
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor0, "srcTensor0", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor1, "srcTensor1", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor0, "srcTensor0", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor1, "srcTensor1", "VECIN/VECOUT/VECCALC");
     CheckCalCount(count, "count", dstTensor, "dstTensor", "SwiGLU");
     CheckCalCount(count, "count", srcTensor0, "srcTensor0", "SwiGLU");
     CheckCalCount(count, "count", srcTensor1, "srcTensor1", "SwiGLU");
@@ -101,7 +101,7 @@ __aicore__ inline void SwiGLUImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor0, const LocalTensor<T>& srcTensor1,
     const float scalarValue, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t count)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     SwiGLUImpl<T, isReuseSource>(dstTensor, srcTensor0, srcTensor1, scalarValue, count);
 }
 
@@ -110,7 +110,7 @@ __aicore__ inline void SwiGLUImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor0, const LocalTensor<T>& srcTensor1,
     const float scalarValue, const LocalTensor<uint8_t>& sharedTmpBuffer)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     SwiGLUImpl<T, isReuseSource>(dstTensor, srcTensor0, srcTensor1, scalarValue, srcTensor0.GetSize());
 }
 

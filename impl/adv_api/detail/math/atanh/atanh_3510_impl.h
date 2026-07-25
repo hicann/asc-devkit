@@ -77,8 +77,8 @@ __aicore__ inline void AtanhImpl(
         return;
     }
     static_assert(SupportType<T, half, float>(), "Atanh only support half/float data type on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Atanh");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Atanh");
     constexpr int32_t oneRepElm = static_cast<int32_t>(GetVecLen() / sizeof(float));
@@ -92,7 +92,7 @@ __aicore__ inline void AtanhImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     AtanhImpl<T, isReuseSource>(dstTensor, srcTensor, calCount);
 }
 
@@ -106,7 +106,7 @@ template <typename T, bool isReuseSource = false>
 __aicore__ inline void AtanhImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     AtanhImpl<T, isReuseSource>(dstTensor, srcTensor, srcTensor.GetSize());
 }
 

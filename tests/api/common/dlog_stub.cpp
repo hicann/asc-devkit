@@ -8,11 +8,17 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <stdio.h>
+#include <atomic>
 #include <cstring>
 #include <cstdint>
 #include <cstdarg>
 
 extern int32_t logLevel;
+
+namespace {
+constexpr int32_t DLOG_ERROR_LEVEL = 3;
+std::atomic<uint64_t> g_dlogErrorCount{0};
+} // namespace
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +34,9 @@ int32_t CheckLogLevel(uint32_t moduleId, int32_t level)
 
 void DlogRecord(uint32_t moduleId, int32_t level, const char* fmt, ...)
 {
+    if (level == DLOG_ERROR_LEVEL) {
+        g_dlogErrorCount++;
+    }
     if (fmt != nullptr) {
         va_list args;
         va_start(args, fmt);
@@ -35,6 +44,8 @@ void DlogRecord(uint32_t moduleId, int32_t level, const char* fmt, ...)
         va_end(args);
     }
 }
+
+uint64_t GetDlogErrorCountForTest() { return g_dlogErrorCount.load(); }
 
 #ifdef __cplusplus
 }

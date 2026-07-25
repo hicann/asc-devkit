@@ -898,13 +898,13 @@ template <typename DstT, typename SrcT, typename ScaleT, typename OffsetT>
 __aicore__ inline void CheckQuantizeParams(
     const LocalTensor<DstT>& dstTensor, const LocalTensor<SrcT>& srcTensor, const ScaleT& scale, const OffsetT& offset)
 {
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     if constexpr (TypeUtils::IsLocalTensorType<ScaleT>()) {
-        CheckTensorPosition(scale, "scale", "VECIN, VECOUT, VECCALC");
+        CheckTensorPosition(scale, "scale", "VECIN/VECOUT/VECCALC");
     }
     if constexpr (TypeUtils::IsLocalTensorType<OffsetT>()) {
-        CheckTensorPosition(offset, "offset", "VECIN, VECOUT, VECCALC");
+        CheckTensorPosition(offset, "offset", "VECIN/VECOUT/VECCALC");
     }
     static_assert(
         SupportType<SrcT, half, float, bfloat16_t>(), "Quantize only support half/float/bfloat16_t input dtype");

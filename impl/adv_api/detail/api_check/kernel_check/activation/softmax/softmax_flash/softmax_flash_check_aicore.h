@@ -41,15 +41,15 @@ public:
         const LocalTensor<T>& inMaxTensor, const LocalTensor<uint8_t>& sharedTmpBuffer, const SoftMaxTiling& tiling,
         bool isUpdate, const SoftMaxShapeInfo& softmaxShapeInfo)
     {
-        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
         CheckTensorPos<uint8_t>(
-            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
+            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(T) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });
@@ -64,13 +64,13 @@ public:
         const LocalTensor<T>& inMaxTensor, const SoftMaxTiling& tiling, bool isUpdate,
         const SoftMaxShapeInfo& softmaxShapeInfo)
     {
-        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<T>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<T>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(T) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });
@@ -95,15 +95,15 @@ public:
         const LocalTensor<uint8_t>& sharedTmpBuffer, const SoftMaxTiling& tiling, bool isUpdate,
         const SoftMaxShapeInfo& softmaxShapeInfo)
     {
-        CheckTensorPos<half>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<half>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<half>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
+        CheckTensorPos<half>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<half>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<half>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
         CheckTensorPos<uint8_t>(
-            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
+            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(half) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });
@@ -114,13 +114,13 @@ public:
         const LocalTensor<float>& inSumTensor, const LocalTensor<float>& inMaxTensor, const SoftMaxTiling& tiling,
         bool isUpdate, const SoftMaxShapeInfo& softmaxShapeInfo)
     {
-        CheckTensorPos<half>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<half>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<half>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
-        CheckTensorPos<float>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlash");
+        CheckTensorPos<half>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<half>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<half>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
+        CheckTensorPos<float>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlash");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(half) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });

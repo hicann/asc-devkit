@@ -105,7 +105,7 @@ public:
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(
                 dstLocal, meanLocal, rstdLocal, srcLocal, gxLocal, betaLocal, gammaLocal, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         CheckDeepNormParamsClass::CheckDeepNormParams<T, isReuseSrc, isBasicBlock>(
             dstLocal, meanLocal, rstdLocal, srcLocal, gxLocal, betaLocal, gammaLocal, sharedTmpBuffer, alpha, epsilon,

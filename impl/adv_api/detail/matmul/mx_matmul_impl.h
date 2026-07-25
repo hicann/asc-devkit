@@ -119,16 +119,16 @@ public:
     {
         static_assert(
             !PhyPosIsL1(A_TYPE::pos) || (PhyPosIsGM(A_TYPE::srcPos) || PhyPosIsUB(A_TYPE::srcPos)),
-            "A_TYPE::srcPos only support GM or VECOUT when A_TYPE::pos is TSCM.");
+            "A_TYPE::srcPos only support GM or UB(VECOUT) when A_TYPE::pos is L1 Buffer(TSCM).");
         static_assert(
             !PhyPosIsL1(A_TYPE::scalePosition) || (PhyPosIsGM(A_TYPE::srcScalePos) || PhyPosIsUB(A_TYPE::srcScalePos)),
-            "A_TYPE::srcScalePos only support GM or VECOUT when A_TYPE::scalePosition is TSCM.");
+            "A_TYPE::srcScalePos only support GM or UB(VECOUT) when A_TYPE::scalePosition is L1 Buffer(TSCM).");
         static_assert(
             !PhyPosIsL1(B_TYPE::pos) || (PhyPosIsGM(B_TYPE::srcPos) || PhyPosIsUB(B_TYPE::srcPos)),
-            "B_TYPE::srcPos only support GM or VECOUT when B_TYPE::pos is TSCM.");
+            "B_TYPE::srcPos only support GM or UB(VECOUT) when B_TYPE::pos is L1 Buffer(TSCM).");
         static_assert(
             !PhyPosIsL1(B_TYPE::scalePosition) || (PhyPosIsGM(B_TYPE::srcScalePos) || PhyPosIsUB(B_TYPE::srcScalePos)),
-            "B_TYPE::srcScalePos only support GM or VECOUT when B_TYPE::scalePosition is TSCM.");
+            "B_TYPE::srcScalePos only support GM or UB(VECOUT) when B_TYPE::scalePosition is L1 Buffer(TSCM).");
         BASE_MODULE::Init(cubeTiling, tpipe);
     }
 

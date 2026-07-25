@@ -51,7 +51,7 @@ __aicore__ inline void RoundImpl(
         return;
     }
 
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
 
     RoundImpl(dstTensor, srcTensor, calCount);
 }
@@ -65,8 +65,8 @@ __aicore__ inline void RoundImpl(
     }
 
     static_assert(SupportType<T, float, half>(), "Round only support half/float data type on current device");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Round");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Round");
 

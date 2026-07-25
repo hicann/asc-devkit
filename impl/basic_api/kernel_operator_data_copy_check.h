@@ -120,29 +120,30 @@ __aicore__ inline void CheckDataCopyLocalRoute(
             (dstHwPos == Hardware::UB || dstHwPos == Hardware::L1),
             KERNEL_LOG_INTERNAL(
                 KERNEL_ERROR,
-                "Failed to check dst tensor route in %s, supported routes are VECIN -> "
-                "VECCALC / VECCALC-> VECOUT / VECIN、VECCALC、VECOUT -> TSCM, current dst TPosition is %s.\n",
-                apiName, GetTPositionName(dstPos)));
+                "Failed to check dst tensor route in %s, supported routes are UB(VECIN)->UB(VECCALC) / "
+                "UB(VECCALC)->UB(VECOUT) / UB(VECIN/VECCALC/VECOUT)->L1 Buffer(TSCM), current dst position is "
+                "%s%s.\n",
+                apiName, GetHardwareName(dstHwPos), GetTPositionSuffix(dstPos)));
         return;
     }
     if (srcHwPos == Hardware::L1) {
         const bool isValidDst = (dstHwPos == Hardware::BIAS || dstHwPos == Hardware::FIXBUF);
         ASCENDC_DEBUG_ASSERT(
-            (isValidDst),
-            KERNEL_LOG_INTERNAL(
-                KERNEL_ERROR,
-                "Failed to check dst tensor route in "
-                "%s, supported routes are A1、B1、C1-> C2PIPE2GM / C1 -> C2, current dst TPosition is %s.\n",
-                apiName, GetTPositionName(dstPos)));
+            (isValidDst), KERNEL_LOG_INTERNAL(
+                              KERNEL_ERROR,
+                              "Failed to check dst tensor route in "
+                              "%s, supported routes are L1 Buffer(A1/B1/C1)->Fixpipe Buffer(C2PIPE2GM) / "
+                              "L1 Buffer(C1)->BiasTable Buffer(C2), current dst position is %s%s.\n",
+                              apiName, GetHardwareName(dstHwPos), GetTPositionSuffix(dstPos)));
         return;
     }
     ASCENDC_DEBUG_ASSERT(
         (false), KERNEL_LOG_INTERNAL(
                      KERNEL_ERROR,
                      "Failed to check src tensor route in %s, "
-                     "supported src TPositions are VECIN / VECCALC / VECOUT / A1 / B1 / C1, current src TPosition is "
-                     "%s.\n",
-                     apiName, GetTPositionName(srcPos)));
+                     "supported src positions are UB(VECIN/VECCALC/VECOUT)/L1 Buffer(A1/B1/C1), current src "
+                     "position is %s%s.\n",
+                     apiName, GetHardwareName(srcHwPos), GetTPositionSuffix(srcPos)));
 }
 
 template <typename T>
@@ -175,7 +176,7 @@ __aicore__ inline void CheckDataCopyTensor(
     const __gm__ char* apiName)
 {
     CheckDataCopyParamsCommon(intriParams, apiName);
-    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(dst, "dst", "A1 / B1 / C1 / VECIN", apiName);
+    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(dst, "dst", "L1 Buffer(A1/B1/C1)/UB(VECIN)", apiName);
     CheckTensorAlignment(dst, ONE_BLK_SIZE, "dst", apiName);
 }
 
@@ -186,7 +187,7 @@ __aicore__ inline void CheckDataCopyTensor(
 {
     (void)dst;
     CheckDataCopyParamsCommon(intriParams, apiName);
-    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(src, "src", "A1 / B1 / VECOUT", apiName);
+    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(src, "src", "L1 Buffer(A1/B1)/UB(VECOUT)", apiName);
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", apiName);
 }
 
@@ -217,14 +218,16 @@ __aicore__ inline void CheckDataCopyTensor(
         (srcHwPos == Hardware::L1), KERNEL_LOG_INTERNAL(
                                         KERNEL_ERROR,
                                         "Failed to check src tensor "
-                                        "route in %s, supported route is C1 -> C2, current src TPosition is %s.\n",
-                                        apiName, GetTPositionName(srcPos)));
+                                        "route in %s, supported route is L1 Buffer(C1)->BiasTable Buffer(C2), "
+                                        "current src position is %s%s.\n",
+                                        apiName, GetHardwareName(srcHwPos), GetTPositionSuffix(srcPos)));
     ASCENDC_DEBUG_ASSERT(
         (dstHwPos == Hardware::BIAS), KERNEL_LOG_INTERNAL(
                                           KERNEL_ERROR,
                                           "Failed to check dst tensor "
-                                          "route in %s, supported route is C1 -> C2, current dst TPosition is %s.\n",
-                                          apiName, GetTPositionName(dstPos)));
+                                          "route in %s, supported route is L1 Buffer(C1)->BiasTable Buffer(C2), "
+                                          "current dst position is %s%s.\n",
+                                          apiName, GetHardwareName(dstHwPos), GetTPositionSuffix(dstPos)));
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", apiName);
     CheckTensorAlignment(dst, 64, "dst", apiName);
 }
@@ -268,14 +271,15 @@ __aicore__ inline void CheckNd2NzRoute(
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
             "Failed to check src tensor "
-            "position in %s, supported positions are VECIN / VECCALC / VECOUT, current position is %s.\n",
-            apiName, GetTPositionName(srcPos)));
+            "position in %s, supported positions are UB(VECIN/VECCALC/VECOUT), current position is %s%s.\n",
+            apiName, GetHardwareName(srcHwPos), GetTPositionSuffix(srcPos)));
     ASCENDC_DEBUG_ASSERT(
         (dstHwPos == Hardware::L1), KERNEL_LOG_INTERNAL(
                                         KERNEL_ERROR,
                                         "Failed to check dst tensor "
-                                        "position in %s, supported positions are TSCM, current position is %s.\n",
-                                        apiName, GetTPositionName(dstPos)));
+                                        "position in %s, supported positions are L1 Buffer(TSCM), current position is "
+                                        "%s%s.\n",
+                                        apiName, GetHardwareName(dstHwPos), GetTPositionSuffix(dstPos)));
 }
 
 __aicore__ inline void CheckUbToL1Route(
@@ -287,15 +291,15 @@ __aicore__ inline void CheckUbToL1Route(
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
             "Failed to check src tensor "
-            "route in %s, supported route is VECIN/VECOUT -> TSCM, current src TPosition is %s.\n",
-            apiName, GetTPositionName(srcPos)));
+            "route in %s, supported route is UB(VECIN/VECOUT)->L1 Buffer(TSCM), current src position is %s%s.\n",
+            apiName, GetHardwareName(srcHwPos), GetTPositionSuffix(srcPos)));
     ASCENDC_DEBUG_ASSERT(
         (dstHwPos == Hardware::L1),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
             "Failed to check dst tensor "
-            "route in %s, supported route is VECIN/VECOUT -> TSCM, current dst TPosition is %s.\n",
-            apiName, GetTPositionName(dstPos)));
+            "route in %s, supported route is UB(VECIN/VECOUT)->L1 Buffer(TSCM), current dst position is %s%s.\n",
+            apiName, GetHardwareName(dstHwPos), GetTPositionSuffix(dstPos)));
 }
 
 template <typename T>
@@ -303,7 +307,7 @@ __aicore__ inline void CheckDataCopyTensor(
     const LocalTensor<T>& dst, const GlobalTensor<T>& src, const Nd2NzParams& intriParams, const __gm__ char* apiName)
 {
     CheckNd2NzParamsCommon(intriParams, apiName);
-    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(dst, "dst", "A1 / B1 / VECIN", apiName);
+    CheckTensorPhyPosition<Hardware::L1, Hardware::UB>(dst, "dst", "L1 Buffer(A1/B1)/UB(VECIN)", apiName);
     CheckTensorAlignment(dst, ONE_BLK_SIZE, "dst", apiName);
 }
 
@@ -333,17 +337,17 @@ __aicore__ inline void CheckDataCopyTensor(
     CheckNz2NdParamsCommon(intriParams, apiName);
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
     const bool isValidSrc = (srcHwPos == Hardware::UB || srcHwPos == Hardware::L1);
-    const __gm__ char* supportedPos = "VECOUT / A1 / B1";
+    const __gm__ char* supportedPos = "UB(VECOUT)/L1 Buffer(A1/B1)";
 #else
     const bool isValidSrc = (srcHwPos == Hardware::UB);
-    const __gm__ char* supportedPos = "VECOUT";
+    const __gm__ char* supportedPos = "UB(VECOUT)";
 #endif
     ASCENDC_DEBUG_ASSERT(
         (isValidSrc), KERNEL_LOG_INTERNAL(
                           KERNEL_ERROR,
                           "Failed to check src tensor route in %s, "
-                          "supported src TPositions are %s, current src TPosition is %s.\n",
-                          apiName, supportedPos, GetTPositionName(srcPos)));
+                          "supported src positions are %s, current src position is %s%s.\n",
+                          apiName, supportedPos, GetHardwareName(srcHwPos), GetTPositionSuffix(srcPos)));
     ASCENDC_DEBUG_ASSERT(
         (intriParams.dValue % BLOCK_CUBE == 0),
         KERNEL_LOG_INTERNAL(
@@ -447,8 +451,8 @@ __aicore__ inline void CheckGmToLocalPadTensor(
         (isValidDst), KERNEL_LOG_INTERNAL(
                           KERNEL_ERROR,
                           "Failed to check dst tensor route in %s, "
-                          "supported route is GM -> VECIN/VECOUT, current dst TPosition is %s.\n",
-                          apiName, GetTPositionName(dstPos)));
+                          "supported route is GM->UB(VECIN/VECOUT), current dst position is %s%s.\n",
+                          apiName, GetHardwareName(GetPhyType(dstPos)), GetTPositionSuffix(dstPos)));
     CheckTensorAlignment(dst, ONE_BLK_SIZE, "dst", apiName);
 }
 
@@ -462,8 +466,8 @@ __aicore__ inline void CheckLocalToGmPadTensor(
         (isValidSrc), KERNEL_LOG_INTERNAL(
                           KERNEL_ERROR,
                           "Failed to check src tensor route in %s, "
-                          "supported route is VECIN/VECOUT->GM, current src TPosition is %s.\n",
-                          apiName, GetTPositionName(srcPos)));
+                          "supported route is UB(VECIN/VECOUT)->GM, current src position is %s%s.\n",
+                          apiName, GetHardwareName(GetPhyType(srcPos)), GetTPositionSuffix(srcPos)));
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", apiName);
 }
 

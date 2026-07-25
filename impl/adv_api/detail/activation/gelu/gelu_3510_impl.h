@@ -271,8 +271,8 @@ __aicore__ inline void GeluImpl(const LocalTensor<T>& dstLocal, const LocalTenso
     }
     (void)highPerformance;
     static_assert(SupportType<T, half, float>(), "Gelu only support half/float data type on current device!");
-    CheckTensorPosition(dstLocal, "dstLocal", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcLocal, "srcLocal", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstLocal, "dstLocal", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcLocal, "srcLocal", "VECIN/VECOUT/VECCALC");
     CheckCalCount(count, "calCount", dstLocal, "dstLocal", "Gelu");
     CheckCalCount(count, "calCount", srcLocal, "srcLocal", "Gelu");
     if constexpr (highPrecision && sizeof(T) == sizeof(half)) {
@@ -293,7 +293,7 @@ __aicore__ inline void GeluImpl(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t count)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     GeluImpl<T, highPrecision, highPerformance>(dstLocal, srcLocal, count);
 }
 

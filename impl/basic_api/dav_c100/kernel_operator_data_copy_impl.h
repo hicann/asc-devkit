@@ -87,7 +87,7 @@ template <typename T>
 __aicore__ inline void DataCopyL12BTImpl(
     const uint64_t dst, __cbuf__ T* src, const uint16_t isEnableConv, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from C1 to C2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(C1) to L0C Buffer(C2)");
 }
 
 template <typename T>
@@ -296,7 +296,7 @@ __aicore__ inline void DataCopyGM2L1ND2NZImpl(__cbuf__ T* dst, __gm__ T* src, co
 template <typename T>
 __aicore__ inline void DataCopyL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from A1 / B1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L1 Buffer(A1/B1) to GM");
 }
 
 template <typename T>
@@ -470,7 +470,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from CO1 to CO2,"
+                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from L0C Buffer(CO1) to UB(CO2),"
                               " deqScale should be DEQ / VDEQ / DEQ16 / VDEQ16");
         });
     }
@@ -659,7 +659,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from CO1 to CO2,"
+                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from L0C Buffer(CO1) to UB(CO2),"
                               " deqScale should be DEQ / VDEQ / DEQ16 / VDEQ16");
         });
     }
@@ -850,7 +850,7 @@ template <typename T, typename U>
 __aicore__ inline void DataCopyL12L0CImpl(
     __cc__ T* dst, __cbuf__ U* src, const DataCopyParams& intriParams, const DataCopyEnhancedParams& enhancedParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from A1 / B1 to CO1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L1 Buffer(A1/B1) to L0C Buffer(CO1)");
 }
 
 /* **************************************************************************************************
@@ -900,7 +900,7 @@ __aicore__ inline void DataCopyL0C2UBImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "In DataCopy from CO1 to CO2, blockMode should be "
+                KERNEL_ERROR, "In DataCopy from L0C Buffer(CO1) to UB(CO2), blockMode should be "
                               "BLOCK_MODE_MATRIX / BLOCK_MODE_VECTOR");
         });
     }
@@ -917,7 +917,7 @@ __aicore__ inline void DataCopyUB2L0CImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "In DataCopy from CO2 to CO1, blockMode should be "
+                KERNEL_ERROR, "In DataCopy from UB(CO2) to L0C Buffer(CO1), blockMode should be "
                               "BLOCK_MODE_MATRIX / BLOCK_MODE_VECTOR");
         });
     }
@@ -952,7 +952,7 @@ __aicore__ inline void DataCopyPadGm2UBImpl(
     __ubuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const uint16_t rightPadding,
     const uint16_t leftPadding, const T paddingValue = 0)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to VECIN / VECOUT");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to UB(VECIN/VECOUT)");
 }
 
 template <typename T>
@@ -960,19 +960,19 @@ __aicore__ inline void DataCopyPadGm2UBImpl(
     __ubuf__ T* dst, __gm__ T* src, const DataCopyExtParams& intriParams, const uint16_t rightPadding,
     const uint16_t leftPadding, const T paddingValue = 0)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to VECIN / VECOUT");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to UB(VECIN/VECOUT)");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadUB2GMImpl(__gm__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadUB2GMImpl(__gm__ T* dst, __ubuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to GM");
 }
 
 template <typename T>
@@ -1034,25 +1034,25 @@ __aicore__ inline void DataCopyGM2UBND2NZImpl(__ubuf__ T* dst, __gm__ T* src, co
 template <typename T>
 __aicore__ inline void DataCopyPadUB2L1Impl(__cbuf__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to TSCM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to L1 Buffer(TSCM)");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadUB2L1Impl(__cbuf__ T* dst, __ubuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to TSCM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to L1 Buffer(TSCM)");
 }
 
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to L1 Buffer(A1/B1)");
 }
 
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2GMImpl(__gm__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to GM");
 }
 
 #pragma begin_pipe(V)
@@ -1083,27 +1083,27 @@ __aicore__ inline __in_pipe__(MTE1) __out_pipe__(MTE1) void DataCopyL12UBIntf(
 template <typename T>
 __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from A1/B1/C1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from L1 Buffer(A1/B1)/UB(C1) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from A1/B1/C1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from L1 Buffer(A1/B1)/UB(C1) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadGM2L1Impl(
     __cbuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const DataCopyPadParams& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to A1/B1/C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to L1 Buffer(A1/B1)/UB(C1)");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadGM2L1Impl(
     __cbuf__ T* dst, __gm__ T* src, const DataCopyExtParams& intriParams, const DataCopyPadExtParams<T>& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to A1/B1/C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to L1 Buffer(A1/B1)/UB(C1)");
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_DATA_COPY_IMPL_H

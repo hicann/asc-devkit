@@ -219,9 +219,9 @@ __aicore__ inline void HypotImpl(
         return;
     }
 
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Hypot");
-    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN / VECCALC / VECOUT", "Hypot");
-    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN / VECCALC / VECOUT", "Hypot");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Hypot");
+    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN/VECCALC/VECOUT", "Hypot");
+    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN/VECCALC/VECOUT", "Hypot");
     ASCENDC_ASSERT((calCount <= src0Tensor.GetSize()), {
         KERNEL_LOG(
             KERNEL_ERROR, "calCount is %u, which should not be larger than src0Tensor length %u", calCount,
@@ -254,7 +254,7 @@ __aicore__ inline void HypotImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Hypot");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Hypot");
 
     HypotImpl(dstTensor, src0Tensor, src1Tensor, calCount);
 }

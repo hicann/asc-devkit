@@ -333,7 +333,7 @@ public:                                                                         
         constexpr auto pool = AscendC::GetPhyType(poolPos);                              \
         static_assert(                                                                   \
             (pool == AscendC::Hardware::L1 || pool == AscendC::Hardware::UB),            \
-            "TbufPool Position should be one of A1/B1/C1/VECIN/VECOUT/VECCALC");         \
+            "TbufPool Position should be L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT/VECCALC)"); \
         ResetPool();                                                                     \
         tBufPoolImpl.bufIdPool_ = 0;                                                     \
         tBufPoolImpl.availableIdMask_ = 0;                                               \
@@ -401,7 +401,7 @@ public:                                                                         
         constexpr auto pool = AscendC::GetPhyType(poolPos);                              \
         static_assert(                                                                   \
             (pool == AscendC::Hardware::L1 || pool == AscendC::Hardware::UB),            \
-            "TbufPool Position should be one of A1/B1/C1/VECIN/VECOUT/VECCALC");         \
+            "TbufPool Position should be L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT/VECCALC)"); \
         ResetPool();                                                                     \
         tBufPoolImpl.isReset_ = true;                                                    \
     }                                                                                    \

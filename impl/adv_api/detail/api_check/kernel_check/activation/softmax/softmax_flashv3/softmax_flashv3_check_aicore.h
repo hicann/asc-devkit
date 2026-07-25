@@ -48,16 +48,16 @@ public:
         const LocalTensor<float>& sharedTmpBuffer, const SoftMaxTiling& tiling, const SoftMaxParams& params)
     {
         CheckTensorPos<float>(
-            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<U>(meanTensor, Hardware::UB, "meanTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<U>(expSumTensor, Hardware::UB, "expSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<U>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<T>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<U>(inMeanTensor, Hardware::UB, "inMeanTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<U>(inexpSumTensor, Hardware::UB, "inexpSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
-        CheckTensorPos<U>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV3");
+            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<U>(meanTensor, Hardware::UB, "meanTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<U>(expSumTensor, Hardware::UB, "expSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<U>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<T>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<U>(inMeanTensor, Hardware::UB, "inMeanTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<U>(inexpSumTensor, Hardware::UB, "inexpSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
+        CheckTensorPos<U>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV3");
         ASCENDC_ASSERT((params.srcK * sizeof(T) % ONE_BLK_SIZE == 0 || HighLevelAPIParametersPrint), {
             KERNEL_LOG(KERNEL_ERROR, "[SoftmaxFlashV3] The params.srcK is %u, should be 32B aligned.", params.srcK);
         });

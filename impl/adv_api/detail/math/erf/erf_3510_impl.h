@@ -283,9 +283,9 @@ __aicore__ inline void ErfCheckParams(
     const uint32_t calCount)
 {
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Erf");
-    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Erf");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Erf");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Erf");
+    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Erf");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Erf");
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Erf");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Erf");
 }

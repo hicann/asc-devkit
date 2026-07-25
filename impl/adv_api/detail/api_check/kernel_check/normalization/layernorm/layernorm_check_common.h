@@ -91,7 +91,7 @@ public:
 
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(output, outputMean, outputVariance, inputX, gamma, beta, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(output, outputMean, outputVariance, gamma, sharedTmpBuffer));
@@ -193,7 +193,7 @@ public:
 
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(output, outputMean, outputRstd, inputX, gamma, beta, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(output, outputMean, outputRstd, gamma, sharedTmpBuffer));

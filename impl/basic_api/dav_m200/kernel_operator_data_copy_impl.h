@@ -61,7 +61,7 @@ template <typename T>
 __aicore__ inline void DataCopyGM2L1Impl(__cbuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from GM to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from GM to L1 Buffer(A1/B1)");
 #else
     CheckDataCopyParams(intriParams.blockCount, intriParams.blockLen);
     if constexpr (g_gm_overflow_check) {
@@ -95,7 +95,7 @@ template <typename T>
 __aicore__ inline void DataCopyUB2UBImpl(__ubuf__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from VECIN to VECCALC, VECCALC to VECOUT");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(VECIN) to UB(VECCALC), UB(VECCALC) to UB(VECOUT)");
 #else
     CheckDataCopyParams(intriParams.blockCount, intriParams.blockLen);
     ASCENDC_DEBUG_ASSERT(
@@ -115,7 +115,7 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyUB2L1Impl(
     __cbuf__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from VECIN / VECCALC / VECOUT to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(VECIN/VECCALC/VECOUT) to L1 Buffer(A1/B1)");
 #else
     CheckDataCopyParams(intriParams.blockCount, intriParams.blockLen);
     ASCENDC_DEBUG_ASSERT(
@@ -131,7 +131,7 @@ template <typename T>
 __aicore__ inline void DataCopyL12UBImpl(__ubuf__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from A1 / B1 to VECIN / VECCALC / VECOUT");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L1 Buffer(A1/B1) to UB(VECIN/VECCALC/VECOUT)");
 #else
     CheckDataCopyParams(intriParams.blockCount, intriParams.blockLen);
     ASCENDC_DEBUG_ASSERT(
@@ -146,14 +146,14 @@ __aicore__ inline void DataCopyL12UBImpl(__ubuf__ T* dst, __cbuf__ T* src, const
 template <typename T>
 __aicore__ inline void DataCopyUB2L1ND2NZImpl(__cbuf__ T* dst, __ubuf__ T* src, const Nd2NzParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy with Nd2NzParams from VECIN / VECCALC / VECOUT to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy with Nd2NzParams from UB(VECIN/VECCALC/VECOUT) to L1 Buffer(A1/B1)");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyL12BTImpl(
     const uint64_t dst, __cbuf__ T* src, const uint16_t isEnableConv, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from C1 to C2");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(C1) to L0C Buffer(C2)");
 }
 
 template <typename T>
@@ -362,7 +362,7 @@ __aicore__ inline void DataCopyGM2L1ND2NZImpl(__cbuf__ T* dst, __gm__ T* src, co
 template <typename T>
 __aicore__ inline void DataCopyL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from A1 / B1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L1 Buffer(A1/B1) to GM");
 }
 
 template <typename T>
@@ -483,7 +483,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -512,7 +512,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type float");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type float");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -535,7 +535,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -558,7 +558,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type uint32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type uint32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -575,7 +575,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type float to half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type float to half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -598,7 +598,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -622,7 +622,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from CO1 to CO2,"
+                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from L0C Buffer(CO1) to UB(CO2),"
                               " deqScale should be DEQ / VDEQ / DEQ16 / VDEQ16");
         });
     }
@@ -635,7 +635,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to int8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to int8_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -668,7 +668,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to uint8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to uint8_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -701,7 +701,7 @@ __aicore__ inline void DataCopyMatrixL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to int16_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to int16_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -735,7 +735,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -764,7 +764,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type float");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type float");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -787,7 +787,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -810,7 +810,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type uint32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type uint32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -827,7 +827,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type float to half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type float to half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -850,7 +850,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -874,7 +874,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from CO1 to CO2,"
+                KERNEL_ERROR, "When src is int32_t, dst is half in DataCopy from L0C Buffer(CO1) to UB(CO2),"
                               " deqScale should be DEQ / VDEQ / DEQ16 / VDEQ16");
         });
     }
@@ -887,7 +887,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to int8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to int8_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -920,7 +920,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to uint8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to uint8_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -953,7 +953,7 @@ __aicore__ inline void DataCopyVectorL0C2UBImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int32_t to int16_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int32_t to int16_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
@@ -988,7 +988,7 @@ __aicore__ inline void DataCopyMatrixUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1005,7 +1005,7 @@ __aicore__ inline void DataCopyMatrixUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type float");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type float");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1022,7 +1022,7 @@ __aicore__ inline void DataCopyMatrixUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type half to float");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type half to float");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1039,7 +1039,7 @@ __aicore__ inline void DataCopyMatrixUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type int32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type int32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1056,7 +1056,7 @@ __aicore__ inline void DataCopyMatrixUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type uint32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type uint32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1074,7 +1074,7 @@ __aicore__ inline void DataCopyVectorUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type half");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type half");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1091,7 +1091,7 @@ __aicore__ inline void DataCopyVectorUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type float");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type float");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1108,7 +1108,7 @@ __aicore__ inline void DataCopyVectorUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type half to float");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type half to float");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1125,7 +1125,7 @@ __aicore__ inline void DataCopyVectorUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type int32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type int32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1142,7 +1142,7 @@ __aicore__ inline void DataCopyVectorUB2L0CImpl(
     const DataCopyEnhancedParams& enhancedParams)
 {
 #if defined(__DAV_M200_VEC__)
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type uint32_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type uint32_t");
 #else
     ASCENDC_DEBUG_ASSERT(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
@@ -1157,7 +1157,7 @@ template <typename T, typename U>
 __aicore__ inline void DataCopyL12L0CImpl(
     __cc__ T* dst, __cbuf__ U* src, const DataCopyParams& intriParams, const DataCopyEnhancedParams& enhancedParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from A1 / B1 to CO1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L1 Buffer(A1/B1) to L0C Buffer(CO1)");
 }
 
 /* **************************************************************************************************
@@ -1168,7 +1168,7 @@ __aicore__ inline void DataCopyL0C2UBImpl(
     __ubuf__ int8_t* dst, __cc__ int8_t* src, const DataCopyParams& intriParams,
     const DataCopyEnhancedParams& enhancedParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to CO2 with type int8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to UB(CO2) with type int8_t");
 }
 
 // ------------  ------------
@@ -1225,7 +1225,7 @@ __aicore__ inline void DataCopyL0C2UBImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "In DataCopy from CO1 to CO2, blockMode should be "
+                KERNEL_ERROR, "In DataCopy from L0C Buffer(CO1) to UB(CO2), blockMode should be "
                               "BLOCK_MODE_MATRIX / BLOCK_MODE_VECTOR");
         });
     }
@@ -1235,7 +1235,7 @@ __aicore__ inline void DataCopyUB2L0CImpl(
     __cc__ int8_t* dst, __ubuf__ int8_t* src, const DataCopyParams& intriParams,
     const DataCopyEnhancedParams& enhancedParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO2 to CO1 with type int8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from UB(CO2) to L0C Buffer(CO1) with type int8_t");
 }
 
 template <typename T, typename U>
@@ -1252,7 +1252,7 @@ __aicore__ inline void DataCopyUB2L0CImpl(
     } else {
         ASCENDC_ASSERT(false, {
             KERNEL_LOG(
-                KERNEL_ERROR, "In DataCopy from CO2 to CO1, blockMode should be "
+                KERNEL_ERROR, "In DataCopy from UB(CO2) to L0C Buffer(CO1), blockMode should be "
                               "BLOCK_MODE_MATRIX / BLOCK_MODE_VECTOR");
         });
     }
@@ -1294,7 +1294,7 @@ template <typename T>
 DataCopyPadGm2UBImpl(
     __ubuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const DataCopyPadParams& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to VECIN / VECOUT");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to UB(VECIN/VECOUT)");
 }
 
 template <typename T>
@@ -1303,7 +1303,7 @@ template <typename T>
 DataCopyPadGm2UBImpl(
     __ubuf__ T* dst, __gm__ T* src, const DataCopyExtParams& intriParams, const DataCopyPadExtParams<T>& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to VECIN / VECOUT");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to UB(VECIN/VECOUT)");
 }
 
 template <typename T>
@@ -1311,7 +1311,7 @@ template <typename T>
              "Please check your code!")]] __aicore__ inline void
 DataCopyPadUB2GMImpl(__gm__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to GM");
 }
 
 template <typename T>
@@ -1319,7 +1319,7 @@ template <typename T>
              "Please check your code!")]] __aicore__ inline void
 DataCopyPadUB2GMImpl(__gm__ T* dst, __ubuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to GM");
 }
 
 template <typename T>
@@ -1388,7 +1388,7 @@ template <typename T>
              "Please check your code!")]] __aicore__ inline void
 DataCopyPadUB2L1Impl(__cbuf__ T* dst, __ubuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to TSCM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to L1 Buffer(TSCM)");
 }
 
 template <typename T>
@@ -1396,19 +1396,19 @@ template <typename T>
              "Please check your code!")]] __aicore__ inline void
 DataCopyPadUB2L1Impl(__cbuf__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from VECIN / VECOUT to TSCM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from UB(VECIN/VECOUT) to L1 Buffer(TSCM)");
 }
 
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to A1 / B1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to L1 Buffer(A1/B1)");
 }
 
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2GMImpl(__gm__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from CO1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopy from L0C Buffer(CO1) to GM");
 }
 
 template <typename T>
@@ -1439,27 +1439,27 @@ __aicore__ inline void DataCopyUB2UBIntf(
 template <typename T>
 __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from A1/B1/C1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from L1 Buffer(A1/B1)/UB(C1) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from A1/B1/C1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from L1 Buffer(A1/B1)/UB(C1) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadGM2L1Impl(
     __cbuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const DataCopyPadParams& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to A1/B1/C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to L1 Buffer(A1/B1)/UB(C1)");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadGM2L1Impl(
     __cbuf__ T* dst, __gm__ T* src, const DataCopyExtParams& intriParams, const DataCopyPadExtParams<T>& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to A1/B1/C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to L1 Buffer(A1/B1)/UB(C1)");
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_DATA_COPY_IMPL_H

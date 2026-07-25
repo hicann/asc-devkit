@@ -73,8 +73,8 @@ __aicore__ inline void AcoshImpl(
         return;
     }
     static_assert(SupportType<T, half, float>(), "Acosh only support half/float data type on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
 
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Acosh");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Acosh");
@@ -89,7 +89,7 @@ __aicore__ inline void AcoshImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     AcoshImpl<T, isReuseSource>(dstTensor, srcTensor, calCount);
 }
 
@@ -97,7 +97,7 @@ template <typename T, bool isReuseSource = false>
 __aicore__ inline void AcoshImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     AcoshImpl<T, isReuseSource>(dstTensor, srcTensor, srcTensor.GetSize());
 }
 

@@ -83,8 +83,8 @@ __aicore__ inline void AsinhImpl(
         return;
     }
     static_assert(SupportType<T, half, float>(), "Asinh only support half/float data type on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Asinh");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Asinh");
     constexpr int32_t oneRepElm = static_cast<int32_t>(GetVecLen() / sizeof(float));
@@ -104,7 +104,7 @@ __aicore__ inline void AsinhImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     AsinhImpl<T, isReuseSource>(dstTensor, srcTensor, calCount);
 }
 

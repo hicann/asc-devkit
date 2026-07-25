@@ -65,9 +65,9 @@ __aicore__ inline void ClampMaxImpl(
 
     static_assert(SupportType<T, float, half>(), "ClampMax only support half/float data type on current device");
 
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
 
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "ClampMax");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "ClampMax");
@@ -94,9 +94,9 @@ __aicore__ inline void ClampMinImpl(
 
     static_assert(SupportType<T, float, half>(), "ClampMin only support half/float data type on current device");
 
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
 
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "ClampMin");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "ClampMin");

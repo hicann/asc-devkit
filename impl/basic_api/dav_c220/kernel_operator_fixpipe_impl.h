@@ -50,7 +50,8 @@ __aicore__ inline void SetFixPipeConfigImpl(const LocalTensor<T>& pre, bool isUn
 {
     if ASCEND_IS_AIC {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-        CheckTensorPhyPosition<Hardware::FIXBUF, Hardware::L0C>(pre, "pre", "C2PIPE2GM / CO1", "SetFixPipeConfig");
+        CheckTensorPhyPosition<Hardware::FIXBUF, Hardware::L0C>(
+            pre, "pre", "Fixpipe Buffer(C2PIPE2GM)/L0C Buffer(CO1)", "SetFixPipeConfig");
 #endif
         uint64_t config = 0;
         if constexpr (setRelu) {
@@ -209,7 +210,7 @@ template <typename T>
 __aicore__ inline void FixpipeL0C2L1Impl(__cbuf__ T* dst, __cc__ T* src, FixpipeInfoParams<T>& fixpipeInfo)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "Fixpipe from CO1 to A1 / B1 with src and dst both float / int32_t");
+    ReportNotSupport(false, "Fixpipe from L0C Buffer(CO1) to L1 Buffer(A1/B1) with src and dst both float / int32_t");
 #endif
 }
 
@@ -217,7 +218,7 @@ template <typename T, typename U>
 __aicore__ inline void FixpipeL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, FixpipeInfoParams<U>& fixpipeInfo)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport((!fixpipeInfo.nz2ndEn), "Fixpipe from CO1 to A1 / B1 with nz2ndEn = true");
+    ReportNotSupport((!fixpipeInfo.nz2ndEn), "Fixpipe from L0C Buffer(CO1) to L1 Buffer(A1/B1) with nz2ndEn = true");
 #endif
     /*
     make code for vector quant mode:

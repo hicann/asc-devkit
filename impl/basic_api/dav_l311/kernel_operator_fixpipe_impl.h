@@ -229,7 +229,7 @@ __aicore__ inline void FixpipeL0cToL1(
         (!(intriParams.isChannelSplit)),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "Failed to check isChannelSplit in Fixpipe, when src position is "
-                          "CO1 and dst position is C1, isChannelSplit must be set as false \n"));
+                          "L0C Buffer(CO1) and dst position is L1 Buffer(C1), isChannelSplit must be set as false \n"));
 
     uint16_t cburstNum = fixpipeTiling.nSize / BLOCK_CUBE;
     // Loop1_src_stride in unit of C0_size

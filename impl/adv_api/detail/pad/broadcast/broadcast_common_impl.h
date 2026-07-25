@@ -279,8 +279,8 @@ __aicore__ inline void BroadcastImpl(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const uint32_t* dstShape, const uint32_t* srcShape,
     BroadcastTiling* tiling)
 {
-    CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Broadcast");
-    CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Broadcast");
+    CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Broadcast");
+    CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Broadcast");
     static_assert(
         (constRank == -1) || (constRank <= 9 && constRank > 0),
         "constRank only supports -1 and the range between 1 and 9");

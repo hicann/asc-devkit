@@ -649,7 +649,7 @@ __aicore__ inline void SetDeqScale(const LocalTensor<T>& vdeq, const VdeqInfo& v
                           "current api support dtype combination is vdeq: uint64_t");
     });
     CheckTensorAlign<T>(vdeq, ONE_BLK_SIZE, "vdeq", "SetDeqScale");
-    CheckTensorPos<T>(vdeq, Hardware::UB, "vdeq", "VECIN / VECCALC / VECOUT", "SetDeqScale");
+    CheckTensorPos<T>(vdeq, Hardware::UB, "vdeq", "VECIN/VECCALC/VECOUT", "SetDeqScale");
 #endif
     SetDeqScaleImpl<T>(vdeq, vdeqInfo);
 }
@@ -666,8 +666,8 @@ template <typename T, RoundMode roundMode>
 __aicore__ inline void Truncate(const LocalTensor<T>& dst, const LocalTensor<T>& src, const uint32_t count)
 {
     using PrimType = PrimT<T>;
-    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN / VECCALC / VECOUT", "Truncate");
-    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN / VECCALC / VECOUT", "Truncate");
+    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN/VECCALC/VECOUT", "Truncate");
+    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN/VECCALC/VECOUT", "Truncate");
     ASCENDC_ASSERT((count <= src.GetSize() && count <= dst.GetSize()), {
         KERNEL_LOG(KERNEL_ERROR, "count is %u, which should not larger than tensor size of dst / src", count);
     });

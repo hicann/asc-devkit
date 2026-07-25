@@ -33,8 +33,8 @@ __aicore__ inline void CheckTensorPosition(
             KERNEL_LOG(
                 KERNEL_ERROR,
                 "Failed to check tensor position of %s, current api support positions are %s, current position is %s.",
-                tensorInfo, supportPosInfo,
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(checkTensor.GetPosition())).c_str());
+                tensorInfo, GetPositionDisplay(Hardware::UB, supportPosInfo).c_str(),
+                GetPositionDisplay(static_cast<TPosition>(checkTensor.GetPosition())).c_str());
         });
 #endif
 }

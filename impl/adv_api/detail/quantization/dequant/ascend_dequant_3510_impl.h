@@ -74,9 +74,9 @@ __aicore__ inline void DequantPerchannelImpl(
     const LocalTensor<half>& dstTensor, const LocalTensor<int32_t>& srcTensor, const LocalTensor<uint64_t>& deqScale,
     DequantParams& params)
 {
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(deqScale, "deqScale", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(deqScale, "deqScale", "VECIN/VECOUT/VECCALC");
     __ubuf__ half* dstUb = (__ubuf__ half*)dstTensor.GetPhyAddr();
     __ubuf__ int32_t* srcUb = (__ubuf__ int32_t*)srcTensor.GetPhyAddr();
     __ubuf__ float* scaleUb = reinterpret_cast<__ubuf__ float*>(deqScale.GetPhyAddr());
@@ -137,9 +137,9 @@ __aicore__ inline void DequantPerchannelImpl(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<int32_t>& srcTensor, const LocalTensor<scaleT>& deqScale,
     DequantParams& params)
 {
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(deqScale, "deqScale", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(deqScale, "deqScale", "VECIN/VECOUT/VECCALC");
     __ubuf__ dstT* dstUb = (__ubuf__ dstT*)dstTensor.GetPhyAddr();
     __ubuf__ int32_t* srcUb = (__ubuf__ int32_t*)srcTensor.GetPhyAddr();
     __ubuf__ scaleT* scaleUb = (__ubuf__ scaleT*)deqScale.GetPhyAddr();
@@ -194,8 +194,8 @@ __aicore__ inline void DequantPertensorImpl(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<int32_t>& srcTensor, const scaleT deqScale,
     DequantParams& params)
 {
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     __ubuf__ dstT* dstUb = (__ubuf__ dstT*)dstTensor.GetPhyAddr();
     __ubuf__ int32_t* srcUb = (__ubuf__ int32_t*)srcTensor.GetPhyAddr();
     DequantPertensorVFImpl<dstT, scaleT, mode>(dstUb, srcUb, deqScale, params);
@@ -584,10 +584,10 @@ __aicore__ inline void AscendDequantImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN/VECOUT/VECCALC");
     static_assert(SupportType<srcT, int32_t, float>(), "AscendDequant only support int32_t/float input dtype");
     static_assert(
         SupportType<dstT, bfloat16_t, half, float>(), "AscendDequant only support bfloat16_t/half/float output dtype");

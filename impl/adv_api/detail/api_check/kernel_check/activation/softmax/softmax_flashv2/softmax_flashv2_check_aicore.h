@@ -44,14 +44,14 @@ public:
         const SoftMaxShapeInfo& softmaxShapeInfo)
     {
         CheckTensorPos<float>(
-            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T1>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T2>(sumTensor, Hardware::UB, "sumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T2>(maxTensor, Hardware::UB, "maxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T1>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T1>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T2>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
-        CheckTensorPos<T2>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN / VECCALC / VECOUT", "SoftmaxFlashV2");
+            sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T1>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T2>(sumTensor, Hardware::UB, "sumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T2>(maxTensor, Hardware::UB, "maxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T1>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T1>(expMaxTensor, Hardware::UB, "expMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T2>(inSumTensor, Hardware::UB, "inSumTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
+        CheckTensorPos<T2>(inMaxTensor, Hardware::UB, "inMaxTensor", "VECIN/VECCALC/VECOUT", "SoftmaxFlashV2");
         ASCENDC_ASSERT((softmaxShapeInfo.srcK * sizeof(T1) % ONE_BLK_SIZE == 0), {
             KERNEL_LOG(KERNEL_ERROR, "srcK should be 32B aligned, current srcK is %u", softmaxShapeInfo.srcK);
         });

@@ -36,7 +36,7 @@ public:
 public:
     __aicore__ inline void VerifyingParameters(
         const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& sharedTmpBuffer,
-        const T scalar, const uint32_t count){};
+        const T scalar, const uint32_t count) {};
 };
 
 template <typename T, bool isReuseSource = false>
@@ -48,7 +48,7 @@ public:
 public:
     __aicore__ inline void VerifyingParameters(
         const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& sharedTmpBuffer,
-        const T scalar, const uint32_t count){};
+        const T scalar, const uint32_t count) {};
 };
 
 template <typename T, typename U, typename S, bool isReuseSource = false>
@@ -77,7 +77,8 @@ public:
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src, min, max));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src, min, max),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, min));
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, max));
@@ -86,7 +87,8 @@ public:
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src, min));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src, min),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, min));
         } else if constexpr (TypeUtils::IsLocalTensorType<S>() && TypeUtils::IsInnerDefaultType<U>()) {
@@ -94,7 +96,8 @@ public:
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src, max));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src, max),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, max));
         } else {
@@ -102,7 +105,8 @@ public:
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(dst, src),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
             MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src));
         }
     };

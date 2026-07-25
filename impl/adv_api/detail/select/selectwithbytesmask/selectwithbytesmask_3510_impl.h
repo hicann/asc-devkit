@@ -120,10 +120,10 @@ __aicore__ inline __inout_pipe__(V) void SelectWithBytesMaskImpl(
     static_assert(
         SupportType<U, bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t>(),
         "Select do not support this type on current device");
-    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN / VECCALC / VECOUT", "Select");
-    CheckTensorPos<T>(src0, Hardware::UB, "src", "VECIN / VECCALC / VECOUT", "Select");
-    CheckTensorPos<U>(mask, Hardware::UB, "mask", "VECIN / VECCALC / VECOUT", "Select");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Select");
+    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN/VECCALC/VECOUT", "Select");
+    CheckTensorPos<T>(src0, Hardware::UB, "src", "VECIN/VECCALC/VECOUT", "Select");
+    CheckTensorPos<U>(mask, Hardware::UB, "mask", "VECIN/VECCALC/VECOUT", "Select");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Select");
     ASCENDC_ASSERT((info.srcLastAxis * sizeof(T) % ONE_BLK_SIZE == 0), {
         KERNEL_LOG(KERNEL_ERROR, "srcLastAxis should be 32B aligned, current srcLastAxis is %u", info.srcLastAxis);
     });

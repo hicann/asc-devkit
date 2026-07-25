@@ -79,8 +79,7 @@ __aicore__ inline void SimpleSoftMaxImpl(
 {
 #if defined(__NPU_ARCH__) && \
     (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-    CheckTensorPos<uint8_t>(
-        sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "SimpleSoftMax");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "SimpleSoftMax");
 #endif
     auto workLocal = sharedTmpBuffer.ReinterpretCast<float>();
     SimpleSoftMaxImpl<T1, T2, isReuseSource, isBasicBlock, isDataFormatNZ, config>(

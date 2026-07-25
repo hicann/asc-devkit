@@ -109,9 +109,9 @@ __aicore__ inline void ExpImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(dstLocal, "dstLocal", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcLocal, "srcLocal", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(dstLocal, "dstLocal", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcLocal, "srcLocal", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", dstLocal, "dstLocal", "Exp");
     CheckCalCount(calCount, "calCount", srcLocal, "srcLocal", "Exp");
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");

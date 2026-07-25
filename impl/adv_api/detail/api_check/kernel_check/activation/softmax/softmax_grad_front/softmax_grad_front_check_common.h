@@ -118,7 +118,7 @@ public:
 #endif
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dstTensor, gradTensor, srcTensor, sharedTmpBuffer),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
 
         CheckSoftmaxGradFrontParamsClass::CheckSoftmaxGradFrontParams<T, isBasicBlock, isDataFormatNZ>(
             dstTensor, gradTensor, srcTensor, sharedTmpBuffer, tiling, softmaxShapeInfo);

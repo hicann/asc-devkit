@@ -212,8 +212,8 @@ __aicore__ inline void TanImpl(
         return;
     }
 
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
 
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Tan");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Tan");
@@ -233,7 +233,7 @@ __aicore__ inline void TanImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
 
     TanImpl(dstTensor, srcTensor, calCount);
 }

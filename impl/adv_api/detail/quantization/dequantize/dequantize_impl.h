@@ -240,11 +240,11 @@ template <typename DstT, typename SrcT, typename ScaleT, typename OffsetT>
 __aicore__ inline void CheckDequantizeTensorPos(
     const LocalTensor<DstT>& dstTensor, const LocalTensor<SrcT>& srcTensor, const ScaleT& scale, const OffsetT& offset)
 {
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     if constexpr (TypeUtils::IsLocalTensorType<ScaleT, OffsetT>()) {
-        CheckTensorPosition(scale, "scale", "VECIN, VECOUT, VECCALC");
-        CheckTensorPosition(offset, "offset", "VECIN, VECOUT, VECCALC");
+        CheckTensorPosition(scale, "scale", "VECIN/VECOUT/VECCALC");
+        CheckTensorPosition(offset, "offset", "VECIN/VECOUT/VECCALC");
     }
 }
 
@@ -254,7 +254,7 @@ __aicore__ inline void DequantizeImpl(
     const LocalTensor<uint8_t>& sharedTmpBuffer, const DequantizeParams& params)
 {
     CheckDequantizeTensorPos(dstTensor, srcTensor, scale, offset);
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     if constexpr (config.policy == DequantizePolicy::PER_TENSOR) {
         DequantizePerTensorImpl<config>(dstTensor, srcTensor, scale, offset, sharedTmpBuffer, params);
     } else if constexpr (config.policy == DequantizePolicy::PER_CHANNEL) {

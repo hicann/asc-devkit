@@ -90,8 +90,8 @@ __aicore__ inline void LoadDataImpl(
 
     if constexpr (Src != TPosition::A1 && Src != TPosition::A2) {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1", "LoadData with LoadDataBitModeParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(A1/B1)", "LoadData with LoadDataBitModeParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     };
     if constexpr (Dst == TPosition::A2) {
         LoadData2DL12L0ACal((__ca__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
@@ -99,8 +99,8 @@ __aicore__ inline void LoadDataImpl(
         LoadData2DL12L0BCal((__cb__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A2 / B2", "LoadData with LoadData2DParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L0A Buffer(A2)/L0B Buffer(B2)", "LoadData with LoadData2DParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 #endif
@@ -207,7 +207,7 @@ __aicore__ inline void LoadDataImpl(
     const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx,
     const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
 {
-    CheckTensorPos<T>(src, Hardware::L1, "src", "A1 / B1", "LoadData with LoadData2DParamsV2");
+    CheckTensorPos<T>(src, Hardware::L1, "src", "A1/B1", "LoadData with LoadData2DParamsV2");
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A) {
         LoadData2DL12L0ACal(
@@ -246,8 +246,8 @@ __aicore__ inline __inout_pipe__(MTE2) void LoadDataImpl(
             (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__gm__ PrimT<T>*)src.GetPhyAddr(), loadDataParams, cacheMode);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / A2 / B2", "LoadData with LoadData2DParamsV2",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/L0A Buffer(A2)/L0B Buffer(B2)", "LoadData with LoadData2DParamsV2",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 #else
     if (dstScope == Hardware::L0A) {

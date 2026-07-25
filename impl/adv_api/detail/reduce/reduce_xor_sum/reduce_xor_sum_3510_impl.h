@@ -79,11 +79,10 @@ __aicore__ inline void ReduceXorSumCheckParams(
     LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
 {
     static_assert(std::is_same<T, int16_t>::value, "ReduceXorSum only support int16_t data type on current device!");
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "ReduceXorSum");
-    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN / VECCALC / VECOUT", "ReduceXorSum");
-    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN / VECCALC / VECOUT", "ReduceXorSum");
-    CheckTensorPos<uint8_t>(
-        sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "ReduceXorSum");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "ReduceXorSum");
+    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN/VECCALC/VECOUT", "ReduceXorSum");
+    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN/VECCALC/VECOUT", "ReduceXorSum");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "ReduceXorSum");
     CheckCalCount(calCount, "calCount", src0Tensor, "src0Tensor", "ReduceXorSum");
     CheckCalCount(calCount, "calCount", src1Tensor, "src1Tensor", "ReduceXorSum");
 }

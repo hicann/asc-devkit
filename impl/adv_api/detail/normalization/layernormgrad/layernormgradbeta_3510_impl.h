@@ -105,12 +105,12 @@ __aicore__ inline void LayerNormGradBetaCheckParams(
     const LocalTensor<T>& inputDy, const LocalTensor<uint8_t>& sharedTmpBuffer, const LayerNormGradBetaTiling& tiling)
 {
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");
-    CheckTensorPos<T>(outputPdGamma, Hardware::UB, "outputPdGamma", "VECIN / VECCALC / VECOUT", "LayerNormGradBeta");
-    CheckTensorPos<T>(outputPdBeta, Hardware::UB, "outputPdBeta", "VECIN / VECCALC / VECOUT", "LayerNormGradBeta");
-    CheckTensorPos<T>(resForGamma, Hardware::UB, "resForGamma", "VECIN / VECCALC / VECOUT", "LayerNormGradBeta");
-    CheckTensorPos<T>(inputDy, Hardware::UB, "inputDy", "VECIN / VECCALC / VECOUT", "LayerNormGradBeta");
+    CheckTensorPos<T>(outputPdGamma, Hardware::UB, "outputPdGamma", "VECIN/VECCALC/VECOUT", "LayerNormGradBeta");
+    CheckTensorPos<T>(outputPdBeta, Hardware::UB, "outputPdBeta", "VECIN/VECCALC/VECOUT", "LayerNormGradBeta");
+    CheckTensorPos<T>(resForGamma, Hardware::UB, "resForGamma", "VECIN/VECCALC/VECOUT", "LayerNormGradBeta");
+    CheckTensorPos<T>(inputDy, Hardware::UB, "inputDy", "VECIN/VECCALC/VECOUT", "LayerNormGradBeta");
     CheckTensorPos<uint8_t>(
-        sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "LayerNormGradBeta");
+        sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "LayerNormGradBeta");
 
     constexpr uint32_t alignLen = 32;
     ASCENDC_ASSERT((tiling.hLength * sizeof(T) % alignLen == 0), {

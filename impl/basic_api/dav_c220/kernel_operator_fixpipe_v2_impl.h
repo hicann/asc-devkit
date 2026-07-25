@@ -46,13 +46,13 @@ __aicore__ inline void CheckFixpipeL0C2L1Param(__cbuf__ T* dst, __cc__ U* src, c
     ASCENDC_DEBUG_ASSERT(
         (config.format != CO2Layout::ROW_MAJOR),
         KERNEL_LOG_INTERNAL(
-            KERNEL_ERROR, "Failed to check format in Fixpipe, when src "
-                          "position is CO1 and dst position is C1, format must be set as NZ \n"));
+            KERNEL_ERROR, "Failed to check format in Fixpipe, when src position is L0C Buffer(CO1) and dst position "
+                          "is L1 Buffer(C1), format must be set as NZ \n"));
     ASCENDC_DEBUG_ASSERT(
         (!(params.isChannelSplit)),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "Failed to check isChannelSplit in Fixpipe, when src position is "
-                          "CO1 and dst position is C1, isChannelSplit must be set as false \n"));
+                          "L0C Buffer(CO1) and dst position is L1 Buffer(C1), isChannelSplit must be set as false \n"));
 
     ASCENDC_DEBUG_ASSERT(
         (SupportType<
@@ -60,8 +60,9 @@ __aicore__ inline void CheckFixpipeL0C2L1Param(__cbuf__ T* dst, __cc__ U* src, c
             Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
-            "Failed to check dtype in Fixpipe, when src position is CO1 and dst "
-            "position is C1, support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t; "
+            "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst "
+            "position is L1 Buffer(C1), support dtype combinations are src: float, dst: int8_t / uint8_t / half / "
+            "bfloat16_t; "
             "src: int32_t, dst: int8_t / uint8_t / half"));
 }
 
@@ -76,7 +77,8 @@ __aicore__ inline void CheckFixpipeL0C2GMParam(__gm__ T* dst, __cc__ U* src, con
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
             "Failed to check "
-            "dtype in Fixpipe, when src position is CO1 and dst position is GM, support dtype combinations are src: "
+            "dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is GM, support dtype "
+            "combinations are src: "
             "float, dst: int8_t / uint8_t / half / bfloat16_t / float; src: int32_t, dst: int8_t / uint8_t / half / "
             "int32_t"));
     if constexpr (IsSameType<U, float>::value && IsSameType<T, float>::value) {
@@ -164,7 +166,7 @@ __aicore__ inline void FixpipeL0C2L1Impl(__cbuf__ T* dst, __cc__ T* src, const F
         false,
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
-            "Failed to check dtype in Fixpipe, when src position is CO1 and dst position is C1, "
+            "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is L1 Buffer(C1), "
             "support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t; src: int32_t, dst: "
             "int8_t / uint8_t / half\n"));
 }
@@ -177,7 +179,7 @@ __aicore__ inline void FixpipeL0C2L1Impl(
         false,
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR,
-            "Failed to check dtype in Fixpipe, when src position is CO1 and dst position is C1, "
+            "Failed to check dtype in Fixpipe, when src position is L0C Buffer(CO1) and dst position is L1 Buffer(C1), "
             "support dtype combinations are src: float, dst: int8_t / uint8_t / half / bfloat16_t; src: int32_t, dst: "
             "int8_t / uint8_t / half\n"));
 }

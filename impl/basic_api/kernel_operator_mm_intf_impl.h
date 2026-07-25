@@ -182,7 +182,7 @@ __aicore__ inline void LoadData(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV1<U>& loadDataParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    CheckTensorPhyPosition<Hardware::L1>(src, "src", "A1 / B1", "LoadData with LoadData3DParamsV1");
+    CheckTensorPhyPosition<Hardware::L1>(src, "src", "L1 Buffer(A1/B1)", "LoadData with LoadData3DParamsV1");
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", "LoadData with LoadData3DParamsV1");
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A || dstScope == Hardware::L0B) {
@@ -230,7 +230,7 @@ __aicore__ inline void LoadData(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2<U>& loadDataParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    CheckTensorPhyPosition<Hardware::L1>(src, "src", "A1 / B1", "LoadData with LoadData3DParamsV2");
+    CheckTensorPhyPosition<Hardware::L1>(src, "src", "L1 Buffer(A1/B1)", "LoadData with LoadData3DParamsV2");
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", "LoadData with LoadData3DParamsV2");
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A || dstScope == Hardware::L0B) {
@@ -653,8 +653,8 @@ __aicore__ inline __inout_pipe__(MTE2) void LoadImageToLocal(
         LoadImageToLocalCal((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1", "LoadImageToLocal",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)", "LoadImageToLocal",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 

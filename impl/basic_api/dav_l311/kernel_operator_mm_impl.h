@@ -31,8 +31,11 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0ATransposeCal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParams& loadDataParam)
 {
-    ASCENDC_ASSERT(
-        false, { KERNEL_LOG(KERNEL_ERROR, "LoadDataWithTranspose from A1 to A2 is not supported on current device"); });
+    ASCENDC_ASSERT(false, {
+        KERNEL_LOG(
+            KERNEL_ERROR,
+            "LoadDataWithTranspose from L1 Buffer(A1) to L0A Buffer(A2) is not supported on current device");
+    });
 }
 
 template <typename T>
@@ -59,7 +62,8 @@ __aicore__ inline void LoadData2DL12L0BTransposeCal(
     ASCENDC_ASSERT(false, {
         KERNEL_LOG(
             KERNEL_ERROR,
-            "LoadDataWithTranspose with LoadData2dTransposeParams from B1 to B2 is not supported on current device");
+            "LoadDataWithTranspose with LoadData2dTransposeParams from L1 Buffer(B1) to L0B Buffer(B2) is not "
+            "supported on current device");
     });
 }
 
@@ -70,7 +74,8 @@ __aicore__ inline void LoadData2DL12L0BTransposeCal(
     ASCENDC_ASSERT(false, {
         KERNEL_LOG(
             KERNEL_ERROR,
-            "LoadDataWithTranspose with LoadData2dTransposeParamsV2 from B1 to B2 is not supported on current device");
+            "LoadDataWithTranspose with LoadData2dTransposeParamsV2 from L1 Buffer(B1) to L0B Buffer(B2) is not "
+            "supported on current device");
     });
 }
 
@@ -264,37 +269,43 @@ template <typename T>
 __aicore__ inline void LoadData3DV2L12L0ACal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from A1/B1 to A2"); });
+    ASCENDC_ASSERT(
+        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from L1 Buffer(A1/B1) to L0A Buffer(A2)"); });
 }
 
 template <typename T>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from A1/B1 to B2"); });
+    ASCENDC_ASSERT(
+        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from L1 Buffer(A1/B1) to L0B Buffer(B2)"); });
 }
 
 template <typename T>
 __aicore__ inline void LoadData3DV2L12UBCal(
     __ubuf__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from A1/B1 to UB"); });
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from L1 Buffer(A1/B1) to UB"); });
 }
 
 template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ uint8_t* dst, __cbuf__ uint8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT(
-        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 load uint8_t dtype from A1/B1 to B2"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "unsupported loaddata_3d_v2 load uint8_t dtype from L1 Buffer(A1/B1) to L0B Buffer(B2)");
+    });
 }
 
 template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT(
-        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 load int8_t dtype from A1/B1 to B2"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "unsupported loaddata_3d_v2 load int8_t dtype from L1 Buffer(A1/B1) to L0B Buffer(B2)");
+    });
 }
 
 /* **************************************************************************************************

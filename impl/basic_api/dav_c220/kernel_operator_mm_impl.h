@@ -81,7 +81,7 @@ __aicore__ inline void LoadData2DGM2L0ACal(__ca__ T* dst, __gm__ T* src, const L
             (!SupportType<T, int4b_t>()),
             KERNEL_LOG_INTERNAL(
                 KERNEL_ERROR, "Failed to check dtype in "
-                              "LoadData with LoadData2DParams, GM -> A2 does not support int4b_t.\n"));
+                              "LoadData with LoadData2DParams, GM -> L0A Buffer(A2) does not support int4b_t.\n"));
         using U = typename Conditional<SupportType<T, uint16_t, int16_t>(), half, T>::type;
         load_gm_to_ca(
             (__ca__ U*)dst, (__gm__ U*)src, loadDataParam.startIndex, loadDataParam.repeatTimes,
@@ -97,7 +97,7 @@ __aicore__ inline void LoadData2DGM2L0BCal(__cb__ T* dst, __gm__ T* src, const L
             (!SupportType<T, int4b_t>()),
             KERNEL_LOG_INTERNAL(
                 KERNEL_ERROR, "Failed to check dtype in "
-                              "LoadData with LoadData2DParams, GM -> B2 does not support int4b_t.\n"));
+                              "LoadData with LoadData2DParams, GM -> L0B Buffer(B2) does not support int4b_t.\n"));
         using U = typename Conditional<SupportType<T, uint16_t, int16_t>(), half, T>::type;
         load_gm_to_cb(
             (__cb__ U*)dst, (__gm__ U*)src, loadDataParam.startIndex, loadDataParam.repeatTimes,
@@ -113,7 +113,7 @@ __aicore__ inline void LoadData2DGM2L1Cal(__cbuf__ T* dst, __gm__ T* src, const 
             (!SupportType<T, int4b_t>()),
             KERNEL_LOG_INTERNAL(
                 KERNEL_ERROR, "Failed to check dtype in "
-                              "LoadData with LoadData2DParams, GM -> A1 / B1 does not support int4b_t.\n"));
+                              "LoadData with LoadData2DParams, GM -> L1 Buffer(A1/B1) does not support int4b_t.\n"));
         using U = typename Conditional<SupportType<T, uint16_t, int16_t>(), half, T>::type;
         if (loadDataParam.addrMode == 0) {
             load_gm_to_cbuf(
@@ -131,7 +131,7 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0ACal(__ca__ T* dst, __cbuf__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from A1 to A2");
+    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from L1 Buffer(A1) to L0A Buffer(A2)");
 #endif
 }
 
@@ -139,7 +139,7 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from B1 to B2");
+    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from L1 Buffer(B1) to L0B Buffer(B2)");
 #endif
 }
 
@@ -147,7 +147,7 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L0ACal(__ca__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from GM to A2");
+    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from GM to L0A Buffer(A2)");
 #endif
 }
 
@@ -155,7 +155,7 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L0BCal(__cb__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from GM to B2");
+    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from GM to L0B Buffer(B2)");
 #endif
 }
 
@@ -163,7 +163,7 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L1Cal(__cbuf__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from GM to A1 / B1");
+    ReportNotSupport(false, "LoadData with LoadData2DParamsV2 from GM to L1 Buffer(A1/B1)");
 #endif
 }
 
@@ -202,7 +202,8 @@ __aicore__ inline void LoadData2DL12L0BTransposeCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParamsV2& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadDataWithTranspose with LoadData2dTransposeParamsV2 from B1 to B2");
+    ReportNotSupport(
+        false, "LoadDataWithTranspose with LoadData2dTransposeParamsV2 from L1 Buffer(B1) to L0B Buffer(B2)");
 #endif
 }
 
@@ -523,7 +524,7 @@ __aicore__ inline void LoadData3DV1L12L0ACal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData3DParamsV1<T>& loadDataParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData3DParamsV1 from A1 to A2");
+    ReportNotSupport(false, "LoadData with LoadData3DParamsV1 from L1 Buffer(A1) to L0A Buffer(A2)");
 #endif
 }
 
@@ -532,7 +533,7 @@ __aicore__ inline void LoadData3DV1L12L0BCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData3DParamsV1<T>& loadDataParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData3DParamsV1 from B1 to B2");
+    ReportNotSupport(false, "LoadData with LoadData3DParamsV1 from L1 Buffer(B1) to L0B Buffer(B2)");
 #endif
 }
 
@@ -562,7 +563,7 @@ __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, const LoadData3DParamsV2<int8_t>& loadDataParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData3DParamsV2 from B1 to B2 with type int8_t");
+    ReportNotSupport(false, "LoadData with LoadData3DParamsV2 from L1 Buffer(B1) to L0B Buffer(B2) with type int8_t");
 #endif
 }
 
@@ -571,7 +572,7 @@ __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ uint8_t* dst, __cbuf__ uint8_t* src, const LoadData3DParamsV2<uint8_t>& loadDataParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    ReportNotSupport(false, "LoadData with LoadData3DParamsV2 from B1 to B2 with type uint8_t");
+    ReportNotSupport(false, "LoadData with LoadData3DParamsV2 from L1 Buffer(B1) to L0B Buffer(B2) with type uint8_t");
 #endif
 }
 
@@ -589,14 +590,16 @@ template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from B1 to B2 with type int8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(
+        false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(B1) to L0B Buffer(B2) with type int8_t");
 }
 
 template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ uint8_t* dst, __cbuf__ uint8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "LoadData with LoadData3DParamsV2Pro from B1 to B2 with type uint8_t");
+    ASCENDC_REPORT_NOT_SUPPORT(
+        false, "LoadData with LoadData3DParamsV2Pro from L1 Buffer(B1) to L0B Buffer(B2) with type uint8_t");
 }
 
 /* **************************************************************************************************

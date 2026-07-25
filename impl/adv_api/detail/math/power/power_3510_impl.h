@@ -1159,9 +1159,9 @@ __aicore__ inline void PowerCommonImpl(
         return;
     }
     PowCheckType<T, config>();
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECOUT / VECCALC", "Power");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC", "Power");
     CheckCalCount(calCount, "calCount", src1Tensor, "src1Tensor", "Power");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Power");
 
@@ -1177,9 +1177,9 @@ __aicore__ inline void PowerCommonImpl(
         return;
     }
     PowCheckType<T, config>();
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECOUT / VECCALC", "Power");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC", "Power");
     CheckCalCount(calCount, "calCount", src0Tensor, "src0Tensor", "Power");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Power");
 
@@ -1195,10 +1195,10 @@ __aicore__ inline void PowerCommonImpl(
         return;
     }
     PowCheckType<T, config>();
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN / VECOUT / VECCALC", "Power");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECOUT / VECCALC", "Power");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<T>(src0Tensor, Hardware::UB, "src0Tensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<T>(src1Tensor, Hardware::UB, "src1Tensor", "VECIN/VECOUT/VECCALC", "Power");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC", "Power");
     CheckCalCount(calCount, "calCount", src0Tensor, "src0Tensor", "Power");
     CheckCalCount(calCount, "calCount", src1Tensor, "src1Tensor", "Power");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Power");

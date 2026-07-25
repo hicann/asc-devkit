@@ -36,8 +36,8 @@ __aicore__ inline void TruncImpl(
         return;
     }
     static_assert(SupportType<T, half, float>(), "Trunc only support half/float data type on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Trunc");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Trunc");
     Truncate<T, RoundMode::CAST_TRUNC>(dstTensor, srcTensor, calCount);
@@ -47,7 +47,7 @@ __aicore__ inline void TruncImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     TruncImpl<T, isReuseSource>(dstTensor, srcTensor, calCount);
 }
 } // namespace AscendC

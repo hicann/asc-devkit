@@ -362,8 +362,8 @@ __aicore__ inline void CheckTensorPos(
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     const Hardware scope = GetPhyType(static_cast<TPosition>(input.GetPosition()));
     ASCENDC_CHECK_TPOSITION(
-        scope == expectPos, tensorName, tPosName, apiMsg,
-        ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(input.GetPosition())));
+        scope == expectPos, tensorName, GetPositionDisplay(expectPos, tPosName).c_str(), apiMsg,
+        GetPositionDisplay(static_cast<TPosition>(input.GetPosition())));
 #endif
 }
 } // namespace AscendC

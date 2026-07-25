@@ -304,8 +304,8 @@ template <typename T, bool isReuseSource, const AtanConfig& config>
 __aicore__ inline void AtanImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const uint32_t calCount)
 {
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Atan");
-    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Atan");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Atan");
+    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Atan");
     ASCENDC_ASSERT((calCount <= srcTensor.GetSize()), {
         KERNEL_LOG(
             KERNEL_ERROR, "calCount is %u, which should not be larger than srcTensor length %u", calCount,
@@ -339,7 +339,7 @@ __aicore__ inline void AtanImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "Atan");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "Atan");
 
     AtanImpl<T, isReuseSource, config>(dstTensor, srcTensor, calCount);
 }

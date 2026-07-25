@@ -44,8 +44,8 @@ __aicore__ inline void AcosImpl(
         return;
     }
     static_assert(SupportType<T, half, float>(), "Acos only support half/float data type on current device!");
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", srcTensor, "srcTensor", "Acos");
     CheckCalCount(calCount, "calCount", dstTensor, "dstTensor", "Acos");
     AcosCompute(dstTensor, srcTensor, calCount);
@@ -60,7 +60,7 @@ __aicore__ inline void AcosImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(sharedTmpBuffer, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     AcosImpl<T, isReuseSource>(dstTensor, srcTensor, calCount);
 }
 } // namespace AscendC

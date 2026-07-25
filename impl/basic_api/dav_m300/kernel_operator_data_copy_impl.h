@@ -898,7 +898,9 @@ __aicore__ inline void DataCopyPadUB2L1Impl(__cbuf__ T* dst, __ubuf__ T* src, co
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "can not move data from CO1 to A1 on current device"); });
+    ASCENDC_ASSERT(false, {
+        KERNEL_LOG(KERNEL_ERROR, "can not move data from L0C Buffer(CO1) to L1 Buffer(A1) on current device");
+    });
 }
 
 template <typename T, typename U>
@@ -911,11 +913,12 @@ __aicore__ inline void DataCopyL0C2GMImpl(__gm__ T* dst, __cc__ U* src, const Da
             Tuple<int32_t, int16_t>, Tuple<int32_t, int32_t>>()),
         {
             KERNEL_LOG(
-                KERNEL_ERROR, "Failed to check dtype in DataCopy from CO1 to GM, current api support dtype combination "
-                              "is src: float, "
-                              "dst: uint8_t / int8_t / half / bfloat16_t / float; src: int32_t, dst: uint8_t / int8_t "
-                              "/ half / int16_t / "
-                              "int32_t.");
+                KERNEL_ERROR,
+                "Failed to check dtype in DataCopy from L0C Buffer(CO1) to GM, current api support dtype combination "
+                "is src: float, "
+                "dst: uint8_t / int8_t / half / bfloat16_t / float; src: int32_t, dst: uint8_t / int8_t "
+                "/ half / int16_t / "
+                "int32_t.");
         });
     uint32_t dstStride = intriParams.dstStride;
     if (intriParams.nz2ndEn == false) {
@@ -980,7 +983,7 @@ __aicore__ inline void DataCopyL0C2GMImpl(__gm__ T* dst, __cc__ U* src, const Da
             ASCENDC_ASSERT(false, {
                 KERNEL_LOG(
                     KERNEL_ERROR,
-                    "Failed to check quantPre value in DataCopy from CO1 "
+                    "Failed to check quantPre value in DataCopy from L0C Buffer(CO1) "
                     "to GM, supported values are NoQuant / F322F16 / F322BF16 / DEQF16 / VDEQF16 / QF322B8_PRE / "
                     "VQF322B8_PRE / REQ8 / VREQ8.");
             });
@@ -1015,27 +1018,27 @@ __aicore__ inline void DataCopyUB2UBIntf(
 template <typename T>
 __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from A1/B1/C1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from L1 Buffer(A1/B1/C1) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, const DataCopyExtParams& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from A1/B1/C1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from L1 Buffer(A1/B1/C1) to GM");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadGM2L1Impl(
     __cbuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const DataCopyPadParams& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to A1/B1/C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to L1 Buffer(A1/B1/C1)");
 }
 
 template <typename T>
 __aicore__ inline void DataCopyPadGM2L1Impl(
     __cbuf__ T* dst, __gm__ T* src, const DataCopyExtParams& intriParams, const DataCopyPadExtParams<T>& padParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to A1/B1/C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "DataCopyPad from GM to L1 Buffer(A1/B1/C1)");
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_DATA_COPY_IMPL_H

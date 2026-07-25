@@ -58,43 +58,67 @@ struct NamedTensor {
     const __gm__ char* tensorName;
 };
 
-__aicore__ inline __gm__ const char* GetTPositionName(TPosition pos)
+__aicore__ inline __gm__ const char* GetTPositionSuffix(TPosition pos)
 {
     switch (pos) {
         case TPosition::GM:
-            return "GM";
+            return "";
         case TPosition::A1:
-            return "A1";
+            return "(A1)";
         case TPosition::B1:
-            return "B1";
+            return "(B1)";
         case TPosition::C1:
-            return "C1";
+            return "(C1)";
         case TPosition::A2:
-            return "A2";
+            return "(A2)";
         case TPosition::B2:
-            return "B2";
+            return "(B2)";
         case TPosition::C2:
-            return "C2";
+            return "(C2)";
         case TPosition::CO1:
-            return "CO1";
+            return "(CO1)";
         case TPosition::CO2:
-            return "CO2";
+            return "(CO2)";
         case TPosition::VECIN:
-            return "VECIN";
+            return "(VECIN)";
         case TPosition::VECOUT:
-            return "VECOUT";
+            return "(VECOUT)";
         case TPosition::VECCALC:
-            return "VECCALC / LCM";
+            return "(VECCALC/LCM)";
         case TPosition::SPM:
-            return "SPM / SHM";
+            return "(SPM/SHM)";
         case TPosition::TSCM:
-            return "TSCM";
+            return "(TSCM)";
         case TPosition::C2PIPE2GM:
-            return "C2PIPE2GM";
+            return "(C2PIPE2GM)";
         case TPosition::C2PIPE2LOCAL:
-            return "C2PIPE2LOCAL";
+            return "(C2PIPE2LOCAL)";
         case TPosition::MAX:
-            return "MAX";
+            return "(MAX)";
+        default:
+            return "(UNKNOWN)";
+    }
+}
+
+__aicore__ inline __gm__ const char* GetHardwareName(Hardware pos)
+{
+    switch (pos) {
+        case Hardware::GM:
+            return "GM";
+        case Hardware::UB:
+            return "UB";
+        case Hardware::L1:
+            return "L1 Buffer";
+        case Hardware::L0A:
+            return "L0A Buffer";
+        case Hardware::L0B:
+            return "L0B Buffer";
+        case Hardware::L0C:
+            return "L0C Buffer";
+        case Hardware::BIAS:
+            return "BiasTable Buffer";
+        case Hardware::FIXBUF:
+            return "Fixpipe Buffer";
         default:
             return "UNKNOWN";
     }
@@ -127,8 +151,8 @@ __aicore__ inline void CheckTensorPhyPosition(
         (posValid), KERNEL_LOG_INTERNAL(
                         KERNEL_ERROR,
                         "Failed to check %s tensor position in %s, "
-                        "supported positions are %s, current position is %s.\n",
-                        tensorName, apiName, posName, GetTPositionName(tpos)));
+                        "supported positions are %s, current position is %s%s.\n",
+                        tensorName, apiName, posName, GetHardwareName(currentPos), GetTPositionSuffix(tpos)));
 }
 
 template <typename T>
@@ -335,7 +359,7 @@ __aicore__ inline void CheckCalcount(const int32_t calcount, const __gm__ char* 
 template <typename... Ts>
 __aicore__ inline void CheckVectorTensor(const __gm__ char* apiName, const Ts&... tensors)
 {
-    (CheckTensorPhyPosition<Hardware::UB>(tensors.tensor, tensors.tensorName, "VECIN / VECCALC / VECOUT", apiName),
+    (CheckTensorPhyPosition<Hardware::UB>(tensors.tensor, tensors.tensorName, "UB(VECIN/VECCALC/VECOUT)", apiName),
      ...);
     (CheckTensorAlignment(tensors.tensor, ONE_BLK_SIZE, tensors.tensorName, apiName), ...);
 }

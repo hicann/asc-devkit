@@ -57,7 +57,7 @@ __aicore__ inline void TBufPool<pos, bufIDSize>::Init()
     constexpr auto pool = GetPhyType(pos);
     static_assert(
         (pool == Hardware::L1 || pool == Hardware::UB),
-        "TbufPool Position should be one of A1/B1/C1/VECIN/VECOUT/VECCALC");
+        "TbufPool Position should be one of L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT/VECCALC)");
     ResetPool();
     tBufPoolImpl.isReset_ = true;
 }

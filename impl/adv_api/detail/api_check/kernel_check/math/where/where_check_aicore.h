@@ -42,20 +42,22 @@ public:
             ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, condition));
         SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
             VA_ARGS_TO_MAKE_TUPLE(dst, condition),
-            VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+            MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC), "UB(VECIN/VECOUT/VECCALC)");
         if constexpr (TypeUtils::IsLocalTensorType<U>()) {
             CalCountCheckFuncBasicClass::CalCountVerifyingParameters(
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(src0));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(src0),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
         }
         if constexpr (TypeUtils::IsLocalTensorType<S>()) {
             CalCountCheckFuncBasicClass::CalCountVerifyingParameters(
                 ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(src1));
             SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
                 VA_ARGS_TO_MAKE_TUPLE(src1),
-                VA_ARGS_TO_MAKE_TUPLE_STRING(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC));
+                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
+                "UB(VECIN/VECOUT/VECCALC)");
         }
     };
 };

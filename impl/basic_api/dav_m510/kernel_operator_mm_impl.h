@@ -294,16 +294,18 @@ template <typename T>
 __aicore__ inline void LoadData2DGM2L0ACal(
     __ca__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam, const uint8_t cacheMode = 0)
 {
-    ASCENDC_ASSERT(
-        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_2d_v2 from gm to A2 on current device"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_2d_v2 from GM to L0A Buffer(A2) on current device");
+    });
 }
 
 template <typename T>
 __aicore__ inline void LoadData2DGM2L0BCal(
     __cb__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam, const uint8_t cacheMode = 0)
 {
-    ASCENDC_ASSERT(
-        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_2d_v2 from gm to B2 on current device"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_2d_v2 from GM to L0B Buffer(B2) on current device");
+    });
 }
 
 template <typename T>
@@ -336,8 +338,11 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0ATransposeCal(
     __ca__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParams& loadDataParam)
 {
-    ASCENDC_ASSERT(
-        false, { KERNEL_LOG(KERNEL_ERROR, "LoadDataWithTranspose from A1 to A2 is not supported on current device"); });
+    ASCENDC_ASSERT(false, {
+        KERNEL_LOG(
+            KERNEL_ERROR,
+            "LoadDataWithTranspose from L1 Buffer(A1) to L0A Buffer(A2) is not supported on current device");
+    });
 }
 
 /* **************************************************************************************************
@@ -452,7 +457,8 @@ __aicore__ inline void InitL1BufferCal(__cbuf__ T* dst, const InitConstValuePara
 template <typename T>
 __aicore__ inline void InitL0ANzMatrixCal(__ca__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "InitConstValue in A2 is not supported on current device"); });
+    ASCENDC_ASSERT(
+        false, { KERNEL_LOG(KERNEL_ERROR, "InitConstValue in L0A Buffer(A2) is not supported on current device"); });
 }
 
 /* **************************************************************************************************
@@ -461,7 +467,8 @@ __aicore__ inline void InitL0ANzMatrixCal(__ca__ T* dst, const InitConstValuePar
 template <typename T>
 __aicore__ inline void InitL0BNzMatrixCal(__cb__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "InitConstValue in B2 is not supported on current device"); });
+    ASCENDC_ASSERT(
+        false, { KERNEL_LOG(KERNEL_ERROR, "InitConstValue in L0B Buffer(B2) is not supported on current device"); });
 }
 
 /* **************************************************************************************************

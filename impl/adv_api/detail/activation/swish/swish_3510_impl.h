@@ -57,8 +57,8 @@ __aicore__ inline void SwishCompute(
         return;
     }
     static_assert(SupportType<T, half, float>(), "Swish only support half/float data type on current device!");
-    CheckTensorPosition(dstLocal, "dstLocal", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcLocal, "srcLocal", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstLocal, "dstLocal", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcLocal, "srcLocal", "VECIN/VECOUT/VECCALC");
     CheckCalCount(count, "count", dstLocal, "dstLocal", "Swish");
     CheckCalCount(count, "count", srcLocal, "srcLocal", "Swish");
     float negOne = -1.0;

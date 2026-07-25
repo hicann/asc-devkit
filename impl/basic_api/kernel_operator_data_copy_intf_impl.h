@@ -91,8 +91,9 @@ __aicore__ inline void __inout_pipe__(MTE2)
 #endif
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / C1 / VECIN", "DataCopy from GlobalTensor to LocalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1/C1)/UB(VECIN)",
+            "DataCopy from GlobalTensor to LocalTensor with DataCopyParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -159,8 +160,8 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
 #endif
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / VECIN", "DataCopy from GlobalTensor to LocalTensor with Nd2NzParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/UB(VECIN)", "DataCopy from GlobalTensor to LocalTensor with Nd2NzParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 #else
@@ -188,8 +189,8 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
         DataCopyGM2UBND2NZImpl((__ubuf__ PrimType*)dst.GetPhyAddr(), (__gm__ PrimType*)src.GetPhyAddr(), intriParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / VECIN", "DataCopy from GlobalTensor to LocalTensor with Nd2NzParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/UB(VECIN)", "DataCopy from GlobalTensor to LocalTensor with Nd2NzParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 #endif
@@ -315,12 +316,14 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopy(
     } else {
 #if __NPU_ARCH__ == 2002
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1 / CO2 / VECOUT", "DataCopy from LocalTensor to GlobalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(A1/B1)/UB(CO2/VECOUT)",
+            "DataCopy from LocalTensor to GlobalTensor with DataCopyParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #else
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1 / VECOUT", "DataCopy from LocalTensor to GlobalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(A1/B1)/UB(VECOUT)",
+            "DataCopy from LocalTensor to GlobalTensor with DataCopyParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #endif
     }
 
@@ -376,14 +379,14 @@ __aicore__ inline void DataCopy(
         } else {
 #if __NPU_ARCH__ == 2201
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "VECCALC / VECOUT / TSCM",
-                "DataCopy from LocalTensor(VECIN / VECCALC / VECOUT) to LocalTensor with DataCopyParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "UB(VECCALC/VECOUT)/L1 Buffer(TSCM)",
+                "DataCopy from LocalTensor(UB(VECIN/VECCALC/VECOUT)) to LocalTensor with DataCopyParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
 #else
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "VECCALC / VECOUT / A1 / B1",
-                "DataCopy from LocalTensor(VECIN / VECCALC / VECOUT) to LocalTensor with DataCopyParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "UB(VECCALC/VECOUT)/L1 Buffer(A1/B1)",
+                "DataCopy from LocalTensor(UB(VECIN/VECCALC/VECOUT)) to LocalTensor with DataCopyParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
 #endif
         }
     } else if (srcHWPos == Hardware::L1) {
@@ -391,29 +394,33 @@ __aicore__ inline void DataCopy(
             // l1 -> ub
             DataCopyL12UBIntf(dst, src, repeatParams);
         } else if (dstHWPos == Hardware::BIAS) {
-            CheckTensorAlign<T>(dst, 64, "dst", "DataCopy from C1 to C2");           // 64B align
-            CheckTensorAlign<T>(src, ONE_BLK_SIZE, "src", "DataCopy from C1 to C2"); // 32B align
+            CheckTensorAlign<T>(dst, 64, "dst", "DataCopy from L1 Buffer(C1) to BiasTable Buffer(C2)"); // 64B align
+            CheckTensorAlign<T>(
+                src, ONE_BLK_SIZE, "src", "DataCopy from L1 Buffer(C1) to BiasTable Buffer(C2)"); // 32B align
             DataCopyL12BTImpl(
                 (uint64_t)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), static_cast<uint16_t>(0),
                 repeatParams);
 #if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || \
     (__NPU_ARCH__ == 5102)
         } else if (dstHWPos == Hardware::FIXBUF) {
-            CheckTensorAlign<T>(dst, 128, "dst", "DataCopy from A1 / B1 / C1 to C2PIPE2GM");          // 128B align
-            CheckTensorAlign<T>(src, ONE_BLK_SIZE, "src", "DataCopy from A1 / B1 / C1 to C2PIPE2GM"); // 32B align
+            CheckTensorAlign<T>(
+                dst, 128, "dst", "DataCopy from L1 Buffer(A1/B1/C1) to Fixpipe Buffer(C2PIPE2GM)"); // 128B align
+            CheckTensorAlign<T>(
+                src, ONE_BLK_SIZE, "src",
+                "DataCopy from L1 Buffer(A1/B1/C1) to Fixpipe Buffer(C2PIPE2GM)"); // 32B align
             DataCopyL12FBImpl((__fbuf__ PrimType*)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), repeatParams);
 #endif
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "C2 / C2PIPE2GM",
-                "DataCopy from LocalTensor(A1 / B1 / C1) to LocalTensor with DataCopyParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "BiasTable Buffer(C2)/Fixpipe Buffer(C2PIPE2GM)",
+                "DataCopy from LocalTensor(L1 Buffer(A1/B1/C1)) to LocalTensor with DataCopyParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN / VECCALC / VECOUT / A1 / B1 / C1",
+            false, "src", "UB(VECIN/VECCALC/VECOUT)/L1 Buffer(A1/B1/C1)",
             "DataCopy from LocalTensor to LocalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     }
 }
 
@@ -449,8 +456,9 @@ __aicore__ inline void DataCopy(
     if (srcHWPos == Hardware::L1) {
         if (dstHWPos == Hardware::BIAS) {
             // l1 -> bt
-            CheckTensorAlign<T>(dst, 64, "dst", "DataCopy from C1 to C2");           // 64B align
-            CheckTensorAlign<U>(src, ONE_BLK_SIZE, "src", "DataCopy from C1 to C2"); // 32B align
+            CheckTensorAlign<T>(dst, 64, "dst", "DataCopy from L1 Buffer(C1) to BiasTable Buffer(C2)"); // 64B align
+            CheckTensorAlign<U>(
+                src, ONE_BLK_SIZE, "src", "DataCopy from L1 Buffer(C1) to BiasTable Buffer(C2)"); // 32B align
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
             if constexpr (
@@ -485,19 +493,19 @@ __aicore__ inline void DataCopy(
             } else {
                 ASCENDC_ASSERT(false, {
                     KERNEL_LOG(
-                        KERNEL_ERROR, "Failed to check dtype in DataCopy from C1 to C2, "
+                        KERNEL_ERROR, "Failed to check dtype in DataCopy from L1 Buffer(C1) to BiasTable Buffer(C2), "
                                       "current api support dtype combination is U = T or src: half, dst: float.");
                 });
             }
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "C2", "DataCopy from LocalTensor to LocalTensor with T / U",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "BiasTable Buffer(C2)", "DataCopy from LocalTensor to LocalTensor with T / U",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "C1", "DataCopy from LocalTensor to LocalTensor with T / U",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(C1)", "DataCopy from LocalTensor to LocalTensor with T / U",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     }
 }
 
@@ -508,8 +516,8 @@ __aicore__ inline void DataCopyL1ToUB(
 #if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
     using PrimType = PrimT<T>;
     ASCENDC_REPORT_OVERFLOW_MEM(CheckDataCopyTensorSizeOverflow(dst, src, repeatParams));
-    CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "DataCopy from A1 / B1 to VECIN / VECOUT"); // 32B align
-    CheckTensorAlign<T>(src, ONE_BLK_SIZE, "src", "DataCopy from A1 / B1 to VECIN / VECOUT"); // 32B align
+    CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "DataCopy from L1 Buffer(A1/B1) to UB(VECIN/VECOUT)"); // 32B align
+    CheckTensorAlign<T>(src, ONE_BLK_SIZE, "src", "DataCopy from L1 Buffer(A1/B1) to UB(VECIN/VECOUT)"); // 32B align
     DataCopyL12UBImpl<PrimType, subBlockId>(
         (__ubuf__ PrimType*)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), repeatParams);
 #endif
@@ -948,8 +956,8 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopy(
     if (srcHWPos != Hardware::UB) {
 #if __NPU_ARCH__ == 2002
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECOUT / CO2", "DataCopy with Nz2NdParamsFull",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECOUT/CO2)", "DataCopy with Nz2NdParamsFull",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #else
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
         if (srcHWPos == Hardware::L1) {
@@ -958,8 +966,8 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopy(
         }
 #endif
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECOUT", "DataCopy with Nz2NdParamsFull",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECOUT)", "DataCopy with Nz2NdParamsFull",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #endif
     }
 
@@ -1031,8 +1039,9 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
 #endif
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / VECIN", "DataCopy from GlobalTensor to LocalTensor with DataCopyEnhancedParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/UB(VECIN)",
+            "DataCopy from GlobalTensor to LocalTensor with DataCopyEnhancedParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -1070,8 +1079,9 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopy(
 #endif
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1 / VECOUT", "DataCopy from LocalTensor to GlobalTensor with DataCopyEnhancedParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(A1/B1)/UB(VECOUT)",
+            "DataCopy from LocalTensor to GlobalTensor with DataCopyEnhancedParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     }
 }
 
@@ -1100,9 +1110,9 @@ __aicore__ inline void DataCopy(
             DataCopyUB2UBIntf(dst, src, intriParams);
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "VECCALC / VECOUT / A1 / B1 / TSCM",
-                "DataCopy from LocalTensor(VECIN / VECCALC / VECOUT) to LocalTensor with DataCopyEnhancedParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "UB(VECCALC/VECOUT)/L1 Buffer(A1/B1/TSCM)",
+                "DataCopy from LocalTensor(UB(VECIN/VECCALC/VECOUT)) to LocalTensor with DataCopyEnhancedParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else if (srcHWPos == Hardware::L1) {
         if (dstHWPos == Hardware::UB) {
@@ -1114,8 +1124,9 @@ __aicore__ inline void DataCopy(
                 (__cc__ PrimType*)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), intriParams, enhancedParams);
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "CO1", "DataCopy from LocalTensor(A1 / B1) to LocalTensor with DataCopyEnhancedParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "L0C Buffer(CO1)",
+                "DataCopy from LocalTensor(L1 Buffer(A1/B1)) to LocalTensor with DataCopyEnhancedParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else if (srcHWPos == Hardware::L0C) {
         if (dstHWPos == Hardware::UB) {
@@ -1124,18 +1135,20 @@ __aicore__ inline void DataCopy(
                 (__ubuf__ PrimType*)dst.GetPhyAddr(), (__cc__ PrimType*)src.GetPhyAddr(), intriParams, enhancedParams);
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "CO2", "DataCopy from LocalTensor(CO1) to LocalTensor with DataCopyEnhancedParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "UB(CO2)",
+                "DataCopy from LocalTensor(L0C Buffer(CO1)) to LocalTensor with DataCopyEnhancedParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else {
 #if __NPU_ARCH__ == 2002
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN / CO1", "DataCopy from LocalTensor to LocalTensor with DataCopyEnhancedParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECIN)/L0C Buffer(CO1)",
+            "DataCopy from LocalTensor to LocalTensor with DataCopyEnhancedParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #else
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN", "DataCopy from LocalTensor to LocalTensor with DataCopyEnhancedParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECIN)", "DataCopy from LocalTensor to LocalTensor with DataCopyEnhancedParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #endif
     }
 }
@@ -1192,13 +1205,15 @@ __aicore__ inline void DataCopy(
                 (__cc__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), intriParams, enhancedParams);
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "CO1", "DataCopy from LocalTensor(U) to LocalTensor(T) with DataCopyEnhancedParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "L0C Buffer(CO1)",
+                "DataCopy from LocalTensor(U) to LocalTensor(T) with DataCopyEnhancedParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1", "DataCopy from LocalTensor(U) to LocalTensor(T) with DataCopyEnhancedParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(A1/B1)",
+            "DataCopy from LocalTensor(U) to LocalTensor(T) with DataCopyEnhancedParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     }
 }
 #endif
@@ -1224,8 +1239,9 @@ __aicore__ inline void DataCopy(
                 (__cc__ half*)dst.GetPhyAddr(), (__cbuf__ float*)src.GetPhyAddr(), intriParams, enhancedParams);
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "CO1", "DataCopy from LocalTensor(A1/B1) to LocalTensor with DataCopyEnhancedParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "L0C Buffer(CO1)",
+                "DataCopy from LocalTensor(L1 Buffer(A1/B1)) to LocalTensor with DataCopyEnhancedParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else if (srcHWPos == Hardware::L0C) {
         if (dstHWPos == Hardware::UB) {
@@ -1234,13 +1250,15 @@ __aicore__ inline void DataCopy(
                 (__ubuf__ half*)dst.GetPhyAddr(), (__cc__ float*)src.GetPhyAddr(), intriParams, enhancedParams);
         } else {
             ASCENDC_CHECK_TPOSITION(
-                false, "dst", "CO2", "DataCopy from LocalTensor(CO1) to LocalTensor with DataCopyEnhancedParams",
-                ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+                false, "dst", "UB(CO2)",
+                "DataCopy from LocalTensor(L0C Buffer(CO1)) to LocalTensor with DataCopyEnhancedParams",
+                GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
         }
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / CO1", "DataCopy from LocalTensor(U) to LocalTensor(T) with DataCopyEnhancedParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/L0C Buffer(CO1)",
+            "DataCopy from LocalTensor(U) to LocalTensor(T) with DataCopyEnhancedParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -1249,10 +1267,10 @@ __aicore__ inline void CheckTensorL0C2UB(const LocalTensor<T>& dst, const LocalT
 {
     CheckTensorPos<U>(
         src, Hardware::L0C, "src", "CO1",
-        "DataCopy from LocalTensor(CO1) to LocalTensor(CO2) with DataCopyEnhancedParams");
+        "DataCopy from LocalTensor(L0C Buffer(CO1)) to LocalTensor(UB(CO2)) with DataCopyEnhancedParams");
     CheckTensorPos<T>(
         dst, Hardware::UB, "dst", "CO2",
-        "DataCopy from LocalTensor(CO1) to LocalTensor(CO2) with DataCopyEnhancedParams");
+        "DataCopy from LocalTensor(L0C Buffer(CO1)) to LocalTensor(UB(CO2)) with DataCopyEnhancedParams");
 }
 
 // int32_t to half
@@ -1339,10 +1357,10 @@ __aicore__ inline __inout_pipe__(V) void DataCopy(
 #endif
     CheckTensorPos<U>(
         src, Hardware::UB, "src", "CO2",
-        "DataCopy from LocalTensor(CO2) to LocalTensor(CO1) with DataCopyEnhancedParams");
+        "DataCopy from LocalTensor(UB(CO2)) to LocalTensor(CO1) with DataCopyEnhancedParams");
     CheckTensorPos<T>(
         dst, Hardware::L0C, "dst", "CO1",
-        "DataCopy from LocalTensor(CO2) to LocalTensor(CO1) with DataCopyEnhancedParams");
+        "DataCopy from LocalTensor(UB(CO2)) to LocalTensor(CO1) with DataCopyEnhancedParams");
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyTensorSizeOverflow(dst, src, intriParams, enhancedParams)));
     DataCopyUB2L0CImpl((__cc__ float*)dst.GetPhyAddr(), (__ubuf__ half*)src.GetPhyAddr(), intriParams, enhancedParams);
 }
@@ -1368,15 +1386,15 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
 #endif
 #endif
 #if ASCENDC_CPU_DEBUG
-    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN/VECOUT")) {
-        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to VECIN / VECOUT", KernelFuncType::NONE_MODE);
+    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)")) {
+        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to UB(VECIN/VECOUT)", KernelFuncType::NONE_MODE);
     }
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, padParams)));
 #endif
     const Hardware dstHWPos = GetPhyType((TPosition)dst.GetPosition());
     const uint8_t cacheMode = ExtractCacheMode(src);
     ASCENDC_ASSERT(((dstHWPos == Hardware::UB) || (dstHWPos == Hardware::L1)), {
-        KERNEL_LOG(KERNEL_ERROR, "DataCopyPad dst position must be VECIN/VECOUT/LCM/TSCM");
+        KERNEL_LOG(KERNEL_ERROR, "DataCopyPad dst position must be UB(VECIN/VECOUT/LCM)/L1 Buffer(TSCM)");
     });
     if (dstHWPos == Hardware::UB) {
         DataCopyPadGm2UBImpl<PrimType, mode>(
@@ -1388,8 +1406,8 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
             cacheMode);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "VECIN / VECOUT", "DataCopyPad from GlobalTensor to LocalTensor with DataCopyPadParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "UB(VECIN/VECOUT)", "DataCopyPad from GlobalTensor to LocalTensor with DataCopyPadParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -1421,8 +1439,8 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
             (__gm__ PrimType*)dst.GetPhyAddr(), (__ubuf__ PrimType*)src.GetPhyAddr(), dataCopyParams, cacheMode);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN / VECOUT", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECIN/VECOUT)", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     }
 }
 #else //  defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
@@ -1449,8 +1467,8 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
         return;
     }
 #if ASCENDC_CPU_DEBUG
-    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN/VECOUT")) {
-        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to VECIN / VECOUT", KernelFuncType::NONE_MODE);
+    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)")) {
+        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to UB(VECIN/VECOUT)", KernelFuncType::NONE_MODE);
     }
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, padParams)));
 #endif
@@ -1468,13 +1486,13 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
     } else {
 #if (__NPU_ARCH__ == 3102)
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / C1 / VECIN / VECOUT",
+            false, "dst", "L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT)",
             "DataCopyPad from GlobalTensor to LocalTensor with DataCopyPadParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
 #else
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "VECIN / VECOUT", "DataCopyPad from GlobalTensor to LocalTensor with DataCopyPadParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "UB(VECIN/VECOUT)", "DataCopyPad from GlobalTensor to LocalTensor with DataCopyPadParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
 #endif
 #endif
     }
@@ -1511,13 +1529,13 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
     } else {
 #if (__NPU_ARCH__ == 3102)
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1 / C1 / VECIN / VECOUT",
+            false, "src", "L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT)",
             "DataCopyPad from LocalTensor to GlobalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #else
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN / VECOUT", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECIN/VECOUT)", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #endif
 #endif
     }
@@ -1538,7 +1556,7 @@ __aicore__ inline void DataCopyPad(
 #endif
 #endif
     CheckTensorPos<T>(dst, Hardware::L1, "dst", "TSCM", "DataCopyPad with Nd2NzParams");
-    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN / VECOUT", "DataCopyPad with Nd2NzParams");
+    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN/VECOUT", "DataCopyPad with Nd2NzParams");
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, nd2nzParams)));
     DataCopyPadUB2L1Impl(
         (__cbuf__ PrimType*)dst.GetPhyAddr(), (__ubuf__ PrimType*)src.GetPhyAddr(), dataCopyParams, nd2nzParams);
@@ -1559,8 +1577,8 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
 #endif
 
 #if ASCENDC_CPU_DEBUG
-    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN/VECOUT")) {
-        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to VECIN / VECOUT", KernelFuncType::NONE_MODE);
+    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)")) {
+        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to UB(VECIN/VECOUT)", KernelFuncType::NONE_MODE);
     }
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, padParams)));
 #endif
@@ -1574,8 +1592,8 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
             (__cbuf__ T*)dst.GetPhyAddr(), (__gm__ T*)src.GetPhyAddr(), dataCopyParams, padParams, cacheMode);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "VECIN / VECOUT", "DataCopyPad from GM to VECIN/VECOUT",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "UB(VECIN/VECOUT)", "DataCopyPad from GM to UB(VECIN/VECOUT)",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 #else // defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
@@ -1592,16 +1610,16 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
 #endif
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-    CheckDataCopyPadTypeSupport<T>("DataCopyPad from GM to VECIN/VECOUT");
-    CheckDataCopyPadTensor(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN/VECOUT");
+    CheckDataCopyPadTypeSupport<T>("DataCopyPad from GM to UB(VECIN/VECOUT)");
+    CheckDataCopyPadTensor(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)");
 #endif
 #endif
     if ASCEND_IS_AIC {
         return;
     }
 #if ASCENDC_CPU_DEBUG
-    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN/VECOUT")) {
-        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to VECIN / VECOUT", KernelFuncType::NONE_MODE);
+    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)")) {
+        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to UB(VECIN/VECOUT)", KernelFuncType::NONE_MODE);
     }
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, padParams)));
 #endif
@@ -1617,12 +1635,12 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
     } else {
 #if (__NPU_ARCH__ == 3102)
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / C1 / VECIN / VECOUT", "DataCopyPad from GM to VECIN/VECOUT",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT)", "DataCopyPad from GM to UB(VECIN/VECOUT)",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
 #else
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "VECIN / VECOUT", "DataCopyPad from GM to VECIN/VECOUT",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "UB(VECIN/VECOUT)", "DataCopyPad from GM to UB(VECIN/VECOUT)",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
 #endif
 #endif
     }
@@ -1647,20 +1665,20 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
     using PrimType = PrimT<T>;
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-    CheckDataCopyPadTypeSupport<T>("DataCopyPad from GM to VECIN / VECOUT");
-    CheckDataCopyPadTensor(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN / VECOUT");
+    CheckDataCopyPadTypeSupport<T>("DataCopyPad from GM to UB(VECIN/VECOUT)");
+    CheckDataCopyPadTensor(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)");
 #endif
 #endif
     if ASCEND_IS_AIC {
         return;
     }
 #if ASCENDC_CPU_DEBUG
-    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to VECIN/VECOUT")) {
-        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to VECIN / VECOUT", KernelFuncType::NONE_MODE);
+    if (!CheckFuncDataCopyPad(dst, src, dataCopyParams, padParams, "DataCopyPad from GM to UB(VECIN/VECOUT)")) {
+        ASCENDC_REPORT_CHECK_ERROR("DataCopyPad from GM to UB(VECIN/VECOUT)", KernelFuncType::NONE_MODE);
     }
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, padParams)));
 #endif
-    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN / VECOUT", "DataCopyPad from GM to VECIN / VECOUT");
+    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN/VECOUT", "DataCopyPad from GM to UB(VECIN/VECOUT)");
     DataCopyPadGm2UBImpl(
         (__ubuf__ PrimType*)dst.GetPhyAddr(), (__gm__ PrimType*)src.GetPhyAddr(), dataCopyParams, padParams);
 }
@@ -1687,8 +1705,8 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
             (__gm__ PrimType*)dst.GetPhyAddr(), (__ubuf__ PrimType*)src.GetPhyAddr(), dataCopyParams, cacheMode);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN / VECOUT", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyExtParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECIN/VECOUT)", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyExtParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     }
 }
 #else // defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
@@ -1723,13 +1741,13 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
     } else {
 #if (__NPU_ARCH__ == 3102)
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1 / C1 / VECIN / VECOUT",
+            false, "src", "L1 Buffer(A1/B1/C1)/UB(VECIN/VECOUT)",
             "DataCopyPad from LocalTensor to GlobalTensor with DataCopyExtParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #else
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "VECIN / VECOUT", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyExtParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "UB(VECIN/VECOUT)", "DataCopyPad from LocalTensor to GlobalTensor with DataCopyExtParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
 #endif
 #endif
     }
@@ -1750,7 +1768,7 @@ __aicore__ inline void DataCopyPad(
 #endif
 #endif
     CheckTensorPos<T>(dst, Hardware::L1, "dst", "TSCM", "DataCopyPad with Nd2NzParams");
-    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN / VECOUT", "DataCopyPad with Nd2NzParams");
+    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN/VECOUT", "DataCopyPad with Nd2NzParams");
     ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyPadTensorSizeOverflow(dst, src, dataCopyParams, nd2nzParams)));
     DataCopyPadUB2L1Impl(
         (__cbuf__ PrimType*)dst.GetPhyAddr(), (__ubuf__ PrimType*)src.GetPhyAddr(), dataCopyParams, nd2nzParams);

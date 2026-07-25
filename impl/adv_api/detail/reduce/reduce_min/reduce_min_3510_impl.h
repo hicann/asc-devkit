@@ -85,12 +85,14 @@ __aicore__ inline void ReduceMinRAB64ReuseSourceCompute(
     if ((srcShape[1] * sizeof(T)) % 32 == 0) {
         if (srcShape[1] * sizeof(T) <= GetVecLen() / 2) {
             ReduceRAConcatImpl<
-                T, Reg::RegTraitNumTwo, Reg::Min<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>,
-                isReuseSource>(dstAddr, srcAddr, tmpAddr, srcShape[1], srcShape[0]);
+                T, Reg::RegTraitNumTwo,
+                Reg::Min<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>, isReuseSource>(
+                dstAddr, srcAddr, tmpAddr, srcShape[1], srcShape[0]);
         } else {
             ReduceRAB64ReuseSource<
-                T, Reg::RegTraitNumTwo, Reg::Min<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>,
-                isReuseSource>(dstAddr, srcAddr, tmpAddr, srcShape[1], srcShape[0]);
+                T, Reg::RegTraitNumTwo,
+                Reg::Min<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>, isReuseSource>(
+                dstAddr, srcAddr, tmpAddr, srcShape[1], srcShape[0]);
         }
     } else {
         ReduceRAReuseSourceUnAlignedB64<
@@ -119,9 +121,9 @@ __aicore__ inline void ReduceMinImpl(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t srcShape[], bool srcInnerPad)
 {
-    CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "ReduceMin");
-    CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "ReduceMin");
-    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECCALC / VECOUT", "ReduceMin");
+    CheckTensorPos<T>(dst, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "ReduceMin");
+    CheckTensorPos<T>(src, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "ReduceMin");
+    CheckTensorPos<uint8_t>(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECCALC/VECOUT", "ReduceMin");
     static_assert(
         SupportType<
             T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t>(),

@@ -70,7 +70,7 @@ template <typename T, typename U>
              "Please check your code!")]] __aicore__ inline void
 FixpipeL0C2GMImpl(__gm__ T* dst, __cc__ U* src, const FixpipeParams<U>& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from CO1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from L0C Buffer(CO1) to GM");
 }
 
 template <typename T, typename U>
@@ -78,7 +78,7 @@ template <typename T, typename U>
              "Please check your code!")]] __aicore__ inline void
 FixpipeL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const FixpipeParams<U>& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from CO1 to C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from L0C Buffer(CO1) to UB(C1)");
 }
 
 // L0C->L1
@@ -87,7 +87,7 @@ template <typename T, typename U, typename S>
              "Please check your code!")]] __aicore__ inline void
 Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParams<S>& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from CO1 to C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from L0C Buffer(CO1) to UB(C1)");
 }
 // L0C->L1 deq tensor quant
 template <typename T, typename U, typename S, typename V>
@@ -97,7 +97,7 @@ Fixpipe(
     const LocalTensor<T>& dst, const LocalTensor<U>& src, const LocalTensor<S>& cbufWorkspace,
     const FixpipeParams<V>& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from CO1 to C1");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from L0C Buffer(CO1) to UB(C1)");
 }
 
 // L0C->GM
@@ -106,7 +106,7 @@ template <typename T, typename U, typename S>
              "Please check your code!")]] __aicore__ inline void
 Fixpipe(const GlobalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParams<S>& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from CO1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from L0C Buffer(CO1) to GM");
 }
 
 // L0C->GM deq tensor quant
@@ -117,7 +117,7 @@ Fixpipe(
     const GlobalTensor<T>& dst, const LocalTensor<U>& src, const LocalTensor<S>& cbufWorkspace,
     const FixpipeParams<V>& intriParams)
 {
-    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from CO1 to GM");
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe from L0C Buffer(CO1) to GM");
 }
 
 template <typename T, typename U, const FixpipeConfig& config>

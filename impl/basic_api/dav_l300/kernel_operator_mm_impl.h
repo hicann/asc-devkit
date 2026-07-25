@@ -268,7 +268,9 @@ __aicore__ inline void LoadData3DV2L12L0BCal(
 __aicore__ inline void LoadData3DV2L12L0ACal(
     __ca__ float* dst, __cbuf__ float* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported float load data from A1/B1 to A2/B2"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(KERNEL_ERROR, "unsupported float load data from L1 Buffer(A1/B1) to L0A Buffer(A2)/L0B Buffer(B2)");
+    });
 }
 
 template <typename T>
@@ -288,7 +290,9 @@ __aicore__ inline void LoadData3DV2L12L0ACal(
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ float* dst, __cbuf__ float* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported float load data from A1/B1 to A2/B2"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(KERNEL_ERROR, "unsupported float load data from L1 Buffer(A1/B1) to L0A Buffer(A2)/L0B Buffer(B2)");
+    });
 }
 
 template <typename T>
@@ -309,23 +313,27 @@ template <typename T>
 __aicore__ inline void LoadData3DV2L12UBCal(
     __ubuf__ T* dst, __cbuf__ T* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from A1/B1 to UB"); });
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 from L1 Buffer(A1/B1) to UB"); });
 }
 
 template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ uint8_t* dst, __cbuf__ uint8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT(
-        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 load uint8_t dtype from A1/B1 to B2"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "unsupported loaddata_3d_v2 load uint8_t dtype from L1 Buffer(A1/B1) to L0B Buffer(B2)");
+    });
 }
 
 template <>
 __aicore__ inline void LoadData3DV2L12L0BCal(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, const LoadData3DParamsV2Pro& loadDataParams)
 {
-    ASCENDC_ASSERT(
-        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported loaddata_3d_v2 load int8_t dtype from A1/B1 to B2"); });
+    ASCENDC_ASSERT((false), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "unsupported loaddata_3d_v2 load int8_t dtype from L1 Buffer(A1/B1) to L0B Buffer(B2)");
+    });
 }
 
 /* **************************************************************************************************

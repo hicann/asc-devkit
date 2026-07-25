@@ -9,12 +9,16 @@
  */
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <atomic>
 #include <fstream>
 #include <iostream>
 #include "kernel_operator.h"
 
 using namespace AscendC;
+
 namespace {
+std::atomic<uint64_t> g_raiseCount{0};
+
 /******************************** Fixpipe ********************************/
 template <typename DstT, typename SrcT, const FixpipeConfig& config>
 using FixpipeOpPtr = void (*)(
@@ -43,6 +47,7 @@ void FixpipeOpTest(std::vector<TPosition>& tensorPos)
     fixpipeParams.mSize = 16;
     fixpipeParams.srcStride = 1;
     fixpipeParams.dstStride = 1;
+    fixpipeParams.quantPre = QuantMode_t::F322F16;
 
     fixpipeParams.ndNum = 1;
     fixpipeParams.srcNdStride = 0;
@@ -57,7 +62,7 @@ template <typename DstT, typename SrcT, const FixpipeConfig& config>
 using FixpipeL2LPtr = void (*)(
     const LocalTensor<DstT>& dstLocal, const LocalTensor<SrcT>& srcLocal, const FixpipeParamsV220& intriParams);
 
-template <typename DstT, typename SrcT, FixpipeL2LPtr<DstT, SrcT, CFG_ROW_MAJOR> func>
+template <typename DstT, typename SrcT, FixpipeL2LPtr<DstT, SrcT, CFG_NZ> func>
 void FixpipeOpTest2(std::vector<TPosition>& tensorPos)
 {
     int32_t dataSize = 128;
@@ -82,6 +87,11 @@ void FixpipeOpTest2(std::vector<TPosition>& tensorPos)
     LocalTensor<SrcT> srcLocal(addr1);
 
     FixpipeParamsV220 fixpipeParams;
+    fixpipeParams.nSize = 16;
+    fixpipeParams.mSize = 16;
+    fixpipeParams.srcStride = 1;
+    fixpipeParams.dstStride = 1;
+    fixpipeParams.quantPre = QuantMode_t::F322F16;
     fixpipeParams.ndNum = 1;
     fixpipeParams.srcNdStride = 0;
     fixpipeParams.dstNdStride = 0;
@@ -316,7 +326,11 @@ void MmadOpTest(std::vector<TPosition>& tensorPos)
     delete[] data2;
 }
 
-int32_t RaiseStub(int32_t i) { return 0; }
+int32_t RaiseStub(int32_t i)
+{
+    g_raiseCount++;
+    return 0;
+}
 } // namespace
 
 class TensorScopeTest : public testing::Test {
@@ -338,7 +352,11 @@ struct CubeOpTestParams {
 class CubeOpTestsuite : public testing::Test, public testing::WithParamInterface<CubeOpTestParams> {
 protected:
     void SetUp() {}
-    void TearDown() { AscendC::CheckSyncState(); }
+    void TearDown()
+    {
+        AscendC::CheckSyncState();
+        GlobalMockObject::verify();
+    }
 };
 
 INSTANTIATE_TEST_CASE_P(
@@ -348,111 +366,123 @@ INSTANTIATE_TEST_CASE_P(
         //***********************************************************
         // Fixpipe
         CubeOpTestParams{
-            FixpipeOpTest<half, float, Fixpipe<half, float>>, "Fixpipe", {TPosition::VECIN}, "src", "VECIN", "CO1"},
-        CubeOpTestParams{
-            FixpipeOpTest2<half, float, Fixpipe<half, float>>,
+            FixpipeOpTest<half, float, Fixpipe<half, float>>,
             "Fixpipe",
-            {TPosition::VECIN, TPosition::VECIN},
+            {TPosition::VECIN},
             "src",
-            "VECIN",
-            "CO1"},
-        // Fixpipe的dst位置,与se确认为A1
+            "UB(VECIN)",
+            "L0C Buffer(CO1)"},
         CubeOpTestParams{
-            FixpipeOpTest2<half, float, Fixpipe<half, float>>,
+            FixpipeOpTest2<half, float, Fixpipe<half, float, CFG_NZ>>,
+            "Fixpipe",
+            {TPosition::C1, TPosition::VECIN},
+            "src",
+            "UB(VECIN)",
+            "L0C Buffer(CO1)"},
+        // Fixpipe dst物理位置为L1
+        CubeOpTestParams{
+            FixpipeOpTest2<half, float, Fixpipe<half, float, CFG_NZ>>,
             "Fixpipe",
             {TPosition::CO2, TPosition::CO1},
             "dst",
-            "CO2",
-            "A1"},
+            "GM(CO2)",
+            "L1 Buffer(C1)"},
         // LoadData
         CubeOpTestParams{
             LoadData2dOpTest<half, LoadData>,
             "LoadData",
-            {TPosition::CO2, TPosition::CO1},
+            {TPosition::A2, TPosition::CO1},
             "src",
-            "CO1",
-            "A1 / B1 / GM"},
+            "L0C Buffer(CO1)",
+            "L1 Buffer(A1/B1)/GM"},
         CubeOpTestParams{
-            LoadData2dOpTest<half, LoadData>, "LoadData", {TPosition::CO2, TPosition::A1}, "dst", "CO2", "A2 / B2"},
+            LoadData2dOpTest<half, LoadData>,
+            "LoadData",
+            {TPosition::CO2, TPosition::A1},
+            "dst",
+            "GM(CO2)",
+            "L0A Buffer(A2)/L0B Buffer(B2)"},
         CubeOpTestParams{
-            LoadData2dG2LOpTest<half, LoadData>, "LoadData", {TPosition::CO2}, "dst", "CO2", "A1 / B1 / A2 / B2"},
+            LoadData2dG2LOpTest<half, LoadData>,
+            "LoadData",
+            {TPosition::CO2},
+            "dst",
+            "GM(CO2)",
+            "L1 Buffer(A1/B1)/L0A Buffer(A2)/L0B Buffer(B2)"},
         // LodaData2DV2
         CubeOpTestParams{
             LoadData2dv2L2LOpTest<half, LoadData>,
             "LoadData with LoadData2DParamsV2",
             {TPosition::CO2, TPosition::A1},
             "dst",
-            "CO2",
-            "A2 / B2"},
+            "GM(CO2)",
+            "L0A Buffer(A2)/L0B Buffer(B2)"},
         CubeOpTestParams{
             LoadData2dv2L2LOpTest<half, LoadData>,
             "LoadData with LoadData2DParamsV2",
-            {TPosition::CO2, TPosition::CO1},
+            {TPosition::A2, TPosition::CO1},
             "src",
-            "CO1",
-            "A1 / B1"},
+            "L0C Buffer(CO1)",
+            "L1 Buffer(A1/B1)"},
         CubeOpTestParams{
             LoadData2dv2G2LOpTest<half, LoadData>,
             "LoadData with LoadData2DParamsV2",
             {TPosition::CO2},
             "dst",
-            "CO2",
-            "A1 / B1 / A2 / B2"},
+            "GM(CO2)",
+            "L1 Buffer(A1/B1)/L0A Buffer(A2)/L0B Buffer(B2)"},
         // Mmad
         CubeOpTestParams{
             MmadOpTest<half, half, half, Mmad>,
             "Mmad",
-            {TPosition::A1, TPosition::A1, TPosition::A1},
+            {TPosition::A1, TPosition::A2, TPosition::B2},
             "dstLocal",
-            "A1",
-            "CO1"},
+            "L1 Buffer(A1)",
+            "L0C Buffer(CO1)"},
         CubeOpTestParams{
             MmadOpTest<half, half, half, Mmad>,
             "Mmad",
-            {TPosition::CO1, TPosition::A1, TPosition::A1},
+            {TPosition::CO1, TPosition::A1, TPosition::B2},
             "fmLocal",
-            "A1",
-            "A2"},
+            "L1 Buffer(A1)",
+            "L0A Buffer(A2)"},
         CubeOpTestParams{
             MmadOpTest<half, half, half, Mmad>,
             "Mmad",
             {TPosition::CO1, TPosition::A2, TPosition::A1},
             "filterLocal",
-            "A1",
-            "B2"}));
+            "L1 Buffer(A1)",
+            "L0B Buffer(B2)"}));
 
 TEST_P(CubeOpTestsuite, CubeOpTestCase)
 {
-    static int32_t count = 0;
-    MOCKER(raise, int32_t(*)(int32_t)).stubs().will(invoke(RaiseStub));
     auto param = GetParam();
-    std::string fileName =
-        "print_ut_aic_tensor_scope" + std::to_string(getpid()) + "_" + std::to_string(count) + ".txt";
-    freopen(fileName.c_str(), "w", stdout);
+    SCOPED_TRACE(param.funcName + "." + param.illegalTensorPos);
+    MOCKER(raise, int32_t(*)(int32_t)).stubs().will(invoke(RaiseStub));
+    const uint64_t startCount = g_raiseCount.load();
     param.func(param.tensorPos);
+    EXPECT_GT(g_raiseCount.load() - startCount, 0);
+}
 
-    // 恢复printf
-    fclose(stdout);
-    freopen("/dev/tty", "w", stdout);
-    freopen("/dev/tty", "r", stdin);
+TEST_F(TensorScopeTest, CheckTensorPhyPositionReportsUnsupportedPositions)
+{
+    MOCKER(raise, int32_t(*)(int32_t)).stubs().will(invoke(RaiseStub));
+    int32_t data[8] = {};
+    TBuffAddr addr;
+    addr.bufferHandle = nullptr;
+    addr.dataLen = sizeof(data);
+    addr.bufferAddr = 0;
+    addr.absAddr = reinterpret_cast<uint8_t*>(data);
+    const TPosition positions[] = {TPosition::GM,  TPosition::C1,        TPosition::VECOUT,      TPosition::VECCALC,
+                                   TPosition::SPM, TPosition::C2PIPE2GM, TPosition::C2PIPE2LOCAL};
 
-    // 校验真值
-    std::ifstream resultFile(fileName, std::ios::in);
-    std::stringstream streambuffer;
-    streambuffer << resultFile.rdbuf();
-    std::string resultString(streambuffer.str());
-    std::string goldenStr = "Failed to check " + param.illegalTensorPos + " tensor position in " + param.funcName +
-                            ", supported positions are " + param.supportPos + ", current position is " +
-                            param.illegalTensorPosName + ".";
-    std::string goldenStr2 = "Failed to check " + param.illegalTensorPos + " tensor TPosition in " + param.funcName +
-                             ", supported TPositions are " + param.supportPos + ", current TPosition is " +
-                             param.illegalTensorPosName + ".";
-    resultFile.close();
-    bool findRes =
-        (resultString.find(goldenStr) != std::string::npos) || (resultString.find(goldenStr2) != std::string::npos);
-    EXPECT_TRUE(findRes);
-    EXPECT_EQ(remove(fileName.c_str()), 0);
-    count++;
+    for (const TPosition position : positions) {
+        addr.logicPos = static_cast<uint8_t>(position);
+        LocalTensor<float> tensor(addr);
+        const uint64_t startCount = g_raiseCount.load();
+        CheckTensorPhyPosition<Hardware::L0C>(tensor, "tensor", "L0C Buffer(CO1)", "DFX position check");
+        EXPECT_GT(g_raiseCount.load() - startCount, 0);
+    }
 }
 
 TEST_F(TensorScopeTest, FixpipeChannelSplitOnlySupportsFloatDst)

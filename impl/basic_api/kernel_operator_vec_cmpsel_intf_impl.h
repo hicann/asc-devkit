@@ -217,7 +217,7 @@ __aicore__ inline void GetCmpMask(const LocalTensor<T>& dst)
 #if ASCENDC_CPU_DEBUG
     constexpr uint64_t align16B = 16;
     CheckTensorAlign<T>(dst, align16B, "dst", "GetCmpMask");
-    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN / VECCALC / VECOUT", "GetCmpMask");
+    CheckTensorPos<T>(dst, Hardware::UB, "dst", "VECIN/VECCALC/VECOUT", "GetCmpMask");
 #endif
     GetCmpMaskImpl((__ubuf__ PrimType*)dst.GetPhyAddr());
 }
@@ -234,7 +234,7 @@ __aicore__ inline void SetCmpMask(const LocalTensor<T>& src)
 #if ASCENDC_CPU_DEBUG
     constexpr uint64_t align16B = 16;
     CheckTensorAlign<T>(src, align16B, "src", "SetCmpMask");
-    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN / VECCALC / VECOUT", "SetCmpMask");
+    CheckTensorPos<T>(src, Hardware::UB, "src", "VECIN/VECCALC/VECOUT", "SetCmpMask");
 #endif
     SetCmpMaskImpl((__ubuf__ PrimType*)src.GetPhyAddr());
 }
@@ -603,7 +603,7 @@ __aicore__ inline void Select(
         ASCENDC_REPORT_CHECK_ERROR("Select", KernelFuncType::MASK_BIT_MODE);
     }
 #endif
-    CheckTensorPos<U>(selMask, Hardware::UB, "selMask", "VECIN / VECCALC / VECOUT", "Select");
+    CheckTensorPos<U>(selMask, Hardware::UB, "selMask", "VECIN/VECCALC/VECOUT", "Select");
     VselImpl(
         (__ubuf__ T*)dst.GetPhyAddr(), (__ubuf__ U*)selMask.GetPhyAddr(), (__ubuf__ T*)src0.GetPhyAddr(), src1, selMode,
         mask, repeatTime, repeatParams);
@@ -625,7 +625,7 @@ __aicore__ inline void Select(
         ASCENDC_REPORT_CHECK_ERROR("Select", KernelFuncType::MASK_COUNT_MODE);
     }
 #endif
-    CheckTensorPos<U>(selMask, Hardware::UB, "selMask", "VECIN / VECCALC / VECOUT", "Select");
+    CheckTensorPos<U>(selMask, Hardware::UB, "selMask", "VECIN/VECCALC/VECOUT", "Select");
     VselImpl(
         (__ubuf__ T*)dst.GetPhyAddr(), (__ubuf__ U*)selMask.GetPhyAddr(), (__ubuf__ T*)src0.GetPhyAddr(), src1, selMode,
         mask, repeatTime, repeatParams);
@@ -657,7 +657,7 @@ __aicore__ inline void Select(
         ASCENDC_REPORT_CHECK_ERROR("Select", KernelFuncType::CALCOUNT_MODE);
     }
 #endif
-    CheckTensorPos<U>(selMask, Hardware::UB, "selMask", "VECIN / VECCALC / VECOUT", "Select");
+    CheckTensorPos<U>(selMask, Hardware::UB, "selMask", "VECIN/VECCALC/VECOUT", "Select");
     VselImpl(
         (__ubuf__ DataPrimType*)dst.GetPhyAddr(), (__ubuf__ MaskPrimType*)selMask.GetPhyAddr(),
         (__ubuf__ DataPrimType*)src0.GetPhyAddr(), src1, selMode, count);
@@ -884,7 +884,7 @@ __aicore__ inline void SelectCommon(
     const T2& dst, const LocalTensor<T1>& selMask, const T3& src0, const T4& src1, SELMODE selMode, MaskType mask,
     uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
 {
-    CheckTensorPos<T1>(selMask, Hardware::UB, "selMask", "VECIN / VECCALC / VECOUT", "Select");
+    CheckTensorPos<T1>(selMask, Hardware::UB, "selMask", "VECIN/VECCALC/VECOUT", "Select");
     static_assert(!TypeUtils::IsInnerDefaultType<T3, T4>(), "One of src0 and src1 should be Tensor");
     static_assert(TypeUtils::IsLocalTensorType<T2>(), "dst should be Tensor");
 
@@ -961,7 +961,7 @@ __aicore__ inline void Select(
         ASCENDC_REPORT_CHECK_ERROR("Select", KernelFuncType::CALCOUNT_MODE);
     }
 #endif
-    CheckTensorPos<T1>(selMask, Hardware::UB, "selMask", "VECIN / VECCALC / VECOUT", "Select");
+    CheckTensorPos<T1>(selMask, Hardware::UB, "selMask", "VECIN/VECCALC/VECOUT", "Select");
     static_assert(!TypeUtils::IsInnerDefaultType<T3, T4>(), "One of src0 and src1 should be Tensor");
     static_assert(TypeUtils::IsLocalTensorType<T2>(), "dst should be Tensor");
 

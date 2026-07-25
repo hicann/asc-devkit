@@ -995,7 +995,7 @@ public:
         ASSERT(sync == true);
         ASSERT(enAtomic == 0);
         ASSERT(kfcMsg_.body.isFirstIter == 1);
-        ASSERT((PhyPosIsL1(C_TYPE::pos)) && "IterateAll LocalTensor only support TPosition A1 or B1");
+        ASSERT((PhyPosIsL1(C_TYPE::pos)) && "IterateAll LocalTensor only supports L1 Buffer(A1/B1)");
         ASSERT(
             !(A_TYPE::ibShare && B_TYPE::ibShare) && "IterateAll LocalTensor not support when sameab"
                                                      " is enabled");

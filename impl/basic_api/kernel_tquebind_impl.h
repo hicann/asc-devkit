@@ -174,11 +174,11 @@ __aicore__ inline __sync_alias__ bool TQueBind<src, dst, depth, mask>::EnQue(TBu
     static_assert(
         ((srcUserPos == TPosition::GM) || (srcUserPos == TPosition::VECIN) || (srcUserPos == TPosition::VECOUT) ||
          (srcUserPos == TPosition::VECCALC)) &&
-        "enque only support src position GM/VECIN/VECOUT/VECCALC currently.");
+        "enque only support src position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         ((dstUserPos == TPosition::GM) || (dstUserPos == TPosition::VECIN) || (dstUserPos == TPosition::VECOUT) ||
          (dstUserPos == TPosition::VECCALC)) &&
-        "enque only support dst position GM/VECIN/VECOUT/VECCALC currently.");
+        "enque only support dst position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         !((srcUserPos == TPosition::GM) && (dstUserPos == TPosition::GM)) &&
         "enque src and dst position cannot be GM at the same time.");
@@ -433,11 +433,11 @@ __aicore__ inline __sync_alias__ TBufHandle TQueBind<src, dst, depth, mask>::DeQ
     static_assert(
         ((srcUserPos == TPosition::GM) || (srcUserPos == TPosition::VECIN) || (srcUserPos == TPosition::VECOUT) ||
          (srcUserPos == TPosition::VECCALC)) &&
-        "DeQue only support src position GM/VECIN/VECOUT/VECCALC currently.");
+        "DeQue only support src position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         ((dstUserPos == TPosition::GM) || (dstUserPos == TPosition::VECIN) || (dstUserPos == TPosition::VECOUT) ||
          (dstUserPos == TPosition::VECCALC)) &&
-        "DeQue only support dst position GM/VECIN/VECOUT/VECCALC currently.");
+        "DeQue only support dst position GM/UB(VECIN/VECOUT/VECCALC) currently.");
     static_assert(
         !((srcUserPos == TPosition::GM) && (dstUserPos == TPosition::GM)) &&
         "DeQue src and dst position cannot be GM at the same time.");

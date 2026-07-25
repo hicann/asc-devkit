@@ -267,15 +267,15 @@ __aicore__ inline void AscendAntiQuantTranspose(
 }
 
 template <typename SrcType, typename OutputDataType, bool isTranspose>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantImpl(
     const LocalTensor<OutputDataType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<fp8_e8m0_t>& scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t k, const AntiQuantShapeInfo& shapeInfo = {})
 {
-    CheckTensorPosition(dst, "dst", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "src", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scale, "scale", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dst", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "src", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scale, "scale", "VECIN/VECOUT/VECCALC");
     static_assert(
         SupportType<SrcType, fp4x2_e2m1_t, fp4x2_e1m2_t>(), "This AscendAntiQuant only support fp4 input dtype");
     static_assert(
@@ -775,8 +775,8 @@ __aicore__ inline void AntiQuantPerchannelImpl(
 }
 
 template <typename SrcType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantInnerLoop(
     const LocalTensor<bfloat16_t>& dst, const LocalTensor<SrcType>& src, const LocalTensor<bfloat16_t>& offset,
     const LocalTensor<bfloat16_t>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer,
@@ -821,8 +821,8 @@ __aicore__ inline void AntiQuantInnerLoop(
 }
 
 template <typename SrcType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantInnerLoop(
     const LocalTensor<bfloat16_t>& dst, const LocalTensor<SrcType>& src, const bfloat16_t offset,
     const bfloat16_t scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const UnaryRepeatParams& unaryParamsCastSrc,
@@ -860,8 +860,8 @@ __aicore__ inline void AntiQuantInnerLoop(
 }
 
 template <typename SrcType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantNoTransposePerformance(
     const LocalTensor<bfloat16_t>& dst, const LocalTensor<SrcType>& src, const LocalTensor<bfloat16_t>& offset,
     const LocalTensor<bfloat16_t>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t K,
@@ -917,8 +917,8 @@ __aicore__ inline void AscendAntiQuantNoTransposePerformance(
 }
 
 template <typename SrcType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantNoTransposePerformanceTail(
     const LocalTensor<bfloat16_t>& dst, const LocalTensor<SrcType>& src, const LocalTensor<bfloat16_t>& offset,
     const LocalTensor<bfloat16_t>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t K,
@@ -999,8 +999,8 @@ __aicore__ inline bool AntiQuantCheckPerformanceMode(
 // scale * (src + offset)   src: N * K, scale: N, offset: N  NOffset: offset used for tmpTensorOffset, tmpTensorScale
 // For now, calCount must equal to N * K then can use brcb
 template <typename SrcType, typename OutputDataType, bool isOffset>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CalculationMax(
     const LocalTensor<SrcType>& src, const LocalTensor<OutputDataType>& dst, AntiquantParams<float>& params,
     const uint32_t calCount, const uint32_t N, const uint32_t K, const uint32_t NOffset)
@@ -1105,8 +1105,8 @@ __aicore__ inline void CastAndBrcb(
 // scale * (src + offset)   src: N * K, scale: N, offset: N  NOffset: offset used for tmpTensorOffset, tmpTensorScale
 // For now, calCount must equal to N * K then can use brcb   calCount: 64 * N
 template <typename SrcType, typename OutputDataType, bool withOffset>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CalculationMin(
     const LocalTensor<SrcType>& src, const LocalTensor<OutputDataType>& dst, AntiquantParams<float>& params,
     const uint32_t calCount, const uint32_t n, const uint32_t srcN, const uint32_t k)
@@ -1160,8 +1160,8 @@ __aicore__ inline void CalculationMin(
 
 // Method2: min: N * 64
 template <typename SrcType, typename OutputDataType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CalculateByBrcbMin(
     const LocalTensor<OutputDataType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<OutputDataType>& offset,
     const LocalTensor<OutputDataType>& scale, const LocalTensor<float>& stackBuffer, const uint32_t calCount,
@@ -1185,8 +1185,8 @@ __aicore__ inline void CalculateByBrcbMin(
 }
 
 template <typename SrcType, typename OutputDataType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CalculateByBrcbMin(
     const LocalTensor<OutputDataType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<OutputDataType>& scale,
     const LocalTensor<float>& stackBuffer, const uint32_t calCount, const uint32_t n, const uint32_t k)
@@ -1244,8 +1244,8 @@ __aicore__ inline void AntiQuantFp16Brcb(
 }
 
 template <typename SrcType, typename OutputDataType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantTranspose(
     const LocalTensor<OutputDataType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<OutputDataType>& offset,
     const LocalTensor<OutputDataType>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t K,
@@ -1268,8 +1268,8 @@ __aicore__ inline void AscendAntiQuantTranspose(
 }
 
 template <typename SrcType, typename OutputDataType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantTranspose(
     const LocalTensor<OutputDataType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<OutputDataType>& scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t K, const AntiQuantShapeInfo& shapeInfo = {})
@@ -2174,10 +2174,10 @@ __aicore__ inline void AscendAntiQuantImpl(
     if ASCEND_IS_AIC {
         return;
     }
-    CheckTensorPosition(dstTensor, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(srcTensor, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dstTensor, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(srcTensor, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scaleTensor, "scaleTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(offsetTensor, "offsetTensor", "VECIN/VECOUT/VECCALC");
     static_assert(
         SupportType<dstT, bfloat16_t, half, float>(),
         "AscendAntiQuant only support bfloat16_t/half/float output dtype");
@@ -2227,10 +2227,10 @@ __aicore__ inline void AscendAntiQuantImplCommon(
     const LocalTensor<DstType>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t k,
     const AntiQuantShapeInfo& shapeInfo = {})
 {
-    CheckTensorPosition(dst, "dst", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "src", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(offset, "offset", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(scale, "scale", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dst", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "src", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(offset, "offset", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(scale, "scale", "VECIN/VECOUT/VECCALC");
     AntiQuantPerchannelImpl<SrcType, DstType, isTranspose>(dst, src, offset, scale, sharedTmpBuffer, k, shapeInfo);
 }
 
@@ -2239,8 +2239,8 @@ __aicore__ inline void AscendAntiQuantImplCommon(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const DstType offset, const DstType scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t k, const AntiQuantShapeInfo& shapeInfo = {})
 {
-    CheckTensorPosition(dst, "dst", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "src", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dst", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "src", "VECIN/VECOUT/VECCALC");
     AntiQuantPertensorImpl<SrcType, DstType>(dst, src, offset, scale, sharedTmpBuffer, k, shapeInfo);
 }
 } // namespace AscendC

@@ -9,11 +9,12 @@
  */
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
-#include <fstream>
-#include <iostream>
 #include "kernel_operator.h"
 
 using namespace AscendC;
+
+extern "C" uint64_t GetDlogErrorCountForTest();
+
 namespace {
 /******************************** 双目指令 ********************************/
 template <typename T>
@@ -137,71 +138,51 @@ INSTANTIATE_TEST_CASE_P(
             "Scatter",
             {TPosition::VECIN, TPosition::VECIN, TPosition::A1},
             "dstOffset",
-            "A1",
-            "VECIN / VECOUT / VECCALC"},
+            "L1 Buffer(A1)",
+            "UB(VECIN/VECOUT/VECCALC)"},
         OpTestParams{
             ScatterOpTest<float, Scatter>,
             "Scatter",
             {TPosition::VECIN, TPosition::A1, TPosition::VECIN},
             "src",
-            "A1",
-            "VECIN / VECOUT / VECCALC"},
+            "L1 Buffer(A1)",
+            "UB(VECIN/VECOUT/VECCALC)"},
         OpTestParams{
             ScatterOpTest<float, Scatter>,
             "Scatter",
             {TPosition::A1, TPosition::VECIN, TPosition::VECIN},
             "dst",
-            "A1",
-            "VECIN / VECOUT / VECCALC"},
+            "L1 Buffer(A1)",
+            "UB(VECIN/VECOUT/VECCALC)"},
         OpTestParams{
             ScatterOp2Test<float, Scatter>,
             "Scatter",
             {TPosition::VECIN, TPosition::VECIN, TPosition::A1},
             "dstOffset",
-            "A1",
-            "VECIN / VECOUT / VECCALC"},
+            "L1 Buffer(A1)",
+            "UB(VECIN/VECOUT/VECCALC)"},
         OpTestParams{
             ScatterOp2Test<float, Scatter>,
             "Scatter",
             {TPosition::VECIN, TPosition::A1, TPosition::VECIN},
             "src",
-            "A1",
-            "VECIN / VECOUT / VECCALC"},
+            "L1 Buffer(A1)",
+            "UB(VECIN/VECOUT/VECCALC)"},
         OpTestParams{
             ScatterOp2Test<float, Scatter>,
             "Scatter",
             {TPosition::A1, TPosition::VECIN, TPosition::VECIN},
             "dst",
-            "A1",
-            "VECIN / VECOUT / VECCALC"}));
+            "L1 Buffer(A1)",
+            "UB(VECIN/VECOUT/VECCALC)"}));
 
 TEST_P(VectorOpTestsuite, VectorOpTestCase)
 {
-    static int32_t count = 0;
     MOCKER(raise, int32_t(*)(int32_t)).stubs().will(invoke(RaiseStub));
     auto param = GetParam();
-    std::string fileName =
-        "print_ut_310p_tensor_scope" + std::to_string(getpid()) + "_" + std::to_string(count) + ".txt";
-    freopen(fileName.c_str(), "w", stdout);
+    SCOPED_TRACE(param.funcName + "." + param.illegalTensorPos);
+    const uint64_t startCount = GetDlogErrorCountForTest();
     param.func(param.tensorPos);
-
-    // 恢复printf
-    fclose(stdout);
-    freopen("/dev/tty", "w", stdout);
-    freopen("/dev/tty", "r", stdin);
-
-    // 校验真值
-    std::ifstream resultFile(fileName, std::ios::in);
-    std::stringstream streambuffer;
-    streambuffer << resultFile.rdbuf();
-    std::string resultString(streambuffer.str());
-    std::string goldenStr = "Failed to check " + param.illegalTensorPos + " tensor position in " + param.funcName +
-                            ", supported positions are " + param.supportPos + ", current position is " +
-                            param.illegalTensorPosName + ".";
-    resultFile.close();
-    std::cout << "resultString is " << resultString << std::endl;
-    std::cout << "goldenStr is " << goldenStr << std::endl;
-    EXPECT_TRUE(resultString.find(goldenStr) != std::string::npos);
-    EXPECT_EQ(remove(fileName.c_str()), 0);
-    count++;
+    const uint64_t dlogErrorCount = GetDlogErrorCountForTest() - startCount;
+    EXPECT_EQ(dlogErrorCount, 1);
 }

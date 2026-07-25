@@ -297,9 +297,9 @@ __aicore__ inline void DigammaCompute(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& tmp, const uint32_t calCount)
 {
     CHECK_FUNC_HIGHLEVEL_API(Digamma, (T, isReuseSource), (dst, src, tmp, calCount));
-    CheckTensorPosition(dst, "dstTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(src, "srcTensor", "VECIN, VECOUT, VECCALC");
-    CheckTensorPosition(tmp, "sharedTmpBuffer", "VECIN, VECOUT, VECCALC");
+    CheckTensorPosition(dst, "dstTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(src, "srcTensor", "VECIN/VECOUT/VECCALC");
+    CheckTensorPosition(tmp, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC");
     CheckCalCount(calCount, "calCount", src, "srcTensor", "Digamma");
     CheckCalCount(calCount, "calCount", dst, "dstTensor", "Digamma");
 

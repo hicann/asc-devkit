@@ -114,7 +114,7 @@ __aicore__ inline void LoadDataImpl(
         Load3DSetPaddingCal(loadDataParams.padValue);
     }
 
-    CheckTensorPos<T>(src, Hardware::L1, "src", "A1 / B1", "LoadData with LoadData3DParamsV1");
+    CheckTensorPos<T>(src, Hardware::L1, "src", "A1/B1", "LoadData with LoadData3DParamsV1");
     CheckTensorAlign<T>(src, ONE_BLK_SIZE, "src", "LoadData with LoadData3DParamsV1");
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A) {
@@ -129,8 +129,8 @@ __aicore__ inline void LoadDataImpl(
             (__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            (false), "dst", "A2 / B2 / UB", "LoadData with LoadData3DParamsV1",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            (false), "dst", "L0A Buffer(A2)/L0B Buffer(B2)/UB(VECIN/VECOUT/VECCALC)",
+            "LoadData with LoadData3DParamsV1", GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -195,15 +195,17 @@ __aicore__ inline void LoadDataImpl(
             KERNEL_LOG_INTERNAL(
                 KERNEL_ERROR,
                 "Failed to check dtype in LoadData with LoadData3DParamsV2 when dst position is "
-                "A2, current api support dtype combination is src and dst both: uint8_t / int8_t / half / bfloat16_t / "
+                "L0A Buffer(A2), current api support dtype combination is src and dst both: uint8_t / int8_t / half / "
+                "bfloat16_t / "
                 "float / uint32_t / int32_t / int4b_t.\n"));
     } else if (dstScope == Hardware::L0B) {
         ASCENDC_DEBUG_ASSERT(
             (SupportType<PrimT<T>, half, bfloat16_t, float, uint32_t, int32_t>()),
             KERNEL_LOG_INTERNAL(
-                KERNEL_ERROR, "Failed to check dtype in LoadData with LoadData3DParamsV2 when dst position is B2, "
-                              "current api support dtype combination is src and dst both: half / bfloat16_t / float / "
-                              "uint32_t / int32_t.\n"));
+                KERNEL_ERROR,
+                "Failed to check dtype in LoadData with LoadData3DParamsV2 when dst position is L0B Buffer(B2), "
+                "current api support dtype combination is src and dst both: half / bfloat16_t / float / "
+                "uint32_t / int32_t.\n"));
     }
 #elif __NPU_ARCH__ == 3510
     ASCENDC_ASSERT(loadDataParams.kExtension * sizeof(T) % ONE_BLK_SIZE == 0, {
@@ -221,7 +223,8 @@ __aicore__ inline void LoadDataImpl(
         ASCENDC_ASSERT((SupportType<PrimT<T>, uint8_t, int8_t, half, uint16_t, int16_t, int4b_t>()), {
             KERNEL_LOG(
                 KERNEL_ERROR,
-                "Failed to check dtype in LoadData with LoadData3DParamsV2 when dst position is A2, current api "
+                "Failed to check dtype in LoadData with LoadData3DParamsV2 when dst position is L0A Buffer(A2), "
+                "current api "
                 "support "
                 "dtype combination is src and dst both: uint8_t / int8_t / half / uint16_t / int16_t / int4b_t.");
         });
@@ -229,14 +232,15 @@ __aicore__ inline void LoadDataImpl(
         ASCENDC_ASSERT((SupportType<PrimT<T>, half, int16_t, uint16_t>()), {
             KERNEL_LOG(
                 KERNEL_ERROR, "Failed to check dtype "
-                              "in LoadData with LoadData3DParamsV2 when dst position is B2, current api support dtype "
+                              "in LoadData with LoadData3DParamsV2 when dst position is L0B Buffer(B2), current api "
+                              "support dtype "
                               "combination is src "
                               "and dst both: half / int16_t / uint16_t.");
         });
     }
 #endif
 
-    CheckTensorPos<T>(src, Hardware::L1, "src", "A1 / B1", "LoadData with LoadData3DParamsV2");
+    CheckTensorPos<T>(src, Hardware::L1, "src", "A1/B1", "LoadData with LoadData3DParamsV2");
     if (dstScope == Hardware::L0A) {
         CheckTensorAlign<T>(dst, VALUE_512, "dst", "LoadData with LoadData3DParamsV2");
         LoadData3DV2L12L0ACal((__ca__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
@@ -249,8 +253,8 @@ __aicore__ inline void LoadDataImpl(
             (__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            (false), "dst", "A2 / B2 / UB", "LoadData with LoadData3DParamsV2",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            (false), "dst", "L0A Buffer(A2)/L0B Buffer(B2)/UB(VECIN/VECOUT/VECCALC)",
+            "LoadData with LoadData3DParamsV2", GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -283,7 +287,7 @@ __aicore__ inline void LoadDataWithStrideImpl(
     ASCENDC_ASSERT(
         loadDataParams.mStartPt % 16 == 0, { KERNEL_LOG(KERNEL_ERROR, "mStartPt should be a multiple of 16"); });
 
-    CheckTensorPos<T>(src, Hardware::L1, "src", "A1 / B1", "LoadDataWithStride with LoadData3DParamsV2");
+    CheckTensorPos<T>(src, Hardware::L1, "src", "A1/B1", "LoadDataWithStride with LoadData3DParamsV2");
     if (dstScope == Hardware::L0A) {
         CheckTensorAlign<T>(dst, VALUE_512, "dst", "LoadDataWithStride with LoadData3DParamsV2");
         LoadData3DV2L12L0AWithStrideCal(
@@ -298,8 +302,9 @@ __aicore__ inline void LoadDataWithStrideImpl(
             (__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            (false), "dst", "A2 / B2 / UB", "LoadDataWithStride with LoadData3DParamsV2",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            (false), "dst", "L0A Buffer(A2)/L0B Buffer(B2)/UB(VECIN/VECOUT/VECCALC)",
+            "LoadDataWithStride with LoadData3DParamsV2",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -339,7 +344,7 @@ __aicore__ inline __inout_pipe__(MTE2) void LoadDataImpl(
     if (dstScope == Hardware::L1) {
         LoadData2DGM2L1Cal((__cbuf__ T*)dst.GetPhyAddr(), (__gm__ U*)src.GetPhyAddr(), loadDataParams, nd2nzParams);
     } else {
-        ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "dst only support A1/B1"); });
+        ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "dst only supports L1 Buffer(A1/B1)"); });
     }
 }
 #endif
@@ -354,8 +359,8 @@ __aicore__ inline void LoadDataImpl(
 
     if constexpr (Src != TPosition::A1 && Src != TPosition::A2) {
         ASCENDC_CHECK_TPOSITION(
-            false, "src", "A1 / B1", "LoadData with LoadDataBitModeParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(src.GetPosition())));
+            false, "src", "L1 Buffer(A1/B1)", "LoadData with LoadDataBitModeParams",
+            GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
     };
     if constexpr (Dst == TPosition::A2) {
         LoadData3DV2L12L0ACal((__ca__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
@@ -363,8 +368,8 @@ __aicore__ inline void LoadDataImpl(
         LoadData3DV2L12L0BCal((__cb__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A2 / B2", "LoadData with LoadData3DParams",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L0A Buffer(A2)/L0B Buffer(B2)", "LoadData with LoadData3DParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 #endif
@@ -410,8 +415,8 @@ __aicore__ inline void LoadDataImpl(
             (__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(), loadDataParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            (false), "dst", "A1 / A2 / UB", "LoadData with LoadData3DParamsV2Pro",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            (false), "dst", "L1 Buffer(A1)/L0A Buffer(A2)/UB(VECIN/VECOUT/VECCALC)",
+            "LoadData with LoadData3DParamsV2Pro", GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -434,7 +439,7 @@ __aicore__ inline void LoadDataImpl(
     } else if (dstScope == Hardware::L0B) {
         LoadData3DV2L12L0BCal((__cb__ half*)dst.GetPhyAddr(), (__cbuf__ half*)src.GetPhyAddr(), loadDataParams);
     } else {
-        ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "dst only support A2/B2"); });
+        ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "dst only supports L0A Buffer(A2)/L0B Buffer(B2)"); });
     }
 }
 #endif
@@ -487,7 +492,9 @@ __aicore__ inline void MmadImpl(
         cmatrixSource = false;
     } else {
         ASCENDC_ASSERT((false), {
-            KERNEL_LOG(KERNEL_ERROR, "Failed to check bias tensor position in Mmad, supported positions are CO1 or C2");
+            KERNEL_LOG(
+                KERNEL_ERROR, "Failed to check bias tensor position in Mmad, supported positions are "
+                              "L0C Buffer(CO1)/BiasTable Buffer(C2)");
         });
     }
     MmadCal(
@@ -532,7 +539,9 @@ __aicore__ inline void MmadImpl(
         cmatrixSource = false;
     } else {
         ASCENDC_ASSERT((false), {
-            KERNEL_LOG(KERNEL_ERROR, "Failed to check bias tensor position in Mmad, supported positions are CO1 or C2");
+            KERNEL_LOG(
+                KERNEL_ERROR, "Failed to check bias tensor position in Mmad, supported positions are "
+                              "L0C Buffer(CO1)/BiasTable Buffer(C2)");
         });
     }
     MmadCal(
@@ -569,7 +578,8 @@ __aicore__ inline void MmadMxImpl(
     } else {
         ASCENDC_ASSERT((false), {
             KERNEL_LOG(
-                KERNEL_ERROR, "Failed to check bias tensor position in MmadMx, supported positions are CO1 or C2");
+                KERNEL_ERROR, "Failed to check bias tensor position in MmadMx, supported positions are "
+                              "L0C Buffer(CO1)/BiasTable Buffer(C2)");
         });
     }
     MmadMxCal(
@@ -614,7 +624,8 @@ __aicore__ inline void MmadMxImpl(
     } else {
         ASCENDC_ASSERT((false), {
             KERNEL_LOG(
-                KERNEL_ERROR, "Failed to check bias tensor position in MmadMx, supported positions are CO1 or C2");
+                KERNEL_ERROR, "Failed to check bias tensor position in MmadMx, supported positions are "
+                              "L0C Buffer(CO1)/BiasTable Buffer(C2)");
         });
     }
     MmadMxCal(
@@ -632,9 +643,9 @@ __aicore__ inline void MmadSpImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<U>& filter, const MmadParams& mmadParams)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    CheckTensorPhyPosition<Hardware::L0C>(dst, "dst", "CO1", "MmadWithSparse");
-    CheckTensorPhyPosition<Hardware::L0A>(fm, "fm", "A2", "MmadWithSparse");
-    CheckTensorPhyPosition<Hardware::L0B>(filter, "filter", "B2", "MmadWithSparse");
+    CheckTensorPhyPosition<Hardware::L0C>(dst, "dst", "L0C Buffer(CO1)", "MmadWithSparse");
+    CheckTensorPhyPosition<Hardware::L0A>(fm, "fm", "L0A Buffer(A2)", "MmadWithSparse");
+    CheckTensorPhyPosition<Hardware::L0B>(filter, "filter", "L0B Buffer(B2)", "MmadWithSparse");
     CheckTensorAlignment(dst, 1024, "dst", "MmadWithSparse");            // 1024B aligned
     CheckTensorAlignment(fm, VALUE_512, "fm", "MmadWithSparse");         // 512B aligned
     CheckTensorAlignment(filter, VALUE_512, "filter", "MmadWithSparse"); // 512B aligned
@@ -654,9 +665,9 @@ __aicore__ inline void LoadDataWithSparseImpl(
     const LoadData2dParams& loadDataParam)
 {
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
-    CheckTensorPhyPosition<Hardware::L0B>(dst, "dst", "B2", "LoadDataWithSparse");
-    CheckTensorPhyPosition<Hardware::L1>(src, "src", "B1", "LoadDataWithSparse");
-    CheckTensorPhyPosition<Hardware::L1>(idx, "idx", "B1", "LoadDataWithSparse");
+    CheckTensorPhyPosition<Hardware::L0B>(dst, "dst", "L0B Buffer(B2)", "LoadDataWithSparse");
+    CheckTensorPhyPosition<Hardware::L1>(src, "src", "L1 Buffer(B1)", "LoadDataWithSparse");
+    CheckTensorPhyPosition<Hardware::L1>(idx, "idx", "L1 Buffer(B1)", "LoadDataWithSparse");
     CheckTensorAlignment(dst, VALUE_512, "dst", "LoadDataWithSparse");    // 512B align
     CheckTensorAlignment(src, ONE_BLK_SIZE, "src", "LoadDataWithSparse"); // 32B align
     CheckTensorAlignment(idx, ONE_BLK_SIZE, "idx", "LoadDataWithSparse"); // 32B align
@@ -722,18 +733,18 @@ __aicore__ inline void FillImpl(const LocalTensor<T>& dst, const InitConstValueP
 {
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A) {
-        CheckTensorAlign<T>(dst, VALUE_512, "dst", "Fill when TPosition is A2");
+        CheckTensorAlign<T>(dst, VALUE_512, "dst", "Fill when dst position is L0A Buffer(A2)");
         InitL0ANzMatrixCal((__ca__ PrimT<T>*)dst.GetPhyAddr(), initConstValueParams);
     } else if (dstScope == Hardware::L0B) {
-        CheckTensorAlign<T>(dst, VALUE_512, "dst", "Fill when TPosition is B2");
+        CheckTensorAlign<T>(dst, VALUE_512, "dst", "Fill when dst position is L0B Buffer(B2)");
         InitL0BNzMatrixCal((__cb__ PrimT<T>*)dst.GetPhyAddr(), initConstValueParams);
     } else if (dstScope == Hardware::L1) {
-        CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "Fill when TPosition is A1 / B1");
+        CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "Fill when dst position is L1 Buffer(A1/B1)");
         InitL1BufferCal((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), initConstValueParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / A2 / B2", "Fill",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/L0A Buffer(A2)/L0B Buffer(B2)", "Fill",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -755,18 +766,18 @@ __aicore__ inline void InitConstValueImpl(
 {
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A) {
-        CheckTensorAlign<T>(dst, VALUE_512, "dst", "InitConstValue when TPosition is A2");
+        CheckTensorAlign<T>(dst, VALUE_512, "dst", "InitConstValue when dst position is L0A Buffer(A2)");
         InitL0ANzMatrixCal((__ca__ PrimT<T>*)dst.GetPhyAddr(), initConstValueParams);
     } else if (dstScope == Hardware::L0B) {
-        CheckTensorAlign<T>(dst, VALUE_512, "dst", "InitConstValue when TPosition is B2");
+        CheckTensorAlign<T>(dst, VALUE_512, "dst", "InitConstValue when dst position is L0B Buffer(B2)");
         InitL0BNzMatrixCal((__cb__ PrimT<T>*)dst.GetPhyAddr(), initConstValueParams);
     } else if (dstScope == Hardware::L1) {
-        CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "InitConstValue when TPosition is A1 / B1");
+        CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "InitConstValue when dst position is L1 Buffer(A1/B1)");
         InitL1BufferCal((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), initConstValueParams);
     } else {
         ASCENDC_CHECK_TPOSITION(
-            false, "dst", "A1 / B1 / A2 / B2", "InitConstValue",
-            ConstDefiner::Instance().logicNameMap.at(static_cast<uint8_t>(dst.GetPosition())));
+            false, "dst", "L1 Buffer(A1/B1)/L0A Buffer(A2)/L0B Buffer(B2)", "InitConstValue",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
     }
 }
 
@@ -842,9 +853,9 @@ __aicore__ inline void LoadDataUnzipImpl(const LocalTensor<T>& dst, const Global
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
 #if ASCENDC_CPU_DEBUG
     if (dstScope == Hardware::L1) {
-        CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "LoadDataUnzip in A1 / B1"); // 32B align
+        CheckTensorAlign<T>(dst, ONE_BLK_SIZE, "dst", "LoadDataUnzip in L1 Buffer(A1/B1)"); // 32B align
     } else if (dstScope == Hardware::L0A || dstScope == Hardware::L0B) {
-        CheckTensorAlign<T>(dst, VALUE_512, "dst", "LoadDataUnzip in B2"); // 512B align
+        CheckTensorAlign<T>(dst, VALUE_512, "dst", "LoadDataUnzip in L0B Buffer(B2)"); // 512B align
     }
     if constexpr (!SupportType<PrimT<T>, int8_t>()) {
         ASCENDC_ASSERT(false, {
@@ -864,7 +875,7 @@ __aicore__ inline void LoadDataUnzipImpl(const LocalTensor<T>& dst, const Global
         ASCENDC_ASSERT((false), {
             KERNEL_LOG(
                 KERNEL_ERROR, "Failed to check dst tensor position in LoadDataUnzip, "
-                              "supported positions are A1 / B1 / B2");
+                              "supported positions are L1 Buffer(A1/B1)/L0B Buffer(B2)");
         });
     }
 }

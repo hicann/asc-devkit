@@ -79,21 +79,6 @@ public:
     }
 
 private:
-    __aicore__ inline __gm__ const char* GetTPositionString(TPosition pos)
-    {
-        auto posTuple = MakeParameters2Tuple(
-            TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, TPosition::GM, TPosition::A1, TPosition::A2,
-            TPosition::B1, TPosition::B2, TPosition::C1, TPosition::C2, TPosition::CO1, TPosition::CO2, TPosition::SPM,
-            TPosition::TSCM);
-
-        auto posString = MakeString2Tuple(
-            "TPosition::VECIN", "TPosition::VECOUT", "TPosition::VECCALC(LCM)", "TPosition::GM", "TPosition::A1",
-            "TPosition::A2", "TPosition::B1", "TPosition::B2", "TPosition::C1", "TPosition::C2", "TPosition::CO1",
-            "TPosition::CO2", "TPosition::SPM(SHM)", "TPosition::TSCM");
-
-        return FindStringFromTuple(pos, posTuple, posString, tuple_sequence<decltype(posTuple)>{});
-    }
-
     template <typename T, typename U, typename W, size_t... Is>
     __aicore__ inline void TPositionAllTensorLoopCheck(
         T tensorTuple, U tensorStringTuple, W posTuple, __gm__ const char* posString, Std::index_sequence<Is...>)
@@ -119,13 +104,12 @@ private:
     {
         TPosition pos = (TPosition)checkTensor.GetPosition();
         bool status = ((pos == Std::get<Is>(posTuple)) || ...);
-
         ASCENDC_ASSERT((status || HighLevelAPIParametersPrint), {
             KERNEL_LOG(
                 KERNEL_ERROR,
                 "[%s] Failed to check tensor position of %s, current api support positions are %s, "
                 "current position is %s.",
-                apiName, tensorName, posString, GetTPositionString(pos));
+                apiName, tensorName, posString, GetPositionDisplay(pos).c_str());
         });
     }
 
@@ -133,7 +117,8 @@ private:
     __aicore__ inline void PrintTensorTPosition(const LocalTensor<T>& checkTensor, __gm__ const char* tensorInfo)
     {
         TPosition pos = (TPosition)checkTensor.GetPosition();
-        KERNEL_LOG(KERNEL_INFO, "[%s] The tensor position of %s is %s.", apiName, tensorInfo, GetTPositionString(pos));
+        KERNEL_LOG(
+            KERNEL_INFO, "[%s] The tensor position of %s is %s.", apiName, tensorInfo, GetPositionDisplay(pos).c_str());
     }
 
     template <typename T, typename U, size_t... Is>

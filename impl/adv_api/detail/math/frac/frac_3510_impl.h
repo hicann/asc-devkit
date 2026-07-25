@@ -71,7 +71,7 @@ __aicore__ inline void FracImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const uint32_t calCount)
 {
-    CheckTensorPos(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN / VECOUT / VECCALC", "Frac");
+    CheckTensorPos(sharedTmpBuffer, Hardware::UB, "sharedTmpBuffer", "VECIN/VECOUT/VECCALC", "Frac");
     FracImpl(dstTensor, srcTensor, calCount);
 }
 
@@ -85,8 +85,8 @@ __aicore__ inline void FracImpl(
     }
 
     static_assert(SupportType<T, half, float>(), "current data type is not supported on current device!");
-    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN / VECCALC / VECOUT", "Frac");
-    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN / VECCALC / VECOUT", "Frac");
+    CheckTensorPos<T>(dstTensor, Hardware::UB, "dstTensor", "VECIN/VECCALC/VECOUT", "Frac");
+    CheckTensorPos<T>(srcTensor, Hardware::UB, "srcTensor", "VECIN/VECCALC/VECOUT", "Frac");
     ASCENDC_ASSERT((calCount <= srcTensor.GetSize()), {
         KERNEL_LOG(
             KERNEL_ERROR, "calCount is %u, which should not be larger than srcTensor length %u", calCount,
