@@ -75,7 +75,7 @@
 | --- | --- | --- |
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，存储位置为UB（TPosition为VECIN、VECCALC、VECOUT）。 |
 | src | 输入 | 源操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，存储位置为UB（TPosition为VECIN、VECCALC、VECOUT）。 |
-| mask[]/mask | 输入 | `mask`用于控制每次迭代内参与计算的源操作数。详细设置参考[掩码概述](../SIMD计算说明/掩码/概述.md)。 |
+| mask[]/mask | 输入 | `mask`用于控制每次迭代内参与计算的源操作数。详细设置参考[掩码概述](../SIMD计算说明/掩码.md)。 |
 | repeatTime | 输入 | 迭代次数。取值范围为[0, 255]。 |
 | dstRepStride | 输入 | 目的操作数相邻迭代间的地址步长，以一个repeatTime归约后的长度为单位。取值范围为[0, $2^{16}-1$]。<br>**注意：dstRepStride的单位受操作数数据类型、`reduceType`和`order`参数的影响**，参考[表3](#tab3)：<br>&bull;返回索引和最值时，单位为dst数据类型所占字节长度的两倍；<br>&bull;仅返回最值时，单位为dst数据类型所占字节长度；<br>&bull;仅返回索引时，单位为uint32_t类型所占字节长度。<!-- npu="910" id46 --><br>**注意：Atlas 训练系列产品不支持配置0。**<!-- end id46 --> |
 | srcBlkStride | 输入 | 单次迭代内DataBlock的地址步长，单位为32字节。取值范围为[0, $2^{16}-1$]。 |

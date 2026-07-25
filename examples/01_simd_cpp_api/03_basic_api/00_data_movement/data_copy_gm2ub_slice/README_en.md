@@ -24,7 +24,7 @@ This example implements data slice transfer based on DataCopy, extracting subset
 
 ## Example Description
 - Example functionality:
-  Implements a data slice transfer example that supports extracting subsets of a two-dimensional source operand Tensor[3, 87] (extracting 4 data segments: [0, 16:40], [0, 47:71], [2, 16:40], [2, 47:71], totaling 96 float32 values) and contiguously transferring them to a two-dimensional destination operand Tensor[2, 48]. Refer to [Slice Data Transfer](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GM与UB切片数据搬运(DataCopy).md) for API documentation.
+  Implements a data slice transfer example that supports extracting subsets of a two-dimensional source operand Tensor[3, 87] (extracting 4 data segments: [0, 16:40], [0, 47:71], [2, 16:40], [2, 47:71], totaling 96 float32 values) and contiguously transferring them to a two-dimensional destination operand Tensor[2, 48]. Refer to [Slice Data Transfer](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GM与UB切片数据搬运）.md) for API documentation.
 
 - Example specifications:
 

@@ -37,7 +37,7 @@
 如图1所示，SetFlag/WaitFlag接口用于核内多流水间的同步：
 
 > [!NOTE]说明
->该接口标注为ISASI类别，不能保证跨硬件版本兼容。如需保证跨硬件版本兼容的同步控制接口，请参见[TQueSync SetFlag/WaitFlag](TQueSync/SetFlag-WaitFlag.md)。二者的区别在于，TQueSync类接口可以保证跨硬件版本兼容。
+>该接口标注为ISASI类别，不能保证跨硬件版本兼容。如需保证跨硬件版本兼容的同步控制接口，请参见[TQueSync SetFlag/WaitFlag](SetFlag-WaitFlag.md)。二者的区别在于，TQueSync类接口可以保证跨硬件版本兼容。
 
 - SetFlag：当源流水的前序指令的所有读写操作都完成之后，当前指令开始执行，并将硬件中的对应标志位设置为1。SetFlag只是设置硬件中的对应标志位，并不会阻塞源流水中的下一个指令。
 - WaitFlag：当目的流水执行到该指令时，如果发现硬件中对应标志位为0，目的流水的后续指令将一直被阻塞；如果发现硬件中对应标志位为1，则将硬件中对应标志位设置为0，同时目的流水的后续指令开始执行。
@@ -73,7 +73,7 @@ __aicore__ inline void WaitFlag(int32_t eventID)
 
 - SetFlag和WaitFlag必须成对使用，且SetFlag和WaitFlag的参数必须完全一致（包括模板参数event和输入参数eventID）。如果不匹配，会引发timeout问题。例如，`SetFlag<HardEvent::S_MTE3>(1)`和`WaitFlag<HardEvent::MTE3_MTE1>(1)`并不匹配，因为其模板参数event不同。
 
-- 在采用[TPipe-TQue框架编程范式](../../../../../guide/编程指南/编程模型/AI-Core-SIMD编程/基于TPipe-TQue框架编程/TPipe-TQue框架编程范式.md)时，eventID需要通过[AllocEventID](../../资源管理/Pipe和Que框架/TPipe/AllocEventID.md)或者[FetchEventID](../../资源管理/Pipe和Que框架/TPipe/FetchEventID.md)来获取。
+- 在采用[TPipe-TQue框架编程范式](../../../../../guide/编程指南/编程模型/AI-Core-SIMD编程/基于TPipe-TQue框架编程/TPipe-TQue框架编程范式.md)时，eventID需要通过[AllocEventID](../../资源管理/TPipe/AllocEventID.md)或者[FetchEventID](../../资源管理/TPipe/FetchEventID.md)来获取。
 
 - 在采用[静态Tensor编程范式](../../../../../guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程.md)时，事件的类型和事件ID由开发者自行管理，建议使用事件ID0-5，事件ID6用于系统内部规划（当前未使用），事件ID7用于TPipe编程中的**自动同步**功能，目前暂不建议直接使用事件ID6-7。
 

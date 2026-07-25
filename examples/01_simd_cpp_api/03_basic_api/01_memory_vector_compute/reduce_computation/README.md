@@ -148,7 +148,7 @@
   - Kernel实现
     - 调用DataCopy基础API将数据从GM（Global Memory）搬运到UB（Unified Buffer），并将归约计算后的数据搬出到GM（Global Memory）。
     - 调用ReduceMax/ReduceMin/ReduceSum接口完成归约计算。
-    - 在ReduceSum前n个数据计算场景，调用[GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/寄存器辅助接口/GetReduceRepeatSumSpr(ISASI).md)获取计算结果。
+    - 在ReduceSum前n个数据计算场景，调用[GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr(ISASI).md)获取计算结果。
 
 - 调用实现  
   使用内核调用符`<<<>>>`调用核函数。

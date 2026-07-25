@@ -9,8 +9,8 @@
 | [ReducePairElem](./ReducePairElem.md) | 对相邻两个元素进行求和。 | 1 element / pair |
 | [ReduceSum](./ReduceSum.md) | 对所有输入数据求和。 | 1 element |
 | [ReduceMax](./ReduceMax.md)/[ReduceMin](./ReduceMin.md) | 对所有输入数据求最大值/最小值。<br>可选择输出对应的索引。 | 1 element (1 index) |
-| [GetReduceRepeatSumSpr(ISASI)](./寄存器辅助接口/GetReduceRepeatSumSpr(ISASI).md) | 获取`ReduceSum`接口的计算结果。 | 1 element |
-| [GetReduceRepeatMaxMinSpr(ISASI)](./寄存器辅助接口/GetReduceRepeatMaxMinSpr(ISASI).md) | 获取调用`ReduceRepeat<MAX/MIN>`时所有repeat内的最值及其索引，或获取调用`ReduceMax`、`ReduceMin`得到的最值。 | 1 element (1 index) |
+| [GetReduceRepeatSumSpr(ISASI)](../归约计算辅助配置接口/GetReduceRepeatSumSpr(ISASI).md) | 获取`ReduceSum`接口的计算结果。 | 1 element |
+| [GetReduceRepeatMaxMinSpr(ISASI)](../归约计算辅助配置接口/GetReduceRepeatMaxMinSpr(ISASI).md) | 获取调用`ReduceRepeat<MAX/MIN>`时所有repeat内的最值及其索引，或获取调用`ReduceMax`、`ReduceMin`得到的最值。 | 1 element (1 index) |
 
 <!-- npu="950" id1 -->
 针对Ascend 950PR/Ascend 950DT，Memory矢量计算的归约计算接口底层均通过VF调用转换为Reg矢量计算指令执行，接口内部存在额外的VF调用开销和UB中转（如sharedTmpBuffer）。因此Memory API不保证极致性能，对性能敏感的场景建议直接使用Reg矢量计算中的[归约计算](../../Reg矢量计算/归约计算/归约计算.md)（Reg::Reduce、Reg::PairReduceElem、Reg::ReduceDataBlock）。

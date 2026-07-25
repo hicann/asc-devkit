@@ -35,7 +35,7 @@
 一次Iterate矩阵乘的结果C矩阵存放在L0C Buffer（CO1）中，对于L0C Buffer（CO1）中计算结果的获取，当前支持如下两种方式：
 
 -   用户无需自行管理存放矩阵乘结果的L0C Buffer（CO1）内存的申请和释放，由Matmul API内部实现管理。调用[接口内部管理CO1](#li135771283591)的Iterate函数原型后，调用[GetTensorC](GetTensorC.md)接口完成L0C Buffer（CO1）上计算结果的搬出。
--   用户可以灵活自主地控制矩阵乘计算结果的搬运，例如将多次Iterate计算的矩阵乘结果缓存在L0C Buffer（CO1）内存中，在需要搬出该结果时，一次性搬出多块baseM \* baseN的C矩阵。这种灵活搬运场景下，用户需要提前申请L0C Buffer（CO1）的内存，调用[用户自主管理CO1](#li4843165185812)的Iterate函数原型后，一次Iterate的计算结果会输出到用户申请的L0C Buffer（CO1）内存上。在需要搬出计算结果时，调用[Fixpipe](../../../基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)接口搬运L0C Buffer（CO1）上的结果，完成后释放申请的L0C Buffer（CO1）内存。具体示例请参考[用户自主管理CO1的矩阵乘场景](Matmul使用说明.md#user-managed-co1)。
+-   用户可以灵活自主地控制矩阵乘计算结果的搬运，例如将多次Iterate计算的矩阵乘结果缓存在L0C Buffer（CO1）内存中，在需要搬出该结果时，一次性搬出多块baseM \* baseN的C矩阵。这种灵活搬运场景下，用户需要提前申请L0C Buffer（CO1）的内存，调用[用户自主管理CO1](#li4843165185812)的Iterate函数原型后，一次Iterate的计算结果会输出到用户申请的L0C Buffer（CO1）内存上。在需要搬出计算结果时，调用[Fixpipe](../../../基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)接口搬运L0C Buffer（CO1）上的结果，完成后释放申请的L0C Buffer（CO1）内存。具体示例请参考[用户自主管理CO1的矩阵乘场景](Matmul使用说明.md#user-managed-co1)。
 
 ## 函数原型
 

@@ -47,7 +47,7 @@ Add算子的计算逻辑遵循"搬入-计算-搬出"三段式流水结构：
 
 - [GM（Global Memory）](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md)：AI Core外部的全局存储，数据通过[GlobalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md)访问，容量大但访问速度较慢。
 - [UB（Unified Buffer）](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)：AI Core内部的向量计算专用缓存，数据通过[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)访问，容量有限但访问速度快。
-- [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GM与UB连续数据搬运(DataCopy).md)：用于在GM和UB之间搬运数据的API，搬运方向由参数顺序决定。
+- [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GM与UB连续数据搬运）.md)：用于在GM和UB之间搬运数据的API，搬运方向由参数顺序决定。
 - [PipeBarrier](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/PipeBarrier(ISASI).md)：流水线同步屏障，确保数据搬运完成后再执行后续操作，避免读写冲突。
 - `block_idx`：通过[GetBlockIdx()](../../../../../docs/zh/api/SIMD-API/基础API/工具接口/系统资源与变量/GetBlockIdx.md)获取当前核的编号，用于多核并行时的数据分片计算。
 

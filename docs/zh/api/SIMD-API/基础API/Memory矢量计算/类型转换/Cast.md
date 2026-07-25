@@ -78,7 +78,7 @@
 | src | 输入 | 源操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。|
 | roundMode | 输入 | 精度转换处理模式，类型是RoundMode。<br>RoundMode为枚举类型，用以控制精度转换处理模式，可参考[精度转换规则](../../数据结构/precision_conversion.md)。RoundMode取值说明请参考[RoundMode取值说明](#roundmode取值说明)。 |
 | count | 输入 | 参与计算的元素个数。<br>**注：参数取值范围和操作数的数据类型有关，数据类型不同，能够处理的元素个数最大值不同，最大处理的数据量不能超过UB大小限制。** |
-| mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。<br>注意：数据类型转换的mask会按照输入和输出类型中sizeof(dtype)较大的来筛选。<br>设置详见[掩码操作](../SIMD计算说明/掩码/概述.md)。 |
+| mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。<br>注意：数据类型转换的mask会按照输入和输出类型中sizeof(dtype)较大的来筛选。<br>设置详见[掩码操作](../SIMD计算说明/掩码.md)。 |
 | repeatTime | 输入| 重复迭代次数。<br>矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体描述请参考[高维切分](../SIMD计算说明/高维切分.md)。 |
 | repeatParams | 输入 | 控制操作数地址步长的参数。[UnaryRepeatParams](../../辅助数据结构//UnaryRepeatParams.md)类型，包含操作数相邻迭代间相同DataBlock的地址步长，操作数同一迭代内不同DataBlock的地址步长等参数。<br>相邻迭代间的地址步长参数说明请参考[repeatStride](../SIMD计算说明/高维切分.md)；同一迭代内DataBlock的地址步长参数说明请参考[dataBlockStride](../SIMD计算说明/高维切分.md)。 |
 
@@ -150,7 +150,7 @@ enum class RoundMode {
 | int32_t | uint8_t | CAST_NONE |
 | int32_t | int16_t | CAST_NONE |
 | int32_t | uint16_t | CAST_NONE |
-| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换/寄存器配置说明/SetDeqScale.md)接口配合使用。 |
+| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换辅助配置接口/SetDeqScale.md)接口配合使用。 |
 | int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
 | int32_t | int64_t | CAST_NONE |
 | uint32_t | uint8_t | CAST_NONE |
@@ -198,7 +198,7 @@ enum class RoundMode {
 | bfloat16_t | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
 | bfloat16_t | float | CAST_NONE |
 | int32_t | int16_t | CAST_NONE |
-| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换/寄存器配置说明/SetDeqScale.md)接口配合使用。 |
+| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换辅助配置接口/SetDeqScale.md)接口配合使用。 |
 | int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
 | int32_t | int64_t | CAST_NONE |
 | float | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
@@ -232,7 +232,7 @@ enum class RoundMode {
 | bfloat16_t | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
 | bfloat16_t | float | CAST_NONE |
 | int32_t | int16_t | CAST_NONE |
-| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换/寄存器配置说明/SetDeqScale.md)接口配合使用。 |
+| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换辅助配置接口/SetDeqScale.md)接口配合使用。 |
 | int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
 | int32_t | int64_t | CAST_NONE |
 | float | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
@@ -294,7 +294,7 @@ enum class RoundMode {
 | half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
 | half | float | CAST_NONE |
 | int32_t | int16_t | CAST_NONE |
-| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换/寄存器配置说明/SetDeqScale.md)接口配合使用。 |
+| int32_t | half | roundMode不生效，与[SetDeqScale(half scale)](../类型转换辅助配置接口/SetDeqScale.md)接口配合使用。 |
 | int32_t | float | CAST_NONE |
 | float | half | CAST_ODD/CAST_NONE |
 | float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
@@ -360,7 +360,7 @@ enum class RoundMode {
 - 当源操作数和目的操作数位数不同时，计算输入参数以数据类型的字节较大的为准。例如，源操作数为half类型，目的操作数为int32\_t类型时，每次迭代最多操作64个元素，为保证输出和输入是连续的，dstRepStride应设置为8，srcRepStride应设置为4。
 - 当dst或src为int4b\_t时，由于一个int4b\_t只占半个字节，故申请Tensor空间时，只需申请相同数量的int8\_t数据空间的一半。host侧目前暂不支持int4b\_t，故在申请int4b\_t类型的tensor时，应先申请一个类型为int8\_t的tensor，再用Reinterpretcast接口转化为int4b\_t类型的tensor，接着调用Cast指令。
 - 当dst或src为int4b\_t时，tensor高维切分计算接口的连续模式的mask与tensor前n个数据计算接口的count必须为偶数；对于tensor高维切分计算接口的逐bit模式，对应同一字节的相邻两个比特位的数值必须一致，即0-1位数值一致，2-3位数值一致，4-5位数值一致，以此类推。
-- int32\_t到half数据类型的转换，设置舍入模式无效，需要与[SetDeqScale](寄存器配置说明/SetDeqScale.md)接口配合使用。
+- int32\_t到half数据类型的转换，设置舍入模式无效，需要与[SetDeqScale](../类型转换辅助配置接口/SetDeqScale.md)接口配合使用。
 <!-- npu="950" id18 -->
 - 针对Ascend 950PR/Ascend 950DT，complex32/complex64/double数据类型仅支持tensor前n个数据计算接口。
 <!-- end id18 -->

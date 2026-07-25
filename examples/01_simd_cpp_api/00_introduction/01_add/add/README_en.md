@@ -47,7 +47,7 @@ The Add operator's computation logic follows the three-stage pipeline structure 
 
 - [GM (Global Memory)](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md): The global storage external to the AI Core, accessed via [GlobalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md), with large capacity but slower access speed.
 - [UB (Unified Buffer)](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md): The dedicated on-chip cache for vector computation inside the AI Core, accessed via [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md), with limited capacity but fast access speed.
-- [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GM与UB连续数据搬运(DataCopy).md): The API used for data transfer between GM and UB, with the transfer direction determined by the parameter order.
+- [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GM与UB连续数据搬运）.md): The API used for data transfer between GM and UB, with the transfer direction determined by the parameter order.
 - [PipeBarrier](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/PipeBarrier(ISASI).md): Pipeline synchronization barrier, ensuring data transfer completes before subsequent operations to avoid read/write conflicts.
 - `block_idx`: A built-in variable representing the current core's index (equivalent to [GetBlockIdx()](../../../../../docs/zh/api/SIMD-API/基础API/工具接口/系统资源与变量/GetBlockIdx.md)), used for data partitioning in multi-core parallel computation.
 

@@ -402,7 +402,7 @@ asc_store(dst_addr, dst_reg, 10);
 
 #### 对齐搬运
 
-[`asc_loadalign`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_loadalign/asc_loadalign.md) / [`asc_storealign`](../../../../../api/SIMD-API/C-API/reg/reg_store/asc_storealign/asc_storealign.md)要求UB地址满足32B对齐。相比通用搬运，对齐搬运的性能开销更低，是连续对齐场景下的首选接口。
+[`asc_loadalign`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_loadalign.md) / [`asc_storealign`](../../../../../api/SIMD-API/C-API/reg/reg_store/asc_storealign.md)要求UB地址满足32B对齐。相比通用搬运，对齐搬运的性能开销更低，是连续对齐场景下的首选接口。
 
 ```cpp
 for (uint16_t i = 0; i < repeat_times; ++i) {

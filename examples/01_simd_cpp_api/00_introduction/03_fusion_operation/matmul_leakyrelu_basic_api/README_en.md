@@ -171,11 +171,11 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
 
           **Memory Transfer and Computation Flow**:
 
-          - **LocalTensor Creation**: Use [LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介.md) (on-chip memory allocator that automatically allocates in application order, avoiding manual address offset maintenance) to create [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) (on-chip memory tensor) for each on-chip cache. The temporary space for A and B matrices in L1 is allocated by the same L1 allocator in application order to avoid manual L1 address offset maintenance
-          - **GM → L1**: Use [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/GMToL1随路转换-ND2NZ搬运（DataCopy）.md) to transfer A and B matrices from GM to L1, completing ND to Nz format conversion (Cube computation unit requires Nz fractal layout, so ND format must be converted to Nz format during transfer)
-          - **L1 → L0A/L0B**: Use [LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md) to transfer data to L0A and L0B. B matrix requires transpose (Nz→Zn)
+          - **LocalTensor Creation**: Use [LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介.md) (on-chip memory allocator that automatically allocates in application order, avoiding manual address offset maintenance) to create [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) (on-chip memory tensor) for each on-chip cache. The temporary space for A and B matrices in L1 is allocated by the same L1 allocator in application order to avoid manual L1 address offset maintenance
+          - **GM → L1**: Use [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（GMToL1随路转换-ND2NZ搬运）.md) to transfer A and B matrices from GM to L1, completing ND to Nz format conversion (Cube computation unit requires Nz fractal layout, so ND format must be converted to Nz format during transfer)
+          - **L1 → L0A/L0B**: Use [LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md) to transfer data to L0A and L0B. B matrix requires transpose (Nz→Zn)
           - **L0A/L0B → L0C**: Use [Mmad](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md) (matrix multiply-accumulate instruction) to execute matrix multiply-add, accumulating all data blocks along the K axis
-          - **L0C → GM**: Use [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md) to transfer results out to GM, completing Nz to ND format conversion and float32 to half type conversion
+          - **L0C → GM**: Use [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md) to transfer results out to GM, completing Nz to ND format conversion and float32 to half type conversion
 
           Code example:
 
@@ -255,9 +255,9 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
       2. **Vector Core Computation Phase**:
           - **Inter-core Synchronization**: Vector cores use [CrossCoreWaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核间同步/CrossCoreWaitFlag(ISASI).md) (inter-core synchronization flag wait, blocks until the flag is set) to wait for Cube core to complete Fixpipe writeback, ensuring LeakyRelu starts only after Matmul computation completes
           - **LocalTensor Creation**: Use UB allocator to create [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) at the VECCALC position to carry the half-block result processed by the current Vector core
-          - **GM → UB**: Use [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md) (data transfer between GM and UB with padding) to transfer Matmul results to UB. Each Vector core processes baseM/2×baseN data
+          - **GM → UB**: Use [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md) (data transfer between GM and UB with padding) to transfer Matmul results to UB. Each Vector core processes baseM/2×baseN data
           - **UB Computation**: Use [LeakyRelu](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/基础算术/LeakyRelu.md) (LeakyReLU activation function, negative values are multiplied by negativeSlope) to execute activation computation, with negative values multiplied by 0.001
-          - **UB → GM**: Use [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/UBToGM非对齐数据搬运(DataCopyPad).md) to write results back to GM, completing the fusion computation
+          - **UB → GM**: Use [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（UBToGM非对齐数据搬运）.md) to write results back to GM, completing the fusion computation
 
           Code example:
 
@@ -326,7 +326,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
 
   The following structures are all passed using curly braces `{}`. The meaning of each field is as follows (field order is consistent with API documentation; actual struct declaration may have different field order):
 
-  **[AscendC::Nd2NzParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/GMToL1随路转换-ND2NZ搬运（DataCopy）.md)** — Used by the `DataCopy` interface to describe ND→Nz format conversion parameters:
+  **[AscendC::Nd2NzParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（GMToL1随路转换-ND2NZ搬运）.md)** — Used by the `DataCopy` interface to describe ND→Nz format conversion parameters:
   ```cpp
   struct Nd2NzParams {
       int32_t  ndNum;              // Number of ND matrices to transfer, [0, 4095]
@@ -341,7 +341,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
   ```
   For example, when transferring matrix A with `{1, baseM, baseK, 0, K, baseM, 1, 0}`, it converts baseM×baseK ND data to Nz format.
 
-  **[AscendC::LoadData2DParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)** — Used by the `LoadData` interface to describe data transfer parameters for matrix A from L1 to L0A and matrix B from L1 to L0B in Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products:
+  **[AscendC::LoadData2DParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)** — Used by the `LoadData` interface to describe data transfer parameters for matrix A from L1 to L0A and matrix B from L1 to L0B in Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products:
   ```cpp
   struct LoadData2DParams {
       int32_t startIndex;   // Fractal matrix ID (0 is the first), unit: 512B, [0, 65535]
@@ -356,7 +356,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
   For example: In Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, the layout format on L0A is Zz. When transferring matrix A, use `{0, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, 0, 0, false, 0}`;<br>
   When transferring matrix B, set `ifTranspose=true` to complete Nz to Zn transpose transfer.
 
-  **[AscendC::LoadData2DParamsV2](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D_V2.md)** — Used by the `LoadData` interface to describe data transfer parameters for matrix A from L1 to L0A and matrix B from L1 to L0B in Ascend 950PR/Ascend 950DT products:
+  **[AscendC::LoadData2DParamsV2](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D_V2.md)** — Used by the `LoadData` interface to describe data transfer parameters for matrix A from L1 to L0A and matrix B from L1 to L0B in Ascend 950PR/Ascend 950DT products:
   ```cpp
   struct LoadData2DParamsV2 {
       uint32_t mStartPosition;  // Starting position in M direction, unit: 512B
@@ -384,7 +384,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
   ```
   For example, `{baseM, baseN, baseK, 0, false, true}` computes a baseM×baseN output block and accumulates along the K direction for baseK length.
 
-  **[AscendC::FixpipeParamsV220](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)** — Used by the `Fixpipe` interface to describe data transfer and precision conversion parameters from L0C to GM:
+  **[AscendC::FixpipeParamsV220](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)** — Used by the `Fixpipe` interface to describe data transfer and precision conversion parameters from L0C to GM:
   ```cpp
   struct FixpipeParamsV220 {
       int32_t     nSize;        // Source Nz matrix N dimension size, [1, 4095]
@@ -402,7 +402,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
   ```
   For example, `{baseN, baseM, baseM, N, false, F322F16, 0, 1, 0, 0, 0}` converts the baseM×baseN float32 result in L0C to half and writes it back to GM.
 
-  **[AscendC::DataCopyExtParams](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)** — Used by the `DataCopyPad` interface to describe block transfer parameters between GM and UB:
+  **[AscendC::DataCopyExtParams](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)** — Used by the `DataCopyPad` interface to describe block transfer parameters between GM and UB:
   ```cpp
   struct DataCopyExtParams {
       uint16_t blockCount;  // Number of consecutive data blocks to transfer
@@ -414,7 +414,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
   ```
   For example, when transferring from GM to UB with `{static_cast<uint16_t>(baseM / 2), blockLen, srcStride, 0, 0}`, each Vector core reads baseM/2 rows of results.
 
-  **[AscendC::DataCopyPadExtParams\<half\>](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)** — Used by the `DataCopyPad` interface to describe tail block padding parameters:
+  **[AscendC::DataCopyPadExtParams\<half\>](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)** — Used by the `DataCopyPad` interface to describe tail block padding parameters:
   ```cpp
   template <typename T>
   struct DataCopyPadExtParams {
@@ -482,12 +482,12 @@ The following table details each step of the Cube core and Vector core operation
 
 | Stage | Data Flow/Behavior | Implementation Purpose/Reason |
 |:---|:---|:---|
-| Initialization | Use [LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介.md) to allocate [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) for on-chip caches such as L1, L0A/L0B, L0C | Automatically allocate on-chip memory in application order, avoiding manual address offset maintenance |
-| GM → L1 | [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/GMToL1随路转换-ND2NZ搬运（DataCopy）.md) transfers A/B matrices from GM to L1, simultaneously completing ND→Nz format conversion | Cube computation unit requires Nz fractal layout format, so ND format must be converted to Nz format during transfer to avoid additional conversion overhead |
-| L1 → L0A/L0B | [LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md) transfers A matrix from L1 to L0A (Nz→Zz/Nz), B matrix from L1 to L0B (Nz→Zn transpose) | B matrix requires transpose because the Mmad instruction requires B matrix to be input in Zn (transposed Nz) format |
+| Initialization | Use [LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介.md) to allocate [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) for on-chip caches such as L1, L0A/L0B, L0C | Automatically allocate on-chip memory in application order, avoiding manual address offset maintenance |
+| GM → L1 | [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（GMToL1随路转换-ND2NZ搬运）.md) transfers A/B matrices from GM to L1, simultaneously completing ND→Nz format conversion | Cube computation unit requires Nz fractal layout format, so ND format must be converted to Nz format during transfer to avoid additional conversion overhead |
+| L1 → L0A/L0B | [LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md) transfers A matrix from L1 to L0A (Nz→Zz/Nz), B matrix from L1 to L0B (Nz→Zn transpose) | B matrix requires transpose because the Mmad instruction requires B matrix to be input in Zn (transposed Nz) format |
 | L0A/L0B → L0C | [Mmad](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md) executes matrix multiply-add, accumulating all data blocks along the K direction | Completes A×B matrix multiplication computation, K-direction block accumulation ensures correctness |
 | Intra-core Synchronization | [SetFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md)/[WaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) ensures data transfer completes before starting the next operation | Avoids LoadData reading data that has not finished transferring, avoids Mmad reading data that has not finished loading |
-| L0C → GM | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md) transfers L0C results out to GM, simultaneously completing Nz→ND format conversion and fp32→fp16 precision conversion | Output results need to return to GM for Vector cores to read, format needs to be converted to ND layout, precision needs to be reduced from fp32 to fp16 to match output requirements |
+| L0C → GM | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md) transfers L0C results out to GM, simultaneously completing Nz→ND format conversion and fp32→fp16 precision conversion | Output results need to return to GM for Vector cores to read, format needs to be converted to ND layout, precision needs to be reduced from fp32 to fp16 to match output requirements |
 | Inter-core Synchronization | [CrossCoreSetFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核间同步/CrossCoreSetFlag(ISASI).md) notifies Vector cores that data is ready | Ensures Vector cores do not start reading GM data before Fixpipe completes |
 
 ### Vector Core Flow
@@ -496,9 +496,9 @@ The following table details each step of the Cube core and Vector core operation
 |:---|:---|:---|
 | Inter-core Synchronization | [CrossCoreWaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核间同步/CrossCoreWaitFlag(ISASI).md) waits for Cube core Fixpipe to complete | Blocks until Cube core notifies data is ready, ensuring complete Matmul results are read |
 | Initialization | Use UB allocator to allocate [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) at VECCALC position | Allocates UB buffer for GM→UB transfer and Vector computation |
-| GM → UB | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md) transfers Matmul results from GM to UB, each Vector core reads baseM/2 rows, with baseN elements per row | Vector cores read Matmul results written back by Cube cores from GM, each Vector core processes half-block data |
+| GM → UB | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md) transfers Matmul results from GM to UB, each Vector core reads baseM/2 rows, with baseN elements per row | Vector cores read Matmul results written back by Cube cores from GM, each Vector core processes half-block data |
 | UB Computation | [LeakyRelu](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/基础算术/LeakyRelu.md) executes activation computation, negative values are multiplied by 0.001 | Applies LeakyRelu activation function to Matmul results, completing fusion computation |
-| UB → GM | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/UBToGM非对齐数据搬运(DataCopyPad).md) writes LeakyRelu results back to GM | Outputs final computation results to GM for subsequent use |
+| UB → GM | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（UBToGM非对齐数据搬运）.md) writes LeakyRelu results back to GM | Outputs final computation results to GM for subsequent use |
 
 ## Optimization Directions Analysis
 

@@ -141,7 +141,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
 }
 ```
 
-由于数据是向coef对齐的，在数据拷贝的过程中可能会出现地址不满足32字节对齐的场景，因此CopyIn函数中使用[DataCopyPad（GM -> UB）](../../../../api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)、CopyOut函数中使用[DataCopyPad（UB -> GM）](../../../../api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/UBToGM非对齐数据搬运(DataCopyPad).md)进行数据拷贝。
+由于数据是向coef对齐的，在数据拷贝的过程中可能会出现地址不满足32字节对齐的场景，因此CopyIn函数中使用[DataCopyPad（GM -> UB）](../../../../api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)、CopyOut函数中使用[DataCopyPad（UB -> GM）](../../../../api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（UBToGM非对齐数据搬运）.md)进行数据拷贝。
 
 CopyIn函数实现代码如下：
 

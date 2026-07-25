@@ -1,4 +1,4 @@
-﻿# Memory矢量计算编程<a name="ZH-CN_TOPIC_0000002600000002"></a>
+# Memory矢量计算编程<a name="ZH-CN_TOPIC_0000002600000002"></a>
 
 本文介绍基于统一缓存（Unified Buffer，下文简称UB）的Ascend C矢量计算开发方法，该计算能力简称Memory矢量计算编程，是Ascend C中最基础、应用最广泛的矢量编程方式。[NPU架构版本2201](../../../语言扩展层/SIMD-BuiltIn关键字.md)原生支持完整的UB直接编程能力；[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)引入寄存器计算能力，推荐使用Reg矢量计算编程以获得更高性能。
 

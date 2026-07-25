@@ -148,7 +148,7 @@ This example implements reduction computation based on ReduceMax/ReduceMin/Reduc
   - Kernel implementation
     - Call the DataCopy basic API to transfer data from GM (Global Memory) to UB (Unified Buffer), and transfer data after reduction computation out to GM (Global Memory).
     - Call ReduceMax/ReduceMin/ReduceSum interfaces to complete reduction computation.
-    - In the ReduceSum first-n data computation scenario, call [GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/寄存器辅助接口/GetReduceRepeatSumSpr(ISASI).md) to obtain computation results.
+    - In the ReduceSum first-n data computation scenario, call [GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr(ISASI).md) to obtain computation results.
 
 - Invocation implementation  
   Use the kernel invocation operator `<<<>>>` to call the kernel function.

@@ -138,8 +138,8 @@ __global__ __vector__ void gelu_custom(__gm__ uint8_t* x, __gm__ uint8_t* y)
 |------|-------------|-------------|
 | 初始化 | 调用 `InitSocState()` 初始化硬件状态 | 确保核运行前硬件状态正确复位 |
 | 分核 | 通过 [GetBlockIdx](../../../../../docs/zh/api/SIMD-API/基础API/工具接口/系统资源与变量/GetBlockIdx.md) 获取当前核索引，计算 `xGm`/`yGm` 的偏移地址 | 每个核只处理自己对应的连续数据段，避免数据重叠 |
-| UB 分配 | 使用 [LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介.md) 为当前核申请 UB 缓存 `xLocal`/`yLocal` | UB 是片上高速缓存，为后续寄存器计算提供数据暂存区 |
-| GM → UB 搬入 | 调用 [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GM与UB数据搬运.md) 将输入数据从 GM 搬运到 UB | 寄存器无法直接访问 GM，必须先将数据搬运到 UB |
+| UB 分配 | 使用 [LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介.md) 为当前核申请 UB 缓存 `xLocal`/`yLocal` | UB 是片上高速缓存，为后续寄存器计算提供数据暂存区 |
+| GM → UB 搬入 | 调用 [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/数据搬运.md) 将输入数据从 GM 搬运到 UB | 寄存器无法直接访问 GM，必须先将数据搬运到 UB |
 | MTE2_V 同步 | `SetFlag<HardEvent::MTE2_V>` + `WaitFlag<HardEvent::MTE2_V>` | GM→UB 搬运由 MTE2 引擎异步执行，必须等待搬运完成后 V 单元才能读取 UB 中的数据，否则会读到未完成搬运的脏数据 |
 | 寄存器计算 | 通过 [asc_vf_call](../../../../../docs/zh/api/SIMD-API/基础API/Reg矢量计算/VF调用/asc_vf_call.md) 调用 `GeluVfMethod2`，在 VF 函数内完成 [LoadAlign](../../../../../docs/zh/api/SIMD-API/基础API/Reg矢量计算/Reg数据搬入/连续对齐搬入（LoadAlign）.md) → 多步 Reg 计算 → [StoreAlign](../../../../../docs/zh/api/SIMD-API/基础API/Reg矢量计算/Reg数据搬出/连续对齐搬出（StoreAlign）.md) | RegBase API 在寄存器级别执行计算，延迟最低；GELU 公式需分解为 Mul/Muls/Add/Exp/Adds/Div 共 8 步逐步完成 |
 | V_MTE3 同步 | `SetFlag<HardEvent::V_MTE3>` + `WaitFlag<HardEvent::V_MTE3>` | 寄存器计算由 V 流水异步执行，必须等待计算完成后 MTE3 引擎才能将 UB 结果写回 GM，否则会写出不完整的计算结果 |

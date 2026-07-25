@@ -1,4 +1,4 @@
-﻿# Cube矩阵计算编程<a name="ZH-CN_TOPIC_0000002600000002"></a>
+# Cube矩阵计算编程<a name="ZH-CN_TOPIC_0000002600000002"></a>
 
 本文介绍基于Ascend C语言扩展API，依托L1 Buffer、L0系列片上缓存实现矩阵计算的开发方法，该方式是Ascend C中最基础、通用的矩阵编程方案。AI Core中的Cube单元部署在AIC核，负责矩阵计算，拥有专属片上缓存：L0A Buffer存放左矩阵、L0B Buffer存放右矩阵、L0C Buffer用于保存初始累加值与矩阵运算结果。
 

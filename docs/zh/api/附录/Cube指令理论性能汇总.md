@@ -46,7 +46,7 @@ $$
 | Mmad | half | half | 16 | 16 | 16 | 16 |
 | Mmad | bfloat16_t | bfloat16_t | 16 | 16 | 16 | 16 |
 | Mmad | float | float | 16 | 16 | 4 | 8 |
-| Mmad（开启[HF32](../SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/关键特性说明/HF32.md)） | float | float | 16 | 16 | 8 | 8 |
+| Mmad（开启[HF32](../SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算关键特性说明/HF32.md)） | float | float | 16 | 16 | 8 | 8 |
 | [MmadWithSparse](../SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/MmadWithSparse.md) | int8_t | int8_t | 16 | 16 | 32 | 32 |
 <!-- end id5 -->
 
@@ -64,7 +64,7 @@ $$
 | Mmad | half | half | 16 | 16 | 16 | 16 |
 | Mmad | bfloat16_t | bfloat16_t | 16 | 16 | 16 | 16 |
 | Mmad | float | float | 16 | 16 | 1 | 8 |
-| Mmad（开启[HF32](../SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/关键特性说明/HF32.md)） | float | float | 16 | 16 | 8 | 8 |
+| Mmad（开启[HF32](../SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算关键特性说明/HF32.md)） | float | float | 16 | 16 | 8 | 8 |
 | [MmadMx](../SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/MmadMx.md) | fp4x2_e1m2_t | fp4x2_e1m2_t | 16 | 16 | 64 | 64 |
 | MmadMx | fp4x2_e2m1_t | fp4x2_e1m2_t | 16 | 16 | 64 | 64 |
 | MmadMx | fp4x2_e1m2_t | fp4x2_e2m1_t | 16 | 16 | 64 | 64 |
@@ -98,15 +98,15 @@ $$
 
 | 接口 | 搬运带宽（单位：Byte/cycle） |
 | --- | --- |
-| [LoadData（2D矩阵搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)（L1 Buffer->L0A Buffer） | 256 |
+| [LoadData（2D矩阵搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)（L1 Buffer->L0A Buffer） | 256 |
 | LoadData（2D矩阵搬运）（L1 Buffer->L0B Buffer） | 128 |
-| [LoadDataWithTranspose](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadDataWithTranspose.md)（L1 Buffer->L0A Buffer） | 256 |
+| [LoadDataWithTranspose](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadDataWithTranspose.md)（L1 Buffer->L0A Buffer） | 256 |
 | LoadDataWithTranspose（L1 Buffer->L0B Buffer） | 128 |
-| [LoadDataWithSparse](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadDataWithSparse.md)（L1 Buffer->L0B Buffer） | 128 |
-| [DataCopy（L1 Buffer->BiasTable Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/L1ToBiasTable-Buffer数据搬运（DataCopy）.md) | 32 |
-| [DataCopy（L1 Buffer->Fixpipe Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/L1ToFixpipe-Buffer数据搬运（DataCopy）.md) | 32 |
+| [LoadDataWithSparse](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadDataWithSparse.md)（L1 Buffer->L0B Buffer） | 128 |
+| [DataCopy（L1 Buffer->BiasTable Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（L1ToBiasTable-Buffer数据搬运）.md) | 32 |
+| [DataCopy（L1 Buffer->Fixpipe Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（L1ToFixpipe-Buffer数据搬运）.md) | 32 |
 
-[LoadData（卷积数据搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_3D.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)，理论性能说明见下表：
+[LoadData（卷积数据搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_3D.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)，理论性能说明见下表：
 
 **表4** LoadData（卷积数据搬运）指令理论性能说明（[NPU架构版本2201](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123821113"></a>  
 
@@ -124,16 +124,16 @@ $$
 
 | 接口 | 搬运带宽（单位：Byte/cycle） |
 | --- | --- |
-| [LoadData（2D矩阵搬运V2）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D_V2.md)（L1 Buffer->L0A Buffer） | 256 |
+| [LoadData（2D矩阵搬运V2）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D_V2.md)（L1 Buffer->L0A Buffer） | 256 |
 | LoadData（2D矩阵搬运V2）（L1 Buffer->L0B Buffer） | 256 |
-| [LoadData（MX矩阵搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D_MX.md)（L1 Buffer->L0A Buffer） | 256 |
+| [LoadData（MX矩阵搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D_MX.md)（L1 Buffer->L0A Buffer） | 256 |
 | LoadData（MX矩阵搬运）（L1 Buffer->L0B Buffer） | 256 |
 | LoadData（MX矩阵搬运）（L1 Buffer->L0A_MX Buffer） | 32 |
 | LoadData（MX矩阵搬运）（L1 Buffer->L0B_MX Buffer） | 32 |
-| [LoadDataWithTranspose](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadDataWithTranspose.md)（L1 Buffer->L0A Buffer） | 256 |
+| [LoadDataWithTranspose](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadDataWithTranspose.md)（L1 Buffer->L0A Buffer） | 256 |
 | LoadDataWithTranspose（L1 Buffer->L0B Buffer） | 128 |
-| [DataCopy（L1 Buffer->BiasTable Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/L1ToBiasTable-Buffer数据搬运（DataCopy）.md) | 32 |
-| [DataCopy（L1 Buffer->Fixpipe Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/L1ToFixpipe-Buffer数据搬运（DataCopy）.md) | 32 |
+| [DataCopy（L1 Buffer->BiasTable Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（L1ToBiasTable-Buffer数据搬运）.md) | 32 |
+| [DataCopy（L1 Buffer->Fixpipe Buffer）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（L1ToFixpipe-Buffer数据搬运）.md) | 32 |
 
 针对Ascend 950PR/Ascend 950DT，LoadData（2D矩阵搬运）接口仅为兼容实现，内部使用了LoadData（2D矩阵搬运V2）接口实现，相关理论性能可参考LoadData（2D矩阵搬运V2）接口，但需要注意，该兼容实现会造成性能损失。
 
@@ -151,7 +151,7 @@ $$
 - $bandwidth\_mx$：搬运scale矩阵的带宽，单位为Byte/cycle。
 - $\Delta T$：搬运过程中的带宽延迟等额外开销。
 
-针对Ascend 950PR/Ascend 950DT，[LoadData（卷积数据搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_3D.md)和[LoadDataWithStride](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadDataWithStride.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)。此外，LoadDataWithStride接口相比于LoadData（卷积数据搬运）接口，内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。两个接口的理论性能说明见下表：
+针对Ascend 950PR/Ascend 950DT，[LoadData（卷积数据搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_3D.md)和[LoadDataWithStride](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadDataWithStride.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)。此外，LoadDataWithStride接口相比于LoadData（卷积数据搬运）接口，内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。两个接口的理论性能说明见下表：
 
 **表6** LoadData（卷积数据搬运）和LoadDataWithStride理论性能说明（[NPU架构版本3510](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123821313"></a>  
 
@@ -182,7 +182,7 @@ $$
 
 注意，下列表格中展示的理论性能为搬运带宽$bandwidth$，未考虑额外开销$\Delta T$。
 
-矩阵计算搬出类指令及其随路功能的详细介绍可参考[L0C到GM数据搬运（DataCopy）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（DataCopy）.md)、[L0C到GM数据搬运（Fixpipe）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)以及相同目录下的其他通路对应资料。以下为理论性能说明列表：
+矩阵计算搬出类指令及其随路功能的详细介绍可参考[DataCopy（L0C到GM数据搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/DataCopy（L0C到GM数据搬运）.md)、[Fixpipe（L0C到GM数据搬运）](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)以及相同目录下的其他通路对应资料。以下为理论性能说明列表：
 
 <!-- npu="A3,910b" id9 -->
 **表7** 矩阵计算搬出类指令理论性能说明（[NPU架构版本2201](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877112315211"></a>  
@@ -238,7 +238,7 @@ $$
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2ND | int8_t/uint8_t | 64 | 64 |
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
-| L0C Buffer->Unified Buffer（开启[双目标模式](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/关键特性说明/L0C-Buffer到UB双目标模式.md)） | float | NoQuant | NZ2NZ | float | 32 + 32 | 128 + 128 |
+| L0C Buffer->Unified Buffer（开启[双目标模式](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵搬出关键特性说明/L0C-Buffer到UB双目标模式.md)） | float | NoQuant | NZ2NZ | float | 32 + 32 | 128 + 128 |
 | L0C Buffer->Unified Buffer（开启双目标模式） | float | NoQuant | NZ2ND | float | 32 + 32 | 128 + 128 |
 | L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2NZ | float | 32 | 128 |
 | L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2NZ + Channel Split | float | 32 | 128 |
@@ -278,6 +278,6 @@ $$
 | L0C Buffer->Unified Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
 | L0C Buffer->Unified Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
 
-注：srcNzC0Stride为启用NZ2DN功能需配置的参数之一，参数详细介绍请参考[NZ2DN关键特性说明](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/关键特性说明/NZ2DN.md)。
+注：srcNzC0Stride为启用NZ2DN功能需配置的参数之一，参数详细介绍请参考[NZ2DN关键特性说明](../SIMD-API/基础API/矩阵计算（ISASI）/矩阵搬出关键特性说明/NZ2DN.md)。
 <!-- end id10 -->
 <!-- end id1 -->

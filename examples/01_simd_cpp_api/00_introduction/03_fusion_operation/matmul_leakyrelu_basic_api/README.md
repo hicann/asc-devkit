@@ -171,11 +171,11 @@
 
           **内存搬运与计算流程**：
 
-          - **LocalTensor创建**：使用[LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介.md)（片上内存分配器，按申请顺序自动分配，避免手动维护地址偏移）为各片上缓存创建[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)（片上内存张量）。其中A、B矩阵在L1中的临时空间由同一个L1 allocator按申请顺序分配，避免手动维护L1地址偏移
-          - **GM → L1**：使用[DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/GMToL1随路转换-ND2NZ搬运（DataCopy）.md)将A、B矩阵从GM搬运到L1，完成ND到Nz格式转换（Cube计算单元要求Nz分形排布，因此需在搬运时将ND格式转为Nz格式）
-          - **L1 → L0A/L0B**：使用[LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)将数据搬运到L0A和L0B，B矩阵需要转置（Nz→Zn）
+          - **LocalTensor创建**：使用[LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介.md)（片上内存分配器，按申请顺序自动分配，避免手动维护地址偏移）为各片上缓存创建[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)（片上内存张量）。其中A、B矩阵在L1中的临时空间由同一个L1 allocator按申请顺序分配，避免手动维护L1地址偏移
+          - **GM → L1**：使用[DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（GMToL1随路转换-ND2NZ搬运）.md)将A、B矩阵从GM搬运到L1，完成ND到Nz格式转换（Cube计算单元要求Nz分形排布，因此需在搬运时将ND格式转为Nz格式）
+          - **L1 → L0A/L0B**：使用[LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)将数据搬运到L0A和L0B，B矩阵需要转置（Nz→Zn）
           - **L0A/L0B → L0C**：使用[Mmad](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md)（矩阵乘累加指令）执行矩阵乘加，累加K轴方向的所有数据块
-          - **L0C → GM**：使用[Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)将结果搬出到GM，完成Nz到ND格式转换和float32到half类型转换
+          - **L0C → GM**：使用[Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)将结果搬出到GM，完成Nz到ND格式转换和float32到half类型转换
 
           代码实例如下：
 
@@ -255,9 +255,9 @@
       2. **Vector核计算阶段**：
           - **核间同步**：Vector核通过[CrossCoreWaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核间同步/CrossCoreWaitFlag(ISASI).md)（核间同步标志等待，阻塞直到标志被设置）等待Cube核完成Fixpipe写回，确保Matmul计算完成后才开始LeakyRelu
           - **LocalTensor创建**：使用UB allocator创建`VECCALC`位置的[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)，用于承载当前Vector核处理的半块结果
-          - **GM → UB**：使用[DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)（带Padding的GM与UB之间数据搬运）将Matmul结果搬运到UB，每个Vector核处理baseM/2×baseN的数据
+          - **GM → UB**：使用[DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)（带Padding的GM与UB之间数据搬运）将Matmul结果搬运到UB，每个Vector核处理baseM/2×baseN的数据
           - **UB计算**：使用[LeakyRelu](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/基础算术/LeakyRelu.md)（LeakyReLU激活函数，负值部分乘以negativeSlope）执行激活计算，负值部分乘以0.001
-          - **UB → GM**：使用[DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/UBToGM非对齐数据搬运(DataCopyPad).md)将结果写回GM，完成融合计算
+          - **UB → GM**：使用[DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（UBToGM非对齐数据搬运）.md)将结果写回GM，完成融合计算
 
           代码实例如下：
 
@@ -326,7 +326,7 @@
 
   以下结构体均以花括号`{}`方式传参，各字段含义如下（字段顺序与API文档保持一致，实际struct声明中部分字段顺序可能不同）：
 
-  **[AscendC::Nd2NzParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/GMToL1随路转换-ND2NZ搬运（DataCopy）.md)** — `DataCopy`接口使用，描述ND→Nz格式转换参数：
+  **[AscendC::Nd2NzParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（GMToL1随路转换-ND2NZ搬运）.md)** — `DataCopy`接口使用，描述ND→Nz格式转换参数：
   ```cpp
   struct Nd2NzParams {
       int32_t  ndNum;              // 传输ND矩阵的数目，[0, 4095]
@@ -341,7 +341,7 @@
   ```
   例如搬运A矩阵时`{1, baseM, baseK, 0, K, baseM, 1, 0}`，将baseM×baseK的ND数据转为Nz格式。
 
-  **[AscendC::LoadData2DParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)** — `LoadData`接口使用，描述Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas A3 训练系列产品/Atlas A3 推理系列产品中A矩阵L1到L0A和B矩阵L1到L0B的数据搬运参数：
+  **[AscendC::LoadData2DParams](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)** — `LoadData`接口使用，描述Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas A3 训练系列产品/Atlas A3 推理系列产品中A矩阵L1到L0A和B矩阵L1到L0B的数据搬运参数：
   ```cpp
   struct LoadData2DParams {
       int32_t startIndex;   // 分形矩阵ID（0为第1个），单位：512B，[0, 65535]
@@ -356,7 +356,7 @@
   例如：Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas A3 训练系列产品/Atlas A3 推理系列产品中，L0A上的排布格式为Zz，搬运A矩阵时`{0, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, 0, 0, false, 0}`；<br>
   搬运B矩阵时`ifTranspose=true`，完成Nz到Zn的转置搬运。
 
-  **[AscendC::LoadData2DParamsV2](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D_V2.md)** — `LoadData`接口使用，描述Ascend 950PR/Ascend 950DT产品中A矩阵L1到L0A和B矩阵L1到L0B的数据搬运参数：
+  **[AscendC::LoadData2DParamsV2](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D_V2.md)** — `LoadData`接口使用，描述Ascend 950PR/Ascend 950DT产品中A矩阵L1到L0A和B矩阵L1到L0B的数据搬运参数：
   ```cpp
   struct LoadData2DParamsV2 {
       uint32_t mStartPosition;  // M方向起始位置，单位：512B
@@ -384,7 +384,7 @@
   ```
   例如`{baseM, baseN, baseK, 0, false, true}`，计算baseM×baseN输出块并在K方向累加baseK长度。
 
-  **[AscendC::FixpipeParamsV220](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)** — `Fixpipe`接口使用，描述L0C到GM的数据搬运和精度转换参数：
+  **[AscendC::FixpipeParamsV220](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)** — `Fixpipe`接口使用，描述L0C到GM的数据搬运和精度转换参数：
   ```cpp
   struct FixpipeParamsV220 {
       int32_t     nSize;        // 源Nz矩阵N方向大小，[1, 4095]
@@ -402,7 +402,7 @@
   ```
   例如`{baseN, baseM, baseM, N, false, F322F16, 0, 1, 0, 0, 0}`，将L0C中的baseM×baseN float32结果转为half并写回GM。
 
-  **[AscendC::DataCopyExtParams](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)** — `DataCopyPad`接口使用，描述GM与UB之间按块搬运的参数：
+  **[AscendC::DataCopyExtParams](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)** — `DataCopyPad`接口使用，描述GM与UB之间按块搬运的参数：
   ```cpp
   struct DataCopyExtParams {
       uint16_t blockCount;  // 连续传输数据块个数
@@ -414,7 +414,7 @@
   ```
   例如GM搬运到UB时`{static_cast<uint16_t>(baseM / 2), blockLen, srcStride, 0, 0}`，每个Vector核读取baseM/2行结果。
 
-  **[AscendC::DataCopyPadExtParams\<half\>](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)** — `DataCopyPad`接口使用，描述尾块补齐参数：
+  **[AscendC::DataCopyPadExtParams\<half\>](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)** — `DataCopyPad`接口使用，描述尾块补齐参数：
   ```cpp
   template <typename T>
   struct DataCopyPadExtParams {
@@ -482,12 +482,12 @@
 
 | 阶段 | 数据流动/行为 | 实现目的/原因 |
 |:---|:---|:---|
-| 初始化 | 使用[LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介.md)分配L1、L0A/L0B、L0C等片上缓存的[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) | 按申请顺序自动分配片上内存，避免手动维护地址偏移 |
-| GM → L1 | [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/GMToL1随路转换-ND2NZ搬运（DataCopy）.md)将A/B矩阵从GM搬入L1，同时完成ND→Nz格式转换 | Cube计算单元要求Nz分形排布格式，因此在搬运时必须将ND格式转为Nz格式，避免额外转换开销 |
-| L1 → L0A/L0B | [LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)将A矩阵从L1搬入L0A（Nz→Zz/Nz），B矩阵从L1搬入L0B（Nz→Zn转置） | B矩阵需要转置是因为Mmad指令要求B矩阵以Zn（转置Nz）格式输入 |
+| 初始化 | 使用[LocalMemAllocator](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介.md)分配L1、L0A/L0B、L0C等片上缓存的[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) | 按申请顺序自动分配片上内存，避免手动维护地址偏移 |
+| GM → L1 | [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（GMToL1随路转换-ND2NZ搬运）.md)将A/B矩阵从GM搬入L1，同时完成ND→Nz格式转换 | Cube计算单元要求Nz分形排布格式，因此在搬运时必须将ND格式转为Nz格式，避免额外转换开销 |
+| L1 → L0A/L0B | [LoadData](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)将A矩阵从L1搬入L0A（Nz→Zz/Nz），B矩阵从L1搬入L0B（Nz→Zn转置） | B矩阵需要转置是因为Mmad指令要求B矩阵以Zn（转置Nz）格式输入 |
 | L0A/L0B → L0C | [Mmad](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md)执行矩阵乘加，在K方向累加所有数据块 | 完成A×B的矩阵乘计算，K方向分块累加确保正确性 |
 | 核内同步 | [SetFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md)/[WaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md)确保数据搬运完成后再开始下一步操作 | 避免LoadData读取尚未搬运完成的数据，避免Mmad读取尚未加载完成的数据 |
-| L0C → GM | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)将L0C结果搬出到GM，同时完成Nz→ND格式转换和fp32→fp16精度转换 | 输出结果需回到GM供Vector核读取，格式需转为ND排布，精度需从fp32降为fp16以匹配输出要求 |
+| L0C → GM | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)将L0C结果搬出到GM，同时完成Nz→ND格式转换和fp32→fp16精度转换 | 输出结果需回到GM供Vector核读取，格式需转为ND排布，精度需从fp32降为fp16以匹配输出要求 |
 | 核间同步 | [CrossCoreSetFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核间同步/CrossCoreSetFlag(ISASI).md)通知Vector核数据就绪 | 确保Vector核不会在Fixpipe完成前开始读取GM数据 |
 
 ### Vector核流程
@@ -496,9 +496,9 @@
 |:---|:---|:---|
 | 核间同步 | [CrossCoreWaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核间同步/CrossCoreWaitFlag(ISASI).md)等待Cube核Fixpipe完成 | 阻塞直到Cube核通知数据就绪，确保读取到完整的Matmul结果 |
 | 初始化 | 使用UB allocator分配VECCALC位置的[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) | 为GM→UB搬运和Vector计算分配UB缓冲区 |
-| GM → UB | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB非对齐数据搬运(DataCopyPad).md)将Matmul结果从GM搬入UB，每个Vector核读取baseM/2行、每行baseN个元素 | Vector核从GM读取Cube核写回的Matmul结果，每个Vector核处理半块数据 |
+| GM → UB | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)将Matmul结果从GM搬入UB，每个Vector核读取baseM/2行、每行baseN个元素 | Vector核从GM读取Cube核写回的Matmul结果，每个Vector核处理半块数据 |
 | UB计算 | [LeakyRelu](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/基础算术/LeakyRelu.md)执行激活计算，负值部分乘以0.001 | 对Matmul结果施加LeakyRelu激活函数，完成融合计算 |
-| UB → GM | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/UBToGM非对齐数据搬运(DataCopyPad).md)将LeakyRelu结果写回GM | 将最终计算结果输出到GM供后续使用 |
+| UB → GM | [DataCopyPad](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad（UBToGM非对齐数据搬运）.md)将LeakyRelu结果写回GM | 将最终计算结果输出到GM供后续使用 |
 
 ## 可优化方向分析
 

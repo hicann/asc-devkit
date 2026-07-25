@@ -45,7 +45,7 @@
 
     - Counter模式下，mask参数表示整个矢量计算参与计算的元素个数。
 
-- 当模板参数isSetMask = true时，不需要调用本接口，参考[接口内设置Mask](../SIMD计算说明/掩码/接口内设置Mask.md)。
+- 当模板参数isSetMask = true时，不需要调用本接口，参考[接口内设置Mask](../SIMD计算说明/掩码.md#接口内设置mask)。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -145,4 +145,4 @@
     AscendC::ResetMask();
     ```
 
-更多示例请参考[接口外设置Mask](../SIMD计算说明/掩码/接口外设置Mask.md)。
+更多示例请参考[接口外设置Mask](../SIMD计算说明/掩码.md#接口外设置mask)。

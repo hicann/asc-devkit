@@ -50,7 +50,7 @@
 
 不开启DoubleBuffer时，只需要对每个核上最后一个分块的起始地址做处理；开启DoubleBuffer后，需要处理的数据块长度变成原来的一半，所以需要对最后两个数据块的起始地址做处理。
 
-开启DoubleBuffer，参考[InitBuffer接口函数原型](../../../../api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/InitBuffer.md)，将num参数配置成2，即BUFFER\_NUM。
+开启DoubleBuffer，参考[InitBuffer接口函数原型](../../../../api/SIMD-API/基础API/资源管理/TPipe/InitBuffer.md)，将num参数配置成2，即BUFFER\_NUM。
 
 ```
 this->initBufferLength = AscendC::Std::max(this->tileLength, this->lastTileLength);

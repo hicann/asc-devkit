@@ -71,7 +71,7 @@
 | 参数名 | 描述 |
 | --- | --- |
 | T | 操作数数据类型。 |
-| isSetMask | 是否在接口内部设置mask模式和mask值。<br>&bull; true，表示在接口内部设置。<br>&nbsp; tensor前n个数据计算API内部使用了mask的[Counter模式](../SIMD计算说明/掩码/概述.md#mask-mode)，一般情况下保持isSetMask默认值即可，表示在API内部根据开发者传入的count参数进行mask模式和mask值的设置。<br>&bull; false，表示在接口外部设置。<br>&nbsp; 开发者需要使用[SetVectorMask](../掩码操作/SetVectorMask.md)接口设置mask值。此时，接口入参中的count不生效，建议设置成1。<br>部分产品型号该参数不生效，详情请参考[约束说明](#约束说明)。 |
+| isSetMask | 是否在接口内部设置mask模式和mask值。<br>&bull; true，表示在接口内部设置。<br>&nbsp; tensor前n个数据计算API内部使用了mask的[Counter模式](../SIMD计算说明/掩码.md#mask-mode)，一般情况下保持isSetMask默认值即可，表示在API内部根据开发者传入的count参数进行mask模式和mask值的设置。<br>&bull; false，表示在接口外部设置。<br>&nbsp; 开发者需要使用[SetVectorMask](../掩码操作/SetVectorMask.md)接口设置mask值。此时，接口入参中的count不生效，建议设置成1。<br>部分产品型号该参数不生效，详情请参考[约束说明](#约束说明)。 |
 
 **表2**  参数说明
 
@@ -81,7 +81,7 @@
 | src | 输入 | 源操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，存储位置为UB（TPosition为VECIN、VECCALC、VECOUT）。 |
 | sharedTmpBuffer | 输入 | 指令执行期间存储中间结果，用于内部计算所需操作空间，需特别注意空间大小。详情请参考[关键特性说明](#关键特性说明)。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，存储位置为UB（TPosition为VECIN、VECCALC、VECOUT）。 |
 | count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD计算说明/连续计算.md)。最大处理的数据量不能超过UB大小限制。 |
-| mask/mask[] | 输入 | `mask`用于控制每次迭代内参与计算的源操作数。详细设置参考[掩码概述](../SIMD计算说明/掩码/概述.md)。 |
+| mask/mask[] | 输入 | `mask`用于控制每次迭代内参与计算的源操作数。详细设置参考[掩码概述](../SIMD计算说明/掩码.md)。 |
 | repeatTime | 输入 | 迭代次数。关于该参数的具体描述请参考[高维切分](../SIMD计算说明/高维切分.md)。**注：与高维切分中不同的是，`repeatTime`可以支持更大的取值范围，保证不超过int32_t的最大值即可。** |
 | srcRepStride | 输入 | 源操作数相邻迭代间的地址步长，即源操作数每次迭代跳过的DataBlock数目。取值范围为[0, $2^{16}-1$]。 |
 
@@ -198,8 +198,8 @@
 <!-- npu="950" id30 -->
 - Ascend 950PR/Ascend 950DT，按场景采用不同的累加方式：
   - int64_t、uint64_t采用方式三。
-  - [Counter模式](../SIMD计算说明/掩码/概述.md#mask-mode)且数据量在256~1024字节之间采用方式三；否则采用方式二。
-  - [Normal模式](../SIMD计算说明/掩码/概述.md#mask-mode)采用方式二。
+  - [Counter模式](../SIMD计算说明/掩码.md#mask-mode)且数据量在256~1024字节之间采用方式三；否则采用方式二。
+  - [Normal模式](../SIMD计算说明/掩码.md#mask-mode)采用方式二。
 <!-- end id30 -->
 <!-- npu="A3" id31 -->
 - Atlas A3 训练系列产品/Atlas A3 推理系列产品，tensor前n个数据计算接口采用方式一，tensor高维切分计算接口采用方式二。

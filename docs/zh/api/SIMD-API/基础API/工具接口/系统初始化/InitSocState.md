@@ -35,14 +35,14 @@
 | 状态类别 | 初始化内容 |
 | ---- | ---- |
 | 公共状态 | 初始化[原子累加状态](../../原子操作/DisableDmaAtomic.md)，关闭数据搬运随路原子操作功能。 |
-| 公共状态 | 初始化[Mask工作模式](../../Memory矢量计算/SIMD计算说明/掩码/概述.md#mask-mode)为Normal模式。 |
-| 公共状态 | 初始化[用于AddDeqRelu/CastDequant/Cast的s322fp16场景的scale量化参数](../../Memory矢量计算/类型转换/寄存器配置说明/SetDeqScale.md#func1)为1。 |
+| 公共状态 | 初始化[Mask工作模式](../../Memory矢量计算/SIMD计算说明/掩码.md#mask-mode)为Normal模式。 |
+| 公共状态 | 初始化[用于AddDeqRelu/CastDequant/Cast的s322fp16场景的scale量化参数](../../Memory矢量计算/类型转换辅助配置接口/SetDeqScale.md#func1)为1。 |
 | 公共状态 | 初始化[CTRL寄存器](../../特殊寄存器访问/SetCtrlSpr(ISASI).md#tab-950)中除`CTRL[48]`以外的比特位为默认值。 |
 | 公共状态 | 初始化[原子操作开启位与原子操作类型](../../原子操作/SetStoreAtomicConfig(ISASI).md)，为无效的原子操作类型。 |
-| AIC | 初始化[LoadData（卷积数据搬运）接口调用时Pad填充的数值](../../矩阵计算（ISASI）/矩阵计算的搬入/辅助配置接口/SetLoadDataPaddingValue.md#功能说明)为0。 |
-| AIC | 初始化[使用LoadData（卷积数据搬运）时A1/B1的边界值](../../矩阵计算（ISASI）/矩阵计算的搬入/辅助配置接口/SetLoadDataBoundary.md#功能说明)为0，表示无边界。 |
-| AIV | 将[Mask](../../Memory矢量计算/SIMD计算说明/掩码/概述.md)配置为全1，表示所有数都参与计算。 |
-| AIV | [重置loop mode的参数](../../Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/ResetLoopModePara.md)。 |
+| AIC | 初始化[LoadData（卷积数据搬运）接口调用时Pad填充的数值](../../矩阵计算（ISASI）/矩阵搬入辅助配置接口/SetLoadDataPaddingValue.md#功能说明)为0。 |
+| AIC | 初始化[使用LoadData（卷积数据搬运）时A1/B1的边界值](../../矩阵计算（ISASI）/矩阵搬入辅助配置接口/SetLoadDataBoundary.md#功能说明)为0，表示无边界。 |
+| AIV | 将[Mask](../../Memory矢量计算/SIMD计算说明/掩码.md)配置为全1，表示所有数都参与计算。 |
+| AIV | [重置loop mode的参数](../../Memory矢量计算/数据搬运辅助配置接口/ResetLoopModePara.md)。 |
 
 **各产品实际执行的初始化项如下：**
 

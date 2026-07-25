@@ -54,4 +54,4 @@ MutexID有数量限制，使用结束后应立即调用[ReleaseMutexID](ReleaseM
 
 ## 调用示例<a name="section837496171220"></a>
 
-示例请参考[Lock调用示例](Mutex(ISASI)/Lock.md#section123275308128)。
+示例请参考[Lock调用示例](Lock.md#section123275308128)。

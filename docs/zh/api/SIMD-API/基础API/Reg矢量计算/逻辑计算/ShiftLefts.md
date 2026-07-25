@@ -1,4 +1,4 @@
-﻿# ShiftLefts<a name="ZH-CN_TOPIC_0000001929668284"></a>
+# ShiftLefts<a name="ZH-CN_TOPIC_0000001929668284"></a>
 
 ## 产品支持情况<a name="section1550532418810"></a>
 

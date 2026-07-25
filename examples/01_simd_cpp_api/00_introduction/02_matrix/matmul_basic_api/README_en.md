@@ -52,8 +52,8 @@ This sample implements multi-core matrix multiplication computation based on the
 - Sample Implementation:
   - Kernel-side Overall Approach
     - `mmad_custom` is a [`__global__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md) [`__cube__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md) kernel function, which indicates that this function runs on the [Cube](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md) computation unit of [AI Core](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md), primarily used for matrix computation.
-    - The sample uses the [static Tensor programming method](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程.md) and creates [`LocalTensor`](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) through [`LocalMemAllocator`](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介.md).
-    - `CUBE_BLOCK = 16` indicates that the half data type fractal is `16 x 16`, and the code performs [`LoadData`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md) transfers in units of `16 x 16` fractals.
+    - The sample uses the [static Tensor programming method](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程.md) and creates [`LocalTensor`](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md) through [`LocalMemAllocator`](../../../../../docs/zh/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介.md).
+    - `CUBE_BLOCK = 16` indicates that the half data type fractal is `16 x 16`, and the code performs [`LoadData`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md) transfers in units of `16 x 16` fractals.
 
   - Kernel-side Detailed Process
     - Create [`GlobalTensor`](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md)`<half>` objects `aGM`, `bGM`, `cGM`, representing matrices A, B, C in [GM (Global Memory)](../../../../../docs/zh/guide/编程指南/高级编程/硬件实现/基本架构.md).
@@ -68,13 +68,13 @@ This sample implements multi-core matrix multiplication computation based on the
       - `b1Local`: Temporary storage of matrix B in L1. `a1Local` and `b1Local` use the same L1 allocator and are allocated in order, avoiding manual L1 address offset maintenance.
       - `b2Local`: Temporary storage of matrix B in L0B, for `Mmad` to read.
       - `cLocal`: Temporary storage of matrix multiplication result in L0C.
-    - Call [`DataCopy`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB随路转换ND2NZ搬运(DataCopy).md) to transfer matrices A and B from GM to L1. Use [`Nd2NzParams`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB随路转换ND2NZ搬运(DataCopy).md) parameters to convert the input [ND](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md) format data to [Nz](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md) format required by Cube computation during the transfer.
+    - Call [`DataCopy`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GMToUB随路转换ND2NZ搬运）.md) to transfer matrices A and B from GM to L1. Use [`Nd2NzParams`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GMToUB随路转换ND2NZ搬运）.md) parameters to convert the input [ND](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md) format data to [Nz](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md) format required by Cube computation during the transfer.
     - Call [`SetFlag<HardEvent::MTE2_MTE1>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) and [`WaitFlag<HardEvent::MTE2_MTE1>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) for synchronization. `DataCopy` belongs to the MTE2 pipeline, and the subsequent `LoadData` belongs to the [MTE1](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md) pipeline. [MTE1](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md) must wait for [MTE2](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md) to complete, to avoid reading L1 data that has not finished transferring.
     - Call `LoadData` to transfer matrix A from L1 to L0A, and matrix B from L1 to L0B. L0A and L0B are input buffers that the Cube matrix computation unit reads directly.
     - Call [`SetFlag<HardEvent::MTE1_M>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) and [`WaitFlag<HardEvent::MTE1_M>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) for synchronization. `LoadData` belongs to the MTE1 pipeline, and the subsequent `Mmad` belongs to the M pipeline. The M pipeline must wait for MTE1 to complete, to avoid reading L0A/L0B data that has not finished transferring.
     - Call [`Mmad`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md)`(cLocal, a2Local, b2Local, {baseM, baseN, baseK, 0, false, true})` to execute matrix multiplication. Here `baseM = 128`, `baseN = 256`, `baseK = 64`, corresponding to the matrix block size computed by a single core at one time.
-    - Call [`SetFlag<HardEvent::M_FIX>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) and [`WaitFlag<HardEvent::M_FIX>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) for synchronization. [`Mmad`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md) belongs to the M pipeline, and the subsequent [`Fixpipe`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md) belongs to the FIX pipeline. The FIX pipeline must wait for the M pipeline to complete, to avoid reading L0C results that have not finished computing.
-    - Call [`Fixpipe`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md) to convert the `float` accumulation result in L0C to `half` and transfer it back to the matrix C output location in GM.
+    - Call [`SetFlag<HardEvent::M_FIX>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) and [`WaitFlag<HardEvent::M_FIX>`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI).md) for synchronization. [`Mmad`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/Mmad计算/Mmad.md) belongs to the M pipeline, and the subsequent [`Fixpipe`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md) belongs to the FIX pipeline. The FIX pipeline must wait for the M pipeline to complete, to avoid reading L0C results that have not finished computing.
+    - Call [`Fixpipe`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md) to convert the `float` accumulation result in L0C to `half` and transfer it back to the matrix C output location in GM.
     - Finally, call [`PipeBarrier`](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/PipeBarrier(ISASI).md)`<PIPE_ALL>()` to ensure that related pipeline tasks within the current core complete.
 
   - Invocation Implementation  
@@ -84,7 +84,7 @@ This sample implements multi-core matrix multiplication computation based on the
 
   The following structures all use curly braces `{}` for parameter passing. The meaning of each field is as follows (field order is consistent with API documentation; actual struct declarations may have different field orders):
 
-  **[`AscendC::Nd2NzParams`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB随路转换ND2NZ搬运(DataCopy).md)** — Used by [`DataCopy`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GMToUB随路转换ND2NZ搬运(DataCopy).md) interface, describes ND→Nz format conversion parameters:
+  **[`AscendC::Nd2NzParams`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GMToUB随路转换ND2NZ搬运）.md)** — Used by [`DataCopy`](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy（GMToUB随路转换ND2NZ搬运）.md) interface, describes ND→Nz format conversion parameters:
   ```cpp
   struct Nd2NzParams {
       int32_t  ndNum;              // Number of ND matrices to transfer, [0, 4095]
@@ -99,7 +99,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   For example, when transferring matrix A, `{1, baseM, baseK, 0, K, baseM, 1, 0}` converts baseM×baseK ND data to Nz format.
 
-  **[`AscendC::LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Atlas A2 Training Series Products/Atlas A2 Inference Series Products, Atlas A3 Training Series Products/Atlas A3 Inference Series Products:
+  **[`AscendC::LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Atlas A2 Training Series Products/Atlas A2 Inference Series Products, Atlas A3 Training Series Products/Atlas A3 Inference Series Products:
 
   ```cpp
   struct LoadData2DParams {
@@ -115,7 +115,7 @@ This sample implements multi-core matrix multiplication computation based on the
   For example: In Atlas A2 Training Series Products/Atlas A2 Inference Series Products, Atlas A3 Training Series Products/Atlas A3 Inference Series Products, the layout format on L0A is Zz. When transferring matrix A, use `{0, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, 0, 0, false, 0}`; <br>
   When transferring matrix B, set `ifTranspose=true` to complete Nz to Zn transpose transfer.
 
-  **[`AscendC::LoadData2DParamsV2`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Ascend 950PR/Ascend 950DT products:
+  **[`AscendC::LoadData2DParamsV2`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Ascend 950PR/Ascend 950DT products:
   ```cpp
   struct LoadData2DParamsV2 {
       uint32_t mStartPosition;  // M direction start position, unit: 512B
@@ -144,7 +144,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   For example, `{baseM, baseN, baseK, 0, false, true}` computes a baseM×baseN output block and accumulates baseK length in the K direction.
 
-  **[`AscendC::FixpipeParamsV220`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)** — Used by [`Fixpipe`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md) interface, describes L0C to GM data transfer and precision conversion parameters:
+  **[`AscendC::FixpipeParamsV220`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)** — Used by [`Fixpipe`](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md) interface, describes L0C to GM data transfer and precision conversion parameters:
   ```cpp
   struct FixpipeParamsV220 {
       int32_t     nSize;        // Source Nz matrix N direction size, [1, 4095]

@@ -57,4 +57,4 @@ AscendC::SetVectorMask<half, AscendC::MaskMode::NORMAL>(128);
 AscendC::ResetMask();
 ```
 
-更多示例请参考[接口外设置Mask](../SIMD计算说明/掩码/接口外设置Mask.md)。
+更多示例请参考[接口外设置Mask](../SIMD计算说明/掩码.md#接口外设置mask)。

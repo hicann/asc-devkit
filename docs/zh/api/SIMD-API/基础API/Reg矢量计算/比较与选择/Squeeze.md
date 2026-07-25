@@ -1,4 +1,4 @@
-﻿# Squeeze<a name="ZH-CN_TOPIC_0000002009320090"></a>
+# Squeeze<a name="ZH-CN_TOPIC_0000002009320090"></a>
 
 ## 产品支持情况<a name="section1550532418810"></a>
 

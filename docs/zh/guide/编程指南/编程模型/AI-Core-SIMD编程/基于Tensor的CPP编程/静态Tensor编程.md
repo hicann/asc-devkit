@@ -25,7 +25,7 @@
 
 静态Tensor编程方式下，开发者可以使用两种方式创建Tensor：
 
--   通过[LocalMemAllocator](../../../../../api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator.md)指定硬件位置进行Tensor分配。
+-   通过[LocalMemAllocator](../../../../../api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator.md)指定硬件位置进行Tensor分配。
 
     LocalMemAllocator是一种线性内存分配器，开发者可以调用Alloc方法进行内存分配，地址分配从0开始，根据调用次序依次向后进行线性分配，LocalMemAllocator只是一个简单的线性分配器，并不提供内存释放以及其它内存管理的能力。在不关注Bank冲突场景或者算子初始功能开发时，可以使用LocalMemAllocator简化算子编写，在后续性能优化时切换到使用LocalTensor进行地址分配的方式。
 

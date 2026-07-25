@@ -142,7 +142,7 @@ Kernel侧实现Matmul矩阵乘运算的步骤概括为：
 
     <a id="user-managed-co1"></a>
     
-    -   用户申请用于存放矩阵乘结果的L0C Buffer（CO1）内存，调用一次或多次[Iterate](Iterate.md#li4843165185812)完成单次或多次迭代计算，在需要搬出计算结果时，调用[Fixpipe](../../../基础API/矩阵计算（ISASI）/矩阵计算的搬出/L0C到GM数据搬运（Fixpipe）.md)接口完成L0C Buffer（CO1）上计算结果的搬运，然后释放申请的L0C Buffer（CO1）内存。该方式下，用户可以灵活控制计算和搬运的节奏，根据实际需要，一次计算对应一次结果的搬出，或者将多次计算结果缓存在L0C Buffer（CO1）内存中，再一次性搬出计算结果。
+    -   用户申请用于存放矩阵乘结果的L0C Buffer（CO1）内存，调用一次或多次[Iterate](Iterate.md#li4843165185812)完成单次或多次迭代计算，在需要搬出计算结果时，调用[Fixpipe](../../../基础API/矩阵计算（ISASI）/矩阵计算的搬出/Fixpipe（L0C到GM数据搬运）.md)接口完成L0C Buffer（CO1）上计算结果的搬运，然后释放申请的L0C Buffer（CO1）内存。该方式下，用户可以灵活控制计算和搬运的节奏，根据实际需要，一次计算对应一次结果的搬出，或者将多次计算结果缓存在L0C Buffer（CO1）内存中，再一次性搬出计算结果。
 
         在此种调用方式下，创建Matmul对象时，必须定义C矩阵的内存逻辑位置为TPosition::CO1、数据排布格式为CubeFormat::NZ、数据类型为float或int32\_t。
 
