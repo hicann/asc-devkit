@@ -28,11 +28,13 @@
 
 头文件路径：`"basic_api/reg_compute/kernel_reg_compute_vec_binary_intf.h"`。
 
-该接口根据mask，对源操作数srcReg0、srcReg1及输入进位carrySrc进行按元素求和操作，将结果写入目的操作数dstReg，同时将每个元素的进位结果写入carry。计算公式如下：
+该接口根据mask，对源操作数srcReg0、srcReg1及输入进位carrySrc进行按元素求和操作，将结果写入目的操作数dstReg，同时将每个元素的进位结果写入carry（存放进位的MaskReg寄存器）。
+
+Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。若srcReg0，srcReg1，carrySrc输入按位相加后最高位有进位，在carry中对应位置每4bit设置1，否则写0。
+
+计算公式如下：
 
 $$\{carry_i, dstReg_i\} = srcReg0_i + srcReg1_i + carrySrc_i$$
-
-Carry flag（进位标志）用于表示加法进位或者减法无借位，若srcReg0，srcReg1，carrySrc输入按位相加后最高位有进位，在carry（存放进位的MaskReg寄存器）中对应位置每4bit设置1，否则写0。
 
 ![](../../../../figures/reg_addc_1.png)
 
@@ -60,7 +62,7 @@ __simd_callee__ inline void AddC(MaskReg& carry, U& dstReg, U& srcReg0, U& srcRe
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| carry | 输出 | 目的操作数。输出借位值。<br>类型为[MaskReg](../寄存器数据类型/MaskReg.md)。 |
+| carry | 输出 | 目的操作数。输出进位值。<br>类型为[MaskReg](../寄存器数据类型/MaskReg.md)。 |
 | dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |
 | srcReg0 | 输入 | 源操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |
 | srcReg1 | 输入 | 源操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |

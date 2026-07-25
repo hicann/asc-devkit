@@ -28,11 +28,17 @@
 
 头文件路径：`"basic_api/reg_compute/kernel_reg_compute_vec_binary_intf.h"`。
 
-该接口根据mask，对源操作数srcReg0、srcReg1进行按元素求和操作，将结果写入目的操作数dstReg，计算公式如下：
+该接口根据mask，对源操作数srcReg0、srcReg1进行按元素求和操作，将结果写入目的操作数dstReg。
+
+Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。该接口可以在carry（MaskReg寄存器）中标记每次加法是否产生进位，若srcReg0，srcReg1输入按位相加后最高位有进位，在MaskReg carry中对应位置每4bit的最低位写1，否则写0。
+
+计算结果不保留进位，计算公式如下：
 
 $$dstReg_i = srcReg0_i + srcReg1_i$$
 
-同时可以在carry（MaskReg寄存器）中标记每次加法是否产生进位，若srcReg0，srcReg1输入按位相加后最高位有进位，在MaskReg carry中对应位置每4bit的最低位写1，否则写0。
+计算结果保留进位，计算公式如下：
+
+$$\{carry_i, dstReg_i\} = srcReg0_i + srcReg1_i$$
 
 ![](../../../../figures/reg_add.png)
 
@@ -72,7 +78,7 @@ $$dstReg_i = srcReg0_i + srcReg1_i$$
 | srcReg0 | 输入 | 源操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |
 | srcReg1 | 输入 | 源操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../寄存器数据类型/MaskReg.md)。 |
-| carry | 输出 | 目的操作数。输出借位值。<br>类型为[MaskReg](../寄存器数据类型/MaskReg.md)。 |
+| carry | 输出 | 目的操作数。输出进位值。<br>类型为[MaskReg](../寄存器数据类型/MaskReg.md)。 |
 
 ## 数据类型
 
@@ -131,4 +137,3 @@ $$dstReg_i = srcReg0_i + srcReg1_i$$
         }
     }
     ```
-
