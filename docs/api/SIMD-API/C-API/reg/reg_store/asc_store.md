@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-reg计算数据搬运接口，适用于从矢量数据寄存器搬出到UB的场景，不区分是否对齐，在追求极致性能时，对齐场景推荐使用[asc_storealign](./asc_storealign)接口。
+reg计算数据搬运接口，适用于从矢量数据寄存器搬出到UB的场景，不区分是否对齐，在追求极致性能时，对齐场景推荐使用[asc_storealign_v1](asc_storealign_v1.md)、[asc_storealign_v2](asc_storealign_v2.md)、[asc_storealign_v3](asc_storealign_v3.md)、[asc_storealign_v4](asc_storealign_v4.md)、[asc_storealign_v5](asc_storealign_v5.md)接口。
 
 ## 函数原型
 

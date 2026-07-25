@@ -138,21 +138,21 @@
 ### 数据搬运
 | 接口名 | 功能描述 |
 | --- | --- |
-| [GM与UB连续数据搬运(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMAndUB_continuous.md) | 支持Global Memory与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [GM与UB高维切分数据搬运(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMAndUB_highdim_split.md) | 支持Global Memory与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [GM与UB切片数据搬运(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMAndUB_slice.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持数据的切片搬运，提取多维Tensor数据的子集进行搬运。 |
-| [GMToUB随路转换ND2NZ搬运(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMToUB_ND2NZ.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Global Memory到Unified Buffer的数据搬运过程中进行ND到NZ格式的转换。 |
-| [UBToGM随路转换NZ2ND搬运(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_UBToGM_NZ2ND.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Unified Buffer到Global Memory的数据搬运过程中进行NZ到ND格式的转换。 |
-| [GMToUB多维数据搬运NDDMA(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMToUB_NDDMA.md) | 多维数据搬运接口，相比于基础数据搬运接口，可更加自由配置搬入的维度信息以及对应的Stride。 |
-| [GMToUB非对齐数据搬运(DataCopyPad)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopyPad_GMToUB.md) | 该接口提供将数据从Global Memory非对齐搬运至Unified Buffer的功能，可以根据开发者的需要自行填充数据。 |
-| [UBToGM非对齐数据搬运(DataCopyPad)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopyPad_UBToGM.md) | 该接口提供将数据从Unified Buffer非对齐搬运至Global Memory的功能。 |
+| [DataCopy（GM与UB-连续数据搬运）](Memory矢量计算/数据搬运/DataCopy_GMAndUB_continuous.md) | 支持Global Memory与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [DataCopy（GM与UB-高维切分数据搬运）](Memory矢量计算/数据搬运/DataCopy_GMAndUB_highdim_split.md) | 支持Global Memory与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [DataCopy（GM与UB-切片数据搬运）](Memory矢量计算/数据搬运/DataCopy_GMAndUB_slice.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持数据的切片搬运，提取多维Tensor数据的子集进行搬运。 |
+| [DataCopy（GM -> UB-随路转换ND2NZ搬运）](Memory矢量计算/数据搬运/DataCopy_GMToUB_ND2NZ.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Global Memory到Unified Buffer的数据搬运过程中进行ND到NZ格式的转换。 |
+| [DataCopy（UB -> GM-随路转换NZ2ND搬运）](Memory矢量计算/数据搬运/DataCopy_UBToGM_NZ2ND.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Unified Buffer到Global Memory的数据搬运过程中进行NZ到ND格式的转换。 |
+| [DataCopy（GM -> UB-多维数据搬运NDDMA）](Memory矢量计算/数据搬运/DataCopy_GMToUB_NDDMA.md) | 多维数据搬运接口，相比于基础数据搬运接口，可更加自由配置搬入的维度信息以及对应的Stride。 |
+| [DataCopyPad（GM -> UB-非对齐数据搬运）](Memory矢量计算/数据搬运/DataCopyPad_GMToUB.md) | 该接口提供将数据从Global Memory非对齐搬运至Unified Buffer的功能，可以根据开发者的需要自行填充数据。 |
+| [DataCopyPad（UB -> GM-非对齐数据搬运）](Memory矢量计算/数据搬运/DataCopyPad_UBToGM.md) | 该接口提供将数据从Unified Buffer非对齐搬运至Global Memory的功能。 |
 | [SetPadValue(ISASI)](Memory矢量计算/数据搬运辅助配置接口/SetPadValue_ISASI.md) | 从Global Memory将数据非对齐搬运至Unified Buffer时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。 |
 | [SetLoopModePara](Memory矢量计算/数据搬运辅助配置接口/SetLoopModePara.md) | DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过ResetLoopModePara重置loop mode的参数。 |
 | [ResetLoopModePara](Memory矢量计算/数据搬运辅助配置接口/ResetLoopModePara.md) | 重置loop mode的参数。与SetLoopModePara搭配使用，在使能loop mode并且设置loop mode的参数的数据搬运场景下，数据搬运结束后需要调用该函数来重置loop mode参数。 |
-| [UBToUB连续数据搬运(DataCopy)](Memory矢量计算/数据搬运/UB与UB数据搬运/DataCopy_UBToUB_continuous.md) | 支持Unified Buffer与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [UBToUB高维切分数据搬运(DataCopy)](Memory矢量计算/数据搬运/UB与UB数据搬运/DataCopy_UBToUB_highdim_split.md) | 支持Unified Buffer与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [UBToUB连续数据搬运(Copy)](Memory矢量计算/数据搬运/UB与UB数据搬运/Copy_UBToUB_continuous.md) | 支持Unified Buffer和Unified Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。 |
-| [UBToUB掩码式高维数据搬运(Copy)](Memory矢量计算/数据搬运/UB与UB数据搬运/Copy_UBToUB_mask_highdim_split.md) | 支持Unified Buffer和Unified Buffer之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。 |
+| [DataCopy（UB -> UB-连续数据搬运）](Memory矢量计算/数据搬运/DataCopy_UBToUB_continuous.md) | 支持Unified Buffer与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [DataCopy（UB -> UB-高维切分数据搬运）](Memory矢量计算/数据搬运/DataCopy_UBToUB_highdim_split.md) | 支持Unified Buffer与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [Copy（UB -> UB-连续数据搬运）](Memory矢量计算/数据搬运/Copy_UBToUB_continuous.md) | 支持Unified Buffer和Unified Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。 |
+| [Copy（UB -> UB-掩码式高维数据搬运）](Memory矢量计算/数据搬运/Copy_UBToUB_mask_highdim_split.md) | 支持Unified Buffer和Unified Buffer之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。 |
 
 ### 基础算术
 | 接口名 | 功能描述 |
@@ -488,24 +488,24 @@
 ## 资源管理
 | 接口名 | 功能描述 |
 | --- | --- |
-| [TPipe](资源管理/Pipe和Que框架/TPipe/TPipe.md) | TPipe是用来管理全局内存等资源的框架。通过TPipe类提供的接口可以完成内存等资源的分配管理操作。 |
-| [GetTPipePtr](资源管理/Pipe和Que框架/GetTPipePtr.md) | 创建TPipe对象时，对象初始化会设置全局唯一的TPipe指针。本接口用于获取该指针，获取该指针后，可进行TPipe相关的操作。 |
-| [TBufPool](资源管理/Pipe和Que框架/TBufPool/TBufPool.md) | TPipe可以管理全局内存资源，而TBufPool可以手动管理或复用Unified Buffer/L1 Buffer物理内存，主要用于多个stage计算中Unified Buffer/L1 Buffer物理内存不足的场景。 |
-| [TQue](资源管理/Pipe和Que框架/TQue/TQue.md) | 提供入队出队等接口，通过队列（Queue）完成任务间同步。 |
-| [TQueBind](资源管理/Pipe和Que框架/TQueBind/TQueBind.md) | TQueBind绑定源逻辑位置和目的逻辑位置，根据源位置和目的位置，来确定内存分配的位置 、插入对应的同步事件，帮助开发者解决内存分配和管理、同步等问题。 |
-| [TBuf](资源管理/Pipe和Que框架/TBuf/TBuf.md) | 使用Ascend C编程的过程中，可能会用到一些临时变量。这些临时变量占用的内存可以使用TBuf数据结构来管理。 |
-| [InitSpmBuffer](资源管理/Pipe和Que框架/TPipe/InitSpmBuffer.md) | 初始化SPM Buffer。 |
-| [WriteSpmBuffer](资源管理/Pipe和Que框架/TPipe/WriteSpmBuffer.md) | 将需要溢出暂存的数据拷贝到SPM Buffer中。 |
-| [ReadSpmBuffer](资源管理/Pipe和Que框架/TPipe/ReadSpmBuffer.md) | 从SPM Buffer读回到local数据中。 |
-| [GetUserWorkspace](资源管理/临时空间管理/workspace/GetUserWorkspace.md) | 获取用户使用的workspace指针。 |
-| [SetSysWorkSpace](资源管理/临时空间管理/workspace/SetSysWorkSpace.md) | 在进行融合算子编程时，由于框架通信机制需要使用到workspace，也就是系统workspace，所以在该场景下，开发者要调用该接口，设置系统workspace的指针。 |
-| [GetSysWorkSpacePtr](资源管理/临时空间管理/workspace/GetSysWorkSpacePtr.md) | 获取系统workspace指针。 |
-| [PopStackBuffer](资源管理/临时空间管理/PopStackBuffer.md) | 在指定position（逻辑位置）申请临时空间，空间大小为指定position的全部剩余空间。 |
+| [TPipe](资源管理/TPipe/TPipe.md) | TPipe是用来管理全局内存等资源的框架。通过TPipe类提供的接口可以完成内存等资源的分配管理操作。 |
+| [GetTPipePtr](资源管理/GetTPipePtr.md) | 创建TPipe对象时，对象初始化会设置全局唯一的TPipe指针。本接口用于获取该指针，获取该指针后，可进行TPipe相关的操作。 |
+| [TBufPool](资源管理/TBufPool/TBufPool.md) | TPipe可以管理全局内存资源，而TBufPool可以手动管理或复用Unified Buffer/L1 Buffer物理内存，主要用于多个stage计算中Unified Buffer/L1 Buffer物理内存不足的场景。 |
+| [TQue](资源管理/TQue/TQue.md) | 提供入队出队等接口，通过队列（Queue）完成任务间同步。 |
+| [TQueBind](资源管理/TQueBind/TQueBind.md) | TQueBind绑定源逻辑位置和目的逻辑位置，根据源位置和目的位置，来确定内存分配的位置 、插入对应的同步事件，帮助开发者解决内存分配和管理、同步等问题。 |
+| [TBuf](资源管理/TBuf/TBuf.md) | 使用Ascend C编程的过程中，可能会用到一些临时变量。这些临时变量占用的内存可以使用TBuf数据结构来管理。 |
+| [InitSpmBuffer](资源管理/TPipe/InitSpmBuffer.md) | 初始化SPM Buffer。 |
+| [WriteSpmBuffer](资源管理/TPipe/WriteSpmBuffer.md) | 将需要溢出暂存的数据拷贝到SPM Buffer中。 |
+| [ReadSpmBuffer](资源管理/TPipe/ReadSpmBuffer.md) | 从SPM Buffer读回到local数据中。 |
+| [GetUserWorkspace](资源管理/workspace/GetUserWorkspace.md) | 获取用户使用的workspace指针。 |
+| [SetSysWorkSpace](资源管理/workspace/SetSysWorkSpace.md) | 在进行融合算子编程时，由于框架通信机制需要使用到workspace，也就是系统workspace，所以在该场景下，开发者要调用该接口，设置系统workspace的指针。 |
+| [GetSysWorkSpacePtr](资源管理/workspace/GetSysWorkSpacePtr.md) | 获取系统workspace指针。 |
+| [PopStackBuffer](资源管理/PopStackBuffer.md) | 在指定position（逻辑位置）申请临时空间，空间大小为指定position的全部剩余空间。 |
 
 ## 同步控制
 | 接口名 | 功能描述 |
 | --- | --- |
-| [TQueSync](同步控制/核内同步/TQueSync/TQueSync.md) | TQueSync类提供同步控制接口，开发者可以使用这类API来自行完成同步控制。 |
+| [TQueSync](同步控制/核内同步/TQueSync模板参数.md) | TQueSync类提供同步控制接口，开发者可以使用这类API来自行完成同步控制。 |
 | [IBSet](同步控制/核间同步/IBSet.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [IBWait](同步控制/核间同步/IBWait.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [SyncAll](同步控制/核间同步/SyncAll.md) | SyncAll是核间同步控制接口。 |

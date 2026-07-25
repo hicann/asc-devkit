@@ -26,7 +26,7 @@ REGIST_MATMUL_OBJ(tpipe, workspace, ...)
 
 ## 约束说明
 
--   在分离模式中，本接口必须在[InitBuffer](../../../基础API/资源管理/Pipe和Que框架/TPipe/InitBuffer.md)接口前调用。
+-   在分离模式中，本接口必须在[InitBuffer](../../../基础API/资源管理/TPipe/InitBuffer.md)接口前调用。
 -   在程序中，最多支持定义4个Matmul对象。
 -   在Matmul的内部实现中使用了[CrossCoreSetFlag](../../../基础API/同步控制/核间同步/CrossCoreSetFlag_ISASI.md)进行核间同步控制，因此不建议开发者同时使用CrossCoreSetFlag和Matmul，以避免核间同步标记flagId冲突的风险。Matmul高阶API内部占用的flagId范围与定义的Matmul对象数目相关。假设定义了N个Matmul对象，则Matmul高阶API内部占用的flagId范围为\[0, 2 \* N - 1\]。Matmul最多支持定义4个对象，此时flagId占用范围为\[0, 7\]。
 -   当代码中只有一个Matmul对象时，本接口可以不传入tiling参数，通过[Init](Init-85.md)接口单独传入tiling参数。

@@ -305,7 +305,7 @@ asc_mem_bar(VST_LD);
 asc_load(vreg1, ub_addr);
 ```
 
-同步的方向包括多个指定的[枚举值](../../../../../api/c_api/reg/reg_vector/asc_mem_bar.md)，用于指定需要同步的两条流水方向。如下图**操作相同UB地址时**，读写依赖需要插入`Load->Store`同步`asc_mem_bar(VLD_ST)` ；写写依赖需要插入Store->Store同步`asc_mem_bar(VST_ST)`  。仅当在读写相同UB地址中间存在寄存器变量依赖计算时，同一数据串行处理，无需插入同步。
+同步的方向包括多个指定的[枚举值](../../../../../api/SIMD-API/C-API/reg/reg_vector/asc_mem_bar.md)，用于指定需要同步的两条流水方向。如下图**操作相同UB地址时**，读写依赖需要插入`Load->Store`同步`asc_mem_bar(VLD_ST)` ；写写依赖需要插入Store->Store同步`asc_mem_bar(VST_ST)`  。仅当在读写相同UB地址中间存在寄存器变量依赖计算时，同一数据串行处理，无需插入同步。
 
 **图5** 流水线同步示意
 
@@ -383,7 +383,7 @@ Reg矢量编程的关键特性按用途分为三大类：
 
 #### 通用搬运
 
-[`asc_load`](../../../../../api/c_api/reg/reg_load/asc_load.md) / [`asc_store`](../../../../../api/c_api/reg/reg_store/asc_store.md)是不区分UB地址是否对齐的通用搬运接口，用于将连续VL数据在UB与矢量数据寄存器之间搬运，或将不超过一个VL的元素数据从矢量数据寄存器搬出到UB。
+[`asc_load`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_load.md) / [`asc_store`](../../../../../api/SIMD-API/C-API/reg/reg_store/asc_store.md)是不区分UB地址是否对齐的通用搬运接口，用于将连续VL数据在UB与矢量数据寄存器之间搬运，或将不超过一个VL的元素数据从矢量数据寄存器搬出到UB。
 
 ```cpp
 // 搬运1个VL长度的数据，从UB地址src_addr到矢量数据寄存器src_reg
@@ -402,7 +402,7 @@ asc_store(dst_addr, dst_reg, 10);
 
 #### 对齐搬运
 
-[`asc_loadalign`](../../../../../api/c_api/reg/reg_load/asc_loadalign) / [`asc_storealign`](../../../../../api/c_api/reg/reg_store/asc_storealign)要求UB地址满足32B对齐。相比通用搬运，对齐搬运的性能开销更低，是连续对齐场景下的首选接口。
+[`asc_loadalign`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_load.md) / [`asc_storealign`](../../../../../api/SIMD-API/C-API/reg/reg_store/asc_store.md)要求UB地址满足32B对齐。相比通用搬运，对齐搬运的性能开销更低，是连续对齐场景下的首选接口。
 
 ```cpp
 for (uint16_t i = 0; i < repeat_times; ++i) {
@@ -420,7 +420,7 @@ for (uint16_t i = 0; i < repeat_times; ++i) {
 
 非对齐搬运是指UB地址非对齐，但仍需要在UB和矢量数据寄存器之间连续读写数据的场景。在直接与非对齐UB地址进行数据搬运时，硬件性能会急剧下降，为了提升此场景性能，通过`vector_load_unalign` / `vector_store_unalign`作为临时缓存，保存跨对齐边界的数据，通过多轮循环拼接成对齐地址的读写，减少直接访问非对齐UB地址的次数，从而减少非对齐访问的额外开销。
 
-**非对齐搬入**由[`asc_loadunalign_pre`](../../../../../api/c_api/reg/reg_load/asc_loadunalign_pre.md)和[`asc_loadunalign`](../../../../../api/c_api/reg/reg_load/asc_loadunalign.md) 组合完成：
+**非对齐搬入**由[`asc_loadunalign_pre`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_loadunalign_pre.md)和[`asc_loadunalign`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_loadunalign.md) 组合完成：
 例如在Ascend 950PR/Ascend 950DT，当想要搬入如下UB地址为48开始的256Bytes数据时:
 
 **图6** 非对齐搬入预期
@@ -439,7 +439,7 @@ for (uint16_t i = 0; i < repeat_times; ++i) {
 
    ![](../../../../figures/Reg非对齐读4.png "Reg非对齐读4")
 
-**非对齐搬出**由[`asc_storeunalign`](../../../../../api/c_api/reg/reg_store/asc_storeunalign.md) 和[`asc_storeunalign_post`](../../../../../api/c_api/reg/reg_store/asc_storeunalign_post.md)组合完成：循环内使用`asc_storeunalign`搬运，循环结束后由`asc_storeunalign_post`将`vector_store_unalign`中的尾部数据搬出到UB。
+**非对齐搬出**由[`asc_storeunalign`](../../../../../api/SIMD-API/C-API/reg/reg_store/asc_storeunalign.md) 和[`asc_storeunalign_post`](../../../../../api/SIMD-API/C-API/reg/reg_store/asc_storeunalign_post.md)组合完成：循环内使用`asc_storeunalign`搬运，循环结束后由`asc_storeunalign_post`将`vector_store_unalign`中的尾部数据搬出到UB。
 例如在Ascend 950PR/Ascend 950DT，当想要搬出如下UB地址为48开始的512Bytes数据时：
 
 **图9** 非对齐搬出预期
@@ -481,7 +481,7 @@ asc_storeunalign_post(dst_addr, store_ureg, 0);
 ```
 
 #### PostUpdate模式
-PostUpdate表示搬运接口在完成本次访问后自动更新UB地址指针。在搬运接口会以*_postupdate结尾表示。例如：使用对齐搬运的[`asc_loadalign_postupdate`](../../../../../api/c_api/reg/reg_load/asc_loadunalign_postupdate.md)。当i = 0时：搬入数据地址src_addr，同时在搬运后硬件更新src_addr = src_addr + offset；当i = 1时：搬入数据地址为更新后的src_addr, 同时在搬运后硬件再次更新src_addr = src_addr + stride；以此类推。
+PostUpdate表示搬运接口在完成本次访问后自动更新UB地址指针。在搬运接口会以*_postupdate结尾表示。例如：使用对齐搬运的[`asc_loadalign_postupdate`](../../../../../api/SIMD-API/C-API/reg/reg_load/asc_loadunalign_postupdate.md)。当i = 0时：搬入数据地址src_addr，同时在搬运后硬件更新src_addr = src_addr + offset；当i = 1时：搬入数据地址为更新后的src_addr, 同时在搬运后硬件再次更新src_addr = src_addr + stride；以此类推。
 
 ```cpp
 for (uint16_t i = 0; i < repeat_times; ++i) {

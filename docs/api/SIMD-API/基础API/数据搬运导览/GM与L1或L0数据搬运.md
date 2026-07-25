@@ -8,19 +8,19 @@ Global Memory与L1 Buffer/L0 Buffer之间的数据搬运提供了灵活、分层
 
 | 数据通路 | 功能 | 描述 |
 |----------|------|------|
-| Global Memory与L1 Buffer | 连续数据搬运(DataCopy) | 提供基础的数据搬运能力，数据在传输过程中保持原始格式和内容不变，支持连续数据搬运。 |
-| Global Memory与L1 Buffer | 高维切分数据搬运(DataCopy) | 提供基础的数据搬运能力，数据在传输过程中保持原始格式和内容不变，支持连续和非连续的数据搬运。 |
-| Global Memory->L1 Buffer | 随路转换-[ND2NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#ZH-CN_TOPIC_0000002568950893>)搬运(DataCopy) | 支持在数据搬运时进行[ND](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section958745018719>)到[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)格式的转换。 |
-| Global Memory->L1 Buffer | 随路转换-[DN2NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#ZH-CN_TOPIC_0000002568950893>)搬运(DataCopy) | 支持在数据搬运时进行[DN](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section958745018719>)到[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)格式的转换。 |
-| Global Memory->L1 Buffer | 非对齐数据搬运(DataCopyPad) | 支持数据非对齐搬运，可以根据开发者的需要自行填充数据。 |
-| Global Memory->L1 Buffer | [NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)数据搬运(Load2D) | 负责完成[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)矩阵的数据搬运。 |
-| Global Memory->L1 Buffer | [NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)数据搬运(Load2DV2) | 负责完成[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)矩阵的数据搬运。 |
-| Global Memory->L0A Buffer | 2D格式分形矩阵搬运(Load2D) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
-| Global Memory->L0B Buffer | 2D格式分形矩阵搬运(Load2D) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
-| L0C Buffer->Global Memory | 随路量化激活搬运(DataCopy) | 支持多种随路能力的组合，需要设置不同的寄存器，配合DataCopy接口使能不同的数据搬运能力。 |
-| L0C Buffer->Global Memory | 随路量化激活搬运(FixPipe) | 支持多种随路能力的组合，FixPipe接口内包含了设置寄存器与数据搬运能力。 |
+| Global Memory与L1 Buffer | DataCopy（GM与L1-连续数据搬运） | 提供基础的数据搬运能力，数据在传输过程中保持原始格式和内容不变，支持连续数据搬运。 |
+| Global Memory与L1 Buffer | DataCopy（GM与L1-高维切分数据搬运） | 提供基础的数据搬运能力，数据在传输过程中保持原始格式和内容不变，支持连续和非连续的数据搬运。 |
+| Global Memory->L1 Buffer | DataCopy（GM -> L1-随路转换-[ND2NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#ZH-CN_TOPIC_0000002568950893>)搬运） | 支持在数据搬运时进行[ND](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section958745018719>)到[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)格式的转换。 |
+| Global Memory->L1 Buffer | DataCopy（GM -> L1-随路转换-[DN2NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#ZH-CN_TOPIC_0000002568950893>)搬运） | 支持在数据搬运时进行[DN](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section958745018719>)到[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)格式的转换。 |
+| Global Memory->L1 Buffer | DataCopyPad（GM -> L1-非对齐数据搬运） | 支持数据非对齐搬运，可以根据开发者的需要自行填充数据。 |
+| Global Memory->L1 Buffer | LoadData（GM -> L1-[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)数据搬运-2D） | 负责完成[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)矩阵的数据搬运。 |
+| Global Memory->L1 Buffer | LoadData（GM -> L1-[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)数据搬运-2DV2） | 负责完成[NZ](<../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md#zh-cn_topic_0000002545089965_section363412741113>)矩阵的数据搬运。 |
+| Global Memory->L0A Buffer | LoadData（GM -> L0A-2D格式分形矩阵搬运） | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
+| Global Memory->L0B Buffer | LoadData（GM -> L0B-2D格式分形矩阵搬运） | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
+| L0C Buffer->Global Memory | DataCopy（L0C -> GM-随路量化激活搬运） | 支持多种随路能力的组合，需要设置不同的寄存器，配合DataCopy接口使能不同的数据搬运能力。 |
+| L0C Buffer->Global Memory | Fixpipe（L0C -> GM-随路量化激活搬运） | 支持多种随路能力的组合，FixPipe接口内包含了设置寄存器与数据搬运能力。 |
 
-## GM与L1连续数据搬运(DataCopy)<a name="ZH-CN_TOPIC_0000002574022813"></a>
+## DataCopy（GM与L1-连续数据搬运）<a name="ZH-CN_TOPIC_0000002574022813"></a>
 
 DataCopy能够实现Global Memory和L1 Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。
 
@@ -31,7 +31,7 @@ DataCopy能够实现Global Memory和L1 Buffer之间的连续数据搬运，数�
 - L1 Buffer -> Global Memory
     - A1/B1 -> GM
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1连续数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_continuous.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GM与L1-连续数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_continuous.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -49,7 +49,7 @@ src和dst分别为源操作数和目的操作数；count为连续搬运的元素
     __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<T>& src, const uint32_t count)
     ```
 
-## GM与L1高维切分数据搬运(DataCopy)<a name="ZH-CN_TOPIC_0000002543262916"></a>
+## DataCopy（GM与L1-高维切分数据搬运）<a name="ZH-CN_TOPIC_0000002543262916"></a>
 
 DataCopy能够实现Global Memory和L1 Buffer之间的连续数据搬运和非连续数据搬运，数据搬运时格式和内容保持不变。
 
@@ -62,7 +62,7 @@ DataCopy能够实现Global Memory和L1 Buffer之间的连续数据搬运和非�
 - L1 Buffer -> Global Memory
     - A1/B1 -> GM
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1高维切分数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_highdim_split.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GM与L1-高维切分数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_highdim_split.md)。
 
 src和dst分别为源操作数和目的操作数；repeatParams为搬运参数。
 
@@ -80,7 +80,7 @@ src和dst分别为源操作数和目的操作数；repeatParams为搬运参数�
     __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const  LocalTensor<T>& src, const DataCopyParams& repeatParams)
     ```
 
-## GMToL1随路转换-ND2NZ搬运(DataCopy)<a name="ZH-CN_TOPIC_0000002573902841"></a>
+## DataCopy（GM -> L1-随路转换-ND2NZ搬运）<a name="ZH-CN_TOPIC_0000002573902841"></a>
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，并支持在数据搬运时进行[ND](../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md)到[NZ](../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md)格式的转换。
 
@@ -89,7 +89,7 @@ src和dst分别为源操作数和目的操作数；repeatParams为搬运参数�
 - Global Memory -> L1 Buffer
     - GM -> A1/B1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1随路转换-ND2NZ搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_ND2NZ.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GM -> L1-随路转换-ND2NZ搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_ND2NZ.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为ND2NZ搬运配置参数。
 
@@ -110,7 +110,7 @@ src和dst分别为源操作数和目的操作数；intriParams为ND2NZ搬运配�
 <!-- end id1 -->
 
 <!-- npu="950" id2 -->
-## GMToL1随路转换-DN2NZ搬运(DataCopy)
+## DataCopy（GM -> L1-随路转换-DN2NZ搬运）
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，并支持在数据搬运时进行[DN](../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md)到[NZ](../cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md)格式的转换。
 
@@ -119,7 +119,7 @@ src和dst分别为源操作数和目的操作数；intriParams为ND2NZ搬运配�
 - Global Memory -> L1 Buffer
     - GM -> A1/B1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1随路转换-DN2NZ搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_DN2NZ.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GM -> L1-随路转换-DN2NZ搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_DN2NZ.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为DN2NZ搬运配置参数。
 
@@ -132,7 +132,7 @@ src和dst分别为源操作数和目的操作数；intriParams为DN2NZ搬运配�
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
-## GMToL1非对齐数据搬运(DataCopyPad)
+## DataCopyPad（GM -> L1-非对齐数据搬运）
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，并支持在数据搬运时提供非对齐数据搬运功能，可以根据开发者的需要自行填充数据。
 
@@ -141,7 +141,7 @@ src和dst分别为源操作数和目的操作数；intriParams为DN2NZ搬运配�
 - Global Memory -> L1 Buffer
     - GM -> A1/B1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyPad（GMToL1非对齐数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopyPad_GMToL1.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyPad（GM -> L1-非对齐数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopyPad_GMToL1.md)。
 
 src和dst分别为源操作数和目的操作数；dataCopyParams和padParams为搬运参数。
 
@@ -153,7 +153,7 @@ src和dst分别为源操作数和目的操作数；dataCopyParams和padParams为
     ```
 <!-- end id3 -->
 
-## GMToL1 NZ数据搬运(Load2D)<a name="ZH-CN_TOPIC_0000002543422574"></a>
+## LoadData（GM -> L1-2D矩阵搬运）<a name="ZH-CN_TOPIC_0000002543422574"></a>
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
 
@@ -162,7 +162,7 @@ src和dst分别为源操作数和目的操作数；dataCopyParams和padParams为
 - Global Memory -> L1 Buffer
     - GM -> A1/B1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（GMToL1-2D矩阵搬运）](../cube_compute_ISASI/矩阵计算的搬入/GMToL1-Load2D指令搬运.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（GM -> L1-2D矩阵搬运）](../cube_compute_ISASI/矩阵计算的搬入/GMToL1-Load2D指令搬运.md)。
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
@@ -172,7 +172,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 ```
 
 <!-- npu="950" id4 -->
-## GMToL1 NZ数据搬运(Load2DV2)
+## LoadData（GM -> L1-2D矩阵搬运V2）
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
 
@@ -181,7 +181,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 - Global Memory -> L1 Buffer
     - GM -> A1/B1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（GMToL1-2D矩阵搬运V2）](../cube_compute_ISASI/矩阵计算的搬入/GMToL1-Load2DV2指令搬运.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（GM -> L1-2D矩阵搬运V2）](../cube_compute_ISASI/矩阵计算的搬入/GMToL1-Load2DV2指令搬运.md)。
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
@@ -193,7 +193,7 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
     ```
 <!-- end id4 -->
 
-## GMToL0A 2D格式分形矩阵搬运(Load2D)<a name="ZH-CN_TOPIC_0000002574022815"></a>
+## Load2D（GM -> L0A-2D格式分形矩阵搬运）<a name="ZH-CN_TOPIC_0000002574022815"></a>
 
 该接口主要实现将数据从Global Memory搬运至L0A Buffer，负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
 
@@ -202,7 +202,7 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
 - Global Memory -> L0A Buffer
     - GM -> A2
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（2D矩阵搬运）](../cube_compute_ISASI/矩阵计算的搬入/Load2D.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（GM -> L0A-2D格式分形矩阵搬运）](../cube_compute_ISASI/矩阵计算的搬入/Load2D.md)。
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
@@ -211,7 +211,7 @@ template <typename T>
 __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>& src, const LoadData2DParams& loadDataParams)
 ```
 
-## GMToL0B 2D格式分形矩阵搬运(Load2D)<a name="ZH-CN_TOPIC_0000002543262918"></a>
+## Load2D（GM -> L0B-2D格式分形矩阵搬运）<a name="ZH-CN_TOPIC_0000002543262918"></a>
 
 该接口主要实现将数据从Global Memory搬运至L0B Buffer，负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
 
@@ -220,7 +220,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 - Global Memory -> L0B Buffer
     - GM -> B2
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（2D矩阵搬运）](../cube_compute_ISASI/矩阵计算的搬入/Load2D.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（GM -> L0B-2D格式分形矩阵搬运）](../cube_compute_ISASI/矩阵计算的搬入/Load2D.md)。
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
@@ -229,7 +229,7 @@ template <typename T>
 __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>& src, const LoadData2DParams& loadDataParams)
 ```
 
-## L0CToGM随路量化激活搬运(DataCopy)<a name="ZH-CN_TOPIC_0000002573902843"></a>
+## DataCopy（L0C到GM-随路量化激活搬运）<a name="ZH-CN_TOPIC_0000002573902843"></a>
 
 该接口主要实现将数据从L0C Buffer搬运至Global Memory，并支持多种随路能力的组合，需要设置不同的寄存器。
 
@@ -238,7 +238,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 - L0C Buffer -> Global Memory
     - CO1 -> GM
 
-搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[DataCopy（L0C到GM数据搬运）](../cube_compute_ISASI/矩阵计算的搬出/DataCopy_L0CToGM.md)。
+搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[DataCopy（L0C -> GM-随路量化激活搬运）](../cube_compute_ISASI/矩阵计算的搬出/DataCopy_L0CToGM.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为搬运参数。
 
@@ -247,7 +247,7 @@ template <typename T, typename U>
 __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<U>& src, const DataCopyCO12DstParams& intriParams)
 ```
 
-## L0CToGM随路量化激活搬运(FixPipe)<a name="ZH-CN_TOPIC_0000002543422576"></a>
+## Fixpipe（L0C到GM-随路量化激活搬运）<a name="ZH-CN_TOPIC_0000002543422576"></a>
 
 该接口主要实现将数据从L0C Buffer搬运至Global Memory，并支持多种随路能力的组合，接口内包含了设置寄存器与数据搬运能力。
 
@@ -258,7 +258,7 @@ __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<U>
 
 搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR/Ascend 950DT为例，接口示例如下：
 
-注意，不同产品型号的接口原型可能不同，具体介绍请参考：[Fixpipe（L0C到GM数据搬运）](../cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md)。
+注意，不同产品型号的接口原型可能不同，具体介绍请参考：[Fixpipe（L0C -> GM-随路量化激活搬运）](../cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为搬运参数，cbufWorkspace为开启tensor量化时所需的量化参数。
 

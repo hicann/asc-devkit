@@ -12,8 +12,8 @@ Ascend C编程模型的核心架构，深度承袭了传统C/C++并发编程中*
 
 **TPipe**与**TQue**是支撑多Stage流水线并行运行的两大基础组件，二者职责分明、紧密协同：
 
-- **[TPipe](../../../../../api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/TPipe.md)** 作为资源管理器，统一管理系统内存资源及用于同步的事件等；
-- **[TQue](../../../../../api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/TQue.md)** 作为队列，负责完成Stage任务间的同步与通信。
+- **[TPipe](../../../../../api/SIMD-API/基础API/资源管理/TPipe/TPipe.md)** 作为资源管理器，统一管理系统内存资源及用于同步的事件等；
+- **[TQue](../../../../../api/SIMD-API/基础API/资源管理/TQue/TQue.md)** 作为队列，负责完成Stage任务间的同步与通信。
 
 在TPipe-TQue模型下，完整的算子计算流程被拆分为若干独立、可并行调度的Stage，每个Stage都遵循一套标准化的四步编程范式：
 

@@ -2980,69 +2980,69 @@ export default {
                       "items": [
                         {
                           "text": "TPipe简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/TPipe简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/TPipe简介"
                         },
                         {
                           "text": "TPipe构造函数",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/TPipe构造函数"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/TPipe构造函数"
                         },
                         {
                           "text": "Init",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/Init"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/Init"
                         },
                         {
                           "text": "Destroy",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/Destroy"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/Destroy"
                         },
                         {
                           "text": "DestroyWithoutPipeAll",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/DestroyWithoutPipeAll"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/DestroyWithoutPipeAll"
                         },
                         {
                           "text": "InitBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/InitBuffer"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/InitBuffer"
                         },
                         {
                           "text": "Reset",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/Reset"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/Reset"
                         },
                         {
                           "text": "AllocEventID",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/AllocEventID"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/AllocEventID"
                         },
                         {
                           "text": "ReleaseEventID",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/ReleaseEventID"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/ReleaseEventID"
                         },
                         {
                           "text": "FetchEventID",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/FetchEventID"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/FetchEventID"
                         },
                         {
                           "text": "GetBaseAddr",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/GetBaseAddr"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/GetBaseAddr"
                         },
                         {
                           "text": "InitBufPool",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/InitBufPool"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/InitBufPool"
                         },
                         {
                           "text": "InitSpmBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/InitSpmBuffer"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/InitSpmBuffer"
                         },
                         {
                           "text": "WriteSpmBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/WriteSpmBuffer"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/WriteSpmBuffer"
                         },
                         {
                           "text": "ReadSpmBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TPipe/ReadSpmBuffer"
+                          "link": "/api/SIMD-API/基础API/资源管理/TPipe/ReadSpmBuffer"
                         }
                       ]
                     },
                     {
                       "text": "GetTPipePtr",
-                      "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/GetTPipePtr"
+                      "link": "/api/SIMD-API/基础API/资源管理/GetTPipePtr"
                     },
                     {
                       "text": "TBufPool",
@@ -3050,23 +3050,23 @@ export default {
                       "items": [
                         {
                           "text": "TBufPool简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBufPool/TBufPool简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBufPool/TBufPool简介"
                         },
                         {
                           "text": "TBufPool构造函数",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBufPool/TBufPool构造函数"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBufPool/TBufPool构造函数"
                         },
                         {
                           "text": "InitBufPool",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBufPool/InitBufPool-55"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBufPool/InitBufPool-55"
                         },
                         {
                           "text": "InitBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBufPool/InitBuffer-56"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBufPool/InitBuffer-56"
                         },
                         {
                           "text": "Reset",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBufPool/Reset-57"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBufPool/Reset-57"
                         }
                       ]
                     },
@@ -3076,35 +3076,35 @@ export default {
                       "items": [
                         {
                           "text": "EXTERN_IMPL_BUFPOOL宏",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/EXTERN_IMPL_BUFPOOL宏"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/EXTERN_IMPL_BUFPOOL宏"
                         },
                         {
                           "text": "Reset",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/Reset-58"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/Reset-58"
                         },
                         {
                           "text": "Init",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/Init-59"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/Init-59"
                         },
                         {
                           "text": "GetBufHandle",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/GetBufHandle"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/GetBufHandle"
                         },
                         {
                           "text": "SetCurAddr",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/SetCurAddr"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/SetCurAddr"
                         },
                         {
                           "text": "GetCurAddr",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/GetCurAddr"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/GetCurAddr"
                         },
                         {
                           "text": "SetCurBufSize",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/SetCurBufSize"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/SetCurBufSize"
                         },
                         {
                           "text": "GetCurBufSize",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/自定义TBufPool/GetCurBufSize"
+                          "link": "/api/SIMD-API/基础API/资源管理/自定义TBufPool/GetCurBufSize"
                         }
                       ]
                     },
@@ -3114,39 +3114,39 @@ export default {
                       "items": [
                         {
                           "text": "TQue简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/TQue简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/TQue简介"
                         },
                         {
                           "text": "AllocTensor",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/AllocTensor"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/AllocTensor"
                         },
                         {
                           "text": "FreeTensor",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/FreeTensor"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/FreeTensor"
                         },
                         {
                           "text": "EnQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/EnQue"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/EnQue"
                         },
                         {
                           "text": "DeQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/DeQue"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/DeQue"
                         },
                         {
                           "text": "VacantInQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/VacantInQue"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/VacantInQue"
                         },
                         {
                           "text": "HasTensorInQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/HasTensorInQue"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/HasTensorInQue"
                         },
                         {
                           "text": "GetTensorCountInQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/GetTensorCountInQue"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/GetTensorCountInQue"
                         },
                         {
                           "text": "HasIdleBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQue/HasIdleBuffer"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQue/HasIdleBuffer"
                         }
                       ]
                     },
@@ -3156,23 +3156,23 @@ export default {
                       "items": [
                         {
                           "text": "TSCM简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TSCM/TSCM简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/TSCM/TSCM简介"
                         },
                         {
                           "text": "AllocTensor",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TSCM/AllocTensor-60"
+                          "link": "/api/SIMD-API/基础API/资源管理/TSCM/AllocTensor-60"
                         },
                         {
                           "text": "FreeTensor",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TSCM/FreeTensor-61"
+                          "link": "/api/SIMD-API/基础API/资源管理/TSCM/FreeTensor-61"
                         },
                         {
                           "text": "EnQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TSCM/EnQue-62"
+                          "link": "/api/SIMD-API/基础API/资源管理/TSCM/EnQue-62"
                         },
                         {
                           "text": "DeQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TSCM/DeQue-63"
+                          "link": "/api/SIMD-API/基础API/资源管理/TSCM/DeQue-63"
                         }
                       ]
                     },
@@ -3182,55 +3182,55 @@ export default {
                       "items": [
                         {
                           "text": "TQueBind简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/TQueBind简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/TQueBind简介"
                         },
                         {
                           "text": "TQueBind构造函数",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/TQueBind构造函数"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/TQueBind构造函数"
                         },
                         {
                           "text": "AllocTensor",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/AllocTensor-64"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/AllocTensor-64"
                         },
                         {
                           "text": "FreeTensor",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/FreeTensor-65"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/FreeTensor-65"
                         },
                         {
                           "text": "EnQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/EnQue-66"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/EnQue-66"
                         },
                         {
                           "text": "DeQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/DeQue-67"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/DeQue-67"
                         },
                         {
                           "text": "VacantInQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/VacantInQue-68"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/VacantInQue-68"
                         },
                         {
                           "text": "HasTensorInQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/HasTensorInQue-69"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/HasTensorInQue-69"
                         },
                         {
                           "text": "GetTensorCountInQue",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/GetTensorCountInQue-70"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/GetTensorCountInQue-70"
                         },
                         {
                           "text": "HasIdleBuffer",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/HasIdleBuffer-71"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/HasIdleBuffer-71"
                         },
                         {
                           "text": "FreeAllEvent",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/FreeAllEvent"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/FreeAllEvent"
                         },
                         {
                           "text": "InitBufHandle",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/InitBufHandle"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/InitBufHandle"
                         },
                         {
                           "text": "InitStartBufHandle",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TQueBind/InitStartBufHandle"
+                          "link": "/api/SIMD-API/基础API/资源管理/TQueBind/InitStartBufHandle"
                         }
                       ]
                     },
@@ -3240,19 +3240,19 @@ export default {
                       "items": [
                         {
                           "text": "TBuf简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBuf/TBuf简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBuf/TBuf简介"
                         },
                         {
                           "text": "TBuf构造函数",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBuf/TBuf构造函数"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBuf/TBuf构造函数"
                         },
                         {
                           "text": "Get",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBuf/Get"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBuf/Get"
                         },
                         {
                           "text": "GetWithOffset",
-                          "link": "/api/SIMD-API/基础API/资源管理/Pipe和Que框架/TBuf/GetWithOffset"
+                          "link": "/api/SIMD-API/基础API/资源管理/TBuf/GetWithOffset"
                         }
                       ]
                     }
@@ -3268,21 +3268,21 @@ export default {
                       "items": [
                         {
                           "text": "GetSysWorkSpacePtr",
-                          "link": "/api/SIMD-API/基础API/资源管理/临时空间管理/workspace/GetSysWorkSpacePtr"
+                          "link": "/api/SIMD-API/基础API/资源管理/workspace/GetSysWorkSpacePtr"
                         },
                         {
                           "text": "SetSysWorkSpace",
-                          "link": "/api/SIMD-API/基础API/资源管理/临时空间管理/workspace/SetSysWorkSpace"
+                          "link": "/api/SIMD-API/基础API/资源管理/workspace/SetSysWorkSpace"
                         },
                         {
                           "text": "GetUserWorkspace",
-                          "link": "/api/SIMD-API/基础API/资源管理/临时空间管理/workspace/GetUserWorkspace"
+                          "link": "/api/SIMD-API/基础API/资源管理/workspace/GetUserWorkspace"
                         }
                       ]
                     },
                     {
                       "text": "PopStackBuffer",
-                      "link": "/api/SIMD-API/基础API/资源管理/临时空间管理/PopStackBuffer"
+                      "link": "/api/SIMD-API/基础API/资源管理/PopStackBuffer"
                     }
                   ]
                 },
@@ -3296,19 +3296,19 @@ export default {
                       "items": [
                         {
                           "text": "LocalMemAllocator简介",
-                          "link": "/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator简介"
+                          "link": "/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator简介"
                         },
                         {
                           "text": "LocalMemAllocator构造函数",
-                          "link": "/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/LocalMemAllocator构造函数"
+                          "link": "/api/SIMD-API/基础API/资源管理/LocalMemAllocator/LocalMemAllocator构造函数"
                         },
                         {
                           "text": "GetCurAddr",
-                          "link": "/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/GetCurAddr-72"
+                          "link": "/api/SIMD-API/基础API/资源管理/LocalMemAllocator/GetCurAddr-72"
                         },
                         {
                           "text": "Alloc",
-                          "link": "/api/SIMD-API/基础API/资源管理/内存管理/LocalMemAllocator/Alloc"
+                          "link": "/api/SIMD-API/基础API/资源管理/LocalMemAllocator/Alloc"
                         }
                       ]
                     }
@@ -3329,19 +3329,13 @@ export default {
                       "link": "/api/SIMD-API/基础API/同步控制/核内同步/同步控制简介"
                     },
                     {
-                      "text": "TQueSync",
-                      "collapsed": true,
-                      "items": [
-                        {
-                          "text": "模板参数",
-                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/TQueSync/模板参数"
-                        },
-                        {
-                          "text": "SetFlag/WaitFlag",
-                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/TQueSync/SetFlag-WaitFlag"
-                        }
-                      ]
+                      "text": "TQueSync模板参数",
+                      "link": "/api/SIMD-API/基础API/同步控制/核内同步/TQueSync模板参数"
                     },
+                    {
+                      "text": "SetFlag/WaitFlag",
+                      "link": "/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag"
+                    }
                     {
                       "text": "SetFlag/WaitFlag(ISASI)",
                       "link": "/api/SIMD-API/基础API/同步控制/核内同步/SetFlag-WaitFlag(ISASI)"
@@ -3359,16 +3353,16 @@ export default {
                       "collapsed": true,
                       "items": [
                         {
-                          "text": "简介",
-                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/Mutex（ISASI）/简介"
+                          "text": "Mutex (ISASI)",
+                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/Mutex_ISASI"
                         },
                         {
                           "text": "Lock",
-                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/Mutex（ISASI）/Lock"
+                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/Lock"
                         },
                         {
                           "text": "Unlock",
-                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/Mutex（ISASI）/Unlock"
+                          "link": "/api/SIMD-API/基础API/同步控制/核内同步/Unlock"
                         }
                       ]
                     },

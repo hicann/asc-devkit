@@ -337,7 +337,12 @@ Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表�
 |   API名称   |   说明   |
 |----------|-----------|
 | [asc_load](reg/reg_load/asc_load.md) | reg计算数据搬运接口，支持从UB非32字节对齐的源地址src搬运至矢量数据寄存器，搬运量为VL。 |
-| [asc_loadalign](reg/reg_load/asc_loadalign/asc_loadalign.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式。 |
+| [asc_loadalign_v1](reg/reg_load/asc_loadalign_v1.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，接口不传入偏移，需要由用户自行更新源操作数的地址。 |
+| [asc_loadalign_v2](reg/reg_load/asc_loadalign_v2.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，接口通过地址寄存器传入偏移，用户可以选择更新偏移或者更新源操作数的地址。 |
+| [asc_loadalign_v3](reg/reg_load/asc_loadalign_v3.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，接口通过int32_t传入偏移，用户可以选择更新偏移或者更新源操作数的地址。 |
+| [asc_loadalign_v4](reg/reg_load/asc_loadalign_v4.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，接口通过int32_t传入偏移，同时设置成硬件自动Post Update，用户不用更新偏移或者更新源操作数的地址。 |
+| [asc_loadalign_v5](reg/reg_load/asc_loadalign_v5.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，接口使用repeat stride模式。 |
+| [asc_loadalign_v6](reg/reg_load/asc_loadalign_v6.md) | reg数据搬运接口，适用于从UB搬入MaskReg。 |
 | [asc_loadalign_deintlv](reg/reg_load/asc_loadalign_deintlv.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，随路完成deinterleave操作。 |
 | [asc_loadalign_deintlv_postupdate](reg/reg_load/asc_loadalign_deintlv_postupdate.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，随路完成deinterleave操作，启用postupdate模式，自动更新UB地址参数。 |
 | [asc_loadalign_postupdate](reg/reg_load/asc_loadalign_postupdate.md) | 将数据从UB搬入MaskReg，使能post mod。 |
@@ -347,7 +352,11 @@ Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表�
 | [asc_gather_datablock](reg/reg_load/asc_gather_datablock.md) | 给定源操作数在UB中的基地址和索引，根据索引位置将源操作数按DataBlock收集到目的操作数中。 |
 | [asc_get_mask_spr](reg/reg_load/asc_get_mask_spr.md) | 从特殊寄存器SPR{MASK1, MASK0}读取mask值并根据数据类型格式返回对应的mask数据，MASK0、MASK1均为64bit的寄存器。 |
 | [asc_store](reg/reg_store/asc_store.md) | reg计算数据搬运接口，适用于从矢量数据寄存器搬出到UB的场景，不区分是否对齐，在追求极致性能时，应尽量避免使用该接口。 |
-| [asc_storealign](reg/reg_store/asc_storealign/asc_storealign.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续对齐搬出到UB的场景，并支持多种搬出模式。 |
+| [asc_storealign_v1](reg/reg_store/asc_storealign_v1.md) | reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到UB的场景，并支持多种搬出模式，接口不传入偏移，需要由用户自行更新目的操作数的地址。 |
+| [asc_storealign_v2](reg/reg_store/asc_storealign_v2.md) | reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到UB的场景，并支持多种搬出模式，接口通过地址寄存器传入偏移，用户可以选择更新偏移或者更新目的操作数的地址。 |
+| [asc_storealign_v3](reg/reg_store/asc_storealign_v3.md) | reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到UB的场景，并支持多种搬出模式，接口通过int32_t传入偏移，用户可以选择更新偏移或者更新目的操作数的地址。 |
+| [asc_storealign_v4](reg/reg_store/asc_storealign_v4.md) | reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到UB的场景，并支持多种搬出模式，接口通过int32_t传入偏移，同时设置成硬件自动Post Update，用户不用更新偏移或者更新目的操作数的地址。 |
+| [asc_storealign_v5](reg/reg_store/asc_storealign_v5.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续对齐搬出到UB的场景，接口使用repeat stride模式。 |
 | [asc_storeunalign](reg/reg_store/asc_storeunalign.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的场景。 |
 | [asc_storeunalign_postupdate](reg/reg_store/asc_storeunalign_postupdate.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的场景。 |
 
