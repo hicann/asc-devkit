@@ -9,7 +9,7 @@ DataCopy能够实现L1 Buffer至Fixpipe Buffer的连续数据搬运，数据搬�
 - L1 Buffer -> Fixpipe Buffer
     - C1 -> C2PIPE2GM
 
-搬运的数据为[随路量化](../cube_compute_ISASI/矩阵计算的搬出/关键特性说明/随路量化.md)和[随路relu](../cube_compute_ISASI/矩阵计算的搬出/关键特性说明/随路ReLU.md)参数，接口具体介绍请参考：[L1ToFixpipe-Buffer数据搬运（DataCopy）](../cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/DataCopy_L1ToFixpipe.md)。
+搬运的数据为[随路量化](../cube_compute_ISASI/矩阵搬出关键特性说明/随路量化.md)和[随路relu](../cube_compute_ISASI/矩阵搬出关键特性说明/随路ReLU.md)参数，接口具体介绍请参考：[DataCopy（L1ToFixpipe-Buffer数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_L1ToFixpipe.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -29,7 +29,7 @@ DataCopy能够实现L1 Buffer至Fixpipe Buffer的连续数据搬运和非连续�
 - L1 Buffer -> Fixpipe Buffer
     - C1 -> C2PIPE2GM
 
-搬运的数据为[随路量化](../cube_compute_ISASI/矩阵计算的搬出/关键特性说明/随路量化.md)和[随路relu](../cube_compute_ISASI/矩阵计算的搬出/关键特性说明/随路ReLU.md)参数，接口具体介绍请参考：[L1ToFixpipe-Buffer数据搬运（DataCopy）](../cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L0-Buffer/DataCopy_L1ToFixpipe.md)。
+搬运的数据为[随路量化](../cube_compute_ISASI/矩阵搬出关键特性说明/随路量化.md)和[随路relu](../cube_compute_ISASI/矩阵搬出关键特性说明/随路ReLU.md)参数，接口具体介绍请参考：[DataCopy（L1ToFixpipe-Buffer数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_L1ToFixpipe.md)。
 
 src和dst分别为源操作数和目的操作数；repeatParams为搬运参数。
 

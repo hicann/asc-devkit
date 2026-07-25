@@ -25,7 +25,7 @@
 ## 样例描述
 
 - 样例功能：  
-  将数据从UB（Unified Buffer）搬运到L1（L1 Buffer），然后进行Mmad矩阵乘计算，最后通过Fixpipe搬出到GM（Global Memory）。接口资料参考[随路基础数据搬运](../../../../../docs/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_UBToL1_continuous.md)。
+  将数据从UB（Unified Buffer）搬运到L1（L1 Buffer），然后进行Mmad矩阵乘计算，最后通过Fixpipe搬出到GM（Global Memory）。接口资料参考[随路基础数据搬运](../../../../../docs/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_continuous.md)。
 - 样例规格：
   <table>
   <tr><td rowspan="3" align="center">样例输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>

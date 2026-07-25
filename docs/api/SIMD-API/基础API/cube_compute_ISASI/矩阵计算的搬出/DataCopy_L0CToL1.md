@@ -1,4 +1,4 @@
-# L0C到L1数据搬运（DataCopy）<a id="ZH-CN_TOPIC_0000002538231198"></a>
+# DataCopy（L0C到L1数据搬运）<a id="ZH-CN_TOPIC_0000002538231198"></a>
 
 ## 产品支持情况<a id="zh-cn_topic_0000002511188540_section796754519912"></a>
 
@@ -57,18 +57,18 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
     __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<U>& src, const DataCopyCO12DstParams& intriParams)
     ```
 
-- [SetFixPipeConfig](./寄存器配置说明/SetFixPipeConfig.md)：寄存器设置接口，通过调用该接口设置随路量化，其中tensor的每个元素都代表一个量化参数，使用tensor量化时需要设置。
+- [SetFixPipeConfig](../矩阵搬出辅助配置接口/SetFixPipeConfig.md)：寄存器设置接口，通过调用该接口设置随路量化，其中tensor的每个元素都代表一个量化参数，使用tensor量化时需要设置。
 
-- [SetFixpipePreQuantFlag](./寄存器配置说明/SetFixpipePreQuantFlag.md)：寄存器设置接口，通过调用该接口设置随路量化参数，此元素代表整个输出矩阵使用的量化参数，使用Scalar量化时需要设置。
+- [SetFixpipePreQuantFlag](../矩阵搬出辅助配置接口/SetFixpipePreQuantFlag.md)：寄存器设置接口，通过调用该接口设置随路量化参数，此元素代表整个输出矩阵使用的量化参数，使用Scalar量化时需要设置。
 
-- [SetFixpipeNz2ndFlag](./寄存器配置说明/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路NZ2ND格式转换配置，使用随路NZ2ND需要设置。
+- [SetFixpipeNz2ndFlag](../矩阵搬出辅助配置接口/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路NZ2ND格式转换配置，使用随路NZ2ND需要设置。
 
 <!-- npu="310b" id12 -->
 针对Atlas 200I/500 A2 推理产品，还支持如下两个接口：
 
-- [SetFixPipeClipRelu](./寄存器配置说明/SetFixPipeClipRelu.md)：寄存器设置接口，通过调用该接口设置ClipReLU操作的最大值。
+- [SetFixPipeClipRelu](../矩阵搬出辅助配置接口/SetFixPipeClipRelu.md)：寄存器设置接口，通过调用该接口设置ClipReLU操作的最大值。
 
-- [SetFixPipeAddr](./寄存器配置说明/SetFixPipeAddr.md)：寄存器设置接口，通过调用该接口设置Elementwise操作时LocalTensor的地址。
+- [SetFixPipeAddr](../矩阵搬出辅助配置接口/SetFixPipeAddr.md)：寄存器设置接口，通过调用该接口设置Elementwise操作时LocalTensor的地址。
 <!-- end id12 -->
 
 ## 参数说明<a id="zh-cn_topic_0000002511188540_section16128134420472"></a>
@@ -94,16 +94,16 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 | ---------- | ---------- |
 | sid | 此参数用户无需关注，设置为0即可。 |
 | nSize | 源NZ矩阵在N方向上的大小。取值范围nSize∈[0, 4095]，nSize必须为16的倍数。<br>**注：nSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
-| mSize | 源NZ矩阵在M方向上的大小。<br>&nbsp;&nbsp;&bull;不开启随路NZ2ND功能（[NZ2NZ搬运](./关键特性说明/NZ2NZ.md)）：取值范围为mSize∈[0, 65535]。<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;开启随路[NZ2ND](./关键特性说明/NZ2ND.md)功能（仅Ascend 950PR/Ascend 950DT支持）：取值范围为mSize∈[0, 8192]。<br><!-- end id25 -->**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
-| dstStride | &bull;不开启NZ2ND功能（[NZ2NZ搬运](./关键特性说明/NZ2NZ.md)）：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为datablock（32字节）。<br><!-- npu="950" id26 -->&bull;开启随路[NZ2ND](./关键特性说明/NZ2ND.md)功能（仅Ascend 950PR/Ascend 950DT支持）：目的ND矩阵每一行中的元素个数，取值不为0 ，单位为element。<!-- end id26 --> |
+| mSize | 源NZ矩阵在M方向上的大小。<br>&nbsp;&nbsp;&bull;不开启随路NZ2ND功能（[NZ2NZ搬运](../矩阵搬出关键特性说明/NZ2NZ.md)）：取值范围为mSize∈[0, 65535]。<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;开启随路[NZ2ND](../矩阵搬出关键特性说明/NZ2ND.md)功能（仅Ascend 950PR/Ascend 950DT支持）：取值范围为mSize∈[0, 8192]。<br><!-- end id25 -->**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
+| dstStride | &bull;不开启NZ2ND功能（[NZ2NZ搬运](../矩阵搬出关键特性说明/NZ2NZ.md)）：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为datablock（32字节）。<br><!-- npu="950" id26 -->&bull;开启随路[NZ2ND](../矩阵搬出关键特性说明/NZ2ND.md)功能（仅Ascend 950PR/Ascend 950DT支持）：目的ND矩阵每一行中的元素个数，取值不为0 ，单位为element。<!-- end id26 --> |
 | srcStride | 源NZ矩阵中相邻Z排布的起始地址偏移，取值范围为srcStride∈[0, 65535]，单位为C0_Size（16*sizeof(T)），T为src的数据类型，其值应填成mSize对16向上取整。 |
-| unitFlag | unitFlag是一种Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag。<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位。<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br>参数设置方案和特性细节可参考：Mmad计算中关键特性说明的[UnitFlag](../Mmad计算/关键特性说明/UnitFlag.md)章节。 |
-| clipReluPre | <!-- npu="950,A3,910b" id13 -->该参数仅在Atlas 200I/500 A2 推理产品支持。<br><!-- end id13 --><!-- npu="310b" id14 -->用于配置是否开启ClipReLU操作，参数类型为uint8_t，取值如下：0，不开启ClipReLU；1，开启ClipReLU，此时需要调用[SetFixPipeClipRelu](./寄存器配置说明/SetFixPipeClipRelu.md)来设置ClipReLU的最大值。<br>&nbsp;&nbsp;&bull;该操作在随路量化后进行，quantPre配置后才能使用，当前支持的量化模式有F322F16/DEQF16/VDEQF16/QF322B8_PRE/VQF322B8_PRE/REQ8/VREQ8。<br><!-- end id14 --> |
-| eltWiseOp | <!-- npu="950,A3,910b" id15 -->该参数仅在Atlas 200I/500 A2 推理产品支持。<br><!-- end id15 --><!-- npu="310b" id16 -->用于配置是否开启Elementwise操作及操作模式。Elementwise操作是指进行随路量化后，可以逐个元素加/减一个LocalTensor，大小为mSize * nSize，具体LocalTensor地址相关参数需要调用[SetFixPipeAddr](./寄存器配置说明/SetFixPipeAddr.md)来设置。<br>eltWiseOp参数类型为uint8_t，取值如下：<br>&nbsp;&nbsp;&bull; 0：不开启Elementwise；<br>&nbsp;&nbsp;&bull; 1：Elementwise Addition；<br>&nbsp;&nbsp;&bull; 2：Elementwise Subtraction。<br><!-- end id16 --> |
-| quantPre | 用于控制量化模式，QuantMode_t类型，具体定义如下：<br>&nbsp;&nbsp;&bull; half/bfloat16_t输出，此参数需配置为QuantMode_t::F322F16/QuantMode_t::F322BF16。<br>&nbsp;&nbsp;&bull;配置为scalar量化时，需要调用[SetFixpipePreQuantFlag](./寄存器配置说明/SetFixpipePreQuantFlag.md)接口来设置scalar量化参数。<br>&nbsp;&nbsp;&bull;配置为tensor量化时，需要调用[SetFixPipeConfig](./寄存器配置说明/SetFixPipeConfig.md)来设置tensor量化参数，其中tensor量化参数需要通过DataCopy从L1 Buffer搬运至Fixpipe Buffer。<br>注：此参数需要用户手动配置，不会自动推导配置对应量化模式。此通路不支持NoQuant模式。<br><pre>enum QuantMode_t<br>{<br>    NoQuant,      // 不开启量化功能，此通路不支持<br>    F322F16,      // Float32_2_Float16：float cast成half，cast mode为CAST_RINT模式<br>    F322BF16,     // Float32_2_BFloat16：float cast成bfloat16_t，cast mode为CAST_RINT模式<br>    DEQF16,       // DeQuant_Float16：int32_t量化成half，scalar量化<br>    VDEQF16,      // Vector_DeQuant_Float16：int32_t量化成half，tensor量化<br>    QF322B8_PRE,  // Quant_Float32_2_B8：float量化成int8_t/uint8_t，scalar量化<br>    VQF322B8_PRE, // Vector_Quant_Float32_2_B8：float量化成int8_t/uint8_t，tensor量化<br>    REQ8,         // ReQuant_int8：int32_t量化成int8_t/uint8_t，scalar量化<br>    VREQ8,        // Vector_ReQuant_int8：int32_t量化成int8_t/uint8_t，tensor量化<br>};</pre> |
+| unitFlag | unitFlag是一种Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag。<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位。<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br>参数设置方案和特性细节可参考：Mmad计算中关键特性说明的[UnitFlag](../Mmad计算关键特性说明/UnitFlag.md)章节。 |
+| clipReluPre | <!-- npu="950,A3,910b" id13 -->该参数仅在Atlas 200I/500 A2 推理产品支持。<br><!-- end id13 --><!-- npu="310b" id14 -->用于配置是否开启ClipReLU操作，参数类型为uint8_t，取值如下：0，不开启ClipReLU；1，开启ClipReLU，此时需要调用[SetFixPipeClipRelu](../矩阵搬出辅助配置接口/SetFixPipeClipRelu.md)来设置ClipReLU的最大值。<br>&nbsp;&nbsp;&bull;该操作在随路量化后进行，quantPre配置后才能使用，当前支持的量化模式有F322F16/DEQF16/VDEQF16/QF322B8_PRE/VQF322B8_PRE/REQ8/VREQ8。<br><!-- end id14 --> |
+| eltWiseOp | <!-- npu="950,A3,910b" id15 -->该参数仅在Atlas 200I/500 A2 推理产品支持。<br><!-- end id15 --><!-- npu="310b" id16 -->用于配置是否开启Elementwise操作及操作模式。Elementwise操作是指进行随路量化后，可以逐个元素加/减一个LocalTensor，大小为mSize * nSize，具体LocalTensor地址相关参数需要调用[SetFixPipeAddr](../矩阵搬出辅助配置接口/SetFixPipeAddr.md)来设置。<br>eltWiseOp参数类型为uint8_t，取值如下：<br>&nbsp;&nbsp;&bull; 0：不开启Elementwise；<br>&nbsp;&nbsp;&bull; 1：Elementwise Addition；<br>&nbsp;&nbsp;&bull; 2：Elementwise Subtraction。<br><!-- end id16 --> |
+| quantPre | 用于控制量化模式，QuantMode_t类型，具体定义如下：<br>&nbsp;&nbsp;&bull; half/bfloat16_t输出，此参数需配置为QuantMode_t::F322F16/QuantMode_t::F322BF16。<br>&nbsp;&nbsp;&bull;配置为scalar量化时，需要调用[SetFixpipePreQuantFlag](../矩阵搬出辅助配置接口/SetFixpipePreQuantFlag.md)接口来设置scalar量化参数。<br>&nbsp;&nbsp;&bull;配置为tensor量化时，需要调用[SetFixPipeConfig](../矩阵搬出辅助配置接口/SetFixPipeConfig.md)来设置tensor量化参数，其中tensor量化参数需要通过DataCopy从L1 Buffer搬运至Fixpipe Buffer。<br>注：此参数需要用户手动配置，不会自动推导配置对应量化模式。此通路不支持NoQuant模式。<br><pre>enum QuantMode_t<br>{<br>    NoQuant,      // 不开启量化功能，此通路不支持<br>    F322F16,      // Float32_2_Float16：float cast成half，cast mode为CAST_RINT模式<br>    F322BF16,     // Float32_2_BFloat16：float cast成bfloat16_t，cast mode为CAST_RINT模式<br>    DEQF16,       // DeQuant_Float16：int32_t量化成half，scalar量化<br>    VDEQF16,      // Vector_DeQuant_Float16：int32_t量化成half，tensor量化<br>    QF322B8_PRE,  // Quant_Float32_2_B8：float量化成int8_t/uint8_t，scalar量化<br>    VQF322B8_PRE, // Vector_Quant_Float32_2_B8：float量化成int8_t/uint8_t，tensor量化<br>    REQ8,         // ReQuant_int8：int32_t量化成int8_t/uint8_t，scalar量化<br>    VREQ8,        // Vector_ReQuant_int8：int32_t量化成int8_t/uint8_t，tensor量化<br>};</pre> |
 | reluPre | 用于配置ReLU操作的模式，类型为uint8_t，取值如下：<br>&nbsp;&nbsp;&bull; 0：不开启ReLU<br>&nbsp;&nbsp;&bull; 1：Normal ReLU |
 | channelSplit | <!-- npu="950" id27 -->**该参数仅在Ascend 950PR/Ascend 950DT上生效**，仅在NZ格式float类型输出时生效，类型为bool，配置是否开启通道切分功能。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id27 --><!-- npu="A3,910b,310b" id29 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id30 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id30 --><!-- npu="910b" id31 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<br><!-- end id31 --><!-- npu="310b" id32 -->Atlas 200I/500 A2 推理产品<!-- end id32 --><!-- end id29 --> |
-| nz2ndEn | <!-- npu="950" id28 -->**该参数仅在Ascend 950PR/Ascend 950DT上生效**，类型为bool，配置是否开启NZ2ND的格式转换。<br>如果要开启NZ2ND的功能需要同步调用[SetFixpipeNz2ndFlag](./寄存器配置说明/SetFixpipeNz2ndFlag.md)来设置格式转换的相关配置信息。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id28 --><!-- npu="A3,910b,310b" id33 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id34 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id34 --><!-- npu="910b" id35 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<br><!-- end id35 --><!-- npu="310b" id36 -->Atlas 200I/500 A2 推理产品<!-- end id36 --><!-- end id33 --> |
+| nz2ndEn | <!-- npu="950" id28 -->**该参数仅在Ascend 950PR/Ascend 950DT上生效**，类型为bool，配置是否开启NZ2ND的格式转换。<br>如果要开启NZ2ND的功能需要同步调用[SetFixpipeNz2ndFlag](../矩阵搬出辅助配置接口/SetFixpipeNz2ndFlag.md)来设置格式转换的相关配置信息。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id28 --><!-- npu="A3,910b,310b" id33 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id34 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id34 --><!-- npu="910b" id35 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<br><!-- end id35 --><!-- npu="310b" id36 -->Atlas 200I/500 A2 推理产品<!-- end id36 --><!-- end id33 --> |
 
 ## 数据类型<a id="zh-cn_topic_0000002511188540_section4219135304818"></a>
 

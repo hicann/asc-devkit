@@ -26,7 +26,7 @@ DataCopy能够实现Unified Buffer到L1 Buffer的连续数据搬运，数据搬�
 - Unified Buffer -> L1 Buffer
     - UB -> C1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[UBToL1连续数据搬运（DataCopy）](../cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_UBToL1_continuous.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（UBToL1连续数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_continuous.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -46,7 +46,7 @@ DataCopy能够实现Unified Buffer到L1 Buffer的连续数据搬运和非连续�
 - Unified Buffer -> L1 Buffer
     - UB -> C1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[UBToL1高维切分数据搬运（DataCopy）](../cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_UBToL1_highdim_split.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（UBToL1高维切分数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_highdim_split.md)。
 
 src和dst分别为源操作数和目的操作数；repeatParams为搬运参数。
 
@@ -64,7 +64,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 - Unified Buffer -> L1 Buffer
     - UB -> C1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[UBToL1随路转换-ND2NZ搬运（DataCopy）](../cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_UBToL1_ND2NZ.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（UBToL1随路转换-ND2NZ搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_ND2NZ.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为ND2NZ搬运配置参数。
 
@@ -82,7 +82,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 - Unified Buffer -> L1 Buffer
     - UB -> C1
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[UBToL1非对齐数据搬运（DataCopyPad）](../cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopyPad_UBToL1.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyPad（UBToL1非对齐数据搬运）](../cube_compute_ISASI/矩阵计算的搬入/DataCopyPad_UBToL1.md)。
 
 src和dst分别为源操作数和目的操作数；dataCopyParams和nd2nzParams为搬运参数。
 
@@ -101,7 +101,7 @@ __aicore__ inline void DataCopyPad(const LocalTensor<T>& dst, const LocalTensor<
 - L0C Buffer -> Unified Buffer
     - CO1 -> UB
 
-搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[L0C到UB数据搬运（DataCopy）](../cube_compute_ISASI/矩阵计算的搬出/DataCopy_L0CToUB.md)。
+搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[DataCopy（L0C到UB数据搬运）](../cube_compute_ISASI/矩阵计算的搬出/DataCopy_L0CToUB.md)。
 
 该接口仅Atlas 推理系列产品AI Core支持。
 
@@ -133,18 +133,18 @@ src和dst分别为源操作数和目的操作数；intriParams和enhancedParams�
 
 搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR/Ascend 950DT为例，接口示例如下：
 
-注意，不同产品型号的接口原型可能不同，具体介绍请参考：[L0C到UB数据搬运（Fixpipe）](../cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToUB.md)。
+注意，不同产品型号的接口原型可能不同，具体介绍请参考：[Fixpipe（L0C到UB数据搬运）](../cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToUB.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为搬运参数，cbufWorkspace为开启tensor量化时所需的量化参数。
 
-- 不开启随路[tensor量化](../cube_compute_ISASI/矩阵计算的搬出/关键特性说明/随路量化.md)功能：
+- 不开启随路[tensor量化](../cube_compute_ISASI/矩阵搬出关键特性说明/随路量化.md)功能：
 
     ```cpp
     template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>
     __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParamsArch3510<config.format>& intriParams)
     ```
 
-- 开启随路[tensor量化](../cube_compute_ISASI/矩阵计算的搬出/关键特性说明/随路量化.md)功能：
+- 开启随路[tensor量化](../cube_compute_ISASI/矩阵搬出关键特性说明/随路量化.md)功能：
 
     ```cpp
     template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>
@@ -161,7 +161,7 @@ DataCopyL1ToUB能够实现L1 Buffer到Unified Buffer的连续数据搬运，数�
 - L1 Buffer -> Unified Buffer
     - C1 -> UB
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[L1到UB数据搬运（DataCopyL1ToUB）](../cube_compute_ISASI/矩阵计算的搬出/DataCopyL1ToUB.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyL1ToUB（L1到UB数据搬运）](../cube_compute_ISASI/矩阵计算的搬出/DataCopyL1ToUB.md)。
 
 该接口仅Ascend 950PR/Ascend 950DT支持。
 
@@ -185,7 +185,7 @@ DataCopyL1ToUB能够实现L1 Buffer到Unified Buffer的连续数据搬运和非�
 - L1 Buffer -> Unified Buffer
     - C1 -> UB
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[L1到UB数据搬运（DataCopyL1ToUB）](../cube_compute_ISASI/矩阵计算的搬出/DataCopyL1ToUB.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyL1ToUB（L1到UB数据搬运）](../cube_compute_ISASI/矩阵计算的搬出/DataCopyL1ToUB.md)。
 
 该接口仅Ascend 950PR/Ascend 950DT支持。
 

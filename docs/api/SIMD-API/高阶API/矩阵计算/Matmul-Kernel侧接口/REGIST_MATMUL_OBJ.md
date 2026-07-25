@@ -33,7 +33,7 @@ REGIST_MATMUL_OBJ(tpipe, workspace, ...)
 -   当代码中有多个Matmul对象时，必须满足Matmul对象与其tiling参数一一对应，依次传入，具体方式请参考调用示例。
 -   在分离模式中，调用本接口后，AIC核不会主动执行接口，仅在AIV核执行到下述接口后，才会触发AIC核的执行，其他接口则不会在AIC核上执行。
     -   [Matmul Kernel侧接口](Matmul-Kernel侧接口.md)。
-    -   [GM与L1连续数据搬运(DataCopy)](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_GMToL1_continuous.md)、[GM与L1高维切分数据搬运(DataCopy)](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_GMToL1_highdim_split.md)、[GMToL1随路转换-ND2NZ搬运(DataCopy)](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_GMToL1_ND2NZ.md)。
+    -   [GM与L1连续数据搬运(DataCopy)](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_continuous.md)、[GM与L1高维切分数据搬运(DataCopy)](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_highdim_split.md)、[GMToL1随路转换-ND2NZ搬运(DataCopy)](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_ND2NZ.md)。
 
 ## 调用示例
 

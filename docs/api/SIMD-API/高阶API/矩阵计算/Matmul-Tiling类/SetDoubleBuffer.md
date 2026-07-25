@@ -22,7 +22,7 @@ int32_t SetDoubleBuffer(bool a, bool b, bool c, bool bias, bool transND2NZ = tru
 | b | 输入 | 设置B矩阵是否开启double buffer。 |
 | c | 输入 | 设置C矩阵是否开启double buffer。 |
 | bias | 输入 | 设置Bias矩阵是否开启double buffer。 |
-| transND2NZ | 输入 | 设置是否需要[ND2NZ](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/矩阵数据搬入至L1-Buffer/DataCopy_GMToL1_ND2NZ.md)。 |
+| transND2NZ | 输入 | 设置是否需要[ND2NZ](../../../基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_GMToL1_ND2NZ.md)。 |
 | transNZ2ND | 输入 | 设置是否需要[NZ2ND](../../../基础API/cube_compute_ISASI/矩阵计算的搬出/DataCopy_L0CToGM.md)。 |
 
 ## 返回值说明

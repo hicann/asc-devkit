@@ -1,4 +1,4 @@
-# L0C Buffer到Global Memory数据搬运
+# Copy（L0C Buffer到Global Memory数据搬运）
 
 ## 产品支持情况
 
@@ -175,15 +175,15 @@ L0C Buffer到Global Memory搬运根据是否传入量化参数自动选择量化
 
 - 源矩阵`NZ`格式，地址要求64字节对齐。目的矩阵`DN`或`ND`格式时，地址要求1字节对齐，`NZ`格式时，地址要求32字节对齐。
 - 目的矩阵为`NZ`输出时，N方向大小需要为16的倍数；`b8`类型通道合并场景为32的倍数，`float`使能`enableChannelSplit`通道拆分场景为8的倍数。
-- tensor量化参数张量应位于L1 Buffer，元素类型为`uint64_t`，地址要求32字节对齐。详情参见[随路量化](关键特性说明/quant_pre.md)。
+- tensor量化参数张量应位于L1 Buffer，元素类型为`uint64_t`，地址要求32字节对齐。详情参见[随路量化](../矩阵搬出关键特性说明/quant_pre.md)。
 - 使能`unitFlag`时，需要配合`Mmad`同时使能。
 - 使用`RoundMode::HYBRID`时，源类型必须为`float`，目的类型必须为`hifloat8_t`。
-- `enableChannelSplit`仅在源类型和目的类型均为`float`，且目的格式为`NZ`时生效。详情参见[F32 Channel Split](关键特性说明/f32_channel_split.md)。
-- 通道合并特性硬件自动使能，不能通过参数配置。详情参见[Int8 Channel Merge](关键特性说明/int8_channel_merge.md)。
+- `enableChannelSplit`仅在源类型和目的类型均为`float`，且目的格式为`NZ`时生效。详情参见[F32 Channel Split](../矩阵搬出关键特性说明/f32_channel_split.md)。
+- 通道合并特性硬件自动使能，不能通过参数配置。详情参见[Int8 Channel Merge](../矩阵搬出关键特性说明/int8_channel_merge.md)。
 
 ## 关键特性
 
-L0C Buffer到Global Memory搬运涉及[随路量化](关键特性说明/quant_pre.md)、[随路Relu](关键特性说明/relu_pre.md)、[F32 Channel Split](关键特性说明/f32_channel_split.md)、[Int8 Channel Merge](关键特性说明/int8_channel_merge.md)和[batch搬运](关键特性说明/batch_copy.md)等关键特性。
+L0C Buffer到Global Memory搬运涉及[随路量化](../矩阵搬出关键特性说明/quant_pre.md)、[随路Relu](../矩阵搬出关键特性说明/relu_pre.md)、[F32 Channel Split](../矩阵搬出关键特性说明/f32_channel_split.md)、[Int8 Channel Merge](../矩阵搬出关键特性说明/int8_channel_merge.md)和[batch搬运](../矩阵搬出关键特性说明/batch_copy.md)等关键特性。
 
 ## 调用示例
 
