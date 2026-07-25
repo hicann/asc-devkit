@@ -69,7 +69,7 @@ __aicore__ inline void asc_time_stamp_impl(uint32_t desc_id)
 #endif
 }
 
-__aicore__ static __attribute__((noinline)) void asc_time_stamp(uint32_t desc_id)
+__aicore__ inline void asc_time_stamp(uint32_t desc_id)
 {
     enable_asc_diagnostics();
     asc_time_stamp_impl(desc_id);
@@ -101,7 +101,7 @@ __aicore__ inline void asc_mark_stamp()
 #include <cstdio>
 
 namespace __asc_aicore {
-__aicore__ static __attribute__((noinline)) void asc_time_stamp(uint32_t desc_id)
+__aicore__ inline void asc_time_stamp(uint32_t desc_id)
 {
     assert(false && "asc_time_stamp is not supported in cpu mode.");
 }
