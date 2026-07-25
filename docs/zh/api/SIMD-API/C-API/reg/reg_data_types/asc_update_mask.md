@@ -28,45 +28,55 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-根据value大小生成对应的掩码寄存器中的值。掩码寄存器的元素有效范围从0到VL_T（位宽为Vector Length的对应数据类型的元素个数）。执行完该函数后，value会减去VL_T。算法逻辑表示如下：
-  ```cpp
-  value = (value < VL_T) ? 0 : (value - VL_T);
-  ```
+根据元素个数value生成mask，并自动将value减去当前向量处理单元的元素个数。支持b8、b16、b32三种位宽模式，由于VL=256B，各模式的向量处理单元元素个数为：
+
+- b8模式：每次处理256个元素。
+- b16模式：每次处理128个元素。
+- b32模式：每次处理64个元素。
+
+**图1**  asc_update_mask更新流程
+
+![asc_update_mask更新流程](../../figures/capi_update_mask.png)
 
 ## 函数原型
 
-  ```cpp
-  __simd_callee__ inline vector_bool asc_update_mask_b8(uint32_t& value)
-  __simd_callee__ inline vector_bool asc_update_mask_b16(uint32_t& value)
-  __simd_callee__ inline vector_bool asc_update_mask_b32(uint32_t& value)
-  ```
+```cpp
+__simd_callee__ inline vector_bool asc_update_mask_b8(uint32_t& value)
+__simd_callee__ inline vector_bool asc_update_mask_b16(uint32_t& value)
+__simd_callee__ inline vector_bool asc_update_mask_b32(uint32_t& value)
+```
 
 ## 参数说明
 
-| 参数名       | 输入/输出 | 描述                |
-| --------- | ----- | ----------------- |
-| value       | 输入/输出 | 矢量计算需要操作的元素的具体数量。 |
+**表1** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| value | 输入/输出 | 元素个数。调用后自动减去当前向量处理单元的元素个数（b8模式、b16模式、b32模式分别为256、128、64）。<br>执行完一次该接口后，value = (value < VL_T) ? 0 : (value - VL_T)，VL_T表示位宽为VL的矢量数据寄存器中，可存放数据类型T的元素个数。<br>例如，有320个b16数据类型的元素，每次处理128个元素：<br>第一次调用接口，生成的mask对应的元素全为有效数据，value = 320-128 = 192。<br>第二次调用接口，生成的mask对应的元素全为有效数据，value = 192-128 = 64。<br>第三次调用接口，生成的mask对应的元素只有低半部分为有效数据，value = 0。|
 
 ## 返回值说明
 
-掩码寄存器。若value大于或等于VL_T，则所有元素位置设置为1；若value小于VL_T，则从第0位开始到第value-1位结束的对应元素位置设置为1。
-
-## 流水类型
-
-PIPE_V
+vector_bool，掩码寄存器。
 
 ## 约束说明
 
-无
+掩码寄存器的数量上限为8，超过上限的掩码寄存器会写入预留的8K UB内存中，可能引起性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若两者均可用，优先复用寄存器。
 
 ## 调用示例
 
 ```cpp
-uint32_t value = 127;
-vector_bool mask = asc_create_mask_b32(PAT_ALL);
-// 一共127个元素需要进行计算，即需要2个VL
-for (int32_t i = 0; i < 2; i++) {
-  mask = asc_update_mask_b32(value);
-  // 使用mask进行一个VL的计算
+__simd_vf__ inline void update_mask_vf(__ubuf__ float* dst_addr, __ubuf__ float* src0_addr, __ubuf__ float* src1_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_float src0;
+    vector_float src1;
+    vector_float dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b32(count);
+        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+        asc_add(dst, src0, src1, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+    }
 }
 ```

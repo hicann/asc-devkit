@@ -69,7 +69,7 @@ __simd_callee__ inline void DeInterleave(U& dstReg0, U& dstReg1, U& srcReg0, U& 
 - srcReg0和srcReg1可以为同一个RegTensor。
 - dstReg0和dstReg1不能为同一个RegTensor。
 - 允许源操作数和目的操作数为同一个RegTensor，例如DeInterleave(srcReg0, srcReg1, srcReg0, srcReg1)。
-- b64数据类型下仅支持RegTraitNumTwo。
+- 数据类型为b64时，仅支持RegTraitNumTwo。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

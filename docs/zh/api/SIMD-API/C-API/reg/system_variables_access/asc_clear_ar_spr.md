@@ -28,7 +28,7 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-对AR寄存器进行清理，AR寄存器通常由[asc_squeeze_with_status](../compare_and_select/asc_squeeze_with_status.md)接口使用。
+对AR特殊寄存器进行清零操作。AR寄存器用于配合[asc_squeeze_with_status](../compare_and_select/asc_squeeze_with_status.md)使用：当调用asc_squeeze_with_status时，有效元素的总字节数会被存入AR寄存器。在调用asc_squeeze_with_status之前，需调用该接口将AR寄存器清零。
 
 ## 函数原型
 
@@ -44,10 +44,6 @@ __simd_callee__ inline void asc_clear_ar_spr()
 
 无
 
-## 流水类型
-
-PIPE_S
-
 ## 约束说明
 
 无
@@ -55,5 +51,17 @@ PIPE_S
 ## 调用示例
 
 ```cpp
-asc_clear_ar_spr();
+__simd_vf__ inline void clear_ar_spr_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half dst;
+    vector_half src;
+    vector_store_unalign ureg;
+    vector_bool mask = asc_create_mask_b16(PAT_M4);
+    asc_clear_ar_spr();
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_squeeze_with_status(dst, src, mask);
+        asc_storeunalign_postupdate(dst_addr, ureg, dst);
+    }
+}
 ```

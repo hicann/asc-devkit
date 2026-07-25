@@ -28,11 +28,9 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-对源操作数逐元素比较是否相等。对于src == value，若条件成立则目的操作数对应结果位为1，否则为0，每个元素的比较结果占一个bit。计算公式如下：
+根据mask，对src中的元素逐个与标量value进行比较（等于），将比较结果写入dst。dst为vector_bool类型，每个元素的比较结果占1个bit，1表示条件成立（等于），0表示不成立。计算公式如下：
 
-$$
-dst_i = src_i == value
-$$
+$$dst_i = (src_i == value)$$
 
 ## 函数原型
 
@@ -50,34 +48,38 @@ __simd_callee__ inline void asc_eq_scalar(vector_bool& dst, vector_float src, fl
 
 ## 参数说明
 
-| 参数名  | 输入/输出 | 描述 |
-| :----- | :------- | :------- |
+**表1** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
 | dst | 输出 | 目的操作数（掩码寄存器）。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | value | 输入 | 源操作数（标量）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+dst中未被mask筛选的位置被置为0。
 
 ## 调用示例
 
 ```cpp
-vector_half src;
-vector_bool dst;
-half value = 0.0;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src, src_addr);  // src_addr是外部输入的UB内存空间地址
-asc_eq_scalar(dst, src, value, mask);
+__simd_vf__ inline void eq_scalar_vf(__ubuf__ uint16_t* dst_addr, __ubuf__ half* src_addr, half value, uint32_t count, uint16_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_half src;
+    vector_bool dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_eq_scalar(dst, src, value, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size);
+    }
+}
 ```

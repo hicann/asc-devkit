@@ -28,47 +28,39 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-根据mask将源操作数src的最低位元素填充到目的操作数dst。
-
-计算公式如下：
-
-$$
-dst_i = src_0
-$$
+将src的最低位元素广播到dst中被mask筛选的位置，dst中未被mask筛选的位置被置为0。
 
 ## 函数原型
 
 ```cpp
-__simd_callee__ inline void asc_duplicate(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_int8_t& dst, vector_int8_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask)
+__simd_callee__ inline void asc_duplicate(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask)
+__simd_callee__ inline void asc_duplicate(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_int16_t& dst, vector_int16_t src, vector_bool mask)
+__simd_callee__ inline void asc_duplicate(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_half& dst, vector_half src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_int32_t& dst, vector_int32_t src, vector_bool mask)
+__simd_callee__ inline void asc_duplicate(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask)
 __simd_callee__ inline void asc_duplicate(vector_float& dst, vector_float src, vector_bool mask)
 ```
 
 ## 参数说明
 
-| 参数名  | 输入/输出 | 描述 |
-| :----- | :------- | :------- |
+**表1** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。  |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
-
-## 流水类型
-
-PIPE_V
 
 ## 约束说明
 
@@ -77,9 +69,16 @@ PIPE_V
 ## 调用示例
 
 ```cpp
-vector_half dst;
-vector_half src;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_duplicate(dst, src, mask);
+__simd_vf__ inline void duplicate_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half dst;
+    vector_half src;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src, src_addr + i * one_repeat_size);
+        asc_duplicate(dst, src, mask);
+        asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
+    }
+}
 ```

@@ -10,6 +10,8 @@
 
 -   **[asc_bfloat162int32](asc_bfloat162int32.md)**
 
+-   **[asc_ceil](asc_ceil.md)**
+
 -   **[asc_e1m2x22bfloat16 (废弃)](asc_e1m2x22bfloat16_deprecated.md)**
 
 -   **[asc_e2m1x22bfloat16 (废弃)](asc_e2m1x22bfloat16_deprecated.md)**
@@ -23,6 +25,8 @@
 -   **[asc_float2e4m3 (废弃)](asc_float2e4m3_deprecated.md)**
 
 -   **[asc_float2e5m2 (废弃)](asc_float2e5m2_deprecated.md)**
+
+-   **[asc_floor](asc_floor.md)**
 
 -   **[asc_float2half](asc_float2half.md)**
 
@@ -90,7 +94,11 @@
 
 -   **[asc_int82int32 (废弃)](asc_int82int32_deprecated.md)**
 
--   **[asc_trunc / asc_rint / asc_round / asc_floor / asc_ceil](asc_truncate.md)**
+-   **[asc_rint](asc_rint.md)**
+
+-   **[asc_round](asc_round.md)**
+
+-   **[asc_trunc](asc_trunc.md)**
 
 -   **[asc_uint162uint32](asc_uint162uint32.md)**
 

@@ -30,6 +30,8 @@
 
 对srcReg中的有效元素逐个复制写入dstReg中对应位置处，无效位置保留dstReg原值。
 
+如需将RegTensor复制到MaskReg，请参考接口[MaskGenWithRegTensor](MaskReg搬入（MaskGenWithRegTensor）.md)。
+
 ## 函数原型<a name="section620mcpsimp"></a>
 
 - 支持传入mask参数：

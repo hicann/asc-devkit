@@ -28,11 +28,10 @@
 
 头文件路径：`"c_api/reg_compute/reg_load.h"`。
 
-从特殊寄存器SPR{MASK1, MASK0}读取mask值并根据数据类型格式返回对应的mask数据，MASK0、MASK1均为64bit的寄存器。
+从SPR（Special Purpose Register）中读取mask值，并按数据类型格式化后返回。
 
-- 对于b16类型，会读取完整的128bit{MASK1, MASK0}数据，并将每bit复制为2bit并返回。
-
-- 对于b32类型，会读取64bit MASK0数据，并将每bit复制为4bit并返回。
+- 对于b16数据类型：从SPR读取mask共128bit数据，将每个bit复制为2bit。
+- 对于b32数据类型：从SPR读取mask共64bit数据，将每个bit复制为4bit。
 
 ## 函数原型
 
@@ -47,11 +46,7 @@ __simd_callee__ inline vector_bool asc_get_mask_spr_b32()
 
 ## 返回值说明
 
-特殊寄存器中读取的mask值。
-
-## 流水类型
-
-PIPE_S
+vector_bool，掩码寄存器。
 
 ## 约束说明
 
@@ -60,6 +55,17 @@ PIPE_S
 ## 调用示例
 
 ```cpp
-vector_bool mask_b16 = asc_get_mask_spr_b16();
-vector_bool mask_b32 = asc_get_mask_spr_b32();
+__simd_vf__ inline void add_vf(__ubuf__ int16_t* dst_addr, __ubuf__ int16_t* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_int16_t src;
+    vector_int16_t dst;
+    vector_bool add_mask = asc_get_mask_spr_b16();
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src, src_addr + i * one_repeat_size);
+        asc_add_scalar(dst, src, 0, add_mask);
+        asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
+    }
+}
 ```

@@ -1,4 +1,4 @@
-# asc_int162float
+# asc_ceil
 
 ## 产品支持情况
 
@@ -28,17 +28,16 @@
 
 头文件路径：`"c_api/reg_compute/reg_convert.h"`。
 
-将src中int16_t类型的元素转换为float类型，并将结果写入dst。
+将src中的浮点数元素按照CEIL（向正无穷方向舍入）舍入模式截断到整数值，结果仍保持原浮点数据类型写入dst。未被mask筛选的元素置零。
 
-由于源操作数与目的操作数类型位宽比为1:2，读取数据时需要将一个VL大小的数据分为两部分，根据不同接口选择输入数据索引为奇数的位置或偶数的位置。
+关于舍入模式的详细说明请参见[舍入模式与饱和模式](rounding_mode.md)。
 
 ## 函数原型
 
 ```cpp
-// 取src的偶数索引元素（索引0, 2, 4, ...）进行转换，mask每2bit为一组、仅组内LSB为1时选取对应位置的int16_t元素。
-__simd_callee__ inline void asc_int162float(vector_float& dst, vector_int16_t src, vector_bool mask)
-// 取src的奇数索引元素（索引1, 3, 5, ...）进行转换，mask每2bit为一组、仅组内LSB为1时选取对应位置的int16_t元素。
-__simd_callee__ inline void asc_int162float_v2(vector_float& dst, vector_int16_t src, vector_bool mask)
+__simd_callee__ inline void asc_ceil(vector_half& dst, vector_half src, vector_bool mask)
+__simd_callee__ inline void asc_ceil(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask)
+__simd_callee__ inline void asc_ceil(vector_float& dst, vector_float src, vector_bool mask)
 ```
 
 ## 参数说明
@@ -49,7 +48,7 @@ __simd_callee__ inline void asc_int162float_v2(vector_float& dst, vector_int16_t
 | --- | --- | --- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
@@ -59,20 +58,20 @@ __simd_callee__ inline void asc_int162float_v2(vector_float& dst, vector_int16_t
 
 ## 约束说明
 
-mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
+float类型只支持不饱和模式。
 
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void int162float_vf(__ubuf__ float* dst_addr, __ubuf__ int16_t* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+__simd_vf__ inline void ceil_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
 {
-    vector_float dst;
-    vector_int16_t src;
+    vector_half dst;
+    vector_half src;
     vector_bool mask;
     for (uint16_t i = 0; i < repeat_time; ++i) {
         mask = asc_update_mask_b16(count);
         asc_loadalign(src, src_addr + i * one_repeat_size);
-        asc_int162float(dst, src, mask);
+        asc_ceil(dst, src, mask);
         asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
     }
 }

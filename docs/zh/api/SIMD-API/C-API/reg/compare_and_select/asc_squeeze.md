@@ -28,7 +28,9 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-将src中被mask选择的有效元素依次复制到dst，有效元素在dst上连续排列。dst中剩余位置元素置为0。
+将src中被mask选择的有效元素依次复制到dst中，有效元素在dst中从低到高连续排列，剩余位置元素置为0。
+
+本接口不会将有效数据大小保存至AR寄存器，如果想将有效数据大小保存至AR寄存器，请参考[asc_squeeze_with_status](asc_squeeze_with_status.md)。
 
 ## 函数原型
 
@@ -36,9 +38,9 @@
 __simd_callee__ inline void asc_squeeze(vector_int8_t& dst, vector_int8_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_hifloat8_t& dst, vector_hifloat8_t src, vector_bool mask)
+__simd_callee__ inline void asc_squeeze(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask)
-__simd_callee__ inline void asc_squeeze(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_int16_t& dst, vector_int16_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask)
 __simd_callee__ inline void asc_squeeze(vector_half& dst, vector_half src, vector_bool mask)
@@ -50,32 +52,38 @@ __simd_callee__ inline void asc_squeeze(vector_float& dst, vector_float src, vec
 
 ## 参数说明
 
-| 参数名       | 输入/输出 | 描述                |
-| --------- | ----- | ----------------- |
-| dst       | 输出    | 目的操作数（矢量数据寄存器）。 |
-| src       | 输入    | 源操作数（矢量数据寄存器）。 |
-| mask      | 输入    | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+**表1** 参数说明
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
-
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+dst中未被mask筛选的位置被置为0。
 
 ## 调用示例
 
 ```cpp
-vector_int8_t src;
-vector_bool mask = asc_create_mask_b8(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-vector_int8_t dst;
-asc_squeeze(dst, src, mask);
+__simd_vf__ inline void squeeze_vf(__ubuf__ int8_t* dst_addr, __ubuf__ int8_t* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_int8_t dst;
+    vector_int8_t src;
+    vector_bool mask;
+    addr_reg addr_reg;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        addr_reg = asc_update_addr_reg_b8(one_repeat_size);
+        mask = asc_update_mask_b8(count);
+        asc_loadalign(src, src_addr, addr_reg);
+        asc_squeeze(dst, src, mask);
+        asc_storealign(dst_addr, dst, addr_reg, mask);
+    }
+}
 ```
