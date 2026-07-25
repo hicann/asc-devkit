@@ -299,15 +299,16 @@ __aicore__ static __attribute__((noinline)) void AscVFDebugInitUb()
 #endif
 }
 
-__aicore__ static __attribute__((noinline)) void AscVFDebugTransferUb()
+__aicore__ static __attribute__((noinline)) bool AscVFDebugTransferUb()
 {
 #if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0) && !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && \
     __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__)
     if (g_sysPrintFifoSpace != nullptr) {
         pipe_barrier(PIPE_ALL);
-        asc_vf_debug_ub2gm();
+        return asc_vf_debug_ub2gm();
     }
 #endif
+    return false;
 }
 
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_ASC_DEBUG_UTILS__)

@@ -19,6 +19,7 @@
 // Reserved UB space is 2K in total. 20 bytes for BlockVFBufInfo header, leaving 2028 bytes for buffer.
 #define ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE 2028
 #endif
+
 #define ASCENDC_SIMD_VF_MAGIC_NUMBER 0xF0A00B0F
 
 struct BlockVFBufInfo {
@@ -26,7 +27,7 @@ struct BlockVFBufInfo {
     uint32_t length = ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE;
     uint32_t writeLen = 0;
     uint16_t pidx = 0;
-    uint8_t flag = 0;
+    uint8_t flag = 0; // 0: normal, nonzero: overflow
     uint8_t resv1 = 0;
     uint16_t blockIdx = 0;
     uint16_t resv2 = 0;

@@ -16,6 +16,7 @@
 #define IMPL_UTILS_DEBUG_NPU_ARCH_3510_ASC_DEBUG_UTILS_H
 
 #include "impl/utils/sys_macros.h"
+#include "impl/utils/debug/asc_simd_vf_utils.h"
 
 namespace __asc_simd_vf {
 template <typename T, typename U, typename... Args>
@@ -91,9 +92,7 @@ __simd_callee__ __ubuf__ inline BlockVFBufInfo* get_printf_ubuf_addr(uint64_t ad
     }
     auto* bufInfo = reinterpret_cast<__ubuf__ BlockVFBufInfo*>(blockInfoAddr);
     if (addr != 0) {
-        bufInfo->writeLen = 0;
-        bufInfo->pidx = 0;
-        bufInfo->blockIdx = blockIdx;
+        init_debug_buffer(bufInfo, blockIdx);
     }
     return bufInfo;
 }
@@ -252,29 +251,43 @@ __aicore__ inline void update_write_info(
     asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(writeInfo));
 }
 
-__aicore__ inline void asc_vf_debug_ub2gm()
+__aicore__ inline bool asc_vf_debug_ub2gm()
 {
     __ubuf__ BlockVFBufInfo* blockInfo = get_printf_ubuf_addr_aicore(0);
     __ubuf__ uint8_t* tlv = reinterpret_cast<__ubuf__ uint8_t*>(blockInfo->buffer);
 
     __gm__ BlockRingBufInfo* blockRingBufInfo = get_block_ring_buf_info();
-    __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
-    const uint32_t tlvLen = blockInfo->writeLen;
+    const bool isValidHeader = blockInfo->magic == ASCENDC_SIMD_VF_MAGIC_NUMBER &&
+                               blockInfo->length <= ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE &&
+                               blockInfo->writeLen <= blockInfo->length;
+    if (!isValidHeader) {
+        blockInfo->flag = 1;
+    }
+    const uint32_t tlvLen = isValidHeader ? blockInfo->writeLen : 0;
+    const uint32_t packageNum = isValidHeader ? blockInfo->pidx : 0;
 
     sync_all_impl();
     constexpr uint32_t sizeU32 = sizeof(uint32_t);
-    const uint32_t totalWords = (tlvLen + sizeU32 - 1) / sizeU32;
-    auto* dstWords = reinterpret_cast<__gm__ uint32_t*>(dstTlv);
-    auto* srcWords = reinterpret_cast<__ubuf__ uint32_t*>(tlv);
-    for (uint32_t i = 0; i < totalWords; ++i) {
-        dstWords[i] = srcWords[i];
+    if (tlvLen > 0) {
+        __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
+        const uint32_t totalWords = tlvLen / sizeU32;
+        auto* dstWords = reinterpret_cast<__gm__ uint32_t*>(dstTlv);
+        auto* srcWords = reinterpret_cast<__ubuf__ uint32_t*>(tlv);
+        for (uint32_t i = 0; i < totalWords; ++i) {
+            dstWords[i] = srcWords[i];
+        }
+        for (uint32_t i = totalWords * sizeU32; i < tlvLen; ++i) {
+            dstTlv[i] = tlv[i];
+        }
+        sync_all_impl();
+
+        asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
     }
-    sync_all_impl();
-
-    asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
-
-    __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
-    update_write_info(writeInfo, tlvLen, blockInfo->pidx);
+    if (tlvLen > 0) {
+        __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
+        update_write_info(writeInfo, tlvLen, packageNum);
+    }
+    return blockInfo->flag != 0;
 }
 } // namespace __asc_aicore
 

@@ -183,9 +183,15 @@ template <class... Args>
 __simd_callee__ inline void scalar_printf_impl(DumpType debug_type, __ubuf__ const char* fmt, Args&&... args)
 {
     __ubuf__ BlockVFBufInfo* block_info = get_printf_ubuf_addr(0);
+    if (block_info->flag != 0) {
+        return;
+    }
 
     uint32_t args_num = 0;
     const uint32_t tlv_len = get_print_tlv_len_simd(args_num, fmt, args...);
+    if (!reserve_debug_tlv(block_info, tlv_len)) {
+        return;
+    }
 
     __ubuf__ PrintTlv* print_tlv =
         reinterpret_cast<__ubuf__ PrintTlv*>((__ubuf__ uint8_t*)(block_info->buffer) + block_info->writeLen);
