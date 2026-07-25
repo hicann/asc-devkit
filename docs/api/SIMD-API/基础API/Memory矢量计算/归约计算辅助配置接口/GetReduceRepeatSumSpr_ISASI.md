@@ -28,7 +28,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_vec_reduce_intf.h"`。
 
-获取[ReduceSum](../ReduceSum.md)接口的计算结果，仅支持tensor前n个数据连续计算接口使用。计算结果以全局变量形式存储，可以随时调用获取。
+获取[ReduceSum](../归约计算/ReduceSum.md)接口的计算结果，仅支持tensor前n个数据连续计算接口使用。计算结果以全局变量形式存储，可以随时调用获取。
 
 ## 函数原型
 

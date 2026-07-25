@@ -15,5 +15,3 @@
 - **[GM -> UB非对齐数据搬运(DataCopyPad)](DataCopyPad_GMToUB.md)**
 
 - **[UB -> GM非对齐数据搬运(DataCopyPad)](DataCopyPad_UBToGM.md)**
-
-- **[寄存器配置说明](寄存器配置说明/寄存器配置说明.md)**

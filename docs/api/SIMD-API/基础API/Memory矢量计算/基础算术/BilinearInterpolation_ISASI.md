@@ -173,7 +173,7 @@ hRepeat = 2；vRepeat = 2；mask = 128；vROffset = 128。
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。 |
 | src0、src1 | 输入 | 源操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>两个源操作数的数据类型需要与目的操作数保持一致。 |
 | src0Offset | 输入 | 源操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。 |
-| mask[]/mask | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD计算说明/掩码/掩码.md)。 |
+| mask[]/mask | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD计算说明/掩码.md)。 |
 | hRepeat | 输入 | 水平方向迭代次数，取值范围为[1, 255]。 |
 | repeatMode | 输入 | 迭代模式：<br>&bull; false：每次迭代src0读取的8个DataBlock中每个值均与src1的单个数值相乘。<br>&bull; true：每次迭代src0的每个DataBlock分别与src1的1个数值相乘，即1次迭代共消耗src0的8个DataBlock和src1的8个element。 |
 | dstBlkStride | 输入 | 单次迭代内，目的操作数不同DataBlock间地址步长，以32B为单位。 |

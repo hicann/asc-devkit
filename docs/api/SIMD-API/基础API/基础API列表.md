@@ -146,9 +146,9 @@
 | [GMToUB多维数据搬运NDDMA(DataCopy)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMToUB_NDDMA.md) | 多维数据搬运接口，相比于基础数据搬运接口，可更加自由配置搬入的维度信息以及对应的Stride。 |
 | [GMToUB非对齐数据搬运(DataCopyPad)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopyPad_GMToUB.md) | 该接口提供将数据从Global Memory非对齐搬运至Unified Buffer的功能，可以根据开发者的需要自行填充数据。 |
 | [UBToGM非对齐数据搬运(DataCopyPad)](Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopyPad_UBToGM.md) | 该接口提供将数据从Unified Buffer非对齐搬运至Global Memory的功能。 |
-| [SetPadValue(ISASI)](Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/SetPadValue_ISASI.md) | 从Global Memory将数据非对齐搬运至Unified Buffer时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。 |
-| [SetLoopModePara](Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/SetLoopModePara.md) | DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过ResetLoopModePara重置loop mode的参数。 |
-| [ResetLoopModePara](Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/ResetLoopModePara.md) | 重置loop mode的参数。与SetLoopModePara搭配使用，在使能loop mode并且设置loop mode的参数的数据搬运场景下，数据搬运结束后需要调用该函数来重置loop mode参数。 |
+| [SetPadValue(ISASI)](Memory矢量计算/数据搬运辅助配置接口/SetPadValue_ISASI.md) | 从Global Memory将数据非对齐搬运至Unified Buffer时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。 |
+| [SetLoopModePara](Memory矢量计算/数据搬运辅助配置接口/SetLoopModePara.md) | DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过ResetLoopModePara重置loop mode的参数。 |
+| [ResetLoopModePara](Memory矢量计算/数据搬运辅助配置接口/ResetLoopModePara.md) | 重置loop mode的参数。与SetLoopModePara搭配使用，在使能loop mode并且设置loop mode的参数的数据搬运场景下，数据搬运结束后需要调用该函数来重置loop mode参数。 |
 | [UBToUB连续数据搬运(DataCopy)](Memory矢量计算/数据搬运/UB与UB数据搬运/DataCopy_UBToUB_continuous.md) | 支持Unified Buffer与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
 | [UBToUB高维切分数据搬运(DataCopy)](Memory矢量计算/数据搬运/UB与UB数据搬运/DataCopy_UBToUB_highdim_split.md) | 支持Unified Buffer与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
 | [UBToUB连续数据搬运(Copy)](Memory矢量计算/数据搬运/UB与UB数据搬运/Copy_UBToUB_continuous.md) | 支持Unified Buffer和Unified Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。 |
@@ -233,7 +233,7 @@
 ### 类型转换
 | 接口名 | 功能描述 |
 | --- | --- |
-| [SetDeqScale](Memory矢量计算/类型转换/寄存器配置说明/SetDeqScale.md) | 本接口用于设置DEQSCALE寄存器的值，DEQSCALE寄存器位宽为64bit，用于Vector计算单元上的量化计算，寄存器中存放的参数在不同场景下的含义不同。 |
+| [SetDeqScale](Memory矢量计算/类型转换辅助配置接口/SetDeqScale.md) | 本接口用于设置DEQSCALE寄存器的值，DEQSCALE寄存器位宽为64bit，用于Vector计算单元上的量化计算，寄存器中存放的参数在不同场景下的含义不同。 |
 | [Cast](Memory矢量计算/类型转换/Cast.md) | 根据源操作数和目的操作数tensor的数据类型进行精度转换。 |
 | [Truncate(ISASI)](Memory矢量计算/类型转换/Truncate_ISASI.md) | 将源操作数的浮点数元素截断到整数位，同时源操作数的数据类型保持不变。 |
 
@@ -246,8 +246,8 @@
 | [ReduceMax](Memory矢量计算/归约计算/ReduceMax.md) | `ReduceMax`接口用于从所有输入数据中找出最大值和最大值索引。 |
 | [ReduceMin](Memory矢量计算/归约计算/ReduceMin.md) | `ReduceMin`接口用于从所有输入数据中找出最小值和最小值索引。 |
 | [ReduceSum](Memory矢量计算/归约计算/ReduceSum.md) | `ReduceSum`接口对所有输入数据进行求和。 |
-| [GetReduceRepeatSumSpr(ISASI)](Memory矢量计算/归约计算/寄存器辅助接口/GetReduceRepeatSumSpr_ISASI.md) | 获取ReduceSum接口的计算结果，仅支持tensor前n个数据连续计算接口使用。计算结果以全局变量形式存储，可以随时调用获取。 |
-| [GetReduceRepeatMaxMinSpr(ISASI)](Memory矢量计算/归约计算/寄存器辅助接口/GetReduceRepeatMaxMinSpr_ISASI.md) | 本接口用于获取调用ReduceRepeat时所有repeat内的最值及其索引，或获取调用ReduceMax/ReduceMin得到的最值。计算结果以全局变量形式存储，可以随时调用获取。 |
+| [GetReduceRepeatSumSpr(ISASI)](Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr_ISASI.md) | 获取ReduceSum接口的计算结果，仅支持tensor前n个数据连续计算接口使用。计算结果以全局变量形式存储，可以随时调用获取。 |
+| [GetReduceRepeatMaxMinSpr(ISASI)](Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatMaxMinSpr_ISASI.md) | 本接口用于获取调用ReduceRepeat时所有repeat内的最值及其索引，或获取调用ReduceMax/ReduceMin得到的最值。计算结果以全局变量形式存储，可以随时调用获取。 |
 
 ### 数据排布转换
 | 接口名 | 功能描述 |

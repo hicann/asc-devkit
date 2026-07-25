@@ -299,11 +299,7 @@
                 -   [概述](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/概述.md)
                 -   [连续计算](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/连续计算.md)
                 -   [高维切分](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/高维切分.md)
-                -   [掩码](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/掩码/掩码.md)
-                    -   [概述](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/掩码/概述.md)
-                    -   [通用说明](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/掩码/通用说明.md)
-                    -   [接口内设置Mask](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/掩码/接口内设置Mask.md)
-                    -   [接口外设置Mask](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/掩码/接口外设置Mask.md)
+                -   [掩码](SIMD-API/基础API/Memory矢量计算/SIMD计算说明/掩码.md)
 
             -   [数据搬运](SIMD-API/基础API/Memory矢量计算/数据搬运/数据搬运.md)
                 -   [GM与UB数据搬运](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/GM与UB数据搬运.md)
@@ -315,15 +311,15 @@
                     -   [GMToUB多维数据搬运NDDMA(DataCopy)](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopy_GMToUB_NDDMA.md)
                     -   [GMToUB非对齐数据搬运(DataCopyPad)](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopyPad_GMToUB.md)
                     -   [UBToGM非对齐数据搬运(DataCopyPad)](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/DataCopyPad_UBToGM.md)
-                    -   [寄存器配置说明](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/寄存器配置说明.md)
-                        -   [SetPadValue(ISASI)](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/SetPadValue_ISASI.md)
-                        -   [SetLoopModePara](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/SetLoopModePara.md)
-                        -   [ResetLoopModePara](SIMD-API/基础API/Memory矢量计算/数据搬运/GM与UB数据搬运/寄存器配置说明/ResetLoopModePara.md)
                 -   [UB与UB数据搬运](SIMD-API/基础API/Memory矢量计算/数据搬运/UB与UB数据搬运/UB与UB数据搬运.md)
                     -   [UBToUB连续数据搬运(DataCopy)](SIMD-API/基础API/Memory矢量计算/数据搬运/UB与UB数据搬运/DataCopy_UBToUB_continuous.md)
                     -   [UBToUB高维切分数据搬运(DataCopy)](SIMD-API/基础API/Memory矢量计算/数据搬运/UB与UB数据搬运/DataCopy_UBToUB_highdim_split.md)
                     -   [UBToUB连续数据搬运(Copy)](SIMD-API/基础API/Memory矢量计算/数据搬运/UB与UB数据搬运/Copy_UBToUB_continuous.md)
                     -   [UBToUB掩码式高维数据搬运(Copy)](SIMD-API/基础API/Memory矢量计算/数据搬运/UB与UB数据搬运/Copy_UBToUB_mask_highdim_split.md)
+            -   [数据搬运辅助配置接口](SIMD-API/基础API/Memory矢量计算/数据搬运辅助配置接口/数据搬运辅助配置接口.md)
+                -   [SetPadValue(ISASI)](SIMD-API/基础API/Memory矢量计算/数据搬运辅助配置接口/SetPadValue_ISASI.md)
+                -   [SetLoopModePara](SIMD-API/基础API/Memory矢量计算/数据搬运辅助配置接口/SetLoopModePara.md)
+                -   [ResetLoopModePara](SIMD-API/基础API/Memory矢量计算/数据搬运辅助配置接口/ResetLoopModePara.md)
 
             -   [基础算术](SIMD-API/基础API/Memory矢量计算/基础算术/基础算术.md)
                 -   [Exp](SIMD-API/基础API/Memory矢量计算/基础算术/Exp.md)
@@ -396,10 +392,10 @@
                 -   [GatherMask](SIMD-API/基础API/Memory矢量计算/比较与选择/GatherMask.md)
 
             -   [类型转换](SIMD-API/基础API/Memory矢量计算/类型转换/类型转换.md)
-                -   [寄存器配置说明](SIMD-API/基础API/Memory矢量计算/类型转换/寄存器配置说明/寄存器配置说明.md)
-                    -   [SetDeqScale](SIMD-API/基础API/Memory矢量计算/类型转换/寄存器配置说明/SetDeqScale.md)
                 -   [Cast](SIMD-API/基础API/Memory矢量计算/类型转换/Cast.md)
                 -   [Truncate\(ISASI\)](SIMD-API/基础API/Memory矢量计算/类型转换/Truncate_ISASI.md)
+            -   [类型转换辅助配置接口](SIMD-API/基础API/Memory矢量计算/类型转换辅助配置接口/类型转换辅助配置接口.md)
+                -   [SetDeqScale](SIMD-API/基础API/Memory矢量计算/类型转换辅助配置接口/SetDeqScale.md)
 
             -   [归约计算](SIMD-API/基础API/Memory矢量计算/归约计算/归约计算.md)
             
@@ -416,11 +412,10 @@
                 - [ReduceMin](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMin.md)  
                 
                 - [ReduceSum](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceSum.md)  
-                
-                - [寄存器辅助接口](SIMD-API/基础API/Memory矢量计算/归约计算/寄存器辅助接口/寄存器辅助接口.md)
 
-                    - [GetReduceRepeatSumSpr\(ISASI\)](SIMD-API/基础API/Memory矢量计算/归约计算/寄存器辅助接口/GetReduceRepeatSumSpr_ISASI.md)
-                    - [GetReduceRepeatMaxMinSpr\(ISASI\)](SIMD-API/基础API/Memory矢量计算/归约计算/寄存器辅助接口/GetReduceRepeatMaxMinSpr_ISASI.md)
+            -   [归约计算辅助配置接口](SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/归约计算辅助配置接口.md)
+                -   [GetReduceRepeatSumSpr\(ISASI\)](SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr_ISASI.md)
+                -   [GetReduceRepeatMaxMinSpr\(ISASI\)](SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatMaxMinSpr_ISASI.md)
 
             -   [数据排布转换](SIMD-API/基础API/Memory矢量计算/数据排布转换/数据排布转换.md)
                 -   [Transpose](SIMD-API/基础API/Memory矢量计算/数据排布转换/Transpose.md)

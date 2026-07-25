@@ -30,7 +30,7 @@
 
 DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过[ResetLoopModePara](ResetLoopModePara.md)重置loop mode的参数。
 
-具体支持的数据通路为（以[逻辑位置TPosition](../../../../辅助数据结构/TPosition.md)表示）：
+具体支持的数据通路为（以[逻辑位置TPosition](../../辅助数据结构/TPosition.md)表示）：
 
 - Global Memory -> Unified Buffer
     - GM -> VECIN
@@ -77,10 +77,10 @@ __aicore__ inline void SetLoopModePara(const LoopModeParams& loopParams, DataCop
 - 使用以上配置，调用SetLoopModePara再调用DataCopyPad就可以开启DataCopyPad的loop模式完成数据类型为int8\_t的数据块大小为384的数据搬运。详细图解如下：
 
 **图1**  源操作数搬运场景示例<a name="fig6671114911311"></a>  
-![](../../../../../../figures/source_operand_transfer_scenario.png "源操作数搬运场景示例")
+![](../../../../figures/source_operand_transfer_scenario.png "源操作数搬运场景示例")
 
 **图2**  目的操作数搬运场景示例<a name="fig226181311513"></a>  
-![](../../../../../../figures/destination_operand_transfer_scenario.png "目的操作数搬运场景示例")
+![](../../../../figures/destination_operand_transfer_scenario.png "目的操作数搬运场景示例")
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

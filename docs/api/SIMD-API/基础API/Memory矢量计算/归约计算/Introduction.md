@@ -9,8 +9,8 @@
 | [ReducePairElem](./ReducePairElem.md) | 对相邻两个元素进行求和。 | 1 output element/ 2 input element |
 | [ReduceSum](./ReduceSum.md) | 对所有输入数据求和。 | 1 element |
 | [ReduceMax](./ReduceMax.md)/[ReduceMin](./ReduceMin.md) | 对所有输入数据求最大值/最小值。<br>可选择输出对应的索引。 | 1 element (1 index) |
-| [GetReduceRepeatSumSpr(ISASI)](./寄存器辅助接口/GetReduceRepeatSumSpr_ISASI.md) | 获取`ReduceSum`接口的计算结果。 | 1 element |
-| [GetReduceRepeatMaxMinSpr(ISASI)](./寄存器辅助接口/GetReduceRepeatMaxMinSpr_ISASI.md) | 获取调用`ReduceRepeat<MAX/MIN>`时所有repeat内的最值及其索引，或获取调用`ReduceMax`、`ReduceMin`得到的最值。 | 1 element (1 index) |
+| [GetReduceRepeatSumSpr(ISASI)](../归约计算辅助配置接口/GetReduceRepeatSumSpr_ISASI.md) | 获取`ReduceSum`接口的计算结果。 | 1 element |
+| [GetReduceRepeatMaxMinSpr(ISASI)](../归约计算辅助配置接口/GetReduceRepeatMaxMinSpr_ISASI.md) | 获取调用`ReduceRepeat<MAX/MIN>`时所有repeat内的最值及其索引，或获取调用`ReduceMax`、`ReduceMin`得到的最值。 | 1 element (1 index) |
 
 
 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品，在使用归约计算接口时，有如下使用建议。

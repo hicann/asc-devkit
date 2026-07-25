@@ -48,7 +48,7 @@
 填充的数据有两种配置方式：
 
 - 配置结构体[DataCopyPadExtParams](#table_gm2ub_pad_4)的参数paddingValue，此时DataCopyPadExtParams的参数isPad需要设置为true。
-- 使用寄存器配置接口[SetPadValue](寄存器配置说明/SetPadValue_ISASI.md)在接口外部设置需要填充的数据，此时DataCopyPadExtParams的参数isPad需要设置为false。
+- 使用寄存器配置接口[SetPadValue](../../数据搬运辅助配置接口/SetPadValue_ISASI.md)在接口外部设置需要填充的数据，此时DataCopyPadExtParams的参数isPad需要设置为false。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -103,7 +103,7 @@
 
 | 参数名 | 描述 |
 | :--- | :--- |
-| isPad | 是否通过DataCopyPadExtParams结构体中的paddingValue字段设置填充值。<br>true：使用paddingValue字段作为填充值。<br>false：不使用paddingValue字段，根据是否调用寄存器配置接口[SetPadValue](寄存器配置说明/SetPadValue_ISASI.md)分为两种情况。<br>&bull; 调用SetPadValue时，在接口外部配置需要填充的数据。<br>&bull; 不调用SetPadValue时，硬件自动在**每个数据块右侧**填充dummy数据至32字节对齐。若PaddingMode为Compact模式，则只会在**最后一个数据块右侧**填充dummy数据至32字节对齐。 |
+| isPad | 是否通过DataCopyPadExtParams结构体中的paddingValue字段设置填充值。<br>true：使用paddingValue字段作为填充值。<br>false：不使用paddingValue字段，根据是否调用寄存器配置接口[SetPadValue](../../数据搬运辅助配置接口/SetPadValue_ISASI.md)分为两种情况。<br>&bull; 调用SetPadValue时，在接口外部配置需要填充的数据。<br>&bull; 不调用SetPadValue时，硬件自动在**每个数据块右侧**填充dummy数据至32字节对齐。若PaddingMode为Compact模式，则只会在**最后一个数据块右侧**填充dummy数据至32字节对齐。 |
 | leftPadding | 连续搬运数据块左侧需要补充的数据范围，单位为元素个数。<br>若PaddingMode为Compact模式，该参数无效，只会在**最后一个数据块右侧**填充数据。<br>**leftPadding、rightPadding所占的字节数均不能超过32字节。** |
 | rightPadding | 连续搬运数据块右侧需要补充的数据范围，单位为元素个数。<br>若PaddingMode为Compact模式，该参数无效，只会在**最后一个数据块右侧**填充数据。<br>**leftPadding、rightPadding所占的字节数均不能超过32字节。** |
 | paddingValue | 左右两侧需要填充的数据值，需要保证在数据占用字节范围内。<br>数据类型和源操作数保持一致，数据类型为模板参数T。<br>**当数据类型长度为64位时，该参数只能设置为0。** |

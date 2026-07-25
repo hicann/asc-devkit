@@ -32,13 +32,13 @@
 本接口用于设置DEQSCALE寄存器的值，DEQSCALE寄存器位宽为64bit，用于Vector计算单元上的量化计算，寄存器中存放的参数在不同场景下的含义不同：
 
 > [!NOTE]说明
-> 本文中类似`s322fp16`、`s162b8`的场景简称采用“源数据类型简写+数字2+目的数据类型简写”的形式，数字2表示转换到。例如，`s322fp16`可拆分为`s32`、`2`和`fp16`，表示将`int32_t`转换为`half`的场景；`s162b8`表示将`int16_t`转换为8bit位宽数据类型的场景。数据类型简写规则请参见[内置数据类型](../../../数据结构/内置数据类型.md#datatype-abbreviation)。
+> 本文中类似`s322fp16`、`s162b8`的场景简称采用“源数据类型简写+数字2+目的数据类型简写”的形式，数字2表示转换到。例如，`s322fp16`可拆分为`s32`、`2`和`fp16`，表示将`int32_t`转换为`half`的场景；`s162b8`表示将`int16_t`转换为8bit位宽数据类型的场景。数据类型简写规则请参见[内置数据类型](../../数据结构/内置数据类型.md#datatype-abbreviation)。
 
 **表1**  DEQSCALE寄存器比特位含义映射表
 
 | 模式 | 比特位数 | 变量名 | 含义 |
 | :--- | :------- | :----- | :--- |
-| [AddDeqRelu](../../复合计算/AddDeqRelu.md#AddDeqRelu)、[Cast](../Cast.md)、[CastDequant](../../复合计算/CastDequant.md#CastDequant)的s322fp16场景 | 0~15 | scale | 一个half类型数据。 |
+| [AddDeqRelu](../复合计算/AddDeqRelu.md#AddDeqRelu)、[Cast](../类型转换/Cast.md)、[CastDequant](../复合计算/CastDequant.md#CastDequant)的s322fp16场景 | 0~15 | scale | 一个half类型数据。 |
 | CastDequant不开启向量量化的s162b8场景 | 0~31 | scale | 一个float类型数据M（硬件在计算时将其视为(1,8,10)格式，即1个符号位、8个指数位和10个尾数位）。 |
 | CastDequant不开启向量量化的s162b8场景 | 37~45 | offset | 一个有符号的9位整数。 |
 | CastDequant不开启向量量化的s162b8场景 | 46 | signMode | 用于指示量化结果是否有符号（其中0表示无符号，1表示有符号）。 |
@@ -94,7 +94,7 @@
 ## 约束说明<a name="zh-cn_topic_0000002563051145_section1323412155712"></a>
 
 - offset量化参数，int16\_t类型，只有前9位有效。
-- vdeq地址对齐约束参考[地址对齐约束](../../../../通用说明和约束.md#section796754519912)。
+- vdeq地址对齐约束参考[地址对齐约束](../../../通用说明和约束.md#section796754519912)。
 
 ## 调用示例<a name="zh-cn_topic_0000002563051145_section5349145316712"></a>
 
