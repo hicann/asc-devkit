@@ -6,4 +6,4 @@ Ascend C开发提供了丰富的通用工具类，涵盖标准库、平台信息
 -   [平台信息获取API](../../../api/Utils-API/平台信息获取/平台信息获取.md)：提供获取平台信息的功能，比如获取硬件平台的核数等信息。
 -   [RTC API](../../../api/Utils-API/RTC/RTC.md)：Ascend C运行时编译库，通过aclrtc接口，在程序运行时，将中间代码动态编译成目标机器码，提升程序运行性能。
 -   [log API](../../../api/Utils-API/log/log.md)：提供Host侧打印Log的功能。开发者可以在算子的TilingFunc代码中使用ASC\_CPU\_LOG\_XXX接口来输出相关内容。
--   [调测接口](../../../api/Utils-API/调测接口/调测接口.md)：SIMT VF调试场景下使用的相关接口。
+-   [调测接口](../../../api/Utils-API/调测接口/调测接口.md)：面向调试场景提供相关接口，支持SIMD、SIMT等各类场景。
