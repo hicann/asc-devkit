@@ -54,36 +54,24 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args)
 ## 约束说明
 
 -   本接口不支持打印除换行符之外的其他转义字符。
+<!-- npu="950,A3,910b" id14 -->
 -   SIMT场景的支持情况如下：
-      <!-- npu="950" id10 -->
+      <!-- npu="950" id11 -->
     - Ascend 950PR/Ascend 950DT：支持。
-      <!-- end id10 -->
-      <!-- npu="A3" id11 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持。
       <!-- end id11 -->
-      <!-- npu="910b" id12 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持。
+      <!-- npu="A3" id12 -->
+    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持。
       <!-- end id12 -->
--   SIMT中printf功能需要占用额外的Global Memory空间用于数据缓存，缓存空间大小默认为2MB。您可以通过acl.json中的"simt\_printf\_fifo\_size"字段进行配置，配置范围最小为1MB，最大为64MB。当打印数据量较大时，建议增加缓存空间。
+      <!-- npu="910b" id13 -->
+    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持。
+      <!-- end id13 -->
+<!-- end id14 -->
+-   SIMT中printf功能需要占用额外的Global Memory空间用于数据缓存，缓存空间大小默认为2MB。您可以通过[aclInit接口](https://hiascend.com/document/redirect/CannCommunityruntimeapiaclinit)中的"simt\_printf\_fifo\_size"字段进行配置，配置范围为`[1MB,64MB]`。当打印数据量较大时，建议增加缓存空间。
 -   SIMT中使用printf接口会增加算子运行时间，请控制打印数据量，避免算子超时。建议在代码中判断线程ID，仅在部分线程中打印调试信息，减少重复内容的打印，更有利于调试。
--   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为32KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过acl.json中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围最小为1KB，最大为64MB。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
--   SIMD场景下，根据算子执行方式的不同，printf的打印结果输出方式不同。动态图或者单算子直调场景下，待输出内容会被解析并打印在屏幕上；静态图场景下，整图算子需要全下沉到NPU侧执行，无法直接调用接口打印出单个算子的信息，因此需要在模型执行完毕后，将待输出内容落盘在dump文件中，dump文件需要通过工具解析为可读内容。
-    -   dump文件落盘路径按照优先级排列如下：
-        -   如果开启了Data Dump功能，dump文件落盘到开发者配置的dump\_path路径下。如何开启Dump功能依赖于具体的网络运行方式。以TensorFlow在线推理为例，通过enable\_dump、dump\_path、dump\_mode等参数进行配置。配置方式可参考《TensorFlow 2.6.5模型迁移》中的API参考 \> TF Adapter接口（2.x）\> npu.global\_options \> 配置参数说明章节。
-        -   如果未开启Data Dump功能，但配置了ASCEND\_WORK\_PATH环境变量，dump文件落盘到ASCEND\_WORK\_PATH下的printf目录下。
-        -   如果未开启Data Dump功能也没有配置ASCEND\_WORK\_PATH环境变量，dump文件落盘到当前程序执行目录下的printf路径下。
-
-    -   落盘dump文件需要使用工具解析为用户可读内容：
-
-        使用show\_kernel\_debug\_data工具将dump二进制文件解析为用户可读内容，命令格式如下。
-
-        ```
-        show_kernel_debug_data  bin_file  output_dir
-        ```
-
+-   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过[aclInit接口](https://hiascend.com/document/redirect/CannCommunityruntimeapiaclinit)中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围为`[1KB,64MB]`。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
 -   由于在simd vf中不能直接访问gm地址，因此使用simd vf中的printf时，需要先定义一个ubuf的字符串，该字符串即为原来的fmt变量。
 
-    ```
+    ```cpp
     __ubuf__ const char* fmt = "simd vf: int=%d, uint=%u, float=%f, string=%s\n";
     ```
 
@@ -101,7 +89,7 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args)
 
 ## SIMD调用示例
 
-```
+```cpp
 #include "utils/debug/asc_printf.h"
 
 // SIMD printf
@@ -120,24 +108,24 @@ __global__ __mix__(1, 2) void hello_world()
 NPU模式下，程序运行时打印效果如下：
 
 ```
-hello world device
-fmt string int: 291
-fmt string float: 3.140000
-hello world device
-fmt string int: 291
-fmt string float: 3.140000
-hello world device
-fmt string int: 291
-fmt string float: 3.140000
-hello world device
-fmt string int: 291
-fmt string float: 3.140000
+[AIV Block 0/8] hello world device
+[AIV Block 0/8] fmt string int: 291
+[AIV Block 0/8] fmt string float: 3.140000
+[AIV Block 1/8] hello world device
+[AIV Block 1/8] fmt string int: 291
+[AIV Block 1/8] fmt string float: 3.140000
+[AIV Block 2/8] hello world device
+[AIV Block 2/8] fmt string int: 291
+[AIV Block 2/8] fmt string float: 3.140000
+[AIV Block 3/8] hello world device
+[AIV Block 3/8] fmt string int: 291
+[AIV Block 3/8] fmt string float: 3.140000
 ......
 ```
 
 ## SIMD VF调用示例
 
-```
+```cpp
 #include "kernel_operator.h"
 #include "utils/debug/asc_printf.h"
 
@@ -159,7 +147,7 @@ simd vf: int=1, uint=2, float=5.000000, string=AscendC
 
 ## SIMT编程场景调用示例
 
-```
+```cpp
 #include "simt_api/asc_simt.h"
 #include "utils/debug/asc_printf.h"
 
@@ -191,8 +179,7 @@ simt: d: (1, 1, 0), f: 3.140000, s: pass
 
 ## SIMD与SIMT混合编程场景SIMT VF调用示例
 
-```
-#include "kernel_operator.h"
+```cpp
 #include "simt_api/asc_simt.h"
 #include "utils/debug/asc_printf.h"
 
