@@ -111,7 +111,7 @@ struct CopyL0C2UBTrait {
 |roundMode|`RoundMode::DEFAULT`|舍入模式。`RoundMode::HYBRID`仅在源类型为`float`、目的类型为`hifloat8_t`的量化输出场景支持。|
 |enableRelu|`false`|是否使能随路Relu。|
 |enableChannelSplit|`false`|是否使能输出数据通道拆分。|
-|dualDstCtl|`DUAL_DST_DISABLE`|双目标模式控制，取值包括`DUAL_DST_DISABLE`、`DUAL_DST_SPLIT_M`、`DUAL_DST_SPLIT_N`。详细说明参见[L0C Buffer到Unified Buffer双目标模式](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/L0C-Buffer到UB双目标模式.md)。|
+|dualDstCtl|`DUAL_DST_DISABLE`|双目标模式控制，取值包括`DUAL_DST_DISABLE`、`DUAL_DST_SPLIT_M`、`DUAL_DST_SPLIT_N`。详细说明参见[L0C Buffer到Unified Buffer双目标模式](../矩阵搬出关键特性说明/l0c_to_ub_dual_dst.md)。|
 
 使用自定义trait的示例：
 
@@ -176,15 +176,15 @@ L0C Buffer到Unified Buffer搬运根据是否传入量化参数自动选择量�
 
 - 源矩阵`NZ`格式，地址要求64字节对齐。目的矩阵地址要求32字节对齐。
 - 目的矩阵为`NZ`输出时，N方向大小需要为16的倍数；`b8`类型通道合并场景为32的倍数，`float`使能`enableChannelSplit`通道拆分场景为8的倍数。
-- tensor量化参数张量应位于L1 Buffer，元素类型为`uint64_t`，地址要求32字节对齐。详细约束参见[随路量化](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/随路量化.md)。
+- tensor量化参数张量应位于L1 Buffer，元素类型为`uint64_t`，地址要求32字节对齐。详细约束参见[随路量化](../矩阵搬出关键特性说明/quant_pre.md)。
 - 使能`unitFlag`时，需要配合`Mmad`同时使能。
 - 使用`RoundMode::HYBRID`时，源类型必须为`float`，目的类型必须为`hifloat8_t`。
-- 目的布局为`NZ`时，不支持`dualDstCtl`设置为`DUAL_DST_SPLIT_N`。双目标模式详细约束参见[L0C Buffer到Unified Buffer双目标模式](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/L0C-Buffer到UB双目标模式.md)。
-- 通道合并特性硬件自动使能，不能通过参数配置。详细约束参见[Int8 Channel Merge](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/Int8-Channel-Merge.md)。
+- 目的布局为`NZ`时，不支持`dualDstCtl`设置为`DUAL_DST_SPLIT_N`。双目标模式详细约束参见[L0C Buffer到Unified Buffer双目标模式](../矩阵搬出关键特性说明/l0c_to_ub_dual_dst.md)。
+- 通道合并特性硬件自动使能，不能通过参数配置。详细约束参见[Int8 Channel Merge](../矩阵搬出关键特性说明/int8_channel_merge.md)。
 
 ## 关键特性
 
-L0C Buffer到Unified Buffer搬运涉及[随路量化](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/随路量化.md)、[随路Relu](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/随路ReLU.md)、[Int8 Channel Merge](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/Int8-Channel-Merge.md)、[L0C Buffer到Unified Buffer双目标模式](../../矩阵计算（ISASI）/矩阵搬出关键特性说明/L0C-Buffer到UB双目标模式.md)和[batch搬运](../矩阵搬出关键特性说明/batch_copy.md)等关键特性。
+L0C Buffer到Unified Buffer搬运涉及[随路量化](../矩阵搬出关键特性说明/quant_pre.md)、[随路Relu](../矩阵搬出关键特性说明/relu_pre.md)、[Int8 Channel Merge](../矩阵搬出关键特性说明/int8_channel_merge.md)、[L0C Buffer到Unified Buffer双目标模式](../矩阵搬出关键特性说明/l0c_to_ub_dual_dst.md)和[batch搬运](../矩阵搬出关键特性说明/batch_copy.md)等关键特性。
 
 ## 调用示例
 
