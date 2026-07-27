@@ -92,7 +92,7 @@
 支持的数据类型如下：
 
 <!-- npu="950" id10 -->
-- Ascend 950PR/Ascend 950DT，支持half、float、int64_t、uint64_t。数据类型int64_t、uint64_t仅支持tensor前n个数据计算接口。
+- Ascend 950PR/Ascend 950DT，支持half、float、int32_t、uint32_t、int64_t、uint64_t。数据类型int64_t、uint64_t仅支持tensor前n个数据计算接口。
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
 - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持half、float。

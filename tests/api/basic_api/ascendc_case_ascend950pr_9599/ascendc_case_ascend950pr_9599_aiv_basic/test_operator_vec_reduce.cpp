@@ -322,38 +322,156 @@ struct ReduceSumCounterModeTestParams {
 class ReduceSumCounterModeTestsuite : public testing::Test,
                                       public testing::WithParamInterface<ReduceSumCounterModeTestParams> {
 protected:
-    void SetUp() {}
-    void TearDown() {}
+    void SetUp() { SetGCoreType(AscendC::AIV); }
+    void TearDown() { SetGCoreType(AscendC::MIX); }
 };
 
 INSTANTIATE_TEST_CASE_P(
     TEST_REDUCE_SUM_COUNTER_MODE, ReduceSumCounterModeTestsuite,
     ::testing::Values(
-        // shapeScope 1: count <= oneRepSize (float: 64, half: 128)
+        // shapeScope 1: count <= oneRepSize (int32_t: 64, uint32_t: 64, float: 64, half: 128)
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<int32_t>, 64, 16, 4, 1},
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<uint32_t>, 64, 16, 4, 1},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<float>, 64, 16, 4, 1},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<half>, 128, 16, 2, 1},
-        // shapeScope 2: count <= oneRepSize * 2 (float: 128, half: 256)
+        // shapeScope 2: count <= oneRepSize * 2 (int32_t: 128, uint32_t: 128, float: 128, half: 256)
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<int32_t>, 128, 16, 4, 2},
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<uint32_t>, 128, 16, 4, 2},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<float>, 128, 16, 4, 2},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<half>, 256, 16, 2, 2},
-        // shapeScope 3: count <= oneRepSize * 3 (float: 192, half: 384)
+        // shapeScope 3: count <= oneRepSize * 3 (int32_t: 192, uint32_t: 192, float: 192, half: 384)
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<int32_t>, 192, 16, 4, 3},
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<uint32_t>, 192, 16, 4, 3},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<float>, 192, 16, 4, 3},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<half>, 384, 16, 2, 3},
-        // shapeScope 4: count <= oneRepSize * 4 (float: 256, half: 512)
+        // shapeScope 4: count <= oneRepSize * 4 (int32_t: 256, uint32_t: 256, float: 256, half: 512)
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<int32_t>, 256, 16, 4, 4},
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<uint32_t>, 256, 16, 4, 4},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<float>, 256, 16, 4, 4},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<half>, 512, 16, 2, 4},
-        // shapeScope 5: count <= oneRepSize * oneRepSize (float: 4096, half: 16384)
+        // shapeScope 5: count <= oneRepSize * oneRepSize (int32_t: 4096, uint32_t: 4096, float: 4096, half: 16384)
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<int32_t>, 4096, 16, 4, 5},
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<uint32_t>, 4096, 16, 4, 5},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<float>, 4096, 16, 4, 5},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<half>, 16384, 16, 2, 5},
-        // shapeScope 6: count > oneRepSize * oneRepSize (float: >4096, half: >16384)
+        // shapeScope 6: count > oneRepSize * oneRepSize (int32_t: >4096, uint32_t: >4096, float: >4096, half: >16384)
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<int32_t>, 8192, 16, 4, 6},
+        ReduceSumCounterModeTestParams{MainReduceSumCounterMode<uint32_t>, 8192, 16, 4, 6},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<float>, 8192, 16, 4, 6},
         ReduceSumCounterModeTestParams{MainReduceSumCounterMode<half>, 32768, 16, 2, 6}));
 
 TEST_P(ReduceSumCounterModeTestsuite, ReduceSumCounterModeTestCase)
 {
     auto param = GetParam();
-    std::vector<uint8_t> srcGm(param.srcDataSize * param.dtypeSize);
-    std::vector<uint8_t> dstGm(param.dstDataSize * param.dtypeSize);
+    std::vector<uint8_t> srcGm(param.srcDataSize * param.dtypeSize, 0);
+    std::vector<uint8_t> dstGm(param.dstDataSize * param.dtypeSize, 1);
 
     param.calFunc(srcGm.data(), dstGm.data(), param.srcDataSize, param.dstDataSize);
     EXPECT_EQ(dstGm[0], 0x00);
+}
+
+template <typename T>
+__global__ __aicore__ void MainReduceSumNormalMode(
+    __gm__ uint8_t* __restrict__ srcGm, __gm__ uint8_t* __restrict__ dstGm, __gm__ int32_t repeatTime,
+    __gm__ int32_t dstDataSize)
+{
+    TPipe tpipe;
+    int32_t mask = 64;
+    if (sizeof(PrimT<T>) == sizeof(half)) {
+        mask = 128;
+    }
+    int32_t srcDataSize = repeatTime * mask;
+    int32_t srcRepStride = GetVecLen() / GetDataBlockSizeInBytes();
+    uint32_t dstDataSizePerBlock = GetDataBlockSizeInBytes() / sizeof(PrimT<T>);
+
+    GlobalTensor<T> inputGlobal;
+    GlobalTensor<T> outputGlobal;
+    inputGlobal.SetGlobalBuffer(reinterpret_cast<__gm__ PrimT<T>*>(srcGm), srcDataSize);
+    outputGlobal.SetGlobalBuffer(reinterpret_cast<__gm__ PrimT<T>*>(dstGm), dstDataSize);
+
+    TBuf<TPosition::VECIN> tbuf1;
+    tpipe.InitBuffer(tbuf1, srcDataSize * sizeof(PrimT<T>));
+    LocalTensor<T> inputLocal = tbuf1.Get<T>();
+
+    TBuf<TPosition::VECOUT> tbuf2;
+    tpipe.InitBuffer(tbuf2, dstDataSize * sizeof(PrimT<T>));
+    LocalTensor<T> outputLocal = tbuf2.Get<T>();
+
+    TBuf<TPosition::VECCALC> tbuf3;
+    tpipe.InitBuffer(tbuf3, repeatTime * sizeof(PrimT<T>));
+    LocalTensor<T> workLocal = tbuf3.Get<T>();
+
+    DataCopy(inputLocal, inputGlobal, srcDataSize);
+    event_t eventIdMte2ToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
+    SetFlag<HardEvent::MTE2_V>(eventIdMte2ToV);
+    WaitFlag<HardEvent::MTE2_V>(eventIdMte2ToV);
+
+    AscendC::SetMaskNorm();
+    ReduceSum<T>(outputLocal, inputLocal, workLocal, mask, repeatTime, srcRepStride);
+
+    event_t eventIdVToMte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+    SetFlag<HardEvent::V_MTE3>(eventIdVToMte3);
+    WaitFlag<HardEvent::V_MTE3>(eventIdVToMte3);
+
+    DataCopy(outputGlobal, outputLocal, dstDataSizePerBlock);
+
+    event_t eventIdMte3ToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
+    SetFlag<HardEvent::MTE3_V>(eventIdMte3ToV);
+    WaitFlag<HardEvent::MTE3_V>(eventIdMte3ToV);
+
+    uint64_t maskArr[] = {0xffffffffffffffff, 0xffffffffffffffff};
+    ReduceSum<T>(outputLocal, inputLocal, workLocal, maskArr, repeatTime, srcRepStride);
+
+    event_t secondEventIdVToMte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+    SetFlag<HardEvent::V_MTE3>(secondEventIdVToMte3);
+    WaitFlag<HardEvent::V_MTE3>(secondEventIdVToMte3);
+
+    DataCopy(outputGlobal[dstDataSizePerBlock], outputLocal, dstDataSizePerBlock);
+
+    PipeBarrier<PIPE_ALL>();
+}
+
+struct ReduceSumNormalModeTestParams {
+    void (*calFunc)(uint8_t*, uint8_t*, int32_t, int32_t);
+    int32_t repeatTime;
+    int32_t dstDataSize;
+    int32_t dtypeSize;
+    int32_t shapeScope;
+};
+
+class ReduceSumNormalModeTestsuite : public testing::Test,
+                                     public testing::WithParamInterface<ReduceSumNormalModeTestParams> {
+protected:
+    void SetUp() { SetGCoreType(AscendC::AIV); }
+    void TearDown() { SetGCoreType(AscendC::MIX); }
+};
+
+INSTANTIATE_TEST_CASE_P(
+    TEST_REDUCE_SUM_NORMAL_MODE, ReduceSumNormalModeTestsuite,
+    ::testing::Values(
+        // shapeScope 1: repeatTime <= 1
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<int32_t>, 1, 64, 4, 1},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<uint32_t>, 1, 64, 4, 1},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<float>, 1, 64, 4, 1},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<half>, 1, 64, 2, 1},
+        // shapeScope 2: repeatTime <= oneRepSize (int32_t: 64, uint32_t: 64, float: 64, half: 128)
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<int32_t>, 64, 64, 4, 2},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<uint32_t>, 64, 64, 4, 2},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<float>, 64, 64, 4, 2},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<half>, 128, 64, 2, 2},
+        // shapeScope 3: repeatTime > oneRepSize (int32_t: >64, uint32_t: >64, float: >64, half: >128)
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<int32_t>, 128, 64, 4, 3},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<uint32_t>, 128, 64, 4, 3},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<float>, 128, 64, 4, 3},
+        ReduceSumNormalModeTestParams{MainReduceSumNormalMode<half>, 256, 64, 2, 3}));
+
+TEST_P(ReduceSumNormalModeTestsuite, ReduceSumNormalModeTestCase)
+{
+    auto param = GetParam();
+    std::vector<uint8_t> srcGm(param.repeatTime * GetVecLen(), 0); // continuous input data
+    std::vector<uint8_t> dstGm(param.dstDataSize * param.dtypeSize, 1);
+
+    param.calFunc(srcGm.data(), dstGm.data(), param.repeatTime, param.dstDataSize);
+    EXPECT_EQ(dstGm[0], 0x00);
+    EXPECT_EQ(dstGm[32], 0x00);
 }
