@@ -15,7 +15,7 @@
     __global__ void hello_world()
     {
         if (threadIdx.x < 3) {
-            printf("[blockIdx (%lu/%lu)][threadIdx (%lu/%lu)]: Hello World!\n", blockIdx.x, gridDim.x, threadIdx.x, blockDim.x);
+            printf("[blockIdx (%u/%u)][threadIdx (%u/%u)]: Hello World!\n", blockIdx.x, gridDim.x, threadIdx.x, blockDim.x);
         }
     }
     ```

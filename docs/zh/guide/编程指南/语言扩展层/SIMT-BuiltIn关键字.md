@@ -158,8 +158,8 @@
 | signed int | int2 | int3 | int4 |
 | 无符号的长整型(64bit) | ulonglong2 | ulonglong3 | ulonglong4 |
 | 有符号的长整型(64bit) | longlong2 | longlong3 | longlong4 |
-| 无符号的长整型(32bit) | ulong2 | ulong3 | ulong4 |
-| 有符号的长整型(32bit) | long2 | long3 | long4 |
+| 无符号的长整型(64bit) | ulong2 | ulong3 | ulong4 |
+| 有符号的长整型(64bit) | long2 | long3 | long4 |
 | 浮点型，1符号位，2指数位，1尾数位 | float4_e2m1x2_t | - | - |
 | 浮点型，1符号位，1指数位，2尾数位 | float4_e1m2x2_t | - | - |
 | 浮点型，1符号位，4指数位，3尾数位 | float8_e4m3x2_t | - | - |
@@ -180,8 +180,8 @@
 | short3、 ushort3、 short4、 ushort4 | 8 | 8 |
 | int2、 uint2 | 8 | 8 |
 | int3、 uint3、 int4、 uint4 | 16 | 16 |
-| long2、 ulong2 | 8 | 8 |
-| long3、 ulong3、 long4、 ulong4 | 16 | 16 |
+| long2、 ulong2 | 16 | 16 |
+| long3、 ulong3、 long4、 ulong4 | 32 | 32 |
 | longlong2、 ulonglong2 | 16 | 16 |
 | longlong3、 ulonglong3、 longlong4、 ulonglong4 | 32 | 32 |
 | float2 | 8 | 8 |
@@ -293,7 +293,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 
 -   \_\_launch\_bounds\_\_\(N\) <a name="li23861114618"></a>
   
-    函数标记宏，在核函数上可选配置，用于指定核函数启动的最大线程数。最大线程数决定了每个线程可分配的寄存器数量，具体对应关系请见下表，寄存器用于存储线程中的局部变量，若局部变量的个数超出寄存器个数，容易出现栈溢出等问题。建议最大线程数与启动核函数时的dim3线程数保持一致。
+    函数标记宏，在核函数上可选配置，用于指定核函数启动的最大线程数。最大线程数决定了每个线程可分配的寄存器数量，具体对应关系请见下表，寄存器用于存储线程中的局部变量，若局部变量的个数超出寄存器个数，容易出现寄存器溢出等问题。建议最大线程数与启动核函数时的dim3线程数保持一致。
 
     **表5**  \_\_launch\_bounds\_\_(N)与每个线程可用的寄存器个数的关系
     
