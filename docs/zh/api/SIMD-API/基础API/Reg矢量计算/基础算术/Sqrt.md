@@ -67,7 +67,8 @@ __simd_callee__ inline void Sqrt(U& dstReg, U& srcReg, MaskReg& mask)
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-如果src的数值为非正数，可能会产生未知结果。
+- 输入为负数时结果为nan。
+- 输入为-0时结果为-0。
 
 ## 关键特性说明
 
