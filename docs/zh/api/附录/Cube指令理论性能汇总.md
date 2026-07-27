@@ -21,7 +21,7 @@ $$
 \begin{gathered}
 {ceil_m} = \left\lceil \frac{m}{16} \right\rceil \times 16 \\[12pt]
 {ceil_n} = \left\lceil \frac{n}{16} \right\rceil \times 16 \\[12pt]
-{ceil_k} = \left\lceil \frac{k_0}{16} \right\rceil \times k_0 \\[16pt]
+{ceil_k} = \left\lceil \frac{k}{16} \right\rceil \times k_0 \\[16pt]
 \text{cube利用率} =
 \frac{ (m \times n \times k) / ({cube_m} \times {cube_n} \times {cube_k}) }
 { \Delta t + ({ceil_m} \times {ceil_n} \times {ceil_k}) / ({cube_m} \times {cube_n} \times {cube_k}) }
