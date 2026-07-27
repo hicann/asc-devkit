@@ -301,6 +301,11 @@ private:
 #ifdef __ASCENDC_SUPER_KERNEL_ENABLE_GM_GET_SET_VALUE_DCCI__
     template <typename U>
     __aicore__ inline uintptr_t AlignPtr(__gm__ U* buffer) const;
+    __aicore__ inline void DcciCacheLine(uintptr_t cacheAddr) const;
+    template <typename U>
+    __aicore__ inline void DcciReadCache(__gm__ U* buffer);
+    template <typename U>
+    __aicore__ inline void DcciWriteCache(__gm__ U* buffer);
 #endif
 };
 
