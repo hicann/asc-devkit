@@ -78,7 +78,7 @@ Reg矢量计算数据搬运接口，支持从RegTensor搬出至非32字节对齐
 ## 约束说明
 
 -   count不能大于一个RegTensor能存储的数据个数，即count <= 256B / sizeof(T)。
--   接口内部定义了一个[UnalignRegForStore](../寄存器数据类型/UnalignRegForLoad-UnalignRegForStore.md)，该寄存器数量上限为4。
+-   接口内部定义了一个[UnalignRegForStore](../寄存器数据类型/UnalignRegForLoad-UnalignRegForStore.md)，该寄存器数量上限为4，超出后编译器将报错。
 
 ## 调用示例
 

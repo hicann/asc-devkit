@@ -40,6 +40,7 @@ Ascend 950PR/Ascend 950DT
 
 ## 约束说明<a name="section11585101304320"></a>
 
-- UnalignRegForLoad寄存器数量上限为4。
+- UnalignRegForLoad寄存器数量上限为4，超出后编译器将报错。
 
-- UnalignRegForStore寄存器数量上限为4。
+- UnalignRegForStore寄存器数量上限为4，超出后编译器将报错。
+

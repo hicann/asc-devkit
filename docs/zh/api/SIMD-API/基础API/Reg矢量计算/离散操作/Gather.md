@@ -57,7 +57,7 @@ __simd_callee__ inline void Gather(S& dstReg, S& srcReg, V& indexReg)
 | --- | --- | --- |
 | dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |
 | srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。 |
-| indexReg | 输入 | 索引值，单位：元素。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。<br>数据类型的位宽需要与目的操作数的位宽保持一致。indexReg中的值可以重复。<br>如果indexReg中索引值超出当前RegTensor中能存储的最大数据元素个数时，按照如下方式处理：<br>RegTensor所能存储的最大数据元素个数为VL/sizeof(T)，indexReg中索引值为i，索引值更新为i % (VL/sizeof(T))。<br>例：元素为half数据类型的srcReg，有128个元素，当indexReg中索引值为168时，索引值更新为168 % 128 = 40。 |
+| indexReg | 输入 | 索引值，单位：元素。<br>类型为[RegTensor](../寄存器数据类型/RegTensor.md)。<br>数据类型的位宽需要与目的操作数的位宽保持一致。indexReg中的值可以重复。<br>如果indexReg中索引值超出当前RegTensor中能存储的最大数据元素个数时，按照如下方式处理：<br>RegTensor所能存储的最大数据元素个数为[VL](../寄存器数据类型/RegTensor.md)/sizeof(T)，indexReg中索引值为i，索引值更新为i % (VL/sizeof(T))。<br>例：元素为half数据类型的srcReg，有128个元素，当indexReg中索引值为168时，索引值更新为168 % 128 = 40。 |
 
 ## 数据类型
 

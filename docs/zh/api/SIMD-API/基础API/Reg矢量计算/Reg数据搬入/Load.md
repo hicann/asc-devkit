@@ -66,7 +66,7 @@ __simd_callee__ inline void Load(U& dstReg, __ubuf__ T* srcAddr)
 ## 约束说明
 
 - dstReg不支持RegTraitNumTwo。
-- 接口内部定义了一个[UnalignRegForLoad](../寄存器数据类型/UnalignRegForLoad-UnalignRegForStore.md)，该寄存器数量上限为4。
+- 接口内部定义了一个[UnalignRegForLoad](../寄存器数据类型/UnalignRegForLoad-UnalignRegForStore.md)，该寄存器数量上限为4，超出后编译器将报错。
 
 ## 调用示例
 
