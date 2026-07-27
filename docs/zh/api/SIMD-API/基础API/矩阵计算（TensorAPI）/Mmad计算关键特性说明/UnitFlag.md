@@ -44,7 +44,7 @@ Mmad和Copy接口设置unitFlag值为2/3后，系统会启动单元标志位。
 ## 相关接口
 
 - [Mmad](../Mmad计算/Mmad.md)
-- [Copy（L0C到GM数据搬运）](../Copy（L0C到GM数据搬运）.md/../矩阵计算的搬出/Copy（L0C到GM数据搬运）.md)
+- [Copy（L0C到GM数据搬运）](../矩阵计算的搬出/Copy（L0C到GM数据搬运）.md)
 - [Copy（L0C到UB数据搬运）](../矩阵计算的搬出/Copy（L0C到UB数据搬运）.md)
 - [SetFixPipeConfig](../../矩阵计算（ISASI）/矩阵搬出辅助配置接口/SetFixPipeConfig.md)
 - [SetMMColumnMajor/SetMMRowMajor](../../矩阵计算（ISASI）/Mmad计算辅助配置接口/SetMMColumnMajor-SetMMRowMajor.md)
