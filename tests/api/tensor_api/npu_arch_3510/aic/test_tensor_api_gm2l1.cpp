@@ -356,6 +356,76 @@ TEST_GM2L1_BATCH(half, Nz2Nz, NZ, NZ, 3, 32, 64)
 // ZN -> ZN batched.
 TEST_GM2L1_BATCH(half, Zn2Zn, ZN, ZN, 3, 32, 64)
 
+// NC1HWC0 (N, C1, H, W, C0) flat 5D layout, contiguous. Built with the NC1HWC0LayoutPtn tag so
+// CopyGM2L1Routing dispatches to CopyGmToCbufNC1HWC02NC1HWC0.
+template <typename T, size_t C0>
+auto MakeNc1hwc0(int n, int c1, int h, int w)
+{
+    return MakeFrameLayout<NC1HWC0LayoutPtn>(n, c1, h, w, static_cast<int>(C0));
+}
+
+// NC1HWC0 gm->l1 copy, W fully loaded: C1 bursts of H*W*C0, golden per-C1 block.
+#define TEST_GM2L1_NC1HWC0_INNER(type, N, C1, H, W, counter)                                                          \
+    TEST_F(TensorApiGm2L1, TEST_GM2L1_CONCAT_(CopyGm2L1NC1HWC0, ND2ND, type, counter))                                \
+    {                                                                                                                 \
+        using T = type;                                                                                               \
+        constexpr size_t C0 = IsB4Type<T> ? 64 : 32 / sizeof(T);                                                      \
+        const int kBlockElems = (H) * (W) * C0; /* per-C1 block = H*W*C0 */                                           \
+        auto gmNc1hwc0 = MakeNc1hwc0<T, C0>((N), (C1), (H), (W));                                                     \
+        auto l1Nc1hwc0 = MakeNc1hwc0<T, C0>((N), (C1), (H), (W));                                                     \
+        auto gmA = MakeTensor(MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm)), gmNc1hwc0);                     \
+        auto l1ATensor = MakeTensor(MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABuf)), l1Nc1hwc0);               \
+        auto atomCopy = MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{});                                               \
+        InitializeData<T>();                                                                                          \
+        atomCopy.Call(l1ATensor, gmA);                                                                                \
+        for (int b = 0; b < (N) * (C1); ++b) {                                                                        \
+            auto gmB = MakeTensor(                                                                                    \
+                MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm) + b * kBlockElems), MakeND<T>(1, kBlockElems)); \
+            auto l1G = MakeTensor(                                                                                    \
+                MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABufGolden) + b * kBlockElems),                       \
+                MakeND<T>(1, kBlockElems));                                                                           \
+            DataCopyGm2L1Sim(l1G, gmB);                                                                               \
+        }                                                                                                             \
+        EXPECT_TRUE(std::equal(l1ABuf, l1ABuf + L1Size, l1ABufGolden));                                               \
+    }
+#define TEST_GM2L1_NC1HWC0(type, N, C1, H, W) TEST_GM2L1_NC1HWC0_INNER(type, N, C1, H, W, __COUNTER__)
+
+TEST_GM2L1_NC1HWC0(half, 1, 3, 4, 4)
+TEST_GM2L1_NC1HWC0(half, 1, 1, 8, 2)
+TEST_GM2L1_NC1HWC0(uint32_t, 1, 2, 4, 4)
+
+// NC1HWC0 gm->l1 copy, W not fully loaded: GM built with srcW, sliced to loadW; per-(C1,H) block.
+#define TEST_GM2L1_NC1HWC0_PARTW_INNER(type, N, C1, H, srcW, loadW, counter)                                        \
+    TEST_F(TensorApiGm2L1, TEST_GM2L1_CONCAT_(CopyGm2L1NC1HWC0PartW, ND2ND, type, counter))                         \
+    {                                                                                                               \
+        using T = type;                                                                                             \
+        constexpr size_t C0 = IsB4Type<T> ? 64 : 32 / sizeof(T);                                                    \
+        const int kSrcRow = (srcW) * C0;                                                                            \
+        const int kDstRow = (loadW) * C0;                                                                           \
+        auto gmFull = MakeNc1hwc0<T, C0>((N), (C1), (H), (srcW));                                                   \
+        auto l1Nc1hwc0 = MakeNc1hwc0<T, C0>((N), (C1), (H), (loadW));                                               \
+        auto gmFullT = MakeTensor(MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm)), gmFull);                  \
+        auto gmA = gmFullT.Slice(MakeCoord(0, 0, 0, 0, 0), MakeShape((N), (C1), (H), (loadW), C0));                 \
+        auto l1ATensor = MakeTensor(MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABuf)), l1Nc1hwc0);             \
+        auto atomCopy = MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{});                                             \
+        InitializeData<T>();                                                                                        \
+        atomCopy.Call(l1ATensor, gmA);                                                                              \
+        for (int b = 0; b < (N) * (C1) * (H); ++b) {                                                                \
+            auto gmB = MakeTensor(                                                                                  \
+                MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm) + b * kSrcRow), MakeND<T>(1, kDstRow));       \
+            auto l1G = MakeTensor(                                                                                  \
+                MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABufGolden) + b * kDstRow), MakeND<T>(1, kDstRow)); \
+            DataCopyGm2L1Sim(l1G, gmB);                                                                             \
+        }                                                                                                           \
+        EXPECT_TRUE(std::equal(l1ABuf, l1ABuf + L1Size, l1ABufGolden));                                             \
+    }
+#define TEST_GM2L1_NC1HWC0_PARTW(type, N, C1, H, srcW, loadW) \
+    TEST_GM2L1_NC1HWC0_PARTW_INNER(type, N, C1, H, srcW, loadW, __COUNTER__)
+
+TEST_GM2L1_NC1HWC0_PARTW(half, 1, 3, 4, 8, 4)
+TEST_GM2L1_NC1HWC0_PARTW(half, 1, 2, 4, 6, 2)
+TEST_GM2L1_NC1HWC0_PARTW(uint32_t, 1, 2, 4, 8, 4)
+
 // ND2ND
 // constraint: col small to big: dst column stride % 32B = 0, col same: no constraint
 // constraint: or support src shape is 1 dim(include 2d continuous, src stride equals to dst stride)
@@ -2791,4 +2861,84 @@ TEST_F(TensorApiGm2L1, CopyGm2L1Batch_ND2ND_Compact_HalfType)
     constexpr uint32_t expectBlockLen = M * N * sizeof(T);
     constexpr uint64_t expectStride = static_cast<uint64_t>(M) * N * sizeof(T);
     EXPECT_GM2L1_BATCH_LAST_CALL(B, expectBlockLen, expectStride, expectStride);
+}
+
+// GM(NHWC) -> L1(NC1HWC0) via the nd2nz DMA path. Verifies the captured DMA parameters:
+// ndNum=H, nValue=W, dValue=C; src strides read straight from the NHWC layout
+// (loop1SrcStride=C*sizeof, loop4SrcStride=W*C*sizeof); dst strides loop2DstStride=1,
+// loop3DstStride=H*W, loop4DstStride=W.
+TEST_F(TensorApiGm2L1, CopyGm2L1NHWC2NC1HWC0)
+{
+    using T = half;
+    constexpr uint32_t N = 1;
+    constexpr uint32_t H = 4;
+    constexpr uint32_t W = 4;
+    constexpr uint32_t C0 = 16;
+    constexpr uint32_t C = 32;
+    constexpr uint32_t C1 = C / C0; // 2
+
+    auto gmNhwc = MakeFrameLayout<NHWCLayoutPtn>(
+        static_cast<int32_t>(N), static_cast<int32_t>(H), static_cast<int32_t>(W), static_cast<int32_t>(C));
+    auto l1Nc1hwc0 = MakeFrameLayout<NC1HWC0LayoutPtn>(
+        static_cast<int32_t>(N), static_cast<int32_t>(C1), static_cast<int32_t>(H), static_cast<int32_t>(W),
+        static_cast<int32_t>(C0));
+    auto gmA = MakeTensor(MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm)), gmNhwc);
+    auto l1A = MakeTensor(MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABuf)), l1Nc1hwc0);
+
+    MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{}).Call(l1A, gmA);
+
+    ASSERT_EQ(gGm2L1ND2NzCaptures.size(), 1);
+    ASSERT_EQ(gGm2L1NzParaCaptures.size(), 1);
+    const auto& nd2nz = gGm2L1ND2NzCaptures.back();
+    const auto& nzPara = gGm2L1NzParaCaptures.back();
+
+    EXPECT_EQ(nzPara.ndNum, H);                         // ndNum = srcH
+    EXPECT_EQ(nd2nz.nValue, W);                         // nValue = srcW
+    EXPECT_EQ(nd2nz.dValue, C);                         // dValue = srcC
+    EXPECT_EQ(nd2nz.loop1SrcStride, C * sizeof(T));     // srcC * sizeof(type)
+    EXPECT_EQ(nd2nz.loop4SrcStride, W * C * sizeof(T)); // srcW * srcC * sizeof(type)
+    EXPECT_EQ(nzPara.loop2DstStride, 1);
+    EXPECT_EQ(nzPara.loop3DstStride, H * W); // dstH * dstW
+    EXPECT_EQ(nzPara.loop4DstStride, W);     // dstW
+    EXPECT_FALSE(nd2nz.enableSmallC0);
+}
+
+// GM(NCHW) -> L1(NC1HWC0) via the dn2nz DMA path (NCHW is the HW<->C transpose of NHWC). Verifies
+// the captured DMA parameters: dnNum=H, nValue=W, dValue=C; src strides read straight from the NCHW
+// layout (loop1SrcStride=H*W*sizeof=Stride[1]*sizeof, loop4SrcStride=W*sizeof=Stride[2]*sizeof);
+// dst strides loop2DstStride=1, loop3DstStride=H*W, loop4DstStride=W.
+TEST_F(TensorApiGm2L1, CopyGm2L1NCHW2NC1HWC0)
+{
+    using T = half;
+    constexpr uint32_t N = 1;
+    constexpr uint32_t H = 4;
+    constexpr uint32_t W = 4;
+    constexpr uint32_t C0 = 16;
+    constexpr uint32_t C = 32;
+    constexpr uint32_t C1 = C / C0; // 2
+
+    auto gmNchw = MakeFrameLayout<NCHWLayoutPtn>(
+        static_cast<int32_t>(N), static_cast<int32_t>(C), static_cast<int32_t>(H), static_cast<int32_t>(W));
+    auto l1Nc1hwc0 = MakeFrameLayout<NC1HWC0LayoutPtn>(
+        static_cast<int32_t>(N), static_cast<int32_t>(C1), static_cast<int32_t>(H), static_cast<int32_t>(W),
+        static_cast<int32_t>(C0));
+    auto gmA = MakeTensor(MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm)), gmNchw);
+    auto l1A = MakeTensor(MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABuf)), l1Nc1hwc0);
+
+    MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{}).Call(l1A, gmA);
+
+    ASSERT_EQ(gGm2L1DN2NzCaptures.size(), 1);
+    ASSERT_EQ(gGm2L1NzParaCaptures.size(), 1);
+    const auto& dn2nz = gGm2L1DN2NzCaptures.back();
+    const auto& nzPara = gGm2L1NzParaCaptures.back();
+
+    EXPECT_EQ(nzPara.ndNum, H);                         // dnNum = srcH
+    EXPECT_EQ(dn2nz.nValue, W);                         // nValue = srcW
+    EXPECT_EQ(dn2nz.dValue, C);                         // dValue = srcC
+    EXPECT_EQ(dn2nz.loop1SrcStride, H * W * sizeof(T)); // srcH*srcW*sizeof (NCHW Stride[1]=H*W)
+    EXPECT_EQ(dn2nz.loop4SrcStride, W * sizeof(T));     // srcW*sizeof (NCHW Stride[2]=W)
+    EXPECT_EQ(nzPara.loop2DstStride, 1);
+    EXPECT_EQ(nzPara.loop3DstStride, H * W); // dstH * dstW
+    EXPECT_EQ(nzPara.loop4DstStride, W);     // dstW
+    EXPECT_FALSE(dn2nz.enableSmallC0);
 }

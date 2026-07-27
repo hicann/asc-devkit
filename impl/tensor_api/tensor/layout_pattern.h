@@ -284,6 +284,48 @@ struct MakeScaleBDNFrameLayout {
     }
 };
 
+// Convolution feature-map patterns. These are flat (non-fractal) row-major layouts: shape carries
+// the logical dims in their natural order, stride is the row-major contiguous product (last dim = 1,
+// each earlier dim = product of all later dims). C0 is supplied by the caller, not derived from the
+// trait, so the stride stays a plain contiguous layout regardless of element type.
+
+struct NCHWLayoutPtn {};
+struct NHWCLayoutPtn {};
+struct NC1HWC0LayoutPtn {};
+
+struct MakeNCHWFrameLayout {
+    template <typename TraitType, typename N, typename C, typename H, typename W>
+    __aicore__ inline static auto Make(N n, C c, H h, W w)
+    {
+        auto shape = MakeShape(n, c, h, w);
+        auto stride = MakeStride(c * h * w, h * w, w, _1{});
+        using LayoutT = Layout<decltype(shape), decltype(stride), Std::tuple<NCHWLayoutPtn, TraitType>>;
+        return LayoutT(shape, stride);
+    }
+};
+
+struct MakeNHWCFrameLayout {
+    template <typename TraitType, typename N, typename H, typename W, typename C>
+    __aicore__ inline static auto Make(N n, H h, W w, C c)
+    {
+        auto shape = MakeShape(n, h, w, c);
+        auto stride = MakeStride(h * w * c, w * c, c, _1{});
+        using LayoutT = Layout<decltype(shape), decltype(stride), Std::tuple<NHWCLayoutPtn, TraitType>>;
+        return LayoutT(shape, stride);
+    }
+};
+
+struct MakeNC1HWC0FrameLayout {
+    template <typename TraitType, typename N, typename C1, typename H, typename W, typename C0>
+    __aicore__ inline static auto Make(N n, C1 c1, H h, W w, C0 c0)
+    {
+        auto shape = MakeShape(n, c1, h, w, c0);
+        auto stride = MakeStride(c1 * h * w * c0, h * w * c0, w * c0, c0, _1{});
+        using LayoutT = Layout<decltype(shape), decltype(stride), Std::tuple<NC1HWC0LayoutPtn, TraitType>>;
+        return LayoutT(shape, stride);
+    }
+};
+
 } // namespace Te
 } // namespace AscendC
 

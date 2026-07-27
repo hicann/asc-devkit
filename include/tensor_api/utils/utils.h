@@ -79,6 +79,24 @@ struct FixpipeParams {
     bool subBlockId = false;
 };
 
+template <typename T>
+struct Img2ColParams {
+    uint16_t mExtension = 0;
+    uint16_t kExtension = 0;
+    uint8_t padList[4] = {0, 0, 0, 0};
+    uint8_t strideW = 1;
+    uint8_t strideH = 1;
+    uint8_t filterW = 1;
+    uint8_t filterH = 1;
+    uint8_t dilationFilterW = 1;
+    uint8_t dilationFilterH = 1;
+    bool filterSizeW = false;
+    bool filterSizeH = false;
+    bool transpose = false;
+    bool fMatrixCtrl = false;
+    T padValue = 0;
+};
+
 } // namespace Te
 } // namespace AscendC
 
