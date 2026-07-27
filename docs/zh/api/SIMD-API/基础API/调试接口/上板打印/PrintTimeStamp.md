@@ -81,5 +81,5 @@ AscendC::PrintTimeStamp(65577);
 
 ```plain
 // 一些框架内部的打点信息
-descId is 65577, rsv is 0, timeStamp is 13806084506158, pcPtr is 20619064414544.
+descId is 65577, rsv is 0, timeStamp is 13806084506158, pcPtr is 20619064414544, entry is 13806084502126.
 ```
