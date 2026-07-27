@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline half __half2half_rna(const half x)
 ```
 
@@ -60,7 +60,7 @@ inline half __half2half_rna(const half x)
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -68,7 +68,7 @@ inline half __half2half_rna(const half x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void kernel_half2half_rna(half* dst, half* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -78,7 +78,7 @@ inline half __half2half_rna(const half x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel_half2half_rna(__gm__ half* dst, __gm__ half* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

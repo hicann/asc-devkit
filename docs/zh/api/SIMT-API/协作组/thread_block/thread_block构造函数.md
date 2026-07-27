@@ -28,12 +28,12 @@
 
 ## 函数原型
 
-```c++
+```cpp
 // 默认场景使用此接口创建thread_block
 thread_block this_thread_block()
 ```
 
-```c++
+```cpp
 // 后续需要创建跨warp的thread_block_tile（size > 32）时使用此接口创建thread_block
 template <unsigned int MaxBlockSize>
 thread_block this_thread_block(block_tile_memory<MaxBlockSize>& scratch)
@@ -53,7 +53,7 @@ thread_block this_thread_block(block_tile_memory<MaxBlockSize>& scratch)
 
 `block_tile_memory`用于为跨Warp的`thread_block_tile`提供组内同步和跨Warp通信所需的临时存储。结构体大小可通过`sizeof()`接口获取。
 
-```c++
+```cpp
 template <unsigned int MaxBlockSize = 1024>
 struct block_tile_memory
 ```

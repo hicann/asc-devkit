@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```c++
+```cpp
 static void sync()
 ```
 
@@ -48,7 +48,7 @@ static void sync()
 
 - SIMT编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -61,7 +61,7 @@ static void sync()
 
 - SIMD与SIMT混合编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

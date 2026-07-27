@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 half __hmin_nan(const half x, const half y)
 ```
 
@@ -66,7 +66,7 @@ half __hmin_nan(const half x, const half y)
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -74,7 +74,7 @@ half __hmin_nan(const half x, const half y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelHmin_nan(half* dst, half* x, half* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -84,7 +84,7 @@ half __hmin_nan(const half x, const half y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelHmin_nan(__gm__ half* dst, __gm__ half* x, __gm__ half* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

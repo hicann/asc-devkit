@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline half hexp(half x)
 ```
 
@@ -61,7 +61,7 @@ e的x次方。本接口受全局饱和寄存器的影响，特殊值如下：
 
 使用half类型接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -69,7 +69,7 @@ e的x次方。本接口受全局饱和寄存器的影响，特殊值如下：
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelExp(half* dst, half* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -79,7 +79,7 @@ e的x次方。本接口受全局饱和寄存器的影响，特殊值如下：
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelExp(__gm__ half* dst, __gm__ half* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

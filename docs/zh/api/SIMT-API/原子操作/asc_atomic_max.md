@@ -28,39 +28,39 @@
 
 ## 函数原型
 
-```
+```cpp
 inline int32_t asc_atomic_max(int32_t *address, int32_t val)
 ```
 
-```
+```cpp
 inline uint32_t asc_atomic_max(uint32_t *address, uint32_t val)
 ```
 
-```
+```cpp
 inline float asc_atomic_max(float *address, float val)
 ```
 
-```
+```cpp
 inline int64_t asc_atomic_max(int64_t *address, int64_t val)
 ```
 
-```
+```cpp
 inline uint64_t asc_atomic_max(uint64_t *address, uint64_t val)
 ```
 
-```
+```cpp
 inline half asc_atomic_max(half *address, half val)
 ```
 
-```
+```cpp
 inline bfloat16_t asc_atomic_max(bfloat16_t *address, bfloat16_t val)
 ```
 
-```
+```cpp
 inline half2 asc_atomic_max(half2 *address, half2 val)
 ```
 
-```
+```cpp
 inline bfloat16x2_t asc_atomic_max(bfloat16x2_t *address, bfloat16x2_t val)
 ```
 
@@ -96,15 +96,15 @@ Unified Buffer或Global Memory上的初始数据。
 
 使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_atomic\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_atomic_functions.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 

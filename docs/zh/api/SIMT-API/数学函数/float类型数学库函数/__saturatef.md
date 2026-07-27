@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 float __saturatef(float x)
 ```
 
@@ -57,7 +57,7 @@ float __saturatef(float x)
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -65,7 +65,7 @@ float __saturatef(float x)
 
 - SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(256) void compute_saturate_intrinsic(float *result, const float *x, uint32_t count)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -78,7 +78,7 @@ float __saturatef(float x)
 
 - SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(256) inline void compute_saturate_intrinsic_vf(__gm__ float *result, __gm__ const float *x, uint32_t count)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;

@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline uint32_t asc_activemask()
 ```
 
@@ -50,7 +50,7 @@ inline uint32_t asc_activemask()
 
 使用该接口需要包含"simt\_api/device\_warp\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_warp_functions.h"
 ```
 
@@ -58,7 +58,7 @@ inline uint32_t asc_activemask()
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelActiveMask(uint32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -69,7 +69,7 @@ inline uint32_t asc_activemask()
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelActiveMask(__gm__ uint32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

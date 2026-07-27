@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```c++
+```cpp
 coalesced_group coalesced_threads()
 ```
 
@@ -48,7 +48,7 @@ coalesced_group coalesced_threads()
 
 - SIMT编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -62,7 +62,7 @@ coalesced_group coalesced_threads()
 
 - SIMD与SIMT混合编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

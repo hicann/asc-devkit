@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline bfloat16_t __ull2bfloat16_ru(const unsigned long long int x)
 ```
 
@@ -60,7 +60,7 @@ inline bfloat16_t __ull2bfloat16_ru(const unsigned long long int x)
 
 使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -68,7 +68,7 @@ inline bfloat16_t __ull2bfloat16_ru(const unsigned long long int x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void kernel__ull2bfloat16_ru(bfloat16_t* dst, uint64_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -78,7 +78,7 @@ inline bfloat16_t __ull2bfloat16_ru(const unsigned long long int x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel__ull2bfloat16_ru(__gm__ bfloat16_t* dst, __gm__ uint64_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

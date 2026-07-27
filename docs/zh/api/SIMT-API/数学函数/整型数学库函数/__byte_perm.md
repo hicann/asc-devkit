@@ -26,7 +26,7 @@
 
 由输入的两个4字节的uint32\_t类型数据组成一个8个字节的64比特位的整数，通过选择器s指定选取其中的4个字节，将这4个字节从低位到高位拼成一个uint32\_t类型的整数。具体实现逻辑如下：
 
-```
+```cpp
 // 以下为C++表示的BytePerm(x, y, s)计算逻辑
 uint64_t tmp64 = ((uint64_t)y << 32) | x; // x,y拼接成uint64整数
 
@@ -46,7 +46,7 @@ uint32_t result = byte0 | (byte1 << 8) | (byte2 << 16) | (byte3 << 24);
 
 ## 函数原型
 
-```
+```cpp
 unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
 ```
 
@@ -75,7 +75,7 @@ unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -83,7 +83,7 @@ unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelByte_perm(unsigned int* dst, unsigned int* x, unsigned int* y, unsigned int* s)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -93,7 +93,7 @@ unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelByte_perm(__gm__ unsigned int* dst, __gm__ unsigned int* x, __gm__ unsigned int* y, __gm__ unsigned int* s)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

@@ -28,43 +28,43 @@
 
 ## 函数原型
 
-```
+```cpp
 long long max(long long x, long long y)
 ```
 
-```
+```cpp
 long max(long x, long y)
 ```
 
-```
+```cpp
 int max(int x, int y)
 ```
 
-```
+```cpp
 short max(short x, short y)
 ```
 
-```
+```cpp
 char max(char x, char y)
 ```
 
-```
+```cpp
 unsigned long long max(unsigned long long x, unsigned long long y)
 ```
 
-```
+```cpp
 unsigned long max(unsigned long x, unsigned long y)
 ```
 
-```
+```cpp
 unsigned int max(unsigned int x, unsigned int y)
 ```
 
-```
+```cpp
 unsigned short max(unsigned short x, unsigned short y)
 ```
 
-```
+```cpp
 unsigned char max(unsigned char x, unsigned char y)
 ```
 
@@ -89,7 +89,7 @@ unsigned char max(unsigned char x, unsigned char y)
 
 使用该接口需要包含"simt\_api/math\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/math_functions.h"
 ```
 
@@ -97,7 +97,7 @@ unsigned char max(unsigned char x, unsigned char y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelMax(long long* dst, long long* x, long long* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -107,7 +107,7 @@ unsigned char max(unsigned char x, unsigned char y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelMax(__gm__ long long* dst, __gm__ long long* x, __gm__ long long* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

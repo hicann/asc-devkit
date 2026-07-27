@@ -34,14 +34,14 @@
 
 ## 函数原型
 
-```
+```cpp
 __aicore__ inline uint64_t clock(void)
 ```
 
 <!-- npu="950" id9 -->
 以下接口为SIMT中所使用的clock接口，仅支持Ascend 950PR/Ascend 950DT。
 
-```
+```cpp
 inline uint64_t clock(void)
 ```
 <!-- end id9 -->
@@ -73,7 +73,7 @@ inline uint64_t clock(void)
 
 使用该接口需要包含"utils/debug/asc\_time.h"头文件。
 
-```
+```cpp
 #include "utils/debug/asc_time.h"
 ```
 
@@ -81,7 +81,7 @@ inline uint64_t clock(void)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void SimtKernel(uint64_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -91,7 +91,7 @@ inline uint64_t clock(void)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void SimtKernel(__gm__ uint64_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -101,7 +101,7 @@ inline uint64_t clock(void)
 
 -   SIMD编程场景：
 
-    ```
+    ```cpp
     __global__ __aicore__ void AicoreKernel(__gm__ uint64_t* dst)
     {
         int idx = AscendC::GetBlockIdx();

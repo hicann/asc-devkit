@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline bfloat16x2_t __float2bfloat162_rn(const float x)
 ```
 
@@ -62,7 +62,7 @@ inline bfloat16x2_t __float2bfloat162_rn(const float x)
 
 使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -70,7 +70,7 @@ inline bfloat16x2_t __float2bfloat162_rn(const float x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __aicore__ void simt_float2bfloat162_rn(float* input, bfloat16x2_t* output, uint32_t input_total_length)
     {
@@ -88,7 +88,7 @@ inline bfloat16x2_t __float2bfloat162_rn(const float x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_float2bfloat162_rn(__gm__ float* input, __gm__ bfloat16x2_t* output, uint32_t input_total_length)
     {

@@ -46,7 +46,7 @@ asc\_syncthreads接口的执行流程示意图如下：
 
 ## 函数原型
 
-```
+```cpp
 inline void asc_syncthreads()
 ```
 
@@ -69,7 +69,7 @@ inline void asc_syncthreads()
 
 使用该接口需要包含"simt\_api/device\_sync\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_sync_functions.h"
 ```
 
@@ -79,7 +79,7 @@ inline void asc_syncthreads()
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelSyncThreads(float* dst, int count)
     {
          int idx = threadIdx.x;
@@ -106,7 +106,7 @@ inline void asc_syncthreads()
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelSyncThreads(__gm__ float* dst, int count)
     {
          int idx = threadIdx.x;

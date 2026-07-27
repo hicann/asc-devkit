@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline float tanpif(float x)
 ```
 
@@ -60,7 +60,7 @@ inline float tanpif(float x)
 
 使用该接口需要包含"simt\_api/math\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/math_functions.h"
 ```
 
@@ -68,7 +68,7 @@ inline float tanpif(float x)
 
 - SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(256) void compute_tanpif(float *result, const float *x, uint32_t count)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -81,7 +81,7 @@ inline float tanpif(float x)
 
 - SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(256) inline void compute_tanpif_vf(__gm__ float *result, __gm__ const float *x, uint32_t count)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;

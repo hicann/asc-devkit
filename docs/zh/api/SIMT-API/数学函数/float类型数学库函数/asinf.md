@@ -32,7 +32,7 @@ arcsin\(x\)为反正弦函数的计算。
 
 ## 函数原型
 
-```
+```cpp
 inline float asinf(float x)
 ```
 
@@ -62,7 +62,7 @@ inline float asinf(float x)
 
 使用该接口需要包含"simt\_api/math\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/math_functions.h"
 ```
 
@@ -70,7 +70,7 @@ inline float asinf(float x)
 
 - SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(256) void compute_asinf(float *result, const float *x, uint32_t count)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -83,7 +83,7 @@ inline float asinf(float x)
 
 - SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(256) inline void compute_asinf_vf(__gm__ float *result, __gm__ const float *x, uint32_t count)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;

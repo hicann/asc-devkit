@@ -28,151 +28,151 @@
 
 ## 函数原型
 
-```
+```cpp
 inline void asc_stcg(long int* address, long int val)
 ```
 
-```
+```cpp
 inline void asc_stcg(unsigned long int* address, unsigned long int val)
 ```
 
-```
+```cpp
 inline void asc_stcg(long long int* address, long long int val)
 ```
 
-```
+```cpp
 inline void asc_stcg(unsigned long long int* address, unsigned long long int val)
 ```
 
-```
+```cpp
 inline void asc_stcg(long2* address, long2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(ulong2* address, ulong2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(long4* address, long4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(ulong4* address, ulong4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(longlong2* address, longlong2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(ulonglong2* address, ulonglong2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(longlong4* address, longlong4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(ulonglong4* address, ulonglong4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(signed char* address, signed char val)
 ```
 
-```
+```cpp
 inline void asc_stcg(unsigned char* address, unsigned char val)
 ```
 
-```
+```cpp
 inline void asc_stcg(char2* address, char2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(uchar2* address, uchar2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(char4* address, char4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(uchar4* address, uchar4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(short* address, short val)
 ```
 
-```
+```cpp
 inline void asc_stcg(unsigned short* address, unsigned short val)
 ```
 
-```
+```cpp
 inline void asc_stcg(short2* address, short2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(ushort2* address, ushort2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(short4* address, short4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(ushort4* address, ushort4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(int* address, int val)
 ```
 
-```
+```cpp
 inline void asc_stcg(unsigned int* address, unsigned int val)
 ```
 
-```
+```cpp
 inline void asc_stcg(int2* address, int2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(uint2* address, uint2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(int4* address, int4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(uint4* address, uint4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(float* address, float val)
 ```
 
-```
+```cpp
 inline void asc_stcg(float2* address, float2 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(float4* address, float4 val)
 ```
 
-```
+```cpp
 inline void asc_stcg(bfloat16_t* address, bfloat16_t val)
 ```
 
-```
+```cpp
 inline void asc_stcg(bfloat16x2_t* address, bfloat16x2_t val)
 ```
 
-```
+```cpp
 inline void asc_stcg(half* address, half val)
 ```
 
-```
+```cpp
 inline void asc_stcg(half2* address, half2 val)
 ```
 
@@ -197,15 +197,15 @@ inline void asc_stcg(half2* address, half2 val)
 
 使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -213,7 +213,7 @@ inline void asc_stcg(half2* address, half2 val)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void kernel_asc_stcg(float* dst, float* val)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -225,7 +225,7 @@ inline void asc_stcg(half2* address, half2 val)
 
     SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间。
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_stcg(__gm__ float* dst, __gm__ float* val)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

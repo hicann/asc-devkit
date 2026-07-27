@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline bfloat16_t __ushort_as_bfloat16(const unsigned short int x)
 ```
 
@@ -64,7 +64,7 @@ unsigned short int的数据按位重新解释为bfloat16的值。特殊值如下
 
 使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -72,7 +72,7 @@ unsigned short int的数据按位重新解释为bfloat16的值。特殊值如下
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void kernel__ushort_as_bfloat16(bfloat16_t* dst, unsigned short int* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -82,7 +82,7 @@ unsigned short int的数据按位重新解释为bfloat16的值。特殊值如下
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel__ushort_as_bfloat16(__gm__ bfloat16_t* dst, __gm__ unsigned short int* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

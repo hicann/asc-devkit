@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 unsigned int __hnex2_mask(half2 x, half2 y)
 ```
 
@@ -76,7 +76,7 @@ unsigned int __hnex2_mask(half2 x, half2 y)
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -84,7 +84,7 @@ unsigned int __hnex2_mask(half2 x, half2 y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __global__ __launch_bounds__(1024) void simt_hnex2_mask(half* x, half* y, unsigned int* dst, uint32_t input_total_length)
     {
@@ -101,7 +101,7 @@ unsigned int __hnex2_mask(half2 x, half2 y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_hnex2_mask(__gm__ half2* x, __gm__ half2* y, __gm__ unsigned int* dst, uint32_t input_total_length)
     {

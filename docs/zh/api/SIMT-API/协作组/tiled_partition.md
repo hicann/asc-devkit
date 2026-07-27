@@ -28,20 +28,20 @@
 
 ## 函数原型
 
-```c++
+```cpp
 template <unsigned int Size, typename ParentT>
 thread_block_tile<Size, ParentT> tiled_partition(const ParentT& g)
 ```
 
-```c++
+```cpp
 thread_group tiled_partition(const thread_group& parent, unsigned int tilesz)
 ```
 
-```c++
+```cpp
 thread_group tiled_partition(const thread_block& parent, unsigned int tilesz)
 ```
 
-```c++
+```cpp
 coalesced_group tiled_partition(const coalesced_group& parent, unsigned int tilesz)
 ```
 
@@ -76,7 +76,7 @@ coalesced_group tiled_partition(const coalesced_group& parent, unsigned int tile
 
 - SIMT编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -95,7 +95,7 @@ coalesced_group tiled_partition(const coalesced_group& parent, unsigned int tile
 
 - SIMD与SIMT混合编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

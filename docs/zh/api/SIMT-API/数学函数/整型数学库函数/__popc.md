@@ -28,15 +28,15 @@
 
 ## 函数原型
 
-```
+```cpp
 int __popc(unsigned int x)
 ```
 
-```
+```cpp
 int __popc(unsigned long long x)
 ```
 
-```
+```cpp
 int __popc(unsigned long x)
 ```
 
@@ -60,7 +60,7 @@ int __popc(unsigned long x)
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -68,7 +68,7 @@ int __popc(unsigned long x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelPopc(int* dst, unsigned int* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -76,7 +76,7 @@ int __popc(unsigned long x)
     }
     ```
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelPopc(int* dst, unsigned long long* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -86,7 +86,7 @@ int __popc(unsigned long x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelPopc(__gm__ int* dst, __gm__ unsigned int* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -94,7 +94,7 @@ int __popc(unsigned long x)
     }
     ```
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelPopc(__gm__ int* dst, __gm__ unsigned long long* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

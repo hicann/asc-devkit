@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline float __bfloat162float(const bfloat16_t x)
 ```
 
@@ -60,7 +60,7 @@ inline float __bfloat162float(const bfloat16_t x)
 
 使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -68,7 +68,7 @@ inline float __bfloat162float(const bfloat16_t x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void kernel__bfloat162float(float* dst, bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -78,7 +78,7 @@ inline float __bfloat162float(const bfloat16_t x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel__bfloat162float(__gm__ float* dst, __gm__ bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

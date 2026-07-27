@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline bfloat16_t hexp(bfloat16_t x)
 ```
 
@@ -63,7 +63,7 @@ e的x次方。本接口受全局饱和模式影响，特殊值如下：
 
 使用bfloat16\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -71,7 +71,7 @@ e的x次方。本接口受全局饱和模式影响，特殊值如下：
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelExp(bfloat16_t* dst, bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -81,7 +81,7 @@ e的x次方。本接口受全局饱和模式影响，特殊值如下：
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelExp(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

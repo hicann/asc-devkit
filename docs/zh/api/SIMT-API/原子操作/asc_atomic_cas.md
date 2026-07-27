@@ -28,31 +28,31 @@
 
 ## 函数原型
 
-```
+```cpp
 inline float asc_atomic_cas(float *address, float compare, float val)
 ```
 
-```
+```cpp
 inline int32_t asc_atomic_cas(int32_t *address, int32_t compare, int32_t val)
 ```
 
-```
+```cpp
 inline uint32_t asc_atomic_cas(uint32_t *address, uint32_t compare, uint32_t val)
 ```
 
-```
+```cpp
 inline int64_t asc_atomic_cas(int64_t *address, int64_t compare, int64_t val)
 ```
 
-```
+```cpp
 inline uint64_t asc_atomic_cas(uint64_t *address, uint64_t compare, uint64_t val)
 ```
 
-```
+```cpp
 inline half2 asc_atomic_cas(half2 *address, half2 compare, half2 val)
 ```
 
-```
+```cpp
 inline bfloat16x2_t asc_atomic_cas(bfloat16x2_t *address, bfloat16x2_t compare, bfloat16x2_t val)
 ```
 
@@ -87,15 +87,15 @@ Unified Buffer或Global Memory上的初始数据。
 
 使用除half2、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_atomic\_functions.h"头文件，使用half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_atomic_functions.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -154,7 +154,7 @@ Unified Buffer或Global Memory上的初始数据。
 
 输出结果示例如下：
 
-```cpp
+```
 worker_ids: 101, 102, 103
 owner before: 0
 owner after: 101/102/103中的一个 // 表明只有一个线程抢占成功

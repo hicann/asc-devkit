@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline long long int llmax(const long long int x, const long long int y)
 ```
 
@@ -55,7 +55,7 @@ inline long long int llmax(const long long int x, const long long int y)
 
 使用该接口需要包含"simt\_api/math\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/math_functions.h"
 ```
 
@@ -63,7 +63,7 @@ inline long long int llmax(const long long int x, const long long int y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelLlmax(long long int* dst, long long int* x, long long int* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -73,7 +73,7 @@ inline long long int llmax(const long long int x, const long long int y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelLlmax(__gm__ long long int* dst, __gm__ long long int* x, __gm__ long long int* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

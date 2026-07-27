@@ -46,39 +46,39 @@ Warp Shfl类接口主要实现Warp级数据交换，能够实现直接读取某�
 
 ## 函数原型
 
-```
+```cpp
 inline int32_t asc_shfl(int32_t var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline uint32_t asc_shfl(uint32_t var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline float asc_shfl(float var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline int64_t asc_shfl(int64_t var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline uint64_t asc_shfl(uint64_t var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline half asc_shfl(half var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline half2 asc_shfl(half2 var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline bfloat16_t asc_shfl(bfloat16_t var, int32_t src_lane, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline bfloat16x2_t asc_shfl(bfloat16x2_t var, int32_t src_lane, int32_t width = warpSize)
 ```
 
@@ -105,15 +105,15 @@ Warp内指定线程的var值。
 
 使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_warp\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_warp_functions.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -123,7 +123,7 @@ Warp内指定线程的var值。
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelShfl(int32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -136,7 +136,7 @@ Warp内指定线程的var值。
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelShfl(__gm__ int32_t* dst)
     {
         // asc_vf_call参数：dim3{1024, 1, 1}

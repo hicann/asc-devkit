@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline int __float2int_rz(const float x)
 ```
 
@@ -61,7 +61,7 @@ inline int __float2int_rz(const float x)
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -69,7 +69,7 @@ inline int __float2int_rz(const float x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void kernel__float2int_rz(int32_t* dst, float* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -79,7 +79,7 @@ inline int __float2int_rz(const float x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel__float2int_rz(__gm__ int32_t* dst, __gm__ float* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

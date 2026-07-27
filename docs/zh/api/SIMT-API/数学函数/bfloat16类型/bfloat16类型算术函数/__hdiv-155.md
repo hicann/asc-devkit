@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y)
 ```
 
@@ -71,7 +71,7 @@ bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y)
 
 使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -79,7 +79,7 @@ bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelHdiv(bfloat16_t* dst, bfloat16_t* x, bfloat16_t* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -89,7 +89,7 @@ bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelHdiv(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

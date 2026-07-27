@@ -7,7 +7,7 @@
 
 ## Public成员函数
 
-```c++
+```cpp
 void sync() const;
 unsigned long long num_threads() const;
 unsigned long long thread_rank() const;

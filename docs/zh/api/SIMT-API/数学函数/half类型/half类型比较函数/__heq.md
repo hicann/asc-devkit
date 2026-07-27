@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 bool __heq(half x, half y)
 ```
 
@@ -93,7 +93,7 @@ bool __heq(half x, half y)
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -101,7 +101,7 @@ bool __heq(half x, half y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelHeq(bool* dst, half* x, half* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -111,7 +111,7 @@ bool __heq(half x, half y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelHeq(__gm__ bool* dst, __gm__ half* x, __gm__ half* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

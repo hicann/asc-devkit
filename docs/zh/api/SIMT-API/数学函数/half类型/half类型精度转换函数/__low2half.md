@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline half __low2half(const half2 x)
 ```
 
@@ -63,7 +63,7 @@ inline half __low2half(const half2 x)
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -71,7 +71,7 @@ inline half __low2half(const half2 x)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __aicore__ void simt_low2half(half2* input, half* output, uint32_t input_total_length)
     {
@@ -90,7 +90,7 @@ inline half __low2half(const half2 x)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_low2half(__gm__ half2* input, __gm__ half* output, uint32_t input_total_length)
     {

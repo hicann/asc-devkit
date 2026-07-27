@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```
+```cpp
 long long __mul64hi(long long x, long long y)
 ```
 
@@ -55,7 +55,7 @@ long long __mul64hi(long long x, long long y)
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -63,7 +63,7 @@ long long __mul64hi(long long x, long long y)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelMul64hi(long long* dst, long long* x, long long* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -73,7 +73,7 @@ long long __mul64hi(long long x, long long y)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelMul64hi(__gm__ long long* dst, __gm__ long long* x,  __gm__ long long* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

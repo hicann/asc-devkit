@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 size_t __cvta_generic_to_ubuf(const void* ptr)
 ```
 
@@ -59,7 +59,7 @@ SIMD与SIMT混合编程场景不支持使用该接口。
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -67,7 +67,7 @@ SIMD与SIMT混合编程场景不支持使用该接口。
 
 SIMT编程场景：
 
-```
+```cpp
 __global__ __launch_bounds__(1024) void kernel__cvta_generic_to_ubuf(uint32_t* dst, uint32_t* src)
 {
     __ubuf__ uint32_t ptr[1024];

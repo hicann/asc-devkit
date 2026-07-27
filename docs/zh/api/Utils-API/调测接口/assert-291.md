@@ -34,7 +34,7 @@
 
 在算子Kernel侧代码的适当位置使用assert进行断言检查，并格式化输出一些调试信息。示例如下：
 
-```
+```cpp
 int assertFlag = 10;
 
 assert(assertFlag != 10);
@@ -50,7 +50,7 @@ assert(assertFlag != 10);
 
 ## 函数原型
 
-```
+```cpp
 assert(expr)
 ```
 
@@ -85,13 +85,13 @@ assert(expr)
 
 使用该接口需要包含"utils/debug/asc\_assert.h"头文件。
 
-```
+```cpp
 #include "utils/debug/asc_assert.h"
 ```
 
 ## SIMD调用示例
 
-```
+```cpp
 // SIMD
 __global__ __cube__ void simp_test_equal(int a)
 {
@@ -110,7 +110,7 @@ __global__ __cube__ void simp_test_equal(int a)
 
 -   SIMT编程场景：
 
-    ```c++
+    ```cpp
     __global__ __launch_bounds__(1024) inline void simt_kernel(float* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -126,7 +126,7 @@ __global__ __cube__ void simp_test_equal(int a)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```c++
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void simt_kernel(__gm__ float* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

@@ -4,7 +4,7 @@
 
 ## Public成员函数
 
-```c++
+```cpp
 static void sync();
 static unsigned int thread_rank();
 static dim3 group_index();

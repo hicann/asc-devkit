@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```c++
+```cpp
 template <typename T>
 T shfl_xor(T var, unsigned int lane_mask) const
 ```
@@ -60,7 +60,7 @@ T shfl_xor(T var, unsigned int lane_mask) const
 
 - SIMT编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -74,7 +74,7 @@ T shfl_xor(T var, unsigned int lane_mask) const
 
 - SIMD与SIMT混合编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

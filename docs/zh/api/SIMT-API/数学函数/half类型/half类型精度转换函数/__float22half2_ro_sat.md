@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline half2 __float22half2_ro_sat(const float2 x)
 ```
 
@@ -64,7 +64,7 @@ SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -72,7 +72,7 @@ SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_float22half2_ro_sat(__gm__ float2* input, __gm__ half2* output, uint32_t input_total_length)
     {

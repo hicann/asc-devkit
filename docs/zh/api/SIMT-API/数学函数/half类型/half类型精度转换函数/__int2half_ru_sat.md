@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 inline half __int2half_ru_sat(const int x)
 ```
 
@@ -62,7 +62,7 @@ SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生
 
 使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -70,7 +70,7 @@ SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void kernel__int2half_ru_sat(__gm__ half* dst, __gm__ int32_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

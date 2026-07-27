@@ -36,39 +36,39 @@
 
 ## 函数原型
 
-```
+```cpp
 inline int32_t asc_shfl_down(int32_t var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline uint32_t asc_shfl_down(uint32_t var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline float asc_shfl_down(float var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline int64_t asc_shfl_down(int64_t var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline uint64_t asc_shfl_down(uint64_t var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline half asc_shfl_down(half var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline half2 asc_shfl_down(half2 var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline bfloat16_t asc_shfl_down(bfloat16_t var, uint32_t delta, int32_t width = warpSize)
 ```
 
-```
+```cpp
 inline bfloat16x2_t asc_shfl_down(bfloat16x2_t var, uint32_t delta, int32_t width = warpSize)
 ```
 
@@ -96,15 +96,15 @@ Warp内指定线程的var值。
 
 使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_warp\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_warp_functions.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_bf16.h"
 ```
 
@@ -118,7 +118,7 @@ Warp内指定线程的var值。
 
     SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelShflDown(int32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -132,7 +132,7 @@ Warp内指定线程的var值。
 
     SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelShflDown(__gm__ int32_t* dst)
     {
         // asc_vf_call参数：dim3{1024, 1, 1}
@@ -149,7 +149,7 @@ Warp内指定线程的var值。
 
     SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelShflDownReduceSum(int32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -168,7 +168,7 @@ Warp内指定线程的var值。
 
     SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelShflDownReduceSum(__gm__ int32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

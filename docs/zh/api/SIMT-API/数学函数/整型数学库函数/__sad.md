@@ -28,7 +28,7 @@
 
 ## 函数原型
 
-```
+```cpp
 unsigned int __sad(int x, int y, unsigned int z)
 ```
 
@@ -54,7 +54,7 @@ unsigned int __sad(int x, int y, unsigned int z)
 
 使用该接口需要包含"simt\_api/device\_functions.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_functions.h"
 ```
 
@@ -62,7 +62,7 @@ unsigned int __sad(int x, int y, unsigned int z)
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelSad(unsigned int* dst, int* x, int* y, unsigned int* z)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -72,7 +72,7 @@ unsigned int __sad(int x, int y, unsigned int z)
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelSad(__gm__ unsigned int* dst, __gm__ int* x, __gm__ int* y, __gm__ unsigned int* z)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

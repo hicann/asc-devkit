@@ -28,11 +28,11 @@
 
 ## 函数原型
 
-```c++
+```cpp
 coalesced_group binary_partition(const coalesced_group& g, bool pred)
 ```
 
-```c++
+```cpp
 template <unsigned int Size, typename ParentT>
 coalesced_group binary_partition(const thread_block_tile<Size, ParentT>& g, bool pred)
 ```
@@ -58,7 +58,7 @@ coalesced_group binary_partition(const thread_block_tile<Size, ParentT>& g, bool
 
 - SIMT编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __global__ void simt_kernel(int *inputArr, ...)
     {
@@ -75,7 +75,7 @@ coalesced_group binary_partition(const thread_block_tile<Size, ParentT>& g, bool
 
 - SIMD与SIMT混合编程场景：
 
-    ```c++
+    ```cpp
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(__gm__ int *inputArr, ...)
     {

@@ -28,19 +28,19 @@
 
 ## 函数原型
 
-```
+```cpp
 inline int32_t asc_reduce_max(int32_t val)
 ```
 
-```
+```cpp
 inline uint32_t asc_reduce_max(uint32_t val)
 ```
 
-```
+```cpp
 inline float asc_reduce_max(float val)
 ```
 
-```
+```cpp
 inline half asc_reduce_max(half val)
 ```
 
@@ -64,11 +64,11 @@ Warp内所有活跃线程输入val的最大值。
 
 使用除half类型之外的接口需要包含"simt\_api/device\_warp\_functions.h"头文件，使用half类型接口需要包含"simt\_api/asc\_fp16.h"头文件。
 
-```
+```cpp
 #include "simt_api/device_warp_functions.h"
 ```
 
-```
+```cpp
 #include "simt_api/asc_fp16.h"
 ```
 
@@ -76,7 +76,7 @@ Warp内所有活跃线程输入val的最大值。
 
 -   SIMT编程场景：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(1024) void KernelReduceMax(int32_t* dst)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -88,7 +88,7 @@ Warp内所有活跃线程输入val的最大值。
 
 -   SIMD与SIMT混合编程场景：
 
-    ```
+    ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void KernelReduceMax(__gm__ int32_t* dst)
     {
         // asc_vf_call参数：dim3{1024, 1, 1}
