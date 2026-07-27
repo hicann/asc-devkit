@@ -19,12 +19,21 @@ endif()
 if(_ASC_MODULE_LOADED)
     return()
 endif()
+
+# support find_package(asc) from asc-devkit source code
+if(CUSTOM_ASC_CMAKE_PATH)
+    set(_ASC_CMAKE_PATH "${CUSTOM_ASC_CMAKE_PATH}")
+else()
+    set(_ASC_CMAKE_PATH "$ENV{ASCEND_HOME_PATH}/compiler/tikcpp/ascendc_kernel_cmake")
+endif()
+
 set(_ASC_MODULE_LOADED FALSE)
-include($ENV{ASCEND_HOME_PATH}/compiler/tikcpp/ascendc_kernel_cmake/fwk_modules/config.cmake)
-include($ENV{ASCEND_HOME_PATH}/compiler/tikcpp/ascendc_kernel_cmake/fwk_modules/func.cmake)
-include($ENV{ASCEND_HOME_PATH}/compiler/tikcpp/ascendc_kernel_cmake/fwk_modules/intf.cmake)
+include(${_ASC_CMAKE_PATH}/fwk_modules/config.cmake)
+include(${_ASC_CMAKE_PATH}/fwk_modules/func.cmake)
+include(${_ASC_CMAKE_PATH}/fwk_modules/intf.cmake)
 
 # plugin support ASC language
-list(APPEND CMAKE_MODULE_PATH "$ENV{ASCEND_HOME_PATH}/compiler/tikcpp/ascendc_kernel_cmake/asc_modules")
-include($ENV{ASCEND_HOME_PATH}/compiler/tikcpp/ascendc_kernel_cmake/asc_modules/FindASC.cmake)
+list(APPEND CMAKE_MODULE_PATH "${_ASC_CMAKE_PATH}/asc_modules")
+include(${_ASC_CMAKE_PATH}/asc_modules/FindASC.cmake)
 set(_ASC_MODULE_LOADED TRUE)
+unset(_ASC_CMAKE_PATH)
