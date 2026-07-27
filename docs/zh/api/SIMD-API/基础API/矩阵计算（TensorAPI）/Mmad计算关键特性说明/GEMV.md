@@ -48,7 +48,7 @@ M=1时开启GEMV模式，则矩阵乘法将M方向作为非对齐场景进行处
 | B | 4096×256 | half | NZ |
 | C | 1×256 | float | ND |
 
-通过[Copy](../Copy（GM到L1数据搬运）.md/../矩阵计算的搬入/Copy（GM到L1数据搬运）.md)接口将输入矩阵A从Global Memory搬运到L1 Buffer上并保持ND格式不变，然后在L1 Buffer上将A矩阵转换为NZ格式，再通过[Copy](../Copy（L1到L0A数据搬运）.md/../矩阵计算的搬入/Copy（L1到L0A数据搬运）.md)接口搬运到L0A Buffer，从而以GEMV模式执行矩阵乘。另外注意GEMV模式默认是关闭的，需要自定义[MmadTrait](../Mmad计算/Mmad.md)来开启。
+通过[Copy](../矩阵计算的搬入/Copy（GM到L1数据搬运）.md)接口将输入矩阵A从Global Memory搬运到L1 Buffer上并保持ND格式不变，然后在L1 Buffer上将A矩阵转换为NZ格式，再通过[Copy](../矩阵计算的搬入/Copy（L1到L0A数据搬运）.md)接口搬运到L0A Buffer，从而以GEMV模式执行矩阵乘。另外注意GEMV模式默认是关闭的，需要自定义[MmadTrait](../Mmad计算/Mmad.md)来开启。
 
 ```cpp
 #include "tensor_api/tensor.h"
