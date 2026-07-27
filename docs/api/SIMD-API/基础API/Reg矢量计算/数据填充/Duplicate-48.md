@@ -285,7 +285,6 @@
         AscendC::Reg::MaskReg mask;    
         for (uint16_t i = 0; i < repeatTimes; i++) {
             mask = AscendC::Reg::UpdateMask<T>(count);
-            AscendC::Reg::LoadAlign(srcReg, src0Addr + i * oneRepeatSize);
             AscendC::Reg::Duplicate(dstReg, scalarValue, mask);
             AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, dstReg, mask);
         }
@@ -303,7 +302,7 @@
         AscendC::Reg::MaskReg mask;
         for (uint16_t i = 0; i < repeatTimes; i++) {
             mask = AscendC::Reg::UpdateMask<T>(count);
-            AscendC::Reg::LoadAlign(srcReg, src0Addr + i * oneRepeatSize);
+            AscendC::Reg::LoadAlign(srcReg, srcAddr + i * oneRepeatSize);
             AscendC::Reg::Duplicate(dstReg, srcReg, mask);
             AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, dstReg, mask);
         }
