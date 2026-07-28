@@ -26,7 +26,7 @@ case_build() {
 
 case_run() {
     mkdir -p "$BUILD_DIR"
-    (cd "$BUILD_DIR" && SCENARIO_NUM=0 soc_version=$SOC_VERSION bash -lc ./demo)
+    (cd "$BUILD_DIR" && SCENARIO_NUM=0 soc_version=$SOC_VERSION bash -lc ./matrix_transpose)
 }
 
 case_verify() {
