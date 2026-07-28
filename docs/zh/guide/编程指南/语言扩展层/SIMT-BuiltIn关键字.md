@@ -30,13 +30,13 @@
 
 -   静态内存通过数组分配：
 
-    ```
+    ```cpp
     __ubuf__ half staticBuf[1024];
     ```
 
 -   动态内存通过以下方式申请使用：
 
-    ```
+    ```cpp
     extern __ubuf__ half dynamicBuf[]; 
     ```
 
@@ -65,7 +65,7 @@
 
     用于指定3个不同维度的大小，三维总数为x \* y \* z。开发者可以通过如下方式创建dim3结构。
 
-    ```
+    ```cpp
     dim3(x); // 创建一维结构，dimy和dimz为默认值1
     dim3(x, y); // 创建二维结构，dimz为默认值1
     dim3(x, y, z); // 创建三维结构
@@ -101,14 +101,14 @@
 
     -   对于二维线程块，其线程ID为二维结构，其计算公式为：
 
-        ```
+        ```cpp
         thread_id_x = blockIdx.x * blockDim.x + threadIdx.x;
         thread_id_y = blockIdx.y * blockDim.y + threadIdx.y;
         ```
 
     -   对于三维线程块，其线程ID为三维结构，其计算公式为：
 
-        ```
+        ```cpp
         thread_id_x = blockIdx.x * blockDim.x + threadIdx.x;
         thread_id_y = blockIdx.y * blockDim.y + threadIdx.y;
         thread_id_z = blockIdx.z * blockDim.z + threadIdx.z;
@@ -228,7 +228,7 @@ SIMT编程提供了一系列运算符，用于执行数学运算。以下是支�
 
 运算符使用示例如下所示：
 
-```
+```cpp
 // 加法运算
 res[idx] = x[idx] + y[idx]; 
 
@@ -258,7 +258,7 @@ res[idx] = x[idx] > y[idx] ? x[idx] : y[idx];
 
 在调用\_\_global\_\_限定符修饰的函数时必须指定执行配置。执行配置通过在函数名和带括号的参数列表之间插入如下形式的表达式来指定：
 
-```
+```cpp
 <<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>
 ```
 
@@ -271,7 +271,7 @@ res[idx] = x[idx] > y[idx] ? x[idx] : y[idx];
 
 以下示例展示了内核函数的声明与调用方式。
 
-```
+```cpp
 // 声明
 __global__ void add_custom(float* x, float* y, float* z, uint64_t total_length);
 // 调用
@@ -308,7 +308,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 
     配置SIMT函数最大线程数为512，每个Thread可用寄存器数为64，示例如下：
 
-    ```
+    ```cpp
     __global__ __launch_bounds__(512) inline void add(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z)
     ```
     \_\_launch\_bounds\_\_\(N\)的参数N需要满足：
@@ -340,6 +340,6 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 
     配置SIMT函数单个线程最多可分配的寄存器数量为64，示例如下：
 
-    ```
+    ```cpp
     __global__ __maxnreg__(64) void add(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z)
     ```

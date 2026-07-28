@@ -23,7 +23,7 @@ SIMT编程方式下，bank冲突为更细粒度的subbank冲突，主要有以�
 
 【反例】矩阵转置使用UB做中转，转置读阶段产生较严重bank冲突。
 
-```
+```cpp
 constexpr int TILE_DIM = 32;
 
 __global__ __launch_bounds__(THREADS_PER_BLOCK) void transpose_ub_kernel(float* output, const float* input,
@@ -55,7 +55,7 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void transpose_ub_kernel(float* 
 
 【正例】为UB tile增加padding，打散列方向访问的bank分布。
 
-```
+```cpp
 constexpr int TILE_DIM = 32;
 
 constexpr int TILE_PAD = 2;

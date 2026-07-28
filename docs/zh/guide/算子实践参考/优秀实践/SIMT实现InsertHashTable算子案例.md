@@ -47,7 +47,7 @@ SIMT能够通过大量线程的并发执行实现高效处理大批数据，但�
 
     程序实现时，在Bucket结构体中添加一个标记位”flag”，用于标记当前桶的写入权限，线程通过原子指令[asc\_atomic\_cas](../../../api/SIMT-API/原子操作/asc_atomic_cas.md)修改flag来获取桶的写权限。
 
-    ```
+    ```cpp
     inline int32_t asc_atomic_cas(int32_t *address, int32_t compare, int32_t val)
     ```
 
@@ -61,7 +61,7 @@ SIMT能够通过大量线程的并发执行实现高效处理大批数据，但�
 
     弱内存模型允许硬件对内存访问指令进行重排序，以追求更高的性能。考虑以下代码片段，假设A和flag是共享的全局变量，初始值都为0。
 
-    ```
+    ```cpp
     // core 0
     A = 1;    // store A
     flag = 1; // store flag
@@ -75,7 +75,7 @@ SIMT能够通过大量线程的并发执行实现高效处理大批数据，但�
 
     程序实现时，在Bucket结构体中添加一个标记位“state”，用于标识key值的写入状态。写线程中，在写入key后将state标记位置为1，并在二者之间调用asc\_threadfence\(\)接口，确保当state被设置为1时，key的写入操作已经完成。读线程中，通过while循环轮询state值，直到state被设置为1，然后再读取key值，判断当前的key与桶中的key是否一致。
 
-    ```
+    ```cpp
     // 写线程
     bucket->key = key;
     asc_threadfence();
@@ -98,7 +98,7 @@ SIMT能够通过大量线程的并发执行实现高效处理大批数据，但�
 
 根据上述分析，桶结构体设计如下：
 
-```
+```cpp
 struct Bucket {
     int64_t key;           // 键
     uint32_t state;        // key值写入状态标记
@@ -109,7 +109,7 @@ struct Bucket {
 
 算子核心逻辑的伪代码如下所示。
 
-```
+```cpp
 uint32_t hash = murmur_hash_3(key);                                             // 采用MurmurHash3算法计算哈希值
 uint32_t index = hash & (capacity - 1);                                         // 通过hash得到初始位置索引
 Bucket* bucket = nullptr;

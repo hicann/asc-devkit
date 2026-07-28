@@ -94,7 +94,7 @@
 
     CMake配置文件示例：
 
-    ```
+    ```cmake
     cmake_minimum_required(VERSION 3.16)
     # find_package(ASC)是CMake中用于查找和配置Ascend C编译工具链的命令
     find_package(ASC REQUIRED)
@@ -114,7 +114,7 @@
 
     编译并执行：
 
-    ```
+    ```bash
     mkdir -p build && cd build;
     cmake ..;make -j;
     ./demo

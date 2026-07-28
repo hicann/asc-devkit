@@ -14,7 +14,7 @@ SIMT编程模式下提供以下访存函数：
 
 【反例】所有数据使用默认方式加载，输入、输出和sin表数据共同竞争DCache空间。
 
-```
+```cpp
 __global__ void sin_table_lookup_baseline(float* input, float* sin_table, float* output,
                                             uint32_t input_length, uint32_t table_length)
 {
@@ -43,7 +43,7 @@ __global__ void sin_table_lookup_baseline(float* input, float* sin_table, float*
 
 【正例】使用访存函数区分不同数据的缓存策略。
 
-```
+```cpp
 __global__ void sin_table_lookup_optimized(float* input, float* sin_table, float* output,
                                              uint32_t input_length, uint32_t table_length)
 {
