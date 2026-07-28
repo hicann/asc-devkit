@@ -30,6 +30,8 @@
 
 将bfloat16_t类型转化为float类型，无舍入模式。
 
+由于源操作数与目的操作数类型位宽比为1:2，读取数据时需要将一个VL大小的数据分为两部分，根据不同接口选择输入数据索引为奇数的位置或偶数的位置。
+
 ## 函数原型
 
 ```cpp
@@ -41,32 +43,36 @@ __simd_callee__ inline void asc_bfloat162float_v2(vector_float& dst, vector_bflo
 
 ## 参数说明
 
-| 参数名    | 输入/输出 | 描述                |
-| :------ | :----- | :----------------- |
-| dst    | 输出    | 目的操作数（矢量数据寄存器）。            |
-| src    | 输入    | 源操作数（矢量数据寄存器）。             |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+**表1** 参数说明
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+| 参数名 | 输入/输出 | 描述 |
+| :--- | :--- | :--- |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
 
 ## 调用示例
 
 ```cpp
-vector_bfloat16_t src;
-vector_float dst;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_bfloat162float(dst, src, mask);
+__simd_vf__ inline void bfloat162float_vf(__ubuf__ float* dst_addr, __ubuf__ bfloat16_t* src_addr, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_bfloat16_t src;
+    vector_float dst;
+    vector_bool mask = asc_create_mask_b16(PAT_ALL);
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        asc_loadalign(src, src_addr, one_repeat_size);
+        asc_bfloat162float(dst, src, mask);
+        asc_storealign(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

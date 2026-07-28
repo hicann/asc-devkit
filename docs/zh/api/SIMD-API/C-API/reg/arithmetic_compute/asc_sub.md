@@ -28,80 +28,90 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-根据mask对源操作数src0、src1进行按元素相减的操作，将结果写入目的操作数dst。
-源操作数为uint32_t或int32_t时，提供带借位数据的接口，src0、src1相减时如果产生借位，在carry中对应位置每4bit的最低位写0，否则写1。
+该接口根据mask，对源操作数src0、src1进行按元素求差操作，将结果写入目的操作数dst。
 
-计算公式如下：
+Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。减法运算在硬件底层通过补码加法实现，该接口可以在carry（掩码寄存器）中标记每次补码加法是否产生进位，若src0，~src1，33'b1，按位相加后最高位有进位，在carry中对应位置每4bit设置1，否则写0。
+
+计算结果不保留进位，计算公式如下：
 
 $$
 dst_i = src0_i - src1_i
 $$
 
-carry输出借位值示例说明：
+计算结果保留进位，计算公式如下：
 
-| 数据类型  | 是否借位 | 示例说明 |
-| :----- | :------- | :------- |
-| uint32_t数据类型 | 不产生借位 | src0_i = 5, src1_i = 2 <br> dst_i = src0_i - src1_i = 3 <br> carry中对应位置4bit的最低位写1：carry_i = 1 |
-| uint32_t数据类型 | 产生借位 | src0_i = 5, src1_i = 7 <br> dst_i = src0_i - src1_i = -2 <br> carry中对应位置4bit的最低位写0：carry_i = 0 |
-| int32_t数据类型 | 不产生借位 | src0_i = 5, src1_i = 2 <br> dst_i = src0_i - src1_i = 3 <br> carry中对应位置4bit的最低位写1：carry_i = 1 |
-| int32_t数据类型 | 产生借位 | src0_i = 5, src1_i = -7 <br> dst_i = src0_i - src1_i = 12 <br> carry中对应位置4bit的最低位写0：carry_i = 0 |
+$$
+\{carry_i, dst_i\} = \{1'b0, src0_i\} + \{1'b0, ~src1_i\} + 33'b1
+$$
+
+![](../../figures/asc_sub.png)
+
+输出carry适用场景请参考[asc_subc功能说明](asc_subc.md#功能说明)。
 
 ## 函数原型
 
-- 不带借位数据的接口
+- 不支持进位计算接口
 
     ```cpp
-    __simd_callee__ inline void asc_sub(vector_uint8_t& dst, vector_uint8_t src0, vector_uint8_t src1, vector_bool mask)
     __simd_callee__ inline void asc_sub(vector_int8_t& dst, vector_int8_t src0, vector_int8_t src1, vector_bool mask)
-    __simd_callee__ inline void asc_sub(vector_uint16_t& dst, vector_uint16_t src0, vector_uint16_t src1, vector_bool mask)
+    __simd_callee__ inline void asc_sub(vector_uint8_t& dst, vector_uint8_t src0, vector_uint8_t src1, vector_bool mask)
     __simd_callee__ inline void asc_sub(vector_int16_t& dst, vector_int16_t src0, vector_int16_t src1, vector_bool mask)
+    __simd_callee__ inline void asc_sub(vector_uint16_t& dst, vector_uint16_t src0, vector_uint16_t src1, vector_bool mask)
     __simd_callee__ inline void asc_sub(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask)
     __simd_callee__ inline void asc_sub(vector_bfloat16_t& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask)
-    __simd_callee__ inline void asc_sub(vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
     __simd_callee__ inline void asc_sub(vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool mask)
+    __simd_callee__ inline void asc_sub(vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
     __simd_callee__ inline void asc_sub(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask)
     ```
 
-- 带借位数据的接口
+- 支持进位计算接口
 
     ```cpp
     __simd_callee__ inline void asc_sub(vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
-    __simd_callee__ inline void asc_sub(vector_bool& carry, vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool mask)
     ```
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
-| carry | 输出 | 目的借位值（掩码寄存器）。 |
+| carry | 输出 | 目的操作数（掩码寄存器）。用来存储补码加法计算后的进位数据。 |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
-| src0 | 输入 | 源操作数0（矢量数据寄存器）。 |
-| src1 | 输入 | 源操作数1（矢量数据寄存器）。 |
+| src0 | 输入 | 源操作数（矢量数据寄存器）。 |
+| src1 | 输入 |源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+- mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
+
+- 支持进位计算接口
+  - 仅支持uint32_t类型。
+  - 需手动调用，接口内部不支持自动识别触发。
+  - 运算输出完整计算结果（包含进位位），不受[asc_set_ctrl](../../sys_var/asc_set_ctrl.md)影响，硬件不会对输出进行饱和或截断。
 
 ## 调用示例
 
 ```cpp
-vector_half dst;
-vector_half src0;
-vector_half src1;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src0, src0_addr); // src0_addr是外部输入的UB内存空间地址。
-asc_loadalign(src1, src1_addr); // src1_addr是外部输入的UB内存空间地址。
-// mask为源操作数掩码
-asc_sub(dst, src0, src1, mask);
+__simd_vf__ inline void sub_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_half src0;
+    vector_half src1;
+    vector_half dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src0, src0_addr, one_repeat_size);
+        asc_loadalign(src1, src1_addr, one_repeat_size);
+        asc_sub(dst, src0, src1, mask);
+        asc_storealign(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

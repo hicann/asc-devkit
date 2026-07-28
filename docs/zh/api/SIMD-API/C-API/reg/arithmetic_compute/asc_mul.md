@@ -28,10 +28,12 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-对源操作数src0和src1进行乘法运算，将结果写入目的操作数dst。计算公式如下：
+该接口根据mask，对源操作数src0、src1进行按元素进行乘法运算，将结果写入目的操作数dst。
+
+计算公式如下：
 
 $$
-dst_i = src0_i * src1_i
+dst_i = src0_i \times src1_i
 $$
 
 ## 函数原型
@@ -48,39 +50,40 @@ __simd_callee__ inline void asc_mul(vector_float& dst, vector_float src0, vector
 
 ## 参数说明
 
-| 参数名  | 输入/输出 | 描述 |
-| :----- | :------- | :------- |
+**表1** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| :--- | :--- | :--- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src0 | 输入 | 源操作数（矢量数据寄存器）。 |
-| src1 | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| src1 | 输入 |源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
 
 ## 调用示例
 
 ```cpp
-constexpr uint32_t total_length = 128;
-__ubuf__ half src0_addr[total_length];
-__ubuf__ half src1_addr[total_length];
-
-vector_half src0;
-vector_half src1;
-vector_half dst;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src0, src0_addr);
-asc_loadalign(src1, src1_addr);
-asc_mul(dst, src0, src1, mask);
+__simd_vf__ inline void mul_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_half src0;
+    vector_half src1;
+    vector_half dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src0, src0_addr, one_repeat_size);
+        asc_loadalign(src1, src1_addr, one_repeat_size);
+        asc_mul(dst, src0, src1, mask);
+        asc_storealign(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

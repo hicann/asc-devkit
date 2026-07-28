@@ -28,7 +28,9 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-按元素取自然指数，计算公式如下：
+该接口根据mask，对源操作数src进行按元素求自然指数操作，将结果写入目的操作数dst。
+
+计算公式如下：
 $$
 dst_i = e^{src_i}
 $$
@@ -42,32 +44,37 @@ __simd_callee__ inline void asc_exp(vector_float& dst, vector_float src, vector_
 
 ## 参数说明
 
-| 参数名       | 输入/输出 | 描述               |
-| --------- | ----- | ---------------- |
-| dst       | 输出    | 目的操作数（矢量数据寄存器）。            |
-| src | 输入    | 源操作数（矢量数据寄存器）。            |
-| mask     | 输入    | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。        |
+**表1** 参数说明
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+| 参数名 | 输入/输出 | 描述 |
+| :--- | :--- | :--- |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
 
 ## 调用示例
 
 ```cpp
-vector_half dst;
-vector_half src;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src, src_addr);  // src_addr是外部输入的UB内存空间地址
-asc_exp(dst, src, mask);
+__simd_vf__ inline void exp_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_half src;
+    vector_half dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src, src_addr, one_repeat_size);
+        asc_exp(dst, src, mask);
+        asc_storealign(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

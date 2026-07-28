@@ -172,16 +172,9 @@ __simd_callee__ inline void asc_sub(vector_float& dst, vector_float src0, vector
 __simd_callee__ inline void asc_sub(
     vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask);
 
-__simd_callee__ inline void asc_sub(
-    vector_bool& carry, vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool mask);
-
-// ==========asc_subc(uint32_t/int32_t)==========
+// ==========asc_subc(uint32_t)==========
 __simd_callee__ inline void asc_subc(
     vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool carry_src,
-    vector_bool mask);
-
-__simd_callee__ inline void asc_subc(
-    vector_bool& carry, vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool carry_src,
     vector_bool mask);
 
 // ==========asc_and(bool/uint8_t/int8_t/uint16_t/int16_t/half/bfloat16_t/uint32_t/int32_t/float)==========
@@ -830,18 +823,11 @@ __simd_callee__ inline void asc_add(
     vector_bfloat16_t& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask);
 
 __simd_callee__ inline void asc_add(
-    vector_bool& dst0, vector_int32_t& dst1, vector_int32_t src0, vector_int32_t src1, vector_bool mask);
+    vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask);
 
-__simd_callee__ inline void asc_add(
-    vector_bool& dst0, vector_uint32_t& dst1, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask);
-
-// // ==========asc_addc(uint32_t/int32_t)==========
+// // ==========asc_addc(uint32_t)==========
 __simd_callee__ inline void asc_addc(
-    vector_bool& dst0, vector_uint32_t& dst1, vector_uint32_t src0, vector_uint32_t src1, vector_bool src2,
-    vector_bool mask);
-
-__simd_callee__ inline void asc_addc(
-    vector_bool& dst0, vector_int32_t& dst1, vector_int32_t src0, vector_int32_t src1, vector_bool src2,
+    vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool carry_src,
     vector_bool mask);
 
 // ==========asc_shiftleft(u8/s8/u16/s16/u32/s32)==========

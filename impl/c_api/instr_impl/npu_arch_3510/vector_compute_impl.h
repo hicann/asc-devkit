@@ -320,30 +320,30 @@ __simd_callee__ inline void asc_add(
 }
 
 __simd_callee__ inline void asc_add(
-    vector_bool& dst0, vector_int32_t& dst1, vector_int32_t src0, vector_int32_t src1, vector_bool mask)
+    vector_bool& carry, vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool mask)
 {
-    asc_add_impl(dst0, dst1, src0, src1, mask);
+    asc_add_impl(carry, dst, src0, src1, mask);
 }
 
 __simd_callee__ inline void asc_add(
-    vector_bool& dst0, vector_uint32_t& dst1, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
+    vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
 {
-    asc_add_impl(dst0, dst1, src0, src1, mask);
+    asc_add_impl(carry, dst, src0, src1, mask);
 }
 
 // // ==========asc_addc(uint32_t/int32_t)==========
 __simd_callee__ inline void asc_addc(
-    vector_bool& dst0, vector_uint32_t& dst1, vector_uint32_t src0, vector_uint32_t src1, vector_bool src2,
+    vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool carry_src,
     vector_bool mask)
 {
-    asc_addc_impl(dst0, dst1, src0, src1, src2, mask);
+    asc_addc_impl(carry, dst, src0, src1, carry_src, mask);
 }
 
 __simd_callee__ inline void asc_addc(
-    vector_bool& dst0, vector_int32_t& dst1, vector_int32_t src0, vector_int32_t src1, vector_bool src2,
+    vector_bool& carry, vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool carry_src,
     vector_bool mask)
 {
-    asc_addc_impl(dst0, dst1, src0, src1, src2, mask);
+    asc_addc_impl(carry, dst, src0, src1, carry_src, mask);
 }
 
 // ==========asc_shiftleft(u8/s8/u16/s16/u32/s32)==========
