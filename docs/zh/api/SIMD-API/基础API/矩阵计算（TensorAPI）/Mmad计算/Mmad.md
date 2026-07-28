@@ -105,7 +105,7 @@ Mmad的矩阵乘加关系可参考下图：
 | dst | 输出 | 结果矩阵C，存储位置为`Location::L0C`，数据格式为NZ。 |
 | fm | 输入 | 左矩阵A，存储位置为`Location::L0A`，数据格式为NZ。 |
 | filter | 输入 | 右矩阵B，存储位置为`Location::L0B`，数据格式为ZN。 |
-| bias | 输入 | bias张量，存储位置为`Location::BIAS`或`Location::L0C`，数据格式为ND。 |
+| bias | 输入 | bias张量，存储位置为`Location::BIAS`，数据格式为ND。 |
 
 **表2**  `MakeMmad`接口参数说明
 
