@@ -14,8 +14,10 @@ add_library(acl_rtc SHARED
 )
 
 if(BUILD_OPEN_PROJECT)
+    target_include_directories(acl_rtc PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include
+    )
     target_include_directories(acl_rtc PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/../include/aclrtc
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/acl
         ${ASCEND_CANN_PACKAGE_PATH}/include/pkg_inc/base/
@@ -26,7 +28,7 @@ if(BUILD_OPEN_PROJECT)
     )
 else()
     target_include_directories(acl_rtc PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/../include/aclrtc
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include
         ${TOP_DIR}/runtime/include/external
  	    ${TOP_DIR}/runtime/include/external/acl
         ${CCEC_PATH}/../include
@@ -69,6 +71,6 @@ install(TARGETS acl_rtc
     RUNTIME DESTINATION ${INSTALL_RUNTIME_DIR}/lib64 ${INSTALL_OPTIONAL} COMPONENT asc-devkit
 )
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/aclrtc/acl_rt_compile.h
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/acl/acl_rt_compile.h
     DESTINATION ${INSTALL_LIBRARY_DIR}/include/acl COMPONENT asc-devkit
 )

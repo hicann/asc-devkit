@@ -11,7 +11,7 @@ project(ascendc_tools_aclrtc_tests)
 cmake_minimum_required(VERSION 3.16.0)
 
 set(ACLRTC_TEST_HEADERS_FILES
-    ${ASCENDC_DIR}/tools/include/aclrtc
+    ${ASCENDC_DIR}/tools/include
 )
 
 file(GLOB ACLRTC_SRC_FILES
