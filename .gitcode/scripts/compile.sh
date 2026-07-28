@@ -21,11 +21,6 @@ fi
 gcc --version
 source /home/jenkins/Ascend/cann/bin/setenv.bash
 set +e
-if [[ "${task_name}" =~ x86_compile_ubuntu24 ]]; then
-    echo "api-check=compile" >> "${ATOMGIT_OUTPUT}"
-else
-    echo "api-check=continue" >> "${ATOMGIT_OUTPUT}"
-fi
 case "${task_name}" in
     x86_compile_ubuntu24)
         sed -i "1i set(CMAKE_EXPORT_COMPILE_COMMANDS ON)" "CMakeLists.txt"
@@ -40,4 +35,14 @@ elif [ "${TARGET_BRANCH}" == exp/kadc ] || [ "${TARGET_BRANCH}" == feature/tenso
         touch ${WORKSPACE}/build_out/cann-asc-devkit.run
 else
         bash build.sh --pkg --cann_3rd_lib_path="/home/jenkins/opensource"
+fi
+
+if [[ "${task_name}" =~ x86_compile_ubuntu24 ]] && [ -f "build_out/"*.run ]; then
+    echo "api-check=compile" >> "${ATOMGIT_OUTPUT}"
+else
+    echo "api-check=continue" >> "${ATOMGIT_OUTPUT}"
+fi
+if [ ! -f "build_out/"*.run ]; then
+        mkdir -p build_out
+        touch build_out/cann-asc-devkit.run
 fi
