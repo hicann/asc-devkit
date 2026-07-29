@@ -86,7 +86,7 @@ inline bfloat16x2_t asc_atomic_max(bfloat16x2_t *address, bfloat16x2_t val)
 
 Unified Buffer或Global Memory上的初始数据。
 
-注意，由于底层硬件约束，half和bfloat16\_t类型的返回值不准确，避免直接使用这些类型的返回值。
+注意，由于底层硬件约束，half和bfloat16\_t类型的返回值不准确，禁止直接使用这些类型的返回值。half2和bfloat16x2\_t类型不受此限制。
 
 ## 约束说明
 
