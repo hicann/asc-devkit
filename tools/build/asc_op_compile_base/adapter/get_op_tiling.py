@@ -1397,22 +1397,17 @@ def _get_tiling_data_with_time_stamp(class_name):
         class_body += (
             f"    {class_name} tiling_data;                                    \\\n"
         )
-        class_body += (
-            f"    InitTilingData<{class_name}>(tiling_arg, &tiling_data);      \\\n"
-        )
-        class_body += _add_time_stamp_codes("TIME_STAMP_TILING_DATA")
+        class_body += f"    InitTilingData<{class_name}>(tiling_arg, &tiling_data);\n"
     class_body += "#define GET_TILING_DATA_WITH_STRUCT(tiling_struct, tiling_data, tiling_arg)  \\\n"
     class_body += "    REGISTER_TILINGDATA_SIZE(tiling_struct, __COUNTER__);                    \\\n"
     class_body += "    tiling_struct tiling_data;                                               \\\n"
-    class_body += "    InitTilingData<tiling_struct>(tiling_arg, &tiling_data);                 \\\n"
-    class_body += _add_time_stamp_codes("TIME_STAMP_TILING_DATA_STRUCT")
+    class_body += "    InitTilingData<tiling_struct>(tiling_arg, &tiling_data);\n"
 
     class_body += "#define GET_TILING_DATA_MEMBER(tiling_type, member, var, tiling)            \\\n"
     class_body += "    REGISTER_TILINGDATA_SIZE(tiling_type, __COUNTER__);                     \\\n"
     class_body += "    decltype(((tiling_type *)0)->member) var;                               \\\n"
     class_body += "    size_t offset##var = (size_t)(&((tiling_type*)0)->member);              \\\n"
-    class_body += "    InitTilingData<decltype(((tiling_type *)0)->member)>(tiling + offset##var, &var);\\\n"
-    class_body += _add_time_stamp_codes("TIME_STAMP_TILING_DATA_MEMBER")
+    class_body += "    InitTilingData<decltype(((tiling_type *)0)->member)>(tiling + offset##var, &var);\n"
 
     class_body += "#else\n"
 

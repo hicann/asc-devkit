@@ -233,9 +233,6 @@ __aicore__ inline bool TPipe::InitBuffer(T& que, const Std::tuple<U, V>& addr0, 
         KERNEL_LOG_INTERNAL(
             KERNEL_ERROR, "Total buffer num managed by TPipe is %d, should be in range (0, %d]\n",
             this->g_tpipeImpl.curBufSize_, QBUF_MAX_LEN));
-#ifdef ASCENDC_TIME_STAMP_ON
-    PrintTimeStamp(static_cast<uint32_t>(TimeStampId::TIME_STAMP_BUFFER));
-#endif
     return true;
 }
 

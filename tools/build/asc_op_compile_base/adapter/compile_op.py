@@ -668,7 +668,6 @@ def _gen_set_workspace_codes(
         source += "    if (ffts_addr != nullptr) {\n"
         source += "        set_ffts_base_addr((uint64_t)ffts_addr);\n"
         source += "    }\n"
-        source += add_time_stamp_codes("TIME_STAMP_WRAP_FFTS_ADDR")
 
     # restart enable begin position
     if global_var_storage.get_variable("ascendc_enable_aicore_exception_restart"):
@@ -679,7 +678,6 @@ def _gen_set_workspace_codes(
         source += f"#ifdef {MIX_CORE_MACRO} \n"
         source += "    if constexpr (g_coreType == AscendC::AIC) {\n"
         source += "        matmul::clearWorkspace(workspace);\n"
-        source += add_time_stamp_codes("TIME_STAMP_WRAP_CLEAR_WK_SPAC", 2)
         source += "    }\n"
         source += "#endif\n"
     return source
@@ -848,7 +846,6 @@ def gen_kernel_fun(
         source += gen_init_dump_code()
         # set mc2 context
         source += _gen_set_mc2_ctx_param(opinfo)
-        source += add_time_stamp_codes("TIME_STAMP_WRAP_MC2_CTX")
         # implicit add aicore exception restart begin position
         # set workspace
         source += _gen_set_workspace_codes(

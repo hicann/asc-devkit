@@ -153,9 +153,10 @@ __aicore__ inline void PrintfImpl(DumpType printType, __gm__ const char* fmt, Ar
 
 __aicore__ inline void DumpTimeStampImpl(uint32_t descId)
 {
+    const uint64_t time = __asc_aicore::asc_capture_time_stamp_cycle();
     dcci((__gm__ uint64_t*)g_sysPrintFifoSpace, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT);
     if (g_sysPrintFifoSpace != nullptr) {
-        __asc_aicore::asc_time_stamp(descId);
+        __asc_aicore::asc_time_stamp_impl(descId, time);
     }
 }
 

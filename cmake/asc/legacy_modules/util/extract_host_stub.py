@@ -2074,10 +2074,6 @@ def _generate_ffts_source(is_mix: bool) -> str:
         source += "    if (ffts_addr != nullptr) {\n"
         source += "        set_ffts_base_addr((uint64_t)ffts_addr);\n"
         source += "    }\n"
-        source += "#ifdef ASCENDC_TIME_STAMP_ON\n"
-        source += "    AscendC::PrintTimeStamp(static_cast<uint32_t>\
-(AscendC::TimeStampId::TIME_STAMP_WRAP_FFTS_ADDR));\n"
-        source += "#endif\n"
         return source
     return ""
 
@@ -2109,9 +2105,6 @@ def _generate_matmul_clear_source(is_mix: bool) -> str:
         return f"""#if defined(REGIST_MATMUL_OBJ) || defined({MIX_CORE_MACRO})
     if constexpr (g_coreType == AscendC::AIC) {{
         matmul::clearWorkspace(workspace_param);
-#ifdef ASCENDC_TIME_STAMP_ON
-        AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_WRAP_CLEAR_WK_SPAC));
-#endif
     }}
 #endif"""
     return ""

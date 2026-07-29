@@ -275,62 +275,54 @@ __aicore__ inline void CountMatmulObj(AscendC::TPipe* tpipe, T& a, Args&&... b)
 
 #ifdef SPLIT_CORE_CUBE
 #ifdef ASCENDC_CUBE_ONLY
-#define REGIST_CUBE_OBJ(tpipe, workspace, ...) \
-    AscendC::InitCurObj(tpipe, __VA_ARGS__);   \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER_OBJ))
+#define REGIST_CUBE_OBJ(tpipe, workspace, ...) AscendC::InitCurObj(tpipe, __VA_ARGS__)
 
 #define REGIST_CUBE_OBJ_REMOTE(tpipe, workspace, ...)
 #else
 #if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
-#define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                           \
-    using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;       \
-    constexpr int8_t enableHardPollKfc =                                                                 \
-        AscendC::ENABLE_HARD_POOL ? AscendC::ENABLE_HARD_POOL : ASCubeObjConfig::enableABShareValue;     \
-    constexpr int8_t asEnableMixDualMaster = ASCubeObjConfig::enableMixDualMasterValue;                  \
-    if constexpr (!asEnableMixDualMaster) {                                                              \
-        AscendC::ClearWorkspace(reinterpret_cast<__gm__ uint8_t*>(workspace));                           \
-    }                                                                                                    \
-    AscendC::TQue<AscendC::QuePosition::CO1, 1, &AscendC::gCO1Config> qCO1;                              \
-    AscendC::gCO1Que = &qCO1;                                                                            \
-    AscendC::KfcServer<enableHardPollKfc> server;                                                        \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER));      \
-    server.Init(workspace);                                                                              \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER_INIT)); \
-    server.InitObj(tpipe, __VA_ARGS__);                                                                  \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER_OBJ));  \
-    if constexpr (!asEnableMixDualMaster) {                                                              \
-        while (server.isRun()) {                                                                         \
-            server.Run(__VA_ARGS__);                                                                     \
-        };                                                                                               \
-        server.Quit();                                                                                   \
-        return;                                                                                          \
+#define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                       \
+    using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;   \
+    constexpr int8_t enableHardPollKfc =                                                             \
+        AscendC::ENABLE_HARD_POOL ? AscendC::ENABLE_HARD_POOL : ASCubeObjConfig::enableABShareValue; \
+    constexpr int8_t asEnableMixDualMaster = ASCubeObjConfig::enableMixDualMasterValue;              \
+    if constexpr (!asEnableMixDualMaster) {                                                          \
+        AscendC::ClearWorkspace(reinterpret_cast<__gm__ uint8_t*>(workspace));                       \
+    }                                                                                                \
+    AscendC::TQue<AscendC::QuePosition::CO1, 1, &AscendC::gCO1Config> qCO1;                          \
+    AscendC::gCO1Que = &qCO1;                                                                        \
+    AscendC::KfcServer<enableHardPollKfc> server;                                                    \
+    server.Init(workspace);                                                                          \
+    server.InitObj(tpipe, __VA_ARGS__);                                                              \
+    if constexpr (!asEnableMixDualMaster) {                                                          \
+        while (server.isRun()) {                                                                     \
+            server.Run(__VA_ARGS__);                                                                 \
+        };                                                                                           \
+        server.Quit();                                                                               \
+        return;                                                                                      \
     }
 #else
-#define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                           \
-    using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;       \
-    static_assert(                                                                                       \
-        ASCubeObjConfig::enableABShareValue != AscendC::CUBEOBJ_MIX_MODE,                                \
-        "If both aType ibshare and bType ibshare are set to true, the values must "                      \
-        "be the same for all cube objects.");                                                            \
-    constexpr int8_t asEnableMixDualMaster = ASCubeObjConfig::enableMixDualMasterValue;                  \
-    static_assert(                                                                                       \
-        asEnableMixDualMaster != AscendC::CUBEOBJ_MIX_MODE,                                              \
-        "enableMixDualMaster must be consistent for all cube objects.");                                 \
-    if constexpr (!asEnableMixDualMaster) {                                                              \
-        AscendC::ClearWorkspace(reinterpret_cast<__gm__ uint8_t*>(workspace));                           \
-    }                                                                                                    \
-    AscendC::KfcServer server;                                                                           \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER));      \
-    server.Init(workspace);                                                                              \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER_INIT)); \
-    server.InitObj(tpipe, __VA_ARGS__);                                                                  \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER_OBJ));  \
-    if constexpr (!asEnableMixDualMaster) {                                                              \
-        while (server.isRun()) {                                                                         \
-            server.Run(__VA_ARGS__);                                                                     \
-        };                                                                                               \
-        server.Quit();                                                                                   \
-        return;                                                                                          \
+#define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                     \
+    using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>; \
+    static_assert(                                                                                 \
+        ASCubeObjConfig::enableABShareValue != AscendC::CUBEOBJ_MIX_MODE,                          \
+        "If both aType ibshare and bType ibshare are set to true, the values must "                \
+        "be the same for all cube objects.");                                                      \
+    constexpr int8_t asEnableMixDualMaster = ASCubeObjConfig::enableMixDualMasterValue;            \
+    static_assert(                                                                                 \
+        asEnableMixDualMaster != AscendC::CUBEOBJ_MIX_MODE,                                        \
+        "enableMixDualMaster must be consistent for all cube objects.");                           \
+    if constexpr (!asEnableMixDualMaster) {                                                        \
+        AscendC::ClearWorkspace(reinterpret_cast<__gm__ uint8_t*>(workspace));                     \
+    }                                                                                              \
+    AscendC::KfcServer server;                                                                     \
+    server.Init(workspace);                                                                        \
+    server.InitObj(tpipe, __VA_ARGS__);                                                            \
+    if constexpr (!asEnableMixDualMaster) {                                                        \
+        while (server.isRun()) {                                                                   \
+            server.Run(__VA_ARGS__);                                                               \
+        };                                                                                         \
+        server.Quit();                                                                             \
+        return;                                                                                    \
     }
 #endif
 #endif
@@ -356,42 +348,35 @@ __aicore__ inline void CountMatmulObj(AscendC::TPipe* tpipe, T& a, Args&&... b)
         AscendC::CrossCoreWaitFlag<matmul::INTRA_MODE, PIPE_S>(AscendC::KFC_SYNC_ID);                \
     }
 #else
-#define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                          \
-    using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;      \
-    static_assert(                                                                                      \
-        ASCubeObjConfig::enableABShareValue != AscendC::CUBEOBJ_MIX_MODE,                               \
-        "If both aType ibshare and bType ibshare are set to true, the values must "                     \
-        "be the same for all cube objects.");                                                           \
-    constexpr int8_t asEnableMixDualMaster = ASCubeObjConfig::enableMixDualMasterValue;                 \
-    static_assert(                                                                                      \
-        asEnableMixDualMaster != AscendC::CUBEOBJ_MIX_MODE,                                             \
-        "enableMixDualMaster must be consistent for all cube objects.");                                \
-    AscendC::KfcCommClient __kfcClient__(workspace, AscendC::GetSubBlockIdx(), asEnableMixDualMaster);  \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_CLIENT_KFC)); \
-    if constexpr (!asEnableMixDualMaster) {                                                             \
-        AscendC::g_kfcClient = &__kfcClient__;                                                          \
-    }                                                                                                   \
-    AscendC::SetMatrixKfc(tpipe, &__kfcClient__, 0, workspace, __VA_ARGS__);                            \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_MATRIX_KFC)); \
-    if constexpr (!asEnableMixDualMaster) {                                                             \
-        if constexpr (AscendC::DAV_310_ENABLE_GM) {                                                     \
-            AscendC::ClearWorkspace(reinterpret_cast<__gm__ uint8_t*>(workspace));                      \
-        } else {                                                                                        \
-            AscendC::WaitEvent(AscendC::WORKSPACE_SYNC_ID);                                             \
-        }                                                                                               \
-    }                                                                                                   \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_WAIT_EVE))
+#define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                         \
+    using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;     \
+    static_assert(                                                                                     \
+        ASCubeObjConfig::enableABShareValue != AscendC::CUBEOBJ_MIX_MODE,                              \
+        "If both aType ibshare and bType ibshare are set to true, the values must "                    \
+        "be the same for all cube objects.");                                                          \
+    constexpr int8_t asEnableMixDualMaster = ASCubeObjConfig::enableMixDualMasterValue;                \
+    static_assert(                                                                                     \
+        asEnableMixDualMaster != AscendC::CUBEOBJ_MIX_MODE,                                            \
+        "enableMixDualMaster must be consistent for all cube objects.");                               \
+    AscendC::KfcCommClient __kfcClient__(workspace, AscendC::GetSubBlockIdx(), asEnableMixDualMaster); \
+    if constexpr (!asEnableMixDualMaster) {                                                            \
+        AscendC::g_kfcClient = &__kfcClient__;                                                         \
+    }                                                                                                  \
+    AscendC::SetMatrixKfc(tpipe, &__kfcClient__, 0, workspace, __VA_ARGS__);                           \
+    if constexpr (!asEnableMixDualMaster) {                                                            \
+        if constexpr (AscendC::DAV_310_ENABLE_GM) {                                                    \
+            AscendC::ClearWorkspace(reinterpret_cast<__gm__ uint8_t*>(workspace));                     \
+        } else {                                                                                       \
+            AscendC::WaitEvent(AscendC::WORKSPACE_SYNC_ID);                                            \
+        }                                                                                              \
+    }
 #endif
 #elif defined(ASCENDC_MATMUL_AICORE)
-#define REGIST_CUBE_OBJ(tpipe, workspace, ...) \
-    AscendC::InitCurObj(tpipe, __VA_ARGS__);   \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_SERVER_OBJ))
+#define REGIST_CUBE_OBJ(tpipe, workspace, ...) AscendC::InitCurObj(tpipe, __VA_ARGS__)
 #define REGIST_CUBE_OBJ_REMOTE(tpipe, workspace, ...)
 #else
 
-#define REGIST_CUBE_OBJ(tpipe, workspace, ...) \
-    AscendC::InitCurObj(tpipe, __VA_ARGS__);   \
-    AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::TIME_STAMP_MATMUL_OBJ))
+#define REGIST_CUBE_OBJ(tpipe, workspace, ...) AscendC::InitCurObj(tpipe, __VA_ARGS__)
 #endif
 #endif
 
