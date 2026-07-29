@@ -122,7 +122,7 @@ cce_default_static_build_config = {
     enable_super_kernel: False,
     workspace_tensor_size: [],
     compile_feature_list: [],
-    deterministic_level: "",
+    deterministic_level: 0,
 }
 
 # dynamic build config dict
