@@ -60,25 +60,46 @@ inline int32_t asc_all(int32_t predicate)
 
 ## 调用示例
 
+以下样例比较两组输入数据，并由Lane 0写出当前Warp负责的数据是否全部相等。
+
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel_asc_all(int32_t* dst)
+    __global__ __launch_bounds__(1024) void KernelAll(
+        const int32_t* input1, const int32_t* input2, int32_t* equal_flags, uint64_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
-        int32_t lane_id= idx % 32;
-        dst[idx] = asc_all(lane_id); // 返回值为0
+        if (idx >= total_length) {
+            return;
+        }
+
+        uint32_t lane_id = threadIdx.x % warpSize;
+        uint32_t warp_id = idx / warpSize;
+        int32_t all_equal = asc_all(input1[idx] == input2[idx]);
+        if (lane_id == 0) {
+            equal_flags[warp_id] = all_equal;
+        }
     }
     ```
 
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_all(__gm__ int32_t* dst)
+    __simt_vf__ __launch_bounds__(1024) inline void KernelAll(
+        __gm__ const int32_t* input1, __gm__ const int32_t* input2, __gm__ int32_t* equal_flags,
+        uint64_t total_length)
     {
         // asc_vf_call参数：dim3{1024, 1, 1}
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
-        int32_t lane_id = idx % 32;
-        dst[idx] = asc_all(lane_id); // 返回值为0
+        if (idx >= total_length) {
+            return;
+        }
+
+        uint32_t lane_id = threadIdx.x % warpSize;
+        uint32_t warp_id = idx / warpSize;
+        int32_t all_equal = asc_all(input1[idx] == input2[idx]);
+        if (lane_id == 0) {
+            equal_flags[warp_id] = all_equal;
+        }
     }
     ```
