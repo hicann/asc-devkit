@@ -88,7 +88,7 @@ __simd_callee__ inline void MulAddDst(U& dstReg, U& srcReg0, U& srcReg1, MaskReg
 
 ## 关键特性说明
 
-对于非软仿实现的数据类型，在硬件层面单条指令完成乘加融合计算，精度高于分开执行[Mul](../基础算术/Mul.md)和[Add](../基础算术/Add.md)。
+本接口软仿实现的数据类型为int64_t、uint64_t，参考自[Reg矢量计算接口软仿情况汇总](../../../../附录/Reg矢量计算接口软仿情况汇总.md)。对于非软仿实现的数据类型，在硬件层面单条指令完成乘加融合计算，精度高于分开执行[Mul](../基础算术/Mul.md)和[Add](../基础算术/Add.md)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

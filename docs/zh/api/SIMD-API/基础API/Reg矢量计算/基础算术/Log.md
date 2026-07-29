@@ -28,9 +28,11 @@
 
 头文件路径：`"basic_api/reg_compute/kernel_reg_compute_vec_unary_intf.h"`。
 
-该接口根据mask逐元素对源操作数求自然对数，将结果写入目的操作数。计算公式如下：
+该接口根据mask逐元素对源操作数求自然对数（以e为底），将结果写入目的操作数。该接口与[Ln](Ln.md)接口功能等价，接口命名遵循C/C++标准库中`log()`表示自然对数的约定。计算公式如下：
 
-$$dstReg_i = \log(srcReg_i)$$
+$$
+dstReg_i = \ln(srcReg_i)
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
