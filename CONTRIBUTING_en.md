@@ -65,3 +65,14 @@ This project includes five core Ascend C documents (Getting Started Tutorial, Pr
   If you have appropriate solutions for problems encountered by others in the community, you are welcome to comment and communicate in the Issue to help others solve problems and pain points, jointly improving usability.
 
   If the corresponding Issue requires code modification, you can enter "/assign" or "/assign @yourself" in the Issue comment box to assign the Issue to yourself, tracking assistance in solving the problem.
+
+## Code Standards
+
+This project has a complete code contribution standards system. Please read the relevant guides before development. For the complete index, see [docs/en/contributing/README.md](./docs/en/contributing/README.md).
+
+| Document | Content |
+|----------|---------|
+| [code-style.md](./docs/en/contributing/code-style.md) | C++ naming, include, header guard, namespace, macros, constexpr, formatting, code comment standards, deprecation annotation |
+| [api-design.md](./docs/en/contributing/api-design.md) | API interface design, template parameters, `__aicore__` usage, Tiling interface |
+| [directory-structure.md](./docs/en/contributing/directory-structure.md) | Directory structure, file naming suffixes, architecture directories, new API operation checklist |
+| [testing.md](./docs/en/contributing/testing.md) | Testing framework, file naming, UT writing, Header Checker, coverage requirements |

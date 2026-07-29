@@ -5,6 +5,7 @@ Key directory structure is as follows:
 ```
 ├── zh                             # Chinese documentation directory
 │   ├── api                        # API documentation directory
+│   ├── contributing               # Code contribution standards directory (code style, API design, directory structure, testing, etc.)
 │   ├── figures                    # Image directory
 │   ├── guide                      # Ascend C operator develop guide
 │   ├── vitepress                      # docs build directory
@@ -14,7 +15,17 @@ Key directory structure is as follows:
 │   ├── asc_doc_contributing.md        # Ascend C documentation contribution guide
 │   ├── asc_doc_design_rules.md        # Ascend C documentation design rules
 │   ├── asc_950_feature_guide.md       # Ascend 950PR/Ascend 950DT new feature guide
-│   ├── asc_hwo_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
+│   ├── asc_how_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
+│   └── quick_start.md                 # Quick start documentation
+├── en                                 # English documentation directory
+│   ├── contributing                   # Code contribution standards directory (code style, API design, directory structure, testing, etc.)
+│   ├── asc_adv_api_contributing.md    # Ascend C high-level API contribution guide
+│   ├── asc_basic_api_contributing.md  # Ascend C basic API contribution guide
+│   ├── asc_c_api_contributing.md      # Ascend C C API contribution guide
+│   ├── asc_doc_contributing.md        # Ascend C documentation contribution guide
+│   ├── asc_doc_design_rules.md        # Ascend C documentation design rules
+│   ├── asc_950_feature_guide.md       # Ascend 950PR/Ascend 950DT new feature guide
+│   ├── asc_how_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
 │   └── quick_start.md                 # Quick start documentation
 ├── README_en.md
 └── README.md
@@ -31,6 +42,7 @@ To help developers quickly familiarize with this project, corresponding document
 | [C API Contribution Guide](./en/asc_c_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C C API. C API provides pure C style interfaces, conforming to C language operator development habits, opening complete chip programming capabilities. |
 | [Documentation Contribution Guide](./en/asc_doc_contributing.md) | Developers improving existing Ascend C documentation. | Introduces the writing and contribution specifications for each chapter of Ascend C documentation. |
 | [Documentation Design Rules](./en/asc_doc_design_rules.md) | Developers improving existing Ascend C documentation. | Introduces the Ascend C documentation architecture and overall design principles. |
+| [Code Contribution Standards](./en/contributing/README.md) | Developers contributing code to Ascend C. | Index of contribution standards: code style, API design, directory structure, testing. |
 
 
 ## Appendix
