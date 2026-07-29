@@ -97,7 +97,7 @@
             IS_SPLIT = 1;
             TILE_NUM = DEFAULT_TILE_NUM;
         }
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         // 获取Tiling结构体指针并赋值
         TilingDataTemplate *tiling = context->GetTilingData<TilingDataTemplate>();
         tiling->totalLength = totalLength;

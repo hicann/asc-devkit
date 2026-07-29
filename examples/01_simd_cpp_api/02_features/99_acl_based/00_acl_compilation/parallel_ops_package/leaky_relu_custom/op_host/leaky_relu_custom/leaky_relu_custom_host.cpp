@@ -22,7 +22,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     const gert::RuntimeAttrs* attrs = context->GetAttrs();
     const float* negativeSlope = attrs->GetAttrPointer<float>(0);
 
-    context->SetBlockDim(NUM_BLOCKS);
+    context->SetSimdNumBlocks(NUM_BLOCKS);
     tiling->totalLength = totalLength;
     tiling->tileNum = TILE_NUM;
     tiling->negativeSlope = *negativeSlope;

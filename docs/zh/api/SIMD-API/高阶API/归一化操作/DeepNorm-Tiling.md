@@ -120,7 +120,7 @@ bool GetDeepNormTilingInfo(const AscendC::TensorShape& srcShape, const AscendC::
     {
         TilingData tiling;
         uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         tiling.set_totalLength(totalLength);
         tiling.set_tileNum(TILE_NUM);
         // 设置其他Tiling参数

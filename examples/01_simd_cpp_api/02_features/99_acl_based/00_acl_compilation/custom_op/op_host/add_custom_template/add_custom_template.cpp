@@ -35,7 +35,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         IS_SPLIT = 1;
         TILE_NUM = DEFAULT_TILE_NUM;
     }
-    context->SetBlockDim(NUM_BLOCKS);
+    context->SetSimdNumBlocks(NUM_BLOCKS);
     TilingDataTemplate* tiling = context->GetTilingData<TilingDataTemplate>();
     tiling->totalLength = totalLength;
     // 模板参数tilingkey配置

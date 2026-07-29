@@ -18,7 +18,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
     AddCustomTilingData* tiling = context->GetTilingData<AddCustomTilingData>();
     uint32_t totalLength = context->GetInputShape(0)->GetOriginShape().GetShapeSize();
-    context->SetBlockDim(NUM_BLOCKS);
+    context->SetSimdNumBlocks(NUM_BLOCKS);
     tiling->totalLength = totalLength;
     tiling->tileNum = TILE_NUM;
     size_t* currentWorkspace = context->GetWorkspaceSizes(1);
@@ -54,14 +54,7 @@ public:
         this->Output("z").ParamType(REQUIRED).DataType({ge::DT_FLOAT16}).Format({ge::FORMAT_ND});
 
         this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
-        this->AICore()
-            .SetTiling(optiling::TilingFunc)
-            // at least one soc version must be configured.
-            .AddConfig("ascend310p")
-            .AddConfig("ascend310b")
-            .AddConfig("ascend910b")
-            .AddConfig("ascend910_93")
-            .AddConfig("ascend950");
+        this->AICore().SetTiling(optiling::TilingFunc).AddConfig("ascend910b");
     }
 };
 OP_ADD(AddCustom);

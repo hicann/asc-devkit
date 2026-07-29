@@ -101,7 +101,7 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
     {
         TilingSinkTilingData *tiling = context->GetTilingData<TilingSinkTilingData>();
         uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         tiling->totalLength = totalLength;
         tiling->tileNum = TILE_NUM;
         size_t *currentWorkspace = context->GetWorkspaceSizes(1);

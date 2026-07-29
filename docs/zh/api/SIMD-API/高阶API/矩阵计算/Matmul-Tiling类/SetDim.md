@@ -6,11 +6,11 @@
 
 -   纯Cube模式（只有矩阵计算）
 
-    SetDim设置当前AI处理器可用的核数，通过[Tiling计算](GetTiling.md)得到执行Matmul计算实际使用的核数，实际使用的核数小于等于AI处理器可用的核数。SetBlockDim按照实际使用的核数由用户进行配置，SetBlockDim加载的核全部用于Matmul API的计算。
+    SetDim设置当前AI处理器可用的核数，通过[Tiling计算](GetTiling.md)得到执行Matmul计算实际使用的核数，实际使用的核数小于等于AI处理器可用的核数。SetSimdNumBlocks按照实际使用的核数由用户进行配置，SetSimdNumBlocks加载的核全部用于Matmul API的计算。
 
 -   MIX模式（包含矩阵计算和矢量计算）
-    -   分离模式：Matmul API都是从AIV侧发起的，调用Iterate计算时在AIV侧只会起到通知的作用，通知AIC去做矩阵计算，计算完成后AIC告知AIV计算完成，在开发者层面感知的是AIV的核数，SetDim设置为当前AI处理器可用的AIV核的数量，通过[Tiling计算](GetTiling.md)得到实际使用的AIV核数。SetBlockDim设置为实际使用的AI Core（AIC、AIV组合）的数量。例如，SetDim设置为40，表示可以使用40个AIV核发起多核Matmul运算，[Tiling计算](GetTiling.md)得到实际使用的AIV核数是20。当前AI处理器的AIC:AIV为1:2，则SetBlockDim设置为10，表示实际使用10个AI Core（AIC AIV的组合）。
-    -   耦合模式：SetDim设置当前AI处理器可用的核数，通过[Tiling计算](GetTiling.md)得到实际使用的核数，实际使用的核数小于等于AI处理器可用的核数。SetBlockDim按照实际使用的核数由用户进行配置，SetBlockDim加载的核全部用于Matmul API的计算。
+    -   分离模式：Matmul API都是从AIV侧发起的，调用Iterate计算时在AIV侧只会起到通知的作用，通知AIC去做矩阵计算，计算完成后AIC告知AIV计算完成，在开发者层面感知的是AIV的核数，SetDim设置为当前AI处理器可用的AIV核的数量，通过[Tiling计算](GetTiling.md)得到实际使用的AIV核数。SetSimdNumBlocks设置为实际使用的AI Core（AIC、AIV组合）的数量。例如，SetDim设置为40，表示可以使用40个AIV核发起多核Matmul运算，[Tiling计算](GetTiling.md)得到实际使用的AIV核数是20。当前AI处理器的AIC:AIV为1:2，则SetSimdNumBlocks设置为10，表示实际使用10个AI Core（AIC AIV的组合）。
+    -   耦合模式：SetDim设置当前AI处理器可用的核数，通过[Tiling计算](GetTiling.md)得到实际使用的核数，实际使用的核数小于等于AI处理器可用的核数。SetSimdNumBlocks按照实际使用的核数由用户进行配置，SetSimdNumBlocks加载的核全部用于Matmul API的计算。
 
 ## 函数原型
 

@@ -90,7 +90,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_srcLastAxis(srcLastAxis);
     tiling.set_maskLastAxis(maskLastAxis);
     tiling.set_tmpBufferSize(tmpSize);
-    context->SetBlockDim(1);
+    context->SetSimdNumBlocks(1);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     context->SetTilingKey(1);

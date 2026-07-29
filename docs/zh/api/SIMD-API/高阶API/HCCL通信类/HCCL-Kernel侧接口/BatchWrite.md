@@ -171,7 +171,7 @@ struct BatchWriteItem {
         const auto aicCoreNum = ascendcPlatform.GetCoreNumAic();
         auto coreNum = use_aiv ? aicCoreNum * 2 : aicCoreNum;
         context->SetAicpuBlockDim(5U);
-        context->SetBlockDim(coreNum);
+        context->SetSimdNumBlocks(coreNum);
         context->SetTilingKey(1000);
 
         // 省略无关代码
@@ -264,7 +264,7 @@ struct BatchWriteItem {
         const auto aicCoreNum = ascendcPlatform.GetCoreNumAic();
         auto coreNum = use_aiv ? aicCoreNum * 2 : aicCoreNum;
         context->SetAicpuBlockDim(4U);
-        context->SetBlockDim(coreNum);
+        context->SetSimdNumBlocks(coreNum);
         context->SetTilingKey(1000);
 
         // 省略无关代码

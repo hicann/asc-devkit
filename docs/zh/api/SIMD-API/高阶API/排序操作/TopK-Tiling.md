@@ -168,7 +168,7 @@ TopKTilingFunc返回值为true/false，true表示成功拿到TopK的Tiling各项
     {
         TilingData tiling;
         uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         tiling.set_totalLength(totalLength);
         tiling.set_tileNum(TILE_NUM);
         tiling.set_k(K);
@@ -252,7 +252,7 @@ TopKTilingFunc返回值为true/false，true表示成功拿到TopK的Tiling各项
                 maxValue, minValue);
             context->SetTilingKey(1);
         }
-        context->SetBlockDim(1);
+        context->SetSimdNumBlocks(1);
         tiling.set_is_init_index(is_init_index);
         tiling.set_is_reuse_src(is_reuse_src);
         tiling.set_order(order);

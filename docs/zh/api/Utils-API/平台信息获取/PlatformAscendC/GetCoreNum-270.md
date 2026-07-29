@@ -43,7 +43,7 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto coreNum = ascendcPlatform.GetCoreNum();
     // ... 根据核数自行设计Tiling策略
-    context->SetBlockDim(coreNum);
+    context->SetSimdNumBlocks(coreNum);
     return ret;
 }
 ```

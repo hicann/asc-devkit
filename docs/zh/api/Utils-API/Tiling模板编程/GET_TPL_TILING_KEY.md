@@ -67,7 +67,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
         IS_SPLIT = 1;
         TILE_NUM = DEFAULT_TILE_NUM;
     }
-    context->SetBlockDim(NUM_BLOCKS);
+    context->SetSimdNumBlocks(NUM_BLOCKS);
     tiling.set_totalLength(totalLength);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());

@@ -187,7 +187,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     {
         TilingData tiling;
         uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         tiling.set_totalLength(totalLength);
         tiling.set_tileNum(TILE_NUM);
         // 设置其他Tiling参数
@@ -248,7 +248,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     {
         TilingData tiling;
         uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         tiling.set_totalLength(totalLength);
         tiling.set_tileNum(TILE_NUM);
         // 设置其他Tiling参数

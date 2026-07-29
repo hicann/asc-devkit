@@ -53,7 +53,7 @@
             if (ascendcPlatform.GetSocVersion() == platform_ascendc::SocVersion::ASCENDXXX) {
                totalCoreNum = totalCoreNum + ascendcPlatform.GetCoreNumVector();
             }
-            context->SetBlockDim(totalCoreNum);
+            context->SetSimdNumBlocks(totalCoreNum);
         }
         ```
 

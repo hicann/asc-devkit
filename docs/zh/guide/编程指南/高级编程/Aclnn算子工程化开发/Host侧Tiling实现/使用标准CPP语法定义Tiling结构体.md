@@ -40,7 +40,7 @@
         // 获取Tiling结构体指针
         AddCustomTilingData *tiling = context->GetTilingData<AddCustomTilingData>();
         uint32_t totalLength = context->GetInputShape(0)->GetOriginShape().GetShapeSize();
-        context->SetBlockDim(NUM_BLOCKS);
+        context->SetSimdNumBlocks(NUM_BLOCKS);
         // 对tiling的成员变量赋值
         tiling->totalLength = totalLength;
         tiling->tileNum = TILE_NUM;

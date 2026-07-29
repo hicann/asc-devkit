@@ -149,7 +149,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p1487434912401"><a name="p1487434912401"></a><a name="p1487434912401"></a>基于Ascend C开发的矢量计算相关的算子可以运行在<span id="ph182831320115814"><a name="ph182831320115814"></a><a name="ph182831320115814"></a>Vector Core</span>上，调用本接口传入该参数用于启用<span id="ph12899342131115"><a name="ph12899342131115"></a><a name="ph12899342131115"></a>Vector Core</span>。</p>
 <p id="p14506850174012"><a name="p14506850174012"></a><a name="p14506850174012"></a><span id="ph5667172611155"><a name="ph5667172611155"></a><a name="ph5667172611155"></a>启用<span id="ph19742192610399"><a name="ph19742192610399"></a><a name="ph19742192610399"></a>Vector Core</span>后，算子执行时会同时启动AI Core和Vector Core，用于并行计算。比如用户在host侧设置numBlocks为10，则会启动总数为10的AI Core和Vector Core。</span></p>
-<p id="p1166792611510"><a name="p1166792611510"></a><a name="p1166792611510"></a>需要注意的是，通过SetBlockDim设置核数时，需要大于AI Core的核数，否则不会启动VectorCore。</p>
+<p id="p1166792611510"><a name="p1166792611510"></a><a name="p1166792611510"></a>需要注意的是，通过SetSimdNumBlocks设置核数时，需要大于AI Core的核数，否则不会启动VectorCore。</p>
 </td>
 </tr>
 </tbody>
@@ -214,7 +214,7 @@
             if (ascendcPlatform.GetSocVersion() == platform_ascendc::SocVersion::ASCENDXXX) {
                totalCoreNum = totalCoreNum + ascendcPlatform.GetCoreNumVector();
             }
-            context->SetBlockDim(totalCoreNum);
+            context->SetSimdNumBlocks(totalCoreNum);
         }
         ```
 

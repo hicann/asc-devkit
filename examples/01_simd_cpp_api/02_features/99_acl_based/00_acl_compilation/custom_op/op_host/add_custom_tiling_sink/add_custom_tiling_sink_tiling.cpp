@@ -24,7 +24,7 @@ ge::graphStatus AddCustomSinkTilingFunc(gert::TilingContext* context)
 {
     TilingSinkTilingData* tiling = context->GetTilingData<TilingSinkTilingData>();
     uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
-    context->SetBlockDim(NUM_BLOCKS);
+    context->SetSimdNumBlocks(NUM_BLOCKS);
     tiling->totalLength = totalLength;
     tiling->tileNum = TILE_NUM;
     size_t* currentWorkspace = context->GetWorkspaceSizes(1);
