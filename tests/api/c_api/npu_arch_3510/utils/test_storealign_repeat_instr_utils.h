@@ -115,9 +115,12 @@
     };                                                                                                        \
                                                                                                               \
     namespace {                                                                                               \
+    uint8_t cce_name##_##data_type##_UpdatedDst_##index;                                                      \
     void cce_name##_##data_type##_PostStub_##index(                                                           \
         vector_##data_type src, __ubuf__ data_type*& dst, int32_t offset, vector_bool mask, Literal post)     \
-    {}                                                                                                        \
+    {                                                                                                         \
+        dst = reinterpret_cast<__ubuf__ data_type*>(&cce_name##_##data_type##_UpdatedDst_##index);            \
+    }                                                                                                         \
     }                                                                                                         \
                                                                                                               \
     TEST_F(TestVectorDataMove##class_name##_##data_type##_CApi, c_api_name##_##data_type##_Succ)              \
@@ -133,6 +136,7 @@
             .will(invoke(cce_name##_##data_type##_PostStub_##index));                                         \
                                                                                                               \
         c_api_name(dst, src, block_stride, repeat_stride, mask);                                              \
+        EXPECT_EQ(dst, reinterpret_cast<__ubuf__ data_type*>(&cce_name##_##data_type##_UpdatedDst_##index));  \
         GlobalMockObject::verify();                                                                           \
     }
 
@@ -145,9 +149,12 @@
     };                                                                                                             \
                                                                                                                    \
     namespace {                                                                                                    \
+    uint8_t cce_name##_##data_type##_UpdatedDst_##index;                                                           \
     void cce_name##_##data_type##_PostStub_##index(                                                                \
         vector_uint8_t src, __ubuf__ uint8_t*& dst, int32_t offset, vector_bool mask, Literal post)                \
-    {}                                                                                                             \
+    {                                                                                                              \
+        dst = &cce_name##_##data_type##_UpdatedDst_##index;                                                        \
+    }                                                                                                              \
     }                                                                                                              \
                                                                                                                    \
     TEST_F(TestVectorDataMove##class_name##_##data_type##_CApi, c_api_name##_##data_type##_Succ)                   \
@@ -163,6 +170,7 @@
             .will(invoke(cce_name##_##data_type##_PostStub_##index));                                              \
                                                                                                                    \
         c_api_name(dst, src, block_stride, repeat_stride, mask);                                                   \
+        EXPECT_EQ(dst, reinterpret_cast<__ubuf__ data_type*>(&cce_name##_##data_type##_UpdatedDst_##index));       \
         GlobalMockObject::verify();                                                                                \
     }
 

@@ -2009,7 +2009,7 @@ union asc_store_align_config_post {
 
 // ==========asc_storealign_postupdate_impl(int8_t/uint8_t/int16_t/uint16_t/int32_t/uint32_t/fp8_e4m3fn_t/fp8_e5m2_t/fp8_e8m0_t/bfloat16_t/half/float)==========
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ int8_t* dst_align32b, vector_int8_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
+    __ubuf__ int8_t*& dst_align32b, vector_int8_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
@@ -2020,29 +2020,7 @@ __simd_callee__ inline void asc_storealign_postupdate_impl(
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ uint8_t* dst_align32b, vector_uint8_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        asc_store_align_config_post config;
-        config.block_stride = block_stride;
-        config.repeat_stride = repeat_stride;
-        vsstb(src, dst_align32b, config.config, mask, POST_UPDATE);
-    }
-}
-
-__simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ int16_t* dst_align32b, vector_int16_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        asc_store_align_config_post config;
-        config.block_stride = block_stride;
-        config.repeat_stride = repeat_stride;
-        vsstb(src, dst_align32b, config.config, mask, POST_UPDATE);
-    }
-}
-
-__simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ uint16_t* dst_align32b, vector_uint16_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ uint8_t*& dst_align32b, vector_uint8_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
@@ -2054,18 +2032,7 @@ __simd_callee__ inline void asc_storealign_postupdate_impl(
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ int32_t* dst_align32b, vector_int32_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        asc_store_align_config_post config;
-        config.block_stride = block_stride;
-        config.repeat_stride = repeat_stride;
-        vsstb(src, dst_align32b, config.config, mask, POST_UPDATE);
-    }
-}
-
-__simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ uint32_t* dst_align32b, vector_uint32_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ int16_t*& dst_align32b, vector_int16_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
@@ -2077,7 +2044,7 @@ __simd_callee__ inline void asc_storealign_postupdate_impl(
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ bfloat16_t* dst_align32b, vector_bfloat16_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ uint16_t*& dst_align32b, vector_uint16_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
@@ -2089,59 +2056,95 @@ __simd_callee__ inline void asc_storealign_postupdate_impl(
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ hifloat8_t* dst_align32b, vector_hifloat8_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ int32_t*& dst_align32b, vector_int32_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
         config.block_stride = block_stride;
         config.repeat_stride = repeat_stride;
-        __ubuf__ uint8_t* dst_align32b_tmp = reinterpret_cast<__ubuf__ uint8_t*>(dst_align32b);
+        vsstb(src, dst_align32b, config.config, mask, POST_UPDATE);
+    }
+}
+
+__simd_callee__ inline void asc_storealign_postupdate_impl(
+    __ubuf__ uint32_t*& dst_align32b, vector_uint32_t src, uint16_t block_stride, uint16_t repeat_stride,
+    vector_bool mask)
+{
+    if ASC_IS_AIV {
+        asc_store_align_config_post config;
+        config.block_stride = block_stride;
+        config.repeat_stride = repeat_stride;
+        vsstb(src, dst_align32b, config.config, mask, POST_UPDATE);
+    }
+}
+
+__simd_callee__ inline void asc_storealign_postupdate_impl(
+    __ubuf__ bfloat16_t*& dst_align32b, vector_bfloat16_t src, uint16_t block_stride, uint16_t repeat_stride,
+    vector_bool mask)
+{
+    if ASC_IS_AIV {
+        asc_store_align_config_post config;
+        config.block_stride = block_stride;
+        config.repeat_stride = repeat_stride;
+        vsstb(src, dst_align32b, config.config, mask, POST_UPDATE);
+    }
+}
+
+__simd_callee__ inline void asc_storealign_postupdate_impl(
+    __ubuf__ hifloat8_t*& dst_align32b, vector_hifloat8_t src, uint16_t block_stride, uint16_t repeat_stride,
+    vector_bool mask)
+{
+    if ASC_IS_AIV {
+        asc_store_align_config_post config;
+        config.block_stride = block_stride;
+        config.repeat_stride = repeat_stride;
+        __ubuf__ uint8_t*& dst_align32b_tmp = reinterpret_cast<__ubuf__ uint8_t*&>(dst_align32b);
         vsstb(*reinterpret_cast<vector_uint8_t*>(&src), dst_align32b_tmp, config.config, mask, POST_UPDATE);
     }
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ fp8_e4m3fn_t* dst_align32b, vector_fp8_e4m3fn_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ fp8_e4m3fn_t*& dst_align32b, vector_fp8_e4m3fn_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
         config.block_stride = block_stride;
         config.repeat_stride = repeat_stride;
-        __ubuf__ float8_e4m3_t* dst_align32b_tmp = reinterpret_cast<__ubuf__ float8_e4m3_t*>(dst_align32b);
+        __ubuf__ float8_e4m3_t*& dst_align32b_tmp = reinterpret_cast<__ubuf__ float8_e4m3_t*&>(dst_align32b);
         vsstb(src, dst_align32b_tmp, config.config, mask, POST_UPDATE);
     }
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ fp8_e5m2_t* dst_align32b, vector_fp8_e5m2_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ fp8_e5m2_t*& dst_align32b, vector_fp8_e5m2_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
         config.block_stride = block_stride;
         config.repeat_stride = repeat_stride;
-        __ubuf__ float8_e5m2_t* dst_align32b_tmp = reinterpret_cast<__ubuf__ float8_e5m2_t*>(dst_align32b);
+        __ubuf__ float8_e5m2_t*& dst_align32b_tmp = reinterpret_cast<__ubuf__ float8_e5m2_t*&>(dst_align32b);
         vsstb(src, dst_align32b_tmp, config.config, mask, POST_UPDATE);
     }
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ fp8_e8m0_t* dst_align32b, vector_fp8_e8m0_t src, uint16_t block_stride, uint16_t repeat_stride,
+    __ubuf__ fp8_e8m0_t*& dst_align32b, vector_fp8_e8m0_t src, uint16_t block_stride, uint16_t repeat_stride,
     vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
         config.block_stride = block_stride;
         config.repeat_stride = repeat_stride;
-        __ubuf__ float8_e8m0_t* dst_align32b_tmp = reinterpret_cast<__ubuf__ float8_e8m0_t*>(dst_align32b);
+        __ubuf__ float8_e8m0_t*& dst_align32b_tmp = reinterpret_cast<__ubuf__ float8_e8m0_t*&>(dst_align32b);
         vsstb(src, dst_align32b_tmp, config.config, mask, POST_UPDATE);
     }
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ half* dst_align32b, vector_half src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
+    __ubuf__ half*& dst_align32b, vector_half src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
@@ -2152,7 +2155,7 @@ __simd_callee__ inline void asc_storealign_postupdate_impl(
 }
 
 __simd_callee__ inline void asc_storealign_postupdate_impl(
-    __ubuf__ float* dst_align32b, vector_float src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
+    __ubuf__ float*& dst_align32b, vector_float src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask)
 {
     if ASC_IS_AIV {
         asc_store_align_config_post config;
