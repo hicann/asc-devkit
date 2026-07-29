@@ -105,7 +105,7 @@ aclnnStatus aclnnXxxTensorGetWorkspaceSize(const aclTensor *x0, const aclTensor 
 单算子API执行流程如下：
 
 **图1**  单算子API执行接口调用流程<a name="fig10713450184013"></a>  
-![](../../../figures/单算子API执行接口调用流程.png "单算子API执行接口调用流程")
+![](../../../figures/single_operator_api_execution_interface_call_flow.png "单算子API执行接口调用流程")
 
 本节以**AddCustom自定义算子**调用为例，介绍如何编写单算子调用的代码逻辑。其他算子的调用逻辑与Add算子大致一样，请根据实际情况自行修改代码。
 
