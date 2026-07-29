@@ -53,7 +53,7 @@ __aicore__ inline void Fill(const LocalTensor<T>& dst, const InitConstValueParam
 | 参数名称 | 描述 |
 | ------- | ------ |
 | T | dst的数据类型。 |
-| U | 初始化值的数据类型。<br>&nbsp;&nbsp;&bull;当dst使用基础数据类型时，U和dst的数据类型T需保持一致，否则编译失败。<br>&nbsp;&nbsp;&bull;当dst使用[TensorTrait](../../数据结构/辅助数据结构/TensorTrait/TensorTrait.md)类型时，U和dst的数据类型T的LiteType需保持一致，否则编译失败。<br>&nbsp;&nbsp;最后一个模板参数仅用于上述数据类型检查，用户无需关注。 |
+| U | 初始化值的数据类型。<br>&nbsp;&nbsp;&bull;当dst使用基础数据类型时，U和dst的数据类型T需保持一致，否则编译失败。<br>&nbsp;&nbsp;&bull;当dst使用[TensorTrait](../../辅助数据结构/TensorTrait/TensorTrait.md)类型时，U和dst的数据类型T的LiteType需保持一致，否则编译失败。<br>&nbsp;&nbsp;最后一个模板参数仅用于上述数据类型检查，用户无需关注。 |
 
 **表2** 参数说明
 

@@ -18,7 +18,7 @@
 
 -   **[RTC](RTC/RTC.md)**
 
--   **[log](log/log1.md)**
+-   **[log](log/log.md)**
 
 -   **[调测接口](调测接口/调测接口.md)**
 

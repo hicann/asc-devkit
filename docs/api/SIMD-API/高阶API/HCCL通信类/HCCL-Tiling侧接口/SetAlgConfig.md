@@ -29,4 +29,4 @@ uint32_t SetAlgConfig(const std::string &algConfig)
 
 ## 调用示例
 
-本接口的调用示例请见[调用示例](SetOpType.md#section1665082013318)。
+本接口的调用示例请见[调用示例](SetOpType.md#调用示例)。

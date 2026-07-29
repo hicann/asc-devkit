@@ -49,4 +49,4 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
 
 -   Kernel直调算子开发场景
 
-    需要使用workspace空间时，建议开启编译选项[HAVE\_WORKSPACE](../基于样例工程完成Kernel直调.md#li1103101565014)。host侧开发者仍需要自行申请workspace的空间，并传入。在使用Matmul Kernel侧接口等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。系统workspace大小可以通过PlatformAscendCManager的GetLibApiWorkSpaceSize接口获取。开启[HAVE\_WORKSPACE](../基于样例工程完成Kernel直调.md#li1103101565014)后，开发者在kernel侧入参处获取的workspace为偏移了系统workspace后的用户workspace。
+    需要使用workspace空间时，建议开启编译选项[HAVE\_WORKSPACE](../基于样例工程完成Kernel直调.md)。host侧开发者仍需要自行申请workspace的空间，并传入。在使用Matmul Kernel侧接口等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。系统workspace大小可以通过PlatformAscendCManager的GetLibApiWorkSpaceSize接口获取。开启[HAVE\_WORKSPACE](../基于样例工程完成Kernel直调.md)后，开发者在kernel侧入参处获取的workspace为偏移了系统workspace后的用户workspace。

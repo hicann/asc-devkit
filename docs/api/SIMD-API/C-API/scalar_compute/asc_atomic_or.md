@@ -58,7 +58,7 @@ PIPE_S
 ## 约束说明
 
 - 在开启编译器自动同步功能的前提下，编译器能够自动在PIPE_MTE2/PIPE_MTE3与PIPE_S之间插入同步。但是，asc_atomic_or为标量计算，在读写GM时如果与搬运单元（MTE2/MTE3）存在数据依赖，编译器却无法自动插入同步，开发者需要根据实际情况手动插入同步。
-- Scalar原子操作会绕过DCache，需要调用[asc_dcci](../缓存控制/asc_dcci.md)接口确保GM与DCache的一致性。
+- Scalar原子操作会绕过DCache，需要调用[asc_dcci](../cache_ctrl/asc_dcci.md)接口确保GM与DCache的一致性。
 
 ## 调用示例
 

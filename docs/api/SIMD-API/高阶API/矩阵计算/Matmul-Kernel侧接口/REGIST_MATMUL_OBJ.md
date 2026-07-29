@@ -18,7 +18,7 @@ REGIST_MATMUL_OBJ(tpipe, workspace, ...)
 | --- | --- | --- |
 | tpipe | 输入 | Tpipe对象。 |
 | workspace | 输入 | 系统workspace指针。 |
-| ... | 输入 | 可变参数，传入Matmul对象和与之对应的Tiling结构，要求Tiling结构的数据类型为[TCubeTiling结构](../Matmul-Tiling类/TCubeTiling结构体.md#table1563162142915)。<br><br>Tiling参数可以通过Host侧[GetTiling](../Matmul-Tiling类/GetTiling.md)接口获取，并传递到kernel侧使用。 |
+| ... | 输入 | 可变参数，传入Matmul对象和与之对应的Tiling结构，要求Tiling结构的数据类型为[TCubeTiling结构](../Matmul-Tiling类/TCubeTiling结构体.md#tcubetiling-struct)。<br><br>Tiling参数可以通过Host侧[GetTiling](../Matmul-Tiling类/GetTiling.md)接口获取，并传递到kernel侧使用。 |
 
 ## 返回值说明
 

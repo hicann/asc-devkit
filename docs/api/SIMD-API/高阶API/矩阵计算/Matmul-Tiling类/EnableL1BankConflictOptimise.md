@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-根据[GetTiling](GetTiling.md)接口计算出的Tiling参数，获取是否可以开启L1 Bank冲突优化功能。若可以开启该功能，则与TilingKey机制配合使用，通过增加TilingKey，关联Host侧与Kernel侧实现，并在Kernel侧增加代码实现分支，将MatmulConfig中的[enableL1BankConflictOptimise](../Matmul-Kernel侧接口/MatmulConfig.md#p84588523128)设置为true，即可优化L1上的Bank冲突。
+根据[GetTiling](GetTiling.md)接口计算出的Tiling参数，获取是否可以开启L1 Bank冲突优化功能。若可以开启该功能，则与TilingKey机制配合使用，通过增加TilingKey，关联Host侧与Kernel侧实现，并在Kernel侧增加代码实现分支，将MatmulConfig中的[enableL1BankConflictOptimise](../Matmul-Kernel侧接口/MatmulConfig.md#matmulconfig-params)设置为true，即可优化L1上的Bank冲突。
 
 ## 函数原型
 

@@ -22,7 +22,7 @@ __aicore__ constexpr MatmulConfig GetSpecialMDLConfig(const bool intrinsicsLimit
 
 ## 参数说明
 
-本接口的所有参数用于设置[MatmulConfig结构体](MatmulConfig.md#table1761013213153)中的参数，其中互相对应的参数的功能作用相同。
+本接口的所有参数用于设置[MatmulConfig结构体](MatmulConfig.md#matmulconfig-params)中的参数，其中互相对应的参数的功能作用相同。
 
 **表1**  接口参数说明
 
@@ -37,7 +37,7 @@ __aicore__ constexpr MatmulConfig GetSpecialMDLConfig(const bool intrinsicsLimit
 
 ## 返回值说明
 
-[MatmulConfig结构体](MatmulConfig.md#table1761013213153)。
+[MatmulConfig结构体](MatmulConfig.md#matmulconfig-params)。
 
 ## 约束说明
 

@@ -21,7 +21,7 @@ SocVersion GetSocVersion(void) const
 AI处理器的型号请通过如下方式获取：
 
 <!-- npu="910b,910,310p,310b" id1 -->
--   针对如下产品：在安装AI处理器的服务器执行**npu-smi info**命令进行查询，获取**Name**信息。实际配置值为AscendName，例如**Name**取值为_xxxyy_，实际配置值为Ascend_xxxyy_。
+-   针对如下产品：在安装AI处理器的服务器执行**npu-smi info**命令进行查询，获取**Name**信息。实际配置值为AscendName，例如**Name**取值为xxxyy，实际配置值为Ascendxxxyy。
 
     <!-- npu="910b" id2 -->
     Atlas A2 训练系列产品/Atlas A2 推理系列产品
@@ -41,13 +41,13 @@ AI处理器的型号请通过如下方式获取：
 <!-- end id1 -->
 
 <!-- npu="A3" id6 -->
--   针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，在安装AI处理器的服务器执行**npu-smi info -t board -i **_id_** -c **_chip\_id_命令进行查询，获取**Chip Name**和**NPU Name**信息，实际配置值为Chip Name\_NPU Name。例如**Chip Name**取值为Ascend_xxx_，**NPU Name**取值为1234，实际配置值为Ascend_xxx__\__1234。其中：
+-   针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，在安装AI处理器的服务器执行**npu-smi info -t board -i **_id_** -c **_chip\_id_命令进行查询，获取**Chip Name**和**NPU Name**信息，实际配置值为Chip Name\_NPU Name。例如**Chip Name**取值为Ascendxxx，**NPU Name**取值为1234，实际配置值为Ascendxxx_1234。其中：
     -   id：设备id，通过**npu-smi info -l**命令查出的NPU ID即为设备id。
     -   chip\_id：芯片id，通过**npu-smi info -m**命令查出的Chip ID即为芯片id。
 <!-- end id6 -->
 
 <!-- npu="950" id7 -->
--   针对Ascend 950PR/Ascend 950DT，在安装AI处理器的服务器执行**npu-smi info -t board -i **_id_命令进行查询，获取**Chip Name**和**NPU Name**信息，实际配置值为Chip Name\_NPU Name。例如**Chip Name**取值为Ascend_xxx_，**NPU Name**取值为1234，实际配置值为Ascend_xxx__\__1234。
+-   针对Ascend 950PR/Ascend 950DT，在安装AI处理器的服务器执行**npu-smi info -t board -i **_id_命令进行查询，获取**Chip Name**和**NPU Name**信息，实际配置值为Chip Name\_NPU Name。例如**Chip Name**取值为Ascendxxx，**NPU Name**取值为1234，实际配置值为Ascend_xxx_1234。
 
     其中，id为设备id，通过**npu-smi info -l**命令查出的NPU ID即为设备id。
 <!-- end id7 -->

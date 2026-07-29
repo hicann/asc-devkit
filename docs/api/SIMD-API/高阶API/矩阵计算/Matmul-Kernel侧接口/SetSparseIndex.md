@@ -12,9 +12,9 @@
 
 ## 功能说明
 
-设置稀疏矩阵[稠密化过程](../../../基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md#section19443175724215)生成的索引矩阵。
+设置稀疏矩阵[稠密化过程](../../../基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md#功能说明)生成的索引矩阵。
 
-索引矩阵在稠密化中的作用请参考[MmadWithSparse](../../../基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md#section618mcpsimp)。
+索引矩阵在稠密化中的作用请参考[MmadWithSparse](../../../基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md)。
 
 ## 函数原型
 
@@ -37,7 +37,7 @@ __aicore__ inline void SetSparseIndex(const GlobalTensor<uint8_t>& indexGlobal)
 ## 约束说明
 
 -   索引矩阵的Format格式要求为NZ格式。
--   本接口仅支持在纯Cube模式（只有矩阵计算）且[MDL模板](MatmulConfig.md#li661233281512)的场景使用。
+-   本接口仅支持在纯Cube模式（只有矩阵计算）且[MDL模板](MatmulConfig.md#table6981133810309)的场景使用。
 
 ## 调用示例
 

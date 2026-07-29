@@ -34,9 +34,13 @@
 
 其中，L0A_MX/L0B_MX Buffer的大小为4KB，和L0A/L0B Buffer地址的映射关系如下：
 
-$$L0A\_MX\ Buffer\ Address = L0A\ Buffer\ Address / 16$$
+$$
+L0A\_MX\ Buffer\ Address = L0A\ Buffer\ Address / 16
+$$
 
-$$L0B\_MX\ Buffer\ Address = L0B\ Buffer\ Address / 16$$
+$$
+L0B\_MX\ Buffer\ Address = L0B\ Buffer\ Address / 16
+$$
 
 - 对于b4数据类型，左右矩阵数据分形在L0A Buffer中为一个16×64的矩阵，在L0B Buffer中为一个64×16的矩阵。
 - 对于b8数据类型，左右矩阵数据分形在L0A Buffer中为一个16×32的矩阵，在L0B Buffer中为一个32×16的矩阵。
@@ -110,7 +114,9 @@ __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>&
 
 量化系数矩阵的搬运特性说明如下，起始地址计算公式为：
 
-$$startAddr = srcAddr + (xStartPosition \times \lvert srcStride \rvert + yStartPosition) \times 32B$$
+$$
+startAddr = srcAddr + (xStartPosition \times \lvert srcStride \rvert + yStartPosition) \times 32B
+$$
 
 量化系数矩阵分形是一个固定数据类型为fp8_e8m0_t、分形大小为16×2的矩阵，搬运示意图如下：
 

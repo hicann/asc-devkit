@@ -14,9 +14,11 @@
 
 本接口用于在编译期间获取常量化的Matmul Tiling参数。
 
+<a id="matmul-tiling-constant"></a>
 Matmul Tiling常量化功能为在编译期期间获取常量化的Matmul Tiling参数并进行算子编译，从而减少Scalar计算开销，提升算子整体性能。具体为，在获取[Matmul模板](Matmul模板参数.md)时，可以确定[MatmulConfig](MatmulConfig.md)的singleCore Shape（[MatmulConfig](MatmulConfig.md)中的singleCoreM/singleCoreN/singleCoreK）和Base Shape（[MatmulConfig](MatmulConfig.md)中的basicM/basicN/basicK）参数，或者只确定Base Shape参数；通过指定获取模板的接口中的singleCore Shape和Base Shape参数，或者只指定Base Shape参数，获取自定义模板；然后调用本接口，得到常量化的Matmul Tiling参数。
 
-当在调用[获取MatmulConfig模板的接口](MatmulConfig.md#li0460173613513)时，只将\(baseM, baseN, baseK\)设置为常数值时，称为部分常量化，此时\(singleCoreM, singleCoreN, singleCoreK\)都保持默认值0，部分常量化场景在Kernel侧使用[REGIST\_MATMUL\_OBJ](REGIST_MATMUL_OBJ.md)初始化Matmul对象时，仍需要使用Tiling；将\(baseM, baseN, baseK, singleCoreM, singleCoreN, singleCoreK\)都设置为常数值时，称为全量常量化，这时可以在[REGIST\_MATMUL\_OBJ](REGIST_MATMUL_OBJ.md)的入参传递Tiling参数的位置，使用空指针替代。
+<a id="partial-constant"></a>
+当在调用[获取MatmulConfig模板的接口](MatmulConfig.md#get-matmulconfig-api)时，只将\(baseM, baseN, baseK\)设置为常数值时，称为部分常量化，此时\(singleCoreM, singleCoreN, singleCoreK\)都保持默认值0，部分常量化场景在Kernel侧使用[REGIST\_MATMUL\_OBJ](REGIST_MATMUL_OBJ.md)初始化Matmul对象时，仍需要使用Tiling；将\(baseM, baseN, baseK, singleCoreM, singleCoreN, singleCoreK\)都设置为常数值时，称为全量常量化，这时可以在[REGIST\_MATMUL\_OBJ](REGIST_MATMUL_OBJ.md)的入参传递Tiling参数的位置，使用空指针替代。
 
 经过上述部分常量化或全部常量化后，将得到带有常量化参数的MatmulConfig模板，然后使用本接口将Tiling参数常量化。本接口的返回值包含常量化的Matmul Tiling参数和MatmulConfig模板。
 
@@ -42,7 +44,7 @@ __aicore__ constexpr MatmulApiStaticTiling GetMatmulApiTiling(const MatmulConfig
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| mmCFG | 输入 | 获取的[MatmulConfig](MatmulConfig.md#table1761013213153)模板。<br><br>对于Ascend 950PR/Ascend 950DT，支持常量化的为全部模板：Norm, IBShare, MDL模板。<br><br>对于Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持常量化的模板有：Norm, MDL模板。<br><br>对于Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持常量化的模板有：Norm, MDL模板。 |
+| mmCFG | 输入 | 获取的[MatmulConfig](MatmulConfig.md#matmulconfig-params)模板。<br><br>对于Ascend 950PR/Ascend 950DT，支持常量化的为全部模板：Norm, IBShare, MDL模板。<br><br>对于Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持常量化的模板有：Norm, MDL模板。<br><br>对于Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持常量化的模板有：Norm, MDL模板。 |
 | l1Size | 输入 | 可用的L1大小，默认值L1_SIZE。 |
 
 ## 返回值说明

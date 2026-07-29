@@ -58,6 +58,6 @@
         ```
 
 >[!NOTE]说明 
->- 请参考[Ascend C API](../../../../api/Ascend-C-API列表.md)中具体API支持的型号，来判断API接口是否支持Atlas 推理系列产品Vector Core。
+>- 请参考[Ascend C API](../../../../api/api_list.md)中具体API支持的型号，来判断API接口是否支持Atlas 推理系列产品Vector Core。
 >- 支持Vector Core后，因为AI Core和Vector Core会分别执行，通过不同的任务进行调度，所以不支持核间同步指令，如IBSet、IBWait、SyncAll等。
 >- 算子计算溢出（输入inf/nan或计算结果超出范围）时，需注意AI Core和Vector Core结果表现不一致，AI Core仅支持饱和模式，Vector Core仅支持inf/nan模式。

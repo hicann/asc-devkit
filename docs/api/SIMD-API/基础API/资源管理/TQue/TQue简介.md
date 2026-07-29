@@ -2,7 +2,7 @@
 
 流水任务之间通过队列（Queue）完成任务间通信和同步。TQue是用来执行队列相关操作、管理相关资源的数据结构。TQue继承自TQueBind父类，继承关系如下：
 
-![](../../../../../figures/enque.png)
+![](../../../../figures/enque.png)
 
 ## 模板参数<a name="section18341144185913"></a>
 

@@ -50,14 +50,14 @@ Init主要用于对Matmul对象中的Tiling数据进行初始化，根据Tiling�
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| cubeTiling | 输入 | Matmul Tiling参数，TCubeTiling结构体定义请参见[表1 TCubeTiling结构说明](../Matmul-Tiling类/TCubeTiling结构体.md#table1563162142915)。<br><br>Tiling参数可以通过host侧[GetTiling](../Matmul-Tiling类/GetTiling.md)接口获取，并传递到kernel侧使用。在kernel侧调用[GET_TILING_DATA](../../../基础API/Kernel-Tiling/GET_TILING_DATA.md)实现将Tiling参数搬运到AI Core内的栈空间中，本接口传入Tiling参数中TCubeTiling结构体的栈地址。 |
+| cubeTiling | 输入 | Matmul Tiling参数，TCubeTiling结构体定义请参见[表1 TCubeTiling结构说明](../Matmul-Tiling类/TCubeTiling结构体.md#tcubetiling-struct)。<br><br>Tiling参数可以通过host侧[GetTiling](../Matmul-Tiling类/GetTiling.md)接口获取，并传递到kernel侧使用。在kernel侧调用[GET_TILING_DATA](../../../基础API/Kernel-Tiling/GET_TILING_DATA.md)实现将Tiling参数搬运到AI Core内的栈空间中，本接口传入Tiling参数中TCubeTiling结构体的栈地址。 |
 | tpipe | 输入 | Tpipe对象。 |
 
 **表2**  Tiling参数传入GM地址接口参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| gmCubeTiling | 输入 | Matmul Tiling参数，该参数指向gm上的一块内存地址，其中的数据类型是TCubeTiling结构体，TCubeTiling结构体定义请参见[表1 TCubeTiling结构说明](../Matmul-Tiling类/TCubeTiling结构体.md#table1563162142915)。<br><br>Tiling参数可以通过host侧[GetTiling](../Matmul-Tiling类/GetTiling.md)接口获取，并传递到kernel侧使用。在kernel侧调用[GET_TILING_DATA_PTR_WITH_STRUCT](../../../基础API/Kernel-Tiling/GET_TILING_DATA_PTR_WITH_STRUCT.md)获取gm上Tiling参数的指针，本接口传入Tiling参数中TCubeTiling结构体的GM地址。 |
+| gmCubeTiling | 输入 | Matmul Tiling参数，该参数指向gm上的一块内存地址，其中的数据类型是TCubeTiling结构体，TCubeTiling结构体定义请参见[表1 TCubeTiling结构说明](../Matmul-Tiling类/TCubeTiling结构体.md#tcubetiling-struct)。<br><br>Tiling参数可以通过host侧[GetTiling](../Matmul-Tiling类/GetTiling.md)接口获取，并传递到kernel侧使用。在kernel侧调用[GET_TILING_DATA_PTR_WITH_STRUCT](../../../基础API/Kernel-Tiling/GET_TILING_DATA_PTR_WITH_STRUCT.md)获取gm上Tiling参数的指针，本接口传入Tiling参数中TCubeTiling结构体的GM地址。 |
 | tpipe | 输入 | Tpipe对象。 |
 
 ## 返回值说明
@@ -71,7 +71,7 @@ Init主要用于对Matmul对象中的Tiling数据进行初始化，根据Tiling�
     无
 
 -   Tiling参数传入GM地址的接口：
-    -   仅支持Matmul Tiling参数的[部分常量化](GetMatmulApiTiling.md#section618mcpsimp)场景。
+    -   仅支持Matmul Tiling参数的[部分常量化](GetMatmulApiTiling.md#partial-constant)场景。
     -   不支持CPU域调试。
 
 ## 调用示例

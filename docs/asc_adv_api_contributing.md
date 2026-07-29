@@ -22,7 +22,10 @@ Ascend C高阶API的开发流程主要包括如下步骤：
 下面以高阶API `Axpy`为例，介绍如何从零开始，开发一个高阶API。本案例删除了部分非必要代码，您可以在代码仓的[axpy.h](../include/adv_api/math/axpy.h)、[axpy_tiling.h](../include/adv_api/math/axpy_tiling.h)、[axpy_tiling_intf.h](../include/adv_api/math/axpy_tiling_intf.h)、[axpy_common_impl.h](../impl/adv_api/detail/math/axpy/axpy_common_impl.h)、[axpy_tiling_impl.cpp](../impl/adv_api/tiling/math/axpy_tiling_impl.cpp)文件中查看全部代码。
 ### 设计API
 axpy的功能为源操作数`srcTensor`中每个元素与标量求积后，与目的操作数`dstTensor`中的对应元素相加，计算公式如下。
-$$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
+
+$$
+dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i
+$$
 
 - Kernel侧
 
@@ -131,8 +134,15 @@ $$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
     \\ 
     Align32(tmpbufferSize) &T = float
     \end{cases}$$
-    $$round = calCount/stackSize$$
-    $$tail = calCount%stackSize$$
+
+    $$
+    round = calCount/stackSize
+    $$
+
+    $$
+    tail = calCount%stackSize
+    $$
+
     如果tail不为0，即存在尾块，则需要额外处理尾块数据。在尾块数据计算前，通过setMaskCount接口设置计算单元的工作方式为Count模式。
     ```c++
     template <typename T, typename U, bool isReuseSource = false>
@@ -249,7 +259,11 @@ $$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
     Cast(dstTensor, tmp4)
     ```
     考虑到Vector计算单元单次Repeat计算256字节的数据，那么最大临时空间的计算公式如下：
-    $$MaxValue=\begin{cases}\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_HALF\_CALC\_PROC &dstType = half\\\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}$$
+
+    $$
+    MaxValue=\begin{cases}\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_HALF\_CALC\_PROC &dstType = half\\\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}
+    $$
+
     ```c++
    inline uint32_t GetAxpyMaxTmpSize(const uint32_t inputSize, const uint32_t typeSize)
     {
@@ -260,7 +274,11 @@ $$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
     }
     ```
     分析所需临时空间最小值的计算，若临时空间最小，则单次计算数据量最小，即每次计算数据量固定为单次Repeat处理的数据大小，256字节，那么临时空间最小值的计算公式如下:
-    $$MinValue=\begin{cases}\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_HALF\_CALC\_PROC &dstType = half\\\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}$$
+
+    $$
+    MinValue=\begin{cases}\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_HALF\_CALC\_PROC &dstType = half\\\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}
+    $$
+
     ```c++
     inline uint32_t GetAxpyMinTmpSize(const uint32_t typeSize)
     {

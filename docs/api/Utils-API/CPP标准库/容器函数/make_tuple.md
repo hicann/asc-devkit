@@ -47,5 +47,5 @@ __aicore__ inline constexpr tuple<unwrap_decay_t<Tps>...> make_tuple(Tps&& ...ar
 AscendC::Std::tuple<uint32_t, float, bool> test = AscendC::Std::make_tuple(22, 3.3, true);
 ```
 
-更多调用示例请参见[示例](tuple.md#section1193764916212)。
+更多调用示例请参见[示例](tuple.md#调用示例)。
 

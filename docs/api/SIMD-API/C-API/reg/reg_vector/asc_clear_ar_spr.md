@@ -28,7 +28,7 @@
 
 头文件路径：`"c_api/reg_compute/reg_vector.h"`。
 
-对AR寄存器进行清理，AR寄存器通常由[asc_squeeze_with_status](./asc_squeeze_with_status.md)接口使用。
+对AR寄存器进行清理，AR寄存器通常由[asc_squeeze](./asc_squeeze.md)接口使用。
 
 ## 函数原型
 

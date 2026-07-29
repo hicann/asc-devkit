@@ -1,6 +1,6 @@
 # Ascend C API参考
 
--   [Ascend C API列表](Ascend-C-API列表.md)
+-   [Ascend C API列表](api_list.md)
 -   [SIMD API](SIMD-API/SIMD-API.md)
     -   [通用说明和约束](SIMD-API/通用说明和约束.md)
     -   [基础API](SIMD-API/基础API/基础API.md)
@@ -46,8 +46,6 @@
                 -   [ReinterpretCast](SIMD-API/基础API/数据结构/GlobalTensor/ReinterpretCast-8.md)
 
         -   [数据结构(TensorAPI)](SIMD-API/基础API/data_structure_TensorAPI/data_structure_TensorAPI.md)
-            -   [内置数据类型](SIMD-API/基础API/数据结构/内置数据类型.md)
-            -   [精度转换](SIMD-API/基础API/数据结构/precision_conversion.md)
             -   [Layout数据结构及相关接口](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/layout_structure.md)
                 -   [Capacity](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Capacity.md)
                 -   [Coord](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Coord.md)
@@ -248,17 +246,8 @@
                 
         -   [矩阵计算（TensorAPI）](SIMD-API/基础API/cube_compute_TensorAPI/cube_compute_TensorAPI.md)
             -   [概述](SIMD-API/基础API/cube_compute_TensorAPI/概述/概述.md)
-                -   [矩阵计算单元](SIMD-API/基础API/cube_compute_ISASI/概述/矩阵计算单元.md)
-                -   [矩阵计算流程](SIMD-API/基础API/cube_compute_TensorAPI/概述/矩阵计算流程.md)
-            -   [矩阵计算分形介绍](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算分形介绍/矩阵计算分形介绍.md)
-                -   [背景与核心概念](SIMD-API/基础API/cube_compute_ISASI/矩阵计算分形介绍/背景与核心概念.md)
-                -   [关键分形格式详解](SIMD-API/基础API/cube_compute_ISASI/矩阵计算分形介绍/关键分形格式详解.md)
-                <cann-filter npu-type="910b,A3,A5">
-                -   [辅助矩阵分形格式详解](SIMD-API/基础API/cube_compute_ISASI/矩阵计算分形介绍/辅助矩阵分形格式详解.md)
-                </cann-filter>
             -   [矩阵计算的搬入](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬入/矩阵计算的搬入.md)
                 -   [总体说明](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬入/总体说明.md)
-                -   [L1 Buffer/L0A Buffer/L0B Buffer内存结构介绍](SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/L1-L0A-B内存结构介绍.md)
                 -   [Copy（Global Memory到L1 Buffer数据搬运）](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬入/Copy_GMToL1.md)
                 -   [Copy（L1 Buffer到L0A Buffer数据搬运）](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬入/Copy_L1ToL0A.md)
                 -   [Copy（L1 Buffer到L0B Buffer数据搬运）](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬入/Copy_L1ToL0B.md)
@@ -273,9 +262,6 @@
                 -   [HF32](SIMD-API/基础API/cube_compute_TensorAPI/Mmad计算关键特性说明/HF32.md)
                 -   [UnitFlag](SIMD-API/基础API/cube_compute_TensorAPI/Mmad计算关键特性说明/UnitFlag.md)
             -   [Mmad计算辅助配置接口](SIMD-API/基础API/cube_compute_TensorAPI/Mmad计算辅助配置接口/Mmad计算辅助配置接口.md)
-                -   [SetMMColumnMajor/SetMMRowMajor](SIMD-API/基础API/cube_compute_ISASI/Mmad计算辅助配置接口/SetMMColumnMajor-SetMMRowMajor.md)
-                -   [SetHF32Mode](SIMD-API/基础API/cube_compute_ISASI/Mmad计算辅助配置接口/SetHF32Mode.md)
-                -   [SetHF32TransMode](SIMD-API/基础API/cube_compute_ISASI/Mmad计算辅助配置接口/SetHF32TransMode.md)
             -   [矩阵计算的搬出](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬出/矩阵计算的搬出.md)
                 -   [总体说明](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬出/总体说明.md)
                 -   [Copy（L0C Buffer到Global Memory数据搬运）](SIMD-API/基础API/cube_compute_TensorAPI/矩阵计算的搬出/Copy_L0CToGM.md)
@@ -390,20 +376,13 @@
                 -   [SetDeqScale](SIMD-API/基础API/Memory矢量计算/类型转换辅助配置接口/SetDeqScale.md)
 
             -   [归约计算](SIMD-API/基础API/Memory矢量计算/归约计算/归约计算.md)
-            
-                - [概述](SIMD-API/基础API/Memory矢量计算/归约计算/Introduction.md)
-                
-                - [ReduceDataBlock](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceDataBlock.md) 
-                
-                - [ReduceRepeat](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceRepeat.md)  
-                
-                - [ReducePairElem](SIMD-API/基础API/Memory矢量计算/归约计算/ReducePairElem.md)  
-                
-                - [ReduceMax](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMax.md)  
-                
-                - [ReduceMin](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMin.md)  
-                
-                - [ReduceSum](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceSum.md)  
+                -   [概述](SIMD-API/基础API/Memory矢量计算/归约计算/Introduction.md)
+                -   [ReduceDataBlock](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceDataBlock.md) 
+                -   [ReduceRepeat](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceRepeat.md)  
+                -   [ReducePairElem](SIMD-API/基础API/Memory矢量计算/归约计算/ReducePairElem.md)  
+                -   [ReduceMax](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMax.md)  
+                -   [ReduceMin](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMin.md)  
+                -   [ReduceSum](SIMD-API/基础API/Memory矢量计算/归约计算/ReduceSum.md)  
 
             -   [归约计算辅助配置接口](SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/归约计算辅助配置接口.md)
                 -   [GetReduceRepeatSumSpr\(ISASI\)](SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr_ISASI.md)
@@ -1141,17 +1120,25 @@
             -   [asc_copy_gm2l1_align](SIMD-API/C-API/cube_datamove/asc_copy_gm2l1_align.md)
             -   [asc_copy_gm2l1_dn2nz](SIMD-API/C-API/cube_datamove/asc_copy_gm2l1_dn2nz.md)
             -   [asc_copy_gm2l1_nd2nz](SIMD-API/C-API/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_2201.md)
-            -   [asc_copy_l0c2gm](SIMD-API/C-API/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)
-            -   [asc_copy_l0c2l1](SIMD-API/C-API/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_2201.md)
+            -   [asc_copy_l0c2gm](SIMD-API/C-API/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm.md)
+                -   [asc_copy_l0c2gm_2201](SIMD-API/C-API/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)
+                -   [asc_copy_l0c2gm_3510](SIMD-API/C-API/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)
+            -   [asc_copy_l0c2l1](SIMD-API/C-API/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1.md)
+                -   [asc_copy_l0c2l1_2201](SIMD-API/C-API/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_2201.md)
+                -   [asc_copy_l0c2l1_3510](SIMD-API/C-API/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)
             -   [asc_copy_l0c2ub](SIMD-API/C-API/cube_datamove/asc_copy_l0c2ub.md)
             -   [asc_copy_l12bt](SIMD-API/C-API/cube_datamove/asc_copy_l12bt/asc_copy_l12bt_arch_2201.md)
             -   [asc_copy_l12fb_arch_2201](SIMD-API/C-API/cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_2201.md)
             -   [asc_copy_l12fb_arch_3510](SIMD-API/C-API/cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_3510.md)
             -   [asc_copy_l12gm](SIMD-API/C-API/cube_datamove/asc_copy_l12gm.md)
-            -   [asc_copy_l12l0a](SIMD-API/C-API/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)
+            -   [asc_copy_l12l0a](SIMD-API/C-API/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a.md)
+                -   [asc_copy_l12l0a_2201](SIMD-API/C-API/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)
+                -   [asc_copy_l12l0a_3510](SIMD-API/C-API/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_arch_3510.md)
             -   [asc_copy_l12l0a_mx](SIMD-API/C-API/cube_datamove/asc_copy_l12l0a_mx.md)
             -   [asc_copy_l12l0a_trans](SIMD-API/C-API/cube_datamove/asc_copy_l12l0a_trans.md)
-            -   [asc_copy_l12l0b](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_arch_2201.md)
+            -   [asc_copy_l12l0b](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b.md)
+                -   [asc_copy_l12l0b_2201](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_arch_2201.md)
+                -   [asc_copy_l12l0b_3510](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_arch_3510.md)
             -   [asc_copy_l12l0b_mx](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b_mx.md)
             -   [asc_copy_l12l0b_sparse](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b_sparse.md)
             -   [asc_copy_l12l0b_trans](SIMD-API/C-API/cube_datamove/asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_2201.md)

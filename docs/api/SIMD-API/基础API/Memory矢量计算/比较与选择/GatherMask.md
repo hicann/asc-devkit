@@ -142,8 +142,8 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 | --- | --- | --- |
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。 |
 | src0 | 输入 | 源操作数。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>数据类型需要与目的操作数保持一致。 |
-| src1Pattern | 输入 | gather mask（数据收集的掩码），分为内置固定模式和用户自定义模式两种，根据内置固定模式对应的二进制掩码或者用户自定义输入的Tensor数值对应的二进制掩码从源操作数中选取元素写入目的操作数中。1为选取，0为不选取。具体说明请参考[功能说明](#section618mcpsimp)。<br>注：内置固定模式下src1RepeatStride参数无效。 |
-| reduceMode | 输入 | 用于选择mask参数模式，数据类型为bool，支持如下取值：<br>&bull; false：Normal模式。该模式下，每次repeat操作256Bytes数据，总的数据计算量为repeatTimes * 256Bytes。此模式下mask参数无效，建议设置为0。<br>&bull; true：Counter模式。根据mask等参数含义的不同，该模式存在两种配置方式。具体说明请参考[功能说明](#section618mcpsimp)。<br>两种取值都支持：<br>&bull; 按需配置src0BlockStride、src0RepeatStride参数。<br>&bull; 支持src1Pattern配置为内置固定模式或用户自定义模式。用户自定义模式下可根据实际情况配置src1RepeatStride。<br> |
+| src1Pattern | 输入 | gather mask（数据收集的掩码），分为内置固定模式和用户自定义模式两种，根据内置固定模式对应的二进制掩码或者用户自定义输入的Tensor数值对应的二进制掩码从源操作数中选取元素写入目的操作数中。1为选取，0为不选取。具体说明请参考[功能说明](#功能说明)。<br>注：内置固定模式下src1RepeatStride参数无效。 |
+| reduceMode | 输入 | 用于选择mask参数模式，数据类型为bool，支持如下取值：<br>&bull; false：Normal模式。该模式下，每次repeat操作256Bytes数据，总的数据计算量为repeatTimes * 256Bytes。此模式下mask参数无效，建议设置为0。<br>&bull; true：Counter模式。根据mask等参数含义的不同，该模式存在两种配置方式。具体说明请参考[功能说明](#功能说明)。<br>两种取值都支持：<br>&bull; 按需配置src0BlockStride、src0RepeatStride参数。<br>&bull; 支持src1Pattern配置为内置固定模式或用户自定义模式。用户自定义模式下可根据实际情况配置src1RepeatStride。<br> |
 | mask | 输入 | 用于控制每次迭代内参与计算的元素。根据reduceMode，分为两种模式：<br>&bull; Normal模式：mask无效，建议设置为0。<br>&bull; Counter模式：取值范围[1, 2<sup>32</sup> – 1]。不同的版本型号Counter模式下，mask参数表示含义不同。具体配置规则参考上文reduceMode参数描述。<br> |
 | gatherMaskParams | 输入 | 控制操作数地址步长的数据结构，GatherMaskParams类型。<br>具体参数说明[表3 GatherMaskParams结构体参数说明](#GatherMaskParams)。 |
 | rsvdCnt | 输出 | 该条指令筛选后保留下来的元素计数，对应dstLocal中有效元素个数，数据类型为uint64_t。 |

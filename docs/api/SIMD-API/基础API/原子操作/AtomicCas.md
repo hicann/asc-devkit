@@ -36,7 +36,9 @@
 
 计算公式如下：
 
-$$new\_value = (old\_value == value1\ ?\ value2\ :\ old\_value)$$
+$$
+new\_value = (old\_value == value1\ ?\ value2\ :\ old\_value)
+$$
 
 ## 函数原型<a name="section1171112415119"></a>
 

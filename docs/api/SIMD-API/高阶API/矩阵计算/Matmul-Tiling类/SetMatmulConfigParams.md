@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-在计算Tiling时，用于自定义设置[表1](#table9646134355611)中的MatmulConfig参数。本接口中配置的参数对应的功能在Tiling与Kernel中需要保持一致，所以本接口中的参数取值，需要与Kernel侧对应的MatmulConfig参数值保持一致，详细MatmulConfig参数请见[表2](../Matmul-Kernel侧接口/MatmulConfig.md#table1761013213153)。
+在计算Tiling时，用于自定义设置[表1](#table9646134355611)中的MatmulConfig参数。本接口中配置的参数对应的功能在Tiling与Kernel中需要保持一致，所以本接口中的参数取值，需要与Kernel侧对应的MatmulConfig参数值保持一致，详细MatmulConfig参数请见[表2](../Matmul-Kernel侧接口/MatmulConfig.md#matmulconfig-params)。
 
 ## 函数原型
 

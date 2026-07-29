@@ -70,10 +70,12 @@
 
 -   gridDim<a name="li20760123812911"></a>
 
+    <a id="griddim"></a>
     内置全局变量，只能在核函数中使用，表示整个计算任务在各个维度上分别由多少个线程块构成。各个维度上线程块关系需满足gridDim.x * gridDim.y * gridDim.z <= 65535。
 
 -   blockDim<a name="li076017381191"></a>
 
+    <a id="blockdim"></a>
     内置全局变量，在核函数中可以直接使用，用于获取线程块中配置的线程的三维层次结构，即启动核函数时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。
 
 -   blockIdx<a name="li1676053814914"></a>

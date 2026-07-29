@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001600307121_zh-cn_topic_0000001576870453_zh-cn_topic_0000001525424352_section36583473819"></a>
 
-注册算子的原型定义，从而确保算子能够被框架正确识别、编译和执行****。
+注册算子的原型定义，从而确保算子能够被框架正确识别、编译和执行。
 
 算子原型主要描述了算子的输入输出、属性等信息以及算子在AI处理器上相关实现信息，并关联[tiling实现](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/编程指南/高级编程/Aclnn算子工程化开发/Host侧Tiling实现/基本流程.md)等函数。算子原型通过自定义的算子类来承载，该算子类继承自[OpDef类](OpDef/OpDef.md)。完成算子的原型定义等操作后，需要调用[OP\_ADD](OP_ADD.md)接口，传入算子类型（自定义算子类的类名），进行算子原型注册。详细内容请参考[算子原型定义](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/编程指南/高级编程/Aclnn算子工程化开发/算子原型定义.md)。
 

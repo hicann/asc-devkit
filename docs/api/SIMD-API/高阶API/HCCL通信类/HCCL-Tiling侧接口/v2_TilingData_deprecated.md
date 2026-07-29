@@ -16,9 +16,10 @@ AI CPU启动下发通信任务前，需获取固定的通信配置，如[表1](#
 | --- | --- |
 | version | uint32_t类型。用于区分TilingData版本。<br><br>v2版本的TilingData结构体中，version字段仅支持取值为2。<br><br>注意：该字段在v2版本TilingData中的位置，同v1版本的preparePosition字段。当该字段取值为2时，为v2版本的结构体，当取值为1时，为v1版本的结构体，请使用[Mc2Msg结构体](v1_TilingData_deprecated.md#table4835205712588)。 |
 | mc2HcommCnt | uint32_t类型。表示各通信域中通信任务总个数。当前该参数支持的最大取值为3。 |
-| serverCfg | [Mc2ServerCfg](#table96371578575)类型。集合通信server端通用参数配置。 |
-| hcom | [Mc2HcommCfg](#table13131010011)类型。各通信域中每个通信任务的参数配置。在通信算子TilingData的定义中，根据各通信域中通信任务总个数，共需要定义mc2HcommCnt个Mc2HcommCfg结构体。例如：mc2HcommCnt=2，则需要依次定义2个[Mc2HcommCfg](#table13131010011)类型的参数，自定义参数名，比如hcom1、hcom2。 |
+| serverCfg | [Mc2ServerCfg](#mc2servercfg)类型。集合通信server端通用参数配置。 |
+| hcom | [Mc2HcommCfg](#mc2hcommcfg)类型。各通信域中每个通信任务的参数配置。在通信算子TilingData的定义中，根据各通信域中通信任务总个数，共需要定义mc2HcommCnt个Mc2HcommCfg结构体。例如：mc2HcommCnt=2，则需要依次定义2个[Mc2HcommCfg](#mc2hcommcfg)类型的参数，自定义参数名，比如hcom1、hcom2。 |
 
+<a id="mc2servercfg"></a>
 **表2**  Mc2ServerCfg结构体说明
 
 | 参数名 | 描述 |
@@ -30,6 +31,7 @@ AI CPU启动下发通信任务前，需获取固定的通信配置，如[表1](#
 | commOutArgIndex | 预留字段，不需要配置。 |
 | reserved | 预留字段，不需要配置。 |
 
+<a id="mc2hcommcfg"></a>
 **表3**  Mc2HcommCfg结构体说明
 
 | 参数名 | 描述 |
@@ -40,8 +42,8 @@ AI CPU启动下发通信任务前，需获取固定的通信配置，如[表1](#
 | reserved | 预留字段，不需要配置。 |
 | groupName | 当前通信任务所在的通信域。char *类型，支持最大长度128。 |
 | algConfig | 通信算法配置。char *类型，支持最大长度128。<br><br>当前支持的取值为：<br>"AllGather=level0:doublering"：AllGather通信任务。<br>"ReduceScatter=level0:doublering"：ReduceScatter通信任务。<br>"AlltoAll=level0:fullmesh;level1:pairwise"：AlltoAllV通信任务。 |
-| opType | 表示通信任务类型。uint32_t类型，取值详见[HcclCMDType](HCCL-Tiling构造函数.md#table2469980529)参数说明。 |
-| reduceType | 归约操作类型，仅对有归约操作的通信任务生效。uint32_t类型，取值详见[HcclReduceOp](../HCCL-Kernel侧接口/HCCL使用说明.md#table2469980529)参数说明。 |
+| opType | 表示通信任务类型。uint32_t类型，取值详见[HcclCMDType](HCCL-Tiling构造函数.md#hcclcmdtype-parameter-description)参数说明。 |
+| reduceType | 归约操作类型，仅对有归约操作的通信任务生效。uint32_t类型，取值详见[HcclReduceOp](../HCCL-Kernel侧接口/HCCL使用说明.md#hcclreduceop)参数说明。 |
 
 ## 约束说明
 

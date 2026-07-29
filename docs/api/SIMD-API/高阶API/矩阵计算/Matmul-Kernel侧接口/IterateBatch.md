@@ -96,7 +96,7 @@
 | ubCmatrix | 输出 | C矩阵。类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731722)。 |
 | batchA | 输入 | 左矩阵的batch数。 |
 | batchB | 输入 | 右矩阵的batch数。在batchA/batchB不相同的情况下，默认做broadcast操作。<br><br>多batch计算支持在G轴上做输入broadcast和输出reduce，左矩阵、右矩阵G轴维度必须是整数倍的关系。 |
-| enSequentialWrite | 输入 | 输出是否[连续存放](GetTensorC.md#fig580415103338)数据，即是否开启连续写模式（连续写，写入[baseM, baseN]；非连续写，写入[singleCoreM, singleCoreN]中对应的位置）。<br>左右矩阵和输出矩阵的存储位置为Unified Buffer，则enSequentialWrite参数应配置为true；<br>输出矩阵的存储位置为GM，则enSequentialWrite参数应配置为false。 |
+| enSequentialWrite | 输入 | 输出是否[连续存放](GetTensorC.md#sequential-write)数据，即是否开启连续写模式（连续写，写入[baseM, baseN]；非连续写，写入[singleCoreM, singleCoreN]中对应的位置）。<br>左右矩阵和输出矩阵的存储位置为Unified Buffer，则enSequentialWrite参数应配置为true；<br>输出矩阵的存储位置为GM，则enSequentialWrite参数应配置为false。 |
 | matrixStrideA | 输入 | A矩阵源操作数相邻nd矩阵起始地址间的偏移，单位是元素，默认值是0。 |
 | matrixStrideB | 输入 | B矩阵源操作数相邻nd矩阵起始地址间的偏移，单位是元素，默认值是0。 |
 | matrixStrideC | 输入 | 该参数预留，保持默认值0即可。 |
@@ -120,7 +120,7 @@
 -   该接口不支持量化模式，即不支持SetQuantScalar、SetQuantVector接口。
 -   BSNGD场景，不支持一次计算多行SD，需要算子程序中循环计算，即\(ALayoutInfoN \* ALayoutInfoG\) / batchA、\(BLayoutInfoN \* BLayoutInfoG\) / batchB均为整数。
 -   **异步模式**不支持IterateBatch搬运到UB上。
--   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#p9218181073719)设置为true，不支持使用该接口。
+-   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
 -   Ascend 950PR/Ascend 950DT上，不支持A、B矩阵内存逻辑位置为TPosition::VECOUT的输入；输出至VECIN的函数原型当前只支持BSNGD Layout格式。
 -   Atlas 推理系列产品AI Core上，只支持NORMAL  Layout格式。
 -   Atlas 推理系列产品AI Core上，不支持A、B矩阵内存逻辑位置为TPosition::TSCM的输入。
@@ -139,7 +139,7 @@
 
 ## 调用示例
 
--   纯cube模式的函数调用示例请参考[调用示例](SetBatchNum.md#section1665082013318)。
+-   纯cube模式的函数调用示例请参考[调用示例](SetBatchNum.md#调用示例)。
 -   该示例完成aGM、bGM矩阵乘，结果保存到cGm上，其中aGM、bGM、cGM数据的layout格式均为NORMAL，左矩阵每次计算batchA个MK数据，右矩阵每次计算batchB个KN数据。
 
     ```

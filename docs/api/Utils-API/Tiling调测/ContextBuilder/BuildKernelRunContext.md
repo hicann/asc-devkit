@@ -16,7 +16,7 @@ std::shared_ptr<KernelRunContextHolder> BuildKernelRunContext()
 
 ## 返回值说明<a name="zh-cn_topic_0000001867409733_zh-cn_topic_0000001389787297_section25791320141317"></a>
 
-KernelRunContextHolder的共享指针，可通过GetContext<gert::KernelContext\>\(\)函数获取KernelContext对象。
+KernelRunContextHolder的共享指针，可通过GetContext`gert::KernelContext>()`函数获取KernelContext对象。
 
 ## 约束说明<a name="zh-cn_topic_0000001867409733_zh-cn_topic_0000001389787297_section19165124931511"></a>
 

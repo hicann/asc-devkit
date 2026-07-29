@@ -12,9 +12,9 @@
 
 ## 功能说明
 
-Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor中，也可以输出到VECIN tensor中。当[MatmulConfig](MatmulConfig.md#table1761013213153)参数中的ScheduleType取值为ScheduleType::INNER\_PRODUCT时，获取一块C矩阵片；当[MatmulConfig](MatmulConfig.md#table1761013213153)参数中的ScheduleType取值为ScheduleType::OUTER\_PRODUCT时，获取两块C矩阵片。
+Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor中，也可以输出到VECIN tensor中。当[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值为ScheduleType::INNER\_PRODUCT时，获取一块C矩阵片；当[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值为ScheduleType::OUTER\_PRODUCT时，获取两块C矩阵片。
 
-该接口和[Iterate](Iterate.md)接口配合使用，用于在调用Iterate完成迭代计算后，根据[MatmulConfig](MatmulConfig.md#table1761013213153)参数中的ScheduleType取值获取一块或两块baseM \* baseN大小的矩阵分片。
+该接口和[Iterate](Iterate.md)接口配合使用，用于在调用Iterate完成迭代计算后，根据[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值获取一块或两块baseM \* baseN大小的矩阵分片。
 
 迭代获取C矩阵分片的过程分为同步和异步两种模式：
 
@@ -92,9 +92,11 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 | enAtomic | 输入 | 是否开启Atomic操作，默认值为0。<br><br>参数取值：<br><br>0：不开启Atomic操作<br><br>1：开启AtomicAdd累加操作<br><br>2：开启AtomicMax求最大值操作<br><br>3：开启AtomicMin求最小值操作<br><br>对于Atlas 推理系列产品AI Core，只有输出位置是GM才支持开启Atomic操作。<br><br>对于Atlas 200I/500 A2 推理产品，只有输出位置是GM才支持开启Atomic操作。 |
 | enSequentialWrite | 输入 | 是否开启连续写模式（连续写，写入[baseM, baseN]；非连续写，写入[singleCoreM, singleCoreN]中对应的位置），默认值false（非连续写模式）。<br><br>注意：非连续写模式，内部会按照迭代顺序算好偏移，开发者不需要关注；如果开发者需要决定排布顺序，可以选择连续写模式，自行按照设定的偏移进行搬运操作。<br><br>对于Atlas 200I/500 A2 推理产品，只支持非连续写模式。 |
 
+ <a id="non-sequential-write"></a>
 **图1**  非连续写模式示意图  
 ![](../../../../figures/非连续写模式示意图.png "非连续写模式示意图")
 
+<a id="sequential-write"></a>
 **图2**  连续写模式示意图  
 ![](../../../../figures/连续写模式示意图.png "连续写模式示意图")
 
@@ -106,7 +108,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 
 -   传入的C矩阵地址空间大小需要保证不小于baseM \* baseN。
 -   异步场景时，需要使用一块临时空间来缓存Iterate计算结果，调用GetTensorC时会在该临时空间中获取C的矩阵分片。临时空间通过[SetWorkspace](SetWorkspace.md)接口进行设置。SetWorkspace接口需要在Iterate接口之前调用。
--   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#p9218181073719)设置为true，不支持使用该接口。
+-   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
 -   支持的数据类型<a id="li12616155731720"></a>
 
     Ascend 950PR/Ascend 950DT，支持的数据类型为：half、float、bfloat16_t、int32_t、int8_t、fp8_e4m3fn_t、hifloat8_t。

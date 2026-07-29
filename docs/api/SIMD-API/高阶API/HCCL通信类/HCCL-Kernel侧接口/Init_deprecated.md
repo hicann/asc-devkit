@@ -30,7 +30,7 @@ __aicore__ inline void Init(GM_ADDR context, __gm__ void *initTiling = nullptr)
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | context | 输入 | 通信上下文，包含rankDim，rankID等相关信息。 |
-| initTiling | 输入 | 可选参数，通信域初始化[Mc2InitTiling](../HCCL-Tiling侧接口/TilingData结构体.md#table4835205712588)的地址。[Mc2InitTiling](../HCCL-Tiling侧接口/TilingData结构体.md#table4835205712588)在Host侧计算得出，具体请参考[表1 Mc2InitTiling参数说明](../HCCL-Tiling侧接口/TilingData结构体.md#table4835205712588)，由框架传递到Kernel函数中使用，完整示例请参考[8.13.1.2-调用示例](HCCL模板参数.md#section11493459173619)。 |
+| initTiling | 输入 | 可选参数，通信域初始化[Mc2InitTiling](../HCCL-Tiling侧接口/TilingData结构体.md#table4835205712588)的地址。[Mc2InitTiling](../HCCL-Tiling侧接口/TilingData结构体.md#table4835205712588)在Host侧计算得出，具体请参考[表1 Mc2InitTiling参数说明](../HCCL-Tiling侧接口/TilingData结构体.md#table4835205712588)，由框架传递到Kernel函数中使用，完整示例请参考[8.13.1.2-调用示例](HCCL模板参数.md#调用示例)。 |
 
 ## 返回值说明
 

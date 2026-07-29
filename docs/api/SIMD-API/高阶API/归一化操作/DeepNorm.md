@@ -20,7 +20,7 @@ DeepNorm\(x\) = LayerNorm\(α \* X + SubLayer\(X\)\)
 
 SubLayer\(X\)通常是指在DeepNorm模型中的一个子层（sub-layer），用于实现自注意力机制（self-attention mechanism）。本接口中会整体作为一个输入Tensor传入。
 
-其中LayerNorm的计算公式请参考[LayerNorm](LayerNorm.md#section618mcpsimp)。
+其中LayerNorm的计算公式请参考[LayerNorm](LayerNorm.md#功能说明)。
 
 ## 函数原型
 

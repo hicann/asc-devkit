@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-获取Tiling计算得到的baseM值。baseM参数的说明请参考[表1](TCubeTiling结构体.md#table1563162142915)。
+获取Tiling计算得到的baseM值。baseM参数的说明请参考[表1](TCubeTiling结构体.md#tcubetiling-struct)。
 
 ## 函数原型
 

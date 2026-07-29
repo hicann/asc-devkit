@@ -84,7 +84,7 @@ Stride = ((StrideRow0, StrideRow1), (StrideColumn0, StrideColumn1))
     ```
 
     **图5** ZN Layout  
-    ![ZN-格式](../../../../figures/Zn-格式(以half类型为例).png)
+    ![ZN-格式](../../../../figures/Zn_format_half.png)
 
     下面是一个连续的ZN Layout示例，其中C0_ELEMENT =_32{} / sizeof(T)。
 

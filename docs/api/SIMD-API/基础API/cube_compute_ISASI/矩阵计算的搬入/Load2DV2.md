@@ -116,7 +116,9 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 起始地址计算公式为：
 
-$$startAddr = srcAddr + (kStartPosition \times \lvert srcStride \rvert + mStartPosition) \times 512B$$
+$$
+startAddr = srcAddr + (kStartPosition \times \lvert srcStride \rvert + mStartPosition) \times 512B
+$$
 
 因此，最终的搬运起始位置为第十三个分形矩阵（源操作数起始地址开始为第1个分形矩阵）。
 

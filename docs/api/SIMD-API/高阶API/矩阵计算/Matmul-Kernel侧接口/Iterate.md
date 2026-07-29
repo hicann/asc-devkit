@@ -17,7 +17,7 @@
 一次Iterate矩阵乘的结果C矩阵存放在逻辑位置CO1的内存中，对于CO1内存中计算结果的获取，当前支持如下两种方式：
 
 -   用户无需自行管理存放矩阵乘结果的CO1内存的申请和释放，由Matmul API内部实现管理。调用[接口内部管理CO1](#li135771283591)的Iterate函数原型后，调用[GetTensorC](GetTensorC.md)接口完成CO1上计算结果的搬出。
--   用户可以灵活自主地控制矩阵乘计算结果的搬运，例如将多次Iterate计算的矩阵乘结果缓存在CO1内存中，在需要搬出该结果时，一次性搬出多块baseM \* baseN的C矩阵。这种灵活搬运场景下，用户需要提前申请CO1的内存，调用[用户自主管理CO1](#li4843165185812)的Iterate函数原型后，一次Iterate的计算结果会输出到用户申请的CO1内存上。在需要搬出计算结果时，调用[Fixpipe](../../../基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md)接口搬运CO1上的结果，完成后释放申请的CO1内存。具体示例请参考[用户自主管理CO1的矩阵乘场景](Matmul使用说明.md#li12765161915318)。
+-   用户可以灵活自主地控制矩阵乘计算结果的搬运，例如将多次Iterate计算的矩阵乘结果缓存在CO1内存中，在需要搬出该结果时，一次性搬出多块baseM \* baseN的C矩阵。这种灵活搬运场景下，用户需要提前申请CO1的内存，调用[用户自主管理CO1](#li4843165185812)的Iterate函数原型后，一次Iterate的计算结果会输出到用户申请的CO1内存上。在需要搬出计算结果时，调用[Fixpipe](../../../基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md)接口搬运CO1上的结果，完成后释放申请的CO1内存。具体示例请参考[用户自主管理CO1的矩阵乘场景](Matmul使用说明.md#user-managed-co1-matmul)。
 
 ## 函数原型
 
@@ -66,7 +66,7 @@ true：数据仍在迭代计算中。
 
 ## 约束说明
 
--   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#p9218181073719)设置为true，不支持使用该接口。
+-   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
 -   对于用户自主管理CO1的Iterate函数，创建Matmul对象时，必须定义C矩阵的内存逻辑位置为TPosition::CO1、数据排布格式为CubeFormat::NZ、数据类型为float或int32\_t。
 
 ## 调用示例

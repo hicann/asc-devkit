@@ -54,4 +54,4 @@ enum class ScopeType: uint8_t {
 
 ## 调用示例
 
-请参见[BatchWrite的调用示例](BatchWrite.md#li03441128285)。
+请参见[BatchWrite的调用示例](BatchWrite.md#multi-queue-p2p)。

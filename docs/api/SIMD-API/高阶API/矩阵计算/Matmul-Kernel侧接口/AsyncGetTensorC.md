@@ -34,4 +34,4 @@ __aicore__ inline void AsyncGetTensorC(const LocalTensor<DstT>& c)
 
 ## 约束说明
 
-当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#p9218181073719)设置为true，不支持使用该接口。
+当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。

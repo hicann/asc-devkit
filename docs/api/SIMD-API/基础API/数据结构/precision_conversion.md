@@ -418,7 +418,7 @@
 
 ### int32_t → half
 
-当前数据类型组合仅支持配合[SetDeqScale](../Memory矢量计算/类型转换/寄存器配置说明/SetDeqScale.md)接口使用进行数据量化并完成精度转换，精度舍入模式不生效。
+当前数据类型组合仅支持配合[SetDeqScale](../Memory矢量计算/类型转换辅助配置接口/SetDeqScale.md)接口使用进行数据量化并完成精度转换，精度舍入模式不生效。
 
 输出：$src / 2^{17} \times scale \times 2^{17}$。
 

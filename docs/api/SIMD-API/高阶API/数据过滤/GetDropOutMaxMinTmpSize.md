@@ -44,7 +44,7 @@ GetDropOutMaxMinTmpSize无返回值。
 
 ## 调用示例
 
-下文呈现了一个host侧调用**GetDropOutMaxMinTmpSize**接口的使用示例，通过该接口获取DropOut计算所需的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到kernel侧使用。配套的kernel侧使用样例请参考[调用示例](DropOut.md#section642mcpsimp)。
+下文呈现了一个host侧调用**GetDropOutMaxMinTmpSize**接口的使用示例，通过该接口获取DropOut计算所需的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到kernel侧使用。配套的kernel侧使用样例请参考[调用示例](DropOut.md#调用示例)。
 
 ```
 #include <vector>

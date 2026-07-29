@@ -17,13 +17,15 @@ Mc2CcTilingConfig(const std::string &groupName, uint32_t opType, const std::stri
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | groupName | 输入 | 当前通信任务所在的通信域。string类型，支持的最大长度为128字节。 |
-| opType | 输入 | 表示通信任务类型。uint32_t类型。HCCL API提供[HcclCMDType](#table2469980529)枚举定义作为该参数的取值，具体支持的通信任务类型及取值请参考[表2](#table2469980529)。 |
+| opType | 输入 | 表示通信任务类型。uint32_t类型。HCCL API提供[HcclCMDType](#)枚举定义作为该参数的取值，具体支持的通信任务类型及取值请参考[表2](#hcclcmdtype-parameter-description)。 |
 | algConfig | 输入 | 通信算法配置。string类型，支持的最大长度为128字节。<br><br>针对Ascend 950PR/Ascend 950DT，该参数为预留字段，配置后不生效，默认仅支持FullMesh算法。FullMesh算法即NPU之间的全连接，任意两个NPU之间可以直接进行数据收发。<br><br>针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，当前支持的取值为：<br>"AllReduce=level0:doublering"：AllReduce通信任务。<br>"AllGather=level0:doublering"：AllGather通信任务。<br>"ReduceScatter=level0:doublering"：ReduceScatter通信任务。<br>"AlltoAll=level0:fullmesh;level1:pairwise"：AlltoAllV和AlltoAll通信任务。<br>"BatchWrite=level0:fullmesh"：BatchWrite通信任务。<br><br>针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数为预留字段，配置后不生效，默认仅支持FullMesh算法。FullMesh算法即NPU之间的全连接，任意两个NPU之间可以直接进行数据收发。 |
-| reduceType | 输入 | 归约操作类型，仅对有归约操作的通信任务生效。uint32_t类型，取值详见[表2](../HCCL-Kernel侧接口/HCCL使用说明.md#table2469980529)。 |
-| dstDataType | 输入 | 通信任务中输出数据的数据类型。uint8_t类型，该参数的取值范围请参考[表1](../HCCL-Kernel侧接口/HCCL使用说明.md#table116710585514)。<br><br>Ascend 950PR/Ascend 950DT，不同通信任务支持的输出数据类型不同，具体为：<br>对于AllReduce、AllGather、AllToAll、AllToAllV、AllToAllVWrite通信任务：输出的数据类型必须与输入的数据类型一致。各通信任务支持的输入数据类型请参考[srcDataType](#p562895445811)。<br>对于ReduceScatter通信任务，当输入的数据类型为int16_t、int32_t、half、float、bfloat16_t时，输出的数据类型必须与其一致；当输入的数据类型为int8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t时，输出的数据类型必须为half、bfloat16_t、float三者之一。<br><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，该参数暂不支持，配置后不生效。<br><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数暂不支持，配置后不生效。 |
+| reduceType | 输入 | 归约操作类型，仅对有归约操作的通信任务生效。uint32_t类型，取值详见[表2](../HCCL-Kernel侧接口/HCCL使用说明.md#hcclreduceop)。 |
+| dstDataType | 输入 | 通信任务中输出数据的数据类型。uint8_t类型，该参数的取值范围请参考[表1](../HCCL-Kernel侧接口/HCCL使用说明.md#table116710585514)。<br><br>Ascend 950PR/Ascend 950DT，不同通信任务支持的输出数据类型不同，具体为：<br>对于AllReduce、AllGather、AllToAll、AllToAllV、AllToAllVWrite通信任务：输出的数据类型必须与输入的数据类型一致。各通信任务支持的输入数据类型请参考srcDataType。<br>对于ReduceScatter通信任务，当输入的数据类型为int16_t、int32_t、half、float、bfloat16_t时，输出的数据类型必须与其一致；当输入的数据类型为int8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t时，输出的数据类型必须为half、bfloat16_t、float三者之一。<br><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，该参数暂不支持，配置后不生效。<br><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数暂不支持，配置后不生效。 |
 | srcDataType | 输入 | 通信任务中输入数据的数据类型。uint8_t类型，该参数的取值范围请参考[表1](../HCCL-Kernel侧接口/HCCL使用说明.md#table116710585514)。<br><br>Ascend 950PR/Ascend 950DT，不同通信任务支持的输入数据类型如下：<br>AllReduce通信任务：支持的输入类型为int16_t、half、bfloat16_t、int32_t、float。<br>AllGather、AllToAll、AllToAllV、AllToAllVWrite通信任务：支持的输入类型为int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、double。<br>ReduceScatter通信任务：支持的输入类型为int8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、half、bfloat16_t、int32_t、float。<br><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，该参数暂不支持，配置后不生效。<br><br>针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数暂不支持，配置后不生效。 |
 | commEngine | 输入 | 通信引擎。uint8_t类型，该参数的取值范围请参考：[HcclCommConfig](https://gitcode.com/cann/hcomm/blob/9.1.0/docs/zh/api_ref/comm_mgr_c/data_type_definition/HcclCommConfig.md#参数说明)中的hcclOpExpansionMode参数的取值说明。 |
 
+
+ <a id="hcclcmdtype-parameter-description"></a>
 **表2**  HcclCMDType参数说明
 
 | 数据类型 | 说明 |

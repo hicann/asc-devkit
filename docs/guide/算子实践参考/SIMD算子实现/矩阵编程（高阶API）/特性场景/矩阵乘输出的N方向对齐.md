@@ -29,7 +29,7 @@ Matmul计算中N方向非32字节对齐，输出C矩阵的N方向要求32字节�
 
 -   Tiling实现
 
-    调用SetCType接口，设置C矩阵的数据格式为CubeFormat::ND\_ALIGN，其它Tiling实现与[基础场景](../算子实现.md#zh-cn_topic_0000001622514006_li19113114819525)相同。
+    调用SetCType接口，设置C矩阵的数据格式为CubeFormat::ND\_ALIGN，其它Tiling实现与[基础场景](../算子实现.md)相同。
 
     ```
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());

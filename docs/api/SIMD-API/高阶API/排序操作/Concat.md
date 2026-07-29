@@ -48,4 +48,4 @@ __aicore__ inline void Concat(LocalTensor<T> &concat, const LocalTensor<T> &src,
 
 ## 调用示例
 
-请参见[MrgSort](MrgSort-93.md)的[调用示例](MrgSort-93.md#section642mcpsimp)。
+请参见[MrgSort](MrgSort-93.md)的[调用示例](MrgSort-93.md#调用示例)。

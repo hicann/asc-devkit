@@ -53,7 +53,7 @@
 | U | beta，gamma操作数的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li171091334311)。 |
 | T | output，inputX操作数的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li171091334311)。 |
 | isReuseSource | 该参数预留，传入默认值false即可。 |
-| config | 配置Normalize接口中输入输出相关信息。NormalizeConfig类型，定义如下方代码所示，其中参数的含义如下。<br>reducePattern：当前仅支持ReducePattern::AR模式，表示输入的内轴R轴为reduce计算轴。<br>aLength：用于描述输入的A轴大小。支持的取值如下：-1：默认值。取[接口参数](#table2087718184450)para中的aLength作为A轴大小。1：支持outputRstd数据非对齐搬出，支持inputMean，inputVariance数据非对齐搬入。aLength为其它取值时，不支持上述三个输入输出的非对齐搬入和非对齐搬出。该取值需要与[接口参数](#table2087718184450)para中的aLength数值一致。请注意，仅在Ascend 950PR/Ascend 950DT上支持该取值。其它值：该值需要与[接口参数](#table2087718184450)para中的aLength数值一致。<br>isNoBeta：计算时，输入beta是否使用。false：默认值，Normalize计算中使用输入beta。true：Normalize计算中不使用输入beta。此时，公式中与beta相关的计算被省略。<br>isNoGamma：可选输入gamma是否使用。false：默认值，Normalize计算中使用可选输入gamma。true：Normalize计算中不使用输入gamma。此时，公式中与gamma相关的计算被省略。<br>isOnlyOutput：是否只输出y，不输出标准差的倒数rstd。当前该参数仅支持取值为false，表示y和rstd的结果全部输出。 |
+| config | 配置Normalize接口中输入输出相关信息。NormalizeConfig类型，定义如下方代码所示，其中参数的含义如下。<br>reducePattern：当前仅支持ReducePattern::AR模式，表示输入的内轴R轴为reduce计算轴。<br>aLength：用于描述输入的A轴大小。支持的取值如下：-1：默认值。取[接口参数](#interface-params)para中的aLength作为A轴大小。1：支持outputRstd数据非对齐搬出，支持inputMean，inputVariance数据非对齐搬入。aLength为其它取值时，不支持上述三个输入输出的非对齐搬入和非对齐搬出。该取值需要与[接口参数](#interface-params)para中的aLength数值一致。请注意，仅在Ascend 950PR/Ascend 950DT上支持该取值。其它值：该值需要与[接口参数](#interface-params)para中的aLength数值一致。<br>isNoBeta：计算时，输入beta是否使用。false：默认值，Normalize计算中使用输入beta。true：Normalize计算中不使用输入beta。此时，公式中与beta相关的计算被省略。<br>isNoGamma：可选输入gamma是否使用。false：默认值，Normalize计算中使用可选输入gamma。true：Normalize计算中不使用输入gamma。此时，公式中与gamma相关的计算被省略。<br>isOnlyOutput：是否只输出y，不输出标准差的倒数rstd。当前该参数仅支持取值为false，表示y和rstd的结果全部输出。 |
 
 ```
 struct NormalizeConfig {
@@ -65,6 +65,7 @@ struct NormalizeConfig {
 };
 ```
 
+<a id="interface-params"></a>
 **表2**  接口参数说明
 
 | 参数名称 | 输入/输出 | 含义 |
