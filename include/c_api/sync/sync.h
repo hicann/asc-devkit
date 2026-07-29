@@ -50,7 +50,7 @@ __aicore__ inline void asc_sync();
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 
-#define asc_sync_subblock_wait(pipe, flag_id) wait_flag_dev((pipe), (flag_id))
+#define asc_sync_subblock_wait(pipe, flag_id) wait_flag_dev((flag_id))
 
 #define asc_sync_block_wait(pipe, flag_id) wait_flag_dev((flag_id))
 
