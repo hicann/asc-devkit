@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_convert.h"`。
-
 将vector_int32_t类型的源操作数以256B为单位分为两部分，读取其中一部分元素，将其转换成vector_int64_t类型并写入目的操作数。
 
 - asc_int322int64：将源操作数的上半部分写入目的操作数。

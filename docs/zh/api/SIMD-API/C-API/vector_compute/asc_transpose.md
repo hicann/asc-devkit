@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 用于实现16*16的二维矩阵数据块转置。
 
 ## 函数原型

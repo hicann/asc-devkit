@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_compute/cube_compute.h"`。
-
 用于设置Mmad计算开启HF32模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。
 
 ## 函数原型

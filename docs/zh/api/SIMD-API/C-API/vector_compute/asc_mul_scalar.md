@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 执行矢量与标量的乘法运算。计算公式如下：
 
 $$

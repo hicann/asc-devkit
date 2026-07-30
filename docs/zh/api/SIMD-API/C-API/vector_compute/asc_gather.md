@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 将src按照src_offset给定的偏移按元素收集到dst中。
 
 ## 函数原型

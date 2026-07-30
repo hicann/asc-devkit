@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 将MMAD指令的Bias数据从L1 Buffer搬运到BiasTable Buffer中。
 
 ## 函数原型

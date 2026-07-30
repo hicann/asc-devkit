@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_datamove/vector_datamove.h"`。
-
 用于设置[asc_ndim_copy_gm2ub](./asc_ndim_copy_gm2ub.md)接口的各个维度左右侧的padding元素个数。
 
 ## 函数原型

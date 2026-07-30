@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 对Global Memory中的数据与指定数据执行原子减操作，即将val从address指向的数据元素上减去。
 
 ## 函数原型

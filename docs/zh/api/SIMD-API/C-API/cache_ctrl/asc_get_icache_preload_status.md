@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cache_ctrl/cache_ctrl.h"`。
-
 获取ICache的Preload的状态。
 
 ## 函数原型

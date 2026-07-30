@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 对Global Memory中address指向的元素执行原子赋值操作，即将该元素值设置为val。
 
 ## 函数原型

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 按元素取自然对数，计算公式如下：
 $$
 dst_i = ln({src_i})

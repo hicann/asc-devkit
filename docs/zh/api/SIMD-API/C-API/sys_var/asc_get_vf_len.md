@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sys_var/sys_var.h"`。
-
 获取Tensor位宽VL（Vector Length）的大小。
 
 ## 函数原型

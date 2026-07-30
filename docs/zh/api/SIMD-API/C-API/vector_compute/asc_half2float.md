@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 将half类型转化为float类型，无舍入模式。
 
 ## 函数原型

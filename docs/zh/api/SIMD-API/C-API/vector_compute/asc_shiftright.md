@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 对src中的每个元素执行右移，右移大小为value。
 
 - 对于int16_t/int32_t，做算术右移（去掉最低位，最高位复制符号位）。

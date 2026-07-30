@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 将矩阵数据从Global Memory搬运到L1 Buffer中，并支持不同类型的pad模式。
 
 ## 函数原型

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_datamove/vector_datamove.h"`。
-
 将数据从Unified Buffer (UB)搬运到Global Memory (GM)时，通过调用该接口设置内层循环和外层循环的次数。
 
 以源操作数搬运场景为例，如下图所示。

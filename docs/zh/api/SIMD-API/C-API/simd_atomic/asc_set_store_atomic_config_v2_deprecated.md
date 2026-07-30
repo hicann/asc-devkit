@@ -28,8 +28,6 @@
 
 **该接口已废弃。原子加操作请使用[asc_atomic_add](../scalar_compute/asc_atomic_add.md)实现。**
 
-头文件路径：`"c_api/atomic/atomic.h"`。
-
 设置原子操作启用位与原子操作类型的值。
 
 ## 函数原型

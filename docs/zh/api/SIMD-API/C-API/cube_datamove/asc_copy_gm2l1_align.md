@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 对矩阵数据进行实时padding，完成padding后将数据从Global Memory搬运到L1 Buffer。需要与[asc_set_gm2l1_loop_size](./asc_set_gm2l1_loop_size.md)、[asc_set_gm2l1_loop1_stride](./asc_set_gm2l1_loop1_stride.md)、[asc_set_gm2l1_loop2_stride](./asc_set_gm2l1_loop2_stride.md)和[asc_set_gm2l1_pad](./asc_set_gm2l1_pad.md)配合使用。
 
 ## 函数原型

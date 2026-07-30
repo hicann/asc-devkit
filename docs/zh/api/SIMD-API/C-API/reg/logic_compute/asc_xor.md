@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 根据mask对输入的src0、src1按元素异或（^）进行操作，将结果写入dst。
 
 ## 函数原型

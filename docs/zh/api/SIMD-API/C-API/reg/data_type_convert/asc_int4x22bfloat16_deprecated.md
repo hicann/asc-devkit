@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_convert.h"`。
-
 将int4x2_t类型转化为bfloat16_t类型，无舍入模式。
 
 ## 函数原型

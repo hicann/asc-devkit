@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 按元素进行开方后取倒数的计算，计算公式如下：
 
 $$

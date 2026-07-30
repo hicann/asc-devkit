@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_load.h"`。
-
 根据索引位置index将源操作数src按元素收集到目的操作数dst中。
 
 ![asc_gather](../../figures/asc_gather.png)

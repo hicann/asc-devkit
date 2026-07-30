@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 按元素判断src_i <= value是否成立，若成立则输出结果为1，否则为0。
 
 ## 函数原型

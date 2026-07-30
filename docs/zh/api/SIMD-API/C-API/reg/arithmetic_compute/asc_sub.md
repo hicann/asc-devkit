@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 根据mask对源操作数src0、src1进行按元素相减的操作，将结果写入目的操作数dst。
 源操作数为uint32_t或int32_t时，提供带借位数据的接口，src0、src1相减时如果产生借位，在carry中对应位置每4bit的最低位写0，否则写1。
 

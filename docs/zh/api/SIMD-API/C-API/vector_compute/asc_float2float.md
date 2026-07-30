@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 对float类型数据进行精度转换处理,支持多种舍入模式：
 
 - RINT舍入模式：四舍六入五成双舍入

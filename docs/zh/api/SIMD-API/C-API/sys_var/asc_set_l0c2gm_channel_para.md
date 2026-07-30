@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sys_var/sys_var.h"`。
-
 对通道步长参数的专用寄存器的比特位进行设置。需要配合接口[asc_copy_l0c2l1](../cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)或[asc_copy_l0c2gm](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)使用。
 仅当调用接口时开启NZ2DN模式时，此功能才有效。
 

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_convert.h"`。
-
 将half类型数据转换为float类型。
 
 ## 函数原型

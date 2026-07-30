@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 根据mask对源操作数src进行取相反数操作，将结果写入目的操作数dst。
 
 计算公式如下：

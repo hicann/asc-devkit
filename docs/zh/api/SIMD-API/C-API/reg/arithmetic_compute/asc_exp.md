@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 按元素取自然指数，计算公式如下：
 $$
 dst_i = e^{src_i}

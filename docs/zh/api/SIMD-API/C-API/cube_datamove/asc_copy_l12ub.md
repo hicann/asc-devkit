@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 将数据从L1 Buffer搬运到Unified Buffer中。
 
 ## 函数原型

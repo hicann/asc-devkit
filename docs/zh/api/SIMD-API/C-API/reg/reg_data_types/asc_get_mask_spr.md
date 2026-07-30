@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_load.h"`。
-
 从特殊寄存器SPR{MASK1, MASK0}读取mask值并根据数据类型格式返回对应的mask数据，MASK0、MASK1均为64bit的寄存器。
 
 - 对于b16类型，会读取完整的128bit{MASK1, MASK0}数据，并将每bit复制为2bit并返回。

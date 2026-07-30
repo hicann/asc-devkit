@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_load.h"`。
-
 数据搬运接口，适用于从UB非32B对齐地址起始连续搬入。
 
 - asc_loadunalign_postupdate（不带addr_reg入参）：配合asc_loadunalign_pre（不带addr_reg入参）接口使用。

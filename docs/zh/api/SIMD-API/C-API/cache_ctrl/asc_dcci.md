@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cache_ctrl/cache_ctrl.h"`。
-
 在AI Core内部，Scalar单元和DMA单元都可能对Global Memory进行访问。
 
 ![](../figures/dcci.png "DataCache内存层次示意图") \\

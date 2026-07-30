@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 对Global Memory中address指向的元素执行原子比较赋值操作，如果address上的数值等于指定数值compare，则对address赋值为指定数值val，否则address的数值不变。
 
 ## 函数原型

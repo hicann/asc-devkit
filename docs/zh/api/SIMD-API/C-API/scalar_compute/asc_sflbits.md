@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 计算一个int64_t类型数字的二进制中，从最高数值位开始与符号位相同的连续比特位的个数。
 
 - 例：int64_t value = 0x0f00000000000000;

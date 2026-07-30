@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 根据mask将源操作数src的最低位元素填充到目的操作数dst。
 
 计算公式如下：

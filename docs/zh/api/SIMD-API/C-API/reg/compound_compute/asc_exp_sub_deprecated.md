@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将src0与src1相减，差值作为e的指数计算，i为元素索引。计算公式如下：
 
 - 当src0和src1为float类型时：

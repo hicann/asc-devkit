@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将传入的源操作数src中每两个相邻数值相加，并将相加的结果连续保存在目的操作数dst中的低半部分。以half数据类型为例，相加示意图如下：
 
 ![asc_pair_reduce_sum示意图](../../../../figures/reg_pair_reduce_elem.png)

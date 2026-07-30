@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 该接口实现带转置的2D格式数据从L1 Buffer到L0B Buffer的加载。
 
 下面通过示例来讲解接口功能和关键参数：下文图中一个N形或者一个Z形代表一个分形。

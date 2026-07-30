@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sys_var/sys_var.h"`。
-
 获取SMMU（System Memory Management Unit）版本信息。
 
 ## 函数原型

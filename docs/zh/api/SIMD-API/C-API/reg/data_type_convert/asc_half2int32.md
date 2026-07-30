@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_convert.h"`。
-
 将vector_half类型的源操作数以256B为单位分为两部分，读取其中一部分元素，将其转换成vector_int32_t类型写入目的操作数，并支持多种舍入模式。
 
 关于舍入模式的详细说明，请参见[舍入模式](../data_type_convert/rounding_mode.md)。

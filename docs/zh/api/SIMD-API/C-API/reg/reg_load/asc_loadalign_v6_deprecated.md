@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_load.h"`。
-
 reg数据搬运接口，适用于从UB搬入MaskReg。
 
 ## 函数原型

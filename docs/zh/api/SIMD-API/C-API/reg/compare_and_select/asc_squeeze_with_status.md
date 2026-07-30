@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将src中被mask选择的有效元素依次复制到dst，有效元素在dst上连续排列。dst中剩余位置元素置为0。
 
 本接口会将有效数据大小保存至AR寄存器，搬出时配合[asc_storeunalign_postupdate](../reg_store/asc_storeunalign_postupdate.md)接口使用该值作为存储偏移量。AR寄存器中的数值可以通过[asc_get_squeeze_status](../../sys_var/asc_get_squeeze_status.md)接口获取。

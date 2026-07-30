@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 此接口用于获取执行[asc_repeat_reduce_max](./asc_repeat_reduce_max.md)操作后的最大值，以及第一个最大值时的索引。
 
 ## 函数原型

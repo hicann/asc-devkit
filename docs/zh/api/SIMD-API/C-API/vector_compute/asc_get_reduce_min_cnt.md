@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 此接口用于获取执行[asc_repeat_reduce_min](./asc_repeat_reduce_min.md)操作后的最小值，以及第一个最小值时的索引。
 
 ## 函数原型

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 madd（multiply-add），该接口用于完成dst与src0逐元素相乘再加src1的融合乘加运算，根据mask将计算结果写回dst。计算公式如下：
 
 $$

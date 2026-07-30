@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 将数据从Global Memory (GM)搬运到L1 Buffer时，通过调用该接口设置内层循环中相邻迭代数据块间的间隔。
 
 以源操作数搬运场景为例，如下图所示。
