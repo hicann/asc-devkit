@@ -42,7 +42,7 @@ void sync() const
 
 ## 约束说明
 
-- 必须保证`thread_block_tile`组内所有线程都能执行到同一个`sync()`调用，否则会导致卡死。
+必须保证`thread_block_tile`组内所有线程都能执行到同一个`sync()`调用，否则是未定义行为。
 
 ## 调用示例
 
