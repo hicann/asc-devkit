@@ -206,8 +206,7 @@ def load_build_in_lib():
         # ascend c static load builtin opmaster ct so fail
         LogUtil.print_compile_log(
             "",
-            f"An AttributeError occurred: {e}, \
-            when load tiling so {builtin_optiling_ctlib_path}",
+            f"An AttributeError occurred: {e}, when load tiling so {builtin_optiling_ctlib_path}",
             AscendCLogLevel.LOG_ERROR,
         )
         return False
@@ -230,8 +229,8 @@ def load_build_in_lib():
         # ascend c static load builtin opmaster rt so fail, undefined symbol, then use 1.0 way
         LogUtil.print_compile_log(
             "",
-            f"An AttributeError occurred: {e}, \
-            when load tiling so {builtin_optiling_rtlib_path}/{builtin_optiling_lib_path2}",
+            f"An AttributeError occurred: {e}, when load tiling so "
+            f"{builtin_optiling_rtlib_path} or {builtin_optiling_lib_path2}",
             AscendCLogLevel.LOG_ERROR,
         )
         return False
@@ -262,8 +261,7 @@ def load_lib():
             # Custom op tiling lib may not exists
             LogUtil.print_compile_log(
                 "",
-                f"An OSError occurred: {e}, \
-                when load tiling so {custom_opp_so_path}",
+                f"An OSError occurred: {e}, when load tiling so {custom_opp_so_path}",
                 AscendCLogLevel.LOG_ERROR,
             )
             pass
