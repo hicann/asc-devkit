@@ -71,7 +71,7 @@ __aicore__ inline void asc_time_stamp_impl(uint32_t desc_id, uint64_t time)
 
 __aicore__ inline uint64_t asc_capture_time_stamp_cycle() { return asc_debug_get_system_cycle(); }
 
-__aicore__ inline void asc_time_stamp(uint32_t desc_id)
+__aicore__ static __attribute__((noinline)) void asc_time_stamp(uint32_t desc_id)
 {
 #ifdef ASCENDC_TIME_STAMP_ON
     const uint64_t time = asc_debug_get_system_cycle();
@@ -107,7 +107,7 @@ __aicore__ inline void asc_mark_stamp()
 #include <cstdio>
 
 namespace __asc_aicore {
-__aicore__ inline void asc_time_stamp(uint32_t desc_id)
+__aicore__ static __attribute__((noinline)) void asc_time_stamp(uint32_t desc_id)
 {
     assert(false && "asc_time_stamp is not supported in cpu mode.");
 }

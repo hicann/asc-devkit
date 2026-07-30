@@ -45,7 +45,7 @@ descId is 11, rsv is 0, timeStamp is 815603975350485, pcPtr is 19792358553124, e
 ## 函数原型
 
 ```
-__aicore__ inline void asc_time_stamp(uint32_t desc_id)
+__aicore__ static __attribute__((noinline)) void asc_time_stamp(uint32_t desc_id)
 ```
 
 ## 参数说明

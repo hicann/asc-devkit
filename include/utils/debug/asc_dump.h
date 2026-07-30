@@ -33,36 +33,36 @@
 
 namespace __asc_aicore {
 template<typename T>
-__aicore__ inline void asc_dump_gm(__gm__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump_gm(__gm__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump_ubuf(__ubuf__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump_ubuf(__ubuf__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump_cbuf(__cc__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump_cbuf(__cc__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump_l1buf(__cbuf__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump_l1buf(__cbuf__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump(__gm__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump(__gm__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump(__cc__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump(__cc__ T* input, uint32_t desc, uint32_t dump_size);
 
 template<typename T>
-__aicore__ inline void asc_dump(__cbuf__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump(__cbuf__ T* input, uint32_t desc, uint32_t dump_size);
 
 #if defined(__NPU_ARCH__)
 template<typename T>
-__aicore__ inline void asc_dump(__biasbuf__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump(__biasbuf__ T* input, uint32_t desc, uint32_t dump_size);
 #endif
 
 template<typename T>
-__aicore__ inline void asc_dump(__fbuf__ T* input, uint32_t desc, uint32_t dump_size);
+__aicore__ static __attribute__((noinline)) void asc_dump(__fbuf__ T* input, uint32_t desc, uint32_t dump_size);
 }
 
 namespace __asc_simd_vf {

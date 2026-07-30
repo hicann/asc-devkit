@@ -36,7 +36,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t clock(void);
 #endif
 
 namespace __asc_aicore {
-__aicore__ inline void asc_time_stamp(uint32_t desc_id);
+__aicore__ static __attribute__((noinline)) void asc_time_stamp(uint32_t desc_id);
 
 __aicore__ inline void asc_prof_start();
 
