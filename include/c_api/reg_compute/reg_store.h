@@ -12,10 +12,20 @@
 #error "reg_store.h cannot be used with compile flag --enable-simt enabled."
 #endif
 
+#if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+#define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H
+#endif
+
 #ifndef INCLUDE_C_API_REG_COMPUTE_REG_STORE_H
 #define INCLUDE_C_API_REG_COMPUTE_REG_STORE_H
+#include "impl/utils/common_types.h"
+#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_type.h"
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl.h"
+#endif
 
 //==============asc_scatter=============
 __simd_callee__ inline void asc_scatter(
@@ -1251,5 +1261,11 @@ __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(
 
 __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(
     __ubuf__ float*& dst_align32b, vector_float src, int32_t offset, vector_bool mask);
+
+#endif
+
+#if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)
+#undef ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#undef UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H
 
 #endif

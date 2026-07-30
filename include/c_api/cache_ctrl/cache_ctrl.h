@@ -19,6 +19,7 @@
 
 #ifndef INCLUDE_C_API_CACHE_CTRL_CACHE_CTRL_H
 #define INCLUDE_C_API_CACHE_CTRL_CACHE_CTRL_H
+#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 
@@ -38,9 +39,7 @@ __aicore__ inline void asc_dcci_single(__gm__ void* dst);
 
 __aicore__ inline void asc_ub_dcci_single(__ubuf__ void* dst);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 __aicore__ inline void asc_dcci_entire_ub();
-#endif
 
 __aicore__ inline void asc_dcci_entire_out();
 
@@ -52,9 +51,7 @@ __aicore__ inline int64_t asc_get_icache_preload_status();
 
 __aicore__ inline void asc_datacache_preload(__gm__ uint64_t* address, int64_t offset);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 __aicore__ inline void asc_dci();
-#endif
 
 #endif
 

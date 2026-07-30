@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.16.0)
 set(CMAKE_CXX_STANDARD 17)
 find_package(tikicpulib REQUIRED)
 
+add_subdirectory(ascendc_host_header_checker)
+
 set(ASCENDC_UT_PRODUCT_TYPE_LIST
     ascend910B1_AIC
     ascend910B1_AIV

@@ -15,26 +15,6 @@
 #ifndef ULL
 #define ULL unsigned long long
 #endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 3510)
-using vector_uint8_t = uint8_t;
-using vector_uint16_t = uint8_t;
-using vector_uint32_t = uint8_t;
-using vector_uint64_t = uint8_t;
-using vector_int8_t = uint8_t;
-using vector_int16_t = uint8_t;
-using vector_int32_t = uint8_t;
-using vector_int64_t = uint8_t;
-using vector_bfloat16_t = uint8_t;
-using vector_half = uint8_t;
-using vector_float = uint8_t;
-using vector_hifloat8_t = uint8_t;
-using vector_fp8_e4m3fn_t = uint8_t;
-using vector_fp8_e5m2_t = uint8_t;
-using vector_fp8_e8m0_t = uint8_t;
-using vector_int4x2_t = uint8_t;
-using vector_fp4x2_e2m1_t = uint8_t;
-using vector_fp4x2_e1m2_t = uint8_t;
-#endif
 
 static bool is_mock_copy_matrix_cc_to_gm = false;
 static uint16_t n_size_global = 0;

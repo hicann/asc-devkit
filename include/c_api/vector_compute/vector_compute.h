@@ -19,11 +19,14 @@
 
 #ifndef INCLUDE_C_API_VECTOR_COMPUTE_VECTOR_COMPUTE_H
 #define INCLUDE_C_API_VECTOR_COMPUTE_VECTOR_COMPUTE_H
+#include "impl/utils/common_types.h"
+#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 #include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
+
 #endif
 
 __aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ int8_t** src_array);
@@ -163,41 +166,18 @@ __aicore__ inline void asc_brcb_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, uint16_t dst_block_stride, uint16_t dst_repeat_stride,
     uint8_t repeat);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-
 // ==========asc_bitsort(half/float)==========
 __aicore__ inline void asc_bitsort(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
 __aicore__ inline void asc_bitsort(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-
-__aicore__ inline void asc_bitsort(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
-__aicore__ inline void asc_bitsort_sync(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
-__aicore__ inline void asc_bitsort(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
-__aicore__ inline void asc_bitsort_sync(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat);
-
 // ==========asc_transpose(int16_t/uint16_t)==========
 __aicore__ inline void asc_transpose(__ubuf__ int16_t* dst, __ubuf__ int16_t* src);
-
 __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src);
-
 __aicore__ inline void asc_transpose(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src);
-
 __aicore__ inline void asc_transpose_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src);
-
-#endif
 
 // ==========asc_datablock_reduce(half/float)==========
 __aicore__ inline void asc_datablock_reduce_sum(
@@ -1908,14 +1888,6 @@ __aicore__ inline void asc_gather_sync(
     __ubuf__ float* dst, __ubuf__ float* src, __ubuf__ uint32_t* src_offset, uint32_t count);
 
 // ==========asc_transpose(int16_t/uint16_t)==========
-__aicore__ inline void asc_transpose(__ubuf__ int16_t* dst, __ubuf__ int16_t* src);
-
-__aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src);
-
-__aicore__ inline void asc_transpose(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src);
-
-__aicore__ inline void asc_transpose_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src);
-
 // ==========asc_and(int16_t/uint16_t)==========
 __aicore__ inline void asc_and(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint8_t repeat, uint8_t dst_block_stride,
@@ -2699,4 +2671,5 @@ __aicore__ inline void asc_squeeze(
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)
 #undef ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #undef UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H
+
 #endif

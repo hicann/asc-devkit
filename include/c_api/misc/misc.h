@@ -19,6 +19,7 @@
 
 #ifndef INCLUDE_C_API_MISC_H
 #define INCLUDE_C_API_MISC_H
+#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 #include "impl/c_api/instr_impl/npu_arch_2201/misc_impl.h"
