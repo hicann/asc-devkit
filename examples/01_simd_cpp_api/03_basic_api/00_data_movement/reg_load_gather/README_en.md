@@ -1,4 +1,4 @@
-# gather_ld_reg Example
+# reg_load_gather Example
 
 ## Overview
 This example implements the functionality of transferring discrete data from UB (Unified Buffer) into a RegTensor (the basic unit of Reg vector computation) based on the Reg programming interface. It supports two scenarios. Select a scenario through the CMake build parameter `SCENARIO_NUM`.
