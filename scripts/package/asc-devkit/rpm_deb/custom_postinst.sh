@@ -16,16 +16,60 @@ whl_install_dir="${sourcedir}/python/site-packages"
 filelist="${sourcedir}/share/info/asc-devkit/script/filelist.csv"
 unset PYTHONPATH
 export PIP_BREAK_SYSTEM_PACKAGES=1
+pip_command=""
+
+detect_pip() {
+    if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
+        pip_command="python3"
+    elif command -v pip3 >/dev/null 2>&1 && pip3 --version >/dev/null 2>&1; then
+        pip_command="pip3"
+    fi
+}
 
 run_pip() {
-    if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
+    if [ "${pip_command}" = "python3" ]; then
         python3 -m pip "$@"
-    elif command -v pip3 >/dev/null 2>&1; then
-        pip3 "$@"
     else
-        echo "[asc-devkit] pip3 is required to install Python modules." >&2
+        pip3 "$@"
+    fi
+}
+
+install_purelib_wheel() {
+    local wheel="$1"
+    if ! command -v python3 >/dev/null 2>&1; then
+        echo "[asc-devkit] python3 is required to install ${wheel}." >&2
         return 1
     fi
+
+    python3 - "${wheel}" "${whl_install_dir}" <<'PY'
+import os
+import sys
+import zipfile
+
+wheel_path = sys.argv[1]
+target_dir = os.path.realpath(sys.argv[2])
+
+with zipfile.ZipFile(wheel_path) as wheel:
+    members = wheel.infolist()
+    metadata_files = [item.filename for item in members if item.filename.endswith(".dist-info/WHEEL")]
+    if len(metadata_files) != 1:
+        raise RuntimeError(f"invalid wheel metadata: {wheel_path}")
+
+    metadata = wheel.read(metadata_files[0]).decode("utf-8")
+    if "Root-Is-Purelib: true" not in metadata:
+        raise RuntimeError(f"pip is required to install non-purelib wheel: {wheel_path}")
+
+    for item in members:
+        parts = item.filename.split("/")
+        if any(part.endswith(".data") for part in parts):
+            raise RuntimeError(f"pip is required to install wheel with .data content: {wheel_path}")
+        destination = os.path.realpath(os.path.join(target_dir, item.filename))
+        if os.path.commonpath((target_dir, destination)) != target_dir:
+            raise RuntimeError(f"unsafe wheel member: {item.filename}")
+
+    os.makedirs(target_dir, exist_ok=True)
+    wheel.extractall(target_dir)
+PY
 }
 
 install_wheel() {
@@ -35,8 +79,13 @@ install_wheel() {
         return 1
     fi
     echo "[asc-devkit] installing ${wheel}"
-    run_pip install --disable-pip-version-check --upgrade --no-deps --force-reinstall \
-        -t "${whl_install_dir}" "${wheel}"
+    if [ -n "${pip_command}" ]; then
+        run_pip install --disable-pip-version-check --upgrade --no-deps --force-reinstall \
+            -t "${whl_install_dir}" "${wheel}"
+    else
+        echo "[asc-devkit] pip is unavailable, extracting purelib wheel with python3"
+        install_purelib_wheel "${wheel}"
+    fi
 }
 
 create_package_directories() {
@@ -111,15 +160,24 @@ clear_kernel_cache_dir() {
     done
 }
 
+remove_wheel_payload() {
+    case "${1:-}" in
+        *[!0-9]*|'')
+            rm -f \
+                "${sourcedir}/lib/asc_op_compile_base-0.1.0-py3-none-any.whl" \
+                "${sourcedir}/lib/asc_opc_tool-0.1.0-py3-none-any.whl"
+            rmdir "${sourcedir}/lib" 2>/dev/null || true
+            ;;
+    esac
+}
+
 mkdir -p "${whl_install_dir}"
+detect_pip
 install_wheel "${sourcedir}/lib/asc_op_compile_base-0.1.0-py3-none-any.whl"
 install_wheel "${sourcedir}/lib/asc_opc_tool-0.1.0-py3-none-any.whl"
 set_python_permissions
 create_package_directories
 create_stub_softlinks
 
-rm -f \
-    "${sourcedir}/lib/asc_op_compile_base-0.1.0-py3-none-any.whl" \
-    "${sourcedir}/lib/asc_opc_tool-0.1.0-py3-none-any.whl"
-rmdir "${sourcedir}/lib" 2>/dev/null || true
+remove_wheel_payload "${1:-}"
 clear_kernel_cache_dir

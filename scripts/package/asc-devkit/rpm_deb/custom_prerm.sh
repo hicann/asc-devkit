@@ -20,7 +20,7 @@ export PIP_BREAK_SYSTEM_PACKAGES=1
 run_pip() {
     if command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
         python3 -m pip "$@"
-    elif command -v pip3 >/dev/null 2>&1; then
+    elif command -v pip3 >/dev/null 2>&1 && pip3 --version >/dev/null 2>&1; then
         pip3 "$@"
     else
         return 1
@@ -83,6 +83,50 @@ remove_empty_dir() {
     rmdir "${dir}" 2>/dev/null || true
 }
 
+remove_package_directories() {
+    local path=""
+    [ -f "${filelist}" ] || return 0
+
+    awk -F, 'NR > 1 && $2 == "mkdir" && $4 != "NA" { print $4 }' "${filelist}" |
+    awk '{ depth = split($0, parts, "/"); print depth "\t" $0 }' |
+    sort -rn -k1,1 |
+    cut -f2- |
+    while IFS= read -r path; do
+        [ -n "${path}" ] || continue
+        remove_empty_dir "${sourcedir}/${path}"
+    done
+}
+
+is_rpm_owned_path() {
+    local path="$1"
+    command -v rpm >/dev/null 2>&1 || return 1
+    rpm -qf -- "${path}" >/dev/null 2>&1
+}
+
+preserve_rpm_owned_paths() {
+    case "${1:-}" in
+        *[!0-9]*|'') return 0 ;;
+    esac
+
+    rm() {
+        local path=""
+        for path in "$@"; do :; done
+        if is_rpm_owned_path "${path}"; then
+            return 0
+        fi
+        command rm "$@"
+    }
+
+    rmdir() {
+        local path=""
+        for path in "$@"; do :; done
+        if is_rpm_owned_path "${path}"; then
+            return 0
+        fi
+        command rmdir "$@"
+    }
+}
+
 remove_python_package "asc_op_compile_base" "asc_op_compile_base" "asc_op_compile_base"
 remove_python_package "asc_opc_tool" "asc_opc_tool" "asc_opc_tool"
 remove_empty_dir "${whl_install_dir}"
@@ -90,3 +134,5 @@ remove_empty_dir "${sourcedir}/python"
 
 rm -rf "${sourcedir}/${pkg_arch_name}-linux/tikcpp/ascendc_kernel_cmake/legacy_modules/util/__pycache__"
 remove_stub_softlinks
+preserve_rpm_owned_paths "${1:-}"
+remove_package_directories
