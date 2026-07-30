@@ -83,7 +83,7 @@
     <td>int32_t</td>
   </tr>
   <tr>
-    <td>bfloat16</td>
+    <td>bfloat16_t</td>
     <td rowspan="3">float</td>
     <td rowspan="3">float</td>
   </tr>
