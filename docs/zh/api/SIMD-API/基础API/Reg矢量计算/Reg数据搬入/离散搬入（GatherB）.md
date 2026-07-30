@@ -34,6 +34,20 @@
 
 ![图1 GatherB功能说明](../../../../figures/reg_gatherb.png)
 
+其中，index中仅前8个元素有效，每个元素对应一个DataBlock。例如，第一个元素为96（3 * 32），表示选取DataBlock3写入dstReg中对应的位置。
+
+以下Python代码用于等价描述GatherB的数据选择过程。其中，**baseAddr列表中的每个元素表示一个DataBlock**，index中的元素表示相对于baseAddr的字节偏移。
+
+```python
+def gather_b(base_addr, index):
+    data_block_size = 32
+    dst_reg = []
+    for offset in index[:8]:
+        data_block_id = offset // data_block_size
+        dst_reg.append(base_addr[data_block_id])
+    return dst_reg
+```
+
 ## 函数原型<a name="section620mcpsimp"></a>
 
 ```cpp
@@ -57,8 +71,8 @@ __simd_callee__ inline void GatherB(U& dstReg, __ubuf__ T* baseAddr, S& index, M
 |-----|-----|-----|
 | dstReg | 输出 | 目的操作数，类型为[RegTensor](../寄存器数据类型/RegTensor.md)。|
 | baseAddr | 输入 | 源操作数，UB中的基地址，需要32字节对齐。 |
-| index | 输入 | 索引值，dstReg中的每个DataBlock在UB中相对于baseAddr的位置，单位：字节。类型为[RegTensor](../寄存器数据类型/RegTensor.md)。索引值必须32B对齐，即一个索引值对应1个DataBlock。index中的值可以重复。例如：<br>baseAddr: [DataBlock0, DataBlock1, DataBlock2, DataBlock3, DataBlock4, DataBlock5, DataBlock6, DataBlock7, ... , DataBlock32, ...]。<br>index: [0\*32, 1\*32, 2\*32, 3\*32, 4\*32, 5\*32, 6\*32, 32\*32]<br>dstReg: [DataBlock0, DataBlock1, DataBlock2, DataBlock3, DataBlock4, DataBlock5, DataBlock6, DataBlock32]。 |
-| mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../寄存器数据类型/MaskReg.md)。 |
+| index | 输入 | 索引值，dstReg中的每个DataBlock在UB中相对于baseAddr的位置，仅前8个元素有效。单位：字节。类型为[RegTensor](../寄存器数据类型/RegTensor.md)。索引值必须32B对齐，即一个索引值对应1个DataBlock。index中的值可以重复。例如：<br>baseAddr: [DataBlock0, DataBlock1, DataBlock2, DataBlock3, DataBlock4, DataBlock5, DataBlock6, DataBlock7, ... , DataBlock32, ...]。<br>index: [0\*32, 1\*32, 2\*32, 3\*32, 4\*32, 5\*32, 6\*32, 32\*32]<br>dstReg: [DataBlock0, DataBlock1, DataBlock2, DataBlock3, DataBlock4, DataBlock5, DataBlock6, DataBlock32]。 |
+| mask | 输入 | DataBlock搬运的有效指示，按b32格式解释。一个DataBlock对应4bit，仅每4bit中的最低位有效。由于index仅前8个元素有效，因此mask仅使用前8个b32元素对应的bit 0、4、8、12、16、20、24、28，分别控制dstReg中DataBlock0至DataBlock7是否更新，其余bit无效。详细说明请参考[MaskReg](../寄存器数据类型/MaskReg.md)。 |
 
 ## 数据类型
 
@@ -77,6 +91,7 @@ __simd_callee__ inline void GatherB(U& dstReg, __ubuf__ T* baseAddr, S& index, M
 - index索引值必须32字节对齐，即一个索引值对应1个DataBlock。
 - index索引值对应的数据必须在UB有效地址范围内。
 - RegTensor模板参数regTrait只支持RegTraitNumOne。
+- index仅前8个元素有效。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
@@ -96,4 +111,3 @@ __simd_vf__ inline void GatherBVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, __ub
     }
 }
 ```
-

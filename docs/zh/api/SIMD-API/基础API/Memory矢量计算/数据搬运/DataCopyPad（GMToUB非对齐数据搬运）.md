@@ -2,10 +2,10 @@
 
 ## 产品支持情况<a name="section1550532418810"></a>
 
-### 不支持数据搬运模式mode的原型
+### 不含mode模板参数的函数原型
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR/Ascend 950DT：不支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
 - Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
@@ -26,7 +26,7 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-### 支持数据搬运模式mode的原型
+### 含mode模板参数的函数原型
 
 <!-- npu="950" id8 -->
 - Ascend 950PR/Ascend 950DT：支持

@@ -72,17 +72,17 @@
 
 | 参数名 | 描述 |
 | :--- | :--- |
-| unsetPad | 表示不设置PaddingSize，固定为0xFFFF。 |
-| isNearestValueMode | 表示Padding值填取方式，类型为bool。<br>True：使能最近值填充方式，即左右Padding值会选取当前维度最左或最右的值进行填充，可参考[图1](#fig10722115123919)。<br>False：使能常数填充方式，即所有Padding值填充为固定值NdDmaParams::constantValue。<br>当数据类型为b64时，参数isNearestValueMode的值应为False。 |
-| loopLpSize | 表示每个维度内的PaddingSize，当该值不为unsetPad时，则表示所有循环里的左PaddingSize为该值，且会使NdDmaLoopInfo::loopLpSize不生效。默认值为unsetPad，开发者可填的范围为默认值或[0,255]。 |
-| loopRpSize | 表示每个维度内的PaddingSize，当该值不为unsetPad时，则表示所有循环里的右PaddingSize为该值，且会使NdDmaLoopInfo::loopRpSize不生效。默认值为unsetPad，开发者可填的范围为默认值或[0,255]。 |
+| unsetPad | 表示未在NdDmaConfig中统一设置PaddingSize，固定为0xFFFF，为uint16_t数据类型的常量。当loopLpSize或loopRpSize取该值时，对应的PaddingSize由NdDmaLoopInfo中的同名参数按维度设置。 |
+| isNearestValueMode | 表示Padding值填取方式，类型为bool。<br>true：使能最近值填充方式，即左右Padding值会选取当前维度最左或最右的值进行填充，可参考[图1](#fig10722115123919)。<br>false：使能常数填充方式，即所有Padding值填充为固定值NdDmaParams::constantValue。<br>当数据类型为b64时，参数isNearestValueMode的值应为false。 |
+| loopLpSize | 所有维度统一使用的左Padding大小，单位为元素个数。取值范围为[0, 255]或unsetPad，默认值为unsetPad。设置为[0, 255]时，所有维度均使用该值，NdDmaLoopInfo::loopLpSize不生效；设置为unsetPad时，按维度使用NdDmaLoopInfo::loopLpSize。 |
+| loopRpSize | 所有维度统一使用的右Padding大小，单位为元素个数。取值范围为[0, 255]或unsetPad，默认值为unsetPad。设置为[0, 255]时，所有维度均使用该值，NdDmaLoopInfo::loopRpSize不生效；设置为unsetPad时，按维度使用NdDmaLoopInfo::loopRpSize。 |
 | ascOptimize | 预留参数，暂不支持。 |
 
 **表4**  NdDmaParams结构体参数定义<a name="table_nddma_4"></a>
 
 | 参数名 | 描述 |
 | :--- | :--- |
-| loopInfo | 每维进行搬运的信息，类型为NdDmaLoopInfo&lt;dim&gt;。<br>NdDmaLoopInfo结构中数组类型的参数，其数组索引值对应实际维度信息，索引0 - 4对应1 - 5维。具体参数介绍可参考[表5](#table_nddma_5)。 |
+| loopInfo | 每维进行搬运的信息，类型为NdDmaLoopInfo&lt;dim&gt;。<br>NdDmaLoopInfo结构中数组类型参数的元素个数由模板参数dim决定。dim的取值范围为[1, 5]，数组的有效索引范围为[0, dim - 1]。具体参数介绍可参考[表5](#table_nddma_5)。 |
 | constantValue | 数据类型为T的数值，当存在维度左右Padding，且不使能NearestValueMode时，该值将作为Padding值填充。<br>当数据类型为b64时，参数constantValue的值应为0。 |
 
 **表5**  NdDmaLoopInfo结构体参数定义<a name="table_nddma_5"></a>
@@ -91,7 +91,7 @@
 | :--- | :--- |
 | loopSrcStride | 表示每个维度内，该源操作数元素与下一个元素间的间隔。<br>单位为元素个数。数据类型为uint64_t，loopSrcStride需在[0, 2<sup>40</sup>)。 |
 | loopDstStride | 表示每个维度内，该目的操作数元素与下一个元素间的间隔。<br>单位为元素个数。数据类型为uint32_t，loopDstStride需在[0, 2<sup>20</sup>)。 |
-| loopSize | 表示每个维度内，处理的元素个数（不包含Padding元素）。<br>单位为元素个数。数据类型为uint32_t，loopSize需在[0, 2<sup>20</sup>)。 |
+| loopSize | 表示每个维度内，处理的元素个数（不包含Padding元素）。<br>单位为元素个数。数据类型为uint32_t，loopSize需在[1, 2<sup>20</sup>)。 |
 | loopLpSize | 表示每个维度内，左侧需要补齐的元素个数。<br>单位为元素个数。数据类型为uint8_t，loopLpSize不要超出该数据类型的取值范围：[0, 255]。 |
 | loopRpSize | 表示每个维度内，右侧需要补齐的元素个数。<br>单位为元素个数。数据类型为uint8_t，loopRpSize不要超出该数据类型的取值范围：[0, 255]。 |
 
