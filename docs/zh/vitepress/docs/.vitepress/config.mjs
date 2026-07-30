@@ -14,8 +14,22 @@ import { resolve } from 'node:path'
 import { load as cheerioLoad } from 'cheerio'
 import { execSync } from 'node:child_process'
 import { pagefindPlugin } from 'vitepress-plugin-pagefind'
+import {
+  installRepositoryLinkRewrite,
+  rewriteRepositoryLinks,
+} from '../../scripts/rewrite-repository-links.mjs'
 
 const docsRoot = resolve(import.meta.dirname, '..')
+const repoRoot = resolve(import.meta.dirname, '..', '..', '..', '..', '..')
+
+function getOriginalSourceFile(relativePath) {
+  if (!relativePath) return null
+  const normalizedPath = relativePath.replace(/\\/g, '/')
+  if (normalizedPath.startsWith('en/')) {
+    return resolve(repoRoot, 'docs', normalizedPath)
+  }
+  return resolve(repoRoot, 'docs', 'zh', normalizedPath)
+}
 
 function removeSelfRefItems(items) {
   return items.map(item => {
@@ -121,8 +135,6 @@ function filterEmptyPages(items, docsRoot) {
     return acc
   }, [])
 }
-
-const repoRoot = resolve(import.meta.dirname, '../../../../..')
 
 const sidebarConfigs = [
   { prefix: '/guide/', sourceFileName: 'index.md' },
@@ -490,6 +502,11 @@ export default defineConfig({
   markdown: {
     math: true,
     config(md) {
+      installRepositoryLinkRewrite(
+        md,
+        env => getOriginalSourceFile(env?.relativePath),
+        repoRoot
+      )
       const originalRender = md.render.bind(md)
       const originalRenderAsync = md.renderAsync ? md.renderAsync.bind(md) : null
       const processSource = (src) => {
@@ -505,11 +522,11 @@ export default defineConfig({
         }
         return src
       }
-      const processHtml = (html) => {
+      const processHtml = (html, env) => {
         if (html.includes('{{')) {
           html = escapeVueInterpolations(html)
         }
-        return html
+        return rewriteRepositoryLinks(html, getOriginalSourceFile(env?.relativePath), repoRoot)
       }
       const renderFn = (src, env) => {
         if (src.includes('<!-- RAW_HTML -->')) {
@@ -615,12 +632,13 @@ function balanceDivTags(html) {
           )
 
           html = balanceDivTags(html)
+          html = rewriteRepositoryLinks(html, getOriginalSourceFile(env?.relativePath), repoRoot)
 
           return `<div v-pre>\n${html}\n</div>`
         }
         src = processSource(src)
         let html = originalRender(src, env)
-        html = processHtml(html)
+        html = processHtml(html, env)
         return `<div v-pre>${html}</div>`
       }
       md.render = function (src, env) {

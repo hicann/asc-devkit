@@ -14,6 +14,7 @@
 import html as html_mod
 import pathlib
 import re
+from urllib.parse import unquote
 import cmarkgfm
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -391,14 +392,45 @@ def gfm_to_html(text: str) -> str:
     return cmarkgfm.github_flavored_markdown_to_html(text, options=_OPTIONS)
 
 
-def _fix_links(html: str) -> str:
+def _is_within(path: pathlib.Path, parent: pathlib.Path) -> bool:
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
+
+
+def _repository_roots(source_path):
+    if source_path is None:
+        return None, None
+    source = pathlib.Path(source_path).resolve()
+    for parent in source.parents:
+        if parent.name in ("zh", "en") and parent.parent.name == "docs":
+            return parent.parent.parent, parent.parent
+    return None, None
+
+
+def _fix_links(html: str, source_path=None) -> str:
     html = re.sub(
         r'(href|src)="https://gitcode\.com/cann/asc-devkit/blob/master/docs/(api|guide)/([^"]+)\.md(#[^"]*)?"',
         r'\1="/\2/\3.html\4"',
         html,
         flags=re.IGNORECASE,
     )
-    return _MD_LINK_RE.sub(r'\1="\2.html\3"', html)
+
+    repo_root, docs_root = _repository_roots(source_path)
+
+    def _replace_markdown_link(match):
+        link_path = match.group(2)
+        if match.group(1).lower() == "href" and repo_root is not None:
+            target = (
+                pathlib.Path(source_path).resolve().parent / unquote(link_path)
+            ).resolve()
+            if _is_within(target, repo_root) and not _is_within(target, docs_root):
+                return match.group(0)
+        return f'{match.group(1)}="{link_path}.html{match.group(3) or ""}"'
+
+    return _MD_LINK_RE.sub(_replace_markdown_link, html)
 
 
 def _fix_callouts(html: str) -> str:
@@ -586,7 +618,7 @@ def _highlight_code(html: str) -> str:
     return _CODEFENCE_RE.sub(_replace, html)
 
 
-def parse_string(text: str, gfm: bool = True) -> str:
+def parse_string(text: str, gfm: bool = True, source_path=None) -> str:
     text = _convert_cann_filter(text)
     text = _escape_lone_tildes(text)
     text, math_blocks = _extract_math_blocks(text)
@@ -595,7 +627,7 @@ def parse_string(text: str, gfm: bool = True) -> str:
     else:
         html = markdown_to_html(text)
     html = _restore_math_blocks(html, math_blocks)
-    html = _fix_links(html)
+    html = _fix_links(html, source_path=source_path)
     html = _fix_callouts(html)
     html = _highlight_code(html)
     return html
@@ -604,7 +636,7 @@ def parse_string(text: str, gfm: bool = True) -> str:
 def parse_file(filepath: str, gfm: bool = True) -> str:
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
-    return parse_string(content, gfm=gfm)
+    return parse_string(content, gfm=gfm, source_path=filepath)
 
 
 def render_html(body: str) -> str:

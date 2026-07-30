@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "node --test scripts/tests/*.test.mjs && python3 -m unittest discover -s scripts/tests -p \"test_*.py\"",
     "docs:dev": "vitepress dev docs",
     "docs:convert": "node scripts/convert-docs.js -s",
     "docs:genstubs": "node scripts/gen-md-stubs.js",
