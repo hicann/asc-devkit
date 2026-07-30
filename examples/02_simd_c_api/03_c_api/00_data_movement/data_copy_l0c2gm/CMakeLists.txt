@@ -18,7 +18,7 @@ find_package(ASC REQUIRED)
 project(c_api_data_copy_l0c2gm LANGUAGES ASC CXX)
 
 if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
-    message(FATAL_ERROR "This C API sample only supports CMAKE_ASC_ARCHITECTURES=dav-3510.")
+    message(FATAL_ERROR "This C API example only supports CMAKE_ASC_ARCHITECTURES=dav-3510.")
 endif()
 
 if(NOT CMAKE_ASC_RUN_MODE MATCHES "^(npu|sim)$")
