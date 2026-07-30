@@ -49,8 +49,8 @@ __aicore__ inline void SetLoopModePara(const LoopModeParams& loopParams, DataCop
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| loopParams | 输入 | 循环模式参数LoopModeParams类型，定义如下，具体参数说明请参考[表2](#table_setloop_2)。<br><pre>struct LoopModeParams {<br>        loop1Size = 0;<br>        loop2Size = 0;<br>        loop1SrcStride = 0;<br>        loop1DstStride = 0;<br>        loop2SrcStride = 0;<br>        loop2DstStride = 0;<br>};</pre> |
-| type | 输入 | 数据搬运模式。DataCopyMVType为枚举类型，定义如下，具体参数说明请参考[表3](#table1166074612214)。<br><pre>enum class DataCopyMVType : uint8_t {<br>    UB_TO_OUT = 0,<br>    OUT_TO_UB = 1,<br>};</pre> |
+| loopParams | 输入 | 循环模式参数LoopModeParams类型，定义如下，具体参数说明请参考[表2](#table_setloop_2)。<br>struct LoopModeParams {<br>        loop1Size = 0;<br>        loop2Size = 0;<br>        loop1SrcStride = 0;<br>        loop1DstStride = 0;<br>        loop2SrcStride = 0;<br>        loop2DstStride = 0;<br>};<br>|
+| type | 输入 | 数据搬运模式。DataCopyMVType为枚举类型，定义如下，具体参数说明请参考[表3](#table1166074612214)。<br>enum class DataCopyMVType : uint8_t {<br>    UB_TO_OUT = 0,<br>    OUT_TO_UB = 1,<br>};<br>|
 
 **表2**  LoopModeParams结构体参数说明<a name="table_setloop_2"></a>
 

@@ -47,7 +47,7 @@ __aicore__ inline U Cast(T valueIn)
 | ------ | ------ |
 | T | valueIn的数据类型。 |
 | U | 转换后的数据类型。 |
-| roundMode | 精度转换处理模式，类型是RoundMode。<br>RoundMode为枚举类型，用以控制精度转换处理模式，参考[精度舍入模式](../数据结构/precision_conversion.md#tab1)，可取值为:<pre>&bull; CAST_NONE：当转换过程存在精度损失时，按CAST_RINT模式处理；当不存在精度损失时，不进行舍入；<br>&bull; CAST_RINT：向最近的偶数舍入；<br>&bull; CAST_FLOOR：向负无穷大方向舍入；<br>&bull; CAST_CEIL：向正无穷大方向舍入；<br>&bull; CAST_ROUND：四舍五入；<br>&bull; CAST_TRUNC：截断模式；<br>&bull; CAST_ODD：向最近的奇数舍入。</pre> |
+| roundMode | 精度转换处理模式，类型是RoundMode。<br>RoundMode为枚举类型，用以控制精度转换处理模式，参考[精度舍入模式](../数据结构/precision_conversion.md#tab1)，可取值为:<br>&bull; CAST_NONE：当转换过程存在精度损失时，按CAST_RINT模式处理；当不存在精度损失时，不进行舍入；<br>&bull; CAST_RINT：向最近的偶数舍入；<br>&bull; CAST_FLOOR：向负无穷大方向舍入；<br>&bull; CAST_CEIL：向正无穷大方向舍入；<br>&bull; CAST_ROUND：四舍五入；<br>&bull; CAST_TRUNC：截断模式；<br>&bull; CAST_ODD：向最近的奇数舍入。<br>|
 
 **表2**  参数说明
 

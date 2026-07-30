@@ -159,9 +159,9 @@
   **表**  CastDequant与SetDeqScale使用关系映射表
   |CastDequant使用场景|对应使用的SetDeqScale函数原型|
   |---|---|
-  |输入类型为int16_t，关闭向量量化模式|<pre>\_\_aicore\_\_ inline void SetDeqScale(float scale, int16_t offset, bool signMode)</pre>|
-  |输入类型为int16_t，开启向量量化模式|<pre>template &lt;typename T&gt;<br>\_\_aicore\_\_ inline void SetDeqScale(const LocalTensor&lt;T&gt;& vdeq, const VdeqInfo& vdeqInfo)</pre>|
-  |输入类型为int32_t，输出数据类型为half类型|<pre>\_\_aicore\_\_ inline void SetDeqScale(half scale)</pre>|
+  |输入类型为int16_t，关闭向量量化模式|<br>\_\_aicore\_\_ inline void SetDeqScale(float scale, int16_t offset, bool signMode)<br>|
+  |输入类型为int16_t，开启向量量化模式|<br>template &lt;typename T&gt;<br>\_\_aicore\_\_ inline void SetDeqScale(const LocalTensor&lt;T&gt;& vdeq, const VdeqInfo& vdeqInfo)<br>|
+  |输入类型为int32_t，输出数据类型为half类型|<br>\_\_aicore\_\_ inline void SetDeqScale(half scale)<br>|
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

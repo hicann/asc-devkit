@@ -59,7 +59,7 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
   - bank冲突优化
 
-    可参考[避免bank冲突（NPU架构版本2201）](<https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免bank冲突（NPU架构版本2201）.md>)。
+    可参考[避免bank冲突（NPU架构版本2201）](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md)。
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
@@ -77,5 +77,5 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
   
   - bank冲突优化
 
-    可参考[避免bank冲突（NPU架构版本3510）](<https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免bank冲突（NPU架构版本3510）.md>)。
+    可参考[避免bank冲突（NPU架构版本3510）](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_3510.md)。
 <!-- end id4 -->
