@@ -42,6 +42,7 @@ exclude = [
     "^https://github\\.com/ImageMagick/ImageMagick-Windows/releases$",
     "^https://docs\\.docker\\.com/$",
     "^https://docs\\.docker\\.com/reference/cli/docker/buildx/$",
+    "^https://ccache\\.dev/documentation\\.html$",
 ]
 
 exclude_path = [

@@ -14,19 +14,19 @@
 1.  环境准备。
     1.  CANN软件安装请参考[环境准备](../../../入门教程/环境准备.md)。
     2.  安装框架插件包，请参考[TensorFlow模型迁移](https://www.hiascend.com/document/detail/zh/TensorFlowCommunity/latest/index/index.html)中《TensorFlow 1.15模型迁移》或《TensorFlow 2.6.5模型迁移》的环境准备 \> 安装框架插件包章节，获取框架插件包详细的安装步骤。
-    3.  <a name="li123241091016"></a>[创建算子工程](../Aclnn算子工程化开发/创建算子工程.md)。使用msOpGen工具创建算子开发工程。TensorFlow框架算子适配场景下，需要通过framework参数指定具体的框架为tf或者tensorflow，工具会自动生成框架适配代码。以自定义CANN算子AddCustom为例，使用msOpGen工具创建算子开发工程的具体命令如下：
+    3.  <a name="li123241091016"></a>[创建算子工程](../Aclnn算子工程化开发/Aclnn算子工程化开发快速入门.md#create-project)。使用msOpGen工具创建算子开发工程。TensorFlow框架算子适配场景下，需要通过framework参数指定具体的框架为tf或者tensorflow，工具会自动生成框架适配代码。以自定义CANN算子AddCustom为例，使用msOpGen工具创建算子开发工程的具体命令如下：
 
         ```
         ${INSTALL_DIR}/python/site-packages/bin/msopgen gen -i $HOME/sample/add_custom.json -f tf -c ai_core-<soc_version> -lan cpp -out $HOME/sample/AddCustom
         ```
 
 2.  算子实现。
-    -   [算子原型定义](../Aclnn算子工程化开发/算子原型定义.md)。通过原型定义来描述算子输入输出、属性等信息以及算子在AI处理器上相关实现信息，并关联tiling实现等函数。
-    -   Kernel侧算子实现和host侧tiling实现请参考[SIMD算子实现](../../../算子实践参考/SIMD算子实现/概述.md)；工程化算子开发，支持开发者调用Tiling API基于CANN提供的编程框架进行tiling开发，kernel侧也提供对应的接口方便开发者获取tiling参数，具体内容请参考[Kernel侧算子实现](../Aclnn算子工程化开发/Kernel侧算子实现.md)和[Host侧Tiling实现](../Aclnn算子工程化开发/Host侧Tiling实现/基本流程.md)，由此而带来的额外约束也在上述章节说明。
+    -   [算子原型定义](../Aclnn算子工程化开发/设计与实现/算子原型定义.md)。通过原型定义来描述算子输入输出、属性等信息以及算子在AI处理器上相关实现信息，并关联tiling实现等函数。
+    -   Kernel侧算子实现和host侧tiling实现请参考[SIMD算子实现](../../../算子实践参考/SIMD算子实现/概述.md)；工程化算子开发，支持开发者调用Tiling API基于CANN提供的编程框架进行tiling开发，kernel侧也提供对应的接口方便开发者获取tiling参数，具体内容请参考[Kernel侧算子实现](../Aclnn算子工程化开发/设计与实现/Kernel侧算子实现.md)和[Host侧Tiling实现](../Aclnn算子工程化开发/设计与实现/Host侧Tiling实现.md)，由此而带来的额外约束也在上述章节说明。
 
 3.  [算子入图（GE图）开发](../算子入图开发/基本开发流程.md)。算子入图场景下，需要提供shape推导等算子入图适配函数的实现。
 4.  TensorFlow框架适配插件开发。详细说明见[适配插件开发](#section1820291291414)。
-5.  编译部署。通过工程编译脚本完成算子的编译部署，分为[算子包编译](../Aclnn算子工程化开发/算子包编译/算子工程编译.md)和[算子动态库编译](../Aclnn算子工程化开发/算子动态库和静态库编译.md)两种方式。
+5.  编译部署。通过工程编译脚本完成算子的编译部署，分为[算子包编译](../Aclnn算子工程化开发/编译与部署/基本流程.md)和[算子动态库编译](../Aclnn算子工程化开发/编译与部署/算子动态库和静态库编译.md)两种方式。
 6.  TensorFlow框架算子调用。详细说明见[TensorFlow原生算子映射到CANN算子](#section6342138121512)和[TensorFlow自定义算子开发并映射到CANN算子](#section18276103563719)。完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/02_features/00_framework/02_onnx)。
 
 ## 适配插件开发<a name="section1820291291414"></a>

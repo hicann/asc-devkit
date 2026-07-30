@@ -14,7 +14,7 @@ this->Output("y")
     .OutputShapeDependOnCompute();
 ```
 
-算子有多个输出时，只在实际依赖计算的输出上增加该标记。输入输出声明方法见[算子原型定义](../算子原型定义.md)。
+算子有多个输出时，只在实际依赖计算的输出上增加该标记。输入输出声明方法见[算子原型定义](./算子原型定义.md)。
 
 ## Kernel入口增加shape输出参数
 
@@ -48,7 +48,7 @@ shape输出按`uint64_t`数组组织。每个待刷新输出固定占9个`uint64
 
 如果有`n`个输出依赖计算，总空间为`n * 9`个`uint64_t`元素。第`i`个输出从`i * 9`开始，顺序与算子原型中的输出声明顺序一致。
 
-![shape信息排布示意图](../../../../../figures/流水任务运行示意图-33.png)
+![shape信息排布示意图](../../../../figures/流水任务运行示意图-33.png)
 
 对于输出Tensor数据类型为`uint64_t`的场景，需要把rank值的第31位设置为1，表示后续维度按`uint64_t`解析：
 
@@ -130,6 +130,6 @@ shapeGlobal.SetValue(13, 32);
 
 ## 相关文档
 
-- [Kernel侧算子实现](./基本流程.md)：Kernel入口格式和参数顺序。
-- [算子原型定义](../算子原型定义.md)：输入输出声明和shape推导关系。
-- [OutputShapeDependOnCompute](../../../../../../api/Utils-API/原型注册与管理/OpParamDef/OutputShapeDependOnCompute.md)：接口定义和工程版本约束。
+- [Kernel侧算子实现](./Kernel侧算子实现.md)：Kernel入口格式和参数顺序。
+- [算子原型定义](./算子原型定义.md)：输入输出声明和shape推导关系。
+- [OutputShapeDependOnCompute](../../../../../api/Utils-API/原型注册与管理/OpParamDef/OutputShapeDependOnCompute.md)：接口定义和工程版本约束。

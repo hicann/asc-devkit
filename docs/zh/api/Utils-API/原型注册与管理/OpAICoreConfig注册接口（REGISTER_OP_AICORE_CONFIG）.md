@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001600307121_zh-cn_topic_0000001576870453_zh-cn_topic_0000001525424352_section36583473819"></a>
 
-不同的硬件形态算子原型定义不同的情况，可以通过新增[OpAICoreConfig](OpAICoreConfig/OpAICoreConfig.md)的方式，针对不同的AI处理器型号[注册差异化的算子原型](../../../guide/编程指南/高级编程/Aclnn算子工程化开发/算子原型定义.md)。REGISTER\_OP\_AICORE\_CONFIG宏在不改变原有注册的基础上，允许单独新增文件来注册算子在不同硬件形态上的差异化信息。
+不同的硬件形态算子原型定义不同的情况，可以通过新增[OpAICoreConfig](OpAICoreConfig/OpAICoreConfig.md)的方式，针对不同的AI处理器型号[注册差异化的算子原型](../../../guide/编程指南/高级编程/Aclnn算子工程化开发/设计与实现/算子原型定义.md)。REGISTER\_OP\_AICORE\_CONFIG宏在不改变原有注册的基础上，允许单独新增文件来注册算子在不同硬件形态上的差异化信息。
 
 使用该注册宏需要包含以下头文件：
 

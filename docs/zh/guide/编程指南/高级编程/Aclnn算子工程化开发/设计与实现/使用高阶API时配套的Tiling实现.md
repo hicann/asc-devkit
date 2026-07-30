@@ -132,6 +132,8 @@ currentWorkspace[0] = systemWorkspaceSize + userWorkspaceSize;
 
 即使算子没有自定义临时数据，也需要检查高阶API是否使用系统workspace，不能直接把workspace设为0。
 
+系统workspace和用户workspace的通用设置方法请参考[如何使用workspace](../../../附录/常用操作/如何使用workspace.md)。
+
 ### 校验输入条件
 
 实际算子还需要在调用`GetTiling`前校验：
@@ -212,5 +214,6 @@ Host侧`SetAType`、`SetBType`和`SetCType`配置的位置、format、dtype，�
 
 ## 相关文档
 
-- [Host侧Tiling实现](./基本流程.md)：普通TilingData和Tiling函数的基本流程。
-- [Matmul-Tiling类](../../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/Matmul-Tiling类.md)：配套Tiling类接口说明。
+- [Host侧Tiling实现](./Host侧Tiling实现.md)：普通TilingData和Tiling函数的基本流程。
+- [Kernel侧算子实现](./Kernel侧算子实现.md)：Kernel入口、TilingData解析和Kernel编程流程。
+- [Matmul-Tiling类](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/Matmul-Tiling类.md)：配套Tiling类接口说明。

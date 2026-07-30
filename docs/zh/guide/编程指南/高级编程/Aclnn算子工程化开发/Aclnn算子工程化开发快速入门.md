@@ -52,7 +52,7 @@ source /usr/local/Ascend/cann/set_env.sh
 | 步骤6 | 部署 | — |
 | 步骤7 | 调用算子 | 1分钟 |
 
-### 创建工程
+### 创建工程<a id="create-project"></a>
 
 编写算子原型定义文件`add_custom.json`（建议放在全英文路径下），然后使用msOpGen工具生成工程骨架。JSON中每个输入/输出的`format`和`type`列表长度必须一致，保持一一对应关系。
 
@@ -216,7 +216,7 @@ extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z
 }
 ```
 
-> 以上代码展示了Kernel侧的基本实现模式。
+> 以上代码展示了[Kernel侧算子实现](./设计与实现/Kernel侧算子实现.md)的基本模式。
 
 ### 修改Tiling与Host侧实现
 
@@ -267,9 +267,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
 } // namespace optiling
 ```
 
-保留文件末尾自动生成的`namespace ge`（InferShape/InferDataType）和`namespace ops`（算子原型注册）代码不变。
+保留文件末尾自动生成的`namespace ge`（InferShape/InferDataType）和`namespace ops`（[算子原型注册](./设计与实现/算子原型定义.md)）代码不变。
 
-> 以上代码展示了Tiling函数实现和TilingData数据结构的基本写法。
+> 以上代码展示了[Host侧Tiling实现](./设计与实现/Host侧Tiling实现.md)中Tiling函数和TilingData数据结构的基本写法。
 
 ### 编译
 

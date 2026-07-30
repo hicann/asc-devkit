@@ -1,6 +1,6 @@
 # 基本流程
 
-本文属于基础内容，介绍aclnn工程化算子开发方式中Kernel侧的基本接入流程，重点说明Kernel入口函数格式、参数顺序、TilingData处理和编译期信息获取方式。Global Memory地址绑定、UB管理、数据搬运、计算和同步等Kernel核心实现方法，请参考[核函数](../../../../编程模型/AI-Core-SIMD编程/核函数.md)。
+本文属于基础内容，介绍aclnn工程化算子开发方式中Kernel侧的基本接入流程，重点说明Kernel入口函数格式、参数顺序、TilingData处理和编译期信息获取方式。Global Memory地址绑定、UB管理、数据搬运、计算和同步等Kernel核心实现方法，请参考[核函数](../../../编程模型/AI-Core-SIMD编程/核函数.md)。
 
 ## Kernel函数格式
 
@@ -16,7 +16,7 @@ Kernel入口函数名需要和算子类型对应。算子类型采用大驼峰�
 | `Conv2DCustom` | `conv2_d_custom` |
 | `GatherV2Custom` | `gather_v2_custom` |
 
-完整转换规则和更多示例会在[命名转换规则对照表](../../附录/命名转换规则对照表.md)中展开。
+完整转换规则和更多示例会在[命名转换规则对照表](../附录/命名转换规则对照表.md)中展开。
 
 ### 函数形式
 
@@ -65,7 +65,7 @@ __global__ __aicore__ void add_custom_template(GM_ADDR x, GM_ADDR y, GM_ADDR z,
 }
 ```
 
-上述代码使用`REGISTER_TILING_DEFAULT`注册默认TilingData结构体，并通过`GET_TILING_DATA_WITH_STRUCT`按指定类型解析Tiling数据。模板参数声明、Host侧选择和编译配置请参考[多分支策略](../多分支策略.md)的Tiling模板编程章节。
+上述代码使用`REGISTER_TILING_DEFAULT`注册默认TilingData结构体，并通过`GET_TILING_DATA_WITH_STRUCT`按指定类型解析Tiling数据。模板参数声明、Host侧选择和编译配置请参考[多分支策略](./多分支策略.md)的Tiling模板编程章节。
 
 ### 参数顺序
 
@@ -105,7 +105,7 @@ AddCustom的Kernel入口按以下步骤串联算子实现：
 4. 调用`Add`完成逐元素加法计算。
 5. 将计算结果从Local Memory搬运回Global Memory。
 
-`Process`根据`tileNum`循环执行步骤3至步骤5，直到当前Block的所有Tile处理完成。搬运和计算之间需要根据数据依赖做好同步，具体实现请参考[核函数](../../../../编程模型/AI-Core-SIMD编程/核函数.md)。
+`Process`根据`tileNum`循环执行步骤3至步骤5，直到当前Block的所有Tile处理完成。搬运和计算之间需要根据数据依赖做好同步，具体实现请参考[核函数](../../../编程模型/AI-Core-SIMD编程/核函数.md)。
 
 ## TilingData处理
 
@@ -117,7 +117,7 @@ Host侧Tiling函数会把Kernel运行需要的参数写入TilingData。TilingDat
 
 **标准C++结构体**
 
-使用标准C++语法定义TilingData时，Kernel侧在入口函数中使用`REGISTER_TILING_DEFAULT`注册默认结构体。
+使用标准C++语法定义TilingData时，Kernel侧在入口函数中使用[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/基础API/Kernel-Tiling/REGISTER_TILING_DEFAULT.md)注册默认结构体。
 
 ```cpp
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z,
@@ -138,7 +138,7 @@ REGISTER_TILING_DATA_CLASS(AddCustom, AddStruct)
 
 宏定义结构体的Kernel入口不使用`REGISTER_TILING_DEFAULT`，直接通过构建生成的TilingData访问宏获取数据。
 
-本节只介绍默认TilingData的注册方式。同一算子需要组织多个Kernel分支时，分支专用TilingData的注册方式以及Kernel模板参数的配置方式，请参见[多分支策略](../多分支策略.md)。
+本节只介绍默认TilingData的注册方式。同一算子需要组织多个Kernel分支时，分支专用TilingData的注册方式以及Kernel模板参数的配置方式，请参见[多分支策略](./多分支策略.md)。
 
 ### 获取TilingData
 
@@ -148,8 +148,8 @@ Kernel可以将入口参数`GM_ADDR tiling`转换为GM指针，再按照TilingDa
 
 两个宏的能力区别如下：
 
-- `GET_TILING_DATA(tiling_data, tiling_arg)`：使用当前Kernel分支注册的默认TilingData类型进行解析，适用于只需访问默认结构体的场景。
-- `GET_TILING_DATA_WITH_STRUCT(tiling_struct, tiling_data, tiling_arg)`：显式指定解析使用的TilingData结构体类型，既可用于不同TilingKey使用不同结构体的场景，也可用于TPL/SEL模板分支显式指定模板TilingData结构体的场景。
+- [GET_TILING_DATA](../../../../../api/SIMD-API/基础API/Kernel-Tiling/GET_TILING_DATA.md)`(tiling_data, tiling_arg)`：使用当前Kernel分支注册的默认TilingData类型进行解析，适用于只需访问默认结构体的场景。
+- [GET_TILING_DATA_WITH_STRUCT](../../../../../api/SIMD-API/基础API/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)`(tiling_struct, tiling_data, tiling_arg)`：显式指定解析使用的TilingData结构体类型，既可用于不同TilingKey使用不同结构体的场景，也可用于TPL/SEL模板分支显式指定模板TilingData结构体的场景。
 
 默认TilingData结构体通过`GET_TILING_DATA`解析。第一个参数是解析后的变量名，第二个参数是Kernel入口中的`tiling`地址。
 
@@ -170,9 +170,9 @@ op.Init(x, y, z, tilingData.totalLength, tilingData.tileNum);
 GET_TILING_DATA_WITH_STRUCT(TilingDataTemplate, tilingData, tiling);
 ```
 
-第一个参数可以是按TilingKey注册的分支专用结构体，也可以是TPL/SEL模板分支使用的模板TilingData结构体。两种分支组织方式的宏调用和字段访问方式相同；分支和结构体的具体配置方式请参见[多分支策略](../多分支策略.md)。使用默认结构体的分支仍通过`GET_TILING_DATA`解析。
+第一个参数可以是按TilingKey注册的分支专用结构体，也可以是TPL/SEL模板分支使用的模板TilingData结构体。两种分支组织方式的宏调用和字段访问方式相同；分支和结构体的具体配置方式请参见[多分支策略](./多分支策略.md)。使用默认结构体的分支仍通过`GET_TILING_DATA`解析。
 
-TilingData定义方式和Host侧写入流程请参考[Host侧Tiling实现](../Host侧Tiling实现/基本流程.md)。
+TilingData定义方式和Host侧写入流程请参考[Host侧Tiling实现](./Host侧Tiling实现.md)。
 
 ## 信息获取
 
@@ -224,7 +224,7 @@ extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z
 
 ## 相关文档
 
-- [Host侧Tiling实现](../Host侧Tiling实现/基本流程.md)：了解TilingData定义、Tiling函数编写和workspace设置。
-- [算子原型定义](../算子原型定义.md)：了解输入输出顺序、dtype/format声明和AI处理器配置。
-- [多分支策略](../多分支策略.md)：了解`TilingKey`如何选择不同Kernel实现分支。
-- [输出shape依赖计算](./输出shape依赖计算.md)：了解输出shape依赖Kernel计算结果时的处理方式。
+- [Host侧Tiling实现](./Host侧Tiling实现.md)：了解TilingData定义、Tiling函数编写和workspace设置。
+- [算子原型定义](./算子原型定义.md)：了解输入输出顺序、dtype/format声明和AI处理器配置。
+- [多分支策略](./多分支策略.md)：了解`TilingKey`如何选择不同Kernel实现分支。
+- [输出shape依赖计算](./Kernel侧输出shape依赖计算.md)：了解输出shape依赖Kernel计算结果时的处理方式。

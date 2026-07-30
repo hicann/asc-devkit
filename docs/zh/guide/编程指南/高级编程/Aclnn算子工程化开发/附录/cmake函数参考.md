@@ -213,7 +213,7 @@ npu_op_kernel_sources(<target_name> [OP_TYPE <op_type>] [KERNEL_DIR <path>] [COM
 - `[OP_TYPE <op_type>]`（可选）：算子类型，必须与`KERNEL_FILE`同时存在。
 - `[KERNEL_DIR <path>]`（可选）：指定Kernel源码相对于`SRC_BASE`的相对路径。若算子的源码文件没有平铺在`SRC_BASE`目录（通过`npu_op_kernel_library`设置）下，可以通过`KERNEL_DIR`指定特定目录。
 - `[COMPUTE_UNIT <soc_version>]`（可选）：设置`KERNEL_FILE`在`<soc_version>`型号生效。默认`KERNEL_FILE`对所有型号生效。
-- `[KERNEL_FILE <file>]`（可选）：指定算子入口的Kernel实现文件名。若算子的Kernel实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（Kernel实现cpp文件名），以配置两者之间的对应关系。不配置时，Kernel实现cpp文件名和OpType之间需满足转换规则，参考[命名转换规则对照表](./外部样例链接汇总.md)。
+- `[KERNEL_FILE <file>]`（可选）：指定算子入口的Kernel实现文件名。若算子的Kernel实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（Kernel实现cpp文件名），以配置两者之间的对应关系。不配置时，Kernel实现cpp文件名和OpType之间需满足转换规则，参考[命名转换规则对照表](./命名转换规则对照表.md)。
 
 **示例：**
 
@@ -285,6 +285,6 @@ npu_op_code_gen(
 
 ## 相关文档
 
-- [算子工程编译拓展](../算子工程编译拓展.md) — 完整的CMakeLists.txt编写方法与编译命令说明。
-- [算子原型定义](../算子原型定义.md) — Kernel实现文件名与OpType的转换规则。
+- [算子工程编译拓展](../编译与部署/基本流程.md#advanced-build-organization) — 完整的CMakeLists.txt编写方法与编译命令说明。
+- [算子原型定义](../设计与实现/算子原型定义.md) — Kernel实现文件名与OpType的转换规则。
 - [如何使用workspace](../../../附录/常用操作/如何使用workspace.md) — Tiling函数中workspace的设置方法。
