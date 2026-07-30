@@ -123,7 +123,6 @@ PIPE_MTE2
 //total_length指参与搬运的数据总长度。
 constexpr uint64_t total_length = 128;
 __cbuf__ int8_t dst[total_length];
-__gm__ int8_t src[total_length];
 // 传输nd矩阵的数目
 constexpr uint16_t nd_num = 2;
 // nd矩阵的行数
@@ -140,5 +139,6 @@ constexpr uint16_t dst_nz_c0_stride = 11;
 constexpr uint16_t dst_nz_n_stride = 2;
 // dst中第x个nd矩阵的起点和第x+1个nd矩阵的起点的偏移
 constexpr uint16_t dst_nz_matrix_stride = 96;
+// src表示源操作数的起始地址
 asc_copy_gm2l1_nd2nz(dst, src, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride, dst_nz_matrix_stride);
 ```

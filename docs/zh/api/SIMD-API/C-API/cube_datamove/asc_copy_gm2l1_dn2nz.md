@@ -120,7 +120,7 @@ constexpr uint32_t d_value = 3;
 constexpr uint64_t loop4_src_stride = 2;
 //每一个C0数据块都会被pad至32个字节
 constexpr bool smallc0_en = true;
-__gm__ half src[256];
+// src表示源操作数的起始地址
 __cbuf__ half dst[256];
 asc_copy_gm2l1_dn2nz(dst, src, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
 ```
