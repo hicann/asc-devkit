@@ -119,12 +119,84 @@ public:
     using type = Converted;
 };
 
+// ===== Multi-batch frame layout: MakeFrameLayout<Ptn>(batch0, ..., batchN, row, col) =====
+
+// SupportsRowColMake: true when the pattern's Make accepts a bare (row, column) pair, i.e. it is one
+// of the matrix layouts that also offer the (batch, row, column) form. The conv feature-map patterns
+// (NCHW/NHWC/NC1HWC0/NCDHW/NDC1HWC0) take fixed positional dimensions and have no 2-arg Make, so they
+// never take the multi-batch path below.
+template <typename Maker, typename Trait, typename = void>
+struct SupportsRowColMake : Std::false_type {};
+
+template <typename Maker, typename Trait>
+struct SupportsRowColMake<
+    Maker, Trait, void_t<decltype(Maker::template Make<Trait>(Std::declval<int>(), Std::declval<int>()))>>
+    : Std::true_type {};
+
+template <typename Maker, typename Trait>
+constexpr bool SupportsRowColMakeV = SupportsRowColMake<Maker, Trait>::value;
+
+// BatchStrideAt: stride of batch axis I, given the batch extents tuple and the base layout capacity.
+// Batch axes are flat and row-major over the base block, so the stride of an axis is the product of
+// all batch extents to its right times the base capacity:
+//   stride[n-1] = capacity, stride[n-2] = batch[n-1]*capacity, ...
+template <size_t I, size_t BatchNum, typename BatchTuple, typename Capacity>
+__aicore__ inline constexpr auto BatchStrideAt(const BatchTuple& batches, const Capacity& capacity)
+{
+    if constexpr (I + 1 >= BatchNum) {
+        return capacity;
+    } else {
+        return Get<I + 1>(batches) * BatchStrideAt<I + 1, BatchNum, BatchTuple, Capacity>(batches, capacity);
+    }
+}
+
+// Builds the flat multi-batch layout: all batch axes sit side by side in the outermost tuple and the
+// base (row, col) block is appended as the last element, e.g.
+//   (batch0, batch1, ((row0, row1), (col0, col1)))
+// so rank is batchNum + 1 (not a chain of nested single-batch layouts).
+template <typename LayoutPattern, typename Trait, typename BatchTuple, typename BaseLayout, size_t... BatchIs>
+__aicore__ inline constexpr auto MakeFlatBatchLayout(
+    const BatchTuple& batches, const BaseLayout& base, Std::index_sequence<BatchIs...>)
+{
+    constexpr size_t batchNum = sizeof...(BatchIs);
+    auto capacity = base.Capacity();
+    return MakePatternLayout<LayoutPattern, Trait>(
+        MakeShape(Get<BatchIs>(batches)..., base.Shape()),
+        MakeStride(BatchStrideAt<BatchIs, batchNum, BatchTuple, decltype(capacity)>(batches, capacity)...,
+                   base.Stride()));
+}
+
+// Peels the trailing (row, column) off the argument pack, builds the 2D base layout from them, then
+// lays the leading arguments out as flat batch axes.
+template <typename LayoutPattern, typename Trait, typename Maker, typename ArgsTuple, size_t... BatchIs>
+__aicore__ inline constexpr auto MakeMultiBatchFrameLayoutImpl(
+    const ArgsTuple& args, Std::index_sequence<BatchIs...>)
+{
+    constexpr size_t argNum = Std::tuple_size_v<ArgsTuple>;
+    auto base = Maker::template Make<Trait>(Get<argNum - 2>(args), Get<argNum - 1>(args));
+    auto batches = Std::make_tuple(Get<BatchIs>(args)...);
+    return MakeFlatBatchLayout<LayoutPattern, Trait>(batches, base, Std::index_sequence<BatchIs...>{});
+}
+
+template <typename LayoutPattern, typename Trait, typename Maker, typename... Args>
+__aicore__ inline constexpr auto MakeMultiBatchFrameLayout(const Args&... args)
+{
+    return MakeMultiBatchFrameLayoutImpl<LayoutPattern, Trait, Maker>(
+        Std::make_tuple(args...), Std::make_index_sequence<sizeof...(Args) - 2>{});
+}
+
 template <typename LayoutPattern, typename TraitType = Std::ignore_t, typename... Args>
 __aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args) {
     using Trait = typename TraitConversion<LayoutPattern, TraitType>::type;
     using LayoutMaker = typename LayoutFormatSet::template Get<LayoutPattern>;
     static_assert(!Std::is_same_v<LayoutMaker, Std::ignore_t>, "Unsupported layout pattern.");
-    return LayoutMaker::template Make<Trait>(args...);
+    // 2 args = (row, col) and 3 args = (batch, row, col) are handled by the pattern's own Make. Four
+    // or more args on a row/col-style pattern means multiple batch axes: (batch0, ..., batchN, row, col).
+    if constexpr (sizeof...(Args) > 3 && SupportsRowColMakeV<LayoutMaker, Trait>) {
+        return MakeMultiBatchFrameLayout<LayoutPattern, Trait, LayoutMaker>(args...);
+    } else {
+        return LayoutMaker::template Make<Trait>(args...);
+    }
 }
 
 template <typename LayoutPattern, size_t C0Element, typename... Args>

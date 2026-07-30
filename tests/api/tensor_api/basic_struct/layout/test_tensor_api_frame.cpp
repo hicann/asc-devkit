@@ -566,3 +566,103 @@ TEST_F(Tensor_Api_Frame_Layout, ConvFeatureMapLayouts)
     EXPECT_EQ(AscendC::Std::get<4>(GetStride(nc1hwc0)), 1);
     static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nc1hwc0)>, NC1HWC0LayoutPtn>);
 }
+
+// MakeFrameLayout(batch0, ..., batchN, row, col): the batch axes are flat -- they sit side by side in
+// the outermost tuple with the base (row, col) block as the last element, giving rank batchNum + 1:
+//   (batch0, batch1, (row, col))
+// Batch strides are row-major over the base block: the last batch axis steps by the base capacity and
+// each axis to its left multiplies in the extents to its right.
+TEST_F(Tensor_Api_Frame_Layout, MultiBatchFrameLayoutTwoBatches)
+{
+    using namespace AscendC::Te;
+
+    // ND base (8,16): capacity 128. Flat shape (2, 3, (8,16)), strides (384, 128, (16,1)).
+    auto layout = MakeFrameLayout<NDLayoutPtn>(2, 3, 8, 16);
+
+    static_assert(decltype(layout)::rank == 3, "two batch axes + base block are flat");
+
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(layout)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(layout)), 3);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(layout)), 384); // 3 * 128
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(layout)), 128); // base capacity 8*16
+
+    // Last element is the plain ND base block, untouched.
+    auto innerShape = AscendC::Std::get<2>(GetShape(layout));
+    auto innerStride = AscendC::Std::get<2>(GetStride(layout));
+    EXPECT_EQ(AscendC::Std::get<0>(innerShape), 8);
+    EXPECT_EQ(AscendC::Std::get<1>(innerShape), 16);
+    EXPECT_EQ(AscendC::Std::get<0>(innerStride), 16);
+    EXPECT_EQ(AscendC::Std::get<1>(innerStride), 1);
+
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(layout)>, NDLayoutPtn>);
+}
+
+TEST_F(Tensor_Api_Frame_Layout, MultiBatchFrameLayoutThreeBatches)
+{
+    using namespace AscendC::Te;
+
+    // base (8,16) capacity 128. Flat shape (2, 3, 4, (8,16)), strides (1536, 512, 128, (16,1)).
+    auto layout = MakeFrameLayout<NDLayoutPtn>(2, 3, 4, 8, 16);
+
+    static_assert(decltype(layout)::rank == 4, "three batch axes + base block are flat");
+
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(layout)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(layout)), 3);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(layout)), 4);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(layout)), 1536); // 3 * 4 * 128
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(layout)), 512);  // 4 * 128
+    EXPECT_EQ(AscendC::Std::get<2>(GetStride(layout)), 128);  // base capacity
+}
+
+// Flat batch axes with a fractal base: the last element stays the untouched NZ block
+// ((row0,row1),(col0,col1)), so the result is (batch0, batch1, ((16,2),(16,4))).
+TEST_F(Tensor_Api_Frame_Layout, MultiBatchFrameLayoutFractal)
+{
+    using namespace AscendC::Te;
+
+    // NZ(32,64) with default trait: single-matrix capacity 2048 (see BatchFrameLayoutDefaultTrait).
+    auto layout = MakeFrameLayout<NZLayoutPtn>(2, 3, 32, 64);
+
+    static_assert(decltype(layout)::rank == 3);
+
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(layout)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(layout)), 3);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(layout)), 6144); // 3 * 2048
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(layout)), 2048); // base capacity
+
+    // Base block keeps the NZ fractal nesting ((16, M/16), (C0, N/C0)).
+    auto baseShape = AscendC::Std::get<2>(GetShape(layout));
+    EXPECT_EQ(AscendC::Std::get<0>(AscendC::Std::get<0>(baseShape)), 16);
+    EXPECT_EQ(AscendC::Std::get<1>(AscendC::Std::get<0>(baseShape)), 2);
+    EXPECT_EQ(AscendC::Std::get<0>(AscendC::Std::get<1>(baseShape)), 16);
+    EXPECT_EQ(AscendC::Std::get<1>(AscendC::Std::get<1>(baseShape)), 4);
+
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(layout)>, NZLayoutPtn>);
+}
+
+// Regression guard: adding the multi-batch overload must not change the existing arities -- 3 args is
+// still single-batch, and the conv feature-map patterns keep their fixed positional meaning (their
+// 4/5-arg Make is not a batch form).
+TEST_F(Tensor_Api_Frame_Layout, MultiBatchFrameLayoutKeepsExistingArities)
+{
+    using namespace AscendC::Te;
+
+    // 3 args = single batch, unchanged.
+    auto single = MakeFrameLayout<NDLayoutPtn>(2, 8, 16);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(single)), 2);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(single)), 128);
+
+    // 4 args on NCHW stays (N, C, H, W), not (batch0, batch1, row, col).
+    auto nchwKeep = MakeFrameLayout<NCHWLayoutPtn>(2, 3, 4, 5);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(nchwKeep)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(nchwKeep)), 3);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(nchwKeep)), 4);
+    EXPECT_EQ(AscendC::Std::get<3>(GetShape(nchwKeep)), 5);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(nchwKeep)), 60);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nchwKeep)>, NCHWLayoutPtn>);
+
+    // 5 args on NC1HWC0 stays (N, C1, H, W, C0).
+    auto nc1hwc0Keep = MakeFrameLayout<NC1HWC0LayoutPtn>(2, 3, 4, 5, 16);
+    EXPECT_EQ(AscendC::Std::get<4>(GetShape(nc1hwc0Keep)), 16);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nc1hwc0Keep)>, NC1HWC0LayoutPtn>);
+}

@@ -392,3 +392,73 @@ TEST_F(Tensor_Api_Layout_Squeeze, TestSqueezeMakeFrameLayoutBatchOne)
     EXPECT_EQ((AscendC::Te::Get<0, 0>(squeezedByPattern.Shape())), 16);
     EXPECT_EQ((AscendC::Te::Get<1, 1>(squeezedByPattern.Shape())), 4);
 }
+
+// End-to-end on a two-batch NN layout: build (b0, b1, ((2,8),(16,2))) with the flat multi-batch
+// MakeFrameLayout, Slice both batch axes down to 1, then Squeeze the two now-degenerate batch axes
+// away, leaving the bare NN fractal block. NN requires C0 == 2.
+TEST_F(Tensor_Api_Layout_Squeeze, TestSqueezeNnTwoBatchAfterSlice)
+{
+    using namespace AscendC::Te;
+
+    constexpr int batch0 = 2;
+    constexpr int batch1 = 3;
+    constexpr int row = 16;
+    constexpr int col = 32;
+    // NN(16,32) with C0=2: shape ((2,8),(16,2)), capacity 512.
+    constexpr int baseCapacity = row * col;
+
+    __gm__ uint8_t data[batch0 * batch1 * baseCapacity] = {};
+
+    // Flat multi-batch NN layout: (2, 3, ((2,8),(16,2))), rank 3.
+    auto layout = MakeFrameLayout<NNLayoutPtn, 2>(batch0, batch1, row, col);
+    static_assert(decltype(layout)::rank == 3, "two flat batch axes + NN base block");
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(layout)), batch0);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(layout)), batch1);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(layout)), batch1 * baseCapacity); // 3 * 512
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(layout)), baseCapacity);          // 512
+
+    auto tensor = MakeTensor(MakeMemPtr<Location::GM>(data), layout);
+
+    // Slice both batch axes to 1, keeping the whole NN base block. The slice shape is isomorphic to
+    // the layout shape: (1, 1, ((2,8),(16,2))).
+    auto coord = MakeCoord(1, 2, MakeCoord(MakeCoord(0, 0), MakeCoord(0, 0)));
+    auto sliceShape = MakeShape(_1{}, _1{}, MakeShape(MakeShape(2, 8), MakeShape(16, 2)));
+    auto sliced = Slice(tensor, coord, sliceShape);
+
+    // Batch axes are now 1; the base block is untouched. Address moved to the (1,2) batch element.
+    using SlicedLayout = AscendC::Std::remove_cvref_t<decltype(sliced.Layout())>;
+    static_assert(SlicedLayout::rank == 3);
+    EXPECT_EQ(sliced.Data(), tensor.Data() + layout(coord));
+    EXPECT_EQ(AscendC::Std::get<0>(sliced.Shape()), 1);
+    EXPECT_EQ(AscendC::Std::get<1>(sliced.Shape()), 1);
+
+    // Squeeze the two degenerate batch axes; only the NN fractal block remains.
+    auto squeezed = Squeeze<0, 1>(sliced.Layout());
+
+    static_assert(decltype(squeezed)::rank == 2, "both batch axes dropped, NN block unwrapped");
+    static_assert(
+        AscendC::Std::is_same_v<GetLayoutPattern<decltype(squeezed)>, NNLayoutPtn>,
+        "Squeeze must preserve NNLayoutPtn");
+
+    // NN(16,32) fractal shape ((C0=2, row/C0=8), (16, ceil(32/16)=2)).
+    auto shape = squeezed.Shape();
+    EXPECT_EQ((AscendC::Te::Get<0, 0>(shape)), 2);
+    EXPECT_EQ((AscendC::Te::Get<0, 1>(shape)), 8);
+    EXPECT_EQ((AscendC::Te::Get<1, 0>(shape)), 16);
+    EXPECT_EQ((AscendC::Te::Get<1, 1>(shape)), 2);
+
+    // Strides of the base block survive the slice + squeeze unchanged.
+    auto stride = squeezed.Stride();
+    EXPECT_EQ((AscendC::Te::Get<0, 0>(stride)), 1);
+    EXPECT_EQ((AscendC::Te::Get<0, 1>(stride)), 32); // C0 * FRACTAL_FIXED = 2 * 16
+    EXPECT_EQ((AscendC::Te::Get<1, 0>(stride)), 2);  // C0
+    EXPECT_EQ((AscendC::Te::Get<1, 1>(stride)), 256); // row * FRACTAL_FIXED = 16 * 16
+
+    // Mode 2 (isomorphic pattern) on the same sliced layout gives the same result.
+    auto squeezedByPattern =
+        Squeeze(sliced.Layout(), MakeCoord(_1{}, _1{}, MakeCoord(MakeCoord(_, _), MakeCoord(_, _))));
+    static_assert(decltype(squeezedByPattern)::rank == 2);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(squeezedByPattern)>, NNLayoutPtn>);
+    EXPECT_EQ((AscendC::Te::Get<0, 0>(squeezedByPattern.Shape())), 2);
+    EXPECT_EQ((AscendC::Te::Get<1, 1>(squeezedByPattern.Shape())), 2);
+}

@@ -158,3 +158,87 @@ TEST_F(Tensor_Api_Tensor_Slice, TestLocalTensorSliceFiveDimLayoutBySameShape)
     EXPECT_EQ(sliced[MakeCoord(0, MakeCoord(MakeCoord(0, 0), MakeCoord(1, 1)))],
         data[layout(MakeCoord(1, MakeCoord(MakeCoord(1, 2), MakeCoord(2, 4))))]);
 }
+
+// Flat multi-batch layout from MakeFrameLayout(batch0, batch1, row, col):
+//   shape (2, 3, ((16, 2), (16, 2)))
+// sliced with the logical form (batch0, batch1, (x, y)): the batch axes are clamped elementwise and
+// the trailing (x, y) is refractalized against the layout's inner row/col.
+TEST_F(Tensor_Api_Tensor_Slice, TestSliceFlatTwoBatchLayoutByLogicalShape)
+{
+    using namespace AscendC::Te;
+
+    constexpr int batch0 = 2;
+    constexpr int batch1 = 3;
+    constexpr int row = 32;
+    constexpr int col = 32;
+
+    __gm__ half data[batch0 * batch1 * row * col] = {};
+    auto layout = MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<half>>(batch0, batch1, row, col);
+    static_assert(decltype(layout)::rank == 3, "two flat batch axes + fractal block");
+
+    auto tensor = MakeTensor(MakeMemPtr<Location::GM>(data), layout);
+
+    // coord: batch (1, 1) and logical (row, col) offset (16, 16) inside the block.
+    auto coord = MakeCoord(1, 1, MakeCoord(16, 16));
+    // slice shape: keep 1 of each batch axis, take a logical 16x16 tile of the block.
+    auto sliceShape = MakeShape(1, 1, MakeShape(16, 16));
+    auto sliced = Slice(tensor, coord, sliceShape);
+
+    using SliceLayout = AscendC::Std::remove_cvref_t<decltype(sliced.Layout())>;
+    static_assert(SliceLayout::rank == 3, "slice keeps the flat multi-batch rank");
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<SliceLayout>, NZLayoutPtn>,
+        "Slice must preserve NZLayoutPtn");
+
+    EXPECT_EQ(sliced.Data(), tensor.Data() + layout(coord));
+
+    // Both batch axes clamped to 1.
+    EXPECT_EQ(Get<0>(sliced.Shape()), 1);
+    EXPECT_EQ(Get<1>(sliced.Shape()), 1);
+
+    // Trailing block: logical 16x16 refractalized against inner (16, 16) -> ((16, 1), (16, 1)).
+    EXPECT_EQ((Get<2, 0, 0>(sliced.Shape())), 16);
+    EXPECT_EQ((Get<2, 0, 1>(sliced.Shape())), 1);
+    EXPECT_EQ((Get<2, 1, 0>(sliced.Shape())), 16);
+    EXPECT_EQ((Get<2, 1, 1>(sliced.Shape())), 1);
+
+    // Strides are inherited untouched from the source layout.
+    EXPECT_EQ(Get<0>(sliced.Stride()), Get<0>(layout.Stride()));
+    EXPECT_EQ(Get<1>(sliced.Stride()), Get<1>(layout.Stride()));
+}
+
+// Same flat-batch slicing with three batch axes, and with the slice shape larger than what remains on
+// a batch axis so the elementwise clamp is exercised (batch0 has 3 left from coord 1, ask for 5).
+TEST_F(Tensor_Api_Tensor_Slice, TestSliceFlatThreeBatchLayoutClamped)
+{
+    using namespace AscendC::Te;
+
+    constexpr int batch0 = 4;
+    constexpr int batch1 = 2;
+    constexpr int batch2 = 2;
+    constexpr int row = 16;
+    constexpr int col = 16;
+
+    __gm__ half data[batch0 * batch1 * batch2 * row * col] = {};
+    auto layout = MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<half>>(batch0, batch1, batch2, row, col);
+    static_assert(decltype(layout)::rank == 4, "three flat batch axes + fractal block");
+
+    auto tensor = MakeTensor(MakeMemPtr<Location::GM>(data), layout);
+
+    auto coord = MakeCoord(1, 0, 1, MakeCoord(0, 0));
+    // batch0: 4 - 1 = 3 remain but 5 requested -> clamped to 3. batch1: min(2, 2) = 2. batch2: min(1, 1) = 1.
+    auto sliceShape = MakeShape(5, 2, 1, MakeShape(16, 16));
+    auto sliced = Slice(tensor, coord, sliceShape);
+
+    using SliceLayout = AscendC::Std::remove_cvref_t<decltype(sliced.Layout())>;
+    static_assert(SliceLayout::rank == 4);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<SliceLayout>, NZLayoutPtn>);
+
+    EXPECT_EQ(sliced.Data(), tensor.Data() + layout(coord));
+    EXPECT_EQ(Get<0>(sliced.Shape()), 3); // clamped by what remains
+    EXPECT_EQ(Get<1>(sliced.Shape()), 2);
+    EXPECT_EQ(Get<2>(sliced.Shape()), 1);
+    EXPECT_EQ((Get<3, 0, 0>(sliced.Shape())), 16);
+    EXPECT_EQ((Get<3, 0, 1>(sliced.Shape())), 1);
+    EXPECT_EQ((Get<3, 1, 0>(sliced.Shape())), 16);
+    EXPECT_EQ((Get<3, 1, 1>(sliced.Shape())), 1);
+}
