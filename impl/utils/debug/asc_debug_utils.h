@@ -39,11 +39,6 @@ inline __gm__ uint8_t* __gm__ g_sysPrintFifoSpace = nullptr;
 #endif
 
 namespace __asc_aicore {
-__aicore__ inline void asc_copy_ub2gm_align(__gm__ void* dst, __ubuf__ void* src, uint32_t size)
-{
-    copy_ubuf_to_gm_align_v2(dst, src, 1, size, 0, 0, 0, 0);
-}
-
 __aicore__ inline void enable_asc_diagnostics()
 {
 #if (!defined(ASCENDC_DUMP) || (ASCENDC_DUMP != 0)) || defined(ASCENDC_TIME_STAMP_ON)

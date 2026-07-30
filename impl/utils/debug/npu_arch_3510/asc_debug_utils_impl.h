@@ -102,11 +102,6 @@ __simd_callee__ __ubuf__ inline BlockVFBufInfo* init_printf_ubuf_addr(uint16_t b
     return get_printf_ubuf_addr(get_vf_debug_reserved_ub_addr(), blockIdx);
 }
 
-__simd_callee__ inline void asc_copy_ub2gm_align(__gm__ void* dst, __ubuf__ void* src, uint32_t size)
-{
-    __cce_scalar::copy_ubuf_to_gm_align_v2(dst, src, 1, size, 0, 0, 0, 0);
-}
-
 __simd_callee__ inline void asc_copy_ub2ub(__ubuf__ void* dst, __ubuf__ void* src, uint32_t size)
 {
     __cce_scalar::copy_ubuf_to_ubuf(dst, src, 1, size / 32, 0, 0);
