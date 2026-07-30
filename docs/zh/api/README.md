@@ -66,6 +66,7 @@
                 -   [MakeStride](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/MakeStride.md)
                 -   [Rank](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Rank.md)
                 -   [Select](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Select.md)
+                -   [Squeeze](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Squeeze.md)
                 -   [Shape](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Shape.md)
                 -   [Size](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Size.md)
                 -   [Stride](SIMD-API/基础API/data_structure_TensorAPI/layout_structure/Stride.md)

@@ -39,7 +39,7 @@ Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用�
 | b16 | 16 * 16 |
 | b32 | 16 * 8 |
 
-接口支持非转置搬运和转置搬运。源张量和目的张量的Layout需要匹配当前通路支持的格式组合。
+接口支持非转置搬运、转置搬运和Img2Col卷积数据搬运。源张量和目的张量的Layout需要匹配当前通路支持的格式组合。Img2Col场景中，源张量为`NC1HWC0`格式，目的张量为`NZ`格式，搬运过程中将卷积特征图展开为矩阵。
 
 接口支持Batch模式。Batch模式下，源张量和目的张量的Layout需要在原有分形Layout最前面增加Batch维，Shape形态为`(B, 单矩阵Shape)`，其中`B`表示Batch数量。用户可使用`MakeFrameLayout<NZLayoutPtn, DataType>(B, m, k)`或`MakeFrameLayout<ZNLayoutPtn, DataType>(B, m, k)`构造带Batch维的Layout。
 
@@ -67,6 +67,8 @@ Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用�
         const CopyOperationType& copyOperation, const CopyTraitType& copyTrait)
     ```
 
+Img2Col搬运通过`CopyAtom::with`绑定`Img2ColParams`后，使用相同的`Copy(atomCopy, dst, src)`函数原型执行。
+
 ## 参数说明
 
 **表1**  `Copy`接口参数说明
@@ -84,13 +86,58 @@ Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用�
 | copyOperation | 输入 | 搬运操作对象。L1 Buffer到L0A Buffer通路使用`CopyL12L0A{}`。 |
 | copyTrait | 输入 | 搬运Trait对象，用于指定搬运特性。L1 Buffer到L0A Buffer默认Trait使用`CopyL12L0ATraitDefault{}`。 |
 
+### Img2ColParams说明
+
+`Img2ColParams<T>`用于配置Img2Col搬运的目的矩阵范围、卷积核、滑动步长、膨胀和padding。源特征图的H、W和通道数由`NC1HWC0`源Layout推导。
+
+```cpp
+template <typename T>
+struct Img2ColParams {
+    uint16_t mExtension = 0;
+    uint16_t kExtension = 0;
+    uint8_t padList[4] = {0, 0, 0, 0};
+    uint8_t strideW = 1;
+    uint8_t strideH = 1;
+    uint8_t filterW = 1;
+    uint8_t filterH = 1;
+    uint8_t dilationFilterW = 1;
+    uint8_t dilationFilterH = 1;
+    bool filterSizeW = false;
+    bool filterSizeH = false;
+    bool transpose = false;
+    bool fMatrixCtrl = false;
+    T padValue = 0;
+};
+```
+
+**表3**  `Img2ColParams`成员说明
+
+| 成员 | 默认值 | 描述 |
+| :--- | :--- | :--- |
+| mExtension | `0` | 目的矩阵M轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最下侧分形时，b8和b16数据类型要求取值为16的倍数，b32数据类型无倍数要求；覆盖最下侧分形时无倍数要求。 |
+| kExtension | `0` | 目的矩阵K轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最右侧分形时，b8、b16和b32数据类型分别要求取值为32、16和8的倍数；覆盖最右侧分形时无倍数要求。 |
+| padList | `{0, 0, 0, 0}` | padding大小，依次为左、右、上、下，每个值的取值范围为[0, 255]。 |
+| strideW | `1` | 卷积核在源特征图W轴的滑动步长，取值范围为[0, 63]。 |
+| strideH | `1` | 卷积核在源特征图H轴的滑动步长，取值范围为[0, 63]。 |
+| filterW | `1` | 卷积核的宽度，取值范围为[0, 255]。 |
+| filterH | `1` | 卷积核的高度，取值范围为[0, 255]。 |
+| dilationFilterW | `1` | 卷积核W轴的膨胀系数，取值范围为[0, 255]。 |
+| dilationFilterH | `1` | 卷积核H轴的膨胀系数，取值范围为[0, 255]。 |
+| filterSizeW | `false` | 是否在`filterW`基础上将卷积核宽度增加256。 |
+| filterSizeH | `false` | 是否在`filterH`基础上将卷积核高度增加256。 |
+| transpose | `false` | 是否对展开后的目的矩阵进行转置。 |
+| fMatrixCtrl | `false` | FeatureMap属性选择标识，当前仅支持`false`。 |
+| padValue | `0` | padding区域的填充值。模板参数T需要与目的张量的元素类型一致。 |
+
 ## 数据类型
 
-支持的数据类型包括：
+非Img2Col搬运支持的数据类型包括：
 
 `fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`half`、`bfloat16_t`、`int16_t`、`uint16_t`、`int32_t`、`uint32_t`、`float`。
 
 源张量和目的张量的数据类型需要保持一致。
+
+Img2Col搬运不支持b4数据类型，即不支持`fp4x2_e2m1_t`和`fp4x2_e1m2_t`。
 
 ## 返回值说明
 
@@ -105,6 +152,8 @@ Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用�
   - b8数据类型要求源矩阵Shape在M轴方向32对齐。
   - b4数据类型要求源矩阵Shape在M轴方向64对齐。
 - Batch模式要求源张量和目的张量的Batch数量一致，且在L1 Buffer和L0A Buffer上张量数据连续排布。
+- Img2Col搬运当前仅支持N为1的`NC1HWC0`源张量，目的张量需要为`NZ`格式。
+- `Img2ColParams<T>`的T需要与L0A Buffer目的张量的元素类型一致。
 
 ## 关键特性说明
 
@@ -149,6 +198,10 @@ Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用�
 ### Batch搬运
 
 当源张量和目的张量均使用带Batch维的Layout时，`Copy`接口会按照Batch维描述的数据范围完成L1 Buffer到L0A Buffer的数据搬运。非转置搬运时源张量、目的张量均为`NZ`格式，转置搬运时源张量为`ZN`格式，目的张量为`NZ`格式。
+
+### Img2Col搬运
+
+Img2Col搬运将`NC1HWC0`格式特征图按卷积核窗口展开为`NZ`格式矩阵。展开后矩阵的M轴对应输出特征图的空间位置，K轴对应卷积核的H、W和输入通道。用户通过`Img2ColParams`配置展开范围和卷积参数，再通过`copyAtom.with(params)`将参数绑定到搬运原子对象。
 
 ## 调用示例
 
@@ -198,5 +251,48 @@ __aicore__ inline void CopyL1ToL0ABatchExample()
 
     auto copyAtom = MakeCopy(CopyL12L0A{}, CopyL12L0ATraitDefault{});
     Copy(copyAtom, l0aTensor, l1Tensor);
+}
+```
+
+Img2Col搬运示例如下。输入特征图Shape为`(1, 2, 5, 5, 16)`，卷积核为3×3，stride为1，padding为1，展开后矩阵的逻辑Shape为`(25, 288)`。
+
+```cpp
+#include "tensor_api/tensor.h"
+
+using namespace AscendC::Te;
+
+__aicore__ inline void CopyImg2ColL1ToL0A()
+{
+    constexpr uint32_t N = 1;
+    constexpr uint32_t C1 = 2;
+    constexpr uint32_t H = 5;
+    constexpr uint32_t W = 5;
+    constexpr uint32_t C0 = 16;
+    constexpr uint32_t M = 25;
+    constexpr uint32_t K = 3 * 3 * C1 * C0;
+    constexpr uint32_t M_ALIGN = 32;
+
+    __cbuf__ half l1Buf[N * C1 * H * W * C0];
+    __ca__ half l0aBuf[M_ALIGN * K];
+
+    auto l1Feature = MakeTensor(
+        MakeMemPtr(l1Buf), MakeFrameLayout<NC1HWC0LayoutPtn>(N, C1, H, W, C0));
+    auto l0aMatrix = MakeTensor(
+        MakeMemPtr(l0aBuf), MakeFrameLayout<NZLayoutPtn, half>(M, K));
+
+    Img2ColParams<half> params;
+    params.mExtension = M;
+    params.kExtension = K;
+    params.filterW = 3;
+    params.filterH = 3;
+    params.strideW = 1;
+    params.strideH = 1;
+    params.padList[0] = 1;
+    params.padList[1] = 1;
+    params.padList[2] = 1;
+    params.padList[3] = 1;
+
+    auto copyL1ToL0A = MakeCopy(CopyL12L0A{}, CopyL12L0ATraitDefault{});
+    Copy(copyL1ToL0A.with(params), l0aMatrix, l1Feature);
 }
 ```

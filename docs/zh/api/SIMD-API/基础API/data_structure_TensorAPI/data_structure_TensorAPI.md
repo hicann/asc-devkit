@@ -20,6 +20,7 @@
         - **[GetStride](layout_structure/GetStride.md)**
         - **[Get](layout_structure/Get.md)**
         - **[Select](layout_structure/Select.md)**
+        - **[Squeeze](layout_structure/Squeeze.md)**
         - **[Capacity](layout_structure/Capacity.md)**
         - **[Size](layout_structure/Size.md)**
         - **[Coshape](layout_structure/Coshape.md)**

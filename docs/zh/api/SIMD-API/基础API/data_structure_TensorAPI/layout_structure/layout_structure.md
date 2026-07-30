@@ -19,6 +19,7 @@
 - **[GetStride](GetStride.md)**
 - **[Get](Get.md)**
 - **[Select](Select.md)**
+- **[Squeeze](Squeeze.md)**
 - **[Capacity](Capacity.md)**
 - **[Size](Size.md)**
 - **[Coshape](Coshape.md)**

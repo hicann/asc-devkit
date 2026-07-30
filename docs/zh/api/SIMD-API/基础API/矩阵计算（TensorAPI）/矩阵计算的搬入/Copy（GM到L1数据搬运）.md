@@ -37,6 +37,7 @@ Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用�
 - 随路格式转换搬入：从Global Memory搬入L1 Buffer的同时完成ND/DN等到NZ/ZN等的矩阵格式转换。
 - Batch多矩阵搬入：源/目的Layout带Batch轴时，一次`Copy`完成多个矩阵的搬运，支持`ND2ND`、`ND2NZ`、`DN2NZ`、`ND2ZN`、`DN2ZN`、`ScaleAND2ZZ`、`ScaleADN2ZZ`、`ZZ2ZZ`、`ScaleBND2NN`、`ScaleBDN2NN`、`NN2NN`随路格式转换。
 - Scale数据搬入：用于MX矩阵计算中ScaleA/ScaleB数据从Global Memory搬入L1 Buffer。
+- 卷积特征图搬入：支持`NC1HWC0`到`NC1HWC0`的连续或切片搬入，以及`NHWC`、`NCHW`到`NC1HWC0`的随路格式转换。
 
 ## 函数原型
 
@@ -113,6 +114,9 @@ Global Memory到L1 Buffer通路使用`CopyGM2L1{}`作为`copyOperation`，使用
 | ScaleBND | NN | fp8_e8m0_t |
 | ScaleBDN | NN | fp8_e8m0_t |
 | NN | NN | fp8_e8m0_t |
+| NC1HWC0 | NC1HWC0 | int8_t/uint8_t/hifloat8_t/fp8_e5m2_t/fp8_e4m3fn_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float |
+| NHWC | NC1HWC0 | int8_t/uint8_t/hifloat8_t/fp8_e5m2_t/fp8_e4m3fn_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float |
+| NCHW | NC1HWC0 | int8_t/uint8_t/hifloat8_t/fp8_e5m2_t/fp8_e4m3fn_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float |
 
 ## 返回值说明
 
@@ -125,6 +129,8 @@ Global Memory到L1 Buffer通路使用`CopyGM2L1{}`作为`copyOperation`，使用
 - 高维切分搬运场景中，搬运长度、源步长和目的步长均按32B对齐。
 - 当输入数据是b4类型时，按b8类型搬运粒度处理，Layout推导参数需要满足对应粒度约束。
 - Batch多矩阵搬入仅支持`ND2ND`、`ND2NZ`、`DN2NZ`、`ND2ZN`、`DN2ZN`、`ScaleAND2ZZ`、`ScaleADN2ZZ`、`ZZ2ZZ`、`ScaleBND2NN`、`ScaleBDN2NN`、`NN2NN`格式转换；Batch数受搬运指令字段范围限制，需不大于4095。
+- `NHWC`或`NCHW`到`NC1HWC0`的卷积特征图搬入当前仅支持N为1。源张量和目的张量的H、W、C需要一致，并保证`C = C1 * C0`。
+- `NC1HWC0`到`NC1HWC0`搬入时，源张量和目的张量的N、C1、H、W、C0需要一致。
 
 ## 关键特性说明
 
@@ -153,6 +159,14 @@ DN2NZ非连续搬运表示源侧或目的侧存在步长、切分维度等高维
 ### Scale数据搬入
 
 Scale数据搬入用于矩阵计算中scale相关数据从Global Memory搬入L1 Buffer。A矩阵相关scale支持`ScaleAND`到`ZZ`、`ScaleADN`到`ZZ`、`ZZ`到`ZZ`的格式转换。B矩阵相关scale支持`ScaleBND`到`NN`、`ScaleBDN`到`NN`、`NN`到`NN`的格式转换。
+
+### 卷积特征图搬入
+
+卷积特征图搬入支持以下Layout组合：
+
+- 源张量和目的张量均为`NC1HWC0`时，搬入后数据格式不变。对源张量使用`Slice`截取W轴局部数据后，`Copy`根据切片Layout完成非连续搬入。
+- 源张量为`NHWC`、目的张量为`NC1HWC0`时，搬入过程中将C轴拆分为C1和C0。
+- 源张量为`NCHW`、目的张量为`NC1HWC0`时，搬入过程中同时完成通道维排布转换和C轴拆分。
 
 ### Batch多矩阵搬入
 
@@ -223,5 +237,33 @@ __aicore__ inline void CopyBatchGmToL1(__gm__ half* gmAddr)
     // 调用方式与单矩阵一致，Copy一条指令完成B个矩阵的ND到NZ搬运
     auto copyGm2L1 = MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{});
     Copy(copyGm2L1, l1A, gmA);
+}
+```
+
+以下示例将Global Memory中的NHWC卷积特征图搬入L1 Buffer，并转换为NC1HWC0格式。NCHW输入只需将源Layout替换为`MakeFrameLayout<NCHWLayoutPtn>(N, C, H, W)`。
+
+```cpp
+#include "tensor_api/tensor.h"
+
+using namespace AscendC::Te;
+
+constexpr uint32_t N = 1;
+constexpr uint32_t H = 4;
+constexpr uint32_t W = 4;
+constexpr uint32_t C0 = 16;
+constexpr uint32_t C = 32;
+constexpr uint32_t C1 = C / C0;
+
+__aicore__ inline void CopyConvInputGmToL1(__gm__ half* gmAddr)
+{
+    __cbuf__ half l1Buf[N * C * H * W];
+
+    auto gmFeature = MakeTensor(
+        MakeMemPtr(gmAddr), MakeFrameLayout<NHWCLayoutPtn>(N, H, W, C));
+    auto l1Feature = MakeTensor(
+        MakeMemPtr(l1Buf), MakeFrameLayout<NC1HWC0LayoutPtn>(N, C1, H, W, C0));
+
+    auto copyGm2L1 = MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{});
+    Copy(copyGm2L1, l1Feature, gmFeature);
 }
 ```

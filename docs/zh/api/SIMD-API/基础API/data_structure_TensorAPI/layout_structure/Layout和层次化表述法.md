@@ -290,6 +290,18 @@ MX scaleB要求在矩阵GM上按照ScaleBND Layout或ScaleBDN Layout格式排布
 **图9** scaleB矩阵在不同位置上的排布格式
 ![scaleB矩阵在不同位置上的排布格式](../../../../figures/scaleB矩阵在不同位置上的排布格式.png)
 
+## 卷积特征图Layout
+
+卷积特征图Layout使用扁平的多维Shape和行主序Stride表示，不使用矩阵分形的层次化Shape。支持的LayoutPattern如下。
+
+| LayoutPattern | Shape | Stride |
+| :--- | :--- | :--- |
+| `NCHWLayoutPtn` | `(N, C, H, W)` | `(C * H * W, H * W, W, 1)` |
+| `NHWCLayoutPtn` | `(N, H, W, C)` | `(H * W * C, W * C, C, 1)` |
+| `NC1HWC0LayoutPtn` | `(N, C1, H, W, C0)` | `(C1 * H * W * C0, H * W * C0, W * C0, C0, 1)` |
+
+`NC1HWC0LayoutPtn`将通道维C拆分为C1和C0，需要满足`C = C1 * C0`。上述Layout可通过[MakeFrameLayout](MakeFrameLayout.md)构造。
+
 ## Layout分形结构数据表
 
 每种分形对应的Layout格式如下表所示，其中T指的是支持的数据类型中除fp8_e8m0_t之外的数据类型，C0_ELEMENT =_32{} / sizeof(T)；特殊情况下当T为fp4x2_e2m1_t或fp4x2_e1m2_t时，C0_ELEMENT =_64{}。

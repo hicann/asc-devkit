@@ -28,11 +28,11 @@
 
 头文件路径为：`tensor_api/tensor.h`。
 
-Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Global Memory。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到Global Memory时，接口会根据目的张量布局自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。
+Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Global Memory。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到Global Memory时，接口会根据目的张量布局自动选择`NZ`到`ND`、`DN`、`NZ`、`NC1HWC0`、`NHWC`或`NCHW`的随路格式转换。其中`NC1HWC0`、`NHWC`和`NCHW`用于卷积输出特征图。
 
 L0C Buffer到Global Memory搬运支持不量化输出、`float`到`half`或`bfloat16_t`的直接转换输出，以及配合标量或张量量化参数的随路量化输出。随路Relu、通道拆分和量化舍入方式通过`CopyL0C2GMTrait`配置。`Mmad`与`Fixpipe`细粒度并行相关的`unitFlag`通过`FixpipeParams`配置。
 
-接口支持batch模式。batch模式用于一次完成多块矩阵计算结果的搬运。Layout在原矩阵Layout最外层增加Batch维度。源张量为`NZ`格式，分形固定为16×16，可通过`MakeFrameLayout<NZLayoutPtn>(batch, m, n)`构造。目的张量可通过`MakeFrameLayout<NDLayoutPtn>(batch, m, n)`、`MakeFrameLayout<DNLayoutPtn>(batch, m, n)`、`MakeFrameLayout<NDExtLayoutPtn>(batch, m, n)`、`MakeFrameLayout<DNExtLayoutPtn>(batch, m, n)`或`MakeFrameLayout<NZLayoutPtn, DstType>(batch, m, n)`构造。`NZ`格式可通过模板参数`DstType`指定目的数据类型，`C0`表示NZ格式的列分形大小，默认为16。
+接口支持batch模式。batch模式用于一次完成多块矩阵计算结果的搬运。Layout在原矩阵Layout最外层增加Batch维度。源张量为`NZ`格式，分形固定为16×16，可通过`MakeFrameLayout<NZLayoutPtn>(batch, m, n)`构造。目的张量可通过`MakeFrameLayout<NDLayoutPtn>(batch, m, n)`、`MakeFrameLayout<DNLayoutPtn>(batch, m, n)`、`MakeFrameLayout<NDExtLayoutPtn>(batch, m, n)`、`MakeFrameLayout<DNExtLayoutPtn>(batch, m, n)`或`MakeFrameLayout<NZLayoutPtn, DstType>(batch, m, n)`构造。`NZ`格式可通过模板参数`DstType`指定目的数据类型，`C0`表示NZ格式的列分形大小，默认为16。卷积输出通路当前仅支持N为1，不支持batch模式。
 
 随路量化、随路Relu、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径如下图所示。图中的F32到F16、F32到BF16为非量化模式，仅进行cast。其余路径为不量化模式、随路scalar量化模式或随路tensor量化模式。
 
@@ -81,7 +81,7 @@ L0C Buffer到Global Memory搬运支持不量化输出、`float`到`half`或`bflo
 |参数名|输入/输出|描述|
 |--------|--------|--------|
 |atomCopy|输入|搬运原子对象，可由`MakeCopy(CopyL0C2GM{})`或`MakeCopy(CopyL0C2GM{}, CopyL0C2GMTraitDefault{})`构造。|
-|dst|输出|目的张量，存储位置为`Location::GM`。支持`ND`、`DN`和`NZ`数据格式。|
+|dst|输出|目的张量，存储位置为`Location::GM`。支持`ND`、`DN`、`NZ`、`NC1HWC0`、`NHWC`和`NCHW`数据格式。|
 |src|输入|源张量，存储位置为`Location::L0C`，数据格式为`NZ`，通常为`Mmad`的计算结果。|
 |quant|输入|可选量化参数。传入`uint64_t`时表示scalar量化参数，传入张量时表示tensor量化参数，张量位于L1 Buffer，元素类型为`uint64_t`。|
 |fixpipeParams|输入|可选搬运参数，类型为`FixpipeParams`，通过`atomCopy`的`with`接口绑定到搬运原子对象，未绑定时使用默认值。|
@@ -180,12 +180,42 @@ L0C Buffer到Global Memory搬运根据是否传入量化参数自动选择量化
 - 使用`RoundMode::HYBRID`时，源类型必须为`float`，目的类型必须为`hifloat8_t`。
 - `enableChannelSplit`仅在源类型和目的类型均为`float`，且目的格式为`NZ`时生效。详情参见[F32 Channel Split](../矩阵搬出关键特性说明/f32_channel_split.md)。
 - 通道合并特性硬件自动使能，不能通过参数配置。详情参见[Int8 Channel Merge](../矩阵搬出关键特性说明/int8_channel_merge.md)。
+- `NZ`到`NC1HWC0`、`NHWC`或`NCHW`的卷积输出通路当前仅支持N为1。`NZ`到`NHWC`或`NCHW`仅支持不传入`quant`的调用形式。
+- 卷积输出通路中，源`NZ`张量的逻辑Shape需要为`(H * W, C)`。目的张量为`NC1HWC0`时需要满足`C = C1 * C0`。
 
 ## 关键特性
 
 L0C Buffer到Global Memory搬运涉及[随路量化](../矩阵搬出关键特性说明/quant_pre.md)、[随路Relu](../矩阵搬出关键特性说明/relu_pre.md)、[F32 Channel Split](../矩阵搬出关键特性说明/f32_channel_split.md)、[Int8 Channel Merge](../矩阵搬出关键特性说明/int8_channel_merge.md)和[batch搬运](../矩阵搬出关键特性说明/batch_copy.md)等关键特性。
 
 ## 调用示例
+
+### 卷积输出
+
+以下示例将L0C Buffer中Shape为`(H * W, C)`的NZ矩阵搬运到Global Memory，并转换为NHWC格式。将目的Layout替换为`NCHWLayoutPtn`或`NC1HWC0LayoutPtn`，可分别完成NCHW或NC1HWC0格式输出。
+
+```cpp
+#include "tensor_api/tensor.h"
+
+using namespace AscendC::Te;
+
+constexpr uint32_t H = 8;
+constexpr uint32_t W = 8;
+constexpr uint32_t C = 16;
+
+__aicore__ inline void CopyConvOutputL0CToGM(__gm__ float* gmAddr)
+{
+    __cc__ float l0cBuf[H * W * C];
+
+    auto l0c = MakeTensor(
+        MakeMemPtr(l0cBuf),
+        MakeFrameLayout<NZLayoutPtn, 16>(H * W, C));
+    auto gm = MakeTensor(
+        MakeMemPtr(gmAddr), MakeFrameLayout<NHWCLayoutPtn>(1, H, W, C));
+
+    auto copyL0CToGM = MakeCopy(CopyL0C2GM{}, CopyL0C2GMTraitDefault{});
+    Copy(copyL0CToGM, gm, l0c);
+}
+```
 
 ### 不量化输出
 

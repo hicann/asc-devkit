@@ -28,7 +28,7 @@
 
 需要包含的头文件为：#include "tensor_api/tensor.h"。
 
-MakeFrameLayout用于根据标准分形排布模式构造带类型信息的Layout对象。该接口接收矩阵的行数、列数，结合指定的LayoutPattern（排布模式）和LayoutTrait（布局特征参数）计算Shape和Stride，构造Layout对象。该接口也支持在矩阵维度前传入Batch维度，用于构造多Batch矩阵的Layout。
+MakeFrameLayout用于根据标准分形排布模式构造带类型信息的Layout对象。该接口根据构造参数，结合指定的LayoutPattern（排布模式）和LayoutTrait（布局特征参数）计算Shape和Stride，构造Layout对象。除矩阵Layout外，该接口还支持构造卷积场景中的NCHW、NHWC和NC1HWC0格式Layout。该接口也支持在矩阵维度前传入Batch维度，用于构造多Batch矩阵的Layout。
 
 LayoutPattern决定数据在内存中的分形排列方式，不同存储位置间的搬运和计算操作要求源/目的张量满足特定的LayoutPattern组合。
 
@@ -47,7 +47,22 @@ auto layout = MakeFrameLayout<LayoutPattern, TraitType>(m, n);
 
 // 构造Batch矩阵Layout，batch为矩阵个数，m为单个矩阵的行数，n为单个矩阵的列数。
 auto batchLayout = MakeFrameLayout<LayoutPattern, TraitType>(batch, m, n);
+
+// 构造卷积输入或输出Layout。
+auto nchwLayout = MakeFrameLayout<NCHWLayoutPtn>(n, c, h, w);
+auto nhwcLayout = MakeFrameLayout<NHWCLayoutPtn>(n, h, w, c);
+auto nc1hwc0Layout = MakeFrameLayout<NC1HWC0LayoutPtn>(n, c1, h, w, c0);
 ```
+
+### 卷积LayoutPattern
+
+| LayoutPattern | 构造参数 | Shape | Stride | 描述 |
+| :--- | :--- | :--- | :--- | :--- |
+| `NCHWLayoutPtn` | `n, c, h, w` | `(N, C, H, W)` | `(C * H * W, H * W, W, 1)` | 通道维C位于高度维H和宽度维W之前。 |
+| `NHWCLayoutPtn` | `n, h, w, c` | `(N, H, W, C)` | `(H * W * C, W * C, C, 1)` | 通道维C位于最内层。 |
+| `NC1HWC0LayoutPtn` | `n, c1, h, w, c0` | `(N, C1, H, W, C0)` | `(C1 * H * W * C0, H * W * C0, W * C0, C0, 1)` | 将通道维C拆分为C1和C0，其中`C = C1 * C0`。 |
+
+上述Layout均为行主序连续排布，Stride的单位为元素。`NC1HWC0LayoutPtn`的C0由函数参数显式指定，不通过LayoutTrait推导。
 
 ### LayoutTrait的指定方式
 
@@ -89,7 +104,7 @@ LayoutTrait用于指定C0维度基数。MakeFrameLayout支持以下四种传递�
 | :--- | :---: | :--- |
 | LayoutPattern | 输入 | 布局模式模板参数。支持的LayoutPattern及数据排布格式见[Layout和层次化表述法](Layout和层次化表述法.md)。 |
 | TraitType | 输入 | 第二个模板参数，用于描述C0取值。可传入`LayoutTraitDefault<T>`、C0常量类型、带`C0_ELEMENT`成员的自定义Trait类型或具体数据类型；省略时接口按LayoutPattern使用内置的C0取值。 |
-| Args | 输入 | 构造参数。常见为矩阵的行数m和列数n；Batch模式为batch、m、n。各LayoutPattern的构造参数数量可能不同。 |
+| Args | 输入 | 构造参数。矩阵场景常见为m和n，Batch矩阵场景为batch、m和n。卷积场景根据LayoutPattern传入n、c、h、w或n、c1、h、w、c0。 |
 
 ## 返回值说明
 
@@ -99,6 +114,7 @@ LayoutTrait用于指定C0维度基数。MakeFrameLayout支持以下四种传递�
 
 - LayoutPattern必须是已支持的排布模式之一，不支持的模式会触发编译期报错。
 - 构造参数的个数和含义由LayoutPattern决定。常见二维场景传入(m, n)即可。
+- 使用`NC1HWC0LayoutPtn`时，用户需要根据数据类型和后续运算要求显式传入C0，并保证C轴数据符合`C = C1 * C0`。
 - Batch模式传入(batch, m, n)，其中m和n表示单个矩阵的行数和列数，batch表示连续排布的矩阵个数。
 - TraitType必须为整型常量、带`C0_ELEMENT`成员的Trait类型或具体数据类型，不支持的类型会触发编译期报错。传入具体数据类型时，该类型仅用于推导C0；Tensor的真实数据类型由`MakeTensor`绑定的内存指针类型决定。
 
@@ -136,4 +152,9 @@ auto l1BatchTensor = MakeTensor(MakeMemPtr<Location::L1>(l1Addr), layoutBatchNZ)
 // 构造MX场景的scale Batch布局
 auto layoutBatchScaleA = MakeFrameLayout<ScaleANDLayoutPtn>(batch, scaleM, scaleK);
 auto gmScaleTensor = MakeTensor(MakeMemPtr<Location::GM>(scaleAddr), layoutBatchScaleA);
+
+// 构造卷积特征图Layout
+auto layoutNCHW = MakeFrameLayout<NCHWLayoutPtn>(n, c, h, w);
+auto layoutNHWC = MakeFrameLayout<NHWCLayoutPtn>(n, h, w, c);
+auto layoutNC1HWC0 = MakeFrameLayout<NC1HWC0LayoutPtn>(n, c1, h, w, c0);
 ```
