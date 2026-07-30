@@ -19,6 +19,8 @@ add_executable(math_bfloat16
         math_bfloat16.asc
 )
 
+target_link_libraries(math_bfloat16 PRIVATE m)
+
 target_compile_options(math_bfloat16 PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=dav-3510 --enable-simt>
 )

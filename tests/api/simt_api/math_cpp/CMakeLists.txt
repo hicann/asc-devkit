@@ -19,6 +19,8 @@ add_executable(math_cpp
         math_cpp.asc
 )
 
+target_link_libraries(math_cpp PRIVATE m)
+
 target_compile_options(math_cpp PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=dav-3510>
 )

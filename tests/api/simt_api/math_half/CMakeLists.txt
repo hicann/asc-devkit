@@ -19,6 +19,8 @@ add_executable(math_half
         math_half.asc
 )
 
+target_link_libraries(math_half PRIVATE m)
+
 target_compile_options(math_half PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=dav-3510 --enable-simt>
 )
