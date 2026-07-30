@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 根据mask，对src中的元素逐个与标量value进行比较（等于），将比较结果写入dst。dst为vector_bool类型，每个元素的比较结果占1个bit，1表示条件成立（等于），0表示不成立。计算公式如下：
 
 $$dst_i = (src_i == value)$$

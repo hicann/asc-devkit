@@ -28,8 +28,6 @@
 
 **该接口已废弃，请使用 [asc_pack_to_low](asc_pack_to_low.md) 和 [asc_pack_to_high](asc_pack_to_high.md) 替代。**
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的低半部分或高半部分。
 
 - asc_pack：将源操作数写入目的操作数的低半部分。

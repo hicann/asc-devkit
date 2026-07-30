@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 对输入的int32_t类型的数据按元素做量化并转换为half类型。计算公式如下：
 $$
 dst_i = Cast(src_i * scale)

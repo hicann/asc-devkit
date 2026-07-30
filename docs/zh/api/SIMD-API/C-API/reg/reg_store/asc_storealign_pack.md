@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_store.h"`。
-
 从矢量数据寄存器压缩搬出到UB的接口，根据mask将src中有效元素的低半部分bit数据连续存储于dst_align32b中，支持数据类型为b16、b32、b64。
 
 ## 函数原型

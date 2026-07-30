@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 根据mask将每个DataBlock(32B)中的最大值依次保存在dst中的最低位。
 
 ## 函数原型

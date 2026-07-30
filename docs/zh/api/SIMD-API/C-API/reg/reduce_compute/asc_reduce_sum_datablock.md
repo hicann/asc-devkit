@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将每个DataBlock（32B）中参与计算的元素相加，并将最终的计算结果依次保存在dst的最低位。
 
 ## 函数原型

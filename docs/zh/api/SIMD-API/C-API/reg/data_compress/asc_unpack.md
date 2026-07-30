@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将src中低半部分或高半部分的元素以扩充位宽的方式写入dst，支持：
 
 - asc_unpack_lower：取src的低半部分（LOWER），每个元素高位填0扩充位宽后写入dst。

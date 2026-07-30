@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 将int16_t类型转换为int8_t或uint8_t类型，并将数据存放在每个DataBlock的高半块或低半块。使用该接口前需要调用[asc_set_deq_scale](./asc_set_deq_scale.md)接口设置量化参数。
 
 - asc_deq_int162b8_h：将数据存放在每个DataBlock的高半块。

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将src0和src1中的元素解交织存入dst0和dst1中。以int8_t数据类型为例，asc_deintlv的实现流程如图1所示：
 
 **图1** 解交织实现流程

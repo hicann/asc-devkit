@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 将数据从Unified Buffer搬运到Unified Buffer。支持高维切分。
 
 ## 函数原型

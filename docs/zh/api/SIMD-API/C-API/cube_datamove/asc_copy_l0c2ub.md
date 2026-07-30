@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_datamove/cube_datamove.h"`。
-
 矩阵计算完成后，对结果进行量化处理，之后将处理结果搬运到Unified Buffer中。量化参数共有2个：quant_pre和quant_post，分别对应预处理和后处理阶段。
 
 quant_pre可选量化模式分别为：

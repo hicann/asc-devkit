@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 该接口用于按元素执行Leaky ReLU（Leaky Rectified Linear Unit）操作：当源操作数中某元素大于0时，直接将该元素写入目的操作数；否则将该元素乘以标量值value后写入目的操作数。计算公式如下：
 
 $$dst_i = \begin{cases} src_i & src_i > 0 \\ src_i \times value & src_i \leq 0 \end{cases}$$

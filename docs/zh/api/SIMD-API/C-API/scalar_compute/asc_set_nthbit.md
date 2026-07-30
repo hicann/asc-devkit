@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 计算一个uint64_t类型数字的指定二进制位置为1，其余位保持不变。
 
 ## 函数原型

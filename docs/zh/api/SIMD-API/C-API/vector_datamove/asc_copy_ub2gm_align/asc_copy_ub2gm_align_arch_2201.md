@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_datamove/vector_datamove.h"`。
-
 将数据从Unified Buffer (UB)搬运到Global Memory (GM)，支持8位/16位/32位分块拷贝操作。
 
 ## 函数原型

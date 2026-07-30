@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 设置DEQSCALE（量化参数）寄存器的值。
 
 ## 函数原型

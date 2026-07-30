@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_convert.h"`。
-
 将bfloat16_t类型数据转换为int32_t，并支持多种舍入模式，饱和/非饱和模式。
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式与饱和模式](../data_type_convert/rounding_mode.md)。

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_store.h"`。
-
 **该接口已废弃。其中asc_storealign_pack_v2请使用[asc_storealign_pack_quarter](asc_storealign_pack_quarter.md)实现此功能。**
 
 reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到UB的场景，并支持多种搬出模式，接口不传入偏移，需要由用户自行更新目的操作数的地址。

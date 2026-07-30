@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 获取一个uint64_t类型数字的二进制中0的个数。
 
 ## 函数原型

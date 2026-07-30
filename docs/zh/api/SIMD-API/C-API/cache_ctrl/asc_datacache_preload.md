@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cache_ctrl/cache_ctrl.h"`。
-
 从源地址所在的特定GM地址预加载数据到Data Cache中。
 
 ## 函数原型

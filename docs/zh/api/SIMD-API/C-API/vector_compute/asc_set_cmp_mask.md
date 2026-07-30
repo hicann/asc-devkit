@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 为[asc_select](asc_select.md)操作设置作用于选择的Mask掩码。
 
 ## 函数原型

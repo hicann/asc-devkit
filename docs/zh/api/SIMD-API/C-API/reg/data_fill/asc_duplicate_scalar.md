@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将标量值value广播到dst寄存器中。支持带mask和不带mask两种模式：
 
 - 带mask模式：将value写入dst中被mask筛选的位置，未被筛选的位置被置为0。

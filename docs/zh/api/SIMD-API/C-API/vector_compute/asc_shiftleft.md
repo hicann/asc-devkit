@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 将所有元素左移distance位。计算公式如下：
 $$
 dst_i = src_i << distance

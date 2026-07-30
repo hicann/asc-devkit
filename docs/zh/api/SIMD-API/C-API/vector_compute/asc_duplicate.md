@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 执行矢量复制（Duplicate）操作，将标量值复制填充到矢量中。
 
 ## 函数原型

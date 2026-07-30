@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 通过比较掩码src1，将src0中的向量压缩成更短的向量，存储到dst中。
 
 ## 函数原型

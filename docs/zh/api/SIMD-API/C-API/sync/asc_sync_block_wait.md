@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sync/sync.h"`。
-
 和[asc_sync_block_arrive](asc_sync_block_arrive.md)配合使用（通过flag_id关联），用于等待所有同步对象到达flag_id对应的同步点。如果flag_id所对应的计数器数值为0则阻塞不执行；如果对应的计数器大于0，则计数器减一，同时后续指令开始执行。
 
 ## 函数原型

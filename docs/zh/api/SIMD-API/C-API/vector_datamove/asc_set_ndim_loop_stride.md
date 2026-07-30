@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_datamove/vector_datamove.h"`。
-
 用于设置[asc_ndim_copy_gm2ub](./asc_ndim_copy_gm2ub.md)接口，每个维度内的源操作数与目的操作数的元素之间的间隔，最多设置5个维度。
 
 ## 函数原型

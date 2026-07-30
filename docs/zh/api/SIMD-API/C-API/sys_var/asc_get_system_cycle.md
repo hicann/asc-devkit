@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sys_var/sys_var.h"`。
-
 <!-- npu="950" id8 -->
 - 针对Ascend 950PR/Ascend 950DT，若换算成时间需要按照1GHz的频率，时间单位为us，换算公式为：time = (cycle数/1000)us。
 <!-- end id8 -->

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 将src的最低位元素广播到dst中被mask筛选的位置，dst中未被mask筛选的位置被置为0。
 
 ## 函数原型

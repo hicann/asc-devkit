@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/cube_compute/cube_compute.h"`。
-
 数据搬运过程中进行随路量化时，通过调用该接口获取unit_flag设置。
 
 ## 函数原型

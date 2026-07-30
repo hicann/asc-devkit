@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sys_var/sys_var.h"`。
-
 分离模式下，获取一个AI Core上Cube Core（AIC）或者Vector Core（AIV）的数量。
 
 ## 函数原型

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 asc_xor支持两种接口：
 
 - 对矢量数据寄存器操作：

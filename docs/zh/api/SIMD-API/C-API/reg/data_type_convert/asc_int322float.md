@@ -26,7 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_convert.h"`。
 将int32_t类型转化为float类型，并支持多种舍入模式。
 $$
 dst_i = (float)src_i

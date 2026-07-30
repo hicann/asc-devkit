@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 此接口用于获取Compare操作的比较结果。
 
 ## 函数原型

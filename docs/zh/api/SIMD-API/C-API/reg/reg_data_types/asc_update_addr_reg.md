@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 更新地址寄存器（[addr_reg](data_type_definition.md#地址寄存器)），用于迭代寻址。支持1~4维偏移量设置，位宽支持b8、b16、b32三种模式：
 
 - b8模式：每次迭代地址偏移量以1字节为单位，适用于int8_t、uint8_t等类型的操作。

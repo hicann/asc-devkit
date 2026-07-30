@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/scalar_compute/scalar_compute.h"`。
-
 位操作函数，用于将一个uint64_t整数bits的第idx位设置为0。
 
 ## 函数原型

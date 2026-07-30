@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/reg_compute/reg_vector.h"`。
-
 对AR特殊寄存器进行清零操作。AR寄存器用于配合[asc_squeeze_with_status](../compare_and_select/asc_squeeze_with_status.md)使用：当调用asc_squeeze_with_status时，有效元素的总字节数会被存入AR寄存器。在调用asc_squeeze_with_status之前，需调用该接口将AR寄存器清零。
 
 ## 函数原型

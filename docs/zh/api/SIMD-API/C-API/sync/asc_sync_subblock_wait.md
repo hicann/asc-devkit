@@ -27,8 +27,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/sync/sync.h"`。
-
 核间同步寄存器同步指令，每个flag_id均分配有计数器，执行asc_sync_subblock_arrive后计数器将递增；执行asc_sync_subblock_wait时如果对应的计数器数值为0则阻塞；如果对应的计数器大于0，则计数器减一，同时后续指令开始执行。
 
 ## 函数原型

@@ -26,8 +26,6 @@
 
 ## 功能说明
 
-头文件路径：`"c_api/vector_compute/vector_compute.h"`。
-
 将bfloat16_t类型数据转为float，无舍入模式。
 
 ## 函数原型
