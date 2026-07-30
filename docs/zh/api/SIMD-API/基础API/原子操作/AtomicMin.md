@@ -66,7 +66,7 @@ address、value、返回值的数据类型相同，支持的数据类型为int32
 
 ## 约束说明<a name="section24727811123"></a>
 
-- 在开启编译器自动同步功能（参见[自动同步使用约束说明](../同步控制/核内同步/关键特性说明.md#自动同步使用约束说明)）的前提下，编译器能够自动在PIPE_MTE2/PIPE_MTE3与PIPE_S之间插入同步（参见[编译器自动同步](../同步控制/核内同步/关键特性说明.md#tpipe-tque框架编程范式和编译器自动同步支持情况)）。但是，AtomicMin为标量计算，在读写GM时如果与搬运单元（MTE2/MTE3）存在数据依赖，编译器却无法自动插入同步，开发者需要根据实际情况手动插入同步。
+- 毕昇编译器能够在一部分属于PIPE_S的接口与属于PIPE_V、PIPE_MTE2、PIPE_MTE3的接口之间自动插入同步（详见[使用约束](../同步控制/核内同步/关键特性说明.md#使用约束-1)）。但标量原子操作接口均不在该范围内，因此AtomicMin与搬运接口（属于PIPE_MTE2、PIPE_MTE3）在读写GM时存在数据依赖时，毕昇编译器无法自动插入同步，开发者需根据实际情况手动插入同步。
 - Scalar原子操作会绕过DCache，需要调用[DataCacheCleanAndInvalid](../缓存控制/DataCacheCleanAndInvalid.md)接口确保GM与DCache的一致性。
 
 ## 调用示例<a name="section191505489122"></a>
