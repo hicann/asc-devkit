@@ -108,7 +108,6 @@ INSTANTIATE_TEST_CASE_P(
         GeluTestParams{4096, sizeof(half), main_Gelu_test<half>},
         GeluTestParams{8192, sizeof(half), main_Gelu_test<half>},
         GeluTestParams{16384, sizeof(half), main_Gelu_test<half>},
-        GeluTestParams{32768, sizeof(half), main_Gelu_test<half>},
         GeluTestParams{32, sizeof(float), main_Gelu_test<float>},
         GeluTestParams{64, sizeof(float), main_Gelu_test<float>},
         GeluTestParams{256, sizeof(float), main_Gelu_test<float>},
@@ -116,8 +115,13 @@ INSTANTIATE_TEST_CASE_P(
         GeluTestParams{1024, sizeof(float), main_Gelu_test<float>},
         GeluTestParams{2048, sizeof(float), main_Gelu_test<float>},
         GeluTestParams{4096, sizeof(float), main_Gelu_test<float>},
-        GeluTestParams{8192, sizeof(float), main_Gelu_test<float>},
-        GeluTestParams{16384, sizeof(float), main_Gelu_test<float>}));
+        GeluTestParams{8192, sizeof(float), main_Gelu_test<float>}
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)) // 用例超出kirinx90 9030 ub size
+        ,
+        GeluTestParams{32768, sizeof(half), main_Gelu_test<half>},
+        GeluTestParams{16384, sizeof(float), main_Gelu_test<float>}
+#endif
+        ));
 
 TEST_P(GeluTestSuite, GeluTestCase)
 {

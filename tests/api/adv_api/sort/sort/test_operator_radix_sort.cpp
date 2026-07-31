@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 #include "kernel_operator.h"
 #include "kernel_utils.h"
+#include "sort/sort.h"
 
 namespace AscendC {
 template <typename T, typename U, SortType sortType, bool descend, bool isReuseSource, bool extraBuf, int mode = 0>
@@ -166,13 +167,7 @@ INSTANTIATE_TEST_CASE_P(
         SortTestParams{
             4, 4, 1024, 1024, testRadixSort<float, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 0>},
         SortTestParams{
-            8, 4, 1024, 1024, testRadixSort<int64_t, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 0>},
-        SortTestParams{
             2, 4, 1024, 1024, testRadixSort<half, uint32_t, AscendC::SortType::RADIX_SORT, false, true, true, 0>},
-        SortTestParams{
-            8, 4, 512, 356, testRadixSort<uint64_t, uint32_t, AscendC::SortType::RADIX_SORT, false, true, true, 0>},
-        SortTestParams{
-            2, 4, 512, 356, testRadixSort<bfloat16_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 0>},
         SortTestParams{
             1, 4, 1024, 1024, testRadixSort<int8_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, true, 1>},
         SortTestParams{
@@ -182,8 +177,6 @@ INSTANTIATE_TEST_CASE_P(
         SortTestParams{
             4, 4, 1024, 1024, testRadixSort<int32_t, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 1>},
         SortTestParams{
-            8, 4, 1024, 1024, testRadixSort<int64_t, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 1>},
-        SortTestParams{
             4, 4, 1024, 1024, testRadixSort<uint32_t, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 1>},
         SortTestParams{
             4, 4, 1024, 1024, testRadixSort<float, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 1>},
@@ -192,27 +185,39 @@ INSTANTIATE_TEST_CASE_P(
         SortTestParams{
             2, 4, 1024, 1024, testRadixSort<half, uint32_t, AscendC::SortType::RADIX_SORT, false, true, true, 1>},
         SortTestParams{
-            2, 4, 512, 356, testRadixSort<bfloat16_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 1>},
-        SortTestParams{
-            8, 4, 512, 356, testRadixSort<uint64_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 1>},
-        SortTestParams{
             2, 4, 1024, 1024, testRadixSort<uint16_t, int32_t, AscendC::SortType::RADIX_SORT, false, false, true, 2>},
         SortTestParams{
             2, 4, 512, 356, testRadixSort<int16_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 2>},
         SortTestParams{
             4, 4, 1024, 1024, testRadixSort<int32_t, int32_t, AscendC::SortType::RADIX_SORT, true, false, false, 2>},
         SortTestParams{
+            1, 4, 512, 512, testRadixSort<int8_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 2>}
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)) // 用例超出kirinx90 9030 ub size
+        ,
+        SortTestParams{
+            8, 4, 1024, 1024, testRadixSort<int64_t, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 0>},
+        SortTestParams{
+            8, 4, 512, 356, testRadixSort<uint64_t, uint32_t, AscendC::SortType::RADIX_SORT, false, true, true, 0>},
+        SortTestParams{
+            2, 4, 512, 356, testRadixSort<bfloat16_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 0>},
+        SortTestParams{
+            8, 4, 1024, 1024, testRadixSort<int64_t, uint32_t, AscendC::SortType::RADIX_SORT, true, false, true, 1>},
+        SortTestParams{
+            2, 4, 512, 356, testRadixSort<bfloat16_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 1>},
+        SortTestParams{
+            8, 4, 512, 356, testRadixSort<uint64_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 1>},
+        SortTestParams{
             4, 8, 1024, 1024, testRadixSort<uint32_t, uint64_t, AscendC::SortType::RADIX_SORT, true, false, true, 2>},
         SortTestParams{
             4, 8, 1024, 1024, testRadixSort<float, int64_t, AscendC::SortType::RADIX_SORT, true, false, true, 2>},
-        SortTestParams{
-            1, 4, 512, 512, testRadixSort<int8_t, uint32_t, AscendC::SortType::RADIX_SORT, false, false, false, 2>},
         SortTestParams{
             8, 4, 1024, 1024, testRadixSort<uint64_t, int32_t, AscendC::SortType::RADIX_SORT, true, false, false, 2>},
         SortTestParams{
             1, 8, 1024, 1024, testRadixSort<uint8_t, uint64_t, AscendC::SortType::RADIX_SORT, true, false, true, 2>},
         SortTestParams{
-            8, 8, 1024, 1024, testRadixSort<int64_t, int64_t, AscendC::SortType::RADIX_SORT, true, false, true, 2>}));
+            8, 8, 1024, 1024, testRadixSort<int64_t, int64_t, AscendC::SortType::RADIX_SORT, true, false, true, 2>}
+#endif
+        ));
 
 TEST_P(AdvanceSortTestSuite, testRadixSort)
 {

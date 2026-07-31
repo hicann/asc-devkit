@@ -33,3 +33,7 @@ build_device/
 .cursor/
 .opencode/
 docs/zh/vitepress/docs/.vitepress/theme/outline-index.json
+
+oat_reports/
+
+log/

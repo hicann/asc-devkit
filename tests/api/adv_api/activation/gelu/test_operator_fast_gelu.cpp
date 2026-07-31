@@ -109,7 +109,6 @@ INSTANTIATE_TEST_CASE_P(
         FastGeluTestParams{4096, sizeof(half), main_FastGelu_test<half>},
         FastGeluTestParams{8192, sizeof(half), main_FastGelu_test<half>},
         FastGeluTestParams{16384, sizeof(half), main_FastGelu_test<half>},
-        FastGeluTestParams{32768, sizeof(half), main_FastGelu_test<half>},
         FastGeluTestParams{32, sizeof(float), main_FastGelu_test<float>},
         FastGeluTestParams{64, sizeof(float), main_FastGelu_test<float>},
         FastGeluTestParams{256, sizeof(float), main_FastGelu_test<float>},
@@ -117,8 +116,13 @@ INSTANTIATE_TEST_CASE_P(
         FastGeluTestParams{1024, sizeof(float), main_FastGelu_test<float>},
         FastGeluTestParams{2048, sizeof(float), main_FastGelu_test<float>},
         FastGeluTestParams{4096, sizeof(float), main_FastGelu_test<float>},
-        FastGeluTestParams{8192, sizeof(float), main_FastGelu_test<float>},
-        FastGeluTestParams{16384, sizeof(float), main_FastGelu_test<float>}));
+        FastGeluTestParams{8192, sizeof(float), main_FastGelu_test<float>}
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)) // 用例超出kirinx90 9030 ub size
+        ,
+        FastGeluTestParams{32768, sizeof(half), main_FastGelu_test<half>},
+        FastGeluTestParams{16384, sizeof(float), main_FastGelu_test<float>}
+#endif
+        ));
 
 TEST_P(FastGeluTestSuite, FastGeluTestCase)
 {

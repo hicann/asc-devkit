@@ -18,7 +18,8 @@
 using namespace std;
 using namespace AscendC;
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 constexpr uint32_t GEGLU_HALF_BUFFER_SIZE = 8; // 1 half data needs 2 float tmpbuffer which is 8 uint8 size
 #endif
 
