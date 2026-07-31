@@ -37,7 +37,7 @@ else
         bash build.sh --pkg --cann_3rd_lib_path="/home/jenkins/opensource"
 fi
 
-if [[ "${task_name}" =~ x86_compile_ubuntu24 ]] && [ -f "build_out/"*.run ]; then
+if [[ "${task_name}" =~ x86_compile_ubuntu24 ]] && [ -f "build_out/"*.run ] && [ "${TARGET_BRANCH}" == master ]; then
     echo "api-check=compile" >> "${ATOMGIT_OUTPUT}"
 else
     echo "api-check=continue" >> "${ATOMGIT_OUTPUT}"
