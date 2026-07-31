@@ -41,6 +41,8 @@ __aicore__ inline int64_t asc_get_smmu_tag_version()
 ## 返回值说明
 
 SMMU版本信息。各bit含义如下：
+**表1** SMMU标签版本比特位说明
+
 | bit范围    | 含义 |
 | ----------- |:----|
 | 63:28 | 保留位。 |

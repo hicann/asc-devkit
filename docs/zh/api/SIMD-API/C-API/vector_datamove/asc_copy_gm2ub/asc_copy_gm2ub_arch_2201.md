@@ -32,23 +32,25 @@
 
 - 前n个数据搬运
 
-```c++
+```cpp
 __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst, __gm__ void* src, uint32_t size)
 ```
 
 - 高维切分搬运
 
-```c++
+```cpp
 __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst, __gm__ void* src, uint16_t n_burst, uint16_t len_burst, uint16_t src_gap, uint16_t dst_gap)
 ```
 
 - 同步计算
 
-```c++
+```cpp
 __aicore__ inline void asc_copy_gm2ub_sync(__ubuf__ void* dst, __gm__ void* src, uint32_t size)
 ```
 
 ## 参数说明
+
+**表1** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |

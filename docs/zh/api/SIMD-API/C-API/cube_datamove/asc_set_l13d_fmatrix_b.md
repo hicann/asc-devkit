@@ -37,6 +37,8 @@ __aicore__ inline void asc_set_l13d_fmatrix_b(asc_l13d_fmatrix_config& config)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | config | 输入 | 用于设置asc_copy_l12l0a/asc_copy_l12l0b的3D格式搬运接口的Feature map属性参数，详细说明请参考[asc_l13d_fmatrix_config](../struct/asc_l13d_fmatrix_config.md)。 |

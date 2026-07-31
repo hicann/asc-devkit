@@ -36,6 +36,8 @@ __aicore__ inline void asc_set_l0c_copy_prequant(uint64_t config)
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
 | config     | 输入     | 量化过程中使用到的标量量化参数。|

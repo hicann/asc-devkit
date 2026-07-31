@@ -17,6 +17,8 @@ enum class asc_load_l2_cache_mode : uint8_t {
 
 ## 枚举值详解
 
+**表1** 枚举值说明
+
 |枚举值|L2 cache管理策略|
 |------|-----------|
 | NORMAL_FIRST_VICTIM | 启用L2 Cache，并且将分配的Cache Line标记为高替换优先级。 |

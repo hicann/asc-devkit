@@ -41,12 +41,14 @@ __simd_callee__ inline void asc_pack_to_low(vector_bool& dst, vector_bool src)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名       | 输入/输出 | 描述               |
 | --------- | ----- | ---------------- |
 | dst       | 输出    | 目的操作数（矢量数据寄存器/掩码寄存器）。            |
 | src | 输入    | 源操作数（矢量数据寄存器/掩码寄存器）。            |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

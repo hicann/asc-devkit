@@ -35,6 +35,8 @@ __aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_p
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
 | relu_pre | 输入     | ReLU操作前矢量的起始地址。|

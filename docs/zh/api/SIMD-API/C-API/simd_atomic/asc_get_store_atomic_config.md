@@ -40,6 +40,8 @@ __aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& conf
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | config | 输出 | 用于获取原子操作启用位和原子操作类型的值，详细说明请参考[asc_store_atomic_config](../struct/asc_store_atomic_config.md)。 |

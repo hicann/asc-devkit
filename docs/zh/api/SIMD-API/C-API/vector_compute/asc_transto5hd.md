@@ -64,6 +64,8 @@ __aicore__ inline void asc_transto5hd_b8_sync(ub_addr8_t dst, ub_addr8_t src, ui
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 | ------------ | ------------ | ------------ |
 |dst|输出|目的地址寄存器。|

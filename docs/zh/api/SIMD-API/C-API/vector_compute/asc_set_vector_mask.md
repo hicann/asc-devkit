@@ -39,6 +39,8 @@ __aicore__ inline void asc_set_vector_mask(uint64_t mask1, uint64_t mask0)
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 | ------------ | ------------ | ------------ |
 |mask1|输入|Normal模式：高位mask值。<br>Counter模式：需要置0，本入参不生效。|

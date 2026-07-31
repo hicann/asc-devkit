@@ -39,7 +39,7 @@
 
 - 前n个数据计算
 
-    ```c++
+    ```cpp
     // NONE舍入模式
     __aicore__ inline void asc_half2uint8(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
     // RINT舍入模式
@@ -56,7 +56,7 @@
 
 - 高维切分计算
 
-    ```c++
+    ```cpp
     // NONE舍入模式
     __aicore__ inline void asc_half2uint8(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint8_t repeat, uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
     // RINT舍入模式
@@ -73,7 +73,7 @@
 
 - 同步计算
 
-    ```c++
+    ```cpp
     // NONE舍入模式
     __aicore__ inline void asc_half2uint8_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
     // RINT舍入模式
@@ -89,6 +89,8 @@
     ```
 
 ## 参数说明
+
+**表1** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |

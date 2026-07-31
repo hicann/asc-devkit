@@ -44,13 +44,15 @@ __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ bfloat16_t*& 
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst_align32b | 输入/输出 | 目的操作数（矢量）的起始地址，搬运完成后该地址会被硬件自动Post Update。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | offset | 输入 | 地址偏移量。 |
 
-矢量数据寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

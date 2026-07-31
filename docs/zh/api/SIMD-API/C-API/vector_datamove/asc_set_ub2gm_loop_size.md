@@ -40,6 +40,8 @@ __aicore__ inline void asc_set_ub2gm_loop_size(uint32_t loop1_size, uint32_t loo
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | loop1_size | 输入 | 用于设置内层循环的循环次数，取值范围为[0, 2^21)。 |

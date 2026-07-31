@@ -36,7 +36,7 @@ $$
 
 - 前n个数据计算
 
-```c++
+```cpp
 __aicore__ inline void asc_add(__ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 __aicore__ inline void asc_add(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 __aicore__ inline void asc_add(__ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint32_t count)
@@ -71,6 +71,8 @@ __aicore__ inline void asc_add_sync(__ubuf__ float* dst, __ubuf__ float* src0, _
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名       | 输入/输出 | 描述                |
 | --------- | ----- | ----------------- |
 | dst       | 输出    | 目的操作数。            |
@@ -99,7 +101,7 @@ PIPE_V
 
 ## 调用示例
 
-```c++
+```cpp
 //total_length指参与计算的数据长度
 constexpr uint64_t total_length = 64;
 __ubuf__ half src0[total_length];

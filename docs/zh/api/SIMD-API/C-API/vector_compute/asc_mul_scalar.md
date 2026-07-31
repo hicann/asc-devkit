@@ -68,6 +68,8 @@ __aicore__ inline void asc_mul_scalar_sync(__ubuf__ float* dst, __ubuf__ float* 
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst | 输出 | 目的操作数（矢量）的起始地址。 |

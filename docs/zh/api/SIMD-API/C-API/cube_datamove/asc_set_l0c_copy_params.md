@@ -37,7 +37,7 @@ __aicore__ inline void asc_set_l0c_copy_params(uint16_t nd_num, uint16_t src_nd_
 
 ## 参数说明
 
-表1参数说明
+**表1** 参数说明
 
 | 参数名       | 输入/输出 | 描述               |
 | --------- | ----- | ---------------- |

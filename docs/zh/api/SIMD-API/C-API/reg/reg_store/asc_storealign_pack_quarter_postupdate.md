@@ -38,6 +38,8 @@ __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(__ubuf__ floa
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst_align32b | 输入/输出 | 目的操作数（矢量）的起始地址，接口调用后自动更新。 |
@@ -45,7 +47,7 @@ __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(__ubuf__ floa
 | offset | 输入 | 偏移量。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

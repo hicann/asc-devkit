@@ -39,7 +39,7 @@ $$
 ## 函数原型
 - 前n个数据计算
 
-    ```c++
+    ```cpp
     __aicore__ inline void asc_leakyrelu(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
     __aicore__ inline void asc_leakyrelu(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
     ```
@@ -60,6 +60,8 @@ $$
 
 ## 参数说明
 
+
+**表1** 参数说明
 
 | 参数名       | 输入/输出 | 描述                |
 | --------- | ----- | ----------------- |
@@ -89,7 +91,7 @@ PIPE_V
 
 ## 调用示例
 
-```c++
+```cpp
 //total_length指参与计算的数据长度
 constexpr uint64_t total_length = 64;
 half alpha = 0.1;

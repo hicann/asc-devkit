@@ -36,7 +36,7 @@ $$
 
 - 前n个数据计算
 
-    ```c++
+    ```cpp
     __aicore__ inline void asc_and(__ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
     __aicore__ inline void asc_and(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, uint32_t count)
     ```
@@ -57,7 +57,7 @@ $$
 
 ## 参数说明
 
-表1参数说明
+**表1** 参数说明
 
 | 参数名       | 输入/输出 | 描述                |
 | --------- | ----- | ----------------- |
@@ -87,7 +87,7 @@ PIPE_V
 
 ## 调用示例
 
-```c++
+```cpp
 constexpr uint64_t total_length = 64;
 //total_length指参与计算的数据长度
 __ubuf__ int16_t src0[total_length];

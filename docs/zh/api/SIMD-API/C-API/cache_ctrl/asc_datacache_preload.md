@@ -36,6 +36,8 @@ __aicore__ inline void asc_datacache_preload(__gm__ uint64_t* address, int64_t o
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
 | address     | 输入     | 源操作数的起始地址。   |

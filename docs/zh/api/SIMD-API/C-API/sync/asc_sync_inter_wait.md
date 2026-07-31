@@ -42,6 +42,8 @@ __aicore__ inline void asc_sync_inter_wait(pipe_t pipe, int64_t flag_id)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
 | pipe | 输入 | 需要执行同步指令的流水类型。|

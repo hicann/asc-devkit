@@ -30,11 +30,13 @@
 
 ## 函数原型
 
-```c++
+```cpp
 __aicore__ inline int64_t asc_clz(uint64_t value_in)
 ```
 
 ## 参数说明
+
+**表1** 参数说明
 
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
@@ -54,7 +56,7 @@ PIPE_S
 
 ## 调用示例
 
-```c++
+```cpp
 uint64_t value_in = 0x0fffffffffffffff;
 int64_t ans = asc_clz(value_in); //返回ans = 4
 ```

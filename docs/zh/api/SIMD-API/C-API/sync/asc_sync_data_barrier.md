@@ -36,6 +36,8 @@ __aicore__ inline void asc_sync_data_barrier(mem_dsb_t arg)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
 | arg | 输入 | 表示需要等待的内存位置，类型为mem_dsb_t，可取值为： <br>&bull; DSB_ALL：等待所有内存访问指令。 <br>&bull; DSB_DDR：等待GM访问指令。<br>&bull; DSB_UB：等待UB访问指令。<br>&bull; DSB_SEQ：预留参数，暂未启动，为后续的功能扩展做保留。|

@@ -100,6 +100,8 @@ __aicore__ inline void asc_copy_l12l0b_trans_sync(__cb__ float* dst, __cbuf__ fl
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名       | 输入/输出 | 描述               |
 | --------- | ----- | ---------------- |
 | dst       | 输出    | 目的操作数。            |

@@ -51,6 +51,8 @@ __aicore__ inline void asc_store_dev(__gm__ uint64_t* addr, uint64_t value)
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
 | addr     | 输出     | 目标GM地址。|
@@ -70,7 +72,7 @@ PIPE_S
 
 ## 调用示例
 
-```c++
+```cpp
 // addr是外部输入的GM地址，value是待写入GM内存的数据，类型为 int32_t
 int32_t value = 2;
 asc_store_dev(addr, value);

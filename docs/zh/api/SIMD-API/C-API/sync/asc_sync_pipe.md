@@ -39,6 +39,8 @@ __aicore__ inline void asc_sync_pipe(pipe_t pipe)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |
 | pipe | 输入 | 阻塞的流水类别。不支持PIPE_S。如果不关注流水类别，希望阻塞所有流水，可以传入PIPE_ALL。 |

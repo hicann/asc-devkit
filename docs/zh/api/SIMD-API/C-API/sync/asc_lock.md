@@ -76,6 +76,8 @@ __aicore__ inline void asc_lock(pipe_t pipe, uint8_t mutex_id, const ascMutexExe
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
 | pipe | 输入 | 指定当前接口所属的流水类型。|

@@ -55,6 +55,8 @@ $$
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst | 输出 | 目的操作数（矢量）的起始地址。 |
@@ -89,3 +91,4 @@ __ubuf__ half dst[total_length];
 asc_set_deq_scale(2.0);
 …… // 数据搬运及同步操作
 asc_deq_int322half(dst, src, total_length);
+```

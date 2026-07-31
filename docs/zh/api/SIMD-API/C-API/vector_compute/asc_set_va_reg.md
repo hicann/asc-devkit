@@ -43,6 +43,8 @@ __aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ float** src_arra
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 | ------------ | ------------ | ------------ |
 |addr|输入|地址寄存器，类型为ub_addr8_t，可取值为：<br>&bull; VA0<br>&bull; VA1<br>&bull; VA2<br>&bull; VA3<br>&bull; VA4<br>&bull; VA5<br>&bull; VA6<br>&bull; VA7<br>数字代表寄存器顺序，每个地址寄存器只能关联8个地址，使用方法请参考调用示例|

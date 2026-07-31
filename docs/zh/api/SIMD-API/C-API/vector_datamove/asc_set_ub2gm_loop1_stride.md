@@ -40,6 +40,8 @@ __aicore__ inline void asc_set_ub2gm_loop1_stride(uint64_t loop1_src_stride, uin
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | loop1_src_stride | 输入 | 用于设置内层循环中相邻迭代源操作数的数据块间的间隔，单位为Byte，取值范围为[0, 2^21)，并且loop1_src_stride必须32B对齐。 |

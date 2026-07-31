@@ -3,6 +3,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 
 ## 数据结构
 
+**表1** 数据结构列表
+
 |结构名|说明|
 |-----------------------|-----------------------|
 | [asc_load3d_v2_config](struct/asc_load3d_v2_config.md) | Load3Dv2接口的repeat参数。 |
@@ -14,6 +16,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 ## 矢量计算
 
 矢量计算类API，单独使用时可以引入vector_compute.h，此类API列表如下：
+
+**表2** 矢量计算API列表
 
 |   API名称   |   说明   |
 |----------|-----------|
@@ -123,6 +127,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 
 数据搬运类API，单独使用时可以引入vector_datamove.h和cube_datamove.h，此类API列表如下：
 
+**表3** 数据搬运API列表
+
 | API名称                                                                                                                       |   说明   |
 |-----------------------------------------------------------------------------------------------------------------------------|-----------|
 | [asc_copy_gm2l0a](cube_datamove/asc_copy_gm2l0a.md)                                                                         | 将GM中的数据搬运到L0A中。 |
@@ -181,6 +187,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 
 标量操作类API，单独使用时可以引入scalar_compute.h，此类API列表如下：
 
+**表4** 标量操作API列表
+
 |   API名称   |   说明   |
 |----------|-----------|
 | [asc_clz](scalar_compute/asc_clz.md)| 计算参数前导零的数量（二进制从最高位到第一个1共有多少个0）。 |
@@ -209,6 +217,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 
 矩阵计算类API，单独使用时可以引入cube_compute.h，此类API列表如下：
 
+**表5** 矩阵计算API列表
+
 |   API名称   |   说明   |
 |----------|-----------|
 | [asc_set_mmad_direction_m](cube_compute/asc_set_mmad_direction_m.md)| 设置mmad计算时优先通过M/N中的M方向生成结果，然后通过N方向产生结果，M为矩阵的行，N为矩阵的列。 |
@@ -228,6 +238,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 ## 同步控制
 
 同步控制类API，单独使用时可以引入sync.h，此类API列表如下：
+
+**表6** 同步控制API列表
 
 |   API名称   |   说明   |
 |----------|-----------|
@@ -253,6 +265,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 ## 系统变量
 
 系统变量类API，单独使用时可以引入sys_var.h，此类API列表如下：
+
+**表7** 系统变量API列表
 
 |   API名称   |   说明   |
 |----------|-----------|
@@ -286,6 +300,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 
 缓存控制类API，单独使用时可以引入cache_ctrl.h，此类API列表如下：
 
+**表8** 缓存控制API列表
+
 |   API名称   |   说明   |
 |----------|-----------|
 | [asc_datacache_preload](cache_ctrl/asc_datacache_preload.md)| 从源地址所在的特定GM地址预加载数据到Data Cache中。 |
@@ -297,6 +313,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 ## 原子操作
 
 原子操作类API，单独使用时可以引入atomic.h，此类API列表如下：
+
+**表9** 原子操作API列表
 
 |   API名称   |   说明   |
 |----------|-----------|
@@ -328,6 +346,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 
 ## 其他操作
 
+**表10** 其他操作API列表
+
 |   API名称   |   说明   |
 |----------|-----------|
 | [asc_init](misc/asc_init.md)| 初始化NPU状态。 |
@@ -337,6 +357,8 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 ## Reg数据搬运
 
 Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表如下：
+
+**表11** Reg数据搬运API列表
 
 |   API名称   |   说明   |
 |----------|-----------|
@@ -380,6 +402,8 @@ Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表�
 ## Reg矢量计算
 
 Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列表如下：
+
+**表12** Reg矢量计算API列表
 
 |   API名称   |   说明   |
 |----------|-----------|
@@ -518,6 +542,8 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 | [asc_xor](reg/logic_compute/asc_xor.md) | 根据mask对输入的src0、src1按元素异或（^）进行操作，将结果写入dst。 |
 
 ## 枚举类型
+
+**表13** 枚举类型列表
 
 |枚举类名|说明|
 |-----------------------|-----------------------|

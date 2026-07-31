@@ -30,11 +30,13 @@
 
 ## 函数原型
 
-```c++
+```cpp
 __aicore__ inline int64_t asc_popc(uint64_t value)
 ```
 
 ## 参数说明
+
+**表1** 参数说明
 
 |参数名|输入/输出|描述|
 | :------ | :--- | :------------ |
@@ -54,7 +56,7 @@ PIPE_S
 
 ## 调用示例
 
-```c++
+```cpp
 uint64_t scalar = 33;
 // 输出数据count_one为2
 int64_t count_one = asc_popc(scalar);

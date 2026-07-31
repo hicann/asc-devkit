@@ -25,6 +25,8 @@ union asc_l13d_fmatrix_config {
 
 ## 字段详解
 
+**表1** 字段说明
+
 |字段名|字段含义|
 |----------|----------|
 | l1_width | Feature map的width，取值范围：[1, 32767]。 |

@@ -53,7 +53,7 @@ __simd_callee__ inline void asc_select(vector_float& dst, vector_float src0, vec
 
 ## 参数说明
 
-**表 1** 参数说明
+**表1** 参数说明
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst | 输出 | 目的操作数（掩码寄存器或矢量数据寄存器）。 |
@@ -61,7 +61,7 @@ __simd_callee__ inline void asc_select(vector_float& dst, vector_float src0, vec
 | src1 | 输入 | 源操作数1（掩码寄存器或矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器）。指定选择src0或src1为有效数据。mask的比特位为1时，选取src0；mask的比特位为0时，选取src1。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

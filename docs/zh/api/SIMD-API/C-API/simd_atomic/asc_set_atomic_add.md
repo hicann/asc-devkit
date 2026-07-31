@@ -34,7 +34,7 @@
 
 ## 函数原型
 
-```c++
+```cpp
 __aicore__ inline void asc_set_atomic_add_int8()
 __aicore__ inline void asc_set_atomic_add_int16()
 __aicore__ inline void asc_set_atomic_add_int32()
@@ -65,7 +65,7 @@ PIPE_S
 
 ## 调用示例
 
-```c++
+```cpp
 //total_length指参与搬运的数据总长度。dst是外部输入的int8_t类型的GM内存。
 constexpr uint32_t total_length = 256;
 __ubuf__ int8_t src0[total_length];

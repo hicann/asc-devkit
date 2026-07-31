@@ -40,6 +40,8 @@ __aicore__ inline void asc_set_ffts_base_addr(uint64_t config)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | config | 输入 | 核间同步的基地址。取值范围[0, 2^48-1]。 |

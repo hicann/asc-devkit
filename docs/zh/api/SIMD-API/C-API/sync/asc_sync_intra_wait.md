@@ -39,6 +39,8 @@ __aicore__ inline void asc_sync_intra_wait(pipe_t pipe, uint64_t sync_id)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
 | pipe | 输入 | 该指令的执行流水线。 |

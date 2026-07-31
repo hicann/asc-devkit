@@ -47,7 +47,7 @@ __simd_callee__ inline void asc_max_scalar(vector_bfloat16_t& dst, vector_bfloat
   ```
 ## 参数说明
 
-**表 1** 参数说明
+**表1** 参数说明
 | 参数名       | 输入/输出 | 描述               |
 | --------- | ----- | ---------------- |
 | dst       | 输出    | 目的操作数（矢量数据寄存器）。            |

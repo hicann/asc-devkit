@@ -36,6 +36,8 @@ __aicore__ inline void asc_sync_notify(pipe_t pipe, pipe_t tpipe, event_t id)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |
 | pipe | 输入 | 源流水线类型。需传入编译期常量。 |

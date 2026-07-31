@@ -38,6 +38,8 @@ __aicore__ inline void asc_icache_preload(const void* addr, int64_t prefetch_len
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |
 | addr | 输入 | 预加载数据的地址。 |

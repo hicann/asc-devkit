@@ -40,6 +40,8 @@ __aicore__ inline void asc_set_gm2l1_loop2_stride(uint64_t loop2_src_stride, uin
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
 | loop2_src_stride     | 输入     | 外层循环中相邻迭代源操作数的数据块间的间隔，单位为Byte，取值范围为[0,2^40]。|

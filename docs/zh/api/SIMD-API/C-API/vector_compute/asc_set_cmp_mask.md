@@ -36,6 +36,8 @@ __aicore__ inline void asc_set_cmp_mask(__ubuf__ void* sel_mask)
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 | ------------ | ------------ | ------------ |
 |sel_mask|输入|用于选择的Mask掩码的起始地址。|

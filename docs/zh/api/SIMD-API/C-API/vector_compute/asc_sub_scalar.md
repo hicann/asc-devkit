@@ -36,7 +36,7 @@ $$
 
 - 前n个数据连续计算
 
-```c++
+```cpp
 __aicore__ inline void asc_sub_scalar(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 __aicore__ inline void asc_sub_scalar(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 __aicore__ inline void asc_sub_scalar(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
@@ -45,7 +45,7 @@ __aicore__ inline void asc_sub_scalar(__ubuf__ float* dst, __ubuf__ float* src, 
 
 - 非连续数据计算
 
-```c++
+```cpp
 __aicore__ inline void asc_sub_scalar(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint8_t repeat, 
     uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
 __aicore__ inline void asc_sub_scalar(__ubuf__ half* dst, __ubuf__ half* src, half value, uint8_t repeat, 
@@ -58,7 +58,7 @@ __aicore__ inline void asc_sub_scalar(__ubuf__ float* dst, __ubuf__ float* src, 
 
 - 数据同步计算
 
-```c++
+```cpp
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
@@ -66,6 +66,8 @@ __aicore__ inline void asc_sub_scalar_sync(__ubuf__ float* dst, __ubuf__ float* 
 ```
 
 ## 参数说明
+
+**表1** 参数说明
 
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
@@ -94,7 +96,7 @@ PIPE_V
 
 ## 调用示例
 
-```c++
+```cpp
 // total_length指参与计算的数据总长度
 constexpr uint64_t total_length = 64;
 half scalar_val = 0.0f;

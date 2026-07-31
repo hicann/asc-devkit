@@ -70,6 +70,8 @@ __simd_callee__ inline void asc_loadalign_deintlv_postupdate(vector_float& dst0,
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名 | 输入/输出 | 说明 |
 | :--- | :--- | :--- |
 | dst0 | 输出 | 第一个目的向量寄存器。 |
@@ -77,11 +79,13 @@ __simd_callee__ inline void asc_loadalign_deintlv_postupdate(vector_float& dst0,
 | src | 输入/输出 | 源数据在UB中的起始地址，要求32B对齐。接口执行完成后，`src`会更新为`src + offset`。 |
 | offset | 输入 | 地址偏移量，单位为元素个数。 |
 
-向量寄存器类型的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+向量寄存器类型的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 数据类型<a name="data-type"></a>
 
 `asc_loadalign_deintlv_postupdate`支持的数据类型如下表所示。
+
+**表2** 数据类型
 
 | 源数据类型`src` | 目的寄存器类型`dst0/dst1` |
 | :--- | :--- |

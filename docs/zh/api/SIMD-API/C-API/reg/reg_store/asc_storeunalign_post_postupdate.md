@@ -66,13 +66,15 @@ __simd_callee__ inline void asc_storeunalign_post_postupdate(__ubuf__  int64_t*&
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst | 输出 | 目的操作数（矢量）的起始地址。 |
 | src | 输入 | 非对齐寄存器，用于保存非对齐数据，长度32B。 |
 | offset | 输入 | 目的操作数结束地址的偏移，单位为元素个数。 |
 
-非对齐寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+非对齐寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

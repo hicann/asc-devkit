@@ -37,6 +37,8 @@ __aicore__ inline void asc_get_reduce_max_cnt(float& val, uint32_t& index)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | val | 输出 | 最大值。 |

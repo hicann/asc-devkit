@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```c++
+```cpp
 __aicore__ inline void asc_set_ndim_pad_value(int8_t pad_value)
 __aicore__ inline void asc_set_ndim_pad_value(uint8_t pad_value)
 __aicore__ inline void asc_set_ndim_pad_value(int16_t pad_value)
@@ -43,6 +43,8 @@ __aicore__ inline void asc_set_ndim_pad_value(float pad_value)
 ```
 
 ## 参数说明
+
+**表1** 参数说明
 
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
@@ -62,7 +64,7 @@ PIPE_S
 
 ## 调用示例
 
-```c++
+```cpp
 half pad_value = 2.0;
 asc_set_ndim_pad_value(pad_value); 
 ```

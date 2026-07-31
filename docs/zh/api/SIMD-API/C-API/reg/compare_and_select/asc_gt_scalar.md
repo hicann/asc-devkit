@@ -34,7 +34,7 @@ $$
 
 ## 函数原型
 
-```c++
+```cpp
 __simd_callee__ inline void asc_gt_scalar(vector_bool& dst, vector_uint8_t src, uint8_t value, vector_bool mask)
 __simd_callee__ inline void asc_gt_scalar(vector_bool& dst, vector_int8_t src, int8_t value, vector_bool mask)
 __simd_callee__ inline void asc_gt_scalar(vector_bool& dst, vector_bfloat16_t src, bfloat16_t value, vector_bool mask)
@@ -48,7 +48,7 @@ __simd_callee__ inline void asc_gt_scalar(vector_bool& dst, vector_float src, fl
 
 ## 参数说明
 
-**表 1** 参数说明
+**表1** 参数说明
 | 参数名   | 输入/输出 | 描述                             |
 |:------| :--- |:-------------------------------|
 | dst   | 输出 | 目的操作数（掩码寄存器）。                 |

@@ -163,6 +163,8 @@ __simd_callee__ inline void asc_loadalign_brc_v3(vector_float& dst, __ubuf__ flo
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
@@ -171,7 +173,7 @@ __simd_callee__ inline void asc_loadalign_brc_v3(vector_float& dst, __ubuf__ flo
 | src | 输入 | 源操作数，UB中32B对齐的起始地址。 |
 | offset | 输入 | 地址寄存器，每次迭代的偏移量，单位为字节。 |
 
-矢量数据寄存器和地址寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

@@ -36,6 +36,8 @@ __aicore__ inline void asc_get_arch_ver(uint32_t& core_version)
 
 ## 参数说明
 
+**表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | core_version | 输出 | AI处理器架构版本，数据类型uint32_t。 |

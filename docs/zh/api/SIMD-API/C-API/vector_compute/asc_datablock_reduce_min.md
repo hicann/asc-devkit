@@ -32,28 +32,28 @@
 
 - 前n个数据连续计算
 
-    ```c++
+    ```cpp
     __aicore__ inline void asc_datablock_reduce_min(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
     __aicore__ inline void asc_datablock_reduce_min(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
     ```
 
 - 高维切分计算
 
-    ```c++
+    ```cpp
     __aicore__ inline void asc_datablock_reduce_min(__ubuf__ half* dst, __ubuf__ half* src, uint8_t repeat, uint16_t dst_repeat_stride, uint16_t src_block_stride, uint16_t src_repeat_stride)
     __aicore__ inline void asc_datablock_reduce_min(__ubuf__ float* dst, __ubuf__ float* src, uint8_t repeat, uint16_t dst_repeat_stride, uint16_t src_block_stride, uint16_t src_repeat_stride)
     ```
 
 - 同步计算
 
-    ```c++
+    ```cpp
     __aicore__ inline void asc_datablock_reduce_min_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
     __aicore__ inline void asc_datablock_reduce_min_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
     ```
 
 ## 参数说明
 
-表1参数说明
+**表1** 参数说明
 
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
@@ -80,7 +80,7 @@ PIPE_V
 
 ## 调用示例
 
-```c++
+```cpp
 constexpr uint32_t src_length = 256;
 constexpr uint32_t dst_length = 16;
 __ubuf__ half src[src_length];

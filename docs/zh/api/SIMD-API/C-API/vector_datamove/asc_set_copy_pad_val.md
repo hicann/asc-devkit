@@ -51,6 +51,8 @@ __aicore__ inline void asc_set_copy_pad_val(float pad_value)
 
 ## 参数说明
 
+**表1** 参数说明
+
 |参数名|输入/输出|描述|
 |------------|------------|-----------|
 | pad_value     | 输入     | 需要填补的数据值。|

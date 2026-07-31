@@ -36,7 +36,7 @@ $$
 
 ## 函数原型
 
-```c++
+```cpp
 __simd_callee__ inline void asc_not(vector_bool& dst, vector_bool src, vector_bool mask)
 __simd_callee__ inline void asc_not(vector_int8_t& dst, vector_int8_t src, vector_bool mask)
 __simd_callee__ inline void asc_not(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask)
@@ -70,7 +70,7 @@ __simd_callee__ inline void asc_not(vector_float& dst, vector_float src, vector_
 
 ## 调用示例
 
-```c++
+```cpp
 __simd_vf__ inline void not_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
 {
     vector_half dst;
