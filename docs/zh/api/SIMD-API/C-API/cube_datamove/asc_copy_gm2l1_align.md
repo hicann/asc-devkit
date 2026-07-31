@@ -69,13 +69,13 @@
 | dst | 输出 | 目的操作数（矢量）的起始地址。 |
 | src | 输入 | 源操作数（矢量）的起始地址。 |
 | n_burst | 输入 | 待搬运的连续传输数据块个数。 |
-| len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为32个字节。对位宽为16的数据类型，该参数取值应为2的倍数，对位宽为32的数据类型，该参数取值应为4的倍数。 |
+| len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。 |
 | left_padding_count | 输入 | 数据左侧的padding元素数。对位宽为8的数据类型，该参数的最大值为32，对位宽为16的数据类型，该参数的最大值为16，对位宽为32的数据类型，该参数的最大值为8。 |
 | right_padding_count | 输入 | 数据右侧的padding元素数。对位宽为8的数据类型，该参数的最大值为32，对位宽为16的数据类型，该参数的最大值为16，对位宽为32的数据类型，该参数的最大值为8。 |
 | data_select_bit | 输入 | padding数据选择位，当前只支持设置为false，将padding值设置为数据块的第一个元素。 |
 | l2_cache_ctl | 输入 | 配置数据在L2 Cache中的管理策略。取值说明请参见[表2](#table2)。 |
-| burst_src_stride |输入| 输入数据中两个相邻的burst所对应的连续数据块头与头之间的距离。 |
-| burst_dst_stride | 输入 | 输出数据中两个相邻的burst所对应的连续数据块头与头之间的距离。 |
+| burst_src_stride |输入| 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。<br>只搬运1个数据块，即n_burst=1时，可以将此参数设置为0。 |
+| burst_dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。<br>只搬运1个数据块，即n_burst=1时，可以将此参数设置为0。 |
 
 **表2**  l2_cache_ctl取值说明 <a id="table2"></a>
 
@@ -83,7 +83,7 @@
 |------|------|------|
 | 0    | NORMAL模式 | 启用L2 Cache，并且将分配的Cache Line标记为高替换优先级。|
 | 1    | LAST模式 | &bull; 启用L2 Cache，并且将分配的Cache Line标记为低替换优先级。<br>&bull; **LAST模式功能，暂不支持。**|
-| 2    | PERSISTENT模式 | &bull; 启用L2 Cache。已存入L2 Cache中的数据可能被替换，若需确保特定GlobalTensor的数据始终保留在L2 Cache中，可采用驻留模式。<br>&bull; 注意，被标记为驻留模式的Cache Line只能被其他同样被标记为驻留模式的Cache Line替换。<br>&bull; **目前该驻留模式功能尚在开发中，暂不支持，计划于Ascend 950PR/Ascend 950DT上提供支持。**|
+| 2    | PERSISTENT模式 | &bull; 启用L2 Cache。已存入L2 Cache中的数据可能被替换，若需确保特定GlobalTensor的数据始终保留在L2 Cache中，可采用驻留模式。<br>&bull; 注意，被标记为驻留模式的Cache Line只能被其他同样被标记为驻留模式的Cache Line替换。<br>&bull; **PERSISTENT模式功能，暂不支持。**|
 | 4    | DISABLE模式 | 不启用L2 Cache，每次都直接从GM中读取，并且保持已有Cache Line的状态不变。 |
 
 ## 返回值说明
@@ -102,21 +102,21 @@ PIPE_MTE2
 ## 调用示例
 
 ```cpp
-//待搬运的连续传输数据块个数为2
+// 待搬运的连续传输数据块个数为2
 constexpr uint32_t n_burst = 2;
-//待搬运的每个连续传输数据块的长度为64个字节
-constexpr uint32_t len_burst = 2;
-//数据左右侧padding的元素数为0
+// 待搬运的每个连续传输数据块的长度为64个字节
+constexpr uint32_t len_burst = 64;
+// 数据左右侧padding的元素数为0
 constexpr uint8_t left_padding_count = 0;
 constexpr uint8_t right_padding_count = 0;
-//padding值取数据块的第一个元素
+// padding值取数据块的第一个元素
 constexpr bool data_select_bit = false;
-//l2 cache采用DISABLE模式
-constexpr uint8_t l2_cache_ctl = 0;
-//输入输出数据中两个相邻连续数据块之间的距离为0
-constexpr uint64_t burst_src_stride = 0;
-constexpr uint32_t burst_dst_stride = 0;
-// src表示源操作数的起始地址
+// L2 Cache采用DISABLE模式
+constexpr uint8_t l2_cache_ctl = 4;
+// 输入输出数据中两个相邻连续数据块之间的距离为64字节
+constexpr uint64_t burst_src_stride = 64;
+constexpr uint32_t burst_dst_stride = 64;
+// src为从GM传入的地址指针
 __cbuf__ half dst[256];
 asc_copy_gm2l1_align(dst, src, n_burst, len_burst,  left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl, burst_src_stride, burst_dst_stride);
 ```
