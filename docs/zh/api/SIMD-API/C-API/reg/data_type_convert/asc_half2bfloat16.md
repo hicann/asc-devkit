@@ -74,9 +74,9 @@ __simd_vf__ inline void half2bfloat16_vf(__ubuf__ bfloat16_t* dst_addr, __ubuf__
     vector_bfloat16_t dst;
     vector_bool mask = asc_create_mask_b16(PAT_ALL);
     for (uint16_t i = 0; i < repeat_time; ++i) {
-        asc_loadalign(src, src_addr, one_repeat_size);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
         asc_half2bfloat16_rna(dst, src, mask);
-        asc_storealign(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
     }
 }
 ```

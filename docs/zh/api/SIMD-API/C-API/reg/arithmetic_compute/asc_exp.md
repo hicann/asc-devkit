@@ -70,9 +70,9 @@ __simd_vf__ inline void exp_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr,
     vector_bool mask;
     for (uint16_t i = 0; i < repeat_time; ++i) {
         mask = asc_update_mask_b16(count);
-        asc_loadalign(src, src_addr, one_repeat_size);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
         asc_exp(dst, src, mask);
-        asc_storealign(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
     }
 }
 ```

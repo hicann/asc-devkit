@@ -36,6 +36,12 @@ __simd_callee__ inline void asc_gather(
     vector_uint16_t& dst, __ubuf__ uint8_t* src, vector_uint16_t index, vector_bool mask);
 
 __simd_callee__ inline void asc_gather(
+    vector_int8_t& dst, __ubuf__ int8_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline void asc_gather(
+    vector_uint8_t& dst, __ubuf__ uint8_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline void asc_gather(
     vector_int16_t& dst, __ubuf__ int16_t* src, vector_uint16_t index, vector_bool mask);
 
 __simd_callee__ inline void asc_gather(

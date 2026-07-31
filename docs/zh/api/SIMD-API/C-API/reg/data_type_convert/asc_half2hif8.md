@@ -84,9 +84,9 @@ __simd_vf__ inline void half2hif8_vf(__ubuf__ hifloat8_t* dst_addr, __ubuf__ hal
     vector_hifloat8_t dst;
     vector_bool mask = asc_create_mask_b8(PAT_ALL);
     for (uint16_t i = 0; i < repeat_time; ++i) {
-        asc_loadalign(src, src_addr, one_repeat_size);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
         asc_half2hif8_rna(dst, src, mask);
-        asc_storealign(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
     }
 }
 ```

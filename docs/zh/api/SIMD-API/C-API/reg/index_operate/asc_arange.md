@@ -86,7 +86,7 @@ __simd_vf__ inline void arange_vf(__ubuf__ int8_t* dst_addr, int8_t value, uint3
     for (uint16_t i = 0; i < repeat_time; ++i) {
         mask = asc_update_mask_b8(count);
         asc_arange(dst, value);
-        asc_storealign(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
     }
 }
 ```

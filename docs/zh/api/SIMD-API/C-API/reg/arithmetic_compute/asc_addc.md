@@ -86,11 +86,11 @@ __simd_vf__ inline void addc_vf(__ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* 
     vector_bool mask;
     for (uint16_t i = 0; i < repeat_time; ++i) {
         mask = asc_update_mask_b32(count);
-        asc_loadalign(src0, src0_addr, one_repeat_size);
-        asc_loadalign(src1, src1_addr, one_repeat_size);
+        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
         asc_loadalign_postupdate(carry_src, carry_src_addr, one_repeat_size);
         asc_addc(carry, dst, src0, src1, carry_src, mask);
-        asc_storealign(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
     }
 }
 ```

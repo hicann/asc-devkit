@@ -81,10 +81,10 @@ __simd_vf__ inline void min_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr
     vector_bool mask;
     for (uint16_t i = 0; i < repeat_time; ++i) {
         mask = asc_update_mask_b16(count);
-        asc_loadalign(src0, src0_addr, one_repeat_size);
-        asc_loadalign(src1, src1_addr, one_repeat_size);
+        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
         asc_min(dst, src0, src1, mask);
-        asc_storealign(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
     }
 }
 ```
