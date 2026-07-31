@@ -2,7 +2,7 @@
 
 - **[数据结构](数据结构/数据结构.md)**  
 
-- **[数据结构(TensorAPI)](data_structure_TensorAPI/data_structure_TensorAPI.md)**  
+- **[数据结构(TensorAPI，试验特性)](data_structure_TensorAPI/data_structure_TensorAPI.md)**  
 
 - **[辅助数据结构](辅助数据结构/辅助数据结构.md)**
 
@@ -10,7 +10,7 @@
 
 - **[矩阵计算（ISASI）](cube_compute_ISASI/cube_compute_ISASI.md)**  
 
-- **[矩阵计算（Tensor API）](cube_compute_TensorAPI/cube_compute_TensorAPI.md)** 
+- **[矩阵计算（Tensor API，试验特性）](cube_compute_TensorAPI/cube_compute_TensorAPI.md)** 
 
 - **[Memory矢量计算](Memory矢量计算/Memory矢量计算.md)**  
 
