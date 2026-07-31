@@ -38,6 +38,7 @@ jobs:
           merge_id: ${{ env.MERGE_ID }}
           repo_name: ${{ env.repo_name }}
           workspace: ${{ steps.process_checkout.outputs.path }}
+          block: ${{ vars.PRECOMMIT_BLOCK }}
       -
         name: upload
         uses: obs-upload
@@ -105,8 +106,8 @@ jobs:
         run: |
           cd ${{ steps.process_checkout.outputs.path }}
           cd CI/scripts
-          python3 codescan_gitcode.py --access_key ${{secrets.SCA_AK}} --secret_access_key ${{secrets.SCA_SK}} --access_key_get ${{secrets.SCA_AK_GET}} --secret_access_key_get ${{secrets.SCA_SK_GET}} --org_name ${org_name} --pr_id ${MERGE_ID} --repo ${repo_name} --commit_id ${{ atomgit.event.pull_request.merge_commit_sha }}
-    if: "${{ default() }}"
+          python3 codescan_gitcode.py --access_key ${{secrets.SCA_AK}} --secret_access_key ${{secrets.SCA_SK}} --access_key_get ${{secrets.SCA_AK_GET}} --secret_access_key_get ${{secrets.SCA_SK_GET}} --org_name ${org_name} --pr_id ${MERGE_ID} --repo ${repo_name} --commit_id ${{ atomgit.event.pull_request.merge_commit_sha }} --online ${{ vars.APPLY_LABEL }}
+    if: env.online == 'true'
     runs-on: [dedicate-hosted, x64, small]
     container:
       image: swr.cn-north-4.myhuaweicloud.com/ci_cann/${{ inputs.codecheck_image_version }}
