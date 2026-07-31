@@ -123,6 +123,24 @@ TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZF322F16)
     EXPECT_EQ(dst[0], static_cast<half>(0));
 }
 
+TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZF322BF16)
+{
+    using namespace AscendC::Te;
+
+    constexpr uint32_t m = 32;
+    constexpr uint32_t n = 32;
+    __cc__ float src[m * n] = {0};
+    __cbuf__ bfloat16_t dst[m * n] = {0};
+
+    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, float>(m, n));
+    auto l1Tensor = MakeTensorAt<Location::L1>(dst, MakeFrameLayout<NZLayoutPtn, bfloat16_t>(m, n));
+
+    RunCopyCallPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor);
+    RunCopyWithParamPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor, FixpipeParams{});
+
+    EXPECT_EQ(dst[0], static_cast<bfloat16_t>(0));
+}
+
 TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZWithChannelSplit)
 {
     using namespace AscendC::Te;

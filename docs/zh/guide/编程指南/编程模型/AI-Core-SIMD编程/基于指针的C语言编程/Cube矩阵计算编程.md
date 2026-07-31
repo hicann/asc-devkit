@@ -230,16 +230,16 @@ asc_copy_l12l0a_transpose(l0a_buffer, l1_buffer, m_start_position, k_start_posit
 
 C语言编程提供了`asc_copy_l0c2gm`来使能发挥芯片的各种随路能力，通过直接传入配置参数可完成随路搬运的操作。
 ```c
-__aicore__ inline void asc_copy_l0c2gm(__gm__ bfloat16_t *dst_addr, __cc__ float *src_addr,
-                        uint16_t n_size, uint16_t m_size, uint32_t loop_dst_stride, uint16_t loop_src_stride, uint8_t l2_cache_ctl,
-                        uint8_t clip_relu_pre, uint8_t unit_flag_ctrl, uint64_t quant_pre, uint8_t relu_pre, 
-                        bool enable_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, 
-                        bool enable_clip_relu_post, uint8_t eltwise_op, bool enable_eltwise_antq, bool enable_c0_pad,
-                        bool enable_broadcast, bool enable_nz2dn);
+__aicore__ inline void asc_copy_l0c2gm(
+    __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
+    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
+    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
+    uint64_t quant_post, uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op,
+    bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn);
 
 ```
 
-另外，对于是否开启unit_flag，nz2nd信息的设置，需配置相应寄存器参数以启用不同功能。对应的接口和处理能力如下：
+另外，对于`unit_flag_mode`、`enable_nz2nd`参数的设置，需配置相应寄存器参数以启用不同功能。对应的接口和处理能力如下：
 ```c
 // 1.0 When performing inline quantization during data movement, call this interface to set vector quantization parameters in the quantization flow.
 __aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre_addr, uint64_t quant_pre_addr, bool enable_unit_flag);
