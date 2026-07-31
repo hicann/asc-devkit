@@ -26,9 +26,10 @@
 
 ## 功能说明
 
-设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子比较取大操作。数据类型支持int8_t、int16_t、int32_t、bfloat16_t、half、float。
+设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到GM的数据传输开启原子比较取大操作。数据类型支持int8_t、int16_t、half、bfloat16_t、int32_t、float。
+开启原子比较取大后，后续执行搬运操作从Unified Buffer/L0C Buffer/L1 Buffer到GM时，将待拷贝的内容和GM已有内容进行比较，将最大值写入GM。
 <!-- npu="950" id8 -->
-特别地，针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到Global Memory的通路。
+特别地，针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到GM的通路。
 <!-- end id8 -->
 
 ## 函数原型
@@ -36,9 +37,9 @@
 ```cpp
 __aicore__ inline void asc_set_atomic_max_int8()
 __aicore__ inline void asc_set_atomic_max_int16()
-__aicore__ inline void asc_set_atomic_max_int()
-__aicore__ inline void asc_set_atomic_max_bfloat()
 __aicore__ inline void asc_set_atomic_max_float16()
+__aicore__ inline void asc_set_atomic_max_bfloat()
+__aicore__ inline void asc_set_atomic_max_int()
 __aicore__ inline void asc_set_atomic_max_float()
 ```
 
@@ -57,8 +58,9 @@ PIPE_S
 ## 约束说明
 
 - 使用结束后，建议通过[asc_set_atomic_none](./asc_set_atomic_none.md)关闭原子最大操作，以免影响后续相关指令功能。
+- 该指令执行前不会对GM的数据做清零操作，开发者可以在需要时手动添加清零操作。
 <!-- npu="950" id9 -->
-- 针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到Global Memory的通路。
+- 针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到GM的通路。
 <!-- end id9 -->
 
 ## 调用示例

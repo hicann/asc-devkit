@@ -28,6 +28,8 @@
 
 获取ICache的Preload的状态。
 
+该接口为调试接口，在[asc_icache_preload](./asc_icache_preload.md)后调用，用于获取ICache的PreLoad的状态。当返回值为0时，说明ICache的PreLoad已完成；当返回值为1时，说明ICache的PreLoad未完成。
+
 ## 函数原型
 
 ```cpp
@@ -40,7 +42,7 @@ __aicore__ inline int64_t asc_get_icache_preload_status()
 
 ## 返回值说明
 
-int64_t类型，0表示空闲，1表示忙。
+int64_t类型，0表示ICache的PreLoad已完成（空闲），1表示ICache的PreLoad未完成（忙）。
 
 ## 流水类型
 

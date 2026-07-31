@@ -52,7 +52,7 @@ PIPE_S
 
 ## 约束说明
 
-无
+asc_sync_notify和asc_sync_wait必须成对使用。
 
 ## 调用示例
 

@@ -40,7 +40,7 @@ __aicore__ inline void asc_sync_notify(pipe_t pipe, pipe_t tpipe, event_t id)
 | :--- | :--- | :--- |
 | pipe | 输入 | 源流水线类型。需传入编译期常量。 |
 | tpipe | 输入 | 目标流水线类型。需传入编译期常量。 |
-| id | 输入 | 同步ID。 |
+| id | 输入 | 同步ID。取值范围为[0, 7]。 |
 
 ## 返回值说明
 
@@ -52,7 +52,9 @@ PIPE_S
 
 ## 约束说明
 
-无
+- asc_sync_notify和asc_sync_wait必须成对使用。
+
+- 相同源流水、相同目标流水、相同id下，连续使用asc_sync_notify会引发未定义行为。
 
 ## 调用示例
 

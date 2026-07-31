@@ -26,7 +26,9 @@
 
 ## 功能说明
 
-block内同步指令，与[asc_sync_intra_arrive](asc_sync_intra_arrive.md)配合使用，是block内不同Core的流水线同步指令，用于向每个Core的同步寄存器发送同步信号。每个sync_id对应VECCORE与CUBECORE中的一个初始值为0的计数器。asc_sync_intra_arrive指令后其他CORE对应的计数器增加1；执行asc_sync_intra_wait时如果对应的计数器数值为0则阻塞不执行；如果对应的计数器大于0，则计数器减一，同时后续指令开始执行。
+在分离模式下，AIC（Cube Core）与AIV（Vector Core）按group划分，一个group由1个block（主核）和N个subblock（从核）组成，比例1:N。block内同步指同一block内block（AIC）与单个subblock（AIV）之间的同步。
+
+block内同步指令，与[asc_sync_intra_arrive](asc_sync_intra_arrive.md)配合使用，是block内不同Core的流水线同步指令，用于向每个Core的同步寄存器发送同步信号。每个sync_id对应Vector Core与Cube Core中的一个初始值为0的计数器。asc_sync_intra_arrive指令后其他CORE对应的计数器增加1；执行asc_sync_intra_wait时如果对应的计数器数值为0则阻塞不执行；如果对应的计数器大于0，则计数器减一，同时后续指令开始执行。
 
 ## 函数原型
 
@@ -40,7 +42,7 @@ __aicore__ inline void asc_sync_intra_wait(pipe_t pipe, uint64_t sync_id)
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
 | pipe | 输入 | 该指令的执行流水线。 |
-| sync_id | 输入 | 事件标号。|
+| sync_id | 输入 | 事件标号。AIC的取值范围为[0, 31]，AIV的取值范围为[0, 15]。|
 
 ## 返回值说明
 
@@ -56,16 +58,24 @@ PIPE_S
 - 需要保证相同的ID只会被一个流水线控制。
 - 每个ID对应一个4位计数器，特定CORE的同步ID计数器可通过其他CORE发起的asc_sync_intra_arrive递增；也可通过本身发起的asc_sync_intra_wait递减。 
 - 三个CORE的ID映射规则如下：
-    - ID为0~15的VECCORE0的asc_sync_intra_arrive指令会被映射到CUBECORE的0~15的ID。 
-    - ID为0~15的VECCORE1的asc_sync_intra_arrive指令会被映射到CUBECORE的16~31的ID。 
-    - ID为0~15的CUBECORE的asc_sync_intra_arrive指令会被映射到VECCORE0的0~15的ID。 
-    - ID为16~31的CUBECORE的asc_sync_intra_arrive指令会被映射到VECCORE1的0~15的ID。 
+    - ID为0~15的Vector Core 0的asc_sync_intra_arrive指令会被映射到Cube Core的0~15的ID。 
+    - ID为0~15的Vector Core 1的asc_sync_intra_arrive指令会被映射到Cube Core的16~31的ID。 
+    - ID为0~15的Cube Core的asc_sync_intra_arrive指令会被映射到Vector Core 0的0~15的ID。 
+    - ID为16~31的Cube Core的asc_sync_intra_arrive指令会被映射到Vector Core 1的0~15的ID。 
+
+- 必须保证配套使用[asc_sync_intra_arrive](asc_sync_intra_arrive.md)和asc_sync_intra_wait，避免计算核一直处于阻塞阶段。
+- pipe支持的流水类型为PIPE_V、PIPE_M、PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX、PIPE_S，不支持PIPE_ALL。
 
 ## 调用示例
 
 ```cpp
-//设置同步指令事件标号为1
+// 场景：AIC执行asc_sync_intra_wait等待1个AIV，对应AIV执行asc_sync_intra_arrive通知。
+// 注意：asc_sync_intra_wait与asc_sync_intra_arrive必须分别在不同Core上调用，同一Core连续调用无法实现跨核同步。
+
+// ---- AIC核代码 ----
 uint64_t sync_id = 1;
-asc_sync_intra_arrive(PIPE_S, sync_id);
-asc_sync_intra_wait(PIPE_S, sync_id);  
+asc_sync_intra_wait(PIPE_FIX, sync_id);   // AIC执行wait，等待AIV的arrive使计数器+1后解除阻塞
+
+// ---- AIV核代码 ----
+asc_sync_intra_arrive(PIPE_V, sync_id);   // AIV执行arrive，AIC对应sync_id计数器+1
 ```

@@ -28,6 +28,12 @@
 
 对Global Memory中的数据与指定数据执行原子加操作，即将val累加到address指向的数据元素上。
 
+将address指向的GM地址上的旧值（old_value）与输入标量值（val）求和，将和结果（new_value）写回GM地址，返回该地址修改前的值（old_value）。
+
+$$
+new\_value = Add(old\_value, val)
+$$
+
 ## 函数原型
 
 ```cpp

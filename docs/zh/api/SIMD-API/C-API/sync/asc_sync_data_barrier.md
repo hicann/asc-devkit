@@ -50,7 +50,8 @@ PIPE_S
 
 ## 约束说明
 
-mem_dsb_t类型的入参必须直接传递枚举值字面量。
+- mem_dsb_t类型的入参必须直接传递枚举值字面量。
+- 等待的内存位置取值为DSB_ALL时，只能等待GM和UB的访问指令，不包括其他内存位置，例如L0C Buffer、L1 Buffer。
 
 ## 调用示例
 
@@ -61,8 +62,5 @@ asc_dcci接口与asc_store_dev接口向GM写数据时硬件不能保证两个接
 根据以上的描述，为了简化编程（开发者无需关心addr是否在DCache缓存以及是否被标记为"脏"），建议开发者在使用asc_store_dev接口时采用如下代码片段：
 
 ```cpp
-asc_dcci_single(reinterpret_cast<__gm__ uint64_t*>(x_gm));
-// 保证asc_store_dev接口向addr写入value之前，DCache中的脏数据已经写回GM。
-asc_sync_data_barrier(mem_dsb_t::DSB_DDR);
-asc_store_dev(x_gm, value);
+asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
 ```

@@ -54,7 +54,7 @@ PIPE_S
 
 ## 约束说明
 
-- 需配合[asc_set_store_atomic_config_v1](./asc_set_store_atomic_config_v1.md)和[asc_set_store_atomic_config_v2（废弃）](./asc_set_store_atomic_config_v2_deprecated.md)接口使用，该接口用于设置原子操作启用位和原子操作类型的值。
+需配合[asc_set_store_atomic_config_v1](./asc_set_store_atomic_config_v1.md)和[asc_set_store_atomic_config_v2（废弃）](./asc_set_store_atomic_config_v2_deprecated.md)接口使用，该接口用于设置原子操作启用位和原子操作类型的值。
 
 ## 调用示例
 

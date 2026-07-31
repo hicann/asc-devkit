@@ -31,11 +31,11 @@
 ## 函数原型
 
 ```cpp
-__aicore__ inline float asc_atomic_exch(__gm__ float *address, float val)
-
 __aicore__ inline int32_t asc_atomic_exch(__gm__ int32_t *address, int32_t val)
 
 __aicore__ inline uint32_t asc_atomic_exch(__gm__ uint32_t *address, uint32_t val)
+
+__aicore__ inline float asc_atomic_exch(__gm__ float *address, float val)
 
 __aicore__ inline int64_t asc_atomic_exch(__gm__ int64_t *address, int64_t val)
 

@@ -31,13 +31,13 @@
 ## 函数原型
 
 ```cpp
-__aicore__ inline float asc_atomic_cas(__gm__ float *address, float compare, float val)
-
-__aicore__ inline int32_t asc_atomic_cas(__gm__ int32_t *address, int32_t compare, int32_t val)
+__aicore__ inline int32_t  asc_atomic_cas(__gm__ int32_t  *address, int32_t  compare, int32_t  val)
 
 __aicore__ inline uint32_t asc_atomic_cas(__gm__ uint32_t *address, uint32_t compare, uint32_t val)
 
-__aicore__ inline int64_t asc_atomic_cas(__gm__ int64_t *address, int64_t compare, int64_t val)
+__aicore__ inline float    asc_atomic_cas(__gm__ float    *address, float    compare, float    val)
+
+__aicore__ inline int64_t  asc_atomic_cas(__gm__ int64_t  *address, int64_t  compare, int64_t  val)
 
 __aicore__ inline uint64_t asc_atomic_cas(__gm__ uint64_t *address, uint64_t compare, uint64_t val)
 ```
