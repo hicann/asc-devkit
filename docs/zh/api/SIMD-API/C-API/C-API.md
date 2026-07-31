@@ -303,19 +303,22 @@ C API文档目录，整体使用时可以引入asc_simd.h，C API列表如下：
 | [asc_set_atomic_add_bfloat](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为bfloat16_t。 |
 | [asc_set_atomic_add_float](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为float。 |
 | [asc_set_atomic_add_float16](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为half。 |
-| [asc_set_atomic_add_int](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
+| [asc_set_atomic_add_int32](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
+| [asc_set_atomic_add_int（废弃）](simd_atomic/asc_set_atomic_add_int_deprecated.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
 | [asc_set_atomic_add_int8](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int8_t。 |
 | [asc_set_atomic_add_int16](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int16_t。 |
 | [asc_set_atomic_max_bfloat](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的bfloat16_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_max_float](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的float数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_max_float16](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的half数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
-| [asc_set_atomic_max_int](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
+| [asc_set_atomic_max_int32](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
+| [asc_set_atomic_max_int（废弃）](simd_atomic/asc_set_atomic_max_int_deprecated.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_max_int8](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int8_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_max_int16](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int16_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_min_bfloat](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的bfloat16_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
 | [asc_set_atomic_min_float](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的float数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
 | [asc_set_atomic_min_float16](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的half数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
-| [asc_set_atomic_min_int](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
+| [asc_set_atomic_min_int32](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
+| [asc_set_atomic_min_int（废弃）](simd_atomic/asc_set_atomic_min_int_deprecated.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
 | [asc_set_atomic_min_int8](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int8_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
 | [asc_set_atomic_min_int16](simd_atomic/asc_set_atomic_min.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int16_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。 |
 | [asc_set_store_atomic_config_v1](simd_atomic/asc_set_store_atomic_config_v1.md)| 设置原子操作启用位与原子操作类型的值，适用于Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品。 |

@@ -37,6 +37,7 @@
 ```c++
 __aicore__ inline void asc_set_atomic_add_int8()
 __aicore__ inline void asc_set_atomic_add_int16()
+__aicore__ inline void asc_set_atomic_add_int32()
 __aicore__ inline void asc_set_atomic_add_float16()
 __aicore__ inline void asc_set_atomic_add_bfloat()
 __aicore__ inline void asc_set_atomic_add_int()

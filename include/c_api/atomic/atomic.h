@@ -33,14 +33,9 @@
 #endif
 
 __aicore__ inline void asc_set_atomic_add_float();
-
-__aicore__ inline void asc_set_atomic_max_float16();
-
-__aicore__ inline void asc_set_atomic_add_int();
-
 __aicore__ inline void asc_set_atomic_add_int8();
-
 __aicore__ inline void asc_set_atomic_add_int16();
+__aicore__ inline void asc_set_atomic_add_int32();
 
 __aicore__ inline void asc_set_atomic_none();
 [[deprecated("NOTICE: asc_get_store_atomic_config is deprecated."
@@ -51,18 +46,31 @@ __aicore__ inline void asc_set_atomic_add_bfloat();
 __aicore__ inline void asc_set_atomic_add_float16();
 __aicore__ inline void asc_set_atomic_max_bfloat();
 __aicore__ inline void asc_set_atomic_max_float();
-__aicore__ inline void asc_set_atomic_max_int();
+__aicore__ inline void asc_set_atomic_max_float16();
 __aicore__ inline void asc_set_atomic_max_int8();
 __aicore__ inline void asc_set_atomic_max_int16();
+__aicore__ inline void asc_set_atomic_max_int32();
 __aicore__ inline void asc_set_atomic_min_bfloat();
 __aicore__ inline void asc_set_atomic_min_float();
 __aicore__ inline void asc_set_atomic_min_float16();
-__aicore__ inline void asc_set_atomic_min_int();
 __aicore__ inline void asc_set_atomic_min_int8();
 __aicore__ inline void asc_set_atomic_min_int16();
+__aicore__ inline void asc_set_atomic_min_int32();
+
 [[deprecated("NOTICE: asc_set_store_atomic_config_v2 is deprecated."
              "Please use asc_atomic_add instead for atomic add operation.")]] __aicore__ inline void
 asc_set_store_atomic_config_v2(uint16_t type, uint16_t op);
+
+// ==================== Deprecated interfaces ====================
+
+[[deprecated("NOTICE: asc_set_atomic_add_int is deprecated. Please use asc_set_atomic_add_int32 instead.")]]
+__aicore__ inline void asc_set_atomic_add_int();
+
+[[deprecated("NOTICE: asc_set_atomic_max_int is deprecated. Please use asc_set_atomic_max_int32 instead.")]]
+__aicore__ inline void asc_set_atomic_max_int();
+
+[[deprecated("NOTICE: asc_set_atomic_min_int is deprecated. Please use asc_set_atomic_min_int32 instead.")]]
+__aicore__ inline void asc_set_atomic_min_int();
 
 #endif
 
