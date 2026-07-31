@@ -32,7 +32,6 @@ CMAKE_TOOLCHAIN_FILE_VAL=""
 CHANGED_FILES=""
 CI_MODE=FALSE
 ENABLE_SIGN="false"
-VERSION_INFO="8.5.0"
 CUSTOM_SIGN_SCRIPT=""
 
 dotted_line="----------------------------------------------------------------"
@@ -806,7 +805,7 @@ main() {
   elif [ -n "$TEST_PART" ]; then
     build_test_part
   elif [ -n "${PKG}" ]; then
-    CUSTOM_OPTION="${CUSTOM_OPTION} -DCUSTOM_SIGN_SCRIPT=${CUSTOM_SIGN_SCRIPT} -DENABLE_SIGN=${ENABLE_SIGN} -DVERSION_INFO=${VERSION_INFO} -DPACKAGE_OPEN_PROJECT=ON"
+    CUSTOM_OPTION="${CUSTOM_OPTION} -DCUSTOM_SIGN_SCRIPT=${CUSTOM_SIGN_SCRIPT} -DENABLE_SIGN=${ENABLE_SIGN} -DPACKAGE_OPEN_PROJECT=ON"
     build_package
   else
     cmake_config

@@ -97,6 +97,7 @@ else()
             INPUT "mc2_server.tar.gz"
             CONFIG "${HCCL_CC_DIR}/sign.xml"
             RESULT_VAR "mc2_server_sign_file"
+            VERSION "${CANN_VERSION_asc-devkit_VERSION}"
             DEPENDS generate_device_aicpu_package
         )
         install(FILES ${mc2_server_sign_file}

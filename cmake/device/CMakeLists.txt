@@ -35,6 +35,7 @@ find_cann_package(atrace REQUIRED)
 find_cann_package(error_manager REQUIRED)
 
 include(${ASCENDC_DIR}/impl/adv_api/gen_kernel_tiling.cmake)
+include(${ASCENDC_DIR}/version.cmake)
 
 set(DEVICE_MODE TRUE)
 set(KERNEL_MODE TRUE)
