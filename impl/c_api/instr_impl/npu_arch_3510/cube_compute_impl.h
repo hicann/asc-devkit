@@ -16,6 +16,7 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_mmad_mx_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_mmad_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_enable_hf32_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_set_hf32_round_mode_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_enable_hf32_trans_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_set_fp32_mode_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_enable_hif8_impl.h"
@@ -370,6 +371,11 @@ __aicore__ inline void asc_mmad_sync(
 }
 
 __aicore__ inline void asc_enable_hf32() { asc_enable_hf32_impl(); }
+
+__aicore__ inline void asc_set_hf32_round_mode(asc_hf32_round_mode hf32_round_mode)
+{
+    asc_set_hf32_round_mode_impl(hf32_round_mode);
+}
 
 __aicore__ inline void asc_enable_hf32_trans(uint32_t mode) { asc_enable_hf32_trans_impl(mode); }
 

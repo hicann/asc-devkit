@@ -114,6 +114,7 @@ __aicore__ inline void asc_mmad_sparse_sync(
     bool c_matrix_source, bool c_matrix_init_val);
 __aicore__ inline void asc_set_mmad_direction_m();
 __aicore__ inline void asc_set_mmad_direction_n();
+__aicore__ inline void asc_set_hf32_round_mode(asc_hf32_round_mode hf32_round_mode);
 __aicore__ inline void asc_enable_hf32_trans(uint32_t mode);
 __aicore__ inline void asc_enable_hf32();
 __aicore__ inline void asc_set_fp32_mode();

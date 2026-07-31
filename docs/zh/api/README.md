@@ -1221,6 +1221,7 @@
             -   [asc_set_l13d_size](SIMD-API/C-API/cube_datamove/asc_set_l13d_size.md)
         -   [矩阵计算](SIMD-API/C-API/cube_compute/矩阵计算.md)
             -   [asc_enable_hf32](SIMD-API/C-API/cube_compute/asc_enable_hf32.md)
+            -   [asc_set_hf32_round_mode](SIMD-API/C-API/cube_compute/asc_set_hf32_round_mode.md)
             -   [asc_enable_hf32_trans](SIMD-API/C-API/cube_compute/asc_enable_hf32_trans.md)
             -   [asc_enable_hif8](SIMD-API/C-API/cube_compute/asc_enable_hif8.md)
             -   [asc_enable_fp8](SIMD-API/C-API/cube_compute/asc_enable_fp8.md)
@@ -1319,6 +1320,10 @@
             -   [asc_set_store_atomic_config_v2（废弃）](SIMD-API/C-API/simd_atomic/asc_set_store_atomic_config_v2_deprecated.md)
         -   [其他操作](SIMD-API/C-API/misc/其他操作.md)
             -   [asc_init](SIMD-API/C-API/misc/asc_init.md)
+        -   [枚举类型](SIMD-API/C-API/enum/枚举类型.md)
+            -   [asc_hf32_round_mode](SIMD-API/C-API/enum/asc_hf32_round_mode.md)
+            -   [asc_load_l2_cache_mode](SIMD-API/C-API/enum/asc_load_l2_cache_mode.md)
+            -   [asc_store_l2_cache_mode](SIMD-API/C-API/enum/asc_store_l2_cache_mode.md)
 
     -   [高阶API](SIMD-API/高阶API/高阶API.md)
         -   [高阶API列表](SIMD-API/高阶API/高阶API列表.md)

@@ -69,7 +69,7 @@ $$
 - $k_0$：L0 Buffer上最小分型K方向大小。
 - $\Delta t$：头开销cycle数。
 
-开启HF32模式后，L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32格式，舍入模式由[asc_enable_hf32_trans](asc_enable_hf32_trans.md)接口配置，中间计算使用HF32格式，最终的运算结果仍以FP32格式输出，以保证后续处理的兼容性。
+开启HF32模式后，L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32格式，舍入模式使用[asc_set_hf32_round_mode](asc_set_hf32_round_mode.md)接口配置，中间计算使用HF32格式，最终的运算结果仍以FP32格式输出，以保证后续处理的兼容性。
 
 FP32与HF32格式的精度对比如下图所示：
 

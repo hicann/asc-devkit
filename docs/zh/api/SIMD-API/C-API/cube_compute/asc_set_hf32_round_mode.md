@@ -1,4 +1,4 @@
-# asc_enable_hf32_trans
+# asc_set_hf32_round_mode
 
 ## 产品支持情况
 
@@ -31,16 +31,14 @@
 ## 函数原型
 
  ```cpp
-   __aicore__ inline void asc_enable_hf32_trans(uint32_t mode)
+__aicore__ inline void asc_set_hf32_round_mode(asc_hf32_round_mode hf32_round_mode)
 ```
 
 ## 参数说明
 
-**表1** 参数说明
-
 | 参数名 | 输入/输出 | 描述 |
 |:-------|:----------|:------|
-| mode | 输入 | HF32取整模式控制入参，uint32_t类型，支持如下2种取值：<br>0：FP32将以最接近偶数的方式四舍五入为HF32。<br>1：FP32将以向零靠近的方式四舍五入为HF32。 |
+| hf32_round_mode | 输入 | HF32舍入模式控制入参，[asc_hf32_round_mode](../enum/asc_hf32_round_mode.md)枚举类型，支持如下2种枚举值：<br>&nbsp;&nbsp;&bull; NEAREST_ZERO：FP32将以向零靠近的方式四舍五入为HF32。<br>&nbsp;&nbsp;&bull; NEAREST_EVEN：FP32将以最接近偶数的方式四舍五入为HF32。 |
 
 ## 返回值说明
 
@@ -52,11 +50,14 @@ PIPE_S
 
 ## 约束说明
 
-mode仅支持如下2种取值：<br>0：FP32将以最接近偶数的方式四舍五入为HF32。<br>1：FP32将以向零靠近的方式四舍五入为HF32。
+hf32_round_mode仅支持如下2种枚举值：
+
+- asc_hf32_round_mode::NEAREST_ZERO
+- asc_hf32_round_mode::NEAREST_EVEN
 
 ## 调用示例
 
 ```cpp
-uint32_t mode = 0;
-asc_enable_hf32_trans(mode);
+asc_hf32_round_mode hf32_round_mode = asc_hf32_round_mode::NEAREST_EVEN;
+asc_set_hf32_round_mode(hf32_round_mode);
 ```

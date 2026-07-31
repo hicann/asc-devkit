@@ -28,6 +28,7 @@ static void test_host_c_api_cube_compute_0()
     using ::asc_mmad_sparse_sync;
     using ::asc_mmad_sync;
     using ::asc_set_fp32_mode;
+    using ::asc_set_hf32_round_mode;
     using ::asc_set_l0c2gm_config;
     using ::asc_set_l0c2gm_nz2nd;
     using ::asc_set_mmad_direction_m;
