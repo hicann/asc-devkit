@@ -24,9 +24,9 @@
 
 ## 功能说明
 
-设置稀疏矩阵[稠密化过程](../../../基础API/矩阵计算（ISASI）/Mmad计算/MmadWithSparse.md#section19443175724215)生成的索引矩阵。
+设置稀疏矩阵[稠密化过程](../../../基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md#section19443175724215)生成的索引矩阵。
 
-索引矩阵在稠密化中的作用请参考[MmadWithSparse](../../../基础API/矩阵计算（ISASI）/Mmad计算/MmadWithSparse.md#section618mcpsimp)。
+索引矩阵在稠密化中的作用请参考[MmadWithSparse](../../../基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md#section618mcpsimp)。
 
 ## 函数原型
 

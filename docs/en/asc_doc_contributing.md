@@ -319,7 +319,7 @@ For Atlas A2/A3 series products:
 | half | half | float | float |
 | ... | ... | ... | ... |
 
-For Ascend 950PR/DT products:
+For Ascend 950PR/Ascend 950DT products:
 (Similar tables, including fp8/hifloat8 and other unique types)
 ```
 

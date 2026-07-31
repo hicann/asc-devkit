@@ -1,18 +1,18 @@
 # Reg数据搬入<a name="ZH-CN_TOPIC_0000002000000002"></a>
 
--   **[连续对齐搬入（LoadAlign）](连续对齐搬入（LoadAlign）.md)**  
+-   **[连续对齐搬入（LoadAlign）](LoadAlign_continuous.md)**  
 
--   **[非连续对齐搬入（LoadAlign）](非连续对齐搬入（LoadAlign）.md)**  
+-   **[非连续对齐搬入（LoadAlign）](LoadAlign_noncontinuous.md)**  
 
--   **[连续非对齐搬入（LoadUnAlign）](连续非对齐搬入（LoadUnAlign）.md)**  
+-   **[连续非对齐搬入（LoadUnAlign）](LoadUnAlign_continuous.md)**  
 
--   **[MaskReg搬入（LoadAlign）](MaskReg搬入（LoadAlign）.md)**  
+-   **[MaskReg搬入（LoadAlign）](LoadAlign_MaskReg.md)**  
 
--   **[MaskReg搬入（MaskGenWithRegTensor）](MaskReg搬入（MaskGenWithRegTensor）.md)**  
+-   **[MaskReg搬入（MaskGenWithRegTensor）](MaskGenWithRegTensor_MaskReg.md)**  
 
--   **[离散搬入（Gather）](离散搬入（Gather）.md)**  
+-   **[离散搬入（Gather）](Gather_discrete.md)**  
 
--   **[离散搬入（GatherB）](离散搬入（GatherB）.md)**  
+-   **[离散搬入（GatherB）](GatherB_discrete.md)**  
 
 -   **[Load](Load.md)**  
 

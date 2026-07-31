@@ -19,7 +19,7 @@ Memory矢量计算接口在边界值输入下，有两类输出结果：
 
 - 饱和模式
 
-    通过接口[SetSaturationFlag](../SIMD-API/基础API/特殊寄存器访问/SetSaturationFlag(ISASI).md)进行设置，饱和模式下：inf和-inf会被饱和为MAX和MIN进行输出，nan会被饱和为0进行输出。
+    通过接口[SetSaturationFlag](../SIMD-API/基础API/特殊寄存器访问/SetSaturationFlag_ISASI.md)进行设置，饱和模式下：inf和-inf会被饱和为MAX和MIN进行输出，nan会被饱和为0进行输出。
 
 注：
 

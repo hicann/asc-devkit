@@ -37,7 +37,7 @@
 完成资源的释放与eventId等变量的初始化操作，恢复到TPipe的初始化状态。
 
 <!-- npu="950" id10 -->
-针对Ascend 950PR/Ascend 950DT，调用该接口后，CTRL\[48\]保持原值，CTRL\[60\]复位为1。CTRL寄存器比特位说明请见[SetCtrlSpr](../../特殊寄存器访问/SetCtrlSpr(ISASI).md)。
+针对Ascend 950PR/Ascend 950DT，调用该接口后，CTRL\[48\]保持原值，CTRL\[60\]复位为1。CTRL寄存器比特位说明请见[SetCtrlSpr](../../特殊寄存器访问/SetCtrlSpr_ISASI.md)。
 <!-- end id10 -->
 
 ## 函数原型<a name="section620mcpsimp"></a>

@@ -35,7 +35,7 @@ This sample demonstrates data movement from UB (Unified Buffer) to L1 (L1 Buffer
   | Contiguous Copy | 1 | `DataCopy(dst, src, DataCopyParams)` | NZ | Data content remains unchanged from UB to L1; input must be pre-converted to NZ format |
   | On-the-fly ND2NZ Copy | 2 | `DataCopy(ubDst, ubSrc, DataCopyParams)` + `DataCopy(l1Dst, ubNZ, DataCopyParams)` | ND | First perform ND→NZ conversion in UB by copying each C0 column block, then copy contiguously to L1 |
 
-  For API reference, see [UBToL1 Contiguous Data Copy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（UBToL1连续数据搬运）.md) and [UBToL1 On-the-fly ND2NZ Copy](../../../../../docs/zh/api/SIMD-API/基础API/矩阵计算（ISASI）/矩阵计算的搬入/DataCopy（UBToL1随路转换-ND2NZ搬运）.md).
+  For API reference, see [UBToL1 Contiguous Data Copy](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_continuous.md) and [UBToL1 On-the-fly ND2NZ Copy](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_ND2NZ.md).
 
 - Notes on Scenario 2 Implementation:
 

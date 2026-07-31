@@ -36,7 +36,7 @@ Global Memory（GM）与Unified Buffer（UB）之间的数据搬运提供了多�
     - CO2 -> GM（仅Atlas 推理系列产品AI Core支持）
     <!-- end id1 -->
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM与UB连续数据搬运）](../Memory矢量计算/数据搬运/DataCopy（GM与UB连续数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM与UB连续数据搬运）](../Memory矢量计算/数据搬运/DataCopy_GMAndUB_continuous.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -70,7 +70,7 @@ src和dst分别为源操作数和目的操作数；count为连续搬运的元素
     - CO2 -> GM（仅Atlas 推理系列产品AI Core支持）
     <!-- end id2 -->
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM与UB高维切分数据搬运）](../Memory矢量计算/数据搬运/DataCopy（GM与UB高维切分数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM与UB高维切分数据搬运）](../Memory矢量计算/数据搬运/DataCopy_GMAndUB_highdim_split.md)。
 
 src和dst分别为源操作数和目的操作数；repeatParams为DataCopyParams类型的搬运参数，通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。
 
@@ -102,7 +102,7 @@ src和dst分别为源操作数和目的操作数；repeatParams为DataCopyParams
     - CO2 -> GM（仅Atlas 推理系列产品AI Core支持）
     <!-- end id3 -->
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM与UB切片数据搬运）](../Memory矢量计算/数据搬运/DataCopy（GM与UB切片数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM与UB切片数据搬运）](../Memory矢量计算/数据搬运/DataCopy_GMAndUB_slice.md)。
 
 src和dst分别为源操作数和目的操作数；dstSliceInfo和srcSliceInfo分别为目的和源操作数的切片信息，类型为SliceInfo；dimValue为操作数维度信息。
 
@@ -129,7 +129,7 @@ src和dst分别为源操作数和目的操作数；dstSliceInfo和srcSliceInfo�
 - Global Memory -> Unified Buffer
     - GM -> VECIN
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM -> UB随路转换ND2NZ搬运）](../Memory矢量计算/数据搬运/DataCopy（GMToUB随路转换ND2NZ搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM -> UB随路转换ND2NZ搬运）](../Memory矢量计算/数据搬运/DataCopy_GMToUB_ND2NZ.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为Nd2NzParams类型的搬运参数，配置ND到NZ格式转换信息。
 
@@ -161,7 +161,7 @@ src和dst分别为源操作数和目的操作数；intriParams为Nd2NzParams类�
     - CO2 -> GM（仅Atlas 推理系列产品AI Core支持）
     <!-- end id5 -->
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（UB->GM随路转换NZ2ND搬运）](../Memory矢量计算/数据搬运/DataCopy（UBToGM随路转换NZ2ND搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（UB->GM随路转换NZ2ND搬运）](../Memory矢量计算/数据搬运/DataCopy_UBToGM_NZ2ND.md)。
 
 src和dst分别为源操作数和目的操作数；intriParams为Nz2NdParamsFull类型的搬运参数，配置NZ到ND格式转换信息。
 
@@ -179,7 +179,7 @@ __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<T>
 - Global Memory -> Unified Buffer
     - GM -> VECIN
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM -> UB多维数据搬运NDDMA）](../Memory矢量计算/数据搬运/DataCopy（GMToUB多维数据搬运NDDMA）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（GM -> UB多维数据搬运NDDMA）](../Memory矢量计算/数据搬运/DataCopy_GMToUB_NDDMA.md)。
 
 src和dst分别为源操作数和目的操作数；params为NdDmaParams类型的搬运参数，配置多维度搬运信息。
 
@@ -213,7 +213,7 @@ src和dst分别为源操作数和目的操作数；params为NdDmaParams类型的
     - GM -> VECCALC（仅Ascend 950PR/Ascend 950DT支持）
     <!-- end id7 -->
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopyPad（GM -> UB非对齐数据搬运）](../Memory矢量计算/数据搬运/DataCopyPad（GMToUB非对齐数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopyPad（GM -> UB非对齐数据搬运）](../Memory矢量计算/数据搬运/DataCopyPad_GMToUB.md)。
 
 src和dst分别为源操作数和目的操作数；dataCopyParams为DataCopyExtParams类型的搬运参数；padParams为DataCopyPadExtParams类型的填充控制参数。
 
@@ -245,7 +245,7 @@ src和dst分别为源操作数和目的操作数；dataCopyParams为DataCopyExtP
     - VECIN -> GM
     - VECOUT -> GM
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopyPad（UB -> GM非对齐数据搬运）](../Memory矢量计算/数据搬运/DataCopyPad（UBToGM非对齐数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopyPad（UB -> GM非对齐数据搬运）](../Memory矢量计算/数据搬运/DataCopyPad_UBToGM.md)。
 
 src和dst分别为源操作数和目的操作数；dataCopyParams为DataCopyExtParams类型的搬运参数。
 

@@ -110,7 +110,7 @@
 
 【场景16：使用交织指令进行两维ND2NZ转置】
 
-支持在UB上使用[交织指令](../../基础API/Memory矢量计算/数据重排（ISASI）/Interleave.md)对二维ND Tensor转置为NZ。
+支持在UB上使用[交织指令](../../基础API/Memory矢量计算/data_rearrange_ISASI/Interleave.md)对二维ND Tensor转置为NZ。
 
 **图11**  场景16使用交织指令的ND2NZ转置  
 ![](../../../figures/场景16使用交织指令的ND2NZ转置.png "场景16使用交织指令的ND2NZ转置")

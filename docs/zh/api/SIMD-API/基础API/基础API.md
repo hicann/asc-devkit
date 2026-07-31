@@ -8,9 +8,9 @@
 
 - **[数据搬运导览](数据搬运导览/数据搬运导览.md)**  
 
-- **[矩阵计算（ISASI）](矩阵计算（ISASI）/矩阵计算（ISASI）.md)**  
+- **[矩阵计算（ISASI）](cube_compute_ISASI/cube_compute_ISASI.md)**  
 
-- **[矩阵计算（Tensor API）](矩阵计算（TensorAPI）/矩阵计算（TensorAPI）.md)** 
+- **[矩阵计算（Tensor API）](cube_compute_TensorAPI/cube_compute_TensorAPI.md)** 
 
 - **[Memory矢量计算](Memory矢量计算/Memory矢量计算.md)**  
 
@@ -30,7 +30,7 @@
 
 - **[工具接口](工具接口/工具接口.md)**  
 
-- **[Cube分组管理（ISASI）](Cube分组管理（ISASI）/Cube分组管理（ISASI）.md)**  
+- **[Cube分组管理（ISASI）](cube_group_mgmt_ISASI/cube_group_mgmt_ISASI.md)**  
 
 - **[Kernel Tiling](Kernel-Tiling/Kernel-Tiling.md)**  
 

@@ -121,7 +121,7 @@ Kirin 9030，支持模式0、1、2。
             __aicore__ inline void Select(const LocalTensor<T>& dst, const LocalTensor<U>& selMask, const LocalTensor<T>& src0, T src1, SELMODE selMode, uint64_t mask, uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
             ```
 
-        - 不传入mask参数（需要和[SetVectorMask](../掩码操作/SetVectorMask.md)、[SetCmpMask\(ISASI\)](SetCmpMask(ISASI).md)配合使用）
+        - 不传入mask参数（需要和[SetVectorMask](../掩码操作/SetVectorMask.md)、[SetCmpMask\(ISASI\)](SetCmpMask_ISASI.md)配合使用）
 
             ```cpp
             template <typename T, typename U>
@@ -143,7 +143,7 @@ Kirin 9030，支持模式0、1、2。
             __aicore__ inline void Select(const LocalTensor<T>& dst, const LocalTensor<U>& selMask, const LocalTensor<T>& src0, const LocalTensor<T>& src1, SELMODE selMode, uint64_t mask, uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
             ```
 
-        - 不传入mask参数（需要和[SetVectorMask](../掩码操作/SetVectorMask.md)、[SetCmpMask\(ISASI\)](SetCmpMask(ISASI).md)配合使用）
+        - 不传入mask参数（需要和[SetVectorMask](../掩码操作/SetVectorMask.md)、[SetCmpMask\(ISASI\)](SetCmpMask_ISASI.md)配合使用）
 
             ```cpp
             template <typename T, SELMODE selMode>

@@ -30,7 +30,7 @@
 
 Reg矢量计算数据搬运接口，支持从UB非32字节对齐的源地址srcAddr搬运至RegTensor，搬运量为VL（256B）。连续搬运时，用户需手动更新srcAddr地址。
 
-该接口封装了[LoadUnAlignPre和LoadUnAlign](连续非对齐搬入（LoadUnAlign）.md)。
+该接口封装了[LoadUnAlignPre和LoadUnAlign](LoadUnAlign_continuous.md)。
 
 ## 函数原型<a name="section429122319217"></a>
 
