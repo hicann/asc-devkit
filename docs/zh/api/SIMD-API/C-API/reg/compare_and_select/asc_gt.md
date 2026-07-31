@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-gt（greater than），该接口用于对两个源操作数执行逐元素大于比较。当src0_i > src1_i时，目的操作数对应结果位为1，否则为0，每个元素的比较结果占一个bit。
+gt（greater than），该接口用于逐元素比较两个源操作数大小，将比较结果（$src0_i > src1_i$）写入目的操作数dst对应比特位，如果比较结果为真，则对应比特位为1，否则为0。
 
 计算公式如下：
 
@@ -52,14 +52,14 @@ __simd_callee__ inline void asc_gt(vector_bool& dst, vector_float src0, vector_f
 
 **表1** 参数说明
 
-| 参数名  | 输入/输出 | 描述                                                                   |
-|:-----| :--- |:---------------------------------------------------------------------|
-| dst  | 输出 | 目的操作数（掩码寄存器）。                                                        |
-| src0 | 输入 | 源操作数（矢量数据寄存器）。                                                       |
-| src1 | 输入 | 源操作数（矢量数据寄存器）。                                                            |
+| 参数名  | 输入/输出 | 描述 |
+|:-----| :--- |:-------|
+| dst  | 输出 | 目的操作数（掩码寄存器）。 |
+| src0 | 输入 | 源操作数（矢量数据寄存器）。 |
+| src1 | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -69,15 +69,24 @@ __simd_callee__ inline void asc_gt(vector_bool& dst, vector_float src0, vector_f
 
 - 通过mask参数控制的未选中元素在目的操作数中被置零。
 - 操作数重叠约束：src0和src1可以是同一个矢量数据寄存器。
+- 浮点数据类型比较，涉及`nan`时比较结果为0。
+- 当源操作数为浮点数据类型时，+0与-0视为相等。
 
 ## 调用示例
 
 ```cpp
-vector_bool dst;
-vector_half src0;
-vector_half src1;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src0, src0_addr); // src0_addr是外部输入的UB内存空间地址。
-asc_loadalign(src1, src1_addr); // src1_addr是外部输入的UB内存空间地址。
-asc_gt(dst, src0, src1, mask);
+__simd_vf__ inline void gt_vf(__ubuf__ uint16_t* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint16_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_half src0;
+    vector_half src1;
+    vector_bool dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+        asc_gt(dst, src0, src1, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_block_size);
+    }
+}
 ```

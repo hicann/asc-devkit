@@ -30,7 +30,7 @@
 
 如下图所示，在低位模式（BIN0）下，目的寄存器dst会统计源寄存器src中落在低位区间[0-127]的数据分布情况；在高位模式（BIN1）下，目的寄存器dst则会统计src中落在高位区间[128-255]的数据分布情况。dst中的第n个元素表示src中从0到n的所有数值在对应区间中出现的总频率。最终，统计结果会在目的寄存器原始数据的基础上进行累加。
 
-![累计统计](../../../../figures/reg_histograms_2.png)
+![累计统计](../../../../figures/asc_cumulative_histogram.png)
 
 ## 函数原型
 
@@ -51,7 +51,7 @@
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -65,9 +65,25 @@
 ## 调用示例
 
 ```cpp
-vector_uint16_t dst;
-vector_uint8_t src;
-vector_bool mask = asc_create_mask_b8(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_cumulative_histogram_bin0(dst, src, mask);
+__simd_vf__ inline void cumulative_histogram_vf(__ubuf__ uint16_t* dst_addr, __ubuf__ uint8_t* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_uint16_t dst0, dst1;  // dst0用于低位统计，dst1用于高位统计
+    vector_uint8_t src;
+    vector_bool mask_u8 = asc_create_mask_u8(PAT_ALL);
+    vector_bool mask_u16 = asc_create_mask_u16(PAT_ALL);
+    
+    // 初始化dst为0，从零开始统计频率
+    asc_duplicate_scalar(dst0, (uint16_t)0);
+    asc_duplicate_scalar(dst1, (uint16_t)0);
+
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_cumulative_histogram_bin0(dst0, src, mask_u8);
+        asc_cumulative_histogram_bin1(dst1, src, mask_u8);
+    }
+
+    // 此时dst0和dst1包含两批数据的累积统计结果
+    asc_storealign_postupdate(dst_addr, dst0, one_repeat_size, mask_u16);
+    asc_storealign_postupdate(dst_addr, dst1, one_repeat_size, mask_u16);
+}
 ```

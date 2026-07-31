@@ -28,9 +28,9 @@
 
 该接口可用于对矢量数据寄存器或掩码寄存器操作：
 
-- 对矢量数据寄存器操作：根据mask对源操作数src0，src1执行元素按位或操作，将结果写入目的操作数dst。
+- 对矢量数据寄存器操作：根据mask对源操作数src0、src1执行按位或（|）操作，将结果写入目的操作数dst。
 
-- 对掩码寄存器操作：根据mask对源操作数src0，src1的有效bit执行按位或运算，得到新的掩码寄存器。
+- 对掩码寄存器操作：根据mask对源操作数src0、src1的有效bit执行按位或（|）操作，将结果写入目的操作数dst。
 
 计算公式如下：
 
@@ -63,7 +63,7 @@ __simd_callee__ inline void asc_or(vector_float& dst, vector_float src0, vector_
 | src1 | 输入 | 源操作数（矢量数据寄存器或掩码寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器）。<br>&bull;源操作数为矢量数据寄存器时，对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。<br>&bull;源操作数为掩码寄存器时，指示在计算过程中哪些bit有效。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -76,11 +76,18 @@ __simd_callee__ inline void asc_or(vector_float& dst, vector_float src0, vector_
 ## 调用示例
 
 ```cpp
-vector_half src0;
-vector_half src1;
-vector_half dst;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src0, src0_addr);  // src0_addr是外部输入的UB内存空间地址
-asc_loadalign(src1, src1_addr);  // src1_addr是外部输入的UB内存空间地址
-asc_or(dst, src0, src1, mask);
+__simd_vf__ inline void or_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half dst;
+    vector_half src0;
+    vector_half src1;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src0, src0_addr + i * one_repeat_size);
+        asc_loadalign(src1, src1_addr + i * one_repeat_size);
+        asc_or(dst, src0, src1, mask);
+        asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
+    }
+}
 ```

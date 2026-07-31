@@ -54,7 +54,7 @@ __simd_callee__ inline void asc_neg(vector_float& dst, vector_float src, vector_
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[data_type_definition.md](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -67,9 +67,16 @@ __simd_callee__ inline void asc_neg(vector_float& dst, vector_float src, vector_
 ## 调用示例
 
 ```cpp
-vector_half dst;
-vector_half src;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_neg(dst, src, mask);
+__simd_vf__ inline void neg_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half dst;
+    vector_half src;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign(src, src_addr + i * one_repeat_size);
+        asc_neg(dst, src, mask);
+        asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
+    }
+}
 ```
