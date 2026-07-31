@@ -39,10 +39,12 @@ struct dim3 {
 };
 } // namespace cce
 
-inline cce::dim3 blockDim(1u, 1u, 1u);
-inline cce::dim3 blockIdx(0u, 0u, 0u);
-inline thread_local cce::dim3 threadIdx(0u, 0u, 0u);
-inline cce::dim3 gridDim(8u, 1u, 1u);
+using dim3 = cce::dim3;
+
+inline dim3 blockDim(1u, 1u, 1u);
+inline dim3 blockIdx(0u, 0u, 0u);
+inline thread_local dim3 threadIdx(0u, 0u, 0u);
+inline dim3 gridDim(8u, 1u, 1u);
 
 namespace AscendC {
 namespace Simt {
