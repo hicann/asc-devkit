@@ -57,5 +57,11 @@ PIPE_S
 
 ```cpp
 asc_l13d_fmatrix_config config;
+config.l1_height = 1;
+config.l1_width = 2;
+config.padding_left_size = 3;
+config.padding_right_size = 4;
+config.padding_top_size = 5;
+config.padding_bottom_size = 6;
 asc_set_l13d_fmatrix_b(config);
 ```

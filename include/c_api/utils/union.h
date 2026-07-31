@@ -77,8 +77,8 @@ union asc_ndim_pad_count_config {
 union asc_l13d_fmatrix_config {
     uint64_t config = ASC_DEFAULT_L13D_FMATRIX_CONFIG_VALUE;
     struct {
-        uint16_t l1_height;
         uint16_t l1_width;
+        uint16_t l1_height;
         uint8_t padding_left_size;
         uint8_t padding_right_size;
         uint8_t padding_top_size;

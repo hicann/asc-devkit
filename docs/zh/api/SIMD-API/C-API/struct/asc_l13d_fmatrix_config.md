@@ -9,8 +9,8 @@ constexpr uint64_t ASC_DEFAULT_L13D_FMATRIX_CONFIG_VALUE = 0;
 union asc_l13d_fmatrix_config {
     uint64_t config = ASC_DEFAULT_L13D_FMATRIX_CONFIG_VALUE;
     struct {
-        uint16_t l1_height;
         uint16_t l1_width;
+        uint16_t l1_height;
         uint8_t padding_left_size;
         uint8_t padding_right_size;
         uint8_t padding_top_size;
@@ -27,8 +27,8 @@ union asc_l13d_fmatrix_config {
 
 |字段名|字段含义|
 |----------|----------|
-| l1_height | Feature map的height，取值范围：[1, 32767]。 |
 | l1_width | Feature map的width，取值范围：[1, 32767]。 |
+| l1_height | Feature map的height，取值范围：[1, 32767]。 |
 | padding_left_size | 左侧填充的大小，取值范围：[0, 255]。 |
 | padding_right_size | 右侧填充的大小，取值范围：[0, 255]。 |
 | padding_top_size | 上侧填充的大小，取值范围：[0, 255]。 |
