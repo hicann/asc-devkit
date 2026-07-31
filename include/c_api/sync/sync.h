@@ -33,7 +33,15 @@
 
 #define asc_sync_pipe(pipe) asc_sync_pipe_impl(pipe)
 
+[[deprecated("NOTICE: asc_sync_vec() is deprecated. "
+             "Please use asc_sync() instead")]]
 __aicore__ inline void asc_sync_vec();
+
+/*
+ * @ingroup Sync
+ * @brief：Perform synchronization operations for the PIPE_V pipeline.
+ */
+__aicore__ inline void asc_sync_vec(int id);
 
 __aicore__ inline void asc_sync_mte3(int id);
 

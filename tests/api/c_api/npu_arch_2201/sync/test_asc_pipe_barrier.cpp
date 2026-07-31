@@ -21,12 +21,21 @@ protected:
 
 namespace {
 void pipe_barrier_Stub(pipe_t pipe) {}
+
+void pipe_barrier_v_Stub(pipe_t pipe) { EXPECT_EQ(pipe_t::PIPE_V, pipe); }
 } // namespace
 
 TEST_F(TestSyncVec, c_api_asc_sync_vec_Succ)
 {
     MOCKER_CPP(pipe_barrier, void(pipe_t)).times(1).will(invoke(pipe_barrier_Stub));
     asc_sync_vec();
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestSyncVec, c_api_asc_sync_vec_new_Succ)
+{
+    MOCKER_CPP(pipe_barrier, void(pipe_t)).times(1).will(invoke(pipe_barrier_v_Stub));
+    asc_sync_vec(0);
     GlobalMockObject::verify();
 }
 
