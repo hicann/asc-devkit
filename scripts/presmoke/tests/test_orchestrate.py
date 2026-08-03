@@ -27,15 +27,16 @@ class OrchestrateShellTest(unittest.TestCase):
             **os.environ,
             "PATH": f"{root / 'bin'}{os.pathsep}{os.environ.get('PATH', '')}",
             "REAL_PYTHON": shutil.which("python3") or "python3",
+            "NPU_CARD_DEV_GLOB": str(root / "dev/davinci[0-9]*"),
         }
         env.update(overrides)
         return env
 
     def copy_orchestrate_fixture(self, root: Path) -> Path:
         project_root = Path(__file__).resolve().parents[3]
-        script = root / "scripts/run_presmoke_v2.sh"
+        script = root / "scripts/run_presmoke.sh"
         script.parent.mkdir(parents=True)
-        shutil.copy(project_root / "scripts/run_presmoke_v2.sh", script)
+        shutil.copy(project_root / "scripts/run_presmoke.sh", script)
         script.chmod(0o755)
 
         presmoke_pkg = root / "scripts/presmoke"
