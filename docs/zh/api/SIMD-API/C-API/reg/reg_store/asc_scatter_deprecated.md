@@ -55,7 +55,7 @@ __simd_callee__ inline void asc_scatter(vector_float& src, __ubuf__ float* dst, 
 | index | 输入 | 数据索引（矢量数据寄存器）。                                                          |
 | mask  | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。 |
 
-掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)
+掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

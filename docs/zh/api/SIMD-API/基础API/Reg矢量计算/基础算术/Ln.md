@@ -30,7 +30,9 @@
 
 该接口根据mask逐元素对源操作数求自然对数，将结果写入目的操作数。计算公式如下：
 
-$$dstReg_i = \ln(srcReg_i)$$
+$$
+dstReg_i = \ln(srcReg_i)
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

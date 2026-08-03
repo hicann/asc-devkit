@@ -182,9 +182,15 @@
 - burstLen，仅在dimValue = 1时生效，超出1维的情况下，必须配置为1，不支持配置成其他值。
 - 切片数据搬运中的横向burstLen大小设置，需要用户自己通过计算：横向切片元素个数\* sizeof\(T\)/32字节。横向切片元素个数\* sizeof\(T\)的大小必须是32字节的倍数。
 - SliceInfo结构体的成员变量startIndex、endIndex、stride、burstLen的取值须满足：
-$$endIndex - startIndex + 1 = (N - 1) \times stride + N \times burstLen \times \frac{32}{sizeof(T)}, \quad N \in正整数$$
+
+$$
+endIndex - startIndex + 1 = (N - 1) \times stride + N \times burstLen \times \frac{32}{sizeof(T)}, \quad N \in正整数
+$$
 - SliceInfo结构体的成员变量startIndex、endIndex、shapeValue的取值须满足：
-$$startIndex < endIndex \le shapeValue$$
+
+$$
+startIndex < endIndex \le shapeValue
+$$
 - 切片数据搬运中的SliceInfo结构体数组大小和dimValue需要保持一致，并且不超过8。
 - 切片数据搬运中的srcSliceInfo结构体数组大小的和dstSliceInfo的结构体数组大小需要保持一致，两者的结构体中的burstLen需要相等（srcSliceInfo\[i\].burstLen = dstSliceInfo\[i\].burstLen）。
 - 切片数据搬运对参数有一定要求，建议使用者参考调用示例，并在CPU上仿真结果无误后，再到NPU侧执行。

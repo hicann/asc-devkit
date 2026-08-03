@@ -30,7 +30,9 @@
 
 该接口根据mask，对源操作数srcReg按元素与标量scalarValue进行求和操作，将结果写入目的操作数dstReg。计算公式如下：
 
-$$dstReg_i = srcReg_i + scalarValue$$
+$$
+dstReg_i = srcReg_i + scalarValue
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

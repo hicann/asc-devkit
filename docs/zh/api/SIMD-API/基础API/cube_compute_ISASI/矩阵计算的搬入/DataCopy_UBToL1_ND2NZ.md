@@ -115,7 +115,9 @@ ND2NZ转换示意图如下，样例中参数设置值和解释说明如下：
 - 本接口通过软件仿真实现，首先会进行数据分形的转换，然后再通过搬运指令进行数据的搬运。
 - 本接口内部会申请一块临时的UB空间用于数据分形的转换，开发者无需申请，但是需要预留临时空间的大小，空间大小计算公式如下（单位为字节）：
 
-$$((dValue \times sizeof(T) / 32 - 1) \times dstNzC0Stride + (nValue - 1) \times dstNzNStride + 1) \times 32$$
+$$
+((dValue \times sizeof(T) / 32 - 1) \times dstNzC0Stride + (nValue - 1) \times dstNzNStride + 1) \times 32
+$$
 
 - 本接口仅支持配置ndNum为1。
 - 位于Unified Buffer的源地址必须32字节对齐，位于L1 Buffer的目的地址必须32字节对齐。

@@ -30,7 +30,9 @@
 
 该接口根据mask，对源操作数srcReg0、srcReg1进行按元素求和操作，将结果写入目的操作数dstReg，计算公式如下：
 
-$$dstReg_i = srcReg0_i + srcReg1_i$$
+$$
+dstReg_i = srcReg0_i + srcReg1_i
+$$
 
 同时可以在carry（MaskReg寄存器）中标记每次加法是否产生进位，若srcReg0，srcReg1输入按位相加后最高位有进位，在MaskReg carry中对应位置每4bit的最低位写1，否则写0。
 

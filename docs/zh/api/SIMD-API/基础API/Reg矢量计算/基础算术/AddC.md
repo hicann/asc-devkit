@@ -30,7 +30,9 @@
 
 该接口根据mask，对源操作数srcReg0、srcReg1及输入进位carrySrc进行按元素求和操作，将结果写入目的操作数dstReg，同时将每个元素的进位结果写入carry。计算公式如下：
 
-$$\{carry_i, dstReg_i\} = srcReg0_i + srcReg1_i + carrySrc_i$$
+$$
+\{carry_i, dstReg_i\} = srcReg0_i + srcReg1_i + carrySrc_i
+$$
 
 Carry flag（进位标志）用于表示加法进位或者减法无借位，若srcReg0，srcReg1，carrySrc输入按位相加后最高位有进位，在carry（存放进位的MaskReg寄存器）中对应位置每4bit设置1，否则写0。
 

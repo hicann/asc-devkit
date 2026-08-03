@@ -30,7 +30,9 @@
 
 该接口根据mask，对源操作数srcReg进行按元素指数操作，将结果写入目的操作数dstReg。计算公式如下：
 
-$$dstReg_i = e^{srcReg_i}$$
+$$
+dstReg_i = e^{srcReg_i}
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

@@ -32,13 +32,17 @@
 
     对srcReg中的有效元素逐个取绝对值，并将结果写入dstReg对应位置，计算公式如下：
 
-    $$dstReg_i = |srcReg_i|$$
+    $$
+    dstReg_i = |srcReg_i|
+    $$
 
 - 对复数类型
 
     对srcReg中有效元素逐个取模，并将结果写入dstReg对应位置，计算公式如下：
 
-    $$dstReg_i = |srcReg_i| = (\alpha^2 + \beta^2)^{1/2}$$
+    $$
+    dstReg_i = |srcReg_i| = (\alpha^2 + \beta^2)^{1/2}
+    $$
 
     其中$srcReg_i = \alpha + \beta i$，α为复数的实部，β为复数的虚部。
 

@@ -32,7 +32,9 @@
 
 计算公式如下：
 
-$$dstReg_i = \log_2(srcReg_i)$$
+$$
+dstReg_i = \log_2(srcReg_i)
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

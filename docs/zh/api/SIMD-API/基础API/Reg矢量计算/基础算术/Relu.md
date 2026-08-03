@@ -30,7 +30,9 @@
 
 该接口根据mask对输入数据srcReg进行Relu（线性整流）操作，将结果写入dstReg，计算公式如下：
 
-$$dstReg_i = \max(0, srcReg_i)$$
+$$
+dstReg_i = \max(0, srcReg_i)
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
