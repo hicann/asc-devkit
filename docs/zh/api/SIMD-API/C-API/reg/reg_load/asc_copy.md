@@ -63,7 +63,7 @@
     __simd_callee__ inline void asc_copy(vector_bool& dst, vector_bool src)
     ```
 
-- 矢量数据寄存器复制到掩码寄存器
+- 矢量数据寄存器复制到掩码寄存器（**part的值必须在编译期确定，可传入整数字面量或constexpr整数常量，不支持传入运行时变量。**）
 
     ```cpp
     __simd_callee__ inline void asc_copy(vector_bool& dst, vector_uint16_t src, int16_t part)
@@ -106,7 +106,9 @@
 
 - 针对矢量数据寄存器复制到矢量数据寄存器：dst中未被mask筛选的位置保持原值。
 - 针对掩码寄存器复制到掩码寄存器：带mask的接口dst中未被mask筛选的位置填0。
-- 针对矢量寄存器复制到掩码寄存器：当数据类型为uint16_t，part∈[0, 15]，当数据类型为uint32_t，part∈[0, 31]。
+- 针对矢量寄存器复制到掩码寄存器：**part的值必须在编译期确定，可传入整数字面量或constexpr整数常量，不支持传入运行时变量。**
+    - 当数据类型为uint16_t，part∈[0, 15]；
+    - 当数据类型为uint32_t，part∈[0, 31]。
 
 ## 关键特性说明
 
