@@ -1,6 +1,6 @@
-# SyncAll<a name="ZH-CN_TOPIC_0000001538296817"></a>
+# SyncAll<a id="ZH-CN_TOPIC_0000001538296817"></a>
 
-## 产品支持情况<a name="section1550532418810"></a>
+## 产品支持情况<a id="section1550532418810"></a>
 
 ### 软同步原型
 
@@ -92,7 +92,7 @@
 - Kirin 9030：不支持
 <!-- end id27 -->
 
-## 功能说明<a name="section618mcpsimp"></a>
+## 功能说明<a id="section618mcpsimp"></a>
 
 头文件路径为：`"basic_api/kernel_operator_block_sync_intf.h"`。
 
@@ -108,7 +108,7 @@ SyncAll是核间同步控制接口，根据不同的函数原型介绍其功能�
 
 在纯Vector算子场景中，若所有AIV核默认参与同步，推荐采用性能更优的硬件同步接口；若需指定部分AIV核参与同步，则应使用软件同步接口，并通过入参usedCores完成配置。
 
-## 函数原型<a name="section620mcpsimp"></a>
+## 函数原型<a id="section620mcpsimp"></a>
 
 - 软同步
 
@@ -132,7 +132,7 @@ SyncAll是核间同步控制接口，根据不同的函数原型介绍其功能�
         __aicore__ inline void SyncAll()
         ```
 
-## 参数说明<a name="section622mcpsimp"></a>
+## 参数说明<a id="section622mcpsimp"></a>
 
 **表1**  模板参数说明
 
@@ -149,11 +149,11 @@ SyncAll是核间同步控制接口，根据不同的函数原型介绍其功能�
 | ubWorkspace | 输入 | ubWorkspace为用户定义的局部空间，每个核单独自用，用于标记当前核的状态。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN、VECCALC、VECOUT，支持的数据类型为int32_t。<br>所需空间大小参见[约束说明](#section633mcpsimp)。<br>硬同步接口不支持该参数。 |
 | usedCores | 输入 | 指定多少个核之间的同步，传入数值不能超过算子调用时指定的逻辑numBlocks。此参数为默认参数，不传此参数表示全核软同步。<br>仅在软同步接口中支持，硬同步接口不支持该参数。 |
 
-## 返回值说明<a name="section91032023123812"></a>
+## 返回值说明<a id="section91032023123812"></a>
 
 无
 
-## 约束说明<a name="section633mcpsimp"></a>
+## 约束说明<a id="section633mcpsimp"></a>
 
 SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也有所区别。
 
@@ -178,12 +178,34 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
         - ≥2个并发算子使用了核间同步功能。
 
         具体而言，在多流场景下，某条流的核间同步算子虽分配到n个物理核，但可能仅有n-m个核先被调度执行，而其余m个核因被其他流的核间同步算子抢占而尚未启动。先启动的n-m个核执行到核间同步时等待剩余m核完成，而剩余m核因被其他流的核间同步算子占用而无法释放，形成死锁。
-        Kernel直调场景下通过[\_\_schedmode\_\_\(mode\)](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)限定符来设置batchmode模式；工程化算子开发场景下，通过TilingContext的SetScheduleMode接口来设置batchmode模式，具体请参考《[基础数据结构和接口](https://gitcode.com/cann/metadef/blob/master/docs/api/README.md)》。
-    - SyncAll硬件同步接口内部实现中使用了[CrossCoreSetFlag](CrossCoreSetFlag_ISASI.md)进行核间同步控制，所以不建议开发者同时使用CrossCoreSetFlag和SyncAll硬件同步接口，否则会有flagID冲突的风险。SyncAll硬件同步接口flagId占用范围为[11-14]。
+        Kernel直调场景下通过[\_\_schedmode\_\_\(mode\)](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)限定符来设置batchmode模式；工程化算子开发场景下，通过TilingContext的SetScheduleMode接口来设置batchmode模式，具体请参考[《基础数据结构和接口》](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/API/basicdataapi/atlasopapi_07_00001.html)。
+<a id="syncall_flagId冲突说明"></a>
+    - SyncAll硬件同步接口内部实现中使用了[CrossCoreSetFlag](CrossCoreSetFlag_ISASI.md)和[CrossCoreWaitFlag](CrossCoreWaitFlag_ISASI.md)进行核间同步控制，因此开发者同时使用CrossCoreSetFlag（或CrossCoreWaitFlag）和SyncAll硬件同步接口时，需注意避免以下[flagId](CrossCoreSetFlag_ISASI.md#flagId取值范围说明)冲突：
+        <!-- npu="950" id28 -->
+        - 针对[NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)，SyncAll硬件同步接口的flagId占用情况如表3所示：
+
+            **表3**  SyncAll硬件同步接口flagId占用情况
+
+            | SyncAll 使用场景 | 占用flagId汇总 | 各计算核flagId占用情况 |
+            | :--- | :--- | :--- |
+            | isAIVOnly=true | 14 | AIV：14 |
+            | isAIVOnly=false（核函数使用`__mix__(1, 1)`修饰时） | 11、12、13 | AIC：11、12、13；AIV：12、13 |
+            | isAIVOnly=false（核函数使用`__mix__(1, 2)`修饰时） | 11、12、13、28、29 | AIC：11、12、13、28、29；AIV：12、13 |
+        <!-- end id28 -->
+        <!-- npu="A3,910b" id29 -->
+        - 针对[NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)，SyncAll硬件同步接口的flagId占用情况如表4所示：
+
+            **表4**  SyncAll硬件同步接口flagId占用情况
+
+            | SyncAll 使用场景 | 占用flagId汇总 | 各计算核flagId占用情况 |
+            | :--- | :--- | :--- |
+            | isAIVOnly=true | 14 | AIV：14 |
+            | isAIVOnly=false | 11、12、13 | AIC：11、12、13；AIV：12、13 |
+        <!-- end id29 -->
 
 - 硬件同步接口和软件同步接口公共约束：使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致Kernel“卡死”现象。
 
-## 调用示例<a name="section642mcpsimp"></a>
+## 调用示例<a id="section642mcpsimp"></a>
 
 本示例实现功能为使用8个核进行数据处理，每个核均是处理32个float类型数据，对该数据乘2后再与其他核上进行同样乘2的数据进行相加，中间结果保存到workGm，因此多个核之间需要进行数据同步。此样例中，使用软同步，入口函数传入的syncGm里的值都已经在host侧初始化为0。若以下用例改成使用硬同步，则不需要传入syncGm，并且不需要使用workQueue。
 
