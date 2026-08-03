@@ -56,8 +56,8 @@ private:
 
         uint16_t blockCount = GetTotalColumnShape(srcLayout);
         uint32_t blockLen = GetTotalRowShape(srcLayout) * sizeof(SrcType);
-        int64_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) * sizeof(SrcType);
-        int64_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout) * sizeof(DstType);
+        int64_t srcStride = GetColumnStride(srcLayout) * sizeof(SrcType);
+        int64_t dstStride = GetColumnStride(dstLayout) * sizeof(DstType);
 
         EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
     }

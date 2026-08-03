@@ -47,7 +47,7 @@ private:
             return;
         }
 
-        asc_copy_ub2ub(dst, src, blockCount, blockLen, srcStride, dstStride);
+        asc_copy_ub2ub((__ubuf__ void*)dst, (__ubuf__ void*)src, blockCount, blockLen, srcStride, dstStride);
     }
 };
 

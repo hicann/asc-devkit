@@ -25,6 +25,7 @@ namespace AscendC {
 namespace Te {
 
 struct CopyGM2UB;
+struct CopyGM2UBWith;
 struct CopyUB2L1;
 struct CopyUB2GM;
 struct CopyUB2UB;

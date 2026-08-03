@@ -30,9 +30,9 @@ namespace Te {
 class CopyGmToUbufAlignV2ND : private CopyGmToUbufAlignV2Common {
 public:
     template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    __aicore__ inline static void Run(const T& dst, const U& src, const CopyGM2UBParams& params)
     {
-        DataCopyImpl<trait, T, U>(dst, src);
+        DataCopyImpl<trait, T, U>(dst, src, params);
     }
 
 private:
@@ -44,7 +44,7 @@ private:
     }
 
     template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src, const CopyGM2UBParams& params)
     {
         using SrcType = typename U::elementType;
         using DstType = typename T::elementType;
@@ -56,10 +56,10 @@ private:
 
         uint16_t blockCount = GetTotalRowShape(srcLayout);
         uint32_t blockLen = GetTotalColumnShape(srcLayout) * sizeof(SrcType);
-        int64_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout) * sizeof(SrcType);
-        int64_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout) * sizeof(DstType);
+        int64_t srcStride = GetRowStride(srcLayout) * sizeof(SrcType);
+        int64_t dstStride = GetRowStride(dstLayout) * sizeof(DstType);
 
-        EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride, params);
     }
 };
 

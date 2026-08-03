@@ -58,8 +58,8 @@ private:
         uint32_t blockLen =
             Std::min(GetTotalColumnShape(srcLayout) * sizeof(SrcType),
                      GetTotalColumnShape(dstLayout) * sizeof(DstType));
-        int64_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout) * sizeof(SrcType);
-        int64_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout) * sizeof(DstType);
+        int64_t srcStride = GetRowStride(srcLayout) * sizeof(SrcType);
+        int64_t dstStride = GetRowStride(dstLayout) * sizeof(DstType);
 
         EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
     }

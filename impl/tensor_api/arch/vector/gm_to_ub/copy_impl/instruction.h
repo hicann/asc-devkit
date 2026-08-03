@@ -56,15 +56,15 @@ private:
     template <typename T>
     __aicore__ inline static void
     CopyGmToUbufAlignV2(__ubuf__ T* dst, __gm__ T* src, const uint16_t blockCount, const uint32_t blockLen,
-                        const uint8_t leftPaddingCount, const uint8_t rightPaddingCount, const int64_t srcStride,
-                        const int64_t dstStride, const uint8_t cacheMode = 0, const bool isPad = true)
+                        const uint8_t leftPaddingCount, const uint8_t rightPaddingCount, const bool enableConstantPad,
+                        const asc_load_l2_cache_mode cacheMode, const int64_t srcStride, const int64_t dstStride)
     {
         if ASCEND_IS_AIC {
             return;
         }
 
-        asc_copy_gm2ub_align(dst, src, blockCount, blockLen, leftPaddingCount, rightPaddingCount, isPad,
-                                    cacheMode, srcStride, dstStride);
+        asc_copy_gm2ub_align(dst, src, blockCount, blockLen, leftPaddingCount, rightPaddingCount, enableConstantPad,
+                             cacheMode, srcStride, dstStride);
     }
 };
 

@@ -48,7 +48,17 @@ struct CopyGM2UBRouting<Version, NDExtLayoutPtn, NDExtLayoutPtn> {
 };
 
 template <uint32_t Version>
+struct CopyGM2UBRouting<Version, NDLayoutPtn, NDLayoutPtn> {
+    using type = CopyGmToUbufAlignV2ND;
+};
+
+template <uint32_t Version>
 struct CopyGM2UBRouting<Version, DNExtLayoutPtn, DNExtLayoutPtn> {
+    using type = CopyGmToUbufAlignV2DN;
+};
+
+template <uint32_t Version>
+struct CopyGM2UBRouting<Version, DNLayoutPtn, DNLayoutPtn> {
     using type = CopyGmToUbufAlignV2DN;
 };
 

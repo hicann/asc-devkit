@@ -23,6 +23,7 @@
 #define IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_DATA_COPY_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
+#include "impl/tensor_api/arch/vector/utils/copy_utils.h"
 #include "impl/tensor_api/arch/vector/gm_to_ub/copy_impl/instruction.h"
 
 namespace AscendC {
@@ -34,25 +35,17 @@ class CopyGmToUbufAlignV2Common {
 protected:
     template <typename T, typename U>
     __aicore__ inline static void EmitCopy(const T& dst, const U& src, uint16_t blockCount, uint32_t blockLen,
-                                           int64_t srcStride, int64_t dstStride)
+                                           int64_t srcStride, int64_t dstStride, const CopyGM2UBParams& params)
     {
         using SrcType = typename U::elementType;
         using DstType = typename T::elementType;
 
-        if constexpr (IsB4Type<SrcType>) {
-            blockLen = blockLen >> 1;
-            srcStride = srcStride >> 1;
-        }
+        AdjustB4CopyParams<SrcType, DstType>(blockLen, srcStride, dstStride);
 
-        if constexpr (IsB4Type<DstType>) {
-            dstStride = dstStride >> 1;
-        }
-
-        constexpr uint8_t leftPaddingCnt = 0;
-        constexpr uint8_t rightPaddingCnt = 0;
-        uint8_t cacheMode = src.Engine().GetCacheMode();
-        CopyGmToUbufAlignV2Instr::DataCopy(dst, src, blockCount, blockLen, leftPaddingCnt, rightPaddingCnt, srcStride,
-                                           dstStride, cacheMode);
+        auto cacheMode = static_cast<asc_load_l2_cache_mode>(src.Engine().GetCacheMode());
+        CopyGmToUbufAlignV2Instr::DataCopy(dst, src, blockCount, blockLen, params.leftPaddingCount,
+                                           params.rightPaddingCount, params.enableConstantPad, cacheMode, srcStride,
+                                           dstStride);
     }
 };
 

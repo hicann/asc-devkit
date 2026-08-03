@@ -30,10 +30,24 @@ namespace AscendC {
 namespace Te {
 
 template <typename Traits>
-struct CopyTraits<CopyGM2UB, Traits> : public CopyTraits<CopyGM2UB, Traits, CopyGM2UB, Traits> {};
+struct CopyTraits<CopyGM2UB, Traits> : public CopyTraits<CopyGM2UB, Traits, CopyGM2UBWith, Traits> {};
 
 template <>
 struct CopyTraits<CopyGM2UB> : public CopyTraits<CopyGM2UB, CopyGM2UBTraitDefault> {};
+
+template <typename TraitStruct>
+struct CopyTraits<CopyGM2UBWith, TraitStruct> {
+    using TraitType = typename TraitStruct::TraitType;
+    static constexpr const TraitType defaultTrait = TraitStruct::value;
+
+    template <const TraitType& trait = defaultTrait, typename... Args>
+    __aicore__ inline void CopyUnpack(const Args&... args) const
+    {
+        CopyGM2UBWith::Copy<TraitType, trait, Args...>(args..., params);
+    }
+
+    CopyGM2UBParams params{};
+};
 
 } // namespace Te
 } // namespace AscendC

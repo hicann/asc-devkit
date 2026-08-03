@@ -35,19 +35,13 @@ struct CopyGM2UBTraitDefault {
     static constexpr const TraitType value = DEFAULT_COPY_GM_TO_UB_TRAIT;
 };
 
-struct CopyGM2UB {
-public:
-    template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void Copy(const Args&... args)
-    {
-        if ASCEND_IS_AIV {
-            DataCopyImpl<traits, Args...>(args...);
-        }
-    }
+constexpr CopyGM2UBParams DEFAULT_COPY_GM_TO_UB_PARAMS{};
 
-private:
+struct CopyGM2UBBase {
+public:
     template <const CopyGM2UBTrait& trait = DEFAULT_COPY_GM_TO_UB_TRAIT, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src,
+                                               const CopyGM2UBParams& params = DEFAULT_COPY_GM_TO_UB_PARAMS)
     {
         using dstTPos = GetMemLocation<T>;
         using srcTPos = GetMemLocation<U>;
@@ -55,12 +49,32 @@ private:
         static_assert(Std::is_same_v<srcTPos, Location::GM>, "When Copy tensor from GM to UB, src tensor must on GM");
         using DstLayoutPtn = GetLayoutPattern<typename T::layoutType>;
         using SrcLayoutPtn = GetLayoutPattern<typename U::layoutType>;
-        using CopyGM2UBImpl =
-            typename CopyGM2UBRouting<CURRENT_ARCH_VERSION, DstLayoutPtn, SrcLayoutPtn>::type;
-        CopyGM2UBImpl::template Run<trait, T, U>(dst, src);
+        using CopyGM2UBImpl = typename CopyGM2UBRouting<CURRENT_ARCH_VERSION, DstLayoutPtn, SrcLayoutPtn>::type;
+        CopyGM2UBImpl::template Run<trait, T, U>(dst, src, params);
     }
 };
 
+struct CopyGM2UB : public CopyGM2UBBase {
+public:
+    template <typename Tp, const Tp& traits, typename... Args>
+    __aicore__ inline static void Copy(const Args&... args)
+    {
+        if ASCEND_IS_AIV {
+            DataCopyImpl<traits>(args...);
+        }
+    }
+};
+
+struct CopyGM2UBWith : public CopyGM2UBBase {
+public:
+    template <typename Tp, const Tp& traits, typename... Args>
+    __aicore__ inline static void Copy(const Args&... args)
+    {
+        if ASCEND_IS_AIV {
+            DataCopyImpl<traits>(args...);
+        }
+    }
+};
 
 } // namespace Te
 } // namespace AscendC

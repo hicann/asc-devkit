@@ -56,14 +56,10 @@ private:
 
         uint16_t blockCount = GetTotalColumnShape(srcLayout);
         uint32_t blockLen = Std::ceil_division(GetTotalRowShape(srcLayout), C0_ELEMENT<SrcType>);
-        int64_t srcStride =
-            Std::ceil_division(GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) -
-                                   GetTotalRowShape(srcLayout),
-                               C0_ELEMENT<SrcType>);
-        int64_t dstStride =
-            Std::ceil_division(GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout) -
-                                   GetTotalRowShape(srcLayout),
-                               C0_ELEMENT<DstType>);
+        int64_t srcStride = Std::ceil_division(
+            GetColumnStride(srcLayout) - GetTotalRowShape(srcLayout), C0_ELEMENT<SrcType>);
+        int64_t dstStride = Std::ceil_division(
+            GetColumnStride(dstLayout) - GetTotalRowShape(srcLayout), C0_ELEMENT<DstType>);
 
         EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
     }

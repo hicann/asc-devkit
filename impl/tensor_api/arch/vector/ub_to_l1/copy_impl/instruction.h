@@ -44,7 +44,7 @@ public:
             return;
         }
 
-        asc_copy_ub2l1(dst, src, blockCount, blockLen, srcStride, dstStride);
+        asc_copy_ub2l1((__cbuf__ void*)dst, (__ubuf__ void*)src, blockCount, blockLen, srcStride, dstStride);
     }
 };
 

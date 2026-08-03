@@ -23,6 +23,7 @@
 #define IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_UB_COPY_IMPL_DATA_COPY_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
+#include "impl/tensor_api/arch/vector/utils/copy_utils.h"
 #include "impl/tensor_api/arch/vector/ub_to_ub/copy_impl/instruction.h"
 
 namespace AscendC {
@@ -39,14 +40,7 @@ protected:
         using SrcType = typename U::elementType;
         using DstType = typename T::elementType;
 
-        if constexpr (IsB4Type<SrcType>) {
-            blockLen = blockLen >> 1;
-            srcStride = srcStride >> 1;
-        }
-
-        if constexpr (IsB4Type<DstType>) {
-            dstStride = dstStride >> 1;
-        }
+        AdjustB4CopyParams<SrcType, DstType>(blockLen, srcStride, dstStride);
 
         // Convert from bytes to 32B units for asc_copy_ub2ub
         uint16_t blockLenIn32B = static_cast<uint16_t>(blockLen >> 5);

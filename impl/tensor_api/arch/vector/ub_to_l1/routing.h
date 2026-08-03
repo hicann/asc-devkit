@@ -48,7 +48,17 @@ struct CopyUB2L1Routing<Version, NDExtLayoutPtn, NDExtLayoutPtn> {
 };
 
 template <uint32_t Version>
+struct CopyUB2L1Routing<Version, NDLayoutPtn, NDLayoutPtn> {
+    using type = CopyUbufToCbufND;
+};
+
+template <uint32_t Version>
 struct CopyUB2L1Routing<Version, DNExtLayoutPtn, DNExtLayoutPtn> {
+    using type = CopyUbufToCbufDN;
+};
+
+template <uint32_t Version>
+struct CopyUB2L1Routing<Version, DNLayoutPtn, DNLayoutPtn> {
     using type = CopyUbufToCbufDN;
 };
 

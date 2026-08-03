@@ -9,6 +9,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <mockcpp/mockcpp.hpp>
 #include "c_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
@@ -23,6 +24,20 @@ protected:
 };
 
 namespace {
+
+struct CopyGM2UBCapture {
+    uint8_t leftPaddingCount = 0;
+    uint8_t rightPaddingCount = 0;
+    bool enableConstantPad = true;
+};
+
+CopyGM2UBCapture gCopyGM2UBCapture;
+
+void CopyGM2UBStub(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t leftPaddingCount,
+                   uint8_t rightPaddingCount, bool enableConstantPad, uint8_t, uint64_t, uint32_t)
+{
+    gCopyGM2UBCapture = {leftPaddingCount, rightPaddingCount, enableConstantPad};
+}
 
 template <typename LocationTag, typename Pointer, typename Layout>
 auto MakeTensorAt(Pointer ptr, const Layout& layout)
@@ -72,6 +87,77 @@ TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBND2ND)
     EXPECT_EQ(dst[0], 0);
 }
 
+TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBWithPaddingParams)
+{
+    using namespace AscendC::Te;
+
+    constexpr uint32_t m = 2;
+    constexpr uint32_t n = 16;
+    __gm__ int8_t src[m * n] = {0};
+    __ubuf__ int8_t dst[m * n] = {0};
+
+    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+
+    MOCKER_CPP(copy_gm_to_ubuf_align_v2, void(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t,
+                                              uint8_t, bool, uint8_t, uint64_t, uint32_t))
+        .times(1)
+        .will(invoke(CopyGM2UBStub));
+
+    constexpr CopyGM2UBParams params{3, 5, false};
+    Copy(MakeCopy(CopyGM2UB{}).with(params), ubTensor, gmTensor);
+
+    GlobalMockObject::verify();
+    EXPECT_EQ(gCopyGM2UBCapture.leftPaddingCount, params.leftPaddingCount);
+    EXPECT_EQ(gCopyGM2UBCapture.rightPaddingCount, params.rightPaddingCount);
+    EXPECT_EQ(gCopyGM2UBCapture.enableConstantPad, params.enableConstantPad);
+}
+
+TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDefaultPaddingParams)
+{
+    using namespace AscendC::Te;
+
+    constexpr uint32_t m = 2;
+    constexpr uint32_t n = 16;
+    __gm__ int8_t src[m * n] = {0};
+    __ubuf__ int8_t dst[m * n] = {0};
+
+    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+
+    MOCKER_CPP(copy_gm_to_ubuf_align_v2, void(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t,
+                                              uint8_t, bool, uint8_t, uint64_t, uint32_t))
+        .times(1)
+        .will(invoke(CopyGM2UBStub));
+
+    gCopyGM2UBCapture = {1, 1, false};
+    Copy(MakeCopy(CopyGM2UB{}), ubTensor, gmTensor);
+
+    GlobalMockObject::verify();
+    EXPECT_EQ(gCopyGM2UBCapture.leftPaddingCount, 0);
+    EXPECT_EQ(gCopyGM2UBCapture.rightPaddingCount, 0);
+    EXPECT_TRUE(gCopyGM2UBCapture.enableConstantPad);
+}
+
+TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBNDLayout2NDLayout)
+{
+    using namespace AscendC::Te;
+
+    constexpr uint32_t m = 64;
+    constexpr uint32_t n = 64;
+    __gm__ int8_t src[m * n] = {0};
+    __ubuf__ int8_t dst[m * n] = {0};
+
+    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    gmTensor.SetL2CacheHint(CacheMode::CACHE_MODE_PERSISTENT);
+
+    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+
+    EXPECT_EQ(dst[0], 0);
+}
+
 TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDN2DN)
 {
     using namespace AscendC::Te;
@@ -83,6 +169,24 @@ TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDN2DN)
 
     auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<DNExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
     auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<DNExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+
+    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+
+    EXPECT_EQ(dst[0], 0);
+}
+
+TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDNLayout2DNLayout)
+{
+    using namespace AscendC::Te;
+
+    constexpr uint32_t m = 64;
+    constexpr uint32_t n = 64;
+    __gm__ int8_t src[m * n] = {0};
+    __ubuf__ int8_t dst[m * n] = {0};
+
+    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<DNLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<DNLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
 
     RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
     RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);

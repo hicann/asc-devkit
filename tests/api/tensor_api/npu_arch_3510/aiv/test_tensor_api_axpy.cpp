@@ -31,7 +31,8 @@ __aicore__ inline void TestTransformAxpy(__gm__ T* z, __gm__ T* x, S value, __ub
     using namespace AscendC::Te;
     asc_init();
 
-    constexpr uint8_t cacheMode = 0;
+    constexpr auto loadCacheMode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM;
+    constexpr auto storeCacheMode = asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM;
     constexpr uint32_t burstLength = TILE_LENGTH * sizeof(T);
     constexpr uint64_t srcStride = 0;
     constexpr uint32_t dstStride = 0;
@@ -46,7 +47,7 @@ __aicore__ inline void TestTransformAxpy(__gm__ T* z, __gm__ T* x, S value, __ub
     auto zLocal = MakeTensor(MakeMemPtr(zUB), MakeFrameLayout<NDLayoutPtn>(_1{}, AscendC::Std::Int<TILE_LENGTH>{}));
 
     asc_copy_gm2ub_align(
-        xLocal.Data().Get(), xGm.Data().Get(), BLK_NUM, burstLength, 0, 0, true, cacheMode, srcStride, dstStride);
+        xLocal.Data().Get(), xGm.Data().Get(), BLK_NUM, burstLength, 0, 0, true, loadCacheMode, srcStride, dstStride);
 
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
@@ -56,7 +57,8 @@ __aicore__ inline void TestTransformAxpy(__gm__ T* z, __gm__ T* x, S value, __ub
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
 
-    asc_copy_ub2gm_align(zGm.Data().Get(), zLocal.Data().Get(), BLK_NUM, burstLength, cacheMode, srcStride, dstStride);
+    asc_copy_ub2gm_align(
+        zGm.Data().Get(), zLocal.Data().Get(), BLK_NUM, burstLength, storeCacheMode, srcStride, dstStride);
 }
 
 #define VECTOR_AXPY_3510(Function, DataType, ScalarType, ScalarValue)                                      \

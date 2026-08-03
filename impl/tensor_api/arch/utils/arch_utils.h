@@ -99,6 +99,26 @@ __aicore__ inline static constexpr uint32_t GetTotalRowShape(const LayoutType& l
         return Get<0, 0>(layout.Shape()) * Get<0, 1>(layout.Shape());
     }
 }
+
+template <typename LayoutType>
+__aicore__ inline static constexpr decltype(auto) GetRowStride(const LayoutType& layout)
+{
+    if constexpr (LayoutType::depth == 2) {
+        return GetElement<AttrInfo::Stride, AttrInfo::Row>(layout);
+    } else {
+        return GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(layout);
+    }
+}
+
+template <typename LayoutType>
+__aicore__ inline static constexpr decltype(auto) GetColumnStride(const LayoutType& layout)
+{
+    if constexpr (LayoutType::depth == 2) {
+        return GetElement<AttrInfo::Stride, AttrInfo::Column>(layout);
+    } else {
+        return GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(layout);
+    }
+}
 } // namespace Te
 } // namespace AscendC
 
