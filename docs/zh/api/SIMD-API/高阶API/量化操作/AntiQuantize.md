@@ -28,7 +28,7 @@
 
 AntiQuantize与[AscendAntiQuant](AscendAntiQuant.md)的功能类似，本接口在不同量化场景下的形式更统一，因此推荐使用本接口。
 
-本接口的伪量化策略包括PER\_TENSOR，PER\_CHANNEL，PER\_TOKEN，PER\_GROUP四种，反量化系数scale、offset在PER\_TENSOR场景下为标量，其余场景下为矢量，计算公式如下：
+本接口的伪量化策略包括PER\_TENSOR，PER\_CHANNEL，PER\_TOKEN，PER\_GROUP四种，伪量化系数scale、offset在PER\_TENSOR场景下为标量，其余场景下为矢量，计算公式如下：
 
 -   PER\_TENSOR场景（按张量量化）：scale和offset的shape为\[1\]。
 

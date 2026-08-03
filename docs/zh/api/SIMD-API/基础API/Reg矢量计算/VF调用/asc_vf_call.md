@@ -57,7 +57,7 @@ __aicore__ inline void asc_vf_call(Args &&...args)
 ## 约束说明<a name="section633mcpsimp"></a>
 
 -   asc\_vf\_call启动SIMD VF子任务时，子任务函数不能是类的成员函数，推荐使用普通函数或类静态函数，且入口函数必须使用\_\_simd\_vf\_\_修饰宏。
--   asc\_vf\_call启动SIMD VF子任务时，传递的参数只支持裸指针，常见基本数据类型。不支持传递结构体，数组等。
+-   asc\_vf\_call启动SIMD VF子任务时，入参仅支持Ascend C的内置数据类型（half、int32_t、uint32_t、float等）及其组成的指针、数组、结构体类型，且指针类型必须指向UB内存。
 
 ## 调用示例<a name="section1316724610428"></a>
 
