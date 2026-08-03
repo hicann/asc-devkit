@@ -17,7 +17,7 @@
 <!-- npu="310p" id5 -->
 - Atlas 推理系列产品AI Core：不支持
 <!-- end id5 -->
-<!-- npu="310p" id6">
+<!-- npu="310p" id6 -->
 - Atlas 推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
