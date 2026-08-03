@@ -309,7 +309,7 @@ customize
 export LD_LIBRARY_PATH=/usr/local/Ascend/cann/opp/vendors/customize/op_api/lib/:${LD_LIBRARY_PATH}
 ```
 
-> 如需了解算子包部署路径、多版本管理等更多选项，请参考[算子包部署](./编译与部署/基本流程.md)。
+> `LD_LIBRARY_PATH`用于设置加载动态库时的搜寻路径列表，如需了解算子包部署路径、多版本管理等更多选项，请参考[算子包部署](./编译与部署/基本流程.md)。
 
 ### 调用算子
 

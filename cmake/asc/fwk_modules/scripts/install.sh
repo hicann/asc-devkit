@@ -360,23 +360,18 @@ if [ -n "${INSTALL_PATH}" ]; then
         fi
     fi
     targetdir=${INSTALL_PATH}
-elif [ -n "${ASCEND_CUSTOM_OPP_PATH}" ]; then
-    if [[ "${ASCEND_CUSTOM_OPP_PATH}" == *:* ]]; then
-        log "[ERROR] environment variable ASCEND_CUSTOM_OPP_PATH=${ASCEND_CUSTOM_OPP_PATH} is set and \
-        has multiple path in it (colon inside), which will cause the custom op installed incorrectly. \
-        Please use the --install-path option to specify an installation path instead."
-        exit 1
-    fi
-    if [ ! -d ${ASCEND_CUSTOM_OPP_PATH} ]; then
-        create_dir "${INSASCEND_CUSTOM_OPP_PATHTALL_PATH}" "750" "${INSTALL_FOR_ALL}"
-    fi
-    targetdir=${ASCEND_CUSTOM_OPP_PATH}
 else
     if [ "x${ASCEND_OPP_PATH}" == "x" ]; then
         log "[ERROR] env ASCEND_OPP_PATH no exist"
         exit 1
     fi
     targetdir="${ASCEND_OPP_PATH}"
+    if [ -n "${ASCEND_CUSTOM_OPP_PATH}" ]; then
+        log "[NOTE] ASCEND_CUSTOM_OPP_PATH is a runtime search path and does not control the installation destination. \
+        The package will be installed to ${targetdir}."
+        log "[NOTE] Operators in ASCEND_CUSTOM_OPP_PATH take precedence over operators installed in the default path. \
+        To give this package higher priority, use --install-path=<path> and source the generated set_env.bash."
+    fi
 fi
 
 if [ ! -d $targetdir ];then
@@ -387,8 +382,8 @@ fi
 if [ ! -x $targetdir ] || [ ! -w $targetdir ] || [ ! -r $targetdir ];then
     log "[WARNING] The directory $targetdir does not have sufficient permissions. \
     Please check and modify the folder permissions (e.g., using chmod), \
-    or use the --install-path option to specify an installation path and \
-    change the environment variable ASCEND_CUSTOM_OPP_PATH to the specified path."
+    or use the --install-path option to specify an installation path and source \
+    the generated set_env.bash."
 fi
 
 upgrade()
