@@ -14,6 +14,7 @@ ascendc compile v200
 """
 
 import os
+import hashlib
 from asc_op_compile_base.common.buildcfg import get_current_build_config
 from .get_op_tiling import TilingInfo
 from asc_op_compile_base.common.utils.log_utils import CompileStage
@@ -130,9 +131,22 @@ def call_bisheng_v200_dynamic(param: SingleTilingKeyCompileParams, kernel_type):
         param.tiling_info.tiling_data_file_path,
     )
     compile_cmd += [f"-D{TILING_KEY_MACRO}={param.tiling_key}UL"]
-    compile_cmd += [
-        f"-D{param.compile_info.origin_func_name}={param.compile_info.origin_func_name}_{param.tiling_key}_tilingkey"
-    ]
+    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
+        tiling_data_hash_src = param.tiling_info.tiling_data
+        if isinstance(tiling_data_hash_src, str):
+            tiling_data_hash_src = tiling_data_hash_src.encode("utf-8")
+        elif not tiling_data_hash_src:
+            tiling_data_hash_src = param.tiling_info.file_content.encode("utf-8")
+        tiling_data_hash = hashlib.sha256(tiling_data_hash_src).hexdigest()[:8]
+        compile_cmd += [
+            f"-D{param.compile_info.origin_func_name}="
+            f"{param.compile_info.origin_func_name}_{tiling_data_hash}_{param.tiling_key}_tilingkey"
+        ]
+    else:
+        compile_cmd += [
+            f"-D{param.compile_info.origin_func_name}="
+            f"{param.compile_info.origin_func_name}_{param.tiling_key}_tilingkey"
+        ]
     if kernel_type in [
         KernelMetaType.KERNEL_TYPE_MIX_AICORE,
         KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
@@ -185,6 +199,17 @@ def call_bisheng_v200_static(
     else:
         kernel_name = compile_info.get_kernel_func_name()
     compile_cmd += [f"-Dauto_gen_{compile_info.origin_func_name}_kernel={kernel_name}"]
+    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
+        tiling_data_hash_src = tiling_info.tiling_data
+        if isinstance(tiling_data_hash_src, str):
+            tiling_data_hash_src = tiling_data_hash_src.encode("utf-8")
+        elif not tiling_data_hash_src:
+            tiling_data_hash_src = tiling_info.file_content.encode("utf-8")
+        tiling_data_hash = hashlib.sha256(tiling_data_hash_src).hexdigest()[:8]
+        compile_cmd += [
+            f"-D{compile_info.origin_func_name}="
+            f"{compile_info.origin_func_name}_{tiling_data_hash}_{tiling_info.tiling_key}_tilingkey"
+        ]
     compile_cmd += [f"-D{TILING_KEY_MACRO}={tiling_info.tiling_key}UL"]
 
     sources = CommonUtility().ascendc_read_file(compile_info.gen_kernel_func_file)
