@@ -30,7 +30,9 @@
 
 该接口根据mask，对源操作数srcReg按元素与标量相比，如果比标量大，则取源操作数值；如果比标量小，则取标量值，将结果写入目的操作数dstReg。计算公式如下：
 
-$$dstReg_i = \max(srcReg_i, scalarValue)$$
+$$
+dstReg_i = \max(srcReg_i, scalarValue)
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

@@ -30,7 +30,9 @@
 
 该接口用于实现PReLU（Parametric ReLU）激活函数：当源操作数srcReg0中对应元素大于0时，直接将该元素写入目的操作数dstReg；否则将srcReg0与srcReg1对应元素相乘的结果写入dstReg，计算公式如下：
 
-$$dstReg_i = \begin{cases} srcReg0_i & srcReg0_i > 0 \\ srcReg0_i \times srcReg1_i & srcReg0_i \leq 0 \end{cases}$$
+$$
+dstReg_i = \begin{cases} srcReg0_i & srcReg0_i > 0 \\ srcReg0_i \times srcReg1_i & srcReg0_i \leq 0 \end{cases}
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

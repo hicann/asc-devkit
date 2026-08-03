@@ -30,7 +30,9 @@
 
 该接口根据mask，对源操作数srcReg逐元素做平方根运算，将结果写入目的操作数dstReg。计算公式如下：
 
-$$dstReg_i = (srcReg_i)^{1/2}$$
+$$
+dstReg_i = (srcReg_i)^{1/2}
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

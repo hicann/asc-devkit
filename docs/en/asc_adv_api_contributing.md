@@ -22,7 +22,10 @@ Ascend C high-level API development process mainly includes the following steps:
 Below uses high-level API `Axpy` as an example to introduce how to develop a high-level API from scratch. This case removes some unnecessary code. You can view all code in the repository files [axpy.h](../../include/adv_api/math/axpy.h), [axpy_tiling.h](../../include/adv_api/math/axpy_tiling.h), [axpy_tiling_intf.h](../../include/adv_api/math/axpy_tiling_intf.h), [axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h), [axpy_tiling_impl.cpp](../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp).
 ### Design API
 Axpy's function is to multiply each element in source operand `srcTensor` with a scalar, then add it with the corresponding element in destination operand `dstTensor`. The calculation formula is as follows.
-$$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
+
+$$
+dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i
+$$
 
 - Kernel Side
 
@@ -133,8 +136,14 @@ $$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
     \\ 
     Align32(tmpbufferSize) &T = float
     \end{cases}$$
-    $$round = calCount/stackSize$$
-    $$tail = calCount%stackSize$$
+
+    $$
+    round = calCount/stackSize
+    $$
+
+    $$
+    tail = calCount%stackSize
+    $$
     If tail is not 0, that is tail block exists, need extra processing for tail block data. Before tail block data computation, set compute unit working mode to Count mode through setMaskCount interface.
     ```c++
     template <typename T, typename U, bool isReuseSource = false>
@@ -250,7 +259,10 @@ $$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
     Cast(dstTensor, tmp4)
     ```
     Considering Vector compute unit single Repeat computes 256 bytes of data, the maximum temporary space calculation formula is as follows:
-    $$MaxValue=\begin{cases}\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_HALF\_CALC\_PROC &dstType = half\\\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}$$
+
+    $$
+    MaxValue=\begin{cases}\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_HALF\_CALC\_PROC &dstType = half\\\max(inputSize*typeSize,\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE \normalsize)*\tiny AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}
+    $$
     ```c++
     inline uint32_t GetAxpyMaxTmpSize(const uint32_t inputSize, const uint32_t typeSize)
     {
@@ -261,7 +273,10 @@ $$dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i$$
     }
     ```
     Analyze the computation of required temporary space minimum value. If temporary space is minimum, single computation data amount is minimum, that is each computation data amount is fixed as single Repeat processed data size, 256 bytes. The minimum temporary space calculation formula is as follows:
-    $$MinValue=\begin{cases}\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_HALF\_CALC\_PROC &dstType = half\\\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}$$
+
+    $$
+    MinValue=\begin{cases}\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_HALF\_CALC\_PROC &dstType = half\\\tiny AXPY\_ONE\_REPEAT\_BYTE\_SIZE*AXPY\_FLOAT\_CALC\_PROC &dstType = float\end{cases}
+    $$
     ```c++
     inline uint32_t GetAxpyMinTmpSize(const uint32_t typeSize)
     {

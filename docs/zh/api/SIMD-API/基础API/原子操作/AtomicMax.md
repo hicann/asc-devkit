@@ -32,7 +32,9 @@
 
 计算公式如下：
 
-$$new\_value = Max(old\_value, value)$$
+$$
+new\_value = Max(old\_value, value)
+$$
 
 ## 函数原型<a name="section1171112415119"></a>
 

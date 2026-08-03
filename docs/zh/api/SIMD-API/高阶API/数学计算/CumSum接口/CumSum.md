@@ -49,10 +49,10 @@
 
     Sklansky二分累加算法是基于Sklansky Adder的并行前缀和逻辑实现的。[图1](#fig45153311379)为一维二进制的并行前缀和算法示意图。将该算法扩展至二维张量的累加和算法，以按行累加为例，[图2](#fig7422174293712)为该算法的执行步骤示意图，通过并行计算多行的加和，实现Sklansky二分累加算法下的按行累加和。
 
-    **图1**  Sklansky Adder算法示意图<a name="fig45153311379"></a>
+    **图1**  Sklansky Adder算法示意图<a name="fig45153311379"></a>  
     ![](../../../../figures/Sklansky-Adder算法示意图.png "Sklansky-Adder算法示意图")
 
-    **图2**  基于Sklansky的二分累加示意图<a name="fig7422174293712"></a>
+    **图2**  基于Sklansky的二分累加示意图<a name="fig7422174293712"></a>  
     ![](../../../../figures/基于Sklansky的二分累加示意图.png "基于Sklansky的二分累加示意图")
 
 ## 函数原型

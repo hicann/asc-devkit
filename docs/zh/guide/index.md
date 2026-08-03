@@ -48,7 +48,7 @@
 
         -   [AI CPU编程](编程指南/编程模型/AI-CPU编程.md)
 
-    -   [编译与运行](编程指南/编译与运行/异步执行.md)
+    -   [编译与运行](编程指南/编译与运行/编译与运行.md)
         -   [异步执行](编程指南/编译与运行/异步执行.md)
         -   [算子编译](编程指南/编译与运行/算子编译/毕昇编译器.md)
             -   [毕昇编译器](编程指南/编译与运行/算子编译/毕昇编译器.md)
@@ -290,8 +290,8 @@
             -   [通过缩减Tensor ShapeInfo维度，优化栈空间](算子实践参考/SIMD算子性能优化/内存访问/通过缩减Tensor-ShapeInfo维度-优化栈空间.md)
             -   [避免UB的bank冲突](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免UB的bank冲突.md)
                 -   [概述](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/概述.md)
-                -   [避免bank冲突（NPU架构版本2201）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免bank冲突（NPU架构版本2201）.md)
-                -   [避免bank冲突（NPU架构版本3510）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免bank冲突（NPU架构版本3510）.md)
+                -   [避免bank冲突（NPU架构版本2201）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md)
+                -   [避免bank冲突（NPU架构版本3510）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md)
 
             -   [L2 Cache切分](算子实践参考/SIMD算子性能优化/内存访问/L2-Cache切分.md)
 

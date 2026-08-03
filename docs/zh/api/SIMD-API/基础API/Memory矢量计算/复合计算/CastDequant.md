@@ -195,7 +195,10 @@
 ### 溢出保护
 
 该接口在执行int32_t到half数据类型的反量化时，会进行防溢出保护处理：
-$$dst_i = Cast(src_i / 2^{17} \times scale \times 2^{17}) = Cast(src_i \times scale)$$
+
+$$
+dst_i = Cast(src_i / 2^{17} \times scale \times 2^{17}) = Cast(src_i \times scale)
+$$
 中间缩小步骤将数值控制在安全范围内，有效避免了浮点溢出。
 
 ## 调用示例<a name="section642mcpsimp"></a>

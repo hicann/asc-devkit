@@ -30,7 +30,9 @@
 
 该接口用于根据mask对输入数据srcReg进行取相反数操作，将结果写入dstReg。计算公式如下：
 
-$$dstReg_i = -srcReg_i$$
+$$
+dstReg_i = -srcReg_i
+$$
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

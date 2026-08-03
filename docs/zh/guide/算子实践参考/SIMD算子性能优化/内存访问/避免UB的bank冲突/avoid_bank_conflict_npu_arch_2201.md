@@ -318,62 +318,45 @@ bank冲突主要可以分为以下三种场景：
     实现`8192 × 8192` half ND矩阵到全局紧凑NZ布局的转换，切分后，每个Tile块完成`144 × 128` half数据的转换。通过在内存分配时适当扩大内存，调整单次搬运内相邻Datablock的地址步长，保证在同一个Copy搬运操作内，不同Datablock的写操作不会同时出现在一个bank group内。完整样例可参考[避免bank冲突样例](../../../../../../../examples/01_simd_cpp_api/05_best_practices/04_memory_access/bank_conflict_nd2nz)。
     实现方案对比如下：
 
-    <a name="table839512544411"></a>
-    <table><thead align="left"><tr id="row73965541942"><th class="cellrowborder" valign="top" width="6.813978389954251%" id="mcps1.1.4.1.1"><p id="p63963545416"><a name="p63963545416"></a><a name="p63963545416"></a>实现方案</p>
-    </th>
-    <th class="cellrowborder" valign="top" width="42.01304390148935%" id="mcps1.1.4.1.2"><p id="p539610544415"><a name="p539610544415"></a><a name="p539610544415"></a>原始实现</p>
-    </th>
-    <th class="cellrowborder" valign="top" width="51.17297770855641%" id="mcps1.1.4.1.3"><p id="p6396185413418"><a name="p6396185413418"></a><a name="p6396185413418"></a>优化实现</p>
-    </th>
-    </tr>
-    </thead>
-    <tbody><tr id="row143961754148"><td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.1.4.1.1 "><p id="p43962544416"><a name="p43962544416"></a><a name="p43962544416"></a>实现方法</p>
-    </td>
-    <td class="cellrowborder" valign="top" width="42.01304390148935%" headers="mcps1.1.4.1.2 "><p id="p33964541745"><a name="p33964541745"></a><a name="p33964541745"></a>不做地址优化及搬运步长，Copy时步长为144，各个Tensor的地址分别为：</p>
-    <p id="p17357131764"><a name="p17357131764"></a><a name="p17357131764"></a>ND矩阵：起始地址0x0，tensor长度为144 * 128 * sizeof(half)字节</p>
-    <p id="p15372720618"><a name="p15372720618"></a><a name="p15372720618"></a>NZ矩阵：起始地址0x12000，tensor长度为144 * 128 * sizeof(half)字节</p>
-    <p id="p1927691223819"><a name="p1927691223819"></a><a name="p1927691223819"></a>在每个Copy搬运操作内，8个Datablock同时写一个bank group，单条Copy从一拍拉长为8拍。</p>
-    </td>
-    <td class="cellrowborder" valign="top" width="51.17297770855641%" headers="mcps1.1.4.1.3 "><p id="p330914381671"><a name="p330914381671"></a><a name="p330914381671"></a>优化地址及搬运步长，为NZ矩阵多申请256字节（即多申请一行UB内存空间），Copy时步长为145，各个Tensor的地址分别为：</p>
-    <p id="p326294904420"><a name="p326294904420"></a><a name="p326294904420"></a>ND矩阵：起始地址0x0，tensor长度为144 * 128 * sizeof(half)字节</p>
-    <p id="p153096389720"><a name="p153096389720"></a><a name="p153096389720"></a>NZ矩阵：起始地址0x12000，tensor长度为145 * 128 * sizeof(half)字节</p>
-    <p id="p9897551154415"><a name="p9897551154415"></a><a name="p9897551154415"></a>NZ矩阵多申请256字节，且将Copy时步长增大1，避免Copy搬运时8个Datablock同时写一个bank group，单条Copy在一拍内完成。</p>
-    </td>
-    </tr>
-    <tr id="row83963547410"><td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.1.4.1.1 "><p id="p103961544412"><a name="p103961544412"></a><a name="p103961544412"></a>示意图</p>
-    </td>
-    <td class="cellrowborder" valign="top" width="42.01304390148935%" headers="mcps1.1.4.1.2 "><p id="p575310529216"><a name="p575310529216"></a><a name="p575310529216"></a><a name="image5993165819214"></a><a name="image5993165819214"></a><span><img class="eddx" id="image5993165819214" src="../../../../figures/矩阵编程逻辑位置示意图-69.png" width="357.105" height="231.19556250000002"></span></p>
-    </td>
-    <td class="cellrowborder" valign="top" width="51.17297770855641%" headers="mcps1.1.4.1.3 "><p id="p20186156039"><a name="p20186156039"></a><a name="p20186156039"></a><a name="image35231563314"></a><a name="image35231563314"></a><span><img class="eddx" id="image35231563314" src="../../../../figures/矩阵编程逻辑位置示意图-70.png" width="388.02750000000003" height="231.42000000000002"></span></p>
-    </td>
-    </tr>
-    <tr id="row1539620548413"><td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.1.4.1.1 "><p id="p43961554645"><a name="p43961554645"></a><a name="p43961554645"></a>示例代码</p>
-    </td>
-    <td class="cellrowborder" valign="top" width="42.01304390148935%" headers="mcps1.1.4.1.2 "><a name="screen35066415507"></a><a name="screen35066415507"></a><pre class="screen" codetype="Cpp" id="screen35066415507">AscendC::LocalTensor<half> nd(AscendC::TPosition::VECIN, 0, 144 * 128);
-    AscendC::LocalTensor<half> nz(AscendC::TPosition::VECOUT, 2 * 144 * 128 * sizeof(half), 144 * 128);
-    AscendC::CopyRepeatParams copyParams;
-    copyParams.dstStride = 144;
-    copyParams.srcStride = 1;
-    copyParams.dstRepeatSize = 1;
-    copyParams.srcRepeatSize = 128 / 16;
+    - 原始实现：不做地址优化及搬运步长，Copy时步长为144，各个Tensor的地址分别为：
+        - ND矩阵：起始地址0x0，tensor长度为144 * 128 * sizeof(half)字节
+        - NZ矩阵：起始地址0x12000，tensor长度为144 * 128 * sizeof(half)字节
+        - 在每个Copy搬运操作内，8个Datablock同时写一个bank group，单条Copy从一拍拉长为8拍。
 
-    AscendC::Copy(nz[0], nd[0],
-        static_cast<uint64_t>(128), static_cast<uint8_t>(144), copyParams);
-    </pre>
-    </td>
-    <td class="cellrowborder" valign="top" width="51.17297770855641%" headers="mcps1.1.4.1.3 "><a name="screen51721010145115"></a><a name="screen51721010145115"></a><pre class="screen" codetype="Cpp" id="screen51721010145115">AscendC::LocalTensor<half> nd(AscendC::TPosition::VECIN, 0, 144 * 128);
-    AscendC::LocalTensor<half> nz(AscendC::TPosition::VECOUT, 2 * 144 * 128 * sizeof(half), 145 * 128); // 多申请256字节
-    AscendC::CopyRepeatParams copyParams;
-    copyParams.dstStride = 145;         // 搬运时地址步长增加1
-    copyParams.srcStride = 1;
-    copyParams.dstRepeatSize = 1;
-    copyParams.srcRepeatSize = 128 / 16;
+    ![](../../../../figures/矩阵编程逻辑位置示意图-69.png)
 
-    AscendC::Copy(nz[0], nd[0],
-        static_cast<uint64_t>(128), static_cast<uint8_t>(144), copyParams);</pre>
-    </td>
-    </tr>
-    </tbody>
-    </table>
+    - 优化实现：优化地址及搬运步长，为NZ矩阵多申请256字节（即多申请一行UB内存空间），Copy时步长为145，各个Tensor的地址分别为：
+        - ND矩阵：起始地址0x0，tensor长度为144 * 128 * sizeof(half)字节
+        - NZ矩阵：起始地址0x12000，tensor长度为145 * 128 * sizeof(half)字节
+        - NZ矩阵多申请256字节，且将Copy时步长增大1，避免Copy搬运时8个Datablock同时写一个bank group，单条Copy在一拍内完成。
+
+    ![](../../../../figures/矩阵编程逻辑位置示意图-70.png)
+
+    - 原始实现示例代码：
+        ```cpp
+        AscendC::LocalTensor<half> nd(AscendC::TPosition::VECIN, 0, 144 * 128);
+        AscendC::LocalTensor<half> nz(AscendC::TPosition::VECOUT, 2 * 144 * 128 * sizeof(half), 144 * 128);
+        AscendC::CopyRepeatParams copyParams;
+        copyParams.dstStride = 144;
+        copyParams.srcStride = 1;
+        copyParams.dstRepeatSize = 1;
+        copyParams.srcRepeatSize = 128 / 16;
+
+        AscendC::Copy(nz[0], nd[0],
+            static_cast<uint64_t>(128), static_cast<uint8_t>(144), copyParams);
+        ```
+    - 优化实现示例代码：
+        ```cpp
+        AscendC::LocalTensor<half> nd(AscendC::TPosition::VECIN, 0, 144 * 128);
+        AscendC::LocalTensor<half> nz(AscendC::TPosition::VECOUT, 2 * 144 * 128 * sizeof(half), 145 * 128); // 多申请256字节
+        AscendC::CopyRepeatParams copyParams;
+        copyParams.dstStride = 145;         // 搬运时地址步长增加1
+        copyParams.srcStride = 1;
+        copyParams.dstRepeatSize = 1;
+        copyParams.srcRepeatSize = 128 / 16;
+
+        AscendC::Copy(nz[0], nd[0],
+            static_cast<uint64_t>(128), static_cast<uint8_t>(144), copyParams);
+        ```
 
 更多的UB Bank冲突场景分析可参考[bank冲突分析样例](../../../../../../../examples/01_simd_cpp_api/05_best_practices/04_memory_access/bank_conflict_ub)。

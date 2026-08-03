@@ -30,9 +30,13 @@
 
 该接口根据mask对输入数据srcReg0、srcReg1按元素相乘操作，将乘法结果的低位部分写入dstReg0，溢出（高位）部分写入dstReg1。计算公式如下：
 
-$$dstReg0_i = (srcReg0_i \times srcReg1_i) mod2^{bit}$$
+$$
+dstReg0_i = (srcReg0_i \times srcReg1_i) mod2^{bit}
+$$
 
-$$dstReg1_i = (srcReg0_i \times srcReg1_i) / 2^{bit}$$
+$$
+dstReg1_i = (srcReg0_i \times srcReg1_i) / 2^{bit}
+$$
 
 其中，bit表示操作数的位宽bit数。
 
