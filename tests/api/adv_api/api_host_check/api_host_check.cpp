@@ -25,7 +25,6 @@
 #include "filter/dropout.h"
 #include "hccl/hccl.h"
 #include "hccl/hccl_common.h"
-#include "hcomm/hcomm.h"
 #include "index/arithprogression.h"
 #include "kernel_struct_data_copy.h"
 #include "math/acos.h"
