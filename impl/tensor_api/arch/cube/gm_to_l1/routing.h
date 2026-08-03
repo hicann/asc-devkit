@@ -29,6 +29,7 @@
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/nd2zn.h"
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/nc1hwc02nc1hwc0.h"
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/nchw2nc1hwc0.h"
+#include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/ncdhw2ndc1hwc0.h"
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/nhwc2nc1hwc0.h"
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/nz2nz.h"
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/zn2zn.h"
@@ -159,6 +160,11 @@ struct CopyGM2L1Routing<Version, NC1HWC0LayoutPtn, NHWCLayoutPtn> {
 template <uint32_t Version>
 struct CopyGM2L1Routing<Version, NC1HWC0LayoutPtn, NCHWLayoutPtn> {
     using type = CopyGmToCbufNCHW2NC1HWC0;
+};
+
+template <uint32_t Version>
+struct CopyGM2L1Routing<Version, NDC1HWC0LayoutPtn, NCDHWLayoutPtn> {
+    using type = CopyGmToCbufNCDHW2NDC1HWC0;
 };
 
 } // namespace Te

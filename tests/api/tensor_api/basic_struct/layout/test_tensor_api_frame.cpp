@@ -567,6 +567,41 @@ TEST_F(Tensor_Api_Frame_Layout, ConvFeatureMapLayouts)
     static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(nc1hwc0)>, NC1HWC0LayoutPtn>);
 }
 
+TEST_F(Tensor_Api_Frame_Layout, Conv3DFeatureMapLayouts)
+{
+    using namespace AscendC::Te;
+
+    // NCDHW(N,C,D,H,W): row-major contiguous stride (C*D*H*W, D*H*W, H*W, W, 1).
+    auto ncdhw = MakeFrameLayout<NCDHWLayoutPtn>(2, 3, 4, 5, 6);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(ncdhw)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(ncdhw)), 3);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(ncdhw)), 4);
+    EXPECT_EQ(AscendC::Std::get<3>(GetShape(ncdhw)), 5);
+    EXPECT_EQ(AscendC::Std::get<4>(GetShape(ncdhw)), 6);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(ncdhw)), 360); // 3*4*5*6
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(ncdhw)), 120); // 4*5*6
+    EXPECT_EQ(AscendC::Std::get<2>(GetStride(ncdhw)), 30);  // 5*6
+    EXPECT_EQ(AscendC::Std::get<3>(GetStride(ncdhw)), 6);   // 6
+    EXPECT_EQ(AscendC::Std::get<4>(GetStride(ncdhw)), 1);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(ncdhw)>, NCDHWLayoutPtn>);
+
+    // NDC1HWC0(N,D,C1,H,W,C0): C0 supplied by caller, row-major contiguous stride.
+    auto ndc1hwc0 = MakeFrameLayout<NDC1HWC0LayoutPtn>(2, 4, 3, 5, 6, 16);
+    EXPECT_EQ(AscendC::Std::get<0>(GetShape(ndc1hwc0)), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(GetShape(ndc1hwc0)), 4);
+    EXPECT_EQ(AscendC::Std::get<2>(GetShape(ndc1hwc0)), 3);
+    EXPECT_EQ(AscendC::Std::get<3>(GetShape(ndc1hwc0)), 5);
+    EXPECT_EQ(AscendC::Std::get<4>(GetShape(ndc1hwc0)), 6);
+    EXPECT_EQ(AscendC::Std::get<5>(GetShape(ndc1hwc0)), 16);
+    EXPECT_EQ(AscendC::Std::get<0>(GetStride(ndc1hwc0)), 5760); // 4*3*5*6*16
+    EXPECT_EQ(AscendC::Std::get<1>(GetStride(ndc1hwc0)), 1440); // 3*5*6*16
+    EXPECT_EQ(AscendC::Std::get<2>(GetStride(ndc1hwc0)), 480);  // 5*6*16
+    EXPECT_EQ(AscendC::Std::get<3>(GetStride(ndc1hwc0)), 96);   // 6*16
+    EXPECT_EQ(AscendC::Std::get<4>(GetStride(ndc1hwc0)), 16);   // 16
+    EXPECT_EQ(AscendC::Std::get<5>(GetStride(ndc1hwc0)), 1);
+    static_assert(AscendC::Std::is_same_v<GetLayoutPattern<decltype(ndc1hwc0)>, NDC1HWC0LayoutPtn>);
+}
+
 // MakeFrameLayout(batch0, ..., batchN, row, col): the batch axes are flat -- they sit side by side in
 // the outermost tuple with the base (row, col) block as the last element, giving rank batchNum + 1:
 //   (batch0, batch1, (row, col))
