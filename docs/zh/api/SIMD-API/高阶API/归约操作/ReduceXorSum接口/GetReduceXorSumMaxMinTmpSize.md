@@ -17,7 +17,7 @@ void GetReduceXorSumMaxMinTmpSize(const AscendC::TensorShape& srcShape, const ui
 
 **表1**  接口参数列表
 
-| 接口 | 输入/输出 | 功能 |
+| 参数名 | 输入/输出 | 功能 |
 | --- | --- | --- |
 | srcShape | 输入 | 输入的shape信息，参数类型为[AscendC::TensorShape](../../数据结构/TensorShape.md)。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为int16_t，此处应传入2。 |

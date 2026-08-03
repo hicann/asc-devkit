@@ -39,7 +39,7 @@ $$
 计算结果保留进位，计算公式如下：
 
 $$
-\{carry_i, dst_i\} = \{1'b0, src0_i\} + \{1'b0, ~src1_i\} + 33'b1
+\{carry_i, dst_i\} = \{1'b0, src0_i\} + \{1'b0, \sim src1_i\} + 33'b1
 $$
 
 ![](../../figures/asc_sub.png)

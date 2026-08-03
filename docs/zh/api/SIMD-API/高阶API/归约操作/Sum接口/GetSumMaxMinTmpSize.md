@@ -17,7 +17,7 @@ inline void GetSumMaxMinTmpSize(const uint32_t n, const uint32_t typeSize, const
 
 **表1**  接口参数列表
 
-| 接口 | 输入/输出 | 功能 |
+| 参数名 | 输入/输出 | 功能 |
 | --- | --- | --- |
 | n | 输入 | 输入数据每行的实际计算个数。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |

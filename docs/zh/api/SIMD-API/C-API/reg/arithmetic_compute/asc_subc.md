@@ -33,7 +33,7 @@ Carry flag（进位/借位标志）用于表示加法进位或者减法无借位
 计算公式如下：
 
 $$
-\{carry_i, dst_i\} = \{1'b0, src0_i\} + \{1'b0, ~src1_i\} + \{32'b0,carry\_src_i\}
+\{carry_i, dst_i\} = \{1'b0, src0_i\} + \{1'b0, \sim src1_i\} + \{32'b0,carry\_src_i\}
 $$
 
 ![](../../figures/asc_subc_1.png)

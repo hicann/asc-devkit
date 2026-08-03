@@ -30,7 +30,7 @@ void GetMeanTmpBufferFactorSize(const uint32_t typeSize, uint32_t& maxLiveNodeCo
 
 **表1**  参数列表
 
-| 接口 | 输入/输出 | 功能 |
+| 参数名 | 输入/输出 | 功能 |
 | --- | --- | --- |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | maxLiveNodeCount | 输出 | 最大存活节点数，表示临时空间是单次计算数据量所占空间的多少倍。 |

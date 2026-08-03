@@ -17,7 +17,7 @@ void GetReduceMeanMaxMinTmpSize(const AscendC::TensorShape& srcShape, const Asce
 
 **表1**  接口参数列表
 
-| 接口 | 输入/输出 | 功能 |
+| 参数名 | 输入/输出 | 功能 |
 | --- | --- | --- |
 | srcShape | 输入 | 输入的shape信息，参数类型为[AscendC::TensorShape](../../数据结构/TensorShape.md)，参数取值与ReduceMean接口的srcShape参数保持一致。 |
 | dataType | 输入 | 输入的数据类型，参数类型为[AscendC::TensorDataType](../../数据结构/TensorDataType.md)，当前支持的数据类型与ReduceMean接口的模板参数T保持一致。 |
