@@ -58,5 +58,5 @@ uint32_t orgShape1 = maxShapeInfo.originalShape[1];
 uint32_t orgShape2 = maxShapeInfo.originalShape[2];
 uint32_t orgShape3 = maxShapeInfo.originalShape[3];
 // 获取现有的shape的2维的值
-uint32_t shape2 = maxShapeInfo.shape[2]
+uint32_t shape2 = maxShapeInfo.shape[2];
 ```

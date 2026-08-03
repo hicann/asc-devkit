@@ -77,7 +77,7 @@ src和dst分别为源操作数和目的操作数；repeatParams为搬运参数�
 
     ```cpp
     template <typename T>
-    __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const  LocalTensor<T>& src, const DataCopyParams& repeatParams)
+    __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<T>& src, const DataCopyParams& repeatParams)
     ```
 
 ## DataCopy（GMToL1随路转换-ND2NZ搬运）<a name="ZH-CN_TOPIC_0000002573902841"></a>

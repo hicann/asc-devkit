@@ -48,7 +48,7 @@
 -   暂存到L1 Buffer初始化，不需要指定地址，会默认暂存到L1 Buffer，只需要传入需要的SPM Buffer大小：
 
     ```cpp
-    __aicore__ inline void InitSpmBuffer(const int32_t  bufferSize)
+    __aicore__ inline void InitSpmBuffer(const int32_t bufferSize)
     ```
 
     <!-- npu="950" id10 -->

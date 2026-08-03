@@ -90,9 +90,9 @@ extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8
     }
     if (TILING_KEY_IS(1)) {
         op.Process();
-    }  else  if (TILING_KEY_IS(2)) {
+    } else if (TILING_KEY_IS(2)) {
         op.Process();
-    } else  if (TILING_KEY_IS(3)) {
+    } else if (TILING_KEY_IS(3)) {
         op.Process();
     }
 }
