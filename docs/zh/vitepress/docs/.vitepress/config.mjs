@@ -9,8 +9,8 @@
  */
 
 import { defineConfig } from 'vitepress'
-import { existsSync, readFileSync, copyFileSync, cpSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { existsSync, readFileSync, copyFileSync, cpSync, readdirSync } from 'node:fs'
+import { relative, resolve } from 'node:path'
 import { load as cheerioLoad } from 'cheerio'
 import { execSync } from 'node:child_process'
 import { pagefindPlugin } from 'vitepress-plugin-pagefind'
@@ -18,9 +18,40 @@ import {
   installRepositoryLinkRewrite,
   rewriteRepositoryLinks,
 } from '../../scripts/rewrite-repository-links.mjs'
+import {
+  extractUnsupportedProducts,
+  normalizeApiRoute,
+} from '../../scripts/api-support.mjs'
 
 const docsRoot = resolve(import.meta.dirname, '..')
 const repoRoot = resolve(import.meta.dirname, '..', '..', '..', '..', '..')
+const sourceDocsRoot = resolve(repoRoot, 'docs', 'zh')
+
+function buildApiUnsupportedIndex(apiRoot) {
+  const index = {}
+
+  function visit(directory) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const fullPath = resolve(directory, entry.name)
+      if (entry.isDirectory()) {
+        visit(fullPath)
+        continue
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.md')) continue
+
+      const unsupported = extractUnsupportedProducts(readFileSync(fullPath, 'utf-8'))
+      if (unsupported.length === 0) continue
+      const sourceRelativePath = relative(sourceDocsRoot, fullPath).replace(/\\/g, '/')
+      const route = normalizeApiRoute('/' + sourceRelativePath)
+      index[route] = unsupported
+    }
+  }
+
+  visit(apiRoot)
+  return index
+}
+
+const apiUnsupportedIndex = buildApiUnsupportedIndex(resolve(sourceDocsRoot, 'api'))
 
 function getOriginalSourceFile(relativePath) {
   if (!relativePath) return null
@@ -49,9 +80,11 @@ function removeSelfRefItems(items) {
 function addNumbering(items, prefix = '') {
   return items.map((item, i) => {
     const num = prefix ? `${prefix}${i + 1}.` : `${i + 1}.`
+    const unnumberedText = item.unnumberedText || item.text
     return {
       ...item,
-      text: `${num} ${item.text}`,
+      unnumberedText,
+      text: `${num} ${unnumberedText}`,
       ...(item.items ? { items: addNumbering(item.items, num) } : {}),
     }
   })
@@ -719,6 +752,35 @@ function balanceDivTags(html) {
         },
       }),
     }, {
+      name: 'patch-vitepress-api-navigation',
+      enforce: 'pre',
+      resolveId(source) {
+        if (source === 'virtual:api-navigation-filter') {
+          return resolve(import.meta.dirname, 'theme', 'api-navigation-filter.mjs')
+        }
+      },
+      transform(code, id) {
+        const normalizedId = id.replace(/\\/g, '/')
+        const importLine = "import { getProductFilteredNavigationCandidates, getProductFilteredSidebarConfig } from 'virtual:api-navigation-filter';\n"
+
+        if (normalizedId.includes('vitepress/dist/client/theme-default/composables/sidebar.js')) {
+          const result = code.replace(
+            'const sidebarConfig = theme.value.sidebar;',
+            'const sidebarConfig = getProductFilteredSidebarConfig(theme.value);'
+          )
+          return result === code ? null : importLine + result
+        }
+
+        if (normalizedId.includes('vitepress/dist/client/theme-default/composables/prev-next.js')) {
+          const original = "const candidates = uniqBy(links, (link) => link.link.replace(/[?#].*$/, ''));"
+          const replacement = "const candidates = getProductFilteredNavigationCandidates(uniqBy(links, (link) => link.link.replace(/[?#].*$/, '')), page.value.relativePath, theme.value);"
+          const result = code.replace(original, replacement)
+          return result === code ? null : importLine + result
+        }
+
+        return null
+      },
+    }, {
       name: 'patch-vpsidebar-item-depth',
       enforce: 'pre',
       transform(code, id) {
@@ -756,6 +818,8 @@ function balanceDivTags(html) {
     },
 
     sidebar: filteredSidebars,
+    apiSidebarSource: filteredSidebars['/api/'],
+    apiUnsupportedIndex,
 
     outline: false,
 

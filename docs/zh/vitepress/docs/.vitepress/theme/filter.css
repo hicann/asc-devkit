@@ -43,6 +43,10 @@
   border-color: var(--vp-c-brand-1);
 }
 
+.api-page-support-hidden {
+  display: none !important;
+}
+
 /* Wider layout */
 :root {
   --vp-layout-max-width: 1680px;

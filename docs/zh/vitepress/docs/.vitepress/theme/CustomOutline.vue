@@ -10,15 +10,24 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useData } from 'vitepress'
+import { useData, useRoute } from 'vitepress'
+import { isApiRouteUnsupported } from '../../../scripts/api-support.mjs'
+import { selectedFilter } from './filter-state.js'
 
-const { page } = useData()
+const route = useRoute()
+const { page, theme } = useData()
 
 const headers = computed(() => {
   const h = page.value?.outlineHeaders || []
+  const unsupported = isApiRouteUnsupported(
+    theme.value.apiUnsupportedIndex,
+    route.path,
+    selectedFilter.value
+  )
   let h2n = 0, h3n = 0
   return h
     .filter(item => item.level === 2 || item.level === 3)
+    .filter(item => !unsupported || item.title === '产品支持情况')
     .map(item => {
       if (item.level === 2) {
         h2n++

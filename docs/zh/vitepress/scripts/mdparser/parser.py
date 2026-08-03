@@ -90,6 +90,72 @@ _INLINE_CODE_SPAN_RE = re.compile(r"`+[^\n]*?`+")
 _LONE_TILDE_RE = re.compile(r"(?<!\\)(?<!~)~(?!~)")
 
 
+_HTML_BLOCK_TAG_NAMES = (
+    r"address|article|aside|base|basefont|blockquote|body|caption|center|col|"
+    r"colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|"
+    r"footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|"
+    r"li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|"
+    r"search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul"
+)
+
+_HTML_BLOCK_TAG_RE = re.compile(
+    rf"^</?(?:{_HTML_BLOCK_TAG_NAMES})(?:[ \t\n\f\r]|/?>)",
+    re.IGNORECASE,
+)
+
+_HTML_BLOCK_TYPE1_RE = re.compile(
+    r"^<(script|pre|style|textarea)(?:[ \t\n\f\r]|>|$)",
+    re.IGNORECASE,
+)
+
+_HTML_BLOCK_TYPE1_END_RE = {
+    tag: re.compile(rf"</{tag}[ \t]*>", re.IGNORECASE)
+    for tag in ("script", "pre", "style", "textarea")
+}
+
+_HTML_BLOCK_SPECIAL_RE = (
+    (re.compile(r"^<!--"), re.compile(r"-->")),
+    (re.compile(r"^<\?"), re.compile(r"\?>")),
+    (re.compile(r"^<![A-Z]"), re.compile(r">")),
+    (re.compile(r"^<!\[CDATA\["), re.compile(r"\]\]>")),
+)
+
+_HTML_ATTRIBUTE_NAME = r"[A-Za-z_:][A-Za-z0-9_.:-]*"
+_HTML_ATTRIBUTE_VALUE = r"""(?:[^\s"'=<>`]+|'[^']*'|"[^"]*")"""
+_HTML_ATTRIBUTE = (
+    rf"(?:[ \t]+{_HTML_ATTRIBUTE_NAME}"
+    rf"(?:[ \t]*=[ \t]*{_HTML_ATTRIBUTE_VALUE})?)"
+)
+_HTML_BLOCK_TYPE7_RE = re.compile(
+    rf"^(?:<[A-Za-z][A-Za-z0-9-]*{_HTML_ATTRIBUTE}*[ \t]*/?>|"
+    rf"</[A-Za-z][A-Za-z0-9-]*[ \t]*>)[ \t]*$"
+)
+
+
+def _html_block_end_pattern(line: str, can_start_type7: bool):
+    """Return the HTML block terminator for a block starting on this line.
+
+    ``None`` means the line is Markdown. An empty string means the block ends at
+    the next blank line; regex values identify the explicit terminator used by
+    CommonMark HTML block types 1 through 5.
+    """
+    type1_match = _HTML_BLOCK_TYPE1_RE.match(line)
+    if type1_match:
+        return _HTML_BLOCK_TYPE1_END_RE[type1_match.group(1).lower()]
+
+    for start_re, end_re in _HTML_BLOCK_SPECIAL_RE:
+        if start_re.match(line):
+            return end_re
+
+    if _HTML_BLOCK_TAG_RE.match(line):
+        return ""
+
+    if can_start_type7 and _HTML_BLOCK_TYPE7_RE.match(line):
+        return ""
+
+    return None
+
+
 def _escape_lone_tildes_in_line(line: str) -> str:
     result = []
     last_end = 0
@@ -108,6 +174,9 @@ def _escape_lone_tildes(md_text: str) -> str:
     result = []
     in_fence = False
     fence_char = None
+    html_end_pattern = None
+    in_html_until_blank = False
+    previous_line_blank = True
 
     for line in lines:
         stripped = line.lstrip(" \t")
@@ -119,6 +188,21 @@ def _escape_lone_tildes(md_text: str) -> str:
             ):
                 in_fence = False
                 fence_char = None
+            previous_line_blank = not stripped
+            continue
+
+        if in_html_until_blank:
+            result.append(line)
+            if not stripped:
+                in_html_until_blank = False
+            previous_line_blank = not stripped
+            continue
+
+        if html_end_pattern is not None:
+            result.append(line)
+            if html_end_pattern.search(line):
+                html_end_pattern = None
+            previous_line_blank = not stripped
             continue
 
         fence_match = re.match(r"^(`{3,}|~{3,})", stripped)
@@ -126,9 +210,21 @@ def _escape_lone_tildes(md_text: str) -> str:
             in_fence = True
             fence_char = fence_match.group(1)[0]
             result.append(line)
+            previous_line_blank = False
+            continue
+
+        end_pattern = _html_block_end_pattern(stripped, previous_line_blank)
+        if end_pattern is not None:
+            result.append(line)
+            if end_pattern == "":
+                in_html_until_blank = True
+            elif not end_pattern.search(line):
+                html_end_pattern = end_pattern
+            previous_line_blank = not stripped
             continue
 
         result.append(_escape_lone_tildes_in_line(line))
+        previous_line_blank = not stripped
 
     return "\n".join(result)
 
