@@ -69,8 +69,8 @@ __simd_vf__ inline void cumulative_histogram_vf(__ubuf__ uint16_t* dst_addr, __u
 {
     vector_uint16_t dst0, dst1;  // dst0用于低位统计，dst1用于高位统计
     vector_uint8_t src;
-    vector_bool mask_u8 = asc_create_mask_u8(PAT_ALL);
-    vector_bool mask_u16 = asc_create_mask_u16(PAT_ALL);
+    vector_bool mask_b8 = asc_create_mask_b8(PAT_ALL);
+    vector_bool mask_b16 = asc_create_mask_b16(PAT_ALL);
     
     // 初始化dst为0，从零开始统计频率
     asc_duplicate_scalar(dst0, (uint16_t)0);
@@ -78,12 +78,12 @@ __simd_vf__ inline void cumulative_histogram_vf(__ubuf__ uint16_t* dst_addr, __u
 
     for (uint16_t i = 0; i < repeat_time; ++i) {
         asc_loadalign_postupdate(src, src_addr, one_repeat_size);
-        asc_cumulative_histogram_bin0(dst0, src, mask_u8);
-        asc_cumulative_histogram_bin1(dst1, src, mask_u8);
+        asc_cumulative_histogram_bin0(dst0, src, mask_b8);
+        asc_cumulative_histogram_bin1(dst1, src, mask_b8);
     }
 
     // 此时dst0和dst1包含两批数据的累积统计结果
-    asc_storealign_postupdate(dst_addr, dst0, one_repeat_size, mask_u16);
-    asc_storealign_postupdate(dst_addr, dst1, one_repeat_size, mask_u16);
+    asc_storealign_postupdate(dst_addr, dst0, one_repeat_size, mask_b16);
+    asc_storealign_postupdate(dst_addr, dst1, one_repeat_size, mask_b16);
 }
 ```
