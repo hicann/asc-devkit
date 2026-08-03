@@ -56,7 +56,7 @@ DataCacheCleanAndInvalid接口用于解决上述一致性问题，其功能可�
 - 用户通过Scalar单元写GM的数据，希望立刻写出，也需要使用DataCacheCleanAndInvalid接口。
 
 <!-- npu="950" id15 -->
-- 针对Ascend 950PR/Ascend 950DT，原子操作过程中，如果希望改变后续数据的饱和模式，需要先使用DataCacheCleanAndInvalid接口将Cache Line中现存的数据立刻写出，再调用[SetCtrlSpr](../特殊寄存器访问/SetCtrlSpr(ISASI).md)设置后续数据的饱和模式。
+- 针对Ascend 950PR/Ascend 950DT，原子操作过程中，如果希望改变后续数据的饱和模式，需要先使用DataCacheCleanAndInvalid接口将Cache Line中现存的数据立刻写出，再调用[SetCtrlSpr](../特殊寄存器访问/SetCtrlSpr_ISASI.md)设置后续数据的饱和模式。
 <!-- end id15 -->
 
 ## 函数原型<a name="section620mcpsimp"></a>

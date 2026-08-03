@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001969965338_zh-cn_topic_0000001391767420_section36583473819"></a>
 
-基于[CreateCubeResGroup](../../../SIMD-API/基础API/Cube分组管理（ISASI）/CubeResGroupHandle/CreateCubeResGroup.md)进行AI Core分组计算需要传入workspace用于消息通信，在Host侧提供本接口用于获取CreateCubeResGroup所需要的workspace空间大小。
+基于[CreateCubeResGroup](../../../SIMD-API/基础API/cube_group_mgmt_ISASI/CubeResGroupHandle/CreateCubeResGroup.md)进行AI Core分组计算需要传入workspace用于消息通信，在Host侧提供本接口用于获取CreateCubeResGroup所需要的workspace空间大小。
 
 ## 函数原型<a name="zh-cn_topic_0000001969965338_zh-cn_topic_0000001391767420_section13230182415108"></a>
 

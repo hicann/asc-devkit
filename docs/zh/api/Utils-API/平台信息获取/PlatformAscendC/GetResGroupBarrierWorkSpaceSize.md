@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001969805546_zh-cn_topic_0000001391767420_section36583473819"></a>
 
-获取[GroupBarrier](../../../SIMD-API/基础API/Cube分组管理（ISASI）/GroupBarrier/GroupBarrier.md)所需要的workspace空间大小。
+获取[GroupBarrier](../../../SIMD-API/基础API/cube_group_mgmt_ISASI/GroupBarrier/GroupBarrier.md)所需要的workspace空间大小。
 
 ## 函数原型<a name="zh-cn_topic_0000001969805546_zh-cn_topic_0000001391767420_section13230182415108"></a>
 

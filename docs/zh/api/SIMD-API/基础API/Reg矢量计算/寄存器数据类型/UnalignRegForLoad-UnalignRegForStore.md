@@ -32,7 +32,7 @@
 
 - UnalignRegForStore为非对齐搬出寄存器，在写非对齐地址时，先调用StoreUnAlign，再使用StoreUnAlignPost进行后处理（将UnalignRegForStore中的数据写入非对齐UB地址）。
 
-UnalignRegForLoad和UnalignRegForStore的具体使用方式请参考：[连续非对齐搬入（LoadUnAlign）](../Reg数据搬入/连续非对齐搬入（LoadUnAlign）.md)、[连续非对齐搬出（StoreUnAlign）](../Reg数据搬出/连续非对齐搬出（StoreUnAlign）.md)。
+UnalignRegForLoad和UnalignRegForStore的具体使用方式请参考：[连续非对齐搬入（LoadUnAlign）](../Reg数据搬入/LoadUnAlign_continuous.md)、[连续非对齐搬出（StoreUnAlign）](../Reg数据搬出/StoreUnAlign_continuous.md)。
 
 ## 支持的型号<a name="section156721693504"></a>
 

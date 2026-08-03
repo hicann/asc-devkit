@@ -25,7 +25,7 @@ Unified Buffer（UB）之间的数据搬运提供了灵活的接口支持，共�
     - VECIN -> VECCALC
     - VECCALC -> VECOUT
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（UB -> UB连续数据搬运）](../Memory矢量计算/数据搬运/DataCopy（UBToUB连续数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（UB -> UB连续数据搬运）](../Memory矢量计算/数据搬运/DataCopy_UBToUB_continuous.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -46,7 +46,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
     - VECIN -> VECCALC
     - VECCALC -> VECOUT
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（UB -> UB高维切分数据搬运）](../Memory矢量计算/数据搬运/DataCopy（UBToUB高维切分数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[DataCopy（UB -> UB高维切分数据搬运）](../Memory矢量计算/数据搬运/DataCopy_UBToUB_highdim_split.md)。
 
 src和dst分别为源操作数和目的操作数；repeatParams为DataCopyParams类型的搬运参数，通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。
 
@@ -69,7 +69,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
     - VECOUT -> VECIN
     - VECOUT -> VECCALC
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[Copy（UB -> UB连续数据搬运）](../Memory矢量计算/数据搬运/Copy（UBToUB连续数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[Copy（UB -> UB连续数据搬运）](../Memory矢量计算/数据搬运/Copy_UBToUB_continuous.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -92,7 +92,7 @@ __aicore__ inline void Copy(const LocalTensor<T>& dst, const LocalTensor<T>& src
     - VECOUT -> VECIN
     - VECOUT -> VECCALC
 
-搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[Copy（UB -> UB掩码式高维数据搬运）](../Memory矢量计算/数据搬运/Copy（UBToUB掩码式高维数据搬运）.md)。
+搬运的数据用于[矢量计算](../Memory矢量计算/Memory矢量计算.md)，具体的接口请参考：[Copy（UB -> UB掩码式高维数据搬运）](../Memory矢量计算/数据搬运/Copy_UBToUB_mask_highdim_split.md)。
 
 src和dst分别为源操作数和目的操作数；mask用于控制每次迭代内参与计算的元素；repeatTime为重复迭代次数；repeatParams为CopyRepeatParams类型的搬运参数。
 

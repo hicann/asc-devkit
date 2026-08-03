@@ -60,7 +60,7 @@ __aicore__ inline TEventID FetchEventID(HardEvent evt)
 <td class="cellrowborder" valign="top" width="12.379999999999999%" headers="mcps1.1.4.1.2 "><p id="p9331531865"><a name="p9331531865"></a><a name="p9331531865"></a>输入</p>
 </td>
 <td class="cellrowborder" valign="top" width="75.26%" headers="mcps1.1.4.1.3 "><p id="p143308311967"><a name="p143308311967"></a><a name="p143308311967"></a>HardEvent类型，硬件同步类型。</p>
-<p id="p15571184910124"><a name="p15571184910124"></a><a name="p15571184910124"></a>该类型的具体说明请参考<a href="../../同步控制/核内同步/SetFlag-WaitFlag(ISASI).md">SetFlag/WaitFlag(ISASI)</a>中同步类型的说明。</p>
+<p id="p15571184910124"><a name="p15571184910124"></a><a name="p15571184910124"></a>该类型的具体说明请参考<a href="../../同步控制/核内同步/SetFlag_WaitFlag_ISASI.md">SetFlag/WaitFlag(ISASI)</a>中同步类型的说明。</p>
 </td>
 </tr>
 </tbody>

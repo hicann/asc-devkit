@@ -56,7 +56,7 @@ __aicore__ inline TEventID AllocEventID()
 </thead>
 <tbody><tr id="row11660173845017"><td class="cellrowborder" valign="top" width="16.29%" headers="mcps1.2.3.1.1 "><p id="p4571114971214"><a name="p4571114971214"></a><a name="p4571114971214"></a>evt</p>
 </td>
-<td class="cellrowborder" valign="top" width="83.71%" headers="mcps1.2.3.1.2 "><p id="p15571184910124"><a name="p15571184910124"></a><a name="p15571184910124"></a>HardEvent硬件同步类型。该类型的具体说明请参考<a href="../../同步控制/核内同步/SetFlag-WaitFlag(ISASI).md">SetFlag/WaitFlag(ISASI)</a>中同步类型的说明。</p>
+<td class="cellrowborder" valign="top" width="83.71%" headers="mcps1.2.3.1.2 "><p id="p15571184910124"><a name="p15571184910124"></a><a name="p15571184910124"></a>HardEvent硬件同步类型。该类型的具体说明请参考<a href="../../同步控制/核内同步/SetFlag_WaitFlag_ISASI.md">SetFlag/WaitFlag(ISASI)</a>中同步类型的说明。</p>
 </td>
 </tr>
 </tbody>

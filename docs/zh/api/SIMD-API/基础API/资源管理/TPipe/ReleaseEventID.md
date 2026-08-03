@@ -56,7 +56,7 @@ __aicore__ inline void ReleaseEventID(TEventID id)
 </thead>
 <tbody><tr id="row18991634144619"><td class="cellrowborder" valign="top" width="12.23%" headers="mcps1.2.3.1.1 "><p id="p118996346463"><a name="p118996346463"></a><a name="p118996346463"></a>evt</p>
 </td>
-<td class="cellrowborder" valign="top" width="87.77000000000001%" headers="mcps1.2.3.1.2 "><p id="p1389943411468"><a name="p1389943411468"></a><a name="p1389943411468"></a>HardEvent硬件同步类型。该类型的具体说明请参考<a href="../../同步控制/核内同步/SetFlag-WaitFlag(ISASI).md">SetFlag/WaitFlag(ISASI)</a>中同步类型的说明。</p>
+<td class="cellrowborder" valign="top" width="87.77000000000001%" headers="mcps1.2.3.1.2 "><p id="p1389943411468"><a name="p1389943411468"></a><a name="p1389943411468"></a>HardEvent硬件同步类型。该类型的具体说明请参考<a href="../../同步控制/核内同步/SetFlag_WaitFlag_ISASI.md">SetFlag/WaitFlag(ISASI)</a>中同步类型的说明。</p>
 </td>
 </tr>
 </tbody>

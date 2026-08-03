@@ -28,7 +28,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-刷新NDDMA DataCache。在多核场景下，当多个AI Core读取同一块GM（Global Memory）地址时，NDDMA DataCache中可能缓存了旧数据，导致部分核读取到错误的数据。因此，在使用[DataCopy（GMToUB多维数据搬运NDDMA）](../数据搬运/DataCopy（GMToUB多维数据搬运NDDMA）.md)前，需要调用NdDmaDci接口刷新NDDMA DataCache，确保缓存中的数据为最新状态。
+刷新NDDMA DataCache。在多核场景下，当多个AI Core读取同一块GM（Global Memory）地址时，NDDMA DataCache中可能缓存了旧数据，导致部分核读取到错误的数据。因此，在使用[DataCopy（GMToUB多维数据搬运NDDMA）](../数据搬运/DataCopy_GMToUB_NDDMA.md)前，需要调用NdDmaDci接口刷新NDDMA DataCache，确保缓存中的数据为最新状态。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -46,13 +46,13 @@ __aicore__ inline void NdDmaDci()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-该接口仅在使用[DataCopy（GMToUB多维数据搬运NDDMA）](../数据搬运/DataCopy（GMToUB多维数据搬运NDDMA）.md)前调用，用于刷新NDDMA DataCache。
+该接口仅在使用[DataCopy（GMToUB多维数据搬运NDDMA）](../数据搬运/DataCopy_GMToUB_NDDMA.md)前调用，用于刷新NDDMA DataCache。
 
 ## 调用示例<a name="section1227835243314"></a>
 
 完整算子用例请参考：[多维数据搬运样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_gm2ub_nddma)。
 
-以2D Padding场景为例，将GM上shape为[2, 8]的数据搬运至UB并Padding为[4, 16]，左Padding 3，上Padding 1，右Padding 5，下Padding 1，Padding值填充为0。在调用[DataCopy（GMToUB多维数据搬运NDDMA）](../数据搬运/DataCopy（GMToUB多维数据搬运NDDMA）.md)前，需要先调用NdDmaDci刷新NDDMA DataCache。
+以2D Padding场景为例，将GM上shape为[2, 8]的数据搬运至UB并Padding为[4, 16]，左Padding 3，上Padding 1，右Padding 5，下Padding 1，Padding值填充为0。在调用[DataCopy（GMToUB多维数据搬运NDDMA）](../数据搬运/DataCopy_GMToUB_NDDMA.md)前，需要先调用NdDmaDci刷新NDDMA DataCache。
 
 ```cpp
 // T：搬运数据的类型

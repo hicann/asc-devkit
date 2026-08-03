@@ -46,7 +46,7 @@ __aicore__ inline void DisableDmaAtomic()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-[SetAtomicAdd](SetAtomicAdd.md)、[SetAtomicMax](SetAtomicMax(ISASI).md)、[SetAtomicMin](SetAtomicMin(ISASI).md)使用完成后，通过DisableDmaAtomic清空原子操作的状态，以免影响后续相关指令功能。
+[SetAtomicAdd](SetAtomicAdd.md)、[SetAtomicMax](SetAtomicMax_ISASI.md)、[SetAtomicMin](SetAtomicMin_ISASI.md)使用完成后，通过DisableDmaAtomic清空原子操作的状态，以免影响后续相关指令功能。
 
 ## 调用示例<a name="section177231425115410"></a>
 

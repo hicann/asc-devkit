@@ -73,9 +73,9 @@ __aicore__ inline void SetAtomicType()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- [SetAtomicAdd](SetAtomicAdd.md)、[SetAtomicMax](SetAtomicMax(ISASI).md)、[SetAtomicMin](SetAtomicMin(ISASI).md)内部已集成与SetAtomicType相同的功能。建议调用上述接口时，通过设置模板参数显式指定原子操作的数据类型，无需额外调用SetAtomicType接口。
+- [SetAtomicAdd](SetAtomicAdd.md)、[SetAtomicMax](SetAtomicMax_ISASI.md)、[SetAtomicMin](SetAtomicMin_ISASI.md)内部已集成与SetAtomicType相同的功能。建议调用上述接口时，通过设置模板参数显式指定原子操作的数据类型，无需额外调用SetAtomicType接口。
 - 使用完成后，建议使用DisableDmaAtomic清空原子操作的状态，以免影响后续相关指令功能。
 
 ## 调用示例<a name="section177231425115410"></a>
 
-根据约束说明可知，使用[SetAtomicAdd](SetAtomicAdd.md)、[SetAtomicMax](SetAtomicMax(ISASI).md)、[SetAtomicMin](SetAtomicMin(ISASI).md)时，已通过模板参数指定原子操作的数据类型，无需额外调用`SetAtomicType`接口，因此本接口不提供调用示例。
+根据约束说明可知，使用[SetAtomicAdd](SetAtomicAdd.md)、[SetAtomicMax](SetAtomicMax_ISASI.md)、[SetAtomicMin](SetAtomicMin_ISASI.md)时，已通过模板参数指定原子操作的数据类型，无需额外调用`SetAtomicType`接口，因此本接口不提供调用示例。

@@ -24,13 +24,13 @@
 
 -   **[数据填充](数据填充/数据填充.md)**
 
--   **[排序组合（ISASI）](排序组合（ISASI）/排序组合（ISASI）.md)**
+-   **[排序组合（ISASI）](sort_and_merge_ISASI/sort_and_merge_ISASI.md)**
 
 -   **[离散与聚合](离散与聚合/离散与聚合.md)**
 
 -   **[掩码操作](掩码操作/掩码操作.md)**
 
--   **[数据重排（ISASI）](数据重排（ISASI）/数据重排（ISASI）.md)**
+-   **[数据重排（ISASI）](data_rearrange_ISASI/data_rearrange_ISASI.md)**
 
 -   **[数据搬运](数据搬运/数据搬运.md)**
 

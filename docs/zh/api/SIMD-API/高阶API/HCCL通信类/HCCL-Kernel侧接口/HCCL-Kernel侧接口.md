@@ -46,7 +46,7 @@
 
 -   **[GetQueueNum](GetQueueNum.md)**
 
--   **[Init（废弃）](Init（废弃）.md)**
+-   **[Init（废弃）](Init_deprecated.md)**
 
--   **[SetCcTiling（废弃）](SetCcTiling（废弃）.md)**
+-   **[SetCcTiling（废弃）](SetCcTiling_deprecated.md)**
 

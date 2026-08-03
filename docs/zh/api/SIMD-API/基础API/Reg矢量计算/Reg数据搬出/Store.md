@@ -30,7 +30,7 @@
 
 Reg矢量计算数据搬运接口，支持从RegTensor搬出至非32字节对齐的UB地址dstAddr。连续搬运时，用户需手动更新dstAddr地址。
 
-该接口封装了[StoreUnAlign和StoreUnAlignPost](连续非对齐搬出（StoreUnAlign）.md)。
+该接口封装了[StoreUnAlign和StoreUnAlignPost](StoreUnAlign_continuous.md)。
 
 ## 函数原型
 

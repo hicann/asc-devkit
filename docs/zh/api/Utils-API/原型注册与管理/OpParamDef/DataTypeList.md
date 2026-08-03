@@ -110,7 +110,7 @@ OpParamDef算子定义，OpParamDef请参考[OpParamDef](OpParamDef.md)。
 ## 约束说明<a name="zh-cn_topic_0000001991854801_zh-cn_topic_0000001526115138_zh-cn_topic_0000001525424352_section19165124931511"></a>
 
 -   同一输入/输出不能同时设置DataType和DataTypeList。
--   本接口不支持和[UnknownShapeFormat](UnknownShapeFormat（废弃）.md)同时使用。
+-   本接口不支持和[UnknownShapeFormat](UnknownShapeFormat_deprecated.md)同时使用。
 
 ## 调用示例<a name="zh-cn_topic_0000001991854801_zh-cn_topic_0000001526115138_zh-cn_topic_0000001575944081_section320753512363"></a>
 
