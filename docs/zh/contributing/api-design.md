@@ -28,7 +28,7 @@ void Add(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTenso
 > **例外：** Tiling接口中输出参数为引用类型（`uint32_t&`），按C++惯例放在参数列表末尾：
 >
 > ```cpp
-> void GetAxpyMaxMinTmpSize(const ge::Shape& srcShape, const uint32_t typeSize,
+> void GetAxpyMaxMinTmpSize(const AscendC::TensorShape& srcShape, const uint32_t typeSize,
 >     const bool isReuseSource, uint32_t& maxValue, uint32_t& minValue);
 > ```
 
@@ -132,7 +132,7 @@ Get<ApiName>TmpBufferFactorSize
 
 **输入参数：**
 
-- `const ge::Shape& srcShape` — 输入shape信息
+- `const AscendC::TensorShape& srcShape` — 输入shape信息
 - `const uint32_t typeSize` — 数据类型大小（字节）
 - `const bool isReuseSource` — 是否允许修改源操作数（当前传false）
 

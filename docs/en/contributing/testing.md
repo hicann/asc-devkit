@@ -237,11 +237,11 @@ TEST_F(TestTiling, TestAxpyTiling)
     uint32_t maxVal = 0;
     uint32_t minVal = 0;
 
-    GetAxpyMaxMinTmpSize(ge::Shape({128}), 4, false, maxVal, minVal);
+    GetAxpyMaxMinTmpSize(AscendC::TensorShape({128}), 4, false, maxVal, minVal);
     EXPECT_EQ(maxVal, 0);
     EXPECT_EQ(minVal, 0);
 
-    GetAxpyMaxMinTmpSize(ge::Shape({256}), 2, false, maxVal, minVal);
+    GetAxpyMaxMinTmpSize(AscendC::TensorShape({256}), 2, false, maxVal, minVal);
     EXPECT_EQ(maxVal, 256 * 4 * 2);
     EXPECT_EQ(minVal, 256 * 4);
 }

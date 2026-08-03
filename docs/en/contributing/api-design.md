@@ -28,7 +28,7 @@ void Add(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTenso
 > **Exception:** In Tiling interfaces, output parameters are reference types (`uint32_t&`) and are placed at the end of the parameter list by C++ convention:
 >
 > ```cpp
-> void GetAxpyMaxMinTmpSize(const ge::Shape& srcShape, const uint32_t typeSize,
+> void GetAxpyMaxMinTmpSize(const AscendC::TensorShape& srcShape, const uint32_t typeSize,
 >     const bool isReuseSource, uint32_t& maxValue, uint32_t& minValue);
 > ```
 
@@ -132,7 +132,7 @@ Taking `Axpy` as an example; different APIs may have different Tiling interface 
 
 **Input Parameters:**
 
-- `const ge::Shape& srcShape` — input shape information
+- `const AscendC::TensorShape& srcShape` — input shape information
 - `const uint32_t typeSize` — data type size (bytes)
 - `const bool isReuseSource` — whether modifying the source operand is allowed (currently false)
 
