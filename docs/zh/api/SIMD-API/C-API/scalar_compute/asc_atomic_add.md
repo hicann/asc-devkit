@@ -73,7 +73,7 @@ PIPE_S
 ## 调用示例
 
 ```cpp
-int32_t dst = 10;          // 初始值
+// dst为外部输入的int32_t类型的GM内存，此示例的初始值为10
 asc_dcci_entire_all();            // 手动同步
-int32_t old = asc_atomic_add(&dst, 5);  // dst = 15, old = 10
+int32_t old = asc_atomic_add(dst, 5);  // 计算后dst = 15, old = 10
 ```
