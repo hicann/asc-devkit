@@ -114,7 +114,7 @@
 | [SetFixPipeClipRelu](cube_compute_ISASI/矩阵搬出辅助配置接口/SetFixPipeClipRelu.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路量化后，通过调用该接口设置ClipReLU操作的最大值。 |
 | [SetFixPipeAddr](cube_compute_ISASI/矩阵搬出辅助配置接口/SetFixPipeAddr.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路量化后，通过调用该接口设置Elementwise操作时LocalTensor的地址。 |
 
-## 矩阵计算（TensorAPI）
+## 矩阵计算（TensorAPI，试验特性）
 
 ### 矩阵数据搬入至L1
 
