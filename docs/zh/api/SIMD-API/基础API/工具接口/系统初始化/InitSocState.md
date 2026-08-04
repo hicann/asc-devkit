@@ -40,7 +40,7 @@
 | 公共状态 | 初始化[CTRL寄存器](../../特殊寄存器访问/SetCtrlSpr_ISASI.md#tab-950)中除`CTRL[48]`以外的比特位为默认值。 |
 | 公共状态 | 初始化[原子操作开启位与原子操作类型](../../原子操作/SetStoreAtomicConfig_ISASI.md)，为无效的原子操作类型。 |
 | AIC | 初始化[LoadData（卷积数据搬运）接口调用时Pad填充的数值](../../cube_compute_ISASI/矩阵搬入辅助配置接口/SetLoadDataPaddingValue.md#功能说明)为0。 |
-| AIC | 初始化[使用LoadData（卷积数据搬运）时A1/B1的边界值](../../cube_compute_ISASI/矩阵搬入辅助配置接口/SetLoadDataBoundary.md#功能说明)为0，表示无边界。 |
+| AIC | 初始化[使用LoadData（卷积数据搬运）时L1 Buffer（A1/B1）的边界值](../../cube_compute_ISASI/矩阵搬入辅助配置接口/SetLoadDataBoundary.md#功能说明)为0，表示无边界。 |
 | AIV | 将[Mask](../../Memory矢量计算/SIMD计算说明/掩码.md)配置为全1，表示所有数都参与计算。 |
 | AIV | [重置loop mode的参数](../../Memory矢量计算/数据搬运辅助配置接口/ResetLoopModePara.md)。 |
 
@@ -69,7 +69,7 @@
 | 公共状态 | 原子累加状态 |
 | 公共状态 | Mask工作模式 |
 | AIC | LoadData（卷积数据搬运）接口调用时Pad填充的数值 |
-| AIC | 使用LoadData（卷积数据搬运）时A1/B1的边界值 |
+| AIC | 使用LoadData（卷积数据搬运）时L1 Buffer（A1/B1）的边界值 |
 | AIV | Mask |
 <!-- end id9 -->
 
@@ -81,7 +81,7 @@
 | 公共状态 | 原子累加状态 |
 | 公共状态 | Mask工作模式 |
 | AIC | LoadData（卷积数据搬运）接口调用时Pad填充的数值 |
-| AIC | 使用LoadData（卷积数据搬运）时A1/B1的边界值 |
+| AIC | 使用LoadData（卷积数据搬运）时L1 Buffer（A1/B1）的边界值 |
 | AIV | Mask |
 <!-- end id10 -->
 

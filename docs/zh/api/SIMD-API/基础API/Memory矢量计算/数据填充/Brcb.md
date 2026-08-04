@@ -74,8 +74,8 @@ __aicore__ inline void Brcb(const LocalTensor<T>& dst, const LocalTensor<T>& src
 
 | 参数名称 | 输入/输出 | 含义 |
 | ------ | ------ | ------ |
-| dst | 输出 | 目的操作数，类型为LocalTensor，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br> LocalTensor的起始地址需要按照32字节对齐。|
-| src | 输入 | 源操作数，类型为LocalTensor，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br> 需要按照32字节对齐。<br> 注：每一次迭代读取src中的8个元素，所以src的元素个数不小于8 * repeatTime。|
+| dst | 输出 | 目的操作数，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br> LocalTensor的起始地址需要按照32字节对齐。|
+| src | 输入 | 源操作数，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br> 需要按照32字节对齐。<br> 注：每一次迭代读取src中的8个元素，所以src的元素个数不小于8 * repeatTime。|
 | repeatTime | 输入 | 指令迭代次数，每次迭代完成8个DataBlock的数据收集，取值范围：repeatTime∈[0,255]。|
 | repeatParams | 输入 | 用于控制指令迭代的相关参数，类型为BrcbRepeatParms。<br> BrcbRepeatParams参数说明请参考[表3 BrcbRepeatParams结构体参数说明](#table3)。|
 

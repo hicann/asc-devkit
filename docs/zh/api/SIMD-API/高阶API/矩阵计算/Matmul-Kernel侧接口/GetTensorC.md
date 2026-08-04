@@ -62,7 +62,7 @@ Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor
     -   支持同步模式
     -   支持异步模式
 
--   获取C矩阵，同时输出至GM和VECIN
+-   获取C矩阵，同时输出至GM和UB（VECIN）
 
     ```
     template <bool sync = true>
@@ -73,12 +73,12 @@ Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor
     -   支持异步模式
     -   纯Cube模式（只有矩阵计算）模式暂不支持该接口
         <!-- npu="310b" id26 -->
-    -   Atlas 200I/500 A2 推理产品暂不支持同时输出至GM和VECIN
+    -   Atlas 200I/500 A2 推理产品暂不支持同时输出至GM和UB（VECIN）
         <!-- end id26 -->
 
 -   获取异步场景用于缓存结果的Workspace上的C矩阵，后续使用过程由开发者自行控制
 
-    C矩阵输出到VECIN时，分配给VECIN的Unified Buffer的大小会影响Matmul计算的力度，分配给VECIN的大小过小时，无法充分利用硬件算力。提供该接口支持返回缓存在Workspace上的C矩阵，由开发者自行控制后续使用过程。
+    C矩阵输出到UB（VECIN）时，分配给UB（VECIN）的空间大小会影响Matmul计算的力度，分配给UB（VECIN）的空间过小时，无法充分利用硬件算力。提供该接口支持返回缓存在Workspace上的C矩阵，由开发者自行控制后续使用过程。
 
     注意，在初始化时，C矩阵的逻辑位置应设置为TPosition::VECIN，调用该接口获取缓存的C矩阵后，自行拷贝到Unified Buffer。
 
@@ -89,7 +89,7 @@ Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor
 
     -   支持异步模式
 
-以下接口中的doPad、height、width、srcGap、dstGap参数待废弃，使用过程中无需传入，保持默认值即可；上文介绍的输出至VECIN的原型实际为不传入默认值的函数原型。
+以下接口中的doPad、height、width、srcGap、dstGap参数待废弃，使用过程中无需传入，保持默认值即可；上文介绍的输出至UB（VECIN）的原型实际为不传入默认值的函数原型。
 
 ```
 template <bool sync = true, bool doPad = false>
@@ -209,7 +209,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
     }
     ```
 
--   获取C矩阵，同时输出至GM和VECIN，同步模式样例
+-   获取C矩阵，同时输出至GM和UB（VECIN），同步模式样例
 
     ```
     while (mm.Iterate()) {

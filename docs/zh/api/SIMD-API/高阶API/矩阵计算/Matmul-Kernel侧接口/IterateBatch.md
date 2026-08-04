@@ -116,7 +116,7 @@
 | matrixStrideA | 输入 | A矩阵源操作数相邻nd矩阵起始地址间的偏移，单位是元素，默认值是0。 |
 | matrixStrideB | 输入 | B矩阵源操作数相邻nd矩阵起始地址间的偏移，单位是元素，默认值是0。 |
 | matrixStrideC | 输入 | 该参数预留，保持默认值0即可。 |
-| enPartialSum | 输入 | 是否将矩阵乘的结果累加于现有的CO1数据，默认值为false。在L0C累加时，只支持A矩阵和B矩阵相乘的输出C矩阵规格为singleM==baseM &&singleN==baseN。 |
+| enPartialSum | 输入 | 是否将矩阵乘的结果累加于现有的L0C Buffer（CO1）数据，默认值为false。在L0C累加时，只支持A矩阵和B矩阵相乘的输出C矩阵规格为singleM==baseM &&singleN==baseN。 |
 | enAtomic | 输入 | 是否开启Atomic操作，默认值为0。<br><br>参数取值：<br><br>0：不开启Atomic操作<br><br>1：开启AtomicAdd累加操作<br><br>2：开启AtomicMax求最大值操作<br><br>3：开启AtomicMin求最小值操作 |
 
 ## 返回值说明

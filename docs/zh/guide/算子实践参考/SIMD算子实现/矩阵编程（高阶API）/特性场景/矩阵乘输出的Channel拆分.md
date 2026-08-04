@@ -20,7 +20,7 @@
 -   C矩阵的数据排布格式为CubeFormat::NZ。
 -   C矩阵的数据类型为float。
 -   C矩阵的内存逻辑位置为Global Memory。
--   矩阵乘结果CO1数据类型为float。
+-   矩阵乘结果L0C Buffer（CO1）数据类型为float。
 
 ## 调用示例<a name="zh-cn_topic_0000002264134832_section15486294368"></a>
 

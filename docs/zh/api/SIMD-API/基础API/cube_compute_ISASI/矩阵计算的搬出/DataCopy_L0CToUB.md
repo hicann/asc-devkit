@@ -83,10 +83,10 @@
 
 | blockMode | src | dst | 数据类型 | blockLen单位 | srcStride单位 | dstStride单位 |
 | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
-| BLOCK_MODE_MATRIX | CO1 | CO2 | half、int16_t、uint16_t | 512B | 512B | 32B |
-| BLOCK_MODE_MATRIX | CO1 | CO2 | float、int32_t、uint32_t | 1024B | 1024B | 32B |
-| BLOCK_MODE_VECTOR | CO1 | CO2 | half、int16_t、uint16_t | 32B | 512B | 32B |
-| BLOCK_MODE_VECTOR | CO1 | CO2 | float、int32_t、uint32_t | 64B | 1024B | 32B |
+| BLOCK_MODE_MATRIX | L0C Buffer（CO1） | UB（CO2） | half、int16_t、uint16_t | 512B | 512B | 32B |
+| BLOCK_MODE_MATRIX | L0C Buffer（CO1） | UB（CO2） | float、int32_t、uint32_t | 1024B | 1024B | 32B |
+| BLOCK_MODE_VECTOR | L0C Buffer（CO1） | UB（CO2） | half、int16_t、uint16_t | 32B | 512B | 32B |
+| BLOCK_MODE_VECTOR | L0C Buffer（CO1） | UB（CO2） | float、int32_t、uint32_t | 64B | 1024B | 32B |
 
 **表5** deqScale参数列表<a id="table168091348673"></a>
 

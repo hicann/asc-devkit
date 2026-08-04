@@ -87,8 +87,8 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 | 参数名称 | 输入/输出 | 含义 |
 | :------- | :-------- | :--- |
-| dst | 输出 | 目的操作数。<br/>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br/>LocalTensor的起始地址需要32字节对齐。 |
-| src | 输入 | 源操作数。<br/>类型为LocalTensor，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br/>LocalTensor的起始地址需要32字节对齐。<br/>数据类型需要与dst保持一致。 |
+| dst | 输出 | 目的操作数。<br/>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br/>LocalTensor的起始地址需要32字节对齐。 |
+| src | 输入 | 源操作数。<br/>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br/>LocalTensor的起始地址需要32字节对齐。<br/>数据类型需要与dst保持一致。 |
 | sharedTmpBuffer | 输入 | 共享的临时Buffer，sharedTmpBuffer的大小参考[表sharedTmpBuffer所需的内存](#table4)。 |
 | transposeParams | 输入 | 控制Transpose的数据结构。结构体内包含：输入的shape信息和transposeType参数。该数据结构的定义请参考[表TransposeParamsExt结构体内参数说明](#table3)。<pre>struct TransposeParamsExt {<br/>    \_\_aicore\_\_ TransposeParamsExt() {}<br/>    \_\_aicore\_\_ TransposeParamsExt(const uint16_t nSizeIn, const uint16_t cSizeIn, const uint16_t hSizeIn,<br/>        const uint16_t wSizeIn, const TransposeType transposeTypeIn)<br/>        : nSize(nSizeIn),<br/>          cSize(cSizeIn),<br/>          hSize(hSizeIn),<br/>          wSize(wSizeIn),<br/>          transposeType(transposeTypeIn)<br/>    {}<br/>    uint16_t nSize = 0;<br/>    uint16_t cSize = 0;<br/>    uint16_t hSize = 0;<br/>    uint16_t wSize = 0;<br/>    TransposeType transposeType = TransposeType::TRANSPOSE\_ND2ND\_B16;<br/>};</pre> |
 

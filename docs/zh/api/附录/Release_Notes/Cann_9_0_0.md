@@ -10,7 +10,7 @@
 
 - `asc_fill_value_config`：fill_value的初始化参数结构体，包含 `asc_fill_l0a` / `asc_fill_l0b` / `asc_fill_l1` 接口需要配置的各种初始化参数。
 - `asc_store_atomic_config`：原子操作使能位与原子操作类型的值。
-- `asc_set_l0c_copy_params_config`：DataCopy（CO1->GM、CO1->A1）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。
+- `asc_set_l0c_copy_params_config`：DataCopy（L0C Buffer->GM、L0C Buffer->L1 Buffer）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。
 - `asc_load3d_v2_config`：Load3Dv2接口的repeat参数。
 - `asc_ndim_pad_count_config`：N维搬运时各层循环的左右填充计数配置。
 - `asc_l13d_fmatrix_config`：L1 3D fmatrix配置，用于设置 `asc_copy_l12l0a` / `asc_copy_l12l0b` 的3D格式搬运的fmatrix参数。
@@ -226,7 +226,7 @@
 - `asc_set_l13d_padding`：设置Pad属性描述，用于在调用 `asc_copy_l12l0a` 接口时配置填充数值。
 - `asc_set_l13d_fmatrix`：3D fmatrix配置。
 - `asc_set_l0c_copy_prequant`：数据搬运过程中进行随路量化时，通过调用该接口设置量化流程中的标量量化参数。
-- `asc_set_l0c_copy_params`：DataCopy（CO1->GM、CO1->A1）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。
+- `asc_set_l0c_copy_params`：DataCopy（L0C Buffer->GM、L0C Buffer->L1 Buffer）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。
 - `asc_copy_l0c2l1` / `asc_copy_l0c2l1_sync`：L0C Buffer到L1 Buffer搬运，扩展量化、ReLU、裁剪等随路操作参数。
 - `asc_copy_l12l0a_mx` / `asc_copy_l12l0a_mx_sync`：L1 Buffer到L0A Buffer微缩格式搬运。
 - `asc_set_gm2l1_loop_size` / `asc_set_gm2l1_loop1_stride` / `asc_set_gm2l1_loop2_stride` / `asc_set_gm2l1_pad`：GM到L1 Buffer循环搬运参数配置。

@@ -73,8 +73,8 @@ TransDataTo5HD接口数据格式转换，一般用于将NCHW格式转换成[NC1H
 
 | 参数名称 | 输入/输出 | 含义 |
 | :------- | :-------- | :--- |
-| dstList | 输出 | 目的操作数地址序列。<br><br>NCHW_CONV_ADDR_LIST_SIZE固定长度为16。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)或者LocalTensor的地址值，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br>LocalTensor的起始地址需要按照32字节对齐。 |
-| srcList | 输入 | 源操作数地址序列。<br><br>NCHW_CONV_ADDR_LIST_SIZE固定长度为16。<br>类型为LocalTensor或者LocalTensor的地址值，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br>LocalTensor的起始地址需要按照32字节对齐。 |
+| dstList | 输出 | 目的操作数地址序列。<br><br>NCHW_CONV_ADDR_LIST_SIZE固定长度为16。<br>类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)或者LocalTensor的地址值，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要按照32字节对齐。 |
+| srcList | 输入 | 源操作数地址序列。<br><br>NCHW_CONV_ADDR_LIST_SIZE固定长度为16。<br>类型为LocalTensor或者LocalTensor的地址值，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要按照32字节对齐。 |
 | dst | 输出 | 目的操作数。<br><br>类型为LocalTensor，连续存储对应LocalTensor的地址值。LocalTensor支持的TPosition为VECIN/VECCALC/VECOUT。LocalTensor的起始地址需要32字节对齐。 |
 | src | 输入 | 源操作数。<br><br>类型为LocalTensor，连续存储对应LocalTensor的地址值。LocalTensor支持的TPosition为VECIN/VECCALC/VECOUT。LocalTensor的起始地址需要32字节对齐。 |
 | nchwconvParams | 输入 | 用于控制TransdataTo5HD的数据结构和指令迭代的相关参数。<br>nchwconvParams参数说明请参考[TransDataTo5HDParams参数说明](#table3)。 |

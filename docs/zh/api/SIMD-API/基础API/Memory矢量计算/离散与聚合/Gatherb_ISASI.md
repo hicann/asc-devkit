@@ -73,9 +73,9 @@ __aicore__ inline void Gatherb(const LocalTensor<T>& dst, const LocalTensor<T>& 
 
 | 参数名称 | 输入/输出 | 含义 |
 | :------- | :-------- | :--- |
-| dst | 输出 | 目的操作数，类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br><br>LocalTensor的起始地址需要按照32字节对齐。 |
-| src | 输入 | 源操作数，类型为LocalTensor，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br><br>LocalTensor的起始地址需要按照32字节对齐。 |
-| offset | 输入 | 每个DataBlock在源操作数中对应的地址偏移，类型为LocalTensor，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。<br><br>LocalTensor的起始地址需要按照32字节对齐。<br><br>该偏移量是相对于src的基地址而言的。每个元素值要大于等于0，单位为字节。取值要求见[约束说明](#约束说明)。 |
+| dst | 输出 | 目的操作数，类型为[LocalTensor](../../数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要按照32字节对齐。 |
+| src | 输入 | 源操作数，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要按照32字节对齐。 |
+| offset | 输入 | 每个DataBlock在源操作数中对应的地址偏移，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要按照32字节对齐。<br><br>该偏移量是相对于src的基地址而言的。每个元素值要大于等于0，单位为字节。取值要求见[约束说明](#约束说明)。 |
 | repeatTime | 输入 | 指令迭代次数，每次迭代完成8个DataBlock的数据收集，取值范围：repeatTime∈[0,255]。|
 | repeatParams | 输入 | 用于控制指令迭代的相关参数。<br><br>GatherRepeatParams参数说明请参考[表3](#table3)。 |
 

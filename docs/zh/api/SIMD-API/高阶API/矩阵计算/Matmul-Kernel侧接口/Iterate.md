@@ -39,23 +39,23 @@
 
 ## 函数原型
 
--   <a name="li135771283591"></a>接口内部管理CO1
+-   <a name="li135771283591"></a>接口内部管理L0C Buffer（CO1）
 
     ```
     template <bool sync = true> __aicore__ inline bool Iterate(bool enPartialSum = false)
     ```
 
--   <a name="li4843165185812"></a>用户自主管理CO1
+-   <a name="li4843165185812"></a>用户自主管理L0C Buffer（CO1）
 
     ```
     template <bool sync = true, typename T> __aicore__ inline bool Iterate(bool enPartialSum, const LocalTensor<T>& localCmatrix)
     ```
 
     <!-- npu="310p" id9 -->
-    -   Atlas 推理系列产品AI Core暂不支持用户自主管理CO1。
+    -   Atlas 推理系列产品AI Core暂不支持用户自主管理L0C Buffer（CO1）。
     <!-- end id9 -->
     <!-- npu="310b" id10 -->
-    -   Atlas 200I/500 A2 推理产品暂不支持用户自主管理CO1。
+    -   Atlas 200I/500 A2 推理产品暂不支持用户自主管理L0C Buffer（CO1）。
     <!-- end id10 -->
 
 ## 参数说明
@@ -67,13 +67,13 @@
 | sync | 迭代获取C矩阵分片的过程分为同步和异步两种模式。通过该参数设置同步或者异步模式：同步模式设置为true；异步模式设置为false。默认为同步模式。具体模式的介绍和使用方法请参考[GetTensorC](GetTensorC.md)。 |
 | T | 用户申请的L0C Buffer（CO1）内存上LocalTensor的数据类型，即矩阵乘输出的C矩阵的数据类型。当前支持的数据类型为float、int32_t。 |
 
-**表2**  接口内部管理CO1的函数参数说明
+**表2**  接口内部管理L0C Buffer（CO1）的函数参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | enPartialSum | 输入 | 是否将矩阵乘的结果累加于现有的L0C Buffer（CO1）数据，默认值为false。在L0C累加时，只支持C矩阵规格为singleCoreM==baseM && singleCoreN==baseN。<!-- npu="310b" id11 --><br><br>针对Atlas 200I/500 A2 推理产品，该参数仅支持配置为false。<!-- end id11 --> |
 
-**表3**  用户自主管理CO1的函数参数说明
+**表3**  用户自主管理L0C Buffer（CO1）的函数参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |

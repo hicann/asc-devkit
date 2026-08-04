@@ -95,12 +95,12 @@ pipe.InitBuffer(tmpBuf1, totalLength * sizeof(float));
 
 基于矢量编程范式，核函数需要实现3个基本任务：CopyIn，Compute，CopyOut。与[基础矢量算子实现](基础矢量算子.md#zh-cn_topic_0000002201157438_section10423482111)相同，核函数按顺序进行CopyIn，Compute，CopyOut。其中，CopyIn，CopyOut与[基础矢量算子的CopyIn](基础矢量算子.md#copyin-implementation)、[基础矢量算子的CopyOut](基础矢量算子.md#copyout-implementation)的实现没有差异，此处不过多赘述。Compute的实现步骤如下：
 
-1.  使用[DeQue](../../../../api/SIMD-API/基础API/资源管理/TQue/DeQue.md)从VECIN的Queue中取出LocalTensor。
+1.  使用[DeQue](../../../../api/SIMD-API/基础API/资源管理/TQue/DeQue.md)从UB（VECIN）的Queue中取出LocalTensor。
 2.  使用TBuf.[Get](../../../../api/SIMD-API/基础API/资源管理/TBuf/Get.md)从TBuf上获取全部长度的Tensor作为临时内存。
 3.  使用[Cast](../../../../api/SIMD-API/基础API/Memory矢量计算/类型转换/Cast.md)接口将LocalTensor转换为float类型，并存入临时内存。
 4.  使用[Add](../../../../api/SIMD-API/基础API/Memory矢量计算/基础算术/Add.md)接口完成矢量计算，将计算结果存入临时内存。
 5.  使用[Cast](../../../../api/SIMD-API/基础API/Memory矢量计算/类型转换/Cast.md)接口将临时内存中的计算结果转换为bfloat16\_t类型。
-6.  使用[EnQue](../../../../api/SIMD-API/基础API/资源管理/TQue/EnQue.md)将bfloat16\_t类型的结果LocalTensor放入VECOUT的Queue中。
+6.  使用[EnQue](../../../../api/SIMD-API/基础API/资源管理/TQue/EnQue.md)将bfloat16\_t类型的结果LocalTensor放入UB（VECOUT）的Queue中。
 7.  使用[FreeTensor](../../../../api/SIMD-API/基础API/资源管理/TQue/FreeTensor.md)释放不再使用的LocalTensor。
 
 ```
