@@ -42,7 +42,7 @@ __aicore__ inline void LoadImageToLocal(const LocalTensor<T>& dst, const LoadIma
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
 | dst | 输出 | 目的操作数，类型为LocalTensor。<br>LocalTensor的起始地址需要保证32字节对齐。 |
-| loadDataParams | 输入 | LoadData参数结构体，类型为LoadImageToLocalParams。<br>具体定义请参考：`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明参考[表2](#table8955841508)。 |
+| loadDataParams | 输入 | LoadData参数结构体，类型为LoadImageToLocalParams。<br>具体定义请参考：`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明参考[表2](#table8955841508)。 |
 
 <a name="table8955841508"></a>
 **表2** LoadImageToLocalParams结构体内参数说明

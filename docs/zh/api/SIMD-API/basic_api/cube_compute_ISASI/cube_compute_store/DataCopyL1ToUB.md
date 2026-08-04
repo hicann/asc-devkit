@@ -61,7 +61,7 @@ __aicore__ inline void DataCopyL1ToUB(const LocalTensor<T>& dst, const LocalTens
 | :--- | :--- | :--- |
 | dst | 输出 | 目的操作数，类型为LocalTensor。LocalTensor的起始地址要求32字节对齐。 |
 | src | 输入 | 源操作数，类型为LocalTensor。LocalTensor的起始地址要求32字节对齐。 |
-| repeatParams | 输入 | 搬运参数，[DataCopyParams](#参数说明)类型。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| repeatParams | 输入 | 搬运参数，[DataCopyParams](#参数说明)类型。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 | count | 输入 | 参与搬运的元素个数。<br>**注：count * sizeof(T)需要32字节对齐，若未对齐，搬运量会向下取整到32字节对齐。** |
 
 **表3** DataCopyParams结构体参数定义

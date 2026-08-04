@@ -107,7 +107,7 @@ __aicore__ inline void MmadWithSparse(const LocalTensor<T>& dst, const LocalTens
 | dst | 输出 | 目的操作数，结果矩阵C，类型为LocalTensor，支持的物理存储位置为L0C Buffer（TPosition:CO1）。<br>LocalTensor的起始地址需要256个元素（1024字节）对齐。 |
 | fm | 输入 | 源操作数，左矩阵A，类型为LocalTensor，支持的物理存储位置为L0A Buffer（TPosition: A2）。<br>LocalTensor的起始地址需要512字节对齐。 |
 | filter | 输入 | 源操作数，右矩阵B，类型为LocalTensor，支持的物理存储位置为L0B Buffer（TPosition:B2）。<br>LocalTensor的起始地址需要512字节对齐。 |
-| mmadParams | 输入 | 矩阵乘相关参数，类型为MmadParams。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明请参考[表5](#zh_cn_topic_mmadsparse_section5_table5)。 |
+| mmadParams | 输入 | 矩阵乘相关参数，类型为MmadParams。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明请参考[表5](#zh_cn_topic_mmadsparse_section5_table5)。 |
 
 **表5** MmadParams结构体内参数说明（Sparse场景）<a id="zh_cn_topic_mmadsparse_section5_table5"></a>
 

@@ -74,7 +74,7 @@
 | dst | 输出 | 目的操作数。<br>&bull;类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)时，存储位置为Unified Buffer，目的地址需要32字节对齐。<br>&bull;类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)时，存储位置为Global Memory，目的地址需要1字节对齐。 |
 | src | 输入 | 源操作数。<br>&bull;类型为GlobalTensor时，存储位置为Global Memory，源地址需要1字节对齐。<br>&bull;类型为LocalTensor时，存储位置为Unified Buffer，源地址需要32字节对齐。 |
 | dstSliceInfo | 输入 | 目的操作数切片信息，类型为SliceInfo。通过该参数可以配置切片的起始和终止元素个数、间隔、长度等信息。<br>SliceInfo参数说明请参考[表3](#table_slice_3)。 |
-| srcSliceInfo | 输入 | 源操作数切片信息，类型为SliceInfo。通过该参数可以配置切片的起始和终止元素个数、间隔、长度等信息。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>SliceInfo参数说明请参考[表3](#table_slice_3)。 |
+| srcSliceInfo | 输入 | 源操作数切片信息，类型为SliceInfo。通过该参数可以配置切片的起始和终止元素个数、间隔、长度等信息。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>SliceInfo参数说明请参考[表3](#table_slice_3)。 |
 | dimValue | 输入 | 操作数维度信息，默认值为1。 |
 
 **表3**  SliceInfo结构体参数定义<a name="table_slice_3"></a>

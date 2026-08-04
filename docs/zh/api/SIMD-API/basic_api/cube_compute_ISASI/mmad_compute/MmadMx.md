@@ -150,7 +150,7 @@ MmadMx的计算公式为：C=(scaleA⊗A)*(scaleB⊗B)+Bias，“⊗”表示广
 | fm | 输入 | 源操作数，左矩阵A，类型为LocalTensor，支持的物理存储位置为L0A Buffer（TPosition:A2）。<br>左矩阵A对应的scale矩阵起始地址为：A矩阵起始对应地址/16。<br>对于fp4场景LocalTensor的起始地址需要按照512字节对齐。对于fp8场景LocalTensor的起始地址需要按照1024字节对齐。 |
 | filter | 输入 | 源操作数，右矩阵B，类型为LocalTensor，支持的物理存储位置为L0B Buffer（TPosition:B2）。<br>右矩阵B对应的scale矩阵起始地址为：B矩阵起始对应地址/16。<br>对于fp4场景LocalTensor的起始地址需要按照512字节对齐。对于fp8场景LocalTensor的起始地址需要按照1024字节对齐。 |
 | bias | 输入 | 源操作数，Bias矩阵，类型为LocalTensor，支持的物理存储位置为BT Buffer（TPosition:C2）。<br>LocalTensor的起始地址需要按照64字节对齐。 |
-| mmadParams | 输入 | 矩阵乘相关参数。<br>该参数类型的具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>MmadParams参数说明请参考[MmadParams结构体内参数说明](Mmad.md#zh_cn_topic_mmad_section4_table4)。 |
+| mmadParams | 输入 | 矩阵乘相关参数。<br>该参数类型的具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>MmadParams参数说明请参考[MmadParams结构体内参数说明](Mmad.md#zh_cn_topic_mmad_section4_table4)。 |
 
 ## 数据类型<a id="zh_cn_topic_mmadmx_section_datatype"></a>
 

@@ -78,7 +78,7 @@ __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>&
 | src | 输入 | 源操作数，类型为LocalTensor。<br>数据类型需要与dst保持一致。  <br>支持的物理存储位置为L1 Buffer（TPosition: A1/B1）。 |
 | srcMx | 输入 | 源操作数，类型为LocalTensor，仅支持fp8_e8m0_t类型。 |
 | loadDataParams | 输入 | LoadData参数结构体，类型为LoadData2DParamsV2。具体参考表[LoadData（2D矩阵搬运V2）](LoadData_2D_V2.md)中的LoadData2DParamsV2结构体内参数说明。 <br>**本结构体用于控制左右矩阵数据的搬运。**  <br>|
-| loadMxDataParams | 输入 | LoadData参数结构体，类型为LoadData2DMxParams。具体参考[表3](#table15901153712305)。<br>**本结构体用于控制左右量化系数矩阵的搬运。**  <br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| loadMxDataParams | 输入 | LoadData参数结构体，类型为LoadData2DMxParams。具体参考[表3](#table15901153712305)。<br>**本结构体用于控制左右量化系数矩阵的搬运。**  <br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表 3** LoadData2DMxParams结构体参数说明<a name="table15901153712305"></a>
 

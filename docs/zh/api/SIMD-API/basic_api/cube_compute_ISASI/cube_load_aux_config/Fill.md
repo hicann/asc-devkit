@@ -67,7 +67,7 @@ __aicore__ inline void Fill(const LocalTensor<T>& dst, const InitConstValueParam
 | 参数名称 | 输入/输出 | 含义 |
 | --------- | ---------- | ------ |
 | dst | 输出 | 目的操作数，结果矩阵，类型为LocalTensor。 |
-| InitConstValueParams | 输入 | 初始化相关参数，类型为InitConstValueParams。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明请参考[表3](#table3)。 |
+| InitConstValueParams | 输入 | 初始化相关参数，类型为InitConstValueParams。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明请参考[表3](#table3)。 |
 
 <a name="table3"></a>
 **表3** InitConstValueParams结构体参数说明

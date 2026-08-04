@@ -106,7 +106,7 @@ __aicore__ inline void MrgSort4(const LocalTensor<T>& dst, const MrgSortSrcList<
 <td class="cellrowborder" valign="top" width="12.58125812581258%" headers="mcps1.2.4.1.2 "><p id="p32933310418"><a name="p32933310418"></a><a name="p32933310418"></a>输入</p>
 </td>
 <td class="cellrowborder" valign="top" width="73.75737573757377%" headers="mcps1.2.4.1.3 "><p id="p1465085251516"><a name="p1465085251516"></a><a name="p1465085251516"></a>排序所需参数，类型为MrgSort4Info结构体。</p>
-<p id="p395104375712"><a name="p395104375712"></a><a name="p395104375712"></a>具体定义请参考<span id="ph10562197165916"><a name="ph10562197165916"></a><a name="ph10562197165916"></a>${INSTALL_DIR}</span>/asc/include/basic_api/interface/kernel_struct_proposal.h，<span id="ph14322531015"><a name="ph14322531015"></a><a name="ph14322531015"></a>${INSTALL_DIR}</span>请替换为CANN软件安装后文件存储路径。</p>
+<p id="p395104375712"><a name="p395104375712"></a><a name="p395104375712"></a>具体定义请参考<span id="ph10562197165916"><a name="ph10562197165916"></a><a name="ph10562197165916"></a>${INSTALL_DIR}</span>/asc/include/basic_api/kernel_struct_proposal.h，<span id="ph14322531015"><a name="ph14322531015"></a><a name="ph14322531015"></a>${INSTALL_DIR}</span>请替换为CANN软件安装后文件存储路径。</p>
 <p id="p102993315413"><a name="p102993315413"></a><a name="p102993315413"></a>参数说明请参考<a href="#table7515358184615">表3</a>。</p>
 </td>
 </tr>

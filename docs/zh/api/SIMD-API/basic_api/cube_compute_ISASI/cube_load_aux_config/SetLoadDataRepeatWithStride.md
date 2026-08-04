@@ -42,7 +42,7 @@ __aicore__ inline void SetLoadDataRepeatWithStride(const LoadDataRepeatParamWith
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| repeatParams | 输入 | 设置[LoadDataWithStride](../cube_compute_load/LoadDataWithStride.md)接口的repeat参数，类型为SetLoadDataRepeatWithStride。<br>具体定义请参考：\$\{INSTALL_DIR\}/include/ascendc/basic_api/interface/kernel_struct_mm.h，\$\{INSTALL_DIR\}请替换为CANN软件安装后文件存储路径。<br>参数说明请参考[表2](#table15780447181826)。 |
+| repeatParams | 输入 | 设置[LoadDataWithStride](../cube_compute_load/LoadDataWithStride.md)接口的repeat参数，类型为SetLoadDataRepeatWithStride。<br>具体定义请参考：`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>参数说明请参考[表2](#table15780447181826)。 |
 
 **表2** LoadDataRepeatParamWithStride结构体参数说明<a name="table15780447181826"></a>  
 

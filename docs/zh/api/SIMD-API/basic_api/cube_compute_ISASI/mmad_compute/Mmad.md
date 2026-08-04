@@ -160,7 +160,7 @@ Atlas A2 训练系列产品/Atlas A2 推理系列产品
 | fm | 输入 | 源操作数，左矩阵A，类型为LocalTensor，支持的物理存储位置为L0A Buffer（TPosition: A2）。<br>LocalTensor的起始地址需要按照512字节对齐。 |
 | filter | 输入 | 源操作数，右矩阵B，类型为LocalTensor，支持的物理存储位置为L0B Buffer（TPosition: B2）。<br>LocalTensor的起始地址需要按照512字节对齐。 |
 | bias | 输入 | 源操作数，Bias矩阵，类型为LocalTensor，支持的物理存储位置为BT Buffer（TPosition:C2）。<br>LocalTensor的起始地址需要按照64字节对齐。 |
-| mmadParams | 输入 | 矩阵乘相关参数。<br>该参数类型的具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>MmadParams参数说明请参考[表4](#zh_cn_topic_mmad_section4_table4)。 |
+| mmadParams | 输入 | 矩阵乘相关参数。<br>该参数类型的具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>MmadParams参数说明请参考[表4](#zh_cn_topic_mmad_section4_table4)。 |
 
 **表4** MmadParams结构体内参数说明<a id="zh_cn_topic_mmad_section4_table4"></a>
 

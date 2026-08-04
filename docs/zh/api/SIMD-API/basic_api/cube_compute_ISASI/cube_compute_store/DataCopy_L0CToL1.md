@@ -86,7 +86,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 | ---------- | ---------- | ---------- |
 | dst | 输出 | 目的操作数，类型为LocalTensor，数据格式为NZ<!-- npu="950" id10 -->、ND（仅Ascend 950PR/Ascend 950DT支持）<!-- end id10 -->格式，地址需要满足32字节对齐。 |
 | src | 输入 | 源操作数，类型为LocalTensor，支持的物理地址为L0C Buffer（TPosition为CO1），为Mmad接口计算的结果。数据格式为NZ格式，地址需要满足64字节对齐。 |
-| intriParams | 输入 | 搬运参数，类型为[DataCopyCO12DstParams](#zh-cn_topic_0000002511188540_table35908519282)。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| intriParams | 输入 | 搬运参数，类型为[DataCopyCO12DstParams](#zh-cn_topic_0000002511188540_table35908519282)。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表3** DataCopyCO12DstParams结构体参数定义<a id="zh-cn_topic_0000002511188540_table35908519282"></a>
 

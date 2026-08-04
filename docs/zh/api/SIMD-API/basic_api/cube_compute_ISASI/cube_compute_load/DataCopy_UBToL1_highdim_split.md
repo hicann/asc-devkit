@@ -61,7 +61,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 | ---------- | ---------- | ---------- |
 | dst | 输出 | 目的操作数，类型为LocalTensor，存储位置为L1 Buffer，起始地址要求32字节对齐。 |
 | src | 输入 | 源操作数，类型为LocalTensor，存储位置为Unified Buffer（TPosition为VECIN/VECCALC/VECOUT），起始地址要求32字节对齐。 |
-| repeatParams | 输入 | 搬运参数，DataCopyParams类型。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`。 |
+| repeatParams | 输入 | 搬运参数，DataCopyParams类型。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`。 |
 
 **表3** DataCopyParams结构体参数定义
 

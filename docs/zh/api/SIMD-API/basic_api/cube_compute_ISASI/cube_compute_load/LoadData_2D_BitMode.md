@@ -59,7 +59,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | ---------- | ---------- | ---------- |
 | dst | 输出 | 目的操作数，类型为LocalTensor。<br>数据连续排列顺序由目的操作数所在TPosition决定，具体约束如下：<br>&nbsp;&nbsp;&bull; A2：ZZ格式/NZ格式；对应的分形大小为16 \* (32字节 / sizeof(T))。<br>&nbsp;&nbsp;&bull; B2：ZN格式；对应的分形大小为 (32字节 / sizeof(T))  \* 16。<br>&nbsp;&nbsp;&bull; A1/B1：无格式要求，一般情况下为NZ格式。NZ格式下，对应的分形大小为16 * (32字节 / sizeof(T))。 |
 | src | 输入 | 源操作数，类型为LocalTensor。<br>数据类型需要与dst保持一致。 |
-| loadDataParams | 输入 | LoadData参数结构体，类型为Load2DBitModeParam，具体参考[表3](#table10539223195311)。<br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| loadDataParams | 输入 | LoadData参数结构体，类型为Load2DBitModeParam，具体参考[表3](#table10539223195311)。<br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表 3** Load2DBitModeParam类参数说明<a id="table10539223195311"></a>
 

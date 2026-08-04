@@ -65,7 +65,7 @@
 | dst | 输出 | 目的操作数，类型为LocalTensor。 |
 | src | 输入 | 源操作数，类型为LocalTensor。 |
 | intriParams | 输入 | 搬运参数。DataCopyParams类型。 |
-| enhancedParams | 输入 | 增强信息参数。DataCopyEnhancedParams类型。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| enhancedParams | 输入 | 增强信息参数。DataCopyEnhancedParams类型。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表3** DataCopyEnhancedParams结构参数说明
 

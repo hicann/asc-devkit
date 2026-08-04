@@ -117,7 +117,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | ---------- | ----------- | ------ |
 | dst | 输出 | 目的操作数，类型为LocalTensor。<br>数据连续排列顺序由目的操作数所在物理存储位置决定，不同产品型号的具体格式约束请参考[约束说明](#zh-cn_topic_0000002512171652_dst_layout)。 |
 | src | 输入 | 源操作数，类型为LocalTensor。<br>数据连续排列顺序由目的操作数所在物理存储位置决定：<br>&nbsp;&nbsp;&bull; L1 Buffer（TPosition: A1/B1）：NC1HWC0格式。 |
-| loadDataParams | 输入 | LoadData参数结构体，类型为：<br>&nbsp;&nbsp;&bull; LoadData3DParamsV1，具体参考[表3](#zh-cn_topic_0000002512171652_table679014222918)。<br>&nbsp;&nbsp;&bull; LoadData3DParamsV2，具体参考[表4](#zh-cn_topic_0000002512171652_table193501032193419)。<br>&nbsp;&nbsp;&bull; LoadData3DParamsV2Pro，具体参考[表5](#zh-cn_topic_0000002512171652_table118027314415)。<br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| loadDataParams | 输入 | LoadData参数结构体，类型为：<br>&nbsp;&nbsp;&bull; LoadData3DParamsV1，具体参考[表3](#zh-cn_topic_0000002512171652_table679014222918)。<br>&nbsp;&nbsp;&bull; LoadData3DParamsV2，具体参考[表4](#zh-cn_topic_0000002512171652_table193501032193419)。<br>&nbsp;&nbsp;&bull; LoadData3DParamsV2Pro，具体参考[表5](#zh-cn_topic_0000002512171652_table118027314415)。<br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 
 **表3** LoadData3DParamsV1结构体内参数说明<a id="zh-cn_topic_0000002512171652_table679014222918"></a>

@@ -80,7 +80,7 @@
 | :--- | :---: | :--- |
 | dst | 输出 | 目的操作数。<br>&bull;类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)时，存储位置为Unified Buffer，目的地址需要32字节对齐。<br>&bull;类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)时，存储位置为Global Memory，目的地址需要按照对应数据类型所占字节数对齐。 |
 | src | 输入 | 源操作数。<br>&bull;类型为GlobalTensor时，存储位置为Global Memory，源地址需要按照对应数据类型所占字节数对齐。<br>&bull;类型为LocalTensor时，存储位置为Unified Buffer，源地址需要32字节对齐。 |
-| repeatParams | 输入 | 搬运参数，DataCopyParams类型，参数说明请参考[表3](#table_highdim_3)。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
+| repeatParams | 输入 | 搬运参数，DataCopyParams类型，参数说明请参考[表3](#table_highdim_3)。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表3**  DataCopyParams结构体参数定义<a name="table_highdim_3"></a>
 

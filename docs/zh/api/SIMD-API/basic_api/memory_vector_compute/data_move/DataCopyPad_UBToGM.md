@@ -103,7 +103,7 @@
 | src | 输入 | 源操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)。<br>起始地址需要保证32字节对齐。 |
 | dataCopyParams | 输入 | 搬运参数，DataCopyExtParams类型，具体参数说明请参考[表3](#table_ub2gm_pad_3)。 |
 
-下文表格中列出的结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/interface/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。
+下文表格中列出的结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。
 
 **表3**  DataCopyExtParams结构体参数定义<a name="table_ub2gm_pad_3"></a>
 

@@ -104,7 +104,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
 | ---------- | ---------- | ---------- |
 | dst | 输出 | 目的操作数，类型为LocalTensor，地址需满足32字节对齐。 |
 | src | 输入 | 源操作数，类型为LocalTensor，支持的物理地址为L0C Buffer（TPosition为CO1），为Mmad接口计算的结果。数据格式为NZ格式，地址需要满足64B对齐。 |
-| intriParams | 输入 | Fixpipe搬运参数，具体定义请参考"basic_api/interface/kernel_struct_fixpipe.h"。<br>参数说明请参考Fixpipe搬运参数（FixpipeParamsArch3510、FixpipeParamsM300）结构体说明。 |
+| intriParams | 输入 | Fixpipe搬运参数，具体定义请参考"basic_api/kernel_struct_fixpipe.h"。<br>参数说明请参考Fixpipe搬运参数（FixpipeParamsArch3510、FixpipeParamsM300）结构体说明。 |
 | cbufWorkspace | 输入 | 量化参数，类型为`LocalTensor<uint64_t>`，支持的物理地址为L1 Buffer（TPosition为C1），地址需满足32字节对齐。<br>&nbsp;&nbsp;&bull;当quantPre为VDEQF16、VQF322B8_PRE、VREQ8时支持。<br><!-- npu="950" id13 -->&nbsp;&nbsp;&bull;针对Ascend 950PR/Ascend 950DT，除上述外还有VQF322FP8_PRE、VQF322HIF8_PRE、VQF322HIF8_PRE_HYBRID、VQS322BF16_PRE、VQF322F16_PRE、VQF322BF16_PRE、VQF322F32_PRE支持。<br><!-- end id13 -->quantPre介绍请参考Fixpipe搬运参数结构体中quantPre部分。 |
 
 **表3** Fixpipe搬运参数（FixpipeParamsArch3510）结构体说明
