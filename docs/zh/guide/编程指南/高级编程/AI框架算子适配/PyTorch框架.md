@@ -138,4 +138,4 @@ Pybind适用于快速将C++函数暴露给Python，实现高效接口绑定。�
     ```
 
 4.  编译生成算子动态库。
-5.  在Python调用脚本中，使用torch接口生成随机输入数据并分配内存，通过导入封装的自定义模块ascendc\_ops，调用自定义模块ascendc\_ops中的run\_add\_custom函数，从而在NPU上执行算子。
+5.  在Python调用脚本中，使用torch接口生成随机输入数据并分配内存，通过导入封装的自定义模块ascendc\_ops，调用自定义模块ascendc\_ops中的ascendc\_add函数，从而在NPU上执行算子。

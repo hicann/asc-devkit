@@ -603,7 +603,8 @@ TensorFlow的原型定义中不支持可选输入，对于包含可选输入的�
         .SetShapeFn([](InferenceContext *c) {
           return Status::OK();
         });
-    REGISTER_KERNEL_BUILDER(Name("FlashAttentionScore").Device(DEVICE_CPU), CustOps)}
+    REGISTER_KERNEL_BUILDER(Name("FlashAttentionScore").Device(DEVICE_CPU), CustOps);
+    }  // namespace tensorflow
     ```
 
     使用如下命令对上述代码进行编译，产物为libcustom\_ops.so，后续的算子调用脚本中可通过load\_op\_library接口加载该so为python模块，从而调用自定义算子。

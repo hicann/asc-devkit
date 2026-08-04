@@ -253,7 +253,7 @@ const uint32_t TILE_NUM = 8;
 static ge::graphStatus TilingFunc(gert::TilingContext *context)
 {
     uint32_t totalLength = context->GetInputShape(0)->GetOriginShape().GetShapeSize();
-    context->SetBlockDim(NUM_BLOCKS);
+    context->SetSimdNumBlocks(NUM_BLOCKS);
 
     AddCustomTilingData *tiling = context->GetTilingData<AddCustomTilingData>();
     tiling->totalLength = totalLength;
