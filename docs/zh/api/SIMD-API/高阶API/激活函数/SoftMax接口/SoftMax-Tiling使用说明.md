@@ -85,7 +85,7 @@ Ascend C提供一组SoftMax Tiling API，方便用户获取SoftMax kernel计算�
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的SoftMax Tiling信息传入SoftMax接口参与计算。完整的kernel侧样例请参考[调用示例](SoftMax.md#section94691236101419)。
+3.  对应的kernel侧通过在核函数中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的SoftMax Tiling信息传入SoftMax接口参与计算。完整的kernel侧样例请参考[调用示例](SoftMax.md#调用示例)。
 
     ```
     extern "C" __global__ __aicore__ void func_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)

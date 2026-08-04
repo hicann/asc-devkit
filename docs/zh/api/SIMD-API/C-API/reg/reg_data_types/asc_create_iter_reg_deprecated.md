@@ -73,4 +73,4 @@ PIPE_V
 
 ## 调用示例
 
-见[地址寄存器调用示例](../reg_data_types/data_type_definition.md#调用示例-4)。
+见[地址寄存器调用示例](../reg_data_types/data_type_definition.md#example4)。

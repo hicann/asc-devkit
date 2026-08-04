@@ -20,7 +20,7 @@ int64_t GetTiling(AscendC::tiling::TCubeTiling& tiling)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| tiling | 输出 | Tiling结构体存储最终的tiling结果。TCubeTiling结构介绍请参考[表1](TCubeTiling结构体.md#table1563162142915)。<br>optiling::TCubeTiling：带有optiling命名空间的TCubeTiling结构体，该结构体为Host侧定义的Matmul TilingData。<br>AscendC::tiling::TCubeTiling：带有AscendC::tiling命名空间的TCubeTiling结构体，Kernel侧定义的Matmul TilingData，与使用标准C++语法定义TilingData结构体的开发方式配合使用。 |
+| tiling | 输出 | Tiling结构体存储最终的tiling结果。TCubeTiling结构介绍请参考[表1](TCubeTiling结构体.md#tcubetiling-struct)。<br>optiling::TCubeTiling：带有optiling命名空间的TCubeTiling结构体，该结构体为Host侧定义的Matmul TilingData。<br>AscendC::tiling::TCubeTiling：带有AscendC::tiling命名空间的TCubeTiling结构体，Kernel侧定义的Matmul TilingData，与使用标准C++语法定义TilingData结构体的开发方式配合使用。 |
 
 ## 返回值说明
 

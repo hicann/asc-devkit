@@ -30,7 +30,7 @@
 
 ## 功能说明
 
-用于配置IBShare模板的参数，获取自定义IBShare模板。IBShare模板的介绍请参考[表模板特性](MatmulConfig.md#table6981133810309)。
+用于配置IBShare模板的参数，获取自定义IBShare模板。IBShare模板的介绍请参考[表模板特性](MatmulConfig.md#template-features)。
 
 ## 函数原型
 
@@ -40,7 +40,7 @@ __aicore__ constexpr MatmulConfig GetIBShareNormConfig(const bool intrinsicsLimi
 
 ## 参数说明
 
-本接口的所有参数用于设置[MatmulConfig结构体](MatmulConfig.md#table1761013213153)中的参数，其中互相对应的参数的功能作用相同。
+本接口的所有参数用于设置[MatmulConfig结构体](MatmulConfig.md#matmulconfig-params)中的参数，其中互相对应的参数的功能作用相同。
 
 **表1**  接口参数说明
 
@@ -55,7 +55,7 @@ __aicore__ constexpr MatmulConfig GetIBShareNormConfig(const bool intrinsicsLimi
 
 ## 返回值说明
 
-[MatmulConfig结构体](MatmulConfig.md#table1761013213153)。
+[MatmulConfig结构体](MatmulConfig.md#matmulconfig-params)。
 
 ## 约束说明
 
