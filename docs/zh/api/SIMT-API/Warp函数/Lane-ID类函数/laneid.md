@@ -54,24 +54,30 @@ int32_t laneid()
 
 ## 调用示例
 
+下面示例使用`laneid`计算全部输入数据的和，并把结果赋值到输出数据的第0位置上，示例中使用[asc_reduce_add](../Warp-Reduce类函数/asc_reduce_add.md)，需另外包含"simt_api/device_warp_functions.h"头文件，使用[asc_atomic_add](../../原子操作/asc_atomic_add.md)，需另外包含"simt_api/device_atomic_functions.h"头文件。
+
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel_laneid(int32_t* dst)
+    __global__ __launch_bounds__(1024) void kernel_laneid(int32_t* dst, int32_t* src)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
-        int32_t lane_id = laneid();
-        dst[idx] = lane_id;
+        int32_t result = asc_reduce_add(src[idx]);
+        if (laneid() == 0) {
+            asc_atomic_add(dst, result);
+        }
     }
     ```
 
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) void kernel_laneid(__gm__ int32_t* dst)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_laneid(__gm__ int32_t* dst, __gm__ int32_t* src)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
-        int32_t lane_id = laneid();
-        dst[idx] = lane_id;
+        int32_t result = asc_reduce_add(src[idx]);
+        if (laneid() == 0) {
+            asc_atomic_add(dst, result);
+        }
     }
     ```

@@ -62,24 +62,32 @@ int32_t lanemask_le()
 
 ## 调用示例
 
+下面示例使用`lanemask_le`统计当前Lane及其之前的线程数，并据此判断当前线程位于Warp的上半区还是下半区，再通过`asc_shfl`分别广播上下半Warp中指定Lane的数据。示例中使用[asc_shfl](../Warp-Shfl类函数/asc_shfl.md)，需另外包含"simt_api/device_warp_functions.h"头文件，其中`srcLane`的取值范围为[0, 15]。
+
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel_lanemask_le(int32_t* dst)
+    __global__ __launch_bounds__(1024) void kernel_lanemask_le(int32_t* src, int32_t* dst, int32_t srcLane)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
-        int32_t lanemask = lanemask_le();
-        dst[idx] = lanemask;
+        int32_t lane_rank = __popc(static_cast<uint32_t>(lanemask_le())) - 1;
+        int32_t group_leader_lane = (lane_rank < 16) ? srcLane : (srcLane + 16);
+        int32_t value = src[idx];
+        value = asc_shfl(value, group_leader_lane, 32);
+        dst[idx] = value;
     }
     ```
 
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) void kernel_lanemask_le(__gm__ int32_t* dst)
+    __simt_vf__ __launch_bounds__(1024) void kernel_lanemask_le(__gm__ int32_t* src, __gm__ int32_t* dst, int32_t srcLane)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
-        int32_t lanemask = lanemask_le();
-        dst[idx] = lanemask;
+        int32_t lane_rank = __popc(static_cast<uint32_t>(lanemask_le())) - 1;
+        int32_t group_leader_lane = (lane_rank < 16) ? srcLane : (srcLane + 16);
+        int32_t value = src[idx];
+        value = asc_shfl(value, group_leader_lane, 32);
+        dst[idx] = value;
     }
     ```

@@ -42,8 +42,8 @@ size_t __cvta_generic_to_local(const void* ptr)
 
 ## 返回值说明
 
-输入指针指向栈空间的地址值。  
-该接口不校验输入地址是否为可安全访问的有效地址。只有当`ptr`实际指向栈空间时，返回值才是有效的栈空间地址值，特殊场景说明如下：  
+输入指针指向栈空间的地址值。
+该接口不校验输入地址是否为可安全访问的有效地址。只有当`ptr`实际指向栈空间时，返回值才是有效的栈空间地址值，特殊场景说明如下：
 | 输入场景 | 返回值 |
 | --- | --- |
 | `ptr`为Global Memory指针 | 未定义行为，返回值不是有效栈空间地址。 |
@@ -67,10 +67,15 @@ SIMD与SIMT混合编程场景不支持使用该接口。
 SIMT编程场景：
 
 ```cpp
-__global__ __launch_bounds__(1024) void kernel__cvta_generic_to_local(uint32_t* dst, uint32_t* src)
+__global__ __launch_bounds__(1024) void kernel__cvta_generic_to_local(uint32_t* src)
 {
-    uint32_t ptr[1024];
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    dst[idx] = __cvta_generic_to_local(ptr + idx);
+    uint32_t local_data[2] = {src[idx], src[idx]};
+    size_t addr_val = __cvta_generic_to_local(local_data);
+    if (addr_val > 1152) {  // 1152:SIMT栈空间大小
+        printf("栈(local_data)溢出，偏移量为：%lu\n", addr_val);
+    } else {
+        printf("栈(local_data)的偏移量为：%lu\n", addr_val);
+    }
 }
 ```
