@@ -45,25 +45,24 @@ template <typename T, bool isInitIndex = false, bool isHasfinish = false, bool i
 __aicore__ inline void TopKNormal(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal,
-    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo,
+    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo,
     const bool isLargest = true)
 {
     LocalTensor<T> tempBuffer = tmpLocal.template ReinterpretCast<T>();
     // if isInitIndex is false, The index of the input data needs to be generated here.
     if constexpr (!isInitIndex) {
-        LocalTensor<int32_t> indexLocalTmp = tempBuffer[tilling.srcIndexOffset].template ReinterpretCast<int32_t>();
+        LocalTensor<int32_t> indexLocalTmp = tempBuffer[tiling.srcIndexOffset].template ReinterpretCast<int32_t>();
         ArithProgression(indexLocalTmp, static_cast<int32_t>(0), static_cast<int32_t>(1), topKInfo.inner);
         PipeBarrier<PIPE_V>();
     }
 
     SetMaskCount();
     TopKCompute<T, isInitIndex, isHasfinish>(
-        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
-        isLargest);
+        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo, isLargest);
 
     if (!isLargest) {
         const UnaryRepeatParams unaryParams;
-        SetVectorMask<T, MaskMode::COUNTER>(0, tilling.maskOffset);
+        SetVectorMask<T, MaskMode::COUNTER>(0, tiling.maskOffset);
         Muls<T, false>(dstValueLocal, dstValueLocal, T(-1), MASK_PLACEHOLDER, 1, unaryParams);
     }
 
@@ -75,20 +74,20 @@ template <typename T, bool isInitIndex = false, bool isHasfinish = false, bool i
 __aicore__ inline void TopKNormal(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const int32_t k,
-    const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     LocalTensor<uint8_t> stackTensor;
     PopStackBuffer<uint8_t, TPosition::LCM>(stackTensor);
-    ASCENDC_ASSERT((stackTensor.GetSize() / sizeof(T) >= tilling.tmpLocalSize), {
+    ASCENDC_ASSERT((stackTensor.GetSize() / sizeof(T) >= tiling.tmpLocalSize), {
         KERNEL_LOG(
             KERNEL_ERROR,
             "The stack "
             "buffer is insufficient, TopK api need %d, but only %ld exists.",
-            tilling.tmpLocalSize, stackTensor.GetSize() / sizeof(T));
+            tiling.tmpLocalSize, stackTensor.GetSize() / sizeof(T));
     });
-    stackTensor.SetSize(tilling.tmpLocalSize * sizeof(T));
+    stackTensor.SetSize(tiling.tmpLocalSize * sizeof(T));
     TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc>(
-        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tilling, topKInfo,
+        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tiling, topKInfo,
         isLargest);
 }
 
@@ -96,14 +95,14 @@ template <typename T, bool isInitIndex = false, bool isHasfinish = false, bool i
 __aicore__ inline void TopKNSmall(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal,
-    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo,
+    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo,
     const bool isLargest = true)
 {
     LocalTensor<T> tempBuffer = tmpLocal.template ReinterpretCast<T>();
     // if isInitIndex is false, The index of the input data needs to be generated here.
     if constexpr (!isInitIndex) {
         LocalTensor<int32_t> indexLocalTmp =
-            tempBuffer[tilling.topkNSmallSrcIndexOffset].template ReinterpretCast<int32_t>();
+            tempBuffer[tiling.topkNSmallSrcIndexOffset].template ReinterpretCast<int32_t>();
         ArithProgression(indexLocalTmp, static_cast<int32_t>(0), static_cast<int32_t>(1), topKInfo.inner);
         PipeBarrier<PIPE_V>();
         if (topKInfo.outter > 1) {
@@ -115,18 +114,17 @@ __aicore__ inline void TopKNSmall(
     const UnaryRepeatParams unaryParams;
     // if isLargest if false, sort Ascending
     if (!isLargest) {
-        SetVectorMask<T, MaskMode::COUNTER>(0, tilling.allDataSize);
-        Muls<T, false>(tempBuffer[tilling.innerDataSize], srcLocal, T(-1), MASK_PLACEHOLDER, 1, unaryParams);
+        SetVectorMask<T, MaskMode::COUNTER>(0, tiling.allDataSize);
+        Muls<T, false>(tempBuffer[tiling.innerDataSize], srcLocal, T(-1), MASK_PLACEHOLDER, 1, unaryParams);
         PipeBarrier<PIPE_V>();
     }
     TopKNSmallCompute<T, isInitIndex, isHasfinish>(
-        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
-        isLargest);
+        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo, isLargest);
 
     if (!isLargest) {
         PipeBarrier<PIPE_V>();
         SetMaskCount();
-        SetVectorMask<T, MaskMode::COUNTER>(0, tilling.maskOffset);
+        SetVectorMask<T, MaskMode::COUNTER>(0, tiling.maskOffset);
         Muls<T, false>(dstValueLocal, dstValueLocal, T(-1), MASK_PLACEHOLDER, 1, unaryParams);
     }
     SetMaskNorm();
@@ -137,21 +135,21 @@ template <typename T, bool isInitIndex = false, bool isHasfinish = false, bool i
 __aicore__ inline void TopKNSmall(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const int32_t k,
-    const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     LocalTensor<uint8_t> stackTensor;
     PopStackBuffer<uint8_t, TPosition::LCM>(stackTensor);
-    ASCENDC_ASSERT((stackTensor.GetSize() / sizeof(T) >= tilling.tmpLocalSize), {
+    ASCENDC_ASSERT((stackTensor.GetSize() / sizeof(T) >= tiling.tmpLocalSize), {
         KERNEL_LOG(
             KERNEL_ERROR,
             "The stack "
             "buffer is insufficient, TopK api need %d, but only %ld exists.",
-            tilling.tmpLocalSize, stackTensor.GetSize() / sizeof(T));
+            tiling.tmpLocalSize, stackTensor.GetSize() / sizeof(T));
     });
-    stackTensor.SetSize(tilling.tmpLocalSize * sizeof(T));
+    stackTensor.SetSize(tiling.tmpLocalSize * sizeof(T));
 
     TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc>(
-        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tilling, topKInfo,
+        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tiling, topKInfo,
         isLargest);
 }
 

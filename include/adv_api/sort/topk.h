@@ -77,7 +77,7 @@ namespace AscendC {
  * @param [in] finishLocal: Used to specify that the sort of some rows is an invalid sort with shape of (outter, 1).
  * @param [in] tmpLocal: Temporary space for storing intermediate variables during internal calculation.
  * @param [in] k: Obtain the first k maximum or minimum values and their corresponding indexes.
- * @param [in] tilling: Tiling information required for TopK calculation.
+ * @param [in] tiling: Tiling information required for TopK calculation.
  * @param [in] topKInfo: Shape information of srcLocal.
  * @param [in] isLargest: Descending or ascending order. The value true indicates descending order,
                           and the value false indicates ascending order.
@@ -88,7 +88,7 @@ template <
 __aicore__ inline void TopK(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal,
-    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo,
+    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo,
     const bool isLargest = true)
 {
     // Only for AI Vector Core.
@@ -111,13 +111,13 @@ __aicore__ inline void TopK(
         static_assert((!isHasfinish), "Topk radix select algorithm cannot support to set finish flag.");
         if constexpr (topkMode == TopKMode::TOPK_NORMAL) {
             Reg::RadixSelectTopK::TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc, config>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo,
                 isLargest);
         }
 
         if constexpr (topkMode == TopKMode::TOPK_NSMALL) {
             Reg::RadixSelectTopK::TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc, config>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo,
                 isLargest);
         }
         return;
@@ -127,12 +127,12 @@ __aicore__ inline void TopK(
         static_assert((SupportType<T, half, float>()), "Type must be half/float in topk merge select algorithm.");
         if constexpr (topkMode == TopKMode::TOPK_NORMAL) {
             TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo,
                 isLargest);
         }
         if constexpr (topkMode == TopKMode::TOPK_NSMALL) {
             TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo,
                 isLargest);
         }
     }
@@ -159,7 +159,7 @@ __aicore__ inline void TopK(
  * @param [in] srcIndexLocal: The input data is used to store the index corresponding to the value of srcLocal.
  * @param [in] finishLocal: Used to specify that the sort of some rows is an invalid sort with shape of (outter, 1).
  * @param [in] k: Obtain the first k maximum or minimum values and their corresponding indexes.
- * @param [in] tilling: Tiling information required for TopK calculation.
+ * @param [in] tiling: Tiling information required for TopK calculation.
  * @param [in] topKInfo: Shape information of srcLocal.
  * @param [in] isLargest: Descending or ascending order. The value true indicates descending order,
                           and the value false indicates ascending order.
@@ -171,7 +171,7 @@ __ASC_USE_RESERVED_UBUF__(3510, "TopK is forbidden when compile option --cce-dis
 __aicore__ inline void TopK(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const int32_t k,
-    const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     // Only for AI Vector Core.
     if ASCEND_IS_AIC {
@@ -185,16 +185,16 @@ __aicore__ inline void TopK(
     // half: tmpLocalSize = inner * 16 / sizeof(half) = inner * 8
 #if ASCENDC_CPU_DEBUG
     auto stackTensorSize = stackTensor.GetSize();
-    bool ans = stackTensorSize >= tilling.tmpLocalSize;
+    bool ans = stackTensorSize >= tiling.tmpLocalSize;
     ASCENDC_ASSERT(ans, {
         KERNEL_LOG(
             KERNEL_ERROR, "The pop stack buffer is insufficient, topk api need %d, but only %d exists.",
-            tilling.tmpLocalSize, stackTensorSize);
+            tiling.tmpLocalSize, stackTensorSize);
     });
 
     TopkInputCheck<T, isInitIndex, topkMode, config>(k, topKInfo);
 #endif
-    stackTensor.SetSize(tilling.tmpLocalSize);
+    stackTensor.SetSize(tiling.tmpLocalSize);
 
     if constexpr (config.algo == TopKAlgo::RADIX_SELECT) {
         static_assert(
@@ -206,13 +206,13 @@ __aicore__ inline void TopK(
         static_assert((!isHasfinish), "Topk radix select algorithm cannot support to set finish flag.");
         if constexpr (topkMode == TopKMode::TOPK_NORMAL) {
             Reg::RadixSelectTopK::TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc, config>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tiling, topKInfo,
                 isLargest);
         }
 
         if constexpr (topkMode == TopKMode::TOPK_NSMALL) {
             Reg::RadixSelectTopK::TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc, config>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tiling, topKInfo,
                 isLargest);
         }
         return;
@@ -222,12 +222,12 @@ __aicore__ inline void TopK(
         static_assert((SupportType<T, half, float>()), "Type must be half/float in topk merge select algorithm.");
         if constexpr (topkMode == TopKMode::TOPK_NORMAL) {
             TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tiling, topKInfo,
                 isLargest);
         }
         if constexpr (topkMode == TopKMode::TOPK_NSMALL) {
             TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc>(
-                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tilling, topKInfo,
+                dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, stackTensor, k, tiling, topKInfo,
                 isLargest);
         }
     }
@@ -255,7 +255,7 @@ __aicore__ inline void TopK(
  * @param [in] finishLocal: Used to specify that the sort of some rows is an invalid sort with shape of (outter, 1).
  * @param [in] tmpLocal: Temporary space for storing intermediate variables during internal calculation.
  * @param [in] k: Obtain the first k maximum or minimum values and their corresponding indexes.
- * @param [in] tilling: Tiling information required for TopK calculation.
+ * @param [in] tiling: Tiling information required for TopK calculation.
  * @param [in] topKInfo: Shape information of srcLocal.
  * @param [in] isLargest: Descending or ascending order. The value true indicates descending order,
                           and the value false indicates ascending order.
@@ -266,7 +266,7 @@ template <
 __aicore__ inline void TopK(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal,
-    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo,
+    const LocalTensor<uint8_t>& tmpLocal, const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo,
     const bool isLargest = true)
 {
     // Only for AI Vector Core.
@@ -276,17 +276,16 @@ __aicore__ inline void TopK(
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002)
     CHECK_FUNC_HIGHLEVEL_API(
         TopK, (T, isInitIndex, isHasfinish, isReuseSrc, topkMode),
-        (dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tmpLocal, k, tilling, topKInfo,
-         isLargest));
+        (dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tmpLocal, k, tiling, topKInfo, isLargest));
 
     if constexpr (topkMode == TopKMode::TOPK_NORMAL) {
         TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc>(
-            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tmpLocal, k, tilling, topKInfo,
+            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tmpLocal, k, tiling, topKInfo,
             isLargest);
     }
     if constexpr (topkMode == TopKMode::TOPK_NSMALL) {
         TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc>(
-            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tmpLocal, k, tilling, topKInfo,
+            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tmpLocal, k, tiling, topKInfo,
             isLargest);
     }
 #endif
@@ -313,7 +312,7 @@ __aicore__ inline void TopK(
  * @param [in] srcIndexLocal: The input data is used to store the index corresponding to the value of srcLocal.
  * @param [in] finishLocal: Used to specify that the sort of some rows is an invalid sort with shape of (outter, 1).
  * @param [in] k: Obtain the first k maximum or minimum values and their corresponding indexes.
- * @param [in] tilling: Tiling information required for TopK calculation.
+ * @param [in] tiling: Tiling information required for TopK calculation.
  * @param [in] topKInfo: Shape information of srcLocal.
  * @param [in] isLargest: Descending or ascending order. The value true indicates descending order,
                           and the value false indicates ascending order.
@@ -324,7 +323,7 @@ template <
 __aicore__ inline void TopK(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const int32_t k,
-    const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     // Only for AI Vector Core.
     if ASCEND_IS_AIC {
@@ -334,15 +333,15 @@ __aicore__ inline void TopK(
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002)
     CHECK_FUNC_HIGHLEVEL_API(
         TopK, (T, isInitIndex, isHasfinish, isReuseSrc, topkMode),
-        (dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, k, tilling, topKInfo, isLargest));
+        (dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, k, tiling, topKInfo, isLargest));
 
     if constexpr (topkMode == TopKMode::TOPK_NORMAL) {
         TopKNormal<T, isInitIndex, isHasfinish, isReuseSrc>(
-            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, k, tilling, topKInfo, isLargest);
+            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, k, tiling, topKInfo, isLargest);
     }
     if constexpr (topkMode == TopKMode::TOPK_NSMALL) {
         TopKNSmall<T, isInitIndex, isHasfinish, isReuseSrc>(
-            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, k, tilling, topKInfo, isLargest);
+            dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, k, tiling, topKInfo, isLargest);
     }
 #endif
 }

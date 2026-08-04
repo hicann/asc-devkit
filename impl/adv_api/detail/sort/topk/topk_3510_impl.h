@@ -69,64 +69,62 @@ void TopkInputCheck(const int32_t k, const TopKInfo& topKInfo)
 #endif
 
 template <typename T>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void GatherDstValAndDstIdx(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& tmpLocal,
-    const TopkTiling& tilling, const int32_t dstOffsetFourBytes, const int outterIdx)
+    const TopkTiling& tiling, const int32_t dstOffsetFourBytes, const int outterIdx)
 {
     uint64_t rsvdCnt = 0;
     struct GatherMaskParams reducev2Params(DEFAULT_BLK_STRIDE, 1, DEFAULT_REPEAT_STRIDE, DEFAULT_BLK_STRIDE);
     if constexpr (sizeof(T) == sizeof(float)) {
         // Get Value, The index of the odd position is obtained for each repeat.
         GatherMask<T>(
-            dstValueLocal[dstOffsetFourBytes], tmpLocal[tilling.innerDataSize], REDUCEV2_MODE_ONE, true,
-            tilling.maskVreducev2FourBytes, reducev2Params, rsvdCnt);
+            dstValueLocal[dstOffsetFourBytes], tmpLocal[tiling.innerDataSize], REDUCEV2_MODE_ONE, true,
+            tiling.maskVreducev2FourBytes, reducev2Params, rsvdCnt);
     } else {
-        int32_t dstOffsetTwoBytes = outterIdx * tilling.kAlignTwoBytes;
+        int32_t dstOffsetTwoBytes = outterIdx * tiling.kAlignTwoBytes;
         // Get Value. The first element is used for every four elements in each repeat.
         GatherMask<T>(
-            dstValueLocal[dstOffsetTwoBytes], tmpLocal[tilling.innerDataSize], REDUCEV2_MODE_THREE, true,
-            tilling.maskVreducev2TwoBytes, reducev2Params, rsvdCnt);
+            dstValueLocal[dstOffsetTwoBytes], tmpLocal[tiling.innerDataSize], REDUCEV2_MODE_THREE, true,
+            tiling.maskVreducev2TwoBytes, reducev2Params, rsvdCnt);
     }
     // Get Index, The index of the even position is obtained for each repeat.
-    LocalTensor<int32_t> tempBufferLocal = tmpLocal[tilling.innerDataSize].template ReinterpretCast<int32_t>();
+    LocalTensor<int32_t> tempBufferLocal = tmpLocal[tiling.innerDataSize].template ReinterpretCast<int32_t>();
     GatherMask<int32_t>(
-        dstIndexLocal[dstOffsetFourBytes], tempBufferLocal, REDUCEV2_MODE_TWO, true, tilling.maskVreducev2FourBytes,
+        dstIndexLocal[dstOffsetFourBytes], tempBufferLocal, REDUCEV2_MODE_TWO, true, tiling.maskVreducev2FourBytes,
         reducev2Params, rsvdCnt);
 }
 
 template <typename T, bool isInitIndex>
 __aicore__ inline void TmpLocalSort32(
     const LocalTensor<T>& srcLocal, const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<T>& tmpLocal,
-    const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest, const int outterIdx)
+    const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest, const int outterIdx)
 {
     int offset = outterIdx * topKInfo.inner;
     LocalTensor<T> tmpBufferLocal = tmpLocal;
     if constexpr (!isInitIndex) {
-        LocalTensor<uint32_t> tempBufferUint32 = tmpLocal[tilling.srcIndexOffset].template ReinterpretCast<uint32_t>();
+        LocalTensor<uint32_t> tempBufferUint32 = tmpLocal[tiling.srcIndexOffset].template ReinterpretCast<uint32_t>();
         Sort<T, true>(
-            tmpLocal[tilling.innerDataSize], srcLocal[offset], tempBufferUint32, tmpBufferLocal, tilling.sortRepeat);
+            tmpLocal[tiling.innerDataSize], srcLocal[offset], tempBufferUint32, tmpBufferLocal, tiling.sortRepeat);
     } else {
         LocalTensor<uint32_t> tempBufferUint32 = srcIndexLocal.template ReinterpretCast<uint32_t>();
         Sort<T, true>(
-            tmpLocal[tilling.innerDataSize], srcLocal[offset], tempBufferUint32, tmpBufferLocal, tilling.sortRepeat);
+            tmpLocal[tiling.innerDataSize], srcLocal[offset], tempBufferUint32, tmpBufferLocal, tiling.sortRepeat);
     }
 }
 
 template <typename T, bool isInitIndex, bool isHasfinish>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void TopKCompute(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const LocalTensor<T>& tmpLocal,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest)
 {
     for (int j = 0; j < topKInfo.outter; ++j) {
-        int32_t dstOffsetFourBytes = j * tilling.kAlignFourBytes;
-        TmpLocalSort32<T, isInitIndex>(srcLocal, srcIndexLocal, tmpLocal, tilling, topKInfo, isLargest, j);
+        int32_t dstOffsetFourBytes = j * tiling.kAlignFourBytes;
+        TmpLocalSort32<T, isInitIndex>(srcLocal, srcIndexLocal, tmpLocal, tiling, topKInfo, isLargest, j);
 
-        GatherDstValAndDstIdx(dstValueLocal, dstIndexLocal, tmpLocal, tilling, dstOffsetFourBytes, j);
+        GatherDstValAndDstIdx(dstValueLocal, dstIndexLocal, tmpLocal, tiling, dstOffsetFourBytes, j);
 
         if constexpr (isHasfinish) {
             bool finishValue = finishLocal.GetValue(j);
@@ -142,11 +140,10 @@ __aicore__ inline void TopKCompute(
 }
 
 template <typename T>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void TopKNSmallGetTopKValue(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& tmpLocal,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo)
 {
     uint64_t rsvdCnt = 0;
     struct GatherMaskParams reducev2Params(DEFAULT_BLK_STRIDE, topKInfo.outter, DEFAULT_REPEAT_STRIDE, 0);
@@ -166,17 +163,17 @@ template <typename T, bool isInitIndex, bool isHasfinish>
 __aicore__ inline void TopKNSmallCompute(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const LocalTensor<T>& tmpLocal,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest)
 {
     if constexpr (!isInitIndex) {
-        LocalTensor<uint32_t> tempBufferUint32 = tmpLocal[tilling.innerDataSize].template ReinterpretCast<uint32_t>();
+        LocalTensor<uint32_t> tempBufferUint32 = tmpLocal[tiling.innerDataSize].template ReinterpretCast<uint32_t>();
         Sort32<T>(tmpLocal, srcLocal, tempBufferUint32, topKInfo.outter);
     } else {
         LocalTensor<uint32_t> tempBufferUint32 = srcIndexLocal.template ReinterpretCast<uint32_t>();
         Sort32<T>(tmpLocal, srcLocal, tempBufferUint32, topKInfo.outter);
     }
 
-    TopKNSmallGetTopKValue(dstValueLocal, dstIndexLocal, tmpLocal, k, tilling, topKInfo);
+    TopKNSmallGetTopKValue(dstValueLocal, dstIndexLocal, tmpLocal, k, tiling, topKInfo);
 }
 
 namespace Reg {
@@ -1158,7 +1155,7 @@ template <typename T, bool isInitIndex = false, bool isReuseSrc = false, const T
 __aicore__ inline void TopKRaidxSelect(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<T>& tempBuffer, const int32_t k,
-    const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest)
+    const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest)
 {
     using ConvType = typename AscendC::Internal::ExtractTypeBySize<sizeof(T)>::T;
 
@@ -1289,7 +1286,7 @@ template <
 __aicore__ inline void TopKNormal(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const LocalTensor<T>& tempBuffer,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     // if isInitIndex is false, The index of the input data needs to be generated here.
     LocalTensor<int32_t> realIndexSrc(srcIndexLocal);
@@ -1306,19 +1303,18 @@ __aicore__ inline void TopKNormal(
     for (int32_t i = 0; i < topKInfo.outter; ++i) {
         TopKRaidxSelect<T, isInitIndex, isReuseSrc, config>(
             dstValueLocal[i * kPad], dstIndexLocal[i * indexKPad], srcLocal[i * topKInfo.inner], realIndexSrc,
-            tempBuffer[initIndexTempBufferSize], k, tilling, topKInfo, isLargest);
+            tempBuffer[initIndexTempBufferSize], k, tiling, topKInfo, isLargest);
     }
 }
 
 template <
     typename T, bool isInitIndex = false, bool isHasfinish = false, bool isReuseSrc = false,
     const TopKConfig& config = defaultTopKConfig>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void TopKNSmall(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const LocalTensor<T>& tempBuffer,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     // if isInitIndex is false, The index of the input data needs to be generated here.
     LocalTensor<int32_t> realIndexSrc(srcIndexLocal);
@@ -1342,7 +1338,7 @@ __aicore__ inline void TopKNSmall(
     for (int32_t i = 0; i < topKInfo.outter; ++i) {
         TopKRaidxSelect<T, isInitIndex, isReuseSrc, config>(
             tmpDstValueLocal[i * kPad], tmpDstIndexLocal[i * indexKPad], srcLocal[i * topKInfo.inner],
-            realIndexSrc[i * topKInfo.inner], tempBuffer[initIndexTempBufferSize], k, tilling, topKInfo, isLargest);
+            realIndexSrc[i * topKInfo.inner], tempBuffer[initIndexTempBufferSize], k, tiling, topKInfo, isLargest);
     }
     SetFlag<HardEvent::V_S>(eventVS);
     WaitFlag<HardEvent::V_S>(eventVS);
@@ -1356,11 +1352,11 @@ template <typename T, bool isInitIndex = false, bool isHasfinish = false, bool i
 __aicore__ inline void TopKNormal(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const LocalTensor<T>& tempBuffer,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     // if isInitIndex is false, The index of the input data needs to be generated here.
     if constexpr (!isInitIndex) {
-        LocalTensor<int32_t> indexLocalTmp = tempBuffer[tilling.srcIndexOffset].template ReinterpretCast<int32_t>();
+        LocalTensor<int32_t> indexLocalTmp = tempBuffer[tiling.srcIndexOffset].template ReinterpretCast<int32_t>();
         CreateVecIndex(indexLocalTmp, static_cast<int32_t>(0), topKInfo.inner);
     }
     if (!isLargest) {
@@ -1368,26 +1364,24 @@ __aicore__ inline void TopKNormal(
     }
 
     TopKCompute<T, isInitIndex, isHasfinish>(
-        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
-        isLargest);
+        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo, isLargest);
 
     if (!isLargest) {
-        Muls(dstValueLocal, dstValueLocal, T(-1), tilling.maskOffset);
+        Muls(dstValueLocal, dstValueLocal, T(-1), tiling.maskOffset);
         Muls(srcLocal, srcLocal, T(-1), topKInfo.outter * topKInfo.inner);
     }
 }
 
 template <typename T, bool isInitIndex = false, bool isHasfinish = false, bool isReuseSrc = false>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "TopK is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void TopKNSmall(
     const LocalTensor<T>& dstValueLocal, const LocalTensor<int32_t>& dstIndexLocal, const LocalTensor<T>& srcLocal,
     const LocalTensor<int32_t>& srcIndexLocal, const LocalTensor<bool>& finishLocal, const LocalTensor<T>& tempBuffer,
-    const int32_t k, const TopkTiling& tilling, const TopKInfo& topKInfo, const bool isLargest = true)
+    const int32_t k, const TopkTiling& tiling, const TopKInfo& topKInfo, const bool isLargest = true)
 {
     // if isInitIndex is false, The index of the input data needs to be generated here.
     if constexpr (!isInitIndex) {
-        LocalTensor<int32_t> indexLocalTmp = tempBuffer[tilling.innerDataSize].template ReinterpretCast<int32_t>();
+        LocalTensor<int32_t> indexLocalTmp = tempBuffer[tiling.innerDataSize].template ReinterpretCast<int32_t>();
         CreateVecIndex(indexLocalTmp, static_cast<int32_t>(0), topKInfo.inner);
         if (topKInfo.outter > 1) {
             Copy(indexLocalTmp[topKInfo.inner], indexLocalTmp, topKInfo.inner, topKInfo.outter - 1, {1, 1, 4, 0});
@@ -1399,11 +1393,10 @@ __aicore__ inline void TopKNSmall(
     }
 
     TopKNSmallCompute<T, isInitIndex, isHasfinish>(
-        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tilling, topKInfo,
-        isLargest);
+        dstValueLocal, dstIndexLocal, srcLocal, srcIndexLocal, finishLocal, tempBuffer, k, tiling, topKInfo, isLargest);
 
     if (!isLargest) {
-        Muls(dstValueLocal, dstValueLocal, T(-1), tilling.maskOffset);
+        Muls(dstValueLocal, dstValueLocal, T(-1), tiling.maskOffset);
         Muls(srcLocal, srcLocal, T(-1), topKInfo.outter * topKInfo.inner);
     }
 }
