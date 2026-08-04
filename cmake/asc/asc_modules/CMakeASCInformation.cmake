@@ -209,23 +209,14 @@ if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
         list(GET _ARCH_TO_SOC_DIR_MAP ${_short_index} _SHORT_NPU_ARCH)
         list(GET _ARCH_TO_SOC_DIR_MAP ${_soc_dir_index} _SOC_DIR)
 
-        # system include
-        set(ASC_CPU_SYSTEM_INCLUDE_OPTIONS "-isystem$ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib/include -isystem$ENV{ASCEND_HOME_PATH}/include \
--isystem$ENV{ASCEND_HOME_PATH}/asc/impl/adv_api \
--isystem$ENV{ASCEND_HOME_PATH}/asc/impl/basic_api -isystem$ENV{ASCEND_HOME_PATH}/asc/impl/c_api \
--isystem$ENV{ASCEND_HOME_PATH}/asc/impl/micro_api -isystem$ENV{ASCEND_HOME_PATH}/asc/impl/simt_api \
--isystem$ENV{ASCEND_HOME_PATH}/asc/impl/utils -isystem$ENV{ASCEND_HOME_PATH}/asc/include \
--isystem$ENV{ASCEND_HOME_PATH}/asc/include/adv_api -isystem$ENV{ASCEND_HOME_PATH}/asc/include/adv_api/matmul \
--isystem$ENV{ASCEND_HOME_PATH}/asc/include/aicpu_api -isystem$ENV{ASCEND_HOME_PATH}/asc/include/basic_api \
--isystem$ENV{ASCEND_HOME_PATH}/asc/include/c_api -isystem$ENV{ASCEND_HOME_PATH}/asc/include/interface \
--isystem$ENV{ASCEND_HOME_PATH}/asc/include/micro_api -isystem$ENV{ASCEND_HOME_PATH}/asc/include/simt_api \
--isystem$ENV{ASCEND_HOME_PATH}/asc/include/tiling -isystem$ENV{ASCEND_HOME_PATH}/asc/include/utils")
-
         # 添加编译选项
-        string(APPEND CMAKE_ASC_FLAGS " -g -D_GLIBCXX_USE_CXX11_ABI=0 -D__NPU_ARCH__=${_SHORT_NPU_ARCH} --run-mode=cpu ${ASC_CPU_SYSTEM_INCLUDE_OPTIONS}")
+        string(APPEND CMAKE_ASC_FLAGS " -g -D_GLIBCXX_USE_CXX11_ABI=0 --run-mode=cpu")
 
         # 配置链接选项
-        string(APPEND CMAKE_ASC_LINK_FLAGS "--run-mode=cpu -Wl,--disable-new-dtags")
+        string(APPEND CMAKE_ASC_LINK_FLAGS " -Wl,--disable-new-dtags")
+
+        # 配置包含目录
+        include_directories($ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib/include)
 
         # 配置链接库
         link_libraries(
@@ -241,22 +232,14 @@ if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
             ascendc_acl_stub
             $<$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-2002>:_pvmodel>
             $<$<OR:$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-2201>,$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-3510>>:pem_davinci>
-            $<$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-3510>:-pthread>
             cpudebug_cceprint
             cpudebug_npuchk
             cpudebug_stubreg
             cpudebug
             c_sec
             stdc++
-            runtime
-            register
-            error_manager
-            profapi
-            ge_common_base
-            unified_dlog
-            mmpa
+            pthread
             dl
-            ascend_dump
         )
 
     else()
