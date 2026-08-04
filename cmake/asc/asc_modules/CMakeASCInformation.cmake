@@ -195,54 +195,48 @@ if(CMAKE_ASC_RUN_MODE STREQUAL "sim")
 endif()
 
 if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
-    # CPU模式架构映射表
-    set(_ARCH_TO_SOC_DIR_MAP
-        "dav-2002" "2002" "Ascend310P1"
-        "dav-2201" "2201" "Ascend910B1"
-        "dav-3510" "3510" "Ascend950PR_9599"
-    )
-    list(FIND _ARCH_TO_SOC_DIR_MAP "${CMAKE_ASC_ARCHITECTURES}" _index)
-    math(EXPR _remainder "${_index} % 3")
-    if(_remainder EQUAL 0) # 只允许dav-2002、dav-2201、dav-3510
-        math(EXPR _short_index "${_index} + 1")
-        math(EXPR _soc_dir_index "${_index} + 2")
-        list(GET _ARCH_TO_SOC_DIR_MAP ${_short_index} _SHORT_NPU_ARCH)
-        list(GET _ARCH_TO_SOC_DIR_MAP ${_soc_dir_index} _SOC_DIR)
-
-        # 添加编译选项
-        string(APPEND CMAKE_ASC_FLAGS " -g -D_GLIBCXX_USE_CXX11_ABI=0 --run-mode=cpu")
-
-        # 配置链接选项
-        string(APPEND CMAKE_ASC_LINK_FLAGS " -Wl,--disable-new-dtags")
-
-        # 配置包含目录
-        include_directories($ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib/include)
-
-        # 配置链接库
-        link_libraries(
-            -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/lib64
-            -Wl,-L$ENV{ASCEND_HOME_PATH}/lib64
-            -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib
-            -Wl,-L$ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib
-            -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib/${_SOC_DIR}
-            -Wl,-L$ENV{ASCEND_HOME_PATH}/tools/tikicpulib/lib/${_SOC_DIR}
-            -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/tools/simulator/${_SOC_DIR}/lib
-            -Wl,-L$ENV{ASCEND_HOME_PATH}/tools/simulator/${_SOC_DIR}/lib
-            -Wl,-Bdynamic,--no-as-needed
-            ascendc_acl_stub
-            $<$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-2002>:_pvmodel>
-            $<$<OR:$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-2201>,$<STREQUAL:${CMAKE_ASC_ARCHITECTURES},dav-3510>>:pem_davinci>
-            cpudebug_cceprint
-            cpudebug_npuchk
-            cpudebug_stubreg
-            cpudebug
-            c_sec
-            stdc++
-            pthread
-            dl
-        )
-
+    if(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-2002")
+        set(_SOC_DIR "Ascend310P1")
+        set(_CPU_MODEL_LIB "_pvmodel")
+    elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-2201")
+        set(_SOC_DIR "Ascend910B1")
+        set(_CPU_MODEL_LIB "pem_davinci")
+    elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
+        set(_SOC_DIR "Ascend950PR_9599")
+        set(_CPU_MODEL_LIB "pem_davinci")
     else()
-        message(FATAL_ERROR "Unsupported ASC architecture for CPU mode: ${CMAKE_ASC_ARCHITECTURES}, should be dav-2002, dav-2201, dav-3510")
+        message(FATAL_ERROR "Unsupported ASC architecture for CPU mode: ${CMAKE_ASC_ARCHITECTURES}")
     endif()
+
+    # 添加编译选项
+    string(APPEND CMAKE_ASC_FLAGS " -g -D_GLIBCXX_USE_CXX11_ABI=0 --run-mode=cpu")
+
+    # 配置链接选项
+    string(APPEND CMAKE_ASC_LINK_FLAGS " -Wl,--disable-new-dtags")
+
+    # 配置包含目录
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/lib/include)
+
+    # 配置链接库
+    link_libraries(
+        -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/lib64
+        -Wl,-L$ENV{ASCEND_HOME_PATH}/lib64
+        -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/tools/cpudebug/lib
+        -Wl,-L$ENV{ASCEND_HOME_PATH}/tools/cpudebug/lib
+        -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/tools/cpudebug/lib/${_SOC_DIR}
+        -Wl,-L$ENV{ASCEND_HOME_PATH}/tools/cpudebug/lib/${_SOC_DIR}
+        -Wl,-rpath,$ENV{ASCEND_HOME_PATH}/tools/simulator/${_SOC_DIR}/lib
+        -Wl,-L$ENV{ASCEND_HOME_PATH}/tools/simulator/${_SOC_DIR}/lib
+        -Wl,-Bdynamic,--no-as-needed
+        ascendc_acl_stub
+        ${_CPU_MODEL_LIB}
+        cpudebug_cceprint
+        cpudebug_npuchk
+        cpudebug_stubreg
+        cpudebug
+        c_sec
+        stdc++
+        pthread
+        dl
+    )
 endif()
