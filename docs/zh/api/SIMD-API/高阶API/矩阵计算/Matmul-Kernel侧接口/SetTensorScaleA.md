@@ -59,7 +59,7 @@ __aicore__ inline void SetTensorScaleA(const LocalTensor<ScaleT>& leftMatrix, bo
 ## 约束说明
 
 -   传入的scaleA地址空间大小必须不小于[singleCoreM](../Matmul-Tiling类/TCubeTiling结构体.md)\*[singleCoreK](../Matmul-Tiling类/TCubeTiling结构体.md)/32。
--   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#p9218181073719)设置为true，不支持使用该接口。
+-   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
 
 ## 调用示例
 

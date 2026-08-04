@@ -61,4 +61,4 @@ AscendC::Std::tuple<uint32_t, float, bool> test{11, 2.2, true};
 uint32_t const_uint32_t = AscendC::Std::get<0>(test);
 ```
 
-更多调用示例请参见[示例](tuple.md#section1193764916212)。
+更多调用示例请参见[示例](tuple.md#调用示例)。

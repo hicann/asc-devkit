@@ -79,7 +79,7 @@ Meant<sub>n</sub>的计算过程示意如下图，调用n次本接口后，得�
 | T | inputX操作数的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li1773114612461)。 |
 | U | outputMean、outputVariance、inputMean、inputVariance操作数的数据类型。支持的数据类型为：float。 |
 | isReuseSource | 是否允许修改源操作数，默认值为false。如果开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后能够节省部分内存空间。<br><br>设置为true，则本接口内部计算时复用inputX的内存空间，节省内存空间；设置为false，则本接口内部计算时不复用inputX的内存空间。<!-- npu="310p" id7 --><br><br>在Atlas 推理系列产品AI Core中，该参数预留，传入默认值false即可。<!-- end id7 --><br><br>isReuseSource的使用样例请参考[更多样例](../数学计算/更多样例-83.md#section639165323915)。 |
-| config | 配置非指定计算范围内的目的操作数与源操作数的复用关系。WelfordUpdateConfig类型，定义如下方代码所示，其中参数的含义如下。<br>isInplace：[接口参数](#zh-cn_topic_0235751031_table33761356)para中的abComputeLength参数指定了输入数据内层轴的计算长度，在该指定计算长度之外的输出数据具体为何值，通过本参数设置。本参数表示，在指定计算长度之外的目的操作数是否复用源操作数；若复用，对于指定计算长度之外的输出，直接使用对应位置的源操作数代替输出目的操作数；若不复用，则本接口不会输出计算范围外的目的操作数。<br>false：默认值。表示目的操作数不复用源操作数。<br>true：表示目的操作数复用源操作数。outputMean复用inputMean，outputVariance复用inputVariance。<br><br>此参数一般用于配合kernel侧tiling计算的接口使用。 |
+| config | 配置非指定计算范围内的目的操作数与源操作数的复用关系。WelfordUpdateConfig类型，定义如下方代码所示，其中参数的含义如下。<br>isInplace：接口参数para中的abComputeLength参数指定了输入数据内层轴的计算长度，在该指定计算长度之外的输出数据具体为何值，通过本参数设置。本参数表示，在指定计算长度之外的目的操作数是否复用源操作数；若复用，对于指定计算长度之外的输出，直接使用对应位置的源操作数代替输出目的操作数；若不复用，则本接口不会输出计算范围外的目的操作数。<br>false：默认值。表示目的操作数不复用源操作数。<br>true：表示目的操作数复用源操作数。outputMean复用inputMean，outputVariance复用inputVariance。<br><br>此参数一般用于配合kernel侧tiling计算的接口使用。 |
 
 ```
 struct WelfordUpdateConfig {

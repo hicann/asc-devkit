@@ -113,7 +113,7 @@ addr_reg的地址计算公式为：offset = Σ(index_i × stride_i)，其中inde
 
 - 由于硬件循环(HardwareLoop)限制，addr_reg最多支持4层循环轴。
 
-### 调用示例
+### 调用示例<a id="example4"></a>
 
 - 单参数版本
     ```cpp

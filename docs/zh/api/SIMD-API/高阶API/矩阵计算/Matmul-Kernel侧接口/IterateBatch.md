@@ -136,7 +136,7 @@
 -   该接口不支持量化模式，即不支持SetQuantScalar、SetQuantVector接口。
 -   BSNGD场景，不支持一次计算多行SD，需要算子程序中循环计算，即\(ALayoutInfoN \* ALayoutInfoG\) / batchA、\(BLayoutInfoN \* BLayoutInfoG\) / batchB均为整数。
 -   **异步模式**不支持IterateBatch搬运到UB上。
--   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#p9218181073719)设置为true，不支持使用该接口。
+-   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
 <!-- npu="950" id9 -->
 -   Ascend 950PR/Ascend 950DT上，不支持A、B矩阵内存逻辑位置为TPosition::VECOUT的输入；输出至VECIN的函数原型当前只支持BSNGD Layout格式。
 <!-- end id9 -->
@@ -175,7 +175,7 @@
 
 ## 调用示例
 
--   纯cube模式的函数调用示例请参考[调用示例](SetBatchNum.md#section1665082013318)。
+-   纯cube模式的函数调用示例请参考[调用示例](SetBatchNum.md#调用示例)。
 -   该示例完成aGM、bGM矩阵乘，结果保存到cGm上，其中aGM、bGM、cGM数据的layout格式均为NORMAL，左矩阵每次计算batchA个MK数据，右矩阵每次计算batchB个KN数据。
 
     ```
