@@ -73,10 +73,10 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>dstLocal的shape和源操作数srcLocal需要保持一致。 |
-| srcLocal | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape为[B, S, H]，尾轴H长度需要满足32字节对齐。 |
-| gammaLocal | 输入 | 缩放系数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape需要与srcLocal和dstLocal的尾轴H长度相等，即shape为[H]。 |
-| sharedTmpBuffer | 输入 | 临时空间。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[RmsNorm Tiling](RmsNorm-Tiling.md)。 |
+| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>dstLocal的shape和源操作数srcLocal需要保持一致。 |
+| srcLocal | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape为[B, S, H]，尾轴H长度需要满足32字节对齐。 |
+| gammaLocal | 输入 | 缩放系数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape需要与srcLocal和dstLocal的尾轴H长度相等，即shape为[H]。 |
+| sharedTmpBuffer | 输入 | 临时空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[RmsNorm Tiling](RmsNorm-Tiling.md)。 |
 | epsilon | 输入 | 防除零的权重系数，数据类型需要与srcLocal/dstLocal保持一致。 |
 | tiling | 输入 | RmsNorm计算所需Tiling信息，Tiling信息的获取请参考[RmsNorm Tiling](RmsNorm-Tiling.md)。 |
 

@@ -1,0 +1,22 @@
+# 概述
+
+Compare、Compares称之为比较接口，用于逐元素比较Tensor或Scalar的大小，并根据比较结果生成掩码。Select、GatherMask称之为选择接口，用于根据掩码条件从源操作数中选取元素输出到目的操作数。推荐使用场景如下：
+
+**表1**  比较与选择接口推荐使用场景
+
+| API | 核心功能 | Mask类型 | 应用场景 |
+| --- | --- | --- | --- |
+| [Compare](Compare.md) | 逐元素比较两个tensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。支持多种比较模式（等于、小于、大于...）。<br>不支持Vector计算的Mask设置。结果存入UB。 | 未使用 | 逐元素比较，结果写入内存。 |
+| [Compare（结果存入寄存器）](Compare_store_to_register.md) | 逐元素比较两个tensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。支持多种比较模式。<br>支持Vector计算的Mask设置。结果暂存CmpMask寄存器。详情参考[表2 CmpMask与VectorMask](#cmpMask-vectorMask)。 | src传参mask用于Vector计算；<br>输出结果为CmpMask（比较掩码）。 | 逐元素比较，结果写寄存器。 |
+| [Compares](Compares.md) | 逐元素比较一个tensor中的元素和另一个scalar的大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。<br>支持多种比较模式。 | 未使用 | 张量和标量逐元素比较，结果写入内存。 |
+| [Select](Select.md) | 给定两个源操作数src0和src1，根据selMask（用于选择的Mask掩码）的比特位值选取元素。<br>支持CmpMask设置，支持用于Vector计算的Mask的设置。详情参考[表2 CmpMask与VectorMask](#cmpMask-vectorMask)。 | src传参mask用于Vector计算；<br>src传参selMask为CmpMask（比较掩码）。 | 掩码条件选择输出。 |
+| [GetCmpMask(ISASI)](GetCmpMask_ISASI.md) | 此接口用于获取[Compare（结果存入寄存器）](Compare_store_to_register.md)指令的比较结果。 | CmpMask（比较掩码） | 读取寄存器比较掩码。 |
+| [SetCmpMask(ISASI)](SetCmpMask_ISASI.md) | 为[Select](Select.md)不传入mask参数的接口设置比较寄存器。 | CmpMask（比较掩码） | 设置寄存器比较掩码。 |
+| [GatherMask](GatherMask.md) | 基于掩码（用于Vector计算）从输入张量中提取有效元素。 | src1传参GatherMask（数据收集掩码）。 | 按掩码提取有效元素。 |
+
+**表2**  CmpMask与VectorMask<a id="cmpMask-vectorMask"></a>
+
+| 名称 | 描述 | 数据来源 | 作用范围 |
+| --- | --- | --- | --- |
+| CmpMask | Compare比较指令的“结果寄存器”。 | &bull;由[Compare（结果存入寄存器）](Compare_store_to_register.md)接口的结果写入。<br>&bull; Select接口selMask参数传入。<br>&bull;通过SetCmpMask接口设置。 | 用于记录元素比较的布尔结果，主要为后续Select指令使用。 |
+| VectorMask | 控制数据元素是否参与计算的标识位序列的Mask寄存器。详情参考[掩码](../SIMD_compute/mask.md)。 | &bull; [接口内设置mask](../SIMD_compute/mask.md#接口内设置mask)<br>&bull; [接口外设置mask](../SIMD_compute/mask.md#接口外设置mask) | 用于逐元素控制向量计算，决定哪些数据元素参与计算。 |

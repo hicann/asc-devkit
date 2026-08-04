@@ -81,9 +81,9 @@ struct IsNanConfig {
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>目的操作数的数据类型和源操作数相同或者为bool类型。当前支持的数据类型组合请见[表3](#tab3)。 |
-| src | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于IsNan内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetIsNanMaxMinTmpSize](GetIsNanMaxMinTmpSize.md)。 |
+| dst | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>目的操作数的数据类型和源操作数相同或者为bool类型。当前支持的数据类型组合请见[表3](#tab3)。 |
+| src | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于IsNan内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetIsNanMaxMinTmpSize](GetIsNanMaxMinTmpSize.md)。 |
 | count | 输入 | 参与计算的元素个数。 |
 
 **表3**  输入输出支持的数据类型组合<a name="tab3"></a>

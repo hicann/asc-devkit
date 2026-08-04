@@ -71,9 +71,9 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于ReduceMean内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetReduceMeanMaxMinTmpSize](GetReduceMeanMaxMinTmpSize.md)。 |
+| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于ReduceMean内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetReduceMeanMaxMinTmpSize](GetReduceMeanMaxMinTmpSize.md)。 |
 | srcShape | 输入 | uint32_t类型的数组，表示源操作数的shape信息。该shape的维度必须和模板参数pattern的维度一致，当前只支持二维shape。例如，pattern为AR，该shape维度只能是二维。 |
 | srcInnerPad | 输入 | 表示实际需要计算的最内层轴数据是否32Bytes对齐。当前只支持true。 |
 

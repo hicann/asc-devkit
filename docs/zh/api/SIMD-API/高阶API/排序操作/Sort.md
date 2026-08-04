@@ -187,10 +187,10 @@
 
     | 参数名称 | 输入/输出 | 含义 |
     | --- | --- | --- |
-    | dst | 输出 | 目的操作数，shape为[2n]。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
-    | concat | 输入 | 源操作数，即接口功能说明中的score，shape为[n]。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与目的操作数保持一致。 |
-    | index | 输入 | 源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数固定为uint32_t数据类型。 |
-    | tmp | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小BufferSize的获取方式请参考[GetSortTmpSize](GetSortTmpSize.md)。数据类型与源操作数保持一致。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
+    | dst | 输出 | 目的操作数，shape为[2n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
+    | concat | 输入 | 源操作数，即接口功能说明中的score，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与目的操作数保持一致。 |
+    | index | 输入 | 源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数固定为uint32_t数据类型。 |
+    | tmp | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小BufferSize的获取方式请参考[GetSortTmpSize](GetSortTmpSize.md)。数据类型与源操作数保持一致。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
     | repeatTime | 输入 | 重复迭代次数，int32_t类型。<!-- npu="950" id17 --><br>    Ascend 950PR/Ascend 950DT：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id17 --><!-- npu="A3" id18 --><br>    Atlas A3 训练系列产品/Atlas A3 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id18 --><!-- npu="910b" id19 --><br> Atlas A2 训练系列产品/Atlas A2 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id19 --><!-- npu="310p" id20 --><br>Atlas 推理系列产品AI Core：每次迭代完成16个region proposal的排序，下次迭代concat和dst各跳过16个region proposal。取值范围：repeatTime∈[0,255]。<!-- end id20 --><!-- npu="x90" id7 --><br>Kirin X90：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id7 --><!-- npu="9030" id8 --><br>Kirin 9030：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id8 --> |
 
 -   对应带SortConfig的函数原型
@@ -219,11 +219,11 @@
 
     | 参数名称 | 输入/输出 | 含义 |
     | --- | --- | --- |
-    | dstTensor | 输出 | 值目的操作数，shape为[n]。MERGE_SORT算法下输出数据的每个元素需要按8Byte申请空间。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
-    | dstIndexTensor | 输出 | 索引目的操作数，shape为[n]。当输入不带srcIndexTensor时，只支持uint32_t类型。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
-    | srcTensor | 输入 | 值源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与值目的操作数保持一致。 |
-    | srcIndexTensor | 输入 | 索引源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与索引目的操作数保持一致。 |
-    | sharedTmpBuffer | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小BufferSize的获取方式请参考[GetSortMaxMinTmpSize](GetSortMaxMinTmpSize.md)。数据类型为uint8_t。<br>    <br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
+    | dstTensor | 输出 | 值目的操作数，shape为[n]。MERGE_SORT算法下输出数据的每个元素需要按8Byte申请空间。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
+    | dstIndexTensor | 输出 | 索引目的操作数，shape为[n]。当输入不带srcIndexTensor时，只支持uint32_t类型。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
+    | srcTensor | 输入 | 值源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与值目的操作数保持一致。 |
+    | srcIndexTensor | 输入 | 索引源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与索引目的操作数保持一致。 |
+    | sharedTmpBuffer | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小BufferSize的获取方式请参考[GetSortMaxMinTmpSize](GetSortMaxMinTmpSize.md)。数据类型为uint8_t。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
     | calCount | 输入 | 需要进行排序的数据元素个数。uint32_t类型。 |
 
 ## 返回值说明

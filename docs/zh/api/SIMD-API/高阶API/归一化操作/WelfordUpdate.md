@@ -97,12 +97,12 @@ constexpr WelfordUpdateConfig WFUPDATE_DEFAULT_CFG = {false};
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| outputMean | 输出 | 均值目的操作数，对应接口公式中的Meanti。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape和源操作数inputMean需要保持一致。 |
-| outputVariance | 输出 | 方差中间结果目的操作数，对应接口公式中的Mi。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape和源操作数inputVariance需要保持一致。 |
-| inputMean | 输入 | 均值源操作数，对应接口公式中的Meanti-1。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputVariance | 输入 | 方差中间结果源操作数，对应接口公式中的Mi-1。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputX | 输入 | 源操作数，对应接口公式中的xi。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 临时空间。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[WelfordUpdate Tiling](WelfordUpdate-Tiling.md)。 |
+| outputMean | 输出 | 均值目的操作数，对应接口公式中的Meanti。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape和源操作数inputMean需要保持一致。 |
+| outputVariance | 输出 | 方差中间结果目的操作数，对应接口公式中的Mi。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>shape和源操作数inputVariance需要保持一致。 |
+| inputMean | 输入 | 均值源操作数，对应接口公式中的Meanti-1。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputVariance | 输入 | 方差中间结果源操作数，对应接口公式中的Mi-1。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputX | 输入 | 源操作数，对应接口公式中的xi。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 临时空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[WelfordUpdate Tiling](WelfordUpdate-Tiling.md)。 |
 | para | 输入 | 计算所需的参数信息。WelfordUpdateParam类型，定义如下方代码所示，其中参数的含义如下。<br>rnLength：预留参数，固定设置为1。<br>abLength：Reduce轴拆分的大小。<br>abComputeLength：从输入的起始地址开始的Reduce轴实际计算长度。<br>nRec：取值为1/i，i为当前调用本接口的累积次数。i的取值范围为[1, n]，n为对输入数据inputX的Reduce轴切分的块数。<br><br>各目的操作数和源操作数的shape均为[rnLength, abLength]。 |
 
 ```

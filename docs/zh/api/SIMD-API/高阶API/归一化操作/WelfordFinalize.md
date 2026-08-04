@@ -131,12 +131,12 @@ constexpr WelfordFinalizeConfig WFFINALIZE_DEFAULT_CFG = { false };
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| outputMean | 输出 | 均值目的操作数，数据类型为float。输出的均值为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../通用说明和约束.md#table16278354141117)，开发者实际需要为outputMean分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| outputVariance | 输出 | 方差目的操作数，数据类型为float。输出的方差为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../通用说明和约束.md#table16278354141117)，开发者实际需要为outputVariance分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputMean | 输入 | 均值源操作数，数据类型为float。shape为[abLength]。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputVariance | 输入 | 方差源操作数，数据类型为float。shape为[abLength]。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| counts | 输入 | 源操作数，数据类型为int32_t。shape为[abLength]。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 临时空间，数据类型为uint8_t。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[WelfordFinalize Tiling](WelfordFinalize-Tiling.md)。 |
+| outputMean | 输出 | 均值目的操作数，数据类型为float。输出的均值为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../通用说明和约束.md#table16278354141117)，开发者实际需要为outputMean分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| outputVariance | 输出 | 方差目的操作数，数据类型为float。输出的方差为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../通用说明和约束.md#table16278354141117)，开发者实际需要为outputVariance分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputMean | 输入 | 均值源操作数，数据类型为float。shape为[abLength]。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputVariance | 输入 | 方差源操作数，数据类型为float。shape为[abLength]。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| counts | 输入 | 源操作数，数据类型为int32_t。shape为[abLength]。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 临时空间，数据类型为uint8_t。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[WelfordFinalize Tiling](WelfordFinalize-Tiling.md)。 |
 | para | 输入 | 计算所需的参数信息。WelfordFinalizePara类型，定义如下方代码所示，其中参数的含义如下。<br>rnLength：输入的Reduce轴，按abLength为一次计算的大小，拆分的次数。如果拆分后有尾块，则次数向上取整。<br>abLength：Reduce轴拆分的大小。在不带counts参数的接口中，abLength=headCountLength+tailCountLength。<br>headCount：在不带counts参数的接口中开启该参数，作为公式中非尾块的counts系数，headCount值。<br>headCountLength：在不带counts参数的接口中开启该参数，headCount值对应的长度。<br>tailCount：在不带counts参数的接口中开启该参数，作为公式中尾块的counts系数，tailCount值。<br>tailCountLength：在不带counts参数的接口中开启该参数，tailCount值对应的长度。<br>abRec：abLength的倒数，即为1/abLength的值。<br>rRec：输入的Reduce轴拆分后，若没有尾块，表示1/(rnLength*abLength)的值，若有尾块，表示1/R的值。<!-- npu="950" id10 --><br>rRecWithCorrection：输入的方差修正系数，当模板参数config中的isCorrection为true时生效。该参数仅支持Ascend 950PR/Ascend 950DT。<!-- end id10 --> |
 
 ```

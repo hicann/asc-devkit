@@ -162,11 +162,11 @@ constexpr SoftmaxConfig SOFTMAX_DEFAULT_CFG = {true, 0, 0, SoftmaxMode::SOFTMAX_
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>dst的shape和源操作数src一致。 |
-| sumTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于保存SoftMax计算过程中reducesum的结果。<br>sumTensor的last轴长度固定为32Byte，即一个datablock长度。该datablock中的所有数据为同一个值，比如half数据类型下，该datablock中的16个数均为相同的reducesum的值。<br>非last轴的长度与dst保持一致。 |
-| maxTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于保存SoftMax计算过程中reducemax的结果。<br>maxTensor的last轴长度固定为32Byte，即一个datablock长度。该datablock中的所有数据为同一个值。比如half数据类型下，该datablock中的16个数均为相同的reducemax的值。<br>非last轴的长度与dst保持一致。 |
-| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>last轴长度需要32Byte对齐。 |
-| sharedTmpBuffer | 输入 | 临时空间。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[SoftMax/SimpleSoftMax Tiling](SoftMax-SimpleSoftMax-Tiling.md)。 |
+| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>dst的shape和源操作数src一致。 |
+| sumTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于保存SoftMax计算过程中reducesum的结果。<br>sumTensor的last轴长度固定为32Byte，即一个datablock长度。该datablock中的所有数据为同一个值，比如half数据类型下，该datablock中的16个数均为相同的reducesum的值。<br>非last轴的长度与dst保持一致。 |
+| maxTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于保存SoftMax计算过程中reducemax的结果。<br>maxTensor的last轴长度固定为32Byte，即一个datablock长度。该datablock中的所有数据为同一个值。比如half数据类型下，该datablock中的16个数均为相同的reducemax的值。<br>非last轴的长度与dst保持一致。 |
+| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>last轴长度需要32Byte对齐。 |
+| sharedTmpBuffer | 输入 | 临时空间。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>接口内部复杂计算时用于存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[SoftMax/SimpleSoftMax Tiling](SoftMax-SimpleSoftMax-Tiling.md)。 |
 | tiling | 输入 | SoftMax计算所需Tiling信息，Tiling信息的获取请参考[SoftMax/SimpleSoftMax Tiling](SoftMax-SimpleSoftMax-Tiling.md)。 |
 | softmaxShapeInfo | 输入 | src的shape信息。SoftMaxShapeInfo类型，具体定义如下方代码所示，其中参数的含义为：<br>srcM：非尾轴长度的乘积。<br>srcK：尾轴长度，必须32Byte对齐。<br>oriSrcM：原始非尾轴长度的乘积。<br>oriSrcK：原始尾轴长度。<br><br>需要注意，当输入输出的数据格式为NZ格式时，尾轴长度为reduce轴长度即[图2](#fig0172155842215)中的W0\*W1，非尾轴为H0\*H1。 |
 

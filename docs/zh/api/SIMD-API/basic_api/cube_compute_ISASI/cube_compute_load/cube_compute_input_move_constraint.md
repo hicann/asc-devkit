@@ -1,0 +1,298 @@
+# 矩阵计算输入搬运约束<a name="ZH-CN_TOPIC_0000002568950895"></a>
+
+## 对齐约束
+
+具体可见[表数据通路和存储层级](overall_description.md#zh-cn_topic_0000002543771563_table3523123518108)。
+
+- 当源地址位于L1 Buffer时，该地址必须32Byte对齐；当源地址位于GM时，该地址必须1Byte对齐。
+- 当目的地址位于L0A Buffer/L0B Buffer时，该地址必须512Byte对齐；当目的地址位于L1 Buffer时，该地址必须32Byte对齐。
+
+## 带宽约束
+
+- LoadData（2D矩阵搬运）以大小为512Byte的分形为单位进行搬运。
+- LoadData（卷积数据搬运）以大小为512Byte的分形为单位进行搬运。
+- LoadDataWithSparse搬运以512Byte为单位存放的稠密权重矩阵到L0B Buffer里，同时搬运以128Byte为单位的索引矩阵到内置的专用buffer空间。
+
+## 分形约束
+
+DataCopy（GM-\>L1 Buffer）在不使能随路进行ND到NZ转换的时候，不会改变分形间和分形内排布，如Nz2Nz，在使能ND到NZ转换的情况下，一定会改变分形排布，如ND2Nz。
+
+LoadData（2D矩阵搬运）在不使能转置情况下，只能改变分形间的排布，如Nz2Zz；在使能转置情况下，既能改变分形内的排布，又能改变分形间的排布，如Nz2Zn。
+
+LoadDataWithTranspose一定改变分形内的排布，可以按需改变分形间的排布，如Nz2Zn。
+
+LoadDataWithTranspose在B32场景下，源操作数2个连续的16\*8分形将被合并为1个16\*16的方块矩阵，然后再基于该方块矩阵做转置，因此要求两个连续分形合并为方块矩阵，要求L1 Buffer上的矩阵满足Nz排布（当且仅当Row==16）或Zn排布（当且仅当Col==16）。
+
+LoadData（卷积数据搬运）主要用于对NC1HWC0格式的feature map完成image to column操作，并将展开后的二维矩阵搬入对应内存位置，因此对于LoadData（卷积数据搬运）的源操作数中数据必须按照NC1HWC0格式排布，目的操作数数据必须按照目的地址L0A Buffer/L0B Buffer中支持的排布方式排布。
+
+<!-- npu="910b,A3" id1 -->
+LoadDataWithSparse主要用于搬运以512Byte为单位存放的稠密权重矩阵到L0B Buffer里，同时搬运以128Byte为单位的索引矩阵到内置的专用buffer空间（用于后续MmadWithSparse接口进行读取），因此源操作稠密权重矩阵和索引矩阵都需要按照Zn格式排布，其中稠密权重矩阵排布方式为32\*16\*8bit=512Byte，索引矩阵排布方式为32\*16\*2bit=128Byte。
+<!-- end id1 -->
+
+矩阵计算过程中，常用分形支持总结如下表：
+    
+<!-- npu="910b,A3" id2 -->
+### 针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品
+
+常用分形支持情况如下，供开发者参考：
+
+- **DataCopy**
+    - GM->L1 Buffer
+        - ND->Nz：
+
+            ![](../../../../figures/datacopy_gm2l1_nd2nz.png)
+        - Nz->Nz：
+
+            ![](../../../../figures/datacopy_gm2l1_nz2nz.png)
+        - Zn->Zn：
+
+            ![](../../../../figures/datacopy_gm2l1_zn2zn.png)
+- **LoadData（2D矩阵搬运）**
+    - GM->L1 Buffer（不支持转置）
+        - Nz->Nz：
+
+            ![](../../../../figures/load2d_gm2l1_nz2nz.png)
+        - Zn->Zn：
+
+            ![](../../../../figures/load2d_gm2l1_zn2zn.png)
+    - GM->L0A Buffer（不支持转置）L1 Buffer->L0A Buffer（不使能转置）（Nz->Zz）
+
+        ![](../../../../figures/load2d_gm2l0a_nz2zz.png)
+    - GM->L0B Buffer（不支持转置）L1 Buffer->L0B Buffer（不使能转置）（Zn->Zn）
+
+        ![](../../../../figures/load2d_gm2l0b_zn2zn.png)
+    - L1 Buffer->L0A Buffer（使能转置，仅支持b16数据类型）（Nz->Zz）
+
+        ![](../../../../figures/load2d_l12l0a_nz2zz.png)
+    - L1 Buffer->L0B Buffer（使能转置，仅支持b16数据类型）（Zn->Zn）
+
+        ![](../../../../figures/load2d_l12l0b_zn2zn.png)
+- **LoadDataWithTranspose**
+    - L1 Buffer->L0A Buffer（b8）（Nz->Zz）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0a_b8_nz2zz.png)
+    - L1 Buffer->L0B Buffer（b4/b8）（Zn->Zn）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0b_b4b8_zn2zn.png)
+    - L1 Buffer->L0A Buffer（b16）（Nz->Zz）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0a_b16_nz2zz.png)
+    - L1 Buffer->L0B Buffer（b16）（Zn->Zn）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0b_b16_zn2zn.png)
+    - L1 Buffer->L0A Buffer（b32）（Nz（<span>当且仅当Row==16</span>）->Zz）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0a_b32_nz2zz.png)
+    - L1 Buffer->L0B Buffer（b32）（Zn（<span>当且仅当Col==16</span>）->Zn）
+        
+        ![](../../../../figures/loaddatawithtranspose_l12l0b_b32_zn2zn.png)
+- **LoadData（卷积数据搬运）**
+    - L1 Buffer->L0A Buffer（NC1HWC0->Zz）
+
+        ![](../../../../figures/load3d_l12l0a_nc1hwc02zz.png)
+    - L1 Buffer->L0B Buffer（NC1HWC0->Zn）
+
+        ![](../../../../figures/load3d_l12l0b_nc1hwc02zn.png)
+- **LoadDataWithSparse**
+    - L1 Buffer->L0B Buffer（Zn->Zn）
+
+        ![](../../../../figures/loaddatawithsparse_l12l0b_zn2zn.png)
+
+针对一些不常用的分形转换的支持情况，开发者可参考下表：
+
+**表1** 扩展分形转换支持情况
+
+<a name="zh-cn_topic_0000002513935478_table471251721314"></a>
+
+| 搬运指令 | 数据通路 | 分形支持情况 |
+| --- | --- | --- |
+| LoadData（2D矩阵搬运） | GM->L1 Buffer（不支持转置） | Nz->Zz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | GM->L0A Buffer（不支持转置）、<br>L1 Buffer->L0A Buffer（不使能转置） | Nz->Nz、Zn->Nn、Zn->Zn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | GM->L0B Buffer（不支持转置）、<br>L1 Buffer->L0B Buffer（不使能转置） | Nz->Zz、Nz->Nz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | L1 Buffer->L0A Buffer（使能转置，仅支持b16数据类型） | Nz->Nz、Zn->Nn、Zn->Zn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | L1 Buffer->L0B Buffer（使能转置，仅支持b16数据类型） | Nz->Zz、Nz->Nz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadDataWithTranspose | L1 Buffer->L0A Buffer（b8）、<br>L1 Buffer->L0A Buffer（b16） | Nz->Nz、Zn->Nn、Zn->Zn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadDataWithTranspose | L1 Buffer->L0B Buffer（b4/b8）、<br>L1 Buffer->L0B Buffer（b16） | Nz->Zz、Nz->Nz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadDataWithTranspose | L1 Buffer->L0A Buffer（b32） | Zz->Nz、Zz->Zz |
+| LoadDataWithTranspose | L1 Buffer->L0B Buffer（b32） | Nn->Zn、Nn->Nn |
+
+<!-- end id2 -->
+
+<!-- npu="950" id3 -->
+### 针对Ascend 950PR/Ascend 950DT
+
+DataCopy（GM-\>L1 Buffer）支持使能随路进行DN到NZ转换，一定会改变分形排布。
+
+LoadData（2D矩阵搬运V2）在不使能转置情况下，不改变分形间排布及分形内的排布，如Nz2Nz；在使能转置情况下，既改变分形内的排布，又改变分形间的排布，如Nz2Zn。
+
+LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置情况下，不改变分形间排布及分形内的排布，如Nz2Nz；在使能转置情况下，既改变分形内的排布，又改变分形间的排布，如Nz2Zn。在搬运量化系数矩阵的时候，不改变分形间及分型内排布。
+
+常用分形支持情况如下，供开发者参考：
+
+- **DataCopy**
+    - GM->L1 Buffer
+        - ND->Nz：
+
+            ![](../../../../figures/datacopy_gm2l1_nd2nz.png)
+        - DN->Nz：
+
+            ![](../../../../figures/datacopy_gm2l1_dn2nz.png)
+        - Nz->Nz：
+
+            ![](../../../../figures/datacopy_gm2l1_nz2nz.png)
+        - Zn->Zn：
+
+            ![](../../../../figures/datacopy_gm2l1_zn2zn.png)
+- **LoadData（2D矩阵搬运）**
+    - GM->L1 Buffer（不支持转置）
+        - Nz->Nz：
+
+            ![](../../../../figures/load2d_gm2l1_nz2nz.png)
+        - Zn->Zn：
+
+            ![](../../../../figures/load2d_gm2l1_zn2zn.png)
+    - L1 Buffer->L0A Buffer（不使能转置）（Nz->Nz）
+
+        ![](../../../../figures/load2d_l12l0a_nz2nz.png)
+    - L1 Buffer->L0B Buffer（不使能转置）（Zn->Zn）
+
+        ![](../../../../figures/load2d_l12l0b_zn2zn.png)
+    - L1 Buffer->L0A Buffer（使能转置，仅支持b16数据类型）（Zn->Nz）
+
+        ![](../../../../figures/load2d_l12l0a_zn2nz.png)
+    - L1 Buffer->L0B Buffer（使能转置，仅支持b16数据类型）（Zn->Zn）
+
+        ![](../../../../figures/load2d_l12l0b_zn2zn.png)
+- **LoadData（2D矩阵搬运V2）**
+    - L1 Buffer->L0A Buffer（Nz->Nz）
+
+        ![](../../../../figures/load2dv2_l12l0a_nz2nz.png)
+    - L1 Buffer->L0A Buffer（使能转置）（Zn->Nz）
+
+        ![](../../../../figures/load2dv2_l12l0a_zn2nz.png)
+    - L1 Buffer->L0B Buffer（Zn->Zn）
+
+        ![](../../../../figures/load2dv2_l12l0b_zn2zn.png)
+    - L1 Buffer->L0B Buffer（使能转置）（Nz->Zn）
+
+        ![](../../../../figures/load2dv2_l12l0b_nz2zn.png)
+- **LoadData（MX矩阵搬运）**
+    - L1 Buffer->L0A Buffer（Nz->Nz）
+
+        ![](../../../../figures/load2dv2mx_l12l0a_nz2nz.png)
+    - L1 Buffer->L0A Buffer_MX
+            
+        ![](../../../../figures/load2dv2mx_l12l0amx.png)
+    - L1 Buffer->L0B Buffer（Zn->Zn）
+
+        ![](../../../../figures/load2dv2mx_l12l0b_zn2zn.png)
+    - L1 Buffer->L0B Buffer_MX
+            
+        ![](../../../../figures/load2dv2mx_l12l0bmx.png)
+- **LoadDataWithTranspose**
+    - L1 Buffer->L0B Buffer（b4/b8）（Zn->Zn）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0b_b4b8_zn2zn.png)
+    - L1 Buffer->L0B Buffer（b16）（Zn->Zn）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0b_b16_zn2zn.png)
+    - L1 Buffer->L0B Buffer（b32）（Zn（<span>当且仅当Col==16</span>）->Zn）
+
+        ![](../../../../figures/loaddatawithtranspose_l12l0b_b32_zn2zn.png)
+- **LoadData（卷积数据搬运）**
+    - L1 Buffer->L0A Buffer（NC1HWC0->Nz）
+
+        ![](../../../../figures/load3d_l12l0a_nc1hwc02nz.png)
+    - L1 Buffer->L0B Buffer（NC1HWC0->Zn）
+
+        ![](../../../../figures/load3d_l12l0b_nc1hwc02zn.png)
+
+针对一些不常用的分形转换的支持情况，开发者可参考下表：
+
+**表2** 扩展分形转换支持情况
+
+<a name="zh-cn_topic_0000002513935478_table150925964717"></a>
+
+| 搬运指令 | 数据通路 | 分形支持情况 |
+| --- | --- | --- |
+| LoadData（2D矩阵搬运） | GM->L1 Buffer（不支持转置） | Nz->Zz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | L1 Buffer->L0A Buffer（不使能转置） | Nz->Nz、Zn->Nn、Zn->Zn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | L1 Buffer->L0B Buffer（不使能转置） | Nz->Zz、Nz->Nz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | L1 Buffer->L0A Buffer（使能转置，仅支持b16数据类型） | Nz->Nz、Zn->Nn、Zn->Zn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadData（2D矩阵搬运） | L1 Buffer->L0B Buffer（使能转置，仅支持b16数据类型） | Nz->Zz、Nz->Nz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadDataWithTranspose | L1 Buffer->L0B Buffer（b4/b8）、<br>L1 Buffer->L0B Buffer（b16） | Nz->Zz、Nz->Nz、Zn->Nn、Zz->Zz、Zz->Nz、Nn->Nn、Nn->Zn |
+| LoadDataWithTranspose | L1 Buffer->L0B Buffer（b32） | Nn->Zn、Nn->Nn |
+
+<!-- end id3 -->
+
+## 数据类型约束
+
+<!-- npu="910b,A3" id4 -->
+针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，数据类型约束如表3所示：
+
+**表3** 数据类型约束
+
+<a name="zh-cn_topic_0000002513935478_table7327153310263"></a>
+
+| 搬运指令 | 数据通路 | 支持的数据类型 |
+| --- | --- | --- |
+| LoadData（2D矩阵搬运） | GM->L1 Buffer、GM->L0A Buffer、GM->L0B Buffer、<br>L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer | <br>b4（int4b_t）；<br>b8（int8_t、uint8_t）；<br>b16（int16_t、uint16_t、half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadDataWithTranspose | L1 Buffer->L0A Buffer | b8（int8_t、uint8_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadDataWithTranspose | L1 Buffer->L0B Buffer | b4（int4b_t）；<br>b8（int8_t、uint8_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadDataWithSparse | L1 Buffer->L0B Buffer | b8(int8_t) |
+| LoadData（卷积数据搬运） | L1 Buffer->L0A Buffer | b4（int4b_t）；<br>b8（int8_t、uint8_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadData（卷积数据搬运） | L1 Buffer->L0B Buffer | b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+
+> [!NOTE]说明
+>
+> - LoadData（2D矩阵搬运）：只有L1 Buffer->L0A Buffer/L0B Buffer通路才能使能转置，使能转置功能时，源操作数、目的操作数仅支持b16位宽数据类型。
+> - LoadData（2D矩阵搬运）：b4（int4b_t）仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。
+> - LoadDataWithTranspose：仅在目的操作数地址位于L0B Buffer的时候支持int4b\_t数据类型。
+<!-- end id4 -->
+
+<!-- npu="950" id5 -->
+针对Ascend 950PR/Ascend 950DT，数据类型约束如表4所示：
+
+**表4** 数据类型约束
+
+<a name="zh-cn_topic_0000002513935478_table259001716534"></a>
+
+| 搬运指令 | 数据通路 | 支持的数据类型 |
+| --- | --- | --- |
+| LoadData（2D矩阵搬运） | GM->L1 Buffer、L1 Buffer->L0A Buffer、<br>L1 Buffer->L0B Buffer | b8（int8_t、uint8_t）；<br>b16（int16_t、uint16_t、half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadData（2D矩阵搬运V2） | GM->L1 Buffer、L1 Buffer->L0A Buffer、<br>L1 Buffer->L0B Buffer | int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、<br>hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、half、<br>bfloat16_t、int32_t、uint32_t、float。 |
+| LoadDataWithTranspose | L1 Buffer->L0B Buffer | b8（int8_t、uint8_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadData（卷积数据搬运） | L1 Buffer->L0A Buffer | b8（int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+| LoadData（卷积数据搬运） | L1 Buffer->L0B Buffer | b8（int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+<!-- end id5 -->
+
+<!-- npu="950" id6 -->
+- 针对Ascend 950PR/Ascend 950DT，LoadData（2D矩阵搬运V2）以大小为512Byte的分形为单位进行搬运。LoadData（MX矩阵搬运）包含两种矩阵数据搬运，左右矩阵大小以512Byte的分形单位，左右量化系数矩阵大小以32Byte的分形为单位。
+<!-- end id6 -->
+
+## 搬运指令总结
+
+<!-- npu="910b,A3" id7 -->
+结合上述数据类型与分形等约束条件，我们对数据搬入接口的使用场景进行了归纳总结，现提供如下，供开发者参考。
+
+针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，**从L1 Buffer->L0A Buffer/L0B Buffer通路，常用的搬运指令有LoadData（2D矩阵搬运）、LoadDataWithTranspose和LoadData（卷积数据搬运），可以调用指令总结如表5所示：**
+
+**表5** L1 Buffer->L0A Buffer/L0B Buffer通路调用指令总结
+
+<a name="zh-cn_topic_0000002513935478_table0327183312611"></a>
+
+| 是否转置/数据类型 | b4（int4b_t） | b8 | b16 | b32 |
+| --- | --- | --- | --- | --- |
+| A不转置（L1 Buffer->L0A Buffer不需要使能转置） | LoadData（卷积数据搬运）（推荐使用） | LoadData（2D矩阵搬运）、LoadData（卷积数据搬运）（推荐使用） | LoadData（2D矩阵搬运）、LoadData（卷积数据搬运）（推荐使用） | LoadData（2D矩阵搬运）、LoadData（卷积数据搬运）（推荐使用） |
+| A转置（L1 Buffer->L0A Buffer需要使能转置） | 不支持 | LoadDataWithTranspose | LoadData（2D矩阵搬运）、LoadDataWithTranspose、LoadData（卷积数据搬运）（推荐使用） | LoadDataWithTranspose（L1 Buffer上数据排布为Nz排布（当且仅当Row==16））、LoadData（卷积数据搬运）（推荐使用） |
+| B不转置（L1 Buffer->L0B Buffer需要使能转置） | LoadDataWithTranspose | LoadDataWithTranspose | LoadData（2D矩阵搬运）、LoadDataWithTranspose、LoadData（卷积数据搬运）（推荐使用） | LoadDataWithTranspose（L1 Buffer上数据排布为Zn排布（当且仅当Col==16））、LoadData（卷积数据搬运）（推荐使用） |
+| B转置（L1 Buffer->L0B Buffer不需要使能转置） | - | LoadData（2D矩阵搬运） | LoadData（2D矩阵搬运） | LoadData（2D矩阵搬运） |
+
+> [!NOTE]说明
+>
+> - 由于LoadData（2D矩阵搬运）和LoadDataWithTranspose在搬运过程中只能在一个方向做repeat搬运，涉及多个方向的数据块的搬运就需要使用for循环进行搬运，而LoadData（卷积数据搬运）可以通过配置mExtension和kExtension来完成多个方向的数据块搬运，不需要使用for循环，因此整体的scalar开销要比LoadData（2D矩阵搬运）和LoadDataWithTranspose要少，因此，在满足LoadData（卷积数据搬运）使用约束条件的场景下，推荐使用LoadData（卷积数据搬运）指令来实现L1 Buffer->L0A Buffer/L0B Buffer的数据搬运。
+<!-- end id7 -->
+
+<!-- npu="950" id8 -->
+针对Ascend 950PR/Ascend 950DT，LoadData（2D矩阵搬运V2）可以支持b4（fp4）/b8/b16/b32数据类型以及转置场景搬运，通过配置mStep和kStep来完成多个方向的数据块搬运，并且相比LoadData（卷积数据搬运），指令的带宽延时更小，因此不带量化系数的矩阵乘法过程中L1 Buffer->L0A Buffer/L0B Buffer通路，都推荐使用LoadData（2D矩阵搬运V2）指令来实现数据搬运。而带量化系数的矩阵乘法过程中，需要使用LoadData（MX矩阵搬运）指令来实现数据搬运，不仅能完成L1 Buffer->L0A Buffer/L0B Buffer通路搬运，还能完成L1 Buffer->L0A\_MX/L0B\_MX Buffer通路的数据搬运。
+<!-- end id8 -->

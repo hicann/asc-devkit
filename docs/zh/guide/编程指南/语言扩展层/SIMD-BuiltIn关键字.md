@@ -262,7 +262,7 @@
 
 -   \_\_simd\_vf\_\_
 
-    函数标记宏，用于标记SIMD VF入口函数，函数无返回值。使用[asc\_vf\_call](../../../api/SIMD-API/基础API/Reg矢量计算/VF调用/asc_vf_call.md)调用SIMD VF入口函数，启动VF子任务。
+    函数标记宏，用于标记SIMD VF入口函数，函数无返回值。使用[asc\_vf\_call](../../../api/SIMD-API/basic_api/reg_vector_compute/vf_call/asc_vf_call.md)调用SIMD VF入口函数，启动VF子任务。
 
     ```
     __simd_vf__ inline void KernelAdd(__ubuf__ float* x, __ubuf__ float* y, __ubuf__ float* z)

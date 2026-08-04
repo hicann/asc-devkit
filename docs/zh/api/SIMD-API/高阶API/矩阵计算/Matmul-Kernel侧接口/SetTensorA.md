@@ -60,8 +60,8 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorA\(SrcAT aScalar\)接口原�
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| gm | 输入 | A矩阵。类型为[GlobalTensor](../../../基础API/数据结构/GlobalTensor/GlobalTensor.md)。SrcAT参数表示A矩阵的数据类型。不同型号支持的数据类型请参考[gm和leftMatrix支持的数据类型](#li12616155731720)。|
-| leftMatrix | 输入 | A矩阵。类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为TSCM/VECOUT。SrcAT参数表示A矩阵的数据类型。不同型号支持的数据类型请参考[gm和leftMatrix支持的数据类型](#li12616155731720)<br><br>若设置TSCM首地址，默认矩阵可全载，已经位于TSCM，Iterate接口无需再进行GM->L1 Buffer（A1/B1）搬运。 |
+| gm | 输入 | A矩阵。类型为[GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md)。SrcAT参数表示A矩阵的数据类型。不同型号支持的数据类型请参考[gm和leftMatrix支持的数据类型](#li12616155731720)。|
+| leftMatrix | 输入 | A矩阵。类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为TSCM/VECOUT。SrcAT参数表示A矩阵的数据类型。不同型号支持的数据类型请参考[gm和leftMatrix支持的数据类型](#li12616155731720)<br><br>若设置TSCM首地址，默认矩阵可全载，已经位于TSCM，Iterate接口无需再进行GM->L1 Buffer（A1/B1）搬运。 |
 | aScalar | 输入 | A矩阵中设置的值。支持传入标量数据，标量数据会被扩展为一个形状为[1, K]的tensor参与矩阵乘计算，tensor的数值均为该标量值。例如，开发者可以通过将aScalar设置为1来实现矩阵B在K方向的reduce sum操作。SrcAT参数表示A矩阵的数据类型。不同型号支持的数据类型请参考[aScalar支持的数据类型](#li12616155731723)。 |
 | isTransposeA | 输入 | A矩阵是否需要转置。<br><br>注意：<br>若A矩阵MatmulType的ISTRANS参数设置为true，该参数可以为true也可以为false，即运行时可以转置和非转置交替使用；<br>若A矩阵MatmulType的ISTRANS参数设置为false，该参数只能设置为false，若强行设置为true，精度会有异常；<br>对于非half、非bfloat16_t输入类型的场景，为了确保Tiling侧与Kernel侧L1 Buffer空间计算大小保持一致及结果精度正确，该参数取值必须与Kernel侧定义A矩阵MatmulType的[ISTRANS](Matmul使用说明.md)参数以及Tiling侧SetAType()接口的[isTrans](../Matmul-Tiling类/SetAType.md)参数保持一致，即上述三个参数必须同时设置为true或同时设置为false。<!-- npu="310p" id21 --><br><br>Atlas 推理系列产品AI Core，A矩阵为int8_t数据类型时不支持转置，即不支持该参数设置为true。<!-- end id21 --><!-- npu="910b" id22 --><br><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，A矩阵为int4b_t数据类型时不支持转置，即不支持该参数设置为true。<!-- end id22 --><!-- npu="A3" id23 --><br><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，A矩阵为int4b_t数据类型时不支持转置，即不支持该参数设置为true。<!-- end id23 --> |
 

@@ -58,7 +58,7 @@ __aicore__ inline void Arange(const LocalTensor<T>& dst, const T firstValue, con
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数。dst的大小应大于等于count * sizeof(T)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dst | 输出 | 目的操作数。dst的大小应大于等于count * sizeof(T)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | firstValue | 输入 | 等差数列的首个元素值。 |
 | diffValue | 输入 | 等差数列元素之间的差值，应大于等于0。 |
 | count | 输入 | 等差数列的长度。count>0。 |

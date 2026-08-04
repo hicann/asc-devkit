@@ -91,8 +91,8 @@
 | --- | --- |
 | config | 指定数据格式转换的场景。当前支持的转换场景有如下四种：NCDHW -> NDC1HWC0、NDC1HWC0 -> NCDHW、NCDHW -> FRACTAL_Z_3D、FRACTAL_Z_3D -> NCDHW。该参数为TransDataConfig类型，具体定义如下方代码所示。<br><br>配置示例如下。<br>constexpr AscendC::TransDataConfig config1 = {AscendC::DataFormat::NCDHW, AscendC::DataFormat::FRACTAL_Z_3D}; |
 | T | 操作数的数据类型。支持的数据类型为：int16_t、uint16_t、half、bfloat16_t。 |
-| U | 源操作数的Shape信息，[Layout](../../基础API/辅助数据结构/Layout/Layout.md)类型。<br>AscendC::Layout ncdhwLayout = AscendC::MakeLayout(AscendC::MakeShape(n, c, d, h, w), AscendC::MakeStride()); |
-| S | 目的操作数的Shape信息，[Layout](../../基础API/辅助数据结构/Layout/Layout.md)类型。<br>AscendC::Layout fractalzLayout = AscendC::MakeLayout(AscendC::MakeShape(d, c1, h, w, n1, n0, c0), AscendC::MakeStride()); |
+| U | 源操作数的Shape信息，[Layout](../../basic_api/aux_data_structures/Layout/Layout.md)类型。<br>AscendC::Layout ncdhwLayout = AscendC::MakeLayout(AscendC::MakeShape(n, c, d, h, w), AscendC::MakeStride()); |
+| S | 目的操作数的Shape信息，[Layout](../../basic_api/aux_data_structures/Layout/Layout.md)类型。<br>AscendC::Layout fractalzLayout = AscendC::MakeLayout(AscendC::MakeShape(d, c1, h, w, n1, n0, c0), AscendC::MakeStride()); |
 
 ```
 struct TransDataConfig {
@@ -116,10 +116,10 @@ enum class DataFormat : uint8_t {
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于TransData内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetTransDataMaxMinTmpSize](GetTransDataMaxMinTmpSize.md)。 |
-| params | 输入 | 源操作数和目的操作数的Shape信息。该参数为TransDataParams数据类型，具体定义及配置示例如下，其中模板参数T、U必须为[Layout](../../基础API/辅助数据结构/Layout/Layout.md)类型。该参数指定的Shape维度必须与config中Format对应维度保持一致。|
+| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于TransData内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetTransDataMaxMinTmpSize](GetTransDataMaxMinTmpSize.md)。 |
+| params | 输入 | 源操作数和目的操作数的Shape信息。该参数为TransDataParams数据类型，具体定义及配置示例如下，其中模板参数T、U必须为[Layout](../../basic_api/aux_data_structures/Layout/Layout.md)类型。该参数指定的Shape维度必须与config中Format对应维度保持一致。|
 
 ```
 template <typename T, typename U>

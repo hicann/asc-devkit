@@ -60,8 +60,8 @@
 | aic_mte1_ratio | MTE1 的时间占比，反映 L1 到 L0 的数据搬运压力 |
 | aic_mte2_time(μs) | MTE2（[GM](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/抽象硬件架构.md)（Global Memory） 到 L1 搬运）的执行时间 |
 | aic_mte2_ratio | MTE2 的时间占比，反映 GM 到 L1 的数据加载压力 |
-| aic_fixpipe_time(μs) | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md)（L0C 到 GM 搬运）的执行时间 |
-| aic_fixpipe_ratio | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md) 的时间占比，反映结果写回的访存压力 |
+| aic_fixpipe_time(μs) | [Fixpipe](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)（L0C 到 GM 搬运）的执行时间 |
+| aic_fixpipe_ratio | [Fixpipe](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) 的时间占比，反映结果写回的访存压力 |
 
 
 ### 数据流路径：
@@ -121,12 +121,12 @@ AscendC::LocalTensor<half> a2LocalPong(AscendC::TPosition::A2, L0_PINGPONG_BYTES
 
 | 事件类型 | 方向 | 用途 | flag 编号 |
 |---------|------|------|----------|
-| [MTE2_MTE1](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | 正向 | L1 数据就绪通知，DataCopyIn 通知 DataLoad 可读取 | 0/1: A1 Ping/Pong; 2/3: B1 Ping/Pong |
-| [MTE1_MTE2](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | 反向 | L1 缓冲区释放通知，DataLoad 通知 DataCopyIn 可写入 | 同上 |
-| [MTE1_M](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | 正向 | L0 数据就绪通知，DataLoad 通知 Compute 可计算 | mte1DBFlag (0/1 交替) |
-| [M_MTE1](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | 反向 | L0 缓冲区释放通知，Compute 通知 DataLoad 可写入 | mte1DBFlag (0/1 交替) |
+| [MTE2_MTE1](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | 正向 | L1 数据就绪通知，DataCopyIn 通知 DataLoad 可读取 | 0/1: A1 Ping/Pong; 2/3: B1 Ping/Pong |
+| [MTE1_MTE2](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | 反向 | L1 缓冲区释放通知，DataLoad 通知 DataCopyIn 可写入 | 同上 |
+| [MTE1_M](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | 正向 | L0 数据就绪通知，DataLoad 通知 Compute 可计算 | mte1DBFlag (0/1 交替) |
+| [M_MTE1](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | 反向 | L0 缓冲区释放通知，Compute 通知 DataLoad 可写入 | mte1DBFlag (0/1 交替) |
 
-**反向同步需预置**：由于反向同步是"消费方 [SetFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) → 生产方 [WaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md)"，首次使用前必须预置 SetFlag，否则首次 WaitFlag 会死锁：
+**反向同步需预置**：由于反向同步是"消费方 [SetFlag](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) → 生产方 [WaitFlag](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)"，首次使用前必须预置 SetFlag，否则首次 WaitFlag 会死锁：
 
 ```cpp
 // 初始化：预置反向同步 flag，防止首次 WaitFlag 死锁
@@ -189,7 +189,7 @@ nd2nzParams.dValue = baseK * stepKa;  // 大包包含 stepKa 个 baseM * baseK
 
 #### 6. LoadData3D 替代 LoadData2D——减少指令队列占用
 
-在 Atlas A2/A3 架构上，本样例使用 [`LoadData3DParamsV2`](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/LoadData_3D.md)（即 [LoadData3D](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/LoadData_3D.md)）替代 [`LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/LoadData_2D.md)（即 LoadData2D）完成 L1→L0 的数据搬运。这是一个关键的指令队列优化。
+在 Atlas A2/A3 架构上，本样例使用 [`LoadData3DParamsV2`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)（即 [LoadData3D](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)）替代 [`LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)（即 LoadData2D）完成 L1→L0 的数据搬运。这是一个关键的指令队列优化。
 
 **问题背景**：MTE1 指令队列深度为 32。使用 LoadData2D 时，由于单条 LoadData2D 指令搬运粒度有限，搬运一个 baseM×baseK 的切片需要用 for 循环发射多条 LoadData2D 指令。例如 baseM=128、baseK=64 时，最少需要发射 `baseK/16 = 4` 条 LoadData2D 指令。
 
@@ -235,7 +235,7 @@ class KernelMmad { ... };
 
 #### 8. UnitFlag 优化
 
-开启 UnitFlag 后，[MMAD](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/Mmad计算/Mmad.md) 和 [FIXPIPE](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md) 实现细粒度（512B）流水并行，而非指令级同步。每当 Cube 完成一个 512B 数据结果的计算，FIXPIPE 立即搬出该数据，Cube 计算与结果写回流水重叠：
+开启 UnitFlag 后，[MMAD](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md) 和 [FIXPIPE](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) 实现细粒度（512B）流水并行，而非指令级同步。每当 Cube 完成一个 512B 数据结果的计算，FIXPIPE 立即搬出该数据，Cube 计算与结果写回流水重叠：
 
 ```cpp
 mmadParams.unitFlag = (kBlockIdx != kLoopCount - 1) ? 2 : 3;  // 开启 UnitFlag

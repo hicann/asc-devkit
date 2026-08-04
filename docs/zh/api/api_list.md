@@ -10,7 +10,7 @@ Ascend C提供了一套层次化的API体系，涵盖了从底层C扩展到高�
 
 | API一级分类 | API二级分类 | 分类说明 |
 | --- | --- | --- |
-| [SIMD API](SIMD-API/基础API/基础API列表.md) | [基础API](SIMD-API/基础API/基础API.md) | 实现对硬件能力的抽象，开放芯片的能力，保证完备性和兼容性。标注为ISASI（Instruction Set Architecture Special Interface，硬件体系结构相关的接口）类别的API，不能保证跨硬件版本兼容。 |
+| [SIMD API](SIMD-API/basic_api/basic_api_list.md) | [基础API](SIMD-API/basic_api/basic_api.md) | 实现对硬件能力的抽象，开放芯片的能力，保证完备性和兼容性。标注为ISASI（Instruction Set Architecture Special Interface，硬件体系结构相关的接口）类别的API，不能保证跨硬件版本兼容。 |
 | [SIMD API](SIMD-API/C-API/C-API.md) | [C API](SIMD-API/C-API/C-API.md) | 纯C接口，开放芯片完备编程能力，支持数组分配内存，一般基于指针编程，提供与业界一致的C语言编程体验。 |
 | [SIMD API](SIMD-API/高阶API/高阶API列表.md) | [高阶API](SIMD-API/高阶API/高阶API.md) | 实现一些常用的计算算法，用于提高编程开发效率，通常会调用多种基础API实现。高阶API包括数学库、Matmul、Softmax等API。高阶API可以保证兼容性。 |
 | [SIMT API](SIMT-API/概述.md) | - | 对标业界，提供单指令多线程API。以单条指令多个线程的形式来实现并行计算。SIMT编程主要用于向量计算，特别适合处理离散访问、复杂控制逻辑等场景。SIMT API支持两种编程模型：SIMT编程、SIMD与SIMT混合编程，具体支持的API请分别参见[SIMT编程API列表](SIMT-API/SIMT编程简介/API列表.md)、[SIMD与SIMT混合编程API列表](SIMT-API/SIMD与SIMT混合编程简介/API列表-148.md)。 |

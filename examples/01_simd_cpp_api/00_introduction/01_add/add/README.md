@@ -39,17 +39,17 @@ $$
 
 Add算子的计算逻辑遵循"搬入-计算-搬出"三段式流水结构：
 
-1. 将输入数据x和y从[GM](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md)（Global Memory，芯片外部全局内存）搬运到[UB](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)（Unified Buffer，向量计算专用片上缓存）；
+1. 将输入数据x和y从[GM](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)（Global Memory，芯片外部全局内存）搬运到[UB](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)（Unified Buffer，向量计算专用片上缓存）；
 2. 在UB上对xLocal、yLocal执行向量加法操作，计算结果存储在zLocal中；
 3. 将计算结果从UB搬运回GM。
 
 **前置说明**：
 
-- [GM（Global Memory）](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md)：AI Core外部的全局存储，数据通过[GlobalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/GlobalTensor/GlobalTensor简介.md)访问，容量大但访问速度较慢。
-- [UB（Unified Buffer）](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)：AI Core内部的向量计算专用缓存，数据通过[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)访问，容量有限但访问速度快。
-- [DataCopy](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopy_GMAndUB_continuous.md)：用于在GM和UB之间搬运数据的API，搬运方向由参数顺序决定。
-- [PipeBarrier](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/PipeBarrier_ISASI.md)：流水线同步屏障，确保数据搬运完成后再执行后续操作，避免读写冲突。
-- `block_idx`：通过[GetBlockIdx()](../../../../../docs/zh/api/SIMD-API/基础API/工具接口/系统资源与变量/GetBlockIdx.md)获取当前核的编号，用于多核并行时的数据分片计算。
+- [GM（Global Memory）](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)：AI Core外部的全局存储，数据通过[GlobalTensor](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)访问，容量大但访问速度较慢。
+- [UB（Unified Buffer）](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)：AI Core内部的向量计算专用缓存，数据通过[LocalTensor](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)访问，容量有限但访问速度快。
+- [DataCopy](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMAndUB_continuous.md)：用于在GM和UB之间搬运数据的API，搬运方向由参数顺序决定。
+- [PipeBarrier](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/PipeBarrier_ISASI.md)：流水线同步屏障，确保数据搬运完成后再执行后续操作，避免读写冲突。
+- `block_idx`：通过[GetBlockIdx()](../../../../../docs/zh/api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)获取当前核的编号，用于多核并行时的数据分片计算。
 
 核心代码如下：
 
@@ -131,9 +131,9 @@ AscendC::printf("add blockIdx=%d\n", AscendC::GetBlockIdx());
 
 ### DumpTensor
 
-基于算子工程开发的算子，可以使用该接口Dump指定[LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md)的内容。同时支持打印自定义的附加信息（仅支持uint32\_t数据类型的信息），比如打印当前行号等。
+基于算子工程开发的算子，可以使用该接口Dump指定[LocalTensor](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)的内容。同时支持打印自定义的附加信息（仅支持uint32\_t数据类型的信息），比如打印当前行号等。
 
-在算子kernel侧实现代码中需要打印Tensor数据的地方调用[DumpTensor](../../../../../docs/zh/api/SIMD-API/基础API/调试接口/上板打印/DumpTensor.md)接口打印相关内容。样例如下：
+在算子kernel侧实现代码中需要打印Tensor数据的地方调用[DumpTensor](../../../../../docs/zh/api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)接口打印相关内容。样例如下：
 
 ```cpp
 // 向量计算: z = x + y

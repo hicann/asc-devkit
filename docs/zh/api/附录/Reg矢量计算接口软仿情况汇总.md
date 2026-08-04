@@ -4,7 +4,7 @@
 
 Ascend 950PR/Ascend 950DT
 
-[Reg数据搬入](../SIMD-API/基础API/Reg矢量计算/Reg数据搬入/Reg数据搬入.md)和[Reg数据搬出](../SIMD-API/基础API/Reg矢量计算/Reg数据搬出/Reg数据搬出.md)目录下提供了UB与RegTensor、UB与MaskReg之间的数据搬运接口。
+[Reg数据搬入](../SIMD-API/basic_api/reg_vector_compute/reg_data_load/reg_data_load.md)和[Reg数据搬出](../SIMD-API/basic_api/reg_vector_compute/reg_data_store/reg_data_store.md)目录下提供了UB与RegTensor、UB与MaskReg之间的数据搬运接口。
 
 UB与RegTensor之间的数据搬运根据操作数的数据类型位宽来搬运，与数据类型本身无关，表1和表2列出的软仿支持的数据类型包括以下情况：
 

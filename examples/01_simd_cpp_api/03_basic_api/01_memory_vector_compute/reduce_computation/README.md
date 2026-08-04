@@ -65,7 +65,7 @@
 ## 样例描述
 
 - 样例功能：  
-  本样例基于ReduceMax/ReduceMin/ReduceSum接口实现归约计算，包含前n个数据计算接口和tensor高维切分计算接口。接口资料参考[ReduceMax](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMax.md)/[ReduceMin](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMin.md)/[ReduceSum](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/ReduceSum.md)。
+  本样例基于ReduceMax/ReduceMin/ReduceSum接口实现归约计算，包含前n个数据计算接口和tensor高维切分计算接口。接口资料参考[ReduceMax](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceMax.md)/[ReduceMin](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceMin.md)/[ReduceSum](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum.md)。
 
 - 样例规格：  
   不同场景的输入输出规格如下表所示：
@@ -148,7 +148,7 @@
   - Kernel实现
     - 调用DataCopy基础API将数据从GM（Global Memory）搬运到UB（Unified Buffer），并将归约计算后的数据搬出到GM（Global Memory）。
     - 调用ReduceMax/ReduceMin/ReduceSum接口完成归约计算。
-    - 在ReduceSum前n个数据计算场景，调用[GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr_ISASI.md)获取计算结果。
+    - 在ReduceSum前n个数据计算场景，调用[GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatSumSpr_ISASI.md)获取计算结果。
 
 - 调用实现  
   使用内核调用符`<<<>>>`调用核函数。

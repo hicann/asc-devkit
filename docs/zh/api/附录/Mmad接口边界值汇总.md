@@ -1,6 +1,6 @@
 # Mmad接口边界值汇总<a name="ZH-CN_TOPIC_0000002607849175"></a>
 
-本节汇总介绍了Mmad计算接口在边界值输入下的输出结果，数据类型见基础API下的[mmad](../SIMD-API/基础API/cube_compute_ISASI/Mmad计算/Mmad.md)，以下内容针对如下型号生效：
+本节汇总介绍了Mmad计算接口在边界值输入下的输出结果，数据类型见基础API下的[mmad](../SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md)，以下内容针对如下型号生效：
 
 <!-- npu="950" id1 -->
 - Ascend 950PR/Ascend 950DT

@@ -416,10 +416,10 @@ Mmad和Fixpipe的unitFlag需同步开启。前n-1条设为2（维持占用），
 当M=1时，Mmad自动触发GEMV（矩阵向量乘）加速通路，跳过不必要的矩阵加载。
 
 ### UnitFlag并行控制
-控制Mmad和Fixpipe的细粒度流水并行，详见[UnitFlag特性说明](api/SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/UnitFlag.md)。
+控制Mmad和Fixpipe的细粒度流水并行，详见[UnitFlag特性说明](api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_key_features/UnitFlag.md)。
 
 ### K方向对齐约束
-k方向需满足特定的对齐要求，不同数据类型约束不同，详见[K方向对齐约束](api/SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/K-方向对齐约束.md)。
+k方向需满足特定的对齐要求，不同数据类型约束不同，详见[K方向对齐约束](api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_key_features/k_direction_alignment_constraint.md)。
 ```
 
 **编写要求**：
@@ -499,7 +499,7 @@ extern "C" __global__ __aicore__ void mmad_custom(GM_ADDR x, GM_ADDR y, GM_ADDR 
 ```
 | 相似API | 与当前API区别 | 选择建议 |
 |---------|-------------|---------|
-| [MmadWithSparse](api/SIMD-API/基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md) | 支持4选2结构化稀疏矩阵乘 | 权重矩阵已剪枝为稀疏格式时选用 |
+| [MmadWithSparse](api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadWithSparse.md) | 支持4选2结构化稀疏矩阵乘 | 权重矩阵已剪枝为稀疏格式时选用 |
 | [MXMmad](MXMmad.md) | 支持MX格式（微缩放）矩阵乘 | 使用MX混合精度训练时选用 |
 | [Iterate](api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/Iterate.md) + [GetTensorC](api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/GetTensorC.md) | Matmul高阶API的循环迭代模式 | 不需要精细控制L0A/L0B排布时，优先用高阶API |
 | Mmad带bias原型 | 支持偏置矩阵初始化C | 需要C+=A×B+Bias场景选用，比cmatrixSource配置更简单 |
@@ -522,7 +522,7 @@ void mad(__cc__ float *c, __ca__ half *a, __cb__ half *b,
     uint16_t m, uint16_t k, uint16_t n, uint8_t unitFlag,
     bool kDirectionAlign, bool cmatrixSource, bool cmatrixInitVal);
 
-针对Ascend 950PR/DT：
+针对Ascend 950PR/Ascend 950DT：
 void mad(__cc__ float *c, __ca__ half *a, __cb__ half *b,
     uint16_t m, uint16_t k, uint16_t n, uint8_t unit_Flag_ctrl,
     bool gemv_ctrl, bool BTbuf_ctrl, bool zero_Cmatrix_ctrl);

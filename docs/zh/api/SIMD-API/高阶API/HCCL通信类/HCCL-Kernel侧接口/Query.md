@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-查询handleId对应的通信任务已经完成的轮次，最多返回repeat轮。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../基础API/工具接口/系统资源与变量/GetBlockIdx.md)指定其在某一个核上运行。
+查询handleId对应的通信任务已经完成的轮次，最多返回repeat轮。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)指定其在某一个核上运行。
 
 ## 函数原型
 

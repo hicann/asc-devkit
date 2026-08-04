@@ -1,0 +1,21 @@
+# 比较与选择<a name="ZH-CN_TOPIC_0000001375618854"></a>
+
+- **[概述](overview.md)**
+
+- **[Compare](Compare.md)**  
+
+- **[Compare（结果存入寄存器）](Compare_store_to_register.md)**  
+
+- **[Compares](Compares.md)**  
+
+- **[Compares（灵活标量位置）](Compares_flexible_scalar.md)**  
+
+- **[GetCmpMask\(ISASI\)](GetCmpMask_ISASI.md)**  
+
+- **[SetCmpMask\(ISASI\)](SetCmpMask_ISASI.md)**  
+
+- **[Select](Select.md)**  
+
+- **[Select（灵活标量位置）](Select_flexible_scalar.md)**  
+
+- **[GatherMask](GatherMask.md)**  

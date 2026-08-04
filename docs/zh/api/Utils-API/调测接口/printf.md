@@ -37,7 +37,7 @@
 在算子Kernel侧的实现代码中，需要输出日志信息时，调用printf接口打印相关内容。
 
 > [!CAUTION]注意
->printf接口打印功能会对算子实际运行的性能带来一定影响，通常在调测阶段使用。开发者可以按需通过设置[ASCENDC\_DUMP=0](../../SIMD-API/基础API/调试接口/关闭ASCENDC_DUMP说明.md)的方式关闭打印功能。
+>printf接口打印功能会对算子实际运行的性能带来一定影响，通常在调测阶段使用。开发者可以按需通过设置[ASCENDC\_DUMP=0](../../SIMD-API/basic_api/debug_interface/disable_ascendc_dump.md)的方式关闭打印功能。
 
 ## 函数原型
 

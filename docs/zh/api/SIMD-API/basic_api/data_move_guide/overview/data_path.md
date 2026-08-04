@@ -1,0 +1,94 @@
+# 数据通路<a name="ZH-CN_TOPIC_0000002535040662"></a>
+
+## AI Core硬件架构与存储单元
+
+<!-- npu="910b,A3" id1 -->
+AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)为例，其内部分层存储架构如图1所示，主要包含以下组成部分：
+
+- **计算单元（图中黄色高亮）：**  包括Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元，分别负责矩阵乘加、向量运算和标量控制流。
+- **存储单元：**  按层级由外到内依次为Global Memory（GM，位于AI Core外部）、L1 Buffer、L0A/L0B/L0C Buffer、Unified Buffer（UB）、BiasTable Buffer、Fixpipe Buffer等。各存储单元的容量与对齐要求各异，详情参见[内存层级架构](./overall_constraints.md#地址对齐约束)。
+- **搬运单元（图中黄色高亮）：**  包括MTE1（Memory Transfer Engine 1）、MTE2、MTE3和FixPipe，负责数据在不同存储单元之间的DMA传输。其中MTE2负责GM  ->  Local Memory方向的搬运，MTE3负责Local Memory -> GM方向的搬运，MTE1负责L1 Buffer -> L0 Buffer方向的数据搬运，FixPipe负责将计算结果从L0C Buffer中通过[随路量化](../../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)和[随路激活](../../cube_compute_ISASI/cube_store_key_features/accompanying_relu.md)的方式搬出。
+
+**图 1**  NPU架构版本2201下，AI Core硬件架构示意图  
+
+![](../../../../figures/atlas_a2_a3_architecture.png)
+<!-- end id1 -->
+
+<!-- npu="950" id2 -->
+以[NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)为例，其内部分层存储架构如图2所示，该架构在数据通路上有如下变化：
+
+- 新增L0C Buffer到UB的单向数据通路。
+- 新增UB到L1 Buffer的数据通路。
+- 删除GM到L0A Buffer、L0B Buffer的数据通路。
+- 删除L1 Buffer到GM的数据通路。
+
+**图 2**  NPU架构版本3510下，AI Core硬件架构示意图  
+
+![](../../../../figures/ascend_950pr_950dt_architecture.png)
+<!-- end id2 -->
+
+  > [!NOTE]说明
+  > - 同一个物理内存可能对应多个不同的[TPosition](../../../basic_api/aux_data_structures/TPosition.md)，例如Unified Buffer（UB）同时映射到VECIN、VECCALC和VECOUT三个逻辑位置，分别代表矢量计算的输入、中间计算和输出阶段。L1 Buffer同时映射到A1、B1、C1和TSCM，具体含义取决于当前所服务的计算流程（矩阵左/右矩阵暂存或共享通信）。这种设计使得同一物理内存可以在不同计算阶段被赋予不同的逻辑语义，开发者可根据编程模型的阶段需求选择合适的TPosition。
+  > - 同一个逻辑位置，在不同产品型号中可能对应不同的物理内存，例如逻辑位置CO2在Atlas A2 训练系列产品/Atlas A2 推理系列产品中映射到Global Memory，而在Atlas训练及推理系列产品中映射到Unified Buffer，详细情况请参考[逻辑位置和物理存储的映射关系](../../../通用说明和约束.md#section1359919519819)。
+
+## 数据通路与搬运流水
+
+基于上述存储单元和搬运单元，AI Core内的数据通路及其对应的[硬件流水](../../sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459)如下表所示。每条数据通路指定了源（SRC）与目的（DST）存储单元，以及执行搬运的硬件流水，理解这些通路是选择正确数据搬运接口参数的基础。
+
+  > [!NOTE]说明
+  > 下表为所有产品型号的数据通路汇总。具体每条数据通路是否在特定产品上支持，请以对应API接口文档中的产品支持情况表格为准。
+
+**表 1**  数据搬运功能总览<a name="table1151112542363"></a>
+
+| 源（SRC） | 目的（DST） | 流水（Pipeline） | 功能 | 支持的API |
+|----------|----------|----------|----------|----------|
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的矩阵数据连续搬运至L1 Buffer做中转。 | DataCopy |
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的矩阵数据通过高维切分方式搬运至L1 Buffer做中转。 | DataCopy |
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的矩阵数据搬运到L1 Buffer的同时实现ND到NZ格式的随路转换。 | DataCopy |
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的矩阵数据搬运到L1 Buffer的同时实现DN到NZ格式的随路转换。 | DataCopy |
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的非对齐数据搬运至L1 Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的NZ格式数据搬运至L1 Buffer。 | LoadData（2D矩阵搬运） |
+| Global Memory | L1 Buffer | MTE2 | 将Global Memory中的NZ格式数据搬运至L1 Buffer。 | LoadData（2D矩阵搬运V2） |
+| Global Memory | L0A Buffer | MTE2 | 将Global Memory中的2D格式分形矩阵搬运至L0A Buffer作为矩阵计算的左矩阵输入。 | LoadData（2D矩阵搬运） |
+| Global Memory | L0B Buffer | MTE2 | 将Global Memory中的2D格式分形矩阵搬运至L0B Buffer作为矩阵计算的右矩阵输入。 | LoadData（2D矩阵搬运） |
+| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的矩阵数据连续搬运至Unified Buffer。 | DataCopy |
+| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的矩阵数据通过高维切分方式搬运至Unified Buffer。 | DataCopy |
+| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的数据按切片方式搬运至Unified Buffer。 | DataCopy |
+| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的数据搬运至Unified Buffer的同时完成ND到NZ格式的随路转换。 | DataCopy |
+| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的数据以NDDMA方式多维搬运至Unified Buffer。 | DataCopy |
+| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的非对齐数据搬运至Unified Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
+| Unified Buffer | Global Memory | MTE3 | 将Unified Buffer中的数据搬运到Global Memory的同时完成NZ到ND格式的随路转换。 | DataCopy |
+| Unified Buffer | Global Memory | MTE3 | 将Unified Buffer中的非对齐数据搬运到Global Memory，并对边界无效区域做Padding填充。 | DataCopyPad |
+| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的数据连续搬运至L1 Buffer。 | DataCopy |
+| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的数据通过高维切分方式搬运至L1 Buffer。 | DataCopy |
+| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的数据搬运到L1 Buffer的同时完成ND到NZ格式的随路转换。 | DataCopy |
+| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的非对齐数据搬运到L1 Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
+| L1 Buffer | Unified Buffer | MTE3 | 将L1 Buffer中的数据连续搬运至Unified Buffer。 | DataCopyL1ToUB |
+| L1 Buffer | Unified Buffer | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至Unified Buffer。 | DataCopyL1ToUB |
+| L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运） |
+| L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运V2） |
+| L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（MX矩阵搬运） |
+| L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer的同时完成转置。 | LoadDataWithTranspose |
+| L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的3D格式分形矩阵搬运至L0A Buffer，支持3D-Tile规则搬运。 | LoadData（卷积数据搬运） |
+| L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的3D格式分形矩阵搬运至L0A Buffer，支持3D-Tile规则搬运，支持配置输出矩阵K轴方向偏移量。 | LoadDataWithStride |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0B Buffer作为Cube矩阵乘的右矩阵输入。 | LoadData（2D矩阵搬运） |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0B Buffer作为Cube矩阵乘的右矩阵输入。 | LoadData（2D矩阵搬运V2） |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0B Buffer作为Cube矩阵乘的右矩阵输入。 | LoadData（MX矩阵搬运） |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0B Buffer的同时完成转置。 | LoadDataWithTranspose |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的3D格式分形矩阵搬运至L0B Buffer，支持3D-Tile规则搬运。 | LoadData（卷积数据搬运） |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的3D格式分形矩阵搬运至L0B Buffer，支持3D-Tile规则搬运，支持配置输出矩阵K轴方向偏移量。 | LoadDataWithStride |
+| L1 Buffer | L0B Buffer | MTE1 | 将L1 Buffer中的稠密权重矩阵搬运至L0B Buffer，同时支持稀疏解压。 | LoadDataWithSparse |
+| L1 Buffer | BiasTable Buffer | MTE1 | 将L1 Buffer中的偏置数据连续搬运至BiasTable Buffer供矩阵计算使用。 | DataCopy |
+| L1 Buffer | BiasTable Buffer | MTE1 | 将L1 Buffer中的偏置数据通过高维切分方式搬运至BiasTable Buffer。 | DataCopy |
+| L1 Buffer | Fixpipe Buffer | FixPipe | 将矩阵数据搬出需要的随路量化和随路relu参数从L1 Buffer连续搬运至Fixpipe Buffer。 | DataCopy |
+| L1 Buffer | Fixpipe Buffer | FixPipe | 将矩阵数据搬出需要的随路量化和随路relu参数从L1 Buffer通过高维切分方式搬运至Fixpipe Buffer。 | DataCopy |
+| L0C Buffer | Global Memory | FixPipe | 将Cube计算结果从L0C Buffer搬运到Global Memory，支持随路量化和激活后处理。 | DataCopy |
+| L0C Buffer | Global Memory | FixPipe | 将Cube计算结果从L0C Buffer搬运到Global Memory，通过FixPipe流水完成量化、激活、格式转换。 | FixPipe |
+| L0C Buffer | L1 Buffer | FixPipe | 将Cube计算结果从L0C Buffer搬运至L1 Buffer做中转，支持随路量化和激活。 | DataCopy |
+| L0C Buffer | L1 Buffer | FixPipe | 将Cube计算结果从L0C Buffer搬运至L1 Buffer做中转，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
+| L0C Buffer | Unified Buffer | MTE3 | 将Cube计算结果从L0C Buffer搬运至Unified Buffer，支持随路量化和激活后处理。 | DataCopy |
+| L0C Buffer | Unified Buffer | MTE3 | 将Cube计算结果从L0C Buffer搬运至Unified Buffer，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
+| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部连续数据搬移。 | DataCopy |
+| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部通过高维切分方式搬移数据。 | DataCopy |
+| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部连续数据搬移。 | Copy |
+| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部掩码式高维数据搬移。 | Copy |

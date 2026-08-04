@@ -56,8 +56,8 @@ __aicore__ inline void Silu(const LocalTensor<T>& dstLocal, const LocalTensor<T>
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcLocal | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
+| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcLocal | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
 | dataSize | 输入 | 实际计算数据元素个数。 |
 
 ## 返回值说明

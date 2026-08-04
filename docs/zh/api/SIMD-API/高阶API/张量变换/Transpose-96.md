@@ -110,7 +110,7 @@
 
 【场景16：使用交织指令进行两维ND2NZ转置】
 
-支持在UB上使用[交织指令](../../基础API/Memory矢量计算/data_rearrange_ISASI/Interleave.md)对二维ND Tensor转置为NZ。
+支持在UB上使用[交织指令](../../basic_api/memory_vector_compute/data_rearrange_ISASI/Interleave.md)对二维ND Tensor转置为NZ。
 
 **图11**  场景16使用交织指令的ND2NZ转置  
 ![](../../../figures/场景16使用交织指令的ND2NZ转置.png "场景16使用交织指令的ND2NZ转置")
@@ -242,9 +242,9 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| src | 输入 | 源操作数，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[Transpose Tiling](Transpose-Tiling.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dst | 输出 | 目的操作数，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| src | 输入 | 源操作数，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[Transpose Tiling](Transpose-Tiling.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | transposeType | 输入 | 数据排布及reshape的类型，类型为TransposeType枚举类，TransposeType的定义如下方代码所示。 |
 | tiling | 输入 | 计算所需tiling信息，Tiling信息的获取请参考[Transpose Tiling](Transpose-Tiling.md)。 |
 

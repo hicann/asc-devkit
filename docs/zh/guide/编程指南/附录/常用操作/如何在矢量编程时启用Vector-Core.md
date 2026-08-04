@@ -4,7 +4,7 @@
 
 本节将重点介绍如何启用Atlas 推理系列产品中的Vector Core。学习本节内容之前，建议您先熟悉[算子实现](../../../算子实践参考/SIMD算子实现/矢量编程/概述.md)、[基于样例工程完成Kernel直调](../基于样例工程完成Kernel直调.md)、[工程化算子开发](../../高级编程/Aclnn算子工程化开发/概述.md)的相关内容，掌握基于AI Core的算子端到端开发流程。在此基础上本章将重点阐述启用Vector Core时的差异点。具体如下：
 
-1.  完成算子kernel侧开发时，需要通过宏[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/基础API/Kernel-Tiling/设置Kernel类型.md)启用Vector Core，算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。如下的代码样例展示了启用Vector Core的方法：
+1.  完成算子kernel侧开发时，需要通过宏[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)启用Vector Core，算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。如下的代码样例展示了启用Vector Core的方法：
 
     ```
     extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *workspace, __gm__ uint8_t *tiling)

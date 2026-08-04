@@ -13,7 +13,7 @@
 <!-- end id4 -->
 
 <!-- npu="950" id5 -->
-针对Ascend 950PR/Ascend 950DT：<br>单个VF是PIPE_V流水，用户不需要管理VF和VF之间的同步，VF内的不同的Reg矢量接口存在数据依赖时需要调用[LocalMemBar](../SIMD-API/基础API/Reg矢量计算/同步控制/LocalMemBar.md)进行同步。
+针对Ascend 950PR/Ascend 950DT：<br>单个VF是PIPE_V流水，用户不需要管理VF和VF之间的同步，VF内的不同的Reg矢量接口存在数据依赖时需要调用[LocalMemBar](../SIMD-API/basic_api/reg_vector_compute/sync_control/LocalMemBar.md)进行同步。
 <!-- end id5 -->
 
 **表1**  Memory矢量计算API流水类型汇总

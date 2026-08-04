@@ -51,7 +51,7 @@ SIMD场景下，通过仿真器进行算子性能仿真时，可对算子任意�
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | apid | 输入 | 当前预留了十个用户自定义的类型：<br>0x0：USER_DEFINE_0<br>0x1：USER_DEFINE_1<br>0x2：USER_DEFINE_2<br>0x3：USER_DEFINE_3<br>0x4：USER_DEFINE_4<br>0x5：USER_DEFINE_5<br>0x6：USER_DEFINE_6<br>0x7：USER_DEFINE_7<br>0x8：USER_DEFINE_8<br>0x9：USER_DEFINE_9 |
-| pipe | 输入 | 指定打点所在的pipeline类型，取值请参考[硬件流水类型](../../SIMD-API/基础API/同步控制/核内同步/核内同步能力概述.md#zh-cn_topic_0000002542725361_section1272612276459)。<!-- npu="950" id7 --><br>仅Ascend 950PR/Ascend 950DT生效，其他产品上不生效。<!-- end id7 --> |
+| pipe | 输入 | 指定打点所在的pipeline类型，取值请参考[硬件流水类型](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459)。<!-- npu="950" id7 --><br>仅Ascend 950PR/Ascend 950DT生效，其他产品上不生效。<!-- end id7 --> |
 
 ## 返回值说明
 

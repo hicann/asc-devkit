@@ -32,7 +32,7 @@
 
 获取当前AIV核的ID。分离架构下，一个AI Core由Cube Core（AIC）和Vector Core（AIV）按照一定比例1：N进行组合，其中N个AIV的子核ID分别为0, 1, ..., N-1。
 
-Matmul::GetSubBlockIdx\(\)与基础API接口[AscendC::GetSubBlockIdx\(\)](../../../基础API/工具接口/系统资源与变量/GetSubBlockIdx_ISASI.md)的区别在于，Matmul::GetSubBlockIdx\(\)用于获取当前AIV核在当前AI Core分组中的ID，而AscendC::GetSubBlockIdx\(\)获取的是AIV核在所有AI Core分组中的逻辑ID。例如，有10组AI Core，AIC与AIV的比例为1:2，共20个AIV核。调用Matmul::GetSubBlockIdx\(\)时，20个AIV的获取结果依次为0, 1, 0, 1, 0, 1, ..., 0, 1。调用AscendC::GetSubBlockIdx\(\)时，20个AIV的获取结果依次为0, 1, 2, 3, 4, 5, ..., 18, 19。
+Matmul::GetSubBlockIdx\(\)与基础API接口[AscendC::GetSubBlockIdx\(\)](../../../basic_api/tool_interface/system_resources_and_variables/GetSubBlockIdx_ISASI.md)的区别在于，Matmul::GetSubBlockIdx\(\)用于获取当前AIV核在当前AI Core分组中的ID，而AscendC::GetSubBlockIdx\(\)获取的是AIV核在所有AI Core分组中的逻辑ID。例如，有10组AI Core，AIC与AIV的比例为1:2，共20个AIV核。调用Matmul::GetSubBlockIdx\(\)时，20个AIV的获取结果依次为0, 1, 0, 1, 0, 1, ..., 0, 1。调用AscendC::GetSubBlockIdx\(\)时，20个AIV的获取结果依次为0, 1, 2, 3, 4, 5, ..., 18, 19。
 
 ## 函数原型
 

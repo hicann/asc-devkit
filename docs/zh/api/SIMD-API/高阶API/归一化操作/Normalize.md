@@ -82,14 +82,14 @@ struct NormalizeConfig {
 <a name="table2087718184450"></a>
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| output | 输出 | 目的操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| outputRstd | 输出 | 标准差的倒数，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputMean | 输入 | 均值，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputVariance | 输入 | 方差，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputX | 输入 | 源操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。inputX的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| gamma | 输入 | 缩放系数，shape为[R]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。gamma的数据类型精度不低于源操作数的数据类型精度。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| beta | 输入 | 平移系数，shape为[R]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。beta的数据类型精度不低于源操作数的数据类型精度。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[Normalize Tiling](Normalize-Tiling.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| output | 输出 | 目的操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| outputRstd | 输出 | 标准差的倒数，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputMean | 输入 | 均值，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputVariance | 输入 | 方差，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputX | 输入 | 源操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。inputX的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| gamma | 输入 | 缩放系数，shape为[R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。gamma的数据类型精度不低于源操作数的数据类型精度。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| beta | 输入 | 平移系数，shape为[R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。beta的数据类型精度不低于源操作数的数据类型精度。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[Normalize Tiling](Normalize-Tiling.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | epsilon | 输入 | 防除零的权重系数。 |
 | para | 输入 | Normalize计算所需的参数信息。NormalizePara类型，定义如下方代码所示，其中参数的含义如下。<br>aLength：指定输入inputX的A轴长度。<br>rLength：指定输入inputX的R轴长度。<br>rLengthWithPadding：指定输入inputX的R轴对齐后的长度，该值是32B对齐的。 |
 

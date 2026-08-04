@@ -89,8 +89,8 @@
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| src0(srcTensor)<br><br>src1(srcTensor) | 输入 | 源操作数。**源操作数Tensor尾轴需32字节对齐**。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dst | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| src0(srcTensor)<br><br>src1(srcTensor) | 输入 | 源操作数。**源操作数Tensor尾轴需32字节对齐**。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | src1(srcScalar)<br><br>src0(srcScalar) | 输入 | 源操作数。类型为scalar。 |
 | mask | 输入 | 掩码Tensor。用于描述如何选择srcTensor和srcScalar之间的值。maskTensor尾轴需32字节对齐且元素个数为16的倍数。<br>**src0为srcTensor（tensor类型），src1为srcScalar（scalar类型）**：<br>若mask的值为0，选择srcTensor相应的值放入dstLocal，否则选择srcScalar的值放入dstLocal。<br>**src0为srcScalar（scalar类型），src1为srcTensor（tensor类型）**：<br>若mask的值为0，选择srcScalar的值放入dstLocal，否则选择srcTensor相应的值放入dstLocal。 |
 | sharedTmpBuffer | 输入 | 该API用于计算的临时空间，所需空间大小根据[GetSelectMaxMinTmpSize](GetSelectMaxMinTmpSize.md)获取。 |

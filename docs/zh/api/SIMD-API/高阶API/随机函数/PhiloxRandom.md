@@ -57,7 +57,7 @@ Philox随机数生成的核心算法是一个基于记数的伪随机数生成�
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要32字节对齐。 |
+| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要32字节对齐。 |
 | philoxKey | 输入 | 随机数种子。两个32bit的key，定义如下：<br>using PhiloxKey = uint32_t[2]; |
 | philoxCounter | 输入 | 随机数种子。一个128bit的记数器C（由4个32bit组成），定义如下：<br>using PhiloxCounter = uint32_t[4]; |
 | count | 输入 | 生成目的操作数的元素个数。 |

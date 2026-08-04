@@ -80,9 +80,9 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>输出值需要outter * sizeof(T)大小的空间进行保存。开发者要根据该大小和框架的对齐要求来为dstTensor分配实际内存空间。<br>**注意**：遵循框架对内存开辟的要求（开辟内存的大小满足32Byte对齐），即outter * sizeof(T)不是32Byte对齐时，需要向上进行32Byte对齐。为了对齐而多开辟的内存空间不填值，为一些随机值。 |
-| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于Sum内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetSumMaxMinTmpSize](GetSumMaxMinTmpSize.md)。 |
+| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>输出值需要outter * sizeof(T)大小的空间进行保存。开发者要根据该大小和框架的对齐要求来为dstTensor分配实际内存空间。<br>**注意**：遵循框架对内存开辟的要求（开辟内存的大小满足32Byte对齐），即outter * sizeof(T)不是32Byte对齐时，需要向上进行32Byte对齐。为了对齐而多开辟的内存空间不填值，为一些随机值。 |
+| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>源操作数的数据类型需要与目的操作数保持一致。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于Sum内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetSumMaxMinTmpSize](GetSumMaxMinTmpSize.md)。 |
 | sumParams | 输入 | srcTensor的shape信息。SumParams类型，具体定义如下方代码所示，其中参数的含义为：<br>outter：输入数据的外轴长度。<br>inner：输入数据内轴实际元素个数32字节补齐后的元素个数，inner\*sizeof(T)必须是32字节的整数倍。<br>n：输入数据内轴的实际元素个数。<br>请注意：sumParams.inner是sumParams.n向上32字节对齐后的值，inner = (n *sizeof(T) + 32 - 1) / 32 * 32 / sizeof(T)，因此sumParams.n的大小应该满足：1 <= sumParams.n <= sumParams.inner。 |
 
 ```
@@ -105,7 +105,7 @@ struct SumParams {
 -   当前仅支持ND格式的输入，不支持其他格式。
 -   一维输入的outter值填为1；二维输入按实际情况填写outter和n，inner计算请按如上公式计算，否则功能不正确。
 -   srcTensor需要能够容纳内轴对齐后的数据占用空间大小，dstTensor需要能够容纳outter个结果对齐后的数据占用空间大小。
--   对于Sum，其内部使用的底层相加方式和[ReduceSum](../../../基础API/Memory矢量计算/归约计算/ReduceSum.md)以及[ReduceRepeat](../../../基础API/Memory矢量计算/归约计算/ReduceRepeat.md)的内部的相加方式一致，采用二叉树方式，两两相加：
+-   对于Sum，其内部使用的底层相加方式和[ReduceSum](../../../basic_api/memory_vector_compute/reduction_compute/ReduceSum.md)以及[ReduceRepeat](../../../basic_api/memory_vector_compute/reduction_compute/ReduceRepeat.md)的内部的相加方式一致，采用二叉树方式，两两相加：
 
     假设源操作数为128个half类型的数据\[data0,data1,data2...data127\]，一个repeat可以计算完，计算过程如下。
 

@@ -11,7 +11,7 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
     算子内部需要通过额外的device内存进行数据交换或者缓存的时候才需要分配，根据实际情况自行分配。使用场景如下：
 
     -   需要使用Unified Buffer和L1 Buffer上的空间且空间不够用时，可以将数据暂存至workspace上。
-    -   调用[SyncAll](../../../../api/SIMD-API/基础API/同步控制/核间同步/SyncAll.md)等API接口时，需要workspace作为入参。
+    -   调用[SyncAll](../../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll.md)等API接口时，需要workspace作为入参。
     -   其他需要使用Global Memory上内存空间的场景。
 
 不同开发方式下，具体的使用方法如下：

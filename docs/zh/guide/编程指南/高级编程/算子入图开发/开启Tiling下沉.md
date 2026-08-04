@@ -121,7 +121,7 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
 
 -   算子核函数实现
 
-    当前Tiling下沉仅支持融合算子，为了模拟融合算子场景，通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/基础API/Kernel-Tiling/设置Kernel类型.md)接口强制指定算子在AIC、AIV混合场景运行。
+    当前Tiling下沉仅支持融合算子，为了模拟融合算子场景，通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)接口强制指定算子在AIC、AIV混合场景运行。
 
     ```
     extern "C" __global__ __aicore__ void add_custom_tiling_sink(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)

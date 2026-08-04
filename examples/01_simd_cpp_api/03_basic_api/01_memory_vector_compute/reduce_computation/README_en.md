@@ -65,7 +65,7 @@ This example implements reduction computation based on ReduceMax/ReduceMin/Reduc
 ## Example Description
 
 - Example function:  
-  This example implements reduction computation based on ReduceMax/ReduceMin/ReduceSum interfaces, including first-n data computation and tensor high-dimensional split computation interfaces. Refer to [ReduceMax](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMax.md)/[ReduceMin](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/ReduceMin.md)/[ReduceSum](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算/ReduceSum.md) for interface documentation.
+  This example implements reduction computation based on ReduceMax/ReduceMin/ReduceSum interfaces, including first-n data computation and tensor high-dimensional split computation interfaces. Refer to [ReduceMax](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceMax.md)/[ReduceMin](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceMin.md)/[ReduceSum](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum.md) for interface documentation.
 
 - Example specifications:  
   The input/output specifications for different scenarios are shown in the table below:
@@ -148,7 +148,7 @@ This example implements reduction computation based on ReduceMax/ReduceMin/Reduc
   - Kernel implementation
     - Call the DataCopy basic API to transfer data from GM (Global Memory) to UB (Unified Buffer), and transfer data after reduction computation out to GM (Global Memory).
     - Call ReduceMax/ReduceMin/ReduceSum interfaces to complete reduction computation.
-    - In the ReduceSum first-n data computation scenario, call [GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/基础API/Memory矢量计算/归约计算辅助配置接口/GetReduceRepeatSumSpr_ISASI.md) to obtain computation results.
+    - In the ReduceSum first-n data computation scenario, call [GetReduceRepeatSumSpr](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatSumSpr_ISASI.md) to obtain computation results.
 
 - Invocation implementation  
   Use the kernel invocation operator `<<<>>>` to call the kernel function.

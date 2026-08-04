@@ -17,4 +17,4 @@
 -   对于自定义算子工程，可以在TilingFunc（算子工程提供的在Host侧计算Tiling的默认函数）中通过SetSimdNumBlocks接口来设置算子使用的核数，具体设置方法请参考SetSimdNumBlocks；对于Kernel直调工程，可以在<<<\>\>\>调用时指定算子使用的核数。
 -   此外，算子的Kernel类型也会影响算子启动的核数。以纯Vector算子为例，如果以混合启动的方式执行该算子，调度器会同时启动Vector核和Cube核。然而，此时Cube核并没有实际的计算指令，但仍会产生核启动和核初始化的头开销。因此，建议设置合适的Kernel类型以最小化头开销。
 
-    通常，算子工程会通过算子使用的指令自动识别算子类型，但该功能无法区分AIC和AIV的配比，默认按照AIV:AIC为1:2的配比下发任务。此外，自动识别功能可能失效，因为其依赖于编译优化的结果。所以推荐用户手动设置算子的Kernel类型。具体设置方法请参考[设置Kernel类型](../../../../api/SIMD-API/基础API/Kernel-Tiling/设置Kernel类型.md)。
+    通常，算子工程会通过算子使用的指令自动识别算子类型，但该功能无法区分AIC和AIV的配比，默认按照AIV:AIC为1:2的配比下发任务。此外，自动识别功能可能失效，因为其依赖于编译优化的结果。所以推荐用户手动设置算子的Kernel类型。具体设置方法请参考[设置Kernel类型](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)。

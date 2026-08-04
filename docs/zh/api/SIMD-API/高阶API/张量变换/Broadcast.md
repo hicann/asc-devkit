@@ -128,18 +128,18 @@
 
 | 参数名称 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcLocal | 输入 | 源操作数。<br><br>源操作数的数据类型需要与目的操作数保持一致。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcLocal | 输入 | 源操作数。<br><br>源操作数的数据类型需要与目的操作数保持一致。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | dstShape | 输入 | 输出tensor的shape：uint32_t类型的数组，长度为1或者2，输入/输出的shape维度数目必须一致。 |
 | srcShape | 输入 | 输入tensor的shape：uint32_t类型的数组，长度为1或者2，输入/输出的shape维度数目必须一致。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于Broadcast内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetBroadCastMaxMinTmpSize](GetBroadCastMaxMinTmpSize.md)。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>用于Broadcast内部复杂计算时存储中间变量，由开发者提供。<br><br>临时空间大小BufferSize的获取方式请参考[GetBroadCastMaxMinTmpSize](GetBroadCastMaxMinTmpSize.md)。 |
 
 **表4**  支持动态shape接口的参数说明
 
 | 参数名称 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| src | 输入 | 源操作数。<br><br>源操作数的数据类型需要与目的操作数保持一致。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dst | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| src | 输入 | 源操作数。<br><br>源操作数的数据类型需要与目的操作数保持一致。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | dstShape | 输入 | 输出tensor的shape：uint32_t类型的数组，长度取值范围为[1, 9]。输入/输出的shape维度数目必须一致，且满足条件dstShape[i] >= srcShape[i]。 |
 | srcShape | 输入 | 输入tensor的shape：uint32_t类型的数组，长度取值范围为[1, 9]。输入/输出的shape维度数目必须一致，且满足条件dstShape[i] >= srcShape[i]。<br><br>当srcShape[i]的值为1，且dstShape[i]不等于srcShape[i]时，表示i轴为广播轴。 |
 | tiling | 输入 | Broadcast接口所需的Tiling信息。BroadcastTiling*类型，通过调用Kernel侧的tiling计算接口GetBroadcastTilingInfo获取。 |
@@ -175,7 +175,7 @@
 -   支持的数据类型<a id="li12616155731718"></a>
 
     <!-- npu="950" id15 -->
-    Ascend 950PR/Ascend 950DT，支持的数据类型为：b8、b16、b32、b64位宽对应的数据类型，具体数据类型请参考[不同位宽对应的数据类型](../../基础API/数据结构/内置数据类型.md#section16395539499)。
+    Ascend 950PR/Ascend 950DT，支持的数据类型为：b8、b16、b32、b64位宽对应的数据类型，具体数据类型请参考[不同位宽对应的数据类型](../../basic_api/data_structures/builtin_data_types.md#section16395539499)。
     <!-- end id15 -->
     <!-- npu="A3" id16 -->
     Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：int8\_t、uint8\_t、half、float。

@@ -279,13 +279,13 @@ struct AscendAntiQuantConfig {
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数。不同型号支持的数据类型请参考[dst支持的数据类型](#li117871685514)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| src | 输入 | 源操作数。不同型号支持的数据类型请参考[src支持的数据类型](#li13336025165520)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| offset | 输入 | 输入数据伪量化时的偏移量。不同型号支持的数据类型请参考[offset支持的数据类型](#li5382122225718)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| scale | 输入 | 输入数据伪量化时的缩放因子。不同型号支持的数据类型请参考[scale支持的数据类型](#li103341450906)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>临时空间大小BufferSize的获取方式请参考[GetAscendAntiQuantMaxMinTmpSize](GetAscendAntiQuantMaxMinTmpSize.md)。 |
+| dst | 输出 | 目的操作数。不同型号支持的数据类型请参考[dst支持的数据类型](#li117871685514)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| src | 输入 | 源操作数。不同型号支持的数据类型请参考[src支持的数据类型](#li13336025165520)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| offset | 输入 | 输入数据伪量化时的偏移量。不同型号支持的数据类型请参考[offset支持的数据类型](#li5382122225718)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| scale | 输入 | 输入数据伪量化时的缩放因子。不同型号支持的数据类型请参考[scale支持的数据类型](#li103341450906)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>临时空间大小BufferSize的获取方式请参考[GetAscendAntiQuantMaxMinTmpSize](GetAscendAntiQuantMaxMinTmpSize.md)。 |
 | k | 输入 | isTranspose为true时，src的shape为[N,K]；isTranspose为false时，src的shape为[K,N]。<br><br>参数k对应其中的K值。 |
-| shapeInfo | 输入 | 设置参数offset和scale的shape信息，仅PER_CHANNEL场景（按通道量化）需要配置。<br><br>可选参数。在PER_CHANNEL场景，如果未传入该参数或者结构体中数据设置为0，将从offset和scale的[ShapeInfo](../../基础API/辅助数据结构/ShapeInfo.md)中获取offset和scale的shape信息。<br><br>AntiQuantShapeInfo类型，定义如下方代码所示。 |
+| shapeInfo | 输入 | 设置参数offset和scale的shape信息，仅PER_CHANNEL场景（按通道量化）需要配置。<br><br>可选参数。在PER_CHANNEL场景，如果未传入该参数或者结构体中数据设置为0，将从offset和scale的[ShapeInfo](../../basic_api/aux_data_structures/ShapeInfo.md)中获取offset和scale的shape信息。<br><br>AntiQuantShapeInfo类型，定义如下方代码所示。 |
 
 ```
 struct AntiQuantShapeInfo {
@@ -300,11 +300,11 @@ struct AntiQuantShapeInfo {
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数。支持的数据类型为：half、bfloat16_t、float。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcTensor | 输入 | 源操作数。支持的数据类型为：int8_t、fp8_e4m3fn_t、fp8_e5m2_t、hifloat8_t、fp4x2_e1m2_t、fp4x2_e2m1_t。注意，对于fp4x2_e1m2_t、fp4x2_e2m1_t数据类型，仅在PER_GROUP场景下支持。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 临时缓存。支持的数据类型为：uint8_t。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>临时空间大小BufferSize的获取方式请参考[GetAscendAntiQuantMaxMinTmpSize](GetAscendAntiQuantMaxMinTmpSize.md)。 |
-| scaleTensor | 输入 | 量化参数scale。支持的数据类型为：half、float、bfloat16_t、fp8_e8m0_t。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| offsetTensor | 输入 | 量化参数offset。支持的数据类型和scaleTensor保持一致。对于float4场景，offsetTensor不生效。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dstTensor | 输出 | 目的操作数。支持的数据类型为：half、bfloat16_t、float。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcTensor | 输入 | 源操作数。支持的数据类型为：int8_t、fp8_e4m3fn_t、fp8_e5m2_t、hifloat8_t、fp4x2_e1m2_t、fp4x2_e2m1_t。注意，对于fp4x2_e1m2_t、fp4x2_e2m1_t数据类型，仅在PER_GROUP场景下支持。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 临时缓存。支持的数据类型为：uint8_t。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>临时空间大小BufferSize的获取方式请参考[GetAscendAntiQuantMaxMinTmpSize](GetAscendAntiQuantMaxMinTmpSize.md)。 |
+| scaleTensor | 输入 | 量化参数scale。支持的数据类型为：half、float、bfloat16_t、fp8_e8m0_t。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| offsetTensor | 输入 | 量化参数offset。支持的数据类型和scaleTensor保持一致。对于float4场景，offsetTensor不生效。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | para | 输入 | 量化接口的参数，AscendAntiQuantParam类型，具体定义如下方代码所示，其中参数的含义如下。<br>m：m方向元素个数。<br>n：n方向元素个数。n值对应的数据大小需满足32B对齐的要求，即shape最后一维为n的输入输出均需要满足该维度上32B对齐的要求。<br>calCount：参与计算的元素个数。calCount必须是n的整数倍。<br>groupSize：PER_GROUP场景有效，表示groupSize行/列数据共用一个scale/offset。groupSize的取值必须大于0且是32的整倍数。 |
 
 ```

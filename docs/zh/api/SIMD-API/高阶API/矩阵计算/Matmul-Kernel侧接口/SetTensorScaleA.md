@@ -48,8 +48,8 @@ __aicore__ inline void SetTensorScaleA(const LocalTensor<ScaleT>& leftMatrix, bo
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| gm | 输入 | 量化系数scaleA矩阵。类型为[GlobalTensor](../../../基础API/数据结构/GlobalTensor/GlobalTensor.md)。支持的数据类型为：fp8_e8m0_t。 |
-| leftMatrix | 输入 | 量化系数scaleA矩阵。类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为TSCM/VECOUT。支持的数据类型为：fp8_e8m0_t。 |
+| gm | 输入 | 量化系数scaleA矩阵。类型为[GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md)。支持的数据类型为：fp8_e8m0_t。 |
+| leftMatrix | 输入 | 量化系数scaleA矩阵。类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为TSCM/VECOUT。支持的数据类型为：fp8_e8m0_t。 |
 | isTransposeScaleA | 输入 | scaleA矩阵是否需要转置。<br><br>参数支持的取值如下：<br>false：默认值，scaleA矩阵不转置。true：scaleA矩阵转置。<br><br>注意：<br>scaleA矩阵为NZ格式时，该参数只支持取值为false。<br>若scaleA矩阵的MatmulTypeWithScale参数中的SCALE_ISTRANS设置为true，除scaleA为NZ格式场景，该参数支持取值为true、false，即运行时scaleA矩阵可以转置和非转置交替使用。<br>若scaleA矩阵的MatmulTypeWithScale参数中的SCALE_ISTRANS设置为false，该参数只支持取值为false，若强行设置为true，精度会有异常。<br><br>对于有Bias输入的场景，为了确保Tiling侧与Kernel侧L1 Buffer空间计算大小保持一致及结果精度正确，该参数取值必须与Kernel侧定义A矩阵MatmulTypeWithScale的SCALE_ISTRANS参数以及Tiling侧SetScaleAType()接口的[isScaleTrans](../Matmul-Tiling类/SetScaleAType.md#p2934103115919)参数保持一致，即有Bias输入的场景，上述三个参数必须同时设置为true或同时设置为false。 |
 
 ## 返回值说明

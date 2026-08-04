@@ -1,0 +1,67 @@
+# 普通矩阵计算流程<a name="ZH-CN_TOPIC_0000002568950891"></a>
+
+Ascend C针对矩阵计算编程模型提供了四类接口，分别承载Cube核中各个通路的搬运能力和计算能力，如下图所示：
+
+**图1** 普通矩阵基础计算流程图<a name="zh-cn_topic_0000002535567224_fig135639216485"></a>  
+![](../../../../figures/matrix_computation_workflow.png "普通矩阵基础计算流程图")
+
+1. 通过DataCopy接口将A、B原始矩阵的GM数据搬运到L1 Buffer中（如果存在Bias/随路量化，则同样通过DataCopy搬运到L1 Buffer中）。详细内容请参考[矩阵数据搬入至L1 Buffer](../cube_compute_load/cube_compute_load.md)。
+
+2. 通过LoadData接口将A、B矩阵分别加载到L0A Buffer和L0B Buffer上准备计算（如果存在Bias/随路量化，则通过DataCopy将L1 Buffer中的bias数据/量化系数数据搬运到BT Buffer/Fixpipe Buffer上）。详细内容请参考[矩阵数据搬入至L0A Buffer/L0B Buffer](../cube_compute_load/cube_compute_load.md)。
+
+3. 通过Mmad接口对L0A Buffer、L0B Buffer、BT Buffer上面的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[Mmad计算](../mmad_compute/Mmad.md)。
+
+4. 通过Fixpipe接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。详细内容请参考[Fixpipe（L0C到GM数据搬运）](../cube_compute_store/Fixpipe_L0CToGM.md)。
+
+<!-- npu="950" id1 -->
+# Mx矩阵计算流程<a name="ZH-CN_TOPIC_0000002568950892"></a>
+
+Mx矩阵计算仅在Ascend 950PR/Ascend 950DT型号支持。
+
+MxMmad（全称Microscaling Mmad）为带有量化系数的矩阵乘法，即左矩阵和右矩阵均有对应的量化系数矩阵，左量化系数矩阵scaleA和右量化系数矩阵scaleB。MxMmad场景中，左量化系数矩阵与左矩阵乘积，右量化系数矩阵与右矩阵乘积，对两个乘积的结果做矩阵乘法。Ascend C针对Mx矩阵计算编程模型提供了对应Mx类接口，如下图所示：
+
+**图 2** Mx矩阵基础计算流程图<a name="zh-cn_topic_0000002535567225_fig135639216486"></a>  
+![](../../../../figures/mx_matrix_computation_workflow.png "Mx矩阵基础计算流程图")
+
+1. 通过DataCopy接口将A、B原始矩阵、[左系数矩阵scaleA](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md#section_mx_scalea_fractal_format)、[右系数矩阵scaleB](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md#section_mx_scaleb_fractal_format)的GM数据搬运到L1 Buffer中（如果存在Bias/随路量化，则同样通过DataCopy搬运到L1 Buffer中）。详细内容请参考[矩阵数据搬入至L1 Buffer](../cube_compute_load/cube_compute_load.md)。
+
+2. 通过[LoadData（MX矩阵搬运）接口](../cube_compute_load/LoadData_2D_MX.md)将A矩阵与scaleA矩阵加载到L0A Buffer与内置L0A_MX Buffer、将B矩阵与scaleB矩阵分别加载到L0B Buffer与L0B_MX Buffer上准备计算（如果存在Bias/随路量化，则通过DataCopy将L1 Buffer中的bias数据/量化系数数据搬运到BT Buffer/Fixpipe Buffer上）。详细内容请参考[矩阵数据搬入至L0A Buffer/L0B Buffer](../cube_compute_load/cube_compute_load.md)。
+
+3. 通过MmadMx接口对L0A Buffer、L0A_MX Buffer、L0B Buffer、L0B_MX Buffer、BT Buffer上面的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[MmadMx计算](../mmad_compute/MmadMx.md)。
+
+4. 通过Fixpipe接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。详细内容请参考[Fixpipe（L0C到GM数据搬运）](../cube_compute_store/Fixpipe_L0CToGM.md)。
+<!-- end id1 -->
+
+<!-- npu="910b,A3" id2 -->
+# 4选2稀疏矩阵计算流程<a name="ZH-CN_TOPIC_0000002538231116"></a>
+
+稀疏矩阵是一种特殊类型的矩阵，即矩阵中包含较多的零元素。4选2结构化稀疏矩阵计算，要求一个连续的4个权重或激活值的组（通常是张量中的一行或一列）中，最多只有2个值为非零，其余2个强制为零。针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，Ascend C针对4选2稀疏矩阵计算编程模型提供了对应sparse类接口，如下图所示：
+
+**图 3** 4选2稀疏矩阵基础计算流程图<a name="zh-cn_topic_0000002566526987_fig12280145134813"></a>  
+![](../../../../figures/sparse_matrix_computation_workflow.png "4选2稀疏矩阵基础计算流程图")
+
+1. 首先将原始矩阵B按照固定粒度划分连续4个元素为一组，按照固定结构稠密算法，离线生成对应的稠密矩阵B与[索引矩阵](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md#zh-cn_topic_0000002563445163_section1873692415233)作为输入。
+
+2. 通过DataCopy接口将原始矩阵A（稀疏矩阵）、稠密矩阵B、索引矩阵的GM数据搬运到L1 Buffer中（如果存在随路量化，则同样通过DataCopy搬运到L1 Buffer中）。详细内容请参考[矩阵数据搬入至L1 Buffer](../cube_compute_load/cube_compute_load.md)。
+
+3. 通过LoadData接口将原始矩阵A加载到L0A Buffer，通过[LoadDataWithSparse接口](../cube_compute_load/LoadDataWithSparse.md)将稠密矩阵B与索引矩阵分别加载到L0B Buffer与内置IDX Buffer上准备计算（如果存在随路量化，则通过DataCopy将L1 Buffer中的量化系数数据搬运到Fixpipe Buffer上）。详细内容请参考[矩阵数据搬入至L0A Buffer/L0B Buffer](../cube_compute_load/cube_compute_load.md)。
+
+4. 通过MmadWithSparse接口对L0A Buffer、L0B Buffer、内置IDX Buffer上面的数据进行4选2稀疏矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[MmadWithSparse计算](../mmad_compute/MmadWithSparse.md)。
+
+5. 通过Fixpipe接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。详细内容请参考[Fixpipe（L0C到GM数据搬运）](../cube_compute_store/Fixpipe_L0CToGM.md)。
+<!-- end id2 -->
+
+# Conv2D前向计算流程<a name="ZH-CN_TOPIC_0000002568950893"></a>
+
+Conv2D前向计算的本质是将卷积运算转换为矩阵乘：先通过img2col（Image to Column）将FeatureMap按卷积核滑动窗口展开为左矩阵A，将Weight作为右矩阵B，再做矩阵乘累加得到输出。与[普通矩阵计算流程](#ZH-CN_TOPIC_0000002568950891)的区别在于：A矩阵从GM直接搬入后，由[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)在L1 Buffer到L0A Buffer的搬运过程中，根据卷积核尺寸、stride、dilation、padding在线完成img2col空间展开生成，如下图所示：
+
+**图 4** Conv2D前向计算流程图<a name="zh-cn_topic_0000002568950893_fig135639216487"></a>  
+![](../../../../figures/conv2d_forward.png "Conv2D前向计算流程图")
+
+1. 通过DataCopy接口将FeatureMap、Weight的GM数据搬运到L1 Buffer中。FeatureMap搬运时完成到[NC1HWC0格式](../cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section217615301084)的随路转换；Weight搬运到L1 Buffer得到Nz分形布局。详细内容请参考[矩阵计算的搬入](../cube_compute_load/cube_compute_load.md)。
+
+2. 通过[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口将L1 Buffer中的FeatureMap执行img2col，根据卷积核尺寸、stride、dilation、padding完成空间展开与padding填充，生成L0A Buffer上的左矩阵A；通过LoadData接口将L1 Buffer中的Weight搬运到L0B Buffer得到右矩阵B。FeatureMap的属性描述（l1H、l1W、padList）可通过[LoadData3DParamsV1](../cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table679014222918)/[LoadData3DParamsV2](../cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)/[LoadData3DParamsV2Pro](../cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table118027314415)结构体字段设置，也可在LoadData接口defaultConfig参数的isSetFMatrix字段为false时通过[SetFmatrix](../cube_load_aux_config/SetFmatrix.md)显式设置（fmatrixMode需与结构体的fMatrixCtrl保持一致）；img2col的repeat参数需通过[SetLoadDataRepeat](../cube_load_aux_config/SetLoadDataRepeat.md)配置，padding填充值可通过结构体字段或[SetLoadDataPaddingValue](../cube_load_aux_config/SetLoadDataPaddingValue.md)设置。详细内容请参考[矩阵计算的搬入](../cube_compute_load/cube_compute_load.md)。
+
+3. 通过Mmad接口对L0A Buffer、L0B Buffer上的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[Mmad计算](../mmad_compute/Mmad.md)。
+
+4. 通过Fixpipe接口将L0C Buffer的数据进行处理并按指定格式搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。L0C Buffer上存放的卷积结果为NC1HWC0格式，Fixpipe通过[NZ2ND](../cube_store_key_features/NZ2ND.md)能力将其转为NHWC格式输出。<!-- npu="950" id3 -->特别地，针对Ascend 950PR/Ascend 950DT产品，Fixpipe还支持通过[NZ2DN](../cube_store_key_features/NZ2DN.md)能力将L0C Buffer上的卷积结果转为NCHW格式输出。<!-- end id3 -->详细内容请参考[卷积格式转换](../cube_store_key_features/convolution_format_conversion.md)。更多搬出相关内容请参考[矩阵计算的搬出](../cube_compute_store/cube_compute_store.md)。

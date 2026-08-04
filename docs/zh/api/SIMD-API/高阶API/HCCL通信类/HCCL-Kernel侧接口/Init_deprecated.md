@@ -27,7 +27,7 @@
 
 ## 功能说明
 
-HCCL客户端初始化接口。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../基础API/工具接口/系统资源与变量/GetBlockIdx.md)指定其在某一个核上运行。
+HCCL客户端初始化接口。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)指定其在某一个核上运行。
 
 ## 函数原型
 

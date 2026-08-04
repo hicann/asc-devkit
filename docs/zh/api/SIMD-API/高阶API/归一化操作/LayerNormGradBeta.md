@@ -69,11 +69,11 @@ LayerNormGradBeta接口用于获取反向beta/gamma的数值，和LayerNormGrad�
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| outputPdGamma | 输出 | 目的操作数，shape为[H]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。尾轴长度需要32B对齐<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| outputPdBeta | 输出 | 目的操作数，shape为[H]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。尾轴长度需要32B对齐<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| resForGamma | 输入 | 源操作数，shape为[B, S, H]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。resForGamma的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。需提前调用[LayerNormGrad](LayerNormGrad.md)接口获取resForGamma参数值。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| inputDy | 输入 | 源操作数，shape为[B, S, H]，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。inputDy的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[LayerNormGradBeta Tiling](LayerNormGradBeta-Tiling.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| outputPdGamma | 输出 | 目的操作数，shape为[H]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。尾轴长度需要32B对齐<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| outputPdBeta | 输出 | 目的操作数，shape为[H]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。尾轴长度需要32B对齐<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| resForGamma | 输入 | 源操作数，shape为[B, S, H]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。resForGamma的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。需提前调用[LayerNormGrad](LayerNormGrad.md)接口获取resForGamma参数值。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| inputDy | 输入 | 源操作数，shape为[B, S, H]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。inputDy的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[LayerNormGradBeta Tiling](LayerNormGradBeta-Tiling.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | tiling | 输入 | LayerNormGradBeta计算所需Tiling信息，Tiling信息的获取请参考[LayerNormGradBeta Tiling](LayerNormGradBeta-Tiling.md)。 |
 
 ## 返回值说明

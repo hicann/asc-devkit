@@ -117,10 +117,10 @@ __aicore__ inline void DropOut(const LocalTensor<T>& dstLocal, const LocalTensor
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcLocal | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>srcLocal的数据类型需要与目的操作数保持一致。 |
-| maskLocal | 输入 | 存放mask的Tensor，数据类型为uint8_t。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存。Tensor的大小应符合对应tiling的要求，配合tiling一起使用。共享缓冲区大小BufferSize的获取方式请参考[GetDropOutMaxMinTmpSize](GetDropOutMaxMinTmpSize.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dstLocal | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcLocal | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>srcLocal的数据类型需要与目的操作数保持一致。 |
+| maskLocal | 输入 | 存放mask的Tensor，数据类型为uint8_t。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存。Tensor的大小应符合对应tiling的要求，配合tiling一起使用。共享缓冲区大小BufferSize的获取方式请参考[GetDropOutMaxMinTmpSize](GetDropOutMaxMinTmpSize.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | keepProb | 输入 | 权重系数，数据类型为float，srcLocal中数据被保留的概率，过滤后的结果会除以权重系数，存放至dstLocal中。<br><br>keepProb∈(0，1) |
 | info | 输入 | DropOutShapeInfo类型，DropOutShapeInfo结构定义如下方代码所示，其中参数的含义为：<br>firstAxis：srcLocal/maskTensor的height轴元素个数。<br>srcLastAxis：srcLocal的width轴元素个数。<br>maskLastAxis：maskTensor的width轴元素个数（如有数据补齐场景，则为带有脏数据的长度，注意，所有模式的元素个数均为对应Tensor类型下的个数，取值需要大于0，如uint8类型Tensor对应Uint8类型元素个数）。|
 

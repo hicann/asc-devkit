@@ -39,7 +39,7 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
     hccl.InitV2(contextGM, &tilingData);
     ```
 
-    当调用InitV2接口时，必须使用标准C++语法定义TilingData结构体的开发方式。如上示例代码中的tilingGM为host侧传入的、作为核函数入参的算子TilingData的GM地址，通过[GET\_TILING\_DATA\_WITH\_STRUCT](../../../基础API/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)获取TilingData。调用[InitV2](InitV2.md)初始化接口时，需要传入通信上下文信息，可以通过框架提供的获取通信上下文的接口[GetHcclContext](../HCCL-Context/GetHcclContext.md)获取。
+    当调用InitV2接口时，必须使用标准C++语法定义TilingData结构体的开发方式。如上示例代码中的tilingGM为host侧传入的、作为核函数入参的算子TilingData的GM地址，通过[GET\_TILING\_DATA\_WITH\_STRUCT](../../../basic_api/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)获取TilingData。调用[InitV2](InitV2.md)初始化接口时，需要传入通信上下文信息，可以通过框架提供的获取通信上下文的接口[GetHcclContext](../HCCL-Context/GetHcclContext.md)获取。
 
 2.  设置对应通信算法的Tiling地址。
 
@@ -249,4 +249,4 @@ extern "C" __global__ __aicore__ void reduce_scatter_custom(
 | --- | --- |
 | MC2_BUFFER_LOCATION | 预留参数。计算和通信中间结果的Buffer存放位置。用户在Tiling侧可设置该字段。 |
 
-提示：调试含有HCCL高阶API的算子时，在算子编译工程中增加编译选项-DASCENDC\_DEBUG，可以开启异常场景拦截的能力，具体内容请参考并使用[assert接口](../../../基础API/调试接口/异常检测/assert.md)。
+提示：调试含有HCCL高阶API的算子时，在算子编译工程中增加编译选项-DASCENDC\_DEBUG，可以开启异常场景拦截的能力，具体内容请参考并使用[assert接口](../../../basic_api/debug_interface/exception_detection/assert.md)。

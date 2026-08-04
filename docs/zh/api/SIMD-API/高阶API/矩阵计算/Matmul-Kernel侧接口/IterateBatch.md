@@ -108,8 +108,8 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| gm | 输出 | C矩阵。类型为[GlobalTensor](../../../基础API/数据结构/GlobalTensor/GlobalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731722)。 |
-| ubCmatrix | 输出 | C矩阵。类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731722)。 |
+| gm | 输出 | C矩阵。类型为[GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731722)。 |
+| ubCmatrix | 输出 | C矩阵。类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731722)。 |
 | batchA | 输入 | 左矩阵的batch数。 |
 | batchB | 输入 | 右矩阵的batch数。在batchA/batchB不相同的情况下，默认做broadcast操作。<br><br>多batch计算支持在G轴上做输入broadcast和输出reduce，左矩阵、右矩阵G轴维度必须是整数倍的关系。 |
 | enSequentialWrite | 输入 | 输出是否[连续存放](GetTensorC.md#fig580415103338)数据，即是否开启连续写模式（连续写，写入[baseM, baseN]；非连续写，写入[singleCoreM, singleCoreN]中对应的位置）。<br>左右矩阵和输出矩阵的存储位置为Unified Buffer，则enSequentialWrite参数应配置为true；<br>输出矩阵的存储位置为GM，则enSequentialWrite参数应配置为false。 |

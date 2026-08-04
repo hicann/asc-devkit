@@ -35,7 +35,7 @@
   | 连续搬运 | 1 | `DataCopy(dst, src, DataCopyParams)` | NZ | UB→L1 数据内容不变，输入需预先转为NZ格式 |
   | 随路ND2NZ搬运 | 2 | `DataCopy(ubDst, ubSrc, DataCopyParams)` + `DataCopy(l1Dst, ubNZ, DataCopyParams)` | ND | 先在UB内逐C0列块搬运完成ND→NZ转换，再连续搬运至L1 |
 
-  接口资料参考[UBToL1连续数据搬运](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_continuous.md)和[UBToL1随路转换-ND2NZ搬运](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/DataCopy_UBToL1_ND2NZ.md)。
+  接口资料参考[UBToL1连续数据搬运](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_continuous.md)和[UBToL1随路转换-ND2NZ搬运](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_ND2NZ.md)。
 
 - 关于场景2实现方案的说明：
   

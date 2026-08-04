@@ -78,7 +78,7 @@ __aicore__ inline void MrgSort(const LocalTensor<T>& dst, const MrgSortSrcList<T
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数，存储经过排序后的数据。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dst | 输出 | 目的操作数，存储经过排序后的数据。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | sortList | 输入 | 源操作数，支持2-4个队列，并且每个队列都已经排好序，类型为MrgSortSrcList结构体，具体请参考下表。MrgSortSrcList中传入要合并的队列，定义如下方代码所示。 |
 | elementCountList | 输入 | 四个源队列的长度（排序方式一：8Bytes结构的数目，排序方式二：16*sizeof(T)Bytes结构的数目），类型为长度为4的uint16_t数据类型的数组，理论上每个元素取值范围[0, 4095]，但不能超出UB的存储空间。 |
 | sortedNum | 输出 | 耗尽模式下（即isExhaustedSuspension为true时），停止合并时每个队列已排序的元素个数。 |
@@ -99,10 +99,10 @@ struct MrgSortSrcList {
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| src1 | 输入 | 源操作数，第一个已经排好序的队列。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
-| src2 | 输入 | 源操作数，第二个已经排好序的队列。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
-| src3 | 输入 | 源操作数，第三个已经排好序的队列。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
-| src4 | 输入 | 源操作数，第四个已经排好序的队列。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
+| src1 | 输入 | 源操作数，第一个已经排好序的队列。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
+| src2 | 输入 | 源操作数，第二个已经排好序的队列。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
+| src3 | 输入 | 源操作数，第三个已经排好序的队列。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
+| src4 | 输入 | 源操作数，第四个已经排好序的队列。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>数据类型与目的操作数保持一致。支持的数据类型为：half、float。 |
 
 ## 返回值说明
 

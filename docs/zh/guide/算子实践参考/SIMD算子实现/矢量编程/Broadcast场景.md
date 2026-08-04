@@ -1,6 +1,6 @@
 # Broadcast场景<a name="ZH-CN_TOPIC_0000002500548092"></a>
 
-在某些场景下，可能会存在两个输入shape不相同的情况。由于[Add](../../../../api/SIMD-API/基础API/Memory矢量计算/基础算术/Add.md)接口只支持对shape相同的输入进行计算，因此需要先对输入进行shape变换，再进行Add计算。本节将对满足Broadcast条件的输入在算子实现中的Broadcast处理进行介绍，其他场景可以参考本章节中提供的思路。
+在某些场景下，可能会存在两个输入shape不相同的情况。由于[Add](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)接口只支持对shape相同的输入进行计算，因此需要先对输入进行shape变换，再进行Add计算。本节将对满足Broadcast条件的输入在算子实现中的Broadcast处理进行介绍，其他场景可以参考本章节中提供的思路。
 
 >[!NOTE]注意 
 >Broadcast机制通过扩展较小维度的数据，使得不同shape的输入能够进行运算，从而避免了显式的复制操作，提高了计算效率。数据进行Broadcast需满足：两个输入的维度个数相同，并且仅在某一个维度上的长度不同，某一个输入在此维度的长度为1。比如：shape为\(32, 8\)和 \(32, 1\)的两个输入可以进行Broadcast，因为它们都是二维，且第一个维度大小相等，而不相等的维度中第二个输入的维度为1，满足条件。
@@ -141,7 +141,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
 }
 ```
 
-由于数据是向coef对齐的，在数据拷贝的过程中可能会出现地址不满足32字节对齐的场景，因此CopyIn函数中使用[DataCopyPad（GM -> UB）](../../../../api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad_GMToUB.md)、CopyOut函数中使用[DataCopyPad（UB -> GM）](../../../../api/SIMD-API/基础API/Memory矢量计算/数据搬运/DataCopyPad_UBToGM.md)进行数据拷贝。
+由于数据是向coef对齐的，在数据拷贝的过程中可能会出现地址不满足32字节对齐的场景，因此CopyIn函数中使用[DataCopyPad（GM -> UB）](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopyPad_GMToUB.md)、CopyOut函数中使用[DataCopyPad（UB -> GM）](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopyPad_UBToGM.md)进行数据拷贝。
 
 CopyIn函数实现代码如下：
 

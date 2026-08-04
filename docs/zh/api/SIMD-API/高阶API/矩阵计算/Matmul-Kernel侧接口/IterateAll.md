@@ -51,8 +51,8 @@ template <bool sync = true> __aicore__ inline void IterateAll(const LocalTensor<
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| gm | 输出 | C矩阵。类型为[GlobalTensor](../../../基础API/数据结构/GlobalTensor/GlobalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731720)。 |
-| ubCmatrix | 输出 | C矩阵。类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为TSCM、VECIN，输出到VECIN Tensor时建议使用[Iterate](Iterate.md)接口。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731720)。 |
+| gm | 输出 | C矩阵。类型为[GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md)。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731720)。 |
+| ubCmatrix | 输出 | C矩阵。类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为TSCM、VECIN，输出到VECIN Tensor时建议使用[Iterate](Iterate.md)接口。不同型号支持的数据类型请参考[支持的数据类型](#li12616155731720)。 |
 | enAtomic | 输入 | 是否开启Atomic操作，默认值为0。<br><br>参数取值：<br><br>0：不开启Atomic操作<br><br>1：开启AtomicAdd累加操作<br><br>2：开启AtomicMax求最大值操作<br><br>3：开启AtomicMin求最小值操作<!-- npu="310p" id15 --><br><br>对于Atlas 推理系列产品AI Core，只有输出位置是GM才支持开启Atomic操作。<!-- end id15 --><!-- npu="310b" id16 --><br><br>对于Atlas 200I/500 A2 推理产品，只有输出位置是GM才支持开启Atomic操作。<!-- end id16 --> |
 | enSequentialWrite | 输入 | 是否开启连续写模式（[连续写](GetTensorC.md#fig580415103338)，写入[baseM, baseN]；[非连续写](GetTensorC.md#fig322951853119)，写入[singleCoreM, singleCoreN]中对应的位置），默认值false（非连续写模式）。<!-- npu="310b" id17 --><br><br>Atlas 200I/500 A2 推理产品<!-- end id17 -->不支持该参数。 |
 | waitIterateAll | 输入 | 仅在异步场景下使用，是否需要通过[WaitIterateAll](WaitIterateAll.md)接口等待IterateAll执行结束。<br><br>true：需要通过WaitIterateAll接口等待IterateAll执行结束。<br><br>false：不需要通过WaitIterateAll接口等待IterateAll执行结束，开发者自行处理等待IterateAll执行结束的过程。 |

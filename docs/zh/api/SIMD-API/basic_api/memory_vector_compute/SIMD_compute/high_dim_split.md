@@ -1,0 +1,84 @@
+# 高维切分
+
+> [!NOTE]说明
+>
+> 本章节对**矢量计算基础API**中的**tensor高维切分计算**接口做解释说明。如果您不需要使用此类接口，可略过该章节。
+>
+> 下文中的repeatTime、dataBlockStride、repeatStride、mask为通用描述，其命名不一定与具体指令中的参数命名完全对应。
+>
+> 比如，单次迭代内不同DataBlock间地址步长dataBlockStride参数，在单目API中，对应为dstBlkStride、srcBlkStride参数；在双目API中，对应为dstBlkStride、src0BlkStride、src1BlkStride参数。
+>
+> 您可以在具体接口的参数说明中，找到参数含义的描述。
+
+**高维切分API**，支持repeatTime、stride和mask参数，能控制指令的迭代执行、操作数的地址间隔和迭代内的掩码，功能更加灵活。
+
+以Exp接口为例，接口调用形式如下：
+
+```cpp
+Exp(dst, src, mask, repeatTime, {dstBlkStride, ..., dstRepStride, ...});
+```
+
+## 迭代控制
+
+Vector计算单元每个迭代会从UB中取出**8**个**DataBlock**（每个DataBlock数据块内部地址连续，长度为32Byte）进行计算，并写入对应的8个DataBlock中。下图为单次迭代内的8个DataBlock进行Exp计算的示意图。
+
+**图1**  单次迭代内的8个DataBlock进行Exp计算示意图  
+![](../../../../figures/single_iter_exp.png)<a id="图1-单次迭代内的8个datablock进行exp计算示意图"></a>
+
+矢量计算API支持开发者通过**repeatTime**来配置迭代次数，从而控制指令的多次迭代执行。假设repeatTime设置为2，矢量计算单元会进行2个迭代的计算，可计算出2\*8（每个迭代8个DataBlock）\* 32Byte = 512Byte的结果。如果数据类型为half，则计算了256个元素。下图展示了2次迭代Exp计算的示意图。由于硬件限制，**repeatTime不能超过255。**
+
+**图2**  2次迭代Exp计算  
+![](../../../../figures/two_iter_exp.png)<a id="图2-2次迭代exp计算"></a>
+
+## 掩码配置
+
+针对同一个迭代中的数据，可以通过**mask**参数进行掩码操作来控制实际参与计算的个数。下图为进行Abs计算时通过mask逐比特模式按位控制哪些元素参与计算的示意图，1表示参与计算，0表示不参与计算。关于掩码的详细介绍请参考[掩码](mask.md#掩码)。
+
+**图3**  通过**mask**参数进行掩码操作示意图（以int32数据类型为例）  
+![](../../../../figures/mask_param_int32.png)<a id="图3-通过mask参数进行掩码操作示意图以int32数据类型为例"></a>
+
+## 地址间隔配置
+
+矢量计算单元还支持带间隔的向量计算，通过**dataBlockStride**（单次迭代内不同DataBlock间地址步长）和**repeatStride**（相邻迭代间相同DataBlock的地址步长）来进行配置。
+
+- **dataBlockStride**<a id="datablockstride"></a>
+
+    dataBlockStride是指单次迭代内不同DataBlock间地址步长。其取值不能超过UB大小限制。
+
+    - 连续计算，dataBlockStride设置为1，对同一迭代内的8个DataBlock数据连续进行处理。
+    - 非连续计算，dataBlockStride值大于1（如取2），同一迭代内不同DataBlock之间在读取数据时出现一个DataBlock的间隔，如下图所示。
+
+    **图4**  dataBlockStride不同取值举例  
+    ![](../../../../figures/data_block_stride.png)<a id="图4-datablockstride不同取值举例"></a>
+
+    **注：dstBlkStride不支持设置为0，若设置成0可能产生未定义行为；若srcBlkStride=0，则源操作数将始终复用第一个DataBlock。**
+
+    下图给出了单次迭代内源操作数与目的操作数在UB空间的读写示例。示例中源操作数的dataBlockStride配置为2，表示单次迭代内不同DataBlock间地址步长为2个DataBlock；目的操作数的dataBlockStride配置为1，表示单次迭代内地址连续。
+
+    **图5**  单次迭代内非连续场景的示意图  
+    ![](../../../../figures/single_iter_non_continuous.png)<a id="图5-单次迭代内非连续场景的示意图"></a>
+
+- **repeatStride**<a id="repeatstride"></a>
+
+    repeatStride是指相邻迭代间相同DataBlock的地址步长。
+
+    - **连续计算场景：** 假设定义一个Tensor供目的操作数和源操作数同时使用（即地址重叠），repeatStride取值为8。此时，矢量计算单元第一次迭代读取连续8个DataBlock，第二轮迭代读取下一个连续的8个DataBlock，通过多次迭代即可完成所有输入数据的计算。
+
+        ![](../../../../figures/repeat_stride1.png)
+
+    - **非连续计算场景：** repeatStride取值大于8（如取10）时，则相邻迭代间矢量计算单元读取的数据在地址上不连续，出现2个DataBlock的间隔。
+
+        ![](../../../../figures/repeat_stride2.png)
+
+    - **反复计算场景：** repeatStride取值为0时，矢量计算单元会对首个连续的8个DataBlock进行反复读取和计算。
+
+        ![](../../../../figures/repeat_stride3.png)
+
+    - **部分重复计算：** repeatStride取值大于0且小于8时，相邻迭代间部分数据会被矢量计算单元重复读取和计算，此种情形一般场景不涉及。
+
+        ![](../../../../figures/repeat_stride4.png)
+
+    当repeatTime大于1，需要多次迭代完成矢量计算时，开发者可以根据不同的使用场景合理设置repeatStride的值。下图给出了多次迭代间非连续场景的示意图，示例中源操作数和目的操作数的**repeatStride**均配置为9，表示相邻迭代间相同DataBlock起始地址之间的间隔为9个DataBlock。相同DataBlock是指DataBlock在迭代内的位置相同，比如下图中的src1和src9处于相邻迭代，在迭代内都是第一个DataBlock的位置，其间隔即为**repeatStride**的数值。
+
+    **图6**  多次迭代间非连续场景的示意图  
+    ![](../../../../figures/multi_iter_non_continuous.png)<a id="图6-多次迭代间非连续场景的示意图"></a>

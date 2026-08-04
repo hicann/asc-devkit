@@ -92,7 +92,7 @@ Quantize与[AscendQuant](AscendQuant.md)的功能类似，Quantize在PER\_TENSOR
 
 | 参数名 | 描述 |
 | --- | --- |
-| config | 用于配置量化计算相关信息，QuantizeConfig类型，具体定义如下方代码所示，其中参数的含义如下。<br>policy：用于配置量化策略，枚举类型，具体定义如下方代码所示。<br>hasOffset：用于配置offset是否参与计算。true：表示offset参与计算。false：表示offset不参与计算。<br>roundMode：量化过程中，数据由高精度数据类型转换为低精度数据类型的舍入模式，支持的取值有：CAST_RINT、CAST_ROUND、CAST_FLOOR、CAST_CEIL、CAST_TRUNC、CAST_HYBRID，各个舍入模式的详细介绍请参考[精度转换规则](../../../SIMD-API/基础API/数据结构/precision_conversion.md#tab1)。不同数据类型的量化支持不同的舍入模式，当量化过程中使用了不支持的舍入模式时，将回退到默认的舍入模式；例如，bfloat16_t数据类型量化为hifloat8_t数据类型时，如果配置的roundMode为不支持的CAST_RINT，实际执行量化时将回退到默认的roundMode（CAST_ROUND）。不同数据类型支持的舍入模式请见下方表格。<br>kDim：group的计算方向，即k方向。仅在PER_GROUP场景有效，支持的取值如下：0：k轴是第0轴，即m方向为group的计算方向。1：k轴是第1轴，即n方向为group的计算方向。 |
+| config | 用于配置量化计算相关信息，QuantizeConfig类型，具体定义如下方代码所示，其中参数的含义如下。<br>policy：用于配置量化策略，枚举类型，具体定义如下方代码所示。<br>hasOffset：用于配置offset是否参与计算。true：表示offset参与计算。false：表示offset不参与计算。<br>roundMode：量化过程中，数据由高精度数据类型转换为低精度数据类型的舍入模式，支持的取值有：CAST_RINT、CAST_ROUND、CAST_FLOOR、CAST_CEIL、CAST_TRUNC、CAST_HYBRID，各个舍入模式的详细介绍请参考[精度转换规则](../../../SIMD-API/basic_api/data_structures/precision_conversion.md#tab1)。不同数据类型的量化支持不同的舍入模式，当量化过程中使用了不支持的舍入模式时，将回退到默认的舍入模式；例如，bfloat16_t数据类型量化为hifloat8_t数据类型时，如果配置的roundMode为不支持的CAST_RINT，实际执行量化时将回退到默认的roundMode（CAST_ROUND）。不同数据类型支持的舍入模式请见下方表格。<br>kDim：group的计算方向，即k方向。仅在PER_GROUP场景有效，支持的取值如下：0：k轴是第0轴，即m方向为group的计算方向。1：k轴是第1轴，即n方向为group的计算方向。 |
 | DstT | 目的操作数的数据类型。接口内根据入参dstTensor自动推导数据类型，开发者无需配置该参数，保证dstTensor符合输入输出支持的数据类型组合即可。 |
 | SrcT | 源操作数的数据类型。接口内根据入参srcTensor自动推导数据类型，开发者无需配置该参数，保证srcTensor符合输入输出支持的数据类型组合即可。 |
 | ScaleT | 缩放因子scale的数据类型。接口内根据入参scale自动推导数据类型，开发者无需配置该参数。ScaleT可以为标量数据类型或LocalTensor类型。<br><br>注意：<br>对于PER_TENSOR量化策略，scale为标量，ScaleT只能为标量数据类型。<br>对于PER_CHANNEL、PER_TOKEN、PER_GROUP量化策略，scale为矢量，ScaleT只能为LocalTensor类型。 |
@@ -112,11 +112,11 @@ enum class QuantizePolicy : int32_t { PER_TENSOR, PER_CHANNEL, PER_TOKEN, PER_GR
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dstTensor | 输出 | 目的操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | scale | 输入 | 输入数据量化时的缩放因子。 |
 | offset | 输入 | 输入数据量化时的偏移量。对于PER_GROUP量化的float4场景，offset不生效。 |
-| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>临时空间大小BufferSize的获取方式请参考[GetQuantizeMaxMinTmpSize](GetQuantizeMaxMinTmpSize.md)。 |
+| sharedTmpBuffer | 输入 | 临时缓存。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>临时空间大小BufferSize的获取方式请参考[GetQuantizeMaxMinTmpSize](GetQuantizeMaxMinTmpSize.md)。 |
 | params | 输入 | 量化接口的参数，QuantizeParams类型，具体定义如下方代码所示，其中参数的含义如下。<br>m：m方向元素个数。<br>n：n方向元素个数。n值对应的数据大小需满足32字节对齐的要求，即shape最后一维为n的输入或输出均需要满足该维度上32字节对齐的要求。<br>groupSize：PER_GROUP场景有效，表示groupSize行/列数据共用一个scale/offset。groupSize的取值必须大于0且是32的整倍数。 |
 
 ```

@@ -60,8 +60,8 @@ This example is based on the static Tensor programming paradigm, implementing hi
 | aic_mte1_ratio | MTE1 time ratio, reflecting L1 to L0 data transfer pressure |
 | aic_mte2_time(μs) | MTE2 ([GM](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/抽象硬件架构.md) (Global Memory) to L1 transfer) execution time |
 | aic_mte2_ratio | MTE2 time ratio, reflecting GM to L1 data loading pressure |
-| aic_fixpipe_time(μs) | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md) (L0C to GM transfer) execution time |
-| aic_fixpipe_ratio | [Fixpipe](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md) time ratio, reflecting result write-back memory access pressure |
+| aic_fixpipe_time(μs) | [Fixpipe](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) (L0C to GM transfer) execution time |
+| aic_fixpipe_ratio | [Fixpipe](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) time ratio, reflecting result write-back memory access pressure |
 
 
 ### Data Flow Path:
@@ -121,12 +121,12 @@ Four types of hardware event flags are used to implement precise pipeline synchr
 
 | Event Type | Direction | Purpose | Flag Number |
 |---------|------|------|----------|
-| [MTE2_MTE1](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | Forward | L1 data readiness notification, DataCopyIn notifies DataLoad that data can be read | 0/1: A1 Ping/Pong; 2/3: B1 Ping/Pong |
-| [MTE1_MTE2](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | Reverse | L1 buffer release notification, DataLoad notifies DataCopyIn that buffer can be written | Same as above |
-| [MTE1_M](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | Forward | L0 data readiness notification, DataLoad notifies Compute that computation can start | mte1DBFlag (0/1 alternating) |
-| [M_MTE1](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) | Reverse | L0 buffer release notification, Compute notifies DataLoad that buffer can be written | mte1DBFlag (0/1 alternating) |
+| [MTE2_MTE1](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | Forward | L1 data readiness notification, DataCopyIn notifies DataLoad that data can be read | 0/1: A1 Ping/Pong; 2/3: B1 Ping/Pong |
+| [MTE1_MTE2](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | Reverse | L1 buffer release notification, DataLoad notifies DataCopyIn that buffer can be written | Same as above |
+| [MTE1_M](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | Forward | L0 data readiness notification, DataLoad notifies Compute that computation can start | mte1DBFlag (0/1 alternating) |
+| [M_MTE1](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | Reverse | L0 buffer release notification, Compute notifies DataLoad that buffer can be written | mte1DBFlag (0/1 alternating) |
 
-**Reverse synchronization must be preset**: Since reverse synchronization is "consumer [SetFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md) → producer [WaitFlag](../../../../../docs/zh/api/SIMD-API/基础API/同步控制/核内同步/SetFlag_WaitFlag_ISASI.md)", SetFlag must be preset before first use, otherwise the first WaitFlag will deadlock:
+**Reverse synchronization must be preset**: Since reverse synchronization is "consumer [SetFlag](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) → producer [WaitFlag](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)", SetFlag must be preset before first use, otherwise the first WaitFlag will deadlock:
 
 ```cpp
 // Initialization: Preset reverse synchronization flags to prevent first WaitFlag deadlock
@@ -189,7 +189,7 @@ nd2nzParams.dValue = baseK * stepKa;  // Large packet contains stepKa baseM * ba
 
 #### 6. LoadData3D Replacing LoadData2D — Reducing Instruction Queue Usage
 
-On Atlas A2/A3 architecture, this example uses [`LoadData3DParamsV2`](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/LoadData_3D.md) (that is, [LoadData3D](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/LoadData_3D.md)) to replace [`LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬入/LoadData_2D.md) (that is, LoadData2D) for L1→L0 data transfer. This is a key instruction queue optimization.
+On Atlas A2/A3 architecture, this example uses [`LoadData3DParamsV2`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md) (that is, [LoadData3D](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)) to replace [`LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md) (that is, LoadData2D) for L1→L0 data transfer. This is a key instruction queue optimization.
 
 **Problem Background**: MTE1 instruction queue depth is 32. When using LoadData2D, due to limited single instruction transfer granularity, transferring one baseM×baseK slice requires a for loop to dispatch multiple LoadData2D instructions. For example, with baseM=128 and baseK=64, at least `baseK/16 = 4` LoadData2D instructions need to be dispatched.
 
@@ -235,7 +235,7 @@ class KernelMmad { ... };
 
 #### 8. UnitFlag Optimization
 
-After enabling UnitFlag, [MMAD](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/Mmad计算/Mmad.md) and [FIXPIPE](../../../../../docs/zh/api/SIMD-API/基础API/cube_compute_ISASI/矩阵计算的搬出/Fixpipe_L0CToGM.md) achieve fine-grained (512B) pipeline parallelism instead of instruction-level synchronization. Whenever Cube completes computation of one 512B data result, FIXPIPE immediately transfers that data, with Cube computation and result write-back pipeline overlapping:
+After enabling UnitFlag, [MMAD](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md) and [FIXPIPE](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) achieve fine-grained (512B) pipeline parallelism instead of instruction-level synchronization. Whenever Cube completes computation of one 512B data result, FIXPIPE immediately transfers that data, with Cube computation and result write-back pipeline overlapping:
 
 ```cpp
 mmadParams.unitFlag = (kBlockIdx != kLoopCount - 1) ? 2 : 3;  // Enable UnitFlag

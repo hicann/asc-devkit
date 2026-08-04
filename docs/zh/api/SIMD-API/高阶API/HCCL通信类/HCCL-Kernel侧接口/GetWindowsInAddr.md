@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-获取卡间通信数据WindowsIn起始地址，可用来直接作为计算的输入输出地址，减少拷贝。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../基础API/工具接口/系统资源与变量/GetBlockIdx.md)指定其在某一个核上运行。
+获取卡间通信数据WindowsIn起始地址，可用来直接作为计算的输入输出地址，减少拷贝。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)指定其在某一个核上运行。
 
 ## 函数原型
 

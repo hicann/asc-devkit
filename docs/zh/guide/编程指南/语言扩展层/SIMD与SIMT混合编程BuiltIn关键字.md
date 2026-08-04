@@ -168,7 +168,7 @@ __global__ __vector__ void add_custom(__gm__ float* x, __gm__ float* y, __gm__ f
 ### SIMD VF的asc\_vf\_call调用
 
 使用`asc_vf_call`接口调用SIMD VF入口函数启动VF子任务，详细接口说明参见
-[asc\_vf\_call接口说明](../../../api/SIMD-API/基础API/Reg矢量计算/VF调用/asc_vf_call.md)。
+[asc\_vf\_call接口说明](../../../api/SIMD-API/basic_api/reg_vector_compute/vf_call/asc_vf_call.md)。
 
 ### SIMT VF与SIMD VF的调用差异
 

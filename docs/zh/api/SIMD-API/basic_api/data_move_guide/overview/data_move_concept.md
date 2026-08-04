@@ -1,0 +1,84 @@
+# 数据搬运概念<a name="ZH-CN_TOPIC_0000002534880720"></a>
+
+## 搬运功能分类总览
+
+数据搬运类接口提供了全面的数据搬运功能，覆盖从最基础的连续搬运到复杂的随路转换和量化激活。按照功能复杂度递增，搬运能力可以分为以下几个类别：基础数据搬运、高维切分搬运、切片搬运、随路格式转换搬运、随路量化激活搬运、非对齐搬运、UB内部搬运（Copy）、矩阵分形搬运和多维数据搬运NDDMA。每一类在后续章节中都有对应的详细接口说明。
+
+## 基础数据搬运（DataCopy连续）
+
+最简单的搬运模式。将源地址处一段连续内存的数据原封不动地搬运到目的地址。数据在传输过程中格式和内容保持不变，不执行任何转换或计算操作。函数原型中通过uint32\_t count参数指定搬运的元素个数（以sizeof\(T\)为单位），接口会自动将元素个数转换为对应的字节数。
+
+**适用场景**：已知数据在源和目的地址均连续存放，且地址满足对齐要求时的快速搬运。典型用于矢量计算前的批量数据加载（GM->UB）和计算后的结果回写（UB->GM）。参考[DataCopy（GM与UB连续数据搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002382908021)、[DataCopy（GM与L1连续数据搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002574022813)等章节。
+
+**图 1**  基础连续搬运示意图  
+
+![](../../../../figures/continuous_data_copy_diagram.png "基础连续搬运示意图")
+
+## 高维切分数据搬运（DataCopy高维切分）
+
+当源或目的操作数在内存中存在固定间隔的非连续分布时，需要使用高维切分模式。该模式引入DataCopyParams（或DataCopyExtParams）参数结构体，通过以下核心参数描述搬运的“分块-重复”模式：
+
+- **blockLen**：每个数据块的长度，以DataBlock（32字节）为单位。DataBlock是Ascend C数据搬运的最小寻址粒度。例如，搬运128个half类型元素（每个2字节，共256字节 = 8个DataBlock），则blockLen = 8。
+- **blockCount**：需要搬运的数据块个数。每轮搬运将依次取出blockCount个连续的数据块。
+- **srcStride/dstStride（srcGap/dstGap）**：相邻数据块之间的地址间隔（以DataBlock为单位）。当stride = blockLen时，数据在内存中实际是连续的；当stride\>blockLen时，表示每个数据块之间存在跳跃，实现了非连续（跨步）搬运。
+- **repeat**：重复搬运的轮数。整个搬运过程将在repeat轮中执行，每轮搬运blockCount个数据块，轮与轮之间的地址偏移由srcRepeatStride/dstRepeatStride控制。
+
+**适用场景**：Conv、Matmul等算子中常见的分块（Tiling）数据搬运，数据按固定步长在源或目的端非连续分布。参考[DataCopy（GM与UB高维切分数据搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_00000023829080211)、[DataCopy（GM与L1高维切分数据搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002543262916)等章节。
+
+**图 2**  高维切分连续搬运示意图  
+
+![](../../../../figures/continuous_data_copy_diagram.png "高维切分连续搬运示意图")
+
+**图 3**  高维切分非连续搬运示意图  
+
+![](../../../../figures/discontinuous_data_copy_diagram.png "高维切分非连续搬运示意图")
+
+## 切片数据搬运（DataCopy切片）
+
+切片搬运支持从一个多维Tensor中提取一个矩形子区域（Slice）进行搬运。通过SliceInfo结构体数组描述源端和目的端每个维度上的切片参数（burstLen、beginOffset、endOffset等），可以实现1\~5维的灵活切片。切片搬运本质上是一种特殊的高维非连续搬运，但接口层面提供了更直观的多维配置方式。
+
+**适用场景**：从大型特征图中提取ROI（Region of Interest）子区域、Pad模式下提取有效数据区域等。参考[DataCopy（GM与UB切片数据搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002568770166)章节。
+
+## 随路格式转换搬运（ND2NZ/NZ2ND/DN2NZ）
+
+在昇腾的矩阵计算流程中，数据通常需要从ND（Standard Normal Data，标准数据排列，即NHWC/NCHW等常规格式）转换为NZ（Normal Normal Data，分形矩阵排列，即按小矩阵块组织的行列排布）格式，计算完成后再从NZ转回ND。Ascend C提供了“随路转换”能力——在数据搬运的同时完成格式转换，无需额外的转换指令，从而实现“搬运零开销格式转换”。
+
+- **ND2NZ搬运**：数据从Global Memory搬运到Unified Buffer/L1 Buffer的同时，将ND格式转换为NZ格式。通过Nd2NzParams参数配置源矩阵的分形维度信息。参考[DataCopy（GMToUB随路转换ND2NZ搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002349187356)、[DataCopy（GMToL1随路转换-ND2NZ搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002573902841)等章节。
+- **NZ2ND搬运**：数据从Unified Buffer搬运到Global Memory的同时，将NZ格式转换回ND格式。通过Nz2NdParamsFull参数配置目的矩阵的维度信息。参考[DataCopy（UBToGM随路转换NZ2ND搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002391805265)等章节。
+- **DN2NZ搬运**：（ISASI产品支持）从深度卷积的DN格式到NZ格式的转换搬运。参考[DataCopy（GMToL1随路转换-DN2NZ搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002573902899)章节。
+
+**图 4**  ND2NZ格式转换示意图
+
+![](../../../../figures/nd2nz_conversion_half.png "ND2NZ格式转换示意图")
+
+## 随路量化激活搬运（FixPipe/DataCopy量化激活）
+
+矩阵计算（Cube单元）的输出结果存放在L0C Buffer中，通常需要经过量化（Quantize）、反量化（Dequantize）、ReLU激活等后处理才能供后续计算使用。Ascend C的随路量化激活搬运接口（DataCopy或FixPipe）在将L0C Buffer数据搬运到Global Memory或L1 Buffer的同时，可以顺带执行量化类型转换和激活操作，实现“搬运+计算”的融合，大幅减少额外的计算指令开销。
+
+**适用场景**：Matmul/Conv算子中矩阵乘累加结果（float/int32_t）向半精度/int8_t输出的转换与搬出。参考[DataCopy（L0CToGM随路量化激活搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002573902843)、[Fixpipe（L0CToGM随路量化激活搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002543422576)等章节。
+
+## 非对齐数据搬运（DataCopyPad）
+
+标准DataCopy接口要求源和目的操作数的起始地址满足对齐约束（如UB要求32Byte对齐）。当实际数据长度不满足对齐要求时（例如搬运17个half元素，共34字节，不是32的整数倍），需要使用DataCopyPad接口。该接口允许搬运的最后一个数据块为非对齐长度，并可通过padParams参数配置填充（Padding）值和填充模式，使搬运后的目的地址仍保持对齐。
+
+**适用场景**：数据总长度不满足32Byte对齐要求时的搬运，以及需要在搬运时对尾部数据补Pad的场景。参考[DataCopyPad（GMToUB非对齐数据搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000001894460401)、[DataCopyPad（GMToL1非对齐数据搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002543262891)等章节。
+
+## UB内部搬运（Copy）
+
+Copy是Unified Buffer内部专用的数据搬运指令，支持VECIN/VECCALC/VECOUT之间的数据搬运。与DataCopy不同，Copy接口支持mask操作（可以按位控制哪些元素参与搬运）和DataBlock间隔控制，适用于矢量计算内部的数据重排和中间结果暂存。参考[Copy（UBToUB连续数据搬运）](../UB_UB_data_move.md#ZH-CN_TOPIC_0000002575088175)、[Copy（UBToUB掩码式高维数据搬运）](../UB_UB_data_move.md#ZH-CN_TOPIC_0000002575088175)等章节。
+
+## 矩阵分形搬运（LoadData（2D矩阵搬运）/LoadData（卷积数据搬运））
+
+LoadData（2D矩阵搬运）和LoadData（卷积数据搬运）是专用于矩阵计算通路的2D/3D格式分形搬运接口，负责将L1中的矩阵数据按照Cube计算单元所需的特殊分形格式（如NZ排列）搬运到L0A Buffer/L0B Buffer。这类接口可以伴随转置操作（LoadDataWithTranspose），并支持稀疏权重矩阵的加载（LoadDataWithSparse）。参考[L1ToL0A 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）)](../L1_L0_data_move.md#ZH-CN_TOPIC_0000002573902845)、[L1ToL0A 3D格式分形矩阵搬运(LoadData（卷积数据搬运）)](../L1_L0_data_move.md#ZH-CN_TOPIC_0000002574022819)等章节。
+
+## 多维数据搬运NDDMA（DataCopy）
+
+NDDMA（N-Dimensional DMA）是一种更灵活的按维度配置的数据搬运方式，支持Global Memory到Unified Buffer之间的多维搬运。与高维切分搬运（使用blockLen/blockCount/repeat的固定模式）不同，NDDMA允许开发者逐维度自由配置搬运参数，搬运维度dim支持1\~5维。每个维度（循环）通过NdDmaLoopInfo结构体配置以下核心参数：
+
+- **loopSize**：该维度内需要搬运的元素个数。
+- **loopSrcStride/loopDstStride**：该维度内源/目的操作数相邻元素之间的地址间隔（以元素个数为单位）。通过配置stride可实现跨步搬运、Transpose转置、BroadCast广播等效果。
+- **loopLpSize/loopRpSize**：该维度内左/右侧需要补齐（Padding）的元素个数。通过NdDmaConfig可进一步选择Padding值填充方式：常数填充（指定固定值constantValue）或最近值填充（自动选取边界值填充）。
+
+NDDMA独立使用32KB的NDDMA Cache，使用DataCopy接口前需通过NdDmaDci\(\)刷新缓存以保证多核场景下数据一致性。
+
+**适用场景**：需要自由控制多维搬运模式的场景，如多维Tensor的Padding填充、Transpose转置搬运、BroadCast广播搬运、Slice子矩阵截取等。参考[DataCopy（GMToUB多维数据搬运NDDMA）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002544407954)章节。

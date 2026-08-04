@@ -1,0 +1,59 @@
+# 基础算术<a name="ZH-CN_TOPIC_0000001425937925"></a>
+
+- **[Exp](Exp.md)**  
+
+- **[Ln](Ln.md)**  
+
+- **[Abs](Abs.md)**  
+
+- **[Reciprocal](Reciprocal.md)**  
+
+- **[Sqrt](Sqrt.md)**  
+
+- **[Rsqrt](Rsqrt.md)**  
+
+- **[Relu](Relu.md)**  
+
+- **[Neg\(ISASI\)](Neg_ISASI.md)**  
+
+- **[Add](Add.md)**  
+
+- **[Sub](Sub.md)**  
+
+- **[Mul](Mul.md)**  
+
+- **[Div](Div.md)**  
+
+- **[Max](Max.md)**  
+
+- **[Min](Min.md)**  
+
+- **[BilinearInterpolation\(ISASI\)](BilinearInterpolation_ISASI.md)**  
+
+- **[Prelu\(ISASI\)](Prelu_ISASI.md)**  
+
+- **[Mull\(ISASI\)](Mull_ISASI.md)**  
+
+- **[Adds](Adds.md)**  
+
+- **[Adds（灵活标量位置）](Adds_flexible_scalar.md)**  
+
+- **[Muls](Muls.md)**  
+
+- **[Muls（灵活标量位置）](Muls_flexible_scalar.md)**  
+
+- **[Maxs](Maxs.md)**  
+
+- **[Maxs（灵活标量位置）](Maxs_flexible_scalar.md)**  
+
+- **[Mins](Mins.md)**  
+
+- **[Mins（灵活标量位置）](Mins_flexible_scalar.md)**  
+
+- **[Subs](Subs_flexible_scalar.md)**  
+
+- **[Divs](Divs_flexible_scalar.md)**  
+
+- **[LeakyRelu](LeakyRelu.md)**  
+
+- **[更多样例](more_examples.md)**  

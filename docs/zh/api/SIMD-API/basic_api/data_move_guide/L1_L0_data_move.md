@@ -1,0 +1,408 @@
+# L1与L0数据搬运
+
+## 总体说明<a name="ZH-CN_TOPIC_0000002543262920"></a>
+
+L1 Buffer与L0 Buffer之间的数据搬运提供了灵活的接口支持，能够充分适配多样化的计算场景（见[表1](#zh-cn_topic_0000002535057808_table12546123753110)）。其中，L1 Buffer-\>L0A Buffer、L1 Buffer-\>L0B Buffer的数据搬运用于矩阵计算（参考[矩阵计算的搬入](../cube_compute_ISASI/cube_compute_load/cube_compute_load.md)），L0C Buffer-\>L1 Buffer用于矩阵计算的搬出，完成矩阵计算的输出流程（参考[矩阵计算的搬出](../cube_compute_ISASI/cube_compute_store/cube_compute_store.md)）。
+
+**表 1**  L1 Buffer与L0 Buffer数据搬运接口概述<a name="zh-cn_topic_0000002535057808_table12546123753110"></a>
+
+| 数据通路 | 功能 | 描述 |
+|----------|------|------|
+| L1 Buffer->L0A Buffer | 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
+| L1 Buffer->L0A Buffer | 2D格式分形矩阵搬运(LoadData（2D矩阵搬运V2）) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
+| L1 Buffer->L0A Buffer | 2D格式分形矩阵搬运(LoadData（MX矩阵搬运）) | 负责完成矩阵计算所需的左右矩阵数据和对应的左右量化系数矩阵数据的搬运。 |
+| L1 Buffer->L0A Buffer | 2D格式分形矩阵伴转置搬运(LoadDataWithTranspose) | 负责完成普通矩阵计算所需的2D格式的数据的搬运，搬运过程中会伴随转置操作。 |
+| L1 Buffer->L0A Buffer | 3D格式分形矩阵搬运(LoadData（卷积数据搬运）) | 用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置。 |
+| L1 Buffer->L0A Buffer | 3D格式分形矩阵搬运(LoadDataWithStride) | 用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置，支持配置输出矩阵K轴方向偏移量。 |
+| L1 Buffer->L0B Buffer | 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
+| L1 Buffer->L0B Buffer | 2D格式分形矩阵搬运(LoadData（2D矩阵搬运V2）) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
+| L1 Buffer->L0B Buffer | 2D格式分形矩阵搬运(LoadData（MX矩阵搬运）) | 负责完成矩阵计算所需的左右矩阵数据和对应的左右量化系数矩阵数据的搬运。 |
+| L1 Buffer->L0B Buffer | 2D格式分形矩阵伴转置搬运(LoadDataWithTranspose) | 负责完成普通矩阵计算所需的2D格式的数据的搬运，搬运过程中会伴随转置操作。 |
+| L1 Buffer->L0B Buffer | 3D格式分形矩阵搬运(LoadData（卷积数据搬运）) | 用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置。 |
+| L1 Buffer->L0B Buffer | 3D格式分形矩阵搬运(LoadDataWithStride) | 用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置，支持配置输出矩阵K轴方向偏移量。 |
+| L1 Buffer->L0B Buffer | 稠密权重矩阵搬运(LoadDataWithSparse) | 用于从L1 Buffer中搬运以512Byte为单位存放的稠密权重矩阵到L0B Buffer里，同时搬运以128Byte为单位的索引矩阵到内置的专用buffer空间（用于后续MmadWithSparse接口进行读取）。 |
+| L0C Buffer->L1 Buffer | L0C Buffer->L1 Buffer随路量化激活搬运(DataCopy) | 支持多种随路能力的组合，需要设置不同的寄存器，配合DataCopy指令使能不同的数据搬运能力。 |
+| L0C Buffer->L1 Buffer | L0C Buffer->L1 Buffer随路量化激活搬运(FixPipe) | 支持多种随路能力的组合，FixPipe接口内包含了设置寄存器与数据搬运能力。 |
+
+## L1ToL0A 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）)<a name="ZH-CN_TOPIC_0000002573902845"></a>
+
+LoadData（2D矩阵搬运）能够实现L1 Buffer到L0A Buffer之间的数据搬运。负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0A Buffer
+    - A1 -> A2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（2D矩阵搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_2D.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+```cpp
+template <typename T>
+__aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2DParams& loadDataParams)
+```
+
+<!-- npu="950" id1 -->
+## L1ToL0A 2D格式分形矩阵搬运(LoadData（2D矩阵搬运V2）)
+
+LoadData（2D矩阵搬运V2）能够实现L1 Buffer到L0A Buffer之间的数据搬运。负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0A Buffer
+    - A1 -> A2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（2D矩阵搬运V2）](../cube_compute_ISASI/cube_compute_load/LoadData_2D_V2.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+- 仅Ascend 950PR/Ascend 950DT支持
+
+    ```cpp
+    template <typename T>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2DParamsV2& loadDataParams)
+    ```
+<!-- end id1 -->
+
+<!-- npu="950" id2 -->
+## L1ToL0A 2D格式分形矩阵搬运(LoadData（MX矩阵搬运）)
+
+LoadData（MX矩阵搬运）负责完成矩阵计算所需的左右矩阵数据和对应的左右量化系数矩阵数据的搬运，其中左右矩阵数据以大小为512Byte的数据分形为单位进行搬运，左右量化系数矩阵以32Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0A Buffer
+    - A1 -> A2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（MX矩阵搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_2D_MX.md)。
+
+src和srcMx为源操作数，dst为目的操作数；loadDataParams和loadMxDataParams为搬运参数。
+
+- LoadData（MX矩阵搬运）接口（仅Ascend 950PR/Ascend 950DT支持）
+
+    ```cpp
+    template <typename T, typename U = T>
+    __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
+    ```
+
+- LoadData（MX矩阵搬运）接口，支持源操作数和目的操作数数据类型不一致（仅Ascend 950PR/Ascend 950DT支持）
+
+    ```cpp
+    template <typename T, typename U>
+    __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src0, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
+    ```
+<!-- end id2 -->
+
+## L1ToL0A 2D格式分形矩阵伴转置搬运(LoadDataWithTranspose)<a name="ZH-CN_TOPIC_0000002543422578"></a>
+
+LoadDataWithTranspose能够实现L1 Buffer到L0A Buffer之间的数据搬运。负责完成普通矩阵计算所需的2D格式的数据搬运，搬运过程中会伴随转置操作，以大小为512Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0A Buffer
+    - A1 -> A2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadDataWithTranspose](../cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+```cpp
+template <typename T>
+__aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2dTransposeParams& loadDataParams)
+```
+
+<!-- npu="950" id10 -->
+仅Ascend 950PR/Ascend 950DT支持
+
+```cpp
+template <typename T>
+__aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2dTransposeParamsV2& loadDataParams)
+```
+<!-- end id10 -->
+
+## L1ToL0A 3D格式分形矩阵搬运(LoadData（卷积数据搬运）)<a name="ZH-CN_TOPIC_0000002574022819"></a>
+
+LoadData（卷积数据搬运）本质上是用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0A Buffer
+    - A1 -> A2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（卷积数据搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_3D.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+- LoadData（卷积数据搬运） v1接口
+
+    ```cpp
+    template <typename T, const IsResetLoad3dConfig &defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>, typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV1<U>& loadDataParams)
+    ```
+
+- LoadData（卷积数据搬运）v2接口
+
+    ```cpp
+    template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>, typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2<U>& loadDataParams)
+    ```
+
+<!-- npu="950" id3 -->
+- LoadData（卷积数据搬运）v2Pro接口（仅Ascend 950PR/Ascend 950DT支持）
+
+    ```cpp
+    template <typename T>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2Pro& loadDataParams)
+    ```
+<!-- end id3 -->
+
+<!-- npu="950" id1 -->
+## L1ToL0A 3D格式分形矩阵搬运(LoadDataWithStride)<a name="ZH-CN_TOPIC_0000002573312819"></a>
+
+LoadDataWithStride用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置，支持配置输出矩阵K轴方向偏移量。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0A Buffer
+    - A1 -> A2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadDataWithStride](../cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+- 仅Ascend 950PR/Ascend 950DT支持
+
+    ```cpp
+    template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>,typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
+    __aicore__ inline void LoadDataWithStride(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2<U>& loadDataParams)
+    ```
+<!-- end id1 -->
+
+## L1ToL0B 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）)<a name="ZH-CN_TOPIC_0000002543262922"></a>
+
+LoadData（2D矩阵搬运）能够实现L1 Buffer到L0B Buffer之间的数据搬运。负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（2D矩阵搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_2D.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+```cpp
+template <typename T>
+__aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2DParams& loadDataParams)
+```
+
+<!-- npu="950" id4 -->
+## L1ToL0B 2D格式分形矩阵搬运(LoadData（2D矩阵搬运V2）)
+
+LoadData（2D矩阵搬运V2）能够实现L1 Buffer到L0B Buffer之间的数据搬运。负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（2D矩阵搬运V2）](../cube_compute_ISASI/cube_compute_load/LoadData_2D_V2.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+- 仅Ascend 950PR/Ascend 950DT支持
+
+    ```cpp
+    template <typename T>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2DParamsV2& loadDataParams)
+    ```
+<!-- end id4 -->
+
+<!-- npu="950" id5 -->
+## L1ToL0B 2D格式分形矩阵搬运(LoadData（MX矩阵搬运）)
+
+LoadData（MX矩阵搬运）负责完成矩阵计算所需的左右矩阵数据和对应的左右量化系数矩阵数据的搬运，其中左右矩阵数据以大小为512Byte的数据分形为单位进行搬运，左右量化系数矩阵以32Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（MX矩阵搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_2D_MX.md)。
+
+src和srcMx为源操作数，dst为目的操作数；loadDataParams和loadMxDataParams为搬运参数。
+
+- LoadData（MX矩阵搬运）接口（仅Ascend 950PR/Ascend 950DT支持）
+
+    ```cpp
+    template <typename T, typename U = T>
+    __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
+    ```
+
+- LoadData（MX矩阵搬运）接口，支持源操作数和目的操作数数据类型不一致（仅Ascend 950PR/Ascend 950DT支持）
+
+    ```cpp
+    template <typename T, typename U>
+    __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src0, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
+    ```
+<!-- end id5 -->
+
+## L1ToL0B 2D格式分形矩阵伴转置搬运(LoadDataWithTranspose)<a name="ZH-CN_TOPIC_0000002573902847"></a>
+
+LoadDataWithTranspose能够实现L1 Buffer到L0B Buffer之间的数据搬运。负责完成普通矩阵计算所需的2D格式的数据搬运，搬运过程中会伴随转置操作，以大小为512Byte的数据分形为单位进行搬运。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadDataWithTranspose](../cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+```cpp
+template <typename T>
+__aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2dTransposeParams& loadDataParams)
+```
+
+<!-- npu="950" id11 -->
+仅Ascend 950PR/Ascend 950DT支持
+
+```cpp
+template <typename T>
+__aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2dTransposeParamsV2& loadDataParams)
+```
+<!-- end id11 -->
+
+## L1ToL0B 3D格式分形矩阵搬运(LoadData（卷积数据搬运）)<a name="ZH-CN_TOPIC_0000002543422580"></a>
+
+LoadData（卷积数据搬运）本质上是用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadData（卷积数据搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_3D.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+- LoadData（卷积数据搬运） v1接口
+
+    ```cpp
+    template <typename T, const IsResetLoad3dConfig &defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>, typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV1<U>& loadDataParams)
+    ```
+
+- LoadData（卷积数据搬运）v2接口
+
+    ```cpp
+    template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>, typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2<U>& loadDataParams)
+    ```
+
+<!-- npu="950" id6 -->
+- LoadData（卷积数据搬运）v2Pro接口（仅Ascend 950PR/Ascend 950DT支持）
+
+    ```cpp
+    template <typename T>
+    __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2Pro& loadDataParams)
+    ```
+<!-- end id6 -->
+
+<!-- npu="950" id12 -->
+## L1ToL0B 3D格式分形矩阵搬运(LoadDataWithStride)<a name="ZH-CN_TOPIC_0000002573312819"></a>
+
+LoadDataWithStride用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置，支持配置输出矩阵K轴方向偏移量。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadDataWithStride](../cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md)。
+
+src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
+
+- 仅Ascend 950PR/Ascend 950DT支持
+
+    ```cpp
+    template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>,typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
+    __aicore__ inline void LoadDataWithStride(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2<U>& loadDataParams)
+    ```
+<!-- end id12 -->
+
+<!-- npu="A3,910b" id9 -->
+## L1ToL0B 稠密权重矩阵搬运(LoadDataWithSparse)<a name="ZH-CN_TOPIC_0000002574022821"></a>
+
+用于从L1中搬运以512Byte为单位存放的稠密权重矩阵到L0B里，同时搬运以128Byte为单位的索引矩阵到内置的专用buffer空间（用于后续MmadWithSparse接口进行读取）。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L1 Buffer -> L0B Buffer
+    - B1 -> B2
+
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[LoadDataWithSparse](../cube_compute_ISASI/cube_compute_load/LoadDataWithSparse.md)。
+
+- 仅如下产品型号支持：
+
+    <!-- npu="A3" id7 -->
+    Atlas A3 训练系列产品/Atlas A3 推理系列产品；
+    <!-- end id7 -->
+
+    <!-- npu="910b" id8 -->
+    Atlas A2 训练系列产品/Atlas A2 推理系列产品；
+    <!-- end id8 -->
+
+    ```cpp
+    template <typename T = int8_t, typename U = uint8_t, typename Std::enable_if<Std::is_same<PrimT<T>, int8_t>::value, bool>::type = true, typename Std::enable_if<Std::is_same<PrimT<U>, uint8_t>::value, bool>::type = true>
+    __aicore__ inline void LoadDataWithSparse(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<U>& idx, const LoadData2dParams& loadDataParam)
+    ```
+<!-- end id9 -->
+
+## DataCopy（L0CToL1随路量化激活搬运）<a name="ZH-CN_TOPIC_0000002543262924"></a>
+
+该接口主要实现将数据从L0C Buffer搬运至L1 Buffer，并支持多种随路能力的组合，需要设置不同的寄存器。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L0C Buffer -> L1 Buffer
+    - CO1 -> C1
+
+搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[DataCopy（L0C到L1数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopy_L0CToL1.md)。
+
+src和dst分别为源操作数和目的操作数；intriParams为搬运参数。
+
+```cpp
+template <typename T, typename U>
+__aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<U>& src, const DataCopyCO12DstParams& intriParams)
+```
+
+## Fixpipe（L0CToL1随路量化激活搬运）<a name="ZH-CN_TOPIC_0000002573902849"></a>
+
+该接口主要实现将数据从L0C Buffer搬运至L1 Buffer，并支持多种随路能力的组合，接口内包含了设置寄存器与数据搬运能力。
+
+具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
+
+- L0C Buffer -> L1 Buffer
+    - CO1 -> C1
+
+搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR/Ascend 950DT为例，接口示例如下：
+
+注意，不同产品型号的接口原型可能不同，具体介绍请参考：[Fixpipe（L0C到L1数据搬运）](../cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1.md)。
+
+src和dst分别为源操作数和目的操作数；intriParams为搬运参数，cbufWorkspace为开启tensor量化时所需的量化参数。
+
+- 不开启随路[tensor量化](../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)功能：
+
+    ```cpp
+    template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>
+    __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParamsArch3510<config.format>& intriParams)
+    ```
+
+- 开启随路[tensor量化](../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)功能：
+
+    ```cpp
+    template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>
+    __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const LocalTensor<uint64_t>& cbufWorkspace, const FixpipeParamsArch3510<config.format>& intriParams)
+    ```

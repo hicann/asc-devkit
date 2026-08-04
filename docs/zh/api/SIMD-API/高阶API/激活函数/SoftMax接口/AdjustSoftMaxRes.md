@@ -65,8 +65,8 @@ __aicore__ inline bool AdjustSoftMaxRes(const LocalTensor<T1>& softMaxRes, const
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| softMaxRes | 输入/输出 | 既是源操作数也是目的操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor数据结构的定义请参考[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)<br><br>last轴长度需要32Byte对齐。<br><br>一般为softmax计算的输出结果。 |
-| maxTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>softmax计算过程中reducemax的结果。<br>maxTensor的last轴长度固定为32Byte，即一个datablock长度。该datablock中的所有数据为同一个值。比如half数据类型下，该datablock中的16个数均为相同的reducemax的值。<br>非last轴的长度与softMaxRes保持一致。 |
+| softMaxRes | 输入/输出 | 既是源操作数也是目的操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor数据结构的定义请参考[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)<br><br>last轴长度需要32Byte对齐。<br><br>一般为softmax计算的输出结果。 |
+| maxTensor | 输入 | 源操作数。<br><br>类型为[LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>softmax计算过程中reducemax的结果。<br>maxTensor的last轴长度固定为32Byte，即一个datablock长度。该datablock中的所有数据为同一个值。比如half数据类型下，该datablock中的16个数均为相同的reducemax的值。<br>非last轴的长度与softMaxRes保持一致。 |
 | from | 输入 | 源操作数，类型为uint32_t。<br><br>需要判断的maxTensor中的值。需要注意的是，由于maxTensor中的值均为浮点数类型，因此此处需要填入的值为浮点数类型对应十六进制的值。比如当需要判断maxTensor是否有1.0这个值时，from值需要填入1.0对应的十六进制值0x3f800000。 |
 | to | 输入 | 源操作数，类型和softMaxRes的数据类型保持一致。<br><br>需要往softMaxRes中填充的值。 |
 | softmaxShapeInfo | 输入 | softMaxRes的shape信息，具体定义如下方代码所示，其中参数的含义为：<br>srcM：非尾轴长度的乘积。<br>srcK：尾轴长度，必须32Byte对齐。<br>oriSrcM：原始非尾轴长度的乘积。<br>oriSrcK：原始尾轴长度。<br><br>需要注意，目前仅支持ND输入。 |

@@ -467,7 +467,7 @@ AscendC::printf("matmul blockIdx=%d\n", AscendC::GetBlockIdx());
 
 ### DumpTensor
 
-For operators developed based on operator projects, this interface can be used to dump the content of a specified [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md). It also supports printing custom additional information (only uint32\_t data type information is supported), such as printing the current line number.
+For operators developed based on operator projects, this interface can be used to dump the content of a specified [LocalTensor](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md). It also supports printing custom additional information (only uint32\_t data type information is supported), such as printing the current line number.
 
 Call the DumpTensor interface in the operator kernel implementation code where Tensor data needs to be printed. Example:
 
@@ -477,7 +477,7 @@ AscendC::Div(yLocal, xLocal, yLocal, n);
 AscendC::DumpTensor(yLocal, 1, 16);
 ```
 
-> **Notice:** The [DumpTensor](../../../../../docs/zh/api/SIMD-API/基础API/调试接口/上板打印/DumpTensor.md) interface printing functionality will impact actual operator running performance and is typically used during the debugging phase. Developers can disable printing by setting ASCENDC_DUMP=0 as needed.
+> **Notice:** The [DumpTensor](../../../../../docs/zh/api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md) interface printing functionality will impact actual operator running performance and is typically used during the debugging phase. Developers can disable printing by setting ASCENDC_DUMP=0 as needed.
 
 ## Performance Debugging
 

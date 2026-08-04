@@ -669,9 +669,9 @@ AscendC::printf("add blockIdx=%d\n", AscendC::GetBlockIdx());
 
 ### DumpTensor
 
-For operators developed based on the operator project, you can use this interface Dump to specify the contents of [LocalTensor](../../../../../docs/zh/api/SIMD-API/基础API/数据结构/LocalTensor/LocalTensor简介.md). It also supports printing of customized additional information (only uint32\_t data type information is supported), such as printing the current line number, etc.
+For operators developed based on the operator project, you can use this interface Dump to specify the contents of [LocalTensor](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md). It also supports printing of customized additional information (only uint32\_t data type information is supported), such as printing the current line number, etc.
 
-In the operator kernel side implementation code, where Tensor data needs to be printed, call the [DumpTensor](../../../../../docs/zh/api/SIMD-API/基础API/调试接口/上板打印/DumpTensor.md) interface to print relevant content. An example is as follows:
+In the operator kernel side implementation code, where Tensor data needs to be printed, call the [DumpTensor](../../../../../docs/zh/api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md) interface to print relevant content. An example is as follows:
 
 ```cpp
 // Vector calculation: z = x + y

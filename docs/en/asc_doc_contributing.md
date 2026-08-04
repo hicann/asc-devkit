@@ -441,7 +441,7 @@ void mad(__cc__ float *c, __ca__ half *a, __cb__ half *b,
     uint16_t m, uint16_t k, uint16_t n, uint8_t unitFlag,
     bool kDirectionAlign, bool cmatrixSource, bool cmatrixInitVal);
 
-For Ascend 950PR/DT:
+For Ascend 950PR/Ascend 950DT:
 void mad(__cc__ float *c, __ca__ half *a, __cb__ half *b,
     uint16_t m, uint16_t k, uint16_t n, uint8_t unit_Flag_ctrl,
     bool gemv_ctrl, bool BTbuf_ctrl, bool zero_Cmatrix_ctrl);

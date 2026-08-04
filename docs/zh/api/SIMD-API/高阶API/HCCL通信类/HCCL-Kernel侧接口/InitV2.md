@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-HCCL客户端初始化接口。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../基础API/工具接口/系统资源与变量/GetBlockIdx.md)指定其在某一个核上运行。
+HCCL客户端初始化接口。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)指定其在某一个核上运行。
 
 ## 函数原型
 
@@ -49,7 +49,7 @@ __aicore__ inline void InitV2(GM_ADDR context, const void* initTiling)
 
 -   本接口必须与[SetCcTilingV2](SetCcTilingV2.md)接口配合使用。
 -   调用本接口时，必须使用标准C++语法定义TilingData结构体的开发方式。
--   调用本接口传入的initTiling参数，不能使用Global Memory地址，建议通过[GET\_TILING\_DATA\_WITH\_STRUCT](../../../基础API/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)接口获取TilingData的栈地址。
+-   调用本接口传入的initTiling参数，不能使用Global Memory地址，建议通过[GET\_TILING\_DATA\_WITH\_STRUCT](../../../basic_api/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)接口获取TilingData的栈地址。
 -   本接口不支持使用相同的context初始化多个HCCL对象。
 
 ## 调用示例

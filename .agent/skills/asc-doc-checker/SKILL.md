@@ -70,7 +70,7 @@ description: |
 - [ ] 所有图片统一存放在 `docs/zh/api/figures/` 目录下，引用时根据不同文档位置计算相对路径
 - [ ] 所有图片的文件名必须是英文小写加下划线（如：atomic_operation_pipelined_data_movement_diagram.png、atomic_operation_3.png）
 - [ ] 如果有图注（没有图注的话就忽略），图注（如"图 1"、"图 2"）必须写在图片上方，格式为 `**图 n**  图片标题`（注意 `**图 n**` 和标题之间是两个空格）
-  **正确示例（在 `docs/zh/api/SIMD-API/基础API/原子操作/原子操作概述.md` 中引用）：**
+  **正确示例（在 `docs/zh/api/SIMD-API/basic_api/atomic_operations/atomic_operations_overview.md` 中引用）：**
   ```
   **图 1**  数据搬运随路原子累加效果示意图
   ![](../../../figures/atomic_operation_pipelined_data_movement_diagram.png)

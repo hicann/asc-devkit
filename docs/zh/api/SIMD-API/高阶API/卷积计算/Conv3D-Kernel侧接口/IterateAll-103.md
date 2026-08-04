@@ -38,7 +38,7 @@ __aicore__ inline void IterateAll(const AscendC::GlobalTensor<OutputT>& output, 
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| output | 输入 | Output在GM上的地址。类型为[GlobalTensor](../../../基础API/数据结构/GlobalTensor/GlobalTensor.md)。结果矩阵Output支持的数据类型为：half、bfloat16_t。 |
+| output | 输入 | Output在GM上的地址。类型为[GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md)。结果矩阵Output支持的数据类型为：half、bfloat16_t。 |
 | enPartialSum | 输入 | 预留参数。 |
 
 ## 返回值说明

@@ -117,7 +117,7 @@ Host侧Tiling函数会把Kernel运行需要的参数写入TilingData。TilingDat
 
 **标准C++结构体**
 
-使用标准C++语法定义TilingData时，Kernel侧在入口函数中使用[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/基础API/Kernel-Tiling/REGISTER_TILING_DEFAULT.md)注册默认结构体。
+使用标准C++语法定义TilingData时，Kernel侧在入口函数中使用[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/REGISTER_TILING_DEFAULT.md)注册默认结构体。
 
 ```cpp
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z,
@@ -148,8 +148,8 @@ Kernel可以将入口参数`GM_ADDR tiling`转换为GM指针，再按照TilingDa
 
 两个宏的能力区别如下：
 
-- [GET_TILING_DATA](../../../../../api/SIMD-API/基础API/Kernel-Tiling/GET_TILING_DATA.md)`(tiling_data, tiling_arg)`：使用当前Kernel分支注册的默认TilingData类型进行解析，适用于只需访问默认结构体的场景。
-- [GET_TILING_DATA_WITH_STRUCT](../../../../../api/SIMD-API/基础API/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)`(tiling_struct, tiling_data, tiling_arg)`：显式指定解析使用的TilingData结构体类型，既可用于不同TilingKey使用不同结构体的场景，也可用于TPL/SEL模板分支显式指定模板TilingData结构体的场景。
+- [GET_TILING_DATA](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA.md)`(tiling_data, tiling_arg)`：使用当前Kernel分支注册的默认TilingData类型进行解析，适用于只需访问默认结构体的场景。
+- [GET_TILING_DATA_WITH_STRUCT](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)`(tiling_struct, tiling_data, tiling_arg)`：显式指定解析使用的TilingData结构体类型，既可用于不同TilingKey使用不同结构体的场景，也可用于TPL/SEL模板分支显式指定模板TilingData结构体的场景。
 
 默认TilingData结构体通过`GET_TILING_DATA`解析。第一个参数是解析后的变量名，第二个参数是Kernel入口中的`tiling`地址。
 

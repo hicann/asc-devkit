@@ -62,10 +62,10 @@
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| dstTensor | 输出 | 目的操作数，shape为二维，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| srcTensor | 输入 | 源操作数，shape为二维，LocalTensor数据结构的定义请参考[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| dstTensor | 输出 | 目的操作数，shape为二维，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| srcTensor | 输入 | 源操作数，shape为二维，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | UnPadParams | 输入 | UnPad详细参数，UnPadParams数据类型，UnPadParams结构体的定义如下方代码所示，具体结构体参数说明如下：<br>leftPad，左边unpad的数据量。leftPad要求小于32B。单位：列。当前暂不生效。<br>rightPad，右边unpad的数据量。rightPad要求小于32B，大于0。单位：列。当前只支持在右边进行unpad。 |
-| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[UnPad Tiling](UnPad-Tiling.md)。<br><br>类型为[LocalTensor](../../基础API/数据结构/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| sharedTmpBuffer | 输入 | 共享缓冲区，用于存放API内部计算产生的临时数据。该方式开发者可以自行管理sharedTmpBuffer内存空间，并在接口调用完成后，复用该部分内存，内存不会反复申请释放，灵活性较高，内存利用率也较高。共享缓冲区大小的获取方式请参考[UnPad Tiling](UnPad-Tiling.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | tiling | 输入 | 计算所需tiling信息，Tiling信息的获取请参考[UnPad Tiling](UnPad-Tiling.md)。 |
 
 ```

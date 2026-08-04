@@ -1,0 +1,203 @@
+# Or<a name="ZH-CN_TOPIC_0000001379430576"></a>
+
+## 产品支持情况<a name="section1550532418810"></a>
+
+<!-- npu="950" id1 -->
+- Ascend 950PR/Ascend 950DT：支持
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 推理产品：支持
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas 推理系列产品AI Core：支持
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas 推理系列产品Vector Core：不支持
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas 训练系列产品：支持
+<!-- end id7 -->
+<!-- npu="x90" id8 -->
+- Kirin X90：支持
+<!-- end id8 -->
+<!-- npu="9030" id9 -->
+- Kirin 9030：支持
+<!-- end id9 -->
+
+## 功能说明<a name="section618mcpsimp"></a>
+
+头文件路径为：`"basic_api/kernel_operator_vec_binary_intf.h"`。
+
+每对元素做按位或运算，计算公式如下：
+
+$dst_i = src0_i | src1_i$
+
+## 函数原型<a name="section620mcpsimp"></a>
+
+- 整个tensor参与计算
+
+    ```cpp
+    dst = src0 | src1;
+    ```
+
+- tensor前n个数据计算
+
+    ```cpp
+    template <typename T>
+    __aicore__ inline void Or(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, const int32_t& count)
+    ```
+
+- tensor高维切分计算
+    - mask逐bit模式
+
+        ```cpp
+        template <typename T, bool isSetMask = true>
+        __aicore__ inline void Or(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, uint64_t mask[], const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
+        ```
+
+    - mask连续模式
+
+        ```cpp
+        template <typename T, bool isSetMask = true>
+        __aicore__ inline void Or(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, uint64_t mask, const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
+        ```
+
+## 参数说明<a name="section622mcpsimp"></a>
+
+**表1**  模板参数说明
+
+| 参数名 | 描述 |
+|---|---|
+| T | 操作数数据类型。 |
+| isSetMask | 是否在接口内部设置mask。<br>&bull; true，表示在接口内部设置mask。<br>&bull; false，表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值设置为占位符`MASK_PLACEHOLDER`，用于占位，无实际含义。 |
+
+**表2**  参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+|---|---|---|
+| dst | 输出 | 目的操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[通用地址对齐约束](../../../通用说明和约束.md)。 |
+| src0、src1 | 输入 | 源操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[通用地址对齐约束](../../../通用说明和约束.md)。<br>源操作数的数据类型需要与目的操作数保持一致。 |
+| count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD_compute/continuous_compute.md)。 |
+| mask[]/mask | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD_compute/mask.md)。 |
+| repeatTime | 输入 | 重复迭代次数。矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体说明请参考[高维切分](../SIMD_compute/high_dim_split.md)。 |
+| repeatParams | 输入 | 控制操作数地址步长的参数。[BinaryRepeatParams](../../aux_data_structures/BinaryRepeatParams.md)类型，包含操作数相邻迭代间相同DataBlock的地址步长，操作数同一迭代内不同DataBlock的地址步长等参数。<br>相邻迭代间的地址步长参数说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)；同一迭代内DataBlock的地址步长参数说明请参考[dataBlockStride](../SIMD_compute/high_dim_split.md)。 |
+
+## 数据类型
+
+<!-- npu="950" id10 -->
+- 针对Ascend 950PR/Ascend 950DT，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t。数据类型int8_t、uint8_t、int64_t、uint64_t仅支持tensor前n个数据计算接口。
+<!-- end id10 -->
+<!-- npu="A3" id11 -->
+- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id11 -->
+<!-- npu="910b" id12 -->
+- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id12 -->
+<!-- npu="310b" id13 -->
+- 针对Atlas 200I/500 A2 推理产品，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id13 -->
+<!-- npu="310p" id14 -->
+- 针对Atlas 推理系列产品AI Core，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id14 -->
+<!-- npu="910" id15 -->
+- 针对Atlas 训练系列产品，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id15 -->
+<!-- npu="x90" id16 -->
+- 针对Kirin X90，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id16 -->
+<!-- npu="9030" id17 -->
+- 针对Kirin 9030，T支持的数据类型为：int16_t、uint16_t。
+<!-- end id17 -->
+
+## 返回值说明<a name="section640mcpsimp"></a>
+
+无
+
+## 约束说明<a name="section633mcpsimp"></a>
+
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md)。
+- 使用整个tensor参与计算接口符号重载时，运算量为目的LocalTensor的总长度。
+
+<!-- npu="A3,910b,310b,310p,910" id18 -->
+- 特别地，针对uint32_t/int32_t类型的Or操作，支持通过ReinterpretCast的方式来实现：使用Local Tensor的ReinterpretCast转换成uint16_t/int16_t后再调用Or进行计算。直接传入uint32_t/int32_t类型的数据，在不同版本型号上表现会有所差异，考虑到算子在各个版本中的兼容性，不建议使用这种直接传入的方式：
+    <!-- npu="A3,910b" id19 -->
+    - 整个tensor参与计算和tensor前n个数据计算接口支持传入uint32_t/int32_t类型，但是tensor前n个数据计算的count需要设置为期望计算个数的2倍才能精度符合预期；tensor高维切分计算接口直接编译报错提示不支持该数据类型。上述说明适用于：
+      <!-- npu="A3" id20 -->
+      - Atlas A3 训练系列产品/Atlas A3 推理系列产品。
+      <!-- end id20 -->
+      <!-- npu="910b" id21 -->
+      - Atlas A2 训练系列产品/Atlas A2 推理系列产品。
+      <!-- end id21 -->
+    <!-- end id19 -->
+    <!-- npu="310b" id22 -->
+    - CPU告警提示不支持该数据类型。上述说明适用于：
+      - Atlas 200I/500 A2 推理产品。
+    <!-- end id22 -->
+    <!-- npu="310p,910" id23 -->
+    - 编译报错提示不支持该数据类型。上述说明适用于：
+      <!-- npu="310p" id24 -->
+      - Atlas 推理系列产品AI Core。
+      <!-- end id24 -->
+      <!-- npu="910" id25 -->
+      - Atlas 训练系列产品。
+      <!-- end id25 -->
+    <!-- end id23 -->
+<!-- end id18 -->
+<!-- npu="A3,910b,950" id26 -->
+- 当参数count或repeatTime取值为0时，该接口的行为如下：
+  <!-- npu="A3,910b" id27 -->
+  - 针对如下型号，该接口不会执行计算操作，不会对目的操作数进行写入，该接口将被视为NOP（空操作）。
+    <!-- npu="A3" id28 -->
+    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    <!-- end id28 -->
+    <!-- npu="910b" id29 -->
+    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    <!-- end id29 -->
+  <!-- end id27 -->
+  <!-- npu="950" id30 -->
+  - 针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
+  <!-- end id30 -->
+<!-- end id26 -->
+
+## 调用示例<a name="section642mcpsimp"></a>
+
+- tensor高维切分计算样例-mask连续模式
+
+    ```cpp
+    uint64_t mask = 128;
+    // repeatTime = 4, 128 elements one repeat, 512 elements total.
+    // dstBlkStride, src0BlkStride, src1BlkStride = 1, no gap between blocks in one repeat.
+    // dstRepStride, src0RepStride, src1RepStride = 8, no gap between repeats.
+    AscendC::Or(dstLocal, src0Local, src1Local, mask, 4, { 1, 1, 1, 8, 8, 8 });
+    ```
+
+- tensor高维切分计算样例-mask逐bit模式
+
+    ```cpp
+    uint64_t mask[2] = { UINT64_MAX, UINT64_MAX };
+    // repeatTime = 4, 128 elements one repeat, 512 elements total.
+    // dstBlkStride, src0BlkStride, src1BlkStride = 1, no gap between blocks in one repeat.
+    // dstRepStride, src0RepStride, src1RepStride = 8, no gap between repeats.
+    AscendC::Or(dstLocal, src0Local, src1Local, mask, 4, { 1, 1, 1, 8, 8, 8 });
+    ```
+
+- tensor前n个数据计算样例
+
+    ```cpp
+    AscendC::Or(dstLocal, src0Local, src1Local, 512);
+    ```
+
+结果示例如下：
+
+```plain
+输入数据src0Local：[1 2 3 ... 512]
+输入数据src1Local：[513 512 511 ... 2]
+输出数据dstLocal：[513 514 511 ... 514]
+```

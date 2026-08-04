@@ -51,7 +51,7 @@ SIMD场景下，通过仿真器进行算子性能仿真时，可对算子任意�
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | apid | 输入 | 取值需与[TRACE_START](TRACE_START.md)参数取值保持一致，否则影响打点结果。 |
-| pipe | 输入 | 取值需与[TRACE_START](TRACE_START.md)的pipe参数取值保持一致，pipe取值请参考[硬件流水类型](../../SIMD-API/基础API/同步控制/核内同步/核内同步能力概述.md#zh-cn_topic_0000002542725361_section1272612276459)，否则影响打点结果。<!-- npu="950" id7 --><br>仅Ascend 950PR/Ascend 950DT生效，其他产品上不生效。<!-- end id7 --> |
+| pipe | 输入 | 取值需与[TRACE_START](TRACE_START.md)的pipe参数取值保持一致，pipe取值请参考[硬件流水类型](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459)，否则影响打点结果。<!-- npu="950" id7 --><br>仅Ascend 950PR/Ascend 950DT生效，其他产品上不生效。<!-- end id7 --> |
 
 ## 返回值说明
 

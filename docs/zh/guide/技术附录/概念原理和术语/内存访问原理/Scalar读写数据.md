@@ -34,7 +34,7 @@ globalTensor1.SetValue(8, val);
 globalTensor1.GetValue(8);
 ```
 
-根据上文的工作机制（如下图所示），多核间访问globalTensor1会出现数据不一致的情况，如果其余核需要获取GM数据的变化，则需要开发者手动调用[DataCacheCleanAndInvalid](../../../../api/SIMD-API/基础API/缓存控制/DataCacheCleanAndInvalid.md)来保证数据的一致性。
+根据上文的工作机制（如下图所示），多核间访问globalTensor1会出现数据不一致的情况，如果其余核需要获取GM数据的变化，则需要开发者手动调用[DataCacheCleanAndInvalid](../../../../api/SIMD-API/basic_api/cache_control/DataCacheCleanAndInvalid.md)来保证数据的一致性。
 
 ![](../../../figures/图1-AI-Core内部并行计算架构抽象示意图-32.png)
 

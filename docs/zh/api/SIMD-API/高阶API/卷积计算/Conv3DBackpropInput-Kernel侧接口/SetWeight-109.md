@@ -38,7 +38,7 @@ __aicore__ inline void SetWeight(const AscendC::GlobalTensor<SrcT>& weight)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| weight | 输入 | Weight矩阵在Global Memory上的首地址。类型为[GlobalTensor](../../../基础API/数据结构/GlobalTensor/GlobalTensor.md)。SrcT表示Weight矩阵的数据类型，当前支持的数据类型为：half、bfloat16_t。 |
+| weight | 输入 | Weight矩阵在Global Memory上的首地址。类型为[GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md)。SrcT表示Weight矩阵的数据类型，当前支持的数据类型为：half、bfloat16_t。 |
 
 ## 返回值说明
 
