@@ -621,3 +621,31 @@ TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2GMNZ2NCHW)
 
     EXPECT_EQ(dst[0], 0);
 }
+
+// L0C(NZ) -> GM(NCDHW) via nz2dn (conv3D output, no quant). Output depth Do is treated as 1, so this
+// is NZ->NCHW with a 5D dst: nSize=C, mSize=D*H*W (=H*W when D==1), dstStride=Stride[1]. Drives the
+// full copy path against the empty cce stub to verify it routes to DataCopyL0C2GMNZ2NCDHW.
+TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2GMNZ2NCDHW)
+{
+    using namespace AscendC::Te;
+
+    constexpr uint32_t D = 1; // output depth treated as 1
+    constexpr uint32_t H = 8;
+    constexpr uint32_t W = 8;
+    constexpr uint32_t C = 16;
+    constexpr uint32_t m = D * H * W; // 64
+    constexpr uint32_t n = C;         // 16
+    __cc__ float src[m * n] = {0};
+    __gm__ float dst[m * n] = {0};
+
+    auto l0cTensor =
+        MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
+    auto gmTensor = MakeTensorAt<Location::GM>(
+        dst, MakeFrameLayout<NCDHWLayoutPtn, LayoutTraitDefault<float>>(
+                 1, static_cast<int>(C), static_cast<int>(D), static_cast<int>(H), static_cast<int>(W)));
+
+    RunCopyCallPaths<CopyL0C2GM, CopyL0C2GMTraitDefault>(gmTensor, l0cTensor);
+    RunCopyWithParamPaths<CopyL0C2GM, CopyL0C2GMTraitDefault>(gmTensor, l0cTensor, FixpipeParams{});
+
+    EXPECT_EQ(dst[0], 0);
+}

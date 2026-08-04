@@ -378,3 +378,50 @@ TEST_F(Tensor_Api_Cube_Copy_3510, CopyL12L0AImg2Col)
 
     EXPECT_EQ(dst[0], 0);
 }
+
+// conv3D img2col (L1 NDC1HWC0 -> L0A NZ). The depth axis D is merged with C1 into the channel
+// dimension (channelSize = D*C1*C0), so the caller passes the whole NDC1HWC0 tensor (no per-depth
+// slicing). Routes to LoadDataL12L0AImg2Col3D. Drives the full path against the empty cce stub to
+// verify it routes/compiles.
+TEST_F(Tensor_Api_Cube_Copy_3510, CopyL12L0AImg2Col3D)
+{
+    using namespace AscendC::Te;
+
+    // src NDC1HWC0: N=1, D=4, C1=2, H=5, W=5, C0=16 -> merged channelSize = D*C1*C0 = 128.
+    constexpr int N = 1;
+    constexpr int D = 4;
+    constexpr int C1 = 2;
+    constexpr int H = 5;
+    constexpr int W = 5;
+    constexpr int C0 = 16;
+
+    // filter 3x3, stride 1, pad 1 -> Ho = Wo = 5, M = 25, K = 3*3*(D*C1*C0) = 3*3*128 = 1152.
+    constexpr int filterH = 3;
+    constexpr int filterW = 3;
+    constexpr int M = 25;
+    constexpr int K = filterH * filterW * D * C1 * C0; // 1152
+    constexpr int mAlign = 32;
+    constexpr int kAlign = 1152;
+
+    __cbuf__ int16_t src[N * D * C1 * H * W * C0] = {0};
+    __ca__ int16_t dst[mAlign * kAlign] = {0};
+
+    auto srcTensor = MakeTensor(
+        MakeMemPtr<Location::L1>(src), MakeFrameLayout<NDC1HWC0LayoutPtn>(N, D, C1, H, W, static_cast<int>(C0)));
+    auto l0aTensor = MakeTensorAt<Location::L0A>(dst, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<int16_t>>(M, K));
+
+    Img2ColParams<int16_t> params;
+    params.mExtension = static_cast<uint16_t>(mAlign);
+    params.kExtension = static_cast<uint16_t>(kAlign);
+    params.filterW = filterW;
+    params.filterH = filterH;
+    params.strideW = 1;
+    params.strideH = 1;
+    params.padList[0] = params.padList[1] = params.padList[2] = params.padList[3] = 1;
+
+    auto atom = MakeCopy(CopyL12L0A{}, CopyL12L0ATraitDefault{});
+    // Whole NDC1HWC0 tensor: D and C1 are merged into the channel axis inside the img2col.
+    Copy(atom.with(params), l0aTensor, srcTensor);
+
+    EXPECT_EQ(dst[0], 0);
+}

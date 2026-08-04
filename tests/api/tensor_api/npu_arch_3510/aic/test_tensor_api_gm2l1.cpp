@@ -2942,3 +2942,55 @@ TEST_F(TensorApiGm2L1, CopyGm2L1NCHW2NC1HWC0)
     EXPECT_EQ(nzPara.loop4DstStride, W);     // dstW
     EXPECT_FALSE(dn2nz.enableSmallC0);
 }
+
+// GM(NCDHW) -> L1(NDC1HWC0): conv3D adds a depth axis D; each depth slice is one NCHW->NC1HWC0
+// (dn2nz). Verifies there is one DMA per depth slice, that the per-slice DMA params match the
+// conv2D NCHW->NC1HWC0 mapping (dnNum=H, nValue=W, dValue=C; loop1SrcStride=Stride[1]=D*H*W here),
+// and that each slice's src/dst pointers advance by the depth stride (src H*W, dst C1*H*W*C0).
+TEST_F(TensorApiGm2L1, CopyGm2L1NCDHW2NDC1HWC0)
+{
+    using T = half;
+    constexpr uint32_t N = 1;
+    constexpr uint32_t D = 3;
+    constexpr uint32_t H = 4;
+    constexpr uint32_t W = 4;
+    constexpr uint32_t C0 = 16;
+    constexpr uint32_t C = 32;
+    constexpr uint32_t C1 = C / C0; // 2
+
+    auto gmNcdhw = MakeFrameLayout<NCDHWLayoutPtn>(
+        static_cast<int32_t>(N), static_cast<int32_t>(C), static_cast<int32_t>(D), static_cast<int32_t>(H),
+        static_cast<int32_t>(W));
+    auto l1Ndc1hwc0 = MakeFrameLayout<NDC1HWC0LayoutPtn>(
+        static_cast<int32_t>(N), static_cast<int32_t>(D), static_cast<int32_t>(C1), static_cast<int32_t>(H),
+        static_cast<int32_t>(W), static_cast<int32_t>(C0));
+    auto gmA = MakeTensor(MakeMemPtr<Location::GM>(reinterpret_cast<T*>(src0Gm)), gmNcdhw);
+    auto l1A = MakeTensor(MakeMemPtr<Location::L1>(reinterpret_cast<T*>(l1ABuf)), l1Ndc1hwc0);
+
+    MakeCopy(CopyGM2L1{}, CopyGM2L1TraitDefault{}).Call(l1A, gmA);
+
+    // One dn2nz DMA (and nz para) per depth slice.
+    ASSERT_EQ(gGm2L1DN2NzCaptures.size(), D);
+    ASSERT_EQ(gGm2L1NzParaCaptures.size(), D);
+
+    for (uint32_t d = 0; d < D; ++d) {
+        const auto& dn2nz = gGm2L1DN2NzCaptures[d];
+        const auto& nzPara = gGm2L1NzParaCaptures[d];
+
+        EXPECT_EQ(nzPara.ndNum, H);                             // dnNum = srcH
+        EXPECT_EQ(dn2nz.nValue, W);                             // nValue = srcW
+        EXPECT_EQ(dn2nz.dValue, C);                             // dValue = srcC
+        EXPECT_EQ(dn2nz.loop1SrcStride, D * H * W * sizeof(T)); // C step: NCDHW Stride[1]=D*H*W
+        EXPECT_EQ(dn2nz.loop4SrcStride, W * sizeof(T));         // H step: NCDHW Stride[3]=W
+        EXPECT_EQ(nzPara.loop2DstStride, 1);
+        EXPECT_EQ(nzPara.loop3DstStride, H * W); // dstH * dstW
+        EXPECT_EQ(nzPara.loop4DstStride, W);     // dstW
+        EXPECT_FALSE(dn2nz.enableSmallC0);
+
+        // Per-slice pointer offsets: src advances by H*W (depth stride), dst by C1*H*W*C0.
+        const T* expectSrc = reinterpret_cast<const T*>(src0Gm) + static_cast<size_t>(d) * (H * W);
+        const T* expectDst = reinterpret_cast<const T*>(l1ABuf) + static_cast<size_t>(d) * (C1 * H * W * C0);
+        EXPECT_EQ(dn2nz.src, static_cast<void*>(const_cast<T*>(expectSrc)));
+        EXPECT_EQ(dn2nz.dst, static_cast<void*>(const_cast<T*>(expectDst)));
+    }
+}

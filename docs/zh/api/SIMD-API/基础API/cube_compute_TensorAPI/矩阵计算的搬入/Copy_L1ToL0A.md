@@ -95,6 +95,8 @@ template <typename T>
 struct Img2ColParams {
     uint16_t mExtension = 0;
     uint16_t kExtension = 0;
+    uint16_t mStartPt = 0;
+    uint16_t kStartPt = 0;
     uint8_t padList[4] = {0, 0, 0, 0};
     uint8_t strideW = 1;
     uint8_t strideH = 1;
@@ -116,6 +118,8 @@ struct Img2ColParams {
 | :--- | :--- | :--- |
 | mExtension | `0` | 目的矩阵M轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最下侧分形时，b8和b16数据类型要求取值为16的倍数，b32数据类型无倍数要求；覆盖最下侧分形时无倍数要求。 |
 | kExtension | `0` | 目的矩阵K轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最右侧分形时，b8、b16和b32数据类型分别要求取值为32、16和8的倍数；覆盖最右侧分形时无倍数要求。 |
+| mStartPt | `0` | 目的矩阵M轴的搬运起点，取值范围[0, 32767]。默认为0。 |
+| kStartPt | `0` | 该指令在目的操作数width维度的起点，对于b32类型，应为8的倍数；对于b16类型，应为16的倍数；对于b8类型，应为32的倍数；对于b4类型，应为64的倍数。取值范围[0, 65535]。默认为0。|
 | padList | `{0, 0, 0, 0}` | padding大小，依次为左、右、上、下，每个值的取值范围为[0, 255]。 |
 | strideW | `1` | 卷积核在源特征图W轴的滑动步长，取值范围为[0, 63]。 |
 | strideH | `1` | 卷积核在源特征图H轴的滑动步长，取值范围为[0, 63]。 |
@@ -283,6 +287,8 @@ __aicore__ inline void CopyImg2ColL1ToL0A()
     Img2ColParams<half> params;
     params.mExtension = M;
     params.kExtension = K;
+    prams.mStartPt = 0;
+    prams.kStartPt = 0;
     params.filterW = 3;
     params.filterH = 3;
     params.strideW = 1;

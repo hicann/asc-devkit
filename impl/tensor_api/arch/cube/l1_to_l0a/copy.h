@@ -55,8 +55,9 @@ public:
         using SrcLayout = typename U::layoutType;
         using DstPattern = GetLayoutPattern<DstLayout>;
         using SrcPattern = GetLayoutPattern<SrcLayout>;
-        if constexpr (Std::is_same_v<SrcPattern, NC1HWC0LayoutPtn>) {
-            // Img2Col: NZ<-NC1HWC0 for conv feature maps; params drives filter/stride/pad.
+        if constexpr (Std::is_same_v<SrcPattern, NC1HWC0LayoutPtn> || Std::is_same_v<SrcPattern, NDC1HWC0LayoutPtn>) {
+            // conv2D (NC1HWC0) and conv3D (NDC1HWC0) both take the img2col path; routing picks the
+            // 2D or 3D implementation by SrcPattern.
             using CopyL12L0AImpl =
                 typename CopyL12L0ARouting<CURRENT_ARCH_VERSION, DstPattern, SrcPattern, CopyMode::NORMAL>::type;
             CopyL12L0AImpl::template Run<trait, T, U, PadT>(dst, src, params);

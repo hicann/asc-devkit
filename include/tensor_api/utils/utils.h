@@ -83,6 +83,8 @@ template <typename T>
 struct Img2ColParams {
     uint16_t mExtension = 0;
     uint16_t kExtension = 0;
+    uint16_t mStartPt = 0;
+    uint16_t kStartPt = 0;
     uint8_t padList[4] = {0, 0, 0, 0};
     uint8_t strideW = 1;
     uint8_t strideH = 1;
