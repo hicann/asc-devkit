@@ -39,23 +39,23 @@ TEST_F(TestVFDebug, AscVFDebugTransferUb_Callable)
     SUCCEED();
 }
 
-TEST_F(TestVFDebug, AscVFCallImpl_CallsTargetFunction)
+TEST_F(TestVFDebug, asc_vf_call_impl_CallsTargetFunction)
 {
-    // Verify AscVFCallImpl (defined in impl/basic_api/kernel_utils.h) invokes the target
+    // Verify asc_vf_call_impl invokes the target
     // function after AscVFDebugInitUb and before AscVFDebugTransferUb.
-    AscVFCallImpl<TestTargetFunc>(42);
+    asc::details::asc_vf_call_impl<TestTargetFunc>(42);
     EXPECT_EQ(g_testFlag, 42);
 }
 
-TEST_F(TestVFDebug, AscVFCallImpl_InitAndTransferCalled)
+TEST_F(TestVFDebug, asc_vf_call_impl_InitAndTransferCalled)
 {
     // Verify both AscVFDebugInitUb and AscVFDebugTransferUb (defined in
-    // impl/utils/debug/asc_debug_utils.h) are callable within AscVFCallImpl.
+    // impl/utils/debug/asc_debug_utils.h) are callable within asc_vf_call_impl.
     g_testFlag = 0;
-    AscVFCallImpl<TestTargetFunc>(100);
+    asc::details::asc_vf_call_impl<TestTargetFunc>(100);
     EXPECT_EQ(g_testFlag, 100);
 
     g_testFlag = 0;
-    AscVFCallImpl<TestTargetFunc>(-1);
+    asc::details::asc_vf_call_impl<TestTargetFunc>(-1);
     EXPECT_EQ(g_testFlag, -1);
 }

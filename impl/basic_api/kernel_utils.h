@@ -36,6 +36,7 @@
 #include "../utils/debug/asc_aicore_printf_impl.h"
 #endif
 
+#include "../utils/base/helpers_impl.h"
 #include "../../include/basic_api/kernel_struct_data_copy.h"
 #include "kernel_scalar_convert.h"
 #include "kernel_utils_base.h"
@@ -276,28 +277,6 @@ enum class TimeStampId : uint32_t {
 
     TIME_STAMP_MAX = 0xffff,
 };
-
-template <auto funcPtr, typename DebugTag = Internal::SimdVfDebugTag, typename... Args>
-__aicore__ static inline void AscVFCallImpl(Args&&... args)
-{
-    if constexpr (Internal::SimdVfDebugTraits<DebugTag>::enabled) {
-        AscVFDebugInitUb();
-    }
-
-    funcPtr(args...);
-
-    if constexpr (Internal::SimdVfDebugTraits<DebugTag>::enabled) {
-        const bool hasOverflow = AscVFDebugTransferUb();
-#ifdef ASCENDC_INTERNAL_SIMD_VF_OVERFLOW_WARNING_ENABLED
-        if (hasOverflow) {
-            __asc_aicore::printf_impl(
-                "[WARNING]: SIMD VF debug buffer overflow (max limit is 2KB), output was truncated.\n");
-        }
-#else
-        (void)hasOverflow;
-#endif
-    }
-}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_UTILS_H
 #ifdef ASCENDC_INTERNAL_SIMD_VF_OVERFLOW_WARNING_ENABLED

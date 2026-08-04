@@ -35,6 +35,7 @@
 #include "../../impl/basic_api/utils/kernel_utils_macros.h"
 #include "kernel_operator_swap_mem_intf.h"
 #include "kernel_operator_sys_var_intf.h"
+#include "../utils/base/helpers.h"
 
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
 #include <cstdint>
@@ -49,14 +50,6 @@ class TPipe;
 template <typename T>
 class GlobalTensor;
 } // namespace AscendC
-
-template <auto funcPtr, typename... Args>
-__aicore__ inline void asc_vf_call(Args&&... args)
-{
-    if ASCEND_IS_AIV {
-        AscendC::AscVFCallImpl<funcPtr, AscendC::Internal::SimdVfDebugTag>(args...);
-    }
-}
 
 #if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
 __BLOCK_LOCAL__ __inline__ uint32_t g_super_kernel_early_start_config;

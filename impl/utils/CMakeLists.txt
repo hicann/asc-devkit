@@ -10,7 +10,7 @@
 
 # copy std to highlevel_api impl
 install(
-  DIRECTORY std debug
+  DIRECTORY std debug base
   DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/utils
   ${INSTALL_OPTIONAL} COMPONENT asc-devkit FILES_MATCHING
   PATTERN "*.h"
