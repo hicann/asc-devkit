@@ -45,7 +45,7 @@
                 -   [SetL2CacheHint](SIMD-API/basic_api/data_structures/GlobalTensor/SetL2CacheHint.md)
                 -   [ReinterpretCast](SIMD-API/basic_api/data_structures/GlobalTensor/ReinterpretCast.md)
                     
-        -   [数据结构(TensorAPI)](SIMD-API/basic_api/data_structure_TensorAPI/data_structure_TensorAPI.md)
+        -   [数据结构(TensorAPI，试验特性)](SIMD-API/basic_api/data_structure_TensorAPI/data_structure_TensorAPI.md)
             -   [Layout数据结构](SIMD-API/basic_api/data_structure_TensorAPI/layout_structure/layout_structure.md)
                 -   [Capacity](SIMD-API/basic_api/data_structure_TensorAPI/layout_structure/Capacity.md)
                 -   [Coord](SIMD-API/basic_api/data_structure_TensorAPI/layout_structure/Coord.md)
@@ -247,7 +247,7 @@
                 -   [SetFixPipeClipRelu](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixPipeClipRelu.md)
                 -   [SetFixPipeAddr](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixPipeAddr.md)
                 
-        -   [矩阵计算（Tensor API）](SIMD-API/basic_api/cube_compute_TensorAPI/cube_compute_TensorAPI.md)
+        -   [矩阵计算（Tensor API，试验特性）](SIMD-API/basic_api/cube_compute_TensorAPI/cube_compute_TensorAPI.md)
             -   [概述](SIMD-API/basic_api/cube_compute_TensorAPI/overview/overview.md)
             -   [矩阵计算的搬入](SIMD-API/basic_api/cube_compute_TensorAPI/cube_compute_load/cube_compute_load.md)
                 -   [总体说明](SIMD-API/basic_api/cube_compute_TensorAPI/cube_compute_load/overall_description.md)

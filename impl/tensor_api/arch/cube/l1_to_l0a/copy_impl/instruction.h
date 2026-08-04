@@ -93,7 +93,7 @@ public:
         config.rpt_stride = 0;
         config.rpt_time = 1;
         config.rpt_mode = 0;
-        config.config |= static_cast<uint64_t>(dstStride) << 32;
+        config.config |= static_cast<uint64_t>(dstStride) << DST_STRIDE_BIT_OFFSET;
         asc_set_l13d_rpt(config);
     }
 
@@ -104,6 +104,8 @@ public:
     }
 
 private:
+    static constexpr uint32_t DST_STRIDE_BIT_OFFSET = 32;
+
     template <typename T>
     __aicore__ inline static void LoadCbufToCaImg2ColImpl(
         __ca__ T* dst, __cbuf__ T* src, uint16_t kExtension, uint16_t mExtension, uint16_t kStartPt, uint16_t mStartPt,
