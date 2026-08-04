@@ -106,8 +106,8 @@ vector_bfloat16_t dst;
 vector_float src;
 vector_bool mask;
 mask = asc_create_mask_b32(PAT_ALL);
-asc_float2bfloat16_rd(dst, src, mask);    // FLOOR舍入模式，不饱和模式，将src转换成vector_bfloat16_t类型并写入dst上半部分
-asc_float2bfloat16_rd_sat(dst, src, mask);    // FLOOR舍入模式，饱和模式，将src转换成vector_bfloat16_t类型并写入dst上半部分
-asc_float2bfloat16_rd_v2(dst, src, mask);    // FLOOR舍入模式，不饱和模式，将src转换成vector_bfloat16_t类型并写入dst下半部分
-asc_float2bfloat16_rd_sat_v2(dst, src, mask);    // FLOOR舍入模式，饱和模式，将src转换成vector_bfloat16_t类型并写入dst下半部分
+asc_float2bfloat16_rd(dst, src, mask);    // FLOOR舍入模式，不饱和模式，将src转换成vector_bfloat16_t类型并写入dst偶数索引位置
+asc_float2bfloat16_rd_sat(dst, src, mask);    // FLOOR舍入模式，饱和模式，将src转换成vector_bfloat16_t类型并写入dst偶数索引位置
+asc_float2bfloat16_rd_v2(dst, src, mask);    // FLOOR舍入模式，不饱和模式，将src转换成vector_bfloat16_t类型并写入dst奇数索引位置
+asc_float2bfloat16_rd_sat_v2(dst, src, mask);    // FLOOR舍入模式，饱和模式，将src转换成vector_bfloat16_t类型并写入dst奇数索引位置
 ```

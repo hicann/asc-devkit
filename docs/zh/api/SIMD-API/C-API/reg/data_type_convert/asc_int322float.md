@@ -63,10 +63,6 @@ __simd_callee__ inline void asc_int322float_rz(vector_float& dst, vector_int32_t
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
 - 当int32_t的值超出float可精确表示的整数范围（绝对值大于2^24）时，按函数后缀指定的舍入模式进行舍入。
@@ -75,9 +71,16 @@ PIPE_V
 ## 调用示例
 
 ```cpp
-vector_int32_t src;
-vector_float dst;
-vector_bool mask = asc_create_mask_b32(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_int322float_rn(dst, src, mask);
+__simd_vf__ inline void int322float_vf(__ubuf__ int32_t* src_addr, __ubuf__ float* dst_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_int32_t src;
+    vector_float dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b32(count);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_int322float_rn(dst, src, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+    }
+}
 ```

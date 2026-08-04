@@ -66,6 +66,6 @@ vector_uint16_t dst;
 vector_uint8_t src;
 vector_bool mask;
 mask = asc_create_mask_b8(PAT_ALL);
-asc_uint82uint16(dst, src, mask);    // 将src的上半部分转换成vector_uint16_t类型并写入dst
-asc_uint82uint16_v2(dst, src, mask);    // 将src的下半部分转换成vector_uint16_t类型并写入dst
+asc_uint82uint16(dst, src, mask);    // 取src的偶数索引元素进行转换并写入dst
+asc_uint82uint16_v2(dst, src, mask);    // 取src的奇数索引元素进行转换并写入dst
 ```

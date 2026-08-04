@@ -102,7 +102,169 @@ PIPE_S
 ## 调用示例
 
 ```cpp
-uint8_t mutex_id = 1;
-asc_lock(PIPE_S, mutex_id);
-asc_unlock(PIPE_S, mutex_id);
+__simd_vf__ inline void add_vf(__ubuf__ half* src0_addr, __ubuf__ half* src1_addr, __ubuf__ half* dst_addr,
+                               uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half src0, src1, dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+        asc_add(dst, src0, src1, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+    }
+}
+
+__aicore__ inline void add_kernel(__gm__ half* x_gm, __gm__ half* y_gm, __gm__ half* z_gm)
+{
+    __ubuf__ half x_local[256];
+    __ubuf__ half y_local[256];
+    __ubuf__ half z_local[256];
+    uint8_t mutex_id = 1;
+
+    // 1. PIPE_MTE2流水线：数据从GM搬入UB
+    asc_lock(PIPE_MTE2, mutex_id);
+    asc_copy_gm2ub_align(x_local, x_gm, 256 * sizeof(half));
+    asc_copy_gm2ub_align(y_local, y_gm, 256 * sizeof(half));
+    // 数据搬入完成后释放mutex_id，使后续相同mutex_id的asc_lock不再阻塞
+    asc_unlock(PIPE_MTE2, mutex_id);
+
+    // 2. PIPE_V流水线：矢量计算
+    // BLOCK模式下（默认），asc_lock阻塞PIPE_V执行，直到前序所有相同mutex_id的asc_unlock执行完成
+    asc_lock(PIPE_V, mutex_id);
+    uint32_t count = 256;
+    add_vf(x_local, y_local, z_local, count, 128, 2);
+    // 计算完成后释放mutex_id，使后续PIPE_MTE3的asc_lock不再阻塞
+    asc_unlock(PIPE_V, mutex_id);
+
+    // 3. PIPE_MTE3流水线：数据从UB搬出至GM
+    // asc_lock阻塞PIPE_MTE3执行，直到PIPE_V的asc_unlock执行完成
+    asc_lock(PIPE_MTE3, mutex_id);
+    asc_copy_ub2gm_align(z_gm, z_local, 256 * sizeof(half));
+    asc_unlock(PIPE_MTE3, mutex_id);
+}
 ```
+
+上述示例的流水线时序如下，三条流水线严格串行执行：
+
+```
+MTE2: |==搬入==|
+V:              |==计算==|
+MTE3:                   |==搬出==|
+```
+
+### 多重循环场景：双buffer流水线优化
+
+当多轮循环中需要相邻轮次的MTE2（搬入）与MTE3（搬出）并行执行时，可使用**两个mutex_id交替**配合**双buffer**，实现软件流水线。同一mutex_id仅在间隔一轮（buffer复用）时才产生等待，从而重叠相邻轮次的搬运与计算。
+
+#### 优化前：单mutex_id串行（所有tile共用一个mutex_id）
+
+所有tile使用相同mutex_id，下一轮的`asc_lock(PIPE_MTE2)`必须等待上一轮`asc_unlock(PIPE_MTE3)`完成，三阶段严格串行。
+
+```cpp
+__simd_vf__ inline void add_vf(__ubuf__ half* src0_addr, __ubuf__ half* src1_addr, __ubuf__ half* dst_addr,
+                               uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half src0, src1, dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+        asc_add(dst, src0, src1, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+    }
+}
+
+__aicore__ inline void add_kernel_serial(__gm__ half* x_gm, __gm__ half* y_gm, __gm__ half* z_gm)
+{
+    __ubuf__ half x_local[256];
+    __ubuf__ half y_local[256];
+    __ubuf__ half z_local[256];
+    uint8_t mutex_id = 0;
+
+    for (uint32_t i = 0; i < TILE_NUM; i++) {
+        uint32_t offset = i * 256;
+
+        // 下一轮MTE2必须等待上一轮MTE3完成（相同mutex_id）
+        asc_lock(PIPE_MTE2, mutex_id);
+        asc_copy_gm2ub_align(x_local, x_gm + offset, 256 * sizeof(half));
+        asc_copy_gm2ub_align(y_local, y_gm + offset, 256 * sizeof(half));
+        // 释放mutex_id，使本轮PIPE_V的asc_lock不再阻塞
+        asc_unlock(PIPE_MTE2, mutex_id);
+
+        asc_lock(PIPE_V, mutex_id);
+        uint32_t count = 256;
+        add_vf(x_local, y_local, z_local, count, 128, 2);
+        // 释放mutex_id，使本轮PIPE_MTE3的asc_lock不再阻塞
+        asc_unlock(PIPE_V, mutex_id);
+
+        asc_lock(PIPE_MTE3, mutex_id);
+        asc_copy_ub2gm_align(z_gm + offset, z_local, 256 * sizeof(half));
+        // 释放mutex_id，使下一轮PIPE_MTE2的asc_lock不再阻塞
+        asc_unlock(PIPE_MTE3, mutex_id);
+    }
+}
+```
+
+优化前的流水线时序，各轮次之间严格串行：
+
+```
+MTE2: |==id0==|                |==id0==|                |==id0==|                |==id0==|
+V:          |==id0==|                |==id0==|                |==id0==|                |==id0==|
+MTE3:            |==id0==|                |==id0==|                |==id0==|                |==id0==|
+```
+
+#### 优化后：双mutex_id交替 + 双buffer
+
+使用两个mutex_id交替配合双buffer，相邻轮次的MTE2与MTE3可并行执行。
+
+```cpp
+__aicore__ inline void add_kernel_pingpong(__gm__ half* x_gm, __gm__ half* y_gm, __gm__ half* z_gm)
+{
+    // 双buffer：buf0和buf1交替使用
+    __ubuf__ half x_buf[2][256];
+    __ubuf__ half y_buf[2][256];
+    __ubuf__ half z_buf[2][256];
+
+    for (uint32_t i = 0; i < TILE_NUM; i++) {
+        // 交替使用mutex_id 0和1
+        uint8_t mutex_id = i % 2;
+        uint32_t offset = i * 256;
+
+        // 1. PIPE_MTE2流水线：数据从GM搬入UB buf[mutex_id]
+        // 当i>=2时，asc_lock阻塞，等待i-2轮的PIPE_MTE3 asc_unlock完成（buffer复用约束）
+        asc_lock(PIPE_MTE2, mutex_id);
+        asc_copy_gm2ub_align(x_buf[mutex_id], x_gm + offset, 256 * sizeof(half));
+        asc_copy_gm2ub_align(y_buf[mutex_id], y_gm + offset, 256 * sizeof(half));
+        // 释放mutex_id，使本轮PIPE_V的asc_lock不再阻塞
+        asc_unlock(PIPE_MTE2, mutex_id);
+
+        // 2. PIPE_V流水线：矢量计算
+        // asc_lock阻塞，等待本轮PIPE_MTE2的asc_unlock完成
+        asc_lock(PIPE_V, mutex_id);
+        uint32_t count = 256;
+        add_vf(x_buf[mutex_id], y_buf[mutex_id], z_buf[mutex_id], count, 128, 2);
+        // 释放mutex_id，使本轮PIPE_MTE3的asc_lock不再阻塞
+        asc_unlock(PIPE_V, mutex_id);
+
+        // 3. PIPE_MTE3流水线：数据从UB搬出至GM
+        // asc_lock阻塞，等待本轮PIPE_V的asc_unlock完成
+        // 本轮MTE3可与下一轮（mutex_id不同）的MTE2并行执行
+        // 释放mutex_id后，下一轮使用不同mutex_id的asc_lock不会阻塞
+        asc_lock(PIPE_MTE3, mutex_id);
+        asc_copy_ub2gm_align(z_gm + offset, z_buf[mutex_id], 256 * sizeof(half));
+        asc_unlock(PIPE_MTE3, mutex_id);
+    }
+}
+```
+
+优化后的流水线时序，相邻轮次的MTE2与MTE3并行执行：
+
+```
+MTE2: |==id0==|        |==id1==|        |==id0==|        |==id1==|
+V:          |==id0==|        |==id1==|        |==id0==|        |==id1==|
+MTE3:            |==id0==|        |==id1==|        |==id0==|        |==id1==|
+```
+

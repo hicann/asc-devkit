@@ -26,11 +26,13 @@
 
 ## 功能说明
 
-将vector_int32_t类型的源操作数以256B为单位分为两部分，读取其中一部分元素，将其转换成vector_int64_t类型并写入目的操作数。
+将vector_int32_t类型的源操作数转换为vector_int64_t类型，并写入目的操作数。
 
-- asc_int322int64：将源操作数的上半部分写入目的操作数。
+由于源操作数与目的操作数类型位宽比为1:2，读取数据时需要将一个VL大小的数据分为两部分，根据不同接口选择输入数据索引为奇数的位置或偶数的位置。
 
-- asc_int322int64_v2：将源操作数的下半部分写入目的操作数。
+- asc_int322int64：取src的偶数索引元素（索引0, 2, 4, ...）进行转换。
+
+- asc_int322int64_v2：取src的奇数索引元素（索引1, 3, 5, ...）进行转换。
 
 
 $$
@@ -40,9 +42,9 @@ $$
 ## 函数原型
 
 ```cpp
-// 数据写入索引为偶数的位置
+// 取src的偶数索引元素（索引0, 2, 4, ...）进行转换
 __simd_callee__ inline void asc_int322int64(vector_int64_t& dst, vector_int32_t src, vector_bool mask)
-// 数据写入索引为奇数的位置
+// 取src的奇数索引元素（索引1, 3, 5, ...）进行转换
 __simd_callee__ inline void asc_int322int64_v2(vector_int64_t& dst, vector_int32_t src, vector_bool mask)
 ```
 
@@ -61,10 +63,6 @@ __simd_callee__ inline void asc_int322int64_v2(vector_int64_t& dst, vector_int32
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
 mask未筛选的元素在输出中置零。
@@ -72,10 +70,16 @@ mask未筛选的元素在输出中置零。
 ## 调用示例
 
 ```cpp
-vector_int64_t dst;
-vector_int32_t src;
-vector_bool mask;
-mask = asc_create_mask_b32(PAT_ALL);
-asc_int322int64(dst, src, mask);    // 将src的上半部分转换成vector_int64_t类型并写入dst
-asc_int322int64_v2(dst, src, mask);    // 将src的下半部分转换成vector_int64_t类型并写入dst
+__simd_vf__ inline void int322int64_vf(__ubuf__ int32_t* src_addr, __ubuf__ int64_t* dst_addr, uint32_t count, uint16_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_int32_t src;
+    vector_int64_t dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b32(count);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_int322int64(dst, src, mask);
+        asc_storealign_pack_postupdate(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

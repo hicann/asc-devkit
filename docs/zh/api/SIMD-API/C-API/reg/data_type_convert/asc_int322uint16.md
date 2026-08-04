@@ -26,19 +26,19 @@
 
 ## 功能说明
 
-将vector_int32_t类型转换成vector_uint16_t类型，写入目的操作数的上半部分或下半部分，并支持不同的饱和模式。
+将vector_int32_t类型转换成vector_uint16_t类型，并支持不同的饱和模式。
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../data_type_convert/rounding_mode.md)。
 
-以asc_int322uint16接口为例：
+由于源操作数与目的操作数类型位宽比为2:1，写入数据时需要将一个VL大小的数据分为两部分，根据不同接口选择数据写入索引为奇数的位置或偶数的位置。
 
-- asc_int322uint16：不饱和模式，写入目的操作数的上半部分。
+- asc_int322uint16：不饱和模式，数据写入索引为偶数的位置。
 
-- asc_int322uint16_sat：饱和模式，写入目的操作数的上半部分。
+- asc_int322uint16_sat：饱和模式，数据写入索引为偶数的位置。
 
-- asc_int322uint16_v2：不饱和模式，写入目的操作数的下半部分。
+- asc_int322uint16_v2：不饱和模式，数据写入索引为奇数的位置。
 
-- asc_int322uint16_sat_v2：饱和模式，写入目的操作数的下半部分。
+- asc_int322uint16_sat_v2：饱和模式，数据写入索引为奇数的位置。
 
 ## 函数原型
 
@@ -68,10 +68,6 @@ __simd_callee__ inline void asc_int322uint16_sat_v2(vector_uint16_t& dst, vector
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
 mask未筛选的元素在输出中置零。
@@ -79,12 +75,16 @@ mask未筛选的元素在输出中置零。
 ## 调用示例
 
 ```cpp
-vector_uint16_t dst;
-vector_int32_t src;
-vector_bool mask;
-mask = asc_create_mask_b32(PAT_ALL);
-asc_int322uint16(dst, src, mask);    // 不饱和模式，将src转换成vector_uint16_t类型并写入dst的上半部分
-asc_int322uint16_sat(dst, src, mask);    // 饱和模式，将src转换成vector_uint16_t类型并写入dst的上半部分
-asc_int322uint16_v2(dst, src, mask);    // 不饱和模式，将src转换成vector_uint16_t类型并写入dst的下半部分
-asc_int322uint16_sat_v2(dst, src, mask);    // 饱和模式，将src转换成vector_uint16_t类型并写入dst的下半部分
+__simd_vf__ inline void int322uint16_vf(__ubuf__ int32_t* src_addr, __ubuf__ uint16_t* dst_addr, uint32_t count, uint16_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_int32_t src;
+    vector_uint16_t dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b32(count);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_int322uint16(dst, src, mask);
+        asc_storealign_pack_postupdate(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

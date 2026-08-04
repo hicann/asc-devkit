@@ -98,10 +98,4 @@ PIPE_S
 
 ## 调用示例
 
-```cpp
-//buffer标号为1
-uint8_t mutex_id = 1;
-//等待PIPE_S中所有前置指令完成后释放标号为1的Mutex
-asc_lock(PIPE_S, mutex_id);
-asc_unlock(PIPE_S, mutex_id); 
-```
+asc_unlock与asc_lock必须成对使用，调用示例请参见[asc_lock的调用示例](asc_lock.md#调用示例)。

@@ -30,7 +30,15 @@
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../data_type_convert/rounding_mode.md)。
 
-由于源操作数与目的操作数类型位宽比为2:1，写入数据时需要将一个VL大小的数据分为两部分，根据不同接口选取索引0或者索引1。
+由于源操作数与目的操作数类型位宽比为2:1，写入数据时需要将一个VL大小的数据分为两部分，根据不同接口选择数据写入索引为奇数的位置或偶数的位置。
+
+- asc_int322int16：非饱和模式，数据写入索引为偶数的位置。
+
+- asc_int322int16_sat：饱和模式，数据写入索引为偶数的位置。
+
+- asc_int322int16_v2：非饱和模式，数据写入索引为奇数的位置。
+
+- asc_int322int16_sat_v2：饱和模式，数据写入索引为奇数的位置。
 
 ## 函数原型
 
@@ -60,10 +68,6 @@ __simd_callee__ inline void asc_int322int16_sat_v2(vector_int16_t& dst, vector_i
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
 mask未筛选的元素在输出中置零。
@@ -71,9 +75,16 @@ mask未筛选的元素在输出中置零。
 ## 调用示例
 
 ```cpp
-vector_int32_t src;
-vector_int16_t dst;
-vector_bool mask = asc_create_mask_b32(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_int322int16(dst, src, mask);
+__simd_vf__ inline void int322int16_vf(__ubuf__ int32_t* src_addr, __ubuf__ int16_t* dst_addr, uint32_t count, uint16_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+{
+    vector_int32_t src;
+    vector_int16_t dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b32(count);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_int322int16(dst, src, mask);
+        asc_storealign_pack_postupdate(dst_addr, dst, one_block_size, mask);
+    }
+}
 ```

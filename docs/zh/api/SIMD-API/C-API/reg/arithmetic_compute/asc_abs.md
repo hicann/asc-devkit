@@ -56,10 +56,6 @@ $$
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
 mask未筛选的元素在输出中置零。
@@ -67,9 +63,15 @@ mask未筛选的元素在输出中置零。
 ## 调用示例
 
 ```cpp
-vector_int8_t dst;
-vector_int8_t src;
-vector_bool mask = asc_create_mask_b8(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
-asc_abs(dst, src, mask);
+__simd_vf__ inline void abs_vf(__ubuf__ half* src_addr, __ubuf__ half* dst_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+{
+    vector_half src, dst;
+    vector_bool mask;
+    for (uint16_t i = 0; i < repeat_time; ++i) {
+        mask = asc_update_mask_b16(count);
+        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_abs(dst, src, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+    }
+}
 ```
