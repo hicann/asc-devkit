@@ -59,7 +59,7 @@ Reg矢量执行单元、DMA单元和Aux Scalar虽属于不同的硬件执行单�
 
 **图1** SIMD Reg矢量执行关系
 
-<img src="../../../../figures/Reg执行单元.png" title="Reg执行单元" style="zoom:80%;" />
+<img src="../../../../figures/Reg执行单元.png" title="Reg执行单元" style="zoom:80%;"/>
 
 ### 内存层级
 
@@ -115,7 +115,7 @@ Reg矢量计算编程模型中`Load` -> `Compute`  ->`Store` 的执行过程，�
 
 **图4** 函数标签调用关系
 
-<img src="../../../../figures/reg_calculation_call_hierarchy.png" title="调用层级" style="zoom: 28%;" />
+<img src="../../../../figures/reg_calculation_call_hierarchy.png" title="调用层级" style="zoom: 28%;"/>
 
 一个完整的实现由外层`__aicore__`逻辑和内层`__simd_vf__`逻辑两部分组成：
 
