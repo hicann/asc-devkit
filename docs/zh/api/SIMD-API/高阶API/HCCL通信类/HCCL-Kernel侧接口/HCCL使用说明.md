@@ -2,7 +2,7 @@
 
 Ascend C提供一组HCCL通信类高阶API，方便算子Kernel开发用户在AI Core侧灵活管理通算融合算子中计算与通信任务的执行顺序。
 
-HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语接口（以下统称为Prepare接口），对标[集合通信C++接口](https://gitcode.com/cann/hccl/blob/master/docs/zh/api_ref/comm_op_interface/README.md)，当前支持[AllReduce](AllReduce.md)、[AllGather](AllGather.md)、[ReduceScatter](ReduceScatter.md)、[AlltoAll](AlltoAll.md)、[AlltoAllV](AlltoAllV.md)、[AlltoAllvWrite](AlltoAllvWrite.md)、[BatchWrite](BatchWrite.md)接口。本章的所有接口运行在AI Core上，且不执行通信任务，而是由用户调用Prepare接口将对应类型的通信任务信息发送给AI CPU或CCU服务端，并在合适的时机通过[Commit](Commit.md)接口通知AI CPU或CCU上的服务端执行对应的通信任务。<!-- npu="950" id1 -->注意，当前Ascend 950PR/Ascend 950DT上仅支持CCU服务端。<!-- end id1 -->
+HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语接口（以下统称为Prepare接口），对标[集合通信C++接口](https://gitcode.com/cann/hccl/blob/9.2.0-beta.1/docs/zh/api_ref/comm_op_interface/README.md)，当前支持[AllReduce](AllReduce.md)、[AllGather](AllGather.md)、[ReduceScatter](ReduceScatter.md)、[AlltoAll](AlltoAll.md)、[AlltoAllV](AlltoAllV.md)、[AlltoAllvWrite](AlltoAllvWrite.md)、[BatchWrite](BatchWrite.md)接口。本章的所有接口运行在AI Core上，且不执行通信任务，而是由用户调用Prepare接口将对应类型的通信任务信息发送给AI CPU或CCU服务端，并在合适的时机通过[Commit](Commit.md)接口通知AI CPU或CCU上的服务端执行对应的通信任务。<!-- npu="950" id1 -->注意，当前Ascend 950PR/Ascend 950DT上仅支持CCU服务端。<!-- end id1 -->
 
 所谓合适的时机，取决于用户编排的是先通信后计算的任务，还是先计算后通信的任务。对于这两种场景，简述如下：
 

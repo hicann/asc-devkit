@@ -4,7 +4,7 @@
 
 通过毕昇编译器编译生成可执行程序后，使用msOpProf工具采集Ascend C算子在AI处理器上执行的性能数据，进行性能精细调优。
 
-[msOpProf工具](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)包含msopprof和msopprof simulator两种使用方式，协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。两种使用方式的详细说明请参考表1。
+[msOpProf工具](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)包含msopprof和msopprof simulator两种使用方式，协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。两种使用方式的详细说明请参考表1。
 
 **表1 msopprof和msopprof simulator功能说明表**
 
@@ -230,4 +230,4 @@
 | visualize_data.bin | 仿真流水图和仿真热点函数等信息可视化呈现文件。
 |trace.json | 仿真指令流水图文件，包括每个核的子文件以及全部核的汇总文件，可参考指令流水图和内存通路吞吐率波形图。 |
 
-更多详细的信息可以参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)。
+更多详细的信息可以参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)。

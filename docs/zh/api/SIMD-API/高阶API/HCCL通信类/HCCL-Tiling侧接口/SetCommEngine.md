@@ -16,7 +16,7 @@ uint32_t SetCommEngine(uint8_t commEngine)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| commEngine | 输入 | 通信引擎。uint8_t类型，该参数的取值范围请参考：[HcclCommConfig](https://gitcode.com/cann/hcomm/blob/master/docs/zh/api_ref/comm_mgr_c/data_type_definition/HcclCommConfig.md#参数说明)中的hcclOpExpansionMode参数的取值说明。 |
+| commEngine | 输入 | 通信引擎。uint8_t类型，该参数的取值范围请参考：[HcclCommConfig](https://gitcode.com/cann/hcomm/blob/9.2.0-beta.1/docs/zh/api_ref/comm_mgr_c/data_type_definition/HcclCommConfig.md#参数说明)中的hcclOpExpansionMode参数的取值说明。 |
 
 ## 返回值说明
 

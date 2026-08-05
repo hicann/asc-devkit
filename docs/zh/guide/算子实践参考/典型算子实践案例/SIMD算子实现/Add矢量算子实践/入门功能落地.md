@@ -159,6 +159,6 @@ msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulat
 cat ./OPPROF_*/PipeUtilization.csv
 ```
 
-请参考 [《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)算子调优（msOpProf）中的内容。
+请参考 [《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)算子调优（msOpProf）中的内容。
 
 完整性能调优过程请参见[Add性能调优样例](../../../../../../../examples/01_simd_cpp_api/05_best_practices/00_vector_compute/add_high_performance)。
