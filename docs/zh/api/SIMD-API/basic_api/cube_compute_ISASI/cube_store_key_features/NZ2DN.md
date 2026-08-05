@@ -8,18 +8,18 @@ NZ2DN转化过程可以参考以下伪代码：
 
 ```cpp
 for (int h = 0; h < dnNum; h++) {
-    src_tmp3_addr = src + h ∗ 16 ∗ sizeof(src_element) ∗ srcNzMatrixStride;
-    dst_tmp3_addr = dst + h ∗ sizeof(dst_element) ∗ dstDnMatrixStride;
+    src_tmp3_addr = src + h * 16 * sizeof(src_element) * srcNzMatrixStride;
+    dst_tmp3_addr = dst + h * sizeof(dst_element) * dstDnMatrixStride;
     for (int i = 0; i < ceil(nSize / 16); i++) {
-        src_tmp2_addr = src_tmp3_addr + i ∗ sizeof(src_element) ∗ 16 ∗ srcStride;
-        dst_tmp2_addr = dst_tmp3_addr + i ∗ sizeof(dst_element) ∗ 16 ∗ dstStride;
+        src_tmp2_addr = src_tmp3_addr + i * sizeof(src_element) * 16 * srcStride;
+        dst_tmp2_addr = dst_tmp3_addr + i * sizeof(dst_element) * 16 * dstStride;
         for (int j = 0; j < 16; j++) {
-            if (i ∗ 16 + j < nSize) {
-                src_block_addr = src_tmp2_addr + j ∗ sizeof(src_element);
-                dst_block_addr = dst_tmp2_addr + j ∗ sizeof(dst_element) ∗ dstStride;
+            if (i * 16 + j < nSize) {
+                src_block_addr = src_tmp2_addr + j * sizeof(src_element);
+                dst_block_addr = dst_tmp2_addr + j * sizeof(dst_element) * dstStride;
                 for (int k = 0; k < mSize; k++) {
-                    src_ele_addr = src_block_addr + k ∗ sizeof(src_element) ∗ 16 ∗ srcNzC0Stride;
-                    dst_ele_addr = dst_block_addr + k ∗ sizeof(dst_element);
+                    src_ele_addr = src_block_addr + k * sizeof(src_element) * 16 * srcNzC0Stride;
+                    dst_ele_addr = dst_block_addr + k * sizeof(dst_element);
                 }
             }
         }
