@@ -61,7 +61,7 @@ __simd_callee__ inline void printf(__ubuf__ const char* fmt, Args&&... args);
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #include "impl/utils/debug/asc_aicore_printf_impl.h"
 
-#if (__NPU_ARCH__ == 3510) && !defined(ASCENDC_CPU_DEBUG)
+#if __NPU_ARCH__ == 3510
 #include "impl/utils/debug/asc_simd_printf_impl.h"
 #endif
 #endif

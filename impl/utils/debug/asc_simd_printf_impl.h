@@ -16,6 +16,8 @@
 #define IMPL_UTILS_DEBUG_ASC_SIMD_PRINTF_IMPL_H
 
 #include "impl/utils/sys_macros.h"
+
+#ifndef ASCENDC_CPU_DEBUG
 #include "impl/utils/debug/asc_debug_utils.h"
 #include "impl/utils/debug/npu_arch_3510/asc_type_conversion_utils.h"
 
@@ -219,5 +221,27 @@ __simd_callee__ inline void printf(__ubuf__ const char* fmt, Args&&... args)
     printf_impl(fmt, args...);
 }
 } // namespace __asc_simd_vf
+
+#else
+
+#include <cstdio>
+
+namespace __asc_simd_vf {
+template <class... Args>
+__simd_callee__ inline void printf_impl(__ubuf__ const char* fmt, Args&&... args)
+{
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
+    std::printf(fmt, args...);
+#endif
+}
+
+template <class... Args>
+__simd_callee__ inline void printf(__ubuf__ const char* fmt, Args&&... args)
+{
+    printf_impl(fmt, args...);
+}
+} // namespace __asc_simd_vf
+
+#endif // ASCENDC_CPU_DEBUG
 
 #endif // IMPL_UTILS_DEBUG_ASC_SIMD_PRINTF_IMPL_H

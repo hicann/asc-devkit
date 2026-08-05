@@ -12,6 +12,7 @@
 #include <mockcpp/mockcpp.hpp>
 #include <vector>
 #include "kernel_operator.h"
+#include "utils/debug/asc_printf.h"
 
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
 __aicore__ inline uint32_t asc_debug_get_core_idx()
@@ -83,6 +84,22 @@ TEST_F(TestPrintfSuite, PrintfCase)
     sub_block_idx = subBlockIdxTmp;
     g_taskRation = taskRationTmp;
 }
+
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+TEST_F(TestPrintfSuite, SimdVfPrintfMatchesAicoreCpuFallback)
+{
+    testing::internal::CaptureStdout();
+    __asc_aicore::printf("SIMD_VF_PRINTF %s %d %u %.2f 0x%x", "value", -3, 6U, 1.25, 0x2AU);
+    const std::string aicoreOutput = testing::internal::GetCapturedStdout();
+
+    testing::internal::CaptureStdout();
+    __asc_simd_vf::printf("SIMD_VF_PRINTF %s %d %u %.2f 0x%x", "value", -3, 6U, 1.25, 0x2AU);
+    const std::string simdVfOutput = testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(simdVfOutput, aicoreOutput);
+    EXPECT_EQ(simdVfOutput, "SIMD_VF_PRINTF value -3 6 1.25 0x2a");
+}
+#endif
 
 TEST_F(TestPrintfSuite, DumpBlockIdxAndSysVarCase)
 {
