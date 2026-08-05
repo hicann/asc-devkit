@@ -208,7 +208,11 @@ def link_relocatable_meta_file(bin_file_path, meta_file_path, compile_log_path=N
 
 
 def link_sk_norm_combine(
-    sk_bin_file, norm_bin_file, sk_bind_dst_file, compile_log_path=None
+    sk_bin_file,
+    norm_bin_file,
+    sk_bind_dst_file,
+    meta_file_path,
+    compile_log_path=None,
 ):
     # Step 1: 解压 sk_bin_file (它是由 ar crs 打包的 .o 文件)
     # 创建临时目录用于解压
@@ -246,11 +250,13 @@ def link_sk_norm_combine(
             AscendCLogLevel.LOG_DEBUG,
         )
 
-        # Step 2: 将解压的 .o 文件、norm_bin_file 和 sk_bind_dst_file 合并
+        # Step 2: 将解压的 .o 文件、norm_bin_file、sk_bind_dst_file 和可选的 meta_file_path 合并
         merged_obj = os.path.join(temp_extract_dir, "merged_sk_norm_bind.o")
         link_cmd = [CCECInfo.get_exe("ld.lld"), "-r", "-o", merged_obj]
         link_cmd.extend(extracted_objs)
         link_cmd.extend([norm_bin_file, sk_bind_dst_file])
+        if meta_file_path:
+            link_cmd.append(meta_file_path)
         CommonUtility.dump_compile_log(
             link_cmd, CompileStage.LINKRELOCATE, compile_log_path
         )

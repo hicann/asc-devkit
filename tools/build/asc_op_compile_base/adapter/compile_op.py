@@ -1953,11 +1953,12 @@ def compile_op_common_part(
             compile_info, compile_info_origin, compile_option_tuple, kernel_meta_dir
         )
 
-        # link norm.o and sk.o and sk_bind.o
+        # link norm.o, sk.o, sk_bind.o and optional meta_info.o
         link_sk_norm_combine(
             compile_info.dst_file,
             compile_info_origin.dst_file,
             sk_bind_dst_file,
+            compile_info_origin.tiling_and_dfx_utils_bin_path,
             compile_info.compile_log_path,
         )
 

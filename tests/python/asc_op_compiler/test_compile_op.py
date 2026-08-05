@@ -1075,6 +1075,104 @@ class TestCompileOp(unittest.TestCase):
                 op_compile_option,
             )
 
+    def test_sk_sub_combine_links_no_register_meta_file(self):
+        op_info = OpInfo(
+            kernel_name="TestKernel", op_type="TestOp", inputs=[], outputs=[]
+        )
+        compile_option_tuple = CompileOptionTuple([], [])
+        infered_info = InferChannelParamsFromIFile(
+            tiling_key_list=[0],
+            code_channel=CORE_TYPE_VEC,
+            hard_sync=False,
+            no_kfc_server_flag=False,
+            enable_deterministic=False,
+            tiling_key_kernel_type={},
+            no_set_kernel_type=False,
+            default_kernel_type=KernelMetaType.KERNEL_TYPE_MAX,
+            dump_info={},
+            template_tiling_info={},
+            default_tiling_struct="",
+            tiling_struct_expr_map={},
+            tiling_key_struct_map={},
+            register_tiling_struct=set(),
+            tpl_tiling_struct=set(),
+            super_kernel_early_start_set_flag=False,
+            super_kernel_early_start_wait_flag=False,
+            tiling_key_deterministic={},
+            tiling_key_group_map={},
+        )
+        tiling_info = TilingInfo()
+        dfx_generator = DFXSectionGenerator()
+
+        global_var_storage.set_variable("ascendc_tiling_no_register", True)
+        global_var_storage.set_variable("ascendc_enable_super_kernel", True)
+        try:
+            with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
+                ctx.add_addition("super_kernel_sub_combine", True)
+                with (
+                    mock.patch.object(
+                        CommonUtility,
+                        "get_kernel_meta_dir",
+                        return_value="/tmp/kernel_meta",
+                    ),
+                    mock.patch.object(
+                        CommonUtility,
+                        "get_distinct_filename_tag",
+                        return_value="_tag",
+                    ),
+                    mock.patch.object(
+                        compile_op_module,
+                        "check_if_gen_placehoder",
+                        return_value=False,
+                    ),
+                    mock.patch.object(
+                        compile_op_module,
+                        "get_tiling_info_by_tiling",
+                        return_value=tiling_info,
+                    ),
+                    mock.patch.object(tiling_info, "save_file"),
+                    mock.patch.object(tiling_info, "remove_file"),
+                    mock.patch.object(compile_op_module, "handle_sk_codegen_options"),
+                    mock.patch.object(
+                        compile_op_module,
+                        "gen_op_stub_kernel_func",
+                        return_value=0,
+                    ),
+                    mock.patch.object(compile_op_module, "handle_compile_options"),
+                    mock.patch.object(compile_op_module, "compile_kernel_and_meta"),
+                    mock.patch.object(compile_op_module, "link_kernel_obj"),
+                    mock.patch.object(
+                        compile_op_module,
+                        "compile_sk_bind",
+                        return_value="/tmp/kernel_meta/sk_bind.o",
+                    ),
+                    mock.patch.object(
+                        compile_op_module, "link_sk_norm_combine"
+                    ) as mock_link,
+                    mock.patch.object(compile_op_module, "_json_post_process"),
+                    mock.patch.object(dfx_generator, "dfx_info_reset"),
+                    mock.patch.object(dfx_generator, "update_is_support"),
+                ):
+                    compile_op_common_part(
+                        "test.cpp",
+                        "test",
+                        op_info,
+                        compile_option_tuple,
+                        infered_info,
+                        {},
+                    )
+        finally:
+            global_var_storage.set_variable("ascendc_tiling_no_register", False)
+            global_var_storage.set_variable("ascendc_enable_super_kernel", False)
+
+        mock_link.assert_called_once_with(
+            "/tmp/kernel_meta/TestKernel.o",
+            "/tmp/kernel_meta/TestKernel_norm.o",
+            "/tmp/kernel_meta/sk_bind.o",
+            "/tmp/kernel_meta/TestKernel_tag_meta_info.o",
+            None,
+        )
+
     def test_compile_op_dynamic_c310_cube(self):
         SetCurrentSocInfo("Ascend950PR_9599")
         cce_file = os.path.join(
