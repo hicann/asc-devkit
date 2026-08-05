@@ -14,12 +14,8 @@
 #include "ins_temp_reduce_scatter_aicpu_reduce_nhr.h"
 #include "ins_temp_reduce_scatter_mesh_1D_Z_axis_detour.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
-#include "ccu_temp_reduce_scatter_mesh_1D_mem2mem.h"
-#include "ccu_temp_reduce_scatter_mesh_1D.h"
-#include "ccu_temp_reduce_scatter_nhr_1D_mem2mem.h"
-#include "ccu_temp_reduce_scatter_mesh_1D_2die_mem2mem.h"
-#include "ccu_temp_reduce_scatter_mesh2die.h"
-#include "ccu_temp_reduce_scatter_nhr_1D_multi_jetty_mem2mem.h"
+#include "ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem.h"
+// Legacy direct-launch CCU headers are retained in source but are incompatible with the current hcomm API.
 #endif
 
 namespace mc2_ops_hccl {
@@ -261,23 +257,8 @@ REGISTER_EXEC_V2(
     TopoMatch1D, InsTempReduceScatterMesh1DZAxisDetour);
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuReduceScatterMesh1DMem2Mem, InsV2ReduceScatterSoleExecutor, TopoMatch1D,
-    CcuTempReduceScatterMesh1DMem2Mem);
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuReduceScatterMesh1D, InsV2ReduceScatterSoleExecutor, TopoMatch1D,
-    CcuTempReduceScatterMesh1D);
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuReduceScatterNHR1DMem2Mem, InsV2ReduceScatterSoleExecutor, TopoMatch1D,
-    CcuTempReduceScatterNHR1DMem2Mem);
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuReduceScatterMeshMem2Mem1D2Die, InsV2ReduceScatterSoleExecutor,
-    TopoMatch1D, CcuTempReduceScatterMeshMem2Mem1D2Die);
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuReduceScatterMesh2Die, InsV2ReduceScatterSoleExecutor, TopoMatch1D,
-    CcuTempReduceScatterMesh2Die);
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuReduceScatterNhr1DMem2MemMultiJetty, InsV2ReduceScatterSoleExecutor,
-    TopoMatch1D, CcuTempReduceScatterNhrMultiJettyMem2Mem1D);
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuKfcReduceScatterMesh1DMem2Mem, InsV2ReduceScatterSoleExecutor, TopoMatch1D,
+    CcuTempKfcReduceScatterMesh1DMem2Mem);
 #endif
 
 } // namespace mc2_ops_hccl

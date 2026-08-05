@@ -79,8 +79,9 @@ __aicore__ inline void AssembleHcclMsgExtForCCU(
         reinterpret_cast<uint64_t>(ccuParam.ccuMsgExt), reinterpret_cast<uint64_t>(ccuMsgExt));
 
     for (uint32_t i = 0U; i < ccuParam.rankNum; ++i) {
-        ccuMsgExt[i].sendSize = allToAllVParam->sendCounts[i] * dataSize;
-        ccuMsgExt[i].sendOffset = allToAllVParam->sdispls[i] * dataSize + ccuMsgExt[i].sendSize * ccuParam.repeatIndex;
+        uint64_t sendSize = allToAllVParam->sendCounts[i] * dataSize;
+        ccuMsgExt[i].sendSize = sendSize % CCU_MAX_COMM_DATA;
+        ccuMsgExt[i].sendOffset = allToAllVParam->sdispls[i] * dataSize + sendSize * ccuParam.repeatIndex;
         ccuMsgExt[i].recvOffset =
             allToAllVParam->rdispls[i] * dataSize + (allToAllVParam->recvCounts[i] * dataSize) * ccuParam.repeatIndex;
         KERNEL_LOG(

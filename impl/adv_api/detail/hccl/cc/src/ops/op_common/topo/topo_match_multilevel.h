@@ -28,7 +28,7 @@ private:
         const HcclComm comm, uint32_t& layer0Size, const uint32_t myRank, AlgHierarchyInfoForAllLevel& algHierarchyInfo,
         uint32_t gcdInstSize = 0) const;
     HcclResult TopoForLayer1(
-        const HcclComm comm, uint32_t& layer0Size, const uint32_t myRank,
+        const HcclComm comm, uint32_t netLayer, uint32_t& layer0Size, const uint32_t myRank,
         AlgHierarchyInfoForAllLevel& algHierarchyInfo) const;
     bool CheckVecElementAllSame(const uint32_t* instSizeList, uint32_t listSize) const;
     uint32_t GcdTwo(uint32_t a, uint32_t b) const;

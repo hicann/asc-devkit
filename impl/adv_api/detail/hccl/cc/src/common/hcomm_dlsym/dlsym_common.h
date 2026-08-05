@@ -11,6 +11,7 @@
 #define DLSYM_COMMON_H
 
 #include "log.h"
+#include <dlfcn.h>
 
 #ifdef __cplusplus
 extern "C" {

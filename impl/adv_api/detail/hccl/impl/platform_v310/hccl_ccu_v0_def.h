@@ -80,9 +80,12 @@ public:
     template <bool sync = true>
     __aicore__ inline void Finalize();
 
-    __aicore__ inline uint32_t GetRankId() { return hcclContext_->rankId; }
+    __aicore__ inline uint32_t GetRankId() { return (newCcuFlag_ ? hcclNewContext_->rankId : hcclContext_->rankId); }
 
-    __aicore__ inline uint32_t GetRankDim() { return hcclContext_->rankNum; }
+    __aicore__ inline uint32_t GetRankDim()
+    {
+        return (newCcuFlag_ ? hcclNewContext_->rankSize : hcclContext_->rankNum);
+    }
 
 private:
     __aicore__ inline void InitWorkingFlag();
@@ -122,7 +125,10 @@ private:
 
 private:
     __gm__ HcclCombineOpParam* hcclContext_;
+    __gm__ HcclApi::OpResCtx* hcclNewContext_;
+
     HcclHandle curHandleId_ = INVALID_HANDLE_ID;
+    bool newCcuFlag_ = false;
 
     uint8_t workingFlag_ = false;
     bool isInited_ = false;

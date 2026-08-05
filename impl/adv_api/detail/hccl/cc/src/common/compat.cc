@@ -8,13 +8,12 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <pthread.h>
+#include "log.h"
 #include "hcomm_dlsym.h"
 
 namespace mc2_ops_hccl {
-void CompatSymInit(void)
-{
-    HcommDlInit(); // 增加强制依赖
-}
+
+void CompatSymInit(void) { HcommDlInit(); }
 
 __attribute__((constructor)) void InitCompat()
 {

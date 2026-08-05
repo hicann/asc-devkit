@@ -9,15 +9,26 @@
  */
 #include "hcomm_dlsym.h"
 #include "hccl_res_dl.h"
+#include "ccu_res_dl.h"
+#include "hccl_ccu_res_dl.h"
+#include "ccu_launch_dl.h"
+#include "ccu_primitives_impl_dl.h"
 #include "hccl_rank_graph_dl.h"
 #include "hcomm_primitives_dl.h"
 #include "hccl_inner_dl.h"
 #include "hcomm_host_profiling_dl.h"
+#include "hccl_host_comm_dl.h"
+#include "hccl_res_expt_dl.h"
+#include "log.h"
 #include <pthread.h>
 #include <dlfcn.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <acl/acl.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 static void* gLibHandle = nullptr;
 static int gHcommVersion = 0;
@@ -55,20 +66,49 @@ bool HcommIsExportThreadSupported()
 // 初始化
 void HcommDlInit(void)
 {
-    if (gLibHandle != nullptr)
-        return;
+    HCCL_INFO("===== HcommDlInit ENTRY =====");
 
-    gLibHandle = dlopen("libhcomm.so", RTLD_NOW);
-    if (!gLibHandle) {
-        fprintf(stderr, "[HcclWrapper] Failed to open libhcomm: %s\n", dlerror());
+    if (gLibHandle != nullptr) {
+        HCCL_INFO("HcommDlInit already initialized, skipping");
         return;
     }
 
+    HCCL_INFO("gLibHandle is nullptr, proceeding with initialization");
+    HCCL_INFO("Calling dlopen(\"libhcomm.so\", RTLD_NOW)");
+
+    gLibHandle = dlopen("libhcomm.so", RTLD_NOW);
+
+    if (!gLibHandle) {
+        const char* dlErr = dlerror();
+        HCCL_ERROR("[HcclWrapper] Failed to open libhcomm: %s", dlErr ? dlErr : "(null)");
+        return;
+    }
+
+    char handleMsg[256];
+    HCCL_INFO("dlopen SUCCESS, handle=%p", gLibHandle);
+
     dlerror();
+
+    HCCL_INFO("Initializing DL modules...");
 
     HcclResDlInit(gLibHandle);
     HcclRankGraphDlInit(gLibHandle);
     HcommPrimitivesDlInit(gLibHandle);
     HcclInnerDlInit(gLibHandle);
     HcommProfilingDlInit(gLibHandle);
+    HcclCommDlInit(gLibHandle);
+    HcclResExptDlInit(gLibHandle);
+    CcuResDlInit(gLibHandle);
+    HcclCcuResDlInit(gLibHandle);
+
+    HCCL_INFO("Calling CcuLaunchDlInit...");
+
+    CcuLaunchDlInit(gLibHandle);
+    CcuPrimitivesImplDlInit(gLibHandle);
+
+    HCCL_INFO("HcommDlInit completed successfully, final gLibHandle=%p", gLibHandle);
 }
+
+#ifdef __cplusplus
+}
+#endif

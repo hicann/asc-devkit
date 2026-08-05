@@ -12,10 +12,17 @@ if(BUILD_OPEN_PROJECT)
         ${HCCL_LOCAL_HEADER_DIRS}
         ${HCCL_CC_INCLUDE_DIR}/hcomm
         ${HCCL_CC_INCLUDE_DIR}/hcomm/hccl
+        ${HCCL_CC_INCLUDE_DIR}/hcomm/ccu
         ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc/hccl
+        ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc/hcomm/ccu
         ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc
         ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}/ccu
 
+        # hcomm头文件
+        ${ASCEND_CANN_PACKAGE_PATH}/include/ccu
+        ${ASCEND_CANN_PACKAGE_PATH}/include/hcomm
+        ${ASCEND_CANN_PACKAGE_PATH}/include/hcomm/ccu
     )
 else()
     set(INCLUDE_LIST
@@ -53,6 +60,7 @@ else()
         ${TOP_DIR}/hcomm/inc/hccl
         ${TOP_DIR}/hcomm/pkg_inc
         ${TOP_DIR}/hcomm/pkg_inc/hccl
+        ${TOP_DIR}/hcomm/ccu
         ${TOP_DIR}/hcomm/pkg_inc/hcomm/ccu
         ${TOP_DIR}/hcomm/include
         ${TOP_DIR}/hcomm/include/hccl
@@ -124,6 +132,12 @@ if(PRODUCT_SIDE STREQUAL "host")
         hcomm_dlsym.cc
         hccl_inner_dl.cc
         hcomm_host_profiling_dl.cc
+        ccu_primitives_impl_dl.cc
+        ccu_res_dl.cc
+        hccl_ccu_res_dl.cc
+        hccl_res_expt_dl.cc
+        hccl_host_comm_dl.cc
+        ccu_launch_dl.cc
     )
 endif()
 

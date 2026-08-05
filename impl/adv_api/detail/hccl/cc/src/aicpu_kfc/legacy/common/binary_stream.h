@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <map>
 
 #include "hccl/base.h"
 #include "exception_util.h"
@@ -23,7 +24,7 @@ class BinaryStream {
 public:
     static constexpr std::ios_base::openmode DEFAULT_IOS_MODE = std::ios_base::in | std::ios_base::out;
 
-    explicit BinaryStream(std::ios_base::openmode mode = DEFAULT_IOS_MODE) : stream(mode | std::ios_base::binary){};
+    explicit BinaryStream(std::ios_base::openmode mode = DEFAULT_IOS_MODE) : stream(mode | std::ios_base::binary) {};
 
     explicit BinaryStream(std::vector<char>& buf, std::ios_base::openmode mode = DEFAULT_IOS_MODE)
         : stream(mode | std::ios_base::binary)

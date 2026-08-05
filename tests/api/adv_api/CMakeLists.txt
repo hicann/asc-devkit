@@ -634,5 +634,6 @@ foreach(product_type ${TILING_PRODUCT_TYPE_LIST})
 endforeach()
 
 add_subdirectory(hccl/cc)
+add_subdirectory(hccl/ccu)
 
 add_subdirectory(api_host_check)

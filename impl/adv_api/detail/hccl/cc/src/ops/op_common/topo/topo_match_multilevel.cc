@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include "topo_match_multilevel.h"
+#include "op_common.h"
 
 namespace mc2_ops_hccl {
 TopoMatchMultilevel::TopoMatchMultilevel() : TopoMatchBase() {}
@@ -92,7 +93,7 @@ HcclResult TopoMatchMultilevel::TopoForLayer0(
 }
 
 HcclResult TopoMatchMultilevel::TopoForLayer1(
-    const HcclComm comm, uint32_t& layer0Size, const uint32_t myRank,
+    const HcclComm comm, uint32_t netLayer, uint32_t& layer0Size, const uint32_t myRank,
     AlgHierarchyInfoForAllLevel& algHierarchyInfo) const
 {
     HCCL_DEBUG("[TopoMatchMultilevel::MeshNHRTopoForLayer1] layer0Size [%d]", layer0Size);
@@ -100,7 +101,7 @@ HcclResult TopoMatchMultilevel::TopoForLayer1(
     // 1. 查出layer 1的所有ranks
     uint32_t* topoInsts;
     uint32_t topoInstNum = 0;
-    CHK_RET(HcclRankGraphGetTopoInstsByLayer(comm, 1, &topoInsts, &topoInstNum));
+    CHK_RET(HcclRankGraphGetTopoInstsByLayer(comm, netLayer, &topoInsts, &topoInstNum));
     CHK_PRT_RET(
         (topoInstNum != NET_INST_NUM_1),
         HCCL_ERROR("[TopoMatchMultilevel::MeshNHRTopoForLayer1] layer1 topoInstNum [%d], Invalid topo.", topoInstNum),
@@ -108,7 +109,7 @@ HcclResult TopoMatchMultilevel::TopoForLayer1(
 
     uint32_t* ranks;
     uint32_t rankNum;
-    CHK_RET(HcclRankGraphGetRanksByTopoInst(comm, 1, topoInsts[0], &ranks, &rankNum));
+    CHK_RET(HcclRankGraphGetRanksByTopoInst(comm, netLayer, topoInsts[0], &ranks, &rankNum));
     HCCL_DEBUG("[TopoMatchMultilevel::MeshNHRTopoForLayer1] Rank [%d], all [%u] ranks in layer1", myRank, rankNum);
 
     // 2. 取出同序号卡，作为layer1的ranks
@@ -124,7 +125,7 @@ HcclResult TopoMatchMultilevel::TopoForLayer1(
         }
         CommLink* links;
         uint32_t linkNum = 0;
-        HcclRankGraphGetLinks(comm, 1, myRank, rankId, &links, &linkNum);
+        HcclRankGraphGetLinks(comm, netLayer, myRank, rankId, &links, &linkNum);
         if (linkNum == 0) {
             continue;
         }
@@ -232,7 +233,13 @@ HcclResult TopoMatchMultilevel::MatchTopo(
     }
 
     // 4. 计算layer1的topo
-    CHK_RET(TopoForLayer1(comm, layer0Size, myRank, algHierarchyInfo));
+    uint32_t netLayer = 1;
+    bool hostDPUOnly = false;
+    if ((CheckHostDPUOnly(comm, topoInfo, hostDPUOnly) == HcclResult::HCCL_SUCCESS) && hostDPUOnly) {
+        // host dpu场景使用最高层的链路
+        netLayer = topoInfo->netLayerDetails.netLayers[topoInfo->netLayerDetails.netLayerNum - 1];
+    }
+    CHK_RET(TopoForLayer1(comm, netLayer, layer0Size, myRank, algHierarchyInfo));
 #endif
     return HcclResult::HCCL_SUCCESS;
 }

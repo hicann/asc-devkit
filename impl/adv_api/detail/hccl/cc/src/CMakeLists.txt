@@ -8,17 +8,20 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
 set(OPS_BASE_DIR ${HCCL_CC_DIR})
-option(MC2_CLIENT_ENABLE_CCU "Build CCU algorithm implementations into mc2_client" OFF)
+option(MC2_CLIENT_ENABLE_CCU "Build CCU algorithm implementations into mc2_client" ON)
 
 set(INCLUDE_LIST
     ${HCCL_CC_INCLUDE_DIR}
     ${HCCL_CC_INCLUDE_DIR}/hcomm
+    ${HCCL_CC_INCLUDE_DIR}/hcomm/types
     ${HCCL_CC_INCLUDE_DIR}/hcomm/hccl
     ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc/hccl
+    ${HCCL_CC_INCLUDE_DIR}/hcomm/ccu
     ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc/hcomm/ccu
     ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc
     ${CMAKE_CURRENT_SOURCE_DIR}/common
     ${CMAKE_CURRENT_SOURCE_DIR}/common/hcomm_dlsym
+    ${CMAKE_CURRENT_SOURCE_DIR}/common/hcomm_dlsym/ccu
 
     ${CMAKE_CURRENT_SOURCE_DIR}/ops
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common
@@ -47,7 +50,6 @@ set(INCLUDE_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/selector
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/template
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/template/aicpu
-    ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/template/aiv
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/template/ccu
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/template/ccu/kernel
 
@@ -56,11 +58,49 @@ set(INCLUDE_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/selector
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/aicpu
-    ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/aiv
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/ccu
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/ccu/kernel
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server/executor
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server/selector
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server/template
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server/template/ccu
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server/template/ccu/kernel
 )
 
+list(APPEND INCLUDE_LIST
+    ${ASCEND_CANN_PACKAGE_PATH}/include
+    ${ASCEND_CANN_PACKAGE_PATH}/include/acl
+
+    # hcomm头文件
+    ${ASCEND_CANN_PACKAGE_PATH}/include/ccu
+    ${ASCEND_CANN_PACKAGE_PATH}/include/hccl
+    ${ASCEND_CANN_PACKAGE_PATH}/include/hcomm
+    ${ASCEND_CANN_PACKAGE_PATH}/include/hcomm/ccu
+
+    # runtime头文件
+    ${ASCEND_CANN_PACKAGE_PATH}/include/base/
+    ${ASCEND_CANN_PACKAGE_PATH}/include/driver/
+    ${ASCEND_CANN_PACKAGE_PATH}/include/dump/
+    ${ASCEND_CANN_PACKAGE_PATH}/include/external/
+    ${ASCEND_CANN_PACKAGE_PATH}/include/platform/
+
+    # mmpa头文件
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/mmpa/
+
+    # 包间接口
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/hccl
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/hcomm/ccu
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/runtime/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/aicpu/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/runtime/runtime/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/profiling/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/base/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/dump/
+    ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc/trace/
+)
 
 if(PRODUCT_SIDE STREQUAL "device")
     add_library(mc2_server SHARED
@@ -99,6 +139,7 @@ if(PRODUCT_SIDE STREQUAL "device")
 
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sole_executor.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/executor/ins_reduce_scatter_parallel_executor.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/executor/ins_reduce_scatter_concurrent_executor.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sequence_executor_aicpu.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sequence_executor.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D.cc
@@ -110,6 +151,7 @@ if(PRODUCT_SIDE STREQUAL "device")
 
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/executor/ins_v2_all_gather_sole_executor.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/executor/ins_v2_all_gather_parallel_executor.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/executor/ins_v2_all_gather_concurrent_executor.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/aicpu/ins_temp_all_gather_mesh_1D.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/aicpu/ins_temp_all_gather_mesh_1D_Z_axis_detour.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_gather/template/aicpu/ins_temp_all_gather_nhr.cc
@@ -147,7 +189,6 @@ if(PRODUCT_SIDE STREQUAL "device")
     target_link_libraries(mc2_server PRIVATE
         -Wl,--no-as-needed
         mc2_kernel_compat
-        -Wl,--no-as-needed
         mmpa
         $<BUILD_INTERFACE:acl_rt_headers>
         $<BUILD_INTERFACE:error_manager_headers>
@@ -207,7 +248,6 @@ if(NOT KERNEL_MODE AND PRODUCT_SIDE STREQUAL "host")
         -Wl,-z,relro
         -Wl,-z,now
         -Wl,-z,noexecstack
-        -Wl,-Bsymbolic-functions
         $<$<CONFIG:Release>:-s>
     )
 

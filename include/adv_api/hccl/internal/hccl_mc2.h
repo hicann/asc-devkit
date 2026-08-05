@@ -12,6 +12,7 @@
 
 #include <hccl/hccl_types.h>
 #include <hccl/hccl_res.h>
+#include <ccu/ccu_types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,6 +94,8 @@ extern HcclResult HcclCreateOpResCtx(HcclComm comm, uint8_t opType, void* opArgs
  */
 extern HcclResult __attribute__((visibility("default"))) HcclAllocComResourceByTiling(
     HcclComm comm, void* stream, void* mc2Tiling, void** opResCtx);
+
+extern CcuResult CcuKernelLaunch(HcclComm comm, void* opResCtx);
 
 #ifdef __cplusplus
 }

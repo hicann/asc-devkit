@@ -154,6 +154,32 @@ public:
     uint32_t mask{1};
 };
 
+// CcuPhyRes implementations
+inline uint16_t CcuPhyRes::Id() const { return id; }
+inline uint16_t CcuPhyRes::DieId() const { return dieId; }
+inline void CcuPhyRes::Reset(uint16_t id) { this->id = id; }
+inline void CcuPhyRes::SetDieId(uint16_t dieId) { this->dieId = dieId; }
+
+// CcuVirRes implementations
+inline CcuVirRes::CcuVirRes(CcuRepContext* context) : context(context) { phyRes = std::make_shared<CcuPhyRes>(); }
+
+inline void CcuVirRes::Reset(uint16_t id) { phyRes->Reset(id); }
+
+inline void CcuVirRes::Reset(uint16_t id, uint16_t dieId)
+{
+    phyRes->Reset(id);
+    phyRes->SetDieId(dieId);
+}
+
+inline void CcuVirRes::SetDieId(uint16_t dieId) { phyRes->SetDieId(dieId); }
+
+inline uint16_t CcuVirRes::Id() const { return phyRes->Id(); }
+
+inline uint16_t CcuVirRes::DieId() const { return phyRes->DieId(); }
+
+// MaskSignal implementation
+inline MaskSignal::MaskSignal(CcuRepContext* context) : CcuVirRes(context) {}
+
 }; // namespace CcuRep
 }; // namespace hcomm
 #endif // HCOMM_CCU_DATATYPE_H

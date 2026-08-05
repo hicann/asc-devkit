@@ -18,6 +18,7 @@
 
 namespace HcclApi {
 constexpr uint32_t INIT_TILING_VERSION = 100U;
+constexpr uint32_t INIT_TILING_CCU_NEW_VERSION = 101U;
 constexpr uint32_t MAX_CC_TILING_NUM = 8U;
 struct Mc2InitTilingInner {
     uint32_t version;

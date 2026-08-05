@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include "topo_match_1d.h"
+#include "dlsym_common.h"
 
 namespace mc2_ops_hccl {
 TopoMatch1D::TopoMatch1D() {}
@@ -35,11 +36,11 @@ HcclResult TopoMatch1D::MatchTopo(
         (topoInfo->userRankSize == 0),
         HCCL_ERROR("[CollAlgFactory] [TopoMatchMesh1D] Rank [%d], rankSize is 0.", myRank_), HcclResult::HCCL_E_PARA);
 
-    for (uint32_t netLayerIdx = 0; netLayerIdx < topoInfo->topoLevelNums; netLayerIdx++) {
+    for (const auto& netLayerIdx : topoInfo->netLayerDetails.netLayers) {
         CommTopo topoType;
         HcclRankGraphGetTopoTypeByLayer(comm, netLayerIdx, &topoType);
         CHK_PRT_RET(
-            (topoType != CommTopo::COMM_TOPO_CUSTOM && topoType != CommTopo::COMM_TOPO_CLOS),
+            (topoType != COMM_TOPO_CUSTOM && topoType != CommTopo::COMM_TOPO_CLOS),
             HCCL_ERROR(
                 "[CollAlgFactory] [TopoMatchMesh1D] netLayer [%d], topoType not COMM_TOPO_CUSTOM or COMM_TOPO_CLOS.",
                 netLayerIdx),

@@ -12,12 +12,7 @@
 #include "ins_temp_all_gather_mesh_1D.h"
 #include "ins_temp_all_gather_nhr.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
-#include "ccu_temp_all_gather_mesh_1D_mem2mem.h"
-#include "ccu_temp_all_gather_mesh_1D.h"
-#include "ccu_temp_all_gather_nhr_1D_mem2mem.h"
-#include "ccu_temp_all_gather_2dies_mesh_1d_mem2mem.h"
-#include "ccu_temp_all_gather_2dies_mesh_1D.h"
-#include "ccu_temp_all_gather_nhr_1D_multi_jetty_mem2mem.h"
+#include "ccu_temp_kfc_all_gather_mesh_1D_mem2mem.h"
 #endif
 #include "topo_match_ubx.h"
 #include <cstddef>
@@ -194,36 +189,10 @@ REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherNHR, InsV2AllGatherSoleExecutor, TopoMatch1D, InsTempAllGatherNHR);
 
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherMesh1DMem2Mem, InsV2AllGatherSoleExecutor, TopoMatch1D,
-    CcuTempAllGatherMesh1DMem2Mem);
+    CcuTempKfcAllGatherMesh1DMem2Mem);
 
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherMesh1D, InsV2AllGatherSoleExecutor, TopoMatch1D,
-    CcuTempAllGatherMesh1D);
-
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherNHR1DMem2Mem, InsV2AllGatherSoleExecutor, TopoMatch1D,
-    CcuTempAllGatherNHR1DMem2Mem);
-
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuKernelAllGather2DiesMeshMem2Mem1D, InsV2AllGatherSoleExecutor, TopoMatch1D,
-    CcuTempAllGather2DiesMeshMem2Mem1D);
-
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuKernelAllGather2DiesMesh1D, InsV2AllGatherSoleExecutor, TopoMatch1D,
-    CcuTempAllGather2DiesMesh1D);
-
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherMesh1DUBX, InsV2AllGatherSoleExecutor, TopoMatchUBX,
-    CcuTempAllGatherMesh1D);
-
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherNHR1DMem2MemUBX, InsV2AllGatherSoleExecutor, TopoMatchUBX,
-    CcuTempAllGatherNHR1DMem2Mem);
-
-REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherMesh1DMem2MemUBX, InsV2AllGatherSoleExecutor, TopoMatchUBX,
-    CcuTempAllGatherMesh1DMem2Mem);
 #endif
 } // namespace mc2_ops_hccl

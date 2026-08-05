@@ -9,6 +9,7 @@
  */
 #include "ccu_alg_template_base.h"
 #include "log.h"
+#include "ccu_assist_pub.h"
 
 namespace mc2_ops_hccl {
 CcuAlgTemplateBase::CcuAlgTemplateBase() {}

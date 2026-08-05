@@ -13,7 +13,7 @@
 #include <vector>
 #include "hccl/base.h"
 #include "enum_factory.h"
-#include "binary_stream.h"
+#include "../../../common/binary_stream.h"
 namespace Hccl {
 
 constexpr u32 MODULE_NAME_LEN = 128;

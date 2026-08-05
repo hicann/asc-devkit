@@ -173,6 +173,91 @@ TEST_F(TestHcclTiling, Mc2CcTilingConfig_multiTiling)
     EXPECT_NE(ccTilingConfig.GetTiling(ccTilingInner), EXIT_SUCCESS);
 }
 
+class TestHcclTilingUseCcuKfc : public TestHcclTiling {
+protected:
+    void SetUp() override
+    {
+        const char* env = std::getenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
+        hasOldEnv_ = (env != nullptr);
+        if (hasOldEnv_) {
+            oldEnv_ = env;
+        }
+    }
+
+    void TearDown() override
+    {
+        if (hasOldEnv_) {
+            setenv("ASCEND_ENABLE_CCU_KFC_BRANCH", oldEnv_.c_str(), 1);
+        } else {
+            unsetenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
+        }
+    }
+
+    void ExpectInitTilingVersion(const char* envValue, uint32_t opType, uint8_t commEngine, uint32_t expectedVersion)
+    {
+        if (envValue == nullptr) {
+            unsetenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
+        } else {
+            setenv("ASCEND_ENABLE_CCU_KFC_BRANCH", envValue, 1);
+        }
+
+        ::Mc2InitTiling initTiling{};
+        Mc2CcTilingConfig tilingConfig("test", opType, "fullmesh", 0, 0, 0, commEngine);
+
+        ASSERT_EQ(tilingConfig.GetTiling(initTiling), EXIT_SUCCESS);
+        const auto* tilingInner = reinterpret_cast<const Mc2InitTilingInner*>(&initTiling);
+        EXPECT_EQ(tilingInner->version, expectedVersion);
+    }
+
+private:
+    bool hasOldEnv_ = false;
+    std::string oldEnv_;
+};
+
+TEST_F(TestHcclTilingUseCcuKfc, UseCcuKfcUnsetUsesDefaultVersion)
+{
+    ExpectInitTilingVersion(nullptr, static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 5U, INIT_TILING_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, UseCcuKfcDisabledUsesDefaultVersion)
+{
+    ExpectInitTilingVersion("0", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 5U, INIT_TILING_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, UnsupportedOpTypeUsesDefaultVersion)
+{
+    ExpectInitTilingVersion("1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE), 5U, INIT_TILING_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, UnsupportedCommEngineUsesDefaultVersion)
+{
+    ExpectInitTilingVersion("1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 4U, INIT_TILING_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, AllGatherCcuMsUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 5U, INIT_TILING_CCU_NEW_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, AllGatherCcuSchedUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 6U, INIT_TILING_CCU_NEW_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, ReduceScatterCcuMsUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), 5U, INIT_TILING_CCU_NEW_VERSION);
+}
+
+TEST_F(TestHcclTilingUseCcuKfc, ReduceScatterCcuSchedUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), 6U, INIT_TILING_CCU_NEW_VERSION);
+}
+
 // ============================================================================
 // 以下用例覆盖 commit aaa3d79e5 的改动:
 // 修复 hccl_tiling.cpp 中不安全的动态库加载。

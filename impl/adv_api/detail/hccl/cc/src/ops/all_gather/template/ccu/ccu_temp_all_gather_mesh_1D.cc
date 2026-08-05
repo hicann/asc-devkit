@@ -10,7 +10,6 @@
 #include "channel.h"
 #include "hccl_ccu_res.h"
 #include "ccu_assist_pub.h"
-#include "ccu_kernel_all_gather_mesh1d.h"
 #include "ccu_temp_all_gather_mesh_1D.h"
 
 namespace mc2_ops_hccl {
@@ -43,10 +42,10 @@ HcclResult CcuTempAllGatherMesh1D::CalcRes(
         "[CcuTempAllGatherMesh1D::CalcRes] notifyNumOnMainThread[%u] slaveThreadNum[%u]",
         resourceRequest.notifyNumOnMainThread, resourceRequest.slaveThreadNum);
 
-    // 创建每个kernel的ctxArg，放入kernelInfo, 然后将kernelinfo放入resourceRequest.ccuKernelInfos
+    // KFC Server will replace this placeholder kernelInfo before CCU kernel registration.
     CcuKernelInfo kernelInfo;
 
-    kernelInfo.creator = [](const hcomm::CcuKernelArg& arg) { return std::make_unique<CcuKernelAllGatherMesh1D>(arg); };
+    strcpy_s(kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelAllGatherMesh1D");
 
     std::vector<HcclChannelDesc> channelDescs;
     if (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS) {
@@ -63,8 +62,10 @@ HcclResult CcuTempAllGatherMesh1D::CalcRes(
     }
     HCCL_DEBUG("[CcuTempAllGatherMesh1D::CalcRes] Get Mesh Channel Success!");
 
-    kernelInfo.kernelArg =
-        std::make_shared<CcuKernelArgAllGatherMesh1D>(subCommRanks_[0].size(), mySubCommRank_, param, subCommRanks_);
+    // Disabled with the legacy direct-launch kernel. KFC Server reconstructs CcuKernelArgKfcServer
+    // from param/rank/subCommRanks and reuses the channels below.
+    // kernelInfo.kernelArg =
+    //     std::make_shared<CcuKernelArgAllGatherMesh1D>(subCommRanks_[0].size(), mySubCommRank_, param, subCommRanks_);
     kernelInfo.channels = channelDescs;
     resourceRequest.ccuKernelInfos.push_back(kernelInfo);
 
@@ -88,25 +89,20 @@ HcclResult CcuTempAllGatherMesh1D::KernelRun(
 
     uint32_t rankId = mySubCommRank_;
     uint64_t offset = rankId * templateDataParams.outputSliceStride;
-    ;
-
-    uint64_t sliceSize = templateDataParams.sliceSize; // 获取本rank需要处理的数据量
+    uint64_t sliceSize = templateDataParams.sliceSize;
 
     HcclDataType dataType = param.DataDes.dataType;
-    uint64_t dataTypeSize = DataTypeSizeGet(dataType);
+    uint64_t dataTypeSize = DATATYPE_SIZE_TABLE[dataType];
     uint64_t dataCount = sliceSize / dataTypeSize;
     if (dataCount == 0) {
         HCCL_INFO("[CcuTempAllGatherMesh1D] DataCount == 0, Template Run Ends.");
         return HcclResult::HCCL_SUCCESS;
     }
 
-    std::unique_ptr<hcomm::CcuTaskArg> taskArg =
-        std::make_unique<CcuTaskArgAllGatherMesh1D>(inputAddr, outputAddr, token, offset, sliceSize);
-
-    void* taskArgPtr = static_cast<void*>(taskArg.get());
-
-    CHK_RET(
-        HcclCcuKernelLaunch(param.hcclComm, templateResource.threads[0], templateResource.ccuKernels[0], taskArgPtr));
+    CcuKernelSubmitInfo submitInfo{};
+    submitInfo.kernelHandle = templateResource.ccuKernels[0];
+    CHK_RET(FillCachedArgs(submitInfo, inputAddr, outputAddr, token, offset, sliceSize));
+    templateResource.submitInfos.push_back(submitInfo);
 
     return HcclResult::HCCL_SUCCESS;
 }

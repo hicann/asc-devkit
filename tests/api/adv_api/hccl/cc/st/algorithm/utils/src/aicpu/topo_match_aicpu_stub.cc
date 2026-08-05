@@ -109,19 +109,19 @@ HcclResult TopoMatchMultilevel::TopoForLayer0(
 }
 
 HcclResult TopoMatchMultilevel::TopoForLayer1(
-    const HcclComm comm, uint32_t& layer0Size, const uint32_t myRank,
+    const HcclComm comm, uint32_t netLayer, uint32_t& layer0Size, const uint32_t myRank,
     AlgHierarchyInfoForAllLevel& algHierarchyInfo) const
 {
     uint32_t* topoInsts = nullptr;
     uint32_t topoInstNum = 0;
-    CHK_RET(HcclRankGraphGetTopoInstsByLayer(comm, NET_LAYER1, &topoInsts, &topoInstNum));
+    CHK_RET(HcclRankGraphGetTopoInstsByLayer(comm, netLayer, &topoInsts, &topoInstNum));
     CHK_PRT_RET(
         topoInstNum != NET_INST_NUM_1,
         HCCL_ERROR("[TopoMatchMultilevel][UT] invalid layer1 topoInstNum [%u].", topoInstNum), HCCL_E_PARA);
 
     uint32_t* ranks = nullptr;
     uint32_t rankNum = 0;
-    CHK_RET(HcclRankGraphGetRanksByTopoInst(comm, NET_LAYER1, topoInsts[0], &ranks, &rankNum));
+    CHK_RET(HcclRankGraphGetRanksByTopoInst(comm, netLayer, topoInsts[0], &ranks, &rankNum));
 
     std::vector<uint32_t> layer1Ranks;
     for (uint32_t i = 0; i < rankNum; ++i) {
@@ -176,7 +176,7 @@ HcclResult TopoMatchMultilevel::MatchTopo(
     } else {
         CHK_RET(TopoForLayer0(comm, layer0Size, myRank, algHierarchyInfo));
     }
-    CHK_RET(TopoForLayer1(comm, layer0Size, myRank, algHierarchyInfo));
+    CHK_RET(TopoForLayer1(comm, NET_LAYER1, layer0Size, myRank, algHierarchyInfo));
     return HCCL_SUCCESS;
 }
 

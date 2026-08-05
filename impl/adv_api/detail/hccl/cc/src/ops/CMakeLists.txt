@@ -10,4 +10,5 @@
 add_subdirectory(op_common)
 add_subdirectory(reduce_scatter)
 add_subdirectory(all_gather)
-add_subdirectory(interface_graph_mode)
+#add_subdirectory(interface_graph_mode)
+add_subdirectory(kfc_server)

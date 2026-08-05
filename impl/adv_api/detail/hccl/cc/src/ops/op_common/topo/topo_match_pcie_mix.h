@@ -11,8 +11,6 @@
 #ifndef TOPO_MATCH_PCIE_MIX
 #define TOPO_MATCH_PCIE_MIX
 
-#include <sstream>
-
 #include "topo_match_base.h"
 
 namespace mc2_ops_hccl {
@@ -43,4 +41,4 @@ private:
         const uint32_t myRank, std::vector<uint32_t>& level0Ranks, std::vector<uint32_t>& level1Ranks) const;
 };
 } // namespace mc2_ops_hccl
-#endif // TOPO_MATCH_PCIE_MIX
+#endif // !TOPO_MATCH_PCIE_MIX

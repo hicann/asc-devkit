@@ -28,6 +28,7 @@ using namespace HcclApi;
 
 namespace AscendC {
 namespace {
+
 void PrintMc2InitTiling(const Mc2InitTilingInner& tiling)
 {
     TILING_LOG_DEBUG("Mc2InitTiling msg begin.");
@@ -63,8 +64,9 @@ void PrintMc2CcTiling(const Mc2CcTilingInner& tiling)
 
 uint32_t SetDevType(Mc2InitTilingInner* tilingInner)
 {
-    const char *homePath = std::getenv("ASCEND_HOME_PATH");
-    ASCENDC_HOST_ASSERT((homePath != nullptr && homePath[0] != '\0'), return EXIT_FAILURE, "ASCEND_HOME_PATH is not set or empty.");
+    const char* homePath = std::getenv("ASCEND_HOME_PATH");
+    ASCENDC_HOST_ASSERT(
+        (homePath != nullptr && homePath[0] != '\0'), return EXIT_FAILURE, "ASCEND_HOME_PATH is not set or empty.");
     std::string pathName(homePath);
     pathName += "/lib64/";
     auto getSocVerFunc =
@@ -141,6 +143,13 @@ uint32_t Mc2CcTilingConfig::GetTiling(::Mc2InitTiling& tiling)
     for (uint32_t i = 0; i < MAX_CC_TILING_NUM; i++) {
         tilingInner->offset[i] = 0;
     }
+    const char* useCcuKfc = std::getenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
+    if (useCcuKfc != nullptr && std::string(useCcuKfc) == "1" &&
+        (impl_.opType_ == static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER) ||
+         impl_.opType_ == static_cast<uint8_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER)) &&
+        (impl_.commEngine_ == 5 || impl_.commEngine_ == 6)) {
+        tilingInner->version = INIT_TILING_CCU_NEW_VERSION;
+    }
     ASCENDC_HOST_ASSERT(SetDevType(tilingInner) == EXIT_SUCCESS, return EXIT_FAILURE, "SetDevType failed.");
 
     TILING_LOG_DEBUG("Mc2InitTiling addr %#lx", impl_.initTilingAddr_);
@@ -186,7 +195,6 @@ uint32_t Mc2CcTilingConfig::GetTiling(::Mc2CcTiling& tiling)
     tilingInner->srcDataType = impl_.srcDataType_;
     tilingInner->dstDataType = impl_.dstDataType_;
     tilingInner->commEngine = impl_.commEngine_;
-
     uint64_t ccTilingAddr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(&tiling));
     ASCENDC_HOST_ASSERT(
         UpdateMc2InitTiling(impl_.initTilingAddr_, ccTilingAddr) == EXIT_SUCCESS, return EXIT_FAILURE,
@@ -240,7 +248,6 @@ uint32_t Mc2CcTilingConfig::SetReduceType(uint32_t reduceType, uint8_t dstDataTy
     impl_.dstDataType_ = dstDataType;
     return EXIT_SUCCESS;
 }
-
 
 uint32_t Mc2CcTilingConfig::SetStepSize(uint8_t stepSize)
 {

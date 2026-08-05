@@ -35,6 +35,7 @@ HcclResult TopoMatchPcieMix::MatchTopo(
         HCCL_ERROR("[TopoMatchPcieMix] Rank [%d], deviceType not supported yet.", myRank), HcclResult::HCCL_E_PARA);
 #endif
 
+    // 获取通信网络层数
     uint32_t* netLayers;
     uint32_t layerNum = 0;
     CHK_RET(HcclRankGraphGetLayers(comm, &netLayers, &layerNum));
@@ -43,6 +44,7 @@ HcclResult TopoMatchPcieMix::MatchTopo(
         "[TopoMatchPcieMix] Rank [%d], netLayers[%u][%s]", myRank, layerNum,
         PrintCArray<uint32_t>(netLayers, layerNum).c_str());
 
+    // 获取layer0的topo
     uint32_t* instSizeList;
     uint32_t listSize = 0;
     CHK_RET(HcclRankGraphGetInstSizeListByLayer(comm, 0, &instSizeList, &listSize));
@@ -51,9 +53,11 @@ HcclResult TopoMatchPcieMix::MatchTopo(
         PrintCArray<uint32_t>(instSizeList, listSize).c_str());
     CHK_RET(CheckVecElementAllSame(instSizeList, listSize));
 
+    // 计算layer0的topo
     algHierarchyInfo.infos.resize(COMM_LAYER_SIZE_2);
     CHK_RET(TopoForLayer0(comm, myRank, algHierarchyInfo));
 
+    // 暂不支持大于1层的PCIE混合topo
     if (layerNum >= COMM_LAYER_SIZE_2) {
         HCCL_WARNING("[TopoMatchPcieMix] layerNum > 1 is not supported yet for PCIE mix topo, and is ignored");
     }
@@ -140,4 +144,5 @@ HcclResult TopoMatchPcieMix::DeduplicateLevelRanks(
     level1Ranks.erase(level1End, level1Ranks.end());
     return HCCL_SUCCESS;
 }
+
 } // namespace mc2_ops_hccl

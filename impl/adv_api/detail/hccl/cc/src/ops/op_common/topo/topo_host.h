@@ -16,6 +16,7 @@
 #include "alg_param.h"
 #include "hccl_rank_graph.h"
 #include "hccl_res.h"
+#include "dlsym_common.h"
 
 namespace mc2_ops_hccl {
 
@@ -25,6 +26,7 @@ enum class HcclNetLayer {
     HCCL_NetLayer_L0 = 0,
     HCCL_NetLayer_L1,
     HCCL_NetLayer_L2,
+    HCCL_NetLayer_L3,
     HCCL_NetLayer_MAX,
 };
 
@@ -38,6 +40,7 @@ bool IsDiffDeviceModule(const TopoInfo* topoInfo, const std::unordered_map<u32, 
 
 HcclResult CalcLinkInfo(TopoInfo* topoInfo, const std::unordered_map<u32, u32>& pairLinkCounter);
 HcclResult CalcLevel0MeshType(HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo);
+
 /**
  * Calculates the group index of the current process in the specified network layer.
  * This function determines the position index of the group that the current process belongs to
@@ -94,6 +97,9 @@ HcclResult ExtractNetLayerDetails(const HcclComm comm, TopoInfoWithNetLayerDetai
 HcclResult ExtractTopoDetails(HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo);
 
 HcclResult Is2DieFullMesh(HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo);
+
+HcclResult CalAllLevelEndpointAttrBwCoeff(
+    HcclComm comm, uint32_t rankId, uint32_t levelSize, std::vector<std::vector<EndpointAttrBwCoeff>>& endpointAttrBw);
 
 HcclResult IsLevel0PcieMix(HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo);
 

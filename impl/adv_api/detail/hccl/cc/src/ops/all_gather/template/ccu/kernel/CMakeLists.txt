@@ -8,12 +8,16 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
 set(src_list
-    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_mesh1d_mem2mem.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_mesh1d.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_nhr1d_mem2mem.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_2dies_mesh1d_mem2mem.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_nhr1d_multi_jetty_mem2mem.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_2dies_mesh_1D.cc
+    # Legacy direct-launch/non-Mem2Mem AllGather kernels are kept for recovery; KFC Mem2Mem is the active path.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_mesh1d_mem2mem.cc
+    # Disabled: the legacy direct-launch Mesh1D kernel uses old hcomm::CcuKernelArg/CcuKernelAlgBase APIs.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_mesh1d.cc
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_all_gather_mesh1d.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_all_gather_mesh1d_mem2mem.cc
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_nhr1d_mem2mem.cc
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_2dies_mesh1d_mem2mem.cc
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_nhr1d_multi_jetty_mem2mem.cc
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_gather_2dies_mesh_1D.cc
 )
 
 target_sources(mc2_client PRIVATE
