@@ -23,9 +23,6 @@
 <!-- npu="910" id10 -->
 - Atlas 训练系列产品：不支持
 <!-- end id10 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
 
 ### TrianUpperMatmulPolicy/TrianLowerMatmulPolicy
 
@@ -48,9 +45,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
-<!-- npu="x90" id2 -->
-- Kirin X90：支持
-<!-- end id2 -->
 
 ### NBuffer33MatmulPolicy
 
@@ -73,9 +67,6 @@
 <!-- npu="910" id22 -->
 - Atlas 训练系列产品：不支持
 <!-- end id22 -->
-<!-- npu="x90" id3 -->
-- Kirin X90：支持
-<!-- end id3 -->
 
 ### MatmulWithScalePolicy/SplitMMatmulPolicy/SplitNMatmulPolicy
 
@@ -98,9 +89,6 @@
 <!-- npu="910" id28 -->
 - Atlas 训练系列产品：不支持
 <!-- end id28 -->
-<!-- npu="x90" id4 -->
-- Kirin X90：不支持
-<!-- end id4 -->
 
 ## 功能说明
 

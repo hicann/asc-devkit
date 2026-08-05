@@ -21,12 +21,6 @@
 <!-- npu="910" id10 -->
 - Atlas 训练系列产品：不支持
 <!-- end id10 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -186,13 +180,7 @@
     <!-- npu="310p" id18 -->
     Atlas 推理系列产品AI Core，支持的数据类型为：int8\_t、uint8\_t、half、float。
     <!-- end id18 -->
-    <!-- npu="x90" id3 -->
-    Kirin X90，支持的数据类型为：int8\_t、uint8\_t、half、float。
-    <!-- end id3 -->
-    <!-- npu="9030" id4 -->
-    Kirin 9030，支持的数据类型为：int8\_t、uint8\_t、half、float。
-    <!-- end id4 -->
-
+        
 ## 调用示例
 
 ```

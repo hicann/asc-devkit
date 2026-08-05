@@ -21,9 +21,6 @@
 <!-- npu="910" id8 -->
 - Atlas 训练系列产品：不支持
 <!-- end id8 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
 
 ## 功能说明
 
@@ -56,7 +53,6 @@
 实例化Matmul时，需要通过MatmulType设置输入输出的Layout格式，当前支持4种Layout类型：BSNGD、SBNGD、BNGS1S2、NORMAL（BMNK的数据排布格式使用NORMAL表示）。
 
 对于BSNGD、SBNGD、BNGS1S2 Layout格式，调用该接口之前需要在host Tiling实现中使用[SetALayout](../Matmul-Tiling类/SetALayout.md)、[SetBLayout](../Matmul-Tiling类/SetBLayout.md)、[SetCLayout](../Matmul-Tiling类/SetCLayout.md)、[SetBatchNum](../Matmul-Tiling类/SetBatchNum-88.md)设置A/B/C的Layout轴信息和最大BatchNum数；对于NORMAL  Layout格式则需使用[SetBatchInfoForNormal](../Matmul-Tiling类/SetBatchInfoForNormal.md)设置A/B/C的M/N/K轴信息和A/B矩阵的BatchNum数。
-
 
 <a name="row_width"></a>使用ND格式输入时，是否开启MatmulConfig中的intrinsicsCheck，取决于单个BMM内A或B矩阵的源矩阵内轴长度。该内轴可理解为源ND数据中一行的连续跨度，即一次ND2NZ搬运所使用的源行宽。不同Layout下的取值规则如下：NORMAL Layout下，按普通矩阵内轴判断；BNGS1S2 Layout下，按源ND矩阵一行的实际跨度判断；BSNGD Layout下，A和B矩阵源矩阵内轴分别为ALayoutInfoN \* ALayoutInfoG \* ALayoutInfoD、BLayoutInfoN \* BLayoutInfoG \* BLayoutInfoD；SBNGD Layout下，A和B矩阵源矩阵内轴分别为ALayoutInfoB \* ALayoutInfoN \* ALayoutInfoG \* ALayoutInfoD、BLayoutInfoB \* BLayoutInfoN \* BLayoutInfoG \* BLayoutInfoD。
 
@@ -168,10 +164,6 @@
     <!-- npu="310p" id16 -->
     Atlas 推理系列产品AI Core，支持的数据类型为：half、bfloat16_t、int32_t、float。
     <!-- end id16 -->
-
-    <!-- npu="x90" id2 -->
-    Kirin X90，支持的数据类型为：half、int32_t。
-    <!-- end id2 -->
 
 ## 调用示例
 

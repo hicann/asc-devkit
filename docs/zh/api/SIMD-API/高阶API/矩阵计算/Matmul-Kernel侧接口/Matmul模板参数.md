@@ -21,12 +21,6 @@
 <!-- npu="910" id10 -->
 - Atlas 训练系列产品：不支持
 <!-- end id10 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -50,10 +44,7 @@
     <!-- npu="910b" id14 -->
     Atlas A2 训练系列产品/Atlas A2 推理系列产品
     <!-- end id14 -->
-    <!-- npu="x90" id3 -->
-    Kirin X90
-    <!-- end id3 -->
-
+    
 -   MatmulPolicy信息（可选），用于配置Matmul可拓展模块策略。不配置使用默认模板策略。当前支持如下产品型号：
 
     <!-- npu="950" id15 -->
@@ -71,10 +62,7 @@
     <!-- npu="310p" id19 -->
     Atlas 推理系列产品AI Core
     <!-- end id19 -->
-    <!-- npu="x90" id4 -->
-    Kirin X90
-    <!-- end id4 -->
-
+    
 ## 函数原型
 
 Matmul模板参数如下：

@@ -21,9 +21,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
 
 ## 功能说明
 
@@ -57,7 +54,7 @@ __aicore__ constexpr MatmulApiStaticTiling GetMatmulApiTiling(const MatmulConfig
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| mmCFG | 输入 | 获取的[MatmulConfig](MatmulConfig.md#matmulconfig-params)模板。<!-- npu="950" id8 --><br><br>对于Ascend 950PR/Ascend 950DT，支持常量化的为全部模板：Norm, IBShare, MDL模板。<!-- end id8 --><!-- npu="A3" id9 --><br><br>对于Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持常量化的模板有：Norm, MDL模板。<!-- end id9 --><!-- npu="910b" id10 --><br><br>对于Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持常量化的模板有：Norm, MDL模板。<!-- end id10 --><!-- npu="x90" id2 --><br><br>对于Kirin X90，支持常量化的模板有：Norm, MDL模板。<!-- end id2 --> |
+| mmCFG | 输入 | 获取的[MatmulConfig](MatmulConfig.md#matmulconfig-params)模板。<!-- npu="950" id8 --><br><br>对于Ascend 950PR/Ascend 950DT，支持常量化的为全部模板：Norm, IBShare, MDL模板。<!-- end id8 --><!-- npu="A3" id9 --><br><br>对于Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持常量化的模板有：Norm, MDL模板。<!-- end id9 --><!-- npu="910b" id10 --><br><br>对于Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持常量化的模板有：Norm, MDL模板。<!-- end id10 --> |
 | l1Size | 输入 | 可用的L1大小，默认值L1_SIZE。 |
 
 ## 返回值说明
