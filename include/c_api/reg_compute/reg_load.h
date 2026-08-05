@@ -2012,7 +2012,7 @@ __simd_callee__ inline void asc_loadalign_downsample(vector_bool& dst, __ubuf__ 
 
 __simd_callee__ inline void asc_loadalign_downsample(vector_bool& dst, __ubuf__ uint32_t* src, addr_reg offset);
 
-__simd_callee__ inline void asc_loadalign_postupdate(vector_bool& dst, __ubuf__ uint32_t*& src);
+__simd_callee__ inline void asc_loadalign_postupdate(vector_bool& dst, __ubuf__ uint32_t*& src, int32_t offset);
 
 __simd_callee__ inline void asc_loadalign_upsample_postupdate(
     vector_bool& dst, __ubuf__ uint32_t*& src, int32_t offset);
