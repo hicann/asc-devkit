@@ -29,6 +29,10 @@ Ascend C提供b8\~b64（8bit\~64bit）四种不同位宽的数据类型，不同
 | U8        | uint8_t |
 | HiF8      | hifloat8_t |
 | FP8_E4M3  | fp8_e4m3fn_t |
+| FP8_E5M2  | fp8_e5m2_t |
+| FP8_E8M0  | fp8_e8m0_t |
+| FP4_E2M1  | fp4x2_e2m1_t |
+| FP4_E1M2  | fp4x2_e1m2_t |
 | S16       | int16_t |
 | U16       | uint16_t |
 | FP16      | half |
