@@ -34,7 +34,7 @@ MTE2将数据从Global Memory（GM）搬运到Unified Buffer（UB）时，可通
 
 ## 样例描述
 
-C-API的GM→UB搬运接口[asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/C-API/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)通过入参`l2_cache_mode`来控制本次搬运数据在L2 Cache中的管理策略，取值及含义详见枚举类[asc_load_l2_cache_mode](../../../../../../docs/zh/api/SIMD-API/C-API/)的说明。
+C-API的GM→UB搬运接口[asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)通过入参`l2_cache_mode`来控制本次搬运数据在L2 Cache中的管理策略，取值及含义详见枚举类[asc_load_l2_cache_mode](../../../../../../docs/zh/api/SIMD-API/c_api/)的说明。
 
 围绕上述两类场景，本样例设计了4个Case进行对比验证：
 

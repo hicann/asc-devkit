@@ -1,7 +1,7 @@
 ﻿# reduce Example
 
 ## Overview
-This example implements the Reduce operation based on the C API programming interface, primarily calling the [asc_reduce_sum](../../../../../docs/zh/api/SIMD-API/C-API/reg/reduce_compute/asc_reduce_sum.md) API (SUM mode).
+This example implements the Reduce operation based on the C API programming interface, primarily calling the [asc_reduce_sum](../../../../../docs/zh/api/SIMD-API/c_api/reg/reduce_compute/asc_reduce_sum.md) API (SUM mode).
 - The asc_reduce_sum API supports SUM/MAX/MIN reduction modes. This example uses the SUM mode.
 
 ## Supported Products and CANN Versions

@@ -1,0 +1,43 @@
+# GetBaseK
+
+## 功能说明
+
+获取Tiling计算得到的baseK值。baseK参数的说明请参考[表1](TCubeTiling_struct.md#tcubetiling-struct)。
+
+## 函数原型
+
+```
+int32_t GetBaseK() const
+```
+
+## 参数说明
+
+无
+
+## 返回值说明
+
+返回值为Tiling计算得到的baseK值。
+
+## 约束说明
+
+使用创建的Tiling对象调用该接口，且需在完成Tiling计算（[GetTiling](GetTiling.md)）后调用。
+
+## 调用示例
+
+```
+auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
+matmul_tiling::MatmulApiTiling tiling(ascendcPlatform);
+tiling.SetAType(matmul_tiling::TPosition::GM, matmul_tiling::CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16);
+tiling.SetBType(matmul_tiling::TPosition::GM, matmul_tiling::CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16);
+tiling.SetCType(matmul_tiling::TPosition::GM, matmul_tiling::CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT);
+tiling.SetBiasType(matmul_tiling::TPosition::GM, matmul_tiling::CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT);
+tiling.SetShape(1024, 1024, 1024);
+tiling.SetOrgShape(1024, 1024, 1024);
+tiling.SetBias(true);
+tiling.SetBufferSpace(-1, -1, -1);
+
+optiling::TCubeTiling tilingData;
+int ret = tiling.GetTiling(tilingData);
+int baseK = tiling.GetBaseK(); // 获取Tiling计算得到的baseK
+```
+

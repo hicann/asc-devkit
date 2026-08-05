@@ -74,7 +74,7 @@ void SetValue(const uint32_t index, const T1 value) const
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-不要大量使用SetValue对LocalTensor进行赋值，会使性能下降。若需要大批量赋值，请根据实际场景选择[数据填充基础API接口](../../memory_vector_compute/data_padding/data_padding.md)或数据填充高阶API接口（[Pad](../../../高阶API/张量变换/Pad.md)、[Broadcast](../../../高阶API/张量变换/Broadcast.md)），以及在需要生成递增数列的场景，选择[Arange](../../../高阶API/索引计算/Arange-94.md)。
+不要大量使用SetValue对LocalTensor进行赋值，会使性能下降。若需要大批量赋值，请根据实际场景选择[数据填充基础API接口](../../memory_vector_compute/data_padding/data_padding.md)或数据填充高阶API接口（[Pad](../../../adv_api/tensor_transform/Pad.md)、[Broadcast](../../../adv_api/tensor_transform/Broadcast.md)），以及在需要生成递增数列的场景，选择[Arange](../../../adv_api/index_compute/Arange-94.md)。
 
 ## 调用示例<a name="section17531157161314"></a>
 

@@ -2,12 +2,12 @@
 
 ## 功能介绍<a name="zh-cn_topic_0000002373911153_section1953745712231"></a>
 
-在Batch Matmul场景中，Matmul API可以一次性计算出多个大小为singleCoreM \* singleCoreN的C矩阵。当Batch Matmul场景有Bias输入时，默认的Bias输入矩阵包含Batch轴，即Bias的大小为Batch \* N。通过开启Bias复用功能，当每个Batch计算使用的Bias数据相同时，只需输入一个不带Batch轴的Bias矩阵。Batch Matmul的Bias矩阵复用功能默认不启用，用户需要设置[MatmulConfig](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/MatmulConfig.md)中的isBiasBatch参数为false来开启此功能。
+在Batch Matmul场景中，Matmul API可以一次性计算出多个大小为singleCoreM \* singleCoreN的C矩阵。当Batch Matmul场景有Bias输入时，默认的Bias输入矩阵包含Batch轴，即Bias的大小为Batch \* N。通过开启Bias复用功能，当每个Batch计算使用的Bias数据相同时，只需输入一个不带Batch轴的Bias矩阵。Batch Matmul的Bias矩阵复用功能默认不启用，用户需要设置[MatmulConfig](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)中的isBiasBatch参数为false来开启此功能。
 
 **图1**  带有Batch轴的Bias计算示意图<a name="zh-cn_topic_0000002373911153_fig889710263325"></a>  
 ![](../../../../figures/带有Batch轴的Bias计算示意图.png "带有Batch轴的Bias计算示意图")
 
-如上图所示，Batch Matmul中未复用Bias矩阵的场景，每计算出一个singleCoreM \* singleCoreN大小的C矩阵，都会与1 \* singleCoreN大小的Bias矩阵相加。若不同Batch的计算使用的Bias数据相同，则多Batch计算可以复用同一个Bias矩阵，如下图所示，此场景中调用[SetBias](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/SetBias.md)接口时，只需设置一个1 \* singleCoreN大小的Bias矩阵。
+如上图所示，Batch Matmul中未复用Bias矩阵的场景，每计算出一个singleCoreM \* singleCoreN大小的C矩阵，都会与1 \* singleCoreN大小的Bias矩阵相加。若不同Batch的计算使用的Bias数据相同，则多Batch计算可以复用同一个Bias矩阵，如下图所示，此场景中调用[SetBias](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetBias.md)接口时，只需设置一个1 \* singleCoreN大小的Bias矩阵。
 
 **图2**  复用Bias计算示意图<a name="zh-cn_topic_0000002373911153_fig1485726153719"></a>  
 ![](../../../../figures/复用Bias计算示意图.png "复用Bias计算示意图")
@@ -18,7 +18,7 @@ Batch Matmul中每个Batch的Matmul计算可以使用相同的Bias矩阵。
 
 ## 约束说明<a name="zh-cn_topic_0000002373911153_section3618165412115"></a>
 
-A、B、C矩阵的Layout类型都为NORMAL时，不支持[batchMode](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/MatmulConfig.md)参数设为SINGLE\_LARGE\_THAN\_L1，即Bias复用场景下，单Batch的A、B矩阵数据总和不得超过L1 Buffer的大小。
+A、B、C矩阵的Layout类型都为NORMAL时，不支持[batchMode](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)参数设为SINGLE\_LARGE\_THAN\_L1，即Bias复用场景下，单Batch的A、B矩阵数据总和不得超过L1 Buffer的大小。
 
 ## 调用示例<a name="zh-cn_topic_0000002373911153_section18018102212"></a>
 

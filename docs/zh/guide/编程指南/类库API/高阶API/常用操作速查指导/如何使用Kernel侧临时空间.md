@@ -10,7 +10,7 @@ Kernel侧接口的内部实现一般涉及复杂的数学计算，需要额外�
 -   为保证功能正确，预留/申请的临时空间大小不能小于最小临时空间大小；
 -   在最小临时空间-最大临时空间范围内，随着临时空间增大，Kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
 
-以下以Asin接口为例，示例使用[AscendC::TensorShape](../../../../../api/SIMD-API/高阶API/数据结构/TensorShape.md)描述输入数据的Tensor形状：
+以下以Asin接口为例，示例使用[AscendC::TensorShape](../../../../../api/SIMD-API/adv_api/data_structures/TensorShape.md)描述输入数据的Tensor形状：
 
 ```
 // 算子输入的数据类型T为half，isReuseSource传入默认值false

@@ -2,7 +2,7 @@
 
 ## 案例介绍<a name="section17413194624510"></a>
 
-本案例呈现了在矩阵乘算子场景中，使用Matmul高阶API进行矩阵乘法计算，开启UnitFlag功能对算子性能的提升效果。UnitFlag功能为AIC核中MMAD计算指令和FIXPIPE数据搬运指令提供了基于内存访问的细粒度同步，使计算与搬运流水并行。开启UnitFlag功能的方式为将MatmulConfig中的enUnitFlag参数设置为true。enUnitFlag参数的详细介绍请参考[MatmulConfig](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/MatmulConfig.md)。
+本案例呈现了在矩阵乘算子场景中，使用Matmul高阶API进行矩阵乘法计算，开启UnitFlag功能对算子性能的提升效果。UnitFlag功能为AIC核中MMAD计算指令和FIXPIPE数据搬运指令提供了基于内存访问的细粒度同步，使计算与搬运流水并行。开启UnitFlag功能的方式为将MatmulConfig中的enUnitFlag参数设置为true。enUnitFlag参数的详细介绍请参考[MatmulConfig](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)。
 
 -   开启UnitFlag的适用场景
 
@@ -11,7 +11,7 @@
 -   开启UnitFlag的约束条件
     -   UnitFlag功能仅支持Norm、IBShare、MDL三个模板。
     -   开启UnitFlag功能时，不支持算子内同时存在L0C Buffer（CO1）搬出到Global Memory和L1 Buffer（A1）搬出到Global Memory的两种流水。
-    -   开启UnitFlag功能时，若同时开启[L0C累加](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/Iterate.md)功能，不支持多次[Iterate](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/Iterate.md)计算、一次[GetTensorC](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/GetTensorC.md)输出。
+    -   开启UnitFlag功能时，若同时开启[L0C累加](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Iterate.md)功能，不支持多次[Iterate](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Iterate.md)计算、一次[GetTensorC](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetTensorC.md)输出。
 
 本案例的算子规格如下：
 

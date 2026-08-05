@@ -33,7 +33,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-获取用户使用的workspace指针。Kernel直调开发方式下，如果未开启HAVE\_WORKSPACE编译选项，框架不会自动设置系统workspace。如果使用了[Matmul Kernel侧接口](../../../高阶API/矩阵计算/Matmul-Kernel侧接口/Matmul-Kernel侧接口.md)等需要系统workspace的高阶API，kernel侧需要通过[SetSysWorkSpace](SetSysWorkSpace.md)设置系统workspace，此时用户workspace需要通过该接口获取。
+获取用户使用的workspace指针。Kernel直调开发方式下，如果未开启HAVE\_WORKSPACE编译选项，框架不会自动设置系统workspace。如果使用了[Matmul Kernel侧接口](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等需要系统workspace的高阶API，kernel侧需要通过[SetSysWorkSpace](SetSysWorkSpace.md)设置系统workspace，此时用户workspace需要通过该接口获取。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

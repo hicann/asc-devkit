@@ -18,7 +18,7 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
 
 -   工程化算子开发方式
 
-    在tiling函数中先通过GetWorkspaceSizes接口获取workspace大小的存放位置，再设置workspace的大小，框架侧会为其申请对应大小的设备侧Global Memory，在对应的算子kernel侧实现时可以使用这块workspace内存。在使用[Matmul Kernel侧接口](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/Matmul-Kernel侧接口.md)等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。
+    在tiling函数中先通过GetWorkspaceSizes接口获取workspace大小的存放位置，再设置workspace的大小，框架侧会为其申请对应大小的设备侧Global Memory，在对应的算子kernel侧实现时可以使用这块workspace内存。在使用[Matmul Kernel侧接口](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。
 
     ```
     // 用户自定义的tiling函数

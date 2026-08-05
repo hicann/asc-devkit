@@ -1,7 +1,7 @@
 ﻿# arange样例
 
 ## 概述
-本样例基于C API编程接口实现Arange运算，主要调用[asc_arange](../../../../../docs/zh/api/SIMD-API/C-API/reg/index_operate/asc_arange.md)接口。
+本样例基于C API编程接口实现Arange运算，主要调用[asc_arange](../../../../../docs/zh/api/SIMD-API/c_api/reg/index_operate/asc_arange.md)接口。
 - asc_arange接口以传入的标量值为起始值，生成递增/递减的索引序列
 - 本样例以递增模式为例，起始值为0
 

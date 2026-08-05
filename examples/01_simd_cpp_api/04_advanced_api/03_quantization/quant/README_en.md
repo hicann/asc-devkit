@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example uses the [AscendQuant](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/AscendQuant.md) high-level API to implement quantization computation, which converts high-precision data to low-precision data to reduce storage and computation overhead. The example demonstrates the process of quantizing float type input data to int8_t type output through scale and offset. On the 950 series, while the AscendQuant API is compatible, it is recommended to prefer the [Quantize](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/Quantize.md) API, which adapts to various quantization scenarios through a unified struct configuration.
+This example uses the [AscendQuant](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/AscendQuant.md) high-level API to implement quantization computation, which converts high-precision data to low-precision data to reduce storage and computation overhead. The example demonstrates the process of quantizing float type input data to int8_t type output through scale and offset. On the 950 series, while the AscendQuant API is compatible, it is recommended to prefer the [Quantize](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/Quantize.md) API, which adapts to various quantization scenarios through a unified struct configuration.
 
 ## Supported Products and CANN Software Versions
 

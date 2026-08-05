@@ -73,7 +73,7 @@ Tiling参数如下：
 
 ## 设计优化方案<a name="section81265422311"></a>
 
-默认MIX模式下，用户在AIV侧发起消息，通过消息通信框架中转消息后，在AIC侧执行Matmul计算。基于这样的流程，用户使用Matmul高阶API编写算子代码时，可以使用[REGIST\_MATMUL\_OBJ](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/REGIST_MATMUL_OBJ.md)宏，无需区分AIV和AIC，但也因这套消息处理机制导致产生了额外的性能开销，如[图1默认MIX模式的Matmul流程示意图](#fig0672118378)所示。
+默认MIX模式下，用户在AIV侧发起消息，通过消息通信框架中转消息后，在AIC侧执行Matmul计算。基于这样的流程，用户使用Matmul高阶API编写算子代码时，可以使用[REGIST\_MATMUL\_OBJ](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/REGIST_MATMUL_OBJ.md)宏，无需区分AIV和AIC，但也因这套消息处理机制导致产生了额外的性能开销，如[图1默认MIX模式的Matmul流程示意图](#fig0672118378)所示。
 
 实现默认MIX模式的具体步骤如下：
 

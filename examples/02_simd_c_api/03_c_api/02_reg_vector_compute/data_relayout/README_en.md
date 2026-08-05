@@ -1,7 +1,7 @@
 # data_relayout Example
 
 ## Overview
-This example implements data relayout functionality based on the C API programming interface, primarily calling the [asc_intlv](../../../../../docs/zh/api/SIMD-API/C-API/reg/data_rearrange/asc_intlv.md)/[asc_pack_to_low](../../../../../docs/zh/api/SIMD-API/C-API/reg/data_compress/asc_pack_to_low.md) API, supporting multiple scenarios. Select a scenario through the CMake build parameter `SCENARIO_NUM`.
+This example implements data relayout functionality based on the C API programming interface, primarily calling the [asc_intlv](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_rearrange/asc_intlv.md)/[asc_pack_to_low](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_compress/asc_pack_to_low.md) API, supporting multiple scenarios. Select a scenario through the CMake build parameter `SCENARIO_NUM`.
     | SCENARIO_NUM | Relayout Scenario |
     | --- | --- |
     | 1 | Interleave (interleave two uint16_t vectors) |

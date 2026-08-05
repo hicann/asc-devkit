@@ -77,7 +77,7 @@
 
 2.  **Matmul Tiling是否有修改，修改是否合理**
 
-    一般含有Matmul的算子Tiling实现中，通过调用[GetTiling](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/GetTiling.md)接口获取Matmul Tiling，其数据类型为[TCubeTiling](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/TCubeTiling结构体.md)结构体，这时这组Tiling值是合法的。某些情况下，用户自定义了一组TCubeTiling参数值，或者，基于[GetTiling](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/GetTiling.md)接口返回的TCubeTiling，自行修改了其中的部分值，这样的修改需要满足参数间的制约条件。
+    一般含有Matmul的算子Tiling实现中，通过调用[GetTiling](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/GetTiling.md)接口获取Matmul Tiling，其数据类型为[TCubeTiling](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/TCubeTiling_struct.md)结构体，这时这组Tiling值是合法的。某些情况下，用户自定义了一组TCubeTiling参数值，或者，基于[GetTiling](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/GetTiling.md)接口返回的TCubeTiling，自行修改了其中的部分值，这样的修改需要满足参数间的制约条件。
 
     为获取所有Tiling参数值，需要打印Tiling参数相关的日志。设置日志环境变量，获取MatmulTiling参数值。设置环境变量的命令如下：
 
@@ -86,7 +86,7 @@
     export ASCEND_SLOG_PRINT_TO_STDOUT=1
     ```
 
-    在日志中搜索“MatmulTiling”关键字，参照[TCubeTiling约束条件](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/TCubeTiling结构体.md)，检查Tiling取值是否合法。若不满足某条约束条件，需要修改对应的相关参数，使该组TCubeTiling参数值均合法。
+    在日志中搜索“MatmulTiling”关键字，参照[TCubeTiling约束条件](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/TCubeTiling_struct.md)，检查Tiling取值是否合法。若不满足某条约束条件，需要修改对应的相关参数，使该组TCubeTiling参数值均合法。
 
     ```
     cat test_tiling.log |grep MatmulTiling // test_tiling.log为示例日志文件名
@@ -121,7 +121,7 @@
     [INFO] ASCENDCKERNEL(1202803,ascendc_kernels_bbit):2024-10-12-08:53:59.636.949 [matmul_tiling_base.cpp:725][PrintTilingDataInfo] MatmulTiling: stepKb        = 1
     ```
 
-    例如，根据如上打印出的TCubeTiling参数，对照[TCubeTiling约束条件](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/TCubeTiling结构体.md)查看各个参数的取值，depthA1的取值应该等于stepM\*stepKa或者stepM\*stepKa\*2，而depthA1的取值为10，既不等于stepM\*stepKa=8，也不等于stepM\*stepKa\*2=16，不满足约束条件，因此需要校正depthA1的值。
+    例如，根据如上打印出的TCubeTiling参数，对照[TCubeTiling约束条件](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/TCubeTiling_struct.md)查看各个参数的取值，depthA1的取值应该等于stepM\*stepKa或者stepM\*stepKa\*2，而depthA1的取值为10，既不等于stepM\*stepKa=8，也不等于stepM\*stepKa\*2=16，不满足约束条件，因此需要校正depthA1的值。
 
 3.  **算子隐藏Vector计算，仅调用Matmul API，算子功能是否正确**
 
@@ -568,13 +568,13 @@
 
     -   案例1：未遵循接口约束条件
 
-        在Matmul MDL模板下，调用[IterateBatch](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/IterateBatch.md)接口，导致算子执行失败。这是由于不满足该接口的约束条件，IterateBatch接口仅支持Norm模板。
+        在Matmul MDL模板下，调用[IterateBatch](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateBatch.md)接口，导致算子执行失败。这是由于不满足该接口的约束条件，IterateBatch接口仅支持Norm模板。
 
         此类问题，应仔细阅读Matmul各接口中的约束条件，并排查算子实现使用的相关接口，是否满足对应接口的约束条件。
 
     -   案例2：未遵循模板约束条件
 
-        在使能[doMTE2Preload](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/MatmulConfig.md)预加载模板时，若K方向非全载，不满足模板约束条件，则会导致精度比对失败。
+        在使能[doMTE2Preload](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)预加载模板时，若K方向非全载，不满足模板约束条件，则会导致精度比对失败。
 
         除了满足函数接口约束条件外，也需要满足模板参数相应的约束条件，排查模板参数的使用。
 

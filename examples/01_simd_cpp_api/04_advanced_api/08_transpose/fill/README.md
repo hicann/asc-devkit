@@ -46,7 +46,7 @@
   </table>
 
 - 样例实现：  
-  本样例中实现的是固定shape为输入input_x[1, 256]，input_y[1, 256]，输出output_z[1, 256]的fill样例，所用API详细介绍请参考[Fill API文档](../../../../../docs/zh/api/SIMD-API/高阶API/张量变换/Fill-97.md)。
+  本样例中实现的是固定shape为输入input_x[1, 256]，input_y[1, 256]，输出output_z[1, 256]的fill样例，所用API详细介绍请参考[Fill API文档](../../../../../docs/zh/api/SIMD-API/adv_api/tensor_transform/Fill-97.md)。
 
   - Kernel实现  
     计算逻辑包含以下步骤：

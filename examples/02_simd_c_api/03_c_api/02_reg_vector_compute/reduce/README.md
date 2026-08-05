@@ -1,7 +1,7 @@
 ﻿# reduce样例
 
 ## 概述
-本样例基于C API编程接口实现Reduce运算，主要调用[asc_reduce_sum](../../../../../docs/zh/api/SIMD-API/C-API/reg/reduce_compute/asc_reduce_sum.md)接口。
+本样例基于C API编程接口实现Reduce运算，主要调用[asc_reduce_sum](../../../../../docs/zh/api/SIMD-API/c_api/reg/reduce_compute/asc_reduce_sum.md)接口。
 
 ## 本样例支持的产品及CANN软件版本
 

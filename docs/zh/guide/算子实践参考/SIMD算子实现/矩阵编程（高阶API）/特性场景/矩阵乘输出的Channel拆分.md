@@ -4,7 +4,7 @@
 
 矩阵乘输出的Channel拆分，又称ChannelSplit。指当Matmul计算结果C矩阵的格式为[NZ](../基础知识.md#zh-cn_topic_0000001622194138_section1453415011)时，C矩阵采用分形存储，关于NZ格式的详细内容请参考[数据格式](../基础知识.md#zh-cn_topic_0000001622194138_section1453415011)。当C矩阵的物理排布格式为NZ、数据类型为float时，默认情况下，每个分形内部包含16\*16个元素，即分形的大小为16\*16。ChannelSplit的功能为将此场景下C矩阵的每个16\*16的分形切分为16\*8的分形，使得C矩阵按照16\*8的分形进行存储。
 
-由于1个float类型数据的大小为4字节，16\*8的分形在内轴满足32字节对齐，内轴上的数据量与一条NPU矢量计算指令处理的数据单元一致，这便于后续的其它计算。ChannelSplit功能默认不启用，用户需通过设置[MatmulConfig](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/MatmulConfig.md)中的isEnableChannelSplit参数为true来开启此功能。
+由于1个float类型数据的大小为4字节，16\*8的分形在内轴满足32字节对齐，内轴上的数据量与一条NPU矢量计算指令处理的数据单元一致，这便于后续的其它计算。ChannelSplit功能默认不启用，用户需通过设置[MatmulConfig](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)中的isEnableChannelSplit参数为true来开启此功能。
 
 **图1**  ChannelSplit功能示意图<a name="zh-cn_topic_0000002264134832_fig38211632121711"></a>  
 ![](../../../../figures/ChannelSplit功能示意图.png "ChannelSplit功能示意图")

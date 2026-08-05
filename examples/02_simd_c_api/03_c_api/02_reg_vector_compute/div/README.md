@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例基于C API编程接口实现Div运算，主要调用[asc_div](../../../../../docs/zh/api/SIMD-API/C-API/reg/arithmetic_compute/asc_div.md)接口。
+本样例基于C API编程接口实现Div运算，主要调用[asc_div](../../../../../docs/zh/api/SIMD-API/c_api/reg/arithmetic_compute/asc_div.md)接口。
 
 ## 本样例支持的产品及CANN软件版本
 

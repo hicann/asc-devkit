@@ -284,7 +284,7 @@ __aicore__ inline void Mmad(const LocalTensor<T>& c, const LocalTensor<U>& a,
 | cmatrixInitVal | Whether to enable C matrix default zero initialization. true=init to 0, false=no init (controlled by cmatrixSource). Default: true. |
 | cmatrixSource | Whether C matrix initial value comes from BT Buffer. true=from BT, false=no init. Default: false. **Note**: Ineffective when bias input is present. |
 | unitFlag | Controls fine-grained Mmad/Fixpipe parallelism. 0=disabled, 2=enabled no reset, 3=enabled with reset. See UnitFlag feature description. |
-| disableGemv | Whether to disable GEMV mode when M=1. **Only 950PR/DT**. |
+| disableGemv | Whether to disable GEMV mode when M=1. **Only Ascend 950PR/Ascend 950DT**. |
 ```
 
 **Requirements**:

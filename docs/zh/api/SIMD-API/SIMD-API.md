@@ -4,6 +4,6 @@
 
 -   **[基础API](basic_api/basic_api.md)**
 
--   **[高阶API](高阶API/高阶API.md)**
+-   **[高阶API](adv_api/adv_api.md)**
 
--   **[C API](C-API/C-API.md)**
+-   **[C API](c_api/c_api.md)**

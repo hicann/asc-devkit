@@ -5,7 +5,7 @@
 >[!NOTE]注意 
 >Broadcast机制通过扩展较小维度的数据，使得不同shape的输入能够进行运算，从而避免了显式的复制操作，提高了计算效率。数据进行Broadcast需满足：两个输入的维度个数相同，并且仅在某一个维度上的长度不同，某一个输入在此维度的长度为1。比如：shape为\(32, 8\)和 \(32, 1\)的两个输入可以进行Broadcast，因为它们都是二维，且第一个维度大小相等，而不相等的维度中第二个输入的维度为1，满足条件。
 
-本节中将使用[Broadcast](../../../../api/SIMD-API/高阶API/张量变换/Broadcast.md)接口，因此输入需满足该API相关约束。同时，由于硬件限制，该API的输入地址需满足32字节对齐。本节以输入维度为2、第二个轴（axis = 1）需要Broadcast为例进行说明。完整的样例代码请参见[输入Broadcast的Add算子样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/08_transpose/add_broadcast)。
+本节中将使用[Broadcast](../../../../api/SIMD-API/adv_api/tensor_transform/Broadcast.md)接口，因此输入需满足该API相关约束。同时，由于硬件限制，该API的输入地址需满足32字节对齐。本节以输入维度为2、第二个轴（axis = 1）需要Broadcast为例进行说明。完整的样例代码请参见[输入Broadcast的Add算子样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/08_transpose/add_broadcast)。
 
 ## Tiling实现<a name="zh-cn_topic_0000002201157446_section598962019342"></a>
 

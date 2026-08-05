@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example uses the [AscendDequant](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/AscendDequant.md) high-level API to implement dequantization computation, which restores quantized low-precision data to high-precision data. The example demonstrates the PER_CHANNEL scenario (per-channel quantization), where int32_t type input data is multiplied by a scale factor and converted to float type output. On the 950 series, while the AscendDequant API is compatible, it is recommended to prefer the [Dequantize](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/Dequantize.md) API, which adapts to various quantization scenarios through a unified struct configuration.
+This example uses the [AscendDequant](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/AscendDequant.md) high-level API to implement dequantization computation, which restores quantized low-precision data to high-precision data. The example demonstrates the PER_CHANNEL scenario (per-channel quantization), where int32_t type input data is multiplied by a scale factor and converted to float type output. On the 950 series, while the AscendDequant API is compatible, it is recommended to prefer the [Dequantize](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/Dequantize.md) API, which adapts to various quantization scenarios through a unified struct configuration.
 
 ## Supported Products and CANN Software Versions
 

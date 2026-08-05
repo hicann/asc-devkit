@@ -2,7 +2,7 @@
 
 ## 案例介绍<a name="section17413194624510"></a>
 
-本案例呈现了在矩阵乘算子场景中，使用Matmul高阶API进行矩阵乘法计算，开启NBuffer33模板对算子性能的提升效果。NBuffer33模板的实现为单核计算的A矩阵切分为3x3个基本块，该3x3个A矩阵的基本块全载和保持在L1 Buffer中，每次与3x1个B矩阵的基本块计算矩阵乘，同时DoubleBuffer并行搬入下次计算所需的3x1个B矩阵基本块，直到singleCoreN方向的矩阵乘计算完成。针对MTE2 Bound场景，通过NBuffer33算法的切分数据方式，错开搬运流水，减少单次搬运的数据量，平衡MTE2和FixPipe的数据流量，让两者带宽均匀分布。NBuffer33模板的详细介绍请参考[MatmulPolicy](../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/MatmulPolicy.md)。
+本案例呈现了在矩阵乘算子场景中，使用Matmul高阶API进行矩阵乘法计算，开启NBuffer33模板对算子性能的提升效果。NBuffer33模板的实现为单核计算的A矩阵切分为3x3个基本块，该3x3个A矩阵的基本块全载和保持在L1 Buffer中，每次与3x1个B矩阵的基本块计算矩阵乘，同时DoubleBuffer并行搬入下次计算所需的3x1个B矩阵基本块，直到singleCoreN方向的矩阵乘计算完成。针对MTE2 Bound场景，通过NBuffer33算法的切分数据方式，错开搬运流水，减少单次搬运的数据量，平衡MTE2和FixPipe的数据流量，让两者带宽均匀分布。NBuffer33模板的详细介绍请参考[MatmulPolicy](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy.md)。
 
 -   开启NBuffer33模板的适用场景
 

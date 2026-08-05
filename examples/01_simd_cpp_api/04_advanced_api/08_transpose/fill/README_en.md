@@ -46,7 +46,7 @@ This example uses the Fill high-level API to initialize data in Global Memory to
   </table>
 
 - Example implementation:  
-  This example implements a fill example with a fixed shape of input input_x[1, 256], input_y[1, 256], and output output_z[1, 256]. For detailed API information, refer to the [Fill API documentation](../../../../../docs/zh/api/SIMD-API/高阶API/张量变换/Fill-97.md).
+  This example implements a fill example with a fixed shape of input input_x[1, 256], input_y[1, 256], and output output_z[1, 256]. For detailed API information, refer to the [Fill API documentation](../../../../../docs/zh/api/SIMD-API/adv_api/tensor_transform/Fill-97.md).
 
   - Kernel implementation  
     The computation logic includes the following steps:

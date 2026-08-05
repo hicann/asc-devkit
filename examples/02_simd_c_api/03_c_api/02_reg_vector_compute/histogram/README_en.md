@@ -1,7 +1,7 @@
 ﻿# histogram Example
 
 ## Overview
-This example implements histogram statistics functionality based on the C API programming interface, using the [asc_frequency_histogram_bin0](../../../../../docs/zh/api/SIMD-API/C-API/reg/histogram_compute/asc_frequency_histogram.md)/asc_frequency_histogram_bin1 API.
+This example implements histogram statistics functionality based on the C API programming interface, using the [asc_frequency_histogram_bin0](../../../../../docs/zh/api/SIMD-API/c_api/reg/histogram_compute/asc_frequency_histogram.md)/asc_frequency_histogram_bin1 API.
 
 ## Supported Products and CANN Versions
 

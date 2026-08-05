@@ -113,7 +113,7 @@ Cube计算流程本质上也可归纳为CopyIn、Compute、CopyOut三个阶段�
 
 ![](../../../../figures/矩阵编程逻辑位置示意图-3.png)
 
-如图所示：CopyIn阶段对应[SetTensorA](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/SetTensorA.md)、[SetTensorB](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/SetTensorB.md)、[SetBias](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/SetBias.md)接口；Compute阶段对应[Iterate](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/Iterate.md)接口；CopyOut阶段对应[GetTensorC](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Kernel侧接口/GetTensorC.md)接口。示例如下：
+如图所示：CopyIn阶段对应[SetTensorA](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetTensorA.md)、[SetTensorB](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetTensorB.md)、[SetBias](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetBias.md)接口；Compute阶段对应[Iterate](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Iterate.md)接口；CopyOut阶段对应[GetTensorC](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetTensorC.md)接口。示例如下：
 
 ```
 // 创建Matmul对象，需传入A、B、C、Bias的参数类型信息

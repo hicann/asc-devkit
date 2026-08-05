@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例在模型量化推理场景下，基于[AscendAntiQuant](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/AscendAntiQuant.md)高阶API实现反量化计算，用于将量化后的低精度数据恢复为高精度数据。样例展示了PER_CHANNEL场景（按通道量化）下，将int8_t类型输入数据与offset偏移量相加后，乘以scale缩放因子，转换为half类型输出结果的过程。在950系列上兼容AscendAntiQuant接口的前提下，推荐优先使用[AntiQuantize](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/AntiQuantize.md)接口，该接口可通过统一的结构体配置，适配各类量化场景。
+本样例在模型量化推理场景下，基于[AscendAntiQuant](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/AscendAntiQuant.md)高阶API实现反量化计算，用于将量化后的低精度数据恢复为高精度数据。样例展示了PER_CHANNEL场景（按通道量化）下，将int8_t类型输入数据与offset偏移量相加后，乘以scale缩放因子，转换为half类型输出结果的过程。在950系列上兼容AscendAntiQuant接口的前提下，推荐优先使用[AntiQuantize](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/AntiQuantize.md)接口，该接口可通过统一的结构体配置，适配各类量化场景。
 
 ## 本样例支持的产品及CANN软件版本
 

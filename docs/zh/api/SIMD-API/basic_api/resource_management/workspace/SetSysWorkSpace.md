@@ -33,7 +33,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-框架需要使用的workspace称之为系统workspace。[Matmul Kernel侧接口](../../../高阶API/矩阵计算/Matmul-Kernel侧接口/Matmul-Kernel侧接口.md)等高阶API需要系统workspace，所以在使用该类API时，需要调用该接口，设置系统workspace的指针。采用工程化算子开发方式或者kernel直调方式（开启HAVE\_WORKSPACE编译选项）时，不需要开发者手动设置，框架会自动设置。其他场景下，需要开发者调用SetSysWorkSpace进行设置。
+框架需要使用的workspace称之为系统workspace。[Matmul Kernel侧接口](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等高阶API需要系统workspace，所以在使用该类API时，需要调用该接口，设置系统workspace的指针。采用工程化算子开发方式或者kernel直调方式（开启HAVE\_WORKSPACE编译选项）时，不需要开发者手动设置，框架会自动设置。其他场景下，需要开发者调用SetSysWorkSpace进行设置。
 
 在kernel侧调用该接口前，需要在host侧调用GetLibApiWorkSpaceSize获取系统workspace的大小，并在host侧设置workspacesize大小。样例如下：
 

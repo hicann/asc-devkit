@@ -34,7 +34,7 @@ When MTE2 moves data from Global Memory (GM) to Unified Buffer (UB), the `l2_cac
 
 ## Sample Description
 
-The C-API GM→UB data movement interface [asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/C-API/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md) uses the `l2_cache_mode` parameter to control how the data being moved is managed in the L2 Cache. For details on the values and their meanings, see the  enum class [asc_load_l2_cache_mode](../../../../../../docs/zh/api/SIMD-API/C-API/) documentation.
+The C-API GM→UB data movement interface [asc_copy_gm2ub_align](../../../../../../docs/zh/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md) uses the `l2_cache_mode` parameter to control how the data being moved is managed in the L2 Cache. For details on the values and their meanings, see the  enum class [asc_load_l2_cache_mode](../../../../../../docs/zh/api/SIMD-API/c_api/) documentation.
 
 Based on the two scenarios described above, this sample designs 4 Cases for comparison and verification:
 

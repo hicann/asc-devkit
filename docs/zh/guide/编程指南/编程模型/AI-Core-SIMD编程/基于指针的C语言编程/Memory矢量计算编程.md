@@ -146,7 +146,7 @@ asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_p
 ```
 > 📌 stride（前一块数据头到后一块数据头的间隔）为该接口从[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)引入，[NPU架构版本2201](../../../语言扩展层/SIMD-BuiltIn关键字.md)使用gap（前一个数据块结束地址与后一个数据块起始地址的差值）。
 
-以上为GM向UB的数据搬入逻辑，UB向GM的数据搬出可使用同系列接口实现。更多搬运接口说明可参考[API手册](../../../../../api/SIMD-API/C-API/vector_datamove/矢量数据搬运.md)。
+以上为GM向UB的数据搬入逻辑，UB向GM的数据搬出可使用同系列接口实现。更多搬运接口说明可参考[API手册](../../../../../api/SIMD-API/c_api/vector_data_move/vector_data_move.md)。
 
 ## Memory数据计算
 

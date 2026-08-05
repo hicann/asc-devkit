@@ -216,4 +216,4 @@ Host侧`SetAType`、`SetBType`和`SetCType`配置的位置、format、dtype，�
 
 - [Host侧Tiling实现](./Host侧Tiling实现.md)：普通TilingData和Tiling函数的基本流程。
 - [Kernel侧算子实现](./Kernel侧算子实现.md)：Kernel入口、TilingData解析和Kernel编程流程。
-- [Matmul-Tiling类](../../../../../api/SIMD-API/高阶API/矩阵计算/Matmul-Tiling类/Matmul-Tiling类.md)：配套Tiling类接口说明。
+- [Matmul-Tiling类](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/Matmul_Tiling.md)：配套Tiling类接口说明。

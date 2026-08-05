@@ -101,7 +101,7 @@ __aicore__ inline CubeResGroupHandle(GM_ADDR workspace, uint8_t blockStart, uint
 -   blockStart和blockSize必须为偶数。
 -   使用该接口，UB空间末尾的1600B + sizeof\(CubeMsgType\)将被占用。
 -   1个AIC只能属于1个CubeGroupHandle，即多个CubeGroupHandle的\[blockStart / 2, blockStart / 2+blockSize / 2\]区间不能重叠。
--   不能和[REGIST\_MATMUL\_OBJ](../../../高阶API/矩阵计算/Matmul-Kernel侧接口/REGIST_MATMUL_OBJ.md)接口同时使用。使用资源管理API时，用户自主管理AIC和AIV的核间通信，REGIST\_MATMUL\_OBJ内部是由框架管理AIC和AIV的核间通信，同时使用可能会导致通信消息错误等异常。
+-   不能和[REGIST\_MATMUL\_OBJ](../../../adv_api/cube_compute/Matmul_Kernel/REGIST_MATMUL_OBJ.md)接口同时使用。使用资源管理API时，用户自主管理AIC和AIV的核间通信，REGIST\_MATMUL\_OBJ内部是由框架管理AIC和AIV的核间通信，同时使用可能会导致通信消息错误等异常。
 
 ## 调用示例<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

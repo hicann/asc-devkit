@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example is based on the C API programming interface to implement Div operation, mainly calling the [asc_div](../../../../../docs/zh/api/SIMD-API/C-API/reg/arithmetic_compute/asc_div.md) interface.
+This example is based on the C API programming interface to implement Div operation, mainly calling the [asc_div](../../../../../docs/zh/api/SIMD-API/c_api/reg/arithmetic_compute/asc_div.md) interface.
 
 ## Supported Products and CANN Versions
 

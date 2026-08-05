@@ -1,7 +1,7 @@
 ﻿# mergemode Example
 
 ## Overview
-This example verifies the behavior characteristics of the MaskMergeMode::MERGING mode based on the C API programming interface, demonstrating the mechanism where inactive mask bits preserve the original value of dst vector data register. The [asc_copy](../../../../../docs/zh/api/SIMD-API/C-API/reg/reg_load/asc_copy.md) API is used for verification.
+This example verifies the behavior characteristics of the MaskMergeMode::MERGING mode based on the C API programming interface, demonstrating the mechanism where inactive mask bits preserve the original value of dst vector data register. The [asc_copy](../../../../../docs/zh/api/SIMD-API/c_api/reg/reg_load/asc_copy.md) API is used for verification.
 
 ## Supported Products and CANN Versions
 

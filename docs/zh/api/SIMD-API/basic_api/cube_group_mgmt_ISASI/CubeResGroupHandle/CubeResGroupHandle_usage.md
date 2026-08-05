@@ -20,7 +20,7 @@ CubeResGroupHandle用于在分离模式下对AI Core计算资源分组。分组�
 
 1.  <a name="li27691150733"></a>创建AIC上所需要的计算对象类型。
 
-    用户根据实际需求，自定义AIC所需要的计算对象类型，或者高阶API已提供的Matmul类型。例如，创建Matmul类型如下，其中A\_TYPE、B\_TYPE、 C\_TYPE、BIAS\_TYPE、CFG\_NORM等含义请参考[Matmul模板参数](../../../高阶API/矩阵计算/Matmul-Kernel侧接口/Matmul模板参数.md)。
+    用户根据实际需求，自定义AIC所需要的计算对象类型，或者高阶API已提供的Matmul类型。例如，创建Matmul类型如下，其中A\_TYPE、B\_TYPE、 C\_TYPE、BIAS\_TYPE、CFG\_NORM等含义请参考[Matmul模板参数](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_template_params.md)。
 
     ```
     // A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE, CFG_NORM根据实际需求场景构造

@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例基于[AscendQuant](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/AscendQuant.md)高阶API实现量化计算，用于将高精度数据转换为低精度数据以减少存储和计算开销。样例展示了将float类型输入数据通过scale缩放和offset偏移，量化为int8_t类型输出的过程。在950上兼容AscendQuant接口的前提下，推荐优先使用[Quantize](../../../../../docs/zh/api/SIMD-API/高阶API/量化操作/Quantize.md)接口，该接口可通过统一的结构体配置，适配各类量化场景。
+本样例基于[AscendQuant](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/AscendQuant.md)高阶API实现量化计算，用于将高精度数据转换为低精度数据以减少存储和计算开销。样例展示了将float类型输入数据通过scale缩放和offset偏移，量化为int8_t类型输出的过程。在950上兼容AscendQuant接口的前提下，推荐优先使用[Quantize](../../../../../docs/zh/api/SIMD-API/adv_api/quantization/Quantize.md)接口，该接口可通过统一的结构体配置，适配各类量化场景。
 
 ## 本样例支持的产品及CANN软件版本
 
