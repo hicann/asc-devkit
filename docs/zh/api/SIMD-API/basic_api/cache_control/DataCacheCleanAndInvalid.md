@@ -118,7 +118,7 @@ DataCacheCleanAndInvalid接口用于解决上述一致性问题，其功能可�
     AscendC::GlobalTensor<uint64_t> global;
     global.SetGlobalBuffer((__gm__ uint64_t*)mmAddr_ + AscendC::GetBlockIdx() * 1024);
     for( int i = 0; i < 8; i++) {
-       global.SetValue(i, AscendC::GetBlockIdx());
+        global.SetValue(i, AscendC::GetBlockIdx());
     }
     // 由于首地址64B对齐，调用DataCacheCleanAndInvalid指令后，会立刻刷新前8个数。
     AscendC::DataCacheCleanAndInvalid<uint64_t, AscendC::CacheLine::SINGLE_CACHE_LINE, AscendC::DcciDst::CACHELINE_OUT>(global);
@@ -131,7 +131,7 @@ DataCacheCleanAndInvalid接口用于解决上述一致性问题，其功能可�
     AscendC::GlobalTensor<uint64_t> global;
     global.SetGlobalBuffer((__gm__ uint64_t*)mmAddr_ + AscendC::GetBlockIdx() * 1024);
     for( int i = 0; i < 8; i++) {
-       global.SetValue(i, AscendC::GetBlockIdx());
+        global.SetValue(i, AscendC::GetBlockIdx());
     }
     // 由于首地址非64B对齐，调用1条指令，只会刷新起始地址至64B字节对齐的部分，即前4个数。
     AscendC::DataCacheCleanAndInvalid<uint64_t, AscendC::CacheLine::SINGLE_CACHE_LINE, AscendC::DcciDst::CACHELINE_OUT>(global);
@@ -158,7 +158,7 @@ DataCacheCleanAndInvalid接口用于解决上述一致性问题，其功能可�
     AscendC::GlobalTensor<uint64_t> global;
     global.SetGlobalBuffer((__gm__ uint64_t*)mmAddr_ + AscendC::GetBlockIdx() * 1024);
     for( int i = 0; i < 8; i++) {
-       global.SetValue(i, AscendC::GetBlockIdx());
+        global.SetValue(i, AscendC::GetBlockIdx());
     }
     // 刷新整个DCache，性能较差。
     AscendC::DataCacheCleanAndInvalid<uint64_t, AscendC::CacheLine::ENTIRE_DATA_CACHE, AscendC::DcciDst::CACHELINE_OUT>(global);

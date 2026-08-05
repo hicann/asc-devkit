@@ -264,7 +264,7 @@ AscendC::Add(zLocal, xLocal, yLocal, blockLength);
 如下的代码文件sync_log_test.h：
 
 ```cpp
-LocalTensor<T> dstLocal;
+AscendC::LocalTensor<T> dstLocal;
 T ave_tmp = 0;
 Vector_OP1(dstLocal, params); 
 ave_tmp = dstLocal.GetValue(0);
@@ -277,18 +277,18 @@ for (int i = 0; i < ave_tmp; ++i) {
 开启自动同步后，同步指令的插入位置如下：
 
 ```cpp
-LocalTensor<T> dstLocal;
+AscendC::LocalTensor<T> dstLocal;
 T ave_tmp = 0;
 Vector_OP1(dstLocal, params); 
-SetFlag<HardEvent::V_S>(EVENT_ID0);
-WaitFlag<HardEvent::V_S>(EVENT_ID0);
+AscendC::SetFlag<AscendC::HardEvent::V_S>(EVENT_ID0);
+AscendC::WaitFlag<AscendC::HardEvent::V_S>(EVENT_ID0);
 ave_tmp = dstLocal.GetValue(0);
-PipeBarrier<PIPE_V>();
-SetFlag<HardEvent::S_V>(EVENT_ID0);
-WaitFlag<HardEvent::S_V>(EVENT_ID0);
+AscendC::PipeBarrier<PIPE_V>();
+AscendC::SetFlag<AscendC::HardEvent::S_V>(EVENT_ID0);
+AscendC::WaitFlag<AscendC::HardEvent::S_V>(EVENT_ID0);
 Vector_OP2(dstLocal, params); 
-SetFlag<HardEvent::V_S>(EVENT_ID0);
-WaitFlag<HardEvent::V_S>(EVENT_ID0);
+AscendC::SetFlag<AscendC::HardEvent::V_S>(EVENT_ID0);
+AscendC::WaitFlag<AscendC::HardEvent::V_S>(EVENT_ID0);
 for (int i = 0; i < ave_tmp; ++i) {
     dstLocal.SetValue(i,0);
 }

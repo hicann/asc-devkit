@@ -43,8 +43,8 @@ __aicore__ inline void DataCachePreload(const GlobalTensor<uint64_t>& src, const
 
 | 参数名 | 输入/输出 | 描述 |
 |--------|-----------|------|
-| src | 输入 | 源操作数，类型为GlobalTensor。支持的数据类型为：uint64_t。 |
-| cacheOffset | 输入 | 在源操作数上偏移cacheOffset大小开始加载数据，单位为byte，支持的数据类型为：int16_t/int64_t。 |
+| src | 输入 | 源操作数，类型为[GlobalTensor](../data_structures/GlobalTensor/GlobalTensor_intro.md)。支持的数据类型为：uint64_t。 |
+| cacheOffset | 输入 | 在源操作数上偏移cacheOffset大小开始加载数据，单位为byte，支持的数据类型为：int16_t、int64_t。 |
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 
@@ -60,3 +60,4 @@ __aicore__ inline void DataCachePreload(const GlobalTensor<uint64_t>& src, const
 AscendC::GlobalTensor<uint64_t> srcGlobal;
 int64_t cacheOffset = 0;
 AscendC::DataCachePreload(srcGlobal, cacheOffset);
+```

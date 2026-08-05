@@ -46,7 +46,7 @@ static __aicore__ inline void Unlock(MutexID id)
 
 | 参数名 | 描述 |
 | --- | --- |
-| pipe | 模板参数，表示流水类别。支持的流水类型为PIPE_S/PIPE_M/PIPE_V/PIPE_MTE1/PIPE_MTE2/PIPE_MTE3/PIPE_FIX。 |
+| pipe | 模板参数，表示流水类别。支持PIPE_S、PIPE_M、PIPE_V、PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX，各流水类型的含义请参考[硬件流水类型](intra_core_sync_overview.md#硬件流水类型)。 |
 
 **表 2**  参数说明
 

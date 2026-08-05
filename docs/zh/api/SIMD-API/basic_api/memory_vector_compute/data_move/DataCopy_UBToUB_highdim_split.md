@@ -193,7 +193,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
     // blockCount = 1：连续数据块个数为1
     // blockLen = 8：一个数据块长度为8个DataBlock（128个half元素 ÷ (32B/2B) = 8）。
     // srcGap = 0, dstGap = 0：无间隔，连续搬运。
-    DataCopyParams params;
+    AscendC::DataCopyParams params;
     params.blockCount = 1;
     params.blockLen = 8;
     params.srcGap = 0;
@@ -211,7 +211,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
     // blockLen = 3：每个数据块长度为3个DataBlock
     // srcGap = 1：源相邻数据块间隔1个DataBlock
     // dstGap = 2：目的相邻数据块间隔2个DataBlock
-    DataCopyParams params;
+    AscendC::DataCopyParams params;
     params.blockCount = 2;
     params.blockLen = 3;
     params.srcGap = 1;
