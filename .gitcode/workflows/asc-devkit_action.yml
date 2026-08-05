@@ -1,7 +1,7 @@
 name: PR-pipeline_asc-devkit
 
 concurrency:
-  max: 5
+  max: 18
   exceed-action: QUEUE
   enable: true
   preemption:
