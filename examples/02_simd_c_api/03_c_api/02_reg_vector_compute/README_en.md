@@ -10,7 +10,7 @@ This directory contains examples for multiple APIs related to vector computation
 | -------------- | ----------- |
 | [abs](./abs) | This example implements the Abs operation based on the C API programming interface, primarily calling the asc_abs API. The asc_relu/asc_exp/asc_sqrt/asc_ln/asc_neg APIs can all refer to this example |
 | [arange](./arange) | This example implements the Arange operation based on the C API programming interface, primarily calling the asc_arange API, generating increasing/decreasing index sequences starting from a scalar value |
-| [cast](./cast) | This example implements the Cast operation based on the C API programming interface, primarily calling the asc_half2int32_rd/asc_float2int16_rna_sat API for data type conversion (narrowing/widening) |
+| [cast](./cast) | This example implements the Cast operation based on the C API programming interface, primarily calling the asc_half2int32_rd/asc_float2int16_rna_sat API for data type conversion (widening/narrowing) |
 | [compare](./compare) | This example implements data comparison functionality across multiple scenarios using the asc_gt and asc_gt_scalar APIs based on the C API programming interface |
 | [data_relayout](./data_relayout) | This example implements data relayout functionality based on the C API programming interface, supporting Interleave (asc_intlv) and Pack (asc_pack_to_low) scenarios |
 | [div](./div) | This example implements the Div operation based on the C API programming interface, primarily calling the asc_div interface |

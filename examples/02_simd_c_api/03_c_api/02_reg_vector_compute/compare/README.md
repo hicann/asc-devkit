@@ -1,7 +1,7 @@
 ﻿# compare样例
 
 ## 概述
-本样例基于C API编程接口实现[asc_gt](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_gt.md)、asc_gt_scalar接口完成多场景下的数据比较功能。  
+本样例基于C API编程接口实现[asc_gt](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_gt.md)、[asc_gt_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_gt_scalar.md)接口完成多场景下的数据比较功能。  
 本样例支持两种比较场景，通过 CMake 编译参数 `SCENARIO_NUM` 选择场景。
   | SCENARIO_NUM | 比较场景 |
   | --- | --- |
@@ -12,7 +12,7 @@
 
 | 产品 | CANN软件版本 |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 ```

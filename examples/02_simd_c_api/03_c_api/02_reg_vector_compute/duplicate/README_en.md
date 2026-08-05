@@ -9,13 +9,13 @@ This example implements the Duplicate operation (scalar fill mode) based on the 
 
 | Product | CANN Version |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 ```
 ├── duplicate
 │   ├── scripts
-│   │   │   ├── gen_data.py            // Ground truth data generation script
+│   │   ├── gen_data.py            // Ground truth data generation script
 │   ├── CMakeLists.txt                 // Build configuration file
 │   ├── data_utils.h                   // Data read/write functions
 │   ├── duplicate.asc                  // Ascend C example implementation & invocation example
