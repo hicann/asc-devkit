@@ -12,6 +12,7 @@ import DefaultTheme from 'vitepress/theme'
 import Layout from './Layout.vue'
 import BackToTop from './BackToTop.vue'
 import SidebarResizer from './SidebarResizer.vue'
+import { installAutomaticTableLayout } from './table_layout.mjs'
 import './code-theme.css'
 import './search-overrides.css'
 
@@ -24,5 +25,6 @@ export default {
   enhanceApp({ app }) {
     app.component('BackToTop', BackToTop)
     app.component('SidebarResizer', SidebarResizer)
+    installAutomaticTableLayout()
   }
 }

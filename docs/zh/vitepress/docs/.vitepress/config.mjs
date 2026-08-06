@@ -810,7 +810,7 @@ function balanceDivTags(html) {
     nav: [
       { text: '首页', link: '/' },
       { text: 'AscendC算子开发指南', link: '/guide/入门教程/Ascend-C概述与学习路径' },
-      { text: 'Ascend C API', link: '/api/Ascend-C-API列表' },
+      { text: 'Ascend C API', link: '/api/README' },
     ],
 
     search: {
