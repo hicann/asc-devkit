@@ -94,6 +94,15 @@ __simd_callee__ inline void asc_min_scalar_impl(vector_half& dst, vector_half sr
     }
 }
 
+// asc_min_scalar bfloat16_t
+__simd_callee__ inline void asc_min_scalar_impl(
+    vector_bfloat16_t& dst, vector_bfloat16_t src, bfloat16_t value, vector_bool mask)
+{
+    if ASC_IS_AIV {
+        vmins(dst, src, value, mask, MODE_ZEROING);
+    }
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

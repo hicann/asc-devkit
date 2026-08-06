@@ -17,4 +17,5 @@ TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ne, asc_ne, vcmp_ne, vector_int16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ne, asc_ne, vcmp_ne, vector_uint32_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ne, asc_ne, vcmp_ne, vector_int32_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ne, asc_ne, vcmp_ne, vector_half);
+TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ne, asc_ne, vcmp_ne, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ne, asc_ne, vcmp_ne, vector_float);

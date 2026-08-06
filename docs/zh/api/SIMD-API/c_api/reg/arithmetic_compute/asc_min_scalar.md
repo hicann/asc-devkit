@@ -43,6 +43,7 @@ __simd_callee__ inline void asc_min_scalar(vector_int8_t& dst, vector_int8_t src
 __simd_callee__ inline void asc_min_scalar(vector_uint8_t& dst, vector_uint8_t src, uint8_t value, vector_bool mask)
 __simd_callee__ inline void asc_min_scalar(vector_float& dst, vector_float src, float value, vector_bool mask)
 __simd_callee__ inline void asc_min_scalar(vector_half& dst, vector_half src, half value, vector_bool mask)
+__simd_callee__ inline void asc_min_scalar(vector_bfloat16_t& dst, vector_bfloat16_t src, bfloat16_t value, vector_bool mask)
 ```
 
 ## 参数说明

@@ -74,6 +74,14 @@ __simd_callee__ inline void asc_ne_impl(vector_bool& dst, vector_half src0, vect
     }
 }
 
+__simd_callee__ inline void asc_ne_impl(
+    vector_bool& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask)
+{
+    if ASC_IS_AIV {
+        vcmp_ne(dst, src0, src1, mask);
+    }
+}
+
 __simd_callee__ inline void asc_ne_impl(vector_bool& dst, vector_float src0, vector_float src1, vector_bool mask)
 {
     if ASC_IS_AIV {

@@ -3280,6 +3280,12 @@ __simd_callee__ inline void asc_min_scalar(vector_half& dst, vector_half src, ha
     asc_min_scalar_impl(dst, src, value, mask);
 }
 
+__simd_callee__ inline void asc_min_scalar(
+    vector_bfloat16_t& dst, vector_bfloat16_t src, bfloat16_t value, vector_bool mask)
+{
+    asc_min_scalar_impl(dst, src, value, mask);
+}
+
 //==================asc_reduce_max_datablock====================
 __simd_callee__ inline void asc_reduce_max_datablock(vector_half& dst, vector_half src, vector_bool mask)
 {
@@ -5188,7 +5194,7 @@ __simd_callee__ inline void asc_max_scalar(
     asc_max_scalar_impl(dst, src, value, mask);
 }
 
-// ==========asc_ne(uint8_t/int8_t/uint16_t/int16_t/uint32_t/int32_t/half/float)==========
+// ==========asc_ne(uint8_t/int8_t/uint16_t/int16_t/uint32_t/int32_t/half/bfloat16_t/float)==========
 __simd_callee__ inline void asc_ne(vector_bool& dst, vector_uint8_t src0, vector_uint8_t src1, vector_bool mask)
 {
     asc_ne_impl(dst, src0, src1, mask);
@@ -5220,6 +5226,11 @@ __simd_callee__ inline void asc_ne(vector_bool& dst, vector_int32_t src0, vector
 }
 
 __simd_callee__ inline void asc_ne(vector_bool& dst, vector_half src0, vector_half src1, vector_bool mask)
+{
+    asc_ne_impl(dst, src0, src1, mask);
+}
+
+__simd_callee__ inline void asc_ne(vector_bool& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask)
 {
     asc_ne_impl(dst, src0, src1, mask);
 }
