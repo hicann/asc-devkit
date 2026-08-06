@@ -29,10 +29,10 @@
 定义指定计算的维度（Reduce轴）为R轴，非指定维度（Normal轴）为A轴。如下图所示，对shape为\(2, 3\)的二维矩阵进行运算，对第一维计算数据求平均值，输出结果为\[2.5, 3.5, 4.5\]；对第二维计算数据求平均值，输出结果为\[2, 5\]。
 
 **图1**  ReduceMean按第一个维度计算示例  
-![](../../../../figures/ReduceMean按第一个维度计算示例.png "ReduceMean按第一个维度计算示例")
+![](../../../../figures/reducemean_first_axis.png "ReduceMean按第一个维度计算示例")
 
 **图2**  ReduceMean最后一个维度计算示例  
-![](../../../../figures/ReduceMean最后一个维度计算示例.png "ReduceMean最后一个维度计算示例")
+![](../../../../figures/reducemean_last_axis_example.png "ReduceMean最后一个维度计算示例")
 
 ## 函数原型
 

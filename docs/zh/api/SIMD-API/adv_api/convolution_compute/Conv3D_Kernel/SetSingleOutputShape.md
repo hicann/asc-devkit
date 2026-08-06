@@ -29,7 +29,7 @@
 Conv3D高阶API目前支持M合轴模式的输出方式。在M合轴模式下，Conv3D API内部将Wout和Hout视为同一轴处理，输出时先沿Wout方向输出，完成一整行Wout输出后，再进行下一行的Wout输出。
 
 **图1**  M合轴模式示意图  
-![](../../../../figures/M合轴模式示意图.png "M合轴模式示意图")
+![](../../../../figures/m_axis_merge_mode.png "M合轴模式示意图")
 
 ## 函数原型
 

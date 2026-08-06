@@ -119,7 +119,7 @@
 
 **图1** sidStoreMode配置示意图<a id="fig5416115192414"></a>  
 
-![](../../../../figures/sidStoreMode配置示意图.png "sidStoreMode配置示意图")
+![](../../../../figures/sidstoremode_config.png "sidStoreMode配置示意图")
 
 ## 数据类型<a id="section8664371012"></a>
 

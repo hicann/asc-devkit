@@ -12,11 +12,11 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
 当后续无通信任务时，调用[Finalize](Finalize.md)接口，通知服务端后续无通信任务，执行结束后退出，客户端检测并等待最后一个通信任务执行结束。以上介绍的AI Core下发HCCL通信任务的机制如下图所示。
 
 **图1**  AI Core下发HCCL通信任务机制  
-![](../../../../figures/AI-Core下发HCCL通信任务机制.png "AI-Core下发HCCL通信任务机制")
+![](../../../../figures/ai_core_hccl_dispatch.png "AI-Core下发HCCL通信任务机制")
 
 <!-- npu="950" id3 -->
 **图2** Ascend 950PR/Ascend 950DT  AI Core下发HCCL通信任务机制  
-![](../../../../figures/Ascend-950PR-Ascend-950DT-AI-Core下发HCCL通信任务机制.png "Ascend-950PR-Ascend-950DT-AI-Core下发HCCL通信任务机制")
+![](../../../../figures/ascend950pr_950dt_ai_core_hccl_dispatch.png "Ascend-950PR-Ascend-950DT-AI-Core下发HCCL通信任务机制")
 <!-- end id3 -->
 
 <!-- npu="A3" id2 -->
@@ -241,7 +241,7 @@ extern "C" __global__ __aicore__ void reduce_scatter_custom(
 ```
 
 **图3**  ReduceScatter通信示例<a name="fig19780192164210"></a>  
-![](../../../../figures/ReduceScatter通信示例.png "ReduceScatter通信示例")
+![](../../../../figures/reducescatter_example.png "ReduceScatter通信示例")
 
 **表3**  MC2\_BUFFER\_LOCATION参数说明
 

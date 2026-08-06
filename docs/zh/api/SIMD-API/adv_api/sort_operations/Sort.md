@@ -101,10 +101,10 @@
     当函数原型带有输出索引dstIndexTensor参数，需要输出排序结果数据分别对应的索引；若输入带有索引srcIndexTensor参数，则输出索引即为原输入的索引，若输入不带有索引，则对输入数据从0开始生成所需排序数量的索引，最终输出索引即为对应输入数据的索引。如下两幅图，分别为输入带有索引和输入不带索引的数据排序示意图。
 
     **图1**  输入带有索引srcIndex的排序样例  
-    ![](../../../figures/输入带有索引srcIndex的排序样例.png "输入带有索引srcIndex的排序样例")
+    ![](../../../figures/sort_with_srcindex.png "输入带有索引srcIndex的排序样例")
 
     **图2**  输入不带索引srcIndex的排序样例  
-    ![](../../../figures/输入不带索引srcIndex的排序样例.png "输入不带索引srcIndex的排序样例")
+    ![](../../../figures/sort_without_srcindex.png "输入不带索引srcIndex的排序样例")
 
 ## 函数原型
 

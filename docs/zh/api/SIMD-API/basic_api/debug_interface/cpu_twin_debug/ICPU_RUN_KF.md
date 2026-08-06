@@ -80,7 +80,7 @@
 2.  CPU侧运行验证。完成算子核函数CPU侧运行验证的步骤如下：
 
     **图1**  CPU侧运行验证步骤<a name="fig13576112114442"></a>  
-    ![](../../../../figures/CPU侧运行验证步骤.png "CPU侧运行验证步骤")
+    ![](../../../../figures/cpu_verification_steps.png "CPU侧运行验证步骤")
 
     ```cpp
     int32_t main(int32_t argc, char* argv[])

@@ -13,11 +13,11 @@ Shape用于表达Tensor形状，Stride则用于区分不同的排布方式。
 
 **图1** 行优先排布
 
-![行优先排布](../../../../figures/行优先排布.png)
+![行优先排布](../../../../figures/row_major_layout.png)
 
 **图2** 列优先排布
 
-![列优先排布](../../../../figures/列优先排布.png)
+![列优先排布](../../../../figures/column_major_layout.png)
 
 ## 层次化表述法
 
@@ -30,7 +30,7 @@ Shape用于表达Tensor形状，Stride则用于区分不同的排布方式。
 
 **图3** 层次化表述法
 
-![层次化表述法](../../../../figures/层次化表述法.png "层次化表述法")
+![层次化表述法](../../../../figures/hierarchical_representation.png "层次化表述法")
 
 图中展示了两层矩阵：内层矩阵为内部用灰色线包裹的矩阵，外层矩阵为将内层矩阵视为一个元素时，用黑色线包裹的矩阵。
 
@@ -61,7 +61,7 @@ Stride = ((StrideRow0, StrideRow1), (StrideColumn0, StrideColumn1))
     ```
 
     **图4** NZ Layout  
-    ![NZ-格式](../../../../figures/Nz-格式.png)
+    ![NZ-格式](../../../../figures/nz_format.png)
     
     下面是一个连续的NZ Layout示例，其中C0_ELEMENT =_32{} / sizeof(T)。
 
@@ -84,7 +84,7 @@ Stride = ((StrideRow0, StrideRow1), (StrideColumn0, StrideColumn1))
     ```
 
     **图5** ZN Layout  
-    ![ZN-格式](../../../../figures/Zn-格式(以half类型为例).png)
+    ![ZN-格式](../../../../figures/zn_fractals_of_half.png)
 
     下面是一个连续的ZN Layout示例，其中C0_ELEMENT =_32{} / sizeof(T)。
 
@@ -105,7 +105,7 @@ Stride = ((StrideRow0, StrideRow1), (StrideColumn0, StrideColumn1))
     ```
 
     **图6** DNExt Layout
-    ![DNExt Layout](../../../../figures/列优先排布.png)
+    ![DNExt Layout](../../../../figures/column_major_layout.png)
 
     下面是一个连续的DNExt Layout示例。
 
@@ -126,7 +126,7 @@ Stride = ((StrideRow0, StrideRow1), (StrideColumn0, StrideColumn1))
     ```
 
     **图7** NDExt Layout
-    ![NDExt Layout](../../../../figures/行优先排布.png)
+    ![NDExt Layout](../../../../figures/row_major_layout.png)
 
     下面是一个连续的NDExt Layout示例。
 
@@ -283,12 +283,12 @@ Stride = ((StrideRow0, StrideRow1), (StrideColumn0, StrideColumn1))
 MX scaleA要求在矩阵GM上按照ScaleAND Layout或ScaleADN Layout格式排布，在L1上需满足按行读取需求，即按照ZZ Layout格式排布。如下图所示，若GM上scaleA矩阵为ScaleAND或者ScaleADN分形排布，搬运到L1后分形为ZZ排布。
 
 **图8** scaleA矩阵在不同位置上的排布格式
-![scaleA矩阵在不同位置上的排布格式](../../../../figures/scaleA矩阵在不同位置上的排布格式.png)
+![scaleA矩阵在不同位置上的排布格式](../../../../figures/scalea_matrix_layout.png)
 
 MX scaleB要求在矩阵GM上按照ScaleBND Layout或ScaleBDN Layout格式排布，在L1上需满足按列读取需求，即按照NN Layout格式排布。如下图所示，若GM上scaleB矩阵为ScaleBND或者ScaleBDN分形排布，搬运到L1后分形为NN排布。
 
 **图9** scaleB矩阵在不同位置上的排布格式
-![scaleB矩阵在不同位置上的排布格式](../../../../figures/scaleB矩阵在不同位置上的排布格式.png)
+![scaleB矩阵在不同位置上的排布格式](../../../../figures/scaleb_matrix_layout.png)
 
 ## 卷积特征图Layout
 

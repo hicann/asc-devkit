@@ -682,7 +682,7 @@ complex64实部和虚部都是float类型，complex32实部和虚部都是half�
 
 **图9** double转bfloat16_t示意图
 
-![double转bfloat16_t示意图](../../../figures/绘图2.png)
+![double转bfloat16_t示意图](../../../figures/double2bfloat16.png)
 
 由于bfloat16_t只有8bit指数，指数部分需要转换，只有7bit尾数，因此灰色部分要进行舍入：
 

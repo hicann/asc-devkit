@@ -30,7 +30,7 @@
 
 以源操作数搬运场景为例，如下图所示。
 
-![源操作数搬运场景示例](../figures/源操作数搬运场景示例.png)
+![源操作数搬运场景示例](../figures/source_operand_move_example.png)
 
 ## 函数原型
 

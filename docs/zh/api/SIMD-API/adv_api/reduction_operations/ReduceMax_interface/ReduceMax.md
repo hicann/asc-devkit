@@ -29,10 +29,10 @@
 定义指定计算的维度（Reduce轴）为R轴，非指定维度（Normal轴）为A轴。如下图所示，对shape为\(2, 3\)的二维矩阵进行运算，指定在第一维求最大值，输出结果为\[4, 5, 6\]；指定在第二维求最大值，输出结果为\[3, 6\]。第一维是外层轴，简称外轴；第二维是内层轴，简称内轴。
 
 **图1**  ReduceMax按第一个维度计算示例  
-![](../../../../figures/ReduceMax按第一个维度计算示例.png "ReduceMax按第一个维度计算示例")
+![](../../../../figures/reducemax_first_axis.png "ReduceMax按第一个维度计算示例")
 
 **图2**  ReduceMax按最后一个维度计算示例  
-![](../../../../figures/ReduceMax按最后一个维度计算示例.png "ReduceMax按最后一个维度计算示例")
+![](../../../../figures/reducemax_last_axis.png "ReduceMax按最后一个维度计算示例")
 
 ## 函数原型
 

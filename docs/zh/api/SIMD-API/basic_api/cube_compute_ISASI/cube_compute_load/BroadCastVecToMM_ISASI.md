@@ -30,7 +30,7 @@
 
 **图1** 功能示例<a name="fig1730933122314"></a>  
 
-![](../../../../figures/功能示例.png "功能示例")
+![](../../../../figures/function_example.png "功能示例")
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -73,7 +73,7 @@ Atlas 推理系列产品AI Core，支持的数据类型为：half、int32_t、fl
 
 **图2** 调用示例图<a name="fig496292825418"></a>  
 
-![](../../../../figures/调用示例图.png "调用示例图")
+![](../../../../figures/call_example.png "调用示例图")
 
 本示例仅展示样例中的部分代码。如需运行，请参考[BroadCastVecToMM样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/broadcast_ub2l0c)实现完整的代码。
 

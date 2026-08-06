@@ -88,7 +88,7 @@
 |U|源操作数数据类型。<br> |
 |isSetMask|是否在接口内部设置mask。<br>&bull; true，表示在接口内部设置mask。<br>&bull; false，表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值设置为占位符`MASK_PLACEHOLDER`，用于占位，无实际含义。|
 |isVecDeq|控制是否选择向量量化模式。<br>和`SetDeqScale`接口配合使用，当`SetDeqScale`接口传入Tensor时，isVecDeq必须为true。|
-|halfBlock|输出数据类型为b8时有效，用于指示输出元素存放在上半还是下半DataBlock。<br>halfBlock=true时，结果存放在下半DataBlock；halfBlock=false时，结果存放在上半DataBlock。<br>如下图所示，一个DataBlock大小的输入得到8个b8类型输出，当halfBlock为false时，这8个输出数据存放在上半DataBlock。<br>![](../../../../figures/halfBlock说明.png)<br>若需要得到连续的目的操作数数据，可以通过将DataBlock分为奇偶块，调用两次接口分别处理奇偶块，奇数块的输出存放在下半DataBlock，偶数块输出存放在上半DataBlock。<br>![](../../../../figures/castdequant_continous.png) |
+|halfBlock|输出数据类型为b8时有效，用于指示输出元素存放在上半还是下半DataBlock。<br>halfBlock=true时，结果存放在下半DataBlock；halfBlock=false时，结果存放在上半DataBlock。<br>如下图所示，一个DataBlock大小的输入得到8个b8类型输出，当halfBlock为false时，这8个输出数据存放在上半DataBlock。<br>![](../../../../figures/halfblock_description.png)<br>若需要得到连续的目的操作数数据，可以通过将DataBlock分为奇偶块，调用两次接口分别处理奇偶块，奇数块的输出存放在下半DataBlock，偶数块输出存放在上半DataBlock。<br>![](../../../../figures/castdequant_continous.png) |
 
 **表**  参数说明
 

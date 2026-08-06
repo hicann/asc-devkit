@@ -47,7 +47,7 @@ def softmax_grad(grad, src, isFront = None):
 以float类型，ND格式，shape为\[m,k\]的输入Tensor为例，描述SoftmaxGrad高阶API内部算法框图，如下图所示。
 
 **图1**  SoftmaxGrad算法框图  
-![](../../../../figures/SoftmaxGrad算法框图.png "SoftmaxGrad算法框图")
+![](../../../../figures/softmaxgrad_algorithm_diagram.png "SoftmaxGrad算法框图")
 
 计算过程分为如下几步，均在Vector上进行：
 

@@ -40,7 +40,7 @@
 以float类型，ND格式，shape为\[m, k1\]的source输入Tensor，shape为\[m, k2\]的mask Tensor为例，描述Select高阶API内部算法框图，如下图所示。
 
 **图1**  Select算法框图  
-![](../../../figures/Select算法框图.png "Select算法框图")
+![](../../../figures/select_diagram.png "Select算法框图")
 
 计算过程分为如下几步，均在Vector上进行：
 
@@ -50,7 +50,7 @@
 4.  Select步骤：根据cmpmask的结果，选择srcTensor相应位置的值或者scalar值，输出Output。
 
 **图2**  Select算法框图  
-![](../../../figures/Select算法框图-54.png "Select算法框图-54")
+![](../../../figures/select_diagram_1.png "Select算法框图-54")
 
 计算过程在Vector上进行，循环m次，每次对k1个元素进行如下操作：
 

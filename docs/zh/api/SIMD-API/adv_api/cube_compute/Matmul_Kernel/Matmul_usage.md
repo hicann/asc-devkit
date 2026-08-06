@@ -9,7 +9,7 @@ Matmul的计算公式为：C = A \* B + Bias，其示意图如下。
 -   Bias为矩阵乘偏置，形状为\[1, N\]。对A\*B结果矩阵的每一行都采用该Bias进行偏置。
 
 **图1**  Matmul矩阵乘示意图  
-![](../../../../figures/Matmul矩阵乘示意图.png "Matmul矩阵乘示意图")
+![](../../../../figures/matmul_matrix_diagram.png "Matmul矩阵乘示意图")
 
 > [!NOTE]说明
 >下文中提及的M轴方向，即为A矩阵纵向；K轴方向，即为A矩阵横向或B矩阵纵向；N轴方向，即为B矩阵横向；尾轴，即为矩阵最后一个维度。
@@ -220,7 +220,7 @@ Kernel侧实现Matmul矩阵乘运算的步骤概括为：
 以输入矩阵A \(GM, ND, half\)、矩阵B\(GM, ND, half\)，输出矩阵C \(GM, ND, float\)，无Bias场景为例，其中\(GM, ND, half\)表示数据存放在GM上，数据格式为ND，数据类型为half，描述Matmul高阶API典型场景的内部算法框图，如下图所示。
 
 **图2**  Matmul算法框图  
-![](../../../../figures/Matmul算法框图.png "Matmul算法框图")
+![](../../../../figures/matmul_algorithm_diagram.png "Matmul算法框图")
 
 计算过程分为如下几步：
 

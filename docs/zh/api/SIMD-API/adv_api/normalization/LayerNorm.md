@@ -55,7 +55,7 @@
     以float类型，ND格式，输入为inputX\[B, S, H\]，gamma\[H\]和beta\[H\]为例，描述LayerNorm高阶API内部算法框图，如下图所示。
 
     **图1**  LayerNorm算法框图
-    ![](../../../figures/LayerNorm算法框图.png "LayerNorm算法框图")
+    ![](../../../figures/layernorm_diagram.png "LayerNorm算法框图")
 
     计算过程分为如下几步，均在Vector上进行（下文中m指尾轴H的长度）：
 

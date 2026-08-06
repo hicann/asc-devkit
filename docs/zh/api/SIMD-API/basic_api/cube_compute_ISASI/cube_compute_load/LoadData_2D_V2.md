@@ -94,7 +94,7 @@ LoadData2DParamsV2结构体在不启用转置时，示意图如下，参数设�
 
 **图1** LoadData2DParamsV2结构体参数示例（以half数据类型，不启用转置为例）
 
-![](../../../../figures/LoadData2DParamsV2结构体参数示例（以half数据类型-不启用转置为例）.png)
+![](../../../../figures/loaddata2dparamsv2_half_no_transpose.png)
 
 ## 数据类型
 

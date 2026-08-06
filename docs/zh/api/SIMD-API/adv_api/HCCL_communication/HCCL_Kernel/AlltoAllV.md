@@ -84,7 +84,7 @@ __aicore__ inline HcclHandle AlltoAllV(GM_ADDR sendBuf, void* sendCounts, void* 
     4张卡调用AlltoAllV接口。非多轮切分场景下，每张卡上的数据块和数据量一致，如下图中每张卡的A\\B\\C\\D数据块，数据量均为dataCount。
 
     **图1**  非切分场景下4卡AlltoAllV图示  
-    ![](../../../../figures/非切分场景下4卡AlltoAllV图示.png "非切分场景下4卡AlltoAllV图示")
+    ![](../../../../figures/alltoallv_4rank_no_split.png "非切分场景下4卡AlltoAllV图示")
 
     ```
     extern "C" __global__ __aicore__ void alltoallv_custom(GM_ADDR xGM, GM_ADDR yGM, GM_ADDR workspaceGM, GM_ADDR tilingGM)
@@ -131,7 +131,7 @@ __aicore__ inline HcclHandle AlltoAllV(GM_ADDR sendBuf, void* sendCounts, void* 
     如下图所示，每个rank下的方格中数字表示发送或接收的数据个数，以rank1为例进行说明：rank1分别向rank0、rank1、rank2、rank3发送2、2、3、2个数据，并分别从rank0、rank1、rank2、rank3接收3、2、4、3个数据，对应的代码示例如下。
 
     **图2**  非切分场景下4卡不均匀收发  
-    ![](../../../../figures/非切分场景下4卡不均匀收发.png "非切分场景下4卡不均匀收发")
+    ![](../../../../figures/4rank_unequal_no_split.png "非切分场景下4卡不均匀收发")
 
     ```
     extern "C" __global__ __aicore__ void alltoallv_custom(GM_ADDR xGM, GM_ADDR yGM, GM_ADDR workspaceGM, GM_ADDR tilingGM)

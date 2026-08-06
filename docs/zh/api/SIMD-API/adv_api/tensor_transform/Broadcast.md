@@ -48,7 +48,7 @@
 以float类型，ND格式，\[m, 1\]广播到\[m, k\]为例，描述Broadcast高阶API内部算法框图，如下图所示。
 
 **图1**  Broadcast算法框图  
-![](../../../figures/Broadcast算法框图.png "Broadcast算法框图")
+![](../../../figures/broadcast_algorithm_diagram.png "Broadcast算法框图")
 
 计算过程分为如下几步，均在Vector上进行：
 

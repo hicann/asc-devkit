@@ -11,10 +11,10 @@ Conv3DBackpropInput的计算公式为：
 -   ∂L/∂X为特征矩阵的反向传播误差GradInput。
 
 **图1**  卷积层的前后向传播示意图<a name="fig1069918872512"></a>  
-![](../../../../figures/卷积层的前后向传播示意图.png "卷积层的前后向传播示意图")
+![](../../../../figures/conv_forward_backward.png "卷积层的前后向传播示意图")
 
 **图2**  反向传播误差计算示意图<a name="fig1953483815252"></a>  
-![](../../../../figures/反向传播误差计算示意图.png "反向传播误差计算示意图")
+![](../../../../figures/backward_error_compute.png "反向传播误差计算示意图")
 
 Kernel侧实现Conv3DBackpropInput求解反向传播误差运算的步骤概括为：
 

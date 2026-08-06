@@ -55,7 +55,7 @@ __aicore__ inline HcclHandle AllGather(GM_ADDR sendBuf, GM_ADDR recvBuf, uint64_
 | repeat | 输入 | 一次下发的AllGather通信任务个数。repeat取值≥1，默认值为1。当repeat>1时，每个AllGather任务的sendBuf和recvBuf地址由服务端自动算出，计算公式如下：<br><br>sendBuf[i] = sendBuf + sendCount* sizeof(datatype) * i, i∈[0, repeat)<br><br>recvBuf[i] = recvBuf + sendCount* sizeof(datatype) * i, i∈[0, repeat)<br><br>注意：当设置repeat>1时，须与strideCount参数配合使用，规划通信数据地址。 |
 
 **图1**  AllGather通信示例  
-![AllGather通信示例](../../../../figures/AllGather通信示例.png)
+![AllGather通信示例](../../../../figures/allgather_example.png)
 
 ## 返回值说明
 
@@ -83,7 +83,7 @@ __aicore__ inline HcclHandle AllGather(GM_ADDR sendBuf, GM_ADDR recvBuf, uint64_
     如下图所示，4张卡上均有sendCount=300个float16数据，每张卡从xGM内存中获取到本卡数据，gather处理各卡的数据后，将结果输出到各卡的yGM。
 
     **图2**  非多轮切分场景下4卡AllGather通信  
-    ![非多轮切分场景下4卡AllGather通信](../../../../figures/非多轮切分场景下4卡AllGather通信.png)
+    ![非多轮切分场景下4卡AllGather通信](../../../../figures/allgather_4rank_no_multisplit.png)
 
     ```
     extern "C" __global__ __aicore__ void all_gather_custom(GM_ADDR xGM, GM_ADDR yGM, GM_ADDR workspaceGM, GM_ADDR tilingGM)
@@ -118,12 +118,12 @@ __aicore__ inline HcclHandle AllGather(GM_ADDR sendBuf, GM_ADDR recvBuf, uint64_
     开启多轮切分，等效处理上述非多轮切分示例的通信。如下图所示，每张卡的300个float16数据，被切分为2个首块数据，1个尾块数据。每个首块的数据量tileLen为128个float16数据，尾块的数据量tailLen为44个float16数据。在算子内部实现时，需要对切分后的数据分3轮进行AllGather通信任务，将等效上述非多轮切分的通信结果。
 
     **图3**  各卡数据切分示意图  
-    ![各卡数据切分示意图-56](../../../../figures/各卡数据切分示意图-56.png)
+    ![各卡数据切分示意图-56](../../../../figures/per_rank_data_split_56.png)
 
     具体实现为，第1轮通信，每个rank上0-0\\1-0\\2-0\\3-0数据块进行AllGather处理。第2轮通信，每个rank上0-1\\1-1\\2-1\\3-1数据块进行AllGather处理。第3轮通信，每个rank上0-2\\1-2\\2-2\\3-2数据块进行AllGather处理。每一轮通信结果中，各卡上相邻数据块的起始地址间隔的数据个数为strideCount，以第一轮通信结果为例，rank0的0-0数据块和1-0数据块起始地址间隔的数据量strideCount = 2\*tileLen+1\*tailLen=300。
 
     **图4**  第一轮4卡AllGather示意图  
-    ![第一轮4卡AllGather示意图](../../../../figures/第一轮4卡AllGather示意图.png)
+    ![第一轮4卡AllGather示意图](../../../../figures/first_round_4rank_allgather.png)
 
     ```
     extern "C" __global__ __aicore__ void all_gather_custom(GM_ADDR xGM, GM_ADDR yGM, GM_ADDR workspaceGM, GM_ADDR tilingGM)

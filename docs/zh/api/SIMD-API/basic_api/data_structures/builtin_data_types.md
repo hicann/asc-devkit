@@ -205,7 +205,7 @@ $$
 
     **图6** fp8_e5m2_t特殊值bit位表示
 
-    ![](../../../figures/hifi8特殊值.png)
+    ![](../../../figures/fp8_e5m2_special_values.png)
 
 - fp8\_e4m3fn\_t
 
@@ -213,13 +213,13 @@ $$
 
     **图7** fp8_e4m3fn_t数据类型二进制示意图
 
-    ![](../../../figures/F8_2.png)
+    ![](../../../figures/fp8_e4m3fn_binary.png)
 
     fp8\_e4m3fn\_t的特殊值bit位表示如下：
 
     **图8** fp8_e4m3fn_t特殊值bit位表示
 
-    ![](../../../figures/hifi8特殊值-3.png)
+    ![](../../../figures/fp8_e4m3fn_special_values.png)
 
 - hifloat8\_t
 
@@ -229,13 +229,13 @@ $$
 
     **图9** S、E、M在不同点域D值下的bit位分布<a name="fig261021710100"></a>
 
-    ![](../../../figures/S-E-M在不同点域D值下的bit位分布.png "S-E-M在不同点域D值下的bit位分布")
+    ![](../../../figures/sem_bit_distribution.png "S-E-M在不同点域D值下的bit位分布")
 
     下图示例中，其符号位占用1位，指数位占用2位，尾数位占用3位，D字段为2比特b01，$S_v=1$，$E_v=3$，$M_v = 2^{-1} + 2^{-2}$，根据实际取值计算公式$S_v \times 2^{E_v} \times (1 + M_v)$计算得到的结果为14。下标v表示各部分的具体数值。
 
     **图10** hifloat8_t数据类型二进制示意图，值为14
 
-    ![](../../../figures/流水任务运行示意图-4.png)
+    ![](../../../figures/hifloat8_binary.png)
 
     hifloat8\_t类型的取值范围如下表所示：
 
@@ -256,7 +256,7 @@ $$
 
     **图11**  hifloat8_t特殊值bit位表示
 
-    ![](../../../figures/hifi8特殊值-5.png)
+    ![](../../../figures/hifloat8_special_values.png)
 
     hifloat8\_t数据类型计算公式如下：
 

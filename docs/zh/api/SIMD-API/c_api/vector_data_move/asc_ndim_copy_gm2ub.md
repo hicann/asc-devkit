@@ -47,19 +47,19 @@
 以下以2维的例子，介绍几个典型使用场景。
 
 - 2D Padding场景，使用固定值填充方式
-![ ](../figures/asc_ndim_copy_gm2ub典型使用场景：2D_Padding场景，使用固定值填充方式.png)
+![ ](../figures/asc_ndim_copy_gm2ub_2d_padding_constant.png)
 
 - 2D Padding场景，使用最近值填充方式
-![ ](../figures/asc_ndim_copy_gm2ub典型使用场景：2D_Padding场景，使用最近值填充方式.png)
+![ ](../figures/asc_ndim_copy_gm2ub_2d_padding_nearest.png)
 
 - 2D Transpose场景
-![ ](../figures/asc_ndim_copy_gm2ub典型使用场景：2D_Transpose场景.png)
+![ ](../figures/asc_ndim_copy_gm2ub_2d_transpose.png)
 
 - 2D Slice场景
-![ ](../figures/asc_ndim_copy_gm2ub典型使用场景：2D_Slice场景.png)
+![ ](../figures/asc_ndim_copy_gm2ub_2d_slice.png)
 
 - 2D BroadCast场景
-![ ](../figures/asc_ndim_copy_gm2ub典型使用场景：2D_BroadCast场景.png)
+![ ](../figures/asc_ndim_copy_gm2ub_2d_broadcast.png)
 
 ## 函数原型
 
@@ -135,7 +135,7 @@ PIPE_MTE2
 ## 调用示例
 
 2D Padding场景，使用固定值填充方式
-![ ](../figures/asc_ndim_copy_gm2ub典型使用场景：2D_Padding场景，使用固定值填充方式.png)
+![ ](../figures/asc_ndim_copy_gm2ub_2d_padding_constant.png)
 
 ```cpp
 // total_length指参与搬运的数据总长度。src是外部输入的half类型的GM内存。

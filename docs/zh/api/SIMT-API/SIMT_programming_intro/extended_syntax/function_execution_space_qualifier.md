@@ -12,4 +12,4 @@
 
 函数调用关系如下图所示：
 
-![](../../../figures/函数调用层级.png)
+![](../../../figures/function_call_hierarchy.png)

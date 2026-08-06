@@ -88,7 +88,7 @@ ND2NZ转换示意图如下，样例中参数设置值和解释说明如下：
 
 **图1** ND2NZ转换示意图（half数据类型）<a id="fig128961542184620"></a>
 
-![](../../../../figures/ND2NZ转换示意图（half数据类型）.png)
+![](../../../../figures/nd2nz_conversion_half.png)
 
 ## 数据类型<a id="section4219135304818"></a>
 

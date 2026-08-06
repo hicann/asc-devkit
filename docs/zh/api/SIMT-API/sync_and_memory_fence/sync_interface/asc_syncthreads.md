@@ -40,7 +40,7 @@ asc\_syncthreads接口用于**阻塞当前线程块内所有线程**，直到所
 
 asc\_syncthreads接口的执行流程示意图如下：
 
-![](../../../figures/syncthreads_接口功能.png)
+![](../../../figures/syncthreads_function.png)
 
 需要注意，线程块内所有线程必须都调用到asc\_syncthreads\(\)接口，程序才能继续执行。如果有线程未到达同步点，其他线程将被阻塞等待，导致死锁，例如：若将本接口的调用放在分支中，就可能导致部分线程到达不了同步接口调用处，导致程序卡死。
 

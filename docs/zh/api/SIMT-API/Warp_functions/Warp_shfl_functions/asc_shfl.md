@@ -42,7 +42,7 @@ Warp Shfl类接口主要实现Warp级数据交换，能够实现直接读取某�
 例如，Warp内32个活跃线程调用asc\_shfl\(LaneId, 5, 16\)接口，每个线程的返回值为当前线程所在分组内线程编号为5的var值。
 
 **图1**  asc\_shfl结果示意图  
-![](../../../figures/asc_shfl结果示意图.png "asc_shfl结果示意图")
+![](../../../figures/asc_shfl_result.png "asc_shfl结果示意图")
 
 ## 函数原型
 

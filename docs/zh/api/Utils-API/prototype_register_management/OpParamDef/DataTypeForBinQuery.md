@@ -100,7 +100,7 @@ OpParamDef算子定义，OpParamDef请参考[OpParamDef](OpParamDef.md)。
     -   替换后第1列使用原来第3列的二进制，第2列和第3列使用原来第1列的二进制。第4列仍使用第4列的二进制。
     -   替换后，第2列和第3列完全一致，达成二进制复用的效果，算子总二进制会由原来的四个（bin1，bin2，bin3，bin4）缩减至现在的三个（bin1，bin3、bin4）。
 
-    ![](../../../figures/算子开发端到端流程.png)
+    ![](../../../figures/DataTypeForBinQuery.png)
 
 -   示例二
 

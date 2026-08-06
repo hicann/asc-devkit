@@ -51,10 +51,10 @@ TConv3DApiTiling结构体包含Conv3D算子规格信息及Tiling切分算法的�
 注：上述的M轴为卷积正向操作过程中的输入Input在img2col展开后的纵轴，数值上等于Hout \* Wout；K为输入Input在img2col展开后的横轴，数值上等于KD\*C1\*KH\*KW\*C0；KD/KH/KW为Weight的Depth、Height、Width，即kernelD/kernelH/kernelW的简写；N为Weight的Cout，具体请见图1。
 
 **图1**  卷积3D正向MKN示意图  
-![](../../../../figures/卷积3D正向MKN示意图.png "卷积3D正向MKN示意图")
+![](../../../../figures/conv3d_mkn.png "卷积3D正向MKN示意图")
 
 **图2**  卷积3D正向MFirst示意图  
-![](../../../../figures/卷积3D正向MFirst示意图.png "卷积3D正向MFirst示意图")
+![](../../../../figures/conv3d_mfirst.png "卷积3D正向MFirst示意图")
 
 **图3**  卷积3D正向NFirst示意图  
-![](../../../../figures/卷积3D正向NFirst示意图.png "卷积3D正向NFirst示意图")
+![](../../../../figures/conv3d_nfirst.png "卷积3D正向NFirst示意图")

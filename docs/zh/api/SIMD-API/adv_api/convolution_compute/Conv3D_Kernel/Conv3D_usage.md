@@ -10,7 +10,7 @@ Ascend C提供一组Conv3D高阶API，方便用户快速实现3维卷积正向�
 -   Y为完成卷积及偏置操作之后的结果矩阵Output。
 
 **图1**  3维正向卷积示意图<a name="fig198021635102613"></a>  
-![](../../../../figures/3维正向卷积示意图.png "3维正向卷积示意图")
+![](../../../../figures/conv3d_forward_diagram.png "3维正向卷积示意图")
 
 > [!NOTE]说明
 >Cin为Input的输入通道大小Channel；Din为Input的Depth维度大小；Hin为Input的Height维度大小；Win为Input的Width维度大小；Cout为Weight、Output的输出通道大小；Dout为Output的Depth维度的大小；Hout为Output的Height维度大小；Wout为Output的Width维度大小；下文中提及的M维度，为卷积正向操作过程中的输入Input在img2col展开后的纵轴，数值上等于Hout \* Wout。
@@ -23,13 +23,13 @@ Ascend C提供一组Conv3D高阶API，方便用户快速实现3维卷积正向�
 -   Dilation代表卷积核三个维度上每个数据的间距，见[图4](#fig1015315044111)。
 
 **图2**  卷积3D正向Padding示意图<a name="fig16852164019363"></a>  
-![](../../../../figures/卷积3D正向Padding示意图.png "卷积3D正向Padding示意图")
+![](../../../../figures/conv3d_padding.png "卷积3D正向Padding示意图")
 
 **图3**  卷积3D正向Stride示意图<a name="fig137769564018"></a>  
-![](../../../../figures/卷积3D正向Stride示意图.png "卷积3D正向Stride示意图")
+![](../../../../figures/conv3d_stride.png "卷积3D正向Stride示意图")
 
 **图4**  卷积3D正向Dilation示意图<a name="fig1015315044111"></a>  
-![](../../../../figures/卷积3D正向Dilation示意图.png "卷积3D正向Dilation示意图")
+![](../../../../figures/conv3d_dilation.png "卷积3D正向Dilation示意图")
 
 Kernel侧实现Conv3D运算的步骤概括为：
 

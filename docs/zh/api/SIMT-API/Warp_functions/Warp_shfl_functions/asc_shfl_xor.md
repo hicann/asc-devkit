@@ -32,7 +32,7 @@
 
 **图1**  asc\_shfl\_xor结果示意图
 
-![](../../../figures/asc_shfl_xor结果示意图.png "asc_shfl_xor结果示意图")
+![](../../../figures/asc_shfl_xor_result.png "asc_shfl_xor结果示意图")
 
 ## 函数原型
 

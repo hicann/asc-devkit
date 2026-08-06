@@ -37,9 +37,9 @@
 
 -   **BSH/SBH**：B：Batch，批处理的大小； S：sequence length，序列长度；H = N \* D，其中，N为head的数量，D为head的大小。Layout格式如下图所示：
 
-    ![](../../../../figures/跳写模式示意图.png)
+    ![](../../../../figures/skip_write_mode.png)
 
-    ![](../../../../figures/跳写模式示意图-46.png)
+    ![](../../../../figures/skip_write_mode_46.png)
 
 -   **BSNGD**：为原始BSH shape做reshape后的shape，S和D为单Batch的矩阵乘的M轴（或N轴）和K轴，一个SD为一个batch的计算数据，Layout格式如下图所示：
 

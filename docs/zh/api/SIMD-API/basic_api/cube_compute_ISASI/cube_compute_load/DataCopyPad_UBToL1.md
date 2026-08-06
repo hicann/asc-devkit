@@ -100,7 +100,7 @@
 
     **图1** UB->L1 Buffer（VECIN/VECOUT->TSCM）搬运示意图<a name="fig9329040132719"></a>  
 
-    ![](../../../../figures/VECIN-VECOUT--TSCM搬运示意图.png "VECIN-VECOUT--TSCM搬运示意图")
+    ![](../../../../figures/vecin_vecout_tscm_move.png "VECIN-VECOUT--TSCM搬运示意图")
 
 ## 数据类型
 

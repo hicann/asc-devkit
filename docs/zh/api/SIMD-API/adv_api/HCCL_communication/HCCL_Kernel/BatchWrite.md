@@ -35,7 +35,7 @@
 <!-- end id8 -->
 
 **图1**  BatchWrite示意图  
-![](../../../../figures/BatchWrite示意图.png "BatchWrite示意图")
+![](../../../../figures/batchwrite_diagram.png "BatchWrite示意图")
 
 ## 函数原型
 

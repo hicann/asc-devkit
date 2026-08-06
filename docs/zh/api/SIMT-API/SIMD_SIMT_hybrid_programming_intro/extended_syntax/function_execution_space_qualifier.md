@@ -16,7 +16,7 @@ SIMD与SIMT混合编程中涉及的函数类型如下表所示：
 
 函数调用关系如下图所示：
 
-![](../../../figures/函数调用层级-64.png)
+![](../../../figures/function_call_hierarchy_64.png)
 
 ## \_\_simt\_vf\_\_
 

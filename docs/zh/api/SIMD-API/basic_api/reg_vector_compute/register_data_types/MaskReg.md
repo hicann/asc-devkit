@@ -32,7 +32,7 @@ MaskReg寄存器用于指示在计算过程中哪些元素参与计算，宽度�
 
 **图1** MaskReg计算过程<a id="fig1"></a>
 
-![](../../../../figures/MaskReg计算过程.png "MaskReg计算过程")
+![](../../../../figures/maskreg_process.png "MaskReg计算过程")
 
 ## 函数原型<a name="section620mcpsimp"></a>
 - CreateMask接口
@@ -85,11 +85,11 @@ MaskReg
 
 **图4** b16到b32类型转换过程<a id="fig4"></a>
 
-![](../../../../figures/b16到b32类型转换过程.png "b16到b32类型转换过程")
+![](../../../../figures/b16_to_b32_conversion.png "b16到b32类型转换过程")
 
 **图5** b32到b16类型转换过程<a id="fig5"></a>
 
-![](../../../../figures/b32到b16类型转换过程.png "b32到b16类型转换过程")
+![](../../../../figures/b32_to_b16_conversion.png "b32到b16类型转换过程")
 
 特别的，int4x2_t/fp4x2_e2m1_t/fp4x2_e1m2_t和b16之间的转换，指令会以每2个元素为一对进行读写，大转小时mask有效位以偶数位为准。
 
@@ -97,11 +97,11 @@ MaskReg
 
 **图6** fp4x2_e2m1_t到bfloat16_t类型转换过程<a id="fig6"></a>
 
-![](../../../../figures/fp4x2_e2m1_t到bfloat16_t转换过程.png "fp4x2_e2m1_t到bfloat16_t类型转换过程")
+![](../../../../figures/fp4x2_e2m1_to_bfloat16.png "fp4x2_e2m1_t到bfloat16_t类型转换过程")
 
 **图7** bfloat16_t到fp4x2_e2m1_t类型转换过程<a id="fig7"></a>
 
-![](../../../../figures/bfloat16_t到fp4x2_e2m1_t转换过程.png "bfloat16_t到fp4x2_e2m1_t类型转换过程")
+![](../../../../figures/bfloat16_to_fp4x2_e2m1.png "bfloat16_t到fp4x2_e2m1_t类型转换过程")
 
 ### Mask设置方式
 
@@ -123,13 +123,13 @@ Reg矢量计算中，掩码的配置方式由MaskReg寄存器决定，仅支持�
 
   **图2** b8数据类型下CreateMask接口不同MaskReg的模式下元素选取<a id="fig2"></a>
 
-![](../../../../figures/b8数据类型下CreateMask接口不同MaskReg的模式下元素选取.png "b8数据类型下CreateMask接口不同MaskReg的模式下元素选取")
+![](../../../../figures/b8_createmask_maskreg.png "b8数据类型下CreateMask接口不同MaskReg的模式下元素选取")
 
 - UpdateMask：根据当前scalarValue的值生成对应长度的有效位掩码，并自动将scalarValue减去当前向量长度以更新剩余待处理元素数量。
 
   **图3** b16数据类型下UpdateMask接口基于scalarValue的掩码生成<a id="fig3"></a>
 
-![](../../../../figures/b16数据类型下UpdateMask接口基于scalarValue的掩码生成.png "b16数据类型下UpdateMask接口基于scalarValue的掩码生成")
+![](../../../../figures/b16_updatemask_scalarvalue.png "b16数据类型下UpdateMask接口基于scalarValue的掩码生成")
 
 以基础算术API Add为例介绍Mask设置的不同方式。
 
@@ -283,7 +283,7 @@ __simd_callee__ inline void Add(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 
 **图8** NPU架构版本2201的Memory矢量计算与NPU架构版本3510的Reg矢量计算Mask机制对比<a id="fig8"></a>
 
-![](../../../../figures/Memory矢量计算与Reg矢量计算Mask机制对比.png "NPU架构版本2201的Memory矢量计算与NPU架构版本3510的Reg矢量计算Mask机制对比")
+![](../../../../figures/memory_vs_reg_mask_comparison.png "NPU架构版本2201的Memory矢量计算与NPU架构版本3510的Reg矢量计算Mask机制对比")
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

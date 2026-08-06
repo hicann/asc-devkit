@@ -115,11 +115,11 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 
 <a name="fig322951853119"></a>
 **图1**  非连续写模式示意图  
-![](../../../../figures/非连续写模式示意图.png "非连续写模式示意图")
+![](../../../../figures/non_continuous_write_mode.png "非连续写模式示意图")
 
 <a name="fig580415103338"></a>
 **图2**  连续写模式示意图  
-![](../../../../figures/连续写模式示意图.png "连续写模式示意图")
+![](../../../../figures/continuous_write_mode.png "连续写模式示意图")
 
 ## 返回值说明
 

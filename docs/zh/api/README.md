@@ -87,7 +87,7 @@
             -   [Layout](SIMD-API/basic_api/aux_data_structures/Layout/Layout.md)
                 -   [Layout简介](SIMD-API/basic_api/aux_data_structures/Layout/Layout_intro.md)
                 -   [Layout构造函数](SIMD-API/basic_api/aux_data_structures/Layout/Layout_constructor.md)
-                -   [layout](SIMD-API/basic_api/aux_data_structures/Layout/layout.md)
+                -   [layout](SIMD-API/basic_api/aux_data_structures/Layout/layout1.md)
                 -   [运算符重载](SIMD-API/basic_api/aux_data_structures/Layout/operator_overloading.md)
                 -   [GetShape](SIMD-API/basic_api/aux_data_structures/Layout/GetShape.md)
                 -   [GetStride](SIMD-API/basic_api/aux_data_structures/Layout/GetStride.md)

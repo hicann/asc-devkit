@@ -195,7 +195,7 @@ enableSmallC0开启模式下的ND2NZ转换示意图如下：
 
 **图4** enableSmallC0开启模式下的ND2NZ转换示意图（half数据类型）<a name="fig07641913195410"></a>  
 
-![](../../../../figures/enableSmallC0开启模式下的ND2NZ转换示意图-（half数据类型）.png "enableSmallC0开启模式下的ND2NZ转换示意图-（half数据类型）")
+![](../../../../figures/nd2nz_small_c0_half.png "enableSmallC0开启模式下的ND2NZ转换示意图-（half数据类型）")
 
 ## 调用示例<a id="zh-cn_topic_0000002566538879_section088124295117"></a>
 

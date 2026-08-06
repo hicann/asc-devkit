@@ -69,7 +69,7 @@
 
 - 定义：通用的N维张量格式，其物理存储顺序对应于ND格式在内存维度上的转置排列，即ND遵循row major（行主序）规则，DN遵循column major（列主序）。列主序示意图如下所示：
 
-![列优先排布](../../../../figures/列优先排布.png)
+![列优先排布](../../../../figures/column_major_layout.png)
 - 场景：通常存在于Global Memory（GM）中。若此输入要作为矩阵计算的输入，需要转换成Nz格式。
 <!-- npu="950" id20 -->
 - 转换示例：针对Ascend 950PR/Ascend 950DT，可以使用[矩阵搬入DataCopy DN2NZ接口](../cube_compute_load/DataCopy_GMToL1_DN2NZ.md)将其转换为Nz格式以适配Cube单元。

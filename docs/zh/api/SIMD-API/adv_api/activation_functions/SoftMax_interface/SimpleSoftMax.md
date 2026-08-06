@@ -41,7 +41,7 @@ def simple_softmax(src, max, sum):
 以float类型，ND格式，shape为\[m, k\]的输入Tensor为例，描述SimpleSoftMax高阶API内部算法框图，如下图所示。
 
 **图1**  SimpleSoftMax算法框图  
-![](../../../../figures/SimpleSoftMax算法框图.png "SimpleSoftMax算法框图")
+![](../../../../figures/simplesoftmax_algorithm_diagram.png "SimpleSoftMax算法框图")
 
 计算过程分为如下几步，均在Vector上进行：
 

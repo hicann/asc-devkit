@@ -29,10 +29,10 @@
 定义指定计算的维度（Reduce轴）为R轴，非指定维度（Normal轴）为A轴。如下图所示，对shape为\(2, 3\)的二维矩阵进行运算，指定在第一维求逻辑与，输出结果为\[1, 0, 0\]；指定在第二维求逻辑与，输出结果为\[0, 0\]。
 
 **图1**  ReduceAll按第一个维度计算示例  
-![](../../../../figures/ReduceAll按第一个维度计算示例.png "ReduceAll按第一个维度计算示例")
+![](../../../../figures/reduceall_first_axis.png "ReduceAll按第一个维度计算示例")
 
 **图2**  ReduceAll按最后一个维度计算示例  
-![](../../../../figures/ReduceAll按最后一个维度计算示例.png "ReduceAll按最后一个维度计算示例")
+![](../../../../figures/reduceall_last_axis.png "ReduceAll按最后一个维度计算示例")
 
 ## 函数原型
 

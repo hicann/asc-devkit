@@ -95,13 +95,13 @@ __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>&
 
 **图 1** ScaleA在L0A Buffer的分形排布<a id="fig138710913432"></a>
 
-![](../../../../figures/ScaleA在L0A的分形排布.png "ScaleA在L0A Buffer的分形排布")
+![](../../../../figures/scalea_l0a_fractal.png "ScaleA在L0A Buffer的分形排布")
 
 下图为ScaleA从L1 Buffer搬运至L0A Buffer过程中的配置参数示意。每一行为32字节，对应着[图1](#fig138710913432)中的一个分形。xStep为M维度分形的个数，如图中的xStep = M / 16 = 3，yStep为K维度32字节的个数，如图中的yStep = K / 32 / 2 = 21，srcStride和dstStride同理，表示在K维度上32字节的个数。
 
 **图 2**  ScaleA从L1 Buffer搬运至L0A Buffer的配置参数示意
 
-![](../../../../figures/Nd2Nz转换示意图.png "ScaleA从L1 Buffer搬运至L0A Buffer的配置参数示意")
+![](../../../../figures/LoadData_2D_MX_nd2nz.png "ScaleA从L1 Buffer搬运至L0A Buffer的配置参数示意")
 
 ## 数据类型
 

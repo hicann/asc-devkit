@@ -68,13 +68,13 @@
 ## 实现原理
 
 **图1**  AscendQuant算法框图scale和offset都是scalar  
-![](../../../figures/AscendQuant算法框图scale和offset都是scalar.png "AscendQuant算法框图scale和offset都是scalar")
+![](../../../figures/ascendquant_scale_offset_scalar.png "AscendQuant算法框图scale和offset都是scalar")
 
 **图2**  AscendQuant算法框图scale和offset都是Tensor  
-![](../../../figures/AscendQuant算法框图scale和offset都是Tensor.png "AscendQuant算法框图scale和offset都是Tensor")
+![](../../../figures/ascendquant_scale_offset_tensor.png "AscendQuant算法框图scale和offset都是Tensor")
 
 **图3**  AscendQuant算法框图scale是Tensor&offset是Scalar  
-![](../../../figures/AscendQuant算法框图scale是Tensor-offset是Scalar.png "AscendQuant算法框图scale是Tensor-offset是Scalar")
+![](../../../figures/ascendquant_scale_tensor_offset_scalar.png "AscendQuant算法框图scale是Tensor-offset是Scalar")
 
 如上图所示是AscendQuant内部算法框图，计算过程大致描述为如下几步，均在Vector上进行：
 
@@ -85,10 +85,10 @@
 5.  精度转换：将Tmp2从half转换成int8\_t类型，得到output。
 
 **图4**  AscendQuant算法框图PER\_TOKEN/PER\_GROUP场景scale和offset都是tensor  
-![](../../../figures/AscendQuant算法框图PER_TOKEN-PER_GROUP场景scale和offset都是tensor.png "AscendQuant算法框图PER_TOKEN-PER_GROUP场景scale和offset都是tensor")
+![](../../../figures/ascendquant_per_token_per_group_scale_offset_tensor.png "AscendQuant算法框图PER_TOKEN-PER_GROUP场景scale和offset都是tensor")
 
 **图5**  AscendQuant算法框图PER\_TOKEN/PER\_GROUP场景scale是tensor&offset是scalar  
-![](../../../figures/AscendQuant算法框图PER_TOKEN-PER_GROUP场景scale是tensor-offset是scalar.png "AscendQuant算法框图PER_TOKEN-PER_GROUP场景scale是tensor-offset是scalar")
+![](../../../figures/ascendquant_per_token_per_group_scale_tensor_offset_scalar.png "AscendQuant算法框图PER_TOKEN-PER_GROUP场景scale是tensor-offset是scalar")
 
 PER\_TOKEN/PER\_GROUP场景的计算逻辑如下：
 

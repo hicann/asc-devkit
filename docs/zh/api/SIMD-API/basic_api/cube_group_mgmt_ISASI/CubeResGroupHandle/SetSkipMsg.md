@@ -30,7 +30,7 @@
 AIC跳过指定个数假消息的处理，仅在回调函数中调用。下图中Block0通过调用SetSkipMsg跳过三个假消息。
 
 **图1**  SetSkipMsg示意图<a name="fig1732521102711"></a>  
-![](../../../../figures/SetSkipMsg示意图.png "SetSkipMsg示意图")
+![](../../../../figures/setskipmsg_diagram.png "SetSkipMsg示意图")
 
 ## 函数原型<a name="section765814724715"></a>
 

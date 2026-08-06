@@ -472,7 +472,7 @@ isSetPadding配置为true，表示在接口内部设置Pad属性描述（即padV
 
 **图2** feature map格式<a id="zh-cn_topic_0000002512171652_fig8137131714319"></a>  
 
-![](../../../../figures/feature-map格式.png "feature-map格式")
+![](../../../../figures/feature_map_format.png "feature-map格式")
 
 对应的filter的格式如下图：
 
@@ -480,13 +480,13 @@ isSetPadding配置为true，表示在接口内部设置Pad属性描述（即padV
 
 **图3** filter的格式<a id="zh-cn_topic_0000002512171652_fig1395194710496"></a>  
 
-![](../../../../figures/filter的格式.png "filter的格式")
+![](../../../../figures/filter_format.png "filter的格式")
 
 实际操作中，由于存储空间或者计算能力限制，我们通常会将整个卷积计算分块，一次只搬运并计算一小块数据。
 
 **图4** 卷积计算分块<a id="zh-cn_topic_0000002512171652_fig5278110624"></a>  
 
-![](../../../../figures/卷积计算分块.png "卷积计算分块")
+![](../../../../figures/conv_compute_block.png "卷积计算分块")
 
 对于L0A Buffer（A2）中的feature map来说有两种方案，水平分块和垂直分块。分别对应参数中repeatMode的0和1。
 
@@ -496,13 +496,13 @@ repeatMode =0时，每次repeat会改变在filter窗口中读取数据点的位�
 
 **图5** repeatMode = 0时的filter窗口<a id="zh-cn_topic_0000002512171652_fig11710143294513"></a>  
 
-![](../../../../figures/repeatMode-0-时的filter窗口.png "repeatMode-0-时的filter窗口")
+![](../../../../figures/repeatmode_0_filter_window.png "repeatMode-0-时的filter窗口")
 
 repeatMode =1的时候filter窗口中读取数据的位置保持不变，每个repeat在feature map中前进C0个元素。
 
 **图6** repeatMode = 1时的filter窗口<a id="zh-cn_topic_0000002512171652_fig1648315981717"></a>  
 
-![](../../../../figures/repeatMode-1-时的filter窗口.png "repeatMode-1-时的filter窗口")
+![](../../../../figures/repeatmode_1_filter_window.png "repeatMode-1-时的filter窗口")
 
 ## 调用示例<a id="zh-cn_topic_0000002512171652_section088124295117"></a>
 

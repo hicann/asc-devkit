@@ -35,7 +35,7 @@
 MatmulCallBackFunc中包含3个可由用户自定义的回调函数接口，即用户可配置3个函数指针。3个函数指针分别为C矩阵从L0C Buffer（CO1）拷贝到GM，A矩阵从GM拷贝到L1 Buffer（A1），B矩阵从GM拷贝到L1 Buffer（B1）的回调函数指针。3个函数指针的位置固定，不使用自定义搬运函数的函数指针位置需要设为空指针。各个功能回调函数接口定义及参数释义见[表1 MatmulCallBackFunc回调函数接口及参数说明](#table10989848113111)。每个回调函数实现矩阵搬运中单个基本块（A矩阵基本块baseM \* baseK、B矩阵基本块baseK \* baseN、C矩阵基本块baseM \* baseN）的搬运策略，无法对整块内存空间进行管理。Matmul默认的搬运函数实现单核上单个基本块的搬运，搬运的基本块大小是固定的，在完整的Matmul计算过程中，多次调用搬运函数，对连续排布的基本块按顺序逐个搬运，以搬入A矩阵的过程为例，示意图如下。
 
 **图1**  Matmul默认搬入A矩阵示意图  
-![](../../../../figures/Matmul默认搬入A矩阵示意图.png "Matmul默认搬入A矩阵示意图")
+![](../../../../figures/matmul_default_load_a.png "Matmul默认搬入A矩阵示意图")
 
 **表1**  MatmulCallBackFunc回调函数接口及参数说明
 

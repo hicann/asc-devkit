@@ -44,7 +44,7 @@ que.FreeTensor(a2);</pre>
 </tr>
 <tr id="row3501135910920"><td class="cellrowborder" valign="top" width="13.63%" headers="mcps1.2.3.1.1 "><p id="p6501175912914"><a name="p6501175912914"></a><a name="p6501175912914"></a>mask</p>
 </td>
-<td class="cellrowborder" valign="top" width="86.37%" headers="mcps1.2.3.1.2 "><a name="ul4317543497"></a><a name="ul4317543497"></a><ul id="ul4317543497"><li>mask是int类型时，采用比特位表达信息：<a name="ul196262325012"></a><a name="ul196262325012"></a><ul id="ul196262325012"><li>bit 0位为预留参数。</li><li>bit 1位为预留参数。</li><li>bit 2位为0时，VECTOR0与VECTOR1映射到CUBE上的内存位置错开，为1时，VECTOR0与VECTOR1映射到CUBE上的内存位置相同。<p id="p8524124174715"><a name="p8524124174715"></a><a name="p8524124174715"></a><a name="image147520519109"></a><a name="image147520519109"></a><span><img class="eddx" id="image147520519109" src="../../../../figures/矩阵编程逻辑位置示意图.png"></span></p>
+<td class="cellrowborder" valign="top" width="86.37%" headers="mcps1.2.3.1.2 "><a name="ul4317543497"></a><a name="ul4317543497"></a><ul id="ul4317543497"><li>mask是int类型时，采用比特位表达信息：<a name="ul196262325012"></a><a name="ul196262325012"></a><ul id="ul196262325012"><li>bit 0位为预留参数。</li><li>bit 1位为预留参数。</li><li>bit 2位为0时，VECTOR0与VECTOR1映射到CUBE上的内存位置错开，为1时，VECTOR0与VECTOR1映射到CUBE上的内存位置相同。<p id="p8524124174715"><a name="p8524124174715"></a><a name="p8524124174715"></a><a name="image147520519109"></a><a name="image147520519109"></a><span><img class="eddx" id="image147520519109" src="../../../../figures/tscm.png"></span></p>
 </li></ul>
 </li><li>mask是const TQueConfig*类型时，TQueConfig结构定义和参数说明如下。<a name="screen13896155731115"></a><a name="screen13896155731115"></a><pre class="screen" codetype="Cpp" id="screen13896155731115">struct TQueConfig {
     bool nd2nz = false;  // 不支持，默认为false

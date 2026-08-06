@@ -56,7 +56,7 @@ Reg矢量计算API提供了下表所示多种搬运指令，合理选择搬运�
 
   **图1** half转int32_t类型转换过程<a id="fig1"></a>
 
-  ![](../../../../figures/half转int32_t类型转换过程.png "half转int32_t类型转换过程")
+  ![](../../../../figures/half_to_int32_conversion.png "half转int32_t类型转换过程")
 
   ```cpp
   // 位宽小转大，以half->int32_t为例 
@@ -77,7 +77,7 @@ Reg矢量计算API提供了下表所示多种搬运指令，合理选择搬运�
 
   **图2** float转int16_t类型转换过程<a id="fig2"></a>
 
-  ![](../../../../figures/float转int16_t类型转换过程.png "float转int16_t类型转换过程")
+  ![](../../../../figures/float_to_int16_conversion.png "float转int16_t类型转换过程")
 
   ```cpp
   // 位宽大转小，以float->int16_t为例 

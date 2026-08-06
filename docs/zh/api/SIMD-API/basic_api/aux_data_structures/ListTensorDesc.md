@@ -29,7 +29,7 @@
 
 ListTensorDesc用来解析符合以下内存排布格式的数据，并在kernel侧根据索引获取储存对应数据的地址及shape信息。
 
-![](../../../figures/Tiling---副本.png)
+![](../../../figures/ListTensorDesc.png)
 
 ## 需要包含的头文件<a name="section12341115212912"></a>
 

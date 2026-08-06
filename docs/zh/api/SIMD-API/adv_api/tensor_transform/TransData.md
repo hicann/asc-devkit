@@ -37,28 +37,28 @@
     输入Tensor \{shape:\[N, C, D, H, W\]\}，输出Tensor \{shape:\[N, D, C/16, H, W, 16\]\}。请注意，C0实际上等于16，为便于展示，下图中C0被设定为2。
 
     **图1**  NCDHW格式转为NDC1HWC0格式示意图
-    ![](../../../figures/NCDHW格式转为NDC1HWC0格式示意图.png "NCDHW格式转为NDC1HWC0格式示意图")
+    ![](../../../figures/ncdhw_to_ndc1hwc0.png "NCDHW格式转为NDC1HWC0格式示意图")
 
 -   场景2：NDC1HWC0 -\> NCDHW
 
     输入Tensor \{shape:\[N, D, C/16, H, W, 16\]\}，输出Tensor \{shape:\[N, C, D, H, W\]\}。请注意，C0实际上等于16，为便于展示，下图中C0被设定为2。
 
     **图2**  NDC1HWC0格式转为NCDHW格式示意图
-    ![](../../../figures/NDC1HWC0格式转为NCDHW格式示意图.png "NDC1HWC0格式转为NCDHW格式示意图")
+    ![](../../../figures/ndc1hwc0_to_ncdhw.png "NDC1HWC0格式转为NCDHW格式示意图")
 
 -   场景3：NCDHW -\> FRACTAL\_Z\_3D
 
     输入Tensor \{shape:\[N, C, D, H, W\]\}，输出Tensor \{shape:\[D, C/16, H, W, N/16, 16, 16\]\}。请注意，C0和N0实际上等于16，为便于展示，下图中C0和N0被设定为2。
 
     **图3**  NCDHW格式转为FRACTAL\_Z\_3D格式示意图
-    ![](../../../figures/NCDHW格式转为FRACTAL_Z_3D格式示意图.png "NCDHW格式转为FRACTAL_Z_3D格式示意图")
+    ![](../../../figures/ncdhw_to_fractal_z_3d.png "NCDHW格式转为FRACTAL_Z_3D格式示意图")
 
 -   场景4：FRACTAL\_Z\_3D -\> NCDHW
 
     输入Tensor \{shape:\[D, C/16, H, W, N/16, 16, 16\]\}，输出Tensor \{shape:\[N, C, D, H, W\]\}。请注意，C0和N0实际上等于16，为便于展示，下图中C0和N0被设定为2。
 
     **图4**  FRACTAL\_Z\_3D格式转为NCDHW格式示意图
-    ![](../../../figures/FRACTAL_Z_3D格式转为NCDHW格式示意图.png "FRACTAL_Z_3D格式转为NCDHW格式示意图")
+    ![](../../../figures/fractal_z_3d_to_ncdhw.png "FRACTAL_Z_3D格式转为NCDHW格式示意图")
 
 ## 函数原型
 

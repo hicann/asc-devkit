@@ -51,17 +51,17 @@ def softmax(src):
 当输入的数据排布格式不同时，内部的reduce过程会有所不同：当输入为ND格式时，内部的reduce过程按last轴进行；当输入为NZ格式时，内部的reduce过程按照last轴和first轴进行，reduce过程如下图所示：
 
 **图1**  ND格式的reduce过程  
-![](../../../../figures/ND格式的reduce过程.png "ND格式的reduce过程")
+![](../../../../figures/nd_format_reduce.png "ND格式的reduce过程")
 
 **图2**  NZ格式的reduce过程<a name="fig0172155842215"></a>  
-![](../../../../figures/NZ格式的reduce过程.png "NZ格式的reduce过程")
+![](../../../../figures/nz_format_reduce.png "NZ格式的reduce过程")
 
 ## 实现原理
 
 以float类型，ND格式，shape为\[m, k\]的输入Tensor为例，描述SoftMax高阶API内部算法框图，如下图所示。
 
 **图3**  SoftMax算法框图  
-![](../../../../figures/SoftMax算法框图.png "SoftMax算法框图")
+![](../../../../figures/softmax_algorithm_diagram.png "SoftMax算法框图")
 
 计算过程分为如下几步，均在Vector上进行：
 

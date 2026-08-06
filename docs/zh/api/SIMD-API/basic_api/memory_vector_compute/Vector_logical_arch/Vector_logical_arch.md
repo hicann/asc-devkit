@@ -50,7 +50,7 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
     **图3** Unified Buffer的内存结构图
 
-    ![](../../../../figures/a2a3_UB内存结构图.png)
+    ![](../../../../figures/a2a3_ub_memory_structure.png)
 
     如图3所示，UB总大小为192KB，包含16个bank group（BG0 ~ BG15），每个bank group包含3个bank。每个bank大小为4KB，由128行组成，每行长度为32B。
     - **读写冲突**：读操作和写操作同时尝试访问同一个bank。
@@ -68,7 +68,7 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
     **图4** Unified Buffer的内存结构图
 
-    ![](../../../../figures/950_UB内存结构图.png)
+    ![](../../../../figures/950_ub_memory_structure.png)
 
     如图4所示，UB总大小为256KB，包含8个bank group（BG0 ~ BG7），每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B。
     - **读写冲突**：读操作和写操作同时尝试访问同一个bank。

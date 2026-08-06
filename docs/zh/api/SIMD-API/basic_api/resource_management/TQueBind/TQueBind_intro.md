@@ -4,7 +4,7 @@ TQueBind绑定源逻辑位置和目的逻辑位置，根据源位置和目的位
 
 如下图的数据通路示意图所示，红色线条和蓝色线条的通路可通过TQueBind定义表达，蓝色线条的通路可通过TQue进行简化表达。
 
-![](../../../../figures/矩阵编程逻辑位置示意图-40.png)
+![](../../../../figures/matrix_programming_position.png)
 
 **表1**  TQueBind和TQue对于数据通路的表达
 
@@ -120,11 +120,11 @@ TQueBind&lt;TPosition::VECOUT, TPosition::C1, 1&gt;</pre>
 
 -   如下的编程范式示例，图中的两个队列分别绑定的是GM VECIN和VECOUT GM。
 
-    ![](../../../../figures/图3-流水线并行示意图.png)
+    ![](../../../../figures/pipeline_parallel.png)
 
 -   如果不需要进行Vector计算，比如仅需要做格式随路转换等场景，可对上述流程进行优化，对VECIN和VECOUT进行绑定，绑定的效果可以实现输入输出使用相同buffer，实现double buffer。
 
-    ![](../../../../figures/图3-流水线并行示意图-41.png)
+    ![](../../../../figures/pipeline_parallel_TQueBind.png)
 
 ## 模板参数<a name="section64347108319"></a>
 

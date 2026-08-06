@@ -29,10 +29,10 @@
 定义指定计算的维度（Reduce轴）为R轴，非指定维度（Normal轴）为A轴。如下图所示，对shape为\(2, 3\)的二维矩阵进行运算，指定在第一维求最小值，输出结果为\[1, 2, 3\]；指定在第二维求最小值，输出结果为\[1, 4\]。
 
 **图1**  ReduceMin按第一个维度计算示例  
-![](../../../../figures/ReduceMin按第一个维度计算示例.png "ReduceMin按第一个维度计算示例")
+![](../../../../figures/reducemin_first_axis.png "ReduceMin按第一个维度计算示例")
 
 **图2**  ReduceMin按最后一个维度计算示例  
-![](../../../../figures/ReduceMin按最后一个维度计算示例.png "ReduceMin按最后一个维度计算示例")
+![](../../../../figures/reducemin_last_axis.png "ReduceMin按最后一个维度计算示例")
 
 ## 函数原型
 

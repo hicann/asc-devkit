@@ -190,7 +190,7 @@ PIPE_M
 </table>
 该索引矩阵用于A矩阵的稠密化，根据索引矩阵从MatrixA中的4个元素中选择2个元素参与计算，如下图所示：
 
-![稠密算法说明图](../figures/asc_mmad_sparse_稠密算法说明.png)
+![稠密算法说明图](../figures/asc_mmad_sparse_dense_algorithm.png)
 
 ## 调用示例
 

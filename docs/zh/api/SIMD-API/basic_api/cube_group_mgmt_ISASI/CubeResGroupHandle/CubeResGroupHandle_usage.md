@@ -5,7 +5,7 @@ CubeResGroupHandle用于在分离模式下对AI Core计算资源分组。分组�
 如下图所示，CubeResGroupHandle1中有2个AIC，10个AIV，AIC为Block0和Block1。其中Block0与Queue0、Queue1、Queue2、Queue3、Queue4进行通信，Block1与Queue 5、Queue 6、Queue 7、Queue 8、Queue9进行通信。每一个消息队列对应一个AIV，消息队列的深度固定为4，即一次性最多可以容纳4个消息。CubeResGroupHandle2的消息队列个数为12，表明有12个AIV。CubeResGroupHandle的消息处理顺序如CubeResGroupHandle2中黑色箭头所示。
 
 **图1**  基于CubeResGroupHandle的AI Core计算资源分组通信示意图<a name="fig1086562617536"></a>  
-![](../../../../figures/基于CubeResGroupHandle的AI-Core计算资源分组通信示意图.png "基于CubeResGroupHandle的AI-Core计算资源分组通信示意图")
+![](../../../../figures/cuberesgrouphandle_aicore_group.png "基于CubeResGroupHandle的AI-Core计算资源分组通信示意图")
 
 基于CubeResGroupHandle实现AI Core计算资源分组步骤如下：
 

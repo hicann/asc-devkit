@@ -97,7 +97,7 @@
 ## 实现原理
 
 **图1**  AscendAntiQuant算法框图  
-![](../../../figures/AscendAntiQuant算法框图.png "AscendAntiQuant算法框图")
+![](../../../figures/ascendantiquant_diagram.png "AscendAntiQuant算法框图")
 
 如上图所示，为AscendAntiQuant的典型场景算法框图，计算过程分为如下几步，均在Vector上进行：
 
@@ -106,7 +106,7 @@
 3.  计算scale：当scale为向量时做Mul计算，当scale为scalar时做Muls计算。
 
 **图2**  isTranspose为False且输出为bfloat16的AscendAntiQuant算法框图  
-![](../../../figures/isTranspose为False且输出为bfloat16的AscendAntiQuant算法框图.png "isTranspose为False且输出为bfloat16的AscendAntiQuant算法框图")
+![](../../../figures/ascendantiquant_no_transpose_bfloat16.png "isTranspose为False且输出为bfloat16的AscendAntiQuant算法框图")
 
 在Atlas A2 训练系列产品/Atlas A2 推理系列产品上，当输出为bfloat16时，计算过程分为如下几步：
 
@@ -118,7 +118,7 @@
 6.  dst精度转换：将tmp1转换为bf16类型。
 
 **图3**  AscendAntiQuant PER\_TOKEN/PER\_GROUP算法框图  
-![](../../../figures/AscendAntiQuant-PER_TOKEN-PER_GROUP算法框图.png "AscendAntiQuant-PER_TOKEN-PER_GROUP算法框图")
+![](../../../figures/ascendantiquant_per_token_per_group.png "AscendAntiQuant-PER_TOKEN-PER_GROUP算法框图")
 
 PER\_TOKEN/PER\_GROUP b8/float4场景的计算逻辑如下：
 

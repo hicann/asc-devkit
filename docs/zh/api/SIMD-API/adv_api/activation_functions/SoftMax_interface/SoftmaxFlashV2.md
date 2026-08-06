@@ -67,7 +67,7 @@ def softmax_flash_2(src, inmax=None, insum=None, update=None):
 以float类型，ND格式，shape为\[m, k\]的输入Tensor为例，描述SoftmaxFlashV2高阶API内部算法框图，如下图所示。
 
 **图1**  SoftmaxFlashV2算法框图  
-![](../../../../figures/SoftmaxFlashV2算法框图.png "SoftmaxFlashV2算法框图")
+![](../../../../figures/softmaxflashv2_algorithm_diagram.png "SoftmaxFlashV2算法框图")
 
 计算过程根据isUpdate是否开启分为两个分支处理，均在Vector上进行。
 

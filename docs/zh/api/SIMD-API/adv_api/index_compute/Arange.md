@@ -31,7 +31,7 @@
 以float类型，ND格式，firstValue和diffValue输入Scalar为例，描述Arange高阶API内部算法框图，如下图所示。
 
 **图1**  Arange算法框图  
-![](../../../figures/Arange算法框图.png "Arange算法框图")
+![](../../../figures/arange_algorithm_diagram.png "Arange算法框图")
 
 计算过程分为如下几步，均在Vector上进行：
 

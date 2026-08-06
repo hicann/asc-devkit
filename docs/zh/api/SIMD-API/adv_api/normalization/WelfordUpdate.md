@@ -31,7 +31,7 @@ LayerNorm算法中Reduce轴较大的场景，可以通过切分Reduce轴，联�
 如下图所示，切分数据的Reduce轴，假设切分后每块数据的形状为\[1, k\]，每块数据标号为1，2，3，…，n。
 
 **图1**  Reduce轴切分示意图  
-![](../../../figures/Reduce轴切分示意图.png "Reduce轴切分示意图")
+![](../../../figures/reduce_axis_split.png "Reduce轴切分示意图")
 
 本接口的计算公式如下。进行上述的数据切分后，分n次调用本接口，切分后的每块数据均完成如下公式的计算。
 
@@ -44,7 +44,7 @@ LayerNorm算法中Reduce轴较大的场景，可以通过切分Reduce轴，联�
 Meant<sub>n</sub>的计算过程示意如下图，调用n次本接口后，得到形状为\[1, k\]的Meant<sub>n</sub>和M<sub>n</sub>，Meant<sub>n</sub>和M<sub>n</sub>用于后续[WelfordFinalize](WelfordFinalize.md)接口的计算。
 
 **图2**  均值Meant<sub>n</sub>计算过程示意图  
-![](../../../figures/均值Meantn计算过程示意图.png "均值Meantn计算过程示意图")
+![](../../../figures/meantn_compute_process.png "均值Meantn计算过程示意图")
 
 ## 函数原型
 

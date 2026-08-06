@@ -29,10 +29,10 @@
 定义指定计算的维度（Reduce轴）为R轴，非指定维度（Normal轴）为A轴。如下图所示，对shape为\(2, 3\)的二维矩阵进行运算，指定在第一维计算数据的累加，输出结果为\[5, 7, 9\]；指定在第二维计算数据的累加，输出结果为\[6, 15\]。
 
 **图1**  ReduceSum按第一个维度计算示例  
-![](../../../../figures/ReduceSum按第一个维度计算示例.png "ReduceSum按第一个维度计算示例")
+![](../../../../figures/reducesum_first_axis.png "ReduceSum按第一个维度计算示例")
 
 **图2**  ReduceSum按最后一个维度计算示例  
-![](../../../../figures/ReduceSum按最后一个维度计算示例.png "ReduceSum按最后一个维度计算示例")
+![](../../../../figures/reducesum_last_axis.png "ReduceSum按最后一个维度计算示例")
 
 ## 函数原型
 

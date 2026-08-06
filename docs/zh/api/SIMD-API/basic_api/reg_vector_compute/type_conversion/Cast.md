@@ -39,11 +39,11 @@ Cast用于数据类型精度转换，将源操作数数据类型转换成目的�
 
 **图1** b16到b32类型转换过程<a id="fig1"></a>  
 
-![](../../../../figures/b16到b32类型转换过程.png)
+![](../../../../figures/b16_to_b32_conversion.png)
 
 **图2** b32到b16类型转换过程<a id="fig2"></a>  
 
-![](../../../../figures/b32到b16类型转换过程.png)
+![](../../../../figures/b32_to_b16_conversion.png)
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
