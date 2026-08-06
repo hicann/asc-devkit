@@ -234,6 +234,7 @@ if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
         cpudebug_npuchk
         cpudebug_stubreg
         cpudebug
+        unified_dlog
         c_sec
         stdc++
         pthread

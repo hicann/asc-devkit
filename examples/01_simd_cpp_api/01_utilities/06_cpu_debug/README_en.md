@@ -30,16 +30,6 @@ This example uses Add computation as the carrier to demonstrate the Ascend C CPU
   The Add implementation in this example is consistent with the [Add basic example](../../00_introduction/01_add/add/README_en.md), using `float` type by default. Each block processes `2048` data elements. The workflow is: `DataCopy` input to UB, execute `Add`, then `DataCopy` the result back to GM.
 
 
-  To enable CPU Debug, this example includes the `cpu_debug_launch.h` header file when the `ASCENDC_CPU_DEBUG` macro is defined.
-
-  ```cpp
-  #ifdef ASCENDC_CPU_DEBUG
-  #include "cpu_debug_launch.h"
-  #endif
-  ```
-
-  `cpu_debug_launch.h` provides kernel function launch support in the CPU domain, enabling the example to run in CPU Debug mode and work with GDB debugging.
-
 ## Build and Run
 
 Run the following steps in the root directory of this example to build and run the example.

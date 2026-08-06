@@ -15,17 +15,7 @@
 
 推荐使用CMake编译方式，可在最小化修改的情况下快速开启CPU域孪生调试功能。
 
-1.  启用CPU域调试需包含"cpu\_debug\_launch.h"头文件。
-
-    bisheng编译器在CPU调试模式下会对<<<\>\>\>调用核函数的过程进行转义，实现核函数在CPU域下的调用，相关调用函数定义在"cpu\_debug\_launch.h"中，在使用<<<\>\>\>语法调用核函数的源文件中，请通过以下方式包含必需的头文件：
-
-    ```
-    #ifdef ASCENDC_CPU_DEBUG
-    #include "cpu_debug_launch.h"
-    #endif
-    ```
-
-2.  通过在CMake配置阶段传入变量CMAKE\_ASC\_RUN\_MODE和CMAKE\_ASC\_ARCHITECTURES即可开启CPU域编译。命令示例如下：
+1.  通过在CMake配置阶段传入变量CMAKE\_ASC\_RUN\_MODE和CMAKE\_ASC\_ARCHITECTURES即可开启CPU域编译。命令示例如下：
 
     ```
     cmake -B build -DCMAKE_ASC_RUN_MODE=cpu -DCMAKE_ASC_ARCHITECTURES=dav-2201

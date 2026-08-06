@@ -29,16 +29,6 @@
 - 样例介绍：  
   本样例的Add实现与[Add基础样例](../../00_introduction/01_add/add/README.md)保持一致，默认使用`float`类型。每个block处理`2048`个数据，流程为`DataCopy`输入到UB、执行`Add`、再将结果`DataCopy`回GM。
 
-  为了使能CPU Debug，本样例在定义`ASCENDC_CPU_DEBUG`宏时包含`cpu_debug_launch.h`头文件。
-
-  ```cpp
-  #ifdef ASCENDC_CPU_DEBUG
-  #include "cpu_debug_launch.h"
-  #endif
-  ```
-
-  `cpu_debug_launch.h`提供CPU域下的核函数启动支持，使样例可以通过CPU Debug方式运行并配合GDB调试。
-
 ## 编译运行
 
 在本样例根目录下执行如下步骤，编译并执行样例。
