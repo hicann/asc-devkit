@@ -212,7 +212,7 @@ Execute the following steps in the root directory of this sample to compile and 
 
 This interface provides formatted output functionality for CPU domain or NPU domain debugging scenarios.
 
-Call the [printf](../../../../../docs/zh/api/Utils-API/调测接口/printf.md) interface in the operator kernel-side implementation code where log information needs to be output to print relevant content.
+Call the [printf](../../../../../docs/zh/api/Utils-API/tuning_interface/printf.md) interface in the operator kernel-side implementation code where log information needs to be output to print relevant content.
 
 Example:
 

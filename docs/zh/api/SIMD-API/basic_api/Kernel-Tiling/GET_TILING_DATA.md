@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
-用于获取算子kernel入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过[TilingData结构注册](../../../Utils-API/Tiling数据结构注册/TilingData结构注册.md)注册了多个TilingData结构体，使用该接口返回默认注册的结构体。
+用于获取算子kernel入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过[TilingData结构注册](../../../Utils-API/Tiling_data_structure_register/TilingData_struct_register.md)注册了多个TilingData结构体，使用该接口返回默认注册的结构体。
 
 ## 函数原型<a name="zh-cn_topic_0000001526206862_section1630753514297"></a>
 

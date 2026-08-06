@@ -133,7 +133,7 @@ y[row] = sum;
 
 ### Case 2: 一个Warp协作处理一行数据
 
-**实现方式**：一个Warp的32个线程协作处理同一行数据，各线程以`warpSize`为步长访问该行的非零元素，循环次数基本相同。使用[asc_reduce_add()](../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Reduce类函数/asc_reduce_add.md)对Warp内各线程的部分和进行规约，由线程0写出最终结果。
+**实现方式**：一个Warp的32个线程协作处理同一行数据，各线程以`warpSize`为步长访问该行的非零元素，循环次数基本相同。使用[asc_reduce_add()](../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_reduce_functions/asc_reduce_add.md)对Warp内各线程的部分和进行规约，由线程0写出最终结果。
 
 **关键代码**：
 

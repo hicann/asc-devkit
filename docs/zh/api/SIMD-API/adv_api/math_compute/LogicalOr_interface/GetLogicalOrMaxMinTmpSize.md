@@ -19,7 +19,7 @@ void GetLogicalOrMaxMinTmpSize(const platform_ascendc::PlatformAscendC& ascendcP
 
 | 参数名 | 输入/输出 | 功能 |
 | --- | --- | --- |
-| ascendcPlatform | 输入 | 输入的平台信息。PlatformAscendC的定义请参见[构造及析构函数](../../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)。 |
+| ascendcPlatform | 输入 | 输入的平台信息。PlatformAscendC的定义请参见[构造及析构函数](../../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)。 |
 | srcShape | 输入 | 输入的shape信息，参数类型为[AscendC::TensorShape](../../data_structures/TensorShape.md)。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | isReuseSource | 输入 | 该参数预留，传入默认值false即可。 |

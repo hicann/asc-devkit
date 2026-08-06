@@ -11,7 +11,7 @@
 2.  编写测试代码。
 
     -   使用ContextBuilder配置输入输出Tensor的形状、数据类型、格式及平台信息等，构建TilingContext。
-    -   通过OpTilingRegistry的[LoadTilingLibrary](../../../../api/Utils-API/Tiling调测/OpTilingRegistry/LoadTilingLibrary.md)接口加载Tiling动态库；使用[GetTilingFunc](../../../../api/Utils-API/Tiling调测/OpTilingRegistry/GetTilingFunc.md)接口获取Tiling函数指针。
+    -   通过OpTilingRegistry的[LoadTilingLibrary](../../../../api/Utils-API/Tiling_tuning/OpTilingRegistry/LoadTilingLibrary.md)接口加载Tiling动态库；使用[GetTilingFunc](../../../../api/Utils-API/Tiling_tuning/OpTilingRegistry/GetTilingFunc.md)接口获取Tiling函数指针。
     -   执行Tiling函数，验证其正确性。
 
     ```

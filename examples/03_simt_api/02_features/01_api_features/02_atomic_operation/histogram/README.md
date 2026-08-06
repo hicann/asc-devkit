@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例展示了如何利用 Ascend C 的SIMT的[`asc_atomic_add()`](../../../../../../docs/zh/api/SIMT-API/原子操作/asc_atomic_add.md)接口，高效统计输入字节序列中每个字节值的出现频率。功能示意如下图：<br>
+本样例展示了如何利用 Ascend C 的SIMT的[`asc_atomic_add()`](../../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md)接口，高效统计输入字节序列中每个字节值的出现频率。功能示意如下图：<br>
 <img src="figures/introduction.png" alt="intro" style="width: 50%; height: auto;">
 
 ## 支持的产品

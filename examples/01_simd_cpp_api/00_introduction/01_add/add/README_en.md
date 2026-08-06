@@ -119,7 +119,7 @@ For the complete performance tuning process, please refer to the [Add Performanc
 
 This interface provides formatted output functionality for CPU/NPU domain debugging scenarios.
 
-Call the [printf](../../../../../docs/zh/api/Utils-API/调测接口/printf.md) interface at the location in the operator kernel-side implementation code where log information needs to be output.
+Call the [printf](../../../../../docs/zh/api/Utils-API/tuning_interface/printf.md) interface at the location in the operator kernel-side implementation code where log information needs to be output.
 
 Example:
 

@@ -1,6 +1,6 @@
 # RTC<a name="ZH-CN_TOPIC_0000002433199236"></a>
 
--   **[RTC简介](RTC简介.md)**  
+-   **[RTC简介](RTC_intro.md)**  
 
 -   **[aclrtcCompileProg](aclrtcCompileProg.md)**  
 
@@ -20,5 +20,5 @@
 
 -   **[aclrtcGetCompileLog](aclrtcGetCompileLog.md)**  
 
--   **[RTC错误码](RTC错误码.md)**  
+-   **[RTC错误码](RTC_error_code.md)**  
 

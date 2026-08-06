@@ -42,7 +42,7 @@ __aicore__ inline constexpr decltype(auto) GetStride() const {}
 
 ## 返回值说明<a name="zh-cn_topic_0000002042526794_zh-cn_topic_0000001602767550_zh-cn_topic_0000001600123102_section25791320141317"></a>
 
-描述内存访问步长的Stride对象，Stride结构类型（[Std::tuple](../../../../Utils-API/CPP标准库/容器函数/容器函数.md)类型的别名），定义如下：
+描述内存访问步长的Stride对象，Stride结构类型（[Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md)类型的别名），定义如下：
 
 ```cpp
 template <typename... Strides>

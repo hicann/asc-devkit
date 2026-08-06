@@ -419,7 +419,7 @@ Use a table to list functionally similar APIs with selection recommendations.
 
 ```
 | Similar API | Difference | Selection Recommendation |
-|------------|-----------|------------------------|
+|-------------|-----------|------------------------|
 | [MmadWithSparse](MmadWithSparse.md) | Supports 4-out-of-2 structured sparse matmul | Use when weight matrix has been pruned to sparse format |
 | [MXMmad](MXMmad.md) | Supports MX format (microscaling) matmul | Use for MX mixed-precision training |
 | [Iterate](Iterate.md) + [GetTensorC](GetTensorC.md) | Matmul high-level API loop iteration | Prefer high-level API when fine-grained L0A/L0B control is not needed |

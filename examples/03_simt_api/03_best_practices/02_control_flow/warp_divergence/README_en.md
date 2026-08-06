@@ -133,7 +133,7 @@ y[row] = sum;
 
 ### Case 2: One Warp Cooperatively Processes One Row of Data
 
-**Implementation**: The 32 threads of one Warp cooperatively process the same row of data. Each thread accesses the non-zero elements of that row with a step size of `warpSize`, resulting in basically the same loop iterations. Use [asc_reduce_add()](../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Reduce类函数/asc_reduce_add.md) to reduce the partial sums of all threads within the Warp, and thread 0 writes the final result.
+**Implementation**: The 32 threads of one Warp cooperatively process the same row of data. Each thread accesses the non-zero elements of that row with a step size of `warpSize`, resulting in basically the same loop iterations. Use [asc_reduce_add()](../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_reduce_functions/asc_reduce_add.md) to reduce the partial sums of all threads within the Warp, and thread 0 writes the final result.
 
 **Key Code**:
 

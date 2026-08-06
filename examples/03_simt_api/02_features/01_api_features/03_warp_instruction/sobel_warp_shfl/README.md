@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例以Sobel边缘检测为例，展示了如何通过Warp shuffle指令复用相邻线程加载的数据来完成 3×3 卷积计算，以及结合[asc_ballot()](../../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Vote类函数/asc_ballot.md)实现边缘像素的紧凑输出。
+本样例以Sobel边缘检测为例，展示了如何通过Warp shuffle指令复用相邻线程加载的数据来完成 3×3 卷积计算，以及结合[asc_ballot()](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_vote_functions/asc_ballot.md)实现边缘像素的紧凑输出。
 
 ## 支持的产品
 
@@ -78,7 +78,7 @@ int y = warp_id / tiles_x;                          // 像素行号：第几行W
 </p>
 
 
-如上图所示，计算Sobel幅值需要获取当前像素周围3×3邻域共9个像素值。而相邻线程计算各自的Sobel幅值时，同样需要其周围3×3邻域的像素值，因此不同线程的3×3邻域存在重叠。利用这一特点，每个线程先从Global Memory读取同一x坐标上的上、中、下三个像素值，分别保存到寄存器变量top、mid和bot，对应当前像素3×3邻域的中间一列；然后通过[asc_shfl_up()](../../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Shfl类函数/asc_shfl_up.md)和[asc_shfl_down()](../../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Shfl类函数/asc_shfl_down.md)从相邻线程的寄存器中获取左右两列数据，避免再次从Global Memory读取。
+如上图所示，计算Sobel幅值需要获取当前像素周围3×3邻域共9个像素值。而相邻线程计算各自的Sobel幅值时，同样需要其周围3×3邻域的像素值，因此不同线程的3×3邻域存在重叠。利用这一特点，每个线程先从Global Memory读取同一x坐标上的上、中、下三个像素值，分别保存到寄存器变量top、mid和bot，对应当前像素3×3邻域的中间一列；然后通过[asc_shfl_up()](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_shfl_functions/asc_shfl_up.md)和[asc_shfl_down()](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_shfl_functions/asc_shfl_down.md)从相邻线程的寄存器中获取左右两列数据，避免再次从Global Memory读取。
 
 
 
@@ -114,7 +114,7 @@ int bot_right = (lane_id == 31) ? input[(y + 1) * width + (x + 1)] : shfl_bot_ri
 
 **asc_ballot实现紧凑输出**
 
-紧凑输出需要将满足阈值条件的边缘像素连续写入edge_list。对于同一个Warp，可能只有部分线程的边缘幅值满足阈值条件，如果每个边缘线程都单独执行[asc_atomic_add()](../../../../../../docs/zh/api/SIMT-API/原子操作/asc_atomic_add.md)申请输出位置，一个Warp内最多会产生32次原子操作。
+紧凑输出需要将满足阈值条件的边缘像素连续写入edge_list。对于同一个Warp，可能只有部分线程的边缘幅值满足阈值条件，如果每个边缘线程都单独执行[asc_atomic_add()](../../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md)申请输出位置，一个Warp内最多会产生32次原子操作。
 
 本样例使用`asc_ballot()`收集Warp内各线程是否满足阈值条件，并生成edge_mask。edge_mask中第i位为1，表示Warp内的第i号线程的边缘幅值满足阈值条件：
 
@@ -124,10 +124,10 @@ uint32_t edge_mask = asc_ballot(strength >= THRESHOLD);
 
 edge_mask用于完成两个操作：
 
-- 第0号线程通过[__popc(edge_mask)](../../../../../../docs/zh/api/SIMT-API/数学函数/整型数学库函数/__popc.md)统计本Warp内边缘线程数量，并通过一次`asc_atomic_add()`为整个Warp申请连续输出位置。
+- 第0号线程通过[__popc(edge_mask)](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/__popc.md)统计本Warp内边缘线程数量，并通过一次`asc_atomic_add()`为整个Warp申请连续输出位置。
 - 每个边缘线程根据edge_mask计算自己在Warp内的局部偏移，写入edge_list中的对应位置。
 
-第0号线程申请输出位置后，通过[asc_shfl()](../../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Shfl类函数/asc_shfl.md)将起始位置广播给Warp内所有线程：
+第0号线程申请输出位置后，通过[asc_shfl()](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_shfl_functions/asc_shfl.md)将起始位置广播给Warp内所有线程：
 
 ```cpp
 uint32_t warp_base = 0;

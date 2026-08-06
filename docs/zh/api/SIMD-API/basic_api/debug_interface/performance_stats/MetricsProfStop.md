@@ -28,7 +28,7 @@
 
 头文件路径为：`"basic_api/kernel_prof_trace_intf.h"`。
 
-推荐使用[asc_prof_stop](../../../../Utils-API/调测接口/asc_prof_stop.md)接口进行性能数据采集信号启动的设置，该接口同时适用于C语言和C++语言编程。
+推荐使用[asc_prof_stop](../../../../Utils-API/tuning_interface/asc_prof_stop.md)接口进行性能数据采集信号启动的设置，该接口同时适用于C语言和C++语言编程。
 
 设置性能数据采集信号停止，和[MetricsProfStart](MetricsProfStart.md)配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。
 

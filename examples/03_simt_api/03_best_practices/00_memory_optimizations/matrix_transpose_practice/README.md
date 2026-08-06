@@ -173,7 +173,7 @@ Case 2在保持GM连续读取的同时，直接将数据写入转置后的输出
 
 **优化目标**：引入UB与分块，将Case 2的非连续全局内存写转换为UB内访问，使全局内存读写均恢复连续；本Case按切分后的tile数量设置Thread Block数，每个Thread Block处理两个32×32的tile。
 
-**核心实现**：将矩阵划分为32×32的tile，总tile数为 `tiles=(W/32)×(H/32)`。本Case中每个Thread Block启动2048个线程，可同时处理两个tile，因此Thread Block数量设置为 `blocks_per_grid=ceil(tiles / 2)`。线程配置参数为 `dim3(32,64,1)`，其中 `threadIdx.y=0..31`的线程处理第一个tile，`threadIdx.y=32..63`的线程处理第二个tile；代码通过 `local_tile=threadIdx.y>>5`得到当前线程在Thread Block内负责的tile编号，通过 `ty=threadIdx.y&31`得到tile内行索引。线程先将tile按原布局写入UB，经 [`asc_syncthreads()`](../../../../../docs/zh/api/SIMT-API/同步与内存栅栏/同步接口/asc_syncthreads.md) 同步后，再按转置方向从UB读取并连续写入GM。
+**核心实现**：将矩阵划分为32×32的tile，总tile数为 `tiles=(W/32)×(H/32)`。本Case中每个Thread Block启动2048个线程，可同时处理两个tile，因此Thread Block数量设置为 `blocks_per_grid=ceil(tiles / 2)`。线程配置参数为 `dim3(32,64,1)`，其中 `threadIdx.y=0..31`的线程处理第一个tile，`threadIdx.y=32..63`的线程处理第二个tile；代码通过 `local_tile=threadIdx.y>>5`得到当前线程在Thread Block内负责的tile编号，通过 `ty=threadIdx.y&31`得到tile内行索引。线程先将tile按原布局写入UB，经 [`asc_syncthreads()`](../../../../../docs/zh/api/SIMT-API/sync_and_memory_fence/sync_interface/asc_syncthreads.md) 同步后，再按转置方向从UB读取并连续写入GM。
 
 UB中转的核心思想如下图所示：GM读取阶段按输入矩阵行方向连续读取至UB；GM写入阶段交换输出tile坐标，使同一个Warp向输出矩阵的一行写入数据。原本非连续的GM写被转移为UB内转置方向读取。
 

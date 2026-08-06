@@ -29,7 +29,7 @@ This example introduces UB bank conflicts that may occur when multiple threads i
 
 This example is used to verify UB bank conflict behavior when multiple threads in the same Warp access UB in Ascend C SIMT programming. The example uses the compile-time parameter `SCENARIO_NUM` to select different cases and construct typical access patterns, including same-address merge, cross-subbank distributed access, same 8B-range merge in contiguous float access, same-subbank different-row conflicts, and same-index subbank conflicts within the same bank group.
 
-On the Host side, the input array is constructed and copied to GM. The kernel first moves input data from GM to UB, then repeatedly reads data according to the UB address pattern of the current case, and uses [`clock()`](../../../../../../docs/zh/api/Utils-API/调测接口/clock.md) to count the cycles spent reading UB data.
+On the Host side, the input array is constructed and copied to GM. The kernel first moves input data from GM to UB, then repeatedly reads data according to the UB address pattern of the current case, and uses [`clock()`](../../../../../../docs/zh/api/Utils-API/tuning_interface/clock.md) to count the cycles spent reading UB data.
 
 ### Example Specifications
 

@@ -4,7 +4,7 @@
 
 本样例基于 Ascend C SIMT 编程方式实现一维 `float` 输入的归约求和，通过 2 个递进场景展示线程块内同步与线程块间内存顺序控制的典型用法。
 
-2 个场景分别对应小 shape 输入、大 shape 输入下的归约求和，重点说明[`asc_syncthreads()`](../../../../../../docs/zh/api/SIMT-API/同步与内存栅栏/同步接口/asc_syncthreads.md)和[`asc_threadfence()`](../../../../../../docs/zh/api/SIMT-API/同步与内存栅栏/内存栅栏接口/asc_threadfence.md)在不同归约规模下的使用方法。
+2 个场景分别对应小 shape 输入、大 shape 输入下的归约求和，重点说明[`asc_syncthreads()`](../../../../../../docs/zh/api/SIMT-API/sync_and_memory_fence/sync_interface/asc_syncthreads.md)和[`asc_threadfence()`](../../../../../../docs/zh/api/SIMT-API/sync_and_memory_fence/memory_fence/asc_threadfence.md)在不同归约规模下的使用方法。
 
 ## 支持的产品
 
@@ -101,7 +101,7 @@
 
 单个线程块内的每个线程先读取一个输入元素，通过**两阶段归约求和**得到最终结果：
 
-- **阶段 1（warp 内归约）**：调用[`asc_reduce_add()`](../../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Reduce类函数/asc_reduce_add.md)接口对当前warp内所有线程的值做归约，得到warp内数据的和，写入共享内存。
+- **阶段 1（warp 内归约）**：调用[`asc_reduce_add()`](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_reduce_functions/asc_reduce_add.md)接口对当前warp内所有线程的值做归约，得到warp内数据的和，写入共享内存。
 - **阶段 2（block 级顺序累加）**：跨warp同步后，0号线程按顺序将各warp的部分和累加，得到最终结果。
 
 以 128 个元素（4 个 warp）为例，两阶段归约过程如图 1 所示：

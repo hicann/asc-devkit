@@ -29,7 +29,7 @@
 
 本样例用于验证Ascend C SIMT编程方式下同一个Warp内多个线程访问UB时的bank冲突现象。样例通过编译期参数`SCENARIO_NUM`选择不同case，构造同地址合并、跨subbank分散访问、连续float访问中的同一8B范围合并、同subbank不同行冲突，以及同一bank group内同编号subbank冲突等典型访问模式。
 
-Host侧构造输入数组并拷贝到GM，kernel先将输入数据从GM搬入UB，再按照当前case对应的UB地址模式重复读取数据，并使用[`clock()`](../../../../../../docs/zh/api/Utils-API/调测接口/clock.md)统计读取UB数据的cycles。
+Host侧构造输入数组并拷贝到GM，kernel先将输入数据从GM搬入UB，再按照当前case对应的UB地址模式重复读取数据，并使用[`clock()`](../../../../../../docs/zh/api/Utils-API/tuning_interface/clock.md)统计读取UB数据的cycles。
 
 ### 样例规格
 

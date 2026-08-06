@@ -175,7 +175,7 @@
 -   没有设置全局默认kernel type的情况下，如果开发者只为其中的某几个tiling key设置kernel type，即部分tiling key没有设置kernel type，会导致算子kernel编译报错。
 -   当设置具体的kernel task type时，用户的算子实现需要与kernel type相匹配。比如用户设置kernel type为KERNEL\_TYPE\_MIX\_AIC\_1\_2，则算子内部实现应与核配比AIC:AIV为1:2相对应；若用户设置kernel type为KERNEL\_TYPE\_AIC\_ONLY，则算子内部实现应该为纯cube逻辑，不应该存在vector部分的逻辑。其他的kernel type类似。
 -   当纯cube或者纯vec算子强制设定kernel type为MIX类型时，workspace的大小不能设置为0，需要设置一个大于0的值（比如16、32等）。
--   使用[Tiling模板编程](../../../Utils-API/Tiling模板编程/Tiling模板编程.md)时，需要通过ASCENDC\_TPL\_KERNEL\_TYPE\_SEL设置Kernel类型即可，无需再通过该接口进行设置，本接口不生效。
+-   使用[Tiling模板编程](../../../Utils-API/Tiling_template_programming/Tiling_template_programming.md)时，需要通过ASCENDC\_TPL\_KERNEL\_TYPE\_SEL设置Kernel类型即可，无需再通过该接口进行设置，本接口不生效。
 
 ## 调用示例<a name="zh-cn_topic_0000001610027821_section97001499599"></a>
 
@@ -201,7 +201,7 @@
         }
         ```
 
-    2.  完成算子host侧Tiling开发时，设置的numBlocks代表的是AI Core和Vector Core的总数，比如用户在host侧设置numBlocks为10，则会启动总数为10的AI Core和Vector Core；为保证启动Vector Core，设置数值应大于AI Core的核数。您可以通过[GetCoreNumAic](../../../Utils-API/平台信息获取/PlatformAscendC/GetCoreNumAic.md)接口获取AI Core的核数，[GetCoreNumVector](../../../Utils-API/平台信息获取/PlatformAscendC/GetCoreNumVector.md)接口获取Vector Core的核数。如下代码片段，展示了numBlocks的设置方法，此处设置为AI Core和Vector Core的总和，表示所有AI Core和Vector Core都启动。
+    2.  完成算子host侧Tiling开发时，设置的numBlocks代表的是AI Core和Vector Core的总数，比如用户在host侧设置numBlocks为10，则会启动总数为10的AI Core和Vector Core；为保证启动Vector Core，设置数值应大于AI Core的核数。您可以通过[GetCoreNumAic](../../../Utils-API/platform_info/PlatformAscendC/GetCoreNumAic.md)接口获取AI Core的核数，[GetCoreNumVector](../../../Utils-API/platform_info/PlatformAscendC/GetCoreNumVector.md)接口获取Vector Core的核数。如下代码片段，展示了numBlocks的设置方法，此处设置为AI Core和Vector Core的总和，表示所有AI Core和Vector Core都启动。
 
         ```
         // 配套的host侧tiling函数示例：

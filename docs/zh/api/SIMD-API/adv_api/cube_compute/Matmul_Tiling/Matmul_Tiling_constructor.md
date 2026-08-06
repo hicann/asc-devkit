@@ -79,8 +79,8 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)。 |
-| platform | 输入 | 传入硬件版本以及AI Core中各个硬件单元提供的内存大小。PlatformInfo构造时通过[构造及析构函数](../../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)获取。<br><br>PlatformInfo结构定义如下代码所示，socVersion通过[GetSocVersion](../../../../Utils-API/平台信息获取/PlatformAscendC/GetSocVersion.md)获取并透传，各类硬件存储空间大小通过[GetCoreMemSize](../../../../Utils-API/平台信息获取/PlatformAscendC/GetCoreMemSize.md)获取并透传。<br><br>不推荐通过直接填值构造PlatformInfo的方式调用构造函数，例如PlatformInfo(socVersion, 1024, 1024, ..); |
+| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)。 |
+| platform | 输入 | 传入硬件版本以及AI Core中各个硬件单元提供的内存大小。PlatformInfo构造时通过[构造及析构函数](../../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)获取。<br><br>PlatformInfo结构定义如下代码所示，socVersion通过[GetSocVersion](../../../../Utils-API/platform_info/PlatformAscendC/GetSocVersion.md)获取并透传，各类硬件存储空间大小通过[GetCoreMemSize](../../../../Utils-API/platform_info/PlatformAscendC/GetCoreMemSize.md)获取并透传。<br><br>不推荐通过直接填值构造PlatformInfo的方式调用构造函数，例如PlatformInfo(socVersion, 1024, 1024, ..); |
 
 ```
 struct PlatformInfo {

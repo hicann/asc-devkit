@@ -77,7 +77,7 @@ __global__ void kernel_spmv_warp(float* values, uint32_t* col_idx,
 }
 ```
 
-上述实现中，一个Warp的32个线程协作处理同一行数据，各线程以`warpSize`为步长访问该行的非零元素，循环次数基本相同。仅在最后一轮循环中部分线程可能不参与计算，Warp Divergence较小。使用[asc_reduce_add()](../../../../api/SIMT-API/Warp函数/Warp-Reduce类函数/asc_reduce_add.md)对Warp内各线程的部分和进行归约计算，由线程0写出最终结果。
+上述实现中，一个Warp的32个线程协作处理同一行数据，各线程以`warpSize`为步长访问该行的非零元素，循环次数基本相同。仅在最后一轮循环中部分线程可能不参与计算，Warp Divergence较小。使用[asc_reduce_add()](../../../../api/SIMT-API/Warp_functions/Warp_reduce_functions/asc_reduce_add.md)对Warp内各线程的部分和进行归约计算，由线程0写出最终结果。
 
 正例算子的性能数据如下：
 

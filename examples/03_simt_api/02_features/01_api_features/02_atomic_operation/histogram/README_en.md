@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example demonstrates how to use the Ascend C SIMT [`asc_atomic_add()`](../../../../../../docs/zh/api/SIMT-API/原子操作/asc_atomic_add.md) interface to efficiently count the frequency of each byte value in an input byte sequence. The function illustration is shown below:<br>
+This example demonstrates how to use the Ascend C SIMT [`asc_atomic_add()`](../../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md) interface to efficiently count the frequency of each byte value in an input byte sequence. The function illustration is shown below:<br>
 <img src="figures/introduction.png" alt="intro" style="width: 50%; height: auto;">
 
 ## Supported Products

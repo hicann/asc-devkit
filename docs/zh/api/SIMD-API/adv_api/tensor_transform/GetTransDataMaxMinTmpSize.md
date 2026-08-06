@@ -19,7 +19,7 @@ bool GetTransDataMaxMinTmpSize(const platform_ascendc::PlatformAscendC& platform
 
 | 接口 | 输入/输出 | 功能 |
 | --- | --- | --- |
-| platform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)。 |
+| platform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)。 |
 | srcShape | 输入 | 输入源操作数的shape大小，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)，参数取值与TransData接口的params.srcLayout参数中的shape信息保持一致。 |
 | dstShape | 输入 | 输出目的操作数的shape大小，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)，参数取值与TransData接口的params.dstLayout参数中的shape信息保持一致。 |
 | dataType | 输入 | 输入的数据类型，参数类型为[AscendC::TensorDataType](../data_structures/TensorDataType.md)，当前只支持half/float/uint16_t/int16_t数据类型的输入。 |

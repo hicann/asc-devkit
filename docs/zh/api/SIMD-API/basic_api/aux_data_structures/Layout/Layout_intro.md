@@ -153,12 +153,12 @@ struct Layout : private Std::tuple<ShapeType, StrideType> {
 </thead>
 <tbody><tr id="row260915573419"><td class="cellrowborder" valign="top" width="21.8%" headers="mcps1.2.3.1.1 "><p id="p2060925573411"><a name="p2060925573411"></a><a name="p2060925573411"></a>ShapeType</p>
 </td>
-<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p823866165711"><a name="p823866165711"></a><a name="p823866165711"></a><span id="ph184621011705"><a name="ph184621011705"></a><a name="ph184621011705"></a><a href="../../../../Utils-API//CPP标准库/容器函数/容器函数.md">Std::tuple</a>结构类型，用于定义数据的逻辑形状，例如二维矩阵的行数和列数或多维张量的各维度大小。</span></p>
+<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p823866165711"><a name="p823866165711"></a><a name="p823866165711"></a><span id="ph184621011705"><a name="ph184621011705"></a><a name="ph184621011705"></a><a href="../../../../Utils-API//cpp_stdlib/container_functions/container_functions.md">Std::tuple</a>结构类型，用于定义数据的逻辑形状，例如二维矩阵的行数和列数或多维张量的各维度大小。</span></p>
 </td>
 </tr>
 <tr id="row1545073919457"><td class="cellrowborder" valign="top" width="21.8%" headers="mcps1.2.3.1.1 "><p id="p1745103924512"><a name="p1745103924512"></a><a name="p1745103924512"></a>StrideType</p>
 </td>
-<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p64517398452"><a name="p64517398452"></a><a name="p64517398452"></a><span id="ph292255305"><a name="ph292255305"></a><a name="ph292255305"></a><a href="../../../../Utils-API//CPP标准库/容器函数/容器函数.md">Std::tuple</a>结构类型，用于定义各维度在内存中的步长，即同维度相邻元素在内存中的间隔，间隔的单位为元素，与Shape的维度信息一一对应。</span></p>
+<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p64517398452"><a name="p64517398452"></a><a name="p64517398452"></a><span id="ph292255305"><a name="ph292255305"></a><a name="ph292255305"></a><a href="../../../../Utils-API//cpp_stdlib/container_functions/container_functions.md">Std::tuple</a>结构类型，用于定义各维度在内存中的步长，即同维度相邻元素在内存中的间隔，间隔的单位为元素，与Shape的维度信息一一对应。</span></p>
 </td>
 </tr>
 </tbody>

@@ -51,7 +51,7 @@ __aicore__ inline constexpr Stride<Ts...> MakeStride(const Ts&... t)
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="p9731042114910"><a name="p9731042114910"></a><a name="p9731042114910"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p39081929172310"><a name="p39081929172310"></a><a name="p39081929172310"></a>表示输入类型的形参包，使用方法和约束说明同<a href="../../../../Utils-API//CPP标准库/容器函数/容器函数.md">Std::tuple</a>。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p39081929172310"><a name="p39081929172310"></a><a name="p39081929172310"></a>表示输入类型的形参包，使用方法和约束说明同<a href="../../../../Utils-API//cpp_stdlib/container_functions/container_functions.md">Std::tuple</a>。</p>
 </td>
 </tr>
 </tbody>
@@ -59,7 +59,7 @@ __aicore__ inline constexpr Stride<Ts...> MakeStride(const Ts&... t)
 
 ## 返回值说明<a name="zh-cn_topic_0000002078447573_zh-cn_topic_0000001576806829_zh-cn_topic_0000001339187720_section25791320141317"></a>
 
-Stride结构类型（[Std::tuple](../../../../Utils-API/CPP标准库/容器函数/容器函数.md)类型的别名），用于定义各维度在内存中的步长，即同维度相邻元素在内存中的间隔，与Shape的维度信息一一对应。定义如下：
+Stride结构类型（[Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md)类型的别名），用于定义各维度在内存中的步长，即同维度相邻元素在内存中的间隔，与Shape的维度信息一一对应。定义如下：
 
 ```cpp
 template <typename... Strides>
@@ -68,7 +68,7 @@ using Stride = Std::tuple<Strides...>;
 
 ## 约束说明<a name="zh-cn_topic_0000002078447573_zh-cn_topic_0000001576806829_zh-cn_topic_0000001339187720_section19165124931511"></a>
 
-同[Std::tuple](../../../../Utils-API/CPP标准库/容器函数/容器函数.md)。
+同[Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md)。
 
 ## 调用示例<a name="zh-cn_topic_0000002078447573_zh-cn_topic_0000001576806829_zh-cn_topic_0000001339187720_section320753512363"></a>
 

@@ -46,7 +46,7 @@ __aicore__ inline constexpr decltype(auto) layout() const {}
 
 ## 约束说明<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section19165124931511"></a>
 
-构造Layout对象时传入的Shape和Stride结构，需是[Std::tuple](../../../../Utils-API/CPP标准库/容器函数/容器函数.md)结构类型，且满足Std::tuple结构类型的使用约束。
+构造Layout对象时传入的Shape和Stride结构，需是[Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md)结构类型，且满足Std::tuple结构类型的使用约束。
 
 ## 调用示例<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section320753512363"></a>
 

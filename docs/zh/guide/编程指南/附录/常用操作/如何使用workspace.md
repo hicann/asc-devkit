@@ -4,7 +4,7 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
 
 -   系统workspace：Ascend C API需要预留的workspace内存
 
-    API在计算过程需要一些workspace内存作为缓存，因此算子需要为API预留workspace内存，预留内存大小通过[GetLibApiWorkSpaceSize](../../../../api/Utils-API/平台信息获取/PlatformAscendC/GetLibApiWorkSpaceSize.md)接口获取。
+    API在计算过程需要一些workspace内存作为缓存，因此算子需要为API预留workspace内存，预留内存大小通过[GetLibApiWorkSpaceSize](../../../../api/Utils-API/platform_info/PlatformAscendC/GetLibApiWorkSpaceSize.md)接口获取。
 
 -   用户workspace：算子实现使用到的workspace内存
 

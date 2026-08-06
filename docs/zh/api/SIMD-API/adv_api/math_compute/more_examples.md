@@ -133,7 +133,7 @@ extern "C" __global__ __aicore__ void asin_custom(GM_ADDR srcGm, GM_ADDR dstGm, 
 
 ## 样例二<a name="section577043422516"></a>
 
-下面的样例展示了数学库Kernel侧API和[PlatformAscendC::ReserveLocalMemory](../../../Utils-API/平台信息获取/PlatformAscendC/ReserveLocalMemory.md)的配合使用方法，流程如下：
+下面的样例展示了数学库Kernel侧API和[PlatformAscendC::ReserveLocalMemory](../../../Utils-API/platform_info/PlatformAscendC/ReserveLocalMemory.md)的配合使用方法，流程如下：
 
 Host侧调用ReserveLocalMemory接口预留Unified Buffer内存空间，并通过GetCoreMemSize接口获取实际可用的Unified Buffer内存大小。基于实际可用的内存大小计算能够支持的最大Shape（最大数据规模）。这种方式可以避免多次调用GetXXXTmpMaxMinSize接口来获取合适的临时空间大小。
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Taking the [asc_atomic_add()](../../../../../../docs/zh/api/SIMT-API/原子操作/asc_atomic_add.md) atomic add as an example, this sample uses five groups of controlled experiments to show how the memory tier (Global Memory / Unified Buffer), the organization of the atomic operation (direct atomic add / intra-block accumulation followed by GM writeback), whether the return value is used, the contention intensity on the same address, and the data type (int32 / int64) affect the performance of atomic add, and provides corresponding optimization guidance.
+Taking the [asc_atomic_add()](../../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md) atomic add as an example, this sample uses five groups of controlled experiments to show how the memory tier (Global Memory / Unified Buffer), the organization of the atomic operation (direct atomic add / intra-block accumulation followed by GM writeback), whether the return value is used, the contention intensity on the same address, and the data type (int32 / int64) affect the performance of atomic add, and provides corresponding optimization guidance.
 
 ## Supported Products
 

@@ -212,7 +212,7 @@
 
 该接口提供CPU域或NPU域调试场景下的格式化输出功能。
 
-在算子kernel侧实现代码中需要输出日志信息的地方调用 [printf](../../../../../docs/zh/api/Utils-API/调测接口/printf.md)接口打印相关内容。
+在算子kernel侧实现代码中需要输出日志信息的地方调用 [printf](../../../../../docs/zh/api/Utils-API/tuning_interface/printf.md)接口打印相关内容。
 
 示例如下：
 

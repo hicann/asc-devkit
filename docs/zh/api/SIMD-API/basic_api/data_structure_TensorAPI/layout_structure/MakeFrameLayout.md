@@ -77,7 +77,7 @@ LayoutTrait用于指定C0维度基数。MakeFrameLayout支持以下四种传递�
    MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float>>(m, n)
    ```
 
-2. **C0常量类型**：直接指定C0维度的元素个数。`_8`、`_16`等类型是[Std::Int](../../../../Utils-API/CPP标准库/类型特性/integral_constant.md)的简写形式，例如`_16`表示`Std::Int<16>`。
+2. **C0常量类型**：直接指定C0维度的元素个数。`_8`、`_16`等类型是[Std::Int](../../../../Utils-API/cpp_stdlib/type_traits/integral_constant.md)的简写形式，例如`_16`表示`Std::Int<16>`。
 
    ```cpp
    MakeFrameLayout<NZLayoutPtn, _16>(m, n)

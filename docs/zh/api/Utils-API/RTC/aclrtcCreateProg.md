@@ -96,7 +96,7 @@ aclError aclrtcCreateProg(aclrtcProg *prog, const char *src, const char *name, i
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 
-aclError为int类型变量，详细说明请参考[RTC错误码](RTC错误码.md)。
+aclError为int类型变量，详细说明请参考[RTC错误码](RTC_error_code.md)。
 
 ## 约束说明<a name="section633mcpsimp"></a>
 

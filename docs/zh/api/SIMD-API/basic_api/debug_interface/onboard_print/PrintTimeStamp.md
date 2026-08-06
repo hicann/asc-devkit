@@ -69,7 +69,7 @@ __aicore__ inline void PrintTimeStamp(uint32_t descId)
 
 ## 约束说明<a name="section794123819592"></a>
 
-可以参考utils目录SIMD约束下的[asc_time_stamp](../../../../Utils-API/调测接口/asc_time_stamp.md)说明。
+可以参考utils目录SIMD约束下的[asc_time_stamp](../../../../Utils-API/tuning_interface/asc_time_stamp.md)说明。
 
 ## 调用示例<a name="section82241477610"></a>
 

@@ -26,7 +26,7 @@ using Coord = Std::tuple<Coords...>
 <tbody><tr id="row260915573419"><td class="cellrowborder" valign="top" width="21.8%" headers="mcps1.2.3.1.1 "><p id="p2060925573411"><a name="p2060925573411"></a><a name="p2060925573411"></a>Coords</p>
 </td>
 <td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p18109358203112"><a name="p18109358203112"></a><a name="p18109358203112"></a>表示输入数据类型的形参包，参数个数范围为[0，64]。</p>
-<p id="p1329915004219"><a name="p1329915004219"></a><a name="p1329915004219"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//CPP标准库/类型特性/integral_constant.md">Int</a>。</p>
+<p id="p1329915004219"><a name="p1329915004219"></a><a name="p1329915004219"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//cpp_stdlib/type_traits/integral_constant.md">Int</a>。</p>
 </td>
 </tr>
 </tbody>

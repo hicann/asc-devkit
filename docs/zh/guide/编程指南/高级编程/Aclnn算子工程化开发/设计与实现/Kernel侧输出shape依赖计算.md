@@ -132,4 +132,4 @@ shapeGlobal.SetValue(13, 32);
 
 - [Kernel侧算子实现](./Kernel侧算子实现.md)：Kernel入口格式和参数顺序。
 - [算子原型定义](./算子原型定义.md)：输入输出声明和shape推导关系。
-- [OutputShapeDependOnCompute](../../../../../api/Utils-API/原型注册与管理/OpParamDef/OutputShapeDependOnCompute.md)：接口定义和工程版本约束。
+- [OutputShapeDependOnCompute](../../../../../api/Utils-API/prototype_register_management/OpParamDef/OutputShapeDependOnCompute.md)：接口定义和工程版本约束。

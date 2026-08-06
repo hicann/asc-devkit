@@ -117,8 +117,8 @@ __aicore__ inline constexpr auto Crd2Idx(const CoordType& coord, const ShapeType
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="p1750771018252"><a name="p1750771018252"></a><a name="p1750771018252"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p13692185110277"><a name="p13692185110277"></a><a name="p13692185110277"></a><a href="../../../../Utils-API//CPP标准库/容器函数/容器函数.md">Std::tuple</a>结构类型，用于表示张量在不同维度上的坐标值。</p>
-<p id="p1329915004219"><a name="p1329915004219"></a><a name="p1329915004219"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//CPP标准库/类型特性/integral_constant.md">Int</a>。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p13692185110277"><a name="p13692185110277"></a><a name="p13692185110277"></a><a href="../../../../Utils-API//cpp_stdlib/container_functions/container_functions.md">Std::tuple</a>结构类型，用于表示张量在不同维度上的坐标值。</p>
+<p id="p1329915004219"><a name="p1329915004219"></a><a name="p1329915004219"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//cpp_stdlib/type_traits/integral_constant.md">Int</a>。</p>
 </td>
 </tr>
 <tr id="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_row152234713443"><td class="cellrowborder" valign="top" width="17.22%" headers="mcps1.1.4.1.1 "><p id="p18419104127"><a name="p18419104127"></a><a name="p18419104127"></a>layout</p>
@@ -126,23 +126,23 @@ __aicore__ inline constexpr auto Crd2Idx(const CoordType& coord, const ShapeType
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="p1641874129"><a name="p1641874129"></a><a name="p1641874129"></a>输入</p>
 </td>
 <td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p14181041623"><a name="p14181041623"></a><a name="p14181041623"></a>输入的<a href="../Layout/Layout.md">Layout</a>对象。</p>
-<p id="p31813716554"><a name="p31813716554"></a><a name="p31813716554"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//CPP标准库/类型特性/integral_constant.md">Int</a>。</p>
+<p id="p31813716554"><a name="p31813716554"></a><a name="p31813716554"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//cpp_stdlib/type_traits/integral_constant.md">Int</a>。</p>
 </td>
 </tr>
 <tr id="row462694915242"><td class="cellrowborder" valign="top" width="17.22%" headers="mcps1.1.4.1.1 "><p id="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_p8563195616313"><a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_p8563195616313"></a><a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_p8563195616313"></a>shape</p>
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_p15663137127"><a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_p15663137127"></a><a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_p15663137127"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p823866165711"><a name="p823866165711"></a><a name="p823866165711"></a><span id="ph715020184014"><a name="ph715020184014"></a><a name="ph715020184014"></a><a href="../../../../Utils-API//CPP标准库/容器函数/容器函数.md">Std::tuple</a>结构类型，用于定义数据的逻辑形状，例如二维矩阵的行数和列数或多维张量的各维度大小。</span></p>
-<p id="p37122225552"><a name="p37122225552"></a><a name="p37122225552"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//CPP标准库/类型特性/integral_constant.md">Int</a>。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p823866165711"><a name="p823866165711"></a><a name="p823866165711"></a><span id="ph715020184014"><a name="ph715020184014"></a><a name="ph715020184014"></a><a href="../../../../Utils-API//cpp_stdlib/container_functions/container_functions.md">Std::tuple</a>结构类型，用于定义数据的逻辑形状，例如二维矩阵的行数和列数或多维张量的各维度大小。</span></p>
+<p id="p37122225552"><a name="p37122225552"></a><a name="p37122225552"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//cpp_stdlib/type_traits/integral_constant.md">Int</a>。</p>
 </td>
 </tr>
 <tr id="row34935466244"><td class="cellrowborder" valign="top" width="17.22%" headers="mcps1.1.4.1.1 "><p id="p139261676324"><a name="p139261676324"></a><a name="p139261676324"></a>stride</p>
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="p19272713213"><a name="p19272713213"></a><a name="p19272713213"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p64517398452"><a name="p64517398452"></a><a name="p64517398452"></a><span id="ph1582113012"><a name="ph1582113012"></a><a name="ph1582113012"></a><a href="../../../../Utils-API//CPP标准库/容器函数/容器函数.md">Std::tuple</a>结构类型，用于定义各维度在内存中的步长，即同维度相邻元素在内存中的间隔，间隔的单位为元素，与Shape的维度信息一一对应。</span></p>
-<p id="p4409152415551"><a name="p4409152415551"></a><a name="p4409152415551"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//CPP标准库/类型特性/integral_constant.md">Int</a>。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p64517398452"><a name="p64517398452"></a><a name="p64517398452"></a><span id="ph1582113012"><a name="ph1582113012"></a><a name="ph1582113012"></a><a href="../../../../Utils-API//cpp_stdlib/container_functions/container_functions.md">Std::tuple</a>结构类型，用于定义各维度在内存中的步长，即同维度相邻元素在内存中的间隔，间隔的单位为元素，与Shape的维度信息一一对应。</span></p>
+<p id="p4409152415551"><a name="p4409152415551"></a><a name="p4409152415551"></a>输入的数据类型支持size_t和Std::<a href="../../../../Utils-API//cpp_stdlib/type_traits/integral_constant.md">Int</a>。</p>
 </td>
 </tr>
 </tbody>

@@ -8,7 +8,7 @@ Ascend C SIMT编程模型中仅提供`asc_syncthreads()`接口来实现线程块
 
 协作组中最重要的概念是使用一个对象表示一组线程，然后通过对象方法控制组内线程。对象可以明确表达开发者的意图，将协作组对象传递到某个函数可以清晰地表达“哪些线程必须共同调用该函数”。
 
-协作组提供了自定义线程组的方法以及操作线程组的接口，全量的协作组API列表可在[SIMT协作组API](../../../api/SIMT-API/协作组/协作组.md)中获取。使用协作组API时需要包含以下头文件，并使用协作组命名空间。
+协作组提供了自定义线程组的方法以及操作线程组的接口，全量的协作组API列表可在[SIMT协作组API](../../../api/SIMT-API/cooperative_groups/cooperative_groups.md)中获取。使用协作组API时需要包含以下头文件，并使用协作组命名空间。
 
 ```c++
 #include <simt_api/cooperative_groups.h>
@@ -25,10 +25,10 @@ namespace cg = cooperative_groups;
 当前提供以下协作组类型：
 
 - 隐式组：
-    - [thread_block](../../../api/SIMT-API/协作组/thread_block/thread_block简介.md)：对线程块的抽象，提供线程块级别的线程管理和同步接口。
+    - [thread_block](../../../api/SIMT-API/cooperative_groups/thread_block/thread_block_intro.md)：对线程块的抽象，提供线程块级别的线程管理和同步接口。
 - 显式组：
-    - [thread_block_tile](../../../api/SIMT-API/协作组/thread_block_tile/thread_block_tile简介.md)：由父组划分得到的固定大小线程子组，支持组内同步、shfl类和vote类线程操作。
-    - [coalesced_group](../../../api/SIMT-API/协作组/coalesced_group/coalesced_group简介.md)：当前Warp内处于同一执行路径的活跃线程集合，常用于处理分支发散后的线程协作。
+    - [thread_block_tile](../../../api/SIMT-API/cooperative_groups/thread_block_tile/thread_block_tile_intro.md)：由父组划分得到的固定大小线程子组，支持组内同步、shfl类和vote类线程操作。
+    - [coalesced_group](../../../api/SIMT-API/cooperative_groups/coalesced_group/coalesced_group_intro.md)：当前Warp内处于同一执行路径的活跃线程集合，常用于处理分支发散后的线程协作。
 
 **图1**  线程块中的协作组层次结构图
 
@@ -80,8 +80,8 @@ if (threadIdx.x % 2 == 0) {
 
 协作组支持将父组划分为更小的子组。当前提供以下划分接口：
 
-- [tiled_partition](../../../api/SIMT-API/协作组/tiled_partition.md)：将父组划分为指定大小的子组。
-- [binary_partition](../../../api/SIMT-API/协作组/binary_partition.md)：根据布尔标签将父组划分为两个`coalesced_group`子组。
+- [tiled_partition](../../../api/SIMT-API/cooperative_groups/tiled_partition.md)：将父组划分为指定大小的子组。
+- [binary_partition](../../../api/SIMT-API/cooperative_groups/binary_partition.md)：根据布尔标签将父组划分为两个`coalesced_group`子组。
 
 ### tiled_partition
 
@@ -100,7 +100,7 @@ __global__ void simt_kernel(...)
 }
 ```
 
-模板版本的划分大小必须满足`tiled_partition`接口约束，详细要求请参考[tiled_partition](../../../api/SIMT-API/协作组/tiled_partition.md)。
+模板版本的划分大小必须满足`tiled_partition`接口约束，详细要求请参考[tiled_partition](../../../api/SIMT-API/cooperative_groups/tiled_partition.md)。
 
 ### binary_partition
 

@@ -74,7 +74,7 @@ bool TopKTilingFunc(const platform_ascendc::PlatformAscendC& ascendcPlatform, co
 
 | 接口 | 输入/输出 | 功能 |
 | --- | --- | --- |
-| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)。 |
+| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)。 |
 | inner | 输入 | 表示TopK接口输入srcLocal的内轴长度，该参数的取值为32的整数倍。 |
 | outter | 输入 | 表示TopK接口输入srcLocal的外轴长度。 |
 | k | 输入 | 获取前k个最大值或最小值及其对应的索引。 |
@@ -102,7 +102,7 @@ enum class TopKOrder { UNSET, LARGEST, SMALLEST };
 
 | 接口 | 输入/输出 | 功能 |
 | --- | --- | --- |
-| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)。 |
+| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)。 |
 | inner | 输入 | 表示TopK接口输入srcLocal的内轴长度，该参数的取值为32的整数倍。 |
 | outter | 输入 | 表示TopK接口输入srcLocal的外轴长度。 |
 | k | 输入 | 获取前k个最大值或最小值及其对应的索引。 |

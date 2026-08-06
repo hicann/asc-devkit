@@ -42,7 +42,7 @@ __aicore__ inline constexpr decltype(auto) GetShape() const {}
 
 ## 返回值说明<a name="zh-cn_topic_0000002078447573_zh-cn_topic_0000001576806829_zh-cn_topic_0000001339187720_section25791320141317"></a>
 
-描述张量形状的Shape对象，Shape结构类型（[Std::tuple](../../../../Utils-API/CPP标准库/容器函数/容器函数.md)类型的别名），定义如下：
+描述张量形状的Shape对象，Shape结构类型（[Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md)类型的别名），定义如下：
 
 ```cpp
 template <typename... Shapes>

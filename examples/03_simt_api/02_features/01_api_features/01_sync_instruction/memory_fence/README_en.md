@@ -4,7 +4,7 @@
 
 This example implements reduction sum for 1D `float` input based on the Ascend C SIMT programming model. Through 2 progressive scenarios, it demonstrates typical usage of intra-block synchronization and inter-block memory ordering control.
 
-The 2 scenarios correspond to reduction sum for small shape input and large shape input respectively, focusing on the usage of [`asc_syncthreads()`](../../../../../../docs/zh/api/SIMT-API/同步与内存栅栏/同步接口/asc_syncthreads.md) and [`asc_threadfence()`](../../../../../../docs/zh/api/SIMT-API/同步与内存栅栏/内存栅栏接口/asc_threadfence.md) under different reduction scales.
+The 2 scenarios correspond to reduction sum for small shape input and large shape input respectively, focusing on the usage of [`asc_syncthreads()`](../../../../../../docs/zh/api/SIMT-API/sync_and_memory_fence/sync_interface/asc_syncthreads.md) and [`asc_threadfence()`](../../../../../../docs/zh/api/SIMT-API/sync_and_memory_fence/memory_fence/asc_threadfence.md) under different reduction scales.
 
 ## Supported Products
 
@@ -101,7 +101,7 @@ This example controls build branches through `SCENARIO_NUM`. The 2 scenarios are
 
 Each thread in a single thread block first reads one input element, then obtains the final result through **two-phase reduction sum**:
 
-- **Phase 1 (intra-warp reduction)**: Call the [`asc_reduce_add()`](../../../../../../docs/zh/api/SIMT-API/Warp函数/Warp-Reduce类函数/asc_reduce_add.md) interface to perform reduction on all thread values within the current warp, obtaining the sum of data within the warp, and write to shared memory.
+- **Phase 1 (intra-warp reduction)**: Call the [`asc_reduce_add()`](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_reduce_functions/asc_reduce_add.md) interface to perform reduction on all thread values within the current warp, obtaining the sum of data within the warp, and write to shared memory.
 - **Phase 2 (block-level sequential accumulation)**: After cross-warp synchronization, thread 0 sequentially accumulates the partial sums from each warp to obtain the final result.
 
 Taking 128 elements (4 warps) as an example, the two-phase reduction process is shown in Figure 1:

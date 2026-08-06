@@ -1,6 +1,6 @@
 # show\_kernel\_debug\_data工具
 
-在Ascend C算子程序代码中，用户可以使用AscendC::[DumpTensor](../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)、AscendC::[printf](../../../api/Utils-API/调测接口/printf.md)、AscendC::[PrintTimeStamp](../../../api/SIMD-API/basic_api/debug_interface/onboard_print/PrintTimeStamp.md)、[ascendc\_assert](../../../api/SIMD-API/basic_api/debug_interface/exception_detection/ascendc_assert.md)接口打印相关调试信息，并通过aclInit接口或直接配置acl.json文件，启用Dump配置，导出Ascend C算子Kernel的调测信息。本工具提供了对调测信息的离线解析能力，帮助用户获取并解析调试信息，即将导出的bin文件解析成可读格式。本工具的使用示例可参考[show\_kernel\_debug\_data样例](https://gitcode.com/cann/asc-tools/tree/master/examples/01_show_kernel_debug_data)。
+在Ascend C算子程序代码中，用户可以使用AscendC::[DumpTensor](../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)、AscendC::[printf](../../../api/Utils-API/tuning_interface/printf.md)、AscendC::[PrintTimeStamp](../../../api/SIMD-API/basic_api/debug_interface/onboard_print/PrintTimeStamp.md)、[ascendc\_assert](../../../api/SIMD-API/basic_api/debug_interface/exception_detection/ascendc_assert.md)接口打印相关调试信息，并通过aclInit接口或直接配置acl.json文件，启用Dump配置，导出Ascend C算子Kernel的调测信息。本工具提供了对调测信息的离线解析能力，帮助用户获取并解析调试信息，即将导出的bin文件解析成可读格式。本工具的使用示例可参考[show\_kernel\_debug\_data样例](https://gitcode.com/cann/asc-tools/tree/master/examples/01_show_kernel_debug_data)。
 
 >[!NOTE]说明
 >show\_kernel\_debug\_data支持多用户并发调用，但用户需要指定不同的落盘路径，否则可能出现落盘内容被覆盖等问题。

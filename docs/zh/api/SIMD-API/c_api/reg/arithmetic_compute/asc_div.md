@@ -65,7 +65,7 @@ __simd_callee__ inline void asc_div(vector_uint32_t& dst, vector_uint32_t src0, 
 
 - mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
 
-- 注意除零错误，结果请参考[Div特殊值/边界值输入的计算结果说明](../../../../附录/Reg矢量计算接口边界值汇总.md#table1325925915217)。
+- 注意除零错误，结果请参考[Div特殊值/边界值输入的计算结果说明](../../../../appendix/reg_vector_compute_interface_boundary_value_summary.md#table1325925915217)。
 
 ## 调用示例
 

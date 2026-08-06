@@ -33,7 +33,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-获取系统workspace指针。部分高阶API如Matmul需要使用系统workspace，相关接口需要传入系统workspace指针，此时可以通过该接口获取。使用系统workspace时，host侧开发者需要自行申请系统workspace的空间，其预留空间大小可以通过[GetLibApiWorkSpaceSize](../../../../Utils-API/平台信息获取/PlatformAscendC/GetLibApiWorkSpaceSize.md)接口获取。
+获取系统workspace指针。部分高阶API如Matmul需要使用系统workspace，相关接口需要传入系统workspace指针，此时可以通过该接口获取。使用系统workspace时，host侧开发者需要自行申请系统workspace的空间，其预留空间大小可以通过[GetLibApiWorkSpaceSize](../../../../Utils-API/platform_info/PlatformAscendC/GetLibApiWorkSpaceSize.md)接口获取。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

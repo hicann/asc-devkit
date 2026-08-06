@@ -440,8 +440,8 @@ k方向需满足特定的对齐要求，不同数据类型约束不同，详见[
 ## 理论性能
 
 本接口的理论性能数据请参考附录：
-- Cube指令理论性能汇总：详见[Cube指令理论性能汇总](api/附录/Cube指令理论性能汇总.md)
-- Vector指令理论性能汇总：详见[Vector指令理论性能汇总](api/附录/Vector指令理论性能汇总.md)
+- Cube指令理论性能汇总：详见[Cube指令理论性能汇总](api/appendix/cube_instruction_theoretical_perf_summary.md)
+- Vector指令理论性能汇总：详见[Vector指令理论性能汇总](api/appendix/vector_instruction_theoretical_perf_summary.md)
 ```
 
 **编写要求**：

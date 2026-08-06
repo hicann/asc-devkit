@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例以[asc_atomic_add()](../../../../../../docs/zh/api/SIMT-API/原子操作/asc_atomic_add.md)接口为例，通过五组对照实验，展示不同内存空间（Global Memory / Unified Buffer）、不同原子累加组织方式（直接原子加 / 线程块内先累加再写回GM）、是否使用返回值、同一地址上的竞争强度，以及数据类型（int32 / int64）等不同使用场景下的接口性能差异，并给出相应的优化指导。
+本样例以[asc_atomic_add()](../../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md)接口为例，通过五组对照实验，展示不同内存空间（Global Memory / Unified Buffer）、不同原子累加组织方式（直接原子加 / 线程块内先累加再写回GM）、是否使用返回值、同一地址上的竞争强度，以及数据类型（int32 / int64）等不同使用场景下的接口性能差异，并给出相应的优化指导。
 
 ## 支持的产品
 

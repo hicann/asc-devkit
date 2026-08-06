@@ -16,7 +16,7 @@ uint32_t GetSortTmpSize(const platform_ascendc::PlatformAscendC& ascendcPlatform
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/平台信息获取/PlatformAscendC/构造及析构函数.md)。 |
+| ascendcPlatform | 输入 | 传入硬件平台的信息，PlatformAscendC定义请参见[构造及析构函数](../../../Utils-API/platform_info/PlatformAscendC/constructor_and_destructor.md)。 |
 | elemCount | 输入 | 输入元素个数。 |
 | dataTypeSize | 输入 | 输入数据大小（单位为字节）。 |
 
