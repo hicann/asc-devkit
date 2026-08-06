@@ -23,12 +23,6 @@
 <!-- npu="910" id27 -->
 - Atlas 训练系列产品：支持
 <!-- end id27 -->
-<!-- npu="x90" id28 -->
-- Kirin X90：支持
-<!-- end id28 -->
-<!-- npu="9030" id29 -->
-- Kirin 9030：支持
-<!-- end id29 -->
 
 ## 功能说明<a name="section474617392321"></a>
 
@@ -114,14 +108,6 @@
 <!-- npu="910" id8 -->
 - Atlas 训练系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id8 -->
-
-<!-- npu="x90" id9 -->
-- Kirin X90，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
-<!-- end id9 -->
-
-<!-- npu="9030" id10 -->
-- Kirin 9030，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
-<!-- end id10 -->
 
 ## 返回值说明<a name="section44801012174220"></a>
 

@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section17600329101418"></a>
 
@@ -105,12 +99,6 @@ __aicore__ inline void Brcb(const LocalTensor<T>& dst, const LocalTensor<T>& src
 <!-- npu="310p" id13 -->
 - 针对Atlas 推理系列产品AI Core，T支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id13 -->
-<!-- npu="x90" id14 -->
-- 针对Kirin X90，T支持的数据类型为：uint16_t、half、uint32_t、float。
-<!-- end id14 -->
-<!-- npu="9030" id15 -->
-- 针对Kirin 9030，T支持的数据类型为：uint16_t、half、uint32_t、float。
-<!-- end id15 -->
 
 ## 返回值说明<a name="section459672612511"></a>
 

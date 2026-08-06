@@ -195,19 +195,9 @@
                 -   [MmadWithSparse](SIMD-API/基础API/cube_compute_ISASI/Mmad计算/MmadWithSparse.md)
             -   [Mmad计算关键特性说明](SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/Mmad计算关键特性说明.md)
                 -   [GEMV](SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/GEMV.md)
-
-                <cann-filter npu-type="950,910b,A3,310b">
-
                 -   [HF32](SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/HF32.md)
                 -   [UnitFlag](SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/UnitFlag.md)
-
-                </cann-filter>
-
-                <cann-filter npu-type="910b,A3,x90,9030">
-
                 -   [K方向对齐约束](SIMD-API/基础API/cube_compute_ISASI/Mmad计算关键特性说明/K-方向对齐约束.md)
-
-                </cann-filter>
 
                 -   [Conv2D（废弃）](SIMD-API/基础API/cube_compute_ISASI/Mmad计算/Conv2D_deprecated.md)
                 -   [Gemm（废弃）](SIMD-API/基础API/cube_compute_ISASI/Mmad计算/Gemm_deprecated.md)

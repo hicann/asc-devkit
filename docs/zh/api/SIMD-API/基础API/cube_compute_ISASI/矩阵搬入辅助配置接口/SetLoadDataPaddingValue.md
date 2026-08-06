@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
@@ -58,8 +52,6 @@ __aicore__ inline void SetLoadDataPaddingValue(const T padValue)
 <!-- npu="910b" id12 -->Atlas A2训练系列产品/Atlas A2推理系列产品，支持数据类型：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id12 --><br>
 <!-- npu="A3" id13 -->Atlas A3训练系列产品/Atlas A3推理系列产品，支持数据类型：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id13 --><br>
 <!-- npu="310b" id14 -->Atlas 200I/500 A2 推理产品，支持数据类型：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id14 --><br>
-<!-- npu="x90" id15 -->Kirin X90，支持数据类型：int8_t、half。<!-- end id15 --><br>
-<!-- npu="9030" id16 -->Kirin 9030，支持数据类型：half。<!-- end id16 -->
 
 ## 返回值说明
 

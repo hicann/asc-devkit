@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
@@ -128,12 +122,6 @@ dst和src使用[TensorTrait](../../辅助数据结构/TensorTrait/TensorTrait.md
 <!-- npu="910" id18 -->
 - 针对Atlas 训练系列产品，T和U支持的数据类型为：half、float。
 <!-- end id18 -->
-<!-- npu="x90" id19 -->
-- 针对Kirin X90，T和U支持的数据类型为：int16_t、half、int32_t、float。
-<!-- end id19 -->
-<!-- npu="9030" id20 -->
-- 针对Kirin 9030，T和U支持的数据类型为：int16_t、half、int32_t、float。
-<!-- end id20 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

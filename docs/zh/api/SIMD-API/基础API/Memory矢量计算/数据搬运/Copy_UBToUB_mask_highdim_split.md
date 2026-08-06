@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="zh-cn_topic_0000002567699435_section106841136114319"></a>
 
@@ -117,18 +111,6 @@
 - Atlas 200I/500 A2 推理产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
 
 <!-- end id13 -->
-
-<!-- npu="x90" id14 -->
-
-- Kirin X90，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
-
-<!-- end id14 -->
-
-<!-- npu="9030" id15 -->
-
-- Kirin 9030，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
-
-<!-- end id15 -->
 
 ## 返回值说明
 

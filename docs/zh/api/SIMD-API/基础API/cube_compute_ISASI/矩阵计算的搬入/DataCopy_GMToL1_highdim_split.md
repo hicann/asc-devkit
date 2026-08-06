@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002566658905_section106841136114319"></a>
 
@@ -97,14 +91,6 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 <!-- npu="910" id14 -->
 针对Atlas 训练系列产品，支持数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t、half、float、double。
 <!-- end id14 -->
-
-<!-- npu="x90" id15 -->
-针对Kirin X90，支持数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t、half、float、double。
-<!-- end id15 -->
-
-<!-- npu="9030" id16 -->
-针对Kirin 9030，支持数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t、half、float、double。
-<!-- end id16 -->
 
 ## 返回值说明
 

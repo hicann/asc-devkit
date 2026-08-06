@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：不支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：不支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
