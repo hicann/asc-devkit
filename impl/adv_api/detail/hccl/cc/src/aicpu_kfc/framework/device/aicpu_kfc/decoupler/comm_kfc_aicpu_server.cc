@@ -21,9 +21,6 @@
 #include "sqe_build_a5.h"
 #endif
 #include "hccl_common.h"
-#include "aicpu_indop_process.h"
-#include "coll_comm_aicpu.h"
-#include "coll_comm_aicpu_mgr.h"
 #include "stream_lite.h"
 #include "thread.h"
 
@@ -58,20 +55,6 @@ hccl::HcclCommAicpu* FindCommAicpuByName(const std::string& commName)
     return nullptr;
 }
 #endif
-
-CollCommAicpuMgr* FindNextCommMgrByName(const std::string& commName)
-{
-    std::vector<std::pair<std::string, CollCommAicpuMgr*>> aicpuCommInfo;
-    if (AicpuIndopProcess::AicpuGetCommAll(aicpuCommInfo) != HCCL_SUCCESS) {
-        return nullptr;
-    }
-    for (auto& commInfo : aicpuCommInfo) {
-        if (commInfo.second != nullptr && commInfo.first == commName) {
-            return commInfo.second;
-        }
-    }
-    return nullptr;
-}
 
 HcclResult IsDevice950(bool& isDevice950)
 {
@@ -253,15 +236,6 @@ HcclResult CommKfcAicpuServer::AddOpContext(const HcclApi::OpResCtx* ctx)
         bool isDevice950 = false;
         CHK_RET(IsDevice950(isDevice950));
         if (isDevice950) {
-            CollCommAicpuMgr* commMgr = FindNextCommMgrByName(commName);
-            CHK_PRT_RET(
-                commMgr == nullptr,
-                HCCL_ERROR(
-                    "Group %u: failed to find next comm manager for commName[%s], opParamKey %#llx.", groupIdx_,
-                    commName.c_str(), opParamKey),
-                HCCL_E_PARA);
-            CollCommAicpu* collCommAicpu = commMgr->GetCollCommAicpu();
-            CHK_PTR_NULL(collCommAicpu);
             CHK_PRT_RET(
                 execCtx.resCtxHolder->threads.empty() || execCtx.resCtxHolder->threads[0] == 0U,
                 HCCL_ERROR(
@@ -269,8 +243,6 @@ HcclResult CommKfcAicpuServer::AddOpContext(const HcclApi::OpResCtx* ctx)
                     execCtx.resCtxHolder->threads.size(), opParamKey),
                 HCCL_E_PARA);
             execCtx.resourceType = ServerExecResourceType::NEXT_AICPU;
-            execCtx.commMgr = commMgr;
-            execCtx.collCommAicpu = collCommAicpu;
             execCtx.mainThread = execCtx.resCtxHolder->threads[0];
         } else {
 #ifdef MC2_SERVER_ONLY
@@ -809,16 +781,13 @@ void CommKfcAicpuServer::DumpTimeoutDfx(u32 msgPos, bool isHardTimeout) const
         static_cast<unsigned long long>(lastProgress_.recordAddr));
 
     for (const auto& execCtx : execCtxList_) {
-        const u32 commStatus = (execCtx.collCommAicpu == nullptr) ?
-                                   INVALID_UINT :
-                                   static_cast<u32>(execCtx.collCommAicpu->GetCommmStatus());
         MC2_TIMEOUT_LOG(
             isHardTimeout,
             "[MC2_OPEN_TIMEOUT][ExecCtx] group %u, commName[%s], opParamKey %#llx, resourceType %u, "
-            "mainThread %#llx, commMgr %p, collCommAicpu %p, commStatus %u, mainStream %p, dispatcher %p.",
+            "mainThread %#llx, mainStream %p, dispatcher %p.",
             groupIdx_, execCtx.commName.c_str(), static_cast<unsigned long long>(execCtx.opParamKey),
             static_cast<u32>(execCtx.resourceType), static_cast<unsigned long long>(execCtx.mainThread),
-            execCtx.commMgr, execCtx.collCommAicpu, commStatus, execCtx.mainStream, execCtx.dispatcher);
+            execCtx.mainStream, execCtx.dispatcher);
         if (execCtx.resourceType != ServerExecResourceType::NEXT_AICPU || execCtx.mainThread == 0U) {
             continue;
         }

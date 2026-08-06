@@ -26,8 +26,6 @@ namespace hccl {
 class HcclCommAicpu;
 class Stream;
 } // namespace hccl
-class CollCommAicpuMgr;
-class CollCommAicpu;
 
 enum class ServerExecResourceType { LEGACY, NEXT_AICPU };
 
@@ -40,8 +38,6 @@ struct ServerExecCtx {
     hccl::HcclCommAicpu* commAicpu{nullptr};
     HcclDispatcher dispatcher{nullptr};
     hccl::Stream* mainStream{nullptr};
-    CollCommAicpuMgr* commMgr{nullptr};
-    CollCommAicpu* collCommAicpu{nullptr};
     ThreadHandle mainThread{0};
     mc2_open::OpenResCtxHolder resCtxHolder{};
 };
