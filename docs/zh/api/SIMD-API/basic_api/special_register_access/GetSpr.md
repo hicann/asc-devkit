@@ -49,7 +49,7 @@ __aicore__ inline int64_t GetSpr()
 
 | 取值 | 含义 |
 |------|------|
-| AR | 通常配合[Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md)，Reg矢量计算API一起使用；[Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md)，Reg矢量计算API会存储有效元素的总字节数到AR特殊寄存器。 |
+| AR | AR寄存器通常配合Reg矢量计算API [Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md)和[连续非对齐搬出](../reg_vector_compute/reg_data_store/StoreUnAlign_continuous.md)的场景3（无需显式传入偏移量）接口一起使用，寄存器会存储有效元素的总字节数。 |
 
 ## 数据类型<a name="section3853852112218"></a>
 

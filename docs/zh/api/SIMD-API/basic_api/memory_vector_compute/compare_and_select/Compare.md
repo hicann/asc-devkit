@@ -63,9 +63,9 @@
     dst = src0 != src1;
     ```
 
-    <!-- npu="310b" id15 -->
+    <!-- npu="310b" id10 -->
     Atlas 200I/500 A2 推理产品暂不支持整个Tensor参与计算的运算符重载。
-    <!-- end id15 -->
+    <!-- end id10 -->
 
 - Tensor前n个数据计算
 
@@ -111,91 +111,91 @@
 | mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD_compute/mask.md)。 |
 | repeatTime | 输入 | 重复迭代次数。矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体描述请参考[高维切分](../SIMD_compute/high_dim_split.md)。 |
 | repeatParams | 输入 | 控制操作数地址步长的参数。[BinaryRepeatParams](../../aux_data_structures/BinaryRepeatParams.md)类型，包含操作数相邻迭代间相同DataBlock的地址步长，操作数同一迭代内不同DataBlock的地址步长等参数。<br>相邻迭代间的地址步长参数说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)；同一迭代内DataBlock的地址步长参数说明请参考[dataBlockStride](../SIMD_compute/high_dim_split.md)。 |
-| count | 输入 | 参与计算的元素个数。设置count时，需要保证count个元素所占空间256字节对齐。未对齐部分元素不参与计算，仅完整对齐块有效。 |
+| count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD_compute/continuous_compute.md)。 |
 
 ### mask/mask[]参数说明
 
-<!-- npu="950" id16 -->
+<!-- npu="950" id11 -->
 - 针对Ascend 950PR/Ascend 950DT，设置有效。
+<!-- end id11 -->
+
+<!-- npu="A3" id12 -->
+- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，保留参数，设置无效。
+<!-- end id12 -->
+
+<!-- npu="910b" id13 -->
+- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，保留参数，设置无效。
+<!-- end id13 -->
+
+<!-- npu="310b" id14 -->
+- 针对Atlas 200I/500 A2 推理产品，设置有效。
+<!-- end id14 -->
+
+<!-- npu="310p" id15 -->
+- 针对Atlas 推理系列产品AI Core，保留参数，设置无效。
+<!-- end id15 -->
+
+<!-- npu="910" id16 -->
+- 针对Atlas 训练系列产品，保留参数，设置无效。
 <!-- end id16 -->
 
-<!-- npu="A3" id17 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，保留参数，设置无效。
+<!-- npu="x90" id17 -->
+- 针对Kirin X90，保留参数，设置无效。
 <!-- end id17 -->
 
-<!-- npu="910b" id18 -->
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，保留参数，设置无效。
-<!-- end id18 -->
-
-<!-- npu="310b" id19 -->
-- 针对Atlas 200I/500 A2 推理产品，设置有效。
-<!-- end id19 -->
-
-<!-- npu="310p" id20 -->
-- 针对Atlas 推理系列产品AI Core，保留参数，设置无效。
-<!-- end id20 -->
-
-<!-- npu="910" id21 -->
-- 针对Atlas 训练系列产品，保留参数，设置无效。
-<!-- end id21 -->
-
-<!-- npu="x90" id22 -->
-- 针对Kirin X90，保留参数，设置无效。
-<!-- end id22 -->
-
-<!-- npu="9030" id23 -->
+<!-- npu="9030" id18 -->
 - 针对Kirin 9030，保留参数，设置无效。
-<!-- end id23 -->
+<!-- end id18 -->
 
 ## 数据类型
 
-<!-- npu="950" id24 -->
+<!-- npu="950" id19 -->
 - 针对Ascend 950PR/Ascend 950DT
     - T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。其中，int8\_t/uint8\_t/int64\_t/uint64\_t/double数据类型仅支持tensor前n个数据计算接口和整个tensor参与计算的运算符重载。
     - U支持的数据类型为：int8_t、uint8_t。
-<!-- end id24 -->
+<!-- end id19 -->
 
-<!-- npu="A3" id25 -->
+<!-- npu="A3" id20 -->
 - 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品
     - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
     - U支持的数据类型为：int8_t、uint8_t。
-<!-- end id25 -->
+<!-- end id20 -->
 
-<!-- npu="910b" id26 -->
+<!-- npu="910b" id21 -->
 - 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品
     - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
     - U支持的数据类型为：int8_t、uint8_t。
-<!-- end id26 -->
+<!-- end id21 -->
 
-<!-- npu="310b" id27 -->
+<!-- npu="310b" id22 -->
 - 针对Atlas 200I/500 A2 推理产品
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
-<!-- end id27 -->
+<!-- end id22 -->
 
-<!-- npu="310p" id28 -->
-- 针对Atlas 推理系列产品AI Core
+<!-- npu="310p" id23 -->
+- 针对Atlas 推理系列产品 AI Core
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
-<!-- end id28 -->
+<!-- end id23 -->
 
-<!-- npu="910" id29 -->
+<!-- npu="910" id24 -->
 - 针对Atlas 训练系列产品
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
-<!-- end id29 -->
+<!-- end id24 -->
 
-<!-- npu="x90" id30 -->
+<!-- npu="x90" id25 -->
 - 针对Kirin X90
     - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
     - U支持的数据类型为：uint8_t。
-<!-- end id30 -->
+<!-- end id25 -->
 
-<!-- npu="9030" id31 -->
+<!-- npu="9030" id26 -->
 - 针对Kirin 9030
     - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
     - U支持的数据类型为：uint8_t。
-<!-- end id31 -->
+<!-- end id26 -->
 
 ## 返回值说明<a name="section128671456102513"></a>
 
@@ -207,23 +207,32 @@
 
 - dst按照小端顺序排序成二进制结果，对应src中相应位置的数据比较结果。
 
-<!-- npu="A3,910b,950" id10 -->
+<!-- npu="A3,910b,950" id27 -->
 - 当参数count或repeatTime取值为0时，该接口的行为如下：
-  <!-- npu="A3,910b" id11 -->
+  <!-- npu="A3,910b" id28 -->
   - 针对如下型号，该接口不会执行计算操作，不会对目的操作数进行写入，该接口将被视为NOP（空操作）。
-    <!-- npu="A3" id12 -->
+    <!-- npu="A3" id29 -->
     - Atlas A3 训练系列产品/Atlas A3 推理系列产品
-    <!-- end id12 -->
-    <!-- npu="910b" id13 -->
+    <!-- end id29 -->
+    <!-- npu="910b" id30 -->
     - Atlas A2 训练系列产品/Atlas A2 推理系列产品
-    <!-- end id13 -->
-  <!-- end id11 -->
-  <!-- npu="950" id14 -->
+    <!-- end id30 -->
+  <!-- end id28 -->
+  <!-- npu="950" id31 -->
   - 针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
-  <!-- end id14 -->
-<!-- end id10 -->
+  <!-- end id31 -->
+<!-- end id27 -->
 
-- **使用整个tensor参与计算的运算符重载功能，src0和src1需满足256字节对齐；使用tensor前n个数据参与计算的接口，设置count时，需要保证count个元素所占空间256字节对齐。**
+- 使用整个tensor参与计算的运算符重载功能，src0和src1需满足256字节对齐。
+<!-- npu="A3,910b" id32 -->
+- 针对如下型号，使用tensor前n个数据参与计算的接口，设置count时，需要保证count个元素所占空间256字节对齐。未对齐部分元素不参与计算，仅完整对齐块有效。
+  <!-- npu="A3" id33 -->
+  - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+  <!-- end id33 -->
+  <!-- npu="910b" id34 -->
+  - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+  <!-- end id34 -->
+<!-- end id32 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
@@ -262,7 +271,7 @@
                         11 11 11 11 11 11 11 11 13 13 13 13 13 13 13 13 17 17 17 17 17 17 17 17 19 19 19 19 19 19 19 19 ]
     输入数据src1Local：[ 2  2  2  2  2  2  2  2  4  4  4  4  4  4  4  4  6  6  6  6  6  6  6  6  8  8  8  8  8  8  8  8
                         10 10 10 10 10 10 10 10 12 12 12 12 12 12 12 12 14 14 14 14 14 14 14 14 16 16 16 16 16 16 16 16 ]
-    输出数据dstLocal： [ 0 127 127 127 0 0 0 0 ]
+    输出数据dstLocal： [ 0(0b00000000) 255(0b11111111) 255(0b11111111) 255(0b11111111) 0(0b00000000) 0(0b00000000) 0(0b00000000) 0(0b00000000) ]
 
     GT：大于
     输入数据src0Local：[ 2 3 5 7 11 13 17 19 ... ]
@@ -288,7 +297,7 @@
     NE：不等于
     输入数据src0Local：[ 2 3 5 7 11 13 17 19 ... ]
     输入数据src1Local：[ 2 4 6 8 10 12 14 16 ... ]
-    输出数据dstLocal： [ 126(0b11111110) ... ]
+    输出数据dstLocal： [ 254(0b11111110) ... ]
     ```
 
 - Tensor高维切分计算，mask逐bit模式
@@ -316,15 +325,15 @@
     输入数据src1Local：[ 2  2  2  2  2  2  2  2  4  4  4  4  4  4  4  4  6  6  6  6  6  6  6  6  8  8  8  8  8  8  8  8
                         10 10 10 10 10 10 10 10 12 12 12 12 12 12 12 12 14 14 14 14 14 14 14 14 16 16 16 16 16 16 16 16 ]
     输入数据masks：{ 858993459, 0 }
-    输出数据dstLocal： [ 51 51 51 51 0 0 0 0 ]
+    输出数据dstLocal： [ 51(0b00110011) 51(0b00110011) 51(0b00110011) 51(0b00110011) 0(0b00000000) 0(0b00000000) 0(0b00000000) 0(0b00000000) ]
     ```
 
 - Tensor高维切分计算，mask连续模式
 
     ```cpp
     // mask控制每次迭代参与计算的连续元素个数
-    // 例如，对float类型数据，每次迭代处理256B / sizeof(float) = 64个元素，因此mask可取值1至64
-    uint64_t mask = 28;
+    // 例如，对float类型数据，每次迭代处理256B / sizeof(float) = 64个元素
+    uint64_t mask = 64;
     // repeat: 1, dstBlkStride: 1, src0BlkStride: 1, src1BlkStride: 1, dstRepStride: 1, src0RepStride: 8, src1RepStride: 8
     AscendC::Compare(dstLocal, src0Local, src1Local, AscendC::CMPMODE::LT, mask, 1, { 1, 1, 1, 1, 8, 8 });
     AscendC::Compare(dstLocal, src0Local, src1Local, AscendC::CMPMODE::GT, mask, 1, { 1, 1, 1, 1, 8, 8 });
@@ -342,6 +351,6 @@
                         11 11 11 11 11 11 11 11 13 13 13 13 13 13 13 13 17 17 17 17 17 17 17 17 19 19 19 19 19 19 19 19 ]
     输入数据src1Local：[ 2  2  2  2  2  2  2  2  4  4  4  4  4  4  4  4  6  6  6  6  6  6  6  6  8  8  8  8  8  8  8  8
                         10 10 10 10 10 10 10 10 12 12 12 12 12 12 12 12 14 14 14 14 14 14 14 14 16 16 16 16 16 16 16 16 ]
-    输入数据mask：28
-    输出数据dstLocal： [ 127 127 127 16 0 0 0 0 ]
+    输入数据mask：64
+    输出数据dstLocal： [ 255(0b11111111) 255(0b11111111) 255(0b11111111) 255(0b11111111) 0(0b00000000) 0(0b00000000) 0(0b00000000) 0(0b00000000) ]
     ```

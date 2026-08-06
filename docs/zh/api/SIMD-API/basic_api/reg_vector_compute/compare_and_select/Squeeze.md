@@ -34,7 +34,7 @@
 
 ![Squeeze计算示意图](../../../../figures/reg_squeeze.png)
 
-特别地，当模板参数store取值为`GatherMaskMode::STORE_REG`时，`Squeeze`会将有效元素的总字节数存入AR特殊寄存器。此时配合使用[连续非对齐搬出](../reg_data_store/StoreUnAlign_continuous.md)的场景3接口（无需显式传入偏移量），`StoreUnAlign`会自动从AR寄存器读取有效字节数作为地址偏移，参考[调用示例](#调用示例)。
+特别地，当模板参数store取值为`GatherMaskMode::STORE_REG`时，`Squeeze`会将有效元素的总字节数存入[AR特殊寄存器](../../special_register_access/GetSpr.md#table37531617424)。此时配合使用[连续非对齐搬出](../reg_data_store/StoreUnAlign_continuous.md)的场景3接口（无需显式传入偏移量），`StoreUnAlign`会自动从AR寄存器读取有效字节数作为地址偏移，参考[调用示例](#调用示例)。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

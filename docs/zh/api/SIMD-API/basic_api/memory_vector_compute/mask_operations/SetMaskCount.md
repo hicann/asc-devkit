@@ -56,6 +56,10 @@ __aicore__ inline void SetMaskCount()
 
 - 设置为Counter模式的场景，需要在矢量计算使用完之后调用[SetMaskNorm](SetMaskNorm.md)将Mask模式恢复为Normal模式，以避免影响后续计算。
 
+<!-- npu="950" id10 -->
+- 针对Ascend 950PR/Ascend 950DT，Mask为软仿实现，Tensor前n个数据计算接口内部不会将Mask模式切换为Normal模式。若当前场景已通过本接口设置为Counter模式，接口调用后仍为Counter模式；后续计算需要使用Normal模式时，需手动调用[SetMaskNorm](SetMaskNorm.md)进行设置。
+<!-- end id10 -->
+
 ## 调用示例<a name="section837496171220"></a>
 
 请参考[Counter模式调用示例](SetVectorMask.md#section837496171220)。
