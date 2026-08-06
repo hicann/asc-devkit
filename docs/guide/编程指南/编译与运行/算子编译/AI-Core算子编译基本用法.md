@@ -27,7 +27,7 @@ AI Core SIMD的基本编译流程如下：Host代码使用Host编译器编译成
   // 或
   bisheng main.cpp add_kernel.asc -o main --npu-arch=dav-xxxx
   ```
-  > [!NOTE] 说明
+  > [!NOTE]说明
   > ${INSTALL_DIR}请替换为CANN软件安装后文件存储路径。以root用户安装为例，安装后文件默认存储路径为：/usr/local/Ascend/cann。
   
 - 单独编译
@@ -63,7 +63,7 @@ AI Core SIMD的基本编译流程如下：Host代码使用Host编译器编译成
   bisheng add_compute.o add_kernel.o main.o -o program
   ```
   
-  > [!NOTE] 说明
+  > [!NOTE]说明
   > ${INSTALL_DIR}请替换为CANN软件安装后文件存储路径。以root用户安装为例，安装后文件默认存储路径为：/usr/local/Ascend/cann。
   
 - 动态库编译

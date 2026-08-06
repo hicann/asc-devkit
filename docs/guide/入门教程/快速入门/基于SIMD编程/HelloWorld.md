@@ -17,7 +17,7 @@
         printf("Hello World!!!\n");
     }
     ```
-    > [!NOTE] 说明
+    > [!NOTE]说明
     > - SIMD算子的Kernel函数需要额外的修饰符，如[`__vector__`](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md)修饰符说明该算子仅在向量计算单元上执行。
     
 - **Host端代码实现**：
@@ -49,7 +49,7 @@
     ```
     执行本样例，将打印了核号和`Hello World!!!`信息。
 
-    > [!NOTE] 说明
+    > [!NOTE]说明
     >- 该样例支持如下型号：
     >    - Ascend 950PR/Ascend 950DT
     >    - Atlas A3 训练系列产品/Atlas A3 推理系列产品

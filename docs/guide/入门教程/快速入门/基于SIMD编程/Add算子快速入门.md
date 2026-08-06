@@ -27,7 +27,7 @@
         - 同步等待：调用 `aclrtSynchronizeStream` 或 `aclrtSynchronizeDevice`等待任务完成。
         - 数据搬出：使用 `aclrtMemcpy`将计算结果从Device Memory拷贝回Host Memory。
       
-      > [!NOTE] 说明
+      > [!NOTE]说明
       > - 请参见[Ascend-C概述与学习路径](../../Ascend-C概述与学习路径.md)技术附录章节，获取`Ascend C API参考`和`CANN运行时接口`链接，以查阅更多接口信息。
 
 - **算子代码实现**：
@@ -68,7 +68,7 @@
           asc_sync();
       }
       ```
-      > [!NOTE] 说明
+      > [!NOTE]说明
       > - 本Memory矢量计算示例支持以下型号：
       >     - Atlas A3训练系列产品/Atlas A3推理系列产品
       >     - Atlas A2训练系列产品/Atlas A2推理系列产品
@@ -108,7 +108,7 @@
           AscendC::PipeBarrier<PIPE_ALL>();
       }
       ```
-      > [!NOTE] 说明
+      > [!NOTE]说明
       > - 该样例支持以下型号：
       >     - Ascend 950PR/Ascend 950DT
       >     - Atlas A3训练系列产品/Atlas A3推理系列产品
@@ -185,7 +185,7 @@
   cmake ..;make -j;             # 编译工程
   ./c_api_add_example           # 运行样例
   ```
-  > [!NOTE] 说明
+  > [!NOTE]说明
   > - 编译选项`--npu-arch`用于指定NPU架构版本，`dav-`后面的数字为架构版本号，请替换为您实际使用的版本。各AI处理器型号与架构版本的对应关系请查阅[AI处理器型号和 \_\_NPU_ARCH\_\_ 的对应关系](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#table65291052154114)。
 
 此外，基于C/C++不同层级的编程接口和不同的矢量计算类型，Add算子有多种实现方式，具体可参考下表：
@@ -197,7 +197,7 @@
 | 基础API | 基于Tensor的Memory矢量计算 | [Memory矢量计算Add算子示例（同上述C++ Tensor实现样例）](../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md) | 匹配Tensor编程习惯，易于上手 |
 | 基础API | 基于Tensor的Reg矢量计算 | [Reg矢量计算Add算子示例](../../../../../examples/01_simd_cpp_api/00_introduction/04_reg_compute/add/README.md) | 匹配Tensor编程习惯，性能上限更高 |
 
-> [!NOTE] 说明
+> [!NOTE]说明
 > Ascend 950PR/Ascend 950DT新一代架构在传统[UB](../../../技术附录/概念原理和术语/术语表.md)缓存体系的基础上，开放了寄存器（Register）可编程能力，单个寄存器大小为256B。基于寄存器的矢量计算称为Reg矢量计算，而基于传统UB的矢量计算称为Memory矢量计算。
 
 若要深入理解Ascend C的SIMD与SIMT编程模型，请参阅[Ascend C编程模型概述](../../../编程指南/编程模型/编程模型概述.md)。
