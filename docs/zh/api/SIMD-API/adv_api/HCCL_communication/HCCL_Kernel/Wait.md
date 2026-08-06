@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-阻塞AI Core，非[细粒度通信](Iterate-99.md)时，等待handleId对应的通信任务完成，[细粒度通信](Iterate-99.md)时，等待handleId对应的[步长](../HCCL_Tiling/SetStepSize.md)长度的子通信任务完成。handleId调用Wait接口的顺序，须和Prepare接口一致。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)指定其在某一个核上运行。
+阻塞AI Core，非[细粒度通信](Iterate.md)时，等待handleId对应的通信任务完成，[细粒度通信](Iterate.md)时，等待handleId对应的[步长](../HCCL_Tiling/SetStepSize.md)长度的子通信任务完成。handleId调用Wait接口的顺序，须和Prepare接口一致。该接口默认在所有核上工作，用户也可以在调用前通过[GetBlockIdx](../../../basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)指定其在某一个核上运行。
 
 ## 函数原型
 
@@ -50,7 +50,7 @@ __aicore__ inline int32_t Wait(HcclHandle handleId)
 -   调用本接口前确保已调用过[InitV2](InitV2.md)和[SetCcTilingV2](SetCcTilingV2.md)接口。
 -   入参handleId只能使用Prepare原语对应接口的返回值。
 -   本接口在AIC核或者AIV核上调用必须与对应的Prepare接口的调用核保持一致。
--   非[细粒度通信](Iterate-99.md)时，本接口的调用次数应该与Prepare的repeat次数一致，[细粒度通信](Iterate-99.md)时，本接口的调用次数应该与通信任务的总步骤数/步长\*Prepare的repeat次数一致。handleId调用Wait接口的顺序，必须和Prepare接口一致。
+-   非[细粒度通信](Iterate.md)时，本接口的调用次数应该与Prepare的repeat次数一致，[细粒度通信](Iterate.md)时，本接口的调用次数应该与通信任务的总步骤数/步长\*Prepare的repeat次数一致。handleId调用Wait接口的顺序，必须和Prepare接口一致。
 
 ## 调用示例
 

@@ -61,7 +61,7 @@ __aicore__ inline TBufPool();
 </tr>
 <tr id="row12501859799"><td class="cellrowborder" valign="top" width="14.099999999999998%" headers="mcps1.2.3.1.1 "><p id="p1650113599915"><a name="p1650113599915"></a><a name="p1650113599915"></a>bufIDSize</p>
 </td>
-<td class="cellrowborder" valign="top" width="85.9%" headers="mcps1.2.3.1.2 "><p id="p1450175912920"><a name="p1450175912920"></a><a name="p1450175912920"></a>TBufPool可分配Buffer数量，默认为4，不超过16。对于非共享模式的资源分配，在本TBufPool上再次申请TBufPool时，申请的bufIDSize不能超过原TBufPool剩余可用的Buffer数量；对于共享模式的资源分配，在本TBufPool上再次申请TBufPool时，申请的bufIDSize不能超过原TBufPool设置的Buffer数量。非共享模式和共享模式的说明请见<a href="./InitBufPool-55.md#功能说明">InitBufPool功能说明</a>。</p>
+<td class="cellrowborder" valign="top" width="85.9%" headers="mcps1.2.3.1.2 "><p id="p1450175912920"><a name="p1450175912920"></a><a name="p1450175912920"></a>TBufPool可分配Buffer数量，默认为4，不超过16。对于非共享模式的资源分配，在本TBufPool上再次申请TBufPool时，申请的bufIDSize不能超过原TBufPool剩余可用的Buffer数量；对于共享模式的资源分配，在本TBufPool上再次申请TBufPool时，申请的bufIDSize不能超过原TBufPool设置的Buffer数量。非共享模式和共享模式的说明请见<a href="./InitBufPool.md#功能说明">InitBufPool功能说明</a>。</p>
 </td>
 </tr>
 </tbody>

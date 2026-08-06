@@ -1,4 +1,4 @@
-# DeQue<a name="ZH-CN_TOPIC_0000002161314645"></a>
+# EnQue<a name="ZH-CN_TOPIC_0000002126034674"></a>
 
 ## 产品支持情况<a name="section1550532418810"></a>
 
@@ -28,16 +28,18 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-将tensor从队列中取出，用于后续处理。
+将tensor push到队列。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
 ```cpp
 template <typename T>
-__aicore__ inline LocalTensor<T> DeQue()
+__aicore__ inline bool EnQue(const LocalTensor<T>& tensor)
 ```
 
 ## 参数说明<a name="section622mcpsimp"></a>
+
+**表1**  模板参数说明
 
 <a name="table1550165916920"></a>
 <table><thead align="left"><tr id="row115015591391"><th class="cellrowborder" valign="top" width="12.139999999999999%" id="mcps1.2.3.1.1"><p id="p12501159099"><a name="p12501159099"></a><a name="p12501159099"></a>参数名</p>
@@ -54,14 +56,36 @@ __aicore__ inline LocalTensor<T> DeQue()
 </tbody>
 </table>
 
+**表2**  接口参数说明
+
+<a name="table181221135162517"></a>
+<table><thead align="left"><tr id="row151221135112520"><th class="cellrowborder" valign="top" width="12.471247124712471%" id="mcps1.2.4.1.1"><p id="p1353754532512"><a name="p1353754532512"></a><a name="p1353754532512"></a>参数名称</p>
+</th>
+<th class="cellrowborder" valign="top" width="12.591259125912593%" id="mcps1.2.4.1.2"><p id="p1253774516259"><a name="p1253774516259"></a><a name="p1253774516259"></a>输入/输出</p>
+</th>
+<th class="cellrowborder" valign="top" width="74.93749374937492%" id="mcps1.2.4.1.3"><p id="p1653710452259"><a name="p1653710452259"></a><a name="p1653710452259"></a>含义</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="row12122235102511"><td class="cellrowborder" valign="top" width="12.471247124712471%" headers="mcps1.2.4.1.1 "><p id="p1537164502512"><a name="p1537164502512"></a><a name="p1537164502512"></a>tensor</p>
+</td>
+<td class="cellrowborder" valign="top" width="12.591259125912593%" headers="mcps1.2.4.1.2 "><p id="p1653714592515"><a name="p1653714592515"></a><a name="p1653714592515"></a>输入</p>
+</td>
+<td class="cellrowborder" valign="top" width="74.93749374937492%" headers="mcps1.2.4.1.3 "><p id="p165371945142512"><a name="p165371945142512"></a><a name="p165371945142512"></a>指定的tensor。</p>
+</td>
+</tr>
+</tbody>
+</table>
+
 ## 约束说明<a name="section633mcpsimp"></a>
 
-无
+无。
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 
-从队列中取出的LocalTensor。
+-   true - 表示Tensor加入Queue成功
+-   false - 表示Queue已满，入队失败
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
-参考[调用示例](AllocTensor-60.md#section642mcpsimp)。
+参考[调用示例](AllocTensor.md#section642mcpsimp)。

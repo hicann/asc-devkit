@@ -37,7 +37,7 @@ this->Attr("negative_slope")
     .Float(0.0f);
 ```
 
-`OPTIONAL`表示调用算子时可以不显式传入该属性；未传入时，使用`Float(0.0f)`设置的默认值。属性在原型中的声明位置和基础用法见[算子原型定义](./算子原型定义.md)；`AttrType`以及`Bool`、`Float`、`Int`等属性类型接口的参数和默认值约束见[OpAttrDef](../../../../../api/Utils-API/prototype_register_management/OpAttrDef/OpAttrDef-272.md)。
+`OPTIONAL`表示调用算子时可以不显式传入该属性；未传入时，使用`Float(0.0f)`设置的默认值。属性在原型中的声明位置和基础用法见[算子原型定义](./算子原型定义.md)；`AttrType`以及`Bool`、`Float`、`Int`等属性类型接口的参数和默认值约束见[OpAttrDef](../../../../../api/Utils-API/prototype_register_management/OpAttrDef/OpAttrDef_functions.md)。
 
 ## 在TilingData中增加字段
 

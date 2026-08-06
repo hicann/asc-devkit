@@ -1,6 +1,6 @@
 # Exp接口
 
--   **[Exp](Exp-81.md)**
+-   **[Exp](Exp.md)**
 
 -   **[GetExpMaxMinTmpSize](GetExpMaxMinTmpSize.md)**
 

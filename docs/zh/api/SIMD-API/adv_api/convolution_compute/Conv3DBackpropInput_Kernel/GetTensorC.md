@@ -24,13 +24,13 @@
 
 ## 功能说明
 
-在完成Iterate操作后调用本接口，获取结果矩阵块，完成数据从L0C到GM的搬运。此接口与[Iterate](../Conv3DBackpropInput_Kernel/Iterate-111.md)接口配合使用，用于在Iterate执行迭代计算后，获取结果矩阵。
+在完成Iterate操作后调用本接口，获取结果矩阵块，完成数据从L0C到GM的搬运。此接口与[Iterate](Iterate.md)接口配合使用，用于在Iterate执行迭代计算后，获取结果矩阵。
 
 ## 函数原型
 
 ```
 template <bool sync = true>
-__aicore__ inline void GetTensorC(const AscendC::GlobalTensor<DstT>& output, uint8_t enAtomic = 1, bool enSequentialWrite = false)
+__aicore__ inline void GetTensorC(const AscendC::GlobalTensor<DstT>& output, uint8_t enAtomic = 0, bool enSequentialWrite = false)
 ```
 
 ## 参数说明
@@ -66,7 +66,7 @@ while (Iterate()) {
 ## 调用示例
 
 ```
-while (gradWeight_.Iterate()) {
-    gradWeight_.GetTensorC(gradWeightGm_[offsetC_]);
+while (gradInput_.Iterate()) {
+    gradInput_.GetTensorC(gradInputGm_[offsetC_]);
 }
 ```

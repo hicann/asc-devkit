@@ -1,6 +1,6 @@
 # Matmul Tiling类使用说明
 
-Ascend C提供一组Matmul Tiling API，方便用户获取[Matmul kernel计算](../Matmul_Kernel/Matmul_usage.md#li5878185413338)时所需的Tiling参数。用户只需要传入A/B/C矩阵的Position位置、Format格式和DType数据类型等信息，调用API接口，即可获取到[Init](../Matmul_Kernel/Init-85.md)中TCubeTiling结构体中的相关参数。
+Ascend C提供一组Matmul Tiling API，方便用户获取[Matmul kernel计算](../Matmul_Kernel/Matmul_usage.md#li5878185413338)时所需的Tiling参数。用户只需要传入A/B/C矩阵的Position位置、Format格式和DType数据类型等信息，调用API接口，即可获取到[Init](../Matmul_Kernel/Init.md)中TCubeTiling结构体中的相关参数。
 
 Matmul Tiling API分为Matmul单核Tiling接口、多核Tiling接口和BatchMatmul Tiling接口，分别用于Matmul单核计算、多核计算和BatchMatmul计算场景。获取Tiling参数的流程如下：
 

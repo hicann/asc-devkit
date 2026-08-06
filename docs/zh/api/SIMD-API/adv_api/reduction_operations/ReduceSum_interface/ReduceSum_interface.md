@@ -1,6 +1,6 @@
 # ReduceSum接口
 
--   **[ReduceSum](ReduceSum-90.md)**
+-   **[ReduceSum](ReduceSum.md)**
 
 -   **[GetReduceSumMaxMinTmpSize](GetReduceSumMaxMinTmpSize.md)**
 

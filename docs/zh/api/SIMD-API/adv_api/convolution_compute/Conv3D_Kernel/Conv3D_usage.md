@@ -156,7 +156,7 @@ Kernel侧实现Conv3D运算的步骤概括为：
 
 4.  完成3D卷积操作。
 
-    调用[IterateAll](IterateAll-103.md)完成单核上所有数据的计算。
+    调用[IterateAll](IterateAll.md)完成单核上所有数据的计算。
 
     ```
     for (uint64_t batchIter = 0; batchIter < singleCoreBatch; ++batchIter) {

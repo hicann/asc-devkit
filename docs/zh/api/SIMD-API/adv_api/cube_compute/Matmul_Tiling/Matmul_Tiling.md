@@ -18,11 +18,11 @@
 
 -   **[SetBiasType](SetBiasType.md)**
 
--   **[SetSingleShape](SetSingleShape-86.md)**
+-   **[SetSingleShape](SetSingleShape.md)**
 
 -   **[SetShape](SetShape.md)**
 
--   **[SetOrgShape](SetOrgShape-87.md)**
+-   **[SetOrgShape](SetOrgShape.md)**
 
 -   **[SetFixSplit](SetFixSplit.md)**
 
@@ -68,13 +68,13 @@
 
 -   **[SetCLayout](SetCLayout.md)**
 
--   **[SetBatchNum](SetBatchNum-88.md)**
+-   **[SetBatchNum](SetBatchNum.md)**
 
 -   **[SetBatchInfoForNormal](SetBatchInfoForNormal.md)**
 
 -   **[SetMatmulConfigParams](SetMatmulConfigParams.md)**
 
--   **[SetBias](SetBias-89.md)**
+-   **[SetBias](SetBias.md)**
 
 -   **[SetSplitK](SetSplitK.md)**
 

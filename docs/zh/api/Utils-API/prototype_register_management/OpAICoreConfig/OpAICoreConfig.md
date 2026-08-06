@@ -2,9 +2,9 @@
 
 -   **[OpAICoreConfig构造函数](OpAICoreConfig_constructor.md)**  
 
--   **[Input](Input-282.md)**  
+-   **[Input](Input.md)**  
 
--   **[Output](Output-283.md)**  
+-   **[Output](Output.md)**  
 
 -   **[DynamicCompileStaticFlag](DynamicCompileStaticFlag.md)**  
 
@@ -18,7 +18,7 @@
 
 -   **[PrecisionReduceFlag](PrecisionReduceFlag.md)**  
 
--   **[ExtendCfgInfo](ExtendCfgInfo-284.md)**  
+-   **[ExtendCfgInfo](ExtendCfgInfo.md)**  
 
--   **[operator =](operator-285.md)**  
+-   **[operator =](operator.md)**  
 

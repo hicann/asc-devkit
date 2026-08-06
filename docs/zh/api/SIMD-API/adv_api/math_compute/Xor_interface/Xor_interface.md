@@ -1,6 +1,6 @@
 # Xor接口
 
--   **[Xor](Xor-82.md)**
+-   **[Xor](Xor.md)**
 
 -   **[GetXorMaxMinTmpSize](GetXorMaxMinTmpSize.md)**
 

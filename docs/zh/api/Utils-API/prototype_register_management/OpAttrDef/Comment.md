@@ -37,7 +37,7 @@ OpAttrDef &Comment(const char *comment)
 
 ## 返回值说明<a name="zh-cn_topic_0000002055278364_zh-cn_topic_0000001526111046_zh-cn_topic_0000001525424352_section25791320141317"></a>
 
-算子属性定义，OpAttrDef请参考[OpAttrDef](OpAttrDef-272.md)。
+算子属性定义，OpAttrDef请参考[OpAttrDef](OpAttrDef_functions.md)。
 
 ## 约束说明<a name="zh-cn_topic_0000002055278364_zh-cn_topic_0000001526111046_zh-cn_topic_0000001525424352_section19165124931511"></a>
 

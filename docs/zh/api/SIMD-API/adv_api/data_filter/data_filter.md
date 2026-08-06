@@ -1,6 +1,6 @@
 # 数据过滤
 
--   **[Select](Select-95.md)**
+-   **[Select](Select.md)**
 
 -   **[GetSelectMaxMinTmpSize](GetSelectMaxMinTmpSize.md)**
 

@@ -1,6 +1,6 @@
 # ReduceMin接口
 
--   **[ReduceMin](ReduceMin-92.md)**
+-   **[ReduceMin](ReduceMin.md)**
 
 -   **[GetReduceMinMaxMinTmpSize](GetReduceMinMaxMinTmpSize.md)**
 

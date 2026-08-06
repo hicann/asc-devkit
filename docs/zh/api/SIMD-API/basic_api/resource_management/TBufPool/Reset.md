@@ -52,4 +52,4 @@ __aicore__ inline void Reset()
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
-参考[InitBufPool](InitBufPool-55.md)。
+参考[InitBufPool](InitBufPool.md)。

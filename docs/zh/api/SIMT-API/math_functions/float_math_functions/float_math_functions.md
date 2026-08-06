@@ -174,9 +174,9 @@
 
 -   **[truncf](truncf.md)**
 
--   **[isfinite](isfinite1.md)**
+-   **[isfinite](isfinite.md)**
 
--   **[isnan](isnan1.md)**
+-   **[isnan](isnan.md)**
 
--   **[isinf](isinf1.md)**
+-   **[isinf](isinf.md)**
 

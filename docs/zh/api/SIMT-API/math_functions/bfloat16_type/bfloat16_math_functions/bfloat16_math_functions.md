@@ -1,34 +1,34 @@
 # bfloat16类型数学库函数
 
--   **[htanh](htanh-176.md)**
+-   **[htanh](htanh.md)**
 
--   **[hexp](hexp-177.md)**
+-   **[hexp](hexp.md)**
 
--   **[hexp2](hexp2-178.md)**
+-   **[hexp2](hexp2.md)**
 
--   **[hexp10](hexp10-179.md)**
+-   **[hexp10](hexp10.md)**
 
--   **[hlog](hlog-180.md)**
+-   **[hlog](hlog.md)**
 
--   **[hlog2](hlog2-181.md)**
+-   **[hlog2](hlog2.md)**
 
--   **[hlog10](hlog10-182.md)**
+-   **[hlog10](hlog10.md)**
 
--   **[hcos](hcos-183.md)**
+-   **[hcos](hcos.md)**
 
--   **[hsin](hsin-184.md)**
+-   **[hsin](hsin.md)**
 
--   **[hsqrt](hsqrt-185.md)**
+-   **[hsqrt](hsqrt.md)**
 
--   **[hrsqrt](hrsqrt-186.md)**
+-   **[hrsqrt](hrsqrt.md)**
 
--   **[hrcp](hrcp-187.md)**
+-   **[hrcp](hrcp.md)**
 
--   **[hrint](hrint-188.md)**
+-   **[hrint](hrint.md)**
 
--   **[hfloor](hfloor-189.md)**
+-   **[hfloor](hfloor.md)**
 
--   **[hceil](hceil-190.md)**
+-   **[hceil](hceil.md)**
 
--   **[htrunc](htrunc-191.md)**
+-   **[htrunc](htrunc.md)**
 

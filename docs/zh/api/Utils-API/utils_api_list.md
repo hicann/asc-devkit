@@ -4,13 +4,13 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [max](cpp_stdlib/algorithms/max-267.md) | 比较相同数据类型的两个数中的最大值。 |
-| [min](cpp_stdlib/algorithms/min-268.md) | 比较相同数据类型的两个数中的最小值。 |
-| [abs](cpp_stdlib/math_functions/abs1.md) | 获取输入数据的绝对值。 |
-| [sqrt](cpp_stdlib/math_functions/sqrt1.md) | 计算输入数据的平方根。 |
+| [max](cpp_stdlib/algorithms/max.md) | 比较相同数据类型的两个数中的最大值。 |
+| [min](cpp_stdlib/algorithms/min.md) | 比较相同数据类型的两个数中的最小值。 |
+| [abs](cpp_stdlib/math_functions/abs.md) | 获取输入数据的绝对值。 |
+| [sqrt](cpp_stdlib/math_functions/sqrt.md) | 计算输入数据的平方根。 |
 | [integer_sequence](cpp_stdlib/general_utils/integer_sequence.md) | 用于生成一个整数序列。 |
 | [tuple](cpp_stdlib/container_functions/tuple.md) | 允许存储多个不同类型元素的容器。 |
-| [get](cpp_stdlib/container_functions/get1.md) | 从tuple容器中提取指定位置的元素。 |
+| [get](cpp_stdlib/container_functions/get.md) | 从tuple容器中提取指定位置的元素。 |
 | [make_tuple](cpp_stdlib/container_functions/make_tuple.md) | 用于便捷地创建tuple对象。 |
 | [is_convertible](cpp_stdlib/type_traits/is_convertible.md) | 在程序编译时判断两个类型之间是否可以进行隐式转换。 |
 | [is_base_of](cpp_stdlib/type_traits/is_base_of.md) | 在程序编译时判断一个类型是否为另一个类型的基类。 |
@@ -82,7 +82,7 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [printf](tuning_interface/printf.md) | 在算子Kernel侧的实现代码中，需要输出日志信息时，调用printf接口打印相关内容。 |
-| [assert](tuning_interface/assert-291.md) | 本接口在SIMT VF调试场景下提供assert断言功能。在算子Kernel侧的SIMT VF实现代码中，如果assert的内部条件判断不为真，则会输出assert条件，并将输入的信息格式化打印在屏幕上。 |
+| [assert](tuning_interface/assert.md) | 本接口在SIMT VF调试场景下提供assert断言功能。在算子Kernel侧的SIMT VF实现代码中，如果assert的内部条件判断不为真，则会输出assert条件，并将输入的信息格式化打印在屏幕上。 |
 | [__trap](tuning_interface/__trap.md) | 在SIMT VF实现代码中调用此接口会中断算子的运行。 |
 | [clock](tuning_interface/clock.md) | 本接口在SIMT VF调试场景中提供Clock时间戳功能，用于记录从程序启动到接口调用时刻所经历的时钟周期数（Cycle Count），便于精确分析执行延迟和性能瓶颈。 |
 | [asc\_dump](tuning_interface/asc_dump.md) | 将对应内存上的数据打印出来，同时支持打印自定义的附加信息（仅支持uint32\_t类型的信息），比如打印当前行号等。 |

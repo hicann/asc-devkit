@@ -1,6 +1,6 @@
 # 算法
 
--   **[max](max-267.md)**
+-   **[max](max.md)**
 
--   **[min](min-268.md)**
+-   **[min](min.md)**
 

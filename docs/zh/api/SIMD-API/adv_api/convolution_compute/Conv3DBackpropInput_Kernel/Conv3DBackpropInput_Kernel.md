@@ -2,19 +2,19 @@
 
 -   **[Conv3DBackpropInput使用说明](Conv3DBackpropInput_usage.md)**
 
--   **[Init](Init-108.md)**
+-   **[Init](Init.md)**
 
 -   **[SetGradOutput](SetGradOutput.md)**
 
--   **[SetWeight](SetWeight-109.md)**
+-   **[SetWeight](SetWeight.md)**
 
--   **[SetSingleShape](SetSingleShape-110.md)**
+-   **[SetSingleShape](SetSingleShape.md)**
 
 -   **[SetStartPosition](SetStartPosition.md)**
 
--   **[Iterate](Iterate-111.md)**
+-   **[Iterate](Iterate.md)**
 
--   **[GetTensorC](GetTensorC-112.md)**
+-   **[GetTensorC](GetTensorC.md)**
 
--   **[End](End-113.md)**
+-   **[End](End.md)**
 

@@ -114,7 +114,7 @@ Kernel侧实现Conv3DBackpropInput求解反向传播误差运算的步骤概括�
 
 4.  完成卷积反向操作。
 
-    调用[Iterate](Iterate-111.md)完成单次迭代计算，叠加while循环完成单核全量数据的计算。Iterate方式，可以自行控制迭代次数，完成所需数据量的计算。
+    调用[Iterate](Iterate.md)完成单次迭代计算，叠加while循环完成单核全量数据的计算。Iterate方式，可以自行控制迭代次数，完成所需数据量的计算。
 
     ```
     while (gradInput_.Iterate()) {

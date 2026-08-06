@@ -2,7 +2,7 @@
 
 -   **[tuple](tuple.md)**
 
--   **[get](get1.md)**
+-   **[get](get.md)**
 
 -   **[make\_tuple](make_tuple.md)**
 

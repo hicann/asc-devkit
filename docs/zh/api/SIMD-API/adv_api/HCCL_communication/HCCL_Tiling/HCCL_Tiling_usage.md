@@ -40,7 +40,7 @@ HCCL Tiling API获取Tiling参数的流程如下：
     | [SetSkipBufferWindowCopy](SetSkipBufferWindowCopy.md) | 设置通信算法获取输入数据的位置。 |
     | [SetDebugMode](SetDebugMode.md) | 设置调测模式。 |
 
-3.  调用[GetTiling](GetTiling-100.md)接口，获取Tiling信息。
+3.  调用[GetTiling](GetTiling.md)接口，获取Tiling信息。
 
     ```
     mc2CcTilingConfig.GetTiling(tiling->mc2InitTiling); // tiling为算子组装的TilingData结构体

@@ -325,58 +325,58 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [__habs](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__habs-150.md) | 获取输入数据的绝对值。 |
-| [__hfma](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hfma-151.md) | 对输入数据x、y、z，计算x与y相乘加上z的结果。 |
-| [__hadd](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hadd-152.md) | 计算两个bfloat16类型数据的相加结果，并遵循CAST_RINT模式舍入。 |
-| [__hsub](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hsub-153.md) | 计算两个bfloat16类型数据的相减结果，并遵循CAST_RINT模式舍入。 |
-| [__hmul](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hmul-154.md) | 计算两个bfloat16类型数据的相乘结果，并遵循CAST_RINT模式舍入。 |
-| [__hdiv](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hdiv-155.md) | 计算两个bfloat16类型数据的相除结果，并遵循CAST_RINT模式舍入。 |
-| [__hneg](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hneg-156.md) | 获取输入bfloat16类型数据的负值。 |
-| [__hfma_relu](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hfma_relu-157.md) | 对输入bfloat16类型数据x、y、z，计算x与y相乘加上z的结果，并遵循CAST_RINT模式舍入。负数结果置为0。 |
+| [__habs](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__habs.md) | 获取输入数据的绝对值。 |
+| [__hfma](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hfma.md) | 对输入数据x、y、z，计算x与y相乘加上z的结果。 |
+| [__hadd](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hadd.md) | 计算两个bfloat16类型数据的相加结果，并遵循CAST_RINT模式舍入。 |
+| [__hsub](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hsub.md) | 计算两个bfloat16类型数据的相减结果，并遵循CAST_RINT模式舍入。 |
+| [__hmul](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hmul.md) | 计算两个bfloat16类型数据的相乘结果，并遵循CAST_RINT模式舍入。 |
+| [__hdiv](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hdiv.md) | 计算两个bfloat16类型数据的相除结果，并遵循CAST_RINT模式舍入。 |
+| [__hneg](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hneg.md) | 获取输入bfloat16类型数据的负值。 |
+| [__hfma_relu](../math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hfma_relu.md) | 对输入bfloat16类型数据x、y、z，计算x与y相乘加上z的结果，并遵循CAST_RINT模式舍入。负数结果置为0。 |
 
 **表16**  bfloat16类型比较函数
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [__hmax](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmax-158.md) | 获取两个输入数据中的最大值。 |
-| [__hmin](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmin-159.md) | 获取两个输入数据中的最小值。 |
-| [__hisnan](../math_functions/bfloat16_type/bfloat16_compare_functions/__hisnan-160.md) | 判断浮点数是否为nan。 |
-| [__hisinf](../math_functions/bfloat16_type/bfloat16_compare_functions/__hisinf-161.md) | 判断浮点数是否为无穷。 |
-| [__heq](../math_functions/bfloat16_type/bfloat16_compare_functions/__heq-162.md) | 比较两个bfloat16类型数据是否相等，相等时返回true。 |
-| [__hne](../math_functions/bfloat16_type/bfloat16_compare_functions/__hne-163.md) | 比较两个bfloat16类型数据是否不相等，不相等时返回true。 |
-| [__hle](../math_functions/bfloat16_type/bfloat16_compare_functions/__hle-164.md) | 比较两个bfloat16类型数据，仅当第一个数小于或等于第二个数时返回true。 |
-| [__hge](../math_functions/bfloat16_type/bfloat16_compare_functions/__hge-165.md) | 比较两个bfloat16类型数据，仅当第一个数大于或等于第二个数时返回true。 |
-| [__hlt](../math_functions/bfloat16_type/bfloat16_compare_functions/__hlt-166.md) | 比较两个bfloat16类型数据，仅当第一个数小于第二个数时返回true。 |
-| [__hgt](../math_functions/bfloat16_type/bfloat16_compare_functions/__hgt-167.md) | 比较两个bfloat16类型数据，仅当第一个数大于第二个数时返回true。 |
-| [__hequ](../math_functions/bfloat16_type/bfloat16_compare_functions/__hequ-168.md) | 比较两个bfloat16类型数据是否相等，相等时返回true。若任一输入为nan，返回true。 |
-| [__hneu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hneu-169.md) | 比较两个bfloat16类型数据是否不相等，不相等时返回true。若任一输入为nan，返回true。 |
-| [__hleu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hleu-170.md) | 比较两个bfloat16类型数据，当第一个数小于或等于第二个数时返回true。若任一输入为nan，返回true。 |
-| [__hgeu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hgeu-171.md) | 比较两个bfloat16类型数据，当第一个数大于或等于第二个数时返回true。若任一输入为nan，返回true。 |
-| [__hltu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hltu-172.md) | 比较两个bfloat16类型数据，当第一个数小于第二个数时返回true。若任一输入为nan，返回true。 |
-| [__hgtu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hgtu-173.md) | 比较两个bfloat16类型数据，当第一个数大于第二个数时返回true。若任一输入为nan，返回true。 |
-| [__hmax_nan](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmax_nan-174.md) | 获取两个输入数据中的最大值。任一输入为nan时返回nan。 |
-| [__hmin_nan](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmin_nan-175.md) | 获取两个输入数据中的最小值。任一输入为nan时返回nan。 |
+| [__hmax](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmax.md) | 获取两个输入数据中的最大值。 |
+| [__hmin](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmin.md) | 获取两个输入数据中的最小值。 |
+| [__hisnan](../math_functions/bfloat16_type/bfloat16_compare_functions/__hisnan.md) | 判断浮点数是否为nan。 |
+| [__hisinf](../math_functions/bfloat16_type/bfloat16_compare_functions/__hisinf.md) | 判断浮点数是否为无穷。 |
+| [__heq](../math_functions/bfloat16_type/bfloat16_compare_functions/__heq.md) | 比较两个bfloat16类型数据是否相等，相等时返回true。 |
+| [__hne](../math_functions/bfloat16_type/bfloat16_compare_functions/__hne.md) | 比较两个bfloat16类型数据是否不相等，不相等时返回true。 |
+| [__hle](../math_functions/bfloat16_type/bfloat16_compare_functions/__hle.md) | 比较两个bfloat16类型数据，仅当第一个数小于或等于第二个数时返回true。 |
+| [__hge](../math_functions/bfloat16_type/bfloat16_compare_functions/__hge.md) | 比较两个bfloat16类型数据，仅当第一个数大于或等于第二个数时返回true。 |
+| [__hlt](../math_functions/bfloat16_type/bfloat16_compare_functions/__hlt.md) | 比较两个bfloat16类型数据，仅当第一个数小于第二个数时返回true。 |
+| [__hgt](../math_functions/bfloat16_type/bfloat16_compare_functions/__hgt.md) | 比较两个bfloat16类型数据，仅当第一个数大于第二个数时返回true。 |
+| [__hequ](../math_functions/bfloat16_type/bfloat16_compare_functions/__hequ.md) | 比较两个bfloat16类型数据是否相等，相等时返回true。若任一输入为nan，返回true。 |
+| [__hneu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hneu.md) | 比较两个bfloat16类型数据是否不相等，不相等时返回true。若任一输入为nan，返回true。 |
+| [__hleu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hleu.md) | 比较两个bfloat16类型数据，当第一个数小于或等于第二个数时返回true。若任一输入为nan，返回true。 |
+| [__hgeu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hgeu.md) | 比较两个bfloat16类型数据，当第一个数大于或等于第二个数时返回true。若任一输入为nan，返回true。 |
+| [__hltu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hltu.md) | 比较两个bfloat16类型数据，当第一个数小于第二个数时返回true。若任一输入为nan，返回true。 |
+| [__hgtu](../math_functions/bfloat16_type/bfloat16_compare_functions/__hgtu.md) | 比较两个bfloat16类型数据，当第一个数大于第二个数时返回true。若任一输入为nan，返回true。 |
+| [__hmax_nan](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmax_nan.md) | 获取两个输入数据中的最大值。任一输入为nan时返回nan。 |
+| [__hmin_nan](../math_functions/bfloat16_type/bfloat16_compare_functions/__hmin_nan.md) | 获取两个输入数据中的最小值。任一输入为nan时返回nan。 |
 
 **表17**  bfloat16数学库函数
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [htanh](../math_functions/bfloat16_type/bfloat16_math_functions/htanh-176.md) | 获取输入数据的双曲正切值。 |
-| [hexp](../math_functions/bfloat16_type/bfloat16_math_functions/hexp-177.md) | 指定输入x，获取e的x次方。 |
-| [hexp2](../math_functions/bfloat16_type/bfloat16_math_functions/hexp2-178.md) | 指定输入x，获取2的x次方。 |
-| [hexp10](../math_functions/bfloat16_type/bfloat16_math_functions/hexp10-179.md) | 指定输入x，获取10的x次方。 |
-| [hlog](../math_functions/bfloat16_type/bfloat16_math_functions/hlog-180.md) | 获取以e为底，输入数据的对数。 |
-| [hlog2](../math_functions/bfloat16_type/bfloat16_math_functions/hlog2-181.md) | 获取以2为底，输入数据的对数。 |
-| [hlog10](../math_functions/bfloat16_type/bfloat16_math_functions/hlog10-182.md) | 获取以10为底，输入数据的对数。 |
-| [hcos](../math_functions/bfloat16_type/bfloat16_math_functions/hcos-183.md) | 获取输入数据的三角函数余弦值。 |
-| [hsin](../math_functions/bfloat16_type/bfloat16_math_functions/hsin-184.md) | 获取输入数据的三角函数正弦值。 |
-| [hsqrt](../math_functions/bfloat16_type/bfloat16_math_functions/hsqrt-185.md) | 获取输入数据x的平方根。 |
-| [hrsqrt](../math_functions/bfloat16_type/bfloat16_math_functions/hrsqrt-186.md) | 获取输入数据x的平方根的倒数。 |
-| [hrcp](../math_functions/bfloat16_type/bfloat16_math_functions/hrcp-187.md) | 获取输入数据x的倒数。 |
-| [hrint](../math_functions/bfloat16_type/bfloat16_math_functions/hrint-188.md) | 获取与输入数据最接近的整数，若存在两个同样接近的整数，则获取其中的偶数。 |
-| [hfloor](../math_functions/bfloat16_type/bfloat16_math_functions/hfloor-189.md) | 获取小于或等于输入数据的最大整数值。 |
-| [hceil](../math_functions/bfloat16_type/bfloat16_math_functions/hceil-190.md) | 获取大于或等于输入数据的最小整数值。 |
-| [htrunc](../math_functions/bfloat16_type/bfloat16_math_functions/htrunc-191.md) | 获取对输入数据的浮点数截断后的整数。 |
+| [htanh](../math_functions/bfloat16_type/bfloat16_math_functions/htanh.md) | 获取输入数据的双曲正切值。 |
+| [hexp](../math_functions/bfloat16_type/bfloat16_math_functions/hexp.md) | 指定输入x，获取e的x次方。 |
+| [hexp2](../math_functions/bfloat16_type/bfloat16_math_functions/hexp2.md) | 指定输入x，获取2的x次方。 |
+| [hexp10](../math_functions/bfloat16_type/bfloat16_math_functions/hexp10.md) | 指定输入x，获取10的x次方。 |
+| [hlog](../math_functions/bfloat16_type/bfloat16_math_functions/hlog.md) | 获取以e为底，输入数据的对数。 |
+| [hlog2](../math_functions/bfloat16_type/bfloat16_math_functions/hlog2.md) | 获取以2为底，输入数据的对数。 |
+| [hlog10](../math_functions/bfloat16_type/bfloat16_math_functions/hlog10.md) | 获取以10为底，输入数据的对数。 |
+| [hcos](../math_functions/bfloat16_type/bfloat16_math_functions/hcos.md) | 获取输入数据的三角函数余弦值。 |
+| [hsin](../math_functions/bfloat16_type/bfloat16_math_functions/hsin.md) | 获取输入数据的三角函数正弦值。 |
+| [hsqrt](../math_functions/bfloat16_type/bfloat16_math_functions/hsqrt.md) | 获取输入数据x的平方根。 |
+| [hrsqrt](../math_functions/bfloat16_type/bfloat16_math_functions/hrsqrt.md) | 获取输入数据x的平方根的倒数。 |
+| [hrcp](../math_functions/bfloat16_type/bfloat16_math_functions/hrcp.md) | 获取输入数据x的倒数。 |
+| [hrint](../math_functions/bfloat16_type/bfloat16_math_functions/hrint.md) | 获取与输入数据最接近的整数，若存在两个同样接近的整数，则获取其中的偶数。 |
+| [hfloor](../math_functions/bfloat16_type/bfloat16_math_functions/hfloor.md) | 获取小于或等于输入数据的最大整数值。 |
+| [hceil](../math_functions/bfloat16_type/bfloat16_math_functions/hceil.md) | 获取大于或等于输入数据的最小整数值。 |
+| [htrunc](../math_functions/bfloat16_type/bfloat16_math_functions/htrunc.md) | 获取对输入数据的浮点数截断后的整数。 |
 
 **表18**  bfloat16类型精度转换函数
 
@@ -474,82 +474,82 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [__haddx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__haddx2-192.md) | 计算两个bfloat16x2_t类型数据各分量的相加结果，并遵循CAST_RINT模式舍入。 |
-| [__hsubx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hsubx2-193.md) | 计算两个bfloat16x2_t类型数据各分量的相减结果，并遵循CAST_RINT模式舍入。 |
-| [__hmulx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hmulx2-194.md) | 计算两个bfloat16x2_t类型数据各分量的相乘结果，并遵循CAST_RINT模式舍入。 |
-| [__hdivx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hdivx2-195.md) | 计算两个bfloat16x2_t类型数据各分量的相除结果，并遵循CAST_RINT模式舍入。 |
-| [__habsx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__habsx2-196.md) | 计算输入bfloat16x2_t类型数据各分量的绝对值。 |
-| [__hfmax2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hfmax2-197.md) | 计算两个bfloat16x2_t类型数据各分量的乘加的结果（前两个输入相乘后与第三个输入相加），并遵循CAST_RINT模式舍入。 |
-| [__hnegx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hnegx2-198.md) | 获取输入bfloat16x2_t类型数据各分量的负值。 |
-| [__hfmax2_relu](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hfmax2_relu-199.md) | 计算两个bfloat16x2_t类型数据各分量的乘加的结果（前两个输入相乘后与第三个输入相加），并遵循CAST_RINT模式舍入。负数结果置为0。 |
-| [__hcmadd](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hcmadd-200.md) | 将三个bfloat16x2_t输入视为复数（第一个分量为实部，第二个分量为虚部），执行复数乘加运算x*y+z。 |
+| [__haddx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__haddx2.md) | 计算两个bfloat16x2_t类型数据各分量的相加结果，并遵循CAST_RINT模式舍入。 |
+| [__hsubx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hsubx2.md) | 计算两个bfloat16x2_t类型数据各分量的相减结果，并遵循CAST_RINT模式舍入。 |
+| [__hmulx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hmulx2.md) | 计算两个bfloat16x2_t类型数据各分量的相乘结果，并遵循CAST_RINT模式舍入。 |
+| [__hdivx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hdivx2.md) | 计算两个bfloat16x2_t类型数据各分量的相除结果，并遵循CAST_RINT模式舍入。 |
+| [__habsx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__habsx2.md) | 计算输入bfloat16x2_t类型数据各分量的绝对值。 |
+| [__hfmax2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hfmax2.md) | 计算两个bfloat16x2_t类型数据各分量的乘加的结果（前两个输入相乘后与第三个输入相加），并遵循CAST_RINT模式舍入。 |
+| [__hnegx2](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hnegx2.md) | 获取输入bfloat16x2_t类型数据各分量的负值。 |
+| [__hfmax2_relu](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hfmax2_relu.md) | 计算两个bfloat16x2_t类型数据各分量的乘加的结果（前两个输入相乘后与第三个输入相加），并遵循CAST_RINT模式舍入。负数结果置为0。 |
+| [__hcmadd](../math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hcmadd.md) | 将三个bfloat16x2_t输入视为复数（第一个分量为实部，第二个分量为虚部），执行复数乘加运算x*y+z。 |
 
 **表20**  bfloat16x2类型比较函数
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [__hbeqx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbeqx2-201.md) | 比较两个bfloat16x2_t类型数据的两个分量是否相等，仅当两个分量均相等时返回true。 |
-| [__hbnex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbnex2-202.md) | 比较两个bfloat16x2_t类型数据的两个分量是否不相等，仅当两个分量均不相等时返回true。 |
-| [__hblex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hblex2-203.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数小于或等于第二个数时返回true。 |
-| [__hbgex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgex2-204.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数大于或等于第二个数时返回true。 |
-| [__hbltx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbltx2-205.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数小于第二个数时返回true。 |
-| [__hbgtx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgtx2-206.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数大于第二个数时返回true。 |
-| [__hbequx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbequx2-207.md) | 比较两个bfloat16x2_t类型数据的两个分量是否相等，当两个分量均相等时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
-| [__hbneux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbneux2-208.md) | 比较两个bfloat16x2_t类型数据的两个分量是否不相等，当两个分量均不相等时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
-| [__hbleux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbleux2-209.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数小于或等于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
-| [__hbgeux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgeux2-210.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数大于或等于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
-| [__hbltux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbltux2-211.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数小于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
-| [__hbgtux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgtux2-212.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数大于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
-| [__heqx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__heqx2-213.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量相等，则对应比较结果为1.0，否则为0.0。 |
-| [__hnex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hnex2-214.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量不相等，则对应比较结果为1.0，否则为0.0。 |
-| [__hlex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hlex2-215.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于或等于第二个数，则对应比较结果为1.0，否则为0.0。 |
-| [__hgex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgex2-216.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于或等于第二个数，则对应比较结果为1.0，否则为0.0。 |
-| [__hltx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltx2-217.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于第二个数，则对应比较结果为1.0，否则为0.0。 |
-| [__hgtx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtx2-218.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于第二个数，则对应比较结果为1.0，否则为0.0。 |
-| [__hequx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hequx2-219.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量相等，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
-| [__hneux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hneux2-220.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量不相等，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
-| [__hleux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hleux2-221.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于或等于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
-| [__hgeux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgeux2-222.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于或等于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
-| [__hltux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltux2-223.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
-| [__hgtux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtux2-224.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
-| [__heqx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__heqx2_mask-225.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量相等，则对应16位掩码为0xFFFF，否则为0x0。 |
-| [__hnex2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hnex2_mask-226.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量不相等，则对应16位掩码为0xFFFF，否则为0x0。 |
-| [__hlex2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hlex2_mask-227.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
-| [__hgex2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgex2_mask-228.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
-| [__hltx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltx2_mask-229.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
-| [__hgtx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtx2_mask-230.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
-| [__hequx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hequx2_mask-231.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量相等，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
-| [__hneux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hneux2_mask-232.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量不相等，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
-| [__hleux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hleux2_mask-233.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
-| [__hgeux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgeux2_mask-234.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
-| [__hltux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltux2_mask-235.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
-| [__hgtux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtux2_mask-236.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
-| [__isnanx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__isnanx2-237.md) | 判断bfloat16x2_t类型数据的两个分量是否为nan。 |
-| [__hmaxx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hmaxx2-238.md) | 获取两个bfloat16x2_t类型数据各分量的最大值。 |
-| [__hmaxx2_nan](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hmaxx2_nan-239.md) | 获取两个bfloat16x2_t类型数据各分量的最大值。任一分量为nan时对应结果为nan。 |
-| [__hminx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hminx2-240.md) | 获取两个bfloat16x2_t类型数据各分量的最小值。 |
-| [__hminx2_nan](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hminx2_nan-241.md) | 获取两个bfloat16x2_t类型数据各分量的最小值。任一分量为nan时对应结果为nan。 |
+| [__hbeqx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbeqx2.md) | 比较两个bfloat16x2_t类型数据的两个分量是否相等，仅当两个分量均相等时返回true。 |
+| [__hbnex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbnex2.md) | 比较两个bfloat16x2_t类型数据的两个分量是否不相等，仅当两个分量均不相等时返回true。 |
+| [__hblex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hblex2.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数小于或等于第二个数时返回true。 |
+| [__hbgex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgex2.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数大于或等于第二个数时返回true。 |
+| [__hbltx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbltx2.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数小于第二个数时返回true。 |
+| [__hbgtx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgtx2.md) | 比较两个bfloat16x2_t类型数据的两个分量，仅当两个分量均满足第一个数大于第二个数时返回true。 |
+| [__hbequx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbequx2.md) | 比较两个bfloat16x2_t类型数据的两个分量是否相等，当两个分量均相等时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
+| [__hbneux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbneux2.md) | 比较两个bfloat16x2_t类型数据的两个分量是否不相等，当两个分量均不相等时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
+| [__hbleux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbleux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数小于或等于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
+| [__hbgeux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgeux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数大于或等于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
+| [__hbltux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbltux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数小于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
+| [__hbgtux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hbgtux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，当两个分量均满足第一个数大于第二个数时返回true。若任一输入的分量为nan，该分量的比较结果为true。 |
+| [__heqx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__heqx2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量相等，则对应比较结果为1.0，否则为0.0。 |
+| [__hnex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hnex2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量不相等，则对应比较结果为1.0，否则为0.0。 |
+| [__hlex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hlex2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于或等于第二个数，则对应比较结果为1.0，否则为0.0。 |
+| [__hgex2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgex2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于或等于第二个数，则对应比较结果为1.0，否则为0.0。 |
+| [__hltx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltx2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于第二个数，则对应比较结果为1.0，否则为0.0。 |
+| [__hgtx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtx2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于第二个数，则对应比较结果为1.0，否则为0.0。 |
+| [__hequx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hequx2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量相等，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
+| [__hneux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hneux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量不相等，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
+| [__hleux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hleux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于或等于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
+| [__hgeux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgeux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于或等于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
+| [__hltux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数小于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
+| [__hgtux2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtux2.md) | 比较两个bfloat16x2_t类型数据的两个分量，如果分量满足第一个数大于第二个数，则对应比较结果为1.0，否则为0.0。若任一输入的分量为nan，该分量的比较结果为1.0。 |
+| [__heqx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__heqx2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量相等，则对应16位掩码为0xFFFF，否则为0x0。 |
+| [__hnex2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hnex2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量不相等，则对应16位掩码为0xFFFF，否则为0x0。 |
+| [__hlex2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hlex2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
+| [__hgex2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgex2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
+| [__hltx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltx2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
+| [__hgtx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtx2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于第二个数，则对应16位掩码为0xFFFF，否则为0x0。 |
+| [__hequx2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hequx2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量相等，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
+| [__hneux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hneux2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量不相等，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
+| [__hleux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hleux2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
+| [__hgeux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgeux2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于或等于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
+| [__hltux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hltux2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数小于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
+| [__hgtux2_mask](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hgtux2_mask.md) | 比较两个bfloat16x2_t类型数据的两个分量，结果以unsigned int形式返回，低16位为第一个分量的掩码结果，高16位为第二个分量的掩码结果。如果分量满足第一个数大于第二个数，则对应16位掩码为0xFFFF，否则为0x0。若任一输入的分量为nan，对应16位掩码为0xFFFF。 |
+| [__isnanx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__isnanx2.md) | 判断bfloat16x2_t类型数据的两个分量是否为nan。 |
+| [__hmaxx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hmaxx2.md) | 获取两个bfloat16x2_t类型数据各分量的最大值。 |
+| [__hmaxx2_nan](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hmaxx2_nan.md) | 获取两个bfloat16x2_t类型数据各分量的最大值。任一分量为nan时对应结果为nan。 |
+| [__hminx2](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hminx2.md) | 获取两个bfloat16x2_t类型数据各分量的最小值。 |
+| [__hminx2_nan](../math_functions/bfloat16_type/bfloat16x2_compare_functions/__hminx2_nan.md) | 获取两个bfloat16x2_t类型数据各分量的最小值。任一分量为nan时对应结果为nan。 |
 
 **表21**  bfloat16x2类型数学库函数
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [h2tanh](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2tanh-242.md) | 获取输入数据各元素的双曲正切值。 |
-| [h2exp](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp-243.md) | 指定输入x，对x的各元素，获取e的该元素次方。 |
-| [h2exp2](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp2-244.md) | 指定输入x，对x的各元素，获取2的该元素次方。 |
-| [h2exp10](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp10-245.md) | 指定输入x，对x的各元素，获取10的该元素次方。 |
-| [h2log](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2log-246.md) | 获取以e为底，输入数据各元素的对数。 |
-| [h2log2](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2log2-247.md) | 获取以2为底，输入数据各元素的对数。 |
-| [h2log10](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2log10-248.md) | 获取以10为底，输入数据各元素的对数。 |
-| [h2cos](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2cos-249.md) | 获取输入数据各元素的三角函数余弦值。 |
-| [h2sin](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2sin-250.md) | 获取输入数据各元素的三角函数正弦值。 |
-| [h2sqrt](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2sqrt-251.md) | 获取输入数据x各元素的平方根。 |
-| [h2rsqrt](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2rsqrt-252.md) | 获取输入数据x各元素的平方根的倒数。 |
-| [h2rcp](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2rcp-253.md) | 获取输入数据x各元素的倒数。 |
-| [h2rint](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2rint-254.md) | 获取与输入数据各元素最接近的整数，若存在两个同样接近的整数，则获取其中的偶数。 |
-| [h2floor](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2floor-255.md) | 获取小于或等于输入数据各元素的最大整数值。 |
-| [h2ceil](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2ceil-256.md) | 获取大于或等于输入数据各元素的最小整数值。 |
-| [h2trunc](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2trunc-257.md) | 获取对输入数据各元素的浮点数截断后的整数。 |
+| [h2tanh](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2tanh.md) | 获取输入数据各元素的双曲正切值。 |
+| [h2exp](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp.md) | 指定输入x，对x的各元素，获取e的该元素次方。 |
+| [h2exp2](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp2.md) | 指定输入x，对x的各元素，获取2的该元素次方。 |
+| [h2exp10](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp10.md) | 指定输入x，对x的各元素，获取10的该元素次方。 |
+| [h2log](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2log.md) | 获取以e为底，输入数据各元素的对数。 |
+| [h2log2](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2log2.md) | 获取以2为底，输入数据各元素的对数。 |
+| [h2log10](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2log10.md) | 获取以10为底，输入数据各元素的对数。 |
+| [h2cos](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2cos.md) | 获取输入数据各元素的三角函数余弦值。 |
+| [h2sin](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2sin.md) | 获取输入数据各元素的三角函数正弦值。 |
+| [h2sqrt](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2sqrt.md) | 获取输入数据x各元素的平方根。 |
+| [h2rsqrt](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2rsqrt.md) | 获取输入数据x各元素的平方根的倒数。 |
+| [h2rcp](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2rcp.md) | 获取输入数据x各元素的倒数。 |
+| [h2rint](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2rint.md) | 获取与输入数据各元素最接近的整数，若存在两个同样接近的整数，则获取其中的偶数。 |
+| [h2floor](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2floor.md) | 获取小于或等于输入数据各元素的最大整数值。 |
+| [h2ceil](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2ceil.md) | 获取大于或等于输入数据各元素的最小整数值。 |
+| [h2trunc](../math_functions/bfloat16_type/bfloat16x2_math_functions/h2trunc.md) | 获取对输入数据各元素的浮点数截断后的整数。 |
 
 **表22**  float类型数学库函数
 
@@ -642,9 +642,9 @@
 | [floorf](../math_functions/float_math_functions/floorf.md) | 获取小于或等于输入数据的最大整数值。 |
 | [ceilf](../math_functions/float_math_functions/ceilf.md) | 获取大于或等于输入数据的最小整数值。 |
 | [truncf](../math_functions/float_math_functions/truncf.md) | 获取对输入数据的浮点数截断后的整数。 |
-| [isfinite](../math_functions/float_math_functions/isfinite1.md) | 判断浮点数是否为有限数（非inf、非nan）。 |
-| [isnan](../math_functions/float_math_functions/isnan1.md) | 判断浮点数是否为nan。 |
-| [isinf](../math_functions/float_math_functions/isinf1.md) | 判断浮点数是否为无穷。 |
+| [isfinite](../math_functions/float_math_functions/isfinite.md) | 判断浮点数是否为有限数（非inf、非nan）。 |
+| [isnan](../math_functions/float_math_functions/isnan.md) | 判断浮点数是否为nan。 |
+| [isinf](../math_functions/float_math_functions/isinf.md) | 判断浮点数是否为无穷。 |
 
 **表23**  类型转换函数
 
@@ -726,12 +726,12 @@
 | [__usad](../math_functions/integer_math_functions/__usad.md) | 对输入数据x、y、z，计算|x - y|+z的结果，即第一个入参和第二个入参之差的绝对值与第三个入参的和。 |
 | [__mul24](../math_functions/integer_math_functions/__mul24.md) | 获取输入int32类型数据x和y低24位乘积的低32位结果。x和y的高8位被忽略。 |
 | [__umul24](../math_functions/integer_math_functions/__umul24.md) | 获取输入uint32类型数据x和y低24位乘积的低32位结果。x和y的高8位被忽略。 |
-| [__hadd](../math_functions/integer_math_functions/__hadd-259.md) | 获取输入int32类型数据x和y的平均值，避免中间求和溢出。 |
+| [__hadd](../math_functions/integer_math_functions/__hadd.md) | 获取输入int32类型数据x和y的平均值，避免中间求和溢出。 |
 | [__rhadd](../math_functions/integer_math_functions/__rhadd.md) | 获取输入int32类型数据x和y的向上取整平均值，避免中间求和溢出。 |
 | [__uhadd](../math_functions/integer_math_functions/__uhadd.md) | 获取输入uint32类型数据x和y的平均值，避免中间求和溢出。 |
 | [__urhadd](../math_functions/integer_math_functions/__urhadd.md) | 获取输入uint32类型数据x和y的向上取整平均值，避免中间求和溢出。 |
-| [max](../math_functions/integer_math_functions/max1.md) | 获取两个输入数据中的最大值。 |
-| [min](../math_functions/integer_math_functions/min1.md) | 获取两个输入数据中的最小值。 |
+| [max](../math_functions/integer_math_functions/max.md) | 获取两个输入数据中的最大值。 |
+| [min](../math_functions/integer_math_functions/min.md) | 获取两个输入数据中的最小值。 |
 
 ## 访存函数<a name="section1064618511375"></a>
 

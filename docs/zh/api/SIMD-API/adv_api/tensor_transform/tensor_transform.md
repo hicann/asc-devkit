@@ -1,6 +1,6 @@
 # 张量变换
 
--   **[Transpose](Transpose-96.md)**
+-   **[Transpose](Transpose.md)**
 
 -   **[Transpose Tiling](Transpose-Tiling.md)**
 
@@ -20,5 +20,5 @@
 
 -   **[GetBroadCastMaxMinTmpSize](GetBroadCastMaxMinTmpSize.md)**
 
--   **[Fill](Fill-97.md)**
+-   **[Fill](Fill.md)**
 

@@ -99,7 +99,7 @@
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.2.4.1.2 "><p id="p1591812481240"><a name="p1591812481240"></a><a name="p1591812481240"></a>输入</p>
 </td>
 <td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p191810481240"><a name="p191810481240"></a><a name="p191810481240"></a>LocalTensor的元素个数，其数量不应超过当前物理位置剩余的内存空间。</p>
-<p id="p3875183944919"><a name="p3875183944919"></a><a name="p3875183944919"></a><span>剩余的内存空间可以通过物理内存最大值与当前可用内存地址（</span><a href="GetCurAddr-72.md">GetCurAddr</a><span>返回值）的差值来计算。</span></p>
+<p id="p3875183944919"><a name="p3875183944919"></a><a name="p3875183944919"></a><span>剩余的内存空间可以通过物理内存最大值与当前可用内存地址（</span><a href="GetCurAddr.md">GetCurAddr</a><span>返回值）的差值来计算。</span></p>
 </td>
 </tr>
 </tbody>

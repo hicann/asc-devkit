@@ -60,4 +60,4 @@ __aicore__ inline void Extract(const LocalTensor<T>& dstValue, const LocalTensor
 
 ## 调用示例
 
-请参见[MrgSort](MrgSort-93.md)的调用示例。
+请参见[MrgSort](MrgSort.md)的调用示例。

@@ -8,36 +8,36 @@
 
 | 接口 | 硬件指令精度标准 | 软仿精度标准 |
 | --- | --- | --- |
-| [hexp](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hexp-177.md) | - | 1-ulp，Not Support denormalized numbers |
-| [htanh](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/htanh-176.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hexp2](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hexp2-178.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hexp10](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hexp10-179.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hlog](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hlog-180.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hlog2](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hlog2-181.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hlog10](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hlog10-182.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hsqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hsqrt-185.md) | - | 1-ulp，Not Support denormalized numbers |
-| [hrsqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hrsqrt-186.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2tanh](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2tanh-242.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2exp](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp-243.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2exp2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp2-244.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2exp10](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp10-245.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2log](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2log-246.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2log2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2log2-247.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2log10](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2log10-248.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2sqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2sqrt-251.md) | - | 1-ulp，Not Support denormalized numbers |
-| [h2rsqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2rsqrt-252.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hexp](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hexp.md) | - | 1-ulp，Not Support denormalized numbers |
+| [htanh](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/htanh.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hexp2](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hexp2.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hexp10](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hexp10.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hlog](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hlog.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hlog2](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hlog2.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hlog10](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hlog10.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hsqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hsqrt.md) | - | 1-ulp，Not Support denormalized numbers |
+| [hrsqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16_math_functions/hrsqrt.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2tanh](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2tanh.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2exp](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2exp2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp2.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2exp10](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2exp10.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2log](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2log.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2log2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2log2.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2log10](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2log10.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2sqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2sqrt.md) | - | 1-ulp，Not Support denormalized numbers |
+| [h2rsqrt](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_math_functions/h2rsqrt.md) | - | 1-ulp，Not Support denormalized numbers |
 
 ### 算术函数
 
 | 接口 | 硬件指令精度标准 | 软仿精度标准 |
 | --- | --- | --- |
-| [\_\_habs](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__habs-150.md) | - | 0-ulp, Support denormalized numbers |
-| [\_\_hadd](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hadd-152.md) | 0-ulp, Support denormalized numbers | - |
-| [\_\_hmul](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hmul-154.md) | 0-ulp, Support denormalized numbers | - |
-| [\_\_hdiv](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hdiv-155.md) | 1-ulp，Not Support denormalized numbers | - |
-| [\_\_haddx2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__haddx2-192.md) | 0-ulp, Support denormalized numbers | - |
-| [\_\_hmulx2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hmulx2-194.md) | 0-ulp, Support denormalized numbers | - |
-| [\_\_hdivx2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hdivx2-195.md) | 1-ulp，Not Support denormalized numbers | - |
+| [\_\_habs](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__habs.md) | - | 0-ulp, Support denormalized numbers |
+| [\_\_hadd](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hadd.md) | 0-ulp, Support denormalized numbers | - |
+| [\_\_hmul](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hmul.md) | 0-ulp, Support denormalized numbers | - |
+| [\_\_hdiv](../SIMT-API/math_functions/bfloat16_type/bfloat16_arithmetic_functions/__hdiv.md) | 1-ulp，Not Support denormalized numbers | - |
+| [\_\_haddx2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__haddx2.md) | 0-ulp, Support denormalized numbers | - |
+| [\_\_hmulx2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hmulx2.md) | 0-ulp, Support denormalized numbers | - |
+| [\_\_hdivx2](../SIMT-API/math_functions/bfloat16_type/bfloat16x2_arithmetic_functions/__hdivx2.md) | 1-ulp，Not Support denormalized numbers | - |
 
 ## fp16数据类型计算API精度标准
 

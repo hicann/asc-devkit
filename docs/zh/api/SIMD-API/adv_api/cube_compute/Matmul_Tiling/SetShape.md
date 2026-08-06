@@ -7,7 +7,7 @@
 使用本接口时，有两种参数传入方式：
 
 -   传入Matmul计算的形状m、n、k，调用[GetTiling](GetTiling.md)接口时，按照m、n、k计算并返回Tiling参数。
--   m、n、k中任意一个或多个参数位置传入-1，调用[GetTiling](GetTiling.md)接口时，该位置取[SetOrgShape](SetOrgShape-87.md)接口中设置的原始形状M、N、K或Ka/Kb，然后由接口内部计算最优Tiling参数。如下图所示，原始A矩阵的K方向最后一列为不参与计算的脏数据，在[SetOrgShape](SetOrgShape-87.md)接口中设置包含该列数据的原始形状，在本接口中设置Matmul计算的K方向大小，同时参数m、n设置为-1表示按照原始形状M、N计算Tiling。
+-   m、n、k中任意一个或多个参数位置传入-1，调用[GetTiling](GetTiling.md)接口时，该位置取[SetOrgShape](SetOrgShape.md)接口中设置的原始形状M、N、K或Ka/Kb，然后由接口内部计算最优Tiling参数。如下图所示，原始A矩阵的K方向最后一列为不参与计算的脏数据，在[SetOrgShape](SetOrgShape.md)接口中设置包含该列数据的原始形状，在本接口中设置Matmul计算的K方向大小，同时参数m、n设置为-1表示按照原始形状M、N计算Tiling。
 
 **图1**  参数传入-1的场景示意图  
 ![](../../../../figures/参数传入-1的场景示意图.png "参数传入-1的场景示意图")

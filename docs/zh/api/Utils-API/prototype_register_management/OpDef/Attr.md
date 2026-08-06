@@ -35,7 +35,7 @@ OpAttrDef &Attr(const char *name)
 
 ## 返回值说明<a name="zh-cn_topic_0000001705099477_zh-cn_topic_0000001576870901_zh-cn_topic_0000001575944081_section25791320141317"></a>
 
-算子属性定义，OpAttrDef请参考[OpAttrDef](../OpAttrDef/OpAttrDef-272.md)。
+算子属性定义，OpAttrDef请参考[OpAttrDef](../OpAttrDef/OpAttrDef_functions.md)。
 
 ## 约束说明<a name="zh-cn_topic_0000001705099477_zh-cn_topic_0000001576870901_zh-cn_topic_0000001575944081_section19165124931511"></a>
 

@@ -1,6 +1,6 @@
 # 索引计算
 
--   **[Arange](Arange-94.md)**
+-   **[Arange](Arange.md)**
 
 -   **[GetArangeMaxMinTmpSize](GetArangeMaxMinTmpSize.md)**
 

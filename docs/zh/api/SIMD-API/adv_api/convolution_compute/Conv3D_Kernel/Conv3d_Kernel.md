@@ -4,19 +4,19 @@
 
 -   **[Conv3D模板参数](Conv3D_template_params.md)**
 
--   **[Init](Init-101.md)**
+-   **[Init](Init.md)**
 
 -   **[SetInput](SetInput.md)**
 
 -   **[SetWeight](SetWeight.md)**
 
--   **[SetBias](SetBias-102.md)**
+-   **[SetBias](SetBias.md)**
 
 -   **[SetSingleOutputShape](SetSingleOutputShape.md)**
 
 -   **[SetInputStartPosition](SetInputStartPosition.md)**
 
--   **[IterateAll](IterateAll-103.md)**
+-   **[IterateAll](IterateAll.md)**
 
--   **[End](End-104.md)**
+-   **[End](End.md)**
 

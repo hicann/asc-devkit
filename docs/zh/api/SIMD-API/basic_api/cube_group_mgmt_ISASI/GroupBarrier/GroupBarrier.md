@@ -6,7 +6,7 @@
 
 -   **[Arrive](Arrive.md)**  
 
--   **[Wait](Wait-75.md)**  
+-   **[Wait](Wait.md)**  
 
 -   **[GetWorkspaceLen](GetWorkspaceLen.md)**  
 

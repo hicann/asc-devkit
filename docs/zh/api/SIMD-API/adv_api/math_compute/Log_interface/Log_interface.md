@@ -1,6 +1,6 @@
 # Log接口
 
--   **[Log](Log-79.md)**
+-   **[Log](Log.md)**
 
 -   **[GetLogMaxMinTmpSize](GetLogMaxMinTmpSize.md)**
 

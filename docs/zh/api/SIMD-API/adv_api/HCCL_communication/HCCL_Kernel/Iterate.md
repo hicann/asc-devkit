@@ -44,7 +44,7 @@ __aicore__ inline int32_t Iterate(HcclHandle handleId, uint16_t* seqSlices, uint
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| sync | 输入 | bool类型。是否需要等待当前通信步骤完成再进行后续计算或通信任务，参数取值如下：<br>true：默认值，表示阻塞并等待当前通信步骤完成。该参数取值为true时，无需再调用[Wait](Wait-98.md)接口等待通信任务完成。<br>false：表示不等待当前通信步骤完成。 |
+| sync | 输入 | bool类型。是否需要等待当前通信步骤完成再进行后续计算或通信任务，参数取值如下：<br>true：默认值，表示阻塞并等待当前通信步骤完成。该参数取值为true时，无需再调用[Wait](Wait.md)接口等待通信任务完成。<br>false：表示不等待当前通信步骤完成。 |
 
 **表2**  接口参数说明
 

@@ -1,6 +1,6 @@
 # OpAttrDef<a name="ZH-CN_TOPIC_0000002120606042"></a>
 
--   **[OpAttrDef](OpAttrDef-272.md)**  
+-   **[OpAttrDef](OpAttrDef_functions.md)**  
 
--   **[Comment](Comment-273.md)**  
+-   **[Comment](Comment.md)**  
 

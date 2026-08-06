@@ -1,6 +1,6 @@
 # Axpy接口
 
--   **[Axpy](Axpy-80.md)**
+-   **[Axpy](Axpy.md)**
 
 -   **[GetAxpyMaxMinTmpSize](GetAxpyMaxMinTmpSize.md)**
 

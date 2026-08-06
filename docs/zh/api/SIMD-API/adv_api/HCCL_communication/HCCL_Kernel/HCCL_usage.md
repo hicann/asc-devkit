@@ -6,7 +6,7 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
 
 所谓合适的时机，取决于用户编排的是先通信后计算的任务，还是先计算后通信的任务。对于这两种场景，简述如下：
 
--   先通信后计算的任务：典型的如AllGather通信+Matmul计算任务编排。此场景下，用户在调用AllGather接口下发通信任务之后，通过AllGather接口返回的该通信任务标识handleId，可立即调用Commit接口通知服务端执行该handleId对应的任务，同时用户调用[Wait](Wait-98.md)阻塞接口等待服务端通知handleId对应的通信任务执行结束，待该通信任务结束后，再执行计算任务。
+-   先通信后计算的任务：典型的如AllGather通信+Matmul计算任务编排。此场景下，用户在调用AllGather接口下发通信任务之后，通过AllGather接口返回的该通信任务标识handleId，可立即调用Commit接口通知服务端执行该handleId对应的任务，同时用户调用[Wait](Wait.md)阻塞接口等待服务端通知handleId对应的通信任务执行结束，待该通信任务结束后，再执行计算任务。
 -   先计算后通信的任务：典型的如Matmul计算+AllReduce通信任务编排。此场景下，用户可以先调用AllReduce接口通知服务端先下发通信任务，再调用Matmul计算接口进行计算，这样AllReduce任务的组装和任务下发及执行过程可以被Matmul的计算流水所掩盖，待计算任务完成后，调用Commit接口通知服务端执行AllReduce任务，无须调用Wait接口等待通信任务执行结束。
 
 当后续无通信任务时，调用[Finalize](Finalize.md)接口，通知服务端后续无通信任务，执行结束后退出，客户端检测并等待最后一个通信任务执行结束。以上介绍的AI Core下发HCCL通信任务的机制如下图所示。
@@ -126,7 +126,7 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
     hccl.Commit(handleId);
     ```
 
-5.  用户调用[Wait](Wait-98.md)阻塞接口，等待服务端执行完对应的通信任务。
+5.  用户调用[Wait](Wait.md)阻塞接口，等待服务端执行完对应的通信任务。
 
     ```
     auto ret = hccl.Wait(handleId);

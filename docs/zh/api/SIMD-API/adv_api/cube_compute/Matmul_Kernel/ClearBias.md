@@ -29,7 +29,7 @@
 
 [DisableBias](DisableBias.md)接口与该接口的功能相同，建议使用[DisableBias](DisableBias.md)。
 
-清除Bias标志位，表示Matmul计算时没有Bias参与。如果在调用[Init](Init-85.md)时配置了TCubeTiling结构中的isBias参数来启用Bias，调用该接口后，会清除Bias标志位，不再启用Bias。
+清除Bias标志位，表示Matmul计算时没有Bias参与。如果在调用[Init](Init.md)时配置了TCubeTiling结构中的isBias参数来启用Bias，调用该接口后，会清除Bias标志位，不再启用Bias。
 
 ## 函数原型
 

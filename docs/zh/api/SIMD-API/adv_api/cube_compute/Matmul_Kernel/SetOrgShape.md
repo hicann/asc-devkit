@@ -54,8 +54,8 @@ __aicore__ inline void SetOrgShape(int orgM, int orgN, int orgKa, int orgKb, int
 
 <!-- npu="950" id14 -->
 > [!CAUTION]注意
->-   对于Ascend 950PR/Ascend 950DT上使用[MDL模板](MatmulConfig.md)创建的Matmul对象，L1上数据的形状与Tiling侧接口[SetOrgShape](../Matmul_Tiling/SetOrgShape-87.md)中的orgMIn/orgNIn/orgKIn/orgKaIn/orgKbIn一致时，不必须调用此接口。
->-   对于Ascend 950PR/Ascend 950DT上使用[MDL模板](MatmulConfig.md)创建的Matmul对象，L1上数据的形状与Tiling侧接口[SetOrgShape](../Matmul_Tiling/SetOrgShape-87.md)中的orgMIn/orgNIn/orgKIn/orgKaIn/orgKbIn不一致时，必须调用本接口指定GM/L1上的orgM/orgN/orgK/orgKa/orgKb。
+>-   对于Ascend 950PR/Ascend 950DT上使用[MDL模板](MatmulConfig.md)创建的Matmul对象，L1上数据的形状与Tiling侧接口[SetOrgShape](../Matmul_Tiling/SetOrgShape.md)中的orgMIn/orgNIn/orgKIn/orgKaIn/orgKbIn一致时，不必须调用此接口。
+>-   对于Ascend 950PR/Ascend 950DT上使用[MDL模板](MatmulConfig.md)创建的Matmul对象，L1上数据的形状与Tiling侧接口[SetOrgShape](../Matmul_Tiling/SetOrgShape.md)中的orgMIn/orgNIn/orgKIn/orgKaIn/orgKbIn不一致时，必须调用本接口指定GM/L1上的orgM/orgN/orgK/orgKa/orgKb。
 >    例如，使用[MDL模板](MatmulConfig.md)时，输入矩阵A在L1、输入矩阵B在GM的场景，L1上A的形状大小与Tiling侧原始的orgMIn/orgKIn/orgKaIn不一致时，调用SetOrgShape\(orgM, orgN, orgK\)/SetOrgShape\(orgM, orgN, orgKa, orgKb\)接口指定L1上A矩阵相关参数orgM/orgK/orgKa。
 <!-- end id14 -->
 

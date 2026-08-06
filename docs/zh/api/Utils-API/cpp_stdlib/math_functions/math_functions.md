@@ -1,5 +1,5 @@
 # 数学函数
 
--   **[abs](abs1.md)**
+-   **[abs](abs.md)**
 
--   **[sqrt](sqrt1.md)**
+-   **[sqrt](sqrt.md)**

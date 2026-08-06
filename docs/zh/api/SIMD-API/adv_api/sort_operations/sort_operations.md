@@ -20,5 +20,5 @@
 
 -   **[GetSortLen](GetSortLen.md)**
 
--   **[MrgSort](MrgSort-93.md)**
+-   **[MrgSort](MrgSort.md)**
 

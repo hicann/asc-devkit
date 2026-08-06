@@ -10,7 +10,7 @@
 
 -   **[GetIndex](GetIndex.md)**  
 
--   **[GetShape](GetShape-138.md)**  
+-   **[GetShape](GetShape.md)**  
 
 -   **[GetDataPtr](GetDataPtr.md)**  
 

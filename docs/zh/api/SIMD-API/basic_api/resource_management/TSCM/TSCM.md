@@ -2,11 +2,11 @@
 
 -   **[TSCM简介](TSCM_intro.md)**  
 
--   **[AllocTensor](AllocTensor-60.md)**  
+-   **[AllocTensor](AllocTensor.md)**  
 
--   **[FreeTensor](FreeTensor-61.md)**  
+-   **[FreeTensor](FreeTensor.md)**  
 
--   **[EnQue](EnQue-62.md)**  
+-   **[EnQue](EnQue.md)**  
 
--   **[DeQue](DeQue-63.md)**  
+-   **[DeQue](DeQue.md)**  
 

@@ -44,7 +44,7 @@
 
 -   **[\_\_umul24](__umul24.md)**
 
--   **[\_\_hadd](__hadd-259.md)**
+-   **[\_\_hadd](__hadd.md)**
 
 -   **[\_\_rhadd](__rhadd.md)**
 
@@ -52,7 +52,7 @@
 
 -   **[\_\_urhadd](__urhadd.md)**
 
--   **[max](max1.md)**
+-   **[max](max.md)**
 
--   **[min](min1.md)**
+-   **[min](min.md)**
 

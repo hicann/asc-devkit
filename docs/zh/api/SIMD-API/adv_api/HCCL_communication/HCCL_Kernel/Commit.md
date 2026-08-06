@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-非[细粒度通信](Iterate-99.md)时，每调用一次本接口，则通知服务端可以执行handleId对应的任务一次。[细粒度通信](Iterate-99.md)时，每调用一次本接口，则通知服务端可以执行handleId对应的[步长](../HCCL_Tiling/SetStepSize.md)长度的子通信任务。
+非[细粒度通信](Iterate.md)时，每调用一次本接口，则通知服务端可以执行handleId对应的任务一次。[细粒度通信](Iterate.md)时，每调用一次本接口，则通知服务端可以执行handleId对应的[步长](../HCCL_Tiling/SetStepSize.md)长度的子通信任务。
 
 ## 函数原型
 
@@ -48,7 +48,7 @@ __aicore__ inline void Commit(HcclHandle handleId)
 
 -   调用本接口前确保已调用过[InitV2](InitV2.md)和[SetCcTilingV2](SetCcTilingV2.md)接口。
 -   入参handleId只能使用Prepare原语对应接口的返回值。
--   非[细粒度通信](Iterate-99.md)时，本接口的调用次数应该与Prepare的repeat次数一致。[细粒度通信](Iterate-99.md)时，本接口的调用次数应该与通信任务的总步骤数/步长\*Prepare的repeat次数一致。
+-   非[细粒度通信](Iterate.md)时，本接口的调用次数应该与Prepare的repeat次数一致。[细粒度通信](Iterate.md)时，本接口的调用次数应该与通信任务的总步骤数/步长\*Prepare的repeat次数一致。
 -   本接口在AIC核或者AIV核上调用必须与对应的Prepare接口的调用核保持一致。
 
 ## 调用示例
