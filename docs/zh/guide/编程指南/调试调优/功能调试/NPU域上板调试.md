@@ -45,7 +45,7 @@ DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
 
 ```
 
-> [!NOTE] 说明
+> [!NOTE]说明
 > DumpTensor接口打印功能会对算子实际运行的性能带来一定影响，通常在调测阶段使用。开发者可以按需关闭打印功能。具体方法请参考[DumpTensor](../../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)。
 
 ## 使用msSanitizer工具进行异常检测<a name="section931475414217"></a>
