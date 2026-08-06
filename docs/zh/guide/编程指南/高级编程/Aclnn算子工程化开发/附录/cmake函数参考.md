@@ -188,7 +188,7 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIO
   >   - Atlas推理系列产品。
   >   - Atlas训练系列产品。
   > - <!-- npu="A3,910b" id3 -->针对Atlas A3训练系列产品 / Atlas A3推理系列产品，在安装AI处理器的服务器执行`npu-smi info -t board -i id -c chip_id`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：id为设备id（通过`npu-smi info -l`查出的NPU ID即为设备id）；chip_id为芯片id（通过`npu-smi info -m`查出的Chip ID即为芯片id）。<!-- end id3 -->
-  > - <!-- npu="950" id4 -->针对Ascend 950PR / Ascend 950DT，在安装AI处理器的服务器执行`npu-smi info -t board -i id`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中id为设备id（通过`npu-smi info -l`查出的NPU ID即为设备id）。
+  > - <!-- npu="950" id4 -->针对Ascend 950PR/Ascend 950DT，在安装AI处理器的服务器执行`npu-smi info -t board -i id`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中id为设备id（通过`npu-smi info -l`查出的NPU ID即为设备id）。
 <!-- end id4 -->
 
 - `OPTIONS …`（必选）：传递给编译器的编译选项。
