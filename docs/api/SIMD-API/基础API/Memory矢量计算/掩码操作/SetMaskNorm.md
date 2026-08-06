@@ -47,7 +47,11 @@ __aicore__ inline void SetMaskNorm()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-无
+- 本接口推荐配合API中isSetMask模板参数使用，当isSetMask为false时，支持用户调用本接口手动管理Normal模式并通过[SetVectorMask](SetVectorMask.md)设置Normal模式下的掩码。
+
+<!-- npu="950" id10 -->
+- 针对Ascend 950PR/Ascend 950DT，Mask为软仿实现，Tensor前n个数据计算接口内部不会将Mask模式切换为Normal模式。若当前场景已通过[SetMaskCount](SetMaskCount.md)设置为Counter模式，接口调用后仍为Counter模式；后续计算需要使用Normal模式时，需手动调用本接口进行设置。
+<!-- end id10 -->
 
 ## 调用示例<a name="section837496171220"></a>
 

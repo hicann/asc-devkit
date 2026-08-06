@@ -79,22 +79,43 @@ __simd_callee__ inline void Select(MaskReg& dst, MaskReg& src0, MaskReg& src1, M
 
 ## 调用示例<a name="section932512912207"></a>
 
-```
-template <typename T>
-__simd_vf__ inline void SelectVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_t count, uint32_t oneRepeatSize, uint16_t repeatTimes)
+如下示例处理32个`float`类型的数据，通过`Select`组合两个不同范围的掩码。`maskFirstHalf`的前16位为1、后16位为0，因此生成的`selMask`在前16位使用`maskFirstQuarter`的对应位，在后16位使用`maskFullLength`的对应位。最后，`StoreAlign`仅搬出`selMask`中有效位对应的源数据。
+
+```cpp
+__simd_vf__ inline void SelectVF(__ubuf__ float* dstAddr, __ubuf__ float* srcAddr)
 {
-    AscendC::Reg::RegTensor<T> srcReg;
-    AscendC::Reg::MaskReg maskFull = AscendC::Reg::CreateMask<T, AscendC::Reg::MaskPattern::ALL>();
-    AscendC::Reg::MaskReg maskNone = AscendC::Reg::CreateMask<T, AscendC::Reg::MaskPattern::ALLF>();
-    AscendC::Reg::MaskReg newMask;
-    AscendC::Reg::MaskReg mask;
-    AscendC::Reg::Select(newMask, maskFull, maskNone, maskFull);
-    for (uint16_t i = 0; i < repeatTimes; ++i) {
-        mask = AscendC::Reg::UpdateMask<T>(count);
-        AscendC::Reg::LoadAlign(srcReg, srcAddr + i * oneRepeatSize);
-        AscendC::Reg::Adds(srcReg, srcReg, 0, newMask);
-        AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, srcReg, mask);
-    }
+    AscendC::Reg::RegTensor<float> srcReg;
+    AscendC::Reg::MaskReg maskFirstQuarter =
+        AscendC::Reg::CreateMask<float, AscendC::Reg::MaskPattern::VL8>();
+    AscendC::Reg::MaskReg maskFirstHalf =
+        AscendC::Reg::CreateMask<float, AscendC::Reg::MaskPattern::VL16>();
+    AscendC::Reg::MaskReg maskFullLength =
+        AscendC::Reg::CreateMask<float, AscendC::Reg::MaskPattern::VL32>();
+    AscendC::Reg::MaskReg selMask;
+    // 前16位从maskFirstQuarter取值，后16位从maskFullLength取值。
+    AscendC::Reg::Select(selMask, maskFirstQuarter, maskFullLength, maskFirstHalf);
+    // 仅搬入maskFullLength指示的前32个元素。
+    AscendC::Reg::LoadAlign<float, AscendC::Reg::DataCopyMode::DATA_BLOCK_COPY>(
+        srcReg, srcAddr, 1, maskFullLength);
+    AscendC::Reg::StoreAlign(dstAddr, srcReg, selMask);
 }
 ```
 
+输入数据如下，`srcAddr`的前16个元素为`1.0`、后16个元素为`2.0`，`dstAddr`的32个元素均为`0.0`：
+
+```text
+srcAddr = [1.0, 1.0, ..., 1.0, 2.0, 2.0, ..., 2.0]
+dstAddr = [0.0, 0.0, ..., 0.0]
+```
+
+`Select`执行后，`selMask`的前8位为1、第9位至第16位为0、后16位为1，其余位均为0。`selMask`是`MaskReg`类型，因此其中的值表示掩码比特：
+
+```text
+selMask = [1, 1, ..., 1, 0, 0, ..., 0, 1, 1, ..., 1]
+```
+
+`StoreAlign`执行后，`dstAddr`的前8个元素为`1.0`，第9个至第16个元素保持初始值`0.0`，后16个元素为`2.0`：
+
+```text
+dstAddr = [1.0, 1.0, ..., 1.0, 0.0, 0.0, ..., 0.0, 2.0, 2.0, ..., 2.0]
+```

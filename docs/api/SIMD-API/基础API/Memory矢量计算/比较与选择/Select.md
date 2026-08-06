@@ -220,6 +220,12 @@ Atlas 训练系列产品，仅支持模式0。
     - Atlas 推理系列产品AI Core
     <!-- end id16 -->
 <!-- end id17 -->
+<!-- npu="310b" id33 -->
+- Atlas 200I/500 A2 推理产品不支持如下函数原型：
+  - tensor高维切分计算Select模式1中，不传入mask参数的函数原型（需配合[SetVectorMask](../掩码操作/SetVectorMask.md)、[SetCmpMask_ISASI](SetCmpMask_ISASI.md)使用）。
+  - tensor高维切分计算Select模式0和模式2中，不传入mask参数的函数原型（需配合[SetVectorMask](../掩码操作/SetVectorMask.md)、[SetCmpMask_ISASI](SetCmpMask_ISASI.md)使用）。
+<!-- end id33 -->
+
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

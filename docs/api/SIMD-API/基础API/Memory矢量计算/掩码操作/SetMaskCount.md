@@ -47,7 +47,13 @@ __aicore__ inline void SetMaskCount()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-设置为Counter模式的场景，需要在矢量计算使用完之后调用[SetMaskNorm](SetMaskNorm.md)将Mask模式恢复为Normal模式，以避免影响后续计算。
+- 本接口推荐配合API中isSetMask模板参数使用，当isSetMask为false时，支持用户调用本接口手动管理Counter模式并通过[SetVectorMask](SetVectorMask.md)设置Counter模式下参与计算的元素个数。
+
+- 设置为Counter模式的场景，需要在矢量计算使用完之后调用[SetMaskNorm](SetMaskNorm.md)将Mask模式恢复为Normal模式，以避免影响后续计算。
+
+<!-- npu="950" id10 -->
+- 针对Ascend 950PR/Ascend 950DT，Mask为软仿实现，Tensor前n个数据计算接口内部不会将Mask模式切换为Normal模式。若当前场景已通过本接口设置为Counter模式，接口调用后仍为Counter模式；后续计算需要使用Normal模式时，需手动调用[SetMaskNorm](SetMaskNorm.md)进行设置。
+<!-- end id10 -->
 
 ## 调用示例<a name="section837496171220"></a>
 

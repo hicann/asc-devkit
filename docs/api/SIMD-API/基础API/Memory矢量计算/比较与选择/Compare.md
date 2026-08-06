@@ -106,7 +106,7 @@
 | mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD计算说明/掩码.md)。 |
 | repeatTime | 输入 | 重复迭代次数。矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体描述请参考[高维切分](../SIMD计算说明/高维切分.md)。 |
 | repeatParams | 输入 | 控制操作数地址步长的参数。[BinaryRepeatParams](../../辅助数据结构/BinaryRepeatParams.md)类型，包含操作数相邻迭代间相同DataBlock的地址步长，操作数同一迭代内不同DataBlock的地址步长等参数。<br>相邻迭代间的地址步长参数说明请参考[repeatStride](../SIMD计算说明/高维切分.md)；同一迭代内DataBlock的地址步长参数说明请参考[dataBlockStride](../SIMD计算说明/高维切分.md)。 |
-| count | 输入 | 参与计算的元素个数。设置count时，需要保证count个元素所占空间256字节对齐。未对齐部分元素不参与计算，仅完整对齐块有效。 |
+ | count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD计算说明/连续计算.md)。 |
 
 ### mask/mask[]参数说明
 
@@ -127,7 +127,7 @@
 <!-- end id5 -->
 
 <!-- npu="310p" id6 -->
-- 针对Atlas 推理系列产品AI Core，保留参数，设置无效。
+- 针对Atlas 推理系列产品 AI Core，保留参数，设置无效。
 <!-- end id6 -->
 
 <!-- npu="910" id7 -->
@@ -138,7 +138,7 @@
 
 <!-- npu="950" id8 -->
 - 针对Ascend 950PR/Ascend 950DT
-    - T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
+    - T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。其中，int8\_t/uint8\_t/int64\_t/uint64\_t/double数据类型仅支持tensor前n个数据计算接口和整个tensor参与计算的运算符重载。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id8 -->
 
@@ -182,10 +182,17 @@
 
 - dst按照小端顺序排序成二进制结果，对应src中相应位置的数据比较结果。
 
-- **使用整个tensor参与计算的运算符重载功能，src0和src1需满足256字节对齐；使用tensor前n个数据参与计算的接口，设置count时，需要保证count个元素所占空间256字节对齐。**
-<!-- npu="950" id14 -->
-- 针对Ascend 950PR/Ascend 950DT，int8\_t/uint8\_t/int64\_t/uint64\_t/double数据类型仅支持tensor前n个数据计算接口和整个tensor参与计算的运算符重载。
-<!-- end id14 -->
+- 使用整个tensor参与计算的运算符重载功能，src0和src1需满足256字节对齐。
+
+<!-- npu="A3,910b" id32 -->
+- 针对如下型号，使用tensor前n个数据参与计算的接口，设置count时，需要保证count个元素所占空间256字节对齐。未对齐部分元素不参与计算，仅完整对齐块有效。
+  <!-- npu="A3" id33 -->
+  - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+  <!-- end id33 -->
+  <!-- npu="910b" id34 -->
+  - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+  <!-- end id34 -->
+<!-- end id32 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
@@ -224,7 +231,7 @@
                         11 11 11 11 11 11 11 11 13 13 13 13 13 13 13 13 17 17 17 17 17 17 17 17 19 19 19 19 19 19 19 19 ]
     输入数据src1Local：[ 2  2  2  2  2  2  2  2  4  4  4  4  4  4  4  4  6  6  6  6  6  6  6  6  8  8  8  8  8  8  8  8
                         10 10 10 10 10 10 10 10 12 12 12 12 12 12 12 12 14 14 14 14 14 14 14 14 16 16 16 16 16 16 16 16 ]
-    输出数据dstLocal： [ 0 127 127 127 0 0 0 0 ]
+    输出数据dstLocal： [ 0(0b00000000) 255(0b11111111) 255(0b11111111) 255(0b11111111) 0(0b00000000) 0(0b00000000) 0(0b00000000) 0(0b00000000) ]
 
     GT：大于
     输入数据src0Local：[ 2 3 5 7 11 13 17 19 ... ]
@@ -250,7 +257,7 @@
     NE：不等于
     输入数据src0Local：[ 2 3 5 7 11 13 17 19 ... ]
     输入数据src1Local：[ 2 4 6 8 10 12 14 16 ... ]
-    输出数据dstLocal： [ 126(0b11111110) ... ]
+    输出数据dstLocal： [ 254(0b11111110) ... ]
     ```
 
 - Tensor高维切分计算，mask逐bit模式
@@ -278,15 +285,15 @@
     输入数据src1Local：[ 2  2  2  2  2  2  2  2  4  4  4  4  4  4  4  4  6  6  6  6  6  6  6  6  8  8  8  8  8  8  8  8
                         10 10 10 10 10 10 10 10 12 12 12 12 12 12 12 12 14 14 14 14 14 14 14 14 16 16 16 16 16 16 16 16 ]
     输入数据masks：{ 858993459, 0 }
-    输出数据dstLocal： [ 51 51 51 51 0 0 0 0 ]
+    输出数据dstLocal： [ 51(0b00110011) 51(0b00110011) 51(0b00110011) 51(0b00110011) 0(0b00000000) 0(0b00000000) 0(0b00000000) 0(0b00000000) ]
     ```
 
 - Tensor高维切分计算，mask连续模式
 
     ```cpp
     // mask控制每次迭代参与计算的连续元素个数
-    // 例如，对float类型数据，每次迭代处理256B / sizeof(float) = 64个元素，因此mask可取值1至64
-    uint64_t mask = 28;
+    // 例如，对float类型数据，每次迭代处理256B / sizeof(float) = 64个元素
+    uint64_t mask = 64;
     // repeat: 1, dstBlkStride: 1, src0BlkStride: 1, src1BlkStride: 1, dstRepStride: 1, src0RepStride: 8, src1RepStride: 8
     AscendC::Compare(dstLocal, src0Local, src1Local, AscendC::CMPMODE::LT, mask, 1, { 1, 1, 1, 1, 8, 8 });
     AscendC::Compare(dstLocal, src0Local, src1Local, AscendC::CMPMODE::GT, mask, 1, { 1, 1, 1, 1, 8, 8 });
@@ -304,6 +311,6 @@
                         11 11 11 11 11 11 11 11 13 13 13 13 13 13 13 13 17 17 17 17 17 17 17 17 19 19 19 19 19 19 19 19 ]
     输入数据src1Local：[ 2  2  2  2  2  2  2  2  4  4  4  4  4  4  4  4  6  6  6  6  6  6  6  6  8  8  8  8  8  8  8  8
                         10 10 10 10 10 10 10 10 12 12 12 12 12 12 12 12 14 14 14 14 14 14 14 14 16 16 16 16 16 16 16 16 ]
-    输入数据mask：28
-    输出数据dstLocal： [ 127 127 127 16 0 0 0 0 ]
+    输入数据mask：64
+    输出数据dstLocal： [ 255(0b11111111) 255(0b11111111) 255(0b11111111) 255(0b11111111) 0(0b00000000) 0(0b00000000) 0(0b00000000) 0(0b00000000) ]
     ```
