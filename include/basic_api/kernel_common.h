@@ -167,7 +167,7 @@ __aicore__ inline MutexID AllocMutexID()
     Internal::g_bufId = sbitset1(Internal::g_bufId, id);
     ASCENDC_ASSERT((id <= MAX_MUTEXID), {
         KERNEL_LOG(
-            KERNEL_ERROR, "current id is %u, max buffer ID allocated is %u", static_cast<uint32_t>(id),
+            KERNEL_ERROR, "current id is %u, max mutex ID allocated is %u", static_cast<uint32_t>(id),
             static_cast<uint32_t>(MAX_MUTEXID));
     });
     return id;
@@ -179,9 +179,9 @@ __aicore__ inline MutexID AllocMutexID()
 __aicore__ inline void ReleaseMutexID(MutexID id)
 {
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
-    ASCENDC_ASSERT((id < MAX_MUTEXID), {
+    ASCENDC_ASSERT((id <= MAX_MUTEXID), {
         KERNEL_LOG(
-            KERNEL_ERROR, "current id is %d, which should be larger than or equals to 0, and smaller than %d",
+            KERNEL_ERROR, "current id is %d, which should be larger than or equals to 0, and less than or equal to %d",
             static_cast<int32_t>(id), MAX_MUTEXID);
     });
     Internal::g_bufId = sbitset0(Internal::g_bufId, id);
