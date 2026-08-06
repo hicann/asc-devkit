@@ -39,13 +39,13 @@
   <tr><td align="center">diffGm</td><td align="center">[1，1]</td><td align="center">float</td><td align="center">ND</td></tr>
 
   <tr><td rowspan="2" align="center">样例输出</td></tr>
-  <tr><td align="center">outputGm</td><td align="center">[128，1]</td><td align="center">float</td><td align="center">ND</td></tr>
+  <tr><td align="center">outputGm</td><td align="center">[104，1]</td><td align="center">float</td><td align="center">ND</td></tr>
 
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">arange_custom</td></tr>
   </table>
 
 - 样例实现：  
-  本样例中实现的是固定shape，输入firstGm[1，1]，diffGm[1，1]，输出outputGm[128，1]的等差数列生成功能。
+  本样例中实现的是固定shape，输入firstGm[1，1]，diffGm[1，1]，输出outputGm[104，1]的等差数列生成功能。
 
   - Kernel实现：  
     计算逻辑是：使用Arange高阶API接口完成等差数列生成计算，再将结果搬出。

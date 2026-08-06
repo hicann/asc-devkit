@@ -39,13 +39,13 @@ This example uses the Arange high-level API to implement arithmetic sequence gen
   <tr><td align="center">diffGm</td><td align="center">[1, 1]</td><td align="center">float</td><td align="center">ND</td></tr>
 
   <tr><td rowspan="2" align="center">Example Output</td></tr>
-  <tr><td align="center">outputGm</td><td align="center">[128, 1]</td><td align="center">float</td><td align="center">ND</td></tr>
+  <tr><td align="center">outputGm</td><td align="center">[104, 1]</td><td align="center">float</td><td align="center">ND</td></tr>
 
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">arange_custom</td></tr>
   </table>
 
 - Example implementation:  
-  This example implements arithmetic sequence generation with fixed shapes: input firstGm[1, 1], diffGm[1, 1], and output outputGm[128, 1].
+  This example implements arithmetic sequence generation with fixed shapes: input firstGm[1, 1], diffGm[1, 1], and output outputGm[104, 1].
 
   - Kernel implementation:  
     The computation logic is: Use the Arange high-level API to complete arithmetic sequence generation, then transfer the result out.
