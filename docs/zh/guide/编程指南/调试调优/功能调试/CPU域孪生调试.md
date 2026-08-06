@@ -2,7 +2,7 @@
 
 本节介绍CPU域调试的方法：CPU侧验证核函数，gdb调试、使用printf命令打印。当前SIMT编程场景不支持。
 
->[!NOTE] 说明
+>[!NOTE]说明
 >CPU调测过程中，配置日志相关环境变量，可以记录程序的运行过程及异常信息，有助于开发者进行功能调测。
 >关于环境变量的使用约束以及详细说明，可参见[《环境变量参考》](https://www.hiascend.com/document/redirect/CannCommunityEnvRef)中“辅助功能 \> 日志”章节。
 
@@ -35,7 +35,7 @@
 
     其他CMakeLists.txt项目配置[通过CMake编译](../../编译与运行/算子编译/AI-Core算子编译基本用法.md#ZH-CN_TOPIC_0000002428982142)进行编写。
 
->[!NOTE] 说明 
+>[!NOTE]说明 
 >为了实现CPU域与NPU域代码归一，框架在CPU域中仅对部分acl接口进行适配，开发者在使用CPU域调测功能时，仅支持使用如下acl接口，并且不支持用户自行链接**ascendcl库**：
 >- 有实际功能接口，支持CPU域调用
 >    - aclDataTypeSize、aclFloat16ToFloat、aclFloatToFloat16。
