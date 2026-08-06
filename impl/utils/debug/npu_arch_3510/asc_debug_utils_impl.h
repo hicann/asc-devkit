@@ -16,6 +16,7 @@
 #define IMPL_UTILS_DEBUG_NPU_ARCH_3510_ASC_DEBUG_UTILS_H
 
 #include "impl/utils/sys_macros.h"
+#include "impl/utils/debug/asc_simd_vf_utils.h"
 
 namespace __asc_simd_vf {
 template <typename T, typename U, typename... Args>
@@ -66,23 +67,43 @@ __simd_callee__ inline void enable_asc_diagnostics()
 #endif
 }
 
+__simd_callee__ constexpr inline uint32_t get_vf_debug_reserved_ub_size()
+{
+    constexpr uint32_t ascendcReservedUbSize = 2 * 1024;
+    constexpr uint32_t vfStackReservedUbSize = 6 * 1024;
+
+#if defined(__ASC_DISABLE_VF_STACK_RESERVED__)
+    return ascendcReservedUbSize;
+#else
+    return ascendcReservedUbSize + vfStackReservedUbSize;
+#endif
+}
+
+__simd_callee__ inline uint64_t get_vf_debug_reserved_ub_addr()
+{
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
+    return static_cast<uint64_t>(get_shmem_sz()) - get_vf_debug_reserved_ub_size();
+#else
+    return 0;
+#endif
+}
+
 __simd_callee__ __ubuf__ inline BlockVFBufInfo* get_printf_ubuf_addr(uint64_t addr, uint16_t blockIdx = 0)
 {
-#if defined(ASCENDC_SIMD_VF_DEBUG)
-    constexpr uint32_t safeStaticLen = 32;
-    static __ubuf__ uint64_t info[safeStaticLen];
-    if (addr != 0) {
-        info[0] = addr;
-        // clear data workspace when initializing
-        auto* bufInfo = reinterpret_cast<__ubuf__ BlockVFBufInfo*>(addr);
-        bufInfo->writeLen = 0;
-        bufInfo->pidx = 0;
-        bufInfo->blockIdx = blockIdx;
+    uint64_t blockInfoAddr = addr;
+    if (blockInfoAddr == 0) {
+        blockInfoAddr = get_vf_debug_reserved_ub_addr();
     }
-    return reinterpret_cast<__ubuf__ BlockVFBufInfo*>(info[0]);
-#else
-    return reinterpret_cast<__ubuf__ BlockVFBufInfo*>(0);
-#endif
+    auto* bufInfo = reinterpret_cast<__ubuf__ BlockVFBufInfo*>(blockInfoAddr);
+    if (addr != 0) {
+        init_debug_buffer(bufInfo, blockIdx);
+    }
+    return bufInfo;
+}
+
+__simd_callee__ __ubuf__ inline BlockVFBufInfo* init_printf_ubuf_addr(uint16_t blockIdx = 0)
+{
+    return get_printf_ubuf_addr(get_vf_debug_reserved_ub_addr(), blockIdx);
 }
 
 __simd_callee__ inline void asc_copy_ub2gm_align(__gm__ void* dst, __ubuf__ void* src, uint32_t size)
@@ -198,6 +219,11 @@ __aicore__ __ubuf__ inline BlockVFBufInfo* get_printf_ubuf_addr_aicore(uint64_t 
     return __asc_simd_vf::get_printf_ubuf_addr(addr, blockIdx);
 }
 
+__aicore__ __ubuf__ inline BlockVFBufInfo* init_printf_ubuf_addr_aicore(uint16_t blockIdx = 0)
+{
+    return __asc_simd_vf::init_printf_ubuf_addr(blockIdx);
+}
+
 __aicore__ __gm__ inline BlockRingBufInfo* get_block_ring_buf_info()
 {
     const uint32_t blockIdx = asc_debug_get_core_idx_impl();
@@ -236,29 +262,43 @@ __aicore__ inline void update_write_info(
     asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(writeInfo));
 }
 
-__aicore__ inline void asc_vf_debug_ub2gm()
+__aicore__ inline bool asc_vf_debug_ub2gm()
 {
     __ubuf__ BlockVFBufInfo* blockInfo = get_printf_ubuf_addr_aicore(0);
     __ubuf__ uint8_t* tlv = reinterpret_cast<__ubuf__ uint8_t*>(blockInfo->buffer);
 
     __gm__ BlockRingBufInfo* blockRingBufInfo = get_block_ring_buf_info();
-    __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
-    const uint32_t tlvLen = blockInfo->writeLen;
+    const bool isValidHeader = blockInfo->magic == ASCENDC_SIMD_VF_MAGIC_NUMBER &&
+                               blockInfo->length <= ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE &&
+                               blockInfo->writeLen <= blockInfo->length;
+    if (!isValidHeader) {
+        blockInfo->flag = 1;
+    }
+    const uint32_t tlvLen = isValidHeader ? blockInfo->writeLen : 0;
+    const uint32_t packageNum = isValidHeader ? blockInfo->pidx : 0;
 
     sync_all_impl();
     constexpr uint32_t sizeU32 = sizeof(uint32_t);
-    const uint32_t totalWords = (tlvLen + sizeU32 - 1) / sizeU32;
-    auto* dstWords = reinterpret_cast<__gm__ uint32_t*>(dstTlv);
-    auto* srcWords = reinterpret_cast<__ubuf__ uint32_t*>(tlv);
-    for (uint32_t i = 0; i < totalWords; ++i) {
-        dstWords[i] = srcWords[i];
+    if (tlvLen > 0) {
+        __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
+        const uint32_t totalWords = tlvLen / sizeU32;
+        auto* dstWords = reinterpret_cast<__gm__ uint32_t*>(dstTlv);
+        auto* srcWords = reinterpret_cast<__ubuf__ uint32_t*>(tlv);
+        for (uint32_t i = 0; i < totalWords; ++i) {
+            dstWords[i] = srcWords[i];
+        }
+        for (uint32_t i = totalWords * sizeU32; i < tlvLen; ++i) {
+            dstTlv[i] = tlv[i];
+        }
+        sync_all_impl();
+
+        asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
     }
-    sync_all_impl();
-
-    asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
-
-    __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
-    update_write_info(writeInfo, tlvLen, blockInfo->pidx);
+    if (tlvLen > 0) {
+        __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
+        update_write_info(writeInfo, tlvLen, packageNum);
+    }
+    return blockInfo->flag != 0;
 }
 }
 

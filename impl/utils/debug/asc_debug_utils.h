@@ -15,6 +15,8 @@
 #ifndef IMPL_UTILS_DEBUG_ASC_DEBUG_UTILS_H
 #define IMPL_UTILS_DEBUG_ASC_DEBUG_UTILS_H
 
+#include "impl/utils/debug/asc_simd_debug_traits.h"
+
 inline __gm__ uint8_t* __gm__ g_sysPrintFifoSpace = nullptr;
 
 #ifndef ASCENDC_CPU_DEBUG
@@ -312,28 +314,22 @@ __aicore__ inline void asc_debug_get_cann_vserion(__gm__ char*& versionStr, uint
 
 __aicore__ static __attribute__((noinline)) void AscVFDebugInitUb()
 {
-#if !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__) && defined(ASCENDC_SIMD_VF_DEBUG)
-    if (g_sysPrintFifoSpace != nullptr) {
-        constexpr uint32_t RESERVED_UB_SIZE = 8 * 1024;
-        uint64_t ascReservedAddr = get_shmem_sz() - RESERVED_UB_SIZE;
-#if defined(__ASC_DISABLE_VF_STACK_RESERVED_UBUF__)
-        constexpr uint32_t RESERVED_ASC_UB_SIZE = 2 * 1024;
-        ascReservedAddr = get_shmem_sz() - RESERVED_ASC_UB_SIZE;
-#endif
-        uint16_t blockIdx = asc_debug_get_block_idx();
-        get_printf_ubuf_addr_aicore(ascReservedAddr, blockIdx);
-    }
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0) && !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && \
+    __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__)
+    init_printf_ubuf_addr_aicore(asc_debug_get_block_idx());
 #endif
 }
 
-__aicore__ static __attribute__((noinline)) void AscVFDebugTransferUb()
+__aicore__ static __attribute__((noinline)) bool AscVFDebugTransferUb()
 {
-#if !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__) && defined(ASCENDC_SIMD_VF_DEBUG)
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0) && !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && \
+    __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__)
     if (g_sysPrintFifoSpace != nullptr) {
         pipe_barrier(PIPE_ALL);
-        asc_vf_debug_ub2gm();
+        return asc_vf_debug_ub2gm();
     }
 #endif
+    return false;
 }
 
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_ASC_DEBUG_UTILS__)

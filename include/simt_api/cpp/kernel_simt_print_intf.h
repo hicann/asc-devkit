@@ -12,6 +12,9 @@
 #define ASCENDC_MODULE_SIMT_PRINT_INTERFACE_H
 
 #include "simt_api/device_types.h"
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#include "impl/utils/debug/asc_printf_simt_impl.h"
+#endif
 
 namespace AscendC {
 namespace Simt {

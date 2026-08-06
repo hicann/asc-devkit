@@ -150,22 +150,6 @@ __aicore__ inline void DumpAccChkPoint(const GlobalTensor<T> &input, uint32_t in
 // only 51, 71, 82 supports printf/assert. the other code is left to avoid errors in test cases.
 #if __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 2002 
 template <class... Args>
-__aicore__ inline void printf(__gm__ const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    __asc_aicore::printf_impl(fmt, args...);
-#endif
-}
-
-template <class... Args>
-__aicore__ inline void PRINTF(__gm__ const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    __asc_aicore::printf_impl(fmt, args...);
-#endif
-}
-
-template <class... Args>
 __aicore__ inline void AssertImpl(__gm__ const char* fmt, Args&&... args)
 {
 #if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
@@ -175,66 +159,6 @@ __aicore__ inline void AssertImpl(__gm__ const char* fmt, Args&&... args)
 #endif
 }
 #else
-#if defined(__NPU_DEVICE__) || defined(__ASCC_DEVICE__)
-template <class... Args>
-__aicore__ inline void PRINTF(__gm__ const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    PrintfImpl(DumpType::DUMP_SCALAR, fmt, args...);
-#endif
-}
-template <class... Args>
-__aicore__ inline void printf(__gm__ const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    PrintfImpl(DumpType::DUMP_SCALAR, fmt, args...);
-#endif
-}
-
-#else // !defined(__NPU_DEVICE__) && !defined(__ASCC_DEVICE__)
-
-#ifdef ASCENDC_CPU_DEBUG
-using ::printf;
-
-template<typename... Args>
-inline auto PRINTF(Args&&... args) -> decltype(printf(std::forward<Args>(args)...))
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    return printf(std::forward<Args>(args)...);
-#else
-    return 0;
-#endif
-}
-
-#if defined(__NPU_HOST__) || defined(__ASCC_HOST__)
-template <class... Args>
-inline void PRINTF(const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    PrintfImpl(DumpType::DUMP_SCALAR, fmt, args...);
-#endif
-}
-#endif // defined(__NPU_HOST__) || defined(__ASCC_HOST__)
-
-#else
-template <class... Args>
-__aicore__ inline void PRINTF(__gm__ const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    PrintfImpl(DumpType::DUMP_SCALAR, fmt, args...);
-#endif
-}
-
-template <class... Args>
-__aicore__ inline void printf(__gm__ const char* fmt, Args&&... args)
-{
-#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
-    PrintfImpl(DumpType::DUMP_SCALAR, fmt, args...);
-#endif
-}
-#endif // ASCENDC_CPU_DEBUG
-#endif // defined(__NPU_DEVICE__) || defined(__ASCC_DEVICE__)
-
 template <class... Args>
 __aicore__ inline void AssertImpl(__gm__ const char* fmt, Args&&... args)
 {

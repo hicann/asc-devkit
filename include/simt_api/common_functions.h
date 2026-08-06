@@ -17,7 +17,9 @@
 #endif
 
 #include "simt_api/device_types.h"
-#include "utils/debug/asc_printf.h"
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#include "impl/utils/debug/asc_printf_simt_impl.h"
+#endif
 #include "utils/debug/asc_assert.h"
 #include "utils/debug/asc_time.h"
 

@@ -25,10 +25,6 @@
 #include "simt_api/device_types.h"
 
 #ifndef __CHECK_FEATURE_AT_PRECOMPILE
-#ifndef ASCENDC_SIMD_VF_DEBUG
-#define ASCENDC_SIMD_VF_DEBUG
-#endif
-
 namespace __asc_simt_vf {
 template <class... Args>
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
@@ -37,35 +33,41 @@ static __attribute__((noinline)) __SIMT_DEVICE_FUNCTIONS_DECL__ void printf(cons
 static __attribute__((noinline)) __SIMT_DEVICE_FUNCTIONS_DECL__ void printf(const char* fmt, Args&&... args);
 #endif
 } // namespace __asc_simt_vf
-
-#if (__NPU_ARCH__ == 3510)
-#include "../../../impl/utils/debug/asc_printf_simt_impl.h"
-#endif
 #endif
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #ifndef __CHECK_FEATURE_AT_PRECOMPILE
-#if (__NPU_ARCH__ == 2002) || (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510)
-#include "../../../impl/utils/debug/asc_aicore_printf_impl.h"
-#endif
 namespace __asc_aicore {
 template <class... Args>
-__aicore__ inline void printf(__gm__ const char* fmt, Args&&... args)
-{
-    printf_impl(fmt, args...);
-}
+__aicore__ inline void printf(__gm__ const char* fmt, Args&&... args);
+
+template <class... Args>
+__aicore__ inline void PRINTF(__gm__ const char* fmt, Args&&... args);
 } // namespace __asc_aicore
-#endif
 
 namespace __asc_simd_vf {
 template <class... Args>
 __ASC_USE_RESERVED_UBUF__(3510,
     "printf is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
-__simd_callee__ inline void printf(__ubuf__ const char* fmt, Args&&... args)
-{
-    printf_impl(fmt, args...);
-}
-}
+__simd_callee__ inline void printf(__ubuf__ const char* fmt, Args&&... args);
+} // namespace __asc_simd_vf
+#endif
+#endif
+
+#include "impl/utils/debug/asc_simd_debug_enable.h"
+
+#ifndef __CHECK_FEATURE_AT_PRECOMPILE
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#include "impl/utils/debug/asc_printf_simt_impl.h"
+#endif
+
+#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
+#include "impl/utils/debug/asc_aicore_printf_impl.h"
+
+#if (__NPU_ARCH__ == 3510) && !defined(ASCENDC_CPU_DEBUG)
+#include "impl/utils/debug/asc_simd_printf_impl.h"
+#endif
+#endif
 #endif
 
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_ASC_PRINTF_H__)

@@ -20,12 +20,15 @@
 #define __UNDEF_ASCENDC_INCLUDE_COMPILER_INTERNAL_HEADERS_ASC_DUMP_H__
 #endif
 
-#ifndef ASCENDC_SIMD_VF_DEBUG
-#define ASCENDC_SIMD_VF_DEBUG
-#endif
+#include "impl/utils/debug/asc_simd_debug_enable.h"
+#include "impl/utils/sys_macros.h"
 
 #if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510)
 #include "impl/utils/debug/asc_aicore_dump_impl.h"
+#endif
+
+#if __NPU_ARCH__ == 3510
+#include "impl/utils/debug/asc_simd_dump_impl.h"
 #endif
 
 namespace __asc_aicore {

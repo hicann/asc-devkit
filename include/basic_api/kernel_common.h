@@ -48,7 +48,7 @@ class GlobalTensor;
 template <auto funcPtr, typename... Args> __aicore__ inline void asc_vf_call(Args &&... args)
 {
     if ASCEND_IS_AIV {
-        AscendC::AscVFCallImpl<funcPtr>(args...);
+        AscendC::AscVFCallImpl<funcPtr, AscendC::Internal::SimdVfDebugTag>(args...);
     }
 }
 
