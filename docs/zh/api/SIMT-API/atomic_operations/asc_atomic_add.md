@@ -93,8 +93,15 @@ Unified Buffer或Global Memory上的初始数据。
 -   原子操作保证对同一地址的读改写过程具有原子性，但不保证多个线程之间的执行顺序。对于浮点累加顺序敏感场景，结果可能随线程调度变化而不同。
 -   本接口的性能受以下因素影响，相关原理请参见[原子操作机制](atomic_operations_intro.md#原子操作机制)。具体性能对比和优化示例请参见[asc_atomic_add接口性能对比样例](../../../../../examples/03_simt_api/02_features/01_api_features/02_atomic_operation/atomic_add_perf)。
     -   内存空间：Unified Buffer的访问路径比Global Memory短，通常具有更低的访问开销。当使用的数据类型支持Unified Buffer（即int32\_t、uint32\_t、float、half、bfloat16\_t、half2、bfloat16x2\_t）时，建议优先在Unified Buffer中完成原子操作。
-    -   返回值：是否使用返回值可能影响编译器生成的原子加指令。以`int32_t`为例，不使用返回值时可生成性能更优的指令；业务场景允许时，建议不使用返回值。
-    -   地址分布：GM原子操作经过L2 Cache处理，L2 Cache以512B Cache Line为缓存管理单位，每条Cache Line包含4个128B Sector，GM原子操作以128B Sector为处理粒度。目标地址集中在同一个Sector内时，处理效率较低；目标地址分布在更多Sector内时，处理效率较高。因此，建议分散相互独立的原子操作目标地址。
+    -   返回值：是否使用返回值可能影响编译器生成的原子加指令。各数据类型在不使用返回值时是否能生成更优指令的情况如下：
+
+        | 数据类型 | 不使用返回值时是否生成更优指令 |
+        | --- | --- |
+        | int32\_t、uint32\_t、float、half、bfloat16\_t、half2、bfloat16x2\_t | 是 |
+        | int64\_t、uint64\_t | 否 |
+
+        业务场景允许时，建议不使用返回值。
+    -   地址分布：Global Memory原子操作经过L2 Cache处理，L2 Cache以512B Cache Line为缓存管理单位，每条Cache Line包含4个128B扇区（Sector），Global Memory原子操作以128B Sector为处理粒度。目标地址集中在同一个Sector内时，处理效率较低；目标地址分布在更多Sector内时，处理效率较高。因此，业务允许时，建议将原子操作的目标地址分散到更多Sector中。
 
 ## 需要包含的头文件
 
