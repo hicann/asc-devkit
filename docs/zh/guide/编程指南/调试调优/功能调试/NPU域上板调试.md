@@ -61,7 +61,7 @@ msSanitizer工具是基于AI处理器的异常检测工具，包含了单算子�
 
 **异常检测程序编译**
 ```shell
-// bisheng编译时增加sanitizer命令行
+// bisheng编译时增加相关的sanitizer编译选项。
 bisheng add_custom.asc -o add_custom --sanitizer -lineinfo
 ```
 **异常检测工具的使用**
