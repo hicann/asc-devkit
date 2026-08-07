@@ -43,7 +43,7 @@ __aicore__ inline void SetSaturationFlag(bool enableSat)
 
 | 参数名 | 描述 |
 | -------- | -------- |
-| mode | 配置的对应饱和模式。<br>当mode配置为FLOAT时，开启饱和模式，inf输出会被饱和为±MAX，NaN输出会被饱和为0；关闭饱和模式，inf/NaN保持原输出。<br>当mode配置为CAST时，开启饱和模式，溢出值会被饱和为±MAX；关闭饱和模式，溢出值会按目标数据类型位数截断，保留低位，舍弃高位。<br><pre>enum class SaturationMode : uint8_t {<br>   FLOAT,     // 控制浮点数计算和浮点数精度转换时的饱和模式,浮点数数据类型仅支持half、bfloat16_t;<br>   CAST       // 控制浮点数转整数或整数转整数时的精度转换饱和模式;<br>};<br></pre>  |
+| mode | 配置的对应饱和模式。<br>当mode配置为FLOAT时，开启饱和模式，inf输出会被饱和为±MAX，NaN输出会被饱和为0；关闭饱和模式，inf/NaN保持原输出。<br>当mode配置为CAST时，开启饱和模式，溢出值会被饱和为±MAX；关闭饱和模式，溢出值会按目标数据类型位数截断，保留低位，舍弃高位。<br>enum class SaturationMode : uint8_t {<br>   FLOAT,     // 控制浮点数计算和浮点数精度转换时的饱和模式,浮点数数据类型仅支持half、bfloat16_t;<br>   CAST       // 控制浮点数转整数或整数转整数时的精度转换饱和模式;<br>};<br>  |
 
 **表2**  参数说明
 

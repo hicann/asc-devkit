@@ -46,7 +46,7 @@ __aicore__ inline void SetFmatrix(uint16_t l1H, uint16_t l1W, const uint8_t padL
 | l1H | 输入 | 源操作数height，取值范围：l1H∈[1, 32767]。 |
 | l1W | 输入 | 源操作数width，取值范围：l1W∈[1, 32767]。 |
 | padList | 输入 | padding列表 [padding\_left, padding\_right, padding\_top, padding\_bottom]，每个元素取值范围：[0,255]。默认为{0, 0, 0, 0}。 |
-| fmatrixMode | 输入 | 用于控制LoadData指令从left还是right寄存器获取信息。FmatrixMode类型，定义如下。当前只支持FMATRIX\_LEFT，左右矩阵均使用该配置。<br><pre>enum class FmatrixMode : uint8_t {<br>    FMATRIX_LEFT = 0,<br>    FMATRIX_RIGHT = 1,<br>};</pre> |
+| fmatrixMode | 输入 | 用于控制LoadData指令从left还是right寄存器获取信息。FmatrixMode类型，定义如下。当前只支持FMATRIX\_LEFT，左右矩阵均使用该配置。<br>enum class FmatrixMode : uint8_t {<br>    FMATRIX_LEFT = 0,<br>    FMATRIX_RIGHT = 1,<br>}; |
 
 ## 返回值说明
 

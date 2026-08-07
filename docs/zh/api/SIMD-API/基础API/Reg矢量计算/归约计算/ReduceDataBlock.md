@@ -47,7 +47,7 @@ __simd_callee__ inline void ReduceDataBlock(U& dstReg, U srcReg, MaskReg mask)
 
 | 参数名 | 描述 |
 | --- | --- |
-| type | ReduceType类型，支持SUM、MAX、MIN。<br><pre>enum class ReduceType {<br>    SUM = 0,<br>    MAX,<br>    MIN,<br>};</pre> |
+| type | ReduceType类型，支持SUM、MAX、MIN。<br>enum class ReduceType {<br>    SUM = 0,<br>    MAX,<br>    MIN,<br>}; |
 | T | 目的操作数和源操作数的数据类型。 |
 | mode | [MaskMergeMode](../辅助数据类型/MaskMergeMode.md)，选择MERGING模式或ZEROING模式。当前仅支持ZEROING模式。<br>&bull; ZEROING，mask未筛选的元素在dst中置零。<br>&bull; MERGING，当前不支持。 |
 | U | 目的操作数和源操作数的RegTensor类型，例如RegTensor&lt;int32_t&gt;，由编译器自动推导，用户不需要填写。 |

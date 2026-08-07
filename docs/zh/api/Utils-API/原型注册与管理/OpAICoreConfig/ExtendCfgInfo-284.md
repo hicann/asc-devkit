@@ -25,7 +25,7 @@ ExtendCfgInfo支持的参数如下表：
 
 | 参数名 | 功能介绍 |
 |:-------|:---------|
-| aclnnSupport.value | - support_aclnn：此模式下，静态Shape场景中该算子通过模型下沉执行，动态Shape场景则在Host侧调用fallback函数下发算子。如果调用了[EnableFallBack](../OpDef/EnableFallBack.md)则默认采用该模式。<br>- aclnn_only：此模式下，动静态Shape场景中该算子均以fallback形式下发。不建议用户使用该模式，后续版本待废弃。<br>关于fallback下发算子的详细介绍请参考[《图引擎开发指南》](https://www.hiascend.com/document/redirect/CannCommunityGraphguide)。 |
+| aclnnSupport.value | - support_aclnn：此模式下，静态Shape场景中该算子通过模型下沉执行，动态Shape场景则在Host侧调用fallback函数下发算子。如果调用了[EnableFallBack](../OpDef/EnableFallBack.md)则默认采用该模式。<br>- aclnn_only：此模式下，动静态Shape场景中该算子均以fallback形式下发。不建议用户使用该模式，后续版本待废弃。<br>关于fallback下发算子的详细介绍请参考《[图开发](https://gitcode.com/cann/ge/blob/master/docs/zh/user_guides/graph_dev/README.md)》。 |
 
 support_aclnn使用示例：
 
