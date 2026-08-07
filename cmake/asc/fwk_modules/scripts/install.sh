@@ -660,6 +660,13 @@ else
         vendor=$(echo $found_vendor | tr -s ' ' ',')
         if [ "$vendor" != "" ]; then
             sed -i "/load_priority=$found_vendors/s@load_priority=$found_vendors@load_priority=$vendor_name,$vendor@g" "$config_file"
+            if [ $? -ne 0 ] || ! grep -Fxq "load_priority=$vendor_name,$vendor" "$config_file"; then
+                log "[ERROR] update load_priority in $config_file failed"
+                exit 1
+            fi
+        elif [ "$found_vendors" != "$vendor_name" ]; then
+            log "[ERROR] load_priority in $config_file is invalid"
+            exit 1
         fi
     fi
     apply_chmod "${config_file}" "750" "${INSTALL_FOR_ALL}"
