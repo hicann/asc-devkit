@@ -93,11 +93,38 @@ msopgen gen -i add_custom.json -c ai_core-ascendxxyy -lan cpp -out AddCustom
 ```
 
 -   -i：指定算子原型定义文件_add\_custom_.json所在路径，请根据实际情况修改。
--   -c：`ai_core-ascendxxyy`代表算子在AI Core上执行，ascendxxyy为昇腾AI处理器的型号。JSON中的dtype/format列表定义算子支持的数据类型和格式组合。msOpGen会基于这些信息生成对应的Kernel编译配置。
+-   -c：`ai_core-ascendxxyy`代表算子在AI Core上执行，ascendxxyy为昇腾AI处理器的型号`soc_version`。JSON中的type/format列表定义算子支持的数据类型和格式组合。msOpGen会基于这些信息生成对应的Kernel编译配置。
 -   -lan：参数cpp代表算子基于Ascend C编程框架，使用C/C++编程语言开发。
 -   -out：生成文件所在路径，可配置为绝对路径或者相对路径，并且工具执行用户对路径具有可读写权限。若不配置，则默认生成在执行命令的当前路径。
 
-将`ascendxxyy`替换为您的AI处理器型号。msOpGen会自动将芯片型号映射为框架统一标识，并写入`CMakePresets.json`的`ASCEND_COMPUTE_UNIT`和原型定义的`AddConfig`中。
+将`ascendxxyy`替换为您的AI处理器型号`soc_version`。msOpGen会自动将芯片型号映射为框架统一标识，并写入`CMakePresets.json`的`ASCEND_COMPUTE_UNIT`和原型定义的`AddConfig`中。
+
+>[!NOTE]说明 
+>其中，AI处理器型号`soc_version`请通过以下方式获取：
+><!-- npu="910b,910,310p,310b" id1 -->
+>- 针对如下产品：在安装AI处理器的服务器执行npu-smi info命令进行查询，获取Name信息。实际配置值为AscendName，例如Name取值为xxxyy，实际配置值为Ascendxxxyy。<br><br>
+>    <!-- npu="910b" id2 -->
+>    Atlas A2 训练系列产品/Atlas A2 推理系列产品  
+>    <!-- end id2 -->
+>
+>    <!-- npu="310b" id3 -->
+>    Atlas 200I/500 A2 推理产品  
+>    <!-- end id3 -->
+>
+>    <!-- npu="310p" id4 -->
+>    Atlas 推理系列产品  
+>    <!-- end id4 -->
+>
+>    <!-- npu="910" id5 -->
+>    Atlas 训练系列产品<br><br> 
+>    <!-- end id5 -->
+><!-- end id1 -->
+><!-- npu="A3" id6 -->
+>- 针对<term>Atlas A3 训练系列产品</term>/<term>Atlas A3 推理系列产品</term>，在安装AI处理器的服务器执行npu-smi info -t board -i id -c chip_id命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：<br>id：设备id，通过npu-smi info -l命令查出的NPU ID即为设备id。<br> chip_id：芯片id，通过npu-smi info -m命令查出的Chip ID即为芯片id。<br><br>
+><!-- end id6 -->
+><!-- npu="950" id7 -->
+>- 针对Ascend 950PR/Ascend 950DT，在安装AI处理器的服务器执行npu-smi info -t board -i id命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。<br> 其中：id为设备id，通过npu-smi info -l命令查出的NPU ID即为设备id。
+><!-- end id7 -->
 
 ### 查看目录结构
 
@@ -300,6 +327,7 @@ customize
 ├── op_api        // 单算子API头文件和动态库（aclnn_*.h、libcust_opapi.so）
 ├── op_impl       // Kernel二进制（.o）和Tiling动态库
 ├── op_proto      // 算子原型动态库
+├── scripts       // 算子包维护脚本
 └── version.info  // 版本信息
 ```
 

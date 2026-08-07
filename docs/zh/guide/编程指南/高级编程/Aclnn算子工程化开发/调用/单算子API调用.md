@@ -208,7 +208,11 @@ aclnnFinalize();
     source /usr/local/Ascend/cann/set_env.sh
     # <vendor_name>需替换为算子工程CMakePresets.json中的vendor_name
     export VENDOR_NAME=<vendor_name>
+    # 配置自定义算子包环境变量
+    # 如果是run包执行
     export LD_LIBRARY_PATH=${ASCEND_OPP_PATH}/vendors/${VENDOR_NAME}/op_api/lib/:${LD_LIBRARY_PATH}
+    # 如果是动态库或者静态库则执行以下命令，其中${CMAKE_INSTALL_PREFIX}需要换成自定义算子包路径的绝对路径
+    export LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib/:${LD_LIBRARY_PATH}
     ```
 
 2.  编译样例工程，生成单算子验证可执行文件。
