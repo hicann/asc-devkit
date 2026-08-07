@@ -230,6 +230,8 @@ bool CheckFuncLoadData3dv2Pro(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2Pro& loadDataParams,
     const char* intriName)
 {
+    uint64_t dstLen = GetLoadDataLocalLen<T>(dst.GetSize());
+    uint64_t srcLen = GetLoadDataLocalLen<T>(src.GetSize());
     check::LoadData3dv2ProApiParams chkParams{
         static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.GetPhyAddr())),
         static_cast<uint64_t>(reinterpret_cast<uintptr_t>(src.GetPhyAddr())),
@@ -248,8 +250,8 @@ bool CheckFuncLoadData3dv2Pro(
         static_cast<bool>(loadDataParams.enSmallK),
         static_cast<uint32_t>(sizeof(PrimT<T>)),
         static_cast<uint32_t>(sizeof(PrimT<T>)),
-        static_cast<uint64_t>(dst.GetLength()),
-        static_cast<uint64_t>(src.GetLength()),
+        static_cast<uint64_t>(dstLen),
+        static_cast<uint64_t>(srcLen),
         static_cast<uint8_t>(dst.GetPosition()),
         static_cast<uint8_t>(src.GetPosition())};
     return check::CheckFuncLoadData3dv2ProImpl(chkParams, intriName);
