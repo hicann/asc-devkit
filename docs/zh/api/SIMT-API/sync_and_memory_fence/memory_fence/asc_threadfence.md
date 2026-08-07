@@ -78,24 +78,45 @@ inline void asc_threadfence()
 
 完整样例请参考[MemoryFence样例](../../../../../../examples/03_simt_api/02_features/01_api_features/01_sync_instruction/memory_fence/README.md)。
 
+以下示例中，假设执行前`data[0]`为旧值、`flag[0]`为0。生产者线程先写入`data[0] = 100`，随后调用`asc_threadfence()`约束全局可见性顺序，再写入`flag[0] = 1`发布数据就绪标志。消费者线程轮询等待`flag[0]`变为1后读取`data[0]`，此时不应读到旧值，而应读到生产者写入的100。
+
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelThreadFence(float* dst, float* src)
+    __global__ __launch_bounds__(1024) void KernelThreadFence(int32_t* data, int32_t* flag, int32_t* result)
     {
-        src[0] = src[0] + 1;
-        asc_threadfence(); // asc_threadfence()保证本线程的写操作顺序对全局可见
-        dst[0] = src[0];
+        if (blockIdx.x == 0 && threadIdx.x == 0) {
+            data[0] = 100;
+            asc_threadfence(); // 保证data[0]的写入先于flag[0]的写入对全局可见
+            flag[0] = 1;
+        }
+
+        if (blockIdx.x == 1 && threadIdx.x == 0) {
+            volatile int32_t* flag_volatile = reinterpret_cast<volatile int32_t*>(flag);
+            while (flag_volatile[0] == 0) {  // 等待生产者将flag[0]置1
+            }
+            result[0] = data[0];
+        }
     }
     ```
 
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelThreadFence(__gm__ float* dst, __gm__ float* src)
+    __simt_vf__ __launch_bounds__(1024) inline void KernelThreadFence(
+        __gm__ int32_t* data, __gm__ int32_t* flag, __gm__ int32_t* result)
     {
-        src[0] = src[0] + 1;
-        asc_threadfence(); // asc_threadfence()保证本线程的写操作顺序对全局可见
-        dst[0] = src[0];
+        if (blockIdx.x == 0 && threadIdx.x == 0) {
+            data[0] = 100;
+            asc_threadfence(); // 保证data[0]的写入先于flag[0]的写入对全局可见
+            flag[0] = 1;
+        }
+
+        if (blockIdx.x == 1 && threadIdx.x == 0) {
+            volatile __gm__ int32_t* flag_volatile = reinterpret_cast<volatile __gm__ int32_t*>(flag);
+            while (flag_volatile[0] == 0) {   // 等待生产者将flag[0]置1
+            }
+            result[0] = data[0];
+        }
     }
     ```
