@@ -291,7 +291,7 @@
             -   [避免UB的bank冲突](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免UB的bank冲突.md)
                 -   [概述](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/概述.md)
                 -   [避免bank冲突（NPU架构版本2201）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md)
-                -   [避免bank冲突（NPU架构版本3510）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md)
+                -   [避免bank冲突（NPU架构版本3510）](算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_3510.md)
 
             -   [L2 Cache切分](算子实践参考/SIMD算子性能优化/内存访问/L2-Cache切分.md)
 
