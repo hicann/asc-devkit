@@ -28,7 +28,13 @@
 
 头文件路径为：`"basic_api/kernel_operator_scalar_intf.h"`。
 
-不经过DCache向GM地址上写数据。使用场景：
+不经过DCache向GM地址上写数据。
+<!-- npu="A3,910b" id8 -->
+> [!CAUTION]注意    
+> 针对[NPU架构2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，接口能否将value成功写入GM还与目标地址addr有关，具体请参见[约束说明](#约束说明)。
+<!-- end id8 -->
+
+使用场景：
 
 - 当多个核写入的数据落在同一条Cache Line内时，经过DCache的读写将以64B为粒度，可能引发多核数据随机覆盖问题（参考[DataCacheCleanAndInvalid调用示例3](../cache_control/DataCacheCleanAndInvalid.md#example3_multi_core)）。使用该接口不经过DCache直接按操作数大小写GM，可避免此问题。
 - 经过DCache写GM时可能导致多核间的数据不一致问题（详细原因请参考[Cache写策略与Cache一致性问题](../cache_control/system_cache_overview.md#zh-cn_topic_0000002583420201_section053731716357)），使用该接口不经过DCache直接向GM写数据，可避免此问题。
@@ -79,7 +85,19 @@ __aicore__ inline void WriteGmByPassDCache(__gm__ T* addr, T value)
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-无
+<!-- npu="A3,910b" id9 -->
+针对[NPU架构2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，接口是否执行写入取决于目标地址addr在当前128字节对齐区间内的偏移。令$\mathrm{offset} = addr \bmod 128$，当$0 \leq \mathrm{offset} < 32$时，写入生效；当$32 \leq \mathrm{offset} < 128$时，不执行写入，目标地址中的数据保持原值。即仅当目标地址位于每个128字节对齐区间的前32字节时，接口才执行写入。
+
+设接口调用前后的目标地址数据分别为$\mathrm{GM}_{\mathrm{before}}(addr)$和$\mathrm{GM}_{\mathrm{after}}(addr)$，则：
+
+  $$
+  \mathrm{GM}_{\mathrm{after}}(addr) =
+  \begin{cases}
+  value, & 0 \leq \mathrm{offset} < 32 \\
+  \mathrm{GM}_{\mathrm{before}}(addr), & 32 \leq \mathrm{offset} < 128
+  \end{cases}
+  $$
+<!-- end id9 -->
 
 ## 调用示例<a name="section6191129670"></a>
 
