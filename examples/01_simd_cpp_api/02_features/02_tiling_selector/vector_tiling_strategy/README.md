@@ -4,7 +4,7 @@
 
 本样例以两个一维Tensor相加为例，介绍矢量计算多核Tiling切分策略。该策略根据输入数据量计算不同的核间和核内切分参数，使数据在多个AI Core之间尽量均衡分配，从而充分利用多核计算能力实现高效计算。
 
-样例固定使用8个AI Core，核内主块数据量为3200个`half`元素（即200个DataBlock），通过CMake编译参数`SCENARIO_NUM`选择不同数据量场景。
+样例固定使用8个核，核内主块数据量为3200个`half`元素（即200个DataBlock），通过CMake编译参数`SCENARIO_NUM`选择不同数据量场景。
 
 ## 本样例支持的产品及CANN软件版本
 
@@ -31,30 +31,38 @@
 
 本样例实现两个一维Tensor相加，计算逻辑为`z = x + y`。样例通过CMake编译参数`SCENARIO_NUM`选择不同数据量场景，对应不同的Tiling切分场景，所有场景数据格式为ND，输入输出均为`half`类型，核函数名为`add_custom`。
 
-样例固定使用8个AI Core，主块数据量为3200个`half`元素，其中“主块”（`MAIN_TILE_LENGTH`）是用户基于UB可用空间确定的一次可以处理的最大数据量，且满足32字节对齐。
+样例固定使用8个核，主块数据量为3200个`half`元素，其中“主块”（`mainTileLength`）是用户基于UB可用空间确定的一次可以处理的最大数据量，且满足32字节对齐。
 
-**场景0：仅主块**
+<a name="scenario0-main-tile-only"></a>
+
+### 场景0：主块均分
 
 - 输入：`x`、`y`均为[1, 256000]个`half`元素
 - 输出：`z`为[1, 256000]个`half`元素
 - Tiling切分：8个核各处理32000个元素；每个核包含10个主块，每个主块3200个元素
-- 说明：所有核处数据量相同，核内只包含主块
+- 说明：所有核处理数据量相同，核内只包含主块
 
-**场景1：主块+尾块**
+<a name="scenario1-main-tile-tail-block"></a>
+
+### 场景1：尾块均分
 
 - 输入：`x`、`y`均为[1, 260096]个`half`元素
 - 输出：`z`为[1, 260096]个`half`元素
 - Tiling切分：8个核各处理32512个元素；每个核包含10个主块和512个元素的尾块
 - 说明：所有核处理数据量相同，每个核在主块后都有等长尾块
 
-**场景2：主块+尾核**
+<a name="scenario2-main-tile-tail-core"></a>
+
+### 场景2：尾核切分
 
 - 输入：`x`、`y`均为[1, 256064]个`half`元素
 - 输出：`z`为[1, 256064]个`half`元素
 - Tiling切分：前4个整核各处理32016个元素，后4个尾核各处理32000个元素；整核包含10个主块和16个元素的尾块，尾核包含10个主块
 - 说明：前4个整核比尾核多处理1个DataBlock，尾核无尾块
 
-**场景3：尾块+尾核**
+<a name="scenario3-tail-block-tail-core"></a>
+
+### 场景3：尾核尾块切分
 
 - 输入：`x`、`y`均为[1, 258112]个`half`元素
 - 输出：`z`为[1, 258112]个`half`元素
@@ -113,42 +121,58 @@
    totalLengthAligned = AlignUp(totalLength, alignNum);
    ```
 
-2. 先在所有核上分配相同数量的主块`MAIN_TILE_LENGTH`。
+2. 先在所有核上分配相同数量的主块`mainTileLength`。
 
    ```cpp
-   mainTileNum = totalLengthAligned / (numBlocks * MAIN_TILE_LENGTH);
-   mainTileRemainder = totalLengthAligned % (numBlocks * MAIN_TILE_LENGTH);
+   mainTileNum = totalLengthAligned / (numBlocks * mainTileLength);
+   mainTileRemainder = totalLengthAligned % (numBlocks * mainTileLength);
    ```
 
-   此时每个核至少处理`mainTileNum * MAIN_TILE_LENGTH`个元素，`mainTileRemainder`表示完成主块分配后的剩余数据量。
-
-3. `mainTileRemainder`再按DataBlock给所有核补齐等长尾块。
+   此时每个核至少处理`mainTileNum * mainTileLength`个元素，`mainTileRemainder`表示完成主块分配后的剩余数据量。当`mainTileRemainder`为0时，进入主块均分场景并结束Tiling计算。
 
    ```cpp
-   tailBlockNumEachCore = mainTileRemainder / (numBlocks * alignNum);
-   formerCoreRemainder = mainTileRemainder % (numBlocks * alignNum);
-   baseLength = mainTileNum * MAIN_TILE_LENGTH + tailBlockNumEachCore * alignNum;
-   ```
-
-   `baseLength`表示每个核处理的基础数据量。`formerCoreRemainder`表示每核补齐等长DataBlock尾块后，剩余需要分给前若干个核的数据量。
-
-4. 最后剩余的DataBlock分给前若干个整核。
-
-   ```cpp
-   if (formerCoreRemainder == 0) {
-       formerNum = numBlocks;
-       formerLength = baseLength;
-       tailNum = 0;
-       tailLength = 0;
-   } else {
-       formerNum = formerCoreRemainder / alignNum;
-       formerLength = baseLength + alignNum;
-       tailNum = numBlocks - formerNum;
-       tailLength = baseLength;
+   if (mainTileRemainder == 0) {
+       // 使用MainTileOnlyTiling。
+       return;
    }
    ```
 
-   `formerCoreRemainder == 0`时不存在尾核，所有核都处理`baseLength`个元素。`formerCoreRemainder != 0`时，`formerNum`表示整核数量，前`formerNum`个核处理`formerLength`个元素；`tailNum`表示尾核数量，剩余核处理`tailLength`个元素。
+3. `mainTileRemainder`不为0时，再按DataBlock给所有核补齐等长尾块。
+
+   ```cpp
+   tailBlockNumEachCore = mainTileRemainder / (numBlocks * alignNum);
+   remainingTailLength = mainTileRemainder % (numBlocks * alignNum);
+   baseLength = mainTileNum * mainTileLength + tailBlockNumEachCore * alignNum;
+   ```
+
+   `baseLength`表示每个核处理的基础数据量。`remainingTailLength`表示每核补齐等长DataBlock尾块后尚未分配的元素数量，其值为`alignNum`的整数倍。
+
+4. 判断尾块均分场景。当`remainingTailLength`为0时，表示所有核均分到等长尾块，进入尾块均分场景。
+
+   ```cpp
+   if (remainingTailLength == 0) {
+       // 使用MainTileWithTailBlockTiling。
+       return;
+   }
+   ```
+
+5. `remainingTailLength`不为0时，将最后剩余的DataBlock分给前若干个整核，并计算整核和尾核的数据长度。
+
+   ```cpp
+   formerNum = remainingTailLength / alignNum;
+   formerLength = baseLength + alignNum;
+   tailLength = baseLength;
+   ```
+
+6. 判断尾核切分场景。`tailBlockNumEachCore`为0时，尾核内只包含主块，进入尾核切分场景；否则，进入尾核尾块切分场景。
+
+   ```cpp
+   if (tailBlockNumEachCore == 0) {
+       // 使用MainTileWithTailCoreTiling。
+   } else {
+       // 使用TailBlockAndTailCoreTiling。
+   }
+   ```
 
 ## 编译运行
 
@@ -193,7 +217,7 @@
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
   | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
-  | `SCENARIO_NUM` | `0`（默认）、`1`、`2`、`3` | 场景编号：0（仅主块）、1（主块+尾块）、2（主块+尾核）、3（尾块+尾核） |
+  | `SCENARIO_NUM` | `0`（默认）、`1`、`2`、`3` | 场景编号：0（主块均分）、1（尾块均分）、2（尾核切分）、3（尾核尾块切分） |
 
 - 执行结果
 

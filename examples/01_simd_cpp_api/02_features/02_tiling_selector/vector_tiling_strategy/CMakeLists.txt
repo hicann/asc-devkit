@@ -15,10 +15,10 @@ set(CMAKE_ASC_ARCHITECTURES "dav-2201" CACHE STRING "NPU architecture: dav-2201,
 
 # 场景参数（通过命令行传入）
 # SCENARIO_NUM: Tiling切分场景编号
-#   0 - 仅主块
-#   1 - 主块+尾块
-#   2 - 主块+尾核
-#   3 - 尾块+尾核
+#   0 - 主块均分
+#   1 - 尾块均分
+#   2 - 尾核切分
+#   3 - 尾核尾块切分
 set(SCENARIO_NUM "0" CACHE STRING "Tiling scenario number: 0-3")
 
 message(STATUS "[INFO] SCENARIO_NUM is ${SCENARIO_NUM}")

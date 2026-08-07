@@ -20,7 +20,7 @@
             totalLength : ((totalLength + alignNum - 1) / alignNum) * alignNum;
     ```
 
-2.  根据totalLengthAligned，计算每个核的计算数据长度blockLength，分核策略可参照[尾核Tiling](多核-Tiling切分/尾核Tiling.md)。
+2.  根据totalLengthAligned，计算每个核的计算数据长度blockLength，分核策略可参照[尾核切分](多核Tiling切分/尾核切分.md)。
 3.  计算其余Tiling参数。
 
     对当前Unified Buffer可用空间以32字节为粒度，进行切分，计算出数据块个数UB\_BLOCK\_NUM。根据是否开启DoubleBuffer计算出当前可用的最大数据块个数，记作MAX\_AVAILABLE\_UB\_BLOCK\_NUM。最后，以MAX\_AVAILABLE\_UB\_BLOCK\_NUM为粒度，对blockLength进行切分。为方便演示，如下代码直接给出UB\_BLOCK\_NUM，作为当前Unified Buffer可用空间包含的block（32字节）数。
@@ -115,7 +115,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
 }
 ```
 
-由于开启DoubleBuffer后，切分后的主块数据块个数翻倍，在Process函数中，需要将BUFFER\_NUM带入计算循环次数；尾块独立计算，不开启DoubleBuffer。后续主尾块在CopyIn、Compute、CopyOut阶段中的处理，与[尾块tiling处理](多核-Tiling切分/尾块Tiling.md)相同。
+由于开启DoubleBuffer后，切分后的主块数据块个数翻倍，在Process函数中，需要将BUFFER\_NUM带入计算循环次数；尾块独立计算，不开启DoubleBuffer。后续主尾块在CopyIn、Compute、CopyOut函数中的处理，与[尾块均分](多核Tiling切分/尾块均分.md)相同。
 
 ```
 __aicore__ inline void Process()
