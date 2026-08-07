@@ -70,7 +70,7 @@ mask控制源操作数是否参与计算，源操作数不参与计算的元素�
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void mul_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void mul_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, int32_t one_repeat_size, uint16_t repeat_time)
 {
     vector_half src0;
     vector_half src1;
@@ -81,7 +81,7 @@ __simd_vf__ inline void mul_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr
         asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
         asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
         asc_mul(dst, src0, src1, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
     }
 }
 ```

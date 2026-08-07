@@ -62,15 +62,15 @@ mask控制源操作数是否参与计算，源操作数不参与计算的元素�
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void bfloat162float_vf(__ubuf__ float* dst_addr, __ubuf__ bfloat16_t* src_addr, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void bfloat162float_vf(__ubuf__ float* dst_addr, __ubuf__ bfloat16_t* src_addr, int32_t src_repeat_size, int32_t dst_repeat_size, uint16_t repeat_time)
 {
     vector_bfloat16_t src;
     vector_float dst;
     vector_bool mask = asc_create_mask_b16(PAT_ALL);
     for (uint16_t i = 0; i < repeat_time; ++i) {
-        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
+        asc_loadalign_postupdate(src, src_addr, src_repeat_size);
         asc_bfloat162float(dst, src, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, dst_repeat_size, mask);
     }
 }
 ```

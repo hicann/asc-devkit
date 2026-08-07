@@ -97,19 +97,42 @@ $$
 
 ## 调用示例
 
-```cpp
-__simd_vf__ inline void sub_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
-{
-    vector_half src0;
-    vector_half src1;
-    vector_half dst;
-    vector_bool mask;
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        mask = asc_update_mask_b16(count);
-        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
-        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
-        asc_sub(dst, src0, src1, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+- 不支持进位计算接口
+
+    ```cpp
+    __simd_vf__ inline void sub_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, int32_t one_repeat_size, uint16_t repeat_time)
+    {
+        vector_half src0;
+        vector_half src1;
+        vector_half dst;
+        vector_bool mask;
+        for (uint16_t i = 0; i < repeat_time; ++i) {
+            mask = asc_update_mask_b16(count);
+            asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+            asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+            asc_sub(dst, src0, src1, mask);
+            asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+        }
     }
-}
-```
+    ```
+
+- 支持进位计算接口
+
+    ```cpp
+    __simd_vf__ inline void sub_vf(__ubuf__ uint32_t* carry_addr, __ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src0_addr, __ubuf__ uint32_t* src1_addr, uint32_t count, int32_t one_repeat_size, int32_t one_block_size, uint16_t repeat_time)
+    {
+        vector_uint32_t src0;
+        vector_uint32_t src1;
+        vector_uint32_t dst;
+        vector_bool carry;
+        vector_bool mask;
+        for (uint16_t i = 0; i < repeat_time; ++i) {
+            mask = asc_update_mask_b32(count);
+            asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+            asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+            asc_sub(carry, dst, src0, src1, mask);
+            asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+            asc_storealign_postupdate(carry_addr, carry, one_block_size);
+        }
+    }
+    ```

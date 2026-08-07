@@ -79,14 +79,14 @@
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void arange_vf(__ubuf__ int8_t* dst_addr, int8_t value, uint32_t count, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void arange_vf(__ubuf__ int8_t* dst_addr, int8_t value, uint32_t count, int32_t one_repeat_size, uint16_t repeat_time)
 {
     vector_int8_t dst;
     vector_bool mask;
     for (uint16_t i = 0; i < repeat_time; ++i) {
         mask = asc_update_mask_b8(count);
         asc_arange(dst, value);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
     }
 }
 ```

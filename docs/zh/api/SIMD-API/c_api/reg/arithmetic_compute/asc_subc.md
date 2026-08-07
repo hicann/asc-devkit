@@ -77,7 +77,7 @@ __simd_callee__ inline void asc_subc(vector_bool& carry, vector_uint32_t& dst, v
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void subc_vf(__ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src0_addr, __ubuf__ uint32_t* src1_addr, __ubuf__ uint32_t* carry_src_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void subc_vf(__ubuf__ uint32_t* carry_addr, __ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src0_addr, __ubuf__ uint32_t* src1_addr, __ubuf__ uint32_t* carry_src_addr, uint32_t count, int32_t one_repeat_size, int32_t one_block_size, uint16_t repeat_time)
 {
     vector_uint32_t src0;
     vector_uint32_t src1;
@@ -89,9 +89,10 @@ __simd_vf__ inline void subc_vf(__ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* 
         mask = asc_update_mask_b32(count);
         asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
         asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
-        asc_loadalign_postupdate(carry_src, carry_src_addr, one_repeat_size);
+        asc_loadalign_postupdate(carry_src, carry_src_addr, one_block_size);
         asc_subc(carry, dst, src0, src1, carry_src, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+        asc_storealign_postupdate(carry_addr, carry, one_block_size);
     }
 }
 ```

@@ -27,7 +27,7 @@
 ## 功能说明
 
 该接口根据mask，对源操作数src0、src1及输入进位carry_src进行按元素求和操作，将结果写入目的操作数dst，同时将每个元素的进位结果写入carry（存放进位的掩码寄存器）。
- 	 
+
 Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。若src0，src1，carry_src输入按位相加后最高位有进位，在carry中对应位置每4bit设置1，否则写0。
 
 计算公式如下：
@@ -76,7 +76,7 @@ __simd_callee__ inline void asc_addc(vector_bool& carry, vector_uint32_t& dst, v
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void addc_vf(__ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src0_addr, __ubuf__ uint32_t* src1_addr, __ubuf__ uint32_t* carry_src_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void addc_vf(__ubuf__ uint32_t* carry_addr, __ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src0_addr, __ubuf__ uint32_t* src1_addr, __ubuf__ uint32_t* carry_src_addr, uint32_t count, int32_t one_repeat_size, int32_t one_block_size, uint16_t repeat_time)
 {
     vector_uint32_t src0;
     vector_uint32_t src1;
@@ -88,9 +88,10 @@ __simd_vf__ inline void addc_vf(__ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* 
         mask = asc_update_mask_b32(count);
         asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
         asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
-        asc_loadalign_postupdate(carry_src, carry_src_addr, one_repeat_size);
+        asc_loadalign_postupdate(carry_src, carry_src_addr, one_block_size);
         asc_addc(carry, dst, src0, src1, carry_src, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+        asc_storealign_postupdate(carry_addr, carry, one_block_size);
     }
 }
 ```

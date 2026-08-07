@@ -63,7 +63,7 @@ mask控制源操作数是否参与计算，源操作数不参与计算的元素�
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void exp_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void exp_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, int32_t one_repeat_size, uint16_t repeat_time)
 {
     vector_half src;
     vector_half dst;
@@ -72,7 +72,7 @@ __simd_vf__ inline void exp_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr,
         mask = asc_update_mask_b16(count);
         asc_loadalign_postupdate(src, src_addr, one_repeat_size);
         asc_exp(dst, src, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
     }
 }
 ```

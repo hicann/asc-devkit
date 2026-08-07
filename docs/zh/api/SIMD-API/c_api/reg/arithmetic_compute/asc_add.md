@@ -27,11 +27,11 @@
 ## 功能说明
 
 该接口根据mask，对源操作数src0、src1进行按元素求和操作，将结果写入目的操作数dst。
- 	 
+
 Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。该接口可以在carry（掩码寄存器）中标记每次加法是否产生进位，若src0，src1输入按位相加后最高位有进位，在carry中对应位置每4bit的最低位写1，否则写0。
 
 计算结果不保留进位，计算公式如下：
- 	 
+
 $$
 dst_i = src0_i + src1_i
 $$
@@ -95,19 +95,42 @@ $$
 
 ## 调用示例
 
-```cpp
-__simd_vf__ inline void add_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
-{
-    vector_half src0;
-    vector_half src1;
-    vector_half dst;
-    vector_bool mask;
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        mask = asc_update_mask_b16(count);
-        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
-        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
-        asc_add(dst, src0, src1, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
-    }
-}
-```
+- 不支持进位计算接口
+
+  ```cpp
+  __simd_vf__ inline void add_vf(__ubuf__ half* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, int32_t one_repeat_size, uint16_t repeat_time)
+  {
+      vector_half src0;
+      vector_half src1;
+      vector_half dst;
+      vector_bool mask;
+      for (uint16_t i = 0; i < repeat_time; ++i) {
+          mask = asc_update_mask_b16(count);
+          asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+          asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+          asc_add(dst, src0, src1, mask);
+          asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+      }
+  }
+  ```
+
+- 支持进位计算接口
+
+  ```cpp
+  __simd_vf__ inline void add_vf(__ubuf__ uint32_t* carry_addr, __ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src0_addr, __ubuf__ uint32_t* src1_addr, uint32_t count, int32_t one_repeat_size, int32_t one_block_size, uint16_t repeat_time)
+  {
+      vector_uint32_t src0;
+      vector_uint32_t src1;
+      vector_uint32_t dst;
+      vector_bool carry;
+      vector_bool mask;
+      for (uint16_t i = 0; i < repeat_time; ++i) {
+          mask = asc_update_mask_b32(count);
+          asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
+          asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
+          asc_add(carry, dst, src0, src1, mask);
+          asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+          asc_storealign_postupdate(carry_addr, carry, one_block_size);
+      }
+  }
+  ```

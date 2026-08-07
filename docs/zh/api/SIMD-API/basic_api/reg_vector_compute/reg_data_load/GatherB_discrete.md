@@ -97,17 +97,16 @@ __simd_callee__ inline void GatherB(U& dstReg, __ubuf__ T* baseAddr, S& index, M
 
 ```cpp
 template <typename T>
-__simd_vf__ inline void GatherBVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, __ubuf__ uint32_t* indexAddr, uint32_t count, uint16_t oneRepeatSize)
+__simd_vf__ inline void GatherBVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, __ubuf__ uint32_t* indexAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)
 {
     AscendC::Reg::RegTensor<T> dstReg;
     AscendC::Reg::RegTensor<uint32_t> indexReg;
-    AscendC::Reg::MaskReg mask;
-    uint16_t repeatTimes = AscendC::CeilDivision(count, oneRepeatSize);
+    AscendC::Reg::MaskReg calMask = AscendC::Reg::CreateMask<uint32_t, AscendC::Reg::MaskPattern::VL8>();
+    AscendC::Reg::MaskReg storeMask = AscendC::Reg::CreateMask<T, AscendC::Reg::MaskPattern::ALL>();
     for (uint16_t i = 0; i < repeatTimes; ++i) {
-        mask = AscendC::Reg::UpdateMask<T>(count);
         AscendC::Reg::LoadAlign(indexReg, indexAddr + i * oneRepeatSize);
-        AscendC::Reg::GatherB(dstReg, srcAddr, indexReg, mask);
-        AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, dstReg, mask);
+        AscendC::Reg::GatherB(dstReg, srcAddr, indexReg, calMask);
+        AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, dstReg, storeMask);
     }
 }
 ```

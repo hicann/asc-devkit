@@ -79,7 +79,7 @@ __simd_callee__ inline void asc_half2int16_rz_sat(vector_int16_t& dst, vector_ha
 ## 调用示例
 
 ```cpp
-__simd_vf__ inline void half2int16_vf(__ubuf__ int16_t* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+__simd_vf__ inline void half2int16_vf(__ubuf__ int16_t* dst_addr, __ubuf__ half* src_addr, int32_t one_repeat_size, uint16_t repeat_time)
 {
     vector_half src;
     vector_int16_t dst;
@@ -87,7 +87,7 @@ __simd_vf__ inline void half2int16_vf(__ubuf__ int16_t* dst_addr, __ubuf__ half*
     for (uint16_t i = 0; i < repeat_time; ++i) {
         asc_loadalign_postupdate(src, src_addr, one_repeat_size);
         asc_half2int16_rn(dst, src, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
     }
 }
 ```

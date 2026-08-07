@@ -28,10 +28,12 @@
 
 根据索引位置index将源操作数src按元素收集到目的操作数dst中。
 
-**图 1**  收集UB中的元素 
+**图 1**  收集UB中的元素
+
 ![收集UB中的元素](../../figures/asc_gather_ub.png)
 
-**图 2**  收集矢量数据寄存器中的元素 
+**图 2**  收集矢量数据寄存器中的元素
+
 ![收集矢量数据寄存器中的元素](../../figures/asc_gather_vec.png)
 
 ## 函数原型
@@ -87,7 +89,7 @@
     | :----- | :------- | :------- |
     | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
     | src | 输入 | 源操作数（矢量）的起始地址。 |
-    | index | 输入 | 数据索引（矢量数据寄存器）。dst中每个元素在UB中相对于src的索引位置。单位是元素，表示每个元素的源地址为index * sizeof(src\_data\_type) + src。 |
+    | index | 输入 | 数据索引（矢量数据寄存器）。dst中每个元素在UB中相对于src的索引位置，单位是元素。 |
     | mask | 输入 | 源操作数掩码（掩码寄存器）。mask用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
 - 收集矢量数据寄存器中的元素
@@ -133,16 +135,16 @@
 - 收集UB中的元素
 
     ```cpp
-    __simd_vf__ inline void gather_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, __ubuf__ uint16_t* index_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+    __simd_vf__ inline void gather_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, __ubuf__ uint16_t* index_addr, uint32_t count, int32_t index_repeat_size, int32_t dst_repeat_size, uint16_t repeat_time)
     {
         vector_half dst;
         vector_uint16_t index;
         vector_bool mask;
         for (uint16_t i = 0; i < repeat_time; ++i) {
             mask = asc_update_mask_b16(count);
-            asc_loadalign_postupdate(index, index_addr, one_repeat_size);
+            asc_loadalign_postupdate(index, index_addr, index_repeat_size);
             asc_gather(dst, src_addr, index, mask);
-            asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+            asc_storealign_postupdate(dst_addr, dst, dst_repeat_size, mask);
         }
     }
     ```
@@ -150,7 +152,7 @@
 - 收集矢量数据寄存器中的元素
 
     ```cpp
-    __simd_vf__ inline void gather_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, __ubuf__ uint16_t* index_addr, uint32_t count, uint32_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+    __simd_vf__ inline void gather_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, __ubuf__ uint16_t* index_addr, uint32_t count, int32_t one_repeat_size, int32_t dst_repeat_size, uint16_t repeat_time)
     {
         vector_half dst;
         vector_half src;
@@ -161,7 +163,7 @@
             asc_loadalign_postupdate(src, src_addr, one_repeat_size);
             asc_loadalign_postupdate(index, index_addr, one_repeat_size);
             asc_gather(dst, src, index);
-            asc_storealign_postupdate(dst_addr, dst, one_block_size, mask);
+            asc_storealign_postupdate(dst_addr, dst, dst_repeat_size, mask);
         }
     }
     ```
