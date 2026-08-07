@@ -26,6 +26,8 @@
 #include "impl/tensor_api/tensor/layout_impl.h"
 #include "impl/tensor_api/tensor/engine_impl.h"
 #include "impl/tensor_api/tensor/pointer_pattern.h"
+#include "impl/tensor_api/experimental/reg/load_mode.h"
+#include "impl/tensor_api/experimental/reg/mask_impl.h"
 
 namespace AscendC {
 
@@ -110,6 +112,33 @@ struct BaseTensor {
     template <typename Coord>
     __aicore__ inline constexpr decltype(auto) operator[](const Coord& coord) const {
         return Data()[Layout()(coord)];
+    }
+
+    using data_type = GetAttributeElementType<elementType*>;
+
+    template <asc::te::load_sideband_mode sidebandMode = asc::te::load_sideband_mode::direct, typename Coord>
+    __simd_callee__ inline decltype(auto) load(const Coord& coord) const {
+        static_assert(Std::is_same_v<GetMemLocation<EngineType>, Location::UB>,
+            "Tensor::load only supports tensors located in UB");
+
+        asc::te::reg_tensor<data_type> dst;
+        auto srcEngine = Engine() + Layout()(coord);
+        auto src = srcEngine.Begin().Get();
+        if constexpr (sidebandMode == asc::te::load_sideband_mode::direct) {
+            asc_loadalign(dst.reg, src);
+        }
+        return dst;
+    }
+
+    template <typename Coord, typename RegDataType>
+    __simd_callee__ inline void store(const Coord& coord, const asc::te::reg_tensor<RegDataType>& src) {
+        static_assert(Std::is_same_v<GetMemLocation<EngineType>, Location::UB>,
+            "Tensor::store only supports tensors located in UB");
+        static_assert(Std::is_same_v<data_type, RegDataType>,
+            "Tensor::store requires the tensor and reg_tensor to have the same element type");
+
+        auto dst = Engine() + Layout()(coord);
+        asc_storealign(dst.Begin().Get(), src.reg, src.mask);
     }
 
     template <typename Coord>
