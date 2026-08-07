@@ -18,6 +18,7 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_UTILS_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_UTILS_IMPL_H
 
+#include "c_api/utils/enum.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_type.h"
 

@@ -38,6 +38,25 @@ __simd_callee__ inline void asc_int642float_rz_v2_impl(vector_float& dst, vector
         vcvt(dst, src, mask, ROUND_Z, PART_ODD, MODE_ZEROING);
     }
 }
+
+__simd_callee__ inline void asc_int642float_rz_impl(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, ROUND_Z, PART_EVEN, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_int642float_rz_impl(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, ROUND_Z, PART_ODD, MODE_ZEROING);
+    }
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

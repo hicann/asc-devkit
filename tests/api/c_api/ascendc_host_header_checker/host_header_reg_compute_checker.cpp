@@ -143,6 +143,7 @@ static void test_host_c_api_reg_compute_3()
     using ::asc_eq_scalar;
     using ::asc_exp;
     using ::asc_exp_sub;
+    using ::asc_exp_sub_half2float;
     using ::asc_exp_sub_v2;
 }
 

@@ -53,6 +53,42 @@ __simd_callee__ inline void asc_half2uint8_rd_sat_v2_impl(vector_uint8_t& dst, v
     }
 }
 
+__simd_callee__ inline void asc_half2uint8_rd_impl(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, ROUND_F, RS_DISABLE, PART_EVEN, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_half2uint8_rd_impl(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, ROUND_F, RS_DISABLE, PART_ODD, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_half2uint8_rd_sat_impl(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, ROUND_F, RS_ENABLE, PART_EVEN, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_half2uint8_rd_sat_impl(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, ROUND_F, RS_ENABLE, PART_ODD, MODE_ZEROING);
+    }
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

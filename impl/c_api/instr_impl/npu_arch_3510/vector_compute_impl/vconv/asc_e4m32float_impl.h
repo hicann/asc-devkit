@@ -46,4 +46,44 @@ __simd_callee__ inline void asc_e4m32float_v4_impl(vector_float& dst, vector_fp8
     }
 }
 
+__simd_callee__ inline void asc_e4m32float_impl(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        src_quarter_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, PART_P0, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_e4m32float_impl(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        src_quarter_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, PART_P1, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_e4m32float_impl(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        src_quarter_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, PART_P2, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_e4m32float_impl(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        src_quarter_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, PART_P3, MODE_ZEROING);
+    }
+}
+
 #endif
