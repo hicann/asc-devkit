@@ -155,7 +155,8 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 | src0BlockStride | 用于设置src0同一迭代不同DataBlock间的地址步长（起始地址之间的间隔）。单位为DataBlock。详细说明请参考[dataBlockStride](../SIMD_compute/high_dim_split.md)。 |
 | repeatTimes | 重复迭代次数。矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTimes表示迭代的次数。<br>关于该参数的具体描述请参考[高维切分](../SIMD_compute/high_dim_split.md)。 |
 | src0RepeatStride | 用于设置src0相邻迭代间的地址步长（起始地址之间的间隔）。单位为DataBlock。详细说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)。 |
-| src1RepeatStride | 用于设置src1相邻迭代间的地址步长（起始地址之间的间隔）。单位为DataBlock。详细说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)。 |
+| src1RepeatStride | 用于设置src1相邻迭代间的地址步长（起始地址之间的间隔）。单位为DataBlock。详细说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)。该参数在部分芯片型号下的特殊说明请参考[相关约束](#src1RepeatStride-310p)。 |
+
 
 ## 数据类型
 
@@ -251,13 +252,20 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 
 - 采用内置固定模式时，配置src1RepeatStride参数无效。
 
+<!-- npu="310p" id25 -->
+<a id="src1RepeatStride-310p"></a>
+- 对于Atlas推理系列产品AI Core，用户自定义模式下，src1RepeatStride在Normal模式和Counter模式中的行为不同：
+<br>&bull; Normal模式：src1RepeatStride的取值仅区分0与非0。配置为0时，每次迭代复用同一段gather mask；配置为非0时，多次迭代读取的gather mask连续存储，相邻迭代的gather mask首地址间隔为32 / sizeof(T)字节。例如，T为16位数据类型时，间隔为16字节；T为32位数据类型时，间隔为8字节。
+<br>&bull; Counter模式：src1RepeatStride不生效，多次迭代读取的gather mask始终连续存储。
+<!-- end id25 -->
+
 - 若调用该接口前为Counter模式，在调用该接口后需要显式设置回Counter模式（接口内部执行结束后会设置为Normal模式）。
 
-<!-- npu="950" id25 -->
+<!-- npu="950" id26 -->
 - 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
   - 内置固定模式占用8KB Unified Buffer临时空间。
   - 用户自定义模式不涉及8KB Unified Buffer临时空间的占用。
-<!-- end id25 -->
+<!-- end id26 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
