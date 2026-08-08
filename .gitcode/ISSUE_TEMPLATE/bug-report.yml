@@ -19,6 +19,11 @@ body:
     attributes:
       label: Environment / 环境信息 (Mandatory / 必填)
       description: 请提供昇腾硬件型号与软件环境信息
+      placeholder: |
+        - HDK 版本：例如 24.1.RC2
+        - CANN 版本：例如 8.0.RC3
+        - 硬件形态：例如 Atlas A3 训练系列产品 / Ascend 950PR 等
+        - 操作系统版本：例如 Ubuntu 22.04 / CentOS 7.6 / EulerOS 2.0 等
     validations:
       required: true
   - type: textarea
