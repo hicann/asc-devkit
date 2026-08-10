@@ -19,9 +19,34 @@ namespace AscendC {
 namespace Std {
 
 template <typename T, typename U>
-ASCENDC_HOST_AICORE inline constexpr auto ceil_division(const T& num1, const U& num2)
+__host__ __aicore__ inline constexpr auto ceil_division(const T& num1, const U& num2)
 {
     return (num1 + num2 - 1) / num2;
+}
+
+template <typename T, typename U>
+__host__ __aicore__ inline constexpr auto ceil_div(const T& a, const U& b)
+{
+    using ReType = decltype(ceil_division(a, b));
+    if (b == 0) {
+        return ReType(0);
+    }
+#if defined(__NPU_HOST__)
+    return ceil_division(a, b);
+#elif defined(__NPU_DEVICE__)
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if (defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1) || !defined(SPLIT_CORE_VEC)
+    return ceil_division(a, b);
+#else
+    return ReType(get_repeat_ceiling(a, b));
+#endif
+#else
+    return ceil_division(a, b);
+#endif
+#else
+    return ceil_division(a, b);
+#endif
 }
 
 } // namespace Std

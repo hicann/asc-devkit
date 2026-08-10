@@ -2787,6 +2787,7 @@
         -   [数学函数](Utils-API/cpp_stdlib/math_functions/math_functions.md)
             -   [abs](Utils-API/cpp_stdlib/math_functions/abs.md)
             -   [sqrt](Utils-API/cpp_stdlib/math_functions/sqrt.md)
+            -   [ceil\_div](Utils-API/cpp_stdlib/math_functions/ceil_div.md)
 
         -   [容器函数](Utils-API/cpp_stdlib/container_functions/container_functions.md)
             -   [tuple](Utils-API/cpp_stdlib/container_functions/tuple.md)
