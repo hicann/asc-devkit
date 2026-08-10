@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
@@ -24,22 +24,22 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
-class LoadDataL12L0AZN2NZB8B4 {
-
+namespace asc {
+namespace te {
+class load_data_l1_to_l0a_zn2nz_b8b4 {
 public:
-    template <const CopyL12L0ATrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src) {
-        CheckTemplate<trait, T, U>();
-        if constexpr (T::layoutType::depth == FIVE_DIM_DATA) {
-            BatchLoadDataImpl<trait, T, U>(dst, src);
-        } else if constexpr (T::layoutType::depth == FOUR_DIM_DATA) {
-            LoadDataImpl<trait, T, U>(dst, src);
+    template <const copy_l1_to_l0a_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
+    {
+        check_template<trait, T, U>();
+        if constexpr (T::layout_type::depth == FIVE_DIM_DATA) {
+            batch_load_data_impl<trait, T, U>(dst, src);
+        } else if constexpr (T::layout_type::depth == FOUR_DIM_DATA) {
+            load_data_impl<trait, T, U>(dst, src);
         } else {
-            static_assert(T::layoutType::depth == FOUR_DIM_DATA || T::layoutType::depth == FIVE_DIM_DATA,
-                "LoadDataL12L0AZN2NZB8B4 only supports the plain fractal layout "
-                "((row0,row1),(col0,col1)) or the batch layout (B,((row0,row1),(col0,col1))).");
+            static_assert(T::layout_type::depth == FOUR_DIM_DATA || T::layout_type::depth == FIVE_DIM_DATA,
+                          "load_data_l1_to_l0a_zn2nz_b8b4 only supports the plain fractal layout "
+                          "((row0,row1),(col0,col1)) or the batch layout (B,((row0,row1),(col0,col1))).");
         }
     }
 
@@ -47,79 +47,80 @@ private:
     static constexpr uint8_t M_STEP_MIN_VAL_B4 = 4;
     static constexpr uint8_t M_STEP_MIN_VAL_B8 = 2;
 
-    template <const CopyL12L0ATrait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const copy_l1_to_l0a_trait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<T, U>();
-        CheckDataType::CheckL12L0ADataType<T, U>();
+        check_layout_pattern<T, U>();
+        check_data_type::check_l1_to_l0a_data_type<T, U>();
     }
 
-    template <uint8_t mStepMinVal, typename T, typename U>
-    __aicore__ inline static void LoadDataImplSplit(const T& dst, const U& src, uint16_t mStartPosition,
-        uint16_t kStartPosition, uint8_t mStep, uint8_t kStep, int16_t srcStride, uint16_t dstStride)
+    template <uint8_t m_step_min_val, typename T, typename U>
+    __aicore__ inline static void load_data_impl_split(const T& dst, const U& src, uint16_t m_start_position,
+                                                       uint16_t k_start_position, uint8_t m_step, uint8_t k_step,
+                                                       int16_t src_stride, uint16_t dst_stride)
     {
-        uint16_t mLoop = mStep / mStepMinVal;
-        mStep = mStepMinVal;
-        for (uint16_t idx = 0; idx < mLoop; ++idx) {
-            auto sliceDst = dst(MakeCoord(MakeCoord(0, 0), MakeCoord(0, idx)));
-            LoadCbufToCa::LoadData<true>(sliceDst, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
-            mStartPosition += mStepMinVal;
+        uint16_t m_loop = m_step / m_step_min_val;
+        m_step = m_step_min_val;
+        for (uint16_t idx = 0; idx < m_loop; ++idx) {
+            auto slice_dst = dst(make_coord(make_coord(0, 0), make_coord(0, idx)));
+            load_l1_to_l0a_instr::load_data<true>(slice_dst.data().get(), src.data().get(), m_start_position,
+                                                    k_start_position, m_step, k_step, src_stride, dst_stride);
+            m_start_position += m_step_min_val;
         }
     }
 
-    template <const CopyL12L0ATrait& trait, typename DstT, typename SrcT, typename DstLayoutT, typename SrcLayoutT>
-    __aicore__ inline static void LoadDataFractal(const DstT& dst, const SrcT& src,
-        const DstLayoutT& dstLayout, const SrcLayoutT& srcLayout)
+    template <const copy_l1_to_l0a_trait& trait, typename DstT, typename SrcT, typename DstLayoutT, typename SrcLayoutT>
+    __aicore__ inline static void load_data_fractal(const DstT& dst, const SrcT& src, const DstLayoutT& dst_layout,
+                                                    const SrcLayoutT& src_layout)
     {
-        using DstType = typename DstT::elementType;
-        uint16_t mStartPosition = 0;
-        uint16_t kStartPosition = 0;
-        auto m1 = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout) *
-                  GetElement<AttrInfo::Shape, AttrInfo::Row, 0>(srcLayout) -
-                  GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(dstLayout) *
-                  GetElement<AttrInfo::Shape, AttrInfo::Row, 0>(dstLayout);
-        auto mStep = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstLayout) *
-                GetElement<AttrInfo::Shape, AttrInfo::Column, 0>(dstLayout) / FRACTAL_FIXED;
-        auto kStep = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
+        using dst_type = typename DstT::element_type;
+        uint16_t m_start_position = 0;
+        uint16_t k_start_position = 0;
+        auto m1 = get_element<attr_info::shape, attr_info::row, 1>(src_layout)
+                      * get_element<attr_info::shape, attr_info::row, 0>(src_layout)
+                  - get_element<attr_info::shape, attr_info::row, 1>(dst_layout)
+                        * get_element<attr_info::shape, attr_info::row, 0>(dst_layout);
+        auto m_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout)
+                      * get_element<attr_info::shape, attr_info::column, 0>(dst_layout) / FRACTAL_FIXED;
+        auto k_step = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         // Zn -> Nz
-        constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<DstType> * FRACTAL_FIXED;
-        auto srcStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout) / STRIDE_UNIT;
-        auto dstStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout) / STRIDE_UNIT;
+        constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<dst_type> * FRACTAL_FIXED;
+        auto src_stride = get_element<attr_info::stride, attr_info::row, 1>(src_layout) / STRIDE_UNIT;
+        auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout) / STRIDE_UNIT;
         if (m1 < FRACTAL_FIXED) {
-            LoadCbufToCa::LoadData<true>(dst, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
-        } else if constexpr (IsB4Type<DstType>) {
-            LoadDataImplSplit<M_STEP_MIN_VAL_B4>(
-                dst, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
+            load_l1_to_l0a_instr::load_data<true>(dst.data().get(), src.data().get(), m_start_position,
+                                                    k_start_position, m_step, k_step, src_stride, dst_stride);
+        } else if constexpr (is_b4_type<dst_type>) {
+            load_data_impl_split<M_STEP_MIN_VAL_B4>(dst, src, m_start_position, k_start_position, m_step, k_step,
+                                                    src_stride, dst_stride);
         } else {
-            LoadDataImplSplit<M_STEP_MIN_VAL_B8>(
-                dst, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
+            load_data_impl_split<M_STEP_MIN_VAL_B8>(dst, src, m_start_position, k_start_position, m_step, k_step,
+                                                    src_stride, dst_stride);
         }
     }
 
-    template <const CopyL12L0ATrait& trait, typename T, typename U>
-    __aicore__ inline static void LoadDataImpl(const T& dst, const U& src)
+    template <const copy_l1_to_l0a_trait& trait, typename T, typename U>
+    __aicore__ inline static void load_data_impl(const T& dst, const U& src)
     {
-        LoadDataFractal<trait>(dst, src, dst.Layout(), src.Layout());
+        load_data_fractal<trait>(dst, src, dst.layout(), src.layout());
     }
 
-    template <const CopyL12L0ATrait& trait, typename T, typename U>
-    __aicore__ inline static void BatchLoadDataImpl(const T& dst, const U& src)
+    template <const copy_l1_to_l0a_trait& trait, typename T, typename U>
+    __aicore__ inline static void batch_load_data_impl(const T& dst, const U& src)
     {
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
-        auto dstNoBatchLayout = RemoveBatchDim(dstLayout);
-        auto srcNoBatchLayout = RemoveBatchDim(srcLayout);
-        auto batchNum = Get<0>(dstLayout.Shape());
-        for (uint32_t i = 0; i < batchNum; ++i) {
-            LoadDataFractal<trait>(
-                MakeSingleBatchSubTensor(dst, i),
-                MakeSingleBatchSubTensor(src, i),
-                dstNoBatchLayout, srcNoBatchLayout);
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
+        auto dst_no_batch_layout = remove_batch_dim(dst_layout);
+        auto src_no_batch_layout = remove_batch_dim(src_layout);
+        auto batch_num = get<0>(dst_layout.shape());
+        for (uint32_t i = 0; i < batch_num; ++i) {
+            load_data_fractal<trait>(make_single_batch_sub_tensor(dst, i), make_single_batch_sub_tensor(src, i),
+                                     dst_no_batch_layout, src_no_batch_layout);
         }
     }
 };
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0A_COPY_IMPL_ZN2NZB8B4_H
 

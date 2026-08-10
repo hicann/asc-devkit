@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
@@ -22,36 +22,29 @@
 #ifndef IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEA_COPY_IMPL_INSTRUCTION_H
 #define IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEA_COPY_IMPL_INSTRUCTION_H
 
-#include "impl/tensor_api/tensor/pointer_pattern.h"
-#include "impl/tensor_api/tensor/tensor_impl.h"
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct CopyL12L0ScaleATrait {};
+struct copy_l1_to_l0scalea_trait {};
 
-class LoadCbufToL0MxScaleA3510 {
+class load_l1_to_l0a_scale_instr {
 public:
-    template <typename U, typename... Params>
-    __aicore__ inline static void LoadData(const uint64_t& mxDstAddr, const U& src, const Params& ...params)
-    {
-        LoadCbufToMxScaleA(mxDstAddr, src.Data().Get(), params...);
-    }
-
-private:
     template <typename T>
-    __aicore__ inline static void LoadCbufToMxScaleA(uint64_t mxDstAddr, __cbuf__ T* src, uint16_t mStartPosition,
-        uint16_t kStartPosition, uint8_t mStep, uint8_t kStep, int16_t srcStride, uint16_t dstStride)
+    __aicore__ inline static void
+    load_data(uint64_t mx_dst_addr, __cbuf__ T* src, uint16_t m_start_position, uint16_t k_start_position,
+                 uint8_t m_step, uint8_t k_step, int16_t src_stride, uint16_t dst_stride)
     {
         if ASCEND_IS_AIV {
             return;
         }
-        asc_copy_l12l0a_mx(mxDstAddr, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
+        asc_copy_l12l0a_mx(mx_dst_addr, src, m_start_position, k_start_position, m_step, k_step, src_stride,
+                           dst_stride);
     }
 };
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEA_COPY_IMPL_INSTRUCTION_H
 

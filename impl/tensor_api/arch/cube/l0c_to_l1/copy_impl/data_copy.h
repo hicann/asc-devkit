@@ -9,7 +9,7 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning \
+#warning                                                                                                               \
     "impl/tensor_api/arch/cube/l0c_to_l1/copy_impl/data_copy.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
@@ -27,256 +27,256 @@
 #include "impl/tensor_api/arch/cube/utils/l0c2out_utils.h"
 #include "impl/tensor_api/arch/cube/l0c_to_l1/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct CopyL0C2L1Trait {
-    __aicore__ constexpr CopyL0C2L1Trait() {}
+struct copy_l0c_to_l1_trait {
+    __aicore__ constexpr copy_l0c_to_l1_trait() {}
 
-    __aicore__ constexpr CopyL0C2L1Trait(RoundMode roundModeIn, bool enableReluIn, bool enableChannelSplitIn)
-        : roundMode(roundModeIn), enableRelu(enableReluIn), enableChannelSplit(enableChannelSplitIn)
+    __aicore__ constexpr copy_l0c_to_l1_trait(asc::te::round_mode round_mode, bool enable_relu,
+                                              bool enable_channel_split) :
+        round_mode(round_mode), enable_relu(enable_relu), enable_channel_split(enable_channel_split)
     {}
 
-    RoundMode roundMode = RoundMode::DEFAULT;
-    bool enableRelu = false;
-    bool enableChannelSplit = false;
+    asc::te::round_mode round_mode = asc::te::round_mode::default_round;
+    bool enable_relu = false;
+    bool enable_channel_split = false;
 };
 
-class DataCopyL0C2L1NoVectorQuant {
+class data_copy_l0c_to_l1_no_vector_quant {
 public:
-    template <const CopyL0C2L1Trait& trait, QuantMode_t quantPre, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U>
+    __aicore__ inline static void data_copy_impl(const T& dst, const U& src, const fixpipe_params& params)
     {
-        if constexpr (IsL0COutSrcBatchLayoutV<U> && !IsL0COutBatchNZ2NZV<T, U>) {
-            EmitDataCopy<trait, quantPre>(dst, src, Get<1>(dst.Layout()), Get<1>(src.Layout()), params);
+        if constexpr (is_l0c_out_src_batch_layout_v<U> && !is_l0c_out_batch_nz2nz_v<T, U>) {
+            emit_data_copy<trait, quant_pre>(dst, src, get<1>(dst.layout()), get<1>(src.layout()), params);
         } else {
-            EmitDataCopy<trait, quantPre>(dst, src, dst.Layout(), src.Layout(), params);
+            emit_data_copy<trait, quant_pre>(dst, src, dst.layout(), src.layout(), params);
         }
     }
 
 private:
-    template <
-        const CopyL0C2L1Trait& trait, QuantMode_t quantPre, typename T, typename U, typename DstLayout,
-        typename SrcLayout>
-    __aicore__ inline static void EmitDataCopy(
-        const T& dst, const U& src, const DstLayout& dstLayout, const SrcLayout& srcLayout, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename DstLayout,
+              typename SrcLayout>
+    __aicore__ inline static void emit_data_copy(const T& dst, const U& src, const DstLayout& dst_layout,
+                                                 const SrcLayout& src_layout, const fixpipe_params& params)
     {
-        auto copyParams = MakeL0COutCopyParams<T, U>(dstLayout, srcLayout);
+        auto copy_params = make_l0c_out_copy_params<T, U>(dst_layout, src_layout);
 
-        bool reluEn = trait.enableRelu;
-        uint8_t unitFlag = params.unitFlag;
+        bool relu_en = trait.enable_relu;
+        uint8_t unit_flag = params.unit_flag;
 
-        bool isChannelSplit = trait.enableChannelSplit;
+        bool is_channel_split = trait.enable_channel_split;
 
-        CopyMatrixCcToL1Instr::DataCopy<quantPre, T, U>(
-            dst, src, copyParams.nSize, copyParams.mSize, copyParams.srcStride, copyParams.dstStride, reluEn, unitFlag,
-            isChannelSplit);
+        copy_l0c_to_l1_instr::data_copy<quant_pre>(dst.data().get(), src.data().get(), copy_params.n_size,
+                                                               copy_params.m_size, copy_params.src_stride,
+                                                               copy_params.dst_stride, relu_en, unit_flag,
+                                                               is_channel_split);
     }
 };
 
-class DataCopyL0C2L1VectorQuant {
+class data_copy_l0c_to_l1_vector_quant {
 public:
-    template <const CopyL0C2L1Trait& trait, QuantMode_t quantPre, typename T, typename U, typename V>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src, const V& quant, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V>
+    __aicore__ inline static void data_copy_impl(const T& dst, const U& src, const V& quant,
+                                                 const fixpipe_params& params)
     {
-        if constexpr (IsL0COutBatchNZ2NZV<T, U>) {
-            EmitBatchNZ2NZDataCopy<trait, quantPre>(dst, src, quant, params);
-        } else if constexpr (IsL0COutSrcBatchLayoutV<U>) {
-            EmitDataCopy<trait, quantPre>(dst, src, quant, Get<1>(dst.Layout()), Get<1>(src.Layout()), params);
+        if constexpr (is_l0c_out_batch_nz2nz_v<T, U>) {
+            emit_batch_nz2_nz_data_copy<trait, quant_pre>(dst, src, quant, params);
+        } else if constexpr (is_l0c_out_src_batch_layout_v<U>) {
+            emit_data_copy<trait, quant_pre>(dst, src, quant, get<1>(dst.layout()), get<1>(src.layout()), params);
         } else {
-            EmitDataCopy<trait, quantPre>(dst, src, quant, dst.Layout(), src.Layout(), params);
+            emit_data_copy<trait, quant_pre>(dst, src, quant, dst.layout(), src.layout(), params);
         }
     }
 
 private:
-    template <const CopyL0C2L1Trait& trait, QuantMode_t quantPre, typename T, typename U, typename V>
-    __aicore__ inline static void EmitBatchNZ2NZDataCopy(
-        const T& dst, const U& src, const V& quant, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V>
+    __aicore__ inline static void emit_batch_nz2_nz_data_copy(const T& dst, const U& src, const V& quant,
+                                                              const fixpipe_params& params)
     {
-        auto srcLayout = src.Layout();
-        auto dstLayout = dst.Layout();
-        for (uint32_t batchIndex = 0; batchIndex < Get<0>(srcLayout.Shape()); ++batchIndex) {
-            EmitDataCopy<trait, quantPre>(
-                dst(MakeCoord(batchIndex, MakeCoord(MakeCoord(0, 0), MakeCoord(0, 0)))),
-                src(MakeCoord(batchIndex, MakeCoord(MakeCoord(0, 0), MakeCoord(0, 0)))), quant, Get<1>(dstLayout),
-                Get<1>(srcLayout), params);
+        auto src_layout = src.layout();
+        auto dst_layout = dst.layout();
+        for (uint32_t batch_index = 0; batch_index < get<0>(src_layout.shape()); ++batch_index) {
+            emit_data_copy<trait, quant_pre>(
+                dst(make_coord(batch_index, make_coord(make_coord(0, 0), make_coord(0, 0)))),
+                src(make_coord(batch_index, make_coord(make_coord(0, 0), make_coord(0, 0)))), quant, get<1>(dst_layout),
+                get<1>(src_layout), params);
         }
     }
 
-    template <
-        const CopyL0C2L1Trait& trait, QuantMode_t quantPre, typename T, typename U, typename V, typename DstLayout,
-        typename SrcLayout>
-    __aicore__ inline static void EmitDataCopy(
-        const T& dst, const U& src, const V& quant, const DstLayout& dstLayout, const SrcLayout& srcLayout,
-        const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V,
+              typename DstLayout, typename SrcLayout>
+    __aicore__ inline static void emit_data_copy(const T& dst, const U& src, const V& quant,
+                                                 const DstLayout& dst_layout, const SrcLayout& src_layout,
+                                                 const fixpipe_params& params)
     {
-        uint32_t nSize = Std::min(GetTotalColumnShape(srcLayout), GetTotalColumnShape(dstLayout));
-        uint16_t nIterNum = 1;
-        uint32_t calNSize = nSize;
-        uint32_t tailNSize = 0;
-        if (calNSize > MAIN_LOOP_N_SIZE) {
-            nIterNum = nSize / MAIN_LOOP_N_SIZE;
-            tailNSize = nSize % MAIN_LOOP_N_SIZE;
-            calNSize = MAIN_LOOP_N_SIZE;
+        uint32_t n_size = Std::min(get_total_column_shape(src_layout), get_total_column_shape(dst_layout));
+        uint16_t n_iter_num = 1;
+        uint32_t cal_n_size = n_size;
+        uint32_t tail_n_size = 0;
+        if (cal_n_size > MAIN_LOOP_N_SIZE) {
+            n_iter_num = n_size / MAIN_LOOP_N_SIZE;
+            tail_n_size = n_size % MAIN_LOOP_N_SIZE;
+            cal_n_size = MAIN_LOOP_N_SIZE;
         }
-        ExecuteDataCopy<trait, quantPre>(dst, src, quant, nIterNum, calNSize, tailNSize, dstLayout, srcLayout, params);
+        execute_data_copy<trait, quant_pre>(dst, src, quant, n_iter_num, cal_n_size, tail_n_size, dst_layout,
+                                            src_layout, params);
     }
 
-    template <const CopyL0C2L1Trait& trait, typename T, bool IsTail, typename DstLayout, typename SrcLayout>
-    __aicore__ inline static auto GenerateParams(
-        const DstLayout& dstLayout, const SrcLayout& srcLayout, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, typename T, bool is_tail, typename DstLayout, typename SrcLayout>
+    __aicore__ inline static auto generate_params(const DstLayout& dst_layout, const SrcLayout& src_layout,
+                                                  const fixpipe_params& params)
     {
-        uint32_t nSize = Std::min(GetTotalColumnShape(srcLayout), GetTotalColumnShape(dstLayout));
-        uint32_t mSize = Std::min(GetTotalRowShape(srcLayout), GetTotalRowShape(dstLayout));
-        if constexpr (IsTail) {
-            nSize %= MAIN_LOOP_N_SIZE;
+        uint32_t n_size = Std::min(get_total_column_shape(src_layout), get_total_column_shape(dst_layout));
+        uint32_t m_size = Std::min(get_total_row_shape(src_layout), get_total_row_shape(dst_layout));
+        if constexpr (is_tail) {
+            n_size %= MAIN_LOOP_N_SIZE;
         } else {
-            if (nSize > MAIN_LOOP_N_SIZE) {
-                nSize = MAIN_LOOP_N_SIZE;
+            if (n_size > MAIN_LOOP_N_SIZE) {
+                n_size = MAIN_LOOP_N_SIZE;
             }
         }
 
-        const uint32_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) / FRACTAL_FIXED;
-        const uint32_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout);
+        const uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED;
+        const uint32_t dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout);
 
-        const bool reluEnable = trait.enableRelu;
-        const uint8_t unitFlag = params.unitFlag;
+        const bool relu_enable = trait.enable_relu;
+        const uint8_t unit_flag = params.unit_flag;
 
-        const bool channelSplit = trait.enableChannelSplit;
-        return Std::make_tuple(nSize, mSize, srcStride, dstStride, reluEnable, unitFlag, channelSplit);
+        const bool channel_split = trait.enable_channel_split;
+        return Std::make_tuple(n_size, m_size, src_stride, dst_stride, relu_enable, unit_flag, channel_split);
     }
 
     template <typename T>
-    __aicore__ inline static void CopyL12Fb(const T& src, uint16_t calNSize, uint16_t nIterIndex)
+    __aicore__ inline static void copy_l1_to_fixbuf(const T& src, uint16_t cal_n_size, uint16_t n_iter_index)
     {
-        auto dstAddr = reinterpret_cast<__fbuf__ uint64_t*>(AllocFbTempBuf(calNSize));
-        auto dst = MakeTensor(MakeMemPtr<Location::FIXBUF>(dstAddr), src.Layout());
-        auto coord = MakeCoord(_0{}, nIterIndex * MAIN_LOOP_N_SIZE);
-        auto shape = MakeShape(_1{}, calNSize);
-        auto tileSrc = src.Slice(coord, shape);
-        CopyL12FBND::Run<DEFAULT_COPY_L1_FB_TRAIT>(dst, tileSrc);
-        SetFpc(dstAddr);
+        auto dst_addr = reinterpret_cast<__fbuf__ uint64_t*>(alloc_fixbuf_temp_buf(cal_n_size));
+        auto dst = make_tensor(make_mem_ptr<location::fixbuf>(dst_addr), src.layout());
+        auto coord = make_coord(_0{}, n_iter_index * MAIN_LOOP_N_SIZE);
+        auto shape = make_shape(_1{}, cal_n_size);
+        auto tile_src = src.slice(coord, shape);
+        copy_l1_to_fixbuf_nd::run<DEFAULT_COPY_L1_FIXBUF_TRAIT>(dst, tile_src);
+        set_qua(dst_addr);
     }
 
-    template <QuantMode_t quantPre, typename T, typename U, typename ParamTuple, size_t... Is>
-    __aicore__ inline static void DataCopyWrapper(
-        const T& dst, const U& src, const ParamTuple& paramTuple, Std::index_sequence<Is...>)
+    template <QuantMode_t quant_pre, typename T, typename U, typename ParamTuple, size_t... Is>
+    __aicore__ inline static void data_copy_wrapper(const T& dst, const U& src, const ParamTuple& param_tuple,
+                                                    Std::index_sequence<Is...>)
     {
-        CopyMatrixCcToL1Instr::DataCopy<quantPre>(dst, src, Std::get<Is>(paramTuple)...);
+        copy_l0c_to_l1_instr::data_copy<quant_pre>(dst.data().get(), src.data().get(), Std::get<Is>(param_tuple)...);
     }
 
     template <typename T>
-    __aicore__ inline static constexpr auto MakeDstCoord(uint32_t nOffset)
+    __aicore__ inline static constexpr auto make_dst_coord(uint32_t n_offset)
     {
-        using LayoutType = typename T::layoutType;
-        if constexpr (LayoutType::depth == FIVE_DIM_DATA) {
-            return MakeCoord(_0{}, MakeCoord(MakeCoord(0, 0), MakeCoord(0, nOffset)));
-        } else if constexpr (LayoutType::depth == FOUR_DIM_DATA) {
-            return MakeCoord(MakeCoord(0, 0), MakeCoord(0, nOffset));
-        } else if constexpr (LayoutType::depth == THREE_DIM_DATA) {
-            return MakeCoord(_0{}, MakeCoord(0, nOffset));
+        using layout_type = typename T::layout_type;
+        if constexpr (layout_type::depth == FIVE_DIM_DATA) {
+            return make_coord(_0{}, make_coord(make_coord(0, 0), make_coord(0, n_offset)));
+        } else if constexpr (layout_type::depth == FOUR_DIM_DATA) {
+            return make_coord(make_coord(0, 0), make_coord(0, n_offset));
+        } else if constexpr (layout_type::depth == THREE_DIM_DATA) {
+            return make_coord(_0{}, make_coord(0, n_offset));
         } else {
-            static_assert(LayoutType::depth == TWO_DIM_DATA, "Only support two-dim dst tensor.");
-            return MakeCoord(0, nOffset);
+            static_assert(layout_type::depth == TWO_DIM_DATA, "Only support two-dim dst tensor.");
+            return make_coord(0, n_offset);
         }
     }
 
     template <typename U>
-    __aicore__ inline static constexpr auto MakeSrcCoord(uint32_t nOffset)
+    __aicore__ inline static constexpr auto make_src_coord(uint32_t n_offset)
     {
-        using LayoutType = typename U::layoutType;
-        if constexpr (LayoutType::depth == FIVE_DIM_DATA) {
-            return MakeCoord(_0{}, MakeCoord(MakeCoord(0, 0), MakeCoord(0, nOffset)));
+        using layout_type = typename U::layout_type;
+        if constexpr (layout_type::depth == FIVE_DIM_DATA) {
+            return make_coord(_0{}, make_coord(make_coord(0, 0), make_coord(0, n_offset)));
         } else {
-            static_assert(LayoutType::depth == FOUR_DIM_DATA, "Only support four-dim or five-dim src tensor.");
-            return MakeCoord(MakeCoord(0, 0), MakeCoord(0, nOffset));
+            static_assert(layout_type::depth == FOUR_DIM_DATA, "Only support four-dim or five-dim src tensor.");
+            return make_coord(make_coord(0, 0), make_coord(0, n_offset));
         }
     }
 
-    template <
-        const CopyL0C2L1Trait& trait, QuantMode_t quantPre, typename T, typename U, typename V, typename DstLayout,
-        typename SrcLayout>
-    __aicore__ inline static void ExecuteDataCopy(
-        const T& dst, const U& src, const V& quant, uint16_t nIterNum, uint32_t calNSize, uint32_t tailNSize,
-        const DstLayout& dstLayout, const SrcLayout& srcLayout, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V,
+              typename DstLayout, typename SrcLayout>
+    __aicore__ inline static void execute_data_copy(const T& dst, const U& src, const V& quant, uint16_t n_iter_num,
+                                                    uint32_t cal_n_size, uint32_t tail_n_size,
+                                                    const DstLayout& dst_layout, const SrcLayout& src_layout,
+                                                    const fixpipe_params& params)
     {
-        const auto mainLoopParam = GenerateParams<trait, T, false>(dstLayout, srcLayout, params);
+        const auto main_loop_param = generate_params<trait, T, false>(dst_layout, src_layout, params);
 
-        for (uint16_t i = 0; i < nIterNum; ++i) {
-            CopyL12Fb(quant, calNSize, i);
-            InsertSync();
+        for (uint16_t i = 0; i < n_iter_num; ++i) {
+            copy_l1_to_fixbuf(quant, cal_n_size, i);
+            insert_sync();
 
-            const auto srcCoord = MakeSrcCoord<U>(i * CBURST_NUM);
-            const auto dstCoord = MakeDstCoord<T>(i * MAIN_LOOP_N_SIZE);
-            DataCopyWrapper<quantPre>(
-                dst(dstCoord), src(srcCoord), mainLoopParam,
-                Std::make_index_sequence<Std::tuple_size_v<decltype(mainLoopParam)>>{});
+            const auto src_coord = make_src_coord<U>(i * CBURST_NUM);
+            const auto dst_coord = make_dst_coord<T>(i * MAIN_LOOP_N_SIZE);
+            data_copy_wrapper<quant_pre>(dst(dst_coord), src(src_coord), main_loop_param,
+                                         Std::make_index_sequence<Std::tuple_size_v<decltype(main_loop_param)>>{});
         }
 
-        if (tailNSize) {
-            const auto tailParam = GenerateParams<trait, T, true>(dstLayout, srcLayout, params);
+        if (tail_n_size) {
+            const auto tail_param = generate_params<trait, T, true>(dst_layout, src_layout, params);
 
-            CopyL12Fb(quant, tailNSize, nIterNum);
-            InsertSync();
+            copy_l1_to_fixbuf(quant, tail_n_size, n_iter_num);
+            insert_sync();
 
-            const auto srcCoord = MakeSrcCoord<U>(nIterNum * CBURST_NUM);
-            const auto dstCoord = MakeDstCoord<T>(nIterNum * MAIN_LOOP_N_SIZE);
-            DataCopyWrapper<quantPre>(
-                dst(dstCoord), src(srcCoord), tailParam,
-                Std::make_index_sequence<Std::tuple_size_v<decltype(tailParam)>>{});
+            const auto src_coord = make_src_coord<U>(n_iter_num * CBURST_NUM);
+            const auto dst_coord = make_dst_coord<T>(n_iter_num * MAIN_LOOP_N_SIZE);
+            data_copy_wrapper<quant_pre>(dst(dst_coord), src(src_coord), tail_param,
+                                         Std::make_index_sequence<Std::tuple_size_v<decltype(tail_param)>>{});
         }
     }
 };
 
-class DataCopyL0C2L1 {
+class data_copy_l0c_to_l1 {
 public:
-    template <const CopyL0C2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src, const fixpipe_params& params)
     {
-        constexpr QuantMode_t quantPre = GetQuantMode<trait.roundMode, T, U>();
-        CheckDataType::CheckL0C2L1DataType<quantPre, T, U>();
-        SetRegisterImpl<T, U>(dst, src);
-        DataCopyL0C2L1NoVectorQuant::DataCopyImpl<trait, quantPre, T, U>(dst, src, params);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U>();
+        check_data_type::check_l0c_to_l1_data_type<quant_pre, T, U>();
+        set_register_impl<T, U>(dst, src);
+        data_copy_l0c_to_l1_no_vector_quant::data_copy_impl<trait, quant_pre, T, U>(dst, src, params);
     }
 
-    template <const CopyL0C2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src, uint64_t quant, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src, uint64_t quant, const fixpipe_params& params)
     {
-        constexpr QuantMode_t quantPre = GetQuantMode<trait.roundMode, T, U, uint64_t>();
-        SetRegisterImpl<T, U>(dst, src, quant);
-        DataCopyL0C2L1NoVectorQuant::DataCopyImpl<trait, quantPre, T, U>(dst, src, params);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U, uint64_t>();
+        set_register_impl<T, U>(dst, src, quant);
+        data_copy_l0c_to_l1_no_vector_quant::data_copy_impl<trait, quant_pre, T, U>(dst, src, params);
     }
 
-    template <const CopyL0C2L1Trait& trait, typename T, typename U, typename V>
-    __aicore__ inline static void Run(const T& dst, const U& src, const V& quant, const FixpipeParams& params)
+    template <const copy_l0c_to_l1_trait& trait, typename T, typename U, typename V>
+    __aicore__ inline static void run(const T& dst, const U& src, const V& quant, const fixpipe_params& params)
     {
-        constexpr QuantMode_t quantPre = GetQuantMode<trait.roundMode, T, U, V>();
-        constexpr bool quantBatched = CheckVectorQuantBatchConsistency<T, U, V>();
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U, V>();
+        constexpr bool quant_batched = check_vector_quant_batch_consistency<T, U, V>();
 
-        if constexpr (quantBatched) {
+        if constexpr (quant_batched) {
             // Fixpipe hardware reads a single quant slice from FB per instruction and reuses it
-            // across the ndNum batch repetition; the FB quant address does not auto-step per
+            // across the nd_num batch repetition; the FB quant address does not auto-step per
             // batch. To honor per-batch quant we must split on the host: each batch issues its
             // own fixpipe instruction with its own L1->FB quant copy.
-            uint32_t batchSize = Get<0>(src.Layout().Shape());
-            for (uint32_t b = 0; b < batchSize; ++b) {
-                auto subDst = MakeSingleBatchSubTensor(dst, b);
-                auto subSrc = MakeSingleBatchSubTensor(src, b);
-                auto subQuant = MakeSingleBatchSubTensor(quant, b);
-                SetRegisterImpl<decltype(subDst), decltype(subSrc)>(subDst, subSrc);
-                DataCopyL0C2L1VectorQuant::DataCopyImpl<
-                    trait, quantPre, decltype(subDst), decltype(subSrc), decltype(subQuant)>(
-                    subDst, subSrc, subQuant, params);
+            uint32_t batch_size = get<0>(src.layout().shape());
+            for (uint32_t b = 0; b < batch_size; ++b) {
+                auto sub_dst = make_single_batch_sub_tensor(dst, b);
+                auto sub_src = make_single_batch_sub_tensor(src, b);
+                auto sub_quant = make_single_batch_sub_tensor(quant, b);
+                set_register_impl<decltype(sub_dst), decltype(sub_src)>(sub_dst, sub_src);
+                data_copy_l0c_to_l1_vector_quant::data_copy_impl<trait, quant_pre, decltype(sub_dst), decltype(sub_src),
+                                                                 decltype(sub_quant)>(sub_dst, sub_src, sub_quant,
+                                                                                      params);
             }
         } else {
-            SetRegisterImpl<T, U>(dst, src);
-            DataCopyL0C2L1VectorQuant::DataCopyImpl<trait, quantPre, T, U, V>(dst, src, quant, params);
+            set_register_impl<T, U>(dst, src);
+            data_copy_l0c_to_l1_vector_quant::data_copy_impl<trait, quant_pre, T, U, V>(dst, src, quant, params);
         }
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_L1_COPY_IMPL_DATA_COPY_H
 

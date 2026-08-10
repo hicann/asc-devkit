@@ -12,7 +12,7 @@
 #include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Engine : public testing::Test {
+class tensor_api_engine : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -20,23 +20,23 @@ protected:
     void TearDown() {}
 };
 
-TEST_F(Tensor_Api_Engine, TestViewEngineBeginAndOffset)
+TEST_F(tensor_api_engine, test_view_engine_begin_and_offset)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     __gm__ float data[4] = {1, 2, 3, 4};
-    auto ptr = MakeMemPtr<Location::GM>(data);
+    auto ptr = make_mem_ptr<location::gm>(data);
 
-    ViewEngine<decltype(ptr)> engine(ptr);
-    EXPECT_EQ(engine.Begin(), ptr);
-    EXPECT_EQ(engine.Begin()[1], 2);
-    EXPECT_EQ((engine + 2).Begin(), ptr + 2);
+    view_engine<decltype(ptr)> engine(ptr);
+    EXPECT_EQ(engine.begin(), ptr);
+    EXPECT_EQ(engine.begin()[1], 2);
+    EXPECT_EQ((engine + 2).begin(), ptr + 2);
 }
 
-TEST_F(Tensor_Api_Engine, TestConstViewEngine)
+TEST_F(tensor_api_engine, test_const_view_engine)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    ConstViewEngine<decltype(MakeMemPtr<Location::GM>((__gm__ float*)nullptr))> constEngine;
-    EXPECT_EQ(constEngine.Begin().Get(), nullptr);
+    const_view_engine<decltype(make_mem_ptr<location::gm>((__gm__ float*)nullptr))> const_engine;
+    EXPECT_EQ(const_engine.begin().get(), nullptr);
 }

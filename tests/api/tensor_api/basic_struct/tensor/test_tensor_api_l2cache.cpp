@@ -14,31 +14,31 @@
 
 namespace {
 
-template <typename T>
-struct IsTensorApiGlobalTensor : AscendC::Std::false_type {};
+template <typename data_type>
+struct is_tensor_api_global_tensor : AscendC::Std::false_type {};
 
-template <typename Engine, typename Layout>
-struct IsTensorApiGlobalTensor<AscendC::GlobalTensor<AscendC::TensorAttribute<Engine, Layout>>>
+template <typename engine_type, typename layout_type>
+struct is_tensor_api_global_tensor<asc::te::global_tensor<engine_type, layout_type>>
     : AscendC::Std::true_type {};
 
-template <typename T>
-constexpr bool IsTensorApiGlobalTensorV =
-    IsTensorApiGlobalTensor<AscendC::Std::remove_cvref_t<T>>::value;
+template <typename data_type>
+constexpr bool is_tensor_api_global_tensor_v =
+    is_tensor_api_global_tensor<AscendC::Std::remove_cvref_t<data_type>>::value;
 
-template <typename T>
-struct IsTensorApiLocalTensor : AscendC::Std::false_type {};
+template <typename data_type>
+struct is_tensor_api_local_tensor : AscendC::Std::false_type {};
 
-template <typename Engine, typename Layout>
-struct IsTensorApiLocalTensor<AscendC::LocalTensor<AscendC::TensorAttribute<Engine, Layout>>>
+template <typename engine_type, typename layout_type>
+struct is_tensor_api_local_tensor<asc::te::local_tensor<engine_type, layout_type>>
     : AscendC::Std::true_type {};
 
-template <typename T>
-constexpr bool IsTensorApiLocalTensorV =
-    IsTensorApiLocalTensor<AscendC::Std::remove_cvref_t<T>>::value;
+template <typename data_type>
+constexpr bool is_tensor_api_local_tensor_v =
+    is_tensor_api_local_tensor<AscendC::Std::remove_cvref_t<data_type>>::value;
 
 } // namespace
 
-class Tensor_Api_Tensor_CacheMode : public testing::Test {
+class tensor_api_tensor_cache_mode : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -46,132 +46,132 @@ protected:
     void TearDown() {}
 };
 
-TEST_F(Tensor_Api_Tensor_CacheMode, SetL2CacheHint)
+TEST_F(tensor_api_tensor_cache_mode, set_l2_cache_hint)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    constexpr uint32_t TILE_LENGTH = 8;
-    __gm__ float data[TILE_LENGTH] = {0, 1, 2, 3, 4, 5, 6, 7};
-    auto ptr = MakeMemPtr<Location::GM>(data);
-    auto tensor = MakeTensor(ptr, MakeShape(_2{}, _2{}, _2{}),
-                             MakeStride(_4{}, _2{}, _1{}));
+    constexpr uint32_t tile_length = 8;
+    __gm__ float data[tile_length] = {0, 1, 2, 3, 4, 5, 6, 7};
+    auto ptr = make_mem_ptr<location::gm>(data);
+    auto tensor = make_tensor(ptr, make_shape(_2{}, _2{}, _2{}),
+                             make_stride(_4{}, _2{}, _1{}));
 
-    tensor.SetL2CacheHint(CacheMode::CACHE_MODE_DISABLE);
-    EXPECT_EQ(tensor.Engine().GetCacheMode(), static_cast<uint8_t>(CacheMode::CACHE_MODE_DISABLE));
+    tensor.set_l2_cache_hint(cache_mode::disable);
+    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::disable));
 
-    tensor.SetL2CacheHint(CacheMode::CACHE_MODE_NORMAL);
-    EXPECT_EQ(tensor.Engine().GetCacheMode(), static_cast<uint8_t>(CacheMode::CACHE_MODE_NORMAL));
+    tensor.set_l2_cache_hint(cache_mode::normal);
+    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::normal));
 
-    tensor.SetL2CacheHint(CacheMode::CACHE_MODE_LAST);
-    EXPECT_EQ(tensor.Engine().GetCacheMode(), static_cast<uint8_t>(CacheMode::CACHE_MODE_LAST));
+    tensor.set_l2_cache_hint(cache_mode::last);
+    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::last));
 
-    tensor.SetL2CacheHint(CacheMode::CACHE_MODE_PERSISTENT);
-    EXPECT_EQ(tensor.Engine().GetCacheMode(), static_cast<uint8_t>(CacheMode::CACHE_MODE_PERSISTENT));
+    tensor.set_l2_cache_hint(cache_mode::persistent);
+    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::persistent));
 }
 
-TEST_F(Tensor_Api_Tensor_CacheMode, SliceCoordTensorCanSetL2CacheHint)
+TEST_F(tensor_api_tensor_cache_mode, slice_coord_tensor_can_set_l2_cache_hint)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 8;
     constexpr uint32_t n = 16;
-    __gm__ float gmData[m * n] = {0};
+    __gm__ float gm_data[m * n] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(m, n);
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), layout);
+    auto layout = make_frame_layout<nd_layout_ptn>(m, n);
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
 
-    auto coordTensor = gmTensor(MakeCoord(2, 4));
+    auto coord_tensor = gm_tensor(make_coord(2, 4));
 
-    static_assert(IsTensorApiGlobalTensorV<decltype(coordTensor)>);
+    static_assert(is_tensor_api_global_tensor_v<decltype(coord_tensor)>);
 
-    coordTensor.SetL2CacheHint(CacheMode::CACHE_MODE_DISABLE);
-    EXPECT_EQ(coordTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_DISABLE));
+    coord_tensor.set_l2_cache_hint(cache_mode::disable);
+    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::disable));
 
-    coordTensor.SetL2CacheHint(CacheMode::CACHE_MODE_NORMAL);
-    EXPECT_EQ(coordTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_NORMAL));
+    coord_tensor.set_l2_cache_hint(cache_mode::normal);
+    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::normal));
 }
 
-TEST_F(Tensor_Api_Tensor_CacheMode, SliceTensorCanSetL2CacheHint)
+TEST_F(tensor_api_tensor_cache_mode, slice_tensor_can_set_l2_cache_hint)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 8;
     constexpr uint32_t n = 16;
-    __gm__ float gmData[m * n] = {0};
+    __gm__ float gm_data[m * n] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(m, n);
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), layout);
+    auto layout = make_frame_layout<nd_layout_ptn>(m, n);
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
 
-    auto sliceTensor = gmTensor.Slice(MakeCoord(2, 4), MakeShape(4, 8));
+    auto slice_tensor = gm_tensor.slice(make_coord(2, 4), make_shape(4, 8));
 
-    static_assert(IsTensorApiGlobalTensorV<decltype(sliceTensor)>);
+    static_assert(is_tensor_api_global_tensor_v<decltype(slice_tensor)>);
 
-    sliceTensor.SetL2CacheHint(CacheMode::CACHE_MODE_LAST);
-    EXPECT_EQ(sliceTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_LAST));
+    slice_tensor.set_l2_cache_hint(cache_mode::last);
+    EXPECT_EQ(slice_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::last));
 
-    sliceTensor.SetL2CacheHint(CacheMode::CACHE_MODE_PERSISTENT);
-    EXPECT_EQ(sliceTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_PERSISTENT));
+    slice_tensor.set_l2_cache_hint(cache_mode::persistent);
+    EXPECT_EQ(slice_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::persistent));
 }
 
-TEST_F(Tensor_Api_Tensor_CacheMode, SliceTensorInheritsCacheMode)
+TEST_F(tensor_api_tensor_cache_mode, slice_tensor_inherits_cache_mode)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 8;
     constexpr uint32_t n = 16;
-    __gm__ float gmData[m * n] = {0};
+    __gm__ float gm_data[m * n] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(m, n);
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), layout);
+    auto layout = make_frame_layout<nd_layout_ptn>(m, n);
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
 
-    gmTensor.SetL2CacheHint(CacheMode::CACHE_MODE_DISABLE);
-    EXPECT_EQ(gmTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_DISABLE));
+    gm_tensor.set_l2_cache_hint(cache_mode::disable);
+    EXPECT_EQ(gm_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::disable));
 
-    auto coordTensor = gmTensor(MakeCoord(2, 4));
-    EXPECT_EQ(coordTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_DISABLE));
+    auto coord_tensor = gm_tensor(make_coord(2, 4));
+    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::disable));
 
-    auto sliceTensor = gmTensor.Slice(MakeCoord(2, 4), MakeShape(4, 8));
-    EXPECT_EQ(sliceTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_DISABLE));
+    auto slice_tensor = gm_tensor.slice(make_coord(2, 4), make_shape(4, 8));
+    EXPECT_EQ(slice_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::disable));
 
-    coordTensor.SetL2CacheHint(CacheMode::CACHE_MODE_NORMAL);
-    EXPECT_EQ(coordTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_NORMAL));
+    coord_tensor.set_l2_cache_hint(cache_mode::normal);
+    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::normal));
 
-    EXPECT_EQ(gmTensor.Engine().GetCacheMode(),
-              static_cast<uint8_t>(CacheMode::CACHE_MODE_DISABLE));
+    EXPECT_EQ(gm_tensor.engine().get_cache_mode(),
+              static_cast<uint8_t>(cache_mode::disable));
 }
 
-TEST_F(Tensor_Api_Tensor_CacheMode, SliceTensorStillGlobalTensor)
+TEST_F(tensor_api_tensor_cache_mode, slice_tensor_still_global_tensor)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 8;
     constexpr uint32_t n = 16;
-    __gm__ float gmData[m * n] = {0};
+    __gm__ float gm_data[m * n] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(m, n);
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), layout);
+    auto layout = make_frame_layout<nd_layout_ptn>(m, n);
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
 
-    static_assert(IsTensorApiGlobalTensorV<decltype(gmTensor)>);
+    static_assert(is_tensor_api_global_tensor_v<decltype(gm_tensor)>);
 
-    auto coordTensor = gmTensor(MakeCoord(2, 4));
-    static_assert(IsTensorApiGlobalTensorV<decltype(coordTensor)>);
-    static_assert(!IsTensorApiLocalTensorV<decltype(coordTensor)>);
+    auto coord_tensor = gm_tensor(make_coord(2, 4));
+    static_assert(is_tensor_api_global_tensor_v<decltype(coord_tensor)>);
+    static_assert(!is_tensor_api_local_tensor_v<decltype(coord_tensor)>);
 
-    auto sliceTensor = gmTensor.Slice(MakeCoord(2, 4), MakeShape(4, 8));
-    static_assert(IsTensorApiGlobalTensorV<decltype(sliceTensor)>);
-    static_assert(!IsTensorApiLocalTensorV<decltype(sliceTensor)>);
+    auto slice_tensor = gm_tensor.slice(make_coord(2, 4), make_shape(4, 8));
+    static_assert(is_tensor_api_global_tensor_v<decltype(slice_tensor)>);
+    static_assert(!is_tensor_api_local_tensor_v<decltype(slice_tensor)>);
 
-    gmTensor.SetL2CacheHint(CacheMode::CACHE_MODE_DISABLE);
-    coordTensor.SetL2CacheHint(CacheMode::CACHE_MODE_NORMAL);
-    sliceTensor.SetL2CacheHint(CacheMode::CACHE_MODE_PERSISTENT);
+    gm_tensor.set_l2_cache_hint(cache_mode::disable);
+    coord_tensor.set_l2_cache_hint(cache_mode::normal);
+    slice_tensor.set_l2_cache_hint(cache_mode::persistent);
 
     EXPECT_TRUE(true);
 }

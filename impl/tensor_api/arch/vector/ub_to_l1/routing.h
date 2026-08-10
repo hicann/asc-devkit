@@ -1,15 +1,16 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning "impl/tensor_api/arch/vector/ub_to_l1/routing.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
+#warning                                                                                                               \
+    "impl/tensor_api/arch/vector/ub_to_l1/routing.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
 #endif
@@ -26,54 +27,55 @@
 #include "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/nz2nz.h"
 #include "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/zn2zn.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyUB2L1Ignore {
+class copy_ub_to_l1_ignore {
 public:
-    template <const CopyUB2L1Trait& trait, typename ...Args>
-    __aicore__ inline static void Run(const Args&... args) {
-        static_assert(Std::is_same_v<Args..., void>, "CopyUB2L1Ignore should not be called");
+    template <const copy_ub_to_l1_trait& trait, typename... Args>
+    __aicore__ inline static void run(const Args&... args)
+    {
+        static_assert(Std::is_same_v<Args..., void>, "copy_ub_to_l1_ignore should not be called");
     }
 };
 
-template <uint32_t Version, typename DstLayoutPtn, typename SrcLayoutPtn>
-struct CopyUB2L1Routing {
-    using type = CopyUB2L1Ignore;
+template <uint32_t version, typename DstLayoutPtn, typename SrcLayoutPtn>
+struct copy_ub_to_l1_routing {
+    using type = copy_ub_to_l1_ignore;
 };
 
-template <uint32_t Version>
-struct CopyUB2L1Routing<Version, NDExtLayoutPtn, NDExtLayoutPtn> {
-    using type = CopyUbufToCbufND;
+template <uint32_t version>
+struct copy_ub_to_l1_routing<version, nd_ext_layout_ptn, nd_ext_layout_ptn> {
+    using type = copy_ub_to_l1_nd;
 };
 
-template <uint32_t Version>
-struct CopyUB2L1Routing<Version, NDLayoutPtn, NDLayoutPtn> {
-    using type = CopyUbufToCbufND;
+template <uint32_t version>
+struct copy_ub_to_l1_routing<version, nd_layout_ptn, nd_layout_ptn> {
+    using type = copy_ub_to_l1_nd;
 };
 
-template <uint32_t Version>
-struct CopyUB2L1Routing<Version, DNExtLayoutPtn, DNExtLayoutPtn> {
-    using type = CopyUbufToCbufDN;
+template <uint32_t version>
+struct copy_ub_to_l1_routing<version, dn_ext_layout_ptn, dn_ext_layout_ptn> {
+    using type = copy_ub_to_l1_dn;
 };
 
-template <uint32_t Version>
-struct CopyUB2L1Routing<Version, DNLayoutPtn, DNLayoutPtn> {
-    using type = CopyUbufToCbufDN;
+template <uint32_t version>
+struct copy_ub_to_l1_routing<version, dn_layout_ptn, dn_layout_ptn> {
+    using type = copy_ub_to_l1_dn;
 };
 
-template <uint32_t Version>
-struct CopyUB2L1Routing<Version, NZLayoutPtn, NZLayoutPtn> {
-    using type = CopyUbufToCbufNZ;
+template <uint32_t version>
+struct copy_ub_to_l1_routing<version, nz_layout_ptn, nz_layout_ptn> {
+    using type = copy_ub_to_l1_nz;
 };
 
-template <uint32_t Version>
-struct CopyUB2L1Routing<Version, ZNLayoutPtn, ZNLayoutPtn> {
-    using type = CopyUbufToCbufZN;
+template <uint32_t version>
+struct copy_ub_to_l1_routing<version, zn_layout_ptn, zn_layout_ptn> {
+    using type = copy_ub_to_l1_zn;
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_ROUTING_H
 

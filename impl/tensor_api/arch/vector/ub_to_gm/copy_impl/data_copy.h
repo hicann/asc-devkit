@@ -26,29 +26,30 @@
 #include "impl/tensor_api/arch/vector/utils/copy_utils.h"
 #include "impl/tensor_api/arch/vector/ub_to_gm/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct CopyUB2GMTrait {};
+struct copy_ub_to_gm_trait {};
 
-class CopyUbufToGmAlignV2Common {
+class copy_ub_to_gm_common {
 protected:
     template <typename T, typename U>
-    __aicore__ inline static void EmitCopy(const T& dst, const U& src, uint16_t blockCount, uint32_t blockLen,
-                                           int64_t srcStride, int64_t dstStride)
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, uint16_t block_count, uint32_t block_len,
+                                            int64_t src_stride, int64_t dst_stride)
     {
-        using SrcType = typename U::elementType;
-        using DstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        AdjustB4CopyParams<SrcType, DstType>(blockLen, srcStride, dstStride);
+        adjust_b4_copy_params<src_type, dst_type>(block_len, src_stride, dst_stride);
 
-        auto cacheMode = static_cast<asc_store_l2_cache_mode>(dst.Engine().GetCacheMode());
-        CopyUbufToGmAlignV2Instr::DataCopy(dst, src, blockCount, blockLen, srcStride, dstStride, cacheMode);
+        auto cache_mode = static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode());
+        copy_ub_to_gm_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len,
+                                                   src_stride, dst_stride, cache_mode);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_GM_COPY_IMPL_DATA_COPY_H
 

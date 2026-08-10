@@ -22,38 +22,30 @@
 #ifndef IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_INSTRUCTION_H
 #define IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_INSTRUCTION_H
 
-#include "impl/tensor_api/tensor/pointer_pattern.h"
-#include "impl/tensor_api/tensor/tensor_impl.h"
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct CopyL12UBTrait {};
+struct copy_l1_to_ub_trait {};
 
-class CopyCbufToUbufInstr {
+class copy_l1_to_ub_instr {
 public:
-    template <typename T, typename U, typename... Params>
-    __aicore__ inline static void DataCopy(const T& dst, const U& src, const Params&... params)
-    {
-        CopyCbufToUbuf(dst.Data().Get(), src.Data().Get(), params...);
-    }
-
-private:
     template <typename T>
-    __aicore__ inline static void CopyCbufToUbuf(__ubuf__ T* dst, __cbuf__ T* src, const uint16_t blockCount,
-        const uint16_t blockLen, const uint16_t srcStride, const uint16_t dstStride)
+    __aicore__ inline static void data_copy(__ubuf__ T* dst, __cbuf__ T* src, const uint16_t block_count,
+                                                const uint16_t block_len, const uint16_t src_stride,
+                                                const uint16_t dst_stride)
     {
         if ASCEND_IS_AIV {
             return;
         }
 
-        asc_copy_l12ub(dst, src, 0, blockCount, blockLen, srcStride, dstStride);
+        asc_copy_l12ub(dst, src, 0, block_count, block_len, src_stride, dst_stride);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_INSTRUCTION_H
 

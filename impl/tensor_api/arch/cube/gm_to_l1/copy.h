@@ -9,7 +9,7 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                              \
+#warning                                                                                                               \
     "impl/tensor_api/arch/cube/gm_to_l1/copy.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
@@ -24,48 +24,45 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/routing.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-constexpr CopyGM2L1Trait DEFAULT_COPY_GM_TO_L1_TRAIT;
+constexpr copy_gm_to_l1_trait DEFAULT_COPY_GM_TO_L1_TRAIT;
 
-struct CopyGM2L1TraitDefault {
-    using TraitType = CopyGM2L1Trait;
-    static constexpr const TraitType value = DEFAULT_COPY_GM_TO_L1_TRAIT;
+struct copy_gm_to_l1_trait_default {
+    using trait_type = copy_gm_to_l1_trait;
+    static constexpr const trait_type value = DEFAULT_COPY_GM_TO_L1_TRAIT;
 };
 
-struct CopyGM2L1 {
+struct copy_gm_to_l1 {
 public:
     template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void Copy(const Args&... args)
+    __aicore__ inline static void copy(const Args&... args)
     {
         if ASCEND_IS_AIC {
-            DataCopyImpl<traits, Args...>(args...);
+            data_copy_impl<traits, Args...>(args...);
         }
     }
 
 private:
-    template <const CopyGM2L1Trait& trait = DEFAULT_COPY_GM_TO_L1_TRAIT, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    template <const copy_gm_to_l1_trait& trait = DEFAULT_COPY_GM_TO_L1_TRAIT, typename T, typename U>
+    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
     {
-        using DstPos = GetMemLocation<T>;
-        using SrcPos = GetMemLocation<U>;
-        static_assert(Std::is_same_v<DstPos, Location::L1>,
-            "CopyGM2L1 requires destination on L1");
-        static_assert(Std::is_same_v<SrcPos, Location::GM>,
-            "CopyGM2L1 requires source on GM");
-        using DstLayout = typename T::layoutType;
-        using SrcLayout = typename U::layoutType;
-        using DstLayoutPtn = GetLayoutPattern<DstLayout>;
-        using SrcLayoutPtn = GetLayoutPattern<SrcLayout>;
-        using CopyGM2L1Impl =
-            typename CopyGM2L1Routing<CURRENT_ARCH_VERSION, DstLayoutPtn, SrcLayoutPtn>::type;
-        CopyGM2L1Impl::template Run<trait, T, U>(dst, src);
+        using dst_pos = get_mem_location<T>;
+        using src_pos = get_mem_location<U>;
+        static_assert(Std::is_same_v<dst_pos, location::l1>, "copy_gm_to_l1 requires destination on L1");
+        static_assert(Std::is_same_v<src_pos, location::gm>, "copy_gm_to_l1 requires source on GM");
+        using dst_layout = typename T::layout_type;
+        using src_layout = typename U::layout_type;
+        using dst_layout_ptn = get_layout_pattern<dst_layout>;
+        using src_layout_ptn = get_layout_pattern<src_layout>;
+        using copy_gm_to_l1_impl = typename copy_gm_to_l1_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
+        copy_gm_to_l1_impl::template run<trait, T, U>(dst, src);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_GM_TO_L1_COPY_H
 

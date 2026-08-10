@@ -12,7 +12,7 @@
 #include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Pointer_Offset : public testing::Test {
+class tensor_api_pointer_offset : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -21,17 +21,17 @@ protected:
 };
 
 
-TEST_F(Tensor_Api_Pointer_Offset, TestMakeMemPtrByteOffset)
+TEST_F(tensor_api_pointer_offset, test_make_mem_ptr_byte_offset)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    constexpr uint64_t byteOffset = 128;
+    constexpr uint64_t byte_offset = 128;
 
-    auto ubPtr = MakeMemPtr<Location::UB, float>(byteOffset);
-    auto l1Ptr = MakeMemPtr<Location::L1, float>(byteOffset);
-    auto l0cPtr = MakeMemPtr<Location::L0C, float>(byteOffset);
+    auto ub_ptr = make_mem_ptr<location::ub, float>(byte_offset);
+    auto l1_ptr = make_mem_ptr<location::l1, float>(byte_offset);
+    auto l0c_ptr = make_mem_ptr<location::l0c, float>(byte_offset);
 
-    EXPECT_EQ(ubPtr.Get(), reinterpret_cast<__ubuf__ float*>(0 + byteOffset));
-    EXPECT_EQ(l1Ptr.Get(), reinterpret_cast<__cbuf__ float*>(0 + byteOffset));
-    EXPECT_EQ(l0cPtr.Get(), reinterpret_cast<__cc__ float*>(0 + byteOffset));
+    EXPECT_EQ(ub_ptr.get(), reinterpret_cast<__ubuf__ float*>(0 + byte_offset));
+    EXPECT_EQ(l1_ptr.get(), reinterpret_cast<__cbuf__ float*>(0 + byte_offset));
+    EXPECT_EQ(l0c_ptr.get(), reinterpret_cast<__cc__ float*>(0 + byte_offset));
 }

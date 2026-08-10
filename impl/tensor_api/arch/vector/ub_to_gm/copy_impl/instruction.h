@@ -22,53 +22,40 @@
 #ifndef IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_GM_COPY_IMPL_INSTRUCTION_H
 #define IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_GM_COPY_IMPL_INSTRUCTION_H
 
-#include "impl/tensor_api/tensor/pointer_pattern.h"
-#include "impl/tensor_api/tensor/tensor_impl.h"
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyUbufToGmAlignV2Instr {
+class copy_ub_to_gm_instr {
 public:
-    template <typename T, typename U, typename... Params>
-    __aicore__ inline static void DataCopy(const T& dst, const U& src, const Params&... params)
-    { 
-        using srcType = typename U::elementType;
-        if constexpr (sizeof(srcType) == 1) {
-            CopyUbufToGmAlignV2((__gm__ uint8_t*)(dst.Data().Get()), (__ubuf__ uint8_t*)(src.Data().Get()), params...);
-        } else if constexpr (sizeof(srcType) == 2) {
-            CopyUbufToGmAlignV2((__gm__ uint16_t*)(dst.Data().Get()), (__ubuf__ uint16_t*)(src.Data().Get()),
-                                params...);
-        } else if constexpr (sizeof(srcType) == 4) {
-            CopyUbufToGmAlignV2((__gm__ uint32_t*)(dst.Data().Get()), (__ubuf__ uint32_t*)(src.Data().Get()),
-                                params...);
-        } else if constexpr (sizeof(srcType) == 8) {
-            CopyUbufToGmAlignV2((__gm__ uint32_t*)(dst.Data().Get()), (__ubuf__ uint32_t*)(src.Data().Get()),
-                                params...);
-        } else {
-            static_assert(sizeof(srcType) == 1 || sizeof(srcType) == 2 || sizeof(srcType) == 4 || sizeof(srcType) == 8,
-                          "Unsupported data type size for CopyGmToUbufAlignV2");
-        }
-    }
-
     template <typename T>
-    __aicore__ inline static void CopyUbufToGmAlignV2(__gm__ T* dst, __ubuf__ T* src, const uint16_t blockCount,
-                                                      const uint32_t blockLen, const int64_t srcStride,
-                                                      const int64_t dstStride,
-                                                      const asc_store_l2_cache_mode cacheMode =
-                                                          asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM)
+    __aicore__ inline static void
+    data_copy(__gm__ T* dst, __ubuf__ T* src, const uint16_t block_count, const uint32_t block_len,
+                 const int64_t src_stride, const int64_t dst_stride,
+                 const asc_store_l2_cache_mode cache_mode = asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM)
     {
         if ASCEND_IS_AIC {
             return;
         }
-        asc_copy_ub2gm_align(dst, src, blockCount, blockLen, cacheMode,
-                                    dstStride, static_cast<uint32_t>(srcStride));
+        if constexpr (sizeof(T) == 1) {
+            asc_copy_ub2gm_align((__gm__ uint8_t*)dst, (__ubuf__ uint8_t*)src, block_count, block_len, cache_mode,
+                                 dst_stride, static_cast<uint32_t>(src_stride));
+        } else if constexpr (sizeof(T) == 2) {
+            asc_copy_ub2gm_align((__gm__ uint16_t*)dst, (__ubuf__ uint16_t*)src, block_count, block_len, cache_mode,
+                                 dst_stride, static_cast<uint32_t>(src_stride));
+        } else if constexpr (sizeof(T) == 4 || sizeof(T) == 8) {
+            asc_copy_ub2gm_align((__gm__ uint32_t*)dst, (__ubuf__ uint32_t*)src, block_count, block_len, cache_mode,
+                                 dst_stride, static_cast<uint32_t>(src_stride));
+        } else {
+            static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8,
+                          "Unsupported data type size for CopyUbufToGmAlignV2");
+        }
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_GM_COPY_IMPL_INSTRUCTION_H
 

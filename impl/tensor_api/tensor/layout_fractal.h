@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
@@ -16,31 +16,34 @@
 #endif
 
 /*!
-* \file layout_fractal.h
-* \brief
-*/
+ * \file layout_fractal.h
+ * \brief
+ */
 #ifndef IMPL_TENSOR_API_TENSOR_LAYOUT_FRACTAL_H
 #define IMPL_TENSOR_API_TENSOR_LAYOUT_FRACTAL_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename T, typename U, size_t... Is>
-__aicore__ inline decltype(auto) MakeFractalShape(T originShape, U innerShape, Std::index_sequence<Is...>) {
-    auto outerShape = Std::make_tuple(Std::ceil_division(Std::get<Is>(originShape), Std::get<Is>(innerShape))...);
-    return MakeShape(MakeShape(Std::get<Is>(innerShape), Std::get<Is>(outerShape))...);
+__aicore__ inline decltype(auto) make_fractal_shape(T origin_shape, U inner_shape, Std::index_sequence<Is...>)
+{
+    auto outer_shape = Std::make_tuple(Std::ceil_division(Std::get<Is>(origin_shape), Std::get<Is>(inner_shape))...);
+    return make_shape(make_shape(Std::get<Is>(inner_shape), Std::get<Is>(outer_shape))...);
 }
 
 template <typename T, typename U>
-__aicore__ inline decltype(auto) MakeFractalShape(T originShape, U innerShape) {
+__aicore__ inline decltype(auto) make_fractal_shape(T origin_shape, U inner_shape)
+{
     static_assert(Std::tuple_size_v<T> == Std::tuple_size_v<U>, "OriginShape and InnerShape must match");
-    return MakeFractalShape(originShape, innerShape, Std::make_index_sequence<Std::tuple_size_v<U>>{});
+    return make_fractal_shape(origin_shape, inner_shape, Std::make_index_sequence<Std::tuple_size_v<U>>{});
 }
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
+
 
 #endif // IMPL_TENSOR_API_TENSOR_LAYOUT_FRACTAL_H
 

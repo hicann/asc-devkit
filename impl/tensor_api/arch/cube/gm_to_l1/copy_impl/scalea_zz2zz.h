@@ -24,77 +24,78 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToCbufScaleAZz2Zz {
+class copy_gm_to_l1_scalea_zz2zz {
 public:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        DataCopyImpl<trait>(dst, src);
+        data_copy_impl<trait>(dst, src);
     }
 
 private:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2L1ScaleDataType<T, U>();
+        check_layout_pattern<U, T>();
+        check_data_type::check_gm_to_l1_scale_data_type<T, U>();
     }
 
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
     {
-        CheckTemplate<trait, T, U>();
-        if constexpr (U::layoutType::depth == FIVE_DIM_DATA) {
-            auto srcLayout = src.Layout();
-            auto dstLayout = dst.Layout();
-            EmitCopy(dst, src, RemoveBatchDim(srcLayout), RemoveBatchDim(dstLayout), Get<0>(srcLayout.Shape()),
-                Get<0>(srcLayout.Stride()), Get<0>(dstLayout.Stride()));
+        check_template<trait, T, U>();
+        if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+            auto src_layout = src.layout();
+            auto dst_layout = dst.layout();
+            emit_copy(dst, src, remove_batch_dim(src_layout), remove_batch_dim(dst_layout), get<0>(src_layout.shape()),
+                      get<0>(src_layout.stride()), get<0>(dst_layout.stride()));
         } else {
-            EmitCopy(dst, src, src.Layout(), dst.Layout(), 1, 0, 0);
+            emit_copy(dst, src, src.layout(), dst.layout(), 1, 0, 0);
         }
     }
 
     template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void EmitCopy(const T& dst, const U& src, const SrcLayout& srcLayout,
-        const DstLayout& dstLayout, uint16_t batchNum, uint64_t srcBatchStride, uint64_t dstBatchStride)
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
+                                            const DstLayout& dst_layout, uint16_t batch_num, uint64_t src_batch_stride,
+                                            uint64_t dst_batch_stride)
     {
-        using type = typename U::elementType;
+        using type = typename U::element_type;
 
-        auto srcShapeRowsB = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
-        auto srcShapeRowsS = GetElement<AttrInfo::Shape, AttrInfo::Row, 0>(srcLayout);
-        auto srcShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-        auto srcStrideRowsB = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout);
-        auto srcStrideRowsS = GetElement<AttrInfo::Stride, AttrInfo::Row, 0>(srcLayout);
+        auto src_shape_rows_b = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
+        auto src_shape_rows_s = get_element<attr_info::shape, attr_info::row, 0>(src_layout);
+        auto src_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+        auto src_stride_rows_b = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
+        auto src_stride_rows_s = get_element<attr_info::stride, attr_info::row, 0>(src_layout);
 
-        auto dstShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstLayout);
-        auto dstStrideRows = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout);
+        auto dst_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
+        auto dst_stride_rows = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
 
-        uint8_t cacheMode = src.Engine().GetCacheMode();
+        uint8_t cache_mode = src.engine().get_cache_mode();
 
         // lprp mode, dst_stride % C0_SIZE should be 0
         // multi rows copy, dst non-contiguous case
 
-        uint32_t blockCount = srcShapeRowsB;
-        uint32_t blockLen = srcShapeColumns * sizeof(type) * srcShapeRowsS * srcStrideRowsS;
-        uint64_t srcStride = srcStrideRowsB * sizeof(type);
-        uint32_t dstStride = dstStrideRows * sizeof(type);
+        uint32_t block_count = src_shape_rows_b;
+        uint32_t block_len = src_shape_columns * sizeof(type) * src_shape_rows_s * src_stride_rows_s;
+        uint64_t src_stride = src_stride_rows_b * sizeof(type);
+        uint32_t dst_stride = dst_stride_rows * sizeof(type);
 
-        uint8_t leftPaddingCnt = 0;
-        uint8_t rightPaddingCnt = 0;
-        for (uint16_t batchIndex = 0; batchIndex < batchNum; ++batchIndex) {
-            CopyGmToCbufAlignV2Base::CopyGmToCbufAlignV2(
-                (__cbuf__ half*)((dst.Data() + batchIndex * dstBatchStride).Get()),
-                (__gm__ half*)((src.Data() + batchIndex * srcBatchStride).Get()), blockCount, blockLen,
-                leftPaddingCnt, rightPaddingCnt, cacheMode, srcStride, dstStride);
+        uint8_t left_padding_cnt = 0;
+        uint8_t right_padding_cnt = 0;
+        for (uint16_t batch_index = 0; batch_index < batch_num; ++batch_index) {
+            copy_gm_to_l1_align_v2_instr::data_copy(
+                (__cbuf__ half*)((dst.data() + batch_index * dst_batch_stride).get()),
+                (__gm__ half*)((src.data() + batch_index * src_batch_stride).get()), block_count, block_len,
+                left_padding_cnt, right_padding_cnt, cache_mode, src_stride, dst_stride);
         }
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif
 

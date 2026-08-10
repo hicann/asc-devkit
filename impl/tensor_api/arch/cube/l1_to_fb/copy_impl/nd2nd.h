@@ -24,71 +24,74 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_fb/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyL12FBND {
+class copy_l1_to_fixbuf_nd {
 public:
-    template <const CopyL12FBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_l1_to_fixbuf_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        DataCopyImpl<trait, T, U>(dst, src);
+        data_copy_impl<trait, T, U>(dst, src);
     }
 
 private:
-    template <const CopyL12FBTrait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const copy_l1_to_fixbuf_trait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckDataType::CheckL12FbDataType<T, U>();
-        CheckLayoutPattern<U, T>();
+        check_data_type::check_l1_to_fixbuf_data_type<T, U>();
+        check_layout_pattern<U, T>();
     }
 
-    template <const CopyL12FBTrait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    template <const copy_l1_to_fixbuf_trait& trait, typename T, typename U>
+    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
     {
-        CheckTemplate<trait, T, U>();
+        check_template<trait, T, U>();
 
-        using srcType = typename U::elementType;
-        using dstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        constexpr uint32_t deqTensorAddrAlignValue = 128;
-        constexpr uint16_t fbufBurstLenUnit = 64;
+        constexpr uint32_t deq_tensor_addr_align_value = 128;
+        constexpr uint16_t fbuf_burst_len_unit = 64;
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t srcCol;
-        uint16_t srcRow;
-        uint16_t dstCol;
-        uint16_t dstRow;
-        uint16_t blockCount;
-        if constexpr (IsSatisfiedPtnFormatV<U, NDLayoutPtn>) {
-            srcCol = GetElement<AttrInfo::Shape, AttrInfo::Column>(srcLayout);
-            srcRow = GetElement<AttrInfo::Stride, AttrInfo::Row>(srcLayout);
-            blockCount = GetElement<AttrInfo::Shape, AttrInfo::Row>(srcLayout);
+        uint16_t src_col;
+        uint16_t src_row;
+        uint16_t dst_col;
+        uint16_t dst_row;
+        uint16_t block_count;
+        if constexpr (is_satisfied_ptn_format_v<U, nd_layout_ptn>) {
+            src_col = get_element<attr_info::shape, attr_info::column>(src_layout);
+            src_row = get_element<attr_info::stride, attr_info::row>(src_layout);
+            block_count = get_element<attr_info::shape, attr_info::row>(src_layout);
         } else {
-            srcCol = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-            srcRow = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout);
-            blockCount = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
+            src_col = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+            src_row = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
+            block_count = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         }
-        if constexpr (IsSatisfiedPtnFormatV<T, NDLayoutPtn>) {
-            dstCol = GetElement<AttrInfo::Shape, AttrInfo::Column>(dstLayout);
-            dstRow = GetElement<AttrInfo::Stride, AttrInfo::Row>(dstLayout);
+        if constexpr (is_satisfied_ptn_format_v<T, nd_layout_ptn>) {
+            dst_col = get_element<attr_info::shape, attr_info::column>(dst_layout);
+            dst_row = get_element<attr_info::stride, attr_info::row>(dst_layout);
         } else {
-            dstCol = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstLayout);
-            dstRow = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout);
+            dst_col = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
+            dst_row = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
         }
 
-        uint16_t blockLen = Std::ceil_align(srcCol * sizeof(srcType), deqTensorAddrAlignValue) / fbufBurstLenUnit;
-        uint16_t srcStride = Std::ceil_division(srcRow * sizeof(srcType), C0_SIZE<>);
-        uint16_t dstStride = Std::ceil_align(dstRow * sizeof(dstType), deqTensorAddrAlignValue) / fbufBurstLenUnit;
+        uint16_t block_len =
+            Std::ceil_align(src_col * sizeof(src_type), deq_tensor_addr_align_value) / fbuf_burst_len_unit;
+        uint16_t src_stride = Std::ceil_division(src_row * sizeof(src_type), C0_SIZE<>);
+        uint16_t dst_stride =
+            Std::ceil_align(dst_row * sizeof(dst_type), deq_tensor_addr_align_value) / fbuf_burst_len_unit;
 
-        CopyL12FBInstr::DataCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        copy_l1_to_fixbuf_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_stride,
+                                              dst_stride);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_FB_COPY_IMPL_ND2ND_H
 

@@ -24,75 +24,76 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/copy_common.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToCbufMultiDN2Zn {
+class copy_gm_to_l1_dn2zn {
 public:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        RunGmToL1Batched<trait, CopyGmToCbufMultiDN2Zn, T, U>(dst, src);
+        run_gm_to_l1_batched<trait, copy_gm_to_l1_dn2zn, T, U>(dst, src);
     }
 
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2L1Fp4DataType<T, U>();
+        check_layout_pattern<U, T>();
+        check_data_type::check_gm_to_l1_fp4_data_type<T, U>();
     }
 
     // Extracts single-matrix parameters from the (batch-stripped) src/dst layouts and emits the
-    // instruction. dnNum/srcDnMatrixStride/dstNzMatrixStride carry the batch dimension (1/0/0 when
+    // instruction. dn_num/src_dn_matrix_stride/dst_nz_matrix_stride carry the batch dimension (1/0/0 when
     // there is no batch). The src/dst pattern is read from the original tensor type U/T.
     template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void EmitCopy(const T& dst, const U& src, const SrcLayout& srcLayout,
-                                           const DstLayout& dstLayout, uint16_t dnNum,
-                                           uint64_t srcDnMatrixStride, uint32_t dstNzMatrixStride)
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
+                                            const DstLayout& dst_layout, uint16_t dn_num, uint64_t src_dn_matrix_stride,
+                                            uint32_t dst_nz_matrix_stride)
     {
-        using type = typename U::elementType;
+        using type = typename U::element_type;
 
-        uint16_t nValue;
-        uint32_t dValue;
-        uint32_t srcRowStride;
-        if constexpr (IsSatisfiedPtnFormatV<U, DNLayoutPtn>) {
-            nValue = GetElement<AttrInfo::Shape, AttrInfo::Column>(srcLayout);
-            dValue = GetElement<AttrInfo::Shape, AttrInfo::Row>(srcLayout);
-            srcRowStride = GetElement<AttrInfo::Stride, AttrInfo::Column>(srcLayout);
+        uint16_t n_value;
+        uint32_t d_value;
+        uint32_t src_row_stride;
+        if constexpr (is_satisfied_ptn_format_v<U, dn_layout_ptn>) {
+            n_value = get_element<attr_info::shape, attr_info::column>(src_layout);
+            d_value = get_element<attr_info::shape, attr_info::row>(src_layout);
+            src_row_stride = get_element<attr_info::stride, attr_info::column>(src_layout);
         } else {
-            nValue = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-            dValue = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
-            srcRowStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout);
+            n_value = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+            d_value = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
+            src_row_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout);
         }
-        auto dstRowStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout);
-        if constexpr (IsB4Type<type>) {
+        auto dst_row_stride = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
+        if constexpr (is_b4_type<type>) {
             // move fp4 as b8, need to be divided by 2
-            dValue = dValue >> 1;
-            srcRowStride = srcRowStride >> 1;
-            srcDnMatrixStride = srcDnMatrixStride >> 1;
+            d_value = d_value >> 1;
+            src_row_stride = src_row_stride >> 1;
+            src_dn_matrix_stride = src_dn_matrix_stride >> 1;
         }
 
-        uint64_t srcDValue = srcRowStride;
-        uint16_t dstNzC0Stride = dstRowStride / C0_ELEMENT<type>;
-        uint16_t dstNzNStride = 1;
+        uint64_t src_d_value = src_row_stride;
+        uint16_t dst_nz_c0_stride = dst_row_stride / C0_ELEMENT<type>;
+        uint16_t dst_nz_n_stride = 1;
 
-        uint64_t loop1SrcStride = srcDValue * sizeof(type);
-        uint64_t loop4SrcStride = srcDnMatrixStride * sizeof(type);
+        uint64_t loop1_src_stride = src_d_value * sizeof(type);
+        uint64_t loop4_src_stride = src_dn_matrix_stride * sizeof(type);
 
-        uint16_t loop2DstStride = dstNzNStride;  // loop2_dst_stride = dst_nz_n_stride
-        uint16_t loop3DstStride = dstNzC0Stride; // loop3_dst_stride = dst_nz_c0_stride
+        uint16_t loop2_dst_stride = dst_nz_n_stride;  // loop2_dst_stride = dst_nz_n_stride
+        uint16_t loop3_dst_stride = dst_nz_c0_stride; // loop3_dst_stride = dst_nz_c0_stride
         // loop4_dst_stride : dst_nz_matrix_stride * size_of_dst_type / C0_SIZE
-        uint16_t loop4DstStride = static_cast<uint16_t>(dstNzMatrixStride / C0_ELEMENT<type>);
+        uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / C0_ELEMENT<type>);
 
-        uint8_t cacheMode = src.Engine().GetCacheMode();
+        uint8_t cache_mode = src.engine().get_cache_mode();
 
-        CopyGmToCbufMultiNd2nzInstr::DataCopy(dst, src, dnNum, loop2DstStride, loop3DstStride, loop4DstStride,
-                                              loop1SrcStride, cacheMode, nValue, dValue, loop4SrcStride, false);
+        copy_gm_to_l1_multi_nd2nz_instr::data_copy(dst.data().get(), src.data().get(), dn_num, loop2_dst_stride, loop3_dst_stride,
+                                                     loop4_dst_stride, loop1_src_stride, cache_mode, n_value, d_value,
+                                                     loop4_src_stride, false);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif
 

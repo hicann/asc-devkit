@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
@@ -16,149 +16,151 @@
 #endif
 
 /*!
-* \file map_impl.h
-* \brief
-*/
+ * \file map_impl.h
+ * \brief
+ */
 #ifndef IMPL_TENSOR_API_UTILS_MAP_IMPL_H
 #define IMPL_TENSOR_API_UTILS_MAP_IMPL_H
 
 #include "impl/tensor_api/utils/extra_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename... Pairs>
-class TupleMap {
+class tuple_map {
 private:
-    using MapType = Std::tuple<Pairs...>;
-    static constexpr size_t MapSize = sizeof...(Pairs);
+    using map_type = Std::tuple<Pairs...>;
+    static constexpr size_t map_size = sizeof...(Pairs);
 
     template <typename Pair>
-    using PairKey = typename Std::tuple_element<0, Pair>::type;
+    using pair_key = typename Std::tuple_element<0, Pair>::type;
 
     template <typename Pair>
-    using PairValue = typename Std::tuple_element<1, Pair>::type;
+    using pair_value = typename Std::tuple_element<1, Pair>::type;
 
     template <typename Pair>
-    struct IsValidPair : Std::false_type {};
+    struct is_valid_pair : Std::false_type {};
 
     template <typename Key, typename Value>
-    struct IsValidPair<Std::tuple<Key, Value>> : Std::true_type {};
+    struct is_valid_pair<Std::tuple<Key, Value>> : Std::true_type {};
 
     template <typename Input, typename KeySet>
-    struct ContainsKey : Std::false_type {};
+    struct contains_key : Std::false_type {};
 
     template <typename Input, typename... Keys>
-    struct ContainsKey<Input, Std::tuple<Keys...>> : Std::bool_constant<(Std::is_same_v<Input, Keys> || ...)> {};
+    struct contains_key<Input, Std::tuple<Keys...>> : Std::bool_constant<(Std::is_same_v<Input, Keys> || ...)> {};
 
     template <typename Input, typename KeySet, bool IsTupleKey>
-    struct MatchKeyImpl : Std::is_same<KeySet, Input> {};
+    struct match_key_impl : Std::is_same<KeySet, Input> {};
 
     template <typename Input, typename KeySet>
-    struct MatchKeyImpl<Input, KeySet, true> : ContainsKey<Input, KeySet> {};
+    struct match_key_impl<Input, KeySet, true> : contains_key<Input, KeySet> {};
 
     template <typename Input, typename KeySet>
-    struct MatchKey : MatchKeyImpl<Input, KeySet, Std::is_tuple_v<KeySet>> {};
+    struct match_key : match_key_impl<Input, KeySet, Std::is_tuple_v<KeySet>> {};
 
     template <typename Pair, typename Map>
-    struct PrependPair;
+    struct prepend_pair;
 
     template <typename Pair, typename... ExistingPairs>
-    struct PrependPair<Pair, TupleMap<ExistingPairs...>> {
-        using type = TupleMap<Pair, ExistingPairs...>;
+    struct prepend_pair<Pair, tuple_map<ExistingPairs...>> {
+        using type = tuple_map<Pair, ExistingPairs...>;
     };
 
     template <typename Key, size_t Index, size_t MaxSize>
-    struct GetImpl {
-        using CurrentPair = typename Std::tuple_element<Index, MapType>::type;
-        static_assert(IsValidPair<CurrentPair>::value, "TupleMap expects Std::tuple<Key, Value> entries.");
-        using CurrentKey = PairKey<CurrentPair>;
-        using CurrentVal = PairValue<CurrentPair>;
+    struct get_impl {
+        using current_pair = typename Std::tuple_element<Index, map_type>::type;
+        static_assert(is_valid_pair<current_pair>::value, "tuple_map expects Std::tuple<Key, Value> entries.");
+        using current_key = pair_key<current_pair>;
+        using current_val = pair_value<current_pair>;
 
-        using NextResult = typename GetImpl<Key, Index + 1, MaxSize>::type;
+        using next_result = typename get_impl<Key, Index + 1, MaxSize>::type;
 
-        using type = Std::conditional_t<Std::is_same_v<CurrentKey, Key>, CurrentVal, NextResult>;
+        using type = Std::conditional_t<Std::is_same_v<current_key, Key>, current_val, next_result>;
     };
 
     template <typename Key, size_t MaxSize>
-    struct GetImpl<Key, MaxSize, MaxSize> {
+    struct get_impl<Key, MaxSize, MaxSize> {
         using type = Std::ignore_t;
     };
 
     template <typename Input, size_t Index, size_t MaxSize>
-    struct MatchImpl {
-        using CurrentPair = typename Std::tuple_element<Index, MapType>::type;
-        static_assert(IsValidPair<CurrentPair>::value, "TupleMap expects Std::tuple<Key, Value> entries.");
-        using CurrentKey = PairKey<CurrentPair>;
-        using CurrentVal = PairValue<CurrentPair>;
+    struct match_impl {
+        using current_pair = typename Std::tuple_element<Index, map_type>::type;
+        static_assert(is_valid_pair<current_pair>::value, "tuple_map expects Std::tuple<Key, Value> entries.");
+        using current_key = pair_key<current_pair>;
+        using current_val = pair_value<current_pair>;
 
-        using NextResult = typename MatchImpl<Input, Index + 1, MaxSize>::type;
+        using next_result = typename match_impl<Input, Index + 1, MaxSize>::type;
 
-        using type = Std::conditional_t<MatchKey<Input, CurrentKey>::value, CurrentVal, NextResult>;
+        using type = Std::conditional_t<match_key<Input, current_key>::value, current_val, next_result>;
     };
 
     template <typename Input, size_t MaxSize>
-    struct MatchImpl<Input, MaxSize, MaxSize> {
+    struct match_impl<Input, MaxSize, MaxSize> {
         using type = Std::ignore_t;
     };
 
     template <typename Key, typename... ExistingPairs>
-    struct DeleteImpl;
+    struct delete_impl;
 
     template <typename Key, typename Val, typename... ExistingPairs>
-    struct InsertImpl;
+    struct insert_impl;
 
     template <typename Key, typename Val>
-    struct InsertImpl<Key, Val> {
-        using type = TupleMap<Std::tuple<Key, Val>>;
+    struct insert_impl<Key, Val> {
+        using type = tuple_map<Std::tuple<Key, Val>>;
     };
 
     template <typename Key, typename Val, typename FirstPair, typename... RestPairs>
-    struct InsertImpl<Key, Val, FirstPair, RestPairs...> {
-        static_assert(IsValidPair<FirstPair>::value, "TupleMap expects Std::tuple<Key, Value> entries.");
-        using FirstKey = PairKey<FirstPair>;
-        using NewPair = Std::tuple<Key, Val>;
+    struct insert_impl<Key, Val, FirstPair, RestPairs...> {
+        static_assert(is_valid_pair<FirstPair>::value, "tuple_map expects Std::tuple<Key, Value> entries.");
+        using first_key = pair_key<FirstPair>;
+        using new_pair = Std::tuple<Key, Val>;
 
-        using NextMap = typename InsertImpl<Key, Val, RestPairs...>::type;
-        using KeepHeadMap = typename PrependPair<FirstPair, NextMap>::type;
-        using ReplaceTailMap = typename DeleteImpl<Key, RestPairs...>::type;
-        using ReplaceHeadMap = typename PrependPair<NewPair, ReplaceTailMap>::type;
+        using next_map = typename insert_impl<Key, Val, RestPairs...>::type;
+        using keep_head_map = typename prepend_pair<FirstPair, next_map>::type;
+        using replace_tail_map = typename delete_impl<Key, RestPairs...>::type;
+        using replace_head_map = typename prepend_pair<new_pair, replace_tail_map>::type;
 
-        using type = Std::conditional_t<Std::is_same_v<FirstKey, Key>, ReplaceHeadMap, KeepHeadMap>;
+        using type = Std::conditional_t<Std::is_same_v<first_key, Key>, replace_head_map, keep_head_map>;
     };
 
     template <typename Key>
-    struct DeleteImpl<Key> {
-        using type = TupleMap<>;
+    struct delete_impl<Key> {
+        using type = tuple_map<>;
     };
 
     template <typename Key, typename FirstPair, typename... RestPairs>
-    struct DeleteImpl<Key, FirstPair, RestPairs...> {
-        static_assert(IsValidPair<FirstPair>::value, "TupleMap expects Std::tuple<Key, Value> entries.");
-        using FirstKey = PairKey<FirstPair>;
+    struct delete_impl<Key, FirstPair, RestPairs...> {
+        static_assert(is_valid_pair<FirstPair>::value, "tuple_map expects Std::tuple<Key, Value> entries.");
+        using first_key = pair_key<FirstPair>;
 
-        using NextMap = typename DeleteImpl<Key, RestPairs...>::type;
-        using KeepHeadMap = typename PrependPair<FirstPair, NextMap>::type;
+        using next_map = typename delete_impl<Key, RestPairs...>::type;
+        using keep_head_map = typename prepend_pair<FirstPair, next_map>::type;
 
-        using type = Std::conditional_t<Std::is_same_v<FirstKey, Key>, NextMap, KeepHeadMap>;
+        using type = Std::conditional_t<Std::is_same_v<first_key, Key>, next_map, keep_head_map>;
     };
 
 public:
     template <typename Key>
-    using Get = typename GetImpl<Key, 0, MapSize>::type;
+    using get = typename get_impl<Key, 0, map_size>::type;
 
     template <typename Input>
-    using Find = typename MatchImpl<Input, 0, MapSize>::type;
+    using find = typename match_impl<Input, 0, map_size>::type;
 
     template <typename Key, typename Val>
-    using Insert = typename InsertImpl<Key, Val, Pairs...>::type;
+    using insert = typename insert_impl<Key, Val, Pairs...>::type;
 
     template <typename Key>
-    using Delete = typename DeleteImpl<Key, Pairs...>::type;
+    using erase = typename delete_impl<Key, Pairs...>::type;
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
+
+
 
 #endif // IMPL_TENSOR_API_UTILS_MAP_IMPL_H
 

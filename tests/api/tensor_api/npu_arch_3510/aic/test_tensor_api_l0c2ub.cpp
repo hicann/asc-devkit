@@ -14,40 +14,41 @@
 #include <mockcpp/mockcpp.hpp>
 #include <type_traits>
 
-enum class CubeFormat {
+enum class cube_format {
     ND = 0,
     NZ,
     DN,
 };
 
-template <CubeFormat FORMAT>
-struct DefaultCLayoutPtn;
+template <cube_format format>
+struct default_c_layout_ptn;
 
 template <>
-struct DefaultCLayoutPtn<CubeFormat::ND> {
-    using Type = AscendC::Te::NDExtLayoutPtn;
-};
-
-template <>
-struct DefaultCLayoutPtn<CubeFormat::NZ> {
-    using Type = AscendC::Te::NZLayoutPtn;
+struct default_c_layout_ptn<cube_format::ND> {
+    using type = asc::te::nd_ext_layout_ptn;
 };
 
 template <>
-struct DefaultCLayoutPtn<CubeFormat::DN> {
-    using Type = AscendC::Te::DNExtLayoutPtn;
+struct default_c_layout_ptn<cube_format::NZ> {
+    using type = asc::te::nz_layout_ptn;
 };
 
-template <CubeFormat FORMAT, typename TYPE, typename LAYOUT_PATTERN = typename DefaultCLayoutPtn<FORMAT>::Type>
-struct InputInfo {
-    constexpr static CubeFormat format = FORMAT;
-    using T = TYPE;
-    using LayoutPtn = LAYOUT_PATTERN;
+template <>
+struct default_c_layout_ptn<cube_format::DN> {
+    using type = asc::te::dn_ext_layout_ptn;
 };
 
-using namespace AscendC::Te;
+template <cube_format format_value, typename element_type,
+          typename layout_pattern_type = typename default_c_layout_ptn<format_value>::type>
+struct input_info {
+    constexpr static cube_format format = format_value;
+    using data_type = element_type;
+    using layout_pattern = layout_pattern_type;
+};
 
-class Tensor_Api_Cube_Copy_3510 : public testing::Test {
+using namespace asc::te;
+
+class tensor_api_cube_copy_3510 : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -70,146 +71,146 @@ protected:
 };
 
 namespace {
-using namespace AscendC::Te;
-constexpr bool enableRelu = false;
-constexpr bool enableChannelSplit = true;
-constexpr DualDstMode dualDstCtl = DUAL_DST_DISABLE;
-constexpr CopyL0C2UBTrait l0c2ubTrait = {RoundMode::DEFAULT, enableRelu, enableChannelSplit, dualDstCtl};
+using namespace asc::te;
+constexpr bool enable_relu = false;
+constexpr bool enable_channel_split = true;
+constexpr dual_dst_mode dual_dst_ctl = disable;
+constexpr copy_l0c_to_ub_trait l0c_toub_trait = {round_mode::default_round, enable_relu, enable_channel_split, dual_dst_ctl};
 
-struct CopyL0C2UBTraitCustom {
-    using TraitType = CopyL0C2UBTrait;
-    static constexpr const TraitType value = l0c2ubTrait;
+struct copy_l0c_to_ub_trait_custom {
+    using trait_type = copy_l0c_to_ub_trait;
+    static constexpr const trait_type value = l0c_toub_trait;
 };
 
 
-template <typename LocationTag, typename Pointer, typename Layout>
-auto MakeTensorAt(Pointer ptr, const Layout& layout)
+template <typename location_tag, typename pointer_type, typename layout_type>
+auto make_tensor_at(pointer_type ptr, const layout_type& layout)
 {
-    return AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr<LocationTag>(ptr), layout);
+    return asc::te::make_tensor(asc::te::make_mem_ptr<location_tag>(ptr), layout);
 }
 
-template <typename CopyOp, typename Trait, typename DstTensor, typename SrcTensor>
-void RunCopyCallPaths(const DstTensor& dst, const SrcTensor& src)
+template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
+void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto atom = MakeCopy(CopyOp{}, Trait{});
-    atom.Call(dst, src);
+    auto atom = make_copy(copy_operation{}, trait_type{});
+    atom.call(dst, src);
 
-    CopyAtom<CopyTraits<CopyOp, Trait>>{}.Call(dst, src);
-    Copy(CopyAtom<CopyTraits<CopyOp, Trait>>{}, dst, src);
+    copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
+    copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
 }
 
-template <typename CopyOp, typename Trait, typename Param, typename DstTensor, typename SrcTensor>
-void RunCopyWithParamPaths(const DstTensor& dst, const SrcTensor& src, const Param& param)
+template <typename copy_operation, typename trait_type, typename param_type, typename dst_tensor_type, typename src_tensor_type>
+void run_copy_with_param_paths(const dst_tensor_type& dst, const src_tensor_type& src, const param_type& param)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto atom = MakeCopy(CopyOp{}).with(param);
-    atom.Call(dst, src);
+    auto atom = make_copy(copy_operation{}).with(param);
+    atom.call(dst, src);
 
-    auto copiedAtom = CopyAtom<CopyTraits<CopyOp, Trait>>{}.with(param);
-    copiedAtom.Call(dst, src);
+    auto copied_atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with(param);
+    copied_atom.call(dst, src);
 
-    Copy(copiedAtom, dst, src);
-    Copy(CopyAtom<CopyTraits<CopyOp, Trait>>{}.with(param), dst, src);
+    copy(copied_atom, dst, src);
+    copy(copy_atom<copy_traits<copy_operation, trait_type>>{}.with(param), dst, src);
 }
 
-uint64_t gExpectedLoop3Para = 0;
-uint64_t gExpectedChannelPara = 0;
+uint64_t g_expected_loop3_para = 0;
+uint64_t g_expected_channel_para = 0;
 
-void SetLoop3ParaStub(uint64_t config)
+void set_loop3_para_stub(uint64_t config)
 {
-    EXPECT_EQ(gExpectedLoop3Para, config);
+    EXPECT_EQ(g_expected_loop3_para, config);
 }
 
-void SetChannelParaStub(uint64_t config)
+void set_channel_para_stub(uint64_t config)
 {
-    EXPECT_EQ(gExpectedChannelPara, config);
+    EXPECT_EQ(g_expected_channel_para, config);
 }
 
-template <typename DstLayoutPtn>
-void RunL0C2UBBatchNoQuant(uint32_t expectedDstStride, bool nz2ndEn, bool nz2dnEn, bool expectChannelPara)
+template <typename dst_layout_pattern>
+void run_l0c_to_ub_batch_no_quant(uint32_t expected_dst_stride, bool nz_tond_en, bool nz_todn_en, bool expect_channel_para)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    constexpr uint32_t kSrcBatch = 3;
-    constexpr uint32_t kDstBatch = 9;
-    constexpr uint32_t kM = 32;
-    constexpr uint32_t kN = 64;
-    constexpr uint32_t kMatrixSize = kM * kN;
-    constexpr uint32_t kSrcBatchStride = kMatrixSize / FRACTAL_FIXED;
-    constexpr uint16_t kSrcMatrixStride = kM;
-    constexpr uint64_t kSrcC0Stride = 1;
+    constexpr uint32_t k_src_batch = 3;
+    constexpr uint32_t k_dst_batch = 9;
+    constexpr uint32_t k_m = 32;
+    constexpr uint32_t k_n = 64;
+    constexpr uint32_t k_matrix_size = k_m * k_n;
+    constexpr uint32_t k_src_batch_stride = k_matrix_size / FRACTAL_FIXED;
+    constexpr uint16_t k_src_matrix_stride = k_m;
+    constexpr uint64_t k_src_c0_stride = 1;
 
-    __cc__ float src[kSrcBatch * kMatrixSize] = {0};
-    __ubuf__ float dst[kDstBatch * kMatrixSize] = {0};
+    __cc__ float src[k_src_batch * k_matrix_size] = {0};
+    __ubuf__ float dst[k_dst_batch * k_matrix_size] = {0};
 
-    auto srcTensor = MakeTensorAt<Location::L0C>(
-        src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(kSrcBatch, kM, kN));
-    auto dstTensor = MakeTensorAt<Location::UB>(
-        dst, MakeFrameLayout<DstLayoutPtn, LayoutTraitDefault<float>>(kDstBatch, kM, kN));
+    auto src_tensor = make_tensor_at<location::l0c>(
+        src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(k_src_batch, k_m, k_n));
+    auto dst_tensor = make_tensor_at<location::ub>(
+        dst, make_frame_layout<dst_layout_pattern, layout_trait_default<float>>(k_dst_batch, k_m, k_n));
 
-    n_size_global = kN;
-    m_size_global = kM;
-    src_stride_global = kSrcMatrixStride;
-    dst_stride_global = expectedDstStride;
-    NZ2ND_en_global = nz2ndEn;
-    NZ2DN_en_global = nz2dnEn;
+    n_size_global = k_n;
+    m_size_global = k_m;
+    src_stride_global = k_src_matrix_stride;
+    dst_stride_global = expected_dst_stride;
+    NZ2ND_en_global = nz_tond_en;
+    NZ2DN_en_global = nz_todn_en;
     is_mock_copy_matrix_cc_to_ub = true;
     ub_addr_global = dst;
     quant_pre_global = static_cast<uint64_t>(QuantMode_t::NoQuant);
-    gExpectedLoop3Para = (static_cast<uint64_t>(kMatrixSize) << 32) |
-                         (static_cast<uint64_t>(kSrcBatchStride) << 16) | kSrcBatch;
+    g_expected_loop3_para = (static_cast<uint64_t>(k_matrix_size) << 32) |
+                         (static_cast<uint64_t>(k_src_batch_stride) << 16) | k_src_batch;
 
-    MOCKER(set_loop3_para, void(uint64_t)).times(1).will(invoke(SetLoop3ParaStub));
-    if (expectChannelPara) {
-        gExpectedChannelPara = kSrcC0Stride << 48;
-        MOCKER_CPP(set_channel_para, void(uint64_t)).times(1).will(invoke(SetChannelParaStub));
+    MOCKER(set_loop3_para, void(uint64_t)).times(1).will(invoke(set_loop3_para_stub));
+    if (expect_channel_para) {
+        g_expected_channel_para = k_src_c0_stride << 48;
+        MOCKER_CPP(set_channel_para, void(uint64_t)).times(1).will(invoke(set_channel_para_stub));
     }
 
-    auto atom = MakeCopy(CopyL0C2UB{}, CopyL0C2UBTraitDefault{});
-    atom.Call(dstTensor, srcTensor);
+    auto atom = make_copy(copy_l0c_to_ub{}, copy_l0c_to_ub_trait_default{});
+    atom.call(dst_tensor, src_tensor);
 
     GlobalMockObject::verify();
     is_mock_copy_matrix_cc_to_ub = false;
 }
 
-void RunL0C2UBBatchNZ2NZNoQuant()
+void run_l0c_to_ub_batch_nz_to_nz_no_quant()
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    constexpr uint32_t kSrcBatch = 3;
-    constexpr uint32_t kDstBatch = 9;
-    constexpr uint32_t kM = 32;
-    constexpr uint32_t kN = 64;
-    constexpr uint32_t kMatrixSize = kM * kN;
-    constexpr uint16_t kSrcMatrixStride = kM;
-    constexpr uint32_t kDstMatrixStride = FRACTAL_FIXED * kM;
+    constexpr uint32_t k_src_batch = 3;
+    constexpr uint32_t k_dst_batch = 9;
+    constexpr uint32_t k_m = 32;
+    constexpr uint32_t k_n = 64;
+    constexpr uint32_t k_matrix_size = k_m * k_n;
+    constexpr uint16_t k_src_matrix_stride = k_m;
+    constexpr uint32_t k_dst_matrix_stride = FRACTAL_FIXED * k_m;
 
-    __cc__ float src[kSrcBatch * kMatrixSize] = {0};
-    __ubuf__ float dst[kDstBatch * kMatrixSize] = {0};
+    __cc__ float src[k_src_batch * k_matrix_size] = {0};
+    __ubuf__ float dst[k_dst_batch * k_matrix_size] = {0};
 
-    auto srcTensor = MakeTensorAt<Location::L0C>(
-        src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(kSrcBatch, kM, kN));
-    auto dstTensor = MakeTensorAt<Location::UB>(
-        dst, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(kDstBatch, kM, kN));
+    auto src_tensor = make_tensor_at<location::l0c>(
+        src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(k_src_batch, k_m, k_n));
+    auto dst_tensor = make_tensor_at<location::ub>(
+        dst, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(k_dst_batch, k_m, k_n));
 
-    n_size_global = kSrcBatch * kN;
-    m_size_global = kM;
-    src_stride_global = kSrcMatrixStride;
-    dst_stride_global = kDstMatrixStride;
+    n_size_global = k_src_batch * k_n;
+    m_size_global = k_m;
+    src_stride_global = k_src_matrix_stride;
+    dst_stride_global = k_dst_matrix_stride;
     NZ2ND_en_global = false;
     NZ2DN_en_global = false;
     is_mock_copy_matrix_cc_to_ub = true;
     ub_addr_global = nullptr;
     quant_pre_global = static_cast<uint64_t>(QuantMode_t::NoQuant);
-    gExpectedLoop3Para = 1;
+    g_expected_loop3_para = 1;
 
-    MOCKER(set_loop3_para, void(uint64_t)).times(1).will(invoke(SetLoop3ParaStub));
+    MOCKER(set_loop3_para, void(uint64_t)).times(1).will(invoke(set_loop3_para_stub));
 
-    auto atom = MakeCopy(CopyL0C2UB{}, CopyL0C2UBTraitDefault{});
-    atom.Call(dstTensor, srcTensor);
+    auto atom = make_copy(copy_l0c_to_ub{}, copy_l0c_to_ub_trait_default{});
+    atom.call(dst_tensor, src_tensor);
 
     GlobalMockObject::verify();
     is_mock_copy_matrix_cc_to_ub = false;
@@ -217,255 +218,258 @@ void RunL0C2UBBatchNZ2NZNoQuant()
 
 } // namespace
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBNZ2ND)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_nz_to_nd)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __ubuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<float>>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<float>>(m, n));
 
-    RunCopyCallPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBNZ2NDLayout)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_nz_to_nd_layout)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __ubuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<float>>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nd_layout_ptn, layout_trait_default<float>>(m, n));
 
-    RunCopyCallPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBNZ2DN)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_nz_to_dn)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __ubuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<DNExtLayoutPtn, LayoutTraitDefault<float>>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<dn_ext_layout_ptn, layout_trait_default<float>>(m, n));
 
-    RunCopyCallPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBNZ2DNLayout)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_nz_to_dn_layout)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __ubuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<DNLayoutPtn, LayoutTraitDefault<float>>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<dn_layout_ptn, layout_trait_default<float>>(m, n));
 
-    RunCopyCallPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBNZ2NZNoChannelSplit)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_nz_to_nz_no_channel_split)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __ubuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float, _16>>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nz_layout_ptn, layout_trait_default<float, _16>>(m, n));
 
-    RunCopyCallPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2UB, CopyL0C2UBTraitDefault>(ubTensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>(ub_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBNZ2NZWithChannelSplit)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_nz_to_nz_with_channel_split)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __ubuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<float>>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<float>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nz_layout_ptn, layout_trait_default<float>>(m, n));
 
-    RunCopyCallPaths<CopyL0C2UB, CopyL0C2UBTraitCustom>(ubTensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2UB, CopyL0C2UBTraitCustom>(ubTensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_custom>(ub_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_ub, copy_l0c_to_ub_trait_custom>(ub_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBBatchNZ2NDExt)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_batch_nz_to_nd_ext)
 {
-    RunL0C2UBBatchNoQuant<NDExtLayoutPtn>(64, true, false, false);
+    run_l0c_to_ub_batch_no_quant<nd_ext_layout_ptn>(64, true, false, false);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBBatchNZ2NDLayout)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_batch_nz_to_nd_layout)
 {
-    RunL0C2UBBatchNoQuant<NDLayoutPtn>(64, true, false, false);
+    run_l0c_to_ub_batch_no_quant<nd_layout_ptn>(64, true, false, false);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBBatchNZ2DNExt)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_batch_nz_to_dn_ext)
 {
-    RunL0C2UBBatchNoQuant<DNExtLayoutPtn>(32, false, true, true);
+    run_l0c_to_ub_batch_no_quant<dn_ext_layout_ptn>(32, false, true, true);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBBatchNZ2DNLayout)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_batch_nz_to_dn_layout)
 {
-    RunL0C2UBBatchNoQuant<DNLayoutPtn>(32, false, true, true);
+    run_l0c_to_ub_batch_no_quant<dn_layout_ptn>(32, false, true, true);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2UBBatchNZ2NZ)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_ub_batch_nz_to_nz)
 {
-    RunL0C2UBBatchNZ2NZNoQuant();
+    run_l0c_to_ub_batch_nz_to_nz_no_quant();
 }
 
-template <class L0C_TYPE, class C_TYPE, QuantMode_t QUANT_MODE, bool IS_TENSOR, bool HAS_COORD>
-class L0C2UBTestCase {
-    using DstT = typename C_TYPE::T;
-    using L0cT = typename L0C_TYPE::T;
+template <class l0c_data_type, class c_data_type, QuantMode_t quant_mode_value, bool is_tensor_value, bool has_coord>
+class l0c_to_ub_test_case {
+    using dst_type = typename c_data_type::data_type;
+    using l0c_t = typename l0c_data_type::data_type;
 
 public:
-    __aicore__ inline L0C2UBTestCase() {}
+    __aicore__ inline l0c_to_ub_test_case() {}
 
-    __aicore__ inline void TestRun(int32_t m, int32_t n, __ubuf__ DstT* c)
+    __aicore__ inline void test_run(int32_t m, int32_t n, __ubuf__ dst_type* c)
     {
-        ubC_ = c;
-        mLength_ = m;
-        nLength_ = n;
-        qAddr_ = reinterpret_cast<__cbuf__ uint64_t*>(0);
-        l0cAddr_ = reinterpret_cast<__cc__ L0cT*>(0);
+        ub_c_ = c;
+        m_length_ = m;
+        n_length_ = n;
+        q_addr_ = reinterpret_cast<__cbuf__ uint64_t*>(0);
+        l0c_addr_ = reinterpret_cast<__cc__ l0c_t*>(0);
         constexpr uint32_t base = 0;
 
-        auto l0cIterator = MakeMemPtr<Location::L0C>(l0cAddr_);
-        auto l0cMatrixLayout = MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<L0cT, _16>>(mLength_, nLength_);
-        auto l0cTensor = MakeTensor(l0cIterator, l0cMatrixLayout);
-        auto ubTensor = MakeUBTensor();
+        auto l0c_iterator = make_mem_ptr<location::l0c>(l0c_addr_);
+        auto l0c_matrix_layout = make_frame_layout<nz_layout_ptn, layout_trait_default<l0c_t, _16>>(m_length_, n_length_);
+        auto l0c_tensor = make_tensor(l0c_iterator, l0c_matrix_layout);
+        auto ub_tensor = make_ub_tensor();
 
-        if constexpr (QUANT_MODE == QuantMode_t::NoQuant || QUANT_MODE == QuantMode_t::F322F16) {
-            if constexpr (HAS_COORD) {
-                auto ubTensorTile = Slice(ubTensor, MakeCoord(base, base), MakeShape(m - base, n - base));
-                Copy(CopyAtom<CopyTraits<CopyL0C2UB, CopyL0C2UBTraitDefault>>{}, ubTensorTile, l0cTensor);
+        if constexpr (quant_mode_value == QuantMode_t::NoQuant || quant_mode_value == QuantMode_t::F322F16) {
+            if constexpr (has_coord) {
+                auto ub_tensor_tile = slice(ub_tensor, make_coord(base, base), make_shape(m - base, n - base));
+                copy(copy_atom<copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>>{}, ub_tensor_tile, l0c_tensor);
             } else {
-                Copy(CopyAtom<CopyTraits<CopyL0C2UB, CopyL0C2UBTraitDefault>>{}, ubTensor, l0cTensor);
+                copy(copy_atom<copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>>{}, ub_tensor, l0c_tensor);
             }
-        } else if constexpr (IS_TENSOR) {
-            auto qIterator = MakeMemPtr<Location::L1>(qAddr_);
-            auto qMatrixLayout = MakeFrameLayout<NDExtLayoutPtn>(1, nLength_);
-            auto qTensor = MakeTensor(qIterator, qMatrixLayout);
-            if constexpr (HAS_COORD) {
-                auto ubTensorTile = Slice(ubTensor, MakeCoord(base, base), MakeShape(m - base, n - base));
-                Copy(CopyAtom<CopyTraits<CopyL0C2UB, CopyL0C2UBTraitDefault>>{}, ubTensorTile, l0cTensor, qTensor);
+        } else if constexpr (is_tensor_value) {
+            auto q_iterator = make_mem_ptr<location::l1>(q_addr_);
+            auto q_matrix_layout = make_frame_layout<nd_ext_layout_ptn>(1, n_length_);
+            auto q_tensor = make_tensor(q_iterator, q_matrix_layout);
+            if constexpr (has_coord) {
+                auto ub_tensor_tile = slice(ub_tensor, make_coord(base, base), make_shape(m - base, n - base));
+                copy(copy_atom<copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>>{}, ub_tensor_tile, l0c_tensor, q_tensor);
             } else {
-                Copy(CopyAtom<CopyTraits<CopyL0C2UB, CopyL0C2UBTraitDefault>>{}, ubTensor, l0cTensor, qTensor);
+                copy(copy_atom<copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>>{}, ub_tensor, l0c_tensor, q_tensor);
             }
         } else {
             uint64_t quant = 1;
-            if constexpr (HAS_COORD) {
-                auto ubTensorTile = Slice(ubTensor, MakeCoord(base, base), MakeShape(m - base, n - base));
-                Copy(CopyAtom<CopyTraits<CopyL0C2UB, CopyL0C2UBTraitDefault>>{}, ubTensorTile, l0cTensor, quant);
+            if constexpr (has_coord) {
+                auto ub_tensor_tile = slice(ub_tensor, make_coord(base, base), make_shape(m - base, n - base));
+                copy(copy_atom<copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>>{}, ub_tensor_tile, l0c_tensor, quant);
             } else {
-                Copy(CopyAtom<CopyTraits<CopyL0C2UB, CopyL0C2UBTraitDefault>>{}, ubTensor, l0cTensor, quant);
+                copy(copy_atom<copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default>>{}, ub_tensor, l0c_tensor, quant);
             }
         }
     }
 
 private:
-    int32_t mLength_ = 0;
-    int32_t nLength_ = 0;
+    int32_t m_length_ = 0;
+    int32_t n_length_ = 0;
 
-    __ubuf__ DstT* ubC_;
-    __cbuf__ uint64_t* qAddr_;
-    __cc__ L0cT* l0cAddr_;
+    __ubuf__ dst_type* ub_c_;
+    __cbuf__ uint64_t* q_addr_;
+    __cc__ l0c_t* l0c_addr_;
 
-    __aicore__ inline constexpr auto MakeUBTensor()
+    __aicore__ inline constexpr auto make_ub_tensor()
     {
-        auto ubIterator = MakeMemPtr<Location::UB>(ubC_);
-        if constexpr (C_TYPE::format == CubeFormat::NZ) {
-            using CastT = std::conditional_t<sizeof(DstT) == 4, half, DstT>;
-            auto ubMatrixLayout = MakeFrameLayout<typename C_TYPE::LayoutPtn, LayoutTraitDefault<CastT>>(mLength_,
-                                                                                                         nLength_);
-            return MakeTensor(ubIterator, ubMatrixLayout);
+        auto ub_iterator = make_mem_ptr<location::ub>(ub_c_);
+        if constexpr (c_data_type::format == cube_format::NZ) {
+            using cast_t = std::conditional_t<sizeof(dst_type) == 4, half, dst_type>;
+            auto ub_matrix_layout = make_frame_layout<typename c_data_type::layout_pattern, layout_trait_default<cast_t>>(m_length_,
+                                                                                                         n_length_);
+            return make_tensor(ub_iterator, ub_matrix_layout);
         } else {
-            auto ubMatrixLayout = MakeFrameLayout<typename C_TYPE::LayoutPtn>(mLength_, nLength_);
-            return MakeTensor(ubIterator, ubMatrixLayout);
+            auto ub_matrix_layout = make_frame_layout<typename c_data_type::layout_pattern>(m_length_, n_length_);
+            return make_tensor(ub_iterator, ub_matrix_layout);
         }
     }
 };
 
-template <class L0C_TYPE, class C_TYPE, QuantMode_t QUANT_MODE, bool IS_TENSOR, bool HAS_COORD>
-__aicore__ inline void TestL0c2Ub(uint8_t* cUB, int32_t m, int32_t n, int32_t usedCoreNum)
+template <class l0c_data_type, class c_data_type, QuantMode_t quant_mode_value, bool is_tensor_value, bool has_coord>
+__aicore__ inline void test_l0c_to_ub(uint8_t* c_ub, int32_t m, int32_t n, int32_t used_core_num)
 {
     if (g_coreType == AscendC::AIV) {
         return;
     }
 
-    using C_T = typename C_TYPE::T;
+    using c_t = typename c_data_type::data_type;
 
-    if (block_idx >= usedCoreNum) {
+    if (block_idx >= used_core_num) {
         return;
     }
 
-    auto ubC = reinterpret_cast<__ubuf__ C_T*>(cUB);
+    auto ub_c = reinterpret_cast<__ubuf__ c_t*>(c_ub);
 
-    L0C2UBTestCase<L0C_TYPE, C_TYPE, QUANT_MODE, IS_TENSOR, HAS_COORD> ins;
-    ins.TestRun(m, n, ubC);
+    l0c_to_ub_test_case<l0c_data_type, c_data_type, quant_mode_value, is_tensor_value, has_coord> ins;
+    ins.test_run(m, n, ub_c);
 }
 
-#define KERNEL_TENSOR_API_L0C2UB_E2E(coreNum, M, N, C_Format, L0C_DType, C_DType, Quant_Mode, Is_Tensor, Has_Coord) \
-    TEST_F(Tensor_Api_Cube_Copy_3510, kernel_tensor_api_l0c2ub_##coreNum##_##M##_##N##_##C_Format##_##L0C_DType##_##C_DType##_##Quant_Mode##_##Is_Tensor##_##Has_Coord) \
+#define TEST_L0C_TO_UB_CONCAT_IMPL_(name, line) name##line
+#define TEST_L0C_TO_UB_CONCAT_(name, line) TEST_L0C_TO_UB_CONCAT_IMPL_(name, line)
+
+#define KERNEL_TENSOR_API_L0C2UB_E2E(core_num, m_value, n_value, c_format, l0c_data_type, c_data_type, quant_mode_value, is_tensor_value, has_coord) \
+    TEST_F(tensor_api_cube_copy_3510, TEST_L0C_TO_UB_CONCAT_(kernel_tensor_api_l0c_to_ub_case_, __LINE__)) \
     { \
-        uint8_t cUB[M * N * sizeof(C_DType)] = {0}; \
-        typedef InputInfo<CubeFormat::NZ, L0C_DType> l0cType; \
-        typedef InputInfo<CubeFormat::C_Format, C_DType> cType; \
-        TestL0c2Ub<l0cType, cType, QuantMode_t::Quant_Mode, Is_Tensor, Has_Coord>(cUB, M, N, coreNum); \
-        for (uint32_t i = 0; i < M * N; i++) { \
-            EXPECT_EQ(cUB[i], 0x00); \
+        uint8_t c_ub[m_value * n_value * sizeof(c_data_type)] = {0}; \
+        typedef input_info<cube_format::NZ, l0c_data_type> l0c_type; \
+        typedef input_info<cube_format::c_format, c_data_type> c_type; \
+        test_l0c_to_ub<l0c_type, c_type, QuantMode_t::quant_mode_value, is_tensor_value, has_coord>(c_ub, m_value, n_value, core_num); \
+        for (uint32_t i = 0; i < m_value * n_value; i++) { \
+            EXPECT_EQ(c_ub[i], 0x00); \
         } \
     }
 
-#define KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(coreNum, M, N, C_Format, C_LayoutPtn, L0C_DType, C_DType, Quant_Mode,    \
-                                            Is_Tensor, Has_Coord)                                                    \
-    TEST_F(Tensor_Api_Cube_Copy_3510, kernel_tensor_api_l0c2ub_##coreNum##_##M##_##N##_##C_Format##_##C_LayoutPtn##_##L0C_DType##_##C_DType##_##Quant_Mode##_##Is_Tensor##_##Has_Coord) \
+#define KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(core_num, m_value, n_value, c_format, c_layout_pattern, l0c_data_type, c_data_type, quant_mode_value,    \
+                                            is_tensor_value, has_coord)                                                    \
+    TEST_F(tensor_api_cube_copy_3510, TEST_L0C_TO_UB_CONCAT_(kernel_tensor_api_l0c_to_ub_layout_case_, __LINE__)) \
     {                                                                                                                \
-        uint8_t cUB[M * N * sizeof(C_DType)] = {0};                                                                  \
-        typedef InputInfo<CubeFormat::NZ, L0C_DType> l0cType;                                                        \
-        typedef InputInfo<CubeFormat::C_Format, C_DType, C_LayoutPtn> cType;                                         \
-        TestL0c2Ub<l0cType, cType, QuantMode_t::Quant_Mode, Is_Tensor, Has_Coord>(cUB, M, N, coreNum);               \
-        for (uint32_t i = 0; i < M * N; i++) {                                                                       \
-            EXPECT_EQ(cUB[i], 0x00);                                                                                 \
+        uint8_t c_ub[m_value * n_value * sizeof(c_data_type)] = {0};                                                                  \
+        typedef input_info<cube_format::NZ, l0c_data_type> l0c_type;                                                        \
+        typedef input_info<cube_format::c_format, c_data_type, c_layout_pattern> c_type;                                         \
+        test_l0c_to_ub<l0c_type, c_type, QuantMode_t::quant_mode_value, is_tensor_value, has_coord>(c_ub, m_value, n_value, core_num);               \
+        for (uint32_t i = 0; i < m_value * n_value; i++) {                                                                       \
+            EXPECT_EQ(c_ub[i], 0x00);                                                                                 \
         }                                                                                                            \
     }
 
@@ -485,14 +489,14 @@ KERNEL_TENSOR_API_L0C2UB_E2E(1, 128, 64, NZ, int32_t, int8_t, VREQ8, true, false
 KERNEL_TENSOR_API_L0C2UB_E2E(1, 128, 64, DN, int32_t, int8_t, REQ8, false, false)
 KERNEL_TENSOR_API_L0C2UB_E2E(1, 128, 64, DN, int32_t, int8_t, VREQ8, true, false)
 
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, ND, NDLayoutPtn, float, float, NoQuant, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, NDLayoutPtn, float, float, NoQuant, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, NDLayoutPtn, float, float, NoQuant, false, true)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, ND, NDLayoutPtn, float, half, F322F16, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, NDLayoutPtn, float, half, F322F16, false, true)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, NDLayoutPtn, int32_t, int8_t, REQ8, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, DN, DNLayoutPtn, float, float, NoQuant, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, DN, DNLayoutPtn, float, float, NoQuant, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, DN, DNLayoutPtn, int32_t, int8_t, REQ8, false, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, ND, NDLayoutPtn, int32_t, half, VDEQF16, true, false)
-KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, DN, DNLayoutPtn, int32_t, half, VDEQF16, true, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, ND, nd_layout_ptn, float, float, NoQuant, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, nd_layout_ptn, float, float, NoQuant, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, nd_layout_ptn, float, float, NoQuant, false, true)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, ND, nd_layout_ptn, float, half, F322F16, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, nd_layout_ptn, float, half, F322F16, false, true)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, ND, nd_layout_ptn, int32_t, int8_t, REQ8, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, DN, dn_layout_ptn, float, float, NoQuant, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, DN, dn_layout_ptn, float, float, NoQuant, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 128, 64, DN, dn_layout_ptn, int32_t, int8_t, REQ8, false, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, ND, nd_layout_ptn, int32_t, half, VDEQF16, true, false)
+KERNEL_TENSOR_API_L0C2UB_E2E_LAYOUT(1, 16, 16, DN, dn_layout_ptn, int32_t, half, VDEQF16, true, false)

@@ -25,14 +25,14 @@
 #include "impl/tensor_api/tensor/tensor_impl.h"
 
 // tensor construction
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename Iterator, typename... Args>
-__aicore__ inline constexpr auto MakeTensor(const Iterator& iter, const Args&... args);
+__aicore__ inline constexpr auto make_tensor(const Iterator& iter, const Args&... args);
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_TENSOR_TENSOR_H
 

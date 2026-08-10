@@ -24,47 +24,47 @@
 
 #include "impl/tensor_api/arch/vector/gm_to_ub/copy_impl/data_copy.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToUbufAlignV2DN : private CopyGmToUbufAlignV2Common {
+class copy_gm_to_ub_dn : private copy_gm_to_ub_common {
 public:
-    template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src, const CopyGM2UBParams& params)
+    template <const copy_gm_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src, const copy_gm_to_ub_params& params)
     {
-        DataCopyImpl<trait, T, U>(dst, src, params);
+        data_copy_impl<trait, T, U>(dst, src, params);
     }
 
 private:
-    template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const copy_gm_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2UBDataType<T, U>();
+        check_layout_pattern<U, T>();
+        check_data_type::check_gm_to_ub_data_type<T, U>();
     }
 
-    template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src, const CopyGM2UBParams& params)
+    template <const copy_gm_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void data_copy_impl(const T& dst, const U& src, const copy_gm_to_ub_params& params)
     {
-        using SrcType = typename U::elementType;
-        using DstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        CheckTemplate<trait, T, U>();
+        check_template<trait, T, U>();
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t blockCount = GetTotalColumnShape(srcLayout);
-        uint32_t blockLen = GetTotalRowShape(srcLayout) * sizeof(SrcType);
-        int64_t srcStride = GetColumnStride(srcLayout) * sizeof(SrcType);
-        int64_t dstStride = GetColumnStride(dstLayout) * sizeof(DstType);
+        uint16_t block_count = get_total_column_shape(src_layout);
+        uint32_t block_len = get_total_row_shape(src_layout) * sizeof(src_type);
+        int64_t src_stride = get_column_stride(src_layout) * sizeof(src_type);
+        int64_t dst_stride = get_column_stride(dst_layout) * sizeof(dst_type);
 
-        EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride, params);
+        emit_copy(dst, src, block_count, block_len, src_stride, dst_stride, params);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_DN2DN_H
 

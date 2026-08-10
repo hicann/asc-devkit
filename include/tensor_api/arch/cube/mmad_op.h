@@ -21,14 +21,15 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_OP_H
 #define INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_OP_H
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct MmadTraitDefault;
-struct MmadOperation;
 
-} // namespace Te
-} // namespace AscendC
+struct mmad_trait_default;
+struct mmad_operation;
+
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_OP_H
 

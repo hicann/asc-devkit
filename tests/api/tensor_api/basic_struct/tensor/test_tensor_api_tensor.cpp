@@ -12,7 +12,7 @@
 #include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Tensor_Struct : public testing::Test {
+class tensor_api_tensor_struct : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -22,267 +22,267 @@ protected:
 
 namespace {
 
-template <typename T>
-struct IsTensorApiGlobalTensor : AscendC::Std::false_type {};
+template <typename data_type>
+struct is_tensor_api_global_tensor : AscendC::Std::false_type {};
 
-template <typename Engine, typename Layout>
-struct IsTensorApiGlobalTensor<AscendC::GlobalTensor<AscendC::TensorAttribute<Engine, Layout>>>
+template <typename engine_type, typename layout_type>
+struct is_tensor_api_global_tensor<asc::te::global_tensor<engine_type, layout_type>>
     : AscendC::Std::true_type {};
 
-template <typename T>
-constexpr bool IsTensorApiGlobalTensorV =
-    IsTensorApiGlobalTensor<AscendC::Std::remove_cvref_t<T>>::value;
+template <typename data_type>
+constexpr bool is_tensor_api_global_tensor_v =
+    is_tensor_api_global_tensor<AscendC::Std::remove_cvref_t<data_type>>::value;
 
-template <typename T>
-struct IsTensorApiLocalTensor : AscendC::Std::false_type {};
+template <typename data_type>
+struct is_tensor_api_local_tensor : AscendC::Std::false_type {};
 
-template <typename Engine, typename Layout>
-struct IsTensorApiLocalTensor<AscendC::LocalTensor<AscendC::TensorAttribute<Engine, Layout>>>
+template <typename engine_type, typename layout_type>
+struct is_tensor_api_local_tensor<asc::te::local_tensor<engine_type, layout_type>>
     : AscendC::Std::true_type {};
 
-template <typename T>
-constexpr bool IsTensorApiLocalTensorV =
-    IsTensorApiLocalTensor<AscendC::Std::remove_cvref_t<T>>::value;
+template <typename data_type>
+constexpr bool is_tensor_api_local_tensor_v =
+    is_tensor_api_local_tensor<AscendC::Std::remove_cvref_t<data_type>>::value;
 
-template <typename Tensor>
-void ExpectTensorBasicAbility(const Tensor& tensor, uint32_t size)
+template <typename tensor_type>
+void expect_tensor_basic_ability(const tensor_type& tensor, uint32_t size)
 {
-    EXPECT_EQ(tensor.Tensor().Data(), tensor.Data());
-    EXPECT_EQ(tensor.Engine().Begin(), tensor.Data());
-    EXPECT_EQ(tensor.Size(), size);
-    EXPECT_EQ(tensor.Capacity(), size);
+    EXPECT_EQ(tensor.tensor().data(), tensor.data());
+    EXPECT_EQ(tensor.engine().begin(), tensor.data());
+    EXPECT_EQ(tensor.size(), size);
+    EXPECT_EQ(tensor.capacity(), size);
 }
 
 } // namespace
 
-TEST_F(Tensor_Api_Tensor_Struct, TestLocalTensorStruct)
+TEST_F(tensor_api_tensor_struct, test_local_tensor_struct)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     __gm__ float data[6] = {0, 1, 2, 3, 4, 5};
-    auto tensor = MakeTensor(MakeMemPtr<Location::GM>(data), MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<float>>(2, 3));
+    auto tensor = make_tensor(make_mem_ptr<location::gm>(data), make_frame_layout<nd_layout_ptn, layout_trait_default<float>>(2, 3));
 
-    EXPECT_EQ(tensor.Tensor().Data(), tensor.Data());
-    EXPECT_EQ(tensor.Engine().Begin(), tensor.Data());
-    EXPECT_EQ(tensor.Size(), 6);
-    EXPECT_EQ(tensor.Capacity(), 6);
-    EXPECT_EQ(AscendC::Std::get<0>(tensor.Shape()), 2);
-    EXPECT_EQ(AscendC::Std::get<1>(tensor.Shape()), 3);
-    EXPECT_EQ(AscendC::Std::get<0>(tensor.Stride()), 3);
-    EXPECT_EQ(AscendC::Std::get<1>(tensor.Stride()), 1);
-    EXPECT_EQ(tensor[MakeCoord(1, 2)], 5);
+    EXPECT_EQ(tensor.tensor().data(), tensor.data());
+    EXPECT_EQ(tensor.engine().begin(), tensor.data());
+    EXPECT_EQ(tensor.size(), 6);
+    EXPECT_EQ(tensor.capacity(), 6);
+    EXPECT_EQ(AscendC::Std::get<0>(tensor.shape()), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(tensor.shape()), 3);
+    EXPECT_EQ(AscendC::Std::get<0>(tensor.stride()), 3);
+    EXPECT_EQ(AscendC::Std::get<1>(tensor.stride()), 1);
+    EXPECT_EQ(tensor[make_coord(1, 2)], 5);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, TestLocalTensorCoord)
+TEST_F(tensor_api_tensor_struct, test_local_tensor_coord)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     __gm__ float data[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-    auto layout = MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<float>>(3, 4);
-    auto tensor = MakeTensor(MakeMemPtr<Location::GM>(data), layout);
-    auto subTensor = tensor(MakeCoord(1, 1));
+    auto layout = make_frame_layout<nd_layout_ptn, layout_trait_default<float>>(3, 4);
+    auto tensor = make_tensor(make_mem_ptr<location::gm>(data), layout);
+    auto sub_tensor = tensor(make_coord(1, 1));
 
-    EXPECT_EQ(subTensor.Data(), tensor.Data() + layout(MakeCoord(1, 1)));
-    EXPECT_EQ(AscendC::Std::get<0>(subTensor.Shape()), 2);
-    EXPECT_EQ(AscendC::Std::get<1>(subTensor.Shape()), 3);
-    EXPECT_EQ(subTensor[MakeCoord(1, 2)], 11);
+    EXPECT_EQ(sub_tensor.data(), tensor.data() + layout(make_coord(1, 1)));
+    EXPECT_EQ(AscendC::Std::get<0>(sub_tensor.shape()), 2);
+    EXPECT_EQ(AscendC::Std::get<1>(sub_tensor.shape()), 3);
+    EXPECT_EQ(sub_tensor[make_coord(1, 2)], 11);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, MakeTensorReturnsGlobalTensorForGM)
+TEST_F(tensor_api_tensor_struct, make_tensor_returns_global_tensor_for_gm)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 4;
     constexpr uint32_t n = 8;
     __gm__ float data[m * n] = {0};
-    auto tensor = MakeTensor(MakeMemPtr(data), MakeFrameLayout<NDLayoutPtn>(m, n));
+    auto tensor = make_tensor(make_mem_ptr(data), make_frame_layout<nd_layout_ptn>(m, n));
 
-    static_assert(IsTensorApiGlobalTensorV<decltype(tensor)>);
-    static_assert(!IsTensorApiLocalTensorV<decltype(tensor)>);
-    static_assert(IsAttrTensorV<decltype(tensor)>);
+    static_assert(is_tensor_api_global_tensor_v<decltype(tensor)>);
+    static_assert(!is_tensor_api_local_tensor_v<decltype(tensor)>);
+    static_assert(is_attr_tensor_v<decltype(tensor)>);
 
-    ExpectTensorBasicAbility(tensor, m * n);
-    EXPECT_EQ(AscendC::Std::get<0>(tensor.Shape()), m);
-    EXPECT_EQ(AscendC::Std::get<1>(tensor.Shape()), n);
-    EXPECT_EQ(AscendC::Std::get<0>(tensor.Stride()), n);
-    EXPECT_EQ(AscendC::Std::get<1>(tensor.Stride()), 1);
+    expect_tensor_basic_ability(tensor, m * n);
+    EXPECT_EQ(AscendC::Std::get<0>(tensor.shape()), m);
+    EXPECT_EQ(AscendC::Std::get<1>(tensor.shape()), n);
+    EXPECT_EQ(AscendC::Std::get<0>(tensor.stride()), n);
+    EXPECT_EQ(AscendC::Std::get<1>(tensor.stride()), 1);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, MakeTensorReturnsLocalTensorForNonGM)
+TEST_F(tensor_api_tensor_struct, make_tensor_returns_local_tensor_for_non_gm)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 4;
     constexpr uint32_t n = 8;
     constexpr uint32_t size = m * n;
-    __ubuf__ float ubData[size] = {0};
-    __cbuf__ float l1Data[size] = {0};
-    __ca__ float l0aData[size] = {0};
-    __cb__ float l0bData[size] = {0};
-    __cc__ float l0cData[size] = {0};
+    __ubuf__ float ub_data[size] = {0};
+    __cbuf__ float l1_data[size] = {0};
+    __ca__ float l0a_data[size] = {0};
+    __cb__ float l0b_data[size] = {0};
+    __cc__ float l0c_data[size] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(m, n);
-    auto ubTensor = MakeTensor(MakeMemPtr<Location::UB>(ubData), layout);
-    auto l1Tensor = MakeTensor(MakeMemPtr<Location::L1>(l1Data), layout);
-    auto l0aTensor = MakeTensor(MakeMemPtr<Location::L0A>(l0aData), layout);
-    auto l0bTensor = MakeTensor(MakeMemPtr<Location::L0B>(l0bData), layout);
-    auto l0cTensor = MakeTensor(MakeMemPtr<Location::L0C>(l0cData), layout);
+    auto layout = make_frame_layout<nd_layout_ptn>(m, n);
+    auto ub_tensor = make_tensor(make_mem_ptr<location::ub>(ub_data), layout);
+    auto l1_tensor = make_tensor(make_mem_ptr<location::l1>(l1_data), layout);
+    auto l0a_tensor = make_tensor(make_mem_ptr<location::l0a>(l0a_data), layout);
+    auto l0b_tensor = make_tensor(make_mem_ptr<location::l0b>(l0b_data), layout);
+    auto l0c_tensor = make_tensor(make_mem_ptr<location::l0c>(l0c_data), layout);
 
-    static_assert(IsTensorApiLocalTensorV<decltype(ubTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l1Tensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l0aTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l0bTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l0cTensor)>);
-    static_assert(!IsTensorApiGlobalTensorV<decltype(ubTensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l1_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l0a_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l0b_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l0c_tensor)>);
+    static_assert(!is_tensor_api_global_tensor_v<decltype(ub_tensor)>);
 
-    ExpectTensorBasicAbility(ubTensor, size);
-    ExpectTensorBasicAbility(l1Tensor, size);
-    ExpectTensorBasicAbility(l0aTensor, size);
-    ExpectTensorBasicAbility(l0bTensor, size);
-    ExpectTensorBasicAbility(l0cTensor, size);
+    expect_tensor_basic_ability(ub_tensor, size);
+    expect_tensor_basic_ability(l1_tensor, size);
+    expect_tensor_basic_ability(l0a_tensor, size);
+    expect_tensor_basic_ability(l0b_tensor, size);
+    expect_tensor_basic_ability(l0c_tensor, size);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, SlicePreservesGlobalOrLocalTensorKind)
+TEST_F(tensor_api_tensor_struct, slice_preserves_global_or_local_tensor_kind)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 4;
     constexpr uint32_t n = 8;
-    __gm__ float gmData[m * n] = {0};
-    __ubuf__ float ubData[m * n] = {0};
-    auto layout = MakeFrameLayout<NDLayoutPtn>(m, n);
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), layout);
-    auto ubTensor = MakeTensor(MakeMemPtr<Location::UB>(ubData), layout);
+    __gm__ float gm_data[m * n] = {0};
+    __ubuf__ float ub_data[m * n] = {0};
+    auto layout = make_frame_layout<nd_layout_ptn>(m, n);
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
+    auto ub_tensor = make_tensor(make_mem_ptr<location::ub>(ub_data), layout);
 
-    auto gmCoordTensor = gmTensor(MakeCoord(1, 1));
-    auto gmSliceTensor = gmTensor.Slice(MakeCoord(1, 1), MakeShape(2, 3));
-    auto ubCoordTensor = ubTensor(MakeCoord(1, 1));
-    auto ubSliceTensor = ubTensor.Slice(MakeCoord(1, 1), MakeShape(2, 3));
+    auto gm_coord_tensor = gm_tensor(make_coord(1, 1));
+    auto gm_slice_tensor = gm_tensor.slice(make_coord(1, 1), make_shape(2, 3));
+    auto ub_coord_tensor = ub_tensor(make_coord(1, 1));
+    auto ub_slice_tensor = ub_tensor.slice(make_coord(1, 1), make_shape(2, 3));
 
-    static_assert(IsTensorApiGlobalTensorV<decltype(gmCoordTensor)>);
-    static_assert(IsTensorApiGlobalTensorV<decltype(gmSliceTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(ubCoordTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(ubSliceTensor)>);
+    static_assert(is_tensor_api_global_tensor_v<decltype(gm_coord_tensor)>);
+    static_assert(is_tensor_api_global_tensor_v<decltype(gm_slice_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_coord_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_slice_tensor)>);
 
-    EXPECT_EQ(gmCoordTensor.Data(), gmTensor.Data() + layout(MakeCoord(1, 1)));
-    EXPECT_EQ(gmSliceTensor.Data(), gmTensor.Data() + layout(MakeCoord(1, 1)));
-    EXPECT_EQ(ubCoordTensor.Data(), ubTensor.Data() + layout(MakeCoord(1, 1)));
-    EXPECT_EQ(ubSliceTensor.Data(), ubTensor.Data() + layout(MakeCoord(1, 1)));
+    EXPECT_EQ(gm_coord_tensor.data(), gm_tensor.data() + layout(make_coord(1, 1)));
+    EXPECT_EQ(gm_slice_tensor.data(), gm_tensor.data() + layout(make_coord(1, 1)));
+    EXPECT_EQ(ub_coord_tensor.data(), ub_tensor.data() + layout(make_coord(1, 1)));
+    EXPECT_EQ(ub_slice_tensor.data(), ub_tensor.data() + layout(make_coord(1, 1)));
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, FormatTraitsSupportGlobalLocalAndCvRefTensor)
+TEST_F(tensor_api_tensor_struct, format_traits_support_global_local_and_cv_ref_tensor)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 4;
     constexpr uint32_t n = 8;
-    __gm__ float gmData[m * n] = {0};
-    __ubuf__ float ubData[m * n] = {0};
-    auto layout = MakeFrameLayout<NDExtLayoutPtn>(m, n);
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), layout);
-    auto ubTensor = MakeTensor(MakeMemPtr<Location::UB>(ubData), layout);
+    __gm__ float gm_data[m * n] = {0};
+    __ubuf__ float ub_data[m * n] = {0};
+    auto layout = make_frame_layout<nd_ext_layout_ptn>(m, n);
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
+    auto ub_tensor = make_tensor(make_mem_ptr<location::ub>(ub_data), layout);
 
-    static_assert(IsSatisfiedPtnFormatV<decltype(gmTensor), NDExtLayoutPtn>);
-    static_assert(IsSatisfiedPtnFormatV<const decltype(gmTensor)&, NDExtLayoutPtn>);
-    static_assert(IsSatisfiedPtnFormatV<decltype(ubTensor), NDExtLayoutPtn>);
-    static_assert(IsSatisfiedPtnFormatV<const decltype(ubTensor)&, NDExtLayoutPtn>);
+    static_assert(is_satisfied_ptn_format_v<decltype(gm_tensor), nd_ext_layout_ptn>);
+    static_assert(is_satisfied_ptn_format_v<const decltype(gm_tensor)&, nd_ext_layout_ptn>);
+    static_assert(is_satisfied_ptn_format_v<decltype(ub_tensor), nd_ext_layout_ptn>);
+    static_assert(is_satisfied_ptn_format_v<const decltype(ub_tensor)&, nd_ext_layout_ptn>);
 
-    using GmShapeRow0 = typename GetNDimType<const decltype(gmTensor)&, AttrInfo::Shape, AttrInfo::Row, 0>::type;
-    using GmShapeCol0 = typename GetNDimType<const decltype(gmTensor)&, AttrInfo::Shape, AttrInfo::Column, 0>::type;
-    using UbStrideRow0 = typename GetNDimType<const decltype(ubTensor)&, AttrInfo::Stride, AttrInfo::Row, 0>::type;
-    using UbStrideCol0 = typename GetNDimType<const decltype(ubTensor)&, AttrInfo::Stride, AttrInfo::Column, 0>::type;
-    using UbStrideCol1 = typename GetNDimType<const decltype(ubTensor)&, AttrInfo::Stride, AttrInfo::Column, 1>::type;
+    using gm_shape_row0 = typename get_n_dim_type<const decltype(gm_tensor)&, attr_info::shape, attr_info::row, 0>::type;
+    using gm_shape_col0 = typename get_n_dim_type<const decltype(gm_tensor)&, attr_info::shape, attr_info::column, 0>::type;
+    using ub_stride_row0 = typename get_n_dim_type<const decltype(ub_tensor)&, attr_info::stride, attr_info::row, 0>::type;
+    using ub_stride_col0 = typename get_n_dim_type<const decltype(ub_tensor)&, attr_info::stride, attr_info::column, 0>::type;
+    using ub_stride_col1 = typename get_n_dim_type<const decltype(ub_tensor)&, attr_info::stride, attr_info::column, 1>::type;
 
-    static_assert(AscendC::Std::is_same_v<GmShapeRow0, _1>);
-    static_assert(AscendC::Std::is_same_v<GmShapeCol0, _1>);
-    static_assert(AscendC::Std::is_same_v<UbStrideRow0, _0>);
-    static_assert(AscendC::Std::is_same_v<UbStrideCol0, _0>);
-    static_assert(AscendC::Std::is_same_v<UbStrideCol1, _1>);
+    static_assert(AscendC::Std::is_same_v<gm_shape_row0, _1>);
+    static_assert(AscendC::Std::is_same_v<gm_shape_col0, _1>);
+    static_assert(AscendC::Std::is_same_v<ub_stride_row0, _0>);
+    static_assert(AscendC::Std::is_same_v<ub_stride_col0, _0>);
+    static_assert(AscendC::Std::is_same_v<ub_stride_col1, _1>);
 
-    EXPECT_EQ(gmTensor.Size(), m * n);
-    EXPECT_EQ(ubTensor.Size(), m * n);
+    EXPECT_EQ(gm_tensor.size(), m * n);
+    EXPECT_EQ(ub_tensor.size(), m * n);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, TensorHeaderPublicEntryBuilds)
+TEST_F(tensor_api_tensor_struct, tensor_header_public_entry_builds)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     __gm__ float data[4] = {0};
-    auto tensor = MakeTensor(MakeMemPtr(data), MakeShape(2, 2), MakeStride(2, 1));
+    auto tensor = make_tensor(make_mem_ptr(data), make_shape(2, 2), make_stride(2, 1));
 
-    static_assert(IsTensorApiGlobalTensorV<decltype(tensor)>);
-    EXPECT_EQ(tensor.Size(), 4);
+    static_assert(is_tensor_api_global_tensor_v<decltype(tensor)>);
+    EXPECT_EQ(tensor.size(), 4);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, LocalTensorHasNoSetL2CacheHintMethod)
+TEST_F(tensor_api_tensor_struct, local_tensor_has_no_set_l2_cache_hint_method)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t size = 128;
-    __ubuf__ float ubData[size] = {0};
-    __cbuf__ float l1Data[size] = {0};
+    __ubuf__ float ub_data[size] = {0};
+    __cbuf__ float l1_data[size] = {0};
 
-    auto ubTensor = MakeTensor(MakeMemPtr<Location::UB>(ubData), MakeLayout(MakeShape(8, 16)));
-    auto l1Tensor = MakeTensor(MakeMemPtr<Location::L1>(l1Data), MakeLayout(MakeShape(8, 16)));
+    auto ub_tensor = make_tensor(make_mem_ptr<location::ub>(ub_data), make_layout(make_shape(8, 16)));
+    auto l1_tensor = make_tensor(make_mem_ptr<location::l1>(l1_data), make_layout(make_shape(8, 16)));
 
-    static_assert(IsTensorApiLocalTensorV<decltype(ubTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l1Tensor)>);
-    static_assert(!IsTensorApiGlobalTensorV<decltype(ubTensor)>);
-    static_assert(!IsTensorApiGlobalTensorV<decltype(l1Tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l1_tensor)>);
+    static_assert(!is_tensor_api_global_tensor_v<decltype(ub_tensor)>);
+    static_assert(!is_tensor_api_global_tensor_v<decltype(l1_tensor)>);
 
-    __gm__ float gmData[size] = {0};
-    auto gmTensor = MakeTensor(MakeMemPtr(gmData), MakeLayout(MakeShape(8, 16)));
-    static_assert(IsTensorApiGlobalTensorV<decltype(gmTensor)>);
-    gmTensor.SetL2CacheHint(CacheMode::CACHE_MODE_DISABLE);
+    __gm__ float gm_data[size] = {0};
+    auto gm_tensor = make_tensor(make_mem_ptr(gm_data), make_layout(make_shape(8, 16)));
+    static_assert(is_tensor_api_global_tensor_v<decltype(gm_tensor)>);
+    gm_tensor.set_l2_cache_hint(cache_mode::disable);
 
     EXPECT_TRUE(true);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, LocalTensorSliceHasNoSetL2CacheHintMethod)
+TEST_F(tensor_api_tensor_struct, local_tensor_slice_has_no_set_l2_cache_hint_method)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t size = 128;
-    __ubuf__ float ubData[size] = {0};
+    __ubuf__ float ub_data[size] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(8, 16);
-    auto ubTensor = MakeTensor(MakeMemPtr<Location::UB>(ubData), layout);
+    auto layout = make_frame_layout<nd_layout_ptn>(8, 16);
+    auto ub_tensor = make_tensor(make_mem_ptr<location::ub>(ub_data), layout);
 
-    auto ubSlice = ubTensor.Slice(MakeCoord(2, 4), MakeShape(4, 8));
-    auto ubCoord = ubTensor(MakeCoord(2, 4));
+    auto ub_slice = ub_tensor.slice(make_coord(2, 4), make_shape(4, 8));
+    auto ub_coord = ub_tensor(make_coord(2, 4));
 
-    static_assert(IsTensorApiLocalTensorV<decltype(ubSlice)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(ubCoord)>);
-    static_assert(!IsTensorApiGlobalTensorV<decltype(ubSlice)>);
-    static_assert(!IsTensorApiGlobalTensorV<decltype(ubCoord)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_slice)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_coord)>);
+    static_assert(!is_tensor_api_global_tensor_v<decltype(ub_slice)>);
+    static_assert(!is_tensor_api_global_tensor_v<decltype(ub_coord)>);
 
     EXPECT_TRUE(true);
 }
 
-TEST_F(Tensor_Api_Tensor_Struct, AllOnChipMemoryTypesNoSetL2CacheHint)
+TEST_F(tensor_api_tensor_struct, all_on_chip_memory_types_no_set_l2_cache_hint)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t size = 64;
-    __ubuf__ float ubData[size] = {0};
-    __cbuf__ float l1Data[size] = {0};
-    __ca__ float l0aData[size] = {0};
-    __cb__ float l0bData[size] = {0};
-    __cc__ float l0cData[size] = {0};
+    __ubuf__ float ub_data[size] = {0};
+    __cbuf__ float l1_data[size] = {0};
+    __ca__ float l0a_data[size] = {0};
+    __cb__ float l0b_data[size] = {0};
+    __cc__ float l0c_data[size] = {0};
 
-    auto layout = MakeFrameLayout<NDLayoutPtn>(8, 8);
+    auto layout = make_frame_layout<nd_layout_ptn>(8, 8);
 
-    auto ubTensor = MakeTensor(MakeMemPtr<Location::UB>(ubData), layout);
-    auto l1Tensor = MakeTensor(MakeMemPtr<Location::L1>(l1Data), layout);
-    auto l0aTensor = MakeTensor(MakeMemPtr<Location::L0A>(l0aData), layout);
-    auto l0bTensor = MakeTensor(MakeMemPtr<Location::L0B>(l0bData), layout);
-    auto l0cTensor = MakeTensor(MakeMemPtr<Location::L0C>(l0cData), layout);
+    auto ub_tensor = make_tensor(make_mem_ptr<location::ub>(ub_data), layout);
+    auto l1_tensor = make_tensor(make_mem_ptr<location::l1>(l1_data), layout);
+    auto l0a_tensor = make_tensor(make_mem_ptr<location::l0a>(l0a_data), layout);
+    auto l0b_tensor = make_tensor(make_mem_ptr<location::l0b>(l0b_data), layout);
+    auto l0c_tensor = make_tensor(make_mem_ptr<location::l0c>(l0c_data), layout);
 
-    static_assert(IsTensorApiLocalTensorV<decltype(ubTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l1Tensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l0aTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l0bTensor)>);
-    static_assert(IsTensorApiLocalTensorV<decltype(l0cTensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(ub_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l1_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l0a_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l0b_tensor)>);
+    static_assert(is_tensor_api_local_tensor_v<decltype(l0c_tensor)>);
 
     EXPECT_TRUE(true);
 }

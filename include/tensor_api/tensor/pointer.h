@@ -23,12 +23,20 @@
 
 #include "impl/tensor_api/tensor/pointer_pattern.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
+template <typename PtrPattern, typename DataType, typename Addr, enable_make_ptr_by_trait<PtrPattern, Addr> Enable>
+__aicore__ inline auto make_mem_ptr(Addr address);
 
-} // namespace Te
-} // namespace AscendC
+template <typename PtrPattern, typename Iterator, enable_make_hardware_ptr<PtrPattern, Iterator> Enable>
+__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator);
+
+template <typename Iterator, enable_make_ptr_by_iter<Iterator> Enable>
+__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator);
+
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_TENSOR_POINTER_H
 

@@ -13,7 +13,7 @@
 #include "include/tensor_api/tensor.h"
 #include <mockcpp/mockcpp.hpp>
 
-class Tensor_Api_Cube_Copy_3510 : public testing::Test {
+class tensor_api_cube_copy_3510 : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -24,119 +24,119 @@ protected:
 };
 
 namespace {
-using namespace AscendC::Te;
-constexpr bool enableRelu = false;
-constexpr bool enableChannelSplit = true;
-constexpr CopyL0C2L1Trait l0c2l1Trait = {RoundMode::DEFAULT, enableRelu, enableChannelSplit};
+using namespace asc::te;
+constexpr bool enable_relu = false;
+constexpr bool enable_channel_split = true;
+constexpr copy_l0c_to_l1_trait l0c_tol1_trait = {round_mode::default_round, enable_relu, enable_channel_split};
 
-struct CopyL0C2L1TraitCustom {
-    using TraitType = CopyL0C2L1Trait;
-    static constexpr const TraitType value = l0c2l1Trait;
+struct copy_l0c_to_l1_trait_custom {
+    using trait_type = copy_l0c_to_l1_trait;
+    static constexpr const trait_type value = l0c_tol1_trait;
 };
 
-template <typename LocationTag, typename Pointer, typename Layout>
-auto MakeTensorAt(Pointer ptr, const Layout& layout)
+template <typename location_tag, typename pointer_type, typename layout_type>
+auto make_tensor_at(pointer_type ptr, const layout_type& layout)
 {
-    return AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr<LocationTag>(ptr), layout);
+    return asc::te::make_tensor(asc::te::make_mem_ptr<location_tag>(ptr), layout);
 }
 
-template <typename CopyOp, typename Trait, typename DstTensor, typename SrcTensor>
-void RunCopyCallPaths(const DstTensor& dst, const SrcTensor& src)
+template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
+void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto atom = MakeCopy(CopyOp{}, Trait{});
-    atom.Call(dst, src);
+    auto atom = make_copy(copy_operation{}, trait_type{});
+    atom.call(dst, src);
 
-    CopyAtom<CopyTraits<CopyOp, Trait>>{}.Call(dst, src);
-    Copy(CopyAtom<CopyTraits<CopyOp, Trait>>{}, dst, src);
+    copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
+    copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
 }
 
-template <typename CopyOp, typename Trait, typename Param, typename DstTensor, typename SrcTensor>
-void RunCopyWithParamPaths(const DstTensor& dst, const SrcTensor& src, const Param& param)
+template <typename copy_operation, typename trait_type, typename param_type, typename dst_tensor_type, typename src_tensor_type>
+void run_copy_with_param_paths(const dst_tensor_type& dst, const src_tensor_type& src, const param_type& param)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto atom = MakeCopy(CopyOp{}).with(param);
-    atom.Call(dst, src);
+    auto atom = make_copy(copy_operation{}).with(param);
+    atom.call(dst, src);
 
-    auto copyAtom = CopyAtom<CopyTraits<CopyOp, Trait>>{}.with(param);
-    copyAtom.Call(dst, src);
+    auto atom_copy = copy_atom<copy_traits<copy_operation, trait_type>>{}.with(param);
+    atom_copy.call(dst, src);
 
-    Copy(copyAtom, dst, src);
-    Copy(CopyAtom<CopyTraits<CopyOp, Trait>>{}.with(param), dst, src);
+    copy(atom_copy, dst, src);
+    copy(copy_atom<copy_traits<copy_operation, trait_type>>{}.with(param), dst, src);
 }
 
 } // namespace
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZFloat)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_float)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __cbuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, float>(m, n));
-    auto l1Tensor = MakeTensorAt<Location::L1>(dst, MakeFrameLayout<NZLayoutPtn, float>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, float>(m, n));
+    auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, float>(m, n));
 
-    RunCopyCallPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZInt32)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_int32)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ int32_t src[m * n] = {0};
     __cbuf__ int32_t dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, int32_t>(m, n));
-    auto l1Tensor = MakeTensorAt<Location::L1>(dst, MakeFrameLayout<NZLayoutPtn, int32_t>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, int32_t>(m, n));
+    auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, int32_t>(m, n));
 
-    RunCopyCallPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZF322F16)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_f32_to_f16)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __cbuf__ half dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, float>(m, n));
-    auto l1Tensor = MakeTensorAt<Location::L1>(dst, MakeFrameLayout<NZLayoutPtn, half>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, float>(m, n));
+    auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, half>(m, n));
 
-    RunCopyCallPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2L1, CopyL0C2L1TraitDefault>(l1Tensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], static_cast<half>(0));
 }
 
-TEST_F(Tensor_Api_Cube_Copy_3510, CopyL0C2L1NZ2NZWithChannelSplit)
+TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_with_channel_split)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 32;
     constexpr uint32_t n = 32;
     __cc__ float src[m * n] = {0};
     __cbuf__ float dst[m * n] = {0};
 
-    auto l0cTensor = MakeTensorAt<Location::L0C>(src, MakeFrameLayout<NZLayoutPtn, float>(m, n));
-    auto l1Tensor = MakeTensorAt<Location::L1>(dst, MakeFrameLayout<NZLayoutPtn, float>(m, n));
+    auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, float>(m, n));
+    auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, float>(m, n));
 
-    RunCopyCallPaths<CopyL0C2L1, CopyL0C2L1TraitCustom>(l1Tensor, l0cTensor);
-    RunCopyWithParamPaths<CopyL0C2L1, CopyL0C2L1TraitCustom>(l1Tensor, l0cTensor, FixpipeParams{});
+    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_custom>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_custom>(l1_tensor, l0c_tensor, fixpipe_params{});
 
     EXPECT_EQ(dst[0], 0);
 }

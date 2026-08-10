@@ -23,23 +23,23 @@
 
 #include "impl/tensor_api/atom/mmad_atom_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-template <typename MmadOperation, typename... MmadOpArgs>
-struct MmadTraits;
+template <typename MmadOperationType, typename... MmadOpArgs>
+struct mmad_traits;
 
 template <typename... Args>
-struct MmadAtom;
+struct mmad_atom;
 
-template <typename MmadOperation>
-struct MmadAtom<MmadOperation>;
+template <typename MmadOperationType>
+struct mmad_atom<MmadOperationType>;
 
-template <typename MmadOperation, typename... Args>
-struct MmadAtom<MmadTraits<MmadOperation, Args...>>;
+template <typename MmadOperationType, typename... Args>
+struct mmad_atom<mmad_traits<MmadOperationType, Args...>>;
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_ATOM_CUBE_MMAD_ATOM_H
 

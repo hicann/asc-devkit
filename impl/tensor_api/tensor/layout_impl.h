@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
@@ -29,10 +29,10 @@
 #include "impl/tensor_api/tensor/layout_frame.h"
 #include "impl/tensor_api/tensor/layout_infer.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct MinOp {
+struct min_op {
     template <typename T, typename U>
     __aicore__ inline constexpr auto operator()(const T& src, const U& dst) const
     {
@@ -40,7 +40,7 @@ struct MinOp {
     }
 };
 
-struct DiffOp {
+struct diff_op {
     template <typename T, typename U>
     __aicore__ inline constexpr auto operator()(const T& shape, const U& coord) const
     {
@@ -49,236 +49,235 @@ struct DiffOp {
 };
 
 template <typename Coord, typename LayoutType>
-__aicore__ inline decltype(auto) MakeCoordLayout(const Coord& coord, const LayoutType& layout) 
+__aicore__ inline decltype(auto) make_coord_layout(const Coord& coord, const LayoutType& layout)
 {
-    using ShapeType = Std::remove_cvref_t<decltype(layout.Shape())>;
-    using CoordType = Std::remove_cvref_t<Coord>;
-    static_assert(IsLayoutV<LayoutType> && Std::is_tuple_v<CoordType>, "LayoutType must be Layout");
-    static_assert(NestingDepthV<ShapeType> == NestingDepthV<CoordType> &&
-        Std::tuple_size_v<ShapeType> == Std::tuple_size_v<CoordType>,
-        "Shape and coord must have same tuple structure");
-    auto coordShape = TransformTupleApply(layout.Shape(), coord, DiffOp{});
-    using TraitType = GetLayoutTrait<LayoutType>;
-    using PatternType = GetLayoutPattern<LayoutType>;
-    return MakePatternLayout<PatternType, TraitType>(coordShape, layout.Stride());
+    using shape_type = Std::remove_cvref_t<decltype(layout.shape())>;
+    using coord_type = Std::remove_cvref_t<Coord>;
+    static_assert(is_layout_v<LayoutType> && Std::is_tuple_v<coord_type>, "LayoutType must be Layout");
+    static_assert(nesting_depth_v<shape_type> == nesting_depth_v<coord_type>
+                      && Std::tuple_size_v<shape_type> == Std::tuple_size_v<coord_type>,
+                  "Shape and coord must have same tuple structure");
+    auto coord_shape = transform_tuple_apply(layout.shape(), coord, diff_op{});
+    using trait_type = get_layout_trait<LayoutType>;
+    using pattern_type = get_layout_pattern<LayoutType>;
+    return make_pattern_layout<pattern_type, trait_type>(coord_shape, layout.stride());
 }
 
 template <typename LayoutType, typename ShapeType>
-__aicore__ inline decltype(auto) MakeSlicePatternLayout(const LayoutType& layout, const ShapeType& shape)
+__aicore__ inline decltype(auto) make_slice_pattern_layout(const LayoutType& layout, const ShapeType& shape)
 {
-    using TraitType = GetLayoutTrait<LayoutType>;
-    using PatternType = GetLayoutPattern<LayoutType>;
-    return MakePatternLayout<PatternType, TraitType>(shape, layout.Stride());
+    using trait_type = get_layout_trait<LayoutType>;
+    using pattern_type = get_layout_pattern<LayoutType>;
+    return make_pattern_layout<pattern_type, trait_type>(shape, layout.stride());
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape>
-__aicore__ inline decltype(auto) MakeSameShapeSliceLayout(
-    const Coord& coord, const LayoutType& layout, const SliceShape& sliceShape)
+__aicore__ inline decltype(auto) make_same_shape_slice_layout(const Coord& coord, const LayoutType& layout,
+                                                              const SliceShape& slice_shape)
 {
-    auto coordLayout = MakeCoordLayout(coord, layout);
-    auto realShape = TransformTupleApply(coordLayout.Shape(), sliceShape, MinOp{});
-    return MakeSlicePatternLayout(layout, realShape);
+    auto coord_layout = make_coord_layout(coord, layout);
+    auto real_shape = transform_tuple_apply(coord_layout.shape(), slice_shape, min_op{});
+    return make_slice_pattern_layout(layout, real_shape);
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape>
-__aicore__ inline decltype(auto) MakeFourDimSliceLayout(
-    const Coord& coord, const LayoutType& layout, const SliceShape& sliceShape)
+__aicore__ inline decltype(auto) make_four_dim_slice_layout(const Coord& coord, const LayoutType& layout,
+                                                            const SliceShape& slice_shape)
 {
-    static_assert(NestingDepthV<SliceShape> == TWO_DIM_DATA,
-        "SliceShape must be Two Dim when layout is Four Dim");
-    auto innerRow = Get<0, 0>(layout.Shape());
-    auto innerCol = Get<1, 0>(layout.Shape());
+    static_assert(nesting_depth_v<SliceShape> == TWO_DIM_DATA, "SliceShape must be Two Dim when layout is Four Dim");
+    auto inner_row = get<0, 0>(layout.shape());
+    auto inner_col = get<1, 0>(layout.shape());
 
-    auto srcRow = innerRow * Get<0, 1>(layout.Shape()) - Get<0>(coord);
-    auto srcCol = innerCol * Get<1, 1>(layout.Shape()) - Get<1>(coord);
+    auto src_row = inner_row * get<0, 1>(layout.shape()) - get<0>(coord);
+    auto src_col = inner_col * get<1, 1>(layout.shape()) - get<1>(coord);
 
-    auto realRow = Std::min(srcRow, Get<0>(sliceShape));
-    auto realCol = Std::min(srcCol, Get<1>(sliceShape));
-    return MakeSlicePatternLayout(layout, MakeFractalShape(MakeShape(realRow, realCol),
-        MakeShape(innerRow, innerCol)));
+    auto real_row = Std::min(src_row, get<0>(slice_shape));
+    auto real_col = Std::min(src_col, get<1>(slice_shape));
+    return make_slice_pattern_layout(
+        layout, make_fractal_shape(make_shape(real_row, real_col), make_shape(inner_row, inner_col)));
 }
 
-// Slice for the flat multi-batch layouts produced by MakeFrameLayout(batch0, ..., batchN, row, col):
-//   layout shape (batch0, ..., batchN-1, ((row0, row1), (col0, col1)))   -- batchNum + 1 elements
-//   slice shape  (batch0, ..., batchN-1, (x, y))                        -- logical row/col for the block
+// Slice for the flat multi-batch layouts produced by make_frame_layout(batch0, ..., batch_n, row, col):
+//   layout shape (batch0, ..., batch_n-1, ((row0, row1), (col0, col1)))   -- batch_num + 1 elements
+//   slice shape  (batch0, ..., batch_n-1, (x, y))                        -- logical row/col for the block
 // Every batch axis is clamped elementwise like the same-shape path, and the trailing logical (x, y) is
 // refractalized against the layout's inner row/col, mirroring MakeFiveDimSliceLayout (which is exactly
-// the batchNum == 1 case of this routine).
-template <typename Coord, typename LayoutType, typename SliceShape, size_t... BatchIs>
-__aicore__ inline decltype(auto) MakeFlatBatchSliceLayoutImpl(
-    const Coord& coord, const LayoutType& layout, const SliceShape& sliceShape, Std::index_sequence<BatchIs...>)
+// the batch_num == 1 case of this routine).
+template <typename Coord, typename LayoutType, typename SliceShape, size_t... batch_is>
+__aicore__ inline decltype(auto) make_flat_batch_slice_layout_impl(const Coord& coord, const LayoutType& layout,
+                                                                   const SliceShape& slice_shape,
+                                                                   Std::index_sequence<batch_is...>)
 {
-    constexpr size_t blockIdx = sizeof...(BatchIs); // last element: the fractal block / logical (x, y)
-    auto innerRow = Get<blockIdx, 0, 0>(layout.Shape());
-    auto innerCol = Get<blockIdx, 1, 0>(layout.Shape());
+    constexpr size_t block_idx = sizeof...(batch_is); // last element: the fractal block / logical (x, y)
+    auto inner_row = get<block_idx, 0, 0>(layout.shape());
+    auto inner_col = get<block_idx, 1, 0>(layout.shape());
 
-    auto realRow = Std::min(
-        innerRow * Get<blockIdx, 0, 1>(layout.Shape()) - Get<blockIdx, 0>(coord), Get<blockIdx, 0>(sliceShape));
-    auto realCol = Std::min(
-        innerCol * Get<blockIdx, 1, 1>(layout.Shape()) - Get<blockIdx, 1>(coord), Get<blockIdx, 1>(sliceShape));
-    auto fractalShape = MakeFractalShape(MakeShape(realRow, realCol), MakeShape(innerRow, innerCol));
+    auto real_row = Std::min(inner_row * get<block_idx, 0, 1>(layout.shape()) - get<block_idx, 0>(coord),
+                             get<block_idx, 0>(slice_shape));
+    auto real_col = Std::min(inner_col * get<block_idx, 1, 1>(layout.shape()) - get<block_idx, 1>(coord),
+                             get<block_idx, 1>(slice_shape));
+    auto fractal_shape = make_fractal_shape(make_shape(real_row, real_col), make_shape(inner_row, inner_col));
 
-    return MakeSlicePatternLayout(
-        layout,
-        MakeShape(
-            Std::min(Get<BatchIs>(layout.Shape()) - Get<BatchIs>(coord), Get<BatchIs>(sliceShape))...,
-            fractalShape));
+    return make_slice_pattern_layout(layout, make_shape(Std::min(get<batch_is>(layout.shape()) - get<batch_is>(coord),
+                                                                 get<batch_is>(slice_shape))...,
+                                                        fractal_shape));
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape>
-__aicore__ inline decltype(auto) MakeFlatBatchSliceLayout(
-    const Coord& coord, const LayoutType& layout, const SliceShape& sliceShape)
+__aicore__ inline decltype(auto) make_flat_batch_slice_layout(const Coord& coord, const LayoutType& layout,
+                                                              const SliceShape& slice_shape)
 {
-    constexpr size_t batchNum = Std::tuple_size_v<Std::remove_cvref_t<decltype(layout.Shape())>> - 1;
-    return MakeFlatBatchSliceLayoutImpl(
-        coord, layout, sliceShape, Std::make_index_sequence<batchNum>{});
+    constexpr size_t batch_num = Std::tuple_size_v<Std::remove_cvref_t<decltype(layout.shape())>> - 1;
+    return make_flat_batch_slice_layout_impl(coord, layout, slice_shape, Std::make_index_sequence<batch_num>{});
 }
 
-template <typename Coord, typename LayoutType, typename SliceShape, Std::enable_if_t<!IsLayoutV<SliceShape>, int> = 0>
-__aicore__ inline decltype(auto) MakeSliceLayout(const Coord& coord, const LayoutType& layout, const SliceShape& sliceShape)
+template <typename Coord, typename LayoutType, typename SliceShape, Std::enable_if_t<!is_layout_v<SliceShape>, int> = 0>
+__aicore__ inline decltype(auto) make_slice_layout(const Coord& coord, const LayoutType& layout,
+                                                   const SliceShape& slice_shape)
 {
-    static_assert(IsLayoutV<LayoutType>, "LayoutType must be Layout");
+    static_assert(is_layout_v<LayoutType>, "LayoutType must be Layout");
     static_assert(Std::is_tuple_v<Std::remove_cvref_t<SliceShape>>, "SliceShape must be a tuple");
-    using OriginShape = Std::remove_cvref_t<decltype(layout.Shape())>;
-    using SliceShapeType = Std::remove_cvref_t<SliceShape>;
-    constexpr auto originShapeDepth = NestingDepthV<OriginShape>;
-    constexpr auto sliceShapeDepth = NestingDepthV<SliceShapeType>;
-    constexpr bool isSameShape = originShapeDepth == sliceShapeDepth &&
-        Std::tuple_size_v<OriginShape> == Std::tuple_size_v<SliceShapeType>;
+    using origin_shape = Std::remove_cvref_t<decltype(layout.shape())>;
+    using slice_shape_type = Std::remove_cvref_t<SliceShape>;
+    constexpr auto origin_shape_depth = nesting_depth_v<origin_shape>;
+    constexpr auto slice_shape_depth = nesting_depth_v<slice_shape_type>;
+    constexpr bool is_same_shape =
+        origin_shape_depth == slice_shape_depth && Std::tuple_size_v<origin_shape> == Std::tuple_size_v<slice_shape_type>;
     // Flat multi-batch: same arity on both sides, batch axes are scalars and the last element is the
     // fractal block on the layout side vs a logical (x, y) pair on the slice side. Depth is then
-    // batchNum + 4 against batchNum + 2. batchNum == 1 covers the classic five-dim/three-dim case.
-    constexpr size_t batchNum = Std::tuple_size_v<OriginShape> - 1;
-    constexpr bool isFlatBatch = Std::tuple_size_v<OriginShape> == Std::tuple_size_v<SliceShapeType> &&
-        Std::tuple_size_v<OriginShape> >= TWO_DIM_DATA &&
-        originShapeDepth == batchNum + FOUR_DIM_DATA && sliceShapeDepth == batchNum + TWO_DIM_DATA;
+    // batch_num + 4 against batch_num + 2. batch_num == 1 covers the classic five-dim/three-dim case.
+    constexpr size_t batch_num = Std::tuple_size_v<origin_shape> - 1;
+    constexpr bool is_flat_batch = Std::tuple_size_v<origin_shape> == Std::tuple_size_v<slice_shape_type>
+                                   && Std::tuple_size_v<origin_shape> >= TWO_DIM_DATA
+                                   && origin_shape_depth == batch_num + FOUR_DIM_DATA
+                                   && slice_shape_depth == batch_num + TWO_DIM_DATA;
 
-    if constexpr (isSameShape) {
-        return MakeSameShapeSliceLayout(coord, layout, sliceShape);
-    } else if constexpr (originShapeDepth == FOUR_DIM_DATA && sliceShapeDepth == TWO_DIM_DATA) {
-        return MakeFourDimSliceLayout(coord, layout, sliceShape);
-    } else if constexpr (isFlatBatch) {
-        return MakeFlatBatchSliceLayout(coord, layout, sliceShape);
+    if constexpr (is_same_shape) {
+        return make_same_shape_slice_layout(coord, layout, slice_shape);
+    } else if constexpr (origin_shape_depth == FOUR_DIM_DATA && slice_shape_depth == TWO_DIM_DATA) {
+        return make_four_dim_slice_layout(coord, layout, slice_shape);
+    } else if constexpr (is_flat_batch) {
+        return make_flat_batch_slice_layout(coord, layout, slice_shape);
     } else {
-        static_assert(isSameShape || (originShapeDepth == FOUR_DIM_DATA && sliceShapeDepth == TWO_DIM_DATA) ||
-            isFlatBatch,
+        static_assert(
+            is_same_shape || (origin_shape_depth == FOUR_DIM_DATA && slice_shape_depth == TWO_DIM_DATA)
+                || is_flat_batch,
             "SliceShape must be same structure as Layout shape, or logical Two Dim Shape for Four Dim Layout, "
-            "or (batch0, ..., batchN, logical Two Dim Shape) for a flat multi-batch Layout.");
+            "or (batch0, ..., batch_n, logical Two Dim Shape) for a flat multi-batch Layout.");
     }
 }
 
-template <typename Coord, typename SrcLayoutType, typename DstLayoutType, Std::enable_if_t<IsLayoutV<DstLayoutType>, int> = 0>
-__aicore__ inline decltype(auto) MakeSliceLayout(const Coord& coord, const SrcLayoutType& srcLayout, const DstLayoutType& dstLayout) 
+template <typename Coord, typename SrcLayoutType, typename DstLayoutType,
+          Std::enable_if_t<is_layout_v<DstLayoutType>, int> = 0>
+__aicore__ inline decltype(auto) make_slice_layout(const Coord& coord, const SrcLayoutType& src_layout,
+                                                   const DstLayoutType& dst_layout)
 {
-    static_assert(IsLayoutV<SrcLayoutType>, "SrcLayoutType must be Layout");
-    static_assert(SrcLayoutType::rank == DstLayoutType::rank,
-        "SrcLayout Rank must be equal to DstLayout Rank");
+    static_assert(is_layout_v<SrcLayoutType>, "SrcLayoutType must be Layout");
+    static_assert(SrcLayoutType::rank == DstLayoutType::rank, "SrcLayout Rank must be equal to DstLayout Rank");
 
-    auto sliceLayout = MakeCoordLayout(coord, srcLayout);
-    auto sliceShape = TransformTupleApply(sliceLayout.Shape(), dstLayout.Shape(), MinOp{});
-    using TraitType = GetLayoutTrait<SrcLayoutType>;
-    using PatternType = GetLayoutPattern<SrcLayoutType>;
-    return MakePatternLayout<PatternType, TraitType>(sliceShape, srcLayout.Stride());
+    auto slice_layout = make_coord_layout(coord, src_layout);
+    auto slice_shape = transform_tuple_apply(slice_layout.shape(), dst_layout.shape(), min_op{});
+    using trait_type = get_layout_trait<SrcLayoutType>;
+    using pattern_type = get_layout_pattern<SrcLayoutType>;
+    return make_pattern_layout<pattern_type, trait_type>(slice_shape, src_layout.stride());
 }
 
-template <typename LayoutType, typename = Std::enable_if_t<IsLayoutV<LayoutType>>>
-__aicore__ inline constexpr decltype(auto) RemoveBatchDim(const LayoutType& layout)
+template <typename LayoutType, typename = Std::enable_if_t<is_layout_v<LayoutType>>>
+__aicore__ inline constexpr decltype(auto) remove_batch_dim(const LayoutType& layout)
 {
-    constexpr auto layoutDepth = LayoutType::depth;
-    static_assert(layoutDepth == THREE_DIM_DATA || layoutDepth == FIVE_DIM_DATA,
-        "RemoveBatchDim only supports Three Dim or Five Dim Layout.");
-    using TraitType = GetLayoutTrait<LayoutType>;
-    using PatternType = GetLayoutPattern<LayoutType>;
-    return MakePatternLayout<PatternType, TraitType>(Get<1>(layout.Shape()), Get<1>(layout.Stride()));
+    constexpr auto layout_depth = LayoutType::depth;
+    static_assert(layout_depth == THREE_DIM_DATA || layout_depth == FIVE_DIM_DATA,
+                  "RemoveBatchDim only supports Three Dim or Five Dim Layout.");
+    using trait_type = get_layout_trait<LayoutType>;
+    using pattern_type = get_layout_pattern<LayoutType>;
+    return make_pattern_layout<pattern_type, trait_type>(get<1>(layout.shape()), get<1>(layout.stride()));
 }
 
 // ===== Squeeze =====
 
 // IsInPack: true if I is in the pack.
 template <size_t I, size_t... Dims>
-struct IsInPack : Std::false_type {};
+struct is_in_pack : Std::false_type {};
 template <size_t I, size_t Head, size_t... Tail>
-struct IsInPack<I, Head, Tail...> : Std::conditional_t<Head == I, Std::true_type, IsInPack<I, Tail...>> {};
+struct is_in_pack<I, Head, Tail...> : Std::conditional_t<Head == I, Std::true_type, is_in_pack<I, Tail...>> {};
 template <size_t I, size_t... Dims>
-constexpr bool IsInPackV = IsInPack<I, Dims...>::value;
+constexpr bool is_in_pack_v = is_in_pack<I, Dims...>::value;
 
 // IsSqueezeMark: pattern position marked _1.
 template <typename T>
-struct IsSqueezeMark : Std::is_same<Std::remove_cvref_t<T>, Std::Int<1>> {};
+struct is_squeeze_mark : Std::is_same<Std::remove_cvref_t<T>, Std::Int<1>> {};
 template <typename T>
-constexpr bool IsSqueezeMarkV = IsSqueezeMark<Std::remove_cvref_t<T>>::value;
+constexpr bool is_squeeze_mark_v = is_squeeze_mark<Std::remove_cvref_t<T>>::value;
 
 // SqueezableSize: true if axis size is Int<1> or a runtime int (trust caller).
-template <typename T, bool IsConst = IsIntegralConstantV<Std::remove_cvref_t<T>>>
-struct SqueezableSize : Std::true_type {};
+template <typename T, bool IsConst = is_integral_constant_v<Std::remove_cvref_t<T>>>
+struct squeezable_size : Std::true_type {};
 template <typename T>
-struct SqueezableSize<T, true> : Std::bool_constant<(Std::remove_cvref_t<T>::value == 1)> {};
+struct squeezable_size<T, true> : Std::bool_constant<(Std::remove_cvref_t<T>::value == 1)> {};
 template <typename T>
-constexpr bool SqueezableSizeV = SqueezableSize<Std::remove_cvref_t<T>>::value;
+constexpr bool squeezable_size_v = squeezable_size<Std::remove_cvref_t<T>>::value;
 
-// DimsMask: keep mask. Drop axis I iff I in SqueezeDims && SqueezableSize.
+// dims_mask: keep mask. Drop axis I iff I in SqueezeDims && SqueezableSize.
 template <typename Shape, typename DimsSeq, typename IdxSeq>
-struct DimsMaskImpl;
+struct dims_mask_impl;
 template <typename Shape, size_t... Dims, size_t... Is>
-struct DimsMaskImpl<Shape, Std::index_sequence<Dims...>, Std::index_sequence<Is...>> {
-    using type = Std::IntegerSequence<
-        bool, (!(IsInPackV<Is, Dims...> && SqueezableSizeV<typename Std::tuple_element<Is, Shape>::type>))...>;
+struct dims_mask_impl<Shape, Std::index_sequence<Dims...>, Std::index_sequence<Is...>> {
+    using type = Std::IntegerSequence<bool, (!(is_in_pack_v<Is, Dims...>
+                                               && squeezable_size_v<typename Std::tuple_element<Is, Shape>::type>))...>;
 };
 template <typename Shape, size_t... Dims>
-using DimsMask = typename DimsMaskImpl<
-    Shape, Std::index_sequence<Dims...>, Std::make_index_sequence<Std::tuple_size_v<Shape>>>::type;
+using dims_mask = typename dims_mask_impl<Shape, Std::index_sequence<Dims...>,
+                                         Std::make_index_sequence<Std::tuple_size_v<Shape>>>::type;
 
-// PatternMask: keep mask. Drop axis I iff pattern[I] is _1 && SqueezableSize.
+// pattern_mask: keep mask. Drop axis I iff pattern[I] is _1 && SqueezableSize.
 template <typename Shape, typename Pattern, typename IdxSeq>
-struct PatternMaskImpl;
+struct pattern_mask_impl;
 template <typename Shape, typename Pattern, size_t... Is>
-struct PatternMaskImpl<Shape, Pattern, Std::index_sequence<Is...>> {
-    using type = Std::IntegerSequence<
-        bool, (!(IsSqueezeMarkV<typename Std::tuple_element<Is, Pattern>::type> &&
-                 SqueezableSizeV<typename Std::tuple_element<Is, Shape>::type>))...>;
+struct pattern_mask_impl<Shape, Pattern, Std::index_sequence<Is...>> {
+    using type = Std::IntegerSequence<bool, (!(is_squeeze_mark_v<typename Std::tuple_element<Is, Pattern>::type>
+                                               && squeezable_size_v<typename Std::tuple_element<Is, Shape>::type>))...>;
 };
 template <typename Shape, typename Pattern>
-using PatternMask = typename PatternMaskImpl<Shape, Pattern, Std::make_index_sequence<Std::tuple_size_v<Shape>>>::type;
+using pattern_mask =
+    typename pattern_mask_impl<Shape, Pattern, Std::make_index_sequence<Std::tuple_size_v<Shape>>>::type;
 
 // Promote single nested tuple after squeeze; preserve Pattern/Trait.
 template <typename Pattern, typename Trait, typename ShapeT, typename StrideT>
-__aicore__ inline constexpr auto MakeSqueezedLayout(const ShapeT& shape, const StrideT& stride)
+__aicore__ inline constexpr auto make_squeezed_layout(const ShapeT& shape, const StrideT& stride)
 {
-    if constexpr (
-        Std::tuple_size_v<ShapeT> == 1 &&
-        Std::is_tuple_v<Std::remove_cvref_t<typename Std::tuple_element<0, ShapeT>::type>>) {
-        return MakePatternLayout<Pattern, Trait>(Get<0>(shape), Get<0>(stride));
+    if constexpr (Std::tuple_size_v<ShapeT> == 1
+                  && Std::is_tuple_v<Std::remove_cvref_t<typename Std::tuple_element<0, ShapeT>::type>>) {
+        return make_pattern_layout<Pattern, Trait>(get<0>(shape), get<0>(stride));
     } else {
-        return MakePatternLayout<Pattern, Trait>(shape, stride);
+        return make_pattern_layout<Pattern, Trait>(shape, stride);
     }
 }
 
 // Squeeze mode 1: drop selected axes by index (if squeezable). Preserves Pattern/Trait.
-template <
-    size_t... SqueezeDims, typename LayoutType,
-    typename = Std::enable_if_t<IsLayoutV<LayoutType> && (sizeof...(SqueezeDims) > 0)>>
-__aicore__ inline constexpr auto SqueezeLayout(const LayoutType& layout)
+template <size_t... SqueezeDims, typename LayoutType,
+          typename = Std::enable_if_t<is_layout_v<LayoutType> && (sizeof...(SqueezeDims) > 0)>>
+__aicore__ inline constexpr auto squeeze_layout(const LayoutType& layout)
 {
-    using Shape = Std::remove_cvref_t<decltype(layout.Shape())>;
-    using Mask = DimsMask<Shape, SqueezeDims...>;
-    using KeepSeq = typename KeepIndexSeqFromSeq<Mask>::type;
-    using Pattern = GetLayoutPattern<LayoutType>;
-    using Trait = GetLayoutTrait<LayoutType>;
-    return MakeSqueezedLayout<Pattern, Trait>(
-        SelectBySeq<KeepSeq>(layout.Shape()), SelectBySeq<KeepSeq>(layout.Stride()));
+    using shape = Std::remove_cvref_t<decltype(layout.shape())>;
+    using mask = dims_mask<shape, SqueezeDims...>;
+    using keep_seq = typename keep_index_seq_from_seq<mask>::type;
+    using pattern = get_layout_pattern<LayoutType>;
+    using trait = get_layout_trait<LayoutType>;
+    return make_squeezed_layout<pattern, trait>(select_by_seq<keep_seq>(layout.shape()),
+                                                select_by_seq<keep_seq>(layout.stride()));
 }
 
 // ---- Recursive pattern squeeze (mode 2) ----
 
 template <typename S, typename D, typename P>
-__aicore__ inline constexpr auto SqueezeRecTupleLevel(const S& s, const D& d, const P& p);
+__aicore__ inline constexpr auto squeeze_rec_tuple_level(const S& s, const D& d, const P& p);
 
 // Recurse into tuple pattern nodes; keep leaves as-is.
 template <typename SNode, typename DNode, typename PNode>
-__aicore__ inline constexpr auto SqueezeRecNode(const SNode& s, const DNode& d, const PNode& p)
+__aicore__ inline constexpr auto squeeze_rec_node(const SNode& s, const DNode& d, const PNode& p)
 {
     if constexpr (Std::is_tuple_v<Std::remove_cvref_t<PNode>>) {
-        return SqueezeRecTupleLevel(s, d, p);
+        return squeeze_rec_tuple_level(s, d, p);
     } else {
         return Std::make_tuple(s, d);
     }
@@ -286,55 +285,56 @@ __aicore__ inline constexpr auto SqueezeRecNode(const SNode& s, const DNode& d, 
 
 // Unwrap single-element tuple pair one layer.
 template <typename S, typename D>
-__aicore__ inline constexpr auto SqueezeUnwrap(const S& s, const D& d)
+__aicore__ inline constexpr auto squeeze_unwrap(const S& s, const D& d)
 {
     if constexpr (Std::tuple_size_v<Std::remove_cvref_t<S>> == 1) {
-        return Std::make_tuple(Get<0>(s), Get<0>(d));
+        return Std::make_tuple(get<0>(s), get<0>(d));
     } else {
         return Std::make_tuple(s, d);
     }
 }
 
 template <typename S, typename D, typename P, size_t... Is>
-__aicore__ inline constexpr auto SqueezeRecTupleLevelImpl(
-    const S& s, const D& d, const P& p, Std::index_sequence<Is...>)
+__aicore__ inline constexpr auto squeeze_rec_tuple_level_impl(const S& s, const D& d, const P& p,
+                                                              Std::index_sequence<Is...>)
 {
-    auto tShape = Std::make_tuple(Get<0>(SqueezeRecNode(Get<Is>(s), Get<Is>(d), Get<Is>(p)))...);
-    auto tStride = Std::make_tuple(Get<1>(SqueezeRecNode(Get<Is>(s), Get<Is>(d), Get<Is>(p)))...);
-    using Mask = PatternMask<Std::remove_cvref_t<S>, Std::remove_cvref_t<P>>;
-    using KeepSeq = typename KeepIndexSeqFromSeq<Mask>::type;
-    return SqueezeUnwrap(SelectBySeq<KeepSeq>(tShape), SelectBySeq<KeepSeq>(tStride));
+    auto t_shape = Std::make_tuple(get<0>(squeeze_rec_node(get<Is>(s), get<Is>(d), get<Is>(p)))...);
+    auto t_stride = Std::make_tuple(get<1>(squeeze_rec_node(get<Is>(s), get<Is>(d), get<Is>(p)))...);
+    using mask = pattern_mask<Std::remove_cvref_t<S>, Std::remove_cvref_t<P>>;
+    using keep_seq = typename keep_index_seq_from_seq<mask>::type;
+    return squeeze_unwrap(select_by_seq<keep_seq>(t_shape), select_by_seq<keep_seq>(t_stride));
 }
 
 template <typename S, typename D, typename P>
-__aicore__ inline constexpr auto SqueezeRecTupleLevel(const S& s, const D& d, const P& p)
+__aicore__ inline constexpr auto squeeze_rec_tuple_level(const S& s, const D& d, const P& p)
 {
-    return SqueezeRecTupleLevelImpl(s, d, p, Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<S>>>{});
+    return squeeze_rec_tuple_level_impl(s, d, p, Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<S>>>{});
 }
 
 // Squeeze mode 2: recursively drop _1-marked positions (if squeezable). Preserves Pattern/Trait.
-template <
-    typename Pattern, typename LayoutType,
-    typename = Std::enable_if_t<IsLayoutV<LayoutType> && Std::is_tuple_v<Std::remove_cvref_t<Pattern>>>>
-__aicore__ inline constexpr auto SqueezeLayout(const LayoutType& layout, const Pattern& pattern)
+template <typename Pattern, typename LayoutType,
+          typename = Std::enable_if_t<is_layout_v<LayoutType> && Std::is_tuple_v<Std::remove_cvref_t<Pattern>>>>
+__aicore__ inline constexpr auto squeeze_layout(const LayoutType& layout, const Pattern& pattern)
 {
-    using Shape = Std::remove_cvref_t<decltype(layout.Shape())>;
-    static_assert(IsSameStructureV<Pattern, Shape>, "Squeeze pattern must be isomorphic to the layout shape.");
-    using LayoutPatternType = GetLayoutPattern<LayoutType>;
-    using LayoutTraitType = GetLayoutTrait<LayoutType>;
-    auto pr = SqueezeRecTupleLevel(layout.Shape(), layout.Stride(), pattern);
-    auto outShape = Get<0>(pr);
-    auto outStride = Get<1>(pr);
-    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<decltype(outShape)>>) {
-        return MakePatternLayout<LayoutPatternType, LayoutTraitType>(outShape, outStride);
+    using shape = Std::remove_cvref_t<decltype(layout.shape())>;
+    static_assert(is_same_structure_v<Pattern, shape>, "Squeeze pattern must be isomorphic to the layout shape.");
+    using layout_pattern_type = get_layout_pattern<LayoutType>;
+    using layout_trait_type = get_layout_trait<LayoutType>;
+    auto pr = squeeze_rec_tuple_level(layout.shape(), layout.stride(), pattern);
+    auto out_shape = get<0>(pr);
+    auto out_stride = get<1>(pr);
+    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<decltype(out_shape)>>) {
+        return make_pattern_layout<layout_pattern_type, layout_trait_type>(out_shape, out_stride);
     } else {
-        return MakePatternLayout<LayoutPatternType, LayoutTraitType>(
-            Std::make_tuple(outShape), Std::make_tuple(outStride));
+        return make_pattern_layout<layout_pattern_type, layout_trait_type>(Std::make_tuple(out_shape),
+                                                                       Std::make_tuple(out_stride));
     }
 }
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
+
+
 
 #endif // IMPL_TENSOR_API_TENSOR_LAYOUT_IMPL_H
 

@@ -9,7 +9,7 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning \
+#warning                                                                                                               \
     "impl/tensor_api/arch/vector/ub_to_ub/copy_impl/data_copy.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
@@ -26,33 +26,34 @@
 #include "impl/tensor_api/arch/vector/utils/copy_utils.h"
 #include "impl/tensor_api/arch/vector/ub_to_ub/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct CopyUB2UBTrait {};
+struct copy_ub_to_ub_trait {};
 
-class CopyUbufToUbufAlignV2Common {
+class copy_ub_to_ub_common {
 protected:
     template <typename T, typename U>
-    __aicore__ inline static void EmitCopy(
-        const T& dst, const U& src, uint16_t blockCount, uint32_t blockLen, int64_t srcStride, int64_t dstStride)
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, uint16_t block_count, uint32_t block_len,
+                                            int64_t src_stride, int64_t dst_stride)
     {
-        using SrcType = typename U::elementType;
-        using DstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        AdjustB4CopyParams<SrcType, DstType>(blockLen, srcStride, dstStride);
+        adjust_b4_copy_params<src_type, dst_type>(block_len, src_stride, dst_stride);
 
         // Convert from bytes to 32B units for asc_copy_ub2ub
-        uint16_t blockLenIn32B = static_cast<uint16_t>(blockLen >> 5);
-        uint16_t srcStrideIn32B = static_cast<uint16_t>(srcStride >> 5);
-        uint16_t dstStrideIn32B = static_cast<uint16_t>(dstStride >> 5);
+        uint16_t block_len_in32_b = static_cast<uint16_t>(block_len >> 5);
+        uint16_t src_stride_in32_b = static_cast<uint16_t>(src_stride >> 5);
+        uint16_t dst_stride_in32_b = static_cast<uint16_t>(dst_stride >> 5);
 
-        CopyUbufToUbufInstr::DataCopy(dst, src, blockCount, blockLenIn32B, srcStrideIn32B, dstStrideIn32B);
+        copy_ub_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len_in32_b,
+                                          src_stride_in32_b, dst_stride_in32_b);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_UB_COPY_IMPL_DATA_COPY_H
 

@@ -13,7 +13,7 @@
 #include "c_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Vector_Copy_3510 : public testing::Test {
+class tensor_api_vector_copy_3510 : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -25,207 +25,207 @@ protected:
 
 namespace {
 
-struct CopyGM2UBCapture {
-    uint8_t leftPaddingCount = 0;
-    uint8_t rightPaddingCount = 0;
-    bool enableConstantPad = true;
+struct copy_gm_to_ub_capture {
+    uint8_t left_padding_count = 0;
+    uint8_t right_padding_count = 0;
+    bool enable_constant_pad = true;
 };
 
-CopyGM2UBCapture gCopyGM2UBCapture;
+copy_gm_to_ub_capture g_copy_gm_to_ub_capture;
 
-void CopyGM2UBStub(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t leftPaddingCount,
-                   uint8_t rightPaddingCount, bool enableConstantPad, uint8_t, uint64_t, uint32_t)
+void copy_gm_to_ub_stub(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t left_padding_count,
+                   uint8_t right_padding_count, bool enable_constant_pad, uint8_t, uint64_t, uint32_t)
 {
-    gCopyGM2UBCapture = {leftPaddingCount, rightPaddingCount, enableConstantPad};
+    g_copy_gm_to_ub_capture = {left_padding_count, right_padding_count, enable_constant_pad};
 }
 
-template <typename LocationTag, typename Pointer, typename Layout>
-auto MakeTensorAt(Pointer ptr, const Layout& layout)
+template <typename location_tag, typename pointer_type, typename layout_type>
+auto make_tensor_at(pointer_type ptr, const layout_type& layout)
 {
-    return AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr<LocationTag>(ptr), layout);
+    return asc::te::make_tensor(asc::te::make_mem_ptr<location_tag>(ptr), layout);
 }
 
-template <typename CopyOp, typename Trait, typename DstTensor, typename SrcTensor>
-void RunCopyCallPaths(const DstTensor& dst, const SrcTensor& src)
+template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
+void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto atom = MakeCopy(CopyOp{}, Trait{});
-    atom.Call(dst, src);
+    auto atom = make_copy(copy_operation{}, trait_type{});
+    atom.call(dst, src);
 
-    CopyAtom<CopyTraits<CopyOp, Trait>>{}.Call(dst, src);
-    Copy(CopyAtom<CopyTraits<CopyOp, Trait>>{}, dst, src);
+    copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
+    copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
 }
 
-template <typename CopyOp, typename Trait, typename DstTensor, typename SrcTensor>
-void RunCopyWithPaths(const DstTensor& dst, const SrcTensor& src)
+template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
+void run_copy_with_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto atom = CopyAtom<CopyTraits<CopyOp, Trait>>{}.with();
-    atom.Call(dst, src);
-    Copy(atom, dst, src);
+    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with();
+    atom.call(dst, src);
+    copy(atom, dst, src);
 }
 
 } // namespace
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBND2ND)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_nd_to_nd)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 64;
     constexpr uint32_t n = 64;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
-    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
-    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    run_copy_call_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
+    run_copy_with_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBWithPaddingParams)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_with_padding_params)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 2;
     constexpr uint32_t n = 16;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
     MOCKER_CPP(copy_gm_to_ubuf_align_v2, void(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t,
                                               uint8_t, bool, uint8_t, uint64_t, uint32_t))
         .times(1)
-        .will(invoke(CopyGM2UBStub));
+        .will(invoke(copy_gm_to_ub_stub));
 
-    constexpr CopyGM2UBParams params{3, 5, false};
-    Copy(MakeCopy(CopyGM2UB{}).with(params), ubTensor, gmTensor);
+    constexpr copy_gm_to_ub_params params{3, 5, false};
+    copy(make_copy(copy_gm_to_ub{}).with(params), ub_tensor, gm_tensor);
 
     GlobalMockObject::verify();
-    EXPECT_EQ(gCopyGM2UBCapture.leftPaddingCount, params.leftPaddingCount);
-    EXPECT_EQ(gCopyGM2UBCapture.rightPaddingCount, params.rightPaddingCount);
-    EXPECT_EQ(gCopyGM2UBCapture.enableConstantPad, params.enableConstantPad);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.left_padding_count, params.left_padding_count);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.right_padding_count, params.right_padding_count);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.enable_constant_pad, params.enable_constant_pad);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDefaultPaddingParams)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_default_padding_params)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 2;
     constexpr uint32_t n = 16;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
     MOCKER_CPP(copy_gm_to_ubuf_align_v2, void(__ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t,
                                               uint8_t, bool, uint8_t, uint64_t, uint32_t))
         .times(1)
-        .will(invoke(CopyGM2UBStub));
+        .will(invoke(copy_gm_to_ub_stub));
 
-    gCopyGM2UBCapture = {1, 1, false};
-    Copy(MakeCopy(CopyGM2UB{}), ubTensor, gmTensor);
+    g_copy_gm_to_ub_capture = {1, 1, false};
+    copy(make_copy(copy_gm_to_ub{}), ub_tensor, gm_tensor);
 
     GlobalMockObject::verify();
-    EXPECT_EQ(gCopyGM2UBCapture.leftPaddingCount, 0);
-    EXPECT_EQ(gCopyGM2UBCapture.rightPaddingCount, 0);
-    EXPECT_TRUE(gCopyGM2UBCapture.enableConstantPad);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.left_padding_count, 0);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.right_padding_count, 0);
+    EXPECT_TRUE(g_copy_gm_to_ub_capture.enable_constant_pad);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBNDLayout2NDLayout)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_nd_layout_to_nd_layout)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 64;
     constexpr uint32_t n = 64;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NDLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    gmTensor.SetL2CacheHint(CacheMode::CACHE_MODE_PERSISTENT);
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<nd_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nd_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    gm_tensor.set_l2_cache_hint(cache_mode::persistent);
 
-    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
-    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    run_copy_call_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
+    run_copy_with_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDN2DN)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_dn_to_dn)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 64;
     constexpr uint32_t n = 64;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<DNExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<DNExtLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<dn_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<dn_ext_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
-    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
-    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    run_copy_call_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
+    run_copy_with_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBDNLayout2DNLayout)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_dn_layout_to_dn_layout)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 64;
     constexpr uint32_t n = 64;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<DNLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<DNLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<dn_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<dn_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
-    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
-    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    run_copy_call_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
+    run_copy_with_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBNZ2NZ)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_nz_to_nz)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 64;
     constexpr uint32_t n = 64;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
-    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
-    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    run_copy_call_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
+    run_copy_with_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
 
-TEST_F(Tensor_Api_Vector_Copy_3510, CopyGM2UBZN2ZN)
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_zn_to_zn)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     constexpr uint32_t m = 64;
     constexpr uint32_t n = 64;
     __gm__ int8_t src[m * n] = {0};
     __ubuf__ int8_t dst[m * n] = {0};
 
-    auto gmTensor = MakeTensorAt<Location::GM>(src, MakeFrameLayout<ZNLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
-    auto ubTensor = MakeTensorAt<Location::UB>(dst, MakeFrameLayout<ZNLayoutPtn, LayoutTraitDefault<int8_t>>(m, n));
+    auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<zn_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto ub_tensor = make_tensor_at<location::ub>(dst, make_frame_layout<zn_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
-    RunCopyCallPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
-    RunCopyWithPaths<CopyGM2UB, CopyGM2UBTraitDefault>(ubTensor, gmTensor);
+    run_copy_call_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
+    run_copy_with_paths<copy_gm_to_ub, copy_gm_to_ub_trait_default>(ub_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }

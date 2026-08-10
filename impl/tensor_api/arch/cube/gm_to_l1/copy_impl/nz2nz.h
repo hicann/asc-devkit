@@ -24,63 +24,63 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/copy_common.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToCbufAlignV2NZ {
+class copy_gm_to_l1_nz2nz {
 public:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        RunGmToL1Batched<trait, CopyGmToCbufAlignV2NZ, T, U>(dst, src);
+        run_gm_to_l1_batched<trait, copy_gm_to_l1_nz2nz, T, U>(dst, src);
     }
 
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2L1AlignV2NDDataType<T, U>();
+        check_layout_pattern<U, T>();
+        check_data_type::check_gm_to_l1_align_v2_nd_data_type<T, U>();
     }
 
     // Extracts single-matrix parameters from the (batch-stripped) src/dst layouts and emits the
-    // copy. matrixNum carries the batch dimension (1 when there is no batch). The align_v2
-    // instruction has no hardware batch loop, so the batch axis is folded into blockCount: NZ
-    // matrices are laid out along the column (big-fractal) direction, so matrixNum matrices of
-    // bigFractalSize big-fractals each become matrixNum * bigFractalSize contiguous blocks that
-    // share the same per-big-fractal stride. srcNdMatrixStride/dstNzMatrixStride are unused here
-    // because that contiguity makes the single srcStride/dstStride describe the whole sequence.
+    // copy. matrix_num carries the batch dimension (1 when there is no batch). The align_v2
+    // instruction has no hardware batch loop, so the batch axis is folded into block_count: NZ
+    // matrices are laid out along the column (big-fractal) direction, so matrix_num matrices of
+    // big_fractal_size big-fractals each become matrix_num * big_fractal_size contiguous blocks that
+    // share the same per-big-fractal stride. src_nd_matrix_stride/dst_nz_matrix_stride are unused here
+    // because that contiguity makes the single src_stride/dst_stride describe the whole sequence.
     template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void EmitCopy(const T& dst, const U& src, const SrcLayout& srcLayout,
-                                           const DstLayout& dstLayout, uint16_t matrixNum,
-                                           uint64_t srcNdMatrixStride, uint32_t dstNzMatrixStride)
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
+                                            const DstLayout& dst_layout, uint16_t matrix_num,
+                                            uint64_t src_nd_matrix_stride, uint32_t dst_nz_matrix_stride)
     {
-        using type = typename U::elementType;
+        using type = typename U::element_type;
 
-        auto smallFractalSize = GetElement<AttrInfo::Shape, AttrInfo::Row, 0>(srcLayout)
-                                * GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
-        auto bigFractalSize = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-        auto srcStrideSize = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout);
-        auto dstStrideSize = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout);
+        auto small_fractal_size = get_element<attr_info::shape, attr_info::row, 0>(src_layout)
+                                  * get_element<attr_info::shape, attr_info::row, 1>(src_layout);
+        auto big_fractal_size = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+        auto src_stride_size = get_element<attr_info::stride, attr_info::column, 1>(src_layout);
+        auto dst_stride_size = get_element<attr_info::stride, attr_info::column, 1>(dst_layout);
 
-        uint8_t leftPaddingCnt = 0;
-        uint8_t rightPaddingCnt = 0;
-        uint8_t cacheMode = src.Engine().GetCacheMode();
+        uint8_t left_padding_cnt = 0;
+        uint8_t right_padding_cnt = 0;
+        uint8_t cache_mode = src.engine().get_cache_mode();
 
-        auto blockCount = bigFractalSize * matrixNum;
-        auto blockLen = smallFractalSize * C0_SIZE<>;
-        auto srcStride = srcStrideSize * sizeof(type);
-        auto dstStride = dstStrideSize * sizeof(type);
-        if constexpr (IsB4Type<type>) {
+        auto block_count = big_fractal_size * matrix_num;
+        auto block_len = small_fractal_size * C0_SIZE<>;
+        auto src_stride = src_stride_size * sizeof(type);
+        auto dst_stride = dst_stride_size * sizeof(type);
+        if constexpr (is_b4_type<type>) {
             // move fp4 as b8, need to be divided by 2
-            srcStride = srcStride >> 1;
-            dstStride = dstStride >> 1;
+            src_stride = src_stride >> 1;
+            dst_stride = dst_stride >> 1;
         }
-        CopyGmToCbufAlignV2Base::DataCopy(dst, src, blockCount, blockLen, leftPaddingCnt, rightPaddingCnt, cacheMode,
-                                          srcStride, dstStride);
+        copy_gm_to_l1_align_v2_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, left_padding_cnt, right_padding_cnt,
+                                                 cache_mode, src_stride, dst_stride);
     }
 };
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif
 

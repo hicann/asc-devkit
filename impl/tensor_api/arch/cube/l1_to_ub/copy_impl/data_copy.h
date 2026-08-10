@@ -25,120 +25,127 @@
 #include "impl/tensor_api/utils/utils_impl.h"
 #include "impl/tensor_api/arch/cube/l1_to_ub/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyL12UBND {
+class copy_l1_to_ub_nd {
 public:
-    template <const CopyL12UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_l1_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        Execute<trait>(dst, src);
+        execute<trait>(dst, src);
     }
 
 private:
-    template <const CopyL12UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Execute(const T& dst, const U& src)
+    template <const copy_l1_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void execute(const T& dst, const U& src)
     {
-        using srcType = typename U::elementType;
-        using dstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t blockCount = GetTotalRowShape(srcLayout);
-        uint32_t blockLen = Std::ceil_division(GetTotalColumnShape(srcLayout), C0_ELEMENT<srcType>);
+        uint16_t block_count = get_total_row_shape(src_layout);
+        uint32_t block_len = Std::ceil_division(get_total_column_shape(src_layout), C0_ELEMENT<src_type>);
 
-        uint32_t srcRowStride;
-        uint32_t dstRowStride;
-        if constexpr (IsSatisfiedPtnFormatV<U, NDLayoutPtn>) {
-            srcRowStride = GetElement<AttrInfo::Stride, AttrInfo::Row>(srcLayout);
+        uint32_t src_row_stride;
+        uint32_t dst_row_stride;
+        if constexpr (is_satisfied_ptn_format_v<U, nd_layout_ptn>) {
+            src_row_stride = get_element<attr_info::stride, attr_info::row>(src_layout);
         } else {
-            srcRowStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout);
+            src_row_stride = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
         }
-        if constexpr (IsSatisfiedPtnFormatV<T, NDLayoutPtn>) {
-            dstRowStride = GetElement<AttrInfo::Stride, AttrInfo::Row>(dstLayout);
+        if constexpr (is_satisfied_ptn_format_v<T, nd_layout_ptn>) {
+            dst_row_stride = get_element<attr_info::stride, attr_info::row>(dst_layout);
         } else {
-            dstRowStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout);
+            dst_row_stride = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
         }
-        int64_t srcStride = Std::ceil_division(srcRowStride - GetTotalColumnShape(srcLayout), C0_ELEMENT<srcType>);
-        int64_t dstStride = Std::ceil_division(dstRowStride - GetTotalColumnShape(srcLayout), C0_ELEMENT<dstType>);
+        int64_t src_stride =
+            Std::ceil_division(src_row_stride - get_total_column_shape(src_layout), C0_ELEMENT<src_type>);
+        int64_t dst_stride =
+            Std::ceil_division(dst_row_stride - get_total_column_shape(src_layout), C0_ELEMENT<dst_type>);
 
-        CopyCbufToUbufInstr::DataCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        copy_l1_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_stride,
+                                         dst_stride);
     }
 };
 
-class CopyL12UBDN {
+class copy_l1_to_ub_dn {
 public:
-    template <const CopyL12UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_l1_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        Execute<trait>(dst, src);
+        execute<trait>(dst, src);
     }
 
 private:
-    template <const CopyL12UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Execute(const T& dst, const U& src)
+    template <const copy_l1_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void execute(const T& dst, const U& src)
     {
-        using srcType = typename U::elementType;
-        using dstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t blockCount = GetTotalColumnShape(srcLayout);
-        uint32_t blockLen = Std::ceil_division(GetTotalRowShape(srcLayout), C0_ELEMENT<srcType>);
+        uint16_t block_count = get_total_column_shape(src_layout);
+        uint32_t block_len = Std::ceil_division(get_total_row_shape(src_layout), C0_ELEMENT<src_type>);
 
-        uint32_t srcColumnStride;
-        uint32_t dstColumnStride;
-        if constexpr (IsSatisfiedPtnFormatV<U, DNLayoutPtn>) {
-            srcColumnStride = GetElement<AttrInfo::Stride, AttrInfo::Column>(srcLayout);
+        uint32_t src_column_stride;
+        uint32_t dst_column_stride;
+        if constexpr (is_satisfied_ptn_format_v<U, dn_layout_ptn>) {
+            src_column_stride = get_element<attr_info::stride, attr_info::column>(src_layout);
         } else {
-            srcColumnStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout);
+            src_column_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout);
         }
-        if constexpr (IsSatisfiedPtnFormatV<T, DNLayoutPtn>) {
-            dstColumnStride = GetElement<AttrInfo::Stride, AttrInfo::Column>(dstLayout);
+        if constexpr (is_satisfied_ptn_format_v<T, dn_layout_ptn>) {
+            dst_column_stride = get_element<attr_info::stride, attr_info::column>(dst_layout);
         } else {
-            dstColumnStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout);
+            dst_column_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout);
         }
-        int64_t srcStride = Std::ceil_division(srcColumnStride - GetTotalRowShape(srcLayout), C0_ELEMENT<srcType>);
-        int64_t dstStride = Std::ceil_division(dstColumnStride - GetTotalRowShape(srcLayout), C0_ELEMENT<dstType>);
+        int64_t src_stride =
+            Std::ceil_division(src_column_stride - get_total_row_shape(src_layout), C0_ELEMENT<src_type>);
+        int64_t dst_stride =
+            Std::ceil_division(dst_column_stride - get_total_row_shape(src_layout), C0_ELEMENT<dst_type>);
 
-        CopyCbufToUbufInstr::DataCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        copy_l1_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_stride,
+                                         dst_stride);
     }
 };
 
-class CopyL12UBNZ {
+class copy_l1_to_ub_nz {
 public:
-    template <const CopyL12UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_l1_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        Execute<trait>(dst, src);
+        execute<trait>(dst, src);
     }
 
 private:
-    template <const CopyL12UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Execute(const T& dst, const U& src)
+    template <const copy_l1_to_ub_trait& trait, typename T, typename U>
+    __aicore__ inline static void execute(const T& dst, const U& src)
     {
-        using srcType = typename U::elementType;
-        using dstType = typename T::elementType;
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t blockCount = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-        uint32_t blockLen = GetTotalRowShape(srcLayout);
-        int64_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) / C0_ELEMENT<srcType> -
-            blockLen;
-        int64_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout) / C0_ELEMENT<dstType> -
-            blockLen;
+        uint16_t block_count = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+        uint32_t block_len = get_total_row_shape(src_layout);
+        int64_t src_stride =
+            get_element<attr_info::stride, attr_info::column, 1>(src_layout) / C0_ELEMENT<src_type> - block_len;
+        int64_t dst_stride =
+            get_element<attr_info::stride, attr_info::column, 1>(dst_layout) / C0_ELEMENT<dst_type> - block_len;
 
-        CopyCbufToUbufInstr::DataCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        copy_l1_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_stride,
+                                         dst_stride);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_DATA_COPY_H
 

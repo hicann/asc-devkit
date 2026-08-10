@@ -40,135 +40,135 @@
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/scaleb_dn2nn.h"
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/scaleb_nn2nn.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGM2L1Ignore {
+class copy_gm_to_l1_ignore {
 public:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src)
     {
-        static_assert(!Std::is_same_v<T, T>, "CopyGM2L1: unsupported layout pattern combination.");
+        static_assert(!Std::is_same_v<T, T>, "copy_gm_to_l1: unsupported layout pattern combination.");
     }
 };
 
-template <uint32_t Version, typename DstLayoutPtn, typename SrcLayoutPtn>
-struct CopyGM2L1Routing {
-    using type = CopyGM2L1Ignore;
+template <uint32_t version, typename DstLayoutPtn, typename SrcLayoutPtn>
+struct copy_gm_to_l1_routing {
+    using type = copy_gm_to_l1_ignore;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NDExtLayoutPtn, NDExtLayoutPtn> {
-    using type = CopyGmToCbufAlignV2ND;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nd_ext_layout_ptn, nd_ext_layout_ptn> {
+    using type = copy_gm_to_l1_nd2nd;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NDLayoutPtn, NDLayoutPtn> {
-    using type = CopyGmToCbufAlignV2ND;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nd_layout_ptn, nd_layout_ptn> {
+    using type = copy_gm_to_l1_nd2nd;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NZLayoutPtn, NDExtLayoutPtn> {
-    using type = CopyGmToCbufMultiND2Nz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nz_layout_ptn, nd_ext_layout_ptn> {
+    using type = copy_gm_to_l1_nd2nz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NZLayoutPtn, NDLayoutPtn> {
-    using type = CopyGmToCbufMultiND2Nz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nz_layout_ptn, nd_layout_ptn> {
+    using type = copy_gm_to_l1_nd2nz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZNLayoutPtn, NDExtLayoutPtn> {
-    using type = CopyGmToCbufMultiND2Zn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zn_layout_ptn, nd_ext_layout_ptn> {
+    using type = copy_gm_to_l1_nd2zn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZNLayoutPtn, NDLayoutPtn> {
-    using type = CopyGmToCbufMultiND2Zn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zn_layout_ptn, nd_layout_ptn> {
+    using type = copy_gm_to_l1_nd2zn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NZLayoutPtn, DNExtLayoutPtn> {
-    using type = CopyGmToCbufMultiDN2Nz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nz_layout_ptn, dn_ext_layout_ptn> {
+    using type = copy_gm_to_l1_dn2nz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NZLayoutPtn, DNLayoutPtn> {
-    using type = CopyGmToCbufMultiDN2Nz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nz_layout_ptn, dn_layout_ptn> {
+    using type = copy_gm_to_l1_dn2nz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZNLayoutPtn, DNExtLayoutPtn> {
-    using type = CopyGmToCbufMultiDN2Zn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zn_layout_ptn, dn_ext_layout_ptn> {
+    using type = copy_gm_to_l1_dn2zn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZNLayoutPtn, DNLayoutPtn> {
-    using type = CopyGmToCbufMultiDN2Zn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zn_layout_ptn, dn_layout_ptn> {
+    using type = copy_gm_to_l1_dn2zn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NZLayoutPtn, NZLayoutPtn> {
-    using type = CopyGmToCbufAlignV2NZ;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nz_layout_ptn, nz_layout_ptn> {
+    using type = copy_gm_to_l1_nz2nz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZNLayoutPtn, ZNLayoutPtn> {
-    using type = CopyGmToCbufAlignV2ZN;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zn_layout_ptn, zn_layout_ptn> {
+    using type = copy_gm_to_l1_zn2zn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZZLayoutPtn, ScaleANDLayoutPtn> {
-    using type = CopyGmToCbufScaleAND2Zz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zz_layout_ptn, scalea_nd_layout_ptn> {
+    using type = copy_gm_to_l1_scalea_nd2zz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZZLayoutPtn, ScaleADNLayoutPtn> {
-    using type = CopyGmToCbufScaleADN2Zz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zz_layout_ptn, scalea_dn_layout_ptn> {
+    using type = copy_gm_to_l1_scalea_dn2zz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, ZZLayoutPtn, ZZLayoutPtn> {
-    using type = CopyGmToCbufScaleAZz2Zz;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, zz_layout_ptn, zz_layout_ptn> {
+    using type = copy_gm_to_l1_scalea_zz2zz;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NNLayoutPtn, ScaleBNDLayoutPtn> {
-    using type = CopyGmToCbufScaleBND2Nn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nn_layout_ptn, scaleb_nd_layout_ptn> {
+    using type = copy_gm_to_l1_scaleb_nd2nn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NNLayoutPtn, ScaleBDNLayoutPtn> {
-    using type = CopyGmToCbufScaleBDN2Nn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nn_layout_ptn, scaleb_dn_layout_ptn> {
+    using type = copy_gm_to_l1_scaleb_dn2nn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NNLayoutPtn, NNLayoutPtn> {
-    using type = CopyGmToCbufScaleBNn2Nn;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nn_layout_ptn, nn_layout_ptn> {
+    using type = copy_gm_to_l1_scaleb_nn2nn;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NC1HWC0LayoutPtn, NC1HWC0LayoutPtn> {
-    using type = CopyGmToCbufNC1HWC02NC1HWC0;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nc1hwc0_layout_ptn, nc1hwc0_layout_ptn> {
+    using type = copy_gm_to_l1_nc1hwc02nc1hwc0;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NC1HWC0LayoutPtn, NHWCLayoutPtn> {
-    using type = CopyGmToCbufNHWC2NC1HWC0;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nc1hwc0_layout_ptn, nhwc_layout_ptn> {
+    using type = copy_gm_to_l1_nhwc2nc1hwc0;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NC1HWC0LayoutPtn, NCHWLayoutPtn> {
-    using type = CopyGmToCbufNCHW2NC1HWC0;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, nc1hwc0_layout_ptn, nchw_layout_ptn> {
+    using type = copy_gm_to_l1_nchw2nc1hwc0;
 };
 
-template <uint32_t Version>
-struct CopyGM2L1Routing<Version, NDC1HWC0LayoutPtn, NCDHWLayoutPtn> {
-    using type = CopyGmToCbufNCDHW2NDC1HWC0;
+template <uint32_t version>
+struct copy_gm_to_l1_routing<version, ndc1hwc0_layout_ptn, ncdhw_layout_ptn> {
+    using type = copy_gm_to_l1_ncdhw2ndc1hwc0;
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_GM_TO_L1_ROUTING_H
 

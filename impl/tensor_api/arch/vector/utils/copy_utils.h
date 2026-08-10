@@ -24,25 +24,24 @@
 
 #include "impl/tensor_api/utils/utils_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename SrcType, typename DstType>
-__aicore__ inline void AdjustB4CopyParams(
-    uint32_t& blockLen, int64_t& srcStride, int64_t& dstStride)
+__aicore__ inline void adjust_b4_copy_params(uint32_t& block_len, int64_t& src_stride, int64_t& dst_stride)
 {
-    if constexpr (IsB4Type<SrcType>) {
-        blockLen >>= 1;
-        srcStride >>= 1;
+    if constexpr (is_b4_type<SrcType>) {
+        block_len >>= 1;
+        src_stride >>= 1;
     }
 
-    if constexpr (IsB4Type<DstType>) {
-        dstStride >>= 1;
+    if constexpr (is_b4_type<DstType>) {
+        dst_stride >>= 1;
     }
 }
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UTILS_COPY_UTILS_H
 

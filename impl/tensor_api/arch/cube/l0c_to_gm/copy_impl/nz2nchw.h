@@ -9,7 +9,7 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning \
+#warning                                                                                                               \
     "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/nz2nchw.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
@@ -24,45 +24,46 @@
 
 #include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class DataCopyL0C2GMNZ2NCHW {
+class data_copy_l0c_to_gm_nz2nchw {
 public:
-    template <const CopyL0C2GMTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src, const FixpipeParams& params)
+    template <const copy_l0c_to_gm_trait& trait, typename T, typename U>
+    __aicore__ inline static void run(const T& dst, const U& src, const fixpipe_params& params)
     {
-        constexpr QuantMode_t quantPre = GetQuantMode<trait.roundMode, T, U>();
-        CheckDataType::CheckL0C2GmDataType<quantPre, T, U>();
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U>();
+        check_data_type::check_l0c_to_gm_data_type<quant_pre, T, U>();
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
         // nz2dn needs the channel register (src NZ C0 stride) set, mirroring the DN path's
         // EmitSetRegister non-ND branch. The generic SetRegisterImpl would treat NCHW as neither
         // ND nor DN and emit SetRegister(1,0,0) without SetChannelPara, so set it explicitly here.
-        SetRegisterInstr::SetRegister(1u, 0u, 0u, GetElement<AttrInfo::Stride, AttrInfo::Column, 0>(srcLayout));
+        set_register_instr::set_register(1u, 0u, 0u, get_element<attr_info::stride, attr_info::column, 0>(src_layout));
 
         // dst NCHW (N, C, H, W), N == 1. NCHW memory equals DNExt (H*W, C) column-major, so this
-        // mirrors the validated DN path: nSize = C = Shape[1] (column count), mSize = H*W =
-        // Shape[2]*Shape[3] (row count), dstStride = H*W (the DN column stride = row count = Stride[1]).
-        uint32_t nSize = Get<1>(dstLayout.Shape());
-        uint32_t mSize = Get<2>(dstLayout.Shape()) * Get<3>(dstLayout.Shape());
-        uint32_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) / FRACTAL_FIXED;
-        uint32_t dstStride = Get<1>(dstLayout.Stride());
+        // mirrors the validated DN path: n_size = C = Shape[1] (column count), m_size = H*W =
+        // Shape[2]*Shape[3] (row count), dst_stride = H*W (the DN column stride = row count = Stride[1]).
+        uint32_t n_size = get<1>(dst_layout.shape());
+        uint32_t m_size = get<2>(dst_layout.shape()) * get<3>(dst_layout.shape());
+        uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED;
+        uint32_t dst_stride = get<1>(dst_layout.stride());
 
-        uint8_t cacheMode = dst.Engine().GetCacheMode();
-        bool reluEn = trait.enableRelu;
-        uint8_t unitFlag = params.unitFlag;
-        bool isChannelSplit = trait.enableChannelSplit;
+        uint8_t cache_mode = dst.engine().get_cache_mode();
+        bool relu_en = trait.enable_relu;
+        uint8_t unit_flag = params.unit_flag;
+        bool is_channel_split = trait.enable_channel_split;
 
-        CopyMatrixCcToGmInstr::DataCopy<quantPre, T, U>(
-            dst, src, nSize, mSize, srcStride, dstStride, cacheMode, reluEn, unitFlag, isChannelSplit, false, true);
+        copy_l0c_to_gm_instr::data_copy<quant_pre>(dst.data().get(), src.data().get(), n_size, m_size, src_stride,
+                                                               dst_stride, cache_mode, relu_en, unit_flag, is_channel_split,
+                                                               false, true);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_GM_COPY_IMPL_NZ2NCHW_H
 

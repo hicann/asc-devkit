@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2026 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
@@ -16,54 +16,56 @@
 #endif
 
 /*!
-* \file copy.h
-* \brief
-*/
+ * \file copy.h
+ * \brief
+ */
 #ifndef IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_H
 #define IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_H
 
 #include "impl/tensor_api/arch/cube/l1_to_l0scaleb/routing.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-constexpr CopyL12L0ScaleBTrait DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT;
+constexpr copy_l1_to_l0scaleb_trait DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT;
 
-struct CopyL12L0ScaleBTraitDefault {
-    using TraitType = CopyL12L0ScaleBTrait;
-    static constexpr const TraitType value = DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT;
+struct copy_l1_to_l0scaleb_trait_default {
+    using trait_type = copy_l1_to_l0scaleb_trait;
+    static constexpr const trait_type value = DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT;
 };
 
-struct CopyL12L0ScaleB {
+struct copy_l1_to_l0scaleb {
 public:
     template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void Copy(const Args& ...args)
+    __aicore__ inline static void copy(const Args&... args)
     {
         if ASCEND_IS_AIC {
-            LoadData<traits, Args...>(args...);
+            load_data<traits, Args...>(args...);
         }
     }
 
 private:
-    template <const CopyL12L0ScaleBTrait& trait = DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT, typename T, typename U>
-    __aicore__ inline static void LoadData(const T& dst, const U& src)
+    template <const copy_l1_to_l0scaleb_trait& trait = DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT, typename T, typename U>
+    __aicore__ inline static void load_data(const T& dst, const U& src)
     {
-        using dstPos = GetMemLocation<T>;
-        using srcPos = GetMemLocation<U>;
-        static_assert(Std::is_same_v<dstPos, Location::L0ScaleB>, "When Copy tensor from L1 to L0ScaleB, dst tensor must on L0ScaleB");
-        static_assert(Std::is_same_v<srcPos, Location::L1>, "When Copy tensor from L1 to L0ScaleB, src tensor must on L1");
-        using DstLayout = typename T::layoutType;
-        using SrcLayout = typename U::layoutType;
-        using DstPattern = GetLayoutPattern<DstLayout>;
-        using SrcPattern = GetLayoutPattern<SrcLayout>;
-        using CopyL12L0ScaleBImpl = typename CopyL12L0ScaleBRouting<CURRENT_ARCH_VERSION, DstPattern,
-            SrcPattern>::type;
-        CopyL12L0ScaleBImpl::template Run<trait, T, U>(dst, src);
+        using dst_pos = get_mem_location<T>;
+        using src_pos = get_mem_location<U>;
+        static_assert(Std::is_same_v<dst_pos, location::l0scaleb>,
+                      "When Copy tensor from L1 to L0ScaleB, dst tensor must on L0ScaleB");
+        static_assert(Std::is_same_v<src_pos, location::l1>,
+                      "When Copy tensor from L1 to L0ScaleB, src tensor must on L1");
+        using dst_layout = typename T::layout_type;
+        using src_layout = typename U::layout_type;
+        using dst_pattern = get_layout_pattern<dst_layout>;
+        using src_pattern = get_layout_pattern<src_layout>;
+        using copy_l1_to_l0scaleb_impl =
+            typename copy_l1_to_l0scaleb_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern>::type;
+        copy_l1_to_l0scaleb_impl::template run<trait, T, U>(dst, src);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_H
 

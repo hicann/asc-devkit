@@ -25,17 +25,17 @@
 #include "impl/tensor_api/arch/cube/l1_to_l0scaleb/copy.h"
 #include "impl/tensor_api/atom/copy_traits_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename Traits>
-struct CopyTraits<CopyL12L0ScaleB, Traits> : public CopyTraits<CopyL12L0ScaleB, Traits, CopyL12L0ScaleB, Traits> {};
+struct copy_traits<copy_l1_to_l0scaleb, Traits> : public copy_traits<copy_l1_to_l0scaleb, Traits, copy_l1_to_l0scaleb, Traits> {};
 
 template <>
-struct CopyTraits<CopyL12L0ScaleB> : public CopyTraits<CopyL12L0ScaleB, CopyL12L0ScaleBTraitDefault> {};
+struct copy_traits<copy_l1_to_l0scaleb> : public copy_traits<copy_l1_to_l0scaleb, copy_l1_to_l0scaleb_trait_default> {};
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ATOM_CUBE_COPY_L12L0SCALEB_H
 

@@ -21,17 +21,25 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 #define INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-struct CopyGM2UB;
-struct CopyGM2UBWith;
-struct CopyUB2L1;
-struct CopyUB2GM;
-struct CopyUB2UB;
+struct copy_gm_to_ub;
+struct copy_ub_to_l1;
+struct copy_ub_to_gm;
+struct copy_ub_to_ub;
 
-} // namespace Te
-} // namespace AscendC
+struct copy_gm_to_ub_trait;
+struct copy_gm_to_ub_trait_default;
+struct copy_ub_to_l1_trait;
+struct copy_ub_to_l1_trait_default;
+struct copy_ub_to_gm_trait;
+struct copy_ub_to_gm_trait_default;
+struct copy_ub_to_ub_trait;
+struct copy_ub_to_ub_trait_default;
+
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 
