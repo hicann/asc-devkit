@@ -37,19 +37,51 @@ else()
     get_filename_component(ASC_COMM_SOURCE_PATH ${ASC_COMM_SOURCE_DIR} REALPATH)
 endif()
 
-# asc-comm 迁出后，devkit 仅把从 asc-comm 迁移来的 hcomm 头按删除前的源码路径打入包。
-set(ASC_COMM_PUBLIC_HEADER_DIR ${ASC_COMM_SOURCE_PATH}/include/aicore/hcomm)
-set(ASC_COMM_DETAIL_HEADER_DIR ${ASC_COMM_SOURCE_PATH}/src/aicore/hcomm)
-if(NOT EXISTS ${ASC_COMM_PUBLIC_HEADER_DIR})
-    message(FATAL_ERROR "[ThirdPartyLib][asc-comm] Missing public hcomm headers: ${ASC_COMM_PUBLIC_HEADER_DIR}")
+# asc-comm 迁出后，将 src 与 include 目录统一打包到 comm_api（hcomm 除外）；
+# hcomm 的 include 和 impl 代码分别打包到 adv_api 和 adv_api/detail 下，
+# 并在 comm_api 下建立 hcomm 的软链接指向 adv_api。
+set(ASC_COMM_SRC_DIR ${ASC_COMM_SOURCE_PATH}/src)
+set(ASC_COMM_INCLUDE_DIR ${ASC_COMM_SOURCE_PATH}/include)
+if(NOT EXISTS ${ASC_COMM_SRC_DIR})
+    message(FATAL_ERROR "[ThirdPartyLib][asc-comm] Missing src dir: ${ASC_COMM_SRC_DIR}")
 endif()
-install(DIRECTORY ${ASC_COMM_PUBLIC_HEADER_DIR}/
+if(NOT EXISTS ${ASC_COMM_INCLUDE_DIR})
+    message(FATAL_ERROR "[ThirdPartyLib][asc-comm] Missing include dir: ${ASC_COMM_INCLUDE_DIR}")
+endif()
+
+# 将 src 下代码（hcomm 除外）统一打包到 asc/impl/comm_api/
+install(DIRECTORY ${ASC_COMM_SRC_DIR}/
+    DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/comm_api
+    COMPONENT asc-devkit
+    FILES_MATCHING PATTERN "*.h"
+    REGEX "aicore/hcomm" EXCLUDE
+)
+
+# 将 include 下代码（hcomm 和 direct_drive 除外）统一打包到 asc/include/comm_api/
+install(DIRECTORY ${ASC_COMM_INCLUDE_DIR}/
+    DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api
+    COMPONENT asc-devkit
+    FILES_MATCHING PATTERN "*.h"
+    REGEX "aicore/hcomm" EXCLUDE
+    REGEX "direct_drive" EXCLUDE
+)
+
+# 将 hcomm 的 include 打包到 asc/include/adv_api/hcomm/
+install(DIRECTORY ${ASC_COMM_INCLUDE_DIR}/aicore/hcomm/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/adv_api/hcomm
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
 )
-install(DIRECTORY ${ASC_COMM_DETAIL_HEADER_DIR}/
+
+# 将 hcomm 的 impl 代码打包到 asc/impl/adv_api/detail/hcomm/
+install(DIRECTORY ${ASC_COMM_SRC_DIR}/aicore/hcomm/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/adv_api/detail/hcomm
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
 )
+
+# 在 comm_api 下为 hcomm 建立软链接，指向 adv_api 下的实际内容
+install(CODE "file(MAKE_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/comm_api/aicore)" COMPONENT asc-devkit)
+install(CODE "file(MAKE_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/impl/comm_api/aicore)" COMPONENT asc-devkit)
+install(CODE "file(CREATE_LINK ../../adv_api/hcomm \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/comm_api/aicore/hcomm SYMBOLIC)" COMPONENT asc-devkit)
+install(CODE "file(CREATE_LINK ../../adv_api/detail/hcomm \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/impl/comm_api/aicore/hcomm SYMBOLIC)" COMPONENT asc-devkit)
