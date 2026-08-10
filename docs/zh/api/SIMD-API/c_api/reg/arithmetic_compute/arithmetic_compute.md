@@ -30,8 +30,6 @@
 
 -   **[asc_mull](asc_mull.md)**
 
--   **[asc_muls (废弃)](asc_muls_deprecated.md)**
-
 -   **[asc_neg](asc_neg.md)**
 
 -   **[asc_prelu](asc_prelu.md)**
@@ -43,3 +41,5 @@
 -   **[asc_sub](asc_sub.md)**
 
 -   **[asc_subc](asc_subc.md)**
+
+-   **[asc_muls（废弃）](asc_muls_deprecated.md)**

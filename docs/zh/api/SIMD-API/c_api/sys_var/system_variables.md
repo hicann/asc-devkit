@@ -2,8 +2,6 @@
 
 - **[asc_get_arch_ver](asc_get_arch_ver.md)**
 
-- **[asc_get_ar_spr（废弃）](asc_get_ar_spr_deprecated.md)**
-
 - **[asc_get_squeeze_status](asc_get_squeeze_status.md)**
 
 - **[asc_get_block_idx](asc_get_block_idx.md)**
@@ -51,3 +49,5 @@
 - **[asc_set_l12l0_padding_val](asc_set_l12l0_padding_val.md)**
 
 - **[asc_set_l3d_rpt_b](asc_set_l3d_rpt_b.md)**
+
+- **[asc_get_ar_spr（废弃）](asc_get_ar_spr_deprecated.md)**

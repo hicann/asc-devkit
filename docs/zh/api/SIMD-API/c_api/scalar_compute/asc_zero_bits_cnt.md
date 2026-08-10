@@ -40,7 +40,7 @@ __aicore__ inline int64_t asc_zero_bits_cnt(uint64_t value)
 
 |参数名|输入/输出|描述|
 | :------ | :--- | :------------ |
-|value   |输入   |被统计的二进制数字。
+|value   |输入   |被统计的二进制数字。|
 
 ## 返回值说明
 
