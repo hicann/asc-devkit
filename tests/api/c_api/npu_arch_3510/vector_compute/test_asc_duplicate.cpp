@@ -43,6 +43,7 @@ TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_uint8_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_int8_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_fp8_e4m3fn_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_fp8_e8m0_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_uint16_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_int16_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_half);
@@ -50,3 +51,47 @@ TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_bfloat16_t
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_uint32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_int32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_float);
+
+#define TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(class_name, c_api_name, cce_name, data_type)          \
+                                                                                                        \
+    class TestVectorCompute##class_name####data_type##MergeCApi : public testing::Test {                \
+    protected:                                                                                          \
+        void SetUp() {}                                                                                 \
+        void TearDown() {}                                                                              \
+    };                                                                                                  \
+                                                                                                        \
+    namespace {                                                                                         \
+    void cce_name##_merging_##data_type##_Stub(                                                         \
+        data_type& dst, data_type src0, vector_bool mask, int32_t pos, Literal mode)                    \
+    {                                                                                                   \
+        EXPECT_EQ(pos, static_cast<int32_t>(POS_LOWEST.value));                                         \
+        EXPECT_EQ(mode, MODE_MERGING);                                                                  \
+    }                                                                                                   \
+    }                                                                                                   \
+                                                                                                        \
+    TEST_F(TestVectorCompute##class_name####data_type##MergeCApi, c_api_name##_##data_type##_MergeSucc) \
+    {                                                                                                   \
+        data_type dst;                                                                                  \
+        data_type src0;                                                                                 \
+        vector_bool mask;                                                                               \
+                                                                                                        \
+        MOCKER_CPP(cce_name, void(data_type&, data_type, vector_bool, int32_t, Literal))                \
+            .times(1)                                                                                   \
+            .will(invoke(cce_name##_merging_##data_type##_Stub));                                       \
+                                                                                                        \
+        c_api_name(dst, src0, mask);                                                                    \
+        GlobalMockObject::verify();                                                                     \
+    }
+
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_uint8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_int8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_fp8_e4m3fn_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_fp8_e8m0_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_uint16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_int16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_half);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_uint32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_int32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_MERGE_INSTR(Vdup, asc_duplicate_merge, vdup, vector_float);

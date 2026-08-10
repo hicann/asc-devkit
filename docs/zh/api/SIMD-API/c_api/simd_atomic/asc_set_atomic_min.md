@@ -39,7 +39,6 @@ __aicore__ inline void asc_set_atomic_min_int8()
 __aicore__ inline void asc_set_atomic_min_int16()
 __aicore__ inline void asc_set_atomic_min_float16()
 __aicore__ inline void asc_set_atomic_min_bfloat()
-__aicore__ inline void asc_set_atomic_min_int()
 __aicore__ inline void asc_set_atomic_min_int32()
 __aicore__ inline void asc_set_atomic_min_float()
 ```

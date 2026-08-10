@@ -13,36 +13,40 @@
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "include/c_api/asc_simd.h"
 
-#define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(class_name, c_api_name, cce_name, data_type)                    \
-                                                                                                                   \
-    class TestVectorCompute##class_name####data_type##CApi : public testing::Test {                                \
-    protected:                                                                                                     \
-        void SetUp() {}                                                                                            \
-        void TearDown() {}                                                                                         \
-    };                                                                                                             \
-                                                                                                                   \
-    namespace {                                                                                                    \
-    void cce_name##_##data_type##_Stub(vector_##data_type& dst, data_type src0, vector_bool mask, Literal mode) {} \
-    }                                                                                                              \
-                                                                                                                   \
-    TEST_F(TestVectorCompute##class_name####data_type##CApi, c_api_name##_##data_type##_Succ)                      \
-    {                                                                                                              \
-        vector_##data_type dst;                                                                                    \
-        data_type src0;                                                                                            \
-        vector_bool mask;                                                                                          \
-                                                                                                                   \
-        MOCKER_CPP(cce_name, void(vector_##data_type&, data_type, vector_bool, Literal))                           \
-            .times(1)                                                                                              \
-            .will(invoke(cce_name##_##data_type##_Stub));                                                          \
-                                                                                                                   \
-        c_api_name(dst, src0, mask);                                                                               \
-        GlobalMockObject::verify();                                                                                \
+#define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(class_name, c_api_name, cce_name, data_type)                 \
+                                                                                                                \
+    class TestVectorCompute##class_name####data_type##CApi : public testing::Test {                             \
+    protected:                                                                                                  \
+        void SetUp() {}                                                                                         \
+        void TearDown() {}                                                                                      \
+    };                                                                                                          \
+                                                                                                                \
+    namespace {                                                                                                 \
+    void cce_name##_##data_type##_Stub(vector_##data_type& dst, data_type src0, vector_bool mask, Literal mode) \
+    {                                                                                                           \
+        EXPECT_EQ(mode, MODE_ZEROING);                                                                          \
+    }                                                                                                           \
+    }                                                                                                           \
+                                                                                                                \
+    TEST_F(TestVectorCompute##class_name####data_type##CApi, c_api_name##_##data_type##_Succ)                   \
+    {                                                                                                           \
+        vector_##data_type dst;                                                                                 \
+        data_type src0;                                                                                         \
+        vector_bool mask;                                                                                       \
+                                                                                                                \
+        MOCKER_CPP(cce_name, void(vector_##data_type&, data_type, vector_bool, Literal))                        \
+            .times(1)                                                                                           \
+            .will(invoke(cce_name##_##data_type##_Stub));                                                       \
+                                                                                                                \
+        c_api_name(dst, src0, mask);                                                                            \
+        GlobalMockObject::verify();                                                                             \
     }
 
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, uint8_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, int8_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, fp8_e4m3fn_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, fp8_e8m0_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, uint16_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, int16_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, half);
@@ -50,6 +54,49 @@ TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, bf
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, uint32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, int32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, float);
+
+#define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(class_name, c_api_name, cce_name, data_type)   \
+                                                                                                        \
+    class TestVectorCompute##class_name####data_type##MergeCApi : public testing::Test {                \
+    protected:                                                                                          \
+        void SetUp() {}                                                                                 \
+        void TearDown() {}                                                                              \
+    };                                                                                                  \
+                                                                                                        \
+    namespace {                                                                                         \
+    void cce_name##_merging_##data_type##_Stub(                                                         \
+        vector_##data_type& dst, data_type value, vector_bool mask, Literal mode)                       \
+    {                                                                                                   \
+        EXPECT_EQ(mode, MODE_MERGING);                                                                  \
+    }                                                                                                   \
+    }                                                                                                   \
+                                                                                                        \
+    TEST_F(TestVectorCompute##class_name####data_type##MergeCApi, c_api_name##_##data_type##_MergeSucc) \
+    {                                                                                                   \
+        vector_##data_type dst;                                                                         \
+        data_type value;                                                                                \
+        vector_bool mask;                                                                               \
+                                                                                                        \
+        MOCKER_CPP(cce_name, void(vector_##data_type&, data_type, vector_bool, Literal))                \
+            .times(1)                                                                                   \
+            .will(invoke(cce_name##_merging_##data_type##_Stub));                                       \
+                                                                                                        \
+        c_api_name(dst, value, mask);                                                                   \
+        GlobalMockObject::verify();                                                                     \
+    }
+
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, uint8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, int8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, fp8_e4m3fn_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, fp8_e8m0_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, uint16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, int16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, half);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, bfloat16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, uint32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, int32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(Vdups, asc_duplicate_scalar_merge, vdup, float);
 
 #define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_INSTR(class_name, c_api_name, cce_name, data_type) \
                                                                                                     \

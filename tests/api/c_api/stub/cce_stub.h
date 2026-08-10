@@ -601,6 +601,8 @@ inline void vgather2_bc(vector_bf16& dst, __ubuf__ bfloat16_t* src, vector_u32 i
 inline void vbr(vector_f8e4m3& dst, fp8_e4m3fn_t value) {}
 inline void vbr(vector_f8e5m2& dst, fp8_e5m2_t value) {}
 inline void vbr(vector_f8e8m0& dst, fp8_e8m0_t value) {}
+inline void vdup(vector_f8e8m0& dst, fp8_e8m0_t value, vector_bool mask, Literal mode) {}
+inline void vdup(vector_f8e8m0& dst, vector_f8e8m0 src, vector_bool mask, int32_t type, Literal mode) {}
 
 inline void copy_gm_to_cbuf_v2(
     __cbuf__ void* dst, __gm__ void* src, uint8_t sid, uint32_t n_burst, uint32_t len_burst, uint8_t pad_func_mode,
