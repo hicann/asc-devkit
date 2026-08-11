@@ -39,7 +39,7 @@
         EXPECT_EQ(loop0_lp_count, static_cast<uint8_t>(6));                                                            \
         EXPECT_EQ(loop0_rp_count, static_cast<uint8_t>(7));                                                            \
         EXPECT_EQ(padding_mode, static_cast<bool>(1));                                                                 \
-        EXPECT_EQ(cache_mode, static_cast<uint8_t>(8));                                                                \
+        EXPECT_EQ(cache_mode, static_cast<uint8_t>(6));                                                                \
     }                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
@@ -56,7 +56,7 @@
         uint8_t loop0_lp_count = static_cast<uint64_t>(6);                                                             \
         uint8_t loop0_rp_count = static_cast<uint64_t>(7);                                                             \
         bool padding_mode = static_cast<uint64_t>(1);                                                                  \
-        uint8_t cache_mode = static_cast<uint64_t>(8);                                                                 \
+        asc_load_l2_cache_mode cache_mode = asc_load_l2_cache_mode::NOTALLOC_DROP;                                     \
                                                                                                                        \
         MOCKER_CPP(                                                                                                    \
             cce_name, void(                                                                                            \

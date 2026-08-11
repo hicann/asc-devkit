@@ -32,4 +32,22 @@ __simd_callee__ inline void asc_bfloat162float_v2_impl(vector_float& dst, vector
     }
 }
 
+__simd_callee__ inline void asc_bfloat162float_impl(
+    vector_float& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, PART_EVEN, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_bfloat162float_impl(
+    vector_float& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
+{
+    if ASC_IS_AIV {
+        vcvt(dst, src, mask, PART_ODD, MODE_ZEROING);
+    }
+}
+
 #endif

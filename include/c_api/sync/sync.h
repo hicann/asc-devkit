@@ -19,6 +19,7 @@
 
 #ifndef INCLUDE_C_API_SYNC_SYNC_H
 #define INCLUDE_C_API_SYNC_SYNC_H
+#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 #include "impl/c_api/instr_impl/npu_arch_2201/sync_impl.h"
@@ -32,7 +33,15 @@
 
 #define asc_sync_pipe(pipe) asc_sync_pipe_impl(pipe)
 
+[[deprecated("NOTICE: asc_sync_vec() is deprecated. "
+             "Please use asc_sync() instead")]]
 __aicore__ inline void asc_sync_vec();
+
+/*
+ * @ingroup Sync
+ * @brief：Perform synchronization operations for the PIPE_V pipeline.
+ */
+__aicore__ inline void asc_sync_vec(int id);
 
 __aicore__ inline void asc_sync_mte3(int id);
 
@@ -50,7 +59,7 @@ __aicore__ inline void asc_sync();
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 
-#define asc_sync_subblock_wait(pipe, flag_id) wait_flag_dev((pipe), (flag_id))
+#define asc_sync_subblock_wait(pipe, flag_id) wait_flag_dev((flag_id))
 
 #define asc_sync_block_wait(pipe, flag_id) wait_flag_dev((flag_id))
 

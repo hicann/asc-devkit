@@ -43,7 +43,7 @@ TEST_F(TestVectorDatamoveLoadAlignPld, LoadAlignPld_Succ)
 {
     vector_bool dst = asc_create_mask_b16(PAT_ALL);
     __ubuf__ uint32_t* src = reinterpret_cast<__ubuf__ uint32_t*>(22);
-    addr_reg offset = asc_create_addr_reg_b32(64);
+    addr_reg offset = asc_update_addr_reg_b32(64);
 
     MOCKER_CPP(pld, void(vector_bool&, __ubuf__ uint32_t*, addr_reg, Literal)).times(1).will(invoke(pld_stub));
 
@@ -55,7 +55,7 @@ TEST_F(TestVectorDatamoveLoadAlignPld, LoadAlignPldUpsample_Succ)
 {
     vector_bool dst = asc_create_mask_b16(PAT_ALL);
     __ubuf__ uint32_t* src = reinterpret_cast<__ubuf__ uint32_t*>(22);
-    addr_reg offset = asc_create_addr_reg_b32(64);
+    addr_reg offset = asc_update_addr_reg_b32(64);
 
     MOCKER_CPP(pld, void(vector_bool&, __ubuf__ uint32_t*, addr_reg, Literal)).times(1).will(invoke(pld_upsample_stub));
 
@@ -67,7 +67,7 @@ TEST_F(TestVectorDatamoveLoadAlignPld, LoadAlignPldDownsample_Succ)
 {
     vector_bool dst = asc_create_mask_b16(PAT_ALL);
     __ubuf__ uint32_t* src = reinterpret_cast<__ubuf__ uint32_t*>(22);
-    addr_reg offset = asc_create_addr_reg_b32(64);
+    addr_reg offset = asc_update_addr_reg_b32(64);
 
     MOCKER_CPP(pld, void(vector_bool&, __ubuf__ uint32_t*, addr_reg, Literal))
         .times(1)

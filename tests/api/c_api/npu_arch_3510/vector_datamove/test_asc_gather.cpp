@@ -105,10 +105,23 @@ protected:
     void SetUp() {}
     void TearDown() {}
 };
+class TestCApiVectorDataMoveAscGatherInt8 : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+class TestCApiVectorDataMoveAscGatherUint8 : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
 
 namespace {
 void vgather2_hifloat8_stub(
     vector_fp8_e5m2_t& dst, __ubuf__ float8_e5m2_t* src, vector_uint16_t index, vector_bool mask)
+{}
+void vgather2_int8_stub(vector_fp8_e5m2_t& dst, __ubuf__ float8_e5m2_t* src, vector_uint16_t index, vector_bool mask) {}
+void vgather2_uint8_stub(vector_fp8_e5m2_t& dst, __ubuf__ float8_e5m2_t* src, vector_uint16_t index, vector_bool mask)
 {}
 void vselr_hifloat8_stub(vector_uint8_t& dst, vector_uint8_t src, vector_uint8_t index) {}
 } // namespace
@@ -123,6 +136,36 @@ TEST_F(TestCApiVectorDataMoveAscGatherHifloat8, vgather2_Succ)
     MOCKER_CPP(vgather2, void(vector_fp8_e5m2_t&, __ubuf__ float8_e5m2_t*, vector_uint16_t, vector_bool))
         .times(1)
         .will(invoke(vgather2_hifloat8_stub));
+
+    asc_gather(dst, src, index, mask);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCApiVectorDataMoveAscGatherInt8, vgather2_Succ)
+{
+    __ubuf__ int8_t* src = reinterpret_cast<__ubuf__ int8_t*>(0);
+    vector_int8_t dst;
+    vector_uint16_t index;
+    vector_bool mask;
+
+    MOCKER_CPP(vgather2, void(vector_fp8_e5m2_t&, __ubuf__ float8_e5m2_t*, vector_uint16_t, vector_bool))
+        .times(1)
+        .will(invoke(vgather2_int8_stub));
+
+    asc_gather(dst, src, index, mask);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCApiVectorDataMoveAscGatherUint8, vgather2_Succ)
+{
+    __ubuf__ uint8_t* src = reinterpret_cast<__ubuf__ uint8_t*>(0);
+    vector_uint8_t dst;
+    vector_uint16_t index;
+    vector_bool mask;
+
+    MOCKER_CPP(vgather2, void(vector_fp8_e5m2_t&, __ubuf__ float8_e5m2_t*, vector_uint16_t, vector_bool))
+        .times(1)
+        .will(invoke(vgather2_uint8_stub));
 
     asc_gather(dst, src, index, mask);
     GlobalMockObject::verify();

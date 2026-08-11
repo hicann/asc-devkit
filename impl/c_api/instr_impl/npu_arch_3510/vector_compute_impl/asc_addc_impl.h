@@ -14,20 +14,20 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
 __simd_callee__ inline void asc_addc_impl(
-    vector_bool& dst0, vector_uint32_t& dst1, vector_uint32_t src0, vector_uint32_t src1, vector_bool src2,
+    vector_bool& carry, vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool carry_src,
     vector_bool mask)
 {
     if ASC_IS_AIV {
-        vaddcs(dst0, dst1, src0, src1, src2, mask);
+        vaddcs(carry, dst, src0, src1, carry_src, mask);
     }
 }
 
 __simd_callee__ inline void asc_addc_impl(
-    vector_bool& dst0, vector_int32_t& dst1, vector_int32_t src0, vector_int32_t src1, vector_bool src2,
+    vector_bool& carry, vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool carry_src,
     vector_bool mask)
 {
     if ASC_IS_AIV {
-        vaddcs(dst0, dst1, src0, src1, src2, mask);
+        vaddcs(carry, dst, src0, src1, carry_src, mask);
     }
 }
 

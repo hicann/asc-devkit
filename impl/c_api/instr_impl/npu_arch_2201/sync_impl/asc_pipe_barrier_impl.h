@@ -29,6 +29,17 @@
 
 __aicore__ inline void asc_sync_vec_impl() { pipe_barrier(pipe_t::PIPE_ALL); }
 
+__aicore__ inline void asc_sync_vec_impl(int id)
+{
+    set_flag(pipe_t::PIPE_V, pipe_t::PIPE_MTE2, static_cast<event_t>(id));
+    set_flag(pipe_t::PIPE_V, pipe_t::PIPE_MTE3, static_cast<event_t>(id));
+    set_flag(pipe_t::PIPE_V, pipe_t::PIPE_S, static_cast<event_t>(id));
+    wait_flag(pipe_t::PIPE_V, pipe_t::PIPE_MTE2, static_cast<event_t>(id));
+    wait_flag(pipe_t::PIPE_V, pipe_t::PIPE_MTE3, static_cast<event_t>(id));
+    wait_flag(pipe_t::PIPE_V, pipe_t::PIPE_S, static_cast<event_t>(id));
+    pipe_barrier(pipe_t::PIPE_V);
+}
+
 __aicore__ inline void asc_sync_mte2_impl(int id)
 {
     set_flag(pipe_t::PIPE_MTE2, pipe_t::PIPE_MTE3, static_cast<event_t>(id));

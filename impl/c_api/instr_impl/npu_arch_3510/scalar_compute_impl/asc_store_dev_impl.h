@@ -20,46 +20,46 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
-constexpr int16_t ASC_C_API_DEFAULIT_OFFSET = 0;
+constexpr int16_t ASC_C_API_DEFAULT_OFFSET = 0;
 
 __aicore__ inline void asc_store_dev_impl(__gm__ int8_t* addr, int8_t value)
 {
-    st_dev(*(reinterpret_cast<uint8_t*>(&value)), reinterpret_cast<__gm__ uint8_t*>(addr), ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(*(reinterpret_cast<uint8_t*>(&value)), reinterpret_cast<__gm__ uint8_t*>(addr), ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ uint8_t* addr, uint8_t value)
 {
-    st_dev(value, addr, ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(value, addr, ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ int16_t* addr, int16_t value)
 {
-    st_dev(*(reinterpret_cast<uint16_t*>(&value)), reinterpret_cast<__gm__ uint16_t*>(addr), ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(*(reinterpret_cast<uint16_t*>(&value)), reinterpret_cast<__gm__ uint16_t*>(addr), ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ uint16_t* addr, uint16_t value)
 {
-    st_dev(value, addr, ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(value, addr, ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ int32_t* addr, int32_t value)
 {
-    st_dev(*(reinterpret_cast<uint32_t*>(&value)), reinterpret_cast<__gm__ uint32_t*>(addr), ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(*(reinterpret_cast<uint32_t*>(&value)), reinterpret_cast<__gm__ uint32_t*>(addr), ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ uint32_t* addr, uint32_t value)
 {
-    st_dev(value, addr, ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(value, addr, ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ int64_t* addr, int64_t value)
 {
-    st_dev(*(reinterpret_cast<uint64_t*>(&value)), reinterpret_cast<__gm__ uint64_t*>(addr), ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(*(reinterpret_cast<uint64_t*>(&value)), reinterpret_cast<__gm__ uint64_t*>(addr), ASC_C_API_DEFAULT_OFFSET);
 }
 
 __aicore__ inline void asc_store_dev_impl(__gm__ uint64_t* addr, uint64_t value)
 {
-    st_dev(value, addr, ASC_C_API_DEFAULIT_OFFSET);
+    st_dev(value, addr, ASC_C_API_DEFAULT_OFFSET);
 }
 #endif
 

@@ -18,3 +18,4 @@ TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vmins, asc_min_scalar, vmins, vector_int
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vmins, asc_min_scalar, vmins, vector_uint8_t, uint8_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vmins, asc_min_scalar, vmins, vector_float, float);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vmins, asc_min_scalar, vmins, vector_half, half);
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vmins, asc_min_scalar, vmins, vector_bfloat16_t, bfloat16_t);

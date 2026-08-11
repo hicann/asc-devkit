@@ -47,3 +47,14 @@ TEST_VECTOR_COMPUTE_EXP_SUB(ExpSub, asc_exp_sub, vexpdif, vector_float, vector_h
 TEST_VECTOR_COMPUTE_EXP_SUB(ExpSub, asc_exp_sub, vexpdif, vector_float, vector_float);
 TEST_VECTOR_COMPUTE_EXP_SUB(ExpSubV2, asc_exp_sub_v2, vexpdif, vector_float, vector_half);
 TEST_VECTOR_COMPUTE_EXP_SUB(ExpSubV2, asc_exp_sub_v2, vexpdif, vector_float, vector_float);
+
+TEST(RegExpSubHalf2FloatPositionOverloads, AcceptAllLegalSourcePositionArguments)
+{
+    vector_float dst;
+    vector_half src0;
+    vector_half src1;
+    vector_bool mask;
+
+    asc_exp_sub_half2float(dst, src0, src1, mask, ASC_POSITION_EVEN);
+    asc_exp_sub_half2float(dst, src0, src1, mask, ASC_POSITION_ODD);
+}

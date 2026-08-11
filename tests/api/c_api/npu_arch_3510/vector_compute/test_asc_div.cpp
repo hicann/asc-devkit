@@ -12,3 +12,7 @@
 
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vdiv, asc_div, vdiv, vector_half);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vdiv, asc_div, vdiv, vector_float);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(Vdiv, asc_div, vdiv, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(Vdiv, asc_div, vdiv, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(Vdiv, asc_div, vdiv, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(Vdiv, asc_div, vdiv, vector_uint32_t);

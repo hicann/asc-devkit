@@ -474,6 +474,13 @@ function sync_utils_from_asc_devkit()
   cp -a "${tmp_dir}/impl/utils" "${CURRENT_DIR}/impl/"
   cp -a "${tmp_dir}/include/utils" "${CURRENT_DIR}/include/"
 
+  local asc_simd_header="${CURRENT_DIR}/include/c_api/asc_simd.h"
+  if [[ ! -f "${asc_simd_header}" ]]; then
+    log "Error: ${asc_simd_header} was not found."
+    exit 1
+  fi
+  sed -i '/^[[:space:]]*#include[[:space:]]*"utils\/base\/helpers\.h"[[:space:]]*$/d' "${asc_simd_header}"
+
   local utils_cmake="${CURRENT_DIR}/impl/utils/CMakeLists.txt"
   if [[ -f "${utils_cmake}" ]]; then
     sed -i '/add_dependencies(kernel_tiling_headers template_argument tiling_log_target)/,+3d' "${utils_cmake}"
