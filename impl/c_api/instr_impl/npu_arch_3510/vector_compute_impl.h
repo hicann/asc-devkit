@@ -6468,7 +6468,13 @@ __simd_callee__ inline void asc_mull(
     asc_mull_impl(dst0, dst1, src0, src1, mask);
 }
 
-__simd_callee__ inline void asc_clear_ar_spr() { asc_clear_ar_spr_impl(); }
+[[deprecated("NOTICE: asc_clear_ar_spr is deprecated. Please use asc_squeeze_and_storeunalign_init instead.")]]
+__simd_callee__ inline void asc_clear_ar_spr()
+{
+    asc_clear_ar_spr_impl();
+}
+
+__simd_callee__ inline void asc_squeeze_and_storeunalign_init() { asc_clear_ar_spr_impl(); }
 
 // ==========asc_bitsort(half/float)==========
 __aicore__ inline void asc_bitsort(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat)

@@ -396,6 +396,8 @@ Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表�
 | [asc_loadunalign_pre](reg/reg_load/asc_loadunalign_pre.md) | 用于在进行非对齐数据搬入前的初始化，需配合[asc_loadunalign](reg/reg_load/asc_loadunalign.md)接口使用。 |
 | [asc_storealign](reg/reg_store/asc_storealign.md) | reg计算数据搬运接口，从矢量数据寄存器连续对齐搬出到UB，NORM搬出模式。 |
 | [asc_scatter](reg/reg_store/asc_scatter.md) | 根据索引值index将源操作数src中的元素分散到目的操作数dst中。 |
+| [asc_squeeze_and_storeunalign](reg/reg_store/asc_squeeze_and_storeunalign.md) | reg计算数据搬运接口，适用于从矢量数据寄存器中筛选出有效元素后按照连续非32B对齐的起始地址连续搬出到UB的场景。 |
+| [asc_squeeze_and_storeunalign_finalize](reg/reg_store/asc_squeeze_and_storeunalign_finalize.md) | reg计算数据搬运接口，适用于从矢量数据寄存器中筛选出有效元素后按照连续非32B对齐的起始地址连续搬出到UB的尾块场景。 |
 | [asc_store](reg/reg_store/asc_store.md) | reg计算数据搬运接口，适用于从矢量数据寄存器搬出到UB的场景，不区分是否对齐，在追求极致性能时，应尽量避免使用该接口。 |
 | [asc_storealign_1st](reg/reg_store/asc_storealign_1st.md) | reg计算数据搬运接口，忽略mask向dst搬出src第一个元素。 |
 | [asc_storealign_1st_postupdate](reg/reg_store/asc_storealign_1st_postupdate.md) | reg计算数据搬运接口，忽略mask向dst搬出src第一个元素，启用Post Update。 |
@@ -421,6 +423,8 @@ Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表�
 | [asc_storealign_v4（废弃）](reg/reg_store/asc_storealign_v4_deprecated.md) | reg计算数据搬运接口，通过int32_t传入偏移并由硬件自动执行Post Update。 |
 | [asc_storealign_v5（废弃）](reg/reg_store/asc_storealign_v5_deprecated.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续对齐搬出到UB，使用repeat stride模式。 |
 | [asc_scatter（废弃）](reg/reg_store/asc_scatter_deprecated.md) | 根据索引值index将源操作数src中的元素分散到目的操作数dst中。 |
+| [asc_storeunalign_post（废弃）](reg/reg_store/asc_storeunalign_post_deprecated.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的尾块场景。 |
+| [asc_storeunalign_postupdate（废弃）](reg/reg_store/asc_storeunalign_postupdate_deprecated.md) | reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续非32B对齐的起始地址连续搬出到UB的场景。 |
 
 ## Reg矢量计算
 
@@ -542,7 +546,8 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 | [asc_frequency_histogram](reg/histogram_compute/asc_frequency_histogram.md) | 对直方图数据进行频率统计。 |
 | [asc_arange](reg/index_operate/asc_arange.md) | 以传入的value为起始值，生成递增/递减的索引，并将生成的索引保存在dst中。 |
 | [asc_mem_bar](reg/sync_control/asc_mem_bar.md) | Reg计算宏函数内不同流水线之间的同步指令。 |
-| [asc_clear_ar_spr](reg/system_variables_access/asc_clear_ar_spr.md) | 对AR寄存器进行清理，AR寄存器通常由[asc_squeeze_with_status](reg/compare_and_select/asc_squeeze_with_status.md)接口使用。 |
+| [asc_squeeze_and_storeunalign_init](reg/system_variables_access/asc_squeeze_and_storeunalign_init.md) | 对AR特殊寄存器进行清零操作。AR寄存器用于配合[asc_squeeze_and_storeunalign](../c_api/reg/reg_store/asc_squeeze_and_storeunalign.md)及[asc_squeeze_and_storeunalign_finalize](../c_api/reg/reg_store/asc_squeeze_and_storeunalign_finalize.md)使用。 |
+| [asc_clear_ar_spr（废弃）](reg/system_variables_access/asc_clear_ar_spr_deprecated.md) | 对AR寄存器进行清理，AR寄存器通常由[asc_squeeze_with_status](reg/compare_and_select/asc_squeeze_with_status.md)接口使用。 |
 | [asc_create_iter_reg（废弃）](reg/reg_data_types/asc_create_iter_reg_deprecated.md) | 该接口已废弃，请使用asc_update_addr_reg实现此功能。 |
 | [asc_muls（废弃）](reg/arithmetic_compute/asc_muls_deprecated.md) | 对源操作数src和value进行乘法运算再按照数据类型转换的ROUND舍入模式转成half类型，根据mask将结果写入目的操作数dst。 |
 | [asc_exp_sub（废弃）](reg/compound_compute/asc_exp_sub_deprecated.md) | 将src0与src1相减，差值作为e的指数计算。 |

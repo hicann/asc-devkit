@@ -42,27 +42,6 @@ store_unalign或store_unalign_postupdate接口执行时，会将主块搬出至U
 
 ## 函数原型
 
-- 不指定偏移量，配合[asc_storeunalign_postupdate](asc_storeunalign_postupdate.md)使用不指定存储偏移量的接口。
-
-    ```cpp
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ int8_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ uint8_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ fp4x2_e2m1_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ fp4x2_e1m2_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ int4b_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ fp8_e8m0_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ fp8_e5m2_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ fp8_e4m3fn_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ int16_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ uint16_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ half* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ bfloat16_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ int32_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ uint32_t* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ float* dst, vector_store_unalign src)
-    __simd_callee__ inline void asc_storeunalign_post(__ubuf__ int64_t* dst, vector_store_unalign src)
-    ```
-
 - 使用int32_t作为偏移量，配合[asc_storeunalign](asc_storeunalign.md)接口。
 
     ```cpp
@@ -108,15 +87,6 @@ store_unalign或store_unalign_postupdate接口执行时，会将主块搬出至U
 
 ## 参数说明
 
-- 不指定偏移量
-
-    **表1** 参数说明
-
-    | 参数名  | 输入/输出 | 描述 |
-    | :----- | :------- | :------- |
-    | dst | 输出 | 目的操作数（矢量）的起始地址。 |
-    | src | 输入 | 非对齐寄存器，用于保存非对齐数据，长度32B。 |
-
 - 使用int32_t作为存储偏移量
 
     **表2** 参数说明
@@ -154,17 +124,6 @@ PIPE_V
 - 需要保证目的操作数的地址加上offset对应的偏移地址，结果等于数据搬运的结束地址，具体见调用示例。
 
 ## 调用示例
-
-- 不指定偏移量
-
-    ```cpp
-    // dst地址为8，非32B对齐。范围为[8:520]。
-    __ubuf__ uint32_t* dst = (__ubuf__ uint32_t*)asc_get_phy_buf_addr(8);
-    vector_store_unalign ureg;
-    vector_uint32_t src;
-    asc_storeunalign_postupdate(dst, ureg, src);
-    asc_storeunalign_post(dst, ureg);
-    ```
 
 - 使用int32_t作为存储偏移量
 

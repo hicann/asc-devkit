@@ -1403,7 +1403,11 @@ __simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vect
 
 __simd_callee__ inline void asc_prelu(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask);
 
+//===================asc_squeeze_and_storeunalign_init=====================
+__simd_callee__ inline void asc_squeeze_and_storeunalign_init();
+
 //===================asc_clear_ar_spr=====================
+[[deprecated("NOTICE: asc_clear_ar_spr is deprecated. Please use asc_squeeze_and_storeunalign_init instead.")]]
 __simd_callee__ inline void asc_clear_ar_spr();
 
 __simd_callee__ inline void asc_copy(vector_bool& dst, vector_uint16_t src, int16_t part);
