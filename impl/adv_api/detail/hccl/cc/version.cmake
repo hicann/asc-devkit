@@ -7,7 +7,7 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
-set_package(hccl VERSION "9.0.0")
+set_package(hccl VERSION "9.2.0")
 
 set_build_dependencies(hcomm ">=8.5")
 set_build_dependencies(runtime ">=8.5")

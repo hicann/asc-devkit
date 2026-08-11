@@ -52,8 +52,10 @@ usage() {
         echo "    --pkg                Compile package"
         echo "    --pkg-type=<TYPE>    Specify package type (TYPE options: run/rpm/deb/all or comma-separated values, eg: deb,rpm), Default: run"
         echo "                         all builds run, rpm and deb packages"
-        echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann"
-        echo "    -j                   Compile thread nums, default is 32, eg: -j 8"
+        echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann
+                         Default: /usr/local/Ascend/cann (root) or \$HOME/Ascend/cann (non-root)"
+        echo "    -j                   Compile thread nums, default is 32, eg: -j 8
+                         Adjusted to CPU core count if it exceeds the core count"
         echo "    --cann_3rd_lib_path  Set the path for third-party library dependencies, eg: ./build"
         echo "    --asan               Enable ASAN (address Sanitizer)"
         echo $dotted_line
@@ -70,8 +72,10 @@ usage() {
         echo "Test Options:"
         echo $dotted_line
         echo "    -t, --test           Build and run all unit tests"
-        echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann"
-        echo "    -j                   Compile thread nums, default is 32, eg: -j 8"
+        echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann
+                         Default: /usr/local/Ascend/cann (root) or \$HOME/Ascend/cann (non-root)"
+        echo "    -j                   Compile thread nums, default is 32, eg: -j 8
+                         Adjusted to CPU core count if it exceeds the core count"
         echo "    --adv_test            Build and run the adv part of unit tests"
         echo "    --adv_test_two        Build and run the adv_test_two part of unit tests"
         echo "    --arm_test            Build and run the arm part of unit tests"
@@ -107,9 +111,11 @@ usage() {
   echo "    The following are all supported arguments:"
   echo $dotted_line
   echo "    -h, --help           Display help information"
-  echo "    -j                   Compile thread nums, default is 32, eg: -j 8"
+  echo "    -j                   Compile thread nums, default is 32, eg: -j 8
+                         Adjusted to CPU core count if it exceeds the core count"
   echo "    -t, --test           Build and run all unit tests"
-  echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann"
+  echo "    -p, --cann_path      Set the cann package installation directory, eg: /usr/local/Ascend/cann
+                         Default: /usr/local/Ascend/cann (root) or \$HOME/Ascend/cann (non-root)"
   echo "    --adv_test            Build and run the adv part of unit tests"
   echo "    --adv_test_two        Build and run the adv_test_two part of unit tests"
   echo "    --arm_test            Build and run the arm part of unit tests"

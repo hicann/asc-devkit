@@ -26,15 +26,6 @@ target_include_directories(asc_hccl_headers INTERFACE
 
 if(BUILD_OPEN_PROJECT)
     add_cann_third_party(json)
-    add_cann_third_party(rdma-core)
-
-    if(NOT TARGET rdma_core_headers)
-        add_library(rdma_core_headers INTERFACE)
-
-        target_include_directories(rdma_core_headers INTERFACE
-            ${RDMA_CORE_INCLUDE_DIR}
-        )
-    endif()
 endif()
 
 add_subdirectory(framework)

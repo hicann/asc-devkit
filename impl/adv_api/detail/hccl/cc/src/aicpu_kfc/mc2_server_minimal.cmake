@@ -46,7 +46,6 @@ function(_add_mc2_server_object target_name attach_to_mc2_server)
         ${_mc2_server_orion_head_list}
     )
     target_link_libraries(${target_name} PRIVATE
-        rdma_core_headers
         ascend_hal
         c_sec
         unified_dlog
@@ -119,7 +118,6 @@ function(configure_mc2_server_minimal_target)
     )
 
     target_link_libraries(mc2_server PRIVATE
-        rdma_core_headers
         -Wl,--no-as-needed
         ascend_hal
         c_sec
