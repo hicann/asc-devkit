@@ -2,7 +2,7 @@
 
 ## 特性说明
 
-调试接口（如本章的上板打印、异常检测接口）开启后会对算子性能产生一定影响，通常在调测阶段使用，生产环境建议关闭。ASCENDC_DUMP宏定义是控制调试接口（）打印的开关。
+调试接口（如本章的上板打印、异常检测接口）开启后会对算子性能产生一定影响，通常在调测阶段使用，生产环境建议关闭。ASCENDC_DUMP宏定义是控制调试接口打印的开关。
 
 ## 使用示例
 
@@ -12,7 +12,7 @@
         ```plain
         // 关闭所有算子的打印功能
         ascendc_compile_definitions({kernel_target_name} PRIVATE
-            ASCENDC_DUMP = 0
+            ASCENDC_DUMP=0
         )
         ```
 
