@@ -29,6 +29,14 @@ struct reg_tensor;
 template <>
 struct reg_tensor<bool>;
 
+template <>
+struct reg_tensor<bool> {
+    using type = bool;
+    using reg_type = typename type_get<bool>::type;
+
+    reg_type reg;
+};
+
 template <typename DataType>
 struct reg_tensor {
     using type = DataType;
@@ -42,14 +50,6 @@ struct reg_tensor {
 
     reg_type reg;
     vector_bool mask;
-};
-
-template <>
-struct reg_tensor<bool> {
-    using type = bool;
-    using reg_type = typename type_get<bool>::type;
-
-    reg_type reg;
 };
 } // namespace te
 } // namespace asc

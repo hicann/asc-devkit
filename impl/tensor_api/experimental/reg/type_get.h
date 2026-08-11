@@ -30,8 +30,6 @@ namespace te {
 template <typename DataType>
 struct type_get;
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-
 template <>
 struct type_get<bool> {
     using type = vector_bool;
@@ -126,8 +124,6 @@ template <>
 struct type_get<fp4x2_e1m2_t> {
     using type = vector_fp4x2_e1m2_t;
 };
-
-#endif
 
 } // namespace te
 } // namespace asc
