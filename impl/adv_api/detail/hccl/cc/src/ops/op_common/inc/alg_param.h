@@ -299,6 +299,8 @@ struct CcuKernelArgBase {
 struct CcuKernelInfo {
     // kernel资源组序号，group号不同时，资源复用
     u32 resGroup = 0;
+    // kernel所属dieId，从channel所在die获取，由各算法在CalcRes中填充；单die算法默认为0
+    u32 dieId = 0;
     // kernel名 string？
     char kernelFuncName[64];
     // kernel函数

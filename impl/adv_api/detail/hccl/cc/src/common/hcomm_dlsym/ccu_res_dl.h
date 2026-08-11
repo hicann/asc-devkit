@@ -13,12 +13,38 @@
 
 #include "dlsym_common.h"
 #include "ccu_types.h"
+#include "ccu/ccu_res_defs_dl.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 DECL_WEAK_FUNC(CcuResult, HcommCcuGetMemToken, uint64_t srcVa, uint64_t size, uint64_t* tokenInfo);
+DECL_WEAK_FUNC(CcuResult, HcommCcuInsResDescCreate, uint32_t dieId, HcommCcuResDescHandle* resDesc);
+DECL_WEAK_FUNC(CcuResult, HcommCcuInsResDescDestroy, HcommCcuResDescHandle resDesc);
+DECL_WEAK_FUNC(
+    CcuResult, HcommCcuInsResDescSetNum, HcommCcuResDescHandle resDesc, HcommCcuResType resType, uint32_t resNum);
+DECL_WEAK_FUNC(
+    CcuResult, HcommCcuInsResDescQueryNum, HcommCcuResDescHandle resDesc, HcommCcuResType resType, uint32_t* resNum);
+DECL_WEAK_FUNC(
+    CcuResult, HcommCcuInsCreate, const HcommCcuResDescHandle* resDescs, uint32_t resDescNum,
+    CcuInsHandle* ccuInsHandle);
+DECL_WEAK_FUNC(CcuResult, HcommCcuInsDestroy, CcuInsHandle ccuInsHandle);
+DECL_WEAK_FUNC(CcuResult, HcommCcuInsQueryResDesc, CcuInsHandle ccuInsHandle, HcommCcuResDescHandle resDesc);
+DECL_WEAK_FUNC(CcuResult, HcommCcuQueryRemainResDesc, HcommCcuResDescHandle resDesc);
+DECL_WEAK_FUNC(
+    CcuResult, HcommCcuKernelQueryResReq, const void* kernelFunc, const void** kernelArgs, uint32_t argNum,
+    HcommCcuResDescHandle resDesc);
+
+DECL_SUPPORT_FLAG(HcommCcuInsResDescCreate);
+DECL_SUPPORT_FLAG(HcommCcuInsResDescDestroy);
+DECL_SUPPORT_FLAG(HcommCcuInsResDescSetNum);
+DECL_SUPPORT_FLAG(HcommCcuInsResDescQueryNum);
+DECL_SUPPORT_FLAG(HcommCcuInsCreate);
+DECL_SUPPORT_FLAG(HcommCcuInsDestroy);
+DECL_SUPPORT_FLAG(HcommCcuInsQueryResDesc);
+DECL_SUPPORT_FLAG(HcommCcuQueryRemainResDesc);
+DECL_SUPPORT_FLAG(HcommCcuKernelQueryResReq);
 
 void CcuResDlInit(void* libHcommHandle);
 
