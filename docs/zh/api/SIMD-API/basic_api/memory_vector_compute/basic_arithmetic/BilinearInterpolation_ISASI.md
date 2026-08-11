@@ -76,7 +76,7 @@ hRepeat = 2；vRepeat = 2；mask = 128；vROffset = 128。
     该步骤处理过程如下：
 
     - 步骤1收集的src0张量占用的空间大小 = 总迭代次数 \* 每次迭代处理的元素个数 = 4 \* 128 = 512。所以广播src1的元素从sharedTmpBuffer\[512\]开始存放；
-    - Brcb指令迭代次数repeatTime = src1的数据长度 / 8 = 16 / 8 = 2次（Brcb指令每次迭代取8个数）；
+    - Brcb指令迭代次数repeatTime = src1的数据长度 / 8 = 32 / 8 = 4次（Brcb指令每次迭代取8个数）；
     - 将输入src1张量中的8个数据，填充到sharedTmpBuffer\[512\]位置起的8个DataBlock中去。输入是half数据类型，故每个元素复制32 / sizeof\(half\) = 16次。
 
         结果：sharedTmpBuffer\[512:1024\] = \[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, ..., 33, 33\]。
@@ -125,7 +125,7 @@ hRepeat = 2；vRepeat = 2；mask = 128；vROffset = 128。
 
             - 迭代3计算过程：第1个DataBlock（sharedTmpBuffer\[384:399\]）与src1的26相乘，第2个DataBlock（sharedTmpBuffer\[400:415\]）与src1的27相乘；...依次类推，第8个DataBlock（sharedTmpBuffer\[496:511\]）与src1的33相乘。
 
-                即sharedTmpBuffer\[384:511\] = \[385 \* 26, ..., 390 \* 26, 391 \* 27, ..., 512 \* 33\]。
+                即sharedTmpBuffer\[384:511\] = \[385 \* 26, ..., 400 \* 26, 401 \* 27, ..., 512 \* 33\]。
 
 - 步骤4. 水平迭代累加，输出到dst。
 
