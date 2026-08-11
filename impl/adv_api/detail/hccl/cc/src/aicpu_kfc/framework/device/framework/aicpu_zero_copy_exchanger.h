@@ -69,7 +69,7 @@ private:
     bool IsAllIpcAddressValid();
     bool IsSupportZeroCopyLinkType(LinkType linkType);
 
-    /* 尝试从data中读数据，只有flag是valid时可以读, 读成功需要置invalid, 如果失败则返回EAGIN表示需要重试 */
+    /* 尝试从data中读数据，只有flag是valid时可以读, 读成功需要置invalid, 如果失败则返回HCCL_E_AGAIN表示需要重试 */
     HcclResult TryToRead(FlagData& data, u64& in, u64& out);
 
     HcclResult GetRemoteRanks(TagRes& tagRes, OpCommTransport& opTransportResponse);

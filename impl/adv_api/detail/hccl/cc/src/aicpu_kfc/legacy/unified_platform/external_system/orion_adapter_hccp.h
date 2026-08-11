@@ -239,7 +239,7 @@ u32 HrtRaSocketGetWhiteListStatus();
 
 struct RaSocketWhitelist {
     IpAddress remoteIp; /**< IP address of remote */
-    uint32_t connLimit; /**< limit of whilte list */
+    uint32_t connLimit; /**< limit of white list */
     std::string tag;
 };
 
@@ -453,7 +453,7 @@ using HrtRaUbCreateJettyParam = struct HrtRaUbJettyCreateParamDef {
     u32 sqeBufIndex{0};
 
     // HOST_OFFLOAD / HOST_OPBASE / CACHE_LOCK_DWQE 类型的Jetty ，需要指定WQEBB的数目
-    // STADARD 类型Jetty，该参数代表SQ深度
+    // STANDARD 类型Jetty，该参数代表SQ深度
     u32 sqDepth{0};
     u32 rqDepth{64};
     HrtTransportMode transMode{HrtTransportMode::RM}; // 仅能使用RM模式的Jetty
@@ -624,7 +624,7 @@ using RaUbGetTpInfoParam = struct RaUbGetTpInfoParamDef {
 
     explicit RaUbGetTpInfoParamDef() = default;
     RaUbGetTpInfoParamDef(const IpAddress& locAddr, const IpAddress& rmtAddr, TpProtocol tpProtocol)
-        : locAddr(locAddr), rmtAddr(rmtAddr), tpProtocol(tpProtocol){};
+        : locAddr(locAddr), rmtAddr(rmtAddr), tpProtocol(tpProtocol) {};
 
     std::string Describe() const
     {

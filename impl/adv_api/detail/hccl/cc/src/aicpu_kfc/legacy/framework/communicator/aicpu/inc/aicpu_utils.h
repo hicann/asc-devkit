@@ -18,75 +18,79 @@
 #include "data_type.h"
 
 /* 检查指针, 若指针为NULL, 则记录日志, 并返回错误 */
-#define CHK_PTR_NULL_WITH_MSG(ptr, format, ...)                                                                        \
-    do {                                                                                                               \
-        if (UNLIKELY((ptr) == nullptr)) {                                                                              \
-            HCCL_ERROR("[%s]errNo[0x%016llx]ptr [%s] is NULL, return HCCL_E_PTR, additional msg: " format,             \
-                       __func__, HCCL_ERROR_CODE(HCCL_E_PTR), #ptr, ##__VA_ARGS__);                                    \
-            return HCCL_E_PTR;                                                                                         \
-        }                                                                                                              \
+#define CHK_PTR_NULL_WITH_MSG(ptr, format, ...)                                                               \
+    do {                                                                                                      \
+        if (UNLIKELY((ptr) == nullptr)) {                                                                     \
+            HCCL_ERROR(                                                                                       \
+                "[%s]errNo[0x%016llx]ptr [%s] is NULL, return HCCL_E_PTR, additional msg: " format, __func__, \
+                HCCL_ERROR_CODE(HCCL_E_PTR), #ptr, ##__VA_ARGS__);                                            \
+            return HCCL_E_PTR;                                                                                \
+        }                                                                                                     \
     } while (0)
 
-#define CHECK_DATA_TYPE(dataType)                                                                                      \
-    do {                                                                                                               \
-        if ((dataType) == DataType::INVALID) {                                                                           \
-            HCCL_ERROR("[%s] dataType is invalid", __func__);                                                          \
-            return HCCL_E_PARA;                                                                                        \
-        }                                                                                                              \
+#define CHECK_DATA_TYPE(dataType)                             \
+    do {                                                      \
+        if ((dataType) == DataType::INVALID) {                \
+            HCCL_ERROR("[%s] dataType is invalid", __func__); \
+            return HCCL_E_PARA;                               \
+        }                                                     \
     } while (0)
 
 namespace Hccl {
 class AicpuMc2Handler;
 constexpr uint32_t MAX_REPORT_CNT = 256U;
-constexpr uint32_t GET_TASK_STATUS    = 1;
+constexpr uint32_t GET_TASK_STATUS = 1;
 constexpr uint32_t GET_EXCEPTION_INFO = 0;
-constexpr uint32_t CCORE_WAIT_TYPE    = 0;
-constexpr uint32_t CCORE_NOTIFY_TYPE  = 1;
+constexpr uint32_t CCORE_WAIT_TYPE = 0;
+constexpr uint32_t CCORE_NOTIFY_TYPE = 1;
 
 class AicpuUtils {
 public:
     friend class AicpuMc2Handler;
     AicpuUtils();
     ~AicpuUtils() = default;
-    static AicpuUtils &GetInstance();
+    static AicpuUtils& GetInstance();
 
-    void CreateSingleInstance(void *args) const;
+    void CreateSingleInstance(void* args) const;
     HcclResult Init() const;
 
-    HcclResult WaitCommFree(CommunicatorImplLite *communicatorImplLite, const char *funcName) const;
+    HcclResult WaitCommFree(CommunicatorImplLite* communicatorImplLite, const char* funcName) const;
 
-    void GetStreamException(StreamLite *curStream, string nullInfo, CommunicatorImplLite *communicatorImplLite, string additionInfo) const;
+    void GetStreamException(
+        StreamLite* curStream, string nullInfo, CommunicatorImplLite* communicatorImplLite, string additionInfo) const;
 
-    HcclResult HcclLaunchCcore(void *opHandle, uint64_t dstAddr, uint32_t turnNum, uint64_t turnNumAddr, bool isLast,
-                               int ccoreType) const;
+    HcclResult HcclLaunchCcore(
+        void* opHandle, uint64_t dstAddr, uint32_t turnNum, uint64_t turnNumAddr, bool isLast, int ccoreType) const;
 
-    void ConvertCollOperatorMem(CollAlgOperator &algOperator, HcclAicpuOpLite &op, const HcclOpData *data,
-                                const uint64_t &size) const;
+    void ConvertCollOperatorMem(
+        CollAlgOperator& algOperator, HcclAicpuOpLite& op, const HcclOpData* data, const uint64_t& size) const;
 
-    int  GetException(StreamLite *curStream, uint32_t flag, CommunicatorImplLite *communicatorImplLite, string additionInfo = "") const;
+    int GetException(
+        StreamLite* curStream, uint32_t flag, CommunicatorImplLite* communicatorImplLite,
+        string additionInfo = "") const;
 
-    HcclResult GetCommHandle(CommunicatorImplLite *communicatorImplLite, void **opHandle) const;
+    HcclResult GetCommHandle(CommunicatorImplLite* communicatorImplLite, void** opHandle) const;
 
-    HcclResult ConvertCollOperatorMemV(CollAlgOperator &algOperator, HcclAicpuOpLite &op, const HcclOpData *data) const;
+    HcclResult ConvertCollOperatorMemV(CollAlgOperator& algOperator, HcclAicpuOpLite& op, const HcclOpData* data) const;
 
-    void       CalcA2ASendRecvMem(const CollAlgOperator &algOperator, uint64_t &sendSize, uint64_t &recvSize) const;
+    void CalcA2ASendRecvMem(const CollAlgOperator& algOperator, uint64_t& sendSize, uint64_t& recvSize) const;
 
-    HcclResult FillKernelParam(HcclOpData *data) const;
+    HcclResult FillKernelParam(HcclOpData* data) const;
 
-    HcclResult RecoverKernelParam(CommunicatorImplLite *communicatorImplLite, HcclOpData *data);
+    HcclResult RecoverKernelParam(CommunicatorImplLite* communicatorImplLite, HcclOpData* data);
 
-    HcclResult RestoreOpRes(CommunicatorImplLite *communicatorImplLite);
+    HcclResult RestoreOpRes(CommunicatorImplLite* communicatorImplLite);
 
-    HcclResult ExecuteOp(CommunicatorImplLite *communicatorImplLite);
+    HcclResult ExecuteOp(CommunicatorImplLite* communicatorImplLite);
 
-    HcclResult FillCollOperatorMemInfo(CollAlgOperator &algOperator, HcclAicpuOpLite &op, const HcclOpData *data) const;
+    HcclResult FillCollOperatorMemInfo(CollAlgOperator& algOperator, HcclAicpuOpLite& op, const HcclOpData* data) const;
 
 private:
     map<uint32_t, HcclKernelParamLite*> kernelParamMap_;
-    HcclKernelParamLite*                kernelParam_{nullptr};
-    uint32_t                            rankSize_{0};
-    uint32_t                            myRank_{0};
-    mutable std::shared_timed_mutex     handlerMutex_{};
+    HcclKernelParamLite* kernelParam_{nullptr};
+    uint32_t rankSize_{0};
+    uint32_t myRank_{0};
+    mutable std::shared_timed_mutex handlerMutex_{};
 };
 } // namespace Hccl
 

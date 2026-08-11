@@ -1,12 +1,12 @@
 /**
-* Copyright (c) 2025 Huawei Technologies Co., Ltd.
-* This program is free software, you can redistribute it and/or modify it under the terms and conditions of
-* CANN Open Software License Agreement Version 2.0 (the "License").
-* Please refer to the License for details. You may not use this file except in compliance with the License.
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
-* INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-* See LICENSE in the root of the software repository for the full text of the License.
-*/
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 #ifndef TASK_PROFILING_PUB_H
 #define TASK_PROFILING_PUB_H
 
@@ -47,7 +47,7 @@ struct ProfReporterData {
     char tag[ENGINE_MAX_TAG_LEN + 1]; // the sub-type of the module, data with different tag will be written
     u32 deviceId;                     // the index of device
     size_t dataLen;                   // the length of send data
-    u8 *data;                         // the data content
+    u8* data;                         // the data content
 };
 
 struct TaskData {
@@ -56,42 +56,24 @@ struct TaskData {
 
     TaskType taskType;
 
-    TaskParaDMA DMA;        // taskType = SDMA/RDMA使用, 包括rtRDMASend写notify
-    TaskParaReduce Reduce;  // taskType = inline/CCE Reduce使用
-    TaskParaNotify Notify;  // taskType = Noitfy Record/Wait使用
-    TaskParaAiv Aiv;        // taskType = Aiv   使用
+    TaskParaDMA DMA;       // taskType = SDMA/RDMA使用, 包括rtRDMASend写notify
+    TaskParaReduce Reduce; // taskType = inline/CCE Reduce使用
+    TaskParaNotify Notify; // taskType = Notify Record/Wait使用
+    TaskParaAiv Aiv;       // taskType = Aiv   使用
 
-    TaskData() : streamID(-1), taskID(-1), taskType(TaskType::TASK_SDMA)
-    {
-    }
-    TaskData(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaDMA &para)
-        : streamID(streamID),
-          taskID(taskID),
-          taskType(taskType),
-          DMA(para)
-    {
-    }
-    TaskData(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaReduce &para)
-        : streamID(streamID),
-          taskID(taskID),
-          taskType(taskType),
-          Reduce(para)
-    {
-    }
-    TaskData(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaNotify &para)
-        : streamID(streamID),
-          taskID(taskID),
-          taskType(taskType),
-          Notify(para)
-    {
-    }
-    TaskData(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaAiv &para)
-        : streamID(streamID),
-          taskID(taskID),
-          taskType(taskType),
-          Aiv(para)
-    {
-    }
+    TaskData() : streamID(-1), taskID(-1), taskType(TaskType::TASK_SDMA) {}
+    TaskData(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaDMA& para)
+        : streamID(streamID), taskID(taskID), taskType(taskType), DMA(para)
+    {}
+    TaskData(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaReduce& para)
+        : streamID(streamID), taskID(taskID), taskType(taskType), Reduce(para)
+    {}
+    TaskData(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaNotify& para)
+        : streamID(streamID), taskID(taskID), taskType(taskType), Notify(para)
+    {}
+    TaskData(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaAiv& para)
+        : streamID(streamID), taskID(taskID), taskType(taskType), Aiv(para)
+    {}
 };
 
 struct HCCLReportData {
@@ -102,7 +84,6 @@ struct HCCLReportData {
     std::string tag;
     std::string groupName;
 };
-
 
 enum class ProfTaskType {
     TASK_HCCL_INFO = 0,
@@ -228,9 +209,8 @@ const std::map<ProfTaskType, std::string> PROF_TASK_OP_NAME = {
     {ProfTaskType::TASK_BUILD_CS_TRANSPORT, "Build_Cs_Transport"},
     {ProfTaskType::TASK_UPDATE_ALG_GLOBAL_REDUCE, "Update_Glg_Global_Reduce"},
     {ProfTaskType::TASK_INTER_PROCESSOR_SYNC, "Inter_Processor_Sync"},
-    {ProfTaskType::TASK_INTER_RANK_RECORD , "Inter_Rank_Record"},
-    {ProfTaskType::TASK_INVALID, "unknown"}
-};
+    {ProfTaskType::TASK_INTER_RANK_RECORD, "Inter_Rank_Record"},
+    {ProfTaskType::TASK_INVALID, "unknown"}};
 
 inline std::string GetProfTaskOpName(ProfTaskType type)
 {
@@ -242,16 +222,24 @@ inline std::string GetProfTaskOpName(ProfTaskType type)
     return "unknown";
 }
 
-const std::map<HcclCMDType, std::string> PROF_OP_NAME = {{HcclCMDType::HCCL_CMD_INVALID, "hcom_invalid_"},
-    {HcclCMDType::HCCL_CMD_BROADCAST, "hcom_broadcast_"}, {HcclCMDType::HCCL_CMD_ALLREDUCE, "hcom_allReduce_"},
-    {HcclCMDType::HCCL_CMD_REDUCE, "hcom_reduce_"}, {HcclCMDType::HCCL_CMD_SEND, "hcom_send_"},
-    {HcclCMDType::HCCL_CMD_RECEIVE, "hcom_receive_"}, {HcclCMDType::HCCL_CMD_ALLGATHER, "hcom_allGather_"},
-    {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "hcom_reduceScatter_"}, {HcclCMDType::HCCL_CMD_SCATTER, "hcom_scatter_"},
-    {HcclCMDType::HCCL_CMD_ALLTOALL, "hcom_alltoall_"}, {HcclCMDType::HCCL_CMD_ALLTOALLV, "hcom_alltoallv_"},
-    {HcclCMDType::HCCL_CMD_ALLGATHER_V, "hcom_allGatherv_"}, {HcclCMDType::HCCL_CMD_REDUCE_SCATTER_V, "hcom_reduceScatterv_"},
+const std::map<HcclCMDType, std::string> PROF_OP_NAME = {
+    {HcclCMDType::HCCL_CMD_INVALID, "hcom_invalid_"},
+    {HcclCMDType::HCCL_CMD_BROADCAST, "hcom_broadcast_"},
+    {HcclCMDType::HCCL_CMD_ALLREDUCE, "hcom_allReduce_"},
+    {HcclCMDType::HCCL_CMD_REDUCE, "hcom_reduce_"},
+    {HcclCMDType::HCCL_CMD_SEND, "hcom_send_"},
+    {HcclCMDType::HCCL_CMD_RECEIVE, "hcom_receive_"},
+    {HcclCMDType::HCCL_CMD_ALLGATHER, "hcom_allGather_"},
+    {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "hcom_reduceScatter_"},
+    {HcclCMDType::HCCL_CMD_SCATTER, "hcom_scatter_"},
+    {HcclCMDType::HCCL_CMD_ALLTOALL, "hcom_alltoall_"},
+    {HcclCMDType::HCCL_CMD_ALLTOALLV, "hcom_alltoallv_"},
+    {HcclCMDType::HCCL_CMD_ALLGATHER_V, "hcom_allGatherv_"},
+    {HcclCMDType::HCCL_CMD_REDUCE_SCATTER_V, "hcom_reduceScatterv_"},
     {HcclCMDType::HCCL_CMD_ALLTOALLVC, "hcom_alltoallvc_"},
     {HcclCMDType::HCCL_CMD_BATCH_SEND_RECV, "hcom_batchSendRecv_"},
-    {HcclCMDType::HCCL_CMD_BATCH_PUT, "hccl_batchPut_"}, {HcclCMDType::HCCL_CMD_BATCH_GET, "hccl_batchGet_"}};
+    {HcclCMDType::HCCL_CMD_BATCH_PUT, "hccl_batchPut_"},
+    {HcclCMDType::HCCL_CMD_BATCH_GET, "hccl_batchGet_"}};
 
 inline std::string GetProfOpName(HcclCMDType cmdType)
 {
@@ -265,7 +253,7 @@ inline std::string GetProfOpName(HcclCMDType cmdType)
 
 class TaskProfiling : public ProfilerBase {
 public:
-    /* * 当前Profling只有注册接口, 生命期需要贯穿整个进程, 故选择静态成员变量
+    /* * 当前Profiling只有注册接口, 生命期需要贯穿整个进程, 故选择静态成员变量
         多线程操作相同reporter_对象需要加锁 */
     static std::mutex mutex_;
 
@@ -274,45 +262,49 @@ public:
     ~TaskProfiling() override;
 
 public:
-    HcclResult Run(const std::string &opName, const std::string &tag) const;
-    HcclResult Run(const StepData &stepData) override;
+    HcclResult Run(const std::string& opName, const std::string& tag) const;
+    HcclResult Run(const StepData& stepData) override;
     HcclResult Flush() override;
-    HcclResult Save(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaDMA &paraDMA) override;
-    HcclResult Save(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaReduce &paraReduce) override;
-    HcclResult Save(u32 &streamID, u32 &taskID, TaskType &taskType, const TaskParaNotify &paraNotify) override;
-    HcclResult Save(u32 streamID, u32 taskID, const TaskParaAiv &paraAiv) override;
-    HcclResult Save(u32 &streamID, u32 &taskID) override;
-    HcclResult SaveToLog(const TaskParaHost &paraHost) override;
-    HcclResult Save(u32 captureStreamID, u32 streamID, u32 taskID, TaskType &taskType, const TaskParaDMA &para) override;
-    HcclResult Save(u32 captureStreamID, u32 streamID, u32 taskID, TaskType &taskType, const TaskParaReduce &para) override;
-    HcclResult Save(u32 captureStreamID, u32 streamID, u32 taskID, TaskType &taskType, const TaskParaNotify &para) override;
+    HcclResult Save(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaDMA& paraDMA) override;
+    HcclResult Save(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaReduce& paraReduce) override;
+    HcclResult Save(u32& streamID, u32& taskID, TaskType& taskType, const TaskParaNotify& paraNotify) override;
+    HcclResult Save(u32 streamID, u32 taskID, const TaskParaAiv& paraAiv) override;
+    HcclResult Save(u32& streamID, u32& taskID) override;
+    HcclResult SaveToLog(const TaskParaHost& paraHost) override;
+    HcclResult Save(
+        u32 captureStreamID, u32 streamID, u32 taskID, TaskType& taskType, const TaskParaDMA& para) override;
+    HcclResult Save(
+        u32 captureStreamID, u32 streamID, u32 taskID, TaskType& taskType, const TaskParaReduce& para) override;
+    HcclResult Save(
+        u32 captureStreamID, u32 streamID, u32 taskID, TaskType& taskType, const TaskParaNotify& para) override;
     HcclResult Save(u32 captureStreamID, u32 streamID, u32 taskID) override;
-    HcclResult Save(u32 captureStreamID, u32 streamID, u32 taskID, const TaskParaAiv &paraAiv) override;
+    HcclResult Save(u32 captureStreamID, u32 streamID, u32 taskID, const TaskParaAiv& paraAiv) override;
 
-    static void DumpReportDataInfo(uint32_t type, const MsprofHcclInfo &profInfo);
+    static void DumpReportDataInfo(uint32_t type, const MsprofHcclInfo& profInfo);
 
-    static HcclResult ReportMsprofData(HCCLReportData &hcclReportData);
+    static HcclResult ReportMsprofData(HCCLReportData& hcclReportData);
+
 protected:
 private:
-    HcclResult Run(const TaskData &taskData, bool isCapture = false);
+    HcclResult Run(const TaskData& taskData, bool isCapture = false);
     u64 TimestampNanosecond() const;
 
-    HcclResult Report(struct ProfReporterData &data);
+    HcclResult Report(struct ProfReporterData& data);
 
     ProfTaskType GetProfTaskType(TaskType taskType) const;
-    double GetTaskTime(TaskType taskType, const TaskData &taskData) const;
-    void GetTaskData(TaskType taskType, const TaskData &taskData, struct MsprofHcclInfo &taskInfo);
-    void GetSdmaTaskData(TaskType taskType, const TaskData &taskData, struct MsprofHcclInfo &taskInfo) const;
-    void GetRdmaTaskData(TaskType taskType, const TaskData &taskData, struct MsprofHcclInfo &taskInfo) const;
-    void GetReduceTaskData(TaskType taskType, const TaskData &taskData, struct MsprofHcclInfo &taskInfo) const;
-    void GetNotifyTaskData(TaskType taskType, const TaskData &taskData, struct MsprofHcclInfo &taskInfo) const;
+    double GetTaskTime(TaskType taskType, const TaskData& taskData) const;
+    void GetTaskData(TaskType taskType, const TaskData& taskData, struct MsprofHcclInfo& taskInfo);
+    void GetSdmaTaskData(TaskType taskType, const TaskData& taskData, struct MsprofHcclInfo& taskInfo) const;
+    void GetRdmaTaskData(TaskType taskType, const TaskData& taskData, struct MsprofHcclInfo& taskInfo) const;
+    void GetReduceTaskData(TaskType taskType, const TaskData& taskData, struct MsprofHcclInfo& taskInfo) const;
+    void GetNotifyTaskData(TaskType taskType, const TaskData& taskData, struct MsprofHcclInfo& taskInfo) const;
     uint32_t GetTransportType(TaskType taskType) const;
     uint32_t GetTaskRole(TaskType taskType) const;
 
 private:
     const u32 localRank_;
-    bool profilingOn_;  // 当前无条件启动profiling
+    bool profilingOn_; // 当前无条件启动profiling
 };
-}  // namespace hccl
+} // namespace hccl
 
 #endif /* TASK_PROFILING_PUB_H */

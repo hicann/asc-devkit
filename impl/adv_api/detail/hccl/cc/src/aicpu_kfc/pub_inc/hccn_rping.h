@@ -151,8 +151,8 @@ extern HccnResult HccnRpingDeinit(HccnRpingCtx rpingCtx);
 /**
  * @brief Add targets to client.
  * @param rpingCtx: context of rping resource.
- * @param targetNum: Number of NPUs need probe.
- * @param target: Infoes of NPU need probe, this is an array.
+ * @param targetNum: Number of NPUs to probe.
+ * @param target: Information about NPUs to probe; this is an array.
  * @return HccnResult
  */
 extern HccnResult HccnRpingAddTarget(HccnRpingCtx rpingCtx, uint32_t targetNum, HccnRpingTargetInfo* target);
@@ -160,8 +160,8 @@ extern HccnResult HccnRpingAddTarget(HccnRpingCtx rpingCtx, uint32_t targetNum, 
 /**
  * @brief Add targets to client.
  * @param rpingCtx: context of rping resource.
- * @param targetNum: Number of NPUs need probe.
- * @param target: Infoes of NPU need probe, this is an array.
+ * @param targetNum: Number of NPUs to probe.
+ * @param target: Information about NPUs to probe; this is an array.
  * @param config: HccnRpingAddTargetConfig.
  * @return HccnResult
  */
@@ -172,8 +172,8 @@ extern HccnResult HccnRpingAddTargetV2(
 /**
  * @brief Add targets to client.
  * @param rpingCtx: context of rping resource.
- * @param targetNum: Number of NPUs need probe.
- * @param target: Infoes of NPU need probe, this is an array.
+ * @param targetNum: Number of NPUs to probe.
+ * @param target: Information about NPUs to probe; this is an array.
  * @param config: HccnRpingAddTargetConfig.
  * @return HccnResult
  */
@@ -181,20 +181,20 @@ extern HccnResult HccnRpingAddTargetWithCfg(
     HccnRpingCtx rpingCtx, uint32_t targetNum, HccnRpingTargetInfo* target, HccnRpingAddTargetConfig* config);
 
 /**
- * @brief Remove targets from targets.
+ * @brief Remove targets from client.
  * @param rpingCtx: context of rping resource.
- * @param targetNum: Number of NPUs need probe.
- * @param target: Infoes of NPU need probe, this is an array.
+ * @param targetNum: Number of NPUs to probe.
+ * @param target: Information about NPUs to probe; this is an array.
  * @return HccnResult
  */
 extern HccnResult HccnRpingRemoveTarget(HccnRpingCtx rpingCtx, uint32_t targetNum, HccnRpingTargetInfo* target);
 
 /**
- * @brief Get adding target's state.
+ * @brief Get added target states.
  * @param rpingCtx: context of rping resource.
- * @param targetNum: Number of NPUs need probe.
- * @param target: Infoes of NPU need probe, this is an array.
- * @param targetState: target state, this is an array.
+ * @param targetNum: Number of NPUs to probe.
+ * @param target: Information about NPUs to probe; this is an array.
+ * @param targetState: target states; this is an array.
  * @return HccnResult
  */
 extern HccnResult HccnRpingGetTarget(
@@ -203,7 +203,7 @@ extern HccnResult HccnRpingGetTarget(
 /**
  * @brief Start batch ping task.
  * @param rpingCtx: context of rping resource.
- * @param pktNum: Number of packet send to target.
+ * @param pktNum: Number of packets to send to target.
  * @param interval: Interval between two sends of ping packet.
  * @param timeout: Time threshold between ping & pong packet.
  * @return HccnResult
@@ -220,9 +220,9 @@ extern HccnResult HccnRpingBatchPingStop(HccnRpingCtx rpingCtx);
 /**
  * @brief Get batch ping results.
  * @param rpingCtx: context of rping resource.
- * @param targetNum: Number of NPUs need probe.
- * @param target: Infoes of NPU need probe, this is an array.
- * @param result: probe result, this is an array.
+ * @param targetNum: Number of NPUs to probe.
+ * @param target: Information about NPUs to probe; this is an array.
+ * @param result: probe results; this is an array.
  * @return HccnResult
  */
 extern HccnResult HccnRpingGetResult(
@@ -231,8 +231,8 @@ extern HccnResult HccnRpingGetResult(
 /**
  * @brief Get batch ping packet payload.
  * @param rpingCtx: context of rping resource.
- * @param payload: packet payload pointer, contain all payload, every payload head struct as HccnRpingPayloadHeader.
- * @param payloadLen: length of all payload.
+ * @param payload: packet payload pointer; contains all payloads, each payload starts with HccnRpingPayloadHeader.
+ * @param payloadLen: length of all payloads.
  * @return HccnResult
  */
 extern HccnResult HccnRpingGetPayload(HccnRpingCtx rpingCtx, void** payload, uint32_t* payloadLen);

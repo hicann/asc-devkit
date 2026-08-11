@@ -21,8 +21,8 @@ using DispatcherCtxPtr = void*;
 static const char* DEFAULT_DISPATCH_NAME = "";
 
 /**
- * @brief 创建dispaatcher ctx
- * @param[in] ctx 待绑定的ctx
+ * @brief 创建dispatcher ctx
+ * @param[in] devPhyId 待绑定的物理设备ID
  * @param[in] commId 待绑定的commId，与线程变量ctx绑定，若不传值，为DEFAULT_DISPATCH_NAME
  * @param[out] ctx 返回已绑定的ctx
  * @return 执行状态码 HcclResult
@@ -30,7 +30,7 @@ static const char* DEFAULT_DISPATCH_NAME = "";
 extern HcclResult CreateDispatcherCtx(DispatcherCtxPtr* ctx, u32 devPhyId, const char* commId = DEFAULT_DISPATCH_NAME);
 
 /**
- * @brief 销毁dispaatcher ctx
+ * @brief 销毁dispatcher ctx
  * @param[in] ctx 待销毁的ctx
  * @param[in] commId 待解绑的commId，若不传值，为DEFAULT_DISPATCH_NAME
  * @return 执行状态码 HcclResult
@@ -38,13 +38,13 @@ extern HcclResult CreateDispatcherCtx(DispatcherCtxPtr* ctx, u32 devPhyId, const
 extern HcclResult DestroyDispatcherCtx(DispatcherCtxPtr ctx, const char* commId = DEFAULT_DISPATCH_NAME);
 
 /**
- * @brief 绑定dispaatcher ctx
+ * @brief 绑定dispatcher ctx
  * @return 执行状态码 HcclResult
  */
 extern HcclResult SetDispatcherCtx(const DispatcherCtxPtr ctx);
 
 /**
- * @brief 获取绑定dispaatcher ctx
+ * @brief 获取绑定dispatcher ctx
  * @return 执行状态码 HcclResult
  */
 extern DispatcherCtxPtr GetDispatcherCtx(const char* commId = DEFAULT_DISPATCH_NAME);

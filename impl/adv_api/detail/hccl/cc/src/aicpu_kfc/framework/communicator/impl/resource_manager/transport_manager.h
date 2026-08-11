@@ -32,8 +32,8 @@ namespace hccl {
 
 constexpr u32 AICPU_RETRY_BACKUP_PORT = 16667;     // aicpu重执行备份默认端口
 constexpr u32 MASSIVE_IBV_CONNECTION_COUNT = 1000; // bsr大于这个链路数量就切换链路类型
-constexpr u32 SEND_QP_DEPTH_FOR_BSR = 512;         // 使用Transport NpuDriect链路的时候设置send深度为512
-constexpr u32 RECV_QP_DEPTH_FOR_BSR = 128;         // // 使用Transport NpuDriect链路的时候设置recv深度为128
+constexpr u32 SEND_QP_DEPTH_FOR_BSR = 512;         // 使用Transport NpuDirect链路的时候设置send深度为512
+constexpr u32 RECV_QP_DEPTH_FOR_BSR = 128;         // // 使用Transport NpuDirect链路的时候设置recv深度为128
 constexpr u32 MAX_THREAD_NUM = 8;                  // BatchSendRecv建链时单个线程池的最大线程数量
 
 struct TransportData {
@@ -61,7 +61,7 @@ struct TransportData {
           inputMem(inputMem),
           outputMem(outputMem),
           supportDataReceivedAck(supportDataReceivedAck),
-          remoteSocketPort(remoteSocketPort){};
+          remoteSocketPort(remoteSocketPort) {};
 
     bool operator==(const TransportData& that) const
     {
@@ -250,7 +250,7 @@ private:
         const bool supportDataReceivedAck, const LinkMode linkMode,
         const std::vector<std::shared_ptr<HcclSocket>>& socketList, const DeviceMem& inputMem,
         const DeviceMem& outputMem, const DeviceMem& expMem, bool isAicpuModeEn, bool isBackup, bool isCapture,
-        u32 notifyNum, u32 trafficClass, u32 serviceLevel, MachinePara& machinePara, RankInfo& loaclRank,
+        u32 notifyNum, u32 trafficClass, u32 serviceLevel, MachinePara& machinePara, RankInfo& localRank,
         RankInfo& remoteRank, const HcclNetDevCtx& netDevCtx, TransportLinkType linkType = TransportLinkType::RESERVED,
         const IndOpMem& indOpMem = IndOpMem(), bool isIndOp = false,
         const HcclCMDType& opType = HcclCMDType::HCCL_CMD_INVALID, bool isNpuDirectRoce = false);

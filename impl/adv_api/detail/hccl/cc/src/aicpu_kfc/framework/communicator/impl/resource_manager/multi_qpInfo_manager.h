@@ -168,7 +168,7 @@ public:
     HcclResult Init(const InitParams& params);
     // 已经调用Init函数
     bool IsInitialized();
-    // 表示多QP信息按序解析正确且存在配置 //否则为多QP未配置 配置错误init就会失败
+    // 表示多QP信息按序解析正确且存在配置 // 否则为多QP未配置 配置错误init就会失败
     HcclResult IsEnableMulQp(bool& isEnableMulQp);
     HcclResult GetMulQpFromType(MUL_QP_FROM& type);
 

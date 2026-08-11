@@ -143,7 +143,7 @@ HcclResult InsV2ReduceScatterSequenceExecutor<AlgTopoMatch, InsAlgTemplate0, Ins
     CHK_PRT_RET(
         ret != HCCL_SUCCESS,
         HCCL_ERROR(
-            "[InsV2ReduceScatterSequenceExecutor][Orchestrate]errNo[0x%016llx] Reduce scatter excutor kernel run "
+            "[InsV2ReduceScatterSequenceExecutor][Orchestrate]errNo[0x%016llx] Reduce scatter executor kernel run "
             "failed",
             HCCL_ERROR_CODE(ret)),
         ret);

@@ -53,6 +53,7 @@ extern HcclResult HcclMemExport(HcclBuf* buf, char** outDesc, uint64_t* outDescL
  * @param[in] descLen 描述信息长度
  * @param[in] isRemote 是否远端访问标识
  * @param[out] outBuf 返回的缓冲区描述符
+ * @param[in] netDevCtx 网络设备上下文
  * @return 执行状态码 HcclResult
  */
 extern HcclResult HcclMemImport(

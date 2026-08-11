@@ -150,7 +150,7 @@ private:
     /* 标记stream_是否是本对象是否申请，如果有stream不是用户传入, 而是代码申请的, 在析构时需要销毁 */
     bool stream_owner_;
 
-    /* stram所编排的逻辑task信息 */
+    /* stream所编排的逻辑task信息 */
     std::queue<TaskLogicInfo> taskLogicInfo_;
 
     s32 streamId_;

@@ -50,7 +50,7 @@ private:
     HcclResult TransformRankInfoByServerId(std::vector<hccl::RankInfo>& serverInnerInfo);
     // server间device选取是否对称校验
     HcclResult CheckInterServerDeviceId();
-    // 校验server内4p场景下deivce选取是否合法，2p与标卡场景重合
+    // 校验server内4p场景下device选取是否合法，2p与标卡场景重合
     HcclResult CheckServerInnerRankInfo();
     // 校验Nic选取是否正确，并在host网卡场景下进行nic填充
     HcclResult CheckRankTableNicInfo(std::vector<u32>& nicIdx);

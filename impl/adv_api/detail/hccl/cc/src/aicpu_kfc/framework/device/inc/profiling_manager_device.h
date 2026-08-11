@@ -16,13 +16,13 @@
 #include "prof_common.h"
 
 extern "C" {
-__attribute__((weak)) int32_t AdprofReportBatchAdditionalInfo(
-    uint32_t nonPersistantFlag, const void* data, uint32_t length);
-__attribute__((weak)) int32_t MsprofReportBatchAdditionalInfo(
-    uint32_t nonPersistantFlag, const VOID_PTR data, uint32_t length);
+__attribute__((weak)) int32_t
+AdprofReportBatchAdditionalInfo(uint32_t nonPersistantFlag, const void* data, uint32_t length);
+__attribute__((weak)) int32_t
+MsprofReportBatchAdditionalInfo(uint32_t nonPersistantFlag, const VOID_PTR data, uint32_t length);
 __attribute__((weak)) int32_t AdprofReportAdditionalInfo(uint32_t nonPersistantFlag, const void* data, uint32_t length);
-__attribute__((weak)) int32_t MsprofReportAdditionalInfo(
-    uint32_t nonPersistantFlag, const VOID_PTR data, uint32_t length);
+__attribute__((weak)) int32_t
+MsprofReportAdditionalInfo(uint32_t nonPersistantFlag, const VOID_PTR data, uint32_t length);
 __attribute__((weak)) int32_t AdprofCheckFeatureIsOn(uint64_t feature);
 __attribute__((weak)) int32_t MsprofRegisterCallback(uint32_t moduleId, ProfCommandHandle handle);
 __attribute__((weak)) uint64_t AdprofGetHashId(const char* hashInfo, size_t length);
@@ -35,10 +35,10 @@ struct ProfCommInfo {
     u32 rankNum{0};
     u32 rankId{0};
 
-    ProfCommInfo(){};
+    ProfCommInfo() {};
 
     ProfCommInfo(uint64_t groupNameHashId, u32 rankNum, u32 rankId)
-        : groupNameHashId(groupNameHashId), rankNum(rankNum), rankId(rankId){};
+        : groupNameHashId(groupNameHashId), rankNum(rankNum), rankId(rankId) {};
 };
 
 class ProfilingManager {

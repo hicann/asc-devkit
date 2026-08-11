@@ -25,9 +25,9 @@ constexpr u32 MAX_AICPU_CIRCULAR_QUEUE_LENGTH = 2048 + 128;
 
 MAKE_ENUM(QueueType, Circular_Queue, Vector_Queue)
 
-using TaskInfoQueue    = Queue<std::unique_ptr<TaskInfo>>;
+using TaskInfoQueue = Queue<std::unique_ptr<TaskInfo>>;
 using TaskInfoQueueMap = std::unordered_map<u32, std::unique_ptr<TaskInfoQueue>>;
 
-}  // namespace Hccl
+} // namespace Hccl
 
-#endif //HCCL_DFX_COMMON_H
+#endif // HCCL_DFX_COMMON_H

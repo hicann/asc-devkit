@@ -28,4 +28,4 @@ private:
 
 } // namespace Hccl
 
-#endif // HCCL_AICPU_RESOURCE_AI_CPU_RESOUCES_H_
+#endif // HCCL_AICPU_RESOURCE_AI_CPU_RESOURCE_H_

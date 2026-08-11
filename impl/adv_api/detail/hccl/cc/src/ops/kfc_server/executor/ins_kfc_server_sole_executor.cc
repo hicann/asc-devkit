@@ -72,7 +72,7 @@ HcclResult InsKfcServerSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchestrate(
     CHK_PRT_RET(
         ret != HCCL_SUCCESS,
         HCCL_ERROR(
-            "[InsKfcServerSoleExecutor][Orchestrate]errNo[0x%016llx] KfcServer excutor kernel run failed",
+            "[InsKfcServerSoleExecutor][Orchestrate]errNo[0x%016llx] KfcServer executor kernel run failed",
             HCCL_ERROR_CODE(ret)),
         ret);
     return HCCL_SUCCESS;

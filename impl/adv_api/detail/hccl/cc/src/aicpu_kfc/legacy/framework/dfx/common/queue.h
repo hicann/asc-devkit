@@ -20,41 +20,31 @@
 #include "log.h"
 namespace Hccl {
 
-template <typename T> class Queue {
+template <typename T>
+class Queue {
 public:
     class Iterator {
     protected:
         typename std::vector<T>::iterator it_;
 
     protected:
-        virtual void check()
-        {
-            return;
-        }
+        virtual void check() { return; }
 
     public:
-        using pointer   = T *;
-        using reference = T &;
+        using pointer = T*;
+        using reference = T&;
 
-        explicit Iterator(typename std::vector<T>::iterator it) : it_(it)
-        {
-        }
+        explicit Iterator(typename std::vector<T>::iterator it) : it_(it) {}
 
         Iterator() {}
 
         virtual ~Iterator() = default;
 
-        virtual reference operator*() const
-        {
-            return *(this->it_);
-        }
+        virtual reference operator*() const { return *(this->it_); }
 
-        virtual pointer operator->() const
-        {
-            return &*(this->it_);
-        }
+        virtual pointer operator->() const { return &*(this->it_); }
 
-        virtual Iterator &operator++()
+        virtual Iterator& operator++()
         {
             (this->it_)++;
             check();
@@ -69,7 +59,7 @@ public:
             return temp;
         }
 
-        virtual Iterator &operator--()
+        virtual Iterator& operator--()
         {
             (this->it_)--;
             check();
@@ -84,50 +74,36 @@ public:
             return temp;
         }
 
-        virtual bool operator==(const Iterator &other) const
-        {
-            return it_ == other.it_;
-        }
+        virtual bool operator==(const Iterator& other) const { return it_ == other.it_; }
 
-        virtual bool operator!=(const Iterator &other) const
-        {
-            return it_ != other.it_;
-        }
+        virtual bool operator!=(const Iterator& other) const { return it_ != other.it_; }
     };
 
     virtual ~Queue() = default;
 
-    virtual void                      Append(T &&value)                                = 0;
-    virtual T&                        GetAndUpdate()                                  = 0; // 返回当前元� 并更新index
-    virtual void                      Traverse(std::function<void(const T &)> action) = 0;
-    virtual size_t                    Size() const                                    = 0;
-    virtual bool                      IsEmpty() const                                 = 0;
-    virtual bool                      IsFull() const                                  = 0;
-    virtual size_t                    Capacity() const                                = 0;
-    virtual std::shared_ptr<Iterator> Find(std::function<bool(const T &)> cond)       = 0;
-    virtual std::shared_ptr<Iterator> Begin()                                         = 0;
-    virtual std::shared_ptr<Iterator> Tail()                                          = 0;
-    virtual std::shared_ptr<Iterator> End()                                           = 0;
-    virtual void                      PopFront()
-    {
-        THROW<InternalException>(StringFormat("Queue<T>::PopFront () is not supported"));
-    }
+    virtual void Append(T&& value) = 0;
+    virtual T& GetAndUpdate() = 0; // 返回当前元素并更新index
+    virtual void Traverse(std::function<void(const T&)> action) = 0;
+    virtual size_t Size() const = 0;
+    virtual bool IsEmpty() const = 0;
+    virtual bool IsFull() const = 0;
+    virtual size_t Capacity() const = 0;
+    virtual std::shared_ptr<Iterator> Find(std::function<bool(const T&)> cond) = 0;
+    virtual std::shared_ptr<Iterator> Begin() = 0;
+    virtual std::shared_ptr<Iterator> Tail() = 0;
+    virtual std::shared_ptr<Iterator> End() = 0;
+    virtual void PopFront() { THROW<InternalException>(StringFormat("Queue<T>::PopFront () is not supported")); }
 };
 
-template <typename T> class QueueWithSize : public Queue<T> {
+template <typename T>
+class QueueWithSize : public Queue<T> {
 protected:
     size_t size_ = 0;
 
 public:
-    size_t Size() const override
-    {
-        return size_;
-    }
+    size_t Size() const override { return size_; }
 
-    bool IsEmpty() const override
-    {
-        return size_ == 0;
-    }
+    bool IsEmpty() const override { return size_ == 0; }
 };
 
 } // namespace Hccl

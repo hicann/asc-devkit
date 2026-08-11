@@ -37,11 +37,11 @@ using namespace hccl;
 class CollCommAicpu {
 public:
     ~CollCommAicpu();
-    HcclResult InitAicpuIndOp(CommAicpuParam *commAicpuParam);
-    HcclResult InitThreads(ThreadMgrAicpuParam *param);
-    HcclResult AllocChannelResource(HcclChannelUrmaRes *commParam);
-    HcclResult NotifyFree(NotifyMgrAicpuParam *param);
-    HcclResult NotifyAlloc(NotifyMgrAicpuParam *param);
+    HcclResult InitAicpuIndOp(CommAicpuParam* commAicpuParam);
+    HcclResult InitThreads(ThreadMgrAicpuParam* param);
+    HcclResult AllocChannelResource(HcclChannelUrmaRes* commParam);
+    HcclResult NotifyFree(NotifyMgrAicpuParam* param);
+    HcclResult NotifyAlloc(NotifyMgrAicpuParam* param);
     const std::vector<std::shared_ptr<Thread>>& GetAllThread() { return threads_; };
     const HcclTopoInfo& GetTopoInfo() { return topoInfo_; }
     const std::string& GetIdentifier() { return identifier_; }
@@ -55,7 +55,7 @@ public:
     ReadWriteLockBase& GetThreadMutex() { return threadMutex_; }
 
     // h2d - d2h通道信息交互
-    HcclResult BackGroundGetCmd(Hccl::KfcCommand &cmd);
+    HcclResult BackGroundGetCmd(Hccl::KfcCommand& cmd);
     HcclResult BackGroundSetStatus(Hccl::KfcStatus state);
     u32 UpdateIndex();
 
@@ -65,25 +65,25 @@ public:
     // N秒快恢
     hccl::NsRecoveryLitePtr GetNsRecoveryLitePtr();
     HcclResult Clean();
-    HcclResult Resume(HcclChannelUrmaRes *commParam);
+    HcclResult Resume(HcclChannelUrmaRes* commParam);
 
     HcclResult CheckIndOpExecStatus(bool timeout);
 
 private:
     // 初始化
-    void InitIndopEnv(CommAicpuParam *commAicpuParam);
-    HcclResult InitHDCommunicate(CommAicpuParam *commAicpuParam);
+    void InitIndopEnv(CommAicpuParam* commAicpuParam);
+    HcclResult InitHDCommunicate(CommAicpuParam* commAicpuParam);
 
-    HcclResult InitUrmaChannel(HcclChannelUrmaRes *commParam);
-    HcclResult ParsePackData(std::vector<char> &data, ChannelHandle &handle);
+    HcclResult InitUrmaChannel(HcclChannelUrmaRes* commParam);
+    HcclResult ParsePackData(std::vector<char>& data, ChannelHandle& handle);
     HcclResult RegisterChannelAddDfxTaskInfo(ChannelHandle channel);
     HcclResult RegisterThreadAddDfxTaskInfo(ThreadHandle thread);
     void InitBackGroundThread();
-    HcclResult ResumePackData(std::vector<char> &data, ChannelHandle &handle);
-    HcclResult ProcessUrmaRes(HcclChannelUrmaRes *commParam, bool isInit);
+    HcclResult ResumePackData(std::vector<char>& data, ChannelHandle& handle);
+    HcclResult ProcessUrmaRes(HcclChannelUrmaRes* commParam, bool isInit);
 
     u32 devId_{0};
-    //通用的通道
+    // 通用的通道
     std::shared_ptr<hccl::HDCommunicate> kfcControlTransferH2D_{nullptr};
     std::shared_ptr<hccl::HDCommunicate> kfcStatusTransferD2H_{nullptr};
 
@@ -105,7 +105,6 @@ private:
     bool isErrorReported_{false}; // 是否上报了taskException信息
     HcclCommDfxLite dfx_;
     u32 index_{0};
-
 };
 
 #endif // __COLL_COMM_AICPU_H__

@@ -38,4 +38,4 @@ private:
 };
 } // namespace Hccl
 
-#endif // HCCL_AICPU_RESOURCE_AI_CPU_RESOUCES_H_
+#endif // HCCLV2_UB_CONN_LITE_MGR_H_

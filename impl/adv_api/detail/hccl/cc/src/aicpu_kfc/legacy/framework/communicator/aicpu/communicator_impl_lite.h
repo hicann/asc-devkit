@@ -40,44 +40,29 @@ public:
     explicit CommunicatorImplLite(u32 idIndex);
     ~CommunicatorImplLite() override = default;
 
-    int LoadWithOpBasedMode(HcclKernelParamLite *kernelParam);
-    int UpdateComm(HcclKernelParamLite *kernelParam);
+    int LoadWithOpBasedMode(HcclKernelParamLite* kernelParam);
+    int UpdateComm(HcclKernelParamLite* kernelParam);
 
-    HostDeviceSyncNotifyLiteMgr *GetHostDeviceSyncNotifyLiteMgr() override;
-    StreamLiteMgr               *GetStreamLiteMgr() override;
-    QueueNotifyLiteMgr          *GetQueueNotifyLiteMgr() override;
-    Cnt1tonNotifyLiteMgr        *GetCnt1tonNotifyLiteMgr() override;
-    CntNto1NotifyLiteMgr        *GetCntNto1NotifyLiteMgr() override;
-    ConnectedLinkMgr            *GetConnectedLinkMgr() override;
-    DevId                        GetDevPhyId() override;
-    u32                          GetExecTimeOut() override;
+    HostDeviceSyncNotifyLiteMgr* GetHostDeviceSyncNotifyLiteMgr() override;
+    StreamLiteMgr* GetStreamLiteMgr() override;
+    QueueNotifyLiteMgr* GetQueueNotifyLiteMgr() override;
+    Cnt1tonNotifyLiteMgr* GetCnt1tonNotifyLiteMgr() override;
+    CntNto1NotifyLiteMgr* GetCntNto1NotifyLiteMgr() override;
+    ConnectedLinkMgr* GetConnectedLinkMgr() override;
+    DevId GetDevPhyId() override;
+    u32 GetExecTimeOut() override;
 
-    MemTransportLiteMgr *GetTransportLiteMgr() override
-    {
-        return transportLiteMgr.get();
-    }
+    MemTransportLiteMgr* GetTransportLiteMgr() override { return transportLiteMgr.get(); }
 
-    u64 GetLocAddr(BufferType type) override
-    {
-        return locBuffer[type];
-    }
+    u64 GetLocAddr(BufferType type) override { return locBuffer[type]; }
 
-    CollOperator GetCurrentOp() override
-    {
-        return currentOp;
-    }
+    CollOperator GetCurrentOp() override { return currentOp; }
 
-    void SetCurrentOpMode(OpMode opMode)
-    {
-        currentOp.opMode = opMode;
-    }
+    void SetCurrentOpMode(OpMode opMode) { currentOp.opMode = opMode; }
 
-    uint32_t GetCommIdIndex() const
-    {
-        return idIndex_;
-    }
+    uint32_t GetCommIdIndex() const { return idIndex_; }
 
-    RmaBufferLite *GetRmaBufferLite(BufferType type) override
+    RmaBufferLite* GetRmaBufferLite(BufferType type) override
     {
         if (rmaBufferLiteVec[type] != nullptr) {
             return rmaBufferLiteVec[type].get();
@@ -86,162 +71,96 @@ public:
         }
     }
 
-    u64 GetCounterAddr() override
-    {
-        return opCounterAddr;
-    }
+    u64 GetCounterAddr() override { return opCounterAddr; }
 
-    MirrorTaskManagerLite *GetMirrorTaskMgrLite() override
-    {
-        return mirrorTaskMgrLite.get();
-    }
+    MirrorTaskManagerLite* GetMirrorTaskMgrLite() override { return mirrorTaskMgrLite.get(); }
 
-    string GetId() const
-    {
-        return commId;
-    }
+    string GetId() const { return commId; }
 
-    u32 GetRankSize() const
-    {
-        return rankSize;
-    }
+    u32 GetRankSize() const { return rankSize; }
 
-    RankId GetMyRank() const
-    {
-        return myRank;
-    }
+    RankId GetMyRank() const { return myRank; }
 
     KfcCommand BackGroundGetCmd();
 
     void BackGroundSetStatus(KfcStatus status, KfcErrType errorCode = KfcErrType::NONE);
 
-    void SetIsCommReady(bool flag)
-    {
-        isCommReady = flag;
-    }
+    void SetIsCommReady(bool flag) { isCommReady = flag; }
 
-    bool IsCommReady() const
-    {
-        return isCommReady;
-    }
+    bool IsCommReady() const { return isCommReady; }
 
-    void SetNeedClean(bool flag)
-    {
-        needClean = flag;
-    }
+    void SetNeedClean(bool flag) { needClean = flag; }
 
-    bool IsNeedClean() const
-    {
-        return needClean;
-    }
+    bool IsNeedClean() const { return needClean; }
 
-    void SetIsSuspended(bool status)
-    {
-        isSuspended = status;
-    }
+    void SetIsSuspended(bool status) { isSuspended = status; }
 
-    bool IsSuspended() const
-    {
-        return isSuspended;
-    }
+    bool IsSuspended() const { return isSuspended; }
 
-    const ProfilingReporterLite* GetProfilingReporterLite() const
-    {
-        return profilingReporterLite.get();
-    }
+    const ProfilingReporterLite* GetProfilingReporterLite() const { return profilingReporterLite.get(); }
 
-    bool IsFirstUsed() const
-    {
-        return isFirstUsed;
-    }
+    bool IsFirstUsed() const { return isFirstUsed; }
 
-    void SetIsFirstUsedToFalse()
-    {
-        isFirstUsed = false;
-    }
+    void SetIsFirstUsedToFalse() { isFirstUsed = false; }
 
-    bool IsUsed() const
-    {
-        return isUsed;
-    }
+    bool IsUsed() const { return isUsed; }
 
-    void SetIsUsed(bool used)
-    {
-        isUsed = used;
-    }
+    void SetIsUsed(bool used) { isUsed = used; }
 
-    std::mutex& GetAicpuMc2Mutex()
-    {
-        return aicpuMc2Mutex;
-    }
+    std::mutex& GetAicpuMc2Mutex() { return aicpuMc2Mutex; }
 
-    InsExecutor* GetInsExecutor()
-    {
-        return insExecutor.get();
-    }
+    InsExecutor* GetInsExecutor() { return insExecutor.get(); }
 
-    ProfilingReporterLite* GetProfilingReporterLite()
-    {
-        return profilingReporterLite.get();
-    }
+    ProfilingReporterLite* GetProfilingReporterLite() { return profilingReporterLite.get(); }
 
-    HcclResult SendErrorMessageReportToHost(ErrorMessageReport &errMsgInfo);
-    u32 GetUserStreamId() const
-    {
-        return userStreamId_;
-    }
+    HcclResult SendErrorMessageReportToHost(ErrorMessageReport& errMsgInfo);
+    u32 GetUserStreamId() const { return userStreamId_; }
 
-    bool IsErrorReported() const
-    {
-        return isErrorReported_;
-    }
+    bool IsErrorReported() const { return isErrorReported_; }
 
-    void SetErrorReported() {
-        isErrorReported_ = true;
-    }
+    void SetErrorReported() { isErrorReported_ = true; }
 
-    void ResetErrorReported() {
-        isErrorReported_ = false;
-    }
+    void ResetErrorReported() { isErrorReported_ = false; }
 
-    void UnfoldOp(HcclKernelParamLite *kernelParam);
+    void UnfoldOp(HcclKernelParamLite* kernelParam);
     void RegisterRtsqCallback();
 
     void CheckOpExecStatus() const;
-    bool CheckNeedUpdateRes(HcclKernelParamLite *kernelParam);
-    void UpdateCommParam(HcclKernelParamLite *kernelParam);
-    void UpdateLocBuffer(HcclKernelParamLite *kernelParam);
-    void UpdateRes(HcclKernelParamLite *kernelParam);
-    void UpdateTransports(HcclKernelParamLite *kernelParam);
-    void UpdateHDCommnicate(HcclKernelParamLite *kernelParam);
+    bool CheckNeedUpdateRes(HcclKernelParamLite* kernelParam);
+    void UpdateCommParam(HcclKernelParamLite* kernelParam);
+    void UpdateLocBuffer(HcclKernelParamLite* kernelParam);
+    void UpdateRes(HcclKernelParamLite* kernelParam);
+    void UpdateTransports(HcclKernelParamLite* kernelParam);
+    void UpdateHDCommnicate(HcclKernelParamLite* kernelParam);
     void CreateCollAlgComponentLite();
-    void InitCurrentOp(HcclKernelParamLite *kernelParam);
-    void UpdateUserStreamId(HcclKernelParamLite *kernelParam);
-    std::shared_ptr<InsQueue> GetInsQueue(HcclKernelParamLite *kernelParam);
-    void                      SetDfxOpInfo(uint64_t beginTime);
+    void InitCurrentOp(HcclKernelParamLite* kernelParam);
+    void UpdateUserStreamId(HcclKernelParamLite* kernelParam);
+    std::shared_ptr<InsQueue> GetInsQueue(HcclKernelParamLite* kernelParam);
+    void SetDfxOpInfo(uint64_t beginTime);
 
 private:
-    std::unique_ptr<StreamLiteMgr>           streamLiteMgr           = std::make_unique<StreamLiteMgr>();
-    std::unique_ptr<QueueNotifyLiteMgr>      queueNotifyLiteMgr      = std::make_unique<QueueNotifyLiteMgr>();
-    std::unique_ptr<Cnt1tonNotifyLiteMgr>    cnt1tonNotifyLiteMgr    = std::make_unique<Cnt1tonNotifyLiteMgr>();
-    std::unique_ptr<CntNto1NotifyLiteMgr>    cntNto1NotifyLiteMgr    = std::make_unique<CntNto1NotifyLiteMgr>();
-    std::unique_ptr<ConnectedLinkMgr>        connectedLinkMgr        = std::make_unique<ConnectedLinkMgr>();
-    std::unique_ptr<PrimTranslator>          primTranslator          = std::make_unique<PrimTranslator>();
-    std::unique_ptr<InsExecutor>             insExecutor             = std::make_unique<InsExecutor>(this);
-    std::unique_ptr<MirrorTaskManagerLite>   mirrorTaskMgrLite       = std::make_unique<MirrorTaskManagerLite>();
-    std::unique_ptr<ProfilingReporterLite> profilingReporterLite
-        = std::make_unique<ProfilingReporterLite>(mirrorTaskMgrLite.get(), &ProfilingHandlerLite::GetInstance());
+    std::unique_ptr<StreamLiteMgr> streamLiteMgr = std::make_unique<StreamLiteMgr>();
+    std::unique_ptr<QueueNotifyLiteMgr> queueNotifyLiteMgr = std::make_unique<QueueNotifyLiteMgr>();
+    std::unique_ptr<Cnt1tonNotifyLiteMgr> cnt1tonNotifyLiteMgr = std::make_unique<Cnt1tonNotifyLiteMgr>();
+    std::unique_ptr<CntNto1NotifyLiteMgr> cntNto1NotifyLiteMgr = std::make_unique<CntNto1NotifyLiteMgr>();
+    std::unique_ptr<ConnectedLinkMgr> connectedLinkMgr = std::make_unique<ConnectedLinkMgr>();
+    std::unique_ptr<PrimTranslator> primTranslator = std::make_unique<PrimTranslator>();
+    std::unique_ptr<InsExecutor> insExecutor = std::make_unique<InsExecutor>(this);
+    std::unique_ptr<MirrorTaskManagerLite> mirrorTaskMgrLite = std::make_unique<MirrorTaskManagerLite>();
+    std::unique_ptr<ProfilingReporterLite> profilingReporterLite =
+        std::make_unique<ProfilingReporterLite>(mirrorTaskMgrLite.get(), &ProfilingHandlerLite::GetInstance());
 
     HcclResult InitProfilingReporterLite();
 
-    std::unique_ptr<MemTransportLiteMgr> transportLiteMgr = std::make_unique<MemTransportLiteMgr>( mirrorTaskMgrLite.get());
+    std::unique_ptr<MemTransportLiteMgr> transportLiteMgr =
+        std::make_unique<MemTransportLiteMgr>(mirrorTaskMgrLite.get());
 
-    std::unique_ptr<HostDeviceSyncNotifyLiteMgr> hostDeviceSyncNotifyLiteMgr
-        = std::make_unique<HostDeviceSyncNotifyLiteMgr>();
+    std::unique_ptr<HostDeviceSyncNotifyLiteMgr> hostDeviceSyncNotifyLiteMgr =
+        std::make_unique<HostDeviceSyncNotifyLiteMgr>();
 
-    std::unique_ptr<CollAlgComponentLite>          algComponentLite{};
+    std::unique_ptr<CollAlgComponentLite> algComponentLite{};
 
-    void RestoreOpRes(const string &opTag, const string &tagKey, u64 addr, u64 bufSize);
+    void RestoreOpRes(const string& opTag, const string& tagKey, u64 addr, u64 bufSize);
 
     void RestoreAllTransports(u64 addr, u64 bufSize);
     unique_ptr<HDCommunicateLite> kfcControlTransferH2D = std::make_unique<HDCommunicateLite>();
@@ -259,15 +178,15 @@ private:
     u64 opCounterAddr{0};
     u32 opIndex_;
     std::string commId;
-    bool isUpdateComm {false};
+    bool isUpdateComm{false};
     CollOperator currentOp;
 
-    bool isCommReady{false};          // 是否初始化完成
-    bool needClean{false};            // 是否有待清理资源
-    bool isSuspended{false};          // 是否处于暂停状态
+    bool isCommReady{false}; // 是否初始化完成
+    bool needClean{false};   // 是否有待清理资源
+    bool isSuspended{false}; // 是否处于暂停状态
 
-    void InitRmaBufferLite(HcclAicpuLocBufLite &bufLite, BufferType type);
-    void UpdateDynamicOpData(HcclKernelParamLite *kernelParam);
+    void InitRmaBufferLite(HcclAicpuLocBufLite& bufLite, BufferType type);
+    void UpdateDynamicOpData(HcclKernelParamLite* kernelParam);
 
     std::vector<std::unique_ptr<RmaBufferLite>> rmaBufferLiteVec;
     DevType devType;
@@ -281,7 +200,7 @@ private:
 
     void CreateOneSidedComponentLite();
     std::unique_ptr<OneSidedComponentLite> oneSidedComponentLite{};
-    std::shared_ptr<InsQueue> GetOneSidedInsQueue(HcclKernelParamLite *kernelParam);
+    std::shared_ptr<InsQueue> GetOneSidedInsQueue(HcclKernelParamLite* kernelParam);
 
     bool isUsed{false};
     bool isFirstUsed{true};

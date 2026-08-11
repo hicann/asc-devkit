@@ -61,7 +61,7 @@
             HCCL_ERROR("Exception occurred: %s", e.what());                       \
             return HcclResult::HCCL_E_INTERNAL;                                   \
         } catch (...) {                                                           \
-            HCCL_ERROR("Unkown error occurs!");                                   \
+            HCCL_ERROR("Unknown error occurs!");                                  \
             return HcclResult::HCCL_E_INTERNAL;                                   \
         }                                                                         \
     } while (0)
@@ -96,7 +96,7 @@
         } catch (exception & e) {                                                 \
             HCCL_ERROR("Exception occurred: %s", e.what());                       \
         } catch (...) {                                                           \
-            HCCL_ERROR("Unkown error occurs!");                                   \
+            HCCL_ERROR("Unknown error occurs!");                                  \
         }                                                                         \
     } while (0)
 

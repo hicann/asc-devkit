@@ -84,6 +84,7 @@ extern HcclResult HcclRemoteNotifyRecord(
  * @param[in] streamHandle 异步流句柄
  * @param[in] memTransport 传输上下文句柄
  * @param[in] notifyIndex 通知索引号
+ * @param[in] timeOut 超时时间
  * @return 执行状态码 HcclResult
  */
 extern HcclResult HcclRemoteNotifyWait(

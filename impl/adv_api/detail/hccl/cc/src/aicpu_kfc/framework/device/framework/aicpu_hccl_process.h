@@ -39,10 +39,10 @@ public:
     static HcclResult AcquireAicpuComm(const std::string& group, hccl::HcclCommAicpu** aicpuCommPtr);
     static HcclResult HandleOneSideService(const OpTilingData* tilingData);
     static HcclResult InitAsyncFlag(
-        const uint32_t* lFlagAddr, const uint32_t* rFlagAddr, hccl::Transport::Buffer* localFlagBufforCheck,
-        hccl::Transport::Buffer* localFlagBufforWrite, hccl::Transport::Buffer* remoteFlagBuf);
+        const uint32_t* lFlagAddr, const uint32_t* rFlagAddr, hccl::Transport::Buffer* localFlagBufferCheck,
+        hccl::Transport::Buffer* localFlagBufferWrite, hccl::Transport::Buffer* remoteFlagBuf);
     static HcclResult WaitAsyncFlag(
-        hccl::Transport::Buffer* localFlagBufforCheck, const uint32_t flagValue, uint64_t timeOut);
+        hccl::Transport::Buffer* localFlagBufferCheck, const uint32_t flagValue, uint64_t timeOut);
     static HcclResult AicpuIndOpChannelInit(HcclIndOpChannelRemoteResV3* commParam);
     static HcclResult AicpuIndOpThreadInit(ThreadMgrAicpuParam* param);
     static HcclResult AicpuIndOpNotifyInit(NotifyMgrAicpuParam* param);

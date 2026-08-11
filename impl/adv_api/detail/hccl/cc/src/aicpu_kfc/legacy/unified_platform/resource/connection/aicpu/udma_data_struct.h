@@ -163,4 +163,4 @@ struct UdmaSqeRead {
     union LocalValueU u;
 };
 } // namespace Hccl
-#endif // HCCL_AICPU_RESOURCE_AI_CPU_RESOUCES_H_
+#endif // HCCLV2_AICPU_WQEMGR_WQE_H

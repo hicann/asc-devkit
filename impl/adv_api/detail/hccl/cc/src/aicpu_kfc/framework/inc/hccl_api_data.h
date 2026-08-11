@@ -80,7 +80,7 @@ typedef enum {
 
 /**
  * @brief 设置任务下发模式（批量或直接下发）
- * @param[in] launchId 下发Id
+ * @param[in] launchTag 下发Tag
  * @param[in] mode 下发模式
  * @return int32_t 执行结果状态码
  * @note 可运行在Host或Device上。

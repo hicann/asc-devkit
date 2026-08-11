@@ -37,7 +37,7 @@ using ts_ctrl_msg_body_t = struct {
         ts_query_task_info_t query_task_info;
         ts_query_task_ack_info_t query_task_ack_info;
     } u; // 40 bytes
-};       // 44 bytes
+}; // 44 bytes
 
 MAKE_ENUM(OPERATION_TYPE, OP_ABORT_APP, OP_QUERY_ABORT_STATUS, OP_INVALID)
 

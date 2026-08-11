@@ -10,7 +10,7 @@
 add_library(intf_pub_base INTERFACE)
 
 target_compile_definitions(intf_pub_base INTERFACE
-	CFG_BUILD_DEBUG
+    CFG_BUILD_DEBUG
 )
 
 target_compile_options(intf_pub_base INTERFACE

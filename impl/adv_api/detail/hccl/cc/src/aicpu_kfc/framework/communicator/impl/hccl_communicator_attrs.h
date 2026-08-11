@@ -214,7 +214,7 @@ private:
     std::vector<HcclIpAddress> devIpAddr_{};
     std::vector<HcclIpAddress> devBackupIpAddr_;
     u32 devBackupPort_{HCCL_INVALID_PORT};
-    // transiemt attrs
+    // transient attrs
     std::string superPodId_{};
     u32 hostPort_{HCCL_INVALID_PORT};
     u32 localRank_{INVALID_VALUE_RANKID};
