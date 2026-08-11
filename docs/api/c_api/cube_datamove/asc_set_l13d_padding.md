@@ -10,7 +10,7 @@
 
 ## 功能说明
 
-设置Pad属性描述，用于在调用[asc_copy_l12l0a](asc_copy_l12l0a/)接口时配置填充数值。
+设置Pad属性描述，用于在调用[asc_copy_l12l0a](asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)接口时配置填充数值。
 
 ## 函数原型
 
