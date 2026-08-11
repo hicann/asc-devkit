@@ -393,24 +393,6 @@ struct SknlKernelMap {
 #define SIMT_ONE_CORE_DUMP_SIZE (2048 * 2048)
 #endif
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
-#ifndef INT4X2_T_STRUCT
-#define INT4X2_T_STRUCT
-struct int4x2_t {
-    uint8_t data;
-
-    const static uint16_t BIT_NUM = 4u;
-
-    int4x2_t operator+(const int4x2_t& other) const
-    {
-        int4x2_t tmp;
-        tmp.data = ((((data >> BIT_NUM) + (other.data >> BIT_NUM)) & 0xfu) << BIT_NUM) + ((data + other.data) & 0xfu);
-        return tmp;
-    }
-};
-#endif
-#endif
-
 #if !defined(ASCENDC_CPU_DEBUG)
 #include "../../utils/common_types.h"
 #endif

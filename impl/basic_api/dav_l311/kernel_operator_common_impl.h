@@ -24,6 +24,9 @@
 #include "../utils/kernel_utils_mode.h"
 #include "../../../include/basic_api/kernel_common.h"
 #include "../kernel_utils.h"
+#if defined(__DAV_VEC__) && (__NPU_ARCH__ == 3113)
+using namespace __cce_simd;
+#endif
 #define GetLoopBoundB8(x) (((x) - 1) / VECTOR_REG_WIDTH)
 #define GetLoopBoundB16(x) (((x) - 1) / (VECTOR_REG_WIDTH / B16_BYTE_SIZE))
 #define GetLoopBoundB32(x) (((x) - 1) / (VECTOR_REG_WIDTH / B32_BYTE_SIZE))
