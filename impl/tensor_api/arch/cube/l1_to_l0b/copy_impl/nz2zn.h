@@ -61,6 +61,8 @@ private:
         auto m_step = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         auto k_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout)
                       * get_element<attr_info::shape, attr_info::column, 0>(dst_layout) / C0_ELEMENT<dst_type>;
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0b nz2zn path");
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0b nz2zn path");
         // Nz -> Zn
         constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<dst_type> * FRACTAL_FIXED;
         auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / STRIDE_UNIT;

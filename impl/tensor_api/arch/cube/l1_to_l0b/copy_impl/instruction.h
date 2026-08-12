@@ -39,6 +39,7 @@ public:
         if ASCEND_IS_AIV {
             return;
         }
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_transpose, transpose, sizeof(T), k_step, "copy_l1_to_l0b");
         if constexpr (transpose) {
             asc_copy_l12l0b_transpose(dst, src, m_start_position, k_start_position, m_step, k_step, src_stride,
                                       dst_stride);

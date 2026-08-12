@@ -64,6 +64,11 @@ private:
         using dst_layout_ptn = get_layout_pattern<dst_layout>;
         using fm_layout_ptn = get_layout_pattern<fm_layout>;
         using filter_layout_ptn = get_layout_pattern<filter_layout>;
+        TENSOR_API_DEBUG_CHECK(debug_check_mmad_params, params, trait.disable_gemv, "mmad");
+        TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, params.unit_flag, "mmad");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "mmad");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, fm.layout(), "fm", "mmad");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, filter.layout(), "filter", "mmad");
         using mmad_impl = typename mmad_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, fm_layout_ptn, filter_layout_ptn,
                                                location::invalid>::type;
         mmad_impl::template run<trait>(dst, fm, filter, params);
@@ -89,6 +94,12 @@ private:
         using dst_layout_ptn = get_layout_pattern<dst_layout>;
         using fm_layout_ptn = get_layout_pattern<fm_layout>;
         using filter_layout_ptn = get_layout_pattern<filter_layout>;
+        TENSOR_API_DEBUG_CHECK(debug_check_mmad_params, params, trait.disable_gemv, "mmad with bias");
+        TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, params.unit_flag, "mmad with bias");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "mmad with bias");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, fm.layout(), "fm", "mmad with bias");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, filter.layout(), "filter", "mmad with bias");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, bias.layout(), "bias", "mmad with bias");
         using mmad_impl =
             typename mmad_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, fm_layout_ptn, filter_layout_ptn, bias_pos>::type;
         mmad_impl::template run<trait>(dst, fm, filter, bias, params);

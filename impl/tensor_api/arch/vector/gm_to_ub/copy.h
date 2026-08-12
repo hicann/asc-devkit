@@ -48,6 +48,9 @@ public:
         using src_pos = get_mem_location<U>;
         static_assert(Std::is_same_v<dst_pos, location::ub>, "When Copy tensor from GM to UB, dst tensor must on UB");
         static_assert(Std::is_same_v<src_pos, location::gm>, "When Copy tensor from GM to UB, src tensor must on GM");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_gm_to_ub");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_gm_to_ub");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_gm_to_ub");
         using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
         using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
         using copy_gm_to_ub_impl = typename copy_gm_to_ub_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;

@@ -28,7 +28,7 @@ ENABLE_BUILD_DEVICE=ON
 USE_CXX11_ABI=0
 CMAKE_TOOLCHAIN_FILE_VAL=""
 UTILS_SOURCE_REPO=${ASC_DEVKIT_UTILS_REPO:-"https://gitcode.com/cann/asc-devkit.git"}
-UTILS_SOURCE_BRANCH=${ASC_DEVKIT_UTILS_BRANCH:-"9.0.0"}
+UTILS_SOURCE_BRANCH=${ASC_DEVKIT_UTILS_BRANCH:-"master"}
 
 dotted_line="----------------------------------------------------------------"
 

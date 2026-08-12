@@ -36,6 +36,7 @@ public:
         // (B, ((1, row), (1, col))) -> depth 5. Non-batch layouts are depth 2/4.
         constexpr auto gm_depth = nesting_depth_v<decltype(src.layout().shape())>;
         if constexpr (gm_depth == THREE_DIM_DATA || gm_depth == FIVE_DIM_DATA) {
+            TENSOR_API_DEBUG_CHECK(debug_check_batch_count, get<0>(src.layout().shape()), "copy_gm_to_l1 nd2nd path");
             batch_data_copy_impl<trait, T, U>(dst, src);
         } else {
             data_copy_impl<trait, T, U>(dst, src);

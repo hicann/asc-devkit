@@ -38,6 +38,11 @@ public:
         if ASCEND_IS_AIV {
             return;
         }
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, n_size, "n_size", "copy_l0c_to_gm instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_n, n_size, is_channel_split, nz2nd_en, nz2dn_en, "copy_l0c_to_gm");
+        TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_m, m_size, nz2nd_en, "copy_l0c_to_gm instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_stride, src_stride, dst_stride, "copy_l0c_to_gm instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, unit_flag, "copy_l0c_to_gm instruction");
 
         asc_copy_l0c2gm(dst, src, static_cast<uint16_t>(n_size), static_cast<uint16_t>(m_size), dst_stride,
                         static_cast<uint16_t>(src_stride), cache_mode, 0, unit_flag, static_cast<uint64_t>(quant_pre),

@@ -72,6 +72,7 @@ private:
             src_row = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
             block_count = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         }
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src row shape size", "copy_l1_to_biastable");
         if constexpr (is_satisfied_ptn_format_v<T, nd_layout_ptn>) {
             dst_col = get_element<attr_info::shape, attr_info::column>(dst_layout);
             dst_row = get_element<attr_info::stride, attr_info::row>(dst_layout);
@@ -121,12 +122,19 @@ private:
         auto dst_layout = dst.layout();
 
         uint16_t batch_size = get<0>(src_layout.shape());
+        TENSOR_API_DEBUG_CHECK(debug_check_batch_match, batch_size, get<0>(dst_layout.shape()),
+                               "copy_l1_to_biastable batch path");
+        TENSOR_API_DEBUG_CHECK(debug_check_batch_count, batch_size, "copy_l1_to_biastable batch path");
         uint32_t src_batch_stride = get<0>(src_layout.stride());
         uint32_t dst_batch_stride = get<0>(dst_layout.stride());
 
         // Strip the leading B axis before calling GetElement, otherwise the dim=0/1 split below
         // would read the batch axis as row/column.
         auto src_inner = get<1>(src_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_l12bt_column_bytes,
+                               static_cast<uint64_t>(get_total_column_shape(src_inner)) * sizeof(src_type),
+                               static_cast<uint64_t>(get_total_column_shape(get<1>(dst_layout))) * sizeof(dst_type),
+                               "copy_l1_to_biastable batch path");
 
         uint32_t src_shape_rows;
         uint32_t src_shape_columns;

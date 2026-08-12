@@ -87,6 +87,8 @@ basic_test_three_targets=(
     # ascendc_ut_c_api_ascend950pr_9599_AIV
     ascendc_ut_tensor_api_NPU_ARCH_3510_AIC
     ascendc_ut_tensor_api_NPU_ARCH_3510_AIV
+    ascendc_ut_tensor_api_runtime_validation_NPU_ARCH_3510_AIC
+    ascendc_ut_tensor_api_runtime_validation_NPU_ARCH_3510_AIV
     # ascendc_ut_basic_api_ascend950pr_9599_AIC
     # ascendc_ut_basic_api_ascend950pr_9599_AIV_BASIC
     # ascendc_ut_basic_api_ascend950pr_9599_AIV_FRAMEWORK

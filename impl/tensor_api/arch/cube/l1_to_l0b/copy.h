@@ -62,6 +62,16 @@ private:
         using src_layout = typename U::layout_type;
         using dst_pattern = get_layout_pattern<dst_layout>;
         using src_pattern = get_layout_pattern<src_layout>;
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_l0b");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_l0b");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_l0b");
+        if constexpr (dst_layout::depth == FIVE_DIM_DATA && src_layout::depth == FIVE_DIM_DATA) {
+            TENSOR_API_DEBUG_CHECK(debug_check_batch_match, get<0>(src.layout().shape()), get<0>(dst.layout().shape()),
+                                   "copy_l1_to_l0b");
+            TENSOR_API_DEBUG_CHECK(debug_check_l0_batch_stride, get<0>(src.layout().stride()),
+                                   remove_batch_dim(src.layout()).capacity(), get<0>(dst.layout().stride()),
+                                   remove_batch_dim(dst.layout()).capacity(), "copy_l1_to_l0b");
+        }
         constexpr auto is_b8_b4_type = sizeof(typename T::element_type) == 1;
         constexpr auto no_trans = Std::is_same_v<dst_pattern, src_pattern>;
         using copy_l1_to_l0b_mode =

@@ -55,6 +55,7 @@ private:
         auto src_layout = src.layout();
 
         uint16_t block_count = get_total_column_shape(src_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src column shape size", "copy_ub_to_gm DN path");
         uint32_t block_len = Std::min(get_total_row_shape(src_layout) * sizeof(src_type),
                                       get_total_row_shape(dst_layout) * sizeof(dst_type));
         int64_t src_stride = get_column_stride(src_layout) * sizeof(src_type);

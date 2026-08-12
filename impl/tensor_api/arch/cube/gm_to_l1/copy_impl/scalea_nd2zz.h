@@ -32,6 +32,10 @@ public:
     template <const copy_gm_to_l1_trait& trait, typename T, typename U>
     __aicore__ inline static void run(const T& dst, const U& src)
     {
+        if constexpr (U::layout_type::depth == THREE_DIM_DATA || U::layout_type::depth == FIVE_DIM_DATA) {
+            TENSOR_API_DEBUG_CHECK(debug_check_batch_count, get<0>(src.layout().shape()),
+                                   "copy_gm_to_l1 scalea_nd2zz path");
+        }
         run_gm_to_l1_batched<trait, copy_gm_to_l1_scalea_nd2zz, T, U>(dst, src);
     }
 

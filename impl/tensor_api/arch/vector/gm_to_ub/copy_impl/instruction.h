@@ -39,6 +39,15 @@ public:
         if ASCEND_IS_AIC {
             return;
         }
+        using PaddingElementType = Std::conditional_t<(sizeof(T) > sizeof(uint32_t)), uint32_t, T>;
+        TENSOR_API_DEBUG_CHECK(debug_check_block_limit, block_count, DEBUG_BLOCK_COUNT_MAX, "block_count",
+                               "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_block_limit, block_len, DEBUG_GM_UB_BLOCK_LEN_MAX, "block_len",
+                               "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_gm2ub_stride, dst_stride, block_len, block_count,
+                               "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_gm2ub_padding<PaddingElementType>, left_padding_count, right_padding_count,
+                               dst_stride, block_len, block_count, "copy_gm_to_ub instruction");
 
         if constexpr (sizeof(T) == 1) {
             asc_copy_gm2ub_align((__ubuf__ uint8_t*)dst, (__gm__ uint8_t*)src, block_count, block_len,

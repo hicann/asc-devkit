@@ -38,6 +38,12 @@ public:
         if ASCEND_IS_AIC {
             return;
         }
+        TENSOR_API_DEBUG_CHECK(debug_check_block_limit, block_count, DEBUG_BLOCK_COUNT_MAX, "block_count",
+                               "copy_ub_to_gm instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_block_limit, block_len, DEBUG_GM_UB_BLOCK_LEN_MAX, "block_len",
+                               "copy_ub_to_gm instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_ub2gm_stride, src_stride, block_len, block_count,
+                               "copy_ub_to_gm instruction");
         if constexpr (sizeof(T) == 1) {
             asc_copy_ub2gm_align((__gm__ uint8_t*)dst, (__ubuf__ uint8_t*)src, block_count, block_len, cache_mode,
                                  dst_stride, static_cast<uint32_t>(src_stride));

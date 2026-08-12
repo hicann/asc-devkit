@@ -60,6 +60,8 @@ private:
         uint16_t k_start_position = 0;
         auto m_step = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
         auto k_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0scalea path");
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0scalea path");
         auto src_stride = get_element<attr_info::stride, attr_info::row, 1>(src_layout) >> 5;
         auto dst_stride = k_step;
         uint64_t mx_dst_addr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.data().get()));

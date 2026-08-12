@@ -56,6 +56,9 @@ private:
         using src_layout = typename U::layout_type;
         using dst_layout_ptn = get_layout_pattern<dst_layout>;
         using src_layout_ptn = get_layout_pattern<src_layout>;
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_fixbuf");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_fixbuf");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_fixbuf");
         using copy_l1_to_fb_impl = typename copy_l1_to_fixbuf_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
         copy_l1_to_fb_impl::template run<trait, T, U>(dst, src);
     }

@@ -83,11 +83,14 @@ private:
         auto m_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout)
                       * get_element<attr_info::shape, attr_info::column, 0>(dst_layout) / FRACTAL_FIXED;
         auto k_step = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0a zn2nz b8/b4 path");
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_m_step, m_step, is_b4_type<dst_type>, "copy_l1_to_l0a zn2nz b8/b4 path");
         // Zn -> Nz
         constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<dst_type> * FRACTAL_FIXED;
         auto src_stride = get_element<attr_info::stride, attr_info::row, 1>(src_layout) / STRIDE_UNIT;
         auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout) / STRIDE_UNIT;
         if (m1 < FRACTAL_FIXED) {
+            TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0a zn2nz b8/b4 path");
             load_l1_to_l0a_instr::load_data<true>(dst.data().get(), src.data().get(), m_start_position,
                                                     k_start_position, m_step, k_step, src_stride, dst_stride);
         } else if constexpr (is_b4_type<dst_type>) {

@@ -46,6 +46,9 @@ public:
         using src_pos = get_mem_location<U>;
         static_assert(Std::is_same_v<dst_pos, location::l1>, "When Copy tensor from L0C to L1, dst tensor must on L1");
         static_assert(Std::is_same_v<src_pos, location::l0c>, "When Copy tensor from L0C to L1, src tensor must on L0C");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l0c_to_l1");
 
         using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
         using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
@@ -62,6 +65,9 @@ public:
         using src_pos = get_mem_location<U>;
         static_assert(Std::is_same_v<dst_pos, location::l1>, "When Copy tensor from L0C to L1, dst tensor must on L1");
         static_assert(Std::is_same_v<src_pos, location::l0c>, "When Copy tensor from L0C to L1, src tensor must on L0C");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l0c_to_l1");
 
         using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
         using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
@@ -78,6 +84,10 @@ public:
         using src_pos = get_mem_location<U>;
         static_assert(Std::is_same_v<dst_pos, location::l1>, "When Copy tensor from L0C to L1, dst tensor must on L1");
         static_assert(Std::is_same_v<src_pos, location::l0c>, "When Copy tensor from L0C to L1, src tensor must on L0C");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, quant.layout(), "quant", "copy_l0c_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l0c_to_l1");
 
         using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
         using src_layout_ptn = get_layout_pattern<typename U::layout_type>;

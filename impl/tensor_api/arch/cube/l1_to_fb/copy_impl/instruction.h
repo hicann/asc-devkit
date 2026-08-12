@@ -38,6 +38,7 @@ public:
         if ASCEND_IS_AIV {
             return;
         }
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_blocks, block_count, block_len, "copy_l1_to_fixbuf instruction");
 
         asc_copy_l12fb(dst, src, block_count, block_len, src_stride, dst_stride);
     }

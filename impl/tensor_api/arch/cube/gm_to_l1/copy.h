@@ -56,6 +56,9 @@ private:
         using src_layout = typename U::layout_type;
         using dst_layout_ptn = get_layout_pattern<dst_layout>;
         using src_layout_ptn = get_layout_pattern<src_layout>;
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_gm_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_gm_to_l1");
+        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_gm_to_l1");
         using copy_gm_to_l1_impl = typename copy_gm_to_l1_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
         copy_gm_to_l1_impl::template run<trait, T, U>(dst, src);
     }
