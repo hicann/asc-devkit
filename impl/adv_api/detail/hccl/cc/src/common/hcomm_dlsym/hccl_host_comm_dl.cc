@@ -13,8 +13,28 @@
 #include <cstdio>
 #include <cstdlib>
 
+using HcclCommRegCommStateCallbackFunc =
+    HcclResult (*)(const char* regName, Mc2HcclCommStateCallback callback, void* args);
+
+static HcclCommRegCommStateCallbackFunc g_HcclCommRegCommStateCallback = nullptr;
+
+extern "C" bool HcclMc2IsSupportCommStateCallback(void) { return g_HcclCommRegCommStateCallback != nullptr; }
+
+extern "C" HcclResult HcclMc2CommRegStateCallback(const char* regName, Mc2HcclCommStateCallback callback, void* args)
+{
+    if (g_HcclCommRegCommStateCallback == nullptr) {
+        return HCCL_E_NOT_SUPPORT;
+    }
+    return g_HcclCommRegCommStateCallback(regName, callback, args);
+}
+
 // 初始化
 void HcclCommDlInit(void* libHcommHandle)
 {
-    // HcclCommGetStatus 已在 op_base.cc 中实现，无需 dl 初始化
+    dlerror();
+    g_HcclCommRegCommStateCallback =
+        reinterpret_cast<HcclCommRegCommStateCallbackFunc>(dlsym(libHcommHandle, "HcclCommRegCommStateCallback"));
+    if (dlerror() != nullptr) {
+        g_HcclCommRegCommStateCallback = nullptr;
+    }
 }

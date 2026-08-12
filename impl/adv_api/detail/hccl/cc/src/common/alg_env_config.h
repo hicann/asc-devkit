@@ -136,6 +136,8 @@ const u32& GetExternalInputIntraRoceSwitch();
 
 const bool& GetExternalInputHcclAicpuUnfold();
 
+const uint8_t& GetExternalInputHcclAicpuCacheEnable();
+
 const bool& GetExternalInputHcclAivMode();
 
 const bool& GetExternalInputHcclAivOnlyMode();

@@ -124,6 +124,7 @@ if(PRODUCT_SIDE STREQUAL "device")
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/alg_v2_template_base.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/template_utils.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/aicpu/kernel_launch.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/aicpu/task_cache/mc2_aicpu_task_cache.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/aicpu/dfx/task_exception_fun.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/registry/alg_template_register.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/template/wrapper/alg_data_trans_wrapper.cc

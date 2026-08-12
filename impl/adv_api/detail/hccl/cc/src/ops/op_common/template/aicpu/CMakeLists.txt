@@ -9,6 +9,7 @@
 # ----------------------------------------------------------------------------------------------------------
 set(src_list
     ${CMAKE_CURRENT_SOURCE_DIR}/load_kernel.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/mc2_aicpu_task_cache_clear.cc
 )
 
 target_sources(mc2_client PRIVATE

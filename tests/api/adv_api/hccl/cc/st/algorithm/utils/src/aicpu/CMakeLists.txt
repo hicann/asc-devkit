@@ -125,6 +125,7 @@ add_library(${HCCL_CHECKER_KERNEL_TARGET} STATIC
     ${HCCL_DEV_BASE}/src/common/log.cc
     ${HCCL_DEV_BASE}/src/common/adapter_error_manager_pub.cc
     ${HCCL_DEV_BASE}/src/common/alg_env_config.cc
+    ${HCCL_DEV_BASE}/src/common/hcomm_dlsym/hcomm_primitives_dl.cc
 
     channel_stub.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/executor/channel/channel_request.cc
@@ -138,6 +139,7 @@ add_library(${HCCL_CHECKER_KERNEL_TARGET} STATIC
     ${HCCL_DEV_BASE}/src/ops/op_common/template/template_utils.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/template/aicpu/kernel_launch.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/template/aicpu/dfx/task_exception_fun.cc
+    ${HCCL_DEV_BASE}/src/ops/op_common/template/aicpu/task_cache/mc2_aicpu_task_cache.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/template/registry/alg_template_register.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/template/registry/alg_v2_template_register.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/template/wrapper/alg_data_trans_wrapper.cc

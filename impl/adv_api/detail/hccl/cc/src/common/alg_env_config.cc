@@ -943,6 +943,8 @@ const bool& GetExternalInputHcclAicpuUnfold()
     return g_algEnvConfig.aicpuUnfold;
 }
 
+const uint8_t& GetExternalInputHcclAicpuCacheEnable() { return g_algEnvConfig.aicpuCacheEnable; }
+
 const bool& GetExternalInputHcclAivMode() { return g_algEnvConfig.aivMode; }
 
 const bool& GetExternalInputHcclAivOnlyMode() { return g_algEnvConfig.aivOnlyMode; }

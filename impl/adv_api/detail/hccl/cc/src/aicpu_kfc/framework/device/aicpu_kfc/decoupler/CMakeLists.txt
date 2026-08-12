@@ -82,6 +82,7 @@ target_include_directories(ccl_kernel_decoupler_open_exec BEFORE PRIVATE
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/executor/channel
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/executor/registry
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/template
+    ${OPEN_HCCL_SRC_ROOT}/ops/op_common/template/aicpu
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/template/registry
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/template/wrapper
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/inc

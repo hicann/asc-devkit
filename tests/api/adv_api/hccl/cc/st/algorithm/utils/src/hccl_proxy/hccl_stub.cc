@@ -30,6 +30,7 @@
 #include "hccl_comm.h"
 #include "hccl_res_expt.h"
 #include "hcomm_primitives_dl.h"
+#include "task_cache_test_stub.h"
 
 using namespace mc2_ops_hccl;
 using namespace HcclSim;
@@ -89,6 +90,14 @@ HcclResult GetSymWinStubByPtr(HcclComm comm, void* ptr, size_t size, HcclCommSym
     return HCCL_E_NOT_SUPPORT;
 }
 } // namespace
+
+Mc2TaskCacheTestStubState& GetMc2TaskCacheTestStubState()
+{
+    static Mc2TaskCacheTestStubState state;
+    return state;
+}
+
+void ResetMc2TaskCacheTestStubState() { GetMc2TaskCacheTestStubState() = Mc2TaskCacheTestStubState{}; }
 
 #ifdef __cplusplus
 extern "C" {
@@ -820,27 +829,18 @@ HcclResult CommFence(ThreadHandle thread, ChannelHandle channel)
 
 int32_t HcommBatchModeStart(const char* batchTag)
 {
-    HCCL_WARNING("[%s] not support.", __func__);
-    return HCCL_SUCCESS;
+    (void)batchTag;
+    auto& state = GetMc2TaskCacheTestStubState();
+    ++state.batchStartCalls;
+    return state.batchStartRet;
 }
 
 int32_t HcommBatchModeEnd(const char* batchTag)
 {
-    HCCL_WARNING("[%s] not support.", __func__);
-    return HCCL_SUCCESS;
-}
-
-bool HcommIsSupportHcommBatchTransferOnThread(void) { return false; }
-
-int32_t HcclHcommBatchTransferOnThread(
-    ThreadHandle thread, ChannelHandle channel, const HcclHcommBatchTransferDesc* transferDescs,
-    uint32_t transferDescNum)
-{
-    (void)thread;
-    (void)channel;
-    (void)transferDescs;
-    (void)transferDescNum;
-    return HCCL_E_NOT_SUPPORT;
+    (void)batchTag;
+    auto& state = GetMc2TaskCacheTestStubState();
+    ++state.batchEndCalls;
+    return state.batchEndRet;
 }
 
 int32_t HcommAcquireComm(const char* commId) { return 0; }

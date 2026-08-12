@@ -18,6 +18,11 @@
 extern "C" {
 #endif
 
+using Mc2HcclCommStateCallback = HcclResult (*)(HcclComm comm, int32_t state, void* args);
+
+bool HcclMc2IsSupportCommStateCallback(void);
+HcclResult HcclMc2CommRegStateCallback(const char* regName, Mc2HcclCommStateCallback callback, void* args);
+
 void HcclCommDlInit(void* libHcommHandle);
 
 #ifdef __cplusplus
