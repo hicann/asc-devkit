@@ -318,7 +318,7 @@ HcclResult InsReduceScatterParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
     CHK_PRT_RET(
         ret != HCCL_SUCCESS,
         HCCL_ERROR(
-            "[InsV2AllGatherParallelExecutor][Orchestrate]errNo[0x%016llx] All Gather executor kernel run failed",
+            "[InsReduceScatterParallelExecutor][Orchestrate]errNo[0x%016llx] Reduce Scatter executor kernel run failed",
             HCCL_ERROR_CODE(ret)),
         ret);
     return HCCL_SUCCESS;

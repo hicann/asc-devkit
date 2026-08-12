@@ -243,7 +243,7 @@ const std::map<HcclCMDType, std::string> PROF_OP_NAME = {
 
 inline std::string GetProfOpName(HcclCMDType cmdType)
 {
-    CHK_PRT_RET(PROF_OP_NAME.empty(), HCCL_ERROR("PROF_OP_NAME has not inited."), "hcom_ivalid_");
+    CHK_PRT_RET(PROF_OP_NAME.empty(), HCCL_ERROR("PROF_OP_NAME has not inited."), "hcom_invalid_");
     auto it = PROF_OP_NAME.find(cmdType);
     if (it != PROF_OP_NAME.end()) {
         return it->second;
