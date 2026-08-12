@@ -1062,34 +1062,66 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline T Rnorm4dImpl(T a, T b, T c, T d)
  *      If sqrt(a[0]^2 +... + a[n-1]^2) overflows, return INF.
  *      If n is less than 1, return |a[0]|.
  */
+#define __INTERNAL_NORM_IMPL(n, a)                                                      \
+    do {                                                                                \
+        if ((n) <= 0) {                                                                 \
+            return AbsImpl((a)[0]);                                                     \
+        }                                                                               \
+        float m = 0;                                                                    \
+        int remainder = (n) & 3;                                                        \
+        int end = (n) - remainder;                                                      \
+        if ((n) > 3) {                                                                  \
+            for (int i = 0; i < end; i += 4) {                                          \
+                float a0 = (a)[i];                                                      \
+                float a1 = (a)[i + 1];                                                  \
+                float a2 = (a)[i + 2];                                                  \
+                float a3 = (a)[i + 3];                                                  \
+                if (IsInfImpl(a0) || IsInfImpl(a1) || IsInfImpl(a2) || IsInfImpl(a3)) { \
+                    return ConstantsInternal::SIMT_FP32_INF;                            \
+                }                                                                       \
+                m = MaxImpl(m, AbsImpl(a0));                                            \
+                m = MaxImpl(m, AbsImpl(a1));                                            \
+                m = MaxImpl(m, AbsImpl(a2));                                            \
+                m = MaxImpl(m, AbsImpl(a3));                                            \
+            }                                                                           \
+        }                                                                               \
+        if (remainder != 0) {                                                           \
+            for (int i = end; i < (n); i++) {                                           \
+                if (IsInfImpl((a)[i])) {                                                \
+                    return ConstantsInternal::SIMT_FP32_INF;                            \
+                }                                                                       \
+                m = MaxImpl(m, AbsImpl((a)[i]));                                        \
+            }                                                                           \
+        }                                                                               \
+        if (m == 0.0f || IsNanImpl(m)) {                                                \
+            return m;                                                                   \
+        }                                                                               \
+        float sum = 0.0f;                                                               \
+        if ((n) > 3) {                                                                  \
+            for (int i = 0; i < end; i += 4) {                                          \
+                float n0 = (a)[i] / m;                                                  \
+                float n1 = (a)[i + 1] / m;                                              \
+                float n2 = (a)[i + 2] / m;                                              \
+                float n3 = (a)[i + 3] / m;                                              \
+                sum = FmaImpl(n0, n0, sum);                                             \
+                sum = FmaImpl(n1, n1, sum);                                             \
+                sum = FmaImpl(n2, n2, sum);                                             \
+                sum = FmaImpl(n3, n3, sum);                                             \
+            }                                                                           \
+        }                                                                               \
+        if (remainder != 0) {                                                           \
+            for (int i = end; i < (n); i++) {                                           \
+                float ni = (a)[i] / m;                                                  \
+                sum = FmaImpl(ni, ni, sum);                                             \
+            }                                                                           \
+        }                                                                               \
+        return m * SqrtImpl(sum);                                                       \
+    } while (0)
+
 template <typename T1, typename T2>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T2 NormImpl(T1 n, T2* a)
 {
-    if (n <= 0) {
-        return AbsImpl(a[0]);
-    }
-    float m = 0;
-    int32_t hasNan = 0;
-    for (int i = 0; i < n; i++) {
-        m = MaxImpl(m, AbsImpl(a[i]));
-        if (IsInfImpl(a[i])) {
-            return ConstantsInternal::SIMT_FP32_INF;
-        }
-        if (IsNanImpl(a[i])) {
-            hasNan = 1;
-        }
-    }
-    if (hasNan) {
-        return ConstantsInternal::SIMT_FP32_INF / ConstantsInternal::SIMT_FP32_INF;
-    }
-    if (m == 0.0f || IsNanImpl(m)) {
-        return m;
-    }
-    float sum = 0.0f;
-    for (int i = 0; i < n; i++) {
-        sum = FmaImpl((a[i] / m), (a[i] / m), sum);
-    }
-    return m * SqrtImpl(sum);
+    __INTERNAL_NORM_IMPL(n, a);
 }
 
 /**

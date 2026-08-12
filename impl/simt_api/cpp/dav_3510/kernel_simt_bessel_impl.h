@@ -518,27 +518,42 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float YnCase3(int n, float x)
     float prev = Y0Impl(x);
     float current = Y1Impl(x);
     float scaleFactor = 1.0f;
+    float invX = 2.0f / x;
 
+    float mult = 0.0f;
+    float value = 0.0f;
+    float inv = 0.0f;
     int k = 1;
-    float mult = 2 * k / x;
-    float value = mult * current - prev;
-    prev = current;
-    current = value;
-    k += 1;
-    while (k < n) {
-        if (AbsImpl(mult) > 1.0f && AbsImpl(current) > 1.0f && k > 2) { // 2 : index
-            current = 1.0f;
-        }
-        mult = 2 * k / x; // 2:Constant coefficient 2 * k / x
+    for (; k + 2 < n; k += 3) { // 2,3: loop unrolling parameters
+        mult = k * invX;
         value = mult * current - prev;
         prev = current;
         current = value;
-        k += 1;
+
+        mult = (k + 1) * invX;
+        value = mult * current - prev;
+        prev = current;
+        current = value;
+
+        mult = (k + 2) * invX; // 2: offset for the third unrolled iteration
+        value = mult * current - prev;
+        prev = current;
+        current = value;
+
         if (AbsImpl(mult) > 1.0f && AbsImpl(current) > 1.0f) {
-            prev = prev / current;
-            scaleFactor = scaleFactor / current;
-            value = value / current;
+            inv = 1.0f / current;
+            prev *= inv;
+            scaleFactor *= inv;
+            value *= inv;
+            current = 1.0f;
         }
+    }
+    while (k < n) {
+        mult = k * invX;
+        value = mult * current - prev;
+        prev = current;
+        current = value;
+        k++;
     }
     return value / scaleFactor;
 }
@@ -680,14 +695,14 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline U YnImpl(T n, U x)
 {
     static_assert(SupportTypeSimtInternel<T, int>, "Input(n) type only supports int.");
     static_assert(SupportTypeSimtInternel<U, float>, "Input(x) type only supports float.");
+    if (n < 0 || x < 0 || IsNanImpl(x)) {
+        return ConstantsInternal::SIMT_FP32_INF / ConstantsInternal::SIMT_FP32_INF;
+    }
     if (x == 0) {
         return -ConstantsInternal::SIMT_FP32_INF;
     }
     if (IsPositiveInfImpl(x)) {
         return 0;
-    }
-    if (n < 0 || x < 0 || IsNanImpl(x)) {
-        return ConstantsInternal::SIMT_FP32_INF / ConstantsInternal::SIMT_FP32_INF;
     }
     if (n == 0) {
         return Y0Impl(x);

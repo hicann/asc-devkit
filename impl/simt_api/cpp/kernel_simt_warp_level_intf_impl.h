@@ -29,8 +29,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T WarpShflSync(T var, int32_t srcLane, int32_t width)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
     return ShflSyncImpl(var, srcLane, width);
 }
 
@@ -38,8 +39,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T WarpShflUpSync(T var, uint32_t delta, int32_t width)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
     return ShflUpSyncImpl(var, delta, width);
 }
 
@@ -47,8 +49,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T WarpShflDownSync(T var, uint32_t delta, int32_t width)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
     return ShflDownSyncImpl(var, delta, width);
 }
 
@@ -56,8 +59,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T WarpShflXorSync(T var, int32_t laneMask, int32_t width)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
     return ShflXorSyncImpl(var, laneMask, width);
 }
 

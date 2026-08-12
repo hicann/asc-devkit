@@ -8,8 +8,9 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
-#include <type_traits>
 #include <cmath>
+#include <cstring>
+#include <type_traits>
 #include "kernel_operator.h"
 
 using namespace std;
@@ -76,4 +77,59 @@ TEST_F(MathComputeTestsuite, HalfComputeTestCompare)
     bool result = Simt::IsNan(x);
     result = Simt::IsInf(x);
     EXPECT_EQ(result, false);
+}
+
+TEST_F(MathComputeTestsuite, CppApiMatchesCApiBehavior)
+{
+    EXPECT_FALSE(std::signbit(Simt::CopySign(1.0f, 0.0f)));
+    EXPECT_FALSE(std::signbit(Simt::CopySign(1.0f, -0.0f)));
+    EXPECT_TRUE(std::signbit(Simt::CopySign(1.0f, -1.0f)));
+
+    float next = Simt::NextAfter(0.0f, 1.0f);
+    uint32_t nextBits = 0;
+    std::memcpy(&nextBits, &next, sizeof(nextBits));
+    EXPECT_EQ(nextBits, 1U);
+
+    next = Simt::NextAfter(0.0f, -1.0f);
+    std::memcpy(&nextBits, &next, sizeof(nextBits));
+    EXPECT_EQ(nextBits, 0x80000001U);
+
+    EXPECT_EQ(Simt::NextAfter(1.0f, 2.0f), std::nextafter(1.0f, 2.0f));
+    EXPECT_EQ(Simt::NextAfter(1.0f, 0.0f), std::nextafter(1.0f, 0.0f));
+    EXPECT_EQ(Simt::NextAfter(-1.0f, -2.0f), std::nextafter(-1.0f, -2.0f));
+    EXPECT_EQ(Simt::NextAfter(-1.0f, 0.0f), std::nextafter(-1.0f, 0.0f));
+    EXPECT_TRUE(std::isnan(Simt::NextAfter(NAN, 1.0f)));
+    EXPECT_TRUE(std::isnan(Simt::NextAfter(1.0f, NAN)));
+    EXPECT_TRUE(std::signbit(Simt::NextAfter(-0.0f, 0.0f)));
+    EXPECT_FALSE(std::signbit(Simt::NextAfter(0.0f, -0.0f)));
+    EXPECT_TRUE(std::isnan(Simt::Yn(-1, 0.0f)));
+}
+
+TEST_F(MathComputeTestsuite, CppApiMathAlgorithms)
+{
+    float values[] = {3.0f, 4.0f, 5.0f, 12.0f, 7.0f};
+    EXPECT_NEAR(Simt::Norm(5, values), 15.588457f, 1e-6f);
+
+    float nonPositiveDimension[] = {-3.0f};
+    EXPECT_EQ(Simt::Norm(0, nonPositiveDimension), 3.0f);
+
+    float shortValues[] = {3.0f, 4.0f, 12.0f};
+    EXPECT_EQ(Simt::Norm(3, shortValues), 13.0f);
+
+    float groupedValues[] = {3.0f, 4.0f, 0.0f, 0.0f};
+    EXPECT_EQ(Simt::Norm(4, groupedValues), 5.0f);
+
+    float zeroValues[] = {0.0f, 0.0f, 0.0f};
+    EXPECT_EQ(Simt::Norm(3, zeroValues), 0.0f);
+
+    float groupedInf[] = {1.0f, INFINITY, 2.0f, 3.0f};
+    EXPECT_TRUE(std::isinf(Simt::Norm(4, groupedInf)));
+
+    float remainderInf[] = {1.0f, 2.0f, 3.0f, 4.0f, INFINITY};
+    EXPECT_TRUE(std::isinf(Simt::Norm(5, remainderInf)));
+
+    float nanValues[] = {1.0f, NAN, 2.0f};
+    EXPECT_TRUE(std::isnan(Simt::Norm(3, nanValues)));
+
+    EXPECT_NEAR(Simt::Yn(8, 2.0f), -1853.9222f, 1e-3f);
 }

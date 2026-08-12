@@ -466,7 +466,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float RemainderImpl(float x, float y)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float CopySignImpl(float x, float y)
 {
-    return (y > 0) ? AbsImpl(x) : -AbsImpl(x);
+    return (y >= 0) ? AbsImpl(x) : -AbsImpl(x);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float NearByIntImpl(float x)
@@ -479,6 +479,9 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float NearByIntImpl(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float NextAfterImpl(float x, float y)
 {
+    if (IsNanImpl(x) || IsNanImpl(y)) {
+        return ConstantsInternal::SIMT_FP32_INF / ConstantsInternal::SIMT_FP32_INF;
+    }
     uint32_t* f = (uint32_t*)&x;
     if (x > 0) {
         if (x < y) { // when x < src, x bit +1
@@ -486,11 +489,17 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float NextAfterImpl(float x, float y)
         } else if (x > y) { // when x > src, x bit -1
             (*f)--;
         }
-    } else {
+    } else if (x < 0) {
         if (x > y) {
             (*f)++;
         } else if (x < y) {
             (*f)--;
+        }
+    } else if (x == 0) {
+        if (y > 0) {
+            *f = 1;
+        } else if (y < 0) {
+            *f = 0x80000001;
         }
     }
     return x;

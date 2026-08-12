@@ -46,9 +46,10 @@ inline float log1pf(float x)
 
 以e为底的x+1的对数。
 
--   当x为inf时，返回值为inf。
--   当x为-inf时，返回值为nan。
 -   当x为nan时，返回值为nan。
+-   当x为-1时，返回值为-inf。
+-   当x小于-1时，返回值为nan。
+-   当x为+inf时，返回值为+inf。
 
 ## 约束说明
 

@@ -25,16 +25,6 @@ namespace Simt {
 #if defined(ASCENDC_CPU_DEBUG)
 constexpr int32_t MAX_SHLF_OFFSET = 31;
 constexpr int32_t WARP_SIZE = 32;
-#else
-// clamp the max source lane, except up mode
-constexpr int32_t MAX_OFFSET_OF_MODE = 0x1f;
-
-// clamp the max source lane for up mode
-constexpr int32_t MAX_OFFSET_OF_UP_MODE = 0;
-
-// the start position of max offset and lane mask
-constexpr int32_t MAX_OFFSET_START_POS = 8;
-constexpr int32_t LANE_MASK_START_POS = 16;
 #endif
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t AllSyncImpl(int32_t predicate)
@@ -108,8 +98,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflSyncImpl(T var, int32_t srcLane, int32_t width = warpSize)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
 #if defined(ASCENDC_CPU_DEBUG)
     ASCENDC_ASSERT((width <= WARP_SIZE && width > 0 && WARP_SIZE % width == 0), {
         KERNEL_LOG(KERNEL_ERROR, "width must be a power of 2 and in (0, 32]");
@@ -124,8 +115,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflSyncImpl(T var, int32_t srcLane, int
 
     return warp.WarpShuffleOp(var, laneId, srcLane);
 #else
-    return __shfl(
-        var, ((warpSize - width) << LANE_MASK_START_POS) | (MAX_OFFSET_OF_MODE << MAX_OFFSET_START_POS) | (srcLane));
+    return __shfl(var, srcLane, width);
 #endif
 }
 
@@ -133,8 +123,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflUpSyncImpl(T var, uint32_t delta, int32_t width = warpSize)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
 #if defined(ASCENDC_CPU_DEBUG)
     ASCENDC_ASSERT((width <= WARP_SIZE && width > 0 && WARP_SIZE % width == 0), {
         KERNEL_LOG(KERNEL_ERROR, "width must be a power of 2 and in (0, 32]");
@@ -153,8 +144,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflUpSyncImpl(T var, uint32_t delta, in
 
     return warp.WarpShuffleOp(var, laneId, srcLane);
 #else
-    return __shfl_up(
-        var, ((warpSize - width) << LANE_MASK_START_POS) | (MAX_OFFSET_OF_UP_MODE << MAX_OFFSET_START_POS) | (delta));
+    return __shfl_up(var, delta, width);
 #endif
 }
 
@@ -162,8 +152,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflDownSyncImpl(T var, uint32_t delta, int32_t width = warpSize)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
 #if defined(ASCENDC_CPU_DEBUG)
     ASCENDC_ASSERT((width <= WARP_SIZE && width > 0 && WARP_SIZE % width == 0), {
         KERNEL_LOG(KERNEL_ERROR, "width must be a power of 2 and in (0, 32]");
@@ -183,8 +174,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflDownSyncImpl(T var, uint32_t delta, 
 
     return warp.WarpShuffleOp(var, laneId, srcLane);
 #else
-    return __shfl_down(
-        var, ((warpSize - width) << LANE_MASK_START_POS) | (MAX_OFFSET_OF_MODE << MAX_OFFSET_START_POS) | (delta));
+    return __shfl_down(var, delta, width);
 #endif
 }
 
@@ -192,8 +182,9 @@ template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflXorSyncImpl(T var, int32_t laneMask, int32_t width = warpSize)
 {
     static_assert(
-        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float>,
-        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float.");
+        SupportTypeSimtInternel<T, int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, bfloat16x2_t>,
+        "Input type of var only supports int32_t, uint32_t, int64_t, uint64_t, half, half2, float, bfloat16_t, "
+        "bfloat16x2_t.");
 #if defined(ASCENDC_CPU_DEBUG)
     ASCENDC_ASSERT((width <= WARP_SIZE && width > 0 && WARP_SIZE % width == 0), {
         KERNEL_LOG(KERNEL_ERROR, "width must be a power of 2 and in (0, 32]");
@@ -214,8 +205,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline T ShflXorSyncImpl(T var, int32_t laneMask,
 
     return warp.WarpShuffleOp(var, laneId, srcLane);
 #else
-    return __shfl_xor(
-        var, ((warpSize - width) << LANE_MASK_START_POS) | (MAX_OFFSET_OF_MODE << MAX_OFFSET_START_POS) | (laneMask));
+    return __shfl_xor(var, laneMask, width);
 #endif
 }
 
