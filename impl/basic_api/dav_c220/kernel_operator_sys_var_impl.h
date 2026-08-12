@@ -100,11 +100,7 @@ __aicore__ inline int64_t GetSystemCycleImpl()
 #endif
 }
 
-__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion)
-{
-    const int32_t coreVersionOffset = 32;
-    coreVersion = static_cast<uint32_t>((static_cast<uint64_t>(get_arch_ver()) >> coreVersionOffset) & 0xFFF);
-}
+__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion) { coreVersion = 2201U; }
 
 __aicore__ inline int64_t GetProgramCounterImpl()
 {

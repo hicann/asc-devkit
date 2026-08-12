@@ -25,12 +25,7 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_impl.h"
 
-__aicore__ inline void asc_get_arch_ver_impl(uint32_t& core_version)
-{
-    asc_capi_arch_version ver;
-    ver.full = get_arch_ver();
-    core_version = static_cast<uint32_t>(ver.core_ver);
-}
+__aicore__ inline void asc_get_arch_ver_impl(uint32_t& core_version) { core_version = 3510U; }
 
 #endif
 

@@ -103,15 +103,6 @@ __aicore__ inline void asc_set_mask_count_end()
 
 __aicore__ inline void asc_sync_post_process() { pipe_barrier(pipe_t::PIPE_ALL); }
 
-union asc_capi_arch_version {
-    uint64_t full;
-    struct {
-        uint64_t low_bit : 32;
-        uint64_t core_ver : 12;
-        uint64_t reserved : 20;
-    };
-};
-
 union asc_capi_fpc_reg_config {
     uint64_t config;
     struct {

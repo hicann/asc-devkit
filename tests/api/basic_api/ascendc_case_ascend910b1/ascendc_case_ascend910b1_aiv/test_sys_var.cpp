@@ -25,6 +25,7 @@ TEST_F(TEST_SYS_VAR, GetSystemVariable)
 
     uint32_t coreVersion = 0;
     GetArchVersion(coreVersion);
+    EXPECT_EQ(coreVersion, 2201U);
 
     int64_t actualSubBlockNum = GetSubBlockNum();
     EXPECT_EQ(actualSubBlockNum, subBlockNum);

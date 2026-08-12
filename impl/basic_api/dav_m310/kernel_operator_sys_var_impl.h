@@ -33,11 +33,7 @@ __aicore__ inline int64_t GetTaskRationImpl() { return 1; }
 
 __aicore__ inline int64_t GetBlockIdxImpl() { return block_idx; }
 
-__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion)
-{
-    (void)(coreVersion);
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "unsupported GetArchVersion on current device"); });
-}
+__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion) { coreVersion = 3102U; }
 
 __aicore__ inline int64_t GetSubBlockNumImpl() { return 1; }
 

@@ -33,11 +33,7 @@ __aicore__ inline int64_t GetTaskRationImpl() { return 1; }
 
 __aicore__ inline int64_t GetBlockIdxImpl() { return block_idx; }
 
-__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion)
-{
-    (void)(coreVersion);
-    ASCENDC_REPORT_NOT_SUPPORT(false, "GetArchVersion");
-}
+__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion) { coreVersion = 1001U; }
 
 __aicore__ inline int64_t GetSubBlockNumImpl() { return 1; }
 
