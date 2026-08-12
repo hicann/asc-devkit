@@ -823,9 +823,26 @@
 | [any](../cooperative_groups/thread_block_tile/any.md) | 判断是否有组内线程的输入不为0。 |
 | [all](../cooperative_groups/thread_block_tile/all.md) | 判断是否所有组内线程的输入均不为0。 |
 
-**表31**  协作组划分接口
+**表31**  grid_group接口
 
 | 接口名 | 功能描述 |
 | --- | --- |
+| [this_grid](../cooperative_groups/grid_group/grid_group_constructor.md) | 获取当前Grid协作组对象。 |
+| [is_valid](../cooperative_groups/grid_group/is_valid.md) | 判断当前Grid协作组是否可使用`sync`接口进行跨线程块同步。 |
+| [sync](../cooperative_groups/grid_group/sync.md) | 同步Grid内所有线程。 |
+| [thread_rank](../cooperative_groups/grid_group/thread_rank.md) | 获取当前线程在Grid内的排名。 |
+| [block_rank](../cooperative_groups/grid_group/block_rank.md) | 获取当前线程所属线程块在Grid内的排名。 |
+| [num_threads](../cooperative_groups/grid_group/num_threads.md) | 获取Grid内线程总数。 |
+| [num_blocks](../cooperative_groups/grid_group/num_blocks.md) | 获取Grid内线程块总数。 |
+| [dim_blocks](../cooperative_groups/grid_group/dim_blocks.md) | 获取Grid的线程块维度配置。 |
+| [block_index](../cooperative_groups/grid_group/block_index.md) | 获取当前线程所属线程块在Grid中的三维索引。 |
+| [size](../cooperative_groups/grid_group/size.md) | 获取Grid内线程总数。 |
+| [group_dim](../cooperative_groups/grid_group/group_dim.md) | 获取Grid的线程块维度配置。 |
+
+**表32**  协作组通用与划分接口
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [sync](../cooperative_groups/sync.md) | 同步指定协作组内的所有线程。 |
 | [tiled_partition](../cooperative_groups/tiled_partition.md) | 将一个线程组按指定大小划分为多个子组。 |
 | [binary_partition](../cooperative_groups/binary_partition.md) | 根据一个标签（0或1）将父组划分为两个子组。 |

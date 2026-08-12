@@ -11,11 +11,23 @@
 #include <mockcpp/mockcpp.hpp>
 #include <type_traits>
 #include "simt_compiler_stub.h"
+#include "simt_api/device_functions.h"
+#include "simt_api/asc_fp16.h"
+#include "simt_api/asc_bf16.h"
+#include "utils/debug/asc_assert.h"
+#define __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #include "simt_api/cooperative_groups.h"
+#undef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 
 using namespace std;
 using namespace AscendC;
 using namespace cooperative_groups;
+
+namespace {
+uint64_t* GetGridSyncCounter() { return reinterpret_cast<uint64_t*>(__cce_simt_get_para_base_imp() - 4U * 8U); }
+
+constexpr uint64_t GridSyncPhaseBit = 1ULL << 63;
+} // namespace
 
 class CooperativeGroupsTestsuite : public testing::Test {
 protected:
@@ -56,6 +68,7 @@ TEST_F(CooperativeGroupsTestsuite, GroupTypeTest)
     EXPECT_EQ(static_cast<unsigned int>(group_type::thread_block_type), 0u);
     EXPECT_EQ(static_cast<unsigned int>(group_type::tiled_group_type), 1u);
     EXPECT_EQ(static_cast<unsigned int>(group_type::coalesced_group_type), 2u);
+    EXPECT_EQ(static_cast<unsigned int>(group_type::grid_group_type), 3u);
 }
 
 TEST_F(CooperativeGroupsTestsuite, ThreadGroupGetTypeTest)
@@ -70,6 +83,106 @@ TEST_F(CooperativeGroupsTestsuite, ThreadGroupGetTypeTest)
     EXPECT_EQ(tg3.get_type(), group_type::tiled_group_type);
 }
 
+TEST_F(CooperativeGroupsTestsuite, GridGroupThisGridTest)
+{
+    grid_group gg = this_grid();
+    EXPECT_EQ(gg.get_type(), group_type::grid_group_type);
+    EXPECT_TRUE(gg.is_valid());
+}
+
+TEST_F(CooperativeGroupsTestsuite, ThreadGroupBaseClassGridGroupDispatchTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 4u, 2u), cce::dim3(7u, 3u, 1u), cce::dim3(3u, 2u, 1u), cce::dim3(4u, 3u, 2u));
+    grid_group gg = this_grid();
+    thread_group& tg = gg;
+
+    EXPECT_EQ(tg.get_type(), group_type::grid_group_type);
+    EXPECT_EQ(tg.size(), grid_group::size());
+    EXPECT_EQ(tg.num_threads(), grid_group::num_threads());
+    EXPECT_EQ(tg.thread_rank(), grid_group::thread_rank());
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupNumBlocksThreadsAndRank3DTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 4u, 2u), cce::dim3(7u, 3u, 1u), cce::dim3(3u, 2u, 1u), cce::dim3(4u, 3u, 2u));
+
+    EXPECT_EQ(grid_group::num_blocks(), 24ull);
+    EXPECT_EQ(grid_group::num_threads(), 1536ull);
+    EXPECT_EQ(grid_group::size(), 1536ull);
+    EXPECT_EQ(grid_group::block_rank(), 23ull);
+    EXPECT_EQ(grid_group::thread_rank(), 1535ull);
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupDimBlocksAndBlockIndex3DTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 4u, 2u), cce::dim3(0u, 0u, 0u), cce::dim3(3u, 2u, 1u), cce::dim3(4u, 3u, 2u));
+
+    dim3 dimBlocks = grid_group::dim_blocks();
+    EXPECT_EQ(dimBlocks.x, 4u);
+    EXPECT_EQ(dimBlocks.y, 3u);
+    EXPECT_EQ(dimBlocks.z, 2u);
+
+    dim3 groupDim = grid_group::group_dim();
+    EXPECT_EQ(groupDim.x, 4u);
+    EXPECT_EQ(groupDim.y, 3u);
+    EXPECT_EQ(groupDim.z, 2u);
+
+    dim3 blockIndex = grid_group::block_index();
+    EXPECT_EQ(blockIndex.x, 3u);
+    EXPECT_EQ(blockIndex.y, 2u);
+    EXPECT_EQ(blockIndex.z, 1u);
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupSyncSingleBlockFlipsCounterPhaseTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 1u, 1u), cce::dim3(0u, 0u, 0u), cce::dim3(0u, 0u, 0u), cce::dim3(1u, 1u, 1u));
+    GetGridSyncCounter()[0] = 123u;
+
+    sync(this_grid());
+
+    EXPECT_EQ(GetGridSyncCounter()[0], GridSyncPhaseBit + 123u);
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupSyncBlockZeroReleasesCounterTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 1u, 1u), cce::dim3(0u, 0u, 0u), cce::dim3(0u, 0u, 0u), cce::dim3(2u, 1u, 1u));
+    GetGridSyncCounter()[0] = 1u;
+
+    this_grid().sync();
+
+    EXPECT_EQ(GetGridSyncCounter()[0], GridSyncPhaseBit);
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupSyncNonZeroBlockReleasesCounterTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 1u, 1u), cce::dim3(0u, 0u, 0u), cce::dim3(1u, 0u, 0u), cce::dim3(2u, 1u, 1u));
+    GetGridSyncCounter()[0] = GridSyncPhaseBit - 1ULL;
+
+    this_grid().sync();
+
+    EXPECT_EQ(GetGridSyncCounter()[0], GridSyncPhaseBit);
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupSyncBlockZeroReleasesCounterForThreeBlocksTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 1u, 1u), cce::dim3(0u, 0u, 0u), cce::dim3(0u, 0u, 0u), cce::dim3(3u, 1u, 1u));
+    GetGridSyncCounter()[0] = 2u;
+
+    this_grid().sync();
+
+    EXPECT_EQ(GetGridSyncCounter()[0], GridSyncPhaseBit);
+}
+
+TEST_F(CooperativeGroupsTestsuite, GridGroupSyncBlockZeroReleasesNextPhaseTest)
+{
+    SimtDimGuard guard(cce::dim3(8u, 1u, 1u), cce::dim3(0u, 0u, 0u), cce::dim3(0u, 0u, 0u), cce::dim3(2u, 1u, 1u));
+    GetGridSyncCounter()[0] = GridSyncPhaseBit + 1ULL;
+
+    this_grid().sync();
+
+    EXPECT_EQ(GetGridSyncCounter()[0], 0u);
+}
+
 TEST_F(CooperativeGroupsTestsuite, ThreadBlockThisThreadBlockTest)
 {
     thread_block tb = this_thread_block();
@@ -77,6 +190,12 @@ TEST_F(CooperativeGroupsTestsuite, ThreadBlockThisThreadBlockTest)
 }
 
 TEST_F(CooperativeGroupsTestsuite, ThreadBlockSyncTest) { thread_block::sync(); }
+
+TEST_F(CooperativeGroupsTestsuite, OuterSyncThreadBlockTest)
+{
+    thread_block tb = this_thread_block();
+    sync(tb);
+}
 
 TEST_F(CooperativeGroupsTestsuite, ThreadBlockThreadRankTest)
 {

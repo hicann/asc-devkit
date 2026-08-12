@@ -2736,6 +2736,20 @@
 
     -   [协作组](SIMT-API/cooperative_groups/cooperative_groups.md)
         -   [协作组简介](SIMT-API/cooperative_groups/cooperative_groups_intro.md)
+        -   [grid_group](SIMT-API/cooperative_groups/grid_group/grid_group.md)
+            -   [grid_group简介](SIMT-API/cooperative_groups/grid_group/grid_group_intro.md)
+            -   [grid_group_constructor](SIMT-API/cooperative_groups/grid_group/grid_group_constructor.md)
+            -   [is_valid](SIMT-API/cooperative_groups/grid_group/is_valid.md)
+            -   [sync](SIMT-API/cooperative_groups/grid_group/sync.md)
+            -   [thread_rank](SIMT-API/cooperative_groups/grid_group/thread_rank.md)
+            -   [block_rank](SIMT-API/cooperative_groups/grid_group/block_rank.md)
+            -   [num_threads](SIMT-API/cooperative_groups/grid_group/num_threads.md)
+            -   [num_blocks](SIMT-API/cooperative_groups/grid_group/num_blocks.md)
+            -   [dim_blocks](SIMT-API/cooperative_groups/grid_group/dim_blocks.md)
+            -   [block_index](SIMT-API/cooperative_groups/grid_group/block_index.md)
+            -   [size](SIMT-API/cooperative_groups/grid_group/size.md)
+            -   [group_dim](SIMT-API/cooperative_groups/grid_group/group_dim.md)
+
         -   [thread_block](SIMT-API/cooperative_groups/thread_block/thread_block.md)
             -   [thread_block简介](SIMT-API/cooperative_groups/thread_block/thread_block_intro.md)
             -   [thread_block构造函数](SIMT-API/cooperative_groups/thread_block/thread_block_constructor.md)
@@ -2781,6 +2795,7 @@
             -   [any](SIMT-API/cooperative_groups/thread_block_tile/any.md)
             -   [all](SIMT-API/cooperative_groups/thread_block_tile/all.md)
 
+        -   [sync](SIMT-API/cooperative_groups/sync.md)
         -   [tiled_partition](SIMT-API/cooperative_groups/tiled_partition.md)
         -   [binary_partition](SIMT-API/cooperative_groups/binary_partition.md)
 

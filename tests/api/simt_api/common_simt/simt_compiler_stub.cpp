@@ -58,3 +58,9 @@ bool CheckFunVecBinaryScalarImpl(VecBinaryScalarApiParams& chkParams, const uint
 bool CheckFunVecBinaryScalarImpl(VecBinaryScalarApiParams& chkParams, const char* intriName) { return true; }
 } // namespace check
 } // namespace AscendC
+
+namespace {
+static uint64_t g_gridSyncArgs[5] = {0U, 0U, 0U, 0U, 0U};
+} // namespace
+
+uint64_t __cce_simt_get_para_base_imp() { return reinterpret_cast<uint64_t>(&g_gridSyncArgs[4]); }

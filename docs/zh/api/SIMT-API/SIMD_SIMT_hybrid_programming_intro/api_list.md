@@ -818,9 +818,10 @@
 | [any](../cooperative_groups/thread_block_tile/any.md) | 判断是否有组内线程的输入不为0。 |
 | [all](../cooperative_groups/thread_block_tile/all.md) | 判断是否所有组内线程的输入均不为0。 |
 
-**表30**  协作组划分接口
+**表30**  协作组通用与划分接口
 
 | 接口名 | 功能描述 |
 | --- | --- |
+| [sync](../cooperative_groups/sync.md) | 同步指定协作组内的所有线程。 |
 | [tiled_partition](../cooperative_groups/tiled_partition.md) | 将一个线程组按指定大小划分为多个子组。 |
 | [binary_partition](../cooperative_groups/binary_partition.md) | 根据一个标签（0或1）将父组划分为两个子组。 |

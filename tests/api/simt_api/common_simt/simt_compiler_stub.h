@@ -27,4 +27,6 @@ static int32_t laneid() { return 0; }
 
 static int32_t lanemask_lt() { return 0xFFFFFFFF; }
 
+uint64_t __cce_simt_get_para_base_imp();
+
 #endif
