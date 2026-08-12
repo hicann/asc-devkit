@@ -7,7 +7,7 @@ CANN 9.0.0首次面向Ascend 950PR/Ascend 950DT（3510架构）提供试验性C�
 ### 数据结构
 
 - `asc_set_l0c_copy_params_config`：用于设置L0C Buffer搬运过程中进行NZ格式转换为ND格式时所需的ND矩阵数量、源相邻NZ矩阵的起始地址偏移和目的相邻ND矩阵的起始地址偏移。
-- `asc_load3d_v2_config`：用于设置asc_copy_l12l0a_3d，asc_copy_l12l0b_3d接口的repeat参数。
+- `asc_load3d_v2_config`：用于设置`asc_copy_l12l0a`，`asc_copy_l12l0b`接口的repeat参数。
 - `asc_ndim_pad_count_config`：用于`asc_set_ndim_pad_count`接口，设置`asc_ndim_copy_gm2ub`接口各个维度左右侧的填充元素个数。
 - `asc_l13d_fmatrix_config`：用于设置`asc_copy_l12l0a`、`asc_copy_l12l0b`的3D格式搬运接口的特征图属性参数。
 
@@ -24,7 +24,7 @@ CANN 9.0.0首次面向Ascend 950PR/Ascend 950DT（3510架构）提供试验性C�
 - `asc_set_ndim_loop0_stride`、`asc_set_ndim_loop1_stride`、`asc_set_ndim_loop2_stride`、`asc_set_ndim_loop3_stride`、`asc_set_ndim_loop4_stride`：用于设置`asc_ndim_copy_gm2ub`接口每个维度内源操作数与目的操作数的元素间隔，最多设置5个维度。
 - `asc_set_ndim_pad_count`：设置`asc_ndim_copy_gm2ub`接口各个维度左右侧的填充元素个数。
 - `asc_set_ndim_pad_value`：当`asc_ndim_copy_gm2ub`接口的`padding_mode`参数为`true`时，设置填充固定值。
-- `asc_set_l13d_rpt`：用于设置asc_copy_l12l0a_3d，asc_copy_l12l0b_3d接口的repeat参数。
+- `asc_set_l13d_rpt`：用于设置`asc_copy_l12l0a`，`asc_copy_l12l0b`接口的repeat参数。
 - `asc_set_l13d_fmatrix`：设置特征图属性描述，用于`asc_copy_l12l0a`、`asc_copy_l12l0b`的3D格式搬运接口配置填充值。从左矩阵获取特征图属性时使用该接口。
 - `asc_set_l0c_copy_prequant`：数据搬运过程中进行随路量化时，设置量化流程中的标量量化参数。
 - `asc_set_l0c_copy_params`：从L0C Buffer搬运到Global Memory或L1 Buffer的过程中进行NZ格式转换为ND格式时，设置格式转换的相关配置。
