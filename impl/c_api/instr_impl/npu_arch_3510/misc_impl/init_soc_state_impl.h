@@ -34,6 +34,7 @@ __aicore__ inline void asc_init_soc_state_impl()
         set_loop_size_ubtoout(loopSizePara);
         set_loop_size_outtoub(loopSizePara);
     }
+    set_st_atomic_cfg(0b00100100);
 }
 
 #endif
