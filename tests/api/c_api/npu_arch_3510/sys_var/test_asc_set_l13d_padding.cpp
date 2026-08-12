@@ -24,7 +24,7 @@
     TEST_F(TestSysVarSetL13dPadding##data_type, c_api_set_l12ub_loop_size##data_type) \
     {                                                                                 \
         data_type input = 33;                                                         \
-        MOCKER_CPP(set_padding, void(uint64_t)).times(1);                             \
+        MOCKER_CPP(set_padding, void(uint64_t)).times(2);                             \
         asc_set_l13d_padding(input);                                                  \
         asc_init();                                                                   \
         GlobalMockObject::verify();                                                   \

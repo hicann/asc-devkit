@@ -21,10 +21,18 @@
 
 __aicore__ inline void asc_init_soc_state_impl()
 {
-    if ASC_IS_AIV {
-        set_atomic_none();
-        set_mask_norm();
+    set_atomic_none();
+    set_mask_norm();
+    uint64_t prevCtrl = get_ctrl() & 0x1000000000000;
+    uint64_t val = 0x1000000000000008 | prevCtrl;
+    set_ctrl(val);
+    if ASCEND_IS_AIC {
+        set_padding(static_cast<uint64_t>(0));
+    } else {
         set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
+        uint64_t loopSizePara = (1uL << 21) | 1uL;
+        set_loop_size_ubtoout(loopSizePara);
+        set_loop_size_outtoub(loopSizePara);
     }
 }
 

@@ -26,7 +26,7 @@ void get_set_ctrl_Stub(uint64_t config) {}
 TEST_F(TestSysVarSETCTR, c_api_get_set_ctrl_Succ)
 {
     int64_t input = 1;
-    MOCKER_CPP(set_ctrl, void(uint64_t)).times(1).will(invoke(get_set_ctrl_Stub));
+    MOCKER_CPP(set_ctrl, void(uint64_t)).times(2).will(invoke(get_set_ctrl_Stub));
     asc_set_ctrl(input);
     asc_init();
     GlobalMockObject::verify();
