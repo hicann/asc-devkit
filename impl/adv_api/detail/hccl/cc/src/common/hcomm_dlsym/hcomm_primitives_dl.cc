@@ -29,7 +29,7 @@ static HcommAicpuTsTaskCacheExecuteFunc g_HcommAicpuTsTaskCacheExecute = nullptr
 static HcommAicpuTsTaskCacheClearFunc g_HcommAicpuTsTaskCacheClear = nullptr;
 
 #ifdef UT_TEST
-extern "C" void HcommAicpuTsTaskCacheSetTestFunctions(
+extern "C" void Mc2HcommAicpuTsTaskCacheSetTestFunctions(
     HcommAicpuTsTaskCacheLookupFunc lookup, HcommAicpuTsTaskCacheStartFunc start, HcommAicpuTsTaskCacheEndFunc end,
     HcommAicpuTsTaskCacheExecuteFunc execute, HcommAicpuTsTaskCacheClearFunc clear)
 {
@@ -40,9 +40,9 @@ extern "C" void HcommAicpuTsTaskCacheSetTestFunctions(
     g_HcommAicpuTsTaskCacheClear = clear;
 }
 
-extern "C" void HcommAicpuTsTaskCacheResetTestFunctions(void)
+extern "C" void Mc2HcommAicpuTsTaskCacheResetTestFunctions(void)
 {
-    HcommAicpuTsTaskCacheSetTestFunctions(nullptr, nullptr, nullptr, nullptr, nullptr);
+    Mc2HcommAicpuTsTaskCacheSetTestFunctions(nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 #endif
 
@@ -99,66 +99,70 @@ DEFINE_WEAK_FUNC(
     HcclResult, HcclSymWinGetPeerPointer, HcclCommSymWindow winHandle, size_t offset, uint32_t peerRank, void** ptr);
 DEFINE_WEAK_FUNC(
     HcclResult, HcclCommSymWinGet, HcclComm comm, void* ptr, size_t size, HcclCommSymWindow* winHandle, size_t* offset);
-extern "C" bool HcommIsSupportAicpuTsTaskCache(void)
+extern "C" bool Mc2HcommIsSupportAicpuTsTaskCache(void)
 {
-    return HcommIsSupportHcommAicpuTsTaskCacheLookup() && HcommIsSupportHcommAicpuTsTaskCacheStart() &&
-           HcommIsSupportHcommAicpuTsTaskCacheEnd() && HcommIsSupportHcommAicpuTsTaskCacheExecute() &&
-           HcommIsSupportHcommAicpuTsTaskCacheClear();
+    return g_HcommAicpuTsTaskCacheLookup != nullptr && g_HcommAicpuTsTaskCacheStart != nullptr &&
+           g_HcommAicpuTsTaskCacheEnd != nullptr && g_HcommAicpuTsTaskCacheExecute != nullptr &&
+           g_HcommAicpuTsTaskCacheClear != nullptr;
 }
 
-extern "C" bool HcommIsSupportHcommAicpuTsTaskCacheLookup(void) { return g_HcommAicpuTsTaskCacheLookup != nullptr; }
-
-extern "C" bool HcommIsSupportHcommAicpuTsTaskCacheStart(void) { return g_HcommAicpuTsTaskCacheStart != nullptr; }
-
-extern "C" bool HcommIsSupportHcommAicpuTsTaskCacheEnd(void) { return g_HcommAicpuTsTaskCacheEnd != nullptr; }
-
-extern "C" bool HcommIsSupportHcommAicpuTsTaskCacheExecute(void) { return g_HcommAicpuTsTaskCacheExecute != nullptr; }
-
-extern "C" bool HcommIsSupportHcommAicpuTsTaskCacheClear(void) { return g_HcommAicpuTsTaskCacheClear != nullptr; }
-
-extern "C" int32_t HcclHcommAicpuTsTaskCacheLookup(const char* tag, bool* isHit)
+extern "C" int32_t Mc2HcommAicpuTsTaskCacheLookup(const char* tag, bool* isHit)
 {
     if (g_HcommAicpuTsTaskCacheLookup == nullptr) {
-        HCCL_ERROR("[HcclWrapper] HcommAicpuTsTaskCacheLookup not supported");
+        HCCL_ERROR("[Mc2HcommWrapper] HcommAicpuTsTaskCacheLookup not supported");
         return HCCL_E_NOT_SUPPORT;
     }
     return g_HcommAicpuTsTaskCacheLookup(tag, isHit);
 }
 
-extern "C" int32_t HcclHcommAicpuTsTaskCacheStart(const char* tag, void** addrs, uint64_t* sizes, uint64_t count)
+extern "C" int32_t Mc2HcommAicpuTsTaskCacheStart(const char* tag, void** addrs, uint64_t* sizes, uint64_t count)
 {
     if (g_HcommAicpuTsTaskCacheStart == nullptr) {
-        HCCL_ERROR("[HcclWrapper] HcommAicpuTsTaskCacheStart not supported");
+        HCCL_ERROR("[Mc2HcommWrapper] HcommAicpuTsTaskCacheStart not supported");
         return HCCL_E_NOT_SUPPORT;
     }
     return g_HcommAicpuTsTaskCacheStart(tag, addrs, sizes, count);
 }
 
-extern "C" int32_t HcclHcommAicpuTsTaskCacheEnd(const char* tag)
+extern "C" int32_t Mc2HcommAicpuTsTaskCacheEnd(const char* tag)
 {
     if (g_HcommAicpuTsTaskCacheEnd == nullptr) {
-        HCCL_ERROR("[HcclWrapper] HcommAicpuTsTaskCacheEnd not supported");
+        HCCL_ERROR("[Mc2HcommWrapper] HcommAicpuTsTaskCacheEnd not supported");
         return HCCL_E_NOT_SUPPORT;
     }
     return g_HcommAicpuTsTaskCacheEnd(tag);
 }
 
-extern "C" int32_t HcclHcommAicpuTsTaskCacheExecute(const char* tag, void** addrs, uint64_t* sizes, uint64_t count)
+extern "C" int32_t Mc2HcommAicpuTsTaskCacheExecute(const char* tag, void** addrs, uint64_t* sizes, uint64_t count)
 {
     if (g_HcommAicpuTsTaskCacheExecute == nullptr) {
-        HCCL_ERROR("[HcclWrapper] HcommAicpuTsTaskCacheExecute not supported");
+        HCCL_ERROR("[Mc2HcommWrapper] HcommAicpuTsTaskCacheExecute not supported");
         return HCCL_E_NOT_SUPPORT;
     }
     return g_HcommAicpuTsTaskCacheExecute(tag, addrs, sizes, count);
 }
 
-extern "C" int32_t HcclHcommAicpuTsTaskCacheClear(const char* tag)
+extern "C" int32_t Mc2HcommAicpuTsTaskCacheClear(const char* tag)
 {
     if (g_HcommAicpuTsTaskCacheClear == nullptr) {
-        HCCL_ERROR("[HcclWrapper] HcommAicpuTsTaskCacheClear not supported");
+        HCCL_ERROR("[Mc2HcommWrapper] HcommAicpuTsTaskCacheClear not supported");
         return HCCL_E_NOT_SUPPORT;
     }
     return g_HcommAicpuTsTaskCacheClear(tag);
+}
+
+extern "C" void Mc2HcommAicpuTaskCacheDlInit(void* libHcommHandle)
+{
+    g_HcommAicpuTsTaskCacheLookup =
+        reinterpret_cast<HcommAicpuTsTaskCacheLookupFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheLookup"));
+    g_HcommAicpuTsTaskCacheStart =
+        reinterpret_cast<HcommAicpuTsTaskCacheStartFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheStart"));
+    g_HcommAicpuTsTaskCacheEnd =
+        reinterpret_cast<HcommAicpuTsTaskCacheEndFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheEnd"));
+    g_HcommAicpuTsTaskCacheExecute =
+        reinterpret_cast<HcommAicpuTsTaskCacheExecuteFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheExecute"));
+    g_HcommAicpuTsTaskCacheClear =
+        reinterpret_cast<HcommAicpuTsTaskCacheClearFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheClear"));
 }
 
 // ---------- 初始化函数 ----------
@@ -186,16 +190,6 @@ void HcommPrimitivesDlInit(void* libHcommHandle)
     INIT_SUPPORT_FLAG(libHcommHandle, HcommThreadJoin);
     INIT_SUPPORT_FLAG(libHcommHandle, HcclSymWinGetPeerPointer);
     INIT_SUPPORT_FLAG(libHcommHandle, HcclCommSymWinGet);
-    g_HcommAicpuTsTaskCacheLookup =
-        reinterpret_cast<HcommAicpuTsTaskCacheLookupFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheLookup"));
-    g_HcommAicpuTsTaskCacheStart =
-        reinterpret_cast<HcommAicpuTsTaskCacheStartFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheStart"));
-    g_HcommAicpuTsTaskCacheEnd =
-        reinterpret_cast<HcommAicpuTsTaskCacheEndFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheEnd"));
-    g_HcommAicpuTsTaskCacheExecute =
-        reinterpret_cast<HcommAicpuTsTaskCacheExecuteFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheExecute"));
-    g_HcommAicpuTsTaskCacheClear =
-        reinterpret_cast<HcommAicpuTsTaskCacheClearFunc>(dlsym(libHcommHandle, "HcommAicpuTsTaskCacheClear"));
 
     dlerror();
     g_HcommBatchTransferOnThread =

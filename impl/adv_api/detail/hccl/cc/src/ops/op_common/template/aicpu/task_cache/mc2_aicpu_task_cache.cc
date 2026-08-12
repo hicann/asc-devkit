@@ -487,7 +487,7 @@ HcclResult BuildMc2AicpuTaskCachePlan(
         SetBypass(plan, "AICPU_CacheDisable");
         return HCCL_SUCCESS;
     }
-    if (!HcommIsSupportAicpuTsTaskCache()) {
+    if (!Mc2HcommIsSupportAicpuTsTaskCache()) {
         SetBypass(plan, "hcomm task cache symbols incomplete");
         return HCCL_SUCCESS;
     }
@@ -557,31 +557,31 @@ HcclResult BuildMc2AicpuTaskCachePlan(
 HcclResult Mc2AicpuTaskCacheLookup(const Mc2AicpuTaskCachePlan& plan, bool& isHit)
 {
     isHit = false;
-    return static_cast<HcclResult>(HcclHcommAicpuTsTaskCacheLookup(plan.tag.c_str(), &isHit));
+    return static_cast<HcclResult>(Mc2HcommAicpuTsTaskCacheLookup(plan.tag.c_str(), &isHit));
 }
 
 HcclResult Mc2AicpuTaskCacheStart(const Mc2AicpuTaskCachePlan& plan)
 {
-    return static_cast<HcclResult>(HcclHcommAicpuTsTaskCacheStart(
+    return static_cast<HcclResult>(Mc2HcommAicpuTsTaskCacheStart(
         plan.tag.c_str(), const_cast<void**>(plan.addrs.data()), const_cast<uint64_t*>(plan.sizes.data()),
         CACHE_ADDR_COUNT));
 }
 
 HcclResult Mc2AicpuTaskCacheEnd(const Mc2AicpuTaskCachePlan& plan)
 {
-    return static_cast<HcclResult>(HcclHcommAicpuTsTaskCacheEnd(plan.tag.c_str()));
+    return static_cast<HcclResult>(Mc2HcommAicpuTsTaskCacheEnd(plan.tag.c_str()));
 }
 
 HcclResult Mc2AicpuTaskCacheExecute(const Mc2AicpuTaskCachePlan& plan)
 {
-    return static_cast<HcclResult>(HcclHcommAicpuTsTaskCacheExecute(
+    return static_cast<HcclResult>(Mc2HcommAicpuTsTaskCacheExecute(
         plan.tag.c_str(), const_cast<void**>(plan.addrs.data()), const_cast<uint64_t*>(plan.sizes.data()),
         CACHE_ADDR_COUNT));
 }
 
 HcclResult Mc2AicpuTaskCacheClear(const Mc2AicpuTaskCachePlan& plan)
 {
-    return static_cast<HcclResult>(HcclHcommAicpuTsTaskCacheClear(plan.tag.c_str()));
+    return static_cast<HcclResult>(Mc2HcommAicpuTsTaskCacheClear(plan.tag.c_str()));
 }
 
 Mc2AicpuTaskCacheManager& Mc2AicpuTaskCacheManager::Instance()
@@ -665,7 +665,7 @@ HcclResult Mc2AicpuTaskCacheManager::Evict(void* comm)
 
     HcclResult result = HCCL_SUCCESS;
     for (const std::string& tag : tags) {
-        const HcclResult ret = static_cast<HcclResult>(HcclHcommAicpuTsTaskCacheClear(tag.c_str()));
+        const HcclResult ret = static_cast<HcclResult>(Mc2HcommAicpuTsTaskCacheClear(tag.c_str()));
         if (ret != HCCL_SUCCESS) {
             HCCL_ERROR("[MC2_TASK_CACHE][Evict] comm[%p], tag[%s], ret[%d].", comm, tag.c_str(), ret);
             result = ret;

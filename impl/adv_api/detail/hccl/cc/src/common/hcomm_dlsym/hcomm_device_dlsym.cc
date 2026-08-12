@@ -22,7 +22,7 @@ static void* gLibHandle = nullptr;
 static bool gInitialized = false;
 
 // 初始化
-void HcommDeviceDlInit(void)
+void Mc2HcommDeviceDlInit(void)
 {
     if (gInitialized) {
         return;
@@ -36,6 +36,7 @@ void HcommDeviceDlInit(void)
     dlerror();
 
     HcommPrimitivesDlInit(gLibHandle);
+    Mc2HcommAicpuTaskCacheDlInit(gLibHandle);
     HcommDeviceProfilingDlInit(gLibHandle);
     HcommDiagDlInit(gLibHandle);
     gInitialized = true;

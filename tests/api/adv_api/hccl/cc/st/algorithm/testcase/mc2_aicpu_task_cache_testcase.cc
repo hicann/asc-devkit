@@ -128,24 +128,38 @@ protected:
     {
         ResetAlgEnvConfigInitState();
         ResetMc2TaskCacheTestStubState();
-        HcommAicpuTsTaskCacheSetTestFunctions(
+        Mc2HcommAicpuTsTaskCacheSetTestFunctions(
             TaskCacheLookupStub, TaskCacheStartStub, TaskCacheEndStub, TaskCacheExecuteStub, TaskCacheClearStub);
     }
 
-    void TearDown() override { HcommAicpuTsTaskCacheResetTestFunctions(); }
+    void TearDown() override { Mc2HcommAicpuTsTaskCacheResetTestFunctions(); }
 };
 
 TEST_F(Mc2AicpuTaskCacheTest, MissingDynamicSymbolsReturnNotSupport)
 {
-    HcommAicpuTsTaskCacheResetTestFunctions();
+    Mc2HcommAicpuTsTaskCacheResetTestFunctions();
     bool isHit = false;
     void* addrs[2] = {nullptr, nullptr};
     uint64_t sizes[2] = {0U, 0U};
-    EXPECT_EQ(HcclHcommAicpuTsTaskCacheLookup("tag", &isHit), HCCL_E_NOT_SUPPORT);
-    EXPECT_EQ(HcclHcommAicpuTsTaskCacheStart("tag", addrs, sizes, 2U), HCCL_E_NOT_SUPPORT);
-    EXPECT_EQ(HcclHcommAicpuTsTaskCacheEnd("tag"), HCCL_E_NOT_SUPPORT);
-    EXPECT_EQ(HcclHcommAicpuTsTaskCacheExecute("tag", addrs, sizes, 2U), HCCL_E_NOT_SUPPORT);
-    EXPECT_EQ(HcclHcommAicpuTsTaskCacheClear("tag"), HCCL_E_NOT_SUPPORT);
+    EXPECT_FALSE(Mc2HcommIsSupportAicpuTsTaskCache());
+    EXPECT_EQ(Mc2HcommAicpuTsTaskCacheLookup("tag", &isHit), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(Mc2HcommAicpuTsTaskCacheStart("tag", addrs, sizes, 2U), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(Mc2HcommAicpuTsTaskCacheEnd("tag"), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(Mc2HcommAicpuTsTaskCacheExecute("tag", addrs, sizes, 2U), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(Mc2HcommAicpuTsTaskCacheClear("tag"), HCCL_E_NOT_SUPPORT);
+}
+
+TEST_F(Mc2AicpuTaskCacheTest, CapabilityAndWrappersUseTheSamePrivateFunctionTable)
+{
+    Mc2HcommAicpuTsTaskCacheSetTestFunctions(TaskCacheLookupStub, nullptr, nullptr, nullptr, nullptr);
+    EXPECT_FALSE(Mc2HcommIsSupportAicpuTsTaskCache());
+
+    Mc2HcommAicpuTsTaskCacheSetTestFunctions(
+        TaskCacheLookupStub, TaskCacheStartStub, TaskCacheEndStub, TaskCacheExecuteStub, TaskCacheClearStub);
+    EXPECT_TRUE(Mc2HcommIsSupportAicpuTsTaskCache());
+    bool isHit = false;
+    EXPECT_EQ(Mc2HcommAicpuTsTaskCacheLookup("tag", &isHit), HCCL_SUCCESS);
+    EXPECT_EQ(GetMc2TaskCacheTestStubState().lookupCalls, 1U);
 }
 
 TEST_F(Mc2AicpuTaskCacheTest, BuildsPlansForAllSupportedOperations)
@@ -184,7 +198,7 @@ TEST_F(Mc2AicpuTaskCacheTest, ShapeAndAllToAllVArraysChangeTheTag)
 
 TEST_F(Mc2AicpuTaskCacheTest, MissingDynamicSymbolsBypassPlan)
 {
-    HcommAicpuTsTaskCacheResetTestFunctions();
+    Mc2HcommAicpuTsTaskCacheResetTestFunctions();
     auto inputs = MakeTaskCacheInputs(HCCL_CMD_ALLGATHER);
     Mc2AicpuTaskCachePlan plan;
     ASSERT_EQ(BuildMc2AicpuTaskCachePlan(inputs.param, inputs.resCtx, plan), HCCL_SUCCESS);

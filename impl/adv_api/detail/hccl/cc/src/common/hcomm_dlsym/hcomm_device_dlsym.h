@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-// 动态库管理接口（大驼峰命名）
-void HcommDeviceDlInit(void);
+// MC2动态库管理接口（大驼峰命名）
+void Mc2HcommDeviceDlInit(void);
 
 #ifdef __cplusplus
 }
