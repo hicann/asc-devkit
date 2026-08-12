@@ -39,6 +39,8 @@ extern "C" unsigned int HcclLaunchAicpuKernel(mc2_ops_hccl::OpParam* param) { re
 
 namespace mc2_ops_hccl {
 
+bool g_stubCcuAlgorithmRegistered = true;
+
 InsCollAlgBase::InsCollAlgBase() {}
 InsCollAlgBase::~InsCollAlgBase() {}
 std::string InsCollAlgBase::Describe() const { return "InsCollAlgBase"; }
@@ -252,6 +254,11 @@ CollAlgExecRegistryV2& CollAlgExecRegistryV2::Instance()
 {
     static CollAlgExecRegistryV2 instance;
     return instance;
+}
+
+bool CollAlgExecRegistryV2::IsRegistered(HcclCMDType opType, const std::string& algTag) const
+{
+    return g_stubCcuAlgorithmRegistered;
 }
 
 std::unique_ptr<InsCollAlgBase> CollAlgExecRegistryV2::GetAlgExec(HcclCMDType opType, const std::string& algTag)

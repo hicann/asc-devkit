@@ -217,6 +217,38 @@ HcclResult BuildTagsAndValidate(
     return HCCL_SUCCESS;
 }
 
+bool HcclIsCcuAlgorithmRegistered(uint32_t opType, const char* algName)
+{
+    if (algName == nullptr || algorithmMap.count(algName) == 0U) {
+        return false;
+    }
+    return CollAlgExecRegistryV2::Instance().IsRegistered(static_cast<HcclCMDType>(opType), algName);
+}
+
+bool CheckCcuAlgorithmsRegistered(const void* ccTilingList[], uint32_t tilingNum)
+{
+    HCCL_INFO("[CheckCcuAlgorithmsRegistered]Start CheckCcuAlgorithmsRegistered!");
+    if (tilingNum > 1) {
+        HCCL_WARNING("[AllocComResourceByTilingCcu] tilingNum[%u] is not supported in mc2_client.", tilingNum);
+        return false;
+    }
+    for (uint32_t i = 0U; i < tilingNum; ++i) {
+        const auto* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
+        std::string algName;
+        if (!GetForcedAlgName(ccTiling, algName)) {
+            HCCL_WARNING("[AllocComResourceByTilingCcu] algName[%s] is not supported in mc2_client.", algName.c_str());
+            return false;
+        }
+        if (!HcclIsCcuAlgorithmRegistered(ccTiling->opType, algName.c_str())) {
+            HCCL_WARNING(
+                "[AllocComResourceByTilingCcu] algorithm[%s] is not registered in mc2_client for opType[%u].",
+                algName.c_str(), ccTiling->opType);
+            return false;
+        }
+    }
+    return true;
+}
+
 // AICPU引擎资源分配流程
 HcclResult AllocComResourceByTilingAicpu(
     HcclComm comm, void* stream, void* mc2Tiling, const void* ccTilingList[], uint32_t tilingNum, const char* commName,
@@ -348,6 +380,10 @@ HcclResult HcclAllocComResourceByTilingImpl(HcclComm comm, void* stream, void* m
             comm, stream, mc2Tiling, ccTilingList, tilingNum, commName, rankSize, userRank, opResCtx, ctxTag));
     } else if (commEngine == static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED)) {
         HCCL_INFO("[HcclAllocComResourceByTiling]commEngine == CCU_SCHED!");
+        if (!CheckCcuAlgorithmsRegistered(ccTilingList, tilingNum)) {
+            HCCL_INFO("[HcclAllocComResourceByTiling]Current ccu algorithm is not supported in mc2_client.");
+            return HCCL_E_ALG_NOT_SUPPORTED;
+        }
         CHK_RET(CheckCcuKfcFlow(mc2Tiling, ccTilingList, tilingNum));
         CHK_RET(AllocComResourceByTilingCcu(
             comm, stream, mc2Tiling, ccTilingList, tilingNum, commName, rankSize, userRank, opResCtx, ctxTag));

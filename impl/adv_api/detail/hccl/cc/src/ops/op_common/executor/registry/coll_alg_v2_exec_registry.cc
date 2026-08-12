@@ -29,6 +29,12 @@ HcclResult CollAlgExecRegistryV2::Register(
     return HcclResult::HCCL_SUCCESS;
 }
 
+bool CollAlgExecRegistryV2::IsRegistered(const HcclCMDType type, const std::string& tag) const
+{
+    auto typeIter = execCreators_.find(type);
+    return typeIter != execCreators_.end() && typeIter->second.count(tag) != 0U;
+}
+
 std::unique_ptr<InsCollAlgBase> CollAlgExecRegistryV2::GetAlgExec(const HcclCMDType type, const std::string& tag)
 {
     if (execCreators_.count(type) == 0 || execCreators_[type].count(tag) == 0) {

@@ -173,89 +173,64 @@ TEST_F(TestHcclTiling, Mc2CcTilingConfig_multiTiling)
     EXPECT_NE(ccTilingConfig.GetTiling(ccTilingInner), EXIT_SUCCESS);
 }
 
-class TestHcclTilingUseCcuKfc : public TestHcclTiling {
+class TestHcclTilingCcuKfc : public TestHcclTiling {
 protected:
-    void SetUp() override
+    void ExpectInitTilingVersion(
+        uint32_t opType, const std::string& algConfig, uint8_t commEngine, uint32_t expectedVersion)
     {
-        const char* env = std::getenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
-        hasOldEnv_ = (env != nullptr);
-        if (hasOldEnv_) {
-            oldEnv_ = env;
-        }
-    }
-
-    void TearDown() override
-    {
-        if (hasOldEnv_) {
-            setenv("ASCEND_ENABLE_CCU_KFC_BRANCH", oldEnv_.c_str(), 1);
-        } else {
-            unsetenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
-        }
-    }
-
-    void ExpectInitTilingVersion(const char* envValue, uint32_t opType, uint8_t commEngine, uint32_t expectedVersion)
-    {
-        if (envValue == nullptr) {
-            unsetenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
-        } else {
-            setenv("ASCEND_ENABLE_CCU_KFC_BRANCH", envValue, 1);
-        }
-
         ::Mc2InitTiling initTiling{};
-        Mc2CcTilingConfig tilingConfig("test", opType, "fullmesh", 0, 0, 0, commEngine);
+        Mc2CcTilingConfig tilingConfig("test", opType, algConfig, 0, 0, 0, commEngine);
 
         ASSERT_EQ(tilingConfig.GetTiling(initTiling), EXIT_SUCCESS);
         const auto* tilingInner = reinterpret_cast<const Mc2InitTilingInner*>(&initTiling);
         EXPECT_EQ(tilingInner->version, expectedVersion);
     }
-
-private:
-    bool hasOldEnv_ = false;
-    std::string oldEnv_;
 };
 
-TEST_F(TestHcclTilingUseCcuKfc, UseCcuKfcUnsetUsesDefaultVersion)
-{
-    ExpectInitTilingVersion(nullptr, static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 5U, INIT_TILING_VERSION);
-}
-
-TEST_F(TestHcclTilingUseCcuKfc, UseCcuKfcDisabledUsesDefaultVersion)
-{
-    ExpectInitTilingVersion("0", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 5U, INIT_TILING_VERSION);
-}
-
-TEST_F(TestHcclTilingUseCcuKfc, UnsupportedOpTypeUsesDefaultVersion)
-{
-    ExpectInitTilingVersion("1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE), 5U, INIT_TILING_VERSION);
-}
-
-TEST_F(TestHcclTilingUseCcuKfc, UnsupportedCommEngineUsesDefaultVersion)
-{
-    ExpectInitTilingVersion("1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 4U, INIT_TILING_VERSION);
-}
-
-TEST_F(TestHcclTilingUseCcuKfc, AllGatherCcuMsUsesCcuNewVersion)
+TEST_F(TestHcclTilingCcuKfc, UnsupportedOpTypeUsesDefaultVersion)
 {
     ExpectInitTilingVersion(
-        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 5U, INIT_TILING_CCU_NEW_VERSION);
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE), "CcuAlltoAllMesh1D", 6U, INIT_TILING_VERSION);
 }
 
-TEST_F(TestHcclTilingUseCcuKfc, AllGatherCcuSchedUsesCcuNewVersion)
+TEST_F(TestHcclTilingCcuKfc, UnsupportedCommEngineUsesDefaultVersion)
 {
     ExpectInitTilingVersion(
-        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), 6U, INIT_TILING_CCU_NEW_VERSION);
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), "CcuAllGatherMesh1DMem2Mem", 4U, INIT_TILING_VERSION);
 }
 
-TEST_F(TestHcclTilingUseCcuKfc, ReduceScatterCcuMsUsesCcuNewVersion)
+TEST_F(TestHcclTilingCcuKfc, UnregisteredAlgorithmUsesDefaultVersion)
 {
     ExpectInitTilingVersion(
-        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), 5U, INIT_TILING_CCU_NEW_VERSION);
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), "CcuUnregisteredAlgorithm", 6U, INIT_TILING_VERSION);
 }
 
-TEST_F(TestHcclTilingUseCcuKfc, ReduceScatterCcuSchedUsesCcuNewVersion)
+TEST_F(TestHcclTilingCcuKfc, AllGatherCcuMsUsesCcuNewVersion)
 {
     ExpectInitTilingVersion(
-        "1", static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), 6U, INIT_TILING_CCU_NEW_VERSION);
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), "CcuAllGatherMesh1DMem2Mem", 5U,
+        INIT_TILING_CCU_NEW_VERSION);
+}
+
+TEST_F(TestHcclTilingCcuKfc, AllGatherCcuSchedUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), "CcuAllGatherMesh1DMem2Mem", 6U,
+        INIT_TILING_CCU_NEW_VERSION);
+}
+
+TEST_F(TestHcclTilingCcuKfc, ReduceScatterCcuMsUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), "CcuKfcReduceScatterMesh1DMem2Mem", 5U,
+        INIT_TILING_CCU_NEW_VERSION);
+}
+
+TEST_F(TestHcclTilingCcuKfc, ReduceScatterCcuSchedUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), "CcuKfcReduceScatterMesh1DMem2Mem", 6U,
+        INIT_TILING_CCU_NEW_VERSION);
 }
 
 // ============================================================================

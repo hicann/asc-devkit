@@ -22,12 +22,24 @@
 #include "include/adv_api/hccl/internal/hccl_tiling_msg.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "hccl_symbol_loader.h"
+#include <set>
 
 using namespace std;
 using namespace HcclApi;
 
 namespace AscendC {
 namespace {
+
+static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
+    "CcuAllGatherMesh1DMem2Mem", "CcuKfcReduceScatterMesh1DMem2Mem"};
+
+bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
+{
+    if (commEngine != 5U && commEngine != 6U) {
+        return false;
+    }
+    return REGISTERED_CCU_ALGORITHMS.count(algConfig) != 0U;
+}
 
 void PrintMc2InitTiling(const Mc2InitTilingInner& tiling)
 {
@@ -143,11 +155,7 @@ uint32_t Mc2CcTilingConfig::GetTiling(::Mc2InitTiling& tiling)
     for (uint32_t i = 0; i < MAX_CC_TILING_NUM; i++) {
         tilingInner->offset[i] = 0;
     }
-    const char* useCcuKfc = std::getenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
-    if (useCcuKfc != nullptr && std::string(useCcuKfc) == "1" &&
-        (impl_.opType_ == static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER) ||
-         impl_.opType_ == static_cast<uint8_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER)) &&
-        (impl_.commEngine_ == 5 || impl_.commEngine_ == 6)) {
+    if (IsCcuAlgorithmRegistered(impl_.algConfig_, impl_.commEngine_)) {
         tilingInner->version = INIT_TILING_CCU_NEW_VERSION;
     }
     ASCENDC_HOST_ASSERT(SetDevType(tilingInner) == EXIT_SUCCESS, return EXIT_FAILURE, "SetDevType failed.");
