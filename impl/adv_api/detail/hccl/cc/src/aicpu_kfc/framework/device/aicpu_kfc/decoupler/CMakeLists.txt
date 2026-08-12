@@ -76,6 +76,7 @@ target_include_directories(ccl_kernel_decoupler_open_exec BEFORE PRIVATE
     ${HCCL_HCOMM_HEADER_DIR}/../
     ${HCCL_HCOMM_HEADER_DIR}
     ${HCCL_HCOMM_HEADER_DIR}/hccl
+    ${OPEN_HCCL_SRC_ROOT}/ops/op_common
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/inc
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/topo
     ${OPEN_HCCL_SRC_ROOT}/ops/op_common/executor
