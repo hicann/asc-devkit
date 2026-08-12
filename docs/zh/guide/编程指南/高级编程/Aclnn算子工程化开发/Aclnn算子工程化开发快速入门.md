@@ -92,7 +92,7 @@ source /usr/local/Ascend/cann/set_env.sh
 msopgen gen -i add_custom.json -c ai_core-ascendxxyy -lan cpp -out AddCustom
 ```
 
--   -i：指定算子原型定义文件_add\_custom_.json所在路径，请根据实际情况修改。
+-   -i：指定算子原型定义文件add\_custom_.json所在路径，请根据实际情况修改。
 -   -c：`ai_core-ascendxxyy`代表算子在AI Core上执行，ascendxxyy为昇腾AI处理器的型号`soc_version`。JSON中的type/format列表定义算子支持的数据类型和格式组合。msOpGen会基于这些信息生成对应的Kernel编译配置。
 -   -lan：参数cpp代表算子基于Ascend C编程框架，使用C/C++编程语言开发。
 -   -out：生成文件所在路径，可配置为绝对路径或者相对路径，并且工具执行用户对路径具有可读写权限。若不配置，则默认生成在执行命令的当前路径。
@@ -260,7 +260,7 @@ Tiling负责将Host侧的调度信息（如数据总量、分块数）传递给K
 
 struct AddCustomTilingData {
     uint32_t totalLength;  // 总计算数据量
-    uint32_t tileNum;      // 每个Block上总计算数据分块个数
+    uint32_t tileNum;      // 总数据分块数量
 };
 #endif // ADD_CUSTOM_TILING_H
 ```
@@ -556,7 +556,7 @@ test pass
 如果输出`test failed`、ACL Error或动态库`not found`类错误，请检查：
 1. CANN环境变量是否已加载（`source /usr/local/Ascend/cann/set_env.sh`）。
 2. 算子是否已按照[部署](#部署)步骤正确部署。
-3. Kernel侧和Host侧代码是否按[Kernel代码](#修改Kernel侧代码)、[Host代码](#修改Tiling与Host侧实现)正确修改。
+3. Kernel侧和Host侧代码是否按[Kernel代码](#修改kernel侧代码)、[Host代码](#修改tiling与host侧实现)正确修改。
 
 ## 下一步指引
 
