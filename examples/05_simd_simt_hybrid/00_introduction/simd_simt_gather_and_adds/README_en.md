@@ -55,7 +55,7 @@ This sample implements gather and adds computation based on SIMD and SIMT hybrid
 
   (1) simt_gather obtains data with specified indexes from GM (Global Memory) input.
   ```
-  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
   ...
   uint32_t gather_idx = index[idx];
   ...

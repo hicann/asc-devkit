@@ -56,7 +56,7 @@
 
   （1）simt_gather从GM（Global Memory）输入中获取指定索引的数据。
   ```
-  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
   ...
   uint32_t gather_idx = index[idx];
   ...
