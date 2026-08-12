@@ -16,16 +16,15 @@
 namespace Hccl {
 constexpr uint32_t VECTOR_QUEUE_SIZE = 2048;
 
-template <typename T>
-class VectorQueue : public QueueWithSize<T> {
+template <typename T> class VectorQueue : public QueueWithSize<T> {
 private:
     std::vector<T> elems_;
 
 public:
     class Iterator : public Queue<T>::Iterator {
     private:
-        VectorQueue* queue_{nullptr};
-        u32 index_ = 0;
+        VectorQueue *queue_{nullptr};
+        u32          index_ = 0;
 
     protected:
         void check() override
@@ -36,19 +35,21 @@ public:
         }
 
     public:
-        using pointer = T*;
-        using reference = T&;
+        using pointer   = T *;
+        using reference = T &;
 
-        Iterator(VectorQueue* queue, u32 index) : queue_(queue), index_(index) { check(); }
+        Iterator(VectorQueue *queue, u32 index) : queue_(queue), index_(index)
+        {
+            check();
+        }
 
         ~Iterator() override = default;
 
         reference operator*() const override
         {
             if (this->index_ >= this->queue_->size_) {
-                THROW<InternalException>(StringFormat(
-                    "VectorQueue<T>::Iterator dereference out of range, index[%u], size[%zu]", this->index_,
-                    this->queue_->size_));
+                THROW<InternalException>(StringFormat("VectorQueue<T>::Iterator dereference out of range, index[%u], size[%zu]",
+                                                       this->index_, this->queue_->size_));
             }
             return (this->queue_->elems_[this->index_]);
         }
@@ -56,14 +57,13 @@ public:
         pointer operator->() const override
         {
             if (this->index_ >= this->queue_->size_) {
-                THROW<InternalException>(StringFormat(
-                    "VectorQueue<T>::Iterator dereference out of range, index[%u], size[%zu]", this->index_,
-                    this->queue_->size_));
+                THROW<InternalException>(StringFormat("VectorQueue<T>::Iterator dereference out of range, index[%u], size[%zu]",
+                                                       this->index_, this->queue_->size_));
             }
             return &(this->queue_->elems_[this->index_]);
         }
 
-        typename Queue<T>::Iterator& operator++() override
+        typename Queue<T>::Iterator &operator++() override
         {
             (this->index_)++;
             check();
@@ -78,7 +78,7 @@ public:
             return temp;
         }
 
-        typename Queue<T>::Iterator& operator--() override
+        typename Queue<T>::Iterator &operator--() override
         {
             (this->index_)--;
             check();
@@ -93,22 +93,27 @@ public:
             return temp;
         }
 
-        bool operator==(const typename Queue<T>::Iterator& other) const override
+        bool operator==(const typename Queue<T>::Iterator &other) const override
         {
             return this->index_ == static_cast<const Iterator&>(other).index_;
         }
 
-        bool operator!=(const typename Queue<T>::Iterator& other) const override
+        bool operator!=(const typename Queue<T>::Iterator &other) const override
         {
             return this->index_ != static_cast<const Iterator&>(other).index_;
         }
     };
 
-    VectorQueue() : elems_(VECTOR_QUEUE_SIZE) {}
+    VectorQueue() : elems_(VECTOR_QUEUE_SIZE)
+    {
+    }
 
-    ~VectorQueue() override { HCCL_INFO("[VectorQueue]Destroy"); }
+    ~VectorQueue() override
+    {
+        HCCL_INFO("[VectorQueue]Destroy");
+    }
 
-    void Append(T&& value) override
+    void Append(T &&value) override
     {
         if (UNLIKELY(this->size_ >= VECTOR_QUEUE_SIZE)) {
             THROW<InternalException>(StringFormat("VectorQueue<T>::Append size[%zu] is full", this->size_));
@@ -125,18 +130,24 @@ public:
         return elems_[this->size_++];
     }
 
-    void Traverse(std::function<void(const T&)> action) override
+    void Traverse(std::function<void(const T &)> action) override
     {
         for (size_t i = 0; i < this->size_; ++i) {
             action(elems_[i]);
         }
     }
 
-    bool IsFull() const override { return this->size_ >= VECTOR_QUEUE_SIZE; }
+    bool IsFull() const override
+    {
+        return this->size_ >= VECTOR_QUEUE_SIZE;
+    }
 
-    size_t Capacity() const override { return VECTOR_QUEUE_SIZE; }
+    size_t Capacity() const override
+    {
+        return VECTOR_QUEUE_SIZE;
+    }
 
-    std::shared_ptr<typename Queue<T>::Iterator> Find(std::function<bool(const T&)> cond) override
+    std::shared_ptr<typename Queue<T>::Iterator> Find(std::function<bool(const T &)> cond) override
     {
         for (size_t i = 0; i < this->size_; ++i) {
             if (cond(elems_[i])) {
@@ -146,7 +157,10 @@ public:
         return std::make_shared<Iterator>(this, static_cast<u32>(this->size_));
     }
 
-    std::shared_ptr<typename Queue<T>::Iterator> Begin() override { return std::make_shared<Iterator>(this, 0); }
+    std::shared_ptr<typename Queue<T>::Iterator> Begin() override
+    {
+        return std::make_shared<Iterator>(this, 0);
+    }
 
     std::shared_ptr<typename Queue<T>::Iterator> Tail() override
     {

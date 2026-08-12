@@ -454,7 +454,7 @@ struct HcclLinkRoceV2 {
     u64 remoteNotifyList{0};              // devicePtrValue    type:u64             size: [3,8192]
     u32 remoteNotifyKey{0};               // deprecated
     s64 chipId{LLONG_MAX};                // deprecated
-    HcclQpInfoV2 QpInfo[RDMA_QP_MAX_NUM]; // array size: [1, 1 + HCCL_RDMA_QPS_PER_CONNECTION_MAX]
+    HcclQpInfoV2 QpInfo[RDMA_QP_MAX_NUM]; // ayyay size: [1, 1 + HCCL_RDMA_QPS_PER_CONNECTION_MAX]
     u32 qpsPerConnection{1};              // current link actual qp num obtained via env、workflowMode、qpMode
     bool useAtomicWrite{false};           // 是否使用atomic write
 };
