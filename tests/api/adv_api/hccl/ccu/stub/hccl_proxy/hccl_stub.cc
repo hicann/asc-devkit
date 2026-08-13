@@ -747,6 +747,8 @@ HcclResult CommWriteReduceWithNotify(
     return HCCL_E_NOT_SUPPORT;
 }
 
+bool HcommIsSupportHcommBatchTransferOnThread() { return false; }
+
 int32_t HcommWriteWithNotifyOnThread(
     ThreadHandle thread, ChannelHandle channel, void* dst, const void* src, uint64_t len, uint32_t remoteNotifyIdx)
 {
