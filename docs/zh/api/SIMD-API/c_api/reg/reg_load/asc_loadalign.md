@@ -26,107 +26,270 @@
 
 ## 功能说明
 
-对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现NORM搬入模式：正常模式，搬运VL数据。
+将Unified Buffer（UB）中起始地址32字节对齐的数据搬入矢量数据寄存器或掩码寄存器，搬运过程中数据格式和内容保持不变。本接口提供四种功能模式：
 
-支持三种偏移方式：
-- 偏移固定传入0，由用户自行更新源操作数的地址。
-- 通过int32_t传入偏移，用户可以选择更新偏移或者更新源操作数的地址。
-- 通过addr_reg地址寄存器传入偏移，用户可以选择更新偏移或者更新源操作数的地址。
+- **连续对齐搬入模式**：将UB源地址的数据搬入到矢量数据寄存器或掩码寄存器，由用户自行更新源地址。
+- **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
+- **地址寄存器偏移搬入模式**：通过地址寄存器指定相对源起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬入场景。需要与[asc_update_addr_reg](../reg_data_types/asc_update_addr_reg.md)配合使用。
+- **非连续对齐搬入模式**：单条指令非连续搬入8个`DataBlock`，每个`DataBlock`的数据量为32字节。支持配置数据块之间的地址步长和起始读取位置。
+
+本接口仅在AIV上生效，非AIV调用直接返回。
 
 ## 函数原型
 
-- 偏移固定传入0，由用户自行更新源操作数的地址
-  ```cpp
-  __simd_callee__ inline void asc_loadalign(vector_int8_t& dst, __ubuf__ int8_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_uint8_t& dst, __ubuf__ uint8_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_fp4x2_e2m1_t& dst, __ubuf__ fp4x2_e2m1_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_fp4x2_e1m2_t& dst, __ubuf__ fp4x2_e1m2_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e8m0_t& dst, __ubuf__ fp8_e8m0_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e5m2_t& dst, __ubuf__ fp8_e5m2_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e4m3fn_t& dst, __ubuf__ fp8_e4m3fn_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_hifloat8_t& dst, __ubuf__ hifloat8_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_int16_t& dst, __ubuf__ int16_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_uint16_t& dst, __ubuf__ uint16_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_half& dst, __ubuf__ half* src)
-  __simd_callee__ inline void asc_loadalign(vector_bfloat16_t& dst, __ubuf__ bfloat16_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_int32_t& dst, __ubuf__ int32_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_uint32_t& dst, __ubuf__ uint32_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_float& dst, __ubuf__ float* src)
-  __simd_callee__ inline void asc_loadalign(vector_int64_t& dst, __ubuf__ int64_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_uint64_t& dst, __ubuf__ uint64_t* src)
-  __simd_callee__ inline void asc_loadalign(vector_int4x2_t& dst, __ubuf__ int4b_t* src)
-  ```
-- 通过int32_t传入偏移
-  ```cpp
-  __simd_callee__ inline void asc_loadalign(vector_int8_t& dst, __ubuf__ int8_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint8_t& dst, __ubuf__ uint8_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp4x2_e2m1_t& dst, __ubuf__ fp4x2_e2m1_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp4x2_e1m2_t& dst, __ubuf__ fp4x2_e1m2_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e8m0_t& dst, __ubuf__ fp8_e8m0_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e5m2_t& dst, __ubuf__ fp8_e5m2_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e4m3fn_t& dst, __ubuf__ fp8_e4m3fn_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_hifloat8_t& dst, __ubuf__ hifloat8_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_int16_t& dst, __ubuf__ int16_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint16_t& dst, __ubuf__ uint16_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_half& dst, __ubuf__ half* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_bfloat16_t& dst, __ubuf__ bfloat16_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_int32_t& dst, __ubuf__ int32_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint32_t& dst, __ubuf__ uint32_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_float& dst, __ubuf__ float* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_int64_t& dst, __ubuf__ int64_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint64_t& dst, __ubuf__ uint64_t* src, int32_t offset)
-  __simd_callee__ inline void asc_loadalign(vector_int4x2_t& dst, __ubuf__ int4b_t* src, int32_t offset)
-  ```
-- 通过addr_reg地址寄存器传入偏移
-  ```cpp
-  __simd_callee__ inline void asc_loadalign(vector_int8_t& dst, __ubuf__ int8_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint8_t& dst, __ubuf__ uint8_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp4x2_e2m1_t& dst, __ubuf__ fp4x2_e2m1_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp4x2_e1m2_t& dst, __ubuf__ fp4x2_e1m2_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e8m0_t& dst, __ubuf__ fp8_e8m0_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e5m2_t& dst, __ubuf__ fp8_e5m2_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_fp8_e4m3fn_t& dst, __ubuf__ fp8_e4m3fn_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_hifloat8_t& dst, __ubuf__ hifloat8_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_int16_t& dst, __ubuf__ int16_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint16_t& dst, __ubuf__ uint16_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_half& dst, __ubuf__ half* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_bfloat16_t& dst, __ubuf__ bfloat16_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_int32_t& dst, __ubuf__ int32_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint32_t& dst, __ubuf__ uint32_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_float& dst, __ubuf__ float* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_int64_t& dst, __ubuf__ int64_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_uint64_t& dst, __ubuf__ uint64_t* src, addr_reg offset)
-  __simd_callee__ inline void asc_loadalign(vector_int4x2_t& dst, __ubuf__ int4b_t* src, addr_reg offset)
-  ```
+### 连续对齐搬入模式
+
+```c
+// 搬入矢量数据寄存器。
+__simd_callee__ inline void asc_loadalign(vector_<dtype>& dst,
+                                          __ubuf__ <dtype>* src)
+// 搬入掩码寄存器。
+__simd_callee__ inline void asc_loadalign(vector_bool& dst,
+                                          __ubuf__ uint32_t* src)
+```
+
+#### dtype支持数据类型
+
+dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`、`uint64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
+
+#### 典型示例
+
+```c
+// 示例：float类型。
+__simd_callee__ inline void asc_loadalign(vector_float& dst,
+                                          __ubuf__ float* src)
+```
+
+### 立即数偏移搬入模式
+
+```c
+// 搬入矢量数据寄存器。
+__simd_callee__ inline void asc_loadalign(vector_<dtype>& dst,
+                                          __ubuf__ <dtype>* src,
+                                          int32_t offset)
+// 搬入掩码寄存器。
+__simd_callee__ inline void asc_loadalign(vector_bool& dst,
+                                          __ubuf__ uint32_t* src,
+                                          int32_t offset)
+```
+
+#### dtype支持数据类型
+
+dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`、`uint64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
+
+#### 典型示例
+
+```c
+// 示例：float类型。
+__simd_callee__ inline void asc_loadalign(vector_float& dst,
+                                          __ubuf__ float* src,
+                                          int32_t offset)
+```
+
+### 地址寄存器偏移搬入模式
+
+```c
+// 搬入矢量数据寄存器。
+__simd_callee__ inline void asc_loadalign(vector_<dtype>& dst,
+                                          __ubuf__ <dtype>* src,
+                                          addr_reg offset)
+// 搬入掩码寄存器。
+__simd_callee__ inline void asc_loadalign(vector_bool& dst,
+                                          __ubuf__ uint32_t* src,
+                                          addr_reg offset)
+```
+
+#### dtype支持数据类型
+
+dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`、`uint64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
+
+#### 典型示例
+
+```c
+// 示例：float类型。
+__simd_callee__ inline void asc_loadalign(vector_float& dst,
+                                          __ubuf__ float* src,
+                                          addr_reg offset)
+```
+
+### 非连续对齐搬入模式
+
+```c
+__simd_callee__ inline void asc_loadalign(vector_<dtype>& dst,
+                                          __ubuf__ <dtype>* src,
+                                          uint16_t block_stride,
+                                          uint16_t repeat_stride,
+                                          vector_bool mask)
+```
+
+#### dtype支持数据类型
+
+dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
+
+#### 典型示例
+
+```c
+// 示例：float类型。
+__simd_callee__ inline void asc_loadalign(vector_float& dst,
+                                          __ubuf__ float* src,
+                                          uint16_t block_stride,
+                                          uint16_t repeat_stride,
+                                          vector_bool mask)
+```
 
 ## 参数说明
 
+### 连续对齐搬入模式
+
 **表1** 参数说明
 
-| 参数名       | 输入/输出 | 描述               |
-| --------- | ----- | ---------------- |
-| dst       | 输出    | 目的操作数（矢量数据寄存器）。            |
-| src | 输入    | 源操作数（矢量）的起始地址。            |
-| offset | 输入    | 偏移量。            |
+| 参数名 | 输入/输出 | 描述 |
+|---|---|---|
+| dst | 输出 | 目的矢量数据寄存器或掩码寄存器。<br>&bull; 当`dst`为矢量数据寄存器，`dtype`必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
+| src | 输入 | 源UB地址，实际读取地址需32字节对齐。 |
 
-矢量数据寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
+### 立即数偏移搬入模式
+
+**表2** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+|---|---|---|
+| dst | 输出 | 目的矢量数据寄存器或掩码寄存器。<br>&bull; 当`dst`为矢量数据寄存器，dtype必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
+| src | 输入 | 源UB地址，实际读取地址需32字节对齐。 |
+| offset | 输入 | 相对`src`起始地址的偏移。<br>&bull; 当`dst`为矢量数据寄存器，单位为元素个数。<br>&bull; 当`dst`为掩码寄存器，单位为字节。 |
+
+### 地址寄存器偏移搬入模式
+
+**表3** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+|---|---|---|
+| dst | 输出 | 目的矢量数据寄存器或掩码寄存器。<br>&bull; 当`dst`为矢量数据寄存器，dtype必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
+| src | 输入 | 源UB地址，实际读取地址需32字节对齐。 |
+| offset | 输入 | 地址寄存器，类型为`addr_reg`，必须通过`asc_update_addr_reg`生成。该寄存器记录的实际字节偏移由创建地址寄存器时选择的位宽模式决定：b8、b16、b32模式分别以1字节、2字节、4字节为偏移单位。当`dst`为`vector_bool`时，应使用b32模式。 |
+
+### 非连续对齐搬入模式
+
+**表4** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+|---|---|---|
+| dst | 输出 | 目的矢量数据寄存器。dtype必须与`src`一致，搬入VL长度数据。本模式不支持`vector_bool`目的寄存器。 |
+| src | 输入 | 源UB地址，实际读取地址需32字节对齐。 |
+| block_stride | 输入 | 源操作数相邻`DataBlock`之间起始地址的步长，单位为32字节。 |
+| repeat_stride | 输入 | 本次搬入的起始读取地址相对`src`的偏移，单位为32字节。实际起始读取地址为`src`偏移`repeat_stride × 32`字节。 |
+| mask | 输入 | 掩码寄存器，用于指示在计算过程中哪些元素参与计算。该接口以`DataBlock`为数据搬运单元。<br>&bull; 当`DataBlock`中的任意一个元素被`mask`筛选成有效元素时，该`DataBlock`中所有数据都会搬入至矢量数据寄存器。<br>&bull; 当`DataBlock`中所有元素都被`mask`筛选成无效元素时，该`DataBlock`中的数据不会搬入到矢量数据寄存器，对应位置的元素设置为0，即使UB越界也不会报错。 |
+
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_V
-
 ## 约束说明
 
-无
+### 通用约束
+
+- 本接口仅在AIV上生效，非AIV调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- 实际读取的UB地址和偏移后的UB地址必须32字节对齐，并且在UB地址空间内且不越界，否则会报错。
+- UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈 + 2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB～128KB作Data Cache，可用容量进一步减少）。UB地址偏移后不可超过实际可用容量，否则会报错。
+- 如果本指令与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../sync_control/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。
+
+### 地址寄存器偏移搬入模式
+
+必须先调用`asc_update_addr_reg`接口。
+
+### 非连续对齐搬入模式
+
+该模式不支持目的操作数为掩码寄存器。
 
 ## 调用示例
 
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510; ./main
+```
+<!-- end id8 -->
+
 ```cpp
-vector_half dst;
-__ubuf__ half* src;
-asc_loadalign(dst, src);
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+constexpr uint32_t BUFFER_BYTES = 256;
+__simd_vf__ inline void asc_loadalign_vf(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
+{
+    vector_bool mask = asc_create_mask_b8(PAT_ALL);
+    for (uint16_t repeat = 0; repeat < 1; ++repeat) {
+        vector_uint8_t src_reg;
+        asc_loadalign(src_reg, input);
+        asc_storealign(output, src_reg, mask);
+    }
+}
+
+__global__ __vector__ void asc_loadalign_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+{
+    asc_init();
+    __ubuf__ uint8_t output_local[BUFFER_BYTES], input_local[BUFFER_BYTES];
+    asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
+
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+
+    asc_vf_call<asc_loadalign_vf>(output_local, input_local);
+
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+
+    asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);
+    asc_sync();
+}
+} // namespace
+
+int main()
+{
+    std::vector<uint8_t> input(BUFFER_BYTES), output(BUFFER_BYTES, 0xff);
+    for (uint32_t i = 0; i < BUFFER_BYTES; ++i) input[i] = static_cast<uint8_t>(i % 251);
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint8_t* input_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    uint8_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, input.size() * sizeof(uint8_t), input.data(), input.size() * sizeof(uint8_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_loadalign_kernel<<<1, 0>>>(output_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint8_t), output_device, output.size() * sizeof(uint8_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input bytes", input);
+    print_data("Output bytes", output);
+    const bool passed = input == output;
+    std::cout << (passed ? "[Success] asc_loadalign completed." : "[Failed] asc_loadalign output mismatch.")
+              << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```
