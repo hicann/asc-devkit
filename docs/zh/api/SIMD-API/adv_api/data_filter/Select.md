@@ -33,7 +33,7 @@
 
 如下图样例，源操作数src0为Tensor，shape为\(2,16\)，数据类型为half，尾轴长度满足32字节对齐；源操作数src1为scalar，数据类型为half；maskTensor的数据类型为bool，为满足对齐要求shape为\(2,32\)，仅有图中蓝色部分的mask掩码生效，灰色部分不参与计算。输出目的操作数dstTensor如下图所示。
 
-![](../../../figures/nz-reduce-53.png)
+![](../../../figures/nz_reduce_53.png)
 
 ## 实现原理
 
