@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains examples for multiple APIs related to vector computation. Each example is based on Ascend C's `<<<>>>` direct invocation method, supporting both main function and kernel function implementation in the same cpp file.
+This directory contains examples for multiple APIs related to vector computation. Each example is based on Ascend C's `<<<>>>` direct invocation method, supporting both main function and kernel function implementation in the same asc file.
 
 ## Operator Development Examples
 
