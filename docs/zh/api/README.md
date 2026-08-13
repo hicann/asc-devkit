@@ -1330,7 +1330,6 @@
             -   [asc_set_atomic_min](SIMD-API/c_api/simd_atomic/asc_set_atomic_min.md)
             -   [asc_set_atomic_none](SIMD-API/c_api/simd_atomic/asc_set_atomic_none.md)
             -   [asc_set_store_atomic_config_v1](SIMD-API/c_api/simd_atomic/asc_set_store_atomic_config_v1.md)
-            -   [asc_set_atomic_add_int（废弃）](SIMD-API/c_api/simd_atomic/asc_set_atomic_add_int_deprecated.md)
             -   [asc_set_atomic_max_int（废弃）](SIMD-API/c_api/simd_atomic/asc_set_atomic_max_int_deprecated.md)
             -   [asc_set_atomic_min_int（废弃）](SIMD-API/c_api/simd_atomic/asc_set_atomic_min_int_deprecated.md)
             -   [asc_set_store_atomic_config_v2（废弃）](SIMD-API/c_api/simd_atomic/asc_set_store_atomic_config_v2_deprecated.md)
@@ -1340,6 +1339,9 @@
             -   [asc_hf32_round_mode](SIMD-API/c_api/enum/asc_hf32_round_mode.md)
             -   [asc_load_l2_cache_mode](SIMD-API/c_api/enum/asc_load_l2_cache_mode.md)
             -   [asc_store_l2_cache_mode](SIMD-API/c_api/enum/asc_store_l2_cache_mode.md)
+        -   [废弃接口](SIMD-API/c_api/deprecated_interface/deprecated_interface.md)
+            -   [asc_set_atomic_add_int（废弃）](SIMD-API/c_api/deprecated_interface/asc_set_atomic_add_int_deprecated.md)
+            -   [asc_abs_sync（废弃）](SIMD-API/c_api/deprecated_interface/asc_abs_sync_deprecated.md)
 
     -   [高阶API](SIMD-API/adv_api/adv_api.md)
         -   [高阶API列表](SIMD-API/adv_api/adv_api_list.md)
