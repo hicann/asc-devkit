@@ -260,8 +260,8 @@ extern HcclResult HcclCommGetStatus(HcclComm comm, HcclCommStatus* status) HCOMM
  * @param comm A pointer identifying the communication resource based on.
  * @param baseVirPtr The base address of memory range
  * @param size The size of memory range
- * @param alignment Memory range alignment, now only support 0
- * @param flags The flag of this memory range, now only support 0
+ * @param alignment Memory range alignment, now only supports 0
+ * @param flags The flag of this memory range, now only supports 0
  */
 extern HcclResult HcclCommSetMemoryRange(HcclComm comm, void* baseVirPtr, size_t size, size_t alignment, uint64_t flags)
     HCOMM_WEAK_SYMBOL;
@@ -278,9 +278,9 @@ extern HcclResult HcclCommUnsetMemoryRange(HcclComm comm, void* baseVirPtr) HCOM
  * @param comm A pointer identifying the communication resource based on.
  * @param virPtr The virtual address memory range in @ref HcclCommSetMemoryRange()
  * @param size The length of activate memory
- * @param offset the offset of physical memory, now only support 0
+ * @param offset the offset of physical memory, now only supports 0
  * @param handle the physical memory handle
- * @param flags the flag of physical memory, now only support 0
+ * @param flags the flag of physical memory, now only supports 0
  */
 extern HcclResult HcclCommActivateCommMemory(
     HcclComm comm, void* virPtr, size_t size, size_t offset, aclrtDrvMemHandle handle,
@@ -322,7 +322,7 @@ extern HcclResult HcclGroupEnd();
  * @param addr A pointer identifying the user memory address.
  * @param size A size_t identifying the size of memory window.
  * @param winHandle A pointer identifying the registered memory window handle.
- * @param flag The flag of this memory window, now only support 0
+ * @param flag The flag of this memory window, now only supports 0
  * @return HcclResult
  */
 extern HcclResult HcclCommSymWinRegister(

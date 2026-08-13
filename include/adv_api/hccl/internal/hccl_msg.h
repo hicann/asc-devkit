@@ -135,8 +135,8 @@ constexpr uint32_t BYTE_PER_MB = BYTE_PER_KB * BYTE_PER_KB;
 // HcclMsgArea is the 16MB space reserved by workspace in struct HcclCombinOpParam and belongs to each comm group.
 // cacheline size aligned by 64 bytes
 struct TurnCnt {
-    uint64_t valid; // COMMIT_VALID_MASK, writen by client when Commit, checked by server
-    uint64_t cnt;   // commit cnt, writen by client, reset by server
+    uint64_t valid; // COMMIT_VALID_MASK, written by client when Commit, checked by server
+    uint64_t cnt;   // commit cnt, written by client, reset by server
     uint64_t reserved[6];
 };
 
@@ -144,8 +144,8 @@ struct SingleQueueMsg {
     HcclMsg sendMsgs[HCCL_MSG_CNT];
     HcclMsg recvMsgs[HCCL_MSG_CNT];
     uint8_t reserved0[8 * BYTE_PER_KB];    // for abi compatibility
-    TurnCnt commitTurnCnt[HCCL_MSG_CNT];   // writen by client, indicating task num needed to be executed.
-    TurnCnt finishedTurnCnt[HCCL_MSG_CNT]; // writen by server, indicating task num has been executed.
+    TurnCnt commitTurnCnt[HCCL_MSG_CNT];   // written by client, indicating task num needed to be executed.
+    TurnCnt finishedTurnCnt[HCCL_MSG_CNT]; // written by server, indicating task num has been executed.
     uint8_t reserved1[BYTE_PER_MB];
     HcclMsgExt paramExtMsgList[HCCL_MSG_CNT];
 };

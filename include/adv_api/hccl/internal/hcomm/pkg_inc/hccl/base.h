@@ -33,7 +33,7 @@ typedef enum {
     HOROVOD_REDUCE_ADASUM = 2,  /**< adasum */
     HOROVOD_REDUCE_MIN = 3,     /**< min */
     HOROVOD_REDUCE_MAX = 4,     /**< max */
-    HOROVOD_REDUCE_PROD = 5,    /**< proo */
+    HOROVOD_REDUCE_PROD = 5,    /**< prod */
     HOROVOD_REDUCE_RESERVED     /**< reserved */
 } HorovodReduceOp;
 
@@ -46,7 +46,7 @@ struct model_feature {
     const char* model_name; /**< The model name */
     u32 gradient_num;       /**< The number of gradients */
     float* gradient_size;   /**< The size of each gradient */
-    float* gradient_time;   /**< The BP compution time of each gradient */
+    float* gradient_time;   /**< The BP computation time of each gradient */
 };
 
 /**

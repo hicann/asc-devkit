@@ -123,7 +123,7 @@ typedef enum tag_ts_error {
     TS_INVLD_CPY_DIR = 0x85,                        /**< invalid copy dir */
     TS_PCIE_DMA_INVLD_CQ_DES = 0x86,                /**< pcie dma invalid cq des */
     TS_PCIE_DMA_CPY_ERR = 0x87,                     /**< pcie dma copy error */
-    TS_PCIE_DMA_LNK_CHN_BUSY = 0x88,                /**< pcie dima link channal busy */
+    TS_PCIE_DMA_LNK_CHN_BUSY = 0x88,                /**< pcie dma link channel busy */
     TS_ERROR_PROFILE_BUFF_FULL = 0x89,              /**< profile buff full */
     TS_ERROR_PROFILE_MODE_CONFLICT = 0x8A,          /**< profile mode conflict */
     TS_ERROR_PROFILE_OTHER_PID_ON = 0x8B,           /**< profile other pid on */
@@ -165,7 +165,7 @@ typedef enum tag_ts_error {
     TS_ERROR_APP_QUEUE_FULL = 0x115,                /* app queue full*/
     TS_ERROR_ABORT_UNFINISHED = 0x116,              /* ts is aborting */
     TS_ERROR_STARS_QOS_ERROR = 0x117,
-    // the following error codes are define for error msg
+    // the following error codes are defined for error msg
     TS_ERR_MSG_EXCEED_MAX_SIZE = 0x200,
     TS_ERROR_MALLOC_MEM_FAILED = 0X201,               /**< malloc memory fail, system error */
     TS_ERROR_DELETE_NODE_FAILED = 0X202,              /* delete node from list error */
@@ -212,7 +212,7 @@ typedef enum tag_ts_error {
     TS_STREAM_RECYCLED = 0x908,                 /**< stream is recycled */
     TS_ERROR_TS_CLOSED = 0x909,                 /**< sentinel mode, ts is closed */
     TS_ERROR_FEATURE_NOT_SUPPORT = 0x90A,       /**< feature not support on this chip */
-    // thf following error codes are ts paas to log daemon, no need to runtime
+    // the following error codes are ts passes to log daemon, no need to runtime
     TS_LOG_DEAMON_RESET_ACC_SWITCH_INVALID = 0x90B,  /* log daemon reset acc switch param invalid */
     TS_LOG_DEAMON_CORE_SWITCH_INVALID = 0x90C,       /* core switch invalid */
     TS_LOG_DEAMON_CORE_ID_INVALID = 0x90D,           /* core id invalid */

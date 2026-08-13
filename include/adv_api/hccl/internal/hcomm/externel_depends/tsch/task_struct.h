@@ -1766,7 +1766,7 @@ typedef struct tag_ts_call_back_info {
     uint32_t fndata_high;
 
     /* word12-13 */
-    uint32_t res2; // noly vf & topic AICPU & callback msg use for hostpid.
+    uint32_t res2; // only vf & topic AICPU & callback msg use for hostpid.
     uint32_t res3;
 
     /* word14 */
@@ -2455,7 +2455,7 @@ typedef struct ts_stars_callback_sqe {
     uint32_t fndata_high;
 
     /* word12-13 */
-    uint32_t res5; // noly vf & topic AICPU & callback use for hostpid.
+    uint32_t res5; // only vf & topic AICPU & callback use for hostpid.
     uint32_t res6;
 
     /* word14 */
@@ -2752,7 +2752,7 @@ typedef struct ts_stars_cqe {
     uint16_t stream_id;
     uint16_t task_id;
     uint16_t err_type : 8;
-    uint16_t drop_flag : 1; /* software define, means drop hw cqe and no dispatch to logic cq */
+    uint16_t drop_flag : 1; /* software defined, means drop hw cqe and no dispatch to logic cq */
     uint16_t rsv : 1;
     uint16_t sqe_type : 6;
     uint16_t sq_index;
