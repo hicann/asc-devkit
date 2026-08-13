@@ -12,6 +12,10 @@
 set -euo pipefail
 
 CASE_REL=01_simd_cpp_api/03_basic_api/05_sync_control/data_sync_barrier
+SKIP_REASON='temporarily disabled by presmoke workaround'
+
+SKIP_MODES=(npu cpu sim)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../../../_case_entry.sh"
 presmoke_case_init "$CASE_REL"

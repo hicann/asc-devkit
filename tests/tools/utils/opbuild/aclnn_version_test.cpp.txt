@@ -22,7 +22,7 @@ aclnnStatus aclnnVersionTestGetWorkspaceSize(
     static bool bias3Def = true;
     static bool bias4OptionalDef[] = {true, false};
     static aclBoolArray *bias4OptionalArray = aclCreateBoolArray(bias4OptionalDef, 2);
-    static float bias5OptionalDef[] = {0.1, 0.2};
+    static float bias5OptionalDef[] = {0.100000001, 0.200000003};
     static aclFloatArray *bias5OptionalArray = aclCreateFloatArray(bias5OptionalDef, 2);
     static int64_t bias6OptionalDef[] = {1, 2};
     static aclIntArray *bias6OptionalArray = aclCreateIntArray(bias6OptionalDef, 2);

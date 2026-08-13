@@ -198,7 +198,7 @@ aclnnStatus aclnnVersionTestV2GetWorkspaceSize(
     if (bias5Optional) {
         NNOPBASE_ASSERT_OK_RETVAL(NnopbaseAddFloatArrayAttr(*executor, bias5Optional, 4));
     } else {
-        static float bias5OptionalDef[] = {0.1, 0.2};
+        static float bias5OptionalDef[] = {0.100000001, 0.200000003};
         static size_t bias5OptionalLen = 2;
         NNOPBASE_ASSERT_OK_RETVAL(NnopbaseAddArrayAttrWithDtype(*executor, static_cast<void*>(bias5OptionalDef), bias5OptionalLen, sizeof(float), 4, kNnopbaseFloat));
     }

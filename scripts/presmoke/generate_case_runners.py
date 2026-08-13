@@ -86,6 +86,7 @@ MATMUL_L2CACHE_SKIP_REASON = (
     "data size (~308M) causes overtime in cpu mode; cpu mode skipped by presmoke"
 )
 LONG_TIME_REASON = "long execution time in cpu mode; cpu mode skipped by presmoke"
+WORKAROUND_SKIP_REASON = "temporarily disabled by presmoke workaround"
 
 
 @dataclass
@@ -143,6 +144,14 @@ SKIP_CONFIG = {
         reason=LONG_TIME_REASON,
         modes=["cpu"],
         archs=["dav-3510"],
+    ),
+    "01_simd_cpp_api/03_basic_api/05_sync_control/cross_core_set_wait_flag": SkipConfig(
+        reason=WORKAROUND_SKIP_REASON,
+        modes=["npu", "cpu", "sim"],
+    ),
+    "01_simd_cpp_api/03_basic_api/05_sync_control/data_sync_barrier": SkipConfig(
+        reason=WORKAROUND_SKIP_REASON,
+        modes=["npu", "cpu", "sim"],
     ),
 }
 

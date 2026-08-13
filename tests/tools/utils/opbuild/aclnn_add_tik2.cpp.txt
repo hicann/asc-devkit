@@ -235,7 +235,7 @@ aclnnStatus aclnnAddTik2GetWorkspaceSize(
     if (bias3Optional) {
         NNOPBASE_ASSERT_OK_RETVAL(NnopbaseAddFloatArrayAttr(*executor, bias3Optional, 3));
     } else {
-        static float bias3OptionalDef[] = {0.1, 0.2};
+        static float bias3OptionalDef[] = {0.100000001, 0.200000003};
         static size_t bias3OptionalLen = 2;
         NNOPBASE_ASSERT_OK_RETVAL(NnopbaseAddArrayAttrWithDtype(*executor, static_cast<void*>(bias3OptionalDef), bias3OptionalLen, sizeof(float), 3, kNnopbaseFloat));
     }

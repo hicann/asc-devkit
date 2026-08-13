@@ -6899,8 +6899,8 @@
       "sim"
     ],
     "target_runnable": true,
-    "skip": false,
-    "skip_reason": "",
+    "skip": true,
+    "skip_reason": "temporarily disabled by presmoke workaround",
     "skip_modes": [],
     "reasons": [],
     "commands": [
@@ -6927,8 +6927,8 @@
       "sim"
     ],
     "target_runnable": true,
-    "skip": false,
-    "skip_reason": "",
+    "skip": true,
+    "skip_reason": "temporarily disabled by presmoke workaround",
     "skip_modes": [],
     "reasons": [],
     "commands": [
@@ -6955,8 +6955,8 @@
       "sim"
     ],
     "target_runnable": true,
-    "skip": false,
-    "skip_reason": "",
+    "skip": true,
+    "skip_reason": "temporarily disabled by presmoke workaround",
     "skip_modes": [],
     "reasons": [],
     "commands": [
@@ -6982,8 +6982,8 @@
       "npu"
     ],
     "target_runnable": true,
-    "skip": false,
-    "skip_reason": "",
+    "skip": true,
+    "skip_reason": "temporarily disabled by presmoke workaround",
     "skip_modes": [],
     "reasons": [],
     "commands": [

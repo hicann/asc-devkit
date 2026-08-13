@@ -17,7 +17,7 @@ REG_OP(VersionTest)
     .ATTR(bias2, Float, 0)
     .ATTR(bias3, Bool, true)
     .ATTR(bias4, ListBool, {true,false})
-    .ATTR(bias5, ListFloat, {0.1,0.2})
+    .ATTR(bias5, ListFloat, {0.100000001,0.200000003})
     .ATTR(bias6, ListInt, {1,2})
     .ATTR(bias7, String, "ssss")
     .OP_END_FACTORY_REG(VersionTest);
