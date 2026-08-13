@@ -150,8 +150,8 @@ constexpr uint64_t CCU_LOOP_COUNT_M2M_AG = 8;  // AllGather
 constexpr uint64_t CCU_LOOP_COUNT_ATAVW = 8;   // CCU cycle number, only for AlltoAllvWrite
 constexpr uint64_t ALIGN_64_BYTE = 64;
 constexpr uint64_t CCU_MEMSLICE_SIZE = 4096; // CCU MS size, MC2 is not aware of it
-constexpr uint8_t CCU_MSG_CKE_INIT_VALUE = 0;
-constexpr uint8_t CCU_MSG_CKE_SET_VALUE = 1;
+constexpr uint64_t CCU_MSG_CKE_INIT_VALUE = 0;
+constexpr uint64_t CCU_MSG_CKE_SET_VALUE = 1;
 constexpr uint64_t CCU_MAX_COMM_DATA = 268435456; // 256 * 1024 * 1024
 
 struct CCUMsg {
