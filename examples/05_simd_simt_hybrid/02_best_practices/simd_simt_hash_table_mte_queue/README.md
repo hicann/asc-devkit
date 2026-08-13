@@ -96,7 +96,7 @@ $$
 
 ### Case 0：SIMT Warp直接写value
 
-**实现方式**：参考`insert_or_assign_warp_store_vf()`函数实现。
+**实现方式**：参考`try_lock_bucket_for_key_case0()`和`insert_or_assign_warp_store_vf()`函数实现。
 
 该实现中，每个Warp处理一条key。lane 0执行hash、线性探测和CAS锁定bucket，Warp内线程通过`asc_shfl`获取目标bucket index，并按`WARP_SIZE`分片写入value向量。对于探测到的临时`LOCKED_KEY`槽位，Case 0的lane 0会在当前槽位上持续重试，而不是直接跳过到下一个槽位，以避免同一个key在并发插入时跳过瞬时锁定槽位并产生重复可见项。value搬运由SIMT线程直接访问GM完成。
 
@@ -105,27 +105,37 @@ $$
 **关键代码**：
 
 ```cpp
-__simt_vf__ inline void insert_or_assign_warp_store_vf(__gm__ Bucket* table,
-    __gm__ float* table_values, __gm__ const int64_t* keys, __gm__ const float* values, uint32_t key_num,
-    uint32_t capacity, uint32_t dim, uint32_t block_index, uint32_t num_blocks)
+__simt_callee__ inline bool try_lock_bucket_for_key_case0(__gm__ int64_t* key_addr, int64_t key)
 {
-    const uint32_t lane_id = static_cast<uint32_t>(threadIdx.x) % WARP_SIZE;
-    ...
-    if (lane_id == 0) {
-        if (try_lock_bucket_for_key_case0(key_addr, key)) {
-            success = 1;
-            break;
+    while (true) {
+        int64_t current_key = *reinterpret_cast<__gm__ volatile int64_t*>(key_addr);
+        if (current_key == LOCKED_KEY) {
+            continue;
         }
         ...
     }
+}
+
+__simt_vf__ inline void insert_or_assign_warp_store_vf(
+    __gm__ Bucket* table, __gm__ float* table_values, __gm__ const int64_t* keys, __gm__ const float* values,
+    uint32_t key_num, uint32_t capacity, uint32_t dim, uint32_t block_index, uint32_t num_blocks)
+{
     ...
-    for (uint32_t j = lane_id; j < dim; j += WARP_SIZE) {
-        table_values[dst_base + j] = values[src_base + j];
-    }
-    asc_threadfence();
-    if (lane_id == 0) {
-        *reinterpret_cast<__gm__ volatile int64_t*>(&table[bucket_idx].key) = key;
-    }
+        success = asc_shfl(success, 0, WARP_SIZE);
+        bucket_idx = asc_shfl(bucket_idx, 0, WARP_SIZE);
+        if (success == 1) {
+            uint32_t dst_base = bucket_idx * dim;
+            uint32_t src_base = idx * dim;
+            for (uint32_t j = lane_id; j < dim; j += WARP_SIZE) {
+                table_values[dst_base + j] = values[src_base + j];
+            }
+            // Publish the key only after the value vector is visible.
+            asc_threadfence();
+            if (lane_id == 0) {
+                *reinterpret_cast<__gm__ volatile int64_t*>(&table[bucket_idx].key) = key;
+            }
+        }
+    ...
 }
 ```
 
@@ -166,42 +176,63 @@ Case 1保留SIMT处理hash/probe/CAS的职责，只把连续value搬运拆给MTE
 **关键代码**：
 
 ```cpp
-class mte_task_queue {
-public:
-    __simt_callee__ inline void assign_warp_task(
-        uint64_t src_addr, uint64_t dst_addr, int64_t key, uint64_t key_addr, bool need_assign)
-    {
-        uint32_t write_mask = asc_ballot(need_assign ? 1 : 0);
-        uint32_t warp_write_count = __popc(write_mask);
-        uint32_t task_start_id = (laneid() == 0) ? apply_id(warp_write_count) : 0;
-        task_start_id = asc_shfl(task_start_id, 0);
-        drain(task_start_id + warp_write_count);
-        if (need_assign) {
-            uint32_t lane_offset = __popc(write_mask & lanemask_lt());
-            fill_task_info(task_start_id + lane_offset, src_addr, dst_addr, key, key_addr);
+__simt_callee__ inline void fill_task_info(
+    uint32_t task_id, uint64_t src_addr, uint64_t dst_addr, int64_t key, uint64_t key_addr) const
+{
+    uint32_t slot = task_id & MTE_TASK_RING_MASK;
+    reinterpret_cast<__ubuf__ volatile uint64_t*>(src_addrs_)[slot] = src_addr;
+    reinterpret_cast<__ubuf__ volatile uint64_t*>(dst_addrs_)[slot] = dst_addr;
+    reinterpret_cast<__ubuf__ volatile int64_t*>(task_keys_)[slot] = key;
+    reinterpret_cast<__ubuf__ volatile uint64_t*>(key_addrs_)[slot] = key_addr;
+}
+
+...
+
+template <bool drain_all = false>
+__simt_callee__ inline void drain(uint32_t new_task_end_id) const
+{
+    while (true) {
+        ...
+        if (lane_id < publish_count) {
+            uint32_t slot = (key_assign_id + lane_id) & MTE_TASK_RING_MASK;
+            int64_t key = reinterpret_cast<__ubuf__ volatile int64_t*>(task_keys_)[slot];
+            uint64_t key_addr = reinterpret_cast<__ubuf__ volatile uint64_t*>(key_addrs_)[slot];
+            // The slot is still owned by this insert task, so a release store is enough to publish the key.
+            *reinterpret_cast<__gm__ volatile int64_t*>(key_addr) = key;
         }
         asc_threadfence();
-        if (laneid() == 0) {
-            assign_task(task_start_id, task_start_id + warp_write_count);
-        }
+        ...
     }
+}
 
-    __aicore__ inline void run_task() const
-    {
-        while (true) {
-            uint32_t simt_assign_id = *reinterpret_cast<__ubuf__ volatile uint32_t*>(simt_assign_id_);
-            uint32_t proc_count = min(max_proc_batch, simt_assign_id - mte_finish_id);
+...
+
+__aicore__ inline void run_task() const
+{
+    ...
+    while (true) {
+        ...
+        uint32_t available = simt_assign_id - mte_finish_id;
+        uint32_t proc_count = (available < max_proc_batch) ? available : max_proc_batch;
+        for (uint32_t i = 0; i < proc_count; ++i) {
             ...
-            asc_copy_gm2ub_align(value_local_, src_addr, 1, value_bytes, 0, 0, true, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
-            asc_sync_notify(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
-            asc_sync_wait(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
-            asc_copy_ub2gm_align(dst_addr, value_local_, 1, value_bytes, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
-            asc_sync_notify(PIPE_MTE3, PIPE_S, EVENT_ID0);
-            asc_sync_wait(PIPE_MTE3, PIPE_S, EVENT_ID0);
-            *reinterpret_cast<__ubuf__ volatile uint32_t*>(mte_finish_id_) = mte_finish_id + proc_count;
+            asc_copy_gm2ub_align(
+                value_local_ + i * value_elems_aligned, reinterpret_cast<__gm__ float*>(src_addr), 1, value_bytes,
+                0, 0, true, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
         }
+        ...
+        for (uint32_t i = 0; i < proc_count; ++i) {
+            ...
+            asc_copy_ub2gm_align(
+                reinterpret_cast<__gm__ float*>(dst_addr), value_local_ + i * value_elems_aligned, 1, value_bytes,
+                asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
+        }
+        ...
+        mte_finish_id += proc_count;
+        *reinterpret_cast<__ubuf__ volatile uint32_t*>(mte_finish_id_) = mte_finish_id;
     }
-};
+}
+
 ```
 
 **性能数据**：
