@@ -81,6 +81,7 @@ basic_test_three_targets=(
     ascendc_ut_asc_runtime
     ascendc_ut_elf_tool
     ascendc_ut_pack_kernel
+    ascendc_ut_asc_compile_exporter
     ascendc_ut_tpl_tiling_debug
     ascendc_ut_tpl_tiling_release
     ascendc_ut_aicpu_api

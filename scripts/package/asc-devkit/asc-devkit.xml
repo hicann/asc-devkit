@@ -36,6 +36,7 @@
         <path value="share" install_mod="750"/>
         <path value="share/info" install_mod="750"/>
         <path value="tools/opbuild" install_mod="750"/>
+        <path value="tools/asc_compile_exporter" install_mod="750"/>
         <path value="$(TARGET_ENV)/tikcpp" install_softlink="compiler/tikcpp;tools/tikcpp"/>
         <path value="$(TARGET_ENV)/tikcpp/tikcfw"/>
         <path value="$(TARGET_ENV)/tikcpp/tikcfw/include"/>
@@ -177,6 +178,9 @@
 
     <file_info value="op_build" copy_type="delivery" src_path="lib/host/" dst_path="tools/opbuild" install_path="tools/opbuild" install_mod="555" feature="ascendc">
         <file value="op_build" file_type= "executable"/>
+    </file_info>
+    <file_info value="asc_compile_exporter" copy_type="delivery" src_path="lib/host/" dst_path="tools/asc_compile_exporter" install_path="tools/asc_compile_exporter" install_mod="555" feature="ascendc">
+        <file value="asc_compile_exporter" file_type= "executable"/>
     </file_info>
 
     <file_info copy_type="source" src_path="build/makeself" dst_path="$(TARGET_ENV)/tikcpp/ascendc_kernel_cmake/fwk_modules/util/makeself" install_path="$(TARGET_ENV)/tikcpp/ascendc_kernel_cmake/fwk_modules/util/makeself">

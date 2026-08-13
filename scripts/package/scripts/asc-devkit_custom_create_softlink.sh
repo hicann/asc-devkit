@@ -81,6 +81,9 @@ do_create_stub_softlink() {
     if [ ! -d "$install_path/$latest_dir/tools/opbuild" ]; then
         ln -sr "$install_path/$version_dir/tools/opbuild" "$install_path/$latest_dir/tools/opbuild"
     fi
+    if [ ! -d "$install_path/$latest_dir/tools/asc_compile_exporter" ]; then
+        ln -sr "$install_path/$version_dir/tools/asc_compile_exporter" "$install_path/$latest_dir/tools/asc_compile_exporter"
+    fi
     if [ -e "$install_path/$version_dir/${arch_name}-linux/bin/asc_opc" ]; then
         if [ ! -L "$install_path/$version_dir/compiler/bin/asc_opc" ]; then
             ln -sr "$install_path/$version_dir/${arch_name}-linux/bin/asc_opc" "$install_path/$version_dir/compiler/bin/asc_opc"
