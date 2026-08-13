@@ -37,7 +37,7 @@ $$
 - 当src0和src1为half类型时：
 
 $$
-dst_i = e^{cast_f16_to_f32(src0_i) - cast_f16_to_f32(src1_i)}
+dst_i = e^{cast\_f16\_to\_f32(src0_i) - cast\_f16\_to\_f32(src1_i)}
 $$
 
 ## 函数原型
