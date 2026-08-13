@@ -86,7 +86,7 @@ __simd_vf__ inline void half2hif8_vf(__ubuf__ hifloat8_t* dst_addr, __ubuf__ hal
     for (uint16_t i = 0; i < repeat_time; ++i) {
         asc_loadalign_postupdate(src, src_addr, src_repeat_size);
         asc_half2hif8_rna(dst, src, mask);
-        asc_storealign_postupdate(dst_addr, dst, dst_repeat_size, mask);
+        asc_storealign_postupdate(reinterpret_cast<__ubuf__ uint8_t*&>(dst_addr), reinterpret_cast<vector_uint8_t&>(dst), dst_repeat_size, mask);
     }
 }
 ```

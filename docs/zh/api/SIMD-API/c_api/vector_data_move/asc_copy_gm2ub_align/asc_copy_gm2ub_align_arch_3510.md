@@ -30,14 +30,14 @@
 
 本接口支持以下两种数据搬运方式：
 
-- 前n个数据搬运
+- 连续数据搬运
 
     若搬运数据长度非32字节对齐，搬运数据会补齐至32字节对齐，支持以下两种填充方式：
 
     - 手动填充：搬运前调用[asc_set_copy_pad_val](../asc_set_copy_pad_val.md)配置填充值。
     - 自动填充：由硬件自动填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
 
-- 高维切分搬运
+- 高维切分数据搬运
 
     若搬运数据长度非32字节对齐，会将搬运数据补齐至32字节对齐。可通过配置参数`dst_stride`选择Normal模式或Compact模式。非32字节对齐场景支持以下两种填充方式：
 
@@ -57,78 +57,65 @@
 
     当只搬运1个数据块，或`len_burst`已经32字节对齐且无左右Padding时，两种模式的搬运结果相同。
 
+本接口仅在AIV上生效。
+
 ## 函数原型
 
-- 前n个数据搬运
+### 连续数据搬运
 
-    ```cpp
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int16_t* dst, __gm__ int16_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ half* dst, __gm__ half* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int32_t* dst, __gm__ int32_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ float* dst, __gm__ float* src, uint32_t size)
-    ```
+```c
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
+                                            __gm__ <dtype>* src,
+                                            uint32_t size)
+```
 
-- 同步搬运
+dtype可取的数据类型为`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
-    ```cpp
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int16_t* dst, __gm__ int16_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ half* dst, __gm__ half* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int32_t* dst, __gm__ int32_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t size)
-    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ float* dst, __gm__ float* src, uint32_t size)
-    ```
+#### 典型示例
 
-- 高维切分搬运
+```c
+// 示例：源与目的数据类型为bfloat16_t
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
+                                            __gm__ bfloat16_t* src,
+                                            uint32_t size)
+```
 
-    ```cpp
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int16_t* dst, __gm__ int16_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint16_t* dst, __gm__ uint16_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ half* dst, __gm__ half* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int32_t* dst, __gm__ int32_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint32_t* dst, __gm__ uint32_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ float* dst, __gm__ float* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    ```
+### 高维切分数据搬运
 
-- **以下函数原型已废弃，请使用`asc_load_l2_cache_mode`类型枚举值进行L2 Cache管理策略配置。**
+```c
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
+                                            __gm__ <dtype>* src,
+                                            uint16_t n_burst,
+                                            uint32_t len_burst,
+                                            uint8_t left_padding_num,
+                                            uint8_t right_padding_num,
+                                            bool enable_constant_pad,
+                                            asc_load_l2_cache_mode l2_cache_mode,
+                                            uint64_t src_stride,
+                                            uint32_t dst_stride)
+```
 
-    ```cpp
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int16_t* dst, __gm__ int16_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint16_t* dst, __gm__ uint16_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ half* dst, __gm__ half* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int32_t* dst, __gm__ int32_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint32_t* dst, __gm__ uint32_t* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ float* dst, __gm__ float* src, uint16_t n_burst, uint32_t len_burst, uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, uint8_t l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-    ```
+dtype可取的数据类型为`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
+#### 典型示例
+
+```c
+// 示例：源与目的数据类型为bfloat16_t
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
+                                            __gm__ bfloat16_t* src,
+                                            uint16_t n_burst,
+                                            uint32_t len_burst,
+                                            uint8_t left_padding_num,
+                                            uint8_t right_padding_num,
+                                            bool enable_constant_pad,
+                                            asc_load_l2_cache_mode l2_cache_mode,
+                                            uint64_t src_stride,
+                                            uint32_t dst_stride)
+```
 
 ## 参数说明
+
+### 连续数据搬运
 
 **表1** 参数说明
 
@@ -136,15 +123,24 @@
 | :--- | :--- | :--- |
 | dst | 输出 | 目的UB的起始地址。需要32字节对齐。 |
 | src | 输入 | 源GM的起始地址。需要1字节对齐。 |
-| size | 输入 | 搬运数据大小，单位为字节。取值范围：[0, 2097151]。 |
-| n_burst | 输入 | 待搬运的连续传输数据块个数。取值范围：[0, 4095]。 |
-| len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[0, 2097151]。 |
+| size | 输入 | 搬运数据大小，单位为字节。取值范围：[1, $2^{21}−1$]。 |
+
+### 高维切分数据搬运
+
+**表2** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| :--- | :--- | :--- |
+| dst | 输出 | 目的UB的起始地址。需要32字节对齐。 |
+| src | 输入 | 源GM的起始地址。需要1字节对齐。 |
+| n_burst | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, 4095]。 |
+| len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[1, $2^{21}−1$]。 |
 | left_padding_num | 输入 | 连续搬运数据块左侧需要补充的元素个数。该参数对应的填充数据大小不能超过32字节。Compact模式下需要设置为0。 |
 | right_padding_num | 输入 | 连续搬运数据块右侧需要补充的元素个数。该参数对应的填充数据大小不能超过32字节。Compact模式下需要设置为0。 |
 | enable_constant_pad | 输入 | 当`left_padding_num`和`right_padding_num`均为0时，配置非对齐场景的填充方式。取值说明如下：  <br>&bull; `true`：手动填充，填充值为接口`asc_set_copy_pad_val`设置的值。 <br>&bull; `false`：自动填充，由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。<br>当`left_padding_num`或`right_padding_num`非0时，该参数不生效。 |
 | l2_cache_mode | 输入 | [asc_load_l2_cache_mode](../../enum/asc_load_l2_cache_mode.md)类型的枚举值，配置数据在L2 Cache中的管理策略。 |
-| src_stride | 输入 | 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。<br>只搬运1个数据块，即`n_burst`设置为1时，可以将此参数设置为0。 |
-| dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节，用于选择数据搬运模式。<br>&bull; 等于`len_burst`：Compact模式，目的数据块在UB中紧密排列，`dst_stride`支持字节对齐。<br>&bull; 不等于`len_burst`：Normal模式，`dst_stride`需要满足32字节对齐要求。<br>只搬运1个数据块，即`n_burst`设置为1时，可以将此参数设置为0。 |
+| src_stride | 输入 | 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{40}−1$]。<br>只搬运1个数据块，即`n_burst`设置为1时，可以将此参数设置为0。 |
+| dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节，用于选择数据搬运模式。取值范围：[0, $2^{21}−1$]。<br>&bull; 等于`len_burst`：Compact模式，目的数据块在UB中紧密排列，`dst_stride`支持字节对齐。<br>&bull; 不等于`len_burst`：Normal模式，`dst_stride`需要满足32字节对齐要求。<br>只搬运1个数据块，即`n_burst`设置为1时，可以将此参数设置为0。 |
 
 ## 返回值说明
 
@@ -156,20 +152,90 @@ PIPE_MTE2
 
 ## 约束说明
 
+### 通用约束
+
+- 本接口在非AIV上调用直接返回。
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../../general_description_and_constraints.md#存储单元说明)。
-- 当`n_burst`、`len_burst`中任意一个值为0时，该接口被视为NOP（空操作）。
-- 当`size`值为0时，该接口被视为NOP（空操作）。
-- 如果需要执行多条`asc_copy_gm2ub_align`指令，且`asc_copy_gm2ub_align`指令的目的地址存在重叠，需要插入同步指令（[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)），保证多个`asc_copy_gm2ub_align`指令的串行化，防止出现异常数据。
+- 如果本指令与其他指令的目的地址存在重叠，需要插入同步指令（[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)），保证多个指令的串行化，防止出现异常数据。
+
+### 连续数据搬运约束
+
+- 若`size`非32字节对齐，搬运数据会补齐至32字节对齐，目的UB需要预留补齐后的空间。手动填充时，调用`asc_set_copy_pad_val`配置填充值；自动填充时，由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
+
+### 高维切分数据搬运约束
+
 - 当`left_padding_num`或`right_padding_num`非0时，`enable_constant_pad`不生效，必须在搬运前调用`asc_set_copy_pad_val`配置填充值。`left_padding_num`、`right_padding_num`对应的填充数据大小均不能超过32字节。
-- 前n个数据搬运接口：若`size`非32字节对齐，搬运数据会补齐至32字节对齐，目的UB需要预留补齐后的空间。手动填充时，调用`asc_set_copy_pad_val`配置填充值；自动填充时，由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
 - 当`dst_stride`不等于`len_burst`时，`dst_stride`要求32字节对齐。
 
 ## 调用示例
 
-```cpp
-asc_set_gm2ub_loop_size(2, 2);
-asc_set_gm2ub_loop1_stride(96, 128);
-asc_set_gm2ub_loop2_stride(192, 288);
-asc_copy_gm2ub_align(dst, src, 2, 48 * sizeof(int8_t), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 48 * sizeof(int8_t), 48 * sizeof(int8_t));
-asc_set_gm2ub_loop_size(1, 1);
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510; ./main
+```
+<!-- end id8 -->
+
+```c
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+
+constexpr uint32_t INPUT_BYTES = 256;
+constexpr uint32_t OUTPUT_BYTES = 256;
+
+__global__ __vector__ void asc_copy_gm2ub_align_arch3510_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+{
+    asc_init();
+    __ubuf__ uint8_t local[INPUT_BYTES];
+    // Copy INPUT_BYTES from GM to UB, then wait only for PIPE_MTE2.
+    asc_copy_gm2ub_align(local, input, INPUT_BYTES);
+    asc_sync_mte2(0);
+    asc_copy_ub2gm_align(output, local, INPUT_BYTES);
+    asc_sync_mte3(0);
+}
+
+void print_data(const char* name, const std::vector<uint8_t>& data)
+{
+    std::cout << name << ":";
+    const uint32_t count = data.size() < 32 ? data.size() : 32;
+    for (uint32_t i = 0; i < count; ++i) std::cout << ' ' << +data[i];
+    if (data.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+} // namespace
+
+int main()
+{
+    std::vector<uint8_t> input(INPUT_BYTES), output(OUTPUT_BYTES, 0), golden(OUTPUT_BYTES, 0);
+    for (uint32_t i = 0; i < INPUT_BYTES; ++i) input[i] = static_cast<uint8_t>(i + 1);
+    for (uint32_t i = 0; i < 256; ++i) golden[i] = input[i];
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint8_t *input_device = nullptr, *output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), INPUT_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), OUTPUT_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, INPUT_BYTES, input.data(), INPUT_BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(output_device, OUTPUT_BYTES, output.data(), OUTPUT_BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_copy_gm2ub_align_arch3510_kernel<<<1, 0>>>(output_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), OUTPUT_BYTES, output_device, OUTPUT_BYTES, ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input", input);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_copy_gm2ub_align passed." : "[Failed] asc_copy_gm2ub_align failed.") << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```
