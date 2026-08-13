@@ -221,15 +221,15 @@ __global__ void atomic_add_ub_local_no_return()
 
 | Memory | With return value (μs) | Without return value (μs) | Ratio |
 |:---:|---:|---:|:---:|
-| GM int32 (Scenario 5, 6) | 421.59 | 159.88 | 2.64× |
-| UB int32 (Scenario 7, 8) | 3.17 | 2.76 | 1.15× |
+| GM int32_t (Scenario 5, 6) | 421.59 | 159.88 | 2.64× |
+| UB int32_t (Scenario 7, 8) | 3.17 | 2.76 | 1.15× |
 
 **Analysis**:
 
 The impact of whether the return value is used differs significantly between GM and UB:
 
-- **GM int32**: Without the return value, about 159.88 μs; with the return value, about 421.59 μs — a difference of roughly **2.6×**.
-- **UB int32**: Without the return value, about 2.76 μs; with the return value, about 3.17 μs — only a difference of roughly **1.15×**.
+- **GM int32_t**: Without the return value, about 159.88 μs; with the return value, about 421.59 μs — a difference of roughly **2.64×**.
+- **UB int32_t**: Without the return value, about 2.76 μs; with the return value, about 3.17 μs — only a difference of roughly **1.15×**.
 
 The reason for this difference is: whether `asc_atomic_add()` uses the return value causes the compiler to generate **two different atomic-add instructions** — without the return value, the compiler selects the better-performing instruction; with the return value, the generated instruction has higher overhead. This instruction-level performance difference is significantly amplified on GM but small on UB, so the impact of return-value usage on time is far greater on GM than on UB.
 
@@ -279,7 +279,7 @@ The two address layouts are compared in the following figure:
 - **Scenario 12**: Enables 12288 threads to operate on 32 densely packed target addresses, with 384 threads per address. The 32 addresses are concentrated in 1 Sector.
 
 > [!NOTE]
-> This group of scenarios uniformly uses the return value: as shown by Case 3, when the return value is not used, int32 triggers an instruction optimization whose time is dominated by that optimization, masking the effects of same-address thread count and Sector distribution on performance.
+> This group of scenarios uniformly uses the return value: as shown by Case 3, when the return value is not used, `int32_t` triggers an instruction optimization whose time is dominated by that optimization, masking the effects of same-address thread count and Sector distribution on performance.
 
 ```cpp
 __global__ void atomic_add_gm_case4_i32_return(
@@ -322,7 +322,7 @@ __global__ void atomic_add_gm_case4_i32_return(
 
 ### Case 5: Data-type trade-off
 
-**Goal**: On GM under a same-address-contention scenario, compare int32 and int64 atomic-add performance, showing that the choice of data type depends on whether the return value is used — one should not judge based solely on the experience that "narrower data types perform better."
+**Goal**: On GM under a same-address-contention scenario, compare int32_t and int64_t atomic-add performance, showing that the choice of data type depends on whether the return value is used — one should not judge based solely on the experience that "narrower data types perform better."
 
 **Scenario configuration**:
 
@@ -334,7 +334,7 @@ __global__ void atomic_add_gm_case4_i32_return(
 | 16 | Global Memory | int64_t | Yes | 48×256 | 1024 |
 
 > [!NOTE]
-> Since int64 atomic add only supports GM, the data-type comparison in this sample is conducted only in the GM scenario.
+> Since int64_t atomic add only supports GM, the data-type comparison in this sample is conducted only in the GM scenario.
 
 **Core implementation**: Launch 48 thread blocks of 256 threads each (12288 threads in total). Each thread performs one atomic add of 1, writing the result to a region in GM consisting of several contiguous addresses. The `target_count` controls the number of target addresses in GM participating in the atomic add; this group fixes `target_count = 1024`, i.e., 12 threads contend for the same address. Under the same address contention level, the four combinations of `int32_t` and `int64_t` with and without return value are tested.
 
@@ -356,21 +356,21 @@ __global__ void atomic_add_gm_dense_i32_return(int32_t* counters, uint64_t targe
 
 **Performance data**:
 
-| Return value | int32 (μs) | int64 (μs) | Performance comparison |
+| Return value | int32_t (μs) | int64_t (μs) | Performance comparison |
 |:---:|---:|---:|:---:|
-| Without return value (Scenario 13, 14) | 1.89 | 58.46 | int32 takes less time, about 1/31 of int64 |
-| With return value (Scenario 15, 16) | 110.95 | 54.28 | int32 takes more time, about 2× of int64 |
+| Without return value (Scenario 13, 14) | 1.89 | 58.46 | int32_t takes less time, about 1/31 of int64_t |
+| With return value (Scenario 15, 16) | 110.95 | 54.28 | int32_t takes more time, about 2× of int64_t |
 
 **Analysis**:
 
-The performance relationship between int32 and int64 is reversed in the two cases: without the return value, int32 and int64 take 1.89 μs and 58.46 μs respectively; with the return value, int32 and int64 take 110.95 μs and 54.28 μs respectively. The two cases are dominated by different mechanisms:
+The performance relationship between int32_t and int64_t is reversed in the two cases: without the return value, int32_t and int64_t take 1.89 μs and 58.46 μs respectively; with the return value, int32_t and int64_t take 110.95 μs and 54.28 μs respectively. The two cases are dominated by different mechanisms:
 
-- **Without the return value**, int32 atomic add executes an optimized instruction. Under a scenario where about 12 threads contend for the same address, int32 and int64 take 1.89 μs and 58.46 μs respectively, indicating that int32's processing efficiency is significantly higher than int64's.
-- **With the return value**, int32 cannot trigger the above optimization, and the measured time is roughly 2× that of int64. When target addresses are densely packed, int32 and int64 cover different numbers of Sectors; additionally, changing the data type also changes the data width of the atomic instruction, so this cross-type data is only used for comparing actual performance and should not be taken as independent evidence of Sector impact. Case 4 demonstrates the impact of Sector distribution through a Padding-vs-dense comparison within the same type.
+- **Without the return value**, int32_t atomic add executes an optimized instruction. Under a scenario where about 12 threads contend for the same address, int32_t and int64_t take 1.89 μs and 58.46 μs respectively, indicating that int32_t's processing efficiency is significantly higher than int64_t's.
+- **With the return value**, int32_t cannot trigger the above optimization, and the measured time is roughly 2× that of int64_t. When target addresses are densely packed, int32_t and int64_t cover different numbers of Sectors; additionally, changing the data type also changes the data width of the atomic instruction, so this cross-type data is only used for comparing actual performance and should not be taken as independent evidence of Sector impact. Case 4 demonstrates the impact of Sector distribution through a Padding-vs-dense comparison within the same type.
 
-The above results show that the performance relationship between int32 and int64 is not determined solely by data-type width, but also depends on whether the return value is used.
+The above results show that the performance relationship between int32_t and int64_t is not determined solely by data-type width, but also depends on whether the return value is used.
 
-**Conclusion**: The data type should be chosen based on whether the return value is used. For pure-counting scenarios that do not use the return value, prefer int32, for which the compiler can generate an optimized instruction; in scenarios that use the return value, the data type should be selected based on measured results. When target addresses are densely packed, padding or struct alignment can be used to spread out the target addresses.
+**Conclusion**: The data type should be chosen based on whether the return value is used. For pure-counting scenarios that do not use the return value, prefer int32_t, for which the compiler can generate an optimized instruction; in scenarios that use the return value, the data type should be selected based on measured results. When target addresses are densely packed, padding or struct alignment can be used to spread out the target addresses.
 
 ---
 
@@ -380,29 +380,29 @@ The above results show that the performance relationship between int32 and int64
 
 | Scenario | Case | Memory | Data Type | Return Value | Scale | Atomic-add config | Task Duration (μs) |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|---:|
-| 1 | Case 1 | GM |   int32 | No | 1×1024 | 1 address | 87.60 |
-| 2 | Case 1 | UB |  int32 | No | 1×1024 | 1 address | 1.84 |
-| 3 | Case 2 | GM |   int32 | No | 8×1024 | 1 address | 351.47 |
-| 4 | Case 2 | UB |  int32 | No | 8×1024 | 1 address | 2.25 |
-| 5 | Case 3 | GM |   int32 | Yes | 1×2048 | 1 address | 421.59 |
-| 6 | Case 3 | GM |   int32 | No | 1×2048 | 1 address | 159.88 |
-| 7 | Case 3 | UB |  int32 | Yes | 1×2048 | 1 address | 3.17 |
-| 8 | Case 3 | UB |  int32 | No | 1×2048 | 1 address | 2.76 |
+| 1 | Case 1 | GM |   int32_t | No | 1×1024 | 1 address | 87.60 |
+| 2 | Case 1 | UB |  int32_t | No | 1×1024 | 1 address | 1.84 |
+| 3 | Case 2 | GM |   int32_t | No | 8×1024 | 1 address | 351.47 |
+| 4 | Case 2 | UB |  int32_t | No | 8×1024 | 1 address | 2.25 |
+| 5 | Case 3 | GM |   int32_t | Yes | 1×2048 | 1 address | 421.59 |
+| 6 | Case 3 | GM |   int32_t | No | 1×2048 | 1 address | 159.88 |
+| 7 | Case 3 | UB |  int32_t | Yes | 1×2048 | 1 address | 3.17 |
+| 8 | Case 3 | UB |  int32_t | No | 1×2048 | 1 address | 2.76 |
 | 9 | Case 4 | GM |   int32_t | Yes | 48×256 | 32 Padding addresses, 1 thread/address, 1 add/thread | 2.53 |
 | 10 | Case 4 | GM |   int32_t | Yes | 48×256 | 32 Padding addresses, 12 threads/address, 1 add/thread | 5.11 |
 | 11 | Case 4 | GM |   int32_t | Yes | 48×256 | 32 Padding addresses, 384 threads/address, 1 add/thread | 80.17 |
 | 12 | Case 4 | GM |   int32_t | Yes | 48×256 | 32 dense addresses, 384 threads/address, 1 add/thread | 2164.72 |
-| 13 | Case 5 | GM |   int32 | No | 48×256 | 1024 dense addresses | 1.89 |
-| 14 | Case 5 | GM |   int64 | No | 48×256 | 1024 dense addresses | 58.46 |
-| 15 | Case 5 | GM |   int32 | Yes | 48×256 | 1024 dense addresses | 110.95 |
-| 16 | Case 5 | GM |  int64 | Yes | 48×256 | 1024 dense addresses | 54.28 |
+| 13 | Case 5 | GM |   int32_t | No | 48×256 | 1024 dense addresses | 1.89 |
+| 14 | Case 5 | GM |   int64_t | No | 48×256 | 1024 dense addresses | 58.46 |
+| 15 | Case 5 | GM |   int32_t | Yes | 48×256 | 1024 dense addresses | 110.95 |
+| 16 | Case 5 | GM |  int64_t | Yes | 48×256 | 1024 dense addresses | 54.28 |
 
 
 ## Tuning Advice
 
 1. **Prefer UB over GM for atomic accumulation**: Atomic accumulations that can be done on UB should avoid being done on GM; when multiple thread blocks accumulate to the same address, first complete the accumulation in each block's UB, then have each block write back to GM once, rather than having all threads directly perform atomic adds on GM.
 2. **Spread out the target addresses of atomic operations**: GM atomic operations use the 128B Sector as the hardware processing granularity. When target addresses are concentrated within the same Sector, processing efficiency is lower; when they are spread across more Sectors, processing efficiency is higher. Therefore, different threads should access target addresses that are as spread out as possible.
-3. **Do not use the return value unless necessary**: Without the return value, the compiler generates a better-performing instruction; for pure-counting scenarios, prefer int32 (which has an instruction optimization when the return value is unused). If the business logic requires the return value and target addresses are densely packed, consider int64 or apply padding to int32.
+3. **Do not use the return value unless necessary**: Without the return value, the compiler generates a better-performing instruction; for pure-counting scenarios, prefer int32_t (which has an instruction optimization when the return value is unused). If the business logic requires the return value and target addresses are densely packed, consider int64_t or apply padding to int32_t.
 
 ## Build and Run
 
