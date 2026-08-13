@@ -192,7 +192,11 @@
 
 - [asc_squeeze_v2](../SIMD-API/c_api/reg/compare_and_select/asc_squeeze_deprecated.md)接口
 
-    此接口后续版本会废弃，请使用[asc_squeeze_with_status](../SIMD-API/c_api/reg/compare_and_select/asc_squeeze_with_status.md)接口。
+    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg/reg_store/asc_squeeze_and_storeunalign.md)接口。
+
+- [asc_squeeze_with_status](../SIMD-API/c_api/reg/compare_and_select/asc_squeeze_with_status_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg/reg_store/asc_squeeze_and_storeunalign.md)接口。
 
 - [asc_create_iter_reg](../SIMD-API/c_api/reg/reg_data_types/asc_create_iter_reg_deprecated.md)接口
 

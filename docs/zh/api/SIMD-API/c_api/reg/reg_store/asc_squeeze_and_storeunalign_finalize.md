@@ -53,7 +53,6 @@ __simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ bfloa
 __simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ int32_t* dst, vector_store_unalign src)
 __simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ uint32_t* dst, vector_store_unalign src)
 __simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ float* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ int64_t* dst, vector_store_unalign src)
 ```
 
 ## 参数说明

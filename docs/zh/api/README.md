@@ -1082,7 +1082,7 @@
                 -   [asc_ne_scalar](SIMD-API/c_api/reg/compare_and_select/asc_ne_scalar.md)
                 -   [asc_select](SIMD-API/c_api/reg/compare_and_select/asc_select.md)
                 -   [asc_squeeze](SIMD-API/c_api/reg/compare_and_select/asc_squeeze.md)
-                -   [asc_squeeze_with_status](SIMD-API/c_api/reg/compare_and_select/asc_squeeze_with_status.md)
+                -   [asc_squeeze_with_status（废弃）](SIMD-API/c_api/reg/compare_and_select/asc_squeeze_with_status_deprecated.md)
                 -   [asc_squeeze_v2（废弃）](SIMD-API/c_api/reg/compare_and_select/asc_squeeze_deprecated.md)
             -   [类型转换](SIMD-API/c_api/reg/data_type_convert/data_type_convert.md)
                 -   [asc_bfloat162float](SIMD-API/c_api/reg/data_type_convert/asc_bfloat162float.md)

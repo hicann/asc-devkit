@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-读取squeeze操作后保存至AR特殊寄存器的有效数据长度值，用于配合[asc_squeeze_with_status](../reg/compare_and_select/asc_squeeze_with_status.md)和[asc_storeunalign_postupdate](../reg/reg_store/asc_storeunalign_postupdate.md)接口完成不等长数据存储。
+读取squeeze操作后保存至AR特殊寄存器的有效数据长度值，用于配合[asc_squeeze_and_storeunalign](../reg/reg_store/asc_squeeze_and_storeunalign.md)接口获取已连续搬出的有效数据量。
 
 ## 函数原型
 
