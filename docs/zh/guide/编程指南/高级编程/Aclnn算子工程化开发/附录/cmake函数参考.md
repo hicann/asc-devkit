@@ -50,7 +50,7 @@ set(package_name ${vendor_name})
 npu_op_package(${package_name}                     # package name
     TYPE RUN                                       #指定编译产物形态，[RUN|STATIC|SHARED]
     CONFIG
-        ENABLE_SOURCE_PACKAGE True                 #是否将源码打包到run包中
+        ENABLE_SOURCE_PACKAGE True                 #是否将源码打包到package中
         ENABLE_BINARY_PACKAGE True                 #是否编译Kernel二进制
         INSTALL_PATH ${CMAKE_BINARY_DIR}/          # package的安装位置
 )
