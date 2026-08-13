@@ -17,7 +17,7 @@ This example uses fixed-divisor integer division computation to demonstrate inte
 
 ## Supported CANN Versions
 
-- \>= CANN 9.1.0
+- \>= CANN 9.2.0
 
 ## Directory Structure
 

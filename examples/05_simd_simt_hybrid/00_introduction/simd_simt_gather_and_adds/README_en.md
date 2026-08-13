@@ -8,7 +8,7 @@ This sample implements gather and adds computation based on SIMD and SIMT hybrid
 
 | Product | CANN Software Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.0.0-beta.2 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

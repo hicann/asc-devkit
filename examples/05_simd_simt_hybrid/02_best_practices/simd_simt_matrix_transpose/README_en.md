@@ -10,7 +10,7 @@ Based on the [matrix_transpose_practice sample](../../../03_simt_api/03_best_pra
 
 ## Supported CANN Version
 
-- CANN >= 9.1.0
+- CANN >= 9.2.0
 
 ## Directory Structure
 
