@@ -31,49 +31,134 @@
 
 ## 函数原型
 
-```cpp
-__aicore__ inline void asc_store_dev(__gm__ int8_t* addr, int8_t value)
+```c
+__aicore__ inline void asc_store_dev(__gm__ <dtype>* addr,
+                                     <dtype> value)
+```
 
-__aicore__ inline void asc_store_dev(__gm__ uint8_t* addr, uint8_t value)
+dtype取值为`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`int32_t`、`uint32_t`、`int64_t`、`uint64_t`。
 
-__aicore__ inline void asc_store_dev(__gm__ int16_t* addr, int16_t value)
+### 典型示例
 
-__aicore__ inline void asc_store_dev(__gm__ uint16_t* addr, uint16_t value)
-
-__aicore__ inline void asc_store_dev(__gm__ int32_t* addr, int32_t value)
-
-__aicore__ inline void asc_store_dev(__gm__ uint32_t* addr, uint32_t value)
-
-__aicore__ inline void asc_store_dev(__gm__ int64_t* addr, int64_t value)
-
-__aicore__ inline void asc_store_dev(__gm__ uint64_t* addr, uint64_t value)
+```c
+// 示例：写入32bit无符号整数
+__aicore__ inline void asc_store_dev(__gm__ uint32_t* addr,
+                                     uint32_t value)
 ```
 
 ## 参数说明
 
 **表1** 参数说明
 
-|参数名|输入/输出|描述|
-|------------|------------|-----------|
-| addr     | 输出     | 目标GM地址。|
-| value     | 输入     | 待写入目标的数据。|
+| 参数名 | 输入/输出 | 描述 |
+| ------------ | ------------ | ----------- |
+| addr | 输出 | 目标GM地址。 |
+| value | 输入 | 待写入目标的数据。 |
 
 ## 返回值说明
 
 无
 
-## 流水类型
-
-PIPE_S
-
 ## 约束说明
 
-无
+- `addr`起始地址须按写入dtype字节数对齐。
+- `addr`须落在GM可访问地址空间内。
+- 本接口运行在标量流水上，与后续依赖该写入结果的指令之间存在标量数据依赖；如后续有读取同一GM地址的指令，须通过同步指令建立依赖顺序，标量流水本身的顺序执行不保证跨指令访存可见性。
+- 本接口访问GM时绕过DCache，不维护缓存一致性。若其他核或其他通路通过缓存访问同一GM地址，调用方需使用[asc_dcci](../cache_ctrl/asc_dcci.md)清理或失效对应Cache Line，并使用[asc_sync_data_barrier](../sync/asc_sync_data_barrier.md)保证相关访存操作的执行顺序和数据可见性。详情可参考[Scalar原子操作与DCache一致性](../../../../guide/编程指南/高级编程/内存模型/缓存一致性.md#scalar原子操作与dcache一致性)。
 
 ## 调用示例
 
+将代码保存为example.asc后，可通过bisheng命令编译运行，其中--npu-arch参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为dav-3510）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510; ./main
+```
+<!-- end id8 -->
+
 ```cpp
-// addr是外部输入的GM地址，value是待写入GM内存的数据，类型为 int32_t
-int32_t value = 2;
-asc_store_dev(addr, value);
+#include <cstdint>
+#include <iostream>
+#include <vector>
+
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+template <typename T>
+bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
+{
+    if (actual.size() != expected.size()) return false;
+    for (size_t i = 0; i < actual.size(); ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
+    }
+    return true;
+}
+
+template <typename T>
+bool compare_range_data(const std::vector<T>& actual, const std::vector<T>& expected,
+    size_t begin, size_t count, double tolerance = 0.0)
+{
+    if (begin + count > actual.size() || begin + count > expected.size()) return false;
+    for (size_t i = begin; i < begin + count; ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
+    }
+    return true;
+}
+
+constexpr uint32_t ELEMENTS = 8;
+
+__global__ __vector__ void asc_store_dev_kernel(__gm__ int64_t* output)
+{
+    asc_init();
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    asc_store_dev(output, static_cast<int64_t>(42));
+    asc_sync();
+}
+} // namespace
+
+int main()
+{
+    std::vector<int64_t> input = {0};
+    std::vector<int64_t> golden = {42};
+    input.resize(ELEMENTS, 0);
+    golden.resize(ELEMENTS, 0);
+    std::vector<int64_t> output(ELEMENTS, -1);
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    int64_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (ELEMENTS) * sizeof(int64_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(output_device, input.size() * sizeof(int64_t), input.data(), input.size() * sizeof(int64_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_store_dev_kernel<<<1, 0>>>(output_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(int64_t), output_device, output.size() * sizeof(int64_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input", input);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = compare_data(output, golden);
+    std::cout << (passed ? "[Success] asc_store_dev passed." : "[Failed] asc_store_dev failed.") << std::endl;
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```
