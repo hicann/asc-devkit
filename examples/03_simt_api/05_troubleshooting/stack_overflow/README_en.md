@@ -151,7 +151,7 @@ __global__ void simt_stack_overflow(int32_t* input, float* output, uint32_t tota
     For more configuration details, see the "SIMT operator stack space size configuration example" section in the [aclInit](https://hiascend.com/document/redirect/CannCommunityruntimeapiaclinit) API. The stack space size configuration field is `simt_stack_size`, and `simt_stack_size` specifies the stack space size of each thread of the SIMT operator.
 
     > [!NOTE]Note
-    > The default SIMT stack space is 1152B. In this example, the stack space of each SIMT thread is configured to 1280, namely 1280B. The maximum number of threads per warp is 32, the maximum number of warps per AIV core is 64, and the total number of cores is 72. Therefore, the total GM space occupied is `1280B * 32 * 64 * 72 = 180MB`.
+    > The default SIMT stack space is 1152B. In this example, the stack space of each SIMT thread is configured to 1280B. The maximum number of threads per Thread Block is 2048, and the maximum number of physical cores that can concurrently execute Thread Blocks in the test environment of this example is 72. Therefore, compared with the default configuration, the additional GM space occupied is `(1280B - 1152B) * 2048 * 72 = 18MB`.
 
 **Conclusion**:
 

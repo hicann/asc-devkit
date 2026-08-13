@@ -151,7 +151,7 @@ __global__ void simt_stack_overflow(int32_t* input, float* output, uint32_t tota
     更多配置细节可参考[aclInit](https://hiascend.com/document/redirect/CannCommunityruntimeapiaclinit)接口中的“SIMT算子栈空间大小配置示例”章节，其中SIMT算子每个线程的栈空间大小配置字段为`simt_stack_size`。
 
     > [!NOTE]注意
-    > SIMT栈空间默认大小为1152B。本样例将SIMT的每个线程栈空间配置为1280，即1280B，每个warp最大线程数为32，每个AIV核最大warp数为64，总核数为72个，因此占用的GM总空间为`1280B * 32 * 64 * 72 = 180MB`。
+    > SIMT栈空间默认大小为1152B。本样例将SIMT的每个线程栈空间配置为1280B，每个Thread Block最大线程数为2048，本样例测试环境可并发执行Thread Block的最大物理核数为72个，因此相比默认配置额外占用的GM空间为`(1280B - 1152B) * 2048 * 72 = 18MB`。
 
 **结论**：
 
