@@ -30,7 +30,7 @@
 创建一个package。
 
 ```cmake
-npu_op_package(<package_name> TYPE <type> [CONFIG] [ENABLE_SOURCE_PKG <value>] [ENABLE_BINARY_PACKAGE <value>] [INSTALL_PATH <path>])
+npu_op_package(<package_name> TYPE <type> [CONFIG] [ENABLE_SOURCE_PACKAGE <value>] [ENABLE_BINARY_PACKAGE <value>] [INSTALL_PATH <path>])
 ```
 
 **参数说明：**
@@ -38,7 +38,7 @@ npu_op_package(<package_name> TYPE <type> [CONFIG] [ENABLE_SOURCE_PKG <value>] [
 - `<package_name>`（必选）：package的名称。
 - `TYPE <type>`（必选）：package的类型，取值为`RUN`、`SHARED`、`STATIC`。分别对应算子run包形式、算子动态库形式与算子静态库形式。
 - `[CONFIG]`（可选）：用于配置package的内容和安装位置。
-  - `[ENABLE_SOURCE_PKG <value>]`（可选）：是否将源码打包到package中，默认为True。
+  - `[ENABLE_SOURCE_PACKAGE <value>]`（可选）：是否将源码打包到package中，默认为True。
   - `[ENABLE_BINARY_PACKAGE <value>]`（可选）：是否将二进制文件打包到package中，默认为True。
   - `[INSTALL_PATH <path>]`（可选）：指定包的安装路径，默认为`CMAKE_BINARY_DIR`。
   - `[ENABLE_CPACK <value>]`（可选）：是否打包，默认为True。对于用户需要定制打包的场景，可以设置为False，配置为False的情况下直接在`<path>`路径下生成编译产物，不会打包为run包。
