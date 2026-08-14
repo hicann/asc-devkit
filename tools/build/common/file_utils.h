@@ -26,6 +26,7 @@ public:
     static std::string ParentPath(const std::string& path);
     static std::string FileName(const std::string& path);
     static bool MakeAbsolutePath(const std::string& path, std::string& absolute);
+    static bool IsSafeRelativePath(const std::string& path);
     static bool IsPathWithin(const std::string& path, const std::string& root);
 
     static bool PathExists(const std::string& path) noexcept;
@@ -37,7 +38,7 @@ public:
     static bool ResolveSubdirectory(const std::string& path, const std::string& root, std::string& resolved);
 
     static bool CreateDirectories(const std::string& path);
-    static bool RemoveAll(const std::string& path);
+    static bool RemoveAll(const std::string& path) noexcept;
 
     static bool ReadRegularFile(const std::string& path, uintmax_t maximum, std::vector<uint8_t>& data);
     static bool FinalizeOutput(std::ofstream& output);

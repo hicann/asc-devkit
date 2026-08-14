@@ -24,21 +24,36 @@
 #include "manifest_bundle_compiler.h"
 
 namespace {
-
-void PrintUsage(const char* program)
+void PrintUsage(std::ostream& output, const char* program)
 {
-    std::cerr << "Usage:\n  " << program
-              << " --input-dir <path> --output <path> --make <path> --cxx <path>"
-                 " [--save-temp-files] [--jobs <N>]\n\n"
-                 "Required arguments:\n"
-                 "  --input-dir <path>       Directory recursively searched for *_manifest.json files.\n"
-                 "  --output <path>          Output path ending in .so or .o, including its parent directory.\n"
-                 "  --make <path>            Path to the make executable used to build generated sources.\n"
-                 "  --cxx <path>             Path to the C++ compiler used by the generated Makefile.\n"
-                 "\nOptional arguments:\n"
-                 "  --save-temp-files        Preserve the private build directory under TMPDIR or /tmp.\n"
-                 "  --jobs <N>               Positive make job count, capped at the detected CPU count;\n"
-                 "                             defaults to half the CPU count, with a minimum of one.\n";
+    output << "Usage:\n  " << program
+           << " --input-dir <path> --output <path> --make <path> --cxx <path>"
+              " [--save-temp-files] [--jobs <N>]\n  "
+           << program
+           << " -h | --help\n\n"
+              "Required arguments:\n"
+              "  --input-dir <path>       Directory recursively searched for *_manifest.json files.\n"
+              "  --output <path>          Output path ending in .so or .o, including its parent directory.\n"
+              "  --make <path>            Path to the make executable used to build generated sources.\n"
+              "  --cxx <path>             Path to the C++ compiler used by the generated Makefile.\n"
+              "\nOptional arguments:\n"
+              "  --save-temp-files        Preserve the private build directory under TMPDIR or /tmp.\n"
+              "  --jobs <N>               Positive make job count, capped at the detected CPU count;\n"
+              "                             defaults to half the CPU count, with a minimum of one.\n"
+              "  -h, --help               Print this usage and exit.\n";
+}
+
+bool IsHelpRequested(int argc, char** argv)
+{
+    for (int index = 1; index < argc; ++index) {
+        if (argv[index] != nullptr) {
+            const std::string argument = argv[index];
+            if (argument == "-h" || argument == "--help") {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool ReportArgumentError(const char* reason, const std::string& argument)
@@ -228,28 +243,31 @@ bool ParseArguments(int argc, char** argv, ascendc::manifest_generator::BuildCol
     return true;
 }
 
-int Run(int argc, char** argv)
+int RunWithExceptionHandling(int argc, char** argv)
 {
-    ascendc::manifest_generator::BuildCollectedBundleRequest request;
-    if (!ParseArguments(argc, argv, request)) {
-        PrintUsage(argv[0]);
+    try {
+        if (IsHelpRequested(argc, argv)) {
+            PrintUsage(std::cout, argv[0]);
+            return 0;
+        }
+        ascendc::manifest_generator::BuildCollectedBundleRequest request;
+        if (!ParseArguments(argc, argv, request)) {
+            PrintUsage(std::cerr, argv[0]);
+            return 1;
+        }
+        ascendc::manifest_generator::ManifestBundleCompiler compiler(std::move(request));
+        if (!compiler.Compile()) {
+            std::cerr << "Compilation failed. Please check plog for details." << '\n';
+            return 1;
+        }
+        return 0;
+    } catch (const std::exception& error) {
+        ASCENDLOGE("asc_compile_exporter failed unexpectedly: %s", error.what());
+        std::cerr << "Compilation failed. Please check plog for details." << '\n';
         return 1;
     }
-    ascendc::manifest_generator::ManifestBundleCompiler compiler(std::move(request));
-    if (!compiler.Compile()) {
-        return 1;
-    }
-    return 0;
 }
 
 } // namespace
 
-int main(int argc, char** argv)
-{
-    try {
-        return Run(argc, argv);
-    } catch (const std::exception& error) {
-        ASCENDLOGE("asc_compile_exporter failed unexpectedly: %s", error.what());
-        return 1;
-    }
-}
+int main(int argc, char** argv) { return RunWithExceptionHandling(argc, argv); }

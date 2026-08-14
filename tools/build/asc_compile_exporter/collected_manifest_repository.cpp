@@ -21,6 +21,7 @@
 #include "ascendc_tool_log.h"
 #include "file_utils.h"
 #include "nlohmann/json.hpp"
+#include "resource_manifest_validator.h"
 
 using Json = nlohmann::json;
 
@@ -68,7 +69,7 @@ private:
     size_t fileCount_{0U};
 };
 
-bool ReadBaseDir(const std::string& text, const std::string& manifestPath, std::string& baseDir)
+bool ValidateAndExtractResourcePath(const std::string& text, const std::string& manifestPath, std::string& resourcePath)
 {
     const Json manifest = Json::parse(text, nullptr, false);
     if (manifest.is_discarded()) {
@@ -76,12 +77,16 @@ bool ReadBaseDir(const std::string& text, const std::string& manifestPath, std::
         return false;
     }
 
-    const Json::const_iterator baseDirValue = manifest.find("base_dir");
-    if (baseDirValue == manifest.end() || !baseDirValue->is_string()) {
-        ASCENDLOGE("Manifest base_dir is unavailable: %s", manifestPath.c_str());
+    if (!ValidateResourceManifest(manifest, manifestPath)) {
         return false;
     }
-    baseDir = baseDirValue->get<std::string>();
+
+    const Json::const_iterator resourcePathValue = manifest.find("resource_path");
+    if (resourcePathValue == manifest.end() || !resourcePathValue->is_string()) {
+        ASCENDLOGE("Manifest resource_path is unavailable: %s", manifestPath.c_str());
+        return false;
+    }
+    resourcePath = resourcePathValue->get<std::string>();
     return true;
 }
 
@@ -190,7 +195,7 @@ bool LoadResourceFiles(
     fs::recursive_directory_iterator iterator(fs::path(directory), fs::directory_options::none, error);
     const fs::recursive_directory_iterator end;
     if (error) {
-        ASCENDLOGE("Failed to enumerate manifest base_dir %s: %s", directory.c_str(), error.message().c_str());
+        ASCENDLOGE("Failed to enumerate manifest resource_path %s: %s", directory.c_str(), error.message().c_str());
         return false;
     }
     while (iterator != end) {
@@ -201,7 +206,7 @@ bool LoadResourceFiles(
             return false;
         }
         if (fs::is_symlink(status)) {
-            ASCENDLOGE("Manifest base_dir contains a symlink: %s", source.c_str());
+            ASCENDLOGE("Manifest resource_path contains a symlink: %s", source.c_str());
             return false;
         }
         if (fs::is_directory(status)) {
@@ -211,7 +216,7 @@ bool LoadResourceFiles(
                 return false;
             }
         } else if (!fs::is_regular_file(status)) {
-            ASCENDLOGE("Manifest base_dir contains a non-regular file: %s", source.c_str());
+            ASCENDLOGE("Manifest resource_path contains a non-regular file: %s", source.c_str());
             return false;
         } else if (!LoadResourceFile(source, manifestRoot, manifestPath, budget, unit)) {
             return false;
@@ -235,18 +240,23 @@ bool LoadUnit(const std::string& manifestPath, ResourceBudget& budget, ManifestU
         return false;
     }
     unit.json.assign(manifestBytes.begin(), manifestBytes.end());
-    std::string baseDir;
-    if (!ReadBaseDir(unit.json, manifestPath, baseDir)) {
+    std::string resourcePath;
+    if (!ValidateAndExtractResourcePath(unit.json, manifestPath, resourcePath)) {
         return false;
+    }
+    if (resourcePath.empty()) {
+        ASCENDLOGD("Loaded manifest %s with no resource files", manifestPath.c_str());
+        return true;
     }
 
     const std::string manifestRoot = FileUtils::ParentPath(manifestPath);
-    const fs::path baseDirPath(baseDir);
-    const std::string resourceInput = baseDirPath.is_absolute() ? baseDir : FileUtils::JoinPath(manifestRoot, baseDir);
+    const fs::path resourcePathValue(resourcePath);
+    const std::string resourceInput =
+        resourcePathValue.is_absolute() ? resourcePath : FileUtils::JoinPath(manifestRoot, resourcePath);
     std::string resourceRoot;
     if (!FileUtils::ResolveSubdirectory(resourceInput, manifestRoot, resourceRoot)) {
         ASCENDLOGE(
-            "Manifest base_dir must be a directory below the manifest root and must not be a symlink: %s",
+            "Manifest resource_path must be a directory below the manifest root and must not be a symlink: %s",
             resourceInput.c_str());
         return false;
     }

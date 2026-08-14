@@ -27,6 +27,7 @@ namespace {
 constexpr size_t TEST_MAX_DIRECTORY_DEPTH = 64U;
 
 using asc_compile_exporter_test::ModuleTest;
+using asc_compile_exporter_test::ReadTestFile;
 using asc_compile_exporter_test::WriteTestFile;
 
 TEST_F(ModuleTest, RepositorySortsManifestsAndResourcesAndSkipsEmptyFiles)
@@ -54,42 +55,80 @@ TEST_F(ModuleTest, RepositorySortsManifestsAndResourcesAndSkipsEmptyFiles)
     EXPECT_EQ(std::string(units[1].files[0].data.begin(), units[1].files[0].data.end()), "a");
 }
 
-TEST_F(ModuleTest, RepositoryReportsManifestJsonAndBaseDirErrors)
+TEST_F(ModuleTest, RepositoryReportsManifestJsonAndResourcePathErrors)
 {
     const std::string malformed = FileUtils::JoinPath(root_, "malformed/Unit");
     WriteTestFile(FileUtils::JoinPath(malformed, "resources/kernel.cpp"), "source");
-    WriteTestFile(FileUtils::JoinPath(malformed, "Unit_manifest.json"), "{\"base_dir\":");
+    WriteTestFile(FileUtils::JoinPath(malformed, "Unit_manifest.json"), "{\"resource_path\":");
     std::vector<ManifestUnit> units;
     EXPECT_FALSE(CollectedManifestRepository(FileUtils::JoinPath(root_, "malformed")).Load(units));
 
-    const std::string missing = FileUtils::JoinPath(root_, "missing-base/Unit");
+    const std::string missing = FileUtils::JoinPath(root_, "missing-resource-path/Unit");
     WriteTestFile(FileUtils::JoinPath(missing, "resources/kernel.cpp"), "source");
-    WriteTestFile(FileUtils::JoinPath(missing, "Unit_manifest.json"), "{}");
-    EXPECT_FALSE(CollectedManifestRepository(FileUtils::JoinPath(root_, "missing-base")).Load(units));
+    CreateManifest(missing, "Unit");
+    std::string missingResourcePath = ReadTestFile(FileUtils::JoinPath(missing, "Unit_manifest.json"));
+    const std::string field = "\"resource_path\":\"resources\",";
+    missingResourcePath.erase(missingResourcePath.find(field), field.size());
+    WriteTestFile(FileUtils::JoinPath(missing, "Unit_manifest.json"), missingResourcePath);
+    EXPECT_FALSE(CollectedManifestRepository(FileUtils::JoinPath(root_, "missing-resource-path")).Load(units));
 
     const std::string wrongType = FileUtils::JoinPath(root_, "wrong-type/Unit");
     WriteTestFile(FileUtils::JoinPath(wrongType, "resources/kernel.cpp"), "source");
-    WriteTestFile(FileUtils::JoinPath(wrongType, "Unit_manifest.json"), "{\"base_dir\":7}");
+    CreateManifest(wrongType, "Unit");
+    std::string wrongResourcePath = ReadTestFile(FileUtils::JoinPath(wrongType, "Unit_manifest.json"));
+    const size_t value = wrongResourcePath.find("\"resources\"");
+    wrongResourcePath.replace(value, std::string("\"resources\"").size(), "7");
+    WriteTestFile(FileUtils::JoinPath(wrongType, "Unit_manifest.json"), wrongResourcePath);
     EXPECT_FALSE(CollectedManifestRepository(FileUtils::JoinPath(root_, "wrong-type")).Load(units));
 }
 
-TEST_F(ModuleTest, RepositorySkipsSymlinkedManifestsAndAcceptsAbsoluteBaseDir)
+TEST_F(ModuleTest, RepositorySkipsSymlinkedManifests)
 {
-    const std::string collection = FileUtils::JoinPath(root_, "collection-absolute");
+    const std::string collection = FileUtils::JoinPath(root_, "collection-symlink");
     const std::string unit = FileUtils::JoinPath(collection, "Unit");
-    const std::string resources = FileUtils::JoinPath(unit, "resources");
-    WriteTestFile(FileUtils::JoinPath(resources, "kernel.cpp"), "source");
-    WriteTestFile(FileUtils::JoinPath(unit, "Unit_manifest.json"), "{\"base_dir\":\"" + resources + "\"}");
+    WriteTestFile(FileUtils::JoinPath(unit, "resources/kernel.cpp"), "source");
+    CreateManifest(unit, "Unit");
 
     const std::string ignoredManifest = FileUtils::JoinPath(root_, "ignored_manifest.json");
-    WriteTestFile(ignoredManifest, "{\"base_dir\":\"resources\"}");
+    WriteTestFile(ignoredManifest, "ignored");
     ASSERT_EQ(symlink(ignoredManifest.c_str(), FileUtils::JoinPath(collection, "Link_manifest.json").c_str()), 0);
 
     std::vector<ManifestUnit> units;
     ASSERT_TRUE(CollectedManifestRepository(collection).Load(units));
     ASSERT_EQ(units.size(), 1U);
-    ASSERT_EQ(units[0].files.size(), 1U);
-    EXPECT_EQ(units[0].files[0].filePath, "resources/kernel.cpp");
+    EXPECT_NE(units[0].json.find("Unit"), std::string::npos);
+}
+
+TEST_F(ModuleTest, RepositoryLoadsManifestWithNoResourceFiles)
+{
+    const std::string collection = FileUtils::JoinPath(root_, "collection-empty-resource-path");
+    const std::string unit = FileUtils::JoinPath(collection, "Unit");
+    CreateManifest(unit, "Unit");
+    std::string manifest = ReadTestFile(FileUtils::JoinPath(unit, "Unit_manifest.json"));
+    const std::string resourcePath = "\"resource_path\":\"resources\"";
+    manifest.replace(manifest.find(resourcePath), resourcePath.size(), "\"resource_path\":\"\"");
+    WriteTestFile(FileUtils::JoinPath(unit, "Unit_manifest.json"), manifest);
+
+    std::vector<ManifestUnit> units;
+    ASSERT_TRUE(CollectedManifestRepository(collection).Load(units));
+    ASSERT_EQ(units.size(), 1U);
+    EXPECT_TRUE(units[0].files.empty());
+}
+
+TEST_F(ModuleTest, RepositoryRejectsAbsoluteResourcePath)
+{
+    const std::string collection = FileUtils::JoinPath(root_, "collection-absolute");
+    const std::string unit = FileUtils::JoinPath(collection, "Unit");
+    const std::string resources = FileUtils::JoinPath(unit, "resources");
+    WriteTestFile(FileUtils::JoinPath(resources, "kernel.cpp"), "source");
+    CreateManifest(unit, "Unit");
+    std::string absoluteResourcePath = ReadTestFile(FileUtils::JoinPath(unit, "Unit_manifest.json"));
+    const size_t value = absoluteResourcePath.find("resources");
+    absoluteResourcePath.replace(value, std::string("resources").size(), resources);
+    WriteTestFile(FileUtils::JoinPath(unit, "Unit_manifest.json"), absoluteResourcePath);
+
+    std::vector<ManifestUnit> units;
+    EXPECT_FALSE(CollectedManifestRepository(collection).Load(units));
 }
 
 TEST_F(ModuleTest, RepositoryRejectsNonRegularResource)
@@ -108,10 +147,11 @@ TEST_F(ModuleTest, RepositoryEnforcesDirectoryDepthLimit)
 {
     const std::string allowedCollection = FileUtils::JoinPath(root_, "collection-depth-allowed");
     std::string allowedDirectory = allowedCollection;
-    for (size_t depth = 0U; depth < TEST_MAX_DIRECTORY_DEPTH; ++depth) {
+    for (size_t depth = 0U; depth + 1U < TEST_MAX_DIRECTORY_DEPTH; ++depth) {
         allowedDirectory = FileUtils::JoinPath(allowedDirectory, "level-" + std::to_string(depth));
     }
-    WriteTestFile(FileUtils::JoinPath(allowedDirectory, "Deep_manifest.json"), "{\"base_dir\":\".\"}");
+    WriteTestFile(FileUtils::JoinPath(allowedDirectory, "resources/kernel.cpp"), "source");
+    CreateManifest(allowedDirectory, "Deep");
     std::vector<ManifestUnit> units;
     EXPECT_TRUE(CollectedManifestRepository(allowedCollection).Load(units));
 

@@ -208,11 +208,15 @@ protected:
     }
 
     void CreateManifest(
-        const std::string& unit, const std::string& name, const std::string& baseDir = "resources") const
+        const std::string& unit, const std::string& name, const std::string& resourcePath = "resources") const
     {
         WriteFile(
             JoinTestPath(unit, name + "_manifest.json"),
-            "{\"base_dir\":\"" + baseDir + "\",\"name\":\"" + name + "\"}");
+            "{\"schema_version\":\"1.0\",\"resource_id\":\"" + name +
+                "\",\"soc_version\":\"test\",\"resource_path\":\"" + resourcePath +
+                "\",\"kernels\":[{\"kernel_name\":\"" + name +
+                "\",\"objects\":[{\"object_name\":\"kernel.o\",\"object_type\":\"basic\",\"commands\":[{\"type\":"
+                "\"compile\",\"stage\":0,\"cmd\":[\"${output}/kernel.o\"]}],\"outputs\":[\"${output}/kernel.o\"]}]}]}");
     }
 
     static void ExpectCompileFailure(const BuildCollectedBundleRequest& request)
@@ -329,7 +333,7 @@ TEST_F(AscCompileExporterTest, RejectsMalformedJsonWithoutReplacingOutput)
     EXPECT_EQ(ReadFile(request.outputPath), "previous bundle");
 }
 
-TEST_F(AscCompileExporterTest, RejectsBaseDirectoryOutsideManifestDirectory)
+TEST_F(AscCompileExporterTest, RejectsResourcePathOutsideManifestDirectory)
 {
     const std::string unit = JoinTestPath(root_, "collection/Traversal");
     WriteFile(JoinTestPath(root_, "collection/outside/kernel.cpp"), "source");

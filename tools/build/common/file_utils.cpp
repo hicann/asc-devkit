@@ -22,11 +22,6 @@ namespace {
 
 namespace fs = boost::filesystem;
 
-void LogFilesystemError(const char* operation, const std::string& path, const boost::system::error_code& error)
-{
-    ASCENDLOGW("Failed to %s: path=%s error=%s", operation, path.c_str(), error.message().c_str());
-}
-
 } // namespace
 
 std::string FileUtils::JoinPath(const std::string& left, const std::string& right)
@@ -50,12 +45,32 @@ bool FileUtils::MakeAbsolutePath(const std::string& path, std::string& absolute)
     boost::system::error_code error;
     const fs::path result = fs::absolute(fs::path(path), error);
     if (error) {
-        LogFilesystemError("make path absolute", path, error);
+        ASCENDLOGE("Failed to make path absolute: path=%s error=%s", path.c_str(), error.message().c_str());
         absolute.clear();
         return false;
     }
     absolute = result.string();
     ASCENDLOGD("Made path absolute: input=%s absolute=%s", path.c_str(), absolute.c_str());
+    return true;
+}
+
+bool FileUtils::IsSafeRelativePath(const std::string& path)
+{
+    if (path.empty() || path.find('\\') != std::string::npos || path.find('\0') != std::string::npos) {
+        return false;
+    }
+    const fs::path filesystemPath(path);
+    if (!filesystemPath.is_relative()) {
+        return false;
+    }
+    if (filesystemPath.lexically_normal().generic_string() != path) {
+        return false;
+    }
+    for (const fs::path& component : filesystemPath) {
+        if (component == fs::path(".") || component == fs::path("..")) {
+            return false;
+        }
+    }
     return true;
 }
 
@@ -113,7 +128,7 @@ bool FileUtils::ResolveCanonicalPath(const std::string& path, std::string& resol
     boost::system::error_code error;
     const fs::path canonical = fs::canonical(fs::path(path), error);
     if (error) {
-        LogFilesystemError("resolve canonical path", path, error);
+        ASCENDLOGE("Failed to resolve canonical path: path=%s error=%s", path.c_str(), error.message().c_str());
         resolved.clear();
         return false;
     }
@@ -128,26 +143,28 @@ bool FileUtils::ResolveDirectory(const std::string& path, std::string& resolved)
     boost::system::error_code error;
     const fs::file_status inputStatus = fs::symlink_status(fs::path(path), error);
     if (error) {
-        LogFilesystemError("inspect directory", path, error);
+        ASCENDLOGE("Failed to inspect directory: path=%s error=%s", path.c_str(), error.message().c_str());
         resolved.clear();
         return false;
     }
     if (fs::is_symlink(inputStatus)) {
-        ASCENDLOGW("Rejected symlink directory: path=%s", path.c_str());
+        ASCENDLOGE("Rejected symlink directory: path=%s", path.c_str());
         resolved.clear();
         return false;
     }
     const fs::path canonical = fs::canonical(fs::path(path), error);
     if (error) {
-        LogFilesystemError("resolve directory", path, error);
+        ASCENDLOGE("Failed to resolve directory: path=%s error=%s", path.c_str(), error.message().c_str());
         resolved.clear();
         return false;
     }
     if (!fs::is_directory(canonical, error) || error) {
         if (error) {
-            LogFilesystemError("inspect resolved directory", canonical.string(), error);
+            ASCENDLOGE(
+                "Failed to inspect resolved directory: path=%s error=%s", canonical.string().c_str(),
+                error.message().c_str());
         } else {
-            ASCENDLOGW("Resolved path is not a directory: path=%s resolved=%s", path.c_str(), canonical.c_str());
+            ASCENDLOGE("Resolved path is not a directory: path=%s resolved=%s", path.c_str(), canonical.c_str());
         }
         resolved.clear();
         return false;
@@ -166,7 +183,7 @@ bool FileUtils::ResolveSubdirectory(const std::string& path, const std::string& 
         return false;
     }
     if (!IsPathWithin(canonical, root)) {
-        ASCENDLOGW(
+        ASCENDLOGE(
             "Resolved directory is outside root: path=%s resolved=%s root=%s", path.c_str(), canonical.c_str(),
             root.c_str());
         resolved.clear();
@@ -186,14 +203,14 @@ bool FileUtils::CreateDirectories(const std::string& path)
     boost::system::error_code error;
     fs::create_directories(fs::path(path), error);
     if (error) {
-        LogFilesystemError("create directories", path, error);
+        ASCENDLOGE("Failed to create directories: path=%s error=%s", path.c_str(), error.message().c_str());
         return false;
     }
     if (!fs::is_directory(fs::path(path), error) || error) {
         if (error) {
-            LogFilesystemError("inspect created directory", path, error);
+            ASCENDLOGE("Failed to inspect created directory: path=%s error=%s", path.c_str(), error.message().c_str());
         } else {
-            ASCENDLOGW("Created path is not a directory: path=%s", path.c_str());
+            ASCENDLOGE("Created path is not a directory: path=%s", path.c_str());
         }
         return false;
     }
@@ -201,13 +218,13 @@ bool FileUtils::CreateDirectories(const std::string& path)
     return true;
 }
 
-bool FileUtils::RemoveAll(const std::string& path)
+bool FileUtils::RemoveAll(const std::string& path) noexcept
 {
     ASCENDLOGD("Removing path recursively: path=%s", path.c_str());
     boost::system::error_code error;
     (void)fs::remove_all(fs::path(path), error);
     if (error) {
-        LogFilesystemError("remove path recursively", path, error);
+        ASCENDLOGE("Failed to remove path recursively: path=%s error=%d", path.c_str(), error.value());
         return false;
     }
     ASCENDLOGI("Removed path recursively: path=%s", path.c_str());
@@ -222,25 +239,25 @@ bool FileUtils::ReadRegularFile(const std::string& path, uintmax_t maximum, std:
     const fs::file_status inputStatus = fs::symlink_status(fs::path(path), error);
     if (error || fs::is_symlink(inputStatus) || !fs::is_regular_file(inputStatus)) {
         if (error) {
-            LogFilesystemError("inspect regular file", path, error);
+            ASCENDLOGE("Failed to inspect regular file: path=%s error=%s", path.c_str(), error.message().c_str());
         } else {
-            ASCENDLOGW("Rejected non-regular file: path=%s", path.c_str());
+            ASCENDLOGE("Rejected non-regular file: path=%s", path.c_str());
         }
         return false;
     }
     const uintmax_t fileSize = fs::file_size(fs::path(path), error);
     if (error) {
-        LogFilesystemError("read regular file size", path, error);
+        ASCENDLOGE("Failed to read regular file size: path=%s error=%s", path.c_str(), error.message().c_str());
         return false;
     }
     if (fileSize > maximum || fileSize > static_cast<uintmax_t>(std::numeric_limits<size_t>::max()) ||
         fileSize > static_cast<uintmax_t>(std::numeric_limits<std::streamsize>::max())) {
-        ASCENDLOGW("Regular file exceeds size limit: path=%s size=%ju maximum=%ju", path.c_str(), fileSize, maximum);
+        ASCENDLOGE("Regular file exceeds size limit: path=%s size=%ju maximum=%ju", path.c_str(), fileSize, maximum);
         return false;
     }
     std::ifstream input(path.c_str(), std::ios::binary);
     if (!input.is_open()) {
-        ASCENDLOGW("Failed to open regular file: path=%s", path.c_str());
+        ASCENDLOGE("Failed to open regular file: path=%s", path.c_str());
         return false;
     }
     data.resize(static_cast<size_t>(fileSize));
@@ -249,7 +266,7 @@ bool FileUtils::ReadRegularFile(const std::string& path, uintmax_t maximum, std:
     }
     input.close();
     if (!input) {
-        ASCENDLOGW("Failed to read or close regular file: path=%s", path.c_str());
+        ASCENDLOGE("Failed to read or close regular file: path=%s", path.c_str());
         data.clear();
         return false;
     }
@@ -265,7 +282,7 @@ bool FileUtils::FinalizeOutput(std::ofstream& output)
     output.close();
     const bool success = writeSucceeded && static_cast<bool>(output);
     if (!success) {
-        ASCENDLOGW("Failed to flush or close output stream");
+        ASCENDLOGE("Failed to flush or close output stream");
         return false;
     }
     ASCENDLOGD("Finalized output stream");
@@ -278,11 +295,11 @@ bool FileUtils::CopyFile(const std::string& source, const std::string& destinati
     boost::system::error_code error;
     if (!fs::copy_file(fs::path(source), fs::path(destination), fs::copy_options::none, error)) {
         if (error) {
-            ASCENDLOGW(
+            ASCENDLOGE(
                 "Failed to copy file: source=%s destination=%s error=%s", source.c_str(), destination.c_str(),
                 error.message().c_str());
         } else {
-            ASCENDLOGW("Failed to copy file: source=%s destination=%s", source.c_str(), destination.c_str());
+            ASCENDLOGE("Failed to copy file: source=%s destination=%s", source.c_str(), destination.c_str());
         }
         return false;
     }

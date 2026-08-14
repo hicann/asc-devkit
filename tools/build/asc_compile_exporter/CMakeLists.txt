@@ -38,6 +38,7 @@ add_executable(asc_compile_exporter
   bundle_source_generator.cpp
   collected_manifest_repository.cpp
   manifest_bundle_compiler.cpp
+  resource_manifest_validator.cpp
   ../common/file_utils.cpp
   ../common/process_runner.cpp
 )

@@ -41,6 +41,16 @@ TEST_F(ModuleTest, FileUtilsBuildsAndComparesPaths)
     EXPECT_FALSE(absolute.empty());
     EXPECT_EQ(absolute[0], '/');
 
+    EXPECT_TRUE(FileUtils::IsSafeRelativePath("relative/path"));
+    EXPECT_TRUE(FileUtils::IsSafeRelativePath("file.cpp"));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath(""));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath("/absolute/path"));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath("relative\\path"));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath("relative/../outside"));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath("./relative"));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath("relative//path"));
+    EXPECT_FALSE(FileUtils::IsSafeRelativePath(std::string("embedded\0nul", 12U)));
+
     EXPECT_TRUE(FileUtils::IsPathWithin("/root/child", "/root"));
     EXPECT_TRUE(FileUtils::IsPathWithin("/root", "/root"));
     EXPECT_TRUE(FileUtils::IsPathWithin("/root/nested/../child", "/root"));

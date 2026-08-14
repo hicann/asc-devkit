@@ -10,6 +10,9 @@
 
 #include <gtest/gtest.h>
 
+#include <atomic>
+#include <cstdlib>
+#include <new>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -20,6 +23,26 @@
 #define main AscCompileExporterProgramMain
 #include "asc_compile_exporter.cpp"
 #undef main
+
+namespace {
+std::atomic<bool> g_failNextAllocation{false};
+}
+
+void* operator new(std::size_t size)
+{
+    if (g_failNextAllocation.exchange(false)) {
+        throw std::bad_alloc();
+    }
+    void* allocation = std::malloc(size == 0U ? 1U : size);
+    if (allocation == nullptr) {
+        throw std::bad_alloc();
+    }
+    return allocation;
+}
+
+void operator delete(void* allocation) noexcept { std::free(allocation); }
+
+void operator delete(void* allocation, std::size_t) noexcept { std::free(allocation); }
 
 namespace {
 
@@ -45,6 +68,22 @@ private:
     std::streambuf* previous_;
 };
 
+class CoutCapture final {
+public:
+    CoutCapture() : previous_(std::cout.rdbuf(stream_.rdbuf())) {}
+
+    ~CoutCapture() { std::cout.rdbuf(previous_); }
+
+    std::string Content() const { return stream_.str(); }
+
+    CoutCapture(const CoutCapture&) = delete;
+    CoutCapture& operator=(const CoutCapture&) = delete;
+
+private:
+    std::ostringstream stream_;
+    std::streambuf* previous_;
+};
+
 bool ParseCommand(std::vector<std::string> arguments, BuildCollectedBundleRequest& request)
 {
     std::vector<char*> argv;
@@ -62,7 +101,7 @@ int RunCommand(std::vector<std::string> arguments)
     for (std::string& argument : arguments) {
         argv.push_back(const_cast<char*>(argument.c_str()));
     }
-    return ::Run(static_cast<int>(argv.size()), argv.data());
+    return RunWithExceptionHandling(static_cast<int>(argv.size()), argv.data());
 }
 
 int RunProgramCommand(std::vector<std::string> arguments)
@@ -73,6 +112,17 @@ int RunProgramCommand(std::vector<std::string> arguments)
         argv.push_back(const_cast<char*>(argument.c_str()));
     }
     return AscCompileExporterProgramMain(static_cast<int>(argv.size()), argv.data());
+}
+
+size_t CountOccurrences(const std::string& text, const std::string& value)
+{
+    size_t count = 0U;
+    size_t position = 0U;
+    while ((position = text.find(value, position)) != std::string::npos) {
+        ++count;
+        position += value.size();
+    }
+    return count;
 }
 
 TEST(CompileExporterCliUnitTest, ParseJobsAcceptsOnlyPositiveUint32Values)
@@ -221,6 +271,7 @@ TEST_F(ModuleTest, CliValidatesArgumentsWhenRead)
 
 TEST_F(ModuleTest, RunPassesValidatedArgumentsToCompiler)
 {
+    CerrCapture capture;
     const std::string manifestRoot = FileUtils::JoinPath(root_, "collection");
     const std::string output = FileUtils::JoinPath(root_, "output/bundle.so");
     ASSERT_TRUE(FileUtils::CreateDirectories(manifestRoot));
@@ -230,6 +281,7 @@ TEST_F(ModuleTest, RunPassesValidatedArgumentsToCompiler)
              "--cxx", "/usr/bin/c++"}),
         1);
     EXPECT_TRUE(FileUtils::IsDirectory(FileUtils::ParentPath(output)));
+    EXPECT_EQ(CountOccurrences(capture.Content(), "Compilation failed. Please check plog for details."), 1U);
 }
 
 TEST_F(ModuleTest, RunBuildsBundleWithKeywordArguments)
@@ -264,6 +316,41 @@ TEST(CompileExporterCliUnitTest, ProgramMainReturnsRunStatusAndPrintsArgument)
     EXPECT_NE(capture.Content().find("Usage:"), std::string::npos);
     EXPECT_NE(capture.Content().find("Required arguments:"), std::string::npos);
     EXPECT_NE(capture.Content().find("Optional arguments:"), std::string::npos);
+    EXPECT_EQ(CountOccurrences(capture.Content(), "Compilation failed. Please check plog for details."), 0U);
+}
+
+TEST(CompileExporterCliUnitTest, HelpOptionsPrintUsageToStdoutAndExitSuccessfully)
+{
+    {
+        CerrCapture errorCapture;
+        CoutCapture outputCapture;
+        EXPECT_EQ(RunProgramCommand({"asc_compile_exporter", "-h"}), 0);
+        EXPECT_NE(outputCapture.Content().find("Usage:"), std::string::npos);
+        EXPECT_NE(outputCapture.Content().find("  -h, --help"), std::string::npos);
+        EXPECT_EQ(errorCapture.Content(), "");
+    }
+
+    CerrCapture errorCapture;
+    CoutCapture outputCapture;
+    EXPECT_EQ(RunProgramCommand({"asc_compile_exporter", "--unknown", "--help"}), 0);
+    EXPECT_NE(outputCapture.Content().find("Usage:"), std::string::npos);
+    EXPECT_NE(outputCapture.Content().find("  -h, --help"), std::string::npos);
+    EXPECT_EQ(errorCapture.Content(), "");
+}
+
+TEST(CompileExporterCliUnitTest, ProgramMainDirectsUsersToPlogAfterException)
+{
+    CerrCapture capture;
+    std::vector<std::string> arguments = {"asc_compile_exporter", std::string(1024U, 'x')};
+    std::vector<char*> argv;
+    argv.reserve(arguments.size());
+    for (std::string& argument : arguments) {
+        argv.push_back(const_cast<char*>(argument.c_str()));
+    }
+
+    g_failNextAllocation = true;
+    EXPECT_EQ(RunWithExceptionHandling(static_cast<int>(argv.size()), argv.data()), 1);
+    EXPECT_EQ(CountOccurrences(capture.Content(), "Compilation failed. Please check plog for details."), 1U);
 }
 
 } // namespace
