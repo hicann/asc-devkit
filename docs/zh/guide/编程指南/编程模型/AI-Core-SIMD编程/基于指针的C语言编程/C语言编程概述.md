@@ -14,7 +14,7 @@ AI Core采用分级存储架构，不同计算单元的编程视角有所差异�
 
 **Vector矢量计算**：传统架构采用「Global Memory → UB」两级层级；[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)引入寄存器后构建「Global Memory → Unified Buffer → Register」三级层级。Global Memory存放输入输出数据，Unified Buffer作为矢量计算数据中间缓存，Register位于Vector计算单元最内层，直接与矢量计算执行单元交互。
 
-<img src="../../../../figures/AI_Core存储层次结构.png" alt="AI Core存储层次结构" width="800" />
+<img src="../../../../figures/aicore_mem_2.png" alt="AI Core存储层次结构" width="800" />
 
 
 ### 外部存储（Global Memory）
@@ -163,17 +163,17 @@ __cc__ half l0c_buffer[m_size * n_size];    // L0C Buffer, 64 bytes aligned
 
 以`Nz`为例，内存排布如下图所示，整块内存通过大N外部column major（列主序）+ 小z内部row major（行主序）存放。
 
-![Nz内存排布示意图](../../../../figures/FRACTAL_NZ内存排布示意图.png)
+![Nz内存排布示意图](../../../../figures/nz_layout.png)
 
 #### Bank冲突
 
 上文介绍了各类内部存储的定义、排布格式。由于AI Core内部存储采用Bank分组架构，不当的内存访问会引发Bank冲突，进而降低算子性能。下面以Unified Buffer为例，介绍Bank冲突的相关原理，在[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)产品上，Unified Buffer总大小为256KB（256 × 1024字节），包含8个bank group，每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B，采用低位地址交织。[NPU架构版本2201](../../../语言扩展层/SIMD-BuiltIn关键字.md)的UB容量规格请参考相应硬件架构文档。
 
-<img src="../../../../figures/UB_Bank冲突示意图.png" alt="UB Bank冲突示意图" width="800" />
+<img src="../../../../figures/ub_conflict.png" alt="UB Bank冲突示意图" width="800" />
 
 该架构地址使用低位编址，地址排布如下图所示，每个bank可以独立地进行数据的读写操作，允许多个数据请求同时进行。然而，当多个读写操作试图同时访问同一个bank，由于硬件资源的限制，这些操作必须排队等待，会导致bank冲突，引起性能下降。
 
-![低位交织地址排布](../../../../figures/低位交织地址排布.png)
+![低位交织地址排布](../../../../figures/low_interleave.png)
 
 每个bank一拍只能完成一读或者一写，每个bank group最多只允许2读0写或者1读1写。根据内存结构，bank冲突主要可以分为以下三种类型：
 - 读写冲突：读操作和写操作同时尝试访问同一个bank，或者两个读操作和一个写操作同时尝试访问同一个bank group。
@@ -202,11 +202,11 @@ AI Core内部的执行单元（如MTE2数据搬运单元、Vector计算单元等
 
 上述不同执行单元对应AI Core内部不同的硬件流水线，各流水线分工明确，具体分类如下表：
 
-<img src="../../../../figures/Vector计算数据流.png" alt="Vector计算数据流" width="800" />
+<img src="../../../../figures/vec_flow.png" alt="Vector计算数据流" width="800" />
 
 四个执行单元Scalar、Vector、DMA（MTE2）、DMA(MTE3)并行执行，若访问同一片Local Memory，需要同步机制来控制它们的访问时序：保证先搬入Local Memory后再计算，计算完成后再搬出。
 
-<img src="../../../../figures/同步顺序.png" alt="同步顺序示意图" width="800" />
+<img src="../../../../figures/sync_order.png" alt="同步顺序示意图" width="800" />
 
 > 📌 提示：上例描述为主要路径，当`Scalar`执行单元读写GM或者UB时，也需要考虑`Scalar`流水与其他流水的同步。
 
@@ -236,11 +236,11 @@ AI Core上的执行单元分别属于不同的执行流水，同步即是保证�
 
 若某个核的计算依赖其他相关核的全部计算结果，则需通过核间同步机制保障多核执行的时序正确性。以下图为例，AIC需要依赖于AIV的ReduceSum计算结果。由于整体矢量较大，必须拆分为多个部分，由每个AIV分别完成部分计算。每个AIV将其部分计算结果通过原子累加写入GM。AIC需要读取的必须是所有AIV均完成累加后的最终结果。
 
-<img src="../../../../figures/核间同步业务场景示例.png" alt="核间同步业务场景示例" width="800" />
+<img src="../../../../figures/inter_core_sync_ex.png" alt="核间同步业务场景示例" width="800" />
 
 从上图可以看到，当前AI Core是由AIC核和AIV核组成，其中AIC核主要用于Cube计算，AIV核负责Vector计算。AIC/AIV按group进行划分。一个group内细分为block（主核）和subblock（从核），二者比例为1:N（N≥1）；其中，block代表主核的数量，subblock代表单个主核关联的从核数量。
 
-<img src="../../../../figures/block和subblock之间关系.png" alt="block和subblock之间关系" width="800" />
+<img src="../../../../figures/block_rel.png" alt="block和subblock之间关系" width="800" />
 
 算子按计算特征可划分为三类：Cube算子（矩阵计算）、Vector算子（矢量计算）和Mix算子（矩阵与矢量混合计算）。算子类型决定了其核间同步方式与group配置模式的选择。针对不同算子场景，C语言编程提供了相应的编程接口，以满足多样化的算子开发需求。
 
@@ -349,7 +349,7 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
 - C为目的操作数，存放矩阵乘结果的矩阵，形状为[M, N]。
 - bias为矩阵乘偏置，形状为[1, N]。对A*B结果矩阵的每一行都采用该bias进行偏置。
 
-![矩阵乘示意图](../../../../figures/矩阵乘示意图.png)
+![矩阵乘示意图](../../../../figures/matmul.png)
 
 ```c
 // Define Cube matrix operator, marked with __cube__ to execute on Device Cube core, suitable for operators with only Cube computation
@@ -374,7 +374,7 @@ __global__ __cube__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ flo
 将矢量计算与矩阵计算融合在同一个算子中，即为CV融合算子，可进一步提升整体性能。开发者可根据业务场景，自由融合Vector、Cube算子以优化性能 —— 融合了Cube计算和Vector计算的算子统称为CV融合算子。例如LLM大模型核心的Flash Attention算子，就是将Matmul（Cube）、Scale（Vector）、Mask（Vector）、SoftMax（Vector）等操作融合为一个算子，核心实现如下：
 
 
-![Flash Attention核心实现](../../../../figures/Flash-Attention核心实现.png)
+![Flash Attention核心实现](../../../../figures/flash_attn.png)
 
 ```c
 // Define CV fusion operator, marked with __mix__ to execute on Device, suitable for operators combining Cube and Vector computation

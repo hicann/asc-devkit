@@ -5,7 +5,7 @@
 若开发者希望在[NPU架构版本3510](../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)下运行原本在[NPU架构版本2201](../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)上开发的Ascend C程序，需在3510架构上重新编译并运行，并可能需要根据迁移指导进行代码调整。
 
 **图1**  Ascend C API层次结构<a name="fig1912418519815"></a>  
-![](../figures/Ascend-C-API层次结构.png "Ascend-C-API层次结构")
+![](../figures/api_hierarchy.png "Ascend-C-API层次结构")
 
 
 **表1**  Ascend C API兼容策略

@@ -66,7 +66,7 @@
 该样例的CopyIn，CopyOut任务与[基础矢量算子](基础矢量算子.md)相同，Compute任务的具体流程如下图所示。
 
 **图1**  输入为bfloat16\_t类型的Add计算流程<a name="zh-cn_topic_0000002201317266_fig816618211471"></a>  
-![](../../../figures/输入为bfloat16_t类型的Add计算流程.png "输入为bfloat16_t类型的Add计算流程")
+![](../../../figures/bf16_add_flow.png "输入为bfloat16_t类型的Add计算流程")
 
 在计算过程中，表示Cast转换结果、Add计算结果的临时变量均需要使用临时内存存储。与[基础矢量算子实现](基础矢量算子.md)的KernelAdd算子类相比，本样例新增两个TBuf类型的成员变量tmpBuf0、tmpBuf1，用于管理计算过程中使用的临时内存，因此初始化阶段除原有步骤外，需要调用[InitBuffer](../../../../api/SIMD-API/basic_api/resource_management/TPipe/InitBuffer.md)接口为TBuf变量分配内存，具体的初始化阶段代码如下：
 

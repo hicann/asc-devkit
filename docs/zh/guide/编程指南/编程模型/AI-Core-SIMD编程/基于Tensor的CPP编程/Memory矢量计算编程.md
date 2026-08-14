@@ -46,7 +46,7 @@ GM与UB之间的数据搬运提供了多样化的接口，支持丰富的数据�
 
 **连续搬运**: 如果开发者需要将一块连续的`Global Memory`搬运到UB时，只需指定搬运数据元素个数即可。例如srcGlobal数据（shape为256，数据类型为half），需搬入到UB中，通过`DataCopy`直接调用：
 
-![连续数据搬运](../../../../figures/连续数据搬运.png)
+![连续数据搬运](../../../../figures/cont_copy.png)
 
 ```cpp
 AscendC::DataCopy(dstLocal, srcGlobal, 256);
@@ -54,7 +54,7 @@ AscendC::DataCopy(dstLocal, srcGlobal, 256);
 
 **高维切分搬运**: 当需要将多块非连续的GM数据搬入单个UB时，可通过高维切分模式配置搬运数据块的数量、单个数据块长度及块间间隔。以srcGlobal数据（shape为256，数据类型为half）为例，如下场景的数据搬运可直接通过C++ Tensor接口实现：
 
-![非连续搬运](../../../../figures/非连续搬运.png)
+![非连续搬运](../../../../figures/discont_copy.png)
 
 ```cpp
 // A total of 6 dataBlocks are transferred, split into two rounds of 3 dataBlocks each.
@@ -72,7 +72,7 @@ AscendC::DataCopy(dstLocal, srcGlobal, copyParams);
 
 **非对齐搬运**: 高维切分数据搬运提供了用户进行非连续多个数据块搬入的能力，但该接口要求GM中搬运的长度和间隔都必须保证是32B对齐的，因此对于一些非对齐场景无法支持。例如需要进行如下图所示的搬运，则无法通过`DataCopy`高维切分接口完成隔行数据的搬运，此时需要突破32B的约束限制。Ascend C根据芯片能力，提供了`DataCopyPad`接口来支持该搬运形式，该接口可以指定以字节为单位的blockLen和stride信息，完成搬运操作。
 
-![非对齐搬入能力](../../../../figures/非对齐搬入能力.png)
+![非对齐搬入能力](../../../../figures/unaligned_in_cap.png)
 
 在上图所示场景中，需将两个数据块从GM搬运至UB：每个数据块的blockLen为54B，源操作数中相邻数据块的间隔为1B，目的操作数中相邻数据块的间隔为32B。为满足32B对齐要求，需在blockLen左侧填充2个half类型元素、右侧填充3个half类型元素；此时总长度为blockLen + leftPadding × 2B + rightPadding × 2B = 54B + 2 × 2B + 3 × 2B = 64B，符合32B对齐约束。
 
@@ -109,7 +109,7 @@ AscendC::DataCopyPad(dstLocal, srcGlobal, copyParams, padParams);
 Memory矢量计算提供连续计算和高维切分两种计算模式，并可通过掩码实现数据选择性参与计算。
 以Add接口为例，两种计算模式的调用方式示意图如下。其中连续计算简单直观，适合一维Tensor连续数据处理；高维切分计算灵活可控，支持迭代执行和地址间隔配置。开发者可根据实际业务需求选择合适的计算方式。
 
-![Memory矢量计算模式示意图](../../../../figures/Memory矢量计算模式示意图.png)
+![Memory矢量计算模式示意图](../../../../figures/mem_vec.png)
 
 ### 高维切分计算
 
@@ -119,12 +119,12 @@ Memory矢量计算提供连续计算和高维切分两种计算模式，并可�
 
 Vector计算单元每个迭代会从UB中取出8个DataBlock（每个DataBlock内部地址连续，长度为32Byte）进行计算，并将结果写入对应的8个DataBlock中。
 
-![DataBlock迭代示意图](../../../../figures/DataBlock迭代示意图.png)
+![DataBlock迭代示意图](../../../../figures/db_iter.png)
 
 矢量计算API支持通过配置repeatTime参数控制指令的迭代执行次数。若将repeatTime设为2，矢量计算单元会执行2次迭代计算，可处理的数据量为2 × 8（单次迭代8个DataBlock） × 32Byte = 512Byte；若数据类型为half（2B / 元素），则对应计算256个元素。下图为2次迭代Exp计算的示意图。
 注意：受硬件限制，repeatTime的取值范围为[1, 255]，该约束适用于所有支持Memory矢量计算的产品。
 
-![2次迭代Exp计算](../../../../figures/2次迭代Exp计算.png)
+![2次迭代Exp计算](../../../../figures/iter2_exp.png)
 
 #### 地址间隔配置
 
@@ -135,26 +135,26 @@ Vector计算单元每个迭代会从UB中取出8个DataBlock（每个DataBlock�
 连续计算，`dataBlockStride`设置为1，对同一迭代内的8个DataBlock数据连续进行处理。
 非连续计算，`dataBlockStride`值大于1（如取2），同一迭代内不同DataBlock之间在读取数据时出现一个DataBlock的间隔，如下图所示。
 
-![dataBlockStride示例](../../../../figures/data_block_stride示例.png)
+![dataBlockStride示例](../../../../figures/db_stride.png)
 
 > 📌 若dst_block_stride == 0，等同于dst_block_stride = 1；若src_block_stride = 0，则源操作数将始终复用第一个dataBlock。
 
 下图给出了单次迭代内源操作数与目的操作数在UB空间的读写示例。示例中源操作数的`dataBlockStride`配置为2，表示单次迭代内不同DataBlock间地址步长为2个DataBlock；目的操作数的`dataBlockStride`配置为1，表示单次迭代内地址连续。
 
-![单次迭代内源和目的操作数读写示例](../../../../figures/单次迭代内源和目的操作数读写示例.png)
+![单次迭代内源和目的操作数读写示例](../../../../figures/iter_rw.png)
 
 其中**repeatStride**是指相邻迭代间相同DataBlock的地址步长，可通过设置`repeatStride`来灵活控制不同的场景。
 
 | 场景 | repeatStride取值 | 数据读取特点 | 适用场景 |
 |------|------------------|-------------|--------|
-| 连续计算 | 8 | 每轮迭代读取连续8个dataBlock，完成所有输入数据的计算 | ![repeatStride连续计算场景](../../../../figures/repeat_stride连续计算场景.png) |
-| 非连续计算 | >8 (如10) | 相邻迭代间存在dataBlock间隔，地址不连续 | ![repeatStride非连续计算场景](../../../../figures/repeat_stride非连续计算场景.png) |
-| 反复计算 | 0 | 对首个连续8个dataBlock反复读取和计算 | ![repeatStride反复计算场景](../../../../figures/repeat_stride反复计算场景.png) |
-| 部分重复计算 | (0, 8) | 相邻迭代间部分数据重复读取，一般场景不涉及 | ![repeatStride部分重复计算](../../../../figures/repeat_stride部分重复计算.png) |
+| 连续计算 | 8 | 每轮迭代读取连续8个dataBlock，完成所有输入数据的计算 | ![repeatStride连续计算场景](../../../../figures/rep_cont.png) |
+| 非连续计算 | >8 (如10) | 相邻迭代间存在dataBlock间隔，地址不连续 | ![repeatStride非连续计算场景](../../../../figures/rep_discont.png) |
+| 反复计算 | 0 | 对首个连续8个dataBlock反复读取和计算 | ![repeatStride反复计算场景](../../../../figures/rep_repeat.png) |
+| 部分重复计算 | (0, 8) | 相邻迭代间部分数据重复读取，一般场景不涉及 | ![repeatStride部分重复计算](../../../../figures/rep_partial.png) |
 
 当 `repeatTime`>1 时，通过多次迭代完成计算。repeatStride表示相邻迭代间相同位置DataBlock的起始地址间隔（以DataBlock为单位）。例如 `repeatStride` = 9 时，第一次迭代的第1个DataBlock与第二次迭代的第1个DataBlock间隔9个DataBlock。
 
-![多次迭代非连续场景示意图](../../../../figures/多次迭代非连续场景示意图.png)
+![多次迭代非连续场景示意图](../../../../figures/multi_iter.png)
 
 通过C++ Tensor接口配置 `repeatStride` 和 `dataBlockStride` 实现上述多次迭代功能。
 
@@ -176,7 +176,7 @@ AscendC::Add(dstLocal, src0Local, src1Local, mask, repeatTime, { dstBlockStride,
 
 针对同一个迭代中的数据，可以通过mask参数进行掩码操作来控制实际参与计算的个数。下图为进行Abs计算时通过mask逐比特模式按位控制哪些元素参与计算的示意图，1表示参与计算，0表示不参与计算。
 
-![掩码操作示意图](../../../../figures/掩码操作示意图.png)
+![掩码操作示意图](../../../../figures/mask_op.png)
 
 每一位掩码对应数据中的一个元素的位置，通过有效位和无效位标记，实现对数据操作的精细化开关控制。
 掩码由固定位宽的数值表示：有效位（通常为1）：对应元素正常参与计算。无效位（通常为0）：对应元素被屏蔽，不执行操作。
@@ -190,7 +190,7 @@ __aicore__ inline void Adds(const U& dst, const S& src0, const V& src1, uint64_t
 Counter模式用于计算连续N个元素。该模式下，Mask寄存器仅低64bit有效，表示参与计算的元素数量；repeatTime参数被忽略，系统根据元素数量自动计算迭代次数。
 例如需计算200个half类型元素时，此时使用Counter模式，可仅针对200个有效元素执行计算，忽略剩余56个元素的无效空间，避免多余计算。
 
-![Count模式计算](../../../../figures/Count模式计算.png)
+![Count模式计算](../../../../figures/count_mode.png)
 
 ```cpp
 half scalarValue = 1.0;
@@ -217,7 +217,7 @@ Normal计算模式下，MASK寄存器作为每个Repeat的掩码使用，通过S
 
 连续模式下，mask指定单次迭代内参与计算的前n个连续元素，超范围按对应数据类型mask最大值计算，mask为0视为NOP（空操作），负值产生未定义行为。例如对shape为256、数据类型为half的src数据（需2次迭代、每次128个元素），设置mask = 100时，第1次迭代计算0, 99、第2次迭代计算128, 227范围的元素，其余元素不参与计算。
 
-![单次迭代内连续计算](../../../../figures/单次迭代内连续计算.png)
+![单次迭代内连续计算](../../../../figures/iter_cont.png)
 
 ```cpp
 AscendC::LocalTensor<half> dstLocal;
@@ -237,7 +237,7 @@ AscendC::Adds<half, false>(dstLocal, src0Local, scalarValue, AscendC::MASK_PLACE
 
   该模式下，可以指定maskHigh和maskLow的值，来处理各种掩码操作。如需进行交错计算，则mask设置成01010101...或者10101010...模式即可。以src数据（shape为256，数据类型为half）为例，通过设置逐bit的掩码，可在单迭代中选取特定bit位的数值参与计算：
 
-  ![单次迭代内逐bit计算](../../../../figures/单次迭代内逐bit计算.png)
+  ![单次迭代内逐bit计算](../../../../figures/iter_bit.png)
 
   ```cpp
   AscendC::LocalTensor<half> dstLocal;

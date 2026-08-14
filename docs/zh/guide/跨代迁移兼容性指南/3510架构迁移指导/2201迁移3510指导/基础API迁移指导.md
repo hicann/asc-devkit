@@ -154,7 +154,7 @@
     -   [NPU架构版本2201](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)的接口参数boundaryValue设置为0时与3510架构版本等价。
     -   如果需要在L1 Buffer上循环读取操作数，需要将对应的LoadData（卷积数据搬运）接口手动拆分成多条指令，手动绕回。具体代码可参考[SetLoadDataBoundary兼容性样例](../../../../../../examples/01_simd_cpp_api/06_compatibility_guide/set_loaddata_boundary)。
 
-    ![](../../../figures/1_zn.png)
+    ![](../../../figures/fig_1_zn.png)
 
     如上图所示，以L1 Buffer到L0A Buffer的搬运为例。矩阵A为half数据类型，大小为32 \* 32的矩阵，假设边界为512B，可以重复搬运数据到L0A Buffer，在每次搬运时设置目的操作数的地址偏移量。
 
@@ -330,7 +330,7 @@
 
         矩阵C：每个分形矩阵内部是行主序，分形矩阵之间是列主序。分形Shape为16 x 16，大小为256个元素。
 
-        ![](../../../figures/2_zn.png)
+        ![](../../../figures/fig_2_zn.png)
 
     -   3510架构版本，参与矩阵乘计算（A \* B = C）时， ABC矩阵的数据排布格式分别为Nz，Zn，Nz。
 
@@ -340,13 +340,13 @@
 
         矩阵C：每个分形矩阵内部是行主序，分形矩阵之间是列主序。其Shape为16 x 16，大小为256个元素。
 
-        ![](../../../figures/3_zn.png)
+        ![](../../../figures/fig_3_zn.png)
 
     **兼容方案**：非L0A Buffer切分的场景兼容2201版本，L0A Buffer切分的场景需要根据新的分形重新适配。具体代码可参考[pattern_transformation兼容性样例](../../../../../../examples/01_simd_cpp_api/06_compatibility_guide/pattern_transformation)。
 
     在2201架构中，矩阵计算要求左矩阵为ZZ分形（3510中为NZ），右矩阵为ZN分形，由于L1 Buffer的数据分形为NZ，所以2201架构下将左矩阵从L1 Buffer搬运到L0A Buffer需要额外做NZ分形到ZZ分形的转换，3510架构下则不用转换分形。
 
-    ![](../../../figures/4_zn.png)
+    ![](../../../figures/fig_4_zn.png)
 
     分形变化带来的变动主要体现在L1 Buffer到L0A Buffer的搬运过程，以下代码片段进行展示：
 

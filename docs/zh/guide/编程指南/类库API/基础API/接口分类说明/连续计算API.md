@@ -9,4 +9,4 @@ Add(dst, src1, src2, n);
 下图以矢量加法为例，展示了**连续计算API**的特点。
 
 **图1** **连续计算API**<a name="zh-cn_topic_0000001762058545_fig6847134062319"></a>  
-![](../../../../figures/连续计算API.png "连续计算API")
+![](../../../../figures/cont_calc_api.png "连续计算API")

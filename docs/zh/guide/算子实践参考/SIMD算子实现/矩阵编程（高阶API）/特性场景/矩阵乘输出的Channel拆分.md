@@ -7,7 +7,7 @@
 由于1个float类型数据的大小为4字节，16\*8的分形在内轴满足32字节对齐，内轴上的数据量与一条NPU矢量计算指令处理的数据单元一致，这便于后续的其它计算。ChannelSplit功能默认不启用，用户需通过设置[MatmulConfig](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)中的isEnableChannelSplit参数为true来开启此功能。
 
 **图1**  ChannelSplit功能示意图<a name="zh-cn_topic_0000002264134832_fig38211632121711"></a>  
-![](../../../../figures/ChannelSplit功能示意图.png "ChannelSplit功能示意图")
+![](../../../../figures/chan_split.png "ChannelSplit功能示意图")
 
 ## 使用场景<a name="zh-cn_topic_0000002264134832_section118051016163613"></a>
 

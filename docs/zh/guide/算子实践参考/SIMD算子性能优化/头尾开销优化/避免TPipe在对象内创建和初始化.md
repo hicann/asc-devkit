@@ -73,9 +73,9 @@ template <typename ComputeT> class KernelExample {
 【性能对比】
 
 **图1**  aiv\_scalar\_time优化前后对比<a name="fig31681942161513"></a>  
-![](../../../figures/aiv_scalar_time优化前后对比.png "aiv_scalar_time优化前后对比")
+![](../../../figures/aiv_time.png "aiv_scalar_time优化前后对比")
 
 **图2**  aiv\_scalar\_ratio优化前后对比<a name="fig105241506161"></a>  
-![](../../../figures/aiv_scalar_ratio优化前后对比.png "aiv_scalar_ratio优化前后对比")
+![](../../../figures/aiv_ratio.png "aiv_scalar_ratio优化前后对比")
 
 通过性能数据对比可以看出，Scalar优化效果显著，平均时间从281us减少到236us，下降17%；平均scalar\_time时延占比从21%下降到17%。因此在Scalar bound（达到上限）的场景下可以使用此优化措施。

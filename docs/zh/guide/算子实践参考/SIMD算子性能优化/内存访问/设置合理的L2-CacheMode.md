@@ -16,7 +16,7 @@
 
 【描述】L2 Cache常用于缓存频繁访问的数据，其物理位置如下图所示：
 
-![](../../../figures/最佳实践优化Reduce使用章节-61.png)
+![](../../../figures/reduce_61.png)
 
 L2 Cache的带宽相比GM的带宽有数倍的提升，因此当数据命中L2 Cache时，数据的搬运耗时会优化数倍。通常情况下，L2 Cache命中率越高，算子的性能越好，在实际访问中需要通过设置合理的L2 CacheMode来保证重复读取的数据尽量缓存在L2 Cache上。
 
@@ -24,11 +24,11 @@ L2 Cache的带宽相比GM的带宽有数倍的提升，因此当数据命中L2 C
 
 数据通过MTE2搬运单元搬入时，L2 Cache访问的典型流程如下：
 
-![](../../../figures/最佳实践优化Reduce使用章节-62.png)
+![](../../../figures/reduce_62.png)
 
 数据通过MTE3或者Fixpipe搬运单元搬出时，L2 Cache访问的典型流程如下：
 
-![](../../../figures/最佳实践优化Reduce使用章节-63.png)
+![](../../../figures/reduce_opt_63.png)
 
 从上面的流程可以看出，当数据访问总量超出L2 Cache容量时，AI Core会对L2 Cache进行数据替换。由于Cache一致性的要求，替换过程中旧数据需要先写回GM（此过程中会占用GM带宽），旧数据写回后，新的数据才能进入L2 Cache。
 

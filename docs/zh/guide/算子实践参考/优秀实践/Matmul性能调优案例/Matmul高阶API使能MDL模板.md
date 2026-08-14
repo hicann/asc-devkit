@@ -79,7 +79,7 @@ Tiling参数如下：
 下图是默认的Norm模板的Matmul计算流水示意图，MTE2分多次从Global Memory搬运基本块到L1 Buffer（A1或B1），每次只搬运一个基本块。Norm模板的优势为启动开销小，可以提前启动MTE1流水；Norm模板的劣势为在大Shape场景，MTE2搬运次数多，搬运带宽利用率低，整体性能开销大。
 
 **图1**  默认Norm模板流水示意图<a name="fig108684561130"></a>  
-![](../../../figures/默认Norm模板流水示意图.png "默认Norm模板流水示意图")
+![](../../../figures/norm_pipe.png "默认Norm模板流水示意图")
 
 实现Norm模板的具体步骤如下：
 
@@ -99,7 +99,7 @@ Tiling参数如下：
 下图是MDL模板的Matmul计算流水示意图，MTE2一次性从Global Memory搬运多个基本块到L1 Buffer（A1或B1），每次搬运stepM \* stepKa个基本块到A1或搬运stepN \* stepKb个基本块到B1。MDL模板的优势为MTE2一次性搬运多个基本块，带宽利用率高，后续的MTE1流水能尽可能复用A1或B1的缓存数据，MTE2重复搬运次数少。MDL模板的劣势为MTE2头开销时间较长，MTE1流水需要等待MTE2流水完成后才启动，MTE1启动时间晚。
 
 **图2**  MDL模板流水示意图<a name="fig15563371352"></a>  
-![](../../../figures/MDL模板流水示意图.png "MDL模板流水示意图")
+![](../../../figures/mdl_pipe.png "MDL模板流水示意图")
 
 Matmul API开启MDL模板的完整样例请参考[开启UnitFlag功能和MDL模板的Matmul样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_unitflag)。开启MDL模板的主要步骤如下：
 

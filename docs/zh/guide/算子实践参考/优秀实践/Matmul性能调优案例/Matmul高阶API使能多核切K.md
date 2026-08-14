@@ -70,7 +70,7 @@
 开启多核切K后，矩阵的K方向数据可以进行切分。如下图所示，C矩阵中的R矩阵块，是通过A1\*B1+A2\*B2+A3\*B3累加得到的，其中，A1\*B1、A2\*B2、A3\*B3可在多个核上并行计算。
 
 **图1**  开启多核切K<a name="fig194841921104410"></a>  
-![](../../../figures/开启多核切K.png "开启多核切K")
+![](../../../figures/multi_k.png "开启多核切K")
 
 开启多核切K功能的方式为：在GetTiling接口前调用EnableMultiCoreSplitK接口，开启多核切K，并在Kernel实现中，对C矩阵的Global Memory地址清零后开启AtomicAdd。开启多核切K的完整样例请参考[多核切K场景的算子样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_splitk)。具体步骤如下：
 

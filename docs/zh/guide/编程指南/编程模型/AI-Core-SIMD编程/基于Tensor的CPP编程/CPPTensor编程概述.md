@@ -10,7 +10,7 @@ C++ Tensor编程是Ascend C SIMD编程路径的基础编程接口，基于Tensor
 
 AI Core采用分级存储架构，Cube矩阵计算采用「Global Memory（以下简称为GM） → L1/L0系列Buffer」两级层级服务于矩阵计算，Vector矢量计算传统架构为「Global Memory → Unified Buffer（以下简称为UB）」两级层级，而[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)引入寄存器后构建「GM → UB → Register」三级层级，其中GM存放输入输出数据、UB作为矢量计算中间缓存、Register位于Vector计算单元最内层直接与执行单元交互。
 
-![AI Core存储层次结构](../../../../figures/AI_Core存储层次结构.png)
+![AI Core存储层次结构](../../../../figures/aicore_mem_2.png)
 
 ### Tensor内存抽象
 
@@ -197,17 +197,17 @@ Cube计算单元专用的缓存为：L0A Buffer存储左矩阵，L0B Buffer存�
 
 以`FRACTAL_Nz`为例，内存排布采用大N外部column major（列主序）+ 小z内部row major（行主序）存放：
 
-![FRACTAL_Nz内存排布示意图](../../../../figures/FRACTAL_NZ内存排布示意图.png)
+![FRACTAL_Nz内存排布示意图](../../../../figures/nz_layout.png)
 
 #### Bank冲突
 
 为了提高数据访问的效率和吞吐量，内部存储采用了bank（大小相等的内存模块）结构设计。以UB为例，[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)产品上，UB总大小为256KB（256 × 1024字节），包含8个bank group，每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B，采用低位地址交织。[NPU架构版本2201](../../../语言扩展层/SIMD-BuiltIn关键字.md)的UB容量规格请参考[UB bank结构](../../../../算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md)。
 
-![UB Bank冲突示意图](../../../../figures/UB_Bank冲突示意图.png)
+![UB Bank冲突示意图](../../../../figures/ub_conflict.png)
 
 该架构地址使用低位编址，地址排布如下图所示，每个bank可以独立地进行数据的读写操作，允许多个数据请求同时进行。然而，当多个读写操作试图同时访问同一个bank时，由于硬件资源的限制，这些操作必须排队等待，会导致bank冲突，引起性能下降。
 
-![低位交织地址排布](../../../../figures/低位交织地址排布.png)
+![低位交织地址排布](../../../../figures/low_interleave.png)
 
 每个bank一拍只能完成一读或者一写，每个bank group最多只允许2读0写或者1读1写。根据内存结构，bank冲突主要可以分为以下三种类型：
 - 读写冲突：读操作和写操作同时尝试访问同一个bank，或者两个读操作和一个写操作同时尝试访问同一个bank group。
@@ -236,11 +236,11 @@ AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以
 2. 进行矢量计算
 3. 通过DMA将数据从Local Memory搬出到GM
 
-![Vector计算数据流](../../../../figures/Vector计算数据流.png)
+![Vector计算数据流](../../../../figures/vec_flow.png)
 
 四个执行单元Scalar、Vector、DMA（MTE2）、DMA(MTE3)并行执行，若访问同一片Local Memory，需要同步机制来控制它们的访问时序：保证先搬入Local Memory后再计算，计算完成后再搬出。
 
-![同步顺序示意图](../../../../figures/同步顺序.png)
+![同步顺序示意图](../../../../figures/sync_order.png)
 
 > 📌 提示：上例描述的是主要路径，当`Scalar`执行单元读写GM或者UB时，也需要考虑`Scalar`流水与其他流水的同步。
 
@@ -271,11 +271,11 @@ AI Core上的执行单元分别属于不同的执行流水，同步即是保证�
 
 以下图为例，AIC（AI Cube，主要用于Cube计算）需要依赖于AIV（AI Vector，负责Vector计算）的ReduceSum计算结果。由于整体矢量较大，必须拆分为多个部分，由每个AIV分别完成部分计算。每个AIV将其部分计算结果通过原子累加写入GM。AIC需要读取的必须是所有AIV均完成累加后的最终结果。
 
-![核间同步业务场景示例](../../../../figures/核间同步业务场景示例.png)
+![核间同步业务场景示例](../../../../figures/inter_core_sync_ex.png)
 
 从上图可以看到，当前AI Core是由AIC核和AIV核组成，其中AIC核主要用于Cube计算，AIV核负责Vector计算。AIC/AIV按group进行划分。一个group内细分block及subblock，block与subblock比例为1:N（N>=1），block表示多少个“主核”，subblock表示一个“主核”带多少个“从核”。
 
-![block和subblock之间关系](../../../../figures/block和subblock之间关系.png)
+![block和subblock之间关系](../../../../figures/block_rel.png)
 
 算子按计算特征可划分为三类：Cube算子（矩阵计算）、Vector算子（矢量计算）和CV融合算子（矩阵与矢量混合计算）。算子类型决定了其核间同步方式与group配置模式的选择。针对不同算子场景，C++ Tensor编程通过[CrossCoreSetFlag](../../../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)和[CrossCoreWaitFlag](../../../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md)两个接口组合实现核间同步，以满足多样化的算子开发需求。
 
@@ -332,7 +332,7 @@ Cube矩阵计算主要涵盖矩阵乘计算与卷积计算，其数据主要来�
 - C为目的操作数，存放矩阵乘结果的矩阵，形状为[M, N]。
 - bias为矩阵乘偏置，形状为[1, N]。对A*B结果矩阵的每一行都采用该bias进行偏置。
 
-![矩阵乘示意图](../../../../figures/矩阵乘示意图.png)
+![矩阵乘示意图](../../../../figures/matmul.png)
 
 ```cpp
 // Define Cube matrix operator, marked with __cube__ to execute on Device Cube core, suitable for operators with only Cube computation
@@ -363,7 +363,7 @@ CV融合计算程序由多个独立的小算子融合而成，其功能与多个
 
 比如对于LLM大模型中最核心的一个融合算子Flash Attention，其核心实现如下图。图中的Matmul算子（Cube）、Scale算子（Vector）、Mask算子（Vector）、SoftMax算子（Vector）融合为一个大的算子Flash Attention。
 
-![Flash Attention核心实现](../../../../figures/Flash-Attention核心实现.png)
+![Flash Attention核心实现](../../../../figures/flash_attn.png)
 
 ```cpp
 // Define CV fusion operator, marked with __mix__ to execute on Device, suitable for operators combining Cube and Vector computation

@@ -11,7 +11,7 @@ Batch Matmul当前支持4种Layout类型：BSNGD、SBNGD、BNGS1S2、NORMAL（BM
 下图为NORMAL数据排布格式的Batch Matmul计算。整个Matmul计算一共包含4个矩阵乘操作：mat\_a1\*mat\_b1、mat\_a2\*mat\_b2、mat\_a3\*mat\_b3、mat\_a4\*mat\_b4，需要单核上计算四个singleCoreM \*singleCoreN。在该场景下，如果shape较小，可以将其视为Batch Matmul场景进行批量处理，以提升性能。一次IterateBatch可同时计算出mat\_c1 = mat\_a1 \* mat\_b1、mat\_c2 = mat\_a2 \* mat\_b2、mat\_c3 = mat\_a3 \* mat\_b3、mat\_c4 = mat\_a4 \* mat\_b4。
 
 **图1**  NORMAL数据排布格式的Batch Matmul示意图<a name="zh-cn_topic_0000001726346562_fig3876163755011"></a>  
-![](../../../../figures/NORMAL数据排布格式的Batch-Matmul示意图.png "NORMAL数据排布格式的Batch-Matmul示意图")
+![](../../../../figures/norm_batch_mm.png "NORMAL数据排布格式的Batch-Matmul示意图")
 
 ## 使用场景<a name="zh-cn_topic_0000001726346562_section1672510573541"></a>
 

@@ -9,7 +9,7 @@
 假设输入数据大小为InputTotalSize，L2 Cache大小为L2CacheSize，InputTotalSize = L2CacheSize \* 2，总核数为20个核，数据未切分，整体一次完成计算。假设20个核一次可以处理共L2CacheSize的数据，则每个核至少两次读取输入数据。
 
 **图1**  未开启L2 Cache切分<a name="fig126831114552"></a>  
-![](../../../figures/未使能L2-Cache切分.png "未开启L2-Cache切分")
+![](../../../figures/no_l2_cache_split.png "未开启L2-Cache切分")
 
 ```
 constexpr int32_t TOTAL_LENGTH = InputTotalSize / sizeof(half);
@@ -75,7 +75,7 @@ private:
 假设输入数据大小为InputTotalSize，L2 Cache大小为L2CacheSize，InputTotalSize = L2CacheSize \* 2，能使用的总核数为20个核，输入数据均等切分成2份数据，则整体分两次进行计算，每次的计算量为L2CacheSize，第一次20个核先计算前L2CacheSize个数据，第二次20个核计算后L2CacheSize个数据。每次计算前读取的数据能够命中L2 Cache，提升算子性能。
 
 **图2**  开启L2 Cache切分<a name="fig1623673819553"></a>  
-![](../../../figures/使能L2-Cache切分.png "开启L2-Cache切分")
+![](../../../figures/l2_cache_split.png "开启L2-Cache切分")
 
 ```
 constexpr int32_t TOTAL_LENGTH = InputTotalSize / sizeof(half);

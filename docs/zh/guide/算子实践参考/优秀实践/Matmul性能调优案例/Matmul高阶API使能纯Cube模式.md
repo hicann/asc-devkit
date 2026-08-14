@@ -5,7 +5,7 @@
 本案例呈现了在矩阵乘算子场景中，开启Matmul高阶API的纯Cube模式对算子性能的提升效果。如下图所示，Matmul API默认使用MIX模式，即用户从AIV侧发起消息，通过消息通信框架中转消息后，在AIC侧执行Matmul计算。这套消息处理机制会带来额外的Scalar性能开销。相较于MIX模式，纯Cube模式可以直接跳过消息通信框架，完成Matmul计算，提升算子性能。
 
 **图1**  默认MIX模式的Matmul流程示意图<a name="fig0672118378"></a>  
-![](../../../figures/默认MIX模式的Matmul流程示意图.png "默认MIX模式的Matmul流程示意图")
+![](../../../figures/mix_matmul.png "默认MIX模式的Matmul流程示意图")
 
 -   开启纯Cube模式的适用场景
 
@@ -107,7 +107,7 @@ Tiling参数如下：
 在没有矢量计算的算子场景下，可以跳过消息通信框架的机制，开启纯Cube模式完成Matmul计算，减少消息通信的性能开销，提升算子性能。
 
 **图2**  纯Cube模式的Matmul流程示意图<a name="fig20558182319127"></a>  
-![](../../../figures/纯Cube模式的Matmul流程示意图.png "纯Cube模式的Matmul流程示意图")
+![](../../../figures/cube_matmul.png "纯Cube模式的Matmul流程示意图")
 
 Matmul API开启纯Cube模式的完整样例请参考[纯Cube模式的Matmul样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul)。开启纯Cube模式的主要步骤如下：
 

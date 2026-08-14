@@ -4,7 +4,7 @@
 
 MC<sup>2</sup>通算融合算子的性能收益主要来自于通信、计算的并行执行，即将输入数据切分为多个子块，子块的计算和通信任务形成两条流水线，通过两条流水线上任务的并行执行，实现流水掩盖，从而提升算子性能。如下图所示，MC<sup>2</sup>算子先做Matmul计算、后通信的场景，输入矩阵沿M轴被切分为两块，第二块数据的Matmul计算和第一块数据的通信可以并行执行，从而达到计算和通信时间相互掩盖的目的。本节的所有图示中MM代表Matmul计算，hcom代表通信任务。
 
-![](../../figures/1-84.png)
+![](../../figures/fig_1_84.png)
 
 本案例将介绍如何分析通算融合算子的性能收益、如何制定较好的数据切分策略。更多MC<sup>2</sup>算子的完整样例请参考[MatmulAllReduce样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/matmul_all_reduce)、[MatmulReduceScatter样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/matmul_reduce_scatter_v2)、[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)。
 
@@ -31,7 +31,7 @@ MC<sup>2</sup>算子收益 = \(融合前算子串行耗时 - 融合后MC<sup>2</
 
     若计算和通信任务的执行时间差异较大，则融合后，MC<sup>2</sup>算子内计算和通信并行执行，能够掩盖的时间较少，算子整体执行耗时与未切分串行时的算子执行耗时接近，此时无法获得较大性能收益。
 
-    ![](../../figures/3.png)
+    ![](../../figures/fig_3.png)
 
 -   因素二：数据切分导致的计算或通信的执行时间膨胀
 
@@ -41,19 +41,19 @@ MC<sup>2</sup>算子收益 = \(融合前算子串行耗时 - 融合后MC<sup>2</
 
         数据切分前，Matmul执行时间为200us，将Matmul的输入均匀切分为两块，假设切分后，每块数据的Matmul执行时间都是100us，通过计算的并行执行，下图实际性能收益为100us。
 
-        ![](../../figures/4.png)
+        ![](../../figures/fig_4.png)
 
     -   发生一般程度的膨胀：
 
         数据切分前，Matmul执行时间为200us，将Matmul的输入均匀切分为两块，假设切分后，每块数据的Matmul执行时间都是150us，通过计算的并行执行，下图实际性能收益为50us。
 
-        ![](../../figures/5.png)
+        ![](../../figures/fig_5.png)
 
     -   发生严重程度的膨胀：
 
         数据切分前，Matmul执行时间为200us，将Matmul的输入均匀切分为两块，假设切分后，每块数据的Matmul执行时间都是200us，通过计算的并行执行，下图实际性能收益为劣化50us。
 
-        ![](../../figures/5-85.png)
+        ![](../../figures/fig_5_85.png)
 
 综合上述分析，计算和通信执行时间较均衡的场景，有更好的流水掩盖和性能收益；同时，性能收益也受到数据切分导致的执行时间膨胀的影响。下文将介绍如何制定数据切分策略，以达到最佳流水掩盖效果。
 
@@ -73,14 +73,14 @@ MC<sup>2</sup>算子收益 = \(融合前算子串行耗时 - 融合后MC<sup>2</
     对于同一个切分后的数据块，计算执行耗时大于通信执行耗时，此时，**计算连续**，且**通信的尾块要短**，如下图所示。
 
     **图1**  计算bound示意图<a name="fig718114619319"></a>  
-    ![](../../figures/计算bound示意图.png "计算bound示意图")
+    ![](../../figures/calc_bound.png "计算bound示意图")
 
 -   通信bound：
 
     对于同一个切分后的数据块，通信执行耗时大于计算执行耗时，此时，**通信连续**，且**计算的头块要短**，如下图所示。
 
     **图2**  通信bound示意图<a name="fig19667165810312"></a>  
-    ![](../../figures/通信bound示意图.png "通信bound示意图")
+    ![](../../figures/comm_bound.png "通信bound示意图")
 
 **前置工作：**
 

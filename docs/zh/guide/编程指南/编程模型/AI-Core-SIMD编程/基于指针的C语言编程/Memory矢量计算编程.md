@@ -93,7 +93,7 @@ Memory矢量计算依托本地内存中的UB完成运算，开发者需先将输
 
 **连续搬运**: 若需将GM中连续地址的数据搬运至UB，仅需指定搬运数据的字节长度即可。例如将形状为256、数据类型为half的src_gm数据搬入UB，可直接调用`asc_copy_gm2ub`接口：
 
-<img src="../../../../figures/连续数据搬运.png" alt="连续数据搬运" width="800" />
+<img src="../../../../figures/cont_copy.png" alt="连续数据搬运" width="800" />
 
 ```c
 uint32_t size = 256 * sizeof(half);
@@ -105,7 +105,7 @@ asc_copy_gm2ub(dst_ub, src_gm, size);
 **非连续搬运**: 若需将GM中多段非连续数据搬入同一段UB空间，可通过高维切分模式，配置数据块数量、单块长度、块间间隔等参数。以形状为256、数据类型为half的src_gm为例，对应搬运逻辑与代码实现如下：
 
 
-<img src="../../../../figures/非连续搬运.png" alt="非连续搬运" width="800" />
+<img src="../../../../figures/discont_copy.png" alt="非连续搬运" width="800" />
 
 ```c
 // Number of consecutive data blocks: 16 rows of data, transfer every alternate row to UB, need to transfer 8 rows
@@ -124,7 +124,7 @@ asc_copy_gm2ub(dst_ub, src_gm, burst_count, burst_len, src_stride, dst_stride);
 
 **非对齐搬运**: 基础高维切分接口要求GM的数据长度与地址间隔均按32字节对齐，无法适配非对齐场景。例如将数据改为形状(16, 200)、类型为half的src_gm后，asc_copy_gm2ub无法实现隔行搬运。针对该场景，Ascend C提供`asc_copy_gm2ub_align`非对齐搬运接口，支持以字节为单位配置数据块长度与地址步长，突破32字节对齐限制。
 
-<img src="../../../../figures/非对齐搬入能力.png" alt="非对齐搬入能力" width="800" />
+<img src="../../../../figures/unaligned_in_cap.png" alt="非对齐搬入能力" width="800" />
 
 以上图为例，将两个数据块从GM搬运至UB，每个blockLen为54B，源操作数相邻数据块之间的间隔为1B，目的操作数相邻数据块之间的间隔为32B。
 在blockLen左侧和右侧分别填充2个和3个half类型元素，此时blockLen + leftPadding + rightPadding = 54B + 2 * 2B + 3 * 2B = 64B，满足32B对齐。
@@ -153,7 +153,7 @@ asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_p
 Memory矢量计算包含连续计算和高维切分计算两种模式，同时支持掩码功能，可灵活控制参与计算的数据范围。
 下文以加法接口为例，结合示意图说明两种模式的差异：连续计算用法简单，适用于一维张量的连续数据运算；高维切分计算灵活性更强，支持迭代运算与自定义地址间隔。开发者可根据业务场景按需选择。
 
-<img src="../../../../figures/Memory矢量计算模式示意图_c.png" alt="Memory矢量计算模式示意图" width="800" />
+<img src="../../../../figures/mem_vec_c.png" alt="Memory矢量计算模式示意图" width="800" />
 
 ### 高维切分计算
 
@@ -163,13 +163,13 @@ Memory矢量计算包含连续计算和高维切分计算两种模式，同时�
 
 矢量计算单元单次迭代从UB读取8个连续的DataBlock（每个32字节），运算结果写入目的UB的8个对应DataBlock。
 
-<img src="../../../../figures/DataBlock迭代示意图_c.png" alt="DataBlock迭代示意图" width="800" />
+<img src="../../../../figures/db_iter_c.png" alt="DataBlock迭代示意图" width="800" />
 
 若设置repeat_time（迭代次数）为2，单元将执行两轮迭代，总处理数据量为2 × 8 × 32字节 = 512字节；若数据类型为half（2字节 / 元素），则对应处理256个元素。
 
 > 📌 硬件约束：repeat_time取值范围为1~255，该约束对[NPU架构版本2201](../../../语言扩展层/SIMD-BuiltIn关键字.md)、[NPU架构版本3510](../../../语言扩展层/SIMD-BuiltIn关键字.md)全系列产品生效。
 
-<img src="../../../../figures/2次迭代Exp计算_c.png" alt="2次迭代Exp计算" width="800" />
+<img src="../../../../figures/iter2_exp_c.png" alt="2次迭代Exp计算" width="800" />
 
 #### 地址间隔配置
 
@@ -177,26 +177,26 @@ Memory矢量计算包含连续计算和高维切分计算两种模式，同时�
 连续计算，`data_block_stride`设置为1，对同一迭代内的8个DataBlock数据连续进行处理。
 非连续计算，`data_block_stride`值大于1（如取2），同一迭代内不同DataBlock之间在读取数据时出现一个DataBlock的间隔，如下图所示。
 
-<img src="../../../../figures/data_block_stride示例_c.png" alt="data_block_stride示例" width="800" />
+<img src="../../../../figures/db_stride_c.png" alt="data_block_stride示例" width="800" />
 
 > 📌 若dst_block_stride == 0，等效于dst_block_stride = 1；若src_block_stride = 0，源操作数将始终复用第一个DataBlock。
 
 下图给出了单次迭代内源操作数与目的操作数在UB空间的读写示例。示例中源操作数的`data_block_stride`配置为2，表示单次迭代内不同DataBlock间地址步长为2个DataBlock；目的操作数的`data_block_stride`配置为1，表示单次迭代内地址连续。
 
-<img src="../../../../figures/单次迭代内源和目的操作数读写示例_c.png" alt="单次迭代内源和目的操作数读写示例" width="800" />
+<img src="../../../../figures/iter_rw_c.png" alt="单次迭代内源和目的操作数读写示例" width="800" />
 
 其中**repeat_stride**是指相邻迭代间相同DataBlock的地址步长，可通过设置`repeat_stride`来灵活控制不同的场景。
 
 | 场景 | repeat_stride取值 | 数据读取特点 | 适用场景 |
 |------|------------------|-------------|--------|
-| 连续计算 | 8 | 每轮迭代读取连续8个data_block，完成所有输入数据的计算 | <img src="../../../../figures/repeat_stride连续计算场景_c.png" alt="repeat_stride连续计算场景" width="600" /> |
-| 非连续计算 | >8 (如10) | 相邻迭代间存在data_block间隔，地址不连续 | <img src="../../../../figures/repeat_stride非连续计算场景_c.png" alt="repeat_stride非连续计算场景" width="600" /> |
-| 反复计算 | 0 | 对首个连续8个data_block反复读取和计算 | <img src="../../../../figures/repeat_stride反复计算场景_c.png" alt="repeat_stride反复计算场景" width="600" /> |
-| 部分重复计算 | (0, 8) | 相邻迭代间部分数据重复读取，一般场景不涉及 | <img src="../../../../figures/repeat_stride部分重复计算_c.png" alt="repeat_stride部分重复计算" width="600" /> |
+| 连续计算 | 8 | 每轮迭代读取连续8个data_block，完成所有输入数据的计算 | <img src="../../../../figures/rep_cont_c.png" alt="repeat_stride连续计算场景" width="600" /> |
+| 非连续计算 | >8 (如10) | 相邻迭代间存在data_block间隔，地址不连续 | <img src="../../../../figures/rep_discont_c.png" alt="repeat_stride非连续计算场景" width="600" /> |
+| 反复计算 | 0 | 对首个连续8个data_block反复读取和计算 | <img src="../../../../figures/rep_repeat_c.png" alt="repeat_stride反复计算场景" width="600" /> |
+| 部分重复计算 | (0, 8) | 相邻迭代间部分数据重复读取，一般场景不涉及 | <img src="../../../../figures/rep_partial_c.png" alt="repeat_stride部分重复计算" width="600" /> |
 
 当 `repeat_time`>1 时，通过多次迭代完成计算。`repeat_stride` 表示相邻迭代间相同位置DataBlock的起始地址间隔（以DataBlock为单位）。例如 `repeat_stride` = 9 时，第一迭代的第1个DataBlock与第二迭代的第1个DataBlock间隔9个DataBlock。
 
-<img src="../../../../figures/多次迭代非连续场景示意图_c.png" alt="多次迭代非连续场景示意图" width="800" />
+<img src="../../../../figures/multi_iter_c.png" alt="多次迭代非连续场景示意图" width="800" />
 
 通过C风格接口配置`repeat_stride`和`data_block_stride`实现上述多次迭代功能。
 ```c
@@ -215,7 +215,7 @@ asc_add(z, x, y, repeat_time, dst_block_stride, src0_block_stride, src1_block_st
 
 针对同一个迭代中的数据，可以通过mask参数进行掩码操作来控制实际参与计算的个数。下图为进行Abs计算时通过mask逐比特模式按位控制哪些元素参与计算的示意图，1表示参与计算，0表示不参与计算。
 
-<img src="../../../../figures/掩码操作示意图_c.png" alt="掩码操作示意图" width="800" />
+<img src="../../../../figures/mask_op_c.png" alt="掩码操作示意图" width="800" />
 
 每一位掩码对应数据中的一个元素的位置，通过有效位和无效位标记，实现对数据操作的精细化开关控制。
 掩码为固定位宽数值，规则如下：有效位（值为1）代表对应元素参与计算，无效位（值为0）代表对应元素被屏蔽，不参与运算。
@@ -223,7 +223,7 @@ asc_add(z, x, y, repeat_time, dst_block_stride, src0_block_stride, src1_block_st
 掩码设置提供了两种模式：Counter模式和Normal模式，Normal模式又包含连续模式、逐比特模式。
 Counter模式适用于连续元素的计算场景。该模式下，掩码寄存器仅低64位有效，用于标识参与计算的元素总数；接口会自动忽略repeat_time，由系统根据元素数量自动匹配迭代次数。例如计算200个half类型元素时，受UB的32B对齐约束，需申请256个元素空间。此时使用Counter模式，可精确处理实际元素数量，避免多余计算。
 
-<img src="../../../../figures/Count模式计算.png" alt="Counter模式计算" width="600" />
+<img src="../../../../figures/count_mode.png" alt="Counter模式计算" width="600" />
 
 ```c
 __ubuf__ half dst_ub[256];
@@ -252,7 +252,7 @@ asc_set_mask_normal();
 
     该模式下，可以指定单次迭代内计算前n个连续元素，其他数据不参与计算。例如：对src数据(shape(256)，数据类型为half)，该数据需通过2次迭代计算完（每次迭代计算128个元素），可通过设置mask = 100，表示第1次迭代计算[0, 99]范围的元素，第2次迭代计算[128, 227]范围的元素参与计算，其他元素不参与计算。
 
-    <img src="../../../../figures/单次迭代内连续计算.png" alt="单次迭代内连续计算" width="600" />
+    <img src="../../../../figures/iter_cont.png" alt="单次迭代内连续计算" width="600" />
 
     ```c
     __ubuf__ half dst_ub[256];
@@ -274,7 +274,7 @@ asc_set_mask_normal();
     该模式下，可以指定maskHigh和maskLow的值，来处理各种掩码操作。如需进行交错计算，则mask设置成01010101...或者10101010...模式即可。
     以src数据(shape(256)，数据类型为half)为例，通过设置逐bit的掩码，可在单迭代中选取特定bit位的数值参与计算：
 
-    <img src="../../../../figures/单次迭代内逐bit计算.png" alt="单次迭代内逐bit计算" width="600" />
+    <img src="../../../../figures/iter_bit.png" alt="单次迭代内逐bit计算" width="600" />
 
     ```c
     __ubuf__ half dst_ub[256];

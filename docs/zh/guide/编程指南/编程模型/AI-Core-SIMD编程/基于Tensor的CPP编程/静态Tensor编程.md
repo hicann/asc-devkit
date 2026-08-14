@@ -6,7 +6,7 @@
 
 两种编程方式的对比如下：
 
-![](../../../../figures/图1-开发Ascend-C算子的基本流程.png)
+![](../../../../figures/op_flow.png)
 
 >[!NOTE]说明
 >- 静态Tensor编程的使用约束和限制请参考[使用约束和限制](#section19853161834615)。
@@ -19,7 +19,7 @@
 
 下图是一个典型矢量算子的示意图，开发者首先根据业务计算量进行数据分块处理，之后根据核内的数据依赖关系完成同步事件的插入：
 
-![](../../../../figures/内存管理示意图-5.png)
+![](../../../../figures/mem_mgmt_5.png)
 
 ## 内存管理<a name="section626154143513"></a>
 
@@ -166,9 +166,9 @@
 
 以下为不开启DoubleBuffer和开启DoubleBuffer的流水示意图。多数情况下，采用DoubleBuffer能有效提升Vector的时间利用率，缩减算子执行时间，详细内容可参考[DoubleBuffer](../../../../技术附录/概念原理和术语/性能优化技术原理/DoubleBuffer.md)。
 
-![](../../../../figures/图1-开发Ascend-C算子的基本流程-6.png)
+![](../../../../figures/op_flow_6.png)
 
-![](../../../../figures/图1-开发Ascend-C算子的基本流程-7.png)
+![](../../../../figures/op_flow_7.png)
 
 ## 使用约束和限制<a name="section19853161834615"></a>
 

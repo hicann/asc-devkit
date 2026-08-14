@@ -24,7 +24,7 @@ SIMD与SIMT混合编程中涉及的函数类型如下表所示：
 - `__callee__`公共函数：可供VF内部调用的公共子函数。`__callee__`函数内只能调用`__callee__`函数。
 
 **图1** SIMD与SIMT混合编程函数调用层级  
-<img src="../../../../figures/SIMT_混合_函数调用层级.png" title="SIMD与SIMT混合编程函数调用层级">
+<img src="../../../../figures/simt_call.png" title="SIMD与SIMT混合编程函数调用层级">
 
 ## 核函数的定义与执行配置<a name="zh-cn_topic_0000002571578013_section156822920311"></a>
 

@@ -7,10 +7,10 @@
 以纯Vector计算为例，矢量计算前后的CopyIn、CopyOut过程使用搬运指令队列（MTE2/MTE3），Compute过程使用Vector指令队列（V），不同指令队列可并行执行，意味着CopyIn、CopyOut过程和Compute过程是可以并行的。如[图1](#fig994415385460)所示，考虑一个完整的数据搬运和计算过程，CopyIn过程将数据从Global Memory搬运到Local Memory，Vector计算单元完成Compute计算后，经过CopyOut过程将计算结果搬回Global Memory。
 
 **图1**  数据搬运与Vector计算过程<a name="fig994415385460"></a>  
-![](../../../figures/数据搬运与Vector计算过程-54.png "数据搬运与Vector计算过程-54")
+![](../../../figures/data_vec_54.png "数据搬运与Vector计算过程-54")
 
 **图2**  未开启DoubleBuffer的流水图<a name="fig101953515215"></a>  
-![](../../../figures/未使能DoubleBuffer的流水图.png "未开启DoubleBuffer的流水图")
+![](../../../figures/no_doublebuf_pipe.png "未开启DoubleBuffer的流水图")
 
 在此过程中，数据搬运与Vector计算串行执行，Vector计算单元不可避免存在资源闲置问题，假设CopyIn、Compute、CopyOut三阶段分别耗时相同均为_t_，则Vector的利用率仅为1/3，等待时间过长，Vector利用率严重不足。
 
@@ -23,10 +23,10 @@ pipe.InitBuffer(inQueueX, 2, 256);
 ```
 
 **图3**  DoubleBuffer机制<a name="fig189541246194710"></a>  
-![](../../../figures/DoubleBuffer机制-55.png "DoubleBuffer机制-55")
+![](../../../figures/dbuf_55.png "DoubleBuffer机制-55")
 
 **图4**  开启DoubleBuffer的流水图<a name="fig166411527185118"></a>  
-![](../../../figures/使能DoubleBuffer的流水图.png "开启DoubleBuffer的流水图")
+![](../../../figures/dbuf_pipe.png "开启DoubleBuffer的流水图")
 
 **需要注意：**
 

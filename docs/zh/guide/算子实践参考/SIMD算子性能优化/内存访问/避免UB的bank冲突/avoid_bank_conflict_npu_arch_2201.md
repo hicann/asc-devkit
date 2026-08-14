@@ -14,7 +14,7 @@
 【描述】为了提高数据访问的效率和吞吐量，Unified Buffer采用了bank（大小相等的内存模块）结构设计。Unified Buffer总大小为192K，划分为48个bank。每个bank由128行组成，每行长度为32B。这48个bank进一步组织为16个bank group，每个bank group包含3个bank，例如bank15、bank31和bank47组成一个bank group。
 
 **图1**  bank结构示意图（图中箭头方向表示内存排布的顺序）<a name="fig1132542915196"></a>  
-![](../../../../figures/bank结构示意图（图中箭头方向表示内存排布的顺序）.png "bank结构示意图（图中箭头方向表示内存排布的顺序）")
+![](../../../../figures/bank_layout.png "bank结构示意图（图中箭头方向表示内存排布的顺序）")
 
 每个bank可以独立地进行数据的读写操作，允许多个数据请求同时进行。然而，当多个读写操作试图同时访问同一个bank或bank group时，由于硬件资源的限制，这些操作必须排队等待，会导致bank冲突，引起性能下降。
 
@@ -31,7 +31,7 @@ bank冲突主要可以分为以下三种场景：
 下文给出了一些具体的示例，假设，0x10000地址在bank16上，0x10020在bank17上，0x20020在bank33上，如下图所示：
 
 **图2**  地址分配示意图<a name="fig129245311375"></a>  
-![](../../../../figures/地址分配示意图.png "地址分配示意图")
+![](../../../../figures/addr_alloc.png "地址分配示意图")
 
 -   读写冲突示例
 
@@ -286,9 +286,9 @@ bank冲突主要可以分为以下三种场景：
     </tr>
     <tr id="row14922142214585"><td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.1.4.1.1 "><p id="p6922182210587"><a name="p6922182210587"></a><a name="p6922182210587"></a>示意图</p>
     </td>
-    <td class="cellrowborder" valign="top" width="42.6652389759564%" headers="mcps1.1.4.1.2 "><p id="p10922222205810"><a name="p10922222205810"></a><a name="p10922222205810"></a><a name="image1757423545813"></a><a name="image1757423545813"></a><span><img class="eddx" id="image1757423545813" src="../../../../figures/矩阵编程逻辑位置示意图-67.png" width="422.94" height="376.36672500000003"></span></p>
+    <td class="cellrowborder" valign="top" width="42.6652389759564%" headers="mcps1.1.4.1.2 "><p id="p10922222205810"><a name="p10922222205810"></a><a name="p10922222205810"></a><a name="image1757423545813"></a><a name="image1757423545813"></a><span><img class="eddx" id="image1757423545813" src="../../../../figures/mat_pos_67.png" width="422.94" height="376.36672500000003"></span></p>
     </td>
-    <td class="cellrowborder" valign="top" width="50.520782634089365%" headers="mcps1.1.4.1.3 "><p id="p1922622115813"><a name="p1922622115813"></a><a name="p1922622115813"></a><a name="image6621154316580"></a><a name="image6621154316580"></a><span><img class="eddx" id="image6621154316580" src="../../../../figures/矩阵编程逻辑位置示意图-68.png" width="489.77250000000004" height="363.174721"></span></p>
+    <td class="cellrowborder" valign="top" width="50.520782634089365%" headers="mcps1.1.4.1.3 "><p id="p1922622115813"><a name="p1922622115813"></a><a name="p1922622115813"></a><a name="image6621154316580"></a><a name="image6621154316580"></a><span><img class="eddx" id="image6621154316580" src="../../../../figures/mat_pos_68.png" width="489.77250000000004" height="363.174721"></span></p>
     </td>
     </tr>
     <tr id="row3293124918559"><td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.1.4.1.1 "><p id="p12812993573"><a name="p12812993573"></a><a name="p12812993573"></a>示例代码</p>
@@ -323,14 +323,14 @@ bank冲突主要可以分为以下三种场景：
         - NZ矩阵：起始地址0x12000，tensor长度为144 * 128 * sizeof(half)字节
         - 在每个Copy搬运操作内，8个Datablock同时写一个bank group，单条Copy从一拍拉长为8拍。
 
-    ![](../../../../figures/矩阵编程逻辑位置示意图-69.png)
+    ![](../../../../figures/mat_pos_69.png)
 
     - 优化实现：优化地址及搬运步长，为NZ矩阵多申请256字节（即多申请一行UB内存空间），Copy时步长为145，各个Tensor的地址分别为：
         - ND矩阵：起始地址0x0，tensor长度为144 * 128 * sizeof(half)字节
         - NZ矩阵：起始地址0x12000，tensor长度为145 * 128 * sizeof(half)字节
         - NZ矩阵多申请256字节，且将Copy时步长增大1，避免Copy搬运时8个Datablock同时写一个bank group，单条Copy在一拍内完成。
 
-    ![](../../../../figures/矩阵编程逻辑位置示意图-70.png)
+    ![](../../../../figures/mat_pos_70.png)
 
     - 原始实现示例代码：
         ```cpp

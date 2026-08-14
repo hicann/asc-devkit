@@ -74,12 +74,12 @@
 下图是不开启IBShare模板（默认使用Norm模板）的Matmul计算流水示意图。MTE2分多次从Global Memory搬运基本块到L1 Buffer（A1或B1），即使前后两次搬运的B矩阵基本块数据是相同的数据，也会重复搬运。
 
 **图1**  不开启IBShare模板的Matmul流水示意图<a name="fig1723213921319"></a>  
-![](../../../figures/不使能IBShare模板的Matmul流水示意图.png "不开启IBShare模板的Matmul流水示意图")
+![](../../../figures/no_ibshare_mm.png "不开启IBShare模板的Matmul流水示意图")
 
 下图是开启IBShare模板的Matmul计算流水示意图。MTE2分多次从Global Memory搬运基本块到L1 Buffer（A1或B1），若前后两次搬运的B矩阵基本块数据相同，不会重复搬运，第一次搬运到B1内的数据会被复用。
 
 **图2**  开启IBShare模板的Matmul流水示意图<a name="fig10881182610139"></a>  
-![](../../../figures/使能IBShare模板的Matmul流水示意图.png "开启IBShare模板的Matmul流水示意图")
+![](../../../figures/ibshare_mm.png "开启IBShare模板的Matmul流水示意图")
 
 Matmul API开启IBShare模板共享B矩阵的完整样例请参考[仅B矩阵开启IBShare样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_ibshareB)。开启IBShare功能的主要步骤如下：
 

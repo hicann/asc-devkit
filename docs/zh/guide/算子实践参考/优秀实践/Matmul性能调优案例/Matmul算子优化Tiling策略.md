@@ -17,7 +17,7 @@
 ## 分析主要瓶颈点<a name="section788333916369"></a>
 
 **图1**  优化前Profiling数据<a name="fig136871118111317"></a>  
-![](../../../figures/优化前Profiling数据.png "优化前Profiling数据")
+![](../../../figures/prof_before.png "优化前Profiling数据")
 
 由以上Profiling数据，可以看出MTE2耗时占比较大，当前性能瓶颈点在于MTE2流水。
 
@@ -102,7 +102,7 @@
     ```
 
     **图2**  优化分核逻辑后Profiling数据<a name="fig3811154518136"></a>  
-    ![](../../../figures/优化分核逻辑后Profiling数据.png "优化分核逻辑后Profiling数据")
+    ![](../../../figures/opt_split_prof.png "优化分核逻辑后Profiling数据")
 
     修改代码后，算子执行时间从12045us下降到2532us，约等于\(20核 / 4核\) = 5倍的性能提升。
 
@@ -134,7 +134,7 @@
     使用这组基本块后，MTE2耗时（对应aic\_mte2\_time）从2452us降低到808us，MTE2性能提升3倍。
 
     **图3**  优化基本块后Profiling数据<a name="fig1012052281415"></a>  
-    ![](../../../figures/优化基本块后Profiling数据.png "优化基本块后Profiling数据")
+    ![](../../../figures/opt_bb_prof.png "优化基本块后Profiling数据")
 
 -   优化点三：开启大包搬运
 
@@ -158,7 +158,7 @@
     从下图可以看到，开启大包搬运后，MTE2耗时从808us下降到591us，带宽利用率代入数据计算为3406GB/s，利用率提升36%+，Cube利用率达到80%+。
 
     **图4**  开启大包搬运后Profiling数据<a name="fig13648142015171"></a>  
-    ![](../../../figures/使能大包搬运后Profiling数据.png "开启大包搬运后Profiling数据")
+    ![](../../../figures/large_copy_prof.png "开启大包搬运后Profiling数据")
 
 ## 验证优化方案性能收益<a name="section225561133715"></a>
 

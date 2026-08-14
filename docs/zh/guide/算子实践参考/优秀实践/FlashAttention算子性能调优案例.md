@@ -29,7 +29,7 @@
 计算流程图如下：
 
 **图1**  算子计算流程<a name="fig13370135013413"></a>  
-![](../../figures/算子计算流程.png "算子计算流程")
+![](../../figures/op_compute.png "算子计算流程")
 
 按照FlashAttention反向计算流程的实现，简介整体计算流程如下。对本算子的算法感兴趣的用户可简单了解，无需重点关注。
 
@@ -60,7 +60,7 @@
 本案例的验证平台为Atlas A2 训练系列产品/Atlas A2 推理系列产品，以两个场景为例，第一个场景的输入维度信息为：B=1，N1=12，N2=12，S1=6144，S2=6144，D=128，causal场景，即atten\_mask的形状为下三角，如[图2](#fig9977418514)。第二个场景的输入维度信息为：B=24，N1=5，N2=5，S1=9216，S2=9216，D=64，不带atten\_mask和drop\_mask输入。主要涉及的优化手段包括tiling基本块大小调整，核间负载均衡，CV流水并行，MTE2流水优化以及FixPipe流水优化等优化手段。
 
 **图2**  causal场景atten\_mask形状<a name="fig9977418514"></a>  
-![](../../figures/causal场景atten_mask形状.png "causal场景atten_mask形状")
+![](../../figures/causal_mask.png "causal场景atten_mask形状")
 
 ## 获取性能数据<a name="section4647105095111"></a>
 
@@ -83,22 +83,22 @@
 -   观察如下流水图，绿色为Vector侧的流水，橙色为Cube侧的流水，可以看出两侧的流水都存在大段的空隙，CV之间流水很大程度上未并行，需要考虑CV流水优化。
 
     **图3**  优化前算子流水<a name="fig101953515215"></a>  
-    ![](../../figures/优化前算子流水.png "优化前算子流水")
+    ![](../../figures/op_pipe_before.png "优化前算子流水")
 
 -   对于上述场景一，causal场景下可能存在核间分布不均匀的情况，如下图经过atten\_mask掩码后，红色部分是算子需要计算的部分，绿色无需计算；如果不按照基本块的个数来分核，按照第一根轴的大小8（行）来分核，假设平均分到9个核上，每个核做ceil\(8 / 9\) = 1行，则第1个核只需做1个基本块，但是第8个核需要做8个基本块的计算，出现明显的负载不均衡。因此需要考虑将红色块均匀分到多个核上计算。
 
     **图4**  causal场景atten\_mask形状<a name="fig13819650657"></a>  
-    ![](../../figures/causal场景atten_mask形状-82.png "causal场景atten_mask形状-82")
+    ![](../../figures/causal_mask_82.png "causal场景atten_mask形状-82")
 
 -   场景一的Profiling数据如下，aic\_fixpipe\_ratio占比极高，可能存在FixPipe bound。
 
     **图5**  场景一Profiling数据<a name="fig8767623113216"></a>  
-    ![](../../figures/场景一Profiling数据.png "场景一Profiling数据")
+    ![](../../figures/scene1_prof.png "场景一Profiling数据")
 
 -   场景二的Profiling数据如下，mte2\_ratio占比高，可能存在MTE2 bound。
 
     **图6**  场景二Profiling数据<a name="fig588917411851"></a>  
-    ![](../../figures/场景二Profiling数据.png "场景二Profiling数据")
+    ![](../../figures/scene2_prof.png "场景二Profiling数据")
 
 ## 设计优化方案<a name="section7611135813517"></a>
 
@@ -107,12 +107,12 @@
     在满足UB空间大小限制的前提下，tiling基本块的切分应尽可能大。如下图为优化前按照\(64, 128\)切分计算，总共需要循环计算32次。
 
     **图7**  优化前计算基本块及次数<a name="fig96297211869"></a>  
-    ![](../../figures/优化前计算基本块及次数.png "优化前计算基本块及次数")
+    ![](../../figures/bb_before.png "优化前计算基本块及次数")
 
     考虑到UB空间没有用满，基本块调整到\(128, 128\)，如下图优化后只需循环计算16次，切分后算子性能提升一倍。
 
     **图8**  优化后计算基本块及次数<a name="fig1872271218713"></a>  
-    ![](../../figures/优化后计算基本块及次数.png "优化后计算基本块及次数")
+    ![](../../figures/bb_after.png "优化后计算基本块及次数")
 
 -   优化点二：CV流水并行
 
@@ -126,12 +126,12 @@
     ```
 
     **图9**  完成mm1/mm2/mm3缓存的流水<a name="fig183930515717"></a>  
-    ![](../../figures/完成mm1-mm2-mm3缓存的流水.png "完成mm1-mm2-mm3缓存的流水")
+    ![](../../figures/mm_cache_pipe.png "完成mm1-mm2-mm3缓存的流水")
 
     如上图是实现mm1、mm2和mm3缓存的流水图，并行度提高，CV的间隔减小，提升了算子性能。
 
     **图10**  Vector等Cube流水的间隔插入Vector计算<a name="fig11911442083"></a>  
-    ![](../../figures/Vector等Cube流水的间隔插入Vector计算.png "Vector等Cube流水的间隔插入Vector计算")
+    ![](../../figures/vec_cube_pipe.png "Vector等Cube流水的间隔插入Vector计算")
 
     基于缓存mm1/mm2/mm3的优化后，在本轮Vector计算等Cube流水的间隔，插入下一轮循环的Vector计算，如上图所示，这样使Vector流水与Cube流水之间的并行度更高，反映到流水图中为Vector计算更密集。原计算过程伪代码与在CV间隔中插入下一轮Vector计算的伪代码，分别如以下两段所示。
 
@@ -162,10 +162,10 @@
 -   优化点三：每个核负载均衡
 
     **图11**  causal场景优化前每个核计算量<a name="fig093211251714"></a>  
-    ![](../../figures/causal场景优化前每个核计算量.png "causal场景优化前每个核计算量")
+    ![](../../figures/causal_before.png "causal场景优化前每个核计算量")
 
     **图12**  causal场景优化后每个核计算量<a name="fig7236118193316"></a>  
-    ![](../../figures/causal场景优化后每个核计算量.png "causal场景优化后每个核计算量")
+    ![](../../figures/causal_after.png "causal场景优化后每个核计算量")
 
     尽量实现每个核的计算量均匀，负载均衡。优化前的分核及每个核的计算量如[图11 causal场景优化前每个核计算量](#fig093211251714)所示，按照第一根轴的大小8（行）来分核，平均分到9个核上，每个核计算ceil\(8/9\)=1行，第1个核只计算1个基本块，但是第8个核计算8个基本块。优化后如[图12 causal场景优化后每个核计算量](#fig7236118193316)所示，红色块总共36个基本块，均分到每个核上，每个核的计算量为4个基本块，性能提升一倍。
 
@@ -174,7 +174,7 @@
     从采集的Profiling数据来看，Cube FixPipe占比高达81%，出现了很严重的bound（达到上限）。CAModel工具打印发现存在很多异常的128B搬运，排查代码，发现workspace地址未512B对齐。
 
     **图13**  场景一优化前Profiling数据<a name="fig93221731191012"></a>  
-    ![](../../figures/场景一优化前Profiling数据.png "场景一优化前Profiling数据")
+    ![](../../figures/scene1_bef.png "场景一优化前Profiling数据")
 
     代码实现中使用SetGlobalBuffer接口设置workspace的起始地址，如果起始地址不是按照512B对齐，搬运效率会很低，可以强制[GM地址512Byte对齐](../SIMD算子性能优化/内存访问/GM地址尽量512B对齐.md)来避免这个情况。下面代码中ADDR\_ALIGN\_SIZE即为512。
 
@@ -199,17 +199,17 @@
     修改代码，workspace地址经过512B对齐后，FixPipe时间减半。
 
     **图14**  场景一优化后Profiling数据<a name="fig17483105414106"></a>  
-    ![](../../figures/场景一优化后Profiling数据.png "场景一优化后Profiling数据")
+    ![](../../figures/scene1_aft.png "场景一优化后Profiling数据")
 
 -   优化点五：MTE2优化
 
     结合如下的Profiling数据和流水图，可以看出MTE2 bound，且部分MTE2搬运时间异常。
 
     **图15**  场景二Profiling数据<a name="fig932111118913"></a>  
-    ![](../../figures/场景二Profiling数据-83.png "场景二Profiling数据-83")
+    ![](../../figures/scene2_83.png "场景二Profiling数据-83")
 
     **图16**  场景二流水图<a name="fig2341533298"></a>  
-    ![](../../figures/场景二流水图.png "场景二流水图")
+    ![](../../figures/scene2_pipe.png "场景二流水图")
 
     将输入数据排布格式从BSH更改为BNSD后，数据搬运连续，不需要跳地址读取数据，搬运效率提升一倍，部分异常搬运时长降低了一半。
 

@@ -11,17 +11,17 @@
 矢量计算通过Vector计算单元完成，矢量计算的源操作数和目的操作数均通过Unified Buffer（UB）来进行存储。Vector计算单元每个迭代会从UB中取出**8**个**datablock**（每个datablock数据块内部地址连续，长度32Byte），进行计算，并写入对应的8个datablock中。下图为单次迭代内的8个datablock进行Exp计算的示意图。
 
 **图1**  单次迭代内的8个datablock进行Exp计算示意图<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_fig143499419171"></a>  
-![](../../../../figures/单次迭代内的8个datablock进行Exp计算示意图.png "单次迭代内的8个datablock进行Exp计算示意图")
+![](../../../../figures/iter_8db_exp.png "单次迭代内的8个datablock进行Exp计算示意图")
 
 -   矢量计算API支持开发者通过**repeatTime**来配置迭代次数，从而控制指令的多次迭代执行。假设repeatTime设置为2，矢量计算单元会进行2个迭代的计算，可计算出2 \* 8（每个迭代8个datablock） \* 32Byte（每个datablock32Byte） = 512Byte的结果。如果数据类型为half，则计算了256个元素。下图展示了2次迭代Exp计算的示意图。由于硬件限制，**repeatTime不能超过255。**
 
     **图2**  2次迭代Exp计算<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_fig148871676180"></a>  
-    ![](../../../../figures/2次迭代Exp计算.png "2次迭代Exp计算")
+    ![](../../../../figures/iter2_exp.png "2次迭代Exp计算")
 
 -   针对同一个迭代中的数据，可以通过**mask**参数进行掩码操作来控制实际参与计算的个数。下图为进行Abs计算时通过mask逐比特模式按位控制哪些元素参与计算的示意图，1表示参与计算，0表示不参与计算。
 
     **图3**  通过**mask**参数进行掩码操作示意图（以float数据类型为例）<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_fig7630131541814"></a>  
-    ![](../../../../figures/通过mask参数进行掩码操作示意图（以float数据类型为例）.png "通过mask参数进行掩码操作示意图（以float数据类型为例）")
+    ![](../../../../figures/mask_float.png "通过mask参数进行掩码操作示意图（以float数据类型为例）")
 
 -   矢量计算单元还支持带间隔的向量计算，通过**dataBlockStride**（单次迭代内不同datablock间地址步长）和**repeatStride**（相邻迭代间相同datablock的地址步长）来进行配置。
     -   **dataBlockStride**
@@ -29,7 +29,7 @@
         如果需要控制单次迭代内，数据处理的步长，可以通过设置同一迭代内不同datablock的地址步长dataBlockStride来实现。下图给出了单次迭代内非连续场景的示意图，示例中源操作数的dataBlockStride配置为2，表示单次迭代内不同datablock间地址步长（起始地址之间的间隔）为2个datablock。
 
         **图4**  单次迭代内非连续场景的示意图<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_fig744519103222"></a>  
-        ![](../../../../figures/单次迭代内非连续场景的示意图.png "单次迭代内非连续场景的示意图")
+        ![](../../../../figures/iter_discont.png "单次迭代内非连续场景的示意图")
 
     -   **repeatStride**
 
@@ -38,7 +38,7 @@
         下图给出了多次迭代间非连续场景的示意图，示例中源操作数和目的操作数的**repeatStride**均配置为9，表示相邻迭代间相同datablock起始地址之间的间隔为9个datablock。相同datablock是指datablock在迭代内的位置相同，比如下图中的src1和src9处于相邻迭代，在迭代内都是第一个datablock的位置，其间隔即为**repeatStride**的数值。
 
         **图5**  多次迭代间非连续场景的示意图<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_fig7376324392"></a>  
-        ![](../../../../figures/多次迭代间非连续场景的示意图.png "多次迭代间非连续场景的示意图")
+        ![](../../../../figures/multi_iter_disc.png "多次迭代间非连续场景的示意图")
 
 下文中给出了dataBlockStride、repeatStride、mask的详细配置说明和示例。
 
@@ -50,7 +50,7 @@ dataBlockStride是指同一迭代内不同datablock的地址步长。
 -   非连续计算，dataBlockStride值大于1（如取2），同一迭代内不同datablock之间在读取数据时出现一个datablock的间隔，如下图所示。
 
     **图6**  dataBlockStride不同取值举例<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_fig6550124115203"></a>  
-    ![](../../../../figures/dataBlockStride不同取值举例.png "dataBlockStride不同取值举例")
+    ![](../../../../figures/db_stride_ex.png "dataBlockStride不同取值举例")
 
 ## repeatStride<a name="zh-cn_topic_0000002267504656_zh-cn_topic_0000001764162593_section139459347420"></a>
 
