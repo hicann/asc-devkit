@@ -1469,6 +1469,14 @@ asc_exp_sub_v2(vector_float& dst, vector_half src0, vector_half src1, vector_boo
              "Please use asc_exp_sub instead.")]] __simd_callee__ inline void
 asc_exp_sub_v2(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask);
 
+//=================asc_fma==================
+__simd_callee__ inline void asc_fma(
+    vector_bfloat16_t& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask);
+
+__simd_callee__ inline void asc_fma(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask);
+
+__simd_callee__ inline void asc_fma(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask);
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)

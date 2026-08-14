@@ -1056,6 +1056,7 @@
             -   [复合计算](SIMD-API/c_api/reg/compound_compute/compound_compute.md)
                 -   [asc_abs_sub](SIMD-API/c_api/reg/compound_compute/asc_abs_sub.md)
                 -   [asc_axpy](SIMD-API/c_api/reg/compound_compute/asc_axpy.md)
+                -   [asc_fma](SIMD-API/c_api/reg/compound_compute/asc_fma.md)
                 -   [asc_madd](SIMD-API/c_api/reg/compound_compute/asc_madd.md)
                 -   [asc_exp_sub（废弃）](SIMD-API/c_api/reg/compound_compute/asc_exp_sub_deprecated.md)
             -   [逻辑计算](SIMD-API/c_api/reg/logic_compute/logic_compute.md)

@@ -461,6 +461,7 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 | [asc_abs_sub](reg/compound_compute/asc_abs_sub.md) | 逐元素计算差的绝对值。 |
 | [asc_axpy](reg/compound_compute/asc_axpy.md) | 根据mask对源操作数src、value进行按元素做乘加操作，将结果写入目的操作数dst。 |
 | [asc_madd](reg/compound_compute/asc_madd.md) | madd（multiply-add），对源操作数执行逐元素乘法和加法。 |
+| [asc_fma](reg/compound_compute/asc_fma.md) | 逐元素乘加运算。 |
 | [asc_and](reg/logic_compute/asc_and.md) | 对掩码寄存器操作：根据mask对源操作数src0、src1的有效bit进行逻辑与运算，得到新的掩码寄存器。 |
 | [asc_not](reg/logic_compute/asc_not.md) | 执行矢量非运算。 |
 | [asc_or](reg/logic_compute/asc_or.md) | 对源操作数src0和src1进行或（\|）运算，将结果写入目的操作数dst。 |
