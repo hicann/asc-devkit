@@ -69,7 +69,7 @@ union Roce3TaskSeg {
         uint32_t opType : 5;
         uint32_t signal : 1;
         uint32_t fence : 1;
-        uint32_t se : 1; /* solited event flag; */
+        uint32_t se : 1; /* solicited event flag; */
     } dw0;
     uint32_t value;
 };
@@ -86,7 +86,7 @@ typedef struct {
             uint32_t pi : 16;
         } bs;
 
-        uint32_t feth; /* cflush feth header */
+        uint32_t feth; /* cflush fetch header */
         uint32_t value;
     } dw3;
     uint64_t va;   /* to indicate remote buf address; */

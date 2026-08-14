@@ -35,13 +35,13 @@ public:
 
     void RegFullyCallBack(std::function<void()> callBack);
     void RegGetRemoteRankCallBack(std::function<u32(u64)> callBack);
-    HcclResult AddTaskInfo(u32 streamId, u32 taskId, const Hccl::TaskParam &taskParam, u64 handle);
-    void AddTaskInfo(std::unique_ptr<TaskInfo> &&taskInfo);
+    HcclResult AddTaskInfo(u32 streamId, u32 taskId, const Hccl::TaskParam& taskParam, u64 handle);
+    void AddTaskInfo(std::unique_ptr<TaskInfo>&& taskInfo);
     HcclResult SetCurrDfxOpInfo(std::shared_ptr<DfxOpInfo> dfxOpInfo);
 
     std::shared_ptr<DfxOpInfo> GetCurrDfxOpInfo() const;
     TaskInfo* GetTaskInfo(u32 streamId, u32 taskId) const;
-    TaskInfoQueue             *GetQueue(u32 streamId) const;
+    TaskInfoQueue* GetQueue(u32 streamId) const;
 
 public:
     std::unordered_map<u32, StreamQueueEntry>::iterator Begin();
@@ -51,8 +51,8 @@ public:
 
 private:
     std::unordered_map<u32, StreamQueueEntry> streamQueues_;
-    std::shared_ptr<DfxOpInfo>     currDfxOpInfo_;
-    std::function<void()>          fullyCallBack_;
+    std::shared_ptr<DfxOpInfo> currDfxOpInfo_;
+    std::function<void()> fullyCallBack_;
     std::function<u32(u64)> getRemoteRankCallback_;
 };
 
