@@ -233,8 +233,8 @@ SIMD与SIMT混合编程场景下，UB数据由MTE搬入。MTE搬运带padding的
 <img src="./figures/case3_bank.png">
 
 ```cpp
-constexpr int TILE_PAD = 8; // MTE搬运要求32B对齐，使用32×40的UB布局
-constexpr int TILE_PAD_STRIDE = TILE_DIM + TILE_PAD;
+constexpr uint32_t TILE_PAD = 8; // MTE搬运要求32B对齐，使用32×40的UB布局
+constexpr uint32_t TILE_PAD_STRIDE = TILE_DIM + TILE_PAD;
 __ubuf__ float in_tile[TILES_PER_BLOCK][TILE_DIM][TILE_PAD_STRIDE];
 __ubuf__ float out_tile[TILES_PER_BLOCK][TILE_DIM][TILE_DIM];
 uint32_t loop_start = block_idx * TILES_PER_BLOCK;
@@ -405,7 +405,6 @@ Case 0距离理论下限较远，主要原因是转置写回导致同一Warp内�
 
   执行结果如下，说明精度对比成功。
 
-
   ```text
   [Success] Case accuracy verification passed.
   ```
@@ -422,7 +421,7 @@ msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulat
 
   基于可执行文件matrix_transpose通过msopprof执行算子调优：
 
-  ```
+  ```bash
   msopprof ./matrix_transpose
   ```
 

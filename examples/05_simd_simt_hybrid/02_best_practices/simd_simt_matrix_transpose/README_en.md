@@ -60,7 +60,7 @@ This sample constructs an optimization path through five cases. The kernel, Thre
 
 Here, `core` is the hardware vector core count. The runtime queries this value by using `aclrtGetDeviceInfo(ACL_DEV_ATTR_VECTOR_CORE_NUM)`. The performance data in this sample was collected in a test environment where `core=64`. `tiles` is the total tile count `(W/32) x (H/32)`. When processing a 1024x1024 matrix, the matrix is divided into 32x32 tiles, so `tiles=1024`.
 
-### Performance Metrics
+#### Performance Metrics
 
 | Metric | Description |
 | ------ | ----------- |
@@ -215,9 +215,9 @@ When the SIMT VF accesses UB, bank conflicts are finer-grained subbank conflicts
 
 For detailed address low-bit interleaving rules and conflict scenarios, see the [bank_conflict sample](../../../03_simt_api/02_features/01_api_features/00_memory_access/bank_conflict/README_en.md).
 
-In Case 2, the UB `in_tile` array is stored in row-major order. According to the low-bit interleaving rule, the first row of `in_tile` covers bank0 through bank3, the second row covers bank4 through bank7, the third row covers bank8 through bank11, and the remaining rows follow the same pattern. Each row has 32 float elements and exactly spans 4 banks. As shown in Figure 3, the figure shows how the first 12 rows of the tile array are placed in UB. The first element of each row is marked in blue. During SIMT VF transpose, threads in one Warp read one column of `in_tile`. During the UB access, 32 threads are concentrated on subbank0 in two bank groups, which is a read-read conflict. `out_tile` is written continuously along the output tile row direction, so memory access merging can reduce write overhead. Therefore, `out_tile` does not need padding.
+In Case 2, the UB `in_tile` array is stored in row-major order. According to the low-bit interleaving rule, the first row of `in_tile` covers bank0 through bank3, the second row covers bank4 through bank7, the third row covers bank8 through bank11, and the remaining rows follow the same pattern. Each row has 32 float elements and exactly spans 4 banks. As shown in Figure 2, the figure shows how the first 12 rows of the tile array are placed in UB. The first element of each row is marked in blue. During SIMT VF transpose, threads in one Warp read one column of `in_tile`. During the UB access, 32 threads are concentrated on subbank0 in two bank groups, which is a read-read conflict. `out_tile` is written continuously along the output tile row direction, so memory access merging can reduce write overhead. Therefore, `out_tile` does not need padding.
 
-**Figure 3: Case 2 tile layout in UB**
+**Figure 2: Case 2 tile layout in UB**
 
 <img src="./figures/case2_bank.png">
 
@@ -225,17 +225,17 @@ In SIMT scenarios, a common way to handle bank conflicts during transpose access
 
 In SIMD and SIMT hybrid programming, MTE moves data into UB. When MTE moves a padded two-dimensional array, the address stride between adjacent rows in UB also needs to meet the alignment requirement. The row stride of a 32x34 layout is `34 * sizeof(float) = 136B`, which does not meet the 32B alignment requirement. Therefore, this sample sets the padding column count to 8 and uses a 32x40 layout. The row stride is `40 * sizeof(float) = 160B`, which staggers UB bank accesses and meets the row stride alignment requirement for MTE movement.
 
-As shown in Figure 4, Case 3 adds 8 columns of padding to the UB tile array, changing each row from 32 elements to 40 elements. The row stride of 40 float elements is 160B, which corresponds to 20 subbanks. When the same column is accessed in the transpose direction, elements in adjacent rows are staggered by a stride of 20 subbanks in the physical UB address space. The accesses of 32 threads are no longer concentrated on subbanks with the same subbank ID in the same bank group, which reduces subbank conflicts during the SIMT VF transpose access phase.
+As shown in Figure 3, Case 3 adds 8 columns of padding to the UB tile array, changing each row from 32 elements to 40 elements. The row stride of 40 float elements is 160B, which corresponds to 20 subbanks. When the same column is accessed in the transpose direction, elements in adjacent rows are staggered by a stride of 20 subbanks in the physical UB address space. The accesses of 32 threads are no longer concentrated on subbanks with the same subbank ID in the same bank group, which reduces subbank conflicts during the SIMT VF transpose access phase.
 
 Note that the 32x40 layout is a tradeoff for SIMD and SIMT hybrid programming after considering the alignment requirements of MTE movement. Unlike the 32x34 layout formed by adding 2 columns of padding in a SIMT scenario, the 32x40 layout may still have a small number of subbank conflicts. However, its conflict intensity is much lower than that of the 32x32 layout without padding.
 
-**Figure 4: Case 3 tile layout in UB**
+**Figure 3: Case 3 tile layout in UB**
 
 <img src="./figures/case3_bank.png">
 
 ```cpp
-constexpr int TILE_PAD = 8; // The hybrid MTE movement requires 32B alignment, so a 32x40 UB layout is used.
-constexpr int TILE_PAD_STRIDE = TILE_DIM + TILE_PAD;
+constexpr uint32_t TILE_PAD = 8; // The hybrid MTE movement requires 32B alignment, so a 32x40 UB layout is used.
+constexpr uint32_t TILE_PAD_STRIDE = TILE_DIM + TILE_PAD;
 __ubuf__ float in_tile[TILES_PER_BLOCK][TILE_DIM][TILE_PAD_STRIDE];
 __ubuf__ float out_tile[TILES_PER_BLOCK][TILE_DIM][TILE_DIM];
 uint32_t loop_start = block_idx * TILES_PER_BLOCK;
@@ -297,7 +297,8 @@ for (uint32_t tile_base = curr_tile_base; tile_base < total_tiles; tile_base += 
     copy_gm_2tile_to_padded_ub(&in_tile[curr_buffer][0][0][0], input, width, tiles_x, tile_base, total_tiles);
     asc_unlock(PIPE_MTE2, input_mutex);
 
-    // The SIMT VF waits for the current input buffer. It also waits before reusing an output buffer.
+    // The SIMT VF waits for the current input buffer load to complete. Before reusing an output buffer,
+    // it waits for the previous MTE3 store on that buffer to complete.
     asc_lock(PIPE_V, input_mutex);
     asc_lock(PIPE_V, output_mutex);
     asc_vf_call<simt_transpose_2tile_pad>(
@@ -323,19 +324,17 @@ for (uint32_t tile_base = curr_tile_base; tile_base < total_tiles; tile_base += 
 
 Case 4 uses double buffering to provide physical isolation. This avoids MTE2 writes overwriting the input buffer that the SIMT VF is reading. It also avoids SIMT VF writes overwriting the output buffer that MTE3 is storing. Multiple mutex IDs manage the lifecycles of the two input/output buffer groups separately. The single-buffer serial barrier sequence of MTE2 load, SIMT VF transpose, and MTE3 store is changed into pipeline overlap between adjacent iterations. Compared with Case 3, Task Duration decreases from 11.596μs to 6.831μs, a latency reduction of about 41.1%. Compared with direct GM transpose in Case 0, Task Duration decreases from 36.263μs to 6.831μs, improving overall performance by about 5.31x.
 
-Figure 5 and Figure 6 show the simulated instruction timelines of Case 3 and Case 4. Figure 5 shows that Case 3 uses a single buffer to process each tile group serially. After the MTE2 load is complete, the SIMT VF must wait until the input buffer is readable. After the SIMT VF finishes, MTE3 can store the output buffer. Only after MTE3 completes can the same UB buffer be reused by the next MTE2 load. Therefore, the MTE2, SIMT VF, and MTE3 pipelines have clear serial waits. The gaps between SIMT VF executions mainly come from data movement and synchronization.
+Figure 4 and Figure 5 show the simulated instruction timelines of Case 3 and Case 4. Figure 4 shows that Case 3 uses a single buffer to process each tile group serially. After the MTE2 load is complete, the SIMT VF must wait until the input buffer is readable. After the SIMT VF finishes, MTE3 can store the output buffer. Only after MTE3 completes can the same UB buffer be reused by the next MTE2 load. Therefore, the MTE2, SIMT VF, and MTE3 pipelines have clear serial waits. The gaps between SIMT VF executions mainly come from data movement and synchronization.
 
-Figure 6 shows that Case 4 uses double buffering to overlap adjacent iterations. While the current buffer is processed by the SIMT VF and MTE3, the other buffer can start the next MTE2 load in advance. MTE2, SIMT VF, and MTE3 overlap across adjacent iterations. Therefore, Case 4 hides part of the MTE movement and synchronization overhead, further reducing Task Duration. The remaining waits mainly protect buffer reuse and cross-pipeline data dependencies.
+Figure 5 shows that Case 4 uses double buffering to overlap adjacent iterations. While the current buffer is processed by the SIMT VF and MTE3, the other buffer can start the next MTE2 load in advance. MTE2, SIMT VF, and MTE3 overlap across adjacent iterations. Therefore, Case 4 hides part of the MTE movement and synchronization overhead, further reducing Task Duration. The remaining waits mainly protect buffer reuse and cross-pipeline data dependencies.
 
-**Figure 5: Simulated instruction timeline of Case 3**
+**Figure 4: Simulated instruction timeline of Case 3**
 
 <img src="./figures/case3_trace.png">
 
-**Figure 6: Simulated instruction timeline of Case 4**
+**Figure 5: Simulated instruction timeline of Case 4**
 
 <img src="./figures/case4_trace.png">
-
----
 
 ## Performance Comparison Summary
 
@@ -421,33 +420,61 @@ In the sample root directory, perform the following steps to build and run the s
 
 - On-device performance collection
 
-    On-device performance collection directly measures the execution time of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
+  On-device performance collection directly measures the execution time of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
 
-    Run operator tuning on the executable demo with `msopprof`:
+  Run operator tuning on the `matrix_transpose` executable with `msopprof`:
 
+  ```bash
+  msopprof ./matrix_transpose
+  ```
+
+  - Performance data description
+    After the command completes, a folder named "OPPROF_{timestamp}_XXX" is generated in the default directory. The performance data folder structure is as follows:
+
+    ```bash
+    ├──dump                       # Raw performance data; users do not need to inspect it
+    ├──ArithmeticUtilization.csv  # Cube/Vector instruction cycle proportions
+    ├──L2Cache.csv                # L2 Cache hit rate; affects MTE2. Plan data transfer logic properly to increase the hit rate
+    ├──Memory.csv                 # Read/write bandwidth rates of UB, L1, and main memory
+    ├──MemoryL0.csv               # Read/write bandwidth rates of L0A, L0B, and L0C
+    ├──MemoryUB.csv               # Read/write bandwidth rates from Vector and Scalar to UB
+    ├──OpBasicInfo.csv            # Basic operator information
+    ├──PipeUtilization.csv        # Durations and proportions of computation and data transfer units
+    ├──ResourceConflictRatio.csv  # Proportions of UB bank groups, bank conflicts, and resource conflicts among all instructions
+    └──visualize_data.bin         # MindStudio Insight presentation file
     ```
-    msopprof ./demo
-    ```
 
-    - Performance data description
-      After the command completes, a folder named "OPPROF_{timestamp}_XXX" will be generated in the default directory. The performance data folder structure is as follows:
+  View the specific performance analysis results:
 
-      ```bash
-      ├──dump                       # Raw performance data; users do not need to inspect it
-      ├──ArithmeticUtilization.csv  # Cube/Vector instruction cycle proportions
-      ├──L2Cache.csv                # L2 Cache hit rate; affects MTE2. Plan data transfer logic properly to increase the hit rate
-      ├──Memory.csv                 # Read/write bandwidth rates of UB, L1, and main memory
-      ├──MemoryL0.csv               # Read/write bandwidth rates of L0A, L0B, and L0C
-      ├──MemoryUB.csv               # Read/write bandwidth rates from Vector and Scalar to UB
-      ├──OpBasicInfo.csv            # Basic operator information
-      ├──PipeUtilization.csv        # Durations and proportions of computation and data transfer units
-      ├──ResourceConflictRatio.csv  # Proportions of UB bank groups, bank conflicts, and resource conflicts among all instructions
-      └──visualize_data.bin         # MindStudio Insight presentation file
-      ```
+  ```bash
+  # View Task Duration and various metrics
+  cat ./OPPROF_*/PipeUtilization.csv
+  ```
 
-View the specific performance analysis results:
+- Simulation performance collection
 
-```bash
-# View Task Duration and various metrics
-cat ./OPPROF_*/PipeUtilization.csv
-```
+  Use `msopprof simulator` to perform simulation performance analysis and generate visualized instruction pipeline diagrams. Run the following commands:
+
+  ```bash
+  SCENARIO_NUM=4                                                                     # Select an execution scenario. Valid values are 0-4.
+  mkdir -p build && cd build;                                                        # Create and enter the build directory.
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=$SCENARIO_NUM ..;make -j;  # Build the project.
+  msopprof simulator --soc-version=<soc_version> ./matrix_transpose
+  ```
+
+  > Before using simulation tuning, add the `-g` compilation option to `CMakeLists.txt` to generate debug information. This allows the simulator to collect instruction pipeline diagrams. For how to obtain `soc_version` and for more simulation tuning information, see the [simulator sample](../../../01_simd_cpp_api/01_utilities/08_simulator/README_en.md).
+  >
+
+  After the command completes, a folder named `OPPROF_{timestamp}_XXX` is generated in the current directory. The artifact structure is as follows:
+
+  ```text
+  OPPROF_{timestamp}_XXX/
+  ├── dump                    // Raw performance data; users do not need to inspect it
+  └── simulator
+      ├── core*.veccore*/     // Simulation instruction pipeline diagram files for each vector core
+      └── visualize_data.bin  // MindStudio Insight presentation file
+  ```
+
+  After the command completes, open `visualize_data.bin` in **MindStudio Insight** to view the visualized instruction pipeline diagrams.
+
+For more information about how to use `msOpProf`, see [MindStudio Tool Tuning (msOpProf) Quick Start](https://www.hiascend.com/document/detail/zh/canncommercial/900/devaids/optool/docs/zh/quick_start/msopprof_quick_start.md).
