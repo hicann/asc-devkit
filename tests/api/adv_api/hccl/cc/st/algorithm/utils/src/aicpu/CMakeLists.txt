@@ -191,9 +191,7 @@ target_sources(${HCCL_CHECKER_KERNEL_TARGET} PRIVATE
     ${HCCL_DEV_BASE}/src/ops/op_common/selector/auto_selector_base.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/selector/selector_registry.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/selector/execute_selector.cc
-    ${HCCL_DEV_BASE}/src/ops/all_gather/all_gather_op.cc
     ${HCCL_DEV_BASE}/src/ops/all_gather/selector/all_gather_auto_selector.cc
-    ${HCCL_DEV_BASE}/src/ops/reduce_scatter/reduce_scatter_op.cc
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/selector/reduce_scatter_auto_selector.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/selector/alltoall_auto_selector.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/selector/alltoallv_auto_selector.cc
