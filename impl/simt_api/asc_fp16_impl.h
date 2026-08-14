@@ -89,14 +89,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hcos(half x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2cos(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = cosf(tmp1);
-    tmp2 = cosf(tmp2);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = cosf(x_fp32.x);
+    res_fp32.y = cosf(x_fp32.y);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hsin(half x)
@@ -108,14 +106,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hsin(half x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2sin(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = sinf(tmp1);
-    tmp2 = sinf(tmp2);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = sinf(x_fp32.x);
+    res_fp32.y = sinf(x_fp32.y);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half htanh(half x)
@@ -127,14 +123,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half htanh(half x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2tanh(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = tanhf(tmp1);
-    tmp2 = tanhf(tmp2);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = tanhf(x_fp32.x);
+    res_fp32.y = tanhf(x_fp32.y);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hexp(half x) { return __expf(x); }
@@ -148,14 +142,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hexp2(half x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2exp2(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = powf(2.0f, tmp1);
-    tmp2 = powf(2.0f, tmp2);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = powf(2.0f, x_fp32.x);
+    res_fp32.y = powf(2.0f, x_fp32.y);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hexp10(half x)
@@ -167,14 +159,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hexp10(half x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2exp10(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = powf(10.0f, tmp1);
-    tmp2 = powf(10.0f, tmp2);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = powf(10.0f, x_fp32.x);
+    res_fp32.y = powf(10.0f, x_fp32.y);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hlog(half x) { return __logf(x); }
@@ -188,33 +178,29 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hlog2(half x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2log2(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = logf(tmp1) / logf(2.0f);
-    tmp2 = logf(tmp2) / logf(2.0f);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = logf(x_fp32.x) / logf(2.0f);
+    res_fp32.y = logf(x_fp32.y) / logf(2.0f);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hlog10(half x)
 {
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
-    tmp = logf(x) / logf(10.0f);
+    tmp = logf(tmp) / logf(10.0f);
     return __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2log10(half2 x)
 {
-    float tmp1 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.x);
-    float tmp2 = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x.y);
-    tmp1 = logf(tmp1) / logf(10.0f);
-    tmp2 = logf(tmp2) / logf(10.0f);
-    half htmp1 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp1);
-    half htmp2 = __cvt_half<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp2);
-    x = {htmp1, htmp2};
-    return x;
+    float2 x_fp32 =
+        __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+    float2 res_fp32;
+    res_fp32.x = logf(x_fp32.x) / logf(10.0f);
+    res_fp32.y = logf(x_fp32.y) / logf(10.0f);
+    return __cvt_half2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(res_fp32);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half hsqrt(half x) { return __sqrtf(x); }
@@ -414,47 +400,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __float22half2_ro_sat(const float2 x
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __half2float(const half x)
 {
-    union Data {
-        half h;
-        unsigned int i;
-    };
-    union Data d = {.h = x};
-
-    unsigned int sign = ((d.i >> 15U) & 1U);
-    unsigned int exponent = ((d.i >> 10U) & 0x1fU);
-    if (exponent == 0) {
-        return x;
-    }
-    unsigned int mantissa = ((d.i & 0x3ffU) << 13U);
-
-    if (exponent == 0x1fU) {
-        sign = ((mantissa != 0U) ? 0U : sign);
-        mantissa = ((mantissa != 0U) ? 0x7fffffU : 0U);
-        exponent = 0xffU;
-    } else if (exponent == 0U) {
-        if (mantissa != 0U) {
-            unsigned int msb;
-            exponent = 0x71U;
-            do {
-                msb = (mantissa & 0x400000U);
-                mantissa <<= 1U;
-                --exponent;
-            } while (msb != 0U);
-            mantissa &= 0x7fffffU;
-        }
-    } else {
-        exponent += 0x70U;
-    }
-
-    unsigned int u = ((sign << 31) | (exponent << 23U) | mantissa);
-    union Data1 {
-        float f;
-        unsigned int i;
-    };
-    union Data1 d1 {
-        .i = u
-    };
-    return d1.f;
+    return __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __half2uint_rn(const half x)
