@@ -28,6 +28,8 @@
 
 获取当前任务配置的核数，用于代码内部的多核逻辑控制等。
 
+**此接口后续版本会废弃，请使用内置变量[block_num](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#内置变量)。**
+
 ## 函数原型
 
 ```cpp
@@ -44,7 +46,7 @@ __aicore__ inline int64_t asc_get_block_num()
 
 ## 流水类型
 
-PIPE_S
+`PIPE_S`
 
 ## 约束说明
 
