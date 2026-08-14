@@ -98,7 +98,7 @@ def _gen_compile_cmd_c310(
         "-cce-aicore-dcci-insert-for-scalar=false",
     ]
     if global_var_storage.get_variable("ascendc_enable_sanitizer"):
-        compile_cmd += ["-gline-tables-only"]
+        compile_cmd += ["--cce-enable-sanitizer", "-gline-tables-only"]
         compile_cmd += [
             "-mllvm",
             "-cce-aicore-long-call",
