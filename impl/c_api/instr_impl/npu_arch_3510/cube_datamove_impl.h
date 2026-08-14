@@ -2591,6 +2591,33 @@ __aicore__ inline void asc_copy_l0c2l1_sync(
         eltwise_op, eltwise_antq_en, c0_pad_en, broadcast_en, enable_nz2dn);
 }
 
+// half float
+__aicore__ inline void asc_copy_l0c2l1(
+    __cbuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
+    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
+    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
+    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
+{
+    asc_copy_l0c2l1_impl(
+        dst, src, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
+        quant_pre_mode, relu_pre_mode, enable_channel_split, enable_nz2nd, quant_post, relu_post, clip_relu_post,
+        eltwise_op, eltwise_antq_en, c0_pad_en, broadcast_en, enable_nz2dn);
+}
+
+// bfloat16_t float
+__aicore__ inline void asc_copy_l0c2l1(
+    __cbuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
+    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
+    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
+    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
+    bool enable_nz2dn)
+{
+    asc_copy_l0c2l1_impl(
+        dst, src, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
+        quant_pre_mode, relu_pre_mode, enable_channel_split, enable_nz2nd, quant_post, relu_post, clip_relu_post,
+        eltwise_op, eltwise_antq_en, c0_pad_en, broadcast_en, enable_nz2dn);
+}
+
 // ==========asc_copy_l0c2gm===========
 // bfloat16_t  float
 __aicore__ inline void asc_copy_l0c2gm(

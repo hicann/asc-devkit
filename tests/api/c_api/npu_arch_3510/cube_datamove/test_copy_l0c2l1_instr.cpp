@@ -142,6 +142,44 @@
         GlobalMockObject::verify();                                                                                   \
     }
 
+class TestCubeDatamoveL0C2L1Full : public testing::Test {
+protected:
+    void SetUp() { g_coreType = C_API_AIC_TYPE; }
+    void TearDown() { g_coreType = C_API_AIV_TYPE; }
+};
+
+template <typename DstType>
+void TestAscCopyL0C2L1FullParams()
+{
+    __cbuf__ DstType* dst = reinterpret_cast<__cbuf__ DstType*>(1);
+    __cc__ float* src = reinterpret_cast<__cc__ float*>(2);
+    uint16_t n_size = 3;
+    uint16_t m_size = 4;
+    uint32_t dst_stride = 6;
+    uint16_t src_stride = 7;
+    uint8_t l2_cache_mode = 0;
+    uint8_t enable_clip_relu_pre = 8;
+    uint8_t unit_flag_mode = 10;
+    uint64_t quant_pre_mode = 11;
+    uint8_t relu_pre_mode = 12;
+    bool enable_channel_split = false;
+    bool enable_nz2nd = false;
+    uint64_t quant_post = 13;
+    uint8_t relu_post = 14;
+    bool clip_relu_post = true;
+    uint8_t eltwise_op = 15;
+    bool eltwise_antq_en = true;
+    bool c0_pad_en = true;
+    bool broadcast_en = false;
+    bool enable_nz2dn = true;
+
+    asc_copy_l0c2l1(
+        dst, src, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
+        quant_pre_mode, relu_pre_mode, enable_channel_split, enable_nz2nd, quant_post, relu_post, clip_relu_post,
+        eltwise_op, eltwise_antq_en, c0_pad_en, broadcast_en, enable_nz2dn);
+    GlobalMockObject::verify();
+}
+
 #endif
 
 TEST_CUBE_COMPUTE_FIXPIPE_L0C2L1_INSTR(L0C2L1, asc_copy_l0c2l1, copy_matrix_cc_to_cbuf, half, float);
@@ -156,3 +194,10 @@ TEST_CUBE_COMPUTE_FIXPIPE_L0C2L1_INSTR(L0C2L1, asc_copy_l0c2l1, copy_matrix_cc_t
 
 TEST_CUBE_COMPUTE_FIXPIPE_L0C2L1_S4_INSTR(L0C2L1, asc_copy_l0c2l1, copy_matrix_cc_to_cbuf_s4, int4b_t, float);
 TEST_CUBE_COMPUTE_FIXPIPE_L0C2L1_S4_INSTR(L0C2L1, asc_copy_l0c2l1, copy_matrix_cc_to_cbuf_s4, int4b_t, int32_t);
+
+TEST_F(TestCubeDatamoveL0C2L1Full, asc_copy_l0c2l1_half_float_full_params_Succ) { TestAscCopyL0C2L1FullParams<half>(); }
+
+TEST_F(TestCubeDatamoveL0C2L1Full, asc_copy_l0c2l1_bfloat16_t_float_full_params_Succ)
+{
+    TestAscCopyL0C2L1FullParams<bfloat16_t>();
+}
