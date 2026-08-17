@@ -44,7 +44,7 @@ public:
 
     std::string Describe() const { return "CcuKernelSignature[data=" + data.str() + "]"; }
 
-    // 下掉CcuContext GetSignatrue
+    // 下掉CcuContext GetSignature
     std::string GetData() const { return data.str(); }
 
     friend class std::hash<hcomm::CcuKernelSignature>;

@@ -94,7 +94,7 @@ typedef char char_t;
 
 /**
  * @ingroup tsch
- * @brief the number of task commands for one prefatch from SQ queue
+ * @brief the number of task commands for one prefetch from SQ queue
  */
 #define ONE_SQ_PREFECH_NUM (4U)
 

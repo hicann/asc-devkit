@@ -42,7 +42,7 @@ extern HcclResult HcclAllReduce(
  * @param count An integer(u64) identifying the number of the data.
  * @param dataType The data type of the operator, must be one of the following types: int8, int16, int32, int64,
  * uint8, uint16, uint32, uint64, float16, float32, float64, bfp16.
- * @param root An integer(u32) identifying the the root rank in the operator.
+ * @param root An integer(u32) identifying the root rank in the operator.
  * @param comm A pointer identifying the communication resource based on
  * @param stream A pointer identifying the stream information.
  * @return HcclResult
@@ -95,7 +95,7 @@ extern HcclResult HcclReduceScatterV(
  * @param recvCount An integer(u64) identifying the number of the data.
  * @param dataType The data type of the operator, must be one of the following types: int8, uint8, int16,
  * uint16, int32, uint32, int64, uint64, float16, float32, float64, bfp16.
- * @param root An integer(u32) identifying the the root rank in the operator.
+ * @param root An integer(u32) identifying the root rank in the operator.
  * @param comm A pointer identifying the communication resource based on
  * @param stream A pointer identifying the stream information.
  * @return HcclResult
@@ -236,7 +236,7 @@ extern HcclResult HcclAlltoAll(
  * @param dataType The data type of the operator, must be one of the following types: int8, int16, int32, int64,
  * float16, float32, bfp16.
  * @param op The reduction type of the operator, must be one of the following types: sum, min, max, prod.
- * @param root An integer(u32) identifying the the root rank in the operator.
+ * @param root An integer(u32) identifying the root rank in the operator.
  * @param comm A pointer identifying the communication resource based on.
  * @param stream A pointer identifying the stream information.
  * @return HcclResult
