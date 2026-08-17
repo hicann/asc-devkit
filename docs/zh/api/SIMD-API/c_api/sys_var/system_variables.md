@@ -50,4 +50,6 @@
 
 - **[asc_set_l3d_rpt_b](asc_set_l3d_rpt_b.md)**
 
+- **[指令发射队列空闲槽位查询](asc_get_pipe_idle_slot_count.md)**
+
 - **[asc_get_ar_spr（废弃）](asc_get_ar_spr_deprecated.md)**

@@ -56,6 +56,7 @@ file(GLOB ASCENDC_UT_ascend910B1_AIV_CASE_SRC
 file(GLOB ASCENDC_UT_ascend950pr_9599_AIC_CASE_SRC
     npu_arch_3510/cube_compute/*.cpp
     npu_arch_3510/cube_datamove/*.cpp
+    npu_arch_3510/sys_var/test_asc_get_pipe_idle_slot_count.cpp
 )
 
 file(GLOB ASCENDC_UT_ascend950pr_9599_AIV_CASE_SRC
