@@ -6,7 +6,7 @@ TSCM表示L1 Buffer空间对应的逻辑内存，L1 Buffer相关内容见[存储
 
 ## 使用场景<a name="zh-cn_topic_0000002298654821_section118051016163613"></a>
 
-用户需要自定义数据搬入到TSCM及自定义管理的场景，即需要自定义实现数据搬入功能，如非连续搬入或对搬入数据进行预处理等。用户通过自定义管理TSCM可灵活配置MTE2流水，实现跨Matmul对象的全局[DoubleBuffer](../../../../技术附录/概念原理和术语/性能优化技术原理/DoubleBuffer.md)，MTE2相关内容见[搬运单元](../../../../编程指南/高级编程/硬件实现/基本架构.md#section123639375417)。
+用户需要自定义数据搬入到TSCM及自定义管理的场景，即需要自定义实现数据搬入功能，如非连续搬入或对搬入数据进行预处理等。用户通过自定义管理TSCM可灵活配置MTE2流水，实现跨Matmul对象的全局[DoubleBuffer](../../../../technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)，MTE2相关内容见[搬运单元](../../../../编程指南/高级编程/硬件实现/基本架构.md#section123639375417)。
 
 ## 约束说明<a name="zh-cn_topic_0000002298654821_section14160134220363"></a>
 

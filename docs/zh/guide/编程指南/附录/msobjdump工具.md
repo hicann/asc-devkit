@@ -37,7 +37,7 @@
 
 1.  安装msobjdump工具。
 
-    工具跟随CANN软件包发布（参考[环境准备](../../入门教程/环境准备.md)完成CANN安装），其路径默认为`${INSTALL_DIR}/tools/msobjdump`，其中`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。以root用户安装为例，安装后文件默认存储路径为：/usr/local/Ascend/cann。
+    工具跟随CANN软件包发布（参考[环境准备](../../getting_started/environment_setup.md)完成CANN安装），其路径默认为`${INSTALL_DIR}/tools/msobjdump`，其中`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。以root用户安装为例，安装后文件默认存储路径为：/usr/local/Ascend/cann。
 
 2.  设置环境变量。
     -   root用户安装Ascend-cann-toolkit包时

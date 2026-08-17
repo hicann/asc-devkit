@@ -46,7 +46,7 @@ The complete data path is: GM → UB → Register (step-by-step computation) →
 
 **Implementation Process Overview**:
 
-This example follows the execution flow of "copy in — synchronize — compute — synchronize — copy out". Input data is copied from [GM](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md) (Global Memory) to [UB](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md) (Unified Buffer), then loaded from UB to registers through [asc_vf_call](../../../../../docs/zh/api/SIMD-API/basic_api/reg_vector_compute/vf_call/asc_vf_call.md) calling the VF function to complete step-by-step computation, and finally the results are written back from registers to UB, then copied from UB back to GM.
+This example follows the execution flow of "copy in — synchronize — compute — synchronize — copy out". Input data is copied from [GM](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md) (Global Memory) to [UB](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md) (Unified Buffer), then loaded from UB to registers through [asc_vf_call](../../../../../docs/zh/api/SIMD-API/basic_api/reg_vector_compute/vf_call/asc_vf_call.md) calling the VF function to complete step-by-step computation, and finally the results are written back from registers to UB, then copied from UB back to GM.
 
 **Prerequisites**:
 

@@ -58,7 +58,7 @@
 </tr>
 <tr id="zh-cn_topic_0000002298078557_row2748530162319"><td class="cellrowborder" valign="top" width="23.64%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000002298078557_p141909471896"><a name="zh-cn_topic_0000002298078557_p141909471896"></a><a name="zh-cn_topic_0000002298078557_p141909471896"></a><a href="TSCM输入的矩阵乘.md">TSCM输入的矩阵乘</a></p>
 </td>
-<td class="cellrowborder" valign="top" width="76.36%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000002298078557_p1748143002320"><a name="zh-cn_topic_0000002298078557_p1748143002320"></a><a name="zh-cn_topic_0000002298078557_p1748143002320"></a>对内存逻辑位置为<a href="../../../../技术附录/概念原理和术语/术语表.md#p1392229512">TSCM</a>的左矩阵A或右矩阵B实现矩阵乘计算。</p>
+<td class="cellrowborder" valign="top" width="76.36%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000002298078557_p1748143002320"><a name="zh-cn_topic_0000002298078557_p1748143002320"></a><a name="zh-cn_topic_0000002298078557_p1748143002320"></a>对内存逻辑位置为<a href="../../../../technical_appendix/concepts_and_terms/glossary.md#p1392229512">TSCM</a>的左矩阵A或右矩阵B实现矩阵乘计算。</p>
 </td>
 </tr>
 <tr id="zh-cn_topic_0000002298078557_row1737123113238"><td class="cellrowborder" valign="top" width="23.64%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000002298078557_p1218910471691"><a name="zh-cn_topic_0000002298078557_p1218910471691"></a><a name="zh-cn_topic_0000002298078557_p1218910471691"></a><a href="矩阵乘输出的N方向对齐.md">矩阵乘输出的N方向对齐</a></p>

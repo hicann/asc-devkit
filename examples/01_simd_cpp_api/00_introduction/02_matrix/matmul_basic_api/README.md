@@ -35,7 +35,7 @@
   其中，A矩阵的形状为`[M, K]`，B矩阵的形状为`[K, N]`，输出C矩阵的形状为`[M, N]`。对输出矩阵C中的每一个元素`C[m, n]`，都会累加A矩阵第`m`行和B矩阵第`n`列在K轴上的乘积。在矩阵乘法中，**M方向**指矩阵C的行方向，**N方向**指矩阵C的列方向，**K方向**指矩阵C乘法的内维（累加维度）。
 
 - 样例规格：  
-  本样例参数`M = 256, N = 256, K = 64`，输入输出均为`half`类型、[`ND`](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md)格式。样例启动2个核完成计算，每个核负责输出矩阵C在M轴方向的128行、N轴方向的全部256列：
+  本样例参数`M = 256, N = 256, K = 64`，输入输出均为`half`类型、[`ND`](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式。样例启动2个核完成计算，每个核负责输出矩阵C在M轴方向的128行、N轴方向的全部256列：
   - 第0个核计算C矩阵的第`0~127`行。
   - 第1个核计算C矩阵的第`128~255`行。
 
@@ -51,7 +51,7 @@
 
 - 样例实现：
   - Kernel侧整体思路
-    - `mmad_custom`是一个[`__global__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md) [`__cube__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)核函数，表示该函数运行在[AI Core](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)的[Cube](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)计算单元上，主要用于矩阵计算。
+    - `mmad_custom`是一个[`__global__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md) [`__cube__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)核函数，表示该函数运行在[AI Core](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)的[Cube](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)计算单元上，主要用于矩阵计算。
     - 样例使用[静态Tensor编程方式](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程.md)，通过[`LocalMemAllocator`](../../../../../docs/zh/api/SIMD-API/basic_api/resource_management/LocalMemAllocator/LocalMemAllocator_intro.md)创建[`LocalTensor`](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)。
     - `CUBE_BLOCK = 16`表示half数据类型分形为`16 x 16`，代码中按`16 x 16`的分形为单位进行[`LoadData`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)搬运。
 
@@ -68,8 +68,8 @@
       - `b1Local`：B矩阵在L1中的临时存储。`a1Local`和`b1Local`使用同一个L1 allocator按申请顺序分配，避免手动维护L1地址偏移。
       - `b2Local`：B矩阵在L0B中的临时存储，供`Mmad`读取。
       - `cLocal`：矩阵乘结果在L0C中的临时存储。
-    - 调用[`DataCopy`](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md)将A、B矩阵从GM搬运到L1。这里使用[`Nd2NzParams`](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md)参数，在搬运过程中将输入的[ND](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md)格式数据转换为Cube计算需要的[Nz](../../../../../docs/zh/guide/技术附录/概念原理和术语/神经网络和算子/数据排布格式.md)格式。
-    - 调用[`SetFlag<HardEvent::MTE2_MTE1>`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)和[`WaitFlag<HardEvent::MTE2_MTE1>`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)进行同步。`DataCopy`属于MTE2流水，后续`LoadData`属于[MTE1](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)流水，[MTE1](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)必须等待[MTE2](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)完成，避免读取到尚未搬运完成的L1数据。
+    - 调用[`DataCopy`](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md)将A、B矩阵从GM搬运到L1。这里使用[`Nd2NzParams`](../../../../../docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md)参数，在搬运过程中将输入的[ND](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式数据转换为Cube计算需要的[Nz](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式。
+    - 调用[`SetFlag<HardEvent::MTE2_MTE1>`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)和[`WaitFlag<HardEvent::MTE2_MTE1>`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)进行同步。`DataCopy`属于MTE2流水，后续`LoadData`属于[MTE1](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)流水，[MTE1](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)必须等待[MTE2](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)完成，避免读取到尚未搬运完成的L1数据。
     - 调用`LoadData`将A矩阵从L1搬运到L0A，将B矩阵从L1搬运到L0B。L0A和L0B是Cube矩阵计算单元直接读取的输入缓存。
     - 调用[`SetFlag<HardEvent::MTE1_M>`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)和[`WaitFlag<HardEvent::MTE1_M>`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md)进行同步。`LoadData`属于MTE1流水，后续`Mmad`属于M流水，M流水必须等待MTE1完成，避免读取到尚未搬运完成的L0A/L0B数据。
     - 调用[`Mmad`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md)`(cLocal, a2Local, b2Local, {baseM, baseN, baseK, 0, false, true})`执行矩阵乘。这里`baseM = 128`、`baseN = 256`、`baseK = 64`，对应单个核一次计算的矩阵块大小。

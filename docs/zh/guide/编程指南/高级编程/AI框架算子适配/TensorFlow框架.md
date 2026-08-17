@@ -12,7 +12,7 @@
 ![](../../../figures/copy.png)
 
 1.  环境准备。
-    1.  CANN软件安装请参考[环境准备](../../../入门教程/环境准备.md)。
+    1.  CANN软件安装请参考[环境准备](../../../getting_started/environment_setup.md)。
     2.  安装框架插件包，请参考[TensorFlow模型迁移](https://www.hiascend.com/document/detail/zh/TensorFlowCommunity/latest/index/index.html)中《TensorFlow 1.15模型迁移》或《TensorFlow 2.6.5模型迁移》的环境准备 \> 安装框架插件包章节，获取框架插件包详细的安装步骤。
     3.  <a name="li123241091016"></a>[创建算子工程](../Aclnn算子工程化开发/Aclnn算子工程化开发快速入门.md#create-project)。使用msOpGen工具创建算子开发工程。TensorFlow框架算子适配场景下，需要通过framework参数指定具体的框架为tf或者tensorflow，工具会自动生成框架适配代码。以自定义CANN算子AddCustom为例，使用msOpGen工具创建算子开发工程的具体命令如下：
 

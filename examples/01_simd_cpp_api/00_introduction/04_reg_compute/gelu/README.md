@@ -46,7 +46,7 @@ $$
 
 **实现流程概述**：
 
-本样例遵循"搬入 — 同步 — 计算 — 同步 — 搬出"的执行流程。输入数据从 [GM](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)（Global Memory，全局内存）搬运到 [UB](../../../../../docs/zh/guide/技术附录/概念原理和术语/术语表.md)（Unified Buffer，片上统一缓冲区），再通过 [asc_vf_call](../../../../../docs/zh/api/SIMD-API/basic_api/reg_vector_compute/vf_call/asc_vf_call.md) 调用 VF 函数将数据从 UB 加载到寄存器完成逐步计算，最后将结果从寄存器写回 UB，再从 UB 搬运回 GM。
+本样例遵循"搬入 — 同步 — 计算 — 同步 — 搬出"的执行流程。输入数据从 [GM](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)（Global Memory，全局内存）搬运到 [UB](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)（Unified Buffer，片上统一缓冲区），再通过 [asc_vf_call](../../../../../docs/zh/api/SIMD-API/basic_api/reg_vector_compute/vf_call/asc_vf_call.md) 调用 VF 函数将数据从 UB 加载到寄存器完成逐步计算，最后将结果从寄存器写回 UB，再从 UB 搬运回 GM。
 
 **前置说明**：
 

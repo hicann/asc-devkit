@@ -53,16 +53,16 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 <p style="color: #555; font-size: 14px; line-height: 1.6; min-height: 65px; margin-bottom: 10px;">初级阶段的目标是让您在最短时间内跑通第一个算子，理解Ascend C的基本工作方式。</p>
 <div style="margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">🔧 环境搭建</strong><br/>
-<a href="./环境准备.md" style="color: #3b82f6; font-size: 14px;">CANN环境安装</a>
+<a href="./environment_setup.md" style="color: #3b82f6; font-size: 14px;">CANN环境安装</a>
 </div>
 <div style="margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">📖 编程模型概览</strong><br/>
-<a href="./快速入门/异构系统与编程模型.md" style="color: #3b82f6; font-size: 14px;">异构系统与SIMD/SIMT编程模型介绍</a>
+<a href="./quick_start/heterogeneous_system_and_programming_model.md" style="color: #3b82f6; font-size: 14px;">异构系统与SIMD/SIMT编程模型介绍</a>
 </div>
 <div style="margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;"><span style="color: #3b82f6;">💻</span> 动手实践</strong><br/><span style="color: #666; font-size: 14px;">• 
-<a href="./快速入门/基于SIMD编程/基于SIMD编程.md" style="color: #3b82f6; font-size: 14px;">SIMD算子快速入门</a><br/><span style="color: #666; font-size: 14px;">• 
-<a href="./快速入门/基于SIMT编程/基于SIMT编程.md" style="color: #3b82f6; font-size: 14px;">SIMT算子快速入门</a>
+<a href="./quick_start/simd_programming/simd_programming.md" style="color: #3b82f6; font-size: 14px;">SIMD算子快速入门</a><br/><span style="color: #666; font-size: 14px;">• 
+<a href="./quick_start/simt_programming/simt_programming.md" style="color: #3b82f6; font-size: 14px;">SIMT算子快速入门</a>
 </div>
 </div>
 
@@ -129,7 +129,7 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">🔄 跨代迁移</strong><br/>
-<a href="../跨代迁移兼容性指南/概述.md" style="color: #3b82f6; font-size: 14px;">跨代迁移兼容性指南</a>
+<a href="../cross_gen_migration_guide/overview.md" style="color: #3b82f6; font-size: 14px;">跨代迁移兼容性指南</a>
 </div>
 
 </div>
@@ -140,8 +140,8 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 <h2 style="color: #1a1a1a; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">📚 技术附录</h2>
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
 <div style="flex: 1; min-width: 200px;">
-<a href="../技术附录/概念原理和术语/术语表.md" style="display: block; padding: 10px; background: #fff; border-radius: 5px; color: #3b82f6; text-decoration: none; margin-bottom: 10px; font-size: 14px;">📖 基本概念与术语</a>
-<a href="../技术附录/CPP标准支持/概述.md" style="display: block; padding: 10px; background: #fff; border-radius: 5px; color: #3b82f6; text-decoration: none; margin-bottom: 10px; font-size: 14px;">🔧 C++语言标准支持</a>
+<a href="../technical_appendix/concepts_and_terms/glossary.md" style="display: block; padding: 10px; background: #fff; border-radius: 5px; color: #3b82f6; text-decoration: none; margin-bottom: 10px; font-size: 14px;">📖 基本概念与术语</a>
+<a href="../technical_appendix/cpp_standard_support/overview.md" style="display: block; padding: 10px; background: #fff; border-radius: 5px; color: #3b82f6; text-decoration: none; margin-bottom: 10px; font-size: 14px;">🔧 C++语言标准支持</a>
 </div>
 <div style="flex: 1; min-width: 200px;">
 <a href="../../api/api_list.md" style="display: block; padding: 10px; background: #fff; border-radius: 5px; color: #3b82f6; text-decoration: none; margin-bottom: 10px; font-size: 14px;">📖 Ascend C API参考</a>

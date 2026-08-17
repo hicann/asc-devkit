@@ -164,7 +164,7 @@
     AscendC::WaitFlag<AscendC::HardEvent::MTE3_V>(EVENT_ID1);
 ```
 
-以下为不开启DoubleBuffer和开启DoubleBuffer的流水示意图。多数情况下，采用DoubleBuffer能有效提升Vector的时间利用率，缩减算子执行时间，详细内容可参考[DoubleBuffer](../../../../技术附录/概念原理和术语/性能优化技术原理/DoubleBuffer.md)。
+以下为不开启DoubleBuffer和开启DoubleBuffer的流水示意图。多数情况下，采用DoubleBuffer能有效提升Vector的时间利用率，缩减算子执行时间，详细内容可参考[DoubleBuffer](../../../../technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)。
 
 ![](../../../../figures/op_flow_6.png)
 

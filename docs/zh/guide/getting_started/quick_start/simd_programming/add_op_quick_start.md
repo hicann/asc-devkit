@@ -1,6 +1,6 @@
 # Add算子快速入门<a name="ZH-CN_TOPIC_0000002500781060"></a>
 
-本示例是一个入门实践，基于Ascend C SIMD实现Add算子，帮助您快速上手。它完整呈现了Device端核函数实现、Host端调用及编译运行的全流程，助您建立整体认知。开始前，请先参考[环境准备](../../环境准备.md)安装所需的CANN软件包。
+本示例是一个入门实践，基于Ascend C SIMD实现Add算子，帮助您快速上手。它完整呈现了Device端核函数实现、Host端调用及编译运行的全流程，助您建立整体认知。开始前，请先参考[环境准备](../../environment_setup.md)安装所需的CANN软件包。
 
 下面分别介绍基于C API与C++ API的Add算子实现，完整示例代码请参考[基于C API实现的Add算子示例](../../../../../../examples/02_simd_c_api/00_introduction/01_add/c_api_async_add/README.md)和[基于C++ API实现的Add算子示例](../../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md)。
 
@@ -28,7 +28,7 @@
         - 数据搬出：使用`aclrtMemcpy`将计算结果从Device Memory拷贝回Host Memory。
       
       > [!NOTE]说明
-      > - 请参见[Ascend-C概述与学习路径](../../Ascend-C概述与学习路径.md)技术附录章节，获取`Ascend C API参考`和`CANN运行时接口`链接，以查阅更多接口信息。
+      > - 请参见[Ascend-C概述与学习路径](../../ascend_c_overview_and_learning_path.md)技术附录章节，获取`Ascend C API参考`和`CANN运行时接口`链接，以查阅更多接口信息。
 
 - **算子代码实现**：
 
@@ -210,7 +210,7 @@
 
 <!-- npu="950" id6 -->
 > [!NOTE]说明
-> Ascend 950PR/Ascend 950DT新一代架构在传统[UB](../../../技术附录/概念原理和术语/术语表.md)缓存体系的基础上，开放了寄存器（Register）可编程能力，单个寄存器大小为256B。基于寄存器的矢量计算称为Reg矢量计算，而基于传统UB的矢量计算称为Memory矢量计算。
+> Ascend 950PR/Ascend 950DT新一代架构在传统[UB](../../../technical_appendix/concepts_and_terms/glossary.md)缓存体系的基础上，开放了寄存器（Register）可编程能力，单个寄存器大小为256B。基于寄存器的矢量计算称为Reg矢量计算，而基于传统UB的矢量计算称为Memory矢量计算。
 <!-- end id6 -->
 
 若要深入理解Ascend C的SIMD与SIMT编程模型，请参阅[Ascend C编程模型概述](../../../编程指南/编程模型/编程模型概述.md)。

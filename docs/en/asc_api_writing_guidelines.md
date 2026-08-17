@@ -1054,7 +1054,7 @@ bool, int4b_t, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0
 
 [Level] Mandatory
 
-[Description] Unified conceptual terminology must be used. For the terminology table, refer to: [LINK](../zh/guide/技术附录/概念原理和术语/术语表.md).
+[Description] Unified conceptual terminology must be used. For the terminology table, refer to: [LINK](../zh/guide/technical_appendix/concepts_and_terms/glossary.md).
 
 ## 12 Figure Guidelines
 
@@ -1257,7 +1257,7 @@ Before submitting documentation, check each item in the following checklist to e
 | 2 | Punctuation | Punctuation must be complete and accurate, avoiding unclosed parentheses, missing or extra punctuation. |
 | 3 | Punctuation | In mixed Chinese-English text, no spaces should be added before or after English words. |
 | 4 | Data Type | Data type writing in the documentation must be consistent with the code. The writing order of data types must be consistent (principle: from small to large bit width, signed -> unsigned -> floating-point, floating-point sorted by exponent bit size): bool, int4b_t, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64. When the interface supports data types only related to bit width, they can be expressed by bit width: b8, b16, b32, b64. |
-| 5 | Terminology | Unified conceptual terminology must be used, such as L1 Buffer, L0A Buffer, AI Core, and so on. For the terminology table, refer to: [LINK](../zh/guide/技术附录/概念原理和术语/术语表.md). |
+| 5 | Terminology | Unified conceptual terminology must be used, such as L1 Buffer, L0A Buffer, AI Core, and so on. For the terminology table, refer to: [LINK](../zh/guide/technical_appendix/concepts_and_terms/glossary.md). |
 | 6 | Preview Format | After preview, check whether indentation and line breaks are correct, avoiding text connected to code/tables/images on the same line. |
 | 7 | Sentence Logic | Sentences must be fluent and logically clear, avoiding grammatical errors or semantic ambiguity. For example, "This section mainly describes the rounding behavior during precision conversion between different data types" should not be written as "This section mainly describes the rounding behavior during precision conversion between different data types for introduction." |
 | 8 | Link Reference | Link reference rule: Links between programming guides, APIs, and example samples within the same code repository must use relative links. |

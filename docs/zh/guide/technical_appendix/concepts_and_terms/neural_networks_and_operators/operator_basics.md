@@ -42,7 +42,7 @@ Tensor是算子计算数据的容器，包含如下属性信息。
 </tr>
 <tr id="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_row1721553016508"><td class="cellrowborder" valign="top" width="28.199999999999996%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_p2021623017509"><a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_p2021623017509"></a><a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_p2021623017509"></a>数据排布格式</p>
 </td>
-<td class="cellrowborder" valign="top" width="71.8%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001265237154_p1445413288586"><a name="zh-cn_topic_0000001265237154_p1445413288586"></a><a name="zh-cn_topic_0000001265237154_p1445413288586"></a>数据的物理排布格式，详细请参见<a href="数据排布格式.md">数据排布格式</a>。</p>
+<td class="cellrowborder" valign="top" width="71.8%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001265237154_p1445413288586"><a name="zh-cn_topic_0000001265237154_p1445413288586"></a><a name="zh-cn_topic_0000001265237154_p1445413288586"></a>数据的物理排布格式，详细请参见<a href="data_layout.md">数据排布格式</a>。</p>
 </td>
 </tr>
 </tbody>

@@ -18,7 +18,7 @@ optype_collector工具用于采集内置/自定义算子包中指定AI处理器�
 
 1.  安装optype_collector工具。
 
-    工具跟随CANN软件包发布，参考[环境准备](../../入门教程/环境准备.md)完成CANN安装后，即可使用该工具。
+    工具跟随CANN软件包发布，参考[环境准备](../../getting_started/environment_setup.md)完成CANN安装后，即可使用该工具。
 
 2.  设置环境变量。
 

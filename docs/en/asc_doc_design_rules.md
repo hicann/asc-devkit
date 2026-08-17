@@ -35,7 +35,7 @@ The Ascend C documentation system consists of **five** core documents, connected
 **Supplementary Notes**:
 - The sample repository (`asc-devkit/examples/`) **is not part of** the Ascend C documentation system, but code examples in the five documents may link to the sample repository
 - Technical appendices (glossary, principles, syntax restrictions) are included in the Programming Guide as shared knowledge infrastructure
-- The Getting Started Tutorial is an independent document, located at `docs/zh/guide/入门教程/`, containing overview, environment setup, and quick start (SIMD/SIMT)
+- The Getting Started Tutorial is an independent document, located at `docs/zh/guide/getting_started/`, containing overview, environment setup, and quick start (SIMD/SIMT)
 
 ---
 

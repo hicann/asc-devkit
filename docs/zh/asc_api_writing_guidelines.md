@@ -1055,7 +1055,7 @@ bool、int4b_t、int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、f
 
 【级别】强制
 
-【描述】须使用统一的概念术语，术语表参考：[LINK](./guide/技术附录/概念原理和术语/术语表.md)。
+【描述】须使用统一的概念术语，术语表参考：[LINK](./guide/technical_appendix/concepts_and_terms/glossary.md)。
 
 ## 12 图元规范
 
@@ -1258,7 +1258,7 @@ asc_get_ar_spr接口文档示例如下：
 | 2 | 标点符号 | 标点符号须完整、准确，避免括号未闭合、标点缺失或多余的情况。 |
 | 3 | 标点符号 | 中英文混排时，英文单词前后不加空格。 |
 | 4 | 数据类型 | 文档中的数据类型写法须与代码中的数据类型写法保持一致。数据类型的写作顺序须保持一致（原则：位宽从小到大、有符号数→无符号数→浮点数、浮点数按指数位大小排序）：bool、int4b_t、int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32、int64_t、uint64_t、double、complex64。接口支持的数据类型只与位宽有关时，可通过位宽表达：b8、b16、b32、b64。 |
-| 5 | 术语 | 须使用统一的概念术语，如L1 Buffer、L0A Buffer、AI Core等。术语表参考：[LINK](./guide/技术附录/概念原理和术语/术语表.md)。 |
+| 5 | 术语 | 须使用统一的概念术语，如L1 Buffer、L0A Buffer、AI Core等。术语表参考：[LINK](./guide/technical_appendix/concepts_and_terms/glossary.md)。 |
 | 6 | 预览格式 | 预览后须检查缩进、换行是否正确，避免出现文字与代码/表格/图片连在同一行等问题。 |
 | 7 | 语句逻辑 | 语句须通顺、逻辑清晰，避免出现语病或语义歧义。例如，"本节主要描述不同数据类型之间精度转换时的舍入行为"不应写成"本节主要描述不同数据类型之间精度转换时的舍入行为进行介绍"。 |
 | 8 | 链接引用 | 链接引用规则：同一个代码仓内编程指南和API、example样例之间的链接均使用相对链接。 |

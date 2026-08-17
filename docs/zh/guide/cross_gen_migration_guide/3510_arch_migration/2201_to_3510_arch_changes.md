@@ -38,7 +38,7 @@
     | Cube计算单元不支持s4类型。 | 对于int4b_t数据类型的矩阵乘计算，开发者需要先将int4b_t的数据Cast转换为int8_t类型，再进行Cube计算。 | Mmad |
     | Cube计算单元不支持L0A上ZZ到ZN的分形变化。 | L0A切分场景下，矩阵乘需要重新计算左矩阵的L0A地址。 | LoadData/LoadDataWithTranspose |
     | Vector Core Membase架构切换到Regbase架构。 | 基础API部分场景性能降低。 | 基础API高维切分模式 |
-    | 硬件不支持Subnormal功能，当前使用软仿实现的Subnormal功能。 | 开发者需要通过设置config模板参数来配置Subnormal计算模式，具体请参考[矢量计算](./2201迁移3510指导/基础API迁移指导.md#section7364115741514)。 | Ln/Sqrt/Rsqrt/Div/Reciprocal/Exp |
+    | 硬件不支持Subnormal功能，当前使用软仿实现的Subnormal功能。 | 开发者需要通过设置config模板参数来配置Subnormal计算模式，具体请参考[矢量计算](./2201_to_3510_guide/basic_api_migration.md#section7364115741514)。 | Ln/Sqrt/Rsqrt/Div/Reciprocal/Exp |
     | 不支持4:2稀疏矩阵的计算。 | 开发者需要利用Vector Core的能力，进行矩阵稠密转稀疏操作。 | LoadDataWithSparse/MmadWithSparse |
 
 - 存储单元<a name="section_2201_to_3510_storage_unit_changes"></a>
@@ -47,7 +47,7 @@
 
     | 3510变更 | 产生的影响 | 影响的API接口 |
     |----------|------------|---------------|
-    | 删除L1 Buffer空间的边界值设定。 | 3510架构硬件删除了L1 Buffer的边界值设定相关寄存器，不再支持SetLoadDataBoundary接口，具体请参考[基础API迁移指导](./2201迁移3510指导/基础API迁移指导.md)。 | SetLoadDataBoundary |
+    | 删除L1 Buffer空间的边界值设定。 | 3510架构硬件删除了L1 Buffer的边界值设定相关寄存器，不再支持SetLoadDataBoundary接口，具体请参考[基础API迁移指导](./2201_to_3510_guide/basic_api_migration.md)。 | SetLoadDataBoundary |
     | UB结构变化。2201架构的UB结构和3510架构的UB结构对比请参考[bank结构对比](../../算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/概述.md)。 | 2201架构上UB分为16个bank group，每个bank group包含3个bank，每个bank大小为4KB。3510架构上UB分为8个bank group，每个bank group包含2个bank，每个bank大小为16KB。若发生UB冲突，开发者可参考[避免UB的bank冲突](../../算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/概述.md)解决UB冲突。 | / |
 
 
