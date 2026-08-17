@@ -393,7 +393,7 @@ A / B / scaleA / scaleB matrices have different alignment requirements on each a
 <a name="table4"></a>
 <table border="2" align="center">
 <caption style="font-weight: normal;">
-    <span style="font-weight: bold; font-size: 1.2em;">📌 Table 4: A / B Matrix m-axis / n-axis Alignment Requirements on L1 (L1 Layout Format is Nz)</span></caption>
+    <span style="font-weight: bold; font-size: 1.2em;">Table 4: A / B Matrix m-axis / n-axis Alignment Requirements on L1 (L1 Layout Format is Nz)</span></caption>
   <tr>
     <td></td>
     <td align="center"><span style="font-weight: bold;">FP4 (<code>fractalNum = 4</code>)</span></td>
@@ -422,7 +422,7 @@ A / B / scaleA / scaleB matrices have different alignment requirements on each a
 <a name="table5"></a>
 <table border="2" align="center">
 <caption style="font-weight: normal;">
-    <span style="font-weight: bold; font-size: 1.2em;">📌 Table 5: A / B Matrix m-axis / n-axis Alignment Requirements on L0</span></caption>
+    <span style="font-weight: bold; font-size: 1.2em;">Table 5: A / B Matrix m-axis / n-axis Alignment Requirements on L0</span></caption>
   <tr>
     <td></td>
     <td align="center"><span style="font-weight: bold;">FP4 (<code>fractalNum = 4</code>)</span></td>
@@ -455,7 +455,7 @@ A / B / scaleA / scaleB matrices have different alignment requirements on each a
 <a name="table6"></a>
 <table border="2" align="center">
 <caption style="font-weight: normal;">
-    <span style="font-weight: bold; font-size: 1.2em;">📌 Table 6: scaleA / scaleB Matrix Alignment Requirements on Each Axis of L1 / L0</span></caption>
+    <span style="font-weight: bold; font-size: 1.2em;">Table 6: scaleA / scaleB Matrix Alignment Requirements on Each Axis of L1 / L0</span></caption>
   <tr>
     <td></td>
     <td align="center"><span style="font-weight: bold;">scaleA Matrix (L1 Layout Format is Zz)</span></td>
@@ -1204,7 +1204,7 @@ AscendC::Fixpipe<U, U, AscendC::CFG_ROW_MAJOR>(cGM, c1Local, fixpipeParams);
 
 Run the following steps in the root directory of this example to build and run the example.
 - Configure environment variables
-  Configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

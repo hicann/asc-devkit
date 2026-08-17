@@ -1,4 +1,4 @@
-﻿# arange样例
+# arange样例
 
 ## 概述
 本样例基于C API编程接口实现Arange运算，主要调用[asc_arange](../../../../../docs/zh/api/SIMD-API/c_api/reg/index_operate/asc_arange.md)接口。

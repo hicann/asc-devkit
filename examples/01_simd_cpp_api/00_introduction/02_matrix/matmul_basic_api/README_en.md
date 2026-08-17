@@ -166,7 +166,7 @@ This sample implements multi-core matrix multiplication computation based on the
 
 Execute the following steps in the root directory of this sample to compile and run the sample.
 - Configure Environment Variables  
-  Configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package on the current environment.
+  Configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

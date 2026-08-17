@@ -98,7 +98,7 @@ This example demonstrates the usage of the register data type RegTensor and Mask
 ## Build and Run
 
 - Configure environment variables
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

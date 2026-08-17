@@ -1,4 +1,4 @@
-﻿# reduce_block样例
+# reduce_block样例
 
 ## 概述
 本样例基于C API编程接口实现ReduceDataBlock运算，主要调用[asc_reduce_sum_datablock](../../../../../docs/zh/api/SIMD-API/c_api/reg/reduce_compute/asc_reduce_sum_datablock.md)接口。

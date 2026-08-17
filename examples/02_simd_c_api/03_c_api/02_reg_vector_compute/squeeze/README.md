@@ -1,4 +1,4 @@
-﻿# squeeze样例
+# squeeze样例
 
 ## 概述
 本样例基于C API编程接口实现Squeeze运算，主要调用[asc_squeeze](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_squeeze.md)接口。

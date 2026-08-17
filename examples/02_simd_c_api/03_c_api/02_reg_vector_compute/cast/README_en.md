@@ -1,4 +1,4 @@
-﻿# cast Example
+# cast Example
 
 ## Overview
 This example implements the Cast operation based on the C API programming interface, primarily calling the [asc_half2int32_rd](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_half2int32.md)/[asc_float2int16_rna_sat](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_float2int16.md) API for data type conversion.
@@ -81,7 +81,7 @@ This example performs data type conversion on the input vector. When the input a
 ## Build and Run
 Run the following steps in the root directory of this example to build and run it.
 - Configure environment variables
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

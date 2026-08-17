@@ -127,7 +127,7 @@ y[row] = sum;
 
 **Optimization Suggestion**:
 
-> 💡 **Use Warp cooperative processing for one row of data**
+> **Use Warp cooperative processing for one row of data**
 >
 > Change the "one thread processes one row of data" approach to "one Warp cooperatively processes one row of data", making the loop iterations of threads within the same Warp basically the same, reducing Warp Divergence.
 
@@ -183,7 +183,7 @@ if (lane_id == 0) {
 
 Perform the following steps in the root directory of this sample to compile and run the sample.
 - Configure environment variables  
-  Configure the environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development toolkit on the current environment.
+  Configure the environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development toolkit on the current environment.
 
   ```bash
   source ${install_path}/cann/set_env.sh

@@ -93,7 +93,7 @@ This example implements dynamic Shape matrix multiplication and inline quantizat
 Run the following steps in the root directory of this example to build and run the example.
 
 - Configure environment variables
-  Configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment. **Currently only [CANN master](../../../../../docs/zh/quick_start.md#下载-cann-master) is supported**.
+  Configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment. **Currently only [CANN master](../../../../../docs/en/quick_start.md#cann-install) is supported**.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

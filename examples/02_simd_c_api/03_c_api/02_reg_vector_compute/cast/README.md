@@ -1,4 +1,4 @@
-﻿# cast样例
+# cast样例
 
 ## 概述
 本样例基于C API编程接口实现Cast运算，主要调用[asc_half2int32_rd](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_half2int32.md)/[asc_float2int16_rna_sat](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_float2int16.md)接口实现数据类型转换。  

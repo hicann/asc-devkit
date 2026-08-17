@@ -317,7 +317,7 @@ The figure below shows the pipeline parallel execution process of AIC and AIV in
 
 ![Scenario1 CV Fusion-GM Relay Pipeline Parallelism](figures/CVParallell_L0C_GM_UB.png)
 
-> 💡 The msOpProf tool requires the CANN commercial or community edition. For details, see the [msOpProf Tool Installation Guide](https://www.hiascend.com/document/detail/zh/canncommercial/900/devaids/optool/docs/zh/install_guide/msopprof_install_guide.md). The pipeline diagram was collected on device with `msopprof --aic-metrics=PipeTimeline ./demo`.
+>  The msOpProf tool requires the CANN commercial or community edition. For details, see the [msOpProf Tool Installation Guide](https://www.hiascend.com/document/detail/zh/canncommercial/900/devaids/optool/docs/zh/install_guide/msopprof_install_guide.md). The pipeline diagram was collected on device with `msopprof --aic-metrics=PipeTimeline ./demo`.
 
 **Reason for Significant MTE2 Time Reduction:**
 
@@ -406,7 +406,7 @@ Run the following steps in the root directory of this example to build and run t
 
 - Configure environment variables
 
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

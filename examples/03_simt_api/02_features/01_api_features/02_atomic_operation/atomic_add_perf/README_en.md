@@ -410,7 +410,7 @@ Execute the following steps in the sample root directory to build and run the sa
 
 - Configure environment variables
 
-  Configure the environment variables according to the [installation method](../../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on your current environment.
+  Configure the environment variables according to the [installation method](../../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on your current environment.
 
   ```bash
   source ${install_path}/cann/set_env.sh

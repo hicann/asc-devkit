@@ -32,7 +32,7 @@ This sample demonstrates tiling offload computation using AI CPU operators.
 Follow these steps in the sample root directory.
 
 - Configure environment variables  
-  Configure environment variables according to the CANN development kit package [installation method](../../../../../docs/zh/quick_start.md#prepare&install).
+  Configure environment variables according to the CANN development kit package [installation method](../../../../../docs/en/quick_start.md#prepare&install).
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

@@ -72,7 +72,7 @@ This sample demonstrates data movement from UB (Unified Buffer) to L1 (L1 Buffer
 Execute the following steps in the sample root directory to build and run the sample.
 
 - Set Environment Variables
-  Configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on your environment.
+  Configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on your environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

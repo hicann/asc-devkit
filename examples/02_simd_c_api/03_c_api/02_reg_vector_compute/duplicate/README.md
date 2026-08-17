@@ -1,4 +1,4 @@
-﻿# duplicate样例
+# duplicate样例
 
 ## 概述
 本样例基于C API编程接口实现Duplicate运算（标量填充模式），主要调用[asc_duplicate_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_fill/asc_duplicate_scalar.md)接口。

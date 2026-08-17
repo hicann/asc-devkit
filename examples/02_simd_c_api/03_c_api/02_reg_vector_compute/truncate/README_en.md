@@ -1,4 +1,4 @@
-﻿# truncate Example
+# truncate Example
 
 ## Overview
 This example implements the Truncate operation based on the C API programming interface, which truncates floating-point numbers in a vector data register to integer values. It primarily calls the [asc_floor](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_floor.md) API.
@@ -42,7 +42,7 @@ This example implements the Truncate operation based on the C API programming in
 ## Build and Run
 Run the following steps in the root directory of this example to build and run it.
 - Configure environment variables
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

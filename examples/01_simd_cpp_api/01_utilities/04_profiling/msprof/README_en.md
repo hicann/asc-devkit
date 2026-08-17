@@ -67,7 +67,7 @@ For more msOpProf tool usage, refer to [MindStudio Tools](https://www.hiascend.c
 Run the following steps in the root directory of this example to build and run the example.
 
 - Configure environment variables
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on the current environment.
 
   > To use the msProf tool, install CANN commercial/community edition. For details, refer to [msOpProf Tool Installation Guide](https://www.hiascend.com/document/detail/zh/canncommercial/900/devaids/optool/docs/zh/install_guide/msopprof_install_guide.md).
 

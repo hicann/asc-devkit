@@ -72,7 +72,7 @@ A Matmul example that enables the UnitFlag feature to parallelize the CUBE compu
 ## Build and Run
 Run the following steps in the root directory of this example to build and run the example.
 - Configure Environment Variables  
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

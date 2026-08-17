@@ -22,7 +22,7 @@ This sample demonstrates the basic process of verifying operator kernel function
 
 Execute the following steps in the root directory of this sample to compile and run the operator.
 - Configure environment variables  
-  Please select the corresponding command to configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package on the current environment.
+  Please select the corresponding command to configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package on the current environment.
   - Default path, root user installs CANN software package
     ```bash
     source /usr/local/Ascend/cann/set_env.sh

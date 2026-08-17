@@ -130,7 +130,7 @@ tilingApi.SetFixSplit(128, 256, 64);
 
 - **Memory access calculation ratio analysis**: When the input is of fp16 type, the Cube execution unit can complete 16×16×16 multiplication and addition operations in 1 cycle. When the base block is set to [baseM, baseN, baseK] = [128, 256, 64], the minimum memory access calculation ratio can be achieved while meeting the GM address 512Byte alignment when moving out. The number of cycles calculated by Cube is (128 × 64 × 256) / (16 × 16 × 16) = 512cycle, and the memory access calculation ratio is (128 × 64 × 2 + 256 × 64 × 2) / 512cycle = **96(byte / cycle)**; set the base block to [baseM, baseN, baseK] = [64, 64, 64], the Cube calculation cycle number is (64 × 64 × 64) / (16 × 16 × 16) = 64cycle, and the memory access calculation ratio is (64 × 64 × 2 + 64 × 64 * 2) / 64cycle = **256 (byte / cycle)**. The base block scheme of [128, 256, 64] has a lower **memory access and calculation ratio. For the same amount of calculation, a smaller amount of data is required, and the required bandwidth pressure is also lower**
 
-- 💡**Recommended base block settings**: On A2/A3 chips, L0A and L0B are both 64 KB and L0C is 128 KB. `[baseM, baseN, baseK] = [128, 256, 64]` maximizes memory utilization. For b16 input, the recommended base block is `[128, 256, 64]`; for b8 input, it is `[128, 256, 128]`.
+- **Recommended base block settings**: On A2/A3 chips, L0A and L0B are both 64 KB and L0C is 128 KB. `[baseM, baseN, baseK] = [128, 256, 64]` maximizes memory utilization. For b16 input, the recommended base block is `[128, 256, 64]`; for b8 input, it is `[128, 256, 128]`.
 
 **Performance Data**:
 | Task Duration(μs) | Block Num | aicore_time(μs) | aic_mac_time(μs) | aic_mac_ratio | aic_scalar_time(μs) | aic_scalar_ratio | aic_mte1_time(μs) | aic_mte1_ratio | aic_mte2_time(μs) | aic_mte2_ratio | aic_fixpipe_time(μs) | aic_fixpipe_ratio |
@@ -228,7 +228,7 @@ AscendC::Matmul<AscendC::MatmulType<AscendC::TPosition::GM, CubeFormat::ND, ATyp
 **Optimization means**:
 - Enable MDL mode to support "large package" handling
 - **Large package transfer**: MTE2 transfers from GM to L1 no longer only transfers one basic block at a time, but caches multiple basic blocks in L1, which can significantly reduce the number of transfers from GM to L1. In this example scenario, depthA1=4 and the double buffer for L1 transfer is enabled, which means that 4 baseM × baseK data blocks are cached in L1, and two blocks each are moved into the ping and pong buffers during transfer.
-- 💡**L1 multi-block cache tuning parameters should meet: **
+- **L1 multi-block cache tuning parameters should meet: **
   - dbL0A / dbL0B=2
   - depthA1 / (stepM * stepKa)=2，
   - depthB1 / (stepN * stepKb)=2
@@ -531,7 +531,7 @@ Compared with the Atlas A2 training series chip, the Ascend 950PR chip is upgrad
 
 Perform the following steps in the root directory of this sample to compile and execute the sample.
 - Configure environment variables
-  Please configure the environment variables according to the [installation method ](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package in the current environment.
+  Please configure the environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

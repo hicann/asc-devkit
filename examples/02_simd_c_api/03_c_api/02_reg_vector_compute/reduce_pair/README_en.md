@@ -1,4 +1,4 @@
-﻿# reduce_pair Example
+# reduce_pair Example
 
 ## Overview
 This example implements the PairReduceElem operation based on the C API programming interface, primarily calling the [asc_pair_reduce_sum](../../../../../docs/zh/api/SIMD-API/c_api/reg/reduce_compute/asc_pair_reduce_sum.md) API (SUM mode).
@@ -49,7 +49,7 @@ This example implements the PairReduceElem operation based on the C API programm
 ## Build and Run
 Run the following steps in the root directory of this example to build and run it.
 - Configure environment variables
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

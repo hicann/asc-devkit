@@ -32,7 +32,7 @@ For the AddCustom operator description and related information, refer to [Operat
 
 - Configure environment variables
 
-  Configure environment variables based on the [installation method](../../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment. Ensure that `ASCEND_HOME_PATH` points to the CANN installation root path so that header file and library paths take effect.
+  Configure environment variables based on the [installation method](../../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment. Ensure that `ASCEND_HOME_PATH` points to the CANN installation root path so that header file and library paths take effect.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

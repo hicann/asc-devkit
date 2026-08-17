@@ -93,7 +93,7 @@ This example primarily uses the following Tensor API capabilities for implementa
 Execute the following steps in the root directory of this example to build and run the sample.
 
 - Configure Environment Variables
-  Configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package on the current environment. **Currently only [CANN master](../../../../../docs/zh/quick_start.md#下载-cann-master) is supported**.
+  Configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package on the current environment. **Currently only [CANN master](../../../../../docs/en/quick_start.md#cann-install) is supported**.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

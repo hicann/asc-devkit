@@ -486,7 +486,7 @@ python3 -m pip install ml_dtypes==0.2.0 en_dtypes==0.0.4
 
 ### Configure Environment Variables
 
-Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
 
 
 ```bash

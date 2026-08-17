@@ -1,4 +1,4 @@
-﻿# reduce_pair样例
+# reduce_pair样例
 
 ## 概述
 本样例基于C API编程接口实现PairReduceElem运算，主要调用[asc_pair_reduce_sum](../../../../../docs/zh/api/SIMD-API/c_api/reg/reduce_compute/asc_pair_reduce_sum.md)接口。

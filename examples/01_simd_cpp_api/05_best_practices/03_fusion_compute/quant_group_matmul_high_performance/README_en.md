@@ -430,7 +430,7 @@ Although Atlas A2/A3 is still biased towards Vector bound in the end, the three-
 
 Perform the following steps in the root directory of this sample to compile and execute the sample.
 - Configure environment variables
-  Please configure the environment variables according to the [installation method ](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package in the current environment.
+  Please configure the environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

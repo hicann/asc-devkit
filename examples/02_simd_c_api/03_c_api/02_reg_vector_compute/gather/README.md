@@ -1,4 +1,4 @@
-﻿# gather样例
+# gather样例
 
 ## 概述
 本样例基于C API编程接口实现按索引从矢量数据寄存器收集元素功能，主要调用[asc_gather](../../../../../docs/zh/api/SIMD-API/c_api/reg/reg_load/asc_gather.md)接口。

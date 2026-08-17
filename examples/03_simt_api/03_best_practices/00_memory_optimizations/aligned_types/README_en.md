@@ -166,7 +166,7 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
 ## Build and Run
 
 - Configure Environment Variables  
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

@@ -164,7 +164,7 @@ Note that mmadParams.k takes alignK = CeilAlign(k, 64) = 128, not the original k
 ## Build and Run
 Run the following steps in the root directory of this example to build and run the operator.
 - Configure environment variables  
-  Configure environment variables according to the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Configure environment variables according to the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

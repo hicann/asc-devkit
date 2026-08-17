@@ -45,7 +45,7 @@ The example script `test_add_custom_tiling_sink.py` contains three key parts:
 
 - Configure Environment Variables
 
-  Select the corresponding command to configure environment variables based on the [installation method](../../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Select the corresponding command to configure environment variables based on the [installation method](../../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   - Default path, root user installs the CANN package
     ```bash
     source /usr/local/Ascend/cann/set_env.sh

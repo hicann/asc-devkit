@@ -1,4 +1,4 @@
-﻿# duplicate Example
+# duplicate Example
 
 ## Overview
 This example implements the Duplicate operation (scalar fill mode) based on the C API programming interface, primarily calling the [asc_duplicate_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_fill/asc_duplicate_scalar.md) API.
@@ -43,7 +43,7 @@ This example implements the Duplicate operation (scalar fill mode) based on the 
 ## Build and Run
 Run the following steps in the root directory of this example to build and run it.
 - Configure environment variables
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit on the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

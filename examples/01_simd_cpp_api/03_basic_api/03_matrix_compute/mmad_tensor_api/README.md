@@ -54,7 +54,7 @@
   <a name="表1"></a>
   <table border="2" align="center">
   <caption style="font-weight: normal;">
-      <span style="font-weight: bold; font-size: 1.2em;">📌 表1：样例规格表</span></caption>
+      <span style="font-weight: bold; font-size: 1.2em;">表1：样例规格表</span></caption>
   <tr><td rowspan="1" align="center">样例类型(OpType)</td><td colspan="4" align="center">Matmul with Quant</td></tr>
   <tr><td rowspan="4" align="center">样例输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
   <tr><td align="center">x (矩阵A)</td><td align="center">[M, K]</td><td align="center">int8_t</td><td align="center">ND</td></tr>
@@ -93,7 +93,7 @@
 在本样例根目录下执行如下步骤，编译并执行样例。
 
 - 配置环境变量
-  请根据当前环境上CANN开发套件包的[安装方式](../../../../../docs/zh/quick_start.md#prepare&install)，配置环境变量。**当前仅支持使用[CANN master](../../../../../docs/zh/quick_start.md#下载-cann-master)**。
+  请根据当前环境上CANN开发套件包的[安装方式](../../../../../docs/zh/quick_start.md#prepare&install)，配置环境变量。**当前仅支持使用[CANN master](../../../../../docs/zh/quick_start.md#cann-install)**。
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

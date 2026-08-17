@@ -1,4 +1,4 @@
-﻿# histogram样例
+# histogram样例
 
 ## 概述
 本样例基于C API编程接口实现直方图统计功能，使用了[asc_frequency_histogram_bin0/asc_frequency_histogram_bin1](../../../../../docs/zh/api/SIMD-API/c_api/reg/histogram_compute/asc_frequency_histogram.md)接口。

@@ -384,7 +384,7 @@ Execute the following steps in the root directory of this sample to build and ru
 
 - Configure environment variables
 
-  Based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package in your current environment, configure the environment variables.
+  Based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package in your current environment, configure the environment variables.
 
   ```bash
   source ${install_path}/cann/set_env.sh

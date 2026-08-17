@@ -171,7 +171,7 @@ The Tiling calculation process of this sample is as follows. The host side recei
 In the sample root directory, perform the following steps to build and run the sample.
 
 - Configure environment variables.
-  Configure environment variables based on the [installation method](../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package in the current environment.
+  Configure environment variables based on the [installation method](../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package in the current environment.
 
   ```bash
   source ${install_path}/cann/set_env.sh

@@ -161,7 +161,7 @@ Compared to each edge thread independently executing `asc_atomic_add()`, this ap
 
 Run the following steps in the root directory of this example to build and execute the operator.
 - Configure Environment Variables  
-  Configure environment variables based on the [installation method](../../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit in the current environment.
+  Configure environment variables based on the [installation method](../../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit in the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```

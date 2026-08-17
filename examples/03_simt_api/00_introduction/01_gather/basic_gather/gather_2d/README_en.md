@@ -57,7 +57,7 @@ This sample implements a simple scenario (fixed shape) 2D Gather operator using 
 Execute the following steps in the root directory of this sample to compile and run the operator.
 
 - Configure Environment Variables  
-  Configure the environment variables according to the [installation method](../../../../../../docs/zh/quick_start.md#prepare&install) of the CANN development kit package on the current environment.
+  Configure the environment variables according to the [installation method](../../../../../../docs/en/quick_start.md#prepare&install) of the CANN development kit package on the current environment.
   ```bash
   source ${install_path}/cann/set_env.sh
   ```
