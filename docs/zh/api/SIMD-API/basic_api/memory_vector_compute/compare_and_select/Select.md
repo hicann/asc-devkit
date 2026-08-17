@@ -169,7 +169,7 @@ Kirin 9030，支持模式0、1、2。
 | selMask | 输入 | 选取mask。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>每个比特位表示1个元素的选取，当selMask的比特位为1时，从src0中选取元素；比特位为0时，从src1中选取元素。<br>各模式下的selMask使用方式详见selMode参数说明。<br> |
 | src0 | 输入 | 源操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。 |
 | src1 | 输入 | 源操作数。<br>&bull;当selMode为模式0或模式2时：<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>&bull;当selMode为模式1时，类型为T，标量数据类型。 |
-| selMode | 输入 | 指令模式，SELMODE类型，取值如下：<br><pre>enum class SELMODE : uint8_t {<br>    VSEL_CMPMASK_SPR = 0, <br>    VSEL_TENSOR_SCALAR_MODE,<br>    VSEL_TENSOR_TENSOR_MODE,<br>};</pre> 三种模式详细说明请参考[功能说明](#section618mcpsimp)。|
+| selMode | 输入 | 指令模式，SELMODE类型，取值如下：<br>enum class SELMODE : uint8_t {<br>    VSEL_CMPMASK_SPR = 0, <br>    VSEL_TENSOR_SCALAR_MODE,<br>    VSEL_TENSOR_TENSOR_MODE,<br>};<br> 三种模式详细说明请参考[功能说明](#section618mcpsimp)。|
 | mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。<br>设置详见[掩码](../SIMD_compute/mask.md)。|
 | repeatTime | 输入 | 重复迭代次数。矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>具体请参考[高维切分](../SIMD_compute/high_dim_split.md)。 |
 | repeatParams | 输入 | 控制操作数地址步长的参数。[BinaryRepeatParams](../../aux_data_structures/BinaryRepeatParams.md)类型，包含操作数相邻迭代间相同DataBlock的地址步长，操作数同一迭代内不同DataBlock的地址步长等参数。<br>相邻迭代间的地址步长参数说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)；同一迭代内DataBlock的地址步长参数说明请参考[dataBlockStride](../SIMD_compute/high_dim_split.md)。 |
@@ -218,9 +218,9 @@ Kirin 9030，支持模式0、1、2。
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
 
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md)。
 
 <!-- npu="950" id10 -->
 - 当参数count或repeatTime取值为0时，针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，不保证该接口将被视为NOP（空操作）。

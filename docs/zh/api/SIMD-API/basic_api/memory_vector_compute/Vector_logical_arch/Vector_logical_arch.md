@@ -37,8 +37,8 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
 ### Unified Buffer的通用约束说明
 
-- Unified Buffer地址对齐约束，请参考[通用地址对齐约束](../../../通用说明和约束.md#通用地址对齐约束)。
-- Unified Buffer地址重叠约束，请参考[通用地址重叠约束](../../../通用说明和约束.md#通用地址重叠约束)。
+- Unified Buffer地址对齐约束，请参考[通用地址对齐约束](../../../general_description_and_constraints.md#通用地址对齐约束)。
+- Unified Buffer地址重叠约束，请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 
 ### Unified Buffer的内存结构与bank冲突
 

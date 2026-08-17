@@ -90,7 +90,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | dst | 输出 | 目的操作数。<br/>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br/>LocalTensor的起始地址需要32字节对齐。 |
 | src | 输入 | 源操作数。<br/>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br/>LocalTensor的起始地址需要32字节对齐。<br/>数据类型需要与dst保持一致。 |
 | sharedTmpBuffer | 输入 | 共享的临时Buffer，sharedTmpBuffer的大小参考[表sharedTmpBuffer所需的内存](#table4)。 |
-| transposeParams | 输入 | 控制Transpose的数据结构。结构体内包含：输入的shape信息和transposeType参数。该数据结构的定义请参考[表TransposeParamsExt结构体内参数说明](#table3)。<pre>struct TransposeParamsExt {<br/>    \_\_aicore\_\_ TransposeParamsExt() {}<br/>    \_\_aicore\_\_ TransposeParamsExt(const uint16_t nSizeIn, const uint16_t cSizeIn, const uint16_t hSizeIn,<br/>        const uint16_t wSizeIn, const TransposeType transposeTypeIn)<br/>        : nSize(nSizeIn),<br/>          cSize(cSizeIn),<br/>          hSize(hSizeIn),<br/>          wSize(wSizeIn),<br/>          transposeType(transposeTypeIn)<br/>    {}<br/>    uint16_t nSize = 0;<br/>    uint16_t cSize = 0;<br/>    uint16_t hSize = 0;<br/>    uint16_t wSize = 0;<br/>    TransposeType transposeType = TransposeType::TRANSPOSE\_ND2ND\_B16;<br/>};</pre> |
+| transposeParams | 输入 | 控制Transpose的数据结构。结构体内包含：输入的shape信息和transposeType参数。该数据结构的定义请参考[表TransposeParamsExt结构体内参数说明](#table3)。<br>struct TransposeParamsExt {<br/>    \_\_aicore\_\_ TransposeParamsExt() {}<br/>    \_\_aicore\_\_ TransposeParamsExt(const uint16_t nSizeIn, const uint16_t cSizeIn, const uint16_t hSizeIn,<br/>        const uint16_t wSizeIn, const TransposeType transposeTypeIn)<br/>        : nSize(nSizeIn),<br/>          cSize(cSizeIn),<br/>          hSize(hSizeIn),<br/>          wSize(wSizeIn),<br/>          transposeType(transposeTypeIn)<br/>    {}<br/>    uint16_t nSize = 0;<br/>    uint16_t cSize = 0;<br/>    uint16_t hSize = 0;<br/>    uint16_t wSize = 0;<br/>    TransposeType transposeType = TransposeType::TRANSPOSE\_ND2ND\_B16;<br/>}; |
 
 **表**  TransposeParamsExt结构体内参数说明<a id="table3"></a>
 
@@ -100,7 +100,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | cSize | c轴长度。默认值为0。<br/>•二维矩阵数据块转置，无需传入，传入数值无效。<br/>•[N,C,H,W]与[N,H,W,C]数据格式互相转换，取值范围：cSize∈[0, 4095]。 |
 | hSize | h轴长度。默认值为0。<br/>•二维矩阵数据块转置，固定传入16。<br/>•[N,C,H,W]与[N,H,W,C]数据格式互相转换，取值范围：hSize \* wSize ∈[0, 4095]，hSize \* wSize \* sizeof(T)需要保证32B对齐。 |
 | wSize | w轴长度。默认值为0。<br/>•二维矩阵数据块转置，固定传入16。<br/>•[N,C,H,W]与[N,H,W,C]数据格式互相转换，取值范围：hSize \* wSize ∈[0, 4095]，hSize \* wSize \* sizeof(T)需要保证32B对齐。 |
-| transposeType | 数据排布及reshape的类型，类型为TransposeType枚举类。默认值为TRANSPOSE_ND2ND_B16。<pre>enum class TransposeType : uint8_t {<br/>    TRANSPOSE_TYPE_NONE,           // API不做任何处理<br/>    TRANSPOSE_NZ2ND_0213,          // 当前不支持<br/>    TRANSPOSE_NZ2NZ_0213,          // 当前不支持<br/>    TRANSPOSE_NZ2NZ_012_WITH_N,    // 当前不支持<br/>    TRANSPOSE_NZ2ND_012_WITH_N,    // 当前不支持<br/>    TRANSPOSE_NZ2ND_012_WITHOUT_N, // 当前不支持<br/>    TRANSPOSE_NZ2NZ_012_WITHOUT_N, // 当前不支持<br/>    TRANSPOSE_ND2ND_ONLY,          // 当前不支持<br/>    TRANSPOSE_ND_UB_GM,            // 当前不支持<br/>    TRANSPOSE_GRAD_ND_UB_GM,       // 当前不支持<br/>    TRANSPOSE_ND2ND_B16,           // [16,16]二维矩阵转置<br/>    TRANSPOSE_NCHW2NHWC,           // [N,C,H,W]-&gt;[N,H,W,C]，<br/>    TRANSPOSE_NHWC2NCHW            // [N,H,W,C]-&gt;[N,C,H,W]<br/>};</pre> |
+| transposeType | 数据排布及reshape的类型，类型为TransposeType枚举类。默认值为TRANSPOSE_ND2ND_B16。<br>enum class TransposeType : uint8_t {<br/>    TRANSPOSE_TYPE_NONE,           // API不做任何处理<br/>    TRANSPOSE_NZ2ND_0213,          // 当前不支持<br/>    TRANSPOSE_NZ2NZ_0213,          // 当前不支持<br/>    TRANSPOSE_NZ2NZ_012_WITH_N,    // 当前不支持<br/>    TRANSPOSE_NZ2ND_012_WITH_N,    // 当前不支持<br/>    TRANSPOSE_NZ2ND_012_WITHOUT_N, // 当前不支持<br/>    TRANSPOSE_NZ2NZ_012_WITHOUT_N, // 当前不支持<br/>    TRANSPOSE_ND2ND_ONLY,          // 当前不支持<br/>    TRANSPOSE_ND_UB_GM,            // 当前不支持<br/>    TRANSPOSE_GRAD_ND_UB_GM,       // 当前不支持<br/>    TRANSPOSE_ND2ND_B16,           // [16,16]二维矩阵转置<br/>    TRANSPOSE_NCHW2NHWC,           // [N,C,H,W]-&gt;[N,H,W,C]，<br/>    TRANSPOSE_NHWC2NCHW            // [N,H,W,C]-&gt;[N,C,H,W]<br/>}; |
 
 <!-- npu="950" id10 -->
 
@@ -109,8 +109,8 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
 | TRANSPOSE_ND2ND_B16 | 不需要临时Buffer。 |
-| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type);</pre> |
-| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type);</pre> |
+| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type); |
+| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type); |
 
 <!-- end id10 -->
 
@@ -121,8 +121,8 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
 | TRANSPOSE_ND2ND_B16 | 不需要临时Buffer。 |
-| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type);</pre> |
-| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type);</pre> |
+| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type); |
+| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type); |
 
 <!-- end id11 -->
 
@@ -133,8 +133,8 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
 | TRANSPOSE_ND2ND_B16 | 不需要临时Buffer。 |
-| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type);</pre> |
-| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type);</pre> |
+| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type); |
+| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type); |
 
 <!-- end id12 -->
 
@@ -167,8 +167,8 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
 | TRANSPOSE_ND2ND_B16 | 不需要临时Buffer。 |
-| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type);</pre> |
-| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type);</pre> |
+| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type); |
+| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type); |
 
 <!-- end id15 -->
 
@@ -179,8 +179,8 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
 | TRANSPOSE_ND2ND_B16 | 不需要临时Buffer。 |
-| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type);</pre> |
-| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<pre>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type);</pre> |
+| TRANSPOSE_NCHW2NHWC | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize + 2)  * h0 \* w0 \* sizeof(type); |
+| TRANSPOSE_NHWC2NCHW | 临时Buffer的大小按照下述计算规则（伪代码）进行计算。<br>auto h0 = 16; // 当数据类型的位宽为8时，h0 = 32；其他情况下，h0 = 16<br/>auto w0 = 32 / sizeof(type);  // type代表数据类型<br/>auto tmpBufferSize = (cSize \* 2 + 1) \* h0 \* w0 \* sizeof(type); |
 
 <!-- end id16 -->
 
@@ -275,7 +275,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 ## 约束说明
 
-- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 - 普通转置接口支持src和dst复用。
 - 增强转置接口，transposeType为TRANSPOSE\_ND2ND\_B16时支持src和dst复用，transposeType为TRANSPOSE\_NCHW2NHWC、TRANSPOSE\_NHWC2NCHW时不支持src和dst复用。
 - 二维矩阵数据块转置时，nSize、cSize无需传入，传入数值无效；hSize、wSize固定传入16。

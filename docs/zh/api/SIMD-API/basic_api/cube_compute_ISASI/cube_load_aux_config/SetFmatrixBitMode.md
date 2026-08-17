@@ -46,7 +46,7 @@ __aicore__ inline void SetFmatrix(const SetFMatrixBitModeParams& param, const Fm
 
 | 参数名称 | 输入/输出 | 含义 |
 | --------- | ---------- | ------ |
-| fmatrixMode | 输入 | 用于控制LoadData指令从left还是right寄存器获取信息。FmatrixMode类型，定义如下。当前只支持FMATRIX\_LEFT，左右矩阵均使用该配置。<br><pre>enum class FmatrixMode : uint8_t {<br>    FMATRIX_LEFT = 0,<br>    FMATRIX_RIGHT = 1,<br>};</pre> |
+| fmatrixMode | 输入 | 用于控制LoadData指令从left还是right寄存器获取信息。FmatrixMode类型，定义如下。当前只支持FMATRIX\_LEFT，左右矩阵均使用该配置。<br>enum class FmatrixMode : uint8_t {<br>    FMATRIX_LEFT = 0,<br>    FMATRIX_RIGHT = 1,<br>}; |
 | param | 输入 | 类型为SetFMatrixBitMode，具体参考[表2](#table85031523118)。 |
 
 <a name="table85031523118"></a>
@@ -93,7 +93,7 @@ __aicore__ inline SetFMatrixBitModeParams(const LoadData3DParamsV2<T> &loadData3
 ## 约束说明<a name="section633mcpsimp"></a>
 
 - 该接口需要配合[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口一起使用，需要在[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口之前调用。
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

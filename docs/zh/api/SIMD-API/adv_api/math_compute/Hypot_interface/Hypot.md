@@ -100,7 +100,7 @@ Hypot\(3.0, 4.0\) = 5.0
 -   源操作数src0Tensor与src1Tensor的数据长度必须保持一致。
 -   **不支持源操作数与目的操作数地址重叠。**
 -   不支持sharedTmpBuffer与源操作数、目的操作数地址重叠。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 -   当源操作数src0Tensor与src1Tensor的输入数据中任意一个或多个为inf，对应位置的目的操作数输出为inf。
 -   当源操作数src0Tensor与src1Tensor的输入数据中任意一个或多个为nan，且该位置上的输入都不是inf，对应位置的目的操作数输出为nan。
 

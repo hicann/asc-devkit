@@ -206,7 +206,7 @@ hRepeat = 2；vRepeat = 2；mask = 128；vROffset = 128。
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
 - src0、src1、src0Offset之间不允许地址重叠，且两个垂直repeat的目的地址之间不允许地址重叠。
 - 参数vROffset的取值范围为\[128, 65535\)。
 - 水平方向迭代次数，取值范围为\[1, 255\]。

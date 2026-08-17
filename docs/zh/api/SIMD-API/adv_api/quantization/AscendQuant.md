@@ -433,7 +433,7 @@ struct AscendQuantParam {
 ## 约束说明
 
 -   源操作数与目的操作数可以复用。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
 -   输入输出操作数参与计算的数据长度要求32B对齐。
 -   当Scale为float类型时，其取值范围仍为half类型的取值范围。
 -   dstTensor非固定数据类型的函数原型支持情况如下：

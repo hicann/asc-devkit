@@ -112,7 +112,7 @@ struct MrgSortSrcList {
 
 -   当存在score\[i\]与score\[j\]相同时，如果i\>j，则score\[j\]将首先被选出来，排在前面，即index的顺序与输入顺序一致。
 -   每次迭代内的数据会进行排序，不同迭代间的数据不会进行排序。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

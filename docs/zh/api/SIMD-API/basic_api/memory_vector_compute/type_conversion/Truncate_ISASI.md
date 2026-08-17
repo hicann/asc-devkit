@@ -66,7 +66,7 @@ __aicore__ inline void Truncate(const LocalTensor<T> &dst, const LocalTensor<T> 
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 <!-- npu="950" id9 -->
 -   针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算](../../reg_vector_compute/reg_vector_compute.md)API实现兼容，当参数count取值为0时，不保证该接口被视为NOP（空操作）。
 <!-- end id9 -->

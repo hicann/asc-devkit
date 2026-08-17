@@ -323,7 +323,7 @@ struct AscendAntiQuantParam {
 ## 约束说明
 
 -   **不支持源操作数与目的操作数地址重叠。**
--   操作数地址对齐要求请参见[通用地址对齐约束](../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
 -   输入输出操作数参与计算的数据长度要求32B对齐。
 -   输入带转置场景，k需要32B对齐。
 -   调用接口前，确保输入数据的size正确，offset和scale的size和shape正确。

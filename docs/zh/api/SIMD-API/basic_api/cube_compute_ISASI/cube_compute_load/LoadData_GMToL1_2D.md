@@ -105,7 +105,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 
 ## 约束说明<a id="zh-cn_topic_0000002567745223_section2045914466492"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 - 本通路搬运过程中不支持转置。
 - 目的地址必须32字节对齐。源地址必须1字节对齐，指令执行占用的流水为PIPE_MTE2。
 - 当srcStride=0时，表示连续的repeat之间读取的源操作数中的同一块数据分形。

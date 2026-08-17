@@ -289,7 +289,7 @@ struct TopKInfo {
 
 ## 约束说明
 
--   操作数地址偏移对齐要求请参见[通用说明和约束](../../通用说明和约束.md)。
+-   操作数地址偏移对齐要求请参见[通用说明和约束](../../general_description_and_constraints.md)。
 -   **不支持源操作数与目的操作数地址重叠。**
 -   当存在srcLocal\[i\]与srcLocal\[j\]相同时，如果i\>j，则srcLocal\[j\]将首先被选出来，排在前面。
 -   inf在Topk中被认为是极大值。

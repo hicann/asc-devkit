@@ -179,7 +179,7 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 
 -   mask仅控制目的操作数中的哪些元素要写入，源操作数的读取与mask无关。
 -   count表示写入目的操作数中的元素总数，源操作数的读取与count无关。

@@ -104,7 +104,7 @@
 | 参数名 | 描述 |
 | :--- | :--- |
 | T | 操作数以及paddingValue（待填充数据值）的数据类型。各产品支持的数据类型请参考[数据类型](#section4219135304818)。 |
-| mode | 配置数据搬运模式。PaddingMode类型，定义如下：<br><pre>enum class PaddingMode : uint8_t {<br>    Normal = 0,  // 默认模式，与原有数据搬运格式保持一致，每次数据搬运都会补齐至32字节对齐<br>    Compact,     // 紧凑模式，允许单次搬运不对齐，统一在整块数据末尾补齐至32字节对齐<br>};</pre> |
+| mode | 配置数据搬运模式。PaddingMode类型，定义如下：<br>enum class PaddingMode : uint8_t {<br>    Normal = 0,  // 默认模式，与原有数据搬运格式保持一致，每次数据搬运都会补齐至32字节对齐<br>    Compact,     // 紧凑模式，允许单次搬运不对齐，统一在整块数据末尾补齐至32字节对齐<br>}; |
 
 **表2**  接口参数说明
 

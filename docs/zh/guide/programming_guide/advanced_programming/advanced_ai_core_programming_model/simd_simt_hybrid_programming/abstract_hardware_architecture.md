@@ -30,7 +30,7 @@ Reg矢量执行单元、DMA单元和Aux Scalar虽属于不同的硬件执行单�
 2. Reg矢量执行单元和DMA单元在没有数据依赖时可以**同时发射、并行执行**。
 
 **图3** SIMD Reg矢量计算示意图  
-<img src="../../../../figures/reg_exec.png" title="Reg执行单元" style="zoom:80%;" />
+<img src="../../../../figures/reg_exec.png" title="Reg执行单元" style="zoom:80%;"/>
 
 ### SIMT Vector Function
 
@@ -39,4 +39,4 @@ Reg矢量执行单元、DMA单元和Aux Scalar虽属于不同的硬件执行单�
 Warp内线程共享同一条指令流，各线程维护独立的线程索引、寄存器和栈等执行状态。硬件根据线程活跃掩码发射指令：当Warp内线程控制流一致时，可保持较高执行效率；发生分支发散时，硬件会按不同分支路径分批执行活跃线程，有效并行度随之下降。
 
 **图4** SIMT线程架构示意图  
-<img src="../../../../figures/simt_thread.png" title="SIMT线程结构示意图" style="zoom:80%;" />
+<img src="../../../../figures/simt_thread.png" title="SIMT线程结构示意图" style="zoom:80%;"/>

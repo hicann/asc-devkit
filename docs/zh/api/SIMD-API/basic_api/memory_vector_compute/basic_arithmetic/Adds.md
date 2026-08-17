@@ -100,8 +100,8 @@ dst和src使用[TensorTrait](../../aux_data_structures/TensorTrait/TensorTrait.m
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[通用地址对齐约束](../../../通用说明和约束.md)。 |
-| src | 输入 | 源操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[通用地址对齐约束](../../../通用说明和约束.md)。<br>数据类型需要与目的操作数保持一致。 |
+| dst | 输出 | 目的操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[通用地址对齐约束](../../../general_description_and_constraints.md)。 |
+| src | 输入 | 源操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[通用地址对齐约束](../../../general_description_and_constraints.md)。<br>数据类型需要与目的操作数保持一致。 |
 | scalarValue | 输入 | 源操作数，数据类型需要与目的操作数中的元素类型保持一致。 |
 | count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD_compute/continuous_compute.md)。 |
 | mask[]/mask | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD_compute/mask.md)。 |
@@ -141,8 +141,8 @@ dst和src使用[TensorTrait](../../aux_data_structures/TensorTrait/TensorTrait.m
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md)。
 
 <!-- npu="A3,910b,950" id24 -->
 - 当参数count或repeatTime取值为0时，该接口的行为如下：

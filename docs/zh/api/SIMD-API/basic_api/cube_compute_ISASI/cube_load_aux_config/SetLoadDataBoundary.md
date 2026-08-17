@@ -55,7 +55,7 @@ __aicore__ inline void SetLoadDataBoundary(uint32_t boundaryValue)
 - 如果使用SetLoadDataBoundary接口设置了边界值，配合LoadData（卷积数据搬运）指令使用时，LoadData（卷积数据搬运）指令的L1 Buffer（A1/B1）的初始地址要在设置的边界内。
 - 如果boundaryValue设置为0，则表示无边界，可使用整个L1 Buffer（A1/B1）。
 - 配合[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)指令使用时，边界值大小最小值要求是1024，如果设置1~1023值是未定义行为。
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

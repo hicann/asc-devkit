@@ -84,7 +84,7 @@ Ascend 950PR/Ascend 950DT，支持的数据类型为：int8_t、uint8_t、fp4x2_
 ## 约束说明<a name="zh-cn_topic_0000002567699435_section2045914466492"></a>
 
 - 位于Unified Buffer的地址必须32字节对齐。
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md#通用地址重叠约束)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 - isSetMask参数不生效，保持默认值true即可。
 
 ## 调用示例<a name="zh-cn_topic_0000002567699435_section088124295117"></a>

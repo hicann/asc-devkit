@@ -137,7 +137,7 @@
 ## 约束说明<a name="zh-cn_topic_0000002567699435_section2045914466492"></a>
 
 - 位于Unified Buffer的地址必须32字节对齐。
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md#通用地址重叠约束)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 - CopyRepeatParams结构体参数的值需在取值范围内：
 
     **表4**  CopyRepeatParams结构体参数取值范围

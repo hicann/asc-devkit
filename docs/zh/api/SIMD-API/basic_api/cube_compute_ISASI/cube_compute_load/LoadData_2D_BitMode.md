@@ -145,7 +145,7 @@ Load2DBitModeConfig1结构体参数的含义与LoadData2DParamsV2结构体中的
 
 ## 约束说明<a id="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
 <!-- npu="950" id10 -->
 - 针对Ascend 950PR/Ascend 950DT，仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer数据通路。
 <!-- end id10 -->

@@ -66,7 +66,7 @@ $dst_i = scalar \div src_i$
 | ---- | ---- |
 | T | 操作数数据类型。<br>对于灵活标量位置接口，为预留参数，暂未启用，为后续的功能扩展做保留，需要指定时，传入默认值BinaryDefaultType即可。 |
 | isSetMask | 是否在接口内部设置mask模式和mask值。<br>&bull; true：表示在接口内部设置mask。<br>&bull; false：表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值必须设置为占位符MASK_PLACEHOLDER。<br>具体使用方式可参考[掩码](../SIMD_compute/mask.md)。 |
-| config | 类型为BinaryConfig，当标量为LocalTensor单点元素类型时生效，用于指定单点元素操作数位置。默认值DEFAULT_BINARY_CONFIG，表示右操作数为标量。<br><pre>struct BinaryConfig {<br>    int8_t scalarTensorIndex = 1; // 用于指定标量为LocalTensor单点元素时标量的位置，0表示左操作数，1表示右操作数<br>};<br>constexpr BinaryConfig DEFAULT_BINARY_CONFIG = {1};</pre> |
+| config | 类型为BinaryConfig，当标量为LocalTensor单点元素类型时生效，用于指定单点元素操作数位置。默认值DEFAULT_BINARY_CONFIG，表示右操作数为标量。<br>struct BinaryConfig {<br>    int8_t scalarTensorIndex = 1; // 用于指定标量为LocalTensor单点元素时标量的位置，0表示左操作数，1表示右操作数<br>};<br>constexpr BinaryConfig DEFAULT_BINARY_CONFIG = {1}; |
 | U | LocalTensor类型，根据输入参数dst自动推导相应的数据类型，开发者无需配置该参数，保证dst满足数据类型的约束即可。 |
 | S | LocalTensor类型或标量类型，根据输入参数src0自动推导相应的数据类型，开发者无需配置该参数，保证src0满足数据类型的约束即可。 |
 | V | LocalTensor类型或标量类型，根据输入参数src1自动推导相应的数据类型，开发者无需配置该参数，保证src1满足数据类型的约束即可。 |
@@ -75,8 +75,8 @@ $dst_i = scalar \div src_i$
 
 | 参数名称 | 类型 | 说明 |
 | ---- | ---- | ---- |
-| dst | 输出 | 目的操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[地址对齐约束](../../../通用说明和约束.md)。 |
-| src0/src1 | 输入 | 灵活标量位置接口中源操作数。<br>&bull; 类型为LocalTensor：可作矢量操作数或标量单点元素，TPosition支持VECIN/VECCALC/VECOUT。地址对齐约束参考[地址对齐约束](../../../通用说明和约束.md)。 <br>&bull; 类型为标量。 |
+| dst | 输出 | 目的操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>地址对齐约束参考[地址对齐约束](../../../general_description_and_constraints.md)。 |
+| src0/src1 | 输入 | 灵活标量位置接口中源操作数。<br>&bull; 类型为LocalTensor：可作矢量操作数或标量单点元素，TPosition支持VECIN/VECCALC/VECOUT。地址对齐约束参考[地址对齐约束](../../../general_description_and_constraints.md)。 <br>&bull; 类型为标量。 |
 | count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD_compute/continuous_compute.md)。 |
 | mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD_compute/mask.md)。 |
 | repeatTime | 输入 | 重复迭代次数。矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体说明请参考[高维切分](../SIMD_compute/high_dim_split.md)。 |
@@ -94,8 +94,8 @@ $dst_i = scalar \div src_i$
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md)。
 - 使用Tensor高维切分计算接口时，节省地址空间，开发者可以定义一个Tensor，供源操作数与目的操作数同时使用（即地址重叠），相关约束如下：
     - 对于单次repeat（repeatTime=1），且源操作数与目的操作数之间要求100%完全重叠，不支持部分重叠。
     - 对于多次repeat（repeatTime\>1），操作数与目的操作数之间存在依赖的情况下，即第N次迭代的目的操作数是第N+1次的源操作数，不支持地址重叠。

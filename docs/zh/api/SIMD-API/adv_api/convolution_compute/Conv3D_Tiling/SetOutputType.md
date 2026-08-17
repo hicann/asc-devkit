@@ -14,7 +14,7 @@ void SetOutputType(const ConvCommonApi::TPosition pos, const ConvCommonApi::Conv
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| pos | 输入 | Output在内存上的[位置](../../../通用说明和约束.md#table07372185712)。当前仅支持TPosition::CO1。 |
+| pos | 输入 | Output在内存上的[位置](../../../general_description_and_constraints.md#table07372185712)。当前仅支持TPosition::CO1。 |
 | format | 输入 | Output的数据格式。当前仅支持ConvFormat::NDC1HWC0。 |
 | dtype | 输入 | Output的数据类型。当前仅支持ConvDtype::FLOAT16、ConvDtype::BF16。 |
 

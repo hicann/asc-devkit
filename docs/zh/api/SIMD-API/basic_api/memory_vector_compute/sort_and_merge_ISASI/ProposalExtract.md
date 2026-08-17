@@ -113,7 +113,7 @@ __aicore__ inline void ProposalExtract(const LocalTensor<T>& dst, const LocalTen
 
 -   用户需保证src中存储的proposal数目大于等于实际所需数目，否则会存在tensor越界错误。
 -   用户需保证dst中存储的元素大于等于实际所需数目，否则会存在tensor越界错误。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

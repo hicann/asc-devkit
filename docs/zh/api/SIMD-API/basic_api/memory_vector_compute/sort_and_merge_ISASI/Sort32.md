@@ -76,7 +76,7 @@ __aicore__ inline void Sort32(const LocalTensor<T>& dst, const LocalTensor<T>& s
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 地址对齐约束参考[通用地址对齐约束](../../../通用说明和约束.md)。
+- 地址对齐约束参考[通用地址对齐约束](../../../general_description_and_constraints.md)。
 <!-- npu="A3,910b,950" id12 -->
 - 当参数repeatTime取值为0时，该接口的行为如下：
     <!-- npu="A3,910b" id10 -->

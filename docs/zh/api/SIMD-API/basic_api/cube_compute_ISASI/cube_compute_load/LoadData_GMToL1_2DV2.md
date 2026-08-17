@@ -97,7 +97,7 @@ LoadData2DParamsV2结构体在不启用转置时，示意图如下，参数设�
 
 ## 约束说明<a id="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 - 本通路场景下不支持转置。
 
 ## 调用示例<a id="section6461234123118"></a>

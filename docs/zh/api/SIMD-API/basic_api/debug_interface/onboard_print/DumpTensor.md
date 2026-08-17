@@ -125,7 +125,7 @@ DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
 - 针对Ascend 950PR/Ascend 950DT，打印Fixpipe Buffer中的Tensor信息场景：
   - Fixpipe Buffer保存的是硬件参数位域，打印结果不一定与L1 Buffer中的原始数据按位相同。前级Quant参数每8字节保留bit[7:0]、bit[31:13]和bit[46:37]，期望值为`input & 0x00007fe0ffffe0ffULL`；前级ReLU参数每4字节保留bit[31:13]，期望值为`word & 0xffffe000U`。
 <!-- end id113 --> 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 - SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过[aclInit接口](https://hiascend.com/document/redirect/CannCommunityruntimeapiaclinit)中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围最小为1KB，最大为64MB。使用时应注意，如果超出这个限制，则数据不会被打印。
 
 ## 调用示例<a name="section82241477610"></a>

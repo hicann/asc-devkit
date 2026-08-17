@@ -60,7 +60,7 @@ __simd_callee__ inline void Cast(S& dstReg, V& srcReg, MaskReg& mask);
 | --- | --- |
 | T | 目的操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | U | 源操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
-| trait | CastTrait类型，类型转换模式结构体。包括[RegLayout](../aux_data_types/RegLayout.md)、[SatMode](../aux_data_types/SatMode.md)、[MaskMergeMode](../aux_data_types/MaskMergeMode.md)、[RoundMode](../aux_data_types/RoundMode.md)。<br><pre><code>struct CastTrait {<br>    RegLayout layoutMode = RegLayout::UNKNOWN;<br>    SatMode satMode = SatMode::UNKNOWN;<br>    MaskMergeMode mrgMode = MaskMergeMode::UNKNOWN;<br>    RoundMode roundMode = RoundMode::UNKNOWN;<br>};</code></pre>使能SatMode生效需与SetCtrlSpr配合使用。不饱和模式和饱和模式的具体配置请参考[表5 饱和模式全局或单指令生效配置表](#表5-饱和模式全局或单指令生效配置表)。<br>注：SetCtrlSpr需在SIMD_VF外调用。 |
+| trait | CastTrait类型，类型转换模式结构体。包括[RegLayout](../aux_data_types/RegLayout.md)、[SatMode](../aux_data_types/SatMode.md)、[MaskMergeMode](../aux_data_types/MaskMergeMode.md)、[RoundMode](../aux_data_types/RoundMode.md)。<br><code>struct CastTrait {<br>    RegLayout layoutMode = RegLayout::UNKNOWN;<br>    SatMode satMode = SatMode::UNKNOWN;<br>    MaskMergeMode mrgMode = MaskMergeMode::UNKNOWN;<br>    RoundMode roundMode = RoundMode::UNKNOWN;<br>};</code><br>使能SatMode生效需与SetCtrlSpr配合使用。不饱和模式和饱和模式的具体配置请参考[表5 饱和模式全局或单指令生效配置表](#表5-饱和模式全局或单指令生效配置表)。<br>注：SetCtrlSpr需在SIMD_VF外调用。 |
 | S | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;float&gt;，由编译器自动推导，用户不需要填写。 |
 | V | 源操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;int32_t&gt;，由编译器自动推导，用户不需要填写。 |
 

@@ -16,7 +16,7 @@ void SetGradOutputType(ConvCommonApi::TPosition pos, ConvCommonApi::ConvFormat f
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| pos | 输入 | GradOutput在内存上的[位置](../../../通用说明和约束.md#table07372185712)。当前仅支持TPosition::GM。 |
+| pos | 输入 | GradOutput在内存上的[位置](../../../general_description_and_constraints.md#table07372185712)。当前仅支持TPosition::GM。 |
 | format | 输入 | GradOutput的数据格式。当前仅支持ConvFormat::NDC1HWC0。 |
 | dtype | 输入 | GradOutput的数据类型。当前仅支持ConvDtype::FLOAT16、ConvDtype::BF16。 |
 

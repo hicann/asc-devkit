@@ -2,7 +2,7 @@
 
 -   [Ascend C API列表](api_list.md)
 -   [SIMD API](SIMD-API/SIMD-API.md)
-    -   [通用说明和约束](SIMD-API/通用说明和约束.md)
+    -   [通用说明和约束](SIMD-API/general_description_and_constraints.md)
     -   [基础API](SIMD-API/basic_api/basic_api.md)
         -   [基础API列表](SIMD-API/basic_api/basic_api_list.md)
         -   [数据结构](SIMD-API/basic_api/data_structures/data_structures.md)

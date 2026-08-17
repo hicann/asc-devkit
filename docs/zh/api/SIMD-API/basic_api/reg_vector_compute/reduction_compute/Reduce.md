@@ -49,7 +49,7 @@ __simd_callee__ inline void Reduce(S& dstReg, V srcReg, MaskReg mask)
 
 | 参数名 | 描述 |
 | --- | --- |
-| type | ReduceType类型，支持SUM、MAX、MIN。<br><pre>enum class ReduceType {<br>    SUM = 0,<br>    MAX,<br>    MIN,<br>};</pre> |
+| type | ReduceType类型，支持SUM、MAX、MIN。<br>enum class ReduceType {<br>    SUM = 0,<br>    MAX,<br>    MIN,<br>}; |
 | T | 目的操作数dstReg的数据类型。 |
 | U | 源操作数srcReg的数据类型。 |
 | mode | [MaskMergeMode](../aux_data_types/MaskMergeMode.md)，选择MERGING模式或ZEROING模式。<br>&bull; ZEROING，mask未选中的元素在dst中置零。<br>&bull; MERGING，当前不支持。 |

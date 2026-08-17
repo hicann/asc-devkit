@@ -197,8 +197,8 @@ PAR列表示矢量计算单元一个迭代能够处理的元素个数。
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../通用说明和约束.md#section668772811100)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#section668772811100)。
 - 源操作数的数据类型为half、目的操作数的数据类型为float的情况下，不支持地址重叠。
 - 使用tensor高维切分计算接口时，src和scalarValue的数据类型为half、dst的数据类型为float的情况下，一个迭代处理内最多处理64个输入数据。
 <!-- npu="A3,910b,950" id18 -->

@@ -131,8 +131,8 @@ constexpr WelfordFinalizeConfig WFFINALIZE_DEFAULT_CFG = { false };
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| outputMean | 输出 | 均值目的操作数，数据类型为float。输出的均值为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../通用说明和约束.md#table16278354141117)，开发者实际需要为outputMean分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| outputVariance | 输出 | 方差目的操作数，数据类型为float。输出的方差为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../通用说明和约束.md#table16278354141117)，开发者实际需要为outputVariance分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| outputMean | 输出 | 均值目的操作数，数据类型为float。输出的均值为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../general_description_and_constraints.md#table16278354141117)，开发者实际需要为outputMean分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+| outputVariance | 输出 | 方差目的操作数，数据类型为float。输出的方差为1个数，需要sizeof(float)大小的空间进行保存，根据[存储单元的对齐要求](../../general_description_and_constraints.md#table16278354141117)，开发者实际需要为outputVariance分配32字节对齐的内存空间。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | inputMean | 输入 | 均值源操作数，数据类型为float。shape为[abLength]。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | inputVariance | 输入 | 方差源操作数，数据类型为float。shape为[abLength]。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | counts | 输入 | 源操作数，数据类型为int32_t。shape为[abLength]。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |

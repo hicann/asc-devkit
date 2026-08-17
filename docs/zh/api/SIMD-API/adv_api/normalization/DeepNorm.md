@@ -82,7 +82,7 @@ SubLayer\(X\)通常是指在DeepNorm模型中的一个子层（sub-layer），�
 
 ## 约束说明
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
 
 -   isReuseSrc模板参数为false时，srcLocal和dstLocal的Tensor空间不支持复用。
 -   仅支持输入shape为ND格式。

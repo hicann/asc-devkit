@@ -172,7 +172,7 @@ struct AntiQuantizeParams {
 ## 约束说明
 
 -   **不支持源操作数与目的操作数地址重叠。**
--   操作数地址对齐要求请参见[通用地址对齐约束](../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
 -   输入输出操作数参与计算的数据长度要求32字节对齐。
 -   连续计算方向（即n方向）的数据量要求32字节对齐。
 -   PER\_GROUP量化的float4场景不支持offset，该场景下模板参数config中的hasOffset参数必须配置为false。

@@ -29,7 +29,7 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 
   > [!NOTE]说明
   > - 同一个物理内存可能对应多个不同的[TPosition](../../../basic_api/aux_data_structures/TPosition.md)，例如Unified Buffer（UB）同时映射到VECIN、VECCALC和VECOUT三个逻辑位置，分别代表矢量计算的输入、中间计算和输出阶段。L1 Buffer同时映射到A1、B1、C1和TSCM，具体含义取决于当前所服务的计算流程（矩阵左/右矩阵暂存或共享通信）。这种设计使得同一物理内存可以在不同计算阶段被赋予不同的逻辑语义，开发者可根据编程模型的阶段需求选择合适的TPosition。
-  > - 同一个逻辑位置，在不同产品型号中可能对应不同的物理内存，例如逻辑位置CO2在Atlas A2 训练系列产品/Atlas A2 推理系列产品中映射到Global Memory，而在Atlas训练及推理系列产品中映射到Unified Buffer，详细情况请参考[逻辑位置和物理存储的映射关系](../../../通用说明和约束.md#section1359919519819)。
+  > - 同一个逻辑位置，在不同产品型号中可能对应不同的物理内存，例如逻辑位置CO2在Atlas A2 训练系列产品/Atlas A2 推理系列产品中映射到Global Memory，而在Atlas训练及推理系列产品中映射到Unified Buffer，详细情况请参考[逻辑位置和物理存储的映射关系](../../../general_description_and_constraints.md#section1359919519819)。
 
 ## 数据通路与搬运流水
 

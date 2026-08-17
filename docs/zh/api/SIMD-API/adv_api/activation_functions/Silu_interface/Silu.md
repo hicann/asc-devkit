@@ -66,7 +66,7 @@ __aicore__ inline void Silu(const LocalTensor<T>& dstLocal, const LocalTensor<T>
 
 ## 约束说明
 
--   操作数地址偏移对齐要求请参见[通用说明和约束](../../../通用说明和约束.md)。
+-   操作数地址偏移对齐要求请参见[通用说明和约束](../../../general_description_and_constraints.md)。
 -   **不支持源操作数与目的操作数地址重叠。**
 -   当前仅支持ND格式的输入，不支持其他格式。
 

@@ -112,7 +112,7 @@ struct SelectWithBytesMaskShapeInfo {
 ## 约束说明
 
 -   源操作数与目的操作数可以复用。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
 -   maskTensor尾轴元素个数和源操作数尾轴元素个数不同的情况下， maskTensor的数据有可能被接口改写。
 
 ## 调用示例

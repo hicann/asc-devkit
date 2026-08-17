@@ -113,7 +113,7 @@ Atlas 200I/500 A2 推理产品，支持的数据类型为：int8_t、uint8_t、i
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 - 不支持源操作数与目的操作数使用同一块内存地址。
 - offset的取值要求如下：
   - 取值应保证src元素类型位宽对齐。

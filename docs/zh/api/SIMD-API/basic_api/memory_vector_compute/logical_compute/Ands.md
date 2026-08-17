@@ -101,7 +101,7 @@ Ascend 950PR/Ascend 950DT，目的操作数dst和源操作数src支持的数据�
     -   对于多次repeat（repeatTime\>1），操作数与目的操作数之间存在依赖的情况下，即第N次迭代的目的操作数是第N+1次的源操作数，不支持地址重叠。
     -   源操作数为LocalTensor单点元素的场景，不支持源操作数和目的操作数地址重叠。
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 
 <!-- npu="950" id9 -->
 -   针对Ascend 950PR/Ascend 950DT，tensor前n个数据计算API中的isSetMask参数不生效，保持默认值即可。

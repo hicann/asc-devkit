@@ -88,7 +88,7 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../通用说明和约束.md)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
 
 - 本接口没有repeat输入，repeat默认为1，即一条指令计算256B的数据。
 

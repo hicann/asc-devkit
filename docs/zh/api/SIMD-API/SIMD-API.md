@@ -1,6 +1,6 @@
 # SIMD API
 
--   **[通用说明和约束](通用说明和约束.md)**
+-   **[通用说明和约束](general_description_and_constraints.md)**
 
 -   **[基础API](basic_api/basic_api.md)**
 
