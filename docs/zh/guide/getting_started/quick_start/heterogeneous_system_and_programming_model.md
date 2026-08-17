@@ -72,7 +72,7 @@ NPU是Device侧的计算核心，而 **AI Core**则是NPU内部的“最小计�
 
 ### SIMD核函数编程基本步骤（遵循SPMD模型）
 
-> **SPMD（Single Program, Multiple Data）**：将每个AI Core抽象成一个Block，通过内置变量[block_idx](../../programming_guide/language_extension/simd_builtin_keywords.md)作为Block索引。每个Block执行同一份算子Kernel代码，基于block_idx划分每个Block的数据处理范围，实现多核负载均衡与并行调度。
+> **SIMD的SPMD模型（Single Program, Multiple Data）**：将每个AI Core抽象成一个Block，通过内置变量[block_idx](../../programming_guide/language_extension/simd_builtin_keywords.md)作为Block索引。每个Block执行同一份算子Kernel代码，基于block_idx划分每个Block的数据处理范围，实现多核负载均衡与并行调度。
 
 1. **Tiling（分块）**：将数据划分为均匀的块，每个AI Core负责一块，实现负载均衡。
 2. **数据搬入**：需要**显式调用数据搬运API**将数据从Device Memory搬到本地存储。
@@ -81,7 +81,7 @@ NPU是Device侧的计算核心，而 **AI Core**则是NPU内部的“最小计�
 
 ### SIMT核函数编程基本步骤（遵循SPMD模型）
 
-> **SPMD（Single Program, Multiple Data）**：每个线程运行同一份程序，但每个线程处理不同的数据元素。
+> **SIMT的SPMD模型（Single Program, Multiple Data）**：每个线程运行同一份程序，但每个线程处理不同的数据元素。
 
 1. **Tiling（分块）**：建立线程索引与数据索引的一一对应关系。
 2. **数据搬入**：通过指针直接访问Device Memory，硬件自动加载到寄存器，**无需显式调用数据搬运API**。
