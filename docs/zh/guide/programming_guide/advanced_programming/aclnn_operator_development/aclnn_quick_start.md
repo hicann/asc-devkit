@@ -102,7 +102,7 @@ msopgen gen -i add_custom.json -c ai_core-ascendxxyy -lan cpp -out AddCustom
 >[!NOTE]说明 
 >其中，AI处理器型号`soc_version`请通过以下方式获取：
 ><!-- npu="910b,910,310p,310b" id1 -->
->- 针对如下产品：在安装AI处理器的服务器执行npu-smi info命令进行查询，获取Name信息。实际配置值为AscendName，例如Name取值为xxxyy，实际配置值为Ascendxxxyy。<br><br>
+>- 针对如下产品：在安装AI处理器的服务器执行`npu-smi info`命令进行查询，获取Name信息。实际配置值为AscendName，例如Name取值为xxxyy，实际配置值为Ascendxxxyy。<br><br>
 >    <!-- npu="910b" id2 -->
 >    Atlas A2 训练系列产品/Atlas A2 推理系列产品  
 >    <!-- end id2 -->
@@ -120,10 +120,10 @@ msopgen gen -i add_custom.json -c ai_core-ascendxxyy -lan cpp -out AddCustom
 >    <!-- end id5 -->
 ><!-- end id1 -->
 ><!-- npu="A3" id6 -->
->- 针对<term>Atlas A3 训练系列产品</term>/<term>Atlas A3 推理系列产品</term>，在安装AI处理器的服务器执行npu-smi info -t board -i id -c chip_id命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：<br>id：设备id，通过npu-smi info -l命令查出的NPU ID即为设备id。<br> chip_id：芯片id，通过npu-smi info -m命令查出的Chip ID即为芯片id。<br><br>
+>- 针对<term>Atlas A3 训练系列产品</term>/<term>Atlas A3 推理系列产品</term>，在安装AI处理器的服务器执行`npu-smi info -t board -i <id> -c <chip_id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：<br>`id`：设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。<br>`chip_id`：芯片id，通过`npu-smi info -m`命令查出的Chip ID即为芯片id，命令中表示为`<chip_id>`。<br><br>
 ><!-- end id6 -->
 ><!-- npu="950" id7 -->
->- 针对Ascend 950PR/Ascend 950DT，在安装AI处理器的服务器执行npu-smi info -t board -i id命令进行查询，获取Chip Name和NPU Name信息，实际配置值为Chip Name_NPU Name。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。<br> 其中：id为设备id，通过npu-smi info -l命令查出的NPU ID即为设备id。
+>- 针对Ascend 950PR/Ascend 950DT，在安装AI处理器的服务器执行`npu-smi info -t board -i <id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。<br>其中：`id`为设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。
 ><!-- end id7 -->
 
 ### 查看目录结构
