@@ -12,7 +12,7 @@
 
 2.  算子实现。
     -   [算子原型定义](../aclnn_operator_development/design_and_implementation/operator_prototype_definition.md)。通过原型定义来描述算子输入输出、属性等信息以及算子在AI处理器上相关实现信息，并关联tiling实现等函数。
-    -   Kernel侧算子实现和host侧tiling实现请参考[SIMD算子实现](../../../算子实践参考/SIMD算子实现/概述.md)；工程化算子开发，支持开发者调用Tiling API基于CANN提供的编程框架进行tiling开发，kernel侧也提供对应的接口方便开发者获取tiling参数，具体内容请参考[Kernel侧算子实现](../aclnn_operator_development/design_and_implementation/kernel_operator_implementation.md)和[Host侧Tiling实现](../aclnn_operator_development/design_and_implementation/host_tiling_implementation.md)，由此而带来的额外约束也在上述章节说明。
+    -   Kernel侧算子实现和host侧tiling实现请参考[SIMD算子实现](../../../operator_practice/simd_operator_impl/overview.md)；工程化算子开发，支持开发者调用Tiling API基于CANN提供的编程框架进行tiling开发，kernel侧也提供对应的接口方便开发者获取tiling参数，具体内容请参考[Kernel侧算子实现](../aclnn_operator_development/design_and_implementation/kernel_operator_implementation.md)和[Host侧Tiling实现](../aclnn_operator_development/design_and_implementation/host_tiling_implementation.md)，由此而带来的额外约束也在上述章节说明。
 
 3.  [算子入图（GE图）开发](basic_development_flow.md)。算子入图场景下，需要提供shape推导等算子入图适配函数的实现。
 4.  编译部署。通过工程编译脚本完成算子的编译部署，分为[算子包编译](../aclnn_operator_development/compilation_and_deployment/basic_process.md)和[算子动态库编译](../aclnn_operator_development/compilation_and_deployment/dynamic_static_lib_compilation.md)两种方式。

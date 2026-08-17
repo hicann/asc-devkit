@@ -38,7 +38,7 @@ __aicore__ inline TPipe()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
--   避免TPipe在对象内创建和初始化，TPipe在对象内创建时，可能会影响编译器对对象内常量的优化，引起scalar性能劣化，具体原理请参考[避免TPipe在对象内创建和初始化](../../../../../guide/算子实践参考/SIMD算子性能优化/头尾开销优化/避免TPipe在对象内创建和初始化.md)。
+-   避免TPipe在对象内创建和初始化，TPipe在对象内创建时，可能会影响编译器对对象内常量的优化，引起scalar性能劣化，具体原理请参考[避免TPipe在对象内创建和初始化](../../../../../guide/operator_practice/simd_operator_optimization/overhead_optimization/avoid_tpipe_init_in_object.md)。
 -   TPipe对象同一时刻全局只能存在一份，同时定义多个TPipe对象，会出现卡死等随机行为。如果需要使用多个TPipe时，请先调用[Destroy](Destroy.md)接口释放前一个TPipe。
 
 ## 返回值说明<a name="section640mcpsimp"></a>

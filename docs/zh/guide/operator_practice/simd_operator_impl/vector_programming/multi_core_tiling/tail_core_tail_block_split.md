@@ -1,0 +1,105 @@
+# 尾核尾块切分
+
+该场景中，主块均分后存在剩余数据`mainTileRemainder`，剩余数据部分能以DataBlock为最小单位均匀分配到每个核，但仍有少量DataBlock无法均分（`remainingTailLength`不为0），只能继续分配给部分核。获得额外DataBlock的核为整核，其余为尾核；整核和尾核都包含尾块，且整核处理的数据量更多。由于`tailBlockNumEachCore`不为0，各核都分配到基础尾块，因此尾核内也存在尾块；整核在尾核基础上多处理一个DataBlock。数据切分后，前`formerNum`个核为整核，各处理`formerLength`个元素（含主块和较长的尾块）；其余核为尾核，各处理`tailLength`个元素（含主块和较短的尾块）。
+
+本场景样例的完整代码请参考[场景3：尾核尾块切分](../../../../../../../examples/01_simd_cpp_api/02_features/02_tiling_selector/vector_tiling_strategy/README.md#scenario3-tail-block-tail-core)。样例中固定使用8个核，主块长度`mainTileLength`为3200个`half`元素，数据整体长度为258112个`half`元素。数据按DataBlock对齐后，前4个核各处理32272个元素，后4个核各处理32256个元素；整核包含10个主块和272个元素的尾块，尾核包含10个主块和256个元素的尾块。数据切分示意如下图所示。
+
+**图 1**  数据切分示意图
+
+![数据切分示意图](../../../../figures/tailblock_tailcore.png "数据切分示意图")
+
+本场景中整核和尾核处理的元素数量、主块数量及尾块长度均不同，需要分别记录两类核的Tiling参数。与[尾核切分](tail_core_split.md)相比，由于尾核内也存在尾块，Tiling参数在`former*`和`tail*`基础上新增`tailLastTileLength`记录尾核的尾块元素数量。Tiling结构体包含以下成员：
+
+- formerNum：分配到数据量较多的核数，即整核的核数。
+- formerLength：整核计算的元素数量。
+- formerTileNum：整核中主块的数量。
+- formerLastTileLength：整核中尾块的元素数量。
+- tailLength：尾核计算的元素数量。
+- tailTileNum：尾核中主块的数量。
+- tailLastTileLength：尾核中尾块的元素数量。
+
+## Tiling实现
+
+Tiling结构体定义如下：
+
+```cpp
+struct TailBlockAndTailCoreTiling {
+    uint32_t formerNum;            // 整核数量
+    uint32_t formerLength;         // 整核处理的元素数量
+    uint32_t formerTileNum;        // 整核中主块的数量
+    uint32_t formerLastTileLength; // 整核中尾块的元素数量
+    uint32_t tailLength;           // 尾核处理的元素数量
+    uint32_t tailTileNum;          // 尾核中主块的数量
+    uint32_t tailLastTileLength;   // 尾核中尾块的元素数量
+};
+```
+
+Host侧Tiling沿用[尾核切分](tail_core_split.md)中的DataBlock对齐、主块分配、基础尾块计算及整核/尾核划分，得到：整核数量`formerNum`、每个整核处理的元素数量`formerLength`、每个尾核处理的元素数量`tailLength`、每个核基础尾块的元素数量`baseLastTileLength`、整核中主块的数量`formerTileNum`，以及尾核中主块的数量`tailTileNum`。当`remainingTailLength`和`tailBlockNumEachCore`均不为0时，尾核切分分支不成立，进入尾核尾块切分场景。此时整核比尾核多处理一个DataBlock，整核尾块长度`formerLastTileLength`为基础尾块长度`baseLastTileLength`与`alignNum`（一个DataBlock包含的`half`元素数量）之和；若两者之和等于`mainTileLength`，则将其合并为一个主块（`formerTileNum`加1，`formerLastTileLength`置0）。尾核尾块长度`tailLastTileLength`直接取`baseLastTileLength`。
+
+```cpp
+uint32_t formerLastTileLength = baseLastTileLength + alignNum;
+if (formerLastTileLength == mainTileLength) {
+    formerTileNum += 1U;
+    formerLastTileLength = 0U;
+}
+uint32_t tailLastTileLength = baseLastTileLength;
+TailBlockAndTailCoreTiling tiling{
+    formerNum,  formerLength, formerTileNum, formerLastTileLength,
+    tailLength, tailTileNum,  tailLastTileLength};
+add_custom<TailBlockAndTailCoreTiling><<<numBlocks, 0, stream>>>(xDevice, yDevice, zDevice, tiling);
+```
+
+对形状为`(1, 258112)`的输入数据计算后，Tiling结构体内各个变量的值如下：
+
+```cpp
+TailBlockAndTailCoreTiling tiling{
+    4,     // formerNum：前4个核为整核
+    32272, // formerLength：整核计算32272个half
+    10,    // formerTileNum：整核包含10个主块
+    272,   // formerLastTileLength：整核包含272个half的尾块
+    32256, // tailLength：尾核计算32256个half
+    10,    // tailTileNum：尾核包含10个主块
+    256    // tailLastTileLength：尾核包含256个half的尾块
+};
+```
+
+## 算子类实现
+
+Kernel侧算子仍采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现。与[尾核切分](tail_core_split.md)相比，本场景中整核和尾核都包含尾块，因此`Init`函数需要根据`GetBlockIdx()`判断当前核是整核还是尾核，并分别设置Global Memory偏移、`tileNum`和`lastTileLength`。
+整核使用`formerLength`、`formerTileNum`和`formerLastTileLength`，计算如下：
+
+```cpp
+uint32_t offset = tiling.formerLength * blockIdx;
+InitGm(x, y, z, offset, tiling.formerLength);
+```
+
+尾核使用`tailLength`、`tailTileNum`和`tailLastTileLength`。尾核的Global Memory偏移需要在全部整核数据之后继续计算，代码如下：
+
+```cpp
+uint32_t offset = tiling.formerLength * tiling.formerNum + tiling.tailLength * (blockIdx - tiling.formerNum);
+InitGm(x, y, z, offset, tiling.tailLength);
+```
+
+完整的`Init`函数实现代码如下：
+
+```cpp
+__aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z,
+                            TailBlockAndTailCoreTiling tiling)
+{
+    uint32_t blockIdx = AscendC::GetBlockIdx();
+    if (blockIdx < tiling.formerNum) {
+        uint32_t offset = tiling.formerLength * blockIdx;
+        InitGm(x, y, z, offset, tiling.formerLength);
+        this->tileNum = tiling.formerTileNum;
+        this->lastTileLength = tiling.formerLastTileLength;
+    } else {
+        uint32_t offset =
+            tiling.formerLength * tiling.formerNum + tiling.tailLength * (blockIdx - tiling.formerNum);
+        InitGm(x, y, z, offset, tiling.tailLength);
+        this->tileNum = tiling.tailTileNum;
+        this->lastTileLength = tiling.tailLastTileLength;
+    }
+}
+```
+
+完成`Init`后，`Process`函数仍按照`tileNum`和`lastTileLength`进行循环处理。整核和尾核都需要处理主块和尾块，循环逻辑与[尾块均分](tail_block_even_split.md)中的`Process`函数一致，此处不再展开。

@@ -666,7 +666,7 @@ VF融合可以分成两个层级：
 - 多个VF保持相同或等价的循环结构增加VF深度融合的机会，循环满足Hardware Loop规范。
 - 控制寄存器使用量，避免融合后超过寄存器资源限制。
 
-> 📌 **提示**：VF融合并非范围越大越好。融合粒度过大可能导致寄存器溢出，反而使性能下降。更多优化手段可以参考[VF融合优化](../../../../算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF融合优化.md)和[VF循环优化](../../../../算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF循环优化.md)。
+> 📌 **提示**：VF融合并非范围越大越好。融合粒度过大可能导致寄存器溢出，反而使性能下降。更多优化手段可以参考[VF融合优化](../../../../operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_fusion_optimization.md)和[VF循环优化](../../../../operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_loop_optimization.md)。
 
 #### 指令双发
 
@@ -674,7 +674,7 @@ VF融合可以分成两个层级：
 
 如果计算链路过长，也可以适度拆分VF循环、必要时将阶段性结果写回UB，以换取更好的指令调度空间。同时需要控制VF内寄存器数量：一个VF中可同时使用的`vector_*`、`vector_bool`、`vector_load_unalign`、`vector_store_unalign`数量都受硬件规格限制，超出后编译器会插入换入换出和同步指令，反而降低性能。
 
->📌 **提示**：优化手段可以参考[指令双发优化](../../../../算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/指令双发优化.md)。
+>📌 **提示**：优化手段可以参考[指令双发优化](../../../../operator_practice/simd_operator_optimization/vector_compute/vf_optimization/dual_issue_optimization.md)。
 
 
 

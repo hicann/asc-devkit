@@ -204,7 +204,7 @@ PAR列表示矢量计算单元一个迭代能够处理的元素个数。
   - 针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
   <!-- end id21 -->
 <!-- end id17 -->
-- MulAddDst指令实际使用会受到[bank冲突](../../../../../guide/算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/概述.md)影响。  
+- MulAddDst指令实际使用会受到[bank冲突](../../../../../guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/overview.md)影响。  
   地址不重叠场景下，无法在一拍读取dst、src0、src1三块不同地址下的数据，因此只能达到一半的理论并行度，理论并行度将在原有基础上减半；在地址重叠场景下，则保持原有理论并行度。
 - 使用tensor高维切分计算接口时，src和scalar的数据类型为half、dst的数据类型为float的情况下，一个迭代处理内最多处理64个输入数据。
 <!-- npu="950" id22 -->

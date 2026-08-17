@@ -30,7 +30,7 @@
 <p id="p1739319428114"><a name="p1739319428114"></a><a name="p1739319428114"></a>BiasTable Buffer：64Byte对齐。</p>
 <p id="p13932421316"><a name="p13932421316"></a><a name="p13932421316"></a>Fixpipe Buffer：128Byte对齐。</p>
 </td>
-<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><a name="ul9477161417"></a><a name="ul9477161417"></a><ul id="ul9477161417"><li>进行数据搬运时，需要感知对齐约束。</li><li>针对UB，遇到一些非对齐的场景，可以使用非对齐搬运的接口或者通过一些技巧（比如搬入时包含冗余数据，搬出时去除冗余数据）来解决。详情见<a href="../../../../算子实践参考/SIMD算子实现/矢量编程/非对齐场景.md">非对齐场景</a>。</li></ul>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><a name="ul9477161417"></a><a name="ul9477161417"></a><ul id="ul9477161417"><li>进行数据搬运时，需要感知对齐约束。</li><li>针对UB，遇到一些非对齐的场景，可以使用非对齐搬运的接口或者通过一些技巧（比如搬入时包含冗余数据，搬出时去除冗余数据）来解决。详情见<a href="../../../../operator_practice/simd_operator_impl/vector_programming/unaligned_scenario.md">非对齐场景</a>。</li></ul>
 </td>
 </tr>
 <tr id="row698415161206"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p153938429117"><a name="p153938429117"></a><a name="p153938429117"></a>内存访问（UB）</p>
@@ -38,7 +38,7 @@
 <td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.2.4.1.2 "><p id="p1393442615"><a name="p1393442615"></a><a name="p1393442615"></a>UB bank访问冲突（Vector计算访问/搬运访问）。</p>
 <p id="p73934420118"><a name="p73934420118"></a><a name="p73934420118"></a></p>
 </td>
-<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><p id="p123932421311"><a name="p123932421311"></a><a name="p123932421311"></a>需要按照芯片要求，在软件实现时错开处理的地址，从而解决bank冲突。具体解决方案可参考<a href="../../../../算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_2201.md">避免UB的bank冲突</a>章节。</p>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><p id="p123932421311"><a name="p123932421311"></a><a name="p123932421311"></a>需要按照芯片要求，在软件实现时错开处理的地址，从而解决bank冲突。具体解决方案可参考<a href="../../../../operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_bank_conflict_npu_arch_2201.md">避免UB的bank冲突</a>章节。</p>
 </td>
 </tr>
 <tr id="row798416160209"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p5393154210115"><a name="p5393154210115"></a><a name="p5393154210115"></a>内存访问（GM）</p>
@@ -47,7 +47,7 @@
 <p id="p14393442116"><a name="p14393442116"></a><a name="p14393442116"></a></p>
 </td>
 <td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><p id="p9393104218116"><a name="p9393104218116"></a><a name="p9393104218116"></a>对相同地址的访问，会被硬件串行化，性能为排队时间，大约下降10%-20%；</p>
-<p id="p539311424118"><a name="p539311424118"></a><a name="p539311424118"></a>多核访问通过错峰访问（调整数据访问顺序和修改切分策略等），使得第一次加载数据到L2 Cache，后续访问性能反而提升。具体解决方案可参考<a href="../../../../算子实践参考/SIMD算子性能优化/内存访问/避免同地址访问.md">避免同地址访问</a>章节。</p>
+<p id="p539311424118"><a name="p539311424118"></a><a name="p539311424118"></a>多核访问通过错峰访问（调整数据访问顺序和修改切分策略等），使得第一次加载数据到L2 Cache，后续访问性能反而提升。具体解决方案可参考<a href="../../../../operator_practice/simd_operator_optimization/memory_access/avoid_same_address_access.md">避免同地址访问</a>章节。</p>
 </td>
 </tr>
 <tr id="row189843164202"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p1339364210115"><a name="p1339364210115"></a><a name="p1339364210115"></a>内存访问（GM）</p>
@@ -55,7 +55,7 @@
 <td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.2.4.1.2 "><p id="p153934427114"><a name="p153934427114"></a><a name="p153934427114"></a>单次搬运数据长度16KB以上时，可发挥带宽的最佳性能。</p>
 </td>
 <td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><p id="p1839334215112"><a name="p1839334215112"></a><a name="p1839334215112"></a>根据实测经验，单次搬运数据长度16KB以上时，通常能较好地发挥出带宽的最佳性能。因此对于单次搬运，应考虑尽可能的搬运较大的数据块（不同芯片不一样）。</p>
-<p id="p14280187181119"><a name="p14280187181119"></a><a name="p14280187181119"></a>具体解决方案可参考<a href="../../../../算子实践参考/SIMD算子性能优化/内存访问/尽量一次搬运较大的数据块.md">尽量一次搬运较大的数据块</a>章节。</p>
+<p id="p14280187181119"><a name="p14280187181119"></a><a name="p14280187181119"></a>具体解决方案可参考<a href="../../../../operator_practice/simd_operator_optimization/memory_access/transfer_larger_data_blocks.md">尽量一次搬运较大的数据块</a>章节。</p>
 </td>
 </tr>
 <tr id="row10984111617206"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p1139394216112"><a name="p1139394216112"></a><a name="p1139394216112"></a>内存访问（GM--&gt;L1）</p>
@@ -70,7 +70,7 @@
 <td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.2.4.1.2 "><p id="p439317429119"><a name="p439317429119"></a><a name="p439317429119"></a>数据搬运会被拆成128B/256B/512B不同长度进行搬运，非对齐会向上取整。</p>
 </td>
 <td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.2.4.1.3 "><p id="p133931242413"><a name="p133931242413"></a><a name="p133931242413"></a>Tiling尽量让搬运的内轴128B、256B、512B对齐。</p>
-<p id="p4131102271514"><a name="p4131102271514"></a><a name="p4131102271514"></a>具体解决方案可参考<a href="../../../../算子实践参考/SIMD算子性能优化/内存访问/GM地址尽量512B对齐.md">GM地址尽量512B对齐</a>章节。</p>
+<p id="p4131102271514"><a name="p4131102271514"></a><a name="p4131102271514"></a>具体解决方案可参考<a href="../../../../operator_practice/simd_operator_optimization/memory_access/gm_address_512b_alignment.md">GM地址尽量512B对齐</a>章节。</p>
 </td>
 </tr>
 <tr id="row7725134123913"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p1639310422014"><a name="p1639310422014"></a><a name="p1639310422014"></a>Cube</p>

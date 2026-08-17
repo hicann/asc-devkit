@@ -182,7 +182,7 @@ __cc__ half l0c_buffer[m_size * n_size];    // L0C Buffer, 64 bytes aligned
 
 以读写冲突为例，当进行一组`dst = src0 + src1`的矢量加法计算时，如果`src0`的起始地址在0x0000，`dst`的起始地址为0x4000，结合Bank的排布，可以看到当前`src0`和`dst`的地址分别属于同一个bank和同一个bank group，则存在读写冲突。
 
-当遇到Bank冲突的时候，会引起算子性能的下降，通常可以通过优化计算逻辑和优化分配地址方式来避免冲突的产生。详情请参考[避免Bank冲突](../../../../算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/avoid_bank_conflict_npu_arch_3510.md)。
+当遇到Bank冲突的时候，会引起算子性能的下降，通常可以通过优化计算逻辑和优化分配地址方式来避免冲突的产生。详情请参考[避免Bank冲突](../../../../operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_bank_conflict_npu_arch_3510.md)。
 
 ## 同步机制
 

@@ -9,7 +9,7 @@ The Ascend C documentation system consists of five core documents. Developers ca
 | Getting Started Tutorial | Ascend C overview, environment setup, quick-start hands-on (HelloWorld, first operator) | `docs/zh/guide/getting_started` |
 | Programming Guide | Programming models, programming paradigms, compilation & execution, hardware architecture, advanced programming | `docs/zh/guide/编程指南` |
 | API Reference Manual | Interface parameters, constraints, examples, API associations | `docs/zh/api/` |
-| Operator Practice Reference | Operator implementation, performance optimization, tuning cases | `docs/zh/guide/算子实践参考/` |
+| Operator Practice Reference | Operator implementation, performance optimization, tuning cases | `docs/zh/guide/operator_practice/` |
 | Cross-generation Migration & Compatibility Guide | API compatibility strategies, architecture change mappings, migration steps | `docs/zh/guide/cross_gen_migration_guide/` |
 
 Before reading this document, ensure you have a basic understanding of the Ascend AI processor hardware architecture. New developers are recommended to start with the Getting Started Tutorial; developers with prior experience should read the Ascend C Programming Guide.
@@ -38,7 +38,7 @@ If you find that certain content is missing or incomplete in the documentation (
 
 If you have practical experience with Ascend C operator performance optimization to share:
 
-1. Refer to existing tuning case structures under `算子实践参考/优秀实践/`
+1. Refer to existing tuning case structures under `operator_practice/best_practices/`
 2. Write documentation following the "Performance Optimization Case Writing Convention" in this guide
 3. Submit a PR
 
@@ -540,7 +540,7 @@ __aicore__ inline void ExampleKernel(__gm__ uint8_t* x) {  // __aicore__=kernel 
 
 ## Performance Optimization Case Writing Conventions
 
-Refer to existing cases under `算子实践参考/优秀实践/` (e.g., FlashAttention, Matmul series). Recommended structure:
+Refer to existing cases under `operator_practice/best_practices/` (e.g., FlashAttention, Matmul series). Recommended structure:
 
 ```markdown
 # <Operator Name> Performance Tuning Case

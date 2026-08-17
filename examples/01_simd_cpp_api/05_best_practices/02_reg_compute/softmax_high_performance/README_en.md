@@ -13,9 +13,9 @@ This example uses single-core Softmax as a case study to demonstrate a complete 
 
 **Prerequisites**: Before reading, a basic understanding of the following background topics is recommended to provide theoretical support for the optimization strategies of each Case:
 - **[Reg Vector Computation Programming](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/reg_vector_computation.md)**
-- **[Instruction Dual-Issue Optimization](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/指令双发优化.md)**
-- **[VF Fusion Optimization](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF融合优化.md)**
-- **[VF Loop Optimization](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF循环优化.md)**
+- **[Instruction Dual-Issue Optimization](../../../../../docs/zh/guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/dual_issue_optimization.md)**
+- **[VF Fusion Optimization](../../../../../docs/zh/guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_fusion_optimization.md)**
+- **[VF Loop Optimization](../../../../../docs/zh/guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_loop_optimization.md)**
 
 ## Supported Products and CANN Software Versions
 

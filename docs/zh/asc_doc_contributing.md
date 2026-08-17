@@ -9,7 +9,7 @@ Ascend C资料体系包含五份核心文档，开发者可以通过提交PR对�
 | 入门教程 | Ascend C概述、环境准备、快速上手（HelloWorld、首个算子） | `docs/zh/guide/getting_started` |
 | 编程指南 | 编程模型、编程范式、编译运行、硬件架构、高级编程 | `docs/zh/guide/编程指南` |
 | API参考手册 | 接口参数、约束、示例、API关联 | `docs/zh/api/` |
-| 算子实践参考 | 算子实现、性能优化、调优案例 | `docs/zh/guide/算子实践参考/` |
+| 算子实践参考 | 算子实现、性能优化、调优案例 | `docs/zh/guide/operator_practice/` |
 | 跨代迁移兼容性指南 | API兼容策略、架构变更映射、迁移步骤 | `docs/zh/guide/cross_gen_migration_guide/` |
 
 在阅读本文档前，请确保您已了解昇腾AI处理器硬件架构。零基础开发者推荐先阅读[入门教程](./guide/getting_started/ascend_c_overview_and_learning_path.md)；已有基础的开发者推荐先阅读[Ascend C编程指南](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC)。
@@ -38,7 +38,7 @@ Ascend C资料体系包含五份核心文档，开发者可以通过提交PR对�
 
 如果您有Ascend C算子性能优化的实战经验愿意分享：
 
-1. 参考 `算子实践参考/优秀实践/` 目录下已有的调优案例结构
+1. 参考 `operator_practice/best_practices/` 目录下已有的调优案例结构
 2. 按照本指南的"性能优化案例编写规范"编写文档
 3. 提交PR
 
@@ -621,7 +621,7 @@ __aicore__ inline void ExampleKernel(__gm__ uint8_t* x) {  // __aicore__=核函�
 
 ## 性能优化案例编写规范
 
-参考 `算子实践参考/优秀实践/` 目录下的已有案例（如FlashAttention、Matmul系列）。推荐结构：
+参考 `operator_practice/best_practices/` 目录下的已有案例（如FlashAttention、Matmul系列）。推荐结构：
 
 ```markdown
 # <算子名> 性能调优案例

@@ -76,14 +76,14 @@
 - **能力范围**：支持向量计算、矩阵计算，以及向量与矩阵的融合计算，覆盖深度学习大部分核心场景；
 - **适用场景**：规整的、高密度的数据并行任务，如卷积、矩阵乘、逐元素变换等，是昇腾NPU开发的主流选择；
 - **优势**：能效比高，指令执行开销低，可充分发挥硬件性能，接近AI Core的峰值计算能力；
-- **学习路径**：详见[AI Core SIMD编程](./ai_core_simd_programming/overview.md)；算子开发流程参见[SIMD算子实现](../../算子实践参考/SIMD算子实现/SIMD算子实现.md)。
+- **学习路径**：详见[AI Core SIMD编程](./ai_core_simd_programming/overview.md)；算子开发流程参见[SIMD算子实现](../../operator_practice/simd_operator_impl/simd_operator_impl.md)。
 
 <!-- npu="950" id2 -->
 ### SIMT编程（辅助补充，仅限Ascend 950PR/Ascend 950DT）
 - **能力范围**：仅支持向量计算，不支持矩阵运算或向量与矩阵的融合计算，功能范围相对有限；
 - **适用场景**：离散数据访问、复杂分支控制的向量算子，同时适合熟悉SIMT模型的开发者快速上手Ascend C；
 - **限制**：当前仅支持Ascend 950PR/Ascend 950DT芯片架构；
-- **学习路径**：详见[AI Core SIMT编程](./ai_core_simt_programming/overview.md)；算子开发参见[SIMT算子实现](../../算子实践参考/SIMT算子实现/SIMT算子实现.md)。
+- **学习路径**：详见[AI Core SIMT编程](./ai_core_simt_programming/overview.md)；算子开发参见[SIMT算子实现](../../operator_practice/simt_operator_impl/simt_operator_impl.md)。
 <!-- end id2 -->
 
 ### SIMD与SIMT混合编程

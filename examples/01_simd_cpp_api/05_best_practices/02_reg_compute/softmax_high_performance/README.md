@@ -13,9 +13,9 @@
 
 **前置阅读**：开始阅读前，建议对以下背景知识有初步了解，为后续各Case的优化策略提供理论支持：
 - **[Reg矢量计算编程](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/reg_vector_computation.md)**：
-- **[指令双发优化](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/指令双发优化.md)**：
-- **[VF融合优化](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF融合优化.md)**：
-- **[VF循环优化](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF循环优化.md)**：
+- **[指令双发优化](../../../../../docs/zh/guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/dual_issue_optimization.md)**：
+- **[VF融合优化](../../../../../docs/zh/guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_fusion_optimization.md)**：
+- **[VF循环优化](../../../../../docs/zh/guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_loop_optimization.md)**：
 
 ## 本样例支持的产品及CANN软件版本
 

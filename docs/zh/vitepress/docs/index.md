@@ -25,7 +25,7 @@ features:
   - icon: 🔧
     title: 算子实践参考
     details: 功能调试、性能分析、优秀实践案例，覆盖 SIMD/SIMT 算子实现与优化。
-    link: /guide/算子实践参考/本文档组织结构
+    link: /guide/operator_practice/document_structure
   - icon: 🔄
     title: 跨代迁移兼容性指南
     details: Ascend C API 兼容策略，2201 到 3510 架构迁移指导。
