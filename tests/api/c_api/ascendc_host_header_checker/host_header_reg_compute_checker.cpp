@@ -122,6 +122,8 @@ static void test_host_c_api_reg_compute_3()
     using ::asc_deintlv_b8;
     using ::asc_div;
     using ::asc_duplicate;
+    using ::asc_duplicate_highest;
+    using ::asc_duplicate_highest_merge;
     using ::asc_duplicate_merge;
     using ::asc_duplicate_scalar;
     using ::asc_duplicate_scalar_merge;

@@ -12,6 +12,9 @@
 #include <cstdint>
 #include "stub_fun.h"
 
+// The compiler supports this overload, but it is missing from the CPU debug stub header.
+int64_t ld_dev(__gm__ int64_t* src, int16_t offset);
+
 #ifndef ULL
 #define ULL unsigned long long
 #endif

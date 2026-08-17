@@ -10,6 +10,8 @@
 
 - **[asc_float2int32](asc_float2int32.md)**
 
+- **[asc_load_dev](asc_load_dev.md)**
+
 - **[asc_popc](asc_popc.md)**
 
 - **[asc_set_nthbit](asc_set_nthbit.md)**

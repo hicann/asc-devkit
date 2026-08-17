@@ -20,6 +20,7 @@ static void test_host_c_api_scalar_compute_0()
     using ::asc_float2int32_rn;
     using ::asc_float2int32_rna;
     using ::asc_float2int32_ru;
+    using ::asc_load_dev;
     using ::asc_popc;
     using ::asc_set_nthbit;
     using ::asc_sflbits;
