@@ -47,6 +47,7 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
+    copy(atom, dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
@@ -57,6 +58,7 @@ void run_copy_with_paths(const dst_tensor_type& dst, const src_tensor_type& src)
     auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with();
     atom.call(dst, src);
     copy(atom, dst, src);
+    copy(atom, dst, src, make_coord(0, 0), zero_coord, make_shape(16, 16));
 }
 
 } // namespace

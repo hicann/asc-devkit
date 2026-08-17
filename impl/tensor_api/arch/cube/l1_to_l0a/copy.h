@@ -86,6 +86,32 @@ public:
             copy_l1_to_l0a_impl::template run<trait, T, U>(dst, src);
         }
     }
+
+    template <const copy_l1_to_l0a_trait& trait = DEFAULT_COPY_L1_TO_L0A_TRAIT, typename T, typename U,
+        typename DstCoord, typename SrcCoord, typename ShapeType, typename PadT = int16_t>
+    __aicore__ inline static void load_data_impl(const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape,
+        const img2col_params<PadT>& params = DEFAULT_IMG2COL_PARAMS)
+    {
+        using dst_pattern = get_layout_pattern<typename T::layout_type>;
+        using src_pattern = get_layout_pattern<typename U::layout_type>;
+        if constexpr (Std::is_same_v<src_pattern, nc1hwc0_layout_ptn>) {
+            using impl_type = typename copy_l1_to_l0a_routing<
+                CURRENT_ARCH_VERSION, dst_pattern, src_pattern, copy_mode::normal>::type;
+            auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
+            auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
+            impl_type::template run<trait, T, U, decltype(resolved_coord_dst), decltype(resolved_coord_src), ShapeType, PadT>(
+                dst, src, resolved_coord_dst, resolved_coord_src, copy_shape, params);
+        } else {
+            constexpr auto is_b8_b4_type = sizeof(typename T::element_type) == 1;
+            constexpr auto no_trans = Std::is_same_v<dst_pattern, src_pattern>;
+            using mode_type = typename copy_l1_to_l0a_mode_set::template get<
+                Std::tuple<Std::Int<no_trans>, Std::Int<is_b8_b4_type>>>;
+            using impl_type = typename copy_l1_to_l0a_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern, mode_type>::type;
+            auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
+            auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
+            impl_type::template run<trait, T, U>(dst, src, resolved_coord_dst, resolved_coord_src, copy_shape);
+        }
+    }
 };
 
 struct copy_l1_to_l0a : public copy_l1_to_l0a_base {

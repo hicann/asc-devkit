@@ -31,6 +31,14 @@ struct copy_l1_to_fixbuf_trait {};
 
 class copy_l1_to_fixbuf_instr {
 public:
+    template <typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
+    __aicore__ inline static void data_copy_with_offset(
+        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    {
+        auto src_data = src.data() + src_offset;
+        data_copy((dst.data() + dst_offset).get(), src_data.get(), params...);
+    }
+
     template <typename T>
     __aicore__ inline static void data_copy(__fbuf__ T* dst, __cbuf__ T* src, uint16_t block_count,
                                               uint16_t block_len, uint16_t src_stride, uint16_t dst_stride)

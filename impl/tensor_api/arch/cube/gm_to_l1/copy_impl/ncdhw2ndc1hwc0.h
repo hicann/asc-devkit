@@ -81,6 +81,42 @@ public:
                                                          d_value, loop4_src_stride, false);
         }
     }
+
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord,
+        typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(const T& dst, const U& src, const DstCoord& coord_dst,
+        const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        using type = typename U::element_type;
+        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(coord_dst);
+        auto src_offset = src.layout()(coord_src);
+        auto src_layout = src.layout();
+        auto dst_layout = dst.layout();
+
+        uint16_t depth = get<2>(src_shape);
+        uint16_t dn_num = get<3>(src_shape);
+        uint16_t n_value = get<4>(src_shape);
+        uint32_t d_value = get<1>(src_shape);
+        uint64_t loop1_src_stride = static_cast<uint64_t>(get<1>(src_layout.stride())) * sizeof(type);
+        uint64_t loop4_src_stride = static_cast<uint64_t>(get<3>(src_layout.stride())) * sizeof(type);
+        uint16_t loop2_dst_stride = 1;
+        uint16_t loop4_dst_stride = get<4>(dst_layout.shape());
+        uint16_t loop3_dst_stride = get<3>(dst_layout.shape()) * get<4>(dst_layout.shape());
+        if constexpr (is_b4_type<type>) {
+            d_value >>= 1;
+            loop4_src_stride >>= 1;
+            loop1_src_stride >>= 1;
+        }
+
+        for (uint16_t d = 0; d < depth; ++d) {
+            auto depth_src_offset = src_offset + d * get<2>(src_layout.stride());
+            auto depth_dst_offset = dst_offset + d * get<1>(dst_layout.stride());
+            copy_gm_to_l1_multi_dn2nz_instr::data_copy_with_offset(dst, src, depth_dst_offset, depth_src_offset,
+                dn_num, loop2_dst_stride, loop3_dst_stride, loop4_dst_stride, loop1_src_stride,
+                src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride, false);
+        }
+    }
 };
 
 } // namespace te

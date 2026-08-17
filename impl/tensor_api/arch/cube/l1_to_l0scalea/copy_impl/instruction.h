@@ -31,16 +31,22 @@ struct copy_l1_to_l0scalea_trait {};
 
 class load_l1_to_l0a_scale_instr {
 public:
+    template <typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
+    __aicore__ inline static void load_data_with_offset(
+        const uint64_t& mx_dst_addr, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    {
+        auto src_data = src.data() + src_offset;
+        load_data(mx_dst_addr, src_data.get(), params...);
+    }
+
     template <typename T>
-    __aicore__ inline static void
-    load_data(uint64_t mx_dst_addr, __cbuf__ T* src, uint16_t m_start_position, uint16_t k_start_position,
-                 uint8_t m_step, uint8_t k_step, int16_t src_stride, uint16_t dst_stride)
+    __aicore__ inline static void load_data(uint64_t mx_dst_addr, __cbuf__ T* src, uint16_t m_start_position,
+        uint16_t k_start_position, uint8_t m_step, uint8_t k_step, int16_t src_stride, uint16_t dst_stride)
     {
         if ASCEND_IS_AIV {
             return;
         }
-        asc_copy_l12l0a_mx(mx_dst_addr, src, m_start_position, k_start_position, m_step, k_step, src_stride,
-                           dst_stride);
+        asc_copy_l12l0a_mx(mx_dst_addr, src, m_start_position, k_start_position, m_step, k_step, src_stride, dst_stride);
     }
 };
 } // namespace te

@@ -27,10 +27,10 @@
 namespace asc {
 namespace te {
 class load_data_l1_to_l0b_nz2zn {
+
 public:
     template <const copy_l1_to_l0b_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
-    {
+    __aicore__ inline static void run(const T& dst, const U& src) {
         check_template<trait, T, U>();
         if constexpr (T::layout_type::depth == FIVE_DIM_DATA) {
             batch_load_data_impl<trait, T, U>(dst, src);
@@ -43,6 +43,25 @@ public:
         }
     }
 
+    template <const copy_l1_to_l0b_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        check_template<trait, T, U>();
+        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(coord_dst);
+        auto src_offset = src.layout()(coord_src);
+        using dst_type = typename T::element_type;
+        constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<dst_type> * FRACTAL_FIXED;
+        auto m_step = get<0, 1>(src_shape);
+        auto k_step = get_element<attr_info::shape, attr_info::column, 1>(dst.layout()) *
+            get_element<attr_info::shape, attr_info::column, 0>(dst.layout()) / C0_ELEMENT<dst_type>;
+        auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src.layout()) / STRIDE_UNIT;
+        auto dst_stride = get_element<attr_info::stride, attr_info::row, 1>(dst.layout()) / STRIDE_UNIT;
+        load_l1_to_l0b_instr::load_data_with_offset<true>(
+            dst, src, dst_offset, src_offset, 0, 0, m_step, k_step, src_stride, dst_stride);
+    }
+
 private:
     template <const copy_l1_to_l0b_trait& trait, typename T, typename U>
     __aicore__ inline static constexpr void check_template()
@@ -52,8 +71,8 @@ private:
     }
 
     template <typename DstT, typename SrcT, typename DstLayoutT, typename SrcLayoutT>
-    __aicore__ inline static void load_data_fractal(const DstT& dst, const SrcT& src, const DstLayoutT& dst_layout,
-                                                    const SrcLayoutT& src_layout)
+    __aicore__ inline static void load_data_fractal(const DstT& dst, const SrcT& src,
+        const DstLayoutT& dst_layout, const SrcLayoutT& src_layout)
     {
         using dst_type = typename DstT::element_type;
         uint16_t m_start_position = 0;
@@ -87,8 +106,8 @@ private:
         auto batch_num = get<0>(dst_layout.shape());
         for (uint32_t i = 0; i < batch_num; ++i) {
             load_data_fractal(dst(make_coord(i, make_coord(make_coord(0, 0), make_coord(0, 0)))),
-                              src(make_coord(i, make_coord(make_coord(0, 0), make_coord(0, 0)))), dst_no_batch_layout,
-                              src_no_batch_layout);
+                src(make_coord(i, make_coord(make_coord(0, 0), make_coord(0, 0)))),
+                dst_no_batch_layout, src_no_batch_layout);
         }
     }
 };

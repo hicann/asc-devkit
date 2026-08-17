@@ -50,10 +50,8 @@ private:
     {
         using dst_pos = get_mem_location<T>;
         using src_pos = get_mem_location<U>;
-        static_assert(Std::is_same_v<dst_pos, location::l0scaleb>,
-                      "When Copy tensor from L1 to L0ScaleB, dst tensor must on L0ScaleB");
-        static_assert(Std::is_same_v<src_pos, location::l1>,
-                      "When Copy tensor from L1 to L0ScaleB, src tensor must on L1");
+        static_assert(Std::is_same_v<dst_pos, location::l0scaleb>, "When Copy tensor from L1 to L0ScaleB, dst tensor must on L0ScaleB");
+        static_assert(Std::is_same_v<src_pos, location::l1>, "When Copy tensor from L1 to L0ScaleB, src tensor must on L1");
         using dst_layout = typename T::layout_type;
         using src_layout = typename U::layout_type;
         using dst_pattern = get_layout_pattern<dst_layout>;
@@ -64,6 +62,25 @@ private:
         using copy_l1_to_l0scaleb_impl =
             typename copy_l1_to_l0scaleb_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern>::type;
         copy_l1_to_l0scaleb_impl::template run<trait, T, U>(dst, src);
+    }
+
+    template <const copy_l1_to_l0scaleb_trait& trait = DEFAULT_COPY_L1_TO_L0SCALEB_TRAIT, typename T, typename U,
+        typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void load_data(
+        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        using dst_pos = get_mem_location<T>;
+        using src_pos = get_mem_location<U>;
+        static_assert(Std::is_same_v<dst_pos, location::l0scaleb>,
+            "When Copy tensor from L1 to L0ScaleB, dst tensor must on L0ScaleB");
+        static_assert(Std::is_same_v<src_pos, location::l1>,
+            "When Copy tensor from L1 to L0ScaleB, src tensor must on L1");
+        using dst_pattern = get_layout_pattern<typename T::layout_type>;
+        using src_pattern = get_layout_pattern<typename U::layout_type>;
+        using impl_type = typename copy_l1_to_l0scaleb_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern>::type;
+        auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
+        auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
+        impl_type::template run<trait, T, U>(dst, src, resolved_coord_dst, resolved_coord_src, copy_shape);
     }
 };
 

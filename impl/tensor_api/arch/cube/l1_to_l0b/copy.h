@@ -74,12 +74,25 @@ private:
         }
         constexpr auto is_b8_b4_type = sizeof(typename T::element_type) == 1;
         constexpr auto no_trans = Std::is_same_v<dst_pattern, src_pattern>;
-        using copy_l1_to_l0b_mode =
-            typename copy_l1_to_l0b_mode_set::template get<Std::tuple<Std::Int<no_trans>, Std::Int<is_b8_b4_type>>>;
+        using copy_l1_to_l0b_mode = typename copy_l1_to_l0b_mode_set::template get<Std::tuple<Std::Int<no_trans>, Std::Int<is_b8_b4_type>>>;
         static_assert(!Std::is_same_v<copy_l1_to_l0b_mode, Std::ignore_t>, "Unsupported CopyL12L0B mode.");
-        using copy_l1_to_l0b_impl =
-            typename copy_l1_to_l0b_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern, copy_l1_to_l0b_mode>::type;
+        using copy_l1_to_l0b_impl = typename copy_l1_to_l0b_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern, copy_l1_to_l0b_mode>::type;
         copy_l1_to_l0b_impl::template run<trait, T, U>(dst, src);
+    }
+
+    template<const copy_l1_to_l0b_trait& trait = DEFAULT_COPY_L1_TO_L0B_TRAIT, typename T, typename U,
+        typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void load_data(const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        using dst_pattern = get_layout_pattern<typename T::layout_type>;
+        using src_pattern = get_layout_pattern<typename U::layout_type>;
+        constexpr auto is_b8_b4_type = sizeof(typename T::element_type) == 1;
+        constexpr auto no_trans = Std::is_same_v<dst_pattern, src_pattern>;
+        using mode_type = typename copy_l1_to_l0b_mode_set::template get<Std::tuple<Std::Int<no_trans>, Std::Int<is_b8_b4_type>>>;
+        using impl_type = typename copy_l1_to_l0b_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern, mode_type>::type;
+        auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
+        auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
+        impl_type::template run<trait, T, U>(dst, src, resolved_coord_dst, resolved_coord_src, copy_shape);
     }
 };
 

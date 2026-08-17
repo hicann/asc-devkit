@@ -42,6 +42,45 @@ public:
         }
     }
 
+    template <const copy_l1_to_biastable_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        check_template<trait, T, U>();
+        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(coord_dst);
+        auto src_offset = src.layout()(coord_src);
+        uint32_t src_col;
+        uint16_t block_count;
+        if constexpr (U::layout_type::depth == TWO_DIM_DATA) {
+            block_count = get<0>(src_shape);
+            src_col = get<1>(src_shape);
+        } else {
+            block_count = get<0, 1>(src_shape);
+            src_col = get<1, 1>(src_shape);
+        }
+        uint32_t src_row;
+        uint32_t dst_row;
+        if constexpr (is_satisfied_ptn_format_v<U, nd_layout_ptn>) {
+            src_row = get_element<attr_info::stride, attr_info::row>(src.layout());
+            dst_row = get_element<attr_info::stride, attr_info::row>(dst.layout());
+        } else {
+            src_row = get_element<attr_info::stride, attr_info::row, 1>(src.layout());
+            dst_row = get_element<attr_info::stride, attr_info::row, 1>(dst.layout());
+        }
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
+        bool conv_control = is_one_of_attr_v<src_type, half> && is_one_of_attr_v<dst_type, float>;
+        uint16_t block_len = Std::ceil_division(src_col, C0_ELEMENT<src_type>);
+        if constexpr (is_one_of_attr_v<src_type, float, int32_t>) {
+            block_len = Std::ceil_align(block_len, 2);
+        }
+        uint16_t src_stride = (src_row - src_col) / C0_ELEMENT<src_type>;
+        uint16_t dst_stride = Std::ceil_align((dst_row - src_col) / C0_ELEMENT<dst_type>, 2);
+        copy_l1_to_biastable_instr::data_copy_with_offset(
+            dst, src, dst_offset, src_offset, conv_control, block_count, block_len, src_stride, dst_stride);
+    }
+
 private:
     template <const copy_l1_to_biastable_trait& trait, typename T, typename U>
     __aicore__ inline static constexpr void check_template()

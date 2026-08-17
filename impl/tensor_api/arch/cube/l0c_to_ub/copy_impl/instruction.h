@@ -29,11 +29,20 @@ namespace te {
 
 class copy_l0c_to_ub_instr {
 public:
+    template <QuantMode_t quant_pre, typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
+    __aicore__ inline static void data_copy_with_offset(
+        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    {
+        auto dst_data = dst.data() + dst_offset;
+        auto src_data = src.data() + src_offset;
+        data_copy<quant_pre>(dst_data.get(), src_data.get(), params...);
+    }
+
     template <QuantMode_t quant_pre, typename T, typename U>
     __aicore__ inline static void data_copy(__ubuf__ T* dst, __cc__ U* src, uint32_t n_size, uint32_t m_size,
                                                    uint32_t src_stride, uint32_t dst_stride, uint8_t dual_dst_ctl,
-                                                   bool relu_en, uint8_t unit_flag, bool sub_block_id,
-                                                   bool is_channel_split, bool nz2nd_en, bool nz2dn_en)
+                                                   bool relu_en, uint8_t unit_flag, bool sub_block_id, bool is_channel_split, bool nz2nd_en,
+                                                   bool nz2dn_en)
     {
         if ASCEND_IS_AIV {
             return;

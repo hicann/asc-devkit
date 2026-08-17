@@ -39,6 +39,58 @@ public:
         data_copy_impl<trait>(dst, src);
     }
 
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        check_template<trait, T, U>();
+        using type = typename U::element_type;
+        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(coord_dst);
+        auto src_offset = src.layout()(coord_src);
+        constexpr auto depth = U::layout_type::depth;
+        uint32_t src_shape_rows_b;
+        uint32_t src_shape_rows_s;
+        uint32_t src_shape_columns;
+        uint32_t src_stride_rows_b;
+        uint32_t src_stride_rows_s;
+        uint32_t dst_stride_rows;
+        if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+            src_shape_rows_b = get<1, 0, 1>(src_shape);
+            src_shape_rows_s = get<1, 0, 0>(src_shape);
+            src_shape_columns = get<1, 1, 1>(src_shape);
+            src_stride_rows_b = get<1, 0, 1>(src.layout().stride());
+            src_stride_rows_s = get<1, 0, 0>(src.layout().stride());
+            dst_stride_rows = get<1, 0, 1>(dst.layout().stride());
+        } else {
+            src_shape_rows_b = get<0, 1>(src_shape);
+            src_shape_rows_s = get<0, 0>(src_shape);
+            src_shape_columns = get<1, 1>(src_shape);
+            src_stride_rows_b = get<0, 1>(src.layout().stride());
+            src_stride_rows_s = get<0, 0>(src.layout().stride());
+            dst_stride_rows = get<0, 1>(dst.layout().stride());
+        }
+        uint32_t block_len = src_shape_columns * sizeof(type) * src_shape_rows_s * src_stride_rows_s;
+        uint64_t src_stride = src_stride_rows_b * sizeof(type);
+        uint32_t dst_stride = dst_stride_rows * sizeof(type);
+        uint32_t batch_num = get_shape_batch_size(src_shape);
+        uint64_t src_batch_stride = 0;
+        if constexpr (depth == FIVE_DIM_DATA) {
+            src_batch_stride = get<0>(src.layout().stride());
+        }
+        for (uint32_t i = 0; i < batch_num; ++i) {
+            if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+                auto dst_batch = make_single_batch_sub_tensor(dst, i);
+                copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst_batch, src,
+                    dst_offset, src_offset + i * src_batch_stride, src_shape_rows_b, block_len, 0, 0,
+                    src.engine().get_cache_mode(), src_stride, dst_stride);
+            } else {
+                copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, src_shape_rows_b,
+                    block_len, 0, 0, src.engine().get_cache_mode(), src_stride, dst_stride);
+            }
+        }
+    }
+
 private:
     template <const copy_gm_to_l1_trait& trait, typename T, typename U>
     __aicore__ inline static constexpr void check_template()
@@ -63,8 +115,7 @@ private:
 
     template <typename T, typename U, typename SrcLayout, typename DstLayout>
     __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
-                                            const DstLayout& dst_layout, uint16_t batch_num, uint64_t src_batch_stride,
-                                            uint64_t dst_batch_stride)
+        const DstLayout& dst_layout, uint16_t batch_num, uint64_t src_batch_stride, uint64_t dst_batch_stride)
     {
         using type = typename U::element_type;
 

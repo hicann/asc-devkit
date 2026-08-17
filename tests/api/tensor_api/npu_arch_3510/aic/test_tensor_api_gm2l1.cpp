@@ -53,6 +53,7 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
+    copy(atom, dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
@@ -63,6 +64,7 @@ void run_copy_with_paths(const dst_tensor_type& dst, const src_tensor_type& src)
     auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with();
     atom.call(dst, src);
     copy(atom, dst, src);
+    copy(atom, dst, src, make_coord(0, 0), zero_coord, make_shape(16, 16));
 }
 
 } // namespace
@@ -2992,4 +2994,18 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_ncdhw_to_ndc1_hwc0)
         EXPECT_EQ(dn2nz.src, static_cast<void*>(const_cast<data_type*>(expect_src)));
         EXPECT_EQ(dn2nz.dst, static_cast<void*>(const_cast<data_type*>(expect_dst)));
     }
+
+    g_gm_to_l1_dn_to_nz_captures.clear();
+    g_gm_to_l1_nz_para_captures.clear();
+    auto atom = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});
+    copy(atom, l1a, gm_a, make_coord(0, 1, 0, 0, 0, 0), make_coord(0, 0, 1, 0, 0),
+        make_shape(1, channel, 1, height, width));
+
+    ASSERT_EQ(g_gm_to_l1_dn_to_nz_captures.size(), 1);
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    const auto& capture = g_gm_to_l1_dn_to_nz_captures.front();
+    const data_type* expected_src = reinterpret_cast<const data_type*>(src0_gm) + height * width;
+    const data_type* expected_dst = reinterpret_cast<const data_type*>(l1a_buf) + c1 * height * width * c0_value;
+    EXPECT_EQ(capture.src, static_cast<void*>(const_cast<data_type*>(expected_src)));
+    EXPECT_EQ(capture.dst, static_cast<void*>(const_cast<data_type*>(expected_dst)));
 }

@@ -50,8 +50,10 @@ private:
     {
         using dst_pos = get_mem_location<T>;
         using src_pos = get_mem_location<U>;
-        static_assert(Std::is_same_v<dst_pos, location::l1>, "copy_gm_to_l1 requires destination on L1");
-        static_assert(Std::is_same_v<src_pos, location::gm>, "copy_gm_to_l1 requires source on GM");
+        static_assert(Std::is_same_v<dst_pos, location::l1>,
+            "copy_gm_to_l1 requires destination on L1");
+        static_assert(Std::is_same_v<src_pos, location::gm>,
+            "copy_gm_to_l1 requires source on GM");
         using dst_layout = typename T::layout_type;
         using src_layout = typename U::layout_type;
         using dst_layout_ptn = get_layout_pattern<dst_layout>;
@@ -61,6 +63,23 @@ private:
         TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_gm_to_l1");
         using copy_gm_to_l1_impl = typename copy_gm_to_l1_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
         copy_gm_to_l1_impl::template run<trait, T, U>(dst, src);
+    }
+
+    template <const copy_gm_to_l1_trait& trait = DEFAULT_COPY_GM_TO_L1_TRAIT, typename T, typename U,
+        typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        using dst_pos = get_mem_location<T>;
+        using src_pos = get_mem_location<U>;
+        static_assert(Std::is_same_v<dst_pos, location::l1>, "copy_gm_to_l1 requires destination on L1");
+        static_assert(Std::is_same_v<src_pos, location::gm>, "copy_gm_to_l1 requires source on GM");
+        using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
+        using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
+        using impl_type = typename copy_gm_to_l1_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
+        auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
+        auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
+        impl_type::template run<trait, T, U>(dst, src, resolved_coord_dst, resolved_coord_src, copy_shape);
     }
 };
 

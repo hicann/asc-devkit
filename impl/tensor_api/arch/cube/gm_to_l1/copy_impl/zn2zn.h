@@ -35,6 +35,28 @@ public:
         run_gm_to_l1_batched<trait, copy_gm_to_l1_zn2zn, T, U>(dst, src);
     }
 
+    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    {
+        check_template<trait, T, U>();
+        using type = typename U::element_type;
+        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(coord_dst);
+        auto src_offset = src.layout()(coord_src);
+        auto block_count = get_shape_batch_size(src_shape) *
+            Std::ceil_division(get_shape_rows(src_shape), FRACTAL_FIXED);
+        auto block_len = get_shape_columns(src_shape) * C0_SIZE<>;
+        auto src_stride = get_matrix_element<attr_info::stride, attr_info::row, 1>(src.layout()) * sizeof(type);
+        auto dst_stride = get_matrix_element<attr_info::stride, attr_info::row, 1>(dst.layout()) * sizeof(type);
+        if constexpr (is_b4_type<type>) {
+            src_stride >>= 1;
+            dst_stride >>= 1;
+        }
+        copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, block_count, block_len, 0, 0,
+            src.engine().get_cache_mode(), src_stride, dst_stride);
+    }
+
     template <const copy_gm_to_l1_trait& trait, typename T, typename U>
     __aicore__ inline static constexpr void check_template()
     {
@@ -56,7 +78,8 @@ public:
     {
         using type = typename U::element_type;
 
-        auto small_fractal_size = get_element<attr_info::shape, attr_info::column, 0>(src_layout)
+        auto small_fractal_size =
+            get_element<attr_info::shape, attr_info::column, 0>(src_layout)
                                   * get_element<attr_info::shape, attr_info::column, 1>(src_layout);
         auto big_fractal_size = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         auto src_stride_size = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
@@ -75,8 +98,8 @@ public:
             src_stride = src_stride >> 1;
             dst_stride = dst_stride >> 1;
         }
-        copy_gm_to_l1_align_v2_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, left_padding_cnt, right_padding_cnt,
-                                                 cache_mode, src_stride, dst_stride);
+        copy_gm_to_l1_align_v2_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, left_padding_cnt, right_padding_cnt, cache_mode,
+                                          src_stride, dst_stride);
     }
 };
 } // namespace te

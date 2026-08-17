@@ -134,6 +134,38 @@ __aicore__ inline static constexpr l0c_out_copy_params make_l0c_out_copy_params(
     }
 }
 
+template <typename T, typename U, typename DstLayout, typename SrcLayout, typename DstShape>
+__aicore__ inline static constexpr l0c_out_copy_params make_l0c_out_copy_params(
+    const DstLayout& dst_layout, const SrcLayout& src_layout, const DstShape& dst_shape)
+{
+    const uint32_t n_size = static_cast<uint32_t>(
+        Std::min(get_total_column_shape(src_layout), get_shape_columns(dst_shape)));
+    const uint32_t m_size = static_cast<uint32_t>(
+        Std::min(get_total_row_shape(src_layout), get_shape_rows(dst_shape)));
+    const uint32_t src_stride = static_cast<uint32_t>(
+        get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED);
+    if constexpr (is_l0c_out_nd_format_v<T>) {
+        return {n_size, m_size, src_stride, get_l0c_out_nd_stride<T>(dst_layout)};
+    } else if constexpr (is_l0c_out_dn_format_v<T>) {
+        return {n_size, m_size, src_stride, get_l0c_out_dn_stride<T>(dst_layout)};
+    } else {
+        return {n_size, m_size, src_stride,
+            static_cast<uint32_t>(get_element<attr_info::stride, attr_info::column, 1>(dst_layout))};
+    }
+}
+
+template <typename DstLayout, typename SrcLayout, typename SrcShape>
+__aicore__ inline static constexpr l0c_out_copy_params make_nc1hwc0_params(
+    const DstLayout& dst_layout, const SrcLayout& src_layout, const SrcShape& src_shape)
+{
+    return {
+        get_shape_columns(src_shape),
+        get_shape_rows(src_shape),
+        static_cast<uint32_t>(
+            get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED),
+        static_cast<uint32_t>(get<1>(dst_layout.stride()))};
+}
+
 template <round_mode mode, typename DstType, typename SrcType>
 __aicore__ inline constexpr QuantMode_t get_vector_quant_mode()
 {

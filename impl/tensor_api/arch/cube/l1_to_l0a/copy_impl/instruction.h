@@ -33,6 +33,14 @@ constexpr img2col_params<int16_t> DEFAULT_IMG2COL_PARAMS{};
 
 class load_l1_to_l0a_instr {
 public:
+    template <bool transpose, typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
+    __aicore__ inline static void load_data_with_offset(
+        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    {
+        auto src_data = src.data() + src_offset;
+        load_data<transpose>((dst.data() + dst_offset).get(), src_data.get(), params...);
+    }
+
     template <bool transpose, typename T>
     __aicore__ inline static void load_data(__ca__ T* dst, __cbuf__ T* src, uint16_t m_start_position,
                                                uint16_t k_start_position, uint8_t m_step, uint8_t k_step,
@@ -88,6 +96,14 @@ public:
         config.rpt_mode = 0;
         config.config |= static_cast<uint64_t>(dst_stride) << 32;
         asc_set_l13d_rpt(config);
+    }
+
+    template <typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
+    __aicore__ inline static void load_data_with_offset(
+        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    {
+        auto src_data = src.data() + src_offset;
+        load_data((dst.data() + dst_offset).get(), src_data.get(), params...);
     }
 
     template <typename T>

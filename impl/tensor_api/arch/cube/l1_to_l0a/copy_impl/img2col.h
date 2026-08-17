@@ -51,10 +51,30 @@ public:
         load_l1_to_l0a_img2col_instr::set_repeat(
             static_cast<uint16_t>(Std::ceil_division(params.m_extension, FRACTAL_FIXED)));
         load_l1_to_l0a_img2col_instr::load_data(dst.data().get(), src.data().get(), params.k_extension,
-                                            params.m_extension, k_start_pt, m_start_pt,
-                                           params.stride_w, params.stride_h, params.filter_w, params.filter_h,
-                                           params.dilation_filter_w, params.dilation_filter_h, params.filter_size_w,
+                                               params.m_extension, k_start_pt, m_start_pt, params.stride_w,
+                                               params.stride_h,
+            params.filter_w, params.filter_h, params.dilation_filter_w, params.dilation_filter_h, params.filter_size_w,
                                            params.filter_size_h, params.transpose, params.f_matrix_ctrl, channel_size);
+    }
+
+    template <const copy_l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename ShapeType, typename PadT>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& coord_dst,
+        const SrcCoord& coord_src, const ShapeType& copy_shape, const img2col_params<PadT>& params)
+    {
+        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(coord_dst);
+        auto src_offset = src.layout()(coord_src);
+        uint16_t l1_h = get<2>(src_shape);
+        uint16_t l1_w = get<3>(src_shape);
+        uint16_t channel_size = get<1>(src_shape) * get<4>(src_shape);
+        load_l1_to_l0a_img2col_instr::set_f_matrix(l1_h, l1_w, params.pad_list);
+        load_l1_to_l0a_img2col_instr::set_padding(params.pad_value);
+        load_l1_to_l0a_img2col_instr::set_repeat(static_cast<uint16_t>(Std::ceil_division(params.m_extension, FRACTAL_FIXED)));
+        load_l1_to_l0a_img2col_instr::load_data_with_offset(dst, src, dst_offset, src_offset, params.k_extension, params.m_extension, 0, 0,
+            params.stride_w, params.stride_h, params.filter_w, params.filter_h, params.dilation_filter_w,
+            params.dilation_filter_h, params.filter_size_w, params.filter_size_h, params.transpose,
+            params.f_matrix_ctrl, channel_size);
     }
 };
 
