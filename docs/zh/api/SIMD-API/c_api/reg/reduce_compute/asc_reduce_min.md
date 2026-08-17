@@ -26,12 +26,11 @@
 
 ## 功能说明
 
-根据mask对源操作数src进行归约最小值操作：将src中的最小值写入目的操作数dst的0位置，最小值在src中的索引写入目的操作数dst的1位置，dst的其他位置将被置为0。
-
-对src中mask为1的元素求最小值，结果广播写入dst的所有有效元素；mask为0的位置在输出中置零。
+根据`mask`对源操作数`src`进行归约最小值操作，将最小值写入目的操作数`dst`的第0个元素，将最小值在`src`中的索引原始位模式写入`dst`的第1个元素，并将`dst`中的其他元素置0。如果存在多个最小值，则写入最小的索引。计算公式如下：
 
 $$
-\text{result} = \min\{src_i \mid mask_i = 1\}
+dst_0 = \min\{src_i \mid mask_i = 1\} \\
+dst_1 = \argmin\{src_i \mid mask_i = 1\}
 $$
 
 ## 函数原型
@@ -62,16 +61,15 @@ __simd_callee__ inline void asc_reduce_min(vector_float& dst, vector_float src, 
 
 ## 约束说明
 
-- 将最小值写入目的操作数的第一个数，将最小值的下标写入目的操作数的第二个数， 如果有多个最小值，第二个数为最小的下标，其余值都将被填充为0。
-- 未被mask选中的元素被视为最大值（浮点数为+inf），如果一个DataBlock中所有元素都未被mask选中，+inf将被填充到目的操作数的第一个数，其余值都将被填充为0（包括下标）。
-- 在比较中，遵循min(-0, +0) = -0。
-- 如果输入数据存在nan，将nan写入目的操作数的第一个数，将第一个nan值的下标写入目的操作数的第二个数。
+- 未被`mask`选中的元素被视为对应数据类型的最大值，浮点数类型的最大值为`+inf`。如果`src`中的所有元素均未被`mask`选中，则将该最大值写入`dst`的第0个元素，并将其余元素置0。
+- 比较时遵循$min(-0, +0) = -0$。
+- 如果输入数据中存在nan，则将nan写入`dst`的第0个元素，并将第一个nan的索引写入`dst`的第1个元素。
 
 ## 关键特性
 
 **索引值需要强制类型转换**：
 
-dst的索引按照dst的数据类型存储，比如dst为half类型时，索引按照half类型存储，因此读取索引需要使用  reinterpret\_cast方法转换到整数类型。若数据类型是half，需要使用reinterpret\_cast\<uint16_t\*\>；若数据类型是float，需要使用reinterpret\_cast\<uint32\_t\*\>。
+`dst`的索引按照`dst`的数据类型存储，比如`dst`为half类型时，索引按照half类型存储，因此读取索引需要使用  reinterpret\_cast方法转换到整数类型。若数据类型是half，需要使用reinterpret\_cast\<uint16_t\*\>；若数据类型是float，需要使用reinterpret\_cast\<uint32\_t\*\>。
 
 **提取结果（值+索引）：**
 

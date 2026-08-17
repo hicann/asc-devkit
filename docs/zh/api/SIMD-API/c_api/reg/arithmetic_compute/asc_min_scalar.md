@@ -26,10 +26,10 @@
 
 ## 功能说明
 
-源操作数矢量内每个元素与标量比，如果比标量大，则取标量值，比标量小，则取源操作数。计算公式如下：
+根据`mask`将源操作数`src`按元素与标量`value`进行比较，将最小值写入目的操作数`dst`。计算公式如下：
 
 $$
-dst_i = min(src_i, scalar)
+dst_i = min(src_i, value)
 $$
 
 ## 函数原型
@@ -54,7 +54,7 @@ __simd_callee__ inline void asc_min_scalar(vector_bfloat16_t& dst, vector_bfloat
 | dst | 输出 | 目的操作数（矢量数据寄存器）。                 |
 | src | 输入 | 源操作数（矢量数据寄存器）。                  |
 | value | 输入 | 源操作数（标量）。                  |
-| mask   | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| mask   | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
@@ -66,7 +66,7 @@ __simd_callee__ inline void asc_min_scalar(vector_bfloat16_t& dst, vector_bfloat
 
 
 - 输入`src`为-0、`value`为+0的情况下，输出`dst`为-0。
-- mask未筛选的元素在输出中置零。
+- `mask`未筛选的元素在输出中置零。
 
 ## 调用示例
 
