@@ -9,7 +9,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "c_api/stub/cce_stub.h"
+#include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
 class tensor_api_layout_squeeze : public testing::Test {

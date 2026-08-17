@@ -30,6 +30,47 @@ namespace Std = AscendC::Std;
 
 enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent = 6 };
 
+enum class load_sideband_mode : uint8_t {
+    direct,
+    deintlv,
+    downsample,
+    unpack,
+    unpack4,
+    upsample,
+};
+
+enum class store_sideband_mode : uint8_t {
+    direct,
+    store_1st,
+    intlv,
+    pack,
+    pack_quarter,
+};
+
+enum class broadcast_mode : uint8_t {
+    elem,
+    datablock,
+    elem2datablock,
+};
+
+enum class mask_pattern : uint8_t {
+    all,
+    vl1,
+    vl2,
+    vl3,
+    vl4,
+    vl8,
+    vl16,
+    vl32,
+    vl64,
+    vl128,
+    every3,
+    every4,
+    half,
+    quarter,
+    none,
+};
+
 enum class mmad_type : uint8_t { normal = 0, mx = 1 };
 
 struct mmad_trait {

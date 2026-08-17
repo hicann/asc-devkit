@@ -28,8 +28,6 @@
 #include "impl/tensor_api/tensor/layout_impl.h"
 #include "impl/tensor_api/tensor/engine_impl.h"
 #include "impl/tensor_api/tensor/pointer_pattern.h"
-#include "impl/tensor_api/experimental/reg/load_mode.h"
-#include "impl/tensor_api/experimental/reg/mask_impl.h"
 
 namespace asc {
 namespace te {
@@ -121,37 +119,6 @@ struct base_tensor {
     {
         TENSOR_API_DEBUG_CHECK(debug_check_coord, layout(), coord, "tensor operator[]");
         return data()[layout()(coord)];
-    }
-
-    using data_type = get_attribute_element_type<element_type*>;
-
-    template <load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Coord>
-    __simd_callee__ inline decltype(auto) load(const Coord& coord) const
-    {
-        static_assert(Std::is_same_v<get_mem_location<EngineType>, location::ub>,
-                      "base_tensor::load only supports tensors located in UB");
-
-        TENSOR_API_DEBUG_CHECK(debug_check_coord, layout(), coord, "tensor::load");
-        reg_tensor<data_type> dst;
-        auto src_engine = engine() + layout()(coord);
-        auto src = src_engine.begin().get();
-        if constexpr (sideband_mode == load_sideband_mode::direct) {
-            asc_loadalign(dst.reg, src);
-        }
-        return dst;
-    }
-
-    template <typename Coord, typename RegDataType>
-    __simd_callee__ inline void store(const Coord& coord, const reg_tensor<RegDataType>& src)
-    {
-        static_assert(Std::is_same_v<get_mem_location<EngineType>, location::ub>,
-                      "base_tensor::store only supports tensors located in UB");
-        static_assert(Std::is_same_v<data_type, RegDataType>,
-                      "base_tensor::store requires the tensor and reg_tensor to have the same element type");
-
-        TENSOR_API_DEBUG_CHECK(debug_check_coord, layout(), coord, "tensor::store");
-        auto dst_engine = engine() + layout()(coord);
-        asc_storealign(dst_engine.begin().get(), src.reg, src.mask);
     }
 
     template <typename Coord>
@@ -295,16 +262,6 @@ struct global_tensor : public base_tensor<EngineType, LayoutType> {
     {
         set_l2_cache_hint(normalize_cache_mode(mode));
     }
-};
-
-template <typename EngineType, typename LayoutType>
-struct local_tensor : public base_tensor<EngineType, LayoutType> {
-    using tensor_api_base = base_tensor<EngineType, LayoutType>;
-    using layoutType = typename tensor_api_base::layout_type;
-
-    using tensor_api_base::tensor_api_base;
-
-    __aicore__ inline local_tensor() = default;
 };
 
 template <typename LocationType, typename EngineType, typename LayoutType>

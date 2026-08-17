@@ -11,7 +11,7 @@
 #ifndef TESTS_API_TENSOR_API_RUNTIME_VALIDATION_TENSOR_API_RUNTIME_VALIDATION_INCLUDE_H
 #define TESTS_API_TENSOR_API_RUNTIME_VALIDATION_TENSOR_API_RUNTIME_VALIDATION_INCLUDE_H
 
-#include "c_api/stub/cce_stub.h"
+#include "tensor_api/stub/cce_stub.h"
 
 namespace tensor_api_runtime_validation {
 

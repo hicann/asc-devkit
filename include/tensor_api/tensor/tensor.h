@@ -23,6 +23,7 @@
 
 #include "impl/tensor_api/tensor/tuple_impl.h"
 #include "impl/tensor_api/tensor/tensor_impl.h"
+#include "tensor_api/tensor/local_tensor.h"
 
 // tensor construction
 namespace asc {

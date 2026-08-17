@@ -10,23 +10,22 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
-    "impl/tensor_api/experimental/reg/type_get.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future."
+    "impl/tensor_api/arch/vector/experimental/type_get.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET
+#define __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H__
 #endif
 
-#ifndef IMPL_TENSOR_API_EXPERIMENTAL_REG_TYPE_GET_H
-#define IMPL_TENSOR_API_EXPERIMENTAL_REG_TYPE_GET_H
-
-#include <cstdint>
+#ifndef IMPL_TENSOR_API_ARCH_VECTOR_EXPERIMENTAL_TYPE_GET_H
+#define IMPL_TENSOR_API_ARCH_VECTOR_EXPERIMENTAL_TYPE_GET_H
 
 #include "c_api/asc_simd.h"
 
 namespace asc {
 namespace te {
+namespace detail {
 
 // Keep the primary template incomplete so unsupported element types fail at
-// compile time when reg_tensor<T> requests the corresponding register type.
+// compile time when reg_tensor<type> requests the corresponding register type.
 template <typename DataType>
 struct type_get;
 
@@ -125,12 +124,13 @@ struct type_get<fp4x2_e1m2_t> {
     using type = vector_fp4x2_e1m2_t;
 };
 
+} // namespace detail
 } // namespace te
 } // namespace asc
 
-#endif // IMPL_TENSOR_API_EXPERIMENTAL_REG_TYPE_GET_H
+#endif // IMPL_TENSOR_API_ARCH_VECTOR_EXPERIMENTAL_TYPE_GET_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET)
+#if defined(__UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H__)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET
+#undef __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H__
 #endif
