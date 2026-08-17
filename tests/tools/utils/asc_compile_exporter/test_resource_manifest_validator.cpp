@@ -208,6 +208,9 @@ TEST_F(ResourceManifestValidatorTest, ValidatesMarkersAndReferencedPaths)
     });
     ExpectInvalid(
         "environment marker name is empty", [](Json& manifest) { Command(manifest)["cmd"][3U] = "${env:}/include"; });
+    ExpectInvalid("environment marker name starts with a digit", [](Json& manifest) {
+        Command(manifest)["cmd"][3U] = "${env:1INVALID}/include";
+    });
     ExpectInvalid("output has no relative path", [](Json& manifest) { Command(manifest)["cmd"].back() = "${output}"; });
     ExpectInvalid("output contains another marker", [](Json& manifest) {
         Command(manifest)["cmd"].back() = "${output}/${source_dir}/kernel.o";

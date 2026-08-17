@@ -25,16 +25,16 @@ namespace manifest_generator {
 namespace {
 
 using Json = nlohmann::json;
-
-constexpr const char* RESOURCE_ROOT_MARKER = "${resource}";
 constexpr const char* OUTPUT_ROOT_MARKER = "${output}";
-constexpr const char* SOURCE_FILE_PATH_MARKER = "${source_file_path}";
 constexpr const char* ENVIRONMENT_MARKER_PREFIX = "${env:";
 constexpr const char* OPTIONS_MARKER_PREFIX = "${options:";
 
+constexpr const char* RESOURCE_ROOT_MARKER = "${resource}";
+constexpr const char* SOURCE_FILE_PATH_MARKER = "${source_file_path}";
+
 enum class MarkerRequirement { None, SourceFile };
 
-const std::map<std::string, MarkerRequirement> KNOWN_MARKERS = {
+const std::map<std::string, MarkerRequirement> GENERIC_MARKER_REQUIREMENTS = {
     {RESOURCE_ROOT_MARKER, MarkerRequirement::None},
     {SOURCE_FILE_PATH_MARKER, MarkerRequirement::SourceFile},
 };
@@ -60,15 +60,22 @@ ResourceManifestValidator::ResourceManifestValidator(const Json& manifest, const
 
 bool ResourceManifestValidator::IsIdentifier(const std::string& value)
 {
-    if (value.empty() ||
-        !((value[0] >= 'A' && value[0] <= 'Z') || (value[0] >= 'a' && value[0] <= 'z') || value[0] == '_')) {
-        return false;
+    if (value.empty()) {
+        return CheckAndLog(false, __LINE__, "invalid marker name: name must not be empty");
+    }
+    if (!((value[0] >= 'A' && value[0] <= 'Z') || (value[0] >= 'a' && value[0] <= 'z') || value[0] == '_')) {
+        return CheckAndLog(
+            false, __LINE__,
+            "invalid marker name: first character must be an ASCII letter or underscore, name=" + value);
     }
     for (size_t index = 1U; index < value.size(); ++index) {
         const char character = value[index];
         if (!((character >= 'A' && character <= 'Z') || (character >= 'a' && character <= 'z') ||
               (character >= '0' && character <= '9') || character == '_')) {
-            return false;
+            return CheckAndLog(
+                false, __LINE__,
+                "invalid marker name: character at index=" + std::to_string(index) +
+                    " must be an ASCII letter, digit, or underscore, name=" + value);
         }
     }
     return true;
@@ -221,8 +228,9 @@ bool ResourceManifestValidator::ValidateMarkerSyntax(const std::string& value)
             return false;
         }
         const std::string marker = value.substr(begin, end - begin + 1U);
-        const std::map<std::string, MarkerRequirement>::const_iterator knownMarker = KNOWN_MARKERS.find(marker);
-        if (knownMarker != KNOWN_MARKERS.end()) {
+        const std::map<std::string, MarkerRequirement>::const_iterator knownMarker =
+            GENERIC_MARKER_REQUIREMENTS.find(marker);
+        if (knownMarker != GENERIC_MARKER_REQUIREMENTS.end()) {
             if (knownMarker->second == MarkerRequirement::SourceFile &&
                 !CheckAndLog(hasSourceFile_, __LINE__, "invalid ${source_file_path} marker: source_file is required")) {
                 return false;
