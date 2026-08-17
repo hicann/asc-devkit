@@ -73,9 +73,9 @@ __aicore__ inline void WaitFlag(int32_t eventID)
 
 - SetFlag和WaitFlag必须成对使用，且SetFlag和WaitFlag的参数必须完全一致（包括模板参数event和输入参数eventID）。如果不匹配，会引发timeout问题。例如，`SetFlag<HardEvent::S_MTE3>(1)`和`WaitFlag<HardEvent::MTE3_MTE1>(1)`并不匹配，因为其模板参数event不同。
 
-- 在采用[TPipe-TQue框架编程范式](../../../../../guide/编程指南/编程模型/AI-Core-SIMD编程/基于TPipe-TQue框架编程/TPipe-TQue框架编程范式.md)时，eventID需要通过[AllocEventID](../../resource_management/TPipe/AllocEventID.md)或者[FetchEventID](../../resource_management/TPipe/FetchEventID.md)来获取。
+- 在采用[TPipe-TQue框架编程范式](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md)时，eventID需要通过[AllocEventID](../../resource_management/TPipe/AllocEventID.md)或者[FetchEventID](../../resource_management/TPipe/FetchEventID.md)来获取。
 
-- 在采用[静态Tensor编程范式](../../../../../guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程.md)时，事件的类型和事件ID由开发者自行管理，建议使用事件ID0-5，事件ID6用于系统内部规划（当前未使用），事件ID7用于TPipe编程中的**自动同步**功能，目前暂不建议直接使用事件ID6-7。
+- 在采用[静态Tensor编程范式](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)时，事件的类型和事件ID由开发者自行管理，建议使用事件ID0-5，事件ID6用于系统内部规划（当前未使用），事件ID7用于TPipe编程中的**自动同步**功能，目前暂不建议直接使用事件ID6-7。
 
 - eventID的取值范围如下：
 

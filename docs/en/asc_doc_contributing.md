@@ -576,7 +576,7 @@ Refer to existing cases under `算子实践参考/优秀实践/` (e.g., FlashAtt
 Before submitting a documentation PR, check each item:
 
 **Content Accuracy**:
-- [ ] All hardware parameter values (capacity, granularity, range) are consistent with Architecture Specifications
+- [ ] All hardware parameter values (capacity, granularity, range) are consistent with [Architecture Specifications](../../docs/zh/guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/architecture_spec.md)
 - [ ] "Fixed value" and other absolute descriptions have been verified (many "fixed values" are actually determined by configuration parameters)
 - [ ] Data path descriptions match actual routes (no contradictions with other documents)
 

@@ -45,7 +45,7 @@ void sync() const
 - 仅支持SIMT编程场景，不支持SIMD与SIMT混合编程场景。
 - 必须保证Grid内所有线程都能执行到同一个`sync()`调用，否则是未定义行为。
 - 确保Grid中的线程块总数不超过设备的AIV物理核数，以避免程序卡死。开发者可以通过[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)中“Device管理”章节的aclrtGetDeviceInfo接口查询设备的AIV物理核数。
-- `sync()`接口仅保证线程指令执行的同步，不保证各线程块的Data Cache和Global Memory间的[缓存一致性](../../../../guide/编程指南/高级编程/内存模型/缓存一致性.md)。
+- `sync()`接口仅保证线程指令执行的同步，不保证各线程块的Data Cache和Global Memory间的[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)。
 
 ## 调用示例
 

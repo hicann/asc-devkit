@@ -6,7 +6,7 @@ C API开放芯片完备编程能力，支持[以数组形式分配内存](genera
 
 C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，定位为最底层的C语言接口，基于指针编程，提供完备的C语言编程能力。C API可直接映射NPU硬件指令，开发者自主管理内存搬运与同步（与TPipe/TQue自动管理内存、同步不同），开放全部底层硬件能力。适配C语言开发习惯，适合对性能和可控性要求较高的算子开发场景，是追求极致性能、充分释放NPU硬件潜能的核心路径。
 
-详细内容请参考[C语言编程概述](../../../guide/编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程/C语言编程概述.md)。
+详细内容请参考[C语言编程概述](../../../guide/programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming/c_programming_overview.md)。
 
 ## 需要包含的头文件
 

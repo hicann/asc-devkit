@@ -56,7 +56,7 @@ void *GmAlloc(size_t size)
 
 ## 约束说明<a name="zh-cn_topic_0000001963639306_zh-cn_topic_0000001541764188_section794123819592"></a>
 
-- 为了保留接口兼容，推荐[<<<>>>](../../../../../guide/编程指南/调试调优/功能调试/CPU域孪生调试.md)编译使用。
+- 为了保留接口兼容，推荐[<<<>>>](../../../../../guide/programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md)编译使用。
 - 该接口在系统的/tmp目录下生成临时文件，故需要磁盘空间足够才可以正常生成共享内存。
 - 必须配合[GmFree](GmFree.md)进行释放。
 

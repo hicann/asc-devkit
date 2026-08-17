@@ -7,12 +7,12 @@ Cube计算单元专用于执行矩阵运算，直接访问的专用缓存如下�
 <!-- end id1 -->
 
 <!-- npu="910b,A3" id2 -->
-**图1** [NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)矩阵计算单元架构图<a name="zh-cn_topic_0000002513373312_fig88330137205"></a>  
+**图1** [NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)矩阵计算单元架构图<a name="zh-cn_topic_0000002513373312_fig88330137205"></a>  
 ![](../../../../figures/architecture_of_cube_compute_unit_a2a3.png "矩阵计算单元架构图-A2A3")
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
-**图2** [NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)矩阵计算单元架构图<a name="zh-cn_topic_0000002513373312_fig1082103513519"></a>  
+**图2** [NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)矩阵计算单元架构图<a name="zh-cn_topic_0000002513373312_fig1082103513519"></a>  
 ![](../../../../figures/architecture_of_cube_compute_unit_950.png "矩阵计算单元架构图-950")
 <!-- end id3 -->
 

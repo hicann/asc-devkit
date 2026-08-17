@@ -59,7 +59,7 @@ Resolved tool locations:
 
 Repository reference doc:
 
-- `${DEVKIT_PATH}/docs/zh/guide/编程指南/附录/show_kernel_debug_data工具.md`
+- `${DEVKIT_PATH}/docs/zh/guide/programming_guide/appendix/show_kernel_debug_data_tool.md`
 
 Basic usage:
 

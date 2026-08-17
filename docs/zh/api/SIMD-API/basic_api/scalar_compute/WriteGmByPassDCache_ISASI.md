@@ -31,7 +31,7 @@
 不经过DCache向GM地址上写数据。
 <!-- npu="A3,910b" id8 -->
 > [!CAUTION]注意    
-> 针对[NPU架构2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，接口能否将value成功写入GM还与目标地址addr有关，具体请参见[约束说明](#约束说明)。
+> 针对[NPU架构2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，接口能否将value成功写入GM还与目标地址addr有关，具体请参见[约束说明](#约束说明)。
 <!-- end id8 -->
 
 使用场景：
@@ -86,7 +86,7 @@ __aicore__ inline void WriteGmByPassDCache(__gm__ T* addr, T value)
 ## 约束说明<a name="section633mcpsimp"></a>
 
 <!-- npu="A3,910b" id9 -->
-针对[NPU架构2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，接口是否执行写入取决于目标地址addr在当前128字节对齐区间内的偏移。令$\mathrm{offset} = addr \bmod 128$，当$0 \leq \mathrm{offset} < 32$时，写入生效；当$32 \leq \mathrm{offset} < 128$时，不执行写入，目标地址中的数据保持原值。即仅当目标地址位于每个128字节对齐区间的前32字节时，接口才执行写入。
+针对[NPU架构2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，接口是否执行写入取决于目标地址addr在当前128字节对齐区间内的偏移。令$\mathrm{offset} = addr \bmod 128$，当$0 \leq \mathrm{offset} < 32$时，写入生效；当$32 \leq \mathrm{offset} < 128$时，不执行写入，目标地址中的数据保持原值。即仅当目标地址位于每个128字节对齐区间的前32字节时，接口才执行写入。
 
 设接口调用前后的目标地址数据分别为$\mathrm{GM}_{\mathrm{before}}(addr)$和$\mathrm{GM}_{\mathrm{after}}(addr)$，则：
 

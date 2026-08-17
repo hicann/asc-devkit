@@ -52,9 +52,9 @@ bisheng add_kernel.o main.o -o demo
 bisheng main.cpp add_kernel.asc -o demo --npu-arch=dav-2201 -I${ASCEND_HOME_PATH}/include
 ```
 
-Where `--npu-arch` specifies the AI processor architecture at compile time. This example supports `dav-2201` and `dav-3510`. For the architecture version number corresponding to each product model, refer to the [mapping table](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch).
+Where `--npu-arch` specifies the AI processor architecture at compile time. This example supports `dav-2201` and `dav-3510`. For the architecture version number corresponding to each product model, refer to the [mapping table](../../../../../docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch).
 
-For more bisheng compilation options and usage, refer to [Basic Usage of AI Core Operator Compilation](../../../../../docs/zh/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法.md).
+For more bisheng compilation options and usage, refer to [Basic Usage of AI Core Operator Compilation](../../../../../docs/zh/guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md).
 
 ### CMake Compilation
 

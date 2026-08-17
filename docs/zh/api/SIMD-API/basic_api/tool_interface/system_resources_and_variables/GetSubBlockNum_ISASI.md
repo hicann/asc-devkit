@@ -34,7 +34,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_sys_var_intf.h"`。
 
-在[分离模式架构](../../../../../guide/编程指南/高级编程/硬件实现/基本架构.md)下，获取当前配置中，一个逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的数量。
+在[分离模式架构](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)下，获取当前配置中，一个逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的数量。
 
 ## 函数原型
 
@@ -48,7 +48,7 @@ __aicore__ inline int64_t GetSubBlockNum()
 
 ## 返回值说明
 
-在融合编译场景下，不同[算子类型](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#section1074418132518)在AIC和AIV上调用该接口的返回值如下：
+在融合编译场景下，不同[算子类型](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#section1074418132518)在AIC和AIV上调用该接口的返回值如下：
 
 **表1** 融合编译场景返回值列表
 

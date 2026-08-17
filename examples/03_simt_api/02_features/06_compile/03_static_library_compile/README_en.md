@@ -44,9 +44,9 @@ Use the `-lib` option to compile the `.asc` mixed file into a static library (.a
 bisheng -lib kernel.asc -o libkernel.a --npu-arch=dav-3510 --enable-simt
 ```
 
-Where `--npu-arch` specifies the AI processor architecture at compile time. This example only supports `dav-3510`. For the architecture version corresponding to each product model, refer to the [correspondence table](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch). `--enable-simt` is used to specify SIMT compilation mode.
+Where `--npu-arch` specifies the AI processor architecture at compile time. This example only supports `dav-3510`. For the architecture version corresponding to each product model, refer to the [correspondence table](../../../../../docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch). `--enable-simt` is used to specify SIMT compilation mode.
 
-For more bisheng compilation options and usage, refer to [AI-Core Operator Compilation Basic Usage](../../../../../docs/zh/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法.md).
+For more bisheng compilation options and usage, refer to [AI-Core Operator Compilation Basic Usage](../../../../../docs/zh/guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md).
 
 ### CMake Compilation
 

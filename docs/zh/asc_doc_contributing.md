@@ -657,7 +657,7 @@ __aicore__ inline void ExampleKernel(__gm__ uint8_t* x) {  // __aicore__=核函�
 提交资料PR前，请逐项检查：
 
 **内容正确性**：
-- [ ] 所有硬件参数值（容量、粒度、范围）与[硬件规格](./guide/编程指南/高级编程/硬件实现/架构规格/架构规格.md)保持一致
+- [ ] 所有硬件参数值（容量、粒度、范围）与[硬件规格](./guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/architecture_spec.md)保持一致
 - [ ] "固定值"等绝对性描述已经核实（很多"固定值"实际由配置参数决定）
 - [ ] 数据通路描述与实际路径一致（不与其他文档矛盾）
 

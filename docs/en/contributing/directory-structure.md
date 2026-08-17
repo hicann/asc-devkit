@@ -111,7 +111,7 @@ The following lists some common architecture directories; for the complete list,
 | `dav_c220` | `2201` | Atlas A2 training series products / Atlas A2 inference series products, Atlas A3 training series products / Atlas A3 inference series products |
 | `dav_3510` | `3510` | Ascend 950PR/Ascend 950DT |
 
-> For the complete mapping between product models and `__NPU_ARCH__`, see the [**NPU_ARCH** documentation](../../zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch).
+> For the complete mapping between product models and `__NPU_ARCH__`, see the [**NPU_ARCH** documentation](../../zh/guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch).
 
 ### Architecture Dispatch Pattern
 

@@ -35,7 +35,7 @@ $$
 其中，A、B、C分别为左、右、结果矩阵，C矩阵可以通过配置本接口的参数，初始化为全0矩阵、L0C Buffer中的矩阵或Bias矩阵，各矩阵的信息说明见下表：
 
 <!-- npu="950" id8 -->
-**表** 矩阵信息说明（[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**表** 矩阵信息说明（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 | 矩阵 | 存储位置 | 形状（行数×列数） | 数据格式 | 分形大小（行数×列数） |
 | --- | --- | --- | --- | --- |
@@ -48,7 +48,7 @@ $$
 <!-- end id8 -->
 
 <!-- npu="A3,910b" id9 -->
-**表** 矩阵信息说明（[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**表** 矩阵信息说明（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 | 矩阵 | 存储位置 | 形状 | 数据格式 | 分形大小 |
 | --- | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ $$
 ## 函数原型
 
 <!-- npu="950" id12 -->
-### 函数原型（[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+### 函数原型（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 **占位符形式：**
 
@@ -86,7 +86,7 @@ __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix,
 
 `c_dtype`、`a_dtype`、`b_dtype`的取值组合见下表：
 
-**表** 支持的数据类型组合（[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="asc_mmad_data_type"></a>
+**表** 支持的数据类型组合（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="asc_mmad_data_type"></a>
 
 | a_dtype | b_dtype | c_dtype | Bias数据类型 |
 | --- | --- | --- | --- |
@@ -117,7 +117,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 <!-- end id12 -->
 
 <!-- npu="A3,910b" id13 -->
-### 函数原型（[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+### 函数原型（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 **占位符形式：**
 
@@ -130,7 +130,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 
   `c_dtype`、`a_dtype`、`b_dtype`的取值组合见下表：
 
-  **表** 支持的数据类型组合（[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+  **表** 支持的数据类型组合（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
   | a_dtype | b_dtype | c_dtype | Bias数据类型 |
   | --- | --- | --- | --- |
@@ -150,7 +150,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 ## 参数说明
 
 <!-- npu="950" id14 -->
-**表** 参数说明（[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="asc_mmad_param_table"></a>
+**表** 参数说明（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="asc_mmad_param_table"></a>
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
@@ -167,7 +167,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 <!-- end id14 -->
 
 <!-- npu="A3,910b" id15 -->
-**表** 参数说明（[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**表** 参数说明（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
@@ -243,7 +243,7 @@ PIPE_M
 <!-- npu="950" id18 -->
 ## 调用示例
 
-将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 

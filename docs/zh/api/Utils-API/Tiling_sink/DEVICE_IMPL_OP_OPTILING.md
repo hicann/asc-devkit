@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001867289945_zh-cn_topic_0000001389787297_section36583473819"></a>
 
-在[Tiling下沉](../../../guide/编程指南/高级编程/算子入图开发/开启Tiling下沉.md)场景中，该宏定义用于生成Tiling下沉的注册类，再通过调用注册类的成员函数来注册需要下沉的Tiling函数。
+在[Tiling下沉](../../../guide/programming_guide/advanced_programming/operator_graph_development/enable_tiling_sink.md)场景中，该宏定义用于生成Tiling下沉的注册类，再通过调用注册类的成员函数来注册需要下沉的Tiling函数。
 
 ## 函数原型<a name="zh-cn_topic_0000001867289945_zh-cn_topic_0000001389787297_section13230182415108"></a>
 

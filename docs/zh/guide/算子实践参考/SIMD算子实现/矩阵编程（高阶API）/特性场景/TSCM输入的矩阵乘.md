@@ -2,11 +2,11 @@
 
 ## 功能介绍<a name="zh-cn_topic_0000002298654821_section310824820358"></a>
 
-TSCM表示L1 Buffer空间对应的逻辑内存，L1 Buffer相关内容见[存储单元](../../../../编程指南/高级编程/硬件实现/基本架构.md#section123639375417)，开发者可以自行管理TSCM以高效利用硬件资源。比如，开发者可缓存一份TSCM数据，在不同使用场景中灵活配置为Matmul操作的A矩阵、B矩阵或Bias偏置矩阵，实现内存复用与计算效率优化。在TSCM输入场景，用户管理整块TSCM内存空间，Matmul直接使用传入的TSCM内存地址，不进行Global Memory到TSCM的数据搬入。
+TSCM表示L1 Buffer空间对应的逻辑内存，L1 Buffer相关内容见[存储单元](../../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md#section123639375417)，开发者可以自行管理TSCM以高效利用硬件资源。比如，开发者可缓存一份TSCM数据，在不同使用场景中灵活配置为Matmul操作的A矩阵、B矩阵或Bias偏置矩阵，实现内存复用与计算效率优化。在TSCM输入场景，用户管理整块TSCM内存空间，Matmul直接使用传入的TSCM内存地址，不进行Global Memory到TSCM的数据搬入。
 
 ## 使用场景<a name="zh-cn_topic_0000002298654821_section118051016163613"></a>
 
-用户需要自定义数据搬入到TSCM及自定义管理的场景，即需要自定义实现数据搬入功能，如非连续搬入或对搬入数据进行预处理等。用户通过自定义管理TSCM可灵活配置MTE2流水，实现跨Matmul对象的全局[DoubleBuffer](../../../../technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)，MTE2相关内容见[搬运单元](../../../../编程指南/高级编程/硬件实现/基本架构.md#section123639375417)。
+用户需要自定义数据搬入到TSCM及自定义管理的场景，即需要自定义实现数据搬入功能，如非连续搬入或对搬入数据进行预处理等。用户通过自定义管理TSCM可灵活配置MTE2流水，实现跨Matmul对象的全局[DoubleBuffer](../../../../technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)，MTE2相关内容见[搬运单元](../../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md#section123639375417)。
 
 ## 约束说明<a name="zh-cn_topic_0000002298654821_section14160134220363"></a>
 

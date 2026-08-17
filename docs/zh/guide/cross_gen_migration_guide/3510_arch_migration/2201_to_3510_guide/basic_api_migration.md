@@ -1,6 +1,6 @@
 # 基础API迁移指导<a name="ZH-CN_TOPIC_0000002470508258"></a>
 
-本节针对[NPU架构版本3510](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)的芯片变更对基础API兼容性产生的影响进行说明，并提供基础API的兼容性适配方案。
+本节针对[NPU架构版本3510](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)的芯片变更对基础API兼容性产生的影响进行说明，并提供基础API的兼容性适配方案。
 
 ## 矢量计算<a name="section7364115741514"></a>
 
@@ -151,7 +151,7 @@
 
     **兼容方案**：
 
-    -   [NPU架构版本2201](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)的接口参数boundaryValue设置为0时与3510架构版本等价。
+    -   [NPU架构版本2201](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)的接口参数boundaryValue设置为0时与3510架构版本等价。
     -   如果需要在L1 Buffer上循环读取操作数，需要将对应的LoadData（卷积数据搬运）接口手动拆分成多条指令，手动绕回。具体代码可参考[SetLoadDataBoundary兼容性样例](../../../../../../examples/01_simd_cpp_api/06_compatibility_guide/set_loaddata_boundary)。
 
     ![](../../../figures/fig_1_zn.png)

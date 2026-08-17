@@ -24,7 +24,7 @@
 | 代码类型 | 运行位置 | 编程语言 | 核心职责 |
 |----------|----------|----------|----------|
 | **Host代码** | CPU（Host侧） | 标准C/C++ | 管理Device设备、搬运数据、启动NPU任务、同步状态 |
-| **Device代码** | NPU（Device侧） | **Ascend C** | 执行具体的并行计算任务，称为[核函数](../../编程指南/编程模型/AI-Core-SIMD编程/核函数.md) |
+| **Device代码** | NPU（Device侧） | **Ascend C** | 执行具体的并行计算任务，称为[核函数](../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md) |
 
 > ✅ **便捷提示**：Host代码与Device代码可编写在同一个`.asc`文件中，由毕昇编译器自动识别、分别编译，简化开发流程。
 
@@ -36,7 +36,7 @@ Host侧通过调用**CANN Runtime API**完成与Device的协同工作。典型�
 
 1. **分配内存**：在Device Memory中申请输入/输出所需的空间。
 2. **数据搬入**：将输入数据从Host Memory拷贝到Device Memory（数据需进入Device侧才能被NPU访问）。
-3. **启动NPU计算任务**：调用Device侧预先编写的[核函数](../../编程指南/编程模型/AI-Core-SIMD编程/核函数.md)，NPU开始并行计算。
+3. **启动NPU计算任务**：调用Device侧预先编写的[核函数](../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)，NPU开始并行计算。
 4. **同步等待**：Host端等待NPU执行完成，确保数据计算完整（避免未完成就读取结果）。
 5. **数据搬出**：将计算结果从Device Memory拷贝回Host Memory，供后续处理。
 
@@ -72,7 +72,7 @@ NPU是Device侧的计算核心，而 **AI Core**则是NPU内部的“最小计�
 
 ### SIMD核函数编程基本步骤（遵循SPMD模型）
 
-> **SPMD（Single Program, Multiple Data）**：将每个AI Core抽象成一个Block，通过内置变量[block_idx](../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md)作为Block索引。每个Block执行同一份算子Kernel代码，基于block_idx划分每个Block的数据处理范围，实现多核负载均衡与并行调度。
+> **SPMD（Single Program, Multiple Data）**：将每个AI Core抽象成一个Block，通过内置变量[block_idx](../../programming_guide/language_extension/simd_builtin_keywords.md)作为Block索引。每个Block执行同一份算子Kernel代码，基于block_idx划分每个Block的数据处理范围，实现多核负载均衡与并行调度。
 
 1. **Tiling（分块）**：将数据划分为均匀的块，每个AI Core负责一块，实现负载均衡。
 2. **数据搬入**：需要**显式调用数据搬运API**将数据从Device Memory搬到本地存储。

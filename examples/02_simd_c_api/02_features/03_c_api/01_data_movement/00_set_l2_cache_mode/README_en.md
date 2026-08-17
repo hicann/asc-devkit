@@ -2,7 +2,7 @@
 
 ## Overview
 
-When MTE2 moves data from Global Memory (GM) to Unified Buffer (UB), the `l2_cache_mode` parameter of the `asc_copy_gm2ub_align` interface (this sample uses [pointer-based C programming](../../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程)) can explicitly configure the L2 Cache management strategy. This sample describes how to select the appropriate L2 Cache mode to optimize MTE2 data movement performance for **reuse data** and **streaming data** scenarios, and how to improve the L2 Cache hit rate through tiling strategies when L2 Cache is enabled.
+When MTE2 moves data from Global Memory (GM) to Unified Buffer (UB), the `l2_cache_mode` parameter of the `asc_copy_gm2ub_align` interface (this sample uses [pointer-based C programming](../../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming)) can explicitly configure the L2 Cache management strategy. This sample describes how to select the appropriate L2 Cache mode to optimize MTE2 data movement performance for **reuse data** and **streaming data** scenarios, and how to improve the L2 Cache hit rate through tiling strategies when L2 Cache is enabled.
 
 - **Reuse Data Scenario (data needs to be read multiple times)**
   Case1: Repeat the entire block 4 times, `l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` — the entire block far exceeds the L2 capacity, hit rate is extremely low, demonstrating the performance bottleneck without tiling.

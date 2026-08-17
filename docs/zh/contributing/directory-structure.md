@@ -111,7 +111,7 @@ exp_check_common.h
 | `dav_c220` | `2201` | Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas A3 训练系列产品/Atlas A3 推理系列产品 |
 | `dav_3510` | `3510` | Ascend 950PR/Ascend 950DT |
 
-> 产品型号与 `__NPU_ARCH__` 的完整对应关系见 [**NPU_ARCH** 文档](../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+> 产品型号与 `__NPU_ARCH__` 的完整对应关系见 [**NPU_ARCH** 文档](../../zh/guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 ### 架构分发模式
 

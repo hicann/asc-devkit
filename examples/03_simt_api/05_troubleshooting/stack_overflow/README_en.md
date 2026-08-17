@@ -41,7 +41,7 @@ This example contains two typical stack overflow scenarios, and reproduces and o
 
 > **Stack overflow issue description**
 >
-> The default stack space of SIMT threads is limited. When a large thread-local array is defined in a kernel function, or when the recursive call depth is too large, the required SIMT stack space keeps increasing. If the runtime stack requirement exceeds the configured upper limit, SIMT stack overflow is triggered. For details about stack space, see [Memory Hierarchy](../../../../docs/zh/guide/%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/AI-Core-SIMT%E7%BC%96%E7%A8%8B/%E5%86%85%E5%AD%98%E5%B1%82%E7%BA%A7.md).
+> The default stack space of SIMT threads is limited. When a large thread-local array is defined in a kernel function, or when the recursive call depth is too large, the required SIMT stack space keeps increasing. If the runtime stack requirement exceeds the configured upper limit, SIMT stack overflow is triggered. For details about stack space, see [Memory Hierarchy](../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simt_programming/memory_hierarchy.md).
 
 **Example specifications**:
 

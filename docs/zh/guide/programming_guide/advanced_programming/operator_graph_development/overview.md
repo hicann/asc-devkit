@@ -1,0 +1,19 @@
+# 概述<a name="ZH-CN_TOPIC_0000001985173748"></a>
+
+图模式是神经网络模型的一种运行模式，在图模式下用户首先将模型的计算过程构造成一张图，然后通过GE将图下发到昇腾硬件执行。相对于单个算子依次下发的方式，图模式下，GE可以通过计算图优化、多流并行、内存复用、模型下沉等技术手段，加速模型执行效率，减少模型内存占用。
+
+算子入图的开发流程如下图所示：算子工程创建完成后，基于工程代码框架完成算子原型定义、kernel侧算子实现、host侧tiling实现并完成算子入图开发，通过工程编译脚本完成算子的编译部署，之后即可基于图IR执行算子，比如IR构图的方式调用自定义算子。该开发流程以[工程化算子开发](../aclnn_operator_development/overview.md)为基础，除了需要提供工程化算子开发中的算子实现文件外，还需要额外交付算子入图的代码文件。
+
+![](../../../figures/op_e2e_34.png)
+
+1.  环境准备。
+    1.  CANN软件安装请参考[环境准备](../../../getting_started/environment_setup.md)。
+    2.  [创建算子工程](../aclnn_operator_development/aclnn_quick_start.md#create-project)。使用msOpGen工具创建算子开发工程。
+
+2.  算子实现。
+    -   [算子原型定义](../aclnn_operator_development/design_and_implementation/operator_prototype_definition.md)。通过原型定义来描述算子输入输出、属性等信息以及算子在AI处理器上相关实现信息，并关联tiling实现等函数。
+    -   Kernel侧算子实现和host侧tiling实现请参考[SIMD算子实现](../../../算子实践参考/SIMD算子实现/概述.md)；工程化算子开发，支持开发者调用Tiling API基于CANN提供的编程框架进行tiling开发，kernel侧也提供对应的接口方便开发者获取tiling参数，具体内容请参考[Kernel侧算子实现](../aclnn_operator_development/design_and_implementation/kernel_operator_implementation.md)和[Host侧Tiling实现](../aclnn_operator_development/design_and_implementation/host_tiling_implementation.md)，由此而带来的额外约束也在上述章节说明。
+
+3.  [算子入图（GE图）开发](basic_development_flow.md)。算子入图场景下，需要提供shape推导等算子入图适配函数的实现。
+4.  编译部署。通过工程编译脚本完成算子的编译部署，分为[算子包编译](../aclnn_operator_development/compilation_and_deployment/basic_process.md)和[算子动态库编译](../aclnn_operator_development/compilation_and_deployment/dynamic_static_lib_compilation.md)两种方式。
+5.  [图编译和图执行](graph_compilation_and_execution.md)：基于图IR执行算子，比如IR构图的方式调用自定义算子。

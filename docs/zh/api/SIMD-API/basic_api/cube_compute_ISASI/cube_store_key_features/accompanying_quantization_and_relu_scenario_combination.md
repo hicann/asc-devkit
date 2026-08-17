@@ -6,7 +6,7 @@
 随路量化与随路ReLU的组合情况如下表所示：
 
 <!-- npu="A3,910b" id2 -->
-**表1** 随路量化与随路ReLU的组合表（[NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**表1** 随路量化与随路ReLU的组合表（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 | quantPre\reluPre | no ReLU | Normal ReLU |
 | ------------------ | --------- | ------------ |
@@ -15,7 +15,7 @@
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
-**表2** 随路量化与随路ReLU的组合表（[NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**表2** 随路量化与随路ReLU的组合表（[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 | quantPre\reluPre | no ReLU | Normal ReLU |
 | --- | --- | --- |

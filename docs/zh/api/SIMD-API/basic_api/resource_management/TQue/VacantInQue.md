@@ -48,7 +48,7 @@ __aicore__ inline bool VacantInQue()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-该接口不支持[Tensor原地操作](../../../../../guide/编程指南/附录/常用操作/如何使用Tensor原地操作提升算子性能.md)，即TQue的depth设置为0的场景。
+该接口不支持[Tensor原地操作](../../../../../guide/programming_guide/appendix/common_operations/tensor_inplace_performance.md)，即TQue的depth设置为0的场景。
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

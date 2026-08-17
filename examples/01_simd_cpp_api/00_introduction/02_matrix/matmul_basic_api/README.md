@@ -28,7 +28,7 @@
 ## 样例描述
 
 - 样例功能：  
-  本样例使用Ascend C基础API实现一个最基础的矩阵乘法（Matmul）[核函数](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/核函数.md)。矩阵乘法的计算公式如下：
+  本样例使用Ascend C基础API实现一个最基础的矩阵乘法（Matmul）[核函数](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)。矩阵乘法的计算公式如下：
   $$
   C = A * B
   $$
@@ -51,12 +51,12 @@
 
 - 样例实现：
   - Kernel侧整体思路
-    - `mmad_custom`是一个[`__global__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md) [`__cube__`](../../../../../docs/zh/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)核函数，表示该函数运行在[AI Core](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)的[Cube](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)计算单元上，主要用于矩阵计算。
-    - 样例使用[静态Tensor编程方式](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程.md)，通过[`LocalMemAllocator`](../../../../../docs/zh/api/SIMD-API/basic_api/resource_management/LocalMemAllocator/LocalMemAllocator_intro.md)创建[`LocalTensor`](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)。
+    - `mmad_custom`是一个[`__global__`](../../../../../docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md) [`__cube__`](../../../../../docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md)核函数，表示该函数运行在[AI Core](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)的[Cube](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)计算单元上，主要用于矩阵计算。
+    - 样例使用[静态Tensor编程方式](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)，通过[`LocalMemAllocator`](../../../../../docs/zh/api/SIMD-API/basic_api/resource_management/LocalMemAllocator/LocalMemAllocator_intro.md)创建[`LocalTensor`](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)。
     - `CUBE_BLOCK = 16`表示half数据类型分形为`16 x 16`，代码中按`16 x 16`的分形为单位进行[`LoadData`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)搬运。
 
   - Kernel侧详细流程
-    - 创建[`GlobalTensor`](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)`<half>`对象`aGM`、`bGM`、`cGM`，分别表示[GM（Global Memory，全局内存）](../../../../../docs/zh/guide/编程指南/高级编程/硬件实现/基本架构.md)中的A、B、C矩阵。
+    - 创建[`GlobalTensor`](../../../../../docs/zh/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)`<half>`对象`aGM`、`bGM`、`cGM`，分别表示[GM（Global Memory，全局内存）](../../../../../docs/zh/guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)中的A、B、C矩阵。
     - 通过[AscendC::GetBlockIdx()](../../../../../docs/zh/api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)获取当前核号，并计算`mIterIdx`。本样例只沿M轴切分任务，因此每个核只需要处理A矩阵和C矩阵中属于自己的M轴分片。
     - 设置GM地址偏移：
       - `aGM`偏移`mIterIdx * singleCoreM * K`，使当前核读取自己负责的A矩阵行块。
@@ -78,7 +78,7 @@
     - 最后调用[`PipeBarrier`](../../../../../docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/PipeBarrier_ISASI.md)`<PIPE_ALL>()`，确保当前核内相关流水任务完成。
 
   - 调用实现  
-    使用[内核调用符](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/核函数.md)`<<<>>>`调用[核函数](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/核函数.md)。调用时模板参数传入矩阵规格、单核计算量和基础Tile大小，运行时参数传入Device侧A、B、C矩阵地址。
+    使用[内核调用符](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)`<<<>>>`调用[核函数](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)。调用时模板参数传入矩阵规格、单核计算量和基础Tile大小，运行时参数传入Device侧A、B、C矩阵地址。
 
 - 接口参数说明：
 

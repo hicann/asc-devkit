@@ -3,7 +3,7 @@
 ## AI Core硬件架构与存储单元
 
 <!-- npu="910b,A3" id1 -->
-AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)为例，其内部分层存储架构如图1所示，主要包含以下组成部分：
+AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)为例，其内部分层存储架构如图1所示，主要包含以下组成部分：
 
 - **计算单元（图中黄色高亮）：**  包括Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元，分别负责矩阵乘加、向量运算和标量控制流。
 - **存储单元：**  按层级由外到内依次为Global Memory（GM，位于AI Core外部）、L1 Buffer、L0A/L0B/L0C Buffer、Unified Buffer（UB）、BiasTable Buffer、Fixpipe Buffer等。各存储单元的容量与对齐要求各异，详情参见[内存层级架构](./overall_constraints.md#地址对齐约束)。
@@ -15,7 +15,7 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 <!-- end id1 -->
 
 <!-- npu="950" id2 -->
-以[NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)为例，其内部分层存储架构如图2所示，该架构在数据通路上有如下变化：
+以[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)为例，其内部分层存储架构如图2所示，该架构在数据通路上有如下变化：
 
 - 新增L0C Buffer到UB的单向数据通路。
 - 新增UB到L1 Buffer的数据通路。

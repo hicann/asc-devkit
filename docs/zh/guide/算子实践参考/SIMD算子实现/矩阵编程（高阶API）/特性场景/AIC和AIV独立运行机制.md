@@ -2,7 +2,7 @@
 
 ## 功能介绍<a name="zh-cn_topic_0000002299608693_section310824820358"></a>
 
-AIC和AIV独立运行机制，又称双主模式。在[分离模式](../../../../编程指南/高级编程/硬件实现/基本架构.md#li188191010204418)下，区别于MIX模式（包含矩阵计算和矢量计算）通过消息机制驱动AIC运行，双主模式为AIC和AIV独立运行代码，不依赖消息驱动，开启双主模式能够提高Matmul计算性能。默认情况下，双主模式不开启，需要通过MatmulConfig中的enableMixDualMaster参数开启。
+AIC和AIV独立运行机制，又称双主模式。在[分离模式](../../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md#li188191010204418)下，区别于MIX模式（包含矩阵计算和矢量计算）通过消息机制驱动AIC运行，双主模式为AIC和AIV独立运行代码，不依赖消息驱动，开启双主模式能够提高Matmul计算性能。默认情况下，双主模式不开启，需要通过MatmulConfig中的enableMixDualMaster参数开启。
 
 ## 使用场景<a name="zh-cn_topic_0000002299608693_section118051016163613"></a>
 

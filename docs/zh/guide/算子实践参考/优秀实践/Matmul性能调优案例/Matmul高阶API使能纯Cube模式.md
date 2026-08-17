@@ -98,7 +98,7 @@ Tiling参数如下：
     cubeTiling.SetDim(numBlocks);
     ```
 
-3.  调用核函数，参考[核函数定义和调用](../../../编程指南/编程模型/AI-Core-SIMD编程/核函数.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数的numBlocks参数配置。
+3.  调用核函数，参考[核函数定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数的numBlocks参数配置。
 
     ```
     matmul_custom_do(ascendcPlatform->GetCoreNumAic(), stream, x1, x2, bias, y, workspaceDevice, tilingDevice); // MIX模式下，启动时，按照AIV和AIC组合启动，numBlocks用于设置启动多少个AI Core。
@@ -133,7 +133,7 @@ Matmul API开启纯Cube模式的完整样例请参考[纯Cube模式的Matmul样�
     cubeTiling.SetDim(numBlocks);
     ```
 
-3.  调用核函数，参考[核函数定义和调用](../../../编程指南/编程模型/AI-Core-SIMD编程/核函数.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数的numBlocks参数配置。
+3.  调用核函数，参考[核函数定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数的numBlocks参数配置。
 
     ```
     matmul_custom_do(ascendcPlatform->GetCoreNumAic(), stream, x1, x2, bias, y, workspaceDevice, tilingDevice); // 仅包含Cube计算的算子，numBlocks用于设置启动多少个AIC。

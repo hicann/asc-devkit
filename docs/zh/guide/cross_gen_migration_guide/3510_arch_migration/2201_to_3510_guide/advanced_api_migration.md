@@ -1,6 +1,6 @@
 # 高阶API迁移指导<a name="ZH-CN_TOPIC_0000002503588125"></a>
 
-Ascend C高阶API基本兼容[NPU架构版本3510](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)与[NPU架构版本2201](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，部分API进行了扩展。当前3510架构不支持卷积计算类高阶API。
+Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)与[NPU架构版本2201](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，部分API进行了扩展。当前3510架构不支持卷积计算类高阶API。
 
 ## Matmul类高阶API<a name="section6925172655117"></a>
 

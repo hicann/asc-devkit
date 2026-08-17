@@ -51,7 +51,7 @@ OpDef算子定义，OpDef请参考[OpDef](OpDef.md)。
 
 当用户使用CATEGORY参数设置算子分组名称时，会对应生成同名的代码文件。若文件名过长在编译时可能超过tar的打包文件名称长度限制，导致报错。
 
-具体参考[算子工程编译时出现文件名过长报错](../../../../guide/编程指南/附录/FAQ/算子工程编译时出现文件名过长报错.md)。
+具体参考[算子工程编译时出现文件名过长报错](../../../../guide/programming_guide/appendix/faq/filename_too_long_error.md)。
 
 ## 调用示例<a name="zh-cn_topic_0000002091517061_zh-cn_topic_0000001526111046_zh-cn_topic_0000001575944081_section320753512363"></a>
 

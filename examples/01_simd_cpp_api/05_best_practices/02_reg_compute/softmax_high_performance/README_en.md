@@ -12,7 +12,7 @@ This example uses single-core Softmax as a case study to demonstrate a complete 
 - Case 4 → Case 5: Main-tail block mode + Outer loop unrolling + ExpSub fused instruction
 
 **Prerequisites**: Before reading, a basic understanding of the following background topics is recommended to provide theoretical support for the optimization strategies of each Case:
-- **[Reg Vector Computation Programming](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/Reg矢量计算编程.md)**
+- **[Reg Vector Computation Programming](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/reg_vector_computation.md)**
 - **[Instruction Dual-Issue Optimization](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/指令双发优化.md)**
 - **[VF Fusion Optimization](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF融合优化.md)**
 - **[VF Loop Optimization](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF循环优化.md)**

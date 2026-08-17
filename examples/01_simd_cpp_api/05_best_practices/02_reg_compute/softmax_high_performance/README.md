@@ -12,7 +12,7 @@
 - Case 4 → Case 5：主尾块模式 + 外层循环展开 + ExpSub融合指令
 
 **前置阅读**：开始阅读前，建议对以下背景知识有初步了解，为后续各Case的优化策略提供理论支持：
-- **[Reg矢量计算编程](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/Reg矢量计算编程.md)**：
+- **[Reg矢量计算编程](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/reg_vector_computation.md)**：
 - **[指令双发优化](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/指令双发优化.md)**：
 - **[VF融合优化](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF融合优化.md)**：
 - **[VF循环优化](../../../../../docs/zh/guide/算子实践参考/SIMD算子性能优化/矢量计算/VF性能优化/VF循环优化.md)**：

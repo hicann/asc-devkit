@@ -1,6 +1,6 @@
 # 简介<a name="ZH-CN_TOPIC_0000002333578885"></a>
 
-OpTilingRegistry类属于context\_ascendc命名空间，主要用于加载Tiling实现的动态库，并获取算子的Tiling函数指针以进行调试和验证。该类通常与[ContextBuilder](../ContextBuilder/ContextBuilder.md)类配合使用，后者用于构造Tiling函数所需的输入参数。具体用法可参考[如何进行Tiling调测](../../../../guide/编程指南/附录/常用操作/如何进行Tiling调测.md)。
+OpTilingRegistry类属于context\_ascendc命名空间，主要用于加载Tiling实现的动态库，并获取算子的Tiling函数指针以进行调试和验证。该类通常与[ContextBuilder](../ContextBuilder/ContextBuilder.md)类配合使用，后者用于构造Tiling函数所需的输入参数。具体用法可参考[如何进行Tiling调测](../../../../guide/programming_guide/appendix/common_operations/tiling_debug.md)。
 
 ## 所需的头文件和库文件<a name="section78885814919"></a>
 

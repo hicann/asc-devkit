@@ -1,13 +1,13 @@
 # 2201到3510架构变更<a name="ZH-CN_TOPIC_0000002503428217"></a>
 
-[NPU架构版本3510](../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)的架构图如[图1](#fig1097417534526)所示，总体来看，3510架构新增了以下特性：
+[NPU架构版本3510](../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)的架构图如[图1](#fig1097417534526)所示，总体来看，3510架构新增了以下特性：
 
 -   新增多条数据通路。
 -   AI Core核数增加。
 -   UB容量提升。
 -   新增SSBuffer核内存储单元，支持AIC核和AIV核通过Scalar访问。
 -   SIMD编程基础上，支持SIMT编程、SIMD与SIMT混合编程。
--   AIV核采用Regbase架构，与[NPU架构版本2201](../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)的Membase架构相比，可以直接对芯片的Vector寄存器Register进行操作，实现更大的灵活性和更好的性能。
+-   AIV核采用Regbase架构，与[NPU架构版本2201](../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)的Membase架构相比，可以直接对芯片的Vector寄存器Register进行操作，实现更大的灵活性和更好的性能。
 
 **图1**  3510架构图<a name="fig1097417534526"></a>  
 ![](../../figures/hw_arch.png "硬件架构")

@@ -37,7 +37,7 @@ $$
 - $\Delta t$：头开销cycle数。
 
 <!-- npu="A3,910b" id5 -->
-**表1** Mmad计算类指令理论性能计算公式中并行度和k0的取值（[NPU架构版本2201](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123815211"></a>  
+**表1** Mmad计算类指令理论性能计算公式中并行度和k0的取值（[NPU架构版本2201](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123815211"></a>  
 
 | 接口 | 左矩阵A | 右矩阵B | cube<sub>m</sub> | cube<sub>n</sub> | cube<sub>k</sub> | k<sub>0</sub> |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -51,7 +51,7 @@ $$
 <!-- end id5 -->
 
 <!-- npu="950" id6 -->
-**表2** Mmad计算类指令理论性能计算公式中并行度和k0的取值（[NPU架构版本3510](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123815985"></a>  
+**表2** Mmad计算类指令理论性能计算公式中并行度和k0的取值（[NPU架构版本3510](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123815985"></a>  
 
 | 接口 | 左矩阵A | 右矩阵B | cube<sub>m</sub> | cube<sub>n</sub> | cube<sub>k</sub> | k<sub>0</sub> |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -94,7 +94,7 @@ $$
 注意，下列表格中展示的理论性能为搬运带宽$bandwidth$，未考虑额外开销$\Delta T$。
 
 <!-- npu="A3,910b" id7 -->
-**表3** 矩阵计算搬入类指令理论性能说明（[NPU架构版本2201](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123827121"></a>  
+**表3** 矩阵计算搬入类指令理论性能说明（[NPU架构版本2201](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123827121"></a>  
 
 | 接口 | 搬运带宽（单位：Byte/cycle） |
 | --- | --- |
@@ -108,7 +108,7 @@ $$
 
 [LoadData（卷积数据搬运）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)，理论性能说明见下表：
 
-**表4** LoadData（卷积数据搬运）指令理论性能说明（[NPU架构版本2201](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123821113"></a>  
+**表4** LoadData（卷积数据搬运）指令理论性能说明（[NPU架构版本2201](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123821113"></a>  
 
 | strideW的取值 | 卷积核在H方向滑动的行数n | L1 Buffer->L0A Buffer带宽（单位：Byte/cycle） | L1 Buffer->L0B Buffer带宽（单位：Byte/cycle） |
 | --- | --- | --- | --- |
@@ -120,7 +120,7 @@ $$
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
-**表5** 矩阵计算搬入类指令理论性能说明（[NPU架构版本3510](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123827112"></a>  
+**表5** 矩阵计算搬入类指令理论性能说明（[NPU架构版本3510](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123827112"></a>  
 
 | 接口 | 搬运带宽（单位：Byte/cycle） |
 | --- | --- |
@@ -153,7 +153,7 @@ $$
 
 针对Ascend 950PR/Ascend 950DT，[LoadData（卷积数据搬运）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)和[LoadDataWithStride](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)。此外，LoadDataWithStride接口相比于LoadData（卷积数据搬运）接口，内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。两个接口的理论性能说明见下表：
 
-**表6** LoadData（卷积数据搬运）和LoadDataWithStride理论性能说明（[NPU架构版本3510](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123821313"></a>  
+**表6** LoadData（卷积数据搬运）和LoadDataWithStride理论性能说明（[NPU架构版本3510](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123821313"></a>  
 
 | strideW的取值 | 卷积核在H方向滑动的行数n | L1 Buffer->L0A Buffer带宽（单位：Byte/cycle） | L1 Buffer->L0B Buffer带宽（单位：Byte/cycle） |
 | --- | --- | --- | --- |
@@ -185,7 +185,7 @@ $$
 矩阵计算搬出类指令及其随路功能的详细介绍可参考[DataCopy（L0C到GM数据搬运）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopy_L0CToGM.md)、[Fixpipe（L0C到GM数据搬运）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)以及相同目录下的其他通路对应资料。以下为理论性能说明列表：
 
 <!-- npu="A3,910b" id9 -->
-**表7** 矩阵计算搬出类指令理论性能说明（[NPU架构版本2201](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877112315211"></a>  
+**表7** 矩阵计算搬出类指令理论性能说明（[NPU架构版本2201](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877112315211"></a>  
 
 | 数据通路 | L0C Buffer上的数据类型 | 量化模式 | 格式转换模式 | 目的内存上的数据类型 | 并行度（单位：elements/cycle） | 搬运带宽（单位：Byte/cycle） |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -197,7 +197,7 @@ $$
 <!-- end id9 -->
 
 <!-- npu="950" id10 -->
-**表8** 矩阵计算搬出类指令理论性能说明（[NPU架构版本3510](../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877112315211"></a>  
+**表8** 矩阵计算搬出类指令理论性能说明（[NPU架构版本3510](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877112315211"></a>  
 
 | 数据通路 | L0C Buffer上的数据类型 | 量化模式 | 格式转换模式 | 目的内存上的数据类型 | 并行度（单位：elements/cycle） | 搬运带宽（单位：Byte/cycle） |
 | --- | --- | --- | --- | --- | --- | --- |

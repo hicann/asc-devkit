@@ -21,7 +21,7 @@ features:
   - icon: 📖
     title: 编程指南
     details: SIMD/SIMT 编程模型、编译运行、语言扩展、调试调优完整指南。
-    link: /guide/编程指南/本文档组织结构
+    link: /guide/programming_guide/document_structure
   - icon: 🔧
     title: 算子实践参考
     details: 功能调试、性能分析、优秀实践案例，覆盖 SIMD/SIMT 算子实现与优化。

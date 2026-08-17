@@ -6,7 +6,7 @@ AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以
 
 <!-- npu="950" id2 -->
 
-针对[NPU架构3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，硬件架构图如下，高亮部分展示了并行执行的计算单元和搬运单元。
+针对[NPU架构3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，硬件架构图如下，高亮部分展示了并行执行的计算单元和搬运单元。
 
 **图1**  NPU架构3510架构图    
 ![](../../../figures/ascend_950pr_950dt_architecture.png "Ascend_950PR_950DT_硬件架构图")
@@ -15,7 +15,7 @@ AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以
 
 <!-- npu="A3,910b" id1 -->
 
-针对[NPU架构2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)，硬件架构图如下，高亮部分展示了并行执行的计算单元和搬运单元。
+针对[NPU架构2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，硬件架构图如下，高亮部分展示了并行执行的计算单元和搬运单元。
 
 **图2**  NPU架构2201架构图    
 ![](../../../figures/atlas_a2_a3_architecture.png)
@@ -41,7 +41,7 @@ AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以
 AI Core内部并行的指令流水类型和解释如下所示：
 
 > [!NOTE]说明
->不同的硬件架构，每一种硬件流水类型包含的具体流水会有所差异，详细介绍请参考[硬件实现](../../../../guide/编程指南/高级编程/硬件实现/硬件实现.md)章节。
+>不同的硬件架构，每一种硬件流水类型包含的具体流水会有所差异，详细介绍请参考[硬件实现](../../../../guide/programming_guide/advanced_programming/hardware_implementation/hardware_implementation.md)章节。
 
 **表1**  指令流水类型和相关说明
 
@@ -75,7 +75,7 @@ AI Core内部并行的指令流水类型和解释如下所示：
 - 通过[asc_sync_data_barrier](asc_sync_data_barrier.md)接口阻塞后续指令的执行，直到此前已发出但尚未完成的内存访问指令全部执行完成。开发者通过`arg`参数指定屏障作用的内存范围，确保屏障前后的内存访问指令按预期顺序完成。
 
 <!-- npu="A3,910b" id4 -->
-以[NPU架构2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)为例，该硬件架构下所有合法的核内同步组合如[表2](#aic_intra_core_sync_combinations)和[表3](#aiv_intra_core_sync_combinations)所示。其中，“不涉及”表示硬件层面不存在此种同步组合，“暂无应用场景”表示存在此种同步组合，但在实际开发场景中暂不需要使用。
+以[NPU架构2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)为例，该硬件架构下所有合法的核内同步组合如[表2](#aic_intra_core_sync_combinations)和[表3](#aiv_intra_core_sync_combinations)所示。其中，“不涉及”表示硬件层面不存在此种同步组合，“暂无应用场景”表示存在此种同步组合，但在实际开发场景中暂不需要使用。
 
 <a name="aic_intra_core_sync_combinations"></a>
 

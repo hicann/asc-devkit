@@ -81,7 +81,7 @@ for (j = 0; j < mSize; j++) {
 如下图所示，在L0C Buffer中有一个NZ格式的矩阵，该矩阵N方向上维度为48，M方向上维度为24，经过NZ2NZ转换，将数据格式变为右部分所示排布。
 
 <!-- npu="A3,910b" id6 -->
-**图1** NZ2NZ示意图（[NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a name="zh-cn_topic_0000002515820868_fig199191646174210"></a>  
+**图1** NZ2NZ示意图（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a name="zh-cn_topic_0000002515820868_fig199191646174210"></a>  
 
 ![](../../../../figures/Fixpipe_NZ2NZ.png)
 
@@ -95,7 +95,7 @@ for (j = 0; j < mSize; j++) {
 <!-- end id6 -->
 
 <!-- npu="950" id5 -->
-**图2** NZ2NZ示意图（[NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a name="zh-cn_topic_0000002515820868_fig199191646174233"></a>  
+**图2** NZ2NZ示意图（[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a name="zh-cn_topic_0000002515820868_fig199191646174233"></a>  
 
 ![](../../../../figures/Fixpipe_NZ2NZ_950.png)
 

@@ -45,7 +45,7 @@
 | [资料设计规范](./zh/asc_doc_design_rules.md) | 完善Ascend C现有资料的开发者。 |  介绍Ascend C资料体系架构与总体设计原则。|
 | [代码贡献规范](./zh/contributing/README.md) | 参与Ascend C代码贡献的开发者。 | 代码风格、接口设计、目录结构、测试等贡献规范索引。 |
 | [Ascend C入门教程](./zh/guide/getting_started/ascend_c_overview_and_learning_path.md) | Ascend C初学者 | 介绍算子编程基本概念与Ascend C学习路径，旨在帮助开发者快速上手算子开发。 |
-| [Ascend C编程指南](./zh/guide/编程指南/本文档组织结构.md) | 基于昇腾AI硬件，使用Ascend C编写算子程序，开发自定义算子的开发者。 | Ascend C是CANN针对算子开发场景推出的编程语言，原生支持C和C++标准规范，兼具开发效率和运行性能。使用Ascend C编写算子程序，运行在昇腾AI处理器上，实现自定义的创新算法。 |
+| [Ascend C编程指南](./zh/guide/programming_guide/document_structure.md) | 基于昇腾AI硬件，使用Ascend C编写算子程序，开发自定义算子的开发者。 | Ascend C是CANN针对算子开发场景推出的编程语言，原生支持C和C++标准规范，兼具开发效率和运行性能。使用Ascend C编写算子程序，运行在昇腾AI处理器上，实现自定义的创新算法。 |
 | [Ascend C算子实践参考](./zh/guide/算子实践参考/本文档组织结构.md) | 基于已完成开发的Ascend C算子，需要进一步优化算子性能的开发者。 | 异构计算的特点、算子功能的调试方法以及算子性能的优化策略。通过介绍Ascend C编程中的调试与优化思路，结合多种性能优化手段，并辅以具体案例，旨在帮助开发者实现高性能算子的开发。|
 | [Ascend C兼容性迁移指南](./zh/guide/cross_gen_migration_guide/overview.md) | 需将已有算子跨代迁移至不同昇腾AI处理器的开发者。 | 指导如何实现跨代芯片间的功能对等与性能最优适配。|
 

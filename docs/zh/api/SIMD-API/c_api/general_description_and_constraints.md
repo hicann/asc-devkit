@@ -15,7 +15,7 @@ AI Core内外包含多级存储单元，各存储单元的主要用途如下：
 <!-- npu="950" id1 -->
 **针对Ascend 950PR/Ascend 950DT：**
 
-各存储单元的空间大小和对齐要求请参见[存储单元规格](../../../guide/编程指南/高级编程/硬件实现/架构规格/NPU架构版本3510.md#section6500173264510)。如果具体C API中已明确操作数起始地址的对齐要求，则以具体C API中的说明为准。
+各存储单元的空间大小和对齐要求请参见[存储单元规格](../../../guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_3510.md#section6500173264510)。如果具体C API中已明确操作数起始地址的对齐要求，则以具体C API中的说明为准。
 
 > [!NOTE]说明
 >
@@ -30,7 +30,7 @@ AI Core内外包含多级存储单元，各存储单元的主要用途如下：
 <!-- npu="910b" id4 -->
 - Atlas A2 训练系列产品/Atlas A2 推理系列产品
 <!-- end id4 -->
-各存储单元的空间大小和对齐要求请参见[存储单元规格](../../../guide/编程指南/高级编程/硬件实现/架构规格/NPU架构版本2201.md#section6500173264510)。如果具体C API中已明确操作数起始地址的对齐要求，则以具体C API中的说明为准。
+各存储单元的空间大小和对齐要求请参见[存储单元规格](../../../guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_2201.md#section6500173264510)。如果具体C API中已明确操作数起始地址的对齐要求，则以具体C API中的说明为准。
 
 > [!NOTE]说明
 >

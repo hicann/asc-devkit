@@ -2,7 +2,7 @@
 
 本兼容性说明仅适用于Ascend C算子开发的兼容性迁移指导。总体兼容性策略见[表1](#table18109729593)，兼容性范围不包含编译器BuiltIn API、Ascend C内部实现接口等。文档中涉及的兼容性分为两类：一是功能兼容，包括数据类型兼容、接口原型兼容和常量兼容；二是性能兼容，指对于同等数据量，新架构上执行API耗时不高于旧架构。
 
-若开发者希望在[NPU架构版本3510](../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)下运行原本在[NPU架构版本2201](../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)上开发的Ascend C程序，需在3510架构上重新编译并运行，并可能需要根据迁移指导进行代码调整。
+若开发者希望在[NPU架构版本3510](../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)下运行原本在[NPU架构版本2201](../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)上开发的Ascend C程序，需在3510架构上重新编译并运行，并可能需要根据迁移指导进行代码调整。
 
 **图1**  Ascend C API层次结构<a name="fig1912418519815"></a>  
 ![](../figures/api_hierarchy.png "Ascend-C-API层次结构")

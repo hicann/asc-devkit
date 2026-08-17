@@ -1,0 +1,81 @@
+# 线程架构<a name="ZH-CN_TOPIC_0000002554358977"></a>
+SIMT编程模型采用分层的抽象线程组织结构，从顶层到底层依次为：Grid（线程块网格）、Thread Block（线程块）和Thread（线程）。这种层次化的设计使得开发者可以方便地将并行计算问题映射到硬件资源上。同时，每个层次中的维度均可由开发者根据算法与数据规模自定义配置。如下图所示，其中线程块是按照一维组织排布，每个线程块的索引为0-4； 线程块内的线程是按照二维组织排布，每个线程由坐标(threadIdx.x, threadIdx.y)唯一标识。
+
+![](../../../figures/simt_thread.png)
+
+## 线程层次结构<a name="zh-cn_topic_0000002540938034_section8959121611415"></a>
+
+**Thread（线程）**
+
+线程是整个架构中的最小单元，每个线程独立完成计算任务，拥有独立的寄存器和栈空间。
+
+**Thread Block（线程块）**
+
+Thread Block由若干线程组成（最大2048个线程），使用内置变量[blockDim](../../language_extension/simt_builtin_keywords.md#li076017381191)表示一个线程块在各维度上的线程数量。Thread Block有以下特征：
+
+-   同一Thread Block内的线程可以访问共享内存实现数据交互；
+-   Thread Block内的线程可通过同步机制实现协作；
+
+
+**Grid（线程块网格）**
+
+Grid是SIMT线程层次结构的最顶层，由多个Thread Block组成。使用内置变量[gridDim](../../language_extension/simt_builtin_keywords.md#li20760123812911)来表示Grid在各维度上的线程块数量，并有以下特征：
+-   Grid的维度由用户的执行配置决定，核函数执行期间不可更改；
+-   Grid中的所有线程块具有相同的尺寸和维度配置；
+-   同一Grid中的线程块相互独立，按任意顺序执行；
+-   基于SIMT编程模型的程序，在AIV核上执行多个结构相同的线程块，执行的总线程数等于gridDim.x\*gridDim.y\*gridDim.z\*blockDim.x\*blockDim.y\*blockDim.z。
+
+当前Grid中线程块总数不能超过65535。
+
+**线程索引**
+
+在SIMT线程架构下，每个线程都有唯一的标识，开发者可以通过内置变量获取线程的身份信息，从而确定每个线程负责处理的数据，相关内置变量如下表所示：
+
+| 内置变量 | 说明 | 数据类型 | 约束 |
+| --- | --- | --- | --- |
+| gridDim | Grid的维度大小。 | dim3 | gridDim.x \* gridDim.y \* gridDim.z <= 65535 |
+| blockDim | Thread Block的维度大小。 | dim3 | blockDim.x \* blockDim.y \* blockDim.z <= 2048 |
+| blockIdx | 当前Thread Block在Grid中的索引。 | dim3 | 无 |
+| threadIdx | 当前线程在Thread Block内的索引。 | dim3 | 无 |
+
+各Thread Block可通过线程块索引blockIdx进行标识，各线程可通过线程块内线程索引threadIdx进行标识。线程索引的计算示例如下图所示：
+
+![](../../../figures/thread_arch_8.png)
+
+对于一维Grid和Block，索引计算公式为：
+
+```cpp
+int global_id = blockIdx.x * blockDim.x + threadIdx.x;
+```
+
+对于二维Grid和Block，索引计算公式为：
+
+```cpp
+int global_id_x = blockIdx.x * blockDim.x + threadIdx.x;
+int global_id_y = blockIdx.y * blockDim.y + threadIdx.y;
+```
+
+## Warp执行机制<a name="zh-cn_topic_0000002540938034_section3214318716"></a>
+
+实际上，每个线程块内的线程并无法同时并发执行，底层是通过Warp对线程块内的线程进行划分，在一个Thread Block内，所有线程按线性顺序被硬件自动划分为每32个线程一组的Warp，同一Warp内的所有线程执行同一条指令。Warp是SIMT架构中基本的调度和执行单位。Warp内的线程从相同的程序地址开始执行，拥有各自的指令地址计数器和寄存器状态，并且可以选择分支独立执行。基于Warp的划分机制，Thread Block的blockDim建议设置为32的整数倍，否则最后一个Warp将包含不足32个线程，导致该Warp内存在空闲线程通道，进而降低执行效率。
+
+Warp内的线程虽然执行同一段代码，但在分支处可能进入不同的执行路径，这种情况称为分支发散（Warp Divergence）。控制流指令（if、switch、do、for、while）都可能会引起分支发散。当Warp中的32个线程均执行相同的代码分支时，硬件利用率最高；一旦发生分支发散，只有进入当前分支的线程（即活跃线程）会被执行，其余线程则被掩码屏蔽等待，从而导致Warp执行效率下降。例如，若Warp中的线程遇到条件分支，导致threadIdx.x小于8的线程与大于等于8的线程进入不同执行路径。由于同一Warp内线程必须同步执行同一条指令，硬件会串行执行各分支：先执行threadIdx.x小于8所在分支，大于等于8的线程被掩码屏蔽等待；再执行大于等于8所在分支，小于8的线程被掩码屏蔽等待；分支发散结束后，所有线程重新汇合继续执行，如下图所示。此外，同一Warp内的线程相互独立，彼此不能存在依赖关系。
+
+![](../../../figures/branch_div.png)
+
+## 配置最大线程数
+
+上文提到，每个线程块内的线程拥有独立的寄存器和栈空间，而每个AIV核总的寄存器是有限的。若算子计算任务越复杂，需要使用到的寄存器越多，支持启动的线程数越少。当前支持用户在核函数定义时使用[\_\_launch\_bounds\_\_\(N\)](../../language_extension/simt_builtin_keywords.md#li23861114618)配置最大线程数`N`，限制算子能启动的线程数个数上限。编译时底层编译器会根据该值对寄存器资源进行分配，用户配置的`N`越大，每个线程可用寄存器越少，具体关系如下表所示：
+
+| 配置的最大线程数 | 每个Thread可用寄存器个数 |
+| --- | --- |
+| 1025~2048 | 16 |
+| 513~1024 | 32 |
+| 257~512 | 64 |
+| 1~256 | 127 |
+
+需要注意的是：
+- \_\_launch\_bounds\_\_\(N\)是可选配置，默认值为1024。
+- `N`是编译期确定的值，因此必须是静态变量或者常量。
+- 算子执行期实际启动的线程数不能超过最大线程数，否则会出现运行报错。
+- 用户配置的最大线程数应与算子复杂度相匹配，若`N`过大，会导致每个线程分配到的寄存器数量过少，线程执行时编译器可能会选择将部分数据存放到栈空间，称为寄存器溢出（register spilling），影响计算性能甚至导致精度异常影响算子功能；而若`N`过小，会限制实际启动的线程数，造成资源浪费。

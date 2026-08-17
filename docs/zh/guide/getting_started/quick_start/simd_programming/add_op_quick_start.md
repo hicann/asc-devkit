@@ -15,9 +15,9 @@
 - **算子设计**
 
     - **Device端核函数编程接口**
-        - 核函数定义：通过 [\_\_global\_\_](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md)修饰符声明。
-        - 数据分块（Tiling）：使用内置关键字 [block_idx](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md)确定每个Block负责处理的数据。
-        - 数据搬入：通过[C API接口](../../../编程指南/语言扩展层/SIMD语言扩展层C-API.md) `asc_copy_gm2ub`或[C++接口](../../../编程指南/类库API/编程接口概述.md) `AscendC::DataCopy`完成。
+        - 核函数定义：通过 [\_\_global\_\_](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符声明。
+        - 数据分块（Tiling）：使用内置关键字 [block_idx](../../../programming_guide/language_extension/simd_builtin_keywords.md)确定每个Block负责处理的数据。
+        - 数据搬入：通过[C API接口](../../../programming_guide/language_extension/simd_language_extension_c_api.md) `asc_copy_gm2ub`或[C++接口](../../../programming_guide/library_api/programming_interface_overview.md) `AscendC::DataCopy`完成。
         - 数据计算：通过C API接口`asc_add`或C++接口`AscendC::Add`完成。
         - 数据搬出：通过C API接口`asc_copy_ub2gm`或C++接口`AscendC::DataCopy`完成。
     - **Host端运行时接口**
@@ -76,8 +76,8 @@
       >     <!-- npu="910b" id2 -->
       >     - Atlas A2训练系列产品/Atlas A2推理系列产品
       >     <!-- end id2 -->
-      > - SIMD算子的Kernel函数需要额外修饰符，[`__vector__`](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md)修饰符表明该算子仅在向量计算单元上执行。
-      > - **性能提示**：示例中为简化同步操作，统一使用了 `asc_sync`。在实际算子开发中，建议根据流水线执行情况使用具体的同步控制指令，以获得更好的性能。详见[同步机制](../../../编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程/C语言编程概述.md#同步机制)章节。
+      > - SIMD算子的Kernel函数需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
+      > - **性能提示**：示例中为简化同步操作，统一使用了 `asc_sync`。在实际算子开发中，建议根据流水线执行情况使用具体的同步控制指令，以获得更好的性能。详见[同步机制](../../../programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming/c_programming_overview.md#同步机制)章节。
 
     - **基于C++ Tensor实现Memory矢量计算示例**
 
@@ -124,7 +124,7 @@
       >     <!-- npu="910b" id5 -->
       >     - Atlas A2训练系列产品/Atlas A2推理系列产品
       >     <!-- end id5 -->
-      > - SIMD算子的Kernel函数需要额外修饰符，[`__vector__`](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md)修饰符表明该算子仅在向量计算单元上执行。
+      > - SIMD算子的Kernel函数需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
 
   - **Host端代码实现**：
 
@@ -197,7 +197,7 @@
   ./c_api_add_example           # 运行样例
   ```
   > [!NOTE]说明
-  > - 编译选项`--npu-arch`用于指定NPU架构版本，`dav-`后面的数字为架构版本号，请替换为您实际使用的版本。各AI处理器型号与架构版本的对应关系请查阅[AI处理器型号和 \_\_NPU_ARCH\_\_ 的对应关系](../../../编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+  > - 编译选项`--npu-arch`用于指定NPU架构版本，`dav-`后面的数字为架构版本号，请替换为您实际使用的版本。各AI处理器型号与架构版本的对应关系请查阅[AI处理器型号和 \_\_NPU_ARCH\_\_ 的对应关系](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 此外，基于C/C++不同层级的编程接口和不同的矢量计算类型，Add算子有多种实现方式，具体可参考下表：
 
@@ -213,4 +213,4 @@
 > Ascend 950PR/Ascend 950DT新一代架构在传统[UB](../../../technical_appendix/concepts_and_terms/glossary.md)缓存体系的基础上，开放了寄存器（Register）可编程能力，单个寄存器大小为256B。基于寄存器的矢量计算称为Reg矢量计算，而基于传统UB的矢量计算称为Memory矢量计算。
 <!-- end id6 -->
 
-若要深入理解Ascend C的SIMD与SIMT编程模型，请参阅[Ascend C编程模型概述](../../../编程指南/编程模型/编程模型概述.md)。
+若要深入理解Ascend C的SIMD与SIMT编程模型，请参阅[Ascend C编程模型概述](../../../programming_guide/programming_model/programming_model_overview.md)。

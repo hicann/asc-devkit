@@ -31,7 +31,7 @@
 是否开启HF32对Mmad计算理论性能的影响见下表：
 
 <!-- npu="A3,910b" id8 -->
-**表1** HF32对Mmad计算理论性能的影响（[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123815311"></a>
+**表1** HF32对Mmad计算理论性能的影响（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123815311"></a>
 
 | 接口 | 左矩阵A | 右矩阵B | $cube_m$ | $cube_n$ | $cube_k$ | $k_0$ |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -40,7 +40,7 @@
 <!-- end id8 -->
 
 <!-- npu="950" id9 -->
-**表2** HF32对Mmad计算理论性能的影响（[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="table1877123815915"></a>
+**表2** HF32对Mmad计算理论性能的影响（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123815915"></a>
 
 | 接口 | 左矩阵A | 右矩阵B | $cube_m$ | $cube_n$ | $cube_k$ | $k_0$ |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -74,13 +74,13 @@ $$
 FP32与HF32格式的精度对比如下图所示：
 
 <!-- npu="A3,910b" id10 -->
-**图1** FP32与HF32格式精度示意图（[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="zh_cn_topic_hf32_figure1"></a>
+**图1** FP32与HF32格式精度示意图（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh_cn_topic_hf32_figure1"></a>
 
 ![FP32与HF32格式精度示意图（NPU架构版本2201）](../../../figures/mmad_hf32.png "FP32与HF32格式精度示意图（NPU架构版本2201）")
 <!-- end id10 -->
 
 <!-- npu="950" id11 -->
-**图2** FP32与HF32格式精度示意图（[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）<a id="zh_cn_topic_hf32_figure2"></a>
+**图2** FP32与HF32格式精度示意图（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh_cn_topic_hf32_figure2"></a>
 
 ![FP32与HF32格式精度示意图（NPU架构版本3510）](../../../figures/mmad_hf32_950.png "FP32与HF32格式精度示意图（NPU架构版本3510）")
 <!-- end id11 -->
@@ -113,7 +113,7 @@ PIPE_S
 <!-- npu="950" id12 -->
 ## 调用示例
 
-将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#npu-arch)。
+将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 

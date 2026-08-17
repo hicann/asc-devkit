@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000002009944386_zh-cn_topic_0000001526594958_zh-cn_topic_0000001525424352_section36583473819"></a>
 
-标识算子输出的shape是否依赖于计算得到。某些算子，比如NonZero（统计tensor中非零值的个数），计算完成前无法得知算子输出的shape信息，算子计算完成后才能获取。该类算子在原型定义时，需要使用OutputShapeDependOnCompute接口进行标识，同时在算子核函数中将实际输出shape写入到出参中，便于框架侧基于该信息进行输出内存的管理。对应的kernel侧实现请参考[输出shape依赖计算的算子kernel实现](../../../../guide/编程指南/高级编程/Aclnn算子工程化开发/设计与实现/Kernel侧输出shape依赖计算.md)。
+标识算子输出的shape是否依赖于计算得到。某些算子，比如NonZero（统计tensor中非零值的个数），计算完成前无法得知算子输出的shape信息，算子计算完成后才能获取。该类算子在原型定义时，需要使用OutputShapeDependOnCompute接口进行标识，同时在算子核函数中将实际输出shape写入到出参中，便于框架侧基于该信息进行输出内存的管理。对应的kernel侧实现请参考[输出shape依赖计算的算子kernel实现](../../../../guide/programming_guide/advanced_programming/aclnn_operator_development/design_and_implementation/kernel_output_shape_computation.md)。
 
 ## 函数原型<a name="zh-cn_topic_0000002009944386_zh-cn_topic_0000001526594958_zh-cn_topic_0000001525424352_section13230182415108"></a>
 

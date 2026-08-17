@@ -9,13 +9,13 @@
 <!-- end id1 -->
 
 <!-- npu="A3,910b" id2 -->
-**图1** 矩阵计算的搬出整体流程图（[NPU架构版本2201](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**图1** 矩阵计算的搬出整体流程图（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 ![](../../../../figures/fixpipe_execution_flow_a2a3.png)
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
-**图2** 矩阵计算的搬出整体流程图（[NPU架构版本3510](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)）
+**图2** 矩阵计算的搬出整体流程图（[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 ![](../../../../figures/fixpipe_execution_flow_a5.png)
 <!-- end id3 -->

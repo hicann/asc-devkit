@@ -1,0 +1,46 @@
+# 原理介绍
+
+## 概述
+
+SuperKernel是一种算子的二进制融合技术。与源码融合不同，它聚焦于内核函数（Kernel）的二进制调度方案优化，在已编译的二进制代码基础上，将多个子Kernel融合创建出一个超级Kernel函数（简称SuperKernel），由该SuperKernel以子函数调用的方式整合多个内核函数，从而优化计算任务、提升性能和资源利用率。
+
+与单算子下发相比，SuperKernel技术能够减少Task调度的等待时间和调度开销，同时利用Task间隙资源进一步优化算子头开销，提升推理性能。
+
+开启SuperKernel融合优化后，系统会自动识别图内可被融合的算子，并生成SuperKernel进行计算。同时框架提供标定SuperKernel范围的能力，支持用户根据实际业务需求对融合范围内的算子进行标记和优化配置。
+
+>[!NOTE]说明
+>SuperKernel适用于如下型号：
+> <!-- npu="A3" id1 -->
+> - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+> <!-- end id1 -->
+> <!-- npu="910b" id2 -->
+> - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+> <!-- end id2 -->
+> <!-- npu="950" id3 -->
+> - Ascend 950PR/Ascend 950DT，该型号下SuperKernel特性是试验特性，在后续版本中会调整或改进，不保证后续兼容性，请开发者在使用过程中关注后续版本更新。
+> <!-- end id3 -->
+
+## 性能收益来源
+
+相对于单算子下发，SuperKernel主要通过以下方式带来性能收益：
+
+- **减少Kernel启动开销**：原本需要多次启动的子Kernel，被统一通过一次SuperKernel启动完成，减少了任务调度开销。
+- **减少Task调度等待时间**：避免了多个独立Task之间的调度间隙。
+- **算子间流水并行**：通过SuperKernel内提供的任务间同步接口（[SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)、[WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)），可以让子Kernel之间的部分指令实现并行执行，进一步压缩端到端耗时。
+
+## 支持的开启方式
+
+当前SuperKernel特性通过PyTorch图模式开启，主要有如下两种方式：
+
+| 开启方式 | 说明 |
+| --- | --- |
+| npugraph_ex后端 | 在`torch.compile`的`options`中传入`super_kernel_optimize=True`开启SuperKernel融合；如需控制融合范围，可通过`torch.npu.super_kernel_scope_begin/end`进行标定。具体请参考[SuperKernel功能](https://www.hiascend.com/document/detail/zh/Pytorch/latest/devguide/TorchAir/docs/zh/npugraph_ex/advanced/superkernel.md)。 |
+| GE图模式 | 通过`torchair.scope.super_kernel`作用域标定融合范围，配合TorchAir的CompilerConfig开启。具体请参考[图内标定SuperKernel范围](https://www.hiascend.com/document/detail/zh/Pytorch/latest/devguide/TorchAir/docs/zh/ascend_ir/features/advanced/super_kernel_scope.md)。 |
+
+## 算子适配说明
+
+CANN包发布的主流模型常用算子已支持SuperKernel融合。用户自定义的Ascend C算子如需支持SuperKernel，需要满足一定适配条件，参考如下算子适配和自验证说明：
+
+- [算子适配说明](operator_adaptation.md)：算子要融合进SuperKernel需要满足的通用约束（与具体的开启方式无关）。
+- [算子自验证说明](operator_self_verification.md)：在两种PyTorch图模式下分别对单个算子进行SuperKernel融合验证的样例。
+- [核函数直调算子额外适配说明](kernel_direct_call_adaptation.md)：对于使用`<<<>>>`方式开发的Ascend C算子，进入SuperKernel前需要进行的额外适配工作。

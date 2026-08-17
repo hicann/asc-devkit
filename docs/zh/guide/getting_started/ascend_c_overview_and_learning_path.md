@@ -71,35 +71,35 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 <p style="color: #555; font-size: 14px; line-height: 1.6; min-height: 65px; margin-bottom: 10px;">本阶段聚焦于理解并掌握Ascend C的SIMD与SIMT编程模型，使您具备自主开发矢量及矩阵类算子的能力，从而满足常规场景下的基本性能要求。</p>
 
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
-<strong style="color: #1a1a1a;"><a href="../编程指南/编程模型/编程模型概述.md" style="color: #3b82f6; text-decoration: none;">📖 编程模型</a></strong><br/>
+<strong style="color: #1a1a1a;"><a href="../programming_guide/programming_model/programming_model_overview.md" style="color: #3b82f6; text-decoration: none;">📖 编程模型</a></strong><br/>
 <div style="display: flex; gap: 15px; margin-top: 10px;">
 <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-<a href="../编程指南/编程模型/AI-Core-SIMD编程/概述.md" style="color: #3b82f6; font-size: 14px; font-weight: bold;">SIMD编程</a><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程/C语言编程概述.md" style="color: #3b82f6; font-size: 13px;">基于指针的C语言编程</a></span><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/CPPTensor编程概述.md" style="color: #3b82f6; font-size: 13px;">基于Tensor的C++编程</a></span><br/>
-<span style="color: #666; font-size: 14px;">•  <a href="../编程指南/编程模型/AI-Core-SIMD编程/基于TPipe-TQue框架编程/TPipe-TQue框架编程原理.md" style="color: #3b82f6; font-size: 13px;">基于TPipe-TQue框架编程</a></span>
+<a href="../programming_guide/programming_model/ai_core_simd_programming/overview.md" style="color: #3b82f6; font-size: 14px; font-weight: bold;">SIMD编程</a><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming/c_programming_overview.md" style="color: #3b82f6; font-size: 13px;">基于指针的C语言编程</a></span><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/cpp_tensor_programming_overview.md" style="color: #3b82f6; font-size: 13px;">基于Tensor的C++编程</a></span><br/>
+<span style="color: #666; font-size: 14px;">•  <a href="../programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_principles.md" style="color: #3b82f6; font-size: 13px;">基于TPipe-TQue框架编程</a></span>
 </div>
 <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
 <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-<a href="../编程指南/编程模型/AI-Core-SIMT编程/AI-Core-SIMT编程.md" style="color: #3b82f6; font-size: 14px; font-weight: bold;">SIMT编程</a>
+<a href="../programming_guide/programming_model/ai_core_simt_programming/ai_core_simt_programming.md" style="color: #3b82f6; font-size: 14px; font-weight: bold;">SIMT编程</a>
 </div>
 <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-<a href="../编程指南/语言扩展层/SIMD-BuiltIn关键字.md" style="color: #3b82f6; font-size: 14px; font-weight: bold;">语言扩展层概述</a>
+<a href="../programming_guide/language_extension/simd_builtin_keywords.md" style="color: #3b82f6; font-size: 14px; font-weight: bold;">语言扩展层概述</a>
 </div>
 </div>
 </div>
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">🔧 构建与运行</strong><br/>
-<a href="../编程指南/编译与运行/异步执行.md" style="color: #3b82f6; font-size: 14px;">异步执行</a> | <a href="../编程指南/编译与运行/算子编译/毕昇编译器.md" style="color: #3b82f6; font-size: 14px;">算子编译</a>
+<a href="../programming_guide/compilation_and_execution/async_execution.md" style="color: #3b82f6; font-size: 14px;">异步执行</a> | <a href="../programming_guide/compilation_and_execution/operator_compilation/bisheng_compiler.md" style="color: #3b82f6; font-size: 14px;">算子编译</a>
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
-<strong style="color: #1a1a1a;"><a href="../编程指南/调试调优/概述.md" style="color: #3b82f6; text-decoration: none;">🔧 调试与调优</a></strong><br/>
-<a href="../编程指南/调试调优/功能调试/CPU域孪生调试.md" style="color: #3b82f6; font-size: 14px;">功能调试</a> <span style="color: #999; font-size: 13px;">（<a href="../编程指南/调试调优/功能调试/CPU域孪生调试.md" style="color: #3b82f6; font-size: 13px;">CPU域孪生调试</a> | <a href="../编程指南/调试调优/功能调试/NPU域上板调试.md" style="color: #3b82f6; font-size: 13px;">NPU域孪生调试</a>）</span> | <a href="../编程指南/调试调优/性能调优.md" style="color: #3b82f6; font-size: 14px;">性能调试</a>
+<strong style="color: #1a1a1a;"><a href="../programming_guide/debug_and_tuning/overview.md" style="color: #3b82f6; text-decoration: none;">🔧 调试与调优</a></strong><br/>
+<a href="../programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md" style="color: #3b82f6; font-size: 14px;">功能调试</a> <span style="color: #999; font-size: 13px;">（<a href="../programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md" style="color: #3b82f6; font-size: 13px;">CPU域孪生调试</a> | <a href="../programming_guide/debug_and_tuning/functional_debug/npu_board_debug.md" style="color: #3b82f6; font-size: 13px;">NPU域孪生调试</a>）</span> | <a href="../programming_guide/debug_and_tuning/performance_tuning.md" style="color: #3b82f6; font-size: 14px;">性能调试</a>
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">📦 算子部署</strong><br/>
-<a href="../编程指南/高级编程/AI框架算子适配/PyTorch框架.md" style="color: #3b82f6; font-size: 14px;">PyTorch框架适配</a>
+<a href="../programming_guide/advanced_programming/ai_framework_adaptation/pytorch_framework.md" style="color: #3b82f6; font-size: 14px;">PyTorch框架适配</a>
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;"><span style="color: #3b82f6;">💻</span> 实践巩固</strong><br/>
@@ -116,11 +116,11 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">📖 高级编程</strong><br/><span style="color: #666; font-size: 14px;">• 
-<a href="../编程指南/高级编程/硬件实现/基本架构.md" style="color: #3b82f6; font-size: 14px;">硬件实现</a><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../编程指南/高级编程/高级AI-Core编程模型/SIMD与SIMT混合编程/概述.md" style="color: #3b82f6; font-size: 14px;">SIMD & SIMT混合编程</a></span><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../编程指南/高级编程/Aclnn算子工程化开发/概述.md" style="color: #3b82f6; font-size: 14px;">Aclnn算子工程化开发</a></span><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../编程指南/高级编程/算子入图开发/概述.md" style="color: #3b82f6; font-size: 14px;">算子入图开发</a></span><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../编程指南/高级编程/AI框架算子适配/概述.md" style="color: #3b82f6; font-size: 14px;">AI框架算子适配</a></span>
+<a href="../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md" style="color: #3b82f6; font-size: 14px;">硬件实现</a><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/overview.md" style="color: #3b82f6; font-size: 14px;">SIMD & SIMT混合编程</a></span><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../programming_guide/advanced_programming/aclnn_operator_development/overview.md" style="color: #3b82f6; font-size: 14px;">Aclnn算子工程化开发</a></span><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../programming_guide/advanced_programming/operator_graph_development/overview.md" style="color: #3b82f6; font-size: 14px;">算子入图开发</a></span><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../programming_guide/advanced_programming/ai_framework_adaptation/overview.md" style="color: #3b82f6; font-size: 14px;">AI框架算子适配</a></span>
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;"><span style="color: #3b82f6;">💻</span> 实践巩固</strong><br/><span style="color: #666; font-size: 14px;">• 

@@ -34,9 +34,9 @@
 
 头文件路径为： `"basic_api/kernel_operator_sys_var_intf.h"`。
 
-在[分离模式架构](../../../../../guide/编程指南/高级编程/硬件实现/基本架构.md)下，获取逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的逻辑索引。
+在[分离模式架构](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)下，获取逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的逻辑索引。
 
-GetSubBlockIdx在使用`__mix__(1, 2)`作为[函数执行空间限定符](../../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md#section1074418132518)的场景下，可以用于区分同一个核上的两个不同Vector Core，取值分别为0和1。
+GetSubBlockIdx在使用`__mix__(1, 2)`作为[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#section1074418132518)的场景下，可以用于区分同一个核上的两个不同Vector Core，取值分别为0和1。
 
 ## 函数原型
 

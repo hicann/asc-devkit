@@ -27,7 +27,7 @@
 
 ## 约束说明<a name="zh-cn_topic_0000002000279997_zh-cn_topic_0000001610028277_section794123819592"></a>
 
-- 为了保留接口兼容，推荐[<<<>>>](../../../../../guide/编程指南/调试调优/功能调试/CPU域孪生调试.md)编译使用。
+- 为了保留接口兼容，推荐[<<<>>>](../../../../../guide/programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md)编译使用。
 - tilingKey建议传入正整数，如果设置为负数或者0，将会告警并继续调测。如果传入0，将会执行tilingKey为0的分支；tilingKey传入负数，将导致未定义的行为。
 - 该接口需要在[ICPU_RUN_KF](ICPU_RUN_KF.md)前调用。
 

@@ -6,7 +6,7 @@
 
 Counter模式下，用户不需要计算迭代次数以及判断是否存在尾块，将mask模式设置为Counter模式后，只需要设置mask为\{0,总元素个数\}，然后调用相应的API，处理逻辑更简便，减少了指令数量和Scalar计算量，同时更加高效地利用了指令单次执行的并发能力，进而提升性能。
 
-提示：Normal模式和Counter模式、掩码的介绍可参考[如何使用掩码操作API](../../../编程指南/类库API/基础API/常用操作速查指导/如何使用掩码操作API.md)。
+提示：Normal模式和Counter模式、掩码的介绍可参考[如何使用掩码操作API](../../../programming_guide/library_api/basic_api/quick_reference/how_to_use_mask_api.md)。
 
 以下反例和正例中的代码均以[AddCustom](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op)算子为例，修改其中Add接口的调用代码，以说明Counter模式的优势。
 

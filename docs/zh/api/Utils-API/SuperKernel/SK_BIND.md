@@ -32,7 +32,7 @@
 
 ## 功能说明<a name="section259105813316"></a>
 
-本接口为算子SuperKernel场景提供绑定原核函数和SK子函数的能力。核函数直调算子的完整适配方法请参见[核函数直调算子额外适配说明](../../../guide/编程指南/高级编程/SuperKernel/核函数直调算子额外适配说明.md)。
+本接口为算子SuperKernel场景提供绑定原核函数和SK子函数的能力。核函数直调算子的完整适配方法请参见[核函数直调算子额外适配说明](../../../guide/programming_guide/advanced_programming/super_kernel/kernel_direct_call_adaptation.md)。
 
 ## 函数原型<a name="section2067518173415"></a>
 
@@ -46,7 +46,7 @@
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | GF | 输入 | 核函数函数签名。 |
-| cap | 输入 | `uint64_t`类型，用于标记当前算子的SuperKernel特性。SuperKernel框架根据这些信息调整相应的同步和融合策略。各bit位可按位或组合：<br>&bull; 1：early start wait flag，表示算子内使用了[WaitPreTaskEnd](../../SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)接口。<br>&bull; 2：early start set flag，表示算子内使用了[SetNextTaskStart](../../SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)接口。<br>&bull; 4：disable_dcci，表示当前算子需要SuperKernel框架关闭调用前后的DCCI ALL指令。详细说明请参见[算子适配说明](../../../guide/编程指南/高级编程/SuperKernel/算子适配说明.md)。<br>&bull; 8：disable_batchmode_check，表示跳过当前算子的`__schedmode__`检查，使该算子可继续参与SuperKernel融合。<br>例如，同时配置early start wait flag和early start set flag时，cap取值为3。 |
+| cap | 输入 | `uint64_t`类型，用于标记当前算子的SuperKernel特性。SuperKernel框架根据这些信息调整相应的同步和融合策略。各bit位可按位或组合：<br>&bull; 1：early start wait flag，表示算子内使用了[WaitPreTaskEnd](../../SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)接口。<br>&bull; 2：early start set flag，表示算子内使用了[SetNextTaskStart](../../SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)接口。<br>&bull; 4：disable_dcci，表示当前算子需要SuperKernel框架关闭调用前后的DCCI ALL指令。详细说明请参见[算子适配说明](../../../guide/programming_guide/advanced_programming/super_kernel/operator_adaptation.md)。<br>&bull; 8：disable_batchmode_check，表示跳过当前算子的`__schedmode__`检查，使该算子可继续参与SuperKernel融合。<br>例如，同时配置early start wait flag和early start set flag时，cap取值为3。 |
 | SK0 | 输入 | SK子函数签名。 |
 | ... | 输入 | SK1~SK3。可提供多个SK子函数签名，包含SK0最多四个函数签名。 |
 
@@ -69,7 +69,7 @@
 
 ## 调用示例<a name="section990974612242"></a>
 
-以下示例展示SK_BIND接口的基本用法，SK子函数签名、参数结构体定义等完整规则请参见[核函数直调算子额外适配说明](../../../guide/编程指南/高级编程/SuperKernel/核函数直调算子额外适配说明.md)。
+以下示例展示SK_BIND接口的基本用法，SK子函数签名、参数结构体定义等完整规则请参见[核函数直调算子额外适配说明](../../../guide/programming_guide/advanced_programming/super_kernel/kernel_direct_call_adaptation.md)。
 
 ```cpp
 #include "kernel_operator.h"

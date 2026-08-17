@@ -58,7 +58,7 @@ This example is based on the static Tensor programming paradigm, implementing hi
 | aic_mac_ratio | Cube computation unit time ratio, reflecting computation unit utilization |
 | aic_mte1_time(μs) | MTE1 (L1 to L0A/L0B transfer) execution time |
 | aic_mte1_ratio | MTE1 time ratio, reflecting L1 to L0 data transfer pressure |
-| aic_mte2_time(μs) | MTE2 ([GM](../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/抽象硬件架构.md) (Global Memory) to L1 transfer) execution time |
+| aic_mte2_time(μs) | MTE2 ([GM](../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/abstract_hardware_architecture.md) (Global Memory) to L1 transfer) execution time |
 | aic_mte2_ratio | MTE2 time ratio, reflecting GM to L1 data loading pressure |
 | aic_fixpipe_time(μs) | [Fixpipe](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) (L0C to GM transfer) execution time |
 | aic_fixpipe_ratio | [Fixpipe](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) time ratio, reflecting result write-back memory access pressure |

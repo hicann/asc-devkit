@@ -2,7 +2,7 @@
 
 ## 概述
 
-MTE2将数据从Global Memory（GM）搬运到Unified Buffer（UB）时，可通过`asc_copy_gm2ub_align`接口的`l2_cache_mode`参数（本样例使用[基于指针的C语言编程](../../../../../../docs/zh/guide/编程指南/编程模型/AI-Core-SIMD编程/基于指针的C语言编程)）显式配置数据在L2 Cache中的管理策略。本样例说明**复用数据**和**流式数据**两大类场景下，如何选择合适的L2 Cache模式来优化MTE2搬运性能，以及在启用L2 Cache的前提下如何通过分片策略提升L2 Cache命中率。
+MTE2将数据从Global Memory（GM）搬运到Unified Buffer（UB）时，可通过`asc_copy_gm2ub_align`接口的`l2_cache_mode`参数（本样例使用[基于指针的C语言编程](../../../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming)）显式配置数据在L2 Cache中的管理策略。本样例说明**复用数据**和**流式数据**两大类场景下，如何选择合适的L2 Cache模式来优化MTE2搬运性能，以及在启用L2 Cache的前提下如何通过分片策略提升L2 Cache命中率。
 
 - **复用数据场景（数据需多次读取）**
   Case1: 整块重复搬4次，`l2_cache_mode = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM` → 整块数据远超L2容量，命中率极低，展示未分片时的性能瓶颈。

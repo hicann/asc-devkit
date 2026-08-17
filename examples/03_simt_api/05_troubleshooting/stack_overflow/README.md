@@ -41,7 +41,7 @@
 
 > **栈溢出问题说明**
 >
-> SIMT线程的栈空间默认大小有限。当Kernel函数中定义较大的线程局部数组，或函数递归调用深度过大时，SIMT栈空间需求会持续增加。若运行时栈空间需求超过配置上限，就会触发SIMT栈溢出。栈空间详细说明请参考[内存层级](../../../../docs/zh/guide/%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/AI-Core-SIMT%E7%BC%96%E7%A8%8B/%E5%86%85%E5%AD%98%E5%B1%82%E7%BA%A7.md)。
+> SIMT线程的栈空间默认大小有限。当Kernel函数中定义较大的线程局部数组，或函数递归调用深度过大时，SIMT栈空间需求会持续增加。若运行时栈空间需求超过配置上限，就会触发SIMT栈溢出。栈空间详细说明请参考[内存层级](../../../../docs/zh/guide/programming_guide/programming_model/ai_core_simt_programming/memory_hierarchy.md)。
 
 **样例规格**：
 

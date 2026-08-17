@@ -6,13 +6,13 @@ Cache（缓存）的主要作用是在搬运单元或Scalar单元与外部存储
 
 [表1](#table1)展示了不同类型的Cache的功能，不同产品中支持的Cache类型不同，具体情况如下：
 <!-- npu="950" id1 -->
-以[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)为例，图1展示了AI Core中支持的五类Cache（L2 Cache、DCache、ICache、SIMT DCache、NDDMA Cache）在硬件架构中的位置关系。
+以[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)为例，图1展示了AI Core中支持的五类Cache（L2 Cache、DCache、ICache、SIMT DCache、NDDMA Cache）在硬件架构中的位置关系。
 
 **图1**  五类Cache在AI Core中的位置关系示意图  
 ![](../../../../api/figures/atlas_950_cache_architecture_diagram.png "atlas_950_cache_architecture_diagram")
 <!-- end id1 -->
 <!-- npu="A3,910b" id2 -->
-以[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)为例，图2展示了AI Core中支持的三类Cache（L2 Cache、DCache和ICache）在硬件架构中的位置关系。
+以[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)为例，图2展示了AI Core中支持的三类Cache（L2 Cache、DCache和ICache）在硬件架构中的位置关系。
 
 **图2**  三类Cache在AI Core中的位置关系示意图<a name="zh-cn_topic_0000002583420201_fig496311278412"></a>  
 ![](../../../../api/figures/atlas_a2_a3_cache_architecture_diagram.png "atlas_a2_a3_cache_architecture_diagram")
@@ -72,7 +72,7 @@ Cache一致性是多核中确保数据正确性的核心机制。简单来说，
 <!-- npu="950,A3,910b" id5 -->
 下面介绍不同产品中每种类型Cache是否需要考虑多核间数据不一致：
 <!-- npu="950" id3 -->
-- 针对[NPU架构版本3510](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)，该产品支持的五类Cache在多核间数据一致性方面的情况如下：
+- 针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，该产品支持的五类Cache在多核间数据一致性方面的情况如下：
     - L2 Cache：多核间共享的缓存，因此不需要考虑多核间数据不一致的问题。
     - DCache：多核独立缓存，因此需要考虑多核间数据一致性的问题。
     - ICache：只读，因此不需要考虑多核间数据不一致的问题。
@@ -80,7 +80,7 @@ Cache一致性是多核中确保数据正确性的核心机制。简单来说，
     - SIMT DCache：在SIMT中，写入数据时会立即写入GM，不存在一致性问题；从GM读取数据时，多核独立缓存，需要考虑多核间数据一致性的问题。
 <!-- end id3 -->
 <!-- npu="A3,910b" id4 -->
-- 针对[NPU架构版本2201](../../../../guide/编程指南/语言扩展层/SIMD-BuiltIn关键字.md)，支持的三类Cache在多核间数据一致性方面的情况如下：
+- 针对[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，支持的三类Cache在多核间数据一致性方面的情况如下：
     - L2 Cache：多核间共享的缓存，因此不需要考虑多核间数据不一致的问题。
     - DCache：多核独立缓存，因此需要考虑多核间数据一致性的问题。
     - ICache：只读，因此不需要考虑多核间数据不一致的问题。

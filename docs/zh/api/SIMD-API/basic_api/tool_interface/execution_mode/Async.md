@@ -28,7 +28,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_utils_intf.h"`。
 
-基于[分离模式](../../../../../guide/编程指南/高级编程/硬件实现/基本架构.md)（AIC和AIV分离）开发融合算子时，算子逻辑中通常同时包含AIV和AIC的处理逻辑，此时需要使用Ascend C提供的宏`ASCEND_IS_AIV`/`ASCEND_IS_AIC`实现如下硬件条件分支来对AIV和AIC的代码进行隔离：
+基于[分离模式](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)（AIC和AIV分离）开发融合算子时，算子逻辑中通常同时包含AIV和AIC的处理逻辑，此时需要使用Ascend C提供的宏`ASCEND_IS_AIV`/`ASCEND_IS_AIC`实现如下硬件条件分支来对AIV和AIC的代码进行隔离：
 
 ```cpp
 if ASCEND_IS_AIV {
