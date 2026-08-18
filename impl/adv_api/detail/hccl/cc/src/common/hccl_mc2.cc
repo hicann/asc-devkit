@@ -308,13 +308,7 @@ HcclResult AllocComResourceByTilingCcu(
     // 申请OpResCtx硬件内存并写入
     std::string tagOpResCtx = ctxTag + "_opResCtx";
     uint64_t opResCtxSize = sizeof(OpResCtx);
-    if (HcclEngineCtxGet(comm, tagOpResCtx.c_str(), COMM_ENGINE_AIV, opResCtx, &opResCtxSize) == HCCL_SUCCESS) {
-        HCCL_INFO(
-            "HcclEngineCtxGet success, tagOpResCtx[%s], opResCtxAddr[%p], opResCtxSize[%u]", tagOpResCtx.c_str(),
-            *opResCtx, opResCtxSize);
-    } else {
-        CHK_RET(HcclEngineCtxCreate(comm, tagOpResCtx.c_str(), COMM_ENGINE_AIV, opResCtxSize, opResCtx));
-    }
+    CHK_RET(GetOrCreateCcuCtx(comm, tagOpResCtx, opResCtxSize, opResCtx));
     aclError aclRet = aclrtMemcpy(*opResCtx, opResCtxSize, &resCtx, opResCtxSize, ACL_MEMCPY_HOST_TO_DEVICE);
     HCCL_INFO(
         "[CCU_DEBUG] opResCtxPtr=%p, *opResCtx=%p, size=%llu ws=0x%llx wsSize=0x%llx xn=0x%llx cke=0x%llx rankId=%llu "

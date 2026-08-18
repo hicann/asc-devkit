@@ -30,6 +30,8 @@ extern "C" {
 
 namespace mc2_ops_hccl {
 
+HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctxSize, void** ctx);
+
 HcclResult HcclExecOp(
     HcclComm comm, OpParam& param, std::unique_ptr<TopoInfoWithNetLayerDetails>& topoInfo, std::string& algName,
     const ResPackGraphMode& resPack = ResPackGraphMode());
