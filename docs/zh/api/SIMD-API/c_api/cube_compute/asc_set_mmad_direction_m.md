@@ -55,17 +55,17 @@ PIPE_S
 ## 约束说明
 
 - 本接口需在矩阵乘加指令（[asc_mmad](./asc_mmad.md)、[asc_mmad_mx](./asc_mmad_mx.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
-- 方向配置一旦写入会持续生效，后续矩阵乘加指令若不显式重新配置，将沿用当前方向配置。如需切换为先沿列方向、再沿行方向生成矩阵计算结果分形，请重新调用[asc_set_mmad_direction_n](./asc_set_mmad_direction_n.md)接口。
+- 方向配置一旦写入会持续生效，后续矩阵乘加指令若不显式重新配置，将沿用当前方向配置。如需切换为逐行生成矩阵计算结果分形，请重新调用[asc_set_mmad_direction_n](./asc_set_mmad_direction_n.md)接口。
 
 <!-- npu="950" id8 -->
 ## 调用示例
 
-将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng examples.asc -o main --npu-arch=dav-3510; ./main
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
 
 以下调用示例代码仅Ascend 950PR/Ascend 950DT产品支持。
