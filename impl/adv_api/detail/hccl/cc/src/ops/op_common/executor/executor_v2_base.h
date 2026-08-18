@@ -31,6 +31,9 @@ public:
 
     virtual std::string Describe() const;
 
+    virtual void* CalcCostCoeffAbiPlaceholder(void*, void*, const char*) { return nullptr; }
+    virtual void* GetAlgNetMetaAbiPlaceholder(void*) const { return nullptr; }
+
     virtual HcclResult CalcAlgHierarchyInfo(
         HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo) = 0;
 
