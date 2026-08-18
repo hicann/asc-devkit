@@ -242,7 +242,7 @@
             -   [通算融合](operator_practice/simd_operator_impl/fusion_operator_programming/general_fusion/basics.md)
                 -   [基础知识](operator_practice/simd_operator_impl/fusion_operator_programming/general_fusion/basics.md)
                 -   [算子实现](operator_practice/simd_operator_impl/fusion_operator_programming/general_fusion/operator_impl.md)
-                -   [特性场景](operator_practice/simd_operator_impl/fusion_operator_programming/general_fusion/特性场景.md)
+                -   [特性场景](operator_practice/simd_operator_impl/fusion_operator_programming/general_fusion/feature_scenarios.md)
 
     -   [SIMT算子实现](operator_practice/simt_operator_impl/simt_operator_impl.md)
         -   [基础知识](operator_practice/simt_operator_impl/basics.md)
