@@ -77,6 +77,7 @@
     __simd_callee__ inline void asc_gather(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_uint16_t index)
     __simd_callee__ inline void asc_gather(vector_int32_t& dst, vector_int32_t src, vector_uint32_t index)
     __simd_callee__ inline void asc_gather(vector_uint32_t& dst, vector_uint32_t src, vector_uint32_t index)
+    __simd_callee__ inline void asc_gather(vector_float& dst, vector_float src, vector_uint32_t index)
     ```
 
 ## 参数说明

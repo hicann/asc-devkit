@@ -220,6 +220,13 @@ __simd_callee__ inline void asc_gather_impl(vector_uint32_t& dst, vector_uint32_
     }
 }
 
+__simd_callee__ inline void asc_gather_impl(vector_float& dst, vector_float src, vector_uint32_t index)
+{
+    if ASC_IS_AIV {
+        vselr(reinterpret_cast<vector_uint32_t&>(dst), *reinterpret_cast<vector_uint32_t*>(&src), index);
+    }
+}
+
 __simd_callee__ inline void asc_gather_impl(vector_half& dst, vector_half src, vector_uint16_t index)
 {
     if ASC_IS_AIV {

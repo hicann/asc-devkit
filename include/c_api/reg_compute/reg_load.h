@@ -84,7 +84,7 @@ __simd_callee__ inline void asc_gather(
     vector_bfloat16_t& dst, __ubuf__ bfloat16_t* src, vector_uint32_t index, vector_bool mask);
 
 // ==========源操作数和目的数都为寄存器=========
-// ==========asc_gather(u8/s8/half/u16/s16/u32/s32/bf16/e4m3/e5m2/e8m0)=========
+// ==========asc_gather(u8/s8/half/u16/s16/float/u32/s32/bf16/e4m3/e5m2/e8m0)=========
 __simd_callee__ inline void asc_gather(vector_int8_t& dst, vector_int8_t src, vector_uint8_t index);
 
 __simd_callee__ inline void asc_gather(vector_uint8_t& dst, vector_uint8_t src, vector_uint8_t index);
@@ -96,6 +96,8 @@ __simd_callee__ inline void asc_gather(vector_uint16_t& dst, vector_uint16_t src
 __simd_callee__ inline void asc_gather(vector_int32_t& dst, vector_int32_t src, vector_uint32_t index);
 
 __simd_callee__ inline void asc_gather(vector_uint32_t& dst, vector_uint32_t src, vector_uint32_t index);
+
+__simd_callee__ inline void asc_gather(vector_float& dst, vector_float src, vector_uint32_t index);
 
 __simd_callee__ inline void asc_gather(vector_half& dst, vector_half src, vector_uint16_t index);
 
