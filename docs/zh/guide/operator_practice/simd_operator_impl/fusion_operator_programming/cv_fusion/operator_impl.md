@@ -69,7 +69,7 @@
     <td class="cellrowborder" valign="top" width="25%" headers="mcps1.2.5.1.4 "><p id="p173947358335"><a name="p173947358335"></a><a name="p173947358335"></a>ND</p>
     </td>
     </tr>
-    <tr id="row59354943016"><td class="cellrowborder" valign="top" width="25%" headers="mcps1.2.5.1.1 "><p id="p1450316186305"><a name="p1450316186305"></a><a name="p1450316186305"></a>z（输出）</p>
+    <tr id="row59354943016"><td class="cellrowborder" valign="top" width="25%" headers="mcps1.2.5.1.1 "><p id="p1450316186305"><a name="p1450316186305"></a><a name="p1450316186305"></a>c（输出）</p>
     </td>
     <td class="cellrowborder" valign="top" width="25%" headers="mcps1.2.5.1.2 "><p id="p143457461338"><a name="p143457461338"></a><a name="p143457461338"></a>[M, N]</p>
     </td>
@@ -185,6 +185,8 @@ Matmul计算、LeakyRelu计算、CopyOut的具体实现代码如下：
 2.  LeakyRelu计算。
 
     ```
+    // 调用DeQue从VECIN队列取出Matmul中间结果，供LeakyRelu读取
+    mmOutLocal = mmOutQueue.DeQue<float>();
     // 调用LeakyRelu接口进行计算
     AscendC::LocalTensor<float> reluOutLocal = reluOutQueue.AllocTensor<float>();
     AscendC::LeakyRelu(reluOutLocal, mmOutLocal, static_cast<float>(alpha), tiling.baseM * tiling.baseN);
