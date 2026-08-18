@@ -24,6 +24,10 @@ namespace {
 
 bool OpenGeneratedOutput(const std::string& path, std::ofstream& output)
 {
+    if (FileUtils::IsSymlink(path)) {
+        ASCENDLOGE("Rejected symlink generated output: %s", path.c_str());
+        return false;
+    }
     output.open(path.c_str(), std::ios::trunc);
     if (!output.is_open()) {
         ASCENDLOGE("Failed to create generated output: %s", path.c_str());
@@ -50,26 +54,31 @@ BundleSourceGenerator::BundleSourceGenerator(
 
 bool BundleSourceGenerator::Generate() const
 {
-    ASCENDLOGD("Generating bundle sources in %s", workDir_.c_str());
-    const std::string abiHeader = FileUtils::JoinPath(workDir_, "ascendc_manifest_abi.h");
+    std::string resolvedWorkDir;
+    if (!FileUtils::ResolveDirectory(workDir_, resolvedWorkDir)) {
+        ASCENDLOGE("Generated output directory is unavailable: %s", workDir_.c_str());
+        return false;
+    }
+    ASCENDLOGD("Generating bundle sources in %s", resolvedWorkDir.c_str());
+    const std::string abiHeader = FileUtils::JoinPath(resolvedWorkDir, "ascendc_manifest_abi.h");
     ASCENDLOGD("Generating bundle ABI header %s", abiHeader.c_str());
     if (!EmitAbiHeader(abiHeader)) {
         return false;
     }
-    const std::string bundleSource = FileUtils::JoinPath(workDir_, "compile_resource_bundle.cpp");
+    const std::string bundleSource = FileUtils::JoinPath(resolvedWorkDir, "compile_resource_bundle.cpp");
     ASCENDLOGD("Generating bundle source %s", bundleSource.c_str());
     if (!EmitBundleSource(bundleSource)) {
         return false;
     }
     for (size_t unitIndex = 0; unitIndex < units_.size(); ++unitIndex) {
         const std::string manifestSource =
-            FileUtils::JoinPath(workDir_, "manifest_" + std::to_string(unitIndex) + ".cpp");
+            FileUtils::JoinPath(resolvedWorkDir, "manifest_" + std::to_string(unitIndex) + ".cpp");
         ASCENDLOGD("Generating manifest source %s", manifestSource.c_str());
         if (!EmitManifestSource(manifestSource, unitIndex, units_[unitIndex])) {
             return false;
         }
     }
-    const std::string makefile = FileUtils::JoinPath(workDir_, "Makefile");
+    const std::string makefile = FileUtils::JoinPath(resolvedWorkDir, "Makefile");
     ASCENDLOGD("Generating build file %s", makefile.c_str());
     if (!EmitMakefile(makefile)) {
         return false;

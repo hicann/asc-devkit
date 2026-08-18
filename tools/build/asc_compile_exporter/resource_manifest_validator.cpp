@@ -195,7 +195,7 @@ bool ResourceManifestValidator::ValidateResourceReference(const std::string& val
            ValidateResourceTarget(path);
 }
 
-bool ResourceManifestValidator::ValidateOutputMarker(const std::string& value)
+bool ResourceManifestValidator::ValidateOutputMarker(const std::string& value) const
 {
     const size_t markerSize = std::char_traits<char>::length(OUTPUT_ROOT_MARKER);
     if (!CheckAndLog(
@@ -382,7 +382,7 @@ bool ResourceManifestValidator::ValidateObjectOutputs(const Json& outputs)
 }
 
 bool ResourceManifestValidator::ValidateObjectOutputReferences(
-    const Json& outputs, const std::set<std::string>& referencedOutputs)
+    const Json& outputs, const std::set<std::string>& referencedOutputs) const
 {
     for (const Json& output : outputs) {
         const std::string value = output.get_ref<const std::string&>();

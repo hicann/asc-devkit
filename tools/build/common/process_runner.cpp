@@ -105,12 +105,14 @@ bool ProcessRunner::Run(
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(SUBPROCESS_POLL_MILLISECONDS));
     }
-    if (WIFSIGNALED(status)) {
+    const bool terminatedBySignal = WIFSIGNALED(status) != 0;
+    if (terminatedBySignal) {
         ASCENDLOGE("Subprocess terminated by signal %d: %s", WTERMSIG(status), arguments.front().c_str());
         return false;
     }
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-        const int exitCode = WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+    const bool exitedNormally = WIFEXITED(status) != 0;
+    if (!exitedNormally || WEXITSTATUS(status) != 0) {
+        const int exitCode = exitedNormally ? WEXITSTATUS(status) : -1;
         ASCENDLOGE("Subprocess exited with code %d: %s", exitCode, arguments.front().c_str());
         return false;
     }

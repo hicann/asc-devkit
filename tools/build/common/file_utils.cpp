@@ -235,8 +235,13 @@ bool FileUtils::ReadRegularFile(const std::string& path, uintmax_t maximum, std:
 {
     ASCENDLOGD("Reading regular file: path=%s maximum=%ju", path.c_str(), maximum);
     data.clear();
+    std::string absolutePath;
+    if (!MakeAbsolutePath(path, absolutePath)) {
+        return false;
+    }
+    const fs::path normalizedPath = fs::path(absolutePath).lexically_normal();
     boost::system::error_code error;
-    const fs::file_status inputStatus = fs::symlink_status(fs::path(path), error);
+    const fs::file_status inputStatus = fs::symlink_status(normalizedPath, error);
     if (error || fs::is_symlink(inputStatus) || !fs::is_regular_file(inputStatus)) {
         if (error) {
             ASCENDLOGE("Failed to inspect regular file: path=%s error=%s", path.c_str(), error.message().c_str());
@@ -245,7 +250,11 @@ bool FileUtils::ReadRegularFile(const std::string& path, uintmax_t maximum, std:
         }
         return false;
     }
-    const uintmax_t fileSize = fs::file_size(fs::path(path), error);
+    std::string canonicalPath;
+    if (!ResolveCanonicalPath(normalizedPath.string(), canonicalPath)) {
+        return false;
+    }
+    const uintmax_t fileSize = fs::file_size(fs::path(canonicalPath), error);
     if (error) {
         ASCENDLOGE("Failed to read regular file size: path=%s error=%s", path.c_str(), error.message().c_str());
         return false;
@@ -255,7 +264,7 @@ bool FileUtils::ReadRegularFile(const std::string& path, uintmax_t maximum, std:
         ASCENDLOGE("Regular file exceeds size limit: path=%s size=%ju maximum=%ju", path.c_str(), fileSize, maximum);
         return false;
     }
-    std::ifstream input(path.c_str(), std::ios::binary);
+    std::ifstream input(canonicalPath.c_str(), std::ios::binary);
     if (!input.is_open()) {
         ASCENDLOGE("Failed to open regular file: path=%s", path.c_str());
         return false;

@@ -37,7 +37,8 @@ private:
     bool ValidateCommand(const nlohmann::json& command, std::set<std::string>& referencedOutputs);
     bool ValidateCommandOptions(const nlohmann::json& commandValues, std::set<std::string>& referencedOutputs);
     bool ValidateObjectOutputs(const nlohmann::json& outputs);
-    bool ValidateObjectOutputReferences(const nlohmann::json& outputs, const std::set<std::string>& referencedOutputs);
+    bool ValidateObjectOutputReferences(
+        const nlohmann::json& outputs, const std::set<std::string>& referencedOutputs) const;
     bool ValidateOptionValue(const std::string& value);
     bool ValidateOptionValue(const std::string& value, std::set<std::string>& referencedOutputs);
     bool ValidateMarkerSyntax(const std::string& value);
@@ -45,7 +46,7 @@ private:
     bool ValidateOptionArray(const std::string& name);
     bool ValidateResourceReference(const std::string& value);
     bool ValidateResourceTarget(const std::string& relativePath);
-    bool ValidateOutputMarker(const std::string& value);
+    bool ValidateOutputMarker(const std::string& value) const;
 
     static bool IsIdentifier(const std::string& value);
     static bool IsNamedMarker(const std::string& marker, const std::string& prefix);

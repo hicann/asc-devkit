@@ -10,6 +10,8 @@
 
 #include <gtest/gtest.h>
 
+#include <unistd.h>
+
 #include "bundle_source_generator.h"
 #include "file_utils.h"
 #include "test_support.h"
@@ -79,6 +81,31 @@ TEST_F(ModuleTest, SourceGeneratorEmitsManifestWithoutResourceFiles)
     const std::string manifestSource = ReadTestFile(FileUtils::JoinPath(work, "manifest_0.cpp"));
     EXPECT_NE(manifestSource.find("nullptr, 0ULL"), std::string::npos);
     EXPECT_EQ(manifestSource.find("AcCompileResourceFile g_manifest_0_files"), std::string::npos);
+}
+
+TEST_F(ModuleTest, SourceGeneratorRejectsSymlinkedWorkDirectory)
+{
+    const std::string work = FileUtils::JoinPath(root_, "symlink-target-work");
+    const std::string symlinkedWork = FileUtils::JoinPath(root_, "symlinked-work");
+    ASSERT_TRUE(FileUtils::CreateDirectories(work));
+    ASSERT_EQ(symlink(work.c_str(), symlinkedWork.c_str()), 0);
+
+    const std::vector<ManifestUnit> units = {{"{\"base_dir\":\"resources\"}", {}}};
+    EXPECT_FALSE(BundleSourceGenerator(symlinkedWork, units, BundleOutputKind::kSharedObject).Generate());
+    EXPECT_FALSE(FileUtils::PathExists(FileUtils::JoinPath(work, "ascendc_manifest_abi.h")));
+}
+
+TEST_F(ModuleTest, SourceGeneratorRejectsSymlinkedGeneratedOutput)
+{
+    const std::string work = FileUtils::JoinPath(root_, "symlink-output-work");
+    const std::string target = FileUtils::JoinPath(root_, "symlink-output-target");
+    ASSERT_TRUE(FileUtils::CreateDirectories(work));
+    asc_compile_exporter_test::WriteTestFile(target, "preserve-this-content");
+    ASSERT_EQ(symlink(target.c_str(), FileUtils::JoinPath(work, "ascendc_manifest_abi.h").c_str()), 0);
+
+    const std::vector<ManifestUnit> units = {{"{\"base_dir\":\"resources\"}", {}}};
+    EXPECT_FALSE(BundleSourceGenerator(work, units, BundleOutputKind::kSharedObject).Generate());
+    EXPECT_EQ(ReadTestFile(target), "preserve-this-content");
 }
 
 TEST_F(ModuleTest, SourceGeneratorReportsFailureAtEachGenerationStage)
