@@ -477,7 +477,7 @@ struct Rt91095StarsMemcpySqe {
     uint8_t mpamns : 1;
     uint8_t pmg : 2;
     uint8_t qos : 4;
-    uint8_t d2dOffsetFlag : 1; // use reserved filed
+    uint8_t d2dOffsetFlag : 1; // use reserved field
 
     /* word6 */
     uint16_t srcStreamId;
@@ -517,7 +517,7 @@ struct Rt91095StarsWriteValueSqe {
 
     /* word6-7 */
     uint32_t res5;
-    uint32_t subType; // use reserved filed
+    uint32_t subType; // use reserved field
 
     /* word8-15 */
     uint32_t writeValuePart[8]; // write value field

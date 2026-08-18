@@ -64,7 +64,7 @@ enum class AlgTypeLevel1 {
 };
 
 enum class AlgTypeLevel2 {
-    ALG_LEVEL2_WHOLE_RING = 0, // 单层拓扑, 所有leve2均为Whole ring时，组成一个大环
+    ALG_LEVEL2_WHOLE_RING = 0, // 单层拓扑, 所有level2均为Whole ring时，组成一个大环
     ALG_LEVEL2_HD,             // 拓扑组合2层, HDR
     ALG_LEVEL2_RING,           // 拓扑组合2层, Ring
     ALG_LEVEL2_NHR,            // 拓扑组合2层, NHR

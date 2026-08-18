@@ -1834,7 +1834,7 @@ typedef struct stars_function_call_sqe {
     uint8_t kernel_credit;
     uint8_t reserved3 : 4;
     uint8_t debug_flag : 1;
-    uint8_t sqe_length : 3; // use reserved filed
+    uint8_t sqe_length : 3; // use reserved field
 
     ts_stars_cond_op_LHWI_t lhwi1;
     ts_stars_cond_op_LLWI_t llwi1;
@@ -2001,7 +2001,7 @@ typedef struct ts_david_stars_memcpy_sqe {
     uint8_t mpamns : 1;
     uint8_t pmg : 2;
     uint8_t qos : 4;
-    uint8_t d2d_offset_flag : 1; // use reserved filed
+    uint8_t d2d_offset_flag : 1; // use reserved field
 
     /* word6 */
     uint16_t src_stream_id;
@@ -2229,15 +2229,15 @@ typedef struct stars_aicpu_sqe {
 typedef struct stars_get_float_status_sqe {
     ts_stars_sqe_header_t header;
 
-    uint8_t conds_sub_type; // use reserved filed
+    uint8_t conds_sub_type; // use reserved field
     uint16_t reserved0;
     uint8_t reserved1 : 7;
-    uint8_t csc : 1; // use reserved filed
+    uint8_t csc : 1; // use reserved field
     uint16_t reserved2;
     uint8_t kernel_credit;
     uint8_t reserved3 : 4;
     uint8_t debug_flag : 1;
-    uint8_t sqe_length : 3; // use reserved filed
+    uint8_t sqe_length : 3; // use reserved field
 
     ts_stars_cond_op_loadimm_t ldi;
     ts_stars_cond_op_LLWI_t llwi;
