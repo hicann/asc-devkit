@@ -27,6 +27,11 @@ using namespace hccl;
 using namespace mc2_ops_hccl;
 thread_local uint32_t curr_dev_id = UINT32_MAX;
 
+namespace mc2_ops_hccl {
+bool g_rejectDirectAclrtMemcpy = false;
+uint32_t g_aclrtMemcpyCallCount = 0;
+} // namespace mc2_ops_hccl
+
 extern "C" unsigned int HcclLaunchAicpuKernel(OpParam* param);
 
 #ifdef __cplusplus
@@ -77,6 +82,10 @@ aclError aclrtStreamGetId(aclrtStream stream, int32_t* streamId_)
 
 aclError aclrtMemcpy(void* dst, size_t destMax, const void* src, size_t count, aclrtMemcpyKind kind)
 {
+    ++mc2_ops_hccl::g_aclrtMemcpyCallCount;
+    if (mc2_ops_hccl::g_rejectDirectAclrtMemcpy) {
+        return ACL_ERROR_INTERNAL_ERROR;
+    }
     if (dst == nullptr || src == nullptr) {
         HCCL_ERROR("[aclrtMemcpy] invalid input dst or src");
         return ACL_ERROR_INVALID_PARAM;

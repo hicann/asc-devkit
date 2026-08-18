@@ -35,6 +35,10 @@
 using namespace mc2_ops_hccl;
 using namespace HcclSim;
 
+namespace mc2_ops_hccl {
+uint32_t g_hcclEngineCtxCopyCallCount = 0;
+}
+
 namespace {
 struct SymWinStub {
     BufferType bufferType;
@@ -425,16 +429,21 @@ HcclResult HcclEngineCtxGet(HcclComm comm, const char* engineTag, CommEngine eng
 HcclResult HcclEngineCtxCopy(
     HcclComm comm, CommEngine engine, const char* ctxTag, const void* srcCtx, uint64_t size, uint64_t dstCtxOffset)
 {
+    ++mc2_ops_hccl::g_hcclEngineCtxCopyCallCount;
     // HOST场景下srcCtx就是创建的EngineCtx内存地址，无需拷贝
     if (engine == CommEngine::COMM_ENGINE_AICPU_TS || engine == CommEngine::COMM_ENGINE_AICPU) {
-        uint64_t size = 0;
+        uint64_t ctxSize = 0;
         void* ctx = nullptr;
         auto simComm = static_cast<HcclSim::SimCommunicator*>(comm);
         CHK_PTR_NULL(simComm);
-        simComm->contextManager_->GetCommEngineCtx(std::string(ctxTag), engine, &ctx, &size);
-        if (ctx != nullptr && size > 0) {
-            memcpy(ctx, srcCtx, size);
-        }
+        CHK_RET(simComm->contextManager_->GetCommEngineCtx(std::string(ctxTag), engine, &ctx, &ctxSize));
+        CHK_PRT_RET(
+            ctx == nullptr || srcCtx == nullptr || dstCtxOffset > ctxSize || size > ctxSize - dstCtxOffset,
+            HCCL_ERROR(
+                "[%s] invalid copy, ctx[%p], srcCtx[%p], ctxSize[%llu], size[%llu], offset[%llu]", __func__, ctx,
+                srcCtx, ctxSize, size, dstCtxOffset),
+            HCCL_E_PARA);
+        memcpy(static_cast<uint8_t*>(ctx) + dstCtxOffset, srcCtx, size);
     }
     return HCCL_SUCCESS;
 }

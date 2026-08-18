@@ -229,24 +229,20 @@ HcclResult AllocOpParamMemory(
         std::string tagParam = ctxTag + "_" + std::to_string(i);
         void* opParamPtr = nullptr;
         const Mc2CcTilingInner* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
-        if (HcclEngineCtxGet(
-                comm, tagParam.c_str(), OpExecuteConfigToCommEngine(ccTiling->commEngine), &opParamPtr, &opParamSize) ==
-            HCCL_SUCCESS) {
+        CommEngine commEngine = OpExecuteConfigToCommEngine(ccTiling->commEngine);
+        if (HcclEngineCtxGet(comm, tagParam.c_str(), commEngine, &opParamPtr, &opParamSize) == HCCL_SUCCESS) {
             HCCL_INFO(
                 "HcclEngineCtxGet success, tagParam[%s], opParamAddr[%p], opParamSize[%u]", tagParam.c_str(),
                 opParamPtr, opParamSize);
             opParamAddr[i] = reinterpret_cast<uint64_t>(opParamPtr);
         } else {
-            CHK_RET(HcclEngineCtxCreate(
-                comm, tagParam.c_str(), OpExecuteConfigToCommEngine(ccTiling->commEngine), opParamSize, &opParamPtr));
+            CHK_RET(HcclEngineCtxCreate(comm, tagParam.c_str(), commEngine, opParamSize, &opParamPtr));
             opParamAddr[i] = reinterpret_cast<uint64_t>(opParamPtr);
         }
         HCCL_INFO(
             "HcclAllocOpResCtx the %dth opParam: opParamAddr[%u], opParamSize[%u]", i, opParamAddr[i], opParamSize);
 
-        aclError aclRet = aclrtMemcpy(
-            reinterpret_cast<void*>(opParamAddr[i]), opParamSize, &opParamVec[i], opParamSize, aclrtMemcpyKind(1));
-        CHK_RET(aclRet == ACL_ERROR_NONE ? HCCL_SUCCESS : HCCL_E_RUNTIME);
+        CHK_RET(HcclEngineCtxCopy(comm, commEngine, tagParam.c_str(), &opParamVec[i], opParamSize, 0));
         resCtx.algInfo[i].opParam = opParamAddr[i];
         resCtx.algInfo[i].offset = initTiling->offset[i];
     }
@@ -293,21 +289,18 @@ HcclResult AllocAndCopyOpResCtx(
 {
     std::string tagOpResCtx = ctxTag + "_opResCtx";
     uint64_t opResCtxSize = sizeof(OpResCtx);
-    if (HcclEngineCtxGet(
-            comm, tagOpResCtx.c_str(), OpExecuteConfigToCommEngine(ccTiling->commEngine), opResCtxPtr, &opResCtxSize) ==
-        HCCL_SUCCESS) {
+    CommEngine commEngine = OpExecuteConfigToCommEngine(ccTiling->commEngine);
+    if (HcclEngineCtxGet(comm, tagOpResCtx.c_str(), commEngine, opResCtxPtr, &opResCtxSize) == HCCL_SUCCESS) {
         HCCL_INFO(
             "HcclEngineCtxGet success, tagOpResCtx[%s], opResCtxAddr[%p], opResCtxSize[%u]", tagOpResCtx.c_str(),
             opResCtxPtr, opResCtxSize);
     } else {
-        CHK_RET(HcclEngineCtxCreate(
-            comm, tagOpResCtx.c_str(), OpExecuteConfigToCommEngine(ccTiling->commEngine), opResCtxSize, opResCtxPtr));
+        CHK_RET(HcclEngineCtxCreate(comm, tagOpResCtx.c_str(), commEngine, opResCtxSize, opResCtxPtr));
     }
 
     HCCL_INFO("HcclAllocOpResCtx the opResCtx: opResCtxAddr[%u], opResCtxSize[%u]", opResCtxPtr, opResCtxSize);
 
-    aclError aclRet = aclrtMemcpy(*opResCtxPtr, opResCtxSize, &resCtx, opResCtxSize, aclrtMemcpyKind(1));
-    CHK_RET(aclRet == ACL_ERROR_NONE ? HCCL_SUCCESS : HCCL_E_RUNTIME);
+    CHK_RET(HcclEngineCtxCopy(comm, commEngine, tagOpResCtx.c_str(), &resCtx, opResCtxSize, 0));
     return HCCL_SUCCESS;
 }
 } // namespace
