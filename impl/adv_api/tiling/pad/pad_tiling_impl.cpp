@@ -166,8 +166,9 @@ void PadTilingFunc(
     uint32_t maxRepeatTimes = 254; // 255*8 not 32B aligned, so 254
     uint32_t brcbTilingRepeatTimes = brcbTiling / 8 / maxRepeatTimes;
     uint32_t brcbTilingRepeatTimesTail = brcbTiling / 8 % maxRepeatTimes;
-    uint32_t brcbFractalTailRepeatTimes = brcbFractalTail / 8 / maxRepeatTimes;
-    uint32_t brcbFractalTailRepeatTimesTail = brcbFractalTail / 8 % maxRepeatTimes;
+    uint32_t brcbFractalTailBrcbRepeatTimes = (brcbFractalTail + 7) / 8;
+    uint32_t brcbFractalTailRepeatTimes = brcbFractalTailBrcbRepeatTimes / maxRepeatTimes;
+    uint32_t brcbFractalTailRepeatTimesTail = brcbFractalTailBrcbRepeatTimes % maxRepeatTimes;
     tiling.set_maxRepeatTimes(maxRepeatTimes);
     tiling.set_brcbTilingRepeatTimes(brcbTilingRepeatTimes);
     tiling.set_brcbTilingRepeatTimesTail(brcbTilingRepeatTimesTail);

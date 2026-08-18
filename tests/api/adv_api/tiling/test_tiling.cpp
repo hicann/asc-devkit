@@ -5857,6 +5857,37 @@ TEST_F(TestTiling, TestPadTiling)
     AscendC::GetPadMaxMinTmpSize(srcShape, typeSize, maxValue, minValue);
 }
 
+TEST_F(TestTiling, TestPadTilingBrcbFractalTailRepeatTimes)
+{
+    const uint32_t typeSize = 2;
+    struct BrcbFractalTailCase {
+        uint32_t stackBufferSize;
+        int64_t srcWidth;
+        uint32_t expectedFractalTail;
+        uint32_t expectedRepeatTimes;
+        uint32_t expectedRepeatTimesTail;
+    };
+
+    const std::vector<BrcbFractalTailCase> testCases = {
+        {4 * 1024, 64, 0, 0, 0},        {4 * 1024, 65, 1, 0, 1},        {4 * 1024, 71, 7, 0, 1},
+        {4 * 1024, 72, 8, 0, 1},        {4 * 1024, 73, 9, 0, 2},        {256 * 1024, 2024, 2024, 0, 253},
+        {256 * 1024, 2025, 2025, 1, 0}, {256 * 1024, 2032, 2032, 1, 0}, {256 * 1024, 2033, 2033, 1, 1},
+    };
+
+    for (const auto& testCase : testCases) {
+        SCOPED_TRACE(testCase.srcWidth);
+        auto srcShape = ge::Shape({1, testCase.srcWidth});
+        auto oriSrcShape = ge::Shape({1, testCase.srcWidth - 1});
+        optiling::PadTiling tiling;
+
+        AscendC::PadTilingFunc(srcShape, oriSrcShape, testCase.stackBufferSize, typeSize, tiling);
+
+        EXPECT_EQ(tiling.get_brcbFractalTail(), testCase.expectedFractalTail);
+        EXPECT_EQ(tiling.get_brcbFractalTailRepeatTimes(), testCase.expectedRepeatTimes);
+        EXPECT_EQ(tiling.get_brcbFractalTailRepeatTimesTail(), testCase.expectedRepeatTimesTail);
+    }
+}
+
 TEST_F(TestTiling, TestLayernormGradTiling)
 {
     const uint32_t stackBufferSize = 100 * 1024;
