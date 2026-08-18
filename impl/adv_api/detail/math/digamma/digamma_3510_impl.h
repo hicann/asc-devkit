@@ -74,204 +74,75 @@ __simd_callee__ inline void DigammaSelect(
     Reg::Add(dstReg, tmpReg, dstReg, fullMask);
 }
 
-__simd_callee__ inline void DigammaPositiveTmp0(Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg)
-{
-    Reg::MaskReg mask = Reg::CreateMask<float, Reg::MaskPattern::ALL>();
-    Reg::RegTensor<float> tmpReg1;
-    Reg::RegTensor<float> tmpReg2;
-    Reg::RegTensor<float> tmpScalarReg;
-    Reg::Adds(tmpReg1, srcReg, 10.0f, mask);
-    Reg::Ln(dstReg, tmpReg1, mask);
-    Reg::Duplicate(tmpScalarReg, 1.0f, mask);
-    Reg::Div(tmpReg1, tmpScalarReg, tmpReg1, mask);
-    Reg::Muls(tmpReg2, tmpReg1, 0.5f, mask);
-    Reg::Sub(dstReg, dstReg, tmpReg2, mask);
-    Reg::Mul(tmpReg1, tmpReg1, tmpReg1, mask);
-    Reg::Duplicate(tmpReg2, 8.33333333333333333333e-2, mask);
-    Reg::Duplicate(tmpScalarReg, posCalcConst[0U], mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Duplicate(tmpScalarReg, posCalcConst[1U], mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Duplicate(tmpScalarReg, posCalcConst[2U], mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Duplicate(tmpScalarReg, posCalcConst[3U], mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Duplicate(tmpScalarReg, posCalcConst[4U], mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Duplicate(tmpScalarReg, posCalcConst[5U], mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, mask);
-    Reg::Sub(dstReg, dstReg, tmpReg2, mask);
-}
-
-__simd_callee__ inline void DigammaPositiveTmp1(Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg)
-{
-    Reg::MaskReg mask = Reg::CreateMask<float, Reg::MaskPattern::ALL>();
-    Reg::RegTensor<float> tmpReg2;
-    Reg::RegTensor<float> tmpScalarReg;
-    Reg::Duplicate(tmpScalarReg, 1.0f, mask);
-    Reg::Div(dstReg, tmpScalarReg, srcReg, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[0U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[1U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[2U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[3U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[4U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[5U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[6U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[7U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[8U], mask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, mask);
-    Reg::Add(dstReg, dstReg, tmpReg2, mask);
-}
-
 __simd_callee__ inline void DigammaPositive(
     Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg, Reg::MaskReg& mask)
 {
-    Reg::RegTensor<float> tmpRegForPos;
-    DigammaPositiveTmp0(dstReg, srcReg);
-    DigammaPositiveTmp1(tmpRegForPos, srcReg);
-    Reg::Sub(dstReg, dstReg, tmpRegForPos, mask);
-}
-
-__simd_callee__ inline void DigammaNegPicotPix(Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg)
-{
-    Reg::MaskReg mask = Reg::CreateMask<float, Reg::MaskPattern::ALL>();
-    Reg::MaskReg mask1;
-    Reg::MaskReg mask2;
+    Reg::MaskReg fullMask = Reg::CreateMask<float, Reg::MaskPattern::ALL>();
     Reg::RegTensor<float> tmpReg1;
     Reg::RegTensor<float> tmpReg2;
-    Reg::RegTensor<float> tmpReg3;
     Reg::RegTensor<float> tmpScalarReg;
-    Reg::RegTensor<int32_t> tmpReg2s32;
-    Reg::Add(tmpReg1, srcReg, srcReg, mask);
-    Reg::Cast<int32_t, float, FLOAT_TO_INT_CAST_TRAIT>(tmpReg2s32, tmpReg1, mask);
-    Reg::Cast<float, int32_t, INT_TO_FLOAT_CAST_TRAIT>(tmpReg2, tmpReg2s32, mask);
-    Reg::Sub(tmpReg1, tmpReg1, tmpReg2, mask);
-    Reg::Muls(tmpReg1, tmpReg1, 1.5707963267948966f, mask);
-    Reg::Cast<int32_t, float, FLOAT_TO_INT_CAST_TRAIT>(tmpReg2s32, tmpReg2, mask);
-    Reg::Duplicate((Reg::RegTensor<int32_t>&)tmpReg3, 1, mask);
-    Reg::And<uint16_t>(
-        (Reg::RegTensor<uint16_t>&)tmpReg2s32, (Reg::RegTensor<uint16_t>&)tmpReg2s32,
-        (Reg::RegTensor<uint16_t>&)tmpReg3, mask);
-    Reg::Cast<float, int32_t, INT_TO_FLOAT_CAST_TRAIT>(tmpReg2, tmpReg2s32, mask);
-    DigammaGenCompareMask<CMPMODE::LT>(mask1, tmpReg2, 0.5f, mask);
-    DigammaGenCompareMask<CMPMODE::GE>(mask2, tmpReg2, 0.5f, mask);
-    Reg::Mul(tmpReg2, tmpReg1, tmpReg1, mask);
-    Reg::Duplicate(dstReg, 0.0093383789065f, mask);
-    Reg::Mul(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(dstReg, dstReg, picotCalcConst[0U], mask);
-    Reg::Mul(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(dstReg, dstReg, picotCalcConst[1U], mask);
-    Reg::Mul(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(dstReg, dstReg, picotCalcConst[2U], mask);
-    Reg::Mul(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(dstReg, dstReg, picotCalcConst[3U], mask);
-    Reg::Mul(dstReg, dstReg, tmpReg2, mask);
-    Reg::Adds(dstReg, dstReg, picotCalcConst[4U], mask);
-    Reg::Mul(dstReg, dstReg, tmpReg2, mask);
-    Reg::Mul(dstReg, dstReg, tmpReg1, mask);
-    Reg::Add(tmpReg1, dstReg, tmpReg1, mask);
-    Reg::Duplicate(dstReg, 0.0f, mask);
-    DigammaSelect(dstReg, tmpReg1, tmpReg3, mask2);
-    Reg::Duplicate(tmpScalarReg, -1.0f, mask);
-    Reg::Div(tmpReg1, tmpScalarReg, tmpReg1, mask);
-    DigammaSelect(dstReg, tmpReg1, tmpReg3, mask1);
-    Reg::Muls(dstReg, dstReg, DIGAMMA_PI, mask);
-}
 
-__simd_callee__ inline void DigammaNegative(
-    Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg, Reg::MaskReg& mask)
-{
-    Reg::MaskReg fullMask = Reg::CreateMask<float, Reg::MaskPattern::ALL>();
-    Reg::RegTensor<float> tmpReg3;
-    Reg::RegTensor<float> tmpReg4;
-    Reg::Muls(tmpReg3, srcReg, -1.0f, fullMask);
-    Reg::Adds(tmpReg3, tmpReg3, 1.0f, fullMask);
-    DigammaPositive(dstReg, tmpReg3, mask);
-    DigammaNegPicotPix(tmpReg4, srcReg);
-    Reg::Add(dstReg, dstReg, tmpReg4, mask);
-}
+    // Inline DigammaPositiveTmp0: compute the asymptotic expansion at srcReg + 10.
+    Reg::Adds(tmpReg1, srcReg, 10.0f, fullMask);
+    Reg::Ln(dstReg, tmpReg1, fullMask);
+    Reg::Duplicate(tmpScalarReg, 1.0f, fullMask);
+    Reg::Div(tmpReg1, tmpScalarReg, tmpReg1, fullMask);
+    Reg::Muls(tmpReg2, tmpReg1, 0.5f, fullMask);
+    Reg::Sub(dstReg, dstReg, tmpReg2, fullMask);
+    Reg::Mul(tmpReg1, tmpReg1, tmpReg1, fullMask);
+    Reg::Duplicate(tmpReg2, 8.33333333333333333333e-2, fullMask);
+    Reg::Duplicate(tmpScalarReg, posCalcConst[0U], fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Duplicate(tmpScalarReg, posCalcConst[1U], fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Duplicate(tmpScalarReg, posCalcConst[2U], fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Duplicate(tmpScalarReg, posCalcConst[3U], fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Duplicate(tmpScalarReg, posCalcConst[4U], fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Duplicate(tmpScalarReg, posCalcConst[5U], fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(dstReg, dstReg, tmpReg2, fullMask);
 
-__simd_callee__ inline void DigammaGenNegIntMask(
-    Reg::MaskReg& maskdst, Reg::RegTensor<float>& srcReg, const float scalar, Reg::RegTensor<float>& tmpCal1,
-    Reg::MaskReg& mask)
-{
-    Reg::MaskReg tmpmask;
-    Reg::MaskReg mask1;
-    Reg::MaskReg mask2;
-    Reg::RegTensor<int32_t> tmpReg2s32;
-    DigammaGenCompareMask<CMPMODE::LT>(mask1, srcReg, 0.0f, mask);
-    DigammaGenCompareMask<CMPMODE::GT>(mask2, srcReg, MIN_NEG_FLOAT, mask);
-    Reg::MaskAnd(mask1, mask1, mask2, mask);
-    Reg::Cast<int32_t, float, FLOAT_TO_INT_CAST_TRAIT>(tmpReg2s32, srcReg, mask);
-    Reg::Cast<float, int32_t, INT_TO_FLOAT_CAST_TRAIT>(tmpCal1, tmpReg2s32, mask);
-    Reg::Compare<float, CMPMODE::EQ>(mask2, srcReg, tmpCal1, mask);
-    Reg::MaskAnd(maskdst, mask1, mask2, mask);
-}
-
-__simd_callee__ inline void DigammaGenNanMask(
-    Reg::MaskReg& mask0, Reg::RegTensor<float>& srcReg, Reg::MaskReg& mask1, Reg::MaskReg& mask2, Reg::MaskReg& mask)
-{
-    DigammaGenCompareMask<CMPMODE::LT>(mask1, srcReg, 0.0f, mask);
-    DigammaGenCompareMask<CMPMODE::GE>(mask2, srcReg, 0.0f, mask);
-    Reg::MaskNot(mask1, mask1, mask);
-    Reg::MaskNot(mask2, mask2, mask);
-    Reg::MaskAnd(mask0, mask1, mask2, mask);
-}
-
-__simd_callee__ inline void DigammaComputeImpl(
-    Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg, Reg::MaskReg& mask)
-{
-    Reg::MaskReg mask0;
-    Reg::MaskReg mask1;
-    Reg::MaskReg mask2;
-    Reg::RegTensor<float> resultReg;
-    Reg::RegTensor<float> tmpCal1;
-    Reg::RegTensor<float> tmpCal2;
-    Reg::RegTensor<float> tmpCal3;
-    Reg::RegTensor<float> tmpCal4;
-    Reg::RegTensor<float> tmpCal5;
-    Reg::RegTensor<float> tmpScalar;
-
-    NotNumUnion notNum;
-    notNum.i = F32_NAN;
-    Reg::Duplicate(dstReg, 0.0f, mask);
-    Reg::Duplicate(resultReg, notNum.f, mask);
-    DigammaGenCompareMask<CMPMODE::LE>(mask0, srcReg, MIN_NEG_FLOAT, mask);
-    DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
-    DigammaGenNegIntMask(mask1, srcReg, MIN_NEG_FLOAT, tmpCal1, mask);
-    DigammaSelect(dstReg, resultReg, tmpCal3, mask1);
-
-    DigammaGenNanMask(mask0, srcReg, mask1, mask2, mask);
-    DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
-    DigammaGenCompareMask<CMPMODE::GE>(mask0, srcReg, 0.0f, mask);
-    DigammaPositive(resultReg, srcReg, mask);
-    DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
-    DigammaGenCompareMask<CMPMODE::LT>(mask0, srcReg, 0.0f, mask);
-    DigammaNegative(resultReg, srcReg, mask);
-    DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
+    // Inline DigammaPositiveTmp1: accumulate the recurrence correction from srcReg to srcReg + 10.
+    Reg::Duplicate(tmpScalarReg, 1.0f, fullMask);
+    Reg::Div(tmpReg1, tmpScalarReg, srcReg, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[0U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[1U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[2U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[3U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[4U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[5U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[6U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[7U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[8U], fullMask);
+    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
+    Reg::Sub(dstReg, dstReg, tmpReg1, mask);
 }
 
 template <typename T = float, bool isReuseSource = false>
@@ -286,7 +157,103 @@ __simd_vf__ inline void DigammaImpl(__ubuf__ float* dstUb, __ubuf__ float* srcUb
     for (uint16_t i = 0; i < repeatTime; ++i) {
         mask = Reg::UpdateMask<float>(calCount);
         Reg::LoadAlign(srcReg, srcUb + i * sregLower);
-        DigammaComputeImpl(dstReg, srcReg, fullMask);
+
+        Reg::MaskReg mask0;
+        Reg::MaskReg mask1;
+        Reg::MaskReg mask2;
+        Reg::RegTensor<float> resultReg;
+        Reg::RegTensor<float> tmpCal3;
+
+        // Inline DigammaComputeImpl: initialize the result and handle values below the supported range.
+        NotNumUnion notNum;
+        notNum.i = F32_NAN;
+        Reg::Duplicate(dstReg, 0.0f, fullMask);
+        Reg::Duplicate(resultReg, notNum.f, fullMask);
+        DigammaGenCompareMask<CMPMODE::LE>(mask0, srcReg, MIN_NEG_FLOAT, fullMask);
+        DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
+
+        // Inline DigammaGenNegIntMask: mark negative integer poles in the supported input range.
+        {
+            Reg::RegTensor<int32_t> tmpReg2s32;
+            DigammaGenCompareMask<CMPMODE::LT>(mask1, srcReg, 0.0f, fullMask);
+            DigammaGenCompareMask<CMPMODE::GT>(mask2, srcReg, MIN_NEG_FLOAT, fullMask);
+            Reg::MaskAnd(mask1, mask1, mask2, fullMask);
+            Reg::Cast<int32_t, float, FLOAT_TO_INT_CAST_TRAIT>(tmpReg2s32, srcReg, fullMask);
+            Reg::Cast<float, int32_t, INT_TO_FLOAT_CAST_TRAIT>(tmpCal3, tmpReg2s32, fullMask);
+            Reg::Compare<float, CMPMODE::EQ>(mask2, srcReg, tmpCal3, fullMask);
+            Reg::MaskAnd(mask1, mask1, mask2, fullMask);
+        }
+        DigammaSelect(dstReg, resultReg, tmpCal3, mask1);
+
+        // Inline DigammaGenNanMask: identify NaN values without introducing another callee frame.
+        DigammaGenCompareMask<CMPMODE::LT>(mask1, srcReg, 0.0f, fullMask);
+        DigammaGenCompareMask<CMPMODE::GE>(mask2, srcReg, 0.0f, fullMask);
+        Reg::MaskNot(mask1, mask1, fullMask);
+        Reg::MaskNot(mask2, mask2, fullMask);
+        Reg::MaskAnd(mask0, mask1, mask2, fullMask);
+        DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
+
+        DigammaGenCompareMask<CMPMODE::GE>(mask0, srcReg, 0.0f, fullMask);
+        DigammaPositive(resultReg, srcReg, fullMask);
+        DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
+
+        // Spill the accumulated non-negative and special-value results to dstUb. The negative path does not depend on
+        // dstReg, so its physical register can be released until the final result merge.
+        Reg::StoreAlign(dstUb + i * sregLower, dstReg, mask);
+
+        DigammaGenCompareMask<CMPMODE::LT>(mask0, srcReg, 0.0f, fullMask);
+        // Inline DigammaNegative and its one-shot positive/reflection subcomputations.
+        {
+            Reg::RegTensor<float> negArgReg;
+            Reg::RegTensor<float> tmpReg1;
+            Reg::RegTensor<float> tmpReg2;
+            Reg::RegTensor<float> tmpReg4;
+
+            Reg::Muls(negArgReg, srcReg, -1.0f, fullMask);
+            Reg::Adds(negArgReg, negArgReg, 1.0f, fullMask);
+
+            DigammaPositive(resultReg, negArgReg, fullMask);
+
+            // Inline DigammaNegPicotPix: reuse dead RegTensor values for the integer cast and select scratch.
+            Reg::Add(tmpReg1, srcReg, srcReg, fullMask);
+            Reg::Cast<int32_t, float, FLOAT_TO_INT_CAST_TRAIT>((Reg::RegTensor<int32_t>&)tmpReg4, tmpReg1, fullMask);
+            Reg::Cast<float, int32_t, INT_TO_FLOAT_CAST_TRAIT>(tmpReg2, (Reg::RegTensor<int32_t>&)tmpReg4, fullMask);
+            Reg::Sub(tmpReg1, tmpReg1, tmpReg2, fullMask);
+            Reg::Muls(tmpReg1, tmpReg1, 1.5707963267948966f, fullMask);
+            Reg::Cast<int32_t, float, FLOAT_TO_INT_CAST_TRAIT>((Reg::RegTensor<int32_t>&)tmpReg4, tmpReg2, fullMask);
+            Reg::Duplicate((Reg::RegTensor<int32_t>&)negArgReg, 1, fullMask);
+            Reg::And<uint16_t>(
+                (Reg::RegTensor<uint16_t>&)tmpReg4, (Reg::RegTensor<uint16_t>&)tmpReg4,
+                (Reg::RegTensor<uint16_t>&)negArgReg, fullMask);
+            Reg::Cast<float, int32_t, INT_TO_FLOAT_CAST_TRAIT>(tmpReg2, (Reg::RegTensor<int32_t>&)tmpReg4, fullMask);
+            DigammaGenCompareMask<CMPMODE::LT>(mask1, tmpReg2, 0.5f, fullMask);
+            DigammaGenCompareMask<CMPMODE::GE>(mask2, tmpReg2, 0.5f, fullMask);
+            Reg::Mul(tmpReg2, tmpReg1, tmpReg1, fullMask);
+            Reg::Duplicate(tmpReg4, 0.0093383789065f, fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg2, fullMask);
+            Reg::Adds(tmpReg4, tmpReg4, picotCalcConst[0U], fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg2, fullMask);
+            Reg::Adds(tmpReg4, tmpReg4, picotCalcConst[1U], fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg2, fullMask);
+            Reg::Adds(tmpReg4, tmpReg4, picotCalcConst[2U], fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg2, fullMask);
+            Reg::Adds(tmpReg4, tmpReg4, picotCalcConst[3U], fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg2, fullMask);
+            Reg::Adds(tmpReg4, tmpReg4, picotCalcConst[4U], fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg2, fullMask);
+            Reg::Mul(tmpReg4, tmpReg4, tmpReg1, fullMask);
+            Reg::Add(tmpReg1, tmpReg4, tmpReg1, fullMask);
+            Reg::Duplicate(tmpReg4, 0.0f, fullMask);
+            DigammaSelect(tmpReg4, tmpReg1, negArgReg, mask2);
+            Reg::Duplicate(tmpReg2, -1.0f, fullMask);
+            Reg::Div(tmpReg1, tmpReg2, tmpReg1, fullMask);
+            DigammaSelect(tmpReg4, tmpReg1, negArgReg, mask1);
+            Reg::Muls(tmpReg4, tmpReg4, DIGAMMA_PI, fullMask);
+            Reg::Add(resultReg, resultReg, tmpReg4, fullMask);
+        }
+        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
+        Reg::LoadAlign(dstReg, dstUb + i * sregLower);
+        DigammaSelect(dstReg, resultReg, tmpCal3, mask0);
         Reg::StoreAlign(dstUb + i * sregLower, dstReg, mask);
     }
 }
