@@ -61,7 +61,7 @@
 
 ## 函数原型
 
-### 连续数据搬运
+### 连续数据搬运（占位符形式）
 
 ```c
 __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
@@ -69,9 +69,9 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
                                             uint32_t size)
 ```
 
-dtype可取的数据类型为`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+**dtype取值如下：**`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
-#### 典型示例
+**典型示例**
 
 ```c
 // 示例：源与目的数据类型为bfloat16_t
@@ -80,7 +80,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
                                             uint32_t size)
 ```
 
-### 高维切分数据搬运
+### 高维切分数据搬运（占位符形式）
 
 ```c
 __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
@@ -95,9 +95,9 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
                                             uint32_t dst_stride)
 ```
 
-dtype可取的数据类型为`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+**dtype取值如下：**`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
-#### 典型示例
+**典型示例**
 
 ```c
 // 示例：源与目的数据类型为bfloat16_t
@@ -133,7 +133,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
 | :--- | :--- | :--- |
 | dst | 输出 | 目的UB的起始地址。需要32字节对齐。 |
 | src | 输入 | 源GM的起始地址。需要1字节对齐。 |
-| n_burst | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, 4095]。 |
+| n_burst | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, $2^{12}−1$]。 |
 | len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[1, $2^{21}−1$]。 |
 | left_padding_num | 输入 | 连续搬运数据块左侧需要补充的元素个数。该参数对应的填充数据大小不能超过32字节。Compact模式下需要设置为0。 |
 | right_padding_num | 输入 | 连续搬运数据块右侧需要补充的元素个数。该参数对应的填充数据大小不能超过32字节。Compact模式下需要设置为0。 |
@@ -175,7 +175,7 @@ PIPE_MTE2
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng example.asc -o main --npu-arch=dav-3510; ./main
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
 <!-- end id8 -->
 
@@ -200,6 +200,7 @@ __global__ __vector__ void asc_copy_gm2ub_align_arch3510_kernel(__gm__ uint8_t* 
     asc_sync_mte2(0);
     asc_copy_ub2gm_align(output, local, INPUT_BYTES);
     asc_sync_mte3(0);
+    asc_sync_pipe(PIPE_ALL);
 }
 
 void print_data(const char* name, const std::vector<uint8_t>& data)

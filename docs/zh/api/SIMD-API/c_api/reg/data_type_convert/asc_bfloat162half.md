@@ -26,33 +26,28 @@
 
 ## 功能说明
 
-将bfloat16_t类型转化为half类型，并支持多种舍入模式、饱和/非饱和模式。
+根据`mask`将`src`中的每个参与计算的`bfloat16_t`类型元素转换为`half`类型，结果写入`dst`。
 
-关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式与饱和模式](../data_type_convert/rounding_mode.md)。
+关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../data_type_convert/rounding_mode.md)。
 
-## 函数原型
+## 函数原型（占位符形式）
 
-```cpp
-// RINT舍入模式,非饱和模式
-__simd_callee__ inline void asc_bfloat162half_rn(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// RINT舍入模式,饱和模式
-__simd_callee__ inline void asc_bfloat162half_rn_sat(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// ROUND舍入模式,非饱和模式
-__simd_callee__ inline void asc_bfloat162half_rna(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// ROUND舍入模式,饱和模式
-__simd_callee__ inline void asc_bfloat162half_rna_sat(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// FLOOR舍入模式,非饱和模式
-__simd_callee__ inline void asc_bfloat162half_rd(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// FLOOR舍入模式,饱和模式
-__simd_callee__ inline void asc_bfloat162half_rd_sat(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// CEIL舍入模式,非饱和模式
-__simd_callee__ inline void asc_bfloat162half_ru(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// CEIL舍入模式,饱和模式
-__simd_callee__ inline void asc_bfloat162half_ru_sat(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// TRUNC舍入模式,非饱和模式
-__simd_callee__ inline void asc_bfloat162half_rz(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
-// TRUNC舍入模式,饱和模式
-__simd_callee__ inline void asc_bfloat162half_rz_sat(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
+```c
+inline void asc_bfloat162half<round_mode><sat_mode>(vector_half& dst,
+                                                    vector_bfloat16_t src,
+                                                    vector_bool mask)
+```
+
+**占位符说明如下：**
+- `<round_mode>`支持`rd`（FLOOR）、`rn`（RINT）、`rna`（ROUND）、`ru`（CEIL）和`rz`（TRUNC）。
+- `<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
+
+**典型示例**
+
+```c
+inline void asc_bfloat162half_rn(vector_half& dst,
+                                 vector_bfloat16_t src,
+                                 vector_bool mask)
 ```
 
 ## 参数说明
@@ -60,10 +55,10 @@ __simd_callee__ inline void asc_bfloat162half_rz_sat(vector_half& dst, vector_bf
 **表1** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
-| :--- | :--- | :--- |
+| ------ | --------- | ---- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| mask | 输入 | 掩码寄存器，用于控制各元素是否参与计算。`mask`中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
@@ -73,21 +68,117 @@ __simd_callee__ inline void asc_bfloat162half_rz_sat(vector_half& dst, vector_bf
 
 ## 约束说明
 
-- mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
-- 开启饱和模式和非饱和模式时，需配置ctrl寄存器，ctrl寄存器的详细说明请参见[asc_set_ctrl.md](../../sys_var/asc_set_ctrl.md)。
+- 本接口在非AIV上调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- mask需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../sys_var/asc_set_ctrl.md)。
+- `mask`掩码位为0时，`dst`对应元素置0。
 
 ## 调用示例
 
-```cpp
-__simd_vf__ inline void bfloat162half_vf(__ubuf__ half* dst_addr, __ubuf__ bfloat16_t* src_addr, int32_t one_repeat_size, uint16_t repeat_time)
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
+```c
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
 {
-    vector_bfloat16_t src;
-    vector_half dst;
-    vector_bool mask = asc_create_mask_b16(PAT_ALL);
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
-        asc_bfloat162half_rn(dst, src, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_repeat_size, mask);
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+template <typename T>
+bool compare_date(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
+{
+    if (actual.size() != expected.size()) return false;
+    for (size_t i = 0; i < actual.size(); ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
     }
+    return true;
+}
+
+constexpr uint32_t BUFFER_BYTES = 256;
+
+__simd_vf__ inline void convert_vf(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
+{
+    vector_bool mask = asc_create_mask_b16(PAT_ALL);
+    vector_half dst;
+    vector_bfloat16_t src;
+    asc_loadalign(dst, reinterpret_cast<__ubuf__ half*>(output));
+    asc_loadalign(src, reinterpret_cast<__ubuf__ bfloat16_t*>(input));
+    asc_bfloat162half_rn(dst, src, mask);
+    asc_storealign(reinterpret_cast<__ubuf__ half*>(output), dst, mask);
+}
+__global__ __vector__ void asc_bfloat162half_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+{
+    asc_init();
+    __ubuf__ uint8_t output_local[BUFFER_BYTES];
+    __ubuf__ uint8_t input_local[BUFFER_BYTES];
+    asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
+    asc_copy_gm2ub_align(output_local, input, BUFFER_BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    convert_vf(output_local, input_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);
+    asc_sync();
+}
+} // namespace
+
+int main()
+{
+    constexpr uint8_t input_pattern[] = {0x80, 0x3f};
+    constexpr uint8_t golden_pattern[] = {0x00, 0x3c};
+    std::vector<uint8_t> input(BUFFER_BYTES);
+    std::vector<uint8_t> output(BUFFER_BYTES, 0xff);
+    std::vector<uint8_t> golden(BUFFER_BYTES);
+    for (size_t i = 0; i < BUFFER_BYTES; ++i) {
+        input[i] = input_pattern[i % sizeof(input_pattern)];
+        golden[i] = golden_pattern[i % sizeof(golden_pattern)];
+    }
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint8_t* input_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    uint8_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, input.size() * sizeof(uint8_t), input.data(), input.size() * sizeof(uint8_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_bfloat162half_kernel<<<1, 0>>>(output_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint8_t), output_device, output.size() * sizeof(uint8_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    std::cout << "Conversion: vector_bfloat16_t -> vector_half" << std::endl;
+    print_data("Input 1.0 (raw bytes)", input);
+    print_data("Output (raw bytes)", output);
+    print_data("Golden 1.0 (raw bytes)", golden);
+    const bool passed = compare_date(output, golden);
+    std::cout << (passed ? "[Success] asc_bfloat162half_rn passed." : "[Failed] asc_bfloat162half_rn failed.") << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
 }
 ```
