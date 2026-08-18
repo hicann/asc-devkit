@@ -1,6 +1,6 @@
 # Hello World <a name="ZH-CN_TOPIC_0000002523206878"></a>
 
-本入门示例基于Ascend C SIMD实现Hello World算子，带你快速上手实践，涵盖Device端核函数实现、Host端调用以及编译运行的完整流程，帮助开发者建立整体认知。
+本入门示例基于Ascend C SIMD实现Hello World算子，带你快速上手实践，涵盖Device端核函数（Kernel）实现、Host端调用以及编译运行的完整流程，帮助开发者建立整体认知。
 
 开始前请参考[环境准备](../../environment_setup.md)安装所需的CANN软件包，完整样例请参考[hello\_world](../../../../../../examples/01_simd_cpp_api/00_introduction/00_quickstart/hello_world/README.md)。
 
@@ -8,7 +8,7 @@
 
     在NPU上打印`Hello World!!!`。
 
-- **Device端Kernel实现**：
+- **Device端核函数（Kernel）实现**：
 
     后缀名为`*.asc`的代码文件包含Host端与Device端代码，其Device端部分示例如下：
     ```cpp
@@ -18,7 +18,7 @@
     }
     ```
     > [!NOTE]说明
-    > - SIMD算子的Kernel函数需要额外的修饰符，如[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符说明该算子仅在向量计算单元上执行。
+    > - SIMD算子的核函数（Kernel）需要额外的修饰符，如[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符说明该算子仅在向量计算单元上执行。
     
 - **Host端代码实现**：
  

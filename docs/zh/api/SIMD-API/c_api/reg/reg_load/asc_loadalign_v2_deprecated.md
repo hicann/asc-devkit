@@ -28,7 +28,7 @@
 
 **该接口已废弃。其中asc_loadalign_brc_v2请使用[asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md)，asc_loadalign_brc_v3请使用[asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md)，asc_loadalign_unpack_v2请使用[asc_loadalign_unpack4](asc_loadalign_unpack4.md)实现此功能。**
 
-对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，接口通过地址寄存器传入偏移，用户可以选择更新偏移或者更新源操作数的地址。
+对齐数据搬运接口，从Unified Buffer（UB）连续对齐搬入目的操作数，支持多种搬入模式，接口通过地址寄存器传入偏移，用户可以选择更新偏移或者更新源操作数的地址。
 
 - NORM搬入模式：正常模式，搬运VL数据。
 - BRC搬入模式：搬运一个b8/b16/b32类型的数据，并Broadcast到所有元素位置。

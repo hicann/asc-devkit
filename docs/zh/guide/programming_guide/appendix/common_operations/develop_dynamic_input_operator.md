@@ -1,6 +1,6 @@
 # 如何开发动态输入算子<a name="ZH-CN_TOPIC_0000002098772922"></a>
 
-动态输入算子是指算子的输入个数是动态的，例如AddN，将N个输入tensor累加到一起，输出一个tensor，输入tensor的个数是不固定的。动态输入算子的开发在构造和解析输入数据方面有差异：核函数的入参采用ListTensorDesc的结构存储输入数据信息，对应的，调用时需构造TensorList结构保存参数信息。下面基于kernel直调和工程化算子开发两种开发方式分别介绍具体开发流程。
+动态输入算子是指算子的输入个数是动态的，例如AddN，将N个输入tensor累加到一起，输出一个tensor，输入tensor的个数是不固定的。动态输入算子的开发在构造和解析输入数据方面有差异：核函数（Kernel）的入参采用ListTensorDesc的结构存储输入数据信息，对应的，调用时需构造TensorList结构保存参数信息。下面基于kernel直调和工程化算子开发两种开发方式分别介绍具体开发流程。
 
 >[!NOTE]说明 
 >下文仅列出代码片段，完整样例请参考[动态输入算子样例](../../../../../../examples/01_simd_cpp_api/03_basic_api/04_memory_management/list_tensor_desc_input)。
@@ -109,7 +109,7 @@
 
     -   kernel侧算子实现，入参需传入动态结构的数据，并使用AscendC::ListTensorDesc结构做解析。
 
-        核函数入参需传入动态结构的数据，例如GM\_ADDR srcList，示例如下。
+        核函数（Kernel）入参需传入动态结构的数据，例如GM\_ADDR srcList，示例如下。
 
         ```
         extern "C" __global__ __aicore__ void addn_custom(GM_ADDR srcList, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)

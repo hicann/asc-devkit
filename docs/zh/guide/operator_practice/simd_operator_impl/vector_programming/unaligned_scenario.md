@@ -6,7 +6,7 @@
 
 >[!NOTE]说明 
 >进行数据搬运和Vector计算时，对于搬运的数据长度和操作数的起始地址有如下的对齐要求：
->- 使用DataCopy接口进行数据搬运，搬运的数据长度和操作数的起始地址（UB上）必须保证32字节对齐。
+>- 使用DataCopy接口进行数据搬运，搬运的数据长度和操作数在Unified Buffer（UB）上的起始地址必须保证32字节对齐。
 >- 通常情况下，进行Vector计算时，操作数的起始地址必须保证32字节对齐。具体对齐要求需要查阅对应的API参考进行确认。
 
 下文描述中的Global指Global Memory上的tensor，Local指Local Memory上的tensor。

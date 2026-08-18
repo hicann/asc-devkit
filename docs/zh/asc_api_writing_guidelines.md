@@ -734,7 +734,7 @@ dataCopyParams给出了其数据类型所在的头文件目录和详细介绍。
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为Unified Buffer，目的地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为Unified Buffer（UB），目的地址需要32字节对齐。 |
 | src | 输入 | 源操作数，类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)，存储位置为Global Memory，源地址需要1字节对齐。 |
 | dataCopyParams | 输入 | 搬运参数。DataCopyExtParams类型，具体参数说明请参考[表3](#table_gm2ub_pad_3)。 |
 | padParams | 输入 | 从Global Memory搬运数据至Local Memory时，可以根据开发者需要，在搬运数据左边或右边填充数据。padParams是用于控制数据填充过程的参数。DataCopyPadExtParams类型，具体参数请参考[表4](#table_gm2ub_pad_4)。 |
@@ -893,7 +893,7 @@ DataCopy的使用说明中给出了DataCopyParams结构体参数的配置图示�
   - 在API使用、参数配置、计算结果的排布方面有无开发者容易理解错误、易混淆的地方。
   - 考虑接口对当前环境的影响：调用该接口后，是否需要调用其他API恢复当前环境。
   - API对特殊数据类型（如int4_t）的支持度有无差异，使用时有什么需要注意的地方。
-  - API接口支持的开发方式有无约束，Kernel直调开发方式和工程化开发方式是否都支持。
+  - API接口支持的开发方式有无约束，核函数（Kernel）直调开发方式和工程化开发方式是否都支持。
   - API有无性能方面的约束，如reduce类fp16性能比fp32性能差。
 
 接口的约束须全面，保证资料内容完备性。
@@ -979,7 +979,7 @@ AscendC::Cos(dstLocal, srcLocal, sharedTmpBuffer, 512);
 
 【级别】强制
 
-【描述】调用示例不应与算子开发方式（Kernel直调开发方式和工程化开发方式）强相关，只能在某一种开发方式下使用的API属于例外场景。
+【描述】调用示例不应与算子开发方式（核函数（Kernel）直调开发方式和工程化开发方式）强相关，只能在某一种开发方式下使用的API属于例外场景。
 
  ### API-EXAMPLE-06 样例代码须使用规范的命名空间和宏定义 
  
@@ -1136,7 +1136,7 @@ __aicore__ inline void Exp(const LocalTensor<T>& dst, const LocalTensor<T>& src,
 |存储单元|对齐要求|
 |----------|----------|
 |Global Memory|无对齐要求。|
-|Unified Buffer|32Byte对齐。|
+|UB|32Byte对齐。|
 |L1 Buffer|32Byte对齐。|
 |L0A Buffer/L0B Buffer|512Byte对齐。|
 |L0C Buffer|64Byte对齐。|

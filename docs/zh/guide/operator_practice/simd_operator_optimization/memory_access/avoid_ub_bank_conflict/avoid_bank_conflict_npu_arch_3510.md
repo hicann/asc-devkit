@@ -8,7 +8,7 @@
 >- Ascend 950PR/Ascend 950DT
 ><!-- end id1 -->
 
-Unified Buffer缓存总大小为256KB，包含8个bank group，每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B，采用低位地址交织。
+Unified Buffer（UB）缓存总大小为256KB，包含8个bank group，每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B，采用低位地址交织。
 
 UB的地址编码格式：
 ```
@@ -39,7 +39,7 @@ UB_ADDR[18:0] = {BANK_DEPTH[8:0], BANK[0], BG[2:0], BANK_WIDTH[4:0]}
 -   **写写冲突**：多个写操作同时尝试访问同一个bank group。
 -   **读读冲突**：两个读操作同时尝试访问同一个bank，或者两个以上读操作同时尝试访问同一个bank group。
 
-**注：bank冲突的场景与Unified Buffer的规格密切相关，规格的变化通常会导致bank冲突场景的变化。**
+**注：bank冲突的场景与UB的规格密切相关，规格的变化通常会导致bank冲突场景的变化。**
 
 ### 基于连续访存的bank冲突分析
 以下对连续访存的冲突类型进行解读：

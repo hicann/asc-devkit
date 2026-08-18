@@ -1,6 +1,6 @@
 # TBufPool简介<a name="ZH-CN_TOPIC_0000001912912993"></a>
 
-TPipe可以管理全局内存资源，而TBufPool可以手动管理或复用Unified Buffer/L1 Buffer物理内存，主要用于多个stage计算中Unified Buffer/L1 Buffer物理内存不足的场景。
+TPipe可以管理全局内存资源，而TBufPool可以手动管理或复用Unified Buffer（UB）/L1 Buffer物理内存，主要用于多个stage计算中UB/L1 Buffer物理内存不足的场景。
 
 ## 功能图示<a name="section10900194131112"></a>
 

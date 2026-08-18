@@ -13,7 +13,7 @@
 
 【反例】
 
--   如下的示例中存在TilingData结构变量冗余的情况：NumBlocks信息已经通过SetSimdNumBlocks接口进行设置，可以在Kernel侧调用GetBlockNum接口获取，无需通过TilingData结构传递。
+-   如下的示例中存在TilingData结构变量冗余的情况：NumBlocks信息已经通过SetSimdNumBlocks接口进行设置，可以在核函数（Kernel）侧调用GetBlockNum接口获取，无需通过TilingData结构传递。
 -   此外，变量的数据类型也不合理：formerNum和tailNum分别为计算整块数据的核数和计算尾块数据的核数，不会超过NUM\_BLOCKS的值，使用uint8\_t类型即可；formerLength等变量根据其计算逻辑，不会超出uint32\_t的范围，使用uint32\_t类型即可。
 
 ```

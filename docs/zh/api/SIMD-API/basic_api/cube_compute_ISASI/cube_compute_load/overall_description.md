@@ -57,7 +57,7 @@
 
 | 接口类别 | 主要功能 | 支持通路 | 典型应用场景 |
 | --- | --- | --- | --- |
-| [DataCopy（UBToL1连续数据搬运）](DataCopy_UBToL1_continuous.md) | 将数据从Unified Buffer连续搬运至L1 Buffer，格式和内容保持不变。 | UB->L1 Buffer | 矢量计算结果从UB传入L1 Buffer供矩阵计算使用。 |
+| [DataCopy（UBToL1连续数据搬运）](DataCopy_UBToL1_continuous.md) | 将数据从UB连续搬运至L1 Buffer，格式和内容保持不变。 | UB->L1 Buffer | 矢量计算结果从UB传入L1 Buffer供矩阵计算使用。 |
 | [DataCopy（UBToL1高维切分数据搬运）](DataCopy_UBToL1_highdim_split.md) | 从UB搬运至L1 Buffer，支持通过块参数配置实现非连续搬运。 | UB->L1 Buffer | UB中非连续排列数据搬入L1 Buffer。 |
 | [DataCopy（UBToL1随路转换-ND2NZ搬运）](DataCopy_UBToL1_ND2NZ.md) | 从UB搬运至L1 Buffer，搬运同时完成ND到NZ分形格式转换。 | UB->L1 Buffer | UB中ND格式数据搬入L1 Buffer并转为NZ格式。 |
 | [DataCopyPad（UBToL1非对齐数据搬运）](DataCopyPad_UBToL1.md) | 将数据从UB非对齐搬运至L1 Buffer，支持在数据左/右侧自行填充。 | UB->L1 Buffer | UB中非32B对齐边界数据的搬移与补齐。 |

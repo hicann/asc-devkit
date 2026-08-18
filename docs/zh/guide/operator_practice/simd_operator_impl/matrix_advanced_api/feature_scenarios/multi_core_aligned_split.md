@@ -42,7 +42,7 @@
 
 ## 调用示例<a name="zh-cn_topic_0000002298767889_section14108832203920"></a>
 
-该场景的关键代码示例如下。Matmul多核对齐场景的完整样例请参考：多核切M、N的样例：[Matmul多核Kernel直调样例](../../../../../../../examples/01_simd_cpp_api/00_introduction/02_matrix/matmul_advanced_api)；多核切K的样例：[多核切K场景的算子样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_splitk)。
+该场景的关键代码示例如下。Matmul多核对齐场景的完整样例请参考：多核切M、N的样例：[Matmul多核场景的核函数（Kernel）直调样例](../../../../../../../examples/01_simd_cpp_api/00_introduction/02_matrix/matmul_advanced_api)；多核切K的样例：[多核切K场景的算子样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_splitk)。
 
 ```
 // 构造多核Tiling对象

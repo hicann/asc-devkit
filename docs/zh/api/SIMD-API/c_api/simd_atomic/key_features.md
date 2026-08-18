@@ -14,7 +14,7 @@
 
 ```text
 1. 向GM搬运数据data0;    // 数据搬运，覆盖GM原有随机值，期望GM数据为data0。
-2. asc_set_atomic_add_float();         // 开启原子累加，后续从UB/L0C Buffer/L1 Buffer到GM的搬运均执行原子累加。
+2. asc_set_atomic_add_float();         // 开启原子累加，后续从Unified Buffer（UB）/L0C Buffer/L1 Buffer到GM的搬运均执行原子累加。
 3. 向GM搬运data1;    // 带随路原子操作的数据搬运，期望GM数据为data0 + data1。
 4. 向GM搬运data2;    // 带随路原子操作的数据搬运，期望GM数据为data0 + data1 + data2。
 5. 向GM搬运data3;    // 带随路原子操作的数据搬运，期望GM数据为data0 + data1 + data2 + data3。

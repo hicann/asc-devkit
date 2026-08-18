@@ -96,7 +96,7 @@ StoreAlign能够实现数据从[MaskReg](../register_data_types/MaskReg.md)搬�
 
 ## 约束说明<a name="section11585101304320"></a>
 
-- 位于Unified Buffer的地址约束、offset的对齐约束、AddrReg寄存器中存储的偏移量 \* sizeof(T)的对齐约束与MaskDist有关，具体地址约束请参考：[表3 MaskDist参数说明](#表3-MaskDist参数说明)。
+- 位于UB的地址约束、offset的对齐约束、AddrReg寄存器中存储的偏移量 \* sizeof(T)的对齐约束与MaskDist有关，具体地址约束请参考：[表3 MaskDist参数说明](#表3-MaskDist参数说明)。
 - MaskReg模板参数regTrait只支持RegTraitNumOne。
 
 ## 调用示例<a name="section642mcpsimp"></a>

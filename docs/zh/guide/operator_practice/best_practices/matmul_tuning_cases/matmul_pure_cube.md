@@ -77,7 +77,7 @@ Tiling参数如下：
 
 实现默认MIX模式的具体步骤如下：
 
-1.  Kernel侧，定义Matmul对象。
+1.  核函数（Kernel）侧，定义Matmul对象。
 
     ```
     #include "lib/matmul_intf.h"
@@ -98,7 +98,7 @@ Tiling参数如下：
     cubeTiling.SetDim(numBlocks);
     ```
 
-3.  调用核函数，参考[核函数定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数的numBlocks参数配置。
+3.  调用核函数（Kernel），参考[核函数（Kernel）定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数（Kernel）的numBlocks参数配置。
 
     ```
     matmul_custom_do(ascendcPlatform->GetCoreNumAic(), stream, x1, x2, bias, y, workspaceDevice, tilingDevice); // MIX模式下，启动时，按照AIV和AIC组合启动，numBlocks用于设置启动多少个AI Core。
@@ -111,7 +111,7 @@ Tiling参数如下：
 
 Matmul API开启纯Cube模式的完整样例请参考[纯Cube模式的Matmul样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul)。开启纯Cube模式的主要步骤如下：
 
-1.  Kernel侧，在定义Matmul对象的代码中，包含matmul\_intf.h头文件前设置ASCENDC\_CUBE\_ONLY宏。
+1.  核函数（Kernel）侧，在定义Matmul对象的代码中，包含matmul\_intf.h头文件前设置ASCENDC\_CUBE\_ONLY宏。
 
     ```
     #define ASCENDC_CUBE_ONLY // 在#include "lib/matmul_intf.h"前，设置ASCENDC_CUBE_ONLY宏
@@ -133,13 +133,13 @@ Matmul API开启纯Cube模式的完整样例请参考[纯Cube模式的Matmul样�
     cubeTiling.SetDim(numBlocks);
     ```
 
-3.  调用核函数，参考[核函数定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数的numBlocks参数配置。
+3.  调用核函数（Kernel），参考[核函数（Kernel）定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)，设置核函数（Kernel）的numBlocks参数配置。
 
     ```
     matmul_custom_do(ascendcPlatform->GetCoreNumAic(), stream, x1, x2, bias, y, workspaceDevice, tilingDevice); // 仅包含Cube计算的算子，numBlocks用于设置启动多少个AIC。
     ```
 
-4.  Kernel侧，核函数实现中增加AIV侧返回分支。
+4.  核函数（Kernel）侧，核函数（Kernel）实现中增加AIV侧返回分支。
 
     ```
     extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ uint8_t* b,

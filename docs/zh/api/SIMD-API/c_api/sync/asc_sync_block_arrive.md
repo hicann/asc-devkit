@@ -55,9 +55,9 @@ PIPE_S
 
 ## 约束说明
 
-- 使用该同步接口时，需要按照如下规则设置Kernel类型：
-  - 在纯Vector/Cube场景下，需设置Kernel类型为KERNEL_TYPE_MIX_AIV_1_0或KERNEL_TYPE_MIX_AIC_1_0。
-  - 对于Vector和Cube混合场景，需根据实际情况灵活配置Kernel类型。
+- 使用该同步接口时，需要按照如下规则设置核函数（Kernel）类型：
+  - 在纯Vector/Cube场景下，需设置核函数（Kernel）类型为KERNEL_TYPE_MIX_AIV_1_0或KERNEL_TYPE_MIX_AIC_1_0。
+  - 对于Vector和Cube混合场景，需根据实际情况灵活配置核函数（Kernel）类型。
 - 不建议开发者同时使用该接口和Matmul高阶API，否则会有flag_id冲突的风险。
 - 同一flag_id的计数器最多设置15次。
 - pipe支持的流水类型为PIPE_V、PIPE_M、PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX，不支持PIPE_ALL和PIPE_S。

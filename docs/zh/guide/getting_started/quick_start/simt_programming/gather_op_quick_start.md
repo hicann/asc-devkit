@@ -1,6 +1,6 @@
 # Gather算子快速入门
 
-本入门示例基于Ascend C SIMT实现一维Gather算子，带你快速上手实践，涵盖Device端核函数实现、Host端调用以及编译运行的完整流程，帮助开发者建立整体认知。
+本入门示例基于Ascend C SIMT实现一维Gather算子，带你快速上手实践，涵盖Device端核函数（Kernel）实现、Host端调用以及编译运行的完整流程，帮助开发者建立整体认知。
 
 开始前请参考[环境准备](../../environment_setup.md)安装所需的CANN软件包，完整样例请见[Gather](../../../../../../examples/03_simt_api/00_introduction/01_gather/basic_gather/gather_1d)。
 
@@ -16,8 +16,8 @@
 
 - **算子设计**：
 
-    - **Device端核函数编程接口**
-        - 核函数定义：通过[\_\_global\_\_](../../../programming_guide/language_extension/simt_builtin_keywords.md#section204112391232)修饰符声明。
+    - **Device端核函数（Kernel）编程接口**
+        - 核函数（Kernel）定义：通过[\_\_global\_\_](../../../programming_guide/language_extension/simt_builtin_keywords.md#section204112391232)修饰符声明。
         - 数据划分：使用内置变量[threadIdx](../../../programming_guide/language_extension/simt_builtin_keywords.md#li7760123814919)、[blockIdx](../../../programming_guide/language_extension/simt_builtin_keywords.md#li1676053814914)、[blockDim](../../../programming_guide/language_extension/simt_builtin_keywords.md#li076017381191)计算线程索引，并为每个线程分配需要处理的数据元素。
         - 数据搬入：无需额外接口，直接通过指针访问即可。
         - 数据计算：根据`index`中的索引值及操作符`[]`读取输入数据。
@@ -25,7 +25,7 @@
     - **Host端运行时接口**
         - 内存分配：使用`aclrtMallocHost`分配Host Memory，`aclrtMalloc`分配Device Memory。
         - 数据搬入：使用`aclrtMemcpy`将输入数据从Host Memory拷贝到Device Memory。
-        - 启动NPU计算任务：通过`<<<...>>>`语法糖启动核函数。
+        - 启动NPU计算任务：通过`<<<...>>>`语法糖启动核函数（Kernel）。
         - 同步等待：调用`aclrtSynchronizeStream`等待当前Stream上的任务完成，或调用`aclrtSynchronizeDevice`等待Device上所有任务完成。
         - 数据搬出：使用`aclrtMemcpy`将计算结果从Device Memory拷贝回Host Memory。
 
@@ -33,7 +33,7 @@
 
     后缀名为`*.asc`的代码文件包含Host端与Device端代码。
 
-    - **Device端Kernel实现**：
+    - **Device端核函数（Kernel）实现**：
 
         Device端部分示例如下：
 

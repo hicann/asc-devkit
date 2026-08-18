@@ -4,7 +4,7 @@
 
 本文档整体架构及各章节核心内容如下：
 - **[编程模型](programming_model/programming_model.md)**：深入解析AscendC原生SIMD/SIMT编程模型的底层原理与应用范式。
-- **[编译与运行](compilation_and_execution/compilation_and_execution.md)**：讲解算子Kernel调用机制，完整说明工程编译与程序运行全流程。
+- **[编译与运行](compilation_and_execution/compilation_and_execution.md)**：讲解算子核函数（Kernel）调用机制，完整说明工程编译与程序运行全流程。
 - **[语言扩展层](language_extension/language_extension.md)**：逐一介绍SIMD、SIMT编程体系的扩展语法、内置关键字及底层系统函数。
 - **[C++类库API](library_api/library_api.md)**：梳理AscendC分层接口体系，包含基于Tensor编程的C++基础API、TPipe/TQue框架API、单核通用算法高阶API，以及面向多核算子开发的算子模板库。
 - **[调试调优](debug_and_tuning/debug_and_tuning.md)**：介绍算子功能问题定位、性能分析、专项调优的实现方法、配套工具及工程实践经验。

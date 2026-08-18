@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-将Unified Buffer内存空间的地址值转换为对应的指针并返回。
+将Unified Buffer（UB）内存空间的地址值转换为对应的指针并返回。
 
 ## 函数原型
 
@@ -42,11 +42,11 @@ void* __cvta_ubuf_to_generic(size_t rawbits)
 
 ## 返回值说明
 
-指向Unified Buffer内存空间的指针。该接口不校验输入是否为有效Unified Buffer地址。异常场景示例说明如下：
+指向UB内存空间的指针。该接口不校验输入是否为有效UB地址。异常场景示例说明如下：
 
 | 输入场景 | 返回值 |
 | --- | --- |
-| `rawbits`为`0`或`1` | 返回指针使用`__isUbuf`判断为1，但该指针不一定是可安全访问的Unified Buffer地址。 |
+| `rawbits`为`0`或`1` | 返回指针使用`__isUbuf`判断为1，但该指针不一定是可安全访问的UB地址。 |
 | `rawbits`为全1 | 返回指针使用`__isGlobal`、`__isUbuf`、`__isLocal`均判断为0。 |
 
 ## 约束说明

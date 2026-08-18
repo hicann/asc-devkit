@@ -16,7 +16,7 @@
 
 **核心瓶颈解读**：
 
-- **痛点1：向量计算开销占比高**：每次基础API向量计算内部会进行load → compute → store操作，数据需在UB和寄存器之间反复交互，8次向量计算产生8次Load/Store开销。
+- **痛点1：向量计算开销占比高**：每次基础API向量计算内部会进行load → compute → store操作，数据需在Unified Buffer（UB）和寄存器之间反复交互，8次向量计算产生8次Load/Store开销。
 - **痛点2：指令级并行度低**：基础API每条向量指令间需插入`PipeBarrier<PIPE_V>()`同步，无法利用VF融合的双发特性。
 
 ## 优化手段：RegBase API + VF融合

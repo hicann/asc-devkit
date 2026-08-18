@@ -33,7 +33,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-框架需要使用的workspace称之为系统workspace。[Matmul Kernel侧接口](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等高阶API需要系统workspace，所以在使用该类API时，需要调用该接口，设置系统workspace的指针。采用工程化算子开发方式或者kernel直调方式（开启HAVE\_WORKSPACE编译选项）时，不需要开发者手动设置，框架会自动设置。其他场景下，需要开发者调用SetSysWorkSpace进行设置。
+框架需要使用的workspace称之为系统workspace。[Matmul核函数（Kernel）侧接口](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等高阶API需要系统workspace，所以在使用该类API时，需要调用该接口，设置系统workspace的指针。采用工程化算子开发方式或者kernel直调方式（开启HAVE\_WORKSPACE编译选项）时，不需要开发者手动设置，框架会自动设置。其他场景下，需要开发者调用SetSysWorkSpace进行设置。
 
 在kernel侧调用该接口前，需要在host侧调用GetLibApiWorkSpaceSize获取系统workspace的大小，并在host侧设置workspacesize大小。样例如下：
 
@@ -76,7 +76,7 @@ __aicore__ inline void SetSysWorkspace(GM_ADDR workspace)
 </td>
 <td class="cellrowborder" valign="top" width="11.93%" headers="mcps1.2.4.1.2 "><p id="p755318134134"><a name="p755318134134"></a><a name="p755318134134"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="71.58%" headers="mcps1.2.4.1.3 "><p id="p1185064715302"><a name="p1185064715302"></a><a name="p1185064715302"></a>核函数传入的workspace的指针，包括系统workspace和用户使用的workspace。</p>
+<td class="cellrowborder" valign="top" width="71.58%" headers="mcps1.2.4.1.3 "><p id="p1185064715302"><a name="p1185064715302"></a><a name="p1185064715302"></a>核函数（Kernel）传入的workspace的指针，包括系统workspace和用户使用的workspace。</p>
 </td>
 </tr>
 </tbody>
@@ -99,7 +99,7 @@ __aicore__ inline void MatmulLeakyKernel<aType, bType, cType, biasType>::Init(
 {
     // 融合算子的初始化操作
     // ...
-    // workspace为核函数传入的GM指针，用于设置系统workspace
+    // workspace为核函数（Kernel）传入的GM指针，用于设置系统workspace
     AscendC::SetSysWorkspace(workspace);
     if (GetSysWorkSpacePtr() == nullptr) {
         return;

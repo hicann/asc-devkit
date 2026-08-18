@@ -13,7 +13,7 @@
 | \_\_aicore\_\_ | x | √ | x | √ |
 | \_\_global\_\_ | x | √ | √ | x |
 
-\_\_global\_\_修饰的函数是核函数入口，有以下使用约束：
+\_\_global\_\_修饰的函数是核函数（Kernel）入口，有以下使用约束：
 
 -   函数返回类型必须为void，不能是class、struct或者union的成员函数。
 -   不支持递归调用。
@@ -26,7 +26,7 @@
 
 ## 内存空间限定符<a name="section20787845172517"></a>
 
-使用内存空间限定符\_\_ubuf\_\_来表示动、静态内存，静态内存的大小在编译期是确定的，动态内存的大小在核函数执行时确定。
+使用内存空间限定符\_\_ubuf\_\_来表示动、静态内存，静态内存的大小在编译期是确定的，动态内存的大小在核函数（Kernel）执行时确定。
 
 -   静态内存通过数组分配：
 
@@ -40,14 +40,14 @@
     extern __ubuf__ half dynamicBuf[]; 
     ```
 
-    动态内存的实际内存大小需要在核函数启动时配置，具体内容请参考[核函数配置](#section97005415463)。
+    动态内存的实际内存大小需要在核函数（Kernel）启动时配置，具体内容请参考[核函数（Kernel）配置](#section97005415463)。
 
 ## 内置常量<a name="section784531219338"></a>
 
 <a name="table878553753515"></a>
 | 常量名 | 取值 | 功能 |
 | --- | --- | --- |
-| constexpr uint64_t ASC_UB_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下Unified Buffer（UB）的容量，可用于编译期获取UB资源大小。 |
+| constexpr uint64_t ASC_UB_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下UB的容量，可用于编译期获取UB资源大小。 |
 
 ## 内置结构体<a name="section13165113520576"></a>
 
@@ -78,14 +78,14 @@
 
 -   gridDim<a name="li20760123812911"></a>
 
-    内置全局变量，只能在核函数中使用，表示整个计算任务在各个维度上分别由多少个线程块构成。
+    内置全局变量，只能在核函数（Kernel）中使用，表示整个计算任务在各个维度上分别由多少个线程块构成。
 -   blockDim<a name="li076017381191"></a>
 
-    内置全局变量，在核函数中可以直接使用，用于获取线程块中配置的线程的三维层次结构，即启动核函数时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。
+    内置全局变量，在核函数（Kernel）中可以直接使用，用于获取线程块中配置的线程的三维层次结构，即启动核函数（Kernel）时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。
 
 -   blockIdx<a name="li1676053814914"></a>
 
-    内置全局变量，只能在核函数中使用，用于获取块索引。表示当前线程所在的线程块在整个网格中的位置坐标。
+    内置全局变量，只能在核函数（Kernel）中使用，用于获取块索引。表示当前线程所在的线程块在整个网格中的位置坐标。
 
     -   blockIdx.x的范围是[0, gridDim.x - 1]。
     -   blockIdx.y的范围是[0, gridDim.y - 1]。
@@ -93,7 +93,7 @@
 
 -   threadIdx<a name="li7760123814919"></a>
 
-    内置全局变量，在核函数中可以直接使用，用于获取当前线程在线程块内部的索引。threadIdx.x，threadIdx.y，threadIdx.z分别表示当前线程在3个维度的索引，threadIdx.x的范围为\[0, blockDim.x\)，threadIdx.y的范围为\[0, blockDim.y\)，threadIdx.z的范围为\[0, blockDim.z\)。线程块内线程的索引与线程ID对应关系如下：
+    内置全局变量，在核函数（Kernel）中可以直接使用，用于获取当前线程在线程块内部的索引。threadIdx.x，threadIdx.y，threadIdx.z分别表示当前线程在3个维度的索引，threadIdx.x的范围为\[0, blockDim.x\)，threadIdx.y的范围为\[0, blockDim.y\)，threadIdx.z的范围为\[0, blockDim.z\)。线程块内线程的索引与线程ID对应关系如下：
 
     -   对于一维线程块，其线程ID为blockIdx.x \* blockDim.x + threadIdx.x。
 
@@ -254,7 +254,7 @@ if (x[idx] || y[idx]) {
 res[idx] = x[idx] > y[idx] ? x[idx] : y[idx];
 ```
 
-## 核函数配置<a name="section97005415463"></a>
+## 核函数（Kernel）配置<a name="核函数配置"></a><a name="section97005415463"></a>
 
 在调用\_\_global\_\_限定符修饰的函数时必须指定执行配置。执行配置通过在函数名和带括号的参数列表之间插入如下形式的表达式来指定：
 
@@ -269,7 +269,7 @@ res[idx] = x[idx] > y[idx] ? x[idx] : y[idx];
 -   dyn\_ubuf\_size：size\_t类型，用于指定每个线程块动态分配的共享内存大小，单位为字节。这部分内存供数组使用，具体用法请参考[共享内存](../programming_model/ai_core_simt_programming/memory_hierarchy.md#共享内存)中的“动态申请”方式。
 -   stream：aclrtStream类型，指定关联的流，用于维护异步操作的执行顺序。
 
-以下示例展示了内核函数的声明与调用方式。
+以下示例展示了核函数（Kernel）的声明与调用方式。
 
 ```cpp
 // 声明
@@ -283,7 +283,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 
 在执行函数之前，会先对上述配置参数进行校验。如果blocks\_per\_grid或threads\_per\_block超出设备的最大允许规模，或dyn\_ubuf\_size超过分配静态内存后剩余的可用共享内存，该函数将会执行失败。
 
-一个核函数所使用的寄存器数量决定了单个线程块内可启动的线程数上限。核函数使用的寄存器数量通过 \_\_launch\_bounds\_\_\(\)限定符或 \_\_maxnreg\_\_\(\)限定符指定。
+一个核函数（Kernel）所使用的寄存器数量决定了单个线程块内可启动的线程数上限。核函数（Kernel）使用的寄存器数量通过 \_\_launch\_bounds\_\_\(\)限定符或 \_\_maxnreg\_\_\(\)限定符指定。
 
 使用上述两个可选配置的限定符时，请注意如下约束：
 -   \_\_launch\_bounds\_\_或\_\_maxnreg\_\_只能在\_\_global\_\_函数中使用。
@@ -293,7 +293,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 
 -   \_\_launch\_bounds\_\_\(N\) <a name="li23861114618"></a>
   
-    函数标记宏，在核函数上可选配置，用于指定核函数启动的最大线程数。最大线程数决定了每个线程可分配的寄存器数量，具体对应关系请见下表，寄存器用于存储线程中的局部变量，若局部变量的个数超出寄存器个数，容易出现寄存器溢出等问题。建议最大线程数与启动核函数时的dim3线程数保持一致。
+    函数标记宏，在核函数（Kernel）上可选配置，用于指定核函数（Kernel）启动的最大线程数。最大线程数决定了每个线程可分配的寄存器数量，具体对应关系请见下表，寄存器用于存储线程中的局部变量，若局部变量的个数超出寄存器个数，容易出现寄存器溢出等问题。建议最大线程数与启动核函数（Kernel）时的dim3线程数保持一致。
 
     **表5**  \_\_launch\_bounds\_\_(N)与每个线程可用的寄存器个数的关系
     
@@ -320,7 +320,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 
 -   \_\_maxnreg\_\_\(N\) <a name="section_maxnreg"></a>
 
-    函数标记宏，在核函数上可选配置，用于在编译期指定单个线程在一个线程块内最多可分配的寄存器数量。
+    函数标记宏，在核函数（Kernel）上可选配置，用于在编译期指定单个线程在一个线程块内最多可分配的寄存器数量。
 
     \_\_maxnreg\_\_\(N\)的参数N需要满足：
     -   N的取值范围为(0, 128]区间的整数;

@@ -41,14 +41,14 @@ __aicore__ inline void asc_vf_call(Args &&...args)
 
 | 参数名 | 描述 |
 | :-- | :------------ | 
-| funcPtr | 用于指定SIMD入口核函数。 |
-| Args | 定义可变参数，用于传递实参到SIMD入口核函数。 |
+| funcPtr | 用于指定SIMD入口核函数（Kernel）。 |
+| Args | 定义可变参数，用于传递实参到SIMD入口核函数（Kernel）。 |
 
 **表2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :-- | :------------ | :-- |
-| args | 输入 | 可变参数，用于传递实参到SIMD入口核函数。 |
+| args | 输入 | 可变参数，用于传递实参到SIMD入口核函数（Kernel）。 |
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 
@@ -57,7 +57,7 @@ __aicore__ inline void asc_vf_call(Args &&...args)
 ## 约束说明<a name="section633mcpsimp"></a>
 
 -   asc\_vf\_call启动SIMD VF子任务时，子任务函数不能是类的成员函数，推荐使用普通函数或类静态函数，且入口函数必须使用\_\_simd\_vf\_\_修饰宏。
--   asc\_vf\_call启动SIMD VF子任务时，入参仅支持Ascend C的内置数据类型（half、int32_t、uint32_t、float等）及其组成的指针、数组、结构体类型，且指针类型必须指向UB内存。
+-   asc\_vf\_call启动SIMD VF子任务时，入参仅支持Ascend C的内置数据类型（half、int32_t、uint32_t、float等）及其组成的指针、数组、结构体类型，且指针类型必须指向Unified Buffer（UB）内存。
 
 ## 调用示例<a name="section1316724610428"></a>
 

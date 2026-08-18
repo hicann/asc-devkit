@@ -267,9 +267,9 @@ examples/
 │   ├── 02_features/        # Advanced features
 │   ├── 03_basic_api/       # Basic API examples
 │   │   └── 00_data_movement/
-│   │       └── copy_ub2ub/ # UB to UB copy example
+│   │       └── copy_ub2ub/ # Unified Buffer (UB) to UB copy example
 │   │           ├── CMakeLists.txt
-│   │           ├── copy.asc          # Kernel source (.asc extension)
+│   │           ├── copy.asc          # Kernel function source (.asc extension)
 │   │           ├── data_utils.h     # Test data utilities
 │   │           └── README.md
 │   ├── 04_advanced_api/    # High-level API examples
@@ -287,7 +287,7 @@ examples/
 
 - Typical directory organization: `<api_type>/<category>/<api_name>/`, with some categories having deeper levels
 - Numeric prefixes ensure ordering: `00_introduction/`, `01_utilities/`
-- Kernel source files use `.asc` extension
+- Kernel function source files use `.asc` extension
 - Each example must have its own `CMakeLists.txt`
 - Each example is recommended to include `README.md`
 

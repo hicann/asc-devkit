@@ -112,7 +112,7 @@ Host侧自动获取Tiling参数的关键步骤介绍如下：
 
 5.  **设置可用空间大小信息。**
 
-    设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer空间大小，-1表示AI处理器对应Buffer的大小。
+    设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer（UB）空间大小，-1表示AI处理器对应Buffer的大小。
 
     ```
     cubeTiling.SetBufferSpace(-1, -1, -1);
@@ -135,7 +135,7 @@ Host侧自动获取Tiling参数的关键步骤介绍如下：
 
 8.  Tiling参数的序列化保存等其他操作。
 
-Kernel侧的关键步骤介绍如下：
+核函数（Kernel）侧的关键步骤介绍如下：
 
 1.  **创建Matmul对象。**
 

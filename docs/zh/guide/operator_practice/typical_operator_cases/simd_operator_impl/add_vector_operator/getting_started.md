@@ -20,14 +20,14 @@ $$
 
 Add算子的计算逻辑遵循"搬入-计算-搬出"三段式流水结构：
 
-1. 将输入数据x和y从[GM](../../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)（Global Memory，芯片外部全局内存）搬运到[UB](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)（Unified Buffer，向量计算专用片上缓存）；
+1. 将输入数据x和y从[GM](../../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)（Global Memory，芯片外部全局内存）搬运到[Unified Buffer（UB）](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)（向量计算专用片上缓存）；
 2. 在UB上对xLocal、yLocal执行向量加法操作，计算结果存储在zLocal中；
 3. 将计算结果从UB搬运回GM。
 
 **前置说明**：
 
 - [GM（Global Memory）](../../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)：AI Core外部的全局存储，数据通过[GlobalTensor](../../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor_intro.md)访问，容量大但访问速度较慢。
-- [UB（Unified Buffer）](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)：AI Core内部的向量计算专用缓存，数据通过[LocalTensor](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)访问，容量有限但访问速度快。
+- [UB](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)：AI Core内部的向量计算专用缓存，数据通过[LocalTensor](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)访问，容量有限但访问速度快。
 - [DataCopy](../../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMAndUB_continuous.md)：用于在GM和UB之间搬运数据的API。
 - [PipeBarrier](../../../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/PipeBarrier_ISASI.md)：流水线同步屏障，确保数据搬运完成后再执行后续操作。
 - `block_idx`：通过[GetBlockIdx()](../../../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)获取当前核编号，用于多核并行时的数据分片。

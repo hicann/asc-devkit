@@ -28,7 +28,7 @@
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_datacopy_intf.h"`。
 
-该指令会根据索引值index将源操作数srcReg中的元素分散到目的操作数UB中。分散过程如图1所示：
+该指令会根据索引值index将源操作数srcReg中的元素分散到目的操作数Unified Buffer（UB）中。分散过程如图1所示：
 
 **图 1**  Scatter功能说明
 
@@ -87,7 +87,7 @@ __simd_callee__ inline void Scatter(__ubuf__ T* baseAddr, S& srcReg, V& index, M
 
 ## 约束说明<a name="section177921451558"></a>
 
-- 位于Unified Buffer的首地址必须32B对齐。
+- 位于UB的首地址必须32B对齐。
 - 当T为int8_t或者uint8_t数据类型时，源操作数中仅偶数位元素有效。即srcReg中的偶数位置[0, 2, 4, ..., 252, 254]的数据会被分散存储到目的操作数中。
 - index中的值必须唯一。若存在重复的index值，系统仅保留其中一个对应的数据，其余将被忽略。无法确定具体保留哪一个，因此必须确保index值不重复。
 - 当目的操作数的数据类型T为B64时，T、U、S、V只支持以下组合：

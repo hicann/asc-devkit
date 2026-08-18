@@ -1,6 +1,6 @@
 # Scalar读写数据<a name="ZH-CN_TOPIC_0000002375401226"></a>
 
-AI Core中Scalar计算单元负责各类型的标量数据运算和程序的流程控制。根据[硬件架构](../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)设计，Scalar仅支持对Global Memory和Unified Buffer的读写操作，而不支持对L1 Buffer、L0A Buffer、L0B Buffer和L0C Buffer等其他类型存储的访问。下文分别介绍了Scalar读写Global Memory和Unified Buffer的方式和Scalar读写数据时的同步机制。
+AI Core中Scalar计算单元负责各类型的标量数据运算和程序的流程控制。根据[硬件架构](../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)设计，Scalar仅支持对Global Memory和Unified Buffer（UB）的读写操作，而不支持对L1 Buffer、L0A Buffer、L0B Buffer和L0C Buffer等其他类型存储的访问。下文分别介绍了Scalar读写Global Memory和UB的方式和Scalar读写数据时的同步机制。
 
 ## Scalar读写Global Memory<a name="section7480536235"></a>
 
@@ -38,9 +38,9 @@ globalTensor1.GetValue(8);
 
 ![](../../../figures/aicore_32.png)
 
-## Scalar读写Unified Buffer<a name="section8156161471119"></a>
+## Scalar读写UB<a name="section8156161471119"></a>
 
-Scalar读写Unified Buffer时，可以使用LocalTensor的SetValue和GetValue接口。示例如下：
+Scalar读写UB时，可以使用LocalTensor的SetValue和GetValue接口。示例如下：
 
 ```
 for (int32_t i = 0; i < 16; ++i) {
@@ -54,7 +54,7 @@ for (int32_t i = 0; i < srcLen; ++i) {
 
 ## Scalar读写数据时的同步<a name="section554364118119"></a>
 
-Scalar读写Global Memory和Unified Buffer时属于PIPE\_S（Scalar流水）操作，当用户使用SetValue或者GetValue接口，且算子工程开启自动同步时，不需要手动插入同步事件。
+Scalar读写Global Memory和UB时属于PIPE\_S（Scalar流水）操作，当用户使用SetValue或者GetValue接口，且算子工程开启自动同步时，不需要手动插入同步事件。
 
 如果用户关闭算子工程的自动同步功能时，则需要手动插入同步事件：
 

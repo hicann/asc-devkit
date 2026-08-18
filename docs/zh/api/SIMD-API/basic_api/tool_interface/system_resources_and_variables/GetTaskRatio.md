@@ -53,11 +53,11 @@ __aicore__ inline int64_t GetTaskRatio()
 
 ## 返回值说明
 
-- 针对[分离模式](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)，不同Kernel类型下（通过[设置Kernel类型](../../Kernel-Tiling/set_Kernel_type.md)接口设置），在AIC和AIV上调用该接口的返回值如下：
+- 针对[分离模式](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)，不同核函数（Kernel）类型下（通过[设置核函数（Kernel）类型](../../Kernel-Tiling/set_Kernel_type.md)接口设置），在AIC和AIV上调用该接口的返回值如下：
 
     **表1** 返回值列表
 
-    | Kernel类型 | KERNEL_TYPE_AIV_ONLY | KERNEL_TYPE_AIC_ONLY | KERNEL_TYPE_MIX_AIC_1_2 | KERNEL_TYPE_MIX_AIC_1_1 | KERNEL_TYPE_MIX_AIC_1_0 | KERNEL_TYPE_MIX_AIV_1_0 |
+    | 核函数（Kernel）类型 | KERNEL_TYPE_AIV_ONLY | KERNEL_TYPE_AIC_ONLY | KERNEL_TYPE_MIX_AIC_1_2 | KERNEL_TYPE_MIX_AIC_1_1 | KERNEL_TYPE_MIX_AIC_1_0 | KERNEL_TYPE_MIX_AIV_1_0 |
     | --- | --- | --- | --- | --- | --- | --- |
     | AIV | 1 | - | 2 | 1 | - | 1 |
     | AIC | - | 1 | 1 | 1 | 1 | - |

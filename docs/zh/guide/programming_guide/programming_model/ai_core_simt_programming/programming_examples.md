@@ -8,7 +8,7 @@
 output[i] = input[index[i]]
 ```
 
-在核函数中完成一行数据量的计算逻辑，通过配置多个线程完成不同行的数据计算操作。核函数的实现逻辑具体为：
+在核函数（Kernel）中完成一行数据量的计算逻辑，通过配置多个线程完成不同行的数据计算操作。核函数（Kernel）的实现逻辑具体为：
 
 -   通过每个线程独有的线程索引找到当前线程需要计算的数据偏移量。
 
@@ -16,7 +16,7 @@ output[i] = input[index[i]]
     int32_t out_row = blockIdx.x * blockDim.x + threadIdx.x;
     ```
 
-    一个线程完成一次核函数的计算操作，核函数内通过计算blockIdx.x \* blockDim.x + threadIdx.x得到索引偏移，其中blockIdx是当前线程块的索引，blockDim是每个线程块启用的线程数，threadIdx是当前线程在线程块内的索引，更多详细介绍请参考[SIMT BuiltIn关键字](../../language_extension/simt_builtin_keywords.md)。
+    一个线程完成一次核函数（Kernel）的计算操作，核函数（Kernel）内通过计算blockIdx.x \* blockDim.x + threadIdx.x得到索引偏移，其中blockIdx是当前线程块的索引，blockDim是每个线程块启用的线程数，threadIdx是当前线程在线程块内的索引，更多详细介绍请参考[SIMT BuiltIn关键字](../../language_extension/simt_builtin_keywords.md)。
 
 -   通过下标偏移将偏移位置的输入数据拷贝到输出中，从而完成获取指定数据的功能。
 
@@ -30,7 +30,7 @@ output[i] = input[index[i]]
     }
     ```
 
-核函数的实现参考如下代码。完整的样例请参考[简单gather算子样例](../../../../../../examples/03_simt_api/00_introduction/01_gather/basic_gather/gather_2d)。
+核函数（Kernel）的实现参考如下代码。完整的样例请参考[简单gather算子样例](../../../../../../examples/03_simt_api/00_introduction/01_gather/basic_gather/gather_2d)。
 
 ```cpp
 template <typename type_data, typename type_idx>
@@ -59,7 +59,7 @@ __global__ void gather_2d_custom(
 }
 ```
 
-算子需要处理总共12288行数据，每行数据由核函数完成处理，因此需要12288个线程来完成对所有数据的处理。在Host侧通过<<<...\>\>\>调用核函数，同时设置启动48个线程块、每个线程块包含256个线程，示例代码如下。
+算子需要处理总共12288行数据，每行数据由核函数（Kernel）完成处理，因此需要12288个线程来完成对所有数据的处理。在Host侧通过<<<...\>\>\>调用核函数（Kernel），同时设置启动48个线程块、每个线程块包含256个线程，示例代码如下。
 
 ```cpp
 int32_t main(int32_t argc, char* argv[])

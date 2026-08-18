@@ -9,7 +9,7 @@
 
 因此原子操作的优化围绕“减少同一地址上排队的原子操作次数”与“降低单条原子指令的处理开销”两点展开，具体可从以下方面进行优化：
 
-- **通过分层归约将原子操作从GM迁移至UB**：Global Memory（GM）位于AI Core外部，访问路径较长、延迟较高；Unified Buffer（UB）位于AI Core内部，访问路径较短、延迟较低。且UB为线程块私有，不同线程块的UB原子操作互不竞争。先在各线程块的UB中局部归约、再向GM汇总，可同时降低单次处理开销并减少同一地址上排队的原子操作次数。
+- **通过分层归约将原子操作从GM迁移至Unified Buffer（UB）**：Global Memory（GM）位于AI Core外部，访问路径较长、延迟较高；UB位于AI Core内部，访问路径较短、延迟较低。且UB为线程块私有，不同线程块的UB原子操作互不竞争。先在各线程块的UB中局部归约、再向GM汇总，可同时降低单次处理开销并减少同一地址上排队的原子操作次数。
 - **非必要不使用原子操作的返回值**：是否使用返回值会影响编译器生成的原子指令，不使用返回值时编译器可生成处理开销更低的优化指令。
 - **分散GM上原子操作的目标地址**：当原子操作因业务需要必须在GM上执行时，由于GM原子操作以128B Sector（扇区）为处理粒度，目标地址集中在同一个Sector内时处理效率较低，应通过padding等方式使原子目标覆盖更多Sector。该方法仅适用于GM，UB上的原子操作不适用。
 
@@ -58,7 +58,7 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void histogram_gm_global(
 __global__ __launch_bounds__(THREADS_PER_BLOCK) void histogram_ub_block_local(
     uint32_t* histogram, const uint8_t* input, uint32_t byte_count)
 {
-    __ubuf__ uint32_t block_histogram[HISTOGRAM_BIN_COUNT]; // __ubuf__表示该数组位于Unified Buffer（UB）片上存储。
+    __ubuf__ uint32_t block_histogram[HISTOGRAM_BIN_COUNT]; // __ubuf__表示该数组位于UB片上存储。
 
     // 线程块内线程协作清零UB直方图。
     for (uint32_t bin_index = threadIdx.x; bin_index < HISTOGRAM_BIN_COUNT; bin_index += blockDim.x) {
@@ -192,11 +192,11 @@ atomic_add_gm_case4_i32_return<<<48, 256, 0, stream>>>(counters_device, 32, 384,
 【正例】通过padding扩大目标地址间隔，使原子目标分散到更多Sector上。
 
 ```cpp
-// 核函数不变，仅将target_stride从1增加到32：相邻目标地址间隔128B，32个地址分别位于32个Sector。
+// 核函数（Kernel）不变，仅将target_stride从1增加到32：相邻目标地址间隔128B，32个地址分别位于32个Sector。
 atomic_add_gm_case4_i32_return<<<48, 256, 0, stream>>>(counters_device, 32, 384, 32);
 ```
 
-上述实现的核函数与反例完全相同，数据类型、是否使用返回值、线程规模、目标地址数、每个地址上的线程数与原子加总次数均保持一致，仅将`target_stride`由1个int32_t元素增加到32个int32_t元素（即128B），使原子目标覆盖32个Sector。该实现的性能数据如下：
+上述实现的核函数（Kernel）与反例完全相同，数据类型、是否使用返回值、线程规模、目标地址数、每个地址上的线程数与原子加总次数均保持一致，仅将`target_stride`由1个int32_t元素增加到32个int32_t元素（即128B），使原子目标覆盖32个Sector。该实现的性能数据如下：
 
 | 地址布局 | target_stride | 覆盖Sector数 | Task Duration（μs） |
 | :---: | :---: | :---: | :---: |

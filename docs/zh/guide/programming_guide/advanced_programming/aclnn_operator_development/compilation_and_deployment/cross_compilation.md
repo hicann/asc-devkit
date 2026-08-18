@@ -64,7 +64,7 @@ which aarch64-linux-gnu-g++
 
 ## 执行交叉编译
 
-交叉编译Kernel二进制时，编译框架需要先加载本机架构可执行的Tiling动态库来获取编译参数。因此设置完`ENABLE_CROSS_COMPILE=True`且`ENABLE_BINARY_PACKAGE=True`之后，需要执行两步才能完成交叉编译：
+交叉编译核函数（Kernel）二进制时，编译框架需要先加载本机架构可执行的Tiling动态库来获取编译参数。因此设置完`ENABLE_CROSS_COMPILE=True`且`ENABLE_BINARY_PACKAGE=True`之后，需要执行两步才能完成交叉编译：
 
 - 要先在本机模式下生成`libcust_opmaster_rt2.0.so`；
 - 再通过`HOST_NATIVE_TILING_LIB`传给交叉编译阶段。

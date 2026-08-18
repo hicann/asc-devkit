@@ -4,5 +4,4 @@
 
 Tiling实现运行在Host侧CPU上，一般使用传统的调测手段（比如gdb工具）即可完成调试。
 
-Kernel实现运行在Device侧NPU上，Ascend C提供了多种调试方式，包括孪生调试、上板调试等，具体的调试方法请参考[算子调试](../../programming_guide/debug_and_tuning/overview.md)。
-
+核函数（Kernel）实现运行在Device侧NPU上，Ascend C提供了多种调试方式，包括孪生调试、上板调试等，具体的调试方法请参考[算子调试](../../programming_guide/debug_and_tuning/overview.md)。

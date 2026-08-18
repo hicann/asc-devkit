@@ -64,7 +64,7 @@ __aicore__ inline void IBWait(const GlobalTensor<int32_t>& gmWorkspace, const Lo
 
 - gmWorkspace申请的空间最少要求为：核数*32Bytes*eventID_max+blockIdx_max*32Bytes+32Bytes（eventID_max和blockIdx_max分别指eventID、blockIdx的最大值）。需要注意的是，如果是AIVOnly模式，核数=GetBlockNum()；如果是MIX模式，核数=GetBlockNum()*2。
 - ubWorkspace申请的空间最少要求为：32Bytes。
-- 使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致Kernel“卡死”现象。
+- 使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致核函数（Kernel）“卡死”现象。
 - IBSet和IBWait配对使用时，除了ubWorkspace其余所有参数都必须相同，否则程序会在IBWait处卡死。
 - 分离模式下，使用该接口进行两个核间的同步时，仅对AIV核生效。
 - IBSet接口的gmWorkspace缓存的值需要初始化为0。

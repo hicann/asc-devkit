@@ -18,7 +18,7 @@
 
 ## CV融合：Scenario 1 — CV融合-GM中转
 
-中级性能优化采用CV融合-GM中转方式（A2/A3/Ascend 950PR均支持）。AIC侧通过Fixpipe将L0C计算结果写入GM，AIV侧从GM读取数据到UB后进行GELU计算，再将结果写回GM。
+中级性能优化采用CV融合-GM中转方式（A2/A3/Ascend 950PR均支持）。AIC侧通过Fixpipe将L0C计算结果写入GM，AIV侧从GM读取数据到Unified Buffer（UB）后进行GELU计算，再将结果写回GM。
 
 数据流路径：
 ```

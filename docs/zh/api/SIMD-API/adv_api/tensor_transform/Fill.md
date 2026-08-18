@@ -55,8 +55,8 @@ __aicore__ inline void Fill(GlobalTensor<T>& gmWorkspaceAddr, const uint64_t siz
 
 ## 约束说明
 
--   单核调用此接口时，如果后续操作涉及Unified Buffer的使用，则需要在调用接口后，设置MTE2流水等待MTE3流水（[MTE3\_MTE2](../../basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md#section622mcpsimp)）的同步。
--   单核上连续多次调用此接口且初始化的值不一致时，需要在接口之间设置V流水等待MTE3流水（[MTE3\_V](../../basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md#section622mcpsimp)）的同步。由于该接口内部使用同一块Unified Buffer作为中转空间进行值初始化，连续调用接口时若不进行流水同步，后一次写操作可能覆盖前一次未完成写入的数据，导致前一次初始化Global Memory的结果非预期。
+-   单核调用此接口时，如果后续操作涉及Unified Buffer（UB）的使用，则需要在调用接口后，设置MTE2流水等待MTE3流水（[MTE3\_MTE2](../../basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md#section622mcpsimp)）的同步。
+-   单核上连续多次调用此接口且初始化的值不一致时，需要在接口之间设置V流水等待MTE3流水（[MTE3\_V](../../basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md#section622mcpsimp)）的同步。由于该接口内部使用同一块UB作为中转空间进行值初始化，连续调用接口时若不进行流水同步，后一次写操作可能覆盖前一次未完成写入的数据，导致前一次初始化Global Memory的结果非预期。
 -   当多个核调用此接口对Global Memory进行初始化时，所有核对Global Memory的初始化未必会同时结束，也可能存在核之间读后写、写后读以及写后写等数据依赖问题。这种使用场景下，可以在本接口后调用[SyncAll](../../basic_api/sync_control/inter_core_sync/SyncAll.md)接口保证多核间同步正确。
 -   该接口仅支持在程序内存分配[InitBuffer](../../basic_api/resource_management/TPipe/InitBuffer.md)接口前使用。
 -   支持的数据类型<a id="li194619420173"></a>

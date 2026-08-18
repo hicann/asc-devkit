@@ -60,7 +60,7 @@ __simd_callee__ inline void asc_pair_reduce_sum(vector_float& dst, vector_float 
   - 若连续两个元素a、b仅元素a参与计算，目的操作数结果为a。
   - 若连续两个元素a、b仅元素b参与计算，目的操作数结果为b。
 
-- 求和后，dst中仅前一半元素为有效数据，后一半填充为0。搬出至UB时需要避免数据踩踏。
+- 求和后，dst中仅前一半元素为有效数据，后一半填充为0。搬出至Unified Buffer（UB）时需要避免数据踩踏。
 
 ## 调用示例
 

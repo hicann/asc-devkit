@@ -55,4 +55,4 @@
 
     头开销是算子执行计算前产生的时延，包含核启动、核取址TLB MISS、同地址访问（由于硬件限制，多核同时访问相同内存地址冲突带来额外的时延）以及变量资源初始化带来的时延。以Atlas A2 训练系列产品/Atlas A2 推理系列产品为例，满核头开销约为20\~21微秒。对于推理领域等本身延迟为微秒级别的算子，头开销是一个值得优化的对象。
 
-    通过**上板Profiling**数据（空Kernel时的TaskDuration数据）可以看到每个核的启动开销耗时，继而通过**使用恰当的核数和算子Kernel Type**等方法来不断的实践，尝试找到最优的配置，具体优化方向可以参考[头尾开销优化](../simd_operator_optimization/overhead_optimization/overhead_optimization.md)。
+    通过**上板Profiling**数据（空核函数（Kernel）时的TaskDuration数据）可以看到每个核的启动开销耗时，继而通过**使用恰当的核数和算子Kernel Type**等方法来不断的实践，尝试找到最优的配置，具体优化方向可以参考[头尾开销优化](../simd_operator_optimization/overhead_optimization/overhead_optimization.md)。

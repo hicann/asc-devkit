@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-在同一Thread Block内，多个线程共享Unified Buffer（256KB共享内存），线程间也会存在数据竞争问题。
+在同一Thread Block内，多个线程共享256KB的Unified Buffer（UB），线程间也会存在数据竞争问题。
 
 与[asc\_threadfence](asc_threadfence.md)接口类似，asc\_threadfence\_block函数用于保证当前线程的内存读写操作在同一Thread Block范围内的可见性顺序，确保某一线程在调用asc\_threadfence\_block\(\)之前的所有内存读写操作对同一线程块内的其他线程可见。该函数不会阻塞当前线程的执行，仅建立Block范围内的内存操作可见性顺序约束。asc\_threadfence\_block提供Block范围内的可见性保证，其实现仅需要确保Block内共享的缓存层级一致性，无需进行全局内存屏障操作。
 
@@ -77,4 +77,3 @@ inline void asc_threadfence_block()
         dst[0] = src[0];
     }
     ```
-

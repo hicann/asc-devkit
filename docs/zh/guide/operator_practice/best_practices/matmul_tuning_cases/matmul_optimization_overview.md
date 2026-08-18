@@ -107,7 +107,7 @@
     </th>
     </tr>
     </thead>
-    <tbody><tr id="row1414892319513"><td class="cellrowborder" valign="top" width="30.086991300869915%" headers="mcps1.2.4.1.1 "><p id="p5148162310512"><a name="p5148162310512"></a><a name="p5148162310512"></a>Tiling常量化：在Kernel编译期间完成Matmul Tiling的计算，由变量转化为常量扩散到系统中，减少Scalar提升性能。</p>
+    <tbody><tr id="row1414892319513"><td class="cellrowborder" valign="top" width="30.086991300869915%" headers="mcps1.2.4.1.1 "><p id="p5148162310512"><a name="p5148162310512"></a><a name="p5148162310512"></a>Tiling常量化：在核函数（Kernel）编译期间完成Matmul Tiling的计算，由变量转化为常量扩散到系统中，减少Scalar提升性能。</p>
     </td>
     <td class="cellrowborder" valign="top" width="40.82591740825918%" headers="mcps1.2.4.1.2 "><p id="p147291104560"><a name="p147291104560"></a><a name="p147291104560"></a>Matmul初始化时的Scalar计算较多，影响指令头开销。</p>
     <p id="p1563512345614"><a name="p1563512345614"></a><a name="p1563512345614"></a>Matmul迭代之间的Scalar计算较多，阻塞MTE2流水。</p>

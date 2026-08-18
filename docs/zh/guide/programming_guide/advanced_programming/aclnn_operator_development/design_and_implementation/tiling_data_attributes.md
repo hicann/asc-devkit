@@ -1,8 +1,8 @@
 # 通过TilingData传递属性信息
 
-本文属于扩展内容，介绍算子属性参与Kernel计算时所需的数据传递方法。算子属性在Host侧保存，Kernel不能直接读取。属性需要参与Kernel计算时，Host侧Tiling函数先读取属性值，再把Kernel真正需要的数据写入TilingData，由框架传到Kernel侧。
+本文属于扩展内容，介绍算子属性参与核函数（Kernel）计算时所需的数据传递方法。算子属性在Host侧保存，核函数（Kernel）不能直接读取。属性需要参与核函数（Kernel）计算时，Host侧Tiling函数先读取属性值，再把核函数（Kernel）真正需要的数据写入TilingData，由框架传到核函数（Kernel）侧。
 
-本文以LeakyReluCustom的`negative_slope`属性为例，介绍如何通过TilingData将属性从Host侧传递至Kernel侧，包括在算子原型中声明属性、在Host侧读取属性并写入TilingData，以及在Kernel侧从TilingData中读取并使用该属性。TilingData的基础定义和写入方法见[基本流程](./host_tiling_implementation.md)。
+本文以LeakyReluCustom的`negative_slope`属性为例，介绍如何通过TilingData将属性从Host侧传递至核函数（Kernel）侧，包括在算子原型中声明属性、在Host侧读取属性并写入TilingData，以及在核函数（Kernel）侧从TilingData中读取并使用该属性。TilingData的基础定义和写入方法见[基本流程](./host_tiling_implementation.md)。
 
 ## 属性传递流程
 
@@ -12,10 +12,10 @@
 flowchart LR
     A["OpDef声明属性"] --> B["TilingFunc按声明顺序读取属性"]
     B --> C["写入TilingData字段"]
-    C --> D["Kernel解析TilingData并使用字段"]
+    C --> D["核函数（Kernel）解析TilingData并使用字段"]
 ```
 
-只有Kernel运行时需要使用的结果才写入TilingData。如果属性只影响Host侧的切分、Block数量或TilingKey，Host侧完成计算后传递最终运行参数即可，不需要原样传递属性。
+只有核函数（Kernel）运行时需要使用的结果才写入TilingData。如果属性只影响Host侧的切分、Block数量或TilingKey，Host侧完成计算后传递最终运行参数即可，不需要原样传递属性。
 
 ## 在算子原型中声明属性
 
@@ -41,7 +41,7 @@ this->Attr("negative_slope")
 
 ## 在TilingData中增加字段
 
-使用标准C++语法定义TilingData时，直接增加与Kernel侧使用类型一致的字段：
+使用标准C++语法定义TilingData时，直接增加与核函数（Kernel）侧使用类型一致的字段：
 
 ```cpp
 #ifndef LEAKY_RELU_CUSTOM_TILING_H
@@ -51,14 +51,14 @@ this->Attr("negative_slope")
 struct LeakyReluCustomTilingData {
     uint32_t totalLength;
     uint32_t tileNum;
-    // 保存Host侧读取到的属性值，供Kernel计算使用。
+    // 保存Host侧读取到的属性值，供核函数（Kernel）计算使用。
     float negativeSlope;
 };
 
 #endif // LEAKY_RELU_CUSTOM_TILING_H
 ```
 
-TilingData字段保存的是传给Kernel的数据，不要求与属性同名。建议使用能直接表达Kernel用途的名称，并选择大小固定、可直接复制的字段类型，例如整数、浮点数、布尔值或定长数组；不要使用指针、引用或动态容器。
+TilingData字段保存的是传给核函数（Kernel）的数据，不要求与属性同名。建议使用能直接表达核函数（Kernel）用途的名称，并选择大小固定、可直接复制的字段类型，例如整数、浮点数、布尔值或定长数组；不要使用指针、引用或动态容器。
 
 ## Host侧TilingFunc读取属性并写入TilingData
 
@@ -92,7 +92,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     context->SetSimdNumBlocks(NUM_BLOCKS);
     tiling->totalLength = totalLength;
     tiling->tileNum = TILE_NUM;
-    // 将属性值写入TilingData，随其他运行参数一起传到Kernel侧。
+    // 将属性值写入TilingData，随其他运行参数一起传到核函数（Kernel）侧。
     tiling->negativeSlope = *negativeSlope;
 
     size_t* currentWorkspace = context->GetWorkspaceSizes(1);
@@ -112,7 +112,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 |---|---|---|
 | `.Bool(...)` | `bool` | `bool`或明确宽度的整数 |
 | `.Float(...)` | `float` | `float` |
-| `.Int(...)` | 与接口约定一致的整数类型 | 按Kernel需求检查范围后转换 |
+| `.Int(...)` | 与接口约定一致的整数类型 | 按核函数（Kernel）需求检查范围后转换 |
 
 属性读取类型不匹配会导致数据解析错误。整数属性转换成`uint32_t`等更窄类型前，需要检查负数和溢出范围。
 
@@ -138,9 +138,9 @@ if (axis == nullptr || keepDims == nullptr) {
 
 新增、删除或调整属性顺序时，需要同步检查所有`GetAttrPointer(index)`调用。建议为索引定义具名常量，避免在Tiling函数中散落数字。
 
-## Kernel侧使用属性
+## 核函数（Kernel）侧使用属性
 
-Kernel入口解析TilingData后，将属性字段传给Kernel实现类：
+核函数（Kernel）入口解析TilingData后，将属性字段传给核函数（Kernel）实现类：
 
 ```cpp
 constexpr uint32_t STATIC_TILE_LENGTH = 64;
@@ -154,14 +154,14 @@ extern "C" __global__ __aicore__ void leaky_relu_custom(
     GET_TILING_DATA(tilingData, tiling);
 
     KernelLeakyRelu<STATIC_TILE_LENGTH> op;
-    // 将解析出的属性值传给Kernel实现类。
+    // 将解析出的属性值传给核函数（Kernel）实现类。
     op.Init(x, y, tilingData.totalLength, tilingData.tileNum,
             tilingData.negativeSlope);
     op.Process();
 }
 ```
 
-`Init`把`negativeSlope`保存为Kernel类成员。配套样例使用`Maxs`、`Mins`、`Muls`和`Add`组合实现LeakyRelu：
+`Init`把`negativeSlope`保存为核函数（Kernel）类成员。配套样例使用`Maxs`、`Mins`、`Muls`和`Add`组合实现LeakyRelu：
 
 ```cpp
 float inputVal = 0.0f;
@@ -183,13 +183,13 @@ tmpTensor2 = min(x, 0) * negativeSlope
 y = tmpTensor1 + tmpTensor2
 ```
 
-计算完成后再按Kernel基本流程把`yLocal`写回Global Memory。示例中的属性值只在`Init`时读取一次，不在Tile循环中重复解析TilingData。
+计算完成后再按核函数（Kernel）基本流程把`yLocal`写回Global Memory。示例中的属性值只在`Init`时读取一次，不在Tile循环中重复解析TilingData。
 
-如果某个属性只用于Host侧选择TilingKey，例如根据`algorithm`属性选择不同Kernel分支，则可以直接调用`context->SetTilingKey(...)`，不再额外增加TilingData字段。分支组织方法见[多分支策略](./multi_branch_strategy.md)。
+如果某个属性只用于Host侧选择TilingKey，例如根据`algorithm`属性选择不同核函数（Kernel）分支，则可以直接调用`context->SetTilingKey(...)`，不再额外增加TilingData字段。分支组织方法见[多分支策略](./multi_branch_strategy.md)。
 
 ## 相关文档
 
 - [算子原型定义](./operator_prototype_definition.md)：声明属性及默认值。
 - [Host侧Tiling实现](./host_tiling_implementation.md)：定义和写入TilingData。
-- [Kernel侧算子实现](./kernel_operator_implementation.md)：注册、解析并使用TilingData。
-- [多分支策略](./multi_branch_strategy.md)：使用属性选择TilingKey或Kernel模板分支。
+- [核函数（Kernel）侧算子实现](./kernel_operator_implementation.md)：注册、解析并使用TilingData。
+- [多分支策略](./multi_branch_strategy.md)：使用属性选择TilingKey或核函数（Kernel）模板分支。

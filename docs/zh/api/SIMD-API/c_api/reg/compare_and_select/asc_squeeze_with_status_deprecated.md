@@ -79,7 +79,7 @@ PIPE_V
 ```cpp
 vector_int8_t src;
 vector_bool mask = asc_create_mask_b8(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
+asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
 vector_int8_t dst;
 asc_squeeze_with_status(dst, src, mask);
 ```

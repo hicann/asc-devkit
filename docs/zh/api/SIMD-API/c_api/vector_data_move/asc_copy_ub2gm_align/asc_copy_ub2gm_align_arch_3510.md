@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将数据从Unified Buffer (UB)搬运到Global Memory (GM)，支持8位/16位/32位数据类型搬运。
+将数据从Unified Buffer（UB）搬运到Global Memory (GM)，支持8位/16位/32位数据类型搬运。
 
 本接口支持以下两种数据搬运方式，均不支持设置填充值：
 

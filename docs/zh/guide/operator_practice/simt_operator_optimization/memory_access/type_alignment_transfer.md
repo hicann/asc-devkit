@@ -4,7 +4,7 @@
 
 【描述】SIMT编程模式下，结构体类型对齐会影响Global Memory的访存效率。<!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT支持1B、2B、4B、8B四种位宽的访存指令。<!-- end id1 -->在数据总量不变时，可通过类型对齐到更大的位宽，提升数据搬运效率。
 
-【样例介绍】设置总搬运量`MEM_BYTES`为512MiB，构造多组不同大小、不同对齐方式的结构体`TData`，依次将长度为`num_elements`的输入数组`d_idata`整体复制到输出数组`d_odata`进行测试，对比非对齐与使用`alignas`类型对齐后的耗时差异。具体代码可参考[类型对齐优化搬运效率最佳实践样例](../../../../../../examples/03_simt_api/03_best_practices/00_memory_optimizations/aligned_types)，其中核函数实现如下：
+【样例介绍】设置总搬运量`MEM_BYTES`为512MiB，构造多组不同大小、不同对齐方式的结构体`TData`，依次将长度为`num_elements`的输入数组`d_idata`整体复制到输出数组`d_odata`进行测试，对比非对齐与使用`alignas`类型对齐后的耗时差异。具体代码可参考[类型对齐优化搬运效率最佳实践样例](../../../../../../examples/03_simt_api/03_best_practices/00_memory_optimizations/aligned_types)，其中核函数（Kernel）实现如下：
 
 ```cpp
 constexpr uint32_t THREAD_COUNT = 2048;                  // threads per block

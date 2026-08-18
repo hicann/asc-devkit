@@ -31,7 +31,7 @@ Ascend C提供一组Conv3D高阶API，方便用户快速实现3维卷积正向�
 **图4**  卷积3D正向Dilation示意图<a name="fig1015315044111"></a>  
 ![](../../../../figures/conv3d_dilation.png "卷积3D正向Dilation示意图")
 
-Kernel侧实现Conv3D运算的步骤概括为：
+核函数（Kernel）侧实现Conv3D运算的步骤概括为：
 
 1.  创建Conv3D对象。
 2.  初始化操作。

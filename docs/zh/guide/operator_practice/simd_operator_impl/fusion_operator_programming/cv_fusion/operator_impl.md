@@ -6,7 +6,7 @@
 
 ## 算子分析<a name="zh-cn_topic_0000001644252364_section161962036133819"></a>
 
-算子分析是指明确算子的数学表达式、输入、输出，核函数的名称等信息。
+算子分析是指明确算子的数学表达式、输入、输出，核函数（Kernel）的名称等信息。
 
 1.  明确算子的数学表达式及计算逻辑。该算子的计算逻辑为，先进行一个矩阵乘操作，然后将矩阵乘的结果与一个alpha参数进行LeakyRelu操作。数学表达式如下：
 
@@ -20,9 +20,9 @@
     -   输入矩阵a的形状为\[M，K\]，输入矩阵b的形状为\[K, N\]，输出矩阵c的形状为\[M，N\]，输入bias的形状为\[1, N\]。
     -   算子输入输出支持的数据格式为：ND。
 
-3.  确定核函数名称和参数。
-    -   您可以自定义核函数名称，本样例中核函数命名为matmul\_leakyrelu\_custom。
-    -   根据对算子输入输出的分析，确定核函数的参数a，b，bias，c；a，b, bias为输入在Global Memory上的内存地址，c为输出在Global Memory上的内存地址。
+3.  确定核函数（Kernel）名称和参数。
+    -   您可以自定义核函数（Kernel）名称，本样例中核函数（Kernel）命名为matmul\_leakyrelu\_custom。
+    -   根据对算子输入输出的分析，确定核函数（Kernel）的参数a，b，bias，c；a，b, bias为输入在Global Memory上的内存地址，c为输出在Global Memory上的内存地址。
 
 通过以上分析，得到Ascend C  Matmul+LeakyRelu算子的设计规格如下：
 
@@ -81,7 +81,7 @@
     </tbody>
     </table>
 
--   核函数名称：matmul\_leakyrelu\_custom
+-   核函数（Kernel）名称：matmul\_leakyrelu\_custom
 
 ## 数据流分析<a name="zh-cn_topic_0000001644252364_section1611503193514"></a>
 
@@ -119,7 +119,7 @@
 Tiling策略的设计主要包括多核切分和核内切分策略。
 
 -   多核切分: 根据当前核数，对输入shape的M, K, N进行多核切分，得到单核内shape大小singleCoreM, singleCoreK, singleCoreN。
--   核内切分: 根据Local Memory的大小约束，对单核内的shape大小进一步切分，得到A、B、C矩阵参与一次矩阵乘指令的shape大小baseM, baseN, baseK。切分时需要注意：GetTensorC的结果如果放在LocalMemory（UB）上，需要注意，baseM \* baseN的大小不能超出UB的限制。
+-   核内切分: 根据Local Memory的大小约束，对单核内的shape大小进一步切分，得到A、B、C矩阵参与一次矩阵乘指令的shape大小baseM, baseN, baseK。切分时需要注意：GetTensorC的结果如果放在Unified Buffer（UB）上，baseM \* baseN的大小不能超出UB的限制。
 
 切分策略示意图如下，更多切分策略相关原理请参考[数据分块（Tiling）](../../matrix_advanced_api/basics.md)。
 
@@ -241,7 +241,7 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 
 4.  **设置可用空间大小信息。**
 
-    设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer空间大小，-1表示AI处理器对应Buffer的大小。融合场景下LeakyRelu需要使用一块`baseM * baseN * sizeof(float)`大小的Unified Buffer缓存，因此可以根据Vector侧缓存需求扣除一部分Unified Buffer空间。
+    设置Matmul计算时可用的L1 Buffer/L0C Buffer/UB空间大小，-1表示AI处理器对应Buffer的大小。融合场景下LeakyRelu需要使用一块`baseM * baseN * sizeof(float)`大小的UB缓存，因此可以根据Vector侧缓存需求扣除一部分UB空间。
 
     ```
     uint64_t ubSize = 0;
@@ -284,10 +284,10 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 >    - 通过[ASCEND\_IS\_AIV和ASCEND\_IS\_AIC](../../../../programming_guide/language_extension/simd_builtin_keywords.md#li19530175294118)实现AIV和AIC代码之间的隔离。
 >    - 自行实现AIC和AIV核之间的同步：比如Matmul + LeakyRelu算子样例中，需要确保在AIC完成矩阵计算后，AIV再进行LeakyRelu的计算。
 >    - 使用高阶API Matmul时需要设置ASCENDC\_CUBE\_ONLY，表示仅在AIC侧调用Matmul API。
->    - 使用[设置Kernel类型接口](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)设置Kernel类型为KERNEL\_TYPE\_MIX\_xxx，同时启用AIV核和AIC核。
+>    - 使用[设置核函数（Kernel）类型接口](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)设置核函数（Kernel）类型为KERNEL\_TYPE\_MIX\_xxx，同时启用AIV核和AIC核。
 >    ```
 >    #define ASCENDC_CUBE_ONLY // 指定Matmul运行在AIC上
->    KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);  // 设置Kernel类型为KERNEL_TYPE_MIX_xxx
+>    KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);  // 设置核函数（Kernel）类型为KERNEL_TYPE_MIX_xxx
 >    if ASCEND_IS_AIC {
 >        ...
 >        // AIC核进行Matmul计算

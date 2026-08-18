@@ -21,17 +21,17 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [asc_atomic_add](../atomic_operations/asc_atomic_add.md) | 对Unified Buffer或Global Memory上的数据与指定数据执行原子加操作，即将指定数据累加到Unified Buffer或Global Memory的数据中。 |
-| [asc_atomic_sub](../atomic_operations/asc_atomic_sub.md) | 对Unified Buffer或Global Memory上的数据与指定数据执行原子减操作，即在Unified Buffer或Global Memory的数据上减去指定数据。 |
-| [asc_atomic_exch](../atomic_operations/asc_atomic_exch.md) | 对Unified Buffer或Global Memory地址做原子赋值操作，即将指定数据赋值到Unified Buffer或Global Memory地址中。 |
-| [asc_atomic_max](../atomic_operations/asc_atomic_max.md) | 对Unified Buffer或Global Memory数据做原子求最大值操作，即将Unified Buffer或Global Memory的数据与指定数据中的最大值赋值到Unified Buffer或Global Memory地址中。 |
-| [asc_atomic_min](../atomic_operations/asc_atomic_min.md) | 对Unified Buffer或Global Memory数据做原子求最小值操作，即将Unified Buffer或Global Memory的数据与指定数据中的最小值赋值到Unified Buffer或Global Memory地址中。 |
-| [asc_atomic_inc](../atomic_operations/asc_atomic_inc.md) | 对Unified Buffer或Global Memory上address的数值进行原子加1操作，如果address上的数值大于等于指定数值val，则对address赋值为0，否则将address上数值加1。 |
-| [asc_atomic_dec](../atomic_operations/asc_atomic_dec.md) | 对Unified Buffer或Global Memory上address的数值进行原子减1操作，如果address上的数值等于0或大于指定数值val，则对address赋值为val，否则将address上数值减1。 |
-| [asc_atomic_cas](../atomic_operations/asc_atomic_cas.md) | 对Unified Buffer或Global Memory上address的数值进行原子比较赋值操作，如果address上的数值等于指定数值compare，则对address赋值为指定数值val，否则address的数值不变。 |
-| [asc_atomic_and](../atomic_operations/asc_atomic_and.md) | 对Unified Buffer或Global Memory上address的数值与指定数值val进行原子与（&）操作，即将address数值与（&）val的结果赋值到Unified Buffer或Global Memory上。 |
-| [asc_atomic_or](../atomic_operations/asc_atomic_or.md) | 对Unified Buffer或Global Memory上address的数值与指定数值val进行原子或（\|）操作，即将address数值或（\|）val的结果赋值到Unified Buffer或Global Memory上。 |
-| [asc_atomic_xor](../atomic_operations/asc_atomic_xor.md) | 对Unified Buffer或Global Memory上address的数值与指定数值val进行原子异或（^）操作，即将address数值异或（^）val的结果赋值到Unified Buffer或Global Memory上。 |
+| [asc_atomic_add](../atomic_operations/asc_atomic_add.md) | 对UB或Global Memory上的数据与指定数据执行原子加操作，即将指定数据累加到UB或Global Memory的数据中。 |
+| [asc_atomic_sub](../atomic_operations/asc_atomic_sub.md) | 对UB或Global Memory上的数据与指定数据执行原子减操作，即在UB或Global Memory的数据上减去指定数据。 |
+| [asc_atomic_exch](../atomic_operations/asc_atomic_exch.md) | 对UB或Global Memory地址做原子赋值操作，即将指定数据赋值到UB或Global Memory地址中。 |
+| [asc_atomic_max](../atomic_operations/asc_atomic_max.md) | 对UB或Global Memory数据做原子求最大值操作，即将UB或Global Memory的数据与指定数据中的最大值赋值到UB或Global Memory地址中。 |
+| [asc_atomic_min](../atomic_operations/asc_atomic_min.md) | 对UB或Global Memory数据做原子求最小值操作，即将UB或Global Memory的数据与指定数据中的最小值赋值到UB或Global Memory地址中。 |
+| [asc_atomic_inc](../atomic_operations/asc_atomic_inc.md) | 对UB或Global Memory上address的数值进行原子加1操作，如果address上的数值大于等于指定数值val，则对address赋值为0，否则将address上数值加1。 |
+| [asc_atomic_dec](../atomic_operations/asc_atomic_dec.md) | 对UB或Global Memory上address的数值进行原子减1操作，如果address上的数值等于0或大于指定数值val，则对address赋值为val，否则将address上数值减1。 |
+| [asc_atomic_cas](../atomic_operations/asc_atomic_cas.md) | 对UB或Global Memory上address的数值进行原子比较赋值操作，如果address上的数值等于指定数值compare，则对address赋值为指定数值val，否则address的数值不变。 |
+| [asc_atomic_and](../atomic_operations/asc_atomic_and.md) | 对UB或Global Memory上address的数值与指定数值val进行原子与（&）操作，即将address数值与（&）val的结果赋值到UB或Global Memory上。 |
+| [asc_atomic_or](../atomic_operations/asc_atomic_or.md) | 对UB或Global Memory上address的数值与指定数值val进行原子或（\|）操作，即将address数值或（\|）val的结果赋值到UB或Global Memory上。 |
+| [asc_atomic_xor](../atomic_operations/asc_atomic_xor.md) | 对UB或Global Memory上address的数值与指定数值val进行原子异或（^）操作，即将address数值异或（^）val的结果赋值到UB或Global Memory上。 |
 
 ## Warp函数
 
@@ -754,7 +754,7 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [__isGlobal](../address_space_predicate_functions/__isGlobal.md) | 判断输入的指针是否指向Global Memory内存空间的地址。 |
-| [__isUbuf](../address_space_predicate_functions/__isUbuf.md) | 判断输入的指针是否指向Unified Buffer内存空间的地址。 |
+| [__isUbuf](../address_space_predicate_functions/__isUbuf.md) | 判断输入的指针是否指向UB内存空间的地址。 |
 | [__isLocal](../address_space_predicate_functions/__isLocal.md) | 判断输入的指针是否指向栈空间的地址。 |
 
 ## 地址空间转换函数
@@ -764,10 +764,10 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [__cvta_generic_to_global](../address_space_conversion_functions/__cvta_generic_to_global.md) | 将输入的指针转换为其指向的Global Memory内存空间的地址值并返回。 |
-| [__cvta_generic_to_ubuf](../address_space_conversion_functions/__cvta_generic_to_ubuf.md) | 将输入的指针转换为其指向的Unified Buffer内存空间的地址值并返回。 |
+| [__cvta_generic_to_ubuf](../address_space_conversion_functions/__cvta_generic_to_ubuf.md) | 将输入的指针转换为其指向的UB内存空间的地址值并返回。 |
 | [__cvta_generic_to_local](../address_space_conversion_functions/__cvta_generic_to_local.md) | 将输入的指针转换为其指向的栈空间地址的值并返回。 |
 | [__cvta_global_to_generic](../address_space_conversion_functions/__cvta_global_to_generic.md) | 将Global Memory内存空间的地址值转换为对应的指针。 |
-| [__cvta_ubuf_to_generic](../address_space_conversion_functions/__cvta_ubuf_to_generic.md) | 将Unified Buffer内存空间的地址值转换为对应的指针。 |
+| [__cvta_ubuf_to_generic](../address_space_conversion_functions/__cvta_ubuf_to_generic.md) | 将UB内存空间的地址值转换为对应的指针。 |
 | [__cvta_local_to_generic](../address_space_conversion_functions/__cvta_local_to_generic.md) | 将栈空间的地址值转换为对应的指针。 |
 
 ## 协作组

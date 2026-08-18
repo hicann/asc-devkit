@@ -84,6 +84,6 @@ __simd_callee__ inline void asc_int642float_rz_v2(vector_float& dst, vector_int6
 vector_int64_t src;
 vector_float dst;
 vector_bool mask = asc_create_mask_b32(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
+asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
 asc_int642float_rn(dst, src, mask);
 ```

@@ -1,13 +1,13 @@
 # 基础矢量算子<a name="ZH-CN_TOPIC_0000002532228157"></a>
 
-基于Ascend C方式实现基础矢量算子核函数的流程如下图所示。
+基于Ascend C方式实现基础矢量算子核函数（Kernel）的流程如下图所示。
 
-**图1**  矢量算子核函数实现流程<a name="zh-cn_topic_0000002201157438_fig16061570280"></a>  
-![](../../../figures/vec_op_impl.png "矢量算子核函数实现流程")
+**图1**  矢量算子核函数（Kernel）实现流程<a name="zh-cn_topic_0000002201157438_fig16061570280"></a><br>
+![](../../../figures/vec_op_impl.png "矢量算子核函数（Kernel）实现流程")
 
 -   算子分析：分析算子的数学表达式、输入、输出以及计算逻辑的实现，明确需要调用的Ascend C接口。
--   核函数定义：定义Ascend C算子入口函数。
--   根据[矢量编程范式](../../../programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md#section116515238815)实现算子类：完成核函数的内部实现，包括3个基本任务：CopyIn，Compute，CopyOut。
+-   核函数（Kernel）定义：定义Ascend C算子入口函数。
+-   根据[矢量编程范式](../../../programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md#section116515238815)实现算子类：完成核函数（Kernel）的内部实现，包括3个基本任务：CopyIn，Compute，CopyOut。
 
 下文以输入为half数据类型且shape的最后一维为32Bytes对齐、在单核上运行的、一次完成计算的Add算子为例，对上述步骤进行详细介绍。
 
@@ -23,7 +23,7 @@
     z = x + y
     ```
 
-    计算逻辑是：Ascend C提供的[矢量计算接口](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)的操作元素都为[LocalTensor](../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor.md)，输入数据需要先从外部存储（Global Memory）搬运进片上存储（Unified Buffer），然后使用计算接口完成两个输入参数相加，得到最终结果，再搬出到外部存储上。Ascend C  Add算子的计算逻辑如下图所示。
+    计算逻辑是：Ascend C提供的[矢量计算接口](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)的操作元素都为[LocalTensor](../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor.md)，输入数据需要先从外部存储（Global Memory）搬运到Unified Buffer（UB），然后使用计算接口完成两个输入参数相加，得到最终结果，再搬出到外部存储上。Ascend C  Add算子的计算逻辑如下图所示。
 
     **图2**  算子计算逻辑<a name="zh-cn_topic_0000002201157438_zh-cn_topic_0000001464091780_fig18937134755411"></a>  
     ![](../../../figures/op_logic.png "算子计算逻辑")
@@ -34,9 +34,9 @@
     -   算子输入支持的shape为（1，2048），输出shape与输入shape相同。
     -   算子输入支持的[format](../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)为：ND。
 
-3.  确定核函数名称和参数。
-    -   您可以自定义核函数名称，本样例中核函数命名为vec\_add\_custom。
-    -   根据对算子输入输出的分析，确定核函数有3个参数x，y，z；x，y为输入在Global Memory上的内存地址，z为输出在Global Memory上的内存地址。
+3.  确定核函数（Kernel）名称和参数。
+    -   您可以自定义核函数（Kernel）名称，本样例中核函数（Kernel）命名为vec\_add\_custom。
+    -   根据对算子输入输出的分析，确定核函数（Kernel）有3个参数x，y，z；x，y为输入在Global Memory上的内存地址，z为输出在Global Memory上的内存地址。
 
 4.  确定算子实现所需接口。
     -   实现涉及外部存储和内部存储间的数据搬运，查看Ascend C  API参考中的数据搬运接口，需要使用[DataCopy](../../../../api/SIMD-API/basic_api/data_move_guide/overview/data_move_concept.md)来实现数据搬运。
@@ -91,7 +91,7 @@
     </tbody>
     </table>
 
--   核函数名称：vec\_add\_custom
+-   核函数（Kernel）名称：vec\_add\_custom
 -   使用的主要接口：
     -   DataCopy：数据搬移接口
     -   Add：矢量基础算术接口
@@ -99,13 +99,13 @@
 
 -   算子实现文件名称：vector\_add.asc
 
-## 核函数定义<a name="zh-cn_topic_0000002201157438_section58723515714"></a>
+## 核函数（Kernel）定义<a name="zh-cn_topic_0000002201157438_section58723515714"></a>
 
-根据[核函数](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中介绍的规则进行核函数的定义。
+根据[核函数（Kernel）](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中介绍的规则进行核函数（Kernel）的定义。
 
 1.  函数原型定义
 
-    本样例中，函数名为vector\_add\_custom（核函数名称可自定义），根据[算子分析](#zh-cn_topic_0000002201157438_section4870456573)中对算子输入输出的分析，确定有3个参数x，y，z，其中x，y为输入内存，z为输出内存。根据[核函数](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)的规则介绍，函数原型定义如下所示：使用\_\_global\_\_函数类型限定符标识它是一个核函数，可以被<<<\>\>\>调用；使用\_\_vector\_\_函数类型限定符标识该核函数在设备端aicore的Vector Core上执行。
+    本样例中，函数名为vector\_add\_custom（核函数（Kernel）名称可自定义），根据[算子分析](#zh-cn_topic_0000002201157438_section4870456573)中对算子输入输出的分析，确定有3个参数x，y，z，其中x，y为输入内存，z为输出内存。根据[核函数（Kernel）](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)的规则介绍，函数原型定义如下所示：使用\_\_global\_\_函数类型限定符标识它是一个核函数（Kernel），可以被<<<\>\>\>调用；使用\_\_vector\_\_函数类型限定符标识该核函数（Kernel）在设备端aicore的Vector Core上执行。
 
     ```
     __global__ __vector__ void vector_add_custom(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z)
@@ -127,7 +127,7 @@
     }
     ```
 
-3.  根据[核函数定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)章节，调用核函数时，除了需要传入参数x，y，z，还需要传入numBlocks（核函数执行的核数）、动态UB大小（无动态UB需求时设置为0）、stream（应用程序中维护异步操作执行顺序的stream）来规定核函数的执行配置。
+3.  根据[核函数（Kernel）定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)章节，调用核函数（Kernel）时，除了需要传入参数x，y，z，还需要传入numBlocks（核函数（Kernel）执行的核数）、动态UB大小（无动态UB需求时设置为0）、stream（应用程序中维护异步操作执行顺序的stream）来规定核函数（Kernel）的执行配置。
 
     ```
     vector_add_custom<<<numBlocks, 0, stream>>>(xDevice, yDevice, zDevice);
@@ -135,7 +135,7 @@
 
 ## 算子类实现<a name="zh-cn_topic_0000002201157438_section10423482111"></a>
 
-根据上一节介绍，核函数中会调用算子类的Init和Process函数，本节具体讲解如何基于编程范式实现算子类。
+根据上一节介绍，核函数（Kernel）中会调用算子类的Init和Process函数，本节具体讲解如何基于编程范式实现算子类。
 
 根据矢量编程范式对Add算子的实现流程进行设计的思路如下，矢量编程范式请参考[矢量编程范式](../../../programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md#section116515238815)，设计完成后得到的Add算子实现流程图参见[图3 Add算子实现流程](#zh-cn_topic_0000002201157438_fig4134406304)：
 
@@ -213,7 +213,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
 }
 ```
 
-基于矢量编程范式，将核函数的实现分为3个基本任务：CopyIn，Compute，CopyOut。再根据编程范式上面的算法分析，将整个计算拆分成三个Stage，用户单独编写每个Stage的代码，三阶段流程示意图参见[图3](#zh-cn_topic_0000002201157438_fig4134406304)，具体流程如下：
+基于矢量编程范式，将核函数（Kernel）的实现分为3个基本任务：CopyIn，Compute，CopyOut。再根据编程范式上面的算法分析，将整个计算拆分成三个Stage，用户单独编写每个Stage的代码，三阶段流程示意图参见[图3](#zh-cn_topic_0000002201157438_fig4134406304)，具体流程如下：
 
 1.  Stage1：CopyIn实现。
 <a id="copyin-implementation"></a> 

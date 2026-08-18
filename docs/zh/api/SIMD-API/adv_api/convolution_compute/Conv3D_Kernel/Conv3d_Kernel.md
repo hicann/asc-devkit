@@ -1,4 +1,4 @@
-# Conv3D Kernel侧接口
+# Conv3D核函数（Kernel）侧接口
 
 -   **[Conv3D使用说明](Conv3D_usage.md)**
 

@@ -8,7 +8,7 @@
 
 -   调用算子的运行环境有NPU设备。
 -   完成自定义算子工程的创建。
--   完成算子原型定义、Kernel侧实现和Host侧Tiling实现。
+-   完成算子原型定义、核函数（Kernel）侧实现和Host侧Tiling实现。
 -   对于算子包编译场景，参考[算子工程编译与部署](../compilation_and_deployment/basic_process.md)完成算子包的编译部署。算子二进制编译开关`ENABLE_BINARY_PACKAGE`默认开启；如果工程中显式设置为`False`，需要改为`True`后重新编译部署。
 
     算子编译部署后，会在算子包安装目录下的`op_api`目录生成单算子调用的头文件`aclnn_<op>.h`和动态库`libcust_opapi.so`。

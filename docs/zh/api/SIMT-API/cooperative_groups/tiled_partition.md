@@ -69,7 +69,7 @@ coalesced_group tiled_partition(const coalesced_group& parent, unsigned int tile
 
 - 模板版本中，`Size`必须是$2^n$，当前可选值范围：1、2、4、8、16、32、64、128、256、512、1024、2048。
 - 非模板版本仅支持创建`Size <= 32`的子组。
-- 当要创建跨Warp的`thread_block_tile`时，用户需创建[block_tile_memory](./thread_block/thread_block_constructor.md#block_tile_memory说明)作为临时存储，并通过带`scratch`参数的`this_thread_block`创建父`thread_block`。传入的`block_tile_memory`对象必须位于Global Memory或Unified Buffer，不能传入栈空间中创建的对象。使用位于Unified Buffer的对象性能优于位于Global Memory的。
+- 当要创建跨Warp的`thread_block_tile`时，用户需创建[block_tile_memory](./thread_block/thread_block_constructor.md#block_tile_memory说明)作为临时存储，并通过带`scratch`参数的`this_thread_block`创建父`thread_block`。传入的`block_tile_memory`对象必须位于Global Memory或Unified Buffer（UB），不能传入栈空间中创建的对象。使用位于UB的对象性能优于位于Global Memory的。
 - 对于模板版本的接口，父组中的线程数必须能被`Size`整除。并且如果父组是`thread_block_tile`，则`Size`必须小于父组大小。
 
 ## 调用示例

@@ -8,7 +8,7 @@
 
 ### Memory矢量计算的瓶颈
 
-在以往的SIMD矢量编程中，矢量计算单元的源操作数和目的操作数都直接落在LocalMemory（Unified Buffer，以下简称UB）上。每一条矢量计算的执行过程都包含"从UB读 → 在执行单元算 → 写回UB"。当一个算子由多个矢量计算串联组成时（例如`dst = (a + b) * c + d`），每一步的中间结果都必须先写回UB，再被下一条指令重新读出。
+在以往的SIMD矢量编程中，矢量计算单元的源操作数和目的操作数都直接存放在Unified Buffer（UB）上。每一条矢量计算的执行过程都包含"从UB读 → 在执行单元算 → 写回UB"。当一个算子由多个矢量计算串联组成时（例如`dst = (a + b) * c + d`），每一步的中间结果都必须先写回UB，再被下一条指令重新读出。
 
 这种模式下存在三个典型瓶颈：
 
@@ -97,7 +97,7 @@ Reg矢量计算编程模型中`Load` -> `Compute`  ->`Store`的执行过程，�
 
 | 标签 | 角色 | 调用方 | 可调用对象 |
 | --- | --- | --- | --- |
-| `__aicore__` | Device侧普通函数 | 核函数或其他`__aicore__`函数 | `__aicore__`函数，或通过`asc_vf_call`调用VF函数 |
+| `__aicore__` | Device侧普通函数 | 核函数（Kernel）或其他`__aicore__`函数 | `__aicore__`函数，或通过`asc_vf_call`调用VF函数 |
 | `__simd_vf__` | VF函数 | `__aicore__`函数通过`asc_vf_call`调用 | `__simd_callee__`修饰的Reg矢量API或者VF内部子函数 |
 | `__simd_callee__` | VF内部子函数 | `__simd_vf__`或其他`__simd_callee__` | `__simd_callee__` |
 

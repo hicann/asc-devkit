@@ -28,7 +28,7 @@
 
 **该接口已废弃。请使用[asc_squeeze_and_storeunalign_finalize](asc_squeeze_and_storeunalign_finalize.md)实现此功能。**
 
-reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的尾块场景。
+reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到Unified Buffer（UB）的尾块场景。
 
 需要先调用下列接口之一后，再调用本接口。
 - [asc_storeunalign_postupdate](asc_storeunalign_postupdate_deprecated.md)接口。

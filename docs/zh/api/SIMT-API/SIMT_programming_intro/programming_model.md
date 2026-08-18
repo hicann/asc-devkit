@@ -20,14 +20,14 @@ SIMT编程模型采用分层的抽象线程组织结构，示意图如下所示�
 
 Thread Block是Grid的组成单元，由若干线程组成（最大2048个线程）。使用内置变量[blockDim](extended_syntax/builtin_variables.md#blockdim)来表示一个Thread Block启用的线程数量。在SIMT编程场景中，Thread Block有以下特点：
 
--   同一Thread Block内的线程可以访问共享内存（UB）实现数据交互；Thread Block内的线程可通过同步机制实现协作；
+-   同一Thread Block内的线程可以访问共享内存，即Unified Buffer（UB），以实现数据交互；Thread Block内的线程可通过同步机制实现协作；
 -   在SIMT函数定义时可使用[\_\_launch\_bounds\_\_\(\)](extended_syntax/kernel_function_config.md#__launch_bounds__n)配置最大线程数。
 
 **Grid（线程块网格）**
 
 Grid是SIMT线程层次结构的最顶层，由多个Thread Block组成。使用内置变量[gridDim](extended_syntax/builtin_variables.md#griddim)来表示Grid中启用的线程块数量。在SIMT编程场景，Grid有以下特征：
 
--   Grid的维度配置由用户设置启动的AIV核数决定，核函数执行期间不可更改；
+-   Grid的维度配置由用户设置启动的AIV核数决定，核函数（Kernel）执行期间不可更改；
 -   Grid中的所有线程块具有相同的尺寸和维度配置；
 -   同一Grid中的线程块相互独立，按任意顺序执行；
 
@@ -69,7 +69,7 @@ Thread Block的线程数建议设置为32的整数倍。若线程数未满足该
 
 ## UB划分
 
-UB（即Unified Buffer）是同一线程块内所有线程均可访问的内存空间，位于每个AIV内部。UB内存空间总大小为256KB，参考[图2](#fig9500834165913)，按功能划分为四个主要区域，从低地址向高地址依次为静态内存、动态内存、 预留空间 、Data Cache。
+UB是同一线程块内所有线程均可访问的内存空间，位于每个AIV内部。UB内存空间总大小为256KB，参考[图2](#fig9500834165913)，按功能划分为四个主要区域，从低地址向高地址依次为静态内存、动态内存、 预留空间 、Data Cache。
 
 **图2**  UB内存分配图<a name="fig9500834165913"></a>  
 ![](../../figures/ub_memory_allocation.png "UB内存分配图")

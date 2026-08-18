@@ -1,6 +1,6 @@
 # L0C Buffer到Unified Buffer双目标模式
 
-L0C Buffer到Unified Buffer双目标模式用于将同一AI Core内L0C Buffer的矩阵结果拆分后，同时写入两个Vector Core各自的Unified Buffer。一个AI Core内包含一个Cube Core和两个Vector Core，启用双目标模式后，源矩阵会按指定维度拆分为两部分，前半部分写入SUB BLOCK0，后半部分写入SUB BLOCK1。
+L0C Buffer到Unified Buffer（UB）双目标模式用于将同一AI Core内L0C Buffer的矩阵结果拆分后，同时写入两个Vector Core各自的UB。一个AI Core内包含一个Cube Core和两个Vector Core，启用双目标模式后，源矩阵会按指定维度拆分为两部分，前半部分写入SUB BLOCK0，后半部分写入SUB BLOCK1。
 
 Tensor API通过`CopyL0C2UBTrait::dualDstCtl`控制双目标模式。
 
@@ -8,9 +8,9 @@ Tensor API通过`CopyL0C2UBTrait::dualDstCtl`控制双目标模式。
 
 |取值|说明|
 |--------|--------|
-|`DUAL_DST_DISABLE`|单目标模式。整个矩阵写入默认目标Unified Buffer。|
-|`DUAL_DST_SPLIT_M`|双目标模式，按M维度拆分。源矩阵拆分为两个形状为`M / 2 * N`的矩阵，分别写入两个Unified Buffer。|
-|`DUAL_DST_SPLIT_N`|双目标模式，按N维度拆分。源矩阵拆分为两个形状为`M * N / 2`的矩阵，分别写入两个Unified Buffer。|
+|`DUAL_DST_DISABLE`|单目标模式。整个矩阵写入默认目标UB。|
+|`DUAL_DST_SPLIT_M`|双目标模式，按M维度拆分。源矩阵拆分为两个形状为`M / 2 * N`的矩阵，分别写入两个UB。|
+|`DUAL_DST_SPLIT_N`|双目标模式，按N维度拆分。源矩阵拆分为两个形状为`M * N / 2`的矩阵，分别写入两个UB。|
 
 ## 使用示例
 
@@ -46,7 +46,7 @@ N方向切分示例：
 M方向切分示例：
 
 - `nSize = 32`，表示源NZ矩阵中待搬运矩阵在N方向上的大小为32个元素。
-- `mSize = 24`，表示每个目标Unified Buffer接收的M方向大小，源矩阵M方向总大小为48个元素。
+- `mSize = 24`，表示每个目标UB接收的M方向大小，源矩阵M方向总大小为48个元素。
 - `srcStride = 64`，表示源NZ矩阵中相邻Z排布的起始地址偏移为`64 * C0_SIZE`。
 - `dstStride = 40 * C0`，表示目的NZ矩阵中相邻Z排布的起始地址偏移为`40 * 16`个元素。
 
@@ -72,7 +72,7 @@ M方向切分示例：
 
 ## 约束说明
 
-- 双目标模式仅支持L0C Buffer到Unified Buffer通路。
+- 双目标模式仅支持L0C Buffer到UB通路。
 - 双目标模式支持普通搬运模式NZ2NZ和NZ2ND搬运场景。
 - 按M维度拆分时，M必须为2的倍数。
 - 按N维度拆分时，N必须为32的倍数。

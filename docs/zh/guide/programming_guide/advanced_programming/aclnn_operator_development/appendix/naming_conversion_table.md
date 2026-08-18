@@ -1,6 +1,6 @@
 # 命名转换规则对照表
 
-本文属于基础内容，介绍自定义算子工程中的命名转换规则。算子类型（OpType）通常采用大驼峰命名方式，配置中的实现文件名和Kernel入口名通常采用小写下划线命名方式。默认情况下，框架会根据OpType生成这些名称。
+本文属于基础内容，介绍自定义算子工程中的命名转换规则。算子类型（OpType）通常采用大驼峰命名方式，配置中的实现文件名和核函数（Kernel）入口名通常采用小写下划线命名方式。默认情况下，框架会根据OpType生成这些名称。
 
 ## 转换规则概述
 
@@ -19,7 +19,7 @@
 
 下表列出了常见算子名称的转换结果。结果以当前构建工具的实际转换结果为准。
 
-| 算子类型（大驼峰） | 文件名/Kernel入口名（小写下划线） | 转换说明 |
+| 算子类型（大驼峰） | 文件名/核函数（Kernel）入口名（小写下划线） | 转换说明 |
 |---|---|---|
 | `AddCustom` | `add_custom` | 首字符转小写，`Custom`前插入下划线 |
 | `ReduceMaxCustom` | `reduce_max_custom` | `Max`和`Custom`前分别插入下划线 |
@@ -73,15 +73,15 @@ Reduce -> reduce
 | 项目 | 命名方式 | `AddCustom`示例 |
 |---|---|---|
 | 算子类型、`OpDef`类名、构造函数名、`OP_ADD`参数 | 大驼峰 | `AddCustom` |
-| Kernel源码文件名 | 建议使用小写下划线，可由CMake显式指定 | `add_custom.cpp` |
-| Kernel入口函数名 | 默认使用小写下划线，需与`opInterface.value`一致 | `add_custom` |
+| 核函数（Kernel）源码文件名 | 建议使用小写下划线，可由CMake显式指定 | `add_custom.cpp` |
+| 核函数（Kernel）入口函数名 | 默认使用小写下划线，需与`opInterface.value`一致 | `add_custom` |
 
-使用msOpGen创建算子工程时，工具通常会按上述规则生成初始文件名和Kernel入口名。构建后可以通过生成的`ops-info.ini`和aclnn头文件确认实际转换结果，应用程序也应以这些构建产物为准。
+使用msOpGen创建算子工程时，工具通常会按上述规则生成初始文件名和核函数（Kernel）入口名。构建后可以通过生成的`ops-info.ini`和aclnn头文件确认实际转换结果，应用程序也应以这些构建产物为准。
 
-如果修改了aclnn工程名前缀或直调接口前缀，生成文件和接口的前缀也会变化。重命名Host或Kernel源文件后，还需要同步修改CMake中的源文件列表。
+如果修改了aclnn工程名前缀或直调接口前缀，生成文件和接口的前缀也会变化。重命名Host或核函数（Kernel）源文件后，还需要同步修改CMake中的源文件列表。
 
 ## 相关文档
 
 - [算子原型定义](../design_and_implementation/operator_prototype_definition.md)：了解OpType、`OpDef`类和`OP_ADD`注册方法。
-- [Kernel侧算子实现](../design_and_implementation/kernel_operator_implementation.md)：了解Kernel入口格式和参数顺序。
+- [核函数（Kernel）侧算子实现](../design_and_implementation/kernel_operator_implementation.md)：了解核函数（Kernel）入口格式和参数顺序。
 - [单算子API调用](../invocation/single_operator_api_call.md)：了解两段式aclnn接口及其参数命名规则。

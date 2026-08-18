@@ -32,7 +32,7 @@
 
 如上图所示：
 
-DMA搬运单元读写Global Memory，数据通过[asc_copy_ub2gm](../vector_data_move/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_data_move/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在UB等Local Memory和Global Memory间交互，没有Cache一致性问题；
+DMA搬运单元读写Global Memory，数据通过[asc_copy_ub2gm](../vector_data_move/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_data_move/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在Unified Buffer（UB）等Local Memory和Global Memory间交互，没有Cache一致性问题；
 Scalar单元访问Global Memory，首先会访问每个核内的Data Cache，因此存在Data Cache与Global Memory的Cache一致性问题。
 该接口用来刷新Cache，保证Cache的一致性，使用场景如下：
 

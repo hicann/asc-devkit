@@ -27,7 +27,7 @@ MXMmad为带有量化系数X的矩阵乘法，即左矩阵和右矩阵均有对�
 
 - **MX scaleA系数矩阵分形介绍**<a name="section_mx_scalea_fractal_format"></a>
 
-    - **物理位置：** Global Memory/L1 Buffer/Unified Buffer：保存离线/在线生成左矩阵量化系数数据。
+    - **物理位置：** Global Memory/L1 Buffer/Unified Buffer（UB）：保存离线/在线生成左矩阵量化系数数据。
 
     - **设计原理：** MX矩阵乘法中A矩阵与scaleA矩阵物理地址上一一映射，LoadData（MX矩阵搬运）接口要求在L1 Buffer中scaleA矩阵满足行读取需求，因此在L1 Buffer上scaleA矩阵为按行存储的小z大Z排布（Zz）。
 
@@ -48,7 +48,7 @@ MXMmad为带有量化系数X的矩阵乘法，即左矩阵和右矩阵均有对�
 
 - **MX scaleB系数矩阵分形介绍**<a name="section_mx_scaleb_fractal_format"></a>
 
-    - **物理位置：** Global Memory/L1 Buffer/Unified Buffer：保存离线/在线生成右矩阵量化系数数据。
+    - **物理位置：** Global Memory/L1 Buffer/UB：保存离线/在线生成右矩阵量化系数数据。
 
     - **设计原理：** MX矩阵乘法中B矩阵与scaleB矩阵物理地址上一一映射，LoadData（MX矩阵搬运）接口要求在L1 Buffer上scaleB矩阵满足列读取需求，因此在L1 Buffer上scaleB矩阵为按列存储的大N小n排布（Nn）。
 

@@ -1,6 +1,6 @@
 # TConv3DApiTiling结构体
 
-TConv3DApiTiling结构体包含Conv3D算子规格信息及Tiling切分算法的相关参数，被传递给Conv3D Kernel侧，用于数据切分、数据搬运和计算等。TConv3DApiTiling结构体的参数说明见[表1](#table18244199192620)。
+TConv3DApiTiling结构体包含Conv3D算子规格信息及Tiling切分算法的相关参数，被传递给Conv3D核函数（Kernel）侧，用于数据切分、数据搬运和计算等。TConv3DApiTiling结构体的参数说明见[表1](#table18244199192620)。
 
 用户通过调用[GetTiling](GetTiling.md)接口获取TConv3DApiTiling结构体，具体流程请参考[Conv3D Tiling使用说明](Conv3D_Tiling_usage.md)。当前暂不支持用户自定义配置TConv3DApiTiling结构体中的参数。
 

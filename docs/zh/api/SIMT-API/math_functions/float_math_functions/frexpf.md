@@ -41,7 +41,7 @@ inline float frexpf(float x, int *exp)
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | x | 输入 | 源操作数。 |
-| exp | 输出 | Unified Buffer、Global Memory或栈空间的地址，用于存储以2为底的指数。 |
+| exp | 输出 | UB、Global Memory或栈空间的地址，用于存储以2为底的指数。 |
 
 ## 返回值说明
 

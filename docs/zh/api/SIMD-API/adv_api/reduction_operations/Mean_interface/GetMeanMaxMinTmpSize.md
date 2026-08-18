@@ -23,7 +23,7 @@ void GetMeanMaxMinTmpSize(const uint32_t n, const uint32_t srcTypeSize, const ui
 | srcTypeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处为2。 |
 | accTypeSize | 输入 | 实际参与计算的数据类型（accType）大小，单位为字节，accType参数说明可参考[Mean接口参数说明](Mean.md)。 |
 | isReuseSource | 输入 | 是否复用源操作数输入的空间，与Mean接口一致。此处为预留参数。 |
-| maxSize | 输出 | Mean接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。<br> 说明： <br>maxSize仅作为参考值，有可能大于Unified Buffer剩余空间的大小，该场景下，开发者需要根据Unified Buffer剩余空间的大小来选取合适的临时空间大小。 |
+| maxSize | 输出 | Mean接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。<br> 说明： <br>maxSize仅作为参考值，有可能大于UB剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minSize | 输出 | Mean接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。 |
 
 ## 返回值说明

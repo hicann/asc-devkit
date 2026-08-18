@@ -64,7 +64,7 @@ __aicore__ inline void PipeBarrier()
 
 - `PipeBarrier<PIPE_ALL>()`会等待所有流水线中所有先前提交的接口完成，这会对性能产生影响。若仅阻塞单条流水线即可解决问题，应避免随意调用`PipeBarrier<PIPE_ALL>()`。
 
-- PIPE\_MTE2/PIPE\_MTE3在搬运地址有重叠的情况下需要开发者插入同步。例如，当需要执行多个DataCopy指令，且DataCopy的目的地址存在重叠时，需要通过调用来插入PipeBarrier同步指令，保证多个DataCopy指令的串行化，防止出现异常数据。如下图左侧示意图，执行两个DataCopy指令，搬运的目的GM地址存在重叠，两条搬运指令之间需要通过调用`PipeBarrier<PIPE_MTE3>()`添加MTE3搬出流水的同步；如下图右侧示意图所示，搬运的目的地址UB存在重叠，两条搬运指令之间需要调用`PipeBarrier<PIPE_MTE2>()`添加MTE2搬入流水的同步。
+- PIPE\_MTE2/PIPE\_MTE3在搬运地址有重叠的情况下需要开发者插入同步。例如，当需要执行多个DataCopy指令，且DataCopy的目的地址存在重叠时，需要通过调用来插入PipeBarrier同步指令，保证多个DataCopy指令的串行化，防止出现异常数据。如下图左侧示意图，执行两个DataCopy指令，搬运的目的GM地址存在重叠，两条搬运指令之间需要通过调用`PipeBarrier<PIPE_MTE3>()`添加MTE3搬出流水的同步；如下图右侧示意图所示，搬运的目的地址Unified Buffer（UB）存在重叠，两条搬运指令之间需要调用`PipeBarrier<PIPE_MTE2>()`添加MTE2搬入流水的同步。
 
 ![](../../../../figures/datacopy_address_overlap_pipebarrier.png "DataCopy_地址重叠_PipeBarrier_同步示意图")
 
@@ -72,7 +72,7 @@ __aicore__ inline void PipeBarrier()
 
 如下示例，Mul指令的输入dst0Local是Add指令的输出，两个矢量运算指令产生依赖，需要插入PipeBarrier保证两条指令的执行顺序。
 
-注：仅作为示例参考，开启自动同步（Kernel直调算子工程和自定义算子开发工程已默认开启）的情况下，编译器自动插入PIPE\_V同步，无需开发者手动插入。
+注：仅作为示例参考，开启自动同步（核函数（Kernel）直调算子工程和自定义算子开发工程已默认开启）的情况下，编译器自动插入PIPE\_V同步，无需开发者手动插入。
 
 **图2**  Mul指令和Add指令是串行关系，必须等待Add指令执行完成后，才能执行Mul指令。<a name="fig1359216580459"></a>  
 ![](../../../../figures/mul_add_pipebarrier_sync_diagram.png "Mul_Add_指令_串行依赖_PipeBarrier_同步示意图")

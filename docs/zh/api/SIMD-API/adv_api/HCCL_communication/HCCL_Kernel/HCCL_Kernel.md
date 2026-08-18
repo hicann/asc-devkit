@@ -1,4 +1,4 @@
-# HCCL Kernel侧接口
+# HCCL核函数（Kernel）侧接口
 
 -   **[HCCL使用说明](HCCL_usage.md)**
 

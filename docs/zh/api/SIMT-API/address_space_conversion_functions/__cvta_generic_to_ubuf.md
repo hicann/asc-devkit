@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-将输入的指针转换为其指向的Unified Buffer内存空间的地址值并返回。
+将输入的指针转换为其指向的Unified Buffer（UB）内存空间的地址值并返回。
 
 ## 函数原型
 
@@ -42,12 +42,12 @@ size_t __cvta_generic_to_ubuf(const void* ptr)
 
 ## 返回值说明
 
-输入指针指向Unified Buffer内存空间的地址值。
-该接口不校验输入地址是否为可安全访问的有效地址。只有当`ptr`实际指向Unified Buffer内存空间时，返回值是有效的Unified Buffer地址值。特殊场景说明如下：
+输入指针指向UB内存空间的地址值。
+该接口不校验输入地址是否为可安全访问的有效地址。只有当`ptr`实际指向UB内存空间时，返回值是有效的UB地址值。特殊场景说明如下：
 
 | 输入场景 | 返回值 |
 | --- | --- |
-| `ptr`为Global Memory指针 | 未定义行为，返回值不是有效Unified Buffer地址。 |
+| `ptr`为Global Memory指针 | 未定义行为，返回值不是有效UB地址。 |
 | `ptr`为`nullptr` | 返回`0x00000000fff80000`。 |
 | `ptr`为栈空间指针 | 编译阶段报错。 |
 

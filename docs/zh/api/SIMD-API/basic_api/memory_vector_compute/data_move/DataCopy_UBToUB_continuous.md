@@ -34,11 +34,11 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-支持Unified Buffer与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。
+支持Unified Buffer（UB）内部的连续数据搬运，数据在传输过程中保持原始格式和内容不变。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECCALC -> VECOUT
 
@@ -61,8 +61,8 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| dst | 输出 | 目的操作数。类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为Unified Buffer，目的地址需要32字节对齐。 |
-| src | 输入 | 源操作数。类型为LocalTensor，存储位置为Unified Buffer，源地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数。类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为UB，目的地址需要32字节对齐。 |
+| src | 输入 | 源操作数。类型为LocalTensor，存储位置为UB，源地址需要32字节对齐。 |
 | count | 输入 | 参与搬运的元素个数。<br>**注：count * sizeof(T)需要32字节对齐，若未对齐，搬运量会向下取整到32字节对齐。** |
 
 以half数据类型为例，源操作数的shape为1 \* 128。当count = 128时，[图1](#zh-cn_topic_0000002567699425_fig13481537531)将源操作数中128个元素连续搬运至目的操作数。
@@ -100,7 +100,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 位于Unified Buffer的地址必须32字节对齐。
+- 位于UB的地址必须32字节对齐。
 - 调用连续搬运接口时，count \* sizeof\(T\)需要32字节对齐，若未对齐，则搬运量会向下取整到32字节对齐。
 <!-- npu="910b,A3" id6 -->
 - 针对如下产品型号：

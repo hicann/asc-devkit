@@ -22,5 +22,4 @@
 
 -   **[REGISTER\_NONE\_TILING](REGISTER_NONE_TILING.md)**  
 
--   **[设置Kernel类型](set_Kernel_type.md)**  
-
+-   **[设置核函数（Kernel）类型](set_Kernel_type.md)**

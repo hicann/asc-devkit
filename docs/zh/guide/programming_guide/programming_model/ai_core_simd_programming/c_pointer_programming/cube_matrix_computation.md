@@ -208,7 +208,7 @@ asc_copy_l12l0a_transpose(l0a_buffer, l1_buffer, m_start_position, k_start_posit
 
 ### 矩阵数据搬出
 
-矩阵搬出接口实现L0C到Global Memory或L1 Buffer的数据传输，支持随路量化、ReLU、格式转换（NZ2ND）、通道拆分合并等操作，开发者通过配置参数控制搬运路径、位置、长度等以充分利用硬件能力，通常在Mmad接口后使用。而针对[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)还支持L0C到UB Buffer的传输、NZ2DN格式转换以及UB双目标模式，矩阵搬出能力如下图所示：
+矩阵搬出接口实现L0C到Global Memory或L1 Buffer的数据传输，支持随路量化、ReLU、格式转换（NZ2ND）、通道拆分合并等操作，开发者通过配置参数控制搬运路径、位置、长度等以充分利用硬件能力，通常在Mmad接口后使用。而针对[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)还支持L0C到Unified Buffer（UB）的传输、NZ2DN格式转换以及UB双目标模式，矩阵搬出能力如下图所示：
 
 针对[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)：
 

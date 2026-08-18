@@ -2,7 +2,7 @@
 
 ## 整体内存资源<a name="zh-cn_topic_0000002571695539_section598391912124"></a>
 
-在SIMD与SIMT混合编程场景下，整体内存资源如下图所示。核外的Global Memory是所有核的全局内存，容量最大，但访问效率最低。AIC的L1和AIV的UB是单核内的共享内存，容量较小，但访问效率较高。私有内存层最靠近计算单元，容量最小，访问效率最高。
+在SIMD与SIMT混合编程场景下，整体内存资源如下图所示。核外的Global Memory是所有核的全局内存，容量最大，但访问效率最低。AIC的L1和AIV的Unified Buffer（UB）是单核内的共享内存，容量较小，但访问效率较高。私有内存层最靠近计算单元，容量最小，访问效率最高。
 
 **图1** SIMD与SIMT混合编程内存层级  
 <img src="../../../../figures/simt_mem.png" alt="内存层级" style="width:70%; height:auto;">

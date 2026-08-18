@@ -170,9 +170,9 @@ T支持的数据类型为：half、float。
   <!-- end id30 -->
 <!-- end id20 -->
 <!-- npu="950" id21 -->
-- 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
-  - tensor高维切分计算占用8KB Unified Buffer。
-  - tensor前n个数据连续计算不涉及8KB Unified Buffer的占用。
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+  - tensor高维切分计算占用8KB UB。
+  - tensor前n个数据连续计算不涉及8KB UB的占用。
 - 针对Ascend 950PR/Ascend 950DT，SqrtAlgo::FAST\_INVERSE、SqrtAlgo::PRECISION\_0ULP\_FTZ\_FALSE，使用快速求逆算法得出结果。适用于输入值在\[0, 85070596800837026223494223584045301760\]范围内的计算。在该范围内，算法保证输出的最大精度误差为0ulp；当输入值大于85070596800837026223494223584045301760时，输出为0。目前，该算法仅支持float数据类型，并在该模式下支持Subnormal数据计算。
 <!-- end id21 -->
 

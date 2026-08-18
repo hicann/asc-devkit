@@ -128,7 +128,7 @@ __aicore__ inline void MrgSort4(const LocalTensor<T>& dst, const MrgSortSrcList<
 </td>
 <td class="cellrowborder" valign="top" width="12.48124812481248%" headers="mcps1.2.4.1.2 "><p id="p125156582464"><a name="p125156582464"></a><a name="p125156582464"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="73.9073907390739%" headers="mcps1.2.4.1.3 "><p id="p1751545874619"><a name="p1751545874619"></a><a name="p1751545874619"></a>四个源Region Proposals队列的长度（Region Proposal数目），类型为长度为4的uint16_t数据类型的数组，理论上每个元素取值范围[0, 4095]，但不能超出UB的存储空间。</p>
+<td class="cellrowborder" valign="top" width="73.9073907390739%" headers="mcps1.2.4.1.3 "><p id="p1751545874619"><a name="p1751545874619"></a><a name="p1751545874619"></a>四个源Region Proposals队列的长度（Region Proposal数目），类型为长度为4的uint16_t数据类型的数组，理论上每个元素取值范围[0, 4095]，但不能超出Unified Buffer（UB）的存储空间。</p>
 </td>
 </tr>
 <tr id="row1515155817465"><td class="cellrowborder" valign="top" width="13.611361136113612%" headers="mcps1.2.4.1.1 "><p id="p55154583465"><a name="p55154583465"></a><a name="p55154583465"></a>ifExhaustedSuspension</p>

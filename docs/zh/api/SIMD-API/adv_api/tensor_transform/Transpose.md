@@ -82,7 +82,7 @@
 
 【场景7：二维转置】
 
-支持在UB上对二维Tensor进行转置，其中srcShape中的H、W均是16的整倍。
+支持在Unified Buffer（UB）上对二维Tensor进行转置，其中srcShape中的H、W均是16的整倍。
 
 **图7**  场景7数据排布变换  
 ![](../../../figures/scenario7_layout_transform.png "场景7数据排布变换")

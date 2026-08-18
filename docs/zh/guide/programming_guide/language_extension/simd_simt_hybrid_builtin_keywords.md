@@ -26,7 +26,7 @@ SIMT VF函数定义中的关键修饰符说明如下：
 | \_\_gm\_\_ | 内存空间修饰符，标识内存空间为GM。 |
 | \_\_ubuf\_\_ | 内存空间修饰符，标识内存空间为UB。 |
 
-只支持在核函数或\_\_aicore\_\_函数中调用SIMT VF函数，调用接口为[asc\_vf\_call](../../../api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config.md#asc_vf_call调用)，示例如下：
+只支持在核函数（Kernel）或\_\_aicore\_\_函数中调用SIMT VF函数，调用接口为[asc\_vf\_call](../../../api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config.md#asc_vf_call调用)，示例如下：
 
 ```cpp
 asc_vf_call<function_name>(dim3(blockDim), arg1, arg2, ...);
@@ -34,7 +34,7 @@ asc_vf_call<function_name>(dim3(blockDim), arg1, arg2, ...);
 
 SIMT VF函数有以下约束：
 
--   入参仅支持Ascend C的[内置数据类型](simt_builtin_keywords.md#section1835494915576)（int32\_t、uint32\_t、float、half等）及其组成的指针、数组、结构体类型，且指针类型必须指向GM或者UB内存。
+-   入参仅支持Ascend C的[内置数据类型](simt_builtin_keywords.md#section1835494915576)（int32\_t、uint32\_t、float、half等）及其组成的指针、数组、结构体类型，且指针类型必须指向GM或者Unified Buffer（UB）内存。
 -   函数返回类型必须是void。
 -   SIMT VF内只能调用\_\_simt\_callee\_\_函数或\_\_callee\_\_函数。
 
@@ -66,11 +66,11 @@ uint32_t result = simt_helper(arg1, arg2, ...);
 
 SIMD与SIMT混合编程使用的地址空间限定符与SIMD编程一致，详细说明请参见[SIMD BuiltIn关键字的地址空间限定符](simd_builtin_keywords.md#section1624210295308)。
 
-## 核函数配置
+## 核函数（Kernel）配置
 
-### 核函数定义
+### 核函数（Kernel）定义
 
-核函数是SIMD与SIMT混合编程的Device侧入口函数，负责协调整个算子的执行流程，包括VF的调度和调用。vector计算单元的混合编程场景下，函数定义语法为：
+核函数（Kernel）是SIMD与SIMT混合编程的Device侧入口函数，负责协调整个算子的执行流程，包括VF的调度和调用。vector计算单元的混合编程场景下，函数定义语法为：
 
 ```cpp
 __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2, ...);
@@ -78,10 +78,10 @@ __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2,
 
 关键修饰符说明如下：
 
--   \_\_global\_\_：必需修饰符，作用为标识核函数，表明可在Host侧通过<<<...\>\>\>调用。
+-   \_\_global\_\_：必需修饰符，作用为标识核函数（Kernel），表明可在Host侧通过<<<...\>\>\>调用。
 -   \_\_vector\_\_：必需修饰符，作用为标识函数是在Device侧AIV核上执行。
 
-核函数定义有以下几个约束：
+核函数（Kernel）定义有以下几个约束：
 
 -   返回值类型必须是void；
 -   入参支持指针类型（需使用\_\_gm\_\_修饰）和Ascend C内置数据类型；
@@ -106,7 +106,7 @@ __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2,
 
 ### <<<\>\>\>调用
 
-SIMD与SIMT混合编程是在SIMD编程模型的核函数执行流程基础上引入SIMT VF（Vector Function）子任务。核函数仍按SIMD编程方式在Host侧通过<<<...\>\>\>启动，语法如下：
+SIMD与SIMT混合编程是在SIMD编程模型的核函数（Kernel）执行流程基础上引入SIMT VF（Vector Function）子任务。核函数（Kernel）仍按SIMD编程方式在Host侧通过<<<...\>\>\>启动，语法如下：
 
 ```cpp
 kernel_name<<<block_num, dyn_ub_size, stream>>>(args...);
@@ -116,14 +116,14 @@ kernel_name<<<block_num, dyn_ub_size, stream>>>(args...);
 
 | 参数 | 类型 | 说明 | 约束 |
 | --- | --- | --- | --- |
-| block_num | uint32_t | 设置核函数启用的核数 | 取值范围[1, 65535] |
+| block_num | uint32_t | 设置核函数（Kernel）启用的核数 | 取值范围[1, 65535] |
 | dyn_ub_size | uint32_t | 指定动态内存大小，单位为字节 | 不超过最大可配置值：256KB - 8KB - 32KB - 静态内存 |
 | stream | aclrtStream | 用于维护异步操作执行顺序 | 无 |
 
 ## VF函数的asc\_vf\_call调用
 
 ### SIMT VF的asc\_vf\_call调用
-SIMD与SIMT混合编程以SIMD核函数作为Device侧入口，在核函数或`__aicore__`函数中通过`asc_vf_call`启动SIMT VF子任务，通过参数配置，启动指定数目的线程，执行指定的SIMT VF函数。其函数原型如下：
+SIMD与SIMT混合编程以SIMD核函数（Kernel）作为Device侧入口，在核函数（Kernel）或`__aicore__`函数中通过`asc_vf_call`启动SIMT VF子任务，通过参数配置，启动指定数目的线程，执行指定的SIMT VF函数。其函数原型如下：
 
 ```cpp
 template <auto funcPtr, typename... Args>
@@ -136,15 +136,15 @@ __aicore__ inline void asc_vf_call(dim3 threadNums, Args &&...args)
 
 | 参数名 | 描述 |
 | --- | --- |
-| funcPtr | 用于指定SIMT入口核函数。 |
-| Args | 定义可变参数，用于传递实参到SIMT入口核函数。 |
+| funcPtr | 用于指定SIMT入口核函数（Kernel）。 |
+| Args | 定义可变参数，用于传递实参到SIMT入口核函数（Kernel）。 |
 
 **表3**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | threadNums | 输入 | dim3结构，定义为{dimx，dimy，dimz}，用于指定SIMT线程块内线程数量。线程总数为dimx * dimy * dimz，该值的大小必须小于等于2048，建议为32的倍数。 |
-| args | 输入 | 可变参数，用于传递实参到SIMT入口核函数。 |
+| args | 输入 | 可变参数，用于传递实参到SIMT入口核函数（Kernel）。 |
 
 以下示例展示了SIMD与SIMT混合编程场景下如何使用asc\_vf\_call调用\_\_simt\_vf\_\_函数。
 
@@ -172,7 +172,7 @@ __global__ __vector__ void add_custom(__gm__ float* x, __gm__ float* y, __gm__ f
 
 ### SIMT VF与SIMD VF的调用差异
 
-SIMT VF与SIMD VF均通过`asc_vf_call`接口在核函数或`__aicore__`函数中启动VF子任务，但二者面向的并行执行模型不同：SIMT VF以线程为基本执行单元，实现线程级并行；SIMD VF基于矢量寄存器对连续数据实现数据级并行。执行模型的差异进一步决定了二者在调用形式上存在差异，具体如下表所示：
+SIMT VF与SIMD VF均通过`asc_vf_call`接口在核函数（Kernel）或`__aicore__`函数中启动VF子任务，但二者面向的并行执行模型不同：SIMT VF以线程为基本执行单元，实现线程级并行；SIMD VF基于矢量寄存器对连续数据实现数据级并行。执行模型的差异进一步决定了二者在调用形式上存在差异，具体如下表所示：
 
 | 对比项 | SIMT VF调用 | SIMD VF调用 |
 | --- | --- | --- |
@@ -209,25 +209,25 @@ SIMT VF与SIMD VF均通过`asc_vf_call`接口在核函数或`__aicore__`函数�
 
     运行时变量，表示一个线程束（Warp）中的线程数量，当前为固定值32。
 
-SIMD核函数层级的内置变量参见[SIMD核函数层内置变量](./simd_builtin_keywords.md#内置变量)。
+SIMD核函数（Kernel）层级的内置变量参见[SIMD核函数（Kernel）层内置变量](./simd_builtin_keywords.md#内置变量)。
 
 ### 不同层级的内置变量使用限制
 
-Host侧<<<...\>\>\>调用配置的是外层核函数的逻辑核数；SIMT VF内部的线程架构类内置变量描述的是SIMT VF子任务的线程层次。两类概念所属层级不同，不能混用，下表列出了SIMD核函数层级和SIMT VF线程层级中常见概念的差异。
+Host侧<<<...\>\>\>调用配置的是外层核函数（Kernel）的逻辑核数；SIMT VF内部的线程架构类内置变量描述的是SIMT VF子任务的线程层次。两类概念所属层级不同，不能混用，下表列出了SIMD核函数（Kernel）层级和SIMT VF线程层级中常见概念的差异。
 
 | 内置变量或方法 | 所属层级 | 使用位置 | 含义 |
 | --- | --- | --- | --- |
-| `AscendC::GetBlockNum()` | SIMD核函数层级 | 核函数或`__aicore__`函数，SIMT VF内部不可见 | 获取Host侧<<<...\>\>\>调用配置的核函数逻辑核数，即`block_num`。 |
-| `AscendC::GetBlockIdx()` | SIMD核函数层级 | 核函数或`__aicore__`函数，SIMT VF内部不可见 | 获取当前执行核函数的逻辑核索引。 |
-| `gridDim` | SIMT VF线程层级 | `__simt_vf__`或`__simt_callee__`函数，SIMT VF外部不可见 | 获取SIMT VF线程层次中的网格维度，表示本次SIMT VF子任务在各维度上的线程块数量。其值由Host侧<<<...\>\>\>调用配置的核函数逻辑核数决定。 |
+| `AscendC::GetBlockNum()` | SIMD核函数（Kernel）层级 | 核函数（Kernel）或`__aicore__`函数，SIMT VF内部不可见 | 获取Host侧<<<...\>\>\>调用配置的核函数（Kernel）逻辑核数，即`block_num`。 |
+| `AscendC::GetBlockIdx()` | SIMD核函数（Kernel）层级 | 核函数（Kernel）或`__aicore__`函数，SIMT VF内部不可见 | 获取当前执行核函数（Kernel）的逻辑核索引。 |
+| `gridDim` | SIMT VF线程层级 | `__simt_vf__`或`__simt_callee__`函数，SIMT VF外部不可见 | 获取SIMT VF线程层次中的网格维度，表示本次SIMT VF子任务在各维度上的线程块数量。其值由Host侧<<<...\>\>\>调用配置的核函数（Kernel）逻辑核数决定。 |
 | `blockIdx` | SIMT VF线程层级 | `__simt_vf__`或`__simt_callee__`函数，SIMT VF外部不可见 | 获取SIMT VF线程层次中的线程块索引，表示当前线程所在的SIMT线程块在VF执行网格中的位置。 |
 | `blockDim` | SIMT VF线程层级 | `__simt_vf__`或`__simt_callee__`函数，SIMT VF外部不可见 | 获取SIMT VF线程块内的线程三维结构，其值由调用SIMT VF时`asc_vf_call`的第一个`dim3`参数指定。 |
 | `threadIdx` | SIMT VF线程层级 | `__simt_vf__`或`__simt_callee__`函数，SIMT VF外部不可见 | 获取当前SIMT线程在线程块内部的索引。 |
 
 使用时需注意：
 
--   SIMD侧核函数不能使用SIMT VF线程层级相关内置变量，SIMT VF也无法感知SIMD核函数层级的逻辑核编号或逻辑核数量。
--   如果SIMT VF需要使用外层SIMD流程中的逻辑核编号或逻辑核数量，建议在核函数或`__aicore__`函数中通过`AscendC::GetBlockIdx()`、`AscendC::GetBlockNum()`获取对应值后，以普通参数传入SIMT VF。
+-   SIMD侧核函数（Kernel）不能使用SIMT VF线程层级相关内置变量，SIMT VF也无法感知SIMD核函数（Kernel）层级的逻辑核编号或逻辑核数量。
+-   如果SIMT VF需要使用外层SIMD流程中的逻辑核编号或逻辑核数量，建议在核函数（Kernel）或`__aicore__`函数中通过`AscendC::GetBlockIdx()`、`AscendC::GetBlockNum()`获取对应值后，以普通参数传入SIMT VF。
 
 ## 内置数据类型<a name="zh-cn_topic_0000002571575581_section1880403364916"></a><a name="cn_topic_0000002571575581_section1880403364916"></a>
 

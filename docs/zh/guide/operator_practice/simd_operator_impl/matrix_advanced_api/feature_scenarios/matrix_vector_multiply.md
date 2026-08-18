@@ -2,7 +2,7 @@
 
 ## 功能介绍<a name="zh-cn_topic_0000002264077892_section310824820358"></a>
 
-矩阵向量乘（General Matrix-Vector multiplication），即GEMV，是指Matmul计算中M=1，形状为\(1, K\)的左矩阵A与形状为\(K, N\)的右矩阵B进行矩阵乘运算的场景。Matmul支持在Tiling侧与Kernel侧通过配置A矩阵的数据格式为[VECTOR](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md#li51557161818)来开启GEMV模式，从而高效处理M=1的计算场景。若在M=1时未开启GEMV模式，Matmul计算则将M方向作为非对齐场景进行处理。GEMV模式相较于非对齐处理方式，搬运数据量更少，性能更好。
+矩阵向量乘（General Matrix-Vector multiplication），即GEMV，是指Matmul计算中M=1，形状为\(1, K\)的左矩阵A与形状为\(K, N\)的右矩阵B进行矩阵乘运算的场景。Matmul支持在Tiling侧与核函数（Kernel）侧通过配置A矩阵的数据格式为[VECTOR](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md#li51557161818)来开启GEMV模式，从而高效处理M=1的计算场景。若在M=1时未开启GEMV模式，Matmul计算则将M方向作为非对齐场景进行处理。GEMV模式相较于非对齐处理方式，搬运数据量更少，性能更好。
 
 以M=1，K=256，N=32，左右矩阵数据类型为half的Matmul为具体示例，说明GEMV模式的Matmul API内部处理过程。
 
@@ -53,7 +53,7 @@
     int ret = tiling.GetTiling(tilingData);
     ```
 
--   Kernel实现
+-   核函数（Kernel）实现
 
     相较于[基础场景](../operator_impl.md#zh-cn_topic_0000001622514006_li1032116474330)，GEMV场景在创建Matmul对象时，设置模板参数A\_TYPE的数据格式为CubeFormat::VECTOR。
 

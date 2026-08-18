@@ -10,7 +10,7 @@
 output[i] = input[index[i]] + 1
 ```
 
-其中，离散读取`input[index[i]]`适合使用SIMT线程并行完成；加1操作面向连续UB数据，适合使用SIMD向量计算完成。
+其中，离散读取`input[index[i]]`适合使用SIMT线程并行完成；加1操作面向连续Unified Buffer（UB）数据，适合使用SIMD向量计算完成。
 
 | 数据 | Shape | 数据类型 | 说明 |
 | --- | --- | --- | --- |
@@ -58,7 +58,7 @@ __simt_vf__ __launch_bounds__(THREAD_COUNT) inline void simt_gather(
 
 ## 调用VF函数<a name="zh-cn_topic_0000002563469531_section199351451451"></a>
 
-在`__global__ __vector__`核函数中，申请UB空间作为共享内存，再通过`asc_vf_call<simt_gather>`调用SIMT VF函数完成gather计算，而后通过`asc_vf_call<simd_adds>`调用SIMD VF函数执行后续的加法计算。在调用SIMT VF函数时，`asc_vf_call`的第一个参数`dim3(THREAD_COUNT)`表示本次SIMT VF调用启动1024个线程。
+在`__global__ __vector__`核函数（Kernel）中，申请UB空间作为共享内存，再通过`asc_vf_call<simt_gather>`调用SIMT VF函数完成gather计算，而后通过`asc_vf_call<simd_adds>`调用SIMD VF函数执行后续的加法计算。在调用SIMT VF函数时，`asc_vf_call`的第一个参数`dim3(THREAD_COUNT)`表示本次SIMT VF调用启动1024个线程。
 
 ```cpp
 __global__ __vector__ void gather_and_adds_kernel(
@@ -84,9 +84,9 @@ __global__ __vector__ void gather_and_adds_kernel(
 
 `asc_vf_call<simt_gather>`调用后，当前Vector Core内会启动一个SIMT线程块。以本样例为例，`index_total_length_per_block`为1024，`THREAD_COUNT`也为1024，因此一个线程块即可处理当前核负责的全部输出元素。
 
-## 配置核函数启动<a name="zh-cn_topic_0000002563469531_section1680714261755"></a>
+## 配置核函数（Kernel）启动<a name="zh-cn_topic_0000002563469531_section1680714261755"></a>
 
-Host侧通过`<<<>>>`内核调用符启动`__global__ __vector__`核函数。下面代码中，`num_blocks`表示启动8个Vector Core，`dyn_ub_size`表示动态UB大小，本样例取值为`THREAD_COUNT * sizeof(float)`，`stream`用于维护异步执行顺序。
+Host侧通过`<<<>>>`内核调用符启动`__global__ __vector__`核函数（Kernel）。下面代码中，`num_blocks`表示启动8个Vector Core，`dyn_ub_size`表示动态UB大小，本样例取值为`THREAD_COUNT * sizeof(float)`，`stream`用于维护异步执行顺序。
 
 ```cpp
 constexpr uint32_t input_total_length = 100000;
@@ -103,7 +103,7 @@ gather_and_adds_kernel<<<num_blocks, dyn_ub_size, stream>>>(
 | 参数 | 本样例取值 | 说明 |
 | --- | --- | --- |
 | num_blocks | 8 | 启动8个Vector Core，每个核处理1024个输出元素 |
-| dyn_ub_size | THREAD_COUNT * sizeof(float) | 为核函数配置动态UB空间 |
+| dyn_ub_size | THREAD_COUNT * sizeof(float) | 为核函数（Kernel）配置动态UB空间 |
 | stream | stream | 指定ACL运行时流 |
 
 ## 数据同步<a name="zh-cn_topic_0000002563469531_section_data_sync"></a>

@@ -22,7 +22,7 @@ void GetReduceXorSumMaxMinTmpSize(const AscendC::TensorShape& srcShape, const ui
 | srcShape | 输入 | 输入的shape信息，参数类型为[AscendC::TensorShape](../../data_structures/TensorShape.md)。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为int16_t，此处应传入2。 |
 | isReuseSource | 输入 | 是否复用源操作数输入的空间，与ReduceXorSum接口一致。 |
-| maxValue | 输出 | ReduceXorSum接口能完成计算所需最大临时空间大小，超出该值的空间不会被该接口使用。<br> 说明： <br>maxValue仅作为参考值，有可能大于Unified Buffer剩余空间的大小，该场景下，开发者需要根据Unified Buffer剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | ReduceXorSum接口能完成计算所需最大临时空间大小，超出该值的空间不会被该接口使用。<br> 说明： <br>maxValue仅作为参考值，有可能大于UB剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | ReduceXorSum接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。 |
 
 ## 返回值说明

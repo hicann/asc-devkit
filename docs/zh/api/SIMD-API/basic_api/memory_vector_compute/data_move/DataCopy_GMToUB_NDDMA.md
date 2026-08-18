@@ -32,12 +32,12 @@
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
 
 ## 函数原型<a name="section1954364615315"></a>
 
-- Global Memory -> Unified Buffer，支持多维度搬运
+- Global Memory -> UB，支持多维度搬运
 
     ```cpp
     template <typename T, uint8_t dim, const NdDmaConfig& config = kDefaultNdDmaConfig>

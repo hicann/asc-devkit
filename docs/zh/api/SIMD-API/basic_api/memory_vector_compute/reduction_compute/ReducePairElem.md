@@ -110,7 +110,7 @@
 
 - 操作数的起始地址对齐约束请参考[通用地址对齐约束](../../../general_description_and_constraints.md#通用地址对齐约束)，需要32字节对齐。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
-- `dstRepStride`、`srcBlkStride`、`srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合UB的实际大小避免出现越界。
+- `dstRepStride`、`srcBlkStride`、`srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合Unified Buffer（UB）的实际大小避免出现越界。
 
 <!-- npu="950,A3,910b" id14 -->
 - 当参数mask或repeatTime取值为0时，该接口的行为如下：
@@ -131,8 +131,8 @@
 
 <!-- npu="950" id19 -->
 - 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
-  - tensor高维切分计算占用8KB Unified Buffer。
-  - tensor前n个数据连续计算不涉及8KB Unified Buffer的占用。
+  - tensor高维切分计算占用8KB UB。
+  - tensor前n个数据连续计算不涉及8KB UB的占用。
 <!-- end id19 -->
 
 <!-- npu="950,A3,910b,310p,310b" id20 -->

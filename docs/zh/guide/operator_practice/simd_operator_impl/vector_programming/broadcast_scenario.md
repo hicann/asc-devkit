@@ -58,7 +58,7 @@ if (divDimCoef % blockDim == 0U) {
 }
 ```
 
-进行核内数据切分时，需要计算Unified Buffer数据块的数量向coef和BUFFER\_NUM对齐之后的数量ubBlockAligned。
+进行核内数据切分时，需要计算Unified Buffer（UB）数据块的数量向coef和BUFFER\_NUM对齐之后的数量ubBlockAligned。
 
 ```
 uint32_t ubBlockAligned =
@@ -87,7 +87,7 @@ if (length % ubBlockAligned == 0U || tileNum == 0U) {
 
 ## 算子类实现<a name="zh-cn_topic_0000002201157446_section1017415713416"></a>
 
-在核函数初始化阶段，根据Tiling结构体传入的参数确定对哪个输入进行Broadcast。由于针对输入的第二个轴（axis = 1）进行Broadcast，可以计算出，对于需要进行Broadcast的输入，每个核搬入数据长度为blockLength / coef。
+在核函数（Kernel）初始化阶段，根据Tiling结构体传入的参数确定对哪个输入进行Broadcast。由于针对输入的第二个轴（axis = 1）进行Broadcast，可以计算出，对于需要进行Broadcast的输入，每个核搬入数据长度为blockLength / coef。
 
 初始化函数代码如下：
 

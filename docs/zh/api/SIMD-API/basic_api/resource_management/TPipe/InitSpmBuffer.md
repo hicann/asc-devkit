@@ -34,7 +34,7 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-初始化SPM Buffer。SPM Buffer是一块在GM上的空间，当UB空间不足时可以将溢出数据存放在SPM Buffer上。
+初始化SPM Buffer。SPM Buffer是一块在GM上的空间，当Unified Buffer（UB）空间不足时可以将溢出数据存放在SPM Buffer上。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

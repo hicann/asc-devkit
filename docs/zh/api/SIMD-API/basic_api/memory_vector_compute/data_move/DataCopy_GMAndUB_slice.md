@@ -32,9 +32,9 @@
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id8 -->
     - CO2 -> GM（仅Atlas 推理系列产品AI Core支持）
@@ -42,14 +42,14 @@
 
 ## 函数原型<a name="zh-cn_topic_0000002565968945_section82039854412"></a>
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
 
     ```cpp
     template <typename T>
     __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>& src, const SliceInfo dstSliceInfo[], const SliceInfo srcSliceInfo[], const uint32_t dimValue = 1)
     ```
 
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
 
     ```cpp
     template <typename T>
@@ -71,8 +71,8 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| dst | 输出 | 目的操作数。<br>&bull;类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)时，存储位置为Unified Buffer，目的地址需要32字节对齐。<br>&bull;类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)时，存储位置为Global Memory，目的地址需要1字节对齐。 |
-| src | 输入 | 源操作数。<br>&bull;类型为GlobalTensor时，存储位置为Global Memory，源地址需要1字节对齐。<br>&bull;类型为LocalTensor时，存储位置为Unified Buffer，源地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数。<br>&bull;类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)时，存储位置为Unified Buffer（UB），目的地址需要32字节对齐。<br>&bull;类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)时，存储位置为Global Memory，目的地址需要1字节对齐。 |
+| src | 输入 | 源操作数。<br>&bull;类型为GlobalTensor时，存储位置为Global Memory，源地址需要1字节对齐。<br>&bull;类型为LocalTensor时，存储位置为UB，源地址需要32字节对齐。 |
 | dstSliceInfo | 输入 | 目的操作数切片信息，类型为SliceInfo。通过该参数可以配置切片的起始和终止元素个数、间隔、长度等信息。<br>SliceInfo参数说明请参考[表3](#table_slice_3)。 |
 | srcSliceInfo | 输入 | 源操作数切片信息，类型为SliceInfo。通过该参数可以配置切片的起始和终止元素个数、间隔、长度等信息。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>SliceInfo参数说明请参考[表3](#table_slice_3)。 |
 | dimValue | 输入 | 操作数维度信息，默认值为1。 |
@@ -145,7 +145,7 @@
 
 ## 数据类型<a name="zh-cn_topic_0000002565968945_section4219135304818"></a>
 
-源操作数和目的操作数支持的数据类型保持一致，Global Memory -> Unified Buffer和Unified Buffer -> Global Memory两个数据通路的数据类型支持情况相同，具体如下：
+源操作数和目的操作数支持的数据类型保持一致，Global Memory -> UB和UB -> Global Memory两个数据通路的数据类型支持情况相同，具体如下：
 
 <!-- npu="950" id9 -->
 
@@ -178,7 +178,7 @@
 ## 约束说明<a name="zh-cn_topic_0000002565968945_section2045914466492"></a>
 
 - 该接口为软仿接口，从易用性角度出发进行设计。
-- 位于Global Memory的地址必须1字节对齐，位于Unified Buffer的地址必须32字节对齐。
+- 位于Global Memory的地址必须1字节对齐，位于UB的地址必须32字节对齐。
 - burstLen，仅在dimValue = 1时生效，超出1维的情况下，必须配置为1，不支持配置成其他值。
 - 切片数据搬运中的横向burstLen大小设置，需要用户自己通过计算：横向切片元素个数\* sizeof\(T\)/32字节。横向切片元素个数\* sizeof\(T\)的大小必须是32字节的倍数。
 - SliceInfo结构体的成员变量startIndex、endIndex、stride、burstLen的取值须满足：
@@ -217,12 +217,12 @@ for (uint32_t i = 0; i < dimValueIn; i++) {
 }
 
 // 先后进行两个数据通路的切片搬运。
-// Global Memory -> Unified Buffer: MTE2流水搬运。
+// Global Memory -> UB: MTE2流水搬运。
 AscendC::DataCopy(srcLocal, srcGlobal, dstSliceInfo, srcSliceInfo, dimValue);
 // 等待MTE2搬运完成，MTE3可以开始。
 AscendC::SetFlag<AscendC::HardEvent::MTE2_MTE3>(EVENT_ID0);
 AscendC::WaitFlag<AscendC::HardEvent::MTE2_MTE3>(EVENT_ID0);
-// Unified Buffer -> Global Memory: MTE3流水搬运。
+// UB -> Global Memory: MTE3流水搬运。
 AscendC::DataCopy(dstGlobal, srcLocal, dstSliceInfo, dstSliceInfo, dimValue);
 ```
 

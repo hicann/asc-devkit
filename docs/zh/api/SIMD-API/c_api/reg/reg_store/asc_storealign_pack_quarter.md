@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-从矢量数据寄存器压缩搬出到UB的接口，根据mask将src中有效元素的低8bits数据连续存储于dst_align32b中，支持数据类型为b32。
+从矢量数据寄存器压缩搬出到Unified Buffer（UB）的接口，根据mask将src中有效元素的低8bits数据连续存储于dst_align32b中，支持数据类型为b32。
 
 支持Post Update模式，接口调用后自动更新目的操作数地址。
 

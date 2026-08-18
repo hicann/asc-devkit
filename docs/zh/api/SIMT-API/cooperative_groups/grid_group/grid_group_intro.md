@@ -1,6 +1,6 @@
 # grid_group简介
 
-`grid_group`是对一个核函数启动的所有SIMT线程的抽象，线程范围覆盖当前Grid中的所有线程块及其线程。通过`grid_group`可以查询Grid维度、线程块排名、全局线程排名，并通过`sync()`在Grid范围内进行跨线程块同步。
+`grid_group`是对一个核函数（Kernel）启动的所有SIMT线程的抽象，线程范围覆盖当前Grid中的所有线程块及其线程。通过`grid_group`可以查询Grid维度、线程块排名、全局线程排名，并通过`sync()`在Grid范围内进行跨线程块同步。
 
 ## Public成员函数
 

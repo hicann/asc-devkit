@@ -28,7 +28,7 @@
 
 将src中被mask选择的有效元素依次复制到dst中，有效元素在dst中从低到高连续排列，剩余位置元素置为0。
 
-本接口不会将有效数据大小保存至AR寄存器。如果需要筛选有效元素并将其连续搬出至UB，请参考[asc_squeeze_and_storeunalign](../reg_store/asc_squeeze_and_storeunalign.md)。
+本接口不会将有效数据大小保存至AR寄存器。如果需要筛选有效元素并将其连续搬出至Unified Buffer（UB），请参考[asc_squeeze_and_storeunalign](../reg_store/asc_squeeze_and_storeunalign.md)。
 
 ## 函数原型
 

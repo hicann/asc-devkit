@@ -230,7 +230,7 @@ AscendC::LoadData(l0aTensor, l1aTensor, loadDataParams);
 
 ### 矩阵数据搬出
 
-矩阵搬出接口实现L0C Buffer到Global Memory或L1 Buffer的数据传输，支持随路量化、ReLU、NZ2ND格式转换、通道拆分合并等操作。开发者通过配置参数控制搬运路径、位置和长度等，通常在`Mmad`接口后使用。针对[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)，还支持L0C Buffer到UB的搬运以及UB双目标模式。L0C Buffer到Global Memory通路的NZ2ND格式转换同时支持NPU架构版本2201和3510。矩阵搬出能力如下图所示：
+矩阵搬出接口实现L0C Buffer到Global Memory或L1 Buffer的数据传输，支持随路量化、ReLU、NZ2ND格式转换、通道拆分合并等操作。开发者通过配置参数控制搬运路径、位置和长度等，通常在`Mmad`接口后使用。针对[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)，还支持L0C Buffer到Unified Buffer（UB）的搬运以及UB双目标模式。L0C Buffer到Global Memory通路的NZ2ND格式转换同时支持NPU架构版本2201和3510。矩阵搬出能力如下图所示：
 
 [NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)下的矩阵搬出流程为：
 
@@ -356,7 +356,7 @@ AI Core内部执行单元（如MTE2搬运单元、Vector计算单元等）以异
 
 当开发者进行一个矩阵乘法计算时（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品），可通过`Mutex::Lock`&`Mutex::Unlock`的方式完成对这四个步骤的同步。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)产品可使用`SetFlag`&`WaitFlag`实现相同同步效果，详见[同步机制](../cpp_tensor_programming/cpp_tensor_programming_overview.md#同步机制)。
 
-以下示例中，Kernel入参`x`、`y`、`z`的指针类型与对应`GlobalTensor`的模板类型一致，因此调用`SetGlobalBuffer`时可省略显式类型转换。若实参指针类型与`GlobalTensor`的模板类型不一致，需要先将其显式转换为对应的`__gm__ PrimType*`类型。
+以下示例中，核函数（Kernel）入参`x`、`y`、`z`的指针类型与对应`GlobalTensor`的模板类型一致，因此调用`SetGlobalBuffer`时可省略显式类型转换。若实参指针类型与`GlobalTensor`的模板类型不一致，需要先将其显式转换为对应的`__gm__ PrimType*`类型。
 
 ```cpp
 __global__ __cube__ void matmul_kernel(__gm__ half* x, __gm__ half* y, __gm__ float* z)

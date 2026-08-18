@@ -229,7 +229,7 @@
 -   一个kernel中所有使用的Buffer数量之和不能超过64。
 -   自定义地址InitBuffer方式分配不建议与不指定地址的混用，可能会导致内存冲突。
 <!-- npu="950" id10 -->
-- 针对Ascend 950PR/Ascend 950DT，对UB的内存分配，会基于静态内存的基础上进行分配，即动态内存初始位置，参考[内存层级](../../../../../guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md)。
+- 针对Ascend 950PR/Ascend 950DT，对Unified Buffer（UB）的内存分配，会基于静态内存的基础上进行分配，即动态内存初始位置，参考[内存层级](../../../../../guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md)。
 <!-- end id10 -->
 - 当前暂不支持与L1 Buffer, L0A Buffer, L0B Buffer, L0C Buffer, BiasTable静态数组混用。
 

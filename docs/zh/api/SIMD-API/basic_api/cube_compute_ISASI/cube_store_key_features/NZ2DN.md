@@ -52,7 +52,7 @@ for (int h = 0; h < dnNum; h++) {
 ## 特性约束
 
 - 当开启Channel Split/Channel Merge功能（NZ2NZ）时，此功能不可用。
-- 当L0C Buffer搬运到UB开启双目标模式时，此功能不可用。
+- 当L0C Buffer搬运到Unified Buffer（UB）开启双目标模式时，此功能不可用。
 - 目标操作数地址之间不能重叠。
 
 ## 使用示例

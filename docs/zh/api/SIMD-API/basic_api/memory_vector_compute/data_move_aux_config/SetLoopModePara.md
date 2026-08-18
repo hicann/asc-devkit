@@ -32,9 +32,9 @@ DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mo
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
     - VECOUT -> GM
 
 ## 函数原型<a name="section620mcpsimp"></a>
@@ -73,7 +73,7 @@ __aicore__ inline void SetLoopModePara(const LoopModeParams& loopParams, DataCop
 下面的样例呈现了SetLoopModePara的使用方法。
 
 - 样例中在数据类型为int8\_t的场景下，数据块大小为384，配置DataCopyPad的数据搬运模式为Compact模式，blockLen = 48，blockCount = 2，表明每个连续传输数据块包含48字节，且连续传输数据块有两个，srcStride = 0，dstStride = 0，isPad = false，表明源操作数相邻数据块之间没有间隔且不需要填充用户自定义的数据；
-- 再设置SetLoopModePara中LoopModeParams的参数：loop1Size = 2，loop2Size = 2，loop1SrcStride = 96，loop2SrcStride =192，loop1DstStride = 128，loop2DstStride = 288，DataCopyMVType为OUT\_TO\_UB，表明内层循环和外层循环的次数分别为2次，内层循环和外层循环中相邻迭代源操作数的数据块间隔分别为96字节和192字节，内层循环和外层循环中相邻迭代目的操作数的数据块间隔分别为128字节和288字节，通路是从GM搬运到UB；
+- 再设置SetLoopModePara中LoopModeParams的参数：loop1Size = 2，loop2Size = 2，loop1SrcStride = 96，loop2SrcStride =192，loop1DstStride = 128，loop2DstStride = 288，DataCopyMVType为OUT\_TO\_UB，表明内层循环和外层循环的次数分别为2次，内层循环和外层循环中相邻迭代源操作数的数据块间隔分别为96字节和192字节，内层循环和外层循环中相邻迭代目的操作数的数据块间隔分别为128字节和288字节，通路是从GM搬运到Unified Buffer（UB）；
 - 使用以上配置，调用SetLoopModePara再调用DataCopyPad就可以开启DataCopyPad的loop模式完成数据类型为int8\_t的数据块大小为384的数据搬运。详细图解如下：
 
 **图1**  源操作数搬运场景示例<a name="fig6671114911311"></a>  

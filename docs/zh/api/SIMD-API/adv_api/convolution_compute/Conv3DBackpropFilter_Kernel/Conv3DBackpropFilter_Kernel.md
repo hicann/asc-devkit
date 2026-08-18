@@ -1,4 +1,4 @@
-# Conv3DBackpropFilter Kernel侧接口
+# Conv3DBackpropFilter核函数（Kernel）侧接口
 
 -   **[Conv3DBackpropFilter使用说明](Conv3DBackpropFilter_usage.md)**
 

@@ -40,7 +40,7 @@ inline float remquof(float x, float y, int *quo)
 | --- | --- | --- |
 | x | 输入 | 源操作数。 |
 | y | 输入 | 源操作数。 |
-| quo | 输出 | Unified Buffer、Global Memory或栈空间的地址，用于存储除法运算的商。 |
+| quo | 输出 | UB、Global Memory或栈空间的地址，用于存储除法运算的商。 |
 
 ## 返回值说明
 

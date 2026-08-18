@@ -86,7 +86,7 @@ asc_duplicate_scalar(dst0, (uint16_t)0, mask);
 asc_duplicate_scalar(dst1, (uint16_t)0, mask);
 
 // 加载待统计的数据
-asc_loadalign(src, src_addr);  // src_addr是外部输入的UB内存空间地址
+asc_loadalign(src, src_addr);  // src_addr是外部输入的Unified Buffer（UB）内存空间地址
 
 // 分别统计低位和高位区间
 asc_frequency_histogram_bin0(dst0, src, mask);  // 统计[0,127]

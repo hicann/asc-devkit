@@ -176,9 +176,9 @@
   <!-- end id16 -->
 <!-- end id12 -->
 <!-- npu="950" id17 -->
-- 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
-  - tensor高维切分计算接口占用8KB Unified Buffer临时空间。
-  - tensor前n个数据连续计算接口不涉及8KB Unified Buffer临时空间的占用。
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+  - tensor高维切分计算接口占用8KB UB临时空间。
+  - tensor前n个数据连续计算接口不涉及8KB UB临时空间的占用。
 <!-- end id17 -->
 - 当输入类型为int16_t，开启向量量化模式时，`SetDeqScale`接口需要传入至少128B大小的UB空间，若空间不足128B，可能导致精度错误。
 - 该接口需要与`SetDeqScale`配合使用，使用关系映射表如下：

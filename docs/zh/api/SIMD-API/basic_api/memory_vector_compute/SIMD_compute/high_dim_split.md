@@ -20,7 +20,7 @@ Exp(dst, src, mask, repeatTime, {dstBlkStride, ..., dstRepStride, ...});
 
 ## 迭代控制
 
-Vector计算单元每个迭代会从UB中取出**8**个**DataBlock**（每个DataBlock数据块内部地址连续，长度为32Byte）进行计算，并写入对应的8个DataBlock中。下图为单次迭代内的8个DataBlock进行Exp计算的示意图。
+Vector计算单元每个迭代会从Unified Buffer（UB）中取出**8**个**DataBlock**（每个DataBlock数据块内部地址连续，长度为32Byte）进行计算，并写入对应的8个DataBlock中。下图为单次迭代内的8个DataBlock进行Exp计算的示意图。
 
 **图1**  单次迭代内的8个DataBlock进行Exp计算示意图  
 ![](../../../../figures/single_iter_exp.png)<a id="图1-单次迭代内的8个datablock进行exp计算示意图"></a>

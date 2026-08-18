@@ -31,7 +31,7 @@
 
 头文件路径为：`tensor_api/tensor.h`。
 
-Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的量化数据搬运到Fixpipe Buffer。量化数据可用于L0C输出到GM/UB时做随路量化。
+Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的量化数据搬运到Fixpipe Buffer。量化数据可用于L0C输出到GM/Unified Buffer（UB）时做随路量化。
 
 ## 函数原型
 

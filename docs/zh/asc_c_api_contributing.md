@@ -54,7 +54,7 @@ C API采用**指针式编程模型**：
 ```cpp
 // C API编程示例
 constexpr uint32_t count = 64;
-__ubuf__ half dst[count];   // Unified Buffer内存
+__ubuf__ half dst[count];   // Unified Buffer（UB）内存
 __ubuf__ half src0[count];
 __ubuf__ half src1[count];
 

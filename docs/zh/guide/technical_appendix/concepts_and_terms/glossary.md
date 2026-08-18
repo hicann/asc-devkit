@@ -67,7 +67,7 @@
 </tr>
 <tr id="row1029785613291"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p113895215115"><a name="p113895215115"></a><a name="p113895215115"></a>numBlocks</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p3363122814513"><a name="p3363122814513"></a><a name="p3363122814513"></a>参与计算的逻辑AI Core核数，在调用核函数时由开发者指定，其值一般等于或大于实际物理核数。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p3363122814513"><a name="p3363122814513"></a><a name="p3363122814513"></a>参与计算的逻辑AI Core核数，在调用核函数（Kernel）时由开发者指定，其值一般等于或大于实际物理核数。</p>
 </td>
 </tr>
 <tr id="row6977143384316"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p193897255119"><a name="p193897255119"></a><a name="p193897255119"></a>BiasTable Buffer</p>
@@ -82,7 +82,7 @@
 </tr>
 <tr id="row233554054812"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p183891219518"><a name="p183891219518"></a><a name="p183891219518"></a>C1</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p1536342817515"><a name="p1536342817515"></a><a name="p1536342817515"></a>AscendC::TPosition::C1代表设备上用于矩阵计算的逻辑内存，用于存放Bias（偏置）数据，物理存储对应AI Core的L1 Buffer或Unified Buffer。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p1536342817515"><a name="p1536342817515"></a><a name="p1536342817515"></a>AscendC::TPosition::C1代表设备上用于矩阵计算的逻辑内存，用于存放Bias（偏置）数据，物理存储对应AI Core的L1 Buffer或Unified Buffer（UB）。</p>
 </td>
 </tr>
 <tr id="row8118833105319"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p03899218513"><a name="p03899218513"></a><a name="p03899218513"></a>C2</p>
@@ -112,7 +112,7 @@
 </tr>
 <tr id="row17964259192913"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p123893216511"><a name="p123893216511"></a><a name="p123893216511"></a>CO2</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p2363122813516"><a name="p2363122813516"></a><a name="p2363122813516"></a>AscendC::TPosition::CO2代表设备上用于矩阵计算的逻辑内存，用于存放矩阵计算结果（如原始矩阵的最终计算结果），物理存储对应Global Memory或AI Core的Unified Buffer。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p2363122813516"><a name="p2363122813516"></a><a name="p2363122813516"></a>AscendC::TPosition::CO2代表设备上用于矩阵计算的逻辑内存，用于存放矩阵计算结果（如原始矩阵的最终计算结果），物理存储对应Global Memory或AI Core的UB。</p>
 </td>
 </tr>
 <tr id="row11948134812470"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p1739332105114"><a name="p1739332105114"></a><a name="p1739332105114"></a>Compute</p>
@@ -226,9 +226,9 @@
 <td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p2010b"><a name="p2010b"></a><a name="p2010b"></a>Instruction Set Architecture Special Interface（硬件体系结构相关接口）。该类接口不能保证跨硬件版本兼容。</p></td>
 </tr>
 </tr>
-<tr id="row179123019146"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p1639032195115"><a name="p1639032195115"></a><a name="p1639032195115"></a>Kernel</p>
+<tr id="row179123019146"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p1639032195115"><a name="p1639032195115"></a><a name="p1639032195115"></a>核函数（Kernel）</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p14364182813519"><a name="p14364182813519"></a><a name="p14364182813519"></a>核函数，是Device设备上执行的并行函数。核函数通过__global__修饰，多个核并行执行相同的核函数，其主要区别是不同核函数运行时具有不同的BlockID。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p14364182813519"><a name="p14364182813519"></a><a name="p14364182813519"></a>核函数（Kernel），是Device设备上执行的并行函数。核函数（Kernel）通过__global__修饰，多个核并行执行相同的核函数（Kernel），其主要区别是不同核函数（Kernel）运行时具有不同的BlockID。</p>
 </td>
 </tr>
 <tr id="row34231332175613"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p614234735610"><a name="p614234735610"></a><a name="p614234735610"></a>Kernel Launch</p>
@@ -268,12 +268,12 @@
 </tr>
 <tr id="row1825111273311"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p23901024519"><a name="p23901024519"></a><a name="p23901024519"></a>LCM</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p736462845114"><a name="p736462845114"></a><a name="p736462845114"></a>Local Cache Memory，AscendC::TPosition::LCM代表临时共享的Unified Buffer空间，与VECCALC实现同样的功能。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p736462845114"><a name="p736462845114"></a><a name="p736462845114"></a>Local Cache Memory，AscendC::TPosition::LCM代表临时共享的UB空间，与VECCALC实现同样的功能。</p>
 </td>
 </tr>
 <tr id="row11628103863017"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p193901420518"><a name="p193901420518"></a><a name="p193901420518"></a>Local Memory</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p1436492835113"><a name="p1436492835113"></a><a name="p1436492835113"></a>AI Core的内部存储，包括L1 Buffer、L0A Buffer、L0B Buffer、L0C Buffer、Unified Buffer等存储单元。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p1436492835113"><a name="p1436492835113"></a><a name="p1436492835113"></a>AI Core的内部存储，包括L1 Buffer、L0A Buffer、L0B Buffer、L0C Buffer、UB等存储单元。</p>
 </td>
 </tr>
 <tr id="row887110515115"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p63939216514"><a name="p63939216514"></a><a name="p63939216514"></a>LocalTensor</p>
@@ -303,12 +303,12 @@
 </tr>
 <tr id="row16717617876"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p53901325511"><a name="p53901325511"></a><a name="p53901325511"></a>MTE2</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p73651928205114"><a name="p73651928205114"></a><a name="p73651928205114"></a>Memory Transfer Engine 2，AI Core的数据传递引擎，负责将数据从GM搬运到L1 Buffer、L0A Buffer、L0B Buffer、Unified Buffer等。注意：不同硬件能力可能有差异。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p73651928205114"><a name="p73651928205114"></a><a name="p73651928205114"></a>Memory Transfer Engine 2，AI Core的数据传递引擎，负责将数据从GM搬运到L1 Buffer、L0A Buffer、L0B Buffer、UB等。注意：不同硬件能力可能有差异。</p>
 </td>
 </tr>
 <tr id="row112041123578"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p183901322511"><a name="p183901322511"></a><a name="p183901322511"></a>MTE3</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p203651128105117"><a name="p203651128105117"></a><a name="p203651128105117"></a>Memory Transfer Engine 3，AI Core的数据传递引擎，负责将数据从Unified Buffer搬运到Global Memory、L1 Buffer等。注意：不同硬件能力可能有差异。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p203651128105117"><a name="p203651128105117"></a><a name="p203651128105117"></a>Memory Transfer Engine 3，AI Core的数据传递引擎，负责将数据从UB搬运到Global Memory、L1 Buffer等。注意：不同硬件能力可能有差异。</p>
 </td>
 </tr>
 <tr id="row682759181911"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p039117217510"><a name="p039117217510"></a><a name="p039117217510"></a>NC1HWC0</p>
@@ -348,7 +348,7 @@
 </tr>
 <tr id="row9853173793419"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p1339122115117"><a name="p1339122115117"></a><a name="p1339122115117"></a>Pipe</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p736512865115"><a name="p736512865115"></a><a name="p736512865115"></a>Ascend C编程范式核心概念之一，用于统一管理Device端内存等资源，一个Kernel函数必须且只能初始化一个Pipe对象。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p736512865115"><a name="p736512865115"></a><a name="p736512865115"></a>Ascend C编程范式核心概念之一，用于统一管理Device端内存等资源，一个核函数（Kernel）必须且只能初始化一个Pipe对象。</p>
 </td>
 </tr>
 <tr id="row296512384350"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p83911328515"><a name="p83911328515"></a><a name="p83911328515"></a>Preload</p>
@@ -413,7 +413,7 @@
 </tr>
 <tr id="row146061856161511"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p1192714320165"><a name="p1192714320165"></a><a name="p1192714320165"></a>SuperKernel</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p5927133215168"><a name="p5927133215168"></a><a name="p5927133215168"></a>SuperKernel是一种算子的二进制融合技术，与源码融合不同，它聚焦于内核函数(Kernel)的二进制的调度方案，展开深度优化，于已编译的二进制代码基础上融合创建一个超级Kernel函数（SuperKernel），以调用子函数的方式调用多个其他内核函数，也就是子Kernel。相对于单算子下发，SuperKernel技术可以减少任务调度等待时间和调度开销，同时利用Task间隙资源进一步优化算子头开销。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p5927133215168"><a name="p5927133215168"></a><a name="p5927133215168"></a>SuperKernel是一种算子的二进制融合技术，与源码融合不同，它聚焦于核函数（Kernel）的二进制的调度方案，展开深度优化，于已编译的二进制代码基础上融合创建一个超级核函数（Kernel）（SuperKernel），以调用子函数的方式调用多个其他核函数（Kernel），也就是子核函数（Kernel）。相对于单算子下发，SuperKernel技术可以减少任务调度等待时间和调度开销，同时利用Task间隙资源进一步优化算子头开销。</p>
 </td>
 </tr>
 <tr id="row164027130332"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p0391924511"><a name="p0391924511"></a><a name="p0391924511"></a>Tensor</p>
@@ -433,7 +433,7 @@
 </tr>
 <tr id="row88301113203316"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p239116225114"><a name="p239116225114"></a><a name="p239116225114"></a>TilingData</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p0366202835113"><a name="p0366202835113"></a><a name="p0366202835113"></a>TilingData指数据切分和分块的相关参数（如每次搬运的块大小、循环次数）。鉴于设备端Scalar计算能力限制，一般Tiling参数在Host侧计算完成，然后传输到设备侧供Kernel函数使用。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p0366202835113"><a name="p0366202835113"></a><a name="p0366202835113"></a>TilingData指数据切分和分块的相关参数（如每次搬运的块大小、循环次数）。鉴于设备端Scalar计算能力限制，一般Tiling参数在Host侧计算完成，然后传输到设备侧供核函数（Kernel）使用。</p>
 </td>
 </tr>
 <tr id="row174292016362"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p183911529514"><a name="p183911529514"></a><a name="p183911529514"></a>TilingFunc</p>
@@ -443,7 +443,7 @@
 </tr>
 <tr id="row296561343316"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p63920210519"><a name="p63920210519"></a><a name="p63920210519"></a>TilingKey</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p4366102865120"><a name="p4366102865120"></a><a name="p4366102865120"></a>用来区分Kernel函数不同版本的特例实现，不同的TilingKey会编译生成不同二进制。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p4366102865120"><a name="p4366102865120"></a><a name="p4366102865120"></a>用来区分核函数（Kernel）不同版本的特例实现，不同的TilingKey会编译生成不同二进制。</p>
 </td>
 </tr>
 <tr id="row166912537816"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p2427951919"><a name="p2427951919"></a><a name="p2427951919"></a>TPosition</p>
@@ -466,24 +466,24 @@
 <td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p838817725912"><a name="p838817725912"></a><a name="p838817725912"></a>非对齐寄存器，用作缓冲区来优化UB和RegTensor之间连续不对齐地址访问的开销，适用于连续非对齐搬出场景。</p>
 </td>
 </tr>
-<tr id="row13357140113713"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p17392122195118"><a name="p17392122195118"></a><a name="p17392122195118"></a>Unified Buffer/UB</p>
+<tr id="row13357140113713"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p17392122195118"><a name="p17392122195118"></a><a name="p17392122195118"></a>UB/UB</p>
 </td>
 <td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p936692819517"><a name="p936692819517"></a><a name="p936692819517"></a>AI Core内部存储单元，主要用于矢量计算，与逻辑内存AscendC::TPosition::VECIN、AscendC::TPosition::VECOUT、AscendC::TPosition::VECCALC相对应。</p>
 </td>
 </tr>
 <tr id="row354602815226"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p23927295115"><a name="p23927295115"></a><a name="p23927295115"></a>VECCALC</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p236617287516"><a name="p236617287516"></a><a name="p236617287516"></a>Vector Calculation，AscendC::TPosition::VECCALC代表设备上用于矢量计算的逻辑内存，用于存放临时变量，物理存储对应AI Core的Unified Buffer。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p236617287516"><a name="p236617287516"></a><a name="p236617287516"></a>Vector Calculation，AscendC::TPosition::VECCALC代表设备上用于矢量计算的逻辑内存，用于存放临时变量，物理存储对应AI Core的UB。</p>
 </td>
 </tr>
 <tr id="row5265131443316"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p3392192155118"><a name="p3392192155118"></a><a name="p3392192155118"></a>VECIN</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p536692845113"><a name="p536692845113"></a><a name="p536692845113"></a>Vector Input，AscendC::TPosition::VECIN代表设备上用于矢量计算的逻辑内存，用于存放矢量计算的输入数据，物理存储对应AI Core的Unified Buffer。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p536692845113"><a name="p536692845113"></a><a name="p536692845113"></a>Vector Input，AscendC::TPosition::VECIN代表设备上用于矢量计算的逻辑内存，用于存放矢量计算的输入数据，物理存储对应AI Core的UB。</p>
 </td>
 </tr>
 <tr id="row11418214173314"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p17392182195114"><a name="p17392182195114"></a><a name="p17392182195114"></a>VECOUT</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p173668282513"><a name="p173668282513"></a><a name="p173668282513"></a>Vector Output，AscendC::TPosition::VECOUT代表设备上用于矢量计算的逻辑内存，用于存放矢量计算的输出数据，物理存储对应AI Core的Unified Buffer。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p173668282513"><a name="p173668282513"></a><a name="p173668282513"></a>Vector Output，AscendC::TPosition::VECOUT代表设备上用于矢量计算的逻辑内存，用于存放矢量计算的输出数据，物理存储对应AI Core的UB。</p>
 </td>
 </tr>
 <tr id="row895317489610"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p203923211517"><a name="p203923211517"></a><a name="p203923211517"></a>Vector</p>
@@ -518,7 +518,7 @@
 </tr>
 <tr id="row6896278492"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p93891429517"><a name="p93891429517"></a><a name="p93891429517"></a>CPU域调试</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p1236310283512"><a name="p1236310283512"></a><a name="p1236310283512"></a>Ascend C提供的一种孪生调试方法，在CPU上模拟设备侧Kernel函数的执行和调试，仅调试算子功能和精度。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p1236310283512"><a name="p1236310283512"></a><a name="p1236310283512"></a>Ascend C提供的一种孪生调试方法，在CPU上模拟设备侧核函数（Kernel）的执行和调试，仅调试算子功能和精度。</p>
 </td>
 </tr>
 <tr id="row134674514426"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p73891426518"><a name="p73891426518"></a><a name="p73891426518"></a>基本块</p>
@@ -531,10 +531,10 @@
 <td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p672534174219"><a name="p672534174219"></a><a name="p672534174219"></a>静态Tensor编程方式，相比基于Pipe的编程方式，这种方式避免了TPipe内存管理初始化过程（约数百纳秒），从而减少了运行时开销，更有助于开发者实现极致性能。通过直接构造指定地址和存储位置的LocalTensor，并将其传递给计算、搬运等API进行编程，提供了更高的灵活性。</p>
 </td>
 </tr>
-<tr id="row1490079161018"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p53938211517"><a name="p53938211517"></a><a name="p53938211517"></a>Kernel直调</p>
+<tr id="row1490079161018"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p53938211517"><a name="p53938211517"></a><a name="p53938211517"></a>核函数（Kernel）直调</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p163671728125117"><a name="p163671728125117"></a><a name="p163671728125117"></a>一种简单直接的Kernel调用方式。</p>
-<p id="p13676289512"><a name="p13676289512"></a><a name="p13676289512"></a>完成Kernel侧算子实现和Host侧Tiling实现后，即可通过运行时接口，完成算子Kernel直调。该方式下Tiling开发不受CANN框架的限制，简单直接，多用于算子功能的快速验证。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p163671728125117"><a name="p163671728125117"></a><a name="p163671728125117"></a>一种简单直接的核函数（Kernel）调用方式。</p>
+<p id="p13676289512"><a name="p13676289512"></a><a name="p13676289512"></a>完成核函数（Kernel）侧算子实现和Host侧Tiling实现后，即可通过运行时接口，完成算子核函数（Kernel）直调。该方式下Tiling开发不受CANN框架的限制，简单直接，多用于算子功能的快速验证。</p>
 </td>
 </tr>
 <tr id="row144191142323"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p239115255119"><a name="p239115255119"></a><a name="p239115255119"></a>NPU域调试</p>
@@ -559,7 +559,7 @@
 </tr>
 <tr id="row15874154915120"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p83923215110"><a name="p83923215110"></a><a name="p83923215110"></a>流水任务</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p936614282513"><a name="p936614282513"></a><a name="p936614282513"></a>Ascend C编程范式是一种流水线式的编程范式，把算子核内的处理程序，分成多个流水任务。流水任务是指单核处理程序中主程序调度的并行任务。在核函数内部，可以通过流水任务实现数据的并行处理，进一步提升性能。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p936614282513"><a name="p936614282513"></a><a name="p936614282513"></a>Ascend C编程范式是一种流水线式的编程范式，把算子核内的处理程序，分成多个流水任务。流水任务是指单核处理程序中主程序调度的并行任务。在核函数（Kernel）内部，可以通过流水任务实现数据的并行处理，进一步提升性能。</p>
 </td>
 </tr>
 <tr id="row715815113320"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p143925216518"><a name="p143925216518"></a><a name="p143925216518"></a>连续模式</p>

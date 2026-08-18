@@ -51,7 +51,7 @@ Vector核: GM(C:ND,half) -> UB(VECCALC,half) -> UB(VECCALC,half) -> GM(C:ND,half
             MTE2搬运（baseM/2×baseN）    VEC计算            MTE3写出
 ```
 
-**核函数声明**：使用`__global__ __mix__(1, 2)`声明混合核函数，1个AIC(Cube) + 2个AIV(Vector)组成一个逻辑核，Cube:Vector核数比例为1:2。
+**核函数（Kernel）声明**：使用`__global__ __mix__(1, 2)`声明混合核函数（Kernel），1个AIC(Cube) + 2个AIV(Vector)组成一个逻辑核，Cube:Vector核数比例为1:2。
 
 ```cpp
 __global__ __mix__(1, 2) void mmad_vec_custom(__gm__ uint8_t* xMatrix, __gm__ uint8_t* yMatrix, __gm__ uint8_t* zMatrix)

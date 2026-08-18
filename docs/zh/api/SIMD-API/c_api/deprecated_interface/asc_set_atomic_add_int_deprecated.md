@@ -30,7 +30,7 @@
 
 头文件路径：`"c_api/atomic/atomic.h"`。
 
-设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。
+设置对后续的从Unified Buffer（UB）/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。
 
 ## 函数原型
 

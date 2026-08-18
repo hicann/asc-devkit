@@ -1,10 +1,10 @@
 # C语言编程概述
 
-C语言编程是Ascend C SIMD编程路径的底层核心接口，可直接映射NPU硬件指令，支持开发者对向量处理单元、矩阵运算单元、本地存储等硬件资源进行精细化控制。开发者可手动规划本地内存布局、管控数据流转、插入硬件流水同步指令、调整数据搬运与计算的流水并行策略，围绕计算单元、存储层次和流水同步机制来组织代码实现。该编程方式适用于对性能和可控性要求较高的算子开发场景，也是习惯C语言编程、追求极致性能的开发者充分释放NPU硬件潜能的核心技术路径。基于以上定位，下面从核函数、内存架构、同步机制、算子开发四大核心模块，逐一讲解Ascend C语言编程的核心规则与使用方法。
+C语言编程是Ascend C SIMD编程路径的底层核心接口，可直接映射NPU硬件指令，支持开发者对向量处理单元、矩阵运算单元、本地存储等硬件资源进行精细化控制。开发者可手动规划本地内存布局、管控数据流转、插入硬件流水同步指令、调整数据搬运与计算的流水并行策略，围绕计算单元、存储层次和流水同步机制来组织代码实现。该编程方式适用于对性能和可控性要求较高的算子开发场景，也是习惯C语言编程、追求极致性能的开发者充分释放NPU硬件潜能的核心技术路径。基于以上定位，下面从核函数（Kernel）、内存架构、同步机制、算子开发四大核心模块，逐一讲解Ascend C语言编程的核心规则与使用方法。
 
-## Kernel函数
+## 核函数（Kernel）
 
-[核函数](../kernel_function.md)在前序章节已作介绍。Ascend C语言编程完全沿用SIMD编程的核函数定义与调用规范，未新增额外语法约束。核函数是运行在Device侧的执行入口，所有内存读写、数据搬运、计算逻辑均在核函数内部实现。下文将首先介绍C语言编程的内存层级，这也是核函数开发的基础。
+[核函数（Kernel）](../kernel_function.md)在前序章节已作介绍。Ascend C语言编程完全沿用SIMD编程的核函数（Kernel）定义与调用规范，未新增额外语法约束。核函数（Kernel）是运行在Device侧的执行入口，所有内存读写、数据搬运、计算逻辑均在核函数（Kernel）内部实现。下文将首先介绍C语言编程的内存层级，这也是核函数（Kernel）开发的基础。
 
 ## 内存层级
 
@@ -12,18 +12,18 @@ AI Core采用分级存储架构，不同计算单元的编程视角有所差异�
 
 **Cube矩阵计算**：采用「Global Memory → L1/L0系列Buffer」两级层级，其中L1 Buffer、L0A/L0B Buffer、L0C Buffer均服务于矩阵计算。
 
-**Vector矢量计算**：传统架构采用「Global Memory → UB」两级层级；[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入寄存器后构建「Global Memory → Unified Buffer → Register」三级层级。Global Memory存放输入输出数据，Unified Buffer作为矢量计算数据中间缓存，Register位于Vector计算单元最内层，直接与矢量计算执行单元交互。
+**Vector矢量计算**：传统架构采用「Global Memory → UB」两级层级；[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入寄存器后构建「Global Memory → UB → Register」三级层级。Global Memory存放输入输出数据，Unified Buffer（UB）作为矢量计算数据中间缓存，Register位于Vector计算单元最内层，直接与矢量计算执行单元交互。
 
 <img src="../../../../figures/aicore_mem_2.png" alt="AI Core存储层次结构" width="800"/>
 
 
 ### 外部存储（Global Memory）
 
-Global Memory是昇腾NPU的设备内存，位于AI Core外部，容量大、带宽高但访问延迟相对较长。用于存储算子的输入数据、输出结果和中间计算数据。运行在Device侧的核函数可直接访问Global Memory。Global Memory具备数据持久性：通过全局内存分配的空间，其存储的数据会一直保留，直至该内存空间被释放或应用程序终止。用户通过Runtime API完成Device侧全局内存的管理。
+Global Memory是昇腾NPU的设备内存，位于AI Core外部，容量大、带宽高但访问延迟相对较长。用于存储算子的输入数据、输出结果和中间计算数据。运行在Device侧的核函数（Kernel）可直接访问Global Memory。Global Memory具备数据持久性：通过全局内存分配的空间，其存储的数据会一直保留，直至该内存空间被释放或应用程序终止。用户通过Runtime API完成Device侧全局内存的管理。
 
-结合下述示例说明：Host侧通过aclrtMalloc接口分配Device侧全局内存，通过aclrtMemcpy完成Host与Device全局内存间的数据互相拷贝（Host→Device或Device→Host）；随后通过<<<>>>语法触发Device侧核函数执行运算；此外，通过aclrtMalloc分配的Device全局内存，需调用aclrtFree接口释放。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+结合下述示例说明：Host侧通过aclrtMalloc接口分配Device侧全局内存，通过aclrtMemcpy完成Host与Device全局内存间的数据互相拷贝（Host→Device或Device→Host）；随后通过<<<>>>语法触发Device侧核函数（Kernel）执行运算；此外，通过aclrtMalloc分配的Device全局内存，需调用aclrtFree接口释放。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
 
-此外，核函数需使用__global__函数前缀进行声明。该前缀用于标识函数在Host侧调用、Device侧执行，是Ascend C核函数的标准定义方式，确保编译器正确识别核函数入口并生成相应的硬件执行代码。完整的调用流程为：Host分配GM内存 → 数据拷贝 → 启动核函数 → 释放内存，示例代码如下：
+此外，核函数（Kernel）需使用__global__函数前缀进行声明。该前缀用于标识函数在Host侧调用、Device侧执行，是Ascend C核函数（Kernel）的标准定义方式，确保编译器正确识别核函数（Kernel）入口并生成相应的硬件执行代码。完整的调用流程为：Host分配GM内存 → 数据拷贝 → 启动核函数（Kernel） → 释放内存，示例代码如下：
 
 ```c
 // Kernel implementation, decorated with __global__ to mark kernel entry point
@@ -59,11 +59,11 @@ std::vector<float> kernel_add(std::vector<float> &x, std::vector<float> &y) {
 
 上文介绍了外部全局内存（Global Memory），接下来说明AI Core内部高速存储。AI Core包含Cube、Vector、Scalar三类计算单元，数据必须从外部存储加载至内部存储后才能执行计算。内部存储按服务对象分为两大体系：服务矢量计算的AIV内部存储、服务矩阵计算的AIC内部存储。
 
-#### AIV内部存储之Unified Buffer
+#### AIV内部存储之UB
 
-Unified Buffer是AI Core中服务于矢量计算单元的核心内部存储单元，部署在每个Vector Core（AIV）内部。相较于外部存储空间，Unified Buffer容量更小，但具备更高的带宽和更低的访问延迟，可作为内核执行期间由用户自主管理的高速缓存资源。
+UB是AI Core中服务于矢量计算单元的核心内部存储单元，部署在每个Vector Core（AIV）内部。相较于外部存储空间，UB容量更小，但具备更高的带宽和更低的访问延迟，可作为内核执行期间由用户自主管理的高速缓存资源。
 
-在C指针编程中，用户可通过数组定义的方式动态或静态申请Unified Buffer。
+在C指针编程中，用户可通过数组定义的方式动态或静态申请UB。
 
 **静态申请**：分配一段指定大小的内存空间，空间大小在编译时确定，不可动态修改。
 
@@ -112,7 +112,7 @@ __global__ __vector__ void add_custom(...) {
 }
 ```
 
-> 📌 Unified Buffer的内存地址必须按32字节对齐，目的是匹配硬件总线的数据传输粒度和SIMD计算单元的并行处理能力；若地址非对齐访问，会直接导致程序运行时错误。
+> 📌 UB的内存地址必须按32字节对齐，目的是匹配硬件总线的数据传输粒度和SIMD计算单元的并行处理能力；若地址非对齐访问，会直接导致程序运行时错误。
 
 #### AIV内部存储之Register File
 
@@ -167,7 +167,7 @@ __cc__ half l0c_buffer[m_size * n_size];    // L0C Buffer, 64 bytes aligned
 
 #### Bank冲突
 
-上文介绍了各类内部存储的定义、排布格式。由于AI Core内部存储采用Bank分组架构，不当的内存访问会引发Bank冲突，进而降低算子性能。下面以Unified Buffer为例，介绍Bank冲突的相关原理，在[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品上，Unified Buffer总大小为256KB（256 × 1024字节），包含8个bank group，每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B，采用低位地址交织。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)的UB容量规格请参考相应硬件架构文档。
+上文介绍了各类内部存储的定义、排布格式。由于AI Core内部存储采用Bank分组架构，不当的内存访问会引发Bank冲突，进而降低算子性能。下面以UB为例，介绍Bank冲突的相关原理，在[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品上，UB总大小为256KB（256 × 1024字节），包含8个bank group，每个bank group包含2个bank。每个bank大小为16KB，由512行组成，每行长度为32B，采用低位地址交织。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)的UB容量规格请参考相应硬件架构文档。
 
 <img src="../../../../figures/ub_conflict.png" alt="UB Bank冲突示意图" width="800"/>
 
@@ -214,7 +214,7 @@ AI Core上的执行单元分别属于不同的执行流水，同步即是保证�
 | 流水类型 | 含义 |
 |---------|------|
 | **PIPE_S** | 标量流水线 |
-| **PIPE_V** | 矢量计算流水及部分硬件架构下的L0C Buffer→Unified Buffer数据搬运流水 |
+| **PIPE_V** | 矢量计算流水及部分硬件架构下的L0C Buffer→UB数据搬运流水 |
 | **PIPE_M** | 矩阵计算流水 |
 | **PIPE_MTE1** | L1 Buffer→L0A Buffer、L1 Buffer→L0B Buffer数据搬运流水 |
 | **PIPE_MTE2** | GM→L1 Buffer、GM→UB等数据搬运流水 |
@@ -318,7 +318,7 @@ AI Core上的执行单元分别属于不同的执行流水，同步即是保证�
 
 Vector矢量计算主要包含基础算术、归约计算、数据类型转换等矢量计算。
 
-在[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)上，Vector矢量计算的数据来自于Unified Buffer（要求32B对齐），C语言编程在Vector计算单元上提供了通过UB指针直接操作计算的接口能力。此类直接操作UB的编程方式称为Memory矢量计算编程。
+在[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)上，Vector矢量计算的数据来自于UB（要求32B对齐），C语言编程在Vector计算单元上提供了通过UB指针直接操作计算的接口能力。此类直接操作UB的编程方式称为Memory矢量计算编程。
 
 以Add计算为例，当开发者需要计算4096长度的向量加法，可以通过`asc_add(dst, src0, src1, count)`的接口直接进行计算。更多内容可参考[Memory矢量计算编程](./memory_vector_computation.md)中有关Memory矢量计算编程的描述。
 
@@ -338,7 +338,7 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
 
 ```
 
-以上为传统架构的矢量计算编程方式；[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)新增寄存器能力，编程模式有所变化：在传统UB缓存体系的基础上，开放寄存器（Register）可编程能力，构建出「Global Memory → UB → Register」的三级内存层级。新一代架构下的矢量计算都需要从Unified Buffer加载到Register寄存器后，再利用Register寄存器进行计算操作。可参考[Reg矢量计算编程](./reg_vector_computation.md)中有关Reg矢量计算编程的描述。
+以上为传统架构的矢量计算编程方式；[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)新增寄存器能力，编程模式有所变化：在传统UB缓存体系的基础上，开放寄存器（Register）可编程能力，构建出「Global Memory → UB → Register」的三级内存层级。新一代架构下的矢量计算都需要从UB加载到Register寄存器后，再利用Register寄存器进行计算操作。可参考[Reg矢量计算编程](./reg_vector_computation.md)中有关Reg矢量计算编程的描述。
 
 ### Cube矩阵计算
 
@@ -399,4 +399,4 @@ __global__ __mix__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ floa
 
 ## 总结
 
-本章从技术定位出发，依次讲解了C语言编程的核函数规范、内存层级、内外核同步机制以及三类算子开发范式。作为底层硬件编程接口，该路径可充分挖掘NPU算力。如需深入实践，可参考以下专项文档：[Memory矢量计算编程](./memory_vector_computation.md)、[Cube矩阵计算编程](./cube_matrix_computation.md)和[Reg矢量计算编程](./reg_vector_computation.md)。
+本章从技术定位出发，依次讲解了C语言编程的核函数（Kernel）规范、内存层级、内外核同步机制以及三类算子开发范式。作为底层硬件编程接口，该路径可充分挖掘NPU算力。如需深入实践，可参考以下专项文档：[Memory矢量计算编程](./memory_vector_computation.md)、[Cube矩阵计算编程](./cube_matrix_computation.md)和[Reg矢量计算编程](./reg_vector_computation.md)。

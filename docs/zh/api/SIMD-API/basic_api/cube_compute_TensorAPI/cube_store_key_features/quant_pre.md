@@ -1,6 +1,6 @@
 # 随路量化
 
-随路量化是矩阵计算结果从L0C Buffer搬出到Global Memory或Unified Buffer过程中的数据转换能力。L0C Buffer到Global Memory/Unified Buffer搬运根据是否传入`quant`参数自动选择不量化、直接cast、scalar量化或tensor量化模式。
+随路量化是矩阵计算结果从L0C Buffer搬出到Global Memory或Unified Buffer（UB）过程中的数据转换能力。L0C Buffer到Global Memory/UB搬运根据是否传入`quant`参数自动选择不量化、直接cast、scalar量化或tensor量化模式。
 
 ## 调用形式
 

@@ -1,13 +1,13 @@
 # AI Core SIMD编程模型概述
 
 ## 引言
-SIMD并行机制是AI Core的核心算力支撑，承担了整机90%以上的计算吞吐量。因此，本章将以**SIMD编程模型**为核心主线，遵循「宏观架构—硬件调度—代码落地」的递进逻辑，完整覆盖SIMD算子开发全链路：阐述多AI Core集群的并行任务分发机制，拆解单AI Core内部异构计算单元的任务调度逻辑，并逐层讲解如何基于差异化的C/C++编程接口，完成[算子Kernel](./kernel_function.md)计算逻辑的开发。
+SIMD并行机制是AI Core的核心算力支撑，承担了整机90%以上的计算吞吐量。因此，本章将以**SIMD编程模型**为核心主线，遵循「宏观架构—硬件调度—代码落地」的递进逻辑，完整覆盖SIMD算子开发全链路：阐述多AI Core集群的并行任务分发机制，拆解单AI Core内部异构计算单元的任务调度逻辑，并逐层讲解如何基于差异化的C/C++编程接口，完成[算子核函数（Kernel）](./kernel_function.md)计算逻辑的开发。
 
 ## 异构并行计算核心模型：SPMD嵌套SIMD编程范式
 
 昇腾NPU异构并行体系采用**外层多核SPMD（Single Program Multiple Data）并行 \+ 内层单核SIMD细粒度并行**的双层融合架构，是AI Core算子开发的核心理论根基。所有SIMD算子的并行逻辑、数据拆分策略、任务调度机制，均基于该编程范式实现。
 
-**多核集群层面遵循SPMD编程模型**：将每个AI Core抽象成一个Block，通过内置变量[block_idx](../../language_extension/simd_builtin_keywords.md)作为Block索引。每个Block执行同一份算子Kernel代码，一般基于[block_idx](../../language_extension/simd_builtin_keywords.md)划分每个Block的数据处理范围，实现多核负载均衡与并行调度。
+**多核集群层面遵循SPMD编程模型**：将每个AI Core抽象成一个Block，通过内置变量[block_idx](../../language_extension/simd_builtin_keywords.md)作为Block索引。每个Block执行同一份算子核函数（Kernel）代码，一般基于[block_idx](../../language_extension/simd_builtin_keywords.md)划分每个Block的数据处理范围，实现多核负载均衡与并行调度。
 
 **单核计算层面依托SIMD并行机制**：单个AI Core内部基于[SIMD](../programming_model_overview.md)机制实现细粒度并行，依靠硬件专用计算单元，单条指令批量完成多组同质数据的并行运算，充分挖掘单AI Core的极致算力潜力。
 
@@ -19,24 +19,24 @@ AI Core是昇腾NPU的基础核心计算单元，采用「控制单元\+异构�
 - **向量处理单元[Vector](../../advanced_programming/hardware_implementation/basic_architecture.md)**：遵循标准SIMD并行计算逻辑，专职执行各类向量指令，支持单指令多数据并行运算，适配元素级计算、逻辑运算、数据重组等灵活性要求高的计算场景。
 - **矩阵运算单元[Cube](../../advanced_programming/hardware_implementation/basic_architecture.md)**：高密度张量专用算力单元，面向矩阵乘加、高维张量卷积等算力密集型场景深度优化。硬件原生支持批量矩阵运算，典型能力为单次完成一组float16类型16×16矩阵乘法，是AI模型训练与推理场景的核心算力支撑。
 
-- **本地存储**：AI Core片内高速存储体系，用于缓存计算中间数据，规避频繁访问低速全局内存的性能损耗，降低访存延迟。其中Cube计算单元配套[L1 Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)、[L0C Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)等；Vector计算单元配套统一缓存[UB（Unified Buffer）](../../advanced_programming/hardware_implementation/basic_architecture.md)。<!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT的AI Core向量单元新增可编程向量寄存器（Register），单寄存器大小为256B。<!-- end id1 -->
+- **本地存储**：AI Core片内高速存储体系，用于缓存计算中间数据，规避频繁访问低速全局内存的性能损耗，降低访存延迟。其中Cube计算单元配套[L1 Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)、[L0C Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)等；Vector计算单元配套统一缓存[Unified Buffer（UB）](../../advanced_programming/hardware_implementation/basic_architecture.md)。<!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT的AI Core向量单元新增可编程向量寄存器（Register），单寄存器大小为256B。<!-- end id1 -->
 
 
 ### 基于硬件单元的三类标准算子
 根据算子核心计算逻辑对硬件单元的依赖差异，AI Core算子可划分为三大标准类型，通过专属修饰符标准化硬件资源调度规则，统一全域算子开发规范：
-- **矢量类算子**：核心计算逻辑完全由Vector计算单元承载，无矩阵密集运算，以元素级、逻辑类、数据重组类计算为主，适配访存密集、灵活度要求高的场景。核函数通过[\_\_vector\_\_](../../language_extension/simd_builtin_keywords.md)修饰。
-- **矩阵类算子**：核心计算逻辑完全由Cube计算单元承载，以大维度矩阵乘、张量卷积等规整算力密集计算为主，追求极致硬件吞吐，核函数通过 [\_\_cube\_\_](../../language_extension/simd_builtin_keywords.md)修饰。
-- **融合类算子**：工业界主流复杂算子形态，可联动调度Cube计算单元与Vector计算单元协同计算，兼顾矩阵高密度算力运算与向量灵活逻辑处理，核函数通过[\_\_mix\_\_(cube, vec)](../../language_extension/simd_builtin_keywords.md)修饰，其中\_\_mix\_\_(cube, vec)表示启动的Cube核与Vector核的配比，支持的配比包括(1, 0)、(0, 1)、(1, 1)、(1, 2)。
+- **矢量类算子**：核心计算逻辑完全由Vector计算单元承载，无矩阵密集运算，以元素级、逻辑类、数据重组类计算为主，适配访存密集、灵活度要求高的场景。核函数（Kernel）通过[\_\_vector\_\_](../../language_extension/simd_builtin_keywords.md)修饰。
+- **矩阵类算子**：核心计算逻辑完全由Cube计算单元承载，以大维度矩阵乘、张量卷积等规整算力密集计算为主，追求极致硬件吞吐，核函数（Kernel）通过 [\_\_cube\_\_](../../language_extension/simd_builtin_keywords.md)修饰。
+- **融合类算子**：工业界主流复杂算子形态，可联动调度Cube计算单元与Vector计算单元协同计算，兼顾矩阵高密度算力运算与向量灵活逻辑处理，核函数（Kernel）通过[\_\_mix\_\_(cube, vec)](../../language_extension/simd_builtin_keywords.md)修饰，其中\_\_mix\_\_(cube, vec)表示启动的Cube核与Vector核的配比，支持的配比包括(1, 0)、(0, 1)、(1, 1)、(1, 2)。
 
 > 📌 **提示**：NPU硬件架构可分为[分离模式](../../advanced_programming/hardware_implementation/basic_architecture.md)和 [耦合模式](../../advanced_programming/hardware_implementation/basic_architecture.md)。分离模式下，两类计算单元各自配备独立标量控制单元；耦合模式下，Cube与Vector单元共享同一个标量控制单元。其中\_\_mix\_\_修饰符仅在分离模式下生效，耦合模式硬件不支持该特性。更详尽的硬件架构信息请参见 [硬件实现](../../advanced_programming/hardware_implementation/basic_architecture.md)章节。
 
 ## 基于AI Core的SIMD算子开发通用步骤
 
-基于SPMD\+SIMD双层编程模型，所有AI Core核运行同一份Kernel核函数，通过 **[block_idx](../../language_extension/simd_builtin_keywords.md)** 区分数据分片，实现多核并行计算。因此，算子开发的首要步骤为 **Tiling（分块）设计**：对全局超大张量数据做均匀切分，为每个AI Core分配独立数据块，保障多核负载均衡。
+基于SPMD\+SIMD双层编程模型，所有AI Core核运行同一份核函数（Kernel），通过 **[block_idx](../../language_extension/simd_builtin_keywords.md)** 区分数据分片，实现多核并行计算。因此，算子开发的首要步骤为 **Tiling（分块）设计**：对全局超大张量数据做均匀切分，为每个AI Core分配独立数据块，保障多核负载均衡。
 
 此外，与传统CPU串行编程、[SIMT](../programming_model_overview.md)线程编程不同，AI Core SIMD编程的显著特征是**显式分层访存**：开发者需手动管控数据流转，将数据从Global Memory（全局内存，又称Device Memory，简称GM）搬运至AI Core片内Local Memory（本地内存，典型包含L1 Buffer、UB）完成计算，最终将运算结果写回全局内存。
 
-### 算子Kernel通用开发四步法
+### 算子核函数（Kernel）通用开发四步法
 基于SIMD的AI Core算子开发包含四个主要步骤，适配绝大多数算子开发场景：
 1. **Tiling（分块）设计**：对全局超大张量数据进行均匀切分，为各AI Core分配大小均衡的独立数据分片，精准适配SPMD多核并行架构，规避单核算力瓶颈，实现全域负载均衡。
 2. **数据搬入**：调用SIMD编程接口，将全局内存中的待计算数据，批量搬运至L1 Buffer、UB等AI Core片内高速本地内存。
@@ -94,6 +94,6 @@ Ascend C提供三层梯度化可编程接口，全层级均支持完整AI Core�
 > 📌 **提示** Ascend C采用GlobalTensor、LocalTensor分别抽象全局内存与片上本地内存对应的Tensor/Tile。当前版本的LocalTensor不携带Layout内存布局信息，后续版本Tensor API中LocalTensor将原生支持Layout布局管理，具体发布节奏请参考[Ascend C DevKit仓](https://gitcode.com/cann/asc-devkit)。
 
 ## 小结
-本章系统梳理了AI Core算子从任务分发、硬件调度到代码落地的全链路技术体系：计算任务依托SPMD\+SIMD异构并行范式分发至多AI Core并行执行，再根据算子计算特性精准调度至Cube矩阵单元或Vector向量单元完成运算；开发者可结合自身编程习惯与业务场景，灵活选用多级C/C++编程接口，完成算子Kernel的完整逻辑开发。
+本章系统梳理了AI Core算子从任务分发、硬件调度到代码落地的全链路技术体系：计算任务依托SPMD\+SIMD异构并行范式分发至多AI Core并行执行，再根据算子计算特性精准调度至Cube矩阵单元或Vector向量单元完成运算；开发者可结合自身编程习惯与业务场景，灵活选用多级C/C++编程接口，完成算子核函数（Kernel）的完整逻辑开发。
 
-后续章节将逐层深入、循序渐进地详解硬件架构原理、Kernel核函数定义、各级编程接口规范、内存管理机制、数据同步逻辑、实战开发流程与性能调优技巧，帮助开发者快速理解核心技术，熟练掌握高性能、高可用的AI Core算子开发能力。
+后续章节将逐层深入、循序渐进地详解硬件架构原理、核函数（Kernel）定义、各级编程接口规范、内存管理机制、数据同步逻辑、实战开发流程与性能调优技巧，帮助开发者快速理解核心技术，熟练掌握高性能、高可用的AI Core算子开发能力。

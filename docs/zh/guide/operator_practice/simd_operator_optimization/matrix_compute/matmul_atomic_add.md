@@ -6,7 +6,7 @@
 
 【反例】
 
-将Matmul的结果矩阵C和GM上的矩阵D分别搬到UB上，做完Add操作后，结果再搬出到GM。这样至少要多分配一块UB内存给矩阵D，假设在分离架构的处理器上执行，将多做三次搬运操作（矩阵C从GM搬到UB、矩阵D从GM搬到UB、Add结果从UB搬出到GM）。
+将Matmul的结果矩阵C和GM上的矩阵D分别搬到Unified Buffer（UB）上，做完Add操作后，结果再搬出到GM。这样至少要多分配一块UB内存给矩阵D，假设在分离架构的处理器上执行，将多做三次搬运操作（矩阵C从GM搬到UB、矩阵D从GM搬到UB、Add结果从UB搬出到GM）。
 
 ```
  template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE>

@@ -9,7 +9,7 @@ SIMT API是面向AI处理器的并行计算编程接口，可以实现高效的�
 | 类别 | 功能 |
 | --- | --- |
 | [同步与内存栅栏](sync_and_memory_fence/sync_and_memory_fence.md) | 内存管理与同步接口，解决不同核内的线程间可能存在的数据竞争以及线程的同步问题。 |
-| [原子操作](atomic_operations/atomic_operations.md) | 对Unified Buffer或Global Memory上的数据与指定数据执行原子操作的一系列接口。 |
+| [原子操作](atomic_operations/atomic_operations.md) | 对UB或Global Memory上的数据与指定数据执行原子操作的一系列接口。 |
 | [Warp函数](Warp_functions/Warp_functions.md) | 对单个Warp内32个线程的数据进行处理的相关操作的一系列API接口。 |
 | [数学函数](math_functions/math_functions.md) | 用于处理数学运算的函数集合以及不同精度、数据类型的转换函数集合 |
 | [地址空间谓词函数](address_space_predicate_functions/address_space_predicate_functions.md) | 判断输入指针是否为指定空间的地址。 |
@@ -67,4 +67,4 @@ SIMT API是面向AI处理器的并行计算编程接口，可以实现高效的�
 | `bfloat16_t`、`bfloat16x2_t` | `#include "simt_api/asc_bf16.h"` |
 | `hifloat8x2_t`、`float8_e4m3x2_t`、`float8_e5m2x2_t` | `#include "simt_api/asc_fp8.h"` |
 
-SIMT API属于Kernel侧基础接口，使用时无需额外链接库文件。
+SIMT API属于核函数（Kernel）侧基础接口，使用时无需额外链接库文件。

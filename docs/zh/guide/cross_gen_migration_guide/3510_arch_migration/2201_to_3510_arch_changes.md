@@ -4,7 +4,7 @@
 
 -   新增多条数据通路。
 -   AI Core核数增加。
--   UB容量提升。
+-   Unified Buffer（UB）容量提升。
 -   新增SSBuffer核内存储单元，支持AIC核和AIV核通过Scalar访问。
 -   SIMD编程基础上，支持SIMT编程、SIMD与SIMT混合编程。
 -   AIV核采用Regbase架构，与[NPU架构版本2201](../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)的Membase架构相比，可以直接对芯片的Vector寄存器Register进行操作，实现更大的灵活性和更好的性能。

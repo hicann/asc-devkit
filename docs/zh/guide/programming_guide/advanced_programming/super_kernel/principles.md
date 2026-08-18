@@ -2,7 +2,7 @@
 
 ## 概述
 
-SuperKernel是一种算子的二进制融合技术。与源码融合不同，它聚焦于内核函数（Kernel）的二进制调度方案优化，在已编译的二进制代码基础上，将多个子Kernel融合创建出一个超级Kernel函数（简称SuperKernel），由该SuperKernel以子函数调用的方式整合多个内核函数，从而优化计算任务、提升性能和资源利用率。
+SuperKernel是一种算子的二进制融合技术。与源码融合不同，它聚焦于核函数（Kernel）的二进制调度方案优化，在已编译的二进制代码基础上，将多个子核函数（Kernel）融合创建出一个超级核函数（Kernel）（简称SuperKernel），由该SuperKernel以子函数调用的方式整合多个核函数（Kernel），从而优化计算任务、提升性能和资源利用率。
 
 与单算子下发相比，SuperKernel技术能够减少Task调度的等待时间和调度开销，同时利用Task间隙资源进一步优化算子头开销，提升推理性能。
 
@@ -24,9 +24,9 @@ SuperKernel是一种算子的二进制融合技术。与源码融合不同，它
 
 相对于单算子下发，SuperKernel主要通过以下方式带来性能收益：
 
-- **减少Kernel启动开销**：原本需要多次启动的子Kernel，被统一通过一次SuperKernel启动完成，减少了任务调度开销。
+- **减少核函数（Kernel）启动开销**：原本需要多次启动的子核函数（Kernel），被统一通过一次SuperKernel启动完成，减少了任务调度开销。
 - **减少Task调度等待时间**：避免了多个独立Task之间的调度间隙。
-- **算子间流水并行**：通过SuperKernel内提供的任务间同步接口（[SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)、[WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)），可以让子Kernel之间的部分指令实现并行执行，进一步压缩端到端耗时。
+- **算子间流水并行**：通过SuperKernel内提供的任务间同步接口（[SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)、[WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)），可以让子核函数（Kernel）之间的部分指令实现并行执行，进一步压缩端到端耗时。
 
 ## 支持的开启方式
 
@@ -43,4 +43,4 @@ CANN包发布的主流模型常用算子已支持SuperKernel融合。用户自�
 
 - [算子适配说明](operator_adaptation.md)：算子要融合进SuperKernel需要满足的通用约束（与具体的开启方式无关）。
 - [算子自验证说明](operator_self_verification.md)：在两种PyTorch图模式下分别对单个算子进行SuperKernel融合验证的样例。
-- [核函数直调算子额外适配说明](kernel_direct_call_adaptation.md)：对于使用`<<<>>>`方式开发的Ascend C算子，进入SuperKernel前需要进行的额外适配工作。
+- [核函数（Kernel）直调算子额外适配说明](kernel_direct_call_adaptation.md)：对于使用`<<<>>>`方式开发的Ascend C算子，进入SuperKernel前需要进行的额外适配工作。

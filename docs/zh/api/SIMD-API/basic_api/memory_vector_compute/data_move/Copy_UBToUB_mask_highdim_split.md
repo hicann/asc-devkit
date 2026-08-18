@@ -34,11 +34,11 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-支持Unified Buffer和Unified Buffer之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。
+支持Unified Buffer（UB）内部的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECIN -> VECOUT
     - VECCALC -> VECIN
@@ -75,8 +75,8 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为Unified Buffer，目的地址需要32字节对齐。 |
-| src | 输入 | 源操作数，类型为LocalTensor，存储位置为Unified Buffer，源地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为UB，目的地址需要32字节对齐。 |
+| src | 输入 | 源操作数，类型为LocalTensor，存储位置为UB，源地址需要32字节对齐。 |
 | mask[]/mask | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD_compute/mask.md)。 |
 | repeatTime | 输入 | 重复迭代次数。矢量计算单元，每次读取连续的256字节数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体描述请参考[高维切分](../SIMD_compute/high_dim_split.md)。|
 | repeatParams | 输入 | 控制操作数地址步长的参数。<br>CopyRepeatParams类型，包含操作数相邻迭代间相同DataBlock的地址步长，操作数同一迭代内不同DataBlock的地址步长等参数。CopyRepeatParams参数说明请参考表3。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
@@ -136,7 +136,7 @@
 
 ## 约束说明<a name="zh-cn_topic_0000002567699435_section2045914466492"></a>
 
-- 位于Unified Buffer的地址必须32字节对齐。
+- 位于UB的地址必须32字节对齐。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 - CopyRepeatParams结构体参数的值需在取值范围内：
 

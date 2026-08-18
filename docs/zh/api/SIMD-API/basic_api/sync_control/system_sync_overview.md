@@ -27,5 +27,5 @@ AI Core的同步，总共分成3类：核内同步、核间同步、任务间同
 
 | 接口名称 | 功能简述 | 同步类别 |
 | --- | --- | --- |
-| [SetNextTaskStart](./inter_task_sync/SetNextTaskStart.md) | 在SuperKernel的子Kernel中调用，调用后的指令可以和后续其他的子Kernel实现并行，提升整体性能。 | 硬件同步 |
-| [WaitPreTaskEnd](./inter_task_sync/WaitPreTaskEnd.md) | 在SuperKernel的子Kernel中调用，调用前的指令可以和前序其他的子Kernel实现并行，提升整体性能。 | 硬件同步 |
+| [SetNextTaskStart](./inter_task_sync/SetNextTaskStart.md) | 在SuperKernel的子核函数（Kernel）中调用，调用后的指令可以和后续其他的子核函数（Kernel）实现并行，提升整体性能。 | 硬件同步 |
+| [WaitPreTaskEnd](./inter_task_sync/WaitPreTaskEnd.md) | 在SuperKernel的子核函数（Kernel）中调用，调用前的指令可以和前序其他的子核函数（Kernel）实现并行，提升整体性能。 | 硬件同步 |

@@ -123,7 +123,7 @@ __aicore__ inline void add_kernel(__gm__ half* x_gm, __gm__ half* y_gm, __gm__ h
     __ubuf__ half z_local[256];
     uint8_t mutex_id = 1;
 
-    // 1. PIPE_MTE2流水线：数据从GM搬入UB
+    // 1. PIPE_MTE2流水线：数据从GM搬入Unified Buffer（UB）
     asc_lock(PIPE_MTE2, mutex_id);
     asc_copy_gm2ub_align(x_local, x_gm, 256 * sizeof(half));
     asc_copy_gm2ub_align(y_local, y_gm, 256 * sizeof(half));

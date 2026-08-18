@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001796358754_zh-cn_topic_0000001442758437_section36583473819"></a>
 
-基于Kernel Launch算子工程，通过Kernel直调（Kernel Launch）方式调用算子的场景下，可能需要获取硬件平台相关信息，比如获取硬件平台的核数。PlatformAscendCManager类提供获取平台信息的功能：通过该类的GetInstance方法可以获取一个PlatformAscendC类的指针，再通过该指针获取硬件平台相关信息，支持获取的信息可参考[PlatformAscendC](PlatformAscendC/PlatformAscendC.md)。
+基于Kernel Launch算子工程，通过核函数（Kernel）直调（Kernel Launch）方式调用算子的场景下，可能需要获取硬件平台相关信息，比如获取硬件平台的核数。PlatformAscendCManager类提供获取平台信息的功能：通过该类的GetInstance方法可以获取一个PlatformAscendC类的指针，再通过该指针获取硬件平台相关信息，支持获取的信息可参考[PlatformAscendC](PlatformAscendC/PlatformAscendC.md)。
 
 > [!CAUTION]注意 
 >-   使用该功能需要包含"tiling/platform/platform\_ascendc.h"头文件，并在编译脚本中链接tiling\_api、platform动态库。

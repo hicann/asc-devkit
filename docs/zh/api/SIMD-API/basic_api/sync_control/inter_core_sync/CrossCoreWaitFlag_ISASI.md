@@ -45,7 +45,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
 | 参数名 | 描述 |
 | --- | --- |
-| modeId | 核间同步的模式。不同产品对同步模式的支持情况请参见[modeId支持的取值说明](#modeId支持的取值说明)。<br>各个模式支持的对应Kernel类型请参照[表3](#table3)。 |
+| modeId | 核间同步的模式。不同产品对同步模式的支持情况请参见[modeId支持的取值说明](#modeId支持的取值说明)。<br>各个模式支持的对应核函数（Kernel）类型请参照[表3](#table3)。 |
 | pipe | 设置这条指令所在的流水类型。支持的流水类型为PIPE_V、PIPE_M、PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX，不支持PIPE_S和PIPE_ALL。不同产品对流水类型的支持情况请参见[pipe支持的流水类型说明](#pipe支持的流水类型说明)。 |
 
 不同产品对模板参数modeId和pipe的生效情况如下：
@@ -114,13 +114,13 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
 ## 约束说明<a id="section633mcpsimp"></a>
 
-- 由于当Kernel类型为KERNEL_TYPE_AIC_ONLY或KERNEL_TYPE_AIV_ONLY时，硬件不会开启调度模块，也就无法正常进行核间同步，因此不同的同步模式配置[Kernel类型](../../Kernel-Tiling/set_Kernel_type.md)或[函数修饰符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#section1074418132518)的情况如下：
-    - 在纯Vector/Cube场景下（模式0或模式1），建议设置Kernel类型为KERNEL\_TYPE\_MIX\_AIV\_1\_0或KERNEL\_TYPE\_MIX\_AIC\_1\_0，其它支持的Kernel类型请参考表3。
-    - 对于Vector和Cube混合场景（模式2和模式4），需根据AI Core中AIC和AIV的比例灵活配置Kernel类型，不同模式支持的函数修饰符和Kernel类型请参照表3。
+- 由于当核函数（Kernel）类型为KERNEL_TYPE_AIC_ONLY或KERNEL_TYPE_AIV_ONLY时，硬件不会开启调度模块，也就无法正常进行核间同步，因此不同的同步模式配置[核函数（Kernel）类型](../../Kernel-Tiling/set_Kernel_type.md)或[函数修饰符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#section1074418132518)的情况如下：
+    - 在纯Vector/Cube场景下（模式0或模式1），建议设置核函数（Kernel）类型为KERNEL\_TYPE\_MIX\_AIV\_1\_0或KERNEL\_TYPE\_MIX\_AIC\_1\_0，其它支持的核函数（Kernel）类型请参考表3。
+    - 对于Vector和Cube混合场景（模式2和模式4），需根据AI Core中AIC和AIV的比例灵活配置核函数（Kernel）类型，不同模式支持的函数修饰符和核函数（Kernel）类型请参照表3。
 
-        **表3**  模式与支持的Kernel类型配置<a id="table3"></a>
+        **表3**  模式与支持的核函数（Kernel）类型配置<a id="table3"></a>
 
-        | 模式 | 支持的函数修饰符 | 支持的Kernel类型配置 |
+        | 模式 | 支持的函数修饰符 | 支持的核函数（Kernel）类型配置 |
         | --- | --- | --- |
         | 0 | \_\_mix\_\_(0, 1)、\_\_mix\_\_(1, 0)、\_\_mix\_\_(1, 1)、\_\_mix\_\_(1, 2) | KERNEL\_TYPE\_MIX\_AIV\_1\_0、KERNEL\_TYPE\_MIX\_AIC\_1\_0、KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2 |
         | 1 | \_\_mix\_\_(1, 1)、\_\_mix\_\_(1, 2) | KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2 |
@@ -156,7 +156,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
     具体而言，在多流场景下，某条流的核间同步算子虽分配到n个物理核，但可能仅有n-m个核先被调度执行，而其余m个核因被其他流的核间同步算子抢占而尚未启动。先启动的n-m个核执行到核间同步时等待剩余m核完成，而剩余m核因被其他流的核间同步算子占用而无法释放，形成死锁。
 
-    Kernel直调场景下通过[\_\_schedmode\_\_\(mode\)](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)限定符来设置batchmode模式；工程化算子开发场景下，通过TilingContext的SetScheduleMode接口来设置batchmode模式，具体请参考《[基础数据结构和接口](https://gitcode.com/cann/metadef/blob/master/docs/zh/api/README.md)》。
+    核函数（Kernel）直调场景下通过[\_\_schedmode\_\_\(mode\)](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)限定符来设置batchmode模式；工程化算子开发场景下，通过TilingContext的SetScheduleMode接口来设置batchmode模式，具体请参考《[基础数据结构和接口](https://gitcode.com/cann/metadef/blob/master/docs/zh/api/README.md)》。
 
 ## 调用示例<a id="section837496171220"></a>
 
@@ -175,7 +175,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
     AscendC::SetFlag<AscendC::HardEvent::V_MTE3>(EVENT_ID0);
     AscendC::WaitFlag<AscendC::HardEvent::V_MTE3>(EVENT_ID0);
 
-    // UB到GM搬运启用原子累加。
+    // Unified Buffer（UB）到GM搬运启用原子累加。
     AscendC::SetAtomicAdd<float>();
     // DataCopy属于PIPE_MTE3流水操作。
     AscendC::DataCopy(atomicResultGm, xLocal, this->blockLength);

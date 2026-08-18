@@ -41,7 +41,7 @@ __aicore__ inline int32_t SetCcTiling(__gm__ void* ccOpTilingData)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| ccOpTilingData | 输入 | 通信算法的[Mc2CcTiling](../HCCL_Tiling/TilingData_struct.md#table678914014562)参数的地址。Mc2CcTiling在Host侧计算得出，具体请参考[表2 Mc2CcTiling参数说明](../HCCL_Tiling/TilingData_struct.md#table678914014562)，由框架传递到Kernel函数中使用。 |
+| ccOpTilingData | 输入 | 通信算法的[Mc2CcTiling](../HCCL_Tiling/TilingData_struct.md#table678914014562)参数的地址。Mc2CcTiling在Host侧计算得出，具体请参考[表2 Mc2CcTiling参数说明](../HCCL_Tiling/TilingData_struct.md#table678914014562)，由框架传递到核函数（Kernel）中使用。 |
 
 ## 返回值说明
 

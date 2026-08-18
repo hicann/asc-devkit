@@ -18,7 +18,7 @@
 
 **Vector计算单元**
 
--   Vector计算单元的数据来源来自于Unified Buffer，要求32字节对齐。
+-   Vector计算单元的数据来源来自于Unified Buffer（UB），要求32字节对齐。
 
 **Cube计算单元**
 
@@ -43,7 +43,7 @@
 </thead>
 <tbody><tr id="row11348135516221"><td class="cellrowborder" valign="top" width="7.5200000000000005%" headers="mcps1.1.4.1.1 "><p id="p48071138245"><a name="p48071138245"></a><a name="p48071138245"></a>AIV</p>
 </td>
-<td class="cellrowborder" valign="top" width="46.22%" headers="mcps1.1.4.1.2 "><p id="p63481755122216"><a name="p63481755122216"></a><a name="p63481755122216"></a><span id="ph15348135502220"><a name="ph15348135502220"></a><a name="ph15348135502220"></a>Unified Buffer</span></p>
+<td class="cellrowborder" valign="top" width="46.22%" headers="mcps1.1.4.1.2 "><p id="p63481755122216"><a name="p63481755122216"></a><a name="p63481755122216"></a><span id="ph15348135502220"><a name="ph15348135502220"></a><a name="ph15348135502220"></a>UB</span></p>
 </td>
 <td class="cellrowborder" valign="top" width="46.26%" headers="mcps1.1.4.1.3 "><p id="p1634825512226"><a name="p1634825512226"></a><a name="p1634825512226"></a>32Byte对齐。</p>
 </td>
@@ -94,17 +94,17 @@
     这些格式针对矩阵乘法等计算密集型任务进行优化，可显著提升计算效率。
 
 -   L1 Buffer缓存推荐使用FRACTAL\_NZ格式。当L1 Buffer采用NZ格式时，数据搬运到L0A/L0B Buffer（需分别转换为ZZ和ZN格式）时，可降低格式转换开销。
--   Unified Buffer对数据格式没有要求。
+-   UB对数据格式没有要求。
 
 **解决存储单元的访问冲突，提升读写性能**
 
-当多个操作尝试同时访问Unified Buffer同一个bank或者bank group时，可能会发生bank冲突，包括读写冲突、写写冲突、读读冲突，这种冲突会导致访问排队，降低性能。可以通过优化bank分配的方式来提升读写性能，具体信息请参考[避免UB的bank冲突](../../../../operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_ub_bank_conflict.md)章节。
+当多个操作尝试同时访问UB同一个bank或者bank group时，可能会发生bank冲突，包括读写冲突、写写冲突、读读冲突，这种冲突会导致访问排队，降低性能。可以通过优化bank分配的方式来提升读写性能，具体信息请参考[避免UB的bank冲突](../../../../operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_ub_bank_conflict.md)章节。
 
 ## 搬运单元<a name="section2819205515273"></a>
 
 **搬运时的对齐要求**
 
-由于搬运后的数据用于参与数据计算，因此对搬运数据大小有要求，搬运到Unified Buffer的数据大小需要按照DataBlock对齐，其余存储单元的数据搬运必须按[分形要求](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)进行搬运。例如，数据从L1 Buffer搬运到L0A Buffer时，数据格式需要从NZ转换为ZZ格式，搬运数据的大小要按分形大小对齐，如果L1 Buffer的剩余大小不足1个分形，则硬件执行中会出现异常。
+由于搬运后的数据用于参与数据计算，因此对搬运数据大小有要求，搬运到UB的数据大小需要按照DataBlock对齐，其余存储单元的数据搬运必须按[分形要求](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)进行搬运。例如，数据从L1 Buffer搬运到L0A Buffer时，数据格式需要从NZ转换为ZZ格式，搬运数据的大小要按分形大小对齐，如果L1 Buffer的剩余大小不足1个分形，则硬件执行中会出现异常。
 
 **支持Fixpipe硬件化加速**
 
@@ -150,7 +150,7 @@ Fixpipe是NPU将典型操作进行硬化的加速模块，位于AIC内部，配�
 
 -   核内同步
 
-    由于AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以异步并行的方式运行，在读写Local Memory（如Unified Buffer）时可能存在数据依赖关系。为确保数据一致性及计算正确性，需通过同步控制协调操作时序。
+    由于AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以异步并行的方式运行，在读写Local Memory（如UB）时可能存在数据依赖关系。为确保数据一致性及计算正确性，需通过同步控制协调操作时序。
 
     以MTE2从GM搬运数据至UB，进行Vector计算单元的Abs计算，再搬运回GM的流程为例，需满足以下同步条件：
 

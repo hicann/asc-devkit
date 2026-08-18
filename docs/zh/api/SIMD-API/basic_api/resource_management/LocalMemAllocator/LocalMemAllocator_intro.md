@@ -40,10 +40,10 @@ public:
 </thead>
 <tbody><tr id="row260915573419"><td class="cellrowborder" valign="top" width="21.8%" headers="mcps1.2.3.1.1 "><p id="p2060925573411"><a name="p2060925573411"></a><a name="p2060925573411"></a>hard</p>
 </td>
-<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p823866165711"><a name="p823866165711"></a><a name="p823866165711"></a><span id="ph46543142425"><a name="ph46543142425"></a><a name="ph46543142425"></a>用于表示数据的物理位置，Hardware枚举类型，定义如下，合法位置为：UB、L1、L0A、L0B、L0C、BIAS、FIXBUF。</span></p>
+<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p823866165711"><a name="p823866165711"></a><a name="p823866165711"></a><span id="ph46543142425"><a name="ph46543142425"></a><a name="ph46543142425"></a>用于表示数据的物理位置，Hardware枚举类型，定义如下，合法位置为：Unified Buffer（UB）、L1、L0A、L0B、L0C、BIAS、FIXBUF。</span></p>
 <a name="screen79541519214"></a><a name="screen79541519214"></a><pre class="screen" codetype="Cpp" id="screen79541519214">enum class Hardware : uint8_t { 
 GM,     // Global Memory
-UB,     // Unified Buffer
+UB,     // UB
 L1,     // L1 Buffer
 L0A,    // L0A Buffer
 L0B,    // L0B Buffer

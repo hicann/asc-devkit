@@ -2,7 +2,7 @@
 
 ## 现象描述<a name="section151611254194612"></a>
 
-通过NPU进行核函数的运行验证时，出现挂死现象；通过CPU进行核函数的运行验证时，出现AllocTensor/FreeTensor失败的报错，日志报错和调用栈打印如下：
+通过NPU进行核函数（Kernel）的运行验证时，出现挂死现象；通过CPU进行核函数（Kernel）的运行验证时，出现AllocTensor/FreeTensor失败的报错，日志报错和调用栈打印如下：
 
 ```
 [ERROR][Core_0][/usr/local/Ascend/cann/x86_64-linux/tikcpp/tikcfw/interface/kernel_tpipe.h:730][AllocEventID][321678] current size is 4, max buffer number in same queue position is 4

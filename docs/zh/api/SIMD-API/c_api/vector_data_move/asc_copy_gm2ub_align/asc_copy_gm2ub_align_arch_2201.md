@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-提供数据非对齐搬运的功能，将数据从Global Memory (GM)搬运到Unified Buffer (UB)，并支持8位/16位/32位数据类型搬运。
+提供数据非对齐搬运的功能，将数据从Global Memory (GM)搬运到Unified Buffer（UB），并支持8位/16位/32位数据类型搬运。
 
 本接口支持以下两种数据搬运方式：
 

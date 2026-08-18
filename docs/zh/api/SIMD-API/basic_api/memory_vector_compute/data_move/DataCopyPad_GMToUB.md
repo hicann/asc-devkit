@@ -54,7 +54,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-该接口提供将数据从Global Memory非对齐搬运至Unified Buffer的功能，可以根据开发者的需要自行填充数据。
+该接口提供将数据从Global Memory非对齐搬运至Unified Buffer（UB）的功能，可以根据开发者的需要自行填充数据。
 
 当每个搬运的数据块长度（blockLen）非32字节对齐时，每一个数据块都需要填充数据至32字节对齐。
 
@@ -64,7 +64,7 @@
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
     - GM -> VECOUT
     <!-- npu="950" id16 -->
@@ -110,7 +110,7 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为Unified Buffer，目的地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为UB，目的地址需要32字节对齐。 |
 | src | 输入 | 源操作数，类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)，存储位置为Global Memory，源地址需要1字节对齐。 |
 | dataCopyParams | 输入 | 搬运参数。DataCopyExtParams类型，具体参数说明请参考[表3](#table_gm2ub_pad_3)。 |
 | padParams | 输入 | 从Global Memory搬运数据至Local Memory时，可以根据开发者需要，在搬运数据左边或右边填充数据。padParams是用于控制数据填充过程的参数。DataCopyPadExtParams类型，具体参数请参考[表4](#table_gm2ub_pad_4)。 |
@@ -251,7 +251,7 @@
 
 <!-- end id28 -->
 
-- 位于Global Memory的源地址必须1字节对齐，位于Unified Buffer的目的地址必须32字节对齐。
+- 位于Global Memory的源地址必须1字节对齐，位于UB的目的地址必须32字节对齐。
 - leftPadding、rightPadding所占字节数均不能超过32B。
 - blockLen必须是sizeof\(T\)的整数倍。
 - 结构体DataCopyPadExtParams的参数paddingValue数据类型和源操作数保持一致。当数据类型为b64时，paddingValue只能设置为0。
@@ -355,7 +355,7 @@
 - 场景6：五维数据搬运（仅支持Ascend 950PR/Ascend 950DT）
 
     ```cpp
-    // Global Memory[2, 4, 3, 128, 126]int8 -> Unified Buffer[512, 128]int8
+    // Global Memory[2, 4, 3, 128, 126]int8 -> UB[512, 128]int8
     // Normal模式，使用loop mode
     // 搬运规格：[2, 2, 2, 64, 126]，每个126字节补2字节padding到128字节。
     // 最终UB连续存放为[512, 128]。

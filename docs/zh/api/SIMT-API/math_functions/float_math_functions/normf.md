@@ -41,7 +41,7 @@ inline float normf(int n, float* a)
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | n | 输入 | 源操作数。输入数据a中连续计算的元素个数。 |
-| a | 输入 | 源操作数。Unified Buffer、Global Memory或栈空间的地址。 |
+| a | 输入 | 源操作数。UB、Global Memory或栈空间的地址。 |
 
 ## 返回值说明
 

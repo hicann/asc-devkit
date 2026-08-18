@@ -217,9 +217,9 @@ PAR列表示矢量计算单元一个迭代能够处理的元素个数。
   <!-- end id22 -->
 <!-- end id18 -->
 <!-- npu="950" id23 -->
-- 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
-  - tensor高维切分计算接口占用8KB Unified Buffer临时空间。
-  - tensor前n个数据连续计算接口不涉及8KB Unified Buffer临时空间的占用。
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+  - tensor高维切分计算接口占用8KB UB临时空间。
+  - tensor前n个数据连续计算接口不涉及8KB UB临时空间的占用。
 <!-- end id23 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>

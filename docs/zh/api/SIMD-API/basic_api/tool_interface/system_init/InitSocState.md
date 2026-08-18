@@ -112,7 +112,7 @@ __aicore__ inline void InitSocState()
 - 在实际运行中，这些值可能被前序执行的算子修改，若不调用该接口进行初始化，非预期的值可能导致计算结果出现精度错误。
 
   例如前序算子使用Counter模式但未重置为Normal模式，当前算子以默认的Normal模式设置Mask时，会导致Mask设置不符合预期，进而引发精度错误。
-- 在[TPipe框架编程](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_principles.md)中，初始化过程由TPipe完成，无需开发者关注；在[静态Tensor编程](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)的场景中，用户必须在Kernel入口处调用此函数来初始化AI Core状态。
+- 在[TPipe框架编程](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_principles.md)中，初始化过程由TPipe完成，无需开发者关注；在[静态Tensor编程](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)的场景中，用户必须在核函数（Kernel）入口处调用此函数来初始化AI Core状态。
 
 ## 调用示例
 

@@ -1,17 +1,17 @@
 # CPU域孪生调试<a name="ZH-CN_TOPIC_0000001664002637"></a>
 
-本节介绍CPU域调试的方法：CPU侧验证核函数，gdb调试、使用printf命令打印。当前SIMT编程场景不支持。
+本节介绍CPU域调试的方法：CPU侧验证核函数（Kernel），gdb调试、使用printf命令打印。当前SIMT编程场景不支持。
 
 >[!NOTE]说明
 >CPU调测过程中，配置日志相关环境变量，可以记录程序的运行过程及异常信息，有助于开发者进行功能调测。
 >关于环境变量的使用约束以及详细说明，可参见[《环境变量参考》](https://www.hiascend.com/document/redirect/CannCommunityEnvRef)中“辅助功能 \> 日志”章节。
 
-## CPU侧验证核函数<a name="section1227643165914"></a>
+## CPU侧验证核函数（Kernel）<a name="section1227643165914"></a>
 
-在非昇腾设备上，开发者可以利用CPU仿真环境先行进行算子开发和测试，并在准备就绪后，利用昇腾设备进行加速计算。在[编译与运行](../../compilation_and_execution/compilation_and_execution.md)章节，我们已经介绍了算子Kernel程序NPU域的编译运行。相比于NPU域的算子运行逻辑，CPU域调试将算子Kernel程序以Host程序的形式进行编译，此时算子Kernel程序链接CPU调测库，执行编译生成的可执行文件，可以完成算子CPU域的运行验证。CPU侧的运行程序，通过GDB通用调试工具进行单步调试，可以精准验证程序执行流程是否符合预期。
+在非昇腾设备上，开发者可以利用CPU仿真环境先行进行算子开发和测试，并在准备就绪后，利用昇腾设备进行加速计算。在[编译与运行](../../compilation_and_execution/compilation_and_execution.md)章节，我们已经介绍了算子核函数（Kernel）程序NPU域的编译运行。相比于NPU域的算子运行逻辑，CPU域调试将算子核函数（Kernel）程序以Host程序的形式进行编译，此时算子核函数（Kernel）程序链接CPU调测库，执行编译生成的可执行文件，可以完成算子CPU域的运行验证。CPU侧的运行程序，通过GDB通用调试工具进行单步调试，可以精准验证程序执行流程是否符合预期。
 
-**图1**  CPU域和NPU域的核函数运行逻辑对比<a name="fig39851716019"></a>  
-![](../../../figures/cpu_npu.png "CPU域和NPU域的核函数运行逻辑对比")
+**图1**  CPU域和NPU域的核函数（Kernel）运行逻辑对比<a name="fig39851716019"></a><br>
+![](../../../figures/cpu_npu.png "CPU域和NPU域的核函数（Kernel）运行逻辑对比")
 
 推荐使用CMake编译方式，可在最小化修改的情况下快速开启CPU域孪生调试功能。
 

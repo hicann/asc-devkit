@@ -35,7 +35,7 @@
 
 3.  创建Matmul对象
 
-    在Kernel侧创建Matmul对象时，通过[MatmulType](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_usage.md)定义A、C、Bias的参数类型信息，包括：内存逻辑位置、数据格式、数据类型。通过[SparseMatmulType](#zh-cn_topic_0000002298767897_table3658657131020)类型定义B矩阵的参数类型，包括：B矩阵的内存逻辑位置、索引矩阵的内存逻辑位置、数据格式、数据类型等。
+    在核函数（Kernel）侧创建Matmul对象时，通过[MatmulType](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_usage.md)定义A、C、Bias的参数类型信息，包括：内存逻辑位置、数据格式、数据类型。通过[SparseMatmulType](#zh-cn_topic_0000002298767897_table3658657131020)类型定义B矩阵的参数类型，包括：B矩阵的内存逻辑位置、索引矩阵的内存逻辑位置、数据格式、数据类型等。
 
     ```
     #include "lib/matmul_intf.h"
@@ -61,7 +61,7 @@
 
 5.  完成矩阵乘操作
 
-    在Kernel侧，基于[步骤4](#zh-cn_topic_0000002298767897_li52321325141410)加载的索引矩阵，完成矩阵乘操作。Matmul API内部完成对A矩阵的稠密化，即根据索引矩阵从A矩阵的每4个元素中，选择2个对应位置元素参与计算。
+    在核函数（Kernel）侧，基于[步骤4](#zh-cn_topic_0000002298767897_li52321325141410)加载的索引矩阵，完成矩阵乘操作。Matmul API内部完成对A矩阵的稠密化，即根据索引矩阵从A矩阵的每4个元素中，选择2个对应位置元素参与计算。
 
     ```
     // 调用Iterate和GetTensorC或IterateAll接口完成矩阵乘计算

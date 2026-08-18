@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
-在Kernel侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套[GET\_TILING\_DATA\_WITH\_STRUCT](GET_TILING_DATA_WITH_STRUCT.md)，[GET\_TILING\_DATA\_MEMBER](GET_TILING_DATA_MEMBER.md)，[GET\_TILING\_DATA\_PTR\_WITH\_STRUCT](GET_TILING_DATA_PTR_WITH_STRUCT.md)来获取对应的TilingData。
+在核函数（Kernel）侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套[GET\_TILING\_DATA\_WITH\_STRUCT](GET_TILING_DATA_WITH_STRUCT.md)，[GET\_TILING\_DATA\_MEMBER](GET_TILING_DATA_MEMBER.md)，[GET\_TILING\_DATA\_PTR\_WITH\_STRUCT](GET_TILING_DATA_PTR_WITH_STRUCT.md)来获取对应的TilingData。
 
 ## 函数原型<a name="zh-cn_topic_0000001526206862_section1630753514297"></a>
 
@@ -41,7 +41,7 @@ REGISTER_NONE_TILING
 
 ## 约束说明<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
--   暂不支持Kernel直调工程。
+-   暂不支持核函数（Kernel）直调工程。
 -   使用[GET\_TILING\_DATA](GET_TILING_DATA.md)需提供默认注册的TilingData结构体，但本接口不注册TilingData结构体，故不支持与[5.11.1-GET\_TILING\_DATA](GET_TILING_DATA.md)组合使用。
 -   不支持和[REGISTER\_TILING\_DEFAULT](REGISTER_TILING_DEFAULT.md)或[REGISTER\_TILING\_FOR\_TILINGKEY](REGISTER_TILING_FOR_TILINGKEY.md)混用，即不支持注册TilingData结构体的场景与非注册场景混合使用。
 

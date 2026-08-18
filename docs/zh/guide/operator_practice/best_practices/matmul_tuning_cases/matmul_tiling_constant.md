@@ -70,7 +70,7 @@ Tiling参数如下：
 
 ## 分析主要瓶颈点<a name="section93975169548"></a>
 
--   优化前的流水图如下，默认不开启Tiling常量化，Tiling参数需要从Host侧拷贝到Kernel侧，导致Matmul初始化时的Scalar计算较多，第一个MTE2指令开始于3.536us左右，MTE2前的指令头开销在算子整个流水中占比较大，因此需要优化Scalar计算。
+-   优化前的流水图如下，默认不开启Tiling常量化，Tiling参数需要从Host侧拷贝到核函数（Kernel）侧，导致Matmul初始化时的Scalar计算较多，第一个MTE2指令开始于3.536us左右，MTE2前的指令头开销在算子整个流水中占比较大，因此需要优化Scalar计算。
 
     ![](../../../figures/zh-cn_image_0000002411422713.png)
 
@@ -80,12 +80,12 @@ Tiling参数如下：
 
 ## 设计优化方案<a name="section10569929145417"></a>
 
-如下图所示，默认不开启Tiling常量化功能时，开发者在host侧创建Tiling对象，通过调用API自动获取Tiling参数。然后将Tiling参数从Host侧传递到Kernel侧，在Kernel侧初始化操作时传入。在算子执行时，使用Tiling变量参数完成矩阵乘操作。
+如下图所示，默认不开启Tiling常量化功能时，开发者在host侧创建Tiling对象，通过调用API自动获取Tiling参数。然后将Tiling参数从Host侧传递到核函数（Kernel）侧，在核函数（Kernel）侧初始化操作时传入。在算子执行时，使用Tiling变量参数完成矩阵乘操作。
 
 **图1**  默认不开启Tiling常量化的Matmul计算流程示意图<a name="fig1911911419426"></a>  
 ![](../../../figures/no_const_matmul.png "默认不开启Tiling常量化的Matmul计算流程示意图")
 
-如下图所示，开启Tiling常量化功能时，开发者只需要在Kernel侧创建Matmul对象时，调用GetMatmulApiTiling接口在编译期获取常量化Tiling信息，即可完成Tiling常量化。在算子执行时，使用常量化的Tiling参数完成矩阵乘操作，减少Scalar计算开销。
+如下图所示，开启Tiling常量化功能时，开发者只需要在核函数（Kernel）侧创建Matmul对象时，调用GetMatmulApiTiling接口在编译期获取常量化Tiling信息，即可完成Tiling常量化。在算子执行时，使用常量化的Tiling参数完成矩阵乘操作，减少Scalar计算开销。
 
 **图2**  开启Tiling常量化的Matmul计算流程示意图<a name="fig146371949194314"></a>  
 ![](../../../figures/const_matmul.png "开启Tiling常量化的Matmul计算流程示意图")
@@ -121,7 +121,7 @@ Matmul API开启Tiling全量常量化的完整样例请参考[Matmul Tiling常�
     AscendC::Matmul<A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE, CONSTANT_CFG> matmulObj;
     ```
 
-3.  初始化操作。全量常量化时，可以在REGIST\_MATMUL\_OBJ接口的入参传递Tiling参数的位置，使用空指针替代。部分常量化时，在Kernel侧使用REGIST\_MATMUL\_OBJ接口初始化Matmul对象时，仍需要使用Tiling。
+3.  初始化操作。全量常量化时，可以在REGIST\_MATMUL\_OBJ接口的入参传递Tiling参数的位置，使用空指针替代。部分常量化时，在核函数（Kernel）侧使用REGIST\_MATMUL\_OBJ接口初始化Matmul对象时，仍需要使用Tiling。
 
     ```
     // 全量常量化场景，初始化操作示例
@@ -133,7 +133,7 @@ Matmul API开启Tiling全量常量化的完整样例请参考[Matmul Tiling常�
 
 ## 验证优化方案性能收益<a name="section7519174385413"></a>
 
--   优化后的流水图如下，通过开启Tiling全量常量化，无需将Tiling参数从Host侧拷贝到Kernel侧，在编译期完成Tiling常量化，减少了Matmul初始化时的Scalar计算。从0us起到第一个MTE2指令发起，这之间的时间为Matmul初始化时间，Matmul初始化时间从优化前的3.536us减少到2.185us，性能有所提升。
+-   优化后的流水图如下，通过开启Tiling全量常量化，无需将Tiling参数从Host侧拷贝到核函数（Kernel）侧，在编译期完成Tiling常量化，减少了Matmul初始化时的Scalar计算。从0us起到第一个MTE2指令发起，这之间的时间为Matmul初始化时间，Matmul初始化时间从优化前的3.536us减少到2.185us，性能有所提升。
 
     ![](../../../figures/zh-cn_image_0000002377921500.png)
 

@@ -3,7 +3,7 @@
 ## 连续非对齐搬运优化建议<a name="section14269121313385"></a>
 
 -   优先采用连续对齐搬运以避免额外开销，提升整体性能。
--   由于硬件支持限制，连续非对齐搬运时不建议使用AddrReg存储偏移量，推荐使用uint32\_t类型存储偏移量，使用[post update](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnAlign_continuous.md)模式搬运，该场景下每次调用接口自动更新源操作数在UB上的地址。后续的优化建议均基于此场景展开。
+-   由于硬件支持限制，连续非对齐搬运时不建议使用AddrReg存储偏移量，推荐使用uint32\_t类型存储偏移量，使用[post update](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnAlign_continuous.md)模式搬运，该场景下每次调用接口自动更新源操作数在Unified Buffer（UB）上的地址。后续的优化建议均基于此场景展开。
 -   连续非对齐搬入时，每次将UB数据搬运至RegTensor后，非对齐寄存器会缓存后续非对齐数据，下一次搬运时非对齐寄存器中的数据会写入RegTensor，因此连续非对齐搬入初始化仅需执行一次，应移至for循环外部。
 -   连续非对齐搬出时，每次将RegTensor数据搬运至UB后，非对齐寄存器会缓存后续非对齐数据，下一次搬运时非对齐寄存器中缓存的数据将写入UB，因此连续非对齐搬出后处理只需执行一次，应移至for循环外部。
 

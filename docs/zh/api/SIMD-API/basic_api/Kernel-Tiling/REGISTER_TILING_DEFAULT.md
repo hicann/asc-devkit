@@ -61,7 +61,7 @@ REGISTER_TILING_DEFAULT(TILING_STRUCT)
 ## 约束说明<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
 -   若TilingData结构体在命名空间内，注册时需要携带对应的命名空间作用域符。
--   暂不支持Kernel直调工程。
+-   暂不支持核函数（Kernel）直调工程。
 
 ## 调用示例<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

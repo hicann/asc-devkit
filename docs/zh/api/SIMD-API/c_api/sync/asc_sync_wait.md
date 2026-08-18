@@ -68,7 +68,7 @@ __ubuf__ float dst[total_length];
 asc_copy_gm2ub(src0, src0_gm, total_length * sizeof(float));
 asc_copy_gm2ub(src1, src1_gm, total_length * sizeof(float));
 
-// 同步操作：数据搬运操作（GM到UB，PIPE_MTE2流水）完成后才能启动计算操作（PIPE_V流水）。
+// 同步操作：数据搬运操作（GM到Unified Buffer（UB），PIPE_MTE2流水）完成后才能启动计算操作（PIPE_V流水）。
 asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);  // EVENT_ID0为外部传入的同步ID。
 asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);  // EVENT_ID0为外部传入的同步ID。
 

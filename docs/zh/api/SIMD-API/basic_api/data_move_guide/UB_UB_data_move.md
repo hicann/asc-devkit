@@ -17,11 +17,11 @@ Unified Buffer（UB）之间的数据搬运提供了灵活的接口支持，共�
 
 ## DataCopy（UB -> UB连续数据搬运）<a name="ZH-CN_TOPIC_0000002382907025"></a>
 
-支持Unified Buffer与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。
+支持UB与UB之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECCALC -> VECOUT
 
@@ -36,13 +36,13 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 ## DataCopy（UB -> UB高维切分数据搬运）<a name="ZH-CN_TOPIC_0000002382908321"></a>
 
-支持Unified Buffer与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。
+支持UB与UB之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。
 
 高维切分数据搬运可通过配置数据块个数、单个数据块长度、地址偏移等搬运参数，同时支持非连续和连续的数据搬运。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECCALC -> VECOUT
 
@@ -57,11 +57,11 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 ## Copy（UB -> UB连续数据搬运）<a name="ZH-CN_TOPIC_0000002575088175"></a>
 
-支持Unified Buffer和Unified Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。
+支持UB和UB之间的连续数据搬运，数据搬运时格式和内容保持不变。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECIN -> VECOUT
     - VECCALC -> VECIN
@@ -80,11 +80,11 @@ __aicore__ inline void Copy(const LocalTensor<T>& dst, const LocalTensor<T>& src
 
 ## Copy（UB -> UB掩码式高维数据搬运）<a name="ZH-CN_TOPIC_0000002575088676"></a>
 
-支持Unified Buffer和Unified Buffer之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。
+支持UB和UB之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../basic_api/aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECIN -> VECOUT
     - VECCALC -> VECIN

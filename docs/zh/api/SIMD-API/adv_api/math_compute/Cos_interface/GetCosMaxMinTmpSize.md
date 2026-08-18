@@ -23,11 +23,11 @@ void GetCosMaxMinTmpSize(const CosConfig& config, const AscendC::TensorShape& sr
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| config | 输入 | Cos接口的相关配置信息。该参数的配置必须与Cos Kernel接口模板参数config的配置保持一致。 |
+| config | 输入 | Cos接口的相关配置信息。该参数的配置必须与Cos核函数（Kernel）接口模板参数config的配置保持一致。 |
 | srcShape | 输入 | 输入的shape信息，参数类型为[AscendC::TensorShape](../../data_structures/TensorShape.md)。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | isReuseSource | 输入 | 是否复用源操作数输入的空间，与Cos接口的isReuseSource参数保持一致。对于float数据类型的输入支持开启该参数，half数据类型的输入不支持开启该参数。 |
-| maxValue | 输出 | Cos接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。最大空间大小为0表示计算不需要临时空间。<br><br>请注意，maxValue仅作为参考值，有可能大于Unified Buffer剩余空间的大小，该场景下，开发者需要根据Unified Buffer剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | Cos接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。最大空间大小为0表示计算不需要临时空间。<br><br>请注意，maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | Cos接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。最小空间大小为0表示计算不需要临时空间。 |
 
 ## 返回值说明

@@ -39,7 +39,7 @@
     ├──dump                       # 原始的性能数据，用户无需关注
     ├──ArithmeticUtilization.csv  # cube/vector指令cycle占比，建议优化算子逻辑，减少冗余计算指令
     ├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
-    ├──Memory.csv                 # UB，L1和主存储器读写带宽速率，单位GB/s
+    ├──Memory.csv                 # Unified Buffer（UB），L1和主存储器读写带宽速率，单位GB/s
     ├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率，单位GB/s
     ├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率，单位GB/s
     ├──OpBasicInfo.csv            # 算子基础信息

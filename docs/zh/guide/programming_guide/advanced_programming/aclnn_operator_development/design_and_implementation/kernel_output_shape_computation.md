@@ -1,10 +1,10 @@
 # 输出shape依赖计算
 
-本文属于扩展内容，介绍输出shape依赖Kernel计算结果时的实现方法。NonZero等算子在Kernel计算完成前无法确定实际输出shape。此类输出需要在原型定义中调用`OutputShapeDependOnCompute()`标记，并由Kernel按照固定格式把实际shape写入框架追加的shape输出地址。
+本文属于扩展内容，介绍输出shape依赖核函数（Kernel）计算结果时的实现方法。NonZero等算子在核函数（Kernel）计算完成前无法确定实际输出shape。此类输出需要在原型定义中调用`OutputShapeDependOnCompute()`标记，并由核函数（Kernel）按照固定格式把实际shape写入框架追加的shape输出地址。
 
 ## 在算子原型中标记输出
 
-`OutputShapeDependOnCompute()`只能用于输出。以下示例表示输出`y`的shape需要等待Kernel计算结果：
+`OutputShapeDependOnCompute()`只能用于输出。以下示例表示输出`y`的shape需要等待核函数（Kernel）计算结果：
 
 ```cpp
 this->Output("y")
@@ -16,9 +16,9 @@ this->Output("y")
 
 算子有多个输出时，只在实际依赖计算的输出上增加该标记。输入输出声明方法见[算子原型定义](./operator_prototype_definition.md)。
 
-## Kernel入口增加shape输出参数
+## 核函数（Kernel）入口增加shape输出参数
 
-框架会在所有普通输出之后、`workspace`和`tiling`之前追加一个`GM_ADDR`参数，用于保存依赖计算的输出shape。Kernel入口保持以下顺序：
+框架会在所有普通输出之后、`workspace`和`tiling`之前追加一个`GM_ADDR`参数，用于保存依赖计算的输出shape。核函数（Kernel）入口保持以下顺序：
 
 ```text
 输入 -> 普通输出 -> shape输出 -> workspace -> tiling
@@ -61,7 +61,7 @@ uint64_t encodedRank = UINT64_SHAPE_FLAG | rank;
 
 ## 写入单个输出shape
 
-假设输出`y`的数据类型为`uint32_t`，Kernel计算后得到实际shape为`[32, 64]`：
+假设输出`y`的数据类型为`uint32_t`，核函数（Kernel）计算后得到实际shape为`[32, 64]`：
 
 ```cpp
 extern "C" __global__ __aicore__ void non_zero_custom(
@@ -130,6 +130,6 @@ shapeGlobal.SetValue(13, 32);
 
 ## 相关文档
 
-- [Kernel侧算子实现](./kernel_operator_implementation.md)：Kernel入口格式和参数顺序。
+- [核函数（Kernel）侧算子实现](./kernel_operator_implementation.md)：核函数（Kernel）入口格式和参数顺序。
 - [算子原型定义](./operator_prototype_definition.md)：输入输出声明和shape推导关系。
 - [OutputShapeDependOnCompute](../../../../../api/Utils-API/prototype_register_management/OpParamDef/OutputShapeDependOnCompute.md)：接口定义和工程版本约束。

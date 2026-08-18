@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现元素到DataBlock广播搬入模式：加载（VL/DataBlock）个元素的数据，并将每个元素（16bit/32bit）广播到一个DataBlock（32B）中。
+对齐数据搬运接口，从Unified Buffer（UB）连续对齐搬入目的操作数，实现元素到DataBlock广播搬入模式：加载（VL/DataBlock）个元素的数据，并将每个元素（16bit/32bit）广播到一个DataBlock（32B）中。
 
 支持三种偏移方式：
 - 偏移固定传入0，由用户自行更新源操作数的地址。

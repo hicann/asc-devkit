@@ -39,7 +39,7 @@ __aicore__ inline void InitV2(GM_ADDR context, const void* initTiling)
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | context | 输入 | 通信上下文，包含rankDim，rankID等相关信息。通过框架提供的获取通信上下文的接口[GetHcclContext](../HCCL-Context/GetHcclContext.md)获取context。 |
-| initTiling | 输入 | 通信域初始化[Mc2InitTiling](../HCCL_Tiling/TilingData_struct.md#table4835205712588)的地址。[Mc2InitTiling](../HCCL_Tiling/TilingData_struct.md#table4835205712588)在Host侧计算得出，具体请参考[表1 Mc2InitTiling参数说明](../HCCL_Tiling/TilingData_struct.md#table4835205712588)，由框架传递到Kernel函数中使用。 |
+| initTiling | 输入 | 通信域初始化[Mc2InitTiling](../HCCL_Tiling/TilingData_struct.md#table4835205712588)的地址。[Mc2InitTiling](../HCCL_Tiling/TilingData_struct.md#table4835205712588)在Host侧计算得出，具体请参考[表1 Mc2InitTiling参数说明](../HCCL_Tiling/TilingData_struct.md#table4835205712588)，由框架传递到核函数（Kernel）中使用。 |
 
 ## 返回值说明
 

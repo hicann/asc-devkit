@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将数据从Global Memory (GM)搬运到Unified Buffer (UB)时，通过调用该接口设置数据搬运流程中的循环次数。
+将数据从Global Memory (GM)搬运到Unified Buffer（UB）时，通过调用该接口设置数据搬运流程中的循环次数。
 
 以源操作数搬运场景为例，如下图所示。
 

@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-reg数据搬运接口，适用于从UB搬入MaskReg。
+reg数据搬运接口，适用于从Unified Buffer（UB）搬入MaskReg。
 
 ## 函数原型
 

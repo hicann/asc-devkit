@@ -1,6 +1,6 @@
 # 使用高阶API时配套的Tiling实现
 
-本文属于扩展内容，介绍使用高阶API时配套的Host侧Tiling实现。Matmul、Conv等高阶API通常提供配套的Host侧Tiling类，用于根据shape、dtype计算切分参数。开发者需要把配套Tiling类的计算结果传到Kernel侧，并使用同一份数据初始化高阶API对象。
+本文属于扩展内容，介绍使用高阶API时配套的Host侧Tiling实现。Matmul、Conv等高阶API通常提供配套的Host侧Tiling类，用于根据shape、dtype计算切分参数。开发者需要把配套Tiling类的计算结果传到核函数（Kernel）侧，并使用同一份数据初始化高阶API对象。
 
 本文构造一个简化的aclnn工程化算子MatmulCustom作为示例。该算子只计算`C = A * B`，用于说明`MultiCoreMatmulTiling`和`TCubeTiling`在算子工程中的接入流程，不包含Bias、激活函数或多分支逻辑。
 
@@ -12,11 +12,11 @@
 flowchart LR
     A["输入shape、dtype"] --> B["Host侧调用配套Tiling类计算切分参数"]
     B --> C["写入算子TilingData"]
-    C --> D["传递到Kernel侧"]
+    C --> D["传递到核函数（Kernel）侧"]
     D --> E["初始化高阶API对象并计算"]
 ```
 
-配套Tiling类负责计算高阶API内部使用的多核切分和核内切分参数，算子TilingData负责把计算结果传到Kernel侧。
+配套Tiling类负责计算高阶API内部使用的多核切分和核内切分参数，算子TilingData负责把计算结果传到核函数（Kernel）侧。
 
 ## 定义包含TCubeTiling的TilingData
 
@@ -102,7 +102,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
                         context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
 
-    // Kernel启动核数需要与Tiling结果中的实际使用核数一致。
+    // 核函数（Kernel）启动核数需要与Tiling结果中的实际使用核数一致。
     context->SetSimdNumBlocks(static_cast<uint32_t>(usedCoreNum));
 
     // 系统workspace供高阶API内部计算使用，并与算子自定义workspace相加。
@@ -146,9 +146,9 @@ currentWorkspace[0] = systemWorkspaceSize + userWorkspaceSize;
 
 校验失败时返回`ge::GRAPH_FAILED`，不要继续使用无效shape计算Tiling。
 
-## Kernel侧使用TCubeTiling
+## 核函数（Kernel）侧使用TCubeTiling
 
-Kernel入口解析TilingData，并用其中的`TCubeTiling`注册Matmul对象：
+核函数（Kernel）入口解析TilingData，并用其中的`TCubeTiling`注册Matmul对象：
 
 ```cpp
 #include "kernel_operator.h"
@@ -210,10 +210,10 @@ extern "C" __global__ __aicore__ void matmul_custom(
 }
 ```
 
-Host侧`SetAType`、`SetBType`和`SetCType`配置的位置、format、dtype，需要与Kernel侧的`MatmulType`模板参数保持一致。本例按M轴分核：不同Block读取A的不同行，复用完整B矩阵，并把结果写入C的对应行。
+Host侧`SetAType`、`SetBType`和`SetCType`配置的位置、format、dtype，需要与核函数（Kernel）侧的`MatmulType`模板参数保持一致。本例按M轴分核：不同Block读取A的不同行，复用完整B矩阵，并把结果写入C的对应行。
 
 ## 相关文档
 
 - [Host侧Tiling实现](./host_tiling_implementation.md)：普通TilingData和Tiling函数的基本流程。
-- [Kernel侧算子实现](./kernel_operator_implementation.md)：Kernel入口、TilingData解析和Kernel编程流程。
+- [核函数（Kernel）侧算子实现](./kernel_operator_implementation.md)：核函数（Kernel）入口、TilingData解析和核函数（Kernel）编程流程。
 - [Matmul-Tiling类](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/Matmul_Tiling.md)：配套Tiling类接口说明。

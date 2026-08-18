@@ -62,7 +62,7 @@ Matmul的[Iterate](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kerne
         mm.template IterateAll<false>(workspaceGm[tmp_block_idx * mmResUbSize * sInnerLoopTimes],0, false,true);
         // 执行其他操作
         mm.WaitIterateAll(); // 等待IterateAll完成
-        DataCopy(dstUB, GM);  // 进行GM到UB的拷贝
+        DataCopy(dstUB, GM);  // 进行GM到Unified Buffer（UB）的拷贝
         ```
 
 ## 使用场景<a name="zh-cn_topic_0000002264077888_section118051016163613"></a>

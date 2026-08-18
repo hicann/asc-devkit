@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现DataBlock广播搬入模式并启用Post Update：读取一个DataBlock（32B）并广播到VL，接口调用后自动更新源操作数地址。
+对齐数据搬运接口，从Unified Buffer（UB）连续对齐搬入目的操作数，实现DataBlock广播搬入模式并启用Post Update：读取一个DataBlock（32B）并广播到VL，接口调用后自动更新源操作数地址。
 
 ## 函数原型
 

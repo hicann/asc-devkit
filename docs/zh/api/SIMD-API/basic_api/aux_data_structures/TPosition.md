@@ -101,12 +101,12 @@ TPosition枚举值的具体定义如下：
 </tr>
 <tr id="row1682573410509"><td class="cellrowborder" valign="top" width="17.53%" headers="mcps1.2.3.1.1 "><p id="p1082533425015"><a name="p1082533425015"></a><a name="p1082533425015"></a>LCM</p>
 </td>
-<td class="cellrowborder" valign="top" width="82.47%" headers="mcps1.2.3.1.2 "><p id="p58251234135017"><a name="p58251234135017"></a><a name="p58251234135017"></a>Local Cache Memory，代表临时共享的Unified Buffer空间，VECCALC的别名，与VECCALC实现同样的功能。</p>
+<td class="cellrowborder" valign="top" width="82.47%" headers="mcps1.2.3.1.2 "><p id="p58251234135017"><a name="p58251234135017"></a><a name="p58251234135017"></a>Local Cache Memory，代表临时共享的Unified Buffer（UB）空间，VECCALC的别名，与VECCALC实现同样的功能。</p>
 </td>
 </tr>
 <tr id="row18899424276"><td class="cellrowborder" valign="top" width="17.53%" headers="mcps1.2.3.1.1 "><p id="p9889942112716"><a name="p9889942112716"></a><a name="p9889942112716"></a>SPM</p>
 </td>
-<td class="cellrowborder" valign="top" width="82.47%" headers="mcps1.2.3.1.2 "><p id="p18891442102718"><a name="p18891442102718"></a><a name="p18891442102718"></a>当Unified Buffer内存有溢出风险时，用于Unified Buffer的数据暂存。</p>
+<td class="cellrowborder" valign="top" width="82.47%" headers="mcps1.2.3.1.2 "><p id="p18891442102718"><a name="p18891442102718"></a><a name="p18891442102718"></a>当UB内存有溢出风险时，用于UB的数据暂存。</p>
 </td>
 </tr>
 <tr id="row121471975507"><td class="cellrowborder" valign="top" width="17.53%" headers="mcps1.2.3.1.1 "><p id="p181474775015"><a name="p181474775015"></a><a name="p181474775015"></a>SHM</p>

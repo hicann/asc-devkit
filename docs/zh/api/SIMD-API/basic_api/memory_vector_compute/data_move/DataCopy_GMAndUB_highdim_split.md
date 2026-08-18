@@ -34,15 +34,15 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-支持Global Memory与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。
+支持Global Memory与Unified Buffer（UB）之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。
 
 高维切分数据搬运可通过配置数据块个数、单个数据块长度、地址偏移等搬运参数，同时支持非连续和连续的数据搬运。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id10 -->
     - CO2 -> GM（仅Atlas 推理系列产品AI Core支持）
@@ -52,14 +52,14 @@
 
 接口同时支持非连续搬运和连续搬运，对于连续搬运场景，推荐使用[DataCopy\(GM与UB连续数据搬运\)](DataCopy_GMAndUB_continuous.md)。
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
 
     ```cpp
     template <typename T>
     __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>& src, const DataCopyParams& repeatParams)
     ```
 
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
 
     ```cpp
     template <typename T>
@@ -78,8 +78,8 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| dst | 输出 | 目的操作数。<br>&bull;类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)时，存储位置为Unified Buffer，目的地址需要32字节对齐。<br>&bull;类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)时，存储位置为Global Memory，目的地址需要按照对应数据类型所占字节数对齐。 |
-| src | 输入 | 源操作数。<br>&bull;类型为GlobalTensor时，存储位置为Global Memory，源地址需要按照对应数据类型所占字节数对齐。<br>&bull;类型为LocalTensor时，存储位置为Unified Buffer，源地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数。<br>&bull;类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)时，存储位置为UB，目的地址需要32字节对齐。<br>&bull;类型为[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md)时，存储位置为Global Memory，目的地址需要按照对应数据类型所占字节数对齐。 |
+| src | 输入 | 源操作数。<br>&bull;类型为GlobalTensor时，存储位置为Global Memory，源地址需要按照对应数据类型所占字节数对齐。<br>&bull;类型为LocalTensor时，存储位置为UB，源地址需要32字节对齐。 |
 | repeatParams | 输入 | 搬运参数，DataCopyParams类型，参数说明请参考[表3](#table_highdim_3)。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表3**  DataCopyParams结构体参数定义<a name="table_highdim_3"></a>
@@ -125,7 +125,7 @@
 
 ## 数据类型<a name="section4219135304818"></a>
 
-源操作数和目的操作数支持的数据类型保持一致，Global Memory -> Unified Buffer和Unified Buffer -> Global Memory两个数据通路对同一产品支持的数据类型相同，具体如下：
+源操作数和目的操作数支持的数据类型保持一致，Global Memory -> UB和UB -> Global Memory两个数据通路对同一产品支持的数据类型相同，具体如下：
 
 <!-- npu="950" id11 -->
 
@@ -187,7 +187,7 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 位于Global Memory的地址必须按照对应数据类型所占字节数对齐，位于Unified Buffer的地址必须32字节对齐。
+- 位于Global Memory的地址必须按照对应数据类型所占字节数对齐，位于UB的地址必须32字节对齐。
 <!-- npu="A3,910b,950" id23 -->
 - 当DataCopyParams结构体参数blockCount、blockLen任意一个值为0时，该接口将被视为NOP（空操作）。该说明针对如下型号生效：
   <!-- npu="A3" id20 -->
@@ -211,7 +211,7 @@
     | srcGap | [0, 65535] |
     | dstGap | [0, 65535] |
 
-- 如果需要执行多个DataCopy指令，且DataCopy的目的地址存在重叠，需要通过调用[PipeBarrier(ISASI)](../../sync_control/intra_core_sync/PipeBarrier_ISASI.md)来插入同步指令，保证多个DataCopy指令的串行化，防止出现异常数据。如下图左侧示意图，执行两个DataCopy指令，搬运的目的Global Memory地址存在重叠，两条搬运指令之间需要通过调用`PipeBarrier<PIPE_MTE3>()`添加MTE3搬出流水的同步；如下图右侧示意图所示，搬运的目的地址Unified Buffer存在重叠，两条搬运指令之间需要调用`PipeBarrier<PIPE_MTE2>()`添加MTE2搬入流水的同步。
+- 如果需要执行多个DataCopy指令，且DataCopy的目的地址存在重叠，需要通过调用[PipeBarrier(ISASI)](../../sync_control/intra_core_sync/PipeBarrier_ISASI.md)来插入同步指令，保证多个DataCopy指令的串行化，防止出现异常数据。如下图左侧示意图，执行两个DataCopy指令，搬运的目的Global Memory地址存在重叠，两条搬运指令之间需要通过调用`PipeBarrier<PIPE_MTE3>()`添加MTE3搬出流水的同步；如下图右侧示意图所示，搬运的目的地址UB存在重叠，两条搬运指令之间需要调用`PipeBarrier<PIPE_MTE2>()`添加MTE2搬入流水的同步。
 
     ![](../../../../figures/datacopy_address_overlap_sync_diagram.png)
 
@@ -227,7 +227,7 @@
 
 ## 调用示例<a name="section122101199486"></a>
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
 
     ```cpp
     // srcLocal为half类型的LocalTensor，srcGlobal为half类型的GlobalTensor。
@@ -247,7 +247,7 @@
     输出数据srcLocal：[1 2 3 ... 512]
     ```
 
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
 
     ```cpp
     // dstLocal为half类型的LocalTensor，dstGlobal为half类型的GlobalTensor。

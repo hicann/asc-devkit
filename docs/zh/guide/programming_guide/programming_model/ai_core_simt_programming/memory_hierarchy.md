@@ -5,12 +5,12 @@ SIMT线程可访问多种内存空间。下表汇总了SIMT编程中常见内存
 | 内存类型 | 线程作用域 | 生命周期 | 物理位置 |
 |---------|----------|---------|---------|
 | 全局内存 | Grid | 应用程序 | Device |
-| 共享内存 | Block | 核函数 | Vector Core |
-| 栈空间 | Thread | 核函数 | Global Memory |
-| 寄存器 | Thread | 核函数 | Vector Core |
+| 共享内存 | Block | 核函数（Kernel） | Vector Core |
+| 栈空间 | Thread | 核函数（Kernel） | Global Memory |
+| 寄存器 | Thread | 核函数（Kernel） | Vector Core |
 
 -   全局内存是所有线程均可直接访问的内存资源，即Global Memory；
--   共享内存是线程块内所有线程共享的内存，位于Unified Buffer，生命周期和线程块一致。
+-   共享内存是线程块内所有线程共享的内存，位于Unified Buffer（UB），生命周期和线程块一致。
 -   每个线程拥有独立的栈空间，主要用于存放线程私有临时数据。
 -   每个线程拥有独立的寄存器，用于存储局部变量。
 -   在访问性能方面，寄存器具有最高的访问速度；共享内存的访问效率优于全局内存。
@@ -20,9 +20,9 @@ SIMT线程可访问多种内存空间。下表汇总了SIMT编程中常见内存
 
 ## 全局内存（Global Memory）<a name="section8946131492119"></a>
 
-Device侧的全局内存是整个Grid中所有线程均可访问的内存空间。全局内存具有持久性：通过全局内存分配的空间及其存储的数据将持续保留，直到该内存空间被释放或应用程序终止。用户需在核函数启动前通过Runtime API完成全局内存的分配与初始化，核函数执行期间SIMT每个线程均可读写全局内存，执行完毕后可将结果拷贝回Host。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+Device侧的全局内存是整个Grid中所有线程均可访问的内存空间。全局内存具有持久性：通过全局内存分配的空间及其存储的数据将持续保留，直到该内存空间被释放或应用程序终止。用户需在核函数（Kernel）启动前通过Runtime API完成全局内存的分配与初始化，核函数（Kernel）执行期间SIMT每个线程均可读写全局内存，执行完毕后可将结果拷贝回Host。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
 
-运行在Device侧的核函数可以通过指针直接访问全局内存。下述代码展示了全局内存的简易示例。数组x、y、z均存储于全局内存中，通过以下核函数实现每个线程对全局内存的访问和存储。
+运行在Device侧的核函数（Kernel）可以通过指针直接访问全局内存。下述代码展示了全局内存的简易示例。数组x、y、z均存储于全局内存中，通过以下核函数（Kernel）实现每个线程对全局内存的访问和存储。
 
 ```cpp
 __global__ void add_custom(float* x, float* y, float* z, uint64_t total_length)
@@ -39,7 +39,7 @@ __global__ void add_custom(float* x, float* y, float* z, uint64_t total_length)
 
 ## 共享内存<a name="section66329146410"></a>
 
-共享内存是同一线程块内所有线程均可访问的内存空间，位于每个Vector Core（AIV）内的Unified Buffer。与全局内存相比，共享内存的容量较小，但具有更高的带宽和更低的访问延迟，可视为内核执行期间由用户管理的高速缓存资源。
+共享内存是同一线程块内所有线程均可访问的内存空间，位于每个Vector Core（AIV）内的UB。与全局内存相比，共享内存的容量较小，但具有更高的带宽和更低的访问延迟，可视为内核执行期间由用户管理的高速缓存资源。
 
 用户可通过动态或者静态方式申请共享内存。
 
@@ -77,7 +77,7 @@ __global__ void add_custom(float* x, float* y, float* z, uint64_t total_length)
 
 ### 共享内存大小的限制
 
-如下图所示，Unified Buffer内存空间总大小为256KB。默认编译模式下，UB按功能划分为四个主要区域，从低地址到高地址依次为静态内存、动态内存、预留空间和Data Cache。由于这四类区域共享同一块Unified Buffer内存，因此用户在配置共享内存大小时，应确保为Data Cache保留足够的空间（至少32KB），避免因可用空间不足导致校验报错。
+如下图所示，UB内存空间总大小为256KB。默认编译模式下，UB按功能划分为四个主要区域，从低地址到高地址依次为静态内存、动态内存、预留空间和Data Cache。由于这四类区域共享同一块UB内存，因此用户在配置共享内存大小时，应确保为Data Cache保留足够的空间（至少32KB），避免因可用空间不足导致校验报错。
 
 ![](../../../figures/ub_alloc.png)
 
@@ -107,10 +107,10 @@ __global__ void add_custom(float* x, float* y, float* z, uint64_t total_length)
 
 ## 栈空间
 
-SIMT编程中的栈空间由编译器管理，生命周期与核函数一致，包括以下两部分：
+SIMT编程中的栈空间由编译器管理，生命周期与核函数（Kernel）一致，包括以下两部分：
 
 -   位于Global Memory（GM）上的SIMT栈空间。
--   位于Unified Buffer（UB）上用于SIMT函数调用参数传递的中转栈空间(UB上8KB预留空间的一部分)。
+-   位于UB上用于SIMT函数调用参数传递的中转栈空间(UB上8KB预留空间的一部分)。
 
 下文分别说明这两类栈空间。
 
@@ -123,7 +123,7 @@ GM上的SIMT栈空间用于保存线程私有运行时状态，按用途分为SI
 -   **SIMT Divergence栈空间**  
     用于存放SIMT分支发散场景下的程序计数器（PC，Program Counter）和活动掩码（Active Mask）。Warp内线程共享一个SIMT Divergence栈空间，每个Warp的栈空间默认大小为1024Byte。分支发散越频繁、控制流越复杂，该栈空间占用越高，严重时可能引发栈溢出。
 
-开发者可通过`--cce-res-usage`编译选项查看核函数的栈空间使用情况。若栈空间占用较高，应优先减少线程私有临时变量、控制调试打印的数据量、简化函数调用链并优化分支发散逻辑，以减少不必要的Global Memory访问。若业务确需调整栈空间大小，可通过`aclInit()`接口加载的配置文件进行设置：配置项`simt_stack_size`用于设置每个线程的SIMT通用栈空间大小，`simt_divergence_stack_size`用于设置SIMT Divergence栈空间大小，单位均为Byte。配置示例如下，更多说明请参考[aclInit()接口配置说明](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/API/runtimeapi/aclcppdevg_03_0022.html)中的“SIMT算子栈空间大小配置示例”。
+开发者可通过`--cce-res-usage`编译选项查看核函数（Kernel）的栈空间使用情况。若栈空间占用较高，应优先减少线程私有临时变量、控制调试打印的数据量、简化函数调用链并优化分支发散逻辑，以减少不必要的Global Memory访问。若业务确需调整栈空间大小，可通过`aclInit()`接口加载的配置文件进行设置：配置项`simt_stack_size`用于设置每个线程的SIMT通用栈空间大小，`simt_divergence_stack_size`用于设置SIMT Divergence栈空间大小，单位均为Byte。配置示例如下，更多说明请参考[aclInit()接口配置说明](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/API/runtimeapi/aclcppdevg_03_0022.html)中的“SIMT算子栈空间大小配置示例”。
 
 ```json
 {
@@ -144,7 +144,7 @@ GM上的SIMT栈空间用于保存线程私有运行时状态，按用途分为SI
 
 ### 通用寄存器
 
-每个SIMT线程拥有独立的通用寄存器，生命周期与核函数一致，其分配由编译器统一管理，用于线程执行期间的局部数据存储。每个Vector Core（AIV）的SIMT通用寄存器文件总容量为128KB，由运行在该AIV上的线程块内所有线程按最大线程数划分使用。每个线程实际可用的寄存器数量取决于核函数定义时配置的最大线程数，最大线程数越大，每个线程可用寄存器越少，对应关系见下表。
+每个SIMT线程拥有独立的通用寄存器，生命周期与核函数（Kernel）一致，其分配由编译器统一管理，用于线程执行期间的局部数据存储。每个Vector Core（AIV）的SIMT通用寄存器文件总容量为128KB，由运行在该AIV上的线程块内所有线程按最大线程数划分使用。每个线程实际可用的寄存器数量取决于核函数（Kernel）定义时配置的最大线程数，最大线程数越大，每个线程可用寄存器越少，对应关系见下表。
 
 **表1**  最大线程数与每个线程可用寄存器数的对应关系
 
@@ -155,7 +155,7 @@ GM上的SIMT栈空间用于保存线程私有运行时状态，按用途分为SI
 | 257~512 | 64 |
 | 1~256 | 127 |
 
-由上表可知，最大线程数配置越大，每个线程可用的寄存器数量越少。若最大线程数配置过大且单线程计算逻辑复杂，编译器可能因寄存器资源不足，将部分局部变量或中间结果转存至GM上的SIMT通用栈空间，即寄存器溢出（register spill），从而引入额外的Global Memory访问并影响算子性能。开发者可通过`--cce-res-usage`编译选项查看核函数的寄存器资源使用情况，据此调整最大线程数或寄存器配置。
+由上表可知，最大线程数配置越大，每个线程可用的寄存器数量越少。若最大线程数配置过大且单线程计算逻辑复杂，编译器可能因寄存器资源不足，将部分局部变量或中间结果转存至GM上的SIMT通用栈空间，即寄存器溢出（register spill），从而引入额外的Global Memory访问并影响算子性能。开发者可通过`--cce-res-usage`编译选项查看核函数（Kernel）的寄存器资源使用情况，据此调整最大线程数或寄存器配置。
 
 开发者可使用[\_\_launch\_bounds\_\_](../../language_extension/simt_builtin_keywords.md#li23861114618)配置最大线程数，间接控制每个线程的通用寄存器数量；也可使用[\_\_maxnreg\_\_](../../language_extension/simt_builtin_keywords.md#section_maxnreg)直接配置每个线程的通用寄存器数量。
 

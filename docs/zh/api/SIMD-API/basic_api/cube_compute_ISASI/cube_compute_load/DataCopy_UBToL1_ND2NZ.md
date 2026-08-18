@@ -59,7 +59,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 | 参数名称 | 输入/输出 | 含义 |
 | ---------- | ---------- | ---------- |
 | dst | 输出 | 目的操作数，类型为LocalTensor，存储位置为L1 Buffer（TSCM）。 |
-| src | 输入 | 源操作数，类型为LocalTensor，存储位置为Unified Buffer（TPosition为VECIN/VECCALC/VECOUT）。 |
+| src | 输入 | 源操作数，类型为LocalTensor，存储位置为UB（TPosition为VECIN/VECCALC/VECOUT）。 |
 | intriParams | 输入 | 搬运参数，类型为[Nd2NzParams](#table844881954715)。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表3** Nd2NzParams结构体参数定义<a id="table844881954715"></a>
@@ -120,7 +120,7 @@ $$
 $$
 
 - 本接口仅支持配置ndNum为1。
-- 位于Unified Buffer的源地址必须32字节对齐，位于L1 Buffer的目的地址必须32字节对齐。
+- 位于UB的源地址必须32字节对齐，位于L1 Buffer的目的地址必须32字节对齐。
 - Nd2NzParams结构体参数ndNum、nValue、dValue设置不能为0。
 - 搬运至L1 Buffer的数据不能重叠，如果存在重叠写入，硬件不会产生任何警告或错误，并且不保证重叠数据的写入顺序。
 

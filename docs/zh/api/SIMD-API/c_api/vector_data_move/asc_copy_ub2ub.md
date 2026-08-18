@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将数据从Unified Buffer搬运到Unified Buffer。
+将数据从Unified Buffer（UB）搬运到UB。
 
 ## 函数原型
 

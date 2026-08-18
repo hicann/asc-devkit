@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001962490173_zh-cn_topic_0000001339105488_section36583473819"></a>
 
-配置通信域名称，每个名称对应一个通信域。配置后在Kernel侧调用GetHcclContext接口可获取通信域对应的context（消息区）地址。
+配置通信域名称，每个名称对应一个通信域。配置后在核函数（Kernel）侧调用GetHcclContext接口可获取通信域对应的context（消息区）地址。
 
 ## 函数原型<a name="zh-cn_topic_0000001962490173_zh-cn_topic_0000001339105488_section13230182415108"></a>
 

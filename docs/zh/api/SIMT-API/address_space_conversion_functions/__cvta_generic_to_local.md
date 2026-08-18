@@ -48,7 +48,7 @@ size_t __cvta_generic_to_local(const void* ptr)
 | --- | --- |
 | `ptr`为Global Memory指针 | 未定义行为，返回值不是有效栈空间地址。 |
 | `ptr`为`nullptr` | 返回`0x00000000fff00000`。 |
-| `ptr`为Unified Buffer指针 | 编译阶段报错。 |
+| `ptr`为UB指针 | 编译阶段报错。 |
 
 ## 约束说明
 

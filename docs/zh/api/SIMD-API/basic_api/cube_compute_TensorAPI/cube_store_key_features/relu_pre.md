@@ -1,6 +1,6 @@
 # 随路Relu
 
-随路Relu是矩阵计算结果从L0C Buffer搬出到Global Memory或Unified Buffer过程中的随路激活能力。Tensor API通过`CopyL0C2GMTrait::enableRelu`或`CopyL0C2UBTrait::enableRelu`控制是否使能该能力。
+随路Relu是矩阵计算结果从L0C Buffer搬出到Global Memory或Unified Buffer（UB）过程中的随路激活能力。Tensor API通过`CopyL0C2GMTrait::enableRelu`或`CopyL0C2UBTrait::enableRelu`控制是否使能该能力。
 
 ## 功能说明
 
@@ -23,7 +23,7 @@ auto atom = MakeCopy(CopyL0C2GM{}, CopyL0C2GMTraitCustom{}).with(params);
 Copy(atom, gm, l0c);
 ```
 
-L0C Buffer到Unified Buffer搬运同样通过`CopyL0C2UBTrait::enableRelu`控制：
+L0C Buffer到UB搬运同样通过`CopyL0C2UBTrait::enableRelu`控制：
 
 ```cpp
 constexpr CopyL0C2UBTrait l0c2ubTrait = {
@@ -45,7 +45,7 @@ Copy(atom, ub, l0c);
 
 ## 支持范围
 
-根据底层Fixpipe的能力，随路Relu包含Normal Relu、Leaky Relu和PRelu等模式。当前Tensor API的L0C Buffer到Global Memory/Unified Buffer搬运通过`enableRelu`暴露Normal Relu能力，当前不支持随路PRelu。
+根据底层Fixpipe的能力，随路Relu包含Normal Relu、Leaky Relu和PRelu等模式。当前Tensor API的L0C Buffer到Global Memory/UB搬运通过`enableRelu`暴露Normal Relu能力，当前不支持随路PRelu。
 
 ## 约束说明
 

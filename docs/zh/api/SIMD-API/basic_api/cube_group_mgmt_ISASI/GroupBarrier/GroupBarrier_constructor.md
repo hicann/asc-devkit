@@ -102,7 +102,7 @@ GroupBarrier对象实例。
 
 ## 约束说明<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
--   使用该接口时，UB空间末尾的1600B被占用。
+-   使用该接口时，Unified Buffer（UB）空间末尾的1600B被占用。
 -   不能和[REGIST\_MATMUL\_OBJ](../../../adv_api/cube_compute/Matmul_Kernel/REGIST_MATMUL_OBJ.md)接口同时使用。使用资源管理API时，用户自主管理AIC和AIV的核间通信，REGIST\_MATMUL\_OBJ内部是由框架管理AIC和AIV的核间通信，同时使用可能会导致通信消息错误等异常。
 
 ## 调用示例<a name="zh-cn_topic_0000001526206862_section97001499599"></a>

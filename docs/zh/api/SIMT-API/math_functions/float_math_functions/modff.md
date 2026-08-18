@@ -39,7 +39,7 @@ inline float modff(float x, float *n)
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | x | 输入 | 源操作数。 |
-| n | 输出 | Unified Buffer、Global Memory或栈空间的地址，用于存储输入数据的整数部分。 |
+| n | 输出 | UB、Global Memory或栈空间的地址，用于存储输入数据的整数部分。 |
 
 ## 返回值说明
 

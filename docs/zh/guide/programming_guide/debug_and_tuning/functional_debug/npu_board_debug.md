@@ -74,7 +74,7 @@ mssanitizer --tool=memcheck --tool=racecheck --tool=initcheck --tool=synccheck .
 内存检测异常报告会输出多种不同类型的异常信息，以下将对非法读写给出了简单的异常信息示例：
 ```shell
 ====== ERROR: illegal read of size 224  // 异常的基本信息,包含非法读写的类型以及被非法访问的字节数,非法读写包括read(非法读取)和write(非法写入)
-======    at 0x12c0c0015000 on GM in add_custom_kernel  // 异常发生的内存位置信息，包含发生的核函数名、地址空间与内存地址，此处的内存地址指一次内存访问中的首地址
+======    at 0x12c0c0015000 on GM in add_custom_kernel  // 异常发生的内存位置信息，包含发生的核函数（Kernel）名、地址空间与内存地址，此处的内存地址指一次内存访问中的首地址
 ======    in block aiv(0) on device 0  // 异常代码对应Vector核的block索引
 ======    code in pc current 0x77c (serialNo:10) // 当前异常发生的pc指针和调用api行为的序列号
 ======    #0 ${ASCEND_HOME_PATH}/asc/impl/basic_api/dav_c220/kernel_operator_data_copy_impl.h :58:9  // 以下为异常发生代码的调用栈，包含文件名、行号和列号

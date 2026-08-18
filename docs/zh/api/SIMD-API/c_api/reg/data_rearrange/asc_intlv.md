@@ -90,7 +90,7 @@ vector_int8_t dst0;
 vector_int8_t dst1;
 vector_int8_t src0;
 vector_int8_t src1;
-asc_loadalign(src0, src0_addr); // src0_addr是外部输入的UB内存空间地址。
+asc_loadalign(src0, src0_addr); // src0_addr是外部输入的Unified Buffer（UB）内存空间地址。
 asc_loadalign(src1, src1_addr); // src1_addr是外部输入的UB内存空间地址。
 asc_intlv(dst0, dst1, src0, src1);
 ```

@@ -22,7 +22,7 @@
 </td>
 <td class="cellrowborder" rowspan="5" valign="top" width="42.89%" headers="mcps1.2.4.1.2 "><p id="p583343014202"><a name="p583343014202"></a><a name="p583343014202"></a>提供降低算子头尾开销（算子执行计算前后产生的时延）的优化建议。</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.56%" headers="mcps1.2.4.1.3 "><p id="p12833530132017"><a name="p12833530132017"></a><a name="p12833530132017"></a><a href="overhead_optimization/core_count_kernel_type.md">设置合适的核数和算子Kernel类型</a></p>
+<td class="cellrowborder" valign="top" width="44.56%" headers="mcps1.2.4.1.3 "><p id="p12833530132017"><a name="p12833530132017"></a><a name="p12833530132017"></a><a href="overhead_optimization/core_count_kernel_type.md">设置合适的核数和算子核函数（Kernel）型</a></p>
 </td>
 </tr>
 <tr id="row15726103392612"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p829011278387"><a name="p829011278387"></a><a name="p829011278387"></a><a href="overhead_optimization/limit_tiling_data_size.md">限制TilingData结构大小</a></p>
@@ -31,7 +31,7 @@
 <tr id="row37921842182612"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p20792194211264"><a name="p20792194211264"></a><a name="p20792194211264"></a><a href="overhead_optimization/avoid_tpipe_init_in_object.md">避免TPipe在对象内创建和初始化</a></p>
 </td>
 </tr>
-<tr id="row466510256183"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p6665162514181"><a name="p6665162514181"></a><a name="p6665162514181"></a><a href="overhead_optimization/remove_workspace_redundancy.md">核函数内删除Workspace相关冗余操作</a></p>
+<tr id="row466510256183"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p6665162514181"><a name="p6665162514181"></a><a name="p6665162514181"></a><a href="overhead_optimization/remove_workspace_redundancy.md">核函数（Kernel）内删除Workspace相关冗余操作</a></p>
 </td>
 </tr>
 <tr id="row127293531686"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p1873011531581"><a name="p1873011531581"></a><a name="p1873011531581"></a><a href="overhead_optimization/dci_compile_option.md">设置DCI编译选项来减少算子尾开销</a></p>
@@ -76,7 +76,7 @@
 <tr id="row1429012717381"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p1340842916384"><a name="p1340842916384"></a><a name="p1340842916384"></a><a href="memory_access/reduce_shapeinfo_optimize_stack.md">通过缩减Tensor ShapeInfo维度，优化栈空间</a></p>
 </td>
 </tr>
-<tr id="row154071429103819"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p1716658185315"><a name="p1716658185315"></a><a name="p1716658185315"></a><a href="memory_access/avoid_ub_bank_conflict/overview.md">避免UB的bank冲突</a></p>
+<tr id="row154071429103819"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p1716658185315"><a name="p1716658185315"></a><a name="p1716658185315"></a><a href="memory_access/avoid_ub_bank_conflict/overview.md">避免Unified Buffer（UB）的bank冲突</a></p>
 </td>
 </tr>
 <tr id="row14297312203113"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p162977123317"><a name="p162977123317"></a><a name="p162977123317"></a><a href="memory_access/l2_cache_split.md">L2 Cache切分</a></p>
@@ -86,7 +86,7 @@
 </td>
 <td class="cellrowborder" rowspan="4" valign="top" width="42.89%" headers="mcps1.2.4.1.2 "><p id="p52813093010"><a name="p52813093010"></a><a name="p52813093010"></a>矢量计算相关优化建议。</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.56%" headers="mcps1.2.4.1.3 "><p id="p141827448127"><a name="p141827448127"></a><a name="p141827448127"></a><a href="vector_compute/ub_fusion_vector_compute.md">通过Unified Buffer融合实现连续vector计算</a></p>
+<td class="cellrowborder" valign="top" width="44.56%" headers="mcps1.2.4.1.3 "><p id="p141827448127"><a name="p141827448127"></a><a name="p141827448127"></a><a href="vector_compute/ub_fusion_vector_compute.md">通过UB融合实现连续vector计算</a></p>
 </td>
 </tr>
 <tr id="row244169133112"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p13310519891"><a name="p13310519891"></a><a name="p13310519891"></a><a href="vector_compute/vector_counter_mode.md">Vector算子灵活运用Counter模式</a></p>

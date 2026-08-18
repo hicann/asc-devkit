@@ -6,7 +6,7 @@
 
 ## 函数原型
 
--   获取Kernel接口计算所需最小/最大临时空间的接口
+-   获取核函数（Kernel）接口计算所需最小/最大临时空间的接口
 
     ```
     uint32_t GetSoftMaxFlashV2MinTmpSize(const AscendC::TensorShape& srcShape, const uint32_t dataTypeSize1, const uint32_t dataTypeSize2, const bool isUpdate, const bool isBasicBlock = false, const bool isFlashOutputBrc = false)

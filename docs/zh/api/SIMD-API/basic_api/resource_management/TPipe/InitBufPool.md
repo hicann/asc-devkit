@@ -34,7 +34,7 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-初始化TBufPool内存资源池。本接口适用于内存资源有限时，希望手动指定UB/L1内存资源复用的场景。本接口初始化后在整体内存资源中划分出一块子资源池。划分出的子资源池TBufPool，提供了如下方式进行资源管理：
+初始化TBufPool内存资源池。本接口适用于内存资源有限时，希望手动指定Unified Buffer（UB）/L1内存资源复用的场景。本接口初始化后在整体内存资源中划分出一块子资源池。划分出的子资源池TBufPool，提供了如下方式进行资源管理：
 
 -   TPipe::InitBufPool的重载接口指定与其他TBufPool子资源池复用;
 -   TBufPool::[InitBufPool](../TBufPool/InitBufPool.md)接口对子资源池继续划分；

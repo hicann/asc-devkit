@@ -17,9 +17,9 @@ AI CPU是位于Device侧ARM64架构的处理器，其具备与AI Core相同的�
 -   Atlas A2 训练系列产品/Atlas A2 推理系列产品
 <!-- end id3 -->
 
-## AI CPU核函数定义<a name="section4987175618443"></a>
+## AI CPU核函数（Kernel）定义<a name="section4987175618443"></a>
 
-在进行AI CPU编程时，与AI Core类似，同样需要定义设备侧函数入口（即核函数），该函数必须通过\_\_aicpu\_\_标识符进行声明，并且需与\_\_global\_\_标识符联合使用以表明其只能被Host侧调用。AI CPU的Device侧实现文件需要以.aicpu为后缀（或者以.cpp为后缀，在编译时增加-x aicpu选项）。该实现文件中包括上面介绍的核函数以及AI CPU普通函数定义，AI CPU普通函数无需添加执行空间标识符。
+在进行AI CPU编程时，与AI Core类似，同样需要定义设备侧函数入口（即核函数（Kernel）），该函数必须通过\_\_aicpu\_\_标识符进行声明，并且需与\_\_global\_\_标识符联合使用以表明其只能被Host侧调用。AI CPU的Device侧实现文件需要以.aicpu为后缀（或者以.cpp为后缀，在编译时增加-x aicpu选项）。该实现文件中包括上面介绍的核函数（Kernel）以及AI CPU普通函数定义，AI CPU普通函数无需添加执行空间标识符。
 
 如下是一个AI CPU“Hello World”程序的示例，hello\_world.aicpu文件内容如下：
 
@@ -38,11 +38,11 @@ __global__ __aicpu__ uint32_t hello_world(void *args)
 >编程时需要遵循如下规范：
 >- \_\_aicpu\_\_ \_\_global\_\_函数不能是void返回类型，并且入参只能是一个指针。
 >- \_\_aicpu\_\_ \_\_global\_\_函数不能是类的成员函数，也不能存在于匿名空间下。
->- 尽管AI CPU的Kernel函数有返回值，但该返回值仅用于Runtime组件报告运行状态，开发者无需编写返回逻辑，也无法使用该返回值。因此，对于用户而言，AI CPU Kernel函数等同于void类型，不能作为右值使用。
+>- 尽管AI CPU的核函数（Kernel）有返回值，但该返回值仅用于Runtime组件报告运行状态，开发者无需编写返回逻辑，也无法使用该返回值。因此，对于用户而言，AI CPU核函数（Kernel）等同于void类型，不能作为右值使用。
 
-## AI CPU核函数调用<a name="section178512255013"></a>
+## AI CPU核函数（Kernel）调用<a name="section178512255013"></a>
 
-AI CPU核函数的调用需要在.asc文件中进行，和AI Core的算子调用类似，同样使用<<<\>\>\>语法。
+AI CPU核函数（Kernel）的调用需要在.asc文件中进行，和AI Core的算子调用类似，同样使用<<<\>\>\>语法。
 
 ```
 hello_world<<<numBlocks, nullptr, stream>>>(&args, sizeof(KernelArgs));
@@ -60,9 +60,9 @@ hello_world<<<numBlocks, nullptr, stream>>>(&args, sizeof(KernelArgs));
 
 加载和运行算子时，需要使用Runtime API，完成运行时管理和配置，详细内容请参考[算子运行](../compilation_and_execution/async_execution.md)。AI CPU算子的编译请参考[AI CPU算子编译](../compilation_and_execution/operator_compilation/ai_cpu_operator_compilation.md)。
 
-## AI CPU模板核函数<a name="section135075471718"></a>
+## AI CPU模板核函数（Kernel）<a name="section135075471718"></a>
 
-若需要使用模板核函数，则需要在.aicpu文件中给出模板核函数的实例化声明，参考如下：
+若需要使用模板核函数（Kernel），则需要在.aicpu文件中给出模板核函数（Kernel）的实例化声明，参考如下：
 
 ```
 template<typename T, int BUFF_SIZE>
@@ -75,7 +75,7 @@ __global__ __aicpu__ uint32_t hello_world(void *args)
 template __global__ __aicpu__ uint32_t hello_world<KernelArgs, 4096>(void *args);
 ```
 
-并在.asc文件中新增模板核函数实例化的extern声明：
+并在.asc文件中新增模板核函数（Kernel）实例化的extern声明：
 
 ```
 template<typename T, int BUFF_SIZE>

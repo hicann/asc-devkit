@@ -66,7 +66,7 @@ __aicore__ inline void DumpAccChkPoint(const GlobalTensor<T> &tensor, uint32_t i
 
 | 参数名称 | 输入/输出 | 描述 |
 | ------ | ------ | ------ |
-| tensor | 输入 | 需要dump的Tensor。<br>•待dump的tensor位于Unified Buffer/L1 Buffer/L0C Buffer时使用LocalTensor类型的tensor参数输入。<br>•待dump的tensor位于Global Memory时使用GlobalTensor类型的tensor参数输入。|
+| tensor | 输入 | 需要dump的Tensor。<br>•待dump的tensor位于UB/L1 Buffer/L0C Buffer时使用LocalTensor类型的tensor参数输入。<br>•待dump的tensor位于Global Memory时使用GlobalTensor类型的tensor参数输入。|
 | index | 输入 | 用户自定义附加信息（行号或其他自定义数字）。|
 | countOff | 输入 | 偏移元素个数。偏移后的Tensor地址需要满足所在物理位置的对齐约束。具体参考[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。|
 | dumpSize | 输入 | 需要dump的元素个数。|
@@ -92,7 +92,7 @@ __aicore__ inline void DumpAccChkPoint(const GlobalTensor<T> &tensor, uint32_t i
 
 ## 约束说明<a name="section794123819592"></a>
 
-- 当前仅支持打印存储位置为Unified Buffer/L1 Buffer/L0C Buffer/Global Memory的Tensor信息。
+- 当前仅支持打印存储位置为Unified Buffer（UB）/L1 Buffer/L0C Buffer/Global Memory的Tensor信息。
 <!-- npu="950" id100 -->
 - 针对Ascend 950PR/Ascend 950DT，使用该接口打印L1 Tensor数据时，HDK版本需要至少升级到25.7.0以上。
 <!-- end id100 -->

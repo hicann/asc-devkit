@@ -2,9 +2,9 @@
 
 上一章阐述了TPipe‑TQue编程模型的底层设计原理：基于经典C/C++队列管道（Queue Pipeline）思想，将算子任务拆分为多级流水Stage，依靠TQue队列解决写后读数据依赖、依靠AllocTensor/FreeTensor解决读后写内存复用冲突，通过底层同步指令实现多单元异步并行的时序安全。
 
-本章将上述原理固化为可直接编码的标准化编程范式。上一章回答**为什么这样设计**，本章则聚焦**如何按此设计编写代码**。TPipe‑TQue编程范式的本质，是队列管道思想在AI Core上的工程化落地——它将流水线拆分、队列同步、内存生命周期管理、异步并行调度等复杂底层逻辑，封装为一套统一、固定的开发流程，帮助开发者快速编写规范、可流水且高性能的算子核函数。
+本章将上述原理固化为可直接编码的标准化编程范式。上一章回答**为什么这样设计**，本章则聚焦**如何按此设计编写代码**。TPipe‑TQue编程范式的本质，是队列管道思想在AI Core上的工程化落地——它将流水线拆分、队列同步、内存生命周期管理、异步并行调度等复杂底层逻辑，封装为一套统一、固定的开发流程，帮助开发者快速编写规范、可流水且高性能的算子核函数（Kernel）。
 
-该范式定义了算子核函数实现的标准化固定流程。开发者严格遵循此范式，无需手动编写底层同步逻辑，也不必独自处理数据依赖与时序阻塞，即可快速搭建稳定、高效的算子代码框架。
+该范式定义了算子核函数（Kernel）实现的标准化固定流程。开发者严格遵循此范式，无需手动编写底层同步逻辑，也不必独自处理数据依赖与时序阻塞，即可快速搭建稳定、高效的算子代码框架。
 
 从硬件执行形态看，AI Core内部的向量单元、矩阵单元和数据搬运单元天然支持异步并行与流水线执行。TPipe‑TQue编程范式完全贴合这一硬件特性，将硬件的多级流水行为抽象为软件层面统一的**数据搬入—计算—数据搬出**三段式流水线开发模型。
 
@@ -50,7 +50,7 @@ for-loop {
     // CopyIn阶段
     {
         auto tensor = queIn.AllocTensor<half>();   // 从队列申请资源，长度1024
-        AscendC::DataCopy(tensor, gm, 1024);       // 将数据从GM搬运至UB（VECIN）
+        AscendC::DataCopy(tensor, gm, 1024);       // 将数据从GM搬运至Unified Buffer（UB，VECIN）
         queIn.EnQue(tensor);
     }
     // Compute阶段
@@ -99,15 +99,15 @@ Cube计算的典型数据流图如下所示：
 
 - A1：用于存放左矩阵的逻辑内存，物理对应AI Core的L1 Buffer。
 - B1：用于存放右矩阵的逻辑内存，物理对应AI Core的L1 Buffer。
-- C1：用于存放Bias（偏置）数据的逻辑内存，物理对应AI Core的L1 Buffer或Unified Buffer。
+- C1：用于存放Bias（偏置）数据的逻辑内存，物理对应AI Core的L1 Buffer或UB。
 - A2：用于存放小块左矩阵（经分割适配L0A Buffer容量）的逻辑内存，物理对应AI Core的L0A Buffer。
 - B2：用于存放小块右矩阵（经分割适配L0B Buffer容量）的逻辑内存，物理对应AI Core的L0B Buffer。
 - C2：用于存放小块Bias数据（经分割适配BT Buffer容量）的逻辑内存，物理对应AI Core的BT Buffer或L0C Buffer。
 - CO1：用于存放小块矩阵计算结果（如切分后的结果分块）的逻辑内存，物理对应AI Core的L0C Buffer。
-- CO2：用于存放最终矩阵计算结果的逻辑内存，物理对应Global Memory或AI Core的Unified Buffer。
-- VECIN：用于存放矢量计算输入数据的逻辑内存，物理对应AI Core的Unified Buffer。
-- VECCALC：用于存放矢量计算临时变量的逻辑内存，物理对应AI Core的Unified Buffer。
-- VECOUT：用于存放矢量计算输出数据的逻辑内存，物理对应AI Core的Unified Buffer。
+- CO2：用于存放最终矩阵计算结果的逻辑内存，物理对应Global Memory或AI Core的UB。
+- VECIN：用于存放矢量计算输入数据的逻辑内存，物理对应AI Core的UB。
+- VECCALC：用于存放矢量计算临时变量的逻辑内存，物理对应AI Core的UB。
+- VECOUT：用于存放矢量计算输出数据的逻辑内存，物理对应AI Core的UB。
 
 Cube计算流程本质上也可归纳为CopyIn、Compute、CopyOut三个阶段。因其流程相对复杂，Matmul高阶API提供了高阶封装，有效简化了编程范式。
 

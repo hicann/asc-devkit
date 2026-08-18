@@ -122,7 +122,7 @@ __aicore__ inline void Brcb(const LocalTensor<T>& dst, const LocalTensor<T>& src
 - 不支持源操作数与目的操作数使用同一块内存地址。
 - BrcbRepeatParams结构体内参数dstBlkStride不支持设置为0，若设置成0可能产生未定义行为。
 <!-- npu="310p" id16 -->
-- 针对Atlas 推理系列产品AI Core，使用时需要预留8KB的Unified Buffer空间，作为接口的临时数据存放区。
+- 针对Atlas 推理系列产品AI Core，使用时需要预留8KB的Unified Buffer（UB）空间，作为接口的临时数据存放区。
 <!-- end id16 -->
 <!-- npu="A3,910b,950" id17 -->
 - 当参数count或repeatTime取值为0时，该接口的行为如下：

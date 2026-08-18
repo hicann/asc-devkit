@@ -34,7 +34,7 @@
 
 头文件路径为：`"tools/cpudebug/include/kern_fwk.h"`。
 
-进行核函数的CPU侧运行验证时，CPU调测总入口，完成CPU侧的算子程序调用。
+进行核函数（Kernel）的CPU侧运行验证时，CPU调测总入口，完成CPU侧的算子程序调用。
 
 ## 函数原型<a name="zh-cn_topic_0000001963799134_zh-cn_topic_0000001541924164_section2067518173415"></a>
 
@@ -63,7 +63,7 @@
 
 ## 调用示例<a name="zh-cn_topic_0000001963799134_zh-cn_topic_0000001541924164_section82241477610"></a>
 
-下面代码以add_custom算子为例，介绍算子核函数在CPU侧验证时，算子调用的应用程序如何编写。您在实现自己的应用程序时，需要关注由于算子核函数不同带来的修改，包括算子核函数名，入参出参的不同等，合理安排相应的内存分配、内存拷贝和文件读写等，相关API的调用方式直接复用即可。
+下面代码以add_custom算子为例，介绍算子核函数（Kernel）在CPU侧验证时，算子调用的应用程序如何编写。您在实现自己的应用程序时，需要关注由于算子核函数（Kernel）不同带来的修改，包括算子核函数（Kernel）名，入参出参的不同等，合理安排相应的内存分配、内存拷贝和文件读写等，相关API的调用方式直接复用即可。
 
 1.  按需包含头文件，通过ASCENDC_CPU_DEBUG宏区分CPU和NPU侧需要包含的头文件。
 
@@ -73,11 +73,11 @@
     #include "acl/acl.h"
     #else
     #include "tikicpulib.h"
-    extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z); // 核函数声明。
+    extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z); // 核函数（Kernel）声明。
     #endif
     ```
 
-2.  CPU侧运行验证。完成算子核函数CPU侧运行验证的步骤如下：
+2.  CPU侧运行验证。完成算子核函数（Kernel）CPU侧运行验证的步骤如下：
 
     **图1**  CPU侧运行验证步骤<a name="fig13576112114442"></a>  
     ![](../../../../figures/cpu_verification_steps.png "CPU侧运行验证步骤")
@@ -98,7 +98,7 @@
         ReadFile("./input/input_y.bin", inputByteSize, y, inputByteSize);
         // 矢量算子需要设置内核模式为AIV模式。
         AscendC::SetKernelMode(KernelMode::AIV_MODE);
-        // 调用ICPU_RUN_KF调测宏，完成核函数CPU侧的调用。
+        // 调用ICPU_RUN_KF调测宏，完成核函数（Kernel）CPU侧的调用。
         ICPU_RUN_KF(add_custom, numBlocks, x, y, z);
         // 输出数据写出。
         WriteFile("./output/output_z.bin", z, outputByteSize);

@@ -11,7 +11,7 @@ AI Core上的各类存储单元有不同的地址对齐要求。Ascend C API操�
 | 存储单元 | 对齐要求 | 说明 |
 |----------|----------|------|
 | Global Memory | 1字节对齐 | 最宽松的对齐要求，任意字节地址均可 |
-| Unified Buffer | 32字节对齐 | 与DataBlock大小一致，地址必须为32的整数倍 |
+| UB | 32字节对齐 | 与DataBlock大小一致，地址必须为32的整数倍 |
 | L1 Buffer | 32字节对齐 | 同UB，地址必须为32的整数倍 |
 | L0A Buffer/L0B Buffer | 512字节对齐 | 矩阵计算输入的高对齐要求 |
 | L0C Buffer | 64字节对齐 | 矩阵计算结果缓冲区 |
@@ -24,7 +24,7 @@ AI Core上的各类存储单元有不同的地址对齐要求。Ascend C API操�
 
 ## 多指令同步<a name="section711085812111"></a>
 
-如果需要执行多个DataCopy指令，且DataCopy的目的地址存在重叠，需要调用[PipeBarrier](../../sync_control/intra_core_sync/PipeBarrier_ISASI.md)插入同步指令，保证多个DataCopy指令的串行化，防止出现异常数据。如下图左侧示意图，执行两个DataCopy指令，搬运的目的GM地址存在重叠，两条搬运指令之间需要通过调用PipeBarrier<PIPE\_MTE3>\(\)进行MTE3流水的同步；如下图右侧示意图所示，搬运的目的地址UB存在重叠，两条搬运指令之间需要调用PipeBarrier<PIPE\_MTE2>\(\)进行MTE2流水的同步。多指令同步的核心代码示例如下：
+如果需要执行多个DataCopy指令，且DataCopy的目的地址存在重叠，需要调用[PipeBarrier](../../sync_control/intra_core_sync/PipeBarrier_ISASI.md)插入同步指令，保证多个DataCopy指令的串行化，防止出现异常数据。如下图左侧示意图，执行两个DataCopy指令，搬运的目的GM地址存在重叠，两条搬运指令之间需要通过调用PipeBarrier<PIPE\_MTE3>\(\)进行MTE3流水的同步；如下图右侧示意图所示，搬运的目的地址Unified Buffer（UB）存在重叠，两条搬运指令之间需要调用PipeBarrier<PIPE\_MTE2>\(\)进行MTE2流水的同步。多指令同步的核心代码示例如下：
 
 ```cpp
 AscendC::DataCopy(src2Local, src2Global, srcDataSize);

@@ -1,4 +1,4 @@
-# Kernel编译时报错“error: out of jump/jumpc imm range”<a name="ZH-CN_TOPIC_0000002033872222"></a>
+# 核函数（Kernel）编译时报错“error: out of jump/jumpc imm range”<a name="ZH-CN_TOPIC_0000002033872222"></a>
 
 ## 现象描述<a name="section151611254194612"></a>
 

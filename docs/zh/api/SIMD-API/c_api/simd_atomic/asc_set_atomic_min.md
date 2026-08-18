@@ -26,8 +26,8 @@
 
 ## 功能说明
 
-设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到GM的数据传输开启原子比较取小操作。数据类型支持int8_t、int16_t、half、bfloat16_t、int32_t、float。
-开启原子比较取小后，后续执行搬运操作从Unified Buffer/L0C Buffer/L1 Buffer到GM时，将待拷贝的内容和GM已有内容进行比较，将最小值写入GM。
+设置对后续的从Unified Buffer（UB）/L0C Buffer/L1 Buffer到GM的数据传输开启原子比较取小操作。数据类型支持int8_t、int16_t、half、bfloat16_t、int32_t、float。
+开启原子比较取小后，后续执行搬运操作从UB/L0C Buffer/L1 Buffer到GM时，将待拷贝的内容和GM已有内容进行比较，将最小值写入GM。
 <!-- npu="950" id8 -->
 特别地，针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到GM的通路。
 <!-- end id8 -->

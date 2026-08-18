@@ -11,7 +11,7 @@
 >- Atlas A2 训练系列产品/Atlas A2 推理系列产品
 ><!-- end id2 -->
 
-【描述】为了提高数据访问的效率和吞吐量，Unified Buffer采用了bank（大小相等的内存模块）结构设计。Unified Buffer总大小为192K，划分为48个bank。每个bank由128行组成，每行长度为32B。这48个bank进一步组织为16个bank group，每个bank group包含3个bank，例如bank15、bank31和bank47组成一个bank group。
+【描述】为了提高数据访问的效率和吞吐量，Unified Buffer（UB）采用了bank（大小相等的内存模块）结构设计。UB总大小为192K，划分为48个bank。每个bank由128行组成，每行长度为32B。这48个bank进一步组织为16个bank group，每个bank group包含3个bank，例如bank15、bank31和bank47组成一个bank group。
 
 **图1**  bank结构示意图（图中箭头方向表示内存排布的顺序）<a name="fig1132542915196"></a>  
 ![](../../../../figures/bank_layout.png "bank结构示意图（图中箭头方向表示内存排布的顺序）")

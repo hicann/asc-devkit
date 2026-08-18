@@ -95,7 +95,7 @@
 - 本接口将结果写入128bit的CmpMask寄存器中，可以用[GetCmpMask](GetCmpMask_ISASI.md)接口获取寄存器保存的数据。
 
 <!-- npu="950" id8 -->
-- 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT，该接口占用8KB Unified Buffer临时空间。
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT，该接口占用8KB UB临时空间。
 <!-- end id8 -->
 
 <!-- npu="A3,910b" id9 -->

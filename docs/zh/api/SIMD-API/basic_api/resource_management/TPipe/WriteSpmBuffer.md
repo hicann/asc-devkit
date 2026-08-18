@@ -34,7 +34,7 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-将因为UB空间不足而需要溢出暂存的数据拷贝到SPM Buffer中。
+将因为Unified Buffer（UB）空间不足而需要溢出暂存的数据拷贝到SPM Buffer中。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

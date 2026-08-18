@@ -90,7 +90,7 @@
 
 通过sharedTmpBuffer传入的情况，开发者需要为tensor申请空间；接口框架申请的方式，开发者需要预留临时空间。临时空间大小BufferSize的获取方式如下：通过[GetBroadCastMaxMinTmpSize](GetBroadCastMaxMinTmpSize.md)中提供的接口获取需要预留空间范围的大小。
 
-另外，提供了一个Kernel侧计算Tiling的接口，针对Broadcast的实现计算Tiling，获取Tiling结果。该接口的模板参数功能与支持动态shape的Broadcast接口模板参数相同，其余参数说明请参见[表5](#table5458981523)。
+另外，提供了一个核函数（Kernel）侧计算Tiling的接口，针对Broadcast的实现计算Tiling，获取Tiling结果。该接口的模板参数功能与支持动态shape的Broadcast接口模板参数相同，其余参数说明请参见[表5](#table5458981523)。
 
 -   **kernel侧tiling计算接口**
 
@@ -142,7 +142,7 @@
 | src | 输入 | 源操作数。<br><br>源操作数的数据类型需要与目的操作数保持一致。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | dstShape | 输入 | 输出tensor的shape：uint32_t类型的数组，长度取值范围为[1, 9]。输入/输出的shape维度数目必须一致，且满足条件dstShape[i] >= srcShape[i]。 |
 | srcShape | 输入 | 输入tensor的shape：uint32_t类型的数组，长度取值范围为[1, 9]。输入/输出的shape维度数目必须一致，且满足条件dstShape[i] >= srcShape[i]。<br><br>当srcShape[i]的值为1，且dstShape[i]不等于srcShape[i]时，表示i轴为广播轴。 |
-| tiling | 输入 | Broadcast接口所需的Tiling信息。BroadcastTiling*类型，通过调用Kernel侧的tiling计算接口GetBroadcastTilingInfo获取。 |
+| tiling | 输入 | Broadcast接口所需的Tiling信息。BroadcastTiling*类型，通过调用核函数（Kernel）侧的tiling计算接口GetBroadcastTilingInfo获取。 |
 
 **表5**  kernel侧tiling计算接口参数说明
 

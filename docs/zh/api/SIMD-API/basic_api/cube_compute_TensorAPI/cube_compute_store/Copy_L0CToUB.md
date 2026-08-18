@@ -31,9 +31,9 @@
 
 头文件路径为：`tensor_api/tensor.h`。
 
-Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Unified Buffer。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到Unified Buffer时，接口会根据目的张量格式自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。
+Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Unified Buffer（UB）。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到UB时，接口会根据目的张量格式自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。
 
-L0C Buffer到Unified Buffer搬运支持不量化输出、`float`到`half`或`bfloat16_t`的直接转换输出，以及配合标量或张量量化参数的随路量化输出。随路Relu、双目的模式和舍入方式通过`CopyL0C2UBTrait`配置。`Mmad`与`Fixpipe`细粒度并行相关的`unitFlag`通过`FixpipeParams`配置。
+L0C Buffer到UB搬运支持不量化输出、`float`到`half`或`bfloat16_t`的直接转换输出，以及配合标量或张量量化参数的随路量化输出。随路Relu、双目的模式和舍入方式通过`CopyL0C2UBTrait`配置。`Mmad`与`Fixpipe`细粒度并行相关的`unitFlag`通过`FixpipeParams`配置。
 
 接口支持batch模式。batch模式用于一次完成多块矩阵计算结果的搬运。Layout在原矩阵Layout最外层增加Batch维度。源张量为`NZ`格式，分形固定为16×16，可通过`MakeFrameLayout<NZLayoutPtn>(batch, m, n)`构造。目的张量可通过`MakeFrameLayout<NDLayoutPtn>(batch, m, n)`、`MakeFrameLayout<DNLayoutPtn>(batch, m, n)`、`MakeFrameLayout<NDExtLayoutPtn>(batch, m, n)`、`MakeFrameLayout<DNExtLayoutPtn>(batch, m, n)`或`MakeFrameLayout<NZLayoutPtn, DstType>(batch, m, n)`构造。`NZ`格式可通过模板参数`DstType`指定目的数据类型，`C0`表示NZ格式的列分形大小，默认为16。
 
@@ -45,14 +45,14 @@ L0C Buffer到Unified Buffer搬运支持不量化输出、`float`到`half`或`bfl
 
 ## 函数原型
 
-- 执行L0C Buffer到Unified Buffer的非量化搬运。
+- 执行L0C Buffer到UB的非量化搬运。
 
     ```cpp
     template <typename AtomType, typename DstTensor, typename SrcTensor>
     __aicore__ inline void Copy(const CopyAtom<AtomType>& atomCopy, const DstTensor& dst, const SrcTensor& src)
     ```
 
-- 执行L0C Buffer到Unified Buffer的量化搬运。
+- 执行L0C Buffer到UB的量化搬运。
 
     ```cpp
     template <typename AtomType, typename DstTensor, typename SrcTensor, typename QuantParam,
@@ -91,12 +91,12 @@ L0C Buffer到Unified Buffer搬运支持不量化输出、`float`到`half`或`bfl
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| copyOperation | 输入 | 搬运操作对象。L0C Buffer到Unified Buffer搬运取`CopyL0C2UB{}`。 |
-| copyTrait | 输入 | 搬运trait对象。L0C Buffer到Unified Buffer搬运默认取`CopyL0C2UBTraitDefault{}`。 |
+| copyOperation | 输入 | 搬运操作对象。L0C Buffer到UB搬运取`CopyL0C2UB{}`。 |
+| copyTrait | 输入 | 搬运trait对象。L0C Buffer到UB搬运默认取`CopyL0C2UBTraitDefault{}`。 |
 
 ### CopyL0C2UBTrait说明
 
-`CopyL0C2UBTrait`用于配置L0C Buffer到Unified Buffer搬运的静态特性。
+`CopyL0C2UBTrait`用于配置L0C Buffer到UB搬运的静态特性。
 
 ```cpp
 struct CopyL0C2UBTrait {
@@ -152,11 +152,11 @@ struct FixpipeParams {
 
 ## 数据类型
 
-L0C Buffer到Unified Buffer搬运根据是否传入量化参数自动选择量化模式。
+L0C Buffer到UB搬运根据是否传入量化参数自动选择量化模式。
 
 **表5**  数据类型说明
 
-|源张量类型（L0C Buffer）|目的张量类型（Unified Buffer）|调用形式|说明|
+|源张量类型（L0C Buffer）|目的张量类型（UB）|调用形式|说明|
 |--------|--------|--------|--------|
 |`int32_t`|`int8_t`、`uint8_t`|`Copy(atom, dst, src, quant)`|scalar或tensor量化输出。|
 |`float`|`int8_t`、`uint8_t`|`Copy(atom, dst, src, quant)`|scalar或tensor量化输出。|
@@ -187,7 +187,7 @@ L0C Buffer到Unified Buffer搬运根据是否传入量化参数自动选择量�
 
 ## 关键特性
 
-L0C Buffer到Unified Buffer搬运涉及[随路量化](../cube_store_key_features/quant_pre.md)、[随路Relu](../cube_store_key_features/relu_pre.md)、[Int8 Channel Merge](../cube_store_key_features/int8_channel_merge.md)、[L0C Buffer到Unified Buffer双目标模式](../cube_store_key_features/l0c_to_ub_dual_dst.md)和[batch搬运](../cube_store_key_features/batch_copy.md)等关键特性。
+L0C Buffer到UB搬运涉及[随路量化](../cube_store_key_features/quant_pre.md)、[随路Relu](../cube_store_key_features/relu_pre.md)、[Int8 Channel Merge](../cube_store_key_features/int8_channel_merge.md)、[L0C Buffer到Unified Buffer双目标模式](../cube_store_key_features/l0c_to_ub_dual_dst.md)和[batch搬运](../cube_store_key_features/batch_copy.md)等关键特性。
 
 ## 调用示例
 

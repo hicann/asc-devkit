@@ -14,7 +14,7 @@ op_host/add_custom.cpp
 
 | 内容 | 作用 |
 |---|---|
-| `TilingFunc` | Host侧Tiling函数，负责计算Kernel启动和分块参数 |
+| `TilingFunc` | Host侧Tiling函数，负责计算核函数（Kernel）启动和分块参数 |
 | `InferShape`、`InferDataType` | 图模式下的输出shape和dtype推导函数，仅在需要支持图模式时编写 |
 | `class AddCustom : public OpDef` | 算子原型定义，描述输入、输出、属性、Tiling关联 |
 
@@ -71,7 +71,7 @@ this->Output("z")
 
 | 原型项 | 参数 | 作用 |
 |---|---|---|
-| `Input`/`Output` | 输入输出名称 | 声明输入输出名称，名称需要和功能设计中的参数名称一致。声明顺序会影响aclnn接口参数顺序和Kernel入口参数顺序。 |
+| `Input`/`Output` | 输入输出名称 | 声明输入输出名称，名称需要和功能设计中的参数名称一致。声明顺序会影响aclnn接口参数顺序和核函数（Kernel）入口参数顺序。 |
 | `Input`/`Output` | `ParamType` | 声明参数提供方式。`REQUIRED`表示每次调用都必须提供，`OPTIONAL`表示部分场景可以省略，`DYNAMIC`表示数量随调用变化。 |
 | `Input`/`Output` | `DataType` | 声明输入输出支持的dtype。多个dtype按列表顺序和format列表一一对应。 |
 | `Input`/`Output` | `Format` | 声明输入输出支持的format。多个format按列表顺序和dtype列表一一对应。 |
@@ -149,7 +149,7 @@ this->Attr("alpha")
 
 `AttrType`描述属性是否必须提供，常用取值为`REQUIRED`和`OPTIONAL`。`Bool`、`Float`、`Int`等接口用于声明属性数据类型和默认值，具体说明请参考[OpAttrDef](../../../../../api/Utils-API/prototype_register_management/OpAttrDef/OpAttrDef_functions.md)。
 
-属性在原型中声明后，Host侧Tiling函数可以通过`context->GetAttrs()`获取属性值。Kernel侧需要使用属性参与计算时，可以通过TilingData将属性值传递到Kernel。属性传递方法见[通过TilingData传递属性信息](./tiling_data_attributes.md)。
+属性在原型中声明后，Host侧Tiling函数可以通过`context->GetAttrs()`获取属性值。核函数（Kernel）侧需要使用属性参与计算时，可以通过TilingData将属性值传递到核函数（Kernel）。属性传递方法见[通过TilingData传递属性信息](./tiling_data_attributes.md)。
 
 ## 图模式下注册输出shape和dtype推导函数
 
@@ -175,7 +175,7 @@ this->AICore()
     .SetTiling(optiling::TilingFunc);
 ```
 
-`SetTiling`只负责建立原型和Tiling函数之间的调用关系。`TilingFunc`内部会读取输入shape等信息，计算Kernel需要的运行参数，并写入TilingData。
+`SetTiling`只负责建立原型和Tiling函数之间的调用关系。`TilingFunc`内部会读取输入shape等信息，计算核函数（Kernel）需要的运行参数，并写入TilingData。
 
 TilingData字段设计、Tiling函数写法、workspace设置和`numBlocks`配置见[Host侧Tiling实现](./host_tiling_implementation.md)。
 
@@ -273,5 +273,5 @@ OP_ADD(AddCustom);
 
 - [算子功能设计](./operator_function_design.md)：了解如何确定算子的输入输出、属性和Host侧Tiling设计。
 - [Host侧Tiling实现](./host_tiling_implementation.md)：了解TilingData定义、Tiling函数编写和`SetTiling`关联关系。
-- [Kernel侧算子实现](./kernel_operator_implementation.md)：了解Kernel入口格式、参数顺序和TilingData读取方式。
-- [命名转换规则对照表](../appendix/naming_conversion_table.md)：了解OpType、Kernel入口和aclnn接口之间的命名转换关系。
+- [核函数（Kernel）侧算子实现](./kernel_operator_implementation.md)：了解核函数（Kernel）入口格式、参数顺序和TilingData读取方式。
+- [命名转换规则对照表](../appendix/naming_conversion_table.md)：了解OpType、核函数（Kernel）入口和aclnn接口之间的命名转换关系。

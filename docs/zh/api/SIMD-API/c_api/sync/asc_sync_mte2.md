@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-针对PIPE_MTE2流水线执行同步操作。其作用是保证PIPE_MTE2流水线中前序指令（如GM到UB的数据搬运）全部完成后，PIPE_MTE3与PIPE_V流水线的后续指令才能开始执行。
+针对PIPE_MTE2流水线执行同步操作。其作用是保证PIPE_MTE2流水线中前序指令（如GM到Unified Buffer（UB）的数据搬运）全部完成后，PIPE_MTE3与PIPE_V流水线的后续指令才能开始执行。
 
 ## 函数原型
 

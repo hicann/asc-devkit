@@ -1,6 +1,6 @@
 # 概述<a name="ZH-CN_TOPIC_0000001644105018"></a>
 
-Ascend C算子调试的整体方案如下：开发者通过调用Ascend C类库编写Ascend C算子Kernel侧源码，Kernel侧源码通过毕昇编译器进行编译，编译生成通用的CPU域的二进制或者NPU域的二进制文件。其中，CPU域的二进制可以通过gdb通用调试工具等调试手段进行调试；NPU域的二进制文件可使用printf/assert等接口进行数据打印，也可通过仿真打点图或者Profiling工具进行上板数据采集等方式进行调试。
+Ascend C算子调试的整体方案如下：开发者通过调用Ascend C类库编写Ascend C算子核函数（Kernel）侧源码，核函数（Kernel）侧源码通过毕昇编译器进行编译，编译生成通用的CPU域的二进制或者NPU域的二进制文件。其中，CPU域的二进制可以通过gdb通用调试工具等调试手段进行调试；NPU域的二进制文件可使用printf/assert等接口进行数据打印，也可通过仿真打点图或者Profiling工具进行上板数据采集等方式进行调试。
 
 ![](../../figures/kernel_compile.png)
 

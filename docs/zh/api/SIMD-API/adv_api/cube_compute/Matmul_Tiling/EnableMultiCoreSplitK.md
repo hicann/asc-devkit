@@ -25,7 +25,7 @@ void EnableMultiCoreSplitK(bool flag)
 ## 约束说明
 
 -   在算子中使用该接口时，获取C矩阵结果时仅支持输出到Global Memory。
--   在算子中使用该接口时，需在Kernel侧代码中首次将C矩阵分片的结果写入Global Memory之前，先清零Global Memory，随后在获取C矩阵分片的结果时，再开启AtomicAdd累加。如果不预先清零Global Memory，可能会因为累加Global Memory中原始的无效数据而产生精度问题。
+-   在算子中使用该接口时，需在核函数（Kernel）侧代码中首次将C矩阵分片的结果写入Global Memory之前，先清零Global Memory，随后在获取C矩阵分片的结果时，再开启AtomicAdd累加。如果不预先清零Global Memory，可能会因为累加Global Memory中原始的无效数据而产生精度问题。
 -   在算子中使用该接口时，不支持Bias参与矩阵乘计算。
 
 ## 调用示例

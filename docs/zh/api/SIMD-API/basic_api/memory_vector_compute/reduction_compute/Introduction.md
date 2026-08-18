@@ -13,7 +13,7 @@
 | [GetReduceRepeatMaxMinSpr(ISASI)](../reduction_compute_aux_config/GetReduceRepeatMaxMinSpr_ISASI.md) | 获取调用`ReduceRepeat<MAX/MIN>`时所有repeat内的最值及其索引，或获取调用`ReduceMax`、`ReduceMin`得到的最值。 | 1 element (1 index) |
 
 <!-- npu="950" id1 -->
-针对Ascend 950PR/Ascend 950DT，Memory矢量计算的归约计算接口底层均通过VF调用转换为Reg矢量计算指令执行，接口内部存在额外的VF调用开销和UB中转（如sharedTmpBuffer）。因此Memory API不保证极致性能，对性能敏感的场景建议直接使用Reg矢量计算中的[归约计算](../../reg_vector_compute/reduction_compute/reduction_compute.md)（Reg::Reduce、Reg::PairReduceElem、Reg::ReduceDataBlock）。
+针对Ascend 950PR/Ascend 950DT，Memory矢量计算的归约计算接口底层均通过VF调用转换为Reg矢量计算指令执行，接口内部存在额外的VF调用开销和Unified Buffer（UB）中转（如sharedTmpBuffer）。因此Memory API不保证极致性能，对性能敏感的场景建议直接使用Reg矢量计算中的[归约计算](../../reg_vector_compute/reduction_compute/reduction_compute.md)（Reg::Reduce、Reg::PairReduceElem、Reg::ReduceDataBlock）。
 <!-- end id1 -->
 
 <!-- npu="A3,910b" id2 -->

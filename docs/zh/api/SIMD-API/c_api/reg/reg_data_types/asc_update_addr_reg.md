@@ -32,7 +32,7 @@
 - b16模式：每次迭代地址偏移量以2字节为单位，适用于half、int16_t等类型的操作。
 - b32模式：每次迭代地址偏移量以4字节为单位，适用于float、int32_t等类型的操作。
 
-每次迭代时的地址偏移量计算公式为：offset = index0×stride0 + index1×stride1 + index2×stride2 + index3×stride3，其中index_i为各维度的循环迭代变量，stride_i为各维度的步长。例如在4维场景（N, C, H, W）中，offset0对应W维（最内层），offset1对应H×W，offset2对应C×H×W，offset3对应N×C×H×W。addr_reg更新后配合asc_loadalign/asc_storealign等接口使用，在循环中按设定的偏移量自动递增UB地址。
+每次迭代时的地址偏移量计算公式为：offset = index0×stride0 + index1×stride1 + index2×stride2 + index3×stride3，其中index_i为各维度的循环迭代变量，stride_i为各维度的步长。例如在4维场景（N, C, H, W）中，offset0对应W维（最内层），offset1对应H×W，offset2对应C×H×W，offset3对应N×C×H×W。addr_reg更新后配合asc_loadalign/asc_storealign等接口使用，在循环中按设定的偏移量自动递增Unified Buffer（UB）地址。
 
 > [!NOTE]说明
 >旧接口 `asc_create_iter_reg_*` 已废弃，请使用 `asc_update_addr_reg_*` 替代。旧接口返回类型 `iter_reg` 也已更名为 `addr_reg`。

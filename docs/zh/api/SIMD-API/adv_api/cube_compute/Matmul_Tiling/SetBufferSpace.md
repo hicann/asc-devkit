@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer/BiasTable Buffer空间大小，单位为字节。
+设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer（UB）/BiasTable Buffer空间大小，单位为字节。
 
 ## 函数原型
 
@@ -18,7 +18,7 @@ int32_t SetBufferSpace(int32_t l1Size = -1, int32_t l0CSize = -1, int32_t ubSize
 | --- | --- | --- |
 | l1Size | 输入 | 设置Matmul计算时，能够使用的L1 Buffer大小，单位为字节。默认值-1，表示使用AI处理器L1 Buffer大小。 |
 | l0CSize | 输入 | 设置Matmul计算时，能够使用的L0C Buffer大小，单位为字节。默认值-1，表示使用AI处理器L0C Buffer大小。 |
-| ubSize | 输入 | 设置Matmul计算时，能够使用的UB Buffer大小，单位为字节。默认值-1，表示使用AI处理器UB Buffer大小。 |
+| ubSize | 输入 | 设置Matmul计算时，能够使用的UB大小，单位为字节。默认值-1，表示使用AI处理器UB大小。 |
 | btSize | 输入 | 设置Matmul计算时，能够使用的BiasTable Buffer大小，单位为字节。默认值-1，表示使用AI处理器BiasTable Buffer大小。 |
 
 ## 返回值说明

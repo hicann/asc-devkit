@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-当使用GetTensorC异步接口将结果矩阵从GM拷贝到UB，且UB后续需要进行Vector计算时，需要调用WaitGetTensorC进行同步。
+当使用GetTensorC异步接口将结果矩阵从GM拷贝到Unified Buffer（UB），且UB后续需要进行Vector计算时，需要调用WaitGetTensorC进行同步。
 
 ## 函数原型
 

@@ -4,10 +4,10 @@
 >本节内容为针对分离模式，使用基础API进行矩阵乘法的编程指导。
 
 针对[分离模式](../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md#section1574769433)，由于硬件架构差异，在使用基础API进行矩阵乘法算子的实现上存在差异：
-- 分离模式中，Cube计算单元与Vector计算单元分离部署，每个核有自己的Scalar单元，能独立加载自己的代码段。在核函数编写时，可通过函数类型限定符\_\_cube\_\_标识该核函数在设备端aicore上的Cube计算单元执行。
-- 分离模式中支持Fixpipe硬件加速，支持从L0C Buffer直接搬出数据到L1 Buffer/Global Memory/Unified Buffer的同时，完成量化、反量化、数据排布格式转换等功能。
+- 分离模式中，Cube计算单元与Vector计算单元分离部署，每个核有自己的Scalar单元，能独立加载自己的代码段。在核函数（Kernel）编写时，可通过函数类型限定符\_\_cube\_\_标识该核函数（Kernel）在设备端aicore上的Cube计算单元执行。
+- 分离模式中支持Fixpipe硬件加速，支持从L0C Buffer直接搬出数据到L1 Buffer/Global Memory/Unified Buffer（UB）的同时，完成量化、反量化、数据排布格式转换等功能。
 
-遵循算子分析、核函数定义、算子类实现的开发流程，下面以Matmul算子为例，给出分离模式下Matmul算子的代码框架。
+遵循算子分析、核函数（Kernel）定义、算子类实现的开发流程，下面以Matmul算子为例，给出分离模式下Matmul算子的代码框架。
 
 ## 算子分析<a name="zh-cn_topic_0000002135641293_section11569817102912"></a>
 
@@ -21,14 +21,14 @@ Matmul算子完成形状为\[m, k\]的矩阵a和形状为\[k, n\]的矩阵b的�
 | 算子输入a | shape：(m, k) = (32, 32)；data type：half；format：[ND](../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) |
 | 算子输入b | shape：(k, n) = (32, 32)；data type：half；format：[ND](../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) |
 | 算子输出c | shape：(m, n) = (32, 32)；data type：half；format：[ND](../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) |
-| 核函数名称 | matmul_custom |
+| 核函数（Kernel）名称 | matmul_custom |
 | 使用的主要接口 | [DataCopy（GMToL1随路转换-ND2NZ搬运）](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_ND2NZ.md)：Global Memory到L1 Buffer数据搬运 + ND转NZ格式转换接口<br>[LoadData（2D矩阵搬运）](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)：L1 Buffer到L0 Buffer数据搬运 + NZ转ZZ/ZN格式转换接口<br>[Mmad](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md)：矩阵乘计算接口<br>[Fixpipe（L0C到GM数据搬运）](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)：L0C Buffer到Global Memory数据搬出 + NZ转ND格式转换 + 精度转换接口 |
 
-## 核函数定义<a name="zh-cn_topic_0000002135641293_section434251315304"></a>
+## 核函数（Kernel）定义<a name="zh-cn_topic_0000002135641293_section434251315304"></a>
 
-根据[核函数](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中介绍的规则进行核函数的定义。核函数名为matmul\_custom，有3个参数a，b，c，其中a，b都为输入内存，c为输出内存。使用函数类型限定符\_\_global\_\_来标识它是一个核函数，可以被<<<\>\>\>调用；使用函数类型限定符\_\_cube\_\_来标识该核函数在设备端aicore上的Cube核执行。
+根据[核函数（Kernel）](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中介绍的规则进行核函数（Kernel）的定义。核函数（Kernel）名为matmul\_custom，有3个参数a，b，c，其中a，b都为输入内存，c为输出内存。使用函数类型限定符\_\_global\_\_来标识它是一个核函数（Kernel），可以被<<<\>\>\>调用；使用函数类型限定符\_\_cube\_\_来标识该核函数（Kernel）在设备端aicore上的Cube核执行。
 
-核函数中，算子类的Init函数，完成内存初始化相关工作，Process函数完成算子实现的核心逻辑。核函数在开始时调用`AscendC::InitSocState()`初始化硬件状态，结束时调用`AscendC::PipeBarrier<PIPE_ALL>()`等待所有指令完成。
+核函数（Kernel）中，算子类的Init函数，完成内存初始化相关工作，Process函数完成算子实现的核心逻辑。核函数（Kernel）在开始时调用`AscendC::InitSocState()`初始化硬件状态，结束时调用`AscendC::PipeBarrier<PIPE_ALL>()`等待所有指令完成。
 
 ```cpp
 template <uint32_t M, uint32_t K, uint32_t N>
@@ -43,7 +43,7 @@ __global__ __cube__ void mmad_custom(__gm__ uint8* a, __gm__ uint8* b, __gm__ ui
 ```
 
 > [!NOTE]说明
-> 核函数使用模板参数传入矩阵的维度信息，这样可以在编译期确定循环次数，有利于编译器优化。其中M/K/N为总矩阵维度。
+> 核函数（Kernel）使用模板参数传入矩阵的维度信息，这样可以在编译期确定循环次数，有利于编译器优化。其中M/K/N为总矩阵维度。
 
 ## 算子类实现<a name="zh-cn_topic_0000002135641293_section1882915463510"></a>
 

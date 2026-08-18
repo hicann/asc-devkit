@@ -7,7 +7,7 @@ Ascend C支持SIMD与SIMT混合编程，实现向量级并行与线程级并行�
 
 ## Vector Function工作机制<a name="zh-cn_topic_0000002571695539_section471921191712"></a>
 
-如上图硬件架构所示，AIV核的计算单元包括SIMD和SIMT两种。针对这两种硬件计算单元，Ascend C抽象出了Vector Function的软件概念，用于表示在SIMT或SIMD硬件计算单元上执行的特定功能代码段。用户通过编写SIMD Vector Function或SIMT Vector Function来调用对应的执行单元完成计算任务，在算子核函数中调用不同类型的Vector Function，以实现SIMD/SIMT硬件单元的切换使用。
+如上图硬件架构所示，AIV核的计算单元包括SIMD和SIMT两种。针对这两种硬件计算单元，Ascend C抽象出了Vector Function的软件概念，用于表示在SIMT或SIMD硬件计算单元上执行的特定功能代码段。用户通过编写SIMD Vector Function或SIMT Vector Function来调用对应的执行单元完成计算任务，在算子核函数（Kernel）中调用不同类型的Vector Function，以实现SIMD/SIMT硬件单元的切换使用。
 
 如下图所示，simt\_func表示在SIMT硬件单元上执行的代码段，simd\_func表示在SIMD硬件单元上执行的代码段，代码段属性通过[\_\_simt\_vf\_\_](kernel_and_vf_functions.md#zh-cn_topic_0000002571578013_section1780955884616)、[\_\_simd\_vf\_\_](../../../language_extension/simd_builtin_keywords.md#section192521344610)来标识。
 
@@ -21,7 +21,7 @@ AIV执行时，Scalar计算单元会将Vector Function发射到Vector Function Q
 当AIV核处于SIMD工作模式时，执行模型遵从[Reg矢量计算方式](../../../programming_model/ai_core_simd_programming/c_pointer_programming/reg_vector_computation.md)，核内参与Reg矢量计算的硬件单元包括：
 
 - **Reg矢量执行单元**：用于执行Reg矢量计算，从寄存器读取数据，完成计算后将结果写回寄存器。
-- **DMA单元**：用于执行Reg矢量搬运，负责在寄存器和UB之间搬运数据。
+- **DMA单元**：用于执行Reg矢量搬运，负责在寄存器和Unified Buffer（UB）之间搬运数据。
 - **Aux Scalar**：处理Reg矢量执行单元和Reg搬运单元所需的标量计算（例如地址计算）。
 
 Reg矢量执行单元、DMA单元和Aux Scalar虽属于不同的硬件执行单元，但是在实际执行时都归属PIPE_V流水。这一架构带来两个直接结果：

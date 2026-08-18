@@ -10,11 +10,11 @@
 
 该架构的关键特点有：
 
--   增加L0C Buffer -\> Unified Buffer、Unified Buffer <-\> L1 Buffer的数据通路。
+-   增加L0C Buffer -\> UB、UB <-\> L1 Buffer的数据通路。
 -   删除Global Memory -\> L0A Buffer、Global Memory -\> L0B Buffer的数据通路。
 -   删除L1 Buffer-\> Global Memory的数据通路。
 -   SSBuffer，用于AIC和AIV的核间通信。
--   增加SIMD Register File存储层次，在SIMD程序中，数据从Unified Buffer搬运到Register进行计算，产生的中间结果可以不用传回Unified Buffer，直接在寄存器计算。
+-   增加SIMD Register File存储层次，在SIMD程序中，数据从Unified Buffer（UB）搬运到Register进行计算，产生的中间结果可以不用传回UB，直接在寄存器计算。
 -   新增SIMT相关硬件单元。SIMT相关硬件单元介绍如下：
 
     <a name="table45836437171"></a>
@@ -83,10 +83,10 @@
 
 <a name="table12348145512210"></a>
 
-| 存储单元名称 | 存储空间大小 | 对齐要求 | Kernel侧常量名称及大小（单位：字节） |
+| 存储单元名称 | 存储空间大小 | 对齐要求 | 核函数（Kernel）侧常量名称及大小（单位：字节） |
 | --- | --- | --- | --- |
 | Global Memory | - | 1Byte对齐 | - |
-| Unified Buffer | 256KB | 32Byte对齐 | ASC_UB_SIZE = 248 × 1024 + BISHENG_VF_STACK + ASC_UB_RESERVE，<br>其中BISHENG_VF_STACK、ASC_UB_RESERVE为常量，默认值为0，开启[编译选项](#compile-options-description)后分别为6K和2K。 |
+| UB | 256KB | 32Byte对齐 | ASC_UB_SIZE = 248 × 1024 + BISHENG_VF_STACK + ASC_UB_RESERVE，<br>其中BISHENG_VF_STACK、ASC_UB_RESERVE为常量，默认值为0，开启[编译选项](#compile-options-description)后分别为6K和2K。 |
 | L1 Buffer | 512KB | 32Byte对齐 | ASC_L1_SIZE = 512 * 1024 |
 | L0A Buffer | 64KB | 512Byte对齐 | ASC_L0A_SIZE = 64 * 1024 |
 | L0B Buffer | 64KB | 512Byte对齐 | ASC_L0B_SIZE = 64 * 1024 |
@@ -130,9 +130,9 @@
 | --- | --- | --- | --- |
 | L1 Buffer | L0A Buffer | PIPE_MTE1 | 256 |
 | L1 Buffer | L0B Buffer | PIPE_MTE1 | 256 |
-| L1 Buffer | Unified Buffer | PIPE_MTE1 | 128 |
-| Unified Buffer | L1 Buffer | PIPE_MTE3 | 128 |
-| L0C Buffer | Unified Buffer | PIPE_FIX | 128 |
+| L1 Buffer | UB | PIPE_MTE1 | 128 |
+| UB | L1 Buffer | PIPE_MTE3 | 128 |
+| L0C Buffer | UB | PIPE_FIX | 128 |
 | L0C Buffer | L1 Buffer | PIPE_FIX | 128 |
 
 **各存储单元推荐使用的数据排布格式**
@@ -146,11 +146,11 @@
     这些格式针对矩阵乘法等计算密集型任务进行优化，可显著提升计算效率。
 
 -   L1 Buffer缓存推荐使用FRACTAL\_NZ格式。当L1 Buffer采用NZ格式时，数据搬运到L0A/L0B Buffer（需分别转换为ZN格式）时，可降低格式转换开销。
--   Unified Buffer对数据格式没有要求。
+-   UB对数据格式没有要求。
 
 **存储单元的访问冲突**
 
-本NPU架构版本UB结构如下图所示，当多个操作尝试同时访问Unified Buffer同一个bank或者bank group时，可能会发生bank冲突，包括读写冲突、写写冲突、读读冲突，这种冲突会导致访问排队，降低性能。在NPU架构版本2201中，同一个bank group只有一组读口和写口，最多一拍完成一读或者一写，在本NPU架构版本中每个bank group有两组读口和写口，最多同时允许2读0写或者1读1写。相关读写约束如下：
+本NPU架构版本UB结构如下图所示，当多个操作尝试同时访问UB同一个bank或者bank group时，可能会发生bank冲突，包括读写冲突、写写冲突、读读冲突，这种冲突会导致访问排队，降低性能。在NPU架构版本2201中，同一个bank group只有一组读口和写口，最多一拍完成一读或者一写，在本NPU架构版本中每个bank group有两组读口和写口，最多同时允许2读0写或者1读1写。相关读写约束如下：
 
 -   **读写冲突**：读操作和写操作同时尝试访问同一个bank。
 -   **写写冲突**：多个写操作同时尝试访问同一个bank group。
@@ -181,12 +181,12 @@
 
 **搬运时的对齐要求**
 
-由于搬运后的数据用于参与数据计算，因此对搬运数据大小有要求，搬运到Unified Buffer的数据大小需要按照DataBlock对齐，其余存储单元的数据搬运必须按[分形要求](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)进行搬运。例如，数据从L1 Buffer搬运到L0A Buffer时，数据格式需要从NZ转换为ZN格式，搬运数据的大小要按分形大小对齐，如果L1 Buffer的剩余大小不足1个分形，则硬件执行中会出现异常。
+由于搬运后的数据用于参与数据计算，因此对搬运数据大小有要求，搬运到UB的数据大小需要按照DataBlock对齐，其余存储单元的数据搬运必须按[分形要求](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)进行搬运。例如，数据从L1 Buffer搬运到L0A Buffer时，数据格式需要从NZ转换为ZN格式，搬运数据的大小要按分形大小对齐，如果L1 Buffer的剩余大小不足1个分形，则硬件执行中会出现异常。
 
 **MTE硬通道**
 
--   AIV新增Unified Buffer和L1 Buffer之间的硬通道。
--   新增支持GM到Unified Buffer搬运和Unified Buffer到GM搬运的Loop模式。在Loop模式下，每次循环可以是Normal模式或Compact模式，Normal模式和Compact模式可参考[DataCopyPad\(ISASI\)](../../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopyPad_GMToUB.md)。
+-   AIV新增UB和L1 Buffer之间的硬通道。
+-   新增支持GM到UB搬运和UB到GM搬运的Loop模式。在Loop模式下，每次循环可以是Normal模式或Compact模式，Normal模式和Compact模式可参考[DataCopyPad\(ISASI\)](../../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopyPad_GMToUB.md)。
     -   单次Loop以Normal模式搬运
 
         若单个数据块长度为32B对齐，则无需插入Padding，可通过多次Repeat搬运多组数据块。
@@ -268,7 +268,7 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
 
 -   核内同步
 
-    由于AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以异步并行的方式运行，在读写Local Memory（如Unified Buffer）时可能存在数据依赖关系。为确保数据一致性及计算正确性，需通过同步控制协调操作时序。
+    由于AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以异步并行的方式运行，在读写Local Memory（如UB）时可能存在数据依赖关系。为确保数据一致性及计算正确性，需通过同步控制协调操作时序。
 
     以MTE2从GM搬运数据至UB，进行Vector计算单元的Abs计算，再搬运回GM的流程为例，需满足以下同步条件：
 

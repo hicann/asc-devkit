@@ -2,7 +2,7 @@
 
 Warp是SIMT线程执行和调度的基本单位。一个线程块内的线程会按照线性线程号被划分为多个Warp，当前一个Warp包含32个线程。同一Warp内的线程执行相同的指令流，但每个线程拥有独立的寄存器和Lane ID，可处理不同的数据地址和分支路径。
 
-Warp函数用于同一Warp内的轻量级线程协作，常见能力包括条件投票、寄存器数据交换、Warp内归约和Lane信息查询。与通过Unified Buffer进行数据交换相比，Warp函数通常直接在Warp内完成寄存器级通信，适合小范围、低开销的线程协作场景。
+Warp函数用于同一Warp内的轻量级线程协作，常见能力包括条件投票、寄存器数据交换、Warp内归约和Lane信息查询。与通过Unified Buffer（UB）进行数据交换相比，Warp函数通常直接在Warp内完成寄存器级通信，适合小范围、低开销的线程协作场景。
 
 ## 基本概念
 
@@ -62,5 +62,5 @@ float warp_max = asc_reduce_max(value);
 -   Warp函数只在当前Warp内生效，不能用于跨Warp或跨线程块的数据同步。
 -   Warp函数面向活跃线程执行。若代码存在分支发散，需要确认参与计算的Lane集合符合预期。
 -   Shfl类函数读取其他Lane的寄存器值时，应避免读取非活跃Lane的数据。
--   Reduce类函数适合Warp内小范围归约；跨Warp或跨线程块归约通常需要结合Unified Buffer、同步机制或原子操作。
+-   Reduce类函数适合Warp内小范围归约；跨Warp或跨线程块归约通常需要结合UB、同步机制或原子操作。
 -   Warp函数不等价于内存栅栏。需要约束内存可见性或线程块内阶段同步时，请使用[同步与内存栅栏](../sync_and_memory_fence/sync_and_memory_fence.md)相关接口。

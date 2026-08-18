@@ -13,14 +13,14 @@ CANN 9.0.0首次面向Ascend 950PR/Ascend 950DT（3510架构）提供试验性C�
 
 ### 数据搬运
 
-- `asc_copy_gm2ub_align`、`asc_copy_gm2ub_align_sync`：提供数据非对齐搬运功能，将数据从Global Memory搬运到Unified Buffer，支持8位、16位、32位数据类型搬运。
-- `asc_copy_ub2gm_align`、`asc_copy_ub2gm_align_sync`：将数据从Unified Buffer搬运到Global Memory，支持8位、16位、32位分块搬运。
-- `asc_ndim_copy_gm2ub`：多维数据搬运接口，将数据从Global Memory搬运到Unified Buffer，最多处理5个维度，每个维度可单独配置步长，并支持随路填充功能。
-- `asc_set_gm2ub_loop_size`：将数据从Global Memory搬运到Unified Buffer时，设置数据搬运流程中的循环次数。
-- `asc_set_gm2ub_loop1_stride`、`asc_set_gm2ub_loop2_stride`：将数据从Global Memory搬运到Unified Buffer时，分别设置内层循环、外层循环中相邻迭代数据块间的间隔。
-- `asc_set_ub2gm_loop_size`：将数据从Unified Buffer搬运到Global Memory时，设置内层循环和外层循环的次数。
-- `asc_set_ub2gm_loop1_stride`、`asc_set_ub2gm_loop2_stride`：将数据从Unified Buffer搬运到Global Memory时，分别设置内层循环、外层循环中相邻迭代数据块间的间隔。
-- `asc_set_gm2ub_pad`：使用`asc_copy_gm2ub_align`将数据从Global Memory搬运到Unified Buffer且源操作数非对齐时，设置连续搬运数据块左右两侧需要填充的数据值。
+- `asc_copy_gm2ub_align`、`asc_copy_gm2ub_align_sync`：提供数据非对齐搬运功能，将数据从Global Memory搬运到Unified Buffer（UB），支持8位、16位、32位数据类型搬运。
+- `asc_copy_ub2gm_align`、`asc_copy_ub2gm_align_sync`：将数据从UB搬运到Global Memory，支持8位、16位、32位分块搬运。
+- `asc_ndim_copy_gm2ub`：多维数据搬运接口，将数据从Global Memory搬运到UB，最多处理5个维度，每个维度可单独配置步长，并支持随路填充功能。
+- `asc_set_gm2ub_loop_size`：将数据从Global Memory搬运到UB时，设置数据搬运流程中的循环次数。
+- `asc_set_gm2ub_loop1_stride`、`asc_set_gm2ub_loop2_stride`：将数据从Global Memory搬运到UB时，分别设置内层循环、外层循环中相邻迭代数据块间的间隔。
+- `asc_set_ub2gm_loop_size`：将数据从UB搬运到Global Memory时，设置内层循环和外层循环的次数。
+- `asc_set_ub2gm_loop1_stride`、`asc_set_ub2gm_loop2_stride`：将数据从UB搬运到Global Memory时，分别设置内层循环、外层循环中相邻迭代数据块间的间隔。
+- `asc_set_gm2ub_pad`：使用`asc_copy_gm2ub_align`将数据从Global Memory搬运到UB且源操作数非对齐时，设置连续搬运数据块左右两侧需要填充的数据值。
 - `asc_set_ndim_loop0_stride`、`asc_set_ndim_loop1_stride`、`asc_set_ndim_loop2_stride`、`asc_set_ndim_loop3_stride`、`asc_set_ndim_loop4_stride`：用于设置`asc_ndim_copy_gm2ub`接口每个维度内源操作数与目的操作数的元素间隔，最多设置5个维度。
 - `asc_set_ndim_pad_count`：设置`asc_ndim_copy_gm2ub`接口各个维度左右侧的填充元素个数。
 - `asc_set_ndim_pad_value`：当`asc_ndim_copy_gm2ub`接口的`padding_mode`参数为`true`时，设置填充固定值。
@@ -66,12 +66,12 @@ CANN 9.0.0首次面向Ascend 950PR/Ascend 950DT（3510架构）提供试验性C�
 
 - `asc_icache_preload`、`asc_get_icache_preload_status`：分别从指令所在Global Memory地址预加载数据到对应的缓存行、获取指令缓存预加载状态。
 - `asc_datacache_preload`：从源地址所在的特定Global Memory地址预加载数据到数据缓存。
-- `asc_dcci_single`、`asc_ub_dcci_single`：分别刷新指定Global Memory地址或Unified Buffer地址所在的单个缓存行（Cache Line）。
+- `asc_dcci_single`、`asc_ub_dcci_single`：分别刷新指定Global Memory地址或UB地址所在的单个缓存行（Cache Line）。
 - `asc_dcci_entire_all`、`asc_dcci_entire_out`、`asc_dcci_entire_atomic`：分别以ALL、OUT或ATOMIC模式刷新全部缓存行，以维护标量单元访问与Global Memory之间的缓存一致性。
 
 ### 原子操作
 
-- `asc_set_atomic_add_float16`、`asc_set_atomic_add_float`：设置后续从Unified Buffer、L0C Buffer、L1 Buffer到Global Memory的数据搬运开启原子累加，累加的数据类型分别为`half`、`float`。
+- `asc_set_atomic_add_float16`、`asc_set_atomic_add_float`：设置后续从UB、L0C Buffer、L1 Buffer到Global Memory的数据搬运开启原子累加，累加的数据类型分别为`half`、`float`。
 - `asc_set_atomic_max_float16`、`asc_set_atomic_max_float`：设置计算结果以原子比较方式搬运到Global Memory，将待搬运的`half`、`float`数据与Global Memory中已有数据逐元素比较，并将最大值写入Global Memory。
 - `asc_set_store_atomic_config_v2`：设置原子操作启用位与原子操作类型的值。
 
@@ -85,36 +85,36 @@ CANN 9.0.0首次面向Ascend 950PR/Ascend 950DT（3510架构）提供试验性C�
 
 **数据搬入：**
 
-- `asc_loadalign`：对齐数据搬运接口，从Unified Buffer连续对齐搬入目的操作数，实现NORM搬入模式，搬运一个矢量长度（Vector Length，VL）的数据。
-- `asc_loadalign_brc`：对齐数据搬运接口，从Unified Buffer连续对齐搬入一个8位、16位或32位数据，并广播到目的操作数的所有元素位置。
-- `asc_loadalign_brc_v2`：对齐数据搬运接口，从Unified Buffer连续对齐搬入一个32字节数据块（DataBlock），并广播到一个矢量长度。
-- `asc_loadalign_brc_v3`：对齐数据搬运接口，从Unified Buffer连续对齐搬入数据，并将每个16位或32位元素广播到一个32字节数据块。
-- `asc_loadalign_unpack`：对齐数据搬运接口，从Unified Buffer连续对齐搬入目的操作数，实现解压缩搬入模式：按8位、16位或32位无符号整数加载半个矢量长度的数据，扩展到一个矢量长度的16位、32位或64位数据，中间位置补0。
-- `asc_loadalign_unpack_v2`：对齐数据搬运接口，从Unified Buffer连续对齐搬入目的操作数，实现解压缩搬入模式：按8位无符号整数加载四分之一个矢量长度的数据，扩展到一个矢量长度的32位数据，中间位置补0。
-- `asc_loadalign_upsample`：对齐数据搬运接口，从Unified Buffer连续对齐搬入目的操作数，实现2倍上采样搬入模式：加载半个矢量长度的数据，每个输入元素重复两次。
-- `asc_loadalign_downsample`：对齐数据搬运接口，从Unified Buffer连续对齐搬入目的操作数，实现2倍下采样搬入模式：加载2倍矢量长度的数据，数据每隔一个保留。
-- `asc_loadalign_deintlv`：从Unified Buffer中读取以32字节对齐地址为起始位置的连续2倍矢量长度数据，在加载过程中完成解交织后，分别写入两个目的矢量数据寄存器。
+- `asc_loadalign`：对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现NORM搬入模式，搬运一个矢量长度（Vector Length，VL）的数据。
+- `asc_loadalign_brc`：对齐数据搬运接口，从UB连续对齐搬入一个8位、16位或32位数据，并广播到目的操作数的所有元素位置。
+- `asc_loadalign_brc_v2`：对齐数据搬运接口，从UB连续对齐搬入一个32字节数据块（DataBlock），并广播到一个矢量长度。
+- `asc_loadalign_brc_v3`：对齐数据搬运接口，从UB连续对齐搬入数据，并将每个16位或32位元素广播到一个32字节数据块。
+- `asc_loadalign_unpack`：对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现解压缩搬入模式：按8位、16位或32位无符号整数加载半个矢量长度的数据，扩展到一个矢量长度的16位、32位或64位数据，中间位置补0。
+- `asc_loadalign_unpack_v2`：对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现解压缩搬入模式：按8位无符号整数加载四分之一个矢量长度的数据，扩展到一个矢量长度的32位数据，中间位置补0。
+- `asc_loadalign_upsample`：对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现2倍上采样搬入模式：加载半个矢量长度的数据，每个输入元素重复两次。
+- `asc_loadalign_downsample`：对齐数据搬运接口，从UB连续对齐搬入目的操作数，实现2倍下采样搬入模式：加载2倍矢量长度的数据，数据每隔一个保留。
+- `asc_loadalign_deintlv`：从UB中读取以32字节对齐地址为起始位置的连续2倍矢量长度数据，在加载过程中完成解交织后，分别写入两个目的矢量数据寄存器。
 - `asc_loadalign_postupdate`、`asc_loadalign_brc_postupdate`、`asc_loadalign_brc_postupdate_v2`、`asc_loadalign_brc_postupdate_v3`：实现相应的对齐搬入模式并启用Post Update，接口调用后自动更新源操作数地址。
 - `asc_loadalign_unpack_postupdate`、`asc_loadalign_unpack_postupdate_v2`、`asc_loadalign_upsample_postupdate`、`asc_loadalign_downsample_postupdate`、`asc_loadalign_deintlv_postupdate`：实现相应的解压缩、2倍上采样、2倍下采样或解交织搬入模式并启用Post Update，接口调用后自动更新源操作数地址。
 - `asc_loadunalign_pre`：用于非对齐数据搬入前的初始化，需配合`asc_loadunalign`或`asc_loadunalign_postupdate`使用。
-- `asc_loadunalign`、`asc_loadunalign_postupdate`：适用于从Unified Buffer非32字节对齐地址连续搬入矢量数据寄存器的场景；后者支持自动更新源操作数地址。
-- `asc_load`：支持从Unified Buffer非32字节对齐的源地址搬运至矢量数据寄存器，搬运量为一个矢量长度。
+- `asc_loadunalign`、`asc_loadunalign_postupdate`：适用于从UB非32字节对齐地址连续搬入矢量数据寄存器的场景；后者支持自动更新源操作数地址。
+- `asc_load`：支持从UB非32字节对齐的源地址搬运至矢量数据寄存器，搬运量为一个矢量长度。
 - `asc_gather`：根据索引位置将源操作数按元素收集到目的操作数中。
-- `asc_gather_datablock`：给定源操作数在Unified Buffer中的基地址和索引，根据索引位置将源操作数按32字节数据块收集到目的操作数中。
+- `asc_gather_datablock`：给定源操作数在UB中的基地址和索引，根据索引位置将源操作数按32字节数据块收集到目的操作数中。
 
 **数据搬出：**
 
-- `asc_storealign`：从矢量数据寄存器或掩码寄存器连续对齐搬出到Unified Buffer，实现NORM搬出模式，搬运一个矢量长度的数据。
-- `asc_storealign_1st`：从矢量数据寄存器搬出第一个元素到Unified Buffer，忽略掩码。
-- `asc_storealign_pack`：从矢量数据寄存器压缩搬出到Unified Buffer，根据掩码将源操作数中有效元素的低半部分比特位连续存储于目的操作数中。
-- `asc_storealign_pack_v2`：从矢量数据寄存器压缩搬出到Unified Buffer，根据掩码将源操作数中有效元素的低8位连续存储于目的操作数中。
-- `asc_storealign_intlv`：从矢量数据寄存器交错搬出到Unified Buffer，忽略掩码，将两个源操作数中的元素交错存储于目的操作数中。
+- `asc_storealign`：从矢量数据寄存器或掩码寄存器连续对齐搬出到UB，实现NORM搬出模式，搬运一个矢量长度的数据。
+- `asc_storealign_1st`：从矢量数据寄存器搬出第一个元素到UB，忽略掩码。
+- `asc_storealign_pack`：从矢量数据寄存器压缩搬出到UB，根据掩码将源操作数中有效元素的低半部分比特位连续存储于目的操作数中。
+- `asc_storealign_pack_v2`：从矢量数据寄存器压缩搬出到UB，根据掩码将源操作数中有效元素的低8位连续存储于目的操作数中。
+- `asc_storealign_intlv`：从矢量数据寄存器交错搬出到UB，忽略掩码，将两个源操作数中的元素交错存储于目的操作数中。
 - `asc_storealign_postupdate`、`asc_storealign_1st_postupdate`：实现NORM搬出模式或搬出第一个元素，并启用Post Update，接口调用后自动更新目的操作数地址。
 - `asc_storealign_pack_postupdate`、`asc_storealign_pack_postupdate_v2`：实现低半部分比特位或低8位压缩搬出，并启用Post Update，接口调用后自动更新目的操作数地址。
-- `asc_storeunalign`、`asc_storeunalign_postupdate`：适用于从矢量数据寄存器连续搬出到Unified Buffer非32字节对齐地址的场景；后者支持自动更新目的操作数地址。
-- `asc_storeunalign_post`、`asc_storeunalign_post_postupdate`：适用于从矢量数据寄存器连续搬出到Unified Buffer非32字节对齐地址的尾块场景；后者支持自动更新目的操作数地址。
+- `asc_storeunalign`、`asc_storeunalign_postupdate`：适用于从矢量数据寄存器连续搬出到UB非32字节对齐地址的场景；后者支持自动更新目的操作数地址。
+- `asc_storeunalign_post`、`asc_storeunalign_post_postupdate`：适用于从矢量数据寄存器连续搬出到UB非32字节对齐地址的尾块场景；后者支持自动更新目的操作数地址。
 - `asc_scatter`：根据索引值将源操作数中的元素分散到目的操作数中。
-- `asc_store`：适用于从矢量数据寄存器搬出到Unified Buffer的场景，不区分是否对齐；对齐场景推荐使用`asc_storealign`。
+- `asc_store`：适用于从矢量数据寄存器搬出到UB的场景，不区分是否对齐；对齐场景推荐使用`asc_storealign`。
 
 ### Reg矢量计算
 

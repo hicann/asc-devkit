@@ -53,7 +53,7 @@ PIPE_S
 ## 约束说明
 
 - mem_dsb_t类型的入参必须直接传递枚举值字面量。
-- 等待的内存位置取值为DSB_ALL时，只能等待GM和UB的访问指令，不包括其他内存位置，例如L0C Buffer、L1 Buffer。
+- 等待的内存位置取值为DSB_ALL时，只能等待GM和Unified Buffer（UB）的访问指令，不包括其他内存位置，例如L0C Buffer、L1 Buffer。
 
 ## 调用示例
 

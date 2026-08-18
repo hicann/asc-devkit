@@ -15,9 +15,9 @@
 | Package | `npu_op_package` | 创建一个package。 |
 | Package | `npu_op_package_add` | 将目标或文件添加到package中。 |
 | Library | `npu_op_library` | 创建Host侧库。 |
-| Library | `npu_op_kernel_library` | 创建Kernel侧库。 |
-| Library | `npu_op_kernel_options` | 添加Kernel目标编译选项。 |
-| Library | `npu_op_kernel_sources` | 描述Kernel目标的源码信息。 |
+| Library | `npu_op_kernel_library` | 创建核函数（Kernel）侧库。 |
+| Library | `npu_op_kernel_options` | 添加核函数（Kernel）目标编译选项。 |
+| Library | `npu_op_kernel_sources` | 描述核函数（Kernel）目标的源码信息。 |
 | Library | `npu_op_device_tiling_library` | 创建Device侧Tiling库。 |
 | 其他 | `npu_op_code_gen` | 执行代码生成过程，生成aclnn单算子调用代码和入图所需的原型定义代码。 |
 
@@ -51,7 +51,7 @@ npu_op_package(${package_name}                     # package name
     TYPE RUN                                       #指定编译产物形态，[RUN|STATIC|SHARED]
     CONFIG
         ENABLE_SOURCE_PACKAGE True                 #是否将源码打包到package中
-        ENABLE_BINARY_PACKAGE True                 #是否编译Kernel二进制
+        ENABLE_BINARY_PACKAGE True                 #是否编译核函数（Kernel）二进制
         INSTALL_PATH ${CMAKE_BINARY_DIR}/          # package的安装位置
 )
 ```
@@ -88,7 +88,7 @@ npu_op_package_add(${package_name}
         cust_op_proto
 )
 
-# 添加Kernel侧相关library
+# 添加核函数（Kernel）侧相关library
 npu_op_package_add(${package_name}
     LIBRARY ascendc_kernels
 )
@@ -146,7 +146,7 @@ npu_op_library(cust_optiling TILING
 
 ### npu_op_kernel_library
 
-创建Kernel侧库。
+创建核函数（Kernel）侧库。
 
 ```cmake
 npu_op_kernel_library(<target_name> SRC_BASE <path> TILING_LIBRARY <tiling_target>)
@@ -155,7 +155,7 @@ npu_op_kernel_library(<target_name> SRC_BASE <path> TILING_LIBRARY <tiling_targe
 **参数说明：**
 
 - `<target_name>`（必选）：目标的名称。
-- `SRC_BASE <path>`（必选）：指定Kernel源码的base目录，要求配置绝对路径。例如示例中的`op_kernel`目录的绝对路径。
+- `SRC_BASE <path>`（必选）：指定核函数（Kernel）源码的base目录，要求配置绝对路径。例如示例中的`op_kernel`目录的绝对路径。
 - `TILING_LIBRARY <tiling_target>`（必选）：指定依赖的Tiling目标。
 
 **示例：**
@@ -169,7 +169,7 @@ npu_op_kernel_library(ascendc_kernels
 
 ### npu_op_kernel_options
 
-添加Kernel目标编译选项。
+添加核函数（Kernel）目标编译选项。
 
 ```cmake
 npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIONS …)
@@ -216,7 +216,7 @@ npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)   #为�
 
 ### npu_op_kernel_sources
 
-描述Kernel目标的源码信息，包括设置算子的Kernel实现文件和源码路径等。
+描述核函数（Kernel）目标的源码信息，包括设置算子的核函数（Kernel）实现文件和源码路径等。
 
 ```cmake
 npu_op_kernel_sources(<target_name> [OP_TYPE <op_type>] [KERNEL_DIR <path>] [COMPUTE_UNIT <soc_version>] [KERNEL_FILE <file>])
@@ -226,9 +226,9 @@ npu_op_kernel_sources(<target_name> [OP_TYPE <op_type>] [KERNEL_DIR <path>] [COM
 
 - `<target_name>`（必选）：目标的名称。
 - `[OP_TYPE <op_type>]`（可选）：算子类型，必须与`KERNEL_FILE`同时存在。
-- `[KERNEL_DIR <path>]`（可选）：指定Kernel源码相对于`SRC_BASE`的相对路径。若算子的源码文件没有平铺在`SRC_BASE`目录（通过`npu_op_kernel_library`设置）下，可以通过`KERNEL_DIR`指定特定目录。
+- `[KERNEL_DIR <path>]`（可选）：指定核函数（Kernel）源码相对于`SRC_BASE`的相对路径。若算子的源码文件没有平铺在`SRC_BASE`目录（通过`npu_op_kernel_library`设置）下，可以通过`KERNEL_DIR`指定特定目录。
 - `[COMPUTE_UNIT <soc_version>]`（可选）：设置`KERNEL_FILE`在`<soc_version>`型号生效。默认`KERNEL_FILE`对所有型号生效。
-- `[KERNEL_FILE <file>]`（可选）：指定算子入口的Kernel实现文件名。若算子的Kernel实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（Kernel实现cpp文件名），以配置两者之间的对应关系。不配置时，Kernel实现cpp文件名和OpType之间需满足转换规则，参考[命名转换规则对照表](./naming_conversion_table.md)。
+- `[KERNEL_FILE <file>]`（可选）：指定算子入口的核函数（Kernel）实现文件名。若算子的核函数（Kernel）实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（核函数（Kernel）实现cpp文件名），以配置两者之间的对应关系。不配置时，核函数（Kernel）实现cpp文件名和OpType之间需满足转换规则，参考[命名转换规则对照表](./naming_conversion_table.md)。
 
 **示例：**
 
@@ -301,5 +301,5 @@ npu_op_code_gen(
 ## 相关文档
 
 - [算子工程编译拓展](../compilation_and_deployment/basic_process.md#advanced-build-organization) — 完整的CMakeLists.txt编写方法与编译命令说明。
-- [算子原型定义](../design_and_implementation/operator_prototype_definition.md) — Kernel实现文件名与OpType的转换规则。
+- [算子原型定义](../design_and_implementation/operator_prototype_definition.md) — 核函数（Kernel）实现文件名与OpType的转换规则。
 - [如何使用workspace](../../../appendix/common_operations/how_to_use_workspace.md) — Tiling函数中workspace的设置方法。

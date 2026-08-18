@@ -59,7 +59,7 @@ Data Cache Clean and Invalid（[DCCI](../../../../api/SIMD-API/c_api/cache_ctrl/
 Cache写入策略决定写操作是否会形成Dirty副本，常见策略包括直写和写回：
 
 - **直写（write-through）**：写操作更新Cache副本的同时，将数据写出到下一级存储。直写路径通常不会留下需要后续Clean回下一级存储的Dirty副本，但写操作是否已经完成仍需要通过DSB等同步机制确认；如果读端已经缓存旧副本，仍需要按读端路径执行Invalid。
-- **写回（write-back）**：写操作先更新Cache副本，并将Cache Line标记为Dirty；下一级存储要等到DCCI Clean、Cache Line替换等时机才会被更新。写回路径更容易产生“写端已经执行Store，但GM或UB仍是旧值”的问题。
+- **写回（write-back）**：写操作先更新Cache副本，并将Cache Line标记为Dirty；下一级存储要等到DCCI Clean、Cache Line替换等时机才会被更新。写回路径更容易产生“写端已经执行Store，但GM或Unified Buffer（UB）仍是旧值”的问题。
 
 
 ### 缓存一致性与内存一致性的区别

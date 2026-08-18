@@ -64,14 +64,14 @@
 </td>
 <td class="cellrowborder" valign="top" width="11.600000000000001%" headers="mcps1.2.4.1.2 "><p id="p783493610121"><a name="p783493610121"></a><a name="p783493610121"></a>176006</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.75%" headers="mcps1.2.4.1.3 "><p id="p1390413153316"><a name="p1390413153316"></a><a name="p1390413153316"></a>编译后核函数名无法转换成Mangling名称。</p>
+<td class="cellrowborder" valign="top" width="44.75%" headers="mcps1.2.4.1.3 "><p id="p1390413153316"><a name="p1390413153316"></a><a name="p1390413153316"></a>编译后核函数（Kernel）名无法转换成Mangling名称。</p>
 </td>
 </tr>
 <tr id="row1460513124307"><td class="cellrowborder" valign="top" width="43.65%" headers="mcps1.2.4.1.1 "><p id="p17605512153019"><a name="p17605512153019"></a><a name="p17605512153019"></a>ACL_ERROR_RTC_NAME_EXPR_NOT_VALID</p>
 </td>
 <td class="cellrowborder" valign="top" width="11.600000000000001%" headers="mcps1.2.4.1.2 "><p id="p1783411368128"><a name="p1783411368128"></a><a name="p1783411368128"></a>176007</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.75%" headers="mcps1.2.4.1.3 "><p id="p166051712143013"><a name="p166051712143013"></a><a name="p166051712143013"></a>传入无效的核函数名。</p>
+<td class="cellrowborder" valign="top" width="44.75%" headers="mcps1.2.4.1.3 "><p id="p166051712143013"><a name="p166051712143013"></a><a name="p166051712143013"></a>传入无效的核函数（Kernel）名。</p>
 </td>
 </tr>
 <tr id="row260514124302"><td class="cellrowborder" valign="top" width="43.65%" headers="mcps1.2.4.1.1 "><p id="p156791225203411"><a name="p156791225203411"></a><a name="p156791225203411"></a>ACL_ERROR_RTC_PROG_CREATION_FAILURE</p>

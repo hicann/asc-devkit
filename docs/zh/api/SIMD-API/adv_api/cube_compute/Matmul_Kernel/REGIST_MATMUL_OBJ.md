@@ -32,7 +32,7 @@ REGIST_MATMUL_OBJ(tpipe, workspace, ...)
 -   当代码中只有一个Matmul对象时，本接口可以不传入tiling参数，通过[Init](Init.md)接口单独传入tiling参数。
 -   当代码中有多个Matmul对象时，必须满足Matmul对象与其tiling参数一一对应，依次传入，具体方式请参考调用示例。
 -   在分离模式中，调用本接口后，AIC核不会主动执行接口，仅在AIV核执行到下述接口后，才会触发AIC核的执行，其他接口则不会在AIC核上执行。
-    -   [Matmul Kernel侧接口](Matmul_Kernel.md)。
+    -   [Matmul核函数（Kernel）侧接口](Matmul_Kernel.md)。
     -   [DataCopy(GMToL1连续数据搬运)](../../../basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md)、[DataCopy(GMToL1高维切分数据搬运)](../../../basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_highdim_split.md)、[DataCopy(GMToL1随路转换-ND2NZ搬运)](../../../basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_ND2NZ.md)。
 
 ## 调用示例

@@ -28,7 +28,7 @@
 
 **该接口已废弃，请使用[asc_storealign_postupdate](asc_storealign_postupdate.md)实现此功能。**
 
-reg计算数据搬运接口，适用于从矢量数据寄存器连续对齐搬出到UB的场景，接口使用repeat stride模式。
+reg计算数据搬运接口，适用于从矢量数据寄存器连续对齐搬出到Unified Buffer（UB）的场景，接口使用repeat stride模式。
 
 ## 函数原型
 

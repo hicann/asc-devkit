@@ -54,7 +54,7 @@ C API uses a **pointer-based programming model**:
 ```cpp
 // C API programming example
 constexpr uint32_t count = 64;
-__ubuf__ half dst[count];   // Unified Buffer memory
+__ubuf__ half dst[count];   // Unified Buffer (UB) memory
 __ubuf__ half src0[count];
 __ubuf__ half src1[count];
 

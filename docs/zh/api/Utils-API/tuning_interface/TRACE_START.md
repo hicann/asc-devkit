@@ -31,7 +31,7 @@ SIMD场景下，通过仿真器进行算子性能仿真时，可对算子任意�
 > [!CAUTION]注意
 >该功能主要用于**调试和性能分析**，开启后会对算子性能产生一定影响，通常在调测阶段使用，**生产环境建议关闭**。
 >默认情况下，该功能关闭，开发者可以按需通过如下方式开启打点功能。
->修改Kernel直调工程cmake目录下的npu\_lib.cmake文件，在ascendc\_compile\_definitions命令中增加-DASCENDC\_TRACE\_ON编译选项，来开启打点功能。示例如下：
+>修改核函数（Kernel）直调工程cmake目录下的npu\_lib.cmake文件，在ascendc\_compile\_definitions命令中增加-DASCENDC\_TRACE\_ON编译选项，来开启打点功能。示例如下：
 >```
 >// 打开算子的打点功能
 >ascendc_compile_definitions(ascendc_kernels_${RUN_MODE} PRIVATE
@@ -62,11 +62,11 @@ SIMD场景下，通过仿真器进行算子性能仿真时，可对算子任意�
 -   TRACE\_START/TRACE\_STOP需配套使用，若Trace图上未显示打点，则说明两者没有配对。
 -   不支持跨核使用，例如TRACE\_START在AI Cube打点，则TRACE\_STOP打点也需要在AI Cube上，不能在AI Vector上。
 -   宏支持所有的产品型号，但实际调用时需与调测工具支持的型号保持一致。
--   仅支持Kernel直调工程，不支持自定义算子工程下开启打点功能。
+-   仅支持核函数（Kernel）直调工程，不支持自定义算子工程下开启打点功能。
 
 ## 调用示例
 
-在Kernel代码中特定指令位置打上TRACE\_START/TRACE\_STOP：
+在核函数（Kernel）代码中特定指令位置打上TRACE\_START/TRACE\_STOP：
 
 ```
 TRACE_START(0x2);

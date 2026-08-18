@@ -13,7 +13,7 @@ Reg矢量编程的硬件原理、内存层级、VF函数执行域、流水线同
 - 使用C++类型表达寄存器对象，例如`RegTensor<T>`、`MaskReg`、`AddrReg`、`UnalignRegForLoad`、`UnalignRegForStore` ,对应关系参考[数据对象与寄存器类型](#section_part4)。
 - 使用模板参数表达数据类型、搬运模式、PostUpdate模式等配置。
 - 多数接口可通过参数自动推导寄存器类型。
-- 搬运接口可以与`LocalTensor`衔接，可以支持不操作UB地址，也可以外层`__aicore__`代码从`LocalTensor::GetPhyAddr()`获取UB物理地址，再传入VF函数内的Reg搬运接口。
+- 搬运接口可以与`LocalTensor`衔接，可以支持不操作Unified Buffer（UB）地址，也可以外层`__aicore__`代码从`LocalTensor::GetPhyAddr()`获取UB物理地址，再传入VF函数内的Reg搬运接口。
 - 部分计算接口提供`MaskMergeMode`模板参数，用于控制未被mask选中的元素如何写入目的寄存器。
 
 > 📌 **提示**：

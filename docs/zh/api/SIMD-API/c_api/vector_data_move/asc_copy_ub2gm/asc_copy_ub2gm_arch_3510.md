@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将数据从Unified Buffer (UB) 搬运到 Global Memory (GM)。
+将数据从Unified Buffer（UB） 搬运到 Global Memory (GM)。
 
 ## 函数原型
 

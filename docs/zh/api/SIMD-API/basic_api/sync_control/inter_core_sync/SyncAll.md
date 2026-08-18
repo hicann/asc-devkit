@@ -166,9 +166,9 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
     - usedCores传入数值不能超过算子调用时指定的逻辑AI Core中AIV的数量：GetBlockNum()*GetTaskRatio()，不传此参数表示全核软同步。
 
 - 硬件同步接口约束：
-    - 使用硬同步接口时，需根据场景使用合适的核函数修饰符：
-        - 在纯Vector算子，需使用\_\_mix\_\_\(0, 1\)修饰核函数，而不是使用\_\_vector\_\_，具体原因请参考[CrossCoreSetFlag约束说明](CrossCoreSetFlag_ISASI.md#约束说明)中的Kernel类型配置说明。
-        - 对于Mix（包含Cube和Vector计算）算子，需使用\_\_mix\_\_\(1, 1\)或\_\_mix\_\_\(1, 2\)修饰核函数。
+    - 使用硬同步接口时，需根据场景使用合适的核函数（Kernel）修饰符：
+        - 在纯Vector算子，需使用\_\_mix\_\_\(0, 1\)修饰核函数（Kernel），而不是使用\_\_vector\_\_，具体原因请参考[CrossCoreSetFlag约束说明](CrossCoreSetFlag_ISASI.md#约束说明)中的核函数（Kernel）类型配置说明。
+        - 对于Mix（包含Cube和Vector计算）算子，需使用\_\_mix\_\_\(1, 1\)或\_\_mix\_\_\(1, 2\)修饰核函数（Kernel）。
     - 对于纯Vector算子，模板参数isAIVOnly必须设置为true，否则会导致程序卡死。
     - 对于Mix（包含Cube和Vector计算）算子，模板参数isAIVOnly设置为true，会导致接口实际只能完成Vector全核同步与预期同步行为不符。
     - 使用该接口时，建议开启batchmode模式，使算子独占全部所需核资源，否则可能因满足以下条件导致死锁：
@@ -178,7 +178,7 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
         - ≥2个并发算子使用了核间同步功能。
 
         具体而言，在多流场景下，某条流的核间同步算子虽分配到n个物理核，但可能仅有n-m个核先被调度执行，而其余m个核因被其他流的核间同步算子抢占而尚未启动。先启动的n-m个核执行到核间同步时等待剩余m核完成，而剩余m核因被其他流的核间同步算子占用而无法释放，形成死锁。
-        Kernel直调场景下通过[\_\_schedmode\_\_\(mode\)](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)限定符来设置batchmode模式；工程化算子开发场景下，通过TilingContext的SetScheduleMode接口来设置batchmode模式，具体请参考[《基础数据结构和接口》](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/API/basicdataapi/atlasopapi_07_00001.html)。
+        核函数（Kernel）直调场景下通过[\_\_schedmode\_\_\(mode\)](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)限定符来设置batchmode模式；工程化算子开发场景下，通过TilingContext的SetScheduleMode接口来设置batchmode模式，具体请参考[《基础数据结构和接口》](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/API/basicdataapi/atlasopapi_07_00001.html)。
 <a id="syncall_flagId冲突说明"></a>
     - SyncAll硬件同步接口内部实现中使用了[CrossCoreSetFlag](CrossCoreSetFlag_ISASI.md)和[CrossCoreWaitFlag](CrossCoreWaitFlag_ISASI.md)进行核间同步控制，因此开发者同时使用CrossCoreSetFlag（或CrossCoreWaitFlag）和SyncAll硬件同步接口时，需注意避免以下[flagId](CrossCoreSetFlag_ISASI.md#flagId取值范围说明)冲突：
         <!-- npu="950" id28 -->
@@ -189,8 +189,8 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
             | SyncAll 使用场景 | 占用flagId汇总 | 各计算核flagId占用情况 |
             | :--- | :--- | :--- |
             | isAIVOnly=true | 14 | AIV：14 |
-            | isAIVOnly=false（核函数使用`__mix__(1, 1)`修饰时） | 11、12、13 | AIC：11、12、13；AIV：12、13 |
-            | isAIVOnly=false（核函数使用`__mix__(1, 2)`修饰时） | 11、12、13、28、29 | AIC：11、12、13、28、29；AIV：12、13 |
+            | isAIVOnly=false（核函数（Kernel）使用`__mix__(1, 1)`修饰时） | 11、12、13 | AIC：11、12、13；AIV：12、13 |
+            | isAIVOnly=false（核函数（Kernel）使用`__mix__(1, 2)`修饰时） | 11、12、13、28、29 | AIC：11、12、13、28、29；AIV：12、13 |
         <!-- end id28 -->
         <!-- npu="A3,910b" id29 -->
         - 针对[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，SyncAll硬件同步接口的flagId占用情况如表4所示：
@@ -203,7 +203,7 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
             | isAIVOnly=false | 11、12、13 | AIC：11、12、13；AIV：12、13 |
         <!-- end id29 -->
 
-- 硬件同步接口和软件同步接口公共约束：使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致Kernel“卡死”现象。
+- 硬件同步接口和软件同步接口公共约束：使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致核函数（Kernel）“卡死”现象。
 
 ## 调用示例<a id="section642mcpsimp"></a>
 

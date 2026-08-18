@@ -16,8 +16,8 @@ aclnnXxxGetWorkspaceSize(input0, input1, output, &workspaceSize, &executor);
 
 此阶段主要在Host侧完成执行前准备：
 1. 根据OpType、SoC、输入输出dtype/format/shape、属性等信息，优先尝试匹配aclnn参数缓存；缓存命中时复用已保存的binary和Tiling执行信息，跳过后续binary匹配和TilingFunc调用。
-2. 缓存未命中时，根据算子注册信息和当前参数匹配可用的Kernel binary，或者调用算子注册的TilingFunc计算当前输入对应的TilingData、TilingKey、BlockDim。
-3. 根据匹配到的binary配置和TilingKey，确定本次执行的Kernel入口。
+2. 缓存未命中时，根据算子注册信息和当前参数匹配可用的核函数（Kernel）binary，或者调用算子注册的TilingFunc计算当前输入对应的TilingData、TilingKey、BlockDim。
+3. 根据匹配到的binary配置和TilingKey，确定本次执行的核函数（Kernel）入口。
 4. 返回workspaceSize（需要分配的Device内存大小）和executor（承载调度上下文）。
 
 此阶段可能触发的耗时操作：
@@ -34,11 +34,11 @@ aclnnXxx(workspace, workspaceSize, executor, stream);
 
 ### 为什么分两阶段
 
-两阶段接口的目的是将执行前准备和执行下发分离：调用方可以先获取`workspaceSize`和`executor`，再根据自身资源管理方式选择按算子申请、统一内存池分配或复用已有workspace，并在提交Kernel前完成内存预算，可以减少频繁申请内存的开销和减少内存碎片。
+两阶段接口的目的是将执行前准备和执行下发分离：调用方可以先获取`workspaceSize`和`executor`，再根据自身资源管理方式选择按算子申请、统一内存池分配或复用已有workspace，并在提交核函数（Kernel）前完成内存预算，可以减少频繁申请内存的开销和减少内存碎片。
 
 ### Binary匹配机制
 
-运行时框架会基于OpType、目标芯片型号、输入输出dtype/format、shape支持范围、属性以及TilingKey/模板参数组合等信息匹配预编译的Kernel binary。
+运行时框架会基于OpType、目标芯片型号、输入输出dtype/format、shape支持范围、属性以及TilingKey/模板参数组合等信息匹配预编译的核函数（Kernel）binary。
 
 binary查找的优先级顺序：
 
@@ -52,13 +52,13 @@ binary查找的优先级顺序：
 
 ### 影响编译产物形态的写法
 
-#### TilingKey / Kernel模板的分支数量
+#### TilingKey / 核函数（Kernel）模板的分支数量
 
-算子有两种分支策略可选：[数字TilingKey](../design_and_implementation/multi_branch_strategy.md#使用tilingkey选择分支)或[命名Kernel模板参数](../design_and_implementation/multi_branch_strategy.md#使用kernel模板组织分支)，两者互斥。
+算子有两种分支策略可选：[数字TilingKey](../design_and_implementation/multi_branch_strategy.md#使用tilingkey选择分支)或[命名核函数（Kernel）模板参数](../design_and_implementation/multi_branch_strategy.md#使用kernel模板组织分支)，两者互斥。
 
 | 分支策略 | 编译耗时 | 运行表现 | 适用场景 |
 |---------|---------|---------|---------|
-| 单一分支（所有支持输入走同一套Kernel逻辑） | 极快 | 代码简单，但难以针对不同场景优化。 | 简单算子、开发阶段。 |
+| 单一分支（所有支持输入走同一套核函数（Kernel）逻辑） | 极快 | 代码简单，但难以针对不同场景优化。 | 简单算子、开发阶段。 |
 | 按shape分档（如 ≤64 / ≤1024 / ≤64K / >64K） | 适中 | 可针对不同数据规模选择更合适的算法或tile参数。 | 大多数算子。 |
 | 按shape × dtype × 参数组合精细分档 | 较长 | 性能特化更充分，但binary数量和包体积增加。 | 生产部署、性能敏感。 |
 
@@ -66,7 +66,7 @@ binary查找的优先级顺序：
 
 #### ASCEND_COMPUTE_UNIT范围
 
-离线编译产物需要包含当前运行芯片型号对应的Kernel binary。开发阶段如果只验证单一芯片，可收窄`ASCEND_COMPUTE_UNIT`。需要跨芯片部署时，再按目标环境配置多个型号，如果离线编译产物里不包含当前运行芯片的Kernel binary，运行时会失败。
+离线编译产物需要包含当前运行芯片型号对应的核函数（Kernel）binary。开发阶段如果只验证单一芯片，可收窄`ASCEND_COMPUTE_UNIT`。需要跨芯片部署时，再按目标环境配置多个型号，如果离线编译产物里不包含当前运行芯片的核函数（Kernel）binary，运行时会失败。
 
 ### 影响Host侧运行开销的写法
 
@@ -78,9 +78,9 @@ TilingFunc被调用时，如果函数中包含复杂计算（如大量循环、�
 
 #### TilingData字段数量
 
-TilingData结构体在Host侧填写、序列化后传递到Kernel侧。字段越多，序列化开销越大。
+TilingData结构体在Host侧填写、序列化后传递到核函数（Kernel）侧。字段越多，序列化开销越大。
 
-**建议**：TilingData只传Kernel需要的标量值，不要传冗余信息。
+**建议**：TilingData只传核函数（Kernel）需要的标量值，不要传冗余信息。
 
 #### Workspace大小设置
 
@@ -88,7 +88,7 @@ TilingData结构体在Host侧填写、序列化后传递到Kernel侧。字段越
 
 **建议**：精确计算所需workspace大小，避免预留过多冗余空间。
 
-### 影响Kernel侧执行表现的写法
+### 影响核函数（Kernel）侧执行表现的写法
 
 #### TILING_KEY_IS vs运行时if-else
 
@@ -110,9 +110,9 @@ if (tilingData.totalLength <= threshold) {
 
 `TILING_KEY_IS`是编译期常量判断，编译器将未命中的分支完全移除（常量折叠），消除运行时分支判断开销和icache压力。运行时if-else两个分支都保留在binary中，代码体积更大。
 
-#### Kernel模板参数
+#### 核函数（Kernel）模板参数
 
-Kernel模板使用命名参数（如`D_T_X`、`TILE_NUM`）组织模板参数组合，并在Host侧根据实际参数生成和设置TilingKey，从而实现编译期特化：
+核函数（Kernel）模板使用命名参数（如`D_T_X`、`TILE_NUM`）组织模板参数组合，并在Host侧根据实际参数生成和设置TilingKey，从而实现编译期特化：
 
 ```cpp
 template<typename D_T_X, typename D_T_Y, typename D_T_Z, int TILE_NUM>
@@ -123,7 +123,7 @@ __global__ __aicore__ void add_custom(...)
 }
 ```
 
-模板参数使编译器能够针对特定类型和常量做优化（如循环展开、常量传播）。运行时只需选择已编译的模板组合，不会在Kernel内产生模板参数本身的判断开销。
+模板参数使编译器能够针对特定类型和常量做优化（如循环展开、常量传播）。运行时只需选择已编译的模板组合，不会在核函数（Kernel）内产生模板参数本身的判断开销。
 
 #### tileNum切分粒度
 
@@ -132,12 +132,12 @@ TilingData中的tileNum决定每个Block上的分块个数：
 - tileNum过小 → 每个分块的数据量大，单次搬运耗时长，但循环次数少。
 - tileNum过大 → 每个分块的数据量小，循环次数多，循环开销占比增大。
 
-需要根据UB内存容量和计算/搬运比例选取合适的tileNum。
+需要根据Unified Buffer（UB）内存容量和计算/搬运比例选取合适的tileNum。
 
 ## 相关文档
 
 - [基本流程](../compilation_and_deployment/basic_process.md) — 编译与部署操作指南。
 - [Host侧Tiling实现](../design_and_implementation/host_tiling_implementation.md) — Tiling函数、TilingData和workspace设置方法。
-- [多分支策略](../design_and_implementation/multi_branch_strategy.md) — TilingKey和Kernel模板的配置方法。
+- [多分支策略](../design_and_implementation/multi_branch_strategy.md) — TilingKey和核函数（Kernel）模板的配置方法。
 - [单算子API调用](./single_operator_api_call.md) — 两段式接口的使用方法。
 - [算子动态库和静态库编译](../compilation_and_deployment/dynamic_static_lib_compilation.md) — 动态库/静态库形态下的集成方式。

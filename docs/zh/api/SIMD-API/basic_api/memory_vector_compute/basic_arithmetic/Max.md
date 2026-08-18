@@ -134,9 +134,9 @@ $dst_i = max(src0_i, src1_i)$
   <!-- end id27 -->
 <!-- end id20 -->
 <!-- npu="950" id21 -->
-- 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
-  - tensor高维切分计算占用8KB Unified Buffer。
-  - tensor前n个数据连续计算不涉及8KB Unified Buffer的占用。
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+  - tensor高维切分计算占用8KB UB。
+  - tensor前n个数据连续计算不涉及8KB UB的占用。
 <!-- end id21 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>

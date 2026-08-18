@@ -215,7 +215,7 @@ hRepeat = 2；vRepeat = 2；mask = 128；vROffset = 128。
 - 参数src0Offset的取值要求如下：
     - 取值应保证src0元素类型位宽对齐。
     - 偏移地址后需要32字节对齐。
-    - 偏移地址后不能超出UB大小数据的范围。
+    - 偏移地址后不能超出Unified Buffer（UB）大小数据的范围。
     - 地址偏移的取值范围：不能超出uint32\_t的范围。
 - 当参数repeatMode配置为true时，需确保src1的有效数据长度*16 ≥ src0的数据长度。
 

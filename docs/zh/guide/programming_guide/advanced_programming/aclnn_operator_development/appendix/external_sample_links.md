@@ -7,7 +7,7 @@
 ### 基础算子实现
 
 - [AddCustom算子样例](../../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op)里的AddCustom样例。
-  - 说明：展示基础的完整算子实现，包括TilingData定义、Tiling函数和Kernel代码。
+  - 说明：展示基础的完整算子实现，包括TilingData定义、Tiling函数和核函数（Kernel）代码。
 
 ### msOpGen工具生成自定义算子工程模板
 
@@ -21,8 +21,8 @@
 
 ### 模板编程算子实现
 
-- [Kernel模板编程样例](../../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op/op_host/add_custom_template)。
-  - 说明：展示使用Kernel模板参数实现编译期分支控制的示例。
+- [核函数（Kernel）模板编程样例](../../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op/op_host/add_custom_template)。
+  - 说明：展示使用核函数（Kernel）模板参数实现编译期分支控制的示例。
 
 ### 编译与集成样例
 

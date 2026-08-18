@@ -38,7 +38,7 @@ __ubuf__ float ubData[size];
 __cbuf__ float l1Data[size];
 __ca__ float l0AData[size];
 
-// 创建Unified Buffer指针
+// 创建Unified Buffer（UB）指针
 auto ubPtr = AscendC::Te::MakeMemPtr(ubData);
 
 // 创建L1 Buffer指针

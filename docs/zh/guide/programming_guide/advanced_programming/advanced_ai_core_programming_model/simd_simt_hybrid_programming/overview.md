@@ -11,7 +11,7 @@
 ## 混合编程的定位
 
 在该模型下，矩阵计算单元和向量计算中的SIMD计算单元共同提供超过90%的算力，为密集计算提供高性能与高算力利用率；向量计算中的SIMT则作为灵活性补充，专门应对复杂控制流、离散访存等不规则场景，提升此类场景下算法开发与优化的效率。  
-因此，在SIMD与SIMT混合编程中，SIMT不用于替代SIMD处理连续、密集的计算任务，而是用于处理算子中的局部不规则逻辑。典型方式是在核函数中通过SIMT VF处理分支判断、索引映射、离散访存等局部片段，再由SIMD继续处理向量或矩阵计算，从而兼顾灵活性和高吞吐。
+因此，在SIMD与SIMT混合编程中，SIMT不用于替代SIMD处理连续、密集的计算任务，而是用于处理算子中的局部不规则逻辑。典型方式是在核函数（Kernel）中通过SIMT VF处理分支判断、索引映射、离散访存等局部片段，再由SIMD继续处理向量或矩阵计算，从而兼顾灵活性和高吞吐。
 
 ## 混合编程的适用场景
 
@@ -19,7 +19,7 @@
 
 -   复杂分支判断的算子，适合使用SIMT完成计算任务，而输入输出的数据搬运较规整连续，适合使用SIMD搬运接口完成数据拷贝。例如[floor_mod样例](../../../../../../../examples/05_simd_simt_hybrid/02_best_practices/simd_simt_high_performance)。
 
--   离散访问场景，适合使用SIMT完成计算任务，当所需访问的数据量远小于Unified Buffer可用空间时，可以使用SIMD搬运接口完成数据拷贝，使SIMT编程能够直接从Unified Buffer读取数据，提高内存访问效率。
+-   离散访问场景，适合使用SIMT完成计算任务，当所需访问的数据量远小于Unified Buffer（UB）可用空间时，可以使用SIMD搬运接口完成数据拷贝，使SIMT编程能够直接从UB读取数据，提高内存访问效率。
 
 -   某些算子，在大Shape场景，使用SIMD并行计算效率更高；而在小Shape不规整场景，则适合使用SIMT完成计算。因此可以区分算子场景，分别使用两种编程方式实现算子功能，提升泛化场景整体性能。
 
@@ -29,10 +29,10 @@
 
 -   **[抽象硬件架构](abstract_hardware_architecture.md)**：介绍了SIMD与SIMT混合编程场景的硬件架构，介绍VF（Vector Function）运行机制及SIMT VF、SIMD VF等概念。
 
--   **[核函数与VF函数](kernel_and_vf_functions.md)**：详细介绍了混合编程场景的核函数定义、调用方式及执行配置，VF函数及各类函数的调用关系。
+-   **[核函数（Kernel）与VF函数](kernel_and_vf_functions.md)**：详细介绍了混合编程场景的核函数（Kernel）定义、调用方式及执行配置，VF函数及各类函数的调用关系。
 
 -   **[内存层级](memory_hierarchy.md)**：展示混合编程场景的内存层级，重点介绍了VF之间的通信方式，UB内存作为共享内存是如何分配与管理的。
 
--   **[编程示例](programming_examples.md)**：以实际样例展示混合编程关键语法，包括`asc_vf_call`调用SIMT VF函数和`<<<>>>`核函数启动配置。
+-   **[编程示例](programming_examples.md)**：以实际样例展示混合编程关键语法，包括`asc_vf_call`调用SIMT VF函数和`<<<>>>`核函数（Kernel）启动配置。
 
 强烈建议开发者阅读[混合编程场景的扩展语法与约束说明](../../../language_extension/simd_simt_hybrid_builtin_keywords.md)，掌握基本扩展语法及使用约束后开发自定义算子。

@@ -34,11 +34,11 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-支持Unified Buffer与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。
+支持Unified Buffer（UB）内部的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECCALC -> VECOUT
 
@@ -63,8 +63,8 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
-| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为Unified Buffer，目的地址需要32字节对齐。 |
-| src | 输入 | 源操作数，类型为LocalTensor，存储位置为Unified Buffer，源地址需要32字节对齐。 |
+| dst | 输出 | 目的操作数，类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md)，存储位置为UB，目的地址需要32字节对齐。 |
+| src | 输入 | 源操作数，类型为LocalTensor，存储位置为UB，源地址需要32字节对齐。 |
 | repeatParams | 输入 | 搬运参数，DataCopyParams类型，参数说明请参考表3。通过该参数可配置搬运的数据块大小、个数、间隔等信息，同时支持非连续和连续搬运。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
 **表3**  DataCopyParams结构体参数定义
@@ -146,7 +146,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 位于Unified Buffer的地址必须32字节对齐。
+- 位于UB的地址必须32字节对齐。
 <!-- npu="A3,910b,950" id18 -->
 - 当DataCopyParams结构体参数blockCount、blockLen任意一个值为0时，该接口将被视为NOP（空操作）。该说明针对如下型号生效：
   <!-- npu="A3" id15 -->

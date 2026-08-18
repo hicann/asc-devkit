@@ -42,7 +42,7 @@
 **注意：**
 - vector_int4x2_t、vector_fp4x2_e2m1_t、vector_fp4x2_e1m2_t这三个矢量数据类型在内存中的排布需要将两个元素打包为一个字节的存储单元。
 
-- 矢量数据寄存器数据上限为32，超出上限的寄存器数据会写入预留的8K UB内存中，可能会引发性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若两者均可用，优先复用寄存器。
+- 矢量数据寄存器数据上限为32，超出上限的寄存器数据会写入预留的8K Unified Buffer（UB）内存中，可能会引发性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若两者均可用，优先复用寄存器。
 
 - 寄存器的生命周期限定于单个VF内部。
 
@@ -64,7 +64,7 @@
 | :-- | :------------ | :------------ | :------------ |
 | 1 | 调用接口设置 | [asc_create_mask](asc_create_mask.md) | 可以设置参数指定mask的模式，即指定哪些位置的元素参与计算。 |
 | 2 | 调用接口设置 | [asc_update_mask](asc_update_mask.md) |&bull; 在循环外调用时设置固定的mask，mask表示在一次循环计算中前count个元素参与计算，每次以循环计算均使用此mask。<br>&bull; 在循环内调用时，表示计算中前count个元素参与计算，每次循环mask会自动更新。|
-| 3 | 从Unified Buffer搬入 | [asc_loadalign_postupdate](../reg_load/asc_loadalign_postupdate.md) | 将掩码从UB搬入掩码寄存器。 |
+| 3 | 从UB搬入 | [asc_loadalign_postupdate](../reg_load/asc_loadalign_postupdate.md) | 将掩码从UB搬入掩码寄存器。 |
 | 4 | 从矢量数据寄存器搬入 | [asc_copy](../reg_load/asc_copy.md) | 从矢量数据寄存器搬运至掩码寄存器。 |
 
 **注意：**

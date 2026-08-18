@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将数据从L1 Buffer搬运到Unified Buffer中。
+将数据从L1 Buffer搬运到Unified Buffer（UB）中。
 
 ## 函数原型
 
@@ -66,7 +66,7 @@ PIPE_MTE1
 
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../general_description_and_constraints.md#通用地址重叠约束)。
-- 由于此接口实现了Cube核与Vector核间的数据搬运，所以如果核函数调用了该接口，则不能使用__cube__或__vector__的执行空间修饰符，否则会导致执行失败。
+- 由于此接口实现了Cube核与Vector核间的数据搬运，所以如果核函数（Kernel）调用了该接口，则不能使用__cube__或__vector__的执行空间修饰符，否则会导致执行失败。
 
 ## 调用示例
 

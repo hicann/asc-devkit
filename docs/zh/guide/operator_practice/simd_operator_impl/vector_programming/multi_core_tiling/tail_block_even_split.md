@@ -55,7 +55,7 @@ MainTileWithTailBlockTiling tiling{
 
 ## 算子类实现
 
-Kernel侧算子仍采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现。与[主块均分](main_block_even_split.md)相比，本场景中每个核处理的数据长度仍相同，因此Global Memory偏移仍由`tiling.blockLength`和`GetBlockIdx()`计算；差异在于`Init`函数需要额外保存`tiling.lastTileLength`，供`Process`函数判断最后一次循环是否处理尾块。
+核函数（Kernel）侧算子仍采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现。与[主块均分](main_block_even_split.md)相比，本场景中每个核处理的数据长度仍相同，因此Global Memory偏移仍由`tiling.blockLength`和`GetBlockIdx()`计算；差异在于`Init`函数需要额外保存`tiling.lastTileLength`，供`Process`函数判断最后一次循环是否处理尾块。
 
 ```cpp
 __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z,

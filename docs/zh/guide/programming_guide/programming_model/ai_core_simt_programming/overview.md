@@ -2,7 +2,7 @@
 
 ## 引言
 
-SIMT（Single Instruction Multiple Thread，单指令多线程）编程是AI Core编程方式的一种重要补充，特别适用于离散数据访问、复杂控制逻辑和分支发散等场景。Ascend C支持与业界一致的SIMT编程模型，通过线程级并行实现数据并行计算，每个线程允许指令对数据进行独立寻址与计算，从而实现了更高的编程灵活性。本章将以**SIMT编程模型**为主线，遵循「宏观架构—线程调度—代码落地」的递进逻辑，完整覆盖SIMT算子开发全链路：阐述多线程并行架构的执行机制，拆解线程块内Warp调度的底层逻辑，并完成算子Kernel计算逻辑的开发。
+SIMT（Single Instruction Multiple Thread，单指令多线程）编程是AI Core编程方式的一种重要补充，特别适用于离散数据访问、复杂控制逻辑和分支发散等场景。Ascend C支持与业界一致的SIMT编程模型，通过线程级并行实现数据并行计算，每个线程允许指令对数据进行独立寻址与计算，从而实现了更高的编程灵活性。本章将以**SIMT编程模型**为主线，遵循「宏观架构—线程调度—代码落地」的递进逻辑，完整覆盖SIMT算子开发全链路：阐述多线程并行架构的执行机制，拆解线程块内Warp调度的底层逻辑，并完成算子核函数（Kernel）计算逻辑的开发。
 
 ## 异构并行计算核心模型：SIMT编程范式
 
@@ -38,8 +38,8 @@ SIMT线程可访问多种内存空间，形成「全局内存-共享内存-寄�
 | 内存类型 | 线程作用域 | 内存修饰符 | 生命周期 | 物理位置 | 特点 |
 |----------|-----------|---------|----------|---------|------|
 | **全局内存** | Grid | \_\_gm__ | 应用程序 | Device | 所有线程可直接访问，持久化存储 |
-| **共享内存（Unified Buffer）** | Block | \_\_ubuf__ | 核函数 | AIV核 | 线程块内共享，高带宽低延迟 |
-| **寄存器** | Thread | NA | 核函数 | AIV核 | 线程私有，编译器管理，数量受blockDim影响 |
+| **共享内存（UB）** | Block | \_\_ubuf__ | 核函数（Kernel） | AIV核 | 线程块内共享，高带宽低延迟 |
+| **寄存器** | Thread | NA | 核函数（Kernel） | AIV核 | 线程私有，编译器管理，数量受blockDim影响 |
 
 
 ## SIMT编程接口体系
@@ -61,4 +61,4 @@ SIMT编程接口核心特点：
 
 本章系统阐述了SIMT算子从线程架构、硬件调度到代码落地的全链路技术体系：计算任务基于Grid-Block-Thread三级线程层级分发至AIV核并行执行，通过线程索引自动映射数据范围，实现大规模线程并发计算。开发者基于SIMT语言编程接口，通过指针操作全局内存与共享内存，配合同步机制确保线程间数据访问正确性。
 
-后续章节将深入详解[抽象硬件架构](./abstract_hardware_architecture.md)、[线程架构](./thread_architecture.md)、[核函数](./kernel_function.md)定义与调用、[内存层级](./memory_hierarchy.md)管理机制、[同步机制](./synchronization.md)原理、[原子操作](./atomic_operations.md)使用方式、[编程示例](./programming_examples.md)实战流程，帮助开发者快速理解核心技术，熟练掌握高性能、高可用的SIMT算子开发技术。
+后续章节将深入详解[抽象硬件架构](./abstract_hardware_architecture.md)、[线程架构](./thread_architecture.md)、[核函数（Kernel）](./kernel_function.md)定义与调用、[内存层级](./memory_hierarchy.md)管理机制、[同步机制](./synchronization.md)原理、[原子操作](./atomic_operations.md)使用方式、[编程示例](./programming_examples.md)实战流程，帮助开发者快速理解核心技术，熟练掌握高性能、高可用的SIMT算子开发技术。

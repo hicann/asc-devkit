@@ -6,7 +6,7 @@
 
 ## 函数原型
 
--   获取Kernel接口计算所需最小/最大临时空间的接口
+-   获取核函数（Kernel）接口计算所需最小/最大临时空间的接口
 
     ```
     uint32_t GetSoftMaxGradMaxTmpSize(const AscendC::TensorShape& srcShape, const uint32_t dataTypeSize, const bool isFront, const bool isReuseSource)

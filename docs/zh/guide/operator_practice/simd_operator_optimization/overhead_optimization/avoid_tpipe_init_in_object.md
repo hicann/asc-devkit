@@ -39,7 +39,7 @@ template <typename ComputeT> class KernelExample {
 
 【正例】
 
-改为由Kernel入口函数创建TPipe对象，在KernelExample类中保存TPipe指针使用。
+改为由核函数（Kernel）入口函数创建TPipe对象，在KernelExample类中保存TPipe指针使用。
 
 ```
 template <typename ComputeT> class KernelExample {

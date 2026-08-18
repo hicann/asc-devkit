@@ -65,6 +65,6 @@ mask控制源操作数是否参与计算，源操作数不参与计算的元素�
 vector_int8_t src;
 vector_half dst;
 vector_bool mask = asc_create_mask_b8(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
+asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
 asc_int82half(dst, src, mask);
 ```

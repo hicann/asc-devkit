@@ -117,7 +117,7 @@ AscendC::SetFlag<AscendC::HardEvent::MTE2_MTE3>(EVENT_ID0);
 AscendC::WaitFlag<AscendC::HardEvent::MTE2_MTE3>(EVENT_ID0);
 AscendC::SyncAll();
 
-// 开启原子累加，将UB数据原子累加到GM
+// 开启原子累加，将Unified Buffer（UB）数据原子累加到GM
 AscendC::SetAtomicAdd<T>();
 AscendC::DataCopy(dstGlobal, srcLocal, SIZE);
 

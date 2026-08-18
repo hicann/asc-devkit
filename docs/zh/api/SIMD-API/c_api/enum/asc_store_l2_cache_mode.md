@@ -1,6 +1,6 @@
 # asc_store_l2_cache_mode
 
-asc_store_l2_cache_mode用于表示数据从UB搬运到GM时的L2 cache策略，在调用[asc_copy_ub2gm_align](../vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)时使用。
+asc_store_l2_cache_mode用于表示数据从Unified Buffer（UB）搬运到GM时的L2 cache策略，在调用[asc_copy_ub2gm_align](../vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)时使用。
 
 ## 枚举类具体定义
 

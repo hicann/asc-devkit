@@ -36,7 +36,7 @@ host侧自动获取Tiling参数的关键步骤介绍如下：
 
 4.  **设置可用空间大小信息。**
 
-    设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer空间大小，-1表示AI处理器对应Buffer的大小。
+    设置Matmul计算时可用的L1 Buffer/L0C Buffer/Unified Buffer（UB）空间大小，-1表示AI处理器对应Buffer的大小。
 
     ```
     tilingApi.SetBufferSpace(-1, -1, -1);
@@ -137,7 +137,7 @@ kernel侧使用Matmul API矩阵乘运算的具体步骤如下：
 
 ![](../../../figures/zh-cn_image_0000002533171617.png)
 
--   Kernel运行时设置
+-   核函数（Kernel）运行时设置
     -   [SetTail](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetTail.md)、[SetSingleShape](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetSingleShape.md)都是运行时修改singleCoreM、singleCoreN、singleCoreK，处理尾块时使用[SetTail](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetTail.md)，Matmul复用（多个Matmul计算复用一个Matmul对象）的场景可以使用SetSingleShape重新设置。
     -   [SetOrgShape](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetOrgShape.md)是运行时修改M、N、K，Matmul复用的场景可以使用SetOrgShape重新设置。
 

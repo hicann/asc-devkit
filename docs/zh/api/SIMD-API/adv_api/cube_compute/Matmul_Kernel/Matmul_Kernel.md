@@ -1,4 +1,4 @@
-# Matmul Kernel侧接口
+# Matmul核函数（Kernel）侧接口
 
 -   **[Matmul使用说明](Matmul_usage.md)**
 

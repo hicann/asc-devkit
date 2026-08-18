@@ -1,6 +1,6 @@
 # TCubeTiling结构体
 
-TCubeTiling结构体包含Matmul Tiling切分算法的相关参数，被传递给Matmul Kernel侧，用于Matmul的切块、搬运和计算过程等。TCubeTiling结构体的参数说明见[表1](#tcubetiling-struct)。
+TCubeTiling结构体包含Matmul Tiling切分算法的相关参数，被传递给Matmul核函数（Kernel）侧，用于Matmul的切块、搬运和计算过程等。TCubeTiling结构体的参数说明见[表1](#tcubetiling-struct)。
 
 **表1**  TCubeTiling结构说明
 

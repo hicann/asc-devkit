@@ -733,7 +733,7 @@ dataCopyParams provides the header file directory of its data type and a detaile
 
 | Parameter | Input/Output | Description |
 | :--- | :---: | :--- |
-| dst | Output | Destination operand, type is [LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md), storage location is Unified Buffer, destination address must be 32-byte aligned. |
+| dst | Output | Destination operand, type is [LocalTensor](../../data_structures/LocalTensor/LocalTensor_intro.md), storage location is Unified Buffer (UB), destination address must be 32-byte aligned. |
 | src | Input | Source operand, type is [GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor_intro.md), storage location is Global Memory, source address must be 1-byte aligned. |
 | dataCopyParams | Input | Transfer parameters. DataCopyExtParams type, for specific parameter descriptions, refer to [Table 3](#table_gm2ub_pad_3). |
 | padParams | Input | When transferring data from Global Memory to Local Memory, data can be padded on the left or right according to developer needs. padParams is the parameter used to control the data padding process. DataCopyPadExtParams type, for specific parameters, refer to [Table 4](#table_gm2ub_pad_4). |
@@ -892,7 +892,7 @@ The return value is true/false. true indicates that the maximum and minimum temp
   - Whether there are aspects in API usage, parameter configuration, or calculation result layout that developers may easily misunderstand or confuse.
   - Consider the impact of the interface on the current environment: after calling this interface, whether other APIs need to be called to restore the current environment.
   - Whether the API has differences in support for special data types (such as int4_t) and what to note when using them.
-  - Whether the API has constraints on development methods, and whether both Kernel direct call and project-based development are supported.
+  - Whether the API has constraints on development methods, and whether both direct kernel function calls and project-based development are supported.
   - Whether the API has performance constraints, such as reduce fp16 performance being worse than fp32.
 
 Interface constraints must be comprehensive to ensure documentation completeness.
@@ -978,7 +978,7 @@ For a detailed example, refer to [ReduceMax Sample](../../examples/01_simd_cpp_a
 
 [Level] Mandatory
 
-[Description] Usage examples must not be strongly coupled to operator development methods (Kernel direct call development and project-based development). APIs that can only be used in one development method are exceptions.
+[Description] Usage examples must not be strongly coupled to operator development methods (direct kernel function calls and project-based development). APIs that can only be used in one development method are exceptions.
 
  ### API-EXAMPLE-06 Sample Code Must Use Standard Namespace and Macro Definitions 
  

@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001610027821_section212607105720"></a>
 
-在核函数中判断本次执行时的tiling\_key是否等于host侧运行时设置的某个key，从而标识tiling\_key==key的一条kernel分支。
+在核函数（Kernel）中判断本次执行时的tiling\_key是否等于host侧运行时设置的某个key，从而标识tiling\_key==key的一条kernel分支。
 
 ## 函数原型<a name="zh-cn_topic_0000001610027821_section1630753514297"></a>
 
@@ -50,7 +50,7 @@ TILING_KEY_IS(key)
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000001610027821_p18857658124919"><a name="zh-cn_topic_0000001610027821_p18857658124919"></a><a name="zh-cn_topic_0000001610027821_p18857658124919"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001610027821_p53562135013"><a name="zh-cn_topic_0000001610027821_p53562135013"></a><a name="zh-cn_topic_0000001610027821_p53562135013"></a>key表示某个核函数的分支，必须是非负整数。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001610027821_p53562135013"><a name="zh-cn_topic_0000001610027821_p53562135013"></a><a name="zh-cn_topic_0000001610027821_p53562135013"></a>key表示某个核函数（Kernel）的分支，必须是非负整数。</p>
 </td>
 </tr>
 </tbody>
@@ -59,7 +59,7 @@ TILING_KEY_IS(key)
 ## 约束说明<a name="zh-cn_topic_0000001610027821_section65498832"></a>
 
 -   TILING\_KEY\_IS运用于if和else if分支，不支持else分支，即用TILING\_KEY\_IS函数来表征N个分支，必须用N个TILING\_KEY\_IS\(key\)来分别表示。
--   暂不支持Kernel直调工程。
+-   暂不支持核函数（Kernel）直调工程。
 
 ## 调用示例<a name="zh-cn_topic_0000001610027821_section97001499599"></a>
 

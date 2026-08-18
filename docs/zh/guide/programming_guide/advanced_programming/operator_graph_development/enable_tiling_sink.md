@@ -119,7 +119,7 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
     } // namespace optiling
     ```
 
--   算子核函数实现
+-   算子核函数（Kernel）实现
 
     当前Tiling下沉仅支持融合算子，为了模拟融合算子场景，通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)接口强制指定算子在AIC、AIV混合场景运行。
 

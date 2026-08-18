@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-MxMatmul场景，设置scaleB矩阵的位置、数据格式、是否转置等信息，这些信息需要和Kernel侧的设置保持一致。如果不调用本接口，scaleB矩阵的信息将与[SetBType](SetBType.md)中设置的B矩阵的信息保持一致。
+MxMatmul场景，设置scaleB矩阵的位置、数据格式、是否转置等信息，这些信息需要和核函数（Kernel）侧的设置保持一致。如果不调用本接口，scaleB矩阵的信息将与[SetBType](SetBType.md)中设置的B矩阵的信息保持一致。
 
 ## 函数原型
 

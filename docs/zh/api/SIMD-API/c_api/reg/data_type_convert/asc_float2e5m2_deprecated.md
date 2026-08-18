@@ -81,6 +81,6 @@ PIPE_V
 vector_fp8_e5m2_t dst;
 vector_float src;
 vector_bool mask = asc_create_mask_b32(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
+asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
 asc_float2e5m2_rn(dst, src, mask);
 ```

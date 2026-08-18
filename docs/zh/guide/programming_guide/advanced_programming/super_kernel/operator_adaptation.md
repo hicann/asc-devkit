@@ -3,15 +3,15 @@
 自定义算子要支持融合进SuperKernel，开发流程上与普通算子并无显著差异，但需要遵循以下一系列**特定约束**。这些约束与具体的开启方式（npugraph_ex后端或GE图模式）无关，大部分约束与算子启动核数（block num）以及SuperKernel启动核数之间的关系相关，需要开发者在算子设计阶段就予以关注。
 
 >[!NOTE]说明
->SuperKernel启动核数为其中所有子Kernel的最大启动核数。例如，SuperKernel包含算子a（启动核数为4）和算子b（启动核数为2），则SuperKernel启动核数为4。
+>SuperKernel启动核数为其中所有子核函数（Kernel）的最大启动核数。例如，SuperKernel包含算子a（启动核数为4）和算子b（启动核数为2），则SuperKernel启动核数为4。
 
 ## 全核同步约束
 
-自定义算子若进行全核同步，需注意该子Kernel启动的核数需要与SuperKernel的核数一致，通常需要启动当前硬件满核。若子Kernel启动的核数少于SuperKernel的核数，全核同步会等待所有核完成，导致卡住超时。
+自定义算子若进行全核同步，需注意该子核函数（Kernel）启动的核数需要与SuperKernel的核数一致，通常需要启动当前硬件满核。若子核函数（Kernel）启动的核数少于SuperKernel的核数，全核同步会等待所有核完成，导致卡住超时。
 
 ## MIX 1:1算子核数比例约束
 
-若自定义算子的Kernel类型设置为`KERNEL_TYPE_MIX_AIC_1_1`，因为SuperKernel会根据启动核数等信息调整SuperKernel的启动比例，此时需特别注意该算子也可以适应SuperKernel的1:2启动比例，确保AIC与AIV之间的硬同步操作正确执行。比如：
+若自定义算子的核函数（Kernel）类型设置为`KERNEL_TYPE_MIX_AIC_1_1`，因为SuperKernel会根据启动核数等信息调整SuperKernel的启动比例，此时需特别注意该算子也可以适应SuperKernel的1:2启动比例，确保AIC与AIV之间的硬同步操作正确执行。比如：
 
 - 算子内部使用了AIC与AIV之间的硬同步接口（CrossCoreSetFlag和CrossCoreWaitFlag），不要单独指定某些AIV核调用硬同步接口，要使所有AIV核均调用硬同步接口，防止因为硬同步数量不匹配而导致卡死超时。
 - 使用Matmul高阶API时，算子逻辑应保证仅有一个AIV0核调用Matmul接口，防止启动两个AIV核之后出现AIV1核消息无法接收导致卡死超时。
@@ -21,11 +21,11 @@
 在开发自定义算子时，开发者必须确保所有对GM的标量读写操作都按需正确插入[DataCacheCleanAndInvalid](../../../../api/SIMD-API/basic_api/cache_control/DataCacheCleanAndInvalid.md)指令。
 
 - 在单算子编译场景下，毕昇编译器自动在算子末尾添加DataCacheCleanAndInvalid指令，刷新整个DCache（数据缓存）。
-- 在SuperKernel中，子Kernel被当作普通函数处理，编译器不会自动插入该指令来确保数据缓存一致性，开发者需要自行保证，避免因容错机制改变而导致错误。
+- 在SuperKernel中，子核函数（Kernel）被当作普通函数处理，编译器不会自动插入该指令来确保数据缓存一致性，开发者需要自行保证，避免因容错机制改变而导致错误。
 
 出于性能考虑，SuperKernel场景下Cache刷新机制如下：
 
-- 如果开发者调用GlobalTensor的[`GetValue`](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/GetValue.md)和[`SetValue`](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/SetValue.md)接口对GM进行标量读写，在GE入图及npugraph_ex后端aclnn调用场景，SuperKernel编译时会自动在两个接口内部插入DataCacheCleanAndInvalid指令刷新单个Cache Line，保证一定的数据缓存一致性。不会在子Kernel调用前后插入DataCacheCleanAndInvalid。
+- 如果开发者调用GlobalTensor的[`GetValue`](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/GetValue.md)和[`SetValue`](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/SetValue.md)接口对GM进行标量读写，在GE入图及npugraph_ex后端aclnn调用场景，SuperKernel编译时会自动在两个接口内部插入DataCacheCleanAndInvalid指令刷新单个Cache Line，保证一定的数据缓存一致性。不会在子核函数（Kernel）调用前后插入DataCacheCleanAndInvalid。
 - 如果开发者通过GlobalTensor的`()`运算符接口来获取值（读值时会插入DataCacheCleanAndInvalid指令刷新单个Cache Line保证数据缓存一致性），但通过该接口直接改写了GlobalTensor对应位置的值时，则不会自动插入DataCacheCleanAndInvalid指令，开发者需要自行保证数据缓存一致性。例如：
 
     ```c++
@@ -42,7 +42,7 @@ Cache刷新机制示意图如下图所示：
 
 ## 核数获取接口约束
 
-在GE入图及npugraph_ex后端aclnn调用场景，子Kernel中调用[GetBlockNum](../../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockNum.md)接口获取核数时，无论是否融合SuperKernel，获取的核数保持不变，不受SuperKernel启动核数的影响。因此，在使用该接口时，开发者无需特别关注SuperKernel的启动核数，使用方法和开发普通算子时一样。
+在GE入图及npugraph_ex后端aclnn调用场景，子核函数（Kernel）中调用[GetBlockNum](../../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockNum.md)接口获取核数时，无论是否融合SuperKernel，获取的核数保持不变，不受SuperKernel启动核数的影响。因此，在使用该接口时，开发者无需特别关注SuperKernel的启动核数，使用方法和开发普通算子时一样。
 
 在SuperKernel场景下，如下Ascend C API在算子编译过程中适配了SuperKernel，子算子需要严格按照Ascend C提供的API进行编程，从而无需感知是否开启SuperKernel。例如在获取核数和索引时，**不能调用`block_idx`、`block_num`等底层变量和相关API**，必须使用下表中的Ascend C API：
 
@@ -118,14 +118,14 @@ Cache刷新机制示意图如下图所示：
 
 - **任务间同步**
 
-    开发者在进行Kernel侧编程时，可以通过调用[SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)和[WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)两个任务间接口，进一步提升性能。
+    开发者在进行核函数（Kernel）侧编程时，可以通过调用[SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md)和[WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)两个任务间接口，进一步提升性能。
 
-    - 调用`SetNextTaskStart`后的指令可以和后续其他的子Kernel实现并行，提升整体性能。如[图1](#fig37581010773)所示，SuperKernel按序调用子Kernel，为保证子Kernel之间数据互不干扰，会在子Kernel间插入算子间同步进行保序，子Kernel<sub>N-1</sub>调用该接口后，之后的指令会和后续子Kernel<sub>N</sub>实现并行。
+    - 调用`SetNextTaskStart`后的指令可以和后续其他的子核函数（Kernel）实现并行，提升整体性能。如[图1](#fig37581010773)所示，SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子核函数（Kernel）<sub>N-1</sub>调用该接口后，之后的指令会和后续子核函数（Kernel）<sub>N</sub>实现并行。
 
     **图1**  通过SetNextTaskStart实现并行示意图<a name="fig37581010773"></a>  
     ![](../../../figures/set_next.png "通过SetNextTaskStart实现并行示意图")
 
-    - 调用`WaitPreTaskEnd`前的指令可以和前序其他的子Kernel实现并行，提升整体性能。如[图2](#fig99271836191110)所示，SuperKernel按序调用子Kernel，为保证子Kernel之间数据互不干扰，会在子Kernel间插入算子间同步进行保序，子Kernel<sub>N+1</sub>调用该接口之前的指令会和前序子Kernel<sub>N</sub>实现并行。
+    - 调用`WaitPreTaskEnd`前的指令可以和前序其他的子核函数（Kernel）实现并行，提升整体性能。如[图2](#fig99271836191110)所示，SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子核函数（Kernel）<sub>N+1</sub>调用该接口之前的指令会和前序子核函数（Kernel）<sub>N</sub>实现并行。
 
     **图2**  通过WaitPreTaskEnd实现并行示意图<a name="fig99271836191110"></a>  
     ![](../../../figures/wait_pre.png "通过WaitPreTaskEnd实现并行示意图")
@@ -134,6 +134,6 @@ Cache刷新机制示意图如下图所示：
 
     在GE入图Tiling下沉场景下，可以通过`--op_relocatable_kernel_binary`编译选项，开启二进制复用优化，提升编译性能，具体可参考[算子工程编译](../aclnn_operator_development/compilation_and_deployment/basic_process.md)。
 
-## 核函数直调算子的额外适配
+## 核函数（Kernel）直调算子的额外适配
 
-对于使用`<<<>>>`方式开发的Ascend C算子，目前仅支持在npugraph_ex后端融合进SuperKernel。此类算子除需遵循上述通用约束外，还需要在算子kernel入口侧增加SuperKernel入口函数。具体方法请参考[核函数直调算子额外适配说明](kernel_direct_call_adaptation.md)。
+对于使用`<<<>>>`方式开发的Ascend C算子，目前仅支持在npugraph_ex后端融合进SuperKernel。此类算子除需遵循上述通用约束外，还需要在算子kernel入口侧增加SuperKernel入口函数。具体方法请参考[核函数（Kernel）直调算子额外适配说明](kernel_direct_call_adaptation.md)。

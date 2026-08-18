@@ -1,6 +1,6 @@
 # 如何使用Tiling依赖的头文件<a name="ZH-CN_TOPIC_0000002522860379"></a>
 
-由于AI处理器的Scalar计算单元执行能力有限，为减少算子Kernel侧的Scalar计算，将部分计算在Host端执行，这需要编写[Host端Tiling代码](../../../advanced_programming/aclnn_operator_development/design_and_implementation/host_tiling_implementation.md)。注意，在程序中调用高阶API的Tiling接口或者使用高阶API的Tiling结构体参数时，需要引入依赖的头文件。在不同的Tiling实现方式下，具体为：
+由于AI处理器的Scalar计算单元执行能力有限，为减少算子核函数（Kernel）侧的Scalar计算，将部分计算在Host端执行，这需要编写[Host端Tiling代码](../../../advanced_programming/aclnn_operator_development/design_and_implementation/host_tiling_implementation.md)。注意，在程序中调用高阶API的Tiling接口或者使用高阶API的Tiling结构体参数时，需要引入依赖的头文件。在不同的Tiling实现方式下，具体为：
 
 -   [使用标准C++语法定义Tiling结构体](../../../advanced_programming/aclnn_operator_development/design_and_implementation/host_tiling_implementation.md#define-tilingdata-structure)
 

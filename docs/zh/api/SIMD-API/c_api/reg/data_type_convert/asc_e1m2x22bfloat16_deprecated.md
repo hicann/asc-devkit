@@ -73,6 +73,6 @@ PIPE_V
 vector_fp4x2_e1m2_t src;
 vector_bfloat16_t dst;
 vector_bool mask = asc_create_mask_b8(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
+asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
 asc_e1m2x22bfloat16(dst, src, mask);
 ```

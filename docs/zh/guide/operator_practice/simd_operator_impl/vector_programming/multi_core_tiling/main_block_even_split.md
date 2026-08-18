@@ -60,9 +60,9 @@ struct MainTileOnlyTiling {
 
 ## 算子类实现
 
-Kernel侧算子采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现，通过`LocalTensor`构造函数直接指定Local Memory地址。静态Tensor编程中的内存管理和同步管理请参考对应章节，本节重点说明各核GM地址的计算以及主块数据的循环处理流程。
+核函数（Kernel）侧算子采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现，通过`LocalTensor`构造函数直接指定Local Memory地址。静态Tensor编程中的内存管理和同步管理请参考对应章节，本节重点说明各核GM地址的计算以及主块数据的循环处理流程。
 
-- Kernel入口接收Host侧传入的Tiling结构体，并依次调用算子类的`Init`与`Process`函数完成初始化与计算。主块均分场景中，传入的结构体类型为`MainTileOnlyTiling`。
+- 核函数（Kernel）入口接收Host侧传入的Tiling结构体，并依次调用算子类的`Init`与`Process`函数完成初始化与计算。主块均分场景中，传入的结构体类型为`MainTileOnlyTiling`。
 
     ```cpp
     template <typename TilingData>

@@ -67,7 +67,7 @@ PIPE_V
 
 ## 约束说明
 - src_offset取值应保证src元素类型位宽对齐。
-- src加上src_offset偏移后的地址不能超出Unified Buffer (UB)大小数据的范围。
+- src加上src_offset偏移后的地址不能超出Unified Buffer（UB）大小数据的范围。
 - dst、src的起始地址需要32字节对齐。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../general_description_and_constraints.md#通用地址重叠约束)。
 

@@ -68,8 +68,8 @@ __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegFor
 
 ## 约束说明
 
-- 数据类型为b16时，位于Unified Buffer的地址必须16字节对齐，搬运完成后UB地址按16B偏移量更新，不需要手动更新地址。
-- 数据类型为b32时，位于Unified Buffer的地址必须8字节对齐，搬运完成后UB地址按8B偏移量更新，不需要手动更新地址。
+- 数据类型为b16时，位于UB的地址必须16字节对齐，搬运完成后UB地址按16B偏移量更新，不需要手动更新地址。
+- 数据类型为b32时，位于UB的地址必须8字节对齐，搬运完成后UB地址按8B偏移量更新，不需要手动更新地址。
 
 ## 关键特性说明
 

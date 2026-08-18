@@ -111,7 +111,7 @@ EngineType engine             // Compute engine
 | `__in_pipe__(V)` | pipeline input annotation | `__aicore__ inline __in_pipe__(V) void Copy(...)` |
 | `__out_pipe__(V)` | pipeline output annotation | `__aicore__ inline __out_pipe__(MTE3) void Copy(...)` |
 | `__BLOCK_LOCAL__ __inline__` | block-level thread-local variable | `__BLOCK_LOCAL__ __inline__ TPipe* g_tPipePtr` |
-| `__ubuf__` | Unified Buffer address space | `__ubuf__ half* dst` |
+| `__ubuf__` | UB address space | `__ubuf__ half* dst` |
 
 ---
 
@@ -119,7 +119,7 @@ EngineType engine             // Compute engine
 
 ### Interface Naming
 
-Kernel-side `Axpy` ↔ Tiling-side `GetAxpyMaxMinTmpSize`:
+Kernel function `Axpy` ↔ Tiling function `GetAxpyMaxMinTmpSize`:
 
 ```text
 Get<ApiName>MaxMinTmpSize

@@ -1,6 +1,6 @@
 # Add算子快速入门<a name="ZH-CN_TOPIC_0000002500781060"></a>
 
-本示例是一个入门实践，基于Ascend C SIMD实现Add算子，帮助您快速上手。它完整呈现了Device端核函数实现、Host端调用及编译运行的全流程，助您建立整体认知。开始前，请先参考[环境准备](../../environment_setup.md)安装所需的CANN软件包。
+本示例是一个入门实践，基于Ascend C SIMD实现Add算子，帮助您快速上手。它完整呈现了Device端核函数（Kernel）实现、Host端调用及编译运行的全流程，助您建立整体认知。开始前，请先参考[环境准备](../../environment_setup.md)安装所需的CANN软件包。
 
 下面分别介绍基于C API与C++ API的Add算子实现，完整示例代码请参考[基于C API实现的Add算子示例](../../../../../../examples/02_simd_c_api/00_introduction/01_add/c_api_async_add/README.md)和[基于C++ API实现的Add算子示例](../../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md)。
 
@@ -14,8 +14,8 @@
 
 - **算子设计**
 
-    - **Device端核函数编程接口**
-        - 核函数定义：通过 [\_\_global\_\_](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符声明。
+    - **Device端核函数（Kernel）编程接口**
+        - 核函数（Kernel）定义：通过 [\_\_global\_\_](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符声明。
         - 数据分块（Tiling）：使用内置关键字 [block_idx](../../../programming_guide/language_extension/simd_builtin_keywords.md)确定每个Block负责处理的数据。
         - 数据搬入：通过[C API接口](../../../programming_guide/language_extension/simd_language_extension_c_api.md) `asc_copy_gm2ub`或[C++接口](../../../programming_guide/library_api/programming_interface_overview.md) `AscendC::DataCopy`完成。
         - 数据计算：通过C API接口`asc_add`或C++接口`AscendC::Add`完成。
@@ -23,7 +23,7 @@
     - **Host端运行时接口**
         - 内存分配：使用`aclrtMallocHost`分配Host Memory，`aclrtMalloc`分配Device Memory。
         - 数据搬入：使用`aclrtMemcpy`将输入数据从Host Memory拷贝到Device Memory。
-        - 启动NPU计算任务：通过`<<<...>>>`语法糖启动核函数。
+        - 启动NPU计算任务：通过`<<<...>>>`语法糖启动核函数（Kernel）。
         - 同步等待：调用`aclrtSynchronizeStream`或`aclrtSynchronizeDevice`等待任务完成。
         - 数据搬出：使用`aclrtMemcpy`将计算结果从Device Memory拷贝回Host Memory。
       
@@ -34,7 +34,7 @@
 
   后缀名为`*.asc`的代码文件包含Host端与Device端代码。
 
-  - **Device端Kernel实现**：
+  - **Device端核函数（Kernel）实现**：
   Device端部分示例如下：
     - **基于C语言API实现Memory矢量计算示例**
       ```cpp
@@ -49,7 +49,7 @@
           __gm__ float* y_gm = y + block_idx * block_length;
           __gm__ float* z_gm = z + block_idx * block_length;
 
-          // Allocate on-chip UB memory
+          // Allocate on-chip Unified Buffer（UB） memory
           __ubuf__ float x_local[block_length];
           __ubuf__ float y_local[block_length];
           __ubuf__ float z_local[block_length];
@@ -76,7 +76,7 @@
       >     <!-- npu="910b" id2 -->
       >     - Atlas A2训练系列产品/Atlas A2推理系列产品
       >     <!-- end id2 -->
-      > - SIMD算子的Kernel函数需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
+      > - SIMD算子的核函数（Kernel）需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
       > - **性能提示**：示例中为简化同步操作，统一使用了 `asc_sync`。在实际算子开发中，建议根据流水线执行情况使用具体的同步控制指令，以获得更好的性能。详见[同步机制](../../../programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming/c_programming_overview.md#同步机制)章节。
 
     - **基于C++ Tensor实现Memory矢量计算示例**
@@ -124,11 +124,11 @@
       >     <!-- npu="910b" id5 -->
       >     - Atlas A2训练系列产品/Atlas A2推理系列产品
       >     <!-- end id5 -->
-      > - SIMD算子的Kernel函数需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
+      > - SIMD算子的核函数（Kernel）需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
 
   - **Host端代码实现**：
 
-    Host端通过`<<<>>>`语法糖调用Device端核函数，示例代码片段如下：
+    Host端通过`<<<>>>`语法糖调用Device端核函数（Kernel），示例代码片段如下：
     ```cpp
       int32_t main(int argc, char const *argv[])
       {

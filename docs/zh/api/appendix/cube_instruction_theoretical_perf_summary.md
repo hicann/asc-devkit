@@ -166,7 +166,7 @@ $$
 
 ## 矩阵计算搬出类指令理论性能汇总
 
-以下内容为矩阵计算搬出类指令在L0C Buffer->L1 Buffer和L0C Buffer->Unified Buffer两条数据搬运通路下的理论性能汇总说明。
+以下内容为矩阵计算搬出类指令在L0C Buffer->L1 Buffer和L0C Buffer->UB两条数据搬运通路下的理论性能汇总说明。
 
 数据搬运指令占用cycle数的理论计算公式：
 
@@ -238,45 +238,45 @@ $$
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2ND | int8_t/uint8_t | 64 | 64 |
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
-| L0C Buffer->Unified Buffer（开启[双目标模式](../SIMD-API/basic_api/cube_compute_ISASI/cube_store_key_features/L0C_to_UB_dual_target_mode.md)） | float | NoQuant | NZ2NZ | float | 32 + 32 | 128 + 128 |
-| L0C Buffer->Unified Buffer（开启双目标模式） | float | NoQuant | NZ2ND | float | 32 + 32 | 128 + 128 |
-| L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2NZ | float | 32 | 128 |
-| L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2NZ + Channel Split | float | 32 | 128 |
-| L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2ND | float | 32 | 128 |
-| L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2DN + srcNzC0Stride = 1 | float | 32 | 128 |
-| L0C Buffer->Unified Buffer | float | NoQuant/(V)QF322F32_PRE | NZ2DN + srcNzC0Stride > 1 | float | 8 | 32 |
-| L0C Buffer->Unified Buffer | float | F322F16/(V)QF322F16_PRE | NZ2NZ | half | 64 | 128 |
-| L0C Buffer->Unified Buffer | float | F322F16/(V)QF322F16_PRE | NZ2ND | half | 64 | 128 |
-| L0C Buffer->Unified Buffer | float | F322F16/(V)QF322F16_PRE | NZ2DN + srcNzC0Stride = 1 | half | 64 | 128 |
-| L0C Buffer->Unified Buffer | float | F322F16/(V)QF322F16_PRE | NZ2DN + srcNzC0Stride > 1 | half | 16 | 32 |
-| L0C Buffer->Unified Buffer | float | F322BF16/(V)QF322BF16_PRE | NZ2NZ | bfloat16_t | 64 | 128 |
-| L0C Buffer->Unified Buffer | float | F322BF16/(V)QF322BF16_PRE | NZ2ND | bfloat16_t | 64 | 128 |
-| L0C Buffer->Unified Buffer | float | F322BF16/(V)QF322BF16_PRE | NZ2DN + srcNzC0Stride = 1 | bfloat16_t | 64 | 128 |
-| L0C Buffer->Unified Buffer | float | F322BF16/(V)QF322BF16_PRE | NZ2DN + srcNzC0Stride > 1 | bfloat16_t | 16 | 32 |
-| L0C Buffer->Unified Buffer | float | (V)QF322FP8_PRE | NZ2NZ + Channel Merge | fp8_e4m3fn_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322FP8_PRE | NZ2ND | fp8_e4m3fn_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322FP8_PRE | NZ2DN + srcNzC0Stride = 1 | fp8_e4m3fn_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322FP8_PRE | NZ2DN + srcNzC0Stride > 1 | fp8_e4m3fn_t | 16 | 16 |
-| L0C Buffer->Unified Buffer | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2NZ + Channel Merge | hifloat8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2ND | hifloat8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2DN + srcNzC0Stride = 1 | hifloat8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2DN + srcNzC0Stride > 1 | hifloat8_t | 16 | 16 |
-| L0C Buffer->Unified Buffer | float | (V)QF322B8_PRE | NZ2NZ + Channel Merge | int8_t/uint8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322B8_PRE | NZ2ND | int8_t/uint8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322B8_PRE | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | float | (V)QF322B8_PRE | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
-| L0C Buffer->Unified Buffer | int32_t | (V)DEQF16 | NZ2NZ | half | 64 | 128 |
-| L0C Buffer->Unified Buffer | int32_t | (V)DEQF16 | NZ2ND | half | 64 | 128 |
-| L0C Buffer->Unified Buffer | int32_t | (V)DEQF16 | NZ2DN + srcNzC0Stride = 1 | half | 64 | 128 |
-| L0C Buffer->Unified Buffer | int32_t | (V)DEQF16 | NZ2DN + srcNzC0Stride > 1 | half | 16 | 32 |
-| L0C Buffer->Unified Buffer | int32_t | (V)QS322BF16_PRE | NZ2NZ | bfloat16_t | 64 | 128 |
-| L0C Buffer->Unified Buffer | int32_t | (V)QS322BF16_PRE | NZ2ND | bfloat16_t | 64 | 128 |
-| L0C Buffer->Unified Buffer | int32_t | (V)QS322BF16_PRE | NZ2DN + srcNzC0Stride = 1 | bfloat16_t | 64 | 128 |
-| L0C Buffer->Unified Buffer | int32_t | (V)QS322BF16_PRE | NZ2DN + srcNzC0Stride > 1 | bfloat16_t | 16 | 32 |
-| L0C Buffer->Unified Buffer | int32_t | (V)REQ8 | NZ2NZ + Channel Merge | int8_t/uint8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | int32_t | (V)REQ8 | NZ2ND | int8_t/uint8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
-| L0C Buffer->Unified Buffer | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
+| L0C Buffer->UB（开启[双目标模式](../SIMD-API/basic_api/cube_compute_ISASI/cube_store_key_features/L0C_to_UB_dual_target_mode.md)） | float | NoQuant | NZ2NZ | float | 32 + 32 | 128 + 128 |
+| L0C Buffer->UB（开启双目标模式） | float | NoQuant | NZ2ND | float | 32 + 32 | 128 + 128 |
+| L0C Buffer->UB | float | NoQuant/(V)QF322F32_PRE | NZ2NZ | float | 32 | 128 |
+| L0C Buffer->UB | float | NoQuant/(V)QF322F32_PRE | NZ2NZ + Channel Split | float | 32 | 128 |
+| L0C Buffer->UB | float | NoQuant/(V)QF322F32_PRE | NZ2ND | float | 32 | 128 |
+| L0C Buffer->UB | float | NoQuant/(V)QF322F32_PRE | NZ2DN + srcNzC0Stride = 1 | float | 32 | 128 |
+| L0C Buffer->UB | float | NoQuant/(V)QF322F32_PRE | NZ2DN + srcNzC0Stride > 1 | float | 8 | 32 |
+| L0C Buffer->UB | float | F322F16/(V)QF322F16_PRE | NZ2NZ | half | 64 | 128 |
+| L0C Buffer->UB | float | F322F16/(V)QF322F16_PRE | NZ2ND | half | 64 | 128 |
+| L0C Buffer->UB | float | F322F16/(V)QF322F16_PRE | NZ2DN + srcNzC0Stride = 1 | half | 64 | 128 |
+| L0C Buffer->UB | float | F322F16/(V)QF322F16_PRE | NZ2DN + srcNzC0Stride > 1 | half | 16 | 32 |
+| L0C Buffer->UB | float | F322BF16/(V)QF322BF16_PRE | NZ2NZ | bfloat16_t | 64 | 128 |
+| L0C Buffer->UB | float | F322BF16/(V)QF322BF16_PRE | NZ2ND | bfloat16_t | 64 | 128 |
+| L0C Buffer->UB | float | F322BF16/(V)QF322BF16_PRE | NZ2DN + srcNzC0Stride = 1 | bfloat16_t | 64 | 128 |
+| L0C Buffer->UB | float | F322BF16/(V)QF322BF16_PRE | NZ2DN + srcNzC0Stride > 1 | bfloat16_t | 16 | 32 |
+| L0C Buffer->UB | float | (V)QF322FP8_PRE | NZ2NZ + Channel Merge | fp8_e4m3fn_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322FP8_PRE | NZ2ND | fp8_e4m3fn_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322FP8_PRE | NZ2DN + srcNzC0Stride = 1 | fp8_e4m3fn_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322FP8_PRE | NZ2DN + srcNzC0Stride > 1 | fp8_e4m3fn_t | 16 | 16 |
+| L0C Buffer->UB | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2NZ + Channel Merge | hifloat8_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2ND | hifloat8_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2DN + srcNzC0Stride = 1 | hifloat8_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322HIF8_PRE/(V)QF322HIF8_PRE_HYBRID | NZ2DN + srcNzC0Stride > 1 | hifloat8_t | 16 | 16 |
+| L0C Buffer->UB | float | (V)QF322B8_PRE | NZ2NZ + Channel Merge | int8_t/uint8_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322B8_PRE | NZ2ND | int8_t/uint8_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322B8_PRE | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
+| L0C Buffer->UB | float | (V)QF322B8_PRE | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
+| L0C Buffer->UB | int32_t | (V)DEQF16 | NZ2NZ | half | 64 | 128 |
+| L0C Buffer->UB | int32_t | (V)DEQF16 | NZ2ND | half | 64 | 128 |
+| L0C Buffer->UB | int32_t | (V)DEQF16 | NZ2DN + srcNzC0Stride = 1 | half | 64 | 128 |
+| L0C Buffer->UB | int32_t | (V)DEQF16 | NZ2DN + srcNzC0Stride > 1 | half | 16 | 32 |
+| L0C Buffer->UB | int32_t | (V)QS322BF16_PRE | NZ2NZ | bfloat16_t | 64 | 128 |
+| L0C Buffer->UB | int32_t | (V)QS322BF16_PRE | NZ2ND | bfloat16_t | 64 | 128 |
+| L0C Buffer->UB | int32_t | (V)QS322BF16_PRE | NZ2DN + srcNzC0Stride = 1 | bfloat16_t | 64 | 128 |
+| L0C Buffer->UB | int32_t | (V)QS322BF16_PRE | NZ2DN + srcNzC0Stride > 1 | bfloat16_t | 16 | 32 |
+| L0C Buffer->UB | int32_t | (V)REQ8 | NZ2NZ + Channel Merge | int8_t/uint8_t | 64 | 64 |
+| L0C Buffer->UB | int32_t | (V)REQ8 | NZ2ND | int8_t/uint8_t | 64 | 64 |
+| L0C Buffer->UB | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride = 1 | int8_t/uint8_t | 64 | 64 |
+| L0C Buffer->UB | int32_t | (V)REQ8 | NZ2DN + srcNzC0Stride > 1 | int8_t/uint8_t | 16 | 16 |
 
 注：srcNzC0Stride为启用NZ2DN功能需配置的参数之一，参数详细介绍请参考[NZ2DN关键特性说明](../SIMD-API/basic_api/cube_compute_ISASI/cube_store_key_features/NZ2DN.md)。
 <!-- end id10 -->

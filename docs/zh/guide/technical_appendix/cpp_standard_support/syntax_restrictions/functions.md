@@ -1,8 +1,8 @@
 # 函数<a name="ZH-CN_TOPIC_0000002541491859"></a>
 
-## 核函数参数列表限制<a name="section_kernel_function_argument_list_constraint"></a>
+## 核函数（Kernel）参数列表限制<a name="section_kernel_function_argument_list_constraint"></a>
 
-核函数的参数列表（argument list）仅支持以下类型：
+核函数（Kernel）的参数列表（argument list）仅支持以下类型：
 
 - 基础数据类型，如int32\_t、float等。
 - 基础数据类型组成的结构体，支持嵌套结构体形式，但必须为POD（Plain Old Data）类型。
@@ -55,7 +55,7 @@
 
 ## SIMD与SIMT混合编程场景结构体使用限制
 
-SIMD与SIMT混合编程场景下，当使用位于Global Memory或Unified Buffer中的结构体或类拷贝构造新结构体或类时，需要开发者为结构体或类手动实现拷贝构造函数，编译器不会默认隐式生成。
+SIMD与SIMT混合编程场景下，当使用位于Global Memory或Unified Buffer（UB）中的结构体或类拷贝构造新结构体或类时，需要开发者为结构体或类手动实现拷贝构造函数，编译器不会默认隐式生成。
 
 ```cpp
 struct TestS {
@@ -66,7 +66,7 @@ struct TestS {
         a = other.a;
         b = other.b;
     }
-    // 手动实现Unified Buffer内存空间的拷贝构造函数
+    // 手动实现UB内存空间的拷贝构造函数
     __callee__ TestS(const __ubuf__ TestS& other) {
         a = other.a;
         b = other.b;
@@ -77,14 +77,14 @@ __simt_vf__ void simt_kernel(__gm__ TestS *data1, __ubuf__ TestS *data2)
 {
     uint32_t idx = threadIdx.x;
     TestS t1 = data1[idx];   // 调用Global Memory拷贝构造函数
-    TestS t2 = data2[idx];   // 调用Unified Buffer拷贝构造函数
+    TestS t2 = data2[idx];   // 调用UB拷贝构造函数
     ...
 }
 ```
 
 在异构编译场景中，Host和Device可共用结构体定义代码，但Host侧无法识别`__callee__`、`__gm__`等Device侧关键字，因此无法根据这些关键字实现函数重载。当需要定义多个地址空间重载函数时，需通过宏`__NPU_ARCH__`将相关Device代码隔离，以避免函数定义冲突。`__NPU_ARCH__`是由编译预定义的宏，可用于区分Device侧代码，具体可参考[《毕昇编译器》](https://www.hiascend.com/document/redirect/CannCommunityBiSheng)中的“基本编程指导 > AI Core编程指导 > 预定义宏和内建变量”章节。
 
-此外，SIMD与SIMT混合编程场景下不支持直接向Global Memory或Unified Buffer地址空间写入结构体。
+此外，SIMD与SIMT混合编程场景下不支持直接向Global Memory或UB地址空间写入结构体。
 
 ```cpp
 struct TestS {

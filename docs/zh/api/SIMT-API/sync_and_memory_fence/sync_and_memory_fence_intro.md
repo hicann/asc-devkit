@@ -17,7 +17,7 @@ SIMT程序中，不同Thread的执行进度和内存访问到达顺序可能不�
 
 ## 同步屏障
 
-`asc_syncthreads`用于Thread Block内的阶段同步。典型场景是多个Thread先写入Unified Buffer中的共享数据，再统一进入下一阶段读取这些数据。
+`asc_syncthreads`用于Thread Block内的阶段同步。典型场景是多个Thread先写入Unified Buffer（UB）中的共享数据，再统一进入下一阶段读取这些数据。
 
 ```cpp
 __global__ __launch_bounds__(256) void block_reduce(float *out, const float *in)
@@ -65,7 +65,7 @@ asc_atomic_exch(ready, 1U);
 
 `asc_threadfence_block`与`asc_threadfence`的区别在于作用范围不同：
 
--   `asc_threadfence_block`用于Thread Block内的数据可见性顺序约束，适合块内共享数据和Unified Buffer协作场景。
+-   `asc_threadfence_block`用于Thread Block内的数据可见性顺序约束，适合块内共享数据和UB协作场景。
 -   `asc_threadfence`用于更大范围的数据可见性顺序约束，适合通过Global Memory发布数据或标志的场景。
 
 ## 使用建议

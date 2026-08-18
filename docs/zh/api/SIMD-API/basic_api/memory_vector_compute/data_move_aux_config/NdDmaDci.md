@@ -52,7 +52,7 @@ __aicore__ inline void NdDmaDci()
 
 完整算子用例请参考：[多维数据搬运样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_gm2ub_nddma)。
 
-以2D Padding场景为例，将GM上shape为[2, 8]的数据搬运至UB并Padding为[4, 16]，左Padding 3，上Padding 1，右Padding 5，下Padding 1，Padding值填充为0。在调用[DataCopy（GMToUB多维数据搬运NDDMA）](../data_move/DataCopy_GMToUB_NDDMA.md)前，需要先调用NdDmaDci刷新NDDMA DataCache。
+以2D Padding场景为例，将GM上shape为[2, 8]的数据搬运至Unified Buffer（UB）并Padding为[4, 16]，左Padding 3，上Padding 1，右Padding 5，下Padding 1，Padding值填充为0。在调用[DataCopy（GMToUB多维数据搬运NDDMA）](../data_move/DataCopy_GMToUB_NDDMA.md)前，需要先调用NdDmaDci刷新NDDMA DataCache。
 
 ```cpp
 // T：搬运数据的类型

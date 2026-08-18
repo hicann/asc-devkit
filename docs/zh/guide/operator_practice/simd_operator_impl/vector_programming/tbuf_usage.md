@@ -1,6 +1,6 @@
 # TBuf的使用<a name="ZH-CN_TOPIC_0000002500548088"></a>
 
-在大多数算子开发时，核函数计算过程需要使用临时内存来存储运算的中间结果，这些中间结果以临时变量表示，临时变量占用的内存可以使用TBuf数据结构来管理，具体介绍请参考[TBuf](../../../../api/SIMD-API/basic_api/resource_management/TBuf/TBuf.md)。下文将以输入的数据类型为bfloat16\_t、在单核上运行的Add算子为例，介绍TBuf的使用方式。本文中介绍的算子完整代码请参见[使用临时内存的Add算子样例](../../../../../../examples/01_simd_cpp_api/03_basic_api/04_memory_management/tmp_buffer)。
+在大多数算子开发时，核函数（Kernel）计算过程需要使用临时内存来存储运算的中间结果，这些中间结果以临时变量表示，临时变量占用的内存可以使用TBuf数据结构来管理，具体介绍请参考[TBuf](../../../../api/SIMD-API/basic_api/resource_management/TBuf/TBuf.md)。下文将以输入的数据类型为bfloat16\_t、在单核上运行的Add算子为例，介绍TBuf的使用方式。本文中介绍的算子完整代码请参见[使用临时内存的Add算子样例](../../../../../../examples/01_simd_cpp_api/03_basic_api/04_memory_management/tmp_buffer)。
 
 在Atlas A2 训练系列产品/Atlas 800I A2 推理产品上，[Add](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)接口不支持对数据类型bfloat16\_t的源操作数进行求和计算。因此，需要先将算子输入的数据类型转换成Add接口支持的数据类型，再进行计算。为保证计算精度，调用[Cast](../../../../api/SIMD-API/basic_api/memory_vector_compute/type_conversion/Cast.md)接口将输入bfloat16\_t类型转换为float类型，再进行Add计算，并在计算结束后将float类型转换回bfloat16\_t类型。
 
@@ -52,7 +52,7 @@
     </tbody>
     </table>
 
--   核函数名称：tmp\_buffer\_custom
+-   核函数（Kernel）名称：tmp\_buffer\_custom
 -   使用的主要接口：
     -   DataCopy：数据搬移接口
     -   Cast：矢量精度转换接口
@@ -93,9 +93,9 @@ pipe.InitBuffer(tmpBuf0, totalLength * sizeof(float));
 pipe.InitBuffer(tmpBuf1, totalLength * sizeof(float));
 ```
 
-基于矢量编程范式，核函数需要实现3个基本任务：CopyIn，Compute，CopyOut。与[基础矢量算子实现](basic_vector_operator.md#zh-cn_topic_0000002201157438_section10423482111)相同，核函数按顺序进行CopyIn，Compute，CopyOut。其中，CopyIn，CopyOut与[基础矢量算子的CopyIn](basic_vector_operator.md#copyin-implementation)、[基础矢量算子的CopyOut](basic_vector_operator.md#copyout-implementation)的实现没有差异，此处不过多赘述。Compute的实现步骤如下：
+基于矢量编程范式，核函数（Kernel）需要实现3个基本任务：CopyIn，Compute，CopyOut。与[基础矢量算子实现](basic_vector_operator.md#zh-cn_topic_0000002201157438_section10423482111)相同，核函数按顺序进行CopyIn，Compute，CopyOut。其中，CopyIn，CopyOut与[基础矢量算子的CopyIn](basic_vector_operator.md#copyin-implementation)、[基础矢量算子的CopyOut](basic_vector_operator.md#copyout-implementation)的实现没有差异，此处不过多赘述。Compute的实现步骤如下：
 
-1.  使用[DeQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/DeQue.md)从UB（VECIN）的Queue中取出LocalTensor。
+1.  使用[DeQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/DeQue.md)从Unified Buffer（UB，VECIN）的Queue中取出LocalTensor。
 2.  使用TBuf.[Get](../../../../api/SIMD-API/basic_api/resource_management/TBuf/Get.md)从TBuf上获取全部长度的Tensor作为临时内存。
 3.  使用[Cast](../../../../api/SIMD-API/basic_api/memory_vector_compute/type_conversion/Cast.md)接口将LocalTensor转换为float类型，并存入临时内存。
 4.  使用[Add](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)接口完成矢量计算，将计算结果存入临时内存。

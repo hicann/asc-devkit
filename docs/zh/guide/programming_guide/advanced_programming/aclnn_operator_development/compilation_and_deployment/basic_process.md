@@ -1,10 +1,10 @@
 # 编译与部署基本流程
 
-本文是基础内容，介绍算子Kernel侧和Host侧实现开发完成后，如何对算子工程进行编译、生成自定义算子安装包\*.run。详细的编译操作包括：
+本文是基础内容，介绍算子核函数（Kernel）侧和Host侧实现开发完成后，如何对算子工程进行编译、生成自定义算子安装包\*.run。详细的编译操作包括：
 
--   编译Ascend C算子Kernel侧代码实现文件\*.cpp，分为源码发布和二进制发布两种方式。
-    -   **源码发布**<a id="source-release"></a>：不对算子Kernel侧实现进行编译，保留算子Kernel源码文件\*.cpp。该方式可以支持算子的在线编译、通过ATC模型转换的方式编译算子的场景。
-    -   **二进制发布**：对算子Kernel侧实现进行编译，生成描述算子相关信息的json文件\*.json和算子二进制文件\*.o。算子调用时，如果需要直接调用算子二进制，则使用该编译方式，比如通过[单算子API调用](../invocation/single_operator_api_call.md)的方式完成单算子的调用，PyTorch框架中单算子调用的场景，动态网络中调用算子的场景。
+-   编译Ascend C算子核函数（Kernel）侧代码实现文件\*.cpp，分为源码发布和二进制发布两种方式。
+    -   **源码发布**<a id="source-release"></a>：不对算子核函数（Kernel）侧实现进行编译，保留算子核函数（Kernel）源码文件\*.cpp。该方式可以支持算子的在线编译、通过ATC模型转换的方式编译算子的场景。
+    -   **二进制发布**：对算子核函数（Kernel）侧实现进行编译，生成描述算子相关信息的json文件\*.json和算子二进制文件\*.o。算子调用时，如果需要直接调用算子二进制，则使用该编译方式，比如通过[单算子API调用](../invocation/single_operator_api_call.md)的方式完成单算子的调用，PyTorch框架中单算子调用的场景，动态网络中调用算子的场景。
 
 -   编译Ascend C算子Host侧代码实现文件\*.cpp、\*.h。
     -   将原型定义和shape推导实现编译成算子原型定义动态库libcust\_opsproto\_\*.so，并生成算子原型对外接口op\_proto.h。
@@ -133,7 +133,7 @@ cmake --build build_out --target binary package -j$(nproc)
 
 - `cmake --build build_out --target binary package -j$(nproc)`是实际编译和打包阶段：使用`build_out`中已经生成的构建文件，执行`binary`和`package`目标；`binary`负责编译算子二进制相关产物，`package`负责生成算子安装包，`-j$(nproc)`表示按当前机器CPU核数并行编译。
 
-编译成功后，会在编译产物目录下生成自定义算子安装包`custom_opp_<target os>_<target architecture>.run`。该run包包含算子原型库、Tiling库、aclnn API库和Kernel二进制，部署后框架会自动扫描并加载。
+编译成功后，会在编译产物目录下生成自定义算子安装包`custom_opp_<target os>_<target architecture>.run`。该run包包含算子原型库、Tiling库、aclnn API库和核函数（Kernel）二进制，部署后框架会自动扫描并加载。
 
 **编译日志存储**（可选）：
 
@@ -314,18 +314,18 @@ source /usr/local/Ascend/cann/set_env.sh
 
 算子工程通过CMake组织编译。如需自行组织工程或用CANN提供的CMake modules定制编译流程，可参考以下内容。
 
-算子工程的目录组织方式不固定，以下仅示意两种常见方式；也可以将Host、Kernel、Tiling文件完全平铺在同一目录，只要CMakeLists.txt正确传入源文件和`npu_op_*`接口参数即可。
+算子工程的目录组织方式不固定，以下仅示意两种常见方式；也可以将Host、核函数（Kernel）、Tiling文件完全平铺在同一目录，只要CMakeLists.txt正确传入源文件和`npu_op_*`接口参数即可。
 
 | 方式 | 特点 | 适用场景 |
 |------|------|----------|
-| 按Host/Kernel划分 | Host和Kernel代码分目录，三层CMakeLists。 | msOpGen默认生成，单算子或少量算子。 |
-| 按算子划分 | 每个算子一个独立目录，算子目录维护自己的源文件清单和Kernel声明。 | 多算子工程，算子间独立性高。 |
+| 按Host/核函数（Kernel）划分 | Host和核函数（Kernel）代码分目录，三层CMakeLists。 | msOpGen默认生成，单算子或少量算子。 |
+| 按算子划分 | 每个算子一个独立目录，算子目录维护自己的源文件清单和核函数（Kernel）声明。 | 多算子工程，算子间独立性高。 |
 
-msOpGen工具默认生成"按Host/Kernel划分"的结构。
+msOpGen工具默认生成"按Host/核函数（Kernel）划分"的结构。
 
-### 按Host/Kernel划分的目录结构
+### 按Host/核函数（Kernel）划分的目录结构
 
-所有算子的Host侧代码集中在`op_host/`目录下，Kernel侧代码集中在`op_kernel/`目录下。工程包含三层CMakeLists.txt：顶层定义算子包并添加子目录，`op_host/`下编译Host侧库，`op_kernel/`下编译Kernel侧库。
+所有算子的Host侧代码集中在`op_host/`目录下，核函数（Kernel）侧代码集中在`op_kernel/`目录下。工程包含三层CMakeLists.txt：顶层定义算子包并添加子目录，`op_host/`下编译Host侧库，`op_kernel/`下编译核函数（Kernel）侧库。
 
 **1. 顶层CMakeLists.txt**
 
@@ -353,7 +353,7 @@ npu_op_package(${package_name}
         INSTALL_PATH ${CMAKE_BINARY_DIR}/
 )
 
-# 3. 添加Host和Kernel子目录进行编译
+# 3. 添加Host和核函数（Kernel）子目录进行编译
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/op_host)
     add_subdirectory(op_host)
 endif()
@@ -422,48 +422,48 @@ npu_op_package_add(${package_name}
 )
 ```
 
-**3. Kernel侧CMakeLists.txt**
+**3. 核函数（Kernel）侧CMakeLists.txt**
 
-`op_kernel/`下的CMakeLists.txt配置Kernel编译选项、指定源码，并编译Kernel库：
+`op_kernel/`下的CMakeLists.txt配置核函数（Kernel）编译选项、指定源码，并编译核函数（Kernel）库：
 
 1.  使用**npu\_op\_kernel\_options**添加[算子编译选项](#自定义编译选项进阶)。
 2.  使用**npu\_op\_kernel\_sources**指定算子特定目录与编译源文件。
     -   若算子的源码文件没有平铺在`SRC_BASE`目录（通过`npu_op_kernel_library`设置）下，可以通过`KERNEL_DIR`指定特定目录。
-    -   若算子的Kernel实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（Kernel实现cpp文件名），以配置两者之间的对应关系。不配置时，Kernel实现cpp文件名和OpType之间需满足[转换规则](../appendix/naming_conversion_table.md)。
+    -   若算子的核函数（Kernel）实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（核函数（Kernel）实现cpp文件名），以配置两者之间的对应关系。不配置时，核函数（Kernel）实现cpp文件名和OpType之间需满足[转换规则](../appendix/naming_conversion_table.md)。
 
-3.  使用**npu\_op\_kernel\_library**编译Kernel库。
-4.  使用**npu\_op\_package\_add**添加上述Kernel侧库到对应package中。
+3.  使用**npu\_op\_kernel\_library**编译核函数（Kernel）库。
+4.  使用**npu\_op\_package\_add**添加上述核函数（Kernel）侧库到对应package中。
 
 ```cmake
-# 1. 设置Kernel编译选项
+# 1. 设置核函数（Kernel）编译选项
 npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)
 
-# 2. 指定Kernel源码
+# 2. 指定核函数（Kernel）源码
 npu_op_kernel_sources(ascendc_kernels
     OP_TYPE AddCustom                              #算子类型
     COMPUTE_UNIT ascendxxyy                       # AI处理器型号
     KERNEL_FILE add_custom.cpp                     # kernel实现文件名
 )
 
-# 3. 编译Kernel库
+# 3. 编译核函数（Kernel）库
 npu_op_kernel_library(ascendc_kernels
-    SRC_BASE ${CMAKE_SOURCE_DIR}/op_kernel/        # Kernel源码根目录
+    SRC_BASE ${CMAKE_SOURCE_DIR}/op_kernel/        # 核函数（Kernel）源码根目录
     TILING_LIBRARY cust_optiling                   #依赖的Tiling库
 )
 
-# 4. 添加Kernel库到package
+# 4. 添加核函数（Kernel）库到package
 npu_op_package_add(${package_name}
     LIBRARY ascendc_kernels
 )
 ```
 
-示例中Kernel实现文件名为`add_custom.cpp`，所以在`npu_op_kernel_sources`中同时指定了`OP_TYPE`和`KERNEL_FILE`。如果想按目录扫描Kernel源码，可改用`KERNEL_DIR ./`，此时`KERNEL_DIR`相对于后续`npu_op_kernel_library`中的`SRC_BASE`。
+示例中核函数（Kernel）实现文件名为`add_custom.cpp`，所以在`npu_op_kernel_sources`中同时指定了`OP_TYPE`和`KERNEL_FILE`。如果想按目录扫描核函数（Kernel）源码，可改用`KERNEL_DIR ./`，此时`KERNEL_DIR`相对于后续`npu_op_kernel_library`中的`SRC_BASE`。
 
 ### 按算子划分的目录结构
 
-工程包含多个算子且各算子独立性较高时，按算子划分更方便维护——每个算子的Host、Kernel、Tiling文件放在同一目录，新增算子只需添加一个独立子目录。
+工程包含多个算子且各算子独立性较高时，按算子划分更方便维护——每个算子的Host、核函数（Kernel）、Tiling文件放在同一目录，新增算子只需添加一个独立子目录。
 
-下面示例在顶层CMakeLists.txt中集中列出各算子的Host源文件，并通过`npu_op_kernel_sources`声明各算子的Kernel源码信息，最终仍由`npu_op_code_gen`、`npu_op_library`、`npu_op_kernel_library`和`npu_op_package_add`完成代码生成、编译和打包。
+下面示例在顶层CMakeLists.txt中集中列出各算子的Host源文件，并通过`npu_op_kernel_sources`声明各算子的核函数（Kernel）源码信息，最终仍由`npu_op_code_gen`、`npu_op_library`、`npu_op_kernel_library`和`npu_op_package_add`完成代码生成、编译和打包。
 
 **1. 目录结构**
 
@@ -472,7 +472,7 @@ npu_op_package_add(${package_name}
 ```text
 add_custom/
 ├── add_custom.cpp           # Host侧原型定义、Shape推导、Tiling实现
-├── add_custom_kernel.cpp    # Kernel实现
+├── add_custom_kernel.cpp    # 核函数（Kernel）实现
 └── add_custom_tiling.h      # Tiling数据结构定义
 add_custom2/
 ├── add_custom2.cpp
@@ -486,7 +486,7 @@ add_custom3/
 
 **2. 顶层CMakeLists.txt**
 
-顶层CMakeLists.txt设置编译环境、定义package形态，声明各算子的Host/Kernel文件，并完成Host侧库、Kernel侧库和算子包打包。
+顶层CMakeLists.txt设置编译环境、定义package形态，声明各算子的Host/核函数（Kernel）文件，并完成Host侧库、核函数（Kernel）侧库和算子包打包。
 
 ```cmake
 cmake_minimum_required(VERSION 3.19.0)
@@ -551,7 +551,7 @@ npu_op_library(cust_optiling TILING
 )
 target_compile_options(cust_optiling PRIVATE -fvisibility=hidden)
 
-# 6. 声明各算子的Kernel源码信息。
+# 6. 声明各算子的核函数（Kernel）源码信息。
 # KERNEL_DIR相对于下面npu_op_kernel_library的SRC_BASE。
 npu_op_kernel_sources(ascendc_kernels
     OP_TYPE AddCustom
@@ -569,14 +569,14 @@ npu_op_kernel_sources(ascendc_kernels
     KERNEL_FILE add_custom3_kernel.cpp
 )
 
-# 7. 编译Kernel库。
+# 7. 编译核函数（Kernel）库。
 # SRC_BASE是所有算子目录共同的源码根目录；TILING_LIBRARY指向上面编译出的Tiling库。
 npu_op_kernel_library(ascendc_kernels
     SRC_BASE ${CMAKE_CURRENT_SOURCE_DIR}/
     TILING_LIBRARY cust_optiling
 )
 
-# 8. 将Host侧库和Kernel库加入算子包，最终生成run包。
+# 8. 将Host侧库和核函数（Kernel）库加入算子包，最终生成run包。
 npu_op_package_add(${package_name}
     LIBRARY
         cust_optiling
@@ -588,16 +588,16 @@ npu_op_package_add(${package_name}
 
 
 > [!NOTE]说明
-> - 示例在顶层集中列出各算子的Host源文件和Kernel源码信息，是为了展示`npu_op_*`接口的调用关系；如果工程有自己的目录封装，只要最终传给`npu_op_code_gen`的Host源文件、传给`npu_op_kernel_sources`的`OP_TYPE`/`KERNEL_DIR`/`KERNEL_FILE`，以及传给`npu_op_kernel_library`的`SRC_BASE`匹配即可。
+> - 示例在顶层集中列出各算子的Host源文件和核函数（Kernel）源码信息，是为了展示`npu_op_*`接口的调用关系；如果工程有自己的目录封装，只要最终传给`npu_op_code_gen`的Host源文件、传给`npu_op_kernel_sources`的`OP_TYPE`/`KERNEL_DIR`/`KERNEL_FILE`，以及传给`npu_op_kernel_library`的`SRC_BASE`匹配即可。
 > - `npu_op_kernel_sources`依赖`npu_op_code_gen`设置的自动生成文件路径，因此需要在`npu_op_code_gen`之后调用。
-> - `OP_TYPE`需要与算子原型注册中的OpType一致；当Kernel文件名不是OpType默认转换后的文件名时，需要显式指定`KERNEL_FILE`。
+> - `OP_TYPE`需要与算子原型注册中的OpType一致；当核函数（Kernel）文件名不是OpType默认转换后的文件名时，需要显式指定`KERNEL_FILE`。
 > - 新增算子时，只需要新增算子子目录，在`ops_srcs`中追加Host源文件，并新增一组`npu_op_kernel_sources`配置。
 
-**与"按Host/Kernel划分"的关键差异**：
+**与"按Host/核函数（Kernel）划分"的关键差异**：
 - Host侧源文件按算子目录列出，顶层统一调用`npu_op_code_gen`。
-- Kernel源码信息按算子目录声明，顶层在`npu_op_code_gen`后统一调用`npu_op_kernel_sources`。
+- 核函数（Kernel）源码信息按算子目录声明，顶层在`npu_op_code_gen`后统一调用`npu_op_kernel_sources`。
 - `SRC_BASE`指向所有算子目录共同的源码根目录，`KERNEL_DIR`指向具体算子子目录。
-- 各算子的Host、Kernel、Tiling文件集中在同一目录下。
+- 各算子的Host、核函数（Kernel）、Tiling文件集中在同一目录下。
 
 > 详细cmake函数参数请参考[cmake函数参考](../appendix/cmake_function_reference.md)。
 
@@ -606,7 +606,7 @@ npu_op_package_add(${package_name}
 <a id="自定义编译选项"></a>
 ## 自定义编译选项（进阶）<a id="custom-compile-options"></a>
 
-在CMakeLists.txt中，用`npu_op_kernel_options`为Kernel侧代码添加编译选项：
+在CMakeLists.txt中，用`npu_op_kernel_options`为核函数（Kernel）侧代码添加编译选项：
 
 ```cmake
 npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIONS ...)
@@ -616,7 +616,7 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIO
 
 | 参数名称 | 可选/必选 | 参数描述 |
 |---------|----------|---------|
-| target_name | 必选 | Kernel库的目标名称（如`ascendc_kernels`）。 |
+| target_name | 必选 | 核函数（Kernel）库的目标名称（如`ascendc_kernels`）。 |
 | op_type | 必选 | 算子类型。如需对所有算子生效，配置为`ALL`。 |
 | COMPUTE_UNIT | 可选 | AI处理器型号，不配置时对所有型号生效。 |
 | OPTIONS | 必选 | 自定义编译选项，多个选项用空格间隔。支持`--save-temp-files`、`-g`、`-DASCENDC_DEBUG`等。 |
@@ -624,7 +624,7 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIO
 **常见示例**：
 
 ```cmake
-# 为所有算子保留Kernel编译中间产物
+# 为所有算子保留核函数（Kernel）编译中间产物
 npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files)
 
 # 为特定算子在特定型号上开启AscendC调试宏
@@ -638,7 +638,7 @@ npu_op_kernel_options(ascendc_kernels AddCustom COMPUTE_UNIT ascendxxyy OPTIONS 
 
 Ascend C框架提供的编译选项介绍如下：
 
--   `--tiling_key`，设置该选项后，只编译指定的[TilingKey](../design_and_implementation/multi_branch_strategy.md#compile-selected-tiling-keys)相关的Kernel代码，用于加速编译过程。若不指定TilingKey编译，则默认编译所有的TilingKey。配置多个TilingKey时，TilingKey之间不能有空格。示例如下，其中1、2为TilingKey取值。
+-   `--tiling_key`，设置该选项后，只编译指定的[TilingKey](../design_and_implementation/multi_branch_strategy.md#compile-selected-tiling-keys)相关的核函数（Kernel）代码，用于加速编译过程。若不指定TilingKey编译，则默认编译所有的TilingKey。配置多个TilingKey时，TilingKey之间不能有空格。示例如下，其中1、2为TilingKey取值。
 
     ```
     --tiling_key=1,2
@@ -646,7 +646,7 @@ Ascend C框架提供的编译选项介绍如下：
 
 -   编译宏开关请参考[内置编译宏开关](../../../compilation_and_execution/operator_compilation/ai_core_operator_compilation.md)。
 -   `--op_relocatable_kernel_binary`，设置该选项为true时，会额外编译一份可被重新链接的二进制文件；不配置或设置为false时该选项均不生效。该选项用于自定义Tiling下沉算子开启SuperKernel的场景，配置该选项所生成的二进制文件，可以使算子在SuperKernel编译时直接复用二进制文件，降低编译耗时。
--   `--kernel-template-input`，编译指定的模板参数组合相关的Kernel代码，用于加速编译过程。更多信息参考[编译加速 — 选择性编译](./compilation_acceleration.md#选择性编译)。
+-   `--kernel-template-input`，编译指定的模板参数组合相关的核函数（Kernel）代码，用于加速编译过程。更多信息参考[编译加速 — 选择性编译](./compilation_acceleration.md#选择性编译)。
 -   `-DFORCE_TILING_CONST_PROPAGATION`，该选项用于静态shape场景Tiling数据的常量化优化。对于复杂算子，该编译选项可以提升算子静态shape执行性能。该编译选项仅支持自定义算子工程，且仅在算子使用`BEGIN_TILING_DATA_DEF`注册Tiling结构体的情形下生效，对于算子使用标准C++语法定义Tiling结构体的情形下不生效。使用示例如下：
     ```
     -DFORCE_TILING_CONST_PROPAGATION
@@ -661,9 +661,9 @@ Ascend C框架提供的编译选项介绍如下：
 
     对于算子使用标准C++语法定义Tiling结构体的情形下不生效的原因是，算子定义Tiling结构体为static constexpr时，无法获得Tiling数据，无法给Tiling结构体成员在定义时初始化。
 
--   --save-temp-files，该选项用于保留Kernel侧编译过程中生成的临时文件。在编译过程中会根据芯片类型、输入输出的dtype/format等因素排列组合触发不同的`kernel.o`编译，开启该选项，可查看每个`kernel.o`的编译过程，用于辅助定位问题。
+-   --save-temp-files，该选项用于保留核函数（Kernel）侧编译过程中生成的临时文件。在编译过程中会根据芯片类型、输入输出的dtype/format等因素排列组合触发不同的`kernel.o`编译，开启该选项，可查看每个`kernel.o`的编译过程，用于辅助定位问题。
 
-    添加该编译选项并执行工程编译，可在`build/op_kernel/<OpType>_<soc>/kernel_*/kernel_meta_*/kernel_meta`目录查看实际参与编译的Kernel源码、编译命令等中间文件，其中`<OpType>`表示算子类型，`<soc>`表示编译目标芯片类型。
+    添加该编译选项并执行工程编译，可在`build/op_kernel/<OpType>_<soc>/kernel_*/kernel_meta_*/kernel_meta`目录查看实际参与编译的核函数（Kernel）源码、编译命令等中间文件，其中`<OpType>`表示算子类型，`<soc>`表示编译目标芯片类型。
 
 ## 相关文档
 

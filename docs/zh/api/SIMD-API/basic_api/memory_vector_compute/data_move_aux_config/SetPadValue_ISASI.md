@@ -28,11 +28,11 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-[DataCopyPad（GMToUB非对齐数据搬运）](../data_move/DataCopyPad_GMToUB.md)从Global Memory将数据非对齐搬运至Unified Buffer时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。
+[DataCopyPad（GMToUB非对齐数据搬运）](../data_move/DataCopyPad_GMToUB.md)从Global Memory将数据非对齐搬运至Unified Buffer（UB）时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
     - GM -> VECOUT
 

@@ -15,7 +15,7 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
   | 存储单元 | 说明 | 
   | --- | --- |
-  | Unified Buffer | AI Core内部物理存储单元，通常用于存储向量计算的输入/输出数据。 |
+  | Unified Buffer（UB） | AI Core内部物理存储单元，通常用于存储向量计算的输入/输出数据。 |
 <!-- end id1 -->
 
 <!-- npu="950" id2 -->
@@ -29,26 +29,26 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
   | 存储单元 | 说明 | 
   | --- | --- |
-  | Unified Buffer | AI Core内部物理存储单元，通常用于存储向量计算的输入/输出数据。 |
-  | SIMD Register File | AI Core内部物理存储单元，在SIMD程序中，数据从Unified Buffer搬运到Register进行计算，产生的中间结果可以不用传回Unified Buffer，直接在寄存器计算。 |
+  | UB | AI Core内部物理存储单元，通常用于存储向量计算的输入/输出数据。 |
+  | SIMD Register File | AI Core内部物理存储单元，在SIMD程序中，数据从UB搬运到Register进行计算，产生的中间结果可以不用传回UB，直接在寄存器计算。 |
 <!-- end id2 -->
 
-## Unified Buffer介绍<a name="ZH-CN_TOPIC_0000002574022839"></a>
+## UB介绍<a name="ZH-CN_TOPIC_0000002574022839"></a>
 
-### Unified Buffer的通用约束说明
+### UB的通用约束说明
 
-- Unified Buffer地址对齐约束，请参考[通用地址对齐约束](../../../general_description_and_constraints.md#通用地址对齐约束)。
-- Unified Buffer地址重叠约束，请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
+- UB地址对齐约束，请参考[通用地址对齐约束](../../../general_description_and_constraints.md#通用地址对齐约束)。
+- UB地址重叠约束，请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 
-### Unified Buffer的内存结构与bank冲突
+### UB的内存结构与bank冲突
 
-为了提高数据访问的效率和吞吐量，Unified Buffer采用了大小相等的内存模块（bank）结构设计。当多条读写指令同时访问Unified Buffer时，由于硬件资源的限制，这些指令不能同时执行，从而引发bank冲突。在这种情况下，指令需要排队等待资源，无法在一个指令周期内完成。
+为了提高数据访问的效率和吞吐量，UB采用了大小相等的内存模块（bank）结构设计。当多条读写指令同时访问UB时，由于硬件资源的限制，这些指令不能同时执行，从而引发bank冲突。在这种情况下，指令需要排队等待资源，无法在一个指令周期内完成。
 
 <!-- npu="A3,910b" id3 -->
 - 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品
-  - Unified Buffer的内存结构
+  - UB的内存结构
 
-    **图3** Unified Buffer的内存结构图
+    **图3** UB的内存结构图
 
     ![](../../../../figures/a2a3_ub_memory_structure.png)
 
@@ -64,9 +64,9 @@ Vector计算单元专用于执行向量计算。如下图所示，高亮部分�
 
 <!-- npu="950" id4 -->
 - 针对Ascend 950PR/Ascend 950DT
-  - Unified Buffer的内存结构
+  - UB的内存结构
 
-    **图4** Unified Buffer的内存结构图
+    **图4** UB的内存结构图
 
     ![](../../../../figures/950_ub_memory_structure.png)
 

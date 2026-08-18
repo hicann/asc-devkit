@@ -97,6 +97,8 @@ Establish a **unified terminology mapping table** (independent appendix file) sh
 
 **Specific Requirements**:
 - Any code name / abbreviation that appears in the documentation must be annotated with its full name on first occurrence and linked to the mapping table
+- Use the term "kernel function" consistently in prose; keep code identifiers, API names, and link targets unchanged
+- On the first mention of Unified Buffer in each document, use "Unified Buffer (UB)", and use "UB" thereafter. API names, document titles, navigation or feature lists, compact table entries or headers, and data path labels may use "UB" as appropriate and do not count as the term's first occurrence. Keep code identifiers and link targets unchanged
 - The same concept may use different-level names in different documents, but must have an equivalence relationship in the terminology mapping table
 - Terminology groups that must be mapped: DMA/MTE/DataCopy (three-layer name for the same transfer function), Local Memory/L1/`__cbuf__` (three-layer name for the same storage), etc.
 
@@ -150,6 +152,17 @@ Similar-named or hierarchically confusable concepts must be **explicitly disting
 | `LocalTensor` vs `GlobalTensor` vs `TBuf` | Compute buffer / external buffer / temporary buffer | Comparison table + scenario recommendation |
 | `__ubuf__` vs `__cbuf__` vs `__gm__` | UB space / L1 space / GM space address qualifiers | Comparison table |
 | `asc_` prefix vs `Ascend C::` prefix vs `cce::` prefix | C API / C++ API / legacy API naming conventions | Comparison table |
+
+---
+
+### Clear Separation Between the Host Side and Kernel Function Side
+
+API documentation must clearly label and separate the Host side and kernel function side:
+
+- Each API page identifies its applicable side: Host side, kernel function side, or both.
+- Host-side APIs, such as Tiling calculation and workspace allocation, are presented separately from kernel function-side APIs, such as computation interfaces and data transfer.
+- The Programming Guide provides an overview of the division of responsibility between the Host side and kernel function side.
+- Concepts involving cross-side data transfer, such as workspace and Tiling, provide end-to-end call chain diagrams.
 
 ---
 

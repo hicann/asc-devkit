@@ -1,6 +1,6 @@
 # Hello World <a name="ZH-CN_TOPIC_0000002523206878"></a>
 
-本入门示例基于Ascend C SIMT实现Hello World算子，带你快速上手实践，涵盖Device端核函数实现、Host端调用以及编译运行的完整流程，帮助开发者建立整体认知。
+本入门示例基于Ascend C SIMT实现Hello World算子，带你快速上手实践，涵盖Device端核函数（Kernel）实现、Host端调用以及编译运行的完整流程，帮助开发者建立整体认知。
 
 开始前请参考[环境准备](../../environment_setup.md)安装所需的CANN软件包，完整样例请参考[hello\_world](../../../../../../examples/03_simt_api/00_introduction/00_quickstart/hello_world_simt/README.md)。
 
@@ -8,7 +8,7 @@
  
     在NPU上打印`Hello World!`。
 
-- **Device端Kernel实现**：
+- **Device端核函数（Kernel）实现**：
 
     后缀名为`*.asc`的代码文件包含Host端与Device端代码，其Device端部分示例如下：
     ```cpp

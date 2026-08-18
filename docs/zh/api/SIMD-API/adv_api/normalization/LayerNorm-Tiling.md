@@ -139,7 +139,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
 | isReuseSource | 输入 | 是否复用源操作数的内存空间，与[LayerNorm](LayerNorm.md)接口一致。 |
 | isComputeRstd | 输入 | 是否计算标准差的倒数rstd。用于Tiling中区分选择的LayerNorm API。 |
 | isOnlyOutput | 输入 | 是否只输出y，不输出均值mean与标准差的倒数rstd。当前该参数仅支持false，y、mean和rstd的结果全都输出。 |
-| maxValue | 输出 | 输出LayerNorm接口所需的tiling信息（最大临时空间大小）。<br><br>LayerNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。<br>maxValue仅作为参考值，有可能大于Unified Buffer剩余空间的大小，该场景下，开发者需要根据Unified Buffer剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | 输出LayerNorm接口所需的tiling信息（最大临时空间大小）。<br><br>LayerNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | 输出LayerNorm接口所需的tiling信息（最小临时空间大小）。<br><br>LayerNorm接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。 |
 
 **表2**  GetLayerNormNDTilingInfo和GetLayerNormNDTillingInfo接口参数列表
@@ -210,7 +210,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
+3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
 
     ```
     extern "C" __global__ __aicore__ void func_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
@@ -276,7 +276,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
+3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
 
     ```
     extern "C" __global__ __aicore__ void func_custom(

@@ -32,7 +32,7 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 | [asc_bfloat162int32](vector_compute/asc_bfloat162int32.md) | 数据类型转换。将bfloat16_t类型的数据转换为int32_t类型。 |
 | [asc_bitsort](vector_compute/asc_bitsort.md) | Score和Index分别存储在src0和src1中，按Score进行排序（Score大的元素排前面），排序后的Score与其对应的Index一起以（Score，Index）的结构存储在dst中。 |
 | [asc_brcb](vector_compute/asc_brcb.md) | 将源操作数中的每一个数填充到目的操作数的一个DataBlock中。 |
-| [asc_copy](vector_compute/asc_copy.md) | 将数据从Unified Buffer搬运到Unified Buffer。支持高维切分。 |
+| [asc_copy](vector_compute/asc_copy.md) | 将数据从UB搬运到UB。支持高维切分。 |
 | [asc_datablock_reduce_max](vector_compute/asc_datablock_reduce_max.md) | 对每个DataBlock内所有元素求最大值。 |
 | [asc_datablock_reduce_min](vector_compute/asc_datablock_reduce_min.md) | 对每个DataBlock内所有元素求最小值。 |
 | [asc_datablock_reduce_sum](vector_compute/asc_datablock_reduce_sum.md) | 对每个DataBlock内所有元素求和。 |
@@ -132,23 +132,23 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 
 | API名称 | 说明 |
 | ------ | ----------- |
-| [asc_copy_gm2ub](vector_data_move/asc_copy_gm2ub/asc_copy_gm2ub.md) | 将数据从Global Memory搬运到Unified Buffer。 |
-| [asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md) | 提供数据非对齐搬运的功能，将数据从Global Memory搬运到Unified Buffer，并支持8位/16位/32位数据类型搬运。 |
-| [asc_copy_ub2gm](vector_data_move/asc_copy_ub2gm/asc_copy_ub2gm.md) | 将数据从Unified Buffer搬运到Global Memory。 |
-| [asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md) | 将数据从Unified Buffer搬运到Global Memory，支持8位/16位/32位分块拷贝操作。 |
-| [asc_copy_ub2l1](vector_data_move/asc_copy_ub2l1.md) | 将数据从Unified Buffer (UB)搬运到L1 Buffer。 |
-| [asc_copy_ub2ub](vector_data_move/asc_copy_ub2ub.md) | 将数据从Unified Buffer搬运到Unified Buffer。 |
-| [asc_ndim_copy_gm2ub](vector_data_move/asc_ndim_copy_gm2ub.md) | 多维数据搬运接口，将数据从Global Memory (GM)搬运到Unified Buffer (UB)。 |
+| [asc_copy_gm2ub](vector_data_move/asc_copy_gm2ub/asc_copy_gm2ub.md) | 将数据从Global Memory搬运到UB。 |
+| [asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md) | 提供数据非对齐搬运的功能，将数据从Global Memory搬运到UB，并支持8位/16位/32位数据类型搬运。 |
+| [asc_copy_ub2gm](vector_data_move/asc_copy_ub2gm/asc_copy_ub2gm.md) | 将数据从UB搬运到Global Memory。 |
+| [asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md) | 将数据从UB搬运到Global Memory，支持8位/16位/32位分块拷贝操作。 |
+| [asc_copy_ub2l1](vector_data_move/asc_copy_ub2l1.md) | 将数据从UB搬运到L1 Buffer。 |
+| [asc_copy_ub2ub](vector_data_move/asc_copy_ub2ub.md) | 将数据从UB搬运到UB。 |
+| [asc_ndim_copy_gm2ub](vector_data_move/asc_ndim_copy_gm2ub.md) | 多维数据搬运接口，将数据从Global Memory (GM)搬运到UB。 |
 | [asc_set_copy_pad_val](vector_data_move/asc_set_copy_pad_val.md) | 和asc_copy_gm2ub_align或asc_copy_ub2gm_align接口配合使用，设置连续搬运数据块左右两侧需要填补的数据值。 |
-| [asc_set_gm2ub_loop_size](vector_data_move/asc_set_gm2ub_loop_size.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到Unified Buffer (UB)时，设置数据搬运流程中的循环次数。 |
-| [asc_set_gm2ub_loop1_stride](vector_data_move/asc_set_gm2ub_loop1_stride.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到Unified Buffer (UB)时，设置内层循环中相邻迭代数据块间的间隔。 |
-| [asc_set_gm2ub_loop2_stride](vector_data_move/asc_set_gm2ub_loop2_stride.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到Unified Buffer (UB)时，设置外层循环中相邻迭代数据块间的间隔。 |
+| [asc_set_gm2ub_loop_size](vector_data_move/asc_set_gm2ub_loop_size.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到UB时，设置数据搬运流程中的循环次数。 |
+| [asc_set_gm2ub_loop1_stride](vector_data_move/asc_set_gm2ub_loop1_stride.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到UB时，设置内层循环中相邻迭代数据块间的间隔。 |
+| [asc_set_gm2ub_loop2_stride](vector_data_move/asc_set_gm2ub_loop2_stride.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到UB时，设置外层循环中相邻迭代数据块间的间隔。 |
 | [asc_set_ndim_loop_stride](vector_data_move/asc_set_ndim_loop_stride.md) | 设置[asc_ndim_copy_gm2ub](vector_data_move/asc_ndim_copy_gm2ub.md)在进行多维搬运时每个维度内的源操作数与目的操作数的元素之间的间隔，最多设置5个维度。 |
 | [asc_set_ndim_pad_count](vector_data_move/asc_set_ndim_pad_count.md) | 设置[asc_ndim_copy_gm2ub](vector_data_move/asc_ndim_copy_gm2ub.md)接口各个维度左右侧的Padding元素个数。 |
 | [asc_set_ndim_pad_value](vector_data_move/asc_set_ndim_pad_value.md) | 设置[asc_ndim_copy_gm2ub](vector_data_move/asc_ndim_copy_gm2ub.md)接口Padding的填充固定值。 |
-| [asc_set_ub2gm_loop_size](vector_data_move/asc_set_ub2gm_loop_size.md) | 使用[asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)将数据从Unified Buffer (UB)搬运到Global Memory (GM)时，设置内层循环和外层循环的次数。 |
-| [asc_set_ub2gm_loop1_stride](vector_data_move/asc_set_ub2gm_loop1_stride.md) | 使用[asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)将数据从Unified Buffer (UB)搬运到Global Memory (GM)时，设置内层循环中源操作数在相邻迭代间的数据块间隔，以及目的操作数在相邻迭代间的数据块间隔。 |
-| [asc_set_ub2gm_loop2_stride](vector_data_move/asc_set_ub2gm_loop2_stride.md) | 使用[asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)将数据从Unified Buffer (UB)搬运到Global Memory (GM)时，设置外层循环中源操作数在相邻迭代间的数据块间隔，以及目的操作数在相邻迭代间的数据块间隔。 |
+| [asc_set_ub2gm_loop_size](vector_data_move/asc_set_ub2gm_loop_size.md) | 使用[asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)将数据从UB搬运到Global Memory (GM)时，设置内层循环和外层循环的次数。 |
+| [asc_set_ub2gm_loop1_stride](vector_data_move/asc_set_ub2gm_loop1_stride.md) | 使用[asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)将数据从UB搬运到Global Memory (GM)时，设置内层循环中源操作数在相邻迭代间的数据块间隔，以及目的操作数在相邻迭代间的数据块间隔。 |
+| [asc_set_ub2gm_loop2_stride](vector_data_move/asc_set_ub2gm_loop2_stride.md) | 使用[asc_copy_ub2gm_align](vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)将数据从UB搬运到Global Memory (GM)时，设置外层循环中源操作数在相邻迭代间的数据块间隔，以及目的操作数在相邻迭代间的数据块间隔。 |
 | [asc_copy_gm2l0a](cube_data_move/asc_copy_gm2l0a.md) | 将GM中的数据搬运到L0A中。 |
 | [asc_copy_gm2l0b](cube_data_move/asc_copy_gm2l0b.md) | 将GM中的数据搬运到L0B中。 |
 | [asc_copy_gm2l1](cube_data_move/asc_copy_gm2l1/asc_copy_gm2l1.md) | 将GM中的数据搬运到L1中。 |
@@ -169,7 +169,7 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 | [asc_copy_l12l0b_sparse](cube_data_move/asc_copy_l12l0b_sparse.md) | 用于搬运存放在L1 Buffer里的512B大小的稠密权重矩阵到L0B Buffer里，同时读取128B大小的索引矩阵用于稠密矩阵的稀疏化。 |
 | [asc_copy_l12l0b_trans](cube_data_move/asc_copy_l12l0b_trans/asc_copy_l12l0b_trans.md) | 该接口实现带转置的2D格式数据从L1 Buffer到L0B Buffer的加载。 |
 | [asc_copy_l12l0c](cube_data_move/asc_copy_l12l0c.md) | 将矩阵由L1 Buffer搬运到L0C Buffer中。 |
-| [asc_copy_l12ub](cube_data_move/asc_copy_l12ub.md) | 将数据从L1 Buffer搬运到Unified Buffer中。 |
+| [asc_copy_l12ub](cube_data_move/asc_copy_l12ub.md) | 将数据从L1 Buffer搬运到UB中。 |
 | [asc_fill_l0a](cube_data_move/asc_fill_l0a.md) | 将L0A Buffer的Local Memory初始化为某一具体数值。 |
 | [asc_fill_l0b](cube_data_move/asc_fill_l0b.md) | 将L0B Buffer的Local Memory初始化为某一具体数值。 |
 | [asc_fill_l1](cube_data_move/asc_fill_l1.md) | 将L1 Buffer的Local Memory初始化为某一具体数值。 |
@@ -186,7 +186,7 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 | [asc_set_l13d_padding](cube_data_move/asc_set_l13d_padding.md) | 设置Pad属性描述，用于在调用asc_copy_l12l0a接口时配置填充数值。 |
 | [asc_set_l13d_rpt](cube_data_move/asc_set_l13d_rpt.md) | 用于设置Load3Dv2接口的repeat参数。 |
 | [asc_set_l13d_size](cube_data_move/asc_set_l13d_size.md) | 设置[asc_copy_l12l0a](cube_data_move/asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)/[asc_copy_l12l0b](cube_data_move/asc_copy_l12l0b/asc_copy_l12l0b_arch_2201.md)的3D格式搬运接口在L1 Buffer的边界值。 |
-| [asc_set_gm2ub_pad（废弃）](vector_data_move/asc_set_gm2ub_pad_deprecated.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到Unified Buffer (UB)且源操作数非对齐时，设置连续搬运数据块左右两侧需要填补的数据值。 |
+| [asc_set_gm2ub_pad（废弃）](vector_data_move/asc_set_gm2ub_pad_deprecated.md) | 使用[asc_copy_gm2ub_align](vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)将数据从Global Memory (GM)搬运到UB且源操作数非对齐时，设置连续搬运数据块左右两侧需要填补的数据值。 |
 
 ## 标量操作
 
@@ -330,12 +330,12 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 | API名称 | 说明 |
 | ------ | ----------- |
 | [asc_get_store_atomic_config](simd_atomic/asc_get_store_atomic_config.md) | 获取原子操作启用位与原子操作类型的值。 |
-| [asc_set_atomic_add_bfloat](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为bfloat16_t。 |
-| [asc_set_atomic_add_float](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为float。 |
-| [asc_set_atomic_add_float16](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为half。 |
-| [asc_set_atomic_add_int32](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
-| [asc_set_atomic_add_int8](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int8_t。 |
-| [asc_set_atomic_add_int16](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int16_t。 |
+| [asc_set_atomic_add_bfloat](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为bfloat16_t。 |
+| [asc_set_atomic_add_float](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为float。 |
+| [asc_set_atomic_add_float16](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为half。 |
+| [asc_set_atomic_add_int32](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
+| [asc_set_atomic_add_int8](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int8_t。 |
+| [asc_set_atomic_add_int16](simd_atomic/asc_set_atomic_add.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int16_t。 |
 | [asc_set_atomic_max_bfloat](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的bfloat16_t数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_max_float](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的float数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
 | [asc_set_atomic_max_float16](simd_atomic/asc_set_atomic_max.md) | 设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的half数据与GM中已有数据进行逐元素比较，并将最大值写入GM。 |
@@ -591,4 +591,4 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 **表14** 废弃接口列表
 | 废弃接口 | 说明 |
 | [asc_abs_sync（废弃）](deprecated_interface/asc_abs_sync_deprecated.md) | 按元素取绝对值同步接口。 |
-| [asc_set_atomic_add_int（废弃）](deprecated_interface/asc_set_atomic_add_int_deprecated.md) | 设置对后续的从Unified Buffer/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
+| [asc_set_atomic_add_int（废弃）](deprecated_interface/asc_set_atomic_add_int_deprecated.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |

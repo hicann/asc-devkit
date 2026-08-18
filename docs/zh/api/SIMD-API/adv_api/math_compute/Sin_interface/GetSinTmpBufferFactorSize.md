@@ -36,7 +36,7 @@ void GetSinTmpBufferFactorSize(const SinConfig& config, const uint32_t typeSize,
 
 | 参数名 | 输入/输出 | 功能 |
 | --- | --- | --- |
-| config | 输入 | Sin接口的相关配置信息。该参数的配置必须与Sin Kernel接口模板参数config的配置保持一致。 |
+| config | 输入 | Sin接口的相关配置信息。该参数的配置必须与Sin核函数（Kernel）接口模板参数config的配置保持一致。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | maxLiveNodeCount | 输出 | 最大存活节点数，表示临时空间是单次计算数据量所占空间的多少倍。 |
 | extraBuf | 输出 | 使用的额外临时空间大小，单位为字节。 |

@@ -1,12 +1,12 @@
 # 算子实现<a name="ZH-CN_TOPIC_0000002500468252"></a>
 
-在通算融合类算子的实现中，通信操作使用[Hccl高阶API](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md)，矩阵乘计算操作使用[Matmul高阶API](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)。关于更多集合通信的内容和相关概念请参考[《HCCL集合通信库》](https://gitcode.com/cann/hccl/blob/master/docs/zh/user_guide/README.md)。通算融合算子的开发过程与一般算子相同，但请注意，当前通算融合算子暂不支持[Kernel直调](../../../../programming_guide/appendix/kernel_direct_call_from_sample.md)和[入图（GE图）开发](../../../../programming_guide/advanced_programming/operator_graph_development/overview.md)，仅支持[单算子API调用](../../../../programming_guide/advanced_programming/aclnn_operator_development/invocation/single_operator_api_call.md)。
+在通算融合类算子的实现中，通信操作使用[Hccl高阶API](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md)，矩阵乘计算操作使用[Matmul高阶API](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)。关于更多集合通信的内容和相关概念请参考[《HCCL集合通信库》](https://gitcode.com/cann/hccl/blob/master/docs/zh/user_guide/README.md)。通算融合算子的开发过程与一般算子相同，但请注意，当前通算融合算子暂不支持[核函数（Kernel）直调](../../../../programming_guide/appendix/kernel_direct_call_from_sample.md)和[入图（GE图）开发](../../../../programming_guide/advanced_programming/operator_graph_development/overview.md)，仅支持[单算子API调用](../../../../programming_guide/advanced_programming/aclnn_operator_development/invocation/single_operator_api_call.md)。
 
-下文将以AllGatherMatmulCustom算子（简称AllGatherMatmul）的实现为例，从算子分析、数据流分析、创建算子工程、原型定义、Tiling实现、Kernel实现、编译与运行等方面介绍通算融合算子的设计和实现流程。本样例中算子的完整代码请参见[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)。该样例仅支持在**Atlas A2 训练系列产品/Atlas A2 推理系列产品**上运行。
+下文将以AllGatherMatmulCustom算子（简称AllGatherMatmul）的实现为例，从算子分析、数据流分析、创建算子工程、原型定义、Tiling实现、核函数（Kernel）实现、编译与运行等方面介绍通算融合算子的设计和实现流程。本样例中算子的完整代码请参见[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)。该样例仅支持在**Atlas A2 训练系列产品/Atlas A2 推理系列产品**上运行。
 
 ## 算子分析<a name="zh-cn_topic_0000002400208581_section59611034123213"></a>
 
-算子分析是指明确算子的数学表达式、输入、输出，核函数的名称等信息。
+算子分析是指明确算子的数学表达式、输入、输出，核函数（Kernel）的名称等信息。
 
 1.  明确算子的数学表达式及通信计算逻辑。
 
@@ -24,9 +24,9 @@
     -   算子输入输出的数据类型为float16，[format](../../../../technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)为：ND。
     -   group为算子属性，表示通信域名称，明确算子运行时所在的通信域。
 
-3.  确定核函数名称和参数。
-    -   本样例中核函数命名为all\_gather\_matmul\_custom。
-    -   根据对算子输入输出的分析，确定核函数的参数aGM，bGM，cGM，gatherOutGM；aGM，bGM为输入在Global Memory上的内存地址，cGM，gatherOutGM为输出在Global Memory上的内存地址。注意，核函数的参数和单算子API调用的输入输出在命名上存在区别，原因是核函数的参数是输入输出在Global Memory上的内存地址，而单算子API调用时输入输出的类型是aclTensor，两者并不完全一致。
+3.  确定核函数（Kernel）名称和参数。
+    -   本样例中核函数（Kernel）命名为all\_gather\_matmul\_custom。
+    -   根据对算子输入输出的分析，确定核函数（Kernel）的参数aGM，bGM，cGM，gatherOutGM；aGM，bGM为输入在Global Memory上的内存地址，cGM，gatherOutGM为输出在Global Memory上的内存地址。注意，核函数（Kernel）的参数和单算子API调用的输入输出在命名上存在区别，原因是核函数（Kernel）的参数是输入输出在Global Memory上的内存地址，而单算子API调用时输入输出的类型是aclTensor，两者并不完全一致。
 
 4.  确定算子实现所需接口。
     -   算子涉及AllGather通信，查看Ascend C  API参考中的通信相关接口，需要使用[Hccl高阶API](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md)来实现AllGather通信。
@@ -93,7 +93,7 @@
 <td class="cellrowborder" colspan="4" valign="top" headers="mcps1.2.6.7.1 "><p id="zh-cn_topic_0000002400208581_p1310191961513"><a name="zh-cn_topic_0000002400208581_p1310191961513"></a><a name="zh-cn_topic_0000002400208581_p1310191961513"></a>group（char*），Host侧标识通信域的字符串，表示通信域名称。</p>
 </td>
 </tr>
-<tr id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_row628260192410"><th class="firstcol" valign="top" id="mcps1.2.6.8.1"><p id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p22821601246"><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p22821601246"></a><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p22821601246"></a>核函数名称</p>
+<tr id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_row628260192410"><th class="firstcol" valign="top" id="mcps1.2.6.8.1"><p id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p22821601246"><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p22821601246"></a><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p22821601246"></a>核函数（Kernel）名称</p>
 </th>
 <td class="cellrowborder" colspan="4" valign="top" headers="mcps1.2.6.8.1 "><p id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p1359311404260"><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p1359311404260"></a><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_p1359311404260"></a>all_gather_matmul_custom</p>
 </td>
@@ -363,7 +363,7 @@ OP_ADD(AllGatherMatmulCustom);
 
 5.  设置Hccl高阶API Tiling结构体。
 
-    根据通信任务类型、算法配置等，创建一个Mc2CcTilingConfig类对象，通过向[GetTiling](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/GetTiling.md)方法传入算子Tiling结构体中mc2InitTiling和mc2CcTiling成员的引用，完成需要传递给Kernel侧的Mc2InitTiling参数和Mc2CcTiling参数的获取。Hccl高阶API Tiling结构体的具体使用方法详见[Hccl Tiling使用说明](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/HCCL_Tiling_usage.md)。
+    根据通信任务类型、算法配置等，创建一个Mc2CcTilingConfig类对象，通过向[GetTiling](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/GetTiling.md)方法传入算子Tiling结构体中mc2InitTiling和mc2CcTiling成员的引用，完成需要传递给核函数（Kernel）侧的Mc2InitTiling参数和Mc2CcTiling参数的获取。Hccl高阶API Tiling结构体的具体使用方法详见[Hccl Tiling使用说明](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/HCCL_Tiling_usage.md)。
 
     ```
     uint32_t opType = HCCL_CMD_ALLGATHER; // 设置通信任务类型
@@ -375,16 +375,16 @@ OP_ADD(AllGatherMatmulCustom);
     mc2CcTilingConfig.GetTiling(tiling->mc2CcTiling);
     ```
 
-## Kernel实现<a name="zh-cn_topic_0000002400208581_section3459452161617"></a>
+## 核函数（Kernel）实现<a name="zh-cn_topic_0000002400208581_section3459452161617"></a>
 
-在AllGatherMatmul算子的Kernel实现中，需要对本卡数据、通信主块、通信尾块共三种形状的左矩阵进行Matmul运算，为避免重复代码，有必要抽象出一个通用的适用于不同输入形状的Matmul计算函数。设计该Matmul计算函数前，需要考虑Matmul计算需要的基本信息，罗列如下：
+在AllGatherMatmul算子的核函数（Kernel）实现中，需要对本卡数据、通信主块、通信尾块共三种形状的左矩阵进行Matmul运算，为避免重复代码，有必要抽象出一个通用的适用于不同输入形状的Matmul计算函数。设计该Matmul计算函数前，需要考虑Matmul计算需要的基本信息，罗列如下：
 
 -   输入A、B矩阵和输出C矩阵的地址。
 -   TCubeTiling结构体：包含矩阵A、B、C的形状、数据类型等信息，以及A、B矩阵进行Matmul运算时在核间和核内的切分策略。
 
 除了上述Matmul运算所需的信息外，为了快速实现Matmul矩阵乘法，可以使用Matmul高阶API中的Matmul对象来执行计算。如果Matmul对象在Matmul计算函数中定义，每次调用该函数时都会实例化Matmul对象并释放资源，这将导致较大的运行时开销。因此，将该对象也作为Matmul计算函数的参数，以实现对象的复用。
 
-综上所述，在Kernel实现中定义的适用于不同输入形状的Matmul计算函数如下。其中Matmul计算函数函数名定义为MatmulKernel，入参aGM、bGM、cGM表示需要运算的原始输入输出矩阵的地址，入参tiling表示TCubeTiling结构体，入参mm对应Matmul高阶API的实现类。MATMUL\_TYPE是特化了MatmulType模板的类型别名。
+综上所述，在核函数（Kernel）实现中定义的适用于不同输入形状的Matmul计算函数如下。其中Matmul计算函数函数名定义为MatmulKernel，入参aGM、bGM、cGM表示需要运算的原始输入输出矩阵的地址，入参tiling表示TCubeTiling结构体，入参mm对应Matmul高阶API的实现类。MATMUL\_TYPE是特化了MatmulType模板的类型别名。
 
 ```
 using MATMUL_TYPE = MatmulType<AscendC::TPosition::GM, CubeFormat::ND, half>;
@@ -393,7 +393,7 @@ __aicore__ inline void MatmulKernel(__gm__ uint8_t* aGM, __gm__ uint8_t* bGM, __
                                     Matmul<MATMUL_TYPE, MATMUL_TYPE, MATMUL_TYPE> &mm)
 ```
 
-MatmulKernel函数的实现步骤如下。
+Matmul核函数（Kernel）的实现步骤如下。
 
 1.  TCubeTiling结构体存储了Matmul计算所需的核数，在无需计算的核上直接返回，结束计算。
 
@@ -440,7 +440,7 @@ MatmulKernel函数的实现步骤如下。
     mm.IterateAll(cGlobal[offsetC]);
     ```
 
-AllGatherMatmul算子的核函数定义如下，aGM、bGM、cGM、gatherOutGM参数含义如[算子分析](#zh-cn_topic_0000002400208581_section59611034123213)中所述，workspaceGM和tilingGM分别表示wrokspace空间和tiling数据在Global Memory的地址。
+AllGatherMatmul算子的核函数（Kernel）定义如下，aGM、bGM、cGM、gatherOutGM参数含义如[算子分析](#zh-cn_topic_0000002400208581_section59611034123213)中所述，workspaceGM和tilingGM分别表示wrokspace空间和tiling数据在Global Memory的地址。
 
 ```
 extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* aGM, __gm__ uint8_t* bGM, __gm__ uint8_t* cGM, __gm__ uint8_t* gatherOutGM, __gm__ uint8_t* workspaceGM, __gm__ uint8_t* tilingGM)
@@ -543,7 +543,7 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
     hccl.Finalize();
     ```
 
-整合前述代码，完整Kernel代码如下。
+整合前述代码，完整核函数（Kernel）代码如下。
 
 ```
 #define ASCENDC_CUBE_ONLY

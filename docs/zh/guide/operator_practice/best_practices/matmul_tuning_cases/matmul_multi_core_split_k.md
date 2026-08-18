@@ -10,7 +10,7 @@
 
 -   开启多核切K的约束条件
     -   开启多核切K的场景，获取C矩阵结果时仅支持输出到Global Memory。
-    -   开启多核切K的场景，需在Kernel侧代码中首次将C矩阵分片的结果写入Global Memory之前，先对Global Memory进行清零，在获取C矩阵分片的结果时，开启AtomicAdd累加。如果不预先清零Global Memory，可能会因为累加Global Memory中的原始无效数据而产生精度问题。
+    -   开启多核切K的场景，需在核函数（Kernel）侧代码中首次将C矩阵分片的结果写入Global Memory之前，先对Global Memory进行清零，在获取C矩阵分片的结果时，开启AtomicAdd累加。如果不预先清零Global Memory，可能会因为累加Global Memory中的原始无效数据而产生精度问题。
     -   开启多核切K的场景，不支持Bias参与矩阵乘计算。
 
 本案例的算子规格如下：
@@ -72,7 +72,7 @@
 **图1**  开启多核切K<a name="fig194841921104410"></a>  
 ![](../../../figures/multi_k.png "开启多核切K")
 
-开启多核切K功能的方式为：在GetTiling接口前调用EnableMultiCoreSplitK接口，开启多核切K，并在Kernel实现中，对C矩阵的Global Memory地址清零后开启AtomicAdd。开启多核切K的完整样例请参考[多核切K场景的算子样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_splitk)。具体步骤如下：
+开启多核切K功能的方式为：在GetTiling接口前调用EnableMultiCoreSplitK接口，开启多核切K，并在核函数（Kernel）实现中，对C矩阵的Global Memory地址清零后开启AtomicAdd。开启多核切K的完整样例请参考[多核切K场景的算子样例](../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_splitk)。具体步骤如下：
 
 -   Tiling实现
 
@@ -91,7 +91,7 @@
     }
     ```
 
--   Kernel实现
+-   核函数（Kernel）实现
 
     调用Fill接口，对C矩阵的Global Memory地址清零。
 

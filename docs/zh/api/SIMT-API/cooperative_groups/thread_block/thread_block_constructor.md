@@ -47,7 +47,7 @@ thread_block this_thread_block(block_tile_memory<MaxBlockSize>& scratch)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| scratch | 输入 | Global Memory或Unified Buffer上的[block_tile_memory](#block_tile_memory说明)对象，用于为`thread_block`携带跨Warp临时存储。 |
+| scratch | 输入 | Global Memory或UB上的[block_tile_memory](#block_tile_memory说明)对象，用于为`thread_block`携带跨Warp临时存储。 |
 
 ### block_tile_memory说明
 
@@ -74,7 +74,7 @@ struct block_tile_memory
 ## 约束说明
 
 - 线程块实际启动线程数不能超过`MaxBlockSize`。
-- `scratch`对应的[block_tile_memory](#block_tile_memory说明)对象必须位于Global Memory或Unified Buffer，不能是在栈空间中创建的对象。
+- `scratch`对应的[block_tile_memory](#block_tile_memory说明)对象必须位于Global Memory或Unified Buffer（UB），不能是在栈空间中创建的对象。
 
 ## 调用示例
 

@@ -1,8 +1,8 @@
-# 核函数配置
+# 核函数（Kernel）配置
 
-## 核函数定义
+## 核函数（Kernel）定义
 
-核函数是SIMD与SIMT混合编程的Device侧入口函数，负责协调整个算子的执行流程，包括VF的调度和调用。vector计算单元的混合编程场景下，函数定义语法为：
+核函数（Kernel）是SIMD与SIMT混合编程的Device侧入口函数，负责协调整个算子的执行流程，包括VF的调度和调用。vector计算单元的混合编程场景下，函数定义语法为：
 
 ```cpp
 __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2, ...);
@@ -10,10 +10,10 @@ __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2,
 
 关键修饰符说明如下：
 
--   \_\_global\_\_：必需修饰符，作用为标识核函数，表明可在Host侧通过<<<...\>\>\>调用。
+-   \_\_global\_\_：必需修饰符，作用为标识核函数（Kernel），表明可在Host侧通过<<<...\>\>\>调用。
 -   \_\_vector\_\_：必需修饰符，作用为标识函数是在Device侧AIV核上执行。
 
-核函数定义有以下几个约束：
+核函数（Kernel）定义有以下几个约束：
 
 -   返回值类型必须是void；
 -   入参支持指针类型（需使用\_\_gm\_\_修饰）和Ascend C内置数据类型；
@@ -41,7 +41,7 @@ __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2,
 
 ## <<<\>\>\>调用
 
-核函数的调用是通过<<<...\>\>\>内核调用符在Host侧调用，语法如下：
+核函数（Kernel）的调用是通过<<<...\>\>\>内核调用符在Host侧调用，语法如下：
 
 ```cpp
 kernel_name<<<block_num, dyn_ub_size, stream>>>(args...);
@@ -51,7 +51,7 @@ kernel_name<<<block_num, dyn_ub_size, stream>>>(args...);
 
 | 参数 | 类型 | 说明 | 约束 |
 | --- | --- | --- | --- |
-| block_num | uint32_t | 设置核函数启用的核数 | 取值范围[1, 65535] |
+| block_num | uint32_t | 设置核函数（Kernel）启用的核数 | 取值范围[1, 65535] |
 | dyn_ub_size | uint32_t | 指定动态内存大小，单位为字节 | 不超过最大可配置值：256KB - 8KB - 32KB - 静态内存 |
 | stream | aclrtStream | 用于维护异步操作执行顺序 | 无 |
 
@@ -74,15 +74,15 @@ __aicore__ inline void asc_vf_call(dim3 threadNums, Args &&...args)
 
 | 参数名 | 描述 |
 | --- | --- |
-| funcPtr | 用于指定SIMT入口核函数。 |
-| Args | 定义可变参数，用于传递实参到SIMT入口核函数。 |
+| funcPtr | 用于指定SIMT入口核函数（Kernel）。 |
+| Args | 定义可变参数，用于传递实参到SIMT入口核函数（Kernel）。 |
 
 **表3**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | threadNums | 输入 | [dim3类型](./builtin_data_types.md#)，用于指定SIMT线程块内线程数量。线程总数为x * y * z，该值的大小必须小于等于2048，建议为32的倍数。 |
-| args | 输入 | 可变参数，用于传递实参到SIMT入口核函数。 |
+| args | 输入 | 可变参数，用于传递实参到SIMT入口核函数（Kernel）。 |
 
 以下示例展示了SIMD与SIMT混合编程场景下如何使用asc\_vf\_call调用\_\_simt\_vf\_\_函数。
 

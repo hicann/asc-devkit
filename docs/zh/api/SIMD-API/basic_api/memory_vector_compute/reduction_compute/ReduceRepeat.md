@@ -182,7 +182,7 @@
     | MAX/MIN | `float` | `ORDER_ONLY_VALUE` | 4字节对齐 | 4字节 |
     | MAX/MIN | `float` | `ORDER_ONLY_INDEX` | 4字节对齐 | 4字节 |
 
-- `dstRepStride`、`srcBlkStride`、`srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合UB的实际大小避免出现越界。
+- `dstRepStride`、`srcBlkStride`、`srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合Unified Buffer（UB）的实际大小避免出现越界。
 
 <!-- npu="950,A3,910b" id27 -->
 - 当参数mask或repeatTime取值为0时，该接口的行为如下：
@@ -203,8 +203,8 @@
 
 <!-- npu="950" id32 -->
 - 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
-  - tensor高维切分计算占用8KB Unified Buffer。
-  - tensor前n个数据连续计算不涉及8KB Unified Buffer的占用。
+  - tensor高维切分计算占用8KB UB。
+  - tensor前n个数据连续计算不涉及8KB UB的占用。
 <!-- end id32 -->
 - 归约操作类型取MAX或MIN时的约束：
   - 如果存在多个最值，该指令会将最小索引写入目的操作数。

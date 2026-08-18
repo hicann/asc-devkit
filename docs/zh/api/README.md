@@ -815,7 +815,7 @@
             -   [REGISTER\_TILING\_DEFAULT](SIMD-API/basic_api/Kernel-Tiling/REGISTER_TILING_DEFAULT.md)
             -   [REGISTER\_TILING\_FOR\_TILINGKEY](SIMD-API/basic_api/Kernel-Tiling/REGISTER_TILING_FOR_TILINGKEY.md)
             -   [REGISTER\_NONE\_TILING](SIMD-API/basic_api/Kernel-Tiling/REGISTER_NONE_TILING.md)
-            -   [设置Kernel类型](SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)
+            -   [设置核函数（Kernel）类型](SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)
         
         -   [特殊寄存器访问](SIMD-API/basic_api/special_register_access/special_register_access.md)
             -   [GetSpr](SIMD-API/basic_api/special_register_access/GetSpr.md)
@@ -1597,7 +1597,7 @@
             -   [更多样例](SIMD-API/adv_api/math_compute/more_examples.md)
 
         -   [矩阵计算](SIMD-API/adv_api/cube_compute/cube_compute.md)
-            -   [Matmul Kernel侧接口](SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)
+            -   [Matmul核函数（Kernel）侧接口](SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)
                 -   [Matmul使用说明](SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_usage.md)
                 -   [Matmul模板参数](SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_template_params.md)
                 -   [MatmulConfig](SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)
@@ -1874,7 +1874,7 @@
             -   [Fill](SIMD-API/adv_api/tensor_transform/Fill.md)
 
         -   [HCCL通信类](SIMD-API/adv_api/HCCL_communication/HCCL_communication.md)
-            -   [HCCL Kernel侧接口](SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_Kernel.md)
+            -   [HCCL核函数（Kernel）侧接口](SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_Kernel.md)
                 -   [HCCL使用说明](SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md)
                 -   [HCCL模板参数](SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_template_params.md)
                 -   [InitV2](SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/InitV2.md)
@@ -1926,7 +1926,7 @@
                 -   [GetHcclContext](SIMD-API/adv_api/HCCL_communication/HCCL-Context/GetHcclContext.md)
 
         -   [卷积计算](SIMD-API/adv_api/convolution_compute/convolution_compute.md)
-            -   [Conv3D Kernel侧接口](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Conv3d_Kernel.md)
+            -   [Conv3D核函数（Kernel）侧接口](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Conv3d_Kernel.md)
                 -   [Conv3D使用说明](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Conv3D_usage.md)
                 -   [Conv3D模板参数](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Conv3D_template_params.md)
                 -   [Init](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Init.md)
@@ -1956,7 +1956,7 @@
                 -   [SetStride](SIMD-API/adv_api/convolution_compute/Conv3D_Tiling/SetStride.md)
                 -   [SetGroups](SIMD-API/adv_api/convolution_compute/Conv3D_Tiling/SetGroups.md)
 
-            -   [Conv3DBackpropInput Kernel侧接口](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Kernel/Conv3DBackpropInput_Kernel.md)
+            -   [Conv3DBackpropInput核函数（Kernel）侧接口](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Kernel/Conv3DBackpropInput_Kernel.md)
                 -   [Conv3DBackpropInput使用说明](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Kernel/Conv3DBackpropInput_usage.md)
                 -   [Init](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Kernel/Init.md)
                 -   [SetGradOutput](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Kernel/SetGradOutput.md)
@@ -1983,7 +1983,7 @@
                 -   [SetDilation](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Tiling/SetDilation.md)
                 -   [SetOutputPadding](SIMD-API/adv_api/convolution_compute/Conv3DBackpropInput_Tiling/SetOutputPadding.md)
 
-            -   [Conv3DBackpropFilter Kernel侧接口](SIMD-API/adv_api/convolution_compute/Conv3DBackpropFilter_Kernel/Conv3DBackpropFilter_Kernel.md)
+            -   [Conv3DBackpropFilter核函数（Kernel）侧接口](SIMD-API/adv_api/convolution_compute/Conv3DBackpropFilter_Kernel/Conv3DBackpropFilter_Kernel.md)
                 -   [Conv3DBackpropFilter使用说明](SIMD-API/adv_api/convolution_compute/Conv3DBackpropFilter_Kernel/Conv3DBackpropFilter_usage.md)
                 -   [Init](SIMD-API/adv_api/convolution_compute/Conv3DBackpropFilter_Kernel/Init.md)
                 -   [SetInput](SIMD-API/adv_api/convolution_compute/Conv3DBackpropFilter_Kernel/SetInput.md)
@@ -2022,7 +2022,7 @@
             -   [内置数据类型](SIMT-API/SIMT_programming_intro/extended_syntax/builtin_data_types.md)
             -   [内置变量](SIMT-API/SIMT_programming_intro/extended_syntax/builtin_variables.md)
             -   [内置宏](SIMT-API/SIMT_programming_intro/extended_syntax/builtin_macros.md)
-            -   [核函数配置](SIMT-API/SIMT_programming_intro/extended_syntax/kernel_function_config.md)
+            -   [核函数（Kernel）配置](SIMT-API/SIMT_programming_intro/extended_syntax/kernel_function_config.md)
 
         -   [API列表](SIMT-API/SIMT_programming_intro/api_list.md)
 
@@ -2034,7 +2034,7 @@
             -   [内置数据类型](SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/builtin_data_types.md)
             -   [内置变量](SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/builtin_variables.md)
             -   [内置宏](SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/builtin_macros.md)
-            -   [核函数配置](SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config.md)
+            -   [核函数（Kernel）配置](SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config.md)
 
         -   [API列表](SIMT-API/SIMD_SIMT_hybrid_programming_intro/api_list.md)
 

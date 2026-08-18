@@ -32,9 +32,9 @@
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Global Memory -> Unified Buffer
+- Global Memory -> UB
     - GM -> VECIN
-- Unified Buffer -> Global Memory
+- UB -> Global Memory
     - VECOUT -> GM
 
 ## 函数原型<a name="section620mcpsimp"></a>

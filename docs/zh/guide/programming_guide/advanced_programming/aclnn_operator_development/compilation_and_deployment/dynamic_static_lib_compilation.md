@@ -4,7 +4,7 @@
 
 ## 算子动态库和静态库
 
-算子动态库和静态库编译，是将算子Kernel实现、Host侧Tiling实现、入图适配文件，以及自动生成的单算子调用代码编译链接成库文件的过程。编译后会同时生成单算子调用aclnn头文件和算子原型定义头文件，分别用于单算子调用和算子入图场景。
+算子动态库和静态库编译，是将算子核函数（Kernel）实现、Host侧Tiling实现、入图适配文件，以及自动生成的单算子调用代码编译链接成库文件的过程。编译后会同时生成单算子调用aclnn头文件和算子原型定义头文件，分别用于单算子调用和算子入图场景。
 
 和`.run`算子包相比，动态库或静态库更适合被应用工程直接链接；`.run`算子包更适合安装到OPP的`vendors/<vendor_name>`路径后供运行环境使用。不同产物形态的典型使用方式如下。
 
@@ -27,7 +27,7 @@
 
 开始前需完成以下准备：
 
-- 已完成算子原型定义、Host侧Tiling实现和Kernel侧实现；
+- 已完成算子原型定义、Host侧Tiling实现和核函数（Kernel）侧实现；
 - 工程使用`find_package(ASC)`和`npu_op_package`组织编译；
 - 已配置CANN环境变量，例如执行`source ${install_path}/cann/set_env.sh`；
 - 已在`CMakePresets.json`或CMake命令中配置`vendor_name`、`ASCEND_COMPUTE_UNIT`、`CMAKE_INSTALL_PREFIX`等参数。

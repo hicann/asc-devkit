@@ -7,7 +7,7 @@
 AI Core负责执行矩阵、矢量计算密集的任务，其包括以下组成部分：
 
 -   **计算单元**：包括Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元。
--   **存储单元**：包括L1 Buffer、L0A Buffer、L0B Buffer、L0C Buffer、Unified Buffer、BiasTable Buffer、Fixpipe Buffer等专为高效计算设计的存储单元。
+-   **存储单元**：包括L1 Buffer、L0A Buffer、L0B Buffer、L0C Buffer、Unified Buffer（UB）、BiasTable Buffer、Fixpipe Buffer等专为高效计算设计的存储单元。
 -   **搬运单元**：包括MTE1、MTE2、MTE3和FixPipe，用于数据在不同存储单元之间的高效传输。
 
 以Atlas A2 训练系列产品/Atlas A2 推理系列产品为例，硬件架构图如下：
@@ -95,7 +95,7 @@ AI Core负责执行矩阵、矢量计算密集的任务，其包括以下组成�
 
     Vector负责执行向量运算。向量计算单元执行向量指令，类似于传统的单指令多数据（Single Instruction Multiple Data，SIMD）指令，每个向量指令可以完成多个操作数的同一类型运算。向量计算单元可以快速完成两个float16类型的向量相加或者相乘。向量指令支持多次迭代执行，也支持对带有间隔的向量直接进行运算。
 
-    如下图所示，Vector所有计算的源数据以及目标数据都要求存储在Unified Buffer中，Vector指令的首地址和操作长度有对齐要求，通常要求32B对齐，具体对齐要求参考API的约束描述。
+    如下图所示，Vector所有计算的源数据以及目标数据都要求存储在UB中，Vector指令的首地址和操作长度有对齐要求，通常要求32B对齐，具体对齐要求参考API的约束描述。
 
     **图4**  Vector计算单元数据访问<a name="fig172397519590"></a>  
     ![](../../../figures/vec_access.png "Vector计算单元数据访问")
@@ -116,7 +116,7 @@ AI Core负责执行矩阵、矢量计算密集的任务，其包括以下组成�
 
 AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输入数据能够及时准确地出现在计算单元中，需要精心设计存储系统，保证计算单元所需的数据供应。
 
-如下图所示：AI Core中包含多级内部存储，AI Core需要把外部存储中的数据加载到内部存储中，才能完成相应的计算。AI Core的主要内部存储包括：L1 Buffer（L1缓冲区），L0 Buffer（L0缓冲区），Unified Buffer（统一缓冲区）等。为了配合AI Core中的数据传输和搬运，AI Core中还包含MTE（Memory Transfer Engine，数据传递引擎）搬运单元，在搬运过程中可执行随路数据格式/类型转换。
+如下图所示：AI Core中包含多级内部存储，AI Core需要把外部存储中的数据加载到内部存储中，才能完成相应的计算。AI Core的主要内部存储包括：L1 Buffer（L1缓冲区），L0 Buffer（L0缓冲区），UB等。为了配合AI Core中的数据传输和搬运，AI Core中还包含MTE（Memory Transfer Engine，数据传递引擎）搬运单元，在搬运过程中可执行随路数据格式/类型转换。
 
 内部存储单元和搬运单元的具体介绍请参考[表1](#table1692510612218)和[表2](#table288493152012)。
 
@@ -147,9 +147,9 @@ AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输
 <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.2.3.1.2 "><p id="p49269611212"><a name="p49269611212"></a><a name="p49269611212"></a>Cube指令的输出，但进行累加计算的时候，也是输入的一部分。</p>
 </td>
 </tr>
-<tr id="row9926467213"><td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.2.3.1.1 "><p id="p1692614642117"><a name="p1692614642117"></a><a name="p1692614642117"></a>Unified Buffer</p>
+<tr id="row9926467213"><td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.2.3.1.1 "><p id="p1692614642117"><a name="p1692614642117"></a><a name="p1692614642117"></a>UB</p>
 </td>
-<td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.2.3.1.2 "><p id="p59267692111"><a name="p59267692111"></a><a name="p59267692111"></a>统一缓冲区，向量和标量计算的输入和输出。</p>
+<td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.2.3.1.2 "><p id="p59267692111"><a name="p59267692111"></a><a name="p59267692111"></a>UB，向量和标量计算的输入和输出。</p>
 </td>
 </tr>
 <tr id="row185871713151111"><td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.2.3.1.1 "><p id="p8186194819417"><a name="p8186194819417"></a><a name="p8186194819417"></a><span>BT Buffer</span></p>

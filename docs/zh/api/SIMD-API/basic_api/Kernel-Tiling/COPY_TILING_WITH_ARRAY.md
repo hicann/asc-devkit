@@ -79,10 +79,10 @@ COPY_TILING_WITH_ARRAY(arr_type, arr_count, src_ptr, dst_ptr)
 
 ## 约束说明<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
--   该宏需在算子Kernel代码处使用，并且传入的dst\_ptr参数无需声明类型。
+-   该宏需在算子核函数（Kernel）代码处使用，并且传入的dst\_ptr参数无需声明类型。
 -   该宏需要和[GET\_TILING\_DATA\_PTR\_WITH\_STRUCT](GET_TILING_DATA_PTR_WITH_STRUCT.md)配合使用，输入参数src\_ptr为GET\_TILING\_DATA\_PTR\_WITH\_STRUCT获取到的指针。
 -   该宏获取到的dst\_ptr指针指向的数组是局部变量，请确保在合理作用域范围内使用。
--   暂不支持Kernel直调工程。
+-   暂不支持核函数（Kernel）直调工程。
 
 ## 调用示例<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

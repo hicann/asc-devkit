@@ -51,7 +51,7 @@
     >[!NOTE]说明
     >当使用高阶API Matmul时，其内部已通过REGIST\_MATMUL\_OBJ宏方式实现了AIV与AIC核代码的隔离，用户无需再使用该宏进行处理。
 
-    以MatmulNzCustom算子为例，该算子在分离模式下需要分别在AIV核和AIC核上实现不同的逻辑。具体而言，AIV核负责将矩阵数据搬入Unified Buffer，完成数据的重排（将矩阵数据转换为NZ格式），并将其写入Global Memory。而AIC核则直接从Global Memory读取已经重排好的NZ格式数据，并执行矩阵乘法（Matmul）计算。由于AIV核和AIC核的代码逻辑不同，需要通过ASCEND\_IS\_AIV和ASCEND\_IS\_AIC宏进行代码隔离，确保在编译时分别生成适用于AIV核和AIC核的代码。
+    以MatmulNzCustom算子为例，该算子在分离模式下需要分别在AIV核和AIC核上实现不同的逻辑。具体而言，AIV核负责将矩阵数据搬入Unified Buffer（UB），完成数据的重排（将矩阵数据转换为NZ格式），并将其写入Global Memory。而AIC核则直接从Global Memory读取已经重排好的NZ格式数据，并执行矩阵乘法（Matmul）计算。由于AIV核和AIC核的代码逻辑不同，需要通过ASCEND\_IS\_AIV和ASCEND\_IS\_AIC宏进行代码隔离，确保在编译时分别生成适用于AIV核和AIC核的代码。
 
     示例伪码如下：
 
@@ -122,7 +122,7 @@
 
 -   **\_\_global\_\_**
 
-    \_\_global\_\_执行空间限定符声明一个Kernel函数。Kernel函数有如下性质：在Device上执行；只能被Host侧函数调用；\_\_global\_\_只是表示这是Device侧函数的入口，并不表示具体的设备类型，具体的设备类型由\_\_aicore\_\_标记。具有如下使用约束：
+    \_\_global\_\_执行空间限定符声明一个核函数（Kernel）。核函数（Kernel）有如下性质：在Device上执行；只能被Host侧函数调用；\_\_global\_\_只是表示这是Device侧函数的入口，并不表示具体的设备类型，具体的设备类型由\_\_aicore\_\_标记。具有如下使用约束：
 
     -   一个\_\_global\_\_函数必须返回void类型，并且不能是class的成员函数。
     -   主机侧调用\_\_global\_\_函数必须使用<<<\>\>\>异构调用语法。
@@ -174,7 +174,7 @@
 
 -   **\_\_aicpu\_\_**
 
-    AI CPU函数执行空间限定符\_\_aicpu\_\_用于指示函数是否为AI CPU Kernel函数，它具有如下属性：
+    AI CPU函数执行空间限定符\_\_aicpu\_\_用于指示函数是否为AI CPU核函数（Kernel），它具有如下属性：
 
     -   在Device侧执行且只能被Host侧函数调用，因此必须与\_\_global\_\_同时声明。
     -   一个\_\_global\_\_ \_\_aicpu\_\_函数不能是void返回类型，并且入参只能是一个指针。
@@ -207,7 +207,7 @@
 
 -   **\_\_cube\_\_**
 
-    标识该核函数仅在Cube核执行。针对耦合模式的硬件架构，该修饰符不生效。
+    标识该核函数（Kernel）仅在Cube核执行。针对耦合模式的硬件架构，该修饰符不生效。
 
     ```
     extern "C" __global__ __cube__ void mmad_custom(GM_ADDR a, GM_ADDR b, GM_ADDR c)
@@ -220,7 +220,7 @@
 
 -   **\_\_vector\_\_**
 
-    标识该核函数仅在Vector核执行。针对耦合模式的硬件架构，该修饰符不生效。
+    标识该核函数（Kernel）仅在Vector核执行。针对耦合模式的硬件架构，该修饰符不生效。
 
     ```
      __vector__ __global__ __aicore__ void add_custom(){}
@@ -228,15 +228,15 @@
 
 -   **\_\_mix\_\_\(cube, vec\)**
 
-    标识该核函数同时在Cube核和Vector核上执行。\(cube, vec\)分别表示核函数启动的Cube核和Vector核的配比，支持的配比为\(1, 0\)、\(0, 1\)、\(1, 1\)和\(1, 2\)。在该修饰符生效的非耦合架构上，`__mix__(1, 0)`等价于`__cube__`，`__mix__(0, 1)`等价于`__vector__`，可分别使用__cube__和__vector__替代。针对耦合模式的硬件架构，该修饰符不生效。
+    标识该核函数（Kernel）同时在Cube核和Vector核上执行。\(cube, vec\)分别表示核函数（Kernel）启动的Cube核和Vector核的配比，支持的配比为\(1, 0\)、\(0, 1\)、\(1, 1\)和\(1, 2\)。在该修饰符生效的非耦合架构上，`__mix__(1, 0)`等价于`__cube__`，`__mix__(0, 1)`等价于`__vector__`，可分别使用__cube__和__vector__替代。针对耦合模式的硬件架构，该修饰符不生效。
 
 -   **\_\_schedmode\_\_\(mode\)**
 
-    标识该核函数的执行调度模式。如下图所示：
+    标识该核函数（Kernel）的执行调度模式。如下图所示：
 
-    -   mode = 0 : normal mode，尽可能选择空闲物理核下发执行核函数，若空闲物理核数无法满足当前核函数的需要，没有下发的部分等待核心空闲后执行。此时OP1和OP2算子会存在交叠执行（overlap）的情况。
+    -   mode = 0 : normal mode，尽可能选择空闲物理核下发执行核函数（Kernel），若空闲物理核数无法满足当前核函数（Kernel）的需要，没有下发的部分等待核心空闲后执行。此时OP1和OP2算子会存在交叠执行（overlap）的情况。
 
-    -   mode = 1 : batch mode，在下发核函数时先进行判断，若空闲物理核数无法满足当前核函数的需要，则等待至空闲物理核数满足该核函数所需要的所有物理核时，同时下发执行，OP1和OP2的执行被切分（split）开，不会出现交叠执行的情况。
+    -   mode = 1 : batch mode，在下发核函数（Kernel）时先进行判断，若空闲物理核数无法满足当前核函数（Kernel）的需要，则等待至空闲物理核数满足该核函数（Kernel）所需要的所有物理核时，同时下发执行，OP1和OP2的执行被切分（split）开，不会出现交叠执行的情况。
 
     ![](../../figures/batchmode.png)
 
@@ -313,7 +313,7 @@ AI Core具备多级独立片上存储，各个地址空间独立编址，具备�
 | 地址空间限定符 | AI Core物理存储空间 |
 |----------------|---------------------|
 | __gm__ | 设备侧内存GM |
-| __ubuf__ | Vector Unified Buffer |
+| __ubuf__ | Vector UB |
 | __ca__ | Cube L0A Buffer |
 | __cb__ | Cube L0B Buffer |
 | __cc__ | Cube L0C Buffer |
@@ -429,7 +429,7 @@ __ubuf__ int * __gm__ ptr;
 | 常量名 | 取值 | 功能 |
 |--------|------|------|
 | constexpr int32_t g_coreType | AscendC::AIC<br>AscendC::AIV | 常量值由框架自动设置，AIC核下，配置为AscendC::AIC，AIV核下，配置为AscendC::AIV。可以通过对该常量值的判断，来实现了AIV与AIC核代码的区分和隔离。功能等同于直接使用ASCEND_IS_AIV、ASCEND_IS_AIC。 |
-| constexpr uint64_t ASC_UB_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下Unified Buffer（UB）的容量，可用于编译期获取UB资源大小。 |
+| constexpr uint64_t ASC_UB_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下UB的容量，可用于编译期获取UB资源大小。 |
 | constexpr uint64_t ASC_L1_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下L1 Buffer的容量，可用于编译期获取L1 Buffer大小。 |
 | constexpr uint64_t ASC_L0A_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下L0A Buffer的容量，可用于编译期获取L0A Buffer大小。 |
 | constexpr uint64_t ASC_L0B_SIZE | 取值由当前AI处理器决定，若该AI处理器不存在这块空间，则默认配置为0。 | 表示当前AI处理器架构下L0B Buffer的容量，可用于编译期获取L0B Buffer大小。 |
@@ -454,7 +454,7 @@ __ubuf__ int * __gm__ ptr;
 例如，在Atlas 推理系列产品中，当启用KERNEL_TYPE_MIX_VECTOR_CORE时，算子会同时运行在AI Core和Vector Core上。此时，block_idx在这两种核心上都是从0开始计数，用户无法直接通过block_idx来切分数据和控制多核逻辑。而GetBlockIdx在Vector Core上对block_idx增加偏移量（AI Core的block_num），从而保证返回的值能够正确反映多核环境下的实际逻辑。
 <!-- end id7 -->
 
-## 核函数配置<a name="section97005415463"></a>
+## 核函数（Kernel）配置<a name="核函数配置"></a><a name="section97005415463"></a>
 
 在调用\_\_global\_\_限定符修饰的函数时必须指定执行配置。执行配置通过在函数名和带括号的参数列表之间插入如下形式的表达式来指定：
 
@@ -463,7 +463,7 @@ __ubuf__ int * __gm__ ptr;
 ```
 
 其中：
--   numBlocks：规定了核函数将会在几个核上执行。每个执行该核函数的核会被分配一个逻辑ID，即block\_idx，可以在核函数的实现中使用内置变量[block_idx](../language_extension/simd_builtin_keywords.md#内置变量)获取；
+-   numBlocks：规定了核函数（Kernel）将会在几个核上执行。每个执行该核函数（Kernel）的核会被分配一个逻辑ID，即block\_idx，可以在核函数（Kernel）的实现中使用内置变量[block_idx](../language_extension/simd_builtin_keywords.md#内置变量)获取；
 
     >[!NOTE]说明 
     >numBlocks是逻辑核的概念，取值范围为\[1,65535\]。为了充分利用硬件资源，一般设置为物理核的核数或其倍数。
@@ -476,10 +476,10 @@ __ubuf__ int * __gm__ ptr;
     >        - AIC/AIV的核数分别通过[GetCoreNumAic](../../../api/Utils-API/platform_info/PlatformAscendC/GetCoreNumAic.md)和[GetCoreNumAiv](../../../api/Utils-API/platform_info/PlatformAscendC/GetCoreNumAiv.md)接口获取。
     >- 如果开发者使用了Device资源限制特性，那么算子设置的numBlocks不应超过[PlatformAscendC](../../../api/Utils-API/platform_info/PlatformAscendC/PlatformAscendC.md)提供核数的API（GetCoreNum/GetCoreNumAic/GetCoreNumAiv等）返回的核数。例如，使用aclrtSetStreamResLimit设置Stream级别的Vector核数为8，那么GetCoreNumAiv接口返回值为8，针对Vector算子设置的numBlocks不应超过8，否则会抢占其他Stream的资源，导致资源限制失效。
 
--   dynUBufSize：Dynamic Unified Buffer Size，是配置UB动态内存分配的空间的大小（仅限UB，不包括L1等），单位为Byte，默认设置为0；
+-   dynUBufSize：Dynamic UB Size，是配置UB动态内存分配的空间的大小（仅限UB，不包括L1等），单位为Byte，默认设置为0；
 -   stream：类型为aclrtStream，stream用于维护一些异步操作的执行顺序，确保按照应用程序中的代码调用顺序在device上执行，默认设置为nullptr。stream创建等管理接口请参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
 
-以下示例展示了内核函数的声明与调用方式。
+以下示例展示了核函数（Kernel）的声明与调用方式。
 
 ```
 // 声明

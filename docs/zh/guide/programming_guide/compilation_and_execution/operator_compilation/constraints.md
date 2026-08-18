@@ -1,7 +1,7 @@
 # 约束说明<a name="ZH-CN_TOPIC_0000002507564342"></a>
 
-- 在同一个编译单元，若存在多个核函数，暂不支持自动推导Kernel类型，需要开发者手动设置Kernel类型。
-    - 特别地，针对如下型号，无论是否是同一个编译单元多个核函数的场景，均不支持在开发者未设置Kernel类型时进行自动推导。建议开发者手动设置Kernel类型。
+- 在同一个编译单元，若存在多个核函数（Kernel），暂不支持自动推导核函数（Kernel）类型，需要开发者手动设置核函数（Kernel）类型。
+    - 特别地，针对如下型号，无论是否是同一个编译单元多个核函数（Kernel）的场景，均不支持在开发者未设置核函数（Kernel）类型时进行自动推导。建议开发者手动设置核函数（Kernel）类型。
         <!-- npu="950" id1 -->
         - Ascend 950PR/Ascend 950DT
         <!-- end id1 -->
@@ -9,10 +9,10 @@
         - Atlas 推理系列产品
         <!-- end id2 -->
 
-- Kernel函数推荐使用 \_\_cube\_\_ / \_\_vector\_\_ / \_\_mix\_\_(cube, vec)进行标记，KERNEL\_TASK\_TYPE\_DEFAULT接口即将废弃。
+- 核函数（Kernel）推荐使用 \_\_cube\_\_ / \_\_vector\_\_ / \_\_mix\_\_(cube, vec)进行标记，KERNEL\_TASK\_TYPE\_DEFAULT接口即将废弃。
 
 - 纯Scalar算子无法实现自动推导
-    需手动标记Kernel函数类型，推荐设置为纯Vector类型，添加\_\_vector\_\_ attribute进行标记：
+    需手动标记核函数（Kernel）类型，推荐设置为纯Vector类型，添加\_\_vector\_\_ attribute进行标记：
 
     ```cpp
     __global__ __vector__ __aicore__ void func0(__gm__ uint8_t* Addr) {

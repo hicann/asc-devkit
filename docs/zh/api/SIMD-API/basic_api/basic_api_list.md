@@ -35,7 +35,7 @@
 | [LoadDataWithStride](cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md) | LoadDataWithStride本质上是用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置，支持配置输出矩阵K轴方向偏移量。 |
 | [LoadDataWithTranspose](cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md) | LoadDataWithTranspose负责完成普通矩阵计算所需的2D格式的数据的搬运，搬运过程中会伴随转置操作，参考特性分形转置。 |
 | [LoadDataWithSparse](cube_compute_ISASI/cube_compute_load/LoadDataWithSparse.md) | 用于从L1 Buffer中搬运以512字节为单位存放的稠密权重矩阵到L0B Buffer里，同时搬运以128字节为单位的索引矩阵到内置的专用buffer空间（用于后续MmadWithSparse接口进行读取）。 |
-| [BroadCastVecToMM(ISASI)](cube_compute_ISASI/cube_compute_load/BroadCastVecToMM_ISASI.md) | 将矢量数据广播到矩阵中，每个数据块中的每16个元素会被连续复制16次，支持Unified Buffer到L0C Buffer的数据传输通路。 |
+| [BroadCastVecToMM(ISASI)](cube_compute_ISASI/cube_compute_load/BroadCastVecToMM_ISASI.md) | 将矢量数据广播到矩阵中，每个数据块中的每16个元素会被连续复制16次，支持UB到L0C Buffer的数据传输通路。 |
 | [DataCopy（L1ToBiasTable-Buffer数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable.md) | DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动到BiasTable Buffer。 |
 | [DataCopy（L1ToFixpipe-Buffer数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_L1ToFixpipe.md) | DataCopy数据搬运支持将随路量化参数从L1 Buffer移动到Fixpipe Buffer。 |
 
@@ -50,10 +50,10 @@
 | [DataCopyPad（GMToL1非对齐数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopyPad_GMToL1.md) | 该接口提供从Global Memory到L1 Buffer的数据非对齐搬运功能，可以根据开发者的需要自行填充数据。 |
 | [LoadData（GMToL1-2D矩阵搬运）](cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2D.md) | 负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512字节的数据分形为单位从Global Memory搬运至L1 Buffer（TPosition为A1/B1）。 |
 | [LoadData（GMToL1-2D矩阵搬运V2）](cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2DV2.md) | 负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512字节的数据分形为单位从Global Memory搬运至L1 Buffer（TPosition为A1/B1）。 |
-| [DataCopy（UBToL1连续数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_continuous.md) | 该接口实现将矩阵从Unified Buffer（UB，TPosition为VECIN/VECCALC/VECOUT）搬运至L1 Buffer，搬运方式为连续搬运，数据搬运时格式和内容保持不变。 |
-| [DataCopy（UBToL1高维切分数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_highdim_split.md) | 该接口实现将矩阵从Unified Buffer（UB，TPosition为VECIN/VECCALC/VECOUT）搬运至L1 Buffer，支持非连续搬运和连续搬运，数据搬运时格式和内容保持不变。 |
-| [DataCopyPad（UBToL1非对齐数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopyPad_UBToL1.md) | 该接口提供从Unified Buffer到L1 Buffer的数据非对齐搬运功能。 |
-| [DataCopy（UBToL1随路转换-ND2NZ搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_ND2NZ.md) | 支持在数据搬运时进行ND到NZ格式的转换。数据从Unified Buffer（UB，TPosition为VECIN/VECCALC/VECOUT）搬运至L1 Buffer，搬运过程中完成ND->NZ格式转换。 |
+| [DataCopy（UBToL1连续数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_continuous.md) | 该接口实现将矩阵从UB（TPosition为VECIN/VECCALC/VECOUT）搬运至L1 Buffer，搬运方式为连续搬运，数据搬运时格式和内容保持不变。 |
+| [DataCopy（UBToL1高维切分数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_highdim_split.md) | 该接口实现将矩阵从UB（TPosition为VECIN/VECCALC/VECOUT）搬运至L1 Buffer，支持非连续搬运和连续搬运，数据搬运时格式和内容保持不变。 |
+| [DataCopyPad（UBToL1非对齐数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopyPad_UBToL1.md) | 该接口提供从UB到L1 Buffer的数据非对齐搬运功能。 |
+| [DataCopy（UBToL1随路转换-ND2NZ搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_ND2NZ.md) | 支持在数据搬运时进行ND到NZ格式的转换。数据从UB（TPosition为VECIN/VECCALC/VECOUT）搬运至L1 Buffer，搬运过程中完成ND->NZ格式转换。 |
 
 ### 辅助配置接口
 
@@ -95,7 +95,7 @@
 | [Fixpipe（L0C到GM数据搬运）](cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) | 矩阵计算的结果存放在L0C Buffer，Fixpipe接口用于将结果搬运至Global Memory（GM）中，并且在搬运过程中支持随路格式转换等操作。 |
 | [DataCopy（L0C到L1数据搬运）](cube_compute_ISASI/cube_compute_store/DataCopy_L0CToL1.md) | 矩阵计算的结果存放在L0C Buffer，DataCopy接口用于将结果搬运至L1 Buffer中，并且在搬运过程中支持随路格式转换等操作。 |
 | [Fixpipe（L0C到L1数据搬运）](cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1.md) | 矩阵计算的结果存放在L0C Buffer，Fixpipe接口用于将结果搬运至L1 Buffer中，并且在搬运过程中支持随路格式转换等操作。 |
-| [Fixpipe（L0C Buffer到UB数据搬运）](cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md) | 矩阵计算的结果存放在L0C Buffer，Fixpipe接口用于将结果搬运至Unified Buffer（UB）中，并且在搬运过程中支持随路格式转换等操作。 |
+| [Fixpipe（L0C Buffer到UB数据搬运）](cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md) | 矩阵计算的结果存放在L0C Buffer，Fixpipe接口用于将结果搬运至UB中，并且在搬运过程中支持随路格式转换等操作。 |
 
 ### L1到GM数据搬运
 
@@ -144,28 +144,28 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Copy（L0C Buffer到Global Memory数据搬运）](cube_compute_TensorAPI/cube_compute_store/Copy_L0CToGM.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Global Memory。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到Global Memory时，接口会根据目的张量布局自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。 |
-| [Copy（L0C Buffer到Unified Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_store/Copy_L0CToUB.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Unified Buffer。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到Unified Buffer时，接口会根据目的张量格式自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。 |
+| [Copy（L0C Buffer到Unified Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_store/Copy_L0CToUB.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到UB。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到UB时，接口会根据目的张量格式自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。 |
 
 ## Memory矢量计算
 
 ### 数据搬运
 | 接口名 | 功能描述 |
 | --- | --- |
-| [DataCopy（GM与UB连续数据搬运）](memory_vector_compute/data_move/DataCopy_GMAndUB_continuous.md) | 支持Global Memory与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [DataCopy（GM与UB高维切分数据搬运）](memory_vector_compute/data_move/DataCopy_GMAndUB_highdim_split.md) | 支持Global Memory与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [DataCopy（GM与UB连续数据搬运）](memory_vector_compute/data_move/DataCopy_GMAndUB_continuous.md) | 支持Global Memory与UB之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [DataCopy（GM与UB高维切分数据搬运）](memory_vector_compute/data_move/DataCopy_GMAndUB_highdim_split.md) | 支持Global Memory与UB之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
 | [DataCopy（GM与UB切片数据搬运）](memory_vector_compute/data_move/DataCopy_GMAndUB_slice.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持数据的切片搬运，提取多维Tensor数据的子集进行搬运。 |
-| [DataCopy（GMToUB随路转换ND2NZ搬运）](memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Global Memory到Unified Buffer的数据搬运过程中进行ND到NZ格式的转换。 |
-| [DataCopy（UBToGM随路转换NZ2ND搬运）](memory_vector_compute/data_move/DataCopy_UBToGM_NZ2ND.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Unified Buffer到Global Memory的数据搬运过程中进行NZ到ND格式的转换。 |
+| [DataCopy（GMToUB随路转换ND2NZ搬运）](memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从Global Memory到UB的数据搬运过程中进行ND到NZ格式的转换。 |
+| [DataCopy（UBToGM随路转换NZ2ND搬运）](memory_vector_compute/data_move/DataCopy_UBToGM_NZ2ND.md) | 该接口为软仿接口，从易用性角度出发进行设计，支持在从UB到Global Memory的数据搬运过程中进行NZ到ND格式的转换。 |
 | [DataCopy（GMToUB多维数据搬运NDDMA）](memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md) | 多维数据搬运接口，相比于基础数据搬运接口，可更加自由配置搬入的维度信息以及对应的Stride。 |
-| [DataCopyPad（GMToUB非对齐数据搬运）](memory_vector_compute/data_move/DataCopyPad_GMToUB.md) | 该接口提供将数据从Global Memory非对齐搬运至Unified Buffer的功能，可以根据开发者的需要自行填充数据。 |
-| [DataCopyPad（UBToGM非对齐数据搬运）](memory_vector_compute/data_move/DataCopyPad_UBToGM.md) | 该接口提供将数据从Unified Buffer非对齐搬运至Global Memory的功能。 |
-| [SetPadValue(ISASI)](memory_vector_compute/data_move_aux_config/SetPadValue_ISASI.md) | 从Global Memory将数据非对齐搬运至Unified Buffer时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。 |
+| [DataCopyPad（GMToUB非对齐数据搬运）](memory_vector_compute/data_move/DataCopyPad_GMToUB.md) | 该接口提供将数据从Global Memory非对齐搬运至UB的功能，可以根据开发者的需要自行填充数据。 |
+| [DataCopyPad（UBToGM非对齐数据搬运）](memory_vector_compute/data_move/DataCopyPad_UBToGM.md) | 该接口提供将数据从UB非对齐搬运至Global Memory的功能。 |
+| [SetPadValue(ISASI)](memory_vector_compute/data_move_aux_config/SetPadValue_ISASI.md) | 从Global Memory将数据非对齐搬运至UB时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。 |
 | [SetLoopModePara](memory_vector_compute/data_move_aux_config/SetLoopModePara.md) | DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过ResetLoopModePara重置loop mode的参数。 |
 | [ResetLoopModePara](memory_vector_compute/data_move_aux_config/ResetLoopModePara.md) | 重置loop mode的参数。与SetLoopModePara搭配使用，在使能loop mode并且设置loop mode的参数的数据搬运场景下，数据搬运结束后需要调用该函数来重置loop mode参数。 |
-| [DataCopy（UBToUB连续数据搬运）](memory_vector_compute/data_move/DataCopy_UBToUB_continuous.md) | 支持Unified Buffer与Unified Buffer之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [DataCopy（UBToUB高维切分数据搬运）](memory_vector_compute/data_move/DataCopy_UBToUB_highdim_split.md) | 支持Unified Buffer与Unified Buffer之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
-| [Copy（UBToUB连续数据搬运）](memory_vector_compute/data_move/Copy_UBToUB_continuous.md) | 支持Unified Buffer和Unified Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。 |
-| [Copy（UBToUB掩码式高维数据搬运）](memory_vector_compute/data_move/Copy_UBToUB_mask_highdim_split.md) | 支持Unified Buffer和Unified Buffer之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。 |
+| [DataCopy（UBToUB连续数据搬运）](memory_vector_compute/data_move/DataCopy_UBToUB_continuous.md) | 支持UB与UB之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [DataCopy（UBToUB高维切分数据搬运）](memory_vector_compute/data_move/DataCopy_UBToUB_highdim_split.md) | 支持UB与UB之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
+| [Copy（UBToUB连续数据搬运）](memory_vector_compute/data_move/Copy_UBToUB_continuous.md) | 支持UB和UB之间的连续数据搬运，数据搬运时格式和内容保持不变。 |
+| [Copy（UBToUB掩码式高维数据搬运）](memory_vector_compute/data_move/Copy_UBToUB_mask_highdim_split.md) | 支持UB和UB之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。 |
 
 ### 基础算术
 | 接口名 | 功能描述 |
@@ -492,7 +492,7 @@
 | --- | --- |
 | [TPipe](resource_management/TPipe/TPipe.md) | TPipe是用来管理全局内存等资源的框架。通过TPipe类提供的接口可以完成内存等资源的分配管理操作。 |
 | [GetTPipePtr](resource_management/GetTPipePtr.md) | 创建TPipe对象时，对象初始化会设置全局唯一的TPipe指针。本接口用于获取该指针，获取该指针后，可进行TPipe相关的操作。 |
-| [TBufPool](resource_management/TBufPool/TBufPool.md) | TPipe可以管理全局内存资源，而TBufPool可以手动管理或复用Unified Buffer/L1 Buffer物理内存，主要用于多个stage计算中Unified Buffer/L1 Buffer物理内存不足的场景。 |
+| [TBufPool](resource_management/TBufPool/TBufPool.md) | TPipe可以管理全局内存资源，而TBufPool可以手动管理或复用UB/L1 Buffer物理内存，主要用于多个stage计算中UB/L1 Buffer物理内存不足的场景。 |
 | [TQue](resource_management/TQue/TQue.md) | 提供入队出队等接口，通过队列（Queue）完成任务间同步。 |
 | [TQueBind](resource_management/TQueBind/TQueBind.md) | TQueBind绑定源逻辑位置和目的逻辑位置，根据源位置和目的位置，来确定内存分配的位置 、插入对应的同步事件，帮助开发者解决内存分配和管理、同步等问题。 |
 | [TBuf](resource_management/TBuf/TBuf.md) | 使用Ascend C编程的过程中，可能会用到一些临时变量。这些临时变量占用的内存可以使用TBuf数据结构来管理。 |
@@ -514,8 +514,8 @@
 | [InitDetermineComputeWorkspace](sync_control/inter_core_sync/InitDetermineComputeWorkspace.md) | InitDetermineComputeWorkspace是基于核间顺序执行的确定性计算的初始化配置接口，能够初始化GM共享内存的值，完成初始化后才可以调用WaitPreBlock和NotifyNextBlock。以上三个接口共同完成基于核间顺序执行的确定性计算，确定性计算的具体含义请参考确定性计算。 |
 | [NotifyNextBlock](sync_control/inter_core_sync/NotifyNextBlock.md) | WaitPreBlock和NotifyNextBlock是核间同步控制接口。NotifyNextBlock通过写全局内存来通知其他核当前核已执行完成，其他核可以继续往下执行；WaitPreBlock通过读取全局内存，判断当前核是否可以继续往下执行。 |
 | [WaitPreBlock](sync_control/inter_core_sync/WaitPreBlock.md) | WaitPreBlock和NotifyNextBlock是核间同步控制接口。NotifyNextBlock通过写全局内存来通知其他核当前核已执行完成，其他核可以继续往下执行；WaitPreBlock通过读取全局内存，判断当前核是否可以继续往下执行。 |
-| [SetNextTaskStart](sync_control/inter_task_sync/SetNextTaskStart.md) | 在SuperKernel的子Kernel中调用，调用后的指令可以和后续其他的子Kernel实现并行，提升整体性能。SuperKernel按序调用子Kernel，为保证子Kernel之间数据互不干扰，会在子Kernel间插入算子间同步进行保序，子KernelN-1调用该接口后，之后的指令会和后续子KernelN实现并行。 |
-| [WaitPreTaskEnd](sync_control/inter_task_sync/WaitPreTaskEnd.md) | 在SuperKernel的子Kernel中调用，调用前的指令可以和前序其他的子Kernel实现并行，提升整体性能。SuperKernel按序调用子Kernel，为保证子Kernel之间数据互不干扰，会在子Kernel间插入算子间同步进行保序，子KernelN+1调用该接口之前的指令会和前序子KernelN实现并行。 |
+| [SetNextTaskStart](sync_control/inter_task_sync/SetNextTaskStart.md) | 在SuperKernel的子核函数（Kernel）中调用，调用后的指令可以和后续其他的子核函数（Kernel）实现并行，提升整体性能。SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子KernelN-1调用该接口后，之后的指令会和后续子KernelN实现并行。 |
+| [WaitPreTaskEnd](sync_control/inter_task_sync/WaitPreTaskEnd.md) | 在SuperKernel的子核函数（Kernel）中调用，调用前的指令可以和前序其他的子核函数（Kernel）实现并行，提升整体性能。SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子KernelN+1调用该接口之前的指令会和前序子KernelN实现并行。 |
 
 ## 缓存控制
 | 接口名 | 功能描述 |
@@ -546,15 +546,15 @@
 | --- | --- |
 | [DumpTensor](debug_interface/onboard_print/DumpTensor.md) | 该接口可以打印Tensor的内容，同时支持打印自定义的标签（仅支持uint32_t数据类型的信息），比如打印当前行号等。 |
 | [DumpAccChkPoint](debug_interface/onboard_print/DumpAccChkPoint.md) | 该接口Dump指定Tensor的内容。同时支持打印自定义的标签（仅支持uint32_t数据类型的信息），比如打印当前行号等。区别于DumpTensor，使用该接口可以支持指定偏移位置的Tensor打印。 |
-| [PrintTimeStamp](debug_interface/onboard_print/PrintTimeStamp.md) | 提供时间戳打点功能，用于在算子Kernel代码中标记关键执行点。 |
+| [PrintTimeStamp](debug_interface/onboard_print/PrintTimeStamp.md) | 提供时间戳打点功能，用于在算子核函数（Kernel）代码中标记关键执行点。 |
 | [ascendc_assert](debug_interface/exception_detection/ascendc_assert.md) | ascendc_assert提供了一种在CPU/NPU域实现断言功能的接口。当断言条件不满足时，系统会输出断言信息并格式化打印在屏幕上。 |
 | [assert](debug_interface/exception_detection/assert.md) | 该接口实现CPU/NPU域assert断言功能。算子执行中，如果assert内部条件判断不为真，则输出assert条件并将输入的信息格式化打印在屏幕上。 |
-| [Trap](debug_interface/exception_detection/Trap.md) | 在Kernel侧调用，NPU模式下会中断AI Core的运行，CPU模式下等同于assert。可用于Kernel侧异常场景的调试。 |
+| [Trap](debug_interface/exception_detection/Trap.md) | 在核函数（Kernel）侧调用，NPU模式下会中断AI Core的运行，CPU模式下等同于assert。可用于核函数（Kernel）侧异常场景的调试。 |
 | [CheckLocalMemoryIA(ISASI)](debug_interface/exception_detection/CheckLocalMemoryIA_ISASI.md) | check设定范围内的UB读写行为，如果有设定范围的读写行为则会出现EXCEPTION报错，无设定范围的读写行为则不会报错。 |
-| [GmAlloc](debug_interface/cpu_twin_debug/GmAlloc.md) | 进行核函数的CPU侧运行验证时，用于创建共享内存：在/tmp目录下创建一个共享文件，并返回该文件的映射指针。 |
-| [ICPU_RUN_KF](debug_interface/cpu_twin_debug/ICPU_RUN_KF.md) | 进行核函数的CPU侧运行验证时，CPU调测总入口，完成CPU侧的算子程序调用。 |
-| [ICPU_SET_TILING_KEY](debug_interface/cpu_twin_debug/ICPU_SET_TILING_KEY.md) | 用于指定本次CPU调测使用的tilingKey。调测执行时，将只执行算子核函数中该tilingKey对应的分支。 |
-| [GmFree](debug_interface/cpu_twin_debug/GmFree.md) | 进行核函数的CPU侧运行验证时，用于释放通过GmAlloc申请的共享内存。 |
+| [GmAlloc](debug_interface/cpu_twin_debug/GmAlloc.md) | 进行核函数（Kernel）的CPU侧运行验证时，用于创建共享内存：在/tmp目录下创建一个共享文件，并返回该文件的映射指针。 |
+| [ICPU_RUN_KF](debug_interface/cpu_twin_debug/ICPU_RUN_KF.md) | 进行核函数（Kernel）的CPU侧运行验证时，CPU调测总入口，完成CPU侧的算子程序调用。 |
+| [ICPU_SET_TILING_KEY](debug_interface/cpu_twin_debug/ICPU_SET_TILING_KEY.md) | 用于指定本次CPU调测使用的tilingKey。调测执行时，将只执行算子核函数（Kernel）中该tilingKey对应的分支。 |
+| [GmFree](debug_interface/cpu_twin_debug/GmFree.md) | 进行核函数（Kernel）的CPU侧运行验证时，用于释放通过GmAlloc申请的共享内存。 |
 | [SetKernelMode](debug_interface/cpu_twin_debug/SetKernelMode.md) | 针对分离模式，CPU调测时，设置内核模式为单AIV模式，单AIC模式或者MIX模式，以分别支持单AIV矢量算子，单AIC矩阵算子，MIX混合算子的CPU调试。不调用该接口的情况下，默认为MIX模式。为保证算子代码在多个硬件平台兼容，耦合模式下也可以调用，该场景下接口不会生效，不影响正常调试。 |
 | [MetricsProfStart](debug_interface/performance_stats/MetricsProfStart.md) | 用于设置性能数据采集信号启动，和MetricsProfStop配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
 | [MetricsProfStop](debug_interface/performance_stats/MetricsProfStop.md) | 设置性能数据采集信号停止，和MetricsProfStart配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
@@ -613,12 +613,12 @@
 | [GET_TILING_DATA_PTR_WITH_STRUCT](Kernel-Tiling/GET_TILING_DATA_PTR_WITH_STRUCT.md) | 在使用该宏时，开发者可以通过指定结构体名称来获取相应的Tiling信息，并将其填入对应的Tiling结构体中。完成填充后，该宏将返回一个指向该Tiling结构体的指针，并使用\_\_tiling\_data\_ptr\_\_修饰符对该指针进行修饰。这种修饰方式能够确保在动静态Shape场景下代码的统一性和兼容性。 |
 | [COPY_TILING_WITH_STRUCT](Kernel-Tiling/COPY_TILING_WITH_STRUCT.md) | 拷贝Tiling结构体，并返回指向拷贝后的Tiling结构体的指针。该宏适用于嵌套结构体场景，可拷贝结构体的子结构体成员变量。该宏将指定结构体拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
 | [COPY_TILING_WITH_ARRAY](Kernel-Tiling/COPY_TILING_WITH_ARRAY.md) | 拷贝指定大小的数组内容到目标数组中，并返回指向拷贝后数组的指针。适用于拷贝一个结构体的数组成员变量的场景。该宏将指定数组拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
-| [TILING_KEY_IS](Kernel-Tiling/TILING_KEY_IS.md) | 在核函数中判断本次执行时的tiling_key是否等于host侧运行时设置的某个key，从而标识tiling_key==key的一条kernel分支。 |
-| [TILING_KEY_LIST](Kernel-Tiling/TILING_KEY_LIST.md) | TILING_KEY_LIST函数用于在核函数中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。 |
+| [TILING_KEY_IS](Kernel-Tiling/TILING_KEY_IS.md) | 在核函数（Kernel）中判断本次执行时的tiling_key是否等于host侧运行时设置的某个key，从而标识tiling_key==key的一条kernel分支。 |
+| [TILING_KEY_LIST](Kernel-Tiling/TILING_KEY_LIST.md) | TILING_KEY_LIST函数用于在核函数（Kernel）中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。 |
 | [REGISTER_TILING_DEFAULT](Kernel-Tiling/REGISTER_TILING_DEFAULT.md) | 用于在kernel侧注册用户使用标准C++语法自定义的默认TilingData结构体。 |
 | [REGISTER_TILING_FOR_TILINGKEY](Kernel-Tiling/REGISTER_TILING_FOR_TILINGKEY.md) | 用于在kernel侧注册与TilingKey相匹配的TilingData自定义结构体；该接口需提供一个逻辑表达式，逻辑表达式以字符串“TILING_KEY_VAR”代指实际TilingKey，表达TilingKey所满足的范围。 |
-| [REGISTER_NONE_TILING](Kernel-Tiling/REGISTER_NONE_TILING.md) | 在Kernel侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套GET\_TILING\_DATA\_WITH\_STRUCT，GET\_TILING\_DATA\_MEMBER， |
-| [设置Kernel类型](Kernel-Tiling/set_Kernel_type.md) | 用于用户自定义设置kernel类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
+| [REGISTER_NONE_TILING](Kernel-Tiling/REGISTER_NONE_TILING.md) | 在核函数（Kernel）侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套GET\_TILING\_DATA\_WITH\_STRUCT，GET\_TILING\_DATA\_MEMBER， |
+| [设置核函数（Kernel）类型](Kernel-Tiling/set_Kernel_type.md) | 用于用户自定义设置kernel类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
 
 ## 特殊寄存器访问
 | 接口名 | 功能描述 |

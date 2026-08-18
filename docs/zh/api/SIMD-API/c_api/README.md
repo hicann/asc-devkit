@@ -31,7 +31,7 @@ C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，�
 |名称|描述|
 |-----------------------|-----------------------|
 |\_\_gm\_\_|存储空间定义修饰符，表示被修饰的变量位于Global Memory地址空间。|
-|\_\_ubuf\_\_|存储空间定义修饰符，表示被修饰的变量位于Unified Buffer地址空间。|
+|\_\_ubuf\_\_|存储空间定义修饰符，表示被修饰的变量位于UB地址空间。|
 |\_\_aicore\_\_|执行空间限定符。表示该函数只能在Ai Core上执行。|
 |\_\_cbuf\_\_|存储空间定义修饰符，表示被修饰的变量位于L1 Buffer地址空间。|
 |\_\_simd\_callee\_\_|执行空间限定符。表示该函数只能在Reg上执行。|
@@ -42,7 +42,7 @@ NPU内部有不同的计算单元，在计算时往往需要把计算数据搬�
 - PIPE_S：标量流水线，负责指令分发和标量计算。
 - PIPE_V：矢量计算流水线。
 - PIPE_M：矩阵计算流水线。
-- PIPE_MTE1：搬运操作。包括从L1 Buffer到L0A Buffer或L0B Buffer，从L1 Buffer到UB的搬运操作和L0A Buffer或L0B Buffer的初始化操作。
+- PIPE_MTE1：搬运操作。包括从L1 Buffer到L0A Buffer或L0B Buffer，从L1 Buffer到Unified Buffer（UB）的搬运操作和L0A Buffer或L0B Buffer的初始化操作。
 - PIPE_MTE2：搬运操作。包括从GM到L1 Buffer、从GM到L0A Buffer或L0B Buffer、从GM到UB的搬运操作和L1 Buffer的初始化操作。
 - PIPE_MTE3：搬运操作。包括从UB到GM、从UB到L1 Buffer的操作和从UB到UB的搬运操作。
 - PIPE_FIX：Fixpipe流水线。

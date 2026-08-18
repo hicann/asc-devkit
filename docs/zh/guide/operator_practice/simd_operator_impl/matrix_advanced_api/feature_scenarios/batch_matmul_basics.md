@@ -22,11 +22,11 @@ Matmul计算需要计算出多个singleCoreM \* singleCoreN大小的C矩阵，�
 -   只支持[Norm模板](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)。
 -   对于BSNGD、SBNGD、BNGS1S2 Layout格式，输入A、B矩阵按分形对齐后的多Batch数据总和应小于L1 Buffer的大小；对于NORMAL Layout格式没有这种限制，但需通过[MatmulConfig](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)配置[batchMode](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)参数，即输入A、B矩阵多Batch数据大小与L1 Buffer的大小关系；
 -   对于BSNGD、SBNGD、BNGS1S2 Layout格式，称左矩阵、右矩阵的G轴分别为ALayoutInfoG、BLayoutInfoG，则ALayoutInfoG / batchA = BLayoutInfoG / batchB；对于NORMAL Layout格式，batchA 、batchB必须满足倍数关系。Bias的shape\(batch, n\)中的batch必须与C矩阵的batch相等。
--   如果接口输出到Unified Buffer上，输出C矩阵大小BaseM\*BaseN应小于分配的Unified Buffer内存大小。
+-   如果接口输出到Unified Buffer（UB）上，输出C矩阵大小BaseM\*BaseN应小于分配的UB内存大小。
 -   对于BSNGD、SBNGD Layout格式，输入输出只支持ND格式数据。对于BNGS1S2、NORMAL Layout格式，输入支持ND/NZ格式数据。
 -   Batch Matmul不支持量化/反量化模式，即不支持[SetQuantScalar](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantScalar.md)、[SetQuantVector](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantVector.md)接口。
 -   BSNGD场景，不支持一次计算多行SD，需要算子程序中循环计算。
--   **异步模式**不支持IterateBatch搬运到Unified Buffer上。
+-   **异步模式**不支持IterateBatch搬运到UB上。
 -   模板参数[enableMixDualMaster](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulConfig.md)（默认取值为false）设置为true，即开启MixDualMaster（双主模式）场景时，不支持Batch Matmul。
 -   在batch场景，A矩阵、B矩阵支持half/float/bfloat16\_t/int8\_t数据类型，不支持int4b\_t数据类型。
 
@@ -62,7 +62,7 @@ Matmul计算需要计算出多个singleCoreM \* singleCoreN大小的C矩阵，�
     int ret = tiling.GetTiling(tilingData);
     ```
 
--   Kernel实现
+-   核函数（Kernel）实现
     -   创建Matmul对象。
 
         通过MatmulType设置输入输出的Layout格式为NORMAL。

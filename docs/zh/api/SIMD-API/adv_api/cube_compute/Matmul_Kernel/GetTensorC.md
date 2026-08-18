@@ -30,7 +30,7 @@
 
 ## 功能说明
 
-Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor中，也可以输出到UB（VECIN）tensor中。当[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值为ScheduleType::INNER\_PRODUCT时，获取一块C矩阵片；当[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值为ScheduleType::OUTER\_PRODUCT时，获取两块C矩阵片。
+Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor中，也可以输出到Unified Buffer（UB，VECIN）tensor中。当[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值为ScheduleType::INNER\_PRODUCT时，获取一块C矩阵片；当[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值为ScheduleType::OUTER\_PRODUCT时，获取两块C矩阵片。
 
 该接口和[Iterate](Iterate.md)接口配合使用，用于在调用Iterate完成迭代计算后，根据[MatmulConfig](MatmulConfig.md#matmulconfig-params)参数中的ScheduleType取值获取一块或两块baseM \* baseN大小的矩阵分片。
 
@@ -80,7 +80,7 @@ Iterate后，获取一块或者两块C矩阵片，可以直接输出到GM tensor
 
     C矩阵输出到UB（VECIN）时，分配给UB（VECIN）的空间大小会影响Matmul计算的力度，分配给UB（VECIN）的空间过小时，无法充分利用硬件算力。提供该接口支持返回缓存在Workspace上的C矩阵，由开发者自行控制后续使用过程。
 
-    注意，在初始化时，C矩阵的逻辑位置应设置为TPosition::VECIN，调用该接口获取缓存的C矩阵后，自行拷贝到Unified Buffer。
+    注意，在初始化时，C矩阵的逻辑位置应设置为TPosition::VECIN，调用该接口获取缓存的C矩阵后，自行拷贝到UB。
 
     ```
     template <bool sync = true>

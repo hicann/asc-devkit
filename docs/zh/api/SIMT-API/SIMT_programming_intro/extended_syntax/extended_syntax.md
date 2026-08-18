@@ -10,5 +10,5 @@
 
 -   **[内置宏](builtin_macros.md)**
 
--   **[核函数配置](kernel_function_config.md)**
+-   **[核函数（Kernel）配置](kernel_function_config.md)**
 

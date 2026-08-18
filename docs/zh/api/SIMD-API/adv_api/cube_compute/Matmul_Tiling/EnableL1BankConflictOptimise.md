@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-根据[GetTiling](GetTiling.md)接口计算出的Tiling参数，获取是否可以开启L1 Bank冲突优化功能。若可以开启该功能，则与TilingKey机制配合使用，通过增加TilingKey，关联Host侧与Kernel侧实现，并在Kernel侧增加代码实现分支，将MatmulConfig中的[enableL1BankConflictOptimise](../Matmul_Kernel/MatmulConfig.md#p84588523128)设置为true，即可优化L1上的Bank冲突。
+根据[GetTiling](GetTiling.md)接口计算出的Tiling参数，获取是否可以开启L1 Bank冲突优化功能。若可以开启该功能，则与TilingKey机制配合使用，通过增加TilingKey，关联Host侧与核函数（Kernel）侧实现，并在核函数（Kernel）侧增加代码实现分支，将MatmulConfig中的[enableL1BankConflictOptimise](../Matmul_Kernel/MatmulConfig.md#p84588523128)设置为true，即可优化L1上的Bank冲突。
 
 ## 函数原型
 
@@ -16,8 +16,8 @@ bool EnableL1BankConflictOptimise()
 
 ## 返回值说明
 
--   false：Kernel侧不能开启L1 Bank冲突优化。
--   true：Kernel侧可以开启L1 Bank冲突优化。
+-   false：核函数（Kernel）侧不能开启L1 Bank冲突优化。
+-   true：核函数（Kernel）侧可以开启L1 Bank冲突优化。
 
 ## 约束说明
 
@@ -39,7 +39,7 @@ tiling.SetBufferSpace(-1, -1, -1);
 
 optiling::TCubeTiling tilingData;
 int ret = tiling.GetTiling(tilingData);
-// Kernel侧是否可以开启L1 Bank冲突优化，可与TilingKey机制结合使用
+// 核函数（Kernel）侧是否可以开启L1 Bank冲突优化，可与TilingKey机制结合使用
 bool enableL1BankConflictOptimise = tiling.EnableL1BankConflictOptimise();
 ```
 

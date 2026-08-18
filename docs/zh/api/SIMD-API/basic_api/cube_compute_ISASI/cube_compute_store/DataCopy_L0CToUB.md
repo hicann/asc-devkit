@@ -29,7 +29,7 @@
 
 ## 功能说明<a name="section474617392321"></a>
 
-对数据搬运能力进行增强，相比于基础数据搬运接口，增加了L0C Buffer-\>Unified Buffer（UB）通路的随路计算。
+对数据搬运能力进行增强，相比于基础数据搬运接口，增加了L0C Buffer-\>UB通路的随路计算。
 
 ## 函数原型<a name="section1954364615315"></a>
 
@@ -74,7 +74,7 @@
 | blockMode | 数据搬运基本分形，BlockMode枚举类型，支持以下配置：<br>&nbsp;&nbsp;&bull; BLOCK_MODE_NORMAL：表示传输单位为32字节。当前暂不支持。<br>&nbsp;&nbsp;&bull; BLOCK_MODE_MATRIX：表示传输单位为一个16 \* 16的cube分形。<br>&nbsp;&nbsp;&bull; BLOCK_MODE_VECTOR：表示传输单位为一个1 \* 16的cube分形。<br>&nbsp;&nbsp;&bull; BLOCK_MODE_SMALL_CHANNEL：表示传输单位为一个16 \* 4的cube分形。当前暂不支持。<br>&nbsp;&nbsp;&bull; BLOCK_MODE_DEPTHWISE：表示传输单位为一个16 \* 16的cube分形，提供随路channel-split功能。当前暂不支持。<br>每种模式下对应的blockLen等参数单位见[表4](#table13396838183618)。 |
 | deqScale | 随路精度转换辅助参数，即量化模式，支持的量化模式取值和对应的数据类型等信息请参考[表5](#table168091348673)。其中DEQ、DEQ8、DEQ16模式，需要传入deqValue量化系数，设置deqValue的对应比特位；VDEQ、VDEQ8、VDEQ16模式，需要传入包含16个元素（deqValue）的量化参数向量，设置deqTensorAddr的对应比特位，同时保证DEQADDR中存储的反量化参数向量的每个元素（deqValue）都符合预期和使用限制。<br>VDEQ模式下，反量化参数向量长度为32字节（16个half元素）；其他模式下，反量化参数向量长度为128字节（16个64bit的反量化元素）。 |
 | deqValue | 量化系数。 deqValue的配置方式请参考[deqValue配置方式](#table54451538192912)。 |
-| deqTensorAddr | UB中存储反量化参数向量的起始地址。deqScale为VDEQ/VDEQ8/VDEQ16模式时，需要传入反量化运算时的参数向量的地址。该地址要满足32字节对齐。<br>对于VDEQ模式，该地址指向32字节大小的反量化参数向量，其中每个元素大小为16bit（half）。<br>对于VDEQ8、VDEQ16模式，反量化参数向量中的每个元素大小都为64bit。搬运时会搬运blockCount个连续传输数据块，每个数据块的长度为blockLen。每个数据块对应一个128字节的反量化向量。对于同一个数据块，反量化参数向量中的16个元素会被连续复用。不同的数据块，对应不同的反量化参数向量，地址会相应的偏移12。例如：假设对应起始地址为A，第一个数据块的12反量化参数向量起始地址为A，第二个数据块的12反量化参数向量起始地址为A + 12。<br>同一个反量化参数向量的每一个元素的MCB标志位必须一致。 |
+| deqTensorAddr | Unified Buffer（UB）中存储反量化参数向量的起始地址。deqScale为VDEQ/VDEQ8/VDEQ16模式时，需要传入反量化运算时的参数向量的地址。该地址要满足32字节对齐。<br>对于VDEQ模式，该地址指向32字节大小的反量化参数向量，其中每个元素大小为16bit（half）。<br>对于VDEQ8、VDEQ16模式，反量化参数向量中的每个元素大小都为64bit。搬运时会搬运blockCount个连续传输数据块，每个数据块的长度为blockLen。每个数据块对应一个128字节的反量化向量。对于同一个数据块，反量化参数向量中的16个元素会被连续复用。不同的数据块，对应不同的反量化参数向量，地址会相应的偏移12。例如：假设对应起始地址为A，第一个数据块的12反量化参数向量起始地址为A，第二个数据块的12反量化参数向量起始地址为A + 12。<br>同一个反量化参数向量的每一个元素的MCB标志位必须一致。 |
 | sidStoreMode | 用于deqScale为DEQ8/VDEQ8时配置存储模式，控制反量化结果如何存储在dst地址中。配置效果参考[sidStoreMode配置示意图](#fig5416115192414)。<br>&nbsp;&nbsp;&bull; 0：dst的数据存储在每个DataBlock的前半段，即每32字节的高16字节；<br>&nbsp;&nbsp;&bull; 1：dst的数据存储在每个DataBlock的后半段，即每32字节的低16字节；<br>&nbsp;&nbsp;&bull; 2：dst的数据存储在完整的DataBlock中，即整个32字节。 |
 | isRelu | 配置是否可以随路做线性整流操作。配置deqValue的情况下，如果该参数被置为true，那么会刷新deqValue的ReLU标志位为1；如果被置为false，则不会做修改。配置deqTensorAddr的情况下，反量化参数向量元素中的ReLU标志位不生效，以isRelu为准。<br>仅配置isRelu，不配置量化参数，即deqValue配置为DEQ_NONE场景，支持src和dst的数据类型组合如下：{half，half}，{float，float}，{int32_t，int32_t}，{float，half}；同时配置isRelu和量化参数的场景，支持的数据类型组合参考[表5](#table168091348673)。 |
 | padMode | 预留参数，当前暂不支持。 |

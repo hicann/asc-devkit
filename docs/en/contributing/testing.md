@@ -90,7 +90,7 @@ tests/
 
 ---
 
-## Kernel-Side UT Writing Standards
+## Kernel Function UT Writing Standards
 
 ### File Structure (Three-Part)
 
@@ -99,7 +99,7 @@ tests/
 #include <gtest/gtest.h>
 #include "kernel_operator.h"
 
-// Part 2: Define test parameter struct and Kernel function
+// Part 2: Define test parameter struct and kernel function
 struct AxpyTestParams {
     int32_t dataSize;
     int32_t dataBitSize;
@@ -110,7 +110,7 @@ struct AxpyTestParams {
 template <typename T, typename U>
 void AxpyKernel(uint8_t* srcGm, uint8_t* dstGm, int32_t dataSize)
 {
-    // Kernel implementation (see Kernel Function Implementation Template below)
+    // Kernel function implementation (see Kernel Function Implementation Template below)
 }
 
 // Golden computation: element-wise dst = src * scalar + dst per T/U type
@@ -312,7 +312,7 @@ Then run `bash build.sh -t`.
 
 ### Single Operator Testing
 
-After completing the kernel-side code, perform end-to-end testing by setting up a custom operator project. See [Ascend C Programming Guide](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC).
+After completing the kernel function code, perform end-to-end testing by setting up a custom operator project. See [Ascend C Programming Guide](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC).
 
 ---
 
@@ -322,7 +322,7 @@ After completing the kernel-side code, perform end-to-end testing by setting up 
 
 | Scenario | Requirement |
 |------|------|
-| New API | Must include kernel-side UT |
+| New API | Must include kernel function UT |
 | New API (requires temporary space) | Must include tiling-side UT |
 | Bug fix | Should add regression test cases |
 | New public header file | Must add Header Checker |

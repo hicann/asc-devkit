@@ -1,45 +1,45 @@
-# 核函数<a name="ZH-CN_TOPIC_0000002554438935"></a>
+# 核函数（Kernel）<a name="ZH-CN_TOPIC_0000002554438935"></a>
 
-正如在[概述](./overview.md)中所介绍的，能够在AI处理器（NPU）上并行执行、并由主机端（Host）发起调用的函数被称为核函数（Kernel）。核函数被设计为由大量线程（Threads）同时并行运行。每个线程都拥有独立的寄存器和栈，它们协同工作以完成海量的数据计算任务。
+正如在[概述](./overview.md)中所介绍的，能够在AI处理器（NPU）上并行执行、并由主机端（Host）发起调用的函数被称为核函数（Kernel）。核函数（Kernel）被设计为由大量线程（Threads）同时并行运行。每个线程都拥有独立的寄存器和栈，它们协同工作以完成海量的数据计算任务。
 
-## 核函数的定义<a name="section962384613331"></a>
+## 核函数（Kernel）的定义<a name="section962384613331"></a>
 
-Ascend C支持开发者自定义核函数来扩展C++。定义核函数时，通过引入特定的函数限定符，编译器能够识别该函数需要在设备端（Device）编译，并允许其从主机端被发起调用。
+Ascend C支持开发者自定义核函数（Kernel）来扩展C++。定义核函数（Kernel）时，通过引入特定的函数限定符，编译器能够识别该函数需要在设备端（Device）编译，并允许其从主机端被发起调用。
 
-核函数的定义示例如下：
+核函数（Kernel）的定义示例如下：
 
 ```cpp
-// 核函数定义示例
+// 核函数（Kernel）定义示例
 __global__ void vec_add(float* x, float* y, float* z) 
 {
     // 具体的计算逻辑
 }
 ```
 
-定义核函数时需要遵循以下规则：
+定义核函数（Kernel）时需要遵循以下规则：
 
--   使用函数类型限定符\_\_global\_\_，标识它是一个核函数。
--   核函数必须具有void返回类型。
--   核函数参数列表需遵循[函数参数列表限制](../../../technical_appendix/cpp_standard_support/syntax_restrictions/functions.md#section_kernel_function_argument_list_constraint)。
+-   使用函数类型限定符\_\_global\_\_，标识它是一个核函数（Kernel）。
+-   核函数（Kernel）必须具有void返回类型。
+-   核函数（Kernel）参数列表需遵循[函数参数列表限制](../../../technical_appendix/cpp_standard_support/syntax_restrictions/functions.md#section_kernel_function_argument_list_constraint)。
 
-## 核函数的调用<a name="section33493239410"></a>
+## 核函数（Kernel）的调用<a name="section33493239410"></a>
 
-算子程序中的函数可以分为三类：host侧执行函数、核函数（device侧执行）、device侧执行函数（除核函数之外）。下图以Kernel直调算子开发方式为例，描述三者的调用关系：
+算子程序中的函数可以分为三类：host侧执行函数、核函数（Kernel）（device侧执行）、device侧执行函数（除核函数（Kernel）之外）。下图以核函数（Kernel）直调算子开发方式为例，描述三者的调用关系：
 
--   host侧执行函数可以调用其它host执行函数，也就是通用C/C++编程中的函数调用；也可以通过<<<...\>\>\>调用核函数。
--   核函数可以调用除核函数之外的其它device侧执行函数。
--   device侧执行函数（除核函数之外）使用类型限定符\_\_aicore\_\_标识，可以调用同类的其它device侧执行函数。
+-   host侧执行函数可以调用其它host执行函数，也就是通用C/C++编程中的函数调用；也可以通过<<<...\>\>\>调用核函数（Kernel）。
+-   核函数（Kernel）可以调用除核函数（Kernel）之外的其它device侧执行函数。
+-   device侧执行函数（除核函数（Kernel）之外）使用类型限定符\_\_aicore\_\_标识，可以调用同类的其它device侧执行函数。
 
-**图1**  核函数、host侧执行函数、device侧执行函数调用关系<a name="fig14484835135913"></a>  
+**图1**  核函数（Kernel）、host侧执行函数、device侧执行函数调用关系<a name="fig14484835135913"></a><br>
 ![](../../../figures/op_func_call.png "算子程序中三种函数间的调用关系")
 
-Host侧通过核函数调用符<<<...>>>的语法形式调用核函数，如下所示：
+Host侧通过核函数（Kernel）调用符<<<...>>>的语法形式调用核函数（Kernel），如下所示：
 
 ```cpp
 kernel_name<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(argument list)
 ```
 
-`<<<...>>>`内的参数为核函数的执行配置，由4个参数决定，详细用法请参考[核函数配置](../../language_extension/simt_builtin_keywords.md#section97005415463)：
+`<<<...>>>`内的参数为核函数（Kernel）的执行配置，由4个参数决定，详细用法请参考[核函数（Kernel）配置](../../language_extension/simt_builtin_keywords.md#section97005415463)：
 
 -   blocks\_per\_grid：[dim3](../../language_extension/simt_builtin_keywords.md#内置结构体)类型，用于指定网格（grid）的维度与规模，blocks\_per\_grid.x \* blocks\_per\_grid.y \* blocks\_per\_grid.z等于启动的线程块总数，不得大于65535。
 -   threads\_per\_block：[dim3](../../language_extension/simt_builtin_keywords.md#内置结构体)类型，用于指定每个线程块（block）的维度与规模，threads\_per\_block.x \* threads\_per\_block.y \* threads\_per\_block.z等于每个线程块包含的线程数，需要小于等于\_\_launch\_bounds\_\_配置。
@@ -48,19 +48,19 @@ kernel_name<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(argum
 
 ## Grid与Thread索引内置变量
 
-在核函数内，Ascend C提供了[内置变量](../../language_extension/simt_builtin_keywords.md#内置变量)来获取执行配置的参数以及线程或线程块的索引。
+在核函数（Kernel）内，Ascend C提供了[内置变量](../../language_extension/simt_builtin_keywords.md#内置变量)来获取执行配置的参数以及线程或线程块的索引。
 
 常用的内置索引变量说明如下：
 -   threadIdx：获取当前线程在其所属线程块内的索引。threadIdx.x，threadIdx.y，threadIdx.z分别表示当前线程在3个维度的索引，threadIdx.x的范围为[0, blockDim.x)，threadIdx.y的范围为[0, blockDim.y)，threadIdx.z的范围为[0, blockDim.z)。
--   blockDim：获取线程块中配置的三维层次结构，即核函数启动时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。在核函数启动的执行配置中指定，对应核函数配置中的threads_per_block参数。
+-   blockDim：获取线程块中配置的三维层次结构，即核函数（Kernel）启动时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。在核函数（Kernel）启动的执行配置中指定，对应核函数（Kernel）配置中的threads_per_block参数。
 -   blockIdx: 获取当前线程块在其所属网格中的索引，表示当前线程所在的线程块在整个网格中的位置坐标。
--   gridDim：表示整个计算任务在各个维度上分别由多少个线程块构成。在核函数启动的执行配置中指定，对应核函数配置中的blocks_per_grid参数。各个维度上线程块关系需满足gridDim.x * gridDim.y * gridDim.z <= 65535。
+-   gridDim：表示整个计算任务在各个维度上分别由多少个线程块构成。在核函数（Kernel）启动的执行配置中指定，对应核函数（Kernel）配置中的blocks_per_grid参数。各个维度上线程块关系需满足gridDim.x * gridDim.y * gridDim.z <= 65535。
 
 开发者可通过组合上述变量，计算出当前线程在整个庞大计算网格空间中的全局唯一数据索引（Global Index）。这使得成千上万个执行相同代码的线程能够精准地定位并处理属于自己的特定数据分片。
 
 ### 边界检查
 
-在实际一维并行处理开发中，待处理的数据总长度往往无法被单一线程块的尺寸完美整除。因此，通常需要分配多余的物理线程，并在核函数内部引入边界检查机制，以防止内存越界。
+在实际一维并行处理开发中，待处理的数据总长度往往无法被单一线程块的尺寸完美整除。因此，通常需要分配多余的物理线程，并在核函数（Kernel）内部引入边界检查机制，以防止内存越界。
 
 一维数据索引的标准计算公式为：
 

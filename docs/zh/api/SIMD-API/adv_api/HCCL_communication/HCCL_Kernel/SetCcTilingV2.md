@@ -38,7 +38,7 @@ __aicore__ inline int32_t SetCcTilingV2(uint64_t offset)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| offset | 输入 | 通信算法配置[Mc2CcTiling](../HCCL_Tiling/TilingData_struct.md#table678914014562)参数地址相对于[Mc2InitTiling](../HCCL_Tiling/TilingData_struct.md#table4835205712588)起始地址的偏移。[Mc2CcTiling](../HCCL_Tiling/TilingData_struct.md#table678914014562)在Host侧计算得出，具体请参考[表2 Mc2CcTiling参数说明](../HCCL_Tiling/TilingData_struct.md#table678914014562)，由框架传递到Kernel函数中使用。 |
+| offset | 输入 | 通信算法配置[Mc2CcTiling](../HCCL_Tiling/TilingData_struct.md#table678914014562)参数地址相对于[Mc2InitTiling](../HCCL_Tiling/TilingData_struct.md#table4835205712588)起始地址的偏移。[Mc2CcTiling](../HCCL_Tiling/TilingData_struct.md#table678914014562)在Host侧计算得出，具体请参考[表2 Mc2CcTiling参数说明](../HCCL_Tiling/TilingData_struct.md#table678914014562)，由框架传递到核函数（Kernel）中使用。 |
 
 ## 返回值说明
 

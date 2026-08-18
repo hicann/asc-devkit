@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001610027821_section212607105720"></a>
 
-TILING\_KEY\_LIST函数用于在核函数中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。
+TILING\_KEY\_LIST函数用于在核函数（Kernel）中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。
 
 ## 函数原型<a name="zh-cn_topic_0000001610027821_section1630753514297"></a>
 
@@ -50,7 +50,7 @@ TILING_KEY_LIST(key1,key2)
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000001610027821_p18857658124919"><a name="zh-cn_topic_0000001610027821_p18857658124919"></a><a name="zh-cn_topic_0000001610027821_p18857658124919"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001610027821_p53562135013"><a name="zh-cn_topic_0000001610027821_p53562135013"></a><a name="zh-cn_topic_0000001610027821_p53562135013"></a>key表示某个核函数的分支，必须是非负整数。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001610027821_p53562135013"><a name="zh-cn_topic_0000001610027821_p53562135013"></a><a name="zh-cn_topic_0000001610027821_p53562135013"></a>key表示某个核函数（Kernel）的分支，必须是非负整数。</p>
 </td>
 </tr>
 </tbody>
@@ -60,8 +60,8 @@ TILING_KEY_LIST(key1,key2)
 
 -   TILING\_KEY\_LIST运用于if和else if分支，不支持else分支，即用TILING\_KEY\_LIST函数来表征N个分支，必须用N个TILING\_KEY\_LIST\(key1,key2\)来分别表示。
 -   支持传入两个TilingKey，每个TilingKey具备唯一性。
--   使用该接口时，必须设置默认的Kernel类型，也可以为某个TilingKey单独配置Kernel类型，该配置会覆盖默认Kernel类型。Kernel类型仅支持配置为KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2。
--   暂不支持Kernel直调工程。
+-   使用该接口时，必须设置默认的核函数（Kernel）类型，也可以为某个TilingKey单独配置核函数（Kernel）类型，该配置会覆盖默认核函数（Kernel）类型。核函数（Kernel）类型仅支持配置为KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2。
+-   暂不支持核函数（Kernel）直调工程。
 
 ## 调用示例<a name="zh-cn_topic_0000001610027821_section97001499599"></a>
 

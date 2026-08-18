@@ -24,7 +24,7 @@
 
 ## 功能说明
 
-对Unified Buffer或Global Memory上的数据与指定数据执行原子减操作，即在这些内存区域的数据中减去指定数据。
+对Unified Buffer（UB）或Global Memory上的数据与指定数据执行原子减操作，即在这些内存区域的数据中减去指定数据。
 
 ## 函数原型
 
@@ -62,7 +62,7 @@ inline bfloat16x2_t asc_atomic_sub(bfloat16x2_t *address, bfloat16x2_t val)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| address | 输出 | Unified Buffer或Global Memory的地址。 |
+| address | 输出 | UB或Global Memory的地址。 |
 | val | 输入 | 源操作数。 |
 
 不同数据类型支持的内存范围说明如下：
@@ -71,18 +71,18 @@ inline bfloat16x2_t asc_atomic_sub(bfloat16x2_t *address, bfloat16x2_t val)
 
 | 参数数据类型 | 支持的内存空间 |
 | --- | --- |
-| int32_t、uint32_t、float、half2、bfloat16x2_t | Unified Buffer、Global Memory |
+| int32_t、uint32_t、float、half2、bfloat16x2_t | UB、Global Memory |
 | int64_t、uint64_t | Global Memory |
 
 ## 返回值说明
 
-Unified Buffer或Global Memory上的初始数据。
+UB或Global Memory上的初始数据。
 
 ## 约束说明
 
 -   原子操作保证对同一地址的读改写过程具有原子性，但不保证多个线程之间的执行顺序。对于浮点累减或依赖返回值顺序敏感的场景，结果可能随线程调度变化而不同。
 -   本接口的性能受以下因素影响，相关原理请参见[原子操作机制](atomic_operations_intro.md#原子操作机制)。
-    -   内存空间：Unified Buffer的访问路径比Global Memory短，通常具有更低的访问开销。当使用的数据类型支持Unified Buffer（即int32\_t、uint32\_t、float、half2、bfloat16x2\_t）时，建议优先在Unified Buffer中完成原子操作。
+    -   内存空间：UB的访问路径比Global Memory短，通常具有更低的访问开销。当使用的数据类型支持UB（即int32\_t、uint32\_t、float、half2、bfloat16x2\_t）时，建议优先在UB中完成原子操作。
     -   返回值：该接口无对应的性能优化指令，对于所有数据类型，程序中是否使用该接口返回值，接口性能基本一致。
     -   地址分布：Global Memory原子操作经过L2 Cache处理，L2 Cache以512B Cache Line为缓存管理单位，每条Cache Line包含4个128B扇区（Sector），Global Memory原子操作以128B Sector为处理粒度。目标地址集中在同一个Sector内时，处理效率较低；目标地址分布在更多Sector内时，处理效率较高。因此，业务允许时，建议将原子操作的目标地址分散到更多Sector中。
 
@@ -132,7 +132,7 @@ Unified Buffer或Global Memory上的初始数据。
 
 -   SIMD与SIMT混合编程场景：
 
-    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间，\_\_ubuf\_\_表示Unified Buffer内存空间。
+    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间，\_\_ubuf\_\_表示UB内存空间。
 
     ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void consume_quota(__gm__ uint32_t *remaining,

@@ -26,7 +26,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-将矢量数据广播到矩阵中，每个数据块中的每16个元素会被连续复制16次；当前支持的数据传输通路：Unified Buffer-\>L0C Buffer（VECIN/VECCALC/VECOUT-\>CO1）。
+将矢量数据广播到矩阵中，每个数据块中的每16个元素会被连续复制16次；当前支持的数据传输通路：UB-\>L0C Buffer（VECIN/VECCALC/VECOUT-\>CO1）。
 
 **图1** 功能示例<a name="fig1730933122314"></a>  
 
@@ -53,7 +53,7 @@ __aicore__ inline void BroadCastVecToMM(const LocalTensor<T> &dst, const LocalTe
 | 参数名称 | 类型 | 说明 |
 | ---------- | ---------- | ---------- |
 | dst | 输出 | 目的操作数，结果矩阵，类型为LocalTensor，支持的物理地址为L0C Buffer（TPosition：CO1）。<br>LocalTensor的起始地址需要256个元素对齐。<br>支持的数据类型为：half、int32_t、float。 |
-| src | 输入 | 源操作数，输入矢量，类型为LocalTensor，支持的物理地址为Unified Buffer（TPosition：VECIN/VECCALC/VECOUT）。<br>支持的数据类型需要与dst一致。 |
+| src | 输入 | 源操作数，输入矢量，类型为LocalTensor，支持的物理地址为UB（TPosition：VECIN/VECCALC/VECOUT）。<br>支持的数据类型需要与dst一致。 |
 | blockCount | 输入 | 指定该指令包含的连续广播数据块个数，取值范围：blockCount∈[1, 255]。 |
 | blockLen | 输入 | 指定该指令每个连续广播数据块长度，单位为16个元素。取值范围：blockLen∈[1, 255]。 |
 | srcGap | 输入 | 源操作数，相邻连续数据块的间隔（前面一个数据块的尾与后面数据块的头的间隔），单位为datablock（32字节）。 |

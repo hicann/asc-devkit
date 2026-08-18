@@ -80,7 +80,7 @@ MainTileWithTailCoreTiling tiling{
 
 ## 算子类实现
 
-Kernel侧算子仍采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现。与[尾块均分](tail_block_even_split.md)相比，本场景中整核和尾核处理的数据长度不同，因此`Init`函数需要根据`GetBlockIdx()`判断当前核是整核还是尾核，并分别设置Global Memory偏移和循环参数。`blockIdx`表示当前逻辑核的索引。
+核函数（Kernel）侧算子仍采用[静态Tensor编程](../../../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)方式实现。与[尾块均分](tail_block_even_split.md)相比，本场景中整核和尾核处理的数据长度不同，因此`Init`函数需要根据`GetBlockIdx()`判断当前核是整核还是尾核，并分别设置Global Memory偏移和循环参数。`blockIdx`表示当前逻辑核的索引。
 
 整核使用`formerLength`、`formerTileNum`和`formerLastTileLength`，计算如下：
 

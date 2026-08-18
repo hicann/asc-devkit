@@ -34,7 +34,7 @@
 
 头文件路径为：`"tools/cpudebug/include/stub_def.h"`。
 
-进行核函数的CPU侧运行验证时，用于释放通过[GmAlloc](GmAlloc.md)申请的共享内存。
+进行核函数（Kernel）的CPU侧运行验证时，用于释放通过[GmAlloc](GmAlloc.md)申请的共享内存。
 
 ## 函数原型<a name="zh-cn_topic_0000002000199397_zh-cn_topic_0000001592243993_section2067518173415"></a>
 

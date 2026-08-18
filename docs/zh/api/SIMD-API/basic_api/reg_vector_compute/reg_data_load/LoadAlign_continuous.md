@@ -178,7 +178,7 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 ## 约束说明<a name="section11585101304320"></a>
 
-- 位于Unified Buffer的地址约束、postUpdateStride * sizeof(T)对齐约束、AddrReg寄存器中存储的偏移量 * sizeof(T)对齐约束与分布模式LoadDist有关，具体地址约束请参考[表3 LoadDist参数说明（单搬入模式）](#表3-LoadDist参数说明（单搬入模式）)、[表6 LoadDist参数说明（双搬入模式）](#表6-LoadDist参数说明（双搬入模式）)。
+- 位于UB的地址约束、postUpdateStride * sizeof(T)对齐约束、AddrReg寄存器中存储的偏移量 * sizeof(T)对齐约束与分布模式LoadDist有关，具体地址约束请参考[表3 LoadDist参数说明（单搬入模式）](#表3-LoadDist参数说明（单搬入模式）)、[表6 LoadDist参数说明（双搬入模式）](#表6-LoadDist参数说明（双搬入模式）)。
 - 当RegTrait为RegTraitNumOne时，单搬入正常模式（DIST_NORM）下，若源UB的剩余空间不足256B，会发生UB越界访问。
 - 单搬入模式：b64数据类型只支持LoadDist中的DIST_NORM模式。
 - 当RegTensor模板参数RegTrait为RegTraitNumOne和RegTraitNumTwo时，支持情况如下：

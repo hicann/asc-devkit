@@ -1,6 +1,6 @@
 # Memory矢量计算编程<a name="ZH-CN_TOPIC_0000002600000004"></a>
 
-本文介绍如何在Ascend C中使用C++ Tensor编程API编写基于Unified Buffer（以下简称UB）的矢量计算代码，该能力是Ascend C最基础、最通用的矢量编程方式。这种基于UB内存的编程方式被称为Memory矢量计算编程。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)产品支持完整的Memory矢量计算UB直接编程能力；而[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)虽也支持UB操作，但推荐使用Reg矢量计算编程以获得更高性能。
+本文介绍如何在Ascend C中使用C++ Tensor编程API编写基于Unified Buffer（UB）的矢量计算代码，该能力是Ascend C最基础、最通用的矢量编程方式。这种基于UB内存的编程方式被称为Memory矢量计算编程。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)产品支持完整的Memory矢量计算UB直接编程能力；而[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)虽也支持UB操作，但推荐使用Reg矢量计算编程以获得更高性能。
 
 ## Memory矢量编程的基本步骤
 

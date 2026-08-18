@@ -47,7 +47,7 @@ unsigned int __isLocal(const void* ptr)
 | 输入场景 | 返回值 |
 | --- | --- |
 | `ptr`为有效Global Memory指针 | 0 |
-| `ptr`为有效Unified Buffer指针 | 0 |
+| `ptr`为有效UB指针 | 0 |
 | `ptr`为`nullptr` | 0 |
 | `ptr`为伪造的低位地址，如`(void*)0x1` | 0 |
 | `ptr`为伪造的全1地址 | 0 |

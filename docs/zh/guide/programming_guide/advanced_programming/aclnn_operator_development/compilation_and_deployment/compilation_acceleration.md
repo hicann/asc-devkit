@@ -1,12 +1,12 @@
 # 编译加速
 
-本文是扩展内容，介绍如何降低算子工程的编译耗时。算子工程编译耗时主要来自Kernel侧代码的逐芯片、逐TilingKey编译；本文从缓存复用、选择性编译、并行度和增量构建四个维度给出加速方案。
+本文是扩展内容，介绍如何降低算子工程的编译耗时。算子工程编译耗时主要来自核函数（Kernel）侧代码的逐芯片、逐TilingKey编译；本文从缓存复用、选择性编译、并行度和增量构建四个维度给出加速方案。
 
 ## ccache编译缓存
 
 ccache是编译缓存工具。第一次编译时，它把编译结果写入缓存；后续编译如果源码、编译命令、编译器等输入一致，就可以复用缓存，减少重复编译耗时。
 
-在算子工程中，可通过CMake的`CMAKE_CXX_COMPILER_LAUNCHER`配置ccache。该变量会作用于Host侧C++编译；在CANN算子工程中，CMake模块也会将ccache路径传给Kernel侧编译脚本，用于Ascend C Kernel编译过程。
+在算子工程中，可通过CMake的`CMAKE_CXX_COMPILER_LAUNCHER`配置ccache。该变量会作用于Host侧C++编译；在CANN算子工程中，CMake模块也会将ccache路径传给核函数（Kernel）侧编译脚本，用于Ascend C核函数（Kernel）编译过程。
 
 ### 单机ccache
 
@@ -149,18 +149,18 @@ ccache --show-stats -v
 <a id="选择性编译"></a>
 ## 选择性编译
 
-选择性编译的核心思路是：开发调试阶段只编译当前真正需要验证的部分，减少无关Kernel变体、无关芯片和无关产物带来的编译开销。常用策略如下：
+选择性编译的核心思路是：开发调试阶段只编译当前真正需要验证的部分，减少无关核函数（Kernel）变体、无关芯片和无关产物带来的编译开销。常用策略如下：
 
 | 策略 | 适用场景 | 配置方式 | 效果 |
 |------|---------|---------|------|
-| `--tiling_key=1,2` | TilingKey编程算子，仅调试特定分支。 | `npu_op_kernel_options`的OPTIONS参数。 | 只编译指定TilingKey的Kernel，跳过其余。 |
-| `--kernel-template-input="D_T_X=float"` | 模板编程算子，仅调试特定模板参数组合。 | `npu_op_kernel_options`的OPTIONS参数。 | 只编译指定模板参数组合的Kernel。 |
-| `ASCEND_COMPUTE_UNIT`收窄 | 开发阶段只跑当前SOC。 | 修改`CMakePresets.json`或cmake的ASCEND_COMPUTE_UNIT参数。 | 跳过其他芯片的Kernel编译。 |
-| `ENABLE_BINARY_PACKAGE=False` | 源码发布模式，不需要Kernel二进制。 | CMakeLists.txt或cmake参数。 | 跳过Kernel `.o`生成，保留Kernel源码和必要配置。 |
+| `--tiling_key=1,2` | TilingKey编程算子，仅调试特定分支。 | `npu_op_kernel_options`的OPTIONS参数。 | 只编译指定TilingKey的核函数（Kernel），跳过其余。 |
+| `--kernel-template-input="D_T_X=float"` | 模板编程算子，仅调试特定模板参数组合。 | `npu_op_kernel_options`的OPTIONS参数。 | 只编译指定模板参数组合的核函数（Kernel）。 |
+| `ASCEND_COMPUTE_UNIT`收窄 | 开发阶段只跑当前SOC。 | 修改`CMakePresets.json`或cmake的ASCEND_COMPUTE_UNIT参数。 | 跳过其他芯片的核函数（Kernel）编译。 |
+| `ENABLE_BINARY_PACKAGE=False` | 源码发布模式，不需要核函数（Kernel）二进制。 | CMakeLists.txt或cmake参数。 | 跳过核函数（Kernel） `.o`生成，保留核函数（Kernel）源码和必要配置。 |
 
 ### TilingKey选择编译
 
-只编译指定[TilingKey](../design_and_implementation/multi_branch_strategy.md#compile-selected-tiling-keys)相关的Kernel代码，用于加速编译过程。若不指定TilingKey编译，则默认编译所有的TilingKey。配置多个TilingKey时，TilingKey之间不能有空格。示例如下，其中1、2为TilingKey取值：
+只编译指定[TilingKey](../design_and_implementation/multi_branch_strategy.md#compile-selected-tiling-keys)相关的核函数（Kernel）代码，用于加速编译过程。若不指定TilingKey编译，则默认编译所有的TilingKey。配置多个TilingKey时，TilingKey之间不能有空格。示例如下，其中1、2为TilingKey取值：
 
 ```bash
 # 在op_kernel/CMakeLists.txt中添加
@@ -169,13 +169,13 @@ npu_op_kernel_options(ascendc_kernels AddCustom COMPUTE_UNIT Ascendxxyy OPTIONS 
 
 ### 模板参数选择编译
 
-对于多分支与模板化算子，可只编译指定的模板参数组合。设置`--kernel-template-input`选项后，只编译指定的模板参数组合相关的Kernel代码，用于加速编译过程。若不设置该选项，则默认编译所有的模板参数组合。传入的参数为键值对列表，整体需用双引号或单引号包裹。不同模板参数之间用英文分号（;）分隔，相同模板参数配置多个值时用英文逗号（,）分隔。配置时不能有空格。示例如下：
+对于多分支与模板化算子，可只编译指定的模板参数组合。设置`--kernel-template-input`选项后，只编译指定的模板参数组合相关的核函数（Kernel）代码，用于加速编译过程。若不设置该选项，则默认编译所有的模板参数组合。传入的参数为键值对列表，整体需用双引号或单引号包裹。不同模板参数之间用英文分号（;）分隔，相同模板参数配置多个值时用英文逗号（,）分隔。配置时不能有空格。示例如下：
 
 ```bash
 npu_op_kernel_options(ascendc_kernels AddCustomTemplate COMPUTE_UNIT Ascendxxyy OPTIONS --kernel-template-input="D_T_X=float;D_T_Y=float;D_T_Z=float")
 ```
 
-配置模板参数组合时，模板参数名需要与Kernel入口处以及Host侧定义的模板参数名匹配。对于模板参数组合的值，如果存在自定义类型，需要替换为其对应数字值，如果为原生支持数据类型，则与Kernel入口处入参保持一致。示例如下：
+配置模板参数组合时，模板参数名需要与核函数（Kernel）入口处以及Host侧定义的模板参数名匹配。对于模板参数组合的值，如果存在自定义类型，需要替换为其对应数字值，如果为原生支持数据类型，则与核函数（Kernel）入口处入参保持一致。示例如下：
 
 ```CPP
 // Host侧模板参数定义
@@ -212,7 +212,7 @@ ASCENDC_TPL_SEL(
 );
 #endif
 
-// Kernel入口。模板参数名需要与Host侧模板参数定义保持一致。
+// 核函数（Kernel）入口。模板参数名需要与Host侧模板参数定义保持一致。
 template <typename D_T_X, typename D_T_Y, typename D_T_Z, uint32_t TILE_NUM, bool IS_SPLIT>
 __global__ __aicore__ void add_custom_template(GM_ADDR x, GM_ADDR y, GM_ADDR z,
                                                GM_ADDR workspace, GM_ADDR tiling)
@@ -239,15 +239,15 @@ npu_op_kernel_options(ascendc_kernels AddCustomTemplate COMPUTE_UNIT Ascendxxyy 
 
 ### 收窄芯片范围
 
-`ASCEND_COMPUTE_UNIT`配置了多少个芯片型号，Kernel侧通常就会按芯片型号分别编译。开发阶段如果只在当前机器上验证，可修改CMakeLists.txt里的ASCEND_COMPUTE_UNIT保留当前SOC或者临时只构建某个SOC。以下是CMake配置阶段临时设置只构建ascendxxyy SOC的示例：
+`ASCEND_COMPUTE_UNIT`配置了多少个芯片型号，核函数（Kernel）侧通常就会按芯片型号分别编译。开发阶段如果只在当前机器上验证，可修改CMakeLists.txt里的ASCEND_COMPUTE_UNIT保留当前SOC或者临时只构建某个SOC。以下是CMake配置阶段临时设置只构建ascendxxyy SOC的示例：
 
 ```bash
 cmake -S . -B build_out --preset=default -DASCEND_COMPUTE_UNIT=ascendxxyy
 ```
 
-### 跳过Kernel二进制编译
+### 跳过核函数（Kernel）二进制编译
 
-如果当前只需要生成源码包，或暂时不需要Kernel `.o`二进制，可关闭二进制包生成。顶层`CMakeLists.txt`中应使用变量形式传递`ENABLE_BINARY_PACKAGE`：
+如果当前只需要生成源码包，或暂时不需要核函数（Kernel） `.o`二进制，可关闭二进制包生成。顶层`CMakeLists.txt`中应使用变量形式传递`ENABLE_BINARY_PACKAGE`：
 
 ```cmake
 npu_op_package(${package_name}
@@ -266,7 +266,7 @@ cmake -S . -B build_out --preset=default -DENABLE_BINARY_PACKAGE=False
 cmake --build build_out --target binary package -j$(nproc)
 ```
 
-该模式下仍会执行Host侧库、Tiling库和配置文件生成，但传给Kernel编译脚本的`--enable-binary`为`False`，不会生成Kernel `.o`二进制文件；`op_kernel/ascendc_kernels/binary/dynamic/`下会保留Kernel源码等文件。
+该模式下仍会执行Host侧库、Tiling库和配置文件生成，但传给核函数（Kernel）编译脚本的`--enable-binary`为`False`，不会生成核函数（Kernel） `.o`二进制文件；`op_kernel/ascendc_kernels/binary/dynamic/`下会保留核函数（Kernel）源码等文件。
 
 > [!NOTE]说明
 >
@@ -279,7 +279,7 @@ cmake --build build_out --target binary package -j$(nproc)
 **线程数选择建议**：
 
 - 一般场景可先使用`-j$(nproc)`，让构建系统按可用CPU核数并行。
-- 如果机器内存较小，或Kernel编译阶段出现明显卡顿、系统负载过高，可改为`nproc / 2`或固定较小值。
+- 如果机器内存较小，或核函数（Kernel）编译阶段出现明显卡顿、系统负载过高，可改为`nproc / 2`或固定较小值。
 
 ```bash
 cmake --build build_out --target binary package -j$(nproc)

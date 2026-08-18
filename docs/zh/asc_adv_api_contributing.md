@@ -27,11 +27,11 @@ $$
 dstTensor_i = srcTensor_i \times scalarValue+dstTensor_i
 $$
 
-- Kernel侧
+- 核函数（Kernel）侧
 
-    考虑算子执行过程中的数据流向，Host侧申请GlobalMemory空间并向其中写入数据，Kernel侧从GlobalMemory搬运数据到LocalMemory，计算单元从LocalMemory中获取数据进行计算，将结果写回LocalMemory中，最后LocalMemory中的计算结果搬出到GlobalMemory。高阶API用于完成其中的计算，因此高阶API的源操作数与目的操作数均位于LocalMemory内存中，即高阶API的接口参数包括已搬入数据的LocalTensor以及其它参数。
+    考虑算子执行过程中的数据流向，Host侧申请GlobalMemory空间并向其中写入数据，核函数（Kernel）侧从GlobalMemory搬运数据到LocalMemory，计算单元从LocalMemory中获取数据进行计算，将结果写回LocalMemory中，最后LocalMemory中的计算结果搬出到GlobalMemory。高阶API用于完成其中的计算，因此高阶API的源操作数与目的操作数均位于LocalMemory内存中，即高阶API的接口参数包括已搬入数据的LocalTensor以及其它参数。
 
-    从`Axpy`的公式可知，接口需要输入参数`srcTensor`和`scalarValue`，输出参数`dstTensor`，还需要一个输入参数`calCount`表示参与计算的元素个数。由于该计算中产生了乘积的中间结果，因此需要额外分配LocalMemory的空间，用于存储中间计算结果。为在接口中传入该临时缓存空间，增加一个`shardTmpBuffer`输入参数。为了扩展API支持的数据类型，定义两个模版参数，分别作为源操作数和目的操作数的数据类型。模板参数中的`isReuseSource`为预留参数，在开发时可以不添加该参数。根据API的算法功能或公式，分析得出接口的所有参数后，得到如下Kernel侧函数原型。
+    从`Axpy`的公式可知，接口需要输入参数`srcTensor`和`scalarValue`，输出参数`dstTensor`，还需要一个输入参数`calCount`表示参与计算的元素个数。由于该计算中产生了乘积的中间结果，因此需要额外分配LocalMemory的空间，用于存储中间计算结果。为在接口中传入该临时缓存空间，增加一个`shardTmpBuffer`输入参数。为了扩展API支持的数据类型，定义两个模版参数，分别作为源操作数和目的操作数的数据类型。模板参数中的`isReuseSource`为预留参数，在开发时可以不添加该参数。根据API的算法功能或公式，分析得出接口的所有参数后，得到如下核函数（Kernel）侧函数原型。
 
     定义出函数原型后，分析并确定API实现中使用的基础API。`Axpy`公式中Tensor与Scalar的相乘运算，可以使用Ascend C提供的基础API `Muls`实现；两个Tensor的加法运算，可以使用Ascend C提供的基础API `Add`实现。
 
@@ -56,7 +56,7 @@ $$
     | calCount   | 输入 | 参与计算的元素个数。     | 
 - Tiling侧
 
-    Kernel侧接口的计算需要开发者预留/申请临时空间，该临时空间的大小需要在Tiling侧根据获取到的源操作数shape大小，计算高阶API所需的最大(maxValue)临时空间和最小临时空间(minValue)的大小。因此在Tiling侧提供一个用于计算maxValue和minValue的接口。接口的输入参数包括源操作数Tensor的shape大小和源操作数数据类型所占字节数，shape大小的参数使用AscendC::TensorShape类型，数据类型所占的字节数使用`uint32_t`类型，输出参数包括minValue和maxValue。与Axpy接口中的isReuseSource参数系统，Tiling接口中的isReuseSource为预留参数。
+    核函数（Kernel）侧接口的计算需要开发者预留/申请临时空间，该临时空间的大小需要在Tiling侧根据获取到的源操作数shape大小，计算高阶API所需的最大(maxValue)临时空间和最小临时空间(minValue)的大小。因此在Tiling侧提供一个用于计算maxValue和minValue的接口。接口的输入参数包括源操作数Tensor的shape大小和源操作数数据类型所占字节数，shape大小的参数使用AscendC::TensorShape类型，数据类型所占的字节数使用`uint32_t`类型，输出参数包括minValue和maxValue。与Axpy接口中的isReuseSource参数系统，Tiling接口中的isReuseSource为预留参数。
     ```c++
     void GetAxpyMaxMinTmpSize(const AscendC::TensorShape& srcShape, const uint32_t typeSize, const bool isReuseSource, uint32_t& maxValue, uint32_t& minValue);
     ```
@@ -70,7 +70,7 @@ $$
     | minValue   | 输出 | Axpy接口能完成计算所需的最小临时空间大小。为保证功能正确，接口计算时申请的临时空间不能小于该数值。最小空间大小为0表示计算不需要临时空间。   | 
 ### 开发API
 #### 编写API对外接口
-- Kernel侧接口
+- 核函数（Kernel）侧接口
     
     在`include/adv_api/`对应分类的目录下，新增[axpy.h](../../include/adv_api/math/axpy.h)文件。根据上述分析设计的API函数原型，编写对外接口的代码，函数实现中调用AxpyImpl的实现。
     ```c++
@@ -106,9 +106,9 @@ $$
     ```
 
 #### 编写API内部实现
-- Kernel侧实现
+- 核函数（Kernel）侧实现
 
-    在Kernel接口实现文件路径[impl/adv_api/detail](../../impl/adv_api/detail)的相应类别目录（本案例为`math`）下新增`axpy`目录，在该目录下新增接口实现文件[axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h)，然后在该实现文件中编写接口实现代码。
+    在核函数（Kernel）接口实现文件路径[impl/adv_api/detail](../../impl/adv_api/detail)的相应类别目录（本案例为`math`）下新增`axpy`目录，在该目录下新增接口实现文件[axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h)，然后在该实现文件中编写接口实现代码。
 
     首先，引入必要的头文件。
     ```c++
@@ -311,7 +311,7 @@ API的编码完成后，开发者可以编写对应的测试用例和测试代�
 #### UT测试
 UT测试使用gTest作为测试框架，一般验证接口编译是否正常，并不能看护接口功能。
 ##### UT编码
-###### Kernel侧
+###### 核函数（Kernel）侧
 
 在UT目录[tests/api/adv_api/math](../../tests/api/adv_api/math)下新增目录`axpy`、文件[test_operator_axpy.cpp](../../tests/api/adv_api/math/axpy/test_operator_axpy.cpp)。UT实现主要包括如下三部分：
 1. 引入头文件
@@ -422,7 +422,7 @@ TEST_F(TestTiling, TestAxpyTiling)
 }
 ```
 ##### 修改cmake文件
-在执行UT用例前，需要修改[CMakeLists.txt](../../tests/api/adv_api/CMakeLists.txt)文件，由于Kernel侧和Tiling侧的UT执行对象不同，需要在不同的target下添加测试文件。以Kernel侧验证Atlas A2 训练系列产品/Atlas A2 推理系列产品的UT为例，将UT测试文件路径添加到用例的源文件列表`ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`中，即新增文件路径`${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`。Tiling侧同理，需要将测试文件添加到`ASCENDC_TILING_TEST_SRC_FILES`列表。
+在执行UT用例前，需要修改[CMakeLists.txt](../../tests/api/adv_api/CMakeLists.txt)文件，由于核函数（Kernel）侧和Tiling侧的UT执行对象不同，需要在不同的target下添加测试文件。以核函数（Kernel）侧验证Atlas A2 训练系列产品/Atlas A2 推理系列产品的UT为例，将UT测试文件路径添加到用例的源文件列表`ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`中，即新增文件路径`${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`。Tiling侧同理，需要将测试文件添加到`ASCENDC_TILING_TEST_SRC_FILES`列表。
 ##### 执行UT
 - 执行全量UT用例
   
@@ -436,7 +436,7 @@ TEST_F(TestTiling, TestAxpyTiling)
     ```c++
     ::testing::GTEST_FLAG(filter) = "*Axpy*";
     ```
-  修改[build.sh](../../build.sh)，将all修改为需要执行的UT target，以执行Kernel侧Ascend 910B1的UT为例，target即为ascendc_utest_ascend910B1_AIV。
+  修改[build.sh](../../build.sh)，将all修改为需要执行的UT target，以执行核函数（Kernel）侧Ascend 910B1的UT为例，target即为ascendc_utest_ascend910B1_AIV。
   ```
   function build_test() {
     cmake_config

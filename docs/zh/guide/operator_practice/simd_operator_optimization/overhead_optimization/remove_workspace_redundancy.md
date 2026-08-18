@@ -1,8 +1,8 @@
-# 核函数内删除Workspace相关冗余操作<a name="ZH-CN_TOPIC_0000002499260290"></a>
+# 核函数（Kernel）内删除Workspace相关冗余操作<a name="ZH-CN_TOPIC_0000002499260290"></a>
 
 【优先级】中
 
-【描述】在Ascend C算子工程中，编写核函数时传入的参数workspace已经直接赋值为用户Workspace，因此无需再通过SetSysWorkspace和GetUserWorkspace来设置和获取Workspace。减少这些冗余判断后，编译器可以在不使用该参数的情况下进一步优化未用到的workspace变量。
+【描述】在Ascend C算子工程中，编写核函数（Kernel）时传入的参数workspace已经直接赋值为用户Workspace，因此无需再通过SetSysWorkspace和GetUserWorkspace来设置和获取Workspace。减少这些冗余判断后，编译器可以在不使用该参数的情况下进一步优化未用到的workspace变量。
 
 【反例】
 

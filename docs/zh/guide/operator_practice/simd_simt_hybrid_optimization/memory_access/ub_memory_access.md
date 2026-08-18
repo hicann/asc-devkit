@@ -8,7 +8,7 @@
 
 【优先级】高
 
-【描述】SIMT线程直接访问Global Memory时，访存请求会经过GM访问路径，数据搬运和线程计算耦合在同一段SIMT逻辑中，容易降低整体访存效率。当单次处理的数据量可放入最大可用Unified Buffer空间（256KB - 系统预留8KB - 最小Dcache 32KB）时，可以使用搬运接口将数据从Global Memory连续搬运到Unified Buffer，使SIMT编程直接访问Unified Buffer中的数据，从而提高内存访问效率，提升算子的整体性能。
+【描述】SIMT线程直接访问Global Memory时，访存请求会经过GM访问路径，数据搬运和线程计算耦合在同一段SIMT逻辑中，容易降低整体访存效率。当单次处理的数据量可放入最大可用Unified Buffer（UB）空间（256KB - 系统预留8KB - 最小Dcache 32KB）时，可以使用搬运接口将数据从Global Memory连续搬运到UB，使SIMT编程直接访问UB中的数据，从而提高内存访问效率，提升算子的整体性能。
 
 【样例介绍】以SIMD与SIMT混合编程方式实现的floor\_mod算子为例。该算子输入x和y的shape均为\[8192, 8192\]，数据类型为int32，输出z的shape为\[8192, 8192\]。完整样例请参考[SIMT与SIMD混合编程高性能优化样例](../../../../../../examples/05_simd_simt_hybrid/02_best_practices/simd_simt_high_performance)。
 
@@ -50,7 +50,7 @@
 
 SIMT线程层次结构为：
 
--   Kernel启动核数：64
+-   核函数（Kernel）启动核数：64
 -   单次SIMT VF调用线程数：1024
 
 【反例】
@@ -83,7 +83,7 @@ __global__ __vector__ void floor_mod_gm_simt_custom(__gm__ int32_t* x, __gm__ in
 
 【正例】
 
-使用搬运接口将x和y从Global Memory连续搬运到Unified Buffer，基于SIMT编程方式直接从Unified Buffer读取数据并写入Unified Buffer，再将结果连续写回Global Memory，对应样例中的场景3（SCENARIO\_NUM=3）。该实现采用ping-pong双缓冲策略，通过两组UB缓冲区交替处理数据，使MTE2搬入流水、Vector计算流水和MTE3搬出流水并行执行。代码如下。
+使用搬运接口将x和y从Global Memory连续搬运到UB，基于SIMT编程方式直接从UB读取数据并写入UB，再将结果连续写回Global Memory，对应样例中的场景3（SCENARIO\_NUM=3）。该实现采用ping-pong双缓冲策略，通过两组UB缓冲区交替处理数据，使MTE2搬入流水、Vector计算流水和MTE3搬出流水并行执行。代码如下。
 
 ```cpp
 __simt_vf__ inline void floor_mod_simt_contiguous(

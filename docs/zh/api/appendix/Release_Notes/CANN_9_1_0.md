@@ -14,10 +14,10 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 
 ### 数据搬运
 
-- `asc_copy_gm2ub`、`asc_copy_gm2ub_sync`：将数据从Global Memory搬运到Unified Buffer。
-- `asc_copy_ub2gm`、`asc_copy_ub2gm_sync`：将数据从Unified Buffer搬运到Global Memory。
-- `asc_copy_ub2ub`、`asc_copy_ub2ub_sync`：将数据从Unified Buffer搬运到Unified Buffer。
-- `asc_copy_ub2l1`、`asc_copy_ub2l1_sync`：将数据从Unified Buffer搬运到L1 Buffer。
+- `asc_copy_gm2ub`、`asc_copy_gm2ub_sync`：将数据从Global Memory搬运到Unified Buffer（UB）。
+- `asc_copy_ub2gm`、`asc_copy_ub2gm_sync`：将数据从UB搬运到Global Memory。
+- `asc_copy_ub2ub`、`asc_copy_ub2ub_sync`：将数据从UB搬运到UB。
+- `asc_copy_ub2l1`、`asc_copy_ub2l1_sync`：将数据从UB搬运到L1 Buffer。
 - `asc_set_copy_pad_val`：与`asc_copy_gm2ub_align`配合使用，设置连续搬运数据块左右两侧需要填充的数据值。Ascend 950PR/Ascend 950DT支持`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`数据需要先转换为`int8_t`再传入。
 - `asc_ndim_copy_dci`：执行N维搬运场景所需的数据缓存失效（Data Cache Invalidate，DCI）操作。
 - `asc_copy_gm2l1`、`asc_copy_gm2l1_sync`：将数据从Global Memory搬运到L1 Buffer。
@@ -28,10 +28,10 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 - `asc_copy_l12l0b_trans`、`asc_copy_l12l0b_trans_sync`：将矩阵从L1 Buffer转置搬运到L0B Buffer。
 - `asc_copy_l12l0b_mx`、`asc_copy_l12l0b_mx_sync`：将微缩放（Microscaling，MX）矩阵从L1 Buffer搬运到L0B Buffer。
 - `asc_copy_l0c2gm`、`asc_copy_l0c2gm_sync`：将L0C Buffer中的数据搬运到Global Memory，支持量化、ReLU、Leaky ReLU、通道拆分和NZ2ND随路控制。
-- `asc_copy_l0c2ub`、`asc_copy_l0c2ub_sync`：将L0C Buffer中的数据搬运到Unified Buffer，支持量化、ReLU、Leaky ReLU和通道拆分随路控制。
+- `asc_copy_l0c2ub`、`asc_copy_l0c2ub_sync`：将L0C Buffer中的数据搬运到UB，支持量化、ReLU、Leaky ReLU和通道拆分随路控制。
 - `asc_copy_l12fb`、`asc_copy_l12fb_sync`：将量化参数从L1 Buffer搬运到Fixpipe Buffer。
 - `asc_copy_l12bt`、`asc_copy_l12bt_sync`：将矩阵乘使用的偏置（Bias）数据从L1 Buffer搬运到BiasTable Buffer。
-- `asc_copy_l12ub`、`asc_copy_l12ub_sync`：将数据从L1 Buffer搬运到Unified Buffer。
+- `asc_copy_l12ub`、`asc_copy_l12ub_sync`：将数据从L1 Buffer搬运到UB。
 - `asc_fill_l1`、`asc_fill_l1_sync`：将`value`的二进制值赋值给目的操作数，对L1 Buffer的Local Memory进行初始化。
 - `asc_set_l13d_fmatrix_b`：设置特征图属性描述，用于`asc_copy_l12l0a`、`asc_copy_l12l0b`的3D格式搬运接口配置填充值。从右矩阵获取特征图属性时使用该接口。
 - `asc_set_l0c2gm_lrelu_alpha`：用于设置`asc_copy_l0c2l1`或`asc_copy_l0c2gm`计算过程中使用的Leaky ReLU alpha值，该值只支持`half`、`float`两种数据类型。
@@ -90,8 +90,8 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 - `asc_get_arch_ver`参数名由`coreVersion`统一为`core_version`。
 - 修复`cache_ctrl.h`复用原子操作头文件保护宏的问题，避免包含顺序导致缓存控制声明被跳过。
 - 统一`asc_simd.h`、`misc.h`、`cache_ctrl.h`、`sync.h`、`sys_var.h`和`utils_intf.h`中的头文件引用路径，避免安装目录变化导致包含失败。
-- 将`asc_loadalign_postupdate`、`asc_loadalign_brc_postupdate`、`asc_loadalign_brc_postupdate_v2`、`asc_loadalign_brc_postupdate_v3`、`asc_loadalign_upsample_postupdate`、`asc_loadalign_downsample_postupdate`、`asc_loadalign_unpack_postupdate`、`asc_loadalign_unpack_postupdate_v2`、`asc_loadalign_deintlv_postupdate`中需要自动更新的Unified Buffer源指针参数修正为指针引用，确保调用后地址变化对调用方可见。
-- 将`asc_storealign_postupdate`、`asc_storealign_1st_postupdate`、`asc_storealign_pack_postupdate`、`asc_storealign_pack_postupdate_v2`中需要自动更新的Unified Buffer目的指针参数修正为指针引用，确保调用后地址变化对调用方可见。
+- 将`asc_loadalign_postupdate`、`asc_loadalign_brc_postupdate`、`asc_loadalign_brc_postupdate_v2`、`asc_loadalign_brc_postupdate_v3`、`asc_loadalign_upsample_postupdate`、`asc_loadalign_downsample_postupdate`、`asc_loadalign_unpack_postupdate`、`asc_loadalign_unpack_postupdate_v2`、`asc_loadalign_deintlv_postupdate`中需要自动更新的UB源指针参数修正为指针引用，确保调用后地址变化对调用方可见。
+- 将`asc_storealign_postupdate`、`asc_storealign_1st_postupdate`、`asc_storealign_pack_postupdate`、`asc_storealign_pack_postupdate_v2`中需要自动更新的UB目的指针参数修正为指针引用，确保调用后地址变化对调用方可见。
 - 将不更新地址的`asc_storeunalign`目的参数由指针引用修正为普通指针，并补齐`asc_storeunalign_postupdate`的地址更新重载。
 - 修复`half`转换为`int4b_t`接口的舍入模式命名。9.0.0将以下四种舍入模式的接口声明为向下舍入函数名，9.1.0修复为与实际舍入模式一致的函数名：
   - 向上舍入：`asc_half2int4x2_ru`、`asc_half2int4x2_ru_sat`、`asc_half2int4x2_ru_v2`、`asc_half2int4x2_ru_sat_v2`、`asc_half2int4x2_ru_v3`、`asc_half2int4x2_ru_sat_v3`、`asc_half2int4x2_ru_v4`、`asc_half2int4x2_ru_sat_v4`。
@@ -116,14 +116,14 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 - `asc_copy_gm2ub_align`、`asc_copy_gm2ub_align_sync`、`asc_copy_ub2gm_align`、`asc_copy_ub2gm_align_sync`新增仅传入`dst`、`src`和`size`的简化重载。
 - `asc_copy_l0c2l1`新增`asc_copy_l0c2l1_sync`，并新增`int16_t`目的数据与`int32_t`源数据、`bfloat16_t`目的数据与`float`源数据的组合，以及目的参数为`__cbuf__ void*`、源参数分别为`__cc__ int32_t*`或`__cc__ float*`的通用重载。
 - `asc_copy_l12l0a_mx`新增`asc_copy_l12l0a_mx_sync`。
-- `asc_set_atomic_add_int8`、`asc_set_atomic_add_int16`、`asc_set_atomic_add_int`：设置后续从Unified Buffer、L0C Buffer到Global Memory的数据搬运开启原子累加，累加的数据类型分别为`int8_t`、`int16_t`、`int32_t`。
+- `asc_set_atomic_add_int8`、`asc_set_atomic_add_int16`、`asc_set_atomic_add_int`：设置后续从UB、L0C Buffer到Global Memory的数据搬运开启原子累加，累加的数据类型分别为`int8_t`、`int16_t`、`int32_t`。
 - `asc_gather`为`int16_t`、`uint16_t`、`half`、`bfloat16_t`数据新增使用`vector_uint32_t`索引的重载。
 - `asc_gather_datablock`新增`int4b_t`重载和无需传入掩码参数的`uint64_t`重载。
 - `asc_loadalign`、`asc_loadalign_brc`、`asc_loadalign_brc_v2`、`asc_loadalign_upsample`、`asc_loadalign_downsample`、`asc_loadalign_unpack`、`asc_loadalign_unpack_v2`、`asc_loadalign_deintlv`新增`int4b_t`、`vector_int4x2_t`重载。
 - `asc_loadalign`、`asc_loadalign_upsample`、`asc_loadalign_downsample`、`asc_loadalign_postupdate`新增`vector_bool`重载。
 - `asc_storealign`、`asc_storealign_1st`、`asc_storealign_intlv`、`asc_storeunalign`、`asc_storeunalign_postupdate`、`asc_storeunalign_post`、`asc_storeunalign_post_postupdate`、`asc_store`新增`int4b_t`、`vector_int4x2_t`数据重载。
 - `asc_storealign`、`asc_storealign_pack`、`asc_storealign_postupdate`、`asc_storealign_pack_postupdate`、`asc_storeunalign_postupdate`新增`vector_bool`输出重载。
-- `asc_scatter`新增9组目的Unified Buffer地址在前、源矢量寄存器在后的重载，根据索引将源矢量寄存器元素分散写入Unified Buffer。支持的数据类型为`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+- `asc_scatter`新增9组目的UB地址在前、源矢量寄存器在后的重载，根据索引将源矢量寄存器元素分散写入UB。支持的数据类型为`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 - `asc_create_iter_reg_b8`、`asc_create_iter_reg_b16`、`asc_create_iter_reg_b32`从单个偏移扩展为支持1至4个偏移。
 - `asc_copy`新增将`vector_uint16_t`、`vector_uint32_t`矢量数据寄存器复制到`vector_bool`掩码寄存器的重载。
 - `asc_duplicate_scalar`新增无需传入掩码参数的重载。
@@ -139,7 +139,7 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 | `asc_set_gm2ub_pad` | `asc_set_copy_pad_val` | 使用通用搬运填充值配置接口。 |
 | `asc_get_store_atomic_config`（Ascend 950PR/Ascend 950DT） | `asc_atomic_add` | 标量原子加无需预先配置和查询数据搬运原子状态。 |
 | `asc_set_store_atomic_config_v2` | `asc_atomic_add` | 标量原子加改为直接调用原子接口。 |
-| 源矢量寄存器在前、目的Unified Buffer地址在后的`asc_scatter`重载 | 目的Unified Buffer地址在前、源矢量寄存器在后的`asc_scatter`重载 | 支持的数据类型不变，仅调整参数顺序。 |
+| 源矢量寄存器在前、目的UB地址在后的`asc_scatter`重载 | 目的UB地址在前、源矢量寄存器在后的`asc_scatter`重载 | 支持的数据类型不变，仅调整参数顺序。 |
 | `asc_exp_sub_v2(vector_float&, vector_float, vector_float, vector_bool)` | `asc_exp_sub` | `half`输入的`asc_exp_sub_v2`仍保留，用于读取源操作数的奇数索引元素；仅`float`输入的该重载废弃。 |
 
 **注：** 详情可参考[废弃接口](../deprecated_interface.md)。

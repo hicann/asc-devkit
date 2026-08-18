@@ -142,14 +142,14 @@
 
 -   SplitMMatmulPolicy（SplitM模板策略）
 
-    Matmul一次[Iterate](Iterate.md)的计算结果从L0C Buffer搬到Unified Buffer时，采用双输出模式，即在分离模式下，AIC核与AIV核的核数比为1：2时，在调用[GetTensorC](GetTensorC.md)接口后，Matmul一次Iterate的计算结果在矩阵的M方向一分为二，将被切分后的两块结果数据分别搬运到两个AIV核的Unified Buffer。模板策略示意图如下所示。
+    Matmul一次[Iterate](Iterate.md)的计算结果从L0C Buffer搬到Unified Buffer（UB）时，采用双输出模式，即在分离模式下，AIC核与AIV核的核数比为1：2时，在调用[GetTensorC](GetTensorC.md)接口后，Matmul一次Iterate的计算结果在矩阵的M方向一分为二，将被切分后的两块结果数据分别搬运到两个AIV核的UB。模板策略示意图如下所示。
 
     **图5**  SplitM模板策略示意图  
     ![](../../../../figures/splitm_strategy.png "SplitM模板策略示意图")
 
 -   SplitNMatmulPolicy（SplitN模板策略）
 
-    Matmul一次[Iterate](Iterate.md)的计算结果从L0C Buffer搬到Unified Buffer时，采用双输出模式，即在分离模式下，AIC核与AIV核的核数比为1：2时，在调用[GetTensorC](GetTensorC.md)接口后，Matmul一次Iterate的计算结果在矩阵的N方向一分为二，将被切分后的两块结果数据分别搬运到两个AIV核的Unified Buffer。模板策略示意图如下所示。
+    Matmul一次[Iterate](Iterate.md)的计算结果从L0C Buffer搬到UB时，采用双输出模式，即在分离模式下，AIC核与AIV核的核数比为1：2时，在调用[GetTensorC](GetTensorC.md)接口后，Matmul一次Iterate的计算结果在矩阵的N方向一分为二，将被切分后的两块结果数据分别搬运到两个AIV核的UB。模板策略示意图如下所示。
 
     **图6**  SplitN模板策略示意图  
     ![](../../../../figures/splitn_strategy.png "SplitN模板策略示意图")
@@ -171,11 +171,11 @@
     -   当前只支持[Norm模板](MatmulConfig.md)和[MDL模板](MatmulConfig.md)。
 
 -   SplitMMatmulPolicy：
-    -   只支持C矩阵输出到Unified Buffer。
+    -   只支持C矩阵输出到UB。
     -   A矩阵、B矩阵类型信息MatmulType中的参数[IBSHARE](Matmul_usage.md)必须为true。
 
 -   SplitNMatmulPolicy：
-    -   只支持C矩阵输出到Unified Buffer。
+    -   只支持C矩阵输出到UB。
     -   baseN必须满足是16的倍数。
     -   [Tiling参数](../Matmul_Tiling/TCubeTiling_struct.md#tcubetiling-struct)必须满足：singleCoreM = baseM，singleCoreN = baseN，singleCoreK = baseK。
     -   A矩阵、B矩阵类型信息MatmulType中的参数[IBSHARE](Matmul_usage.md)必须为true。
@@ -323,7 +323,7 @@
         mm.SetBias(gmBias);
     }
 
-    // 调用GetTensorC接口后，将Matmul一次Iterate的计算结果一分为二，搬运到两个AIV核的Unified Buffer。
+    // 调用GetTensorC接口后，将Matmul一次Iterate的计算结果一分为二，搬运到两个AIV核的UB。
     pipe.InitBuffer(resultCMatrix, 1, tiling.M* tiling.N * sizeof(C_T));
     mm.template Iterate<false>();
     bufferC = resultCMatrix.AllocTensor<C_T>();
@@ -372,7 +372,7 @@
         mm.SetBias(gmBias);
     }
 
-    // 调用GetTensorC接口后，将Matmul一次Iterate的计算结果一分为二，搬运到两个AIV核的Unified Buffer。
+    // 调用GetTensorC接口后，将Matmul一次Iterate的计算结果一分为二，搬运到两个AIV核的UB。
     pipe.InitBuffer(resultCMatrix, 1, tiling.M* tiling.N * sizeof(C_T));
     mm.template Iterate<false>();
     bufferC = resultCMatrix.AllocTensor<C_T>();

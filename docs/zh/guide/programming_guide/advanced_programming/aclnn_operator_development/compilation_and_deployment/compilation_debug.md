@@ -1,6 +1,6 @@
 # 编译过程调试
 
-本文是扩展内容，介绍算子工程编译过程中的调试方法。算子工程编译涉及代码生成、Host侧编译、Kernel侧编译、打包部署四个阶段，默认输出通常不足以定位根因，下文按阶段介绍调试手段，并附常见错误的诊断方法。
+本文是扩展内容，介绍算子工程编译过程中的调试方法。算子工程编译涉及代码生成、Host侧编译、核函数（Kernel）侧编译、打包部署四个阶段，默认输出通常不足以定位根因，下文按阶段介绍调试手段，并附常见错误的诊断方法。
 
 ## 生成代码调试
 
@@ -85,13 +85,13 @@ cmake --build build_out --target binary package -j$(nproc)
 | 头文件找不到 | `-I`路径是否包含目标头文件所在目录。 |
 | 链接undefined reference | `-L`和`-l`是否包含缺失符号所在的库。 |
 
-## Kernel侧编译调试
+## 核函数（Kernel）侧编译调试
 
-Kernel侧由编译框架为每个算子调用毕昇编译器，默认不保留中间产物。通过`--save-temp-files`选项可以保留每次编译的中间文件，用于排查预处理、编译、链接各阶段的问题。
+核函数（Kernel）侧由编译框架为每个算子调用毕昇编译器，默认不保留中间产物。通过`--save-temp-files`选项可以保留每次编译的中间文件，用于排查预处理、编译、链接各阶段的问题。
 
 ### 开启方法
 
-在Kernel侧CMakeLists.txt中，通过`npu_op_kernel_options`添加`--save-temp-files`选项：
+在核函数（Kernel）侧CMakeLists.txt中，通过`npu_op_kernel_options`添加`--save-temp-files`选项：
 
 ```cmake
 # 为所有算子开启
@@ -109,18 +109,18 @@ npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)
 
 ### 保留的中间产物
 
-开启后，编译框架会在构建目录下保留每个Kernel编译过程的中间文件。例如本文在ascendxxyy上验证的AddCustom工程中，临时文件位于：
+开启后，编译框架会在构建目录下保留每个核函数（Kernel）编译过程的中间文件。例如本文在ascendxxyy上验证的AddCustom工程中，临时文件位于：
 
 ```
 build_out/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kernel_meta/
 ```
 
-实际目录名会随OpType、芯片型号和Kernel名称变化。常见文件包括：
+实际目录名会随OpType、芯片型号和核函数（Kernel）名称变化。常见文件包括：
 
 - **预处理文件**（`.i`）：预处理后的源码，可用于确认宏展开是否正确、头文件是否被正确包含。
 - **目标文件**（`.o`）：链接前的目标文件，可用于确认符号是否正确导出。
-- **编译日志**（`.log`）：单个Kernel的编译日志，可用于查看编译器调用和诊断信息。
-- **生成源码**（`*_kernel.cpp`、`*_tiling_data.h`等）：编译框架生成的Kernel源码和Tiling数据结构文件。
+- **编译日志**（`.log`）：单个核函数（Kernel）的编译日志，可用于查看编译器调用和诊断信息。
+- **生成源码**（`*_kernel.cpp`、`*_tiling_data.h`等）：编译框架生成的核函数（Kernel）源码和Tiling数据结构文件。
 
 
 ### 常见问题排查场景
@@ -133,7 +133,7 @@ build_out/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kern
 
 ### 部分芯片编译失败处理
 
-当`ASCEND_COMPUTE_UNIT`配置了多个芯片型号时，Kernel编译会对每个芯片独立执行一轮。如果某个芯片的Kernel编译失败，默认行为是终止整个构建流程。
+当`ASCEND_COMPUTE_UNIT`配置了多个芯片型号时，核函数（Kernel）编译会对每个芯片独立执行一轮。如果某个芯片的核函数（Kernel）编译失败，默认行为是终止整个构建流程。
 
 `ASCEND_SKIP_FAILED_COMPUTE_UNIT`选项允许跳过单个芯片的编译失败，继续编译其余芯片。适用场景：
 
@@ -177,7 +177,7 @@ Run CPack packaging tool...
 
 ### 检查编译产物目录
 
-在打包或安装前，先检查编译产物目录，确认单算子API头文件、动态库、Kernel二进制和Tiling库等是否已生成。不同编译方式下目录结构会有差异，下方仅列出排查时常用的关键路径。
+在打包或安装前，先检查编译产物目录，确认单算子API头文件、动态库、核函数（Kernel）二进制和Tiling库等是否已生成。不同编译方式下目录结构会有差异，下方仅列出排查时常用的关键路径。
 
 `TYPE RUN`模式下，原始构建目录中主要检查中间产物：
 
@@ -221,7 +221,7 @@ build_out/_CPack_Packages/Linux/External/custom_opp_*.run/packages/vendors/<vend
 **检查要点**：
 - `build_out/autogen/`或staging目录的`op_api/include/`下是否生成`aclnn_<op>.h`。
 - `build_out/op_host/`或staging目录的`op_api/lib/`下是否生成`libcust_opapi.so`。
-- staging目录或安装目录的`op_impl`下是否包含目标芯片型号的Kernel二进制和Tiling动态库。
+- staging目录或安装目录的`op_impl`下是否包含目标芯片型号的核函数（Kernel）二进制和Tiling动态库。
 - 如果使用SHARED/STATIC模式，`ENABLE_BINARY_PACKAGE`必须为True。
 
 ### 安装后验证内容
@@ -253,7 +253,7 @@ ls <path>/vendors/<vendor_name>/op_proto # 可选
 
 ## 编译日志存盘
 
-默认情况下，Kernel侧编译过程中的中间日志不会保留到磁盘，编译失败时终端仅打印异常抛出信息。通过设置`ASCENDC_BUILD_LOG_DIR`环境变量，可将每个编译阶段的日志写入指定目录，便于事后回溯。
+默认情况下，核函数（Kernel）侧编译过程中的中间日志不会保留到磁盘，编译失败时终端仅打印异常抛出信息。通过设置`ASCENDC_BUILD_LOG_DIR`环境变量，可将每个编译阶段的日志写入指定目录，便于事后回溯。
 
 **开启方法**：在执行cmake或build.sh之前设置环境变量：
 
@@ -282,4 +282,4 @@ export ASCENDC_BUILD_LOG_DIR=/home/build_log/
 
 > [!NOTE]说明
 >
-> 开启`ASCEND_SKIP_FAILED_COMPUTE_UNIT`时，建议同时开启`ASCENDC_BUILD_LOG_DIR`，两者配合使用可以完整保留每个失败Kernel的详细编译日志，便于逐个修复。
+> 开启`ASCEND_SKIP_FAILED_COMPUTE_UNIT`时，建议同时开启`ASCENDC_BUILD_LOG_DIR`，两者配合使用可以完整保留每个失败核函数（Kernel）的详细编译日志，便于逐个修复。

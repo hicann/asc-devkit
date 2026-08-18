@@ -1,6 +1,6 @@
 # asc_load_l2_cache_mode
 
-asc_load_l2_cache_mode用于表示数据从GM搬运到UB时的L2 cache管理策略，在调用[asc_copy_gm2ub_align](../vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)和[asc_ndim_copy_gm2ub](../vector_data_move/asc_ndim_copy_gm2ub.md)时使用。L2 Cache管理策略的影响可见[L2 Cache Mode最佳实践](../../../../../../examples/02_simd_c_api/02_features/03_c_api/01_data_movement/00_set_l2_cache_mode/README.md)。
+asc_load_l2_cache_mode用于表示数据从GM搬运到Unified Buffer（UB）时的L2 cache管理策略，在调用[asc_copy_gm2ub_align](../vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)和[asc_ndim_copy_gm2ub](../vector_data_move/asc_ndim_copy_gm2ub.md)时使用。L2 Cache管理策略的影响可见[L2 Cache Mode最佳实践](../../../../../../examples/02_simd_c_api/02_features/03_c_api/01_data_movement/00_set_l2_cache_mode/README.md)。
 
 ## 枚举类具体定义
 

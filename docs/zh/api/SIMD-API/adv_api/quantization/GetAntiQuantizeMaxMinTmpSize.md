@@ -24,7 +24,7 @@ void GetAntiQuantizeMaxMinTmpSize(const AscendC::TensorShape& srcShape, const As
 | isTranspose | 输入 | 预留参数。当前仅支持配置为false。 |
 | inputDataType | 输入 | 输入srcTensor数据类型，参数类型为[AscendC::TensorDataType](../data_structures/TensorDataType.md)。 |
 | outputDataType | 输入 | 输出dstTensor数据类型，参数类型为[AscendC::TensorDataType](../data_structures/TensorDataType.md)。 |
-| maxValue | 输出 | AntiQuantize接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。最大空间大小为0表示计算不需要临时空间。<br>maxValue仅作为参考值，有可能大于Unified Buffer剩余空间的大小，该场景下，开发者需要根据Unified Buffer剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | AntiQuantize接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。最大空间大小为0表示计算不需要临时空间。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | AntiQuantize接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。最小空间大小为0表示计算不需要临时空间。 |
 
 ## 返回值说明

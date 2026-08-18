@@ -7,7 +7,7 @@
 
 ## Tiling实现<a name="zh-cn_topic_0000002236197681_section1967484164119"></a>
 
-开启DoubleBuffer后，每一个数据块会分成大小相等的两块，因此，若要开启DoubleBuffer，要求数据总量应该能够均分。为了简化处理，将可用的Unified Buffer空间以32字节为粒度，分成n块dataBlock，如果n不是偶数，则减1，这样就可以保证一套代码兼容开启或不开启DoubleBuffer功能。对应步骤如下：
+开启DoubleBuffer后，每一个数据块会分成大小相等的两块，因此，若要开启DoubleBuffer，要求数据总量应该能够均分。为了简化处理，将可用的Unified Buffer（UB）空间以32字节为粒度，分成n块dataBlock，如果n不是偶数，则减1，这样就可以保证一套代码兼容开启或不开启DoubleBuffer功能。对应步骤如下：
 
 1.  判断数据总长度totalLength是否满足32字节对齐，如不满足，则计算totalLength向上32字节对齐后的长度totalLengthAligned。
 
@@ -23,7 +23,7 @@
 2.  根据totalLengthAligned，计算每个核的计算数据长度blockLength，分核策略可参照[尾核切分](multi_core_tiling/tail_core_split.md)。
 3.  计算其余Tiling参数。
 
-    对当前Unified Buffer可用空间以32字节为粒度，进行切分，计算出数据块个数UB\_BLOCK\_NUM。根据是否开启DoubleBuffer计算出当前可用的最大数据块个数，记作MAX\_AVAILABLE\_UB\_BLOCK\_NUM。最后，以MAX\_AVAILABLE\_UB\_BLOCK\_NUM为粒度，对blockLength进行切分。为方便演示，如下代码直接给出UB\_BLOCK\_NUM，作为当前Unified Buffer可用空间包含的block（32字节）数。
+    对当前UB可用空间以32字节为粒度，进行切分，计算出数据块个数UB\_BLOCK\_NUM。根据是否开启DoubleBuffer计算出当前可用的最大数据块个数，记作MAX\_AVAILABLE\_UB\_BLOCK\_NUM。最后，以MAX\_AVAILABLE\_UB\_BLOCK\_NUM为粒度，对blockLength进行切分。为方便演示，如下代码直接给出UB\_BLOCK\_NUM，作为当前UB可用空间包含的block（32字节）数。
 
     ```
     constexpr uint32_t BUFFER_NUM = 2;

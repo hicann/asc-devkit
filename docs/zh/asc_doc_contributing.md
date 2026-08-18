@@ -200,7 +200,7 @@ C = A × B + Bias
 
 **编写要求**：
 - 当不同产品的排布格式不同（如Zz vs Nz）时，**必须分表**
-- 物理位置写Buffer名称（L0A/L0B/L0C/UB等）
+- 物理位置写Buffer名称（L0A/L0B/L0C/Unified Buffer（UB）等）
 - 格式写分形排布格式（Zz/Zn/Nz/ND等）
 - 如有偏置矩阵，在C矩阵行的说明中标注"可支持使用偏置矩阵Bias进行初始化，维度为1 x N"
 
@@ -612,7 +612,7 @@ void mad(__cc__ float *c, __ca__ half *a, __cb__ half *b,
 ### 示例中的关键字注释
 
 ```cpp
-__aicore__ inline void ExampleKernel(__gm__ uint8_t* x) {  // __aicore__=核函数修饰符, __gm__=Global Memory地址空间
+__aicore__ inline void ExampleKernel(__gm__ uint8_t* x) {  // __aicore__=核函数（Kernel）修饰符, __gm__=Global Memory地址空间
     // ...
 }
 ```

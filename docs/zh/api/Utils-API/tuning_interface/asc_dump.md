@@ -39,7 +39,7 @@
 template<typename T>
 __aicore__ static __attribute__((noinline)) void asc_dump_gm(__gm__ T* input, uint32_t desc, uint32_t dump_size)
 
-// UB内存上的数据打印
+// Unified Buffer（UB）内存上的数据打印
 template<typename T>
 __aicore__ static __attribute__((noinline)) void asc_dump_ubuf(__ubuf__ T* input, uint32_t desc, uint32_t dump_size)
 

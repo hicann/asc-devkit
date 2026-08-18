@@ -82,6 +82,6 @@ vector_uint16_t dst;
 vector_uint16_t src;
 int16_t value = 1;
 vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的UB内存空间地址。
+asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
 asc_shiftleft_scalar(dst, src, value, mask);
 ```

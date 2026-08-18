@@ -20,10 +20,10 @@
 </th>
 </tr>
 </thead>
-<tbody><tr id="row1098410169204"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p73939428116"><a name="p73939428116"></a><a name="p73939428116"></a>内存访问（L0 Buffer/L1 Buffer/UB等）</p>
+<tbody><tr id="row1098410169204"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.2.4.1.1 "><p id="p73939428116"><a name="p73939428116"></a><a name="p73939428116"></a>内存访问（L0 Buffer/L1 Buffer/Unified Buffer（UB）等）</p>
 </td>
 <td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.2.4.1.2 "><p id="p339313421116"><a name="p339313421116"></a><a name="p339313421116"></a>各存储单元的最小访问粒度/地址对齐要求：</p>
-<p id="p14393742910"><a name="p14393742910"></a><a name="p14393742910"></a>Unified Buffer：32Byte对齐。</p>
+<p id="p14393742910"><a name="p14393742910"></a><a name="p14393742910"></a>UB：32Byte对齐。</p>
 <p id="p1339384218119"><a name="p1339384218119"></a><a name="p1339384218119"></a>L1 Buffer：32Byte对齐。</p>
 <p id="p03939425116"><a name="p03939425116"></a><a name="p03939425116"></a>L0A Buffer/L0B Buffer：512Byte对齐。</p>
 <p id="p139316421914"><a name="p139316421914"></a><a name="p139316421914"></a>L0C Buffer：64Byte对齐。</p>

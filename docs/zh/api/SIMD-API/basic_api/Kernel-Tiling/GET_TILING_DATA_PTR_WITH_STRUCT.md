@@ -72,9 +72,9 @@ GET_TILING_DATA_PTR_WITH_STRUCT(tiling_struct, dst_ptr, tiling_ptr)
 
 ## 约束说明<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
--   该宏需在算子Kernel代码处使用，并且传入的dst\_ptr参数无需声明类型。
+-   该宏需在算子核函数（Kernel）代码处使用，并且传入的dst\_ptr参数无需声明类型。
 -   动态Shape场景下，获取到的dst\_ptr是指向Global Memory变量的指针；静态Shape场景下，获取到的dst\_ptr是指向局部变量的指针，需确保在合理的作用域范围内使用。
--   暂不支持Kernel直调工程。
+-   暂不支持核函数（Kernel）直调工程。
 
 ## 调用示例<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

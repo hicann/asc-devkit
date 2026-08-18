@@ -131,7 +131,7 @@ __global__ __vector__ void asc_init_kernel(__gm__ uint64_t* output, __gm__ uint6
     asc_set_atomic_add_int();
     // Reinitialize the core and clear persistent state such as the atomic mode.
     asc_init();
-    // asc_init resets the atomic mode, so this is an ordinary UB-to-GM copy.
+    // asc_init resets the atomic mode, so this is an ordinary Unified Buffer（UB）-to-GM copy.
     asc_copy_ub2gm(reinterpret_cast<__gm__ uint32_t*>(output), local, BYTES);
     asc_sync_mte3(0);
 }

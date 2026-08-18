@@ -2,7 +2,7 @@
 
 ## 特性说明
 
-同一AI Core内有一个Cube Core和两个Vector Core，当启用双目标模式控制时，L0C Buffer中的M×N矩阵将被分成两半，并同时分别写入两个Vector Core各自的UB中，其中前半部分写入SUB BLOCK0，后半部分写入SUB BLOCK1。
+同一AI Core内有一个Cube Core和两个Vector Core，当启用双目标模式控制时，L0C Buffer中的M×N矩阵将被分成两半，并同时分别写入两个Vector Core各自的Unified Buffer（UB）中，其中前半部分写入SUB BLOCK0，后半部分写入SUB BLOCK1。
 
 - 双目标模式（M维度）：按M维度拆分成形状为M / 2 \* N的两个矩阵，分别写入两个UB。
 - 双目标模式（N维度）：按N维度拆分成形状为M \* N / 2的两个矩阵，分别写入两个UB。

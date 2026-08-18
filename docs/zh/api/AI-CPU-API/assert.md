@@ -13,7 +13,7 @@
 
 ## 功能说明<a name="section259105813316"></a>
 
-该接口实现AI CPU算子Kernel调试场景下的assert断言功能。
+该接口实现AI CPU算子核函数（Kernel）调试场景下的assert断言功能。
 
 算子执行中，如果assert内部条件判断不为真，则输出assert条件、触发文件名、行号等信息。
 

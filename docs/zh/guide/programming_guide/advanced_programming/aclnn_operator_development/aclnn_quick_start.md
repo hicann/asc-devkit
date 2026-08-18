@@ -46,7 +46,7 @@ source /usr/local/Ascend/cann/set_env.sh
 |------|------|----------|
 | 步骤1 | 创建工程 | 1分钟 |
 | 步骤2 | 查看目录结构 | — |
-| 步骤3 | 修改Kernel侧代码 | 1分钟 |
+| 步骤3 | 修改核函数（Kernel）侧代码 | 1分钟 |
 | 步骤4 | 修改Host侧Tiling | 1分钟 |
 | 步骤5 | 编译 | 1分钟 |
 | 步骤6 | 部署 | — |
@@ -93,7 +93,7 @@ msopgen gen -i add_custom.json -c ai_core-ascendxxyy -lan cpp -out AddCustom
 ```
 
 -   -i：指定算子原型定义文件add\_custom_.json所在路径，请根据实际情况修改。
--   -c：`ai_core-ascendxxyy`代表算子在AI Core上执行，ascendxxyy为昇腾AI处理器的型号`soc_version`。JSON中的type/format列表定义算子支持的数据类型和格式组合。msOpGen会基于这些信息生成对应的Kernel编译配置。
+-   -c：`ai_core-ascendxxyy`代表算子在AI Core上执行，ascendxxyy为昇腾AI处理器的型号`soc_version`。JSON中的type/format列表定义算子支持的数据类型和格式组合。msOpGen会基于这些信息生成对应的核函数（Kernel）编译配置。
 -   -lan：参数cpp代表算子基于Ascend C编程框架，使用C/C++编程语言开发。
 -   -out：生成文件所在路径，可配置为绝对路径或者相对路径，并且工具执行用户对路径具有可读写权限。若不配置，则默认生成在执行命令的当前路径。
 
@@ -139,7 +139,7 @@ AddCustom
 ├── op_host                   // Host侧实现文件
 │   ├── add_custom.cpp        // [需修改] 算子原型注册、Tiling实现
 │   └── CMakeLists.txt
-└── op_kernel                 // Kernel侧实现文件
+└── op_kernel                 // 核函数（Kernel）侧实现文件
     ├── add_custom.cpp        // [需修改] 算子代码实现
     ├── add_custom_tiling.h   // [需修改] Tiling数据结构定义
     └── CMakeLists.txt
@@ -149,7 +149,7 @@ AddCustom
 
 msOpGen生成的`op_host/add_custom.cpp`已包含`namespace ops`（算子原型注册）和`namespace ge`（InferShape/InferDataType）的框架代码，以及`TilingFunc`函数的空实现。后续只需修改`TilingFunc`的实现，保留框架代码不变。
 
-### 修改Kernel侧代码
+### 修改核函数（Kernel）侧代码<a name="修改kernel侧代码"></a>
 
 编辑`op_kernel/add_custom.cpp`，将自动生成模板中的内容替换为完整的算子计算实现：
 
@@ -243,11 +243,11 @@ extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z
 }
 ```
 
-> 以上代码展示了[Kernel侧算子实现](./design_and_implementation/kernel_operator_implementation.md)的基本模式。
+> 以上代码展示了[核函数（Kernel）侧算子实现](./design_and_implementation/kernel_operator_implementation.md)的基本模式。
 
 ### 修改Tiling与Host侧实现
 
-Tiling负责将Host侧的调度信息（如数据总量、分块数）传递给Kernel侧执行。Tiling数据结构定义放在`op_kernel/add_custom_tiling.h`，供Host和Kernel共同引用。
+Tiling负责将Host侧的调度信息（如数据总量、分块数）传递给核函数（Kernel）侧执行。Tiling数据结构定义放在`op_kernel/add_custom_tiling.h`，供Host和核函数（Kernel）共同引用。
 
 #### 修改Tiling数据结构定义
 
@@ -325,7 +325,7 @@ cd AddCustom
 customize
 ├── framework     // AI框架适配插件
 ├── op_api        // 单算子API头文件和动态库（aclnn_*.h、libcust_opapi.so）
-├── op_impl       // Kernel二进制（.o）和Tiling动态库
+├── op_impl       // 核函数（Kernel）二进制（.o）和Tiling动态库
 ├── op_proto      // 算子原型动态库
 ├── scripts       // 算子包维护脚本
 └── version.info  // 版本信息
@@ -556,7 +556,7 @@ test pass
 如果输出`test failed`、ACL Error或动态库`not found`类错误，请检查：
 1. CANN环境变量是否已加载（`source /usr/local/Ascend/cann/set_env.sh`）。
 2. 算子是否已按照[部署](#部署)步骤正确部署。
-3. Kernel侧和Host侧代码是否按[Kernel代码](#修改kernel侧代码)、[Host代码](#修改tiling与host侧实现)正确修改。
+3. 核函数（Kernel）侧和Host侧代码是否按[核函数（Kernel）代码](#修改kernel侧代码)、[Host代码](#修改tiling与host侧实现)正确修改。
 
 ## 下一步指引
 

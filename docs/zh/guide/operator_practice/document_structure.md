@@ -28,7 +28,7 @@
 本文档分为如下几个章节，各章的内容以及目标如下：
 
 -   **[异构计算](heterogeneous_computing.md)**：介绍算子在硬件上的部署以及运行的数据流。目的是让开发者在宏观上了解硬件架构上可能影响算子执行性能的流程。
--   **[SIMD算子实现](simd_operator_impl/overview.md)**：介绍矢量编程、矩阵编程、融合算子编程三种典型场景下的算子Tiling、Kernel实现，是对Ascend C编程范式的具体应用。
+-   **[SIMD算子实现](simd_operator_impl/overview.md)**：介绍矢量编程、矩阵编程、融合算子编程三种典型场景下的算子Tiling、核函数（Kernel）实现，是对Ascend C编程范式的具体应用。
 -   **[SIMT算子实现](simt_operator_impl/simt_operator_impl.md)**：介绍使用SIMT API进行算子开发的参考案例。
 -   **[SIMD与SIMT混合算子实现](simd_simt_hybrid_operator_impl/simd_simt_hybrid_operator_impl.md)**：介绍使用Reg矢量计算API和SIMT API进行SIMD与SIMT混合编程的算子开发参考案例。
 -   **[功能调试](functional_debug/functional_debug.md)**：介绍部分比较常见的影响算子功能的场景。目的是让开发者可以快速解决功能问题，便于进行性能优化，以及快速解决在性能优化过程中可能出现的功能问题。

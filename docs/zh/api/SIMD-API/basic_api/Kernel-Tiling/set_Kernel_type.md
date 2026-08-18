@@ -1,4 +1,4 @@
-# 设置Kernel类型<a name="ZH-CN_TOPIC_0000001777592824"></a>
+# 设置核函数（Kernel）类型<a name="ZH-CN_TOPIC_0000001777592824"></a>
 
 ## 产品支持情况<a name="section1550532418810"></a>
 
@@ -33,7 +33,7 @@
 
 -   设置全局默认的kernel type，对所有的tiling key生效。
 
-    当前支持在自定义算子工程和Kernel直调工程中使用。
+    当前支持在自定义算子工程和核函数（Kernel）直调工程中使用。
 
     ```
     KERNEL_TASK_TYPE_DEFAULT(value)
@@ -64,7 +64,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.2.4.1.2 "><p id="p16921418832"><a name="p16921418832"></a><a name="p16921418832"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p12921131811315"><a name="p12921131811315"></a><a name="p12921131811315"></a>tiling key的key值，此参数是正数，表示某个核函数的分支。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p12921131811315"><a name="p12921131811315"></a><a name="p12921131811315"></a>tiling key的key值，此参数是正数，表示某个核函数（Kernel）的分支。</p>
 </td>
 </tr>
 <tr id="row1792151817316"><td class="cellrowborder" valign="top" width="17.22%" headers="mcps1.2.4.1.1 "><p id="p119219181935"><a name="p119219181935"></a><a name="p119219181935"></a>value</p>
@@ -111,23 +111,23 @@
 </tr>
 <tr id="row196349321693"><td class="cellrowborder" valign="top" width="35.8%" headers="mcps1.2.3.1.1 "><p id="p1863411329915"><a name="p1863411329915"></a><a name="p1863411329915"></a>KERNEL_TYPE_MIX_AIV_1_0</p>
 </td>
-<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p101533312255"><a name="p101533312255"></a><a name="p101533312255"></a>AIC、AIV混合场景下，使用了<a href="../sync_control/inter_core_sync/inter_core_sync.md">多核控制相关指令</a>时，设置核函数的类型为MIX AIV:AIC 1:0（带有硬同步），算子执行时仅会启动AI Core上的Vector核，比如用户在host侧设置numBlocks为10，则会启动10个Vector核。</p>
+<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p101533312255"><a name="p101533312255"></a><a name="p101533312255"></a>AIC、AIV混合场景下，使用了<a href="../sync_control/inter_core_sync/inter_core_sync.md">多核控制相关指令</a>时，设置核函数（Kernel）的类型为MIX AIV:AIC 1:0（带有硬同步），算子执行时仅会启动AI Core上的Vector核，比如用户在host侧设置numBlocks为10，则会启动10个Vector核。</p>
 <p id="p15178718334"><a name="p15178718334"></a><a name="p15178718334"></a>硬同步的概念解释如下：当不同核之间操作同一块全局内存且可能存在读后写、写后读以及写后写等数据依赖问题时，通过调用<a href="../sync_control/inter_core_sync/SyncAll.md">SyncAll()</a>函数来插入同步语句来避免上述数据依赖时可能出现的数据读写错误问题。目前多核同步分为硬同步和软同步，硬同步是利用硬件自带的全核同步指令由硬件保证多核同步。</p>
 </td>
 </tr>
 <tr id="row12635183213919"><td class="cellrowborder" valign="top" width="35.8%" headers="mcps1.2.3.1.1 "><p id="p7635932295"><a name="p7635932295"></a><a name="p7635932295"></a>KERNEL_TYPE_MIX_AIC_1_0</p>
 </td>
-<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p121619511252"><a name="p121619511252"></a><a name="p121619511252"></a>AIC、AIV混合场景下，使用了<a href="../sync_control/inter_core_sync/inter_core_sync.md">多核控制相关指令</a>时，设置核函数的类型为MIX AIC:AIV 1:0（带有硬同步），算子执行时仅会启动AI Core上的Cube核，比如用户在host侧设置numBlocks为10，则会启动10个Cube核。</p>
+<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p121619511252"><a name="p121619511252"></a><a name="p121619511252"></a>AIC、AIV混合场景下，使用了<a href="../sync_control/inter_core_sync/inter_core_sync.md">多核控制相关指令</a>时，设置核函数（Kernel）的类型为MIX AIC:AIV 1:0（带有硬同步），算子执行时仅会启动AI Core上的Cube核，比如用户在host侧设置numBlocks为10，则会启动10个Cube核。</p>
 </td>
 </tr>
 <tr id="row76354321096"><td class="cellrowborder" valign="top" width="35.8%" headers="mcps1.2.3.1.1 "><p id="p146354324910"><a name="p146354324910"></a><a name="p146354324910"></a>KERNEL_TYPE_MIX_AIC_1_1</p>
 </td>
-<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p1763563216919"><a name="p1763563216919"></a><a name="p1763563216919"></a>AIC、AIV混合场景下，设置核函数的类型为MIX AIC:AIV 1:1，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置numBlocks为10，则会启动10个Cube核和10个Vector核。</p>
+<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p1763563216919"><a name="p1763563216919"></a><a name="p1763563216919"></a>AIC、AIV混合场景下，设置核函数（Kernel）的类型为MIX AIC:AIV 1:1，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置numBlocks为10，则会启动10个Cube核和10个Vector核。</p>
 </td>
 </tr>
 <tr id="row15635332191"><td class="cellrowborder" valign="top" width="35.8%" headers="mcps1.2.3.1.1 "><p id="p13635113220918"><a name="p13635113220918"></a><a name="p13635113220918"></a>KERNEL_TYPE_MIX_AIC_1_2</p>
 </td>
-<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p16635332397"><a name="p16635332397"></a><a name="p16635332397"></a>AIC、AIV混合场景下，设置核函数的类型为MIX AIC:AIV 1:2，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置numBlocks为10，则会启动10个Cube核和20个Vector核。</p>
+<td class="cellrowborder" valign="top" width="64.2%" headers="mcps1.2.3.1.2 "><p id="p16635332397"><a name="p16635332397"></a><a name="p16635332397"></a>AIC、AIV混合场景下，设置核函数（Kernel）的类型为MIX AIC:AIV 1:2，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置numBlocks为10，则会启动10个Cube核和20个Vector核。</p>
 </td>
 </tr>
 <tr id="row66355321498"><td class="cellrowborder" valign="top" width="35.8%" headers="mcps1.2.3.1.1 "><p id="p863516323915"><a name="p863516323915"></a><a name="p863516323915"></a><span>KERNEL_TYPE_AICORE </span></p>
@@ -175,7 +175,7 @@
 -   没有设置全局默认kernel type的情况下，如果开发者只为其中的某几个tiling key设置kernel type，即部分tiling key没有设置kernel type，会导致算子kernel编译报错。
 -   当设置具体的kernel task type时，用户的算子实现需要与kernel type相匹配。比如用户设置kernel type为KERNEL\_TYPE\_MIX\_AIC\_1\_2，则算子内部实现应与核配比AIC:AIV为1:2相对应；若用户设置kernel type为KERNEL\_TYPE\_AIC\_ONLY，则算子内部实现应该为纯cube逻辑，不应该存在vector部分的逻辑。其他的kernel type类似。
 -   当纯cube或者纯vec算子强制设定kernel type为MIX类型时，workspace的大小不能设置为0，需要设置一个大于0的值（比如16、32等）。
--   使用[Tiling模板编程](../../../Utils-API/Tiling_template_programming/Tiling_template_programming.md)时，需要通过ASCENDC\_TPL\_KERNEL\_TYPE\_SEL设置Kernel类型即可，无需再通过该接口进行设置，本接口不生效。
+-   使用[Tiling模板编程](../../../Utils-API/Tiling_template_programming/Tiling_template_programming.md)时，需要通过ASCENDC\_TPL\_KERNEL\_TYPE\_SEL设置核函数（Kernel）类型即可，无需再通过该接口进行设置，本接口不生效。
 
 ## 调用示例<a name="zh-cn_topic_0000001610027821_section97001499599"></a>
 

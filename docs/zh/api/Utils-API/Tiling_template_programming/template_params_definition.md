@@ -193,7 +193,7 @@ C_FORMAT_FRACTAL_NZ_C0_8</pre>
 </td>
 <td class="cellrowborder" valign="top" width="47.83478347834784%" headers="mcps1.2.4.1.3 "><p id="p4637141672417"><a name="p4637141672417"></a><a name="p4637141672417"></a>args0：参数名</p>
 <p id="p06378169245"><a name="p06378169245"></a><a name="p06378169245"></a>args1-argsn：后续为若干kernel类型。</p>
-<p id="p195465652615"><a name="p195465652615"></a><a name="p195465652615"></a>当前支持的Kernel类型如下：</p>
+<p id="p195465652615"><a name="p195465652615"></a><a name="p195465652615"></a>当前支持的核函数（Kernel）类型如下：</p>
 <a name="ul2054135610267"></a><a name="ul2054135610267"></a><ul id="ul2054135610267"><li>ASCENDC_TPL_AIV_ONLY // 算子执行时仅启动AI Core上的Vector核</li><li>ASCENDC_TPL_AIC_ONLY // 算子执行时仅启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIV_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Vector核</li><li>ASCENDC_TPL_MIX_AIC_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIC_1_1 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：1</li><li>ASCENDC_TPL_MIX_AIC_1_2 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：2</li><li>ASCENDC_TPL_AICORE // 算子执行时仅会启动AI Core</li><li>ASCENDC_TPL_VECTORCORE // 该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_AICORE  //  该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_VECTOR_CORE // 算子执行时会同时启动AI Core和Vector Core</li></ul>
 <p id="p176510543512"><a name="p176510543512"></a><a name="p176510543512"></a>本接口只允许与ASCENDC_TPL_SHARED_KERNEL_TYPE_SEL(args0, ...)配合使用。</p>
 </td>
@@ -228,11 +228,11 @@ C_FORMAT_FRACTAL_NZ_C0_8</pre>
 </tr>
 <tr id="row9443131565713"><td class="cellrowborder" valign="top" width="23.75237523752375%" headers="mcps1.2.4.1.1 "><p id="p52843445011"><a name="p52843445011"></a><a name="p52843445011"></a>ASCENDC_TPL_KERNEL_TYPE_SEL(args0)</p>
 </td>
-<td class="cellrowborder" valign="top" width="28.202820282028203%" headers="mcps1.2.4.1.2 "><p id="p17444815195718"><a name="p17444815195718"></a><a name="p17444815195718"></a>用于设置算子模板参数组合的Kernel类型，但该参数并不能作为核函数的模板参数传入。</p>
+<td class="cellrowborder" valign="top" width="28.202820282028203%" headers="mcps1.2.4.1.2 "><p id="p17444815195718"><a name="p17444815195718"></a><a name="p17444815195718"></a>用于设置算子模板参数组合的核函数（Kernel）类型，但该参数并不能作为核函数（Kernel）的模板参数传入。</p>
 </td>
-<td class="cellrowborder" valign="top" width="48.04480448044804%" headers="mcps1.2.4.1.3 "><p id="p2651142418375"><a name="p2651142418375"></a><a name="p2651142418375"></a>args0：该模板参数组合下，算子的Kernel类型。如不选择将走自动推导流程，ASCENDC_TPL_SEL下的所有算子对于是否选择Kernel类型需要保持一致。</p>
-<p id="p1617912310417"><a name="p1617912310417"></a><a name="p1617912310417"></a>当前支持的Kernel类型如下：</p>
-<a name="ul78891930111019"></a><a name="ul78891930111019"></a><ul id="ul78891930111019"><li>ASCENDC_TPL_AIV_ONLY // 算子执行时仅启动AI Core上的Vector核</li><li>ASCENDC_TPL_AIC_ONLY // 算子执行时仅启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIV_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Vector核</li><li>ASCENDC_TPL_MIX_AIC_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIC_1_1 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：1</li><li>ASCENDC_TPL_MIX_AIC_1_2 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：2</li><li>ASCENDC_TPL_AICORE // 算子执行时仅会启动AI Core</li><li>ASCENDC_TPL_VECTORCORE // 该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_AICORE  //  该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_VECTOR_CORE // 算子执行时会同时启动AI Core和Vector Core<p id="p1316145282715"><a name="p1316145282715"></a><a name="p1316145282715"></a>通过本接口配置Kernel类型，Kernel类型的取值范围同KERNEL_TASK_TYPE_DEFAULT接口一致，详见<a href="../../SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md">设置Kernel类型</a>。</p>
+<td class="cellrowborder" valign="top" width="48.04480448044804%" headers="mcps1.2.4.1.3 "><p id="p2651142418375"><a name="p2651142418375"></a><a name="p2651142418375"></a>args0：该模板参数组合下，算子的核函数（Kernel）类型。如不选择将走自动推导流程，ASCENDC_TPL_SEL下的所有算子对于是否选择核函数（Kernel）类型需要保持一致。</p>
+<p id="p1617912310417"><a name="p1617912310417"></a><a name="p1617912310417"></a>当前支持的核函数（Kernel）类型如下：</p>
+<a name="ul78891930111019"></a><a name="ul78891930111019"></a><ul id="ul78891930111019"><li>ASCENDC_TPL_AIV_ONLY // 算子执行时仅启动AI Core上的Vector核</li><li>ASCENDC_TPL_AIC_ONLY // 算子执行时仅启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIV_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Vector核</li><li>ASCENDC_TPL_MIX_AIC_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIC_1_1 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：1</li><li>ASCENDC_TPL_MIX_AIC_1_2 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：2</li><li>ASCENDC_TPL_AICORE // 算子执行时仅会启动AI Core</li><li>ASCENDC_TPL_VECTORCORE // 该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_AICORE  //  该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_VECTOR_CORE // 算子执行时会同时启动AI Core和Vector Core<p id="p1316145282715"><a name="p1316145282715"></a><a name="p1316145282715"></a>通过本接口配置核函数（Kernel）类型，核函数（Kernel）类型的取值范围同KERNEL_TASK_TYPE_DEFAULT接口一致，详见<a href="../../SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md">设置核函数（Kernel）类型</a>。</p>
 </li></ul>
 </td>
 </tr>
@@ -286,7 +286,7 @@ C_FORMAT_FRACTAL_NZ_C0_8</pre>
 </tr>
 <tr id="row121841620202716"><td class="cellrowborder" valign="top" width="23.75237523752375%" headers="mcps1.2.4.1.1 "><p id="p17184172011276"><a name="p17184172011276"></a><a name="p17184172011276"></a><span>ASCENDC_TPL_TILING_STRUCT_SEL(args0)</span></p>
 </td>
-<td class="cellrowborder" valign="top" width="28.202820282028203%" headers="mcps1.2.4.1.2 "><p id="p518414206272"><a name="p518414206272"></a><a name="p518414206272"></a><span>用于为当前模板参数组合指定Tiling结构体，该结构体不作为核函数模板参数传入。</span></p>
+<td class="cellrowborder" valign="top" width="28.202820282028203%" headers="mcps1.2.4.1.2 "><p id="p518414206272"><a name="p518414206272"></a><a name="p518414206272"></a><span>用于为当前模板参数组合指定Tiling结构体，该结构体不作为核函数（Kernel）模板参数传入。</span></p>
 </td>
 <td class="cellrowborder" valign="top" width="48.04480448044804%" headers="mcps1.2.4.1.3 "><p id="p482024872719"><a name="p482024872719"></a><a name="p482024872719"></a>args0：表示当前模板参数组合使用的Tiling结构体名。该接口只能在ASCENDC_TPL_ARGS_SEL(...)中使用，不参与ASCENDC_TPL_SEL_PARAM(...)或GET_TPL_TILING_KEY(...)的参数顺序，也不参与TilingKey编码。</p>
 <p id="p13820154810279"><a name="p13820154810279"></a><a name="p13820154810279"></a>未配置本接口的模板参数组合，将使用REGISTER_TILING_DEFAULT注册的默认Tiling结构体。使用本接口时，必须通过REGISTER_TILING_DEFAULT提供默认Tiling结构体。</p>
@@ -294,10 +294,10 @@ C_FORMAT_FRACTAL_NZ_C0_8</pre>
 </tr>
 <tr id="row125414102715"><td class="cellrowborder" valign="top" width="23.75237523752375%" headers="mcps1.2.4.1.1 "><p id="p1554114112710"><a name="p1554114112710"></a><a name="p1554114112710"></a>ASCENDC_TPL_SHARED_KERNEL_TYPE_SEL(args0, ...)</p>
 </td>
-<td class="cellrowborder" valign="top" width="28.202820282028203%" headers="mcps1.2.4.1.2 "><p id="p5541748279"><a name="p5541748279"></a><a name="p5541748279"></a>设置算子模板参数组合的Kernel类型，该参数可以作为核函数的模板参数传入。</p>
+<td class="cellrowborder" valign="top" width="28.202820282028203%" headers="mcps1.2.4.1.2 "><p id="p5541748279"><a name="p5541748279"></a><a name="p5541748279"></a>设置算子模板参数组合的核函数（Kernel）类型，该参数可以作为核函数（Kernel）的模板参数传入。</p>
 </td>
 <td class="cellrowborder" valign="top" width="48.04480448044804%" headers="mcps1.2.4.1.3 "><p id="p1663273111272"><a name="p1663273111272"></a><a name="p1663273111272"></a>args0: 参数名</p>
-<p id="p1063233192717"><a name="p1063233192717"></a><a name="p1063233192717"></a>args1-argsn: 该模板参数组合下，算子的Kernel类型，后续参数为若干Kernel类型。该接口不能与ASCENDC_TPL_KERNEL_TYPE_SEL接口同时使用。</p>
+<p id="p1063233192717"><a name="p1063233192717"></a><a name="p1063233192717"></a>args1-argsn: 该模板参数组合下，算子的核函数（Kernel）类型，后续参数为若干核函数（Kernel）类型。该接口不能与ASCENDC_TPL_KERNEL_TYPE_SEL接口同时使用。</p>
 <p id="p1337446101011"><a name="p1337446101011"></a><a name="p1337446101011"></a>若同时使用KERNEL_TASK_TYPE_DEFAULT(value)接口，本接口优先级更高。</p>
 </td>
 </tr>

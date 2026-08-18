@@ -34,11 +34,11 @@
 
 头文件路径为：`"basic_api/kernel_operator_data_copy_intf.h"`。
 
-支持Unified Buffer和Unified Buffer之间的连续数据搬运，数据搬运时格式和内容保持不变。
+支持Unified Buffer（UB）内部的连续数据搬运，数据搬运时格式和内容保持不变。
 
 具体支持的数据通路为（以[逻辑位置TPosition](../../aux_data_structures/TPosition.md)表示）：
 
-- Unified Buffer -> Unified Buffer
+- UB -> UB
     - VECIN -> VECCALC
     - VECIN -> VECOUT
     - VECCALC -> VECIN
@@ -83,7 +83,7 @@ Ascend 950PR/Ascend 950DT，支持的数据类型为：int8_t、uint8_t、fp4x2_
 
 ## 约束说明<a name="zh-cn_topic_0000002567699435_section2045914466492"></a>
 
-- 位于Unified Buffer的地址必须32字节对齐。
+- 位于UB的地址必须32字节对齐。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 - isSetMask参数不生效，保持默认值true即可。
 

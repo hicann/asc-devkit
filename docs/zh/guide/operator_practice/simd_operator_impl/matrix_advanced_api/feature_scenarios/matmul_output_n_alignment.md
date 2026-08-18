@@ -44,7 +44,7 @@ Matmul计算中N方向非32字节对齐，输出C矩阵的N方向要求32字节�
     int ret = tiling.GetTiling(tilingData);
     ```
 
--   Kernel实现
+-   核函数（Kernel）实现
 
     相较于[基础场景](../operator_impl.md#zh-cn_topic_0000001622514006_li1032116474330)，ND\_ALIGN输出功能要求在创建Matmul对象时，设置模板参数cType的数据格式为CubeFormat::ND\_ALIGN。
 

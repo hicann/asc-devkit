@@ -34,7 +34,7 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-开发者可以通过[TBufPool类](../TBufPool/TBufPool.md)手动管理Unified Buffer、L1 Buffer物理内存。
+开发者可以通过[TBufPool类](../TBufPool/TBufPool.md)手动管理Unified Buffer（UB）、L1 Buffer物理内存。
 
 TBufPool类切分的内存块都是连续的，开发者可能有一些自定义的内存块分配需求，比如不连续内存块、内存块在不同TQue之间共享等，这时就需要开发者自定义一个TBufPool的实现。
 

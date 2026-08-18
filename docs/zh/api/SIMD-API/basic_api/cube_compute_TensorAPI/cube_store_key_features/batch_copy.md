@@ -1,6 +1,6 @@
 # batch搬运
 
-batch搬运是L0C Buffer到Global Memory或Unified Buffer搬运在矩阵最外层增加Batch维度的能力，用于一次完成多块矩阵计算结果的搬运。
+batch搬运是L0C Buffer到Global Memory或Unified Buffer（UB）搬运在矩阵最外层增加Batch维度的能力，用于一次完成多块矩阵计算结果的搬运。
 
 ## 功能说明
 

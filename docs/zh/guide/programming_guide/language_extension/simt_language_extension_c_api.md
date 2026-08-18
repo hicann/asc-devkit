@@ -3,7 +3,7 @@
 SIMT编程基于AI Core的硬件能力实现，当前，SIMT语言扩展层支持的C API类别如下：
 
 -   [同步与内存栅栏](../../../api/SIMT-API/sync_and_memory_fence/sync_and_memory_fence.md)：提供同步与内存栅栏接口，解决线程间可能存在的数据竞争以及线程的同步问题。
--   [原子操作](../../../api/SIMT-API/atomic_operations/atomic_operations.md)：提供对Unified Buffer或Global Memory上的数据与指定数据执行原子操作的一系列API接口。
+-   [原子操作](../../../api/SIMT-API/atomic_operations/atomic_operations.md)：提供对Unified Buffer（UB）或Global Memory上的数据与指定数据执行原子操作的一系列API接口。
 -   [Warp函数](../../../api/SIMT-API/Warp_functions/Warp_functions.md)：提供对单个Warp内32个线程数据进行处理的一系列API接口。
 -   [数学函数](../../../api/SIMT-API/math_functions/math_functions.md)：提供处理数学运算的函数接口集合。
 -   [访存函数](../../../api/SIMT-API/memory_access_functions/memory_access_functions.md)：提供开启Cache Hints的Load/Store函数。

@@ -28,7 +28,7 @@
 
 **该接口已废弃。其中asc_storealign_pack_postupdate_v2请使用[asc_storealign_pack_quarter_postupdate](asc_storealign_pack_quarter_postupdate.md)实现此功能。**
 
-reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到UB的场景，并支持多种搬出模式，接口通过int32_t传入偏移，同时设置成硬件自动Post Update，用户不用更新偏移或者更新目的操作数的地址。
+reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续对齐搬出到Unified Buffer（UB）的场景，并支持多种搬出模式，接口通过int32_t传入偏移，同时设置成硬件自动Post Update，用户不用更新偏移或者更新目的操作数的地址。
 
 - 从矢量数据寄存器连续对齐搬出到UB的场景
   - NORM搬出模式：正常模式，搬运VL数据，支持数据类型为b8、b16、b32。

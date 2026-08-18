@@ -21,7 +21,7 @@
 
 ## CV融合：Scenario 2 — CV融合-UB直通
 
-在高阶极限打磨阶段，CV融合层面提供Scenario 2方式（仅Ascend 950PR支持）。AIC侧通过Fixpipe将L0C计算结果直接写入UB，AIV侧无需从GM读取数据，直接在UB上进行GELU计算后将结果写回GM，省去GM中转的读写开销。
+在高阶极限打磨阶段，CV融合层面提供Scenario 2方式（仅Ascend 950PR支持）。AIC侧通过Fixpipe将L0C计算结果直接写入Unified Buffer（UB），AIV侧无需从GM读取数据，直接在UB上进行GELU计算后将结果写回GM，省去GM中转的读写开销。
 
 > **兼容性说明**：A2/A3芯片不支持Fixpipe直写UB，请使用Scenario 1（CV融合-GM中转）方案。
 

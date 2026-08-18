@@ -111,7 +111,7 @@ TPipe-TQue框架编程范式的自动同步功能需满足以下前提条件方�
 - 反例2：未正确使用EnQue/DeQue、AllocTensor/FreeTensor接口（由TPipe-TQue框架编程范式提供）。例如，在[基于TPipe-TQue框架编程范式的Add向量加法的样例](../../../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add_tpipe_tque)中，如果缺失了`xLocal = inQueueX.DeQue<float>()`会导致TPipe-TQue框架编程范式无法自动插入`MTE2_V`，并最终导致样例执行失败。
 
     ```cpp
-    // 使用DataCopy将输入从GM搬运到UB，并通过EnQue将LocalTensor入队，供后续计算阶段DeQue取用。
+    // 使用DataCopy将输入从GM搬运到Unified Buffer（UB），并通过EnQue将LocalTensor入队，供后续计算阶段DeQue取用。
     AscendC::LocalTensor<float> xLocal = inQueueX.AllocTensor<float>();
     AscendC::LocalTensor<float> yLocal = inQueueY.AllocTensor<float>();
     AscendC::DataCopy(xLocal, xGm, blockLength);
@@ -132,7 +132,7 @@ TPipe-TQue框架编程范式的自动同步功能需满足以下前提条件方�
 
 开启cce-auto-sync编译选项的自动同步功能需满足以下前提条件方可生效：
 
-- 异构编译直调（<<<>>>调用）、Kernel直调算子工程以及自定义算子开发工程已默认设置`--cce-auto-sync=on`，如果开发者手动设置`--cce-auto-sync=off`，毕昇编译器无法自动插入同步。
+- 异构编译直调（<<<>>>调用）、核函数（Kernel）直调算子工程以及自定义算子开发工程已默认设置`--cce-auto-sync=on`，如果开发者手动设置`--cce-auto-sync=off`，毕昇编译器无法自动插入同步。
 - 属于PIPE\_V、PIPE\_MTE2、PIPE\_MTE3的接口必须操作基础Tensor（包含[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)和[GlobalTensor](../../data_structures/GlobalTensor/GlobalTensor.md)）。
 - 属于PIPE\_S的接口必须在以下接口集合内：
     - Tensor标量读写：[LocalTensor::GetValue](../../data_structures/LocalTensor/GetValue.md)、[LocalTensor::SetValue](../../data_structures/LocalTensor/SetValue.md)、[LocalTensor::operator()](../../data_structures/LocalTensor/operator_call.md)、[GlobalTensor::GetValue](../../data_structures/GlobalTensor/GetValue.md)、[GlobalTensor::operator()](../../data_structures/GlobalTensor/operator_call.md)。

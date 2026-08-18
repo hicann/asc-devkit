@@ -27,7 +27,7 @@
 
 ## 功能说明
 
-将数据从Unified Buffer搬运到Unified Buffer。支持高维切分。
+将数据从Unified Buffer（UB）搬运到UB。支持高维切分。
 
 ## 函数原型
 

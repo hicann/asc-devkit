@@ -41,7 +41,7 @@ DataStoreBarrier(void)
 
 ## 调用示例<a name="section82241477610"></a>
 
-在AI CPU算子Kernel侧实现代码中调用AscendC::DataStoreBarrier\(\)，确保AI CPU算子对Tiling数据的修改写入内存，使得AI Core算子能够正确读取Tiling数据：
+在AI CPU算子核函数（Kernel）侧实现代码中调用AscendC::DataStoreBarrier\(\)，确保AI CPU算子对Tiling数据的修改写入内存，使得AI Core算子能够正确读取Tiling数据：
 
 ```
 namespace KernelInfo {

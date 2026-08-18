@@ -87,7 +87,7 @@ StoreAlign能够实现数据从[RegTensor](../register_data_types/RegTensor.md)�
 
 ## 约束说明<a name="section11585101304320"></a>
 
-- 位于Unified Buffer的地址必须32字节对齐。
+- 位于UB的地址必须32字节对齐。
 - RegTensor模板参数regTrait只支持RegTraitNumOne。
 - repeatStride * 32B / sizeof(T)需要32字节对齐。
 

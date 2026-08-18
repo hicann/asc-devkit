@@ -76,7 +76,7 @@ PIPE_V
 ## 调用示例
 
 ```cpp
-// dst为外部输入的指向UB内存空间的half类型的指针。
+// dst为外部输入的指向Unified Buffer（UB）内存空间的half类型的指针。
 vector_half src;
 vector_uint16_t index;
 vector_bool mask = asc_create_mask_b16(PAT_ALL);

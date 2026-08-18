@@ -7,7 +7,7 @@ Conv3DBackpropInput的计算公式为：
 ![](../../../../figures/zh-cn_formulaimage_0000002073192576.png)
 
 -   ∂L/∂Y为卷积正向损失函数对输出Y的梯度GradOutput，作为求反向传播误差∂L/∂X的输入。
--   W为卷积正向Weight权重，即矩阵核Kernel，也是滤波器Filter，作为求反向传播误差∂L/∂X的输入，W<sup>T</sup>表示W的转置。
+-   W为卷积正向Weight权重，即矩阵核核函数（Kernel），也是滤波器Filter，作为求反向传播误差∂L/∂X的输入，W<sup>T</sup>表示W的转置。
 -   ∂L/∂X为特征矩阵的反向传播误差GradInput。
 
 **图1**  卷积层的前后向传播示意图<a name="fig1069918872512"></a>  
@@ -16,7 +16,7 @@ Conv3DBackpropInput的计算公式为：
 **图2**  反向传播误差计算示意图<a name="fig1953483815252"></a>  
 ![](../../../../figures/backward_error_compute.png "反向传播误差计算示意图")
 
-Kernel侧实现Conv3DBackpropInput求解反向传播误差运算的步骤概括为：
+核函数（Kernel）侧实现Conv3DBackpropInput求解反向传播误差运算的步骤概括为：
 
 1.  创建Conv3DBackpropInput对象。
 2.  初始化操作。

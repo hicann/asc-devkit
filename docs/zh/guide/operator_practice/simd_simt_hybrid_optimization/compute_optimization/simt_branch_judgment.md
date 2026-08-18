@@ -50,12 +50,12 @@
 
 SIMT线程层次结构为：
 
--   Kernel启动核数：64
+-   核函数（Kernel）启动核数：64
 -   单次SIMT VF调用线程数：1024
 
 【反例】
 
-基于SIMD Reg矢量计算的floor\_mod算子实现：对应样例中的场景1（SCENARIO\_NUM=1）。该场景使用 `asc_copy_gm2ub_align` 和 `asc_copy_ub2gm_align` 完成GM与UB之间的数据搬运，在UB上使用SIMD VF函数实现计算。由于SIMD无法直接通过普通if else语句表达逐元素分支判断，因此需要使用多个矢量计算API完成符号比较、条件组合和结果选择，相关代码如下。
+基于SIMD Reg矢量计算的floor\_mod算子实现：对应样例中的场景1（SCENARIO\_NUM=1）。该场景使用 `asc_copy_gm2ub_align` 和 `asc_copy_ub2gm_align` 完成GM与Unified Buffer（UB）之间的数据搬运，在UB上使用SIMD VF函数实现计算。由于SIMD无法直接通过普通if else语句表达逐元素分支判断，因此需要使用多个矢量计算API完成符号比较、条件组合和结果选择，相关代码如下。
 
 ```cpp
 __simd_vf__ inline void floor_mod_simd(

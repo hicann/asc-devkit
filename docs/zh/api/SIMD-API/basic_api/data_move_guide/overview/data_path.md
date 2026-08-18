@@ -28,8 +28,8 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 <!-- end id2 -->
 
   > [!NOTE]说明
-  > - 同一个物理内存可能对应多个不同的[TPosition](../../../basic_api/aux_data_structures/TPosition.md)，例如Unified Buffer（UB）同时映射到VECIN、VECCALC和VECOUT三个逻辑位置，分别代表矢量计算的输入、中间计算和输出阶段。L1 Buffer同时映射到A1、B1、C1和TSCM，具体含义取决于当前所服务的计算流程（矩阵左/右矩阵暂存或共享通信）。这种设计使得同一物理内存可以在不同计算阶段被赋予不同的逻辑语义，开发者可根据编程模型的阶段需求选择合适的TPosition。
-  > - 同一个逻辑位置，在不同产品型号中可能对应不同的物理内存，例如逻辑位置CO2在Atlas A2 训练系列产品/Atlas A2 推理系列产品中映射到Global Memory，而在Atlas训练及推理系列产品中映射到Unified Buffer，详细情况请参考[逻辑位置和物理存储的映射关系](../../../general_description_and_constraints.md#section1359919519819)。
+  > - 同一个物理内存可能对应多个不同的[TPosition](../../../basic_api/aux_data_structures/TPosition.md)，例如UB同时映射到VECIN、VECCALC和VECOUT三个逻辑位置，分别代表矢量计算的输入、中间计算和输出阶段。L1 Buffer同时映射到A1、B1、C1和TSCM，具体含义取决于当前所服务的计算流程（矩阵左/右矩阵暂存或共享通信）。这种设计使得同一物理内存可以在不同计算阶段被赋予不同的逻辑语义，开发者可根据编程模型的阶段需求选择合适的TPosition。
+  > - 同一个逻辑位置，在不同产品型号中可能对应不同的物理内存，例如逻辑位置CO2在Atlas A2 训练系列产品/Atlas A2 推理系列产品中映射到Global Memory，而在Atlas训练及推理系列产品中映射到UB，详细情况请参考[逻辑位置和物理存储的映射关系](../../../general_description_and_constraints.md#section1359919519819)。
 
 ## 数据通路与搬运流水
 
@@ -51,20 +51,20 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 | Global Memory | L1 Buffer | MTE2 | 将Global Memory中的NZ格式数据搬运至L1 Buffer。 | LoadData（2D矩阵搬运V2） |
 | Global Memory | L0A Buffer | MTE2 | 将Global Memory中的2D格式分形矩阵搬运至L0A Buffer作为矩阵计算的左矩阵输入。 | LoadData（2D矩阵搬运） |
 | Global Memory | L0B Buffer | MTE2 | 将Global Memory中的2D格式分形矩阵搬运至L0B Buffer作为矩阵计算的右矩阵输入。 | LoadData（2D矩阵搬运） |
-| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的矩阵数据连续搬运至Unified Buffer。 | DataCopy |
-| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的矩阵数据通过高维切分方式搬运至Unified Buffer。 | DataCopy |
-| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的数据按切片方式搬运至Unified Buffer。 | DataCopy |
-| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的数据搬运至Unified Buffer的同时完成ND到NZ格式的随路转换。 | DataCopy |
-| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的数据以NDDMA方式多维搬运至Unified Buffer。 | DataCopy |
-| Global Memory | Unified Buffer | MTE2 | 将Global Memory中的非对齐数据搬运至Unified Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
-| Unified Buffer | Global Memory | MTE3 | 将Unified Buffer中的数据搬运到Global Memory的同时完成NZ到ND格式的随路转换。 | DataCopy |
-| Unified Buffer | Global Memory | MTE3 | 将Unified Buffer中的非对齐数据搬运到Global Memory，并对边界无效区域做Padding填充。 | DataCopyPad |
-| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的数据连续搬运至L1 Buffer。 | DataCopy |
-| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的数据通过高维切分方式搬运至L1 Buffer。 | DataCopy |
-| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的数据搬运到L1 Buffer的同时完成ND到NZ格式的随路转换。 | DataCopy |
-| Unified Buffer | L1 Buffer | MTE3 | 将Unified Buffer中的非对齐数据搬运到L1 Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
-| L1 Buffer | Unified Buffer | MTE3 | 将L1 Buffer中的数据连续搬运至Unified Buffer。 | DataCopyL1ToUB |
-| L1 Buffer | Unified Buffer | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至Unified Buffer。 | DataCopyL1ToUB |
+| Global Memory | UB | MTE2 | 将Global Memory中的矩阵数据连续搬运至UB。 | DataCopy |
+| Global Memory | UB | MTE2 | 将Global Memory中的矩阵数据通过高维切分方式搬运至UB。 | DataCopy |
+| Global Memory | UB | MTE2 | 将Global Memory中的数据按切片方式搬运至UB。 | DataCopy |
+| Global Memory | UB | MTE2 | 将Global Memory中的数据搬运至UB的同时完成ND到NZ格式的随路转换。 | DataCopy |
+| Global Memory | UB | MTE2 | 将Global Memory中的数据以NDDMA方式多维搬运至UB。 | DataCopy |
+| Global Memory | UB | MTE2 | 将Global Memory中的非对齐数据搬运至UB，并对边界无效区域做Padding填充。 | DataCopyPad |
+| UB | Global Memory | MTE3 | 将UB中的数据搬运到Global Memory的同时完成NZ到ND格式的随路转换。 | DataCopy |
+| UB | Global Memory | MTE3 | 将UB中的非对齐数据搬运到Global Memory，并对边界无效区域做Padding填充。 | DataCopyPad |
+| UB | L1 Buffer | MTE3 | 将UB中的数据连续搬运至L1 Buffer。 | DataCopy |
+| UB | L1 Buffer | MTE3 | 将UB中的数据通过高维切分方式搬运至L1 Buffer。 | DataCopy |
+| UB | L1 Buffer | MTE3 | 将UB中的数据搬运到L1 Buffer的同时完成ND到NZ格式的随路转换。 | DataCopy |
+| UB | L1 Buffer | MTE3 | 将UB中的非对齐数据搬运到L1 Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
+| L1 Buffer | UB | MTE3 | 将L1 Buffer中的数据连续搬运至UB。 | DataCopyL1ToUB |
+| L1 Buffer | UB | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至UB。 | DataCopyL1ToUB |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运） |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运V2） |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（MX矩阵搬运） |
@@ -86,9 +86,9 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 | L0C Buffer | Global Memory | FixPipe | 将Cube计算结果从L0C Buffer搬运到Global Memory，通过FixPipe流水完成量化、激活、格式转换。 | FixPipe |
 | L0C Buffer | L1 Buffer | FixPipe | 将Cube计算结果从L0C Buffer搬运至L1 Buffer做中转，支持随路量化和激活。 | DataCopy |
 | L0C Buffer | L1 Buffer | FixPipe | 将Cube计算结果从L0C Buffer搬运至L1 Buffer做中转，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
-| L0C Buffer | Unified Buffer | MTE3 | 将Cube计算结果从L0C Buffer搬运至Unified Buffer，支持随路量化和激活后处理。 | DataCopy |
-| L0C Buffer | Unified Buffer | MTE3 | 将Cube计算结果从L0C Buffer搬运至Unified Buffer，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
-| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部连续数据搬移。 | DataCopy |
-| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部通过高维切分方式搬移数据。 | DataCopy |
-| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部连续数据搬移。 | Copy |
-| Unified Buffer | Unified Buffer | PIPE_V | Unified Buffer内部掩码式高维数据搬移。 | Copy |
+| L0C Buffer | UB | MTE3 | 将Cube计算结果从L0C Buffer搬运至UB，支持随路量化和激活后处理。 | DataCopy |
+| L0C Buffer | UB | MTE3 | 将Cube计算结果从L0C Buffer搬运至UB，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
+| UB | UB | PIPE_V | UB内部连续数据搬移。 | DataCopy |
+| UB | UB | PIPE_V | UB内部通过高维切分方式搬移数据。 | DataCopy |
+| UB | UB | PIPE_V | UB内部连续数据搬移。 | Copy |
+| UB | UB | PIPE_V | UB内部掩码式高维数据搬移。 | Copy |

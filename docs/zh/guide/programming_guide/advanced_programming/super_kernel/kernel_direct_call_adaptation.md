@@ -1,13 +1,13 @@
-# 核函数直调算子额外适配说明
+# 核函数（Kernel）直调算子额外适配说明
 
-对于使用`<<<>>>`方式开发的Ascend C算子，除了遵循[算子适配说明](operator_adaptation.md)中的通用约束外，还需要在算子Kernel入口侧增加SuperKernel入口函数。本文档介绍具体的适配方法。
+对于使用`<<<>>>`方式开发的Ascend C算子，除了遵循[算子适配说明](operator_adaptation.md)中的通用约束外，还需要在算子核函数（Kernel）入口侧增加SuperKernel入口函数。本文档介绍具体的适配方法。
 
 >[!NOTE]说明
->核函数直调算子目前仅支持在npugraph_ex后端进入SuperKernel，不支持GE图模式。
+>核函数（Kernel）直调算子目前仅支持在npugraph_ex后端进入SuperKernel，不支持GE图模式。
 
-## SuperKernel与普通Kernel的区别
+## SuperKernel与普通核函数（Kernel）的区别
 
-### 普通Kernel入口函数
+### 普通核函数（Kernel）入口函数
 
 - 函数签名：`__global__ __vector__ void func(参数列表)`
 - 参数直接作为函数参数传递。
@@ -18,7 +18,7 @@
 - 函数签名：`__sk__ __vector__ void func(const ArgsStruct *args, sk::SkSystemArgs *sysArgs)`
 - 参数通过结构体指针传递，需要用户定义参数结构体并封装入参。
 - 可选添加`sk::SkSystemArgs *sysArgs`参数，用于获取系统信息（如block num）。
-- 需要与普通Kernel函数通过SK_BIND宏绑定。
+- 需要与普通核函数（Kernel）通过SK_BIND宏绑定。
 
 ## SuperKernel适配规则
 
@@ -94,7 +94,7 @@ struct MyArgs {
 ```
 
 > **注意**：
-> - 结构体必须根据用户实际算子核函数（global函数）的参数进行定义，不要直接复制示例中的字段名。
+> - 结构体必须根据用户实际算子核函数（Kernel）（global函数）的参数进行定义，不要直接复制示例中的字段名。
 > - 结构体字段必须按原函数参数顺序排列。
 > - 对于size小于4字节的类型（如`int16_t`、`int8_t`、`uint16_t`、`uint8_t`），必须使用`alignas(4)`确保内存对齐（ABI要求）。
 > - 示例：`alignas(4) int16_t val;`、`alignas(4) uint8_t flag;`
@@ -188,10 +188,10 @@ SK_BIND(original_func, 4, sk_func<0>, sk_func<1>, sk_func<2>, sk_func<3>);
 
 ## 完整适配示例
 
-### 原始普通Kernel
+### 原始普通核函数（Kernel）
 
 ```cpp
-// 普通Kernel定义
+// 普通核函数（Kernel）定义
 __global__ __vector__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, uint32_t totalLength)
 {
     KernelAdd op;
@@ -203,7 +203,7 @@ __global__ __vector__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, uint32_t 
 ### SuperKernel适配版本
 
 ```cpp
-// 原普通Kernel保留（用于非SuperKernel场景）
+// 原普通核函数（Kernel）保留（用于非SuperKernel场景）
 __global__ __vector__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, uint32_t totalLength)
 {
     KernelAdd op;
@@ -272,7 +272,7 @@ SK_BIND(add_custom, 4, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 
 ### 参数结构体定义注意事项
 
-- 结构体必须根据用户实际算子核函数（global函数）的参数进行定义，不要直接复制示例中的字段名。
+- 结构体必须根据用户实际算子核函数（Kernel）（global函数）的参数进行定义，不要直接复制示例中的字段名。
 - 结构体字段必须按原函数参数顺序排列。
 - 对于size小于4字节的类型（如`int16_t`、`int8_t`、`uint16_t`、`uint8_t`），必须使用`alignas(4)`确保内存对齐（ABI要求）。
 - 示例：`alignas(4) int16_t val;`、`alignas(4) uint8_t flag;`。
@@ -308,7 +308,7 @@ SK_BIND(add_custom, 4, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 
 **Q1：为什么要定义参数结构体？**
 
-A：SuperKernel使用结构体传递参数，用户需要根据原global函数的实际参数定义一个结构体来封装所有入参，这样可以实现参数的统一管理和跨split共享。注意结构体定义必须根据用户实际算子核函数（global函数）的参数进行定义，不要直接复制示例中的字段名。
+A：SuperKernel使用结构体传递参数，用户需要根据原global函数的实际参数定义一个结构体来封装所有入参，这样可以实现参数的统一管理和跨split共享。注意结构体定义必须根据用户实际算子核函数（Kernel）（global函数）的参数进行定义，不要直接复制示例中的字段名。
 
 **Q2：为什么小于4字节的类型需要alignas(4)？**
 

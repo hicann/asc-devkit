@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-`asc_loadalign_deintlv_postupdate`用于从UB中读取以32B对齐地址`src`为起始位置的连续`2 x VL`长度数据。数据按元素类型宽度进行解释，在Load过程中完成解交织后，分别写入两个目的向量寄存器`dst0`和`dst1`。
+`asc_loadalign_deintlv_postupdate`用于从Unified Buffer（UB）中读取以32B对齐地址`src`为起始位置的连续`2 x VL`长度数据。数据按元素类型宽度进行解释，在Load过程中完成解交织后，分别写入两个目的向量寄存器`dst0`和`dst1`。
 
 与[`asc_loadalign_deintlv`](asc_loadalign_deintlv.md)不同，该接口在完成数据加载后，会对源地址参数`src`执行后更新操作：
 

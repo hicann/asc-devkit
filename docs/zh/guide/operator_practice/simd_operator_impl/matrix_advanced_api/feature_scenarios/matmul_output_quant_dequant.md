@@ -16,12 +16,12 @@
 
 Matmul量化/反量化包含两种模式：同一系数的量化/反量化模式、向量的量化/反量化模式，开发者在算子Tiling侧调用[SetDequantType](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/SetDequantType.md)接口设置量化或反量化模式，这两种模式的具体区别为：
 
--   同一系数的量化/反量化模式（PER\_TENSOR模式）：整个C矩阵对应一个量化参数，量化参数的shape为\[1\]。开发者在算子Kernel侧调用接口[SetQuantScalar](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantScalar.md)设置量化参数。
--   向量的量化/反量化模式（PER\_CHANNEL模式）：C矩阵的shape为\[m, n\]，每个channel维度即C矩阵的每一列，对应一个量化参数，量化参数的shape为\[n\]。开发者在算子Kernel侧调用接口[SetQuantVector](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantVector.md)设置量化参数。
+-   同一系数的量化/反量化模式（PER\_TENSOR模式）：整个C矩阵对应一个量化参数，量化参数的shape为\[1\]。开发者在算子核函数（Kernel）侧调用接口[SetQuantScalar](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantScalar.md)设置量化参数。
+-   向量的量化/反量化模式（PER\_CHANNEL模式）：C矩阵的shape为\[m, n\]，每个channel维度即C矩阵的每一列，对应一个量化参数，量化参数的shape为\[n\]。开发者在算子核函数（Kernel）侧调用接口[SetQuantVector](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantVector.md)设置量化参数。
 
 **表1**  量化/反量化模式对应的接口配置
 
-| 模式 | Tiling侧接口 | Kernel侧接口 |
+| 模式 | Tiling侧接口 | 核函数（Kernel）侧接口 |
 | --- | --- | --- |
 | 同一系数的量化/反量化 | SetDequantType(DequantType::SCALAR) | SetQuantScalar(gmScalar) |
 | 向量的量化/反量化 | SetDequantType(DequantType::TENSOR) | SetQuantVector(gmTensor) |
@@ -48,9 +48,9 @@ Matmul量化/反量化包含两种模式：同一系数的量化/反量化模式
 
 -   [SetQuantScalar](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantScalar.md)和[SetQuantVector](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantVector.md)接口必须在[Iterate](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Iterate.md)或者[IteratAll](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateAll.md)接口前调用。
 
--   在Kernel侧与Tiling侧设置的量化/反量化模式需要保持一致：
-    -   Kernel侧调用SetQuantScalar接口设置同一系数的量化/反量化模式，对应Tiling侧调用SetDequantType接口配置模式为DequantType::SCALAR。
-    -   Kernel侧调用SetQuantVector接口设置向量的量化/反量化模式，对应Tiling侧调用SetDequantType接口配置模式为DequantType::TENSOR。
+-   在核函数（Kernel）侧与Tiling侧设置的量化/反量化模式需要保持一致：
+    -   核函数（Kernel）侧调用SetQuantScalar接口设置同一系数的量化/反量化模式，对应Tiling侧调用SetDequantType接口配置模式为DequantType::SCALAR。
+    -   核函数（Kernel）侧调用SetQuantVector接口设置向量的量化/反量化模式，对应Tiling侧调用SetDequantType接口配置模式为DequantType::TENSOR。
 
 -   当A、B矩阵为int8\_t或int4b\_t类型，C矩阵为half时，本节特性的输出结果不支持INF\_NAN模式。若结果需要以INF\_NAN输出，建议在调用Matmul API时将结果输出到TPosition::VECIN，同时将输出的数据类型设置为int32\_t，再基于AIV核使用高阶API  [AscendDequant](../../../../../api/SIMD-API/adv_api/quantization/AscendDequant.md)将该结果反量化为half类型。
 
@@ -77,7 +77,7 @@ Matmul量化/反量化包含两种模式：同一系数的量化/反量化模式
     ... // 执行其他配置
     ```
 
--   Kernel实现
+-   核函数（Kernel）实现
 
     根据具体量化模式场景，调用[SetQuantScalar](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantScalar.md)或[SetQuantVector](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetQuantVector.md)接口设置量化参数。其他实现内容与基础场景相同。
 

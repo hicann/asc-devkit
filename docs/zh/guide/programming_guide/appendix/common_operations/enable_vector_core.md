@@ -1,6 +1,6 @@
 # 如何在矢量编程时启用Vector Core<a name="ZH-CN_TOPIC_0000001883181813"></a>
 
-针对Atlas 推理系列产品，其硬件架构除了AI Core外，还额外设置了单独的Vector Core，作为AI Core中Vector计算单元的补充，从而缓解Vector计算瓶颈。Vector Core只包括了两种基础计算资源：向量计算单元（Vector Unit）和标量计算单元（Scalar Unit），分别用于完成向量与标量的数据计算。矢量算子开发时，启用Vector Core，算子执行时会同时启动AI Core和Vector Core，这些核并行执行相同的核函数代码。
+针对Atlas 推理系列产品，其硬件架构除了AI Core外，还额外设置了单独的Vector Core，作为AI Core中Vector计算单元的补充，从而缓解Vector计算瓶颈。Vector Core只包括了两种基础计算资源：向量计算单元（Vector Unit）和标量计算单元（Scalar Unit），分别用于完成向量与标量的数据计算。矢量算子开发时，启用Vector Core，算子执行时会同时启动AI Core和Vector Core，这些核并行执行相同的核函数（Kernel）代码。
 
 本节将重点介绍如何启用Atlas 推理系列产品中的Vector Core。学习本节内容之前，建议您先熟悉[算子实现](../../../operator_practice/simd_operator_impl/vector_programming/overview.md)、[基于样例工程完成Kernel直调](../kernel_direct_call_from_sample.md)、[工程化算子开发](../../advanced_programming/aclnn_operator_development/overview.md)的相关内容，掌握基于AI Core的算子端到端开发流程。在此基础上本章将重点阐述启用Vector Core时的差异点。具体如下：
 

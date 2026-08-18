@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-数据搬运接口，适用于从UB非32B对齐地址起始连续搬入。
+数据搬运接口，适用于从Unified Buffer（UB）非32B对齐地址起始连续搬入。
 
 - asc_loadunalign_postupdate（不带addr_reg入参）：配合asc_loadunalign_pre（不带addr_reg入参）接口使用。
 - asc_loadunalign_postupdate（带addr_reg入参）：配合asc_loadunalign_pre（带addr_reg入参）接口使用。

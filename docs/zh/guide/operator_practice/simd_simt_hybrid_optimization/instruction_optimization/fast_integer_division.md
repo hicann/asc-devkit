@@ -22,7 +22,7 @@
 
 SIMT线程层次结构为：
 
--   Kernel启动线程块数：4096
+-   核函数（Kernel）启动线程块数：4096
 -   单次SIMT VF调用线程数：2048
 
 【反例】
@@ -49,7 +49,7 @@ __simt_vf__ __launch_bounds__(THREAD_LIMIT) inline void simt_normal_div(
 }
 ```
 
-场景0和场景1采用相同的数据搬运和写回流程：每个线程块将负责处理的对应数据从GM搬运到UB，在SIMT VF中完成计算并将结果写入UB，随后在核函数中将结果从UB写回GM。两个场景的性能差异主要来自SIMT计算过程中的除法实现方式。
+场景0和场景1采用相同的数据搬运和写回流程：每个线程块将负责处理的对应数据从GM搬运到Unified Buffer（UB），在SIMT VF中完成计算并将结果写入UB，随后在核函数（Kernel）中将结果从UB写回GM。两个场景的性能差异主要来自SIMT计算过程中的除法实现方式。
 
 【正例】
 

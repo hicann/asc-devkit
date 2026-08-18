@@ -1,6 +1,6 @@
 # msobjdump工具<a name="ZH-CN_TOPIC_0000002028951292"></a>
 
-本工具主要针对工程编译生成的算子ELF文件（Executable and Linkable Format）提供解析和解压功能，并将结果信息以可读形式呈现，方便开发者直观获得kernel文件信息。当前支持解析融合编译工程、标准/简易自定义算子工程，以及Kernel直调工程生成的相关产物。
+本工具主要针对工程编译生成的算子ELF文件（Executable and Linkable Format）提供解析和解压功能，并将结果信息以可读形式呈现，方便开发者直观获得kernel文件信息。当前支持解析融合编译工程、标准/简易自定义算子工程，以及核函数（Kernel）直调工程生成的相关产物。
 
 >[!NOTE]说明 
 >- ELF文件是一种用于二进制文件、可执行文件、目标代码、共享库和核心转储的文件格式，包括常见的\*.a、\*.so文件等。ELF文件常见构成如下：
@@ -127,13 +127,13 @@
 | `AICORE` | **该参数为预留参数，当前版本暂不支持。**<br>算子执行时仅会启动AI Core，比如用户在host侧设置blocknum为5，则会启动5个AI Core。 |
 | `AIC` | 算子执行时仅启动AI Core上的Cube核，比如用户在host侧设置blocknum为10，则会启动10个Cube核。 |
 | `AIV` | 算子执行时仅启动AI Core上的Vector核，比如用户在host侧设置blocknum为10，则会启动10个Vector核。 |
-| `MIX_AIC_MAIN` | AIC、AIV混合场景下，设置核函数的类型为MIX，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置blocknum为10，且设置task_ration为1：2，则会启动10个Cube核和20个Vector核。 |
-| `MIX_AIV_MAIN` | AIC、AIV混合场景下，使用了多核控制相关指令时，设置核函数的类型为MIX，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置blocknum为10，且设置task_ration为1：2，则会启动10个Vector核和20个Cube核。 |
+| `MIX_AIC_MAIN` | AIC、AIV混合场景下，设置核函数（Kernel）的类型为MIX，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置blocknum为10，且设置task_ration为1：2，则会启动10个Cube核和20个Vector核。 |
+| `MIX_AIV_MAIN` | AIC、AIV混合场景下，使用了多核控制相关指令时，设置核函数（Kernel）的类型为MIX，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置blocknum为10，且设置task_ration为1：2，则会启动10个Vector核和20个Cube核。 |
 | `AIC_ROLLBACK` | 算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Cube Core使用。 |
 | `AIV_ROLLBACK` | 算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。 |
 
 
-**表6**  ELF解析字段说明（Kernel直调工程）
+**表6**  ELF解析字段说明（核函数（Kernel）直调工程）
 
 <a name="table217334916136"></a>
 | 字段名 | 含义 | 是否必选 | 打印说明 |
@@ -676,7 +676,7 @@
     ```
 
 
-## 使用样例（Kernel直调算子工程）<a name="section12189203721319"></a>
+## 使用样例（核函数（Kernel）直调算子工程）<a name="section12189203721319"></a>
 
 以MatMulInvocationNeo算子为例（NPU模式），假设$\{cmake\_install\_dir\}为算子Cmake编译产物根目录，目录结构如下（仅为示例，具体以实际算子工程为准），类似[CMake编译配置文件编写](kernel_direct_call_from_sample.md#section185111259496)。
 

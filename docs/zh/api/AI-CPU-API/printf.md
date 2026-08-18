@@ -13,7 +13,7 @@
 
 ## 功能说明<a name="section259105813316"></a>
 
-该接口提供AI CPU算子Kernel调试场景下的格式化输出功能，默认将输出内容解析并打印在屏幕上。
+该接口提供AI CPU算子核函数（Kernel）调试场景下的格式化输出功能，默认将输出内容解析并打印在屏幕上。
 
 ## 需要包含的头文件<a name="section78885814919"></a>
 
@@ -77,7 +77,7 @@ void printf(const char* fmt, ...)
 
 ## 调用示例<a name="section82241477610"></a>
 
-在算子Kernel侧实现代码中需要输出日志信息的地方调用printf接口打印相关内容。样例如下：
+在算子核函数（Kernel）侧实现代码中需要输出日志信息的地方调用printf接口打印相关内容。样例如下：
 
 ```
 #include "aicpu_api.h"

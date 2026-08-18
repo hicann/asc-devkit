@@ -46,8 +46,8 @@ Cube编程范式把算子的实现流程分为5个基本任务：CopyIn，Split�
 ![](../../../figures/mat_op_impl.png "矩阵算子实现流程")
 
 -   算子分析：分析算子的数学表达式、输入、输出以及计算逻辑的实现，明确需要调用的Ascend C接口。
--   核函数定义：定义Ascend C算子入口函数。
--   根据矩阵编程范式实现算子类：完成核函数的内部实现，调用私有成员函数CopyIn、SplitA、SplitB、Compute、Aggregate、CopyOut完成矩阵算子的五级流水操作。
+-   核函数（Kernel）定义：定义Ascend C算子入口函数。
+-   根据矩阵编程范式实现算子类：完成核函数（Kernel）的内部实现，调用私有成员函数CopyIn、SplitA、SplitB、Compute、Aggregate、CopyOut完成矩阵算子的五级流水操作。
 
 下文将以Matmul算子为例对上述步骤进行详细介绍，Matmul算子的代码框架如下。
 
@@ -109,7 +109,7 @@ private:
 
 };
 
-//核函数定义
+//核函数（Kernel）定义
 extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ uint8_t* b, __gm__ uint8_t* c)
 {
     KernelMatmul op;
@@ -146,9 +146,9 @@ extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ ui
     -   矩阵a、b、c的形状均为\[32, 32\]。
     -   算子输入输出支持的数据格式为：ND。
 
-3.  确定核函数名称和参数。
-    -   您可以自定义核函数名称，本样例中核函数命名为matmul\_custom。
-    -   根据对算子输入输出的分析，确定核函数有3个参数a，b，c；a，b为输入在Global Memory上的内存地址，c为输出在Global Memory上的内存地址。
+3.  确定核函数（Kernel）名称和参数。
+    -   您可以自定义核函数（Kernel）名称，本样例中核函数（Kernel）命名为matmul\_custom。
+    -   根据对算子输入输出的分析，确定核函数（Kernel）有3个参数a，b，c；a，b为输入在Global Memory上的内存地址，c为输出在Global Memory上的内存地址。
 
 4.  约束分析。
 
@@ -218,7 +218,7 @@ extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ ui
 <td class="cellrowborder" valign="top" width="29.53%" headers="mcps1.2.6.5.1 "><p id="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p1752074519175"><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p1752074519175"></a><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p1752074519175"></a>ND</p>
 </td>
 </tr>
-<tr id="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_row628260192410"><th class="firstcol" valign="top" id="mcps1.2.6.6.1"><p id="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p22821601246"><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p22821601246"></a><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p22821601246"></a>核函数名称</p>
+<tr id="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_row628260192410"><th class="firstcol" valign="top" id="mcps1.2.6.6.1"><p id="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p22821601246"><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p22821601246"></a><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p22821601246"></a>核函数（Kernel）名称</p>
 </th>
 <td class="cellrowborder" colspan="4" valign="top" headers="mcps1.2.6.6.1 "><p id="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p1359311404260"><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p1359311404260"></a><a name="zh-cn_topic_0000002135641293_zh-cn_topic_0000001514387805_p1359311404260"></a>matmul_custom</p>
 </td>
@@ -240,13 +240,13 @@ extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ ui
 </tbody>
 </table>
 
-## 核函数定义<a name="zh-cn_topic_0000002135641293_section434251315304"></a>
+## 核函数（Kernel）定义<a name="zh-cn_topic_0000002135641293_section434251315304"></a>
 
-根据[核函数](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中介绍的规则进行核函数的定义。
+根据[核函数（Kernel）](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中介绍的规则进行核函数（Kernel）的定义。
 
 1.  函数原型定义。
 
-    本样例中，函数名为matmul\_custom（核函数名称可自定义）；根据[算子分析](#zh-cn_topic_0000002135641293_section11569817102912)中对算子输入输出的分析，确定有3个参数a，b，c，其中a，b都为输入内存，c为输出内存。根据[核函数](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中核函数的规则介绍，函数原型定义如下所示：使用\_\_global\_\_函数类型限定符来标识它是一个核函数，可以被<<<\>\>\>调用；使用\_\_aicore\_\_函数类型限定符来标识该核函数在设备端aicore上执行。
+    本样例中，函数名为matmul\_custom（核函数（Kernel）名称可自定义）；根据[算子分析](#zh-cn_topic_0000002135641293_section11569817102912)中对算子输入输出的分析，确定有3个参数a，b，c，其中a，b都为输入内存，c为输出内存。根据[核函数（Kernel）](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)中核函数（Kernel）的规则介绍，函数原型定义如下所示：使用\_\_global\_\_函数类型限定符来标识它是一个核函数（Kernel），可以被<<<\>\>\>调用；使用\_\_aicore\_\_函数类型限定符来标识该核函数（Kernel）在设备端aicore上执行。
 
     ```
     extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ uint8_t* b, __gm__ uint8_t* c)
@@ -267,7 +267,7 @@ extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ ui
     }
     ```
 
-3.  对核函数进行封装，得到matmul\_custom\_do函数，便于主程序调用。\#ifndef ASCENDC\_CPU\_DEBUG表示该封装函数仅在编译运行NPU侧的算子时会用到，编译运行CPU侧的算子时，可以直接调用matmul\_custom函数。根据[核函数定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)章节，调用核函数时，除了需要传入参数a，b，c，还需要传入numBlocks（核函数执行的核数）、动态UB大小（无动态UB需求时设置为0）、stream（应用程序中维护异步操作执行顺序的stream）来规定核函数的执行配置。
+3.  对核函数（Kernel）进行封装，得到matmul\_custom\_do函数，便于主程序调用。\#ifndef ASCENDC\_CPU\_DEBUG表示该封装函数仅在编译运行NPU侧的算子时会用到，编译运行CPU侧的算子时，可以直接调用matmul\_custom函数。根据[核函数（Kernel）定义和调用](../../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md#zh-cn_topic_0000001447989210_section1915102519220)章节，调用核函数（Kernel）时，除了需要传入参数a，b，c，还需要传入numBlocks（核函数（Kernel）执行的核数）、动态Unified Buffer（UB）大小（无动态UB需求时设置为0）、stream（应用程序中维护异步操作执行顺序的stream）来规定核函数（Kernel）的执行配置。
 
     ```
     #ifndef ASCENDC_CPU_DEBUG
@@ -281,7 +281,7 @@ extern "C" __global__ __aicore__ void matmul_custom(__gm__ uint8_t* a, __gm__ ui
 
 ## 算子类实现<a name="zh-cn_topic_0000002135641293_section1882915463510"></a>
 
-根据上一章节介绍，核函数中会调用算子类的Init和Process函数，本章具体讲解基于编程范式实现算子类。矩阵编程范式请参考[编程范式](#zh-cn_topic_0000002135641293_section12567050132819)。
+根据上一章节介绍，核函数（Kernel）中会调用算子类的Init和Process函数，本章具体讲解基于编程范式实现算子类。矩阵编程范式请参考[编程范式](#zh-cn_topic_0000002135641293_section12567050132819)。
 
 算子类中主要包含对外开放的初始化Init函数和核心处理函数Process以及一些实现中会用到的私有成员。KernelMatmul算子类的定义如下：
 
@@ -400,7 +400,7 @@ __aicore__ inline void Init(__gm__ uint8_t* a, __gm__ uint8_t* b, __gm__ uint8_t
 
 **Process函数实现**
 
-基于矩阵编程范式，将核函数的实现分为5个基本阶段：CopyIn，Split，Compute，Aggregate，CopyOut。Split，Compute，Aggregate阶段需要区分a、b矩阵。Process函数中通过如下方式调用这几个函数。
+基于矩阵编程范式，将核函数（Kernel）的实现分为5个基本阶段：CopyIn，Split，Compute，Aggregate，CopyOut。Split，Compute，Aggregate阶段需要区分a、b矩阵。Process函数中通过如下方式调用这几个函数。
 
 ```
 __aicore__ inline void Process()
