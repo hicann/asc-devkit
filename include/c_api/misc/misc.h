@@ -29,6 +29,10 @@
 
 __aicore__ inline void asc_init();
 
+namespace __asc_aicore {
+__aicore__ inline void asc_nop();
+} // namespace __asc_aicore
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)

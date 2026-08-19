@@ -8,10 +8,22 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include "c_api/misc/misc.h"
+#include <gtest/gtest.h>
+#include <mockcpp/mockcpp.hpp>
+#include <type_traits>
+#include "c_api/stub/cce_stub.h"
+#include "c_api/asc_simd.h"
 
-static void test_host_c_api_misc_0()
+static_assert(std::is_same_v<decltype(&__asc_aicore::asc_nop), void (*)()>);
+
+class TestAscNopCAPI : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+
+TEST_F(TestAscNopCAPI, c_api_asc_nop_succ)
 {
-    using ::asc_init;
-    using __asc_aicore::asc_nop;
+    __asc_aicore::asc_nop();
+    GlobalMockObject::verify();
 }
