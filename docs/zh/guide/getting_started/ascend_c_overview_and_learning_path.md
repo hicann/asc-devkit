@@ -95,7 +95,7 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;"><a href="../programming_guide/debug_and_tuning/overview.md" style="color: #3b82f6; text-decoration: none;">🔧 调试与调优</a></strong><br/>
-<a href="../programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md" style="color: #3b82f6; font-size: 14px;">功能调试</a> <span style="color: #999; font-size: 13px;">（<a href="../programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md" style="color: #3b82f6; font-size: 13px;">CPU域孪生调试</a> | <a href="../programming_guide/debug_and_tuning/functional_debug/npu_board_debug.md" style="color: #3b82f6; font-size: 13px;">NPU域孪生调试</a>）</span> | <a href="../programming_guide/debug_and_tuning/performance_tuning.md" style="color: #3b82f6; font-size: 14px;">性能调试</a>
+<a href="../programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md" style="color: #3b82f6; font-size: 14px;">功能调试</a> <span style="color: #999; font-size: 13px;">（<a href="../programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md" style="color: #3b82f6; font-size: 13px;">CPU域孪生调试</a> | <a href="../programming_guide/debug_and_tuning/functional_debug/npu_board_debug.md" style="color: #3b82f6; font-size: 13px;">NPU域上板调试</a>）</span> | <a href="../programming_guide/debug_and_tuning/performance_tuning.md" style="color: #3b82f6; font-size: 14px;">性能调试</a>
 </div>
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;">📦 算子部署</strong><br/>

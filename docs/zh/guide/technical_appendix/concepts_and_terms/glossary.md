@@ -308,7 +308,7 @@
 </tr>
 <tr id="row112041123578"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p183901322511"><a name="p183901322511"></a><a name="p183901322511"></a>MTE3</p>
 </td>
-<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p203651128105117"><a name="p203651128105117"></a><a name="p203651128105117"></a>Memory Transfer Engine 3，AI Core的数据传递引擎，负责将数据从UB搬运到Global Memory、L1 Buffer等。注意：不同硬件能力可能有差异。</p>
+<td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p203651128105117"><a name="p203651128105117"></a><a name="p203651128105117"></a>Memory Transfer Engine 3，AI Core的数据传递引擎，负责将数据从UB搬运到Global Memory、L1 Buffer以及从L1 Buffer搬运到Global Memory等等。注意：不同硬件能力可能有差异。</p>
 </td>
 </tr>
 <tr id="row682759181911"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p039117217510"><a name="p039117217510"></a><a name="p039117217510"></a>NC1HWC0</p>

@@ -50,7 +50,7 @@ AI Core内部并行的指令流水类型和解释如下所示：
 | PIPE_M | 矩阵计算流水 |
 | PIPE_MTE1 | L1 Buffer -&gt;L0A Buffer、L1 Buffer-&gt;L0B Buffer数据搬运流水 |
 | PIPE_MTE2 | GM-&gt;L1 Buffer、GM-&gt;UB等数据搬运流水 |
-| PIPE_MTE3 | UB-&gt;GM等数据搬运流水 |
+| PIPE_MTE3 | UB-&gt;GM、L1 Buffer-&gt;GM等数据搬运流水 |
 | PIPE_FIX | L0C Buffer-&gt;GM、L0C Buffer -&gt;L1等数据搬运流水 |
 
 ## 核内同步分类<a name="zh-cn_topic_0000002542725361_section2167161594419"></a>

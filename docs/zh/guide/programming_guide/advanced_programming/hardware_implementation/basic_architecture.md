@@ -189,7 +189,7 @@ AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输
 <tr id="row153848520214"><td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.2.3.1.1 "><p id="p121221999218"><a name="p121221999218"></a><a name="p121221999218"></a>MTE3</p>
 </td>
 <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.2.3.1.2 "><p id="p1683722417444"><a name="p1683722417444"></a><a name="p1683722417444"></a>负责如下通路的数据搬运：</p>
-<a name="ul43441132124411"></a><a name="ul43441132124411"></a><ul id="ul43441132124411"><li>UB -&gt; GM</li></ul>
+<a name="ul43441132124411"></a><a name="ul43441132124411"></a><ul id="ul43441132124411"><li>UB -&gt; GM</li><li>L1-&gt;GM</li></ul>
 </td>
 </tr>
 <tr id="row217791862110"><td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.2.3.1.1 "><p id="p61776186219"><a name="p61776186219"></a><a name="p61776186219"></a>FixPipe</p>
@@ -216,7 +216,7 @@ AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输
 -   Cube计算典型的数据流如下：
 
     -   GM →L1→L0A/L0B →Cube →L0C→FixPipe→GM
-    -   GM →L1→L0A/L0B →Cube →L0C→FixPipe→L1
+    -   GM →L1→L0A/L0B →Cube →L0C→FixPipe→L1→GM
 
     ![](../../../figures/sep_arch_11.png)
 
@@ -242,4 +242,3 @@ AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输
 Ascend C提供同步控制API，开发者可以使用这类API来自行完成同步控制。需要注意的是，通常情况下，开发者基于[编程模型](../../programming_model/programming_model_overview.md)中介绍的编程模型和范式进行编程时不需要关注同步，编程模型帮助开发者完成了同步控制；使用编程模型和范式是我们推荐的编程方式，自行同步控制可能会带来一定的编程复杂度。
 
 但是我们仍然希望开发者可以理解同步的基本原理，便于后续更好的理解设计并行计算程序；同时少数情况需要开发者手动插入同步，您可以通过[什么时候需要开发者手动插入同步](../../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md)来了解具体内容。
-

@@ -253,7 +253,7 @@ AI Core上的执行单元分别属于不同的执行流水，同步即是保证�
 | **PIPE_M** | 矩阵计算流水 |
 | **PIPE_MTE1** | L1 Buffer→L0A Buffer、L1 Buffer→L0B Buffer数据搬运流水 |
 | **PIPE_MTE2** | GM→L1 Buffer、GM→UB等数据搬运流水 |
-| **PIPE_MTE3** | UB→GM等数据搬运流水 |
+| **PIPE_MTE3** | UB→GM、L1 Buffer→GM数据搬运流水 |
 | **PIPE_FIX** | L0C Buffer→GM、L0C Buffer→L1等数据搬运流水 |
 
 为确保流水线间正确执行，AI Core针对不同应用场景提供了多种同步机制，开发者可根据实际需求灵活选择合适的同步方式来实现算子功能。

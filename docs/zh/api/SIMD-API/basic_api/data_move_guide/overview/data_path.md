@@ -65,6 +65,8 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 | UB | L1 Buffer | MTE3 | 将UB中的非对齐数据搬运到L1 Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
 | L1 Buffer | UB | MTE3 | 将L1 Buffer中的数据连续搬运至UB。 | DataCopyL1ToUB |
 | L1 Buffer | UB | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至UB。 | DataCopyL1ToUB |
+| L1 Buffer | Global Memory | MTE3 | 将L1 Buffer中的数据连续搬运至Global Memory。 | DataCopy |
+| L1 Buffer | Global Memory | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至Global Memory。 | DataCopy |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运） |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运V2） |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（MX矩阵搬运） |
