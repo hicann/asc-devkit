@@ -22,6 +22,8 @@
 
 __aicore__ inline int64_t asc_get_system_cycle_impl() { return get_sys_cnt(); }
 
+__aicore__ inline int64_t asc_get_system_clock_impl() { return get_sys_cnt() / 50; }
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

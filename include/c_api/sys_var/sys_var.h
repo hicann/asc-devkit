@@ -65,6 +65,7 @@ __aicore__ inline int64_t asc_get_sub_block_num();
 __aicore__ inline int64_t asc_get_sub_block_id();
 
 __aicore__ inline int64_t asc_get_system_cycle();
+__aicore__ inline int64_t asc_get_system_clock();
 
 __aicore__ inline void asc_set_ctrl(uint64_t config);
 

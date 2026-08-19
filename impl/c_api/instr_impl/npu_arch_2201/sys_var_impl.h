@@ -55,6 +55,8 @@ __aicore__ inline int64_t asc_get_sub_block_num() { return asc_get_sub_block_num
 
 __aicore__ inline int64_t asc_get_system_cycle() { return asc_get_system_cycle_impl(); }
 
+__aicore__ inline int64_t asc_get_system_clock() { return asc_get_system_clock_impl(); }
+
 __aicore__ inline void asc_set_ctrl(uint64_t config) { asc_set_ctrl_impl(config); }
 
 __aicore__ inline void asc_get_arch_ver(uint32_t& core_version) { asc_get_arch_ver_impl(core_version); }

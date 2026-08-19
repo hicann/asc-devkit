@@ -64,6 +64,8 @@ __aicore__ inline int64_t asc_get_block_num() { return asc_get_block_num_impl();
 
 __aicore__ inline int64_t asc_get_system_cycle() { return asc_get_system_cycle_impl(); }
 
+__aicore__ inline int64_t asc_get_system_clock() { return asc_get_system_clock_impl(); }
+
 __aicore__ inline void asc_set_ctrl(uint64_t config) { asc_set_ctrl_impl(config); }
 
 __aicore__ inline int64_t asc_get_ctrl() { return asc_get_ctrl_impl(); }
