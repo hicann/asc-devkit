@@ -697,14 +697,14 @@ __aicore__ inline void SetHF32Mode(bool hf32Mode) { SetHF32ModeImpl(hf32Mode); }
  */
 __aicore__ inline void SetHF32TransMode(HF32TransMode mode)
 {
-    SetHF32TransModeImpl(mode == AscendC::HF32TransMode::NEAREST_ZERO);
+    SetHF32TransModeImpl(mode == AscendC::HF32TransMode::NEAREST_AWAY);
 }
 
 /*
  * @brief Sets the rounding method for HF32 rounding mode
  * @param [in] hf32TransMode Control parameter for Mmad HF32 mode
  * @note Must Call SetHF32Mode to enable HF32 rounding mode first.When hf32TransMode is true, FP32 is rounded to HF32
- * with rounding towards zero; when false, rounded to nearest even
+ * with rounding to nearest, with ties away from zero; when false, rounded to nearest, with ties to even
  */
 // SetHF32TransMode(bool hf32TransMode) has been updated, please use SetHF32TransMode(HF32TransMode mode) instead.
 __aicore__ inline void SetHF32TransMode(bool hf32TransMode) { SetHF32TransModeImpl(hf32TransMode); }

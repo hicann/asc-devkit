@@ -43,7 +43,11 @@ namespace AscendC {
 
 enum class HF32Mode { ENABLE, DISABLE };
 
-enum class HF32TransMode { NEAREST_ZERO, NEAREST_EVEN };
+enum class HF32TransMode {
+    NEAREST_AWAY = 0,
+    NEAREST_EVEN = 1,
+    NEAREST_ZERO = NEAREST_AWAY // Compatible with the old name; the actual behavior is equivalent to NEAREST_AWAY.
+};
 
 /* **************************************************************************************************
  * LoadData 2d                                             *
@@ -483,7 +487,7 @@ __aicore__ inline void SetHF32TransMode(HF32TransMode mode);
  * @brief Sets the rounding method for HF32 rounding mode
  * @param [in] hf32TransMode Control parameter for Mmad HF32 mode
  * @note Must Call SetHF32Mode to enable HF32 rounding mode first.When hf32TransMode is true, FP32 is rounded to HF32
- * with rounding towards zero; when false, rounded to nearest even
+ * with rounding to nearest, with ties away from zero; when false, rounded to nearest, with ties to even
  */
 // SetHF32TransMode(bool hf32TransMode) has been updated, please use SetHF32TransMode(HF32TransMode mode) instead.
 __aicore__ inline void SetHF32TransMode(bool hf32TransMode);

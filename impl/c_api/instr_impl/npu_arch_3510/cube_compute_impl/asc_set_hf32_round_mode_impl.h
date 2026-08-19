@@ -28,7 +28,7 @@
 __aicore__ inline void asc_set_hf32_round_mode_impl(asc_hf32_round_mode hf32_round_mode)
 {
     constexpr int32_t HF32_TRANS_MODE_BIT = 47;
-    if (hf32_round_mode == asc_hf32_round_mode::NEAREST_ZERO) {
+    if (hf32_round_mode == asc_hf32_round_mode::NEAREST_AWAY) {
         set_ctrl(sbitset1(get_ctrl(), HF32_TRANS_MODE_BIT));
     } else {
         set_ctrl(sbitset0(get_ctrl(), HF32_TRANS_MODE_BIT));

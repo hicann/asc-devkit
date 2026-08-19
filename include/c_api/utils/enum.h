@@ -30,7 +30,11 @@ enum class asc_store_l2_cache_mode : uint8_t {
     NOTALLOC_CLEAN = 4
 };
 
-enum class asc_hf32_round_mode : uint8_t { NEAREST_ZERO, NEAREST_EVEN };
+enum class asc_hf32_round_mode : uint8_t {
+    NEAREST_AWAY = 0,
+    NEAREST_EVEN = 1,
+    NEAREST_ZERO = NEAREST_AWAY // Compatible with the old name; the actual behavior is equivalent to NEAREST_AWAY.
+};
 
 enum class asc_position_mode { EVEN = 0, ODD };
 

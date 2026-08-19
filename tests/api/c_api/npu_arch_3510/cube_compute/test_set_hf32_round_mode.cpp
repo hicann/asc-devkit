@@ -45,19 +45,19 @@ uint64_t sbitset1_hf32_trans_stub(uint64_t bits, int64_t idx)
 
 void set_ctrl_nearest_even_stub(uint64_t ctrl_val) { EXPECT_EQ(CTRL_VAL, ctrl_val); }
 
-void set_ctrl_nearest_zero_stub(uint64_t ctrl_val) { EXPECT_EQ(CTRL_VAL | HF32_TRANS_MODE_BIT_MASK, ctrl_val); }
+void set_ctrl_nearest_away_stub(uint64_t ctrl_val) { EXPECT_EQ(CTRL_VAL | HF32_TRANS_MODE_BIT_MASK, ctrl_val); }
 
 } // namespace
 
-TEST_F(TestSetHf32RoundModeCAPI, SetHf32RoundMode_NearestZero_Success)
+TEST_F(TestSetHf32RoundModeCAPI, SetHf32RoundMode_NearestAway_Success)
 {
     MOCKER_CPP(get_ctrl, int64_t()).times(1).will(invoke(get_ctrl_Stub));
 
     MOCKER_CPP(sbitset1, uint64_t(uint64_t, int64_t)).times(1).will(invoke(sbitset1_hf32_trans_stub));
 
-    MOCKER_CPP(set_ctrl, void(uint64_t ctrl_val)).times(1).will(invoke(set_ctrl_nearest_zero_stub));
+    MOCKER_CPP(set_ctrl, void(uint64_t ctrl_val)).times(1).will(invoke(set_ctrl_nearest_away_stub));
 
-    asc_set_hf32_round_mode(asc_hf32_round_mode::NEAREST_ZERO);
+    asc_set_hf32_round_mode(asc_hf32_round_mode::NEAREST_AWAY);
     GlobalMockObject::verify();
 }
 

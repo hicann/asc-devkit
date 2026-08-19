@@ -40,7 +40,7 @@ __aicore__ inline void SetHF32TransMode(HF32TransMode mode)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| mode | 输入 | Mmad HF32取整模式控制入参，HF32TransMode类型。支持如下两种取值：<br>&nbsp;&nbsp;&bull; NEAREST_ZERO：则FP32将以向零靠近的方式四舍五入为HF32。<br>&nbsp;&nbsp;&bull; NEAREST_EVEN：则FP32将以最接近偶数的方式四舍五入为HF32。 |
+| mode | 输入 | Mmad HF32取整模式控制入参，HF32TransMode类型。支持如下两种取值：<br>&nbsp;&nbsp;&bull; NEAREST_AWAY：FP32将以向最接近的值舍入，平局时远离零的方式舍入为HF32。<br>&nbsp;&nbsp;&bull; NEAREST_EVEN：FP32将以向最接近的值舍入，平局时向偶数舍入的方式舍入为HF32。 |
 
 ## 返回值说明
 
@@ -52,8 +52,9 @@ __aicore__ inline void SetHF32TransMode(HF32TransMode mode)
 
 ## 调用示例
 
-设置HF32模式取整的具体方式，需要先使用[SetHF32Mode](SetHF32Mode.md)开启HF32取整模式。
+- 设置HF32模式取整的具体方式，需要先使用[SetHF32Mode](SetHF32Mode.md)开启HF32取整模式。
+- 本接口兼容枚举值`NEAREST_ZERO`，但不推荐使用，实际行为等同于`NEAREST_AWAY`。
 
 ```cpp
-AscendC::SetHF32TransMode(HF32TransMode::NEAREST_ZERO);
+AscendC::SetHF32TransMode(HF32TransMode::NEAREST_AWAY);
 ```
