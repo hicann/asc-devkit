@@ -118,7 +118,7 @@ protected:
     {
         WriteTestFile(
             ascendc::FileUtils::JoinPath(unit, name + "_manifest.json"),
-            "{\"schema_version\":\"1.0\",\"resource_id\":\"" + name +
+            "{\"resource_id\":\"" + name +
                 "\",\"soc_version\":\"test\",\"resource_path\":\"resources\",\"kernels\":[{\"kernel_name\":\"" + name +
                 "\",\"objects\":[{\"object_name\":\"kernel.o\",\"object_type\":\"basic\",\"commands\":[{\"type\":"
                 "\"compile\",\"stage\":0,\"cmd\":[\"${output}/kernel.o\"]}],\"outputs\":[\"${output}/kernel.o\"]}]}]}");

@@ -69,11 +69,15 @@ private:
     size_t fileCount_{0U};
 };
 
-bool ValidateAndExtractResourcePath(const std::string& text, const std::string& manifestPath, std::string& resourcePath)
+bool ValidateAndExtractResourcePath(std::string& text, const std::string& manifestPath, std::string& resourcePath)
 {
-    const Json manifest = Json::parse(text, nullptr, false);
+    Json manifest = Json::parse(text, nullptr, false);
     if (manifest.is_discarded()) {
         ASCENDLOGE("Manifest is not valid JSON: %s", manifestPath.c_str());
+        return false;
+    }
+    if (manifest.contains("schema_version")) {
+        ASCENDLOGE("Manifest must not contain schema_version: %s", manifestPath.c_str());
         return false;
     }
 
@@ -87,6 +91,8 @@ bool ValidateAndExtractResourcePath(const std::string& text, const std::string& 
         return false;
     }
     resourcePath = resourcePathValue->get<std::string>();
+    manifest["schema_version"] = "1.0";
+    text = manifest.dump();
     return true;
 }
 

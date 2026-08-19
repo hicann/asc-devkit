@@ -18,6 +18,7 @@
 
 #include "collected_manifest_repository.h"
 #include "file_utils.h"
+#include "nlohmann/json.hpp"
 #include "test_support.h"
 
 namespace ascendc {
@@ -26,6 +27,7 @@ namespace {
 
 constexpr size_t TEST_MAX_DIRECTORY_DEPTH = 64U;
 
+using Json = nlohmann::json;
 using asc_compile_exporter_test::ModuleTest;
 using asc_compile_exporter_test::ReadTestFile;
 using asc_compile_exporter_test::WriteTestFile;
@@ -53,6 +55,36 @@ TEST_F(ModuleTest, RepositorySortsManifestsAndResourcesAndSkipsEmptyFiles)
     EXPECT_EQ(units[1].files[0].filePath, "resources/a.cpp");
     EXPECT_EQ(units[1].files[1].filePath, "resources/z.cpp");
     EXPECT_EQ(std::string(units[1].files[0].data.begin(), units[1].files[0].data.end()), "a");
+}
+
+TEST_F(ModuleTest, RepositoryAddsSchemaVersionToManifestJson)
+{
+    const std::string unit = FileUtils::JoinPath(root_, "collection-schema-version/Unit");
+    WriteTestFile(FileUtils::JoinPath(unit, "resources/kernel.cpp"), "source");
+    CreateManifest(unit, "Unit");
+
+    std::vector<ManifestUnit> units;
+    ASSERT_TRUE(CollectedManifestRepository(FileUtils::JoinPath(root_, "collection-schema-version")).Load(units));
+
+    ASSERT_EQ(units.size(), 1U);
+    const Json manifest = Json::parse(units[0].json);
+    ASSERT_TRUE(manifest.contains("schema_version"));
+    EXPECT_EQ(manifest.at("schema_version"), "1.0");
+}
+
+TEST_F(ModuleTest, RepositoryRejectsManifestWithSchemaVersion)
+{
+    const std::string collection = FileUtils::JoinPath(root_, "collection-existing-schema-version");
+    const std::string unit = FileUtils::JoinPath(collection, "Unit");
+    WriteTestFile(FileUtils::JoinPath(unit, "resources/kernel.cpp"), "source");
+    CreateManifest(unit, "Unit");
+    const std::string manifestPath = FileUtils::JoinPath(unit, "Unit_manifest.json");
+    Json manifest = Json::parse(ReadTestFile(manifestPath));
+    manifest["schema_version"] = "2.0";
+    WriteTestFile(manifestPath, manifest.dump());
+
+    std::vector<ManifestUnit> units;
+    EXPECT_FALSE(CollectedManifestRepository(collection).Load(units));
 }
 
 TEST_F(ModuleTest, RepositoryReportsManifestJsonAndResourcePathErrors)
