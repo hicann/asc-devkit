@@ -30,7 +30,7 @@ namespace te {
 
 class copy_l0c_to_ub_ignore {
 public:
-    template <const copy_l0c_to_ub_trait& trait, typename... Args>
+    template <const l0c_to_ub_trait& trait, typename... Args>
     __aicore__ inline static void run(const Args&... args)
     {
         static_assert(Std::is_same_v<Args..., void>, "copy_l0c_to_ub_ignore should not be called");

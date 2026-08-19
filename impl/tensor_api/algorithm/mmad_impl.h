@@ -27,31 +27,30 @@
 namespace asc {
 namespace te {
 
-template <typename AtomType, typename DstTensor, typename FmTensor, typename FilterTensor>
-__aicore__ inline void mmad(const mmad_atom<AtomType>& atom, const DstTensor& dst, const FmTensor& fm,
-                            const FilterTensor& filter)
+template <typename Atom, typename CTensor, typename ATensor, typename BTensor>
+__aicore__ inline void mmad(const mmad_atom<Atom>& atom, const CTensor& c, const ATensor& a, const BTensor& b)
 {
-    atom.call(dst, fm, filter);
+    atom.call(c, a, b);
 }
 
-template <typename AtomType, typename DstTensor, typename FmTensor, typename FilterTensor, typename BiasTensor,
-          Std::enable_if_t<is_attr_tensor_v<BiasTensor>, int> = 0>
-__aicore__ inline void mmad(const mmad_atom<AtomType>& atom, const DstTensor& dst, const FmTensor& fm,
-                            const FilterTensor& filter, const BiasTensor& bias)
+template <typename Atom, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor,
+          Std::enable_if_t<is_attr_tensor_v<BiasTensor>, int> Enable = 0>
+__aicore__ inline void mmad(const mmad_atom<Atom>& atom, const CTensor& c, const ATensor& a, const BTensor& b,
+                            const BiasTensor& bias)
 {
-    atom.call(dst, fm, filter, bias);
+    atom.call(c, a, b, bias);
 }
 
-template <typename MmadOperationType>
-__aicore__ inline constexpr auto make_mmad(const MmadOperationType& mmad_operation)
+template <typename MmadOperation>
+__aicore__ inline constexpr auto make_mmad(const MmadOperation& operation)
 {
-    return mmad_atom<mmad_traits<MmadOperationType>>{};
+    return mmad_atom<mmad_traits<MmadOperation>>{};
 }
 
-template <typename MmadOperationType, typename MmadTraitType>
-__aicore__ inline constexpr auto make_mmad(const MmadOperationType& mmad_operation, const MmadTraitType& trait_config)
+template <typename MmadOperation, typename MmadTrait>
+__aicore__ inline constexpr auto make_mmad(const MmadOperation& operation, const MmadTrait& trait)
 {
-    return mmad_atom<mmad_traits<MmadOperationType, MmadTraitType>>{};
+    return mmad_atom<mmad_traits<MmadOperation, MmadTrait>>{};
 }
 
 } // namespace te

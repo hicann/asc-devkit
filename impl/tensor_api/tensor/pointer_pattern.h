@@ -28,27 +28,27 @@
 namespace asc {
 namespace te {
 
-template <typename T = uint16_t>
+template <typename DataType = uint16_t>
 struct ptr_trait {
-    using type = T;
+    using type = DataType;
 };
 
-template <typename T, typename = void>
+template <typename Trait, typename = void>
 struct is_ptr_trait : Std::false_type {};
 
-template <typename T>
-struct is_ptr_trait<T, void_t<typename T::type>> : Std::true_type {};
+template <typename Trait>
+struct is_ptr_trait<Trait, void_t<typename Trait::type>> : Std::true_type {};
 
-template <typename T>
-using mem_ptr_trait_t = typename Std::conditional<is_ptr_trait<T>::value, T, ptr_trait<T>>::type;
+template <typename Trait>
+using mem_ptr_trait_t = typename Std::conditional<is_ptr_trait<Trait>::value, Trait, ptr_trait<Trait>>::type;
 
-template <typename Hardware, typename Arg>
+template <typename Hardware, typename PointerArg>
 using enable_make_ptr_by_trait =
-    Std::enable_if_t<is_hardware_v<Hardware> && !is_mem_ptr_iterator<Std::remove_cvref_t<Arg>>::value, int>;
+    Std::enable_if_t<is_hardware_v<Hardware> && !is_mem_ptr_iterator<Std::remove_cvref_t<PointerArg>>::value, int>;
 
-template <typename Hardware, typename Arg>
+template <typename Hardware, typename PointerArg>
 using enable_make_hardware_ptr =
-    Std::enable_if_t<is_hardware_v<Hardware> && is_mem_ptr_iterator<Std::remove_cvref_t<Arg>>::value, int>;
+    Std::enable_if_t<is_hardware_v<Hardware> && is_mem_ptr_iterator<Std::remove_cvref_t<PointerArg>>::value, int>;
 
 template <typename Iterator>
 using enable_make_ptr_by_iter = Std::enable_if_t<is_mem_ptr_iterator<Std::remove_cvref_t<Iterator>>::value, int>;
@@ -75,8 +75,6 @@ __aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
 
 } // namespace te
 } // namespace asc
-
-
 
 #endif // IMPL_TENSOR_API_TENSOR_POINTER_PATTERN_H
 

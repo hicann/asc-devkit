@@ -46,30 +46,19 @@ namespace asc {
 namespace te {
 
 template <typename... Args>
-struct copy_atom;
-
-template <typename CopyOperation>
-struct copy_atom<CopyOperation> : copy_atom<copy_traits<CopyOperation>> {};
+template <const typename copy_atom<copy_traits<Args...>>::trait_type& traits, typename... Params>
+__aicore__ inline void copy_atom<copy_traits<Args...>>::call(const Params&... params) const
+{
+    copy_traits_type::template copy_unpack<traits>(params...);
+}
 
 template <typename... Args>
-struct copy_atom<copy_traits<Args...>> : copy_traits<Args...> {
-    using copy_trait_type = copy_traits<Args...>;
-    using trait_type = get_trait_member_type_t<copy_trait_type>;
-    static constexpr const trait_type default_trait = copy_trait_type::default_trait;
-
-    template <const trait_type& traits = default_trait, typename... Params>
-    __aicore__ inline void call(const Params&... params) const
-    {
-        copy_trait_type::template copy_unpack<traits>(params...);
-    }
-
-    template <typename... TraitsArgs>
-    __aicore__ inline auto with(TraitsArgs&&... args) const
-    {
-        auto traits = copy_trait_type::with(static_cast<TraitsArgs&&>(args)...);
-        return copy_atom<decltype(traits)>{traits};
-    }
-};
+template <typename... TraitArgs>
+__aicore__ inline auto copy_atom<copy_traits<Args...>>::with(TraitArgs&&... args) const
+{
+    auto traits = copy_traits_type::with(static_cast<TraitArgs&&>(args)...);
+    return copy_atom<decltype(traits)>{traits};
+}
 
 } // namespace te
 } // namespace asc

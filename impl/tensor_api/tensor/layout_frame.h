@@ -27,53 +27,44 @@
 namespace asc {
 namespace te {
 
-using layout_format_set =
-    tuple_map<Std::tuple<nz_layout_ptn, make_nz_frame_layout>, Std::tuple<nd_layout_ptn, make_nd_frame_layout>,
-             Std::tuple<dn_layout_ptn, make_dn_frame_layout>, Std::tuple<nd_ext_layout_ptn, make_nd_ext_frame_layout>,
-             Std::tuple<dn_ext_layout_ptn, make_dn_ext_frame_layout>, Std::tuple<nn_layout_ptn, make_nn_frame_layout>,
-             Std::tuple<zz_layout_ptn, make_zz_frame_layout>, Std::tuple<zn_layout_ptn, make_zn_frame_layout>,
-             Std::tuple<scalea_nd_layout_ptn, make_scalea_nd_frame_layout>,
-             Std::tuple<scalea_dn_layout_ptn, make_scalea_dn_frame_layout>,
-             Std::tuple<scaleb_nd_layout_ptn, make_scaleb_nd_frame_layout>,
-             Std::tuple<scaleb_dn_layout_ptn, make_scaleb_dn_frame_layout>, Std::tuple<nchw_layout_ptn, make_nchw_frame_layout>,
-             Std::tuple<nhwc_layout_ptn, make_nhwc_frame_layout>, Std::tuple<nc1hwc0_layout_ptn, make_nc1hwc0_frame_layout>,
-             Std::tuple<ncdhw_layout_ptn, make_ncdhw_frame_layout>, Std::tuple<ndc1hwc0_layout_ptn, make_ndc1hwc0_frame_layout>>;
+using layout_format_set = tuple_map<
+    Std::tuple<nz_layout_ptn, make_nz_frame_layout>, Std::tuple<nd_layout_ptn, make_nd_frame_layout>,
+    Std::tuple<dn_layout_ptn, make_dn_frame_layout>, Std::tuple<nd_ext_layout_ptn, make_nd_ext_frame_layout>,
+    Std::tuple<dn_ext_layout_ptn, make_dn_ext_frame_layout>, Std::tuple<nn_layout_ptn, make_nn_frame_layout>,
+    Std::tuple<zz_layout_ptn, make_zz_frame_layout>, Std::tuple<zn_layout_ptn, make_zn_frame_layout>,
+    Std::tuple<scalea_nd_layout_ptn, make_scalea_nd_frame_layout>,
+    Std::tuple<scalea_dn_layout_ptn, make_scalea_dn_frame_layout>,
+    Std::tuple<scaleb_nd_layout_ptn, make_scaleb_nd_frame_layout>,
+    Std::tuple<scaleb_dn_layout_ptn, make_scaleb_dn_frame_layout>, Std::tuple<nchw_layout_ptn, make_nchw_frame_layout>,
+    Std::tuple<nhwc_layout_ptn, make_nhwc_frame_layout>, Std::tuple<nc1hwc0_layout_ptn, make_nc1hwc0_frame_layout>,
+    Std::tuple<ncdhw_layout_ptn, make_ncdhw_frame_layout>, Std::tuple<ndc1hwc0_layout_ptn, make_ndc1hwc0_frame_layout>>;
 
-template <typename T, typename C0>
-struct layout_trait {
-    static constexpr auto C0_ELEMENT = C0{};
-};
+using format_trait_set =
+    tuple_map<Std::tuple<nz_layout_ptn, layout_trait_default<>>,
+              Std::tuple<nd_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<dn_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<nd_ext_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<dn_ext_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<nn_layout_ptn, layout_trait<Std::ignore_t, _2>>,
+              Std::tuple<zz_layout_ptn, layout_trait_default<>>, Std::tuple<zn_layout_ptn, layout_trait_default<>>,
+              Std::tuple<scalea_nd_layout_ptn, layout_trait<Std::ignore_t, _2>>,
+              Std::tuple<scalea_dn_layout_ptn, layout_trait<Std::ignore_t, _2>>,
+              Std::tuple<scaleb_nd_layout_ptn, layout_trait<Std::ignore_t, _2>>,
+              Std::tuple<scaleb_dn_layout_ptn, layout_trait<Std::ignore_t, _2>>,
+              Std::tuple<nchw_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<nhwc_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<nc1hwc0_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<ncdhw_layout_ptn, layout_trait<Std::ignore_t, _1>>,
+              Std::tuple<ndc1hwc0_layout_ptn, layout_trait<Std::ignore_t, _1>>>;
 
-template <typename T = uint16_t, typename C0 = Std::Int<C0_ELEMENT<T>>>
-struct layout_trait_default : layout_trait<T, C0> {};
-
-struct layout_trait_scale : layout_trait_default<fp8_e8m0_t, Std::Int<MX_SCALE_K0 / sizeof(fp8_e8m0_t)>> {};
-
-struct layout_trait_fp4 : layout_trait_default<fp4x2_e2m1_t, Std::Int<C0_ELEMENT<fp4x2_e2m1_t>>> {};
-
-using format_trait_set = tuple_map<
-    Std::tuple<nz_layout_ptn, layout_trait_default<>>, Std::tuple<nd_layout_ptn, layout_trait<Std::ignore_t, _1>>,
-    Std::tuple<dn_layout_ptn, layout_trait<Std::ignore_t, _1>>, Std::tuple<nd_ext_layout_ptn, layout_trait<Std::ignore_t, _1>>,
-    Std::tuple<dn_ext_layout_ptn, layout_trait<Std::ignore_t, _1>>, Std::tuple<nn_layout_ptn, layout_trait<Std::ignore_t, _2>>,
-    Std::tuple<zz_layout_ptn, layout_trait_default<>>, Std::tuple<zn_layout_ptn, layout_trait_default<>>,
-    Std::tuple<scalea_nd_layout_ptn, layout_trait<Std::ignore_t, _2>>,
-    Std::tuple<scalea_dn_layout_ptn, layout_trait<Std::ignore_t, _2>>,
-    Std::tuple<scaleb_nd_layout_ptn, layout_trait<Std::ignore_t, _2>>,
-    Std::tuple<scaleb_dn_layout_ptn, layout_trait<Std::ignore_t, _2>>,
-    Std::tuple<nchw_layout_ptn, layout_trait<Std::ignore_t, _1>>,
-    Std::tuple<nhwc_layout_ptn, layout_trait<Std::ignore_t, _1>>,
-    Std::tuple<nc1hwc0_layout_ptn, layout_trait<Std::ignore_t, _1>>,
-    Std::tuple<ncdhw_layout_ptn, layout_trait<Std::ignore_t, _1>>,
-    Std::tuple<ndc1hwc0_layout_ptn, layout_trait<Std::ignore_t, _1>>>;
-
-template <typename T, typename = void>
+template <typename Trait, typename = void>
 struct is_frame_layout_trait : Std::false_type {};
 
-template <typename T>
-struct is_frame_layout_trait<T, void_t<decltype(T::C0_ELEMENT)>> : Std::true_type {};
+template <typename Trait>
+struct is_frame_layout_trait<Trait, void_t<decltype(Trait::c0_element)>> : Std::true_type {};
 
-template <typename T>
-constexpr bool is_frame_layout_trait_v = is_frame_layout_trait<T>::value;
+template <typename Trait>
+constexpr bool is_frame_layout_trait_v = is_frame_layout_trait<Trait>::value;
 
 template <typename LayoutPattern, typename TraitType>
 struct trait_conversion {
@@ -91,9 +82,9 @@ private:
 
     using converted = typename Std::conditional<
         Std::is_same_v<raw_trait, Std::ignore_t>, from_pattern,
-        typename Std::conditional<
-            is_integral_constant_v<raw_trait>, from_int,
-            typename Std::conditional<is_frame_layout_trait_v<raw_trait>, from_trait, from_data_type>::type>::type>::type;
+        typename Std::conditional<is_integral_constant_v<raw_trait>, from_int,
+                                  typename Std::conditional<is_frame_layout_trait_v<raw_trait>, from_trait,
+                                                            from_data_type>::type>::type>::type;
 
 public:
     using type = converted;
@@ -165,10 +156,10 @@ __aicore__ inline constexpr auto make_multi_batch_frame_layout(const Args&... ar
         Std::make_tuple(args...), Std::make_index_sequence<sizeof...(Args) - 2>{});
 }
 
-template <typename LayoutPattern, typename TraitType = Std::ignore_t, typename... Args>
+template <typename LayoutPattern, typename Trait, typename... Args>
 __aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args)
 {
-    using trait = typename trait_conversion<LayoutPattern, TraitType>::type;
+    using trait = typename trait_conversion<LayoutPattern, Trait>::type;
     using layout_maker = typename layout_format_set::template get<LayoutPattern>;
     static_assert(!Std::is_same_v<layout_maker, Std::ignore_t>, "Unsupported layout pattern.");
     // 2 args = (row, col) and 3 args = (batch, row, col) are handled by the pattern's own Make. Four
@@ -186,18 +177,15 @@ __aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args
     return make_frame_layout<LayoutPattern, Std::Int<C0Element>>(args...);
 }
 
-template <typename LayoutPattern, typename TraitType = layout_trait_default<>>
-struct frame_layout_format {
-    template <typename... Args>
-    __aicore__ inline constexpr decltype(auto) operator()(const Args&... args)
-    {
-        return make_frame_layout<LayoutPattern, TraitType>(args...);
-    }
-};
+template <typename LayoutPattern, typename Trait>
+template <typename... Args>
+__aicore__ inline constexpr decltype(auto) frame_layout_format<LayoutPattern, Trait>::operator()(const Args&... args)
+{
+    return make_frame_layout<LayoutPattern, Trait>(args...);
+}
 
 } // namespace te
 } // namespace asc
-
 
 #endif // IMPL_TENSOR_API_TENSOR_LAYOUT_FRAME_H
 

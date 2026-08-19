@@ -25,7 +25,6 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/nz2nz.h"
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/zn2nz.h"
-#include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/zn2nzb8b4.h"
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/img2col.h"
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/img2col3d.h"
 
@@ -34,37 +33,32 @@ namespace te {
 
 class copy_l1_to_l0a_ignore {
 public:
-    template <const copy_l1_to_l0a_trait& trait, typename... Args>
+    template <const l1_to_l0a_trait& trait, typename... Args>
     __aicore__ inline void static run(const Args&... args)
     {
         static_assert(Std::is_same_v<Args..., void>, "copy_l1_to_l0a_ignore should not be called");
     }
 };
 
-template <uint32_t version, typename DstLayoutPattern, typename SrcLayoutPattern, typename CopyMode>
+template <uint32_t version, typename DstLayoutPattern, typename SrcLayoutPattern>
 struct copy_l1_to_l0a_routing {
     using type = copy_l1_to_l0a_ignore;
 };
 
 template <uint32_t version>
-struct copy_l1_to_l0a_routing<version, nz_layout_ptn, nz_layout_ptn, copy_mode::normal> {
+struct copy_l1_to_l0a_routing<version, nz_layout_ptn, nz_layout_ptn> {
     using type = load_data_l1_to_l0a_nz2nz;
 };
 
 template <uint32_t version>
-struct copy_l1_to_l0a_routing<version, nz_layout_ptn, zn_layout_ptn, copy_mode::trans> {
+struct copy_l1_to_l0a_routing<version, nz_layout_ptn, zn_layout_ptn> {
     using type = load_data_l1_to_l0a_zn2nz;
-};
-
-template <uint32_t version>
-struct copy_l1_to_l0a_routing<version, nz_layout_ptn, zn_layout_ptn, copy_mode::trans_b8b4> {
-    using type = load_data_l1_to_l0a_zn2nz_b8b4;
 };
 
 // Img2Col: L1(NC1HWC0) -> L0A(NZ) for conv feature maps. Dispatched when src carries the
 // nc1hwc0_layout_ptn tag and params is bound via copy_l1_to_l0a.with(Img2ColParams).
 template <uint32_t version>
-struct copy_l1_to_l0a_routing<version, nz_layout_ptn, nc1hwc0_layout_ptn, copy_mode::normal> {
+struct copy_l1_to_l0a_routing<version, nz_layout_ptn, nc1hwc0_layout_ptn> {
     using type = load_data_l1_to_l0a_img2col;
 };
 
@@ -72,7 +66,7 @@ struct copy_l1_to_l0a_routing<version, nz_layout_ptn, nc1hwc0_layout_ptn, copy_m
 // selected by the caller (tensor(coord)) and looped outside, so this reads one (C1,H,W,C0) plane
 // with indices shifted for the leading D axis.
 template <uint32_t version>
-struct copy_l1_to_l0a_routing<version, nz_layout_ptn, ndc1hwc0_layout_ptn, copy_mode::normal> {
+struct copy_l1_to_l0a_routing<version, nz_layout_ptn, ndc1hwc0_layout_ptn> {
     using type = load_data_l1_to_l0a_img2col3d;
 };
 

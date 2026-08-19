@@ -77,21 +77,20 @@ namespace te {
 struct location_type_combo {
     TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_GENERATE_ALL_TYPES)
 
-    using location_type_to_location = tuple_map<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_PAIR_QUAL_LOC) Std::tuple<void, void>>;
+    using location_type_to_location =
+        tuple_map<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_PAIR_QUAL_LOC) Std::tuple<void, void>>;
 
     using location_type_to_type = tuple_map<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_GEN_BASE_MAP) Std::tuple<void, void>>;
 };
 
-template <typename T>
-using get_attribute_location = typename location_type_combo::location_type_to_location::template get<T>;
+template <typename Pointer>
+using get_attribute_location = typename location_type_combo::location_type_to_location::template get<Pointer>;
 
-template <typename T>
-using get_attribute_element_type = typename location_type_combo::location_type_to_type::template get<T>;
+template <typename Pointer>
+using get_attribute_element_type = typename location_type_combo::location_type_to_type::template get<Pointer>;
 
 } // namespace te
 } // namespace asc
-
-
 
 #endif // IMPL_TENSOR_API_UTILS_LOCATION_IMPL_H
 

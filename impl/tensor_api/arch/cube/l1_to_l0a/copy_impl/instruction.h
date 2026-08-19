@@ -27,29 +27,26 @@
 namespace asc {
 namespace te {
 
-struct copy_l1_to_l0a_trait {};
-
-constexpr img2col_params<int16_t> DEFAULT_IMG2COL_PARAMS{};
+constexpr img2col_params<int16_t> default_img2col_params{};
 
 class load_l1_to_l0a_instr {
 public:
-    template <bool transpose, typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
-    __aicore__ inline static void load_data_with_offset(
-        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    template <bool transpose, typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset,
+              typename... Params>
+    __aicore__ inline static void load_data_with_offset(const DstTensor& dst, const SrcTensor& src,
+                                                        const DstOffset& dst_offset, const SrcOffset& src_offset,
+                                                        const Params&... params)
     {
         auto src_data = src.data() + src_offset;
         load_data<transpose>((dst.data() + dst_offset).get(), src_data.get(), params...);
     }
 
-    template <bool transpose, typename T>
-    __aicore__ inline static void load_data(__ca__ T* dst, __cbuf__ T* src, uint16_t m_start_position,
-                                               uint16_t k_start_position, uint8_t m_step, uint8_t k_step,
-                                               int16_t src_stride, uint16_t dst_stride)
+    template <bool transpose, typename DataType>
+    __aicore__ inline static void load_data(__ca__ DataType* dst, __cbuf__ DataType* src, uint16_t m_start_position,
+                                            uint16_t k_start_position, uint8_t m_step, uint8_t k_step,
+                                            int16_t src_stride, uint16_t dst_stride)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
-        TENSOR_API_DEBUG_CHECK(debug_check_l0_transpose, transpose, sizeof(T), k_step, "copy_l1_to_l0a");
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_transpose, transpose, sizeof(DataType), k_step, "copy_l1_to_l0a");
         if constexpr (transpose) {
             asc_copy_l12l0a_transpose(dst, src, m_start_position, k_start_position, m_step, k_step, src_stride,
                                       dst_stride);
@@ -63,9 +60,6 @@ class load_l1_to_l0a_img2col_instr {
 public:
     __aicore__ inline static void set_f_matrix(uint16_t l1_h, uint16_t l1_w, const uint8_t pad_list[4])
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
         asc_l13d_fmatrix_config config;
         config.l1_height = l1_h;
         config.l1_width = l1_w;
@@ -76,20 +70,14 @@ public:
         asc_set_l13d_fmatrix(config);
     }
 
-    template <typename T>
-    __aicore__ inline static void set_padding(T pad_value)
+    template <typename PadType>
+    __aicore__ inline static void set_padding(PadType pad_value)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
         asc_set_l13d_padding(pad_value);
     }
 
     __aicore__ inline static void set_repeat(uint16_t dst_stride)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
         asc_load3d_v2_config config;
         config.rpt_stride = 0;
         config.rpt_time = 1;
@@ -98,24 +86,22 @@ public:
         asc_set_l13d_rpt(config);
     }
 
-    template <typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
-    __aicore__ inline static void load_data_with_offset(
-        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    template <typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset, typename... Params>
+    __aicore__ inline static void load_data_with_offset(const DstTensor& dst, const SrcTensor& src,
+                                                        const DstOffset& dst_offset, const SrcOffset& src_offset,
+                                                        const Params&... params)
     {
         auto src_data = src.data() + src_offset;
         load_data((dst.data() + dst_offset).get(), src_data.get(), params...);
     }
 
-    template <typename T>
+    template <typename DataType>
     __aicore__ inline static void
-    load_data(__ca__ T* dst, __cbuf__ T* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
-                 uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
-                 uint8_t dilation_filter_w, uint8_t dilation_filter_h, bool filter_size_w, bool filter_size_h,
-                 bool transpose, bool f_matrix_ctrl, uint16_t channel_size)
+    load_data(__ca__ DataType* dst, __cbuf__ DataType* src, uint16_t k_extension, uint16_t m_extension,
+              uint16_t k_start_pt, uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w,
+              uint8_t filter_h, uint8_t dilation_filter_w, uint8_t dilation_filter_h, bool filter_size_w,
+              bool filter_size_h, bool transpose, bool f_matrix_ctrl, uint16_t channel_size)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
         asc_copy_l12l0a(dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w,
                         filter_h, dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose,
                         f_matrix_ctrl, channel_size);

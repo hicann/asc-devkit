@@ -18,6 +18,7 @@
 #include "utils/base/sys_macros.h"
 #include "utils/base/sys_constants.h"
 #include "utils/common_types.h"
+#include "utils/std/type_traits.h"
 
 namespace AscendC {
 namespace Std {}
@@ -27,8 +28,6 @@ namespace asc {
 namespace te {
 
 namespace Std = AscendC::Std;
-
-enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent = 6 };
 
 enum class load_sideband_mode : uint8_t {
     direct,
@@ -71,85 +70,49 @@ enum class mask_pattern : uint8_t {
     none,
 };
 
-enum class mmad_type : uint8_t { normal = 0, mx = 1 };
+enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
 
-struct mmad_trait {
-    __aicore__ constexpr mmad_trait(){};
+using _0 = Std::Int<0>;
+using _1 = Std::Int<1>;
+using _2 = Std::Int<2>;
+using _3 = Std::Int<3>;
+using _4 = Std::Int<4>;
+using _5 = Std::Int<5>;
+using _6 = Std::Int<6>;
+using _7 = Std::Int<7>;
+using _8 = Std::Int<8>;
+using _9 = Std::Int<9>;
+using _10 = Std::Int<10>;
+using _16 = Std::Int<16>;
+using _24 = Std::Int<24>;
+using _32 = Std::Int<32>;
+using _64 = Std::Int<64>;
+using _128 = Std::Int<128>;
+using _256 = Std::Int<256>;
+using _512 = Std::Int<512>;
+using _1024 = Std::Int<1024>;
+using _2048 = Std::Int<2048>;
+using _4096 = Std::Int<4096>;
 
-    __aicore__ constexpr mmad_trait(int32_t fm_offset, bool k_direction_align, bool cmatrix_source,
-                                    bool disable_gemv, asc::te::mmad_type mmad_type) :
-        fm_offset(fm_offset), k_direction_align(k_direction_align), cmatrix_source(cmatrix_source),
-        disable_gemv(disable_gemv), mmad_type(mmad_type){};
-
-    int32_t fm_offset = 0;
-    bool k_direction_align = false;
-    bool cmatrix_source = false;
-    bool disable_gemv = true;
-    asc::te::mmad_type mmad_type = asc::te::mmad_type::normal;
+struct keep_mark {
+    __aicore__ inline constexpr keep_mark() = default;
 };
+inline constexpr keep_mark _{};
 
-struct mmad_params {
-    __aicore__ constexpr mmad_params(){};
-
-    __aicore__ constexpr mmad_params(uint16_t m, uint16_t n, uint16_t k, uint8_t unit_flag,
-                                     bool cmatrix_init_val) :
-        m(m), n(n), k(k), unit_flag(unit_flag), cmatrix_init_val(cmatrix_init_val){};
-
-    uint16_t m = 0;
-    uint16_t n = 0;
-    uint16_t k = 0;
-    uint8_t unit_flag = 0;
-    bool cmatrix_init_val = false;
-};
-
-enum class round_mode : uint8_t { default_round = 0, hybrid = 1 };
-
-enum dual_dst_mode : uint8_t { disable = 0, split_m = 1, split_n = 2 };
-
-struct fixpipe_params {
-    __aicore__ constexpr fixpipe_params(){};
-
-    __aicore__ constexpr fixpipe_params(uint8_t unit_flag, bool sub_block_id = false) :
-        unit_flag(unit_flag), sub_block_id(sub_block_id)
-    {}
-
-    uint8_t unit_flag = 0;
-    bool sub_block_id = false;
-};
-
-struct copy_gm_to_ub_params {
-    __aicore__ constexpr copy_gm_to_ub_params() {}
-
-    __aicore__ constexpr copy_gm_to_ub_params(uint8_t left_padding_count, uint8_t right_padding_count,
-                                              bool enable_constant_pad = true) :
-        left_padding_count(left_padding_count), right_padding_count(right_padding_count),
-        enable_constant_pad(enable_constant_pad)
-    {}
-
-    uint8_t left_padding_count = 0;
-    uint8_t right_padding_count = 0;
-    bool enable_constant_pad = true;
-};
-
-template <typename T>
-struct img2col_params {
-    uint16_t m_extension = 0;
-    uint16_t k_extension = 0;
-    uint16_t m_start_pt = 0;
-    uint16_t k_start_pt = 0;
-    uint8_t pad_list[4] = {0, 0, 0, 0};
-    uint8_t stride_w = 1;
-    uint8_t stride_h = 1;
-    uint8_t filter_w = 1;
-    uint8_t filter_h = 1;
-    uint8_t dilation_filter_w = 1;
-    uint8_t dilation_filter_h = 1;
-    bool filter_size_w = false;
-    bool filter_size_h = false;
-    bool transpose = false;
-    bool f_matrix_ctrl = false;
-    T pad_value = 0;
-};
+namespace location {
+struct invalid {};
+struct gm {};
+struct ub {};
+struct l1 {};
+struct l0a {};
+struct l0b {};
+struct l0scalea {};
+struct l0scaleb {};
+struct l0c {};
+struct bias {};
+struct fixbuf {};
+struct ssbuf {};
+} // namespace location
 
 } // namespace te
 } // namespace asc

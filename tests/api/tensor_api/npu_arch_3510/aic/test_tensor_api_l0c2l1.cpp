@@ -27,10 +27,10 @@ namespace {
 using namespace asc::te;
 constexpr bool enable_relu = false;
 constexpr bool enable_channel_split = true;
-constexpr copy_l0c_to_l1_trait l0c_tol1_trait = {round_mode::default_round, enable_relu, enable_channel_split};
+constexpr l0c_to_l1_trait l0c_tol1_trait = {round_mode::default_round, enable_relu, enable_channel_split};
 
 struct copy_l0c_to_l1_trait_custom {
-    using trait_type = copy_l0c_to_l1_trait;
+    using trait_type = l0c_to_l1_trait;
     static constexpr const trait_type value = l0c_tol1_trait;
 };
 
@@ -81,11 +81,11 @@ TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_float)
     auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, float>(m, n));
     auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, float>(m, n));
 
-    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
-    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, fixpipe_params{});
-    auto atom = make_copy(copy_l0c_to_l1{}, copy_l0c_to_l1_trait_default{});
+    run_copy_call_paths<copy_l0c_to_l1, l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, l0c_to_l1_params{});
+    auto atom = make_copy(copy_l0c_to_l1{}, l0c_to_l1_trait_default{});
     copy(atom, l1_tensor, l0c_tensor, make_coord(0, 0), zero_coord, make_shape(16, 16));
-    copy(atom.with(fixpipe_params{}), l1_tensor, l0c_tensor,
+    copy(atom.with(l0c_to_l1_params{}), l1_tensor, l0c_tensor,
         zero_coord, make_coord(0, 0), make_shape(16, 16));
 
     EXPECT_EQ(dst[0], 0);
@@ -103,8 +103,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_int32)
     auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, int32_t>(m, n));
     auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, int32_t>(m, n));
 
-    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
-    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, fixpipe_params{});
+    run_copy_call_paths<copy_l0c_to_l1, l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, l0c_to_l1_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -121,8 +121,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_f32_to_f16)
     auto l0c_tensor = make_tensor_at<location::l0c>(src, make_frame_layout<nz_layout_ptn, float>(m, n));
     auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, half>(m, n));
 
-    run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
-    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, fixpipe_params{});
+    run_copy_call_paths<copy_l0c_to_l1, l0c_to_l1_trait_default>(l1_tensor, l0c_tensor);
+    run_copy_with_param_paths<copy_l0c_to_l1, l0c_to_l1_trait_default>(l1_tensor, l0c_tensor, l0c_to_l1_params{});
 
     EXPECT_EQ(dst[0], static_cast<half>(0));
 }
@@ -140,7 +140,7 @@ TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_nz_to_nz_with_channel_split)
     auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nz_layout_ptn, float>(m, n));
 
     run_copy_call_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_custom>(l1_tensor, l0c_tensor);
-    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_custom>(l1_tensor, l0c_tensor, fixpipe_params{});
+    run_copy_with_param_paths<copy_l0c_to_l1, copy_l0c_to_l1_trait_custom>(l1_tensor, l0c_tensor, l0c_to_l1_params{});
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -161,7 +161,7 @@ TEST_F(tensor_api_cube_copy_3510, copy_l0c_to_l1_batch_tensor_quant_coord_shape_
         make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t, _16>>(batch, m, n));
     auto quant_tensor = make_tensor_at<location::l1>(quant,
         make_frame_layout<nd_ext_layout_ptn, layout_trait_default<uint64_t>>(batch, 1, n));
-    auto atom = make_copy(copy_l0c_to_l1{}, copy_l0c_to_l1_trait_default{});
+    auto atom = make_copy(copy_l0c_to_l1{}, l0c_to_l1_trait_default{});
 
     if (false) {
         copy(atom, dst_tensor, src_tensor, quant_tensor,

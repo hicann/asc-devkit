@@ -29,38 +29,40 @@ namespace te {
 
 class mmad_executor {
 public:
-    template <const mmad_trait& trait, typename T, typename U, typename S, typename Params>
-    __aicore__ inline static void run(const T& dst, const U& fm, const S& filter, const Params& params)
+    template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename Params>
+    __aicore__ inline static void run(const CTensor& dst, const ATensor& fm, const BTensor& filter,
+                                      const Params& params)
     {
-        mmad_impl<trait, T, U, S>(dst, fm, filter, params);
+        mmad_impl<trait, CTensor, ATensor, BTensor>(dst, fm, filter, params);
     }
 
 private:
-    template <const mmad_trait& trait, typename T, typename U, typename S>
+    template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor>
     __aicore__ inline static constexpr void check_template_for_normal()
     {
-        check_layout_pattern<T, U, S>();
-        check_data_type::check_mmad_data_type<T, U, S>();
+        check_layout_pattern<CTensor, ATensor, BTensor>();
+        check_data_type::check_mmad_data_type<CTensor, ATensor, BTensor>();
     }
 
-    template <const mmad_trait& trait, typename T, typename U, typename S>
+    template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor>
     __aicore__ inline static constexpr void check_template_for_mx()
     {
-        check_layout_pattern<T, U, S>();
-        check_data_type::check_mx_mmad_data_type<T, U, S>();
+        check_layout_pattern<CTensor, ATensor, BTensor>();
+        check_data_type::check_mx_mmad_data_type<CTensor, ATensor, BTensor>();
     }
 
-    template <const mmad_trait& trait, typename T, typename U, typename S, typename Params>
-    __aicore__ inline static void mmad_impl(const T& dst, const U& fm, const S& filter, const Params& params)
+    template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename Params>
+    __aicore__ inline static void mmad_impl(const CTensor& dst, const ATensor& fm, const BTensor& filter,
+                                            const Params& params)
     {
         if constexpr (trait.mmad_type == mmad_type::normal) {
-            check_template_for_normal<trait, T, U, S>();
-            mmad_instr::mmad(dst, fm, filter, params.m, params.k, params.n, params.unit_flag, trait.disable_gemv,
-                             trait.cmatrix_source, params.cmatrix_init_val);
+            check_template_for_normal<trait, CTensor, ATensor, BTensor>();
+            mmad_instr::mmad(dst, fm, filter, params.m, params.k, params.n, static_cast<uint8_t>(params.unit_flag),
+                             trait.disable_gemv, trait.init_with_btbuf, params.init_with_zero);
         } else if constexpr (trait.mmad_type == mmad_type::mx) {
-            check_template_for_mx<trait, T, U, S>();
-            mmad_mx_instr::mmad(dst, fm, filter, params.m, params.k, params.n, params.unit_flag, trait.disable_gemv,
-                                trait.cmatrix_source, params.cmatrix_init_val);
+            check_template_for_mx<trait, CTensor, ATensor, BTensor>();
+            mmad_mx_instr::mmad(dst, fm, filter, params.m, params.k, params.n, static_cast<uint8_t>(params.unit_flag),
+                                trait.disable_gemv, trait.init_with_btbuf, params.init_with_zero);
         }
     }
 };

@@ -41,10 +41,10 @@ namespace te {
 // on dst.
 class copy_gm_to_l1_ncdhw2ndc1hwc0 {
 public:
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        using type = typename U::element_type;
+        using type = typename SrcTensor::element_type;
         auto src_layout = src.layout();
         auto dst_layout = dst.layout();
 
@@ -76,21 +76,21 @@ public:
         for (uint16_t d = 0; d < depth; ++d) {
             auto sub_src = src(make_coord(0, 0, d, 0, 0));    // NCDHW: engine += d*(H*W)
             auto sub_dst = dst(make_coord(0, d, 0, 0, 0, 0)); // NDC1HWC0: engine += d*(C1*H*W*C0)
-            copy_gm_to_l1_multi_dn2nz_instr::data_copy(sub_dst.data().get(), sub_src.data().get(), dn_num, loop2_dst_stride, loop3_dst_stride,
-                                                         loop4_dst_stride, loop1_src_stride, cache_mode, n_value,
-                                                         d_value, loop4_src_stride, false);
+            copy_gm_to_l1_multi_dn2nz_instr::data_copy(
+                sub_dst.data().get(), sub_src.data().get(), dn_num, loop2_dst_stride, loop3_dst_stride,
+                loop4_dst_stride, loop1_src_stride, cache_mode, n_value, d_value, loop4_src_stride, false);
         }
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord,
-        typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, const DstCoord& coord_dst,
-        const SrcCoord& coord_src, const ShapeType& copy_shape)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+              typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape)
     {
-        using type = typename U::element_type;
-        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
+        using type = typename SrcTensor::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
         auto src_layout = src.layout();
         auto dst_layout = dst.layout();
 
@@ -112,9 +112,10 @@ public:
         for (uint16_t d = 0; d < depth; ++d) {
             auto depth_src_offset = src_offset + d * get<2>(src_layout.stride());
             auto depth_dst_offset = dst_offset + d * get<1>(dst_layout.stride());
-            copy_gm_to_l1_multi_dn2nz_instr::data_copy_with_offset(dst, src, depth_dst_offset, depth_src_offset,
-                dn_num, loop2_dst_stride, loop3_dst_stride, loop4_dst_stride, loop1_src_stride,
-                src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride, false);
+            copy_gm_to_l1_multi_dn2nz_instr::data_copy_with_offset(dst, src, depth_dst_offset, depth_src_offset, dn_num,
+                                                                   loop2_dst_stride, loop3_dst_stride, loop4_dst_stride,
+                                                                   loop1_src_stride, src.engine().get_cache_mode(),
+                                                                   n_value, d_value, loop4_src_stride, false);
         }
     }
 };

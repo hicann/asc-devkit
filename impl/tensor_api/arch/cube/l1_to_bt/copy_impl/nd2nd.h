@@ -29,30 +29,31 @@ namespace te {
 
 class copy_l1_to_biastable_nd {
 public:
-    template <const copy_l1_to_biastable_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
         // Batch layouts carry a leading B axis: (B, (row, col)) -> depth 3,
         // (B, ((1, row), (1, col))) -> depth 5. Non-batch layouts are depth 2/4.
         constexpr auto l1_depth = nesting_depth_v<decltype(src.layout().shape())>;
-        if constexpr (l1_depth == THREE_DIM_DATA || l1_depth == FIVE_DIM_DATA) {
-            batch_data_copy_impl<trait, T, U>(dst, src);
+        if constexpr (l1_depth == three_dim_data || l1_depth == five_dim_data) {
+            batch_data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
         } else {
-            data_copy_impl<trait, T, U>(dst, src);
+            data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
         }
     }
 
-    template <const copy_l1_to_biastable_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+              typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape)
     {
-        check_template<trait, T, U>();
-        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
+        check_template<trait, DstTensor, SrcTensor>();
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
         uint32_t src_col;
         uint16_t block_count;
-        if constexpr (U::layout_type::depth == TWO_DIM_DATA) {
+        if constexpr (SrcTensor::layout_type::depth == two_dim_data) {
             block_count = get<0>(src_shape);
             src_col = get<1>(src_shape);
         } else {
@@ -61,38 +62,38 @@ public:
         }
         uint32_t src_row;
         uint32_t dst_row;
-        if constexpr (is_satisfied_ptn_format_v<U, nd_layout_ptn>) {
+        if constexpr (is_satisfied_ptn_format_v<SrcTensor, nd_layout_ptn>) {
             src_row = get_element<attr_info::stride, attr_info::row>(src.layout());
             dst_row = get_element<attr_info::stride, attr_info::row>(dst.layout());
         } else {
             src_row = get_element<attr_info::stride, attr_info::row, 1>(src.layout());
             dst_row = get_element<attr_info::stride, attr_info::row, 1>(dst.layout());
         }
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
         bool conv_control = is_one_of_attr_v<src_type, half> && is_one_of_attr_v<dst_type, float>;
-        uint16_t block_len = Std::ceil_division(src_col, C0_ELEMENT<src_type>);
+        uint16_t block_len = Std::ceil_division(src_col, c0_element<src_type>);
         if constexpr (is_one_of_attr_v<src_type, float, int32_t>) {
             block_len = Std::ceil_align(block_len, 2);
         }
-        uint16_t src_stride = (src_row - src_col) / C0_ELEMENT<src_type>;
-        uint16_t dst_stride = Std::ceil_align((dst_row - src_col) / C0_ELEMENT<dst_type>, 2);
-        copy_l1_to_biastable_instr::data_copy_with_offset(
-            dst, src, dst_offset, src_offset, conv_control, block_count, block_len, src_stride, dst_stride);
+        uint16_t src_stride = (src_row - src_col) / c0_element<src_type>;
+        uint16_t dst_stride = Std::ceil_align((dst_row - src_col) / c0_element<dst_type>, 2);
+        copy_l1_to_biastable_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, conv_control, block_count,
+                                                          block_len, src_stride, dst_stride);
     }
 
 private:
-    template <const copy_l1_to_biastable_trait& trait, typename T, typename U>
+    template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_template()
     {
-        check_layout_pattern<T, U>();
-        check_data_type::check_l1_to_biastable_data_type<T, U>();
+        check_layout_pattern<DstTensor, SrcTensor>();
+        check_data_type::check_l1_to_biastable_data_type<DstTensor, SrcTensor>();
     }
 
-    template <const copy_l1_to_biastable_trait& trait, typename T, typename U>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
+    template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        check_template<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
         auto dst_layout = dst.layout();
         auto src_layout = src.layout();
@@ -102,7 +103,7 @@ private:
         uint16_t dst_col;
         uint16_t dst_row;
         uint16_t block_count;
-        if constexpr (is_satisfied_ptn_format_v<U, nd_layout_ptn>) {
+        if constexpr (is_satisfied_ptn_format_v<SrcTensor, nd_layout_ptn>) {
             src_col = get_element<attr_info::shape, attr_info::column>(src_layout);
             src_row = get_element<attr_info::stride, attr_info::row>(src_layout);
             block_count = get_element<attr_info::shape, attr_info::row>(src_layout);
@@ -112,7 +113,7 @@ private:
             block_count = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         }
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src row shape size", "copy_l1_to_biastable");
-        if constexpr (is_satisfied_ptn_format_v<T, nd_layout_ptn>) {
+        if constexpr (is_satisfied_ptn_format_v<DstTensor, nd_layout_ptn>) {
             dst_col = get_element<attr_info::shape, attr_info::column>(dst_layout);
             dst_row = get_element<attr_info::stride, attr_info::row>(dst_layout);
         } else {
@@ -120,23 +121,23 @@ private:
             dst_row = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
         }
 
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
         bool conv_control = false;
         if (is_one_of_attr_v<src_type, half> && is_one_of_attr_v<dst_type, float>) {
             conv_control = true;
         }
 
-        uint16_t block_len = Std::ceil_division(src_col, C0_ELEMENT<src_type>);
+        uint16_t block_len = Std::ceil_division(src_col, c0_element<src_type>);
         if constexpr (is_one_of_attr_v<src_type, float, int32_t>) {
             block_len = Std::ceil_align(block_len, 2);
         }
 
-        uint16_t src_stride = (src_row - src_col) / C0_ELEMENT<src_type>;
-        uint16_t dst_stride = Std::ceil_align((dst_row - src_col) / C0_ELEMENT<dst_type>, 2);
+        uint16_t src_stride = (src_row - src_col) / c0_element<src_type>;
+        uint16_t dst_stride = Std::ceil_align((dst_row - src_col) / c0_element<dst_type>, 2);
         copy_l1_to_biastable_instr::data_copy(reinterpret_cast<uint64_t>(dst.data().get()), src.data().get(),
-                                                 conv_control, block_count, block_len, src_stride, dst_stride);
+                                              conv_control, block_count, block_len, src_stride, dst_stride);
     }
 
     // Batch case: layout is (B, (M, N)) with strides (sB, (sM, sN)). Per-matrix internal
@@ -147,15 +148,15 @@ private:
     //   - get<0>(Shape/Stride) returns the batch size and per-matrix start-to-start stride.
     //   - When batches are also contiguous (src_batch_stride == M*N && dst_batch_stride == M*N),
     //     fold the B blocks into a single B*M*N block; otherwise emit B blocks, one per matrix.
-    //   - Both src_stride and dst_stride encode the end-to-next-start gap in C0_ELEMENT units, in
+    //   - Both src_stride and dst_stride encode the end-to-next-start gap in c0_element units, in
     //     keeping with the L1->BT instruction's stride convention.
-    template <const copy_l1_to_biastable_trait& trait, typename T, typename U>
-    __aicore__ inline static void batch_data_copy_impl(const T& dst, const U& src)
+    template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void batch_data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        check_template<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
         auto src_layout = src.layout();
         auto dst_layout = dst.layout();
@@ -177,7 +178,7 @@ private:
 
         uint32_t src_shape_rows;
         uint32_t src_shape_columns;
-        if constexpr (is_satisfied_ptn_format_v<U, nd_layout_ptn>) {
+        if constexpr (is_satisfied_ptn_format_v<SrcTensor, nd_layout_ptn>) {
             src_shape_rows = get_element<attr_info::shape, attr_info::row>(src_inner);
             src_shape_columns = get_element<attr_info::shape, attr_info::column>(src_inner);
         } else {
@@ -194,15 +195,15 @@ private:
 
         // batch-strided: B blocks, stride encodes per-matrix end-to-next-start gap.
         uint16_t block_count = batch_size;
-        uint16_t block_len = Std::ceil_division(matrix_elems, C0_ELEMENT<src_type>);
+        uint16_t block_len = Std::ceil_division(matrix_elems, c0_element<src_type>);
         if constexpr (is_one_of_attr_v<src_type, float, int32_t>) {
             block_len = Std::ceil_align(block_len, 2);
         }
-        uint16_t src_stride = (src_batch_stride - matrix_elems) / C0_ELEMENT<src_type>;
-        uint16_t dst_stride = Std::ceil_align((dst_batch_stride - matrix_elems) / C0_ELEMENT<dst_type>, 2);
+        uint16_t src_stride = (src_batch_stride - matrix_elems) / c0_element<src_type>;
+        uint16_t dst_stride = Std::ceil_align((dst_batch_stride - matrix_elems) / c0_element<dst_type>, 2);
 
         copy_l1_to_biastable_instr::data_copy(reinterpret_cast<uint64_t>(dst.data().get()), src.data().get(),
-                                                 conv_control, block_count, block_len, src_stride, dst_stride);
+                                              conv_control, block_count, block_len, src_stride, dst_stride);
     }
 };
 

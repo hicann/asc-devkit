@@ -39,14 +39,14 @@ struct copy_traits<copy_l0c_to_ub_with, TraitStruct> {
     {
         copy_l0c_to_ub_with::copy<trait_type, trait, Args...>(args..., params);
     }
-    fixpipe_params params;
+    l0c_to_ub_params params;
 };
 
 template <typename Traits>
 struct copy_traits<copy_l0c_to_ub, Traits> : public copy_traits<copy_l0c_to_ub, Traits, copy_l0c_to_ub_with, Traits> {};
 
 template <>
-struct copy_traits<copy_l0c_to_ub> : public copy_traits<copy_l0c_to_ub, copy_l0c_to_ub_trait_default> {};
+struct copy_traits<copy_l0c_to_ub> : public copy_traits<copy_l0c_to_ub, l0c_to_ub_trait_default> {};
 
 } // namespace te
 } // namespace asc

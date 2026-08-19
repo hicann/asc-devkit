@@ -30,12 +30,12 @@ namespace te {
 
 class check_data_type {
 public:
-    template <typename T, typename U, typename S>
+    template <typename DstTensor, typename FmTensor, typename FilterTensor>
     __aicore__ inline static constexpr void check_mx_mmad_data_type()
     {
-        using dst_data_type = typename T::element_type;
-        using fm_data_type = typename U::element_type;
-        using filter_data_type = typename S::element_type;
+        using dst_data_type = typename DstTensor::element_type;
+        using fm_data_type = typename FmTensor::element_type;
+        using filter_data_type = typename FilterTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<Std::tuple<dst_data_type, fm_data_type, filter_data_type>,
@@ -51,14 +51,14 @@ public:
 #endif
     }
 
-    template <typename T, typename U, typename S, typename V>
+    template <typename DstTensor, typename FmTensor, typename FilterTensor, typename BiasTensor>
     __aicore__ inline static constexpr void check_mx_mmad_bias_data_type()
     {
-        using dst_data_type = typename T::element_type;
-        using bias_data_type = typename V::element_type;
-        using fm_data_type = typename U::element_type;
-        using filter_data_type = typename S::element_type;
-        using bias_pos = get_mem_location<V>;
+        using dst_data_type = typename DstTensor::element_type;
+        using bias_data_type = typename BiasTensor::element_type;
+        using fm_data_type = typename FmTensor::element_type;
+        using filter_data_type = typename FilterTensor::element_type;
+        using bias_pos = get_mem_location<BiasTensor>;
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         if constexpr (Std::is_same_v<bias_pos, location::bias>) {
             static_assert(
@@ -88,12 +88,12 @@ public:
 #endif
     }
 
-    template <typename T, typename U, typename S>
+    template <typename DstTensor, typename FmTensor, typename FilterTensor>
     __aicore__ inline static constexpr void check_mmad_data_type()
     {
-        using dst_data_type = typename T::element_type;
-        using fm_data_type = typename U::element_type;
-        using filter_data_type = typename S::element_type;
+        using dst_data_type = typename DstTensor::element_type;
+        using fm_data_type = typename FmTensor::element_type;
+        using filter_data_type = typename FilterTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<Std::tuple<dst_data_type, fm_data_type, filter_data_type>,
@@ -110,14 +110,14 @@ public:
 #endif
     }
 
-    template <typename T, typename U, typename S, typename V>
+    template <typename DstTensor, typename FmTensor, typename FilterTensor, typename BiasTensor>
     __aicore__ inline static constexpr void check_mmad_bias_data_type()
     {
-        using dst_data_type = typename T::element_type;
-        using fm_data_type = typename U::element_type;
-        using filter_data_type = typename S::element_type;
-        using bias_data_type = typename V::element_type;
-        using bias_pos = get_mem_location<V>;
+        using dst_data_type = typename DstTensor::element_type;
+        using fm_data_type = typename FmTensor::element_type;
+        using filter_data_type = typename FilterTensor::element_type;
+        using bias_data_type = typename BiasTensor::element_type;
+        using bias_pos = get_mem_location<BiasTensor>;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         if constexpr (Std::is_same_v<bias_pos, location::bias>) {
@@ -150,11 +150,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_gm_to_l1_data_type()
     {
-        using dst_data_type = typename T::element_type;
-        using src_data_type = typename U::element_type;
+        using dst_data_type = typename DstTensor::element_type;
+        using src_data_type = typename SrcTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<
@@ -170,11 +170,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_gm_to_l1_fp4_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<
@@ -192,24 +192,24 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_gm_to_l1_scale_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
-        static_assert(
-            Std::is_one_of_v<Std::tuple<dst_data_type, src_data_type>, Std::tuple<__cbuf__ fp8_e8m0_t, __gm__ fp8_e8m0_t>>,
-            "The data type is not supported.");
+        static_assert(Std::is_one_of_v<Std::tuple<dst_data_type, src_data_type>,
+                                       Std::tuple<__cbuf__ fp8_e8m0_t, __gm__ fp8_e8m0_t>>,
+                      "The data type is not supported.");
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_gm_to_l1_align_v2_nd_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<
@@ -228,11 +228,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_gm_to_ub_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<
@@ -251,11 +251,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_ub_to_ub_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
@@ -275,11 +275,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_ub_to_gm_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(Std::is_one_of_v<
@@ -298,11 +298,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_ub_to_l1_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
@@ -322,36 +322,35 @@ public:
 #endif
     }
 
-    template <typename U>
+    template <typename SrcTensor>
     __aicore__ inline static constexpr void check_gm_to_l1_nd2_nd_src_one_dim()
     {
-        using shape_row1 = typename get_n_dim_type<U, attr_info::shape, attr_info::row, 1>::type;
-        using shape_col1 = typename get_n_dim_type<U, attr_info::shape, attr_info::column, 1>::type;
+        using shape_row1 = typename get_n_dim_type<SrcTensor, attr_info::shape, attr_info::row, 1>::type;
+        using shape_col1 = typename get_n_dim_type<SrcTensor, attr_info::shape, attr_info::column, 1>::type;
         static_assert(Std::is_constant<1, shape_row1>::value || Std::is_constant<1, shape_col1>::value,
                       "The src only support 1D tensor");
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l1_to_biastable_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
-        static_assert(
-            Std::is_one_of_v<Std::tuple<dst_data_type, src_data_type>, Std::tuple<__biasbuf__ float, __cbuf__ bfloat16_t>,
-                             Std::tuple<__biasbuf__ float, __cbuf__ half>,
-                             Std::tuple<__biasbuf__ float, __cbuf__ float>,
-                             Std::tuple<__biasbuf__ int32_t, __cbuf__ int32_t>>,
-            "The data type is not supported.");
+        static_assert(Std::is_one_of_v<
+                          Std::tuple<dst_data_type, src_data_type>, Std::tuple<__biasbuf__ float, __cbuf__ bfloat16_t>,
+                          Std::tuple<__biasbuf__ float, __cbuf__ half>, Std::tuple<__biasbuf__ float, __cbuf__ float>,
+                          Std::tuple<__biasbuf__ int32_t, __cbuf__ int32_t>>,
+                      "The data type is not supported.");
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l1_to_fixbuf_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
@@ -360,11 +359,11 @@ public:
 #endif
     }
 
-    template <QuantMode_t quant_pre, typename T, typename U>
+    template <QuantMode_t quant_pre, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l0c_to_gm_data_type()
     {
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
             (quant_pre == QuantMode_t::NoQuant
@@ -378,11 +377,11 @@ public:
 #endif
     }
 
-    template <QuantMode_t quant_pre, typename T, typename U>
+    template <QuantMode_t quant_pre, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l0c_to_l1_data_type()
     {
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
             (quant_pre == QuantMode_t::NoQuant
@@ -396,11 +395,11 @@ public:
 #endif
     }
 
-    template <QuantMode_t quant_pre, typename T, typename U>
+    template <QuantMode_t quant_pre, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l0c_to_ub_data_type()
     {
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
             (quant_pre == QuantMode_t::NoQuant
@@ -414,11 +413,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l1_to_l0a_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
@@ -437,11 +436,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l1_to_l0scalea_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
@@ -450,11 +449,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l1_to_l0b_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(
@@ -473,11 +472,11 @@ public:
 #endif
     }
 
-    template <typename T, typename U>
+    template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_l1_to_l0scaleb_data_type()
     {
-        using src_data_type = typename U::element_type;
-        using dst_data_type = typename T::element_type;
+        using src_data_type = typename SrcTensor::element_type;
+        using dst_data_type = typename DstTensor::element_type;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
         static_assert(

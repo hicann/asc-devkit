@@ -27,26 +27,22 @@
 namespace asc {
 namespace te {
 
-struct copy_l1_to_ub_trait {};
-
 class copy_l1_to_ub_instr {
 public:
-    template <typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
-    __aicore__ inline static void data_copy_with_offset(
-        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    template <typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset, typename... Params>
+    __aicore__ inline static void data_copy_with_offset(const DstTensor& dst, const SrcTensor& src,
+                                                        const DstOffset& dst_offset, const SrcOffset& src_offset,
+                                                        const Params&... params)
     {
         auto src_data = src.data() + src_offset;
         data_copy((dst.data() + dst_offset).get(), src_data.get(), params...);
     }
 
-    template <typename T>
-    __aicore__ inline static void data_copy(__ubuf__ T* dst, __cbuf__ T* src, const uint16_t block_count,
-        const uint16_t block_len, const uint16_t src_stride, const uint16_t dst_stride)
+    template <typename DataType>
+    __aicore__ inline static void data_copy(__ubuf__ DataType* dst, __cbuf__ DataType* src, const uint16_t block_count,
+                                            const uint16_t block_len, const uint16_t src_stride,
+                                            const uint16_t dst_stride)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
-
         asc_copy_l12ub(dst, src, 0, block_count, block_len, src_stride, dst_stride);
     }
 };

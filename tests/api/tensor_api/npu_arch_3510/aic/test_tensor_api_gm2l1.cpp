@@ -57,11 +57,11 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
-void run_copy_with_paths(const dst_tensor_type& dst, const src_tensor_type& src)
+void run_copy_default_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
     using namespace asc::te;
 
-    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with();
+    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{};
     atom.call(dst, src);
     copy(atom, dst, src);
     copy(atom, dst, src, make_coord(0, 0), zero_coord, make_shape(16, 16));
@@ -81,8 +81,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_gm_to_l1_routes_to_cube_arch_copy)
     auto gm_tensor = make_tensor_at<location::gm>(src, make_frame_layout<nd_ext_layout_ptn>(m, n));
     auto l1_tensor = make_tensor_at<location::l1>(dst, make_frame_layout<nd_ext_layout_ptn>(m, n));
 
-    run_copy_call_paths<copy_gm_to_l1, copy_gm_to_l1_trait_default>(l1_tensor, gm_tensor);
-    run_copy_with_paths<copy_gm_to_l1, copy_gm_to_l1_trait_default>(l1_tensor, gm_tensor);
+    run_copy_call_paths<copy_gm_to_l1, gm_to_l1_trait_default>(l1_tensor, gm_tensor);
+    run_copy_default_paths<copy_gm_to_l1, gm_to_l1_trait_default>(l1_tensor, gm_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -218,7 +218,7 @@ private:
         auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_a_layout);                      \
         auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1a_layout);                \
         auto l1a_tensor_golden = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf_golden)), l1a_layout);    \
-        auto atom_copy = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});                                                \
+        auto atom_copy = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});                                                \
         initialize_data<data_type>();                                                                                           \
         atom_copy.call(l1a_tensor, gm_a);                                                                                 \
         data_copy_gm_to_l1_sim(l1a_tensor_golden, gm_a);                                                                        \
@@ -231,7 +231,7 @@ private:
         auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_a_layout);                      \
         auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1a_layout);                \
         auto l1a_tensor_golden = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf_golden)), l1a_layout);    \
-        auto atom_copy = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});                                                \
+        auto atom_copy = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});                                                \
         initialize_data<data_type>();                                                                                           \
         auto coord = make_coord;                                                                                        \
         data_copy_gm_to_l1_sim(l1a_tensor_golden, gm_a, coord);                                                                 \
@@ -246,7 +246,7 @@ private:
     template <typename data_type>                                                                                              \
     constexpr auto make_##name = [](auto row, auto col) {                                                               \
         constexpr size_t c0_value = is_b4_type<data_type> ? 64 : 32 / sizeof(data_type);                                                       \
-        return make_frame_layout<layout_pattern_type, Int<c0_value>>(row, col);                                                    \
+        return make_frame_layout<layout_pattern_type, AscendC::Std::Int<c0_value>>(row, col);                                      \
     };
 
 MAKE_LAYOUT_FUNC(nd_ext, nd_ext_layout_ptn)
@@ -279,7 +279,7 @@ MAKE_LAYOUT_FUNC(scaleb_dn, scaleb_dn_layout_ptn)
     template <typename data_type>                                                                                             \
     constexpr auto make_batch_##name = [](auto batch, auto row, auto col) {                                            \
         constexpr size_t c0_value = is_b4_type<data_type> ? 64 : 32 / sizeof(data_type);                                                      \
-        return make_frame_layout<layout_pattern_type, Int<c0_value>>(batch, row, col);                                             \
+        return make_frame_layout<layout_pattern_type, AscendC::Std::Int<c0_value>>(batch, row, col);                               \
     };
 
 MAKE_BATCH_LAYOUT_FUNC(nd_ext, nd_ext_layout_ptn)
@@ -301,7 +301,7 @@ MAKE_BATCH_LAYOUT_FUNC(zn, zn_layout_ptn)
         auto l1_batched = make_batch_##l1_ptn<data_type>(k_batch, (m_value), (k_size));                                       \
         auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_batched);                     \
         auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_batched);               \
-        auto atom_copy = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});                                               \
+        auto atom_copy = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});                                               \
         initialize_data<data_type>();                                                                                          \
         atom_copy.call(l1a_tensor, gm_a);                                                                                \
         for (int b = 0; b < k_batch; ++b) {                                                                            \
@@ -380,7 +380,7 @@ auto make_nc1hwc0(int n, int c1, int h, int w)
         auto l1_nc1hwc0 = make_nc1hwc0<data_type, c0_value>((n_value), (c1), (height), (width));                                                     \
         auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_nc1hwc0);                     \
         auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_nc1hwc0);               \
-        auto atom_copy = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});                                               \
+        auto atom_copy = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});                                               \
         initialize_data<data_type>();                                                                                          \
         atom_copy.call(l1a_tensor, gm_a);                                                                                \
         for (int b = 0; b < (n_value) * (c1); ++b) {                                                                        \
@@ -413,7 +413,7 @@ TEST_GM2L1_NC1HWC0(uint32_t, 1, 2, 4, 4)
         auto gm_full_t = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_full);                  \
         auto gm_a = gm_full_t.slice(make_coord(0, 0, 0, 0, 0), make_shape((n_value), (c1), (height), (load_w), c0_value));                 \
         auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_nc1hwc0);             \
-        auto atom_copy = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});                                             \
+        auto atom_copy = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});                                             \
         initialize_data<data_type>();                                                                                        \
         atom_copy.call(l1a_tensor, gm_a);                                                                              \
         for (int b = 0; b < (n_value) * (c1) * (height); ++b) {                                                                \
@@ -534,7 +534,7 @@ TEST_GM2L1(float, nd_to_nd_1_dim_int, make_nd_ext<data_type>(17, Std::Int<1>()),
 TEST_GM2L1(uint64_t, nd_to_nd_1_dim_int, make_nd_ext<data_type>(17, Std::Int<1>()), make_nd_ext<data_type>(19, 1))
 TEST_GM2L1(uint64_t, nd_to_nd_1_dim_int, make_nd_ext<data_type>(17, Std::Int<1>()), make_nd_ext<data_type>(19, Std::Int<1>()))
 
-// non continuous case, the dst col stride of ND layout needs to be aligned with C0_SIZE(32B)
+// non continuous case, the dst col stride of ND layout needs to be aligned with c0_size(32B)
 TEST_GM2L1_COORD(fp4x2_e2m1_t, nd_to_nd, make_nd_ext<data_type>(33, 40), make_nd_ext<data_type>(19, 64), make_coord(10, 10))
 TEST_GM2L1_COORD(uint8_t, nd_to_nd, make_nd_ext<data_type>(33, 40), make_nd_ext<data_type>(19, 32), make_coord(10, 10))
 TEST_GM2L1_COORD(uint16_t, nd_to_nd, make_nd_ext<data_type>(33, 40), make_nd_ext<data_type>(19, 16), make_coord(10, 10))
@@ -1589,7 +1589,7 @@ void sim_nd_to_nd(const dst_tensor_type& dst, const src_tensor_type& src)
     auto src_col_stride = get_sim_layout_element<attr_info::stride, attr_info::column, 1>(src_layout);
     auto dst_row_stride = get_sim_layout_element<attr_info::stride, attr_info::row, 1>(dst_layout);
 
-    uint32_t c0_elements = C0_SIZE<src_type> / sizeof(src_type);
+    uint32_t c0_elements = c0_size<src_type> / sizeof(src_type);
     uint32_t m1_size = get_sim_layout_element<attr_info::shape, attr_info::row, 1>(dst_layout);
     uint32_t n1_size = get_sim_layout_element<attr_info::shape, attr_info::column, 1>(dst_layout);
 
@@ -1652,7 +1652,7 @@ void sim_nd_to_nz(const dst_tensor_type& dst, const src_tensor_type& src)
         EXPECT_TRUE(src_sm1 % 2 == 0) << "For b4 type, col stride must be even for ND format, but got src_sm1: "
                                      << src_sm1;
     }
-    uint32_t c0_elements = C0_ELEMENT<src_type>;
+    uint32_t c0_elements = c0_element<src_type>;
     uint32_t m0_size = get_element<attr_info::shape, attr_info::row, 0>(dst_layout);
     uint32_t n0_size = get_element<attr_info::shape, attr_info::column, 0>(dst_layout);
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
@@ -1695,7 +1695,7 @@ void sim_nd_to_zn(const dst_tensor_type& dst, const src_tensor_type& src)
     auto src_col_stride = get_sim_layout_element<attr_info::stride, attr_info::column, 1>(src_layout);
     auto src_row_stride = get_sim_layout_element<attr_info::stride, attr_info::row, 1>(src_layout);
 
-    uint32_t c0_elements = C0_SIZE<src_type> / sizeof(src_type);
+    uint32_t c0_elements = c0_size<src_type> / sizeof(src_type);
     uint32_t m0_size = get_element<attr_info::shape, attr_info::row, 0>(dst_layout);
     uint32_t n0_size = get_element<attr_info::shape, attr_info::column, 0>(dst_layout);
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
@@ -1739,7 +1739,7 @@ void sim_dn_to_nz(const dst_tensor_type& dst, const src_tensor_type& src)
 
     auto src_col_stride = get_sim_layout_element<attr_info::stride, attr_info::column, 1>(src_layout);
 
-    uint32_t c0_elements = C0_SIZE<src_type> / sizeof(src_type);
+    uint32_t c0_elements = c0_size<src_type> / sizeof(src_type);
     uint32_t m0_size = get_element<attr_info::shape, attr_info::row, 0>(dst_layout);
     uint32_t n0_size = get_element<attr_info::shape, attr_info::column, 0>(dst_layout);
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
@@ -1785,7 +1785,7 @@ void sim_dn_to_zn(const dst_tensor_type& dst, const src_tensor_type& src)
             << "For b4 type, col stride must be even for ND format, but got src_col_stride: " << src_col_stride;
     }
 
-    uint32_t c0_elements = C0_SIZE<src_type> / sizeof(src_type);
+    uint32_t c0_elements = c0_size<src_type> / sizeof(src_type);
     uint32_t m0_size = get_element<attr_info::shape, attr_info::row, 0>(dst_layout);
     uint32_t n0_size = get_element<attr_info::shape, attr_info::column, 0>(dst_layout);
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
@@ -1920,7 +1920,7 @@ void sim_scalea_nd_to_zz(const dst_tensor_type& dst, const src_tensor_type& src)
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
     uint32_t n1_size = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
 
-    uint32_t c0_elements = C0_ELEMENT<half>; // sim by b16
+    uint32_t c0_elements = c0_element<half>; // sim by b16
     uint32_t src_row_n_align_c0 = ((m_value + c0_elements - 1) / c0_elements) * c0_elements;
     for (uint32_t m1 = 0; m1 < m1_size; m1++) {
         for (uint32_t n1 = 0; n1 < n1_size; n1++) {
@@ -1965,7 +1965,7 @@ void sim_scalea_dn_to_zz(const dst_tensor_type& dst, const src_tensor_type& src)
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
     uint32_t n1_size = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
 
-    uint32_t c0_elements = C0_ELEMENT<half>; // sim by b16
+    uint32_t c0_elements = c0_element<half>; // sim by b16
     uint32_t src_row_n_align_c0 = ((m_value + c0_elements - 1) / c0_elements) * c0_elements;
     for (uint32_t m1 = 0; m1 < m1_size; m1++) {
         for (uint32_t n1 = 0; n1 < n1_size; n1++) {
@@ -2049,7 +2049,7 @@ void sim_scaleb_nd_to_nn(const dst_tensor_type& dst, const src_tensor_type& src)
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
     uint32_t n1_size = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
 
-    uint32_t c0_elements = C0_ELEMENT<half>; // sim by b16
+    uint32_t c0_elements = c0_element<half>; // sim by b16
     uint32_t src_col_n_align_c0 = ((s_n * b_n + c0_elements - 1) / c0_elements) * c0_elements;
     for (uint32_t n1 = 0; n1 < n1_size; n1++) {
         for (uint32_t m1 = 0; m1 < m1_size; m1++) {
@@ -2096,7 +2096,7 @@ void sim_scaleb_dn_to_nn(const dst_tensor_type& dst, const src_tensor_type& src)
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
     uint32_t n1_size = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
 
-    uint32_t c0_elements = C0_ELEMENT<half>; // sim by b16
+    uint32_t c0_elements = c0_element<half>; // sim by b16
     uint32_t src_col_n_align_c0 = ((s_n * b_n + c0_elements - 1) / c0_elements) * c0_elements;
     for (uint32_t n1 = 0; n1 < n1_size; n1++) {
         for (uint32_t m1 = 0; m1 < m1_size; m1++) {
@@ -2145,7 +2145,7 @@ void sim_scaleb_nn_to_nn(const dst_tensor_type& dst, const src_tensor_type& src)
     uint32_t m1_size = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
     uint32_t n1_size = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
 
-    uint32_t c0_elements = C0_ELEMENT<half>; // sim by b16
+    uint32_t c0_elements = c0_element<half>; // sim by b16
     uint32_t src_col_n_align_c0 = ((s_n * b_n + c0_elements - 1) / c0_elements) * c0_elements;
 
     for (uint32_t n1 = 0; n1 < n1_size; n1++) {
@@ -2328,11 +2328,11 @@ void simulate_nd_to_nz_data_copy(data_type* dst, data_type* src, uint64_t loop1_
     uint16_t loop3_dst_stride = g_gm_to_l1_nz_para_captures.back().loop3_dst_stride;
     uint16_t loop4_dst_stride = g_gm_to_l1_nz_para_captures.back().loop4_dst_stride;
     constexpr uint32_t type_size = sizeof(data_type);
-    uint32_t c0_elements = C0_SIZE<data_type> / type_size; // Number of elements in one c0_value block
+    uint32_t c0_elements = c0_size<data_type> / type_size; // Number of elements in one c0_value block
     if (enable_small_c0) {
         for (int h = 0; h < nd_num; h++) {
             const uint8_t* src_nd_addr = reinterpret_cast<const uint8_t*>(src) + h * loop4_src_stride;
-            uint8_t* dst_nd_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * C0_SIZE<data_type>;
+            uint8_t* dst_nd_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * c0_size<data_type>;
 
             uint16_t n_ceil = (n_value + 3) / 4;
             for (int j = 0; j < n_ceil; j++) {
@@ -2353,14 +2353,14 @@ void simulate_nd_to_nz_data_copy(data_type* dst, data_type* src, uint64_t loop1_
         uint32_t block_num = (d_value + c0_elements - 1) / c0_elements;
         for (int h = 0; h < nd_num; h++) {
             const uint8_t* src_nd_addr = reinterpret_cast<const uint8_t*>(src) + h * loop4_src_stride;
-            uint8_t* dst_nd_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * C0_SIZE<data_type>;
+            uint8_t* dst_nd_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * c0_size<data_type>;
             for (int i = 0; i < block_num; i++) {
-                const uint8_t* src_block_addr = src_nd_addr + i * C0_SIZE<data_type>;
-                uint8_t* dst_block_addr = dst_nd_addr + i * loop3_dst_stride * C0_SIZE<data_type>;
+                const uint8_t* src_block_addr = src_nd_addr + i * c0_size<data_type>;
+                uint8_t* dst_block_addr = dst_nd_addr + i * loop3_dst_stride * c0_size<data_type>;
 
                 for (int j = 0; j < n_value; j++) {
                     const uint8_t* src_n_addr = src_block_addr + j * loop1_src_stride;
-                    uint8_t* dst_n_addr = dst_block_addr + j * loop2_dst_stride * C0_SIZE<data_type>;
+                    uint8_t* dst_n_addr = dst_block_addr + j * loop2_dst_stride * c0_size<data_type>;
                     for (int k = 0; k < c0_elements; k++) {
                         uint32_t src_ele_index = i * c0_elements + k;
                         uint8_t* dst_ele_addr = dst_n_addr + k * type_size;
@@ -2392,11 +2392,11 @@ void simulate_dn_to_nz_data_copy(data_type* dst, data_type* src, uint64_t loop1_
     uint16_t loop3_dst_stride = g_gm_to_l1_nz_para_captures.back().loop3_dst_stride;
     uint16_t loop4_dst_stride = g_gm_to_l1_nz_para_captures.back().loop4_dst_stride;
     constexpr uint32_t type_size = sizeof(data_type);
-    uint32_t c0_elements = C0_SIZE<data_type> / type_size; // Number of elements in one c0_value block
+    uint32_t c0_elements = c0_size<data_type> / type_size; // Number of elements in one c0_value block
     if (enable_small_c0) {
         for (int h = 0; h < dn_num; h++) {
             const uint8_t* src_dn_addr = reinterpret_cast<const uint8_t*>(src) + h * loop4_src_stride;
-            uint8_t* dst_dn_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * C0_SIZE<data_type>;
+            uint8_t* dst_dn_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * c0_size<data_type>;
 
             uint16_t n_ceil = (n_value + 3) / 4;
             for (int j = 0; j < n_ceil; j++) {
@@ -2417,14 +2417,14 @@ void simulate_dn_to_nz_data_copy(data_type* dst, data_type* src, uint64_t loop1_
         uint32_t block_num = (d_value + c0_elements - 1) / c0_elements;
         for (int h = 0; h < dn_num; h++) {
             const uint8_t* src_dn_addr = reinterpret_cast<const uint8_t*>(src) + h * loop4_src_stride;
-            uint8_t* dst_dn_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * C0_SIZE<data_type>;
+            uint8_t* dst_dn_addr = reinterpret_cast<uint8_t*>(dst) + h * loop4_dst_stride * c0_size<data_type>;
             for (int i = 0; i < block_num; i++) {
                 const uint8_t* src_block_addr = src_dn_addr + i * loop1_src_stride * c0_elements;
-                uint8_t* dst_block_addr = dst_dn_addr + i * loop3_dst_stride * C0_SIZE<data_type>;
+                uint8_t* dst_block_addr = dst_dn_addr + i * loop3_dst_stride * c0_size<data_type>;
 
                 for (int j = 0; j < n_value; j++) {
                     const uint8_t* src_n_addr = src_block_addr + j * type_size;
-                    uint8_t* dst_n_addr = dst_block_addr + j * loop2_dst_stride * C0_SIZE<data_type>;
+                    uint8_t* dst_n_addr = dst_block_addr + j * loop2_dst_stride * c0_size<data_type>;
                     for (int k = 0; k < c0_elements; k++) {
                         uint32_t src_ele_index = i * c0_elements + k;
                         uint8_t* dst_ele_addr = dst_n_addr + k * type_size;
@@ -2451,12 +2451,12 @@ void simulate_align_v2_data_copy(data_type* dst, data_type* src, uint32_t block_
     bool is_lprp_mode = (left_padding_cnt > 0) || (right_padding_cnt > 0);
     bool is_compact_mode = (dst_stride == block_len);
     uint32_t total_burst_size = block_len + left_padding_cnt * sizeof(data_type) + right_padding_cnt * sizeof(data_type);
-    uint32_t pad_size = (total_burst_size % C0_SIZE<data_type> == 0) ? 0 : (C0_SIZE<data_type> - (total_burst_size % C0_SIZE<data_type>));
+    uint32_t pad_size = (total_burst_size % c0_size<data_type> == 0) ? 0 : (c0_size<data_type> - (total_burst_size % c0_size<data_type>));
     uint32_t pad_elem = pad_size / sizeof(data_type);
     // compact mode, left and right pad cnt is zero, dst_stride equals block_len, can directly copy without padding
     if (is_lprp_mode) {
         // In LPRP mode, dst_stride should be aligned to c0_value size
-        EXPECT_TRUE(dst_stride % C0_SIZE<data_type> == 0);
+        EXPECT_TRUE(dst_stride % c0_size<data_type> == 0);
         for (uint32_t block_id = 0; block_id < block_count; block_id++) {
             uint8_t* src_burst = reinterpret_cast<uint8_t*>(src) + block_id * src_stride;
             uint8_t* dst_burst = reinterpret_cast<uint8_t*>(dst) + block_id * dst_stride;
@@ -2489,7 +2489,7 @@ void simulate_align_v2_data_copy(data_type* dst, data_type* src, uint32_t block_
         }
         // check tail padding
         uint32_t total_data_len = block_count * block_len;
-        uint64_t alignd_size = ((total_data_len + C0_SIZE<data_type> - 1) / C0_SIZE<data_type>)*C0_SIZE<data_type>;
+        uint64_t alignd_size = ((total_data_len + c0_size<data_type> - 1) / c0_size<data_type>)*c0_size<data_type>;
         if (alignd_size > total_data_len) {
             uint8_t* pad_start = dst_base + total_data_len;
             std::fill(pad_start, pad_start + (alignd_size - total_data_len), 0); // Padding with zeros
@@ -2574,6 +2574,83 @@ CAPTURE_GM_TO_L1_IMPL(uint16_t);
 CAPTURE_GM_TO_L1_IMPL(float);
 CAPTURE_GM_TO_L1_IMPL(uint32_t);
 
+TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_fp4_nd_to_nz_uses_packed_destination_stride)
+{
+    using data_type = fp4x2_e2m1_t;
+    constexpr uint32_t m_value = 64;
+    constexpr uint32_t k_value = 128;
+    constexpr uint16_t expected_loop3_dst_stride = 64;
+
+    auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)),
+                            make_nd_ext<data_type>(m_value, k_value));
+    auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)),
+                                  make_nz<data_type>(m_value, k_value));
+    auto atom = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});
+
+    initialize_data<data_type>();
+    atom.call(l1a_tensor, gm_a);
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    EXPECT_EQ(g_gm_to_l1_nz_para_captures.back().loop3_dst_stride, expected_loop3_dst_stride);
+
+    reset_capture();
+    copy(atom, l1a_tensor, gm_a, make_coord(0, 0), make_coord(0, 0), make_shape(m_value, k_value));
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    EXPECT_EQ(g_gm_to_l1_nz_para_captures.back().loop3_dst_stride, expected_loop3_dst_stride);
+}
+
+TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_fp4_dn_to_zn_uses_packed_destination_stride)
+{
+    using data_type = fp4x2_e2m1_t;
+    constexpr uint32_t k_value = 128;
+    constexpr uint32_t n_value = 64;
+    constexpr uint16_t expected_loop3_dst_stride = 64;
+
+    auto gm_b = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)),
+                            make_dn_ext<data_type>(k_value, n_value));
+    auto l1b_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)),
+                                  make_zn<data_type>(k_value, n_value));
+    auto atom = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});
+
+    initialize_data<data_type>();
+    atom.call(l1b_tensor, gm_b);
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    EXPECT_EQ(g_gm_to_l1_nz_para_captures.back().loop3_dst_stride, expected_loop3_dst_stride);
+
+    reset_capture();
+    copy(atom, l1b_tensor, gm_b, make_coord(0, 0), make_coord(0, 0), make_shape(k_value, n_value));
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    EXPECT_EQ(g_gm_to_l1_nz_para_captures.back().loop3_dst_stride, expected_loop3_dst_stride);
+}
+
+TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_fp4_batch_uses_packed_matrix_stride)
+{
+    using data_type = fp4x2_e2m1_t;
+    constexpr uint32_t batch_value = 2;
+    constexpr uint32_t m_value = 64;
+    constexpr uint32_t k_value = 128;
+    constexpr uint32_t n_value = 64;
+    constexpr uint16_t expected_loop4_dst_stride = 128;
+    auto atom = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});
+
+    auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)),
+                            make_batch_nd_ext<data_type>(batch_value, m_value, k_value));
+    auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)),
+                                  make_batch_nz<data_type>(batch_value, m_value, k_value));
+    initialize_data<data_type>();
+    atom.call(l1a_tensor, gm_a);
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    EXPECT_EQ(g_gm_to_l1_nz_para_captures.back().loop4_dst_stride, expected_loop4_dst_stride);
+
+    reset_capture();
+    auto gm_b = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)),
+                            make_batch_dn_ext<data_type>(batch_value, k_value, n_value));
+    auto l1b_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)),
+                                  make_batch_zn<data_type>(batch_value, k_value, n_value));
+    atom.call(l1b_tensor, gm_b);
+    ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
+    EXPECT_EQ(g_gm_to_l1_nz_para_captures.back().loop4_dst_stride, expected_loop4_dst_stride);
+}
+
 #define RUN_GM2L1_SCALE_BATCH_COPY(type, batch, gm_base_layout_expr, l1_base_layout_expr)                                   \
     using data_type = type;                                                                                                   \
     constexpr uint32_t batch_value = batch;                                                                                     \
@@ -2588,7 +2665,7 @@ CAPTURE_GM_TO_L1_IMPL(uint32_t);
     auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_batch_layout);                     \
     auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_batch_layout);               \
     initialize_data<data_type>();                                                                                              \
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a_tensor, gm_a);                                              \
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a_tensor, gm_a);                                              \
     auto src_batch_stride = get<0>(gm_batch_layout.stride());                                                             \
     auto dst_batch_stride = get<0>(l1_batch_layout.stride());                                                             \
     for (uint32_t batch_idx = 0; batch_idx < batch_value; ++batch_idx) {                                                           \
@@ -2621,7 +2698,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_scalea_nd_to_zz_routes_to_single
     auto l1a_tensor = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_batch_layout);
 
     initialize_data<data_type>();
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a_tensor, gm_a);
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a_tensor, gm_a);
 
     auto src_batch_stride = get<0>(gm_batch_layout.stride());
     auto dst_batch_stride = get<0>(l1_batch_layout.stride());
@@ -2643,8 +2720,8 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_scalea_nd_to_zz_routes_to_single
     const auto& dn2nz = g_gm_to_l1_dn_to_nz_captures.back();
     const auto& nz_para = g_gm_to_l1_nz_para_captures.back();
     auto expected_loop3_dst_stride = get_element<attr_info::stride, attr_info::row, 1>(l1_base_layout) * sizeof(data_type) /
-        C0_SIZE<>;
-    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / C0_SIZE<>;
+        c0_size<>;
+    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / c0_size<>;
     auto expected_loop1_src_stride = get_element<attr_info::stride, attr_info::row, 1>(gm_base_layout) * sizeof(data_type);
     auto expected_loop4_src_stride = src_batch_stride * sizeof(data_type);
     EXPECT_EQ(nz_para.nd_num, batch_value);
@@ -2669,8 +2746,8 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_scalea_dn_to_zz_routes_to_single
     const auto& nd2nz = g_gm_to_l1_nd_to_nz_captures.back();
     const auto& nz_para = g_gm_to_l1_nz_para_captures.back();
     auto expected_loop3_dst_stride = get_element<attr_info::stride, attr_info::row, 1>(l1_base_layout) * sizeof(data_type) /
-        C0_SIZE<>;
-    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / C0_SIZE<>;
+        c0_size<>;
+    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / c0_size<>;
     auto expected_loop1_src_stride = get_element<attr_info::stride, attr_info::column, 1>(gm_base_layout) * sizeof(data_type);
     auto expected_loop4_src_stride = src_batch_stride * sizeof(data_type);
     EXPECT_EQ(nz_para.nd_num, batch_value);
@@ -2695,8 +2772,8 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_scaleb_nd_to_nn_routes_to_single
     const auto& nd2nz = g_gm_to_l1_nd_to_nz_captures.back();
     const auto& nz_para = g_gm_to_l1_nz_para_captures.back();
     auto expected_loop3_dst_stride = get_element<attr_info::stride, attr_info::column, 1>(l1_base_layout) * sizeof(data_type) /
-        C0_SIZE<>;
-    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / C0_SIZE<>;
+        c0_size<>;
+    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / c0_size<>;
     auto expected_loop1_src_stride = get_element<attr_info::stride, attr_info::row, 1>(gm_base_layout) * sizeof(data_type);
     auto expected_loop4_src_stride = src_batch_stride * sizeof(data_type);
     EXPECT_EQ(nz_para.nd_num, batch_value);
@@ -2721,8 +2798,8 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_scaleb_dn_to_nn_routes_to_single
     const auto& dn2nz = g_gm_to_l1_dn_to_nz_captures.back();
     const auto& nz_para = g_gm_to_l1_nz_para_captures.back();
     auto expected_loop3_dst_stride = get_element<attr_info::stride, attr_info::column, 1>(l1_base_layout) * sizeof(data_type) /
-        C0_SIZE<>;
-    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / C0_SIZE<>;
+        c0_size<>;
+    auto expected_loop4_dst_stride = dst_batch_stride * sizeof(data_type) / c0_size<>;
     auto expected_loop1_src_stride = get_element<attr_info::stride, attr_info::column, 1>(gm_base_layout) * sizeof(data_type);
     auto expected_loop4_src_stride = src_batch_stride * sizeof(data_type);
     EXPECT_EQ(nz_para.nd_num, batch_value);
@@ -2841,7 +2918,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_nd_to_nd_compact_folds_to_single
     auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), make_batch_nd_ext<data_type>(batch_value, m_value, n_value));
     auto l1a = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), make_batch_nd_ext<data_type>(batch_value, m_value, n_value));
 
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a, gm_a);
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a, gm_a);
 
     constexpr uint32_t expect_block_len = m_value * n_value * sizeof(data_type);
     constexpr uint64_t expect_stride = static_cast<uint64_t>(m_value) * n_value * sizeof(data_type);
@@ -2857,7 +2934,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_batch_nd_to_nd_compact_half_type)
     auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), make_batch_nd_ext<data_type>(batch_value, m_value, n_value));
     auto l1a = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), make_batch_nd_ext<data_type>(batch_value, m_value, n_value));
 
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a, gm_a);
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a, gm_a);
 
     constexpr uint32_t expect_block_len = m_value * n_value * sizeof(data_type);
     constexpr uint64_t expect_stride = static_cast<uint64_t>(m_value) * n_value * sizeof(data_type);
@@ -2886,7 +2963,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_nhwc_to_nc1_hwc0)
     auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_nhwc);
     auto l1a = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_nc1hwc0);
 
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a, gm_a);
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a, gm_a);
 
     ASSERT_EQ(g_gm_to_l1_nd_to_nz_captures.size(), 1);
     ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
@@ -2926,7 +3003,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_nchw_to_nc1_hwc0)
     auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_nchw);
     auto l1a = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_nc1hwc0);
 
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a, gm_a);
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a, gm_a);
 
     ASSERT_EQ(g_gm_to_l1_dn_to_nz_captures.size(), 1);
     ASSERT_EQ(g_gm_to_l1_nz_para_captures.size(), 1);
@@ -2968,7 +3045,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_ncdhw_to_ndc1_hwc0)
     auto gm_a = make_tensor(make_mem_ptr<location::gm>(reinterpret_cast<data_type*>(src0_gm)), gm_ncdhw);
     auto l1a = make_tensor(make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf)), l1_ndc1hwc0);
 
-    make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{}).call(l1a, gm_a);
+    make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{}).call(l1a, gm_a);
 
     // One dn2nz DMA (and nz para) per depth slice.
     ASSERT_EQ(g_gm_to_l1_dn_to_nz_captures.size(), depth);
@@ -2997,7 +3074,7 @@ TEST_F(tensor_api_gm_to_l1, copy_gm_to_l1_ncdhw_to_ndc1_hwc0)
 
     g_gm_to_l1_dn_to_nz_captures.clear();
     g_gm_to_l1_nz_para_captures.clear();
-    auto atom = make_copy(copy_gm_to_l1{}, copy_gm_to_l1_trait_default{});
+    auto atom = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});
     copy(atom, l1a, gm_a, make_coord(0, 1, 0, 0, 0, 0), make_coord(0, 0, 1, 0, 0),
         make_shape(1, channel, 1, height, width));
 

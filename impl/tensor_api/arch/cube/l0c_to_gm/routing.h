@@ -33,7 +33,7 @@ namespace te {
 
 class copy_l0c_to_gm_ignore {
 public:
-    template <const copy_l0c_to_gm_trait& trait, typename... Args>
+    template <const l0c_to_gm_trait& trait, typename... Args>
     __aicore__ inline static void run(const Args&... args)
     {
         static_assert(Std::is_same_v<Args..., void>, "copy_l0c_to_gm_ignore should not be called");

@@ -29,33 +29,34 @@ namespace te {
 
 class copy_gm_to_l1_scalea_zz2zz {
 public:
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+        if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
             TENSOR_API_DEBUG_CHECK(debug_check_batch_count, get<0>(src.layout().shape()),
                                    "copy_gm_to_l1 scalea_zz2zz path");
         }
         data_copy_impl<trait>(dst, src);
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+              typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape)
     {
-        check_template<trait, T, U>();
-        using type = typename U::element_type;
-        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
-        constexpr auto depth = U::layout_type::depth;
+        check_template<trait, DstTensor, SrcTensor>();
+        using type = typename SrcTensor::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        constexpr auto depth = SrcTensor::layout_type::depth;
         uint32_t src_shape_rows_b;
         uint32_t src_shape_rows_s;
         uint32_t src_shape_columns;
         uint32_t src_stride_rows_b;
         uint32_t src_stride_rows_s;
         uint32_t dst_stride_rows;
-        if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+        if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
             src_shape_rows_b = get<1, 0, 1>(src_shape);
             src_shape_rows_s = get<1, 0, 0>(src_shape);
             src_shape_columns = get<1, 1, 1>(src_shape);
@@ -75,35 +76,36 @@ public:
         uint32_t dst_stride = dst_stride_rows * sizeof(type);
         uint32_t batch_num = get_shape_batch_size(src_shape);
         uint64_t src_batch_stride = 0;
-        if constexpr (depth == FIVE_DIM_DATA) {
+        if constexpr (depth == five_dim_data) {
             src_batch_stride = get<0>(src.layout().stride());
         }
         for (uint32_t i = 0; i < batch_num; ++i) {
-            if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+            if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
                 auto dst_batch = make_single_batch_sub_tensor(dst, i);
-                copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst_batch, src,
-                    dst_offset, src_offset + i * src_batch_stride, src_shape_rows_b, block_len, 0, 0,
+                copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
+                    dst_batch, src, dst_offset, src_offset + i * src_batch_stride, src_shape_rows_b, block_len, 0, 0,
                     src.engine().get_cache_mode(), src_stride, dst_stride);
             } else {
                 copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, src_shape_rows_b,
-                    block_len, 0, 0, src.engine().get_cache_mode(), src_stride, dst_stride);
+                                                                    block_len, 0, 0, src.engine().get_cache_mode(),
+                                                                    src_stride, dst_stride);
             }
         }
     }
 
 private:
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_template()
     {
-        check_layout_pattern<U, T>();
-        check_data_type::check_gm_to_l1_scale_data_type<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_gm_to_l1_scale_data_type<DstTensor, SrcTensor>();
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        check_template<trait, T, U>();
-        if constexpr (U::layout_type::depth == FIVE_DIM_DATA) {
+        check_template<trait, DstTensor, SrcTensor>();
+        if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
             auto src_layout = src.layout();
             auto dst_layout = dst.layout();
             emit_copy(dst, src, remove_batch_dim(src_layout), remove_batch_dim(dst_layout), get<0>(src_layout.shape()),
@@ -113,11 +115,12 @@ private:
         }
     }
 
-    template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
-        const DstLayout& dst_layout, uint16_t batch_num, uint64_t src_batch_stride, uint64_t dst_batch_stride)
+    template <typename DstTensor, typename SrcTensor, typename SrcLayout, typename DstLayout>
+    __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, const SrcLayout& src_layout,
+                                            const DstLayout& dst_layout, uint16_t batch_num, uint64_t src_batch_stride,
+                                            uint64_t dst_batch_stride)
     {
-        using type = typename U::element_type;
+        using type = typename SrcTensor::element_type;
 
         auto src_shape_rows_b = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         auto src_shape_rows_s = get_element<attr_info::shape, attr_info::row, 0>(src_layout);
@@ -130,7 +133,7 @@ private:
 
         uint8_t cache_mode = src.engine().get_cache_mode();
 
-        // lprp mode, dst_stride % C0_SIZE should be 0
+        // lprp mode, dst_stride % c0_size should be 0
         // multi rows copy, dst non-contiguous case
 
         uint32_t block_count = src_shape_rows_b;
@@ -142,9 +145,9 @@ private:
         uint8_t right_padding_cnt = 0;
         for (uint16_t batch_index = 0; batch_index < batch_num; ++batch_index) {
             copy_gm_to_l1_align_v2_instr::data_copy(
-                (__cbuf__ half*)((dst.data() + batch_index * dst_batch_stride).get()),
-                (__gm__ half*)((src.data() + batch_index * src_batch_stride).get()), block_count, block_len,
-                left_padding_cnt, right_padding_cnt, cache_mode, src_stride, dst_stride);
+                reinterpret_cast<__cbuf__ half*>((dst.data() + batch_index * dst_batch_stride).get()),
+                reinterpret_cast<__gm__ half*>((src.data() + batch_index * src_batch_stride).get()), block_count,
+                block_len, left_padding_cnt, right_padding_cnt, cache_mode, src_stride, dst_stride);
         }
     }
 };

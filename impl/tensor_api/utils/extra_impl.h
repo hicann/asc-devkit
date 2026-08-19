@@ -35,50 +35,50 @@
 
 namespace asc {
 namespace te {
-template <typename... Ts>
+template <typename... Types>
 using void_t = void;
 
-template <typename T, typename = void>
+template <typename Trait, typename = void>
 struct get_trait_member_type {
-    using type = typename T::TraitType;
+    using type = typename Trait::TraitType;
 };
 
-template <typename T>
-struct get_trait_member_type<T, void_t<typename T::trait_type>> {
-    using type = typename T::trait_type;
+template <typename Trait>
+struct get_trait_member_type<Trait, void_t<typename Trait::trait_type>> {
+    using type = typename Trait::trait_type;
 };
 
-template <typename T>
-using get_trait_member_type_t = typename get_trait_member_type<T>::type;
+template <typename Trait>
+using get_trait_member_type_t = typename get_trait_member_type<Trait>::type;
 
-template <typename T, typename = void>
+template <typename Iterator, typename = void>
 struct iter_ref {
-    using type = decltype(*Std::declval<T&>()); // type = T&
+    using type = decltype(*Std::declval<Iterator&>());
 };
 
-template <typename T>
-struct iter_ref<T, void_t<typename T::reference>> {
-    using type = typename T::reference;
+template <typename Iterator>
+struct iter_ref<Iterator, void_t<typename Iterator::reference>> {
+    using type = typename Iterator::reference;
 };
 
-template <typename T, typename = void>
+template <typename Iterator, typename = void>
 struct iter_ele {
-    using type = Std::remove_reference_t<typename iter_ref<T>::type>;
+    using type = Std::remove_reference_t<typename iter_ref<Iterator>::type>;
 };
 
-template <typename T>
-struct iter_ele<T, void_t<typename T::element_type>> {
-    using type = typename T::element_type;
+template <typename Iterator>
+struct iter_ele<Iterator, void_t<typename Iterator::element_type>> {
+    using type = typename Iterator::element_type;
 };
 
-template <typename T, typename = void>
+template <typename Iterator, typename = void>
 struct iter_val {
-    using type = Std::remove_cv_t<typename iter_ele<T>::type>;
+    using type = Std::remove_cv_t<typename iter_ele<Iterator>::type>;
 };
 
-template <typename T>
-struct iter_val<T, void_t<typename T::value_type>> {
-    using type = typename T::value_type;
+template <typename Iterator>
+struct iter_val<Iterator, void_t<typename Iterator::value_type>> {
+    using type = typename Iterator::value_type;
 };
 } // namespace te
 } // namespace asc

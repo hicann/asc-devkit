@@ -195,7 +195,7 @@ TEST_F(tensor_api_layout_struct, test_remove_batch_dim_from_three_dim_layout)
         make_shape(2, make_shape(8, 16)), make_stride(128, make_stride(16, 1)));
     auto no_batch_layout = remove_batch_dim(layout);
 
-    static_assert(decltype(no_batch_layout)::depth == TWO_DIM_DATA);
+    static_assert(decltype(no_batch_layout)::depth == two_dim_data);
     static_assert(AscendC::Std::is_same_v<get_layout_pattern<decltype(no_batch_layout)>, nd_layout_ptn>);
     EXPECT_EQ(AscendC::Std::get<0>(no_batch_layout.shape()), 8);
     EXPECT_EQ(AscendC::Std::get<1>(no_batch_layout.shape()), 16);
@@ -214,7 +214,7 @@ TEST_F(tensor_api_layout_struct, test_remove_batch_dim_from_five_dim_layout)
     auto shape = no_batch_layout.shape();
     auto stride = no_batch_layout.stride();
 
-    static_assert(decltype(no_batch_layout)::depth == FOUR_DIM_DATA);
+    static_assert(decltype(no_batch_layout)::depth == four_dim_data);
     static_assert(AscendC::Std::is_same_v<get_layout_pattern<decltype(no_batch_layout)>, nz_layout_ptn>);
     EXPECT_EQ(AscendC::Std::get<0>(AscendC::Std::get<0>(shape)), 16);
     EXPECT_EQ(AscendC::Std::get<1>(AscendC::Std::get<0>(shape)), 2);
@@ -232,7 +232,6 @@ TEST_F(tensor_api_layout_struct, test_make_tuple)
 
     auto shape = make_shape(2, 3, 4);
     auto stride = make_stride(12, 4, 1);
-    auto tile = make_tile(8, 16);
     auto coord = make_coord(1, 2, 3);
 
     EXPECT_EQ(AscendC::Std::get<0>(shape), 2);
@@ -242,9 +241,6 @@ TEST_F(tensor_api_layout_struct, test_make_tuple)
     EXPECT_EQ(AscendC::Std::get<0>(stride), 12);
     EXPECT_EQ(AscendC::Std::get<1>(stride), 4);
     EXPECT_EQ(AscendC::Std::get<2>(stride), 1);
-
-    EXPECT_EQ(AscendC::Std::get<0>(tile), 8);
-    EXPECT_EQ(AscendC::Std::get<1>(tile), 16);
 
     EXPECT_EQ(AscendC::Std::get<0>(coord), 1);
     EXPECT_EQ(AscendC::Std::get<1>(coord), 2);

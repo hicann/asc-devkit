@@ -51,11 +51,11 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
-void run_copy_with_paths(const dst_tensor_type& dst, const src_tensor_type& src)
+void run_copy_default_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
     using namespace asc::te;
 
-    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with();
+    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{};
     atom.call(dst, src);
     copy(atom, dst, src);
     copy(atom, dst, src, make_coord(0, 0), zero_coord, make_shape(16, 16));
@@ -75,8 +75,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_l1_to_fb_routes_to_cube_arch_copy)
     auto l1_tensor = make_tensor_at<location::l1>(src, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<uint64_t>>(m, n));
     auto fixbuf_tensor = make_tensor_at<location::fixbuf>(dst, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<uint64_t>>(m, n));
 
-    run_copy_call_paths<copy_l1_to_fixbuf, copy_l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
-    run_copy_with_paths<copy_l1_to_fixbuf, copy_l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
+    run_copy_call_paths<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
+    run_copy_default_paths<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -93,8 +93,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_l1_to_fb_nd_layout_routes_to_cube_arch_co
     auto l1_tensor = make_tensor_at<location::l1>(src, make_frame_layout<nd_layout_ptn, layout_trait_default<uint64_t>>(m, n));
     auto fixbuf_tensor = make_tensor_at<location::fixbuf>(dst, make_frame_layout<nd_layout_ptn, layout_trait_default<uint64_t>>(m, n));
 
-    run_copy_call_paths<copy_l1_to_fixbuf, copy_l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
-    run_copy_with_paths<copy_l1_to_fixbuf, copy_l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
+    run_copy_call_paths<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
+    run_copy_default_paths<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default>(fixbuf_tensor, l1_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -159,7 +159,7 @@ __aicore__ inline void copy_cbuf_to_fbuf_stub(__fbuf__ void* dst, __cbuf__ void*
             .times(1) \
             .will(invoke(&copy_cbuf_to_fbuf_stub<data_type, src_size1, src_size2, dst_size1, dst_size2>)); \
         CREATE_TENSOR(data_type, src_size1, src_size2, dst_size1, dst_size2, cbuf, L1, ND, fbuf, FIXBUF, ND) \
-        copy(copy_atom<copy_traits<copy_l1_to_fixbuf, copy_l1_to_fixbuf_trait_default>>{}, dst_tensor, src_tensor);\
+        copy(copy_atom<copy_traits<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default>>{}, dst_tensor, src_tensor);\
         GlobalMockObject::verify(); \
     }
 

@@ -105,21 +105,21 @@ private:
     template <typename Key, typename... ExistingPairs>
     struct delete_impl;
 
-    template <typename Key, typename Val, typename... ExistingPairs>
+    template <typename Key, typename Value, typename... ExistingPairs>
     struct insert_impl;
 
-    template <typename Key, typename Val>
-    struct insert_impl<Key, Val> {
-        using type = tuple_map<Std::tuple<Key, Val>>;
+    template <typename Key, typename Value>
+    struct insert_impl<Key, Value> {
+        using type = tuple_map<Std::tuple<Key, Value>>;
     };
 
-    template <typename Key, typename Val, typename FirstPair, typename... RestPairs>
-    struct insert_impl<Key, Val, FirstPair, RestPairs...> {
+    template <typename Key, typename Value, typename FirstPair, typename... RestPairs>
+    struct insert_impl<Key, Value, FirstPair, RestPairs...> {
         static_assert(is_valid_pair<FirstPair>::value, "tuple_map expects Std::tuple<Key, Value> entries.");
         using first_key = pair_key<FirstPair>;
-        using new_pair = Std::tuple<Key, Val>;
+        using new_pair = Std::tuple<Key, Value>;
 
-        using next_map = typename insert_impl<Key, Val, RestPairs...>::type;
+        using next_map = typename insert_impl<Key, Value, RestPairs...>::type;
         using keep_head_map = typename prepend_pair<FirstPair, next_map>::type;
         using replace_tail_map = typename delete_impl<Key, RestPairs...>::type;
         using replace_head_map = typename prepend_pair<new_pair, replace_tail_map>::type;
@@ -150,8 +150,8 @@ public:
     template <typename Input>
     using find = typename match_impl<Input, 0, map_size>::type;
 
-    template <typename Key, typename Val>
-    using insert = typename insert_impl<Key, Val, Pairs...>::type;
+    template <typename Key, typename Value>
+    using insert = typename insert_impl<Key, Value, Pairs...>::type;
 
     template <typename Key>
     using erase = typename delete_impl<Key, Pairs...>::type;
@@ -159,8 +159,6 @@ public:
 
 } // namespace te
 } // namespace asc
-
-
 
 #endif // IMPL_TENSOR_API_UTILS_MAP_IMPL_H
 

@@ -29,10 +29,10 @@ namespace te {
 
 class copy_gm_to_l1_nhwc2nc1hwc0 {
 public:
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        using type = typename U::element_type;
+        using type = typename SrcTensor::element_type;
         auto src_layout = src.layout();
         auto dst_layout = dst.layout();
 
@@ -62,14 +62,15 @@ public:
                                                    n_value, d_value, loop4_src_stride, false);
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+              typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape)
     {
-        using type = typename U::element_type;
-        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
+        using type = typename SrcTensor::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
         uint16_t nd_num = get<1>(src_shape);
         uint16_t n_value = get<2>(src_shape);
         uint32_t d_value = get<3>(src_shape);
@@ -82,9 +83,9 @@ public:
             loop4_src_stride >>= 1;
             loop1_src_stride >>= 1;
         }
-        copy_gm_to_l1_multi_nd2nz_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, nd_num, 1,
-            loop3_dst_stride, loop4_dst_stride, loop1_src_stride, src.engine().get_cache_mode(), n_value,
-            d_value, loop4_src_stride, false);
+        copy_gm_to_l1_multi_nd2nz_instr::data_copy_with_offset(
+            dst, src, dst_offset, src_offset, nd_num, 1, loop3_dst_stride, loop4_dst_stride, loop1_src_stride,
+            src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride, false);
     }
 };
 

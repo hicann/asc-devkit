@@ -29,9 +29,11 @@ namespace te {
 
 class copy_l0c_to_l1_instr {
 public:
-    template <QuantMode_t quant_pre, typename T, typename U, typename DstOffset, typename SrcOffset, typename... ParamTypes>
-    __aicore__ inline static void data_copy_with_offset(
-        const T& dst, const U& src, const DstOffset& dst_offset, const SrcOffset& src_offset, const ParamTypes&... params)
+    template <QuantMode_t quant_pre, typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset,
+              typename... Params>
+    __aicore__ inline static void data_copy_with_offset(const DstTensor& dst, const SrcTensor& src,
+                                                        const DstOffset& dst_offset, const SrcOffset& src_offset,
+                                                        const Params&... params)
     {
         auto dst_data = dst.data() + dst_offset;
         auto src_data = src.data() + src_offset;
@@ -39,14 +41,11 @@ public:
     }
 
     // This path only emits straight NZ output, so nz2nd_en is always false.
-    template <QuantMode_t quant_pre, typename T, typename U>
-    __aicore__ inline static void data_copy(__cbuf__ T* dst, __cc__ U* src, uint32_t n_size, uint32_t m_size,
-                                                   uint32_t src_stride, uint32_t dst_stride, bool relu_en,
-                                                   uint8_t unit_flag, bool is_channel_split)
+    template <QuantMode_t quant_pre, typename DstType, typename SrcType>
+    __aicore__ inline static void data_copy(__cbuf__ DstType* dst, __cc__ SrcType* src, uint32_t n_size,
+                                            uint32_t m_size, uint32_t src_stride, uint32_t dst_stride, bool relu_en,
+                                            uint8_t unit_flag, bool is_channel_split)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, n_size, "n_size", "copy_l0c_to_l1 instruction");
         TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_m, m_size, false, "copy_l0c_to_l1 instruction");
         TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_stride, src_stride, dst_stride, "copy_l0c_to_l1 instruction");

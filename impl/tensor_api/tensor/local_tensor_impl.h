@@ -24,16 +24,16 @@ namespace asc {
 namespace te {
 namespace detail {
 
-template <load_sideband_mode sideband_mode, typename TensorType, typename Coord>
-__simd_callee__ inline decltype(auto) load_local_tensor(const TensorType& tensor, const Coord& coord)
+template <load_sideband_mode sideband_mode, typename Tensor, typename Coord>
+__simd_callee__ inline decltype(auto) load_local_tensor(const Tensor& tensor, const Coord& coord)
 {
-    using engine_type = typename TensorType::engine_type;
-    using data_type = typename TensorType::data_type;
+    using engine_type = typename Tensor::engine_type;
+    using data_type = typename Tensor::data_type;
     static_assert(Std::is_same_v<get_mem_location<engine_type>, location::ub>,
                   "local_tensor::load only supports tensors located in UB");
 
-    auto srcEngine = tensor.engine() + tensor.layout()(coord);
-    auto src = srcEngine.begin().get();
+    auto src_engine = tensor.engine() + tensor.layout()(coord);
+    auto src = src_engine.begin().get();
 
     reg_tensor<data_type> dst;
     if constexpr (sideband_mode == load_sideband_mode::direct) {
@@ -55,36 +55,36 @@ __simd_callee__ inline decltype(auto) load_local_tensor(const TensorType& tensor
     return dst;
 }
 
-template <load_sideband_mode sideband_mode, typename TensorType, typename Coord, typename RegDataType>
-__simd_callee__ inline void load_local_tensor(const TensorType& tensor, const Coord& coord,
-                                               reg_tensor<RegDataType>& dst0, reg_tensor<RegDataType>& dst1)
+template <load_sideband_mode sideband_mode, typename Tensor, typename Coord, typename RegDataType>
+__simd_callee__ inline void load_local_tensor(const Tensor& tensor, const Coord& coord, reg_tensor<RegDataType>& dst0,
+                                              reg_tensor<RegDataType>& dst1)
 {
-    using engine_type = typename TensorType::engine_type;
-    using data_type = typename TensorType::data_type;
+    using engine_type = typename Tensor::engine_type;
+    using data_type = typename Tensor::data_type;
     static_assert(Std::is_same_v<get_mem_location<engine_type>, location::ub>,
                   "local_tensor::load only supports tensors located in UB");
     static_assert(Std::is_same_v<data_type, RegDataType>,
                   "local_tensor::load requires matching tensor and register element types");
 
     if constexpr (sideband_mode == load_sideband_mode::deintlv) {
-        auto srcEngine = tensor.engine() + tensor.layout()(coord);
-        asc_loadalign_deintlv(dst0.reg, dst1.reg, srcEngine.begin().get());
+        auto src_engine = tensor.engine() + tensor.layout()(coord);
+        asc_loadalign_deintlv(dst0.reg, dst1.reg, src_engine.begin().get());
     } else {
         static_assert(sideband_mode == load_sideband_mode::deintlv,
                       "the two-destination local_tensor::load overload only supports deintlv");
     }
 }
 
-template <broadcast_mode brc_mode, typename TensorType, typename Coord>
-__simd_callee__ inline decltype(auto) load_broadcast_local_tensor(const TensorType& tensor, const Coord& coord)
+template <broadcast_mode brc_mode, typename Tensor, typename Coord>
+__simd_callee__ inline decltype(auto) load_broadcast_local_tensor(const Tensor& tensor, const Coord& coord)
 {
-    using engine_type = typename TensorType::engine_type;
-    using data_type = typename TensorType::data_type;
+    using engine_type = typename Tensor::engine_type;
+    using data_type = typename Tensor::data_type;
     static_assert(Std::is_same_v<get_mem_location<engine_type>, location::ub>,
                   "local_tensor::load_broadcast only supports tensors located in UB");
 
-    auto srcEngine = tensor.engine() + tensor.layout()(coord);
-    auto src = srcEngine.begin().get();
+    auto src_engine = tensor.engine() + tensor.layout()(coord);
+    auto src = src_engine.begin().get();
 
     reg_tensor<data_type> dst;
     if constexpr (brc_mode == broadcast_mode::elem) {
@@ -99,19 +99,18 @@ __simd_callee__ inline decltype(auto) load_broadcast_local_tensor(const TensorTy
     return dst;
 }
 
-template <store_sideband_mode sideband_mode, typename TensorType, typename Coord, typename RegDataType>
-__simd_callee__ inline void store_local_tensor(TensorType& tensor, const Coord& coord,
-                                                const reg_tensor<RegDataType>& src)
+template <store_sideband_mode sideband_mode, typename Tensor, typename Coord, typename RegDataType>
+__simd_callee__ inline void store_local_tensor(Tensor& tensor, const Coord& coord, const reg_tensor<RegDataType>& src)
 {
-    using engine_type = typename TensorType::engine_type;
-    using data_type = typename TensorType::data_type;
+    using engine_type = typename Tensor::engine_type;
+    using data_type = typename Tensor::data_type;
     static_assert(Std::is_same_v<get_mem_location<engine_type>, location::ub>,
                   "local_tensor::store only supports tensors located in UB");
     static_assert(Std::is_same_v<data_type, RegDataType>,
                   "local_tensor::store requires matching tensor and register element types");
 
-    auto dstEngine = tensor.engine() + tensor.layout()(coord);
-    auto dst = dstEngine.begin().get();
+    auto dst_engine = tensor.engine() + tensor.layout()(coord);
+    auto dst = dst_engine.begin().get();
     if constexpr (sideband_mode == store_sideband_mode::direct) {
         asc_storealign(dst, src.reg, src.mask);
     } else if constexpr (sideband_mode == store_sideband_mode::store_1st) {
@@ -128,21 +127,20 @@ __simd_callee__ inline void store_local_tensor(TensorType& tensor, const Coord& 
     }
 }
 
-template <store_sideband_mode sideband_mode, typename TensorType, typename Coord, typename RegDataType>
-__simd_callee__ inline void store_local_tensor(TensorType& tensor, const Coord& coord,
-                                                const reg_tensor<RegDataType>& src0,
-                                                const reg_tensor<RegDataType>& src1)
+template <store_sideband_mode sideband_mode, typename Tensor, typename Coord, typename RegDataType>
+__simd_callee__ inline void store_local_tensor(Tensor& tensor, const Coord& coord, const reg_tensor<RegDataType>& src0,
+                                               const reg_tensor<RegDataType>& src1)
 {
-    using engine_type = typename TensorType::engine_type;
-    using data_type = typename TensorType::data_type;
+    using engine_type = typename Tensor::engine_type;
+    using data_type = typename Tensor::data_type;
     static_assert(Std::is_same_v<get_mem_location<engine_type>, location::ub>,
                   "local_tensor::store only supports tensors located in UB");
     static_assert(Std::is_same_v<data_type, RegDataType>,
                   "local_tensor::store requires matching tensor and register element types");
 
     if constexpr (sideband_mode == store_sideband_mode::intlv) {
-        auto dstEngine = tensor.engine() + tensor.layout()(coord);
-        asc_storealign_intlv(dstEngine.begin().get(), src0.reg, src1.reg);
+        auto dst_engine = tensor.engine() + tensor.layout()(coord);
+        asc_storealign_intlv(dst_engine.begin().get(), src0.reg, src1.reg);
     } else {
         static_assert(sideband_mode == store_sideband_mode::intlv,
                       "the two-source local_tensor::store overload only supports intlv");
@@ -151,46 +149,53 @@ __simd_callee__ inline void store_local_tensor(TensorType& tensor, const Coord& 
 
 } // namespace detail
 
-template <typename EngineType, typename LayoutType>
+template <typename EngineT, typename LayoutT>
+__aicore__ inline local_tensor<EngineT, LayoutT>::local_tensor() = default;
+
+template <typename EngineT, typename LayoutT>
+__aicore__ inline local_tensor<EngineT, LayoutT>::local_tensor(const EngineT& engine, const LayoutT& layout) :
+    tensor_api_base(engine, layout)
+{}
+
+template <typename EngineT, typename LayoutT>
 template <load_sideband_mode sideband_mode, typename Coord>
-__simd_callee__ inline decltype(auto) local_tensor<EngineType, LayoutType>::load(const Coord& coord) const
+__simd_callee__ inline decltype(auto) local_tensor<EngineT, LayoutT>::load(const Coord& coord) const
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, this->layout(), coord, "tensor::load");
     return detail::load_local_tensor<sideband_mode>(*this, coord);
 }
 
-template <typename EngineType, typename LayoutType>
+template <typename EngineT, typename LayoutT>
 template <load_sideband_mode sideband_mode, typename Coord, typename RegDataType>
-__simd_callee__ inline void local_tensor<EngineType, LayoutType>::load(const Coord& coord,
-                                                                       reg_tensor<RegDataType>& dst0,
-                                                                       reg_tensor<RegDataType>& dst1) const
+__simd_callee__ inline void local_tensor<EngineT, LayoutT>::load(const Coord& coord, reg_tensor<RegDataType>& dst0,
+                                                                 reg_tensor<RegDataType>& dst1) const
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, this->layout(), coord, "tensor::load");
     detail::load_local_tensor<sideband_mode>(*this, coord, dst0, dst1);
 }
 
-template <typename EngineType, typename LayoutType>
+template <typename EngineT, typename LayoutT>
 template <broadcast_mode brc_mode, typename Coord>
-__simd_callee__ inline decltype(auto) local_tensor<EngineType, LayoutType>::load_broadcast(const Coord& coord) const
+__simd_callee__ inline decltype(auto) local_tensor<EngineT, LayoutT>::load_broadcast(const Coord& coord) const
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, this->layout(), coord, "tensor::load_broadcast");
     return detail::load_broadcast_local_tensor<brc_mode>(*this, coord);
 }
 
-template <typename EngineType, typename LayoutType>
+template <typename EngineT, typename LayoutT>
 template <store_sideband_mode sideband_mode, typename Coord, typename RegDataType>
-__simd_callee__ inline void local_tensor<EngineType, LayoutType>::store(const Coord& coord,
-                                                                        const reg_tensor<RegDataType>& src)
+__simd_callee__ inline void local_tensor<EngineT, LayoutT>::store(const Coord& coord,
+                                                                  const reg_tensor<RegDataType>& src)
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, this->layout(), coord, "tensor::store");
     detail::store_local_tensor<sideband_mode>(*this, coord, src);
 }
 
-template <typename EngineType, typename LayoutType>
+template <typename EngineT, typename LayoutT>
 template <store_sideband_mode sideband_mode, typename Coord, typename RegDataType>
-__simd_callee__ inline void local_tensor<EngineType, LayoutType>::store(const Coord& coord,
-                                                                        const reg_tensor<RegDataType>& src0,
-                                                                        const reg_tensor<RegDataType>& src1)
+__simd_callee__ inline void local_tensor<EngineT, LayoutT>::store(const Coord& coord,
+                                                                  const reg_tensor<RegDataType>& src0,
+                                                                  const reg_tensor<RegDataType>& src1)
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, this->layout(), coord, "tensor::store");
     detail::store_local_tensor<sideband_mode>(*this, coord, src0, src1);

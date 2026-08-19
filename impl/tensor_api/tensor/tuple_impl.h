@@ -27,118 +27,116 @@
 namespace asc {
 namespace te {
 
-template <typename T, typename F, typename G, size_t... I>
-__aicore__ inline constexpr auto tuple_apply(T&& t, F&& f, G&& g, Std::index_sequence<I...>)
+template <typename Tuple, typename Transform, typename Combine, size_t... I>
+__aicore__ inline constexpr auto tuple_apply(Tuple&& tuple, Transform&& transform, Combine&& combine,
+                                             Std::index_sequence<I...>)
 {
-    return g(f(Std::get<I>(static_cast<T&&>(t)))...);
+    return combine(transform(Std::get<I>(static_cast<Tuple&&>(tuple)))...);
 }
 
-template <typename T0, typename T1, typename F, typename G, size_t... I>
-__aicore__ inline constexpr auto tuple_apply(T0&& t0, T1&& t1, F&& f, G&& g, Std::index_sequence<I...>)
+template <typename Left, typename Right, typename Transform, typename Combine, size_t... I>
+__aicore__ inline constexpr auto tuple_apply(Left&& left, Right&& right, Transform&& transform, Combine&& combine,
+                                             Std::index_sequence<I...>)
 {
-    return g(f(Std::get<I>(static_cast<T0&&>(t0)), Std::get<I>(static_cast<T1&&>(t1)))...);
+    return combine(transform(Std::get<I>(static_cast<Left&&>(left)), Std::get<I>(static_cast<Right&&>(right)))...);
 }
 
-template <typename T, typename F, typename G>
-__aicore__ inline constexpr auto transform_apply(T&& t, F&& f, G&& g)
+template <typename Input, typename Transform, typename Combine>
+__aicore__ inline constexpr auto transform_apply(Input&& input, Transform&& transform, Combine&& combine)
 {
-    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<T>>) {
-        return tuple_apply(static_cast<T&&>(t), f, g, tuple_sequence<T>{});
+    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<Input>>) {
+        return tuple_apply(static_cast<Input&&>(input), transform, combine, tuple_sequence<Input>{});
     } else {
-        return g(f(static_cast<T&&>(t)));
+        return combine(transform(static_cast<Input&&>(input)));
     }
 }
 
-template <typename T0, typename T1, typename F, typename G>
-__aicore__ inline constexpr auto transform_apply(T0&& t0, T1&& t1, F&& f, G&& g)
+template <typename Left, typename Right, typename Transform, typename Combine>
+__aicore__ inline constexpr auto transform_apply(Left&& left, Right&& right, Transform&& transform, Combine&& combine)
 {
-    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<T0>>) {
-        return tuple_apply(static_cast<T0&&>(t0), static_cast<T1&&>(t1), f, g, tuple_sequence<T0>{});
+    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<Left>>) {
+        return tuple_apply(static_cast<Left&&>(left), static_cast<Right&&>(right), transform, combine,
+                           tuple_sequence<Left>{});
     } else {
-        return g(f(static_cast<T0&&>(t0), static_cast<T1&&>(t1)));
+        return combine(transform(static_cast<Left&&>(left), static_cast<Right&&>(right)));
     }
 }
 
-template <typename T, typename U, typename F>
-__aicore__ inline constexpr auto transform_tuple_apply(const T& t, const U& u, const F& f);
+template <typename Left, typename Right, typename Operation>
+__aicore__ inline constexpr auto transform_tuple_apply(const Left& left, const Right& right,
+                                                       const Operation& operation);
 
-template <typename T, typename U, typename F, size_t... Is>
-__aicore__ inline constexpr auto transform_tuple_apply_impl(const T& t, const U& u, const F& f,
-                                                            Std::index_sequence<Is...>)
+template <typename Left, typename Right, typename Operation, size_t... Is>
+__aicore__ inline constexpr auto transform_tuple_apply_impl(const Left& left, const Right& right,
+                                                            const Operation& operation, Std::index_sequence<Is...>)
 {
-    return Std::make_tuple(transform_tuple_apply(Std::get<Is>(t), Std::get<Is>(u), f)...);
+    return Std::make_tuple(transform_tuple_apply(Std::get<Is>(left), Std::get<Is>(right), operation)...);
 }
 
-template <typename T, typename U, typename F>
-__aicore__ inline constexpr auto transform_tuple_apply(const T& t, const U& u, const F& f)
+template <typename Left, typename Right, typename Operation>
+__aicore__ inline constexpr auto transform_tuple_apply(const Left& left, const Right& right, const Operation& operation)
 {
-    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<T>>) {
-        static_assert(Std::tuple_size_v<Std::remove_cvref_t<T>> == Std::tuple_size_v<Std::remove_cvref_t<U>>,
+    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<Left>>) {
+        static_assert(Std::tuple_size_v<Std::remove_cvref_t<Left>> == Std::tuple_size_v<Std::remove_cvref_t<Right>>,
                       "Two tuple needs to be the same tuple size");
-        return transform_tuple_apply_impl(t, u, f,
-                                          Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<T>>>{});
+        return transform_tuple_apply_impl(left, right, operation,
+                                          Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<Left>>>{});
     } else {
-        static_assert(!Std::is_tuple_v<Std::remove_cvref_t<U>>, "Two tuple needs to be the same tuple size");
-        return f(t, u);
+        static_assert(!Std::is_tuple_v<Std::remove_cvref_t<Right>>, "Two tuple needs to be the same tuple size");
+        return operation(left, right);
     }
 }
 
 struct multiplies_unary_left_fold {
-    template <typename... T>
-    __aicore__ inline constexpr auto operator()(T&&... t) const
+    template <typename... Values>
+    __aicore__ inline constexpr auto operator()(Values&&... values) const
     {
-        return (... * t);
+        return (... * values);
     }
 };
 
 struct product {
-    template <typename T>
-    __aicore__ inline constexpr auto operator()(const T& int_t) const
+    template <typename Value>
+    __aicore__ inline constexpr auto operator()(const Value& value) const
     {
-        if constexpr (Std::is_tuple_v<T>) {
-            if constexpr (Std::tuple_size_v<T> == 0) {
+        if constexpr (Std::is_tuple_v<Value>) {
+            if constexpr (Std::tuple_size_v<Value> == 0) {
                 return _1{};
             } else {
-                return transform_apply(int_t, product{}, multiplies_unary_left_fold{});
+                return transform_apply(value, product{}, multiplies_unary_left_fold{});
             }
-        } else if constexpr (Std::is_integral<T>::value) {
-            return int_t;
+        } else if constexpr (Std::is_integral<Value>::value) {
+            return value;
         } else {
-            static_assert(sizeof(T) == 0, "Invalid Product parameters");
+            static_assert(sizeof(Value) == 0, "Invalid Product parameters");
         }
     }
 };
 
-template <size_t I, typename Tuple, typename = Std::enable_if_t<Std::is_tuple_v<Std::remove_cvref_t<Tuple>>>>
-__aicore__ inline constexpr auto get(Tuple&& t)
-{
-    static_assert(Std::is_tuple_v<Std::remove_cvref_t<Tuple>>, "Shape or Stride is not Tuple");
-    return Std::get<I>(static_cast<Tuple&&>(t));
-}
-
-template <size_t I0, size_t I1, size_t... Is, typename Tuple,
+template <size_t I, size_t... Is, typename Tuple,
           typename = Std::enable_if_t<Std::is_tuple_v<Std::remove_cvref_t<Tuple>>>>
 __aicore__ inline constexpr auto get(Tuple&& t)
 {
     static_assert(Std::is_tuple_v<Std::remove_cvref_t<Tuple>>, "Shape or Stride is not Tuple");
-    return get<I1, Is...>(get<I0>(static_cast<Tuple&&>(t)));
-}
-
-template <typename Tuple, typename = Std::enable_if_t<Std::is_tuple_v<Std::remove_cvref_t<Tuple>>>>
-__aicore__ inline constexpr auto get(Tuple&& t)
-{
-    static_assert(Std::is_tuple_v<Std::remove_cvref_t<Tuple>>, "Shape or Stride is not Tuple");
-    return static_cast<Tuple&&>(t);
+    if constexpr (sizeof...(Is) == 0) {
+        return Std::get<I>(static_cast<Tuple&&>(t));
+    } else {
+        return get<Is...>(get<I>(static_cast<Tuple&&>(t)));
+    }
 }
 
 template <size_t... Is, typename Tuple>
 __aicore__ inline constexpr auto get_tuple(Tuple&& t)
 {
-    auto element = get<Is...>(static_cast<Tuple&&>(t));
-    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<decltype(element)>>) {
-        return element;
+    if constexpr (sizeof...(Is) == 0) {
+        return static_cast<Tuple&&>(t);
     } else {
-        return Std::make_tuple(element);
+        auto element = get<Is...>(static_cast<Tuple&&>(t));
+        if constexpr (Std::is_tuple_v<Std::remove_cvref_t<decltype(element)>>) {
+            return element;
+        } else {
+            return Std::make_tuple(element);
+        }
     }
 }
 
@@ -207,13 +205,13 @@ __aicore__ inline constexpr decltype(auto) get_value(const Tuple& t)
     return Std::get<index>(t);
 }
 
-template <typename T0, typename... Ts>
-__aicore__ inline constexpr auto get_max(const T0& t0, const Ts&... ts)
+template <typename FirstValue, typename... Values>
+__aicore__ inline constexpr auto get_max(const FirstValue& first_value, const Values&... values)
 {
-    if constexpr (sizeof...(Ts) == 0) {
-        return t0;
+    if constexpr (sizeof...(Values) == 0) {
+        return first_value;
     } else {
-        return Std::max(t0, get_max(ts...));
+        return Std::max(first_value, get_max(values...));
     }
 }
 
@@ -281,41 +279,41 @@ __aicore__ inline constexpr auto select_by_seq(const Tuple& t)
 }
 
 // IsSameStructure: two types share the same tuple nesting structure (same depth, same size per level).
-template <typename T, typename U, typename = void>
+template <typename Left, typename Right, typename = void>
 struct is_same_structure;
 
-template <typename T, typename U, typename Seq>
+template <typename Left, typename Right, typename Seq>
 struct all_children_same;
 
-template <typename T, typename U, size_t... Is>
-struct all_children_same<T, U, Std::index_sequence<Is...>>
-    : Std::bool_constant<(is_same_structure<typename Std::tuple_element<Is, Std::remove_cvref_t<T>>::type,
-                                            typename Std::tuple_element<Is, Std::remove_cvref_t<U>>::type>::value
+template <typename Left, typename Right, size_t... Is>
+struct all_children_same<Left, Right, Std::index_sequence<Is...>>
+    : Std::bool_constant<(is_same_structure<typename Std::tuple_element<Is, Std::remove_cvref_t<Left>>::type,
+                                            typename Std::tuple_element<Is, Std::remove_cvref_t<Right>>::type>::value
                           && ...)> {};
 
-template <typename T, typename U, typename>
+template <typename Left, typename Right, typename>
 struct is_same_structure : Std::false_type {};
 
-template <typename T, typename U>
+template <typename Left, typename Right>
 struct is_same_structure<
-    T, U, Std::enable_if_t<Std::is_tuple_v<Std::remove_cvref_t<T>> && Std::is_tuple_v<Std::remove_cvref_t<U>>>>
-    : Std::conditional_t<Std::tuple_size_v<Std::remove_cvref_t<T>> == Std::tuple_size_v<Std::remove_cvref_t<U>>,
-                         all_children_same<Std::remove_cvref_t<T>, Std::remove_cvref_t<U>,
-                                           Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<T>>>>,
+    Left, Right,
+    Std::enable_if_t<Std::is_tuple_v<Std::remove_cvref_t<Left>> && Std::is_tuple_v<Std::remove_cvref_t<Right>>>>
+    : Std::conditional_t<Std::tuple_size_v<Std::remove_cvref_t<Left>> == Std::tuple_size_v<Std::remove_cvref_t<Right>>,
+                         all_children_same<Std::remove_cvref_t<Left>, Std::remove_cvref_t<Right>,
+                                           Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<Left>>>>,
                          Std::false_type> {};
 
-template <typename T, typename U>
+template <typename Left, typename Right>
 struct is_same_structure<
-    T, U, Std::enable_if_t<!Std::is_tuple_v<Std::remove_cvref_t<T>> && !Std::is_tuple_v<Std::remove_cvref_t<U>>>>
+    Left, Right,
+    Std::enable_if_t<!Std::is_tuple_v<Std::remove_cvref_t<Left>> && !Std::is_tuple_v<Std::remove_cvref_t<Right>>>>
     : Std::true_type {};
 
-template <typename T, typename U>
-constexpr bool is_same_structure_v = is_same_structure<Std::remove_cvref_t<T>, Std::remove_cvref_t<U>>::value;
+template <typename Left, typename Right>
+constexpr bool is_same_structure_v = is_same_structure<Std::remove_cvref_t<Left>, Std::remove_cvref_t<Right>>::value;
 
 } // namespace te
 } // namespace asc
-
-
 
 #endif // IMPL_TENSOR_API_TENSOR_TUPLE_IMPL_H
 

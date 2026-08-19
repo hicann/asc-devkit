@@ -65,7 +65,7 @@ void copy_tensor(const DstTensorType& dst, const SrcTensorType& src)
 }
 
 template <typename ElementType>
-void copy_gm2ub_with_padding(int src_columns, int dst_columns, const asc::te::copy_gm_to_ub_params& params)
+void copy_gm2ub_with_padding(int src_columns, int dst_columns, const asc::te::gm_to_ub_params& params)
 {
     using namespace asc::te;
 
@@ -274,24 +274,24 @@ TEST_F(TensorApiVectorCopyAbnormalValidation, CopyGM2UBRejectsPaddingOver32Bytes
 {
     using namespace asc::te;
 
-    EXPECT_THROW((copy_gm2ub_with_padding<uint8_t>(32, 64, copy_gm_to_ub_params{33, 0, true})), TrapException);
-    EXPECT_THROW((copy_gm2ub_with_padding<half>(16, 32, copy_gm_to_ub_params{0, 17, true})), TrapException);
-    EXPECT_THROW((copy_gm2ub_with_padding<uint64_t>(4, 8, copy_gm_to_ub_params{9, 0, true})), TrapException);
+    EXPECT_THROW((copy_gm2ub_with_padding<uint8_t>(32, 64, gm_to_ub_params{33, 0, true})), TrapException);
+    EXPECT_THROW((copy_gm2ub_with_padding<half>(16, 32, gm_to_ub_params{0, 17, true})), TrapException);
+    EXPECT_THROW((copy_gm2ub_with_padding<uint64_t>(4, 8, gm_to_ub_params{9, 0, true})), TrapException);
 }
 
 TEST_F(TensorApiVectorCopyAbnormalValidation, CopyGM2UBUsesUint32PaddingGranularityForEightByteTypes)
 {
     using namespace asc::te;
 
-    EXPECT_NO_THROW((copy_gm2ub_with_padding<uint64_t>(4, 8, copy_gm_to_ub_params{8, 8, true})));
+    EXPECT_NO_THROW((copy_gm2ub_with_padding<uint64_t>(4, 8, gm_to_ub_params{8, 8, true})));
 }
 
 TEST_F(TensorApiVectorCopyAbnormalValidation, CopyGM2UBRejectsNonzeroPaddingInCompactMode)
 {
     using namespace asc::te;
 
-    EXPECT_THROW((copy_gm2ub_with_padding<uint8_t>(32, 32, copy_gm_to_ub_params{1, 0, true})), TrapException);
-    EXPECT_THROW((copy_gm2ub_with_padding<half>(16, 16, copy_gm_to_ub_params{0, 1, true})), TrapException);
+    EXPECT_THROW((copy_gm2ub_with_padding<uint8_t>(32, 32, gm_to_ub_params{1, 0, true})), TrapException);
+    EXPECT_THROW((copy_gm2ub_with_padding<half>(16, 16, gm_to_ub_params{0, 1, true})), TrapException);
 }
 
 TEST_F(TensorApiVectorCopyAbnormalValidation, CopyUB2GMRejectsAllInvalidSrcAndDstLayouts)

@@ -32,7 +32,7 @@ template <typename Traits>
 struct copy_traits<copy_l1_to_biastable, Traits> : public copy_traits<copy_l1_to_biastable, Traits, copy_l1_to_biastable, Traits> {};
 
 template <>
-struct copy_traits<copy_l1_to_biastable> : public copy_traits<copy_l1_to_biastable, copy_l1_to_biastable_trait_default> {};
+struct copy_traits<copy_l1_to_biastable> : public copy_traits<copy_l1_to_biastable, l1_to_biastable_trait_default> {};
 
 } // namespace te
 } // namespace asc

@@ -29,16 +29,14 @@
 namespace asc {
 namespace te {
 
-struct copy_ub_to_ub_trait {};
-
 class copy_ub_to_ub_common {
 protected:
-    template <typename T, typename U>
-    __aicore__ inline static void emit_copy(const T& dst, const U& src, uint16_t block_count, uint32_t block_len,
-                                            int64_t src_stride, int64_t dst_stride)
+    template <typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, uint16_t block_count,
+                                            uint32_t block_len, int64_t src_stride, int64_t dst_stride)
     {
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
         adjust_b4_copy_params<src_type, dst_type>(block_len, src_stride, dst_stride);
 
@@ -48,7 +46,7 @@ protected:
         uint16_t dst_stride_in32_b = static_cast<uint16_t>(dst_stride >> 5);
 
         copy_ub_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len_in32_b,
-                                          src_stride_in32_b, dst_stride_in32_b);
+                                       src_stride_in32_b, dst_stride_in32_b);
     }
 };
 

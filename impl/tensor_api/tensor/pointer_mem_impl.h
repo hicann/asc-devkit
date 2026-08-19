@@ -26,14 +26,14 @@
 namespace asc {
 namespace te {
 
+template <typename Tensor>
+using get_mem_location = typename Tensor::iterator::ptr_pattern;
+
 template <typename PtrPattern, typename Pointer>
 struct hardware_mem_ptr : iter_adaptor<Pointer, hardware_mem_ptr<PtrPattern, Pointer>> {
     using iter_adaptor<Pointer, hardware_mem_ptr<PtrPattern, Pointer>>::iter_adaptor;
     using ptr_pattern = PtrPattern;
 };
-
-template <typename T>
-using get_mem_location = typename T::iterator::ptr_pattern;
 
 // is hardware mem
 template <typename PtrPattern, typename Pointer, typename = void>
@@ -49,20 +49,20 @@ struct is_hardware_mem<PtrPattern, Pointer, void_t<typename Pointer::iterator>>
 template <typename PtrPattern, typename Pointer>
 constexpr bool is_hardware_mem_v = is_hardware_mem<PtrPattern, Pointer>::value;
 
-template <typename T>
+template <typename Pointer>
 struct is_hardware_mem_ptr : Std::false_type {};
 
 template <typename PtrPattern, typename Pointer>
 struct is_hardware_mem_ptr<hardware_mem_ptr<PtrPattern, Pointer>> : Std::true_type {};
 
-template <typename T>
-constexpr bool is_hardware_mem_ptr_v = is_hardware_mem_ptr<Std::remove_cvref_t<T>>::value;
+template <typename Pointer>
+constexpr bool is_hardware_mem_ptr_v = is_hardware_mem_ptr<Std::remove_cvref_t<Pointer>>::value;
 
-template <typename T, typename = void>
+template <typename Iterator, typename = void>
 struct is_mem_ptr_iterator : Std::false_type {};
 
-template <typename T>
-struct is_mem_ptr_iterator<T, void_t<decltype(*Std::declval<T&>())>> : Std::true_type {};
+template <typename Iterator>
+struct is_mem_ptr_iterator<Iterator, void_t<decltype(*Std::declval<Iterator&>())>> : Std::true_type {};
 
 template <typename PtrPattern, typename Iterator>
 __aicore__ inline auto make_location_mem_ptr(Iterator iter)
@@ -71,8 +71,6 @@ __aicore__ inline auto make_location_mem_ptr(Iterator iter)
 }
 } // namespace te
 } // namespace asc
-
-
 
 #endif // IMPL_TENSOR_API_TENSOR_POINTER_MEM_IMPL_H
 

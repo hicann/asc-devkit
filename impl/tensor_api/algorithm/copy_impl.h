@@ -27,12 +27,12 @@
 namespace asc {
 namespace te {
 
-template <typename QuantParam>
+template <typename Quant>
 constexpr bool is_quant_scalar_v =
-    !is_attr_tensor_v<QuantParam> && Std::is_convertible_v<Std::remove_cvref_t<QuantParam>, uint64_t>;
+    !is_attr_tensor_v<Quant> && Std::is_convertible_v<Std::remove_cvref_t<Quant>, uint64_t>;
 
-template <typename QuantParam>
-constexpr bool is_copy_quant_param_v = is_quant_scalar_v<QuantParam> || is_attr_tensor_v<QuantParam>;
+template <typename Quant>
+constexpr bool is_valid_quant_v = is_quant_scalar_v<Quant> || is_attr_tensor_v<Quant>;
 
 template <typename Coord>
 constexpr bool is_valid_coord_v = Std::is_tuple_v<Std::remove_cvref_t<Coord>> ||
@@ -53,23 +53,23 @@ constexpr bool is_conv_layout_pattern_v = Std::is_same_v<Pattern, nchw_layout_pt
 template <typename SrcTensor, typename CopyShape>
 struct is_copy_shape_compatible_with_src_layout {
 private:
-    using layout_type = typename Std::remove_cvref_t<SrcTensor>::layout_type;
-    using src_shape_type = Std::remove_cvref_t<decltype(Std::declval<layout_type>().shape())>;
-    using shape_type = Std::remove_cvref_t<CopyShape>;
-    using pattern_type = get_layout_pattern<layout_type>;
+    using layout = typename Std::remove_cvref_t<SrcTensor>::layout_type;
+    using src_shape = Std::remove_cvref_t<decltype(Std::declval<layout>().shape())>;
+    using shape = Std::remove_cvref_t<CopyShape>;
+    using pattern = get_layout_pattern<layout>;
 
-    static constexpr size_t src_depth = nesting_depth_v<src_shape_type>;
-    static constexpr size_t shape_depth = nesting_depth_v<shape_type>;
-    static constexpr size_t src_rank = Std::tuple_size_v<src_shape_type>;
-    static constexpr size_t shape_rank = Std::tuple_size_v<shape_type>;
+    static constexpr size_t src_depth = nesting_depth_v<src_shape>;
+    static constexpr size_t shape_depth = nesting_depth_v<shape>;
+    static constexpr size_t src_rank = Std::tuple_size_v<src_shape>;
+    static constexpr size_t shape_rank = Std::tuple_size_v<shape>;
     static constexpr size_t batch_num = src_rank - 1;
 
-    static constexpr bool is_same_structure = is_same_structure_v<src_shape_type, shape_type>;
-    static constexpr bool is_logical_matrix = !is_conv_layout_pattern_v<pattern_type> && src_rank == TWO_DIM_DATA &&
-        src_depth == FOUR_DIM_DATA && shape_depth == TWO_DIM_DATA;
-    static constexpr bool is_logical_flat_batch = !is_conv_layout_pattern_v<pattern_type> && src_rank == shape_rank &&
-        src_rank >= TWO_DIM_DATA && src_depth == batch_num + FOUR_DIM_DATA &&
-        shape_depth == batch_num + TWO_DIM_DATA;
+    static constexpr bool is_same_structure = is_same_structure_v<src_shape, shape>;
+    static constexpr bool is_logical_matrix = !is_conv_layout_pattern_v<pattern> && src_rank == two_dim_data &&
+        src_depth == four_dim_data && shape_depth == two_dim_data;
+    static constexpr bool is_logical_flat_batch = !is_conv_layout_pattern_v<pattern> && src_rank == shape_rank &&
+        src_rank >= two_dim_data && src_depth == batch_num + four_dim_data &&
+        shape_depth == batch_num + two_dim_data;
 
 public:
     static constexpr bool value = is_same_structure || is_logical_matrix || is_logical_flat_batch;
@@ -88,51 +88,51 @@ __aicore__ inline constexpr void check_copy_params()
         "Shape must match the source layout shape, or use a supported logical matrix/batch shape.");
 }
 
-template <typename AtomType, typename DstTensor, typename SrcTensor>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src)
+template <typename Atom, typename DstTensor, typename SrcTensor>
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src)
 {
     atom.call(dst, src);
 }
 
-template <typename AtomType, typename DstTensor, typename SrcTensor, typename QuantParam,
-          Std::enable_if_t<is_copy_quant_param_v<QuantParam>, int> = 0>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src,
-                            const QuantParam& quant)
+template <typename Atom, typename DstTensor, typename SrcTensor, typename Quant,
+          Std::enable_if_t<is_valid_quant_v<Quant>, int> Enable = 0>
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src,
+                            const Quant& quant)
 {
     atom.call(dst, src, quant);
 }
 
-template <typename AtomType, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+template <typename Atom, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
     typename CopyShape, Std::enable_if_t<is_valid_coord_v<DstCoord> && is_valid_coord_v<SrcCoord> &&
         is_valid_shape_v<CopyShape>, int> = 0>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src,
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src,
     const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape)
 {
     check_copy_params<SrcTensor, SrcCoord, CopyShape>();
     atom.call(dst, src, dst_coord, src_coord, copy_shape);
 }
 
-template <typename AtomType, typename DstTensor, typename SrcTensor, typename QuantParam, typename DstCoord,
+template <typename Atom, typename DstTensor, typename SrcTensor, typename Quant, typename DstCoord,
     typename SrcCoord, typename CopyShape,
-    Std::enable_if_t<is_copy_quant_param_v<QuantParam> && is_valid_coord_v<DstCoord> &&
+    Std::enable_if_t<is_valid_quant_v<Quant> && is_valid_coord_v<DstCoord> &&
         is_valid_coord_v<SrcCoord> && is_valid_shape_v<CopyShape>, int> = 0>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src,
-    const QuantParam& quant, const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape)
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src,
+    const Quant& quant, const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape)
 {
     check_copy_params<SrcTensor, SrcCoord, CopyShape>();
     atom.call(dst, src, quant, dst_coord, src_coord, copy_shape);
 }
 
-template <typename CopyOperationType>
-__aicore__ inline constexpr auto make_copy(const CopyOperationType& copy_operation)
+template <typename CopyOperation>
+__aicore__ inline constexpr auto make_copy(const CopyOperation& operation)
 {
-    return copy_atom<copy_traits<CopyOperationType>>{};
+    return copy_atom<copy_traits<CopyOperation>>{};
 }
 
-template <typename CopyOperationType, typename CopyTraitType>
-__aicore__ inline constexpr auto make_copy(const CopyOperationType& copy_operation, const CopyTraitType& copy_trait)
+template <typename CopyOperation, typename CopyTrait>
+__aicore__ inline constexpr auto make_copy(const CopyOperation& operation, const CopyTrait& trait)
 {
-    return copy_atom<copy_traits<CopyOperationType, CopyTraitType>>{};
+    return copy_atom<copy_traits<CopyOperation, CopyTrait>>{};
 }
 
 } // namespace te

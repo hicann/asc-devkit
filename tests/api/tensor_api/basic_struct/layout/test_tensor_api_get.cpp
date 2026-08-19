@@ -27,12 +27,9 @@ TEST_F(tensor_api_layout_get, test_get_layout_slices)
 
     auto layout = make_layout(make_shape(10, 20, 30), make_stride(600, 30, 1));
 
-    auto all = get(layout);
     auto dim1 = get<1>(layout);
     auto dim2 = get<2>(make_shape(10, 20, 30));
 
-    EXPECT_EQ(AscendC::Std::get<0>(get_shape(all)), 10);
-    EXPECT_EQ(AscendC::Std::get<2>(get_stride(all)), 1);
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(dim1)), 20);
     EXPECT_EQ(AscendC::Std::get<0>(get_stride(dim1)), 30);
     EXPECT_EQ(dim2, 30);

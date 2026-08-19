@@ -28,31 +28,20 @@
 namespace asc {
 namespace te {
 
-template <typename... Args>
-struct mmad_atom;
+template <typename MmadOperation, typename... Args>
+template <const typename mmad_atom<mmad_traits<MmadOperation, Args...>>::trait_type& trait, typename... Params>
+__aicore__ inline void mmad_atom<mmad_traits<MmadOperation, Args...>>::call(const Params&... params) const
+{
+    mmad_traits_type::template mmad_unpack<trait>(params...);
+}
 
-template <typename MmadOperationType>
-struct mmad_atom<MmadOperationType> : mmad_atom<mmad_traits<MmadOperationType>> {};
-
-template <typename MmadOperationType, typename... Args>
-struct mmad_atom<mmad_traits<MmadOperationType, Args...>> : mmad_traits<MmadOperationType, Args...> {
-    using mmad_trait_type = mmad_traits<MmadOperationType, Args...>;
-    using trait_type = get_trait_member_type_t<mmad_trait_type>;
-    static constexpr const trait_type default_trait = mmad_trait_type::default_trait;
-
-    template <const trait_type& traits = default_trait, typename... Params>
-    __aicore__ inline void call(const Params&... params) const
-    {
-        mmad_trait_type::template mmad_unpack<traits>(params...);
-    }
-
-    template <typename... TraitsArgs>
-    __aicore__ inline auto with(TraitsArgs&&... args) const
-    {
-        auto traits = mmad_trait_type::with(static_cast<TraitsArgs&&>(args)...);
-        return mmad_atom<decltype(traits)>{traits};
-    }
-};
+template <typename MmadOperation, typename... Args>
+template <typename... TraitArgs>
+__aicore__ inline auto mmad_atom<mmad_traits<MmadOperation, Args...>>::with(TraitArgs&&... args) const
+{
+    auto traits = mmad_traits_type::with(static_cast<TraitArgs&&>(args)...);
+    return mmad_atom<decltype(traits)>{traits};
+}
 
 } // namespace te
 } // namespace asc

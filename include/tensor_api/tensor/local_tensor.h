@@ -23,16 +23,15 @@
 namespace asc {
 namespace te {
 
-template <typename EngineType, typename LayoutType>
-struct local_tensor : public base_tensor<EngineType, LayoutType> {
-    using tensor_api_base = base_tensor<EngineType, LayoutType>;
+template <typename EngineT, typename LayoutT>
+struct local_tensor : public base_tensor<EngineT, LayoutT> {
+    using tensor_api_base = base_tensor<EngineT, LayoutT>;
     using element_type = typename tensor_api_base::element_type;
     using data_type = get_attribute_element_type<element_type*>;
     using layoutType = typename tensor_api_base::layout_type;
 
-    __aicore__ inline local_tensor() = default;
-    __aicore__ inline local_tensor(const EngineType& engine, const LayoutType& layout) : tensor_api_base(engine, layout)
-    {}
+    __aicore__ inline local_tensor();
+    __aicore__ inline local_tensor(const EngineT& engine, const LayoutT& layout);
 
     template <load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Coord>
     __simd_callee__ inline decltype(auto) load(const Coord& coord) const;

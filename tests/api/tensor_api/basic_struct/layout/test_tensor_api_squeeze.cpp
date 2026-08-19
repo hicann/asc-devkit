@@ -27,7 +27,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_single_dim)
     auto layout = make_layout(make_shape(_4{}, _1{}, _5{}));
     auto squeezed = squeeze<1>(layout);
 
-    static_assert(decltype(squeezed)::rank == 2);
+    static_assert(decltype(squeezed)::rank_size == 2);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(squeezed.shape()).value, 5);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.stride()).value, 5);
@@ -41,7 +41,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_multiple_dims)
     auto layout = make_layout(make_shape(_1{}, _4{}, _1{}));
     auto squeezed = squeeze<0, 2>(layout);
 
-    static_assert(decltype(squeezed)::rank == 1);
+    static_assert(decltype(squeezed)::rank_size == 1);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
 }
 
@@ -52,7 +52,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_no_op_when_size_not_one)
     auto layout = make_layout(make_shape(_4{}, _5{}));
     auto squeezed = squeeze<0>(layout);
 
-    static_assert(decltype(squeezed)::rank == 2);
+    static_assert(decltype(squeezed)::rank_size == 2);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(squeezed.shape()).value, 5);
 }
@@ -64,7 +64,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_pattern_flat)
     auto layout = make_layout(make_shape(_1{}, _4{}, _1{}));
     auto squeezed = squeeze(layout, make_coord(_1{}, _, _1{}));
 
-    static_assert(decltype(squeezed)::rank == 1);
+    static_assert(decltype(squeezed)::rank_size == 1);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
 }
 
@@ -75,7 +75,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_pattern_keep_all)
     auto layout = make_layout(make_shape(_4{}, _5{}));
     auto squeezed = squeeze(layout, make_coord(_, _));
 
-    static_assert(decltype(squeezed)::rank == 2);
+    static_assert(decltype(squeezed)::rank_size == 2);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(squeezed.shape()).value, 5);
 }
@@ -87,7 +87,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_pattern_mark_non_one)
     auto layout = make_layout(make_shape(_4{}, _5{}));
     auto squeezed = squeeze(layout, make_coord(_1{}, _));
 
-    static_assert(decltype(squeezed)::rank == 2);
+    static_assert(decltype(squeezed)::rank_size == 2);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(squeezed.shape()).value, 5);
 }
@@ -98,7 +98,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_rank_change)
     using namespace asc::te;
     auto layout = make_layout(make_shape(_1{}, _4{}, _1{}, _5{}));
     auto squeezed = squeeze<0, 2>(layout);
-    static_assert(decltype(squeezed)::rank == 2, "rank should drop by 2");
+    static_assert(decltype(squeezed)::rank_size == 2, "rank should drop by 2");
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(squeezed.shape()).value, 5);
 }
@@ -111,7 +111,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_mode_equivalence)
     auto by_dims = squeeze<0, 2>(layout);
     auto by_pattern = squeeze(layout, make_coord(_1{}, _, _1{}));
 
-    static_assert(decltype(by_dims)::rank == decltype(by_pattern)::rank, "modes should give same rank");
+    static_assert(decltype(by_dims)::rank_size == decltype(by_pattern)::rank_size, "modes should give same rank");
     EXPECT_EQ(AscendC::Std::get<0>(by_dims.shape()).value, AscendC::Std::get<0>(by_pattern.shape()).value);
 }
 
@@ -123,8 +123,8 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_unordered_dims)
     auto ordered = squeeze<0, 2>(layout);
     auto unordered = squeeze<2, 0>(layout);
 
-    static_assert(decltype(ordered)::rank == decltype(unordered)::rank, "order must not affect rank");
-    static_assert(decltype(unordered)::rank == 2);
+    static_assert(decltype(ordered)::rank_size == decltype(unordered)::rank_size, "order must not affect rank");
+    static_assert(decltype(unordered)::rank_size == 2);
     EXPECT_EQ(AscendC::Std::get<0>(unordered.shape()).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(unordered.shape()).value, 5);
     EXPECT_EQ(AscendC::Std::get<0>(ordered.shape()).value, AscendC::Std::get<0>(unordered.shape()).value);
@@ -144,7 +144,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_nested_batch_dim)
 
     // Dropping the batch axis leaves a single nested tuple, which is unwrapped:
     // (1, ((16,2),(16,3))) -> ((16,2),(16,3)), rank 2.
-    static_assert(decltype(squeezed)::rank == 2, "batch axis dropped and outer wrapper unwrapped");
+    static_assert(decltype(squeezed)::rank_size == 2, "batch axis dropped and outer wrapper unwrapped");
     auto shape = squeezed.shape();
     auto stride = squeezed.stride();
     EXPECT_EQ((asc::te::get<0, 0>(shape).value), 16);
@@ -165,7 +165,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_nested_pattern)
     auto squeezed = squeeze(layout, make_coord(_1{}, make_coord(make_coord(_, _), make_coord(_, _))));
 
     // Batch dropped and outer wrapper unwrapped: ((16,2),(16,3)), rank 2.
-    static_assert(decltype(squeezed)::rank == 2);
+    static_assert(decltype(squeezed)::rank_size == 2);
     auto shape = squeezed.shape();
     EXPECT_EQ((asc::te::get<0, 0>(shape).value), 16);
     EXPECT_EQ((asc::te::get<1, 1>(shape).value), 3);
@@ -180,7 +180,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_unwrap_batch)
         make_shape(_1{}, make_shape(_8{}, _16{})), make_stride(AscendC::Std::Int<128>{}, make_stride(_16{}, _1{})));
     auto squeezed = squeeze<0>(layout);
 
-    static_assert(decltype(squeezed)::rank == 2, "(1,(m_value,K)) -> (m_value,K)");
+    static_assert(decltype(squeezed)::rank_size == 2, "(1,(m_value,K)) -> (m_value,K)");
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 8);
     EXPECT_EQ(AscendC::Std::get<1>(squeezed.shape()).value, 16);
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.stride()).value, 16);
@@ -194,7 +194,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_scalar_not_unwrapped)
     auto layout = make_layout(make_shape(_4{}, _1{}));
     auto squeezed = squeeze<1>(layout);
 
-    static_assert(decltype(squeezed)::rank == 1, "lone scalar axis stays rank 1");
+    static_assert(decltype(squeezed)::rank_size == 1, "lone scalar axis stays rank 1");
     EXPECT_EQ(AscendC::Std::get<0>(squeezed.shape()).value, 4);
 }
 
@@ -210,7 +210,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_double_nested_probe)
     auto squeezed = squeeze(layout, make_coord(_1{}, make_coord(_1{}, make_coord(_, _))));
 
     // Recursive squeeze removes both the outer and the inner 1: (1,(1,(2,3))) -> (2,3).
-    static_assert(decltype(squeezed)::rank == 2, "outer and inner 1 removed -> (2,3)");
+    static_assert(decltype(squeezed)::rank_size == 2, "outer and inner 1 removed -> (2,3)");
     auto shape = squeezed.shape();
     EXPECT_EQ(AscendC::Std::get<0>(shape).value, 2);
     EXPECT_EQ(AscendC::Std::get<1>(shape).value, 3);
@@ -228,7 +228,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_inner_ones_probe)
     auto squeezed = squeeze(layout, make_coord(make_coord(_1{}, _), make_coord(_1{}, _)));
 
     // Recursive squeeze: each inner (1,x) drops its 1 and unwraps to x, giving (4,5).
-    static_assert(decltype(squeezed)::rank == 2, "inner 1s removed -> (4,5)");
+    static_assert(decltype(squeezed)::rank_size == 2, "inner 1s removed -> (4,5)");
     auto shape = squeezed.shape();
     EXPECT_EQ(AscendC::Std::get<0>(shape).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(shape).value, 5);
@@ -274,7 +274,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_runtime_dim)
     // squeeze the batch axis (mode 1, by index).
     auto squeezed = squeeze<0>(layout);
 
-    static_assert(decltype(squeezed)::rank == 2, "runtime axis must be dropped at compile time");
+    static_assert(decltype(squeezed)::rank_size == 2, "runtime axis must be dropped at compile time");
     static_assert(
         AscendC::Std::is_same_v<get_layout_pattern<decltype(squeezed)>, nz_layout_ptn>,
         "pattern nz_layout_ptn must be preserved");
@@ -287,7 +287,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_runtime_multiple_dims)
     auto layout = make_layout(make_shape(1, 4, 1), make_stride(4, 1, 1));
     auto squeezed = squeeze<0, 2>(layout);
 
-    static_assert(decltype(squeezed)::rank == 1);
+    static_assert(decltype(squeezed)::rank_size == 1);
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(squeezed)), 4);
     EXPECT_EQ(AscendC::Std::get<0>(get_stride(squeezed)), 1);
 }
@@ -300,7 +300,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_mixed_static_and_runtime)
     auto layout = make_layout(make_shape(_1{}, 4, 1), make_stride(4, 1, 1));
     auto squeezed = squeeze<0, 2>(layout);
 
-    static_assert(decltype(squeezed)::rank == 1);
+    static_assert(decltype(squeezed)::rank_size == 1);
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(squeezed)), 4);
 }
 
@@ -314,7 +314,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_runtime_no_validation)
     auto layout = make_layout(make_shape(batch, 32, 64), make_stride(32 * 64, 64, 1));
     auto squeezed = squeeze<0>(layout);
 
-    static_assert(decltype(squeezed)::rank == 2);
+    static_assert(decltype(squeezed)::rank_size == 2);
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(squeezed)), 32);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(squeezed)), 64);
     EXPECT_EQ(AscendC::Std::get<0>(get_stride(squeezed)), 64);
@@ -329,7 +329,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_static_non_one_kept)
     auto layout = make_layout(make_shape(_4{}, _5{}));
     auto squeezed = squeeze<1>(layout);
 
-    static_assert(decltype(squeezed)::rank == 2, "static non-one axis must be kept");
+    static_assert(decltype(squeezed)::rank_size == 2, "static non-one axis must be kept");
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(squeezed)).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(squeezed)).value, 5);
 }
@@ -342,7 +342,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_runtime_pattern)
     auto layout = make_layout(make_shape(1, 4, 1), make_stride(4, 1, 1));
     auto squeezed = squeeze(layout, make_coord(_1{}, _, _1{}));
 
-    static_assert(decltype(squeezed)::rank == 1);
+    static_assert(decltype(squeezed)::rank_size == 1);
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(squeezed)), 4);
     EXPECT_EQ(AscendC::Std::get<0>(get_stride(squeezed)), 1);
 }
@@ -354,7 +354,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_pattern_static_non_one_kept)
     auto layout = make_layout(make_shape(_4{}, _5{}));
     auto squeezed = squeeze(layout, make_coord(_1{}, _));
 
-    static_assert(decltype(squeezed)::rank == 2, "static non-one _1-marked axis must be kept");
+    static_assert(decltype(squeezed)::rank_size == 2, "static non-one _1-marked axis must be kept");
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(squeezed)).value, 4);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(squeezed)).value, 5);
 }
@@ -368,13 +368,13 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_make_frame_layout_batch_one)
     auto batch_layout = make_frame_layout<nz_layout_ptn>(1, 32, 64);
 
     // Batch layout shape: (1, ((16,2),(16,4))), rank 2 (outer batch + inner fractal).
-    static_assert(decltype(batch_layout)::rank == 2, "batch NZ layout rank should be 2");
+    static_assert(decltype(batch_layout)::rank_size == 2, "batch NZ layout rank should be 2");
 
     // squeeze the batch axis (mode 1, by index).
     auto squeezed = squeeze<0>(batch_layout);
 
     // After squeeze: batch removed, inner fractal unwrapped -> rank 2 (the NZ inner).
-    static_assert(decltype(squeezed)::rank == 2, "squeezed NZ should be rank 2");
+    static_assert(decltype(squeezed)::rank_size == 2, "squeezed NZ should be rank 2");
     static_assert(
         AscendC::Std::is_same_v<get_layout_pattern<decltype(squeezed)>, nz_layout_ptn>,
         "pattern nz_layout_ptn must be preserved");
@@ -388,7 +388,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_make_frame_layout_batch_one)
 
     // Also verify mode 2 (pattern) gives the same result.
     auto squeezed_by_pattern = squeeze(batch_layout, make_coord(_1{}, make_coord(make_coord(_, _), make_coord(_, _))));
-    static_assert(decltype(squeezed_by_pattern)::rank == 2);
+    static_assert(decltype(squeezed_by_pattern)::rank_size == 2);
     EXPECT_EQ((asc::te::get<0, 0>(squeezed_by_pattern.shape())), 16);
     EXPECT_EQ((asc::te::get<1, 1>(squeezed_by_pattern.shape())), 4);
 }
@@ -411,7 +411,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_nn_two_batch_after_slice)
 
     // Flat multi-batch NN layout: (2, 3, ((2,8),(16,2))), rank 3.
     auto layout = make_frame_layout<nn_layout_ptn, 2>(batch0, batch1, row, col);
-    static_assert(decltype(layout)::rank == 3, "two flat batch axes + NN base block");
+    static_assert(decltype(layout)::rank_size == 3, "two flat batch axes + NN base block");
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(layout)), batch0);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(layout)), batch1);
     EXPECT_EQ(AscendC::Std::get<0>(get_stride(layout)), batch1 * base_capacity); // 3 * 512
@@ -427,7 +427,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_nn_two_batch_after_slice)
 
     // Batch axes are now 1; the base block is untouched. Address moved to the (1,2) batch element.
     using sliced_layout = AscendC::Std::remove_cvref_t<decltype(sliced.layout())>;
-    static_assert(sliced_layout::rank == 3);
+    static_assert(sliced_layout::rank_size == 3);
     EXPECT_EQ(sliced.data(), tensor.data() + layout(coord));
     EXPECT_EQ(AscendC::Std::get<0>(sliced.shape()), 1);
     EXPECT_EQ(AscendC::Std::get<1>(sliced.shape()), 1);
@@ -435,7 +435,7 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_nn_two_batch_after_slice)
     // squeeze the two degenerate batch axes; only the NN fractal block remains.
     auto squeezed = squeeze<0, 1>(sliced.layout());
 
-    static_assert(decltype(squeezed)::rank == 2, "both batch axes dropped, NN block unwrapped");
+    static_assert(decltype(squeezed)::rank_size == 2, "both batch axes dropped, NN block unwrapped");
     static_assert(
         AscendC::Std::is_same_v<get_layout_pattern<decltype(squeezed)>, nn_layout_ptn>,
         "squeeze must preserve nn_layout_ptn");
@@ -450,14 +450,14 @@ TEST_F(tensor_api_layout_squeeze, test_squeeze_nn_two_batch_after_slice)
     // Strides of the base block survive the slice + squeeze unchanged.
     auto stride = squeezed.stride();
     EXPECT_EQ((asc::te::get<0, 0>(stride)), 1);
-    EXPECT_EQ((asc::te::get<0, 1>(stride)), 32); // c0_value * FRACTAL_FIXED = 2 * 16
+    EXPECT_EQ((asc::te::get<0, 1>(stride)), 32); // c0_value * fractal_fixed = 2 * 16
     EXPECT_EQ((asc::te::get<1, 0>(stride)), 2);  // c0_value
-    EXPECT_EQ((asc::te::get<1, 1>(stride)), 256); // row * FRACTAL_FIXED = 16 * 16
+    EXPECT_EQ((asc::te::get<1, 1>(stride)), 256); // row * fractal_fixed = 16 * 16
 
     // Mode 2 (isomorphic pattern) on the same sliced layout gives the same result.
     auto squeezed_by_pattern =
         squeeze(sliced.layout(), make_coord(_1{}, _1{}, make_coord(make_coord(_, _), make_coord(_, _))));
-    static_assert(decltype(squeezed_by_pattern)::rank == 2);
+    static_assert(decltype(squeezed_by_pattern)::rank_size == 2);
     static_assert(AscendC::Std::is_same_v<get_layout_pattern<decltype(squeezed_by_pattern)>, nn_layout_ptn>);
     EXPECT_EQ((asc::te::get<0, 0>(squeezed_by_pattern.shape())), 2);
     EXPECT_EQ((asc::te::get<1, 1>(squeezed_by_pattern.shape())), 2);

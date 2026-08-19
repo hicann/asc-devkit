@@ -29,7 +29,7 @@ namespace te {
 
 class copy_l1_to_biastable_ignore {
 public:
-    template <const copy_l1_to_biastable_trait& trait, typename... Args>
+    template <const l1_to_biastable_trait& trait, typename... Args>
     __aicore__ inline static void run(const Args&... args)
     {
         static_assert(Std::is_same_v<Args..., void>, "copy_l1_to_biastable_ignore should not be called");

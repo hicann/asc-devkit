@@ -10,7 +10,7 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_ENTRY_H
 #endif
 
 /*!
@@ -20,19 +20,19 @@
 #ifndef INCLUDE_TENSOR_API_TENSOR_H
 #define INCLUDE_TENSOR_API_TENSOR_H
 
-#include "tensor_api/algorithm/copy.h"
-#include "tensor_api/algorithm/mmad.h"
-#include "tensor_api/arch/arch.h"
-#include "tensor_api/atom/atom.h"
-#include "tensor_api/tensor/layout.h"
 #include "tensor_api/tensor/tensor.h"
+#include "tensor_api/tensor/layout_interface.h"
 #include "tensor_api/tensor/pointer.h"
 #include "tensor_api/utils/utils.h"
+#include "tensor_api/arch/arch.h"
+#include "tensor_api/atom/atom.h"
+#include "tensor_api/algorithm/copy.h"
+#include "tensor_api/algorithm/mmad.h"
 #include "impl/tensor_api/legacy/legacy.h"
 
 #endif // INCLUDE_TENSOR_API_TENSOR_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_ENTRY_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_ENTRY_H
 #endif

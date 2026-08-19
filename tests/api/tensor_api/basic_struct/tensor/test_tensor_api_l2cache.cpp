@@ -57,16 +57,16 @@ TEST_F(tensor_api_tensor_cache_mode, set_l2_cache_hint)
                              make_stride(_4{}, _2{}, _1{}));
 
     tensor.set_l2_cache_hint(cache_mode::disable);
-    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::disable));
+    EXPECT_EQ(tensor.get_cache_mode(), cache_mode::disable);
 
     tensor.set_l2_cache_hint(cache_mode::normal);
-    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::normal));
+    EXPECT_EQ(tensor.get_cache_mode(), cache_mode::normal);
 
     tensor.set_l2_cache_hint(cache_mode::last);
-    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::last));
+    EXPECT_EQ(tensor.get_cache_mode(), cache_mode::last);
 
     tensor.set_l2_cache_hint(cache_mode::persistent);
-    EXPECT_EQ(tensor.engine().get_cache_mode(), static_cast<uint8_t>(cache_mode::persistent));
+    EXPECT_EQ(tensor.get_cache_mode(), cache_mode::persistent);
 }
 
 TEST_F(tensor_api_tensor_cache_mode, slice_coord_tensor_can_set_l2_cache_hint)
@@ -85,12 +85,10 @@ TEST_F(tensor_api_tensor_cache_mode, slice_coord_tensor_can_set_l2_cache_hint)
     static_assert(is_tensor_api_global_tensor_v<decltype(coord_tensor)>);
 
     coord_tensor.set_l2_cache_hint(cache_mode::disable);
-    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::disable));
+    EXPECT_EQ(coord_tensor.get_cache_mode(), cache_mode::disable);
 
     coord_tensor.set_l2_cache_hint(cache_mode::normal);
-    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::normal));
+    EXPECT_EQ(coord_tensor.get_cache_mode(), cache_mode::normal);
 }
 
 TEST_F(tensor_api_tensor_cache_mode, slice_tensor_can_set_l2_cache_hint)
@@ -109,12 +107,10 @@ TEST_F(tensor_api_tensor_cache_mode, slice_tensor_can_set_l2_cache_hint)
     static_assert(is_tensor_api_global_tensor_v<decltype(slice_tensor)>);
 
     slice_tensor.set_l2_cache_hint(cache_mode::last);
-    EXPECT_EQ(slice_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::last));
+    EXPECT_EQ(slice_tensor.get_cache_mode(), cache_mode::last);
 
     slice_tensor.set_l2_cache_hint(cache_mode::persistent);
-    EXPECT_EQ(slice_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::persistent));
+    EXPECT_EQ(slice_tensor.get_cache_mode(), cache_mode::persistent);
 }
 
 TEST_F(tensor_api_tensor_cache_mode, slice_tensor_inherits_cache_mode)
@@ -129,23 +125,18 @@ TEST_F(tensor_api_tensor_cache_mode, slice_tensor_inherits_cache_mode)
     auto gm_tensor = make_tensor(make_mem_ptr(gm_data), layout);
 
     gm_tensor.set_l2_cache_hint(cache_mode::disable);
-    EXPECT_EQ(gm_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::disable));
+    EXPECT_EQ(gm_tensor.get_cache_mode(), cache_mode::disable);
 
     auto coord_tensor = gm_tensor(make_coord(2, 4));
-    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::disable));
+    EXPECT_EQ(coord_tensor.get_cache_mode(), cache_mode::disable);
 
     auto slice_tensor = gm_tensor.slice(make_coord(2, 4), make_shape(4, 8));
-    EXPECT_EQ(slice_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::disable));
+    EXPECT_EQ(slice_tensor.get_cache_mode(), cache_mode::disable);
 
     coord_tensor.set_l2_cache_hint(cache_mode::normal);
-    EXPECT_EQ(coord_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::normal));
+    EXPECT_EQ(coord_tensor.get_cache_mode(), cache_mode::normal);
 
-    EXPECT_EQ(gm_tensor.engine().get_cache_mode(),
-              static_cast<uint8_t>(cache_mode::disable));
+    EXPECT_EQ(gm_tensor.get_cache_mode(), cache_mode::disable);
 }
 
 TEST_F(tensor_api_tensor_cache_mode, slice_tensor_still_global_tensor)

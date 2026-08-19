@@ -131,11 +131,11 @@ TEST_F(tensor_api_frame_layout, batch_frame_layout_trait_forms)
     using nz_trait_with_default = get_layout_trait<decltype(nz_layout_with_trait)>;
     using nz_trait_with_data_type = get_layout_trait<decltype(nz_layout_with_data_type)>;
     using nz_compat_trait = get_layout_trait<decltype(nz_layout_with_compat_trait)>;
-    static_assert(nz_trait_with_default::C0_ELEMENT == _8{}, "layout_trait_default<data_type> should only be used to infer c0_value.");
-    static_assert(nz_trait_with_data_type::C0_ELEMENT == _8{}, "Data type argument should only be used to infer c0_value.");
+    static_assert(nz_trait_with_default::c0_element == _8{}, "layout_trait_default<data_type> should only be used to infer c0_value.");
+    static_assert(nz_trait_with_data_type::c0_element == _8{}, "Data type argument should only be used to infer c0_value.");
     static_assert(AscendC::Std::is_same_v<nz_compat_trait, layout_trait<float, _8>>,
         "layout_trait<data_type, c0_value> should remain source-compatible.");
-    static_assert(nz_compat_trait::C0_ELEMENT == _8{}, "layout_trait<data_type, c0_value> should use c0_value as layout trait.");
+    static_assert(nz_compat_trait::c0_element == _8{}, "layout_trait<data_type, c0_value> should use c0_value as layout trait.");
 
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(nd_layout)), 2);
     EXPECT_EQ(AscendC::Std::get<0>(get_stride(nd_layout)), 128);
@@ -614,7 +614,7 @@ TEST_F(tensor_api_frame_layout, multi_batch_frame_layout_two_batches)
     // ND base (8,16): capacity 128. Flat shape (2, 3, (8,16)), strides (384, 128, (16,1)).
     auto layout = make_frame_layout<nd_layout_ptn>(2, 3, 8, 16);
 
-    static_assert(decltype(layout)::rank == 3, "two batch axes + base block are flat");
+    static_assert(decltype(layout)::rank_size == 3, "two batch axes + base block are flat");
 
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(layout)), 2);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(layout)), 3);
@@ -639,7 +639,7 @@ TEST_F(tensor_api_frame_layout, multi_batch_frame_layout_three_batches)
     // base (8,16) capacity 128. Flat shape (2, 3, 4, (8,16)), strides (1536, 512, 128, (16,1)).
     auto layout = make_frame_layout<nd_layout_ptn>(2, 3, 4, 8, 16);
 
-    static_assert(decltype(layout)::rank == 4, "three batch axes + base block are flat");
+    static_assert(decltype(layout)::rank_size == 4, "three batch axes + base block are flat");
 
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(layout)), 2);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(layout)), 3);
@@ -658,7 +658,7 @@ TEST_F(tensor_api_frame_layout, multi_batch_frame_layout_fractal)
     // NZ(32,64) with default trait: single-matrix capacity 2048 (see batch_frame_layout_default_trait).
     auto layout = make_frame_layout<nz_layout_ptn>(2, 3, 32, 64);
 
-    static_assert(decltype(layout)::rank == 3);
+    static_assert(decltype(layout)::rank_size == 3);
 
     EXPECT_EQ(AscendC::Std::get<0>(get_shape(layout)), 2);
     EXPECT_EQ(AscendC::Std::get<1>(get_shape(layout)), 3);

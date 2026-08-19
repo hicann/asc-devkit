@@ -30,10 +30,10 @@ namespace asc {
 namespace te {
 
 template <typename Traits>
-struct copy_traits<copy_ub_to_ub, Traits> : public copy_traits<copy_ub_to_ub, Traits, copy_ub_to_ub, copy_ub_to_ub_trait_default> {};
+struct copy_traits<copy_ub_to_ub, Traits> : public copy_traits<copy_ub_to_ub, Traits, copy_ub_to_ub, ub_to_ub_trait_default> {};
 
 template <>
-struct copy_traits<copy_ub_to_ub> : public copy_traits<copy_ub_to_ub, copy_ub_to_ub_trait_default> {};
+struct copy_traits<copy_ub_to_ub> : public copy_traits<copy_ub_to_ub, ub_to_ub_trait_default> {};
 
 } // namespace te
 } // namespace asc

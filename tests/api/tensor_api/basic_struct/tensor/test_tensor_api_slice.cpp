@@ -174,7 +174,7 @@ TEST_F(tensor_api_tensor_slice, test_slice_flat_two_batch_layout_by_logical_shap
 
     __gm__ half data[batch0 * batch1 * row * col] = {};
     auto layout = make_frame_layout<nz_layout_ptn, layout_trait_default<half>>(batch0, batch1, row, col);
-    static_assert(decltype(layout)::rank == 3, "two flat batch axes + fractal block");
+    static_assert(decltype(layout)::rank_size == 3, "two flat batch axes + fractal block");
 
     auto tensor = make_tensor(make_mem_ptr<location::gm>(data), layout);
 
@@ -185,7 +185,7 @@ TEST_F(tensor_api_tensor_slice, test_slice_flat_two_batch_layout_by_logical_shap
     auto sliced = slice(tensor, coord, slice_shape);
 
     using slice_layout = AscendC::Std::remove_cvref_t<decltype(sliced.layout())>;
-    static_assert(slice_layout::rank == 3, "slice keeps the flat multi-batch rank");
+    static_assert(slice_layout::rank_size == 3, "slice keeps the flat multi-batch rank");
     static_assert(AscendC::Std::is_same_v<get_layout_pattern<slice_layout>, nz_layout_ptn>,
         "Slice must preserve nz_layout_ptn");
 
@@ -220,7 +220,7 @@ TEST_F(tensor_api_tensor_slice, test_slice_flat_three_batch_layout_clamped)
 
     __gm__ half data[batch0 * batch1 * batch2 * row * col] = {};
     auto layout = make_frame_layout<nz_layout_ptn, layout_trait_default<half>>(batch0, batch1, batch2, row, col);
-    static_assert(decltype(layout)::rank == 4, "three flat batch axes + fractal block");
+    static_assert(decltype(layout)::rank_size == 4, "three flat batch axes + fractal block");
 
     auto tensor = make_tensor(make_mem_ptr<location::gm>(data), layout);
 
@@ -230,7 +230,7 @@ TEST_F(tensor_api_tensor_slice, test_slice_flat_three_batch_layout_clamped)
     auto sliced = slice(tensor, coord, slice_shape);
 
     using slice_layout = AscendC::Std::remove_cvref_t<decltype(sliced.layout())>;
-    static_assert(slice_layout::rank == 4);
+    static_assert(slice_layout::rank_size == 4);
     static_assert(AscendC::Std::is_same_v<get_layout_pattern<slice_layout>, nz_layout_ptn>);
 
     EXPECT_EQ(sliced.data(), tensor.data() + layout(coord));

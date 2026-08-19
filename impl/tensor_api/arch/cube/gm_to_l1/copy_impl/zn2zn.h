@@ -29,39 +29,40 @@ namespace te {
 
 class copy_gm_to_l1_zn2zn {
 public:
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        run_gm_to_l1_batched<trait, copy_gm_to_l1_zn2zn, T, U>(dst, src);
+        run_gm_to_l1_batched<trait, copy_gm_to_l1_zn2zn, DstTensor, SrcTensor>(dst, src);
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+              typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape)
     {
-        check_template<trait, T, U>();
-        using type = typename U::element_type;
-        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
-        auto block_count = get_shape_batch_size(src_shape) *
-            Std::ceil_division(get_shape_rows(src_shape), FRACTAL_FIXED);
-        auto block_len = get_shape_columns(src_shape) * C0_SIZE<>;
+        check_template<trait, DstTensor, SrcTensor>();
+        using type = typename SrcTensor::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        auto block_count =
+            get_shape_batch_size(src_shape) * Std::ceil_division(get_shape_rows(src_shape), fractal_fixed);
+        auto block_len = get_shape_columns(src_shape) * c0_size<>;
         auto src_stride = get_matrix_element<attr_info::stride, attr_info::row, 1>(src.layout()) * sizeof(type);
         auto dst_stride = get_matrix_element<attr_info::stride, attr_info::row, 1>(dst.layout()) * sizeof(type);
         if constexpr (is_b4_type<type>) {
             src_stride >>= 1;
             dst_stride >>= 1;
         }
-        copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, block_count, block_len, 0, 0,
-            src.engine().get_cache_mode(), src_stride, dst_stride);
+        copy_gm_to_l1_align_v2_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, block_count, block_len, 0,
+                                                            0, src.engine().get_cache_mode(), src_stride, dst_stride);
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_template()
     {
-        check_layout_pattern<U, T>();
-        check_data_type::check_gm_to_l1_align_v2_nd_data_type<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_gm_to_l1_align_v2_nd_data_type<DstTensor, SrcTensor>();
     }
 
     // Extracts single-matrix parameters from the (batch-stripped) src/dst layouts and emits the
@@ -71,15 +72,14 @@ public:
     // big_fractal_size big-fractals each become matrix_num * big_fractal_size contiguous blocks that
     // share the same per-big-fractal stride. src_nd_matrix_stride/dst_nz_matrix_stride are unused here
     // because that contiguity makes the single src_stride/dst_stride describe the whole sequence.
-    template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
+    template <typename DstTensor, typename SrcTensor, typename SrcLayout, typename DstLayout>
+    __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, const SrcLayout& src_layout,
                                             const DstLayout& dst_layout, uint16_t matrix_num,
                                             uint64_t src_nd_matrix_stride, uint32_t dst_nz_matrix_stride)
     {
-        using type = typename U::element_type;
+        using type = typename SrcTensor::element_type;
 
-        auto small_fractal_size =
-            get_element<attr_info::shape, attr_info::column, 0>(src_layout)
+        auto small_fractal_size = get_element<attr_info::shape, attr_info::column, 0>(src_layout)
                                   * get_element<attr_info::shape, attr_info::column, 1>(src_layout);
         auto big_fractal_size = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
         auto src_stride_size = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
@@ -90,7 +90,7 @@ public:
         uint8_t cache_mode = src.engine().get_cache_mode();
 
         auto block_count = big_fractal_size * matrix_num;
-        auto block_len = small_fractal_size * C0_SIZE<>;
+        auto block_len = small_fractal_size * c0_size<>;
         auto src_stride = src_stride_size * sizeof(type);
         auto dst_stride = dst_stride_size * sizeof(type);
         if constexpr (is_b4_type<type>) {
@@ -98,8 +98,9 @@ public:
             src_stride = src_stride >> 1;
             dst_stride = dst_stride >> 1;
         }
-        copy_gm_to_l1_align_v2_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, left_padding_cnt, right_padding_cnt, cache_mode,
-                                          src_stride, dst_stride);
+        copy_gm_to_l1_align_v2_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len,
+                                                left_padding_cnt, right_padding_cnt, cache_mode, src_stride,
+                                                dst_stride);
     }
 };
 } // namespace te

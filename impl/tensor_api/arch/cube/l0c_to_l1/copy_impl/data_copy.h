@@ -30,108 +30,107 @@
 namespace asc {
 namespace te {
 
-struct copy_l0c_to_l1_trait {
-    __aicore__ constexpr copy_l0c_to_l1_trait() {}
-
-    __aicore__ constexpr copy_l0c_to_l1_trait(asc::te::round_mode round_mode, bool enable_relu,
-                                              bool enable_channel_split) :
-        round_mode(round_mode), enable_relu(enable_relu), enable_channel_split(enable_channel_split)
-    {}
-
-    asc::te::round_mode round_mode = asc::te::round_mode::default_round;
-    bool enable_relu = false;
-    bool enable_channel_split = false;
-};
+__aicore__ constexpr l0c_to_l1_trait::l0c_to_l1_trait(asc::te::round_mode round_mode, bool enable_relu,
+                                                      bool enable_channel_split) :
+    round_mode(round_mode), enable_relu(enable_relu), enable_channel_split(enable_channel_split)
+{}
 
 class data_copy_l0c_to_l1_no_vector_quant {
 public:
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
+                                                 const l0c_to_l1_params& params)
     {
-        if constexpr (is_l0c_out_src_batch_layout_v<U> && !is_l0c_out_batch_nz2nz_v<T, U>) {
+        if constexpr (is_l0c_out_src_batch_layout_v<SrcTensor> && !is_l0c_out_batch_nz2nz_v<DstTensor, SrcTensor>) {
             emit_data_copy<trait, quant_pre>(dst, src, get<1>(dst.layout()), get<1>(src.layout()), params);
         } else {
             emit_data_copy<trait, quant_pre>(dst, src, dst.layout(), src.layout(), params);
         }
     }
 
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U,
-        typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_with_offset(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename DstCoord, typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void data_copy_with_offset(const DstTensor& dst, const SrcTensor& src,
+                                                        const DstCoord& dst_coord, const SrcCoord& src_coord,
+                                                        const CopyShape& copy_shape, const l0c_to_l1_params& params)
     {
-        auto dst_shape = make_slice_shape(coord_dst, dst.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
-        auto copy_params = make_l0c_out_copy_params<T, U>(dst.layout(), src.layout(), dst_shape);
-        copy_l0c_to_l1_instr::data_copy_with_offset<quant_pre, T, U>(dst, src, dst_offset, src_offset, copy_params.n_size,
-            copy_params.m_size, copy_params.src_stride, copy_params.dst_stride, trait.enable_relu, params.unit_flag,
+        auto dst_shape = make_slice_shape(dst_coord, dst.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        auto copy_params = make_l0c_out_copy_params<DstTensor, SrcTensor>(dst.layout(), src.layout(), dst_shape);
+        copy_l0c_to_l1_instr::data_copy_with_offset<quant_pre, DstTensor, SrcTensor>(
+            dst, src, dst_offset, src_offset, copy_params.n_size, copy_params.m_size, copy_params.src_stride,
+            copy_params.dst_stride, trait.enable_relu, static_cast<uint8_t>(params.unit_flag),
             trait.enable_channel_split);
     }
 
 private:
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename DstLayout,
-              typename SrcLayout>
-    __aicore__ inline static void emit_data_copy(const T& dst, const U& src, const DstLayout& dst_layout,
-                                                 const SrcLayout& src_layout, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename DstLayout, typename SrcLayout>
+    __aicore__ inline static void emit_data_copy(const DstTensor& dst, const SrcTensor& src,
+                                                 const DstLayout& dst_layout, const SrcLayout& src_layout,
+                                                 const l0c_to_l1_params& params)
     {
-        auto copy_params = make_l0c_out_copy_params<T, U>(dst_layout, src_layout);
+        auto copy_params = make_l0c_out_copy_params<DstTensor, SrcTensor>(dst_layout, src_layout);
 
         bool relu_en = trait.enable_relu;
-        uint8_t unit_flag = params.unit_flag;
+        uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
 
         bool is_channel_split = trait.enable_channel_split;
 
         copy_l0c_to_l1_instr::data_copy<quant_pre>(dst.data().get(), src.data().get(), copy_params.n_size,
-                                                               copy_params.m_size, copy_params.src_stride,
-                                                               copy_params.dst_stride, relu_en, unit_flag,
-                                                               is_channel_split);
+                                                   copy_params.m_size, copy_params.src_stride, copy_params.dst_stride,
+                                                   relu_en, unit_flag, is_channel_split);
     }
 };
 
 class data_copy_l0c_to_l1_vector_quant {
 public:
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src, const V& quant,
-                                                 const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename Quant>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src, const Quant& quant,
+                                                 const l0c_to_l1_params& params)
     {
-        if constexpr (is_l0c_out_batch_nz2nz_v<T, U>) {
+        if constexpr (is_l0c_out_batch_nz2nz_v<DstTensor, SrcTensor>) {
             emit_batch_nz2_nz_data_copy<trait, quant_pre>(dst, src, quant, params);
-        } else if constexpr (is_l0c_out_src_batch_layout_v<U>) {
+        } else if constexpr (is_l0c_out_src_batch_layout_v<SrcTensor>) {
             emit_data_copy<trait, quant_pre>(dst, src, quant, get<1>(dst.layout()), get<1>(src.layout()), params);
         } else {
             emit_data_copy<trait, quant_pre>(dst, src, quant, dst.layout(), src.layout(), params);
         }
     }
 
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V,
-        typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_with_offset(const T& dst, const U& src, const V& quant,
-        const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename Quant, typename DstCoord, typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void data_copy_with_offset(const DstTensor& dst, const SrcTensor& src, const Quant& quant,
+                                                        const DstCoord& dst_coord, const SrcCoord& src_coord,
+                                                        const CopyShape& copy_shape, const l0c_to_l1_params& params)
     {
-        auto dst_shape = make_slice_shape(coord_dst, dst.layout(), copy_shape);
-        auto base_dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
-        auto copy_params = make_l0c_out_copy_params<T, U>(dst.layout(), src.layout(), dst_shape);
-        uint16_t n_iter_num = Std::ceil_division(copy_params.n_size, MAIN_LOOP_N_SIZE);
+        auto dst_shape = make_slice_shape(dst_coord, dst.layout(), copy_shape);
+        auto base_dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        auto copy_params = make_l0c_out_copy_params<DstTensor, SrcTensor>(dst.layout(), src.layout(), dst_shape);
+        uint16_t n_iter_num = Std::ceil_division(copy_params.n_size, main_loop_n_size);
         for (uint16_t i = 0; i < n_iter_num; ++i) {
-            uint32_t n_offset = i * MAIN_LOOP_N_SIZE;
-            uint32_t cal_n_size = Std::min(copy_params.n_size - n_offset, MAIN_LOOP_N_SIZE);
+            uint32_t n_offset = i * main_loop_n_size;
+            uint32_t cal_n_size = Std::min(copy_params.n_size - n_offset, main_loop_n_size);
             copy_l1_to_fixbuf(quant, cal_n_size, i);
             insert_sync();
-            auto src_coord = make_src_coord<U>(i * CBURST_NUM);
-            auto dst_coord = make_dst_coord<T>(n_offset);
+            auto src_coord = make_src_coord<SrcTensor>(i * cburst_num);
+            auto dst_coord = make_dst_coord<DstTensor>(n_offset);
             auto dst_offset = base_dst_offset + dst.layout()(dst_coord);
-            copy_l0c_to_l1_instr::data_copy_with_offset<quant_pre>(dst, src(src_coord), dst_offset, src_offset, cal_n_size,
-                copy_params.m_size, copy_params.src_stride, copy_params.dst_stride, trait.enable_relu,
-                params.unit_flag, trait.enable_channel_split);
+            copy_l0c_to_l1_instr::data_copy_with_offset<quant_pre>(
+                dst, src(src_coord), dst_offset, src_offset, cal_n_size, copy_params.m_size, copy_params.src_stride,
+                copy_params.dst_stride, trait.enable_relu, static_cast<uint8_t>(params.unit_flag),
+                trait.enable_channel_split);
         }
     }
 
 private:
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V>
-    __aicore__ inline static void emit_batch_nz2_nz_data_copy(const T& dst, const U& src, const V& quant,
-                                                              const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename Quant>
+    __aicore__ inline static void emit_batch_nz2_nz_data_copy(const DstTensor& dst, const SrcTensor& src,
+                                                              const Quant& quant, const l0c_to_l1_params& params)
     {
         auto src_layout = src.layout();
         auto dst_layout = dst.layout();
@@ -143,123 +142,123 @@ private:
         }
     }
 
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V,
-              typename DstLayout, typename SrcLayout>
-    __aicore__ inline static void emit_data_copy(const T& dst, const U& src, const V& quant,
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename Quant, typename DstLayout, typename SrcLayout>
+    __aicore__ inline static void emit_data_copy(const DstTensor& dst, const SrcTensor& src, const Quant& quant,
                                                  const DstLayout& dst_layout, const SrcLayout& src_layout,
-                                                 const fixpipe_params& params)
+                                                 const l0c_to_l1_params& params)
     {
         uint32_t n_size = Std::min(get_total_column_shape(src_layout), get_total_column_shape(dst_layout));
         uint16_t n_iter_num = 1;
         uint32_t cal_n_size = n_size;
         uint32_t tail_n_size = 0;
-        if (cal_n_size > MAIN_LOOP_N_SIZE) {
-            n_iter_num = n_size / MAIN_LOOP_N_SIZE;
-            tail_n_size = n_size % MAIN_LOOP_N_SIZE;
-            cal_n_size = MAIN_LOOP_N_SIZE;
+        if (cal_n_size > main_loop_n_size) {
+            n_iter_num = n_size / main_loop_n_size;
+            tail_n_size = n_size % main_loop_n_size;
+            cal_n_size = main_loop_n_size;
         }
         execute_data_copy<trait, quant_pre>(dst, src, quant, n_iter_num, cal_n_size, tail_n_size, dst_layout,
                                             src_layout, params);
     }
 
-    template <const copy_l0c_to_l1_trait& trait, typename T, bool is_tail, typename DstLayout, typename SrcLayout>
+    template <const l0c_to_l1_trait& trait, typename DstTensor, bool is_tail, typename DstLayout, typename SrcLayout>
     __aicore__ inline static auto generate_params(const DstLayout& dst_layout, const SrcLayout& src_layout,
-                                                  const fixpipe_params& params)
+                                                  const l0c_to_l1_params& params)
     {
         uint32_t n_size = Std::min(get_total_column_shape(src_layout), get_total_column_shape(dst_layout));
         uint32_t m_size = Std::min(get_total_row_shape(src_layout), get_total_row_shape(dst_layout));
         if constexpr (is_tail) {
-            n_size %= MAIN_LOOP_N_SIZE;
+            n_size %= main_loop_n_size;
         } else {
-            if (n_size > MAIN_LOOP_N_SIZE) {
-                n_size = MAIN_LOOP_N_SIZE;
+            if (n_size > main_loop_n_size) {
+                n_size = main_loop_n_size;
             }
         }
 
-        const uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED;
+        const uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
         const uint32_t dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout);
 
         const bool relu_enable = trait.enable_relu;
-        const uint8_t unit_flag = params.unit_flag;
+        const uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
 
         const bool channel_split = trait.enable_channel_split;
         return Std::make_tuple(n_size, m_size, src_stride, dst_stride, relu_enable, unit_flag, channel_split);
     }
 
-    template <typename T>
-    __aicore__ inline static void copy_l1_to_fixbuf(const T& src, uint16_t cal_n_size, uint16_t n_iter_index)
+    template <typename SrcTensor>
+    __aicore__ inline static void copy_l1_to_fixbuf(const SrcTensor& src, uint16_t cal_n_size, uint16_t n_iter_index)
     {
         auto dst_addr = reinterpret_cast<__fbuf__ uint64_t*>(alloc_fixbuf_temp_buf(cal_n_size));
         auto dst = make_tensor(make_mem_ptr<location::fixbuf>(dst_addr), src.layout());
-        auto coord = make_coord(_0{}, n_iter_index * MAIN_LOOP_N_SIZE);
+        auto coord = make_coord(_0{}, n_iter_index * main_loop_n_size);
         auto shape = make_shape(_1{}, cal_n_size);
         auto tile_src = src.slice(coord, shape);
-        copy_l1_to_fixbuf_nd::run<DEFAULT_COPY_L1_FIXBUF_TRAIT>(dst, tile_src);
+        copy_l1_to_fixbuf_nd::run<l1_to_fixbuf_trait_default::value>(dst, tile_src);
         set_qua(dst_addr);
     }
 
-    template <QuantMode_t quant_pre, typename T, typename U, typename ParamTuple, size_t... Is>
-    __aicore__ inline static void data_copy_wrapper(const T& dst, const U& src, const ParamTuple& param_tuple,
-                                                    Std::index_sequence<Is...>)
+    template <QuantMode_t quant_pre, typename DstTensor, typename SrcTensor, typename ParamTuple, size_t... Is>
+    __aicore__ inline static void data_copy_wrapper(const DstTensor& dst, const SrcTensor& src,
+                                                    const ParamTuple& param_tuple, Std::index_sequence<Is...>)
     {
         copy_l0c_to_l1_instr::data_copy<quant_pre>(dst.data().get(), src.data().get(), Std::get<Is>(param_tuple)...);
     }
 
-    template <typename T>
+    template <typename DstTensor>
     __aicore__ inline static constexpr auto make_dst_coord(uint32_t n_offset)
     {
-        using layout_type = typename T::layout_type;
-        if constexpr (layout_type::depth == FIVE_DIM_DATA) {
+        using layout_type = typename DstTensor::layout_type;
+        if constexpr (layout_type::depth == five_dim_data) {
             return make_coord(_0{}, make_coord(make_coord(0, 0), make_coord(0, n_offset)));
-        } else if constexpr (layout_type::depth == FOUR_DIM_DATA) {
+        } else if constexpr (layout_type::depth == four_dim_data) {
             return make_coord(make_coord(0, 0), make_coord(0, n_offset));
-        } else if constexpr (layout_type::depth == THREE_DIM_DATA) {
+        } else if constexpr (layout_type::depth == three_dim_data) {
             return make_coord(_0{}, make_coord(0, n_offset));
         } else {
-            static_assert(layout_type::depth == TWO_DIM_DATA, "Only support two-dim dst tensor.");
+            static_assert(layout_type::depth == two_dim_data, "Only support two-dim dst tensor.");
             return make_coord(0, n_offset);
         }
     }
 
-    template <typename U>
+    template <typename SrcTensor>
     __aicore__ inline static constexpr auto make_src_coord(uint32_t n_offset)
     {
-        using layout_type = typename U::layout_type;
-        if constexpr (layout_type::depth == FIVE_DIM_DATA) {
+        using layout_type = typename SrcTensor::layout_type;
+        if constexpr (layout_type::depth == five_dim_data) {
             return make_coord(_0{}, make_coord(make_coord(0, 0), make_coord(0, n_offset)));
         } else {
-            static_assert(layout_type::depth == FOUR_DIM_DATA, "Only support four-dim or five-dim src tensor.");
+            static_assert(layout_type::depth == four_dim_data, "Only support four-dim or five-dim src tensor.");
             return make_coord(make_coord(0, 0), make_coord(0, n_offset));
         }
     }
 
-    template <const copy_l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename T, typename U, typename V,
-              typename DstLayout, typename SrcLayout>
-    __aicore__ inline static void execute_data_copy(const T& dst, const U& src, const V& quant, uint16_t n_iter_num,
-                                                    uint32_t cal_n_size, uint32_t tail_n_size,
+    template <const l0c_to_l1_trait& trait, QuantMode_t quant_pre, typename DstTensor, typename SrcTensor,
+              typename Quant, typename DstLayout, typename SrcLayout>
+    __aicore__ inline static void execute_data_copy(const DstTensor& dst, const SrcTensor& src, const Quant& quant,
+                                                    uint16_t n_iter_num, uint32_t cal_n_size, uint32_t tail_n_size,
                                                     const DstLayout& dst_layout, const SrcLayout& src_layout,
-                                                    const fixpipe_params& params)
+                                                    const l0c_to_l1_params& params)
     {
-        const auto main_loop_param = generate_params<trait, T, false>(dst_layout, src_layout, params);
+        const auto main_loop_param = generate_params<trait, DstTensor, false>(dst_layout, src_layout, params);
 
         for (uint16_t i = 0; i < n_iter_num; ++i) {
             copy_l1_to_fixbuf(quant, cal_n_size, i);
             insert_sync();
 
-            const auto src_coord = make_src_coord<U>(i * CBURST_NUM);
-            const auto dst_coord = make_dst_coord<T>(i * MAIN_LOOP_N_SIZE);
+            const auto src_coord = make_src_coord<SrcTensor>(i * cburst_num);
+            const auto dst_coord = make_dst_coord<DstTensor>(i * main_loop_n_size);
             data_copy_wrapper<quant_pre>(dst(dst_coord), src(src_coord), main_loop_param,
                                          Std::make_index_sequence<Std::tuple_size_v<decltype(main_loop_param)>>{});
         }
 
         if (tail_n_size) {
-            const auto tail_param = generate_params<trait, T, true>(dst_layout, src_layout, params);
+            const auto tail_param = generate_params<trait, DstTensor, true>(dst_layout, src_layout, params);
 
             copy_l1_to_fixbuf(quant, tail_n_size, n_iter_num);
             insert_sync();
 
-            const auto src_coord = make_src_coord<U>(n_iter_num * CBURST_NUM);
-            const auto dst_coord = make_dst_coord<T>(n_iter_num * MAIN_LOOP_N_SIZE);
+            const auto src_coord = make_src_coord<SrcTensor>(n_iter_num * cburst_num);
+            const auto dst_coord = make_dst_coord<DstTensor>(n_iter_num * main_loop_n_size);
             data_copy_wrapper<quant_pre>(dst(dst_coord), src(src_coord), tail_param,
                                          Std::make_index_sequence<Std::tuple_size_v<decltype(tail_param)>>{});
         }
@@ -268,47 +267,55 @@ private:
 
 class data_copy_l0c_to_l1 {
 public:
-    template <const copy_l0c_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const l0c_to_l1_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U>();
-        check_data_type::check_l0c_to_l1_data_type<quant_pre, T, U>();
-        set_register_impl<T, U>(dst, src);
-        data_copy_l0c_to_l1_no_vector_quant::data_copy_impl<trait, quant_pre, T, U>(dst, src, params);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor>();
+        check_data_type::check_l0c_to_l1_data_type<quant_pre, DstTensor, SrcTensor>();
+        set_register_impl<DstTensor, SrcTensor>(dst, src);
+        data_copy_l0c_to_l1_no_vector_quant::data_copy_impl<trait, quant_pre, DstTensor, SrcTensor>(dst, src, params);
     }
 
-    template <const copy_l0c_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape,
-        const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+              typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape,
+                                      const l0c_to_l1_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U>();
-        check_data_type::check_l0c_to_l1_data_type<quant_pre, T, U>();
-        set_register_impl<T, U>(dst, src);
-        data_copy_l0c_to_l1_no_vector_quant::data_copy_with_offset<trait, quant_pre>(dst, src, coord_dst, coord_src, copy_shape, params);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor>();
+        check_data_type::check_l0c_to_l1_data_type<quant_pre, DstTensor, SrcTensor>();
+        set_register_impl<DstTensor, SrcTensor>(dst, src);
+        data_copy_l0c_to_l1_no_vector_quant::data_copy_with_offset<trait, quant_pre>(dst, src, dst_coord, src_coord,
+                                                                                     copy_shape, params);
     }
 
-    template <const copy_l0c_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src, uint64_t quant, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, uint64_t quant,
+                                      const l0c_to_l1_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U, uint64_t>();
-        set_register_impl<T, U>(dst, src, quant);
-        data_copy_l0c_to_l1_no_vector_quant::data_copy_impl<trait, quant_pre, T, U>(dst, src, params);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor, uint64_t>();
+        set_register_impl<DstTensor, SrcTensor>(dst, src, quant);
+        data_copy_l0c_to_l1_no_vector_quant::data_copy_impl<trait, quant_pre, DstTensor, SrcTensor>(dst, src, params);
     }
 
-    template <const copy_l0c_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, uint64_t quant, const DstCoord& coord_dst, const SrcCoord& coord_src,
-        const ShapeType& copy_shape, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+              typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, uint64_t quant,
+                                      const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape,
+                                      const l0c_to_l1_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U, uint64_t>();
-        set_register_impl<T, U>(dst, src, quant);
-        data_copy_l0c_to_l1_no_vector_quant::data_copy_with_offset<trait, quant_pre>(dst, src, coord_dst, coord_src, copy_shape, params);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor, uint64_t>();
+        set_register_impl<DstTensor, SrcTensor>(dst, src, quant);
+        data_copy_l0c_to_l1_no_vector_quant::data_copy_with_offset<trait, quant_pre>(dst, src, dst_coord, src_coord,
+                                                                                     copy_shape, params);
     }
 
-    template <const copy_l0c_to_l1_trait& trait, typename T, typename U, typename V>
-    __aicore__ inline static void run(const T& dst, const U& src, const V& quant, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename Quant>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const Quant& quant,
+                                      const l0c_to_l1_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U, V>();
-        constexpr bool quant_batched = check_vector_quant_batch_consistency<T, U, V>();
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor, Quant>();
+        constexpr bool quant_batched = check_vector_quant_batch_consistency<DstTensor, SrcTensor, Quant>();
 
         if constexpr (quant_batched) {
             // Fixpipe hardware reads a single quant slice from FB per instruction and reuses it
@@ -321,37 +328,40 @@ public:
                 auto sub_src = make_single_batch_sub_tensor(src, b);
                 auto sub_quant = make_single_batch_sub_tensor(quant, b);
                 set_register_impl<decltype(sub_dst), decltype(sub_src)>(sub_dst, sub_src);
-                data_copy_l0c_to_l1_vector_quant::data_copy_impl<trait, quant_pre, decltype(sub_dst),
-                                                                 decltype(sub_src), decltype(sub_quant)>(sub_dst,
-                    sub_src, sub_quant, params);
+                data_copy_l0c_to_l1_vector_quant::data_copy_impl<trait, quant_pre, decltype(sub_dst), decltype(sub_src),
+                                                                 decltype(sub_quant)>(sub_dst, sub_src, sub_quant,
+                                                                                      params);
             }
         } else {
-            set_register_impl<T, U>(dst, src);
-            data_copy_l0c_to_l1_vector_quant::data_copy_impl<trait, quant_pre, T, U, V>(dst, src, quant, params);
+            set_register_impl<DstTensor, SrcTensor>(dst, src);
+            data_copy_l0c_to_l1_vector_quant::data_copy_impl<trait, quant_pre, DstTensor, SrcTensor, Quant>(
+                dst, src, quant, params);
         }
     }
 
-    template <const copy_l0c_to_l1_trait& trait, typename T, typename U, typename V, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, const V& quant, const DstCoord& coord_dst, const SrcCoord& coord_src,
-        const ShapeType& copy_shape, const fixpipe_params& params)
+    template <const l0c_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename Quant, typename DstCoord,
+              typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const Quant& quant,
+                                      const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape,
+                                      const l0c_to_l1_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U, V>();
-        constexpr bool quant_batched = check_vector_quant_batch_consistency<T, U, V>();
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor, Quant>();
+        constexpr bool quant_batched = check_vector_quant_batch_consistency<DstTensor, SrcTensor, Quant>();
         if constexpr (quant_batched) {
-            auto dst_shape = make_slice_shape(coord_dst, dst.layout(), copy_shape);
+            auto dst_shape = make_slice_shape(dst_coord, dst.layout(), copy_shape);
             uint32_t batch_size = get_shape_batch_size(dst_shape);
             for (uint32_t b = 0; b < batch_size; ++b) {
-                auto sub_dst = make_single_batch_sub_tensor(dst, get<0>(coord_dst) + b);
-                auto sub_src = make_single_batch_sub_tensor(src, get<0>(coord_src) + b);
+                auto sub_dst = make_single_batch_sub_tensor(dst, get<0>(dst_coord) + b);
+                auto sub_src = make_single_batch_sub_tensor(src, get<0>(src_coord) + b);
                 auto sub_quant = make_single_batch_sub_tensor(quant, b);
                 set_register_impl<decltype(sub_dst), decltype(sub_src)>(sub_dst, sub_src);
                 data_copy_l0c_to_l1_vector_quant::data_copy_with_offset<trait, quant_pre>(
-                    sub_dst, sub_src, sub_quant, get<1>(coord_dst), get<1>(coord_src), get<1>(copy_shape), params);
+                    sub_dst, sub_src, sub_quant, get<1>(dst_coord), get<1>(src_coord), get<1>(copy_shape), params);
             }
         } else {
-            set_register_impl<T, U>(dst, src);
-            data_copy_l0c_to_l1_vector_quant::data_copy_with_offset<trait, quant_pre>(
-                dst, src, quant, coord_dst, coord_src, copy_shape, params);
+            set_register_impl<DstTensor, SrcTensor>(dst, src);
+            data_copy_l0c_to_l1_vector_quant::data_copy_with_offset<trait, quant_pre>(dst, src, quant, dst_coord,
+                                                                                      src_coord, copy_shape, params);
         }
     }
 };

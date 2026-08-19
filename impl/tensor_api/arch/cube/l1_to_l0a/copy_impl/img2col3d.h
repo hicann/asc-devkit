@@ -35,16 +35,17 @@ namespace te {
 // unchanged; only channel_size differs from the conv2D path (C1*C0).
 class load_data_l1_to_l0a_img2col3d {
 public:
-    template <const copy_l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor, typename PadT>
-    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const img2col_params<PadT>& params)
+    template <const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor, typename PaddingValue>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src,
+                                      const img2col_params<PaddingValue>& params)
     {
-        // PadT (the pad_value type) should match the L0A dst element type so the padding register bit
-        // pattern is correct; the caller picks it when constructing img2col_params<PadT>.
+        // PaddingValue should match the L0A dst element type so the padding register bit pattern is correct;
+        // the caller picks it when constructing img2col_params<PaddingValue>.
         auto src_layout = src.layout();
 
         // Window start offsets come from params (default 0), same as the 2D img2col path.
-        uint16_t k_start_pt = params.k_start_pt;
-        uint16_t m_start_pt = params.m_start_pt;
+        uint16_t k_start_pos = params.k_start_pos;
+        uint16_t m_start_pos = params.m_start_pos;
 
         // src L1 NDC1HWC0 (N, D, C1, H, W, C0): l1_h/l1_w at index 3/4; D and C1 merge into the channel
         // axis -> channel_size = D*C1*C0 = Shape[1]*Shape[2]*Shape[5].
@@ -55,12 +56,12 @@ public:
         load_l1_to_l0a_img2col_instr::set_f_matrix(l1_h, l1_w, params.pad_list);
         load_l1_to_l0a_img2col_instr::set_padding(params.pad_value);
         load_l1_to_l0a_img2col_instr::set_repeat(
-            static_cast<uint16_t>(Std::ceil_division(params.m_extension, FRACTAL_FIXED)));
-        load_l1_to_l0a_img2col_instr::load_data(dst.data().get(), src.data().get(), params.k_extension,
-                                            params.m_extension, k_start_pt, m_start_pt,
-                                           params.stride_w, params.stride_h, params.filter_w, params.filter_h,
-                                           params.dilation_filter_w, params.dilation_filter_h, params.filter_size_w,
-                                           params.filter_size_h, params.transpose, params.f_matrix_ctrl, channel_size);
+            static_cast<uint16_t>(Std::ceil_division(params.m_extension, fractal_fixed)));
+        load_l1_to_l0a_img2col_instr::load_data(
+            dst.data().get(), src.data().get(), params.k_extension, params.m_extension, k_start_pos, m_start_pos,
+            params.stride_w, params.stride_h, params.filter_w, params.filter_h, params.dilation_filter_w,
+            params.dilation_filter_h, params.enable_filter_w_extend, params.enable_filter_h_extend,
+            params.enable_transpose, params.enable_f_matrix_ctrl, channel_size);
     }
 };
 

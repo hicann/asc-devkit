@@ -27,23 +27,24 @@
 namespace asc {
 namespace te {
 
-template <typename T, typename U, size_t... Is>
-__aicore__ inline decltype(auto) make_fractal_shape(T origin_shape, U inner_shape, Std::index_sequence<Is...>)
+template <typename OriginShape, typename InnerShape, size_t... Is>
+__aicore__ inline decltype(auto) make_fractal_shape(OriginShape origin_shape, InnerShape inner_shape,
+                                                    Std::index_sequence<Is...>)
 {
     auto outer_shape = Std::make_tuple(Std::ceil_division(Std::get<Is>(origin_shape), Std::get<Is>(inner_shape))...);
     return make_shape(make_shape(Std::get<Is>(inner_shape), Std::get<Is>(outer_shape))...);
 }
 
-template <typename T, typename U>
-__aicore__ inline decltype(auto) make_fractal_shape(T origin_shape, U inner_shape)
+template <typename OriginShape, typename InnerShape>
+__aicore__ inline decltype(auto) make_fractal_shape(OriginShape origin_shape, InnerShape inner_shape)
 {
-    static_assert(Std::tuple_size_v<T> == Std::tuple_size_v<U>, "OriginShape and InnerShape must match");
-    return make_fractal_shape(origin_shape, inner_shape, Std::make_index_sequence<Std::tuple_size_v<U>>{});
+    static_assert(Std::tuple_size_v<OriginShape> == Std::tuple_size_v<InnerShape>,
+                  "OriginShape and InnerShape must match");
+    return make_fractal_shape(origin_shape, inner_shape, Std::make_index_sequence<Std::tuple_size_v<InnerShape>>{});
 }
 
 } // namespace te
 } // namespace asc
-
 
 #endif // IMPL_TENSOR_API_TENSOR_LAYOUT_FRACTAL_H
 

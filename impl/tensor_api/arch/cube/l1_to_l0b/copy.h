@@ -27,74 +27,60 @@
 namespace asc {
 namespace te {
 
-constexpr copy_l1_to_l0b_trait DEFAULT_COPY_L1_TO_L0B_TRAIT;
+template <typename Trait, const Trait& trait, typename... Args>
+__aicore__ inline void copy_l1_to_l0b::copy(const Args&... args)
+{
+    load_data<trait, Args...>(args...);
+}
 
-struct copy_l1_to_l0b_trait_default {
-    using trait_type = copy_l1_to_l0b_trait;
-    static constexpr const trait_type value = DEFAULT_COPY_L1_TO_L0B_TRAIT;
-};
-
-using copy_l1_to_l0b_mode_set =
-    tuple_map<Std::tuple<Std::tuple<_1, _0>, copy_mode::normal>, Std::tuple<Std::tuple<_1, _1>, copy_mode::normal>,
-             Std::tuple<Std::tuple<_0, _0>, copy_mode::trans>, Std::tuple<Std::tuple<_0, _1>, copy_mode::trans_b8b4>>;
-
-struct copy_l1_to_l0b {
-public:
-    template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void copy(const Args&... args)
-    {
-        if ASCEND_IS_AIC {
-            load_data<traits, Args...>(args...);
-        }
+template <const l1_to_l0b_trait& trait, typename DstTensor, typename SrcTensor>
+__aicore__ inline void copy_l1_to_l0b::load_data(const DstTensor& dst, const SrcTensor& src)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(Std::is_same_v<dst_pos, location::l0b>,
+                  "For copy_l1_to_l0b, the destination tensor must be located in L0B.");
+    static_assert(Std::is_same_v<src_pos, location::l1>,
+                  "For copy_l1_to_l0b, the source tensor must be located in L1.");
+    using dst_layout = typename DstTensor::layout_type;
+    using src_layout = typename SrcTensor::layout_type;
+    using dst_pattern = get_layout_pattern<dst_layout>;
+    using src_pattern = get_layout_pattern<src_layout>;
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_l0b");
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_l0b");
+    TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_l0b");
+    if constexpr (dst_layout::depth == five_dim_data && src_layout::depth == five_dim_data) {
+        TENSOR_API_DEBUG_CHECK(debug_check_batch_match, get<0>(src.layout().shape()), get<0>(dst.layout().shape()),
+                               "copy_l1_to_l0b");
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_batch_stride, get<0>(src.layout().stride()),
+                               remove_batch_dim(src.layout()).capacity(), get<0>(dst.layout().stride()),
+                               remove_batch_dim(dst.layout()).capacity(), "copy_l1_to_l0b");
     }
+    using copy_l1_to_l0b_impl =
+        typename copy_l1_to_l0b_routing<current_arch_version, dst_pattern, src_pattern>::type;
+    copy_l1_to_l0b_impl::template run<trait, DstTensor, SrcTensor>(dst, src);
+}
 
-private:
-    template <const copy_l1_to_l0b_trait& trait = DEFAULT_COPY_L1_TO_L0B_TRAIT, typename T, typename U>
-    __aicore__ inline static void load_data(const T& dst, const U& src)
-    {
-        using dst_pos = get_mem_location<T>;
-        using src_pos = get_mem_location<U>;
-        static_assert(Std::is_same_v<dst_pos, location::l0b>,
-                      "When Copy tensor from L1 to L0B, dst tensor must be from L0B.");
-        static_assert(Std::is_same_v<src_pos, location::l1>,
-                      "When Copy tensor from L1 to L0B, src tensor must be from L1.");
-        using dst_layout = typename T::layout_type;
-        using src_layout = typename U::layout_type;
-        using dst_pattern = get_layout_pattern<dst_layout>;
-        using src_pattern = get_layout_pattern<src_layout>;
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_l0b");
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_l0b");
-        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_l0b");
-        if constexpr (dst_layout::depth == FIVE_DIM_DATA && src_layout::depth == FIVE_DIM_DATA) {
-            TENSOR_API_DEBUG_CHECK(debug_check_batch_match, get<0>(src.layout().shape()), get<0>(dst.layout().shape()),
-                                   "copy_l1_to_l0b");
-            TENSOR_API_DEBUG_CHECK(debug_check_l0_batch_stride, get<0>(src.layout().stride()),
-                                   remove_batch_dim(src.layout()).capacity(), get<0>(dst.layout().stride()),
-                                   remove_batch_dim(dst.layout()).capacity(), "copy_l1_to_l0b");
-        }
-        constexpr auto is_b8_b4_type = sizeof(typename T::element_type) == 1;
-        constexpr auto no_trans = Std::is_same_v<dst_pattern, src_pattern>;
-        using copy_l1_to_l0b_mode = typename copy_l1_to_l0b_mode_set::template get<Std::tuple<Std::Int<no_trans>, Std::Int<is_b8_b4_type>>>;
-        static_assert(!Std::is_same_v<copy_l1_to_l0b_mode, Std::ignore_t>, "Unsupported CopyL12L0B mode.");
-        using copy_l1_to_l0b_impl = typename copy_l1_to_l0b_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern, copy_l1_to_l0b_mode>::type;
-        copy_l1_to_l0b_impl::template run<trait, T, U>(dst, src);
-    }
-
-    template<const copy_l1_to_l0b_trait& trait = DEFAULT_COPY_L1_TO_L0B_TRAIT, typename T, typename U,
-        typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void load_data(const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
-    {
-        using dst_pattern = get_layout_pattern<typename T::layout_type>;
-        using src_pattern = get_layout_pattern<typename U::layout_type>;
-        constexpr auto is_b8_b4_type = sizeof(typename T::element_type) == 1;
-        constexpr auto no_trans = Std::is_same_v<dst_pattern, src_pattern>;
-        using mode_type = typename copy_l1_to_l0b_mode_set::template get<Std::tuple<Std::Int<no_trans>, Std::Int<is_b8_b4_type>>>;
-        using impl_type = typename copy_l1_to_l0b_routing<CURRENT_ARCH_VERSION, dst_pattern, src_pattern, mode_type>::type;
-        auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
-        auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
-        impl_type::template run<trait, T, U>(dst, src, resolved_coord_dst, resolved_coord_src, copy_shape);
-    }
-};
+template <const l1_to_l0b_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+    typename SrcCoord, typename CopyShape>
+__aicore__ inline void copy_l1_to_l0b::load_data(const DstTensor& dst, const SrcTensor& src,
+    const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(Std::is_same_v<dst_pos, location::l0b>,
+                  "For copy_l1_to_l0b, the destination tensor must be located in L0B.");
+    static_assert(Std::is_same_v<src_pos, location::l1>,
+                  "For copy_l1_to_l0b, the source tensor must be located in L1.");
+    using dst_pattern = get_layout_pattern<typename DstTensor::layout_type>;
+    using src_pattern = get_layout_pattern<typename SrcTensor::layout_type>;
+    using copy_l1_to_l0b_impl =
+        typename copy_l1_to_l0b_routing<current_arch_version, dst_pattern, src_pattern>::type;
+    auto resolved_dst_coord = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
+    auto resolved_src_coord = resolve_copy_coord(src.layout(), copy_shape, src_coord);
+    copy_l1_to_l0b_impl::template run<trait, DstTensor, SrcTensor>(
+        dst, src, resolved_dst_coord, resolved_src_coord, copy_shape);
+}
 
 } // namespace te
 } // namespace asc

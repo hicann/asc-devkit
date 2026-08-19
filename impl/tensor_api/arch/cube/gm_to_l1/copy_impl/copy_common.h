@@ -30,18 +30,18 @@ namespace te {
 // Shared GM->L1 batch dispatch for the four copy ops (ND2Nz/DN2Nz/ND2Zn/DN2Zn). The op-specific
 // single-matrix parameter extraction lives in CopyOp::EmitCopy; this routine handles the parts that
 // are identical across ops: depth-based batch detection, stripping the leading B axis, and reading
-// the per-batch counts/strides. CopyOp must provide static check_template<trait,T,U>() and
+// the per-batch counts/strides. CopyOp must provide static check_template<trait,DstTensor,SrcTensor>() and
 // emit_copy(dst, src, src_layout, dst_layout, matrix_num, src_matrix_stride, dst_matrix_stride).
 //   - Non-batch (depth 2/4): pass the full layouts, matrix_num=1, strides=0.
 //   - Batch (depth 3/5): strip B with remove_batch_dim (keeps pattern/trait), matrix_num/strides from
 //     the B axis. The GM stride comes straight from the layout, so both bmk-contiguous and
 //     mbk-non-contiguous memory are covered.
-template <const copy_gm_to_l1_trait& trait, typename CopyOp, typename T, typename U>
-__aicore__ inline void run_gm_to_l1_batched(const T& dst, const U& src)
+template <const gm_to_l1_trait& trait, typename CopyOp, typename DstTensor, typename SrcTensor>
+__aicore__ inline void run_gm_to_l1_batched(const DstTensor& dst, const SrcTensor& src)
 {
-    CopyOp::template check_template<trait, T, U>();
+    CopyOp::template check_template<trait, DstTensor, SrcTensor>();
     constexpr auto src_depth = nesting_depth_v<decltype(src.layout().shape())>;
-    if constexpr (src_depth == THREE_DIM_DATA || src_depth == FIVE_DIM_DATA) {
+    if constexpr (src_depth == three_dim_data || src_depth == five_dim_data) {
         auto src_layout = src.layout();
         auto dst_layout = dst.layout();
         uint16_t matrix_num = get<0>(src_layout.shape());
@@ -54,20 +54,20 @@ __aicore__ inline void run_gm_to_l1_batched(const T& dst, const U& src)
     }
 }
 
-template <const copy_gm_to_l1_trait& trait, typename CopyOp, typename T, typename U, typename DstCoord,
-    typename SrcCoord, typename ShapeType>
-__aicore__ inline void run_gm_to_l1_batched(
-    const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+template <const gm_to_l1_trait& trait, typename CopyOp, typename DstTensor, typename SrcTensor, typename DstCoord,
+          typename SrcCoord, typename CopyShape>
+__aicore__ inline void run_gm_to_l1_batched(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                            const SrcCoord& src_coord, const CopyShape& copy_shape)
 {
-    CopyOp::template check_template<trait, T, U>();
-    auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-    auto dst_offset = dst.layout()(coord_dst);
-    auto src_offset = src.layout()(coord_src);
+    CopyOp::template check_template<trait, DstTensor, SrcTensor>();
+    auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+    auto dst_offset = dst.layout()(dst_coord);
+    auto src_offset = src.layout()(src_coord);
     uint16_t matrix_num = get_shape_batch_size(src_shape);
     uint64_t src_matrix_stride = 0;
     uint32_t dst_matrix_stride = 0;
     constexpr auto src_depth = nesting_depth_v<decltype(src.layout().shape())>;
-    if constexpr (src_depth == THREE_DIM_DATA || src_depth == FIVE_DIM_DATA) {
+    if constexpr (src_depth == three_dim_data || src_depth == five_dim_data) {
         src_matrix_stride = get<0>(src.layout().stride());
         dst_matrix_stride = get<0>(dst.layout().stride());
     }

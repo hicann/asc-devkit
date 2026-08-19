@@ -33,7 +33,7 @@ template <typename Traits>
 struct copy_traits<copy_ub_to_l1, Traits> : public copy_traits<copy_ub_to_l1, Traits, copy_ub_to_l1, Traits> {};
 
 template <>
-struct copy_traits<copy_ub_to_l1> : public copy_traits<copy_ub_to_l1, copy_ub_to_l1_trait_default> {};
+struct copy_traits<copy_ub_to_l1> : public copy_traits<copy_ub_to_l1, ub_to_l1_trait_default> {};
 
 } // namespace te
 } // namespace asc

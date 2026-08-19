@@ -34,24 +34,24 @@ struct copy_traits<copy_l1_to_l0a, Traits> : public copy_traits<copy_l1_to_l0a, 
     using trait_type = get_trait_member_type_t<base_type>;
     using base_type::with;
 
-    template <typename PadT>
-    __aicore__ inline constexpr auto with(const Img2ColParams<PadT>& params) const
+    template <typename PaddingValue>
+    __aicore__ inline constexpr auto with(const AscendC::Te::Img2ColParams<PaddingValue>& params) const
     {
-        return copy_traits<copy_l1_to_l0a_with, Traits, PadT>{normalize_img2col_params(params)};
+        return copy_traits<copy_l1_to_l0a_with, Traits, PaddingValue>{AscendC::Te::normalize_img2col_params(params)};
     }
 
-    template <typename PadT>
-    __aicore__ inline constexpr auto with(const img2col_params<PadT>& params) const
+    template <typename PaddingValue>
+    __aicore__ inline constexpr auto with(const img2col_params<PaddingValue>& params) const
     {
-        return copy_traits<copy_l1_to_l0a_with, Traits, PadT>{params};
+        return copy_traits<copy_l1_to_l0a_with, Traits, PaddingValue>{params};
     }
 };
 
 template <>
-struct copy_traits<copy_l1_to_l0a> : public copy_traits<copy_l1_to_l0a, copy_l1_to_l0a_trait_default> {};
+struct copy_traits<copy_l1_to_l0a> : public copy_traits<copy_l1_to_l0a, l1_to_l0a_trait_default> {};
 
-template <typename TraitStruct, typename PadT>
-struct copy_traits<copy_l1_to_l0a_with, TraitStruct, PadT> {
+template <typename TraitStruct, typename PaddingValue>
+struct copy_traits<copy_l1_to_l0a_with, TraitStruct, PaddingValue> {
     using trait_type = get_trait_member_type_t<TraitStruct>;
     static constexpr const trait_type default_trait = TraitStruct::value;
 
@@ -60,7 +60,7 @@ struct copy_traits<copy_l1_to_l0a_with, TraitStruct, PadT> {
     {
         copy_l1_to_l0a_with::copy<trait_type, trait, Args...>(args..., params);
     }
-    img2col_params<PadT> params;
+    img2col_params<PaddingValue> params;
 };
 
 template <typename TraitStruct>

@@ -27,31 +27,23 @@
 namespace asc {
 namespace te {
 
-template <typename MmadOperationType, typename... MmadOpArgs>
-struct mmad_traits {};
+template <typename MmadOperation, typename MmadTrait, typename MmadOperationWith, typename MmadTraitWith>
+template <typename Params>
+__aicore__ inline constexpr mmad_traits<MmadOperationWith, MmadTraitWith>
+mmad_traits<MmadOperation, MmadTrait, MmadOperationWith, MmadTraitWith>::with(const Params& params) const
+{
+    return {params};
+}
 
-template <typename MmadOp, typename MmadTraitsType, typename MmadOpWith, typename MmadTraitsWith>
-struct mmad_traits<MmadOp, MmadTraitsType, MmadOpWith, MmadTraitsWith> {
-    using trait_type = get_trait_member_type_t<MmadTraitsType>;
-    static constexpr const trait_type default_trait = MmadTraitsType::value;
-
-    __aicore__ inline constexpr mmad_traits<MmadOpWith, MmadTraitsWith> with() const
-    {
-        return {};
-    }
-
-    template <typename Params>
-    __aicore__ inline constexpr mmad_traits<MmadOpWith, MmadTraitsWith> with(const Params& params) const
-    {
-        return {normalize_mmad_params(params)};
-    }
-
-    template <const trait_type& trait = default_trait, typename... Args>
-    __aicore__ inline void mmad_unpack(const Args&... args) const
-    {
-        MmadOp::template mmad<trait_type, trait, Args...>(args...);
-    }
-};
+template <typename MmadOperation, typename MmadTrait, typename MmadOperationWith, typename MmadTraitWith>
+template <
+    const typename mmad_traits<MmadOperation, MmadTrait, MmadOperationWith, MmadTraitWith>::trait_type& trait,
+    typename... Args>
+__aicore__ inline void
+mmad_traits<MmadOperation, MmadTrait, MmadOperationWith, MmadTraitWith>::mmad_unpack(const Args&... args) const
+{
+    MmadOperation::template mmad<trait_type, trait, Args...>(args...);
+}
 
 } // namespace te
 } // namespace asc

@@ -68,30 +68,30 @@ using is_vector_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, TILE_O
 template <QuantMode_t quant_pre>
 using is_direct_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, TILE_OP_INTERNAL_DIRECT_QUANT_MODE>;
 
-template <typename info1, typename info2, size_t dim, typename T>
-__aicore__ inline constexpr decltype(auto) get_element(const T& layout)
+template <typename Info1, typename Info2, size_t dim, typename Layout>
+__aicore__ inline constexpr decltype(auto) get_element(const Layout& layout)
 {
-    constexpr size_t shape_or_stride = (Std::is_same_v<info1, attr_info::shape> ? 0 : 1);
-    constexpr size_t row_or_column = (Std::is_same_v<info2, attr_info::row> ? 0 : 1);
+    constexpr size_t shape_or_stride = (Std::is_same_v<Info1, attr_info::shape> ? 0 : 1);
+    constexpr size_t row_or_column = (Std::is_same_v<Info2, attr_info::row> ? 0 : 1);
     return layout.template get<shape_or_stride, row_or_column, dim>();
 }
 
-template <typename info1, typename info2, typename T>
-__aicore__ inline constexpr decltype(auto) get_element(const T& layout)
+template <typename Info1, typename Info2, typename Layout>
+__aicore__ inline constexpr decltype(auto) get_element(const Layout& layout)
 {
-    constexpr size_t shape_or_stride = (Std::is_same_v<info1, attr_info::shape> ? 0 : 1);
-    constexpr size_t row_or_column = (Std::is_same_v<info2, attr_info::row> ? 0 : 1);
+    constexpr size_t shape_or_stride = (Std::is_same_v<Info1, attr_info::shape> ? 0 : 1);
+    constexpr size_t row_or_column = (Std::is_same_v<Info2, attr_info::row> ? 0 : 1);
     return layout.template get<shape_or_stride, row_or_column>();
 }
 
-template <typename AttributeType, typename AxisType, size_t dim, typename T>
-__aicore__ inline constexpr decltype(auto) get_matrix_element(const T& layout)
+template <typename AttributeType, typename AxisType, size_t dim, typename Layout>
+__aicore__ inline constexpr decltype(auto) get_matrix_element(const Layout& layout)
 {
     // Shape and stride are stored at indices 0 and 1 of a layout, respectively.
     constexpr size_t attribute_index = Std::is_same_v<AttributeType, attr_info::shape> ? 0 : 1;
     // Row and column are stored at indices 0 and 1 of a matrix attribute; batched layouts skip axis 0 below.
     constexpr size_t axis_index = Std::is_same_v<AxisType, attr_info::row> ? 0 : 1;
-    if constexpr (T::depth == THREE_DIM_DATA || T::depth == FIVE_DIM_DATA) {
+    if constexpr (Layout::depth == three_dim_data || Layout::depth == five_dim_data) {
         return layout.template get<attribute_index, 1, axis_index, dim>();
     } else {
         return layout.template get<attribute_index, axis_index, dim>();
@@ -137,43 +137,43 @@ __aicore__ inline static constexpr decltype(auto) get_column_stride(const Layout
         return get<1, 1>(layout.stride());
     }
 }
-template <typename ShapeType>
-__aicore__ inline static constexpr uint32_t get_shape_columns(const ShapeType& copy_shape)
+template <typename Shape>
+__aicore__ inline static constexpr uint32_t get_shape_columns(const Shape& copy_shape)
 {
-    constexpr auto depth = nesting_depth_v<ShapeType>;
-    if constexpr (depth == TWO_DIM_DATA) {
+    constexpr auto depth = nesting_depth_v<Shape>;
+    if constexpr (depth == two_dim_data) {
         return get<1>(copy_shape);
-    } else if constexpr (depth == THREE_DIM_DATA) {
+    } else if constexpr (depth == three_dim_data) {
         return get<1, 1>(copy_shape);
-    } else if constexpr (depth == FOUR_DIM_DATA) {
+    } else if constexpr (depth == four_dim_data) {
         return get<1, 0>(copy_shape) * get<1, 1>(copy_shape);
     } else {
-        static_assert(depth == FIVE_DIM_DATA, "Only support 2D to 5D matrix shapes");
+        static_assert(depth == five_dim_data, "Only support 2D to 5D matrix shapes");
         return get<1, 1, 0>(copy_shape) * get<1, 1, 1>(copy_shape);
     }
 }
 
-template <typename ShapeType>
-__aicore__ inline static constexpr uint32_t get_shape_rows(const ShapeType& copy_shape)
+template <typename Shape>
+__aicore__ inline static constexpr uint32_t get_shape_rows(const Shape& copy_shape)
 {
-    constexpr auto depth = nesting_depth_v<ShapeType>;
-    if constexpr (depth == TWO_DIM_DATA) {
+    constexpr auto depth = nesting_depth_v<Shape>;
+    if constexpr (depth == two_dim_data) {
         return get<0>(copy_shape);
-    } else if constexpr (depth == THREE_DIM_DATA) {
+    } else if constexpr (depth == three_dim_data) {
         return get<1, 0>(copy_shape);
-    } else if constexpr (depth == FOUR_DIM_DATA) {
+    } else if constexpr (depth == four_dim_data) {
         return get<0, 0>(copy_shape) * get<0, 1>(copy_shape);
     } else {
-        static_assert(depth == FIVE_DIM_DATA, "Only support 2D to 5D matrix shapes");
+        static_assert(depth == five_dim_data, "Only support 2D to 5D matrix shapes");
         return get<1, 0, 0>(copy_shape) * get<1, 0, 1>(copy_shape);
     }
 }
 
-template <typename ShapeType>
-__aicore__ inline static constexpr uint32_t get_shape_batch_size(const ShapeType& copy_shape)
+template <typename Shape>
+__aicore__ inline static constexpr uint32_t get_shape_batch_size(const Shape& copy_shape)
 {
-    constexpr auto depth = nesting_depth_v<ShapeType>;
-    if constexpr (depth == THREE_DIM_DATA || depth == FIVE_DIM_DATA) {
+    constexpr auto depth = nesting_depth_v<Shape>;
+    if constexpr (depth == three_dim_data || depth == five_dim_data) {
         return get<0>(copy_shape);
     } else {
         return 1;
@@ -181,7 +181,6 @@ __aicore__ inline static constexpr uint32_t get_shape_batch_size(const ShapeType
 }
 } // namespace te
 } // namespace asc
-
 
 #endif // IMPL_TENSOR_API_ARCH_UTILS_ARCH_UTILS_H
 

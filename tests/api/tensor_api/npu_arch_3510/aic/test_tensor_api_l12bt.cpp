@@ -51,11 +51,11 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
-void run_copy_with_paths(const dst_tensor_type& dst, const src_tensor_type& src)
+void run_copy_default_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 {
     using namespace asc::te;
 
-    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{}.with();
+    auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{};
     atom.call(dst, src);
     copy(atom, dst, src);
     copy(atom, dst, src, make_coord(0, 0), zero_coord, make_shape(16, 16));
@@ -75,8 +75,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_l1_to_bt_routes_to_cube_arch_copy)
     auto l1_tensor = make_tensor_at<location::l1>(src, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<float>>(m, n));
     auto biastable_tensor = make_tensor_at<location::bias>(dst, make_frame_layout<nd_ext_layout_ptn, layout_trait_default<float>>(m, n));
 
-    run_copy_call_paths<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
-    run_copy_with_paths<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
+    run_copy_call_paths<copy_l1_to_biastable, l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
+    run_copy_default_paths<copy_l1_to_biastable, l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -93,8 +93,8 @@ TEST_F(tensor_api_cube_copy_3510, copy_l1_to_bt_nd_layout_routes_to_cube_arch_co
     auto l1_tensor = make_tensor_at<location::l1>(src, make_frame_layout<nd_layout_ptn, layout_trait_default<float>>(m, n));
     auto biastable_tensor = make_tensor_at<location::bias>(dst, make_frame_layout<nd_layout_ptn, layout_trait_default<float>>(m, n));
 
-    run_copy_call_paths<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
-    run_copy_with_paths<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
+    run_copy_call_paths<copy_l1_to_biastable, l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
+    run_copy_default_paths<copy_l1_to_biastable, l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
 
     EXPECT_EQ(dst[0], 0);
 }
@@ -191,7 +191,7 @@ __aicore__ inline void copy_cbuf_to_bt_two_type_stub(uint64_t dst, __cbuf__ src_
             .times(1) \
             .will(invoke(&copy_cbuf_to_bt_stub<data_type, src_size1, src_size2, dst_size1, dst_size2>)); \
         CREATE_TENSOR(data_type, src_size1, src_size2, dst_size1, dst_size2, cbuf, L1, ND, biasbuf, BIAS, ND) \
-        copy(copy_atom<copy_traits<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);\
+        copy(copy_atom<copy_traits<copy_l1_to_biastable, l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);\
         GlobalMockObject::verify(); \
     }
 
@@ -207,7 +207,7 @@ DATA_COPY_TEST_L12BIAS_ND2ND(int32_t, 1, 64, 1, 64)
             .times(1) \
             .will(invoke(&copy_cbuf_to_bt_two_type_stub<src_data_type, dst_data_type, src_size1, src_size2, dst_size1, dst_size2>)); \
         CREATE_TENSOR_TWO_TYPE(src_data_type, src_size1, src_size2, dst_data_type, dst_size1, dst_size2, cbuf, L1, ND, biasbuf, BIAS, ND) \
-        copy(copy_atom<copy_traits<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);\
+        copy(copy_atom<copy_traits<copy_l1_to_biastable, l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);\
         GlobalMockObject::verify(); \
     }
 
@@ -221,9 +221,9 @@ DATA_COPY_TEST_L12BIAS_TWO_TYPE_ND2ND(half, 1, 64, float, 1, 64)
 // s_b == m_value*n_value. The implementation only keeps the batched branch:
 //   conv_control = 0 (same-type) or 1 (half->float)
 //   block_count  = batch_value
-//   block_len    = ceil_division(m_value*n_value, C0_ELEMENT<src_type>), rounded up to 2 for fp32/int32
-//   src_stride   = (s_b - m_value*n_value) / C0_ELEMENT<src_type>
-//   dst_stride   = ceil_align((s_b - m_value*n_value) / C0_ELEMENT<dst_type>, 2)
+//   block_len    = ceil_division(m_value*n_value, c0_element<src_type>), rounded up to 2 for fp32/int32
+//   src_stride   = (s_b - m_value*n_value) / c0_element<src_type>
+//   dst_stride   = ceil_align((s_b - m_value*n_value) / c0_element<dst_type>, 2)
 // With s_b == m_value*n_value both strides are 0.
 // =========================================================================
 template <typename data_type, int batch_value, int m_value, int n_value>
@@ -259,7 +259,7 @@ __aicore__ inline void copy_cbuf_to_bt_batch_compact_stub(uint64_t dst, __cbuf__
             static_cast<uint32_t>(batch_value), static_cast<uint32_t>(m_value), static_cast<uint32_t>(n_value));                             \
         auto src_tensor = make_tensor(make_mem_ptr<location::l1>(src_data), src_layout);                                     \
         auto dst_tensor = make_tensor(make_mem_ptr<location::bias>(dst_data), dst_layout);                                   \
-        copy(copy_atom<copy_traits<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);                          \
+        copy(copy_atom<copy_traits<copy_l1_to_biastable, l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);                          \
         GlobalMockObject::verify();                                                                                    \
     }
 
@@ -296,7 +296,7 @@ __aicore__ inline void copy_cbuf_to_bt_batch_compact_half_to_float_stub(uint64_t
             static_cast<uint32_t>(batch_value), static_cast<uint32_t>(m_value), static_cast<uint32_t>(n_value));                             \
         auto src_tensor = make_tensor(make_mem_ptr<location::l1>(src_data), src_layout);                                     \
         auto dst_tensor = make_tensor(make_mem_ptr<location::bias>(dst_data), dst_layout);                                   \
-        copy(copy_atom<copy_traits<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);                          \
+        copy(copy_atom<copy_traits<copy_l1_to_biastable, l1_to_biastable_trait_default>>{}, dst_tensor, src_tensor);                          \
         GlobalMockObject::verify();                                                                                    \
     }
 

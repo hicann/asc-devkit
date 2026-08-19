@@ -29,21 +29,21 @@
 namespace asc {
 namespace te {
 
-template <typename T, bool IsTuple>
+template <typename Value, bool IsTuple>
 struct to_tuple_impl;
 
-template <typename T>
-struct to_tuple_impl<T, true> {
-    using type = T;
+template <typename Value>
+struct to_tuple_impl<Value, true> {
+    using type = Value;
 };
 
-template <typename T>
-struct to_tuple_impl<T, false> {
-    using type = Std::tuple<T>;
+template <typename Value>
+struct to_tuple_impl<Value, false> {
+    using type = Std::tuple<Value>;
 };
 
-template <typename T>
-using to_tuple = to_tuple_impl<T, Std::is_tuple_v<T>>;
+template <typename Value>
+using to_tuple = to_tuple_impl<Value, Std::is_tuple_v<Value>>;
 
 // Selects the (row, col) shape/stride sub-tuples from a layout's top-level (rowPart, colPart) pair.
 // Batched layouts carry a leading Batch axis, so the top-level pair is (Int<B>, matrixTuple): the
@@ -64,14 +64,14 @@ struct select_row_col_tuples<ShapeRows, ShapeCols, StrideRows, StrideCols, true>
     using stride_cols_t = typename Std::tuple_element<1, StrideCols>::type;
 };
 
-template <typename T>
+template <typename Tensor>
 struct get_type_from_n_dim_trait;
 
 template <template <typename, typename> class TensorType, typename HPos, typename Pointer, typename ShapeRows,
           typename ShapeCols, typename StrideRows, typename StrideCols, typename LayoutPattern>
 struct get_type_from_n_dim_trait<
     TensorType<view_engine<hardware_mem_ptr<HPos, Pointer>>,
-               layout<shape_type<ShapeRows, ShapeCols>, stride_type<StrideRows, StrideCols>, LayoutPattern>>> {
+               layout<shape<ShapeRows, ShapeCols>, stride<StrideRows, StrideCols>, LayoutPattern>>> {
     // A batched layout has a scalar Batch axis as rowPart and the matrix tuple as colPart.
     static constexpr bool is_batched = !Std::is_tuple_v<ShapeRows> && Std::is_tuple_v<ShapeCols>;
     using selector = select_row_col_tuples<ShapeRows, ShapeCols, StrideRows, StrideCols, is_batched>;
@@ -101,31 +101,31 @@ struct row {};
 struct column {};
 }; // namespace attr_info
 
-template <typename T, typename info1, typename info2, size_t dim>
+template <typename Tensor, typename Info1, typename Info2, size_t dim>
 struct get_n_dim_type;
 
-template <typename T, size_t dim>
-struct get_n_dim_type<T, attr_info::shape, attr_info::row, dim> {
-    using type =
-        Std::remove_cvref_t<typename get_type_from_n_dim_trait<Std::remove_cvref_t<T>>::template shape_row_dim<dim>>;
+template <typename Tensor, size_t dim>
+struct get_n_dim_type<Tensor, attr_info::shape, attr_info::row, dim> {
+    using type = Std::remove_cvref_t<
+        typename get_type_from_n_dim_trait<Std::remove_cvref_t<Tensor>>::template shape_row_dim<dim>>;
 };
 
-template <typename T, size_t dim>
-struct get_n_dim_type<T, attr_info::shape, attr_info::column, dim> {
-    using type =
-        Std::remove_cvref_t<typename get_type_from_n_dim_trait<Std::remove_cvref_t<T>>::template shape_col_dim<dim>>;
+template <typename Tensor, size_t dim>
+struct get_n_dim_type<Tensor, attr_info::shape, attr_info::column, dim> {
+    using type = Std::remove_cvref_t<
+        typename get_type_from_n_dim_trait<Std::remove_cvref_t<Tensor>>::template shape_col_dim<dim>>;
 };
 
-template <typename T, size_t dim>
-struct get_n_dim_type<T, attr_info::stride, attr_info::row, dim> {
-    using type =
-        Std::remove_cvref_t<typename get_type_from_n_dim_trait<Std::remove_cvref_t<T>>::template stride_row_dim<dim>>;
+template <typename Tensor, size_t dim>
+struct get_n_dim_type<Tensor, attr_info::stride, attr_info::row, dim> {
+    using type = Std::remove_cvref_t<
+        typename get_type_from_n_dim_trait<Std::remove_cvref_t<Tensor>>::template stride_row_dim<dim>>;
 };
 
-template <typename T, size_t dim>
-struct get_n_dim_type<T, attr_info::stride, attr_info::column, dim> {
-    using type =
-        Std::remove_cvref_t<typename get_type_from_n_dim_trait<Std::remove_cvref_t<T>>::template stride_col_dim<dim>>;
+template <typename Tensor, size_t dim>
+struct get_n_dim_type<Tensor, attr_info::stride, attr_info::column, dim> {
+    using type = Std::remove_cvref_t<
+        typename get_type_from_n_dim_trait<Std::remove_cvref_t<Tensor>>::template stride_col_dim<dim>>;
 };
 
 template <typename TensorType, typename TargetLayoutPtn>
@@ -139,8 +139,6 @@ inline constexpr bool is_satisfied_ptn_format_v = is_satisfied_ptn_format<Tensor
 
 } // namespace te
 } // namespace asc
-
-
 
 #endif // IMPL_TENSOR_API_ARCH_UTILS_IS_FORMAT_H
 

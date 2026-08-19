@@ -48,8 +48,8 @@ protected:
         para.m = m_value;                                                                                                 \
         para.n = n_value;                                                                                                 \
         para.k = k_size;                                                                                                 \
-        para.unit_flag = 0;                                                                                          \
-        para.cmatrix_init_val = true;                                                                                 \
+        para.unit_flag = unit_flag_mode::disable;                                                                    \
+        para.init_with_zero = true;                                                                                  \
                                                                                                                     \
         auto mmad_atom = make_mmad(mmad_operation{}, mmad_trait_default{}).with(para);                                 \
         mmad(mmad_atom, l0c_tensor, l0a_tensor, l0b_tensor);                                                          \

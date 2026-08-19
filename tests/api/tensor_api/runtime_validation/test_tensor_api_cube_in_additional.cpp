@@ -91,7 +91,7 @@ void expect_gm2l1_trap(const SrcLayoutType& src_layout, const DstLayoutType& dst
     auto src_tensor = make_tensor_at<location::gm>(src.data(), src_layout);
     auto dst_tensor = make_tensor_at<location::l1>(dst.data(), dst_layout);
 
-    EXPECT_THROW((copy_tensor<copy_gm_to_l1, copy_gm_to_l1_trait_default>(dst_tensor, src_tensor)), TrapException);
+    EXPECT_THROW((copy_tensor<copy_gm_to_l1, gm_to_l1_trait_default>(dst_tensor, src_tensor)), TrapException);
 }
 
 template <typename SrcType, typename DstType, typename SrcLayoutType, typename DstLayoutType>
@@ -103,7 +103,7 @@ void expect_l12bt_trap(const SrcLayoutType& src_layout, const DstLayoutType& dst
     auto src_tensor = make_tensor_at<location::l1>(src.data(), src_layout);
     auto dst_tensor = make_tensor_at<location::bias>(dst.data(), dst_layout);
 
-    EXPECT_THROW((copy_tensor<copy_l1_to_biastable, copy_l1_to_biastable_trait_default>(dst_tensor, src_tensor)),
+    EXPECT_THROW((copy_tensor<copy_l1_to_biastable, l1_to_biastable_trait_default>(dst_tensor, src_tensor)),
                  TrapException);
 }
 
@@ -116,7 +116,7 @@ void expect_l12ub_trap(const SrcLayoutType& src_layout, const DstLayoutType& dst
     auto src_tensor = make_tensor_at<location::l1>(src.data(), src_layout);
     auto dst_tensor = make_tensor_at<location::ub>(dst.data(), dst_layout);
 
-    EXPECT_THROW((copy_tensor<copy_l1_to_ub, copy_l1_to_ub_trait_default>(dst_tensor, src_tensor)), TrapException);
+    EXPECT_THROW((copy_tensor<copy_l1_to_ub, l1_to_ub_trait_default>(dst_tensor, src_tensor)), TrapException);
 }
 
 template <typename SrcLayoutType, typename DstLayoutType>
@@ -128,7 +128,7 @@ void expect_l12fb_trap(const SrcLayoutType& src_layout, const DstLayoutType& dst
     auto src_tensor = make_tensor_at<location::l1>(src.data(), src_layout);
     auto dst_tensor = make_tensor_at<location::fixbuf>(dst.data(), dst_layout);
 
-    EXPECT_THROW((copy_tensor<copy_l1_to_fixbuf, copy_l1_to_fixbuf_trait_default>(dst_tensor, src_tensor)),
+    EXPECT_THROW((copy_tensor<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default>(dst_tensor, src_tensor)),
                  TrapException);
 }
 
@@ -141,7 +141,7 @@ void expect_l12l0a_trap(const SrcLayoutType& src_layout, const DstLayoutType& ds
     auto src_tensor = make_tensor_at<location::l1>(src.data(), src_layout);
     auto dst_tensor = make_tensor_at<location::l0a>(dst.data(), dst_layout);
 
-    EXPECT_THROW((copy_tensor<copy_l1_to_l0a, copy_l1_to_l0a_trait_default>(dst_tensor, src_tensor)), TrapException);
+    EXPECT_THROW((copy_tensor<copy_l1_to_l0a, l1_to_l0a_trait_default>(dst_tensor, src_tensor)), TrapException);
 }
 
 template <typename ElementType, typename SrcLayoutType, typename DstLayoutType>
@@ -153,7 +153,7 @@ void expect_l12l0b_trap(const SrcLayoutType& src_layout, const DstLayoutType& ds
     auto src_tensor = make_tensor_at<location::l1>(src.data(), src_layout);
     auto dst_tensor = make_tensor_at<location::l0b>(dst.data(), dst_layout);
 
-    EXPECT_THROW((copy_tensor<copy_l1_to_l0b, copy_l1_to_l0b_trait_default>(dst_tensor, src_tensor)), TrapException);
+    EXPECT_THROW((copy_tensor<copy_l1_to_l0b, l1_to_l0b_trait_default>(dst_tensor, src_tensor)), TrapException);
 }
 
 template <typename ElementType, typename SrcLayoutType, typename DstLayoutType>
@@ -646,7 +646,7 @@ TEST_F(TensorApiCubeInputAdditionalValidation, CopyL12L0ScaleARejectsEachStepAbo
         auto src_tensor = make_tensor_at<location::l1>(src.data(), layout);
         auto dst_pointer = make_mem_ptr<location::l0scalea, fp8_e8m0_t>(reinterpret_cast<uint64_t>(dst.data()) / 16);
         auto dst_tensor = make_tensor(dst_pointer, layout);
-        EXPECT_THROW((copy_tensor<copy_l1_to_l0scalea, copy_l1_to_l0scalea_trait_default>(dst_tensor, src_tensor)),
+        EXPECT_THROW((copy_tensor<copy_l1_to_l0scalea, l1_to_l0scalea_trait_default>(dst_tensor, src_tensor)),
                      TrapException);
     };
 
@@ -663,7 +663,7 @@ TEST_F(TensorApiCubeInputAdditionalValidation, CopyL12L0ScaleBRejectsEachStepAbo
         auto src_tensor = make_tensor_at<location::l1>(src.data(), layout);
         auto dst_pointer = make_mem_ptr<location::l0scaleb, fp8_e8m0_t>(reinterpret_cast<uint64_t>(dst.data()) / 16);
         auto dst_tensor = make_tensor(dst_pointer, layout);
-        EXPECT_THROW((copy_tensor<copy_l1_to_l0scaleb, copy_l1_to_l0scaleb_trait_default>(dst_tensor, src_tensor)),
+        EXPECT_THROW((copy_tensor<copy_l1_to_l0scaleb, l1_to_l0scaleb_trait_default>(dst_tensor, src_tensor)),
                      TrapException);
     };
 

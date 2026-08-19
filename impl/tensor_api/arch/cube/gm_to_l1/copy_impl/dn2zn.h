@@ -29,43 +29,46 @@ namespace te {
 
 class copy_gm_to_l1_dn2zn {
 public:
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        if constexpr (U::layout_type::depth == THREE_DIM_DATA || U::layout_type::depth == FIVE_DIM_DATA) {
+        if constexpr (SrcTensor::layout_type::depth == three_dim_data
+                      || SrcTensor::layout_type::depth == five_dim_data) {
             TENSOR_API_DEBUG_CHECK(debug_check_batch_count, get<0>(src.layout().shape()), "copy_gm_to_l1 dn2zn path");
         }
-        run_gm_to_l1_batched<trait, copy_gm_to_l1_dn2zn, T, U>(dst, src);
+        run_gm_to_l1_batched<trait, copy_gm_to_l1_dn2zn, DstTensor, SrcTensor>(dst, src);
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+              typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape)
     {
-        run_gm_to_l1_batched<trait, copy_gm_to_l1_dn2zn, T, U>(dst, src, coord_dst, coord_src, copy_shape);
+        run_gm_to_l1_batched<trait, copy_gm_to_l1_dn2zn, DstTensor, SrcTensor>(dst, src, dst_coord, src_coord,
+                                                                               copy_shape);
     }
 
-    template <const copy_gm_to_l1_trait& trait, typename T, typename U>
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_template()
     {
-        check_layout_pattern<U, T>();
-        check_data_type::check_gm_to_l1_fp4_data_type<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_gm_to_l1_fp4_data_type<DstTensor, SrcTensor>();
     }
 
     // Extracts single-matrix parameters from the (batch-stripped) src/dst layouts and emits the
     // instruction. dn_num/src_dn_matrix_stride/dst_nz_matrix_stride carry the batch dimension (1/0/0 when
-    // there is no batch). The src/dst pattern is read from the original tensor type U/T.
-    template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void emit_copy(const T& dst, const U& src, const SrcLayout& src_layout,
-                                           const DstLayout& dst_layout, uint16_t dn_num,
-                                           uint64_t src_dn_matrix_stride, uint32_t dst_nz_matrix_stride)
+    // there is no batch). The src/dst pattern is read from the original tensor type SrcTensor/DstTensor.
+    template <typename DstTensor, typename SrcTensor, typename SrcLayout, typename DstLayout>
+    __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, const SrcLayout& src_layout,
+                                            const DstLayout& dst_layout, uint16_t dn_num, uint64_t src_dn_matrix_stride,
+                                            uint32_t dst_nz_matrix_stride)
     {
-        using type = typename U::element_type;
+        using type = typename SrcTensor::element_type;
 
         uint16_t n_value;
         uint32_t d_value;
         uint32_t src_row_stride;
-        if constexpr (is_satisfied_ptn_format_v<U, dn_layout_ptn>) {
+        if constexpr (is_satisfied_ptn_format_v<SrcTensor, dn_layout_ptn>) {
             n_value = get_element<attr_info::shape, attr_info::column>(src_layout);
             d_value = get_element<attr_info::shape, attr_info::row>(src_layout);
             src_row_stride = get_element<attr_info::stride, attr_info::column>(src_layout);
@@ -83,7 +86,7 @@ public:
         }
 
         uint64_t src_d_value = src_row_stride;
-        uint16_t dst_nz_c0_stride = dst_row_stride / C0_ELEMENT<type>;
+        uint16_t dst_nz_c0_stride = dst_row_stride / c0_element<type>;
         uint16_t dst_nz_n_stride = 1;
 
         uint64_t loop1_src_stride = src_d_value * sizeof(type);
@@ -91,26 +94,28 @@ public:
 
         uint16_t loop2_dst_stride = dst_nz_n_stride;  // loop2_dst_stride = dst_nz_n_stride
         uint16_t loop3_dst_stride = dst_nz_c0_stride; // loop3_dst_stride = dst_nz_c0_stride
-        // loop4_dst_stride : dst_nz_matrix_stride * size_of_dst_type / C0_SIZE
-        uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / C0_ELEMENT<type>);
+        // loop4_dst_stride : dst_nz_matrix_stride * size_of_dst_type / c0_size
+        uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / c0_element<type>);
 
         uint8_t cache_mode = src.engine().get_cache_mode();
 
-        copy_gm_to_l1_multi_nd2nz_instr::data_copy(dst.data().get(), src.data().get(), dn_num, loop2_dst_stride, loop3_dst_stride, loop4_dst_stride,
-                                              loop1_src_stride, cache_mode, n_value, d_value, loop4_src_stride, false);
+        copy_gm_to_l1_multi_nd2nz_instr::data_copy(dst.data().get(), src.data().get(), dn_num, loop2_dst_stride,
+                                                   loop3_dst_stride, loop4_dst_stride, loop1_src_stride, cache_mode,
+                                                   n_value, d_value, loop4_src_stride, false);
     }
 
-    template <typename T, typename U, typename ShapeType, typename DstOffset, typename SrcOffset>
-    __aicore__ inline static void emit_copy(const T& dst, const U& src, const ShapeType& copy_shape, uint16_t dn_num,
-        uint64_t src_dn_matrix_stride, uint32_t dst_nz_matrix_stride, const DstOffset& dst_offset,
-        const SrcOffset& src_offset)
+    template <typename DstTensor, typename SrcTensor, typename CopyShape, typename DstOffset, typename SrcOffset>
+    __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, const CopyShape& copy_shape,
+                                            uint16_t dn_num, uint64_t src_dn_matrix_stride,
+                                            uint32_t dst_nz_matrix_stride, const DstOffset& dst_offset,
+                                            const SrcOffset& src_offset)
     {
-        using type = typename U::element_type;
+        using type = typename SrcTensor::element_type;
         uint16_t n_value = get_shape_columns(copy_shape);
         uint32_t d_value = get_shape_rows(copy_shape);
         uint32_t src_col_stride = get_matrix_element<attr_info::stride, attr_info::column, 1>(src.layout());
-        uint16_t loop3_dst_stride = get_matrix_element<attr_info::stride, attr_info::row, 1>(dst.layout()) /
-            C0_ELEMENT<type>;
+        uint16_t loop3_dst_stride =
+            get_matrix_element<attr_info::stride, attr_info::row, 1>(dst.layout()) / c0_element<type>;
         if constexpr (is_b4_type<type>) {
             d_value >>= 1;
             src_col_stride >>= 1;
@@ -118,9 +123,10 @@ public:
         }
         uint64_t loop1_src_stride = src_col_stride * sizeof(type);
         uint64_t loop4_src_stride = src_dn_matrix_stride * sizeof(type);
-        uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / C0_ELEMENT<type>);
-        copy_gm_to_l1_multi_nd2nz_instr::data_copy_with_offset(dst, src, dst_offset, src_offset, dn_num, 1, loop3_dst_stride,
-            loop4_dst_stride, loop1_src_stride, src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride, false);
+        uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / c0_element<type>);
+        copy_gm_to_l1_multi_nd2nz_instr::data_copy_with_offset(
+            dst, src, dst_offset, src_offset, dn_num, 1, loop3_dst_stride, loop4_dst_stride, loop1_src_stride,
+            src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride, false);
     }
 };
 

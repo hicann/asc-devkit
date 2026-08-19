@@ -25,38 +25,32 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0b/copy_impl/zn2zn.h"
 #include "impl/tensor_api/arch/cube/l1_to_l0b/copy_impl/nz2zn.h"
-#include "impl/tensor_api/arch/cube/l1_to_l0b/copy_impl/nz2znb8b4.h"
 
 namespace asc {
 namespace te {
 
 class copy_l1_to_l0b_ignore {
 public:
-    template <const copy_l1_to_l0b_trait& trait, typename... Args>
+    template <const l1_to_l0b_trait& trait, typename... Args>
     __aicore__ inline void static run(const Args&... args)
     {
         static_assert(Std::is_same_v<Args..., void>, "copy_l1_to_l0b_ignore should not be called");
     }
 };
 
-template <uint32_t version, typename DstLayoutPattern, typename SrcLayoutPattern, typename CopyMode>
+template <uint32_t version, typename DstLayoutPattern, typename SrcLayoutPattern>
 struct copy_l1_to_l0b_routing {
     using type = copy_l1_to_l0b_ignore;
 };
 
 template <uint32_t version>
-struct copy_l1_to_l0b_routing<version, zn_layout_ptn, zn_layout_ptn, copy_mode::normal> {
+struct copy_l1_to_l0b_routing<version, zn_layout_ptn, zn_layout_ptn> {
     using type = load_data_l1_to_l0b_zn2zn;
 };
 
 template <uint32_t version>
-struct copy_l1_to_l0b_routing<version, zn_layout_ptn, nz_layout_ptn, copy_mode::trans> {
+struct copy_l1_to_l0b_routing<version, zn_layout_ptn, nz_layout_ptn> {
     using type = load_data_l1_to_l0b_nz2zn;
-};
-
-template <uint32_t version>
-struct copy_l1_to_l0b_routing<version, zn_layout_ptn, nz_layout_ptn, copy_mode::trans_b8b4> {
-    using type = load_data_l1_to_l0b_nz2zn_b8b4;
 };
 
 } // namespace te

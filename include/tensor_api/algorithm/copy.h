@@ -20,6 +20,9 @@
 #ifndef INCLUDE_TENSOR_API_ALGORITHM_COPY_H
 #define INCLUDE_TENSOR_API_ALGORITHM_COPY_H
 
+#include "tensor_api/tensor/layout_interface.h"
+#include "tensor_api/tensor/pointer.h"
+#include "tensor_api/atom/cube/copy_atom.h"
 #include "impl/tensor_api/algorithm/copy_impl.h"
 
 namespace asc {
@@ -31,8 +34,8 @@ namespace te {
  * @param dst : Destination tensor.
  * @param src : Source tensor.
  */
-template <typename AtomType, typename DstTensor, typename SrcTensor>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src);
+template <typename Atom, typename DstTensor, typename SrcTensor>
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src);
 
 /**
  * @brief Perform a copy operation with a preconstructed copy_atom and a quantization parameter.
@@ -41,10 +44,10 @@ __aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& ds
  * @param src : Source tensor.
  * @param quant : Quantization parameter, which can be a scalar or a Tensor API tensor.
  */
-template <typename AtomType, typename DstTensor, typename SrcTensor, typename QuantParam,
-          Std::enable_if_t<is_copy_quant_param_v<QuantParam>, int> Enable>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src,
-                            const QuantParam& quant);
+template <typename Atom, typename DstTensor, typename SrcTensor, typename Quant,
+          Std::enable_if_t<is_valid_quant_v<Quant>, int> Enable>
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src,
+                            const Quant& quant);
 
 /**
  * @brief Perform a copy operation using source/destination coordinates and a requested shape.
@@ -55,10 +58,10 @@ __aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& ds
  * @param src_coord : Start coordinate in the source tensor, or zero_coord.
  * @param copy_shape : Shape of the region to copy.
  */
-template <typename AtomType, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+template <typename Atom, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
     typename CopyShape, Std::enable_if_t<is_valid_coord_v<DstCoord> && is_valid_coord_v<SrcCoord> &&
         is_valid_shape_v<CopyShape>, int> Enable>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src,
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src,
     const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape);
 
 /**
@@ -71,27 +74,27 @@ __aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& ds
  * @param src_coord : Start coordinate in the source tensor, or zero_coord.
  * @param copy_shape : Shape of the region to copy.
  */
-template <typename AtomType, typename DstTensor, typename SrcTensor, typename QuantParam, typename DstCoord,
+template <typename Atom, typename DstTensor, typename SrcTensor, typename Quant, typename DstCoord,
     typename SrcCoord, typename CopyShape,
-    Std::enable_if_t<is_copy_quant_param_v<QuantParam> && is_valid_coord_v<DstCoord> &&
+    Std::enable_if_t<is_valid_quant_v<Quant> && is_valid_coord_v<DstCoord> &&
         is_valid_coord_v<SrcCoord> && is_valid_shape_v<CopyShape>, int> Enable>
-__aicore__ inline void copy(const copy_atom<AtomType>& atom, const DstTensor& dst, const SrcTensor& src,
-    const QuantParam& quant, const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape);
+__aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src,
+    const Quant& quant, const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape);
 
 /**
  * @brief Construct a copy_atom from the copy operation object.
- * @param copy_operation : Copy operation object.
+ * @param operation : Copy operation object.
  */
-template <typename CopyOperationType>
-__aicore__ inline constexpr auto make_copy(const CopyOperationType& copy_operation);
+template <typename CopyOperation>
+__aicore__ inline constexpr auto make_copy(const CopyOperation& operation);
 
 /**
  * @brief Construct a copy_atom from the copy operation object and trait object.
- * @param copy_operation : Copy operation object.
- * @param copy_trait : Copy trait object.
+ * @param operation : Copy operation object.
+ * @param trait : Copy trait object.
  */
-template <typename CopyOperationType, typename CopyTraitType>
-__aicore__ inline constexpr auto make_copy(const CopyOperationType& copy_operation, const CopyTraitType& copy_trait);
+template <typename CopyOperation, typename CopyTrait>
+__aicore__ inline constexpr auto make_copy(const CopyOperation& operation, const CopyTrait& trait);
 
 } // namespace te
 } // namespace asc

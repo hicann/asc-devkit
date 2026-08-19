@@ -30,11 +30,11 @@ namespace te {
 
 class data_copy_l0c_to_gm_nz2ncdhw {
 public:
-    template <const copy_l0c_to_gm_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src, const fixpipe_params& params)
+    template <const l0c_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const l0c_to_gm_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U>();
-        check_data_type::check_l0c_to_gm_data_type<quant_pre, T, U>();
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor>();
+        check_data_type::check_l0c_to_gm_data_type<quant_pre, DstTensor, SrcTensor>();
 
         auto dst_layout = dst.layout();
         auto src_layout = src.layout();
@@ -50,40 +50,39 @@ public:
         // row count = Stride[1] (= D*H*W).
         uint32_t n_size = get<1>(dst_layout.shape());
         uint32_t m_size = get<2>(dst_layout.shape()) * get<3>(dst_layout.shape()) * get<4>(dst_layout.shape());
-        uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED;
+        uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
         uint32_t dst_stride = get<1>(dst_layout.stride());
 
         uint8_t cache_mode = dst.engine().get_cache_mode();
         bool relu_en = trait.enable_relu;
-        uint8_t unit_flag = params.unit_flag;
+        uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
         bool is_channel_split = trait.enable_channel_split;
 
         copy_l0c_to_gm_instr::data_copy<quant_pre>(dst.data().get(), src.data().get(), n_size, m_size, src_stride,
-                                                               dst_stride, cache_mode, relu_en, unit_flag, is_channel_split,
-                                                               false, true);
+                                                   dst_stride, cache_mode, relu_en, unit_flag, is_channel_split, false,
+                                                   true);
     }
 
-    template <const copy_l0c_to_gm_trait& trait, typename T, typename U, typename DstCoord,
-        typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, const DstCoord& coord_dst,
-        const SrcCoord& coord_src, const ShapeType& copy_shape, const fixpipe_params& params)
+    template <const l0c_to_gm_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+              typename SrcCoord, typename CopyShape>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+                                      const SrcCoord& src_coord, const CopyShape& copy_shape,
+                                      const l0c_to_gm_params& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, T, U>();
-        check_data_type::check_l0c_to_gm_data_type<quant_pre, T, U>();
-        auto src_shape = make_slice_shape(coord_src, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(coord_dst);
-        auto src_offset = src.layout()(coord_src);
+        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor>();
+        check_data_type::check_l0c_to_gm_data_type<quant_pre, DstTensor, SrcTensor>();
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
         auto src_layout = src.layout();
-        set_register_instr::set_register(
-            1u, 0u, 0u, get_element<attr_info::stride, attr_info::column, 0>(src_layout));
+        set_register_instr::set_register(1u, 0u, 0u, get_element<attr_info::stride, attr_info::column, 0>(src_layout));
         uint32_t n_size = get_shape_columns(src_shape);
         uint32_t m_size = get_shape_rows(src_shape);
-        uint32_t src_stride =
-            get_element<attr_info::stride, attr_info::column, 1>(src_layout) / FRACTAL_FIXED;
+        uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
         uint32_t dst_stride = get<1>(dst.layout().stride());
-        copy_l0c_to_gm_instr::data_copy_with_offset<quant_pre>(dst, src, dst_offset, src_offset, n_size, m_size,
-            src_stride, dst_stride, dst.engine().get_cache_mode(), trait.enable_relu, params.unit_flag,
-            trait.enable_channel_split, false, true);
+        copy_l0c_to_gm_instr::data_copy_with_offset<quant_pre>(
+            dst, src, dst_offset, src_offset, n_size, m_size, src_stride, dst_stride, dst.engine().get_cache_mode(),
+            trait.enable_relu, static_cast<uint8_t>(params.unit_flag), trait.enable_channel_split, false, true);
     }
 };
 

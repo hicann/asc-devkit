@@ -28,48 +28,48 @@
 namespace asc {
 namespace te {
 
-constexpr auto DEBUG_MMAD_DIM_MIN = 0;
-constexpr auto DEBUG_MMAD_DIM_MAX = 4095;
-constexpr auto DEBUG_GEMV_M_SIZE = 1;
-constexpr auto DEBUG_UNIT_FLAG_DEFAULT = 0;
-constexpr auto DEBUG_UNIT_FLAG_KEEP = 2;
-constexpr auto DEBUG_UNIT_FLAG_RESET = 3;
-constexpr auto DEBUG_BLOCK_COUNT_MIN = 1;
-constexpr auto DEBUG_BLOCK_COUNT_MAX = 4095;
-constexpr auto DEBUG_BLOCK_LEN_MIN = 1;
-constexpr auto DEBUG_BLOCK_LEN_MAX = 65535;
-constexpr auto DEBUG_GM_UB_BLOCK_LEN_MAX = 2097151;
-constexpr auto DEBUG_GM2UB_PADDING_BYTES_MAX = 32;
-constexpr auto DEBUG_COPY_NOP_VALUE = 0;
-constexpr auto DEBUG_SINGLE_BLOCK_COUNT = 1;
-constexpr auto DEBUG_DATA_BLOCK_BYTES = 32;
-constexpr auto DEBUG_BATCH_COUNT_MAX = 4095;
-constexpr auto DEBUG_FIXPIPE_SRC_STRIDE_MAX = 65535;
-constexpr auto DEBUG_FIXPIPE_M_MIN = 1;
-constexpr auto DEBUG_FIXPIPE_M_ND_MAX = 8192;
-constexpr auto DEBUG_FIXPIPE_M_MAX = 65535;
-constexpr auto DEBUG_FIXPIPE_SPLIT_N_MULTIPLE = 8;
-constexpr auto DEBUG_FIXPIPE_N_MULTIPLE = 16;
-constexpr auto DEBUG_L0_STEP_MAX = 255;
-constexpr auto DEBUG_L0_B4_M_STEP_MULTIPLE = 4;
-constexpr auto DEBUG_L0_B8_M_STEP_MULTIPLE = 2;
-constexpr auto DEBUG_L0_TRANSPOSE_DATA_BYTES = 4;
-constexpr auto DEBUG_L0_TRANSPOSE_K_STEP_MULTIPLE = 2;
-constexpr auto DEBUG_IMG2COL_M_START_MAX = 32767;
-constexpr auto DEBUG_IMG2COL_B32_K_START_MULTIPLE = 8;
-constexpr auto DEBUG_IMG2COL_B16_K_START_MULTIPLE = 16;
-constexpr auto DEBUG_IMG2COL_B8_K_START_MULTIPLE = 32;
-constexpr auto DEBUG_IMG2COL_B32_DATA_BYTES = 4;
-constexpr auto DEBUG_IMG2COL_B16_DATA_BYTES = 2;
-constexpr auto DEBUG_IMG2COL_DATA_BITS_PER_BYTE = 8;
-constexpr auto DEBUG_IMG2COL_ALIGNED_REMAINDER = 0;
+constexpr auto debug_mmad_dim_min = 0;
+constexpr auto debug_mmad_dim_max = 4095;
+constexpr auto debug_gemv_m_size = 1;
+constexpr auto debug_unit_flag_default = 0;
+constexpr auto debug_unit_flag_keep = 2;
+constexpr auto debug_unit_flag_reset = 3;
+constexpr auto debug_block_count_min = 1;
+constexpr auto debug_block_count_max = 4095;
+constexpr auto debug_block_len_min = 1;
+constexpr auto debug_block_len_max = 65535;
+constexpr auto debug_gm_ub_block_len_max = 2097151;
+constexpr auto debug_gm2ub_padding_bytes_max = 32;
+constexpr auto debug_copy_nop_value = 0;
+constexpr auto debug_single_block_count = 1;
+constexpr auto debug_data_block_bytes = 32;
+constexpr auto debug_batch_count_max = 4095;
+constexpr auto debug_fixpipe_src_stride_max = 65535;
+constexpr auto debug_fixpipe_m_min = 1;
+constexpr auto debug_fixpipe_m_nd_max = 8192;
+constexpr auto debug_fixpipe_m_max = 65535;
+constexpr auto debug_fixpipe_split_n_multiple = 8;
+constexpr auto debug_fixpipe_n_multiple = 16;
+constexpr auto debug_l0_step_max = 255;
+constexpr auto debug_l0_b4_m_step_multiple = 4;
+constexpr auto debug_l0_b8_m_step_multiple = 2;
+constexpr auto debug_l0_transpose_data_bytes = 4;
+constexpr auto debug_l0_transpose_k_step_multiple = 2;
+constexpr auto debug_img2col_m_start_max = 32767;
+constexpr auto debug_img2col_b32_k_start_multiple = 8;
+constexpr auto debug_img2col_b16_k_start_multiple = 16;
+constexpr auto debug_img2col_b8_k_start_multiple = 32;
+constexpr auto debug_img2col_b32_data_bytes = 4;
+constexpr auto debug_img2col_b16_data_bytes = 2;
+constexpr auto debug_img2col_data_bits_per_byte = 8;
+constexpr auto debug_img2col_aligned_remainder = 0;
 
 template <typename ElementType>
-constexpr auto DEBUG_IMG2COL_K_START_MULTIPLE =
-    sizeof(ElementType) == DEBUG_IMG2COL_B32_DATA_BYTES ?
-        DEBUG_IMG2COL_B32_K_START_MULTIPLE :
-        (sizeof(ElementType) == DEBUG_IMG2COL_B16_DATA_BYTES ? DEBUG_IMG2COL_B16_K_START_MULTIPLE :
-                                                               DEBUG_IMG2COL_B8_K_START_MULTIPLE);
+constexpr auto debug_img2col_k_start_multiple =
+    sizeof(ElementType) == debug_img2col_b32_data_bytes ?
+        debug_img2col_b32_k_start_multiple :
+        (sizeof(ElementType) == debug_img2col_b16_data_bytes ? debug_img2col_b16_k_start_multiple :
+                                                               debug_img2col_b8_k_start_multiple);
 
 template <typename ShapeType>
 __aicore__ inline constexpr bool is_shape_valid(const ShapeType& shape);

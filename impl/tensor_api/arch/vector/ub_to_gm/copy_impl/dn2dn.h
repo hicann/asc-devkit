@@ -29,27 +29,27 @@ namespace te {
 
 class copy_ub_to_gm_dn : private copy_ub_to_gm_common {
 public:
-    template <const copy_ub_to_gm_trait& trait, typename T, typename U>
-    __aicore__ inline static void run(const T& dst, const U& src)
+    template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        data_copy_impl<trait, T, U>(dst, src);
+        data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
     }
 
 private:
-    template <const copy_ub_to_gm_trait& trait, typename T, typename U>
+    template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static constexpr void check_template()
     {
-        check_layout_pattern<U, T>();
-        check_data_type::check_ub_to_gm_data_type<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_ub_to_gm_data_type<DstTensor, SrcTensor>();
     }
 
-    template <const copy_ub_to_gm_trait& trait, typename T, typename U>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
+    template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
-        check_template<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
         auto dst_layout = dst.layout();
         auto src_layout = src.layout();

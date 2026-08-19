@@ -22,46 +22,34 @@
 #ifndef IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_H
 #define IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_H
 
-#include "impl/tensor_api/atom/copy_traits_impl.h"
 #include "impl/tensor_api/arch/vector/ub_to_l1/routing.h"
 
 namespace asc {
 namespace te {
 
-constexpr copy_ub_to_l1_trait DEFAULT_COPY_UB_TO_L1_TRAIT;
+template <typename Trait, const Trait& trait, typename... Args>
+__aicore__ inline void copy_ub_to_l1::copy(const Args&... args)
+{
+    data_copy_impl<trait, Args...>(args...);
+}
 
-struct copy_ub_to_l1_trait_default {
-    using trait_type = copy_ub_to_l1_trait;
-    static constexpr const trait_type value = DEFAULT_COPY_UB_TO_L1_TRAIT;
-};
-
-struct copy_ub_to_l1 {
-public:
-    template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void copy(const Args&... args)
-    {
-        if ASCEND_IS_AIV {
-            data_copy_impl<traits, Args...>(args...);
-        }
-    }
-
-private:
-    template <const copy_ub_to_l1_trait& trait = DEFAULT_COPY_UB_TO_L1_TRAIT, typename T, typename U>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
-    {
-        using dst_pos = get_mem_location<T>;
-        using src_pos = get_mem_location<U>;
-        static_assert(Std::is_same_v<dst_pos, location::l1>, "When Copy tensor from UB to L1, dst tensor must on L1");
-        static_assert(Std::is_same_v<src_pos, location::ub>, "When Copy tensor from UB to L1, src tensor must on UB");
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_ub_to_l1");
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_ub_to_l1");
-        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_ub_to_l1");
-        using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
-        using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
-        using copy_ub_to_l1_impl = typename copy_ub_to_l1_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
-        copy_ub_to_l1_impl::template run<trait, T, U>(dst, src);
-    }
-};
+template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+__aicore__ inline void copy_ub_to_l1::data_copy_impl(const DstTensor& dst, const SrcTensor& src)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(Std::is_same_v<dst_pos, location::l1>,
+                  "For copy_ub_to_l1, the destination tensor must be located in L1.");
+    static_assert(Std::is_same_v<src_pos, location::ub>, "For copy_ub_to_l1, the source tensor must be located in UB.");
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_ub_to_l1");
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_ub_to_l1");
+    TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_ub_to_l1");
+    using dst_layout_ptn = get_layout_pattern<typename DstTensor::layout_type>;
+    using src_layout_ptn = get_layout_pattern<typename SrcTensor::layout_type>;
+    using copy_ub_to_l1_impl =
+        typename copy_ub_to_l1_routing<current_arch_version, dst_layout_ptn, src_layout_ptn>::type;
+    copy_ub_to_l1_impl::template run<trait, DstTensor, SrcTensor>(dst, src);
+}
 
 } // namespace te
 } // namespace asc

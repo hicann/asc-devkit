@@ -27,55 +27,53 @@
 namespace asc {
 namespace te {
 
-constexpr copy_l1_to_biastable_trait DEFAULT_COPY_L1_BIASTABLE_TRAIT;
+template <typename Trait, const Trait& trait, typename... Args>
+__aicore__ inline void copy_l1_to_biastable::copy(const Args&... args)
+{
+    data_copy_impl<trait, Args...>(args...);
+}
 
-struct copy_l1_to_biastable_trait_default {
-    using trait_type = copy_l1_to_biastable_trait;
-    static constexpr const trait_type value = DEFAULT_COPY_L1_BIASTABLE_TRAIT;
-};
+template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor>
+__aicore__ inline void copy_l1_to_biastable::data_copy_impl(const DstTensor& dst, const SrcTensor& src)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(Std::is_same_v<dst_pos, location::bias>,
+                  "For copy_l1_to_biastable, the destination tensor must be located in BIAS.");
+    static_assert(Std::is_same_v<src_pos, location::l1>,
+                  "For copy_l1_to_biastable, the source tensor must be located in L1.");
+    using dst_layout = typename DstTensor::layout_type;
+    using src_layout = typename SrcTensor::layout_type;
+    using dst_layout_ptn = get_layout_pattern<dst_layout>;
+    using src_layout_ptn = get_layout_pattern<src_layout>;
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_biastable");
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_biastable");
+    TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_biastable");
+    using copy_l1_to_bt_impl =
+        typename copy_l1_to_biastable_routing<current_arch_version, dst_layout_ptn, src_layout_ptn>::type;
+    copy_l1_to_bt_impl::template run<trait, DstTensor, SrcTensor>(dst, src);
+}
 
-struct copy_l1_to_biastable {
-public:
-    template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void copy(const Args&... args)
-    {
-        if ASCEND_IS_AIC {
-            data_copy_impl<traits, Args...>(args...);
-        }
-    }
-
-private:
-    template <const copy_l1_to_biastable_trait& trait = DEFAULT_COPY_L1_BIASTABLE_TRAIT, typename T, typename U>
-    __aicore__ inline static void data_copy_impl(const T& dst, const U& src)
-    {
-        using dst_pos = get_mem_location<T>;
-        using src_pos = get_mem_location<U>;
-        static_assert(Std::is_same_v<dst_pos, location::bias>, "copy_l1_to_biastable requires destination on BIAS");
-        static_assert(Std::is_same_v<src_pos, location::l1>, "copy_l1_to_biastable requires source on L1");
-        using dst_layout = typename T::layout_type;
-        using src_layout = typename U::layout_type;
-        using dst_layout_ptn = get_layout_pattern<dst_layout>;
-        using src_layout_ptn = get_layout_pattern<src_layout>;
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_biastable");
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_biastable");
-        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_biastable");
-        using copy_l1_to_bt_impl = typename copy_l1_to_biastable_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
-        copy_l1_to_bt_impl::template run<trait, T, U>(dst, src);
-    }
-
-    template <const copy_l1_to_biastable_trait& trait = DEFAULT_COPY_L1_BIASTABLE_TRAIT, typename T, typename U,
-        typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_impl(
-        const T& dst, const U& src, const DstCoord& coord_dst, const SrcCoord& coord_src, const ShapeType& copy_shape)
-    {
-        using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
-        using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
-        using impl = typename copy_l1_to_biastable_routing<CURRENT_ARCH_VERSION, dst_layout_ptn, src_layout_ptn>::type;
-        auto resolved_coord_dst = resolve_copy_coord(dst.layout(), copy_shape, coord_dst);
-        auto resolved_coord_src = resolve_copy_coord(src.layout(), copy_shape, coord_src);
-        impl::template run<trait, T, U>(dst, src, resolved_coord_dst, resolved_coord_src, copy_shape);
-    }
-};
+template <const l1_to_biastable_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+    typename SrcCoord, typename CopyShape>
+__aicore__ inline void copy_l1_to_biastable::data_copy_impl(const DstTensor& dst, const SrcTensor& src,
+    const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(Std::is_same_v<dst_pos, location::bias>,
+                  "For copy_l1_to_biastable, the destination tensor must be located in BIAS.");
+    static_assert(Std::is_same_v<src_pos, location::l1>,
+                  "For copy_l1_to_biastable, the source tensor must be located in L1.");
+    using dst_pattern = get_layout_pattern<typename DstTensor::layout_type>;
+    using src_pattern = get_layout_pattern<typename SrcTensor::layout_type>;
+    using copy_l1_to_bt_impl =
+        typename copy_l1_to_biastable_routing<current_arch_version, dst_pattern, src_pattern>::type;
+    auto resolved_dst_coord = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
+    auto resolved_src_coord = resolve_copy_coord(src.layout(), copy_shape, src_coord);
+    copy_l1_to_bt_impl::template run<trait, DstTensor, SrcTensor>(
+        dst, src, resolved_dst_coord, resolved_src_coord, copy_shape);
+}
 
 } // namespace te
 } // namespace asc

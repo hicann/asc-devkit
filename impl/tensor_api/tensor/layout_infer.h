@@ -85,21 +85,21 @@ struct infer_nested_layout_pattern_impl<_2, ShapeRow1, _16, ShapeColumn1, _1, _3
 template <size_t ShapeRow0, typename ShapeRow1, size_t ShapeColumn0, typename ShapeColumn1, typename StrideColumn1>
 struct infer_nested_layout_pattern_impl<Std::Int<ShapeRow0>, ShapeRow1, Std::Int<ShapeColumn0>, ShapeColumn1,
                                         Std::Int<ShapeColumn0>, Std::Int<ShapeRow0 * ShapeColumn0>, _1, StrideColumn1,
-                                        3, Std::enable_if_t<ShapeRow0 == FRACTAL_FIXED>> {
+                                        3, Std::enable_if_t<ShapeRow0 == fractal_fixed>> {
     using type = nz_layout_ptn;
 };
 
 template <size_t ShapeRow0, typename ShapeRow1, size_t ShapeColumn0, typename ShapeColumn1, typename StrideRow1>
 struct infer_nested_layout_pattern_impl<Std::Int<ShapeRow0>, ShapeRow1, Std::Int<ShapeColumn0>, ShapeColumn1,
                                         Std::Int<ShapeColumn0>, StrideRow1, _1, Std::Int<ShapeRow0 * ShapeColumn0>, 4,
-                                        Std::enable_if_t<ShapeRow0 == FRACTAL_FIXED>> {
+                                        Std::enable_if_t<ShapeRow0 == fractal_fixed>> {
     using type = zz_layout_ptn;
 };
 
 template <size_t ShapeRow0, typename ShapeRow1, size_t ShapeColumn0, typename ShapeColumn1, typename StrideRow1>
 struct infer_nested_layout_pattern_impl<Std::Int<ShapeRow0>, ShapeRow1, Std::Int<ShapeColumn0>, ShapeColumn1, _1,
                                         StrideRow1, Std::Int<ShapeRow0>, Std::Int<ShapeRow0 * ShapeColumn0>, 5,
-                                        Std::enable_if_t<ShapeColumn0 == FRACTAL_FIXED>> {
+                                        Std::enable_if_t<ShapeColumn0 == fractal_fixed>> {
     using type = zn_layout_ptn;
 };
 
@@ -120,8 +120,8 @@ struct infer_nested_layout_pattern {
 
 template <typename ShapeRow0, typename ShapeRow1, typename ShapeColumn0, typename ShapeColumn1, typename StrideRow0,
           typename StrideRow1, typename StrideColumn0, typename StrideColumn1>
-struct infer_nested_layout_pattern<shape_type<ShapeRow0, ShapeRow1>, shape_type<ShapeColumn0, ShapeColumn1>,
-                                   stride_type<StrideRow0, StrideRow1>, stride_type<StrideColumn0, StrideColumn1>>
+struct infer_nested_layout_pattern<shape<ShapeRow0, ShapeRow1>, shape<ShapeColumn0, ShapeColumn1>,
+                                   stride<StrideRow0, StrideRow1>, stride<StrideColumn0, StrideColumn1>>
     : infer_nested_layout_pattern_impl<Std::remove_cvref_t<ShapeRow0>, Std::remove_cvref_t<ShapeRow1>,
                                        Std::remove_cvref_t<ShapeColumn0>, Std::remove_cvref_t<ShapeColumn1>,
                                        Std::remove_cvref_t<StrideRow0>, Std::remove_cvref_t<StrideRow1>,
@@ -156,7 +156,7 @@ struct infer_layout_pattern {
 };
 
 template <typename Row, typename Column, typename RowStride, typename ColumnStride>
-struct infer_layout_pattern<shape_type<Row, Column>, stride_type<RowStride, ColumnStride>>
+struct infer_layout_pattern<shape<Row, Column>, stride<RowStride, ColumnStride>>
     : infer_two_dim_layout_pattern<Row, Column, RowStride, ColumnStride> {};
 
 template <typename Pattern, typename C0 = _1>
@@ -206,9 +206,9 @@ struct infer_layout_c0_type<scalea_dn_layout_ptn, ShapeRow0, ShapeColumn0> {
 };
 
 template <typename Row, typename Column, typename RowStride, typename ColumnStride>
-struct infer_layout_trait<shape_type<Row, Column>, stride_type<RowStride, ColumnStride>> {
+struct infer_layout_trait<shape<Row, Column>, stride<RowStride, ColumnStride>> {
 private:
-    using pattern_type = typename infer_layout_pattern<shape_type<Row, Column>, stride_type<RowStride, ColumnStride>>::type;
+    using pattern_type = typename infer_layout_pattern<shape<Row, Column>, stride<RowStride, ColumnStride>>::type;
 
 public:
     using type = typename build_inferred_layout_trait<pattern_type>::type;
@@ -216,11 +216,11 @@ public:
 
 template <typename ShapeRow0, typename ShapeRow1, typename ShapeColumn0, typename ShapeColumn1, typename StrideRow0,
           typename StrideRow1, typename StrideColumn0, typename StrideColumn1>
-struct infer_layout_trait<shape_type<shape_type<ShapeRow0, ShapeRow1>, shape_type<ShapeColumn0, ShapeColumn1>>,
-                          stride_type<stride_type<StrideRow0, StrideRow1>, stride_type<StrideColumn0, StrideColumn1>>> {
+struct infer_layout_trait<shape<shape<ShapeRow0, ShapeRow1>, shape<ShapeColumn0, ShapeColumn1>>,
+                          stride<stride<StrideRow0, StrideRow1>, stride<StrideColumn0, StrideColumn1>>> {
 private:
-    using layout_shape = shape_type<shape_type<ShapeRow0, ShapeRow1>, shape_type<ShapeColumn0, ShapeColumn1>>;
-    using layout_stride = stride_type<stride_type<StrideRow0, StrideRow1>, stride_type<StrideColumn0, StrideColumn1>>;
+    using layout_shape = shape<shape<ShapeRow0, ShapeRow1>, shape<ShapeColumn0, ShapeColumn1>>;
+    using layout_stride = stride<stride<StrideRow0, StrideRow1>, stride<StrideColumn0, StrideColumn1>>;
     using pattern_type = typename infer_layout_pattern<layout_shape, layout_stride>::type;
     using c0_type = typename infer_layout_c0_type<pattern_type, ShapeRow0, ShapeColumn0>::type;
 
@@ -232,14 +232,15 @@ template <typename Batch, typename ShapeRow0, typename ShapeRow1, typename Shape
           typename BatchStride, typename StrideRow0, typename StrideRow1, typename StrideColumn0,
           typename StrideColumn1>
 struct infer_layout_trait<
-    shape_type<Batch, shape_type<shape_type<ShapeRow0, ShapeRow1>, shape_type<ShapeColumn0, ShapeColumn1>>>,
-    stride_type<BatchStride, stride_type<stride_type<StrideRow0, StrideRow1>, stride_type<StrideColumn0, StrideColumn1>>>>
-    : infer_layout_trait<shape_type<shape_type<ShapeRow0, ShapeRow1>, shape_type<ShapeColumn0, ShapeColumn1>>,
-                         stride_type<stride_type<StrideRow0, StrideRow1>, stride_type<StrideColumn0, StrideColumn1>>> {};
+    shape<Batch, shape<shape<ShapeRow0, ShapeRow1>, shape<ShapeColumn0, ShapeColumn1>>>,
+    stride<BatchStride, stride<stride<StrideRow0, StrideRow1>, stride<StrideColumn0, StrideColumn1>>>>
+    : infer_layout_trait<shape<shape<ShapeRow0, ShapeRow1>, shape<ShapeColumn0, ShapeColumn1>>,
+                         stride<stride<StrideRow0, StrideRow1>, stride<StrideColumn0, StrideColumn1>>> {};
 
-template <typename T, typename U>
-struct get_layout_info<layout_type<T, U, Std::ignore_t>> {
-    using type = Std::tuple<typename infer_layout_pattern<T, U>::type, typename infer_layout_trait<T, U>::type>;
+template <typename Shape, typename Stride>
+struct get_layout_info<layout<Shape, Stride, Std::ignore_t>> {
+    using type = Std::tuple<typename infer_layout_pattern<Shape, Stride>::type,
+                            typename infer_layout_trait<Shape, Stride>::type>;
 };
 
 } // namespace te

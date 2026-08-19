@@ -29,23 +29,22 @@
 namespace asc {
 namespace te {
 
-struct copy_gm_to_ub_trait {};
-
 class copy_gm_to_ub_common {
 protected:
-    template <typename T, typename U>
-    __aicore__ inline static void emit_copy(const T& dst, const U& src, uint16_t block_count, uint32_t block_len,
-                                            int64_t src_stride, int64_t dst_stride, const copy_gm_to_ub_params& params)
+    template <typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, uint16_t block_count,
+                                            uint32_t block_len, int64_t src_stride, int64_t dst_stride,
+                                            const gm_to_ub_params& params)
     {
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
         adjust_b4_copy_params<src_type, dst_type>(block_len, src_stride, dst_stride);
 
         auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
         copy_gm_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len,
-                                                   params.left_padding_count, params.right_padding_count,
-                                                   params.enable_constant_pad, cache_mode, src_stride, dst_stride);
+                                       params.left_padding_count, params.right_padding_count,
+                                       params.enable_constant_pad, cache_mode, src_stride, dst_stride);
     }
 };
 
