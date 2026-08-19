@@ -104,7 +104,7 @@ void print_data(const char* label, const std::vector<T>& values)
 }
 
 template <typename T>
-bool compare_date(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
+bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
 {
     if (actual.size() != expected.size()) return false;
     for (size_t i = 0; i < actual.size(); ++i) {
@@ -173,7 +173,7 @@ int main()
     print_data("Input 1.0 (raw bytes)", input);
     print_data("Output (raw bytes)", output);
     print_data("Golden 1.0 (raw bytes)", golden);
-    const bool passed = compare_date(output, golden);
+    const bool passed = compare_data(output, golden);
     std::cout << (passed ? "[Success] asc_bfloat162half_rn passed." : "[Failed] asc_bfloat162half_rn failed.") << std::endl;
     aclrtFree(input_device);
     aclrtFree(output_device);

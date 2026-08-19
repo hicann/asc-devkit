@@ -31,14 +31,14 @@
 
 对直方图数据进行统计，在目的操作数dstReg的基础数据上加上源操作数srcReg数据的统计结果，包括数据的频率统计和累计统计。
 
-- 频率统计  
-    如下图所示，在低位模式下，dstReg用于统计srcReg中index为[0-127]范围内（前半部分）各个值的出现频率；而在高位模式下，dstReg则统计[128-255]范围内（后半部分）的频率。dstReg中的第n位（bit）表示srcReg中数值n的出现次数，并在原始dstReg数据的基础上进行累加。
+- 频率统计
+    如下图所示，dstReg中的第n个元素表示srcReg中数值n的出现次数，并在原始dstReg数据的基础上进行累加。在低位模式下，dstReg用于统计srcReg中index为[0, 127]范围内（前半部分）各个值的出现频率，例如dst[i]表示数值i在src的[0, 127]中出现的次数；而在高位模式下，dstReg则统计[128, 255]范围内（后半部分）的频率，例如dst[i]表示数值i在src的[128, 255]中出现的次数。
 
     **图 1**  频率统计  
     ![频率统计](../../../../figures/reg_histograms_1.png)
 
 - 累计统计  
-    如下图所示，在低位模式下，目的寄存器dstReg会统计源寄存器srcReg中值落在低位区间[0-127]的数据分布情况；在高位模式下，目的寄存器dstReg则会统计srcReg中值落在高位区间[128-255]的数据分布情况。dstReg中的第n个元素表示srcReg中从0到n的所有数值在对应区间中出现的总频率。最终，统计结果会在目的寄存器原始数据的基础上进行累加。
+    如下图所示，dstReg中的第n个元素表示srcReg中从0到n的所有数值在对应区间中出现的总频率。最终，统计结果会在目的寄存器原始数据的基础上进行累加。在低位模式下，目的寄存器dstReg会统计源寄存器srcReg中值落在低位区间[0, 127]的数据分布情况，例如dst[i]表示数值0~i在src的[0, 127]中出现的次数；在高位模式下，目的寄存器dstReg则会统计srcReg中值落在高位区间[128, 255]的数据分布情况，例如dst[i]表示数值0~i在src的[128, 255]中出现的次数。
 
     **图 2**  累计统计  
     ![累计统计](../../../../figures/reg_histograms_2.png)
@@ -67,7 +67,7 @@ __simd_callee__ inline void Histograms(V& dstReg, S& srcReg, MaskReg& mask)
 
 | 参数名称 | 输入/输出 | 描述 |
 | ------ | ------ | ------ |
-| dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输入/输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
 | srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
