@@ -557,6 +557,7 @@ set_options() {
         shift
         ;;
     --sign-script)
+        require_option_value "$1" "$2"
         CUSTOM_SIGN_SCRIPT="$(realpath $2)"
         shift 2
         ;;
