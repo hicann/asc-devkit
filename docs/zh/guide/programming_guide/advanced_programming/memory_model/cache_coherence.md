@@ -1,6 +1,6 @@
 # 缓存一致性
 
-本文介绍NPU编程中常见的缓存一致性问题，说明DCache、ICache、SIMT DCache与GM的数据一致性。
+本文介绍NPU编程中常见的缓存一致性问题，说明DCache、ICache、SIMT DCache与GM的数据一致性。芯片的硬件架构参考[NPU架构版本2201](../hardware_implementation/architecture_spec/npu_arch_2201.md)和[NPU架构版本3510](../hardware_implementation/architecture_spec/npu_arch_3510.md)。
 
 ## 缓存一致性的基本概念
 
@@ -20,7 +20,7 @@ Cache Line是Cache加载、失效、写回的最小操作粒度。例如访问GM
 | AIV ICache | Scalar取指缓存 | 只读，不考虑多个核之间的数据不一致问题 | 128B | 16KB |
 | AIC DCache | Scalar数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 64B | 32KB |
 | AIV DCache | Scalar数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 64B | 32KB |
-| SIMT DCache | SIMT数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 128B | 128KB |
+| SIMT DCache | SIMT数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 128B | 32KB~128KB |
 <!-- end id15 -->
 
 <!-- npu="A3,910b" id20 -->
@@ -220,7 +220,7 @@ T6                                                Scalar.LOAD A -> 1
 <!-- npu="950" id3 -->
 #### Atomic访问导致的DCache缓存一致性
 
-[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持Scalar原子操作，Scalar原子操作可以看成对某个GM地址执行的读-改-写事件。例如C API [asc_atomic_add](../../../../api/SIMD-API/c_api/scalar_compute/asc_atomic_add.md)，该接口在指定GM地址上执行原子加操作。原子操作保证的是这一次读-改-写不会被其他原子更新打断，但它不会自动清理同一地址在DCache中的旧副本或Dirty副本。
+[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持Scalar原子操作，Scalar原子操作可以看成对某个GM地址执行的读-改-写事件，但是Scalar原子操作会绕过DCache，因此会导致缓存一致性。例如C API [asc_atomic_add](../../../../api/SIMD-API/c_api/scalar_compute/asc_atomic_add.md)，该接口在指定GM地址上执行原子加操作。原子操作保证的是这一次读-改-写不会被其他原子更新打断，但它不会自动清理同一地址在DCache中的旧副本或Dirty副本。
 
 因此，如果同一GM地址此前被普通Scalar路径访问过，就需要分析原子事件和DCache事件的一致性问题：
 
@@ -343,12 +343,12 @@ RAW（Read After Write）场景要求后序读操作读取到前序写操作产�
 
 下表列出同一AI Core内Scalar写GM之后、消费者读取GM完整的软件维护操作序列。假设生产者和消费者访问同一地址，每个单元格都是从写后处理到读前处理的完整操作序列。
 
-表中的`VF_SIMT`表示经过cache的SIMT线程函数，MTE2表示经过MTE2的读取操作，cache表示经过cache的访问，no cache表示不经过cache的访问。
+表中的cache表示经过cache的访问，no cache表示不经过cache的访问,`VF_SIMT`表示经过cache的SIMT线程函数，MTE2表示经过MTE2的读取操作，MTE2（cache）指[多维数据搬运NDDMA](../../../../api/SIMD-API/c_api/vector_data_move/asc_ndim_copy_gm2ub.md)，MTE2.DCI指NDDMA Cache的[失效操作](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/NdDmaDci.md)或[asc_ndim_copy_dci](../../../../api/appendix/Release_Notes/CANN_9_1_0.md)。
 
-| 后续读取方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE2 | MTE2（no cache） |
+| 后续读取方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE2（cache） | MTE2（no cache） |
 | --- | --- | --- | --- | --- | --- | --- |
-| Scalar（cache） | 先写Scalar.STORE<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→V/VF<br>后读SIMT.DCCI<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→V/VF<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.DCCI<br>后读MTE2.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.LOAD |
-| Scalar（no cache） | 先写Scalar.STORE<br>先写Scalar.DSB<br>后读Scalar.DCCI<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→V/VF<br>后读SIMT.DCCI<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→V/VF<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.DCCI<br>后读MTE2.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.LOAD |
+| Scalar（cache） | 先写Scalar.STORE<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→V/VF<br>后读SIMT.DCCI<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→V/VF<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.DCI<br>后读MTE2.LOAD | 先写Scalar.STORE<br>先写Scalar.DCCI<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.LOAD |
+| Scalar（no cache） | 先写Scalar.STORE<br>先写Scalar.DSB<br>后读Scalar.DCCI<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>后读Scalar.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→V/VF<br>后读SIMT.DCCI<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→V/VF<br>后读VF_SIMT.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.DCI<br>后读MTE2.LOAD | 先写Scalar.STORE<br>先写Scalar.DSB<br>sync S→MTE2<br>后读MTE2.LOAD |
 
 例如，前序写入方式是`Scalar（cache）`，后续读取方式是`VF_SIMT（cache）`时，对应单元格要求执行：
 
@@ -452,12 +452,17 @@ ICache用于缓存Scalar单元最近使用或频繁使用的指令。Scalar读�
 
 [NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)新增SIMT相关硬件单元。SIMT访存会涉及SIMT DCache：SIMT DCache复用UB中的一部分空间，用于缓存SIMT线程访问GM时的数据。SIMT DCache空间可配置范围为32KB到128KB，实际大小由UB总大小扣除静态内存、动态内存和预留空间后确定，若剩余空间超过128KB，SIMT DCache大小固定为128KB。SIMT也提供[`asc_ldcg`](../../../../api/SIMT-API/memory_access_functions/asc_ldcg.md)、[`asc_stcg`](../../../../api/SIMT-API/memory_access_functions/asc_stcg.md)等接口表达不占用或绕过SIMT DCache的访问意图，因此本节按带Cache路径和no cache路径分别分析。
 
-SIMT读GM的底层实现：先从SIMT DCache读取，未命中再访问L2 Cache或GM，并把数据缓存到L2 Cache和SIMT DCache中。L2 Cache与GM之间的数据一致性由硬件保证，但SIMT DCache与GM之间不保证一致性。因此，如果同一GM地址已经被其他线程、其他核、Scalar路径或MTE路径更新，而当前SIMT DCache中仍有旧副本，后续SIMT读可能继续命中旧值。
+SIMT读GM的底层实现：先从SIMT DCache读取，未命中再访问L2 Cache或GM，并把数据缓存到L2 Cache和SIMT DCache中。L2 Cache与GM之间的数据一致性由硬件保证，但SIMT DCache与GM之间不保证一致性。因此，如果同一GM地址已经被其他核、Scalar路径或MTE路径更新，而当前SIMT DCache中仍有旧副本，后续SIMT读可能继续命中旧值。
 
-SIMT DCache采用直写（write-through）策略。SIMT写GM时，写入会进入SIMT DCache，同时写出到GM，不形成需要后续Clean回GM的Dirty副本；no cache写入不经过SIMT DCache，也不会在SIMT DCache中缓存写入数据。判断SIMT写GM后是否需要Cache处理，可以按两步看：
+SIMT DCache采用直写（write-through）策略：
 
-- **先看写端是否需要等待GM写完成**：SIMT DCache是直写Cache，写端不需要执行DCCI把Dirty副本写回GM，但仍需要通过`SIMT.DSB`等待前序GM写入完成。
-- **再看读端是否可能命中旧副本**：如果消费者通过Scalar或MTE2等其他带Cache路径读取，读端路径中可能已有旧副本，需要在读前按表执行对应的DCCI；如果消费者走no cache读取路径，则不需要处理SIMT DCache中的旧副本。
+- SIMT写GM时，写入会进入SIMT DCache，同时写出到GM，不形成需要后续Clean回GM的Dirty副本；
+- no cache写入不经过SIMT DCache，也不会在SIMT DCache中缓存写入数据。no cache写GM时会检查该地址的数据是否已缓存在SIMT DCache里，如果命中，硬件会自己执行DCCI。
+
+判断SIMT写GM后是否需要Cache处理，可以按两步看：
+
+- **先看写端是否需要等待GM写完成**：SIMT DCache是直写Cache，写端不需要执行DCCI把Dirty副本写回GM。
+- **再看读端是否可能命中旧副本**：如果消费者通过Scalar或MTE2等其他带Cache路径读取，读端路径中可能已有旧副本，需要在读前按表执行对应的DCCI。
 
 如果线程或核之间还通过GM上的标志位通信，需要另行使用[`asc_threadfence`](../../../../api/SIMT-API/sync_and_memory_fence/memory_fence/asc_threadfence.md)等内存栅栏处理写入顺序关系。内存栅栏属于内存顺序控制，不会自动写回生产者侧Cache，也不会自动失效消费者侧Cache。
 
@@ -467,32 +472,34 @@ SIMT DCache采用直写（write-through）策略。SIMT写GM时，写入会进�
 
 表中的两类VF_SIMT访问路径含义如下：
 
-- **VF_SIMT（cache）**：写入经过SIMT DCache直写路径，数据会缓存至SIMT DCache和L2 Cache，同时写出到GM。后续其他流水读取前仍需等待GM写完成，并处理读端可能存在的旧副本。
-- **VF_SIMT（no cache）**：写GM不经过SIMT DCache，不在SIMT DCache中缓存写入数据。其他流水读取前仍需通过`SIMT.DSB`等待GM写完成，并按读端路径处理旧副本。
+- **VF_SIMT（cache）**：写入经过SIMT DCache直写路径，数据会缓存至SIMT DCache和L2 Cache，同时写出到GM。
+- **VF_SIMT（no cache）**：写GM不经过SIMT DCache，不在SIMT DCache中缓存写入数据。
 
 由于SIMT DCache为直写Cache，且no cache路径也不会产生Dirty副本，二者在RAW、WAW、WAR场景下需要的软件一致性维护动作基本相同，下文表格将`VF_SIMT（cache）`和`VF_SIMT（no cache）`合并为`VF_SIMT（cache/no cache）`。
 
-下面按RAW、WAW和WAR三类依赖关系分析。本节表格同样按"先看行、再看列"阅读：行表示先发生的访问，列表示后发生的访问；单元格中的操作按从上到下的顺序执行。表中的`xxx.STORE`表示对应路径的写操作，`xxx.LOAD`表示对应路径的读操作。`SIMT.DSB`用于等待SIMT侧前序GM访问完成，`SIMT.DCCI`用于使SIMT DCache中的旧副本失效，`sync X→Y`用于同一AI Core内建立流水X到流水Y的执行顺序，`Scalar.DCCI`和`MTE2.DCCI`表示读端在读取前处理本路径可能存在的旧Cache副本。`DSB`和`sync`不改变Cache副本状态，不能替代DCCI。
+下面按RAW、WAW和WAR三类依赖关系分析。本节表格同样按"先看行、再看列"阅读：行表示先发生的访问，列表示后发生的访问；单元格中的操作按从上到下的顺序执行。表中的`xxx.STORE`表示对应路径的写操作，`xxx.LOAD`表示对应路径的读操作。`SIMT.DCCI`用于使SIMT DCache中的旧副本失效，`sync X→Y`用于同一AI Core内建立流水X到流水Y的执行顺序，`Scalar.DCCI`和`MTE2.DCI`表示读端在读取前处理本路径可能存在的旧Cache副本。`DSB`和`sync`不改变Cache副本状态，不能替代DCCI。
 
 ##### RAW：先写后读
 
-RAW场景要求后续读操作读取到VF_SIMT前序写操作产生的新值。由于SIMT DCache是直写Cache，写端不需要执行DCCI写回Dirty数据，但仍可能需要通过`SIMT.DSB`等待写GM完成；如果后续读端是Scalar或MTE2等可能持有旧副本的带Cache路径，还需要在读前执行对应DCCI，避免命中旧副本。
+RAW场景要求后续读操作读取到VF_SIMT前序写操作产生的新值。由于SIMT DCache是直写Cache，写端不需要执行DCCI写回Dirty数据；如果后续读端是Scalar或MTE2等可能持有旧副本的带Cache路径，还需要在读前执行对应DCCI，避免命中旧副本。
 
 下表描述核内VF_SIMT作为生产者写GM之后、消费者真正读取之前，生产者和消费者需要按顺序执行哪些Cache处理以及必要的等待/流水顺序操作。
 
-| 后续读取方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE2 | MTE2（no cache） |
+| 后续读取方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE2（cache） | MTE2（no cache） |
 | --- | --- | --- | --- | --- | --- | --- |
-| VF_SIMT<br>（cache/no cache） | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→S<br>后读Scalar.DCCI<br>后读Scalar.LOAD | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→S<br>后读Scalar.LOAD | 先写VF_SIMT.STORE<br>后读VF_SIMT.LOAD | 先写VF_SIMT.STORE<br>后读VF_SIMT.LOAD | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→MTE2<br>后读MTE2.DCCI<br>后读MTE2.LOAD | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→MTE2<br>后读MTE2.LOAD |
+| VF_SIMT<br>（cache/no cache） | 先写VF_SIMT.STORE<br>sync V/VF→S<br>后读Scalar.DCCI<br>后读Scalar.LOAD | 先写VF_SIMT.STORE<br>sync V/VF→S<br>后读Scalar.LOAD | 先写VF_SIMT.STORE<br>sync SIMT->SIMT（同线程内无需同步）<br>后读VF_SIMT.LOAD | 先写VF_SIMT.STORE<br>sync SIMT->SIMT（同线程内无需同步）<br>后读VF_SIMT.LOAD | 先写VF_SIMT.STORE<br>sync V/VF→MTE2<br>后读MTE2.DCI<br>后读MTE2.LOAD | 先写VF_SIMT.STORE<br>sync V/VF→MTE2<br>后读MTE2.LOAD |
 
 例如，前序写入方式是`VF_SIMT（cache/no cache）`，后续读取方式是普通`Scalar（cache）`时，需要执行：
 
 ```text
-VF_SIMT.STORE -> SIMT.DSB -> sync V/VF→S -> Scalar.DCCI -> Scalar.LOAD
+VF_SIMT.STORE -> sync V/VF→S -> Scalar.DCCI -> Scalar.LOAD
 ```
 
-含义是：SIMT DCache是直写Cache，SIMT写GM时新值会写出到GM；生产者侧先执行`SIMT.DSB`等待前序GM写完成；消费者读前再通过`sync V/VF→S`保证同一AI Core内Scalar读取发生在VF_SIMT写入之后，并执行`Scalar.DCCI`避免Scalar DCache中已有旧副本；之后Scalar读取才能从正确位置获得新值。
+含义是：SIMT DCache是直写Cache，SIMT写GM时新值会写出到GM；消费者读前再通过`sync V/VF→S`保证同一AI Core内Scalar读取发生在VF_SIMT写入之后，并执行`Scalar.DCCI`避免Scalar DCache中已有旧副本；之后Scalar读取才能从正确位置获得新值。
 
 其他单元格按同样方式阅读：先完成行中描述的VF_SIMT写，再根据列中后续读取路径补充等待、流水同步以及读端Cache失效操作。是否需要读端DCCI，取决于后续读取路径是否可能命中旧Cache副本。
+
+其中，表格里的sync SIMT->SIMT（同线程内无需同步）指如果是线程间操作同地址，则需要通过[asc_syncthreads](../../../../api/SIMT-API/sync_and_memory_fence/sync_interface/asc_syncthreads.md)建立阶段同步；如果是SIMT的某个单线程内VF_SIMT写入和读取同地址无需同步。
 
 ##### WAW：先写后写
 
@@ -502,7 +509,7 @@ WAW场景要求最终写入GM的是后一次写操作的数据。由于SIMT DCac
 
 | 后续写入方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE3 | FixPipe |
 | --- | --- | --- | --- | --- | --- | --- |
-| VF_SIMT<br>（cache/no cache） | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→S<br>后写Scalar.STORE | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→S<br>后写Scalar.STORE | 先写VF_SIMT.STORE<br>后写VF_SIMT.STORE | 先写VF_SIMT.STORE<br>后写VF_SIMT.STORE | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→MTE3<br>后写MTE3.STORE | 先写VF_SIMT.STORE<br>先写SIMT.DSB<br>sync V/VF→FixPipe<br>后写FixPipe.STORE |
+| VF_SIMT<br>（cache/no cache） | 先写VF_SIMT.STORE<br>sync V/VF→S<br>后写Scalar.STORE | 先写VF_SIMT.STORE<br>sync V/VF→S<br>后写Scalar.STORE | 先写VF_SIMT.STORE<br>sync SIMT->SIMT（同线程内无需同步）<br>后写VF_SIMT.STORE | 先写VF_SIMT.STORE<br>sync SIMT->SIMT（同线程内无需同步）<br>后写VF_SIMT.STORE | 先写VF_SIMT.STORE<br>sync V/VF→MTE3<br>后写MTE3.STORE | 先写VF_SIMT.STORE<br>sync V/VF→FixPipe<br>后写FixPipe.STORE |
 
 如果后一次写需要立刻对GM或其他访问路径可见，仍需要在后写完成后按对应写路径执行必要的等待或发布操作。例如，后写为Scalar（cache）时，需要执行`后写Scalar.DCCI -> 后写Scalar.DSB`；后写为VF_SIMT、MTE3或FixPipe时，需要等待对应写GM操作完成。
 
@@ -514,9 +521,9 @@ WAR场景要求前序读操作读取到后续写操作发生之前的旧值。�
 
 | 后续写入方式（列，后发生）<br>╲<br>前序读取方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE3 | FixPipe |
 | --- | --- | --- | --- | --- | --- | --- |
-| VF_SIMT<br>（cache/no cache） | 前读VF_SIMT.LOAD<br>前读SIMT.DSB<br>sync V/VF→S<br>后写Scalar.STORE | 前读VF_SIMT.LOAD<br>前读SIMT.DSB<br>sync V/VF→S<br>后写Scalar.STORE | 前读VF_SIMT.LOAD<br>后写VF_SIMT.STORE | 前读VF_SIMT.LOAD<br>后写VF_SIMT.STORE | 前读VF_SIMT.LOAD<br>前读SIMT.DSB<br>sync V/VF→MTE3<br>后写MTE3.STORE | 前读VF_SIMT.LOAD<br>前读SIMT.DSB<br>sync V/VF→FixPipe<br>后写FixPipe.STORE |
+| VF_SIMT<br>（cache/no cache） | 前读VF_SIMT.LOAD<br>sync V/VF→S<br>后写Scalar.STORE | 前读VF_SIMT.LOAD<br>sync V/VF→S<br>后写Scalar.STORE | 前读VF_SIMT.LOAD<br>sync SIMT->SIMT（同线程内无需同步）<br>后写VF_SIMT.STORE | 前读VF_SIMT.LOAD<br>sync SIMT->SIMT（同线程内无需同步）<br>后写VF_SIMT.STORE | 前读VF_SIMT.LOAD<br>sync V/VF→MTE3<br>后写MTE3.STORE | 前读VF_SIMT.LOAD<br>sync V/VF→FixPipe<br>后写FixPipe.STORE |
 
-WAR表不要求读端失效Cache副本，因为目标是读取写前旧值；维护重点是等待前序读完成并建立到后续写路径的顺序。若前序访问和后续访问位于不同AI Core，表中的`sync V/VF→S`、`sync V/VF→MTE3`和`sync V/VF→FixPipe`不能跨核生效，应先在前序访问所在核完成必要的Cache处理和`DSB`，再发送核间通知；后序访问所在核收到通知后，再处理本核读端或写端可能存在的Cache副本。
+WAR表不要求读端失效Cache副本，因为目标是读取写前旧值；维护重点是等待前序读完成并建立到后续写路径的顺序。若前序访问和后续访问位于不同AI Core，表中的`sync V/VF→S`、`sync V/VF→MTE3`和`sync V/VF→FixPipe`不能跨核生效，应先在前序访问所在核完成读取之后发送核间通知；后序访问所在核收到通知后，再处理本核读端或写端可能存在的Cache副本。
 <!-- end id4 -->
 
 ### UB与DCache的缓存一致性
