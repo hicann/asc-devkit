@@ -27,16 +27,8 @@
 ```cpp
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
 {
-    AscendC::InitSocState();
-
-    REGISTER_TILING_DEFAULT(AddCustomTilingData);
-    GET_TILING_DATA(tilingData, tiling);
-
-    KernelAdd op;
-    op.Init(x, y, z, tilingData.totalLength, tilingData.tileNum);
-    op.Process();
-
-    AscendC::PipeBarrier<PIPE_ALL>();
+    // 核函数具体内容
+    // ...
 }
 ```
 
@@ -47,21 +39,8 @@ template <typename D_T_X, typename D_T_Y, typename D_T_Z, int TILE_NUM, int IS_S
 __global__ __aicore__ void add_custom_template(GM_ADDR x, GM_ADDR y, GM_ADDR z,
                                                GM_ADDR workspace, GM_ADDR tiling)
 {
-    AscendC::InitSocState();
-
-    REGISTER_TILING_DEFAULT(TilingDataTemplate);
-    GET_TILING_DATA_WITH_STRUCT(TilingDataTemplate, tilingData, tiling);
-
-    KernelAdd<D_T_X, D_T_Y, D_T_Z> op;
-    op.Init(x, y, z, tilingData.totalLength, TILE_NUM);
-
-    if constexpr (IS_SPLIT == 0) {
-        op.Process1();
-    } else {
-        op.Process2();
-    }
-
-    AscendC::PipeBarrier<PIPE_ALL>();
+    // 核函数具体内容
+    // ...
 }
 ```
 

@@ -1,6 +1,6 @@
 # msobjdump工具<a name="ZH-CN_TOPIC_0000002028951292"></a>
 
-本工具主要针对工程编译生成的算子ELF文件（Executable and Linkable Format）提供解析和解压功能，并将结果信息以可读形式呈现，方便开发者直观获得kernel文件信息。当前支持解析融合编译工程、标准/简易自定义算子工程，以及核函数（Kernel）直调工程生成的相关产物。
+本工具主要针对工程编译生成的算子ELF文件（Executable and Linkable Format）提供解析和解压功能，并将结果信息以可读形式呈现，方便开发者直观获得kernel文件信息。当前支持解析融合编译工程和自定义算子工程生成的相关产物。
 
 >[!NOTE]说明 
 >- ELF文件是一种用于二进制文件、可执行文件、目标代码、共享库和核心转储的文件格式，包括常见的\*.a、\*.so文件等。ELF文件常见构成如下：
@@ -72,7 +72,7 @@
 
     | 参数（区分大小写） | 可选/必选 | 说明 |
     | ---- | ---- | ---- |
-    | `--dump-elf <elf_file>`，`-d` | 必选 | 解析ELF文件中包含的device信息，如文件名、文件类型、文件长度、符号表等，并终端打屏显示。<br>`<elf_file>`表示待解析ELF文件路径，如`/home/op_api/lib_api.so`。支持两种打印模式：<br>简单打印：默认仅打印部分device信息。<br>全量打印：与`--verbose`配套使用，开启全量device信息打屏显示。<br>不同工程打印字段信息不同，具体参见<a href="#table94384560259">表4</a>和<a href="#table217334916136">表6</a>。 |
+    | `--dump-elf <elf_file>`，`-d` | 必选 | 解析ELF文件中包含的device信息，如文件名、文件类型、文件长度、符号表等，并终端打屏显示。<br>`<elf_file>`表示待解析ELF文件路径，如`/home/op_api/lib_api.so`。支持两种打印模式：<br>简单打印：默认仅打印部分device信息。<br>全量打印：与`--verbose`配套使用，开启全量device信息打屏显示。<br>融合编译工程和自定义算子工程的打印字段分别参见<a href="#table94384560259">表4</a>和<a href="#table-aclnn-meta-fields">表5</a>。 |
     | `--verbose`，`-V` | 可选 | 必须与`--dump-elf`配套使用，用于开启ELF文件中全量打印device信息功能。 |
 
 -   **解压ELF文件的命令**
@@ -101,25 +101,37 @@
     | ---- | ---- | ---- |
     | `--list-elf <elf_file>`，`-l` | 必选 | 获取ELF文件中包含的device信息文件列表，并打印显示。<br>`<elf_file>`表示待打印的ELF文件路径，如`/home/op_api/lib_api.so`。 |
 
-**表4**  ELF解析字段说明（标准/简易自定义算子工程及融合编译工程）<a name="table94384560259"></a>
+**表4**  融合编译工程支持的ELF解析字段说明<a name="table94384560259"></a>
 
 | 字段名 | 含义 | 是否必选 | 打印说明 |
 | ---- | ---- | ---- | ---- |
 | `.ascend.meta. ${id}` | 表示算子kernel函数名称，其中`${id}`表示meta信息的索引值。 | 是 | 不设置`--verbose`，默认打印。 |
 | `VERSION` | 表示版本号。 | 是 | 不设置`--verbose`，默认打印。 |
-| `DEBUG` | 调试相关信息，包含如下两部分内容：<br>`debugBufSize`：调试信息需要的内存空间。<br>`debugOptions`：调试开关状态。取值如下：<br>`0`：调试开关关闭。<br>`1`：通过DumpTensor、printf打印进行调试。<br>`2`：通过assert断言进行调试。<br>`4`：通过时间戳打点功能进行调试。<br>`8`：通过内存越界检测进行调试。 | 否 | 不设置`--verbose`，默认打印。 |
-| `DYNAMIC_PARAM` | 算子kernel函数是否启用动态参数。取值分别为：<br>`0`：关闭动态参数模式。<br>`1`：开启动态参数模式。 | 否 | 不设置`--verbose`，默认打印。 |
-| `OPTIONAL_PARAM` | 可选参数信息，包含如下两部分内容：<br>`optionalInputMode`：可选输入在算子kernel函数中是否需要占位。<br>`0`：可选输入不占位。<br>`1`：可选输入占位。<br>`optionalOutputMode`：可选输出在算子kernel函数中是否需要占位。<br>`0`：可选输出不占位。<br>`1`：可选输出占位。 | 否 | 不设置`--verbose`，默认打印。 |
 | `RUNTIME_IMPLICIT_INFO` | 表示运行时隐式信息标志。取值如下：<br>`1`：`SIMD Printf Flag`，表示SIMD侧Printf标志。<br>`2`：`Hardware Sync Flag`，表示硬同步标志。<br>`3`：`L2Cache Hint Flag`，表示L2 Cache命中标志。<br>`4`：`SIMT Printf Flag`，表示SIMT侧Printf标志。<br>`5`：`SIMD Assert Flag`，表示SIMD侧Assert标志。<br>其他取值打印原始数值。 | 否 | 不设置`--verbose`，默认打印。 |
-| `KERNEL_TYPE` | 表示kernel函数运行时core类型，取值参见<a href="#table187419221164">表5</a>。 | 否 | 不设置`--verbose`，默认打印。 |
-| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。 | 否 | 不设置`--verbose`，默认打印。 |
+| `KERNEL_TYPE` | 表示kernel函数运行时core类型，取值参见<a href="#table187419221164">表6</a>。 | 否 | 不设置`--verbose`，默认打印。 |
+| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。<br><!-- npu="950" id7 -->Ascend 950PR/Ascend 950DT：不支持<br><!-- end id7 --><!-- npu="A3" id8 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持<br><!-- end id8 --><!-- npu="910b" id9 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持<br><!-- end id9 --><!-- npu="310b" id10 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id10 --><!-- npu="310p" id11 -->Atlas 推理系列产品：不支持<br><!-- end id11 --><!-- npu="910" id12 -->Atlas 训练系列产品：不支持<!-- end id12 --> | 否 | 不设置`--verbose`，默认打印。 |
 | `MIX_TASK_RATION` | 表示kernel函数运行时的Cube核/Vector核占比分配类型。 | 否 | 不设置`--verbose`，默认打印。 |
-| `DETERMINISTIC_INFO` | 表示算子是否为确定性计算。<br>`0`：不确定计算。<br>`1`：确定性计算。 | 否 | 不设置`--verbose`，默认打印。 |
-| `BLOCK_NUM` | 表示算子执行核数，该字段当前暂不支持，只打印默认值`0xFFFFFFFF`。 | 否 | 不设置`--verbose`，默认打印。 |
-| `FUNCTION_ENTRY` | 算子TilingKey的值。 | 否 | 不设置`--verbose`，默认打印。 |
 | `elf header infos` | 包括ELF Header、Section Headers、Key to Flags、Program Headers、Symbol表等信息。 | 否 | 设置`--verbose`，开启全量打印。 |
 
-**表5**  kernel type信息
+**表5**  自定义算子工程支持的ELF解析字段说明<a name="table-aclnn-meta-fields"></a>
+
+| 字段名 | 含义 | 是否必选 | 打印说明 |
+| ---- | ---- | ---- | ---- |
+| `.ascend.meta. ${id}` | 表示算子kernel函数名称，其中`${id}`表示meta信息的索引值。 | 是 | 不设置`--verbose`，默认打印。 |
+| `VERSION` | 表示版本号。<br><!-- npu="950" id13 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id13 --><!-- npu="A3" id14 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id14 --><!-- npu="910b" id15 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id15 --><!-- npu="310b" id16 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id16 --><!-- npu="310p" id17 -->Atlas 推理系列产品：不支持<br><!-- end id17 --><!-- npu="910" id18 -->Atlas 训练系列产品：不支持<!-- end id18 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `DEBUG` | 调试相关信息，包含如下两部分内容：<br>`debugBufSize`：调试信息需要的内存空间。<br>`debugOptions`：调试开关状态。取值如下：<br>`0`：调试开关关闭。<br>`1`：通过DumpTensor、printf打印进行调试。<br>`2`：通过assert断言进行调试。<br>`4`：通过时间戳打点功能进行调试。<br>`8`：通过内存越界检测进行调试。<br><!-- npu="950" id19 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id19 --><!-- npu="A3" id20 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id20 --><!-- npu="910b" id21 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id21 --><!-- npu="310b" id22 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id22 --><!-- npu="310p" id23 -->Atlas 推理系列产品：不支持<br><!-- end id23 --><!-- npu="910" id24 -->Atlas 训练系列产品：不支持<!-- end id24 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `DYNAMIC_PARAM` | 算子kernel函数是否启用动态参数。取值分别为：<br>`0`：关闭动态参数模式。<br>`1`：开启动态参数模式。<br><!-- npu="950" id25 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id25 --><!-- npu="A3" id26 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id26 --><!-- npu="910b" id27 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id27 --><!-- npu="310b" id28 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id28 --><!-- npu="310p" id29 -->Atlas 推理系列产品：不支持<br><!-- end id29 --><!-- npu="910" id30 -->Atlas 训练系列产品：不支持<!-- end id30 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `OPTIONAL_PARAM` | 可选参数信息，包含如下两部分内容：<br>`optionalInputMode`：可选输入在算子kernel函数中是否需要占位。<br>`0`：可选输入不占位。<br>`1`：可选输入占位。<br>`optionalOutputMode`：可选输出在算子kernel函数中是否需要占位。<br>`0`：可选输出不占位。<br>`1`：可选输出占位。<br><!-- npu="950" id31 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id31 --><!-- npu="A3" id32 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id32 --><!-- npu="910b" id33 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id33 --><!-- npu="310b" id34 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id34 --><!-- npu="310p" id35 -->Atlas 推理系列产品：不支持<br><!-- end id35 --><!-- npu="910" id36 -->Atlas 训练系列产品：不支持<!-- end id36 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `RUNTIME_IMPLICIT_INFO` | 表示运行时隐式信息标志。取值如下：<br>`1`：`SIMD Printf Flag`，表示SIMD侧Printf标志。<br>`2`：`Hardware Sync Flag`，表示硬同步标志。<br>`3`：`L2Cache Hint Flag`，表示L2 Cache命中标志。<br>`4`：`SIMT Printf Flag`，表示SIMT侧Printf标志。<br>`5`：`SIMD Assert Flag`，表示SIMD侧Assert标志。<br>其他取值打印原始数值。 | 否 | 不设置`--verbose`，默认打印。 |
+| `KERNEL_TYPE` | 表示kernel函数运行时core类型，取值参见<a href="#table187419221164">表6</a>。 | 否 | 不设置`--verbose`，默认打印。 |
+| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。<br><!-- npu="950" id37 -->Ascend 950PR/Ascend 950DT：不支持<br><!-- end id37 --><!-- npu="A3" id38 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持<br><!-- end id38 --><!-- npu="910b" id39 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持<br><!-- end id39 --><!-- npu="310b" id40 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id40 --><!-- npu="310p" id41 -->Atlas 推理系列产品：不支持<br><!-- end id41 --><!-- npu="910" id42 -->Atlas 训练系列产品：不支持<!-- end id42 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `MIX_TASK_RATION` | 表示kernel函数运行时的Cube核/Vector核占比分配类型。 | 否 | 不设置`--verbose`，默认打印。 |
+| `DETERMINISTIC_INFO` | 表示算子是否为确定性计算。<br>`0`：不确定计算。<br>`1`：确定性计算。<br><!-- npu="950" id43 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id43 --><!-- npu="A3" id44 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id44 --><!-- npu="910b" id45 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id45 --><!-- npu="310b" id46 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id46 --><!-- npu="310p" id47 -->Atlas 推理系列产品：不支持<br><!-- end id47 --><!-- npu="910" id48 -->Atlas 训练系列产品：不支持<!-- end id48 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `BLOCK_NUM` | 表示算子执行核数，该字段当前暂不支持实际执行核数的打印，只打印默认值`0xFFFFFFFF`。<br><!-- npu="950" id49 -->Ascend 950PR/Ascend 950DT：支持打印默认值<br><!-- end id49 --><!-- npu="A3" id50 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id50 --><!-- npu="910b" id51 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id51 --><!-- npu="310b" id52 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id52 --><!-- npu="310p" id53 -->Atlas 推理系列产品：不支持<br><!-- end id53 --><!-- npu="910" id54 -->Atlas 训练系列产品：不支持<!-- end id54 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `FUNCTION_ENTRY` | 算子TilingKey的值。<br><!-- npu="950" id55 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id55 --><!-- npu="A3" id56 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id56 --><!-- npu="910b" id57 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id57 --><!-- npu="310b" id58 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id58 --><!-- npu="310p" id59 -->Atlas 推理系列产品：不支持<br><!-- end id59 --><!-- npu="910" id60 -->Atlas 训练系列产品：不支持<!-- end id60 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `elf header infos` | 包括ELF Header、Section Headers、Key to Flags、Program Headers、Symbol表等信息。 | 否 | 设置`--verbose`，开启全量打印。 |
+
+**表6**  kernel type信息
 
 <a name="table187419221164"></a>
 | KERNEL_TYPE | 说明 |
@@ -131,20 +143,6 @@
 | `MIX_AIV_MAIN` | AIC、AIV混合场景下，使用了多核控制相关指令时，设置核函数（Kernel）的类型为MIX，算子执行时会同时启动AI Core上的Cube核和Vector核，比如用户在host侧设置blocknum为10，且设置task_ration为1：2，则会启动10个Vector核和20个Cube核。 |
 | `AIC_ROLLBACK` | 算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Cube Core使用。 |
 | `AIV_ROLLBACK` | 算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。 |
-
-
-**表6**  ELF解析字段说明（核函数（Kernel）直调工程）
-
-<a name="table217334916136"></a>
-| 字段名 | 含义 | 是否必选 | 打印说明 |
-| ---- | ---- | ---- | ---- |
-| `VERSION` | 表示版本号。 | 是 | 不设置`--verbose`，默认打印。 |
-| `TYPE COUNT` | 表示ELF文件中包含的kernel文件个数。 | 是 | 不设置`--verbose`，默认打印。 |
-| `ELF FILE ${id}` | 表示ELF文件中包含的kernel文件名，`${id}`表示kernel文件序号。<br>kernel文件名的命名规则如下：<br>按`${sec_prefix}_${file_index}_${kernel_type}.o`拼接，其中`${sec_prefix}`为section段名（工具根据`.ascend.kernel`关键字搜索获取），`${file_index}`表示文件编号，`${kernel_type}`表示kernel类型。 | 是 | 不设置`--verbose`，默认打印。 |
-| `KERNEL LEN` | 表示kernel文件的长度。 | 是 | 不设置`--verbose`，默认打印。 |
-| `KERNEL TYPE` | 表示kernel类型，映射关系为`{0: mix, 1: aiv, 2: aic}`。 | 否 | 不设置`--verbose`，默认打印。 |
-| `ASCEND META` | 表示算子执行时核间同步、Cube/Vector核占比（task_ration）等信息。<br>若没有获取到该信息，默认显示`None`。 | 否 | 不设置`--verbose`，默认打印。 |
-| `elf header infos` | 包括ELF Header、Section Headers、Key to Flags、Program Headers、Symbol表等信息。 | 否 | 设置`--verbose`，开启全量打印。 |
 
 ## 使用样例（融合编译工程）<a name="section_fusion_compile_msobjdump"></a>
 
@@ -251,547 +249,35 @@
 
     执行上述命令，默认在当前执行路径下落盘`demo.aicore.o`文件。若需要指定输出路径，可配合`--out-dir`使用。
 
-## 使用样例（标准/简易自定义算子工程）<a name="section12835815105114"></a>
+## 使用样例（自定义算子工程）<a name="section12835815105114"></a>
 
-以下面的算子工程为例（仅为示例，具体以实际算子工程为准），假设$\{cmake\_install\_dir\}为算子Cmake编译产物根目录，目录结构如下，类似[算子编译](../advanced_programming/aclnn_operator_development/compilation_and_deployment/basic_process.md#部署后的目录结构)。
+以[自定义算子工程样例](../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op/README.md)中的AddCustom算子为例。若样例根目录为`${sample_dir}`，执行如下命令：
 
-```
-├── op_api
-│   ├── include
-│       ├── aclnn_acos_custom.h
-│       ├── aclnn_matmul_leakyrelu_custom.h
-│       ├── .........
-│   ├── lib
-│       ├── libcust_opapi.so
+```bash
+cd ${sample_dir}
+mkdir -p build && cd build
+cmake .. && make -j binary package
 ```
 
-工具对编译生成的库文件（如\*.so、\*.a等）进行解析和解压，功能实现命令样例如下：
+编译后，AddCustom算子的Device侧ELF文件位于`build/op_kernel/ascendc_kernels/binary/${soc_version}/add_custom/`目录。文件名中的哈希值由编译输入生成，以实际产物为准。解析字段含义参见[表5](#table-aclnn-meta-fields)。
 
--   **解析包含device信息的库文件**
-
-    支持两种打印方式，请按需选取，解析字段含义参见[表4](#table94384560259)。
-
-    -   简单打印
-
-        ```
-        msobjdump --dump-elf ${cmake_install_dir}/op_api/lib/libcust_opapi.so 
-        ```
-
-        执行上述命令，终端打印基础device信息，示例如下：
-
-        ```
-        .ascend.meta META INFO
-        VERSION: 1
-        DEBUG: debugBufSize=0, debugOptions=0
-        DYNAMIC_PARAM: dynamicParamMode=0
-        OPTIONAL_PARAM: optionalInputMode=1, optionalOutputMode=1
-        .ascend.meta. [0]: AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26_1
-        KERNEL_TYPE: AIV
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 1
-        .ascend.meta. [0]: AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26_2_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 2
-        .ascend.meta. [0]: AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26_3_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 3
-        ....................................
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_1
-        KERNEL_TYPE: AIV
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 1
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_2_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 2
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_3_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 3
-        ```
-
-    -   全量打印
-
-        ```
-        msobjdump --dump-elf ${cmake_install_dir}/op_api/lib/libcust_opapi.so --verbose
-        ```
-
-        执行上述命令，终端打印基础device信息，示例如下：
-
-        ```
-        .ascend.meta META INFO
-        VERSION: 1
-        DEBUG: debugBufSize=0, debugOptions=0
-        DYNAMIC_PARAM: dynamicParamMode=0
-        OPTIONAL_PARAM: optionalInputMode=1, optionalOutputMode=1
-        .ascend.meta. [0]: AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26_1
-        KERNEL_TYPE: AIV
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 1
-        .ascend.meta. [0]: AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26_2_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 2
-        .ascend.meta. [0]: AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26_3_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 3
-        ....................................
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_1
-        KERNEL_TYPE: AIV
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 1
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_2_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 2
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_3_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        DETERMINISTIC_INFO: 1
-        BLOCK_NUM: 0xFFFFFFFF
-        FUNCTION_ENTRY: 3
-        ```
-
-        ```
-        ....................................
-        ===== [elf header infos] in ascendxxx_acos_custom_AcosCustom_da824ede53d7e754f85c14b9446ec2fc.o =====:
-        ELF Header:
-          Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
-          Class:                             ELF64
-          Data:                              2's complement, little endian
-          Version:                           1 (current)
-          OS/ABI:                            UNIX - System V
-          ................................................
-          Size of program headers:           56 (bytes)
-          Number of program headers:         3
-          Size of section headers:           64 (bytes)
-          Number of section headers:         9
-          Section header string table index: 7
-        Section Headers:
-          [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
-          [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0 
-           .....................................................................................
-          [ 8] .strtab           STRTAB          0000000000000000 00529b 000119 00      0   0  1
-        Key to Flags:
-          W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
-          L (link order), O (extra OS processing required), G (group), T (TLS),
-          C (compressed), x (unknown), o (OS specific), E (exclude),
-          D (mbind), p (processor specific)
-        ................................................
-        
-        ===== [elf header infos] in ascendxxx_matmul_leakyrelu_custom_MatmulLeakyreluCustom_e052bee3255764ac919095f3bdf83389.o =====:
-        ELF Header:
-          Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
-          Class:                             ELF64
-          Data:                              2's complement, little endian
-          Version:                           1 (current)
-          ................................................
-          Section header string table index: 6
-        Section Headers:
-          [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
-          [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
-          [ 1] .text             PROGBITS        0000000000000000 0000e8 007ed8 00  AX  0   0  4
-          [ 2] .data             PROGBITS        0000000000008000 0080e8 000008 00  WA  0   0 256
-          [ 3] .comment          PROGBITS        0000000000000000 0080f0 000043 01  MS  0   0  1
-          [ 4] .bl_uninit        NOBITS          0000000000000000 008133 000020 00      0   0  1
-          [ 5] .symtab           SYMTAB          0000000000000000 008138 0000c0 18      7   1  8
-          [ 6] .shstrtab         STRTAB          0000000000000000 0081f8 00003b 00      0   0  1
-          [ 7] .strtab           STRTAB          0000000000000000 008233 0000ec 00      0   0  1
-          ................................................
-        ```
-
--   **解压包含device信息的库文件并落盘**
-
-    ```
-    msobjdump --extract-elf ${cmake_install_dir}/op_api/lib/libcust_opapi.so 
-    ```
-
-    执行上述命令，默认在当前执行路径下保存解压文件，产物目录如下：
-
-    ```
-    |-- config                                                               // 算子原型配置文件目录
-    |    ├── ${soc_version}   
-    |        ├── acos_custom.json                                  
-    |        ├── matmul_leakyrelu_custom.json                               
-    |        ├── .......                                             
-    |-- ${soc_version}                                                    // AI处理器名
-    |     ├── acos_custom                                               // 基础单算子编译文件*.o和对应的*.json文件
-    |         ├── AcosCustom_da824ede53d7e754f85c14b9446ec2fc.json      // 命名规则：${op_type}_${parm_info}.json或${op_type}_${parm_info}.o，${parm_info}是基于算子输入/输出dtype、shape等信息生成的标识码
-    |         ├── AcosCustom_da824ede53d7e754f85c14b9446ec2fc.o
-    |         ├── AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26.json
-    |         ├── AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26.o
-    |     ├── matmul_leakyrelu_custom  
-    |         ├── MatmulLeakyreluCustom_e052bee3255764ac919095f3bdf83389.json
-    |         ├── MatmulLeakyreluCustom_e052bee3255764ac919095f3bdf83389.o
-    |     ├── axpy_custom    
-    |         ├── .....
-    ```
-
-    以acos\_custom算子编译产物解压为例：
-
-    -   查看算子原型（acos\_custom.json）
-
-        ```
-        {
-            "binList": [
-                {
-                    "implMode": "high_performance",
-                    "int64Mode": false,
-                    "simplifiedKeyMode": 0,
-                    "simplifiedKey": [......],
-                    "staticKey": "96b2b4bb2e3xxx,ee37ce8796ef139dexxxx",
-                    "inputs": [
-                        {
-                            "name": "x",
-                            "index": 0,
-                            "dtype": "float32",
-                            "format": "ND",
-                            "paramType": "required",
-                            "shape": [
-                                -2
-                            ],
-                            "format_match_mode": "FormatAgnostic"
-                        }
-                    ],
-                    "outputs": [
-                        {
-                            "name": "y",
-                            "index": 0,
-                            "dtype": "float32",
-                            "format": "ND",
-                            "paramType": "required",
-                            "shape": [
-                                -2
-                            ],
-                            "format_match_mode": "FormatAgnostic"
-                        }
-                    ],
-                    "attrs": [
-                        {
-                            "name": "tmp",
-                            "dtype": "int",
-                            "value": 0
-                        },
-                        .........
-                    ],
-                    "opMode": "dynamic",
-                    "optionalInputMode": "gen_placeholder",
-                    "deterministic": "ignore",
-                    "binInfo": {
-                        "jsonFilePath": "ascendxxx/acos_custom/AcosCustom_da824ede53d7e754f85c14b9446ec2fc.json"
-                    }
-                },
-                {
-                    "implMode": "high_performance",
-                    "int64Mode": false,
-                    "simplifiedKeyMode": 0,
-                    "simplifiedKey": [
-          
-                    ],
-                    "staticKey": "27d6f997f2f3551axxxx,1385590c47affa578eb429xxx",
-                    "inputs": [
-                        {
-                            "name": "x",
-                            "index": 0,
-                            "dtype": "float16",
-                            "format": "ND",
-                            "paramType": "required",
-                            "shape": [
-                                -2
-                            ],
-                            "format_match_mode": "FormatAgnostic"
-                        }
-                    ],
-                    "outputs": [
-                        {
-                            "name": "y",
-                            "index": 0,
-                            "dtype": "float16",
-                            "format": "ND",
-                            "paramType": "required",
-                            "shape": [
-                                -2
-                            ],
-                            "format_match_mode": "FormatAgnostic"
-                        }
-                    ],
-                    "attrs": [
-                        {
-                            "name": "tmp",
-                            "dtype": "int",
-                            "value": 0
-                        },
-                        .........
-                    ],
-                    "opMode": "dynamic",
-                    "optionalInputMode": "gen_placeholder",
-                    "deterministic": "ignore",
-                    "binInfo": {
-                        "jsonFilePath": "ascendxxx/acos_custom/AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26.json"
-                    }
-                }
-            ]
-        }
-        ```
-
-    -   解析$\{op\_type\}\_$\{parm\_info\}.o文件获取.ascend.meta段信息。
-
-        ```
-        msobjdump --dump-elf ./AcosCustom_da824ede53d7e754f85c14b9446ec2fc.o
-        ```
-
-        执行上述命令，终端屏显如下，字段与库文件解析类似，参见[表4](#table94384560259)。
-
-        ```
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_1
-        KERNEL_TYPE: AIV
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_2_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        .ascend.meta. [0]: AcosCustom_da824ede53d7e754f85c14b9446ec2fc_3_mix_aiv
-        KERNEL_TYPE: MIX_AIV_MAIN
-        MIX_TASK_RATION: [0:1]
-        ```
-
-    -   查看$\{op\_type\}\_$\{parm\_info\}.json，直观获取device文件中算子信息。
-
-        ```
-        {
-            "binFileName": "AcosCustom_da824ede53d7e754f85c14b9446ec2fc",
-            "binFileSuffix": ".o",
-            "blockDim": -1,
-            "coreType": "MIX",
-            "intercoreSync": 1,
-            "kernelName": "AcosCustom_da824ede53d7e754f85c14b9446ec2fc",
-            "magic": "RT_DEV_BINARY_MAGIC_ELF",
-            "memoryStamping": [],
-            "opParaSize": 24,
-            "parameters": [],
-            "sha256": "94e32d04fcaf435411xxxxxxxx",
-            "workspace": {
-                "num": 1,
-                "size": [
-                    -1
-                ],
-                "type": [
-                    0
-                ]
-            },
-            "kernelList": [
-                {
-                    "tilingKey": 1,
-                    "kernelType": "MIX_AIC",
-                    "taskRation": "0:1",
-                    "crossCoreSync": 0,
-                    "kernelName": "AcosCustom_da824ede53d7e754f85c14b9446ec2fc_1"
-                },
-                .........
-            ],
-            "taskRation": "tilingKey",
-            "optionalInputMode": "gen_placeholder",
-            "debugOptions": "printf",
-            "debugBufSize": 78643200,
-            "compileInfo": {},
-            "supportInfo": {                                                        // 算子原型信息
-                "implMode": "high_performance",
-                "int64Mode": false,
-                "simplifiedKeyMode": 0,
-                "simplifiedKey": [......],
-                "staticKey": "96b2b4bb2e35fa3dxxx,ee37ce8796ef139dedxxxxxxxx",
-                "inputs": [
-                    {
-                        "name": "x",
-                        "index": 0,
-                        "dtype": "float32",
-                        "format": "ND",
-                        "paramType": "required",
-                        "shape": [
-                            -2
-                        ],
-                        "format_match_mode": "FormatAgnostic"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "y",
-                        "index": 0,
-                        "dtype": "float32",
-                        "format": "ND",
-                        "paramType": "required",
-                        "shape": [
-                            -2
-                        ],
-                        "format_match_mode": "FormatAgnostic"
-                    }
-                ],
-                "attrs": [
-                    {
-                        "name": "tmp",
-                        "dtype": "int",
-                        "value": 0
-                    },
-                    .........
-                ],
-                "opMode": "dynamic",
-                "optionalInputMode": "gen_placeholder",
-                "deterministic": "ignore"
-            },
-            "filePath": "ascendxxx/acos_custom/AcosCustom_da824ede53d7e754f85c14b9446ec2fc.json"
-        }
-        ```
-
--   **获取包含device信息的库文件列表**
-
-    ```
-    msobjdump --list-elf ${cmake_install_dir}/op_api/lib/libcust_opapi.so 
-    ```
-
-    执行上述命令，终端会打印所有文件，屏显信息形如：
-
-    ```
-    ELF file    0: ascendxxx_acos_custom_AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26.json
-    ELF file    1: ascendxxx_acos_custom_AcosCustom_dad9c8ca8fcbfd789010c8b1c0da8e26.o
-    ....................
-    ELF file    2: ascendxxx_acos_custom_AcosCustom_da824ede53d7e754f85c14b9446ec2fc.json
-    ELF file    3: ascendxxx_acos_custom_AcosCustom_da824ede53d7e754f85c14b9446ec2fc.o
-    ```
-
-
-## 使用样例（核函数（Kernel）直调算子工程）<a name="section12189203721319"></a>
-
-以MatMulInvocationNeo算子为例（NPU模式），假设$\{cmake\_install\_dir\}为算子Cmake编译产物根目录，目录结构如下（仅为示例，具体以实际算子工程为准），类似[CMake编译配置文件编写](kernel_direct_call_from_sample.md#section185111259496)。
-
-```
-out
-├── lib
-│   ├── libascendc_kernels_npu.so
-├── include
-│   ├── ascendc_kernels_npu
-│           ├── aclrtlaunch_matmul_custom.h
-│           ├── aclrtlaunch_triple_chevrons_func.h
-......
+```bash
+msobjdump --dump-elf ${sample_dir}/build/op_kernel/ascendc_kernels/binary/ascend950/add_custom/AddCustom_*.o
 ```
 
-工具对编译生成的库文件（如\*.so、\*.a等）进行解析和解压，功能实现命令样例如下：
+执行上述命令，终端打印基础device信息，示例如下：
 
--   **解析包含device信息的库文件**
+```text
+.ascend.meta META INFO
+VERSION: 1
+DEBUG: debugBufSize=0, debugOptions=0
+DYNAMIC_PARAM: dynamicParamMode=0
+OPTIONAL_PARAM: optionalInputMode=1, optionalOutputMode=1
+.ascend.meta. [0]: AddCustom_ab1b6750d7f510985325b603cb06dc8b_0
+KERNEL_TYPE: AIV
+DETERMINISTIC_INFO: 1
+BLOCK_NUM: 0xFFFFFFFF
+FUNCTION_ENTRY: 0
+```
 
-    支持两种打印方式，请按需选取，解析字段含义参见[表6](#table217334916136)。
-
-    -   简单打印
-
-        ```
-        msobjdump --dump-elf ${cmake_install_dir}/out/libascendc_kernels_npu.so
-        ```
-
-        执行上述命令，终端打印基础device信息，示例如下：
-
-        ```
-        ===========================
-        [VERSION]: 1
-        [TYPE COUNT]: 1
-        ===========================
-        [ELF FILE 0]: ascendxxxb1_ascendc_kernels_npu_0_mix.o
-        [KERNEL TYPE]: mix
-        [KERNEL LEN]: 511560
-        [ASCEND META]: None
-        ```
-
-    -   全量打印
-
-        ```
-        msobjdump --dump-elf ${cmake_install_dir}/out/libascendc_kernels_npu.so --verbose
-        ```
-
-        执行上述命令，终端打印所有device信息，示例如下：
-
-        ```
-        ===========================
-        [VERSION]: 1
-        [TYPE COUNT]: 1
-        ===========================
-        [ELF FILE 0]: ascendxxxb1_ascendc_kernels_npu_0_mix.o
-        [KERNEL TYPE]: mix
-        [KERNEL LEN]: 511560
-        [ASCEND META]: None
-        ====== [elf header infos] ======
-        ELF Header:
-          Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
-          Class:                             ELF64
-          Data:                              2's complement, little endian
-          Version:                           1 (current)
-          OS/ABI:                            UNIX - System V
-          ABI Version:                       0
-          Type:                              EXEC (Executable file)
-          Machine:                           <unknown>: 0x1029
-          Version:                           0x1
-          Entry point address:               0x0
-          Start of program headers:          64 (bytes into file)
-          Start of section headers:          510280 (bytes into file)
-          Flags:                             0x940000
-          Size of this header:               64 (bytes)
-          Size of program headers:           56 (bytes)
-          Number of program headers:         2
-          Size of section headers:           64 (bytes)
-          Number of section headers:         20
-          Section header string table index: 18
-        
-        Section Headers:
-          [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
-          [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
-          [ 1] .text             PROGBITS        0000000000000000 0000b0 010a08 00  AX  0   0  4
-           .....................................................................................
-          [19] .strtab           STRTAB          0000000000000000 071278 00b6cb 00      0   0  1
-        Key to Flags:
-          W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
-          L (link order), O (extra OS processing required), G (group), T (TLS),
-          C (compressed), x (unknown), o (OS specific), E (exclude),
-          D (mbind), p (processor specific)
-        
-        There are no section groups in this file.
-        
-        Program Headers:
-          Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
-          LOAD           0x0000b0 0x0000000000000000 0x0000000000000000 0x010aa8 0x010aa8 R E 0x1000
-          GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0
-        ......
-        ```
-
--   **解压包含device信息的库文件并落盘**
-
-    ```
-    msobjdump --extract-elf ${cmake_install_dir}/out/libascendc_kernels_npu.so
-    ```
-
-    执行上述命令，默认在当前执行路径下落盘ascendxxxb1\_ascendc\_kernels\_npu\_0\_mix.o文件。
-
--   **获取包含device信息的库文件列表**
-
-    ```
-    msobjdump --list-elf ${cmake_install_dir}/out/libascendc_kernels_npu.so
-    ```
-
-    执行上述命令，终端会打印所有文件，屏显信息形如：
-
-    ```
-    ELF file    0: ascendxxxb1_ascendc_kernels_npu_0_mix.o
-    ```
+如需查看ELF头、Section和Symbol等详细信息，可在上述命令中增加`--verbose`参数。
