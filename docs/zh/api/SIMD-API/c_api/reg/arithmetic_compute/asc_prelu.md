@@ -26,17 +26,37 @@
 
 ## 功能说明
 
-该接口用于实现PReLU（Parametric ReLU）激活函数：源操作数src0大于0的情况下直接将src0写入目的操作数dst，否则将src0 * src1的结果写入dst。计算公式如下：
+根据掩码对源操作数矢量数据寄存器`src0`和`src1`中的对应元素执行PReLU（Parametric ReLU）运算，并将结果写入目的操作数矢量数据寄存器`dst`。`src0`大于0时直接写入`src0`，否则将`src0`与`src1`相乘后写入`dst`。掩码对应位置为1的元素参与计算，为0的元素在目的矢量数据寄存器中置零。计算公式如下：
 
 $$
-dst_i = (src0_i > 0) ? src0_i : src0_i * src1_i
+dst_i = \begin{cases}
+src0_i, & src0_i > 0 \\
+src0_i \times src1_i, & src0_i \leq 0
+\end{cases}
 $$
+
+本接口仅在AIV上生效。
 
 ## 函数原型
 
-```cpp
-__simd_callee__ inline void asc_prelu(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask)
-__simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask)
+```c
+__simd_callee__ inline void asc_prelu(vector_<dtype>& dst,
+                                      vector_<dtype> src0,
+                                      vector_<dtype> src1,
+                                      vector_bool mask)
+```
+
+### dtype支持数据类型
+
+`dtype`支持的数据类型为`half`、`float`。
+
+### 典型示例
+
+```c
+__simd_callee__ inline void asc_prelu(vector_half& dst,
+                                      vector_half src0,
+                                      vector_half src1,
+                                      vector_bool mask)
 ```
 
 ## 参数说明
@@ -44,11 +64,11 @@ __simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vect
 **表1** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
-| --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。|
-| src0 | 输入 | 源操作数（矢量数据寄存器）。|
-| src1 | 输入 | 源操作数（矢量数据寄存器）。|
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+|---|---|---|
+| dst | 输出 | 目的操作数（矢量数据寄存器）。数据类型须与`src0`、`src1`一致。 |
+| src0 | 输入 | 源操作数（矢量数据寄存器）。 |
+| src1 | 输入 | 源操作数（矢量数据寄存器）。数据类型须与`src0`一致。 |
+| mask | 输入 | 掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。需通过掩码设置接口预先赋值后再传入。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
@@ -58,16 +78,114 @@ __simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vect
 
 ## 约束说明
 
-无
+### 通用约束
+
+- 非AIV调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- `mask`需通过掩码设置接口预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- 掩码位为0的元素位置不参与PReLU运算，`dst`对应位置写0。
+
+### 计算约束
+
+- 源矢量数据寄存器中数据为负零（-0）时按负数处理，乘法满足IEEE 754浮点乘法规则。
 
 ## 调用示例
 
- ```cpp
-vector_half dst;
-vector_half src0;
-vector_half src1;
-vector_bool mask = asc_create_mask_b16(PAT_ALL);
-asc_loadalign(src0, src0_addr); // src0_addr是外部输入的Unified Buffer（UB）内存空间地址。
-asc_loadalign(src1, src1_addr); // src1_addr是外部输入的UB内存空间地址。
-asc_prelu(dst, src0, src1, mask);
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
+```cpp
+#include <cmath>
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+constexpr uint32_t ELEMENT_COUNT = 64;
+constexpr uint32_t BUFFER_BYTES = ELEMENT_COUNT * sizeof(float);
+
+__simd_vf__ inline void prelu_vf(__ubuf__ float* output,
+                                 __ubuf__ float* input,
+                                 __ubuf__ float* slope)
+{
+    vector_float src0;
+    vector_float src1;
+    vector_float dst;
+    vector_bool mask = asc_create_mask_b32(PAT_ALL);
+    asc_loadalign(src0, input);
+    asc_loadalign(src1, slope);
+    asc_prelu(dst, src0, src1, mask);
+    asc_storealign(output, dst, mask);
+}
+
+__global__ __vector__ void asc_prelu_kernel(__gm__ float* output,
+                                            __gm__ float* input,
+                                            __gm__ float* slope)
+{
+    asc_init();
+    __ubuf__ float output_local[ELEMENT_COUNT];
+    __ubuf__ float input_local[ELEMENT_COUNT];
+    __ubuf__ float slope_local[ELEMENT_COUNT];
+    asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
+    asc_copy_gm2ub_align(slope_local, slope, BUFFER_BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    prelu_vf(output_local, input_local, slope_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);
+    asc_sync();
+}
+} // namespace
+
+int main()
+{
+    std::vector<float> input(ELEMENT_COUNT);
+    std::vector<float> slope(ELEMENT_COUNT, 0.1f);
+    std::vector<float> output(ELEMENT_COUNT, 0.0f);
+    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
+        input[i] = static_cast<float>(static_cast<int32_t>(i) - 64);
+    }
+
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    float* input_device = nullptr;
+    float* slope_device = nullptr;
+    float* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), BUFFER_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&slope_device), BUFFER_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), BUFFER_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, BUFFER_BYTES, input.data(), BUFFER_BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(slope_device, BUFFER_BYTES, slope.data(), BUFFER_BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_prelu_kernel<<<1, 0>>>(output_device, input_device, slope_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), BUFFER_BYTES, output_device, BUFFER_BYTES, ACL_MEMCPY_DEVICE_TO_HOST);
+
+    bool passed = true;
+    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
+        const float expected = input[i] > 0.0f ? input[i] : input[i] * slope[i];
+        if (std::fabs(output[i] - expected) > 1e-6f) {
+            passed = false;
+            break;
+        }
+    }
+    std::cout << (passed ? "[Success] asc_prelu completed."
+                         : "[Failed] asc_prelu output mismatch.")
+              << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(slope_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```
