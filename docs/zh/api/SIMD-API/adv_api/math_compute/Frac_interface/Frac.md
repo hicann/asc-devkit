@@ -23,6 +23,7 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/math_compute/Frac_interface/Frac_res.md#id1 -->
 
 ## 功能说明
 

@@ -101,6 +101,7 @@
 <!-- npu="x90" id4 -->
 - Kirin X90：不支持
 <!-- end id4 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id1 -->
 
 ## 功能说明
 

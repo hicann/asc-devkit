@@ -27,6 +27,7 @@
 <!-- npu="9030" id2 -->
 - Kirin 9030：不支持
 <!-- end id2 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetHF32_res.md#id1 -->
 
 ## 功能说明
 
