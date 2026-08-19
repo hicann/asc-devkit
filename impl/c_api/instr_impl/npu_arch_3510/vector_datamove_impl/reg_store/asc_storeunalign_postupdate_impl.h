@@ -103,8 +103,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e4m3fn_t*& dst, vector_store_unalign& src0, vector_fp8_e4m3fn_t src1, uint32_t count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e4m3_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e4m3_t*>(dst);
-        vstus(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstus(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -122,8 +121,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e5m2_t*& dst, vector_store_unalign& src0, vector_fp8_e5m2_t src1, uint32_t count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e5m2_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e5m2_t*>(dst);
-        vstus(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstus(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -131,8 +129,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e8m0_t*& dst, vector_store_unalign& src0, vector_fp8_e8m0_t src1, uint32_t count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e8m0_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e8m0_t*>(dst);
-        vstus(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstus(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -140,8 +137,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp4x2_e2m1_t*& dst, vector_store_unalign& src0, vector_fp4x2_e2m1_t src1, uint32_t count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float4_e2m1x2_t* dst_tmp = reinterpret_cast<__ubuf__ float4_e2m1x2_t*>(dst);
-        vstus(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstus(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -149,8 +145,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp4x2_e1m2_t*& dst, vector_store_unalign& src0, vector_fp4x2_e1m2_t src1, uint32_t count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float4_e1m2x2_t* dst_tmp = reinterpret_cast<__ubuf__ float4_e1m2x2_t*>(dst);
-        vstus(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstus(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -247,8 +242,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e4m3fn_t* dst, vector_store_unalign& src0, vector_fp8_e4m3fn_t src1)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e4m3_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e4m3_t*>(dst);
-        vstur(src0, src1, dst_tmp, POST_UPDATE);
+        vstur(src0, src1, dst, POST_UPDATE);
     }
 }
 
@@ -256,8 +250,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e5m2_t* dst, vector_store_unalign& src0, vector_fp8_e5m2_t src1)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e5m2_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e5m2_t*>(dst);
-        vstur(src0, src1, dst_tmp, POST_UPDATE);
+        vstur(src0, src1, dst, POST_UPDATE);
     }
 }
 
@@ -265,8 +258,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e8m0_t* dst, vector_store_unalign& src0, vector_fp8_e8m0_t src1)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e8m0_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e8m0_t*>(dst);
-        vstur(src0, src1, dst_tmp, POST_UPDATE);
+        vstur(src0, src1, dst, POST_UPDATE);
     }
 }
 
@@ -274,8 +266,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp4x2_e2m1_t* dst, vector_store_unalign& src0, vector_fp4x2_e2m1_t src1)
 {
     if ASC_IS_AIV {
-        __ubuf__ float4_e2m1x2_t* dst_tmp = reinterpret_cast<__ubuf__ float4_e2m1x2_t*>(dst);
-        vstur(src0, src1, dst_tmp, POST_UPDATE);
+        vstur(src0, src1, dst, POST_UPDATE);
     }
 }
 
@@ -283,8 +274,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp4x2_e1m2_t* dst, vector_store_unalign& src0, vector_fp4x2_e1m2_t src1)
 {
     if ASC_IS_AIV {
-        __ubuf__ float4_e1m2x2_t* dst_tmp = reinterpret_cast<__ubuf__ float4_e1m2x2_t*>(dst);
-        vstur(src0, src1, dst_tmp, POST_UPDATE);
+        vstur(src0, src1, dst, POST_UPDATE);
     }
 }
 
@@ -417,8 +407,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e4m3fn_t* dst, vector_store_unalign& src0, vector_fp8_e4m3fn_t src1, addr_reg& count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e4m3_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e4m3_t*>(dst);
-        vstu(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstu(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -426,8 +415,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e5m2_t* dst, vector_store_unalign& src0, vector_fp8_e5m2_t src1, addr_reg& count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e5m2_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e5m2_t*>(dst);
-        vstu(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstu(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -435,8 +423,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp8_e8m0_t* dst, vector_store_unalign& src0, vector_fp8_e8m0_t src1, addr_reg& count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float8_e8m0_t* dst_tmp = reinterpret_cast<__ubuf__ float8_e8m0_t*>(dst);
-        vstu(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstu(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -444,8 +431,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp4x2_e2m1_t* dst, vector_store_unalign& src0, vector_fp4x2_e2m1_t src1, addr_reg& count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float4_e2m1x2_t* dst_tmp = reinterpret_cast<__ubuf__ float4_e2m1x2_t*>(dst);
-        vstu(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstu(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
@@ -453,8 +439,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate_impl(
     __ubuf__ fp4x2_e1m2_t* dst, vector_store_unalign& src0, vector_fp4x2_e1m2_t src1, addr_reg& count)
 {
     if ASC_IS_AIV {
-        __ubuf__ float4_e1m2x2_t* dst_tmp = reinterpret_cast<__ubuf__ float4_e1m2x2_t*>(dst);
-        vstu(src0, count, src1, dst_tmp, POST_UPDATE);
+        vstu(src0, count, src1, dst, POST_UPDATE);
     }
 }
 
