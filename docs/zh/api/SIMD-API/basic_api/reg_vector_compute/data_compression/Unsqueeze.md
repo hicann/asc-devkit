@@ -29,8 +29,9 @@
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_gather_mask_intf.h"`。
 
-以dstReg为源操作数和目的操作数，根据mask进行解压缩。解压缩方式：dstReg中第0个元素置为0，dstReg中的第i个元素等于mask中从第0个到第(i-1)个元素中1的数量。mask最高位被忽略不参与统计。
-具体算法如下图所示，dstReg的首位为0，后续mask[i]对应mask值为1时，dstReg[i]的值为dstReg[i-1] + 1；mask[i]对应mask值为0时，dstReg[i]的值为dstReg[i-1]。
+将dstReg中数据根据mask进行解压缩。解压缩方式：dstReg中第0个元素置为0，dstReg中的第i个元素等于mask中从第0个到第(i-1)个元素中1的数量。mask最高位被忽略，不参与统计。
+
+具体算法如图1所示，dstReg的首位为0。对于后续元素，与dstReg[i-1]对应的有效mask位为1时，dstReg[i]的值为dstReg[i-1] + 1；对应的有效mask位为0时，dstReg[i]的值为dstReg[i-1]。
 
 **图 1**  Unsqueeze示意图
 

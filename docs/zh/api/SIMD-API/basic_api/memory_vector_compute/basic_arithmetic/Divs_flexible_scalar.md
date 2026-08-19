@@ -28,7 +28,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_vec_binary_scalar_intf.h"`。
 
-Divs属于双目标量类计算接口，矢量内每个元素和标量间取较小值，支持标量在前和标量在后两种场景。其中标量输入支持配置LocalTensor单点元素，计算公式如下：
+Divs属于双目标量类计算接口，用于将矢量中的每个元素与标量相除，支持标量作为被除数或除数两种场景。其中标量输入支持配置LocalTensor单点元素，计算公式如下：
 
 $dst_i = src_i \div scalar$
 

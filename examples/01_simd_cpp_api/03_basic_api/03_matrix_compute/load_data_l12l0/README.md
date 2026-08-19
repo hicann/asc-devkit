@@ -37,7 +37,7 @@
 一次完整的矩阵乘包含GM -> L1、L1 -> L0A / L0B、矩阵乘和L0C -> GM四个阶段，如下所示：
 
 ```text
-GM(ND) -> L1(Nz/Zz) -> L0A(Zz)/L0B(Zn) -> L0C(Zz) -> GM(ND)
+GM(ND) -> L1(Nz/Zz) -> L0A(Zz)/L0B(Zn) -> L0C(Nz) -> GM(ND)
        │            │                       │          │
     DataCopy     LoadData                 Mmad       Fixpipe
 ```

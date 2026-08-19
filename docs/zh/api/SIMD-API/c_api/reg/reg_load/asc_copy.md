@@ -119,12 +119,14 @@
 搬运原理如[图1](#fig-maskgen-b16)、[图2](#fig-maskgen-b32)所示。
 
 - 当操作数类型为uint16_t时，矢量数据寄存器的一个数据块大小为16B，每个bit经过broadcast成2bit后变为32B，即一个MaskReg（32B）。此外，一个矢量数据寄存器有256B/16B = 16个数据块，偏移量part取值范围为[0, 15]。
-- 当操作数类型为b32时，矢量数据寄存器的一个数据块大小为8B，每个bit经过broadcast成4bit后变为32B，即一个MaskReg（32B）。此外，一个矢量数据寄存器有256B/8B = 32个数据块，偏移量part取值范围为[0, 31]。
+- 当操作数类型为uint32_t时，矢量数据寄存器的一个数据块大小为8B，每个bit经过broadcast成4bit后变为32B，即一个MaskReg（32B）。此外，一个矢量数据寄存器有256B/8B = 32个数据块，偏移量part取值范围为[0, 31]。
 
 **图1**  矢量寄存器复制到掩码寄存器（uint16_t）<a id="fig-maskgen-b16"></a>
+
 ![矢量寄存器复制到掩码寄存器（uint16_t）](../../figures/capi_copy_reg2mask_b16.png)
 
 **图2**  矢量寄存器复制到掩码寄存器（uint32_t）<a id="fig-maskgen-b32"></a>
+
 ![矢量寄存器复制到掩码寄存器（uint32_t）](../../figures/capi_copy_reg2mask_b32.png)
 
 ## 调用示例
@@ -156,7 +158,7 @@
         vector_bool mask;
         for (uint16_t i = 0; i < repeat_time; ++i) {
             mask = asc_update_mask_b16(count);
-            asc_loadalign_postupdate(src, src_addr);
+            asc_loadalign_postupdate(src, src_addr, one_block_size);
             asc_copy(dst, src, mask);
             asc_storealign_postupdate(dst_addr, dst, one_block_size);
         }

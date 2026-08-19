@@ -145,8 +145,8 @@
 
     这些格式针对矩阵乘法等计算密集型任务进行优化，可显著提升计算效率。
 
--   L1 Buffer缓存推荐使用FRACTAL\_NZ格式。当L1 Buffer采用NZ格式时，数据搬运到L0A/L0B Buffer（需分别转换为ZN格式）时，可降低格式转换开销。
--   UB对数据格式没有要求。
+-   L1 Buffer缓存推荐使用FRACTAL\_NZ格式。当L1 Buffer采用NZ格式时，数据搬运到L0A/L0B Buffer（格式要求分别为NZ/ZN格式）时，可降低格式转换开销。
+-   Unified Buffer对数据格式没有要求。
 
 **存储单元的访问冲突**
 

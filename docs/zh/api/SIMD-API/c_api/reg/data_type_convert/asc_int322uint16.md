@@ -61,7 +61,7 @@ __simd_callee__ inline void asc_int322uint16<sat_mode><position_mode>(vector_uin
 
 ### 占位符说明
 
-- `<sat_mode>`表示饱和非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
+- `<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
 - `<position_mode>`表示`dst`写入的位置，为空时，结果写入`dst`的偶数索引位置；取值为`_v2`时，结果写入`dst`的奇数索引位置。
 
 ### 典型示例

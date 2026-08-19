@@ -180,6 +180,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
 <!-- npu="950" id18 -->
 - dualDstCtrl仅支持在普通搬运模式（NZ2NZ）或NZ2ND搬运场景下使用，不支持随路功能场景。
 - 当启用NZ2DN且srcNzC0Stride不等于1时，不能同时开启unitFlag。
+- 该接口仅适用于Mix算子场景，且仅支持Cube核数与Vector核数比例为1:2的配置。在该场景下，subBlockId仅支持取值0或1。
 - Ascend 950PR/Ascend 950DT特殊值/边界值约束说明：
 
     对于浮点类型inf/nan输入输出，可以通过CTRL寄存器（控制寄存器）的CTRL\[48\]比特位进行设置，控制浮点数量化搬出时的饱和模式；

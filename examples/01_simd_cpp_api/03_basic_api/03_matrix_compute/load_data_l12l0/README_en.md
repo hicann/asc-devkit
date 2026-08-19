@@ -36,7 +36,7 @@ This example uses a fixed matrix multiplication specification of `[m, n, k] = [4
 A complete matrix multiplication includes four phases: GM -> L1, L1 -> L0A / L0B, matrix multiplication, and L0C -> GM, as shown below:
 
 ```text
-GM(ND) -> L1(Nz/Zz) -> L0A(Zz)/L0B(Zn) -> L0C(Zz) -> GM(ND)
+GM(ND) -> L1(Nz/Zz) -> L0A(Zz)/L0B(Zn) -> L0C(Nz) -> GM(ND)
        │            │                       │          │
     DataCopy     LoadData                 Mmad       Fixpipe
 ```
