@@ -560,9 +560,9 @@ __aicore__ inline void DataCopySliceGm2UBImpl(__ubuf__ T* dst, __gm__ T* src, co
     uint32_t offsetSrc = 0;
     uint32_t offsetDst = 0;
     for (uint32_t i = 0; i < intriParams.blockCount; i++) {
-        offsetSrc = offsetSrc + i * (intriParams.blockLen * ONE_BLK_SIZE + intriParams.srcStride);
-        offsetDst = offsetDst + i * (intriParams.blockLen * ONE_BLK_SIZE + intriParams.dstStride);
         DataCopyGM2UBImpl(dst + offsetDst / sizeof(T), src + offsetSrc / sizeof(T), {1, intriParams.blockLen, 0, 0});
+        offsetSrc = offsetSrc + (intriParams.blockLen * ONE_BLK_SIZE + intriParams.srcStride);
+        offsetDst = offsetDst + (intriParams.blockLen * ONE_BLK_SIZE + intriParams.dstStride);
     }
 }
 
@@ -572,9 +572,9 @@ __aicore__ inline void DataCopySliceUB2GMImpl(__gm__ T* dst, __ubuf__ T* src, co
     uint32_t offsetSrc = 0;
     uint32_t offsetDst = 0;
     for (uint32_t i = 0; i < intriParams.blockCount; i++) {
-        offsetSrc = offsetSrc + i * (intriParams.blockLen * ONE_BLK_SIZE + intriParams.srcStride);
-        offsetDst = offsetDst + i * (intriParams.blockLen * ONE_BLK_SIZE + intriParams.dstStride);
         DataCopyUB2GMImpl(dst + offsetDst / sizeof(T), src + offsetSrc / sizeof(T), {1, intriParams.blockLen, 0, 0});
+        offsetSrc = offsetSrc + (intriParams.blockLen * ONE_BLK_SIZE + intriParams.srcStride);
+        offsetDst = offsetDst + (intriParams.blockLen * ONE_BLK_SIZE + intriParams.dstStride);
     }
 }
 
