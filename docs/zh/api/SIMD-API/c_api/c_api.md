@@ -281,8 +281,6 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 | ------ | ----------- |
 | [asc_get_arch_ver](sys_var/asc_get_arch_ver.md) | 获取当前AI处理器架构版本号。 |
 | [asc_get_squeeze_status](sys_var/asc_get_squeeze_status.md) | 读取squeeze操作后保存至AR特殊寄存器的有效数据长度值。 |
-| [asc_get_block_idx](sys_var/asc_get_block_idx.md) | 获取当前运行核的索引。 |
-| [asc_get_block_num](sys_var/asc_get_block_num.md) | 获取AI核数。 |
 | [asc_get_core_id](sys_var/asc_get_core_id.md) | 获取当前核的编号。 |
 | [asc_get_ctrl](sys_var/asc_get_ctrl.md) | 读取CTRL寄存器（控制寄存器）的值。 |
 | [asc_get_ffts_base_addr](sys_var/asc_get_ffts_base_addr.md) | 获取核间同步寄存器的基地址。 |
@@ -591,4 +589,11 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 **表14** 废弃接口列表
 | 废弃接口 | 说明 |
 | [asc_abs_sync（废弃）](deprecated_interface/asc_abs_sync_deprecated.md) | 按元素取绝对值同步接口。 |
+| [asc_get_block_idx（废弃）](deprecated_interface/asc_get_block_idx_deprecated.md) | 获取当前运行核的索引。 |
+| [asc_get_block_num（废弃）](deprecated_interface/asc_get_block_num_deprecated.md) | 获取AI核数。 |
 | [asc_set_atomic_add_int（废弃）](deprecated_interface/asc_set_atomic_add_int_deprecated.md) | 设置对后续的从UB/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。 |
+| [asc_float2bfloat16（废弃）](deprecated_interface/asc_float2bfloat16_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
+| [asc_int322int16（废弃）](deprecated_interface/asc_int322int16_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
+| [asc_int322int64（废弃）](deprecated_interface/asc_int322int64_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
+| [asc_int322uint16（废弃）](deprecated_interface/asc_int322uint16_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
+| [asc_uint82uint16（废弃）](deprecated_interface/asc_uint82uint16_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |

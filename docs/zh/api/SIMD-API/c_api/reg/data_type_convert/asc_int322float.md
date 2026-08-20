@@ -32,16 +32,14 @@
 def asc_int322float_rn(dst, src, mask):
     for i in range(64):
         if mask[i]:
-            dst[i] = float(src[i])       # int32 -> float, RINT舍入
+            dst[i] = float(src[i])       # int32 -> float，RINT舍入
         else:
-            dst[i] = 0.0                 # mask未选中, 置零
+            dst[i] = 0.0                 # mask未选中，置零
 ```
 
 关于舍入模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
 ## 函数原型
-
-### 模板原型（占位符形式）
 
 ```c
 __simd_callee__ inline void asc_int322float_<round_mode>(vector_float& dst,
@@ -49,9 +47,7 @@ __simd_callee__ inline void asc_int322float_<round_mode>(vector_float& dst,
                                                          vector_bool mask)
 ```
 
-### 占位符说明
-
-- `<round_mode>`表示支持的舍入模式，支持`rd`（`FLOOR`）、`rn`（`RINT`）、`rna`（`ROUND`）、`ru`（`CEIL`）和`rz`（`TRUNC`）。
+`<round_mode>`表示支持的舍入模式，支持`rd`（`FLOOR`）、`rn`（`RINT`）、`rna`（`ROUND`）、`ru`（`CEIL`）和`rz`（`TRUNC`）。
 
 ### 典型示例
 
@@ -86,15 +82,15 @@ __simd_callee__ inline void asc_int322float_rn(vector_float& dst,
 
 ## 调用示例
 
+<!-- npu="950" id8 -->
+
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[__NPU_ARCH__](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
-<!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng example.asc -o main --npu-arch=dav-3510; ./main
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
-<!-- end id8 -->
 
 ```c
 #include <cstdint>
@@ -129,36 +125,11 @@ constexpr uint32_t BUFFER_BYTES = 256;
 __simd_vf__ inline void convert(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
 {
     vector_bool mask = asc_create_mask_b8(PAT_ALL);
-    vector_float dst_0;
-    vector_int32_t src_0;
-    asc_loadalign(dst_0, reinterpret_cast<__ubuf__ float*>(output));
-    asc_loadalign(src_0, reinterpret_cast<__ubuf__ int32_t*>(input));
-    asc_int322float_rna(dst_0, src_0, mask);
-    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst_0, mask);
-    vector_float dst_1;
-    vector_int32_t src_1;
-    asc_loadalign(dst_1, reinterpret_cast<__ubuf__ float*>(output));
-    asc_loadalign(src_1, reinterpret_cast<__ubuf__ int32_t*>(input));
-    asc_int322float_rd(dst_1, src_1, mask);
-    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst_1, mask);
-    vector_float dst_2;
-    vector_int32_t src_2;
-    asc_loadalign(dst_2, reinterpret_cast<__ubuf__ float*>(output));
-    asc_loadalign(src_2, reinterpret_cast<__ubuf__ int32_t*>(input));
-    asc_int322float_ru(dst_2, src_2, mask);
-    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst_2, mask);
-    vector_float dst_3;
-    vector_int32_t src_3;
-    asc_loadalign(dst_3, reinterpret_cast<__ubuf__ float*>(output));
-    asc_loadalign(src_3, reinterpret_cast<__ubuf__ int32_t*>(input));
-    asc_int322float_rz(dst_3, src_3, mask);
-    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst_3, mask);
-    vector_float dst_4;
-    vector_int32_t src_4;
-    asc_loadalign(dst_4, reinterpret_cast<__ubuf__ float*>(output));
-    asc_loadalign(src_4, reinterpret_cast<__ubuf__ int32_t*>(input));
-    asc_int322float_rn(dst_4, src_4, mask);
-    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst_4, mask);
+    vector_float dst;
+    vector_int32_t src;
+    asc_loadalign(src, reinterpret_cast<__ubuf__ int32_t*>(input));
+    asc_int322float_rn(dst, src, mask);
+    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst, mask);
 }
 __global__ __vector__ void asc_int322float_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
 {
@@ -201,15 +172,9 @@ int main()
     aclrtSynchronizeDevice();
     aclrtMemcpy(output.data(), output.size() * sizeof(uint8_t), output_device, output.size() * sizeof(uint8_t),
         ACL_MEMCPY_DEVICE_TO_HOST);
-    std::cout << "Conversion: vector_int32_t -> vector_float" << std::endl;
-    print_data("Input 1.0 (raw bytes)", input);
-    print_data("Output (raw bytes)", output);
-    print_data("Golden 1.0 (raw bytes)", golden);
     const bool passed = compare_data(output, golden);
-    std::cout << (passed ? "[Success] asc_int322float_rn/asc_int322float_rna/"
-                           "asc_int322float_rd/asc_int322float_ru/asc_int322float_rz passed."
-                         : "[Failed] asc_int322float_rn/asc_int322float_rna/"
-                           "asc_int322float_rd/asc_int322float_ru/asc_int322float_rz failed.")
+    std::cout << (passed ? "[Success] asc_int322float_rn passed."
+                         : "[Failed] asc_int322float_rn failed.")
               << std::endl;
     aclrtFree(input_device);
     aclrtFree(output_device);
@@ -218,3 +183,5 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+<!-- end id8 -->

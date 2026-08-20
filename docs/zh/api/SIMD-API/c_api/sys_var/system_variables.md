@@ -4,10 +4,6 @@
 
 - **[asc_get_squeeze_status](asc_get_squeeze_status.md)**
 
-- **[asc_get_block_idx](asc_get_block_idx.md)**
-
-- **[asc_get_block_num](asc_get_block_num.md)**
-
 - **[asc_get_core_id](asc_get_core_id.md)**
 
 - **[asc_get_ctrl](asc_get_ctrl.md)**

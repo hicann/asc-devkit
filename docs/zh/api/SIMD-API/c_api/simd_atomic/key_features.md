@@ -96,24 +96,24 @@
 5. 向GM搬运data3;    // 开启原子累加后的数据搬运，期望GM数据为data0 + data1 + data2 + data3。
 ```
 
-如下伪代码所示，当上述指令都在不同核中执行时，需要将上述的核内同步替换为核间同步。
+如下伪代码所示，在一个纯Vector算子中，当上述指令都在不同AIV核中执行时，需要将上述的核内同步替换为核间同步。
 
 ```text
 // 整个原子累加在4个不同核中执行，控制4个核执行的顺序为“核0→核1→核2→核3”。
-if (asc_get_block_idx() == 0) {
+if (block_idx == 0) {
    向GM搬运数据data0;
    核间同步
-} else if (asc_get_block_idx() == 1) {
+} else if (block_idx == 1) {
    核间同步
    asc_set_atomic_add_float();
    向GM搬运data1;
    核间同步
-} else if (asc_get_block_idx() == 2) {
+} else if (block_idx == 2) {
    核间同步
    asc_set_atomic_add_float();
    向GM搬运data2;
    核间同步
-} else if (asc_get_block_idx() == 3) {
+} else if (block_idx == 3) {
    核间同步
    asc_set_atomic_add_float();
    向GM搬运data3;

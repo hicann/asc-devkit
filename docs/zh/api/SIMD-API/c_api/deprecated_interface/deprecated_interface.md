@@ -3,5 +3,17 @@
 ## 矢量计算
 - **[asc_abs_sync（废弃）](asc_abs_sync_deprecated.md)**
 
+### 类型转换
+
+- **[asc_float2bfloat16（废弃）](asc_float2bfloat16_deprecated.md)**
+- **[asc_int322int16（废弃）](asc_int322int16_deprecated.md)**
+- **[asc_int322int64（废弃）](asc_int322int64_deprecated.md)**
+- **[asc_int322uint16（废弃）](asc_int322uint16_deprecated.md)**
+- **[asc_uint82uint16（废弃）](asc_uint82uint16_deprecated.md)**
+
 ## 原子操作
 - **[asc_set_atomic_add_int（废弃）](asc_set_atomic_add_int_deprecated.md)**
+
+## 系统变量
+- **[asc_get_block_idx（废弃）](asc_get_block_idx_deprecated.md)**
+- **[asc_get_block_num（废弃）](asc_get_block_num_deprecated.md)**
