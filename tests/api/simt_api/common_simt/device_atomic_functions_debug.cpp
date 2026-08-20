@@ -18,6 +18,8 @@
 #include "kernel_utils.h"
 #include "kernel_simt_cpu.h"
 #include "stub_def.h"
+#include "kernel_fp16.h"
+#include "kernel_bf16.h"
 
 template <typename T>
 T AtomicAddCPU(__gm__ T* address, T val)
@@ -116,6 +118,8 @@ REGISTER_SIMT_ATOMIC_ADD(atomicAdd, int32_t);
 REGISTER_SIMT_ATOMIC_ADD(atomicAdd, uint64_t);
 REGISTER_SIMT_ATOMIC_ADD(atomicAdd, int64_t);
 REGISTER_SIMT_ATOMIC_ADD(atomicAdd, float);
+REGISTER_SIMT_ATOMIC_ADD(atomicAdd, half);
+REGISTER_SIMT_ATOMIC_ADD(atomicAdd, bfloat16_t);
 #endif
 
 #define REGISTER_SIMT_ATOMIC_SUB(INTRI, TYPE) \

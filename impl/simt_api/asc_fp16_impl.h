@@ -800,6 +800,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 asc_atomic_sub(__ubuf__ half2* addre
     return atomicSub(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half asc_atomic_sub(__ubuf__ half* address, half val)
+{
+    return asc_atomic_add(address, -val);
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 asc_atomic_exch(__ubuf__ half2* address, half2 val)
 {
     return atomicExch(address, val);
@@ -832,6 +837,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 asc_atomic_cas(__ubuf__ half2* addre
     return atomicCAS(address, compare, val);
 }
 #endif
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half asc_atomic_sub(__gm__ half* address, half val)
+{
+    return asc_atomic_add(address, -val);
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half asc_atomic_add(__gm__ half* address, half val)
 {
@@ -943,6 +953,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 asc_atomic_add(half2* address, half2
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 asc_atomic_sub(half2* address, half2 val)
 {
     return __atomic_sub(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half asc_atomic_sub(half* address, half val)
+{
+    return asc_atomic_add(address, -val);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 asc_atomic_exch(half2* address, half2 val)

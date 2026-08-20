@@ -235,6 +235,13 @@ static uint16_t Fp16Add(uint16_t v1, uint16_t v2)
 }
 
 // operate
+half half::operator-() const
+{
+    half ret;
+    ret.val = val ^ static_cast<uint16_t>(Fp16BasicParam::K_FP16_SIGN_MASK);
+    return ret;
+}
+
 half half::operator+(const half fp) const
 {
     uint16_t retVal = Fp16Add(val, fp.val);

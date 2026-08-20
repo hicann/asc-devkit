@@ -153,6 +153,13 @@ uint16_t Bf16T::Bf16Sub(uint16_t fp1, uint16_t fp2) const
 }
 
 // operate
+Bf16T Bf16T::operator-() const
+{
+    Bf16T ret;
+    ret.val = val ^ static_cast<uint16_t>(1u << BF16_SIGN_INDEX);
+    return ret;
+}
+
 Bf16T Bf16T::operator+(const Bf16T fp) const
 {
     uint16_t retVal = Bf16Add(val, fp.val);

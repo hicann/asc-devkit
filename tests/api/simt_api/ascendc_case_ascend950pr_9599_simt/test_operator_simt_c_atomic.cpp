@@ -9,7 +9,10 @@
  */
 #include <gtest/gtest.h>
 #include <type_traits>
+#include <cmath>
 #include "simt_api/device_atomic_functions.h"
+#include "simt_api/asc_fp16.h"
+#include "simt_api/asc_bf16.h"
 
 using namespace std;
 using namespace __asc_simt_vf;
@@ -507,4 +510,157 @@ TEST_F(AtomicXorTestsuite, AtomicXorUint64TestCase)
     uint64_t old = asc_atomic_xor(&address, val);
     EXPECT_EQ(old, 0xFF);
     EXPECT_EQ(address, 0x0F);
+}
+
+class AtomicAddHalfTestsuite : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+
+TEST_F(AtomicAddHalfTestsuite, AtomicAddHalfNormalTestCase)
+{
+    half address = half(100.0f);
+    half val = half(50.0f);
+    asc_atomic_add(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 150.0f);
+}
+
+TEST_F(AtomicAddHalfTestsuite, AtomicAddHalfZeroTestCase)
+{
+    half address = half(0.0f);
+    half val = half(0.0f);
+    asc_atomic_add(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 0.0f);
+}
+
+TEST_F(AtomicAddHalfTestsuite, AtomicAddHalfSubnormalTestCase)
+{
+    half address = half(5.960464477539063e-08f);
+    half val = half(5.960464477539063e-08f);
+    asc_atomic_add(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 1.1920928955078125e-07f);
+}
+
+class AtomicSubHalfTestsuite : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+
+TEST_F(AtomicSubHalfTestsuite, AtomicSubHalfNormalTestCase)
+{
+    half address = half(100.0f);
+    half val = half(50.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 50.0f);
+}
+
+TEST_F(AtomicSubHalfTestsuite, AtomicSubHalfZeroTestCase)
+{
+    half address = half(0.0f);
+    half val = half(0.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 0.0f);
+}
+
+TEST_F(AtomicSubHalfTestsuite, AtomicSubHalfResultZeroTestCase)
+{
+    half address = half(50.0f);
+    half val = half(50.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 0.0f);
+}
+
+TEST_F(AtomicSubHalfTestsuite, AtomicSubHalfSubnormalTestCase)
+{
+    half address = half(1.1920928955078125e-07f);
+    half val = half(5.960464477539063e-08f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 5.960464477539063e-08f);
+}
+
+class AtomicAddBf16Testsuite : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+
+TEST_F(AtomicAddBf16Testsuite, AtomicAddBf16NormalTestCase)
+{
+    bfloat16_t address = bfloat16_t(100.0f);
+    bfloat16_t val = bfloat16_t(50.0f);
+    asc_atomic_add(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 150.0f);
+}
+
+TEST_F(AtomicAddBf16Testsuite, AtomicAddBf16ZeroTestCase)
+{
+    bfloat16_t address = bfloat16_t(0.0f);
+    bfloat16_t val = bfloat16_t(0.0f);
+    asc_atomic_add(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 0.0f);
+}
+
+TEST_F(AtomicAddBf16Testsuite, AtomicAddBf16NaNTestCase)
+{
+    bfloat16_t address = bfloat16_t(NAN);
+    bfloat16_t val = bfloat16_t(1.0f);
+    asc_atomic_add(&address, val);
+    EXPECT_TRUE(std::isnan((float)address));
+}
+
+TEST_F(AtomicAddBf16Testsuite, AtomicAddBf16OverflowTestCase)
+{
+    bfloat16_t address = bfloat16_t(3.389e38f);
+    bfloat16_t val = bfloat16_t(3.389e38f);
+    asc_atomic_add(&address, val);
+    EXPECT_TRUE(std::isinf((float)address));
+}
+
+class AtomicSubBf16Testsuite : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+
+TEST_F(AtomicSubBf16Testsuite, AtomicSubBf16NormalTestCase)
+{
+    bfloat16_t address = bfloat16_t(100.0f);
+    bfloat16_t val = bfloat16_t(50.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 50.0f);
+}
+
+TEST_F(AtomicSubBf16Testsuite, AtomicSubBf16ZeroTestCase)
+{
+    bfloat16_t address = bfloat16_t(0.0f);
+    bfloat16_t val = bfloat16_t(0.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 0.0f);
+}
+
+TEST_F(AtomicSubBf16Testsuite, AtomicSubBf16ResultZeroTestCase)
+{
+    bfloat16_t address = bfloat16_t(50.0f);
+    bfloat16_t val = bfloat16_t(50.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_FLOAT_EQ((float)address, 0.0f);
+}
+
+TEST_F(AtomicSubBf16Testsuite, AtomicSubBf16NaNTestCase)
+{
+    bfloat16_t address = bfloat16_t(NAN);
+    bfloat16_t val = bfloat16_t(1.0f);
+    asc_atomic_sub(&address, val);
+    EXPECT_TRUE(std::isnan((float)address));
+}
+
+TEST_F(AtomicSubBf16Testsuite, AtomicSubBf16OverflowTestCase)
+{
+    bfloat16_t address = bfloat16_t(-3.389e38f);
+    bfloat16_t val = bfloat16_t(3.389e38f);
+    asc_atomic_sub(&address, val);
+    EXPECT_TRUE(std::isinf((float)address));
+    EXPECT_LT((float)address, 0.0f);
 }
