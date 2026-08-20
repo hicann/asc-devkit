@@ -33,11 +33,11 @@ Atlas A2 训练系列产品/Atlas A2 推理系列产品不支持通算融合算�
     add_ops_compile_options(ALL OPTIONS -DAICORE_EXCEPTION_RESTART)
     ```
 
--   配置HCCL重执行环境变量HCCL\_OP\_RETRY\_ENABLE，开启重执行的检测和上报能力，该环境变量的说明请参考[HCCL\_OP\_RETRY\_ENABLE](https://gitcode.com/cann/hccl/blob/master/docs/zh/user_guide/hccl_env/HCCL_OP_RETRY_ENABLE.md)。请在算子执行前设置该环境变量，具体配置如下：
+-   配置HCCL重执行环境变量HCCL\_OP\_RETRY\_ENABLE，开启重执行的检测和上报能力，该环境变量的说明请参考[HCCL\_OP\_RETRY\_ENABLE](https://gitcode.com/cann/hccl/blob/9.2.0-beta.2/docs/zh/user_guide/hccl_env/HCCL_OP_RETRY_ENABLE.md)。请在算子执行前设置该环境变量，具体配置如下：
 
     ```
     # server间L1需配置为1,不支持跨超节点，L2配置为0。
     export HCCL_OP_RETRY_ENABLE="L1:1, L2:0" 
     ```
 
-    注意，开启重执行后，若AI Core第一次下发通信任务后通信中断，默认只重执行一次。若需修改重执行次数或重传间隔时间，请参考[HCCL\_OP\_RETRY\_PARAMS](https://gitcode.com/cann/hccl/blob/master/docs/zh/user_guide/hccl_env/HCCL_OP_RETRY_PARAMS.md)。
+    注意，开启重执行后，若AI Core第一次下发通信任务后通信中断，默认只重执行一次。若需修改重执行次数或重传间隔时间，请参考[HCCL\_OP\_RETRY\_PARAMS](https://gitcode.com/cann/hccl/blob/9.2.0-beta.2/docs/zh/user_guide/hccl_env/HCCL_OP_RETRY_PARAMS.md)。

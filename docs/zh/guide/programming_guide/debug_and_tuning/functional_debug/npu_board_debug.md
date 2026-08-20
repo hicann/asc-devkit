@@ -57,7 +57,7 @@ msSanitizer工具是基于AI处理器的异常检测工具，包含了单算子�
 -   未初始化检测：工具可以协助用户定位由于内存未初始化可能导致的脏数据读取问题。
 -   同步检测：工具可以协助用户定位由于前序算子中的未配对同步指令导致的后续算子同步失败的问题。
 
-具体使用方法请参考[《msSanitizer用户指南》](https://gitcode.com/Ascend/mssanitizer/blob/master/docs/zh/user_guide/mssanitizer_user_guide.md)。
+具体使用方法请参考[《msSanitizer用户指南》](https://gitcode.com/Ascend/mssanitizer/blob/26.1.0/docs/zh/user_guide/mssanitizer_user_guide.md)。
 
 **异常检测程序编译**
 ```shell
@@ -168,4 +168,4 @@ export ASCEND_DUMP_PATH=./
 ```shell
 msdebug --core output2/extra-info/data-dump/0/xxx.core add_custom
 ```
-更多详细信息可以参考[《msDebug用户指南》](https://gitcode.com/Ascend/msdebug/blob/master/docs/zh/user_guide/msdebug_user_guide.md)。
+更多详细信息可以参考[《msDebug用户指南》](https://gitcode.com/Ascend/msdebug/blob/26.1.0/docs/zh/user_guide/msdebug_user_guide.md)。

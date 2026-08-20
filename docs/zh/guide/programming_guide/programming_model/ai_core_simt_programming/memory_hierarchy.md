@@ -123,7 +123,7 @@ GM上的SIMT栈空间用于保存线程私有运行时状态，按用途分为SI
 -   **SIMT Divergence栈空间**  
     用于存放SIMT分支发散场景下的程序计数器（PC，Program Counter）和活动掩码（Active Mask）。Warp内线程共享一个SIMT Divergence栈空间，每个Warp的栈空间默认大小为1024Byte。分支发散越频繁、控制流越复杂，该栈空间占用越高，严重时可能引发栈溢出。
 
-开发者可通过`--cce-res-usage`编译选项查看核函数（Kernel）的栈空间使用情况。若栈空间占用较高，应优先减少线程私有临时变量、控制调试打印的数据量、简化函数调用链并优化分支发散逻辑，以减少不必要的Global Memory访问。若业务确需调整栈空间大小，可通过`aclInit()`接口加载的配置文件进行设置：配置项`simt_stack_size`用于设置每个线程的SIMT通用栈空间大小，`simt_divergence_stack_size`用于设置SIMT Divergence栈空间大小，单位均为Byte。配置示例如下，更多说明请参考[aclInit()接口配置说明](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/API/runtimeapi/aclcppdevg_03_0022.html)中的“SIMT算子栈空间大小配置示例”。
+开发者可通过`--cce-res-usage`编译选项查看核函数（Kernel）的栈空间使用情况。若栈空间占用较高，应优先减少线程私有临时变量、控制调试打印的数据量、简化函数调用链并优化分支发散逻辑，以减少不必要的Global Memory访问。若业务确需调整栈空间大小，可通过`aclInit()`接口加载的配置文件进行设置：配置项`simt_stack_size`用于设置每个线程的SIMT通用栈空间大小，`simt_divergence_stack_size`用于设置SIMT Divergence栈空间大小，单位均为Byte。配置示例如下，更多说明请参考[aclInit()接口配置说明](https://gitcode.com/cann/runtime/blob/9.2.0-beta.2/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的“SIMT算子栈空间大小配置示例”。
 
 ```json
 {

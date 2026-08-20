@@ -15,11 +15,11 @@ msopprof --output=$HOME/projects/output $HOME/projects/MyApp/out/main
 **图1**  PipeUtilization.csv（计算单元和搬运单元耗时占比）文件示例<a name="fig10602164732915"></a>  
 ![](../../figures/pipe_util.png "PipeUtilization-csv（计算单元和搬运单元耗时占比）文件示例")
 
-详细的字段说明和性能分析工具的具体使用方法请参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)。
+详细的字段说明和性能分析工具的具体使用方法请参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)。
 
 ## 算子仿真流水图<a name="section17259539153513"></a>
 
-算子调优工具msOpProf支持仿真环境下的性能数据采集和自动解析。使用msOpProf工具获取仿真流水图的具体方式请参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)。
+算子调优工具msOpProf支持仿真环境下的性能数据采集和自动解析。使用msOpProf工具获取仿真流水图的具体方式请参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)。
 
 支持以下两种可视化呈现方式：
 
@@ -35,4 +35,4 @@ msopprof --output=$HOME/projects/output $HOME/projects/MyApp/out/main
     ![](../../figures/timeline.png "时间线界面")
 
 >[!NOTE]说明 
->本文部分样例中展示的算子仿真流水图和上述两种可视化呈现方式不一致，但是其中的关键字段含义是对应的，开发者可以参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)查看具体字段的含义。
+>本文部分样例中展示的算子仿真流水图和上述两种可视化呈现方式不一致，但是其中的关键字段含义是对应的，开发者可以参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)查看具体字段的含义。

@@ -14,7 +14,7 @@ AI Core上SIMD与SIMT混合编程结合了SIMD多数据并行计算能力与SIMT
 
 2. 实际数据度量
 
-   实际数据度量用于观察算子运行时的GM访问情况，以及SIMT VF在AIV核执行时间中的占比。可使用[算子开发工具](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)中的msOpProf工具采集性能数据：
+   实际数据度量用于观察算子运行时的GM访问情况，以及SIMT VF在AIV核执行时间中的占比。可使用[算子开发工具](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)中的msOpProf工具采集性能数据：
    - 通过`Memory.csv`查看AIV核整体GM读写带宽和读写数据量，相关性能数据字段为：`aiv_main_mem_read_bw`、`aiv_main_mem_write_bw`、`read_main_memory_datas`、`write_main_memory_datas`。
    - 通过`ArithmeticUtilization.csv`查看算子在AIV核上的执行时间以及SIMT VF类型指令的cycle占比，相关性能数据字段为：`aiv_time`、`aiv_vec_simt_vf_ratio`。
 

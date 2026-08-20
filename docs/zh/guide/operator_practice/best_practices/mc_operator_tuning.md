@@ -6,7 +6,7 @@ MC<sup>2</sup>通算融合算子的性能收益主要来自于通信、计算的
 
 ![](../../figures/fig_1_84.png)
 
-本案例将介绍如何分析通算融合算子的性能收益、如何制定较好的数据切分策略。更多MC<sup>2</sup>算子的完整样例请参考[MatmulAllReduce样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/matmul_all_reduce)、[MatmulReduceScatter样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/matmul_reduce_scatter_v2)、[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)。
+本案例将介绍如何分析通算融合算子的性能收益、如何制定较好的数据切分策略。更多MC<sup>2</sup>算子的完整样例请参考[MatmulAllReduce样例](https://gitcode.com/cann/ops-transformer/tree/9.2.0-beta.2/mc2/matmul_all_reduce)、[MatmulReduceScatter样例](https://gitcode.com/cann/ops-transformer/tree/9.2.0-beta.2/mc2/matmul_reduce_scatter_v2)、[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/9.2.0-beta.2/mc2/all_gather_matmul_v2)。
 
 ## 获取性能数据<a name="section4647105095111"></a>
 

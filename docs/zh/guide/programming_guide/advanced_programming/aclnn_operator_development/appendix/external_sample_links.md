@@ -11,7 +11,7 @@
 
 ### msOpGen工具生成自定义算子工程模板
 
-- [msOpGen样例](https://gitcode.com/cann/asc-tools/tree/master/examples/03_msopgen)。
+- [msOpGen样例](https://gitcode.com/cann/asc-tools/tree/9.2.0-beta.2/examples/03_msopgen)。
   - 说明：基于AddCustom算子演示如何使用msOpGen工具生成自定义算子工程模板，并通过ACLNN调用示例验证生成的自定义算子。
 
 ### TilingData传递属性

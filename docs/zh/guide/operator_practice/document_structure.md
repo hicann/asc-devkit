@@ -32,7 +32,7 @@
 -   **[SIMT算子实现](simt_operator_impl/simt_operator_impl.md)**：介绍使用SIMT API进行算子开发的参考案例。
 -   **[SIMD与SIMT混合算子实现](simd_simt_hybrid_operator_impl/simd_simt_hybrid_operator_impl.md)**：介绍使用Reg矢量计算API和SIMT API进行SIMD与SIMT混合编程的算子开发参考案例。
 -   **[功能调试](functional_debug/functional_debug.md)**：介绍部分比较常见的影响算子功能的场景。目的是让开发者可以快速解决功能问题，便于进行性能优化，以及快速解决在性能优化过程中可能出现的功能问题。
--   **[性能分析](performance_analysis/performance_analysis.md)**：介绍了算子性能数据分析的方向。目的是让开发者能够通过分析性能数据，识别性能的优化方向。算子性能数据的测试方法，以及性能工具使用方式的详细说明请参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/master/docs/zh/user_guide/msopprof_user_guide.md)，本章不做赘述。
+-   **[性能分析](performance_analysis/performance_analysis.md)**：介绍了算子性能数据分析的方向。目的是让开发者能够通过分析性能数据，识别性能的优化方向。算子性能数据的测试方法，以及性能工具使用方式的详细说明请参考[《msOpProf用户指南》](https://gitcode.com/Ascend/msopprof/blob/26.1.0/docs/zh/user_guide/msopprof_user_guide.md)，本章不做赘述。
 -   **[SIMD算子性能优化](simd_operator_optimization/simd_operator_optimization.md)**：介绍性能优化的手段。目的是让开发者结合算子性能瓶颈点，开展性能优化工作。将主要的优化建议分成搬运优化、内存优化、API使用优化、流水优化以及Tiling优化。有一些优化建议是对上述分类的综合体现，则写在了相关性比较大的章节。这些建议按优先级进行分类，优先级是综合考虑性能效果及其范围来设定：为大多数Ascend C算子带来性能收益的建议具有最高优先级，而仅影响特定情况的手段被给予较低优先级。开发者不必熟悉所有优化手段，可以根据分析得到的算子性能瓶颈，获取对应的优化手段，逐渐了解优化策略全貌。
 -   **[SIMD与SIMT混合算子性能优化](simd_simt_hybrid_optimization/simd_simt_hybrid_optimization.md)**：介绍SIMD与SIMT混合编程场景的性能优化建议。包括内存访问优化、计算优化等。
 -   **[SIMT算子性能优化](simt_operator_optimization/simt_operator_optimization.md)**：介绍SIMT算子的性能优化建议，当前包含内存访问和执行配置两类优化内容。

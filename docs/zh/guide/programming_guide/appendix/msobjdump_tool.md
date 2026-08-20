@@ -148,7 +148,7 @@
 
 ## 使用样例（融合编译工程）<a name="section_fusion_compile_msobjdump"></a>
 
-以融合编译工程生成的可执行文件为例，假设`${build_dir}`为工程构建目录，编译生成的可执行文件名为`demo`。对于该类产物，工具会基于可执行文件中的device相关信息进行解析，其中`--dump-elf`用于展示binary meta与function meta信息，`--list-elf`用于查看可提取的device文件名，`--extract-elf`用于将解析出的device文件落盘。调用样例可参考[msobjdump样例](https://gitcode.com/cann/asc-tools/tree/master/examples/04_msobjdump)。
+以融合编译工程生成的可执行文件为例，假设`${build_dir}`为工程构建目录，编译生成的可执行文件名为`demo`。对于该类产物，工具会基于可执行文件中的device相关信息进行解析，其中`--dump-elf`用于展示binary meta与function meta信息，`--list-elf`用于查看可提取的device文件名，`--extract-elf`用于将解析出的device文件落盘。调用样例可参考[msobjdump样例](https://gitcode.com/cann/asc-tools/tree/9.2.0-beta.2/examples/04_msobjdump)。
 
 -   **解析融合编译工程产物**
 
