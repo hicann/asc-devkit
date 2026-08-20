@@ -215,7 +215,7 @@ private:
             newRingQueue[i] = new (std::nothrow) T;
             if (newRingQueue[i] == nullptr) {
                 for (size_t j = newHead; j < i; j++) {
-                    delete newRingQueue[i];
+                    delete newRingQueue[j];
                 }
                 delete[] newStatus;
                 delete[] newRingQueue;
