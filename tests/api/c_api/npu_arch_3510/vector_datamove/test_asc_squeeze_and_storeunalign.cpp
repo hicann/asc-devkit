@@ -76,7 +76,7 @@ TEST_SQUEEZE_AND_STOREUNALIGN(bfloat16_t, vector_bfloat16_t, vector_bfloat16_t, 
 TEST_SQUEEZE_AND_STOREUNALIGN(
     fp8_e4m3fn_t, vector_fp8_e4m3fn_t, vector_fp8_e4m3fn_t, vector_fp8_e4m3fn_t, float8_e4m3_t);
 TEST_SQUEEZE_AND_STOREUNALIGN(fp8_e5m2_t, vector_fp8_e5m2_t, vector_fp8_e5m2_t, vector_fp8_e5m2_t, float8_e5m2_t);
-TEST_SQUEEZE_AND_STOREUNALIGN(fp8_e8m0_t, vector_fp8_e8m0_t, vector_fp8_e8m0_t, vector_fp8_e8m0_t, float8_e8m0_t);
+TEST_SQUEEZE_AND_STOREUNALIGN(fp8_e8m0_t, vector_fp8_e8m0_t, vector_fp8_e8m0_t, vector_fp8_e8m0_t, fp8_e8m0_t);
 TEST_SQUEEZE_AND_STOREUNALIGN(fp4x2_e2m1_t, vector_fp4x2_e2m1_t, vector_int8_t, vector_fp4x2_e2m1_t, float4_e2m1x2_t);
 TEST_SQUEEZE_AND_STOREUNALIGN(fp4x2_e1m2_t, vector_fp4x2_e1m2_t, vector_int8_t, vector_fp4x2_e1m2_t, float4_e1m2x2_t);
 TEST_SQUEEZE_AND_STOREUNALIGN(int4b_t, vector_int4x2_t, vector_int8_t, vector_fp4x2_e1m2_t, float4_e1m2x2_t);
