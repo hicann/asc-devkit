@@ -150,8 +150,13 @@ html [command-item] .title {
   display: flex !important;
   flex-wrap: wrap !important;
   align-items: baseline !important;
+  justify-content: flex-start !important;
   gap: 0 !important;
   row-gap: 2px !important;
+}
+
+html [command-item] .title .date {
+  margin-left: auto !important;
 }
 
 /* Breadcrumb path - from pagefind meta title */
@@ -160,6 +165,25 @@ html [command-item] .headings {
   font-weight: 600 !important;
   color: var(--vp-c-text-1) !important;
   line-height: 1.4 !important;
+}
+
+html [command-item] .section-title {
+  display: inline-block !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  color: var(--vp-c-text-2) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html [command-item] .section-title::before {
+  content: '›';
+  margin: 0 6px;
+  color: var(--vp-c-text-3);
 }
 
 html [command-item] .headings i.prefix {
@@ -184,21 +208,25 @@ html [command-item][aria-selected="true"] .des {
 
 /* Highlight (mark) */
 html [command-item] .des mark,
-html [command-item] .headings mark {
-  background-color: var(--vp-c-brand-light) !important;
-  color: var(--vp-c-brand-dark) !important;
+html [command-item] .headings mark,
+html [command-item] .section-title mark {
+  background-color: var(--vp-c-brand-soft) !important;
+  color: var(--vp-c-brand-1) !important;
   border-radius: 2px !important;
   padding: 0 2px !important;
   font-weight: inherit !important;
+  text-decoration: none !important;
 }
 
 html [command-item][aria-selected="true"] .des mark,
 html [command-item][aria-selected="true"] .headings mark,
+html [command-item][aria-selected="true"] .section-title mark,
 html [command-item]:hover .des mark,
-html [command-item]:hover .headings mark {
-  color: inherit !important;
-  text-decoration: underline !important;
-  background: none !important;
+html [command-item]:hover .headings mark,
+html [command-item]:hover .section-title mark {
+  background-color: var(--vp-c-brand-soft) !important;
+  color: var(--vp-c-brand-1) !important;
+  text-decoration: none !important;
 }
 
 /* Footer */

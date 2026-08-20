@@ -81,22 +81,7 @@ export function formatPagefindResult(result: PagefindResult, count = 1) {
 
   const subs: SubResult[] = []
   for (const { location } of weightedLocations) {
-    const filterData = subResults.filter((sub) => {
-      const { locations } = sub
-      const [min] = locations || []
-      if (typeof min !== 'number') {
-        return false
-      }
-      const max = locations.length === 1 ? Number.POSITIVE_INFINITY : locations[locations.length - 1]
-      return min <= location && location <= max
-    })
-
-    const sub = filterData.reduce((prev, curr) => {
-      if (!prev) {
-        return curr
-      }
-      return prev.locations.length > curr.locations.length ? prev : curr
-    }, null as SubResult | null)
+    const sub = subResults.find(candidate => (candidate.locations || []).includes(location))
 
     if (!sub) {
       continue

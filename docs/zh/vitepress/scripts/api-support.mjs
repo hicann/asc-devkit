@@ -164,7 +164,10 @@ export function renumberSidebarItems(items, prefix = '') {
 }
 
 export function getFilteredSidebarConfig(theme, selectedFilter) {
-  if (!theme?.sidebar || !Array.isArray(theme.apiSidebarSource)) {
+  const apiSidebarSource = Array.isArray(theme?.apiSidebarSource)
+    ? theme.apiSidebarSource
+    : theme?.sidebar?.['/api/']
+  if (!theme?.sidebar || !Array.isArray(apiSidebarSource)) {
     return theme?.sidebar
   }
   if (!selectedFilter || selectedFilter === 'all') return theme.sidebar
@@ -173,7 +176,7 @@ export function getFilteredSidebarConfig(theme, selectedFilter) {
     ...theme.sidebar,
     '/api/': renumberSidebarItems(
       filterSidebarItems(
-        theme.apiSidebarSource,
+        apiSidebarSource,
         selectedFilter,
         theme.apiUnsupportedIndex
       )

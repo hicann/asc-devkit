@@ -10,11 +10,53 @@
 
 <script setup>
 import DefaultTheme from 'vitepress/theme'
+import { onContentUpdated } from 'vitepress'
+import { nextTick, onBeforeUnmount, onMounted } from 'vue'
 import FilterToggle from './FilterToggle.vue'
 import BackToTop from './BackToTop.vue'
 import CustomOutline from './CustomOutline.vue'
 import ApiDownload from './ApiDownload.vue'
 import EditOnGitcode from './EditOnGitcode.vue'
+import PageBreadcrumb from './PageBreadcrumb.vue'
+import DocumentBuildInfo from './DocumentBuildInfo.vue'
+
+let sidebarScrollRequest = 0
+
+function scrollActiveSidebarItem() {
+  if (typeof window === 'undefined') return
+  const request = ++sidebarScrollRequest
+
+  nextTick(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (request !== sidebarScrollRequest) return
+
+        const sidebar = document.querySelector('.VPSidebar')
+        const activeItem = sidebar?.querySelector('.VPSidebarItem.is-active > .item > .link')
+        if (!sidebar || !activeItem) return
+
+        const sidebarRect = sidebar.getBoundingClientRect()
+        const activeRect = activeItem.getBoundingClientRect()
+        const edgePadding = 48
+        const isVisible = activeRect.top >= sidebarRect.top + edgePadding &&
+          activeRect.bottom <= sidebarRect.bottom - edgePadding
+
+        if (isVisible) return
+
+        const top = sidebar.scrollTop + activeRect.top - sidebarRect.top -
+          (sidebar.clientHeight - activeRect.height) / 2
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth'
+        sidebar.scrollTo({ top: Math.max(0, top), behavior })
+      })
+    })
+  })
+}
+
+onMounted(scrollActiveSidebarItem)
+onContentUpdated(scrollActiveSidebarItem)
+onBeforeUnmount(() => { sidebarScrollRequest += 1 })
 </script>
 
 <template>
@@ -25,7 +67,11 @@ import EditOnGitcode from './EditOnGitcode.vue'
     <template #aside-outline-before>
       <CustomOutline />
     </template>
+    <template #doc-before>
+      <PageBreadcrumb />
+    </template>
     <template #doc-footer-before>
+      <DocumentBuildInfo />
       <EditOnGitcode />
     </template>
     <template #layout-bottom>

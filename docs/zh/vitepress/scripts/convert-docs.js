@@ -11,7 +11,7 @@
 
 const { spawnSync } = require('node:child_process')
 const { resolve, join } = require('node:path')
-const { cpSync, existsSync } = require('node:fs')
+const { cpSync, existsSync, rmSync } = require('node:fs')
 
 const scriptsDir = resolve(__dirname)
 const root = resolve(scriptsDir, '..')
@@ -21,6 +21,9 @@ function runMdparser(inputDir, outputDir, label) {
   console.log(`Converting ${label}...`)
   const input = resolve(repoRoot, 'docs', 'zh', inputDir)
   const output = resolve(root, 'docs', outputDir)
+  // The generated tree is ignored by Git, so remove pages left behind by
+  // source renames or deletions before producing the next build input.
+  rmSync(output, { recursive: true, force: true })
   const scriptsDirUnix = scriptsDir.replace(/\\/g, '/')
   const inputUnix = input.replace(/\\/g, '/')
   const outputUnix = output.replace(/\\/g, '/')

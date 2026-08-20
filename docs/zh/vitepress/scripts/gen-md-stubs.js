@@ -10,6 +10,7 @@
 
 const { readdirSync, writeFileSync, existsSync, mkdirSync, readFileSync } = require('node:fs')
 const { join, resolve } = require('node:path')
+const { load } = require('cheerio')
 
 const docsDir = resolve(__dirname, '..', 'docs')
 const manifestFile = resolve(__dirname, '..', '.stubs-manifest.json')
@@ -31,20 +32,19 @@ function slugify(text) {
 }
 
 function extractHeaders(html) {
-  const headingRegex = /<h([23456])(?:\s[^>]*)?>([\s\S]*?)<\/h\1>/gi
+  const $ = load(html, null, false)
   const headers = []
   const seen = new Map()
-  let match
-  while ((match = headingRegex.exec(html)) !== null) {
-    const level = parseInt(match[1])
-    let text = match[2].replace(/<[^>]+>/g, '').trim()
-    if (!text) continue
+  $('h2,h3,h4,h5,h6').each((_, heading) => {
+    const level = Number(heading.tagName.slice(1))
+    const text = $(heading).text().trim()
+    if (!text) return
     const baseSlug = slugify(text)
     const count = seen.get(baseSlug) || 0
     const slug = count === 0 ? baseSlug : `${baseSlug}-${count}`
     seen.set(baseSlug, count + 1)
     headers.push({ level, title: text, slug, link: `#${slug}` })
-  }
+  })
   return headers
 }
 
@@ -76,7 +76,7 @@ function findAllHtml(dir) {
   return results
 }
 
-function genStubs(subdir) {
+function genStubs(subdir, allStubs) {
   const dir = join(docsDir, subdir)
   if (!existsSync(dir)) {
     console.log(`Directory ${subdir}/ not found, skipping`)
@@ -98,17 +98,23 @@ function genStubs(subdir) {
   console.log(`  ${subdir}/: generated ${stubs.length} .md stubs, ${totalHeaders} headers (${htmlFiles.length} .html files)`)
 }
 
-const allStubs = []
-genStubs('api')
-genStubs('guide')
+function main() {
+  const allStubs = []
+  genStubs('api', allStubs)
+  genStubs('guide', allStubs)
 
-writeFileSync(manifestFile, JSON.stringify(allStubs, null, 2), 'utf-8')
-console.log(`Total: ${allStubs.length} .md stubs generated`)
+  writeFileSync(manifestFile, JSON.stringify(allStubs, null, 2), 'utf-8')
+  console.log(`Total: ${allStubs.length} .md stubs generated`)
 
-if (!existsSync(figuresDir)) {
-  mkdirSync(figuresDir, { recursive: true })
+  if (!existsSync(figuresDir)) {
+    mkdirSync(figuresDir, { recursive: true })
+  }
+  if (!existsSync(join(figuresDir, 'placeholder.png'))) {
+    writeFileSync(join(figuresDir, 'placeholder.png'), PLACEHOLDER_PNG)
+    console.log('Created figures/placeholder.png')
+  }
 }
-if (!existsSync(join(figuresDir, 'placeholder.png'))) {
-  writeFileSync(join(figuresDir, 'placeholder.png'), PLACEHOLDER_PNG)
-  console.log('Created figures/placeholder.png')
-}
+
+if (require.main === module) main()
+
+module.exports = { extractHeaders, slugify }

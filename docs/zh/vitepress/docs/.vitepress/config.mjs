@@ -10,9 +10,9 @@
 
 import { defineConfig } from 'vitepress'
 import { existsSync, readFileSync, copyFileSync, cpSync, readdirSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { relative, resolve } from 'node:path'
 import { load as cheerioLoad } from 'cheerio'
-import { execSync } from 'node:child_process'
 import { pagefindPlugin } from 'vitepress-plugin-pagefind'
 import {
   installRepositoryLinkRewrite,
@@ -22,6 +22,8 @@ import {
   extractUnsupportedProducts,
   normalizeApiRoute,
 } from '../../scripts/api-support.mjs'
+import { loadGitTimestamps } from '../../scripts/git-timestamps.mjs'
+import { shellQuote } from '../../scripts/shell-utils.mjs'
 
 const docsRoot = resolve(import.meta.dirname, '..')
 const repoRoot = resolve(import.meta.dirname, '..', '..', '..', '..', '..')
@@ -61,6 +63,10 @@ function getOriginalSourceFile(relativePath) {
   }
   return resolve(repoRoot, 'docs', 'zh', normalizedPath)
 }
+
+const distDir = resolve(docsRoot, '.vitepress', 'dist')
+const pagefindTitleScript = resolve(import.meta.dirname, 'build-pagefind-title-index.mjs')
+const pagefindIndexingCommand = `npx pagefind --site ${shellQuote(distDir)} --exclude-selectors ${shellQuote('div.aside, a.header-anchor')} --force-language zh --include-characters ${shellQuote('_:')} && node ${shellQuote(pagefindTitleScript)} ${shellQuote(distDir)}`
 
 function removeSelfRefItems(items) {
   return items.map(item => {
@@ -169,6 +175,60 @@ function filterEmptyPages(items, docsRoot) {
   }, [])
 }
 
+function runGit(args) {
+  try {
+    return execFileSync('git', args, {
+      cwd: repoRoot,
+      encoding: 'utf-8',
+      maxBuffer: 16 * 1024 * 1024,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  } catch {
+    return ''
+  }
+}
+
+function resolveBuildDate() {
+  const configured = process.env.DOCS_BUILD_TIME
+  if (configured) {
+    const date = new Date(configured)
+    if (!Number.isNaN(date.getTime())) return date
+  }
+
+  const sourceDateEpoch = Number(process.env.SOURCE_DATE_EPOCH)
+  if (Number.isFinite(sourceDateEpoch) && sourceDateEpoch > 0) {
+    return new Date(sourceDateEpoch * 1000)
+  }
+  return new Date()
+}
+
+const buildDate = resolveBuildDate()
+const buildCommit = process.env.DOCS_COMMIT || process.env.CI_COMMIT_SHA ||
+  process.env.GIT_COMMIT || runGit(['rev-parse', 'HEAD'])
+const buildRef = process.env.DOCS_REF || process.env.CI_COMMIT_REF_NAME ||
+  process.env.GITHUB_REF_NAME || runGit(['branch', '--show-current'])
+const buildVersion = process.env.DOCS_VERSION || process.env.CI_COMMIT_TAG ||
+  buildRef || buildCommit.slice(0, 12) || '未知'
+const documentationBuild = {
+  version: buildVersion,
+  ref: buildRef,
+  commit: buildCommit,
+  shortCommit: buildCommit.slice(0, 12),
+  dirty: Boolean(runGit(['status', '--porcelain', '--untracked-files=no'])),
+  builtAt: buildDate.toISOString(),
+  builtAtText: new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(buildDate),
+}
+const gitTimestamps = loadGitTimestamps(runGit)
+
 const sidebarConfigs = [
   { prefix: '/guide/', sourceFileName: 'index.md' },
   { prefix: '/api/', sourceFileName: 'README.md' },
@@ -187,6 +247,59 @@ for (const { prefix, sourceFileName } of sidebarConfigs) {
   }
   filteredSidebars[prefix] = filterEmptyPages(items, docsRoot)
 }
+
+function normalizeDocRoute(route) {
+  let normalized = decodeURIComponent(String(route || '').split('#')[0])
+  normalized = normalized.replace(/\.html?$/, '').replace(/\.md$/, '')
+  normalized = normalized.replace(/\/$/, '')
+  return normalized.startsWith('/') ? normalized : `/${normalized}`
+}
+
+function stripSidebarNumber(text) {
+  return String(text || '').replace(/^\d+(?:\.\d+)*\.\s*/, '')
+}
+
+function buildBreadcrumbMap() {
+  const roots = {
+    '/api/': { text: 'Ascend C API', link: '/api/api_list' },
+    '/guide/': { text: 'Ascend C算子开发指南', link: '/guide/getting_started/ascend_c_overview_and_learning_path' },
+  }
+  const breadcrumbs = new Map()
+
+  function visit(items, trail, rootLink) {
+    for (const item of items) {
+      const link = item.link ? normalizeDocRoute(item.link) : ''
+      const isRootItem = link && link === rootLink
+      const nextTrail = isRootItem
+        ? trail
+        : [...trail, { text: stripSidebarNumber(item.text), ...(item.link ? { link: item.link } : {}) }]
+      if (link) breadcrumbs.set(link, nextTrail)
+      if (item.items?.length) visit(item.items, nextTrail, rootLink)
+    }
+  }
+
+  for (const [prefix, items] of Object.entries(filteredSidebars)) {
+    const root = roots[prefix]
+    const trail = root ? [root] : []
+    const rootLink = root ? normalizeDocRoute(root.link) : ''
+    if (rootLink) breadcrumbs.set(rootLink, trail)
+    visit(items, trail, rootLink)
+  }
+  return breadcrumbs
+}
+
+function resolveSourceTimestamp(relativePath) {
+  const path = String(relativePath || '').replace(/\\/g, '/')
+  const candidates = path.startsWith('en/')
+    ? [`docs/${path}`]
+    : [`docs/zh/${path}`, `docs/${path}`]
+  for (const candidate of candidates) {
+    const timestamp = gitTimestamps.get(candidate)
+    if (timestamp) return timestamp
+  }
+}
+
+const breadcrumbMap = buildBreadcrumbMap()
 
 function extractBodyContent(html) {
   const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)
@@ -690,24 +803,24 @@ function balanceDivTags(html) {
     if (cache && cache.length > 0) {
       pageData.outlineHeaders = cache
     }
+    const route = normalizeDocRoute(pageData.relativePath)
+    const breadcrumbs = breadcrumbMap.get(route)
+    if (breadcrumbs?.length) {
+      pageData.frontmatter.breadcrumbs = breadcrumbs
+    }
+    const sourceTimestamp = resolveSourceTimestamp(pageData.relativePath)
+    if (sourceTimestamp) {
+      pageData.lastUpdated = sourceTimestamp
+    }
   },
 
   buildConcurrency: 1,
+  metaChunk: true,
 
   transformHtml(code) {
     code = code.replace(/href="\/\/pagefind/g, 'href="/pagefind')
-    code = code.replace(/<body\b/, '<body data-pagefind-body')
+    code = code.replace('<article class="markdown-body">', '<article class="markdown-body" data-pagefind-body>')
     return code
-  },
-
-  async buildEnd(siteConfig) {
-    const distDir = resolve(docsRoot, '.vitepress', 'dist')
-    const scriptPath = resolve(import.meta.dirname, 'build-cjk-index.mjs')
-    try {
-      execSync(`node "${scriptPath}" "${distDir}"`, { stdio: 'inherit' })
-    } catch (e) {
-      console.warn('[cjk-index] Failed to build CJK search index:', e.message)
-    }
   },
 
   vite: {
@@ -732,6 +845,7 @@ function balanceDivTags(html) {
       emptyText: '未找到结果',
       heading: '共: {{searchResult}} 条结果',
       forceLanguage: 'zh',
+      indexingCommand: pagefindIndexingCommand,
     }), {
       name: 'copy-figures-to-dist',
       closeBundle() {
@@ -781,13 +895,24 @@ function balanceDivTags(html) {
         return null
       },
     }, {
-      name: 'patch-vpsidebar-item-depth',
+      name: 'patch-vitepress-sidebar',
       enforce: 'pre',
       transform(code, id) {
-        if (!id.includes('VPSidebarItem') || !id.includes('vitepress')) return null
+        if (!id.includes('vitepress')) return null
         let result = code
-        result = result.replace('depth < 5', 'true')
-        result = result.replace('props.depth + 2 === 7', 'props.depth + 2 >= 7')
+        if (id.includes('VPSidebar.vue')) {
+          result = result.replace(
+            '<VPSidebarGroup :items="sidebarGroups" :key="key" />',
+            '<ClientOnly><VPSidebarGroup :items="sidebarGroups" :key="key" /></ClientOnly>'
+          )
+        } else if (id.includes('VPSidebarItem')) {
+          result = result.replace('depth < 5', 'true')
+          result = result.replace('props.depth + 2 === 7', 'props.depth + 2 >= 7')
+          result = result.replace(
+            '<div v-if="item.items && item.items.length" class="items">',
+            '<div v-if="item.items && item.items.length && !collapsed" class="items">'
+          )
+        }
         if (result === code) return null
         return result
       },
@@ -807,9 +932,11 @@ function balanceDivTags(html) {
   head: [],
 
   themeConfig: {
+    documentationBuild,
+
     nav: [
       { text: '首页', link: '/' },
-      { text: 'AscendC算子开发指南', link: '/guide/入门教程/Ascend-C概述与学习路径' },
+      { text: 'AscendC算子开发指南', link: '/guide/getting_started/ascend_c_overview_and_learning_path' },
       { text: 'Ascend C API', link: '/api/README' },
     ],
 
@@ -818,7 +945,6 @@ function balanceDivTags(html) {
     },
 
     sidebar: filteredSidebars,
-    apiSidebarSource: filteredSidebars['/api/'],
     apiUnsupportedIndex,
 
     outline: false,
@@ -826,6 +952,15 @@ function balanceDivTags(html) {
     docFooter: {
       prev: '上一页',
       next: '下一页',
+    },
+
+    lastUpdated: {
+      text: '源文档更新于',
+      formatOptions: {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        forceLocale: true,
+      },
     },
 
     footer: {

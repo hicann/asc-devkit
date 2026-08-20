@@ -1,0 +1,18 @@
+{
+  "name": "asc-search-benchmark",
+  "version": "1.0.0",
+  "description": "Black-box search quality benchmark for Ascend C documentation",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "asc-search-benchmark": "./bin/asc-search-benchmark.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "benchmark:live": "node bin/asc-search-benchmark.mjs --url https://asc.gitcode.com/ --enforce"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "CANN-2.0"
+}

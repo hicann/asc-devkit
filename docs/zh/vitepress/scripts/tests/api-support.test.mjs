@@ -137,7 +137,6 @@ test('builds an API sidebar config for the selected product without mutating the
       '/guide/': [{ text: 'Guide', link: '/guide/start' }],
       '/api/': apiSidebarSource,
     },
-    apiSidebarSource,
     apiUnsupportedIndex: { '/api/hidden': ['310p'] },
   }
 

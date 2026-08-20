@@ -7,6 +7,9 @@ docs/api
 docs/guide
 docs/figures
 docs/public
+docs/asc_*.md
+docs/quick_start.md
+docs/en
 build-output*.log
 *.zip
 .stubs-manifest.json

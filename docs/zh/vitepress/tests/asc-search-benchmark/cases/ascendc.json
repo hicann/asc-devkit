@@ -1,0 +1,2246 @@
+{
+  "version": 2,
+  "name": "Ascend C documentation search benchmark",
+  "description": "A stable, engine-independent query set for evaluating static search quality.",
+  "topK": 10,
+  "successGrade": 2,
+  "thresholds": {
+    "completionRate": 1,
+    "successAt1": 0.6,
+    "successAt3": 0.75,
+    "successAt10": 0.85,
+    "mrrAt10": 0.7,
+    "ndcgAt10": 0.75,
+    "targetRecallAt10": 0.7,
+    "zeroResultAccuracy": 1,
+    "invalidResultRateAt10": 0,
+    "p95LatencyMs": 1500
+  },
+  "cases": [
+    {
+      "id": "api-exact-datastorebarrier",
+      "query": "DataStoreBarrier",
+      "category": "api-exact",
+      "intent": "Locate the exact AI CPU API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/AI-CPU-API/DataStoreBarrier", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-setglobalbuffer",
+      "query": "SetGlobalBuffer",
+      "category": "api-exact",
+      "intent": "Locate the exact GlobalTensor member page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/SetGlobalBuffer", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-asc-mmad",
+      "query": "asc_mmad",
+      "category": "api-exact",
+      "intent": "Prefer the exact C API over suffixed variants.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/cube_compute/asc_mmad", "grade": 3 },
+          { "prefix": "/api/SIMD-API/c_api/cube_compute/asc_mmad_", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-overload-copy-gm2ub",
+      "query": "asc_copy_gm2ub",
+      "category": "api-exact",
+      "intent": "Find architecture-specific pages for an overloaded C API.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "prefix": "/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub/", "grade": 3 },
+          { "prefix": "/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub_align/", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-class-localtensor",
+      "query": "LocalTensor",
+      "category": "api-exact",
+      "intent": "Prefer the main LocalTensor page and its introduction.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "api-family-datacopy",
+      "query": "DataCopy",
+      "category": "api-family",
+      "intent": "Return DataCopy overloads before DataCopyPad pages.",
+      "expect": {
+        "minResults": 5,
+        "targets": [
+          { "contains": "/memory_vector_compute/data_move/DataCopy_", "grade": 3 },
+          { "contains": "/cube_compute_load/DataCopy_", "grade": 2 },
+          { "contains": "/DataCopyPad", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-insensitive-datacopy",
+      "query": "datacopy",
+      "category": "api-normalization",
+      "intent": "API lookup should be case insensitive.",
+      "expect": {
+        "minResults": 5,
+        "targets": [
+          { "contains": "/memory_vector_compute/data_move/DataCopy_", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-prefix-datacop",
+      "query": "DataCop",
+      "category": "api-prefix",
+      "intent": "An incomplete API prefix should still locate DataCopy pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/memory_vector_compute/data_move/DataCopy_", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-separator-asc-mmad",
+      "query": "asc mmad",
+      "category": "api-normalization",
+      "intent": "A space-separated spelling should locate the snake_case API.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/cube_compute/asc_mmad", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-uppercase-asc-mmad",
+      "query": "ASC_MMAD",
+      "category": "api-normalization",
+      "intent": "Uppercase input should locate the lowercase C API.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/cube_compute/asc_mmad", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-special-operator",
+      "query": "operator[]",
+      "category": "special-character",
+      "intent": "Search punctuation-heavy operator names.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/operator", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/operator", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-special-macro",
+      "query": "__NPU_ARCH__",
+      "category": "special-character",
+      "intent": "Find the macro definition and migration guidance.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 1,
+        "descriptionIncludes": ["__NPU_ARCH__"],
+        "highlightIncludes": ["__NPU_ARCH__"],
+        "sectionTitleIncludes": ["__NPU_ARCH__"],
+        "sectionHighlightIncludes": ["__NPU_ARCH__"],
+        "sectionHash": "#npu-arch",
+        "targets": [
+          { "exact": "/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字", "grade": 3 },
+          { "exact": "/guide/跨代迁移兼容性指南/概述", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "api-special-macro-leading-underscore",
+      "query": "_NPU_ARCH",
+      "category": "special-character",
+      "intent": "Find a decorated predefined macro when one leading and both trailing underscores are omitted.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 1,
+        "descriptionIncludes": ["__NPU_ARCH__"],
+        "highlightIncludes": ["_NPU_ARCH"],
+        "sectionTitleIncludes": ["__NPU_ARCH__"],
+        "sectionHighlightIncludes": ["_NPU_ARCH"],
+        "sectionHash": "#npu-arch",
+        "targets": [
+          { "exact": "/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字", "grade": 3 },
+          { "exact": "/guide/跨代迁移兼容性指南/概述", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "api-special-macro-undecorated",
+      "query": "NPU_ARCH",
+      "category": "special-character",
+      "intent": "Prefer the decorated predefined macro when all outer underscores are omitted.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 1,
+        "descriptionIncludes": ["__NPU_ARCH__"],
+        "highlightIncludes": ["NPU_ARCH"],
+        "sectionTitleIncludes": ["__NPU_ARCH__"],
+        "sectionHighlightIncludes": ["NPU_ARCH"],
+        "sectionHash": "#npu-arch",
+        "targets": [
+          { "exact": "/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字", "grade": 3 },
+          { "exact": "/guide/跨代迁移兼容性指南/概述", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "syntax-kernel-launch-prefix",
+      "query": "<<<",
+      "category": "special-character",
+      "intent": "Find kernel launch configuration while the punctuation-only syntax is still incomplete.",
+      "expect": {
+        "minResults": 1,
+        "descriptionIncludes": ["<<<"],
+        "highlightIncludes": ["<<<"],
+        "sectionTitleIncludes": ["<<<>>>调用"],
+        "sectionHighlightIncludes": ["<<<"],
+        "sectionHash": "#<<<>>>调用",
+        "targets": [
+          { "exact": "/api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config", "grade": 3 },
+          { "exact": "/guide/编程指南/语言扩展层/SIMD与SIMT混合编程BuiltIn关键字", "grade": 3 },
+          { "exact": "/api/SIMT-API/SIMT_programming_intro/extended_syntax/kernel_function_config", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "syntax-kernel-launch-empty",
+      "query": "<<<>>>",
+      "category": "special-character",
+      "intent": "Locate the kernel launch configuration syntax despite punctuation-only tokenization.",
+      "expect": {
+        "minResults": 1,
+        "descriptionIncludes": ["<<<"],
+        "highlightIncludes": ["<<<"],
+        "sectionHash": "#<<<>>>调用",
+        "targets": [
+          { "exact": "/api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config", "grade": 3 },
+          { "exact": "/guide/编程指南/语言扩展层/SIMD与SIMT混合编程BuiltIn关键字", "grade": 3 },
+          { "exact": "/api/SIMT-API/SIMT_programming_intro/extended_syntax/kernel_function_config", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "syntax-kernel-launch-prefix-second-visible-mobile",
+      "query": "<<<",
+      "category": "special-character",
+      "intent": "Keep the highlighted launch syntax visible in the second result on a narrow viewport.",
+      "viewportWidth": 375,
+      "expect": {
+        "minResults": 2,
+        "descriptionIncludes": ["<<<"],
+        "highlightIncludes": ["<<<"],
+        "sectionTitleIncludes": ["<<<>>>调用"],
+        "sectionHighlightIncludes": ["<<<"],
+        "targets": [
+          { "exact": "/guide/编程指南/语言扩展层/SIMD与SIMT混合编程BuiltIn关键字", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "syntax-kernel-launch-placeholder",
+      "query": "<<<...>>>",
+      "category": "special-character",
+      "intent": "Treat a parameterized kernel launch placeholder as the same searchable syntax.",
+      "expect": {
+        "minResults": 1,
+        "descriptionIncludes": ["<<<"],
+        "highlightIncludes": ["<<<"],
+        "sectionHash": "#<<<>>>调用",
+        "targets": [
+          { "exact": "/api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config", "grade": 3 },
+          { "exact": "/guide/编程指南/语言扩展层/SIMD与SIMT混合编程BuiltIn关键字", "grade": 3 },
+          { "exact": "/api/SIMT-API/SIMT_programming_intro/extended_syntax/kernel_function_config", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-datatype-fp8",
+      "query": "fp8_e4m3fn_t",
+      "category": "special-character",
+      "intent": "Locate the built-in data type documentation.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-prefix-no-over",
+      "query": "NO_OVER",
+      "category": "special-character",
+      "intent": "Prefer the compiler option identifier prefix over unrelated No and Overview text.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "highlightIncludes": ["NO_OVER"],
+        "sectionTitleIncludes": ["内置编译宏开关"],
+        "sectionHash": "#内置编译宏开关",
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-exact-no-overlap-in-multi-repeat",
+      "query": "NO_OVERLAP_IN_MULTI_REPEAT",
+      "category": "special-character",
+      "intent": "Match the full snake-case compiler option instead of terms scattered across a document.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-environment",
+      "query": "环境准备",
+      "category": "zh-navigation",
+      "intent": "Locate the exact getting-started section.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/入门教程/环境准备", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-quick-start",
+      "query": "快速开始",
+      "category": "zh-navigation",
+      "intent": "Locate the exact quick-start page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/quick_start", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-performance",
+      "query": "性能分析",
+      "category": "zh-navigation",
+      "intent": "Locate the performance analysis overview.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/性能分析/性能分析", "grade": 3 },
+          { "prefix": "/guide/算子实践参考/性能分析/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-migration",
+      "query": "跨代迁移",
+      "category": "zh-navigation",
+      "intent": "Locate migration overview and compatibility policy pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/跨代迁移兼容性指南/Ascend-C-API兼容策略", "grade": 3 },
+          { "exact": "/guide/跨代迁移兼容性指南/概述", "grade": 3 },
+          { "prefix": "/guide/跨代迁移兼容性指南/3510架构迁移指导/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-matmul",
+      "query": "矩阵乘",
+      "category": "zh-concept",
+      "intent": "Find matrix multiplication guides and examples.",
+      "expect": {
+        "minResults": 3,
+        "targets": [
+          { "prefix": "/guide/算子实践参考/SIMD算子实现/矩阵编程（高阶API）/", "grade": 3 },
+          { "contains": "/矩阵计算/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-kernel",
+      "query": "核函数",
+      "category": "zh-concept",
+      "intent": "Find the SIMD and SIMT kernel-function documentation.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMD编程/核函数", "grade": 3 },
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMT编程/核函数", "grade": 3 },
+          { "contains": "/核函数", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-datacopy-unaligned",
+      "query": "DataCopy 非对齐",
+      "category": "mixed-language",
+      "intent": "Combine an API family with a Chinese constraint.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/DataCopyPad_GMToUB", "grade": 3 },
+          { "contains": "/DataCopyPad_UBToGM", "grade": 3 },
+          { "contains": "/DataCopyPad_", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-gmtoub-unaligned",
+      "query": "GMToUB 非对齐",
+      "category": "mixed-language",
+      "intent": "Locate the exact GM-to-UB non-aligned transfer page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/DataCopyPad_GMToUB", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-sparse-matmul",
+      "query": "4:2稀疏矩阵乘",
+      "category": "mixed-language",
+      "intent": "Search a title containing punctuation, digits and Chinese.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子实现/矩阵编程（高阶API）/特性场景/4-2稀疏矩阵乘", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-double-buffer",
+      "query": "双缓冲",
+      "category": "zh-content",
+      "intent": "Find pages where the phrase appears in body content rather than titles.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/Matmul矩阵算子实践/中级性能优化", "grade": 3 },
+          { "contains": "/Add矢量算子实践/中级性能优化", "grade": 2 },
+          { "contains": "/使用Unified-Buffer提升内存访问效率", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "typo-localtensor",
+      "query": "LocalTensro",
+      "category": "typo-tolerance",
+      "intent": "Measure whether a one-character transposition can recover the API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-tpipe",
+      "query": "TPipe",
+      "category": "api-exact",
+      "intent": "Locate the TPipe resource-management API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/resource_management/TPipe/TPipe", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-tque",
+      "query": "TQue",
+      "category": "api-exact",
+      "intent": "Locate the TQue resource-management API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/resource_management/TQue/TQue", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-globaltensor",
+      "query": "GlobalTensor",
+      "category": "api-exact",
+      "intent": "Locate the main GlobalTensor data-structure page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-getvalue",
+      "query": "GetValue",
+      "category": "api-exact",
+      "intent": "Find both GlobalTensor and LocalTensor GetValue members.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/GetValue", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/GetValue", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-setvalue",
+      "query": "SetValue",
+      "category": "api-exact",
+      "intent": "Find both GlobalTensor and LocalTensor SetValue members.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/SetValue", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/SetValue", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-mmad",
+      "query": "Mmad",
+      "category": "api-exact",
+      "intent": "Find the ISASI and Tensor API Mmad pages.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/cube_compute_TensorAPI/mmad_compute/Mmad", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-softmax",
+      "query": "SoftMax",
+      "category": "api-exact",
+      "intent": "Locate the high-level SoftMax API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/activation_functions/SoftMax_interface/SoftMax", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-reducesum",
+      "query": "ReduceSum",
+      "category": "api-exact",
+      "intent": "Find both low-level and high-level ReduceSum pages.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/reduction_operations/ReduceSum_interface/ReduceSum-90", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-syncall",
+      "query": "SyncAll",
+      "category": "api-exact",
+      "intent": "Locate the inter-core SyncAll API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-exact-getblockidx",
+      "query": "GetBlockIdx",
+      "category": "api-exact",
+      "intent": "Locate the system-variable GetBlockIdx API page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockIdx", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-family-add",
+      "query": "Add",
+      "category": "api-family",
+      "intent": "Return the Memory and Reg vector Add families.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/reg_vector_compute/basic_arithmetic/Add", "grade": 3 },
+          { "contains": "/c_api/", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-family-mul",
+      "query": "Mul",
+      "category": "api-family",
+      "intent": "Return the Memory and Reg vector Mul families.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Mul", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/reg_vector_compute/basic_arithmetic/Mul", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-family-duplicate",
+      "query": "Duplicate",
+      "category": "api-family",
+      "intent": "Return both Memory and Reg Duplicate APIs.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/data_padding/Duplicate", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/reg_vector_compute/data_padding/Duplicate", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-family-gather",
+      "query": "Gather",
+      "category": "api-family",
+      "intent": "Return both Memory and Reg Gather APIs.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/scatter_gather/Gather", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/reg_vector_compute/scatter_operations/Gather", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-family-reducemax",
+      "query": "ReduceMax",
+      "category": "api-family",
+      "intent": "Return low-level and high-level ReduceMax APIs.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceMax", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/reduction_operations/ReduceMax_interface/ReduceMax-91", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-tpipe-lower",
+      "query": "tpipe",
+      "category": "api-normalization",
+      "intent": "Lowercase input should locate the TPipe API.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/resource_management/TPipe/TPipe", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-globaltensor-upper",
+      "query": "GLOBALTENSOR",
+      "category": "api-normalization",
+      "intent": "Uppercase input should locate the mixed-case GlobalTensor API.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-getvalue-lower",
+      "query": "getvalue",
+      "category": "api-normalization",
+      "intent": "Lowercase input should locate GetValue member pages.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/GetValue", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/GetValue", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-asc-add-space",
+      "query": "asc add",
+      "category": "api-normalization",
+      "intent": "Space-separated input should locate asc_add C APIs.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/reg/arithmetic_compute/asc_add", "grade": 3 },
+          { "exact": "/api/SIMD-API/c_api/vector_compute/asc_add", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-copy-ub2gm-upper",
+      "query": "ASC_COPY_UB2GM",
+      "category": "api-normalization",
+      "intent": "Uppercase input should locate architecture-specific asc_copy_ub2gm pages.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "prefix": "/api/SIMD-API/c_api/vector_data_move/asc_copy_ub2gm/", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-datacopy-pad-space",
+      "query": "data copy pad",
+      "category": "api-normalization",
+      "intent": "Space-separated lowercase input should locate DataCopyPad pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/DataCopyPad_", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-normalization-softmax-space",
+      "query": "soft max",
+      "category": "api-normalization",
+      "intent": "Space-separated lowercase input should locate SoftMax.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/activation_functions/SoftMax_interface/SoftMax", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-prefix-setglobalbuff",
+      "query": "SetGlobalBuff",
+      "category": "api-prefix",
+      "intent": "An incomplete member name should locate SetGlobalBuffer.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/SetGlobalBuffer", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-prefix-localtens",
+      "query": "LocalTens",
+      "category": "api-prefix",
+      "intent": "An incomplete class name should locate LocalTensor.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-prefix-copy-ub2g",
+      "query": "asc_copy_ub2g",
+      "category": "api-prefix",
+      "intent": "An incomplete C API name should locate asc_copy_ub2gm pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "prefix": "/api/SIMD-API/c_api/vector_data_move/asc_copy_ub2gm/", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-prefix-reducesu",
+      "query": "ReduceSu",
+      "category": "api-prefix",
+      "intent": "An incomplete reduction name should locate ReduceSum pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/reduction_operations/ReduceSum_interface/ReduceSum-90", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-prefix-getblocki",
+      "query": "GetBlockI",
+      "category": "api-prefix",
+      "intent": "An incomplete system API should locate GetBlockIdx.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockIdx", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "special-operator-call",
+      "query": "operator()",
+      "category": "special-character",
+      "intent": "Search the function-call operators on tensor types.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/operator_call", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/operator_call", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "special-tposition-enum",
+      "query": "TPosition::VECIN",
+      "category": "special-character",
+      "intent": "Locate the TPosition enumeration from a scoped enum value.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/aux_data_structures/TPosition", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "special-int4b-type",
+      "query": "int4b_t",
+      "category": "special-character",
+      "intent": "Locate the built-in data type documentation for int4b_t.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "special-aicore-keyword",
+      "query": "__aicore__",
+      "category": "special-character",
+      "intent": "Locate the SIMD built-in keyword documentation.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "special-atomicadd-template",
+      "query": "AtomicAdd<int32_t>",
+      "category": "special-character",
+      "intent": "Locate AtomicAdd despite C++ template punctuation.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/atomic_operations/AtomicAdd", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-ascendc-overview",
+      "query": "Ascend C概述",
+      "category": "zh-navigation",
+      "intent": "Locate the Ascend C overview and learning path.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/入门教程/Ascend-C概述与学习路径", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-simd-model",
+      "query": "AI Core SIMD编程模型概述",
+      "category": "zh-navigation",
+      "intent": "Locate the SIMD programming-model overview.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMD编程/概述", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-simt-model",
+      "query": "AI Core SIMT编程模型概述",
+      "category": "zh-navigation",
+      "intent": "Locate the SIMT programming-model overview.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMT编程/概述", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-programming-model",
+      "query": "编程模型",
+      "category": "zh-navigation",
+      "intent": "Locate the main programming-model navigation page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/编程模型", "grade": 3 },
+          { "exact": "/guide/编程指南/编程模型/编程模型概述", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-build-run",
+      "query": "编译与运行",
+      "category": "zh-navigation",
+      "intent": "Locate the compilation and execution overview.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/编译与运行", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-functional-debug",
+      "query": "功能调试",
+      "category": "zh-navigation",
+      "intent": "Locate functional-debugging overview pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/调试调优/功能调试/功能调试", "grade": 3 },
+          { "exact": "/guide/算子实践参考/功能调试/功能调试", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-simd-optimization",
+      "query": "SIMD算子性能优化",
+      "category": "zh-navigation",
+      "intent": "Locate the SIMD operator optimization guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子性能优化/SIMD算子性能优化", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-simt-optimization",
+      "query": "SIMT算子性能优化",
+      "category": "zh-navigation",
+      "intent": "Locate the SIMT operator optimization guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMT算子性能优化/SIMT算子性能优化", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-matrix-programming",
+      "query": "矩阵编程（高阶API）",
+      "category": "zh-navigation",
+      "intent": "Locate the high-level matrix programming guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子实现/矩阵编程（高阶API）/矩阵编程（高阶API）", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-navigation-guide-index",
+      "query": "Ascend C算子开发指南",
+      "category": "zh-navigation",
+      "intent": "Locate the main guide index.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/index", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-kernel-tiling",
+      "query": "Kernel Tiling",
+      "category": "zh-concept",
+      "intent": "Locate the Kernel Tiling concept page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/Kernel-Tiling/Kernel-Tiling", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-vector-programming",
+      "query": "矢量编程",
+      "category": "zh-concept",
+      "intent": "Locate the vector programming guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子实现/矢量编程/矢量编程", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-atomic-operation",
+      "query": "原子操作",
+      "category": "zh-concept",
+      "intent": "Find the primary SIMD and SIMT atomic-operation pages.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/atomic_operations/atomic_operations", "grade": 3 },
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMT编程/原子操作", "grade": 3 },
+          { "contains": "/atomic_operations/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-tensor-transform",
+      "query": "张量变换",
+      "category": "zh-concept",
+      "intent": "Locate the high-level tensor transformation family.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/tensor_transform/tensor_transform", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-address-space",
+      "query": "地址空间",
+      "category": "zh-concept",
+      "intent": "Find address-space predicate and conversion function families.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMT-API/address_space_predicate_functions/address_space_predicate_functions", "grade": 3 },
+          { "exact": "/api/SIMT-API/address_space_conversion_functions/address_space_conversion_functions", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-data-types",
+      "query": "内置数据类型",
+      "category": "zh-concept",
+      "intent": "Find SIMD and SIMT built-in data type references.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 },
+          { "contains": "/extended_syntax/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-pipeline-scheduling",
+      "query": "流水编排",
+      "category": "zh-concept",
+      "intent": "Locate the pipeline scheduling optimization guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子性能优化/流水编排/流水编排", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-memory-hierarchy",
+      "query": "内存层级",
+      "category": "zh-concept",
+      "intent": "Find both SIMT and mixed-programming memory hierarchy pages.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMT编程/内存层级", "grade": 3 },
+          { "exact": "/guide/编程指南/高级编程/高级AI-Core编程模型/SIMD与SIMT混合编程/内存层级", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-sync-control",
+      "query": "同步控制",
+      "category": "zh-concept",
+      "intent": "Find the main synchronization control references.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/sync_control/sync_control", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/reg_vector_compute/sync_control/sync_control", "grade": 3 },
+          { "contains": "/c_api/sync/sync_control", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-concept-intercore-sync",
+      "query": "核间同步",
+      "category": "zh-concept",
+      "intent": "Locate inter-core synchronization overview and APIs.",
+      "expect": {
+        "minResults": 2,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/sync_control/inter_core_sync/inter_core_sync", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/sync_control/inter_core_sync/inter_core_sync_overview", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-softmax-high-level",
+      "query": "SoftMax 高阶API",
+      "category": "mixed-language",
+      "intent": "Combine an API name with its high-level API scope.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/activation_functions/SoftMax_interface/SoftMax", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-reducesum-reduction",
+      "query": "ReduceSum 归约",
+      "category": "mixed-language",
+      "intent": "Combine ReduceSum with its Chinese operation category.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/reduction_operations/ReduceSum_interface/ReduceSum-90", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-kernel-tiling-data",
+      "query": "Kernel Tiling 数据",
+      "category": "mixed-language",
+      "intent": "Locate Kernel Tiling documentation from a mixed query.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/Kernel-Tiling/Kernel-Tiling", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-simt-kernel-config",
+      "query": "SIMT 核函数配置",
+      "category": "mixed-language",
+      "intent": "Locate SIMT kernel configuration syntax.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/SIMT_programming_intro/extended_syntax/kernel_function_config", "grade": 3 },
+          { "exact": "/api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-matmul-performance",
+      "query": "Matmul 性能优化",
+      "category": "mixed-language",
+      "intent": "Locate the Matmul performance optimization strategy guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/优秀实践/Matmul性能调优案例/Matmul性能优化策略总览", "grade": 3 },
+          { "prefix": "/guide/算子实践参考/优秀实践/Matmul性能调优案例/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-datacopy-ub2gm",
+      "query": "DataCopy UBToGM",
+      "category": "mixed-language",
+      "intent": "Locate UB-to-GM DataCopy and DataCopyPad pages.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/DataCopy_UBToGM", "grade": 3 },
+          { "contains": "/DataCopyPad_UBToGM", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-atomicadd-operation",
+      "query": "AtomicAdd 原子操作",
+      "category": "mixed-language",
+      "intent": "Locate AtomicAdd from a mixed API and concept query.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/atomic_operations/AtomicAdd", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-bank-conflict",
+      "query": "Bank Conflict",
+      "category": "zh-content",
+      "intent": "Find optimization pages that discuss bank conflicts in body content.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/典型算子实践案例/SIMD算子实现/Add矢量算子实践/高阶性能打磨", "grade": 3 },
+          { "exact": "/guide/编程指南/调试调优/性能调优", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-intrakernel-pipeline",
+      "query": "核内流水",
+      "category": "zh-content",
+      "intent": "Find the Matmul optimization guide that discusses intra-kernel pipelines.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/优秀实践/Matmul性能调优案例/Matmul性能优化策略总览", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-tail-block",
+      "query": "尾块处理",
+      "category": "zh-content",
+      "intent": "Find vector programming pages that discuss tail-block handling.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子实现/矢量编程/DoubleBuffer场景", "grade": 3 },
+          { "prefix": "/guide/算子实践参考/SIMD算子实现/矢量编程/多核Tiling切分/", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-data-reuse",
+      "query": "数据复用",
+      "category": "zh-content",
+      "intent": "Find pages that discuss data reuse in body content.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD与SIMT混合算子性能优化/概述", "grade": 3 },
+          { "exact": "/api/SIMT-API/memory_access_functions/memory_access_functions_intro", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-intercore-communication",
+      "query": "核间通信",
+      "category": "zh-content",
+      "intent": "Find synchronization and architecture pages that discuss inter-core communication.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/高级编程/硬件实现/架构规格/NPU架构版本3510", "grade": 3 },
+          { "contains": "/cube_group_mgmt_ISASI/", "grade": 2 },
+          { "exact": "/guide/算子实践参考/SIMD算子性能优化/流水编排/使能Iterate或IterateAll异步接口避免AIC-AIV同步依赖", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-memory-reuse",
+      "query": "内存复用",
+      "category": "zh-content",
+      "intent": "Find resource-management and programming pages that discuss memory reuse.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程", "grade": 3 },
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMD编程/基于TPipe-TQue框架编程/TPipe-TQue框架编程范式", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/resource_management/TPipe/InitBufPool", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-content-multicore-split",
+      "query": "多核切分",
+      "category": "zh-content",
+      "intent": "Find Tiling and implementation pages that discuss multi-core splitting.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "prefix": "/guide/算子实践参考/SIMD算子实现/矢量编程/多核Tiling切分/", "grade": 3 },
+          { "exact": "/guide/算子实践参考/SIMD算子实现/矩阵编程（高阶API）/基础知识", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "typo-datacopy",
+      "query": "DataCoppy",
+      "category": "typo-tolerance",
+      "intent": "Recover DataCopy from a duplicated character.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/memory_vector_compute/data_move/DataCopy_", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "typo-globaltensor",
+      "query": "GloblaTensor",
+      "category": "typo-tolerance",
+      "intent": "Recover GlobalTensor from a transposed character pair.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/GlobalTensor", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "typo-setglobalbuffer",
+      "query": "SetGlobalBuffre",
+      "category": "typo-tolerance",
+      "intent": "Recover SetGlobalBuffer from a final transposition.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/GlobalTensor/SetGlobalBuffer", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "typo-reducesum",
+      "query": "RedcueSum",
+      "category": "typo-tolerance",
+      "intent": "Recover ReduceSum from a transposed character pair.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/reduction_operations/ReduceSum_interface/ReduceSum-90", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "typo-atomicadd",
+      "query": "AtmoicAdd",
+      "category": "typo-tolerance",
+      "intent": "Recover AtomicAdd from a transposed character pair.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/atomic_operations/AtomicAdd", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-isnan-lower",
+      "query": "isnan",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the lowercase SIMT API when the query casing is exact.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/math_functions/float_math_functions/isnan", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/math_compute/IsNan_interface/IsNan", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-isnan-upper",
+      "query": "IsNan",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the PascalCase high-level API when the query casing is exact.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/math_compute/IsNan_interface/IsNan", "grade": 3 },
+          { "exact": "/api/SIMT-API/math_functions/float_math_functions/isnan", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-isinf-lower",
+      "query": "isinf",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the lowercase SIMT API when the query casing is exact.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/math_functions/float_math_functions/isinf", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/math_compute/IsInf_interface/IsInf", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-isinf-upper",
+      "query": "IsInf",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the PascalCase high-level API when the query casing is exact.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/math_compute/IsInf_interface/IsInf", "grade": 3 },
+          { "exact": "/api/SIMT-API/math_functions/float_math_functions/isinf", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-isfinite-lower",
+      "query": "isfinite",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the lowercase SIMT API when the query casing is exact.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/math_functions/float_math_functions/isfinite", "grade": 3 },
+          { "exact": "/api/SIMD-API/adv_api/math_compute/IsFinite_interface/IsFinite", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-isfinite-upper",
+      "query": "IsFinite",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the PascalCase high-level API when the query casing is exact.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/math_compute/IsFinite_interface/IsFinite", "grade": 3 },
+          { "exact": "/api/SIMT-API/math_functions/float_math_functions/isfinite", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-abs-lower",
+      "query": "abs",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the lowercase C++ standard library function.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/Utils-API/cpp_stdlib/math_functions/abs", "grade": 3 },
+          { "contains": "/basic_arithmetic/Abs", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-abs-upper",
+      "query": "Abs",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the PascalCase SIMD APIs.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/basic_arithmetic/Abs", "grade": 3 },
+          { "exact": "/api/Utils-API/cpp_stdlib/math_functions/abs", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-sqrt-lower",
+      "query": "sqrt",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the lowercase C++ standard library function.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/Utils-API/cpp_stdlib/math_functions/sqrt", "grade": 3 },
+          { "contains": "/basic_arithmetic/Sqrt", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-sqrt-upper",
+      "query": "Sqrt",
+      "category": "api-case-sensitive",
+      "intent": "Prefer the PascalCase SIMD APIs.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/basic_arithmetic/Sqrt", "grade": 3 },
+          { "exact": "/api/Utils-API/cpp_stdlib/math_functions/sqrt", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-max-lower",
+      "query": "max",
+      "category": "api-case-sensitive",
+      "intent": "Prefer lowercase SIMT and C++ standard library functions.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/math_functions/integer_math_functions/max", "grade": 3 },
+          { "exact": "/api/Utils-API/cpp_stdlib/algorithms/max", "grade": 3 },
+          { "contains": "/basic_arithmetic/Max", "grade": 1 },
+          { "contains": "/NumericLimits_utils/Max", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-max-upper",
+      "query": "Max",
+      "category": "api-case-sensitive",
+      "intent": "Prefer PascalCase SIMD and NumericLimits APIs.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/basic_arithmetic/Max", "grade": 3 },
+          { "contains": "/NumericLimits_utils/Max", "grade": 3 },
+          { "exact": "/api/SIMT-API/math_functions/integer_math_functions/max", "grade": 1 },
+          { "exact": "/api/Utils-API/cpp_stdlib/algorithms/max", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-min-lower",
+      "query": "min",
+      "category": "api-case-sensitive",
+      "intent": "Prefer lowercase SIMT and C++ standard library functions.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/math_functions/integer_math_functions/min", "grade": 3 },
+          { "exact": "/api/Utils-API/cpp_stdlib/algorithms/min", "grade": 3 },
+          { "contains": "/basic_arithmetic/Min", "grade": 1 },
+          { "contains": "/NumericLimits_utils/Min", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "api-case-sensitive-min-upper",
+      "query": "Min",
+      "category": "api-case-sensitive",
+      "intent": "Prefer PascalCase SIMD and NumericLimits APIs.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/basic_arithmetic/Min", "grade": 3 },
+          { "contains": "/NumericLimits_utils/Min", "grade": 3 },
+          { "exact": "/api/SIMT-API/math_functions/integer_math_functions/min", "grade": 1 },
+          { "exact": "/api/Utils-API/cpp_stdlib/algorithms/min", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "unicode-fullwidth-datacopy",
+      "query": "ＤａｔａＣｏｐｙ",
+      "category": "unicode-normalization",
+      "intent": "Normalize fullwidth Latin letters before searching an API family.",
+      "expect": {
+        "minResults": 5,
+        "targets": [
+          { "contains": "/memory_vector_compute/data_move/DataCopy_", "grade": 3 },
+          { "contains": "/cube_compute_load/DataCopy_", "grade": 2 },
+          { "contains": "/DataCopyPad", "grade": 1 }
+        ]
+      }
+    },
+    {
+      "id": "unicode-trim-localtensor",
+      "query": "  LocalTensor  ",
+      "category": "unicode-normalization",
+      "intent": "Ignore leading and trailing whitespace around an exact API title.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor", "grade": 3 },
+          { "exact": "/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "unicode-ideographic-space-datacopy",
+      "query": "DataCopy　非对齐",
+      "category": "unicode-normalization",
+      "intent": "Treat an ideographic space as normal query whitespace.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/DataCopyPad_GMToUB", "grade": 3 },
+          { "contains": "/DataCopyPad_UBToGM", "grade": 3 },
+          { "contains": "/DataCopyPad_", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "unicode-ascii-parentheses-matrix",
+      "query": "矩阵编程(高阶API)",
+      "category": "unicode-normalization",
+      "intent": "Match ASCII parentheses to a title that uses fullwidth Chinese parentheses.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子实现/矩阵编程（高阶API）/矩阵编程（高阶API）", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "root-navigation-home",
+      "query": "Ascend C",
+      "category": "root-navigation",
+      "intent": "Locate the documentation homepage through its exact title.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "root-navigation-basic-contributing",
+      "query": "基础API贡献指南",
+      "category": "root-navigation",
+      "intent": "Locate a generated root-level contribution guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/asc_basic_api_contributing", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "root-navigation-c-api-contributing",
+      "query": "C API贡献指南",
+      "category": "root-navigation",
+      "intent": "Locate a generated root-level C API contribution guide.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/asc_c_api_contributing", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-combination-aic-aiv-intercore",
+      "query": "AIC AIV核间通信",
+      "category": "technical-combination",
+      "intent": "Combine two hardware abbreviations with a Chinese content phrase.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/高级编程/硬件实现/架构规格/NPU架构版本3510", "grade": 3 },
+          { "exact": "/guide/算子实践参考/SIMD算子性能优化/流水编排/使能Iterate或IterateAll异步接口避免AIC-AIV同步依赖", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "technical-combination-static-tensor-reuse",
+      "query": "静态Tensor 内存复用",
+      "category": "technical-combination",
+      "intent": "Combine a programming model name with a body-content concept.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMD编程/基于Tensor的CPP编程/静态Tensor编程", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-combination-simd-builtin",
+      "query": "SIMD BuiltIn关键字",
+      "category": "technical-combination",
+      "intent": "Locate a guide title containing spaced English and Chinese terms.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/语言扩展层/SIMD-BuiltIn关键字", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-combination-ub-bank-conflict",
+      "query": "UB Bank冲突",
+      "category": "technical-combination",
+      "intent": "Find SIMD and SIMT optimization pages despite title casing differences.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子性能优化/内存访问/避免UB的bank冲突/避免UB的bank冲突", "grade": 3 },
+          { "exact": "/guide/算子实践参考/SIMT算子性能优化/内存访问/避免UB的Bank冲突", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "special-macro-ascendc-tpl-sel-param",
+      "query": "ASCENDC_TPL_SEL_PARAM",
+      "category": "special-character",
+      "intent": "Locate an exact underscore-heavy tiling macro page.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/Utils-API/Tiling_template_programming/ASCENDC_TPL_SEL_PARAM", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-no-over-space",
+      "query": "no over",
+      "category": "identifier-separator",
+      "intent": "Treat a space-separated compiler option prefix as one identifier instead of unrelated English terms.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-no-over-hyphen",
+      "query": "no-over",
+      "category": "identifier-separator",
+      "intent": "Normalize a hyphenated compiler option prefix to the documented underscore identifier.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-no-sat-space",
+      "query": "no sat",
+      "category": "identifier-separator",
+      "intent": "Locate the NO_SAT enumeration value from a natural space-separated spelling.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/reg_vector_compute/aux_data_types/SatMode", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-pipe-all-space",
+      "query": "pipe all",
+      "category": "identifier-separator",
+      "intent": "Locate PIPE_ALL synchronization documentation without requiring an underscore.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "contains": "/sync_control/intra_core_sync/PipeBarrier", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-format-nd-space",
+      "query": "format nd",
+      "category": "identifier-separator",
+      "intent": "Locate the FORMAT_ND definition from separated format tokens.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/Utils-API/prototype_register_management/OpParamDef/FormatForBinQuery", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-dt-int32-space",
+      "query": "dt int32",
+      "category": "identifier-separator",
+      "intent": "Locate the DT_INT32 definition rather than generic int32 conversion APIs.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/Utils-API/prototype_register_management/OpParamDef/DataTypeForBinQuery", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-get-tiling-data-space",
+      "query": "get tiling data",
+      "category": "identifier-separator",
+      "intent": "Locate the GET_TILING_DATA macro page from separated words.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA", "grade": 3 },
+          { "prefix": "/api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA_", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-tiling-key-is-space",
+      "query": "tiling key is",
+      "category": "identifier-separator",
+      "intent": "Locate the TILING_KEY_IS macro page when underscores are entered as spaces.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/Kernel-Tiling/TILING_KEY_IS", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-ascendc-cpu-debug-space",
+      "query": "ascendc cpu debug",
+      "category": "identifier-separator",
+      "intent": "Prefer CPU twin-debug documentation that uses the ASCENDC_CPU_DEBUG macro.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/debug_interface/cpu_twin_debug/ICPU_RUN_KF", "grade": 3 },
+          { "prefix": "/api/SIMD-API/basic_api/debug_interface/cpu_twin_debug/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-separator-acl-memcpy-host-device-space",
+      "query": "acl memcpy host to device",
+      "category": "identifier-separator",
+      "intent": "Locate the ACL_MEMCPY_HOST_TO_DEVICE usage guide from separated words.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/高级编程/Aclnn算子工程化开发/调用/单算子API调用", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "datatype-separator-uint32-space",
+      "query": "uint32 t",
+      "category": "datatype-separator",
+      "intent": "Locate the uint32_t definition when the type suffix is separated by a space.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "datatype-separator-uint16-space",
+      "query": "uint16 t",
+      "category": "datatype-separator",
+      "intent": "Locate the uint16_t definition when the type suffix is separated by a space.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "datatype-separator-int4b-space",
+      "query": "int4b t",
+      "category": "datatype-separator",
+      "intent": "Locate the int4b_t definition when the underscore is entered as a space.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "datatype-separator-fp8-e4m3fn-space",
+      "query": "fp8 e4m3fn t",
+      "category": "datatype-separator",
+      "intent": "Locate fp8_e4m3fn_t without requiring the user to preserve underscores.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/data_structures/builtin_data_types", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "datatype-separator-vector-uint32-space",
+      "query": "vector uint32 t",
+      "category": "datatype-separator",
+      "intent": "Locate the vector_uint32_t C API type definition from separated tokens.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/reg/reg_data_types/data_type_definition", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "parameter-separator-dst-repeat-stride",
+      "query": "dst repeat stride",
+      "category": "parameter-separator",
+      "intent": "Find documentation that defines the dst_repeat_stride parameter semantics.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/general_description_and_constraints", "grade": 3 },
+          { "contains": "/SetLoadDataRepeatWithStride", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-prefix-no-o",
+      "query": "NO_O",
+      "category": "identifier-prefix",
+      "intent": "Keep the compiler option discoverable while the user has typed a four-character prefix.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-prefix-no-ov",
+      "query": "NO_OV",
+      "category": "identifier-prefix",
+      "intent": "Keep the compiler option discoverable while the user has typed a five-character prefix.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-prefix-no-ove",
+      "query": "NO_OVE",
+      "category": "identifier-prefix",
+      "intent": "Locate the compiler option once its second identifier segment becomes selective.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "descriptionIncludes": ["NO_OVERLAP_IN_MULTI_REPEAT", "内存同步指令"],
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-prefix-get-til",
+      "query": "GET_TIL",
+      "category": "identifier-prefix",
+      "intent": "Locate the GET_TILING_DATA macro family from an incomplete identifier prefix.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA", "grade": 3 },
+          { "prefix": "/api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA_", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "identifier-prefix-vector-uint",
+      "query": "vector_uint",
+      "category": "identifier-prefix",
+      "intent": "Locate vector integer type definitions from a partially typed identifier.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/reg/reg_data_types/data_type_definition", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-concept-matmul-tiling-lower",
+      "query": "matmul tiling",
+      "category": "technical-combination",
+      "intent": "Locate the Matmul Tiling class landing page from a lowercase technical phrase.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/Matmul_Tiling", "grade": 3 },
+          { "prefix": "/api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "technical-concept-l2-cache-mode-lower",
+      "query": "l2 cache mode",
+      "category": "technical-combination",
+      "intent": "Locate the L2 CacheMode optimization guide despite separator and case differences.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/算子实践参考/SIMD算子性能优化/内存访问/设置合理的L2-CacheMode", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "technical-concept-thread-block-lower",
+      "query": "thread block",
+      "category": "technical-combination",
+      "intent": "Locate the thread_block cooperative-group documentation from separated words.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block/thread_block", "grade": 3 },
+          { "prefix": "/api/SIMT-API/cooperative_groups/thread_block/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "technical-concept-block-word",
+      "query": "block",
+      "category": "technical-concept",
+      "intent": "Prefer titles containing the exact word block over one-edit spelling corrections such as Lock.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block/thread_block_intro", "grade": 3 },
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block/thread_block_constructor", "grade": 3 },
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block/thread_block", "grade": 3 },
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block_tile/thread_block_tile_intro", "grade": 2 },
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block_tile/thread_block_tile_constructor", "grade": 2 },
+          { "exact": "/api/SIMT-API/cooperative_groups/thread_block_tile/thread_block_tile", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "technical-concept-simt-api-lower",
+      "query": "simt api",
+      "category": "technical-combination",
+      "intent": "Locate the SIMT API landing page from a lowercase spaced phrase.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/api/SIMT-API/SIMT-API", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "mixed-ai-core-compile",
+      "query": "AI Core 编译",
+      "category": "mixed-language",
+      "intent": "Locate the AI Core operator compilation guide from mixed English and Chinese terms.",
+      "expect": {
+        "minResults": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 },
+          { "prefix": "/guide/编程指南/编译与运行/算子编译/", "grade": 2 }
+        ]
+      }
+    },
+    {
+      "id": "zh-section-memory-lifecycle",
+      "query": "内存生命周期管理",
+      "category": "zh-content",
+      "intent": "Open the existing section that contains the matching documentation content.",
+      "expect": {
+        "minResults": 1,
+        "sectionTitleIncludes": ["内存生命周期管理：AllocTensor/FreeTensor解决读后写冲突"],
+        "sectionHighlightIncludes": ["内存生命周期管理"],
+        "sectionHash": "#内存生命周期管理：AllocTensor/FreeTensor解决读后写冲突",
+        "targets": [
+          { "exact": "/guide/编程指南/编程模型/AI-Core-SIMD编程/基于TPipe-TQue框架编程/TPipe-TQue框架编程原理", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "negative-random-underscored",
+      "query": "zzqv_nonexistent_987",
+      "category": "negative",
+      "intent": "A nonexistent underscored identifier must not produce results.",
+      "expect": {
+        "maxResults": 0,
+        "targets": []
+      }
+    },
+    {
+      "id": "negative-random-alpha",
+      "query": "mnbvcxzlkjhgf",
+      "category": "negative",
+      "intent": "A random alphabetic token must not produce results.",
+      "expect": {
+        "maxResults": 0,
+        "targets": []
+      }
+    },
+    {
+      "id": "negative-unknown-macro",
+      "query": "__ARCH_UNKNOWN_999__",
+      "category": "negative",
+      "intent": "A nonexistent macro-like identifier must not produce results.",
+      "expect": {
+        "maxResults": 0,
+        "targets": []
+      }
+    },
+    {
+      "id": "negative-nonexistent-zh",
+      "query": "不存在术语甲乙丙丁",
+      "category": "negative",
+      "intent": "A nonexistent Chinese phrase must not produce weak substring results.",
+      "expect": {
+        "maxResults": 0,
+        "targets": []
+      }
+    },
+    {
+      "id": "negative-random-api",
+      "query": "qzxvkjfwpb",
+      "category": "negative",
+      "intent": "A deliberately nonexistent API must not produce results.",
+      "expect": {
+        "maxResults": 0,
+        "targets": []
+      }
+    },
+    {
+      "id": "product-filter-310p-excludes-datastorebarrier",
+      "query": "DataStoreBarrier",
+      "productFilter": "310p",
+      "category": "product-filter",
+      "intent": "Hide an API that explicitly does not support the selected Atlas inference product.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 3,
+        "targets": [
+          { "exact": "/api/AI-CPU-API/AI-CPU-API", "grade": 3 },
+          { "exact": "/api/AI-CPU-API/ai_cpu_api_list", "grade": 2 }
+        ],
+        "excludedTargets": [
+          { "exact": "/api/AI-CPU-API/DataStoreBarrier", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "product-filter-950-keeps-datastorebarrier",
+      "query": "DataStoreBarrier",
+      "productFilter": "950",
+      "category": "product-filter",
+      "intent": "Keep an API that explicitly supports the selected Ascend 950 product.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 1,
+        "targets": [
+          { "exact": "/api/AI-CPU-API/DataStoreBarrier", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "product-filter-keeps-guide-results",
+      "query": "NO_OVER",
+      "productFilter": "310p",
+      "category": "product-filter",
+      "intent": "Keep non-API guide results while an NPU product filter is selected.",
+      "expect": {
+        "minResults": 1,
+        "maxResults": 1,
+        "maxFirstRelevantRank": 1,
+        "targets": [
+          { "exact": "/guide/编程指南/编译与运行/算子编译/AI-Core算子编译基本用法", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "product-filter-950-prefers-copy-align-definition",
+      "query": "asc_copy_gm2ub_align",
+      "productFilter": "950",
+      "category": "product-filter",
+      "intent": "Prefer the supported concrete API definition over link-only catalog pages.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 1,
+        "descriptionIncludes": ["asc_copy_gm2ub_align", "插入同步指令"],
+        "titleHighlightIncludes": ["asc_copy_gm2ub_align"],
+        "descriptionHighlightIncludes": ["asc_copy_gm2ub_align"],
+        "sectionTitleIncludes": ["约束说明"],
+        "sectionHash": "#约束说明",
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510", "grade": 3 }
+        ],
+        "excludedTargets": [
+          { "exact": "/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_2201", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "product-filter-950-copy-align-reference-context",
+      "query": "asc_copy_gm2ub_align",
+      "productFilter": "950",
+      "category": "product-filter",
+      "intent": "Show the exact identifier context instead of unrelated product-support token highlights.",
+      "expect": {
+        "minResults": 2,
+        "maxFirstRelevantRank": 5,
+        "descriptionIncludes": ["该接口仅对asc_copy_gm2ub_align接口有效"],
+        "descriptionHighlightIncludes": ["asc_copy_gm2ub_align"],
+        "sectionTitleIncludes": ["功能说明"],
+        "sectionHash": "#功能说明",
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/vector_data_move/asc_set_copy_pad_val", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "product-filter-950-demotes-copy-align-catalog",
+      "query": "asc_copy_gm2ub_align",
+      "productFilter": "950",
+      "category": "product-filter",
+      "intent": "Keep the same-name navigation catalog below concrete API content and highlight its title.",
+      "expect": {
+        "minResults": 3,
+        "minFirstRelevantRank": 3,
+        "maxFirstRelevantRank": 10,
+        "titleHighlightIncludes": ["asc_copy_gm2ub_align"],
+        "descriptionHighlightIncludes": ["asc_copy_gm2ub_align"],
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/vector_data_move/asc_copy_gm2ub_align/asc_copy_gm2ub_align", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "product-filter-950-demotes-vector-catalog",
+      "query": "asc_copy_gm2ub_align",
+      "productFilter": "950",
+      "category": "product-filter",
+      "intent": "Keep the parent vector navigation catalog below concrete API content and show the matching identifier context.",
+      "expect": {
+        "minResults": 3,
+        "minFirstRelevantRank": 3,
+        "maxFirstRelevantRank": 10,
+        "descriptionHighlightIncludes": ["asc_copy_gm2ub_align"],
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/vector_data_move/vector_data_move", "grade": 3 }
+        ]
+      }
+    },
+    {
+      "id": "catalog-title-remains-authoritative",
+      "query": "矢量数据搬运",
+      "category": "technical-concept",
+      "intent": "Keep a navigation catalog first when the catalog itself is the requested concept.",
+      "expect": {
+        "minResults": 1,
+        "maxFirstRelevantRank": 1,
+        "titleHighlightIncludes": ["矢量数据搬运"],
+        "targets": [
+          { "exact": "/api/SIMD-API/c_api/vector_data_move/vector_data_move", "grade": 3 }
+        ]
+      }
+    }
+  ]
+}

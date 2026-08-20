@@ -30,7 +30,7 @@
     "cheerio": "^1.2.0",
     "cross-env": "^10.1.0",
     "markdown-it-mathjax3": "^4.3.0",
-    "pagefind": "1.0.4",
+    "pagefind": "1.5.2",
     "vitepress": "1.6.4",
     "vitepress-plugin-pagefind": "0.4.20",
     "vue-command-palette": "^0.1.4",

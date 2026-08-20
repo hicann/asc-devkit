@@ -128,18 +128,27 @@ install_deps() {
         exit 1
     fi
 
-    if [ ! -d "node_modules" ]; then
-        log "安装项目依赖..."
-        if command -v pnpm &>/dev/null; then
-            pnpm install 2>&1 | tee -a "$LOG_FILE"
-        else
-            log "pnpm未安装，使用npm..."
-            npm install --legacy-peer-deps 2>&1 | tee -a "$LOG_FILE"
-        fi
-        log "依赖安装完成"
-    else
-        log "依赖已存在，跳过安装"
+    local deps_stamp="node_modules/.asc-deps.sha256"
+    local deps_hash
+    deps_hash=$(sha256sum package.json pnpm-lock.yaml | sha256sum | awk '{print $1}')
+
+    if [ -d "node_modules" ] && [ "$(cat "$deps_stamp" 2>/dev/null || true)" = "$deps_hash" ]; then
+        log "项目依赖未变化，跳过安装"
+        return
     fi
+
+    log "项目依赖发生变化，开始同步..."
+    if command -v pnpm &>/dev/null; then
+        pnpm install 2>&1 | tee -a "$LOG_FILE"
+    elif command -v corepack &>/dev/null && corepack pnpm --version &>/dev/null; then
+        log "使用Corepack提供的pnpm..."
+        corepack pnpm install 2>&1 | tee -a "$LOG_FILE"
+    else
+        log "pnpm未安装，使用npm..."
+        npm install --legacy-peer-deps 2>&1 | tee -a "$LOG_FILE"
+    fi
+    printf '%s\n' "$deps_hash" > "$deps_stamp"
+    log "依赖同步完成"
 }
 
 # ============================================================
