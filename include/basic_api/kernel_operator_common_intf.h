@@ -94,13 +94,11 @@ __aicore__ inline void SetSaturationStrategy();
 
 __aicore__ inline OverrideStrategy GetSaturationStrategy();
 
-#if (__NPU_ARCH__ == 3510)
 template <CacheRwMode rwMode, CacheMode cacheMode>
 __aicore__ inline void SetScalarCacheMode();
 
 template <CacheRwMode rwMode>
 __aicore__ inline CacheMode GetScalarCacheMode();
-#endif
 } // namespace AscendC
 
 #if defined(__NPU_ARCH__)

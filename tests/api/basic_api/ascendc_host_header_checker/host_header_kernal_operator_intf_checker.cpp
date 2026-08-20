@@ -91,6 +91,7 @@ static void test_host_kernel_operator_common_intf()
     using AscendC::CheckLocalMemoryIA;
     using AscendC::GetCtrlSpr;
     using AscendC::GetSaturationFlag;
+    using AscendC::GetScalarCacheMode;
     using AscendC::GetStoreAtomicConfig;
     using AscendC::InitOutput;
     using AscendC::InitSocState;
@@ -98,6 +99,7 @@ static void test_host_kernel_operator_common_intf()
     using AscendC::SetCtrlSpr;
     using AscendC::SetNextTaskStart;
     using AscendC::SetSaturationFlag;
+    using AscendC::SetScalarCacheMode;
     using AscendC::SetStoreAtomicConfig;
     using AscendC::WaitPreTaskEnd;
 }

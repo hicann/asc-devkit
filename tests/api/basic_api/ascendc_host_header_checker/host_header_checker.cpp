@@ -92,8 +92,10 @@ static void test_host_kernel_operator_cache_intf() { using AscendC::DataCacheCle
 static void test_host_kernel_operator_common_intf()
 {
     using AscendC::GetCtrlSpr;
+    using AscendC::GetScalarCacheMode;
     using AscendC::ResetCtrlSpr;
     using AscendC::SetCtrlSpr;
+    using AscendC::SetScalarCacheMode;
 }
 
 static void test_host_kernel_operator_data_copy_intf()
