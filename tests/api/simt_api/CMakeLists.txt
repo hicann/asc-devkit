@@ -28,6 +28,13 @@ set(ASCENDC_TEST_HEADER_FILES
     ${ASCENDC_DIR}/impl/simt_api
 )
 
+file(GLOB ASCENDC_TEST_SIMT_COMMON_SRC_FILES
+    common_simt/*.cpp
+)
+set(ASCENDC_TEST_ascend950pr_9599_SIMT_SUBNORMAL_CASE_SRC_FILE
+    ${CMAKE_CURRENT_SOURCE_DIR}/ascendc_case_ascend950pr_9599_simt/test_operator_simt_subnormal.cpp
+)
+
 # # ================ simt_api kernel ut ================
 # ascend950pr_9599 simt test cases
 file(GLOB ASCENDC_TEST_ascend950pr_9599_SIMT_CASE_SRC_FILES
@@ -41,43 +48,47 @@ file(GLOB ASCENDC_TEST_mc62cm12aa_SIMT_CASE_SRC_FILES
     ascendc_case_mc62cm12aa_simt/*.cpp
 )
 
+add_library(simt_api_test_common INTERFACE)
+target_compile_definitions(simt_api_test_common INTERFACE
+    UT_TEST
+    ASCENDC_OOM=1
+    ASCENDC_DUMP=0
+    __CCE_KT_TEST__=1
+    ASCENDC_CPU_DEBUG=1
+    ASCENDC_DEBUG=1
+)
+target_include_directories(simt_api_test_common INTERFACE
+    ${ASCENDC_TEST_HEADER_FILES}
+    ${ASCEND_CANN_PACKAGE_PATH}/tools/tikicpulib/lib/include
+    ${ASCEND_CANN_PACKAGE_PATH}/include/base/
+    ${ASCEND_CANN_PACKAGE_PATH}/include/metadef/
+)
+target_compile_options(simt_api_test_common INTERFACE
+    -fno-access-control
+)
+target_link_libraries(simt_api_test_common INTERFACE
+    $<BUILD_INTERFACE:intf_llt_pub_basic>
+    kernel_tiling
+    -Wl,--no-as-needed
+    error_manager
+    mmpa
+    c_sec
+    -Wl,--as-needed
+)
+
 foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
     add_executable(ascendc_ut_simt_api_${product_type}
         ${ASCENDC_DIR}/tests/main.cpp
-        ../common/k3_pvwrap.cpp
         ${ASCENDC_TEST_${product_type}_SIMT_CASE_SRC_FILES}
     )
 
     target_compile_definitions(ascendc_ut_simt_api_${product_type} PRIVATE
-        UT_TEST
-        ASCENDC_OOM=1
-        ASCENDC_DUMP=0
-        __CCE_KT_TEST__=1
-        ASCENDC_CPU_DEBUG=1
-        ASCENDC_DEBUG=1
         $<$<STREQUAL:${product_type},ascend950pr_9599>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
         $<$<STREQUAL:${product_type},mc62cm12aa>:__NPU_ARCH__=5102>
     )
 
-    target_include_directories(ascendc_ut_simt_api_${product_type} PRIVATE
-        ${ASCENDC_TEST_HEADER_FILES}
-        ${ASCEND_CANN_PACKAGE_PATH}/tools/tikicpulib/lib/include
-        ${ASCEND_CANN_PACKAGE_PATH}/include/base/
-        ${ASCEND_CANN_PACKAGE_PATH}/include/metadef/
-    )
-
-    target_compile_options(ascendc_ut_simt_api_${product_type} PRIVATE
-        -fno-access-control
-    )
-
     target_link_libraries(ascendc_ut_simt_api_${product_type} PRIVATE
-        $<BUILD_INTERFACE:intf_llt_pub_basic>
-        kernel_tiling
-        -Wl,--no-as-needed
-        error_manager
-        mmpa
-        c_sec
-        -Wl,--as-needed
+        simt_api_test_common
     )
 
     run_llt_test(
@@ -92,4 +103,40 @@ foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
     add_dependencies(ascendc_ut_simt_api_${product_type} math_bfloat16)
     add_subdirectory(math_cpp)
     add_dependencies(ascendc_ut_simt_api_${product_type} math_cpp)
+
+    if("${product_type}" STREQUAL "ascend950pr_9599")
+        set(SIMT_SUBNORMAL_TARGETS
+            ascendc_ut_simt_subnormal_ftz_false_prec_false
+            ascendc_ut_simt_subnormal_ftz_false_prec_true
+            ascendc_ut_simt_subnormal_ftz_true_prec_false
+            ascendc_ut_simt_subnormal_ftz_true_prec_true
+        )
+
+        foreach(target_name ${SIMT_SUBNORMAL_TARGETS})
+            add_executable(${target_name}
+                ${ASCENDC_DIR}/tests/main.cpp
+                ${ASCENDC_TEST_SIMT_COMMON_SRC_FILES}
+                ${ASCENDC_TEST_ascend950pr_9599_SIMT_SUBNORMAL_CASE_SRC_FILE}
+            )
+
+            target_link_libraries(${target_name} PRIVATE simt_api_test_common)
+            target_compile_definitions(${target_name} PRIVATE
+                __NPU_ARCH__=3510
+                __DAV_C310__
+                __DAV_C310_VEC__
+            )
+
+            if("${target_name}" MATCHES "_ftz_true_")
+                target_compile_definitions(${target_name} PRIVATE __ASC_FTZ__)
+            endif()
+            if("${target_name}" MATCHES "_prec_true$")
+                target_compile_definitions(${target_name} PRIVATE __ASC_PREC_SQRT__)
+            endif()
+
+            run_llt_test(
+                TARGET ${target_name}
+                TASK_NUM 1
+            )
+        endforeach()
+    endif()
 endforeach()

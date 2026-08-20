@@ -118,6 +118,10 @@ basic_test_five_targets=(
     ascendc_run_all_tensor_api_header_checks_npu
     ascendc_run_all_tensor_api_header_checks_npu_single
     ascendc_ut_simt_api_ascend950pr_9599
+    ascendc_ut_simt_subnormal_ftz_false_prec_false
+    ascendc_ut_simt_subnormal_ftz_false_prec_true
+    ascendc_ut_simt_subnormal_ftz_true_prec_false
+    ascendc_ut_simt_subnormal_ftz_true_prec_true
 )
 
 arm_test_targets=(
@@ -125,6 +129,10 @@ arm_test_targets=(
     ascendc_ut_elf_tool
     ascendc_ut_pack_kernel
     ascendc_ut_simt_api_ascend950pr_9599
+    ascendc_ut_simt_subnormal_ftz_false_prec_false
+    ascendc_ut_simt_subnormal_ftz_false_prec_true
+    ascendc_ut_simt_subnormal_ftz_true_prec_false
+    ascendc_ut_simt_subnormal_ftz_true_prec_true
     ascendc_run_all_host_header_checks
     ascendc_run_all_host_header_checks_npu
     ascendc_run_all_host_header_checks_npu_single

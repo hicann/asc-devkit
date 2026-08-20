@@ -29,6 +29,8 @@
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
 
 #define ASCRT_FOUR_BYTE_LEN_U 32U
+constexpr float __internal_subnormal_boundary =
+    1.17549435e-38f; // 1.17549435e-38f: subnormal floating-point number boundary
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long int lroundf(float x)
 {
@@ -75,7 +77,103 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fabsf(float x) { return __fabsf(x); 
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmaf(float x, float y, float z) { return __fma(x, y, z); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expf(float x) { return __expf(x); }
+/*
+ * Computes a refined sqrt approximation for float inputs.
+ *
+ * calculation to move subnormal or very small values into a more stable
+ * range. The result is scaled back by 2^-12 because sqrt(x * 2^24)
+ * equals sqrt(x) * 2^12.
+ *
+ * then applies one Newton-style correction to inv:
+ *   err0 = 1 - b * inv * inv
+ *   inv = inv + err0 * inv * 0.5
+ *
+ * The final sqrt value is reconstructed and corrected:
+ *   y = inv * b
+ *   err1 = b - y * y
+ *   y = y + 0.5 * inv * err1
+ *
+ * @param x The input value.
+ * @return The refined square root approximation.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_sqrtf_precise_impl(float x)
+{
+    constexpr float scale_up = 16777216.0f;       // 2^24
+    constexpr float scale_down = 0.000244140625f; // 2^-12
+    constexpr float half = 0.5f;
+
+    // Return early for zero and positive infinity.
+    if (x == 0.0f || x == ASCRT_INF_F) {
+        return x;
+    }
+
+    // Scale inputs smaller than 1 to the normal range.
+    bool scaled = x < 1.0f;
+    float b = scaled ? x * scale_up : x;
+
+    // Compute an approximate reciprocal square root.
+    float sqrt_b = __sqrtf(b);
+    float inv = 1.0f / sqrt_b;
+
+    // Refine the reciprocal square root.
+    float err0 = fmaf(-(b * inv), inv, 1.0f);
+    inv = fmaf(err0, inv * half, inv);
+
+    // Convert to a square-root approximation, then compensate the sqrt residual.
+    float y = inv * b;
+    float err1 = fmaf(-y, y, b);
+    y = fmaf(inv * half, err1, y);
+
+    // Scale the result back if the input was multiplied by 2^24.
+    return scaled ? y * scale_down : y;
+}
+
+#ifdef __ASC_FTZ__
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_expf(float x) { return __expf(x); }
+
+#ifdef __ASC_PREC_SQRT__
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_sqrtf(float x)
+{
+    // Treat positive subnormal inputs as 0 before entering the precise sqrt path.
+    if (x > 0.0f && x < __internal_subnormal_boundary) {
+        x = 0.0f;
+    }
+    return __internal_sqrtf_precise_impl(x);
+}
+#else
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_sqrtf(float x) { return __sqrtf(x); }
+#endif
+#endif
+
+#ifndef __ASC_FTZ__
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_expf(float x)
+{
+    constexpr float __internal_subnormal_input_boundary =
+        -87.3365478515625f; // Input range where expf returns a subnormal result
+    if (x <= __internal_subnormal_input_boundary) {
+        float half_y = __expf(x * 0.5f);
+        return half_y * half_y;
+    }
+    return __expf(x);
+}
+
+#ifdef __ASC_PREC_SQRT__
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_sqrtf(float x) { return __internal_sqrtf_precise_impl(x); }
+#else
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_sqrtf(float x)
+{
+    constexpr float scale_up = 16777216.0f;       // 2^24
+    constexpr float scale_down = 0.000244140625f; // 2^-12
+    // Scale positive subnormal inputs to the normal range, then scale the result back.
+    if (x < __internal_subnormal_boundary) {
+        return __sqrtf(x * scale_up) * scale_down;
+    }
+    return __sqrtf(x);
+}
+#endif
+#endif
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expf(float x) { return __internal_expf(x); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logf(float x)
 {
@@ -87,7 +185,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logf(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x) { return logf(x) / logf(2.0f); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sqrtf(float x) { return __sqrtf(x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sqrtf(float x) { return __internal_sqrtf(x); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rsqrtf(float x) { return 1.0f / sqrtf(x); }
 
