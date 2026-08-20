@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002567745223_section106841136114319"></a>
 
@@ -90,14 +84,6 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 <!-- npu="910" id15 -->
 针对Atlas 训练系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
 <!-- end id15 -->
-
-<!-- npu="x90" id16 -->
-针对Kirin X90，支持数据类型为：int8_t、half。
-<!-- end id16 -->
-
-<!-- npu="9030" id17 -->
-针对Kirin 9030，支持数据类型为：half。
-<!-- end id17 -->
 
 ## 返回值说明
 

@@ -142,8 +142,6 @@ bool CompareRangeData(const std::vector<T>& actual, const std::vector<T>& expect
     return true;
 }
 
-
-
 constexpr uint32_t ELEMENTS = 8;
 
 __global__ __vector__ void AscAtomicAddKernel(__gm__ int64_t* output)

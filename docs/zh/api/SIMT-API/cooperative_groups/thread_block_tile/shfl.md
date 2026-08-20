@@ -35,7 +35,6 @@ T shfl(T var, int src_rank) const
 
 ## 参数说明
 
-
 **表1**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |

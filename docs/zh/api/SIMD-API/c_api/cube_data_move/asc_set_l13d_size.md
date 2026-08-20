@@ -57,8 +57,6 @@ PIPE_S
 - 如果asc_copy_l12l0a/asc_copy_l12l0b的3D格式搬运接口的源操作数在L1 Buffer上的地址超出设置的边界值（value），则会从L1 Buffer起始地址开始读取数据。
 - 操作数地址对齐约束请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
 
-
-
 ## 调用示例
 
 ```cpp

@@ -50,7 +50,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id14 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 LocalTensor构造函数。

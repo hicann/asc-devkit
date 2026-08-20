@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 获取LocalTensor指定索引的数值。
@@ -84,7 +83,6 @@ auto element = inputLocal.GetValue(2); // 获取inputLocal中第i个位置的数
 
 // 示例1结果如下：
 // element为200
-
 
 // 示例2
 // 数据(inputLocal): [0 100 200  ... ]

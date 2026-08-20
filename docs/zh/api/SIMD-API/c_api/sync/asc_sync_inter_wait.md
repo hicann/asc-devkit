@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id8 -->
 
-
 ## 功能说明
 
 在分离模式下，AIC（Cube Core）与AIV（Vector Core）按group划分，一个group由1个block（主核）和N个subblock（从核）组成，比例1:N。组间同步指不同group之间的同步，即所有block（所有AIC或所有AIV）之间的同步。

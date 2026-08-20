@@ -73,7 +73,6 @@
 
 ![](../../figures/asc_copy_l12l0_trans_b32_example2.png)
 
-
 ## 函数原型
 
 - 高维切分搬运
@@ -112,8 +111,6 @@ __aicore__ inline void asc_copy_l12l0b_trans_sync(__cb__ float* dst, __cbuf__ fl
 | dst_gap | 输入|表示相邻迭代间，目的操作数前一个迭代第一个分形的结束地址到下一个迭代第一个分形起始地址的间隔。取值范围：dst_gap∈[0, 65535]。 |
 | enable_addr_decrement | 输入| 控制地址更新方式。<br>false: 递增，每次迭代在前一个地址的基础上加上src_stride。<br>true: 递减，每次迭代在前一个地址的基础上减去src_stride。 |
 | dst_frac_gap | 输入  | 每个迭代内目的操作数转置前一个分形结束地址与后一个分形起始地址的间隔，单位为512B，仅在数据类型为float/int32_t/uint32_t/uint8_t/int8_t时有效。|
-
-
 
 ## 返回值说明
 

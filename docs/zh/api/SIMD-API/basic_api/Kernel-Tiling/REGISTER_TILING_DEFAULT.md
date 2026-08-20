@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 用于在kernel侧注册用户使用标准C++语法自定义的默认TilingData结构体。

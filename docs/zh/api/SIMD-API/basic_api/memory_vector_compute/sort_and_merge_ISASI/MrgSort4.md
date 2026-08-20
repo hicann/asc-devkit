@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 将已经排好序的最多4条Region Proposals队列，排列并合并成1条队列，结果按照score域由大到小排序。

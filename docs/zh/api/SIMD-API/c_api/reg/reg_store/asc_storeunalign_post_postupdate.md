@@ -41,7 +41,6 @@ reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对�
 store_unalign或store_unalign_postupdate接口执行时，会将主块搬出至UB，尾块暂存至非对齐寄存器[0, unalign_count]。
 本接口执行时，会将尾块从非对齐寄存器[0, unalign_count]搬出至UB。
 
-
 ## 函数原型
 
 ```cpp

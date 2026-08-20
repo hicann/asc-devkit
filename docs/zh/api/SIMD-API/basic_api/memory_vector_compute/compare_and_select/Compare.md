@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
@@ -139,14 +133,6 @@
 - 针对Atlas 训练系列产品，保留参数，设置无效。
 <!-- end id16 -->
 
-<!-- npu="x90" id17 -->
-- 针对Kirin X90，保留参数，设置无效。
-<!-- end id17 -->
-
-<!-- npu="9030" id18 -->
-- 针对Kirin 9030，保留参数，设置无效。
-<!-- end id18 -->
-
 ## 数据类型
 
 <!-- npu="950" id19 -->
@@ -184,18 +170,6 @@
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id24 -->
-
-<!-- npu="x90" id25 -->
-- 针对Kirin X90
-    - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
-    - U支持的数据类型为：uint8_t。
-<!-- end id25 -->
-
-<!-- npu="9030" id26 -->
-- 针对Kirin 9030
-    - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
-    - U支持的数据类型为：uint8_t。
-<!-- end id26 -->
 
 ## 返回值说明<a name="section128671456102513"></a>
 

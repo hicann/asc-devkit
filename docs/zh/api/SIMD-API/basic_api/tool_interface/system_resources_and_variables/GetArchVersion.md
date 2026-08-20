@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id4 -->
 
-
 ## 功能说明
 
 头文件路径为：`"basic_api/kernel_operator_sys_var_intf.h"`。

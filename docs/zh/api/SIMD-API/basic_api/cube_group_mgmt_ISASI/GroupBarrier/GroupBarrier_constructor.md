@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 创建GroupBarrier对象，通过设置构造函数参数，确定Arrive组的Block个数和Wait组的Block个数。

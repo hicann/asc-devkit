@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 根据Region Proposals中的score域对其进行排序（score大的排前面），每次排16个Region Proposals。

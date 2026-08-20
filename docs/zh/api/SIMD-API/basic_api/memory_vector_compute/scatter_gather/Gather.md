@@ -181,7 +181,6 @@ Atlas 推理系列产品AI Core，支持的数据类型为：int16_t、uint16_t�
   <!-- end id31 -->
 <!-- end id28 -->
 
-
 ## 调用示例<a name="section11276201527"></a>
 
 本样中只展示部分关键代码。如果您需要运行样例代码，请将该代码段拷贝并替换[Gather类样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/gather)场景三中Compute函数的部分代码即可。

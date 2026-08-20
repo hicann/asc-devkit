@@ -65,7 +65,6 @@ __simd_callee__ inline void Adds(S& dstReg, S& srcReg, U scalarValue, MaskReg& m
 
 目的操作数与源操作数的数据类型需要保持一致。支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32、int64_t、uint64_t、complex64。
 
-
 ## 返回值说明<a name="section640mcpsimp"></a>
 
 无

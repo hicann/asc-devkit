@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明
 
@@ -106,12 +100,6 @@
 <!-- npu="910" id15 -->
 - Atlas 训练系列产品，支持half。
 <!-- end id15 -->
-<!-- npu="x90" id16 -->
-- Kirin X90，支持half、float。
-<!-- end id16 -->
-<!-- npu="9030" id17 -->
-- Kirin 9030，支持half、float。
-<!-- end id17 -->
 
 <!-- npu="950" id18 -->
 **针对Ascend 950PR/Ascend 950DT：**
@@ -145,12 +133,6 @@
 <!-- npu="910" id24 -->
 - Atlas 训练系列产品
 <!-- end id24 -->
-<!-- npu="x90" id25 -->
-- Kirin X90
-<!-- end id25 -->
-<!-- npu="9030" id26 -->
-- Kirin 9030
-<!-- end id26 -->
 <!-- end id19 -->
 
 ## 返回值说明
@@ -228,13 +210,7 @@
     <!-- npu="910" id38 -->
     - Atlas 训练系列产品，支持`ORDER_VALUE_INDEX`。
     <!-- end id38 -->
-    <!-- npu="x90" id39 -->
-    - Kirin X90，支持`ORDER_VALUE_INDEX`、`ORDER_INDEX_VALUE`。
-    <!-- end id39 -->
-    <!-- npu="9030" id40 -->
-    - Kirin 9030，支持`ORDER_VALUE_INDEX`、`ORDER_INDEX_VALUE`。
-    <!-- end id40 -->
-
+        
 ## 关键特性说明
 
 - **索引值需要强制类型转换**：

@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 设置Buffer长度。当用户调用operator\[\]函数创建新LocalTensor时，建议调用该接口设置新LocalTensor长度，便于编译器对内存及同步进行自动优化。

@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 设置带有偏移的Tensor地址。用于快速获取定义一个Tensor，同时指定新Tensor相对于旧Tensor首地址的偏移。偏移的长度为旧Tensor的元素个数。

@@ -96,7 +96,6 @@ inline float erfcxf(float x)
     }
     ```
 
-
 输入输出示例如下：
 
 ```

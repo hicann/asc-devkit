@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section16390191715619"></a>
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_pack_intf.h"`。

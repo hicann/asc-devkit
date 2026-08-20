@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：不支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：不支持
-<!-- end id9 -->
 
 ## 功能说明<a id="section618mcpsimp"></a>
 
@@ -59,7 +53,6 @@ $$
 template <typename T, typename U>
 __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
 ```
-
 
 ## 参数说明<a id="section622mcpsimp"></a>
 

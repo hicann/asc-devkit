@@ -21,12 +21,6 @@
 <!-- npu="910" id14 -->
 - Atlas 训练系列产品：不支持
 <!-- end id14 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -107,14 +101,6 @@ ReGlu是一种GLU变体，使用Relu作为激活函数，计算公式如下：
     <!-- npu="310p" id8 -->
     Atlas 推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id8 -->
-
-    <!-- npu="x90" id3 -->
-    Kirin X90，支持的数据类型为：half、float。
-    <!-- end id3 -->
-
-    <!-- npu="9030" id4 -->
-    Kirin 9030，支持的数据类型为：half、float。
-    <!-- end id4 -->
 
 ## 调用示例
 

@@ -44,7 +44,6 @@ __aicore__ inline void ICachePreLoad(const int64_t preFetchLen)
 |--------|-----------|------|
 | preFetchLen | 输入 | 预取长度。|
 
-
 <!-- npu="950,A3,910b" id8 -->
 针对如下型号：
 <!-- npu="950" id9 -->

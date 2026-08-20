@@ -25,12 +25,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：不支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：不支持
-<!-- end id9 -->
 
 ### LoadData（卷积数据搬运） v2接口和LoadData（卷积数据搬运） v2 Pro接口
 
@@ -55,12 +49,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
-<!-- npu="x90" id17 -->
-- Kirin X90：支持
-<!-- end id17 -->
-<!-- npu="9030" id18 -->
-- Kirin 9030：不支持
-<!-- end id18 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002512171652_section106841136114319"></a>
 
@@ -119,7 +107,6 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | src | 输入 | 源操作数，类型为LocalTensor。<br>数据连续排列顺序由目的操作数所在物理存储位置决定：<br>&nbsp;&nbsp;&bull; L1 Buffer（TPosition: A1/B1）：NC1HWC0格式。 |
 | loadDataParams | 输入 | LoadData参数结构体，类型为：<br>&nbsp;&nbsp;&bull; LoadData3DParamsV1，具体参考[表3](#zh-cn_topic_0000002512171652_table679014222918)。<br>&nbsp;&nbsp;&bull; LoadData3DParamsV2，具体参考[表4](#zh-cn_topic_0000002512171652_table193501032193419)。<br>&nbsp;&nbsp;&bull; LoadData3DParamsV2Pro，具体参考[表5](#zh-cn_topic_0000002512171652_table118027314415)。<br>上述结构体参数定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
-
 **表3** LoadData3DParamsV1结构体内参数说明<a id="zh-cn_topic_0000002512171652_table679014222918"></a>
 
 | 参数名称 | 含义 |
@@ -143,7 +130,6 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | repeatTime | 迭代次数，每一次源操作数和目的操作数的地址都会改变。取值范围：repeatTime∈[1, 255]。 |
 | cSize | 配置是否开启cSize = 4（b16） / cSize = 8（b8）优化，取值范围：cSize∈[0, 1]。默认为0。 |
 | padValue | Pad填充值的数值，数据类型需要与src保持一致。默认为0。若不想开启padding，可将padList设为全0。 |
-
 
 **表4** LoadData3DParamsV2结构体内参数说明<a id="zh-cn_topic_0000002512171652_table193501032193419"></a>
 
@@ -226,11 +212,6 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 - Atlas 推理系列产品AI Core，支持的数据类型为：int4b_t、int8_t、uint8_t、half。
 <!-- end id27 -->
 
-<!-- npu="x90" id28 -->
-- Kirin X90产品：
-    - TPosition为A1/A2时，支持数据类型为：int8_t、half。
-    - TPosition为B1/B2时，支持数据类型为：int8_t、half。
-<!-- end id28 -->
 <!-- end id22 -->
 
 ## 返回值说明<a id="zh-cn_topic_0000002512171652_section640mcpsimp"></a>

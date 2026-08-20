@@ -12,7 +12,6 @@ batch搬运是L0C Buffer到Global Memory或Unified Buffer（UB）搬运在矩阵
 
 不传入`quant`或传入`uint64_t`类型的scalar量化参数时，不涉及量化张量的Batch维度匹配。接口按源张量的Batch数量完成搬运；scalar量化场景下所有Batch共用同一个量化参数：
 
-
 ```cpp
 auto l0c = MakeTensor(MakeMemPtr(l0cAddr), MakeFrameLayout<NZLayoutPtn>(batch, m, n));
 auto dst = MakeTensor(MakeMemPtr(dstAddr), MakeFrameLayout<NDExtLayoutPtn>(batch, m, n));

@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 获取本LocalTensor的第offset个变量的引用。用于左值，相当于[SetValue](SetValue.md)接口，用于右值，相当于[GetValue](GetValue.md)接口。

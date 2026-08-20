@@ -36,7 +36,6 @@ __aicore__ inline void asc_get_vms4_sr(uint16_t sorted_num[ASC_C_API_MRGSORT_ELE
 
 ## 参数说明
 
-
 **表1** 参数说明
 
 |参数名|输入/输出|描述|

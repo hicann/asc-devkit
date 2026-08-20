@@ -21,12 +21,6 @@
 <!-- npu="910" id12 -->
 - Atlas 训练系列产品：不支持
 <!-- end id12 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -100,14 +94,6 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorB\(SrcBT bScalar\)接口原�
     Atlas 200I/500 A2 推理产品，支持的数据类型为：half、bfloat16_t、int8_t、float。
     <!-- end id19 -->
 
-    <!-- npu="x90" id3 -->
-    Kirin X90，支持的数据类型为：half、int8_t。
-    <!-- end id3 -->
-
-    <!-- npu="9030" id4 -->
-    Kirin 9030，支持的数据类型为：half。
-    <!-- end id4 -->
-
 -   bScalar支持的数据类型<a id="li12616155731723"></a>
 
     <!-- npu="950" id20 -->
@@ -129,14 +115,6 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorB\(SrcBT bScalar\)接口原�
     <!-- npu="310b" id24 -->
     Atlas 200I/500 A2 推理产品，不支持该参数。
     <!-- end id24 -->
-
-    <!-- npu="x90" id5 -->
-    Kirin X90，支持的数据类型为：half。
-    <!-- end id5 -->
-
-    <!-- npu="9030" id6 -->
-    Kirin 9030，支持的数据类型为：half。
-    <!-- end id6 -->
 
 ## 调用示例
 

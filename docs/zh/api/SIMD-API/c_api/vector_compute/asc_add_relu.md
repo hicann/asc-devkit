@@ -90,7 +90,6 @@ $$
 | src0_repeat_stride | 输入 | 源操作数0相邻迭代间相同DataBlock的地址步长。 |
 | src1_repeat_stride | 输入 | 源操作数1相邻迭代间相同DataBlock的地址步长。 |
 
-
 ## 返回值说明
 
 无

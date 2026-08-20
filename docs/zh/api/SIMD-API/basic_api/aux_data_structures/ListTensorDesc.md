@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section195171847105215"></a>
 
 ListTensorDesc用来解析符合以下内存排布格式的数据，并在kernel侧根据索引获取储存对应数据的地址及shape信息。

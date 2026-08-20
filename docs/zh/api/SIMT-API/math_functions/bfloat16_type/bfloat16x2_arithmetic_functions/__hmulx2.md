@@ -91,7 +91,6 @@ bfloat16x2_t __hmulx2(const bfloat16x2_t x, const bfloat16x2_t y)
   </tbody>
 </table>
 
-
 ## 约束说明
 
 无

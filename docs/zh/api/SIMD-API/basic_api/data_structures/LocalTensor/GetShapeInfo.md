@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 获取LocalTensor的Shape信息。注意：Shape信息没有默认值，只有通过[SetShapeInfo](SetShapeInfo.md)设置过Shape信息后，才可以调用该接口获取正确的Shape信息。

@@ -64,7 +64,6 @@ __simd_callee__ inline void asc_min_scalar(vector_bfloat16_t& dst, vector_bfloat
 
 ## 约束说明
 
-
 - 输入`src`为-0、`value`为+0的情况下，输出`dst`为-0。
 - `mask`未筛选的元素在输出中置零。
 

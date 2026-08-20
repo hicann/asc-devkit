@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 在调用PostMessage或PostFakeMessage后，查询该消息是否已被AIC处理完。

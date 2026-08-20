@@ -51,7 +51,6 @@ inline int __float2int_ru(const float x)
 | inf | 2147483647 |
 | -inf | -2147483648 |
 
-
 ## 约束说明
 
 无

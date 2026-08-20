@@ -2,7 +2,6 @@
 
 ## 产品支持情况
 
-
 <!-- npu="950" id13 -->
 - Ascend 950PR/Ascend 950DT：支持
 <!-- end id13 -->

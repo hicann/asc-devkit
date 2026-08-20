@@ -46,7 +46,6 @@ __aicore__ inline void Truncate(const LocalTensor<T> &dst, const LocalTensor<T> 
 | T | 操作数数据类型。 |
 | roundMode | 舍入模式，取值如下。<br>**RoundMode::CAST_RINT**：返回最接近的整数，若存在两个同样接近的整数，则选择偶数。<br>**RoundMode::CAST_ROUND**：四舍五入取整。<br>**RoundMode::CAST_FLOOR**：向下取整。<br>**RoundMode::CAST_CEIL**：向上取整。<br>**RoundMode::CAST_TRUNC**：截断取整（直接舍弃小数部分）。 |
 
-
 **表2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |

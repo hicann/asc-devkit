@@ -90,7 +90,6 @@ __aicore__ inline void MrgSort(const LocalTensor<T>& dst, const MrgSortSrcList<T
     <!-- end id11 -->
 <!-- end id12 -->
 
-
 ## 调用示例<a name="section642mcpsimp"></a>
 
 完整示例请参考[MrgSort样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/mrg_sort)。

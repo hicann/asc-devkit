@@ -77,7 +77,6 @@ $$
 | dst_repeat_stride | 输入 | 目的操作数相邻迭代间相同DataBlock的地址步长。 |
 | src_repeat_stride | 输入 | 源操作数相邻迭代间相同DataBlock的地址步长。 |
 
-
 ## 返回值说明
 
 无

@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 返回当前GroupBarrier所占用的Global Memory消息空间大小。

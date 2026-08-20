@@ -66,7 +66,6 @@ __simd_callee__ inline void asc_subc(vector_bool& carry,
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
-
 ## 返回值说明
 
 无

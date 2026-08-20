@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section530317554214"></a>
 
 将传入的Shape和Stride数据打包成Layout数据结构。

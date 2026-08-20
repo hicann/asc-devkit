@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002542828493_section106841136114319"></a>
 
@@ -214,24 +208,6 @@
 | float | int8_t、uint8_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、int32_t。 |
 <!-- end id22 -->
-
-<!-- npu="x90" id23 -->
-针对Kirin X90，Fixpipe接口支持的数据类型组合如下：
-
-| 源矩阵（L0C Buffer） | 目的矩阵（GM） |
-| ---------- | ---------- |
-| float | int8_t、half。 |
-| int32_t | int8_t、half、int32_t。 |
-<!-- end id23 -->
-
-<!-- npu="9030" id24 -->
-针对Kirin 9030，Fixpipe接口支持的数据类型组合如下：
-
-| 源矩阵（L0C Buffer） | 目的矩阵（GM） |
-| ---------- | ---------- |
-| float | half |
-| int32_t | half |
-<!-- end id24 -->
 
 ## 返回值说明
 

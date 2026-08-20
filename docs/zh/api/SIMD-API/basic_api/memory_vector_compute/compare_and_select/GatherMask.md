@@ -157,7 +157,6 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 | src0RepeatStride | 用于设置src0相邻迭代间的地址步长（起始地址之间的间隔）。单位为DataBlock。详细说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)。 |
 | src1RepeatStride | 用于设置src1相邻迭代间的地址步长（起始地址之间的间隔）。单位为DataBlock。详细说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)。该参数在部分芯片型号下的特殊说明请参考[相关约束](#src1RepeatStride-310p)。 |
 
-
 ## 数据类型
 
 <!-- npu="950" id20 -->

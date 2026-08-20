@@ -190,7 +190,6 @@ __ubuf__ float x_local[block_length];
 __ubuf__ float y_local[block_length];
 __ubuf__ float z_local[block_length];
 
-
 asc_copy_gm2ub(x_local, x_gm, block_length * sizeof(float));
 asc_copy_gm2ub(y_local, y_gm, block_length * sizeof(float));
 

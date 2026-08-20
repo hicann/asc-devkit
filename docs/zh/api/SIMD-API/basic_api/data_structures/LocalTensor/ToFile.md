@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="section618mcpsimp"></a>
 
 只限于CPU调试，将LocalTensor数据Dump到文件中，用于精度调试，文件保存在执行目录。

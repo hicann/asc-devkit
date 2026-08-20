@@ -21,12 +21,6 @@
 <!-- npu="910" id18 -->
 - Atlas 训练系列产品：不支持
 <!-- end id18 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -88,14 +82,6 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
             Atlas 推理系列产品采用方式二。
             <!-- end id32 -->
 
-            <!-- npu="x90" id3 -->
-            Kirin X90采用方式一。
-            <!-- end id3 -->
-
-            <!-- npu="9030" id4 -->
-            Kirin 9030采用方式一。
-            <!-- end id4 -->
-
             -   方式一：使用CreateVecIndex生成0到inner - 1的索引。
             -   方式二：使用Arange生成0到inner - 1的索引。
 
@@ -117,14 +103,6 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
             <!-- npu="310p" id36 -->
             Atlas 推理系列产品采用方式二。
             <!-- end id36 -->
-
-            <!-- npu="x90" id5 -->
-            Kirin X90采用方式一。
-            <!-- end id5 -->
-
-            <!-- npu="9030" id6 -->
-            Kirin 9030采用方式一。
-            <!-- end id6 -->
 
             方式一：
 
@@ -162,14 +140,6 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
             <!-- npu="310p" id40 -->
             Atlas 推理系列产品采用方式二。
             <!-- end id40 -->
-
-            <!-- npu="x90" id7 -->
-            Kirin X90采用方式一。
-            <!-- end id7 -->
-
-            <!-- npu="9030" id8 -->
-            Kirin 9030采用方式一。
-            <!-- end id8 -->
 
             -   方式一：使用CreateVecIndex生成0到inner - 1的索引。
             -   方式二：使用Arange生成0到inner - 1的索引。
@@ -246,7 +216,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
 | T | 待排序数据的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li197551749192811)。 |
 | isInitIndex | 是否传入输入数据的索引。<br>true表示传入，设置为true时，需要通过srcIndexLocal参数传入输入数据的索引，具体规则请参考表2中的srcIndexLocal参数说明。<br>false表示不传入，TopK API输出的索引不可用。 |
 | isHasfinish | Topk接口支持开发者通过finishLocal参数来指定某些行的排序是无效排序。该模板参数用于控制是否启用上述功能，true表示启用，false表示不启用。<br>Normal模式支持的取值：true / false。<br>Small模式支持的取值：false。<br>isHasfinish参数和finishLocal的配套使用方法请参考表2中的finishLocal参数说明。<!-- npu="950" id19 --><br><br>Ascend 950PR/Ascend 950DT，对于RADIX_SELECT算法，该参数为预留参数，暂未启用，为后续的功能扩展做保留，保持默认值即可。<!-- end id19 --> |
-| isReuseSrc | 是否允许修改源操作数，默认值为false。<!-- npu="950" id20 --><br>Ascend 950PR/Ascend 950DT，该参数仅在输入的数据类型为float时生效，取值如下：<br>true：开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后本接口内部计算时复用srcTensor的内存空间，节省部分内存空间；<br>false：本接口内部计算时不复用srcTensor的内存空间。<!-- end id20 --><!-- npu="A3" id21 --><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，该参数预留，传入默认值false即可。<!-- end id21 --><!-- npu="910b" id22 --><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数预留，传入默认值false即可。<!-- end id22 --><!-- npu="310p" id23 --><br>Atlas 推理系列产品AI Core，该参数预留，传入默认值false即可。<!-- end id23 --><!-- npu="x90" id9 --><br>Kirin X90，该参数预留，传入默认值false即可。<!-- end id9 --><!-- npu="9030" id10 --><br>Kirin 9030，该参数预留，传入默认值false即可。<!-- end id10 --> |
+| isReuseSrc | 是否允许修改源操作数，默认值为false。<!-- npu="950" id20 --><br>Ascend 950PR/Ascend 950DT，该参数仅在输入的数据类型为float时生效，取值如下：<br>true：开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后本接口内部计算时复用srcTensor的内存空间，节省部分内存空间；<br>false：本接口内部计算时不复用srcTensor的内存空间。<!-- end id20 --><!-- npu="A3" id21 --><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，该参数预留，传入默认值false即可。<!-- end id21 --><!-- npu="910b" id22 --><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数预留，传入默认值false即可。<!-- end id22 --><!-- npu="310p" id23 --><br>Atlas 推理系列产品AI Core，该参数预留，传入默认值false即可。<!-- end id23 --> |
 | topkMode | Topk的模式选择，取值如下：<br>TopKMode::TOPK_NORMAL：Normal模式。<br>TopKMode::TOPK_NSMALL：Small模式。 |
 | config | <!-- npu="950" id24 -->该参数仅支持Ascend 950PR/Ascend 950DT。<br><br><!-- end id24 -->TopK计算的相关配置，包括算法选择、取最大值或最小值、是否对结果排序。此参数可选配，TopKConfig类型，具体定义如下方代码所示：<br>algo：选择的排序算法。默认为MERGE_SORT算法，当前仅支持RADIX_SELECT算法，用户需要显式指定algo为TopKAlgo::RADIX_SELECT。<br>order：表示获取前k个最大值或者获取前k个最小值，取值如下：UNSET：默认值，按照函数参数isLargest的配置实现。isLargest为true时，取前k个最大值及其对应的索引，isLargest为false，取前k个最小值及其对应的索引。LARGEST：表示取前k个最大值及其对应的索引。取值为LARGEST时，函数参数isLargest的配置不生效。SMALLEST：表示取前k个最小值及其对应的索引。取值为SMALLEST时，函数参数isLargest的配置不生效。<br>sorted：表示是否对输出结果进行排序。取值为true，对输出结果进行排序；取值为false，不对输出结果进行排序。<br><br>该参数的默认值defaultTopKConfig的取值为：TopKAlgo::MERGE_SORT、TopKOrder::UNSET、true。 |
 
@@ -318,14 +288,6 @@ struct TopKInfo {
     <!-- npu="310p" id28 -->
     Atlas 推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id28 -->
-
-    <!-- npu="x90" id11 -->
-    Kirin X90，支持的数据类型为：half。
-    <!-- end id11 -->
-
-    <!-- npu="9030" id12 -->
-    Kirin 9030，支持的数据类型为：half。
-    <!-- end id12 -->
 
 ## 调用示例<a name="section94691236101419"></a>
 

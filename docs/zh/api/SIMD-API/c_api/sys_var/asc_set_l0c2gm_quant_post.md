@@ -40,7 +40,6 @@
 | 39:32 |                           在QS162S16_POST，QF162S16_POST，SHIFT2S16_POST和SHIFT2S32_POST量化模式中表示s17偏移量中的高8位. |
 | 44:40 | 在SHIFT2S4_POST，SHIFT2B8_POST，SHIFT2S16_POST和SHIFT2S32_POST量化模式中表示位移值。 |
 
-
 ## 函数原型
 
 ```cpp

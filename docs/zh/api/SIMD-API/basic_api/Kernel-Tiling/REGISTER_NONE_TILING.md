@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 在核函数（Kernel）侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套[GET\_TILING\_DATA\_WITH\_STRUCT](GET_TILING_DATA_WITH_STRUCT.md)，[GET\_TILING\_DATA\_MEMBER](GET_TILING_DATA_MEMBER.md)，[GET\_TILING\_DATA\_PTR\_WITH\_STRUCT](GET_TILING_DATA_PTR_WITH_STRUCT.md)来获取对应的TilingData。

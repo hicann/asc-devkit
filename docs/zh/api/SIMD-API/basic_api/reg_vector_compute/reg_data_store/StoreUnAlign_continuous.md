@@ -145,7 +145,6 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 ② 调用**StoreUnAlignPost**进行非对齐搬出后处理。将ureg中缓存的数据写入UB地址288 ~ 304。
 
-
 **图 2**  非对齐数据搬出（ureg不为空）<a id="fig-storeunalign-2"></a>
 
 ![](../../../../figures/reg_storeunalign_2.png)

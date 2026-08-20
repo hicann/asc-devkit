@@ -155,8 +155,6 @@ repeatMode =1的时候filter窗口中读取数据的位置保持不变，每个r
 
 ![ ](../../figures/load3d_05.png)
 
-
-
 ## 调用示例
 
 ```cpp

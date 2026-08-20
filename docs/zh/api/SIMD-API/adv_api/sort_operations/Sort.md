@@ -21,12 +21,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -49,14 +43,6 @@
     <!-- npu="310p" id27 -->
     Atlas 推理系列产品AI Core采用方式二。
     <!-- end id27 -->
-
-    <!-- npu="x90" id3 -->
-    Kirin X90采用方式一。
-    <!-- end id3 -->
-
-    <!-- npu="9030" id4 -->
-    Kirin 9030采用方式一。
-    <!-- end id4 -->
 
 -   排布方式一：
 
@@ -180,7 +166,7 @@
 
     | 参数名 | 含义 |
     | --- | --- |
-    | T | 操作数的数据类型。支持的数据类型为：half、float。<!-- npu="x90" id5 --><br>    <br>Kirin X90，支持的数据类型为：half。<!-- end id5 --><!-- npu="9030" id6 --><br>    <br>Kirin 9030，支持的数据类型为：half。<!-- end id6 --> |
+    | T | 操作数的数据类型。支持的数据类型为：half、float。 |
     | isFullSort | 是否开启全排序模式。全排序模式指将全部输入降序排序，非全排序模式下，排序方式请参考表2中的repeatTime说明。 |
 
     **表2**  参数说明
@@ -191,7 +177,7 @@
     | concat | 输入 | 源操作数，即接口功能说明中的score，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与目的操作数保持一致。 |
     | index | 输入 | 源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数固定为uint32_t数据类型。 |
     | tmp | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小BufferSize的获取方式请参考[GetSortTmpSize](GetSortTmpSize.md)。数据类型与源操作数保持一致。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
-    | repeatTime | 输入 | 重复迭代次数，int32_t类型。<!-- npu="950" id17 --><br>    Ascend 950PR/Ascend 950DT：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id17 --><!-- npu="A3" id18 --><br>    Atlas A3 训练系列产品/Atlas A3 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id18 --><!-- npu="910b" id19 --><br> Atlas A2 训练系列产品/Atlas A2 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id19 --><!-- npu="310p" id20 --><br>Atlas 推理系列产品AI Core：每次迭代完成16个region proposal的排序，下次迭代concat和dst各跳过16个region proposal。取值范围：repeatTime∈[0,255]。<!-- end id20 --><!-- npu="x90" id7 --><br>Kirin X90：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id7 --><!-- npu="9030" id8 --><br>Kirin 9030：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id8 --> |
+    | repeatTime | 输入 | 重复迭代次数，int32_t类型。<!-- npu="950" id17 --><br>    Ascend 950PR/Ascend 950DT：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id17 --><!-- npu="A3" id18 --><br>    Atlas A3 训练系列产品/Atlas A3 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id18 --><!-- npu="910b" id19 --><br> Atlas A2 训练系列产品/Atlas A2 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id19 --><!-- npu="310p" id20 --><br>Atlas 推理系列产品AI Core：每次迭代完成16个region proposal的排序，下次迭代concat和dst各跳过16个region proposal。取值范围：repeatTime∈[0,255]。<!-- end id20 --> |
 
 -   对应带SortConfig的函数原型
 
@@ -261,14 +247,6 @@
     <!-- npu="A3" id23 -->
     Atlas A3 训练系列产品/Atlas A3 推理系列产品
     <!-- end id23 -->
-
-    <!-- npu="x90" id9 -->
-    Kirin X90
-    <!-- end id9 -->
-
-    <!-- npu="9030" id10 -->
-    Kirin 9030
-    <!-- end id10 -->
 
     ```
     // sortedLocal：排序结果

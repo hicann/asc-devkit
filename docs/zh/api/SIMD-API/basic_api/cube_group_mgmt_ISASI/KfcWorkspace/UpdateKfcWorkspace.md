@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 更新用于CubeResGroupHandle消息通信区的内存地址。用户使用[CubeResGroupHandle](../CubeResGroupHandle/CubeResGroupHandle_constructor.md)接口时，需要用此接口自主管理空间地址。

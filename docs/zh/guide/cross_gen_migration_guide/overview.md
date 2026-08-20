@@ -22,7 +22,3 @@ Ascend C的核心设计目标之一是实现跨代兼容。然而，每一代芯
 - 使用兼容的API接口。
 - 若涉及特定领域的扩展特性，应在Device侧通过 [`__NPU_ARCH__`编译宏](../programming_guide/language_extension/simd_builtin_keywords.md)进行隔离，在Host侧通过`SocVersion`进行隔离。
 - 使用`<<<>>>`直调或 [Tiling模板编程](../programming_guide/advanced_programming/aclnn_operator_development/design_and_implementation/multi_branch_strategy.md)。
-
-<!-- npu="x90,9030" id2 -->
-> 💡 请参考[昇腾到麒麟迁移指南](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/cannkit-ascend-kirin-compatibility)，了解如何将昇腾平台上开发的算子迁移到麒麟平台。
-<!-- end id2 -->

@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
@@ -79,14 +73,6 @@ Atlas 推理系列产品AI Core，支持模式0、1、2。
 <!-- npu="910" id22 -->
 Atlas 训练系列产品，仅支持模式0。
 <!-- end id22 -->
-
-<!-- npu="x90" id23 -->
-Kirin X90，支持模式0、1、2。
-<!-- end id23 -->
-
-<!-- npu="9030" id24 -->
-Kirin 9030，支持模式0、1、2。
-<!-- end id24 -->
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -201,14 +187,6 @@ Kirin 9030，支持模式0、1、2。
   <!-- npu="910" id30 -->
   - Atlas 训练系列产品，支持的数据类型为：half/float。
   <!-- end id30 -->
-    
-  <!-- npu="x90" id31 -->
-  - Kirin X90，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
-  <!-- end id31 -->
-    
-  <!-- npu="9030" id32 -->
-  - Kirin 9030，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
-    <!-- end id32 -->
 
 - U支持的数据类型为：uint8_t、uint16_t、uint32_t、uint64_t。
 

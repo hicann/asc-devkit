@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
@@ -319,34 +313,6 @@ enum class RoundMode {
 | float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
 
 <!-- end id15 -->
-
-<!-- npu="x90" id16 -->
-
-**表**  Kirin X90支持的数据类型组合情况
-
-| src数据类型 | dst数据类型 | 支持的roundMode |
-| :---------- | :---------- | :-------------- |
-| half | uint8_t | CAST_CEIL |
-| half | int32_t | CAST_FLOOR |
-| int32_t | float | CAST_CEIL |
-| float | bfloat16_t | CAST_ROUND |
-| bfloat16_t | float | CAST_NONE |
-
-<!-- end id16 -->
-
-<!-- npu="9030" id17 -->
-
-**表**  Kirin 9030支持的数据类型组合情况
-
-| src数据类型 | dst数据类型 | 支持的roundMode |
-| :---------- | :---------- | :-------------- |
-| half | uint8_t | CAST_CEIL |
-| half | int32_t | CAST_FLOOR |
-| int32_t | float | CAST_CEIL |
-| float | bfloat16_t | CAST_ROUND |
-| bfloat16_t | float | CAST_NONE |
-
-<!-- end id17 -->
 
 ## 返回值说明
 

@@ -22,13 +22,7 @@
   <!-- npu="910" id6 -->
   - Atlas 训练系列产品
   <!-- end id6 -->
-  <!-- npu="x90" id7 -->
-  - Kirin X90
-  <!-- end id7 -->
-  <!-- npu="9030" id8 -->
-  - Kirin 9030
-  <!-- end id8 -->
-
+    
   **图1** 矩阵乘法场景涉及的数据格式<a name="zh-cn_topic_0000002545089965_fig18172115901518"></a>  
   ![](../../../../figures/fractals_involved_in_matrix_calculation_a2a3.png "矩阵乘法场景涉及的数据格式")
 <!-- end id1 -->

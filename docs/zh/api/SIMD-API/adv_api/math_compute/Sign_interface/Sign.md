@@ -21,12 +21,6 @@
 <!-- npu="910" id8 -->
 - Atlas 训练系列产品：不支持
 <!-- end id8 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 
 ## 功能说明
 
@@ -119,14 +113,6 @@
     <!-- npu="310p" id12 -->
     Atlas 推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id12 -->
-
-    <!-- npu="x90" id3 -->
-    Kirin X90，支持的数据类型为：half、float。
-    <!-- end id3 -->
-
-    <!-- npu="9030" id4 -->
-    Kirin 9030，支持的数据类型为：half、float。
-    <!-- end id4 -->
 
 ## 调用示例
 

@@ -40,7 +40,6 @@ __aicore__ inline int64_t asc_get_sub_block_num()
 
 ## 返回值说明
 
-
 不同核函数（Kernel）类型下，在AIC和AIV上调用该接口的返回值如下：
 
 **表1** 不同核函数（Kernel）类型下的返回值

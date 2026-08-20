@@ -76,9 +76,6 @@ static __aicore__ inline void Lock(MutexID id)
     AscendC::Mutex::Unlock<PIPE_V>(0);
     AscendC::Mutex::Unlock<PIPE_V>(0);
 
-
-    
-    
     // 正确写法：Lock和Unlock严格成对出现。
     AscendC::Mutex::Lock<PIPE_V>(0);
     AscendC::Mutex::Unlock<PIPE_V>(0);

@@ -10,7 +10,6 @@
 - Atlas 推理系列产品Vector Core：不支持
 - Atlas 训练系列产品：不支持
 
-
 ## 功能说明<a name="section259105813316"></a>
 
 该接口实现AI CPU算子核函数（Kernel）调试场景下的assert断言功能。

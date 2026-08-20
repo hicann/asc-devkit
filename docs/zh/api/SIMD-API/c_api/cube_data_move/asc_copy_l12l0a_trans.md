@@ -73,7 +73,6 @@
 
 ![](../figures/asc_copy_l12l0_trans_b32_example2.png)
 
-
 ## 函数原型
 
 - 高维切分搬运

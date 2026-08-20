@@ -45,7 +45,6 @@ unsigned int __hequx2_mask(half2 x, half2 y)
 
 比较输入数据各分量是否相等的结果：满足时对应16位掩码结果为0xFFFF，不满足时对应16位掩码结果为0x0。各分量掩码结果如下：
 
-
 <table>
   <tr>
     <th>x分量</th>

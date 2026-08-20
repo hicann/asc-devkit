@@ -25,12 +25,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ### 传入bias的原型
 
@@ -55,12 +49,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
-<!-- npu="x90" id17 -->
-- Kirin X90：支持
-<!-- end id17 -->
-<!-- npu="9030" id18 -->
-- Kirin 9030：不支持
-<!-- end id18 -->
 
 ## 功能说明
 
@@ -257,23 +245,6 @@ Atlas A2 训练系列产品/Atlas A2 推理系列产品
 | half | half | half<br> 说明： <br>该精度类型组合，精度无法达到双千分之一，且后续处理器版本不支持该类型转换，建议直接使用half输入float输出。<br><br>双千分之一是指每个实际数据和真值数据之间的误差不超过千分之一，误差超过千分之一的数据总和不超过总数据数的千分之一。 |
 | half | half | float |
 <!-- end id26 -->
-
-<!-- npu="x90" id27 -->
-**表11** dst、fm、filter、bias支持的精度类型组合（Kirin X90）
-
-| 左矩阵fm type | 右矩阵filter type | bias type | 结果矩阵dst type |
-| --- | --- | --- | --- |
-| int8_t | int8_t | int32_t | int32_t |
-| half | half | half | half |
-<!-- end id27 -->
-
-<!-- npu="9030" id28 -->
-**表12** dst、fm、filter、bias支持的精度类型组合（Kirin 9030）
-
-| 左矩阵fm type | 右矩阵filter type | bias type | 结果矩阵dst type |
-| --- | --- | --- | --- |
-| half | half | half | half |
-<!-- end id28 -->
 
 ## 返回值说明
 

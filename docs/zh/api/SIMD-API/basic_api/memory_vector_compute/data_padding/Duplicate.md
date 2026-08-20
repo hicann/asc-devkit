@@ -23,12 +23,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
@@ -124,12 +118,6 @@ def Duplicate(scalarValue, dst, count):
 <!-- npu="910" id17 -->
 - 针对Atlas 训练系列产品，T支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
 <!-- end id17 -->
-<!-- npu="x90" id18 -->
-- 针对Kirin X90，T支持的数据类型为：half。
-<!-- end id18 -->
-<!-- npu="9030" id19 -->
-- 针对Kirin 9030，T支持的数据类型为：half。
-<!-- end id19 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>	 
 

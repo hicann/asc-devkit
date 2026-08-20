@@ -24,7 +24,6 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
 通过AllocMessage接口获取到消息空间地址msg后，构造消息结构体[CubeMsgType](CubeResGroupHandle_usage.md#table189051237164018)，发送该消息。

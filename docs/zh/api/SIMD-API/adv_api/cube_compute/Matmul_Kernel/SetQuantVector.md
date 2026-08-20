@@ -21,9 +21,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
 
 ## 功能说明
 
@@ -53,10 +50,7 @@ Matmul量化场景：在Matmul计算时，左、右矩阵的输入为half或bflo
     <!-- npu="310p" id9 -->
     -   Atlas 推理系列产品AI Core暂不支持量化参数的存储位置为L1 Buffer。
     <!-- end id9 -->
-    <!-- npu="x90" id2 -->
-    -   Kirin X90暂不支持量化参数的存储位置为L1 Buffer。
-    <!-- end id2 -->
-
+    
 ## 参数说明
 
 | 参数名 | 输入/输出 | 描述 |

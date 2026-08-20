@@ -59,7 +59,6 @@
 | src_repeat_stride | 输入 | 源操作数相邻迭代间相同DataBlock的地址步长。 |
 | repeat | 输入 | 迭代次数。 |
 
-
 ## 返回值说明
 
 无
