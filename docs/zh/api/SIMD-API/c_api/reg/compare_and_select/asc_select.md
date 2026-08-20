@@ -79,7 +79,6 @@ __simd_callee__ inline void asc_select(vector_half& dst,
 
 ## 约束说明
 
-- 通过`mask`参数控制的未选中的元素保持源操作数的值而非清零。
 - `src0`、`src1`和`dst`的数据类型需要保持一致。
 
 ## 调用示例
