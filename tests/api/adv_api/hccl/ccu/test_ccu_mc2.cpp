@@ -203,6 +203,7 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_AllGather)
     Mc2CcTilingInner ccTiling{};
     ccTiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
     ccTiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    strcpy(ccTiling.algConfig, "CcuAllGatherMesh1DMem2Mem");
     const void* ccTilingList[] = {&ccTiling};
     std::string topoTag[] = {"tag0"};
 
@@ -224,6 +225,7 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_ReduceScatterKfcMesh1DMem2Mem)
     ccTiling.srcDataType = HCCL_DATA_TYPE_FP16;
     ccTiling.dstDataType = HCCL_DATA_TYPE_FP16;
     ccTiling.reduceType = HCCL_REDUCE_SUM;
+    strcpy(ccTiling.algConfig, "CcuKfcReduceScatterMesh1DMem2Mem");
     const void* ccTilingList[] = {&ccTiling};
     std::string topoTag[] = {"tag0"};
 
@@ -473,7 +475,7 @@ TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_MixedOpsRejected)
         static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE)};
     Mc2TilingTestData tiling = BuildMc2Tiling(2, static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), opTypes, nullptr);
     void* opResCtx = nullptr;
-    EXPECT_EQ(HcclAllocComResourceByTiling(comm_, stream_, &tiling, &opResCtx), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(HcclAllocComResourceByTiling(comm_, stream_, &tiling, &opResCtx), HCCL_E_ALG_NOT_SUPPORTED);
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_NullComm)
@@ -544,13 +546,16 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_AllGatherMesh1D_KfcServerArgs)
     ccTiling.srcDataType = HCCL_DATA_TYPE_FP16;
     ccTiling.dstDataType = HCCL_DATA_TYPE_FP16;
     ccTiling.reduceType = HCCL_REDUCE_SUM;
+    strcpy(ccTiling.algConfig, "CcuAllGatherMesh1DMem2Mem");
 
     OpParam opParam{};
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "allgather_tag", &ccTiling, opParam), HCCL_SUCCESS);
 
     std::string algName;
     auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
-    ASSERT_EQ(SelectAlgAndPrepareEngine(comm_, opParam, algName, topoInfo), HCCL_SUCCESS);
+    ASSERT_TRUE(GetForcedAlgName(&ccTiling, algName));
+    ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam, topoInfo), HCCL_SUCCESS);
+    ASSERT_EQ(PrepareEngineForAlg(opParam, algName), HCCL_SUCCESS);
     ASSERT_EQ(algName, "CcuAllGatherMesh1DMem2Mem");
     ASSERT_EQ(opParam.engine, COMM_ENGINE_CCU);
 
@@ -616,13 +621,16 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
     ccTiling.srcDataType = HCCL_DATA_TYPE_FP16;
     ccTiling.dstDataType = HCCL_DATA_TYPE_FP16;
     ccTiling.reduceType = HCCL_REDUCE_SUM;
+    strcpy(ccTiling.algConfig, "CcuAllGatherMesh1DMem2Mem");
 
     OpParam opParam1{};
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "reuse_tag", &ccTiling, opParam1), HCCL_SUCCESS);
 
     std::string algName;
     auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
-    ASSERT_EQ(SelectAlgAndPrepareEngine(comm_, opParam1, algName, topoInfo), HCCL_SUCCESS);
+    ASSERT_TRUE(GetForcedAlgName(&ccTiling, algName));
+    ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam1, topoInfo), HCCL_SUCCESS);
+    ASSERT_EQ(PrepareEngineForAlg(opParam1, algName), HCCL_SUCCESS);
     ASSERT_EQ(algName, "CcuAllGatherMesh1DMem2Mem");
 
     int result = sprintf_s(opParam1.algName, sizeof(opParam1.algName), "%s", algName.c_str());
@@ -651,7 +659,9 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
 
     OpParam opParam2{};
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "reuse_tag", &ccTiling, opParam2), HCCL_SUCCESS); // 相同tag
-    ASSERT_EQ(SelectAlgAndPrepareEngine(comm_, opParam2, algName, topoInfo), HCCL_SUCCESS);
+    ASSERT_TRUE(GetForcedAlgName(&ccTiling, algName));
+    ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam2, topoInfo), HCCL_SUCCESS);
+    ASSERT_EQ(PrepareEngineForAlg(opParam2, algName), HCCL_SUCCESS);
     result = sprintf_s(opParam2.algName, sizeof(opParam2.algName), "%s", algName.c_str());
     ASSERT_GT(result, 0);
     ASSERT_EQ(HandleSingleRankAndCommMode(comm_, opParam2, skipGetRes), HCCL_SUCCESS);
