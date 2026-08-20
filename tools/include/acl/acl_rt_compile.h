@@ -10,6 +10,19 @@
 #ifndef ASCENDC_ACL_RT_COMPILE_H
 #define ASCENDC_ACL_RT_COMPILE_H
 #include <stddef.h>
+#include <stdint.h>
+
+#if defined(_MSC_VER)
+#if defined(ACLRTC_FUNC_VISIBILITY)
+#define ACLRTC_API __declspec(dllexport)
+#else
+#define ACLRTC_API
+#endif
+#elif defined(ACLRTC_FUNC_VISIBILITY)
+#define ACLRTC_API __attribute__((visibility("default")))
+#else
+#define ACLRTC_API
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,6 +30,23 @@ extern "C" {
 
 typedef int aclError;
 typedef void* aclrtcProg;
+
+typedef struct aclrtcKernelSpecRequest {
+    const char* resourceId;
+    const char* kernelEntry;
+
+    uint64_t argsCount;
+    const void* const* argsAddr;
+    const uint64_t* argsBytes;
+
+    const char* const* options;
+    uint64_t optionCount;
+
+    const char* const* skOptions;
+    uint64_t skOptionCount;
+
+    uint8_t reserved[256];
+} aclrtcKernelSpecRequest;
 
 /**
  * @brief Creates an instance of aclrtcProg with the given input parameters.
@@ -28,7 +58,7 @@ typedef void* aclrtcProg;
  * @param[in] includeNames Currently must be NULL.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcCreateProg(
+ACLRTC_API aclError aclrtcCreateProg(
     aclrtcProg* prog, const char* src, const char* name, int numHeaders, const char** headers,
     const char** includeNames);
 
@@ -39,7 +69,7 @@ aclError aclrtcCreateProg(
  * @param[in] options Array of option strings.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcCompileProg(aclrtcProg prog, int numOptions, const char** options);
+ACLRTC_API aclError aclrtcCompileProg(aclrtcProg prog, int numOptions, const char** options);
 
 /**
  * @brief Notes the given name expression denoting the address of a global function or device variable.
@@ -49,7 +79,7 @@ aclError aclrtcCompileProg(aclrtcProg prog, int numOptions, const char** options
  *                           on a subsequent call to aclrtcGetLoweredName to extract the lowered name.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcAddNameExpr(aclrtcProg prog, const char* const nameExpression);
+ACLRTC_API aclError aclrtcAddNameExpr(aclrtcProg prog, const char* const nameExpression);
 
 /**
  * @brief Extracts the lowered (mangled) name for a global function or device variable.
@@ -62,14 +92,14 @@ aclError aclrtcAddNameExpr(aclrtcProg prog, const char* const nameExpression);
  *                         by aclrtcDestroyProg.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcGetLoweredName(aclrtcProg prog, const char* nameExpression, const char** loweredName);
+ACLRTC_API aclError aclrtcGetLoweredName(aclrtcProg prog, const char* nameExpression, const char** loweredName);
 
 /**
  * @brief Destroys the given program.
  * @param[in,out] prog Runtime Compilation program.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcDestroyProg(aclrtcProg* prog);
+ACLRTC_API aclError aclrtcDestroyProg(aclrtcProg* prog);
 
 /**
  * @brief Retrieves the compiled device ELF binary.
@@ -77,7 +107,7 @@ aclError aclrtcDestroyProg(aclrtcProg* prog);
  * @param[out] binData Compiled result.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcGetBinData(aclrtcProg prog, char* binData);
+ACLRTC_API aclError aclrtcGetBinData(aclrtcProg prog, char* binData);
 
 /**
  * @brief Retrieves the size of the compiled device ELF binary.
@@ -85,7 +115,7 @@ aclError aclrtcGetBinData(aclrtcProg prog, char* binData);
  * @param[out] deviceELFSizeRet Size of the ELF binary.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcGetBinDataSize(aclrtcProg prog, size_t* binDataSizeRet);
+ACLRTC_API aclError aclrtcGetBinDataSize(aclrtcProg prog, size_t* binDataSizeRet);
 
 /**
  * @brief Retrieves the size of the compilation log.
@@ -93,7 +123,7 @@ aclError aclrtcGetBinDataSize(aclrtcProg prog, size_t* binDataSizeRet);
  * @param[out] logSizeRet Size of the log string.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcGetCompileLogSize(aclrtcProg prog, size_t* logSizeRet);
+ACLRTC_API aclError aclrtcGetCompileLogSize(aclrtcProg prog, size_t* logSizeRet);
 
 /**
  * @brief Retrieves the compilation log.
@@ -101,7 +131,17 @@ aclError aclrtcGetCompileLogSize(aclrtcProg prog, size_t* logSizeRet);
  * @param[out] log Compilation log.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
-aclError aclrtcGetCompileLog(aclrtcProg prog, char* log);
+ACLRTC_API aclError aclrtcGetCompileLog(aclrtcProg prog, char* log);
+
+/**
+ * @brief Specializes and compiles an ACLNN kernel from a registered JIT resource.
+ * @param[in] request Kernel resource, entry, constant argument, and compiler option request.
+ *                    The structure must be zero-initialized before setting fields.
+ * @param[in] outPath Output path for the linked kernel ELF. A relative path is resolved against the current
+ *                    working directory when this function is called.
+ * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
+ */
+ACLRTC_API aclError aclrtcKernelSpecialization(const aclrtcKernelSpecRequest* request, const char* outPath);
 
 #ifdef __cplusplus
 }

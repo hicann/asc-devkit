@@ -31,6 +31,30 @@
 namespace ascendc {
 namespace specialization_compile {
 
+bool IsKernelMetaSavingEnabled() noexcept
+{
+    const char* environmentValue = std::getenv("ASCEND_OP_COMPILE_SAVE_KERNEL_META");
+    if (environmentValue == nullptr) {
+        return false;
+    }
+
+    const auto isWhitespace = [](char value) {
+        return value == ' ' || value == '\t' || value == '\n' || value == '\r' || value == '\f' || value == '\v';
+    };
+    const char* firstValueCharacter = environmentValue;
+    while (*firstValueCharacter != '\0' && isWhitespace(*firstValueCharacter)) {
+        ++firstValueCharacter;
+    }
+    const char* valueEnd = firstValueCharacter;
+    while (*valueEnd != '\0') {
+        ++valueEnd;
+    }
+    while (valueEnd != firstValueCharacter && isWhitespace(*(valueEnd - 1))) {
+        --valueEnd;
+    }
+    return valueEnd == firstValueCharacter + 1 && *firstValueCharacter == '1';
+}
+
 void LibraryDeleter::operator()(void* handle) const noexcept
 {
     if (handle != nullptr && dlclose(handle) != 0) {
@@ -97,29 +121,6 @@ void CleanupPath(const std::string& path) noexcept
     if (!FileUtils::RemoveAll(path)) {
         ASCENDLOGW("Failed to remove compile resource path: path=%s reason=recursive removal failed", path.c_str());
     }
-}
-
-bool ShouldKeepTemporaryRoot() noexcept
-{
-    const char* environment = std::getenv("ASCEND_OP_COMPILE_SAVE_KERNEL_META");
-    if (environment == nullptr) {
-        return false;
-    }
-    auto isWhitespace = [](char value) {
-        return value == ' ' || value == '\t' || value == '\n' || value == '\r' || value == '\f' || value == '\v';
-    };
-    const char* begin = environment;
-    while (*begin != '\0' && isWhitespace(*begin)) {
-        ++begin;
-    }
-    const char* end = begin;
-    while (*end != '\0') {
-        ++end;
-    }
-    while (end != begin && isWhitespace(*(end - 1))) {
-        --end;
-    }
-    return end == begin + 1 && *begin == '1';
 }
 
 ResourceStatus CreateTemporaryRoot(std::string& temporaryRoot)
@@ -1411,7 +1412,7 @@ ResourceStatus ResourceRegistry::Materialize(
     {
         std::lock_guard<std::mutex> lock(registryMutex_);
         if (temporaryRoot_.empty()) {
-            keepTemporaryRoot_ = ShouldKeepTemporaryRoot();
+            keepTemporaryRoot_ = IsKernelMetaSavingEnabled();
             const ResourceStatus status = CreateTemporaryRoot(temporaryRoot_);
             if (status != ResourceStatus::Success) {
                 return status;
