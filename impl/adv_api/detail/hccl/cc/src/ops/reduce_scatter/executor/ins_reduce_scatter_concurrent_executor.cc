@@ -37,11 +37,13 @@ HcclResult InsReduceScatterConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, Ins
 {
     // 初始化一些基本成员变量
     InitCommInfo(param, topoInfo, algHierarchyInfo);
+    constexpr u32 minMembers = 2;
 
     // 拆一下algHierarchyInfo
-    if (algHierarchyInfo.infos.size() == 0) {
+    if (algHierarchyInfo.infos.size() == 0 || algHierarchyInfo.infos[0].size() < minMembers) {
         HCCL_ERROR(
             "[InsReduceScatterConcurrentExecutor] algHierarchyInfo has no members, Please check the algHierarchyInfo!");
+        return HCCL_E_PARA;
     }
     std::vector<std::vector<u32>> temp0HierarchyInfo = {algHierarchyInfo.infos[0][0]};
     std::vector<std::vector<u32>> temp1HierarchyInfo = {algHierarchyInfo.infos[0][1]};
@@ -53,8 +55,8 @@ HcclResult InsReduceScatterConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, Ins
     AlgResourceRequest temp0ResReq;
     AlgResourceRequest temp1ResReq;
 
-    tempAlg0->CalcRes(comm, param, topoInfo, temp0ResReq);
-    tempAlg1->CalcRes(comm, param, topoInfo, temp1ResReq);
+    CHK_RET(tempAlg0->CalcRes(comm, param, topoInfo, temp0ResReq));
+    CHK_RET(tempAlg1->CalcRes(comm, param, topoInfo, temp1ResReq));
 
     // 合并两个resourceRequest
     resourceRequest.slaveThreadNum =

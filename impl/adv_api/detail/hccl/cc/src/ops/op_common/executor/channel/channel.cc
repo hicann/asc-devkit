@@ -529,17 +529,33 @@ HcclResult GetTopoTypeByLink(HcclComm comm, uint32_t netLayer, CommLink& link, C
         uint32_t endPointNum;
         CHK_RET(HcclRankGraphGetEndpointNum(comm, netLayer, topoInstId, &endPointNum));
         EndpointDesc* endPointDescs = (EndpointDesc*)malloc(endPointNum * sizeof(EndpointDesc));
-        CHK_RET(HcclRankGraphGetEndpointDesc(comm, netLayer, topoInstId, &endPointNum, endPointDescs));
-        CHK_RET(HcclRankGraphGetTopoType(comm, netLayer, topoInstId, &topoType));
+        if (endPointDescs == nullptr) {
+            HCCL_ERROR("Malloc endPointDescs failed!");
+            return HCCL_E_PARA;
+        }
+        HcclResult ret = HCCL_SUCCESS;
+        ret = HcclRankGraphGetEndpointDesc(comm, netLayer, topoInstId, &endPointNum, endPointDescs);
+        if (ret != HCCL_SUCCESS) {
+            free(endPointDescs);
+            return ret;
+        }
+
+        ret = HcclRankGraphGetTopoType(comm, netLayer, topoInstId, &topoType);
+        if (ret != HCCL_SUCCESS) {
+            free(endPointDescs);
+            return ret;
+        }
         HCCL_DEBUG("[%s]topoInstId=%u, endPointNum=%u, topoType=%u", __func__, topoInstId, endPointNum, topoType);
         for (uint32_t endPointIdx = 0; endPointIdx < endPointNum; endPointIdx++) {
             EndpointDesc endPoint = endPointDescs[endPointIdx];
             if (IsEndPointEqual(link.srcEndpointDesc, endPoint) ==
                 true) { // 当前TopoInst和link的endPoint相同，说明link属于当前TopoInst
+                free(endPointDescs);
                 return HCCL_SUCCESS;
             }
         }
         HCCL_WARNING("[%s]No Endpoint matches on TopoInst[%u].", __func__, topoInstId);
+        free(endPointDescs);
     }
     HCCL_ERROR("[%s]Cannot get TopoType by Link.", __func__);
     return HCCL_E_INTERNAL;
