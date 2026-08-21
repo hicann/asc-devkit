@@ -22,45 +22,30 @@ namespace asc {
 namespace te {
 
 template <typename DataType>
-struct reg_tensor;
-
-template <>
-struct reg_tensor<bool> {
-    using type = bool;
-    using elem_type = bool;
-    using reg_type = typename detail::type_get<bool>::type;
-
-    __simd_callee__ reg_tensor() = default;
-    __simd_callee__ reg_tensor(reg_type regValue) : reg(regValue) {}
-
-    reg_type reg;
-};
-
-template <typename DataType>
 struct reg_tensor {
-    using type = DataType;
     using elem_type = DataType;
-    using reg_type = typename detail::type_get<DataType>::type;
+    using reg_type = typename detail::type_get<elem_type>::type;
 
     __simd_callee__ reg_tensor() = default;
     __simd_callee__ reg_tensor(vector_bool maskValue) : mask(maskValue) {}
 
     template <typename ScalarType>
-    __simd_callee__ inline reg_tensor& operator=(ScalarType src)
-    {
-        asc_duplicate_scalar(reg, static_cast<DataType>(src), mask);
-        return *this;
-    }
+    __simd_callee__ inline reg_tensor& operator=(ScalarType src);
 
-    __simd_callee__ inline reg_tensor& with_mask(const reg_tensor<bool>& maskReg)
-    {
-        mask = maskReg.reg;
-        return *this;
-    }
+    __simd_callee__ inline reg_tensor& with_mask(const reg_tensor<bool>& maskReg);
 
     reg_type reg;
     vector_bool mask;
 };
+
+template <typename T>
+struct is_reg_tensor : AscendC::Std::false_type {};
+
+template <typename DataType>
+struct is_reg_tensor<reg_tensor<DataType>> : AscendC::Std::true_type {};
+
+template <typename T>
+inline constexpr bool is_reg_tensor_v = is_reg_tensor<AscendC::Std::remove_cvref_t<T>>::value;
 
 template <typename DataType>
 struct reg_pair {
@@ -70,6 +55,10 @@ struct reg_pair {
 
 } // namespace te
 } // namespace asc
+
+#if defined(__NPU_ARCH__)
+#include "impl/tensor_api/arch/vector/experimental/reg_tensor_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_VECTOR_EXPERIMENTAL_REG_TENSOR_H
 
