@@ -70,6 +70,8 @@ enum class mask_pattern : uint8_t {
     none,
 };
 
+enum class reduce_scope : uint8_t { vector, datablock, pair };
+
 enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
 
 using _0 = Std::Int<0>;
