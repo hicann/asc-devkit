@@ -285,7 +285,7 @@ __aicore__ inline void BroadcastImpl(
         (constRank == -1) || (constRank <= 9 && constRank > 0),
         "constRank only supports -1 and the range between 1 and 9");
     static_assert(SupportBytes<T, 1, 2, 4, 8>(), "Broadcast only supports type b8/b16/b32/b64 on current device");
-    ASCENDC_ASSERT((tiling != nullptr), "BroadcastTiling could not be empty!");
+    ASCENDC_ASSERT((tiling != nullptr), { KERNEL_LOG(KERNEL_ERROR, "BroadcastTiling could not be empty!"); });
     if constexpr (constRank != -1) {
         ASCENDC_ASSERT((tiling->oriRank == constRank), {
             KERNEL_LOG(KERNEL_ERROR, "Tilling original rank and constRank should be equal!");

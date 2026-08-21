@@ -1348,13 +1348,13 @@ __aicore__ inline void ReduceMinImpl(
 template <typename T>
 __aicore__ inline void GetReduceMaxMinCountImpl(T& maxMinValue, T& maxMinIndex)
 {
-    ASCENDC_ASSERT((false), "GetReduceRepeatMaxMinSpr is not supported on current device");
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "GetReduceMaxMinCount is not supported on current device"); });
 }
 
 template <typename T>
 __aicore__ inline void GetReduceMaxMinCountImpl(T& maxMinValue)
 {
-    ASCENDC_ASSERT((false), "GetReduceRepeatMaxMinSpr is not supported on current device");
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "GetReduceMaxMinCount is not supported on current device"); });
 }
 
 template <typename T>
