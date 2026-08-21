@@ -26,6 +26,7 @@ inline constexpr Literal PAT_Q = static_cast<Literal>(107);
 
 using float8_e4m3_t = fp8_e4m3fn_t;
 using float8_e5m2_t = fp8_e5m2_t;
+using float8_e8m0_t = fp8_e8m0_t;
 using float4_e1m2x2_t = fp4x2_e1m2_t;
 using float4_e2m1x2_t = fp4x2_e2m1_t;
 
@@ -570,6 +571,9 @@ inline void vstur(vector_align& alignData, vector_f8e5m2 src, __ubuf__ fp8_e5m2_
 inline void vstur(vector_align& alignData, vector_f8e8m0 src, __ubuf__ fp8_e8m0_t* base, Literal post) {}
 inline void vstur(vector_align& alignData, vector_f4e2m1x2 src, __ubuf__ fp4x2_e2m1_t* base, Literal post) {}
 inline void vstur(vector_align& alignData, vector_f4e1m2x2 src, __ubuf__ fp4x2_e1m2_t* base, Literal post) {}
+
+inline void vdup(vector_f8e8m0 src0, vector_f8e8m0 src1, vector_bool mask, int32_t pos, Literal mode) {}
+inline void vdup(vector_f8e8m0 src0, fp8_e8m0_t src1, vector_bool mask, Literal mode) {}
 
 inline void nd_dma_dci() {}
 

@@ -118,6 +118,42 @@ __simd_callee__ inline reg_tensor<bool> update_mask(uint32_t& remain)
     return detail::make_updated_reg_mask<DataType>(remain);
 }
 
+template <typename DataType>
+__simd_callee__ inline reg_pair<bool> interleave(reg_tensor<bool> src0, reg_tensor<bool> src1)
+{
+    static_assert(sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t)
+                      || sizeof(DataType) == sizeof(uint32_t),
+                  "interleave only supports 8-bit, 16-bit, and 32-bit element types");
+
+    reg_pair<bool> result;
+    if constexpr (sizeof(DataType) == sizeof(uint32_t)) {
+        asc_intlv_b32(result.first.reg, result.second.reg, src0.reg, src1.reg);
+    } else if constexpr (sizeof(DataType) == sizeof(uint16_t)) {
+        asc_intlv_b16(result.first.reg, result.second.reg, src0.reg, src1.reg);
+    } else if constexpr (sizeof(DataType) == sizeof(uint8_t)) {
+        asc_intlv_b8(result.first.reg, result.second.reg, src0.reg, src1.reg);
+    }
+    return result;
+}
+
+template <typename DataType>
+__simd_callee__ inline reg_pair<bool> deinterleave(reg_tensor<bool> src0, reg_tensor<bool> src1)
+{
+    static_assert(sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t)
+                      || sizeof(DataType) == sizeof(uint32_t),
+                  "deinterleave only supports 8-bit, 16-bit, and 32-bit element types");
+
+    reg_pair<bool> result;
+    if constexpr (sizeof(DataType) == sizeof(uint32_t)) {
+        asc_deintlv_b32(result.first.reg, result.second.reg, src0.reg, src1.reg);
+    } else if constexpr (sizeof(DataType) == sizeof(uint16_t)) {
+        asc_deintlv_b16(result.first.reg, result.second.reg, src0.reg, src1.reg);
+    } else if constexpr (sizeof(DataType) == sizeof(uint8_t)) {
+        asc_deintlv_b8(result.first.reg, result.second.reg, src0.reg, src1.reg);
+    }
+    return result;
+}
+
 } // namespace te
 } // namespace asc
 
