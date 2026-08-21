@@ -357,7 +357,7 @@ __aicore__ inline void LoadDataImpl(
     CheckTensorAlign<T>(src, ONE_BLK_SIZE, "src", "LoadData with LoadData3DParams");
     CheckTensorAlign<T>(dst, VALUE_512, "dst", "LoadData with LoadData3DParams");
 
-    if constexpr (Src != TPosition::A1 && Src != TPosition::A2) {
+    if constexpr (Src != TPosition::A1 && Src != TPosition::B1) {
         ASCENDC_CHECK_TPOSITION(
             false, "src", "L1 Buffer(A1/B1)", "LoadData with LoadDataBitModeParams",
             GetPositionDisplay(static_cast<TPosition>(src.GetPosition())));
