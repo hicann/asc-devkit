@@ -217,7 +217,7 @@ TPipe-TQue框架编程范式插入的同步并没有单独的日志功能，但�
 
 <!-- npu="A3,910b" id10 -->
 > [!NOTE]说明
-> 以下日志片段及对应分析仅针对[NPU架构2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)成立。
+> 以下日志片段及对应分析仅针对[NPU架构2201](../../../../../../zh/guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)成立。
 
 ```text
 [info] [00002009] (PC: 0x10d0d378) MTE2     : (Binary: 0x40a210bc) SET_FLAG  PIPE:MTE2, TRIGGER PIPE:VEC, FLAG ID:0, 
