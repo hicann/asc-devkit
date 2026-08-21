@@ -48,6 +48,20 @@ protected:
         copy_ub_to_ub_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len_in32_b,
                                        src_stride_in32_b, dst_stride_in32_b);
     }
+
+    template <typename T, typename U, typename DstOffset, typename SrcOffset>
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, const DstOffset& dst_offset,
+        const SrcOffset& src_offset, uint16_t block_count, uint32_t block_len, int64_t src_stride, int64_t dst_stride)
+    {
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
+        adjust_b4_copy_params<src_type, dst_type>(block_len, src_stride, dst_stride);
+        uint16_t block_len_in32_b = static_cast<uint16_t>(block_len >> 5);
+        uint16_t src_stride_in32_b = static_cast<uint16_t>(src_stride >> 5);
+        uint16_t dst_stride_in32_b = static_cast<uint16_t>(dst_stride >> 5);
+        copy_ub_to_ub_instr::data_copy((dst.data() + dst_offset).get(), (src.data() + src_offset).get(),
+            block_count, block_len_in32_b, src_stride_in32_b, dst_stride_in32_b);
+    }
 };
 
 } // namespace te

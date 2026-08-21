@@ -121,20 +121,30 @@ __aicore__ inline static constexpr uint32_t get_total_row_shape(const LayoutType
 template <typename LayoutType>
 __aicore__ inline static constexpr decltype(auto) get_row_stride(const LayoutType& layout)
 {
-    if constexpr (LayoutType::depth == 2) {
+    if constexpr (LayoutType::depth == two_dim_data) {
         return get<0>(layout.stride());
-    } else {
+    } else if constexpr (LayoutType::depth == three_dim_data) {
+        return get<1, 0>(layout.stride());
+    } else if constexpr (LayoutType::depth == four_dim_data) {
         return get<0, 1>(layout.stride());
+    } else {
+        static_assert(LayoutType::depth == five_dim_data, "Only support 2D to 5D matrix layouts");
+        return get<1, 0, 1>(layout.stride());
     }
 }
 
 template <typename LayoutType>
 __aicore__ inline static constexpr decltype(auto) get_column_stride(const LayoutType& layout)
 {
-    if constexpr (LayoutType::depth == 2) {
+    if constexpr (LayoutType::depth == two_dim_data) {
         return get<1>(layout.stride());
-    } else {
+    } else if constexpr (LayoutType::depth == three_dim_data) {
         return get<1, 1>(layout.stride());
+    } else if constexpr (LayoutType::depth == four_dim_data) {
+        return get<1, 1>(layout.stride());
+    } else {
+        static_assert(LayoutType::depth == five_dim_data, "Only support 2D to 5D matrix layouts");
+        return get<1, 1, 1>(layout.stride());
     }
 }
 template <typename Shape>

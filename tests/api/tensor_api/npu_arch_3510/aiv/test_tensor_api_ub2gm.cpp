@@ -40,6 +40,8 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
+    copy(dst, src);
+    copy(dst, src, zero_coord, zero_coord, src.shape());
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>

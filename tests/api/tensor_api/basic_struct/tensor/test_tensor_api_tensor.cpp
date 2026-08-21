@@ -44,6 +44,10 @@ template <typename data_type>
 constexpr bool is_tensor_api_local_tensor_v =
     is_tensor_api_local_tensor<AscendC::Std::remove_cvref_t<data_type>>::value;
 
+template <typename Dst, typename Src>
+using dispatched_copy_operation = typename asc::te::copy_operation_dispatch_map::template get<
+    AscendC::Std::tuple<Dst, Src>>;
+
 template <typename tensor_type>
 void expect_tensor_basic_ability(const tensor_type& tensor, uint32_t size)
 {
@@ -214,6 +218,23 @@ TEST_F(tensor_api_tensor_struct, tensor_header_public_entry_builds)
     EXPECT_EQ(tensor.size(), 4);
 }
 
+TEST_F(tensor_api_tensor_struct, row_and_column_stride_support_batch_layouts)
+{
+    using namespace asc::te;
+
+    auto plain_layout = make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(32, 64);
+    auto plain_batch_layout = make_batch_pattern_layout<nd_ext_layout_ptn, get_layout_trait<decltype(plain_layout)>>(
+        3, plain_layout);
+    EXPECT_EQ(get_row_stride(plain_layout), get_row_stride(plain_batch_layout));
+    EXPECT_EQ(get_column_stride(plain_layout), get_column_stride(plain_batch_layout));
+
+    auto fractal_layout = make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(32, 64);
+    auto fractal_batch_layout = make_batch_pattern_layout<nz_layout_ptn, get_layout_trait<decltype(fractal_layout)>>(
+        3, fractal_layout);
+    EXPECT_EQ(get_row_stride(fractal_layout), get_row_stride(fractal_batch_layout));
+    EXPECT_EQ(get_column_stride(fractal_layout), get_column_stride(fractal_batch_layout));
+}
+
 TEST_F(tensor_api_tensor_struct, local_tensor_has_no_set_l2_cache_hint_method)
 {
     using namespace asc::te;
@@ -283,6 +304,30 @@ TEST_F(tensor_api_tensor_struct, all_on_chip_memory_types_no_set_l2_cache_hint)
     static_assert(is_tensor_api_local_tensor_v<decltype(l0a_tensor)>);
     static_assert(is_tensor_api_local_tensor_v<decltype(l0b_tensor)>);
     static_assert(is_tensor_api_local_tensor_v<decltype(l0c_tensor)>);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(tensor_api_tensor_struct, copy_operation_dispatch)
+{
+    using namespace asc::te;
+
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l1, location::gm>, copy_gm_to_l1>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::ub, location::gm>, copy_gm_to_ub>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::gm, location::ub>, copy_ub_to_gm>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l1, location::ub>, copy_ub_to_l1>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::ub, location::ub>, copy_ub_to_ub>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::ub, location::l1>, copy_l1_to_ub>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::bias, location::l1>, copy_l1_to_biastable>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::fixbuf, location::l1>, copy_l1_to_fixbuf>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l0a, location::l1>, copy_l1_to_l0a>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l0b, location::l1>, copy_l1_to_l0b>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l0scalea, location::l1>, copy_l1_to_l0scalea>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l0scaleb, location::l1>, copy_l1_to_l0scaleb>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::gm, location::l0c>, copy_l0c_to_gm>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::ub, location::l0c>, copy_l0c_to_ub>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::l1, location::l0c>, copy_l0c_to_l1>);
+    static_assert(Std::is_same_v<dispatched_copy_operation<location::gm, location::gm>, Std::ignore_t>);
 
     EXPECT_TRUE(true);
 }

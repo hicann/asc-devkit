@@ -88,6 +88,47 @@ __aicore__ inline constexpr void check_copy_params()
         "Shape must match the source layout shape, or use a supported logical matrix/batch shape.");
 }
 
+using copy_operation_dispatch_map = tuple_map<
+    Std::tuple<Std::tuple<location::l1, location::gm>, copy_gm_to_l1>,
+    Std::tuple<Std::tuple<location::ub, location::gm>, copy_gm_to_ub>,
+    Std::tuple<Std::tuple<location::gm, location::ub>, copy_ub_to_gm>,
+    Std::tuple<Std::tuple<location::l1, location::ub>, copy_ub_to_l1>,
+    Std::tuple<Std::tuple<location::ub, location::ub>, copy_ub_to_ub>,
+    Std::tuple<Std::tuple<location::ub, location::l1>, copy_l1_to_ub>,
+    Std::tuple<Std::tuple<location::bias, location::l1>, copy_l1_to_biastable>,
+    Std::tuple<Std::tuple<location::fixbuf, location::l1>, copy_l1_to_fixbuf>,
+    Std::tuple<Std::tuple<location::l0a, location::l1>, copy_l1_to_l0a>,
+    Std::tuple<Std::tuple<location::l0b, location::l1>, copy_l1_to_l0b>,
+    Std::tuple<Std::tuple<location::l0scalea, location::l1>, copy_l1_to_l0scalea>,
+    Std::tuple<Std::tuple<location::l0scaleb, location::l1>, copy_l1_to_l0scaleb>,
+    Std::tuple<Std::tuple<location::gm, location::l0c>, copy_l0c_to_gm>,
+    Std::tuple<Std::tuple<location::ub, location::l0c>, copy_l0c_to_ub>,
+    Std::tuple<Std::tuple<location::l1, location::l0c>, copy_l0c_to_l1>>;
+
+template <typename DstTensor, typename SrcTensor>
+using inferred_copy_operation_t = typename copy_operation_dispatch_map::template get<
+    Std::tuple<get_mem_location<DstTensor>, get_mem_location<SrcTensor>>>;
+
+template <typename DstTensor, typename SrcTensor>
+__aicore__ inline constexpr void check_quant_copy_locations()
+{
+    using dst_location = get_mem_location<DstTensor>;
+    using src_location = get_mem_location<SrcTensor>;
+    constexpr bool valid_dst = Std::is_same_v<dst_location, location::gm> ||
+        Std::is_same_v<dst_location, location::ub> || Std::is_same_v<dst_location, location::l1>;
+    static_assert(Std::is_same_v<src_location, location::l0c> && valid_dst,
+        "Quantized copy requires source on L0C and destination on GM, UB, or L1.");
+}
+
+template <typename DstTensor, typename SrcTensor, typename... Args>
+__aicore__ inline void dispatch_copy(const DstTensor& dst, const SrcTensor& src, const Args&... args)
+{
+    using operation = inferred_copy_operation_t<DstTensor, SrcTensor>;
+    static_assert(!Std::is_same_v<operation, Std::ignore_t>,
+        "Unsupported copy destination/source memory location combination.");
+    copy_atom<copy_traits<operation>>{}.call(dst, src, args...);
+}
+
 template <typename Atom, typename DstTensor, typename SrcTensor>
 __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src)
 {
@@ -100,6 +141,22 @@ __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, c
                             const Quant& quant)
 {
     atom.call(dst, src, quant);
+}
+
+template <typename DstTensor, typename SrcTensor,
+          Std::enable_if_t<is_attr_tensor_v<DstTensor> && is_attr_tensor_v<SrcTensor>, int> = 0>
+__aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src)
+{
+    dispatch_copy(dst, src);
+}
+
+template <typename DstTensor, typename SrcTensor, typename QuantParam,
+    Std::enable_if_t<is_attr_tensor_v<DstTensor> && is_attr_tensor_v<SrcTensor> &&
+        is_valid_quant_v<QuantParam>, int> = 0>
+__aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src, const QuantParam& quant)
+{
+    check_quant_copy_locations<DstTensor, SrcTensor>();
+    dispatch_copy(dst, src, quant);
 }
 
 template <typename Atom, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
@@ -121,6 +178,28 @@ __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, c
 {
     check_copy_params<SrcTensor, SrcCoord, CopyShape>();
     atom.call(dst, src, quant, dst_coord, src_coord, copy_shape);
+}
+
+template <typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord, typename CopyShape,
+    Std::enable_if_t<is_attr_tensor_v<DstTensor> && is_attr_tensor_v<SrcTensor> &&
+        is_valid_coord_v<DstCoord> && is_valid_coord_v<SrcCoord> && is_valid_shape_v<CopyShape>, int> = 0>
+__aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+    const SrcCoord& src_coord, const CopyShape& copy_shape)
+{
+    check_copy_params<SrcTensor, SrcCoord, CopyShape>();
+    dispatch_copy(dst, src, dst_coord, src_coord, copy_shape);
+}
+
+template <typename DstTensor, typename SrcTensor, typename QuantParam, typename DstCoord, typename SrcCoord,
+    typename CopyShape, Std::enable_if_t<is_attr_tensor_v<DstTensor> && is_attr_tensor_v<SrcTensor> &&
+        is_valid_quant_v<QuantParam> && is_valid_coord_v<DstCoord> && is_valid_coord_v<SrcCoord> &&
+        is_valid_shape_v<CopyShape>, int> = 0>
+__aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src, const QuantParam& quant,
+    const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape)
+{
+    check_copy_params<SrcTensor, SrcCoord, CopyShape>();
+    check_quant_copy_locations<DstTensor, SrcTensor>();
+    dispatch_copy(dst, src, quant, dst_coord, src_coord, copy_shape);
 }
 
 template <typename CopyOperation>

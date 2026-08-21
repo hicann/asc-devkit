@@ -48,6 +48,8 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
     copy(atom, dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
+    copy(dst, src);
+    copy(dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
@@ -97,6 +99,26 @@ void load_cbuf_to_ca_stub(__ca__ data_type* dst, __cbuf__ data_type* src,
     EXPECT_EQ(m_step, expected_m_step);
     EXPECT_EQ(k_step, expected_k_step);
     EXPECT_EQ(transposed, transpose);
+}
+
+TEST_F(tensor_api_cube_copy_3510, copy_l1_to_l0a_steps)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t dim = 32;
+    __cbuf__ half src[dim * dim] = {0};
+    __ca__ half dst[dim * dim] = {0};
+    auto layout = make_frame_layout<nz_layout_ptn, layout_trait_default<half>>(dim, dim);
+    auto src_tensor = make_tensor_at<location::l1>(src, layout);
+    auto dst_tensor = make_tensor_at<location::l0a>(dst, layout);
+
+    MOCKER_CPP(load_cbuf_to_ca,
+        void(__ca__ half*, __cbuf__ half*, uint16_t, uint16_t, uint8_t, uint8_t, int16_t, uint16_t, bool))
+        .times(1)
+        .will(invoke(&load_cbuf_to_ca_stub<false, half, 1, 1>));
+
+    copy(dst_tensor, src_tensor, make_coord(16, 0), make_coord(0, 0), make_shape(16, 16));
+    mockcpp::GlobalMockObject::verify();
 }
 
 template<typename data_type, int expected_m_step, int expected_k_step, int expected_src_stride, int expected_dst_stride>

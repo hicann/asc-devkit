@@ -45,6 +45,8 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
     copy(atom, dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
+    copy(dst, src);
+    copy(dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
@@ -85,6 +87,19 @@ void load_cbuf_to_ca_mx_batch_stub(uint64_t dst, __cbuf__ void* src, uint16_t x_
     EXPECT_EQ(src_stride, 16);
     EXPECT_EQ(dst_stride, 16);
     ++g_scalea_call_idx;
+}
+
+void load_cbuf_to_ca_mx_stride_stub(uint64_t dst, __cbuf__ void* src, uint16_t x_start_pos,
+    uint16_t y_start_pos, uint8_t x_step, uint8_t y_step, uint16_t src_stride, uint16_t dst_stride)
+{
+    EXPECT_EQ(dst, g_expected_mx_dst_addr);
+    EXPECT_EQ(src, g_expected_mx_src);
+    EXPECT_EQ(x_start_pos, 0);
+    EXPECT_EQ(y_start_pos, 0);
+    EXPECT_EQ(x_step, 2);
+    EXPECT_EQ(y_step, 1);
+    EXPECT_EQ(src_stride, 2);
+    EXPECT_EQ(dst_stride, 2);
 }
 
 } // namespace
@@ -137,5 +152,29 @@ TEST_F(tensor_api_cube_copy_l1_to_l0scalea_3510, copy_l1_to_l0scalea_batch)
     copy(copy_atom<copy_traits<copy_l1_to_l0scalea, l1_to_l0scalea_trait_default>>{}, l0a_tensor, l1_tensor);
 
     EXPECT_EQ(g_scalea_call_idx, batch);
+    mockcpp::GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_cube_copy_l1_to_l0scalea_3510, copy_l1_to_l0scalea_stride)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t m = 32;
+    constexpr uint32_t n = 4;
+    __cbuf__ fp8_e8m0_t src[m * n] = {0};
+    __ca__ fp8_e8m0_t dst[m * n] = {0};
+    auto layout = make_frame_layout<zz_layout_ptn, AscendC::Std::Int<2>>(m, n);
+    auto src_tensor = make_tensor(make_mem_ptr<location::l1>(src), layout);
+    auto dst_ptr = make_mem_ptr<location::l0scalea, fp8_e8m0_t>(reinterpret_cast<uint64_t>(dst) / 16);
+    auto dst_tensor = make_tensor(dst_ptr, layout);
+
+    g_expected_mx_dst_addr = reinterpret_cast<uint64_t>(dst) / 16;
+    g_expected_mx_src = reinterpret_cast<__cbuf__ void*>(src + layout(make_coord(0, 2)));
+    MOCKER_CPP(load_cbuf_to_ca_mx,
+        void(uint64_t, __cbuf__ void*, uint16_t, uint16_t, uint8_t, uint8_t, uint16_t, uint16_t))
+        .times(1)
+        .will(invoke(&load_cbuf_to_ca_mx_stride_stub));
+
+    copy(dst_tensor, src_tensor, make_coord(0, 0), make_coord(0, 2), make_shape(32, 2));
     mockcpp::GlobalMockObject::verify();
 }

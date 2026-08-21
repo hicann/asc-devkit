@@ -57,7 +57,7 @@ public:
         auto m_step = get<1, 1>(src_shape);
         auto k_step = get<0, 1>(src_shape);
         auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src.layout()) >> 5;
-        auto dst_stride = k_step;
+        auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst.layout()) >> 5;
         uint64_t mx_dst_addr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>((dst.data() + dst_offset).get()));
         load_l1_to_l0b_scale_instr::load_data_with_offset(mx_dst_addr, src, _0{}, src_offset, 0, 0, m_step, k_step,
                                                           src_stride, dst_stride);

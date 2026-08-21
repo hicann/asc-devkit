@@ -31,6 +31,15 @@ protected:
 
 namespace {
 
+uint64_t expected_bt_dst = 0;
+__cbuf__ float* expected_bt_src = nullptr;
+
+void copy_cbuf_to_bt_offset_stub(uint64_t dst, __cbuf__ float* src, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t)
+{
+    EXPECT_EQ(dst, expected_bt_dst);
+    EXPECT_EQ(src, expected_bt_src);
+}
+
 template <typename location_tag, typename pointer_type, typename layout_type>
 auto make_tensor_at(pointer_type ptr, const layout_type& layout)
 {
@@ -48,6 +57,8 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
     copy(atom, dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
+    copy(dst, src);
+    copy(dst, src, zero_coord, make_coord(0, 0), make_shape(16, 16));
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
@@ -97,6 +108,24 @@ TEST_F(tensor_api_cube_copy_3510, copy_l1_to_bt_nd_layout_routes_to_cube_arch_co
     run_copy_default_paths<copy_l1_to_biastable, l1_to_biastable_trait_default>(biastable_tensor, l1_tensor);
 
     EXPECT_EQ(dst[0], 0);
+}
+
+TEST_F(tensor_api_cube_copy_3510, copy_l1_to_bt_offsets)
+{
+    using namespace asc::te;
+    __cbuf__ float src[64] = {0};
+    __biasbuf__ float dst[64] = {0};
+    auto layout = make_frame_layout<nd_ext_layout_ptn, layout_trait_default<float>>(1, 64);
+    auto src_tensor = make_tensor_at<location::l1>(src, layout);
+    auto dst_tensor = make_tensor_at<location::bias>(dst, layout);
+    expected_bt_dst = reinterpret_cast<uint64_t>(dst + 16);
+    expected_bt_src = src + 8;
+    MOCKER_CPP(copy_cbuf_to_bt, void(uint64_t, __cbuf__ float*, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t))
+        .times(1)
+        .will(invoke(&copy_cbuf_to_bt_offset_stub));
+    copy(make_copy(copy_l1_to_biastable{}, l1_to_biastable_trait_default{}), dst_tensor, src_tensor,
+         make_coord(0, 16), make_coord(0, 8), make_shape(1, 16));
+    GlobalMockObject::verify();
 }
 
 enum class cube_layout {

@@ -44,6 +44,18 @@ protected:
         copy_ub_to_gm_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_stride,
                                        dst_stride, cache_mode);
     }
+
+    template <typename T, typename U, typename DstOffset, typename SrcOffset>
+    __aicore__ inline static void emit_copy(const T& dst, const U& src, const DstOffset& dst_offset,
+        const SrcOffset& src_offset, uint16_t block_count, uint32_t block_len, int64_t src_stride, int64_t dst_stride)
+    {
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
+        adjust_b4_copy_params<src_type, dst_type>(block_len, src_stride, dst_stride);
+        auto cache_mode = static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode());
+        copy_ub_to_gm_instr::data_copy((dst.data() + dst_offset).get(), (src.data() + src_offset).get(),
+            block_count, block_len, src_stride, dst_stride, cache_mode);
+    }
 };
 
 } // namespace te

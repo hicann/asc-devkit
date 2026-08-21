@@ -9,6 +9,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <mockcpp/mockcpp.hpp>
 #include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
@@ -40,6 +41,8 @@ void run_copy_call_paths(const dst_tensor_type& dst, const src_tensor_type& src)
 
     copy_atom<copy_traits<copy_operation, trait_type>>{}.call(dst, src);
     copy(copy_atom<copy_traits<copy_operation, trait_type>>{}, dst, src);
+    copy(dst, src);
+    copy(dst, src, zero_coord, zero_coord, src.shape());
 }
 
 template <typename copy_operation, typename trait_type, typename dst_tensor_type, typename src_tensor_type>
@@ -50,6 +53,43 @@ void run_copy_default_paths(const dst_tensor_type& dst, const src_tensor_type& s
     auto atom = copy_atom<copy_traits<copy_operation, trait_type>>{};
     atom.call(dst, src);
     copy(atom, dst, src);
+}
+
+__cbuf__ void* expected_l1_dst = nullptr;
+__ubuf__ void* expected_ub_src = nullptr;
+uint16_t expected_block_count = 0;
+uint16_t expected_block_len = 0;
+uint16_t expected_src_gap = 0;
+uint16_t expected_dst_gap = 0;
+
+void copy_ubuf_to_cbuf_stub(__cbuf__ void* dst, __ubuf__ void* src, uint8_t sid, uint16_t block_count,
+    uint16_t block_len, uint16_t src_gap, uint16_t dst_gap)
+{
+    EXPECT_EQ(dst, expected_l1_dst);
+    EXPECT_EQ(src, expected_ub_src);
+    EXPECT_EQ(sid, 0);
+    EXPECT_EQ(block_count, expected_block_count);
+    EXPECT_EQ(block_len, expected_block_len);
+    EXPECT_EQ(src_gap, expected_src_gap);
+    EXPECT_EQ(dst_gap, expected_dst_gap);
+}
+
+template <typename Call>
+void check_copy_params(__cbuf__ void* dst, __ubuf__ void* src, uint16_t block_count, uint16_t block_len,
+    uint16_t src_gap, uint16_t dst_gap, Call call)
+{
+    expected_l1_dst = dst;
+    expected_ub_src = src;
+    expected_block_count = block_count;
+    expected_block_len = block_len;
+    expected_src_gap = src_gap;
+    expected_dst_gap = dst_gap;
+    MOCKER_CPP(copy_ubuf_to_cbuf,
+        void(__cbuf__ void*, __ubuf__ void*, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t))
+        .times(1)
+        .will(invoke(copy_ubuf_to_cbuf_stub));
+    call();
+    GlobalMockObject::verify();
 }
 
 } // namespace
@@ -160,4 +200,23 @@ TEST_F(tensor_api_vector_copy_3510, copy_ub_to_l1_zn_to_zn)
     run_copy_default_paths<copy_ub_to_l1, ub_to_l1_trait_default>(l1_tensor, ub_tensor);
 
     EXPECT_EQ(dst[0], 0);
+}
+
+TEST_F(tensor_api_vector_copy_3510, copy_ub_to_l1_nz_example_params)
+{
+    using namespace asc::te;
+    __ubuf__ int8_t src[32 * 64] = {0};
+    __cbuf__ int8_t dst[32 * 64] = {0};
+    auto layout = make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(32, 64);
+    auto src_tensor = make_tensor_at<location::ub>(src, layout);
+    auto dst_tensor = make_tensor_at<location::l1>(dst, layout);
+    auto atom = make_copy(copy_ub_to_l1{}, ub_to_l1_trait_default{});
+
+    check_copy_params(dst + layout(make_coord(0, 32)), src, 1, 32, 0, 0, [&] {
+        copy(atom, dst_tensor, src_tensor, make_coord(0, 32), make_coord(0, 0), make_shape(32, 32));
+    });
+    check_copy_params(dst, src, 2, 32, 0, 0, [&] { copy(dst_tensor, src_tensor); });
+    check_copy_params(dst + layout(make_coord(16, 0)), src, 2, 16, 16, 16, [&] {
+        copy(dst_tensor, src_tensor, make_coord(16, 0), make_coord(0, 0), make_shape(16, 64));
+    });
 }

@@ -51,6 +51,24 @@ __aicore__ inline void copy_ub_to_l1::data_copy_impl(const DstTensor& dst, const
     copy_ub_to_l1_impl::template run<trait, DstTensor, SrcTensor>(dst, src);
 }
 
+template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor,
+    typename DstCoord, typename SrcCoord, typename ShapeType>
+__aicore__ inline void copy_ub_to_l1::data_copy_impl(const DstTensor& dst, const SrcTensor& src,
+    const DstCoord& dst_coord,
+    const SrcCoord& src_coord, const ShapeType& copy_shape)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(Std::is_same_v<dst_pos, location::l1>, "When Copy tensor from UB to L1, dst tensor must on L1");
+    static_assert(Std::is_same_v<src_pos, location::ub>, "When Copy tensor from UB to L1, src tensor must on UB");
+    using dst_layout_ptn = get_layout_pattern<typename DstTensor::layout_type>;
+    using src_layout_ptn = get_layout_pattern<typename SrcTensor::layout_type>;
+    using copy_ub_to_l1_impl =
+        typename copy_ub_to_l1_routing<current_arch_version, dst_layout_ptn, src_layout_ptn>::type;
+    auto resolved_dst = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
+    auto resolved_src = resolve_copy_coord(src.layout(), copy_shape, src_coord);
+    copy_ub_to_l1_impl::template run<trait, DstTensor, SrcTensor>(dst, src, resolved_dst, resolved_src, copy_shape);
+}
 } // namespace te
 } // namespace asc
 

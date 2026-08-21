@@ -51,6 +51,11 @@ struct copy_ub_to_l1 {
 private:
     template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
+
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
+        const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape);
 };
 
 struct copy_ub_to_gm {
@@ -60,6 +65,11 @@ struct copy_ub_to_gm {
 private:
     template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
+
+    template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
+        const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape);
 };
 
 struct copy_ub_to_ub {
@@ -69,6 +79,11 @@ struct copy_ub_to_ub {
 private:
     template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
+
+    template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
+        const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape);
 };
 
 } // namespace te
