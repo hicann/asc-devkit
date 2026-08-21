@@ -131,6 +131,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 -   传入的C矩阵地址空间大小需要保证不小于baseM \* baseN。
 -   异步场景时，需要使用一块临时空间来缓存Iterate计算结果，调用GetTensorC时会在该临时空间中获取C的矩阵分片。临时空间通过[SetWorkspace](SetWorkspace.md)接口进行设置。SetWorkspace接口需要在Iterate接口之前调用。
 -   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
+<!-- npu="950,A3,910b,310p,310b,x90,9030" id28 -->
 -   支持的数据类型<a id="li12616155731720"></a>
 
     <!-- npu="950" id14 -->
@@ -182,6 +183,9 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
     <!-- npu="310b" id23 -->
     Atlas 200I/500 A2 推理产品，支持的数据类型为：ND、NZ。
     <!-- end id23 -->
+<!-- end id28 -->
+
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetTensorC_res.md#id2 -->
 
 ## 调用示例
 

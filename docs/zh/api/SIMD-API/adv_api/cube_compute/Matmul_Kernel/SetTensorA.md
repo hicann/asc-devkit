@@ -73,6 +73,7 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorA\(SrcAT aScalar\)接口原�
 ## 约束说明
 
 -   传入的TensorA地址空间大小需要保证不小于singleM \* singleK。
+<!-- npu="950,A3,910b,310p,310b,x90,9030" id24 -->
 -   gm和leftMatrix支持的数据类型<a id="li12616155731720"></a>
 
     <!-- npu="950" id9 -->
@@ -132,6 +133,10 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorA\(SrcAT aScalar\)接口原�
     <!-- npu="9030" id6 -->
     Kirin 9030，支持的数据类型为：half。
     <!-- end id6 -->
+
+<!-- end id24 -->
+
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetTensorA_res.md#id2 -->
 
 ## 调用示例
 

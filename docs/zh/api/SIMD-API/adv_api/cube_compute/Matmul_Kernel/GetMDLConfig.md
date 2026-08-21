@@ -68,6 +68,8 @@ __aicore__ constexpr MatmulConfig GetMDLConfig(const bool intrinsicsLimit = fals
 
 无
 
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetMDLConfig_res.md#id2 -->
+
 ## 调用示例
 
 ```

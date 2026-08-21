@@ -66,6 +66,8 @@ __aicore__ constexpr MatmulConfig GetNormalConfig(const bool intrinsicsLimit = f
 
 无
 
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetNormalConfig_res.md#id2 -->
+
 ## 调用示例
 
 ```

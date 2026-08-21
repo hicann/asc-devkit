@@ -38,6 +38,7 @@
 
     <!-- npu="310b" id11 -->针对Atlas 200I/500 A2 推理产品，当前只支持使用默认的Norm模板。<!-- end id11 -->
 
+<!-- npu="950,A3,910b,310p,310b,x90" id20 -->
 <a id="matmul-callback-func"></a>
 
 -   MatmulCallBackFunc回调函数信息（可选），用于配置A矩阵从GM拷贝到L1 Buffer（A1）、B矩阵从GM拷贝到L1 Buffer（B1）、计算结果从L0C Buffer（CO1）拷贝到GM的自定义函数。当前支持如下产品型号：
@@ -75,6 +76,7 @@
     <!-- npu="x90" id4 -->
     Kirin X90
     <!-- end id4 -->
+<!-- end id20 -->
 
 ## 函数原型
 

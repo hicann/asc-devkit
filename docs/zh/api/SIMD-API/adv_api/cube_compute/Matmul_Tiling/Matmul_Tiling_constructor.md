@@ -33,6 +33,7 @@
         explicit MultiCoreMatmulTiling(const PlatformInfo& platform)
         ```
 
+<!-- npu="A3,910b" id3 -->
 -   无参构造函数
 
     ```
@@ -56,6 +57,7 @@
     <!-- npu="A3" id2 -->
     Atlas A3 训练系列产品
     <!-- end id2 -->
+<!-- end id3 -->
 
 -   基类构造函数
 

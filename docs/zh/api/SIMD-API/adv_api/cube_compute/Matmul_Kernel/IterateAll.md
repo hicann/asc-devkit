@@ -66,6 +66,7 @@ template <bool sync = true> __aicore__ inline void IterateAll(const LocalTensor<
 ## 约束说明
 
 -   传入的C矩阵地址空间大小需要保证不小于singleCoreM \* singleCoreN个元素。
+<!-- npu="950,A3,910b,310p,310b,x90" id18 -->
 -   支持的数据类型<a id="li12616155731720"></a>
 
     <!-- npu="950" id9 -->
@@ -91,6 +92,10 @@ template <bool sync = true> __aicore__ inline void IterateAll(const LocalTensor<
     <!-- npu="x90" id2 -->
     Kirin X90，支持的数据类型为：half、int8_t、int32_t。
     <!-- end id2 -->
+
+<!-- end id18 -->
+
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateAll_res.md#id2 -->
 
 ## 调用示例
 

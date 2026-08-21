@@ -60,6 +60,7 @@ __aicore__ inline void SetBias(const LocalTensor<BiasT>& inputBias)
 <!-- npu="950" id13 -->
 -   对于Ascend 950PR/Ascend 950DT，Bias矩阵的内存逻辑位置为TSCM且数据类型为float或int32\_t时，Bias矩阵的LocalTensor空间必须64字节对齐。
 <!-- end id13 -->
+<!-- npu="950,A3,910b,310p,310b,x90" id14 -->
 -   支持的数据类型<a id="li12616155731720"></a>
 
     <!-- npu="950" id8 -->
@@ -82,9 +83,13 @@ __aicore__ inline void SetBias(const LocalTensor<BiasT>& inputBias)
     Atlas 200I/500 A2 推理产品，支持的数据类型为：half、float、int32_t，其中仅在A、B的数据类型为int8_t时，Bias的数据类型可以设置为int32_t。
     <!-- end id12 -->
 
-    <!-- npu="x90" id2 -->
+    <!-- npu="x90" id15 -->
     Kirin X90，支持的数据类型为：half、int32_t，其中仅在A、B的数据类型为int8_t时，Bias的数据类型可以设置为int32_t。
-    <!-- end id2 -->
+    <!-- end id15 -->
+
+<!-- end id14 -->
+
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetBias_res.md#id2 -->
 
 ## 调用示例
 
