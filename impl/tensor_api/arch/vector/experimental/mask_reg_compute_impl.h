@@ -10,7 +10,7 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning                                                                                                               \
-    "impl/tensor_api/arch/vector/experimental/MaskReg_compute_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use tensor_api/arch/vector/experimental/MaskReg_compute.h instead."
+    "impl/tensor_api/arch/vector/experimental/mask_reg_compute_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use tensor_api/arch/vector/experimental/mask_reg_compute.h instead."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H__
 #endif
@@ -18,7 +18,7 @@
 #ifndef IMPL_TENSOR_API_ARCH_VECTOR_EXPERIMENTAL_MASK_REG_COMPUTE_IMPL_H
 #define IMPL_TENSOR_API_ARCH_VECTOR_EXPERIMENTAL_MASK_REG_COMPUTE_IMPL_H
 
-#include "tensor_api/arch/vector/experimental/MaskReg_compute.h"
+#include "tensor_api/arch/vector/experimental/mask_reg_compute.h"
 
 namespace asc {
 namespace te {

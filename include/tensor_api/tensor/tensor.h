@@ -20,17 +20,10 @@
 #ifndef INCLUDE_TENSOR_API_TENSOR_TENSOR_H
 #define INCLUDE_TENSOR_API_TENSOR_TENSOR_H
 
-namespace asc {
-namespace te {
-
-enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent = 6 };
-
-} // namespace te
-} // namespace asc
-
 #include "tensor_api/tensor/layout_interface.h"
 #include "tensor_api/tensor/pointer.h"
 #include "impl/tensor_api/tensor/tuple_impl.h"
+#include "tensor_api/utils/utils.h"
 
 namespace asc {
 namespace te {

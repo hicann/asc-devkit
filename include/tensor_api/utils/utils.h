@@ -29,6 +29,40 @@ namespace te {
 
 namespace Std = AscendC::Std;
 
+/** @brief Data layout selected by a width-changing register cast. */
+enum class cast_layout {
+    unknow = -1,
+    zero,
+    one,
+    two,
+    three,
+};
+
+/** @brief Rounding behavior for register cast. */
+enum class cast_round_mode {
+    unknow = -1,
+    rint,
+    round,
+    floor,
+    ceil,
+    trunc,
+};
+
+/** @brief Saturation behavior for register cast. */
+enum class cast_sat_mode {
+    unknow = -1,
+    not_sat,
+    sat,
+};
+
+struct cast_options {
+    cast_layout layout = cast_layout::zero;
+    cast_round_mode round = cast_round_mode::rint;
+    cast_sat_mode sat = cast_sat_mode::not_sat;
+};
+
+enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent = 6 };
+
 enum class load_sideband_mode : uint8_t {
     direct,
     deintlv,
