@@ -243,6 +243,16 @@ def gen_sub_super_kernel_compile_options(
     compile_option_tuple.compile_options.append("-D__ASCENDC_ENABLE_SUPER_KERNEL__")
     sp_add_sub_op_block_num_macro(compile_option_tuple, tiling_info)
     sp_add_sub_op_feed_sync_all_macro(compile_info, compile_option_tuple)
+    if (
+        get_context().get_addition("super_kernel_sub_combine") is True
+        and compile_info.super_kernel_info["sp_options"].get(
+            "debug-per-op-max-core-num", "0"
+        )
+        == "1"
+    ):
+        compile_option_tuple.compile_options.append(
+            "-D__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__"
+        )
     stream_fusion_mode = compile_info.super_kernel_info["sp_options"].get(
         "stream-fusion", SuperKernelStreamFusionMode.StreamFusionDisable
     )

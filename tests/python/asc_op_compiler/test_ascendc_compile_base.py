@@ -912,6 +912,29 @@ const static uint64_t L0A_SIZE = 65536 * get_block_idx();
             compile_option_tuple.compile_options,
         )
 
+    def test_gen_sub_super_kernel_compile_options_inner_core_sync_check(self):
+        cases = (("0", True, False), ("1", True, True), ("1", False, False))
+        for option_value, is_aclgraph, should_enable in cases:
+            with self.subTest(option_value=option_value, is_aclgraph=is_aclgraph):
+                with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
+                    ctx.add_addition("super_kernel_sub_combine", is_aclgraph)
+                    compile_option_tuple = CompileOptionTuple([], [])
+                    tiling_info = TilingInfo()
+                    tiling_info.static_shape_flag = False
+                    compile_info = CompileInfo()
+                    compile_info.super_kernel_info = {
+                        "sp_options": {
+                            "debug-per-op-max-core-num": option_value,
+                        }
+                    }
+                    gen_sub_super_kernel_compile_options(
+                        compile_option_tuple, tiling_info, compile_info
+                    )
+                macro = "-D__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__"
+                self.assertEqual(
+                    macro in compile_option_tuple.compile_options, should_enable
+                )
+
     def test_add_sub_super_kernel_info(self):
         compile_info = CompileInfo()
         global_var_storage.set_variable("ascendc_enable_super_kernel", True)

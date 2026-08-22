@@ -305,6 +305,29 @@ class TestAscendCCompileBase(unittest.TestCase):
                         compile_option_tuple.compile_options,
                     )
 
+    def test_gen_sub_super_kernel_compile_options_inner_core_sync_check(self):
+        cases = (("0", True, False), ("1", True, True), ("1", False, False))
+        for option_value, is_aclgraph, should_enable in cases:
+            with self.subTest(option_value=option_value, is_aclgraph=is_aclgraph):
+                with tbe.common.context.op_context.OpContext() as ctx:
+                    ctx.add_addition("super_kernel_sub_combine", is_aclgraph)
+                    compile_option_tuple = CompileOptionTuple([], [])
+                    tiling_info = TilingInfo()
+                    tiling_info.static_shape_flag = False
+                    compile_info = CompileInfo()
+                    compile_info.super_kernel_info = {
+                        "sp_options": {
+                            "debug-per-op-max-core-num": option_value,
+                        }
+                    }
+                    gen_sub_super_kernel_compile_options(
+                        compile_option_tuple, tiling_info, compile_info
+                    )
+                macro = "-D__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__"
+                self.assertEqual(
+                    macro in compile_option_tuple.compile_options, should_enable
+                )
+
     def test_gen_sub_super_kernel_early_start_compile_options(self):
         # early start sub kernel disable
         with tbe.common.context.op_context.OpContext() as ctx:

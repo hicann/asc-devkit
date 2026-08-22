@@ -124,6 +124,12 @@ class TestCompileUtility(unittest.TestCase):
             },
         )
 
+    def test_aclgraph_options_accept_debug_per_op_max_core_num(self):
+        with OpContext() as ctx:
+            ctx.add_addition("super_kernel_sub_combine", True)
+            res = parse_super_kernel_options("debug_per_op_max_core_num=1")
+        self.assertEqual(res, {"debug-per-op-max-core-num": "1"})
+
     def test_aclgraph_options_reject_non_binary_early_start(self):
         with OpContext() as ctx:
             ctx.add_addition("super_kernel_sub_combine", True)

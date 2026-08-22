@@ -770,6 +770,11 @@ constexpr uint32_t ASCENDC_SUPER_KERNEL_EARLY_START_MASK_AIC_TO_AIV_WAIT = 1U <<
 constexpr uint32_t ASCENDC_SUPER_KERNEL_EARLY_START_CTRL_SPLIT_CORE = 1U << 15;
 } // namespace Internal
 
+#if defined(__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__)
+constexpr int32_t SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE = 0x5A5A5A5A;
+__BLOCK_LOCAL__ __inline__ int32_t g_superKernelSetWaitFlagCountDifference;
+#endif
+
 #if defined(__ASCENDC_SUPERKERNEL_AUTO_SYNC_ALL__)
 __BLOCK_LOCAL__ __inline__ __gm__ uint8_t* g_superKernelAutoSyncAllConfigGmBaseAddr;
 __BLOCK_LOCAL__ __inline__ __gm__ uint8_t* g_superKernelAutoSyncAllConfigGmAddr;

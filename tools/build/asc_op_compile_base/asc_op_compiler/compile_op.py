@@ -833,8 +833,21 @@ def gen_kernel_fun(
             source += "do {\n"
 
     need_ffts = is_mix or is_single_and_using_hard_sync
+    context = get_context()
+    enable_inner_core_sync_check = (
+        global_var_storage.get_variable("ascendc_enable_super_kernel") is True
+        and context is not None
+        and context.get_addition("super_kernel_sub_combine") is True
+        and compile_info.super_kernel_info["sp_options"].get(
+            "debug-per-op-max-core-num", "0"
+        )
+        == "1"
+    )
 
     # call usr kernel function call
+    if enable_inner_core_sync_check:
+        source += "    AscendC::g_superKernelSetWaitFlagCountDifference = "
+        source += "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE;\n"
     source += "#if defined(TEMPLATE_PARAMS_LEN) && TEMPLATE_PARAMS_LEN != 0\n"
     source += gen_usr_origin_kernel_function_call(
         func_name, opinfo, tiling_info, has_template=True
@@ -844,6 +857,20 @@ def gen_kernel_fun(
         func_name, opinfo, tiling_info, has_template=False
     )
     source += "#endif\n"
+    if enable_inner_core_sync_check:
+        source += "    if (AscendC::g_superKernelSetWaitFlagCountDifference > "
+        source += "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE) {\n"
+        source += '        assert(false, "SuperKernel: current operator has %d more '
+        source += 'SetFlag calls than WaitFlag calls; Please check synchronization within the current operator.\\n", '
+        source += "AscendC::g_superKernelSetWaitFlagCountDifference - "
+        source += "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE);\n"
+        source += "    } else if (AscendC::g_superKernelSetWaitFlagCountDifference < "
+        source += "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE) {\n"
+        source += '        assert(false, "SuperKernel: current operator has %d more '
+        source += 'WaitFlag calls than SetFlag calls; Please check synchronization within the current operator.\\n", '
+        source += "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE - "
+        source += "AscendC::g_superKernelSetWaitFlagCountDifference);\n"
+        source += "    }\n"
 
     if len(compile_info.tiling_key_struct_map) > 0:
         source += _gen_tpl_tiling_struct_section(compile_info, tiling_info)
