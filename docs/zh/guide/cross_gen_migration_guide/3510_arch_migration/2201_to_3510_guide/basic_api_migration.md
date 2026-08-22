@@ -318,7 +318,7 @@
         }
         ```
 
--   **L0A Buffer分形改变，从ZZ转换为ZN格式。**
+-   **L0A Buffer分形改变，从Zz转换为Nz格式。**
 
     **说明**：涉及的API有LoadData、Mmad和LoadDataWithTranspose。
 

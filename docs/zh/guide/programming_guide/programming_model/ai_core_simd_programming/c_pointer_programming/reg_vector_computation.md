@@ -481,7 +481,7 @@ asc_storeunalign_post(dst_addr, store_ureg, 0);
 ```
 
 #### PostUpdate模式
-PostUpdate表示搬运接口在完成本次访问后自动更新UB地址指针。在搬运接口会以*_postupdate结尾表示。例如：使用对齐搬运的[`asc_loadalign_postupdate`](../../../../../api/SIMD-API/c_api/reg/reg_load/asc_loadunalign_postupdate.md)。当i = 0时：搬入数据地址src_addr，同时在搬运后硬件更新src_addr = src_addr + offset；当i = 1时：搬入数据地址为更新后的src_addr,同时在搬运后硬件再次更新src_addr = src_addr + stride；以此类推。
+PostUpdate表示搬运接口在完成本次访问后自动更新UB地址指针。在搬运接口会以*_postupdate结尾表示。例如：使用对齐搬运的[`asc_loadalign_postupdate`](../../../../../api/SIMD-API/c_api/reg/reg_load/asc_loadalign_postupdate.md)。当i = 0时：搬入数据地址src_addr，同时在搬运后硬件更新src_addr = src_addr + offset；当i = 1时：搬入数据地址为更新后的src_addr,同时在搬运后硬件再次更新src_addr = src_addr + stride；以此类推。
 
 ```cpp
 for (uint16_t i = 0; i < repeat_times; ++i) {

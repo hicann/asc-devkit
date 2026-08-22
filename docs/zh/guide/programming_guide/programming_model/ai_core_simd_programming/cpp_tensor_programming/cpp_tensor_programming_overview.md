@@ -71,7 +71,7 @@ GM是昇腾NPU的设备内存，位于AI Core外部，容量大、带宽高但�
 __global__ __vector__ void add_custom(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z)
 {
     AscendC::GlobalTensor<float> xGm;
-    xGm.SetGlobalBuffer(x + block_idx * blockLength, blockLength);
+    xGm.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(x) + block_idx * blockLength, blockLength);
     ...
 }
 

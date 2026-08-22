@@ -109,7 +109,7 @@ __aicore__ inline void SetCmpMask(const LocalTensor<T>& src)
     AscendC::LocalTensor<int32_t> tempBuf;
     #if defined(ASCENDC_CPU_DEBUG) && (ASCENDC_CPU_DEBUG == 1)  // cpu调试
     tempBuf.ReinterpretCast<int64_t>().SetValue(0, reinterpret_cast<int64_t>(reinterpret_cast<__ubuf__ int64_t*>(sel.GetPhyAddr())));
-    event_t eventIdSToV = static_cast<event_t>(AscendC::GetTPipePtr()->FetchEventID(AscendC::HardEvent::S_V));
+    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(AscendC::HardEvent::S_V));
     AscendC::SetFlag<AscendC::HardEvent::S_V>(eventIdSToV);
     AscendC::WaitFlag<AscendC::HardEvent::S_V>(eventIdSToV);
     #else // npu调试

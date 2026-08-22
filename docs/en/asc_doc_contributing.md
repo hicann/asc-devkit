@@ -7,7 +7,7 @@ The Ascend C documentation system consists of five core documents. Developers ca
 | Document | Content | Directory |
 |----------|---------|-----------|
 | Getting Started Tutorial | Ascend C overview, environment setup, quick-start hands-on (HelloWorld, first operator) | `docs/zh/guide/getting_started` |
-| Programming Guide | Programming models, programming paradigms, compilation & execution, hardware architecture, advanced programming | `docs/zh/guide/编程指南` |
+| Programming Guide | Programming models, programming paradigms, compilation & execution, hardware architecture, advanced programming | `docs/zh/guide/programming_guide` |
 | API Reference Manual | Interface parameters, constraints, examples, API associations | `docs/zh/api/` |
 | Operator Practice Reference | Operator implementation, performance optimization, tuning cases | `docs/zh/guide/operator_practice/` |
 | Cross-generation Migration & Compatibility Guide | API compatibility strategies, architecture change mappings, migration steps | `docs/zh/guide/cross_gen_migration_guide/` |

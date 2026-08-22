@@ -7,7 +7,7 @@ Ascend C资料体系包含五份核心文档，开发者可以通过提交PR对�
 | 文档 | 内容 | 文档目录 |
 |------|------|---------|
 | 入门教程 | Ascend C概述、环境准备、快速上手（HelloWorld、首个算子） | `docs/zh/guide/getting_started` |
-| 编程指南 | 编程模型、编程范式、编译运行、硬件架构、高级编程 | `docs/zh/guide/编程指南` |
+| 编程指南 | 编程模型、编程范式、编译运行、硬件架构、高级编程 | `docs/zh/guide/programming_guide` |
 | API参考手册 | 接口参数、约束、示例、API关联 | `docs/zh/api/` |
 | 算子实践参考 | 算子实现、性能优化、调优案例 | `docs/zh/guide/operator_practice/` |
 | 跨代迁移兼容性指南 | API兼容策略、架构变更映射、迁移步骤 | `docs/zh/guide/cross_gen_migration_guide/` |
@@ -487,7 +487,7 @@ extern "C" __global__ __aicore__ void mmad_custom(GM_ADDR x, GM_ADDR y, GM_ADDR 
 ```
 > **警告**：以下接口与当前接口互斥，不能在同一Tiling策略中同时使用：
 > - **MmadWithSparse**：当启用结构化稀疏（4选2）时使用，与Mmad互斥。
-> - **MXMmad**：MX矩阵计算场景使用，与Mmad互斥。
+> - **MmadMx**：MX矩阵计算场景使用，与Mmad互斥。
 
 > **注意**：Mmad的带bias原型和不带bias原型**不互斥**，可根据场景自由选择。
 ```
@@ -500,7 +500,7 @@ extern "C" __global__ __aicore__ void mmad_custom(GM_ADDR x, GM_ADDR y, GM_ADDR 
 | 相似API | 与当前API区别 | 选择建议 |
 |---------|-------------|---------|
 | [MmadWithSparse](api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadWithSparse.md) | 支持4选2结构化稀疏矩阵乘 | 权重矩阵已剪枝为稀疏格式时选用 |
-| [MXMmad](MXMmad.md) | 支持MX格式（微缩放）矩阵乘 | 使用MX混合精度训练时选用 |
+| [MmadMx](api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx.md) | 支持MX格式（微缩放）矩阵乘 | 使用MX混合精度训练时选用 |
 | [Iterate](api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Iterate.md) + [GetTensorC](api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetTensorC.md) | Matmul高阶API的循环迭代模式 | 不需要精细控制L0A/L0B排布时，优先用高阶API |
 | Mmad带bias原型 | 支持偏置矩阵初始化C | 需要C+=A×B+Bias场景选用，比cmatrixSource配置更简单 |
 | Mmad不带bias + cmatrixSource | 通过参数配置C初始值来源 | 需要C初始值来自BT Buffer但不需要Bias时选用 |
