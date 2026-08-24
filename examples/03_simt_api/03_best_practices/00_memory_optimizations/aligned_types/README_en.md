@@ -2,7 +2,7 @@
 
 ## Overview
 
-  This example quantitatively demonstrates **the impact of struct type alignment on Global Memory access**: leveraging the 1B, 2B, 4B, and 8B width memory access instructions supported by Ascend 950PR/Ascend 950DT, multiple structs of different sizes are constructed for element-wise data transfer, comparing the transfer efficiency differences brought by type alignment.
+  This example quantitatively demonstrates **the impact of struct type alignment on Global Memory access**: leveraging the 1B, 2B, 4B, 8B and 16B width memory access instructions supported by Ascend 950PR/Ascend 950DT, multiple structs of different sizes are constructed for element-wise data transfer, comparing the transfer efficiency differences brought by type alignment.
 
 ## Supported Products
 
@@ -118,7 +118,7 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
 
 - Performance Data
 
-  |       TData       | Task Duration(us) | aiv_total_cycles |
+  |       TData       | Task Duration(μs) | aiv_total_cycles |
   | :---------------: | :---------------: | :--------------: |
   |      Align4       |     27889.33      |   46005213.32    |
   |     Misalign4     |     81223.02      |   134028903.60   |
@@ -130,9 +130,9 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
   | MisalignU8PadU16  |     46664.42      |   76969440.94    |
   |      Align8       |     17417.23      |   28735088.65    |
   |     Misalign8     |     21287.91      |   35112582.91    |
-  |      Align16      |     32983.77      |   54417477.84    |
+  |      Align16      |     27931.29      |   46090787.94    |
   |    Misalign16     |     38353.60      |   63284236.16    |
-  |      Align32      |     60901.24      |   100477599.40   |
+  |      Align32      |     52357.78      |   86396567.61    |
   |    Misalign32     |     77790.93      |   128352303.30   |
 
 - Comprehensive Analysis
@@ -146,8 +146,8 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
   | 4B (2xu8 + u16)            | 27854.56 (alignof=4)  | 46666.11 (alignof=2)    | **1.68x**   |
   | 4B (u8 + 1B padding + u16) | 27809.72 (alignof=4)  | 46664.42 (alignof=2)    | **1.68x**   |
   | 8B                         | 17417.23 (alignof=8)  | 21287.91 (alignof=4)    | **1.22x**   |
-  | 16B                        | 32983.77 (alignof=16) | 38353.60 (alignof=4)    | **1.16x**   |
-  | 32B                        | 60901.24 (alignof=32) | 77790.93 (alignof=4)    | **1.28x**   |
+  | 16B                        | 27931.29 (alignof=16) | 38353.60 (alignof=4)    | **1.37x**   |
+  | 32B                        | 52357.78 (alignof=32) | 77790.93 (alignof=4)    | **1.49x**   |
 
   From the table above:
 
@@ -157,11 +157,11 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
 
   (2) The three 4B struct groups (2xu16, 2xu8 + u16, u8 + 1B padding + u16) show no difference in `Task Duration` when compared vertically, indicating that whether fields are the same type or mixed types, and whether padding exists, does not affect transfer efficiency. The compiler only cares about the overall `sizeof` and `alignof` of the struct.
 
-  In summary, with the same total data size, type alignment improves transfer efficiency for structs of the same size, and higher `alignof` yields higher efficiency, with an upper limit of 8B.
+  In summary, with the same total data size, type alignment improves transfer efficiency for structs of the same size, and higher `alignof` yields higher efficiency, with an upper limit of 16B.
 
 - Tuning Recommendations
 
-  Ascend 950PR/Ascend 950DT supports four memory access instruction widths: 1B, 2B, 4B, and 8B. Therefore, it is recommended to select the highest possible width that does not exceed the struct size.
+  Ascend 950PR/Ascend 950DT supports five memory access instruction widths: 1B, 2B, 4B, 8B and 16B. Therefore, it is recommended to select the highest possible width that does not exceed the struct size.
 
 ## Build and Run
 
