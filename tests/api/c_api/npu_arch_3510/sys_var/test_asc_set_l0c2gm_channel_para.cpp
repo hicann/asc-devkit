@@ -21,6 +21,7 @@ protected:
 
 namespace {
 void set_channel_para_stub(uint64_t config) { EXPECT_EQ(config, 135); }
+void set_channel_para_multi_stub(uint64_t config) { EXPECT_EQ(config, static_cast<uint64_t>(5) << 48); }
 } // namespace
 
 TEST_F(TestSysVarSetL0c2gmChannelPara, c_api_get_set_l0c2gm_channel_para_Succ)
@@ -28,6 +29,15 @@ TEST_F(TestSysVarSetL0c2gmChannelPara, c_api_get_set_l0c2gm_channel_para_Succ)
     int64_t input = 135;
     MOCKER_CPP(set_channel_para, void(uint64_t)).times(1).will(invoke(set_channel_para_stub));
     asc_set_l0c2gm_channel_para(input);
+    asc_init();
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestSysVarSetL0c2gmChannelPara, c_api_set_l0c_copy_channel_para_Succ)
+{
+    uint16_t src_nz_matrix_stride = 5;
+    MOCKER_CPP(set_channel_para, void(uint64_t)).times(1).will(invoke(set_channel_para_multi_stub));
+    asc_set_l0c_copy_channel_para(src_nz_matrix_stride);
     asc_init();
     GlobalMockObject::verify();
 }

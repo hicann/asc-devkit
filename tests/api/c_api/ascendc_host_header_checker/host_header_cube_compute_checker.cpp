@@ -12,6 +12,8 @@
 
 static void test_host_c_api_cube_compute_0()
 {
+    using ::asc_disable_hf32;
+    using ::asc_disable_hif8;
     using ::asc_enable_fp8;
     using ::asc_enable_hf32;
     using ::asc_enable_hf32_trans;
@@ -31,6 +33,7 @@ static void test_host_c_api_cube_compute_0()
     using ::asc_set_hf32_round_mode;
     using ::asc_set_l0c2gm_config;
     using ::asc_set_l0c2gm_nz2nd;
+    using ::asc_set_l0c_copy_nz_para;
     using ::asc_set_mmad_direction_m;
     using ::asc_set_mmad_direction_n;
 }

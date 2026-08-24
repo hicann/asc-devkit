@@ -25,6 +25,15 @@ void set_quant_pre_Stub(uint64_t config)
     uint64_t conf = 123;
     EXPECT_EQ(conf, config);
 }
+
+void set_quant_pre_multi_Stub(uint64_t config)
+{
+    float scale = 1.5f;
+    uint32_t scale_bits = (*reinterpret_cast<uint32_t*>(&scale)) & 0xFFFFE000u;
+    uint64_t expected = (static_cast<uint64_t>(1) << 46) | (static_cast<uint64_t>(100 & 0x1FF) << 37) |
+                        static_cast<uint64_t>(scale_bits);
+    EXPECT_EQ(expected, config);
+}
 } // namespace
 
 TEST_F(TestCubeComputeSetL0cCopyPrequant, set_l0c_copy_prequant_Succ)
@@ -33,5 +42,16 @@ TEST_F(TestCubeComputeSetL0cCopyPrequant, set_l0c_copy_prequant_Succ)
     uint64_t config = 123;
 
     asc_set_l0c_copy_prequant(config);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCubeComputeSetL0cCopyPrequant, set_l0c_copy_prequant_multi_Succ)
+{
+    MOCKER(set_quant_pre, void(uint64_t)).times(1).will(invoke(set_quant_pre_multi_Stub));
+    float scale = 1.5f;
+    uint16_t offset = 100;
+    bool is_signed = true;
+
+    asc_set_l0c_copy_prequant(scale, offset, is_signed);
     GlobalMockObject::verify();
 }

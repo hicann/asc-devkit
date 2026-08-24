@@ -46,6 +46,6 @@ TEST_F(TestEnableFp8CAPI, c_api_EnableFp8_Success)
 
     MOCKER_CPP(set_ctrl, void(uint64_t ctrl_val)).times(1).will(invoke(set_ctrl_fp8_mode_stub));
 
-    asc_enable_fp8();
+    asc_disable_hif8();
     GlobalMockObject::verify();
 }

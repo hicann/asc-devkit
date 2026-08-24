@@ -87,9 +87,12 @@ __aicore__ inline void asc_get_arch_ver(uint32_t& core_version);
 __aicore__ inline int64_t asc_get_ar_spr();
 __aicore__ inline void asc_set_ffts_base_addr(uint64_t config);
 __aicore__ inline constexpr int64_t asc_get_vf_len();
+__aicore__ inline void asc_set_l0c_copy_channel_para(uint16_t src_nz_matrix_stride);
 __aicore__ inline void asc_set_l0c2gm_channel_para(uint64_t config);
 __aicore__ inline void asc_set_l3d_rpt_b(uint64_t config);
 __aicore__ inline void asc_set_gm2l1_nz_para(uint64_t config);
+__aicore__ inline void asc_set_gm2l1_nz_para(
+    uint16_t matrix_num, uint16_t dst_nz_n_stride, uint16_t dst_nz_c0_stride, uint16_t dst_nz_matrix_stride);
 __aicore__ inline void asc_set_l13d_padding(uint64_t config);
 __aicore__ inline void asc_set_l13d_padding(half config);
 __aicore__ inline void asc_set_l13d_padding(int16_t config);

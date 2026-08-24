@@ -46,6 +46,6 @@ TEST_F(TestSetFP32ModeCAPI, c_api_SetFP32Mode_Success)
 
     MOCKER_CPP(set_ctrl, void(uint64_t ctrl_val)).times(1).will(invoke(set_ctrl_fp32_mode_stub));
 
-    asc_set_fp32_mode();
+    asc_disable_hf32();
     GlobalMockObject::verify();
 }

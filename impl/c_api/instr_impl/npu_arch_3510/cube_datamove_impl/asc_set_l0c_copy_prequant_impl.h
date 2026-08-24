@@ -27,6 +27,15 @@ __aicore__ inline void asc_set_l0c_copy_prequant_impl(uint64_t config)
     }
 }
 
+__aicore__ inline void asc_set_l0c_copy_prequant_impl(float scale, uint16_t offset, bool is_signed)
+{
+    if ASC_IS_AIC {
+        uint64_t config = (static_cast<uint64_t>(is_signed) << 46) | (static_cast<uint64_t>(offset & 0x1FF) << 37) |
+                          static_cast<uint64_t>(*(reinterpret_cast<uint32_t*>(&scale)) & 0xFFFFE000u);
+        set_quant_pre(config);
+    }
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

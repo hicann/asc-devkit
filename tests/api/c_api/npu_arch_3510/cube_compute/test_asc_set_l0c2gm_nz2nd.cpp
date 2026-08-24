@@ -27,11 +27,11 @@ void set_loop3_para_Stub(uint64_t config)
 }
 } // namespace
 
-TEST_F(TestCubeComputeSetL0c2gmNz2nd, set_l0c2gm_nz2nd_Succ)
+TEST_F(TestCubeComputeSetL0c2gmNz2nd, set_l0c_copy_nz_para_Succ)
 {
     MOCKER(set_loop3_para, void(uint64_t)).times(1).will(invoke(set_loop3_para_Stub));
     uint64_t config = 123;
 
-    asc_set_l0c2gm_nz2nd(config, 0, 0);
+    asc_set_l0c_copy_nz_para(config, 0, 0);
     GlobalMockObject::verify();
 }
