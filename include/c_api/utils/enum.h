@@ -48,6 +48,19 @@ enum class asc_position_quarter_mode {
     DISPERSE_FOURTH_QUARTER
 };
 
+enum class asc_dual_dst_mode : uint8_t { DUAL_DST_DISABLE = 0, DUAL_DST_SPLIT_M = 1, DUAL_DST_SPLIT_N = 2 };
+
+enum class asc_unit_flag_mode : uint8_t { DISABLE = 0, ENABLE_KEEP = 2, ENABLE_UPDATE = 3 };
+
+enum class asc_relu_pre_mode : uint8_t {
+    NONE = 0,
+    NORMAL = 1,
+    SCALAR = 2,
+    VECTOR = 3,
+};
+
+using asc_quant_mode = QuantMode_t;
+
 constexpr std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
     ASC_DISPERSE_FIRST_QUARTER;
 constexpr std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
