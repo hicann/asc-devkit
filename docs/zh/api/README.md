@@ -1338,6 +1338,7 @@
             -   [asc_set_store_atomic_config_v2（废弃）](SIMD-API/c_api/simd_atomic/asc_set_store_atomic_config_v2_deprecated.md)
         -   [其他操作](SIMD-API/c_api/misc/other_operations.md)
             -   [asc_init](SIMD-API/c_api/misc/asc_init.md)
+            -   [asc_nop](SIMD-API/c_api/misc/asc_nop.md)
         -   [枚举类型](SIMD-API/c_api/enum/enum_types.md)
             -   [asc_hf32_round_mode](SIMD-API/c_api/enum/asc_hf32_round_mode.md)
             -   [asc_load_l2_cache_mode](SIMD-API/c_api/enum/asc_load_l2_cache_mode.md)

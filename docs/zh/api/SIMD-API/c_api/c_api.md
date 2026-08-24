@@ -359,6 +359,7 @@ C API文档目录。除试验接口外，整体使用时可以引入`asc_simd.h`
 | API名称 | 说明 |
 | ------ | ----------- |
 | [asc_init](misc/asc_init.md) | 初始化NPU状态。 |
+| [asc_nop](misc/asc_nop.md) | 生成一条空操作指令，不执行实际计算。 |
 
 ## Reg数据搬运
 
