@@ -26,11 +26,13 @@
 
 ## 功能说明
 
-等待所有流水线操作完成。
+用于同一核内所有流水线之间的全流水同步，功能等价于[asc_sync_pipe(PIPE_ALL)](asc_sync_pipe.md)。阻塞调用点后所有硬件流水的后序指令，直到调用点之前所有硬件流水的前序指令全部完成。
+
+本接口适用于需要等待核内所有并行执行单元同时到达一个一致状态后再继续执行的场景。
 
 ## 函数原型
 
-```cpp
+```c
 __aicore__ inline void asc_sync()
 ```
 
@@ -44,31 +46,88 @@ __aicore__ inline void asc_sync()
 
 ## 流水类型
 
-PIPE_S
+`PIPE_S`
 
 ## 约束说明
 
-asc_sync会等待所有流水线中所有先前提交的接口完成，这会对性能产生影响。若仅需阻塞单条流水线，应避免随意调用asc_sync，可选用[asc_sync_pipe](asc_sync_pipe.md)、[asc_sync_mte2](asc_sync_mte2.md)、[asc_sync_mte3](asc_sync_mte3.md)等接口精准控制，以提升性能。
+`asc_sync`会等待所有流水线中所有先前提交的接口完成，这会对性能产生影响。若仅需阻塞单条流水线，应避免随意调用`asc_sync`，可使用[asc_sync_pipe](asc_sync_pipe.md)接口指定某个流水的阻塞。
 
 ## 调用示例
 
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+
+<!-- end id8 -->
+
 ```cpp
-// 本例中total_length指参与计算的数据总长度。src0_gm，src1_gm，dst_gm是外部输入的float类型的源操作数、目的操作数，指向GM内存空间。
-constexpr uint32_t total_length = 128;
-__ubuf__ float src0[total_length];
-__ubuf__ float src1[total_length];
-__ubuf__ float dst[total_length];
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
 
-asc_copy_gm2ub(src0, src0_gm, total_length * sizeof(float));
-asc_copy_gm2ub(src1, src1_gm, total_length * sizeof(float));
+namespace {
 
-// 同步操作：前置操作完成后才能启动后续操作。
-asc_sync();
+constexpr uint32_t ELEMENTS = 64;
+constexpr uint32_t BYTES = ELEMENTS * sizeof(float);
 
-asc_add(dst, src1, src0, total_length);
+void print_data(const char* label, const std::vector<float>& data)
+{
+    std::cout << label << ":";
+    for (uint32_t i = 0; i < 8; ++i) std::cout << ' ' << data[i];
+    std::cout << " ..." << std::endl;
+}
 
-// 同步操作：前置操作完成后才能启动后续操作。
-asc_sync();
+__global__ __vector__ void asc_sync_kernel(__gm__ float* output, __gm__ float* src0, __gm__ float* src1)
+{
+    asc_init();
+    __ubuf__ float x[ELEMENTS], y[ELEMENTS], z[ELEMENTS];
+    asc_copy_gm2ub_align(x, src0, BYTES);
+    asc_copy_gm2ub_align(y, src1, BYTES);
+    asc_sync();
+    asc_add(z, x, y, ELEMENTS);
+    asc_sync();
+    asc_copy_ub2gm_align(output, z, BYTES);
+    asc_sync();
+}
+} // namespace
 
-asc_copy_ub2gm(dst_gm, dst, total_length * sizeof(float));
+int main()
+{
+    std::vector<float> src0(ELEMENTS), src1(ELEMENTS), output(ELEMENTS, 0.0f), golden(ELEMENTS);
+    for (uint32_t i = 0; i < ELEMENTS; ++i) {
+        src0[i] = static_cast<float>(i) * 0.25f;
+        src1[i] = static_cast<float>(ELEMENTS - i) * 0.5f;
+        golden[i] = src0[i] + src1[i];
+    }
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    float *src0_device = nullptr, *src1_device = nullptr, *output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&src0_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&src1_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(src0_device, BYTES, src0.data(), BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(src1_device, BYTES, src1.data(), BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_sync_kernel<<<1, 0>>>(output_device, src0_device, src1_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), BYTES, output_device, BYTES, ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input src0", src0);
+    print_data("Input src1", src1);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_sync passed." : "[Failed] asc_sync failed.") << std::endl;
+    aclrtFree(src0_device);
+    aclrtFree(src1_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```

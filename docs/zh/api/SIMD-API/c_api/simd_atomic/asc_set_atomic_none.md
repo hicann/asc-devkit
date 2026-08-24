@@ -26,24 +26,25 @@
 
 ## 功能说明
 
-清空原子操作的状态。一般和[asc_set_atomic_add](asc_set_atomic_add.md)，[asc_set_atomic_max](asc_set_atomic_max.md)，[asc_set_atomic_min](asc_set_atomic_min.md)接口配合使用，用于在完成原子操作后关闭原子操作，避免影响后续功能。
+与[asc_set_atomic_add](asc_set_atomic_add.md)、[asc_set_atomic_max](asc_set_atomic_max.md)、[asc_set_atomic_min](asc_set_atomic_min.md)接口配合使用，用于在完成原子操作后关闭原子操作，避免影响后续搬运。
 
 ## 函数原型
 
-```cpp
+```c
 __aicore__ inline void asc_set_atomic_none()
 ```
 
 ## 参数说明
 
 无
+
 ## 返回值说明
 
 无
 
 ## 流水类型
 
-PIPE_S
+`PIPE_S`
 
 ## 约束说明
 
@@ -51,21 +52,4 @@ PIPE_S
 
 ## 调用示例
 
-```cpp
-//total_length指参与搬运的数据总长度。dst是外部输入的int16_t类型的GM内存。
-constexpr uint32_t total_length = 256;
-__ubuf__ int16_t src0[total_length];
-__ubuf__ int16_t src1[total_length];
-asc_set_atomic_add_int16();
-asc_copy_ub2gm_sync(dst, src0, total_length * sizeof(int16_t));
-asc_copy_ub2gm_sync(dst, src1, total_length * sizeof(int16_t));
-asc_set_atomic_none();
-```
-
-结果示例：
-
-```
-输入数据src0：[1, 1, 1, ..., 1]  // int16_t类型
-输入数据src1：[2, 2, 2, ..., 2]  // int16_t类型
-输出数据dst：[3, 3, 3, ..., 3]   // int16_t类型
-```
+asc_set_atomic_none与[asc_set_atomic_add](asc_set_atomic_add.md)等原子操作接口配合使用，调用示例请参见[asc_set_atomic_add的调用示例](asc_set_atomic_add.md#调用示例)。

@@ -89,17 +89,17 @@ PIPE_S
 
 ## 调用示例
 
-将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id10 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng examples.asc -o main --npu-arch=dav-3510; ./main
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
 <!-- end id10 -->
 
-```c
+```cpp
 #include <cstdint>
 #include <iostream>
 #include <vector>
@@ -107,81 +107,65 @@ bisheng examples.asc -o main --npu-arch=dav-3510; ./main
 #include "acl/acl.h"
 
 namespace {
+constexpr uint32_t ELEMENTS = 64;
+constexpr uint32_t BYTES = ELEMENTS * sizeof(float);
+
 template <typename T>
-void PrintData(const char* label, const std::vector<T>& values)
+void print_data(const char* label, const std::vector<T>& data)
 {
     std::cout << label << ":";
-    const size_t count = values.size() < 8 ? values.size() : 8;
-    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
-    if (values.size() > count) std::cout << " ...";
+    const size_t count = data.size() < 8 ? data.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +data[i];
+    if (data.size() > count) std::cout << " ...";
     std::cout << std::endl;
 }
 
-template <typename T>
-bool CompareData(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
-{
-    if (actual.size() != expected.size()) return false;
-    for (size_t i = 0; i < actual.size(); ++i) {
-        if (actual[i] == expected[i]) continue;
-        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
-        if (diff > tolerance || diff < -tolerance) return false;
-    }
-    return true;
-}
-
-template <typename T>
-bool CompareRangeData(const std::vector<T>& actual, const std::vector<T>& expected,
-    size_t begin, size_t count, double tolerance = 0.0)
-{
-    if (begin + count > actual.size() || begin + count > expected.size()) return false;
-    for (size_t i = begin; i < begin + count; ++i) {
-        if (actual[i] == expected[i]) continue;
-        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
-        if (diff > tolerance || diff < -tolerance) return false;
-    }
-    return true;
-}
-
-
-
-constexpr uint32_t ELEMENTS = 8;
-
-__global__ __vector__ void AscAtomicAddKernel(__gm__ int64_t* output)
+__global__ __vector__ void asc_set_atomic_add_kernel(__gm__ float* output, __gm__ float* input0, __gm__ float* input1)
 {
     asc_init();
-    __gm__ uint32_t* address = reinterpret_cast<__gm__ uint32_t*>(output);
-    asc_dcci_entire_all();
-    const uint32_t old_value = asc_atomic_add(address, 5U);
-    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
-    asc_dcci_entire_all();
-    output[1] = static_cast<int64_t>(old_value);
+    __ubuf__ float local0[ELEMENTS];
+    __ubuf__ float local1[ELEMENTS];
+    asc_copy_gm2ub_align(local0, input0, BYTES);
+    asc_copy_gm2ub_align(local1, input1, BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm(output, local0, BYTES);
+    asc_set_atomic_add_float();
+    asc_sync_pipe(PIPE_MTE3);
+    asc_copy_ub2gm(output, local1, BYTES);
+    asc_set_atomic_none();
     asc_sync();
 }
-} // namespace
+
+}
 
 int main()
 {
-    std::vector<int64_t> input = {10, 0};
-    std::vector<int64_t> golden = {15, 10};
-    input.resize(ELEMENTS, 0);
-    golden.resize(ELEMENTS, 0);
-    std::vector<int64_t> output(ELEMENTS, -1);
+    std::vector<float> input0(ELEMENTS), input1(ELEMENTS), output(ELEMENTS), golden(ELEMENTS);
+    for (uint32_t i = 0; i < ELEMENTS; ++i) {
+        input0[i] = static_cast<float>(i % 8 + 1);
+        input1[i] = 2.0f;
+        golden[i] = input0[i] + input1[i];
+    }
     aclInit(nullptr);
     aclrtSetDevice(0);
-    int64_t* output_device = nullptr;
-    aclrtMalloc(reinterpret_cast<void**>(&output_device), (ELEMENTS) * sizeof(int64_t),
-        ACL_MEM_MALLOC_HUGE_FIRST);
-    aclrtMemcpy(output_device, input.size() * sizeof(int64_t), input.data(), input.size() * sizeof(int64_t),
-        ACL_MEMCPY_HOST_TO_DEVICE);
-    AscAtomicAddKernel<<<1, 0>>>(output_device);
+    float *input0_device = nullptr, *input1_device = nullptr, *output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input0_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&input1_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input0_device, BYTES, input0.data(), BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(input1_device, BYTES, input1.data(), BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_set_atomic_add_kernel<<<1, 0>>>(output_device, input0_device, input1_device);
     aclrtSynchronizeDevice();
-    aclrtMemcpy(output.data(), output.size() * sizeof(int64_t), output_device, output.size() * sizeof(int64_t),
-        ACL_MEMCPY_DEVICE_TO_HOST);
-    PrintData("Input", input);
-    PrintData("Output", output);
-    PrintData("Golden", golden);
-    const bool passed = CompareData(output, golden);
-    std::cout << (passed ? "[Success] asc_atomic_add passed." : "[Failed] asc_atomic_add failed.") << std::endl;
+    aclrtMemcpy(output.data(), BYTES, output_device, BYTES, ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input0", input0);
+    print_data("Input1", input1);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_set_atomic_add passed." : "[Failed] asc_set_atomic_add failed.") << std::endl;
+    aclrtFree(input0_device);
+    aclrtFree(input1_device);
     aclrtFree(output_device);
     aclrtResetDevice(0);
     aclFinalize();
