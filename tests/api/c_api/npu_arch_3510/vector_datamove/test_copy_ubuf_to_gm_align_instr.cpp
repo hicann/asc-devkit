@@ -29,14 +29,14 @@
     namespace {                                                                                                \
                                                                                                                \
     void cce_name##_##data_type##_Stub(                                                                        \
-        __gm__ void* dst, __ubuf__ void* src, uint8_t sid, uint32_t n_burst, uint32_t len_burst,               \
+        __gm__ void* dst, __ubuf__ void* src, uint8_t sid, uint32_t burst_count, uint32_t burst_len,           \
         uint8_t l2_cache_mode, uint64_t dst_stride, uint32_t src_stride)                                       \
     {                                                                                                          \
         EXPECT_EQ(dst, reinterpret_cast<__gm__ void*>(11));                                                    \
         EXPECT_EQ(src, reinterpret_cast<__ubuf__ void*>(22));                                                  \
         EXPECT_EQ(sid, static_cast<uint8_t>(0));                                                               \
-        EXPECT_EQ(n_burst, static_cast<uint32_t>(1));                                                          \
-        EXPECT_EQ(len_burst, static_cast<uint32_t>(1));                                                        \
+        EXPECT_EQ(burst_count, static_cast<uint32_t>(1));                                                      \
+        EXPECT_EQ(burst_len, static_cast<uint32_t>(1));                                                        \
         EXPECT_EQ(l2_cache_mode, static_cast<uint8_t>(0));                                                     \
         EXPECT_EQ(dst_stride, static_cast<uint64_t>(0));                                                       \
         EXPECT_EQ(src_stride, static_cast<uint32_t>(0));                                                       \
@@ -49,7 +49,7 @@
         __ubuf__ data_type* src = reinterpret_cast<__ubuf__ data_type*>(22);                                   \
         MOCK_COPY_UB2GM_ALIGN(cce_name, data_type);                                                            \
         c_api_name(                                                                                            \
-            dst, src, static_cast<uint16_t>(1), static_cast<uint32_t>(1),                                      \
+            dst, src, static_cast<uint32_t>(1), static_cast<uint32_t>(1),                                      \
             asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, static_cast<uint64_t>(0), static_cast<uint32_t>(0)); \
         GlobalMockObject::verify();                                                                            \
     }                                                                                                          \

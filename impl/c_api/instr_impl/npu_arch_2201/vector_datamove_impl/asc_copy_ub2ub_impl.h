@@ -26,10 +26,11 @@
 #include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 __aicore__ inline void asc_copy_ub2ub_impl(
-    __ubuf__ void* dst, __ubuf__ void* src, uint16_t n_burst, uint16_t len_burst, uint16_t src_gap, uint16_t dst_gap)
+    __ubuf__ void* dst, __ubuf__ void* src, uint16_t burst_count, uint16_t burst_len, uint16_t src_gap,
+    uint16_t dst_gap)
 {
     if ASC_IS_AIV {
-        copy_ubuf_to_ubuf(dst, src, 0, n_burst, len_burst, src_gap, dst_gap);
+        copy_ubuf_to_ubuf(dst, src, 0, burst_count, burst_len, src_gap, dst_gap);
     }
 }
 

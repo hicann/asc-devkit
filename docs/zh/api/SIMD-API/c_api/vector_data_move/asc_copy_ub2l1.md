@@ -55,8 +55,8 @@ __aicore__ inline void asc_copy_ub2l1(__cbuf__ void* dst,
 ```c
 __aicore__ inline void asc_copy_ub2l1(__cbuf__ void* dst,
                                       __ubuf__ void* src,
-                                      uint16_t n_burst,
-                                      uint16_t len_burst,
+                                      uint16_t burst_count,
+                                      uint16_t burst_len,
                                       uint16_t src_gap,
                                       uint16_t dst_gap)
 ```
@@ -81,8 +81,8 @@ __aicore__ inline void asc_copy_ub2l1(__cbuf__ void* dst,
 | :--- | :--- | :--- |
 | dst | 输出 | 目的L1 Buffer的起始地址。 |
 | src | 输入 | 源UB的起始地址。 |
-| n_burst | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, 4095]。 |
-| len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为DataBlock（32字节）。取值范围：[1, 65535]。 |
+| burst_count | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, 4095]。 |
+| burst_len | 输入 | 待搬运的每个连续传输数据块的长度，单位为DataBlock（32字节）。取值范围：[1, 65535]。 |
 | src_gap | 输入 | 源操作数相邻连续数据块的间隔（前面一个数据块的尾与后面一个数据块的头的间隔），单位为DataBlock（32字节）。 |
 | dst_gap | 输入 | 目的操作数相邻连续数据块的间隔（前面一个数据块的尾与后面一个数据块的头的间隔），单位为DataBlock（32字节）。 |
 
@@ -100,7 +100,7 @@ PIPE_MTE3
 
 - 本接口在非AIV上调用直接返回。
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
-- 如果本指令与其他指令的目的地址存在重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令的串行化，防止出现异常数据。
+- 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)，保证多个指令串行化，防止出现异常数据。
 
 ## 调用示例
 

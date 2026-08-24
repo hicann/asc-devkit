@@ -21,14 +21,14 @@ protected:
 
 namespace {
 void copy_ubuf_to_cbuf_stub(
-    __cbuf__ void* dst, __ubuf__ void* src, uint8_t sid, uint16_t n_burst, uint16_t len_burst, uint16_t src_gap,
+    __cbuf__ void* dst, __ubuf__ void* src, uint8_t sid, uint16_t burst_count, uint16_t burst_len, uint16_t src_gap,
     uint16_t dst_gap)
 {
     EXPECT_EQ(dst, reinterpret_cast<__cbuf__ void*>(11));
     EXPECT_EQ(src, reinterpret_cast<__ubuf__ void*>(22));
     EXPECT_EQ(sid, static_cast<uint8_t>(0));
-    EXPECT_EQ(n_burst, static_cast<uint16_t>(1));
-    EXPECT_EQ(len_burst, static_cast<uint16_t>(1));
+    EXPECT_EQ(burst_count, static_cast<uint16_t>(1));
+    EXPECT_EQ(burst_len, static_cast<uint16_t>(1));
     EXPECT_EQ(src_gap, static_cast<uint16_t>(0));
     EXPECT_EQ(dst_gap, static_cast<uint16_t>(0));
 }
@@ -39,14 +39,14 @@ TEST_F(TestAscCopyUB2L1, copy_ubuf_to_cbuf_CopyConfig_Succ)
     __cbuf__ void* dst = reinterpret_cast<__cbuf__ void*>(11);
     __ubuf__ void* src = reinterpret_cast<__ubuf__ void*>(22);
 
-    uint16_t n_burst = static_cast<uint64_t>(1);
-    uint16_t len_burst = static_cast<uint64_t>(1);
+    uint16_t burst_count = static_cast<uint64_t>(1);
+    uint16_t burst_len = static_cast<uint64_t>(1);
     uint16_t src_gap = static_cast<uint64_t>(0);
     uint16_t dst_gap = static_cast<uint64_t>(0);
     MOCKER_CPP(copy_ubuf_to_cbuf, void(__cbuf__ void*, __ubuf__ void*, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t))
         .times(1)
         .will(invoke(copy_ubuf_to_cbuf_stub));
-    asc_copy_ub2l1(dst, src, n_burst, len_burst, src_gap, dst_gap);
+    asc_copy_ub2l1(dst, src, burst_count, burst_len, src_gap, dst_gap);
     GlobalMockObject::verify();
 }
 

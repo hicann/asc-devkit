@@ -46,8 +46,8 @@
 
     数据搬运模式说明如下：
 
-    - Compact模式：将`dst_stride`设置为`len_burst`，并将`left_padding_num`和`right_padding_num`设置为0。多个数据块在UB中紧密排列，在32字节补齐处理上被视为一个整体；若所有数据块的总长度非32字节对齐，则仅在整体末尾通过上述手动或自动填充方式补齐至32字节对齐。
-    - Normal模式：将`dst_stride`设置为不等于`len_burst`且满足32字节对齐的值。相邻目的数据块的首地址间隔由`dst_stride`指定，数据块之间可以预留间隔，无需紧密排列。
+    - Compact模式：将`dst_stride`设置为`burst_len`，并将`left_padding_num`和`right_padding_num`设置为0。多个数据块在UB中紧密排列，在32字节补齐处理上被视为一个整体；若所有数据块的总长度非32字节对齐，则仅在整体末尾通过上述手动或自动填充方式补齐至32字节对齐。
+    - Normal模式：将`dst_stride`设置为不等于`burst_len`且满足32字节对齐的值。相邻目的数据块的首地址间隔由`dst_stride`指定，数据块之间可以预留间隔，无需紧密排列。
         - 当`left_padding_num`和`right_padding_num`均为0时，通过上述手动或自动填充方式将每个数据块分别补齐至32字节对齐。
         - 当`left_padding_num`或`right_padding_num`非0时，`enable_constant_pad`不生效，必须在搬运前调用`asc_set_copy_pad_val`配置填充值。若数据块长度与左右Padding的总字节数非32字节对齐，硬件会在右侧继续填充dummy假数据至32字节对齐，dummy假数据的值为`asc_set_copy_pad_val`配置的值。
 
@@ -55,7 +55,7 @@
     - Compact模式下将`dst_stride`设置为48，各数据块在UB中的起始偏移依次为0、48、96，仅在144字节有效数据的末尾补齐16字节。
     - Normal模式下将`dst_stride`设置为64，各数据块在UB中的起始偏移依次为0、64、128，每个数据块分别补齐16字节。
 
-    当只搬运1个数据块，或`len_burst`已经32字节对齐且无左右Padding时，两种模式的搬运结果相同。
+    当只搬运1个数据块，或`burst_len`已经32字节对齐且无左右Padding时，两种模式的搬运结果相同。
 
 本接口仅在AIV上生效。
 
@@ -85,8 +85,8 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
 ```c
 __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
                                             __gm__ <dtype>* src,
-                                            uint16_t n_burst,
-                                            uint32_t len_burst,
+                                            uint32_t burst_count,
+                                            uint32_t burst_len,
                                             uint8_t left_padding_num,
                                             uint8_t right_padding_num,
                                             bool enable_constant_pad,
@@ -103,8 +103,8 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
 // 示例：源与目的数据类型为bfloat16_t
 __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
                                             __gm__ bfloat16_t* src,
-                                            uint16_t n_burst,
-                                            uint32_t len_burst,
+                                            uint32_t burst_count,
+                                            uint32_t burst_len,
                                             uint8_t left_padding_num,
                                             uint8_t right_padding_num,
                                             bool enable_constant_pad,
@@ -133,14 +133,14 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst,
 | :--- | :--- | :--- |
 | dst | 输出 | 目的UB的起始地址。需要32字节对齐。 |
 | src | 输入 | 源GM的起始地址。需要1字节对齐。 |
-| n_burst | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, $2^{12}−1$]。 |
-| len_burst | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[1, $2^{21}−1$]。 |
+| burst_count | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, $2^{12}−1$]。 |
+| burst_len | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[1, $2^{21}−1$]。 |
 | left_padding_num | 输入 | 连续搬运数据块左侧需要补充的元素个数。该参数对应的填充数据大小不能超过32字节。Compact模式下需要设置为0。 |
 | right_padding_num | 输入 | 连续搬运数据块右侧需要补充的元素个数。该参数对应的填充数据大小不能超过32字节。Compact模式下需要设置为0。 |
 | enable_constant_pad | 输入 | 当`left_padding_num`和`right_padding_num`均为0时，配置非对齐场景的填充方式。取值说明如下：  <br>&bull; `true`：手动填充，填充值为接口`asc_set_copy_pad_val`设置的值。 <br>&bull; `false`：自动填充，由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。<br>当`left_padding_num`或`right_padding_num`非0时，该参数不生效。 |
 | l2_cache_mode | 输入 | [asc_load_l2_cache_mode](../../enum/asc_load_l2_cache_mode.md)类型的枚举值，配置数据在L2 Cache中的管理策略。 |
-| src_stride | 输入 | 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{40}−1$]。<br>只搬运1个数据块，即`n_burst`设置为1时，可以将此参数设置为0。 |
-| dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节，用于选择数据搬运模式。取值范围：[0, $2^{21}−1$]。<br>&bull; 等于`len_burst`：Compact模式，目的数据块在UB中紧密排列，`dst_stride`支持字节对齐。<br>&bull; 不等于`len_burst`：Normal模式，`dst_stride`需要满足32字节对齐要求。<br>只搬运1个数据块，即`n_burst`设置为1时，可以将此参数设置为0。 |
+| src_stride | 输入 | 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{40}−1$]。<br>只搬运1个数据块，即`burst_count`设置为1时，可以将此参数设置为0。 |
+| dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节，用于选择数据搬运模式。取值范围：[0, $2^{21}−1$]。<br>&bull; 等于`burst_len`：Compact模式，目的数据块在UB中紧密排列，`dst_stride`支持字节对齐。<br>&bull; 不等于`burst_len`：Normal模式，`dst_stride`需要满足32字节对齐要求。<br>只搬运1个数据块，即`burst_count`设置为1时，可以将此参数设置为0。 |
 
 ## 返回值说明
 
@@ -156,7 +156,7 @@ PIPE_MTE2
 
 - 本接口在非AIV上调用直接返回。
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../../general_description_and_constraints.md#存储单元说明)。
-- 如果本指令与其他指令的目的地址存在重叠，需要插入同步指令（[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)），保证多个指令的串行化，防止出现异常数据。
+- 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)，保证多个指令串行化，防止出现异常数据。
 
 ### 连续数据搬运约束
 
@@ -165,7 +165,7 @@ PIPE_MTE2
 ### 高维切分数据搬运约束
 
 - 当`left_padding_num`或`right_padding_num`非0时，`enable_constant_pad`不生效，必须在搬运前调用`asc_set_copy_pad_val`配置填充值。`left_padding_num`、`right_padding_num`对应的填充数据大小均不能超过32字节。
-- 当`dst_stride`不等于`len_burst`时，`dst_stride`要求32字节对齐。
+- 当`dst_stride`不等于`burst_len`时，`dst_stride`要求32字节对齐。
 
 ## 调用示例
 
