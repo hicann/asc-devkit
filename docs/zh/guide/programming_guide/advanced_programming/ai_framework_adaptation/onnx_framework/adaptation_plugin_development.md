@@ -11,7 +11,7 @@
 ><!-- end id3 -->
 <!-- end id1 -->
 
-您可以参考本章节进行算子适配插件的开发，将ONNX框架的算子映射成适配AI处理器的算子（下文简称CANN算子），从而完成从ONNX框架调用Ascend C自定义算子的过程。如果只涉及插件开发，也可以不依赖自定义算子工程，参考[LINK](https://gitcode.com/cann/cann-samples/tree/master/Samples/0_Introduction/custom_op)生成算子插件so后，通过ASCEND_CUSTOM_OPP_PATH指定so所在路径进行使用。
+您可以参考本章节进行算子适配插件的开发，将ONNX框架的算子映射成适配AI处理器的算子（下文简称CANN算子），从而完成从ONNX框架调用Ascend C自定义算子的过程。如果只涉及插件开发，也可以不依赖自定义算子工程，参考[LINK](https://gitcode.com/cann/cann-samples/tree/master/Samples/0_Introduction)中的custom_op_in_graph样例生成算子插件so后，通过ASCEND_CUSTOM_OPP_PATH指定so所在路径进行使用。
 
 完成[算子工程创建](../tensorflow_framework.md#li123241091016)后，会在算子工程目录下生成framework/onnx\_plugin目录，用于存放ONNX框架适配插件实现文件。以自定义CANN算子LeakyReluCustom为例，算子工程目录如下：
 
