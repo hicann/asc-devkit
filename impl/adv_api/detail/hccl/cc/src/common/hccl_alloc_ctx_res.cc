@@ -55,16 +55,22 @@ HcclResult CheckInputParam(const HcclComm comm, const void* mc2Tiling, const acl
 
 HcclResult HcclGetTilingList(const void* mc2Tiling, const void* p[], uint32_t& cnt)
 {
+    CHK_PTR_NULL(mc2Tiling);
+    CHK_PTR_NULL(p);
     const u32* versionPtr = static_cast<const u32*>(mc2Tiling);
     const u32 version = *(versionPtr++);
     CHK_PRT_RET(version < MC2_TILING_VERSION, HCCL_ERROR("Invalid tiling version %u.", version), HCCL_E_PARA);
 
     cnt = *(versionPtr++);
-    CHK_PRT_RET(cnt > MAX_HCOM_NUM, HCCL_ERROR("Invalid hcom tiling number %u.", cnt), HCCL_E_PARA);
+    CHK_PRT_RET(cnt == 0U || cnt > MAX_HCOM_NUM, HCCL_ERROR("Invalid hcom tiling number %u.", cnt), HCCL_E_PARA);
 
-    u64 serverCfgAddr = reinterpret_cast<u64>(versionPtr) + sizeof(Mc2ServerCfg);
-    for (uint32_t i = 0U; i < MAX_CC_TILING_NUM; ++i) {
-        p[i] = reinterpret_cast<const void*>(reinterpret_cast<const u8*>(mc2Tiling) + versionPtr[i]);
+    constexpr uint32_t offsetTableEnd = sizeof(uint32_t) * (2U + MAX_CC_TILING_NUM);
+    for (uint32_t i = 0U; i < cnt; ++i) {
+        const uint32_t offset = versionPtr[i];
+        CHK_PRT_RET(
+            offset < offsetTableEnd || offset % alignof(Mc2CcTilingInner) != 0U,
+            HCCL_ERROR("Invalid hcom tiling offset %u at index %u.", offset, i), HCCL_E_PARA);
+        p[i] = reinterpret_cast<const void*>(reinterpret_cast<const u8*>(mc2Tiling) + offset);
     }
     HCCL_INFO("HcclGetTilingList version[%u] cnt[%u]", version, cnt);
     return HCCL_SUCCESS;
@@ -72,6 +78,8 @@ HcclResult HcclGetTilingList(const void* mc2Tiling, const void* p[], uint32_t& c
 
 HcclResult CheckIsReduce(const Mc2CcTilingInner* ccTiling, bool* isReduce)
 {
+    CHK_PTR_NULL(ccTiling);
+    CHK_PTR_NULL(isReduce);
     if (ccTiling->opType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER || ccTiling->opType == HcclCMDType::HCCL_CMD_REDUCE ||
         ccTiling->opType == HcclCMDType::HCCL_CMD_ALLREDUCE) {
         *isReduce = true;
@@ -83,8 +91,13 @@ HcclResult CheckIsReduce(const Mc2CcTilingInner* ccTiling, bool* isReduce)
 
 HcclResult CheckCommEngine(const void* ccTilingList[], uint32_t tilingNum)
 {
+    CHK_PTR_NULL(ccTilingList);
+    CHK_PRT_RET(
+        tilingNum == 0U || tilingNum > MAX_HCOM_NUM, HCCL_ERROR("Invalid hcom tiling number %u.", tilingNum),
+        HCCL_E_PARA);
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const Mc2CcTilingInner* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
+        CHK_PTR_NULL(ccTiling);
         if (ccTiling->commEngine != static_cast<uint8_t>(COMM_ENGINE_AICPU) &&
             ccTiling->commEngine != static_cast<uint8_t>(COMM_ENGINE_CPU)) {
             HCCL_ERROR("Invalid commEngine %u.", ccTiling->commEngine);
@@ -96,9 +109,14 @@ HcclResult CheckCommEngine(const void* ccTilingList[], uint32_t tilingNum)
 
 HcclResult ObtainCommEngine(const void* ccTilingList[], uint32_t tilingNum, uint8_t& commEngine)
 {
+    CHK_PTR_NULL(ccTilingList);
+    CHK_PRT_RET(
+        tilingNum == 0U || tilingNum > MAX_HCOM_NUM, HCCL_ERROR("Invalid hcom tiling number %u.", tilingNum),
+        HCCL_E_PARA);
     commEngine = static_cast<uint8_t>(OpExecuteConfig::DEFAULT);
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const Mc2CcTilingInner* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
+        CHK_PTR_NULL(ccTiling);
         if (commEngine == static_cast<uint8_t>(OpExecuteConfig::DEFAULT)) {
             commEngine = ccTiling->commEngine;
         }
@@ -575,6 +593,7 @@ std::unique_ptr<InsCollAlgBase> GetAlgExecutorForOp(const OpParam& opParam, cons
 HcclResult CheckForcedAlgResource(
     HcclComm comm, const OpParam& opParam, TopoInfoWithNetLayerDetails* topoInfo, const std::string& algName)
 {
+    CHK_PTR_NULL(topoInfo);
     std::unique_ptr<InsCollAlgBase> executor = GetAlgExecutorForOp(opParam, algName);
     CHK_PRT_RET(
         executor == nullptr,
@@ -752,6 +771,9 @@ HcclResult GetOpParamResCtx(
     HcclComm comm, const std::string& algName, OpParam& opParam, TopoInfoWithNetLayerDetails* topoInfo,
     void** resCtxOut)
 {
+    CHK_PTR_NULL(topoInfo);
+    CHK_PTR_NULL(resCtxOut);
+    *resCtxOut = nullptr;
     bool useCannResCtx = UseCannBridge(opParam);
     std::unique_ptr<InsCollAlgBase> executor = nullptr;
     if (useCannResCtx) {
@@ -776,6 +798,7 @@ HcclResult GetOpParamResCtx(
         CHK_RET(HcclThreadExportToCommEngine(comm, 1, &cpuTsThread, COMM_ENGINE_AICPU_TS, &exportedAicpuTsThread));
     }
     CHK_RET(HcclGetAlgRes(comm, opParam, executor, topoInfo, resCtxHost, resCtxOut, isResourceReused));
+    CHK_PTR_NULL(*resCtxOut);
     opParam.cacheValid = isResourceReused;
     opParam.resCtx = *resCtxOut;
     return HCCL_SUCCESS;
@@ -785,6 +808,9 @@ HcclResult GetCcuOpParamResCtx(
     HcclComm comm, const std::string& algName, OpParam& opParam, TopoInfoWithNetLayerDetails* topoInfo,
     OpResCtx& opResCtx, void** resCtxOut)
 {
+    CHK_PTR_NULL(topoInfo);
+    CHK_PTR_NULL(resCtxOut);
+    *resCtxOut = nullptr;
     HCCL_INFO("[GetCcuOpParamResCtx]start GetCcuOpParamResCtx!");
     HCCL_INFO(
         "[GetCcuOpParamResCtx]received: workspace[%p], size[%llu]", (void*)opResCtx.workSpace, opResCtx.workSpaceSize);
@@ -793,26 +819,38 @@ HcclResult GetCcuOpParamResCtx(
     CHK_PRT_RET(
         executor.get() == nullptr, HCCL_ERROR("Fail to find executor for algName[%s]", algName.c_str()), HCCL_E_PARA);
     std::unique_ptr<AlgResourceCtxSerializable> resCtxHost = std::make_unique<AlgResourceCtxSerializable>();
-    return AcquireAlgResources(comm, opParam, executor, topoInfo, resCtxHost, opResCtx, resCtxOut);
+    CHK_RET(AcquireAlgResources(comm, opParam, executor, topoInfo, resCtxHost, opResCtx, resCtxOut));
+    CHK_PTR_NULL(*resCtxOut);
+    return HCCL_SUCCESS;
+}
+
+static HcclResult PrepareAlltoAllSendCounts(HcclComm comm, OpParam& opParam, std::vector<uint64_t>& sendCounts)
+{
+    if (opParam.opType != HcclCMDType::HCCL_CMD_ALLTOALL) {
+        return HCCL_SUCCESS;
+    }
+    constexpr uint64_t ALLTOALL_DEFAULT_SEND_COUNTS = 200ULL * 1024 * 1024;
+    uint32_t userRankSize = 0;
+    CHK_RET(HcclGetRankSize(comm, &userRankSize));
+    sendCounts.assign(userRankSize, ALLTOALL_DEFAULT_SEND_COUNTS);
+    opParam.all2AllVDataDes.sendCounts = reinterpret_cast<void*>(sendCounts.data());
+    return HCCL_SUCCESS;
 }
 
 HcclResult GetOpParam(
     HcclComm comm, void* stream, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& opParam)
 {
+    CHK_PTR_NULL(comm);
+    CHK_PTR_NULL(stream);
+    CHK_PTR_NULL(ccTiling);
     CHK_RET(InitOpParamByTiling(comm, stream, tag, ccTiling, opParam));
 
     // ALLTOALL场景下sendCounts需指向host侧真实数组，且必须在整个GetOpParam调用链
     // (含SelectAlgAndPrepareEngine、GetOpParamResCtx中的GetAlgExecViaCann)期间保持存活。
     // 该数组持有在本函数栈帧，覆盖opParam的全部使用范围。
-    constexpr uint64_t ALLTOALL_DEFAULT_SEND_COUNTS = 200ULL * 1024 * 1024;
     std::vector<uint64_t> sendCounts;
     void* origSendCounts = opParam.all2AllVDataDes.sendCounts;
-    if (opParam.opType == HcclCMDType::HCCL_CMD_ALLTOALL) {
-        uint32_t userRankSize = 0;
-        CHK_RET(HcclGetRankSize(comm, &userRankSize));
-        sendCounts.assign(userRankSize, ALLTOALL_DEFAULT_SEND_COUNTS);
-        opParam.all2AllVDataDes.sendCounts = reinterpret_cast<void*>(sendCounts.data());
-    }
+    CHK_RET(PrepareAlltoAllSendCounts(comm, opParam, sendCounts));
 
     std::string algName;
     std::unique_ptr<TopoInfoWithNetLayerDetails> topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();

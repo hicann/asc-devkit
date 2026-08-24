@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <cmath>
+#include <climits>
 #include <cstdlib>
 #include <fcntl.h>
 #include <mutex>
@@ -20,8 +21,6 @@
 #include "sal.h"
 
 using namespace std;
-
-u32 SalStrLen(const char* s, u32 maxLen) { return strnlen(s, maxLen); }
 
 HcclResult SalStrToDouble(const std::string str, double& val)
 {
@@ -70,7 +69,7 @@ HcclResult IsAllDigit(const char* strNum)
     CHK_PTR_NULL(strNum);
     u32 index = 0;
 
-    u32 nLength = SalStrLen(strNum);
+    u32 nLength = strnlen(strNum, INT_MAX);
     if (strNum[0] == '-') {
         index = 1;
     }

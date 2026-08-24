@@ -35,6 +35,10 @@ HcclResult CreateScatter(OpParam* param, ScatterOpInfo* opInfo)
 
 void GetScatterOpInfo(const void* opInfo, char* outPut, size_t size)
 {
+    if (opInfo == nullptr || outPut == nullptr || size == 0U) {
+        HCCL_ERROR("[%s] invalid input: opInfo or outPut is null, or size is zero.", __func__);
+        return;
+    }
     const ScatterOpInfo* info = reinterpret_cast<const ScatterOpInfo*>(opInfo);
     std::stringstream ss;
     ss << "tag:" << info->algTag << ", ";
@@ -43,13 +47,14 @@ void GetScatterOpInfo(const void* opInfo, char* outPut, size_t size)
     ss << "dataType:" << info->dataType << ", ";
     ss << "opType:" << info->opType << ", ";
     ss << "rootId:" << info->root << ", ";
-    ss << "dstAddr:0x" << std::hex << info->inputPtr << ", ";
-    ss << "srcAddr:0x" << std::hex << info->outputPtr << ".";
+    ss << "srcAddr:0x" << std::hex << info->inputPtr << ", ";
+    ss << "dstAddr:0x" << std::hex << info->outputPtr << ".";
 
     std::string strTmp = ss.str();
     s32 sRet = strncpy_s(outPut, size, strTmp.c_str(), std::min(size, strTmp.size()));
     if (strTmp.size() >= size || sRet != EOK) {
-        HCCL_ERROR("%s strncpy_s fail, src size[%u], dst size[%u], sRet[%d]", strTmp.size(), size, sRet);
+        HCCL_ERROR(
+            "[%s] strncpy_s failed, src size[%zu], dst size[%zu], sRet[%d]", __func__, strTmp.size(), size, sRet);
     }
 }
 

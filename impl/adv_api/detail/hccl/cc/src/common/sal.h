@@ -10,7 +10,6 @@
 #ifndef HCCL_INC_SAL_H
 #define HCCL_INC_SAL_H
 
-#include <climits>
 #include <chrono>
 #include <hccl/hccl_types.h>
 #include <hccl/base.h>
@@ -25,7 +24,6 @@ HcclResult SalStrToULong(const std::string str, int base, u32& val);
 HcclResult SalStrToDouble(const std::string str, double& val);
 
 HcclResult IsAllDigit(const char* strNum);
-u32 SalStrLen(const char* s, u32 maxLen = INT_MAX);
 
 #define weak_alias(name, aliasname) _weak_alias(name, aliasname)
 #define _weak_alias(name, aliasname) extern __typeof(name) aliasname __attribute__((weak, alias(#name)))

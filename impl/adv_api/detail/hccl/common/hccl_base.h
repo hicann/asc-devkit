@@ -35,7 +35,12 @@ namespace AscendC {
         }                                               \
     } while (0)
 #else
-#define ASCENDC_HCCL_API_ASSERT(cond, ret, fmt, ...)
+#define ASCENDC_HCCL_API_ASSERT(cond, ret, fmt, ...) \
+    do {                                             \
+        if (!(cond)) {                               \
+            ret;                                     \
+        }                                            \
+    } while (0)
 #endif
 
 template <HcclServerType serverType, const auto& config>

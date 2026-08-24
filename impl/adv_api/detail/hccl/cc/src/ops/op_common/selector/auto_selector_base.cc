@@ -161,6 +161,7 @@ HcclResult AutoSelectorBase::CheckHostDPUOnly(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam, bool& hostDPUOnly) const
 {
     hostDPUOnly = false;
+    CHK_PTR_NULL(topoInfo);
     HCCL_INFO("Start CheckHostDPUOnly");
     // 只有一个server，不使用DPU
     if (topoInfo->serverNum == 1) {
