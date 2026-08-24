@@ -54,11 +54,10 @@ inline float sqrtf(float x)
 
 ## 约束说明
 
-本接口支持的输入数据范围为x大于等于0，否则返回值为nan。
-
-<!-- npu="950" id7 -->
-针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
-<!-- end id7 -->
+-   本接口支持的输入数据范围为x大于等于0，否则返回值为nan。
+-   本接口受编译选项[--cce-use-fast-math](../../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#常用的编译选项)的影响。
+    -   --cce-use-fast-math=true：开启快速计算模式，不支持Subnormal场景的低精度平方根运算，处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
+    -   --cce-use-fast-math=false：支持Subnormal场景的高精度平方根运算。
 
 ## 需要包含的头文件
 

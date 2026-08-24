@@ -53,9 +53,9 @@ e的x次方。
 
 ## 约束说明
 
-<!-- npu="950" id7 -->
-针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
-<!-- end id7 -->
+本接口受编译选项[--cce-use-fast-math](../../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#常用的编译选项)的影响。
+-   --cce-use-fast-math=true：开启快速计算模式，不支持Subnormal场景，处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
+-   --cce-use-fast-math=false：支持Subnormal场景。
 
 ## 需要包含的头文件
 
