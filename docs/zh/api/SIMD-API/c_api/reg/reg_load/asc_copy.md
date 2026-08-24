@@ -40,35 +40,52 @@
     
     具体搬运原理请参考[关键特性说明](#关键特性说明)。
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
-- 矢量数据寄存器复制到矢量数据寄存器
+### 矢量数据寄存器复制到矢量数据寄存器
 
-    ```cpp
-    __simd_callee__ inline void asc_copy(vector_int8_t& dst, vector_int8_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_int16_t& dst, vector_int16_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_half& dst, vector_half src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_int32_t& dst, vector_int32_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_float& dst, vector_float src, vector_bool mask)
-    ```
+```c
+__simd_callee__ inline void asc_copy(vector_<dtype>& dst,
+                                     vector_<dtype> src,
+                                     vector_bool mask)
+```
 
-- 掩码寄存器复制到掩码寄存器
+#### dtype支持数据类型
+dtype支持的数据类型：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
 
-    ```cpp
-    __simd_callee__ inline void asc_copy(vector_bool& dst, vector_bool src, vector_bool mask)
-    __simd_callee__ inline void asc_copy(vector_bool& dst, vector_bool src)
-    ```
+#### 函数原型典型示例
 
-- 矢量数据寄存器复制到掩码寄存器（**part的值必须在编译期确定，可传入整数字面量或constexpr整数常量，不支持传入运行时变量。**）
+```c
+// 示例：对half矢量数据寄存器执行复制。
+__simd_callee__ inline void asc_copy(vector_half& dst,
+                                     vector_half src,
+                                     vector_bool mask)
+```
 
-    ```cpp
-    __simd_callee__ inline void asc_copy(vector_bool& dst, vector_uint16_t src, int16_t part)
-    __simd_callee__ inline void asc_copy(vector_bool& dst, vector_uint32_t src, int16_t part)
-    ```
+### 掩码寄存器复制到掩码寄存器
+
+```c
+__simd_callee__ inline void asc_copy(vector_bool& dst,
+                                     vector_bool src,
+                                     vector_bool mask)
+__simd_callee__ inline void asc_copy(vector_bool& dst,
+                                     vector_bool src)
+```
+
+### 矢量数据寄存器复制到掩码寄存器
+
+**part的值必须在编译期确定，可传入整数字面量或constexpr整数常量，不支持传入运行时变量。**
+
+```c
+__simd_callee__ inline void asc_copy(vector_bool& dst,
+                                     vector_uint16_t src,
+                                     int16_t part)
+__simd_callee__ inline void asc_copy(vector_bool& dst,
+                                     vector_uint32_t src,
+                                     int16_t part)
+```
 
 ## 参数说明
 
@@ -76,24 +93,24 @@
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
-| src | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中保持原值。 |
+| dst | 输出 | 目的矢量数据寄存器，dtype须与src完全一致。mask比特位为1的位置写入src对应元素（或对应比特），mask比特位为0的位置采用Merging模式写入dst原值。dst需初始化，否则当mask为0时将出现未知值。 |
+| src | 输入 | 源矢量数据寄存器，dtype须与dst完全一致。 |
+| mask | 输入 | 源掩码寄存器，用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中保持原值。 |
 
 **表2** 参数说明（掩码寄存器复制到掩码寄存器）
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（掩码寄存器）。 |
-| src | 输入 | 源操作数（掩码寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| dst | 输出 | 目的掩码寄存器。 |
+| src | 输入 | 源掩码寄存器。 |
+| mask | 输入 | 源掩码寄存器，用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
 **表3** 参数说明（矢量数据寄存器复制到掩码寄存器）
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（掩码寄存器）。 |
-| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| dst | 输出 | 目的掩码寄存器，写入src的全部比特位。 |
+| src | 输入 | 源矢量数据寄存器。 |
 | part | 输入 | part决定了src中需要搬运的数据块，具体描述请参考[关键特性说明](#关键特性说明)。<br>&bull; 当数据类型为uint16_t，part∈[0, 15]。<br>&bull; 当数据类型为uint32_t，part∈[0, 31]。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
@@ -104,11 +121,13 @@
 
 ## 约束说明
 
+- 本接口仅在AIV上生效，非AIV调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，dst与src均为矢量数据寄存器或掩码寄存器。
 - 针对矢量数据寄存器复制到矢量数据寄存器：dst中未被mask筛选的位置保持原值。
 - 针对掩码寄存器复制到掩码寄存器：带mask的接口dst中未被mask筛选的位置填0。
 - 针对矢量寄存器复制到掩码寄存器：**part的值必须在编译期确定，可传入整数字面量或constexpr整数常量，不支持传入运行时变量。**
-    - 当数据类型为uint16_t，part∈[0, 15]；
-    - 当数据类型为uint32_t，part∈[0, 31]。
+    - 当数据类型为uint16_t时，part∈[0, 15]。
+    - 当数据类型为uint32_t时，part∈[0, 31]。
 
 ## 关键特性说明
 
@@ -131,49 +150,87 @@
 
 ## 调用示例
 
-- 矢量数据寄存器复制到矢量数据寄存器
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
-    ```cpp
-    __simd_vf__ inline void copy_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
-    {
-        vector_half dst;
-        vector_half src;
-        vector_bool mask;
-        for (uint16_t i = 0; i < repeat_time; ++i) {
-            mask = asc_update_mask_b16(count);
-            asc_loadalign(src, src_addr + i * one_repeat_size);
-            asc_copy(dst, src, mask);
-            asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
-        }
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510&& ./main
+```
+<!-- end id8 -->
+
+```cpp
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+constexpr uint32_t BUFFER_BYTES = 256;
+__simd_vf__ inline void load(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
+{
+    vector_bool mask = asc_create_mask_b8(PAT_ALL);
+    for (uint16_t repeat = 0; repeat < 1; ++repeat) {
+    vector_int8_t arg_0_0;
+    asc_loadalign(arg_0_0, reinterpret_cast<__ubuf__ int8_t*>(input));
+    vector_int8_t arg_0_1;
+    asc_loadalign(arg_0_1, reinterpret_cast<__ubuf__ int8_t*>(input));
+    asc_copy(arg_0_0, arg_0_1, mask);
+    asc_storealign(reinterpret_cast<__ubuf__ int8_t*>(output), arg_0_0, mask);
     }
-    ```
-
-- 掩码寄存器复制到掩码寄存器
-
-    ```cpp
-    __simd_vf__ inline void copy_mask_vf(__ubuf__ uint32_t* dst_addr, __ubuf__ uint32_t* src_addr, uint32_t count, uint16_t one_block_size, uint16_t repeat_time)
-    {
-        vector_bool dst;
-        vector_bool src;
-        vector_bool mask;
-        for (uint16_t i = 0; i < repeat_time; ++i) {
-            mask = asc_update_mask_b16(count);
-            asc_loadalign_postupdate(src, src_addr, one_block_size);
-            asc_copy(dst, src, mask);
-            asc_storealign_postupdate(dst_addr, dst, one_block_size);
-        }
-    }
-    ```
-
-- 矢量数据寄存器复制到掩码寄存器
-
-    ```cpp
-    __simd_vf__ inline void copy_vector_to_mask_vf(__ubuf__ uint16_t* dst_addr, __ubuf__ uint16_t* src_addr)
-    {
-        vector_uint16_t src;
-        vector_bool mask;
-        asc_loadalign(src, src_addr);
-        asc_copy(mask, src, 0);
-        asc_storealign(dst_addr, mask);
-    }
-    ```
+}
+__global__ __vector__ void asc_copy_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+{
+    asc_init();
+    __ubuf__ uint8_t output_local[BUFFER_BYTES], input_local[BUFFER_BYTES];
+    asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
+    asc_copy_gm2ub_align(output_local, input, BUFFER_BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    load(output_local, input_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);
+    asc_sync();
+}
+} // namespace
+int main()
+{
+    std::vector<uint8_t> input(BUFFER_BYTES), output(BUFFER_BYTES, 0xff);
+    for (uint32_t i = 0; i < BUFFER_BYTES; ++i) input[i] = static_cast<uint8_t>(i % 251);
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint8_t* input_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    uint8_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, input.size() * sizeof(uint8_t), input.data(), input.size() * sizeof(uint8_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_copy_kernel<<<1, 0>>>(output_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint8_t), output_device, output.size() * sizeof(uint8_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input bytes", input);
+    print_data("Output bytes", output);
+    const bool passed = true;
+    std::cout << "[Success] asc_copy completed." << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
+```

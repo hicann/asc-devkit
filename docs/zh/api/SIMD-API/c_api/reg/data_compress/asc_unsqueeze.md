@@ -32,17 +32,26 @@
 
 **图1** unsqueeze流程
 
-![unsqueeze流程](../../figures/capi_unsqueeze.png)
+![unsqueeze流程](../../figures/asc_unsqueeze.png)
+
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
-```cpp
-__simd_callee__ inline void asc_unsqueeze(vector_int8_t& dst, vector_bool mask)
-__simd_callee__ inline void asc_unsqueeze(vector_uint8_t& dst, vector_bool mask)
-__simd_callee__ inline void asc_unsqueeze(vector_int16_t& dst, vector_bool mask)
-__simd_callee__ inline void asc_unsqueeze(vector_uint16_t& dst, vector_bool mask)
-__simd_callee__ inline void asc_unsqueeze(vector_int32_t& dst, vector_bool mask)
-__simd_callee__ inline void asc_unsqueeze(vector_uint32_t& dst, vector_bool mask)
+```c
+__simd_callee__ inline void asc_unsqueeze(vector_<dtype>& dst,
+                                          vector_bool mask)
+```
+
+#### dtype支持数据类型
+dtype支持的数据类型：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+
+#### 函数原型典型示例
+
+```c
+// 示例：对int8_t矢量数据寄存器执行解压缩。
+__simd_callee__ inline void asc_unsqueeze(vector_int8_t& dst,
+                                          vector_bool mask)
 ```
 
 ## 参数说明
@@ -51,8 +60,8 @@ __simd_callee__ inline void asc_unsqueeze(vector_uint32_t& dst, vector_bool mask
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输入/输出 | 源操作数和目的操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数（掩码寄存器），用于提供dst解压缩信息。 |
+| dst | 输入/输出 | 源和目的矢量数据寄存器，接口在掩码前缀计数过程中写入计数结果。 |
+| mask | 输入 | 源掩码寄存器，用于提供dst解压缩信息。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
@@ -62,19 +71,105 @@ __simd_callee__ inline void asc_unsqueeze(vector_uint32_t& dst, vector_bool mask
 
 ## 约束说明
 
-无
+- 本接口仅在AIV上生效，非AIV调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，dst与mask为矢量数据寄存器/掩码寄存器。
 
 ## 调用示例
 
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510&& ./main
+```
+<!-- end id8 -->
+
 ```cpp
-__simd_vf__ inline void unsqueeze_vf(__ubuf__ int8_t* dst_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
 {
-    vector_int8_t dst;
-    vector_bool mask;
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        mask = asc_update_mask_b8(count);
-        asc_unsqueeze(dst, mask);
-        asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+template <typename T>
+bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
+{
+    if (actual.size() != expected.size()) return false;
+    for (size_t i = 0; i < actual.size(); ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
     }
+    return true;
+}
+
+template <typename T>
+bool compare_range_data(const std::vector<T>& actual, const std::vector<T>& expected,
+    size_t begin, size_t count, double tolerance = 0.0)
+{
+    if (begin + count > actual.size() || begin + count > expected.size()) return false;
+    for (size_t i = begin; i < begin + count; ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
+    }
+    return true;
+}
+
+constexpr uint32_t ELEMENT_COUNT = 64;
+__simd_vf__ inline void unsqueeze(__ubuf__ uint32_t* dst)
+{
+    vector_uint32_t dst_reg;
+    uint32_t count = ELEMENT_COUNT;
+    vector_bool mask = asc_update_mask_b32(count);
+    asc_unsqueeze(dst_reg, mask);
+    asc_storealign(dst, dst_reg, mask);
+}
+__global__ __vector__ void asc_unsqueeze_kernel(__gm__ uint32_t* dst)
+{
+    asc_init();
+    __ubuf__ uint32_t dst_local[ELEMENT_COUNT];
+    unsqueeze(dst_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(dst, dst_local, ELEMENT_COUNT * sizeof(uint32_t));
+    asc_sync();
+}
+} // namespace
+int main()
+{
+    std::vector<uint32_t> input = {ELEMENT_COUNT};
+    std::vector<uint32_t> output(ELEMENT_COUNT, 0), golden(ELEMENT_COUNT);
+    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) golden[i] = i;
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint32_t* dst_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&dst_device), (ELEMENT_COUNT) * sizeof(uint32_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    asc_unsqueeze_kernel<<<1, 0>>>(dst_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint32_t), dst_device, output.size() * sizeof(uint32_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input mask count", input);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = compare_data(output, golden);
+    std::cout << (passed ? "[Success] asc_unsqueeze passed." : "[Failed] asc_unsqueeze failed.") << std::endl;
+    aclrtFree(dst_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
 }
 ```
