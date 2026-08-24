@@ -34,7 +34,7 @@
 如图1所示，其作用是保证指定流水线中前序指令的所有数据读写全部完成后，该流水线的后序指令才能开始执行。
 
 **图1**  `asc_sync_pipe`接口功能示意图    
-![](../../c_api/figures/asc_sync_pipe.png)
+![](../figures/asc_sync_pipe.png)
 
 ## 函数原型
 

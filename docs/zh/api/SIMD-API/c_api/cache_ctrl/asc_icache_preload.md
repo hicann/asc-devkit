@@ -60,7 +60,7 @@ prefetch_len参数单位为2K Byte，取值需满足 $\text{prefetch\_len} < \df
 ## 调用示例
 
 ```cpp
-int64_t prefetch_length = 32;
+int64_t prefetch_length = 7;
 int64_t pc = asc_get_program_counter() & 0xFFFFFFFFFFFF;
 asc_icache_preload(reinterpret_cast<void *>(pc), prefetch_length);
 ```
