@@ -239,6 +239,10 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         KERNEL_INFO, "ApiClient CcuPrepareForReduceScatterM2M scratchAddr:0x%llx, rankSliceOffset:%d",
         ccuParam_.scratchAddr, rankSliceOffset);
     xnData_[4] = rankSliceOffset;
+    // xn5/xn6 are outputOffset and repeatStride, which CCU always treats as 0.
+    // Set them explicitly to avoid flushing stale values.
+    xnData_[5] = 0;
+    xnData_[6] = 0;
     xnData_[7] = sliceSize;
     xnData_[8] = UINT64_MAX - 1;
     CalcGoSize(sliceSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[9]);
