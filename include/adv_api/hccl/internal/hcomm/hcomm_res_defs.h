@@ -226,7 +226,7 @@ static inline HcommResult EndpointDescInit(EndpointDesc* endpoint, uint32_t num)
     const HcommResult hcommEPointer = (HcommResult)2; // 对齐HCCL_E_PTR
 
     for (uint32_t idx = 0; idx < num; ++idx) {
-        if (endpoint == NULL) {
+        if (endpoint == nullptr) {
             return hcommEPointer;
         }
 
@@ -256,7 +256,7 @@ static inline HcommResult HcommChannelDescInit(HcommChannelDesc* channelDesc, ui
     const HcommResult hcommEInternal = (HcommResult)4; // 对齐HCCL_E_INTERNAL
 
     for (uint32_t idx = 0; idx < descNum; ++idx) {
-        if (channelDesc == NULL) {
+        if (channelDesc == nullptr) {
             return hcommEPointer;
         }
 
@@ -267,9 +267,9 @@ static inline HcommResult HcommChannelDescInit(HcommChannelDesc* channelDesc, ui
         channelDesc->header.reserved = 0;
         channelDesc->notifyNum = 0;
         channelDesc->exchangeAllMems = false;
-        channelDesc->memHandles = NULL;
+        channelDesc->memHandles = nullptr;
         channelDesc->memHandleNum = 0;
-        channelDesc->socket = NULL;
+        channelDesc->socket = nullptr;
         channelDesc->role = HCOMM_SOCKET_ROLE_RESERVED;
         channelDesc->port = 0;
         if (EndpointDescInit(&channelDesc->remoteEndpoint, 1) != 0) {
