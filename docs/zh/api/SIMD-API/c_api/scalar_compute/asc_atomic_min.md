@@ -63,6 +63,19 @@ PIPE_S
 
 - 在开启编译器自动同步功能的前提下，编译器能够自动在PIPE_MTE2/PIPE_MTE3与PIPE_S之间插入同步。但是，asc_atomic_min为标量计算，在读写GM时如果与搬运单元（MTE2/MTE3）存在数据依赖，编译器却无法自动插入同步，开发者需要根据实际情况手动插入同步。
 - Scalar原子操作会绕过DCache，需要调用[asc_dcci](../cache_ctrl/asc_dcci.md)接口确保GM与DCache的一致性。
+- float类型下接口的性能与接口返回值是否被使用有关，具体情况如下：
+    - 当使用接口返回值时，接口采用软仿实现，float类型下接口的性能低于其它数据类型。
+    - 当不使用接口返回值时，float类型下接口的性能与其它数据类型一致。
+
+    示例代码如下：
+
+    ```cpp
+    // 使用接口返回值。
+    float old = asc_atomic_min(dst_float, 1.0f);
+
+    // 不使用接口返回值。
+    asc_atomic_min(dst_float, 1.0f);
+    ```
 
 ## 调用示例
 
