@@ -11,8 +11,6 @@
 [![license](https://img.shields.io/badge/license-CANN_Open_2.0-lightgrey.svg)](LICENSE)
 [![contributing](https://img.shields.io/badge/CONTRIBUTING-teal)](CONTRIBUTING.md)
 [![SIG](https://img.shields.io/badge/SIG-ascendc-yellow)](https://gitcode.com/cann/community/tree/master/CANN/sigs/ascendc)
-[![VS Marketplace](https://vsmarketplacebadges.dev/version/HICANN.ascend-c-toolkit.svg)](https://marketplace.visualstudio.com/items?itemName=HICANN.ascend-c-toolkit)
-[![Installs](https://vsmarketplacebadges.dev/installs-short/HICANN.ascend-c-toolkit.svg)](https://marketplace.visualstudio.com/items?itemName=HICANN.ascend-c-toolkit)
 
 </div>
 
@@ -44,49 +42,61 @@
 
 ## 🚀概述
 
-[Ascend C](https://www.hiascend.com/cann/ascend-c)是CANN（Compute Architecture for Neural Networks）推出的昇腾AI处理器专用的算子程序开发语言，原生支持C和C++标准规范。作为一门面向多场景的编程语言，Ascend C不仅致力于**开放芯片完备编程能力支撑实现极致性能**，同时通过多层级编程API设计，让您能够根据项目需求、团队技能与性能目标，灵活选择最合适的API，在开发效率与运行性能之间取得最佳平衡。
+[Ascend C](https://www.hiascend.com/cann/ascend-c)是CANN（Compute Architecture for Neural Networks）面向昇腾AI处理器打造的专用算子开发编程语言，原生兼容C/C++标准规范。
+
+作为覆盖全场景算子开发需求的编程语言，Ascend C一方面完整开放芯片底层可编程能力，支撑极致性能调优；另一方面通过分层分级的API设计体系，开发者可根据业务场景、技术储备与性能目标灵活选择开发接口，在开发效率与运行性能之间找到最优平衡点。
 
 ### 设计目标
 
-Ascend C的设计目标可概括为 **“高性能、完备性、易编程、可调试和兼容性”**。其通过对C/C++语言标准进行最小化扩展，既支持基于指针的C语言开发习惯，也支持基于Tensor的C++编程范式，在支撑昇腾算子高效开发的同时，实现与现有生态的无缝衔接，保障开发体验的一致性。
+Ascend C以「**兼容C/C++标准 · 释放极致算力**」为核心设计理念：在严格遵循C/C++语言规范的基础上做最小化语法扩展，让具备C/C++开发基础的开发者可低门槛平滑迁移至昇腾平台，自主释放芯片全部算力潜能。语言同时兼容指针式原生C开发范式与Tensor+Layout现代C++编程模式，在深度支撑算子定制优化的同时，实现与现有C/C++开发生态的无缝衔接，保障跨平台开发体验的一致性。
 
-我们秉持以下核心理念：
-- **没有银弹**：不同场景对性能、开发效率的要求各异，单一接口无法最优适配所有场景；
-- **渐进式学习**：新手可从易用性接口入手快速验证算法；专家则可向下钻取、精细调优，借助复杂接口特性充分挖掘硬件潜能。
+我们坚持两大核心设计原则：
+- **没有银弹**：不同业务场景对性能、开发效率的诉求存在差异，不存在适配所有场景的最优单一接口，分层设计是兼顾效率与性能的核心路径；
+- **渐进式成长**：入门开发者可从高层易用接口快速上手，完成算法验证与原型落地；资深开发者可向下深入底层接口，通过精细化调优充分释放硬件潜能。
 
-### API层级
-Ascend C提供三类接口，均可实现底层的完备编程能力：
+### API分层体系
 
-| API层级 | 语言  | 特点 | 目标用户 | 主要用途 |
-|----------|----------|----------|----------|----------|
-| **Tpipe/Tque框架编程API** |  **C++** |基于**Tensor**编程<br>通过Tpipe/Tque框架统一管理内存与同步| 算子库开发者| 基于框架自动管理同步与内存，<br>提升编程易用性|
-| **基础API** | **C++** |基于**Tensor**编程，提供**C++基础完备编程能力**<br>通过MakeTensor/LocalMemoryAllocator分配Tensor，自主管理同步| 算子库开发者|自主管理同步与内存<br>匹配C++Tensor开发习惯，支撑实现极致性能|
-| **语言扩展层<br>SIMD&SIMT API** |**C**|基于**指针**编程，提供**C基础完备编程能力**<br>通过数组[]分配内存，自主管理同步|算子库开发者 |自主管理同步与内存<br>匹配C语言开发习惯，支撑实现极致性能|
+Ascend C遵循「标准C/C++语法、最小化扩展」的核心原则，构建了轻量化高性能基座。
 
+| API层级 | 语言范式 | 核心特性 | 目标用户 | 核心价值 |
+|---------|----------|----------|----------|----------|
+| **Basic API** | C++ | 基于SIMD编程模型，采用无Layout约束的Tensor抽象编程；依托TPipe/TQue框架实现内存调度与执行同步的统一托管。 | 通用算子库开发者 | 通过框架自动化完成内存与同步管理，屏蔽底层硬件实现细节，有效降低开发复杂度，提升编程易用性与工程交付效率。 |
+| **Tensor API** | C++ | 基于SIMD编程模型，依托Layout代数体系提供携带**Layout**语义的Tensor抽象；采用**arch/atom/algorithm**三层解耦的API架构设计。 | 高性能算子优化开发者 | 将张量与布局作为一等公民，内置Layout代数运算能力，实现零成本编译抽象；三层解耦设计达成关注点分离，天然具备跨架构可移植性。 |
+| **SIMD C API** | C | 基于SIMD编程模型与**原生指针**编程范式，提供完整C语言级底层可编程能力；支持数组下标式内存访问，内存生命周期与执行同步完全由开发者自主管控。 | 极致性能调优开发者 | 完全契合原生C语言开发习惯，支持深度定制内存排布与同步策略；指令级透明映射实现零封装开销，全面开放底层硬件能力，支撑精细化性能调优与极致算力释放。 |
+| **SIMT API** | C | 基于业界通用SIMT编程模型，以单线程为基本编程单元，原生支持离散不规则并行计算逻辑。 | 不规则场景高性能算子开发者 | 天然适配离散、不规则的并行计算场景，支持业界主流异构开发范式，有效降低跨技术栈迁移成本与学习门槛。 |
 
-此外，Ascend C提供高阶API和算子模板库以便提升算子开发效率。
+在底层编程接口之上，Ascend C还提供了算子模板库与高阶API组件，沉淀通用开发能力，进一步降低开发门槛，加速算法原型落地。
 
-| API层级 |  目标用户 | 主要用途 |
+| 组件层级 | 目标用户 | 核心价值 |
 |----------|----------|----------|
-| **算子模板库 (CATLASS/ATVOSS等)** |  算法开发人员 | 基于典型算子实现进行自定义扩展，满足特定场景高性能需求 |
-| **高阶API** |算法开发人员 | 复用通用单核算法，快速完成算法验证 |
+| **算子模板库（BLAZE/ATVOSS等）** | 算法开发人员 | 提供典型算子的高性能模板实现，支持基于模板定制化扩展，快速适配业务场景的高性能算力需求 |
+| **高阶API** | 算法开发人员 | 封装通用单核计算算法原语，屏蔽底层硬件实现细节，支撑开发者快速搭建算法逻辑，高效完成功能验证与方案原型落地 |
 
+此外，联合生态正持续建设Kernel编程C++标准库**asc-stl**、设备侧线性代数库**asc-mathdx**等基础组件，不断丰富Ascend C算子编程生态。
 
-其总体逻辑架构图如下所示：
+### 整体架构
 
-<img src="docs/zh/guide/figures/architecture_ascendc.png" alt="架构图"  width="1000px">
+Ascend C采用分层架构设计，自下而上构建完整的算子开发技术栈，整体逻辑架构如下：
 
-- **语言扩展层C API**：纯C接口，支持数组分配内存、基于指针的计算接口，提供与业界一致的C语言编程体验，并开放芯片完备编程能力。Atlas A2/A3支持SIMD的纯C接口；Ascend 950PR/Ascend 950DT将支持与业界类似的SIMT编程能力、SIMD/SIMT混合编程能力；
-- **基础API**：单指令抽象的C++类库API，一般基于Tensor编程；逐步基于Layout完善Tensor编程能力；
-- **高阶API**：基于单核对常见算法进行抽象和封装，提供公共算法的实现；
-- **算子模板库**：基于模板提供算子的完整实现参考，简化Tiling开发，支持用户自定义扩展；
-- **Python前端PyAsc**：PyAsc基于Python前端，提供芯片底层完备编程能力，并将逐步基于Layout完善Tensor编程能力，新增SIMT编程等能力，实现基于Python接口开发高性能算子；
+<img src="docs/zh/guide/figures/architecture_ascendc.png" alt="Ascend C整体架构图"  width="1000px">
+
+各层级能力定义与说明如下：
+- **语言扩展层（SIMT API）**：面向多线程并行场景的原生C语言编程接口，支持业界通用的SIMT编程模型，保障跨技术栈开发体验的一致性，支撑离散、不规则计算场景下的高性能算子开发。
+- **语言扩展层（SIMD C API）**：基于SIMD向量化编程模型、面向极致性能调优的C语言级底层编程接口，原生支持数组式内存分配与指针式计算原语，具备指令级零封装开销的硬件访问能力。Ascend 950PR/Ascend 950DT架构新增SIMD/SIMT混合编程模式支持，可覆盖多形态并行计算场景。
+- **Tensor API**：面向高性能算子开发的C++ Tensor级核心编程接口。将内存布局（Layout）作为Tensor抽象的一等公民，原生支持携带Layout语义的Tensor对象；内置Layout代数运算能力，可自动化完成内存布局索引推导与布局变换管理，显著降低复杂内存排布场景的开发复杂度，提升代码可维护性与跨架构可移植性。
+- **基础API（Basic API）**：基于单指令抽象的C++类库接口，以无Layout约束的Tensor对象为核心提供基础编程能力；依托TPipe/TQue框架统一托管内存调度与执行同步，屏蔽底层硬件实现细节。
+- **高阶API（Adv API)**：对单核通用计算算法进行标准化抽象封装，提供开箱即用的公共算法实现，屏蔽底层硬件指令细节，支撑算法快速验证与工程原型落地。
+- **算子模板库**：面向典型计算场景的高性能算子参考实现框架，基于模板化设计提供算子完整工程实现参考，沉淀Tiling调优与性能优化最佳实践，简化算子开发流程，支持用户自定义扩展。
+- **生态扩展组件（开发中）**：
+  - **asc-comm**：提供通信算子自主开发能力，支撑分布式场景下的算子定制开发；
+  - **asc-stl**：提供设备侧常用C++标准库能力，深度适配Kernel编程范式与运行环境；
+  - **asc-mathdx**：集成blasdx等设备侧线性代数计算库，支撑高性能数学运算与科学计算场景。
+- **Python前端（PyAsc）**：基于Python语言封装芯片底层完备可编程能力，持续完善Layout体系下的Tensor编程能力，新增SIMT编程模型支持，实现通过Python接口开发高性能算子。
 
 ### 如何选择多层级API进行算子开发
 - **基于C/C++语言开发**：详细请参考[Ascend C多级API选择指南](./docs/zh/asc_how_to_choose_api.md)
 - **基于Python语言开发，支撑完备编程能力，实现极致性能**：推荐选用Ascend C Python前端[PyAsc](https://gitcode.com/cann/pyasc)
 - **基于Python语言开发，快速开发验证，易用性优先**：推荐选用 [PyPTO](https://gitcode.com/cann/pypto)
-
 
 ## 🔍目录结构说明
 本仓主要包含Ascend C编程API和必要的cmake编译脚本，是算子开发所需的核心模块，其目录结构如下：
@@ -188,7 +198,7 @@ Ascend C提供三类接口，均可实现底层的完备编程能力：
 
 - 重启clangd（VS Code: Command Palette -> "Clangd: Restart language server"）
 
-- 推荐安装VS Code扩展[Ascend C Toolkit](https://marketplace.visualstudio.com/items?itemName=HICANN.ascend-c-toolkit)，用于在VS Code中完成Ascend C算子工程的编辑、编译、运行、调试、异常检测与性能调优等流程。打开本仓工作区时，VS Code会根据`.vscode/extensions.json`提示安装推荐扩展。
+- 推荐安装VS Code扩展Ascend C Toolkit，用于在VS Code中完成Ascend C算子工程的编辑、编译、运行、调试、异常检测与性能调优等流程。打开本仓工作区时，VS Code会根据`.vscode/extensions.json`提示安装推荐扩展。
 
 - Ascend C Toolkit近期更新重点增强Atlas A2系列产品和Atlas A3系列产品的环境解析、标准自定义算子创建、SoC设置、仿真分析、NPU调试、设置迁移与稳定性；完整使用说明和问题反馈请参考[CANN讨论区使用指导](https://gitcode.com/org/cann/discussions/54)。
 
@@ -222,6 +232,7 @@ Ascend C提供三类接口，均可实现底层的完备编程能力：
 ## 📌相关规划
 
 - [Ascend C Development Roadmap (2026 Q2)](https://gitcode.com/cann/asc-devkit/issues/316)；
+- [Ascend C Development Roadmap (2026 Q3)](https://gitcode.com/cann/asc-devkit/issues/938)；
 
 ## 📝相关信息
 
