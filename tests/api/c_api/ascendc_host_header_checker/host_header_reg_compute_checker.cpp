@@ -149,6 +149,7 @@ static void test_host_c_api_reg_compute_3()
     using ::asc_exp_sub;
     using ::asc_exp_sub_half2float;
     using ::asc_exp_sub_v2;
+    using ::asc_fma;
 }
 
 static void test_host_c_api_reg_compute_4()
@@ -578,6 +579,7 @@ static void test_host_c_api_reg_compute_16()
     using ::asc_min_scalar;
     using ::asc_mul;
     using ::asc_mul_scalar;
+    using ::asc_mula;
     using ::asc_mull;
     using ::asc_muls;
     using ::asc_muls_v2;

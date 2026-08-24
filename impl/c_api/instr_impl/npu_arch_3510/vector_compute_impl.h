@@ -218,6 +218,7 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_transpose_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_transto5hd_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_set_va_reg_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_mula_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_fma_impl.h"
 
 // ==========asc_update_addr_reg(b8/b16/b32)=========
@@ -9272,21 +9273,61 @@ __simd_callee__ inline void asc_half2uint8_rz_sat(
     asc_half2uint8_rz_sat_impl(dst, src, mask, dst_pos);
 }
 
-//=================asc_fma==================
-__simd_callee__ inline void asc_fma(
+//=================asc_mula==================
+__simd_callee__ inline void asc_mula(vector_int16_t& dst, vector_int16_t src0, vector_int16_t src1, vector_bool mask)
+{
+    asc_mula_impl(dst, src0, src1, mask);
+}
+
+__simd_callee__ inline void asc_mula(vector_uint16_t& dst, vector_uint16_t src0, vector_uint16_t src1, vector_bool mask)
+{
+    asc_mula_impl(dst, src0, src1, mask);
+}
+
+__simd_callee__ inline void asc_mula(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask)
+{
+    asc_mula_impl(dst, src0, src1, mask);
+}
+
+__simd_callee__ inline void asc_mula(
     vector_bfloat16_t& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask)
 {
-    asc_fma_impl(dst, src0, src1, mask);
+    asc_mula_impl(dst, src0, src1, mask);
 }
 
-__simd_callee__ inline void asc_fma(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask)
+__simd_callee__ inline void asc_mula(vector_int32_t& dst, vector_int32_t src0, vector_int32_t src1, vector_bool mask)
 {
-    asc_fma_impl(dst, src0, src1, mask);
+    asc_mula_impl(dst, src0, src1, mask);
 }
 
-__simd_callee__ inline void asc_fma(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask)
+__simd_callee__ inline void asc_mula(vector_uint32_t& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
 {
-    asc_fma_impl(dst, src0, src1, mask);
+    asc_mula_impl(dst, src0, src1, mask);
+}
+
+__simd_callee__ inline void asc_mula(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask)
+{
+    asc_mula_impl(dst, src0, src1, mask);
+}
+
+//=================asc_fma==================
+__simd_callee__ inline vector_half asc_fma(vector_half src0, vector_half src1, vector_half src2, vector_bool mask)
+{
+    asc_fma_impl(src2, src0, src1, mask);
+    return src2;
+}
+
+__simd_callee__ inline vector_bfloat16_t asc_fma(
+    vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bfloat16_t src2, vector_bool mask)
+{
+    asc_fma_impl(src2, src0, src1, mask);
+    return src2;
+}
+
+__simd_callee__ inline vector_float asc_fma(vector_float src0, vector_float src1, vector_float src2, vector_bool mask)
+{
+    asc_fma_impl(src2, src0, src1, mask);
+    return src2;
 }
 
 #endif

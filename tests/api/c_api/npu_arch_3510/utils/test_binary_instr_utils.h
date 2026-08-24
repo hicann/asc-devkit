@@ -44,4 +44,32 @@
         GlobalMockObject::verify();                                                                                    \
     }
 
+#define TEST_VECTOR_COMPUTE_TERNARY_RET_INSTR(class_name, c_api_name, cce_name, data_type)                             \
+                                                                                                                       \
+    class TestVectorCompute##class_name##_##data_type##_CApi : public testing::Test {                                  \
+    protected:                                                                                                         \
+        void SetUp() {}                                                                                                \
+        void TearDown() {}                                                                                             \
+    };                                                                                                                 \
+                                                                                                                       \
+    namespace {                                                                                                        \
+    void cce_name##_##data_type##_Stub(data_type& dst, data_type src0, data_type src1, vector_bool mask, Literal mode) \
+    {}                                                                                                                 \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(TestVectorCompute##class_name##_##data_type##_CApi, c_api_name##_##data_type##_Succ)                        \
+    {                                                                                                                  \
+        data_type src0;                                                                                                \
+        data_type src1;                                                                                                \
+        data_type src2;                                                                                                \
+        vector_bool mask;                                                                                              \
+                                                                                                                       \
+        MOCKER_CPP(cce_name, void(data_type&, data_type, data_type, vector_bool, Literal))                             \
+            .times(1)                                                                                                  \
+            .will(invoke(cce_name##_##data_type##_Stub));                                                              \
+                                                                                                                       \
+        data_type result = c_api_name(src0, src1, src2, mask);                                                         \
+        GlobalMockObject::verify();                                                                                    \
+    }
+
 #endif

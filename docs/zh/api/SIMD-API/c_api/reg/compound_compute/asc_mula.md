@@ -1,4 +1,4 @@
-# asc_fma
+# asc_mula
 
 ## 产品支持情况
 
@@ -26,31 +26,31 @@
 
 ## 功能说明
 
-根据`mask`对源操作数`src0`、`src1`按元素相乘后，与源操作数`src2`中的对应元素相加，将计算结果作为返回值返回。计算公式如下：
+根据`mask`对源操作数`src0`、`src1`按元素相乘后，与目的操作数`dst`中的对应元素相加，将结果写入`dst`。其中，`dst`既作为输入累加器参与计算，又用于存储最终结果。计算公式如下：
 
 $$
-result_i = src0_i \times src1_i + src2_i
+dst_i = src0_i \times src1_i + dst_i
 $$
 
 ## 函数原型
 
 ```c
-__simd_callee__ inline vector_<dtype> asc_fma(vector_<dtype> src0,
-                                              vector_<dtype> src1,
-                                              vector_<dtype> src2,
-                                              vector_bool mask)
+__simd_callee__ inline void asc_mula(vector_<dtype>& dst,
+                                     vector_<dtype> src0,
+                                     vector_<dtype> src1,
+                                     vector_bool mask)
 ```
 
-`dtype`支持的取值为`half`、`bfloat16_t`、`float`。
+`dtype`支持的取值为`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
 ### 函数原型典型示例
 
 ```c
-// 示例：对float类型的矢量数据寄存器执行浮点乘加计算。
-__simd_callee__ inline vector_float asc_fma(vector_float src0,
-                                            vector_float src1,
-                                            vector_float src2,
-                                            vector_bool mask)
+// 示例：对float类型的矢量数据寄存器执行乘加计算。
+__simd_callee__ inline void asc_mula(vector_float& dst,
+                                     vector_float src0,
+                                     vector_float src1,
+                                     vector_bool mask)
 ```
 
 ## 参数说明
@@ -59,21 +59,21 @@ __simd_callee__ inline vector_float asc_fma(vector_float src0,
 
 | 参数名 | 输入/输出 | 描述                                                                                                             |
 | ------ | --------- | ---------------------------------------------------------------------------------------------------------------- |
-| src0   | 输入      | 源操作数0（矢量数据寄存器）。                                                                                     |
-| src1   | 输入      | 源操作数1（矢量数据寄存器）。                                                                                     |
-| src2   | 输入      | 源操作数2（矢量数据寄存器），作为乘加运算的累加值。                                                               |
+| dst    | 输入/输出 | 目的操作数（矢量数据寄存器）。                                                                                   |
+| src0   | 输入      | 源操作数0（矢量数据寄存器）。                                                                                    |
+| src1   | 输入      | 源操作数1（矢量数据寄存器）。                                                                                    |
 | mask   | 输入      | 掩码寄存器，用于控制各元素是否参与计算。`mask`中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
-返回计算结果，类型为矢量数据寄存器，与`src0`、`src1`、`src2`的数据类型一致。`mask`掩码位为0的元素在返回值中置0。
+无
 
 ## 约束说明
 
-- `src0`、`src1`和`src2`的数据类型需要保持一致。
-- `mask`掩码位为0时，返回值对应元素置0。
+- `dst`、`src0`和`src1`的数据类型需要保持一致。
+- `mask`掩码位为0时，`dst`对应元素置0。
 
 <!-- npu="950" id8 -->
 ## 调用示例
@@ -110,34 +110,32 @@ bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, 
 
 constexpr uint32_t ELEMENT_COUNT = 64;
 
-__simd_vf__ inline void compute(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, __ubuf__ float* src2)
+__simd_vf__ inline void compute(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1)
 {
+    vector_float dst_reg;
     vector_float src0_reg;
     vector_float src1_reg;
-    vector_float src2_reg;
     uint32_t count = ELEMENT_COUNT;
     vector_bool mask = asc_update_mask_b32(count);
+    asc_loadalign(dst_reg, dst);
     asc_loadalign(src0_reg, src0);
     asc_loadalign(src1_reg, src1);
-    asc_loadalign(src2_reg, src2);
-    vector_float result = asc_fma(src0_reg, src1_reg, src2_reg, mask);
-    asc_storealign(dst, result, mask);
+    asc_mula(dst_reg, src0_reg, src1_reg, mask);
+    asc_storealign(dst, dst_reg, mask);
 }
 
-__global__ __vector__ void asc_fma_kernel(__gm__ float* dst, __gm__ float* src0, __gm__ float* src1, __gm__ float* src2)
+__global__ __vector__ void asc_mula_kernel(__gm__ float* dst, __gm__ float* src0, __gm__ float* src1)
 {
     asc_init();
     __ubuf__ float dst_local[ELEMENT_COUNT];
     __ubuf__ float src0_local[ELEMENT_COUNT];
     __ubuf__ float src1_local[ELEMENT_COUNT];
-    __ubuf__ float src2_local[ELEMENT_COUNT];
     asc_copy_gm2ub_align(dst_local, dst, ELEMENT_COUNT * sizeof(float));
     asc_copy_gm2ub_align(src0_local, src0, ELEMENT_COUNT * sizeof(float));
     asc_copy_gm2ub_align(src1_local, src1, ELEMENT_COUNT * sizeof(float));
-    asc_copy_gm2ub_align(src2_local, src2, ELEMENT_COUNT * sizeof(float));
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
-    compute(dst_local, src0_local, src1_local, src2_local);
+    compute(dst_local, src0_local, src1_local);
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_copy_ub2gm_align(dst, dst_local, ELEMENT_COUNT * sizeof(float));
@@ -147,16 +145,17 @@ __global__ __vector__ void asc_fma_kernel(__gm__ float* dst, __gm__ float* src0,
 
 int main()
 {
+    std::vector<float> initial(ELEMENT_COUNT);
     std::vector<float> src0(ELEMENT_COUNT);
     std::vector<float> src1(ELEMENT_COUNT);
-    std::vector<float> src2(ELEMENT_COUNT);
     std::vector<float> output(ELEMENT_COUNT);
     std::vector<float> golden(ELEMENT_COUNT);
     for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
+        initial[i] = static_cast<float>(i) * 0.125f;
         src0[i] = static_cast<float>(i % 8) * 0.25f;
         src1[i] = static_cast<float>((i + 1) % 8) * 0.25f;
-        src2[i] = static_cast<float>(i) * 0.125f;
-        golden[i] = src0[i] * src1[i] + src2[i];
+        output[i] = initial[i];
+        golden[i] = src0[i] * src1[i] + initial[i];
     }
     aclInit(nullptr);
     aclrtSetDevice(0);
@@ -169,25 +168,21 @@ int main()
     float* src1_device = nullptr;
     aclrtMalloc(reinterpret_cast<void**>(&src1_device), (ELEMENT_COUNT) * sizeof(float),
         ACL_MEM_MALLOC_HUGE_FIRST);
-    float* src2_device = nullptr;
-    aclrtMalloc(reinterpret_cast<void**>(&src2_device), (ELEMENT_COUNT) * sizeof(float),
-        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(dst_device, initial.size() * sizeof(float), initial.data(), initial.size() * sizeof(float),
+        ACL_MEMCPY_HOST_TO_DEVICE);
     aclrtMemcpy(src0_device, src0.size() * sizeof(float), src0.data(), src0.size() * sizeof(float),
         ACL_MEMCPY_HOST_TO_DEVICE);
     aclrtMemcpy(src1_device, src1.size() * sizeof(float), src1.data(), src1.size() * sizeof(float),
         ACL_MEMCPY_HOST_TO_DEVICE);
-    aclrtMemcpy(src2_device, src2.size() * sizeof(float), src2.data(), src2.size() * sizeof(float),
-        ACL_MEMCPY_HOST_TO_DEVICE);
-    asc_fma_kernel<<<1, 0>>>(dst_device, src0_device, src1_device, src2_device);
+    asc_mula_kernel<<<1, 0>>>(dst_device, src0_device, src1_device);
     aclrtSynchronizeDevice();
     aclrtMemcpy(output.data(), output.size() * sizeof(float), dst_device, output.size() * sizeof(float),
         ACL_MEMCPY_DEVICE_TO_HOST);
     const bool passed = compare_data(output, golden, 1e-6);
-    std::cout << (passed ? "[Success] asc_fma passed." : "[Failed] asc_fma failed.") << std::endl;
+    std::cout << (passed ? "[Success] asc_mula passed." : "[Failed] asc_mula failed.") << std::endl;
     aclrtFree(dst_device);
     aclrtFree(src0_device);
     aclrtFree(src1_device);
-    aclrtFree(src2_device);
     aclrtResetDevice(0);
     aclFinalize();
     return passed ? 0 : 1;

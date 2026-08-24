@@ -10,7 +10,10 @@
 
 #include "tests/api/c_api/npu_arch_3510/utils/test_binary_instr_utils.h"
 
-// ==========asc_fma(half/bfloat16_t/float)==========
-TEST_VECTOR_COMPUTE_TERNARY_RET_INSTR(AscFma, asc_fma, vmula, vector_half);
-TEST_VECTOR_COMPUTE_TERNARY_RET_INSTR(AscFma, asc_fma, vmula, vector_bfloat16_t);
-TEST_VECTOR_COMPUTE_TERNARY_RET_INSTR(AscFma, asc_fma, vmula, vector_float);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_half);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_uint32_t);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(AscMula, asc_mula, vmula, vector_float);
