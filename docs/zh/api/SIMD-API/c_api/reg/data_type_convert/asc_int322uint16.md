@@ -58,7 +58,7 @@ __simd_callee__ inline void asc_int322uint16<sat_mode>(vector_uint16_t& dst,
 
 `<sat_mode>`表示饱和非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 // 非饱和模式，数据写入索引为偶数的位置

@@ -73,7 +73,7 @@ __simd_callee__ inline void asc_uint82uint16<position_mode>(vector_uint16_t& dst
 
 - `<position_mode>`表示`src`读取的位置，为空时，读取`src`的偶数索引位置；取值为`_v2`时，读取`src`的奇数索引位置。
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 // 数据读取索引为偶数的位置

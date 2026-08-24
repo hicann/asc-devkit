@@ -75,7 +75,8 @@ __simd_callee__ inline void asc_gather(vector_<dst_dtype>& dst,
 | uint32_t | uint32_t | uint32_t |
 | float | float | uint32_t |
 
-**典型示例**
+#### 函数原型典型示例
+
 ```c
 // 示例：dst_dtype/src_dtype/index_dtype数据类型分别为: int16_t/int16_t/uint16_t
 __simd_callee__ inline void asc_gather(vector_int16_t& dst,
@@ -110,7 +111,7 @@ __simd_callee__ inline void asc_gather(vector_<dtype>& dst,
 | uint32_t | uint32_t |
 | float | uint32_t |
 
-**典型示例**
+#### 函数原型典型示例
 
 ```c
 // 示例：dtype/index_dtype数据类型分别为: int16_t/uint16_t

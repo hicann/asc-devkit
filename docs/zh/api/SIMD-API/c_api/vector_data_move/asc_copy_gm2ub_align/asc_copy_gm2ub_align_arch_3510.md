@@ -69,9 +69,11 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
                                             uint32_t size)
 ```
 
-**dtype取值如下：**`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+#### dtype支持数据类型
 
-**典型示例**
+`dtype`取值为：`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+#### 函数原型典型示例
 
 ```c
 // 示例：源与目的数据类型为bfloat16_t
@@ -95,9 +97,11 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ <dtype>* dst,
                                             uint32_t dst_stride)
 ```
 
-**dtype取值如下：**`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+#### dtype支持数据类型
 
-**典型示例**
+`dtype`取值为：`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+#### 函数原型典型示例
 
 ```c
 // 示例：源与目的数据类型为bfloat16_t

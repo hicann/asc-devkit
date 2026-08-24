@@ -45,9 +45,11 @@ __simd_callee__ inline void asc_mul(vector_<dtype>& dst,
                                     vector_bool mask)
 ```
 
-`dtype`可取的数据类型为`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+### dtype支持数据类型
 
-### 典型示例
+`dtype`取值为：`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+### 函数原型典型示例
 
 ```c
 // 示例：对half矢量数据寄存器执行逐元素乘法

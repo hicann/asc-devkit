@@ -49,7 +49,7 @@ __simd_callee__ inline void asc_reduce_sum(vector_<dst_dtype>& dst,
                                            vector_bool mask)
 ```
 
-### src_dtype与dst_dtype支持组合
+### src_dtype与dst_dtype数据类型支持情况
 
 | `src_dtype` | `dst_dtype` |
 | ----------- | ----------- |
@@ -60,7 +60,7 @@ __simd_callee__ inline void asc_reduce_sum(vector_<dst_dtype>& dst,
 | `uint32_t`  | `uint32_t`  |
 | `float`     | `float`     |
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 // 示例：float类型归约求和

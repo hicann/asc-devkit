@@ -45,9 +45,11 @@ __simd_callee__ inline void asc_eq(vector_bool& dst,
                                    vector_bool mask)
 ```
 
-dtype取值为`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+### dtype支持数据类型
 
-### 典型示例
+`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+### 函数原型典型示例
 
 ```c
 // 典型示例：half类型逐元素相等比较

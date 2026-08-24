@@ -35,41 +35,44 @@
 
 ## 函数原型
 
-- 带mask
+### 带mask（占位符形式）
 
-    ```c
-    __simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
-                                                     <dtype> value,
-                                                     vector_bool mask)
-    ```
+```c
+__simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
+                                                 <dtype> value,
+                                                 vector_bool mask)
+```
 
-    dtype可取的数据类型为`int8_t`、`uint8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+#### dtype支持数据类型
 
-- 不带mask
+`dtype`取值为：`int8_t`、`uint8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
-    ```c
-    __simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
-                                                     <dtype> value)
-    ```
+#### 函数原型典型示例
 
-    dtype可取的数据类型为`int8_t`、`uint8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+```c
+__simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
+                                                 int8_t value,
+                                                 vector_bool mask)
+```
 
-**典型示例：**
+### 不带mask（占位符形式）
 
-- 带mask
+```c
+__simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
+                                                 <dtype> value)
+```
 
-    ```c
-    __simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
-                                                     int8_t value,
-                                                     vector_bool mask)
-    ```
+#### dtype支持数据类型
 
-- 不带mask
+`dtype`取值为：`int8_t`、`uint8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
-    ```c
-    __simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
-                                                     int8_t value)
-    ```
+
+#### 函数原型典型示例
+
+```c
+__simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
+                                                 int8_t value)
+```
 
 ## 参数说明
 

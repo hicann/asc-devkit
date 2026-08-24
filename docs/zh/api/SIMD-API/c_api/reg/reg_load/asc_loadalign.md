@@ -122,7 +122,7 @@ __simd_callee__ inline void asc_loadalign(vector_<dtype>& dst,
                                           vector_bool mask)
 ```
 
-#### dtype支持数据类型
+##### dtype支持数据类型
 
 dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
 

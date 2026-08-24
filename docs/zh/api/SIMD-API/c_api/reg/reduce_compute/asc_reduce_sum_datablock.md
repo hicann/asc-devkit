@@ -66,7 +66,7 @@ __simd_callee__ inline void asc_reduce_sum_datablock(vector_<dst_dtype>& dst,
 | `uint32_t`  | `uint32_t`  |
 | `float`     | `float`     |
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 // 示例：half类型树形归约求和

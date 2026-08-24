@@ -44,7 +44,7 @@ inline void asc_half2int32<round_mode>(vector_int32_t& dst,
 
 **占位符说明如下：**`<round_mode>`支持`rd`（FLOOR）、`rn`（RINT）、`rna`（ROUND）、`ru`（CEIL）和`rz`（TRUNC）。
 
-**典型示例**
+### 函数原型典型示例
 
 ```c
 inline void asc_half2int32_rd(vector_int32_t& dst,

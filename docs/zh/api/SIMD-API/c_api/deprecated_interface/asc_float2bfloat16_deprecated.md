@@ -79,7 +79,7 @@ __simd_callee__ inline void asc_float2bfloat16_<round_mode><sat_mode><position_m
 - `<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
 - `<position_mode>`表示`dst`写入的位置，为空时，结果写入`dst`的偶数索引位置；取值为`_v2`时，结果写入`dst`的奇数索引位置。
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 // RINT舍入模式，非饱和模式，数据写入索引为偶数的位置

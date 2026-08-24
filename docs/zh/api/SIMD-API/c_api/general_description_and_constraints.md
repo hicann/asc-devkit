@@ -61,7 +61,7 @@ AI Core内外包含多级存储单元，各存储单元的主要用途如下：
 
 使用高维切分计算API可充分发挥硬件优势，支持开发者控制指令的迭代执行和操作数的地址间隔，功能更加灵活。
 
-矢量计算通过Vector计算单元完成，矢量计算的源操作数和目的操作数均通过UB来进行存储。Vector计算单元每个迭代会从UB中取出8个DataBlock（每个DataBlock数据块内部地址连续，长度32Byte），进行计算，并写入对应的8个DataBlock中。下图为单次迭代内的8个DataBlock进行Exp计算的示意图。
+矢量计算通过Vector计算单元完成，矢量计算的源操作数和目的操作数均通过Unified Buffer（UB）来进行存储。Vector计算单元每个迭代会从UB中取出8个DataBlock（每个DataBlock数据块内部地址连续，长度32Byte），进行计算，并写入对应的8个DataBlock中。下图为单次迭代内的8个DataBlock进行Exp计算的示意图。
 
 **图2** 单次迭代内的8个DataBlock进行Exp计算示意图
 
@@ -151,10 +151,10 @@ asc_add(dstLocal, src0Local, src1Local, repeatTime, dst_block_stride, src0_block
 
 结果示例如下：
 
-```cpp
-输入数据(src0Local)： [1 2 3 ... 64 ...127 128]
-输入数据(src1Local)： [1 2 3 ... 64 ...127 128]
-输出数据(dstLocal)：  [2 undefined 6 ... undefined  ...254 undefined]
+```text
+输入数据(src0Local): [1 2 3 ... 64 ...127 128]
+输入数据(src1Local): [1 2 3 ... 64 ...127 128]
+输出数据(dstLocal):  [2 undefined 6 ... undefined  ...254 undefined]
 ```
 
 mask过程如下：<br/>
@@ -178,10 +178,10 @@ asc_add(dstLocal, src0Local, src1Local, repeatTime, dst_block_stride, src0_block
 
 结果示例如下：
 
-```cpp
-输入数据(src0Local)： [1 2 3 ... 63 64]
-输入数据(src1Local)： [1 2 3 ... 63 64]
-输出数据(dstLocal)： [2 undefined 6 ... 126 undefined]
+```text
+输入数据(src0Local): [1 2 3 ... 63 64]
+输入数据(src1Local): [1 2 3 ... 63 64]
+输出数据(dstLocal): [2 undefined 6 ... 126 undefined]
 ```
 
 mask过程如下：<br/>
@@ -192,7 +192,6 @@ mask={6148914691236517205, 0}（注：6148914691236517205表示64位二进制数
 
 编译器支持以数组方式申请内存。但需注意以下约束：
 
-- 当前仅支持Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品。
 - 数组方式的申请方式，和asc_get_phy_buf_addr API接口不能混用。否则可能导致地址重叠。
 - 不支持多维数组和嵌套的数组。
 - 封装到数据结构中时，不支持隐式构造。
@@ -224,5 +223,4 @@ __ubuf__ float buff[result_len]; // 不支持动态数组。result_len为前置�
 // 不支持两种地址申请方式混用。下面的写法获取的src0和src1的起始位置相同：
 __ubuf__ float* src0 = (__ubuf__ float*)asc_get_phy_buf_addr(0);
 __ubuf__ float src1[src_len];
-
 ```

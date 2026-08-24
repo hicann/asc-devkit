@@ -59,9 +59,11 @@ __simd_callee__ inline void asc_add(vector_<dtype>& dst,
                                     vector_bool mask)
 ```
 
-**dtype取值如下：**`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+#### dtype支持数据类型
 
-**典型示例**
+`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+#### 函数原型典型示例
 
 ```c
 // 示例：float类型的无进位输出加法

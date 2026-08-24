@@ -50,7 +50,9 @@ __simd_callee__ inline void asc_not(vector_<dtype>& dst,
                                     vector_bool mask)
 ```
 
-`dtype`取值为`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`int32_t`、`uint32_t`、`float`。
+#### dtype支持数据类型
+
+`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`int32_t`、`uint32_t`、`float`。
 
 #### 函数原型典型示例
 

@@ -38,7 +38,7 @@ __aicore__ inline void asc_store_dev(__gm__ <dtype>* addr,
 
 dtype取值为`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`int32_t`、`uint32_t`、`int64_t`、`uint64_t`。
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 // 示例：写入32bit无符号整数

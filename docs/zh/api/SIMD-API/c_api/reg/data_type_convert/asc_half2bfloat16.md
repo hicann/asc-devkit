@@ -38,7 +38,7 @@ inline void asc_half2bfloat16<round_mode>(vector_bfloat16_t& dst,
 
 **占位符说明如下：**`<round_mode>`支持`rd`（FLOOR）、`rn`（RINT）、`rna`（ROUND）、`ru`（CEIL）和`rz`（TRUNC）。
 
-**典型示例**
+### 函数原型典型示例
 
 ```c
 inline void asc_half2bfloat16_rna(vector_bfloat16_t& dst,

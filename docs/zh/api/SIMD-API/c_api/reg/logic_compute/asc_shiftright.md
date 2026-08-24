@@ -48,7 +48,7 @@ __simd_callee__ inline void asc_shiftright(vector_<dtype0>& dst,
                                            vector_bool mask)
 ```
 
-### dtype支持数据类型
+### dtype0与dtype1数据类型支持情况
 
 | `dtype0` | `dtype1` |
 |---|---|
@@ -59,7 +59,7 @@ __simd_callee__ inline void asc_shiftright(vector_<dtype0>& dst,
 | `int32_t` | `int32_t` |
 | `uint32_t` | `int32_t` |
 
-### 典型示例
+### 函数原型典型示例
 
 ```c
 __simd_callee__ inline void asc_shiftright(vector_uint16_t& dst,
