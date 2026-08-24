@@ -44,6 +44,7 @@ __aicore__ inline void InitGlobalMemoryImpl(GlobalTensor<T>& gmWorkspaceAddr, co
     ASCENDC_ASSERT(ret, { KERNEL_LOG(KERNEL_ERROR, "No space left to allocate in Unified Buffer"); });
     constexpr uint32_t maxBurstSize = (MAX_REPEAT_TIMES * MAX_REPEAT_LEN) / sizeof(T);
     const uint32_t popSize = popBuffer.GetSize() >= maxBurstSize ? maxBurstSize : popBuffer.GetSize();
+    ASCENDC_ASSERT((popSize > 0), { KERNEL_LOG(KERNEL_ERROR, "popSize must be larger than 0"); });
     const uint32_t round = size / popSize;
     const uint32_t tail = size % popSize;
     const uint32_t roundSize = round != 0 ? popSize : 0;
