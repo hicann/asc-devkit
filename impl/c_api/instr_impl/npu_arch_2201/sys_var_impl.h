@@ -39,9 +39,22 @@
 
 __aicore__ inline int64_t asc_get_core_id() { return asc_get_core_id_impl(); }
 
-__aicore__ inline int64_t asc_get_block_idx() { return asc_get_block_idx_impl(); }
+[[deprecated("NOTICE: asc_get_block_idx is deprecated. "
+             "Please use block_idx for pure Vector, pure Cube, and Mix(1, 1). "
+             "For Mix(1, 2), please use block_idx on the Cube core and "
+             "block_idx * asc_get_sub_block_num() + asc_get_sub_block_id() "
+             "on Vector cores instead.")]]
+__aicore__ inline int64_t asc_get_block_idx()
+{
+    return asc_get_block_idx_impl();
+}
 
-__aicore__ inline int64_t asc_get_block_num() { return asc_get_block_num_impl(); }
+[[deprecated("NOTICE: asc_get_block_num is deprecated. "
+             "Please use block_num instead.")]]
+__aicore__ inline int64_t asc_get_block_num()
+{
+    return asc_get_block_num_impl();
+}
 
 __aicore__ inline int64_t asc_get_ctrl() { return asc_get_ctrl_impl(); }
 
