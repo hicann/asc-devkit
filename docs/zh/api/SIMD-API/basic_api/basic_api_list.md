@@ -479,7 +479,6 @@
 | [CountLeadingZero](scalar_compute/CountLeadingZero.md) | 统计uint64_t类型数值的二进制表示中前导0的个数（二进制表示中最高有效位到第一个'1'的'0'的数量，输入为0时返回64）。 |
 | [CountBitsCntSameAsSignBit](scalar_compute/CountBitsCntSameAsSignBit.md) | 统计int64_t类型数值的二进制表示中，从最高数值位开始与符号位相同的连续比特位的个数。 |
 | [GetSFFValue](scalar_compute/GetSFFValue.md) | 查找uint64_t类型数值的二进制表示中从最低有效位开始的首个指定比特值（0或1）的位置，如果没找到则返回-1。 |
-| [CeilDivision](scalar_compute/CeilDivision.md) | 计算两个整数num1和num2相除后向上取整结果。 |
 | [Cast（float转half/int32_t）](scalar_compute/Cast_float_to_half_int32.md) | 对标量的数据类型进行转换。 |
 | [Cast（float转bfloat16_t）](scalar_compute/Cast_float_to_bfloat16.md) | float类型标量数据转换成bfloat16_t类型标量数据。 |
 | [Cast（多类型转float）](scalar_compute/Cast_multi_type_to_float.md) | 该接口将输入数据转换为float类型。 |
