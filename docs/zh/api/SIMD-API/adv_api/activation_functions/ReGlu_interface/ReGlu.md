@@ -126,19 +126,19 @@ ReGlu是一种GLU变体，使用Relu作为激活函数，计算公式如下：
 // sharedTmpBuffer: 存放ReGlu计算过程中临时缓存的Tensor
 
 // 接口框架申请临时空间，部分参与计算,需要参与计算的元素个数为30
-AscendC::ReGlu(dstLocal, srcLocal, 30);
+AscendC::ReGlu(dstLocal, src0Local, src1Local, 30);
 
 // 通过sharedTmpBuffer入参传入临时空间，部分参与计算,需要参与计算的元素个数为30
-AscendC::ReGlu(dstLocal, srcLocal, sharedTmpBuffer, 30);
+AscendC::ReGlu(dstLocal, src0Local, src1Local, sharedTmpBuffer, 30);
 ```
 
 结果示例如下：
 
 ```
-输入数据(srcLocal0):
+输入数据(src0Local):
 [2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2.
  2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2.]
-输入数据(srcLocal1):
+输入数据(src1Local):
 [-1.6 -1.5 -1.4 -1.3 -1.2 -1.1 -1.  -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1
   0.   0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9  1.   1.1  1.2  1.3  1.4  1.5]
 输出数据(dstLocal):
