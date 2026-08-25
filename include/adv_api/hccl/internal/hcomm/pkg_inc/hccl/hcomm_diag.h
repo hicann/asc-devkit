@@ -30,8 +30,7 @@ extern HcclResult HcommRegOpInfo(const char* commId, void* opInfo, size_t size);
  * @brief 注册taskException算子信息解析函数
  * @param[in] commId 通信域id
  * @param[in] callback 解析算子信息并输出字符数组的回调函数
- * @param[in] opInfo 算子信息存储的内存地址
- * @param[in] size 算子信息存储的内存长度
+ * @note callback的size参数表示outPut缓冲区容量（字节），包含字符串终止符空间；opInfo布局由注册方约定。
  * @return HcclResult 执行结果状态码
  * @note 当前仅支持AICPU模式
  */

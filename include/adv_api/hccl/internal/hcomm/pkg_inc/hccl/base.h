@@ -296,7 +296,7 @@ enum HcomOperationType {
 #define HCOM_GROUP_NAME_MAX_LEN 127
 
 typedef struct {
-    char group[HCOM_GROUP_NAME_MAX_LEN];
+    char group[HCOM_GROUP_NAME_MAX_LEN + 1];
     uint32_t tag;          // 点到点通信的tag
     uint32_t peerRank;     // 点到点通信的对端rank
     void* addr;            // send/recv的发送或接收buffer
@@ -308,7 +308,7 @@ typedef struct {
 } HcomP2pOpInfo;
 
 typedef struct {
-    char group[HCOM_GROUP_NAME_MAX_LEN];
+    char group[HCOM_GROUP_NAME_MAX_LEN + 1];
     void* inputAddr;
     void* outputAddr;
     uint64_t count;

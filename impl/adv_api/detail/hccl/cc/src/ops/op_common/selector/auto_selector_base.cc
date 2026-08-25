@@ -211,25 +211,40 @@ HcclResult AutoSelectorBase::CheckHostDPUOnly(
             }
             uint32_t endPointNums = 0;
             CHK_RET(HcclRankGraphGetEndpointNum(opParam.hcclComm, netLayer, topoInstId, &endPointNums));
-            EndpointDesc endPointDescs[endPointNums];
-            CHK_RET(HcclRankGraphGetEndpointDesc(opParam.hcclComm, netLayer, topoInstId, &endPointNums, endPointDescs));
+            const uint32_t endPointCapacity = endPointNums;
+            std::vector<EndpointDesc> endPointDescs;
+            CHK_PRT_RET(
+                static_cast<size_t>(endPointCapacity) > endPointDescs.max_size(),
+                HCCL_ERROR("endpoint num[%u] exceeds vector capacity", endPointCapacity), HCCL_E_PARA);
+            EXECEPTION_CATCH(endPointDescs.resize(endPointCapacity), return HCCL_E_MEMORY);
+            if (endPointCapacity == 0) {
+                continue;
+            }
+            CHK_RET(HcclRankGraphGetEndpointDesc(
+                opParam.hcclComm, netLayer, topoInstId, &endPointNums, endPointDescs.data()));
+            CHK_PRT_RET(
+                endPointNums > endPointCapacity,
+                HCCL_ERROR(
+                    "HcclRankGraphGetEndpointDesc returned endpoint num[%u] greater than capacity[%u]", endPointNums,
+                    endPointCapacity),
+                HCCL_E_INTERNAL);
             for (uint32_t endPointIdx = 0; endPointIdx < endPointNums; endPointIdx++) {
-                EndpointDesc endPointDesc = endPointDescs[endPointIdx];
-                if (endPointDesc.loc.locType == ENDPOINT_LOC_TYPE_DEVICE) {
+                const EndpointDesc& endPointDesc = endPointDescs[endPointIdx];
+                if (endPointDesc.loc.locType == ENDPOINT_LOC_TYPE_HOST) {
+                    HCCL_INFO("Found a host endPoint in netLayer[%u] endPointIdx[%u]", netLayer, endPointIdx);
+                    hostDPU = true;
+                } else if (endPointDesc.loc.locType == ENDPOINT_LOC_TYPE_DEVICE) {
                     HCCL_INFO(
                         "Not using hostdpu because there is links on device in netLayer[%u] in endPointIdx[%u]",
                         netLayer, endPointIdx);
                     return HCCL_SUCCESS;
-                } else if (endPointDesc.loc.locType == ENDPOINT_LOC_TYPE_HOST) {
-                    HCCL_INFO("Found a host endPoint in netLayer[%u] endPointIdx[%u]", netLayer, endPointIdx);
-                    hostDPU = true;
                 }
             }
         }
     }
     if (hostDPU) {
-        HCCL_INFO("Using host dpu trans.");
         hostDPUOnly = true;
+        HCCL_INFO("Using host dpu trans.");
     }
     return HCCL_SUCCESS;
 }

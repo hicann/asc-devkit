@@ -130,6 +130,7 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::InitInner(
     GM_ADDR context, HcclTilingVersion version)
 {
+    isInited_ = false;
     ASCENDC_HCCL_API_ASSERT(context != nullptr, { return; }, "Init Hccl failed, context addr is nullptr.");
     // 只有 alltoall 且 ccu的会走到这里，并设为true
     if (newCcuFlag_) {
@@ -138,14 +139,25 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::I
         hcclContext_ = (__gm__ HcclCombineOpParam*)context;
     }
 
-    // ensure hcclMsgArea 512B aligned
-    uint64_t msgAddr = newCcuFlag_ ? hcclNewContext_->workspace : hcclContext_->workSpace;
-    if (msgAddr & 0x1ff) {
-        msgAddr = (msgAddr & (~((uint64_t)0x1ff))) + 0x200;
+    constexpr uint64_t workspaceAlignMask = 0x1ffU;
+    constexpr uint64_t layoutSize =
+        MAX_DCCI_CNT + sizeof(CommonPrepareParamCcu) * static_cast<uint64_t>(HCCL_MAX_HANDLE_ID) +
+        sizeof(AlltoAllVParamCcu) * static_cast<uint64_t>(HCCL_MAX_HANDLE_ID) + CCU_MSG_EXT_MAX_OFFSET;
+    static_assert(
+        sizeof(CommonPrepareParamCcu) % ALIGN_64_BYTE == 0U && sizeof(AlltoAllVParamCcu) % ALIGN_64_BYTE == 0U,
+        "CCU workspace layout is unaligned");
+
+    const uint64_t workspaceAddr = newCcuFlag_ ? hcclNewContext_->workspace : hcclContext_->workSpace;
+    const uint64_t workspaceSize = newCcuFlag_ ? hcclNewContext_->workspaceSize : hcclContext_->workSpaceSize;
+    const uint64_t alignPadding = (workspaceAlignMask + 1U - (workspaceAddr & workspaceAlignMask)) & workspaceAlignMask;
+    const uint64_t requiredSize = alignPadding + layoutSize;
+    if (unlikely(workspaceAddr > UINT64_MAX - alignPadding || workspaceSize < requiredSize)) {
+        return;
     }
+    const uint64_t msgAddr = workspaceAddr + alignPadding;
     KERNEL_LOG(
-        KERNEL_INFO, "ApiClient InitInner msgAddr:0x%llx, workSpaceSize:0x%llx", msgAddr,
-        newCcuFlag_ ? hcclNewContext_->workspace : hcclContext_->workSpace);
+        KERNEL_INFO, "ApiClient InitInner msgAddr:0x%llx, workSpaceSize:0x%llx",
+        static_cast<unsigned long long>(msgAddr), static_cast<unsigned long long>(workspaceSize));
 
     uint64_t xnAddr = newCcuFlag_ ? hcclNewContext_->xnAddr : reinterpret_cast<uint64_t>(hcclContext_->xnOffset);
     uint64_t ckeAddr = newCcuFlag_ ? hcclNewContext_->ckeAddr : reinterpret_cast<uint64_t>(hcclContext_->ckeOffset);
@@ -224,9 +236,9 @@ __aicore__ inline int32_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>
         ccOpTilingData != nullptr, { return HCCL_FAILED; },
         "Call SetCcTiling failed, ensure ccOpTilingData is not nullptr");
     const uint32_t opType = (static_cast<__gm__ Mc2CcTilingInner*>(ccOpTilingData))->opType;
-    ASCENDC_HCCL_API_ASSERT(
-        opType >= 0 && opType < static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL), { return HCCL_FAILED; },
-        "Call SetCcTiling failed, ensure cmdType is valid");
+    if (unlikely(opType >= static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL))) {
+        return HCCL_FAILED;
+    }
     KERNEL_LOG(KERNEL_INFO, "CmdType = %d, ccOpTilingData = %lu ", opType, reinterpret_cast<uint64_t>(ccOpTilingData));
     ccOpTilingDataTable_[opType] = reinterpret_cast<uint64_t>(ccOpTilingData);
     return HCCL_SUCCESS;
@@ -239,9 +251,9 @@ __aicore__ inline int32_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>
         curVersion_ == HcclTilingVersion::ONLINE_COMPILATION_TILING_VERSION, { return HCCL_FAILED; },
         "Call SetCcTiling failed, ensure Hccl::InitV2 func has been called successfully!");
     const uint32_t opType = (reinterpret_cast<Mc2CcTilingInner*>(tilingBaseAddr_ + offset))->opType;
-    ASCENDC_HCCL_API_ASSERT(
-        opType >= 0 && opType < static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL), { return HCCL_FAILED; },
-        "Call SetCcTiling failed, ensure cmdType is valid");
+    if (unlikely(opType >= static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL))) {
+        return HCCL_FAILED;
+    }
     ccOpTilingDataTable_[opType] = offset;
     return HCCL_SUCCESS;
 }
@@ -342,6 +354,23 @@ __aicore__ inline HcclHandle HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, conf
         return INVALID_HANDLE_ID;
     }
 
+    const uint32_t prepareType = static_cast<uint32_t>(commonPrepareParam.commType.prepareType);
+    if (unlikely(prepareType >= static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL))) {
+        return INVALID_HANDLE_ID;
+    }
+    if (unlikely(
+            (commonPrepareParam.commType.prepareType != HcclCMDType::HCCL_CMD_BATCH_WRITE) &&
+            (GetHcclDataTypeSize(commonPrepareParam.dataType) == 0U))) {
+        return INVALID_HANDLE_ID;
+    }
+    uint32_t rankNum = 0U;
+    if (commonPrepareParam.commType.prepareType == HcclCMDType::HCCL_CMD_ALLTOALLV) {
+        rankNum = newCcuFlag_ ? hcclNewContext_->rankSize : hcclContext_->rankNum;
+        if (unlikely(!IsValidCcuRankNum(rankNum))) {
+            return INVALID_HANDLE_ID;
+        }
+    }
+
     HcclHandle handleId = curHandleId_;
 
     ASCENDC_HCCL_API_ASSERT(
@@ -366,8 +395,6 @@ __aicore__ inline HcclHandle HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, conf
         handleParamGM_[handleId].strideCount = commonPrepareParam.strideCount;
         InitCcuParam(handleId);
         FlushDataCache(&handleParamGM_[handleId]);
-        uint64_t dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commonPrepareParam.dataType)];
-        uint32_t rankNum = newCcuFlag_ ? hcclNewContext_->rankSize : hcclContext_->rankNum;
 
         if (commonPrepareParam.commType.prepareType == HcclCMDType::HCCL_CMD_ALLTOALLV) {
             for (uint32_t i = 0; i < rankNum; i++) {

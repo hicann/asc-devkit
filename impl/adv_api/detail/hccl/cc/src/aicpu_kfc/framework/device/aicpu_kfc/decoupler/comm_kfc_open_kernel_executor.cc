@@ -36,6 +36,7 @@ u64 GetDataTypeSize(HcclDataType dataType)
         case HCCL_DATA_TYPE_FP8E5M2:
         case HCCL_DATA_TYPE_FP8E4M3:
         case HCCL_DATA_TYPE_FP8E8M0:
+        case HCCL_DATA_TYPE_MXFP8:
             return 1U;
         case HCCL_DATA_TYPE_INT16:
         case HCCL_DATA_TYPE_UINT16:

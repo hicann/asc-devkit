@@ -52,9 +52,14 @@ struct ApiParamDef {
 
     ApiParamDef(const char* kName, const char* sName, const char* oName)
     {
-        strncpy_s(kernelName, NAME_SIZE, kName, NAME_SIZE - 1);
-        strncpy_s(soName, NAME_SIZE, sName, NAME_SIZE - 1);
-        strncpy_s(opName, NAME_SIZE, oName, NAME_SIZE - 1);
+        const s32 kernelRet = strncpy_s(kernelName, NAME_SIZE, kName, NAME_SIZE - 1);
+        const s32 soRet = strncpy_s(soName, NAME_SIZE, sName, NAME_SIZE - 1);
+        const s32 opRet = strncpy_s(opName, NAME_SIZE, oName, NAME_SIZE - 1);
+        if (UNLIKELY(kernelRet != EOK || soRet != EOK || opRet != EOK)) {
+            HCCL_ERROR(
+                "[%s] failed to initialize API names, kernel ret[%d], so ret[%d], op ret[%d].", __func__, kernelRet,
+                soRet, opRet);
+        }
     }
 };
 

@@ -43,7 +43,7 @@ HcclResult HcclSetOpParamGraphModeOpType(OpParamGraphMode* opParam, const char* 
     }
     // 将void*转换为OpParamGraphMode*
     OpParamGraphMode* paramPtr = reinterpret_cast<OpParamGraphMode*>(opParam);
-    strncpy_s(paramPtr->opType, sizeof(paramPtr->opType), opType, sizeof(paramPtr->opType) - 1);
+    CHK_SAFETY_FUNC_RET(strncpy_s(paramPtr->opType, sizeof(paramPtr->opType), opType, sizeof(paramPtr->opType) - 1));
     return HCCL_SUCCESS;
 }
 

@@ -9,6 +9,8 @@
  */
 #include "hccl_alloc_ctx_res.h"
 
+#include <limits>
+
 using namespace mc2_ops_hccl;
 using namespace hcomm::CcuRep;
 
@@ -230,27 +232,47 @@ HcclResult AllocOpParamMemory(
     const Mc2InitTilingInner* initTiling, const void* ccTilingList[], OpResCtx& resCtx)
 {
     std::vector<uint64_t> opParamAddr(opParamVec.size());
-    uint64_t opParamSize = sizeof(OpParam);
+    std::vector<uint8_t> serializedOpParam;
     for (uint32_t i = 0U; i < opParamVec.size(); ++i) {
+        CHK_PRT_RET(
+            opParamVec[i].varMemSize > std::numeric_limits<size_t>::max() - sizeof(OpParam),
+            HCCL_ERROR(
+                "OpParam[%u] varMemSize[%llu] is too large.", i,
+                static_cast<unsigned long long>(opParamVec[i].varMemSize)),
+            HCCL_E_PARA);
+        const size_t opParamSize = sizeof(OpParam) + static_cast<size_t>(opParamVec[i].varMemSize);
+        serializedOpParam.assign(opParamSize, 0U);
+        CHK_SAFETY_FUNC_RET(
+            memcpy_s(serializedOpParam.data(), serializedOpParam.size(), &opParamVec[i], sizeof(OpParam)));
+
         std::string tagParam = ctxTag + "_" + std::to_string(i);
         void* opParamPtr = nullptr;
+        uint64_t allocatedOpParamSize = opParamSize;
         const Mc2CcTilingInner* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
         CommEngine commEngine = OpExecuteConfigToCommEngine(ccTiling->commEngine);
-        if (HcclEngineCtxGet(comm, tagParam.c_str(), commEngine, &opParamPtr, &opParamSize) == HCCL_SUCCESS) {
+        if (HcclEngineCtxGet(comm, tagParam.c_str(), commEngine, &opParamPtr, &allocatedOpParamSize) == HCCL_SUCCESS) {
+            CHK_PRT_RET(
+                allocatedOpParamSize < opParamSize,
+                HCCL_ERROR(
+                    "OpParam[%u] size[%llu] exceeds capacity[%llu].", i, static_cast<unsigned long long>(opParamSize),
+                    static_cast<unsigned long long>(allocatedOpParamSize)),
+                HCCL_E_MEMORY);
             HCCL_INFO(
-                "HcclEngineCtxGet success, tagParam[%s], opParamAddr[%p], opParamSize[%u]", tagParam.c_str(),
-                opParamPtr, opParamSize);
+                "HcclEngineCtxGet success, tagParam[%s], opParamAddr[%p], opParamSize[%llu]", tagParam.c_str(),
+                opParamPtr, static_cast<unsigned long long>(allocatedOpParamSize));
             opParamAddr[i] = reinterpret_cast<uint64_t>(opParamPtr);
         } else {
             CHK_RET(HcclEngineCtxCreate(comm, tagParam.c_str(), commEngine, opParamSize, &opParamPtr));
             opParamAddr[i] = reinterpret_cast<uint64_t>(opParamPtr);
         }
         HCCL_INFO(
-            "HcclAllocOpResCtx the %dth opParam: opParamAddr[%u], opParamSize[%u]", i, opParamAddr[i], opParamSize);
+            "HcclAllocOpResCtx the %uth opParam: opParamAddr[%llu], opParamSize[%llu]", i,
+            static_cast<unsigned long long>(opParamAddr[i]), static_cast<unsigned long long>(opParamSize));
 
-        CHK_RET(HcclEngineCtxCopy(comm, commEngine, tagParam.c_str(), &opParamVec[i], opParamSize, 0));
+        CHK_RET(HcclEngineCtxCopy(comm, commEngine, tagParam.c_str(), serializedOpParam.data(), opParamSize, 0));
         resCtx.algInfo[i].opParam = opParamAddr[i];
         resCtx.algInfo[i].offset = initTiling->offset[i];
+        resCtx.opParamSize[i] = opParamSize;
     }
     return HCCL_SUCCESS;
 }
@@ -294,17 +316,26 @@ HcclResult AllocAndCopyOpResCtx(
     void** opResCtxPtr)
 {
     std::string tagOpResCtx = ctxTag + "_opResCtx";
-    uint64_t opResCtxSize = sizeof(OpResCtx);
+    constexpr uint64_t opResCtxSize = sizeof(OpResCtx);
+    uint64_t allocatedSize = opResCtxSize;
     CommEngine commEngine = OpExecuteConfigToCommEngine(ccTiling->commEngine);
-    if (HcclEngineCtxGet(comm, tagOpResCtx.c_str(), commEngine, opResCtxPtr, &opResCtxSize) == HCCL_SUCCESS) {
+    if (HcclEngineCtxGet(comm, tagOpResCtx.c_str(), commEngine, opResCtxPtr, &allocatedSize) == HCCL_SUCCESS) {
+        CHK_PRT_RET(
+            allocatedSize < opResCtxSize,
+            HCCL_ERROR(
+                "OpResCtx size[%llu] exceeds capacity[%llu].", static_cast<unsigned long long>(opResCtxSize),
+                static_cast<unsigned long long>(allocatedSize)),
+            HCCL_E_MEMORY);
         HCCL_INFO(
-            "HcclEngineCtxGet success, tagOpResCtx[%s], opResCtxAddr[%p], opResCtxSize[%u]", tagOpResCtx.c_str(),
-            opResCtxPtr, opResCtxSize);
+            "HcclEngineCtxGet success, tagOpResCtx[%s], opResCtxAddr[%p], allocatedSize[%llu]", tagOpResCtx.c_str(),
+            opResCtxPtr, static_cast<unsigned long long>(allocatedSize));
     } else {
         CHK_RET(HcclEngineCtxCreate(comm, tagOpResCtx.c_str(), commEngine, opResCtxSize, opResCtxPtr));
     }
 
-    HCCL_INFO("HcclAllocOpResCtx the opResCtx: opResCtxAddr[%u], opResCtxSize[%u]", opResCtxPtr, opResCtxSize);
+    HCCL_INFO(
+        "HcclAllocOpResCtx the opResCtx: opResCtxAddr[%p], opResCtxSize[%llu]", opResCtxPtr,
+        static_cast<unsigned long long>(opResCtxSize));
 
     CHK_RET(HcclEngineCtxCopy(comm, commEngine, tagOpResCtx.c_str(), &resCtx, opResCtxSize, 0));
     return HCCL_SUCCESS;
@@ -330,6 +361,9 @@ HcclResult HcclAllocOpResCtx(
 HcclResult ConvertAlltoAllParam(
     const u64 recvCount, const u32 rankSize, std::vector<u64>& sdispls, std::vector<u64>& rdispls)
 {
+    CHK_PRT_RET(
+        sdispls.size() < rankSize || rdispls.size() < rankSize,
+        HCCL_ERROR("[ConvertAlltoAllParam] invalid rankSize[%u].", rankSize), HCCL_E_PARA);
     u64 dataCountOffset = 0;
     for (u64 i = 0; i < rankSize; i++) {
         sdispls[i] = dataCountOffset;
@@ -995,6 +1029,7 @@ HcclResult CopyCcuOpParamToDevice(
     CHK_RET(aclRet == ACL_ERROR_NONE ? HCCL_SUCCESS : HCCL_E_RUNTIME);
     opResCtx.algInfo[tilingIndex].opParam = reinterpret_cast<uint64_t>(opParamPtr);
     opResCtx.algInfo[tilingIndex].offset = initTiling->offset[tilingIndex];
+    opResCtx.opParamSize[tilingIndex] = opParamSize;
     HCCL_INFO(
         "[CcuSelectAlg] ccTiling[%u]: opParamAddr[%llu], offset[%u]", tilingIndex,
         opResCtx.algInfo[tilingIndex].opParam, opResCtx.algInfo[tilingIndex].offset);

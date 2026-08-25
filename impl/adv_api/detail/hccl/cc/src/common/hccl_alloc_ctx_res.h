@@ -22,6 +22,7 @@
 #include "hcomm_primitives_dl.h"
 #include "mc2_type.h"
 #include "ccu_assist_pub.h"
+#include "hccl_tiling_msg.h"
 
 #include <vector>
 #include <memory>
@@ -55,34 +56,8 @@ struct Mc2ServerCfg {
     uint8_t reserved[8];
 };
 
-struct Mc2InitTilingInner {
-    uint32_t version; // ccu & alltoall (暂定version 为 原本的version + 1)
-    uint32_t mc2HcommCnt;
-    uint32_t offset[MAX_CC_TILING_NUM];
-    uint8_t debugMode;
-    uint8_t preparePosition;
-    uint16_t queueNum;
-    uint16_t commBlockNum;
-    uint8_t devType;
-    char reserved[17];
-};
-
-constexpr uint32_t MC2_GROUP_NAME_SIZE = 128U;
-constexpr uint32_t MC2_ALG_CONFIG_SIZE = 128U;
-struct Mc2CcTilingInner {
-    uint8_t skipLocalRankCopy;
-    uint8_t skipBufferWindowCopy;
-    uint8_t stepSize;
-    uint8_t version;
-    char reserved[9];
-    uint8_t commEngine;
-    uint8_t srcDataType;
-    uint8_t dstDataType;
-    char groupName[MC2_GROUP_NAME_SIZE];
-    char algConfig[MC2_ALG_CONFIG_SIZE];
-    uint32_t opType;
-    uint32_t reduceType;
-};
+using Mc2InitTilingInner = HcclApi::Mc2InitTilingInner;
+using Mc2CcTilingInner = HcclApi::Mc2CcTilingInner;
 
 struct AlgInfo {
     uint64_t offset;
@@ -105,6 +80,7 @@ struct OpResCtx {
     uint64_t resCtx;                    // 资源地址，用于资源下发时的处理
     uint32_t opType[Hccl::MC2_MAX_OP_NUM];
     uint32_t algorithmType[Hccl::MC2_MAX_OP_NUM];
+    uint64_t opParamSize[Hccl::MC2_MAX_OP_NUM];
     bool isKfc[Hccl::MC2_MAX_OP_NUM]; // 用于标记是否走kfcServer
 };
 

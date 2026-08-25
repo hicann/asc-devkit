@@ -75,7 +75,7 @@ HcclResult CcuTempKfcServer::CalcRes(
 
     // 构建 KfcServer kernelInfo
     CcuKernelInfo kernelInfo;
-    strcpy_s(kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelKfcServer");
+    CHK_SAFETY_FUNC_RET(strcpy_s(kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelKfcServer"));
     kernelInfo.kernelFunc = reinterpret_cast<void*>(CcuKfcServerKernel);
 
     // 从 ccuKernelInfos 最后一项继承属性到当前 KfcServer kernel，然后替换最后一项

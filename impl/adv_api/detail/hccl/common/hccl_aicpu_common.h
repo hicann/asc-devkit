@@ -54,8 +54,7 @@ constexpr uint32_t HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX = 1U;
 // Keep primitiveId state in GM reserved bytes to avoid function-local static state across kernel launches.
 __aicore__ inline void ResetPrimitiveIdStateInControlMsg(__gm__ ControlHcclMsg* controlMsgGM)
 {
-    ASCENDC_HCCL_API_ASSERT(
-        controlMsgGM != nullptr, { return; }, "Control msg is nullptr.");
+    ASCENDC_HCCL_API_ASSERT(controlMsgGM != nullptr, { return; }, "Control msg is nullptr.");
     controlMsgGM->reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX] = 0U;
     controlMsgGM->reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX] = 0U;
     FlushDataCache(controlMsgGM);
@@ -63,8 +62,7 @@ __aicore__ inline void ResetPrimitiveIdStateInControlMsg(__gm__ ControlHcclMsg* 
 
 __aicore__ inline void ResetPrimitiveIdOnceInControlMsg(__gm__ ControlHcclMsg* controlMsgGM)
 {
-    ASCENDC_HCCL_API_ASSERT(
-        controlMsgGM != nullptr, { return; }, "Control msg is nullptr.");
+    ASCENDC_HCCL_API_ASSERT(controlMsgGM != nullptr, { return; }, "Control msg is nullptr.");
     FlushDataCache(controlMsgGM);
     if (controlMsgGM->reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX] == 0U) {
         controlMsgGM->reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX] = 0U;
@@ -75,8 +73,7 @@ __aicore__ inline void ResetPrimitiveIdOnceInControlMsg(__gm__ ControlHcclMsg* c
 
 __aicore__ inline uint8_t FetchAndIncPrimitiveIdInControlMsg(__gm__ ControlHcclMsg* controlMsgGM)
 {
-    ASCENDC_HCCL_API_ASSERT(
-        controlMsgGM != nullptr, { return 0U; }, "Control msg is nullptr.");
+    ASCENDC_HCCL_API_ASSERT(controlMsgGM != nullptr, { return 0U; }, "Control msg is nullptr.");
     FlushDataCache(controlMsgGM);
     uint8_t seqNum = controlMsgGM->reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX];
     controlMsgGM->reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX] = static_cast<uint8_t>(seqNum + 1U);
@@ -186,11 +183,14 @@ __aicore__ inline HcclContextDef::HcclRankRelationResV2* GetRemoteRankAddrs(
 
 __aicore__ inline void UpdateControlMsgCount(__gm__ HcclMsgArea* hcclMsgArea, ControlMsgType msg)
 {
-    ASCENDC_HCCL_API_ASSERT(
-        msg < ControlMsgType::HCCL_CMD_MAX, { return; }, "Invalid msg type %u.", static_cast<uint32_t>(msg));
-    __gm__ TurnCnt* apiInfo =
-        &(hcclMsgArea->apiStats
-              .msgStats[static_cast<uint32_t>(msg) - static_cast<uint32_t>(ControlMsgType::HCCL_CMD_FINALIZE)]);
+    const uint32_t msgValue = static_cast<uint32_t>(msg);
+    const uint32_t firstMsgValue = static_cast<uint32_t>(ControlMsgType::HCCL_CMD_FINALIZE);
+    const uint32_t maxMsgValue = static_cast<uint32_t>(ControlMsgType::HCCL_CMD_MAX);
+    if ((msgValue < firstMsgValue) || (msgValue >= maxMsgValue)) {
+        KERNEL_LOG(KERNEL_ERROR, "Invalid msg type %u.", msgValue);
+        return;
+    }
+    __gm__ TurnCnt* apiInfo = &(hcclMsgArea->apiStats.msgStats[msgValue - firstMsgValue]);
     FlushDataCache(apiInfo);
     ++(apiInfo->cnt);
     FlushDataCache(apiInfo);

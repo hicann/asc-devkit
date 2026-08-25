@@ -186,7 +186,19 @@ private:
         sizeof(uint32_t),
         8U,
         2U,
-        16U};
+        16U,
+        0U,
+        1U,
+        1U,
+        1U,
+        1U,
+        1U};
+    static_assert(
+        SIZE_TABLE[HcclDataType::HCCL_DATA_TYPE_HIF8] == 1U && SIZE_TABLE[HcclDataType::HCCL_DATA_TYPE_FP8E4M3] == 1U &&
+            SIZE_TABLE[HcclDataType::HCCL_DATA_TYPE_FP8E5M2] == 1U &&
+            SIZE_TABLE[HcclDataType::HCCL_DATA_TYPE_FP8E8M0] == 1U &&
+            SIZE_TABLE[HcclDataType::HCCL_DATA_TYPE_MXFP8] == 1U,
+        "FP8 data type sizes must be one byte");
     static constexpr int64_t WORKING_BLOCK_IDX = 0;
 #endif
 };

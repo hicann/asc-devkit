@@ -51,7 +51,8 @@ void GetScatterOpInfo(const void* opInfo, char* outPut, size_t size)
     ss << "dstAddr:0x" << std::hex << info->outputPtr << ".";
 
     std::string strTmp = ss.str();
-    s32 sRet = strncpy_s(outPut, size, strTmp.c_str(), std::min(size, strTmp.size()));
+    const size_t copyLength = std::min(size - 1U, strTmp.size());
+    s32 sRet = strncpy_s(outPut, size, strTmp.c_str(), copyLength);
     if (strTmp.size() >= size || sRet != EOK) {
         HCCL_ERROR(
             "[%s] strncpy_s failed, src size[%zu], dst size[%zu], sRet[%d]", __func__, strTmp.size(), size, sRet);

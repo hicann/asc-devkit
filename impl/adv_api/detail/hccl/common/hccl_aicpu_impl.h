@@ -155,6 +155,10 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, config>:
     } while ((debugMode_ != HCCL_ONLY_COMPUTE) && (hcclSendMsg->valid == HCCL_MSG_VALID_MASK));
     KERNEL_LOG(KERNEL_INFO, "Hccl send extMsg[%u] is available now.", curMsgPosition_[0U]);
     uint32_t rankNum = GetRankDim();
+    if ((rankNum == 0U) || (rankNum > HCCL_MAX_RANK_NUM_V2)) {
+        KERNEL_LOG(KERNEL_ERROR, "Invalid rank num %u for extended message.", rankNum);
+        return;
+    }
     AssembleHcclMsgExt(param, rankNum, hcclSendMsg);
     GlobalTensor<int64_t> globalHcclMsgArea;
     for (uint32_t i = 0U; i < rankNum; i += MAX_DCCI_CNT / sizeof(uint64_t)) {
@@ -254,6 +258,13 @@ __aicore__ inline HcclHandle HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, co
     if (unlikely(param.repeat == 0U)) {
         return INVALID_HANDLE_ID;
     }
+    if ((param.commType.prepareType != HcclCMDType::HCCL_CMD_BATCH_WRITE) &&
+        (GetHcclDataTypeSize(param.dataType) == 0U)) {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Call Prepare[%d] failed, param HcclDataType is %d, invalid.",
+            static_cast<int32_t>(param.commType.prepareType), static_cast<int32_t>(param.dataType));
+        return INVALID_HANDLE_ID;
+    }
     ASCENDC_HCCL_API_ASSERT(
         CheckCommonPrepareParamValid(param), { return INVALID_HANDLE_ID; }, "Call Prepare[%d] failed, param invalid.",
         static_cast<int32_t>(param.commType.prepareType));
@@ -276,7 +287,7 @@ __aicore__ inline HcclHandle HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, co
     }
     ++(curMsgPosition_[queId]);
     ASCENDC_HCCL_API_ASSERT(
-        curMsgPosition_[queId] < HCCL_MSG_CNT, {  return INVALID_HANDLE_ID; },
+        curMsgPosition_[queId] < HCCL_MSG_CNT, { return INVALID_HANDLE_ID; },
         "Message amount exceeds the maximum value when prepare.");
     return handleId;
 }

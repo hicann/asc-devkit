@@ -223,7 +223,8 @@ typedef struct {
  */
 static inline HcommResult EndpointDescInit(EndpointDesc* endpoint, uint32_t num)
 {
-    const HcommResult hcommEPointer = (HcommResult)2; // 对齐HCCL_E_PTR
+    const HcommResult hcommEPointer = (HcommResult)2;  // 对齐HCCL_E_PTR
+    const HcommResult hcommEInternal = (HcommResult)4; // 对齐HCCL_E_INTERNAL
 
     for (uint32_t idx = 0; idx < num; ++idx) {
         if (endpoint == nullptr) {
@@ -231,7 +232,9 @@ static inline HcommResult EndpointDescInit(EndpointDesc* endpoint, uint32_t num)
         }
 
         // 用0xFF填充整个结构体
-        (void)memset_s(endpoint, sizeof(EndpointDesc), 0xFF, sizeof(EndpointDesc));
+        if (memset_s(endpoint, sizeof(EndpointDesc), 0xFF, sizeof(EndpointDesc)) != EOK) {
+            return hcommEInternal;
+        }
 
         // 显式设置关键字段为无效值
         endpoint->protocol = COMM_PROTOCOL_RESERVED;
@@ -260,7 +263,9 @@ static inline HcommResult HcommChannelDescInit(HcommChannelDesc* channelDesc, ui
             return hcommEPointer;
         }
 
-        (void)memset_s(channelDesc, sizeof(HcommChannelDesc), 0xFF, sizeof(HcommChannelDesc));
+        if (memset_s(channelDesc, sizeof(HcommChannelDesc), 0xFF, sizeof(HcommChannelDesc)) != EOK) {
+            return hcommEInternal;
+        }
         channelDesc->header.version = HCOMM_CHANNEL_VERSION;
         channelDesc->header.magicWord = HCOMM_CHANNEL_MAGIC_WORD;
         channelDesc->header.size = sizeof(HcommChannelDesc);

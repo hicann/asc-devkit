@@ -138,8 +138,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, config>:
     }
 
     hcclContext_ = (__gm__ HcclCombineOpParam*)context;
-    ASCENDC_HCCL_API_ASSERT(
-        hcclContext_ != nullptr, { return; }, "Init Hccl failed, context addr is nullptr.");
+    ASCENDC_HCCL_API_ASSERT(hcclContext_ != nullptr, { return; }, "Init Hccl failed, context addr is nullptr.");
     InitInner(hcclContext_->workSpace, version);
 }
 
@@ -156,8 +155,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, config>:
     tilingBaseAddr_ = reinterpret_cast<uint64_t>(initTiling);
 
     hcclContext_ = (__gm__ HcclCombineOpParam*)context;
-    ASCENDC_HCCL_API_ASSERT(
-        hcclContext_ != nullptr, { return; }, "Init Hccl failed, context addr is nullptr.");
+    ASCENDC_HCCL_API_ASSERT(hcclContext_ != nullptr, { return; }, "Init Hccl failed, context addr is nullptr.");
     InitInner(hcclContext_->workSpace, HcclTilingVersion::ONLINE_COMPILATION_TILING_VERSION);
 }
 
@@ -207,6 +205,15 @@ template <const auto& config>
 template <ScopeType type>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, config>::QueueBarrier(uint16_t queueID)
 {
+    const uint32_t availableQueueNum = (queueNum_ == 0U) ? 1U : static_cast<uint32_t>(queueNum_);
+    const uint64_t queueIndex =
+        static_cast<uint64_t>(queueID) + static_cast<uint64_t>(GetBlockIdx()) * static_cast<uint64_t>(queueNum_);
+    if ((static_cast<uint32_t>(queueID) >= availableQueueNum) || (queueIndex >= MAX_QUE_NUM)) {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Invalid queue ID %u, available queue num %u, queue index %llu.",
+            static_cast<uint32_t>(queueID), availableQueueNum, static_cast<unsigned long long>(queueIndex));
+        return;
+    }
     CommonPrepareParam param;
     param.commType.msgType = ControlMsgType::HCCL_CMD_BARRIER;
     SendMsgToServer(queueID, param);
@@ -247,8 +254,7 @@ __aicore__ inline int32_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, confi
     const uint16_t slicesPerRepeat = stepsPerRepeat;
     const uint32_t rankId = GetRankId();
     const uint32_t rankDim = GetRankDim();
-    ASCENDC_HCCL_API_ASSERT(
-        rankDim != 0U, { return HCCL_FAILED; }, "Invalid rank-dim.");
+    ASCENDC_HCCL_API_ASSERT(rankDim != 0U, { return HCCL_FAILED; }, "Invalid rank-dim.");
     for (uint16_t i = 0U; i < seqSliceLen; ++i) {
         if constexpr (sync) {
             if ((curSlice + 1) % stepSize == 0) {

@@ -12,6 +12,7 @@
 
 #include <hccl/hccl_types.h>
 #include <acl/acl.h>
+#include "securec.h"
 
 #ifndef HCOMM_WEAK_SYMBOL
 #define HCOMM_WEAK_SYMBOL __attribute__((weak))
@@ -209,12 +210,11 @@ static inline void HcclCommConfigInit(HcclCommConfig* config)
         uint64_t reserved;
     } configInfo_t;
 
-    configInfo_t* info = (configInfo_t*)config;
-
-    info->size = sizeof(HcclCommConfig);
-    info->magicWord = HCCL_COMM_CONFIG_MAGIC_WORD;
-    info->version = HCCL_COMM_CONFIG_VERSION;
-    info->reserved = 0;
+    static_assert(sizeof(configInfo_t) <= sizeof(config->reserved), "HcclCommConfig metadata exceeds reserved bytes");
+    const configInfo_t info = {sizeof(HcclCommConfig), HCCL_COMM_CONFIG_MAGIC_WORD, HCCL_COMM_CONFIG_VERSION, 0U};
+    if (memcpy_s(config->reserved, sizeof(config->reserved), &info, sizeof(info)) != EOK) {
+        return;
+    }
 
     config->hcclBufferSize = HCCL_COMM_BUFFSIZE_CONFIG_NOT_SET;
     config->hcclDeterministic = HCCL_COMM_DETERMINISTIC_CONFIG_NOT_SET;

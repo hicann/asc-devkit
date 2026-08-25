@@ -21,7 +21,8 @@ namespace mc2_ops_hccl {
 struct AlgResourceCtxSerializable;
 }
 
-HcclResult LoadOpenOpParamData(uint64_t opParamKey, std::string& commName, std::vector<uint8_t>& opParam);
+HcclResult LoadOpenOpParamData(
+    uint64_t opParamKey, uint64_t opParamSize, std::string& commName, std::vector<uint8_t>& opParam);
 HcclResult FormatOpenOpParamDataFromMsg(
     const std::vector<uint8_t>& baseOpParam, const HcclApi::HcclMsg& msg, HcclApi::HcclMsgExt& extMsg, uint32_t rankNum,
     uint32_t repeatIdx, void* stream, std::vector<uint8_t>& runOpParam);

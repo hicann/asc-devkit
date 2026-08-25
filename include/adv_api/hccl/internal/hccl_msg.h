@@ -105,6 +105,11 @@ struct HcclMsg {
 // Current HcclMsgExt support 256 ranks max.
 // Current size of HcclMsgExt is 8256B, while stack frame size is 32KB limited. Thus, do not define HcclMsgExt object.
 constexpr uint32_t HCCL_MAX_RANK_NUM_V2 = 256;
+constexpr bool IsValidHcclMsgRankSize(uint64_t rankSize)
+{
+    return (rankSize > 0U) && (rankSize <= HCCL_MAX_RANK_NUM_V2);
+}
+
 struct HcclMsgExt {
     // sendCounts[i] represents the data count sent to rank i by this rank.
     uint64_t sendCounts[HCCL_MAX_RANK_NUM_V2];
@@ -227,6 +232,7 @@ struct OpResCtx {
     uint64_t resCtx;                   // 资源地址，用于资源下发时的处理
     uint32_t opType[HCCL_API_MAX_OP_NUM];
     uint32_t algorithmType[HCCL_API_MAX_OP_NUM];
+    uint64_t opParamSize[HCCL_API_MAX_OP_NUM];
 };
 } // namespace HcclApi
 

@@ -23,8 +23,9 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllToAllV(
     __gm__ CommonPrepareParamCcu* commParam, __gm__ AlltoAllVParamCcu* allToAllVParam)
 {
+    const uint64_t dataSize = GetHcclDataTypeSize(commParam->dataType);
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    uint64_t offset = commParam->count * ccuParam_.repeatIndex * DATA_TYPE_MAP[commParam->dataType];
+    uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
     xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2
     xnData_[3] = 0;                                     // 3 is index of xnData
@@ -34,8 +35,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     AssembleHcclMsgExtForCCU(ccuParam_, commParam, allToAllVParam);
 
     uint64_t loopCount = 8;
-    auto dataSlice =
-        ((allToAllVParam->sendCounts[ccuParam_.rankId]) * DATA_TYPE_MAP[commParam->dataType]) % CCU_MAX_COMM_DATA;
+    auto dataSlice = ((allToAllVParam->sendCounts[ccuParam_.rankId]) * dataSize) % CCU_MAX_COMM_DATA;
     CalcGoSize(dataSlice, loopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[5]);
     xnData_[9] = reinterpret_cast<uint64_t>(ccuParam_.ccuMsgExt) + CCU_MSG_EXT_RANK_OFFSET * ccuParam_.alltoallvCnt;
     return;
@@ -45,7 +45,7 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllToAll(
     __gm__ CommonPrepareParamCcu* commParam)
 {
-    uint64_t dataSize = DATA_TYPE_MAP[commParam->dataType];
+    uint64_t dataSize = GetHcclDataTypeSize(commParam->dataType);
     xnData_[0] = GetOpId(commParam); // ccu xn0
     uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
@@ -66,10 +66,6 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     __gm__ CommonPrepareParamCcu* commParam)
 {
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    uint64_t offset = commParam->count * ccuParam_.repeatIndex * DATA_TYPE_MAP[commParam->dataType];
-    xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
-    xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2
-
     uint64_t loopCount = CCU_LOOP_COUNT_ATAVW;
 
     xnData_[1] = reinterpret_cast<uint64_t>(commParam->sendBuf); // 1 is index of xnData
@@ -85,8 +81,9 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllReduce(
     __gm__ CommonPrepareParamCcu* commParam)
 {
+    const uint64_t dataSize = GetHcclDataTypeSize(commParam->dataType);
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    uint64_t offset = commParam->count * ccuParam_.repeatIndex * DATA_TYPE_MAP[commParam->dataType];
+    uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
     xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2
 
@@ -95,14 +92,13 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     uint64_t sliceCount = (ccuParam_.rankId == ccuParam_.rankNum - 1) ?
                               (commParam->count - (ccuParam_.rankNum - 1) * tmpCount) :
                               tmpCount;
-    uint64_t sliceSize = sliceCount * DATA_TYPE_MAP[commParam->dataType];
+    uint64_t sliceSize = sliceCount * dataSize;
 
     uint64_t loopSize = loopCount * CCU_MEMSLICE_SIZE;
     uint64_t m = sliceSize / loopSize;
     uint64_t n = (sliceSize - m * loopSize) / CCU_MEMSLICE_SIZE;
     uint64_t p = sliceSize - m * loopSize - n * CCU_MEMSLICE_SIZE;
 
-    auto dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commParam->dataType)];
     xnData_[3] = (commParam->strideCount == 0) ?
                      tmpCount * dataSize * ccuParam_.rankId :
                      (commParam->strideCount * dataSize * ccuParam_.rankId); // 3 is index of xnData
@@ -116,7 +112,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     __gm__ CommonPrepareParamCcu* commParam)
 {
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    auto dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commParam->dataType)];
+    auto dataSize = GetHcclDataTypeSize(commParam->dataType);
     uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
     xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2
@@ -152,7 +148,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     __gm__ CommonPrepareParamCcu* commParam)
 {
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    auto dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commParam->dataType)];
+    auto dataSize = GetHcclDataTypeSize(commParam->dataType);
     uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
     xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2
@@ -162,7 +158,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     uint64_t sliceCount = (ccuParam_.rankId == ccuParam_.rankNum - 1) ?
                               (commParam->count - (ccuParam_.rankNum - 1) * tmpCount) :
                               tmpCount;
-    uint64_t sliceSize = sliceCount * DATA_TYPE_MAP[commParam->dataType];
+    uint64_t sliceSize = sliceCount * dataSize;
 
     xnData_[3] = ccuParam_.scratchAddr;
     uint64_t rankSliceOffset =
@@ -204,7 +200,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     __gm__ CommonPrepareParamCcu* commParam)
 {
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    auto dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commParam->dataType)];
+    auto dataSize = GetHcclDataTypeSize(commParam->dataType);
     uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
     xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2
@@ -223,7 +219,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     __gm__ CommonPrepareParamCcu* commParam)
 {
     xnData_[0] = GetOpId(commParam); // ccu xn0
-    auto dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commParam->dataType)];
+    auto dataSize = GetHcclDataTypeSize(commParam->dataType);
     uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
     xnData_[1] = (uint64_t)commParam->sendBuf + offset; // ccu xn1
     xnData_[2] = (uint64_t)commParam->recvBuf + offset; // ccu xn2

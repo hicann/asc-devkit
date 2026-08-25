@@ -440,8 +440,14 @@ extern "C" __attribute__((visibility("default"))) unsigned int HcclLaunchAicpuKe
             // 上报device侧的op 附加信息
             HcomProInfoTmp profInfo;
             std::string algTypeStr(param->algTypeStr);
-            strcpy_s(profInfo.algType, sizeof(profInfo.algType), algTypeStr.c_str());
-            strcpy_s(profInfo.commName, sizeof(profInfo.commName), param->commName);
+            if (strcpy_s(profInfo.algType, sizeof(profInfo.algType), algTypeStr.c_str()) != EOK) {
+                HCCL_ERROR("failed to copy algType for profiling");
+                return 1;
+            }
+            if (strcpy_s(profInfo.commName, sizeof(profInfo.commName), param->commName) != EOK) {
+                HCCL_ERROR("failed to copy commName for profiling");
+                return 1;
+            }
             profInfo.commNameLen = strlen(param->commName);
             profInfo.dataCount = param->DataDes.count;
             profInfo.dataType = static_cast<uint8_t>(param->DataDes.dataType);

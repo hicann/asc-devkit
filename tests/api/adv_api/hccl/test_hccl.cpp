@@ -177,6 +177,57 @@ private:
     int64_t blockIdxBak_;
 };
 
+TEST_F(HcclCommonTestSuite, ResetPrimitiveIdStateInControlMsg)
+{
+    ControlHcclMsg controlMsg{};
+    controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX] = 1U;
+    controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX] = 1U;
+
+    ResetPrimitiveIdStateInControlMsg(&controlMsg);
+    EXPECT_EQ(controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX], 0U);
+    EXPECT_EQ(controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX], 0U);
+
+    controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX] = 1U;
+    ResetPrimitiveIdOnceInControlMsg(&controlMsg);
+    EXPECT_EQ(controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX], 0U);
+    EXPECT_EQ(controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX], 1U);
+
+    controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX] = 1U;
+    ResetPrimitiveIdOnceInControlMsg(&controlMsg);
+    EXPECT_EQ(controlMsg.reserved[HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX], 1U);
+}
+
+TEST_F(HcclAbnormalTestSuite, UpdateControlMsgCount_InvalidMsgType)
+{
+    std::vector<uint8_t> workSpace(workSpaceSize + 1024);
+    HcclMsgArea* hcclMsgArea = GetHcclMsgArea(workSpace.data());
+
+    UpdateControlMsgCount(hcclMsgArea, static_cast<ControlMsgType>(0U));
+    UpdateControlMsgCount(hcclMsgArea, ControlMsgType::HCCL_CMD_MAX);
+    for (uint32_t i = 0U; i < HCCL_MSG_TYPE_CNT; ++i) {
+        EXPECT_EQ(hcclMsgArea->apiStats.msgStats[i].cnt, 0U);
+    }
+}
+
+TEST_F(HcclAbnormalTestSuite, AlltoAllV_InvalidRankNum)
+{
+    std::vector<uint8_t> workSpace(workSpaceSize + 1024);
+    HcclMsgArea* hcclMsgArea = GetHcclMsgArea(workSpace.data());
+    HcclCombineOpParam hcclCombineOpParam = GetHcclCombineOpParam(workSpace);
+    hcclCombineOpParam.rankNum = HCCL_MAX_RANK_NUM_V2 + 1U;
+    std::vector<uint64_t> counts(hcclCombineOpParam.rankNum, 0U);
+
+    Hccl hccl;
+    hccl.Init(reinterpret_cast<GM_ADDR>(&hcclCombineOpParam));
+    HcclHandle handleId = hccl.AlltoAllV(
+        reinterpret_cast<__gm__ uint8_t*>(0x11), counts.data(), counts.data(), HcclDataType::HCCL_DATA_TYPE_INT8,
+        reinterpret_cast<__gm__ uint8_t*>(0x11), counts.data(), counts.data(), HcclDataType::HCCL_DATA_TYPE_INT8);
+
+    EXPECT_EQ(handleId, 0);
+    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.sendMsgs[0].addMsg.v0Msg.valid, HCCL_MSG_VALID_MASK);
+    EXPECT_NE(hcclMsgArea->commMsg.singleMsg.paramExtMsgList[0].valid, HCCL_MSG_VALID_MASK);
+}
+
 // Prepare 1 time (AllReduce interface, repeat=1) + Commit 1 time, verify the content of the message area
 TEST_F(HcclCommonTestSuite, AllReduce_Repeat1)
 {

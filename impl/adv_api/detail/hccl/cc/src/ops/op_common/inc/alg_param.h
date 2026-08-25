@@ -371,6 +371,12 @@ struct CcuFastLaunchCtx {
     }
 };
 
+static_assert(
+    offsetof(CcuFastLaunchCtx, ccuKernelNum) + sizeof(u32) * MAX_TEMP_NUM_IN_ALGO == sizeof(CcuFastLaunchCtx),
+    "ccuKernelNum must be the last member of CcuFastLaunchCtx");
+static_assert(
+    sizeof(CcuFastLaunchCtx) % alignof(ThreadHandle) == 0, "CcuFastLaunchCtx must preserve ThreadHandle alignment");
+
 // A5用了cntNotify
 struct AlgResourceRequest {
     double dieSplitRatio = 0.0;
@@ -526,6 +532,14 @@ struct AlgResourceCtxSerializable {
         binaryStream >> kfcServerArgs;
         binaryStream >> kfcServerArgSize;
         binaryStream >> topoInfoSeqSize;
+        if ((topoInfoSeqSize == 0) || (topoInfoSeqSize > data.size())) {
+            HCCL_ERROR(
+                "[AlgResourceCtxSerializable::DeSerialize] invalid topo info size[%u], data size[%zu]", topoInfoSeqSize,
+                data.size());
+            topoInfoSeqSize = 0;
+            topoInfo = TopoInfoWithNetLayerDetails{};
+            return;
+        }
         size_t startPos = data.size() - topoInfoSeqSize;
         std::vector<char> tailData(data.begin() + startPos, data.end());
         TopoInfoWithNetLayerDetails topoTemp;

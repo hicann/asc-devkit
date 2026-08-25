@@ -25,7 +25,18 @@ constexpr int32_t HCCL_SUCCESS = 0;
 constexpr uint8_t HCCL_ONLY_COMPUTE = 1U;
 constexpr uint8_t HCCL_ASCEND910B = 1U;
 constexpr uint32_t MAX_DCCI_CNT = 64U;
-constexpr uint64_t DATA_TYPE_MAP[] = {1, 2, 4, 2, 4, 8, 8, 1, 8, 4, 8, 2, 0, 0, 1, 1, 1, 1, 0};
+constexpr uint64_t DATA_TYPE_MAP[] = {1, 2, 4, 2, 4, 8, 8, 1, 8, 4, 8, 2, 0, 0, 1, 1, 1, 1, 1};
+constexpr uint32_t DATA_TYPE_MAP_SIZE = sizeof(DATA_TYPE_MAP) / sizeof(DATA_TYPE_MAP[0]);
+static_assert(DATA_TYPE_MAP[HCCL_DATA_TYPE_MXFP8] == 1U, "MXFP8 elements occupy one byte");
+
+__aicore__ inline uint64_t GetHcclDataTypeSize(HcclDataType dataType)
+{
+    const uint32_t dataTypeIndex = static_cast<uint32_t>(dataType);
+    if (dataTypeIndex >= DATA_TYPE_MAP_SIZE) {
+        return 0U;
+    }
+    return DATA_TYPE_MAP[dataTypeIndex];
+}
 
 // Used to calc xor checksum for HcclMsg
 constexpr uint32_t HCCL_MSG_DATA_CNT = 16U;
@@ -85,6 +96,13 @@ struct IbVerbsData {
 
 constexpr uint32_t HCCL_MAX_RANK_NUM = 32U;
 constexpr uint32_t HCCL_MAX_RANK_NUM_V310 = 64U;
+constexpr uint32_t HCCL_CCU_MAX_RANK_NUM = HCCL_MAX_RANK_NUM_V310;
+
+__aicore__ inline constexpr bool IsValidCcuRankNum(uint32_t rankNum)
+{
+    return rankNum > 0U && rankNum <= HCCL_CCU_MAX_RANK_NUM;
+}
+
 struct HcclCombineOpParam {
     uint64_t workSpace;     // Address for communication between client and server,
                             // hccl requests and clears
@@ -178,10 +196,10 @@ struct CcuPrepareParam {
 };
 
 struct AlltoAllVParamCcu {
-    uint64_t sendCounts[HCCL_MAX_RANK_NUM];
-    uint64_t sdispls[HCCL_MAX_RANK_NUM];
-    uint64_t recvCounts[HCCL_MAX_RANK_NUM];
-    uint64_t rdispls[HCCL_MAX_RANK_NUM];
+    uint64_t sendCounts[HCCL_CCU_MAX_RANK_NUM];
+    uint64_t sdispls[HCCL_CCU_MAX_RANK_NUM];
+    uint64_t recvCounts[HCCL_CCU_MAX_RANK_NUM];
+    uint64_t rdispls[HCCL_CCU_MAX_RANK_NUM];
 };
 
 constexpr uint64_t CCU_MSG_EXT_RANK_OFFSET = sizeof(CCUMsgExt) * HCCL_MAX_RANK_NUM_V2;

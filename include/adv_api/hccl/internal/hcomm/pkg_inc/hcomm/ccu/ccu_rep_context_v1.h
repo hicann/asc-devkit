@@ -59,10 +59,11 @@ struct CcuProfilingInfo {
           mask(0),
           dataSize(0)
     {
-        (void)memset_s(channelId, sizeof(channelId), INVALID_VALUE_CHANNELID, sizeof(channelId));
-        (void)memset_s(remoteRankId, sizeof(remoteRankId), INVALID_RANKID, sizeof(remoteRankId));
-        (void)memset_s(
-            channelHandle, sizeof(channelHandle), static_cast<int>(INVALID_VALUE_NOTIFYID), sizeof(channelHandle));
+        for (uint16_t i = 0; i < CCU_MAX_CHANNEL_NUM; ++i) {
+            channelId[i] = INVALID_VALUE_CHANNELID;
+            remoteRankId[i] = UINT32_MAX;
+            channelHandle[i] = INVALID_VALUE_NOTIFYID;
+        }
     }
 };
 namespace CcuRep {

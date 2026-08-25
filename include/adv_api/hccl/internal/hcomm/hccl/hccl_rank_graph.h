@@ -86,7 +86,9 @@ static inline HcclResult CommLinkInit(CommLink* commLink, uint32_t linkNum)
     for (uint32_t idx = 0; idx < linkNum; idx++) {
         if (commLink != nullptr) {
             // 先用0xFF填充整个结构体
-            (void)memset_s(commLink, sizeof(CommLink), 0xFF, sizeof(CommLink));
+            if (UNLIKELY(memset_s(commLink, sizeof(CommLink), 0xFF, sizeof(CommLink)) != EOK)) {
+                return HCCL_E_INTERNAL;
+            }
 
             // 初始化ABI头信息
             commLink->header.version = COMM_LINK_VERSION;

@@ -45,7 +45,8 @@ HcclResult CcuTempAllGatherMesh1D::CalcRes(
     // KFC Server will replace this placeholder kernelInfo before CCU kernel registration.
     CcuKernelInfo kernelInfo;
 
-    strcpy_s(kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelAllGatherMesh1D");
+    CHK_SAFETY_FUNC_RET(
+        strcpy_s(kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelAllGatherMesh1D"));
 
     std::vector<HcclChannelDesc> channelDescs;
     if (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS) {

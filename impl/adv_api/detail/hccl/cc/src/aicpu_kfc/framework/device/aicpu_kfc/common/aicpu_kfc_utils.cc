@@ -183,6 +183,10 @@ std::string AicpuKfcUtils::GetMsgSimpleStr(const HcclMsg& msg)
 
 std::string AicpuKfcUtils::GetMsgSimpleStr(u32 rankSize, const HcclMsgExt& msg)
 {
+    if (!IsValidHcclMsgRankSize(rankSize)) {
+        HCCL_ERROR("Invalid rank size %u for extended message log.", rankSize);
+        return "";
+    }
     std::stringstream ss;
     ss << "rankSize:" << rankSize << ",valid:" << msg.valid << ",xorCheck:" << msg.xorCheck << ",sendCounts:";
     for (u32 i = 0; i < rankSize; ++i) {

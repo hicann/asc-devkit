@@ -36,15 +36,23 @@ inline std::string StringFormat(const char* format, Args... args)
     using namespace std;
     constexpr size_t bufSize = BUFSIZ;
     char buffer[bufSize];
-    size_t actualSize = snprintf_s(&buffer[0], bufSize, bufSize, format, args...);
-    actualSize++;
+    int formatRet = snprintf_s(&buffer[0], bufSize, bufSize, format, args...);
+    if (formatRet < 0) {
+        HCCL_ERROR("[StringFormat] failed to format string into the local buffer");
+        return "";
+    }
+    size_t actualSize = static_cast<size_t>(formatRet) + 1;
 
     if (actualSize > bufSize) {
         std::vector<char> newbuffer(actualSize);
-        snprintf_s(newbuffer.data(), actualSize, actualSize, format, args...);
-        return newbuffer.data();
+        int retryRet = snprintf_s(newbuffer.data(), actualSize, actualSize, format, args...);
+        if (retryRet < 0) {
+            HCCL_ERROR("[StringFormat] failed to format string into the resized buffer");
+            return "";
+        }
+        return std::string(newbuffer.data(), static_cast<size_t>(retryRet));
     }
-    return buffer;
+    return std::string(buffer, static_cast<size_t>(formatRet));
 }
 } // namespace mc2_ops_hccl
 

@@ -69,10 +69,16 @@ __aicore__ inline uint64_t GetOpId(__gm__ CommonPrepareParamCcu* commParam)
 __aicore__ inline void AssembleHcclMsgExtForCCU(
     CcuPrepareParam& ccuParam, __gm__ CommonPrepareParamCcu* commParam, __gm__ AlltoAllVParamCcu* allToAllVParam)
 {
+    if (!IsValidCcuRankNum(ccuParam.rankNum)) {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Assemble CCU AlltoAllV message failed, rank num %u is outside the supported range [1, %u].",
+            ccuParam.rankNum, HCCL_CCU_MAX_RANK_NUM);
+        return;
+    }
     __gm__ CCUMsgExt* ccuMsgExt = reinterpret_cast<__gm__ CCUMsgExt*>(
         reinterpret_cast<uint64_t>(ccuParam.ccuMsgExt) + CCU_MSG_EXT_RANK_OFFSET * ccuParam.alltoallvCnt);
     FlushDataCache(ccuMsgExt);
-    uint64_t dataSize = DATA_TYPE_MAP[static_cast<uint64_t>(commParam->dataType)];
+    uint64_t dataSize = GetHcclDataTypeSize(commParam->dataType);
 
     KERNEL_LOG(
         KERNEL_INFO, "ApiClient AssembleHcclMsgExtForCCU ccuParam.ccuMsgExt:0x%llx, ccuMsgExt:0x%llx",
