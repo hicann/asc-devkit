@@ -85,11 +85,9 @@ __aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& conf
 
 __aicore__ inline void asc_set_store_atomic_config_v1(uint16_t type, uint16_t op);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 [[deprecated("NOTICE: asc_set_store_atomic_config_v2 is deprecated."
              "Please use asc_atomic_add instead for atomic add operation.")]] __aicore__ inline void
 asc_set_store_atomic_config_v2(uint16_t type, uint16_t op);
-#endif
 
 #endif
 

@@ -23,7 +23,7 @@
 #include "c_api/asc_cube.h"
 #include "c_api/asc_memory_vector.h"
 
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
+#if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
 #include "c_api/asc_reg_vector.h"
 #endif
 

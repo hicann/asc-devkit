@@ -15,7 +15,7 @@
 #ifndef INCLUDE_C_API_ASC_REG_VECTOR_H
 #define INCLUDE_C_API_ASC_REG_VECTOR_H
 
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
+#if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
 #include "utils/base/helpers.h"
 #include "utils/debug/asc_assert.h"
 #include "utils/debug/asc_dump.h"
