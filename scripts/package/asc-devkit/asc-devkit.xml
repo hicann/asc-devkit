@@ -20,7 +20,6 @@
 
     <block_info dependtree="false" dst_path="asc-devkit" block_conf_path="ascend">
         <block name="EngineeringCommon"/>
-        <block name="EngineeringFiles"/>
         <block name="DevlibCommon"/>
     </block_info>
 
