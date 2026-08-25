@@ -11,7 +11,36 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_UTILS_IMPL_UTILS_C_API_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_UTILS_IMPL_UTILS_C_API_IMPL_H
 
-#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
+#include "utils/base/sys_constants.h"
+
+constexpr uint32_t C_API_AIC_TYPE = AscendC::AIC;
+constexpr uint32_t C_API_AIV_TYPE = AscendC::AIV;
+constexpr uint32_t C_API_MIX_TYPE = AscendC::MIX;
+
+#define ASC_IS_AIV ASCEND_IS_AIV
+#define ASC_IS_AIC ASCEND_IS_AIC
+
+constexpr uint16_t ASC_C_API_ONE_DATABLOCK_SIZE = 32;
+
+__aicore__ inline void asc_sync_post_process() { pipe_barrier(pipe_t::PIPE_ALL); }
+
+union asc_capi_fpc_reg_config {
+    uint64_t config;
+    struct {
+        uint64_t relu_units : 8;
+        uint64_t quant_units : 8;
+        uint64_t reserved : 47;
+        uint64_t unit_flag : 1;
+    };
+};
+
+union asc_scalar_bitcode {
+    __aicore__ asc_scalar_bitcode() {}
+    half input_half;
+    int16_t input_int16_t;
+    uint16_t input_uint16_t;
+    uint64_t output;
+};
 
 union asc_gm2l1_loop_size_config {
     uint64_t config;

@@ -25,8 +25,9 @@
 
 #include <cstdint>
 #include <type_traits>
-#include "c_api/utils_intf.h"
-#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_type.h"
+#include "c_api/defs/constant.h"
+#include "c_api/defs/enum.h"
+#include "c_api/defs/union.h"
 #include "impl/utils/common_types.h"
 #include "impl/utils/sys_macros.h"
 #include "utils/base/sys_constants.h"
@@ -71,10 +72,8 @@ constexpr asc_c_api_half_default_repeat_stride ASC_C_API_HALF_DEFAULT_REPEAT_STR
 constexpr asc_c_api_one_fourth_default_repeat_stride ASC_C_API_ONE_FOURTH_DEFAULT_REPEAT_STRIDE;
 
 constexpr uint16_t ASC_C_API_DATABLOCK_NUM = 8;
-constexpr uint8_t ASC_C_API_MRGSORT_ELEMENT_LEN = 4;
 constexpr uint16_t ASC_C_API_ONE_DATABLOCK_SIZE = 32;
 constexpr uint16_t ASC_C_API_REDUCE_DEFAULT_REPEAT_STRIDE = 1;
-constexpr uint8_t ASC_VDEQ_SIZE = 16;
 
 using order_t = Order_t;
 

@@ -40,7 +40,6 @@ static void test_host_c_api_vector_compute_0()
     using ::asc_bitsort_sync;
     using ::asc_brcb;
     using ::asc_brcb_sync;
-    using ::asc_copy;
     using ::asc_copy_sync;
 }
 

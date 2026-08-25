@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "tests/api/c_api/stub/cce_stub.h"
-#include "include/c_api/asc_simd.h"
+#include "c_api/reg_compute/reg_copy.h"
 
 #define TEST_VECTOR_COMPUTE_COPY_INSTR_0(class_name, c_api_name, cce_name, data_type)                     \
                                                                                                           \

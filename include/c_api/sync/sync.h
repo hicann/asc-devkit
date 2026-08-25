@@ -19,7 +19,7 @@
 
 #ifndef INCLUDE_C_API_SYNC_SYNC_H
 #define INCLUDE_C_API_SYNC_SYNC_H
-#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
+#include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 #include "impl/c_api/instr_impl/npu_arch_2201/sync_impl.h"
@@ -37,10 +37,6 @@
              "Please use asc_sync() instead")]]
 __aicore__ inline void asc_sync_vec();
 
-/*
- * @ingroup Sync
- * @brief：Perform synchronization operations for the PIPE_V pipeline.
- */
 __aicore__ inline void asc_sync_vec(int id);
 
 __aicore__ inline void asc_sync_mte3(int id);

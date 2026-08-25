@@ -19,7 +19,7 @@
 
 #ifndef INCLUDE_C_API_CACHE_CTRL_CACHE_CTRL_H
 #define INCLUDE_C_API_CACHE_CTRL_CACHE_CTRL_H
-#include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
+#include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 

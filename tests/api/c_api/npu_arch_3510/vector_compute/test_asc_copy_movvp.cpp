@@ -11,7 +11,8 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "tests/api/c_api/stub/cce_stub.h"
-#include "include/c_api/asc_simd.h"
+#include "c_api/reg_compute/compute/reg_mask.h"
+#include "c_api/reg_compute/reg_copy.h"
 
 class TestVectorComputeCopyMovvp : public testing::Test {
 protected:

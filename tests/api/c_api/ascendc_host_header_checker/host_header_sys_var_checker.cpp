@@ -33,12 +33,4 @@ static void test_host_c_api_sys_var_0()
     using ::asc_get_vf_len;
     using ::asc_set_ctrl;
     using ::asc_set_ffts_base_addr;
-    using ::asc_set_gm2l1_nz_para;
-    using ::asc_set_l0c2gm_channel_para;
-    using ::asc_set_l0c2gm_quant_post;
-    using ::asc_set_l0c2gm_relu_alpha;
-    using ::asc_set_l0c_copy_channel_para;
-    using ::asc_set_l12l0_padding_val;
-    using ::asc_set_l13d_padding;
-    using ::asc_set_l3d_rpt_b;
 }

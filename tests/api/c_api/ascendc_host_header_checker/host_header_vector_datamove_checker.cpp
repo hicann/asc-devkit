@@ -12,6 +12,7 @@
 
 static void test_host_c_api_vector_datamove_0()
 {
+    using ::asc_copy;
     using ::asc_copy_gm2ub;
     using ::asc_copy_gm2ub_align;
     using ::asc_copy_gm2ub_align_sync;
