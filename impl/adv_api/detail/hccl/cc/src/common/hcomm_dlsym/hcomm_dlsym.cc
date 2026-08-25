@@ -65,7 +65,7 @@ void HcommDlInit(void) {
 
     HcclResDlInit(gLibHandle);
     HcclRankGraphDlInit(gLibHandle);
-    HcommPrimitivesDlInit(gLibHandle);
+    Mc2HcommPrimitivesDlInit(gLibHandle);
     HcclInnerDlInit(gLibHandle);
     HcommProfilingDlInit(gLibHandle);
 }

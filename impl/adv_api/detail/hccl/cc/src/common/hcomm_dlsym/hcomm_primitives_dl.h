@@ -27,7 +27,7 @@ DECL_WEAK_FUNC(HcclResult, HcclSymWinGetPeerPointer, HcclCommSymWindow winHandle
 DECL_WEAK_FUNC(HcclResult, HcclCommSymWinGet, HcclComm comm, void *ptr, size_t size,
                HcclCommSymWindow *winHandle, size_t *offset);
 
-void HcommPrimitivesDlInit(void* libHcommHandle);  // 本模块独立初始化
+void Mc2HcommPrimitivesDlInit(void* libHcommHandle);  // 本模块独立初始化
 
 #ifdef __cplusplus
 }

@@ -13,7 +13,7 @@
 namespace mc2_ops_hccl {
 void CompatSymInit(void)
 {
-    HcommDeviceDlInit(); // 增加强制依赖
+    Mc2HcommDeviceDlInit(); // 增加强制依赖
 }
 
 __attribute__((constructor)) void InitCompat()

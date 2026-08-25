@@ -43,7 +43,7 @@ DEFINE_WEAK_FUNC(HcclResult, HcclCommSymWinGet, HcclComm comm, void *ptr, size_t
                  HcclCommSymWindow *winHandle, size_t *offset);
 
 // ---------- 初始化函数 ----------
-void HcommPrimitivesDlInit(void* libHcommHandle) {
+void Mc2HcommPrimitivesDlInit(void* libHcommHandle) {
     INIT_SUPPORT_FLAG(libHcommHandle, HcommWriteWithNotifyOnThread);
     INIT_SUPPORT_FLAG(libHcommHandle, HcommWriteReduceWithNotifyOnThread);
     INIT_SUPPORT_FLAG(libHcommHandle, HcommWriteNbiOnThread);
