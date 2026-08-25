@@ -61,7 +61,7 @@ host侧自动获取Tiling参数的关键步骤介绍如下：
 <a name="zh-cn_topic_0000001622514006_li1032116474330"></a>
 kernel侧使用Matmul API矩阵乘运算的具体步骤如下：
 
-1.  **创建Matmul对象**
+1.  **创建Matmul对象。**
 
     创建Matmul对象的示例如下：
 
@@ -92,26 +92,31 @@ kernel侧使用Matmul API矩阵乘运算的具体步骤如下：
     >    size_t workspaceSize = userWorkspaceSize + systemWorkspaceSize;
     >    ```
 
-3.  **设置左矩阵A、右矩阵B。**
+3.  **设置原始矩阵shape以及当前核使用的左矩阵A、右矩阵B。**
+
+    多核场景下，需要根据数据切分方向为每个核设置对应的矩阵起始地址。本样例中沿M轴切分A矩阵和C矩阵：每个核读取A矩阵中`singleCoreM`行数据，B矩阵不切分，由所有核共同读取完整B矩阵。`SetOrgShape`需要在`SetTensorA`、`SetTensorB`之前调用。
 
     ```
-    mm.SetTensorA(gmA);    // 设置左矩阵A
-    mm.SetTensorB(gmB);    // 设置右矩阵B
+    mm.SetOrgShape(tiling.M, tiling.N, tiling.Ka, tiling.Kb);
+    mm.SetTensorA(aGlobal[GetBlockIdx() * tiling.singleCoreM * tiling.Ka], false);
+    mm.SetTensorB(bGlobal[0], false);
     ```
+
+    其中，`GetBlockIdx()`表示当前核号。A矩阵按`[M, Ka]`连续存放，因此当前核的A矩阵起始偏移为`GetBlockIdx() * tiling.singleCoreM * tiling.Ka`。各核计算C矩阵的不同行，但都需要完整的B矩阵参与K轴累加，因此B矩阵从`bGlobal[0]`开始读取。`SetTensorA`和`SetTensorB`的第二个参数`false`表示矩阵不转置。
 
 4.  **完成矩阵乘操作。**
-    -   调用Iterate完成单次迭代计算，叠加while循环完成单核全量数据的计算。Iterate方式，可以自行控制迭代次数，完成所需数据量的计算，方式比较灵活。
+    -   调用Iterate完成单次迭代计算，叠加while循环完成当前核负责的数据计算。C矩阵按`[M, N]`连续存放，当前核的写回起始偏移为`GetBlockIdx() * tiling.singleCoreM * tiling.N`。Iterate方式可以自行控制迭代次数，使用方式比较灵活。
 
         ```
-        while (mm.Iterate()) {   
-            mm.GetTensorC(gmC); 
+        while (mm.Iterate()) {
+            mm.GetTensorC(cGlobal[GetBlockIdx() * tiling.singleCoreM * tiling.N]);
         }
         ```
 
-    -   调用IterateAll完成单核上所有数据的计算。IterateAll方式，无需循环迭代，使用比较简单。
+    -   调用IterateAll完成当前核负责的全部数据计算并写回C矩阵。IterateAll方式无需循环迭代，使用比较简单。本节样例代码中调用IterateAll实现矩阵乘。
 
         ```
-        mm.IterateAll(gmC);
+        mm.IterateAll(cGlobal[GetBlockIdx() * tiling.singleCoreM * tiling.N]);
         ```
 
 5.  **结束矩阵乘操作。**
