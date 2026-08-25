@@ -13,7 +13,6 @@
 
 #include "acl/acl_rt_compile.h"
 
-#include <chrono>
 #include <boost/filesystem/path.hpp>
 #include <cstdint>
 #include <optional>
@@ -31,7 +30,7 @@ constexpr aclError ACLRTC_ERROR_LINKING = 176004;
 constexpr aclError ACLRTC_ERROR_OUT_OF_MEMORY = 276001;
 constexpr aclError ACLRTC_ERROR_FAILURE = 576000;
 
-enum class CompilationVariant : uint32_t {
+enum class KernelCompilationVariant : uint32_t {
     Basic,
     BasicWithSuperKernel,
 };
@@ -40,13 +39,6 @@ enum class CompilationCommandKind : uint32_t {
     Compile,
     ObjectCopy,
     Link,
-};
-
-enum class CompilationProcessTermination : uint32_t {
-    InfrastructureFailure,
-    Exited,
-    Signaled,
-    TimedOut,
 };
 
 struct KernelCompilerOptions {
@@ -59,7 +51,7 @@ struct NormalizedKernelSpecializationRequest {
     std::string resourceId;
     std::string kernelName;
     boost::filesystem::path outputElfPath;
-    CompilationVariant compilationVariant{CompilationVariant::Basic};
+    KernelCompilationVariant compilationVariant{KernelCompilationVariant::Basic};
     KernelCompilerOptions compilerOptions;
     uint64_t kernelArgumentCount{0};
     const void* const* borrowedKernelArgumentDataPointers{nullptr};
@@ -85,14 +77,6 @@ struct KernelCompilationPlan {
     std::vector<CompilationCommand> compilationCommands;
     std::vector<boost::filesystem::path> requiredOutputDirectoryPaths;
     boost::filesystem::path linkedKernelElfPath;
-};
-
-struct CompilationProcessResult {
-    CompilationProcessTermination termination{CompilationProcessTermination::InfrastructureFailure};
-    int32_t terminationCode{0};
-    bool capturedOutputTruncated{false};
-    std::chrono::milliseconds elapsedTime{0};
-    std::string capturedOutput;
 };
 
 aclError NormalizeKernelSpecializationRequest(

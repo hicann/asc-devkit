@@ -26,9 +26,9 @@ namespace {
 namespace fs = boost::filesystem;
 using Json = nlohmann::json;
 using ascendc::aclrtc::CompilationCommandKind;
-using ascendc::aclrtc::CompilationVariant;
 using ascendc::aclrtc::KernelCompilationPlan;
 using ascendc::aclrtc::KernelCompilationPlanBuilder;
+using ascendc::aclrtc::KernelCompilationVariant;
 using ascendc::aclrtc::NormalizedKernelSpecializationRequest;
 
 class ScopedEnvironmentVariable final {
@@ -300,7 +300,7 @@ TEST(KernelCompilationPlanBuilderTest, PreservesExplicitStagesAndManifestCommand
     const void* argumentAddresses[] = {tilingBytes};
     const uint64_t argumentByteCounts[] = {sizeof(tilingBytes)};
     NormalizedKernelSpecializationRequest request = CreateRequest(workspace, argumentAddresses, argumentByteCounts);
-    request.compilationVariant = CompilationVariant::BasicWithSuperKernel;
+    request.compilationVariant = KernelCompilationVariant::BasicWithSuperKernel;
     request.compilerOptions.superKernelOptions = {"-g"};
 
     KernelCompilationPlan plan;
@@ -335,7 +335,7 @@ TEST(KernelCompilationPlanBuilderTest, SelectsAllRequestedObjectsInManifestOrder
     const void* argumentAddresses[] = {tilingBytes};
     const uint64_t argumentByteCounts[] = {sizeof(tilingBytes)};
     NormalizedKernelSpecializationRequest request = CreateRequest(workspace, argumentAddresses, argumentByteCounts);
-    request.compilationVariant = CompilationVariant::BasicWithSuperKernel;
+    request.compilationVariant = KernelCompilationVariant::BasicWithSuperKernel;
 
     Json manifest = CreateManifest();
     Json secondBasicObject = manifest["kernels"][1]["objects"][0];
@@ -398,7 +398,7 @@ TEST(KernelCompilationPlanBuilderTest, RequiresOnlyEnvironmentUsedBySelectedObje
             .BuildCompilationPlan(plan),
         0);
 
-    request.compilationVariant = CompilationVariant::BasicWithSuperKernel;
+    request.compilationVariant = KernelCompilationVariant::BasicWithSuperKernel;
     EXPECT_EQ(
         KernelCompilationPlanBuilder(
             request, CreateManifest(), workspace.ResourcePath(), workspace.SourceDirectoryPath())
@@ -673,7 +673,7 @@ TEST(KernelCompilationPlanBuilderTest, RequiresBasicAndRequestedSuperKernelObjec
             .BuildCompilationPlan(plan),
         ascendc::aclrtc::ACLRTC_ERROR_FAILURE);
 
-    request.compilationVariant = CompilationVariant::BasicWithSuperKernel;
+    request.compilationVariant = KernelCompilationVariant::BasicWithSuperKernel;
     Json manifestWithoutSuperKernel = CreateManifest();
     manifestWithoutSuperKernel["kernels"][1]["objects"].erase(1);
     EXPECT_EQ(

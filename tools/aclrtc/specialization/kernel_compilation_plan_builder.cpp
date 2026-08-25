@@ -354,7 +354,7 @@ aclError BuildManifestCommand(
 }
 
 aclError SelectManifestObjectsForCompilation(
-    const Json& selectedKernel, CompilationVariant compilationVariant,
+    const Json& selectedKernel, KernelCompilationVariant compilationVariant,
     std::vector<SelectedManifestObject>& selectedObjects)
 {
     bool foundBasicObject = false;
@@ -366,7 +366,7 @@ aclError SelectManifestObjectsForCompilation(
             selectedObjects.push_back({&manifestObject, ManifestObjectKind::Basic});
         } else if (objectType == "sk") {
             foundSuperKernelObject = true;
-            if (compilationVariant == CompilationVariant::BasicWithSuperKernel) {
+            if (compilationVariant == KernelCompilationVariant::BasicWithSuperKernel) {
                 selectedObjects.push_back({&manifestObject, ManifestObjectKind::SuperKernel});
             }
         }
@@ -375,7 +375,7 @@ aclError SelectManifestObjectsForCompilation(
         ASCENDLOGE("Selected kernel does not contain a basic object; regenerate the JIT resource");
         return ACLRTC_ERROR_FAILURE;
     }
-    if (compilationVariant == CompilationVariant::BasicWithSuperKernel && !foundSuperKernelObject) {
+    if (compilationVariant == KernelCompilationVariant::BasicWithSuperKernel && !foundSuperKernelObject) {
         ASCENDLOGE("Super-kernel compilation was requested but the selected kernel has no sk object; remove "
                    "--enable-super-kernel or use a JIT resource that contains an sk object");
         return ACLRTC_ERROR_FAILURE;

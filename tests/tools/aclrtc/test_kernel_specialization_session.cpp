@@ -31,6 +31,7 @@
 namespace {
 namespace fs = boost::filesystem;
 using Json = nlohmann::json;
+using ascendc::DirectoryCleanupGuard;
 using ascendc::aclrtc::KernelCompilationWorkspace;
 using ascendc::aclrtc::KernelSpecializationSession;
 using ascendc::aclrtc::MaterializedKernelCompilationResource;
@@ -193,14 +194,13 @@ public:
         std::vector<ResourceFileData> resourceFiles = {{"payload.bin", "payload.bin", {0x01U, 0x02U}}})
         : registry_(ResourceRegistry::Instance()),
           resourceId_(std::move(resourceId)),
-          previousTemporaryRoot_(registry_.temporaryRoot_),
+          previousOwnedMaterializationRoot_(std::move(registry_.ownedMaterializationRoot_)),
           previousAutomaticLoadAttempted_(registry_.automaticLoadAttempted_),
-          previousKeepTemporaryRoot_(registry_.keepTemporaryRoot_),
+          previousRetainMaterializedDirectories_(registry_.retainMaterializedDirectories_),
           previousAutomaticLoadStatus_(registry_.automaticLoadStatus_)
     {
-        registry_.temporaryRoot_.clear();
         registry_.automaticLoadAttempted_ = true;
-        registry_.keepTemporaryRoot_ = false;
+        registry_.retainMaterializedDirectories_ = false;
         registry_.automaticLoadStatus_ = ResourceStatus::Success;
 
         std::unique_ptr<ResourceEntry> resourceEntry(new ResourceEntry());
@@ -216,11 +216,9 @@ public:
         if (inserted_) {
             registry_.externalResources_.erase(resourceId_);
         }
-        boost::system::error_code ignoredError;
-        fs::remove_all(registry_.temporaryRoot_, ignoredError);
-        registry_.temporaryRoot_ = previousTemporaryRoot_;
+        registry_.ownedMaterializationRoot_ = std::move(previousOwnedMaterializationRoot_);
         registry_.automaticLoadAttempted_ = previousAutomaticLoadAttempted_;
-        registry_.keepTemporaryRoot_ = previousKeepTemporaryRoot_;
+        registry_.retainMaterializedDirectories_ = previousRetainMaterializedDirectories_;
         registry_.automaticLoadStatus_ = previousAutomaticLoadStatus_;
     }
 
@@ -231,9 +229,9 @@ public:
 private:
     ResourceRegistry& registry_;
     std::string resourceId_;
-    std::string previousTemporaryRoot_;
+    DirectoryCleanupGuard previousOwnedMaterializationRoot_;
     bool previousAutomaticLoadAttempted_{false};
-    bool previousKeepTemporaryRoot_{false};
+    bool previousRetainMaterializedDirectories_{false};
     ResourceStatus previousAutomaticLoadStatus_{ResourceStatus::Success};
     bool inserted_{false};
 };
@@ -367,13 +365,13 @@ TEST(KernelSpecializationSessionTest, LoadsAndCopiesFreshMaterializedPathsFromRe
     registeredResource.SetAutomaticLoadStatus(ResourceStatus::NotFound);
     MaterializedKernelCompilationResource rejectedResource;
     EXPECT_EQ(
-        KernelSpecializationSession::PrepareCompilationResource(resourceId, rejectedResource),
+        KernelSpecializationSession::LoadAndMaterializeCompilationResource(resourceId, rejectedResource),
         ascendc::aclrtc::ACLRTC_ERROR_FAILURE);
 
     registeredResource.SetAutomaticLoadStatus(ResourceStatus::Success);
     MaterializedKernelCompilationResource firstResource;
     ASSERT_EQ(
-        KernelSpecializationSession::PrepareCompilationResource(resourceId, firstResource),
+        KernelSpecializationSession::LoadAndMaterializeCompilationResource(resourceId, firstResource),
         ascendc::aclrtc::ACLRTC_SUCCESS);
     EXPECT_EQ(firstResource.manifest, manifest);
     EXPECT_EQ(firstResource.externalSourceDirectoryPath, sourceDirectoryPath);
@@ -381,7 +379,7 @@ TEST(KernelSpecializationSessionTest, LoadsAndCopiesFreshMaterializedPathsFromRe
 
     MaterializedKernelCompilationResource secondResource;
     ASSERT_EQ(
-        KernelSpecializationSession::PrepareCompilationResource(resourceId, secondResource),
+        KernelSpecializationSession::LoadAndMaterializeCompilationResource(resourceId, secondResource),
         ascendc::aclrtc::ACLRTC_SUCCESS);
     EXPECT_NE(firstResource.ownedResourceDirectoryPath, secondResource.ownedResourceDirectoryPath);
     EXPECT_TRUE(fs::is_regular_file(secondResource.ownedResourceDirectoryPath / "payload.bin"));

@@ -227,7 +227,7 @@ TEST(KernelCompilationWorkspaceTest, RemovesWorktreeBeforeOutputPublicationWhenN
 {
     const fs::path worktreePath = CreateWorkspacePath("aclrtc_workspace_prepublish_cleanup");
     KernelCompilationWorkspace workspace(worktreePath, WorktreeRetentionPolicy::RemoveAfterCompilation);
-    EXPECT_EQ(workspace.RemoveWorktreeBeforePublishingElfIfNeeded(), 0);
+    EXPECT_EQ(workspace.CleanupWorktreeBeforeElfPublication(), 0);
     EXPECT_FALSE(fs::exists(worktreePath));
 }
 
@@ -266,11 +266,11 @@ TEST(KernelCompilationWorkspaceTest, PreservesSourceWhenTemporaryPatchFilenameIs
 TEST(KernelCompilationWorkspaceTest, PrepublicationCleanupNoOpsForEmptyAndRetainedWorktrees)
 {
     KernelCompilationWorkspace emptyWorkspace({}, WorktreeRetentionPolicy::RemoveAfterCompilation);
-    EXPECT_EQ(emptyWorkspace.RemoveWorktreeBeforePublishingElfIfNeeded(), ascendc::aclrtc::ACLRTC_SUCCESS);
+    EXPECT_EQ(emptyWorkspace.CleanupWorktreeBeforeElfPublication(), ascendc::aclrtc::ACLRTC_SUCCESS);
 
     const fs::path retainedWorktreePath = CreateWorkspacePath("aclrtc_workspace_retained_prepublish");
     KernelCompilationWorkspace retainedWorkspace(retainedWorktreePath, WorktreeRetentionPolicy::RetainAfterCompilation);
-    EXPECT_EQ(retainedWorkspace.RemoveWorktreeBeforePublishingElfIfNeeded(), ascendc::aclrtc::ACLRTC_SUCCESS);
+    EXPECT_EQ(retainedWorkspace.CleanupWorktreeBeforeElfPublication(), ascendc::aclrtc::ACLRTC_SUCCESS);
     EXPECT_TRUE(fs::is_directory(retainedWorktreePath));
 
     boost::system::error_code ignoredError;
@@ -280,7 +280,7 @@ TEST(KernelCompilationWorkspaceTest, PrepublicationCleanupNoOpsForEmptyAndRetain
 TEST(KernelCompilationWorkspaceTest, ReportsWorktreeRemovalFailure)
 {
     KernelCompilationWorkspace workspace("/proc/self/status", WorktreeRetentionPolicy::RemoveAfterCompilation);
-    EXPECT_EQ(workspace.RemoveWorktreeBeforePublishingElfIfNeeded(), ascendc::aclrtc::ACLRTC_ERROR_FAILURE);
+    EXPECT_EQ(workspace.CleanupWorktreeBeforeElfPublication(), ascendc::aclrtc::ACLRTC_ERROR_FAILURE);
     EXPECT_EQ(workspace.GetWorktreePath(), "/proc/self/status");
 }
 } // namespace

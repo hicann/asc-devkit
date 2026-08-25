@@ -70,7 +70,7 @@ TEST(KernelSpecializationRequestTest, NormalizesBasicRequestAndCopiesOptions)
     EXPECT_EQ(normalizedRequest.resourceId, RESOURCE_ID);
     EXPECT_EQ(normalizedRequest.kernelName, "add_custom_100000");
     EXPECT_EQ(normalizedRequest.outputElfPath, "/tmp/kernel.elf");
-    EXPECT_EQ(normalizedRequest.compilationVariant, ascendc::aclrtc::CompilationVariant::Basic);
+    EXPECT_EQ(normalizedRequest.compilationVariant, ascendc::aclrtc::KernelCompilationVariant::Basic);
     EXPECT_EQ(normalizedRequest.compilerOptions.basicOptions, (std::vector<std::string>{"-g", "-DVALUE=1"}));
     EXPECT_TRUE(normalizedRequest.compilerOptions.superKernelOptions.empty());
 }
@@ -96,7 +96,7 @@ TEST(KernelSpecializationRequestTest, EnablesSuperKernelAndRemovesControlOption)
 
     ascendc::aclrtc::NormalizedKernelSpecializationRequest normalizedRequest;
     EXPECT_EQ(ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "/tmp/kernel.elf", normalizedRequest), 0);
-    EXPECT_EQ(normalizedRequest.compilationVariant, ascendc::aclrtc::CompilationVariant::BasicWithSuperKernel);
+    EXPECT_EQ(normalizedRequest.compilationVariant, ascendc::aclrtc::KernelCompilationVariant::BasicWithSuperKernel);
     EXPECT_EQ(normalizedRequest.compilerOptions.superKernelOptions, (std::vector<std::string>{"-g", "-DDCCI_OFF"}));
 }
 
@@ -109,7 +109,7 @@ TEST(KernelSpecializationRequestTest, IgnoresSuperKernelOptionsWithoutEnable)
 
     ascendc::aclrtc::NormalizedKernelSpecializationRequest normalizedRequest;
     EXPECT_EQ(ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "/tmp/kernel.elf", normalizedRequest), 0);
-    EXPECT_EQ(normalizedRequest.compilationVariant, ascendc::aclrtc::CompilationVariant::Basic);
+    EXPECT_EQ(normalizedRequest.compilationVariant, ascendc::aclrtc::KernelCompilationVariant::Basic);
     EXPECT_TRUE(normalizedRequest.compilerOptions.superKernelOptions.empty());
 }
 

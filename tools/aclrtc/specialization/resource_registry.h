@@ -21,6 +21,7 @@
 
 #include "ascendc_manifest_abi.h"
 #include "nlohmann/json.hpp"
+#include "directory_cleanup_guard.h"
 
 namespace boost {
 namespace filesystem {
@@ -175,14 +176,14 @@ private:
     ResourceStatus Commit(StageState& stage);
     bool HasCommitConflict(const ResourceStore& incoming, const ResourceStore& committed) const;
 
-    std::string temporaryRoot_;
+    DirectoryCleanupGuard ownedMaterializationRoot_;
     ResourceStore externalResources_;
     ResourceStore customResources_;
     ResourceStore builtInResources_;
     uint64_t resourceBytes_ = 0U;
     uint64_t resourceFileCount_ = 0U;
     bool automaticLoadAttempted_ = false;
-    bool keepTemporaryRoot_ = false;
+    bool retainMaterializedDirectories_ = false;
     ResourceStatus automaticLoadStatus_ = ResourceStatus::Success;
     std::mutex loadMutex_;
     std::mutex registryMutex_;

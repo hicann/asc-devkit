@@ -12,6 +12,7 @@
 #define ASCENDC_ACLRTC_KERNEL_COMPILATION_WORKSPACE_H
 
 #include "kernel_specialization_types.h"
+#include "directory_cleanup_guard.h"
 
 #include <boost/filesystem/path.hpp>
 #include <cstdint>
@@ -27,17 +28,17 @@ enum class WorktreeRetentionPolicy : uint32_t {
 class KernelCompilationWorkspace final {
 public:
     KernelCompilationWorkspace(boost::filesystem::path worktreePath, WorktreeRetentionPolicy retentionPolicy);
-    ~KernelCompilationWorkspace();
+    ~KernelCompilationWorkspace() = default;
 
     KernelCompilationWorkspace(const KernelCompilationWorkspace&) = delete;
     KernelCompilationWorkspace& operator=(const KernelCompilationWorkspace&) = delete;
 
-    const boost::filesystem::path& GetWorktreePath() const noexcept;
+    boost::filesystem::path GetWorktreePath() const;
     aclError CreateOutputDirectoriesAndApplySourcePatches(const KernelCompilationPlan& compilationPlan);
-    aclError RemoveWorktreeBeforePublishingElfIfNeeded();
+    aclError CleanupWorktreeBeforeElfPublication();
 
 private:
-    boost::filesystem::path worktreePath_;
+    DirectoryCleanupGuard worktreeCleanupGuard_;
     WorktreeRetentionPolicy retentionPolicy_{WorktreeRetentionPolicy::RemoveAfterCompilation};
 };
 

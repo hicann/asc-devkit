@@ -198,7 +198,7 @@ aclError NormalizeSuperKernelCompilerOptions(
         return ACLRTC_SUCCESS;
     }
 
-    normalizedRequest.compilationVariant = CompilationVariant::BasicWithSuperKernel;
+    normalizedRequest.compilationVariant = KernelCompilationVariant::BasicWithSuperKernel;
     for (size_t optionIndex = 0U; optionIndex < copiedSuperKernelOptions.size(); ++optionIndex) {
         std::string& superKernelOption = copiedSuperKernelOptions[optionIndex];
         if (superKernelOption == SUPER_KERNEL_ENABLE_OPTION) {

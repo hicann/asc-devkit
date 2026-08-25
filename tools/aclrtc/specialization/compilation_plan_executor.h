@@ -15,8 +15,12 @@
 
 #include <chrono>
 #include <cstddef>
+#include <cstdint>
 
 namespace ascendc {
+
+struct ProcessExecutorResult;
+
 namespace aclrtc {
 
 class KernelSpecializationDiagnostics;
@@ -25,7 +29,6 @@ struct CompilationCommandExecutionLimits {
     std::chrono::milliseconds compileCommandTimeout;
     std::chrono::milliseconds objectCopyAndLinkCommandTimeout;
     std::chrono::milliseconds terminationGracePeriod;
-    uint64_t capturedOutputByteLimit;
 
     static CompilationCommandExecutionLimits ProductionDefaults() noexcept;
 };
@@ -39,11 +42,10 @@ public:
 
 private:
     aclError ExecuteCompilationCommand(
-        const CompilationCommand& compilationCommand, CompilationProcessResult& processResult) const;
-    std::chrono::milliseconds GetCommandExecutionTimeout(CompilationCommandKind commandKind) const noexcept;
+        const CompilationCommand& compilationCommand, ProcessExecutorResult& executorResult) const;
 
     KernelSpecializationDiagnostics& specializationDiagnostics_;
-    CompilationCommandExecutionLimits executionLimits_;
+    CompilationCommandExecutionLimits commandExecutionLimits_;
 };
 
 } // namespace aclrtc

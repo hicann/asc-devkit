@@ -113,60 +113,16 @@ const char* ResourceStatusName(ResourceStatus status) noexcept
     return "unknown";
 }
 
-void CleanupPath(const std::string& path) noexcept
-{
-    if (path.empty()) {
-        return;
-    }
-    if (!FileUtils::RemoveAll(path)) {
-        ASCENDLOGW("Failed to remove compile resource path: path=%s reason=recursive removal failed", path.c_str());
-    }
-}
-
-ResourceStatus CreateTemporaryRoot(std::string& temporaryRoot)
+ResourceStatus CreateCompileResourceMaterializationRoot(DirectoryCleanupGuard& materializationRootDirectory)
 {
     const char* environment = std::getenv("TMPDIR");
-    const fs::path configured = environment == nullptr || *environment == '\0' ? "/tmp" : environment;
-    boost::system::error_code error;
-    const fs::path parent = fs::canonical(configured, error);
-    if (error) {
-        ASCENDLOGE(
-            "Failed to resolve compile resource temporary parent: configured=%s error=%s", configured.c_str(),
-            error.message().c_str());
+    const std::string parentDirectoryPath = environment == nullptr || *environment == '\0' ? "/tmp" : environment;
+    if (!materializationRootDirectory.CreateUniqueSubdirectory(parentDirectoryPath, "aclrtc-resource")) {
+        ASCENDLOGE("Failed to create compile resource temporary root: parent=%s", parentDirectoryPath.c_str());
         return ResourceStatus::IoError;
     }
-    if (!fs::is_directory(parent, error)) {
-        ASCENDLOGE(
-            "Compile resource temporary parent is not a directory: configured=%s resolved=%s error=%s",
-            configured.c_str(), parent.c_str(), error ? error.message().c_str() : "none");
-        return ResourceStatus::IoError;
-    }
-    const std::string pattern = (parent / "aclrtc-resource-XXXXXX").string();
-    std::vector<char> writable(pattern.begin(), pattern.end());
-    writable.push_back('\0');
-    char* created = mkdtemp(writable.data());
-    if (created == nullptr) {
-        ASCENDLOGE(
-            "Failed to create compile resource temporary root: parent=%s error=%s", parent.c_str(),
-            std::strerror(errno));
-        return ResourceStatus::IoError;
-    }
-    const fs::path canonical = fs::canonical(created, error);
-    if (error) {
-        ASCENDLOGE(
-            "Failed to resolve created compile resource temporary root: path=%s error=%s", created,
-            error.message().c_str());
-        CleanupPath(created);
-        return ResourceStatus::IoError;
-    }
-    if (canonical != fs::path(created).lexically_normal()) {
-        ASCENDLOGE(
-            "Compile resource temporary root identity mismatch: expected=%s actual=%s", created, canonical.c_str());
-        CleanupPath(created);
-        return ResourceStatus::IoError;
-    }
-    temporaryRoot = canonical.string();
-    ASCENDLOGI("Created compile resource temporary root: path=%s", temporaryRoot.c_str());
+    ASCENDLOGI(
+        "Created compile resource temporary root: path=%s", materializationRootDirectory.GetDirectoryPath().c_str());
     return ResourceStatus::Success;
 }
 
@@ -428,42 +384,18 @@ ResourceStatus ParseManifestOwnership(
     return ParseSourceFile(ownership.document, spec, manifestIndex, ownership);
 }
 
-ResourceStatus PrepareMaterializationRoot(
-    const std::string& temporaryRoot, const std::string& resourceId, ResourceSourceType sourceType,
-    std::string& categoryRoot, std::string& canonicalRoot)
+ResourceStatus CreateUniqueResourceMaterializationDirectory(
+    const std::string& materializationRootPath, const std::string& resourceId, ResourceSourceType sourceType,
+    DirectoryCleanupGuard& materializedResourceDirectory)
 {
-    boost::system::error_code error;
-    const fs::path randomComponent = fs::unique_path("materialize-%%%%%%%%%%%%%%%%", error);
-    if (error || randomComponent.empty() || randomComponent.has_parent_path()) {
+    const std::string categoryParent = FileUtils::JoinPath(materializationRootPath, SourceTypeName(sourceType));
+    if (!FileUtils::CreateDirectories(categoryParent) ||
+        !materializedResourceDirectory.CreateUniqueSubdirectory(categoryParent, "materialize")) {
         ASCENDLOGE(
-            "Failed to generate compile resource materialization path: resource_id=%s source_type=%s error=%s",
-            resourceId.c_str(), SourceTypeName(sourceType), error ? error.message().c_str() : "invalid random path");
+            "Failed to create compile resource materialization directory: resource_id=%s source_type=%s parent=%s",
+            resourceId.c_str(), SourceTypeName(sourceType), categoryParent.c_str());
         return ResourceStatus::IoError;
     }
-    const std::string categoryParent = FileUtils::JoinPath(temporaryRoot, SourceTypeName(sourceType));
-    categoryRoot = FileUtils::JoinPath(categoryParent, randomComponent.string());
-    if (!FileUtils::CreateDirectories(categoryRoot)) {
-        ASCENDLOGE(
-            "Failed to create compile resource materialization directory: resource_id=%s source_type=%s path=%s",
-            resourceId.c_str(), SourceTypeName(sourceType), categoryRoot.c_str());
-        return ResourceStatus::IoError;
-    }
-    const fs::path canonical = fs::canonical(categoryRoot, error);
-    if (error) {
-        ASCENDLOGE(
-            "Failed to resolve compile resource materialization directory: resource_id=%s source_type=%s path=%s "
-            "error=%s",
-            resourceId.c_str(), SourceTypeName(sourceType), categoryRoot.c_str(), error.message().c_str());
-        return ResourceStatus::IoError;
-    }
-    if (canonical != fs::path(categoryRoot).lexically_normal()) {
-        ASCENDLOGE(
-            "Compile resource materialization directory identity mismatch: resource_id=%s source_type=%s expected=%s "
-            "actual=%s",
-            resourceId.c_str(), SourceTypeName(sourceType), categoryRoot.c_str(), canonical.c_str());
-        return ResourceStatus::IoError;
-    }
-    canonicalRoot = canonical.string();
     return ResourceStatus::Success;
 }
 
@@ -1267,12 +1199,7 @@ ResourceRegistry& ResourceRegistry::Instance()
 
 ResourceRegistry::ResourceRegistry() = default;
 
-ResourceRegistry::~ResourceRegistry()
-{
-    if (!keepTemporaryRoot_) {
-        CleanupPath(temporaryRoot_);
-    }
-}
+ResourceRegistry::~ResourceRegistry() = default;
 
 ResourceEntry* ResourceRegistry::FindResource(const std::string& resourceId) noexcept
 {
@@ -1408,38 +1335,42 @@ ResourceStatus ResourceRegistry::Materialize(
     ASCENDLOGI(
         "Materializing compile resource: resource_id=%s source_type=%s so=%s files=%zu", resourceId.c_str(),
         SourceTypeName(entry.sourceType), entry.sourceSoPath.c_str(), entry.files.size());
-    std::string temporaryRoot;
+    std::string materializationRootPath;
     {
         std::lock_guard<std::mutex> lock(registryMutex_);
-        if (temporaryRoot_.empty()) {
-            keepTemporaryRoot_ = IsKernelMetaSavingEnabled();
-            const ResourceStatus status = CreateTemporaryRoot(temporaryRoot_);
+        if (ownedMaterializationRoot_.GetDirectoryPath().empty()) {
+            retainMaterializedDirectories_ = IsKernelMetaSavingEnabled();
+            const ResourceStatus status = CreateCompileResourceMaterializationRoot(ownedMaterializationRoot_);
             if (status != ResourceStatus::Success) {
                 return status;
             }
+            if (retainMaterializedDirectories_) {
+                ownedMaterializationRoot_.PreserveDirectory();
+            }
         }
-        temporaryRoot = temporaryRoot_;
+        materializationRootPath = ownedMaterializationRoot_.GetDirectoryPath();
     }
     ASCENDLOGD(
-        "Compile resource temporary root is ready: resource_id=%s path=%s", resourceId.c_str(), temporaryRoot.c_str());
-    std::string categoryRoot;
-    std::string canonicalRoot;
-    ResourceStatus status =
-        PrepareMaterializationRoot(temporaryRoot, resourceId, entry.sourceType, categoryRoot, canonicalRoot);
+        "Compile resource temporary root is ready: resource_id=%s path=%s", resourceId.c_str(),
+        materializationRootPath.c_str());
+    DirectoryCleanupGuard materializedResourceDirectory;
+    ResourceStatus status = CreateUniqueResourceMaterializationDirectory(
+        materializationRootPath, resourceId, entry.sourceType, materializedResourceDirectory);
     if (status == ResourceStatus::Success) {
         ASCENDLOGD(
             "Compile resource materialization directory is ready: resource_id=%s path=%s", resourceId.c_str(),
-            canonicalRoot.c_str());
-        status = WriteMaterializedFiles(entry.files, canonicalRoot);
+            materializedResourceDirectory.GetDirectoryPath().c_str());
+        status = WriteMaterializedFiles(entry.files, materializedResourceDirectory.GetDirectoryPath());
     }
     if (status != ResourceStatus::Success) {
-        if (!keepTemporaryRoot_) {
-            CleanupPath(categoryRoot);
+        if (retainMaterializedDirectories_) {
+            materializedResourceDirectory.PreserveDirectory();
         }
         resource.resourceDir.clear();
         return status;
     }
-    resource.resourceDir = canonicalRoot;
+    resource.resourceDir = materializedResourceDirectory.GetDirectoryPath();
+    materializedResourceDirectory.PreserveDirectory();
     ASCENDLOGI(
         "Compile resource materialized: resource_id=%s source_type=%s so=%s files=%zu directory=%s", resourceId.c_str(),
         SourceTypeName(entry.sourceType), entry.sourceSoPath.c_str(), entry.files.size(), resource.resourceDir.c_str());

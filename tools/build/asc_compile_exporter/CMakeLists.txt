@@ -34,13 +34,13 @@ configure_file(
 
 add_executable(asc_compile_exporter
   asc_compile_exporter.cpp
-  build_workspace.cpp
   bundle_source_generator.cpp
   collected_manifest_repository.cpp
   manifest_bundle_compiler.cpp
   resource_manifest_validator.cpp
   ../common/file_utils.cpp
-  ../common/process_runner.cpp
+  ../common/process_executor.cpp
+  ../common/directory_cleanup_guard.cpp
 )
 
 set_target_properties(asc_compile_exporter PROPERTIES

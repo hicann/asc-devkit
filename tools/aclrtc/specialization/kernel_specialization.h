@@ -32,16 +32,16 @@ public:
     aclError RunKernelSpecialization(const aclrtcKernelSpecRequest* apiRequest, const char* outputElfPath);
 
 private:
-    static aclError PrepareCompilationResource(
+    static aclError LoadAndMaterializeCompilationResource(
         const std::string& resourceId, MaterializedKernelCompilationResource& compilationResource);
 
     aclError RunSpecializationWithMaterializedResource(
         const NormalizedKernelSpecializationRequest& specializationRequest,
         MaterializedKernelCompilationResource compilationResource);
 
-    static aclError FinalizeSpecializationResult(
+    static aclError ReportSpecializationStatus(
         const NormalizedKernelSpecializationRequest& specializationRequest,
-        KernelSpecializationDiagnostics& diagnostics, aclError specializationResult) noexcept;
+        KernelSpecializationDiagnostics& diagnostics, aclError specializationStatus) noexcept;
 
     aclError PublishKernelElf(
         const boost::filesystem::path& linkedKernelElfPath, const boost::filesystem::path& outputElfPath,

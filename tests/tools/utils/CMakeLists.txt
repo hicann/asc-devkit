@@ -202,21 +202,21 @@ add_executable(ascendc_ut_asc_compile_exporter
     ${ASCENDC_DIR}/tests/main.cpp
     asc_compile_exporter/test_asc_compile_exporter_unit.cpp
     asc_compile_exporter/test_asc_compile_exporter.cpp
-    asc_compile_exporter/test_build_workspace.cpp
     asc_compile_exporter/test_bundle_source_generator.cpp
     asc_compile_exporter/test_collected_manifest_repository.cpp
     asc_compile_exporter/test_file_utils.cpp
     asc_compile_exporter/test_manifest_bundle_types.cpp
-    asc_compile_exporter/test_process_runner.cpp
+    common/test_process_executor.cpp
     asc_compile_exporter/test_resource_manifest_validator.cpp
+    common/test_directory_cleanup_guard.cpp
     asc_compile_exporter/test_ascendc_tool_log.cpp
-    ${ASCENDC_DIR}/tools/build/asc_compile_exporter/build_workspace.cpp
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/bundle_source_generator.cpp
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/collected_manifest_repository.cpp
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/manifest_bundle_compiler.cpp
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/resource_manifest_validator.cpp
     ${ASCENDC_DIR}/tools/build/common/file_utils.cpp
-    ${ASCENDC_DIR}/tools/build/common/process_runner.cpp
+    ${ASCENDC_DIR}/tools/build/common/process_executor.cpp
+    ${ASCENDC_DIR}/tools/build/common/directory_cleanup_guard.cpp
 )
 
 function(configure_asc_compile_exporter_test target_name)
@@ -235,9 +235,7 @@ function(configure_asc_compile_exporter_test target_name)
     )
 
     target_link_options(${target_name} PRIVATE
-        -Wl,--wrap=fork
         -Wl,--wrap=rename
-        -Wl,--wrap=waitpid
     )
 
     target_link_libraries(${target_name} PRIVATE

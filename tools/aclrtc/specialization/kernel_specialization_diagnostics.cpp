@@ -11,6 +11,7 @@
 #include "kernel_specialization_diagnostics.h"
 
 #include "ascendc_tool_log.h"
+#include "process_executor.h"
 
 #include <boost/filesystem.hpp>
 #include <cerrno>
@@ -41,22 +42,6 @@ std::string QuoteArgumentForReplayScript(const std::string& argument)
     }
     quotedArgument += '\'';
     return quotedArgument;
-}
-
-const char* GetProcessTerminationName(CompilationProcessTermination termination)
-{
-    switch (termination) {
-        case CompilationProcessTermination::InfrastructureFailure:
-            return "infrastructure_failure";
-        case CompilationProcessTermination::Exited:
-            return "exited";
-        case CompilationProcessTermination::Signaled:
-            return "signaled";
-        case CompilationProcessTermination::TimedOut:
-            return "timed_out";
-        default:
-            return "unknown";
-    }
 }
 
 bool WriteDiagnosticTextFile(const fs::path& filePath, const std::string& text, std::ios::openmode writeMode)
@@ -175,22 +160,40 @@ void KernelSpecializationDiagnostics::AppendCommandToReplayScript(const Compilat
     }
 }
 
-void KernelSpecializationDiagnostics::AppendCommandResultToCompilationLog(
-    const CompilationCommand& compilationCommand, const CompilationProcessResult& processResult) noexcept
+std::string KernelSpecializationDiagnostics::GetCompilationLogFilePath() const
+{
+    return diagnosticsEnabled_ ? (resourceWorktreePath_ / DIAGNOSTIC_COMPILE_LOG_FILE_NAME).string() : std::string();
+}
+
+void KernelSpecializationDiagnostics::AppendCommandExecutionHeaderToLog(
+    const CompilationCommand& compilationCommand) noexcept
+{
+    if (!diagnosticsEnabled_) {
+        return;
+    }
+    try {
+        AppendTextToDiagnosticFile(
+            resourceWorktreePath_ / DIAGNOSTIC_COMPILE_LOG_FILE_NAME,
+            "[" + compilationCommand.diagnosticLabel + "] output:\n");
+    } catch (...) {
+        ASCENDLOGW(
+            "Failed to record command output header: command=%s resource_worktree=%s",
+            compilationCommand.diagnosticLabel.c_str(), resourceWorktreePath_.c_str());
+    }
+}
+
+void KernelSpecializationDiagnostics::AppendCommandExecutionResultToLog(
+    const CompilationCommand& compilationCommand, const ProcessExecutorResult& executorResult) noexcept
 {
     if (!diagnosticsEnabled_) {
         return;
     }
     try {
         std::ostringstream resultText;
-        resultText << '[' << compilationCommand.diagnosticLabel
-                   << "] termination=" << GetProcessTerminationName(processResult.termination)
-                   << " code=" << processResult.terminationCode << " elapsed_ms=" << processResult.elapsedTime.count()
-                   << " output_truncated=" << (processResult.capturedOutputTruncated ? "true" : "false") << '\n'
-                   << processResult.capturedOutput;
-        if (!processResult.capturedOutput.empty() && processResult.capturedOutput.back() != '\n') {
-            resultText << '\n';
-        }
+        resultText << '\n'
+                   << '[' << compilationCommand.diagnosticLabel << "] outcome=" << executorResult.GetOutcomeName()
+                   << " code=" << executorResult.terminationCode << " elapsed_ms=" << executorResult.elapsedTime.count()
+                   << '\n';
         AppendTextToDiagnosticFile(resourceWorktreePath_ / DIAGNOSTIC_COMPILE_LOG_FILE_NAME, resultText.str());
     } catch (...) {
         ASCENDLOGW(
@@ -220,7 +223,7 @@ void KernelSpecializationDiagnostics::LogCommandFailureRecoveryHint() const noex
 }
 
 void KernelSpecializationDiagnostics::WriteSpecializationResult(
-    const fs::path& outputElfPath, OutputPublicationStatus publicationStatus) noexcept
+    const fs::path& outputElfPath, KernelElfPublicationStatus publicationStatus) noexcept
 {
     if (!diagnosticsEnabled_) {
         return;
@@ -230,7 +233,7 @@ void KernelSpecializationDiagnostics::WriteSpecializationResult(
         nlohmann::json resultJson{
             {"specialization_session_id", specializationSessionId_},
             {"output_path", outputElfPath.string()},
-            {"output_published", publicationStatus == OutputPublicationStatus::Published},
+            {"output_published", publicationStatus == KernelElfPublicationStatus::Published},
         };
         const fs::path resultPath = resourceWorktreePath_ / DIAGNOSTIC_RESULT_FILE_NAME;
         WriteDiagnosticTextFile(resultPath, resultJson.dump(diagnosticJsonIndentationWidth) + '\n', std::ios::trunc);
