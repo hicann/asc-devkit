@@ -11,7 +11,7 @@ Ascend C提供一组类库API，开发者使用标准C++语法和类库API进行
 -   **高阶API**：实现一些常用的计算算法，用于提高编程开发效率，通常会调用多种基础API实现。高阶API包括数学库、Matmul、Softmax等API。高阶API可以保证兼容性。
 -   **Utils API（公共辅助函数）**：丰富的通用工具类，涵盖标准库、平台信息获取、运行时编译及日志输出等功能，支持开发者高效实现算子开发与性能优化。
 
-<img src="../../figures/architecture_ascendc.png" alt="架构图"  width="1000px">
+<img src="../../figures/architecture_ascendc.png" alt="架构图" width="1000px">
 
 >[!NOTE]说明 
 >Ascend C API所在头文件目录为：
