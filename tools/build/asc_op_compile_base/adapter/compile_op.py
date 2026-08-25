@@ -652,7 +652,11 @@ def _gen_set_workspace_codes(
         source += "    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n"
     else:
         source += (
+            "#if ENABLE_CV_COMM_VIA_SSBUF != 0 && __MIX_CORE_AIC_RATION__ != 1\n"
+            "    GM_ADDR usrWorkspace = workspace;\n"
+            "#else\n"
             "    GM_ADDR usrWorkspace = workspace + AscendC::RESERVED_WORKSPACE;\n"
+            "#endif\n"
         )
     if "oom" in get_current_build_config("tir.op_debug_config"):
         source = add_op_param_to_workspace(
