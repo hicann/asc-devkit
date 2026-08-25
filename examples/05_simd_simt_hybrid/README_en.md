@@ -6,11 +6,11 @@ SIMD and SIMT hybrid programming applies to scenarios where the same kernel need
 
 SIMD and SIMT hybrid programming is an advanced programming mode based on SIMD programming and SIMT programming. Related samples are mainly distributed in the following paths:
 
-- The `examples/05_simd_simt_hybrid` path provides introductory hybrid programming samples and samples that use SIMD and SIMT together for performance optimization.
+- The `examples/05_simd_simt_hybrid` path provides introductory hybrid programming samples, troubleshooting samples, and samples that use SIMD and SIMT together for performance optimization.
 - Because the kernel entry of hybrid programming is consistent with the SIMD programming mode, end-to-end profiling and debugging samples can refer to the samples under `examples/01_simd_cpp_api`.
 - Hybrid programming starts SIMT VF functions to implement SIMT thread-level operations. Key features, profiling/debugging, and performance optimization samples related to SIMT VF can refer to samples under `examples/03_simt_api`.
 
-The following sections introduce the introduction, utilities, features, and best_practices samples involved in hybrid programming scenarios.
+The following sections introduce the introduction, utilities, features, trouble_shooting, and best_practices samples involved in hybrid programming scenarios.
 
 ## introduction
 
@@ -46,6 +46,14 @@ When developing custom operators based on SIMD and SIMT hybrid programming, refe
 | sync_instruction | SIMT reference sample. Demonstrates the usage of synchronization and memory fence APIs. It is applicable to SIMT thread collaboration and cross-stage data visibility control in hybrid programming. Sample link: [sync_instruction](../03_simt_api/02_features/01_api_features/01_sync_instruction). | This sample is implemented in SIMT programming mode as a reference sample. It can be converted into the corresponding hybrid programming sample implementation. For details, see [SIMT Reference Sample Conversion Guide](#simt-reference-sample-conversion-guide). |
 | atomic_operation | SIMT reference sample. Demonstrates the usage of atomic operation APIs. It is applicable to multi-thread accumulation, counting, or conflict write handling in hybrid programming. Sample link: [atomic_operation](../03_simt_api/02_features/01_api_features/02_atomic_operation). | This sample is implemented in SIMT programming mode as a reference sample. It can be converted into the corresponding hybrid programming sample implementation. For details, see [SIMT Reference Sample Conversion Guide](#simt-reference-sample-conversion-guide). |
 | warp_instruction | SIMT reference sample. Demonstrates Warp-level data exchange capability, which can be used to understand thread collaboration and data transfer within a Warp. Sample link: [warp_instruction](../03_simt_api/02_features/01_api_features/03_warp_instruction). | This sample is implemented in SIMT programming mode as a reference sample. It can be converted into the corresponding hybrid programming sample implementation. For details, see [SIMT Reference Sample Conversion Guide](#simt-reference-sample-conversion-guide). |
+
+## trouble_shooting
+
+[01_trouble_shooting](./01_trouble_shooting) is the troubleshooting reference directory for SIMD and SIMT hybrid programming. It contains the following samples.
+
+| Sample Name | Sample Description |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| simd_simt_ub_usage_limit | Uses a UB out-of-bounds access that causes an output accuracy error as an example to demonstrate UB static memory, dynamic memory, reserved space, Data Cache layout, and out-of-bounds troubleshooting in hybrid programming. Sample link: [simd_simt_ub_usage_limit](./01_trouble_shooting/simd_simt_ub_usage_limit). |
 
 ## best_practices
 

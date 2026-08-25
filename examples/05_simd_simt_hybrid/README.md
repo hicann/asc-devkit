@@ -7,11 +7,11 @@ SIMD与SIMT混合编程适用于同一个Kernel中同时需要向量化计算能
 
 SIMD与SIMT混合编程是基于SIMD编程和SIMT编程的高阶编程方式，相关样例主要分布在以下路径：
 
-- `examples/05_simd_simt_hybrid`路径下提供混合编程入门样例，以及使用SIMD和SIMT协同进行性能优化的样例。
+- `examples/05_simd_simt_hybrid`路径下提供混合编程入门样例、问题定位样例，以及使用SIMD和SIMT协同进行性能优化的样例。
 - 由于混合编程的Kernel入口与SIMD编程方式一致，端到端维测相关样例可参考`examples/01_simd_cpp_api`路径下的样例。
 - 混合编程通过启动SIMT VF实现SIMT线程级操作，SIMT VF相关的重点特性、维测和性能优化样例可参考`examples/03_simt_api`路径下的样例。
 
-后文将分别介绍混合编程场景下涉及到introduction、utilities、features和best_practices样例。
+后文将分别介绍混合编程场景下涉及到introduction、utilities、features、trouble_shooting和best_practices样例。
 
 ## introduction
 
@@ -48,6 +48,13 @@ SIMD与SIMT混合编程是基于SIMD编程和SIMT编程的高阶编程方式，�
 | atomic_operation | 展示原子操作接口的使用方法，适用于混合编程中多线程累加、计数或冲突写入处理。样例链接：[atomic_operation](../03_simt_api/02_features/01_api_features/02_atomic_operation)。 | 该样例为SIMT编程方式实现的参考样例，可转换为混合编程对应的样例实现，方法详见[SIMT参考样例转换说明](#simt参考样例转换说明)。 |
 | warp_instruction | 展示Warp级数据交换能力，可用于了解Warp内线程协作和数据传递方式。样例链接：[warp_instruction](../03_simt_api/02_features/01_api_features/03_warp_instruction)。 | 该样例为SIMT编程方式实现的参考样例，可转换为混合编程对应的样例实现，方法详见[SIMT参考样例转换说明](#simt参考样例转换说明)。 |
 
+## trouble_shooting
+
+[01_trouble_shooting](./01_trouble_shooting)是SIMD与SIMT混合编程场景的问题定位参考目录，该目录下包含以下样例。
+
+| 样例名 | 样例描述 |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| simd_simt_ub_usage_limit | 以UB访问越界导致输出精度异常为例，展示混合编程场景下UB静态内存、动态内存、预留空间、Data Cache布局，以及UB越界问题定位方法。样例链接：[simd_simt_ub_usage_limit](./01_trouble_shooting/simd_simt_ub_usage_limit)。 |
 
 ## best_practices
 
