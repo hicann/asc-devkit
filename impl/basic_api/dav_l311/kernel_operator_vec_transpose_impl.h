@@ -219,6 +219,13 @@ __aicore__ inline void TransposeImpl(__ubuf__ T* dst, __ubuf__ T* src)
 }
 
 template <typename T>
+__aicore__ inline void TransposeUB2UBImpl(__ubuf__ T* dst, __ubuf__ T* src, const DataCopyParams& intriParams)
+{
+    static_assert((SupportBytes<T, 1, 2, 4>()), "Transpose only supports type fp4/b8/b16/b32 on current device");
+    DataCopyUB2UBImpl(dst, src, intriParams);
+}
+
+template <typename T>
 typename std::enable_if<(sizeof(T) == 1)>::type __aicore__ inline Transpose4DImpl(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint8_t>& sharedTmpBuffer,
     const TransposeParamsExt& transposeParams)

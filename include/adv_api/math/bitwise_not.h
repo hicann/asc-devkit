@@ -28,7 +28,8 @@
 #include "kernel_tensor.h"
 #include "include/adv_api/math/bitwise_not_utils.h"
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/bitwise_not/bitwise_not_3510_impl.h"
 #endif
 
@@ -43,7 +44,8 @@ namespace AscendC {
 template <const BitwiseNotConfig& config = DEFAULT_BITWISE_NOT_CONFIG, typename T>
 __aicore__ inline void BitwiseNot(const LocalTensor<T>& dst, const LocalTensor<T>& src, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     BitwiseNotImpl<config, T>(dst, src, count);
 #endif
 }

@@ -28,7 +28,8 @@
 #include "kernel_tensor.h"
 #include "include/adv_api/math/logical_xor_utils.h"
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/logical_xor/logical_xor_3510_impl.h"
 #endif
 
@@ -45,7 +46,8 @@ template <const LogicalXorConfig& config = DEFAULT_LOGICAL_XOR_CONFIG, typename 
 __aicore__ inline void LogicalXor(
     const LocalTensor<T>& dst, const LocalTensor<U>& src0, const LocalTensor<U>& src1, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     LogicalXorImpl<config, T, U>(dst, src0, src1, count);
 #endif
 }

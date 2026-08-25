@@ -520,6 +520,25 @@ UNARY_VEC_COUNTER_IMPL(NotImpl, Not, float);
 UNARY_VEC_COUNTER_IMPL(NotImpl, Not, uint32_t);
 UNARY_VEC_COUNTER_IMPL(NotImpl, Not, int32_t);
 
+/* **************************************************************************************************
+ * Neg                                            *
+ * ************************************************************************************************* */
+// Neg::Level 2
+template <typename T>
+__aicore__ inline void NegImpl(__ubuf__ T* dst, __ubuf__ T* src, const uint32_t count)
+{
+    static_assert(
+        (SupportType<T, int8_t, int16_t, int32_t, half, float>()),
+        "current data type is not supported on current device!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = Reg::Neg<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+    } else {
+        constexpr auto func = Reg::Neg<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+        Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+    }
+}
+
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_UNARY_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_UNARY_IMPL_H__)

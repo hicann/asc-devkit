@@ -30,9 +30,9 @@ template <typename T>
 constexpr __aicore__ inline void CheckDuplicateSupportedType()
 {
     static_assert(
-        std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value || std::is_same<T, half>::value ||
-            std::is_same<T, int16_t>::value || std::is_same<T, uint16_t>::value || std::is_same<T, int32_t>::value ||
-            std::is_same<T, uint32_t>::value || std::is_same<T, float>::value,
+        std::is_same<T, bool>::value || std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value ||
+            std::is_same<T, half>::value || std::is_same<T, int16_t>::value || std::is_same<T, uint16_t>::value ||
+            std::is_same<T, int32_t>::value || std::is_same<T, uint32_t>::value || std::is_same<T, float>::value,
         "Duplicate instr only support uint8_t/int8_t/half/int16_t/uint16_t/int32_t/uint32_t/float type");
 }
 

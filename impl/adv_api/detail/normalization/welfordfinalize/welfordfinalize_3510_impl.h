@@ -296,12 +296,12 @@ __aicore__ inline void WelfordFinalizeWithCounts(
         uint32_t k = CalculateMainBlock(K);
         uint32_t kOverflow = k < K ? (k << 1) : k;
         BinaryReduceSum(
-            outMean + m, tmpbuffer, sumTmpbuffer, K, k, 1 / (float)kOverflow, para.rRec * kOverflow,
+            outMean + m, tmpbuffer, sumTmpbuffer, K, k, 1.0f / kOverflow, para.rRec * kOverflow,
             para.rRecWithCorrection * kOverflow);
         WelfordFinalizeWithCountsOutVarVF<isReuseSource, config>(
             outMean, counts, inMean, inVar, tmpbuffer, K, sregLower, repeat, m);
         BinaryReduceSum<config.isCorrection>(
-            outVar + m, tmpbuffer, sumTmpbuffer, K, k, 1 / (float)kOverflow, para.rRec * kOverflow,
+            outVar + m, tmpbuffer, sumTmpbuffer, K, k, 1.0f / kOverflow, para.rRec * kOverflow,
             para.rRecWithCorrection * kOverflow);
     }
 }
@@ -322,7 +322,7 @@ __simd_vf__ inline void WelfordFinalizeForB32RnVF(
 
     Reg::LoadAlign<float, Reg::LoadDist::DIST_BRC_B32>(outmeanReg, outMean + m);
     uint32_t sreg = static_cast<uint32_t>(K);
-    float rn = para.rnLength;
+    float rn = static_cast<int32_t>(para.rnLength);
     for (uint16_t i = 0; i < repeat; ++i) {
         Reg::MaskReg preg = Reg::UpdateMask<uint32_t>(sreg);
         Reg::LoadAlign<float, Reg::LoadDist::DIST_NORM>(inMeanReg, inMean + i * sregLower + m * para.headCountLength);
@@ -344,8 +344,8 @@ __simd_vf__ inline void WelfordFinalizeForB32OutMeanVF(
     Reg::RegTensor<float> headReg;
     Reg::RegTensor<float> tailReg;
     Reg::MaskReg preg;
-    Duplicate(headReg, (float)para.headCount / (float)para.tailCount);
-    Duplicate(tailReg, para.tailCount);
+    Duplicate(headReg, static_cast<float>((int32_t)para.headCount) / static_cast<float>((int32_t)para.tailCount));
+    Duplicate(tailReg, static_cast<float>((int32_t)para.tailCount));
     uint32_t sreg = K;
     for (uint16_t i = 0; i < abRepeat; ++i) {
         preg = Reg::UpdateMask<uint32_t>(sreg);
@@ -376,8 +376,8 @@ __simd_vf__ inline void WelfordFinalizeForB32OutVarVF(
     Reg::MaskReg preg;
     Reg::RegTensor<float> headReg;
     Reg::RegTensor<float> tailReg;
-    Duplicate(headReg, (float)para.headCount / (float)para.tailCount);
-    Duplicate(tailReg, para.tailCount);
+    Duplicate(headReg, static_cast<float>((int32_t)para.headCount) / static_cast<float>((int32_t)para.tailCount));
+    Duplicate(tailReg, static_cast<float>((int32_t)para.tailCount));
 
     Reg::LoadAlign<float, Reg::LoadDist::DIST_BRC_B32>(outmeanReg, outMean + m);
     uint32_t sreg = static_cast<uint32_t>(K);
@@ -419,13 +419,13 @@ __aicore__ inline void WelfordFinalizeForB32(
         uint32_t kOverflow = k < K ? (k << 1) : k;
         for (uint16_t m = 0; m < 1; m++) {
             BinaryReduceSum(
-                outMean + m, inMean + m * para.headCountLength, sumTmpbuffer, para.headCountLength, k,
-                1 / (float)kOverflow, para.abRec * kOverflow, para.rRecWithCorrection * kOverflow);
+                outMean + m, inMean + m * para.headCountLength, sumTmpbuffer, para.headCountLength, k, 1.0f / kOverflow,
+                para.abRec * kOverflow, para.rRecWithCorrection * kOverflow);
 
             WelfordFinalizeForB32RnVF<isReuseSource, config>(outMean, inMean, inVar, tmpbuffer, para, m);
             BinaryReduceSum<config.isCorrection>(
-                outVar + m, tmpbuffer, sumTmpbuffer, para.headCountLength, k, 1 / (float)kOverflow,
-                para.rRec * kOverflow, para.rRecWithCorrection * kOverflow);
+                outVar + m, tmpbuffer, sumTmpbuffer, para.headCountLength, k, 1.0f / kOverflow, para.rRec * kOverflow,
+                para.rRecWithCorrection * kOverflow);
         }
     } else {
         uint32_t K = para.abLength;
@@ -438,12 +438,12 @@ __aicore__ inline void WelfordFinalizeForB32(
             WelfordFinalizeForB32OutMeanVF<isReuseSource, config>(
                 inMean, tmpbuffer, para, sregLower, K, m, hRepeat, abRepeat);
             BinaryReduceSum(
-                outMean + m, tmpbuffer, sumTmpbuffer, K, k, 1 / (float)kOverflow, para.rRec * kOverflow,
+                outMean + m, tmpbuffer, sumTmpbuffer, K, k, 1.0f / kOverflow, para.rRec * kOverflow,
                 para.rRecWithCorrection * kOverflow);
             WelfordFinalizeForB32OutVarVF<isReuseSource, config>(
                 outMean, inMean, inVar, tmpbuffer, para, sregLower, K, m, hRepeat, abRepeat);
             BinaryReduceSum<config.isCorrection>(
-                outVar + m, tmpbuffer, sumTmpbuffer, K, k, 1 / (float)kOverflow, para.rRec * kOverflow,
+                outVar + m, tmpbuffer, sumTmpbuffer, K, k, 1.0f / kOverflow, para.rRec * kOverflow,
                 para.rRecWithCorrection * kOverflow);
         }
     }

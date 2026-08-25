@@ -21,7 +21,8 @@
 #endif
 #ifndef LIB_MATH_IS_FINITE_IMPL_H
 #define LIB_MATH_IS_FINITE_IMPL_H
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
 // Implementation Process
@@ -43,9 +44,17 @@ __simd_vf__ inline void IsFiniteVFImpl(__ubuf__ U* dstUb, __ubuf__ T* srcUb, uin
     constexpr uint32_t HALF_NEG_INF = 0xfc00;
     constexpr uint32_t B_HALF_INF = 0x7f80;
     constexpr uint32_t B_HALF_NEG_INF = 0xff80;
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    constexpr uint32_t FLOAT_EXP_MASK = 0x7f800000;
+    constexpr uint32_t HALF_EXP_MASK = 0x7c00;
+#endif
 
     Reg::RegTensor<T, Reg::RegTraitNumOne> vSrcReg0;
     Reg::RegTensor<U, Reg::RegTraitNumOne> vDstReg0, vReg0, vReg1;
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    Reg::RegTensor<uint32_t> vExpMaskReg32, vExpResultReg32;
+    Reg::RegTensor<uint16_t> vExpMaskReg16, vExpResultReg16;
+#endif
 
     if constexpr (IsSameType<U, bfloat16_t>::value) {
         Reg::Duplicate((Reg::RegTensor<uint16_t, Reg::RegTraitNumOne>&)vReg0, ZERO);
@@ -58,15 +67,36 @@ __simd_vf__ inline void IsFiniteVFImpl(__ubuf__ U* dstUb, __ubuf__ T* srcUb, uin
         Reg::Duplicate(vReg1, ONE);
     }
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    if constexpr (IsSameType<T, float>::value) {
+        Reg::Duplicate(vExpMaskReg32, FLOAT_EXP_MASK);
+    } else if constexpr (IsSameType<T, half>::value) {
+        Reg::Duplicate(vExpMaskReg16, static_cast<uint16_t>(HALF_EXP_MASK));
+    }
+#endif
+
     uint32_t sreg = static_cast<uint32_t>(calCount);
     Reg::MaskReg preg;
-    Reg::MaskReg cmpMaskNAN, cmpMaskPINF, cmpMaskNINF, cmpMaskINF, cmpMaskReg;
+    Reg::MaskReg cmpMaskReg;
+#if !(__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    Reg::MaskReg cmpMaskNAN, cmpMaskPINF, cmpMaskNINF, cmpMaskINF;
+#endif
 
     uint32_t sregLower = static_cast<uint32_t>(GetVecLen() / sizeof(T));
     uint16_t repeatTimes = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         preg = Reg::UpdateMask<T, Reg::RegTraitNumOne>(sreg);
         Reg::LoadAlign(vSrcReg0, srcUb + i * sregLower);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+        if constexpr (IsSameType<T, float>::value) {
+            Reg::And(vExpResultReg32, (Reg::RegTensor<uint32_t>&)vSrcReg0, vExpMaskReg32, preg);
+            Reg::CompareScalar<uint32_t, CMPMODE::EQ>(cmpMaskReg, vExpResultReg32, FLOAT_EXP_MASK, preg);
+        } else if constexpr (IsSameType<T, half>::value) {
+            Reg::And(vExpResultReg16, (Reg::RegTensor<uint16_t>&)vSrcReg0, vExpMaskReg16, preg);
+            Reg::CompareScalar<uint16_t, CMPMODE::EQ>(
+                cmpMaskReg, vExpResultReg16, static_cast<uint16_t>(HALF_EXP_MASK), preg);
+        }
+#else
         Reg::Compare<T, CMPMODE::NE>(cmpMaskNAN, vSrcReg0, vSrcReg0, preg);
         if constexpr (IsSameType<T, float>::value) {
             Reg::CompareScalar<uint32_t, CMPMODE::EQ>(cmpMaskPINF, (Reg::RegTensor<uint32_t>&)vSrcReg0, INF, preg);
@@ -84,6 +114,7 @@ __simd_vf__ inline void IsFiniteVFImpl(__ubuf__ U* dstUb, __ubuf__ T* srcUb, uin
 
         Reg::MaskOr(cmpMaskINF, cmpMaskPINF, cmpMaskNINF, preg);
         Reg::MaskOr(cmpMaskReg, cmpMaskNAN, cmpMaskINF, preg);
+#endif
         if constexpr (IsSameType<U, bool>::value) {
             if constexpr (IsSameType<T, float>::value) {
                 Reg::MaskPack(cmpMaskReg, cmpMaskReg);
@@ -120,12 +151,19 @@ __aicore__ inline void IsFiniteImpl(const LocalTensor<U>& dst, const LocalTensor
         return;
     });
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    static_assert(
+        (SupportType<Tuple<U, T>, Tuple<half, half>, Tuple<bool, half>, Tuple<float, float>, Tuple<bool, float>>()),
+        "Failed to check dtype in IsFinite, current api support dtype combination is U : half/bool, "
+        "T : half; U : float/bool, T : float");
+#else
     static_assert(
         (SupportType<
             Tuple<U, T>, Tuple<half, half>, Tuple<bool, half>, Tuple<float, float>, Tuple<bool, float>,
             Tuple<bfloat16_t, bfloat16_t>, Tuple<bool, bfloat16_t>>()),
         "Failed to check dtype in IsInf, current api support dtype combination is U : half/bool, "
         "T : half; U : float/bool, T : float, U: bfloat16_t/bool, T: bfloat16_t");
+#endif
 
     __ubuf__ T* srcUb = (__ubuf__ T*)src.GetPhyAddr();
     __ubuf__ U* dstUb = (__ubuf__ U*)dst.GetPhyAddr();

@@ -28,7 +28,8 @@
 #include "include/adv_api/math/clamp_utils.h"
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201)
 #include "../../../impl/adv_api/detail/math/clamp/clamp_common_impl.h"
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#elif defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/clamp/clamp_3510_impl.h"
 #endif
 #include "../../../impl/basic_api/kernel_pop_stack_buffer.h"
@@ -60,8 +61,8 @@ __aicore__ inline void ClampMax(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
+                              __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     ClampMaxImpl<T, isReuseSource>(dstTensor, srcTensor, sharedTmpBuffer, scalar, calCount);
 #endif
 }
@@ -78,8 +79,8 @@ __aicore__ inline void ClampMax(
     LocalTensor<uint8_t> sharedTmpBuffer;
     bool ret = PopStackBuffer<uint8_t, TPosition::LCM>(sharedTmpBuffer);
     ASCENDC_ASSERT((ret), { KERNEL_LOG(KERNEL_ERROR, "PopStackBuffer Error!"); });
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
+                              __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     ClampMaxImpl<T, isReuseSource>(dstTensor, srcTensor, sharedTmpBuffer, scalar, calCount);
 #endif
 }
@@ -109,8 +110,8 @@ __aicore__ inline void ClampMin(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
+                              __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     ClampMinImpl<T, isReuseSource>(dstTensor, srcTensor, sharedTmpBuffer, scalar, calCount);
 #endif
 }
@@ -127,8 +128,8 @@ __aicore__ inline void ClampMin(
     LocalTensor<uint8_t> sharedTmpBuffer;
     bool ret = PopStackBuffer<uint8_t, TPosition::LCM>(sharedTmpBuffer);
     ASCENDC_ASSERT((ret), { KERNEL_LOG(KERNEL_ERROR, "PopStackBuffer Error!"); });
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
+                              __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     ClampMinImpl<T, isReuseSource>(dstTensor, srcTensor, sharedTmpBuffer, scalar, calCount);
 #endif
 }
@@ -153,7 +154,8 @@ template <const ClampConfig& config = DEFAULT_CLAMP_CONFIG, typename T, typename
 __aicore__ inline void Clamp(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& min, const S& max, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     ClampImpl<config, T, U, S>(dst, src, min, max, count);
 #endif
 }

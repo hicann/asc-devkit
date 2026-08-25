@@ -82,7 +82,7 @@ __aicore__ inline void Adds(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, uint64_t mask, const uint8_t repeatTime,
     const UnaryRepeatParams& repeatParams);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -119,7 +119,7 @@ template <
 __aicore__ inline void Adds(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, const int32_t& count);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -171,7 +171,7 @@ __aicore__ inline void Muls(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, uint64_t mask, const uint8_t repeatTime,
     const UnaryRepeatParams& repeatParams);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -208,7 +208,7 @@ template <
 __aicore__ inline void Muls(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, const int32_t& count);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -260,7 +260,7 @@ __aicore__ inline void Maxs(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, uint64_t mask, const uint8_t repeatTime,
     const UnaryRepeatParams& repeatParams);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -297,7 +297,7 @@ template <
 __aicore__ inline void Maxs(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, const int32_t& count);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -349,7 +349,7 @@ __aicore__ inline void Mins(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, uint64_t mask, const uint8_t repeatTime,
     const UnaryRepeatParams& repeatParams);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,
@@ -386,7 +386,7 @@ template <
 __aicore__ inline void Mins(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const U& scalarValue, const int32_t& count);
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 // One of src0/src1 should be scalar or single point LocalTensor
 template <
     typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG,

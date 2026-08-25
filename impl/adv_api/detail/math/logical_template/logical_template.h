@@ -21,7 +21,8 @@
 #endif
 #ifndef LIB_MATH_LOGICAL_TEMPLATE_IMPL_H
 #define LIB_MATH_LOGICAL_TEMPLATE_IMPL_H
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
 namespace AscendC {
@@ -48,8 +49,15 @@ __simd_vf__ inline void LogicalTemplateVF(
         mask = Reg::UpdateMask<U, Trait>(count);
         Reg::LoadAlign(src0Vreg, src0 + i * oneRepElm);
         Reg::LoadAlign(src1Vreg, src1 + i * oneRepElm);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+        Reg::CompareScalar<U, CMPMODE::EQ>(cmpMask0, src0Vreg, static_cast<U>(0), mask);
+        Reg::Not(cmpMask0, cmpMask0, mask);
+        Reg::CompareScalar<U, CMPMODE::EQ>(cmpMask1, src1Vreg, static_cast<U>(0), mask);
+        Reg::Not(cmpMask1, cmpMask1, mask);
+#else
         Reg::CompareScalar<U, CMPMODE::NE>(cmpMask0, src0Vreg, static_cast<U>(0), mask);
         Reg::CompareScalar<U, CMPMODE::NE>(cmpMask1, src1Vreg, static_cast<U>(0), mask);
+#endif
         func(cmpMask2, cmpMask0, cmpMask1, mask);
         if constexpr (sizeof(U) == 2) {
             Reg::MaskPack(cmpMask2, cmpMask2);
@@ -133,11 +141,21 @@ __simd_vf__ inline void LogicalTemplateBothTensorVF(
         Reg::LoadAlign(dupVreg, scalar);
         Reg::Duplicate(dupVreg, dupVreg, fullMask);
     }
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    Reg::CompareScalar<U, CMPMODE::EQ>(cmpMask1, dupVreg, static_cast<U>(0), fullMask);
+    Reg::Not(cmpMask1, cmpMask1, fullMask);
+#else
     Reg::CompareScalar<U, CMPMODE::NE>(cmpMask1, dupVreg, static_cast<U>(0), fullMask);
+#endif
     for (uint16_t i = 0; i < repeatTime; ++i) {
         mask = Reg::UpdateMask<U, Trait>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+        Reg::CompareScalar<U, CMPMODE::EQ>(cmpMask0, srcVreg, static_cast<U>(0), mask);
+        Reg::Not(cmpMask0, cmpMask0, mask);
+#else
         Reg::CompareScalar<U, CMPMODE::NE>(cmpMask0, srcVreg, static_cast<U>(0), mask);
+#endif
         func(cmpMask2, cmpMask0, cmpMask1, mask);
         if constexpr (sizeof(U) == 2) {
             Reg::MaskPack(cmpMask2, cmpMask2);
@@ -173,11 +191,21 @@ __simd_vf__ inline void LogicalTemplateSingleScalarVF(
     Reg::Duplicate(brcZeroReg, 0u);
     fullMask = Reg::CreateMask<U, Reg::MaskPattern::ALL, Trait>();
     Reg::Duplicate(dupVreg, scalar);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    Reg::CompareScalar<U, CMPMODE::EQ>(cmpMask0, dupVreg, static_cast<U>(0), fullMask);
+    Reg::Not(cmpMask0, cmpMask0, fullMask);
+#else
     Reg::CompareScalar<U, CMPMODE::NE>(cmpMask0, dupVreg, static_cast<U>(0), fullMask);
+#endif
     for (uint16_t i = 0; i < repeatTime; ++i) {
         mask = Reg::UpdateMask<U, Trait>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+        Reg::CompareScalar<U, CMPMODE::EQ>(cmpMask1, srcVreg, static_cast<U>(0), mask);
+        Reg::Not(cmpMask1, cmpMask1, mask);
+#else
         Reg::CompareScalar<U, CMPMODE::NE>(cmpMask1, srcVreg, static_cast<U>(0), mask);
+#endif
         func(cmpMask2, cmpMask0, cmpMask1, mask);
         if constexpr (sizeof(U) == 2) {
             Reg::MaskPack(cmpMask2, cmpMask2);

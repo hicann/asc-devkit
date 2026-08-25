@@ -28,7 +28,8 @@
 #include "kernel_tensor.h"
 #include "include/adv_api/math/bitwise_or_utils.h"
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/bitwise_or/bitwise_or_3510_impl.h"
 #endif
 
@@ -45,7 +46,8 @@ template <const BitwiseOrConfig& config = DEFAULT_BITWISE_OR_CONFIG, typename T>
 __aicore__ inline void BitwiseOr(
     const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     BitwiseOrImpl<config, T>(dst, src0, src1, count);
 #endif
 }

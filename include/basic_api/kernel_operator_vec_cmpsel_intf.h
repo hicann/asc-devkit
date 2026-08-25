@@ -288,7 +288,7 @@ __aicore__ inline void Select(
  * @param [in] count number Number of data involved in calculation
  */
 // One of src0/src1 should be Scalar
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
 template <
     typename T0 = BinaryDefaultType, typename T1 = BinaryDefaultType, bool isSetMask = true,
     const BinaryConfig& config = DEFAULT_BINARY_CONFIG, typename T2, typename T3, typename T4>

@@ -27,7 +27,11 @@
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../basic_api/kernel_pop_stack_buffer.h"
 #include "antiquantize_common.h"
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
 #include "../antiquant/ascend_antiquant_3510_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#include "../antiquant/ascend_antiquant_l300_impl.h"
+#endif
 
 namespace AscendC {
 namespace AntiQuantizeUtils {
@@ -139,7 +143,11 @@ __simd_vf__ inline void AntiQuantizePerGroupForRowCommonVF(
     const AscendAntiQuantParam para, uint16_t rowNum, uint16_t tailRow)
 {
     uint16_t mainRowGroup = rowNum / para.groupSize;
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    uint32_t vecLen = ANTIQUANT_B32_VF_LEN;
+#else
     uint32_t vecLen = ASCENDC_QUANT_B32_VF_LEN;
+#endif
     uint16_t repeat = CeilDivision(para.n, vecLen);
 
     Reg::MaskReg preg;
@@ -198,7 +206,11 @@ __simd_vf__ inline void AntiQuantizePerTokenCommonVF(
     const AscendAntiQuantParam para)
 {
     uint16_t rowNum = para.calCount / para.n;
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    uint32_t vecLen = ANTIQUANT_B32_VF_LEN;
+#else
     uint32_t vecLen = ASCENDC_QUANT_B32_VF_LEN;
+#endif
     uint16_t repeat = CeilDivision(para.n, vecLen);
     uint32_t sreg = para.n;
 
@@ -291,7 +303,13 @@ __aicore__ inline void AntiQuantizePerTensor(
     const LocalTensor<uint8_t>& sharedTmpBuffer, const AntiQuantizeParams& params)
 {
     static_assert(
-        SupportType<SrcT, fp8_e4m3fn_t, fp8_e5m2_t, hifloat8_t, int8_t>(),
+        SupportType<
+            SrcT, fp8_e4m3fn_t, fp8_e5m2_t, int8_t
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+            ,
+            hifloat8_t
+#endif
+            >(),
         "This AntiQuantize only support fp8_e4m3fn_t/fp8_e5m2_t/hifloat8_t/int8_t input dtype");
     static_assert(SupportType<DstT, half, bfloat16_t>(), "This AntiQuantize only support half/bfloat16_t output dtype");
     __ubuf__ DstT* dstUb = (__ubuf__ DstT*)dst.GetPhyAddr();

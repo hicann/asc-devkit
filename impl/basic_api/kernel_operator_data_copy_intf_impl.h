@@ -120,7 +120,7 @@ __aicore__ inline void CheckNd2NzParams(Nd2NzParams params, const __gm__ char* m
  * @param [in] intriParams.dstNzNStride stride of n between 2 C0 in L1
  * @param [in] intriParams.dstNzMatrixStride DST_nz_matrix_stride in L1 in unit of element
  */
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113)
 template <typename T, bool enableSmallC0>
 __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
     const LocalTensor<T>& dst, const GlobalTensor<T>& src, const Nd2NzParams& intriParams)
@@ -140,7 +140,7 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
         return;
     }
 #endif
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113)
     const uint8_t cacheMode = ExtractCacheMode(src);
 #endif
     if (dstHWPos == Hardware::L1) {
@@ -152,7 +152,7 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
         DataCopyGM2L1ND2NZImpl((__cbuf__ PrimType*)dst.GetPhyAddr(), (__gm__ PrimType*)src.GetPhyAddr(), intriParams);
 #endif
     } else if (dstHWPos == Hardware::UB) {
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113)
         DataCopyGM2UBND2NZImpl(
             (__ubuf__ PrimType*)dst.GetPhyAddr(), (__gm__ PrimType*)src.GetPhyAddr(), intriParams, cacheMode);
 #else
@@ -401,7 +401,7 @@ __aicore__ inline void DataCopy(
                 (uint64_t)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), static_cast<uint16_t>(0),
                 repeatParams);
 #if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || \
-    (__NPU_ARCH__ == 5102)
+    (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
         } else if (dstHWPos == Hardware::FIXBUF) {
             CheckTensorAlign<T>(
                 dst, 128, "dst", "DataCopy from L1 Buffer(A1/B1/C1) to Fixpipe Buffer(C2PIPE2GM)"); // 128B align
@@ -1782,7 +1782,9 @@ __aicore__ inline void SetPadValue(T paddingValue)
         return;
     }
     set_mov_pad_val(GetScalarBitcodeValue((T)paddingValue));
-#elif (__NPU_ARCH__ == 3102)
+#elif (__NPU_ARCH__ == 3003)
+    set_mov_pad_val(GetScalarBitcodeValue((T)paddingValue));
+#elif (__NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3113)
     if constexpr (pos == TPosition::MAX || GetPhyType(pos) == Hardware::UB) {
         set_pad_val_outtoub(GetScalarBitcodeValue((T)paddingValue));
     } else if constexpr (GetPhyType(pos) == Hardware::L1) {

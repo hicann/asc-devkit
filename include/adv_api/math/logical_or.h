@@ -28,7 +28,8 @@
 #include "kernel_tensor.h"
 #include "include/adv_api/math/logical_or_utils.h"
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/logical_or/logical_or_common_impl.h"
 #endif
 
@@ -45,7 +46,8 @@ template <const LogicalOrConfig& config = DEFAULT_LOGICAL_OR_CONFIG, typename T,
 __aicore__ inline void LogicalOr(
     const LocalTensor<T>& dst, const LocalTensor<U>& src0, const LocalTensor<U>& src1, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     LogicalOrImpl<config, T, U>(dst, src0, src1, count);
 #endif
 }

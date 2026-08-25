@@ -87,7 +87,7 @@ __simd_callee__ inline void SelectImpl(RegT& dstReg, RegT& srcReg0, RegT& srcReg
     using ActualT = typename RegT::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        SupportType<ActualT, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, half, float>(),
+        SupportType<ActualT, bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, half, float>(),
         "current data type is not supported on current device!");
     vsel(dstReg, srcReg0, srcReg1, mask);
 }

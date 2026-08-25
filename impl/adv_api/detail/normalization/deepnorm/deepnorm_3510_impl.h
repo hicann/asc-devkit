@@ -50,7 +50,7 @@ __aicore__ inline void GetDeepnormPara(DeepnormPara& para, DeepNormTiling& tilin
 {
     para.hRepeatTimes = tiling.hLength / static_cast<uint32_t>(oneRepSize);
     para.hTailSize = tiling.hLength % oneRepSize;
-    para.hDim = tiling.hLength;
+    para.hDim = static_cast<int32_t>(tiling.hLength);
     para.hRepeatCtrl = 1;
     para.hTailCtrl = 1;
     para.hTailOffset = para.hRepeatTimes * oneRepSize;

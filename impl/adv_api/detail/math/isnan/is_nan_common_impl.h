@@ -21,7 +21,8 @@
 #endif
 #ifndef LIB_MATH_IS_NAN_IMPL_H
 #define LIB_MATH_IS_NAN_IMPL_H
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
 #include "../../../../../include/adv_api/math/is_nan_utils.h"
@@ -45,13 +46,18 @@ __simd_vf__ inline void IsNanImplVF(__ubuf__ T* dst, __ubuf__ U* src, uint32_t c
         Reg::Duplicate((Reg::RegTensor<uint8_t>&)vReg0, 0u);
         Reg::Duplicate((Reg::RegTensor<uint8_t>&)vReg1, 1u);
     } else {
-        Reg::Duplicate(vReg0, 0.0);
-        Reg::Duplicate(vReg1, 1.0);
+        Reg::Duplicate(vReg0, 0.0f);
+        Reg::Duplicate(vReg1, 1.0f);
     }
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         mask = Reg::UpdateMask<U>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+        Reg::Compare<U, CMPMODE::EQ>(cmpMaskReg, srcVreg, srcVreg, mask);
+        Reg::Not(cmpMaskReg, cmpMaskReg, mask);
+#else
         Reg::Compare<U, CMPMODE::NE>(cmpMaskReg, srcVreg, srcVreg, mask);
+#endif
         if constexpr (Std::is_same_v<T, bool>) {
             if constexpr (Std::is_same_v<U, float>) {
                 Reg::MaskPack(cmpMaskReg, cmpMaskReg);

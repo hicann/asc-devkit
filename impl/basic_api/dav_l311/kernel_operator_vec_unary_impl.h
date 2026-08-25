@@ -26,6 +26,33 @@
 
 namespace AscendC {
 namespace Internal {
+template <auto func, typename T, typename RegType>
+__simd_vf__ inline void VecUnaryLevel2VFImpl(__ubuf__ T* dst, __ubuf__ T* src, const uint32_t count)
+{
+    RegType srcReg;
+    RegType dstReg;
+    uint32_t sreg = static_cast<uint32_t>(count);
+    Reg::MaskReg mask;
+    constexpr uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T) * RegType::trait.REG_NUM);
+    uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(sreg, repeatStride));
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T, RegType::trait>(sreg);
+        Reg::DataCopy(srcReg, src + i * repeatStride);
+        func(dstReg, srcReg, mask);
+        Reg::DataCopy(dst + i * repeatStride, dstReg, mask);
+    }
+}
+
+template <auto func, typename T>
+__aicore__ inline void VecUnaryLevel2ImplTemplate(__ubuf__ T* dst, __ubuf__ T* src, const uint32_t count)
+{
+    if constexpr (SupportBytes<T, 8>()) {
+        VecUnaryLevel2VFImpl<func, T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>(dst, src, count);
+    } else {
+        VecUnaryLevel2VFImpl<func, T, Reg::RegTensor<T>>(dst, src, count);
+    }
+}
+
 template <auto func, bool isSetMask, bool isMaskBitMode, bool isNormalMode, typename T>
 __aicore__ inline void VecUnaryLevel0VFImpl(
     __ubuf__ T* dst, __ubuf__ T* src, const uint64_t maskArray[], const uint64_t maskCount, const uint8_t repeatTime,
@@ -442,6 +469,25 @@ __aicore__ inline void ExpImpl(
     static_assert((SupportType<T, half, float>()), "current data type is not supported on current device!");
     constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
     Internal::VecUnaryLevel0Template<func, isSetMask, false>(dst, src, nullptr, mask, repeatTime, repeatParams);
+}
+
+/* **************************************************************************************************
+ * Neg                                            *
+ * ************************************************************************************************* */
+// Neg::Level 2
+template <typename T>
+__aicore__ inline void NegImpl(__ubuf__ T* dst, __ubuf__ T* src, const uint32_t count)
+{
+    static_assert(
+        (SupportType<T, int8_t, int16_t, int32_t, half, float>()),
+        "current data type is not supported on current device!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = Reg::Neg<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+    } else {
+        constexpr auto func = Reg::Neg<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+        Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+    }
 }
 
 } // namespace AscendC

@@ -149,6 +149,9 @@ __simd_vf__ inline void WholeReduceUnalignCall(
             Reg::Duplicate(tmpVreg2, static_cast<T>(0), mask);
             Reg::DeInterleave(tmpVreg3, tmpVreg4, tmpVreg1, tmpVreg2);
             Reg::Interleave(dstVreg, tmpVreg1, tmpVreg4, tmpVreg3);
+            if (sizeof(T) == 2 && order == ReduceOrder::ORDER_ONLY_INDEX) {
+                Reg::Interleave(dstVreg, tmpVreg1, dstVreg, tmpVreg2);
+            }
         }
         Reg::DataCopyUnAlign(dst, dstVreg, ureg, oneRepOffset);
         if constexpr (withStride) {
@@ -481,6 +484,9 @@ __aicore__ inline void WholeReduceMinImpl(
     }
     uint32_t oneRepOffset =
         (order == ReduceOrder::ORDER_VALUE_INDEX || order == ReduceOrder::ORDER_INDEX_VALUE) ? 2 : 1;
+    if (sizeof(T) == 2 && order == ReduceOrder::ORDER_ONLY_INDEX) {
+        oneRepOffset = 2;
+    }
 
     // save the src address and count for GetReduceMaxMinCountImpl
     LocalTensor<uint64_t> popBuffer;
@@ -517,6 +523,9 @@ __aicore__ inline void WholeReduceMinImpl(
     uint32_t maskReg = static_cast<uint32_t>(mask);
     uint32_t oneRepOffset =
         (order == ReduceOrder::ORDER_VALUE_INDEX || order == ReduceOrder::ORDER_INDEX_VALUE) ? 2 : 1;
+    if (sizeof(T) == 2 && order == ReduceOrder::ORDER_ONLY_INDEX) {
+        oneRepOffset = 2;
+    }
 
     // save the src address and count for GetReduceMaxMinCountImpl
     LocalTensor<uint64_t> popBuffer;

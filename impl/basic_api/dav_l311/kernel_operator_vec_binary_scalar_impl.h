@@ -167,6 +167,35 @@ namespace AscendC {
         }                                                                                              \
     }
 namespace Internal {
+template <auto func, typename T, typename RegType>
+__simd_vf__ inline void VecBinaryScalarLevel2VFImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint32_t calCount)
+{
+    RegType srcReg;
+    RegType dstReg;
+    uint32_t count = static_cast<uint32_t>(calCount);
+    Reg::MaskReg mask;
+    constexpr uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T) * RegType::trait.REG_NUM);
+    uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, repeatStride));
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T, RegType::trait>(count);
+        Reg::DataCopy(srcReg, src + i * repeatStride);
+        func(dstReg, srcReg, scalarValue, mask);
+        Reg::DataCopy(dst + i * repeatStride, dstReg, mask);
+    }
+}
+
+template <auto func, typename T>
+__aicore__ inline void VecBinaryScalarLevel2ImplTemplate(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint32_t calCount)
+{
+    if constexpr (SupportBytes<T, 8>()) {
+        VecBinaryScalarLevel2VFImpl<func, T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>(dst, src, scalarValue, calCount);
+    } else {
+        VecBinaryScalarLevel2VFImpl<func, T, Reg::RegTensor<T>>(dst, src, scalarValue, calCount);
+    }
+}
+
 template <auto func, bool isSetMask, bool isMaskBitMode, bool isNormalMode, typename T>
 __aicore__ inline void VecBinaryScalarLevel0VFImpl(
     __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t maskArray[], const uint64_t maskCount,
@@ -582,6 +611,875 @@ BINARY_SCALAR_OP_LEVEL2_IMPL(ShiftRightImpl, ShiftRights, int16_t)
 BINARY_SCALAR_OP_LEVEL2_IMPL(ShiftRightImpl, ShiftRights, uint32_t)
 BINARY_SCALAR_OP_LEVEL2_IMPL(ShiftRightImpl, ShiftRights, int32_t)
 
+/* **************************************************************************************************
+ * Subs: LocalTensor - Scalar                                             *
+ * ************************************************************************************************* */
+// Subs::Level 0
+namespace RegSubs {
+template <typename T, typename RegT>
+__simd_callee__ inline void Subs(RegT& dstReg, RegT& srcReg, T scalarValue, Reg::MaskReg& mask)
+{
+    Reg::Duplicate(dstReg, scalarValue, mask);
+    Reg::Sub(dstReg, srcReg, dstReg, mask);
+}
+} // namespace RegSubs
+template <typename T, bool isSetMask = true>
+__aicore__ inline void SubsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Subs not support current datatype!");
+    constexpr auto func = RegSubs::Subs<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, true>(
+        dst, src, scalarValue, mask, 0, repeatTime, repeatParams);
+}
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void SubsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Subs not support current datatype!");
+    constexpr auto func = RegSubs::Subs<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, false>(
+        dst, src, scalarValue, nullptr, mask, repeatTime, repeatParams);
+}
+
+// Subs::Level 2
+template <typename T, bool isSetMask = true>
+__aicore__ inline void SubsImpl(__ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Subs not support current datatype!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = RegSubs::Subs<T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    } else {
+        constexpr auto func = RegSubs::Subs<T, Reg::RegTensor<T>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * Subs: Scalar - LocalTensor                                             *
+ * ************************************************************************************************* */
+// Subs::Level 0
+namespace RegSubs {
+template <typename T, typename RegT>
+__simd_callee__ inline void Subs2(RegT& dstReg, RegT& srcReg, T scalarValue, Reg::MaskReg& mask)
+{
+    Reg::Duplicate(dstReg, scalarValue, mask);
+    Reg::Sub(dstReg, dstReg, srcReg, mask);
+}
+} // namespace RegSubs
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void SubsImpl(
+    __ubuf__ T* dst, T scalarValue, __ubuf__ T* src, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Subs not support current datatype!");
+    constexpr auto func = RegSubs::Subs2<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, true>(
+        dst, src, scalarValue, mask, 0, repeatTime, repeatParams);
+}
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void SubsImpl(
+    __ubuf__ T* dst, T scalarValue, __ubuf__ T* src, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Subs not support current datatype!");
+    constexpr auto func = RegSubs::Subs2<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, false>(
+        dst, src, scalarValue, nullptr, mask, repeatTime, repeatParams);
+}
+
+// Subs::Level 2
+template <typename T, bool isSetMask = true>
+__aicore__ inline void SubsImpl(__ubuf__ T* dst, T scalarValue, __ubuf__ T* src, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Subs not support current datatype!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = RegSubs::Subs2<T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    } else {
+        constexpr auto func = RegSubs::Subs2<T, Reg::RegTensor<T>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * Divs                                             *
+ * ************************************************************************************************* */
+namespace RegDivs {
+template <typename T, typename RegT>
+__simd_callee__ inline void Divs(RegT& dstReg, RegT& srcReg, T scalarValue, Reg::MaskReg& mask)
+{
+    Reg::Duplicate(dstReg, scalarValue, mask);
+    Reg::Div(dstReg, srcReg, dstReg, mask);
+}
+} // namespace RegDivs
+// Divs::Level 0
+template <typename T, bool isSetMask = true>
+__aicore__ inline void DivsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, float>()), "Divs not support current datatype!");
+    constexpr auto func = RegDivs::Divs<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, true>(
+        dst, src, scalarValue, mask, 0, repeatTime, repeatParams);
+}
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void DivsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, float>()), "Divs not support current datatype!");
+    constexpr auto func = RegDivs::Divs<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, false>(
+        dst, src, scalarValue, nullptr, mask, repeatTime, repeatParams);
+}
+
+// Divs::Level 2
+template <typename T, bool isSetMask = true>
+__aicore__ inline void DivsImpl(__ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const int32_t& calCount)
+{
+    static_assert((SupportType<T, half, float, int64_t, uint64_t>()), "Divs not support current datatype!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = RegDivs::Divs<T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    } else {
+        constexpr auto func = RegDivs::Divs<T, Reg::RegTensor<T>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * Divs   Scalar / LocalTensor                                         *
+ * ************************************************************************************************* */
+namespace RegDivs {
+template <typename T, typename RegT>
+__simd_callee__ inline void Divs2(RegT& dstReg, RegT& srcReg, T scalarValue, Reg::MaskReg& mask)
+{
+    Reg::Duplicate(dstReg, scalarValue, mask);
+    Reg::Div(dstReg, dstReg, srcReg, mask);
+}
+} // namespace RegDivs
+// Div::Level 0
+template <typename T, bool isSetMask = true>
+__aicore__ inline void DivsImpl(
+    __ubuf__ T* dst, T scalarValue, __ubuf__ T* src, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, float>()), "Divs not support current datatype!");
+    constexpr auto func = RegDivs::Divs2<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, true>(
+        dst, src, scalarValue, mask, 0, repeatTime, repeatParams);
+}
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void DivsImpl(
+    __ubuf__ T* dst, T scalarValue, __ubuf__ T* src, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, float>()), "Divs not support current datatype!");
+    constexpr auto func = RegDivs::Divs2<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, false>(
+        dst, src, scalarValue, nullptr, mask, repeatTime, repeatParams);
+}
+
+// Divs::Level 2
+template <typename T, bool isSetMask = true>
+__aicore__ inline void DivsImpl(__ubuf__ T* dst, T scalarValue, __ubuf__ T* src, const int32_t& calCount)
+{
+    static_assert((SupportType<T, half, float, int64_t, uint64_t>()), "Divs not support current datatype!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = RegDivs::Divs2<T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    } else {
+        constexpr auto func = RegDivs::Divs2<T, Reg::RegTensor<T>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * Ands                                             *
+ * ************************************************************************************************* */
+namespace RegAnds {
+template <typename T, typename RegT>
+__simd_callee__ inline void Ands(RegT& dstReg, RegT& srcReg, T scalarValue, Reg::MaskReg& mask)
+{
+    Reg::Duplicate(dstReg, scalarValue, mask);
+    Reg::And(dstReg, dstReg, srcReg, mask);
+}
+} // namespace RegAnds
+// Ands::Level 0
+template <typename T, bool isSetMask = true>
+__aicore__ inline void AndsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ands not support current datatype!");
+    constexpr auto func = RegAnds::Ands<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, true>(
+        dst, src, scalarValue, mask, 0, repeatTime, repeatParams);
+}
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void AndsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ands not support current datatype!");
+    constexpr auto func = RegAnds::Ands<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, false>(
+        dst, src, scalarValue, nullptr, mask, repeatTime, repeatParams);
+}
+
+// Ands::Level 2
+template <typename T, bool isSetMask = true>
+__aicore__ inline void AndsImpl(__ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const int32_t& calCount)
+{
+    static_assert((SupportType<T, int16_t, uint16_t, int64_t, uint64_t>()), "Ands not support current datatype!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = RegAnds::Ands<T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    } else {
+        constexpr auto func = RegAnds::Ands<T, Reg::RegTensor<T>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * Ors                                             *
+ * ************************************************************************************************* */
+namespace RegOrs {
+template <typename T, typename RegT>
+__simd_callee__ inline void Ors(RegT& dstReg, RegT& srcReg, T scalarValue, Reg::MaskReg& mask)
+{
+    Reg::Duplicate(dstReg, scalarValue, mask);
+    Reg::Or(dstReg, dstReg, srcReg, mask);
+}
+} // namespace RegOrs
+// Ors::Level 0
+template <typename T, bool isSetMask = true>
+__aicore__ inline void OrsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ors not support current datatype!");
+    constexpr auto func = RegOrs::Ors<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, true>(
+        dst, src, scalarValue, mask, 0, repeatTime, repeatParams);
+}
+
+template <typename T, bool isSetMask = true>
+__aicore__ inline void OrsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ors not support current datatype!");
+    constexpr auto func = RegOrs::Ors<T, Reg::RegTensor<T>>;
+    Internal::VecBinaryScalarLevel0Template<func, isSetMask, false>(
+        dst, src, scalarValue, nullptr, mask, repeatTime, repeatParams);
+}
+
+// Ors::Level 2
+template <typename T, bool isSetMask = true>
+__aicore__ inline void OrsImpl(__ubuf__ T* dst, __ubuf__ T* src, T scalarValue, const int32_t& calCount)
+{
+    static_assert((SupportType<T, int16_t, uint16_t, int64_t, uint64_t>()), "Ors not support current datatype!");
+    if constexpr (SupportBytes<T, 8>()) {
+        constexpr auto func = RegOrs::Ors<T, Reg::RegTensor<T, Reg::RegTraitNumTwo>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    } else {
+        constexpr auto func = RegOrs::Ors<T, Reg::RegTensor<T>>;
+        Internal::VecBinaryScalarLevel2ImplTemplate<func, T>(dst, src, scalarValue, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * FusedMulsCast                                            *
+ * ************************************************************************************************* */
+// FusedMulsCast::Level 2
+
+template <typename T, typename U>
+__simd_vf__ inline void FusedMulsCastImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint32_t calCount)
+{
+    static_assert(
+        SupportType<Tuple<T, U>, Tuple<half, float>>(),
+        "Failed to check dtype in "
+        "FusedMulsCast, current api support dtype combination is src : float, dst: half, scalar: float.");
+    constexpr uint32_t sregLower = static_cast<uint32_t>(VECTOR_REG_WIDTH / sizeof(U));
+    const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    U scalar = src1[0];
+    Reg::RegTensor<T> vDstReg;
+    Reg::RegTensor<U> vSrcReg;
+    Reg::MaskReg mask;
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<U>(sreg);
+        Reg::DataCopy(vSrcReg, src0 + i * sregLower);
+        Reg::MulsImpl<U, U, Reg::MaskMergeMode::ZEROING>(vSrcReg, vSrcReg, scalar, mask);
+        Reg::CastImpl<
+            T, U, RoundMode::CAST_RINT, Reg::SatMode::NO_SAT, Reg::RegLayout::ZERO, Reg::MaskMergeMode::ZEROING>(
+            vDstReg, vSrcReg, mask);
+        Reg::DataCopy<T, Reg::StoreDist::DIST_PACK_B32>(dst + i * sregLower, vDstReg, mask);
+    }
+}
+
+template <typename T, typename U>
+__simd_vf__ inline void FusedMulsCastImpl(__ubuf__ T* dst, __ubuf__ U* src, U scalar, const uint32_t calCount)
+{
+    static_assert(
+        SupportType<Tuple<T, U>, Tuple<half, float>>(),
+        "Failed to check dtype in "
+        "FusedMulsCast, current api support dtype combination is src : float, dst: half, scalar: float.");
+    constexpr uint32_t sregLower = static_cast<uint32_t>(VECTOR_REG_WIDTH / sizeof(U));
+    const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::RegTensor<T> vDstReg;
+    Reg::RegTensor<U> vSrcReg;
+    Reg::MaskReg mask;
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<U>(sreg);
+        Reg::DataCopy(vSrcReg, src + i * sregLower);
+        Reg::MulsImpl<U, U, Reg::MaskMergeMode::ZEROING>(vSrcReg, vSrcReg, scalar, mask);
+        Reg::CastImpl<
+            T, U, RoundMode::CAST_RINT, Reg::SatMode::NO_SAT, Reg::RegLayout::ZERO, Reg::MaskMergeMode::ZEROING>(
+            vDstReg, vSrcReg, mask);
+        Reg::DataCopy<T, Reg::StoreDist::DIST_PACK_B32>(dst + i * sregLower, vDstReg, mask);
+    }
+}
+
+template <typename T, BinaryScalarOp op, uint8_t scalarIdx>
+__simd_vf__ inline void BinaryScalarOpTemplateCntB64(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t calCount)
+{
+    Reg::RegTensor<T, Reg::RegTraitNumTwo> dstReg, srcReg0, srcReg1, dupReg;
+    Reg::RegTensor<T, Reg::RegTraitNumOne> preReg;
+    Reg::MaskReg mask;
+    Reg::UnalignReg ureg;
+    Reg::RegTensor<uint32_t> zeroReg;
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    uint32_t repeatStride = static_cast<uint32_t>(B64_DATA_NUM_PER_REPEAT) * 2;
+    uint16_t repeatTime = CeilDivision(calCount, repeatStride);
+    Reg::MaskReg maskFull = Reg::CreateMask<uint32_t, Reg::MaskPattern::ALL>();
+    Reg::Duplicate(zeroReg, 0, maskFull);
+
+    if constexpr (scalarIdx == 0) {
+        Reg::DataCopyUnAlignPre(ureg, (__ubuf__ T*)src0);
+        Reg::DataCopyUnAlign(preReg, ureg, (__ubuf__ T*)src0);
+        Reg::DeInterleave(
+            (Reg::RegTensor<uint32_t>&)dupReg.reg[0], (Reg::RegTensor<uint32_t>&)dupReg.reg[1],
+            (Reg::RegTensor<uint32_t>&)preReg, zeroReg);
+        Reg::Duplicate(srcReg0, dupReg, maskFull);
+    } else if (scalarIdx == 1) {
+        Reg::DataCopyUnAlignPre(ureg, (__ubuf__ T*)src1);
+        Reg::DataCopyUnAlign(preReg, ureg, (__ubuf__ T*)src1);
+        Reg::DeInterleave(
+            (Reg::RegTensor<uint32_t>&)dupReg.reg[0], (Reg::RegTensor<uint32_t>&)dupReg.reg[1],
+            (Reg::RegTensor<uint32_t>&)preReg, zeroReg);
+        Reg::Duplicate(srcReg1, dupReg, maskFull);
+    }
+
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
+        mask = Reg::UpdateMask<T, Reg::RegTraitNumTwo>(sreg);
+        if constexpr (scalarIdx == 0) {
+            Reg::DataCopy<T>(srcReg1, src1 + i * repeatStride);
+        } else if (scalarIdx == 1) {
+            Reg::DataCopy<T>(srcReg0, src0 + i * repeatStride);
+        }
+        if constexpr (op == BinaryScalarOp::ADDS) {
+            Reg::Add(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::MULS) {
+            Reg::Mul(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::MAXS) {
+            Reg::Max(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::MINS) {
+            Reg::Min(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::SUBS) {
+            Reg::Sub(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::DIVS) {
+            Reg::Div(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::ANDS) {
+            Reg::And(dstReg, srcReg0, srcReg1, mask);
+        } else if constexpr (op == BinaryScalarOp::ORS) {
+            Reg::Or(dstReg, srcReg0, srcReg1, mask);
+        }
+        Reg::DataCopy<T>(dst + i * repeatStride, dstReg, mask);
+    }
+}
+
+template <typename T, Reg::LoadDist pattern, BinaryScalarOp op, uint8_t scalarIdx>
+__simd_vf__ inline void BinaryScalarOpTemplateCnt(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t calCount)
+{
+    Reg::RegTensor<T> vSrcReg0;
+    Reg::RegTensor<T> vSrcReg1;
+    Reg::RegTensor<T> vDstReg0;
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::MaskReg preg;
+
+    uint32_t sregLower = static_cast<uint32_t>(GetVecLen() / sizeof(T));
+    uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        preg = Reg::UpdateMask<T>(sreg);
+
+        if constexpr (scalarIdx == 0) {
+            Reg::DataCopy<T, pattern>(vSrcReg0, src0);
+            Reg::DataCopy(vSrcReg1, src1 + i * sregLower);
+        } else if constexpr (scalarIdx == 1) {
+            Reg::DataCopy(vSrcReg0, src0 + i * sregLower);
+            Reg::DataCopy<T, pattern>(vSrcReg1, src1);
+        }
+
+        if constexpr (op == BinaryScalarOp::ADDS) {
+            Reg::Add(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::MULS) {
+            Reg::Mul(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::MAXS) {
+            Reg::Max(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::MINS) {
+            Reg::Min(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::SUBS) {
+            Reg::Sub(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::DIVS) {
+            Reg::Div(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::ANDS) {
+            Reg::And(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        } else if constexpr (op == BinaryScalarOp::ORS) {
+            Reg::Or(vDstReg0, vSrcReg0, vSrcReg1, preg);
+        }
+
+        Reg::DataCopy(dst + i * sregLower, vDstReg0, preg);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void AddsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Adds not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Add<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void AddsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Adds not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Add<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void AddsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, uint8_t, int8_t, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Adds not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 1) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B8, BinaryScalarOp::ADDS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::ADDS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::ADDS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::ADDS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MaxsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Maxs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Max<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MaxsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Maxs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Max<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MaxsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, uint8_t, int8_t, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Maxs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 1) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B8, BinaryScalarOp::MAXS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::MAXS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::MAXS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::MAXS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MinsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Mins not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Min<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MinsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Mins not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Min<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MinsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, uint8_t, int8_t, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Mins not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 1) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B8, BinaryScalarOp::MINS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::MINS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::MINS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::MINS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MulsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Muls not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Mul<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MulsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Muls not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Mul<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void MulsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Muls not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::MULS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::MULS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::MULS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void SubsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Subs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Sub<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void SubsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, bfloat16_t, float, int16_t, int32_t>()), "Subs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Sub<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void SubsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert(
+        (SupportType<T, half, bfloat16_t, float, int16_t, int32_t, int64_t, uint64_t>()),
+        "Subs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::SUBS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::SUBS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::SUBS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void DivsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, float>()), "Divs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Div<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void DivsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, half, float>()), "Divs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Div<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void DivsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert((SupportType<T, half, float, int64_t, uint64_t>()), "Divs not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::DIVS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::DIVS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::DIVS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void AndsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ands not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::And<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void AndsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ands not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::And<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void AndsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert((SupportType<T, int16_t, uint16_t, int64_t, uint64_t>()), "Ands not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::ANDS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::ANDS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::ANDS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void OrsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask[], const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ors not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Or<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, true, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, mask, 0, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void OrsImpl(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint64_t mask, const uint8_t repeatTime,
+    const UnaryRepeatParams& repeatParams)
+{
+    static_assert((SupportType<T, int16_t, uint16_t>()), "Ors not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    constexpr auto func = Reg::Or<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+    if constexpr (sizeof(T) == 2) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B16, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::VecBinaryScalarLevel0Template<func, isSetMask, false, T, Reg::LoadDist::DIST_BRC_B32, scalarIdx>(
+            dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
+    }
+}
+
+template <typename T, bool isSetMask = true, uint8_t scalarIdx = 1>
+__aicore__ inline void OrsImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t& calCount)
+{
+    static_assert((SupportType<T, int16_t, uint16_t, int64_t, uint64_t>()), "Ors not support current datatype!");
+    static_assert(scalarIdx == 0 || scalarIdx == 1);
+    if constexpr (sizeof(T) == 2) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B16, BinaryScalarOp::ORS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 4) {
+        BinaryScalarOpTemplateCnt<T, Reg::LoadDist::DIST_BRC_B32, BinaryScalarOp::ORS, scalarIdx>(
+            dst, src0, src1, calCount);
+    } else if constexpr (sizeof(T) == 8) {
+        BinaryScalarOpTemplateCntB64<T, BinaryScalarOp::ORS, scalarIdx>(dst, src0, src1, calCount);
+    }
+}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_BINARY_SCALAR_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_BINARY_SCALAR_IMPL_H__)

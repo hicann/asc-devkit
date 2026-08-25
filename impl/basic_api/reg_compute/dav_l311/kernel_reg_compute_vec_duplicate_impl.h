@@ -34,7 +34,7 @@ __simd_callee__ inline void DuplicateImpl(RegT& dstReg, T1 scalarValue)
     using ActualT = typename RegT::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        (SupportType<ActualT, int8_t, uint8_t, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
+        (SupportType<ActualT, bool, int8_t, uint8_t, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
         "unsupported datatype on current device!");
     vbr(dstReg, (ActualT)scalarValue);
 }
@@ -45,7 +45,7 @@ __simd_callee__ inline void DuplicateImpl(RegT& dstReg, T1 scalarValue, MaskReg&
     using ActualT = typename RegT::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        (SupportType<ActualT, int8_t, uint8_t, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
+        (SupportType<ActualT, bool, int8_t, uint8_t, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
         "unsupported datatype on current device!");
 
     constexpr auto modeValue = GetMaskMergeMode<mode>();
@@ -60,7 +60,7 @@ __simd_callee__ inline void DuplicateImpl(RegT& dstReg, RegT& srcReg, MaskReg& m
     using ActualT = typename RegT::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        (SupportType<ActualT, int8_t, uint8_t, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
+        (SupportType<ActualT, bool, int8_t, uint8_t, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
         "unsupported datatype on current device!");
 
     constexpr auto posValue = std::integral_constant<::Pos, static_cast<::Pos>(pos)>();

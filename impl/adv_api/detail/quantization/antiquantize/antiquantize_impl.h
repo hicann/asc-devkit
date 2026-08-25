@@ -31,11 +31,17 @@
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
 #include "../antiquant/ascend_antiquant_3510_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#include "../antiquant/ascend_antiquant_l300_impl.h"
+#endif
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "antiquantize_3510_impl.h"
 #endif
 
 namespace AscendC {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 template <typename DstT, typename SrcT, typename ScaleT, AntiQuantizePolicy policy>
 __aicore__ inline constexpr bool IsDataTypeValid()
 {
@@ -75,7 +81,13 @@ __aicore__ inline void AntiQuantizePerTensorImpl(
         return;
     }
     static_assert(
-        SupportType<SrcT, fp8_e4m3fn_t, fp8_e5m2_t, hifloat8_t, int8_t>(),
+        SupportType<
+            SrcT, fp8_e4m3fn_t, fp8_e5m2_t, int8_t
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+            ,
+            hifloat8_t
+#endif
+            >(),
         "This AntiQuantize PER_TENSOR only support fp8_e4m3fn_t/fp8_e5m2_t/hifloat8_t/int8_t input dtype");
     static_assert(TypeUtils::IsInnerDefaultType<ScaleT, OffsetT>());
     static_assert(IsSameType<ScaleT, OffsetT>::value, "Dtype of scale should be same as offset");
@@ -98,7 +110,13 @@ __aicore__ inline void AntiQuantizePerChannelImpl(
     }
     static_assert(TypeUtils::IsLocalTensorType<ScaleT, OffsetT>());
     static_assert(
-        SupportType<SrcT, fp8_e4m3fn_t, fp8_e5m2_t, hifloat8_t, int8_t>(),
+        SupportType<
+            SrcT, fp8_e4m3fn_t, fp8_e5m2_t, int8_t
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+            ,
+            hifloat8_t
+#endif
+            >(),
         "This AntiQuantize PER_CHANNEL only support fp8_e4m3fn_t/fp8_e5m2_t/hifloat8_t/int8_t input dtype");
     static_assert(IsSameType<ScaleT, OffsetT>::value, "Dtype of scale should be same as offset");
     static_assert(
@@ -119,7 +137,13 @@ __aicore__ inline void AntiQuantizePerTokenImpl(
     }
     static_assert(TypeUtils::IsLocalTensorType<ScaleT, OffsetT>());
     static_assert(
-        SupportType<SrcT, int8_t, fp8_e4m3fn_t, fp8_e5m2_t, hifloat8_t>(),
+        SupportType<
+            SrcT, int8_t, fp8_e4m3fn_t, fp8_e5m2_t
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+            ,
+            hifloat8_t
+#endif
+            >(),
         "AntiQuantize PerToken only support int8_t/fp8_e4m3fn_t/fp8_e5m2_t/hifloat8_t input dtype");
     static_assert(IsSameType<ScaleT, OffsetT>::value, "Dtype of scale should be same as offset");
     static_assert(
@@ -144,7 +168,13 @@ __aicore__ inline void AntiQuantizePerGroupImpl(
     static_assert(TypeUtils::IsLocalTensorType<ScaleT, OffsetT>());
     static_assert(IsSameType<ScaleT, OffsetT>::value, "Dtype of scale should be same as offset");
     static_assert(
-        SupportType<SrcT, int8_t, fp8_e4m3fn_t, fp8_e5m2_t, hifloat8_t, fp4x2_e1m2_t, fp4x2_e2m1_t>(),
+        SupportType<
+            SrcT, int8_t, fp8_e4m3fn_t, fp8_e5m2_t, fp4x2_e1m2_t, fp4x2_e2m1_t
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+            ,
+            hifloat8_t
+#endif
+            >(),
         "AntiQuantize PerGroup only support "
         "int8_t/fp8_e4m3fn_t/fp8_e5m2_t/hifloat8_t/fp4x2_e1m2_t/fp4x2_e2m1_t input dtype");
 
@@ -168,21 +198,29 @@ __aicore__ inline void AntiQuantizePerGroupImpl(
     AscendAntiQuantParam antiParams = {params.m, params.n, params.m * params.n, params.groupSize};
 
     if constexpr (config.kDim == 1) {
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
         if constexpr (SupportType<SrcT, fp4x2_e1m2_t, fp4x2_e2m1_t>()) {
             AntiQuantPerGroupForColFp4<DstT, SrcT, typename ScaleT::PrimType, antiConfig>(
                 dstTensor, srcTensor, scale, antiParams);
         } else {
+#endif
             AntiQuantizePerGroupForColCommon<DstT, SrcT, typename ScaleT::PrimType, antiConfig>(
                 dstTensor, srcTensor, scale, offset, antiParams);
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
         }
+#endif
     } else {
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
         if constexpr (SupportType<SrcT, fp4x2_e1m2_t, fp4x2_e2m1_t>()) {
             AntiQuantPerGroupForRowFp4<DstT, SrcT, typename ScaleT::PrimType, antiConfig>(
                 dstTensor, srcTensor, scale, antiParams);
         } else {
+#endif
             AntiQuantizePerGroupForRowCommon<DstT, SrcT, typename ScaleT::PrimType, antiConfig>(
                 dstTensor, srcTensor, scale, offset, antiParams);
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
         }
+#endif
     }
 }
 

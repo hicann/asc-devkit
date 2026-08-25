@@ -97,6 +97,41 @@ constexpr Reg::CastTrait LayoutZMrgZRndASatNS = {
 constexpr Reg::CastTrait MrgZRndRSatNS = {
     Reg::RegLayout::UNKNOWN, Reg::SatMode::NO_SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
 
+namespace CastParam {
+constexpr Reg::CastTrait AddReluCastTrait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait SubReluCastTrait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait s162HalfTrait = {
+    Reg::RegLayout::UNKNOWN, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait s162f32CastTrait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::UNKNOWN};
+constexpr Reg::CastTrait f322s16CastTrait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait TrueHalfBlockCastTrait = {
+    Reg::RegLayout::ONE, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::UNKNOWN};
+constexpr Reg::CastTrait FalseHalfBlockCastTrait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::UNKNOWN};
+constexpr Reg::CastTrait TrueHalfBlockHalf2S8Trait = {
+    Reg::RegLayout::ONE, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait FalseHalfBlockHalf2S8Trait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait s322F32CastTrait = {
+    Reg::RegLayout::UNKNOWN, Reg::SatMode::NO_SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+constexpr Reg::CastTrait f322F16CastTrait = {
+    Reg::RegLayout::ZERO, Reg::SatMode::NO_SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+
+template <typename ORI_TYPE>
+struct CastTypeTrait {
+    using RealType = ORI_TYPE;
+};
+
+template <>
+struct CastTypeTrait<int4b_t> {
+    using RealType = int4x2_t;
+};
+} // namespace CastParam
+
 // micro adaptor
 template <typename T, typename U, RoundMode roundMode, Mode mode, SatMode satMode, PartMode partMode>
 __aicore__ inline void CastAdaptor(RegTensor<T>& dstReg, RegTensor<U>& srcReg, MaskReg& mask)
@@ -1017,54 +1052,233 @@ __aicore__ inline void CastDeqImpl(
     ASCENDC_ASSERT((false), "CastDeq is not supported");
 }
 
+namespace RegAddReluCast {
+template <typename T1, typename T2, typename RegT, typename RegU>
+__simd_callee__ inline void AddReluCast(RegT& dstReg, RegU& src0Reg, RegU& src1Reg, Reg::MaskReg& mask)
+{
+    Reg::Add(src0Reg, src0Reg, src1Reg, mask);
+    Reg::Maxs(src0Reg, src0Reg, static_cast<T2>(0), mask);
+    if constexpr (IsSameType<T2, float>::value) {
+        Reg::Cast<T1, T2, CastParam::AddReluCastTrait>(dstReg, src0Reg, mask);
+        Reg::Pack<uint16_t, uint32_t, Reg::HighLowPart::LOWEST>(
+            (Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint32_t>&)dstReg);
+    } else {
+        if constexpr (IsSameType<T2, int16_t>::value) {
+            Reg::RegTensor<half> tmpReg;
+            Reg::Cast<half, int16_t, CastParam::s162HalfTrait>(tmpReg, src0Reg, mask);
+            Reg::Cast<int8_t, half, CastParam::AddReluCastTrait>(dstReg, tmpReg, mask);
+        } else {
+            Reg::Cast<T1, T2, CastParam::AddReluCastTrait>(dstReg, src0Reg, mask);
+        }
+        Reg::Pack<uint8_t, uint16_t, Reg::HighLowPart::LOWEST>(
+            (Reg::RegTensor<uint8_t>&)dstReg, (Reg::RegTensor<uint16_t>&)dstReg);
+    }
+}
+} // namespace RegAddReluCast
+
+template <typename T1, typename T2>
+constexpr __aicore__ inline void CheckAddReluCastSupportType()
+{
+    static_assert(
+        SupportType<Tuple<T1, T2>, Tuple<half, float>, Tuple<int8_t, half>, Tuple<int8_t, int16_t>>(),
+        "Failed to check dtype in AddReluCast, current api support dtype combination is src: float, dst: half; "
+        "src: half, dst: int8_t; src: int16_t, dst: int8_t.");
+}
 // AddReluCast::Level 0 - mask count mode
-template <typename T, typename U, bool isSetMask = true>
+template <typename T1, typename T2, bool isSetMask = true>
 __aicore__ inline void AddReluCastImpl(
-    __ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint64_t mask, uint8_t repeatTime,
+    __ubuf__ T1* dst, __ubuf__ T2* src0, __ubuf__ T2* src1, const uint64_t mask, uint8_t repeatTime,
     const BinaryRepeatParams& repeatParams)
 {
-    ASCENDC_ASSERT((false), "AddReluCast is not supported");
+    CheckAddReluCastSupportType<T1, T2>();
+    constexpr auto func = RegAddReluCast::AddReluCast<T1, T2, Reg::RegTensor<T1>, Reg::RegTensor<T2>>;
+    Internal::VecBinaryImplTemplate<func, isSetMask, false>(dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
 }
 
 // AddReluCast::Level 0 - mask bit mode
-template <typename T, typename U, bool isSetMask = true>
+template <typename T1, typename T2, bool isSetMask = true>
 __aicore__ inline void AddReluCastImpl(
-    __ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint64_t mask[2], uint8_t repeatTime,
+    __ubuf__ T1* dst, __ubuf__ T2* src0, __ubuf__ T2* src1, const uint64_t mask[], uint8_t repeatTime,
     const BinaryRepeatParams& repeatParams)
 {
-    ASCENDC_ASSERT((false), "AddReluCast is not supported");
+    CheckAddReluCastSupportType<T1, T2>();
+    constexpr auto func = RegAddReluCast::AddReluCast<T1, T2, Reg::RegTensor<T1>, Reg::RegTensor<T2>>;
+    Internal::VecBinaryImplTemplate<func, isSetMask, true>(dst, src0, src1, mask, 0, repeatTime, repeatParams);
 }
 
 // AddReluCast::Level 2
-template <typename T, typename U>
-__aicore__ inline void AddReluCastImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint32_t count)
+template <typename T1, typename T2>
+__simd_vf__ inline void AddReluCastImpl(__ubuf__ T1* dst, __ubuf__ T2* src0, __ubuf__ T2* src1, const uint32_t calCount)
 {
-    ASCENDC_ASSERT((false), "AddReluCast is not supported");
+    static_assert(
+        SupportType<
+            Tuple<T1, T2>, Tuple<half, float>, Tuple<int8_t, half>, Tuple<int8_t, int16_t>, Tuple<float, int64_t>,
+            Tuple<int32_t, int64_t>>(),
+        "Failed to check dtype in AddReluCast, current api "
+        "support dtype combination is src: float, dst: half; src: half, dst: int8_t; src: int16_t, dst: int8_t; "
+        "src: int64_t, dst : int32_t / float.");
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    const T2 scalarValue = 0;
+    if constexpr (sizeof(T2) == 8) {
+        constexpr uint32_t sregLower = static_cast<uint32_t>(B64_DATA_NUM_PER_REPEAT * 2);
+        const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+        Reg::RegTensor<T1> vDstReg0;
+        Reg::RegTensor<T2, Reg::RegTraitNumTwo> vDstReg1;
+        Reg::RegTensor<T2, Reg::RegTraitNumTwo> vSrcReg0;
+        Reg::RegTensor<T2, Reg::RegTraitNumTwo> vSrcReg1;
+        Reg::MaskReg mask;
+        for (uint16_t i = 0; i < repeatTime; ++i) {
+            mask = Reg::UpdateMask<T2, Reg::RegTraitNumTwo>(sreg);
+            Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
+            Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
+            Reg::Add(vDstReg1, vSrcReg0, vSrcReg1, mask);
+            Reg::Maxs(vDstReg1, vDstReg1, scalarValue, mask);
+            Reg::Cast<T1, T2, CastParam::AddReluCastTrait>(vDstReg0, vDstReg1, mask);
+            Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+        }
+    } else {
+        constexpr uint32_t sregLower = static_cast<uint32_t>(GetVecLen() / sizeof(T2));
+        const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+        Reg::RegTensor<T1> dst0Reg;
+        Reg::RegTensor<T2> dst1Reg;
+        Reg::RegTensor<T2> src0Reg;
+        Reg::RegTensor<T2> src1Reg;
+        Reg::MaskReg preg;
+        for (uint16_t i = 0; i < repeatTime; ++i) {
+            preg = Reg::UpdateMask<T2>(sreg);
+            Reg::LoadAlign<T2>(src0Reg, src0 + i * sregLower);
+            Reg::LoadAlign<T2>(src1Reg, src1 + i * sregLower);
+            Reg::Add<T2>(dst1Reg, src0Reg, src1Reg, preg);
+            Reg::Maxs<T2>(dst1Reg, dst1Reg, scalarValue, preg);
+            if constexpr (IsSameType<T2, float>::value) {
+                Reg::Cast<T1, T2, CastParam::AddReluCastTrait>(dst0Reg, dst1Reg, preg);
+                Reg::StoreAlign<T1, Reg::StoreDist::DIST_PACK_B32>(dst + i * sregLower, dst0Reg, preg);
+            } else {
+                if constexpr (IsSameType<T2, int16_t>::value) {
+                    Reg::RegTensor<half> tmpReg;
+                    Reg::Cast<half, int16_t, CastParam::s162HalfTrait>(tmpReg, dst1Reg, preg);
+                    Reg::Cast<int8_t, half, CastParam::AddReluCastTrait>(dst0Reg, tmpReg, preg);
+                } else {
+                    Reg::Cast<T1, T2, CastParam::AddReluCastTrait>(dst0Reg, dst1Reg, preg);
+                }
+                Reg::StoreAlign<T1, Reg::StoreDist::DIST_PACK_B16>(dst + i * sregLower, dst0Reg, preg);
+            }
+        }
+    }
+}
+
+namespace RegSubReluCast {
+template <typename T1, typename T2, typename RegT, typename RegU>
+__simd_callee__ inline void SubReluCast(RegT& dstReg, RegU& src0Reg, RegU& src1Reg, Reg::MaskReg& mask)
+{
+    Reg::Sub(src0Reg, src0Reg, src1Reg, mask);
+    Reg::Maxs<T2>(src0Reg, src0Reg, static_cast<T2>(0), mask);
+    if constexpr (IsSameType<T2, float>::value) {
+        Reg::Cast<T1, T2, layoutZSatSMrgZRndR>(dstReg, src0Reg, mask);
+        Reg::Pack((Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint32_t>&)dstReg);
+    } else {
+        if constexpr (IsSameType<T2, int16_t>::value) {
+            Reg::RegTensor<half> tmpReg;
+            Reg::Cast<half, int16_t, MrgZRndRSatS>(tmpReg, src0Reg, mask);
+            Reg::Cast<int8_t, half, layoutZSatSMrgZRndR>(dstReg, tmpReg, mask);
+        } else {
+            Reg::Cast<T1, T2, layoutZSatSMrgZRndR>(dstReg, src0Reg, mask);
+        }
+        Reg::Pack((Reg::RegTensor<uint8_t>&)dstReg, (Reg::RegTensor<uint16_t>&)dstReg);
+    }
+}
+} // namespace RegSubReluCast
+
+template <typename T1, typename T2>
+constexpr __aicore__ inline void CheckSubReluCastSupportType()
+{
+    static_assert(
+        SupportType<Tuple<T1, T2>, Tuple<half, float>, Tuple<int8_t, half>, Tuple<int8_t, int16_t>>(),
+        "Failed to check dtype in SubReluCast, current api support dtype combination is src: float, dst: half; "
+        "src: half, dst: int8_t; src: int16_t, dst: int8_t.");
 }
 
 // SubReluCast::Level 0 - mask count mode
-template <typename T, typename U, bool isSetMask = true>
+template <typename T1, typename T2, bool isSetMask = true>
 __aicore__ inline void SubReluCastImpl(
-    __ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint64_t mask, uint8_t repeatTime,
+    __ubuf__ T1* dst, __ubuf__ T2* src0, __ubuf__ T2* src1, const uint64_t mask, uint8_t repeatTime,
     const BinaryRepeatParams& repeatParams)
 {
-    ASCENDC_ASSERT((false), "SubReluCast is not supported");
+    CheckSubReluCastSupportType<T1, T2>();
+    constexpr auto func = RegSubReluCast::SubReluCast<T1, T2, Reg::RegTensor<T1>, Reg::RegTensor<T2>>;
+    Internal::VecBinaryImplTemplate<func, isSetMask, false>(dst, src0, src1, nullptr, mask, repeatTime, repeatParams);
 }
 
 // SubReluCast::Level 0 - mask bit mode
-template <typename T, typename U, bool isSetMask = true>
+template <typename T1, typename T2, bool isSetMask = true>
 __aicore__ inline void SubReluCastImpl(
-    __ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint64_t mask[2], uint8_t repeatTime,
+    __ubuf__ T1* dst, __ubuf__ T2* src0, __ubuf__ T2* src1, const uint64_t mask[], uint8_t repeatTime,
     const BinaryRepeatParams& repeatParams)
 {
-    ASCENDC_ASSERT((false), "SubReluCast is not supported");
+    CheckSubReluCastSupportType<T1, T2>();
+    constexpr auto func = RegSubReluCast::SubReluCast<T1, T2, Reg::RegTensor<T1>, Reg::RegTensor<T2>>;
+    Internal::VecBinaryImplTemplate<func, isSetMask, true>(dst, src0, src1, mask, 0, repeatTime, repeatParams);
 }
 
 // SubReluCast::Level 2
-template <typename T, typename U>
-__aicore__ inline void SubReluCastImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint32_t count)
+template <typename T1, typename T2>
+__simd_vf__ inline void SubReluCastImpl(__ubuf__ T1* dst, __ubuf__ T2* src0, __ubuf__ T2* src1, const uint32_t calCount)
 {
-    ASCENDC_ASSERT((false), "SubReluCast is not supported");
+    static_assert(
+        SupportType<
+            Tuple<T1, T2>, Tuple<half, float>, Tuple<int8_t, half>, Tuple<int8_t, int16_t>, Tuple<float, int64_t>,
+            Tuple<int32_t, int64_t>>(),
+        "Failed to check dtype in SubReluCast, current api support "
+        "dtype combination is src: float, dst: half; src: half, dst: int8_t; src: int16_t, dst: int8_t; src: int64_t, "
+        "dst : int32_t / float.");
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    const T2 scalarValue = 0;
+
+    if constexpr (sizeof(T2) == 8) {
+        constexpr uint32_t sregLower = static_cast<uint32_t>(B64_DATA_NUM_PER_REPEAT * 2);
+        const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+        Reg::RegTensor<T1> vDstReg0;
+        Reg::RegTensor<T2, Reg::RegTraitNumTwo> vDstReg1;
+        Reg::RegTensor<T2, Reg::RegTraitNumTwo> vSrcReg0;
+        Reg::RegTensor<T2, Reg::RegTraitNumTwo> vSrcReg1;
+        Reg::MaskReg mask;
+        for (uint16_t i = 0; i < repeatTime; ++i) {
+            mask = Reg::UpdateMask<T2, Reg::RegTraitNumTwo>(sreg);
+            Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
+            Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
+            Reg::Sub(vDstReg1, vSrcReg0, vSrcReg1, mask);
+            Reg::Maxs(vDstReg1, vDstReg1, scalarValue, mask);
+            Reg::Cast<T1, T2, CastParam::SubReluCastTrait>(vDstReg0, vDstReg1, mask);
+            Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+        }
+    } else {
+        const uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T2));
+        const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, repeatStride));
+        Reg::RegTensor<T2> src0Reg;
+        Reg::RegTensor<T2> src1Reg;
+        Reg::RegTensor<T1> dstReg;
+        Reg::MaskReg mask;
+        for (uint16_t i = 0; i < repeatTime; ++i) {
+            mask = Reg::UpdateMask<T2>(sreg);
+            Reg::LoadAlign(src0Reg, src0 + i * repeatStride);
+            Reg::LoadAlign(src1Reg, src1 + i * repeatStride);
+            Reg::Sub(src0Reg, src0Reg, src1Reg, mask);
+            Reg::Maxs<T2>(src0Reg, src0Reg, scalarValue, mask);
+            if constexpr (IsSameType<T2, float>::value) {
+                Reg::Cast<T1, T2, layoutZSatSMrgZRndR>(dstReg, src0Reg, mask);
+                Reg::StoreAlign<T1, Reg::StoreDist::DIST_PACK_B32>(dst + i * repeatStride, dstReg, mask);
+            } else {
+                if constexpr (IsSameType<T2, int16_t>::value) {
+                    Reg::RegTensor<half> tmpReg;
+                    Reg::Cast<half, int16_t, MrgZRndRSatS>(tmpReg, src0Reg, mask);
+                    Reg::Cast<int8_t, half, layoutZSatSMrgZRndR>(dstReg, tmpReg, mask);
+                } else {
+                    Reg::Cast<T1, T2, layoutZSatSMrgZRndR>(dstReg, src0Reg, mask);
+                }
+                Reg::StoreAlign<T1, Reg::StoreDist::DIST_PACK_B16>(dst + i * repeatStride, dstReg, mask);
+            }
+        }
+    }
 }
 
 //  castDequanValue bit arrange

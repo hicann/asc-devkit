@@ -158,6 +158,195 @@ BINARY_OP_CONTINUOUS_IMPL(OrImpl, Or, int16_t)
 BINARY_OP_CONTINUOUS_IMPL(OrImpl, Or, uint16_t)
 BINARY_OP_CONTINUOUS_IMPL(OrImpl, Or, int32_t)
 BINARY_OP_CONTINUOUS_IMPL(OrImpl, Or, uint32_t)
+
+/* **************************************************************************************************
+ * Prelu                                             *
+ * ************************************************************************************************* */
+// Prelu::Level 2
+template <typename T>
+__simd_vf__ inline void PreluImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint32_t calCount)
+{
+    static_assert(
+        SupportType<T, half, float>(), "Failed to check dtype in Prelu, current api support "
+                                       "dtype is half, float.");
+    constexpr uint32_t sregLower = static_cast<uint32_t>(GetVecLen() / sizeof(T));
+    const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::RegTensor<T> vDstReg0;
+    Reg::RegTensor<T> vSrcReg0;
+    Reg::RegTensor<T> vSrcReg1;
+    Reg::MaskReg mask;
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T>(sreg);
+        Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
+        Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
+        Reg::Prelu(vDstReg0, vSrcReg0, vSrcReg1, mask);
+        Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+    }
+}
+
+/* **************************************************************************************************
+ * FusedAbsSub                                            *
+ * ************************************************************************************************* */
+// FusedAbsSub::Level 2
+template <typename T>
+__simd_vf__ inline void FusedAbsSubImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const uint32_t calCount)
+{
+    static_assert(
+        SupportType<T, half, float>(), "Failed to check dtype in FusedAbsSub, current api support "
+                                       "dtype is src and dst both: half, float.");
+    constexpr uint32_t sregLower = static_cast<uint32_t>(GetVecLen() / sizeof(T));
+    const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::RegTensor<T> vDstReg0;
+    Reg::RegTensor<T> vSrcReg0;
+    Reg::RegTensor<T> vSrcReg1;
+    Reg::MaskReg mask;
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T>(sreg);
+        Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
+        Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
+        Reg::FusedAbsSub(vDstReg0, vSrcReg0, vSrcReg1, mask);
+        Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+    }
+}
+
+/* **************************************************************************************************
+ * FusedExpSub                                        *
+ * ************************************************************************************************* */
+// FusedExpSub::Level 2
+template <typename T, typename U>
+__simd_vf__ inline void FusedExpSubImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf__ U* src1, const uint32_t calCount)
+{
+    static_assert(
+        SupportType<Tuple<T, U>, Tuple<float, half>, Tuple<float, float>>(),
+        "Failed to check dtype in "
+        "FusedExpSub, current api support dtype combination is src : half / float, dst: float.");
+    constexpr uint32_t sregLower = static_cast<uint32_t>(GetVecLen() / sizeof(float));
+    const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::RegTensor<T> vDstReg0;
+    Reg::RegTensor<U> vSrcReg0;
+    Reg::RegTensor<U> vSrcReg1;
+    Reg::MaskReg mask;
+    if constexpr (IsSameType<U, half>::value) {
+        for (uint16_t i = 0; i < repeatTime; ++i) {
+            mask = Reg::UpdateMask<T>(sreg);
+            Reg::LoadAlign<U, Reg::LoadDist::DIST_UNPACK_B16>(vSrcReg0, src0 + i * sregLower);
+            Reg::LoadAlign<U, Reg::LoadDist::DIST_UNPACK_B16>(vSrcReg1, src1 + i * sregLower);
+            Reg::SubImpl<U>(vSrcReg0, vSrcReg0, vSrcReg1, mask);
+            Reg::CastImpl<T, U, Reg::RegLayout::ZERO, Reg::MaskMergeMode::ZEROING>(vDstReg0, vSrcReg0, mask);
+            Reg::ExpImpl<T>(vDstReg0, vDstReg0, mask);
+            Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+        }
+    } else if constexpr (IsSameType<U, float>::value) {
+        for (uint16_t i = 0; i < repeatTime; ++i) {
+            mask = Reg::UpdateMask<T>(sreg);
+            Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
+            Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
+            Reg::FusedExpSub(vDstReg0, vSrcReg0, vSrcReg1, mask);
+            Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+        }
+    }
+}
+
+template <typename T, typename RegType, auto func>
+__simd_vf__ inline void BinaryContinuousImplTemplate(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t calCount)
+{
+    RegType src0Reg;
+    RegType src1Reg;
+    RegType dstReg;
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::MaskReg mask;
+    constexpr uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T) * RegType::trait.REG_NUM);
+    uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, repeatStride));
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T, RegType::trait>(sreg);
+        Reg::LoadAlign(src0Reg, src0 + i * repeatStride);
+        Reg::LoadAlign(src1Reg, src1 + i * repeatStride);
+        func(dstReg, src0Reg, src1Reg, mask);
+        Reg::StoreAlign(dst + i * repeatStride, dstReg, mask);
+    }
+}
+
+template <typename T, typename U, typename RegTypeT, typename RegTypeU, auto func>
+__simd_vf__ inline void BinaryContinuousImplTemplate(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ U* src1, const int32_t calCount)
+{
+    RegTypeT src0Reg;
+    RegTypeU src1Reg;
+    RegTypeT dstReg;
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::MaskReg mask;
+    constexpr uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T) * RegTypeT::trait.REG_NUM);
+    uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, repeatStride));
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T, RegTypeT::trait>(sreg);
+        Reg::LoadAlign(src0Reg, src0 + i * repeatStride);
+        Reg::LoadAlign(src1Reg, src1 + i * repeatStride);
+        func(dstReg, src0Reg, src1Reg, mask);
+        Reg::StoreAlign(dst + i * repeatStride, dstReg, mask);
+    }
+}
+
+/* **************************************************************************************************
+ * ShiftLeft                                             *
+ * ************************************************************************************************* */
+// ShiftLeft::Level 2
+template <typename T, typename U>
+__aicore__ inline void ShiftLeftImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ U* src1, const int32_t& calCount)
+{
+    static_assert(
+        SupportType<
+            Tuple<T, U>, Tuple<int32_t, int32_t>, Tuple<uint32_t, int32_t>, Tuple<int16_t, int16_t>,
+            Tuple<uint16_t, int16_t>, Tuple<int8_t, int8_t>, Tuple<uint8_t, int8_t>>(),
+        "Failed to check dtype in ShiftLeft, current api support dtype combination is  "
+        "src0: int32_t, src1: int32_t; src0: uint32_t, src1: int32_t; src0: int16_t, "
+        "src1: int16_t; src0: uint16_t, src1: int16_t; "
+        "src0: int8_t, src1: int8_t; src0: uint8_t, src1: int8_t.");
+    if constexpr (SupportBytes<T, 8>()) {
+        BinaryContinuousImplTemplate<
+            T, U, Reg::RegTensor<T, Reg::RegTraitNumTwo>, Reg::RegTensor<U, Reg::RegTraitNumTwo>,
+            Reg::ShiftLeft<
+                T, U, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>,
+                Reg::RegTensor<U, Reg::RegTraitNumTwo>>>(dst, src0, src1, calCount);
+    } else {
+        BinaryContinuousImplTemplate<
+            T, U, Reg::RegTensor<T>, Reg::RegTensor<U>,
+            Reg::ShiftLeft<T, U, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>, Reg::RegTensor<U>>>(
+            dst, src0, src1, calCount);
+    }
+}
+
+/* **************************************************************************************************
+ * ShiftRight                                             *
+ * ************************************************************************************************* */
+// ShiftRight::Level 2
+template <typename T, typename U>
+__aicore__ inline void ShiftRightImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ U* src1, const int32_t& calCount)
+{
+    static_assert(
+        SupportType<
+            Tuple<T, U>, Tuple<int32_t, int32_t>, Tuple<uint32_t, int32_t>, Tuple<int16_t, int16_t>,
+            Tuple<uint16_t, int16_t>, Tuple<int8_t, int8_t>, Tuple<uint8_t, int8_t>>(),
+        "Failed to check dtype in ShiftRight, current api support dtype combination is  "
+        "src0: int32_t, src1: int32_t; src0: uint32_t, src1: int32_t; src0: int16_t, "
+        "src1: int16_t; src0: uint16_t, src1: int16_t; "
+        "src0: int8_t, src1: int8_t; src0: uint8_t, src1: int8_t.");
+    if constexpr (SupportBytes<T, 8>()) {
+        BinaryContinuousImplTemplate<
+            T, U, Reg::RegTensor<T, Reg::RegTraitNumTwo>, Reg::RegTensor<U, Reg::RegTraitNumTwo>,
+            Reg::ShiftRight<
+                T, U, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>,
+                Reg::RegTensor<U, Reg::RegTraitNumTwo>>>(dst, src0, src1, calCount);
+    } else {
+        BinaryContinuousImplTemplate<
+            T, U, Reg::RegTensor<T>, Reg::RegTensor<U>,
+            Reg::ShiftRight<T, U, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>, Reg::RegTensor<U>>>(
+            dst, src0, src1, calCount);
+    }
+}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_BINARY_CONTINUOUS_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_BINARY_CONTINUOUS_IMPL_H__)

@@ -21,7 +21,8 @@
 #endif
 #ifndef LIB_MATH_RINT_IMPL_H
 #define LIB_MATH_RINT_IMPL_H
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
 #include "../../../../../include/adv_api/math/rint_utils.h"

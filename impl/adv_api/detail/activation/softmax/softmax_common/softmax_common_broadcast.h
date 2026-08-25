@@ -28,8 +28,7 @@
 namespace AscendC {
 
 template <typename T>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AlignedBrcbImpl(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const uint32_t brcbCount)
 {
@@ -46,8 +45,7 @@ __aicore__ inline void AlignedBrcbImpl(
     }
 }
 
-__ASC_USE_RESERVED_UBUF__(3510,
-    "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void ContinuousColumnBrcbImpl(
     const LocalTensor<float>& dstLocal, const LocalTensor<float>& srcLocal, const uint32_t& repeat,
     const uint32_t& brcbCount)
@@ -82,8 +80,7 @@ __aicore__ inline void ContinuousColumnBrcbImpl(
     }
 }
 
-__ASC_USE_RESERVED_UBUF__(3510,
-    "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AlignedColumnBrcbImpl(
     const LocalTensor<float>& dstLocal, const LocalTensor<float>& srcLocal, const uint32_t& repeat,
     const uint32_t& brcbCount)
@@ -118,15 +115,14 @@ __aicore__ inline void AlignedColumnBrcbImpl(
     }
 }
 
-__ASC_USE_RESERVED_UBUF__(3510,
-    "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void BroadCastNZImpl(
     const LocalTensor<float>& dst, const LocalTensor<float>& src, const uint32_t srcM)
 {
     uint8_t repeat = srcM / DEFAULT_REPEAT_STRIDE;
     for (uint8_t i = 0; i < repeat; i++) {
         Muls<float, false>(
-            dst[i * B16_BYTE_SIZE * FLOAT_REPEAT_SIZE], src[i * B16_BYTE_SIZE * FLOAT_REPEAT_SIZE], 1.0,
+            dst[i * B16_BYTE_SIZE * FLOAT_REPEAT_SIZE], src[i * B16_BYTE_SIZE * FLOAT_REPEAT_SIZE], 1.0f,
             MASK_PLACEHOLDER, B16_BYTE_SIZE, {1, 0, DEFAULT_REPEAT_STRIDE, 0});
     }
     PipeBarrier<PIPE_V>();
@@ -147,8 +143,7 @@ __aicore__ inline void BroadCastNZImpl(
 }
 
 template <typename T>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "SoftMax is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void BroadCastLastCompute(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const BroadCastLastND& brcParam,
     const uint32_t scalarStackDepth, const uint32_t index)
@@ -177,7 +172,7 @@ __aicore__ inline void BroadCastLastCompute(
     }
 }
 
-};     // namespace AscendC
+}; // namespace AscendC
 #endif // IMPL_ACTIVATION_SOFTMAX_SOFTMAX_COMMON_BROADCAST_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_SOFTMAX_COMMON_BROADCAST_H__)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__

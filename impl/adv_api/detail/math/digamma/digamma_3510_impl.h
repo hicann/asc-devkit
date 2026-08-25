@@ -90,7 +90,11 @@ __simd_callee__ inline void DigammaPositive(
     Reg::Muls(tmpReg2, tmpReg1, 0.5f, fullMask);
     Reg::Sub(dstReg, dstReg, tmpReg2, fullMask);
     Reg::Mul(tmpReg1, tmpReg1, tmpReg1, fullMask);
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+    Reg::Duplicate(tmpReg2, 8.33333333333333333333e-2f, fullMask);
+#else
     Reg::Duplicate(tmpReg2, 8.33333333333333333333e-2, fullMask);
+#endif
     Reg::Duplicate(tmpScalarReg, posCalcConst[0U], fullMask);
     Reg::Mul(tmpReg2, tmpReg1, tmpReg2, fullMask);
     Reg::Sub(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
