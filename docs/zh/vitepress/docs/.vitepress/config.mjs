@@ -18,6 +18,7 @@ import {
   installRepositoryLinkRewrite,
   rewriteRepositoryLinks,
 } from '../../scripts/rewrite-repository-links.mjs'
+import { renderCannFilterTags } from '../../scripts/filter-tags.mjs'
 import {
   extractUnsupportedProducts,
   normalizeApiRoute,
@@ -457,48 +458,18 @@ function replaceNpuCommentTags(html) {
     if (closeId) {
       if (stack.length > 0 && stack[stack.length - 1].id === closeId) {
         stack.pop()
-        parts.push('</div>')
+        parts.push('</cann-filter>')
       }
     } else if (npuType && openId) {
       stack.push({ id: openId })
-      parts.push(`<div data-filter="${npuType}">`)
+      parts.push(`<cann-filter npu-type="${npuType}">`)
     }
   }
   parts.push(html.slice(lastIdx))
   while (stack.length > 0) {
     stack.pop()
-    parts.push('</div>')
+    parts.push('</cann-filter>')
   }
-  return parts.join('')
-}
-
-function replaceCannFilterTags(src, replacer) {
-  const tagRegex = /<(\/?)(cann-filter)((?:\s[^>]*)?)>/gi
-  const stack = []
-  const parts = []
-  let lastIdx = 0
-  let match
-  while ((match = tagRegex.exec(src)) !== null) {
-    const pos = match.index
-    const isClose = match[1] === '/'
-    const attrs = match[3]
-    parts.push(src.slice(lastIdx, pos))
-    lastIdx = pos + match[0].length
-    if (isClose) {
-      if (stack.length > 0) {
-        const opener = stack.pop()
-        parts.push(replacer.end(opener.type, opener.contentStart, lastIdx))
-      }
-    } else {
-      const attrMatch = attrs.match(/npu[_-]type\s*=\s*"([^"]+)"/i)
-      if (attrMatch) {
-        stack.push({ type: attrMatch[1], contentStart: lastIdx })
-        parts.push(replacer.start(attrMatch[1]))
-      }
-    }
-  }
-  const end = src.slice(lastIdx)
-  parts.push(end)
   return parts.join('')
 }
 
@@ -699,21 +670,18 @@ function balanceDivTags(html) {
 }
 
           html = replaceNpuCommentTags(html)
-          html = replaceCannFilterTags(html, {
-            start(type) { return `<div data-filter="${type}">` },
-            end() { return '</div>' },
-          })
+          html = renderCannFilterTags(html)
           html = html.replace(
             /<tr\b[^>]*>((?:(?!<\/tr>)[\s\S])*?)<\/tr>/gi,
             (rowMatch) => {
-              const divOpen = rowMatch.match(/<td\b[^>]*>\s*<div\s+data-filter\s*=\s*"([^"]+)">/i)
-              if (!divOpen) return rowMatch
-              const divClose = rowMatch.match(/<\/div>\s*<\/td>/)
-              if (!divClose) return rowMatch
-              const filterVal = divOpen[1]
+              const filterOpen = rowMatch.match(/<td\b[^>]*>\s*<(?:div|span)\s+data-filter\s*=\s*"([^"]+)">/i)
+              if (!filterOpen) return rowMatch
+              const filterClose = rowMatch.match(/<\/(?:div|span)>\s*<\/td>/)
+              if (!filterClose) return rowMatch
+              const filterVal = filterOpen[1]
               let newRow = rowMatch
-                .replace(/<div\s+data-filter\s*=\s*"[^"]*">\s*/ig, '')
-                .replace(/\s*<\/div>/ig, '')
+                .replace(/<(?:div|span)\s+data-filter\s*=\s*"[^"]*">\s*/ig, '')
+                .replace(/\s*<\/(?:div|span)>/ig, '')
               newRow = newRow.replace(
                 /<tr\b([^>]*)>/i,
                 (m, attrs) => {

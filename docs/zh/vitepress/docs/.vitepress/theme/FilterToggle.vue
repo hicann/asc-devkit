@@ -75,13 +75,13 @@ function applyFilter() {
   const content = document.querySelector('.vp-doc')
   if (!content) return
 
-  const allFilterDivs = content.querySelectorAll('[data-filter]')
+  const allFilterElements = content.querySelectorAll('[data-filter]')
   content.querySelectorAll('tr').forEach(tr => { tr.style.display = '' })
 
   if (selectedFilter.value === 'all') {
-    allFilterDivs.forEach(el => { el.style.display = '' })
+    allFilterElements.forEach(el => { el.style.display = '' })
   } else {
-    allFilterDivs.forEach(el => {
+    allFilterElements.forEach(el => {
       if (el.tagName === 'TR') return
       const filterValue = el.getAttribute('data-filter')
       const match = filterValue.split(',').map(s => s.trim()).includes(selectedFilter.value)
