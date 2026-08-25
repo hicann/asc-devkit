@@ -36,6 +36,8 @@ exclude_link_local = true
 exclude_private = true
 
 exclude = [
+    "^https://code\\.visualstudio\\.com/",
+    "^https://docs\\.docker\\.com/engine/install/",
     "^https://gitee\\.com/ascend/samples/tree/master/operator/ascendc$",
     "^https://gitee\\.com/ascend/samples/tree/master/operator/ascendc/0_introduction/3_add_kernellaunch/AddKernelInvocationNeo$",
     "^https://gitee\\.com/ascend/ascendc-api-adv/tree/master/examples$",

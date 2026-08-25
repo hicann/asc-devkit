@@ -256,7 +256,7 @@ git clone https://gitcode.com/cann/asc-devkit.git
     执行以下命令安装：
 
     ```bash
-    pip3 install pytest
+    pip3 install "pytest>=8.0.0"
     ```
 
 - coverage >= 4.5.4
@@ -264,7 +264,7 @@ git clone https://gitcode.com/cann/asc-devkit.git
     执行以下命令安装：
 
     ```bash
-    pip3 install coverage
+    pip3 install "coverage>=4.5.4"
     ```
 
 - lcov >= 1.16 (仅在执行覆盖率统计场景需要)

@@ -254,7 +254,7 @@ The following are basic dependencies for source code compilation and examples op
     Execute the following command to install:
 
     ```bash
-    pip3 install pytest
+    pip3 install "pytest>=8.0.0"
     ```
 
 - coverage >= 4.5.4
@@ -262,7 +262,7 @@ The following are basic dependencies for source code compilation and examples op
     Execute the following command to install:
 
     ```bash
-    pip3 install coverage
+    pip3 install "coverage>=4.5.4"
     ```
 
 - lcov >= 1.16 (Only required for coverage statistics scenario)
