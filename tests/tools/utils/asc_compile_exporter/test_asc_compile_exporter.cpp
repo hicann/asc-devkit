@@ -215,7 +215,7 @@ protected:
             "{\"resource_id\":\"" + name + "\",\"soc_version\":\"test\",\"resource_path\":\"" + resourcePath +
                 "\",\"kernels\":[{\"kernel_name\":\"" + name +
                 "\",\"objects\":[{\"object_name\":\"kernel.o\",\"object_type\":\"basic\",\"commands\":[{\"type\":"
-                "\"compile\",\"stage\":0,\"cmd\":[\"${output}/kernel.o\"]}],\"outputs\":[\"${output}/kernel.o\"]}]}]}");
+                "\"compile\",\"cmd\":[\"${output}/kernel.o\"]}],\"outputs\":[\"${output}/kernel.o\"]}]}]}");
     }
 
     static void ExpectCompileFailure(const BuildCollectedBundleRequest& request)

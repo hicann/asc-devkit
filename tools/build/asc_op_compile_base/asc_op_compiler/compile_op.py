@@ -55,7 +55,11 @@ from .ascendc_constants import (
 )
 from .ascendc_common_utility import (
     CommonUtility,
+    CompileCommandMode,
+    CompileCommandSession,
     CompileInfo,
+    KernelCompileCommand,
+    SkBindCommand,
     process_ascendc_api_version,
     gen_func_align_attribute,
     convert_customized_config_to_inferchannel,
@@ -69,6 +73,9 @@ from .ascendc_compile_dfx import (
 )
 from .ascendc_compile_v220 import (
     gen_compile_cmd_v220,
+    get_compile_core_types,
+    get_compile_target_name,
+    get_compile_target_options,
     get_v220_kernel_type_mix_flag,
     call_bisheng_v220,
     get_ktype_section_variable,
@@ -122,6 +129,9 @@ from .super_kernel_sub_op_compile import (
     split_sub_kernel_objs,
     gen_sub_super_kernel_compile_options,
     add_sub_super_kernel_info,
+)
+from .static_compile_resource_generator import (
+    KernelSpecCompilation,
 )
 from .super_kernel_constants import SuperKernelStreamFusionMode
 from .super_kernel_option_parse import parse_super_kernel_options
@@ -415,6 +425,7 @@ the superkernel cannot be integrated with the operator.",
     # get max tiling size when use tiling old
     else:
         max_tiling_size = tiling_info.tiling_data_size
+    compile_info.max_tiling_size = int(max_tiling_size)
 
     # updata op_param size by flag of oom
     if "oom" in get_current_build_config("tir.op_debug_config"):
@@ -1192,6 +1203,12 @@ def _get_tiling_struct_size(compile_info):
             tiling_struct_size_map[tiling_struct] = dec_data
             max_tiling_size = max(max_tiling_size, dec_data)
 
+    # Preserve exact per-key sizes for Manifest constants before removing sections.
+    compile_info.compiled_tiling_key_data_size_map = {
+        str(tiling_key): int(tiling_struct_size_map[tiling_struct])
+        for tiling_key, tiling_struct in compile_info.tiling_key_struct_map.items()
+        if tiling_struct in tiling_struct_size_map
+    }
     # The sk sub operator failed to rm tiling section because llvm-objcopy could not correctly process the ar obj.
     if (
         global_var_storage.get_variable("ascendc_enable_super_kernel") is True
@@ -1270,6 +1287,12 @@ def _get_tiling_struct_without_register_size(compile_info: CompileInfo):
             )
             max_tiling_size = max(max_tiling_size, dec_data)
     compile_info.max_tiling_size = max_tiling_size
+    # REGISTER_NONE_TILING sections encode both the struct name and byte size.
+    compile_info.compiled_tiling_key_data_size_map = {
+        str(tiling_key): int(value[1])
+        for tiling_key, value in tiling_key_struct_size_map.items()
+        if isinstance(value, tuple) and len(value) == 2 and value[1] > 0
+    }
     return tiling_key_struct_size_map
 
 
@@ -1512,6 +1535,10 @@ def compile_kernel_and_meta(
     else:
         _compile_ascendc_cce(compile_info, compile_option_tuple, tiling_info)
 
+    # Record-only replay stops before inspecting or generating physical objects.
+    if not compile_info.compile_command_session.should_execute:
+        return
+
     # get tiling struct and size in .asendc.tiling section and generate meta_info.o when using REGISTER_NONE_TILING
     if global_var_storage.get_variable("ascendc_tiling_no_register"):
         tiling_key_struct_size_map = _get_tiling_struct_without_register_size(
@@ -1630,17 +1657,9 @@ def _get_dcci_disable_cap_bitmap(
     return 0
 
 
-def compile_sk_bind(
-    compile_info: CompileInfo,
-    compile_info_origin: CompileInfo,
-    compile_option_tuple,
-    kernel_meta_dir,
-):
-    sk_bind_src_file = os.path.join(kernel_meta_dir, "sk_bind.cpp")
-    sk_bind_dst_file = os.path.join(kernel_meta_dir, "sk_bind.o")
-    source = '#include "kernel_operator.h"\n'
+def _get_sk_cap_bitmap(compile_info: CompileInfo, basic_kernel_symbols: list) -> int:
+    """Encode early-start and DCCI capabilities for SK_BIND generation."""
 
-    # bitmap definition: bit0:wait_flag(1), bit1:set_flag(2), bit2:dcci_disable(4), default:0
     cap_bitmap = 0
     if (
         global_var_storage.get_variable(
@@ -1654,7 +1673,21 @@ def compile_sk_bind(
         is True
     ):
         cap_bitmap |= 2
-    cap_bitmap |= _get_dcci_disable_cap_bitmap(
+    return cap_bitmap | _get_dcci_disable_cap_bitmap(compile_info, basic_kernel_symbols)
+
+
+def compile_sk_bind(
+    compile_info: CompileInfo,
+    compile_info_origin: CompileInfo,
+    compile_option_tuple,
+    kernel_meta_dir,
+):
+    sk_bind_src_file = os.path.join(kernel_meta_dir, "sk_bind.cpp")
+    sk_bind_dst_file = os.path.join(kernel_meta_dir, "sk_bind.o")
+    source = '#include "kernel_operator.h"\n'
+
+    # bitmap definition: bit0:wait_flag(1), bit1:set_flag(2), bit2:dcci_disable(4)
+    cap_bitmap = _get_sk_cap_bitmap(
         compile_info, compile_info_origin.global_kernel_symbols
     )
 
@@ -1721,10 +1754,73 @@ def compile_sk_bind(
         sk_bind_dst_file,
     ]
 
-    CommonUtility.run_cmd_inner(
-        compile_cmd, CompileStage.COMPILE, compile_info.compile_log_path
+    compile_info.compile_command_session.submit_sk_bind(
+        SkBindCommand(
+            source_path=sk_bind_src_file,
+            argv=tuple(compile_cmd),
+            output_path=sk_bind_dst_file,
+        )
     )
+    if compile_info.compile_command_session.should_execute:
+        CommonUtility.run_cmd_inner(
+            compile_cmd, CompileStage.COMPILE, compile_info.compile_log_path
+        )
     return sk_bind_dst_file
+
+
+def _record_kernel_spec_sk_commands(
+    kernel_spec, op_info, infered_info, tiling_info, distinct_tag
+):
+    if not kernel_spec.begin_sk_recording():
+        return
+    kernel_meta_dir = os.path.dirname(kernel_spec.compile_info.dst_file)
+    # Replay the original SK workflow with a record-only command session.
+    compile_info = kernel_spec.sk_compile_info
+    basic_compile_info = kernel_spec.basic_compile_info
+    compile_options = kernel_spec.sk_compile_option_tuple
+    DFXSectionGenerator().dfx_info_reset(op_info)
+    DFXSectionGenerator().update_is_support(op_info)
+    compile_info.raw_tiling_key_kernel_type = copy.deepcopy(
+        compile_info.tiling_key_kernel_type
+    )
+    handle_sk_codegen_options(compile_info, infered_info)
+    workspace_idx = gen_op_stub_kernel_func(
+        compile_info,
+        op_info,
+        compile_options,
+        tiling_info,
+        distinct_tag,
+        kernel_meta_dir,
+    )
+    handle_compile_options(
+        compile_info,
+        compile_options,
+        tiling_info,
+        workspace_idx,
+    )
+    compile_kernel_and_meta(
+        compile_info,
+        op_info,
+        compile_options,
+        tiling_info,
+    )
+    # Use the recorded symbols to build the SK_BIND command and capability bitmap.
+    compile_info.global_kernel_symbols = [
+        command.compiled_symbol
+        for command in compile_info.compile_command_session.records
+    ]
+    compile_sk_bind(
+        compile_info,
+        basic_compile_info,
+        compile_options,
+        kernel_meta_dir,
+    )
+    kernel_spec.finish_sk_recording(
+        _get_sk_cap_bitmap(
+            compile_info,
+            basic_compile_info.global_kernel_symbols,
+        )
+    )
 
 
 def compile_op_common_part(
@@ -1858,134 +1954,163 @@ def compile_op_common_part(
     compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
     compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
     compile_info.dump_info = {"dump_type": "", "dump_size": 1024}
-
-    # generate tiling struct size, dfx section
-    if global_var_storage.get_variable("ascendc_tiling_no_register"):
-        file_name_tag = distinct_tag + "_meta_info.cpp"
-        compile_info.tiling_and_dfx_utils_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
-        file_name_tag = distinct_tag + "_meta_info.o"
-        compile_info.tiling_and_dfx_utils_bin_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
     compile_info.template_tiling_info = infered_info_from_ifile.template_tiling_info
     compile_info.tiling_key_struct_map = infered_info_from_ifile.tiling_key_struct_map
     compile_info.register_tiling_struct = infered_info_from_ifile.register_tiling_struct
     compile_info.tpl_tiling_struct = infered_info_from_ifile.tpl_tiling_struct
 
-    compile_info_origin = CompileInfo()
-    compile_option_tuple_origin = None
-    if (
-        get_context().get_addition("super_kernel_sub_combine") is True
-        and global_var_storage.get_variable("ascendc_enable_super_kernel") is True
-    ):
-        global_var_storage.set_variable("ascendc_sk_double_compile", True)
-        compile_info_origin = copy.deepcopy(compile_info)
-        compile_option_tuple_origin = copy.deepcopy(compile_option_tuple)
-
-    # dump ktype handle
-    compile_info.raw_tiling_key_kernel_type = copy.deepcopy(
-        compile_info.tiling_key_kernel_type
+    kernel_spec = KernelSpecCompilation.create(
+        compile_info, compile_option_tuple, tiling_info
     )
 
-    # get super kernel option to compile info when enable super kernel
-    handle_sk_codegen_options(compile_info, infered_info_from_ifile)
-
-    # stub kernel func generation
-    workspace_idx = gen_op_stub_kernel_func(
-        compile_info,
-        op_info,
-        compile_option_tuple,
-        tiling_info,
-        distinct_tag,
-        kernel_meta_dir,
-    )
-    # handle compile options
-    handle_compile_options(
-        compile_info, compile_option_tuple, tiling_info, workspace_idx
-    )
-
-    # compile cce file and set meta info in .o
-    compile_kernel_and_meta(compile_info, op_info, compile_option_tuple, tiling_info)
-
-    # link kernel obj
-    link_kernel_obj(compile_info, op_info, tiling_info)
-
-    # aclnn sk combine compile workflow
-    if (
-        get_context().get_addition("super_kernel_sub_combine") is True
-        and global_var_storage.get_variable("ascendc_enable_super_kernel") is True
-    ):
-        # reset sk opt
-        global_var_storage.set_variable("ascendc_enable_super_kernel", False)
-        global_var_storage.set_variable("ascendc_sk_sub_combine_norm_workflow", True)
-        DFXSectionGenerator().dfx_info_reset(op_info)
-        DFXSectionGenerator().update_is_support(op_info)
-        compile_info_origin.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_norm.o"
+    with kernel_spec:
+        # generate tiling struct size, dfx section
+        if global_var_storage.get_variable("ascendc_tiling_no_register"):
+            file_name_tag = distinct_tag + "_meta_info.cpp"
+            compile_info.tiling_and_dfx_utils_file = os.path.join(
+                kernel_meta_dir, op_info.kernel_name + file_name_tag
+            )
+            file_name_tag = distinct_tag + "_meta_info.o"
+            compile_info.tiling_and_dfx_utils_bin_path = os.path.join(
+                kernel_meta_dir, op_info.kernel_name + file_name_tag
+            )
+        compile_info_origin = CompileInfo()
+        compile_option_tuple_origin = None
+        if (
+            get_context().get_addition("super_kernel_sub_combine") is True
+            and global_var_storage.get_variable("ascendc_enable_super_kernel") is True
+        ):
+            global_var_storage.set_variable("ascendc_sk_double_compile", True)
+            compile_info_origin = copy.deepcopy(compile_info)
+            compile_option_tuple_origin = copy.deepcopy(compile_option_tuple)
+        kernel_spec.select_basic_compile(
+            compile_info_origin, compile_option_tuple_origin
         )
 
         # dump ktype handle
         compile_info.raw_tiling_key_kernel_type = copy.deepcopy(
-            compile_info_origin.tiling_key_kernel_type
+            compile_info.tiling_key_kernel_type
         )
-        handle_sk_codegen_options(compile_info_origin, infered_info_from_ifile)
+
+        # get super kernel option to compile info when enable super kernel
+        handle_sk_codegen_options(compile_info, infered_info_from_ifile)
+
+        # stub kernel func generation
         workspace_idx = gen_op_stub_kernel_func(
-            compile_info_origin,
+            compile_info,
             op_info,
-            compile_option_tuple_origin,
+            compile_option_tuple,
             tiling_info,
             distinct_tag,
             kernel_meta_dir,
         )
+        # handle compile options
         handle_compile_options(
-            compile_info_origin, compile_option_tuple_origin, tiling_info, workspace_idx
+            compile_info, compile_option_tuple, tiling_info, workspace_idx
         )
+
+        # compile cce file and set meta info in .o
         compile_kernel_and_meta(
-            compile_info_origin, op_info, compile_option_tuple_origin, tiling_info
+            compile_info, op_info, compile_option_tuple, tiling_info
         )
 
-        # compile_sk_bind
-        sk_bind_dst_file = compile_sk_bind(
-            compile_info, compile_info_origin, compile_option_tuple, kernel_meta_dir
+        # link kernel obj
+        link_kernel_obj(compile_info, op_info, tiling_info)
+
+        # aclnn sk combine compile workflow
+        if (
+            get_context().get_addition("super_kernel_sub_combine") is True
+            and global_var_storage.get_variable("ascendc_enable_super_kernel") is True
+        ):
+            # reset sk opt
+            global_var_storage.set_variable("ascendc_enable_super_kernel", False)
+            global_var_storage.set_variable(
+                "ascendc_sk_sub_combine_norm_workflow", True
+            )
+            DFXSectionGenerator().dfx_info_reset(op_info)
+            DFXSectionGenerator().update_is_support(op_info)
+            compile_info_origin.dst_file = os.path.join(
+                kernel_meta_dir, op_info.kernel_name + "_norm.o"
+            )
+
+            # dump ktype handle
+            compile_info.raw_tiling_key_kernel_type = copy.deepcopy(
+                compile_info_origin.tiling_key_kernel_type
+            )
+            handle_sk_codegen_options(compile_info_origin, infered_info_from_ifile)
+            workspace_idx = gen_op_stub_kernel_func(
+                compile_info_origin,
+                op_info,
+                compile_option_tuple_origin,
+                tiling_info,
+                distinct_tag,
+                kernel_meta_dir,
+            )
+            handle_compile_options(
+                compile_info_origin,
+                compile_option_tuple_origin,
+                tiling_info,
+                workspace_idx,
+            )
+            compile_kernel_and_meta(
+                compile_info_origin, op_info, compile_option_tuple_origin, tiling_info
+            )
+
+            # compile_sk_bind
+            sk_bind_dst_file = compile_sk_bind(
+                compile_info, compile_info_origin, compile_option_tuple, kernel_meta_dir
+            )
+
+            # link norm.o, sk.o, sk_bind.o and optional meta_info.o
+            link_sk_norm_combine(
+                compile_info.dst_file,
+                compile_info_origin.dst_file,
+                sk_bind_dst_file,
+                compile_info_origin.tiling_and_dfx_utils_bin_path,
+                compile_info.compile_log_path,
+            )
+
+            global_var_storage.set_variable("ascendc_enable_super_kernel", True)
+            global_var_storage.set_variable(
+                "ascendc_sk_sub_combine_norm_workflow", False
+            )
+            DFXSectionGenerator().update_is_support(op_info)
+
+        kernel_spec.attach_resource_id()
+
+        # generate opinfo json
+        _json_post_process(
+            compile_info,
+            op_info,
+            tiling_info,
+            input_gen_placehoder,
+            output_gen_placehoder,
+            compile_log_path,
         )
-
-        # link norm.o, sk.o, sk_bind.o and optional meta_info.o
-        link_sk_norm_combine(
-            compile_info.dst_file,
-            compile_info_origin.dst_file,
-            sk_bind_dst_file,
-            compile_info_origin.tiling_and_dfx_utils_bin_path,
-            compile_info.compile_log_path,
+        if kernel_spec.record_sk_commands:
+            _record_kernel_spec_sk_commands(
+                kernel_spec,
+                op_info,
+                infered_info_from_ifile,
+                tiling_info,
+                distinct_tag,
+            )
+        kernel_spec.publish_manifest(tiling_info, workspace_idx)
+        if not global_var_storage.get_variable("ascendc_compile_debug_config"):
+            tiling_info.remove_file()
+            CommonUtility.remove_temp_file(compile_info.gen_kernel_func_file)
+            CommonUtility.remove_temp_file(compile_info.tiling_and_dfx_utils_file)
+        CommonUtility.print_compile_log(
+            "",
+            "compile Ascend C operator {} success".format(op_info.op_type),
+            AscendCLogLevel.LOG_INFO,
         )
-
-        global_var_storage.set_variable("ascendc_enable_super_kernel", True)
-        global_var_storage.set_variable("ascendc_sk_sub_combine_norm_workflow", False)
-        DFXSectionGenerator().update_is_support(op_info)
-
-    # generate opinfo json
-    _json_post_process(
-        compile_info,
-        op_info,
-        tiling_info,
-        input_gen_placehoder,
-        output_gen_placehoder,
-        compile_log_path,
-    )
-    if not global_var_storage.get_variable("ascendc_compile_debug_config"):
-        tiling_info.remove_file()
-        CommonUtility.remove_temp_file(compile_info.gen_kernel_func_file)
-        CommonUtility.remove_temp_file(compile_info.tiling_and_dfx_utils_file)
-    CommonUtility.print_compile_log(
-        "",
-        "compile Ascend C operator {} success".format(op_info.op_type),
-        AscendCLogLevel.LOG_INFO,
-    )
-    msg_info = "<{}> <{}> compile op end".format(
-        compile_info.op_type, compile_info.tiling_key_list
-    )
-    LogUtil.detail_log_print(op_info.kernel_name, msg_info, AscendCLogLevel.LOG_INFO)
+        msg_info = "<{}> <{}> compile op end".format(
+            compile_info.op_type, compile_info.tiling_key_list
+        )
+        LogUtil.detail_log_print(
+            op_info.kernel_name, msg_info, AscendCLogLevel.LOG_INFO
+        )
 
 
 def compile_op(
@@ -2162,6 +2287,10 @@ def compile_op_with_customized_config(
     infered_info_from_ifile = convert_customized_config_to_inferchannel(
         customized_config
     )
+    if infered_info_from_ifile.tiling_key_group_map is None:
+        infered_info_from_ifile = infered_info_from_ifile._replace(
+            tiling_key_group_map={}
+        )
 
     compile_option_tuple.compile_options.append("-DASCENDC_TPL_KERNEL")
     value_depend_dict = extend_options.get("valueDepend")
@@ -2373,18 +2502,6 @@ def _get_compile_cmd_and_section_content(
         tiling_info.tiling_data_file_path,
     )
 
-    if CommonUtility.is_c310():
-        if (
-            compile_info.raw_tiling_key_kernel_type.get(str(tiling_key))
-            == KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-        ):
-            compile_cmd += ["-D__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__"]
-        if (
-            compile_info.raw_tiling_key_kernel_type.get(str(tiling_key))
-            == KernelMetaType.KERNEL_TYPE_AIC_ONLY
-        ):
-            compile_cmd += ["-DRAW_AIC_ONLY_DUMP_TENSOR"]
-
     current_kernel_name = ""
     kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
     if tiling_info.static_shape_flag:
@@ -2405,23 +2522,18 @@ def _get_compile_cmd_and_section_content(
                 f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"
             ]
     else:
+        core_type = "cube" if arch.endswith("-cube") else "vec"
+        current_kernel_name = get_compile_target_name(
+            compile_info, tiling_key, core_type
+        )
+        compile_cmd += [
+            f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"
+        ]
         if kernel_type.value >= 2:
-            current_kernel_name = (
-                compile_info.kernel_name[:-7]
-                + tiling_key
-                + compile_info.kernel_name[-8:]
-            )
-            compile_cmd += [
-                f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"
-            ]
             set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group(
                 tiling_key, arch, kernel_type.name, current_kernel_name, compile_info
             )
         else:
-            current_kernel_name = compile_info.kernel_name + "_%s" % tiling_key
-            compile_cmd += [
-                f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"
-            ]
             set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group(
                 tiling_key,
                 "AiCore",
@@ -2429,10 +2541,9 @@ def _get_compile_cmd_and_section_content(
                 current_kernel_name,
                 compile_info,
             )
-    if kernel_type.value >= 6 and kernel_type.value <= 7:
-        compile_cmd += [f"-D{MIX_CORE_MACRO}={1}"]
-    if kernel_type == KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1:
-        compile_cmd += ["-D__MIX_CORE_AIC_RATION__=1"]
+    compile_cmd.extend(
+        get_compile_target_options(compile_info, tiling_key, CommonUtility.is_c310())
+    )
     compile_cmd += [f"-D{TILING_KEY_MACRO}={tiling_key}UL"]
     if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
         tiling_data_hash_src = tiling_info.tiling_data
@@ -2454,6 +2565,7 @@ def _get_compile_cmd_and_section_content(
     )
     if global_var_storage.get_variable("ascendc_sk_double_compile") is True:
         compile_info.global_kernel_symbols.append(current_kernel_name)
+    compile_info.last_compiled_symbol = current_kernel_name
     return compile_cmd, section_content
 
 
@@ -2684,101 +2796,51 @@ def _compile_ascendc_cce_v220_with_kernel_type_for_dynamic(
     tiling_key_cube = []
     for tiling_key in compile_info.tiling_key_list:
         kernel_type = compile_info.tiling_key_kernel_type[tiling_key]
-        if kernel_type.value >= 6 and kernel_type.value <= 7:
-            cube_compile_info = _get_sub_compile_info(compile_info, CORE_TYPE_CUBE)
-            cube_compile_info.dst_file = (
-                cube_compile_info.dst_file[:-2] + "_%s.o" % tiling_key
+        for core_type in get_compile_core_types(compile_info, tiling_key):
+            code_type = CORE_TYPE_CUBE if core_type == "cube" else CORE_TYPE_VEC
+            sub_compile_info = (
+                _get_sub_compile_info(compile_info, code_type)
+                if kernel_type.value >= 2
+                else copy.deepcopy(compile_info)
             )
-            arch = f"dav-{chip_version}-cube"
-            compile_cmd, section_content = _get_compile_cmd_and_section_content(
-                cube_compile_info, arch, compile_option_tuple, tiling_info, tiling_key
-            )
-            if global_var_storage.get_variable("ascendc_sk_double_compile") is True:
-                compile_info.global_kernel_symbols.extend(
-                    cube_compile_info.global_kernel_symbols
-                )
-            new_sources += section_content
-            cmds_list_cube.append(compile_cmd)
-            obj_files.append(cube_compile_info.dst_file)
-            tiling_key_cube.append(tiling_key)
-            vec_compile_info = _get_sub_compile_info(compile_info, CORE_TYPE_VEC)
-            vec_compile_info.dst_file = (
-                vec_compile_info.dst_file[:-2] + "_%s.o" % tiling_key
-            )
-            arch = f"dav-{chip_version}-vec"
-            compile_cmd, section_content = _get_compile_cmd_and_section_content(
-                vec_compile_info, arch, compile_option_tuple, tiling_info, tiling_key
-            )
-            if global_var_storage.get_variable("ascendc_sk_double_compile") is True:
-                compile_info.global_kernel_symbols.extend(
-                    vec_compile_info.global_kernel_symbols
-                )
-            new_sources += section_content
-            cmds_list_vec.append(compile_cmd)
-            obj_files.append(vec_compile_info.dst_file)
-            tiling_key_vec.append(tiling_key)
-        elif kernel_type.value >= 2 and kernel_type.value <= 5:
-            if kernel_type in [
-                KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC,
-                KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0,
-            ]:
-                arch = f"dav-{chip_version}-cube"
-                code_type = CORE_TYPE_CUBE
-            else:
-                arch = f"dav-{chip_version}-vec"
-                code_type = CORE_TYPE_VEC
-            sub_compile_info = _get_sub_compile_info(compile_info, code_type)
             sub_compile_info.dst_file = (
                 sub_compile_info.dst_file[:-2] + "_%s.o" % tiling_key
             )
+            arch = f"dav-{chip_version}-{core_type}"
             compile_cmd, section_content = _get_compile_cmd_and_section_content(
                 sub_compile_info, arch, compile_option_tuple, tiling_info, tiling_key
+            )
+            # Keep one command per physical core target for later Manifest replay.
+            compile_info.compile_command_session.submit(
+                KernelCompileCommand(
+                    tiling_key=str(tiling_key),
+                    compiled_symbol=sub_compile_info.last_compiled_symbol,
+                    core_type=core_type,
+                    source_path=sub_compile_info.gen_kernel_func_file,
+                    argv=tuple(compile_cmd),
+                    output_path=sub_compile_info.dst_file,
+                )
             )
             if global_var_storage.get_variable("ascendc_sk_double_compile") is True:
                 compile_info.global_kernel_symbols.extend(
                     sub_compile_info.global_kernel_symbols
                 )
             new_sources += section_content
+            obj_files.append(sub_compile_info.dst_file)
             if code_type == CORE_TYPE_CUBE:
                 cmds_list_cube.append(compile_cmd)
-                obj_files.append(sub_compile_info.dst_file)
                 tiling_key_cube.append(tiling_key)
             else:
                 cmds_list_vec.append(compile_cmd)
-                obj_files.append(sub_compile_info.dst_file)
                 tiling_key_vec.append(tiling_key)
-        elif kernel_type.value >= 0 and kernel_type.value <= 1:
-            arch = (
-                f"dav-{chip_version}-cube"
-                if kernel_type == KernelMetaType.KERNEL_TYPE_AIC_ONLY
-                else f"dav-{chip_version}-vec"
-            )
-            sub_compile_info = copy.deepcopy(compile_info)
-            sub_compile_info.dst_file = (
-                sub_compile_info.dst_file[:-2] + "_%s.o" % tiling_key
-            )
-            compile_cmd, section_content = _get_compile_cmd_and_section_content(
-                sub_compile_info, arch, compile_option_tuple, tiling_info, tiling_key
-            )
-            if global_var_storage.get_variable("ascendc_sk_double_compile") is True:
-                compile_info.global_kernel_symbols.extend(
-                    sub_compile_info.global_kernel_symbols
-                )
-            new_sources += section_content
-            if arch == f"dav-{chip_version}-cube":
-                cmds_list_cube.append(compile_cmd)
-                obj_files.append(sub_compile_info.dst_file)
-                tiling_key_cube.append(tiling_key)
-            else:
-                cmds_list_vec.append(compile_cmd)
-                obj_files.append(sub_compile_info.dst_file)
-                tiling_key_vec.append(tiling_key)
-        else:
-            raise Exception(f"current kernel type is not suport {kernel_type}")
     new_sources += global_var_storage.get_variable("ascendc_meta_info")
     new_sources += "#endif\n"
     # add dfx info section to sourse file
     CommonUtility().ascendc_write_file(compile_info.gen_kernel_func_file, new_sources)
+
+    # The rewritten wrapper is retained as a resource; no object exists in replay.
+    if not compile_info.compile_command_session.should_execute:
+        return
 
     if len(cmds_list_vec) != 0:
         compile_multi_tilingkey(
@@ -3046,7 +3108,11 @@ def _compile_ascendc_cce_v220(
             compile_info.global_kernel_symbols.extend(
                 cube_compile_info.global_kernel_symbols
             )
-        _gen_mix_sub_json(cube_compile_info, tiling_info, CORE_TYPE_CUBE)
+        compile_info.compile_command_session.extend(
+            cube_compile_info.compile_command_session.records
+        )
+        if compile_info.compile_command_session.should_execute:
+            _gen_mix_sub_json(cube_compile_info, tiling_info, CORE_TYPE_CUBE)
         # build vector
         set_soc_spec("VectorCore")
         vec_compile_info = _get_sub_compile_info(compile_info, CORE_TYPE_VEC)
@@ -3062,6 +3128,13 @@ def _compile_ascendc_cce_v220(
             compile_info.global_kernel_symbols.extend(
                 vec_compile_info.global_kernel_symbols
             )
+        compile_info.compile_command_session.extend(
+            vec_compile_info.compile_command_session.records
+        )
+        # Record-only MIX replay merges both command streams and restores AiCore.
+        if not compile_info.compile_command_session.should_execute:
+            set_soc_spec("AiCore")
+            return
         # fatbin 2o->1o
         mix_objs = [cube_compile_info.dst_file, vec_compile_info.dst_file]
         fatbin_objs(
@@ -3097,6 +3170,13 @@ def _compile_ascendc_cce_v220(
             compile_info.global_kernel_symbols.extend(
                 single_side_compile_info.global_kernel_symbols
             )
+        compile_info.compile_command_session.extend(
+            single_side_compile_info.compile_command_session.records
+        )
+        # No JSON or fatbin is produced when only the command plan is requested.
+        if not compile_info.compile_command_session.should_execute:
+            set_soc_spec("AiCore")
+            return
         _gen_mix_sub_json(
             single_side_compile_info, tiling_info, compile_info.code_channel
         )
@@ -3122,6 +3202,10 @@ def _compile_ascendc_cce_v220(
             arch,
             compile_info.code_channel,
         )
+        # call_bisheng_v220 already recorded the command and generated wrapper.
+        if not compile_info.compile_command_session.should_execute:
+            set_soc_spec("AiCore")
+            return
         _gen_non_mix_sub_json(compile_info, tiling_info, sub_core_type)
     if not tiling_info.static_shape_flag:
         _dynamic_kernel_list_to_json(
@@ -3231,6 +3315,10 @@ def _get_sub_compile_info(compile_info: CompileInfo, core_type: int):
     sub_compile_info.sub_core_type = core_type
     # Clear global_kernel_symbols to avoid accumulation from parent compile_info
     sub_compile_info.global_kernel_symbols = []
+    # Child core compilation inherits the mode without sharing recorded commands.
+    sub_compile_info.compile_command_session = (
+        compile_info.compile_command_session.fork()
+    )
     return sub_compile_info
 
 

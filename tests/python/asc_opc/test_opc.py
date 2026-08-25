@@ -31,6 +31,7 @@ sys.path.insert(0, OPC_STUB_PATH)
 from opc import OpcOptionParser
 import opc as opc
 import opc_api as opc_api
+from constant import OpcOptions
 from opc_common import get_int64_mode
 import asc_op_compile_base.common.utils.log as logger
 from op_compile_info_check import check_op_optional_paramtype
@@ -978,6 +979,78 @@ class TestOpc02(unittest.TestCase):
         assert do_check_input_args(["--deterministic", "true"]) == True
         assert do_check_input_args(["--deterministic", "false"]) == True
         assert do_check_input_args(["--deterministic", "other"]) == False
+
+    def test_kernel_spec_defaults_to_none(self):
+        with RequiredValidArgs() as required_args:
+            sys.argv = required_args
+            _, result_parser = opc.parse_args()
+
+        options = result_parser.get_all_options()
+        self.assertEqual(options[OpcOptions.KERNEL_SPEC], "None")
+        self.assertIsNone(options[OpcOptions.KERNEL_SPEC_DIR])
+
+    def test_kernel_spec_accepts_normal_and_sk(self):
+        for mode, relocatable in (
+            ("Normal", "false"),
+            ("SK", "false"),
+        ):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as output_dir:
+                with RequiredValidArgs() as required_args:
+                    sys.argv = required_args + [
+                        "--kernel-spec=" + mode,
+                        "--kernel-spec-dir=" + output_dir,
+                        "--op_relocatable_kernel_binary=" + relocatable,
+                    ]
+                    _, result_parser = opc.parse_args()
+
+                self.assertTrue(result_parser.check_input_params())
+                options = result_parser.get_all_options()
+                self.assertEqual(options[OpcOptions.KERNEL_SPEC], mode)
+                self.assertEqual(
+                    options[OpcOptions.KERNEL_SPEC_DIR], os.path.realpath(output_dir)
+                )
+
+    def test_kernel_spec_none_accepts_relocatable_binary(self):
+        with RequiredValidArgs() as required_args:
+            sys.argv = required_args + [
+                "--op_relocatable_kernel_binary=true",
+            ]
+            _, result_parser = opc.parse_args()
+
+        self.assertTrue(result_parser.check_input_params())
+        self.assertTrue(result_parser.get_option(OpcOptions.RELOCATABLE_BIN))
+
+    def test_kernel_spec_rejects_invalid_combinations(self):
+        cases = (
+            ("invalid mode", ["--kernel-spec=All"]),
+            ("normal without dir", ["--kernel-spec=Normal"]),
+            ("sk without dir", ["--kernel-spec=SK"]),
+            (
+                "normal with relocatable binary",
+                [
+                    "--kernel-spec=Normal",
+                    "--kernel-spec-dir={}",
+                    "--op_relocatable_kernel_binary=true",
+                ],
+            ),
+            (
+                "sk with relocatable binary",
+                [
+                    "--kernel-spec=SK",
+                    "--kernel-spec-dir={}",
+                    "--op_relocatable_kernel_binary=true",
+                ],
+            ),
+        )
+        for name, args in cases:
+            with self.subTest(name=name):
+                with tempfile.TemporaryDirectory() as output_dir:
+                    args = [arg.format(output_dir) for arg in args]
+                    with RequiredValidArgs() as required_args:
+                        sys.argv = required_args + args
+                        _, result_parser = opc.parse_args()
+
+                    self.assertFalse(result_parser.check_input_params())
 
     def test_options_parse_24(self):
         """

@@ -65,6 +65,8 @@ compiling_option_keys = [
     OpcOptions.RELOCATABLE_BIN,
     OpcOptions.SPK_OPT,
     OpcOptions.KERNEL_TEMPLATE_INPUT,
+    OpcOptions.KERNEL_SPEC,
+    OpcOptions.KERNEL_SPEC_DIR,
 ]
 
 valid_format_match_mode = ["FormatAgnostic", "FormatDefault", "FormatFixed", None]

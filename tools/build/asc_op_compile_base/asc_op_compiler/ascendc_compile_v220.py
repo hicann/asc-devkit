@@ -13,15 +13,17 @@
 ascendc compile v220
 """
 
+import copy
+import hashlib
 import os
 import stat
 import subprocess
-import hashlib
 from asc_op_compile_base.common.buildcfg import get_current_build_config
 from .global_storage import global_var_storage
 from .ascendc_common_utility import (
     CommonUtility,
     CompileInfo,
+    KernelCompileCommand,
     get_kernel_fun_name_with_tiling_key_and_kernel_type,
 )
 from .get_op_tiling import TilingInfo
@@ -305,6 +307,107 @@ def gen_compile_cmd_v220(
         )
 
 
+def _kernel_type_for_key(compile_info: CompileInfo, tiling_key: str):
+    """Return the explicit Kernel type registered for one Tiling Key."""
+
+    kernel_type = compile_info.tiling_key_kernel_type.get(str(tiling_key))
+    if kernel_type is None:
+        raise ValueError(f"kernel type is unavailable for tiling key {tiling_key}")
+    return kernel_type
+
+
+def get_compile_core_types(compile_info: CompileInfo, tiling_key: str):
+    """Resolve the physical cube/vector compile targets for one Tiling Key."""
+
+    if compile_info.no_set_kernel_type:
+        core_types = {
+            CORE_TYPE_MIX: ("cube", "vec"),
+            CORE_TYPE_CUBE: ("cube",),
+            CORE_TYPE_VEC: ("vec",),
+        }
+        try:
+            return core_types[compile_info.code_channel]
+        except KeyError as error:
+            raise ValueError(
+                f"unsupported code channel: {compile_info.code_channel}"
+            ) from error
+
+    kernel_type = _kernel_type_for_key(compile_info, tiling_key)
+    if kernel_type in {
+        KernelMetaType.KERNEL_TYPE_AIC_ONLY,
+        KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC,
+        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0,
+    }:
+        return ("cube",)
+    if kernel_type in {
+        KernelMetaType.KERNEL_TYPE_AIV_ONLY,
+        KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC,
+        KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0,
+    }:
+        return ("vec",)
+    if kernel_type in {
+        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1,
+        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2,
+    }:
+        return ("cube", "vec")
+    raise ValueError(f"unsupported kernel type: {kernel_type}")
+
+
+def get_compile_target_name(compile_info: CompileInfo, tiling_key: str, core_type: str):
+    """Build the symbol name shared by dynamic compilation and Manifest replay."""
+
+    kernel_name = compile_info.kernel_name
+    for suffix in ("_mix_aic", "_mix_aiv"):
+        if kernel_name.endswith(suffix):
+            return f"{kernel_name[: -len(suffix)]}_{tiling_key}{suffix}"
+
+    target_name = f"{kernel_name}_{tiling_key}"
+    if compile_info.no_set_kernel_type:
+        uses_suffix = compile_info.code_channel == CORE_TYPE_MIX or (
+            compile_info.hard_sync
+            and compile_info.code_channel in {CORE_TYPE_CUBE, CORE_TYPE_VEC}
+        )
+    else:
+        uses_suffix = _kernel_type_for_key(compile_info, tiling_key).value >= 2
+    if uses_suffix:
+        target_name += "_mix_aic" if core_type == "cube" else "_mix_aiv"
+    return target_name
+
+
+def get_compile_target_options(
+    compile_info: CompileInfo, tiling_key: str, enable_c310_rules: bool
+):
+    """Build Kernel-type macros shared by executed and recorded commands."""
+
+    options = []
+    is_no_set_mix = (
+        compile_info.no_set_kernel_type and compile_info.code_channel == CORE_TYPE_MIX
+    )
+    kernel_type = (
+        None
+        if compile_info.no_set_kernel_type
+        else _kernel_type_for_key(compile_info, tiling_key)
+    )
+    if is_no_set_mix or kernel_type in {
+        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1,
+        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2,
+    }:
+        options.append(f"-D{MIX_CORE_MACRO}=1")
+    if kernel_type == KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1:
+        options.append("-D__MIX_CORE_AIC_RATION__=1")
+
+    raw_kernel_type = compile_info.raw_tiling_key_kernel_type.get(
+        str(tiling_key), kernel_type
+    )
+    if enable_c310_rules and (
+        is_no_set_mix or raw_kernel_type == KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
+    ):
+        options.append("-D__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__")
+    if enable_c310_rules and raw_kernel_type == KernelMetaType.KERNEL_TYPE_AIC_ONLY:
+        options.append("-DRAW_AIC_ONLY_DUMP_TENSOR")
+    return tuple(options)
+
+
 def gen_compile_cmd_for_meta_info(
     src_file: str, dst_file: str, compile_option_tuple, sub_arch: str
 ):
@@ -483,27 +586,20 @@ def compile_single_tiling_v220(param: SingleTilingKeyCompileParams):
             f"-D{param.compile_info.origin_func_name}="
             f"{param.compile_info.origin_func_name}_{param.tiling_key}_tilingkey"
         ]
-    if param.code_channel == CORE_TYPE_MIX or (
-        param.compile_info.hard_sync
-        and param.compile_info.code_channel in [CORE_TYPE_VEC, CORE_TYPE_CUBE]
-    ):
-        kernel_func_name = (
-            param.compile_info.kernel_name[:-7]
-            + param.tiling_key
-            + param.compile_info.kernel_name[-8:]
+    is_cube = (param.sub_arch is None and param.code_channel == CORE_TYPE_CUBE) or (
+        param.sub_arch is not None and "cube" in param.sub_arch
+    )
+    core_type = "cube" if is_cube else "vec"
+    kernel_func_name = get_compile_target_name(
+        param.compile_info, param.tiling_key, core_type
+    )
+    compile_cmd.extend(
+        get_compile_target_options(
+            param.compile_info,
+            param.tiling_key,
+            CommonUtility.is_c310() or CommonUtility.is_m510(),
         )
-    else:
-        kernel_func_name = param.compile_info.kernel_name + "_%s" % param.tiling_key
-    if param.code_channel == CORE_TYPE_MIX:
-        compile_cmd += [f"-D{MIX_CORE_MACRO}={1}"]
-    if CommonUtility.is_c310() or CommonUtility.is_m510():
-        if param.code_channel == CORE_TYPE_MIX:
-            compile_cmd += ["-D__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__"]
-        raw_kernel_type = param.compile_info.raw_tiling_key_kernel_type.get(
-            str(param.tiling_info.tiling_key)
-        )
-        if raw_kernel_type == KernelMetaType.KERNEL_TYPE_AIC_ONLY:
-            compile_cmd += ["-DRAW_AIC_ONLY_DUMP_TENSOR"]
+    )
     compile_cmd += [
         f"-Dauto_gen_{param.compile_info.origin_func_name}_kernel={kernel_func_name}"
     ]
@@ -654,6 +750,23 @@ def call_bisheng_v220(
                 compile_option_tuple,
             )
             compile_cmd, kernel_name = compile_single_tiling_v220(param)
+            core_type = (
+                "cube"
+                if (sub_arch is None and code_channel == CORE_TYPE_CUBE)
+                or (sub_arch is not None and "cube" in sub_arch)
+                else "vec"
+            )
+            # Record each per-key argv before batch execution.
+            compile_info.compile_command_session.submit(
+                KernelCompileCommand(
+                    tiling_key=str(tiling_key),
+                    compiled_symbol=kernel_name,
+                    core_type=core_type,
+                    source_path=compile_info.gen_kernel_func_file,
+                    argv=tuple(compile_cmd),
+                    output_path=compile_info.dst_file[:-2] + "_%s.o" % tiling_key,
+                ),
+            )
             new_sources += DFXSectionGenerator().generate_dfx_section(
                 tiling_key, tiling_info, kernel_name, compile_info, True
             )
@@ -668,6 +781,10 @@ def call_bisheng_v220(
         CommonUtility().ascendc_write_file(
             compile_info.gen_kernel_func_file, new_sources
         )
+
+        # Record-only replay retains the wrapper but skips compilation and fatbin generation.
+        if not compile_info.compile_command_session.should_execute:
+            return compile_info.tiling_key_list
 
         compile_multi_tilingkey(
             compile_info.tiling_key_list,

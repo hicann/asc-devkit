@@ -40,7 +40,6 @@ Json MakeValidManifest()
     };
     Json command = {
         {"type", "compile"},
-        {"stage", Json::number_unsigned_t(0U)},
         {"cmd", Json::array(
                     {"${options:common_compile}", "${source_file_path}", "${resource}/resources/weight.bin",
                      "${env:ASCEND_HOME_PATH}/include", "${source_file_path}", "${output}/kernel.o"})},
@@ -297,8 +296,6 @@ TEST_F(ResourceManifestValidatorTest, ValidatesCommands)
     ExpectInvalid("command is not an object", [](Json& manifest) { Object(manifest)["commands"][0U] = "compile"; });
     ExpectInvalid("command type is missing", [](Json& manifest) { Command(manifest).erase("type"); });
     ExpectInvalid("command type has wrong type", [](Json& manifest) { Command(manifest)["type"] = 1U; });
-    ExpectInvalid("command stage is missing", [](Json& manifest) { Command(manifest).erase("stage"); });
-    ExpectInvalid("command stage has wrong type", [](Json& manifest) { Command(manifest)["stage"] = -1; });
     ExpectInvalid("command cmd is missing", [](Json& manifest) { Command(manifest).erase("cmd"); });
     ExpectInvalid("command cmd has wrong type", [](Json& manifest) { Command(manifest)["cmd"] = Json::object(); });
     ExpectInvalid("command option is not a string", [](Json& manifest) { Command(manifest)["cmd"][0U] = 1U; });

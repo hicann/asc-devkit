@@ -238,6 +238,14 @@ class OpcOptionParser:
         self.__define_option(
             OpcOptions.KERNEL_TEMPLATE_INPUT, "", "kernel template input."
         )
+        self.__define_option(
+            OpcOptions.KERNEL_SPEC,
+            "None",
+            "kernel spec mode. Support None, Normal and SK.",
+        )
+        self.__define_option(
+            OpcOptions.KERNEL_SPEC_DIR, None, "kernel spec output directory."
+        )
 
     @staticmethod
     def usage():
@@ -311,6 +319,9 @@ class OpcOptionParser:
             "                      For expl: --op_super_kernel_options=aaa,bbb \n"
             "                      if not set, use empty str as default. \n"
             "  --kernel-template-input         Set specific kernel compilation. \n"
+            "  --kernel-spec                   Generate static compile resources. \n"
+            "                                  Support None(default), Normal and SK. \n"
+            "  --kernel-spec-dir               Set the kernel spec output directory. \n"
         )
 
     @staticmethod
@@ -622,6 +633,35 @@ class OpcOptionParser:
         self.set_option(OpcOptions.SPK_OPT, sub_kernel_option)
         logger.info("Save op_super_kernel_options {}.".format(sub_kernel_option))
 
+    def check_kernel_spec_cfg(self):
+        """Validate Kernel Spec mode and normalize its publication directory."""
+
+        kernel_spec = self.get_option(OpcOptions.KERNEL_SPEC)
+        if kernel_spec not in {"None", "Normal", "SK"}:
+            logger.error(
+                "Invalid kernel-spec option {}, support None/Normal/SK.".format(
+                    kernel_spec
+                )
+            )
+            return False
+        if kernel_spec == "None":
+            return True
+
+        if self.get_option(OpcOptions.RELOCATABLE_BIN):
+            logger.error(
+                "kernel-spec cannot be used with op_relocatable_kernel_binary."
+            )
+            return False
+
+        kernel_spec_dir = self.get_option(OpcOptions.KERNEL_SPEC_DIR)
+        if not kernel_spec_dir:
+            logger.error("kernel-spec-dir is required when kernel-spec is enabled.")
+            return False
+        if not self.__check_and_update_dir(OpcOptions.KERNEL_SPEC_DIR):
+            logger.error("Failed to check and update kernel spec output dir.")
+            return False
+        return True
+
     def check_op_compile_mode(self):
         if (
             self.get_option(OpcOptions.OP_COMPILE_MODE)
@@ -744,6 +784,8 @@ class OpcOptionParser:
 
         self.check_and_save_tiling_key()
         self.check_op_relocatable_cfg()
+        if not self.check_kernel_spec_cfg():
+            return False
         self.check_and_save_kernel_template_input()
         return True
 

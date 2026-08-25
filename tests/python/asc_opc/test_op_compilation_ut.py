@@ -33,6 +33,7 @@ sys.path.insert(0, ASC_OPC_PATH)
 sys.path.insert(0, OPC_STUB_PATH)
 
 import asc_op_compile_base.common.utils.log as logger
+from asc_op_compile_base.common.context import op_context
 
 from constant import OpcCompileMode
 from op_compilation import OpCompilation, OpcOptions, CompileParam
@@ -924,6 +925,87 @@ class TestOpCompilationUt(unittest.TestCase):
             test_op_func.assert_called_once()
             build_config.assert_called_once()
             assert build_config.call_args[1]["enable_deterministic_mode"] is True
+
+    def test_single_op_compile_passes_kernel_spec_to_context(self):
+        cases = (
+            ("Normal", False, False),
+            ("SK", False, True),
+            ("None", True, True),
+        )
+        for mode, relocatable, expected_enable_sk in cases:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as output_dir:
+                captured_context = {}
+
+                def op_func(*args, **kwargs):
+                    context = op_context.get_context()
+                    captured_context["mode"] = context.get_addition("kernel_spec_mode")
+                    captured_context["dir"] = context.get_addition("kernel_spec_dir")
+                    captured_context["sk_sub_combine"] = context.get_addition(
+                        "super_kernel_sub_combine"
+                    )
+
+                op = {
+                    "bin_filename": "Add_3",
+                    "inputs": [],
+                    "outputs": [],
+                }
+                op_info = {
+                    OpcOptions.OP_FUNC_ATTR: op_func,
+                    OpcOptions.IS_DYNAMIC: "true",
+                    CompileParam.INPUTS: [],
+                    CompileParam.OUTPUTS: [],
+                }
+                compile_args = {
+                    OpcOptions.KERNEL_SPEC: mode,
+                    OpcOptions.KERNEL_SPEC_DIR: output_dir,
+                    OpcOptions.RELOCATABLE_BIN: relocatable,
+                }
+
+                with patch("single_op_compile.build_config") as build_config:
+                    SingleOpCompile(op, op_info, compile_args).op_compile()
+
+                self.assertEqual(captured_context["mode"], mode)
+                self.assertEqual(captured_context["dir"], output_dir)
+                self.assertIs(
+                    captured_context["sk_sub_combine"],
+                    True if mode == "SK" else None,
+                )
+                self.assertIs(
+                    build_config.call_args.kwargs["enable_super_kernel"],
+                    expected_enable_sk,
+                )
+
+    def test_kernel_spec_sk_adds_default_sub_super_kernel_info(self):
+        compiler = SingleOpCompile(
+            {},
+            {},
+            {
+                OpcOptions.KERNEL_SPEC: "SK",
+                OpcOptions.SPK_OPT: "early-start=1",
+            },
+        )
+        with op_context.OpContext() as context:
+            compiler.set_kernel_spec_for_context(context)
+            self.assertEqual(
+                context.get_addition("super_kernel_sub_info"),
+                {
+                    "enable_super_kernel": True,
+                    "super_kernel_options": "early-start=1",
+                    "super_kernel_sub_loc": "middle",
+                },
+            )
+
+    def test_kernel_spec_sk_keeps_input_sub_super_kernel_info(self):
+        compiler = SingleOpCompile({}, {}, {OpcOptions.KERNEL_SPEC: "SK"})
+        expected_info = {
+            "enable_super_kernel": True,
+            "super_kernel_options": "early-start=0",
+            "super_kernel_sub_loc": "start",
+        }
+        with op_context.OpContext() as context:
+            context.add_addition("super_kernel_sub_info", expected_info)
+            compiler.set_kernel_spec_for_context(context)
+            self.assertIs(context.get_addition("super_kernel_sub_info"), expected_info)
 
     def test_SingleOpCompile_will_jit_compile_option_to_kwargs(self):
         with unittest.mock.patch("single_op_compile.build_config") as build_config:
