@@ -25,39 +25,39 @@
 #include "impl/tensor_api/arch/cube/mmad/mmad_impl/mmad.h"
 #include "impl/tensor_api/arch/cube/mmad/mmad_impl/mmad_with_bias.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class MmadIgnore {
+class mmad_ignore {
 public:
-    template <const MmadTrait& trait, typename... Args>
-    __aicore__ inline static void Run(const Args&... args)
+    template <const mmad_trait& trait, typename... Args>
+    __aicore__ inline static void run(const Args&... args)
     {
-        static_assert(Std::is_same_v<Args..., void>, "MmadIgnore should not be called");
+        static_assert(Std::is_same_v<Args..., void>, "mmad_ignore should not be called");
     }
 };
 
-template <uint32_t Version, typename DstLayoutPtn, typename FmLayoutPtn, typename FilterLayoutPtn, typename BiasPos>
-struct MmadRouting {
-    using type = MmadIgnore;
+template <uint32_t version, typename DstLayoutPtn, typename FmLayoutPtn, typename FilterLayoutPtn, typename BiasPos>
+struct mmad_routing {
+    using type = mmad_ignore;
 };
 
-template <uint32_t Version>
-struct MmadRouting<Version, NZLayoutPtn, NZLayoutPtn, ZNLayoutPtn, Location::INVALID> {
-    using type = Mmad;
+template <uint32_t version>
+struct mmad_routing<version, nz_layout_ptn, nz_layout_ptn, zn_layout_ptn, location::invalid> {
+    using type = mmad_executor;
 };
 
-template <uint32_t Version>
-struct MmadRouting<Version, NZLayoutPtn, NZLayoutPtn, ZNLayoutPtn, Location::L0C> {
-    using type = MmadWithBias;
+template <uint32_t version>
+struct mmad_routing<version, nz_layout_ptn, nz_layout_ptn, zn_layout_ptn, location::l0c> {
+    using type = mmad_with_bias;
 };
 
-template <uint32_t Version>
-struct MmadRouting<Version, NZLayoutPtn, NZLayoutPtn, ZNLayoutPtn, Location::BIAS> {
-    using type = MmadWithBias;
+template <uint32_t version>
+struct mmad_routing<version, nz_layout_ptn, nz_layout_ptn, zn_layout_ptn, location::bias> {
+    using type = mmad_with_bias;
 };
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_MMAD_ROUTING_H
 

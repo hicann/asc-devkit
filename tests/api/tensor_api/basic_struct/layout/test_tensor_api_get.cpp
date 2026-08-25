@@ -9,10 +9,10 @@
  */
 
 #include <gtest/gtest.h>
-#include "c_api/stub/cce_stub.h"
+#include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Layout_Get : public testing::Test {
+class tensor_api_layout_get : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -20,37 +20,30 @@ protected:
     void TearDown() {}
 };
 
-TEST_F(Tensor_Api_Layout_Get, TestGetLayoutSlices)
+TEST_F(tensor_api_layout_get, test_get_layout_slices)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto layout = MakeLayout(MakeShape(10, 20, 30), MakeStride(600, 30, 1));
+    auto layout = make_layout(make_shape(10, 20, 30), make_stride(600, 30, 1));
 
-    auto all = Get(layout);
-    auto dim1 = Get<1>(layout);
-    auto dim2 = Get<2>(MakeShape(10, 20, 30));
+    auto dim1 = get<1>(layout);
+    auto dim2 = get<2>(make_shape(10, 20, 30));
 
-    EXPECT_EQ(AscendC::Std::get<0>(GetShape(all)), 10);
-    EXPECT_EQ(AscendC::Std::get<2>(GetStride(all)), 1);
-    EXPECT_EQ(AscendC::Std::get<0>(GetShape(dim1)), 20);
-    EXPECT_EQ(AscendC::Std::get<0>(GetStride(dim1)), 30);
+    EXPECT_EQ(AscendC::Std::get<0>(get_shape(dim1)), 20);
+    EXPECT_EQ(AscendC::Std::get<0>(get_stride(dim1)), 30);
     EXPECT_EQ(dim2, 30);
 }
 
-TEST_F(Tensor_Api_Layout_Get, TestGetStaticLayouts)
+TEST_F(tensor_api_layout_get, test_get_static_layouts)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto layout = MakeLayout(
-        MakeShape(
-            MakeShape(AscendC::Std::Int<2>{}, AscendC::Std::Int<3>{}),
-            MakeShape(AscendC::Std::Int<4>{}, AscendC::Std::Int<5>{})),
-        MakeStride(
-            MakeStride(AscendC::Std::Int<1>{}, AscendC::Std::Int<8>{}),
-            MakeStride(AscendC::Std::Int<2>{}, AscendC::Std::Int<24>{})));
+    auto layout = make_layout(
+        make_shape(make_shape(_2{}, _3{}), make_shape(_4{}, _5{})),
+        make_stride(make_stride(_1{}, _8{}), make_stride(_2{}, _24{})));
 
-    auto inner = Get<1, 0>(layout);
+    auto inner = get<1, 0>(layout);
 
-    EXPECT_EQ(AscendC::Std::get<0>(GetShape(inner)), 4);
-    EXPECT_EQ(AscendC::Std::get<0>(GetStride(inner)), 2);
+    EXPECT_EQ(AscendC::Std::get<0>(get_shape(inner)), 4);
+    EXPECT_EQ(AscendC::Std::get<0>(get_stride(inner)), 2);
 }

@@ -24,148 +24,193 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToCbufAlignV2ND {
+class copy_gm_to_l1_nd2nd {
 public:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
         // Batch layouts carry a leading B axis: (B, (row, col)) -> depth 3,
         // (B, ((1, row), (1, col))) -> depth 5. Non-batch layouts are depth 2/4.
-        constexpr auto gmDepth = NestingDepthV<decltype(src.Layout().Shape())>;
-        if constexpr (gmDepth == THREE_DIM_DATA || gmDepth == FIVE_DIM_DATA) {
-            BatchDataCopyImpl<trait, T, U>(dst, src);
+        constexpr auto gm_depth = nesting_depth_v<decltype(src.layout().shape())>;
+        if constexpr (gm_depth == three_dim_data || gm_depth == five_dim_data) {
+            TENSOR_API_DEBUG_CHECK(debug_check_batch_count, get<0>(src.layout().shape()), "copy_gm_to_l1 nd2nd path");
+            batch_data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
         } else {
-            DataCopyImpl<trait, T, U>(dst, src);
+            data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
         }
+    }
+
+    template <
+        const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename CopyShape>
+    __aicore__ inline static void run(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const CopyShape& copy_shape)
+    {
+        check_template<trait, DstTensor, SrcTensor>();
+
+        using type = typename SrcTensor::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        uint32_t src_shape_rows = get_shape_rows(src_shape);
+        uint32_t src_shape_columns = get_shape_columns(src_shape);
+        uint32_t src_stride_rows = get_matrix_element<attr_info::stride, attr_info::row, 1>(src.layout());
+        uint32_t dst_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(dst.layout());
+        uint32_t dst_stride_rows = get_matrix_element<attr_info::stride, attr_info::row, 1>(dst.layout());
+
+        uint32_t block_count = src_shape_rows;
+        uint32_t block_len = src_shape_columns * sizeof(type);
+        uint64_t src_stride = src_stride_rows * sizeof(type);
+        uint32_t dst_stride = dst_stride_rows * sizeof(type);
+        if ((src_shape_rows == 1) || (src_shape_columns == 1) ||
+            (src_stride_rows == src_shape_columns && dst_stride_rows == dst_shape_columns &&
+             src_stride_rows == dst_stride_rows)) {
+            block_count = 1;
+            block_len = src_shape_rows * src_shape_columns * sizeof(type);
+            src_stride = 0;
+            dst_stride = block_len;
+        }
+        if constexpr (is_b4_type<type>) {
+            block_len >>= 1;
+            src_stride >>= 1;
+            dst_stride >>= 1;
+        }
+        uint8_t cache_mode = src.engine().get_cache_mode();
+        copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
+            dst, src, dst_offset, src_offset, block_count, block_len, 0, 0, cache_mode, src_stride, dst_stride);
     }
 
 private:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2L1AlignV2NDDataType<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_gm_to_l1_align_v2_nd_data_type<DstTensor, SrcTensor>();
     }
 
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        CheckTemplate<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
-        using type = typename U::elementType;
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        using type = typename SrcTensor::element_type;
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint32_t srcShapeRows;
-        uint32_t srcShapeColumns;
-        uint32_t srcStrideRows;
-        uint32_t dstShapeColumns;
-        uint32_t dstStrideRows;
+        uint32_t src_shape_rows;
+        uint32_t src_shape_columns;
+        uint32_t src_stride_rows;
+        uint32_t dst_shape_columns;
+        uint32_t dst_stride_rows;
 
-        if constexpr (IsSatisfiedPtnFormatV<T, NDLayoutPtn>) {
-            srcShapeRows = GetElement<AttrInfo::Shape, AttrInfo::Row>(srcLayout);
-            srcShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column>(srcLayout);
-            srcStrideRows = GetElement<AttrInfo::Stride, AttrInfo::Row>(srcLayout);
+        if constexpr (is_satisfied_ptn_format_v<DstTensor, nd_layout_ptn>) {
+            src_shape_rows = get_element<attr_info::shape, attr_info::row>(src_layout);
+            src_shape_columns = get_element<attr_info::shape, attr_info::column>(src_layout);
+            src_stride_rows = get_element<attr_info::stride, attr_info::row>(src_layout);
         } else {
-            srcShapeRows = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
-            srcShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-            srcStrideRows = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout);
+            src_shape_rows = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
+            src_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+            src_stride_rows = get_element<attr_info::stride, attr_info::row, 1>(src_layout);
         }
 
-        if constexpr (IsSatisfiedPtnFormatV<T, NDLayoutPtn>) {
-            dstShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column>(dstLayout);
-            dstStrideRows = GetElement<AttrInfo::Stride, AttrInfo::Row>(dstLayout);
+        if constexpr (is_satisfied_ptn_format_v<DstTensor, nd_layout_ptn>) {
+            dst_shape_columns = get_element<attr_info::shape, attr_info::column>(dst_layout);
+            dst_stride_rows = get_element<attr_info::stride, attr_info::row>(dst_layout);
         } else {
-            dstShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstLayout);
-            dstStrideRows = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout);
+            dst_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
+            dst_stride_rows = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
         }
 
-        uint8_t cacheMode = src.Engine().GetCacheMode();
+        uint8_t cache_mode = src.engine().get_cache_mode();
 
-        // normal mode, dst_stride % C0_SIZE should be 0
-        // compact mode, blockLen equals dstStride
+        // normal mode, dst_stride % c0_size should be 0
+        // compact mode, block_len equals dst_stride
         // multi rows copy, dst non-contiguous case
-        uint32_t blockCount = srcShapeRows;
-        uint32_t blockLen = srcShapeColumns * sizeof(type);
-        uint64_t srcStride = srcStrideRows * sizeof(type);
-        uint32_t dstStride = dstStrideRows * sizeof(type);
+        uint32_t block_count = src_shape_rows;
+        uint32_t block_len = src_shape_columns * sizeof(type);
+        uint64_t src_stride = src_stride_rows * sizeof(type);
+        uint32_t dst_stride = dst_stride_rows * sizeof(type);
 
-        if ((srcShapeRows == 1) || (srcShapeColumns == 1) ||
-            (srcStrideRows == srcShapeColumns && dstStrideRows == dstShapeColumns && srcStrideRows == dstStrideRows)) {
+        if ((src_shape_rows == 1) || (src_shape_columns == 1) ||
+            (src_stride_rows == src_shape_columns && dst_stride_rows == dst_shape_columns &&
+             src_stride_rows == dst_stride_rows)) {
             // compact mode, one line
-            blockCount = 1;
+            block_count = 1;
             // must use srcShape, there is a scenario of small to large, using dstShape will cause src out of bound
-            blockLen = srcShapeRows * srcShapeColumns * sizeof(type);
-            srcStride = 0;
-            dstStride = blockLen;
+            block_len = src_shape_rows * src_shape_columns * sizeof(type);
+            src_stride = 0;
+            dst_stride = block_len;
         }
-        if constexpr (IsB4Type<type>) {
+        if constexpr (is_b4_type<type>) {
             // move fp4 as b8, need to be divided by 2
-            blockLen = blockLen >> 1;
-            srcStride = srcStride >> 1;
-            dstStride = dstStride >> 1;
+            block_len = block_len >> 1;
+            src_stride = src_stride >> 1;
+            dst_stride = dst_stride >> 1;
         }
-        CopyGmToCbufAlignV2Base::DataCopy(dst, src, blockCount, blockLen, 0, 0, cacheMode, srcStride, dstStride);
+        copy_gm_to_l1_align_v2_instr::data_copy(
+            dst.data().get(), src.data().get(), block_count, block_len, 0, 0, cache_mode, src_stride, dst_stride);
     }
 
     // Batch case: layout is (B, (M, N)) with strides (sB, (sM, sN)). Per-matrix internal
-    // compactness is assumed (sM == N), so a single matrix can be moved as one blockLen-sized block.
+    // compactness is assumed (sM == N), so a single matrix can be moved as one block_len-sized block.
     // Four DataCopy params are derived directly from the batched layout:
-    //   - GetElement<Shape, Row/Column> on the batched layout returns sub-matrix M/N (the
-    //     SelectRowColTuples helper in is_format.h handles batch-axis stripping).
-    //   - Get<0>(Shape/Stride) returns the batch size and per-matrix start-to-start stride.
-    //   - When batches are also contiguous (srcBatchStride == M*N && dstBatchStride == M*N),
+    //   - get_element<Shape, Row/Column> on the batched layout returns sub-matrix M/N (the
+    //     select_row_col_tuples helper in is_format.h handles batch-axis stripping).
+    //   - get<0>(Shape/Stride) returns the batch size and per-matrix start-to-start stride.
+    //   - When batches are also contiguous (src_batch_stride == M*N && dst_batch_stride == M*N),
     //     fold the B blocks into a single B*M*N block; otherwise emit B blocks, one per matrix.
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void BatchDataCopyImpl(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void batch_data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        CheckTemplate<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
-        using type = typename U::elementType;
-        auto srcLayout = src.Layout();
-        auto dstLayout = dst.Layout();
+        using type = typename SrcTensor::element_type;
+        auto src_layout = src.layout();
+        auto dst_layout = dst.layout();
 
-        uint32_t batchSize = Get<0>(srcLayout.Shape());
-        uint64_t srcBatchStride = Get<0>(srcLayout.Stride());
-        uint32_t dstBatchStride = Get<0>(dstLayout.Stride());
+        uint32_t batch_size = get<0>(src_layout.shape());
+        uint64_t src_batch_stride = get<0>(src_layout.stride());
+        uint32_t dst_batch_stride = get<0>(dst_layout.stride());
 
         // Strip the leading B axis before calling GetElement, otherwise the dim=0/1 split below
         // would read the batch axis as row/column.
-        auto srcInner = Te::Get<1>(srcLayout);
+        auto src_inner = get<1>(src_layout);
 
-        uint32_t srcShapeRows;
-        uint32_t srcShapeColumns;
-        if constexpr (IsSatisfiedPtnFormatV<T, NDLayoutPtn>) {
-            srcShapeRows = GetElement<AttrInfo::Shape, AttrInfo::Row>(srcInner);
-            srcShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column>(srcInner);
+        uint32_t src_shape_rows;
+        uint32_t src_shape_columns;
+        if constexpr (is_satisfied_ptn_format_v<DstTensor, nd_layout_ptn>) {
+            src_shape_rows = get_element<attr_info::shape, attr_info::row>(src_inner);
+            src_shape_columns = get_element<attr_info::shape, attr_info::column>(src_inner);
         } else {
-            srcShapeRows = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcInner);
-            srcShapeColumns = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcInner);
+            src_shape_rows = get_element<attr_info::shape, attr_info::row, 1>(src_inner);
+            src_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(src_inner);
         }
 
-        uint32_t matrixElems = srcShapeRows * srcShapeColumns;
-        uint8_t cacheMode = src.Engine().GetCacheMode();
+        uint32_t matrix_elems = src_shape_rows * src_shape_columns;
+        uint8_t cache_mode = src.engine().get_cache_mode();
 
         // batch-strided: B blocks, stride = per-matrix start-to-start in bytes.
-        uint32_t blockCount = batchSize;
-        uint32_t blockLen = matrixElems * sizeof(type);
-        uint64_t srcStride = srcBatchStride * sizeof(type);
-        uint32_t dstStride = dstBatchStride * sizeof(type);
+        uint32_t block_count = batch_size;
+        uint32_t block_len = matrix_elems * sizeof(type);
+        uint64_t src_stride = src_batch_stride * sizeof(type);
+        uint32_t dst_stride = dst_batch_stride * sizeof(type);
 
-        if constexpr (IsB4Type<type>) {
+        if constexpr (is_b4_type<type>) {
             // move fp4 as b8, need to be divided by 2
-            blockLen = blockLen >> 1;
-            srcStride = srcStride >> 1;
-            dstStride = dstStride >> 1;
+            block_len = block_len >> 1;
+            src_stride = src_stride >> 1;
+            dst_stride = dst_stride >> 1;
         }
-        CopyGmToCbufAlignV2Base::DataCopy(dst, src, blockCount, blockLen, 0, 0, cacheMode, srcStride, dstStride);
+        copy_gm_to_l1_align_v2_instr::data_copy(
+            dst.data().get(), src.data().get(), block_count, block_len, 0, 0, cache_mode, src_stride, dst_stride);
     }
 };
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif
 

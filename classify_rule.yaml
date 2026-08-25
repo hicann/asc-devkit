@@ -92,6 +92,7 @@ asc-devkit:
       - impl/tensor_api/atom/cube/*.h
       - impl/tensor_api/atom/vector/*.h
       - impl/tensor_api/atom/*.h
+      - impl/tensor_api/legacy/legacy_type.h
       - impl/tensor_api/tensor/layout_infer.h
       - impl/tensor_api/tensor/layout_size.h
       - impl/tensor_api/tensor/layout_static_fractal.h

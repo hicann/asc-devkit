@@ -24,40 +24,38 @@
 
 #include "impl/tensor_api/atom/mmad_atom_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-template <typename AtomType, typename DstTensor, typename FmTensor, typename FilterTensor>
-__aicore__ inline void Mmad(
-    const MmadAtom<AtomType>& atomMmad, const DstTensor& dst, const FmTensor& fm, const FilterTensor& filter)
+template <typename Atom, typename CTensor, typename ATensor, typename BTensor>
+__aicore__ inline void mmad(const mmad_atom<Atom>& atom, const CTensor& c, const ATensor& a, const BTensor& b)
 {
-    atomMmad.Call(dst, fm, filter);
+    atom.call(c, a, b);
 }
 
 template <
-    typename AtomType, typename DstTensor, typename FmTensor, typename FilterTensor, typename BiasTensor,
-    Std::enable_if_t<IsAttrTensorV<BiasTensor>, int> = 0>
-__aicore__ inline void Mmad(
-    const MmadAtom<AtomType>& atomMmad, const DstTensor& dst, const FmTensor& fm, const FilterTensor& filter,
-    const BiasTensor& bias)
+    typename Atom, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor,
+    Std::enable_if_t<is_attr_tensor_v<BiasTensor>, int> Enable = 0>
+__aicore__ inline void mmad(
+    const mmad_atom<Atom>& atom, const CTensor& c, const ATensor& a, const BTensor& b, const BiasTensor& bias)
 {
-    atomMmad.Call(dst, fm, filter, bias);
+    atom.call(c, a, b, bias);
 }
 
-template <typename MmadOperationType>
-__aicore__ inline constexpr auto MakeMmad(const MmadOperationType& mmadOperation)
+template <typename MmadOperation>
+__aicore__ inline constexpr auto make_mmad(const MmadOperation& operation)
 {
-    return MmadAtom<MmadTraits<MmadOperationType>>{};
+    return mmad_atom<mmad_traits<MmadOperation>>{};
 }
 
-template <typename MmadOperationType, typename MmadTraitType>
-__aicore__ inline constexpr auto MakeMmad(const MmadOperationType& mmadOperation, const MmadTraitType& mmadTrait)
+template <typename MmadOperation, typename MmadTrait>
+__aicore__ inline constexpr auto make_mmad(const MmadOperation& operation, const MmadTrait& trait)
 {
-    return MmadAtom<MmadTraits<MmadOperationType, MmadTraitType>>{};
+    return mmad_atom<mmad_traits<MmadOperation, MmadTrait>>{};
 }
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ALGORITHM_MMAD_IMPL_H
 

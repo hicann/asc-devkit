@@ -9,10 +9,10 @@
  */
 
 #include <gtest/gtest.h>
-#include "c_api/stub/cce_stub.h"
+#include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Pointer : public testing::Test {
+class tensor_api_pointer : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -20,48 +20,48 @@ protected:
     void TearDown() {}
 };
 
-TEST_F(Tensor_Api_Pointer, TestMakeMemPtr)
+TEST_F(tensor_api_pointer, test_make_mem_ptr)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    __gm__ float gmData[4] = {0};
-    __ubuf__ float ubData[4] = {0};
-    __cbuf__ float l1Data[4] = {0};
-    __ca__ float l0aData[4] = {0};
-    __cb__ float l0bData[4] = {0};
-    __cc__ float l0cData[4] = {0};
-    __biasbuf__ float biasData[4] = {0};
-    __fbuf__ float fixbufData[4] = {0};
+    __gm__ float gm_data[4] = {0};
+    __ubuf__ float ub_data[4] = {0};
+    __cbuf__ float l1_data[4] = {0};
+    __ca__ float l0a_data[4] = {0};
+    __cb__ float l0b_data[4] = {0};
+    __cc__ float l0c_data[4] = {0};
+    __biasbuf__ float bias_data[4] = {0};
+    __fbuf__ float fixbuf_data[4] = {0};
 
-    auto gmPtr = MakeMemPtr<Location::GM>(gmData);
-    auto ubPtr = MakeMemPtr<Location::UB>(ubData);
-    auto l1Ptr = MakeMemPtr<Location::L1>(l1Data);
-    auto l0aPtr = MakeMemPtr<Location::L0A>(l0aData);
-    auto l0bPtr = MakeMemPtr<Location::L0B>(l0bData);
-    auto l0cPtr = MakeMemPtr<Location::L0C>(l0cData);
-    auto biasPtr = MakeMemPtr<Location::BIAS>(biasData);
-    auto fixbufPtr = MakeMemPtr<Location::FIXBUF>(fixbufData);
+    auto gm_ptr = make_mem_ptr<location::gm>(gm_data);
+    auto ub_ptr = make_mem_ptr<location::ub>(ub_data);
+    auto l1_ptr = make_mem_ptr<location::l1>(l1_data);
+    auto l0a_ptr = make_mem_ptr<location::l0a>(l0a_data);
+    auto l0b_ptr = make_mem_ptr<location::l0b>(l0b_data);
+    auto l0c_ptr = make_mem_ptr<location::l0c>(l0c_data);
+    auto bias_ptr = make_mem_ptr<location::bias>(bias_data);
+    auto fixbuf_ptr = make_mem_ptr<location::fixbuf>(fixbuf_data);
 
-    EXPECT_EQ(gmPtr.Get(), gmData);
-    EXPECT_EQ(ubPtr.Get(), ubData);
-    EXPECT_EQ(l1Ptr.Get(), l1Data);
-    EXPECT_EQ(l0aPtr.Get(), l0aData);
-    EXPECT_EQ(l0bPtr.Get(), l0bData);
-    EXPECT_EQ(l0cPtr.Get(), l0cData);
-    EXPECT_EQ(biasPtr.Get(), biasData);
-    EXPECT_EQ(fixbufPtr.Get(), fixbufData);
+    EXPECT_EQ(gm_ptr.get(), gm_data);
+    EXPECT_EQ(ub_ptr.get(), ub_data);
+    EXPECT_EQ(l1_ptr.get(), l1_data);
+    EXPECT_EQ(l0a_ptr.get(), l0a_data);
+    EXPECT_EQ(l0b_ptr.get(), l0b_data);
+    EXPECT_EQ(l0c_ptr.get(), l0c_data);
+    EXPECT_EQ(bias_ptr.get(), bias_data);
+    EXPECT_EQ(fixbuf_ptr.get(), fixbuf_data);
 }
 
-TEST_F(Tensor_Api_Pointer, TestPointerAdaptor)
+TEST_F(tensor_api_pointer, test_pointer_adaptor)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     __gm__ float data[4] = {1, 2, 3, 4};
-    auto ptr = MakeMemPtr<Location::GM>(data);
+    auto ptr = make_mem_ptr<location::gm>(data);
 
     EXPECT_EQ(*ptr, 1);
     EXPECT_EQ(ptr[2], 3);
-    EXPECT_EQ((ptr + 3).Get(), data + 3);
+    EXPECT_EQ((ptr + 3).get(), data + 3);
 
     *ptr = 10;
     (ptr + 1)[1] = 20;
@@ -70,12 +70,12 @@ TEST_F(Tensor_Api_Pointer, TestPointerAdaptor)
     EXPECT_EQ(data[2], 20);
 }
 
-TEST_F(Tensor_Api_Pointer, TestPointerOperators)
+TEST_F(tensor_api_pointer, test_pointer_operators)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
     __gm__ float data[4] = {0};
-    auto ptr = MakeMemPtr<Location::GM>(data);
+    auto ptr = make_mem_ptr<location::gm>(data);
     auto next = ptr + 1;
     auto far = ptr + 3;
 

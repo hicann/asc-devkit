@@ -24,45 +24,47 @@
 
 #include "impl/tensor_api/utils/utils_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename Iterator, typename DerivedType>
-struct IterAdaptor {
+struct iter_adaptor {
     using iterator = Iterator;
-    using reference = typename IterRef<iterator>::type;   // T&
-    using elementType = typename IterEle<iterator>::type; // rm_ref
-    using valueType = typename IterVal<iterator>::type;   // rm_cvf
+    using reference = typename iter_ref<iterator>::type;    // T&
+    using element_type = typename iter_ele<iterator>::type; // rm_ref
+    using value_type = typename iter_val<iterator>::type;   // rm_cvf
 
-    __aicore__ inline constexpr IterAdaptor(iterator ptr = {}) : ptr(ptr) {}
+    __aicore__ inline constexpr iter_adaptor(iterator ptr = {}) : ptr(ptr) {}
 
     __aicore__ inline constexpr reference operator*() const { return *ptr; }
 
     template <typename Index>
     __aicore__ inline constexpr reference operator[](const Index& i) const
     {
-        auto ic = IndexCorrect(i);
+        auto ic = index_correct(i);
         return ptr[ic];
     }
 
     template <typename Index>
     __aicore__ inline constexpr DerivedType operator+(const Index& i) const
     {
-        auto ic = IndexCorrect(i);
+        auto ic = index_correct(i);
         return {ptr + ic};
     }
 
     __aicore__ inline constexpr DerivedType operator&(uint64_t mask) const
     {
-        return {(iterator)(reinterpret_cast<uint64_t>(ptr) & mask)};
+        return {reinterpret_cast<iterator>(reinterpret_cast<uint64_t>(ptr) & mask)};
     }
 
     __aicore__ inline constexpr DerivedType operator|(uint64_t mask) const
     {
-        return {(iterator)(reinterpret_cast<uint64_t>(ptr) | mask)};
+        return {reinterpret_cast<iterator>(reinterpret_cast<uint64_t>(ptr) | mask)};
     }
 
-    __aicore__ inline constexpr iterator Get() const { return ptr; }
+    __aicore__ inline constexpr iterator get() const { return ptr; }
+
+    __aicore__ inline constexpr iterator Get() const { return get(); }
 
     __aicore__ inline constexpr friend bool operator==(const DerivedType& x, const DerivedType& y)
     {
@@ -96,9 +98,9 @@ struct IterAdaptor {
 
 private:
     template <typename Index>
-    __aicore__ inline constexpr Index IndexCorrect(const Index& i) const
+    __aicore__ inline constexpr Index index_correct(const Index& i) const
     {
-        if constexpr (IsB4Type<valueType>) {
+        if constexpr (is_b4_type<value_type>) {
             return i >> 1;
         } else {
             return i;
@@ -108,8 +110,8 @@ private:
     iterator ptr;
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_TENSOR_POINTER_ADAPTOR_IMPL_H
 

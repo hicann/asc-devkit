@@ -24,47 +24,68 @@
 
 #include "impl/tensor_api/arch/vector/gm_to_ub/copy_impl/data_copy.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToUbufAlignV2ND : private CopyGmToUbufAlignV2Common {
+class copy_gm_to_ub_nd : private copy_gm_to_ub_common {
 public:
-    template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const gm_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const gm_to_ub_params& params)
     {
-        DataCopyImpl<trait, T, U>(dst, src);
+        data_copy_impl<trait, DstTensor, SrcTensor>(dst, src, params);
+    }
+
+    template <
+        const gm_to_ub_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape,
+        const gm_to_ub_params& params)
+    {
+        check_template<trait, T, U>();
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto block_count = get_shape_rows(src_shape);
+        auto block_len = get_shape_columns(src_shape) * sizeof(src_type);
+        auto src_stride = get_row_stride(src.layout()) * sizeof(src_type);
+        auto dst_stride = get_row_stride(dst.layout()) * sizeof(dst_type);
+        emit_copy(
+            dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_stride, dst_stride,
+            params);
     }
 
 private:
-    template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const gm_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2UBDataType<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_gm_to_ub_data_type<DstTensor, SrcTensor>();
     }
 
-    template <const CopyGM2UBTrait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    template <const gm_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const gm_to_ub_params& params)
     {
-        using SrcType = typename U::elementType;
-        using DstType = typename T::elementType;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
-        CheckTemplate<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t blockCount = GetTotalRowShape(srcLayout);
-        uint32_t blockLen = GetTotalColumnShape(srcLayout) * sizeof(SrcType);
-        int64_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout) * sizeof(SrcType);
-        int64_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout) * sizeof(DstType);
+        uint16_t block_count = get_total_row_shape(src_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src row shape size", "copy_gm_to_ub ND path");
+        uint32_t block_len = get_total_column_shape(src_layout) * sizeof(src_type);
+        int64_t src_stride = get_row_stride(src_layout) * sizeof(src_type);
+        int64_t dst_stride = get_row_stride(dst_layout) * sizeof(dst_type);
 
-        EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        emit_copy(dst, src, block_count, block_len, src_stride, dst_stride, params);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_ND2ND_H
 

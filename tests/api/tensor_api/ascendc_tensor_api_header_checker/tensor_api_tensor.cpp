@@ -11,13 +11,14 @@
 #ifndef VERIFY_SINGLE_HEADER
 #include "tensor_api/tensor.h"
 #else
+#include "tensor_api/tensor/tensor.h"
 #include "tensor_api/tensor/layout.h"
 #include "tensor_api/tensor/pointer.h"
-#include "tensor_api/tensor/tensor.h"
 #endif
 
 static void test_tensor_api_tensor_layout()
 {
+#ifndef VERIFY_SINGLE_HEADER
     using AscendC::Te::Capacity;
     using AscendC::Te::Cosize;
     using AscendC::Te::Crd2Idx;
@@ -28,13 +29,42 @@ static void test_tensor_api_tensor_layout()
     using AscendC::Te::MakePatternLayout;
     using AscendC::Te::MakeShape;
     using AscendC::Te::MakeStride;
-    using AscendC::Te::MakeTile;
     using AscendC::Te::Rank;
     using AscendC::Te::Select;
     using AscendC::Te::Size;
     using AscendC::Te::Slice;
+#else
+    using asc::te::capacity;
+    using asc::te::cosize;
+    using asc::te::crd2idx;
+    using asc::te::get;
+    using asc::te::make_coord;
+    using asc::te::make_frame_layout;
+    using asc::te::make_layout;
+    using asc::te::make_pattern_layout;
+    using asc::te::make_shape;
+    using asc::te::make_stride;
+    using asc::te::rank;
+    using asc::te::select;
+    using asc::te::size;
+    using asc::te::slice;
+#endif
 }
 
-static void test_tensor_api_tensor_pointer() { using AscendC::Te::MakeMemPtr; }
+static void test_tensor_api_tensor_pointer()
+{
+#ifndef VERIFY_SINGLE_HEADER
+    using AscendC::Te::MakeMemPtr;
+#else
+    using asc::te::make_mem_ptr;
+#endif
+}
 
-static void test_tensor_api_tensor_tensor() { using AscendC::Te::MakeTensor; }
+static void test_tensor_api_tensor_tensor()
+{
+#ifndef VERIFY_SINGLE_HEADER
+    using AscendC::Te::MakeTensor;
+#else
+    using asc::te::make_tensor;
+#endif
+}

@@ -26,40 +26,50 @@
 #include "impl/tensor_api/arch/vector/ub_to_gm/copy_impl/nd2nd.h"
 #include "impl/tensor_api/arch/vector/ub_to_gm/copy_impl/nz2nz.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyUB2GMIgnore {
+class copy_ub_to_gm_ignore {
 public:
-    template <const CopyUB2GMTrait& trait, typename... Args>
-    __aicore__ inline static void Run(const Args&... args)
+    template <const ub_to_gm_trait& trait, typename... Args>
+    __aicore__ inline static void run(const Args&... args)
     {
-        static_assert(Std::is_same_v<Args..., void>, "CopyUB2GMIgnore should not be called");
+        static_assert(Std::is_same_v<Args..., void>, "copy_ub_to_gm_ignore should not be called");
     }
 };
 
-template <uint32_t Version, typename DstLayoutPtn, typename SrcLayoutPtn>
-struct CopyUB2GMRouting {
-    using type = CopyUB2GMIgnore;
+template <uint32_t version, typename DstLayoutPtn, typename SrcLayoutPtn>
+struct copy_ub_to_gm_routing {
+    using type = copy_ub_to_gm_ignore;
 };
 
-template <uint32_t Version>
-struct CopyUB2GMRouting<Version, NDExtLayoutPtn, NDExtLayoutPtn> {
-    using type = CopyUbufToGmAlignV2ND;
+template <uint32_t version>
+struct copy_ub_to_gm_routing<version, nd_ext_layout_ptn, nd_ext_layout_ptn> {
+    using type = copy_ub_to_gm_nd;
 };
 
-template <uint32_t Version>
-struct CopyUB2GMRouting<Version, DNExtLayoutPtn, DNExtLayoutPtn> {
-    using type = CopyUbufToGmAlignV2DN;
+template <uint32_t version>
+struct copy_ub_to_gm_routing<version, nd_layout_ptn, nd_layout_ptn> {
+    using type = copy_ub_to_gm_nd;
 };
 
-template <uint32_t Version>
-struct CopyUB2GMRouting<Version, NZLayoutPtn, NZLayoutPtn> {
-    using type = CopyUbufToGmAlignV2NZ;
+template <uint32_t version>
+struct copy_ub_to_gm_routing<version, dn_ext_layout_ptn, dn_ext_layout_ptn> {
+    using type = copy_ub_to_gm_dn;
 };
 
-} // namespace Te
-} // namespace AscendC
+template <uint32_t version>
+struct copy_ub_to_gm_routing<version, dn_layout_ptn, dn_layout_ptn> {
+    using type = copy_ub_to_gm_dn;
+};
+
+template <uint32_t version>
+struct copy_ub_to_gm_routing<version, nz_layout_ptn, nz_layout_ptn> {
+    using type = copy_ub_to_gm_nz;
+};
+
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_GM_ROUTING_H
 

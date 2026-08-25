@@ -31,8 +31,8 @@
 
 #include "impl/tensor_api/atom/vector/copy_gm2ub.h"
 #include "impl/tensor_api/atom/vector/copy_ub2gm.h"
-#include "impl/tensor_api/atom/vector/copy_ub2l1.h"
 #include "impl/tensor_api/atom/vector/copy_ub2ub.h"
+#include "impl/tensor_api/atom/vector/copy_ub2l1.h"
 
 #include "impl/tensor_api/atom/cube/copy_l12bt.h"
 #include "impl/tensor_api/atom/cube/copy_l12fb.h"
@@ -42,37 +42,26 @@
 #include "impl/tensor_api/atom/cube/copy_l12l0scalea.h"
 #include "impl/tensor_api/atom/cube/copy_l12l0scaleb.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 template <typename... Args>
-struct CopyAtom;
-
-template <typename CopyOperation>
-struct CopyAtom<CopyOperation> : CopyAtom<CopyTraits<CopyOperation>> {};
+template <const typename copy_atom<copy_traits<Args...>>::trait_type& traits, typename... Params>
+__aicore__ inline void copy_atom<copy_traits<Args...>>::call(const Params&... params) const
+{
+    copy_traits_type::template copy_unpack<traits>(params...);
+}
 
 template <typename... Args>
-struct CopyAtom<CopyTraits<Args...>> : CopyTraits<Args...> {
-    using CopyTraitType = CopyTraits<Args...>;
-    using TraitType = typename CopyTraitType::TraitType;
-    static constexpr const TraitType defaultTrait = CopyTraitType::defaultTrait;
+template <typename... TraitArgs>
+__aicore__ inline auto copy_atom<copy_traits<Args...>>::with(TraitArgs&&... args) const
+{
+    auto traits = copy_traits_type::with(static_cast<TraitArgs&&>(args)...);
+    return copy_atom<decltype(traits)>{traits};
+}
 
-    template <const TraitType& traits = defaultTrait, typename... Params>
-    __aicore__ inline void Call(const Params&... params) const
-    {
-        CopyTraitType::template CopyUnpack<traits>(params...);
-    }
-
-    template <typename... TraitsArgs>
-    __aicore__ inline auto with(TraitsArgs&&... args) const
-    {
-        auto traits = CopyTraitType::with(static_cast<TraitsArgs&&>(args)...);
-        return CopyAtom<decltype(traits)>{traits};
-    }
-};
-
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ATOM_COPY_ATOM_IMPL_H
 

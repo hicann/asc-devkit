@@ -11,18 +11,29 @@
 #ifndef VERIFY_SINGLE_HEADER
 #include "include/tensor_api/tensor.h"
 #else
+#include "include/tensor_api/tensor/tensor.h"
 #include "include/tensor_api/atom/cube/copy_atom.h"
 #include "include/tensor_api/atom/cube/mmad_atom.h"
 #endif
 
 static void test_host_tensor_api_atom_copy_atom()
 {
+#ifndef VERIFY_SINGLE_HEADER
     using AscendC::Te::CopyAtom;
     using AscendC::Te::CopyTraits;
+#else
+    using asc::te::copy_atom;
+    using asc::te::copy_traits;
+#endif
 }
 
 static void test_host_tensor_api_atom_mmad_atom()
 {
+#ifndef VERIFY_SINGLE_HEADER
     using AscendC::Te::MmadAtom;
     using AscendC::Te::MmadTraits;
+#else
+    using asc::te::mmad_atom;
+    using asc::te::mmad_traits;
+#endif
 }

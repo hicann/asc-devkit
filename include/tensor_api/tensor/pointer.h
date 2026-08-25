@@ -8,10 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
-#error "pointer.h cannot be used with compile flag --enable-simt enabled."
-#endif
-
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
@@ -26,20 +22,20 @@
 
 #include "impl/tensor_api/tensor/pointer_pattern.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-template <typename PtrPattern, typename DataType, typename Addr, EnableMakePtrByTrait<PtrPattern, Addr> Enable>
-__aicore__ inline auto MakeMemPtr(Addr addr);
+template <typename PtrPattern, typename DataType, typename Addr, enable_make_ptr_by_trait<PtrPattern, Addr> Enable>
+__aicore__ inline auto make_mem_ptr(Addr address);
 
-template <typename PtrPattern, typename Iterator, EnableMakeHardwarePtr<PtrPattern, Iterator> Enable>
-__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator);
+template <typename PtrPattern, typename Iterator, enable_make_hardware_ptr<PtrPattern, Iterator> Enable>
+__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator);
 
-template <typename Iterator, EnableMakePtrByIter<Iterator> Enable>
-__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator);
+template <typename Iterator, enable_make_ptr_by_iter<Iterator> Enable>
+__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator);
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_TENSOR_POINTER_H
 
