@@ -62,8 +62,8 @@ output[nc, argmax[nc, d, h, w]] = grad[nc, d, h, w]     # 根据argmax将grad的
 |---|---|---|---|---|---|
 | 0 | `simd` | `adaptive_max_pool3d_grad_simd.h` |64|-| 展示纯SIMD实现算子功能。 |
 | 1 | `scalar` | `adaptive_max_pool3d_grad_scalar.h` |64|-| 展示用SIMD实现清零和Scalar处理离散写操作的实现方案。 |
-| 2 | `hybrid` | `adaptive_max_pool3d_grad_hybrid.h` |64|512| 展示用SIMD实现清零和SIMT实现离散梯度回填的混合方式。 |
-| 3 | `hybrid_ub` | `adaptive_max_pool3d_grad_hybrid_ub.h` |64|512| 展示在Case 2基础上融入UB的实现方式。 |
+| 2 | `hybrid` | `adaptive_max_pool3d_grad_hybrid.h` |64|1024| 展示用SIMD实现清零和SIMT实现离散梯度回填的混合方式。 |
+| 3 | `hybrid_ub` | `adaptive_max_pool3d_grad_hybrid_ub.h` |64|1024| 展示在Case 2基础上融入UB的实现方式。 |
 
 ## 样例实现
 

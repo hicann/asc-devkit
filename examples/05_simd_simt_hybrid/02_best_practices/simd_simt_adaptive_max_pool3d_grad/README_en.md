@@ -63,8 +63,8 @@ This sample implements the operator in four ways, so as to compare the performan
 |---|---|---|---|---|---|
 | 0 | `simd` | `adaptive_max_pool3d_grad_simd.h` | 64 | - | Show a pure SIMD implementation of the operator. |
 | 1 | `scalar` | `adaptive_max_pool3d_grad_scalar.h` | 64 | - | Show an implementation that uses SIMD for zeroing and Scalar for the discrete writes. |
-| 2 | `hybrid` | `adaptive_max_pool3d_grad_hybrid.h` | 64 | 512 | Show a hybrid approach that uses SIMD for contiguous zeroing and SIMT for discrete scatter. |
-| 3 | `hybrid_ub` | `adaptive_max_pool3d_grad_hybrid_ub.h` | 64 | 512 | Show how Case 2 can be further improved by bringing UB into the picture. |
+| 2 | `hybrid` | `adaptive_max_pool3d_grad_hybrid.h` | 64 | 1024 | Show a hybrid approach that uses SIMD for contiguous zeroing and SIMT for discrete scatter. |
+| 3 | `hybrid_ub` | `adaptive_max_pool3d_grad_hybrid_ub.h` | 64 | 1024 | Show how Case 2 can be further improved by bringing UB into the picture. |
 
 ## Sample Implementation
 
