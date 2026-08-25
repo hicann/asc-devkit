@@ -22,29 +22,36 @@
 #ifndef IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_INSTRUCTION_H
 #define IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_INSTRUCTION_H
 
+#include "impl/tensor_api/tensor/pointer_pattern.h"
+#include "impl/tensor_api/tensor/tensor_impl.h"
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class copy_ub_to_l1_instr {
+class CopyUbufToCbufInstr {
 public:
-    template <typename DataType>
-    __aicore__ inline static void data_copy(
-        __cbuf__ DataType* dst, __ubuf__ DataType* src, const uint16_t block_count, const uint16_t block_len,
-        const uint16_t src_stride, const uint16_t dst_stride)
+    template <typename T, typename U, typename... Params>
+    __aicore__ inline static void DataCopy(const T& dst, const U& src, const Params&... params)
     {
-        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "block_count", "copy_ub_to_l1 instruction");
-        TENSOR_API_DEBUG_CHECK(debug_check_block_len, block_len, debug_block_len_max, "copy_ub_to_l1 instruction");
+        CopyUbufToCbuf(dst.Data().Get(), src.Data().Get(), params...);
+    }
 
-        asc_copy_ub2l1(
-            reinterpret_cast<__cbuf__ void*>(dst), reinterpret_cast<__ubuf__ void*>(src), block_count, block_len,
-            src_stride, dst_stride);
+    template <typename T>
+    __aicore__ inline static void CopyUbufToCbuf(
+        __cbuf__ T* dst, __ubuf__ T* src, const uint16_t blockCount, const uint16_t blockLen, const uint16_t srcStride,
+        const uint16_t dstStride)
+    {
+        if ASCEND_IS_AIC {
+            return;
+        }
+
+        asc_copy_ub2l1(dst, src, blockCount, blockLen, srcStride, dstStride);
     }
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_INSTRUCTION_H
 

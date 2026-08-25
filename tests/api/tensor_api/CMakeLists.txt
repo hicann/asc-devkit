@@ -94,5 +94,3 @@ foreach(product_type ${ASCENDC_UT_PRODUCT_TYPE_LIST})
         TASK_NUM 1
     )
 endforeach()
-
-add_subdirectory(runtime_validation)

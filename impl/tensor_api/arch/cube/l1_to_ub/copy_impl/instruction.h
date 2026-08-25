@@ -22,33 +22,39 @@
 #ifndef IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_INSTRUCTION_H
 #define IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_INSTRUCTION_H
 
+#include "impl/tensor_api/tensor/pointer_pattern.h"
+#include "impl/tensor_api/tensor/tensor_impl.h"
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class copy_l1_to_ub_instr {
+struct CopyL12UBTrait {};
+
+class CopyCbufToUbufInstr {
 public:
-    template <typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset, typename... Params>
-    __aicore__ inline static void data_copy_with_offset(
-        const DstTensor& dst, const SrcTensor& src, const DstOffset& dst_offset, const SrcOffset& src_offset,
-        const Params&... params)
+    template <typename T, typename U, typename... Params>
+    __aicore__ inline static void DataCopy(const T& dst, const U& src, const Params&... params)
     {
-        auto src_data = src.data() + src_offset;
-        data_copy((dst.data() + dst_offset).get(), src_data.get(), params...);
+        CopyCbufToUbuf(dst.Data().Get(), src.Data().Get(), params...);
     }
 
-    template <typename DataType>
-    __aicore__ inline static void data_copy(
-        __ubuf__ DataType* dst, __cbuf__ DataType* src, const uint16_t block_count, const uint16_t block_len,
-        const uint16_t src_stride, const uint16_t dst_stride)
+private:
+    template <typename T>
+    __aicore__ inline static void CopyCbufToUbuf(
+        __ubuf__ T* dst, __cbuf__ T* src, const uint16_t blockCount, const uint16_t blockLen, const uint16_t srcStride,
+        const uint16_t dstStride)
     {
-        asc_copy_l12ub(dst, src, 0, block_count, block_len, src_stride, dst_stride);
+        if ASCEND_IS_AIV {
+            return;
+        }
+
+        asc_copy_l12ub(dst, src, 0, blockCount, blockLen, srcStride, dstStride);
     }
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_UB_COPY_IMPL_INSTRUCTION_H
 

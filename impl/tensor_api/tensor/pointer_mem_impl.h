@@ -23,54 +23,54 @@
 #define IMPL_TENSOR_API_TENSOR_POINTER_MEM_IMPL_H
 
 #include "impl/tensor_api/tensor/pointer_adaptor_impl.h"
-namespace asc {
-namespace te {
-
-template <typename Tensor>
-using get_mem_location = typename Tensor::iterator::ptr_pattern;
+namespace AscendC {
+namespace Te {
 
 template <typename PtrPattern, typename Pointer>
-struct hardware_mem_ptr : iter_adaptor<Pointer, hardware_mem_ptr<PtrPattern, Pointer>> {
-    using iter_adaptor<Pointer, hardware_mem_ptr<PtrPattern, Pointer>>::iter_adaptor;
-    using ptr_pattern = PtrPattern;
+struct HardwareMemPtr : IterAdaptor<Pointer, HardwareMemPtr<PtrPattern, Pointer>> {
+    using IterAdaptor<Pointer, HardwareMemPtr<PtrPattern, Pointer>>::IterAdaptor;
+    using ptrPattern = PtrPattern;
 };
+
+template <typename T>
+using GetMemLocation = typename T::iterator::ptrPattern;
 
 // is hardware mem
 template <typename PtrPattern, typename Pointer, typename = void>
-struct is_hardware_mem : Std::false_type {};
+struct IsHardwareMem : Std::false_type {};
 
 template <typename PtrPattern, typename Pointer>
-struct is_hardware_mem<PtrPattern, hardware_mem_ptr<PtrPattern, Pointer>> : Std::true_type {};
+struct IsHardwareMem<PtrPattern, HardwareMemPtr<PtrPattern, Pointer>> : Std::true_type {};
 
 template <typename PtrPattern, typename Pointer>
-struct is_hardware_mem<PtrPattern, Pointer, void_t<typename Pointer::iterator>>
-    : is_hardware_mem<PtrPattern, typename Pointer::iterator> {};
+struct IsHardwareMem<PtrPattern, Pointer, void_t<typename Pointer::iterator>>
+    : IsHardwareMem<PtrPattern, typename Pointer::iterator> {};
 
 template <typename PtrPattern, typename Pointer>
-constexpr bool is_hardware_mem_v = is_hardware_mem<PtrPattern, Pointer>::value;
+constexpr bool IsHardwareMemV = IsHardwareMem<PtrPattern, Pointer>::value;
 
-template <typename Pointer>
-struct is_hardware_mem_ptr : Std::false_type {};
+template <typename T>
+struct IsHardwareMemPtr : Std::false_type {};
 
 template <typename PtrPattern, typename Pointer>
-struct is_hardware_mem_ptr<hardware_mem_ptr<PtrPattern, Pointer>> : Std::true_type {};
+struct IsHardwareMemPtr<HardwareMemPtr<PtrPattern, Pointer>> : Std::true_type {};
 
-template <typename Pointer>
-constexpr bool is_hardware_mem_ptr_v = is_hardware_mem_ptr<Std::remove_cvref_t<Pointer>>::value;
+template <typename T>
+constexpr bool IsHardwareMemPtrV = IsHardwareMemPtr<Std::remove_cvref_t<T>>::value;
 
-template <typename Iterator, typename = void>
-struct is_mem_ptr_iterator : Std::false_type {};
+template <typename T, typename = void>
+struct IsMemPtrIterator : Std::false_type {};
 
-template <typename Iterator>
-struct is_mem_ptr_iterator<Iterator, void_t<decltype(*Std::declval<Iterator&>())>> : Std::true_type {};
+template <typename T>
+struct IsMemPtrIterator<T, void_t<decltype(*Std::declval<T&>())>> : Std::true_type {};
 
 template <typename PtrPattern, typename Iterator>
-__aicore__ inline auto make_location_mem_ptr(Iterator iter)
+__aicore__ inline auto MakeLocationMemPtr(Iterator iter)
 {
-    return hardware_mem_ptr<PtrPattern, Iterator>{iter};
+    return HardwareMemPtr<PtrPattern, Iterator>{iter};
 }
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_TENSOR_POINTER_MEM_IMPL_H
 

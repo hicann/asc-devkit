@@ -24,103 +24,73 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/instruction.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class load_data_l1_to_l0a_nz2nz {
+class LoadDataL12L0ANZ2NZ {
 public:
-    template <const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
+    template <const CopyL12L0ATrait& trait, typename T, typename U>
+    __aicore__ inline static void Run(const T& dst, const U& src)
     {
-        check_template<trait, DstTensor, SrcTensor>();
-        if constexpr (DstTensor::layout_type::depth == five_dim_data) {
-            batch_load_data_impl<trait, DstTensor, SrcTensor>(dst, src);
-        } else if constexpr (DstTensor::layout_type::depth == four_dim_data) {
-            load_data_impl<trait, DstTensor, SrcTensor>(dst, src);
+        CheckTemplate<trait, T, U>();
+        if constexpr (T::layoutType::depth == FIVE_DIM_DATA) {
+            BatchLoadDataImpl<trait, T, U>(dst, src);
+        } else if constexpr (T::layoutType::depth == FOUR_DIM_DATA) {
+            LoadDataImpl<trait, T, U>(dst, src);
         } else {
             static_assert(
-                DstTensor::layout_type::depth == four_dim_data || DstTensor::layout_type::depth == five_dim_data,
-                "load_data_l1_to_l0a_nz2nz only supports the plain fractal layout "
+                T::layoutType::depth == FOUR_DIM_DATA || T::layoutType::depth == FIVE_DIM_DATA,
+                "LoadDataL12L0ANZ2NZ only supports the plain fractal layout "
                 "((row0,row1),(col0,col1)) or the batch layout (B,((row0,row1),(col0,col1))).");
         }
     }
 
-    template <
-        const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
-        typename CopyShape>
-    __aicore__ inline static void run(
-        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
-        const CopyShape& copy_shape)
-    {
-        check_template<trait, DstTensor, SrcTensor>();
-        auto dst_offset = dst.layout()(dst_coord);
-        auto src_offset = src.layout()(src_coord);
-        auto dst_layout = dst.layout();
-        using dst_type = typename DstTensor::element_type;
-        constexpr uint32_t stride_unit = c0_element<dst_type> * fractal_fixed;
-        auto m_step = get<0>(copy_shape) / fractal_fixed;
-        auto k_step = get<1>(copy_shape) / c0_element<dst_type>;
-        auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src.layout()) / stride_unit;
-        auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout) / stride_unit;
-        load_l1_to_l0a_instr::load_data_with_offset<false>(
-            dst, src, dst_offset, src_offset, 0, 0, m_step, k_step, src_stride, dst_stride);
-    }
-
 private:
-    template <const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static constexpr void check_template()
+    template <const CopyL12L0ATrait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void CheckTemplate()
     {
-        check_data_type::check_l1_to_l0a_data_type<DstTensor, SrcTensor>();
-        check_layout_pattern<DstTensor, SrcTensor>();
+        CheckDataType::CheckL12L0ADataType<T, U>();
+        CheckLayoutPattern<T, U>();
     }
 
-    template <const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void load_data_impl(const DstTensor& dst, const SrcTensor& src)
+    template <const CopyL12L0ATrait& trait, typename T, typename U>
+    __aicore__ inline static void LoadDataImpl(const T& dst, const U& src)
     {
-        using dst_type = typename DstTensor::element_type;
-        auto dst_layout = dst.layout();
-        auto src_layout = src.layout();
-        uint16_t m_start_position = 0;
-        uint16_t k_start_position = 0;
-        auto m_step = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
-        auto k_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
-        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0a nz2nz path");
-        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0a nz2nz path");
+        using DstType = typename T::elementType;
+        auto dstLayout = dst.Layout();
+        auto srcLayout = src.Layout();
+        uint16_t mStartPosition = 0;
+        uint16_t kStartPosition = 0;
+        auto mStep = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(dstLayout);
+        auto kStep = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstLayout);
         // Nz -> Nz
-        constexpr uint32_t stride_unit = c0_element<dst_type> * fractal_fixed;
-        auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / stride_unit;
-        auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout) / stride_unit;
-        load_l1_to_l0a_instr::load_data<false>(
-            dst.data().get(), src.data().get(), m_start_position, k_start_position, m_step, k_step, src_stride,
-            dst_stride);
+        constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<DstType> * FRACTAL_FIXED;
+        auto srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) / STRIDE_UNIT;
+        auto dstStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout) / STRIDE_UNIT;
+        LoadCbufToCa::LoadData<false>(dst, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
     }
 
-    template <const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void batch_load_data_impl(const DstTensor& dst, const SrcTensor& src)
+    template <const CopyL12L0ATrait& trait, typename T, typename U>
+    __aicore__ inline static void BatchLoadDataImpl(const T& dst, const U& src)
     {
-        using dst_type = typename DstTensor::element_type;
-        auto dst_layout = dst.layout();
-        auto src_layout = src.layout();
-        auto dst_no_batch_layout = remove_batch_dim(dst_layout);
-        auto src_no_batch_layout = remove_batch_dim(src_layout);
-        uint16_t m_start_position = 0;
-        uint16_t k_start_position = 0;
-        auto m_step = get_element<attr_info::shape, attr_info::row, 1>(dst_no_batch_layout);
-        auto k_step =
-            get<0>(dst_layout.shape()) * get_element<attr_info::shape, attr_info::column, 1>(dst_no_batch_layout);
-        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0a batch nz2nz path");
-        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0a batch nz2nz path");
+        using DstType = typename T::elementType;
+        auto dstLayout = dst.Layout();
+        auto srcLayout = src.Layout();
+        auto dstNoBatchLayout = RemoveBatchDim(dstLayout);
+        auto srcNoBatchLayout = RemoveBatchDim(srcLayout);
+        uint16_t mStartPosition = 0;
+        uint16_t kStartPosition = 0;
+        auto mStep = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(dstNoBatchLayout);
+        auto kStep = Get<0>(dstLayout.Shape()) * GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstNoBatchLayout);
         // Nz -> Nz
-        constexpr uint32_t stride_unit = c0_element<dst_type> * fractal_fixed;
-        auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_no_batch_layout) / stride_unit;
-        auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_no_batch_layout) / stride_unit;
-        load_l1_to_l0a_instr::load_data<false>(
-            dst.data().get(), src.data().get(), m_start_position, k_start_position, m_step, k_step, src_stride,
-            dst_stride);
+        constexpr uint32_t STRIDE_UNIT = C0_ELEMENT<DstType> * FRACTAL_FIXED;
+        auto srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcNoBatchLayout) / STRIDE_UNIT;
+        auto dstStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstNoBatchLayout) / STRIDE_UNIT;
+        LoadCbufToCa::LoadData<false>(dst, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
     }
 };
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0A_COPY_IMPL_NZ2NZ_H
 

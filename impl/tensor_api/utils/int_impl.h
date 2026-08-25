@@ -29,42 +29,42 @@
 namespace AscendC {
 namespace Std {
 
-#define STD_INT_NAMED_BINARY_FN(OP, CMP)                                                 \
-    template <auto t, auto u>                                                            \
-    ASCENDC_HOST_AICORE inline constexpr Int<(CMP ? t : u)> OP(Int<t>, Int<u>)           \
-    {                                                                                    \
-        return {};                                                                       \
-    }                                                                                    \
-    template <auto t, typename Right, typename = enable_if_t<is_integral<Right>::value>> \
-    ASCENDC_HOST_AICORE inline constexpr auto OP(Int<t>, const Right& u)                 \
-    {                                                                                    \
-        return OP(static_cast<size_t>(t), u);                                            \
-    }                                                                                    \
-    template <typename Left, auto u, typename = enable_if_t<is_integral<Left>::value>>   \
-    ASCENDC_HOST_AICORE inline constexpr auto OP(const Left& t, Int<u>)                  \
-    {                                                                                    \
-        return OP(t, static_cast<size_t>(u));                                            \
+#define STD_INT_NAMED_BINARY_FN(OP, CMP)                                         \
+    template <auto t, auto u>                                                    \
+    ASCENDC_HOST_AICORE inline constexpr Int<(CMP ? t : u)> OP(Int<t>, Int<u>)   \
+    {                                                                            \
+        return {};                                                               \
+    }                                                                            \
+    template <auto t, typename U, typename = enable_if_t<is_integral<U>::value>> \
+    ASCENDC_HOST_AICORE inline constexpr auto OP(Int<t>, const U& u)             \
+    {                                                                            \
+        return OP(static_cast<size_t>(t), u);                                    \
+    }                                                                            \
+    template <typename T, auto u, typename = enable_if_t<is_integral<T>::value>> \
+    ASCENDC_HOST_AICORE inline constexpr auto OP(const T& t, Int<u>)             \
+    {                                                                            \
+        return OP(t, static_cast<size_t>(u));                                    \
     }
 
 STD_INT_NAMED_BINARY_FN(max, t > u);
 STD_INT_NAMED_BINARY_FN(min, t < u);
 #undef STD_INT_NAMED_BINARY_FN
 
-#define STD_INT_BINARY_FN(OP, EXPR)                                                      \
-    template <auto t, auto u>                                                            \
-    ASCENDC_HOST_AICORE inline constexpr Int<EXPR> OP(Int<t>, Int<u>)                    \
-    {                                                                                    \
-        return {};                                                                       \
-    }                                                                                    \
-    template <auto t, typename Right, typename = enable_if_t<is_integral<Right>::value>> \
-    ASCENDC_HOST_AICORE inline constexpr auto OP(Int<t>, const Right& u)                 \
-    {                                                                                    \
-        return OP(static_cast<size_t>(t), u);                                            \
-    }                                                                                    \
-    template <typename Left, auto u, typename = enable_if_t<is_integral<Left>::value>>   \
-    ASCENDC_HOST_AICORE inline constexpr auto OP(const Left& t, Int<u>)                  \
-    {                                                                                    \
-        return OP(t, static_cast<size_t>(u));                                            \
+#define STD_INT_BINARY_FN(OP, EXPR)                                              \
+    template <auto t, auto u>                                                    \
+    ASCENDC_HOST_AICORE inline constexpr Int<EXPR> OP(Int<t>, Int<u>)            \
+    {                                                                            \
+        return {};                                                               \
+    }                                                                            \
+    template <auto t, typename U, typename = enable_if_t<is_integral<U>::value>> \
+    ASCENDC_HOST_AICORE inline constexpr auto OP(Int<t>, const U& u)             \
+    {                                                                            \
+        return OP(static_cast<size_t>(t), u);                                    \
+    }                                                                            \
+    template <typename T, auto u, typename = enable_if_t<is_integral<T>::value>> \
+    ASCENDC_HOST_AICORE inline constexpr auto OP(const T& t, Int<u>)             \
+    {                                                                            \
+        return OP(t, static_cast<size_t>(u));                                    \
     }
 
 STD_INT_BINARY_FN(divide, (t / u));

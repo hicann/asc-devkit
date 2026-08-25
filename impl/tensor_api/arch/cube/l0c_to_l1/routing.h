@@ -25,30 +25,30 @@
 #include "impl/tensor_api/arch/cube/utils/l0c2out_utils.h"
 #include "impl/tensor_api/arch/cube/l0c_to_l1/copy_impl/data_copy.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class copy_l0c_to_l1_ignore {
+class CopyL0C2L1Ignore {
 public:
-    template <const l0c_to_l1_trait& trait, typename... Args>
-    __aicore__ inline static void run(const Args&... args)
+    template <const CopyL0C2L1Trait& trait, typename... Args>
+    __aicore__ inline static void Run(const Args&... args)
     {
-        static_assert(Std::is_same_v<Args..., void>, "copy_l0c_to_l1_ignore should not be called");
+        static_assert(Std::is_same_v<Args..., void>, "CopyL0C2L1Ignore should not be called");
     }
 };
 
-template <uint32_t version, typename DstLayoutPtn, typename SrcLayoutPtn>
-struct copy_l0c_to_l1_routing {
-    using type = copy_l0c_to_l1_ignore;
+template <uint32_t Version, typename DstLayoutPtn, typename SrcLayoutPtn>
+struct CopyL0C2L1Routing {
+    using type = CopyL0C2L1Ignore;
 };
 
-template <uint32_t version>
-struct copy_l0c_to_l1_routing<version, nz_layout_ptn, nz_layout_ptn> {
-    using type = data_copy_l0c_to_l1;
+template <uint32_t Version>
+struct CopyL0C2L1Routing<Version, NZLayoutPtn, NZLayoutPtn> {
+    using type = DataCopyL0C2L1;
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_L1_ROUTING_H
 

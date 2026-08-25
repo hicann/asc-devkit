@@ -24,29 +24,32 @@
 
 #include "impl/tensor_api/utils/utils_impl.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-template <typename MmadOperation, typename MmadTrait, typename MmadOperationWith, typename MmadTraitWith>
-template <typename Params>
-__aicore__ inline constexpr mmad_traits<MmadOperationWith, MmadTraitWith>
-mmad_traits<MmadOperation, MmadTrait, MmadOperationWith, MmadTraitWith>::with(const Params& params) const
-{
-    return {params};
-}
+template <typename MmadOperation, typename... MmadOpArgs>
+struct MmadTraits {};
 
-template <typename MmadOperation, typename MmadTrait, typename MmadOperationWith, typename MmadTraitWith>
-template <
-    const typename mmad_traits<MmadOperation, MmadTrait, MmadOperationWith, MmadTraitWith>::trait_type& trait,
-    typename... Args>
-__aicore__ inline void mmad_traits<MmadOperation, MmadTrait, MmadOperationWith, MmadTraitWith>::mmad_unpack(
-    const Args&... args) const
-{
-    MmadOperation::template mmad<trait_type, trait, Args...>(args...);
-}
+template <typename MmadOp, typename MmadTraitsType, typename MmadOpWith, typename MmadTraitsWith>
+struct MmadTraits<MmadOp, MmadTraitsType, MmadOpWith, MmadTraitsWith> {
+    using TraitType = typename MmadTraitsType::TraitType;
+    static constexpr const TraitType defaultTrait = MmadTraitsType::value;
 
-} // namespace te
-} // namespace asc
+    template <typename... Args>
+    __aicore__ inline constexpr MmadTraits<MmadOpWith, MmadTraitsWith> with(const Args&... args) const
+    {
+        return {args...};
+    }
+
+    template <const TraitType& trait = defaultTrait, typename... Args>
+    __aicore__ inline void MmadUnpack(const Args&... args) const
+    {
+        MmadOp::template Mmad<TraitType, trait, Args...>(args...);
+    }
+};
+
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ATOM_MMAD_TRAITS_IMPL_H
 

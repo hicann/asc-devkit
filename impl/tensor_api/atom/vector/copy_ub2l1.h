@@ -26,17 +26,17 @@
 #include "impl/tensor_api/arch/vector/ub_to_l1/copy.h"
 #include "impl/tensor_api/atom/copy_traits_impl.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
 template <typename Traits>
-struct copy_traits<copy_ub_to_l1, Traits> : public copy_traits<copy_ub_to_l1, Traits, copy_ub_to_l1, Traits> {};
+struct CopyTraits<CopyUB2L1, Traits> : public CopyTraits<CopyUB2L1, Traits, CopyUB2L1, Traits> {};
 
 template <>
-struct copy_traits<copy_ub_to_l1> : public copy_traits<copy_ub_to_l1, ub_to_l1_trait_default> {};
+struct CopyTraits<CopyUB2L1> : public CopyTraits<CopyUB2L1, CopyUB2L1TraitDefault> {};
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ATOM_VECTOR_COPY_UB2L1_H
 

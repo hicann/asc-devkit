@@ -24,67 +24,40 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0a/copy_impl/instruction.h"
 
-namespace asc {
-namespace te {
-class load_data_l1_to_l0a_img2col {
+namespace AscendC {
+namespace Te {
+class LoadDataL12L0AImg2Col {
 public:
-    template <const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor, typename PaddingValue>
-    __aicore__ inline static void run(
-        const DstTensor& dst, const SrcTensor& src, const img2col_params<PaddingValue>& params)
+    template <const CopyL12L0ATrait& trait, typename DstTensor, typename SrcTensor, typename PadT>
+    __aicore__ inline static void Run(const DstTensor& dst, const SrcTensor& src, const Img2ColParams<PadT>& params)
     {
-        // PaddingValue should match the L0A dst element type so the padding register bit pattern is correct;
-        // the caller picks it when constructing img2col_params<PaddingValue>.
-        auto dst_layout = dst.layout();
-        auto src_layout = src.layout();
+        // PadT (the padValue type) should match the L0A dst element type so the padding register bit
+        // pattern is correct; the caller picks it when constructing Img2ColParams<PadT>.
+        auto dstLayout = dst.Layout();
+        auto srcLayout = src.Layout();
 
         // Window start offsets come from params (default 0). Non-zero values let an M tile start
-        // mid-row (m_start_pos = wout_start) or a K chunk start inside a C0 block (k_start_pos).
-        uint16_t k_start_pos = params.k_start_pos;
-        uint16_t m_start_pos = params.m_start_pos;
+        // mid-row (mStartPt = woutStart) or a K chunk start inside a C0 block (kStartPt).
+        uint16_t kStartPt = params.kStartPt;
+        uint16_t mStartPt = params.mStartPt;
 
-        // src L1 NC1HWC0 (N, C1, H, W, C0): l1_h/l1_w are the feature-map dims, channel_size = C1*C0.
-        uint16_t l1_h = get<2>(src_layout.shape());
-        uint16_t l1_w = get<3>(src_layout.shape());
-        uint16_t channel_size = get<1>(src_layout.shape()) * get<4>(src_layout.shape());
+        // src L1 NC1HWC0 (N, C1, H, W, C0): l1H/l1W are the feature-map dims, channelSize = C1*C0.
+        uint16_t l1H = Get<2>(srcLayout.Shape());
+        uint16_t l1W = Get<3>(srcLayout.Shape());
+        uint16_t channelSize = Get<1>(srcLayout.Shape()) * Get<4>(srcLayout.Shape());
 
-        load_l1_to_l0a_img2col_instr::set_f_matrix(l1_h, l1_w, params.pad_list);
-        load_l1_to_l0a_img2col_instr::set_padding(params.pad_value);
-        load_l1_to_l0a_img2col_instr::set_repeat(
-            static_cast<uint16_t>(Std::ceil_division(params.m_extension, fractal_fixed)));
-        load_l1_to_l0a_img2col_instr::load_data(
-            dst.data().get(), src.data().get(), params.k_extension, params.m_extension, k_start_pos, m_start_pos,
-            params.stride_w, params.stride_h, params.filter_w, params.filter_h, params.dilation_filter_w,
-            params.dilation_filter_h, params.enable_filter_w_extend, params.enable_filter_h_extend,
-            params.enable_transpose, params.enable_f_matrix_ctrl, channel_size);
-    }
-
-    template <
-        const l1_to_l0a_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
-        typename CopyShape, typename PaddingValue>
-    __aicore__ inline static void run(
-        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
-        const CopyShape& copy_shape, const img2col_params<PaddingValue>& params)
-    {
-        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(dst_coord);
-        auto src_offset = src.layout()(src_coord);
-        uint16_t l1_h = get<2>(src_shape);
-        uint16_t l1_w = get<3>(src_shape);
-        uint16_t channel_size = get<1>(src_shape) * get<4>(src_shape);
-        load_l1_to_l0a_img2col_instr::set_f_matrix(l1_h, l1_w, params.pad_list);
-        load_l1_to_l0a_img2col_instr::set_padding(params.pad_value);
-        load_l1_to_l0a_img2col_instr::set_repeat(
-            static_cast<uint16_t>(Std::ceil_division(params.m_extension, fractal_fixed)));
-        load_l1_to_l0a_img2col_instr::load_data_with_offset(
-            dst, src, dst_offset, src_offset, params.k_extension, params.m_extension, 0, 0, params.stride_w,
-            params.stride_h, params.filter_w, params.filter_h, params.dilation_filter_w, params.dilation_filter_h,
-            params.enable_filter_w_extend, params.enable_filter_h_extend, params.enable_transpose,
-            params.enable_f_matrix_ctrl, channel_size);
+        LoadCbufToCaImg2Col::SetFMatrix(l1H, l1W, params.padList);
+        LoadCbufToCaImg2Col::SetPadding(params.padValue);
+        LoadCbufToCaImg2Col::SetRepeat(static_cast<uint16_t>(Std::ceil_division(params.mExtension, FRACTAL_FIXED)));
+        LoadCbufToCaImg2Col::LoadData(
+            dst, src, params.kExtension, params.mExtension, kStartPt, mStartPt, params.strideW, params.strideH,
+            params.filterW, params.filterH, params.dilationFilterW, params.dilationFilterH, params.filterSizeW,
+            params.filterSizeH, params.transpose, params.fMatrixCtrl, channelSize);
     }
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0A_COPY_IMPL_IMG2COL_H
 

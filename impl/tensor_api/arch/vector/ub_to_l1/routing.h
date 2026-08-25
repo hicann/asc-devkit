@@ -27,55 +27,45 @@
 #include "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/nz2nz.h"
 #include "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/zn2zn.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class copy_ub_to_l1_ignore {
+class CopyUB2L1Ignore {
 public:
-    template <const ub_to_l1_trait& trait, typename... Args>
-    __aicore__ inline static void run(const Args&... args)
+    template <const CopyUB2L1Trait& trait, typename... Args>
+    __aicore__ inline static void Run(const Args&... args)
     {
-        static_assert(Std::is_same_v<Args..., void>, "copy_ub_to_l1_ignore should not be called");
+        static_assert(Std::is_same_v<Args..., void>, "CopyUB2L1Ignore should not be called");
     }
 };
 
-template <uint32_t version, typename DstLayoutPtn, typename SrcLayoutPtn>
-struct copy_ub_to_l1_routing {
-    using type = copy_ub_to_l1_ignore;
+template <uint32_t Version, typename DstLayoutPtn, typename SrcLayoutPtn>
+struct CopyUB2L1Routing {
+    using type = CopyUB2L1Ignore;
 };
 
-template <uint32_t version>
-struct copy_ub_to_l1_routing<version, nd_ext_layout_ptn, nd_ext_layout_ptn> {
-    using type = copy_ub_to_l1_nd;
+template <uint32_t Version>
+struct CopyUB2L1Routing<Version, NDExtLayoutPtn, NDExtLayoutPtn> {
+    using type = CopyUbufToCbufND;
 };
 
-template <uint32_t version>
-struct copy_ub_to_l1_routing<version, nd_layout_ptn, nd_layout_ptn> {
-    using type = copy_ub_to_l1_nd;
+template <uint32_t Version>
+struct CopyUB2L1Routing<Version, DNExtLayoutPtn, DNExtLayoutPtn> {
+    using type = CopyUbufToCbufDN;
 };
 
-template <uint32_t version>
-struct copy_ub_to_l1_routing<version, dn_ext_layout_ptn, dn_ext_layout_ptn> {
-    using type = copy_ub_to_l1_dn;
+template <uint32_t Version>
+struct CopyUB2L1Routing<Version, NZLayoutPtn, NZLayoutPtn> {
+    using type = CopyUbufToCbufNZ;
 };
 
-template <uint32_t version>
-struct copy_ub_to_l1_routing<version, dn_layout_ptn, dn_layout_ptn> {
-    using type = copy_ub_to_l1_dn;
+template <uint32_t Version>
+struct CopyUB2L1Routing<Version, ZNLayoutPtn, ZNLayoutPtn> {
+    using type = CopyUbufToCbufZN;
 };
 
-template <uint32_t version>
-struct copy_ub_to_l1_routing<version, nz_layout_ptn, nz_layout_ptn> {
-    using type = copy_ub_to_l1_nz;
-};
-
-template <uint32_t version>
-struct copy_ub_to_l1_routing<version, zn_layout_ptn, zn_layout_ptn> {
-    using type = copy_ub_to_l1_zn;
-};
-
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_ROUTING_H
 

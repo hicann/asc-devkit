@@ -24,70 +24,54 @@
 
 #include "impl/tensor_api/utils/utils_impl.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
 template <typename Iterator>
-struct view_engine {
+struct ViewEngine {
     using iterator = Iterator;
-    using reference = typename iter_ref<iterator>::type;    // T&
-    using element_type = typename iter_ele<iterator>::type; // rm_ref
-    using value_type = typename iter_val<iterator>::type;   // rm_cvf
-    __aicore__ inline constexpr iterator const& begin() const { return storage; }
+    using reference = typename IterRef<iterator>::type;   // T&
+    using elementType = typename IterEle<iterator>::type; // rm_ref
+    using valueType = typename IterVal<iterator>::type;   // rm_cvf
+    __aicore__ inline constexpr iterator const& Begin() const { return storage; }
 
-    __aicore__ inline constexpr iterator& begin() { return storage; }
+    __aicore__ inline constexpr iterator& Begin() { return storage; }
 
-    __aicore__ inline constexpr view_engine(iterator storage = {}) : storage(storage) {}
-    __aicore__ inline constexpr view_engine(iterator storage, cache_mode mode) : storage(storage), mode(mode) {}
-    __aicore__ inline constexpr view_engine(iterator storage, AscendC::Te::CacheMode mode)
-        : storage(storage), mode(normalize_cache_mode(mode))
-    {}
+    __aicore__ inline constexpr ViewEngine(iterator storage = {}) : storage(storage) {}
+    __aicore__ inline constexpr ViewEngine(iterator storage, CacheMode mode) : storage(storage), mode(mode) {}
 
-    __aicore__ inline constexpr uint8_t get_cache_mode() const { return static_cast<uint8_t>(mode); }
+    __aicore__ inline constexpr uint8_t GetCacheMode() const { return static_cast<uint8_t>(mode); }
 
-    __aicore__ inline constexpr void set_cache_mode(cache_mode mode) { this->mode = mode; }
+    __aicore__ inline constexpr void SetCacheMode(CacheMode mode) { this->mode = mode; }
 
     template <typename Index>
-    __aicore__ inline constexpr view_engine operator+(const Index& i) const
+    __aicore__ inline constexpr ViewEngine operator+(const Index& i) const
     {
-        auto iter = begin() + i;
+        auto iter = Begin() + i;
         return {iter, mode};
     }
 
-    __aicore__ inline constexpr iterator const& Begin() const { return begin(); }
-
-    __aicore__ inline constexpr iterator& Begin() { return begin(); }
-
-    __aicore__ inline constexpr uint8_t GetCacheMode() const { return get_cache_mode(); }
-
-    __aicore__ inline constexpr void SetCacheMode(AscendC::Te::CacheMode cache_mode)
-    {
-        set_cache_mode(normalize_cache_mode(cache_mode));
-    }
-
 private:
     iterator storage;
-    cache_mode mode = cache_mode::normal;
+    CacheMode mode = CacheMode::CACHE_MODE_NORMAL;
 };
 
 template <typename Iterator>
-struct const_view_engine {
+struct ConstViewEngine {
     using iterator = Iterator;
-    using reference = typename iter_ref<iterator>::type;    // T&
-    using element_type = typename iter_ele<iterator>::type; // rm_ref
-    using value_type = typename iter_val<iterator>::type;   // rm_cvf
+    using reference = typename IterRef<iterator>::type;   // T&
+    using elementType = typename IterEle<iterator>::type; // rm_ref
+    using valueType = typename IterVal<iterator>::type;   // rm_cvf
 
-    __aicore__ inline constexpr iterator const& begin() const { return storage; }
-
-    __aicore__ inline constexpr iterator const& Begin() const { return begin(); }
-    __aicore__ inline constexpr const_view_engine(iterator storage = {}) : storage(storage) {}
+    __aicore__ inline constexpr iterator const& Begin() const { return storage; }
+    __aicore__ inline constexpr ConstViewEngine(iterator storage = {}) : storage(storage) {}
 
 private:
     iterator storage;
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_TENSOR_ENGINE_IMPL_H
 

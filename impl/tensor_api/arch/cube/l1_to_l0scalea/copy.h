@@ -24,63 +24,48 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0scalea/routing.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-template <typename Trait, const Trait& trait, typename... Args>
-__aicore__ inline void copy_l1_to_l0scalea::copy(const Args&... args)
-{
-    load_data<trait, Args...>(args...);
-}
+constexpr CopyL12L0ScaleATrait DEFAULT_COPY_L1_TO_L0SCALEA_TRAIT;
 
-template <const l1_to_l0scalea_trait& trait, typename DstTensor, typename SrcTensor>
-__aicore__ inline void copy_l1_to_l0scalea::load_data(const DstTensor& dst, const SrcTensor& src)
-{
-    using dst_pos = get_mem_location<DstTensor>;
-    using src_pos = get_mem_location<SrcTensor>;
-    static_assert(
-        Std::is_same_v<dst_pos, location::l0scalea>,
-        "For copy_l1_to_l0scalea, the destination tensor must be located in L0ScaleA.");
-    static_assert(
-        Std::is_same_v<src_pos, location::l1>, "For copy_l1_to_l0scalea, the source tensor must be located in L1.");
-    using dst_layout = typename DstTensor::layout_type;
-    using src_layout = typename SrcTensor::layout_type;
-    using dst_pattern = get_layout_pattern<dst_layout>;
-    using src_pattern = get_layout_pattern<src_layout>;
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_l1_to_l0scalea");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_l1_to_l0scalea");
-    TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_l1_to_l0scalea");
-    using copy_l1_to_l0scalea_impl =
-        typename copy_l1_to_l0scalea_routing<current_arch_version, dst_pattern, src_pattern>::type;
-    copy_l1_to_l0scalea_impl::template run<trait, DstTensor, SrcTensor>(dst, src);
-}
+struct CopyL12L0ScaleATraitDefault {
+    using TraitType = CopyL12L0ScaleATrait;
+    static constexpr const TraitType value = DEFAULT_COPY_L1_TO_L0SCALEA_TRAIT;
+};
 
-template <
-    const l1_to_l0scalea_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
-    typename CopyShape>
-__aicore__ inline void copy_l1_to_l0scalea::load_data(
-    const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
-    const CopyShape& copy_shape)
-{
-    using dst_pos = get_mem_location<DstTensor>;
-    using src_pos = get_mem_location<SrcTensor>;
-    static_assert(
-        Std::is_same_v<dst_pos, location::l0scalea>,
-        "For copy_l1_to_l0scalea, the destination tensor must be located in L0ScaleA.");
-    static_assert(
-        Std::is_same_v<src_pos, location::l1>, "For copy_l1_to_l0scalea, the source tensor must be located in L1.");
-    using dst_pattern = get_layout_pattern<typename DstTensor::layout_type>;
-    using src_pattern = get_layout_pattern<typename SrcTensor::layout_type>;
-    using copy_l1_to_l0scalea_impl =
-        typename copy_l1_to_l0scalea_routing<current_arch_version, dst_pattern, src_pattern>::type;
-    auto resolved_dst_coord = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
-    auto resolved_src_coord = resolve_copy_coord(src.layout(), copy_shape, src_coord);
-    copy_l1_to_l0scalea_impl::template run<trait, DstTensor, SrcTensor>(
-        dst, src, resolved_dst_coord, resolved_src_coord, copy_shape);
-}
+struct CopyL12L0ScaleA {
+public:
+    template <typename Tp, const Tp& traits, typename... Args>
+    __aicore__ inline static void Copy(const Args&... args)
+    {
+        if ASCEND_IS_AIC {
+            LoadData<traits, Args...>(args...);
+        }
+    }
 
-} // namespace te
-} // namespace asc
+private:
+    template <const CopyL12L0ScaleATrait& trait = DEFAULT_COPY_L1_TO_L0SCALEA_TRAIT, typename T, typename U>
+    __aicore__ inline static void LoadData(const T& dst, const U& src)
+    {
+        using dstPos = GetMemLocation<T>;
+        using srcPos = GetMemLocation<U>;
+        static_assert(
+            Std::is_same_v<dstPos, Location::L0ScaleA>,
+            "When Copy tensor from L1 to L0ScaleA, dst tensor must on L0ScaleA");
+        static_assert(
+            Std::is_same_v<srcPos, Location::L1>, "When Copy tensor from L1 to L0ScaleA, src tensor must on L1");
+        using DstLayout = typename T::layoutType;
+        using SrcLayout = typename U::layoutType;
+        using DstPattern = GetLayoutPattern<DstLayout>;
+        using SrcPattern = GetLayoutPattern<SrcLayout>;
+        using CopyL12L0ScaleAImpl = typename CopyL12L0ScaleARouting<CURRENT_ARCH_VERSION, DstPattern, SrcPattern>::type;
+        CopyL12L0ScaleAImpl::template Run<trait, T, U>(dst, src);
+    }
+};
+
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEA_COPY_H
 

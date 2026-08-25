@@ -24,69 +24,45 @@
 
 #include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/instruction.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class data_copy_l0c_to_gm_nz2nchw {
+class DataCopyL0C2GMNZ2NCHW {
 public:
-    template <const l0c_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src, const l0c_to_gm_params& params)
+    template <const CopyL0C2GMTrait& trait, typename T, typename U>
+    __aicore__ inline static void Run(const T& dst, const U& src, const FixpipeParams& params)
     {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor>();
-        check_data_type::check_l0c_to_gm_data_type<quant_pre, DstTensor, SrcTensor>();
+        constexpr QuantMode_t quantPre = GetQuantMode<trait.roundMode, T, U>();
+        CheckDataType::CheckL0C2GmDataType<quantPre, T, U>();
 
-        auto dst_layout = dst.layout();
-        auto src_layout = src.layout();
+        auto dstLayout = dst.Layout();
+        auto srcLayout = src.Layout();
 
         // nz2dn needs the channel register (src NZ C0 stride) set, mirroring the DN path's
         // EmitSetRegister non-ND branch. The generic SetRegisterImpl would treat NCHW as neither
         // ND nor DN and emit SetRegister(1,0,0) without SetChannelPara, so set it explicitly here.
-        set_register_instr::set_register(1u, 0u, 0u, get_element<attr_info::stride, attr_info::column, 0>(src_layout));
+        SetRegisterInstr::SetRegister(1u, 0u, 0u, GetElement<AttrInfo::Stride, AttrInfo::Column, 0>(srcLayout));
 
         // dst NCHW (N, C, H, W), N == 1. NCHW memory equals DNExt (H*W, C) column-major, so this
-        // mirrors the validated DN path: n_size = C = Shape[1] (column count), m_size = H*W =
-        // Shape[2]*Shape[3] (row count), dst_stride = H*W (the DN column stride = row count = Stride[1]).
-        uint32_t n_size = get<1>(dst_layout.shape());
-        uint32_t m_size = get<2>(dst_layout.shape()) * get<3>(dst_layout.shape());
-        uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
-        uint32_t dst_stride = get<1>(dst_layout.stride());
+        // mirrors the validated DN path: nSize = C = Shape[1] (column count), mSize = H*W =
+        // Shape[2]*Shape[3] (row count), dstStride = H*W (the DN column stride = row count = Stride[1]).
+        uint32_t nSize = Get<1>(dstLayout.Shape());
+        uint32_t mSize = Get<2>(dstLayout.Shape()) * Get<3>(dstLayout.Shape());
+        uint32_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) / FRACTAL_FIXED;
+        uint32_t dstStride = Get<1>(dstLayout.Stride());
 
-        uint8_t cache_mode = dst.engine().get_cache_mode();
-        bool relu_en = trait.enable_relu;
-        uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
-        bool is_channel_split = trait.enable_channel_split;
+        uint8_t cacheMode = dst.Engine().GetCacheMode();
+        bool reluEn = trait.enableRelu;
+        uint8_t unitFlag = params.unitFlag;
+        bool isChannelSplit = trait.enableChannelSplit;
 
-        copy_l0c_to_gm_instr::data_copy<quant_pre>(
-            dst.data().get(), src.data().get(), n_size, m_size, src_stride, dst_stride, cache_mode, relu_en, unit_flag,
-            is_channel_split, false, true);
-    }
-
-    template <
-        const l0c_to_gm_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
-        typename CopyShape>
-    __aicore__ inline static void run(
-        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
-        const CopyShape& copy_shape, const l0c_to_gm_params& params)
-    {
-        constexpr QuantMode_t quant_pre = get_quant_mode<trait.round_mode, DstTensor, SrcTensor>();
-        check_data_type::check_l0c_to_gm_data_type<quant_pre, DstTensor, SrcTensor>();
-        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
-        auto dst_offset = dst.layout()(dst_coord);
-        auto src_offset = src.layout()(src_coord);
-        auto src_layout = src.layout();
-        set_register_instr::set_register(1u, 0u, 0u, get_element<attr_info::stride, attr_info::column, 0>(src_layout));
-        uint32_t n_size = get_shape_columns(src_shape);
-        uint32_t m_size = get_shape_rows(src_shape);
-        uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
-        uint32_t dst_stride = get<1>(dst.layout().stride());
-        copy_l0c_to_gm_instr::data_copy_with_offset<quant_pre>(
-            dst, src, dst_offset, src_offset, n_size, m_size, src_stride, dst_stride, dst.engine().get_cache_mode(),
-            trait.enable_relu, static_cast<uint8_t>(params.unit_flag), trait.enable_channel_split, false, true);
+        CopyMatrixCcToGmInstr::DataCopy<quantPre, T, U>(
+            dst, src, nSize, mSize, srcStride, dstStride, cacheMode, reluEn, unitFlag, isChannelSplit, false, true);
     }
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_GM_COPY_IMPL_NZ2NCHW_H
 

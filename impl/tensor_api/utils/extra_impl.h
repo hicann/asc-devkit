@@ -31,57 +31,44 @@
 #include "utils/std/utility.h"
 #include "utils/std/algorithm.h"
 #include "utils/std/cmath.h"
-#include "impl/tensor_api/utils/int_impl.h"
+#include "int_impl.h"
 
-namespace asc {
-namespace te {
-template <typename... Types>
+namespace AscendC {
+namespace Te {
+template <typename... Ts>
 using void_t = void;
 
-template <typename Trait, typename = void>
-struct get_trait_member_type {
-    using type = typename Trait::TraitType;
+template <typename T, typename = void>
+struct IterRef {
+    using type = decltype(*Std::declval<T&>()); // type = T&
 };
 
-template <typename Trait>
-struct get_trait_member_type<Trait, void_t<typename Trait::trait_type>> {
-    using type = typename Trait::trait_type;
+template <typename T>
+struct IterRef<T, void_t<typename T::reference>> {
+    using type = typename T::reference;
 };
 
-template <typename Trait>
-using get_trait_member_type_t = typename get_trait_member_type<Trait>::type;
-
-template <typename Iterator, typename = void>
-struct iter_ref {
-    using type = decltype(*Std::declval<Iterator&>());
+template <typename T, typename = void>
+struct IterEle {
+    using type = Std::remove_reference_t<typename IterRef<T>::type>;
 };
 
-template <typename Iterator>
-struct iter_ref<Iterator, void_t<typename Iterator::reference>> {
-    using type = typename Iterator::reference;
+template <typename T>
+struct IterEle<T, void_t<typename T::elementType>> {
+    using type = typename T::elementType;
 };
 
-template <typename Iterator, typename = void>
-struct iter_ele {
-    using type = Std::remove_reference_t<typename iter_ref<Iterator>::type>;
+template <typename T, typename = void>
+struct IterVal {
+    using type = Std::remove_cv_t<typename IterEle<T>::type>;
 };
 
-template <typename Iterator>
-struct iter_ele<Iterator, void_t<typename Iterator::element_type>> {
-    using type = typename Iterator::element_type;
+template <typename T>
+struct IterVal<T, void_t<typename T::valueType>> {
+    using type = typename T::valueType;
 };
-
-template <typename Iterator, typename = void>
-struct iter_val {
-    using type = Std::remove_cv_t<typename iter_ele<Iterator>::type>;
-};
-
-template <typename Iterator>
-struct iter_val<Iterator, void_t<typename Iterator::value_type>> {
-    using type = typename Iterator::value_type;
-};
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_UTILS_EXTRA_IMPL_H
 

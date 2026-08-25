@@ -24,29 +24,32 @@
 
 #include "impl/tensor_api/utils/utils_impl.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-template <typename CopyOperation, typename CopyTrait, typename CopyOperationWith, typename CopyTraitWith>
-template <typename Params>
-__aicore__ inline constexpr copy_traits<CopyOperationWith, CopyTraitWith>
-copy_traits<CopyOperation, CopyTrait, CopyOperationWith, CopyTraitWith>::with(const Params& params) const
-{
-    return {params};
-}
+template <typename CopyOperation, typename... CopyOpArgs>
+struct CopyTraits {};
 
-template <typename CopyOperation, typename CopyTrait, typename CopyOperationWith, typename CopyTraitWith>
-template <
-    const typename copy_traits<CopyOperation, CopyTrait, CopyOperationWith, CopyTraitWith>::trait_type& trait,
-    typename... Args>
-__aicore__ inline void copy_traits<CopyOperation, CopyTrait, CopyOperationWith, CopyTraitWith>::copy_unpack(
-    const Args&... args) const
-{
-    CopyOperation::template copy<trait_type, trait, Args...>(args...);
-}
+template <typename CopyOp, typename Traits, typename CopyOpWith, typename TraitsWith>
+struct CopyTraits<CopyOp, Traits, CopyOpWith, TraitsWith> {
+    using TraitType = typename Traits::TraitType;
+    static constexpr const TraitType defaultTrait = Traits::value;
 
-} // namespace te
-} // namespace asc
+    template <typename... Args>
+    __aicore__ inline constexpr CopyTraits<CopyOpWith, TraitsWith> with(const Args&... args) const
+    {
+        return {args...};
+    }
+
+    template <const TraitType& trait = defaultTrait, typename... Args>
+    __aicore__ inline void CopyUnpack(const Args&... args) const
+    {
+        CopyOp::template Copy<TraitType, trait, Args...>(args...);
+    }
+};
+
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ATOM_COPY_TRAITS_IMPL_H
 

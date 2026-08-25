@@ -24,65 +24,47 @@
 
 #include "impl/tensor_api/arch/vector/ub_to_ub/copy_impl/data_copy.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class copy_ub_to_ub_nd : private copy_ub_to_ub_common {
+class CopyUbufToUbufAlignV2ND : private CopyUbufToUbufAlignV2Common {
 public:
-    template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
+    template <const CopyUB2UBTrait& trait, typename T, typename U>
+    __aicore__ inline static void Run(const T& dst, const U& src)
     {
-        data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
-    }
-
-    template <
-        const ub_to_ub_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void run(
-        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape)
-    {
-        check_template<trait, T, U>();
-        using src_type = typename U::element_type;
-        using dst_type = typename T::element_type;
-        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
-        auto block_count = get_shape_rows(src_shape);
-        auto block_len = get_shape_columns(src_shape) * sizeof(src_type);
-        auto src_stride = get_row_stride(src.layout()) * sizeof(src_type) - block_len;
-        auto dst_stride = get_row_stride(dst.layout()) * sizeof(dst_type) - block_len;
-        emit_copy(
-            dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_stride, dst_stride);
+        DataCopyImpl<trait, T, U>(dst, src);
     }
 
 private:
-    template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static constexpr void check_template()
+    template <const CopyUB2UBTrait& trait, typename T, typename U>
+    __aicore__ inline static constexpr void CheckTemplate()
     {
-        check_layout_pattern<SrcTensor, DstTensor>();
-        check_data_type::check_ub_to_ub_data_type<DstTensor, SrcTensor>();
+        CheckLayoutPattern<U, T>();
+        CheckDataType::CheckUB2UBDataType<T, U>();
     }
 
-    template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
+    template <const CopyUB2UBTrait& trait, typename T, typename U>
+    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
     {
-        using src_type = typename SrcTensor::element_type;
-        using dst_type = typename DstTensor::element_type;
+        using SrcType = typename U::elementType;
+        using DstType = typename T::elementType;
 
-        check_template<trait, DstTensor, SrcTensor>();
+        CheckTemplate<trait, T, U>();
 
-        auto dst_layout = dst.layout();
-        auto src_layout = src.layout();
+        auto dstLayout = dst.Layout();
+        auto srcLayout = src.Layout();
 
-        uint16_t block_count = get_total_row_shape(src_layout);
-        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src row shape size", "copy_ub_to_ub ND path");
-        uint32_t block_len = get_total_column_shape(src_layout) * sizeof(src_type);
-        int64_t src_stride = get_row_stride(src_layout) * sizeof(src_type) - block_len;
-        int64_t dst_stride = get_row_stride(dst_layout) * sizeof(dst_type) - block_len;
+        uint16_t blockCount = GetTotalRowShape(srcLayout);
+        uint32_t blockLen = GetTotalColumnShape(srcLayout) * sizeof(SrcType);
+        int64_t srcStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(srcLayout) * sizeof(SrcType);
+        int64_t dstStride = GetElement<AttrInfo::Stride, AttrInfo::Row, 1>(dstLayout) * sizeof(DstType);
 
-        emit_copy(dst, src, block_count, block_len, src_stride, dst_stride);
+        EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
     }
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_UB_COPY_IMPL_ND2ND_H
 

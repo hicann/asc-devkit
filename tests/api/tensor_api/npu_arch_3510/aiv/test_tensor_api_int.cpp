@@ -9,10 +9,10 @@
  */
 
 #include <gtest/gtest.h>
-#include "tensor_api/stub/cce_stub.h"
+#include "c_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class tensor_api_int_3510 : public testing::Test {
+class Tensor_Api_Int_3510 : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -22,51 +22,51 @@ protected:
     void TearDown() override { AscendC::SetGCoreType(0); }
 };
 
-TEST_F(tensor_api_int_3510, int_max_min_return_static_int)
+TEST_F(Tensor_Api_Int_3510, IntMaxMinReturnStaticInt)
 {
     using namespace AscendC::Std;
 
-    auto max_result = max(Int<16>{}, Int<32>{});
-    auto min_result = min(Int<16>{}, Int<32>{});
-    auto same_max_result = max(Int<64>{}, Int<64>{});
-    auto same_min_result = min(Int<64>{}, Int<64>{});
+    auto maxResult = max(Int<16>{}, Int<32>{});
+    auto minResult = min(Int<16>{}, Int<32>{});
+    auto sameMaxResult = max(Int<64>{}, Int<64>{});
+    auto sameMinResult = min(Int<64>{}, Int<64>{});
 
-    static_assert(is_same_v<decltype(max_result), Int<32>>);
-    static_assert(is_same_v<decltype(min_result), Int<16>>);
-    static_assert(is_same_v<decltype(same_max_result), Int<64>>);
-    static_assert(is_same_v<decltype(same_min_result), Int<64>>);
-    EXPECT_EQ(max_result(), 32);
-    EXPECT_EQ(min_result(), 16);
-    EXPECT_EQ(same_max_result(), 64);
-    EXPECT_EQ(same_min_result(), 64);
+    static_assert(is_same_v<decltype(maxResult), Int<32>>);
+    static_assert(is_same_v<decltype(minResult), Int<16>>);
+    static_assert(is_same_v<decltype(sameMaxResult), Int<64>>);
+    static_assert(is_same_v<decltype(sameMinResult), Int<64>>);
+    EXPECT_EQ(maxResult(), 32);
+    EXPECT_EQ(minResult(), 16);
+    EXPECT_EQ(sameMaxResult(), 64);
+    EXPECT_EQ(sameMinResult(), 64);
 }
 
-TEST_F(tensor_api_int_3510, int_mixed_integral_max)
+TEST_F(Tensor_Api_Int_3510, IntMixedIntegralMax)
 {
     using namespace AscendC::Std;
 
-    uint32_t larger_u32 = 48;
-    int32_t smaller_i32 = 12;
-    uint16_t smaller_u16 = 8;
-    size_t larger_size = 96;
+    uint32_t largerU32 = 48;
+    int32_t smallerI32 = 12;
+    uint16_t smallerU16 = 8;
+    size_t largerSize = 96;
 
-    EXPECT_EQ(max(Int<32>{}, larger_u32), 48);
-    EXPECT_EQ(max(Int<32>{}, smaller_i32), 32);
-    EXPECT_EQ(max(smaller_u16, Int<32>{}), 32);
-    EXPECT_EQ(max(larger_size, Int<32>{}), 96);
+    EXPECT_EQ(max(Int<32>{}, largerU32), 48);
+    EXPECT_EQ(max(Int<32>{}, smallerI32), 32);
+    EXPECT_EQ(max(smallerU16, Int<32>{}), 32);
+    EXPECT_EQ(max(largerSize, Int<32>{}), 96);
 }
 
-TEST_F(tensor_api_int_3510, int_mixed_integral_min)
+TEST_F(Tensor_Api_Int_3510, IntMixedIntegralMin)
 {
     using namespace AscendC::Std;
 
-    uint32_t larger_u32 = 48;
-    int32_t smaller_i32 = 12;
-    uint16_t smaller_u16 = 8;
-    size_t larger_size = 96;
+    uint32_t largerU32 = 48;
+    int32_t smallerI32 = 12;
+    uint16_t smallerU16 = 8;
+    size_t largerSize = 96;
 
-    EXPECT_EQ(min(Int<32>{}, larger_u32), 32);
-    EXPECT_EQ(min(Int<32>{}, smaller_i32), 12);
-    EXPECT_EQ(min(smaller_u16, Int<32>{}), 8);
-    EXPECT_EQ(min(larger_size, Int<32>{}), 32);
+    EXPECT_EQ(min(Int<32>{}, largerU32), 32);
+    EXPECT_EQ(min(Int<32>{}, smallerI32), 12);
+    EXPECT_EQ(min(smallerU16, Int<32>{}), 8);
+    EXPECT_EQ(min(largerSize, Int<32>{}), 32);
 }

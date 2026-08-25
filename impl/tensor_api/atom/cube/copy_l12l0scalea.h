@@ -25,18 +25,17 @@
 #include "impl/tensor_api/arch/cube/l1_to_l0scalea/copy.h"
 #include "impl/tensor_api/atom/copy_traits_impl.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
 template <typename Traits>
-struct copy_traits<copy_l1_to_l0scalea, Traits>
-    : public copy_traits<copy_l1_to_l0scalea, Traits, copy_l1_to_l0scalea, Traits> {};
+struct CopyTraits<CopyL12L0ScaleA, Traits> : public CopyTraits<CopyL12L0ScaleA, Traits, CopyL12L0ScaleA, Traits> {};
 
 template <>
-struct copy_traits<copy_l1_to_l0scalea> : public copy_traits<copy_l1_to_l0scalea, l1_to_l0scalea_trait_default> {};
+struct CopyTraits<CopyL12L0ScaleA> : public CopyTraits<CopyL12L0ScaleA, CopyL12L0ScaleATraitDefault> {};
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ATOM_CUBE_COPY_L12L0SCALEA_H
 

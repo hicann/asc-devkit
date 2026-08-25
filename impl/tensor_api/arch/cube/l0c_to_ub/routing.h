@@ -25,47 +25,47 @@
 #include "impl/tensor_api/arch/cube/utils/l0c2out_utils.h"
 #include "impl/tensor_api/arch/cube/l0c_to_ub/copy_impl/data_copy.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class copy_l0c_to_ub_ignore {
+class CopyL0C2UBIgnore {
 public:
-    template <const l0c_to_ub_trait& trait, typename... Args>
-    __aicore__ inline static void run(const Args&... args)
+    template <const CopyL0C2UBTrait& trait, typename... Args>
+    __aicore__ inline static void Run(const Args&... args)
     {
-        static_assert(Std::is_same_v<Args..., void>, "copy_l0c_to_ub_ignore should not be called");
+        static_assert(Std::is_same_v<Args..., void>, "CopyL0C2UBIgnore should not be called");
     }
 };
 
-template <uint32_t version, typename DstLayoutPtn, typename SrcLayoutPtn>
-struct copy_l0c_to_ub_routing {
-    using type = copy_l0c_to_ub_ignore;
+template <uint32_t Version, typename DstLayoutPtn, typename SrcLayoutPtn>
+struct CopyL0C2UBRouting {
+    using type = CopyL0C2UBIgnore;
 };
 
-template <uint32_t version>
-struct copy_l0c_to_ub_routing<version, nd_ext_layout_ptn, nz_layout_ptn> {
-    using type = data_copy_l0c_to_ub;
+template <uint32_t Version>
+struct CopyL0C2UBRouting<Version, NDExtLayoutPtn, NZLayoutPtn> {
+    using type = DataCopyL0C2UB;
 };
-template <uint32_t version>
-struct copy_l0c_to_ub_routing<version, dn_ext_layout_ptn, nz_layout_ptn> {
-    using type = data_copy_l0c_to_ub;
+template <uint32_t Version>
+struct CopyL0C2UBRouting<Version, DNExtLayoutPtn, NZLayoutPtn> {
+    using type = DataCopyL0C2UB;
 };
-template <uint32_t version>
-struct copy_l0c_to_ub_routing<version, nd_layout_ptn, nz_layout_ptn> {
-    using type = data_copy_l0c_to_ub;
+template <uint32_t Version>
+struct CopyL0C2UBRouting<Version, NDLayoutPtn, NZLayoutPtn> {
+    using type = DataCopyL0C2UB;
 };
-template <uint32_t version>
-struct copy_l0c_to_ub_routing<version, dn_layout_ptn, nz_layout_ptn> {
-    using type = data_copy_l0c_to_ub;
-};
-
-template <uint32_t version>
-struct copy_l0c_to_ub_routing<version, nz_layout_ptn, nz_layout_ptn> {
-    using type = data_copy_l0c_to_ub;
+template <uint32_t Version>
+struct CopyL0C2UBRouting<Version, DNLayoutPtn, NZLayoutPtn> {
+    using type = DataCopyL0C2UB;
 };
 
-} // namespace te
-} // namespace asc
+template <uint32_t Version>
+struct CopyL0C2UBRouting<Version, NZLayoutPtn, NZLayoutPtn> {
+    using type = DataCopyL0C2UB;
+};
+
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_UB_ROUTING_H
 

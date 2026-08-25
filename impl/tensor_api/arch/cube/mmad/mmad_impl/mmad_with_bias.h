@@ -24,66 +24,61 @@
 
 #include "impl/tensor_api/arch/cube/mmad/mmad_impl/instruction.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-class mmad_with_bias {
+class MmadWithBias {
 public:
-    template <
-        const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor,
-        typename Params>
-    __aicore__ inline static void run(
-        const CTensor& dst, const ATensor& fm, const BTensor& filter, const BiasTensor& bias, const Params& params)
+    template <const MmadTrait& trait, typename T, typename U, typename S, typename V, typename Params>
+    __aicore__ inline static void Run(const T& dst, const U& fm, const S& filter, const V& bias, const Params& params)
     {
-        mmad_impl<trait, CTensor, ATensor, BTensor, BiasTensor>(dst, fm, filter, bias, params);
+        MmadImpl<trait, T, U, S, V>(dst, fm, filter, bias, params);
     }
 
 private:
-    template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor>
-    __aicore__ inline static constexpr void check_template_for_normal()
+    template <const MmadTrait& trait, typename T, typename U, typename S, typename V>
+    __aicore__ inline static constexpr void CheckTemplateForNormal()
     {
-        check_layout_pattern<CTensor, ATensor, BTensor, BiasTensor>();
-        check_data_type::check_mmad_bias_data_type<CTensor, ATensor, BTensor, BiasTensor>();
+        CheckLayoutPattern<T, U, S, V>();
+        CheckDataType::CheckMmadBiasDataType<T, U, S, V>();
     }
 
-    template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor>
-    __aicore__ inline static constexpr void check_template_for_mx()
+    template <const MmadTrait& trait, typename T, typename U, typename S, typename V>
+    __aicore__ inline static constexpr void CheckTemplateForMx()
     {
-        check_layout_pattern<CTensor, ATensor, BTensor, BiasTensor>();
-        check_data_type::check_mx_mmad_bias_data_type<CTensor, ATensor, BTensor, BiasTensor>();
+        CheckLayoutPattern<T, U, S, V>();
+        CheckDataType::CheckMxMmadBiasDataType<T, U, S, V>();
     }
 
-    template <
-        const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor,
-        typename Params>
-    __aicore__ inline static void mmad_impl(
-        const CTensor& dst, const ATensor& fm, const BTensor& filter, const BiasTensor& bias, const Params& params)
+    template <const MmadTrait& trait, typename T, typename U, typename S, typename V, typename Params>
+    __aicore__ inline static void MmadImpl(
+        const T& dst, const U& fm, const S& filter, const V& bias, const Params& params)
     {
-        if constexpr (trait.mmad_type == mmad_type::normal) {
-            check_template_for_normal<trait, CTensor, ATensor, BTensor, BiasTensor>();
-        } else if constexpr (trait.mmad_type == mmad_type::mx) {
-            check_template_for_mx<trait, CTensor, ATensor, BTensor, BiasTensor>();
+        if constexpr (trait.mmadType == MmadType::NORMAL) {
+            CheckTemplateForNormal<trait, T, U, S, V>();
+        } else if constexpr (trait.mmadType == MmadType::MX) {
+            CheckTemplateForMx<trait, T, U, S, V>();
         }
 
-        bool init_with_btbuf = false;
-        if constexpr (Std::is_same_v<get_mem_location<BiasTensor>, location::bias>) {
-            init_with_btbuf = true;
+        bool cmatrixSource = false;
+        if constexpr (Std::is_same_v<GetMemLocation<V>, Location::BIAS>) {
+            cmatrixSource = true;
         }
 
-        if constexpr (trait.mmad_type == mmad_type::normal) {
-            mmad_bias_instr::mmad(
-                dst, fm, filter, bias, params.m, params.k, params.n, static_cast<uint8_t>(params.unit_flag),
-                trait.disable_gemv, init_with_btbuf, false);
-        } else if constexpr (trait.mmad_type == mmad_type::mx) {
-            mmad_mx_bias_instr::mmad(
-                dst, fm, filter, bias, params.m, params.k, params.n, static_cast<uint8_t>(params.unit_flag),
-                trait.disable_gemv, init_with_btbuf, false);
+        if constexpr (trait.mmadType == MmadType::NORMAL) {
+            MmadBiasInstr::Mmad(
+                dst, fm, filter, bias, params.m, params.k, params.n, params.unitFlag, trait.disableGemv, cmatrixSource,
+                false);
+        } else if constexpr (trait.mmadType == MmadType::MX) {
+            MmadMxBiasInstr::Mmad(
+                dst, fm, filter, bias, params.m, params.k, params.n, params.unitFlag, trait.disableGemv, cmatrixSource,
+                false);
         }
     }
 };
 
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_MMAD_MMAD_IMPL_MMAD_WITH_BIAS_H
 

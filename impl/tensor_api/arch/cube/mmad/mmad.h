@@ -24,74 +24,80 @@
 
 #include "impl/tensor_api/arch/cube/mmad/routing.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-template <typename Trait, const Trait& traits, typename... Args>
-__aicore__ inline void mmad_operation::mmad(const Args&... args)
-{
-    mmad_impl<traits>(args...);
-}
+constexpr MmadTrait DEFAULT_MMAD_TRAIT;
 
-template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor>
-__aicore__ inline void mmad_operation::mmad_impl(
-    const CTensor& c, const ATensor& a, const BTensor& b, const mmad_params& params)
-{
-    using c_pos = get_mem_location<CTensor>;
-    using a_pos = get_mem_location<ATensor>;
-    using b_pos = get_mem_location<BTensor>;
-    static_assert(Std::is_same_v<c_pos, location::l0c>, "When Mmad, c tensor must be from L0C.");
-    static_assert(Std::is_same_v<a_pos, location::l0a>, "When Mmad, a tensor must be from L0A.");
-    static_assert(Std::is_same_v<b_pos, location::l0b>, "When Mmad, b tensor must be from L0B.");
-    using c_layout = typename CTensor::layout_type;
-    using a_layout = typename ATensor::layout_type;
-    using b_layout = typename BTensor::layout_type;
-    using c_layout_ptn = get_layout_pattern<c_layout>;
-    using a_layout_ptn = get_layout_pattern<a_layout>;
-    using b_layout_ptn = get_layout_pattern<b_layout>;
-    TENSOR_API_DEBUG_CHECK(debug_check_mmad_params, params, trait.disable_gemv, "mmad");
-    TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, params.unit_flag, "mmad");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, c.layout(), "c", "mmad");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, a.layout(), "a", "mmad");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, b.layout(), "b", "mmad");
-    using mmad_impl =
-        typename mmad_routing<current_arch_version, c_layout_ptn, a_layout_ptn, b_layout_ptn, location::invalid>::type;
-    mmad_impl::template run<trait>(c, a, b, params);
-}
+constexpr MmadParams defaultMmadParams = {0, 0, 0, 0, true};
 
-template <const mmad_trait& trait, typename CTensor, typename ATensor, typename BTensor, typename BiasTensor>
-__aicore__ inline void mmad_operation::mmad_impl(
-    const CTensor& c, const ATensor& a, const BTensor& b, const BiasTensor& bias, const mmad_params& params)
-{
-    using c_pos = get_mem_location<CTensor>;
-    using a_pos = get_mem_location<ATensor>;
-    using b_pos = get_mem_location<BTensor>;
-    using bias_pos = get_mem_location<BiasTensor>;
-    static_assert(Std::is_same_v<c_pos, location::l0c>, "When Mmad, c tensor must be from L0C.");
-    static_assert(Std::is_same_v<a_pos, location::l0a>, "When Mmad, a tensor must be from L0A.");
-    static_assert(Std::is_same_v<b_pos, location::l0b>, "When Mmad, b tensor must be from L0B.");
-    static_assert(
-        Std::is_same_v<bias_pos, location::l0c> || Std::is_same_v<bias_pos, location::bias>,
-        "When Mmad, bias tensor must be from L0C or BIAS.");
-    using c_layout = typename CTensor::layout_type;
-    using a_layout = typename ATensor::layout_type;
-    using b_layout = typename BTensor::layout_type;
-    using c_layout_ptn = get_layout_pattern<c_layout>;
-    using a_layout_ptn = get_layout_pattern<a_layout>;
-    using b_layout_ptn = get_layout_pattern<b_layout>;
-    TENSOR_API_DEBUG_CHECK(debug_check_mmad_params, params, trait.disable_gemv, "mmad with bias");
-    TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, params.unit_flag, "mmad with bias");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, c.layout(), "c", "mmad with bias");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, a.layout(), "a", "mmad with bias");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, b.layout(), "b", "mmad with bias");
-    TENSOR_API_DEBUG_CHECK(debug_check_layout, bias.layout(), "bias", "mmad with bias");
-    using mmad_impl =
-        typename mmad_routing<current_arch_version, c_layout_ptn, a_layout_ptn, b_layout_ptn, bias_pos>::type;
-    mmad_impl::template run<trait>(c, a, b, bias, params);
-}
+constexpr MmadParams defaultMmadWithBiasParams = {0, 0, 0, 0, false};
 
-} // namespace te
-} // namespace asc
+struct MmadTraitDefault {
+    using TraitType = MmadTrait;
+    static constexpr const TraitType value = DEFAULT_MMAD_TRAIT;
+};
+
+struct MmadOperation {
+public:
+    template <typename Tp, const Tp& traits, typename... Args>
+    __aicore__ inline static void Mmad(const Args&... args)
+    {
+        if ASCEND_IS_AIC {
+            MmadImpl<traits, Args...>(args...);
+        }
+    }
+
+private:
+    template <const MmadTrait& trait = DEFAULT_MMAD_TRAIT, typename T, typename U, typename S, typename Params>
+    __aicore__ inline static void MmadImpl(const T& dst, const U& fm, const S& filter, const Params& params)
+    {
+        using dstPos = GetMemLocation<T>;
+        using fmPos = GetMemLocation<U>;
+        using filterPos = GetMemLocation<S>;
+        static_assert(Std::is_same_v<dstPos, Location::L0C>, "When Mmad, dst tensor must be from L0C.");
+        static_assert(Std::is_same_v<fmPos, Location::L0A>, "When Mmad, fm tensor must be from L0A.");
+        static_assert(Std::is_same_v<filterPos, Location::L0B>, "When Mmad, filter tensor must be from L0B.");
+        using DstLayout = typename T::layoutType;
+        using FmLayout = typename U::layoutType;
+        using FilterLayout = typename S::layoutType;
+        using DstLayoutPtn = GetLayoutPattern<DstLayout>;
+        using FmLayoutPtn = GetLayoutPattern<FmLayout>;
+        using FilterLayoutPtn = GetLayoutPattern<FilterLayout>;
+        using MmadImpl = typename MmadRouting<
+            CURRENT_ARCH_VERSION, DstLayoutPtn, FmLayoutPtn, FilterLayoutPtn, Location::INVALID>::type;
+        MmadImpl::template Run<trait>(dst, fm, filter, params);
+    }
+
+    template <
+        const MmadTrait& trait = DEFAULT_MMAD_TRAIT, typename T, typename U, typename S, typename V, typename Params>
+    __aicore__ inline static void MmadImpl(
+        const T& dst, const U& fm, const S& filter, const V& bias, const Params& params)
+    {
+        using dstPos = GetMemLocation<T>;
+        using fmPos = GetMemLocation<U>;
+        using filterPos = GetMemLocation<S>;
+        using biasPos = GetMemLocation<V>;
+        static_assert(Std::is_same_v<dstPos, Location::L0C>, "When Mmad, dst tensor must be from L0C.");
+        static_assert(Std::is_same_v<fmPos, Location::L0A>, "When Mmad, fm tensor must be from L0A.");
+        static_assert(Std::is_same_v<filterPos, Location::L0B>, "When Mmad, filter tensor must be from L0B.");
+        static_assert(
+            Std::is_same_v<biasPos, Location::L0C> || Std::is_same_v<biasPos, Location::BIAS>,
+            "When Mmad, bias tensor must be from L0C or BIAS.");
+        using DstLayout = typename T::layoutType;
+        using FmLayout = typename U::layoutType;
+        using FilterLayout = typename S::layoutType;
+        using DstLayoutPtn = GetLayoutPattern<DstLayout>;
+        using FmLayoutPtn = GetLayoutPattern<FmLayout>;
+        using FilterLayoutPtn = GetLayoutPattern<FilterLayout>;
+        using MmadImpl =
+            typename MmadRouting<CURRENT_ARCH_VERSION, DstLayoutPtn, FmLayoutPtn, FilterLayoutPtn, biasPos>::type;
+        MmadImpl::template Run<trait>(dst, fm, filter, bias, params);
+    }
+};
+
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_MMAD_MMAD_H
 

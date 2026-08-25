@@ -23,72 +23,46 @@
 #define IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
+#include "impl/tensor_api/atom/copy_traits_impl.h"
 #include "impl/tensor_api/arch/vector/gm_to_ub/routing.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
-constexpr gm_to_ub_params default_gm_to_ub_params{};
+constexpr CopyGM2UBTrait DEFAULT_COPY_GM_TO_UB_TRAIT = CopyGM2UBTrait{};
 
-struct copy_gm_to_ub_base {
+struct CopyGM2UBTraitDefault {
+    using TraitType = CopyGM2UBTrait;
+    static constexpr const TraitType value = DEFAULT_COPY_GM_TO_UB_TRAIT;
+};
+
+struct CopyGM2UB {
 public:
-    template <const gm_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
-    __aicore__ inline static void data_copy_impl(
-        const DstTensor& dst, const SrcTensor& src, const gm_to_ub_params& params = default_gm_to_ub_params)
+    template <typename Tp, const Tp& traits, typename... Args>
+    __aicore__ inline static void Copy(const Args&... args)
     {
-        using dst_pos = get_mem_location<DstTensor>;
-        using src_pos = get_mem_location<SrcTensor>;
-        static_assert(
-            Std::is_same_v<dst_pos, location::ub>, "For copy_gm_to_ub, the destination tensor must be located in UB.");
-        static_assert(
-            Std::is_same_v<src_pos, location::gm>, "For copy_gm_to_ub, the source tensor must be located in GM.");
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_gm_to_ub");
-        TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_gm_to_ub");
-        TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_gm_to_ub");
-        using dst_layout_ptn = get_layout_pattern<typename DstTensor::layout_type>;
-        using src_layout_ptn = get_layout_pattern<typename SrcTensor::layout_type>;
-        using copy_gm_to_ub_impl =
-            typename copy_gm_to_ub_routing<current_arch_version, dst_layout_ptn, src_layout_ptn>::type;
-        copy_gm_to_ub_impl::template run<trait, DstTensor, SrcTensor>(dst, src, params);
+        if ASCEND_IS_AIV {
+            DataCopyImpl<traits, Args...>(args...);
+        }
     }
 
-    template <
-        const gm_to_ub_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_impl(
-        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape,
-        const gm_to_ub_params& params = default_gm_to_ub_params)
+private:
+    template <const CopyGM2UBTrait& trait = DEFAULT_COPY_GM_TO_UB_TRAIT, typename T, typename U>
+    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
     {
-        using dst_pos = get_mem_location<T>;
-        using src_pos = get_mem_location<U>;
-        static_assert(Std::is_same_v<dst_pos, location::ub>, "When Copy tensor from GM to UB, dst tensor must on UB");
-        static_assert(Std::is_same_v<src_pos, location::gm>, "When Copy tensor from GM to UB, src tensor must on GM");
-        using dst_layout_ptn = get_layout_pattern<typename T::layout_type>;
-        using src_layout_ptn = get_layout_pattern<typename U::layout_type>;
-        using copy_gm_to_ub_impl =
-            typename copy_gm_to_ub_routing<current_arch_version, dst_layout_ptn, src_layout_ptn>::type;
-        auto resolved_dst = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
-        auto resolved_src = resolve_copy_coord(src.layout(), copy_shape, src_coord);
-        copy_gm_to_ub_impl::template run<trait, T, U>(dst, src, resolved_dst, resolved_src, copy_shape, params);
+        using dstTPos = GetMemLocation<T>;
+        using srcTPos = GetMemLocation<U>;
+        static_assert(Std::is_same_v<dstTPos, Location::UB>, "When Copy tensor from GM to UB, dst tensor must on UB");
+        static_assert(Std::is_same_v<srcTPos, Location::GM>, "When Copy tensor from GM to UB, src tensor must on GM");
+        using DstLayoutPtn = GetLayoutPattern<typename T::layoutType>;
+        using SrcLayoutPtn = GetLayoutPattern<typename U::layoutType>;
+        using CopyGM2UBImpl = typename CopyGM2UBRouting<CURRENT_ARCH_VERSION, DstLayoutPtn, SrcLayoutPtn>::type;
+        CopyGM2UBImpl::template Run<trait, T, U>(dst, src);
     }
 };
 
-template <typename Trait, const Trait& trait, typename... Args>
-__aicore__ inline void copy_gm_to_ub::copy(const Args&... args)
-{
-    copy_gm_to_ub_base::data_copy_impl<trait>(args...);
-}
-
-struct copy_gm_to_ub_with : public copy_gm_to_ub_base {
-public:
-    template <typename Trait, const Trait& traits, typename... Args>
-    __aicore__ inline static void copy(const Args&... args)
-    {
-        data_copy_impl<traits>(args...);
-    }
-};
-
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_H
 

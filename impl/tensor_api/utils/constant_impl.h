@@ -22,30 +22,55 @@
 #ifndef IMPL_TENSOR_API_UTILS_CONSTANT_IMPL_H
 #define IMPL_TENSOR_API_UTILS_CONSTANT_IMPL_H
 
-#include "tensor_api/utils/utils.h"
 #include "impl/tensor_api/utils/extra_impl.h"
 #include "impl/tensor_api/utils/map_impl.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
+using Std::Int;
+using _0 = Std::Int<0>;
+using _1 = Std::Int<1>;
+using _2 = Std::Int<2>;
+using _3 = Std::Int<3>;
+using _4 = Std::Int<4>;
+using _5 = Std::Int<5>;
+using _6 = Std::Int<6>;
+using _7 = Std::Int<7>;
+using _8 = Std::Int<8>;
+using _9 = Std::Int<9>;
+using _10 = Std::Int<10>;
+using _16 = Std::Int<16>;
+using _24 = Std::Int<24>;
+using _32 = Std::Int<32>;
+using _64 = Std::Int<64>;
+using _128 = Std::Int<128>;
+using _256 = Std::Int<256>;
+using _512 = Std::Int<512>;
+using _1024 = Std::Int<1024>;
+using _2048 = Std::Int<2048>;
+using _4096 = Std::Int<4096>;
 
-constexpr size_t two_dim_data = 2;
-constexpr size_t three_dim_data = 3;
-constexpr size_t four_dim_data = 4;
-constexpr size_t five_dim_data = 5;
-constexpr size_t fractal_fixed = 16;
-constexpr size_t mx_scale_k0 = 2;
-constexpr uint32_t block_cube = 16;
-constexpr uint64_t hifloat8_mmad_ctrl_mask = 0x200000000000ULL;
+// Squeeze pattern mark: positions marked with `_` are kept (only `_1` marks a squeeze).
+struct KeepMark {
+    __aicore__ inline constexpr KeepMark() = default;
+};
+inline constexpr KeepMark _{};
 
-struct arch_version {
-    static constexpr uint32_t v3510 = 3510;
-    static constexpr uint32_t v2201 = 2201;
+constexpr size_t TWO_DIM_DATA = 2;
+constexpr size_t THREE_DIM_DATA = 3;
+constexpr size_t FOUR_DIM_DATA = 4;
+constexpr size_t FIVE_DIM_DATA = 5;
+constexpr size_t FRACTAL_FIXED = 16;
+constexpr size_t MX_SCALE_K0 = 2;
+constexpr uint32_t BLOCK_CUBE = 16;
+constexpr uint64_t HIFLOAT8_MMAD_CTRL_MASK = 0x200000000000ULL;
+
+struct ArchVersion {
     static constexpr uint32_t V3510 = 3510;
     static constexpr uint32_t V2201 = 2201;
 };
 
-struct get_arch_version {
+struct GetArchVersion {
     __aicore__ inline constexpr uint32_t operator()() const
     {
 #ifdef __NPU_ARCH__
@@ -56,124 +81,157 @@ struct get_arch_version {
     }
 };
 
-constexpr uint32_t current_arch_version = get_arch_version{}();
+constexpr uint32_t CURRENT_ARCH_VERSION = GetArchVersion{}();
 
-template <typename Hardware>
-struct is_hardware {
+namespace CopyMode {
+struct NORMAL {};
+struct TRANS {};
+struct TRANS_B8B4 {};
+}; // namespace CopyMode
+
+namespace Location {
+struct INVALID {};
+struct GM {};
+struct UB {};
+struct L1 {};
+struct L0A {};
+struct L0B {};
+struct L0ScaleA {};
+struct L0ScaleB {};
+struct L0C {};
+struct BIAS {};
+struct FIXBUF {};
+struct SSBUF {};
+} // namespace Location
+
+template <typename T>
+struct IsHardware {
 private:
-    template <typename Target, typename... Candidates>
-    __aicore__ inline static constexpr bool is_unqualified_any_of()
+    template <typename Tp, typename... Tps>
+    __aicore__ inline static constexpr bool IsUnqualifiedAnyOf()
     {
-        return (... || Std::is_same_v<Std::remove_cvref_t<Target>, Candidates>);
+        return (... || Std::is_same_v<Std::remove_cvref_t<Tp>, Tps>);
     }
 
 public:
-    static constexpr bool value = is_unqualified_any_of<
-        Hardware, location::invalid, location::gm, location::ub, location::l1, location::l0a, location::l0b,
-        location::l0scalea, location::l0scaleb, location::l0c, location::bias, location::fixbuf, location::ssbuf>();
+    static constexpr bool value = IsUnqualifiedAnyOf<
+        T, Location::INVALID, Location::GM, Location::UB, Location::L1, Location::L0A, Location::L0B,
+        Location::L0ScaleA, Location::L0ScaleB, Location::L0C, Location::BIAS, Location::FIXBUF, Location::SSBUF>();
 };
 
-template <typename Hardware>
-constexpr bool is_hardware_v = is_hardware<Hardware>::value;
+template <typename T>
+constexpr bool IsHardwareV = IsHardware<T>::value;
 
 template <typename TupleType>
 using tuple_sequence = Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<TupleType>>>;
 
-template <typename DataType>
-struct location_attr {
-    using gm_attr = __gm__ DataType*;
-    using l1_attr = __cbuf__ DataType*;
-    using l0a_attr = __ca__ DataType*;
-    using l0b_attr = __cb__ DataType*;
-    using l0c_attr = __cc__ DataType*;
-    using ub_attr = __ubuf__ DataType*;
-    using fixbuf_attr = __fbuf__ DataType*;
-    using ssbuf_attr = __ssbuf__ DataType*;
-    using bias_attr = __biasbuf__ DataType*;
-    using none_attr = DataType*;
+template <typename T>
+struct locationAttr {
+    using gmAttr = __gm__ T*;
+    using cbufAttr = __cbuf__ T*;
+    using caAttr = __ca__ T*;
+    using cbAttr = __cb__ T*;
+    using ccAttr = __cc__ T*;
+    using ubufAttr = __ubuf__ T*;
+    using fbufAttr = __fbuf__ T*;
+    using ssbufAttr = __ssbuf__ T*;
+    using biasbufAttr = __biasbuf__ T*;
+    using noneAttr = T*;
 
-    using type =
-        Std::tuple<gm_attr, l1_attr, l0a_attr, l0b_attr, l0c_attr, ub_attr, fixbuf_attr, ssbuf_attr, bias_attr>;
+    using type = Std::tuple<gmAttr, cbufAttr, caAttr, cbAttr, ccAttr, ubufAttr, fbufAttr, ssbufAttr, biasbufAttr>;
 
-    using location_map = tuple_map<
-        Std::tuple<location::gm, gm_attr>, Std::tuple<location::l1, l1_attr>, Std::tuple<location::l0a, l0a_attr>,
-        Std::tuple<location::l0b, l0b_attr>, Std::tuple<location::l0scalea, none_attr>,
-        Std::tuple<location::l0scaleb, none_attr>, Std::tuple<location::l0c, l0c_attr>,
-        Std::tuple<location::ub, ub_attr>, Std::tuple<location::bias, bias_attr>,
-        Std::tuple<location::fixbuf, fixbuf_attr>>;
+    using locationMap = TupleMap<
+        Std::tuple<Location::GM, gmAttr>, Std::tuple<Location::L1, cbufAttr>, Std::tuple<Location::L0A, caAttr>,
+        Std::tuple<Location::L0B, cbAttr>, Std::tuple<Location::L0ScaleA, noneAttr>,
+        Std::tuple<Location::L0ScaleB, noneAttr>, Std::tuple<Location::L0C, ccAttr>, Std::tuple<Location::UB, ubufAttr>,
+        Std::tuple<Location::BIAS, biasbufAttr>, Std::tuple<Location::FIXBUF, fbufAttr>>;
 };
 
-template <typename Target, typename ProcessedTuple>
-struct all_elements_same_as_a;
+template <typename A, typename ProcessedTuple>
+struct AllElementsSameAsA;
 
-template <typename Target, typename First, typename... Rest>
-struct all_elements_same_as_a<Target, Std::tuple<First, Rest...>> {
-    static constexpr bool value = Std::is_same_v<Target, typename iter_ele<First>::type> ||
-                                  all_elements_same_as_a<Target, Std::tuple<Rest...>>::value;
+template <typename A, typename First, typename... Rest>
+struct AllElementsSameAsA<A, Std::tuple<First, Rest...>> {
+    static constexpr bool value =
+        Std::is_same_v<A, typename IterEle<First>::type> || AllElementsSameAsA<A, Std::tuple<Rest...>>::value;
 };
 
-template <typename Target>
-struct all_elements_same_as_a<Target, Std::tuple<>> {
+template <typename A>
+struct AllElementsSameAsA<A, Std::tuple<>> {
     static constexpr bool value = false;
 };
 
-template <typename Target, typename... Candidates>
-struct check_all_same;
+template <typename A, typename... BList>
+struct CheckAllSame;
 
-template <typename Target, typename Candidate, typename... RestCandidates>
-struct check_all_same<Target, Candidate, RestCandidates...> {
-    static constexpr bool value = Std::is_same_v<Target, Candidate> ||
-                                  all_elements_same_as_a<Target, typename location_attr<Candidate>::type>::value ||
-                                  check_all_same<Target, RestCandidates...>::value;
+template <typename A, typename B, typename... RestB>
+struct CheckAllSame<A, B, RestB...> {
+    static constexpr bool value = Std::is_same_v<A, B> ||
+                                  AllElementsSameAsA<A, typename locationAttr<B>::type>::value ||
+                                  CheckAllSame<A, RestB...>::value;
 };
 
-template <typename Target>
-struct check_all_same<Target> {
+template <typename A>
+struct CheckAllSame<A> {
     static constexpr bool value = false;
 };
 
-template <typename Target, typename... Candidates>
-constexpr bool is_one_of_attr_v = check_all_same<Target, Candidates...>::value;
+template <typename A, typename... BList>
+constexpr bool IsOneOfAttrV = CheckAllSame<A, BList...>::value;
 
 template <typename DataType>
-inline constexpr bool is_data_type =
-    is_one_of_attr_v<
+inline constexpr bool IsDataType =
+    IsOneOfAttrV<
         Std::remove_cvref_t<DataType>, hifloat8_t, bfloat16_t, fp4x2_e1m2_t, fp4x2_e2m1_t, fp8_e5m2_t, fp8_e4m3fn_t,
         fp8_e8m0_t> ||
     Std::is_integral_v<Std::remove_cvref_t<DataType>> || Std::is_floating_point_v<Std::remove_cvref_t<DataType>>;
 
 template <typename DataType>
-inline constexpr bool is_b4_type = is_one_of_attr_v<DataType, fp4x2_e1m2_t, fp4x2_e2m1_t>;
+inline constexpr bool IsB4Type = IsOneOfAttrV<DataType, fp4x2_e1m2_t, fp4x2_e2m1_t>;
 
-template <typename DataType = Std::ignore_t>
-__aicore__ inline constexpr size_t get_c0_size()
+template <typename T = Std::ignore_t>
+__aicore__ inline constexpr size_t GetC0Size()
 {
-    constexpr size_t c0_size = 32;
-    if constexpr (is_b4_type<DataType>) {
-        return c0_size * 2;
+    constexpr size_t c0Size = 32;
+    if constexpr (IsB4Type<T>) {
+        return c0Size * 2;
     } else {
-        return c0_size;
+        return c0Size;
     }
 }
 
-template <typename DataType = Std::ignore_t>
-constexpr size_t c0_size = get_c0_size<DataType>();
+template <typename T = Std::ignore_t>
+constexpr size_t C0_SIZE = GetC0Size<T>();
 
-template <typename DataType>
-constexpr size_t c0_element = c0_size<DataType> / sizeof(DataType);
+template <typename T>
+constexpr size_t C0_ELEMENT = C0_SIZE<T> / sizeof(T);
 
-// is_integral_constant
-template <typename Constant>
-struct is_integral_constant : Std::false_type {};
+// IsIntegralConstant
+template <typename T>
+struct IsIntegralConstant : Std::false_type {};
 
 template <size_t Value>
-struct is_integral_constant<Std::Int<Value>> : Std::true_type {};
+struct IsIntegralConstant<Std::Int<Value>> : Std::true_type {};
 
-template <typename Constant>
-constexpr bool is_integral_constant_v = is_integral_constant<Constant>::value;
+template <typename T>
+constexpr bool IsIntegralConstantV = IsIntegralConstant<T>::value;
 
-} // namespace te
-} // namespace asc
+#if defined(__NPU_ARCH__)
+using VectorTypeTransform = TupleMap<
+    Std::tuple<uint8_t, vector_uint8_t>, Std::tuple<uint16_t, vector_uint16_t>, Std::tuple<uint32_t, vector_uint32_t>,
+    Std::tuple<uint64_t, vector_uint64_t>, Std::tuple<int8_t, vector_int8_t>, Std::tuple<int16_t, vector_int16_t>,
+    Std::tuple<int32_t, vector_int32_t>, Std::tuple<int64_t, vector_int64_t>, Std::tuple<bfloat16_t, vector_bfloat16_t>,
+    Std::tuple<half, vector_half>, Std::tuple<float, vector_float>,
+#if __NPU_ARCH__ == 3510
+    Std::tuple<hifloat8_t, vector_hifloat8_t>, Std::tuple<fp8_e4m3fn_t, vector_fp8_e4m3fn_t>,
+    Std::tuple<fp8_e5m2_t, vector_fp8_e5m2_t>, Std::tuple<fp8_e8m0_t, vector_fp8_e8m0_t>,
+    Std::tuple<int4x2_t, vector_int4x2_t>, Std::tuple<fp4x2_e2m1_t, vector_fp4x2_e2m1_t>,
+    Std::tuple<fp4x2_e1m2_t, vector_fp4x2_e1m2_t>
+#endif
+    >;
+#endif
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_UTILS_CONSTANT_IMPL_H
 

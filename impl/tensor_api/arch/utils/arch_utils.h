@@ -26,8 +26,8 @@
 #include "impl/tensor_api/arch/utils/check_format.h"
 #include "impl/tensor_api/arch/utils/is_format.h"
 
-namespace asc {
-namespace te {
+namespace AscendC {
+namespace Te {
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #define SCALAR_QUANT_MODE                                                                                             \
@@ -40,8 +40,8 @@ namespace te {
 #define SCALAR_QUANT_MODE QuantMode_t::NoQuant
 #endif
 
-template <QuantMode_t quant_pre>
-using is_scalar_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, SCALAR_QUANT_MODE>;
+template <QuantMode_t quantPre>
+using IsScalarQuantMode = Std::is_one_of_value<QuantMode_t, quantPre, SCALAR_QUANT_MODE>;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #define TILE_OP_INTERNAL_TENSOR_QUANT_MODE                                                            \
@@ -54,8 +54,8 @@ using is_scalar_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, SCALAR
 #define TILE_OP_INTERNAL_TENSOR_QUANT_MODE QuantMode_t::NoQuant
 #endif
 
-template <QuantMode_t quant_pre>
-using is_vector_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, TILE_OP_INTERNAL_TENSOR_QUANT_MODE>;
+template <QuantMode_t quantPre>
+using IsVectorQuantMode = Std::is_one_of_value<QuantMode_t, quantPre, TILE_OP_INTERNAL_TENSOR_QUANT_MODE>;
 
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #define TILE_OP_INTERNAL_DIRECT_QUANT_MODE QuantMode_t::F322F16, QuantMode_t::F322BF16
@@ -65,132 +65,46 @@ using is_vector_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, TILE_O
 #define TILE_OP_INTERNAL_DIRECT_QUANT_MODE QuantMode_t::NoQuant
 #endif
 
-template <QuantMode_t quant_pre>
-using is_direct_quant_mode = Std::is_one_of_value<QuantMode_t, quant_pre, TILE_OP_INTERNAL_DIRECT_QUANT_MODE>;
+template <QuantMode_t quantPre>
+using IsDirectQuantMode = Std::is_one_of_value<QuantMode_t, quantPre, TILE_OP_INTERNAL_DIRECT_QUANT_MODE>;
 
-template <typename Info1, typename Info2, size_t dim, typename Layout>
-__aicore__ inline constexpr decltype(auto) get_element(const Layout& layout)
+template <typename info1, typename info2, size_t dim, typename T>
+__aicore__ inline constexpr decltype(auto) GetElement(const T& layout)
 {
-    constexpr size_t shape_or_stride = (Std::is_same_v<Info1, attr_info::shape> ? 0 : 1);
-    constexpr size_t row_or_column = (Std::is_same_v<Info2, attr_info::row> ? 0 : 1);
-    return layout.template get<shape_or_stride, row_or_column, dim>();
+    constexpr size_t shapeOrStride = (Std::is_same_v<info1, AttrInfo::Shape> ? 0 : 1);
+    constexpr size_t rowOrColumn = (Std::is_same_v<info2, AttrInfo::Row> ? 0 : 1);
+    return layout.template Get<shapeOrStride, rowOrColumn, dim>();
 }
 
-template <typename Info1, typename Info2, typename Layout>
-__aicore__ inline constexpr decltype(auto) get_element(const Layout& layout)
+template <typename info1, typename info2, typename T>
+__aicore__ inline constexpr decltype(auto) GetElement(const T& layout)
 {
-    constexpr size_t shape_or_stride = (Std::is_same_v<Info1, attr_info::shape> ? 0 : 1);
-    constexpr size_t row_or_column = (Std::is_same_v<Info2, attr_info::row> ? 0 : 1);
-    return layout.template get<shape_or_stride, row_or_column>();
-}
-
-template <typename AttributeType, typename AxisType, size_t dim, typename Layout>
-__aicore__ inline constexpr decltype(auto) get_matrix_element(const Layout& layout)
-{
-    // Shape and stride are stored at indices 0 and 1 of a layout, respectively.
-    constexpr size_t attribute_index = Std::is_same_v<AttributeType, attr_info::shape> ? 0 : 1;
-    // Row and column are stored at indices 0 and 1 of a matrix attribute; batched layouts skip axis 0 below.
-    constexpr size_t axis_index = Std::is_same_v<AxisType, attr_info::row> ? 0 : 1;
-    if constexpr (Layout::depth == three_dim_data || Layout::depth == five_dim_data) {
-        return layout.template get<attribute_index, 1, axis_index, dim>();
-    } else {
-        return layout.template get<attribute_index, axis_index, dim>();
-    }
+    constexpr size_t shapeOrStride = (Std::is_same_v<info1, AttrInfo::Shape> ? 0 : 1);
+    constexpr size_t rowOrColumn = (Std::is_same_v<info2, AttrInfo::Row> ? 0 : 1);
+    return layout.template Get<shapeOrStride, rowOrColumn>();
 }
 
 template <typename LayoutType>
-__aicore__ inline static constexpr uint32_t get_total_column_shape(const LayoutType& layout)
+__aicore__ inline static constexpr uint32_t GetTotalColumnShape(const LayoutType& layout)
 {
     if constexpr (LayoutType::depth == 2) {
-        return get<1>(layout.shape());
+        return Get<1>(layout.Shape());
     } else {
-        return get<1, 0>(layout.shape()) * get<1, 1>(layout.shape());
+        return Get<1, 0>(layout.Shape()) * Get<1, 1>(layout.Shape());
     }
 }
 
 template <typename LayoutType>
-__aicore__ inline static constexpr uint32_t get_total_row_shape(const LayoutType& layout)
+__aicore__ inline static constexpr uint32_t GetTotalRowShape(const LayoutType& layout)
 {
     if constexpr (LayoutType::depth == 2) {
-        return get<0>(layout.shape());
+        return Get<0>(layout.Shape());
     } else {
-        return get<0, 0>(layout.shape()) * get<0, 1>(layout.shape());
+        return Get<0, 0>(layout.Shape()) * Get<0, 1>(layout.Shape());
     }
 }
-
-template <typename LayoutType>
-__aicore__ inline static constexpr decltype(auto) get_row_stride(const LayoutType& layout)
-{
-    if constexpr (LayoutType::depth == two_dim_data) {
-        return get<0>(layout.stride());
-    } else if constexpr (LayoutType::depth == three_dim_data) {
-        return get<1, 0>(layout.stride());
-    } else if constexpr (LayoutType::depth == four_dim_data) {
-        return get<0, 1>(layout.stride());
-    } else {
-        static_assert(LayoutType::depth == five_dim_data, "Only support 2D to 5D matrix layouts");
-        return get<1, 0, 1>(layout.stride());
-    }
-}
-
-template <typename LayoutType>
-__aicore__ inline static constexpr decltype(auto) get_column_stride(const LayoutType& layout)
-{
-    if constexpr (LayoutType::depth == two_dim_data) {
-        return get<1>(layout.stride());
-    } else if constexpr (LayoutType::depth == three_dim_data) {
-        return get<1, 1>(layout.stride());
-    } else if constexpr (LayoutType::depth == four_dim_data) {
-        return get<1, 1>(layout.stride());
-    } else {
-        static_assert(LayoutType::depth == five_dim_data, "Only support 2D to 5D matrix layouts");
-        return get<1, 1, 1>(layout.stride());
-    }
-}
-template <typename Shape>
-__aicore__ inline static constexpr uint32_t get_shape_columns(const Shape& copy_shape)
-{
-    constexpr auto depth = nesting_depth_v<Shape>;
-    if constexpr (depth == two_dim_data) {
-        return get<1>(copy_shape);
-    } else if constexpr (depth == three_dim_data) {
-        return get<1, 1>(copy_shape);
-    } else if constexpr (depth == four_dim_data) {
-        return get<1, 0>(copy_shape) * get<1, 1>(copy_shape);
-    } else {
-        static_assert(depth == five_dim_data, "Only support 2D to 5D matrix shapes");
-        return get<1, 1, 0>(copy_shape) * get<1, 1, 1>(copy_shape);
-    }
-}
-
-template <typename Shape>
-__aicore__ inline static constexpr uint32_t get_shape_rows(const Shape& copy_shape)
-{
-    constexpr auto depth = nesting_depth_v<Shape>;
-    if constexpr (depth == two_dim_data) {
-        return get<0>(copy_shape);
-    } else if constexpr (depth == three_dim_data) {
-        return get<1, 0>(copy_shape);
-    } else if constexpr (depth == four_dim_data) {
-        return get<0, 0>(copy_shape) * get<0, 1>(copy_shape);
-    } else {
-        static_assert(depth == five_dim_data, "Only support 2D to 5D matrix shapes");
-        return get<1, 0, 0>(copy_shape) * get<1, 0, 1>(copy_shape);
-    }
-}
-
-template <typename Shape>
-__aicore__ inline static constexpr uint32_t get_shape_batch_size(const Shape& copy_shape)
-{
-    constexpr auto depth = nesting_depth_v<Shape>;
-    if constexpr (depth == three_dim_data || depth == five_dim_data) {
-        return get<0>(copy_shape);
-    } else {
-        return 1;
-    }
-}
-} // namespace te
-} // namespace asc
+} // namespace Te
+} // namespace AscendC
 
 #endif // IMPL_TENSOR_API_ARCH_UTILS_ARCH_UTILS_H
 
