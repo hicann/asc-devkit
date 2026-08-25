@@ -37,6 +37,11 @@ __aicore__ inline int64_t asc_get_squeeze_status();
              "Please use asc_get_squeeze_status instead.")]]
 __aicore__ inline int64_t asc_get_ar_spr();
 
+__aicore__ inline void asc_set_saturation_flag(asc_saturation_mode saturation_mode, bool enable_sat);
+__aicore__ inline bool asc_get_saturation_flag(asc_saturation_mode saturation_mode);
+__aicore__ inline void asc_set_saturation_strategy(asc_override_strategy strategy);
+__aicore__ inline asc_override_strategy asc_get_saturation_strategy();
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)

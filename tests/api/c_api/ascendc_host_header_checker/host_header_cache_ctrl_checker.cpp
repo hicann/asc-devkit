@@ -19,7 +19,10 @@ static void test_host_c_api_cache_ctrl_0()
     using ::asc_dcci_entire_ub;
     using ::asc_dci;
     using ::asc_get_icache_preload_status;
+    using ::asc_get_scalar_load_cache_mode;
+    using ::asc_get_scalar_store_cache_mode;
     using ::asc_icache_preload;
+    using ::asc_set_scalar_cache_mode;
     using ::asc_ub_dcci_single;
     using __asc_aicore::asc_dcci_single;
 }

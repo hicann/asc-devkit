@@ -36,6 +36,18 @@ enum class asc_hf32_round_mode : uint8_t {
     NEAREST_ZERO = NEAREST_AWAY // Compatible with the old name; the actual behavior is equivalent to NEAREST_AWAY.
 };
 
+enum class asc_saturation_mode : uint8_t {
+    FLOAT = 48,  // 浮点数计算和浮点数精度转换饱和模式
+    FLOAT8 = 50, // 浮点数精度转换时NaN饱和模式
+    INT = 53,    // 整数计算指令饱和模式
+    CAST = 59    // 浮点数转整数或整数转整数精度转换饱和模式
+};
+
+enum class asc_override_strategy : uint8_t {
+    USE_API = 0,   // 饱和模式为单指令设置饱和
+    USE_GLOBAL = 1 // 饱和模式为全局设置饱和
+};
+
 enum class asc_position_mode { EVEN = 0, ODD };
 
 constexpr std::integral_constant<asc_position_mode, asc_position_mode::EVEN> ASC_POSITION_EVEN;

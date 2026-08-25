@@ -53,6 +53,14 @@ __aicore__ inline void asc_datacache_preload(__gm__ uint64_t* address, int64_t o
 
 __aicore__ inline void asc_dci();
 
+__aicore__ inline void asc_set_scalar_cache_mode(asc_load_l2_cache_mode l2_cache_mode);
+
+__aicore__ inline void asc_set_scalar_cache_mode(asc_store_l2_cache_mode l2_cache_mode);
+
+__aicore__ inline asc_load_l2_cache_mode asc_get_scalar_load_cache_mode();
+
+__aicore__ inline asc_store_l2_cache_mode asc_get_scalar_store_cache_mode();
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)
