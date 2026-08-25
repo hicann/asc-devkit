@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-gt（greater than），该接口用于逐元素比较两个源操作数大小，将比较结果（$src0_i > src1_i$）写入目的操作数dst对应比特位，如果比较结果为真，则对应比特位为1，否则为0。
+gt表示大于（greater than），该接口用于逐元素比较两个源操作数大小，将比较结果（$src0_i > src1_i$）写入目的操作数`dst`对应比特位，如果比较结果为真，则对应比特位为1，否则为0。
 
 计算公式如下：
 
@@ -34,30 +34,41 @@ $$
 dst_i = (src0_i > src1_i)
 $$
 
+本接口仅在AIV上生效。
+
 ## 函数原型
 
-```cpp
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_int8_t src0, vector_int8_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_uint8_t src0, vector_uint8_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_int16_t src0, vector_int16_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_uint16_t src0, vector_uint16_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_half src0, vector_half src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_int32_t src0, vector_int32_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_uint32_t src0, vector_uint32_t src1, vector_bool mask)
-__simd_callee__ inline void asc_gt(vector_bool& dst, vector_float src0, vector_float src1, vector_bool mask)
+```c
+__simd_callee__ inline void asc_gt(vector_bool& dst,
+                                   vector_<dtype> src0,
+                                   vector_<dtype> src1,
+                                   vector_bool mask)
+```
+
+### dtype支持数据类型
+
+`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+### 函数原型典型示例
+
+```c
+// 示例：half类型逐元素大于比较
+__simd_callee__ inline void asc_gt(vector_bool& dst,
+                                   vector_half src0,
+                                   vector_half src1,
+                                   vector_bool mask)
 ```
 
 ## 参数说明
 
 **表1** 参数说明
 
-| 参数名  | 输入/输出 | 描述 |
+| 参数名 | 输入/输出 | 描述 |
 |:-----| :--- |:-------|
 | dst  | 输出 | 目的操作数（掩码寄存器）。 |
 | src0 | 输入 | 源操作数（矢量数据寄存器）。 |
 | src1 | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。mask中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
 
@@ -67,26 +78,136 @@ __simd_callee__ inline void asc_gt(vector_bool& dst, vector_float src0, vector_f
 
 ## 约束说明
 
-- 通过mask参数控制的未选中元素在目的操作数中被置零。
-- 操作数重叠约束：src0和src1可以是同一个矢量数据寄存器。
-- 浮点数据类型比较，涉及`nan`时比较结果为0。
-- 当源操作数为浮点数据类型时，+0与-0视为相等。
+- 本接口在非AIV上调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`dst`为掩码寄存器，`src0`和`src1`为矢量数据寄存器。
+- `mask`需通过[掩码设置接口](../reg_data_types/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- `mask`比特位为0时，`dst`对应比特位写0。
+- 浮点比较时，+0.0与-0.0视为相等。
+- 浮点比较输入含nan时，`dst`对应比特位写0。
 
 ## 调用示例
 
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
 ```cpp
-__simd_vf__ inline void gt_vf(__ubuf__ uint16_t* dst_addr, __ubuf__ half* src0_addr, __ubuf__ half* src1_addr, uint32_t count, uint16_t one_repeat_size, uint16_t one_block_size, uint16_t repeat_time)
+#include <cstdint>
+#include <iostream>
+#include <vector>
+
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
 {
-    vector_half src0;
-    vector_half src1;
-    vector_bool dst;
-    vector_bool mask;
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        mask = asc_update_mask_b16(count);
-        asc_loadalign_postupdate(src0, src0_addr, one_repeat_size);
-        asc_loadalign_postupdate(src1, src1_addr, one_repeat_size);
-        asc_gt(dst, src0, src1, mask);
-        asc_storealign_postupdate(dst_addr, dst, one_block_size);
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+template <typename T>
+bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
+{
+    if (actual.size() != expected.size()) return false;
+    for (size_t i = 0; i < actual.size(); ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
     }
+    return true;
+}
+
+constexpr uint32_t ELEMENT_COUNT = 64;
+
+__simd_vf__ inline void compare(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1)
+{
+    vector_float dst_reg;
+    vector_float ones;
+    vector_float zeros;
+    vector_float src0_reg;
+    vector_float src1_reg;
+    vector_bool predicate;
+    uint32_t count = ELEMENT_COUNT;
+    vector_bool mask = asc_update_mask_b32(count);
+    asc_loadalign(src0_reg, src0);
+    asc_loadalign(src1_reg, src1);
+    asc_gt(predicate, src0_reg, src1_reg, mask);
+    asc_duplicate_scalar(ones, 1.0f, mask);
+    asc_duplicate_scalar(zeros, 0.0f, mask);
+    asc_select(dst_reg, ones, zeros, predicate);
+    asc_storealign(dst, dst_reg, mask);
+}
+
+__global__ __vector__ void asc_gt_kernel(__gm__ float* dst, __gm__ float* src0, __gm__ float* src1)
+{
+    asc_init();
+    __ubuf__ float dst_local[ELEMENT_COUNT];
+    __ubuf__ float src0_local[ELEMENT_COUNT];
+    __ubuf__ float src1_local[ELEMENT_COUNT];
+    asc_copy_gm2ub_align(src0_local, src0, ELEMENT_COUNT * sizeof(float));
+    asc_copy_gm2ub_align(src1_local, src1, ELEMENT_COUNT * sizeof(float));
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    compare(dst_local, src0_local, src1_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(dst, dst_local, ELEMENT_COUNT * sizeof(float));
+    asc_sync();
+}
+} // namespace
+
+int main()
+{
+    std::vector<float> src0(ELEMENT_COUNT);
+    std::vector<float> src1(ELEMENT_COUNT);
+    std::vector<float> output(ELEMENT_COUNT, 0.0f);
+    std::vector<float> golden(ELEMENT_COUNT);
+    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
+        src0[i] = static_cast<float>(i % 8);
+        src1[i] = static_cast<float>((i / 2) % 8);
+        golden[i] = src0[i] > src1[i] ? 1.0f : 0.0f;
+    }
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    float* src0_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&src0_device), (ELEMENT_COUNT) * sizeof(float),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    float* src1_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&src1_device), (ELEMENT_COUNT) * sizeof(float),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    float* dst_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&dst_device), (ELEMENT_COUNT) * sizeof(float),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(src0_device, src0.size() * sizeof(float), src0.data(), src0.size() * sizeof(float),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(src1_device, src1.size() * sizeof(float), src1.data(), src1.size() * sizeof(float),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_gt_kernel<<<1, 0>>>(dst_device, src0_device, src1_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(float), dst_device, output.size() * sizeof(float),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input src0", src0);
+    print_data("Input src1", src1);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = compare_data(output, golden);
+    std::cout << (passed ? "[Success] asc_gt passed." : "[Failed] asc_gt failed.") << std::endl;
+    aclrtFree(dst_device);
+    aclrtFree(src0_device);
+    aclrtFree(src1_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
 }
 ```
