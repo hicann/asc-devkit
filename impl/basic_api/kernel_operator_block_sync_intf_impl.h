@@ -81,9 +81,6 @@ __aicore__ inline void SetFlag(int32_t eventID)
             return;
         }
     }
-#if defined(__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__)
-    g_superKernelSetWaitFlagCountDifference += 1;
-#endif
     SetFlagImpl<event>(eventID);
 }
 
@@ -110,9 +107,6 @@ __aicore__ inline void WaitFlag(int32_t eventID)
             return;
         }
     }
-#if defined(__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__)
-    g_superKernelSetWaitFlagCountDifference -= 1;
-#endif
     WaitFlagImpl(event, eventID);
 }
 

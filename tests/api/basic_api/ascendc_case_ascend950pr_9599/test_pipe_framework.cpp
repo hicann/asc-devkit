@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
+#define __ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__
 #include "kernel_tpipe_impl.h"
 #include <vector>
 using namespace AscendC;
@@ -145,6 +146,17 @@ protected:
     void SetUp() {}
     void TearDown() {}
 };
+
+TEST_F(TEST_TPIPE, InnerCoreSyncCheckCountsInternalFlagCalls)
+{
+    constexpr pipe_t testSrcPipe = static_cast<pipe_t>(0x7E);
+    constexpr pipe_t testDstPipe = static_cast<pipe_t>(0x7F);
+    g_superKernelSetWaitFlagCountDifference = SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE;
+    SetFlagInternal<testSrcPipe, testDstPipe>(EVENT_ID0);
+    EXPECT_EQ(g_superKernelSetWaitFlagCountDifference, SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE + 1);
+    WaitFlagInternal<testSrcPipe, testDstPipe>(EVENT_ID0);
+    EXPECT_EQ(g_superKernelSetWaitFlagCountDifference, SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE);
+}
 /* ********************************* TPipe Construction ********************************* */
 TEST_F(TEST_TPIPE, TPipeConstructionTest)
 {

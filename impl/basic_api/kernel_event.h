@@ -296,9 +296,16 @@ __aicore__ inline void PipeBarrierInternal()
 #endif
 }
 
+#if defined(__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__)
+__BLOCK_LOCAL__ __inline__ int32_t g_superKernelSetWaitFlagCountDifference;
+#endif
+
 template <pipe_t srcPipe, pipe_t dstPipe>
 __aicore__ inline void SetFlagInternal(event_t evt)
 {
+#if defined(__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__)
+    g_superKernelSetWaitFlagCountDifference += 1;
+#endif
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     if constexpr (IsSplitVectorPipe<srcPipe>() && IsSplitVectorPipe<dstPipe>()) {
         if ASCEND_IS_AIV {
@@ -318,6 +325,9 @@ __aicore__ inline void SetFlagInternal(event_t evt)
 template <pipe_t srcPipe, pipe_t dstPipe>
 __aicore__ inline void WaitFlagInternal(event_t evt)
 {
+#if defined(__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__)
+    g_superKernelSetWaitFlagCountDifference -= 1;
+#endif
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     (void)evt;
     if constexpr (IsSplitVectorPipe<srcPipe>() && IsSplitVectorPipe<dstPipe>()) {
