@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口已废弃。请使用[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)实现此功能。**
+**该接口已废弃。请使用[asc_squeeze_and_storeunalign](../reg/reg_store/asc_squeeze_and_storeunalign.md)实现此功能。**
 
 reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续非32B对齐的起始地址连续搬出到Unified Buffer（UB）的场景。
 
@@ -67,7 +67,7 @@ reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存�
     | src0 | 输入/输出 | 非对齐寄存器，用于保存非对齐数据，长度32B。 |
     | src1 | 输入 | 源操作数（矢量数据寄存器或掩码寄存器）。 |
 
-矢量数据寄存器、非对齐寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
+矢量数据寄存器、非对齐寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 

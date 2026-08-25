@@ -26,11 +26,11 @@
 
 ## 功能说明
 
-**该接口已废弃。请使用[asc_scatter](../reg_store/asc_scatter.md)实现此功能。**
+**该接口已废弃。请使用[asc_scatter](../reg/reg_store/asc_scatter.md)实现此功能。**
 
 该指令会根据索引值index将源操作数src中的元素分散到目的操作数dst中。分散过程如下图所示：
 
-![scatter功能说明](../../figures/reg_scatter.png)
+![scatter功能说明](../figures/reg_scatter.png)
 
 ## 函数原型
 
@@ -57,7 +57,7 @@ __simd_callee__ inline void asc_scatter(vector_float& src, __ubuf__ float* dst, 
 | index | 输入 | 数据索引（矢量数据寄存器）。                                                          |
 | mask  | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。 |
 
-掩码寄存器的详细说明请参见[reg数据类型定义](../reg_data_types/data_type_definition.md)。
+掩码寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
 
 ## 返回值说明
 
