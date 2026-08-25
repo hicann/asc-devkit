@@ -2745,7 +2745,7 @@
         -   [协作组简介](SIMT-API/cooperative_groups/cooperative_groups_intro.md)
         -   [grid_group](SIMT-API/cooperative_groups/grid_group/grid_group.md)
             -   [grid_group简介](SIMT-API/cooperative_groups/grid_group/grid_group_intro.md)
-            -   [grid_group_constructor](SIMT-API/cooperative_groups/grid_group/grid_group_constructor.md)
+            -   [grid_group构造函数](SIMT-API/cooperative_groups/grid_group/grid_group_constructor.md)
             -   [is_valid](SIMT-API/cooperative_groups/grid_group/is_valid.md)
             -   [sync](SIMT-API/cooperative_groups/grid_group/sync.md)
             -   [thread_rank](SIMT-API/cooperative_groups/grid_group/thread_rank.md)
