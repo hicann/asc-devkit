@@ -16,7 +16,7 @@ uint32_t GetResCubeGroupWorkSpaceSize(void) const
 
 ## 返回值说明<a name="zh-cn_topic_0000001969965338_zh-cn_topic_0000001391767420_section25791320141317"></a>
 
-当前CreateCubeResGroup所需要的workspace空间大小。
+当前CreateCubeResGroup所需要的workspace空间大小。接口正常返回workspace大小，当返回`std::numeric_limits<uint32_t>::max()`（即`UINT32_MAX`）则接口异常。
 
 ## 约束说明<a name="zh-cn_topic_0000001969965338_zh-cn_topic_0000001391767420_section19165124931511"></a>
 
@@ -33,11 +33,17 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     // 如需要使用系统workspace需要调用GetLibApiWorkSpaceSize获取系统workspace的大小。
     auto ascendcPlatform = platform_ascendc:: PlatformAscendC(context->GetPlatformInfo());
     uint32_t sysWorkspaceSize = ascendcPlatform.GetLibApiWorkSpaceSize();
+    if (sysWorkspaceSize == std::numeric_limits<uint32_t>::max()) {
+        return ge::GRAPH_FAILED;
+    }
     // 设置用户需要使用的workspace和CreateCubeResGroup需要的大小作为usrWorkspace的总大小。
-    size_t usrSize = 256 + ascendcPlatform.GetResCubeGroupWorkSpaceSize(); 
+    uint32_t cubeGroupWorkspaceSize = ascendcPlatform.GetResCubeGroupWorkSpaceSize();
+    if (cubeGroupWorkspaceSize == std::numeric_limits<uint32_t>::max()) {
+        return ge::GRAPH_FAILED;
+    }
+    size_t usrSize = 256 + cubeGroupWorkspaceSize;
     size_t *currentWorkspace = context->GetWorkspaceSizes(1); // 通过框架获取workspace的指针，GetWorkspaceSizes入参为所需workspace的块数。当前限制使用一块。
     currentWorkspace[0] = usrSize + sysWorkspaceSize; // 设置总的workspace的数值大小，总的workspace空间由框架来申请并管理。
     ...
 }
 ```
-

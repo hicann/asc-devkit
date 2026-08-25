@@ -16,7 +16,7 @@ uint32_t GetLibApiWorkSpaceSize(void) const
 
 ## 返回值说明<a name="zh-cn_topic_0000001663835704_zh-cn_topic_0000001391767420_section25791320141317"></a>
 
-返回uint32\_t数据类型的结果，该结果代表当前系统workspace的大小，单位为字节。
+返回uint32\_t数据类型的结果，该结果代表当前系统workspace的大小，单位为字节。接口正常返回workspace大小，当返回`std::numeric_limits<uint32_t>::max()`（即`UINT32_MAX`）则接口异常。
 
 ## 约束说明<a name="zh-cn_topic_0000001663835704_zh-cn_topic_0000001391767420_section19165124931511"></a>
 
@@ -34,9 +34,11 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     // 如需要使用系统workspace需要调用GetLibApiWorkSpaceSize获取系统workspace的大小。
     auto ascendcPlatform = platform_ascendc:: PlatformAscendC(context->GetPlatformInfo());
     uint32_t sysWorkspaceSize = ascendcPlatform.GetLibApiWorkSpaceSize();
+    if (sysWorkspaceSize == std::numeric_limits<uint32_t>::max()) {
+        return ge::GRAPH_FAILED;
+    }
     size_t *currentWorkspace = context->GetWorkspaceSizes(1); // 通过框架获取workspace的指针，GetWorkspaceSizes入参为所需workspace的块数。当前限制使用一块。
     currentWorkspace[0] = usrSize + sysWorkspaceSize; // 设置总的workspace的数值大小，总的workspace空间由框架来申请并管理。
     ...
 }
 ```
-
