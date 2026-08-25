@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-用于设置接口[asc_copy_l12l0a](../cube_data_move/asc_copy_l12l0a/asc_copy_l12l0a_arch_3510.md)、[asc_copy_l12l0b](../cube_data_move/asc_copy_l12l0b/asc_copy_l12l0b_arch_3510.md)的2D格式搬运的repeat参数。
+用于设置接口[asc_copy_l12l0a](../cube_data_move/asc_copy_l12l0a/asc_copy_l12l0a_3d_arch_3510.md)、[asc_copy_l12l0b](../cube_data_move/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)的2D格式搬运的repeat参数。
 
 ## 函数原型
 
@@ -62,7 +62,7 @@ PIPE_S
 
 ## 约束说明
 
-- 需要配合接口[asc_copy_l12l0a](../cube_data_move/asc_copy_l12l0a/asc_copy_l12l0a_arch_3510.md)、[asc_copy_l12l0b](../cube_data_move/asc_copy_l12l0b/asc_copy_l12l0b_arch_3510.md)使用。
+- 需要配合接口[asc_copy_l12l0a](../cube_data_move/asc_copy_l12l0a/asc_copy_l12l0a_3d_arch_3510.md)、[asc_copy_l12l0b](../cube_data_move/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)使用。
 
 ## 调用示例
 
