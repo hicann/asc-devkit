@@ -10,3 +10,9 @@
 target_sources(mc2_client PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ins_v2_all_to_all_v_sole_executor.cc
 )
+
+if(NOT HCCL_CANN_COMPAT_850)
+    target_sources(mc2_client PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/ins_v2_all_to_all_concurrent_executor.cc
+    )
+endif()

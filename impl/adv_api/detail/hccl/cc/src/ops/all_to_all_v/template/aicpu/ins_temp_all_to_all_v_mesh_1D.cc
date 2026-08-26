@@ -15,9 +15,11 @@
 namespace mc2_ops_hccl {
 namespace {
 constexpr u64 ALLTOALL_MULTI_CHANNEL_DATA_SIZE_LIMIT = 150ULL * 1024ULL * 1024ULL;
-constexpr const char* ALLTOALL_SINGLE_CHANNEL_ALG = "InsAlltoAllMesh1DSingleChannel";
-constexpr const char* ALLTOALL_MULTI_CHANNEL_ALG = "InsAlltoAllMesh1D";
-constexpr const char* ALLTOALLV_MESH_ALG = "InsAlltoAllVMesh1D";
+constexpr const char* ALLTOALL_SINGLE_CHANNEL_ALG = "AicpuAlltoAllSoleMeshSingleChannel";
+constexpr const char* ALLTOALL_MULTI_CHANNEL_ALG = "AicpuAlltoAllSoleMesh";
+constexpr const char* ALLTOALLV_MESH_ALG = "AicpuAlltoAllVSoleMesh";
+constexpr const char* ALLTOALL_CONCURRENT_ALG = "AicpuAllToAllSoleMeshConcurrent";
+constexpr const char* ALLTOALLV_CONCURRENT_ALG = "AicpuAllToAllVSoleMeshConcurrent";
 
 bool AddOverflows(u64 lhs, u64 rhs) { return lhs > std::numeric_limits<u64>::max() - rhs; }
 
@@ -123,29 +125,37 @@ HcclResult InsTempAlltoAllVMesh1D::CalcRes(
     std::vector<HcclChannelDesc> level0Channels;
     CHK_RET(CalcChannelRequestMesh1D(comm, param, topoInfo, subCommRanks_, level0Channels));
     resourceRequest.channels.push_back(level0Channels);
+    return CalcResByChannelDescs(param, level0Channels, resourceRequest);
+}
 
+HcclResult InsTempAlltoAllVMesh1D::CalcResByChannelDescs(
+    const OpParam& param, const std::vector<HcclChannelDesc>& channelDescs, AlgResourceRequest& resourceRequest)
+{
+    CHK_PRT_RET(
+        subCommRanks_.empty() || templateRankSize_ == 0U,
+        HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcResByChannelDescs] sub communication ranks are empty."), HCCL_E_PARA);
     channelsPerRank_ = 1U;
     if (std::string(param.algName) != ALLTOALL_SINGLE_CHANNEL_ALG && templateRankSize_ > 1U) {
         CHK_PRT_RET(
-            level0Channels.empty(), HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcRes] channels are empty."),
+            channelDescs.empty(), HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcResByChannelDescs] channels are empty."),
             HCCL_E_INTERNAL);
-        channelsPerRank_ = CalcChannelsPerRank(level0Channels);
+        channelsPerRank_ = CalcChannelsPerRank(channelDescs);
     }
     CHK_PRT_RET(
-        channelsPerRank_ == 0U, HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcRes] channelsPerRank is zero."),
+        channelsPerRank_ == 0U, HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcResByChannelDescs] channelsPerRank is zero."),
         HCCL_E_INTERNAL);
 
     const u32 remoteRankNum = templateRankSize_ > 0U ? templateRankSize_ - 1U : 0U;
     const u32 concurrentRankNum = std::min(ALLTOALLV_DIRECT_FULLMESH_CONCURRENT_SIZE, remoteRankNum);
     CHK_PRT_RET(
         concurrentRankNum > 0U && channelsPerRank_ > std::numeric_limits<u32>::max() / concurrentRankNum,
-        HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcRes] slave thread number overflows."), HCCL_E_PARA);
+        HCCL_ERROR("[InsTempAlltoAllVMesh1D][CalcResByChannelDescs] slave thread number overflows."), HCCL_E_PARA);
     resourceRequest.slaveThreadNum = concurrentRankNum * channelsPerRank_;
     resourceRequest.notifyNumPerThread.assign(resourceRequest.slaveThreadNum, channelsPerRank_);
     resourceRequest.notifyNumOnMainThread = resourceRequest.slaveThreadNum;
     HCCL_INFO(
-        "[InsTempAlltoAllVMesh1D][CalcRes] algName[%s], channelsPerRank[%u], slaveThreadNum[%u].", param.algName,
-        channelsPerRank_, resourceRequest.slaveThreadNum);
+        "[InsTempAlltoAllVMesh1D][CalcResByChannelDescs] algName[%s], channelsPerRank[%u], slaveThreadNum[%u].",
+        param.algName, channelsPerRank_, resourceRequest.slaveThreadNum);
     return HCCL_SUCCESS;
 }
 
@@ -203,7 +213,7 @@ HcclResult InsTempAlltoAllVMesh1D::SetRuntimeChannelsPerRank(
         allocatedChannelsPerRank == 0U, HCCL_ERROR("[InsTempAlltoAllVMesh1D] allocated channels per rank is zero."),
         HCCL_E_INTERNAL);
 
-    if (algName == ALLTOALLV_MESH_ALG) {
+    if (algName == ALLTOALLV_MESH_ALG || algName == ALLTOALL_CONCURRENT_ALG || algName == ALLTOALLV_CONCURRENT_ALG) {
         channelsPerRank_ = allocatedChannelsPerRank;
         return HCCL_SUCCESS;
     }
