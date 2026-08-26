@@ -93,13 +93,22 @@ __aicore__ inline uint64_t clock(void) { return clock_impl(); }
 template <pipe_t pipe>
 __aicore__ inline void asc_mark_stamp(uint16_t idx)
 {
-    bisheng::cce::mark_stamp<pipe>(idx);
+    if constexpr (pipe == PIPE_S || pipe == PIPE_V || pipe == PIPE_MTE2 || pipe == PIPE_MTE3) {
+        if ASCEND_IS_AIV {
+            bisheng::cce::mark_stamp<pipe>(idx);
+        }
+    }
+    if constexpr (pipe == PIPE_S || pipe == PIPE_MTE1 || pipe == PIPE_MTE2 || pipe == PIPE_FIX || pipe == PIPE_M) {
+        if ASCEND_IS_AIC {
+            bisheng::cce::mark_stamp<pipe>(idx);
+        }
+    }
 }
 
 template <pipe_t pipe, uint16_t idx>
 __aicore__ inline void asc_mark_stamp()
 {
-    bisheng::cce::mark_stamp<pipe>(idx);
+    asc_mark_stamp<pipe>(idx);
 }
 #endif
 } // namespace __asc_aicore
