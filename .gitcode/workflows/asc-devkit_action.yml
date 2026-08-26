@@ -11,20 +11,20 @@ concurrency:
 on:
   pull_request_comment:
     types: [created]
-    branches: [ '*' ]
+    branches: [ '**' ]
     comments: [ '^(?:\/)?compile*' ]
   pr_comment:
       types: [ created ]
       keyword: '^(?:\/)?compile*'
 
 env:
-  org_name: "cann"
+  org_name: "${{ vars.ORG_NAME }}"
+  repo_name: ${{atomgit.event.repository.name}}
   MERGE_ID: ${{atomgit.event.pull_request.number}}
-  obs_path: "${{ vars.OBS_PATH }}/${{ env.MERGE_ID }}"
-  obs_smoke_path: "${{ env.obs_path }}/presmoke/2"
-  repo_name: "asc-devkit"
+  obs_path: "${{ env.org_name }}/${{ env.repo_name }}/ci/package/${{ env.MERGE_ID }}"
   TARGET_BRANCH: ${{atomgit.ref_name}}
   SOURCE_BRANCH: ${{atomgit.head_ref}}
+  obs_smoke_path: "${{ env.obs_path }}/presmoke/2"
   online: ${{ vars.APPLY_LABEL }}
 
 
@@ -47,88 +47,12 @@ stages:
             run: |
               echo "image: ${{ steps.revise_image.outputs.Compile_Ascend_X86 }}"
         if: "${{ default() }}"
-        runs-on: ["dedicate-hosted", "x64", "small"]
+        runs-on: ["self-hosted", "arch=x64", "spec=small"]
         container:
           image: swr.cn-north-4.myhuaweicloud.com/ci_cann/ubuntu20.04.05_x86:k8s_v1.1006
-      JOB_pr:
-        name: Test_get-pr
-        steps:
-          -
-            name: Checkout
-            identifier: process_checkout
-            uses: checkout
-            with:
-              ref: ${{ atomgit.event.pull_request.merge_commit_sha }}
-              token: ${{secrets.GIT_TOKEN}}
-          -
-            name: get_pr
-            identifier: get_pr
-            uses: cann/.gitcode/actions/get-pr@master
-            with:
-              workspace: ${{ steps.process_checkout.outputs.path }}
-              target_branch: ${{ env.TARGET_BRANCH }}
-              owner: ${{ env.org_name }}
-              repo: ${{ env.repo_name }}
-              pr_number: ${{ atomgit.event.pull_request.number }}
-              git_token: ${{secrets.GIT_TOKEN}}
-          -
-            name: upload
-            uses: obs-upload
-            with:
-              endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
-              bucket: "ascend-ci"
-              access-key: ${{secrets.AK}}
-              secret-key: ${{secrets.SK}}
-              artifact-path: |
-                ${{ steps.process_checkout.outputs.path }}/pr_filelist.txt
-                ${{ steps.process_checkout.outputs.path }}/pr_filelist_mod.txt
-                ${{ steps.process_checkout.outputs.path }}/pr_filelist_precommit.txt
-                ${{ steps.process_checkout.outputs.path }}/update_file_detail.txt
-                ${{ steps.process_checkout.outputs.path }}/gitdiff.txt
-              object-prefix: ${{ env.obs_path }}/
-        runs-on:
-        - default
-      JOB_shell:
-        name: Test_get-shell
-        steps:
-          -
-            name: Checkout
-            identifier: process_checkout
-            uses: checkout
-            with:
-              ref: master
-              token: ${{secrets.GIT_TOKEN}}
-          -
-            name: upload
-            uses: obs-upload
-            with:
-              endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
-              bucket: "ascend-ci"
-              access-key: ${{secrets.AK}}
-              secret-key: ${{secrets.SK}}
-              artifact-path: |
-                ${{ steps.process_checkout.outputs.path }}/.gitcode/scripts/*
-              object-prefix: ${{ env.obs_path }}/
-        if: "${{ default() }}"
-        runs-on:
-        - default
       JOB_pre:
-        name: Test_pre_pipeline
-        steps:
-          - name: pre_pipeline
-            uses: cann/.gitcode/actions/pre-pipeline@master
-            with:
-              owner: ${{ env.org_name }}
-              repo: ${{ env.repo_name }}
-              pr_number: ${{ atomgit.event.pull_request.number }}
-              token: ${{ secrets.GIT_TOKEN }}
-              apply_label: ${{ vars.APPLY_LABEL }}
-          - name: associate-pr-comment
-            uses: associate-pr-comment
-            if: env.online == 'true'
-        runs-on: [dedicate-hosted, x64, small]
-        container:
-          image: swr.cn-north-4.myhuaweicloud.com/ci_cann/ubuntu20.04.05_x86:k8s_v1.1006
+        name: Test_PreBuild
+        uses: cann/.gitcode/.gitcode/workflows/pre_action.yml@master
     pre:
     - type: auto
     fail-fast: true
@@ -167,9 +91,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.Compile_Ascend_ARM }}
           arch: 'arm64'
           package_name: 'cann-asc-devkit_linux-aarch64.run'
-      JOB_codecheck_action:
+      JOB_codecheck:
         name: CodeCheck
-        uses: .gitcode/workflows/codecheck_action.yml
+        uses: cann/.gitcode/.gitcode/workflows/codecheck_action.yml@master
         with:
           precommit_image_version: ${{ jobs.JOB_image.outputs.precommit }}
           codecheck_image_version: ${{ jobs.JOB_image.outputs.codecheck }}
@@ -198,7 +122,7 @@ stages:
               repo_name: ${{ env.repo_name }}
               merge_id: ${{ env.MERGE_ID }}
         if: env.TARGET_BRANCH == 'master'
-        runs-on: [dedicate-hosted, x64, small]
+        runs-on: [self-hosted, arch=x64, spec=small]
         container:
           image: swr.cn-north-4.myhuaweicloud.com/ci_cann/${{ jobs.JOB_image.outputs.API_Check }}
       JOB_UT_Test_adv_test_one:
@@ -316,7 +240,7 @@ stages:
                 ${{ steps.process_checkout.outputs.path }}/ut_cov_*.tar.gz
               object-prefix: ${{ env.obs_path }}/
         if: "${{ default() }}"
-        runs-on: [dedicate-hosted, x64, large]
+        runs-on: [self-hosted, arch=x64, spec=large]
         container:
           image: swr.cn-north-4.myhuaweicloud.com/ci_cann/${{ jobs.JOB_image.outputs.UT_Test }}
   stage5:
@@ -331,15 +255,6 @@ stages:
             uses: checkout
             with:
               token: ${{secrets.GIT_TOKEN}}
-              path: "./runner"
-          -
-            name: Checkout gitcode
-            identifier: process_checkout_gitcode
-            uses: checkout
-            with:
-              repository: "https://gitcode.com/cann/.gitcode.git"
-              ref: master
-              path: "./runner/ci"
           -
             name: download
             uses: obs-download
@@ -355,57 +270,32 @@ stages:
                 ${{ env.obs_path }}/pre_smoke.sh
               path: ${{ steps.process_checkout.outputs.path }}
           -
-            name: tar businesscode
-            run: |
-              echo "############${{ steps.process_checkout.outputs.path }}#################"
-              echo "#####image: swr.cn-south-1.myhuaweicloud.com/pre_smoke/${{ jobs.JOB_image.outputs.PreSmoke_A900 }}#####"
-              cd ${{ steps.process_checkout.outputs.path }}
-              tar -zcf ../smoke_data.tar.gz .
-              mv ../smoke_data.tar.gz ./
-          -
-            name: upload
-            identifier: process_upload
-            uses: obs-upload
-            with:
-              endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
-              bucket: "ascend-ci"
-              access-key: ${{secrets.AK}}
-              secret-key: ${{secrets.SK}}
-              artifact-path: |
-                ${{ steps.process_checkout.outputs.path }}/smoke_data.tar.gz
-              object-prefix: ${{ env.obs_smoke_path }}/
-          -
             name: smoke executor
             timeout-minutes: 30
-            uses: manifest-management-plugin
-            with:
-              action: DEPLOY
-              repo: ${{ steps.process_checkout.outputs.path }}
-              file_path: ${{ steps.process_checkout.outputs.path }}/ci/smoke-conf/smoke-A2.yaml
-              manifest_image: swr.cn-south-1.myhuaweicloud.com/pre_smoke/${{ jobs.JOB_image.outputs.Presmoke_A900_npupool }}
-              custom_shell_script: |-
+            run: |
                 set -e
+                # set env
+                export WORKSPACE=${{ steps.process_checkout.outputs.path }}
                 export repo_name=${{env.repo_name}}
                 export pr_id=${{ env.MERGE_ID }}
                 export obs_path=${{env.obs_path}}
                 export AK=${{secrets.AK}}
                 export SK=${{secrets.SK}}
                 export obs_smoke_path=${{ env.obs_smoke_path }}
-                mkdir -p /home/taskspace && cd /home/taskspace
-                wget -nv ${{ steps.process_upload.outputs.primary-url }}
-                tar -zxf $(basename "${{ steps.process_upload.outputs.primary-url }}")
-                bash /home/taskspace/pre_smoke.sh
-          -
-            name: smoke resource clean
-            uses: manifest-management-plugin
-            if: ${{ always() }}
+                bash ${{ steps.process_checkout.outputs.path }}/pre_smoke.sh
+          - name: upload
+            uses: obs-upload
             with:
-              action: CRUSH
-              repo: ${{ steps.process_checkout.outputs.path }}
-              file_path: ${{ steps.process_checkout.outputs.path }}/ci/smoke-conf/smoke-A2.yaml
-
+              endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
+              bucket: "ascend-ci"
+              access-key: ${{ secrets.AK }}
+              secret-key: ${{ secrets.SK }}
+              artifact-path: "${{ steps.process_checkout.outputs.path }}/slog.tar.gz"
+              object-prefix: ${obs_smoke_path}/plog/
         if: env.TARGET_BRANCH == 'master'
         runs-on: ['self-hosted','arch=arm','smoke=204']
+        container:
+          image: swr.cn-south-1.myhuaweicloud.com/pre_smoke/${{ jobs.JOB_image.outputs.Presmoke_A900_npupool }}
     pre:
     - type: auto
     fail-fast: true
@@ -413,18 +303,5 @@ stages:
 post:
   jobs:
     job_post:
-      name: Test_finish
-      steps:
-        -
-          name: query_pipeline
-          uses: cann/.gitcode/actions/query-pipeline@master
-          with:
-            owner: ${{ env.org_name }}
-            repo: ${{ env.repo_name }}
-            run_id: ${{atomgit. workflow_run_id}}
-            token: ${{ secrets.GIT_TOKEN }}
-            pr_number: ${{ env.MERGE_ID }}
-            apply_label: ${{ vars.APPLY_LABEL }}
-      runs-on: [dedicate-hosted, x64, small]
-      container:
-        image: swr.cn-north-4.myhuaweicloud.com/ci_cann/${{ jobs.JOB_image.outputs.codecheck }}
+      name: Test_post
+      uses: cann/.gitcode/.gitcode/workflows/post_action.yml@master
