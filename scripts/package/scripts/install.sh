@@ -90,6 +90,25 @@ chmod_start() {
 
 # 运行结束授权
 chmod_end() {
+    chmod_recur "$default_dir/bin" 550 dir
+    chmod_recur "$default_dir/bin" 550 file
+    chmod_single_dir "$default_dir/ascend_install.info" 640 file 2> /dev/null
+    chmod_single_dir "$default_dir/version.info" 440 file 2> /dev/null
+    chmod_single_dir "$default_dir/scene.info" 640 file 2> /dev/null
+    chmod_single_dir "$default_dir" 550 dir 2> /dev/null
+    chmod_single_dir "$default_dir/script" 550 dir 2> /dev/null
+    chmod_recur "$default_dir/script" 550 file 2> /dev/null
+    chmod_single_dir "$default_dir/script/install.sh" 500 file 2> /dev/null
+
+    chmod_recur "$pkg_install_path/python/site-packages/asc_op_compile_base" 550 dir
+    chmod_recur "$pkg_install_path/python/site-packages/asc_op_compile_base" 550 file
+    chmod_recur "$pkg_install_path/python/site-packages/asc_op_compile_base-0.1.0.dist-info" 550 dir
+    chmod_recur "$pkg_install_path/python/site-packages/asc_op_compile_base-0.1.0.dist-info" 550 file
+    chmod_recur "$pkg_install_path/python/site-packages/asc_opc_tool" 550 dir
+    chmod_recur "$pkg_install_path/python/site-packages/asc_opc_tool" 550 file
+    chmod_recur "$pkg_install_path/python/site-packages/asc_opc_tool-0.1.0.dist-info" 550 dir
+    chmod_recur "$pkg_install_path/python/site-packages/asc_opc_tool-0.1.0.dist-info" 550 file
+
     if [ $(id -u) -eq 0 ]; then
         chown "root:root" "$default_dir" 2> /dev/null
         chmod 755 "$default_dir" 2> /dev/null
@@ -523,7 +542,7 @@ update_version_info_version() {
         cp -f "$pkg_version_path" "$default_dir"
         log "INFO" "Base version set successfully!"
     fi
-    chmod_single_dir "$default_dir/version.info" 640 file >> /dev/null 2>&1
+    chmod_single_dir "$default_dir/version.info" 440 file >> /dev/null 2>&1
 }
 
 log_base_version() {
