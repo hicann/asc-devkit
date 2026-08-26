@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long meta_group_rank() const
+unsigned int meta_group_rank() const
 ```
 
 ## 参数说明
@@ -58,7 +58,7 @@ unsigned long long meta_group_rank() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.meta_group_rank(); // 返回0
+            unsigned int group_rank = active.meta_group_rank(); // 返回0
         }
         ...
     }
@@ -73,7 +73,7 @@ unsigned long long meta_group_rank() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.meta_group_rank(); // 返回0
+            unsigned int group_rank = active.meta_group_rank(); // 返回0
         }
         ...
     }

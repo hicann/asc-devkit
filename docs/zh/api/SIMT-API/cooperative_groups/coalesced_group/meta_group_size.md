@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long meta_group_size() const
+unsigned int meta_group_size() const
 ```
 
 ## 参数说明
@@ -58,7 +58,7 @@ unsigned long long meta_group_size() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.meta_group_size(); // 返回1
+            unsigned int group_size = active.meta_group_size(); // 返回1
         }
         ...
     }
@@ -73,7 +73,7 @@ unsigned long long meta_group_size() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.meta_group_size(); // 返回1
+            unsigned int group_size = active.meta_group_size(); // 返回1
         }
         ...
     }

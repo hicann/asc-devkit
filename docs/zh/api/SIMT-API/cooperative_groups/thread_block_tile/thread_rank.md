@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long thread_rank() const
+unsigned int thread_rank() const
 ```
 
 ## 参数说明
@@ -61,7 +61,7 @@ unsigned long long thread_rank() const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        unsigned long long rank = tile4.thread_rank();
+        unsigned int rank = tile4.thread_rank();
         ...
     }
     ```
@@ -75,7 +75,7 @@ unsigned long long thread_rank() const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        unsigned long long rank = tile4.thread_rank();
+        unsigned int rank = tile4.thread_rank();
         ...
     }
     ```

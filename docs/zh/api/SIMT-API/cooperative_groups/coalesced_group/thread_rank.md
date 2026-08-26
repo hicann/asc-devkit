@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long thread_rank() const
+unsigned int thread_rank() const
 ```
 
 ## 参数说明
@@ -61,7 +61,7 @@ unsigned long long thread_rank() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long rank = active.thread_rank();
+            unsigned int rank = active.thread_rank();
         }
         ...
     }
@@ -76,7 +76,7 @@ unsigned long long thread_rank() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long rank = active.thread_rank();
+            unsigned int rank = active.thread_rank();
         }
         ...
     }

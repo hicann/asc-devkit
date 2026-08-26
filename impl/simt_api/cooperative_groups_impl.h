@@ -280,16 +280,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline tiled_group::tiled_group(unsigned int num_
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void tiled_group::sync() const { asc_threadfence_block(); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long tiled_group::num_threads() const
-{
-    return static_cast<unsigned long long>(_tiled_info.num_threads);
-}
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int tiled_group::num_threads() const { return _tiled_info.num_threads; }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long tiled_group::size() const { return num_threads(); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int tiled_group::size() const { return num_threads(); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long tiled_group::thread_rank() const
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int tiled_group::thread_rank() const
 {
-    return static_cast<unsigned long long>(__popc(_tiled_info.mask & lanemask_lt()));
+    return __popc(_tiled_info.mask & lanemask_lt());
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline thread_block::thread_block()
@@ -541,26 +538,26 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void coalesced_group::sync() const { asc_t
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int coalesced_group::get_mask() const { return _tiled_info.mask; }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long coalesced_group::num_threads() const
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int coalesced_group::num_threads() const
 {
-    return static_cast<unsigned long long>(_tiled_info.num_threads);
+    return _tiled_info.num_threads;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long coalesced_group::size() const { return num_threads(); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int coalesced_group::size() const { return num_threads(); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long coalesced_group::thread_rank() const
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int coalesced_group::thread_rank() const
 {
-    return static_cast<unsigned long long>(__popc(_tiled_info.mask & lanemask_lt()));
+    return __popc(_tiled_info.mask & lanemask_lt());
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long coalesced_group::meta_group_size() const
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int coalesced_group::meta_group_size() const
 {
-    return static_cast<unsigned long long>(_tiled_info.meta_group_size);
+    return _tiled_info.meta_group_size;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long coalesced_group::meta_group_rank() const
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int coalesced_group::meta_group_rank() const
 {
-    return static_cast<unsigned long long>(_tiled_info.meta_group_rank);
+    return _tiled_info.meta_group_rank;
 }
 
 template <typename T>
@@ -703,20 +700,19 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void single_warp_thread_block_tile_base<Si
 }
 
 template <unsigned int Size>
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long single_warp_thread_block_tile_base<Size>::thread_rank()
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int single_warp_thread_block_tile_base<Size>::thread_rank()
 {
     return laneid() & (Size - 1);
 }
 
 template <unsigned int Size>
-__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned long long
-single_warp_thread_block_tile_base<Size>::num_threads()
+__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned int single_warp_thread_block_tile_base<Size>::num_threads()
 {
     return numThreads;
 }
 
 template <unsigned int Size>
-__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned long long single_warp_thread_block_tile_base<Size>::size()
+__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned int single_warp_thread_block_tile_base<Size>::size()
 {
     return numThreads;
 }
@@ -748,20 +744,19 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void multi_warp_thread_block_tile_base<Siz
 }
 
 template <unsigned int Size>
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long multi_warp_thread_block_tile_base<Size>::thread_rank()
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int multi_warp_thread_block_tile_base<Size>::thread_rank()
 {
     return thread_block::thread_rank() & (Size - 1);
 }
 
 template <unsigned int Size>
-__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned long long
-multi_warp_thread_block_tile_base<Size>::num_threads()
+__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned int multi_warp_thread_block_tile_base<Size>::num_threads()
 {
     return numThreads;
 }
 
 template <unsigned int Size>
-__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned long long multi_warp_thread_block_tile_base<Size>::size()
+__SIMT_DEVICE_FUNCTIONS_DECL__ constexpr inline unsigned int multi_warp_thread_block_tile_base<Size>::size()
 {
     return numThreads;
 }

@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long num_threads() const
+unsigned int num_threads() const
 ```
 
 ## 参数说明
@@ -56,7 +56,7 @@ unsigned long long num_threads() const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        unsigned long long thread_num = tile4.num_threads();    // 返回4
+        unsigned int thread_num = tile4.num_threads();    // 返回4
         ...
     }
     ```
@@ -70,7 +70,7 @@ unsigned long long num_threads() const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        unsigned long long thread_num = tile4.num_threads();    // 返回4
+        unsigned int thread_num = tile4.num_threads();    // 返回4
         ...
     }
     ```

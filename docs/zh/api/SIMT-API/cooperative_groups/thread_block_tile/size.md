@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long size() const
+unsigned int size() const
 ```
 
 ## 参数说明
@@ -56,7 +56,7 @@ unsigned long long size() const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        unsigned long long thread_num = tile4.size();    // 返回4
+        unsigned int thread_num = tile4.size();    // 返回4
         ...
     }
     ```
@@ -70,7 +70,7 @@ unsigned long long size() const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        unsigned long long thread_num = tile4.size();    // 返回4
+        unsigned int thread_num = tile4.size();    // 返回4
         ...
     }
     ```

@@ -60,7 +60,7 @@ int any(int predicate) const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        uint32_t result = tile4.any(1);             // 返回1
+        int result = tile4.any(1);                  // 返回1
         ...
     }
     ```
@@ -74,7 +74,7 @@ int any(int predicate) const
         ...
         thread_block block = this_thread_block();
         auto tile4 = tiled_partition<4>(block);
-        uint32_t result = tile4.any(1);             // 返回1
+        int result = tile4.any(1);                  // 返回1
         ...
     }
     ```

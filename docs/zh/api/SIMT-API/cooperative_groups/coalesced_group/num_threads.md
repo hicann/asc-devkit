@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long num_threads() const
+unsigned int num_threads() const
 ```
 
 ## 参数说明
@@ -58,7 +58,7 @@ unsigned long long num_threads() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.num_threads(); // 返回16
+            unsigned int thread_num = active.num_threads(); // 返回16
         }
         ...
     }
@@ -73,7 +73,7 @@ unsigned long long num_threads() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.num_threads(); // 返回16
+            unsigned int thread_num = active.num_threads(); // 返回16
         }
         ...
     }

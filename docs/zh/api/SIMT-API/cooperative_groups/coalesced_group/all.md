@@ -60,7 +60,7 @@ int all(int predicate) const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            uint32_t result = active.all(1); // 返回1
+            int result = active.all(1); // 返回1
         }
         ...
     }
@@ -75,7 +75,7 @@ int all(int predicate) const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            uint32_t result = active.all(1); // 返回1
+            int result = active.all(1); // 返回1
         }
         ...
     }

@@ -146,9 +146,9 @@ class tiled_group : public thread_group {
 
 public:
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sync() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long num_threads() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long size() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long thread_rank() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int num_threads() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int size() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int thread_rank() const;
 
 protected:
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline tiled_group(unsigned int num_threads);
@@ -257,11 +257,11 @@ class coalesced_group : public thread_group {
 
 public:
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sync() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long num_threads() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long size() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long thread_rank() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long meta_group_size() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long meta_group_rank() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int num_threads() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int size() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int thread_rank() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int meta_group_size() const;
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int meta_group_rank() const;
 
     template <typename T>
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline T shfl(T var, int src_rank) const;
@@ -354,9 +354,9 @@ class single_warp_thread_block_tile_base {
 
 public:
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sync() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ static inline unsigned long long thread_rank();
-    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned long long num_threads();
-    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned long long size();
+    __SIMT_DEVICE_FUNCTIONS_DECL__ static inline unsigned int thread_rank();
+    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned int num_threads();
+    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned int size();
 
     template <typename T>
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline T shfl(T var, int src_rank) const;
@@ -395,9 +395,9 @@ class multi_warp_thread_block_tile_base {
 
 public:
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sync() const;
-    __SIMT_DEVICE_FUNCTIONS_DECL__ static inline unsigned long long thread_rank();
-    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned long long num_threads();
-    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned long long size();
+    __SIMT_DEVICE_FUNCTIONS_DECL__ static inline unsigned int thread_rank();
+    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned int num_threads();
+    __SIMT_DEVICE_FUNCTIONS_DECL__ static constexpr inline unsigned int size();
 
     template <typename T>
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline T shfl(T var, int src_rank) const;

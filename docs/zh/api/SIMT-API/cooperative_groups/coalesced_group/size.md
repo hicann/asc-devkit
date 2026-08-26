@@ -30,7 +30,7 @@
 ## 函数原型
 
 ```cpp
-unsigned long long size() const
+unsigned int size() const
 ```
 
 ## 参数说明
@@ -56,7 +56,7 @@ unsigned long long size() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.size(); // 返回16
+            unsigned int thread_num = active.size(); // 返回16
         }
         ...
     }
@@ -71,7 +71,7 @@ unsigned long long size() const
         ...
         if (threadIdx.x % 2 == 0) {
             coalesced_group active = coalesced_threads();
-            unsigned long long thread_num = active.size(); // 返回16
+            unsigned int thread_num = active.size(); // 返回16
         }
         ...
     }
