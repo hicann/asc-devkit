@@ -20,7 +20,7 @@ SIMT线程可访问多种内存空间。下表汇总了SIMT编程中常见内存
 
 ## 全局内存（Global Memory）<a name="section8946131492119"></a>
 
-Device侧的全局内存是整个Grid中所有线程均可访问的内存空间。全局内存具有持久性：通过全局内存分配的空间及其存储的数据将持续保留，直到该内存空间被释放或应用程序终止。用户需在核函数（Kernel）启动前通过Runtime API完成全局内存的分配与初始化，核函数（Kernel）执行期间SIMT每个线程均可读写全局内存，执行完毕后可将结果拷贝回Host。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+Device侧的全局内存是整个Grid中所有线程均可访问的内存空间。全局内存具有持久性：通过全局内存分配的空间及其存储的数据将持续保留，直到该内存空间被释放或应用程序终止。用户需在核函数（Kernel）启动前通过Runtime API完成全局内存的分配与初始化，核函数（Kernel）执行期间SIMT每个线程均可读写全局内存，执行完毕后可将结果拷贝回Host。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/9.2.0-beta.2/docs/zh/api_ref/README.md)。
 
 运行在Device侧的核函数（Kernel）可以通过指针直接访问全局内存。下述代码展示了全局内存的简易示例。数组x、y、z均存储于全局内存中，通过以下核函数（Kernel）实现每个线程对全局内存的访问和存储。
 
