@@ -376,6 +376,14 @@ def _trans_soc_ver_to_short(soc_ver: str):
     return SOC_TO_SHORT_SOC_MAP[low_soc_ver]
 
 
+def _trans_short_soc_to_soc_version(short_soc_ver: str):
+    low_short_soc_ver = short_soc_ver.lower()
+    for soc_ver, mapped_short_soc_ver in SOC_TO_SHORT_SOC_MAP.items():
+        if mapped_short_soc_ver == low_short_soc_ver:
+            return soc_ver
+    return short_soc_ver
+
+
 def get_impl_mode(options_list: list):
     tmp_impl_mode = ""
     for opt in options_list:

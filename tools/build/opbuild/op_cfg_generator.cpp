@@ -24,6 +24,20 @@
 #include "op_dtype_name_utils.h"
 
 namespace ops {
+namespace {
+std::string NormalizeSupportedSoc(const std::string& socVer)
+{
+    std::string lowerSocVer = socVer;
+    for (char& c : lowerSocVer) {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    }
+    if (VALID_SOC_SET.find(lowerSocVer) != VALID_SOC_SET.end()) {
+        return lowerSocVer;
+    }
+    return socVer;
+}
+} // namespace
+
 std::string CfgGenerator::GetDataTypeName(const ge::DataType& type) const { return FindCfgDataTypeName(type); }
 
 std::string CfgGenerator::GetParamTypeName(uint32_t paramType) const
@@ -410,7 +424,7 @@ void CfgGenerator::GenAllOpCfgWithoutComputeUint(
         OpDef opsDef = OpDefFactory::OpDefCreate(op.c_str());
         bool enableFallBack = opsDef.IsEnableFallBack();
         for (auto& aicoreItem : opsDef.AICore().GetAICoreConfigs()) {
-            std::string socVer = aicoreItem.first.GetString();
+            std::string socVer = NormalizeSupportedSoc(aicoreItem.first.GetString());
             OpAICoreConfig aicoreConfig = aicoreItem.second;
             std::ofstream outfile;
             GetOutFilePtr(genPath, socVer, outfile, resolvedGenPath, cfgFileStreams);
@@ -455,8 +469,13 @@ opbuild::Status CfgGenerator::GenerateCode(void)
                 ASCENDLOGW("Invlid soc version %s\n of ASCEND_COMPUTE_UNIT", socVer.c_str());
                 continue;
             }
-            ge::AscendString curCompUnit(socVer.c_str());
-            auto cfgIter = allAICoreConfig.find(curCompUnit);
+            auto cfgIter = allAICoreConfig.end();
+            for (auto iter = allAICoreConfig.begin(); iter != allAICoreConfig.end(); ++iter) {
+                if (NormalizeSupportedSoc(iter->first.GetString()) == socVer) {
+                    cfgIter = iter;
+                    break;
+                }
+            }
             OpAICoreConfig aicoreConfig;
             if (cfgIter == allAICoreConfig.end()) {
                 aicoreConfig = OpAICoreConfig(socVer.c_str());

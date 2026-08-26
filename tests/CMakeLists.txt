@@ -20,6 +20,11 @@ if (BUILD_OPEN_PROJECT)
     include(cmake/func.cmake)
 endif()
 
+add_custom_target(ascendc_ut_fwk_modules ALL
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_soc_series_validation.cmake
+    COMMENT "Run framework CMake module tests"
+)
+
 add_subdirectory(api)
 add_subdirectory(tools)
 add_subdirectory(python)

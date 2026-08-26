@@ -16,6 +16,8 @@ import os
 import stat
 import hashlib
 
+from opdesc_parser import _trans_short_soc_to_soc_version
+
 
 def args_parse():
     parser = argparse.ArgumentParser()
@@ -23,9 +25,19 @@ def args_parse():
     parser.add_argument("-n", "--target-name", required=True, help="kernel target name")
     parser.add_argument("-t", "--op-type", required=True, help="op type")
     parser.add_argument("-f", "--op-kernel-file", help="op kernel file")
-    parser.add_argument("-c", "--compute-unit", nargs="*", help="compute unit")
+    soc_group = parser.add_mutually_exclusive_group()
+    soc_group.add_argument("-c", "--compute-unit", nargs="*", help="compute unit")
+    soc_group.add_argument("-s", "--soc-series", nargs="*", help="soc series")
     parser.add_argument("-d", "--op-kernel-dir", help="op kernel dir")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.soc_series:
+        args.compute_unit = [
+            " ".join(
+                _trans_short_soc_to_soc_version(soc_ver)
+                for soc_ver in args.soc_series[0].strip().split()
+            )
+        ]
+    return args
 
 
 def is_only_filename(s):

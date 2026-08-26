@@ -104,6 +104,7 @@ basic_test_four_targets=(
     install_adapter_api_ut
     run_all_tests_and_clean
     asc_opc_unittest
+    ascendc_ut_fwk_modules
     ascendc_ut_basic_api_ascend950pr_9599_AIV_BASIC
 )
 

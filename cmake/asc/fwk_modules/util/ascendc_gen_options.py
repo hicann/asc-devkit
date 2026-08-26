@@ -14,6 +14,8 @@ import sys
 import stat
 import os
 
+from opdesc_parser import _trans_short_soc_to_soc_version
+
 
 def write_options_to_file(
     file_name: str, options_str: str, op_type: str, compute_unit: str, split_char: str
@@ -220,17 +222,32 @@ if __name__ == "__main__":
     if len(sys.argv) < 4:
         raise RuntimeError("arguments must greater than 4")
     compute_soc = ""
+    soc_series = ""
     comp_options = []
     for i in range(len(sys.argv) - 3):
-        if sys.argv[i + 3].upper().startswith("ASCEND"):
-            compute_soc += sys.argv[i + 3] + ";"
-        elif sys.argv[i + 3].upper().startswith("KIRIN"):
-            compute_soc += sys.argv[i + 3] + ";"
-        elif sys.argv[i + 3].upper().startswith("MC62"):
-            compute_soc += sys.argv[i + 3] + ";"
+        arg = sys.argv[i + 3]
+        if arg.startswith("--soc-series="):
+            soc_series = arg.split("=", 1)[1].replace(",", ";")
+            if not soc_series:
+                raise RuntimeError("No value given for --soc-series")
+        elif arg.upper().startswith("ASCEND"):
+            compute_soc += arg + ";"
+        elif arg.upper().startswith("KIRIN"):
+            compute_soc += arg + ";"
+        elif arg.upper().startswith("MC62"):
+            compute_soc += arg + ";"
         else:
-            comp_options.append(sys.argv[i + 3])
-    if compute_soc != "":
+            comp_options.append(arg)
+    if soc_series and compute_soc:
+        raise RuntimeError(
+            "SOC_SERIES and COMPUTE_UNIT cannot be used at the same time"
+        )
+    if soc_series:
+        compute_soc = ";".join(
+            _trans_short_soc_to_soc_version(soc_ver)
+            for soc_ver in soc_series.split(";")
+        )
+    elif compute_soc != "":
         compute_soc = compute_soc[0:-1]
     final_options = []
     for opt in comp_options:
