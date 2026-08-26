@@ -50,6 +50,7 @@ __aicore__ inline void asc_mark_stamp()
 ## 约束说明
 
 -   idx取值范围为\[0,4095\]。为方便从打点图中找到对应的代码，建议不要重复使用相同的idx。
+-   AIV侧仅支持输入PIPE_S、PIPE_V、PIPE_MTE2和PIPE_MTE3流水类型；AIC侧仅支持输入PIPE_S、PIPE_MTE1、PIPE_MTE2、PIPE_FIX和PIPE_M流水类型。
 -   如果在循环中增加了一个asc_mark_stamp指令，每次执行到指令时都会输出一个打点，且idx是相同的。
 -   如果开发者在两个相邻的VF分别打标记，由于编译器可能会对VF A和VF B做融合，asc_mark_stamp1和asc_mark_stamp2则会被优化掉，不会输出打点。
 
