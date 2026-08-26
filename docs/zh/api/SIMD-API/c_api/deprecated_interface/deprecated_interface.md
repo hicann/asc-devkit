@@ -11,6 +11,13 @@
 - **[asc_int322uint16（废弃）](asc_int322uint16_deprecated.md)**
 - **[asc_uint82uint16（废弃）](asc_uint82uint16_deprecated.md)**
 
+### Reg数据搬入
+
+- **[asc_loadalign_v1（废弃）](asc_loadalign_v1_deprecated.md)**
+- **[asc_loadalign_v2（废弃）](asc_loadalign_v2_deprecated.md)**
+- **[asc_loadalign_v3（废弃）](asc_loadalign_v3_deprecated.md)**
+- **[asc_loadalign_v4（废弃）](asc_loadalign_v4_deprecated.md)**
+
 ### Reg数据搬出
 
 - **[asc_storealign_v1（废弃）](asc_storealign_v1_deprecated.md)**

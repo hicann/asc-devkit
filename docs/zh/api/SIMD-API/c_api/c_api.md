@@ -411,12 +411,6 @@ Reg数据搬运类API，单独使用时可以引入reg_load.h，此类API列表�
 | [asc_storeunalign_post](reg/reg_store/asc_storeunalign_post.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址搬出到UB的尾块场景。 |
 | [asc_storeunalign_post_postupdate](reg/reg_store/asc_storeunalign_post_postupdate.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址搬出到UB的尾块场景，并自动更新目的操作数地址。 |
 | [asc_storeunalign_postupdate](reg/reg_store/asc_storeunalign_postupdate.md) | reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的场景。 |
-| [asc_loadalign_v1（废弃）](reg/reg_load/asc_loadalign_v1_deprecated.md) | 对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，源操作数地址由用户更新。 |
-| [asc_loadalign_v2（废弃）](reg/reg_load/asc_loadalign_v2_deprecated.md) | 对齐数据搬运接口，通过地址寄存器传入偏移，用户可选择更新偏移或源操作数地址。 |
-| [asc_loadalign_v3（废弃）](reg/reg_load/asc_loadalign_v3_deprecated.md) | 对齐数据搬运接口，通过int32_t传入偏移，用户可选择更新偏移或源操作数地址。 |
-| [asc_loadalign_v4（废弃）](reg/reg_load/asc_loadalign_v4_deprecated.md) | 对齐数据搬运接口，通过int32_t传入偏移并由硬件自动执行Post Update。 |
-| [asc_loadalign_v5（废弃）](reg/reg_load/asc_loadalign_v5_deprecated.md) | 对齐数据搬运接口，使用repeat stride模式。 |
-| [asc_loadalign_v6（废弃）](reg/reg_load/asc_loadalign_v6_deprecated.md) | reg数据搬运接口，适用于从UB搬入MaskReg。 |
 
 ## Reg矢量计算
 
@@ -591,6 +585,10 @@ Reg矢量计算类API，单独使用时可以引入reg_vector.h，此类API列�
 | [asc_int322int64（废弃）](deprecated_interface/asc_int322int64_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
 | [asc_int322uint16（废弃）](deprecated_interface/asc_int322uint16_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
 | [asc_uint82uint16（废弃）](deprecated_interface/asc_uint82uint16_deprecated.md) | 通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。 |
+| [asc_loadalign_v1（废弃）](deprecated_interface/asc_loadalign_v1_deprecated.md) | 不传入偏移的BRCV2、BRCV3和UNPACKV2搬入接口。 |
+| [asc_loadalign_v2（废弃）](deprecated_interface/asc_loadalign_v2_deprecated.md) | 通过地址寄存器传入偏移的BRCV2、BRCV3和UNPACKV2搬入接口。 |
+| [asc_loadalign_v3（废弃）](deprecated_interface/asc_loadalign_v3_deprecated.md) | 通过int32_t传入偏移的BRCV2、BRCV3和UNPACKV2搬入接口。 |
+| [asc_loadalign_v4（废弃）](deprecated_interface/asc_loadalign_v4_deprecated.md) | 通过int32_t传入偏移并启用Post Update的BRCV2、BRCV3和UNPACKV2搬入接口。 |
 | [asc_storealign_v1（废弃）](deprecated_interface/asc_storealign_v1_deprecated.md) | 将有效32bit元素的低8bit数据压缩搬出到UB，不传入偏移量。 |
 | [asc_storealign_v2（废弃）](deprecated_interface/asc_storealign_v2_deprecated.md) | 将有效32bit元素的低8bit数据压缩搬出到UB，通过地址寄存器传入偏移量。 |
 | [asc_storealign_v3（废弃）](deprecated_interface/asc_storealign_v3_deprecated.md) | 将有效32bit元素的低8bit数据压缩搬出到UB，通过`int32_t`传入偏移量。 |
