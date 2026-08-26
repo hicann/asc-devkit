@@ -16,6 +16,7 @@ constexpr u64 RS_AICPU_1D_MAX_DATA_SIZE = 16 * 1024 * 1024;
 constexpr u64 RS_AICPU_1D_MIN_DATA_SIZE = 4 * 1024 * 1024;
 constexpr u64 RS_AICPU_1D_TWO_LEVER_DATA_SIZE_THRESHOLD = 1536 * 1024 * 1024;
 constexpr u64 RS_AICPU_SEQUENCE_SIZE_THRESHOLD = 1 * 1024 * 1024 * 1024;
+constexpr u32 PCIE_BASIC_RS_MAX_DATA_SIZE = 4 * 1024 * 1024;
 
 SelectorStatus ReduceScatterAutoSelector::SelectCcuMsAlgo(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam,
@@ -170,6 +171,10 @@ SelectorStatus ReduceScatterAutoSelector::SelectAicpuAlgo(
     u64 perDataSize = DATATYPE_SIZE_TABLE[opParam.DataDes.dataType];
     u64 dataSize = opParam.DataDes.count * perDataSize;
     if (topoInfo->topoLevelNums > 1) {
+        if (topoInfo->level0PcieMix) {
+            // 加个注释，pcie mixed + 多层topology，不支持
+            return SelectorStatus::NOT_MATCH;
+        }
         if (Is64BitDataType(opParam.DataDes.dataType) || opParam.reduceType == HcclReduceOp::HCCL_REDUCE_PROD) {
             selectAlgName = "InsReduceScatterAicpuReduceNHR";
         } else if (topoInfo->Level1Nhr) {
@@ -216,25 +221,7 @@ SelectorStatus ReduceScatterAutoSelector::SelectMeshAlgoAicpu(
         ratio = (DEFAULT_RANK_SIZE / topoInfo->userRankSize) * (DEFAULT_RANK_SIZE / topoInfo->userRankSize);
     }
     if (topoInfo->level0Topo == Level0Shape::MESH_1D) {
-        if (Is64BitDataType(opParam.DataDes.dataType) || opParam.reduceType == HcclReduceOp::HCCL_REDUCE_PROD) {
-            selectAlgName = "InsReduceScatterMesh1D";
-        } else {
-            if (IsTwoLevelNetLayer(topoInfo)) {
-                if (dataSize * topoInfo->userRankSize > RS_AICPU_1D_TWO_LEVER_DATA_SIZE_THRESHOLD) {
-                    selectAlgName = "InsReduceScatterMesh1DZAxisDetour";
-                } else if (dataSize * ratio > RS_AICPU_1D_MAX_DATA_SIZE) {
-                    selectAlgName = "InsReduceScatterMesh1DMeshChunk";
-                } else {
-                    selectAlgName = "InsReduceScatterMesh1D";
-                }
-            } else {
-                if (dataSize * ratio > RS_AICPU_1D_MAX_DATA_SIZE) {
-                    selectAlgName = "InsReduceScatterMesh1DMeshChunk";
-                } else {
-                    selectAlgName = "InsReduceScatterMesh1D";
-                }
-            }
-        }
+        return SelectMeshAlgoAicpuForMesh1D(topoInfo, opParam, selectAlgName, dataSize, ratio);
     } else if (topoInfo->level0Topo == Level0Shape::CLOS) {
         if (Is64BitDataType(opParam.DataDes.dataType) || opParam.reduceType == HcclReduceOp::HCCL_REDUCE_PROD) {
             selectAlgName = "InsReduceScatterAicpuReduceNHR";
@@ -260,6 +247,7 @@ SelectorStatus ReduceScatterAutoSelector::SelectAivAlgo(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam,
     const std::map<HcclCMDType, std::vector<HcclAlgoType>>& configAlgMap, std::string& selectAlgName) const
 {
+    (void)configAlgMap;
     HCCL_DEBUG("[ReduceScatterAutoSelector][%s] start, topoInfo levelNum[%u]", __func__, topoInfo->topoLevelNums);
     // aiv 模式不支持 PROD
     CHK_PRT_RET(
@@ -293,18 +281,53 @@ SelectorStatus ReduceScatterAutoSelector::SelectDPUAlgo(
     return SelectorStatus::NOT_MATCH;
 }
 
+SelectorStatus ReduceScatterAutoSelector::SelectMeshAlgoAicpuForMesh1D(
+    const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam, std::string& selectAlgName, u64 dataSize,
+    double ratio) const
+{
+    if (Is64BitDataType(opParam.DataDes.dataType) || opParam.reduceType == HcclReduceOp::HCCL_REDUCE_PROD) {
+        selectAlgName = "InsReduceScatterMesh1D";
+    } else {
+        if (IsTwoLevelNetLayer(topoInfo)) {
+            if (dataSize * topoInfo->userRankSize > RS_AICPU_1D_TWO_LEVER_DATA_SIZE_THRESHOLD) {
+                selectAlgName = "InsReduceScatterMesh1DZAxisDetour";
+            } else if (dataSize * ratio > RS_AICPU_1D_MAX_DATA_SIZE) {
+                selectAlgName = "InsReduceScatterMesh1DMeshChunk";
+            } else {
+                selectAlgName = "InsReduceScatterMesh1D";
+            }
+        } else {
+            if (dataSize * ratio > RS_AICPU_1D_MAX_DATA_SIZE) {
+                selectAlgName = "InsReduceScatterMesh1DMeshChunk";
+            } else {
+                selectAlgName = "InsReduceScatterMesh1D";
+            }
+        }
+    }
+    HCCL_DEBUG("[%s] Algo match [%s]", __func__, selectAlgName.c_str());
+    return SelectorStatus::MATCH;
+}
+
 SelectorStatus ReduceScatterAutoSelector::SelectMeshAlgoAicpuForMesh1DClos(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam, u64 dataSize, double ratio,
     bool isClosNumMultipleOfMeshNum, std::string& selectAlgName) const
 {
     if (topoInfo->level0PcieMix) {
-        // PCIE mixed topology uses the parallel AICPU executor in this scope.
+        // PCIE机型算法选择
         if (IsLayerAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH)) {
-            selectAlgName = "InsReduceScatterMesh1D";
+            return SelectMeshAlgoAicpuForMesh1D(topoInfo, opParam, selectAlgName, dataSize, ratio);
         } else if (Is64BitDataType(opParam.DataDes.dataType) || opParam.reduceType == HcclReduceOp::HCCL_REDUCE_PROD) {
-            selectAlgName = "InsReduceScatterAicpuReduceNHR";
+            // PCIE机型Mesh无法链接全卡时，不支持64bit数据类型和PROD
+            HCCL_WARNING(
+                "[ReduceScatterAutoSelector] pcie mix topo not support dataType[%d] or reduceType[%d].",
+                opParam.DataDes.dataType, opParam.reduceType);
+            return SelectorStatus::NOT_MATCH;
         } else {
-            selectAlgName = "InsReduceScatterParallelMesh1DNHRPcie";
+            if (dataSize < PCIE_BASIC_RS_MAX_DATA_SIZE) {
+                selectAlgName = "InsReduceScatterParallelMesh1DNHRPcie";
+            } else {
+                selectAlgName = "AicpuReduceScatterPipeLinePcie";
+            }
         }
     } else if (IsLayerAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH)) {
         // MESH_1D 即可链接所有卡， 使用 MESH_1D 算法

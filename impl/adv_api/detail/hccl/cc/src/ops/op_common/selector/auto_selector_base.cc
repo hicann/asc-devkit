@@ -71,6 +71,13 @@ SelectorStatus AutoSelectorBase::Select(
         return ret;
     }
     if (IsStarsState(opParam.opExecuteConfig)) {
+        if (topoInfo->level0PcieMix && topoInfo->level0BigClosRange) {
+            HCCL_WARNING(
+                "[asc][AlgoSelect][AutoSelectorBase::Select] level0 is PCIE mix and CLOS scale > 8, "
+                "opType[%d] is not supported.",
+                opParam.opType);
+            return SelectorStatus::NOT_MATCH;
+        }
         HCCL_DEBUG(
             "[asc][AlgoSelect][AutoSelectorBase::Select] try AICPU algo, opType[%d], opExecuteConfig[%d].",
             opParam.opType, opParam.opExecuteConfig);
