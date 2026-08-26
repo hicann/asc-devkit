@@ -102,8 +102,14 @@ protected:
     static constexpr TPosition dstPosition = dst;
     static constexpr Hardware srcHardType = GetPhyType(src);
     static constexpr Hardware dstHardType = GetPhyType(dst);
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+    static constexpr HardEvent enQueEvt = GetQueEvt(srcPosition, dstPosition, true);
+    static constexpr HardEvent freeBufEvt = GetQueEvt(srcPosition, dstPosition, false);
+#else
     static constexpr HardEvent enQueEvt = GetQueEvt(srcHardType, dstHardType, true, nd2nz, nz2nd);
     static constexpr HardEvent freeBufEvt = GetQueEvt(srcHardType, dstHardType, false, nd2nz, nz2nd);
+#endif
     static constexpr int32_t queDepth = depth;
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
     static constexpr bool enableGlobalManageQue = EnableGlobalManageQue<GetBufferPos(src, dst)>(config);

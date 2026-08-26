@@ -110,10 +110,11 @@ __aicore__ inline void LoadData(
     LoadDataImpl(dst, src, loadDataParams);
 }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
-template <typename T, typename U>
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+template <typename T, typename U, typename V>
 __aicore__ inline void LoadData(
-    const LocalTensor<U>& dst, const LocalTensor<T>& src0, const LocalTensor<fp8_e8m0_t>& srcMx,
+    const LocalTensor<U>& dst, const LocalTensor<T>& src0, const LocalTensor<V>& srcMx,
     const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
 {
     LoadDataImpl(dst, src0, srcMx, loadDataParams, loadMxDataParams);

@@ -649,6 +649,30 @@ class CommonUtility:
         return False
 
     @staticmethod
+    def is_l510():
+        """return if current soc version is l510
+
+        Returns:
+            res: True means l311
+        """
+        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
+        if short_soc_version in ["KirinDev0000"]:
+            return True
+        return False
+
+    @staticmethod
+    def is_l516():
+        """return if current soc version is l516
+
+        Returns:
+            res: True means l311
+        """
+        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
+        if short_soc_version in ["KirinDev0001", "KirinDev0002", "KirinDev0003"]:
+            return True
+        return False
+
+    @staticmethod
     def get_chip_version():
         """get chip version for (c220/c310/510r2)
 
@@ -663,6 +687,19 @@ class CommonUtility:
         return chip_version
 
     @staticmethod
+    def get_kernel_meta_parent_dir():
+        parent_dir = get_current_build_config("kernel_meta_parent_dir")
+        try:
+            from tbe.common.buildcfg import get_current_build_config as _tbe_get_cfg
+
+            _tbe_parent = _tbe_get_cfg("kernel_meta_parent_dir")
+            if _tbe_parent and _tbe_parent != ".":
+                parent_dir = _tbe_parent
+        except Exception:
+            pass
+        return parent_dir
+
+    @staticmethod
     def get_kernel_meta_dir():
         """assembly kernel meta directory, and create directory if not exists
 
@@ -670,7 +707,7 @@ class CommonUtility:
             kernel_meta_dir (str): kernel meta directory
         """
         kernel_meta_dir = os.path.join(
-            get_current_build_config("kernel_meta_parent_dir"), "kernel_meta"
+            CommonUtility.get_kernel_meta_parent_dir(), "kernel_meta"
         )
         if not os.path.exists(kernel_meta_dir):
             try:

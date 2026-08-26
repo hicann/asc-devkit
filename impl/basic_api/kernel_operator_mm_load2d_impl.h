@@ -201,22 +201,27 @@ __aicore__ inline void LoadDataImpl(
     }
 }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
-template <typename T, typename U>
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+template <typename T, typename U, typename V>
 __aicore__ inline void LoadDataImpl(
-    const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx,
+    const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<V>& srcMx,
     const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
 {
     CheckTensorPos<T>(src, Hardware::L1, "src", "A1/B1", "LoadData with LoadData2DParamsV2");
     const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
     if (dstScope == Hardware::L0A) {
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)))
         LoadData2DL12L0ACal(
             (__ca__ PrimT<U>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(),
-            (__cbuf__ fp8_e8m0_t*)srcMx.GetPhyAddr(), loadDataParams, loadMxDataParams);
+            (__cbuf__ PrimT<V>*)srcMx.GetPhyAddr(), loadDataParams, loadMxDataParams);
+#endif
     } else if (dstScope == Hardware::L0B) {
         LoadData2DL12L0BCal(
             (__cb__ PrimT<U>*)dst.GetPhyAddr(), (__cbuf__ PrimT<T>*)src.GetPhyAddr(),
-            (__cbuf__ fp8_e8m0_t*)srcMx.GetPhyAddr(), loadDataParams, loadMxDataParams);
+            (__cbuf__ PrimT<V>*)srcMx.GetPhyAddr(), loadDataParams, loadMxDataParams);
     } else {
         ASSERT(false);
     }

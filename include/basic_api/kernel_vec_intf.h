@@ -37,12 +37,19 @@
 #include "kernel_operator_data_copy_intf.h"
 #include "kernel_operator_dump_tensor_intf.h"
 #include "kernel_operator_common_intf.h"
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 #include "kernel_operator_vec_binary_intf.h"
 #include "kernel_operator_vec_binary_scalar_intf.h"
 #include "kernel_operator_vec_duplicate_intf.h"
 #include "kernel_operator_vec_gather_mask_intf.h"
 #include "kernel_operator_vec_vconv_intf.h"
+#endif
 #include "kernel_operator_scalar_intf.h"
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 #include "kernel_operator_vec_reduce_intf.h"
 #include "kernel_operator_proposal_intf.h"
 #include "kernel_operator_determine_compute_sync_intf.h"
@@ -57,6 +64,7 @@
 #include "kernel_operator_vec_ternary_scalar_intf.h"
 #include "kernel_operator_vec_unary_intf.h"
 #include "kernel_operator_vec_vpadding_intf.h"
+#endif
 #include "kernel_operator_limits_intf.h"
 #include "kernel_operator_sys_var_intf.h"
 #include "kernel_operator_atomic_intf.h"

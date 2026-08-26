@@ -38,8 +38,10 @@ struct ReduceRepeatParams {
         const int32_t mask, const int32_t repeatTimesIn, const int32_t dstRepStrideIn, const int32_t srcBlkStrideIn,
         const int32_t srcRepStrideIn)
     {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || \
-                              (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510))
+#if defined(__NPU_ARCH__) &&                                                                                 \
+    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113) || \
+     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || \
+     (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
         normalMask = mask;
         maskMode = 1;
 #else
@@ -67,8 +69,10 @@ struct ReduceRepeatParams {
         const uint64_t mask[2], const int32_t repeatTimesIn, const int32_t dstRepStrideIn, const int32_t srcBlkStrideIn,
         const int32_t srcRepStrideIn)
     {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || \
-                              (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510))
+#if defined(__NPU_ARCH__) &&                                                                                 \
+    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113) || \
+     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || \
+     (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
         bitMask[0] = mask[0];
         bitMask[1] = mask[1];
 #else

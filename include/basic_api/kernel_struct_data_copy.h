@@ -50,8 +50,14 @@ enum class DataFormat : uint8_t {
 };
 #endif // ASCC_ENUM_DATAFORMAT
 
-#if __NPU_ARCH__ == 5102
+#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || \
+    (__NPU_ARCH__ == 5163)
 #define CANN_ASC_ENABLE_FIX_SHIFT
+#endif
+
+#if (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)
+#define CANN_ASC_ENABLE_POST_PROC_BUF
+#define CANN_ASC_ENABLE_SID
 #endif
 
 struct DataCopyParams {
@@ -78,6 +84,12 @@ struct DataCopyParams {
     };
 #ifdef CANN_ASC_ENABLE_FIX_SHIFT
     uint8_t fixShiftVal = 0;
+#endif
+#ifdef CANN_ASC_ENABLE_POST_PROC_BUF
+    uint8_t postProcBufBlock = 0;
+#endif
+#ifdef CANN_ASC_ENABLE_SID
+    uint8_t sid = 0;
 #endif
 };
 
@@ -192,9 +204,10 @@ struct DataCopyPadParams {
 };
 
 struct DataCopyExtParams {
-    __aicore__ DataCopyExtParams() {}
+    __aicore__ DataCopyExtParams(){}
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
     __aicore__ DataCopyExtParams(
         const uint16_t count, const uint32_t len, const int64_t srcStrideIn, const int64_t dstStrideIn,
         const uint32_t rsvIn)
@@ -208,7 +221,8 @@ struct DataCopyExtParams {
 
     uint16_t blockCount = DEFAULT_DATA_COPY_NBURST;
     uint32_t blockLen = 0;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
     int64_t srcStride = static_cast<int64_t>(DEFAULT_DATA_COPY_STRIDE);
     int64_t dstStride = static_cast<int64_t>(DEFAULT_DATA_COPY_STRIDE);
 #else
@@ -216,11 +230,15 @@ struct DataCopyExtParams {
     uint32_t dstStride = DEFAULT_DATA_COPY_STRIDE;
 #endif
     uint32_t rsv = 0; // reserved information
+#ifdef CANN_ASC_ENABLE_SID
+    uint8_t sid = 0;
+#endif
 };
 
 template <typename T>
 struct DataCopyPadExtParams {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
     using TYPE = typename GetPadValueType<T>::Type;
     __aicore__ DataCopyPadExtParams()
     {
@@ -257,9 +275,10 @@ struct DataCopyPadExtParams {
 };
 
 struct Nd2NzParams {
-    __aicore__ Nd2NzParams() {}
+    __aicore__ Nd2NzParams(){}
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
     __aicore__ Nd2NzParams(
         const uint16_t ndNumIn, const uint16_t nValueIn, const uint32_t dValueIn, const uint64_t srcNdMatrixStrideIn,
         const uint64_t srcDValueIn, const uint16_t dstNzC0StrideIn, const uint16_t dstNzNStrideIn,
@@ -282,6 +301,9 @@ struct Nd2NzParams {
     uint16_t dstNzC0Stride = 0;
     uint16_t dstNzNStride = 0;
     uint32_t dstNzMatrixStride = 0;
+#ifdef CANN_ASC_ENABLE_SID
+    uint8_t sid = 0;
+#endif
 #else
     __aicore__ Nd2NzParams(
         const uint16_t ndNumIn, const uint16_t nValueIn, const uint16_t dValueIn, const uint16_t srcNdMatrixStrideIn,
@@ -295,7 +317,8 @@ struct Nd2NzParams {
           dstNzC0Stride(dstNzC0StrideIn),
           dstNzNStride(dstNzNStrideIn),
           dstNzMatrixStride(dstNzMatrixStrideIn)
-    {}
+    {
+    }
 
     uint16_t ndNum = 0;
     uint16_t nValue = 0;
@@ -309,11 +332,13 @@ struct Nd2NzParams {
 };
 
 struct Nz2NdParamsFull {
-    __aicore__ Nz2NdParamsFull() {}
+    __aicore__ Nz2NdParamsFull(){}
 
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
     __aicore__ Nz2NdParamsFull(
-        const uint16_t ndNumIn, const uint16_t nValueIn, const uint16_t dValueIn, const uint16_t srcNdMatrixStrideIn,
-        const uint16_t srcNStrideIn, const uint16_t dstDStrideIn, const uint16_t dstNdMatrixStrideIn)
+        const uint16_t ndNumIn, const uint16_t nValueIn, const uint32_t dValueIn, const uint16_t srcNdMatrixStrideIn,
+        const uint16_t srcNStrideIn, const uint64_t dstDStrideIn, const uint64_t dstNdMatrixStrideIn)
         : ndNum(ndNumIn),
           nValue(nValueIn),
           dValue(dValueIn),
@@ -325,11 +350,36 @@ struct Nz2NdParamsFull {
 
     uint16_t ndNum = 1;
     uint16_t nValue = 0;
+    uint32_t dValue = 0;
+    uint16_t srcNdMatrixStride = 1;
+    uint16_t srcNStride = 0;
+    uint64_t dstDStride = 0;
+    uint64_t dstNdMatrixStride = 1;
+#ifdef CANN_ASC_ENABLE_SID
+    uint8_t sid = 0;
+#endif
+#else
+    __aicore__ Nz2NdParamsFull(
+        const uint16_t ndNumIn, const uint16_t nValueIn, const uint16_t dValueIn, const uint16_t srcNdMatrixStrideIn,
+        const uint16_t srcNStrideIn, const uint16_t dstDStrideIn, const uint16_t dstNdMatrixStrideIn)
+        : ndNum(ndNumIn),
+          nValue(nValueIn),
+          dValue(dValueIn),
+          srcNdMatrixStride(srcNdMatrixStrideIn),
+          srcNStride(srcNStrideIn),
+          dstDStride(dstDStrideIn),
+          dstNdMatrixStride(dstNdMatrixStrideIn)
+    {
+    }
+
+    uint16_t ndNum = 1;
+    uint16_t nValue = 0;
     uint16_t dValue = 0;
     uint16_t srcNdMatrixStride = 1;
     uint16_t srcNStride = 0;
     uint16_t dstDStride = 0;
     uint16_t dstNdMatrixStride = 1;
+#endif
 };
 
 struct Dn2NzParams {
@@ -358,6 +408,37 @@ struct Dn2NzParams {
     uint16_t dstNzC0Stride = 0;
     uint16_t dstNzNStride = 0;
     uint32_t dstNzMatrixStride = 0;
+#ifdef CANN_ASC_ENABLE_SID
+    uint8_t sid = 0;
+#endif
+};
+
+struct Nz2DnParamsFull {
+    __aicore__ Nz2DnParamsFull() {}
+
+    __aicore__ Nz2DnParamsFull(
+        const uint16_t dnNumIn, const uint16_t nValueIn, const uint32_t dValueIn, const uint16_t srcNzMatrixStrideIn,
+        const uint16_t srcNStrideIn, const uint64_t dstNStrideIn, const uint64_t dstDnMatrixStrideIn)
+    {
+        dnNum = dnNumIn;
+        nValue = nValueIn;
+        dValue = dValueIn;
+        srcNzMatrixStride = srcNzMatrixStrideIn;
+        srcNStride = srcNStrideIn;
+        dstNStride = dstNStrideIn;
+        dstDnMatrixStride = dstDnMatrixStrideIn;
+    }
+
+    uint16_t dnNum = 0;
+    uint16_t nValue = 0;            // loop2_size
+    uint32_t dValue = 0;            // loop3_size
+    uint16_t srcNzMatrixStride = 0; // loop4_src_stride
+    uint16_t srcNStride = 0;        // loop3_src_stride
+    uint64_t dstNStride = 0;        // loop2_dst_stride
+    uint64_t dstDnMatrixStride = 0; // loop4_dst_stride
+#ifdef CANN_ASC_ENABLE_SID
+    uint8_t sid = 0;
+#endif
 };
 
 struct LoopModeParams {

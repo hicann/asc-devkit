@@ -182,9 +182,14 @@ __aicore__ inline __sync_alias__ bool TQueBind<src, dst, depth, mask>::EnQue(TBu
     static_assert(
         !((srcUserPos == TPosition::GM) && (dstUserPos == TPosition::GM)) &&
         "enque src and dst position cannot be GM at the same time.");
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+    static constexpr HardEvent enQueUserEvt = GetQueEvt(srcUserPos, dstUserPos, true);
+#else
     constexpr Hardware srcUserHardType = GetPhyType(srcUserPos);
     constexpr Hardware dstUserHardType = GetPhyType(dstUserPos);
     constexpr HardEvent enQueUserEvt = GetQueEvt(srcUserHardType, dstUserHardType, true, false, false);
+#endif
 
     ASCENDC_DEBUG_ASSERT(
         (this->usedCount < depth),
@@ -441,9 +446,14 @@ __aicore__ inline __sync_alias__ TBufHandle TQueBind<src, dst, depth, mask>::DeQ
     static_assert(
         !((srcUserPos == TPosition::GM) && (dstUserPos == TPosition::GM)) &&
         "DeQue src and dst position cannot be GM at the same time.");
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+    static constexpr HardEvent deQueUserEvt = GetQueEvt(srcUserPos, dstUserPos, true);
+#else
     constexpr Hardware srcUserHardType = GetPhyType(srcUserPos);
     constexpr Hardware dstUserHardType = GetPhyType(dstUserPos);
     constexpr HardEvent deQueUserEvt = GetQueEvt(srcUserHardType, dstUserHardType, true, false, false);
+#endif
 
     TBufHandle buf;
     if constexpr (depth == 1) {

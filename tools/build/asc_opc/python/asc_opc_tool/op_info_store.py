@@ -601,6 +601,13 @@ def load_op_info_store(soc_version):
         ascend_opp_path, short_soc_version, short_soc_version
     )
     logger.debug("json_path is {}.".format(json_path))
+    if not isinstance(json_path, str) or not os.path.exists(json_path):
+        json_dir = os.getenv("ASCEND_OPP_INFO_DIR")
+        json_path = (
+            os.path.join(json_dir, os.path.basename(json_path))
+            if isinstance(json_dir, str)
+            else json_path
+        )
     load_set_op_content(json_path)
 
     OpPathParse().start_parse()

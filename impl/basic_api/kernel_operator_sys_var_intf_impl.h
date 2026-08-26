@@ -42,6 +42,8 @@
 #include "dav_l300/kernel_operator_sys_var_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "dav_l311/kernel_operator_sys_var_impl.h"
+#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#include "dav_5161/kernel_operator_sys_var_impl.h"
 #endif
 
 #if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)

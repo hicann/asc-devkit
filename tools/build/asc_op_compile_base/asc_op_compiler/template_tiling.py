@@ -864,7 +864,10 @@ def check_kernel_template_input(kernel_compile_dict_input: dict):
 
 def decode_tiling(tiling_key: int = None) -> dict:
     global kernel_compile_dict
-    kernel_template_input = get_context().get_addition("kernel-template-input")
+    _ctx = get_context()
+    kernel_template_input = (
+        _ctx.get_addition("kernel-template-input") if _ctx is not None else None
+    )
     if kernel_template_input and "=" not in kernel_template_input:
         raise RuntimeError(
             "Invalid kernel-template-input format! Please use key value pairs!"

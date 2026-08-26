@@ -53,7 +53,7 @@ endif()
 
 set(ASCEND_CHECK_OPTYPE_DUPLICATE FALSE CACHE BOOL "")
 
-set(ASC_VALID_SOC_LIST ascend310b ascend310p ascend610 ascend910 ascend910b ascend910_93 ascend950 bs9sx1a bs9sx2a ascend610lite mc61am21a mc62 ascend910_96 kirinx90 kirin9030 mc32dm11a ascend350)
+set(ASC_VALID_SOC_LIST ascend310b ascend310p ascend610 ascend910 ascend910b ascend910_93 ascend950 bs9sx1a bs9sx2a ascend610lite mc61am21a mc62 ascend910_96 kirinx90 kirin9030 kirindev0000 kirindev0001 kirindev0002 kirindev0003 mc32dm11a ascend350)
 
 if (DEFINED ASCEND_SOC_SERIES)
     if (DEFINED ASCEND_COMPUTE_UNIT)

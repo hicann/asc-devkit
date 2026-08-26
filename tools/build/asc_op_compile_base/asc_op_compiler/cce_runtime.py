@@ -617,12 +617,13 @@ def _save_operator_json_info(
         bin_file_suffix = ".so"
 
     # user set output directory in debug mode
-    dir_path = os.path.join(
-        ccec.current_build_config().get(kernel_meta_parent_dir), "kernel_meta"
-    )
+    from .ascendc_common_utility import CommonUtility
+
+    parent_dir = CommonUtility.get_kernel_meta_parent_dir()
+    dir_path = os.path.join(parent_dir, "kernel_meta")
     if ccec.current_build_config().get(build_fatbin):
         dir_path = os.path.join(
-            ccec.current_build_config().get(kernel_meta_parent_dir),
+            parent_dir,
             "kernel_meta",
             KernelName.get_kernel_name(),
         )
@@ -707,7 +708,16 @@ def _save_operator_json_info(
 
     if context is not None:
         if mix != "MIX" and not ccec.current_build_config().get(build_fatbin):
-            context.add_build_res("json_file_path", os.path.abspath(file_name))
+            _json_abs = os.path.abspath(file_name)
+            context.add_build_res("json_file_path", _json_abs)
+            try:
+                import tbe.common.context.op_context as _tbe_op_context
+
+                _tbe_ctx = _tbe_op_context.get_context()
+                if _tbe_ctx is not None:
+                    _tbe_ctx.add_build_res("json_file_path", _json_abs)
+            except Exception:
+                pass
         context.add_addition("tik_mix_core_mode", mix)
 
 

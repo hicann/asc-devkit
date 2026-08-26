@@ -272,18 +272,18 @@ __aicore__ inline void LoadData2DL12L0BTransposeCal(
         inc, loadDataParam.dstFracGap, loadDataParam.srcFracGap);
 }
 
-template <typename T, typename U = T>
+template <typename T, typename U = T, typename V = fp8_e8m0_t>
 __aicore__ inline void LoadData2DL12L0ACal(
-    __ca__ U* dst, __cbuf__ T* src0, __cbuf__ fp8_e8m0_t* src1, const LoadData2DParamsV2& loadDataParam,
+    __ca__ U* dst, __cbuf__ T* src0, __cbuf__ V* src1, const LoadData2DParamsV2& loadDataParam,
     const LoadData2DMxParams& loadMxDataParams)
 {
     ASCENDC_ASSERT(
         false, { KERNEL_LOG(KERNEL_ERROR, "current device don't support LoadData using LoadData2DMxParams"); });
 }
 
-template <typename T, typename U = T>
+template <typename T, typename U = T, typename V = fp8_e8m0_t>
 __aicore__ inline void LoadData2DL12L0BCal(
-    __cb__ U* dst, __cbuf__ T* src0, __cbuf__ fp8_e8m0_t* src1, const LoadData2DParamsV2& loadDataParam,
+    __cb__ U* dst, __cbuf__ T* src0, __cbuf__ V* src1, const LoadData2DParamsV2& loadDataParam,
     const LoadData2DMxParams& loadMxDataParams)
 {
     ASCENDC_ASSERT(

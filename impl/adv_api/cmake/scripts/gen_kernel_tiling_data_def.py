@@ -46,6 +46,13 @@ _LEGACY_TILING_STRUCTS = [
 ]
 
 
+def get_tilingdata_list(find_dir, file_set):
+    for root, _, code_files in os.walk(find_dir, followlinks=True):
+        for code_file in code_files:
+            if code_file.endswith("tilingdata.h"):
+                file_set.add(os.path.join(root, code_file))
+
+
 def gen_tiling(tiling_header_file):
     single_tiling_source = ""
     single_legacy_tiling_export = ""
@@ -110,17 +117,16 @@ if __name__ == "__main__":
     res += "namespace AscendC {\nnamespace tiling {\n"
 
     print("[LOG]:  ", sys.argv[1], sys.argv[2])
-    file_list = []
-    for root, dirs, files in os.walk(sys.argv[1]):
-        for file in files:
-            if file.endswith("tilingdata.h"):
-                file_list.append(os.path.join(root, file))
-    file_list.sort()
+    file_set = set()
+    get_tilingdata_list(sys.argv[1], file_set)
+    file_list = sorted(file_set)
 
     tiling_source = ""
     legacy_tiling_export = ""
     for file in file_list:
         src, exp = gen_tiling(file)
+        if src in tiling_source:
+            continue
         tiling_source += src
         legacy_tiling_export += exp
 

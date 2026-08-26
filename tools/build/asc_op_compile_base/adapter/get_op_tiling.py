@@ -184,6 +184,29 @@ tiling_path: {tiling_path}",
 
 def load_build_in_lib():
     LogUtil.print_compile_log("", "load build in tiling lib.", AscendCLogLevel.LOG_INFO)
+    # 1. load env tiling
+    tiling_so = os.environ.get("ASCEND_OPP_TILING_SO_PATH")
+    if tiling_so is not None:
+        if not isinstance(tiling_so, str) or not os.path.exists(tiling_so):
+            LogUtil.print_compile_log(
+                "",
+                f"ASCEND_OPP_TILING_SO_PATH {tiling_so} invalid",
+                AscendCLogLevel.LOG_ERROR,
+            )
+            return False
+        tiling_so_path = Path(tiling_so)
+        try:
+            ctlib_opp_tiling = ctypes.CDLL(tiling_so_path)
+        except AttributeError as e:
+            # ascend c static load builtin opmaster ct so fail
+            LogUtil.print_compile_log(
+                "",
+                f"An AttributeError occurred: {e}, when load tiling so {tiling_so_path}",
+                AscendCLogLevel.LOG_ERROR,
+            )
+            return False
+        return True
+
     # 2. loat built-in tiling so in op_host dir
     load_op_host_tiling_lib()
     opp_path = Path(os.environ.get(_ASCEND_OPP_PATH_ENV, _ASCEND_OPP_PATH_DEFAULT))
@@ -1486,7 +1509,10 @@ p_tilingdata",
         "    copy_gm_to_ubuf(((__ubuf__ void *)tilingdata_in_ub), (__gm__ void *)p_tilingdata, 0, 1, \
 len_burst, 0, 0);\n"
     )
-    class_body += "#elif __NPU_ARCH__ == 3113\n"
+    class_body += (
+        "#elif __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+__NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163\n"
+    )
     class_body += "    copy_gm_to_ubuf_align_v2((__ubuf__ uint8_t *)tilingdata_in_ub, \
 (__gm__ uint8_t *)p_tilingdata, 0, 1, len_burst * 32, 0, 0, false, 0, 0);\n"
 
@@ -1508,7 +1534,17 @@ len_burst, 0, 0);\n"
         "all_bytes", "__ubuf__", "(__ubuf__ uint8_t *)tilingdata_in_ub"
     )
     class_body += "#else\n"
+    class_body += (
+        "#if __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+__NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163\n"
+    )
+    class_body += (
+        "    constexpr uint64_t bytes_align64 = (all_bytes + 63) / 64 * 64 + 8;\n"
+    )
+    class_body += "    copy_data_align64((uint8_t*)tilingdata, (__ubuf__ uint8_t *)tilingdata_in_ub, bytes_align64);\n"
+    class_body += "#else\n"
     class_body += "    copy_data_align64((uint8_t*)tilingdata, (__ubuf__ uint8_t *)tilingdata_in_ub, all_bytes);\n"
+    class_body += "#endif\n"
     class_body += "#endif\n"
     class_body += "#endif // __ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__ \n"
     class_body += "#endif\n"
@@ -2100,6 +2136,29 @@ def get_static_run_info(op_info, context):
     _change_param_name_to_name(op_info.inputs)
     _change_param_name_to_name(op_info.origin_inputs)
     compile_info = context.get_compile_info()
+
+    pre_run_info = compile_info.get("run_info_op_tiling") if compile_info else None
+    if pre_run_info is None:
+        try:
+            import tbe.common.context.op_context as _tbe_ctx
+
+            _tbe_context = _tbe_ctx.get_context()
+            if _tbe_context is not None:
+                pre_run_info = _tbe_context.get_compile_info("run_info_op_tiling")
+        except Exception:
+            pre_run_info = None
+    if pre_run_info is not None:
+        pre_run_info_dict = (
+            pre_run_info if isinstance(pre_run_info, dict) else json.loads(pre_run_info)
+        )
+        tiling_data = pre_run_info_dict.get("tiling_data", [])
+        if not isinstance(tiling_data, (bytes, bytearray)):
+            tiling_data = bytes(int(x) & 0xFF for x in tiling_data)
+        pre_run_info_dict["tiling_data"] = tiling_data
+        pre_run_info_dict.setdefault("clear_atomic", False)
+        pre_run_info_dict.setdefault("workspaces", [])
+        return pre_run_info_dict
+
     tiling_config = {
         "name": "ascendc_op_para_size",
         "dtype": "int",

@@ -76,7 +76,8 @@ __BLOCK_LOCAL__ __inline__ AscendC::TPipe* g_tPipePtr;
 #endif // end ASCENDC_DEBUG
 
 #if __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || \
-    __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113
+    __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+    __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163
 __BLOCK_LOCAL__ __inline__ uint64_t g_maskCount;
 #if __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113
 __BLOCK_LOCAL__ __inline__ half g_deqValue;
@@ -140,7 +141,8 @@ public:
     template <pipe_t pipe>
     static __aicore__ inline void Lock(MutexID id)
     {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
         ASCENDC_ASSERT((id <= MAX_MUTEXID), {
             KERNEL_LOG(KERNEL_ERROR, "For Mutex::Lock current id is %u, max MutexID is %u", id, MAX_MUTEXID);
         });
@@ -151,7 +153,8 @@ public:
     template <pipe_t pipe>
     static __aicore__ inline void Unlock(MutexID id)
     {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || \
+                              (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
         ASCENDC_ASSERT((id <= MAX_MUTEXID), {
             KERNEL_LOG(KERNEL_ERROR, "For Mutex::Unlock current id is %u, max MutexID is %u", id, MAX_MUTEXID);
         });

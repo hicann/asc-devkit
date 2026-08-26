@@ -502,7 +502,10 @@ grep -q "None of the given tiling keys are in the supported list"; then\n'
         hard_soc = const_var.conv_soc_ver(self.soc)
         if not hard_soc:
             hard_soc = self.soc.capitalize()
-        name_com = [self.op_type, self.op_file, str(index)]
+        if os.path.dirname(self.op_file) != "":
+            name_com = [self.op_type, os.path.basename(self.op_file), str(index)]
+        else:
+            name_com = [self.op_type, self.op_file, str(index)]
         compile_file = os.path.join(self.out_path, "-".join(name_com) + ".sh")
         compile_file = os.path.realpath(compile_file)
 

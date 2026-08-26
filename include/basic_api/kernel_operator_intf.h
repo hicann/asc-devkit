@@ -24,8 +24,12 @@
 
 #ifndef ASCENDC_MODULE_OPERATOR_INTERFACE_H
 #define ASCENDC_MODULE_OPERATOR_INTERFACE_H
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 // MICRO API
 #include "reg_compute/kernel_reg_compute_intf.h"
+#endif
 #include "kernel_prof_trace_intf.h"
 #include "kernel_operator_data_copy_intf.h"
 #include "kernel_operator_fixpipe_intf.h"
@@ -34,12 +38,19 @@
 #include "kernel_operator_gemm_intf.h"
 #include "kernel_operator_conv2d_intf.h"
 #include "kernel_operator_common_intf.h"
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 #include "kernel_operator_vec_binary_intf.h"
 #include "kernel_operator_vec_binary_scalar_intf.h"
 #include "kernel_operator_vec_duplicate_intf.h"
 #include "kernel_operator_vec_gather_mask_intf.h"
 #include "kernel_operator_vec_vconv_intf.h"
+#endif
 #include "kernel_operator_scalar_intf.h"
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 #include "kernel_operator_vec_reduce_intf.h"
 #include "kernel_operator_proposal_intf.h"
 #include "kernel_operator_determine_compute_sync_intf.h"
@@ -54,6 +65,7 @@
 #include "kernel_operator_vec_ternary_scalar_intf.h"
 #include "kernel_operator_vec_unary_intf.h"
 #include "kernel_operator_vec_vpadding_intf.h"
+#endif
 #include "kernel_operator_limits_intf.h"
 #include "kernel_operator_sys_var_intf.h"
 #include "kernel_operator_atomic_intf.h"
@@ -61,7 +73,11 @@
 #include "kernel_operator_cache_intf.h"
 #include "kernel_operator_utils_intf.h"
 
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 #include "include/adv_api/kernel_api.h"
+#endif
 
 #include "core_mng/roc/kernel_operator_cube_group_intf.h"
 #include "core_mng/roc/kernel_operator_group_barrier_intf.h"
