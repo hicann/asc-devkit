@@ -147,13 +147,13 @@ protected:
     void TearDown() {}
 };
 
-TEST_F(TEST_TPIPE, InnerCoreSyncCheckCountsInternalFlagCalls)
+TEST_F(TEST_TPIPE, InnerCoreSyncCheckSkipsCallsWithoutCceInstruction)
 {
     constexpr pipe_t testSrcPipe = static_cast<pipe_t>(0x7E);
     constexpr pipe_t testDstPipe = static_cast<pipe_t>(0x7F);
     g_superKernelSetWaitFlagCountDifference = SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE;
     SetFlagInternal<testSrcPipe, testDstPipe>(EVENT_ID0);
-    EXPECT_EQ(g_superKernelSetWaitFlagCountDifference, SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE + 1);
+    EXPECT_EQ(g_superKernelSetWaitFlagCountDifference, SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE);
     WaitFlagInternal<testSrcPipe, testDstPipe>(EVENT_ID0);
     EXPECT_EQ(g_superKernelSetWaitFlagCountDifference, SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE);
 }
