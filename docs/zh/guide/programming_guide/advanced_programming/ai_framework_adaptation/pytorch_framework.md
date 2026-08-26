@@ -3,8 +3,8 @@
 通过PyTorch框架进行模型的训练、推理时，会调用很多算子进行计算。开发者开发的自定义算子如果需要集成部署到PyTorch框架，有如下几种方式：
 
 -   核函数（Kernel）直调：通过适配torch.library或Pybind注册自定义算子，可以实现PyTorch框架调用算子核函数（Kernel）程序。
--   单算子API调用：该模式下的适配插件开发流程和具体样例请参见 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/latest/index/index.html)中的“开发指南 > 框架特性 > 自定义算子适配开发 > 基于OpPlugin算子适配开发”章节。
--   图模式调用：自定义算子在Pytorch图模式下的适配开发指导请参见 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/latest/index/index.html)中的“TorchAir > 自定义算子入图”章节。
+-   单算子API调用：该模式下的适配插件开发流程和具体样例请参见 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/2610/index/index.html)中的“开发指南 > 框架特性 > 自定义算子适配开发 > 基于OpPlugin算子适配开发”章节。
+-   图模式调用：自定义算子在Pytorch图模式下的适配开发指导请参见 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/2610/index/index.html)中的“TorchAir > 自定义算子入图”章节。
 
 **图1**  Pytorch框架部署方式<a name="fig1969201074516"></a>  
 ![](../../../figures/pytorch_deploy.png "Pytorch框架部署方式")
@@ -24,11 +24,11 @@ Pybind适用于快速将C++函数暴露给Python，实现高效接口绑定。�
 
     除了按照[环境准备](../../../getting_started/environment_setup.md)进行CANN软件包的安装，还需要安装以下依赖：
 
-    [安装TorchNPU](https://www.hiascend.com/document/detail/zh/Pytorch/latest/configandinstg/instg/docs/zh/installation_guide/installation_description.md)
+    [安装TorchNPU](https://www.hiascend.com/document/detail/zh/Pytorch/2610/configandinstg/instg/docs/zh/installation_guide/installation_description.md)
 
 2.  实现NPU上的自定义算子。
 
-    包括算子核函数（Kernel）实现，并使用<<<\>\>\>接口调用算子核函数（Kernel）完成指定的运算。样例中的c10\_npu::getCurrentNPUStream接口用于获取当前npu流，返回值类型NPUStream，使用方式请参考 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/latest/index/index.html)中的“API > 自定义API”。
+    包括算子核函数（Kernel）实现，并使用<<<\>\>\>接口调用算子核函数（Kernel）完成指定的运算。样例中的c10\_npu::getCurrentNPUStream接口用于获取当前npu流，返回值类型NPUStream，使用方式请参考 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/2610/index/index.html)中的“API > 自定义API”。
 
     需要注意的是，本样例的输入x，y的内存是在外层的Python调用脚本中分配的。
 
@@ -84,7 +84,7 @@ Pybind适用于快速将C++函数暴露给Python，实现高效接口绑定。�
 
     除了按照[环境准备](../../../getting_started/environment_setup.md)进行CANN软件包的安装，还需要安装以下依赖：
 
-    - [安装TorchNPU](https://www.hiascend.com/document/detail/zh/Pytorch/latest/configandinstg/instg/docs/zh/installation_guide/installation_description.md)
+    - [安装TorchNPU](https://www.hiascend.com/document/detail/zh/Pytorch/2610/configandinstg/instg/docs/zh/installation_guide/installation_description.md)
 
     -   安装pybind11
 
@@ -94,7 +94,7 @@ Pybind适用于快速将C++函数暴露给Python，实现高效接口绑定。�
 
 2.  实现NPU上的自定义算子。
 
-    包括算子核函数（Kernel）实现，并使用<<<\>\>\>接口调用算子核函数（Kernel）完成指定的运算。样例中的c10\_npu::getCurrentNPUStream接口用于获取当前npu流，返回值类型NPUStream，使用方式请参考 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/latest/index/index.html)中的“API > 自定义API”。
+    包括算子核函数（Kernel）实现，并使用<<<\>\>\>接口调用算子核函数（Kernel）完成指定的运算。样例中的c10\_npu::getCurrentNPUStream接口用于获取当前npu流，返回值类型NPUStream，使用方式请参考 [《TorchNPU》](https://www.hiascend.com/document/detail/zh/Pytorch/2610/index/index.html)中的“API > 自定义API”。
 
     需要注意的是，本样例的输入x，y的内存是在Python调用脚本中分配的。
 

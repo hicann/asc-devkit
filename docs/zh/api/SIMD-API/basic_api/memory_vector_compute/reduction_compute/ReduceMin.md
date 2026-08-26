@@ -142,7 +142,7 @@
 - 对于Ascend 950PR/Ascend 950DT，因接口内部算法实现不同，无需使用`sharedTmpBuffer`，可以直接传入`src`或者任意大小的`sharedTmpBuffer`。
 <!-- end id23 -->
 
-<!-- npu="A3,910b,910,310p,310b,x90,9030" id24 -->
+<!-- npu="A3,910b,910,310p,310b" id24 -->
 - 针对如下型号，需要使用`sharedTmpBuffer`。
   <!-- npu="A3" id25 -->
   - Atlas A3 训练系列产品/Atlas A3 推理系列产品

@@ -75,17 +75,6 @@ Atlas 200I/500 A2 推理产品
 | dstNdStride | 输入 | 目的相邻nd矩阵的偏移（头与头）。取值范围dstNdStride∈[1, 2^32-1]，单位为element元素。 |
 <!-- end id15 -->
 
-<!-- npu="x90,9030" id16 -->
-针对如下产品型号，参数说明见下表：
-**表3** 参数说明
-
-| 参数名称 | 输入/输出 | 含义 |
-| ---------- | ---------- | ---------- |
-| ndNum | 输入 | nd矩阵的数量，取值范围∈[1, 65535]。（[具体含义图示参见NZ2ND介绍特性章节](../cube_store_key_features/NZ2ND.md)） |
-| srcNdStride | 输入 | 以分形大小为单位的源步长，源相邻nz矩阵的偏移（头与头）。当ndNum配置为1时，srcNdStride配置为0即可，不生效。取值范围∈[0, 65535]，单位为C0_SIZE。 |
-| dstNdStride | 输入 | 目的相邻nd矩阵的偏移（头与头）。取值范围dstNdStride∈[0, 65535]，单位为element元素。 |
-<!-- end id16 -->
-
 ## 数据类型
 
 参数的数据类型见[函数原型](#zh-cn_topic_0000002516209232_section620mcpsimp)。
