@@ -281,6 +281,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ signed char* address,
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ unsigned char* address, unsigned char val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ char* address, char val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ char2* address, char2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ uchar2* address, uchar2 val);
@@ -346,6 +348,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ ulonglong4* address, 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ signed char* address, signed char val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ unsigned char* address, unsigned char val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ char* address, char val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ char2* address, char2 val);
 
@@ -563,6 +567,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(signed char* address, signed
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(unsigned char* address, unsigned char val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(char* address, char val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(char2* address, char2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(uchar2* address, uchar2 val);
@@ -628,6 +634,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(ulonglong4* address, ulonglo
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(signed char* address, signed char val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(unsigned char* address, unsigned char val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(char* address, char val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(char2* address, char2 val);
 

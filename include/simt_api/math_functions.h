@@ -91,6 +91,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmaxf(float x, float y);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fminf(float x, float y);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float nanf(const char* tagp);
+#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float nanf(const __gm__ char* tagp);
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float nanf(const __ubuf__ char* tagp);
+#endif
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanf(float x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x);
@@ -276,6 +282,8 @@ static __callee__ unsigned short max(unsigned short x, unsigned short y);
 
 static __callee__ unsigned char max(unsigned char x, unsigned char y);
 
+static __callee__ float max(float x, float y);
+
 static __callee__ long long min(long long x, long long y);
 
 static __callee__ unsigned long long min(unsigned long long x, unsigned long long y);
@@ -295,6 +303,10 @@ static __callee__ unsigned long min(unsigned long x, unsigned long y);
 static __callee__ unsigned short min(unsigned short x, unsigned short y);
 
 static __callee__ unsigned char min(unsigned char x, unsigned char y);
+
+static __callee__ float min(float x, float y);
+
+static __callee__ float abs(float x);
 #endif
 #endif
 #else
@@ -318,6 +330,8 @@ static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned short max(unsigned short x, unsig
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned char max(unsigned char x, unsigned char y);
 
+static __SIMT_DEVICE_FUNCTIONS_DECL__ float max(float x, float y);
+
 static __SIMT_DEVICE_FUNCTIONS_DECL__ long long min(long long x, long long y);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned long long min(unsigned long long x, unsigned long long y);
@@ -337,7 +351,36 @@ static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned long min(unsigned long x, unsigne
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned short min(unsigned short x, unsigned short y);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned char min(unsigned char x, unsigned char y);
+
+static __SIMT_DEVICE_FUNCTIONS_DECL__ float min(float x, float y);
+
+static __SIMT_DEVICE_FUNCTIONS_DECL__ float abs(float x);
 #endif
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int max(unsigned int x, int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int max(int x, unsigned int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long int max(long int x, unsigned long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long int max(unsigned long int x, long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int max(long long int x, unsigned long long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int max(unsigned long long int x, long long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int min(unsigned int x, int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int min(int x, unsigned int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long int min(long int x, unsigned long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long int min(unsigned long int x, long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int min(long long int x, unsigned long long int y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int min(unsigned long long int x, long long int y);
+
 #include "impl/simt_api/math_functions_impl.h"
 
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_MATH_FUNCTIONS_H__)

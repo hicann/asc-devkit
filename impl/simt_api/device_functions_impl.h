@@ -828,6 +828,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ unsigned char* addres
     __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ char* address, char val)
+{
+    __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>(
+        (__gm__ signed char*)address, (signed char)(val));
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ char2* address, char2 val)
 {
     __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>((__gm__ int16_t*)address, (int16_t&)val);
@@ -1016,6 +1022,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ signed char* address,
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ unsigned char* address, unsigned char val)
 {
     __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::CACHEABLE>(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ char* address, char val)
+{
+    __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::CACHEABLE>(
+        (__gm__ signed char*)address, (signed char)val);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ char2* address, char2 val)
@@ -1615,6 +1627,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(unsigned char* address, unsi
     __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(char* address, char val)
+{
+    __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>((signed char*)address, (signed char)val);
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(char2* address, char2 val)
 {
     __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>((int16_t*)address, (int16_t&)val);
@@ -1802,6 +1819,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(signed char* address, signed
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(unsigned char* address, unsigned char val)
 {
     __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::CACHEABLE>(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(char* address, char val)
+{
+    __stg<ST_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::CACHEABLE>((signed char*)address, (signed char)val);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(char2* address, char2 val)

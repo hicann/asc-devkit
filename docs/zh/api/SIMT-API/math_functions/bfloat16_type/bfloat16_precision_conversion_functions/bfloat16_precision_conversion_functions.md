@@ -82,6 +82,26 @@
 
 -   **[\_\_bfloat162int\_rna](__bfloat162int_rna.md)**
 
+-   **[\_\_bfloat162char\_rz](__bfloat162char_rz.md)**
+
+-   **[\_\_bfloat162uchar\_rz](__bfloat162uchar_rz.md)**
+
+-   **[\_\_bfloat162short\_rn](__bfloat162short_rn.md)**
+
+-   **[\_\_bfloat162short\_rz](__bfloat162short_rz.md)**
+
+-   **[\_\_bfloat162short\_rd](__bfloat162short_rd.md)**
+
+-   **[\_\_bfloat162short\_ru](__bfloat162short_ru.md)**
+
+-   **[\_\_bfloat162ushort\_rn](__bfloat162ushort_rn.md)**
+
+-   **[\_\_bfloat162ushort\_rz](__bfloat162ushort_rz.md)**
+
+-   **[\_\_bfloat162ushort\_rd](__bfloat162ushort_rd.md)**
+
+-   **[\_\_bfloat162ushort\_ru](__bfloat162ushort_ru.md)**
+
 -   **[\_\_bfloat162ull\_rn](__bfloat162ull_rn.md)**
 
 -   **[\_\_bfloat162ull\_rz](__bfloat162ull_rz.md)**
@@ -121,6 +141,22 @@
 -   **[\_\_int2bfloat16\_ru](__int2bfloat16_ru.md)**
 
 -   **[\_\_int2bfloat16\_rna](__int2bfloat16_rna.md)**
+
+-   **[\_\_short2bfloat16\_rn](__short2bfloat16_rn.md)**
+
+-   **[\_\_short2bfloat16\_rz](__short2bfloat16_rz.md)**
+
+-   **[\_\_short2bfloat16\_rd](__short2bfloat16_rd.md)**
+
+-   **[\_\_short2bfloat16\_ru](__short2bfloat16_ru.md)**
+
+-   **[\_\_ushort2bfloat16\_rn](__ushort2bfloat16_rn.md)**
+
+-   **[\_\_ushort2bfloat16\_rz](__ushort2bfloat16_rz.md)**
+
+-   **[\_\_ushort2bfloat16\_rd](__ushort2bfloat16_rd.md)**
+
+-   **[\_\_ushort2bfloat16\_ru](__ushort2bfloat16_ru.md)**
 
 -   **[\_\_ull2bfloat16\_rn](__ull2bfloat16_rn.md)**
 
@@ -173,4 +209,10 @@
 -   **[\_\_bfloat1622float2](__bfloat1622float2.md)**
 
 -   **[\_\_ushort\_as\_bfloat16](__ushort_as_bfloat16.md)**
+
+-   **[\_\_bfloat16\_as\_short](__bfloat16_as_short.md)**
+
+-   **[\_\_bfloat16\_as\_ushort](__bfloat16_as_ushort.md)**
+
+-   **[\_\_short\_as\_bfloat16](__short_as_bfloat16.md)**
 

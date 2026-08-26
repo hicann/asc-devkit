@@ -86,6 +86,10 @@ inline void asc_stwt(unsigned char* address, unsigned char val)
 ```
 
 ```cpp
+inline void asc_stwt(char* address, char val)
+```
+
+```cpp
 inline void asc_stwt(char2* address, char2 val)
 ```
 
@@ -196,7 +200,7 @@ inline void asc_stwt(half2* address, half2 val)
 
 ## 需要包含的头文件
 
-使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含`simt_api/device_functions.h`头文件，使用half和half2类型接口需要包含`simt_api/asc_fp16.h`头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"
@@ -215,9 +219,12 @@ inline void asc_stwt(half2* address, half2 val)
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel_asc_stwt(float* dst, float* val)
+    __global__ __launch_bounds__(1024) void kernel_asc_stwt(float* dst, float* val, uint32_t input_total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= input_total_length) {
+            return;
+        }
         asc_stwt(dst + idx, val[idx]);
     }
     ```
@@ -227,9 +234,12 @@ inline void asc_stwt(half2* address, half2 val)
     SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间。
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_stwt(__gm__ float* dst, __gm__ float* val)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_stwt(__gm__ float* dst, __gm__ float* val, uint32_t input_total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= input_total_length) {
+            return;
+        }
         asc_stwt(dst + idx, val[idx]);
     }
     ```

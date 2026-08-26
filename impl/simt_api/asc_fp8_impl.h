@@ -121,6 +121,15 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline __asc_fp8x2_storage_t __asc_cvt_float2_to_
     return res;
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline __asc_fp8_storage_t __asc_cvt_float_to_fp8(
+    const float x, const __asc_saturation_t saturation, const __asc_fp8_interpretation_t fp8_interpretation)
+{
+    float2 f{x, 0.0f};
+    __asc_fp8x2_storage_t tmp = __asc_cvt_float2_to_fp8x2(f, saturation, fp8_interpretation);
+    __asc_fp8_storage_t res = (__asc_fp8_storage_t)(tmp);
+    return res;
+}
+
 #endif
 #endif // IMPL_SIMT_API_ASC_FP8_IMPL_H
 

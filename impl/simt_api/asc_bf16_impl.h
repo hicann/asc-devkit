@@ -534,6 +534,71 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __bfloat162bfloat16_rna(const b
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_ROUND>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char __bfloat162char_rz(const bfloat16_t x)
+{
+    int i = __cvt_int32_t<__internal_get_round<__RoundMode::CAST_TRUNC>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_int_to_char(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned char __bfloat162uchar_rz(const bfloat16_t x)
+{
+    unsigned int i =
+        __cvt_uint32_t<__internal_get_round<__RoundMode::CAST_TRUNC>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_uint_to_uchar(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rn(const bfloat16_t x)
+{
+    int i = __cvt_int32_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_int_to_short(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rz(const bfloat16_t x)
+{
+    int i = __cvt_int32_t<__internal_get_round<__RoundMode::CAST_TRUNC>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_int_to_short(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rd(const bfloat16_t x)
+{
+    int i = __cvt_int32_t<__internal_get_round<__RoundMode::CAST_FLOOR>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_int_to_short(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_ru(const bfloat16_t x)
+{
+    int i = __cvt_int32_t<__internal_get_round<__RoundMode::CAST_CEIL>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_int_to_short(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rn(const bfloat16_t x)
+{
+    unsigned int i =
+        __cvt_uint32_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_uint_to_ushort(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rz(const bfloat16_t x)
+{
+    unsigned int i =
+        __cvt_uint32_t<__internal_get_round<__RoundMode::CAST_TRUNC>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_uint_to_ushort(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rd(const bfloat16_t x)
+{
+    unsigned int i =
+        __cvt_uint32_t<__internal_get_round<__RoundMode::CAST_FLOOR>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_uint_to_ushort(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_ru(const bfloat16_t x)
+{
+    unsigned int i =
+        __cvt_uint32_t<__internal_get_round<__RoundMode::CAST_CEIL>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
+    return __internal_uint_to_ushort(i);
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __bfloat162uint_rn(const bfloat16_t x)
 {
     return __cvt_uint32_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_ENABLE_VALUE>(x);
@@ -692,6 +757,54 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_ru(const int x)
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_rna(const int x)
 {
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_ROUND>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rn(const short int x)
+{
+    int32_t i = static_cast<int32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rz(const short int x)
+{
+    int32_t i = static_cast<int32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_TRUNC>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rd(const short int x)
+{
+    int32_t i = static_cast<int32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_FLOOR>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_ru(const short int x)
+{
+    int32_t i = static_cast<int32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_CEIL>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rn(const unsigned short int x)
+{
+    uint32_t i = static_cast<uint32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rz(const unsigned short int x)
+{
+    uint32_t i = static_cast<uint32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_TRUNC>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rd(const unsigned short int x)
+{
+    uint32_t i = static_cast<uint32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_FLOOR>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_ru(const unsigned short int x)
+{
+    uint32_t i = static_cast<uint32_t>(x);
+    return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_CEIL>(), RoundingSaturation::RS_DISABLE_VALUE>(i);
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_rn(const unsigned long long int x)
@@ -1168,6 +1281,36 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t make_bfloat162(bfloat16_t x, 
     tmp.x = x;
     tmp.y = y;
     return tmp;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat16_as_short(const bfloat16_t x)
+{
+    union Data {
+        short int i;
+        bfloat16_t f;
+    };
+    union Data data = {.f = x};
+    return data.i;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat16_as_ushort(const bfloat16_t x)
+{
+    union Data {
+        unsigned short int i;
+        bfloat16_t f;
+    };
+    union Data data = {.f = x};
+    return data.i;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short_as_bfloat16(const short int x)
+{
+    union Data {
+        short int i;
+        bfloat16_t f;
+    };
+    union Data data = {.i = x};
+    return data.f;
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort_as_bfloat16(const unsigned short int x)

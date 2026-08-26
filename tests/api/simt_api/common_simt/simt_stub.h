@@ -677,7 +677,7 @@ inline half2 __float22half2_rz(float2 const x)
     return res;
 }
 
-inline float2 __half22float2(half2 const x)
+static float2 __half22float2(half2 const x)
 {
     float2 res;
     res.x = __cvt_float<ROUND::CAST_RINT, RoundingSaturation::RS_DISABLE_VALUE>(x.x);

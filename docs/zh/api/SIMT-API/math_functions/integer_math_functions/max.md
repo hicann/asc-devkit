@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-获取两个输入数据中的最大值。
+获取两个输入数据中的最大值，当入参为一个有符号整数、一个无符号整数时，有符号整数会先被转换为对应的无符号类型，再进行大小比较。
 
 ## 函数原型
 
@@ -69,6 +69,30 @@ unsigned short max(unsigned short x, unsigned short y)
 unsigned char max(unsigned char x, unsigned char y)
 ```
 
+```cpp
+unsigned int max(unsigned int x, int y)
+```
+
+```cpp
+unsigned int max(int x, unsigned int y)
+```
+
+```cpp
+unsigned long int max(long int x, unsigned long int y)
+```
+
+```cpp
+unsigned long int max(unsigned long int x, long int y)
+```
+
+```cpp
+unsigned long long int max(long long int x, unsigned long long int y)
+```
+
+```cpp
+unsigned long long int max(unsigned long long int x, long long int y)
+```
+
 ## 参数说明
 
 **表1**  参数说明
@@ -88,7 +112,7 @@ unsigned char max(unsigned char x, unsigned char y)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"
@@ -99,9 +123,12 @@ unsigned char max(unsigned char x, unsigned char y)
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelMax(long long* dst, long long* x, long long* y)
+    __global__ __launch_bounds__(1024) void KernelMax(long long* dst, long long* x, long long* y, uint32_t input_total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= input_total_length) {
+            return;
+        }
         dst[idx] = max(x[idx], y[idx]);
     }
     ```
@@ -109,9 +136,12 @@ unsigned char max(unsigned char x, unsigned char y)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelMax(__gm__ long long* dst, __gm__ long long* x, __gm__ long long* y)
+    __simt_vf__ __launch_bounds__(1024) inline void KernelMax(__gm__ long long* dst, __gm__ long long* x, __gm__ long long* y, uint32_t input_total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= input_total_length) {
+            return;
+        }
         dst[idx] = max(x[idx], y[idx]);
     }
     ```

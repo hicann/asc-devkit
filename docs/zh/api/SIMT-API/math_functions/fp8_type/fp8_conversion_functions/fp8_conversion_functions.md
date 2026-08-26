@@ -10,6 +10,8 @@
 
 -   **[\_\_asc\_cvt\_float2\_to\_fp8x2](__asc_cvt_float2_to_fp8x2.md)**
 
+-   **[\_\_asc\_cvt\_float\_to\_fp8](__asc_cvt_float_to_fp8.md)**
+
 -   **[\_\_half22hif82\_rna](__half22hif82_rna.md)**
 
 -   **[\_\_half22hif82\_rna\_sat](__half22hif82_rna_sat.md)**

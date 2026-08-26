@@ -187,6 +187,26 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __bfloat162bfloat16_ru(const bf
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __bfloat162bfloat16_rna(const bfloat16_t x);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char __bfloat162char_rz(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned char __bfloat162uchar_rz(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rn(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rz(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rd(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_ru(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rn(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rz(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rd(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_ru(const bfloat16_t x);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __bfloat162uint_rn(const bfloat16_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __bfloat162uint_rz(const bfloat16_t x);
@@ -246,6 +266,22 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_rd(const int x);
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_ru(const int x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_rna(const int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rn(const short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rz(const short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rd(const short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_ru(const short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rn(const unsigned short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rz(const unsigned short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rd(const unsigned short int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_ru(const unsigned short int x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_rn(const unsigned long long int x);
 
@@ -420,6 +456,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t asc_shfl_xor(
     bfloat16x2_t var, int32_t lane_mask, int32_t width = warpSize);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t make_bfloat162(bfloat16_t x, bfloat16_t y);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat16_as_short(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat16_as_ushort(const bfloat16_t x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short_as_bfloat16(const short int x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort_as_bfloat16(const unsigned short int x);
 

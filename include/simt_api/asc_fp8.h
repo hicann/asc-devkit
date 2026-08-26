@@ -28,6 +28,8 @@ typedef enum __asc_saturation_t {
 
 typedef unsigned short int __asc_fp8x2_storage_t;
 
+typedef unsigned char __asc_fp8_storage_t;
+
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
 
 #include "simt_api/asc_bf16.h"
@@ -59,6 +61,9 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 __e5m2x22float2(const float8_e5m2x2
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline __asc_fp8x2_storage_t __asc_cvt_float2_to_fp8x2(
     const float2 x, const __asc_saturation_t saturate, const __asc_fp8_interpretation_t fp8_interpretation);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline __asc_fp8_storage_t __asc_cvt_float_to_fp8(
+    const float x, const __asc_saturation_t saturation, const __asc_fp8_interpretation_t fp8_interpretation);
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #include "impl/simt_api/asc_fp8_impl.h"

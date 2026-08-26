@@ -122,11 +122,19 @@
 
 -   **[fabsf](fabsf.md)**
 
+-   **[abs](abs.md)**
+
 -   **[fmaf](fmaf.md)**
 
 -   **[fmaxf](fmaxf.md)**
 
+-   **[max](max.md)**
+
 -   **[fminf](fminf.md)**
+
+-   **[min](min.md)**
+
+-   **[nanf](nanf.md)**
 
 -   **[fdimf](fdimf.md)**
 

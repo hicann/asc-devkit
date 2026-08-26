@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
+#include <climits>
 #include <type_traits>
 // #include <cmath>
 #include "simt_compiler_stub.h"
@@ -35,6 +36,14 @@ TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_absfloat)
     float y = -123.0;
     EXPECT_EQ(static_cast<float>(123.0), fabsf(x));
     EXPECT_EQ(static_cast<float>(123.0), fabsf(y));
+    EXPECT_EQ(static_cast<float>(123.0), abs(y));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_nanf)
+{
+    EXPECT_TRUE(std::isnan(nanf("0x1")));
+    EXPECT_TRUE(std::isnan(nanf("123")));
+    EXPECT_TRUE(std::isnan(nanf("abc")));
 }
 
 TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_abshalf)
@@ -138,6 +147,20 @@ TEST_F(FloatComputeTestsuite1, MathIntegerTest)
     src_ui_y = 1;
     dst_ui = umin(src_ui_x, src_ui_y);
     EXPECT_EQ(dst_ui, 0);
+
+    EXPECT_EQ(max((unsigned int)2, -1), UINT32_MAX);
+    EXPECT_EQ(max(-1, (unsigned int)2), UINT32_MAX);
+    EXPECT_EQ(max((unsigned long)2, -1L), ULONG_MAX);
+    EXPECT_EQ(max(-1L, (unsigned long int)2), ULONG_MAX);
+    EXPECT_EQ(max((unsigned long long int)2, -1LL), ULLONG_MAX);
+    EXPECT_EQ(max(-1LL, (unsigned long long int)2), ULLONG_MAX);
+    EXPECT_EQ(min((unsigned int)2, -1), 2U);
+    EXPECT_EQ(min(-1, (unsigned int)2), 2U);
+    EXPECT_EQ(min((unsigned long int)2, -1L), 2UL);
+    EXPECT_EQ(min(-1L, (unsigned long int)2), 2UL);
+    EXPECT_EQ(min((unsigned long long int)2, -1LL), 2ULL);
+    EXPECT_EQ(min(-1LL, (unsigned long long int)2), 2ULL);
+
     float x_f = 1.0f;
     float y_f = 2.0f;
     float res_div = fdividef(x_f, y_f);

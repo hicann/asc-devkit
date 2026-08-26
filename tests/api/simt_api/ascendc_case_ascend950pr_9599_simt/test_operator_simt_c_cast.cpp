@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
+#include <climits>
 #include <type_traits>
 #include "simt_compiler_stub.h"
 #include "kernel_operator.h"
@@ -223,6 +224,81 @@ TEST_F(TypeCastApiHalfTestsuite, TypeCastApiHalfTest)
     x1 = 1.0f;
     EXPECT_EQ(x1, 1.0f);
 }
+
+TEST_F(TypeCastApiHalfTestsuite, TypeCastApiHalfInt16Test)
+{
+    half pos = half(1.75f);
+    half neg = half(-1.25f);
+    uint16_t halfPositiveInfBits = 0x7C00;
+    half halfPositiveInf = *reinterpret_cast<half*>(&halfPositiveInfBits);
+
+    EXPECT_EQ(static_cast<signed char>(12), __half2char_rz(half(12.75f)));
+    EXPECT_EQ(static_cast<unsigned char>(12), __half2uchar_rz(half(12.75f)));
+    EXPECT_EQ(static_cast<signed char>(SCHAR_MAX), __half2char_rz(half(200.0f)));
+    EXPECT_EQ(static_cast<signed char>(SCHAR_MIN), __half2char_rz(half(-200.0f)));
+    EXPECT_EQ(static_cast<unsigned char>(UCHAR_MAX), __half2uchar_rz(half(300.0f)));
+    EXPECT_EQ(static_cast<unsigned char>(0), __half2uchar_rz(half(-1.0f)));
+
+    EXPECT_EQ(static_cast<short int>(2), __half2short_rn(pos));
+    EXPECT_EQ(static_cast<short int>(1), __half2short_rz(pos));
+    EXPECT_EQ(static_cast<short int>(1), __half2short_rd(pos));
+    EXPECT_EQ(static_cast<short int>(2), __half2short_ru(pos));
+    EXPECT_EQ(static_cast<short int>(-1), __half2short_rn(neg));
+    EXPECT_EQ(static_cast<short int>(-1), __half2short_rz(neg));
+    EXPECT_EQ(static_cast<short int>(-2), __half2short_rd(neg));
+    EXPECT_EQ(static_cast<short int>(-1), __half2short_ru(neg));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __half2short_rn(half(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __half2short_rz(half(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __half2short_rd(half(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __half2short_ru(half(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __half2short_rn(half(-40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __half2short_rz(half(-40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __half2short_rd(half(-40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __half2short_ru(half(-40000.0f)));
+
+    EXPECT_EQ(static_cast<unsigned short int>(2), __half2ushort_rn(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(1), __half2ushort_rz(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(1), __half2ushort_rd(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(2), __half2ushort_ru(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __half2ushort_rn(halfPositiveInf));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __half2ushort_rz(halfPositiveInf));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __half2ushort_rd(halfPositiveInf));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __half2ushort_ru(halfPositiveInf));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __half2ushort_rn(half(-1.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __half2ushort_rz(half(-1.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __half2ushort_rd(half(-1.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __half2ushort_ru(half(-1.0f)));
+
+    EXPECT_EQ(half(123.0f), __short2half_rn(123));
+    EXPECT_EQ(half(123.0f), __short2half_rz(123));
+    EXPECT_EQ(half(123.0f), __short2half_rd(123));
+    EXPECT_EQ(half(123.0f), __short2half_ru(123));
+    EXPECT_EQ(half(456.0f), __ushort2half_rn(456));
+    EXPECT_EQ(half(456.0f), __ushort2half_rz(456));
+    EXPECT_EQ(half(456.0f), __ushort2half_rd(456));
+    EXPECT_EQ(half(456.0f), __ushort2half_ru(456));
+}
+
+TEST_F(TypeCastApiHalfTestsuite, TypeCastApiHalfPackAndReinterpretTest)
+{
+    half x = half(1.5f);
+    half2 half2Result = __float2half2_rn(1.5f);
+    EXPECT_EQ(x, half2Result.x);
+    EXPECT_EQ(x, half2Result.y);
+
+    half2Result = __half2half2(x);
+    EXPECT_EQ(x, half2Result.x);
+    EXPECT_EQ(x, half2Result.y);
+
+    float2 float2Result = __half22float2(half2Result);
+    EXPECT_EQ(1.5f, float2Result.x);
+    EXPECT_EQ(1.5f, float2Result.y);
+
+    short int bitValue = __half_as_short(x);
+    unsigned short int unsignedBitValue = __half_as_ushort(x);
+    EXPECT_EQ(x, __short_as_half(bitValue));
+    EXPECT_EQ(static_cast<unsigned short int>(bitValue), unsignedBitValue);
+}
 // ================================ Test type cast(half) end ==================================
 
 // ================================ Test type cast(bfloat16) start ==================================
@@ -289,6 +365,68 @@ TEST_F(TypeCastApiBfloat16Testsuite, TypeCastApiBfloat16Test)
 
     x1 = 1.0f;
     EXPECT_EQ(x1, 1.0f);
+}
+
+TEST_F(TypeCastApiBfloat16Testsuite, TypeCastApiBfloat16Int16Test)
+{
+    bfloat16_t pos = bfloat16_t(1.75f);
+    bfloat16_t neg = bfloat16_t(-1.25f);
+
+    EXPECT_EQ(static_cast<signed char>(12), __bfloat162char_rz(bfloat16_t(12.75f)));
+    EXPECT_EQ(static_cast<unsigned char>(12), __bfloat162uchar_rz(bfloat16_t(12.75f)));
+    EXPECT_EQ(static_cast<signed char>(SCHAR_MAX), __bfloat162char_rz(bfloat16_t(200.0f)));
+    EXPECT_EQ(static_cast<signed char>(SCHAR_MIN), __bfloat162char_rz(bfloat16_t(-200.0f)));
+    EXPECT_EQ(static_cast<unsigned char>(UCHAR_MAX), __bfloat162uchar_rz(bfloat16_t(300.0f)));
+    EXPECT_EQ(static_cast<unsigned char>(0), __bfloat162uchar_rz(bfloat16_t(-1.0f)));
+
+    EXPECT_EQ(static_cast<short int>(2), __bfloat162short_rn(pos));
+    EXPECT_EQ(static_cast<short int>(1), __bfloat162short_rz(pos));
+    EXPECT_EQ(static_cast<short int>(1), __bfloat162short_rd(pos));
+    EXPECT_EQ(static_cast<short int>(2), __bfloat162short_ru(pos));
+    EXPECT_EQ(static_cast<short int>(-1), __bfloat162short_rn(neg));
+    EXPECT_EQ(static_cast<short int>(-1), __bfloat162short_rz(neg));
+    EXPECT_EQ(static_cast<short int>(-2), __bfloat162short_rd(neg));
+    EXPECT_EQ(static_cast<short int>(-1), __bfloat162short_ru(neg));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __bfloat162short_rn(bfloat16_t(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __bfloat162short_rz(bfloat16_t(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __bfloat162short_rd(bfloat16_t(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MAX), __bfloat162short_ru(bfloat16_t(40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __bfloat162short_rn(bfloat16_t(-40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __bfloat162short_rz(bfloat16_t(-40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __bfloat162short_rd(bfloat16_t(-40000.0f)));
+    EXPECT_EQ(static_cast<short int>(SHRT_MIN), __bfloat162short_ru(bfloat16_t(-40000.0f)));
+
+    EXPECT_EQ(static_cast<unsigned short int>(2), __bfloat162ushort_rn(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(1), __bfloat162ushort_rz(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(1), __bfloat162ushort_rd(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(2), __bfloat162ushort_ru(pos));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __bfloat162ushort_rn(bfloat16_t(70000.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __bfloat162ushort_rz(bfloat16_t(70000.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __bfloat162ushort_rd(bfloat16_t(70000.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(USHRT_MAX), __bfloat162ushort_ru(bfloat16_t(70000.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __bfloat162ushort_rn(bfloat16_t(-1.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __bfloat162ushort_rz(bfloat16_t(-1.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __bfloat162ushort_rd(bfloat16_t(-1.0f)));
+    EXPECT_EQ(static_cast<unsigned short int>(0), __bfloat162ushort_ru(bfloat16_t(-1.0f)));
+
+    EXPECT_EQ(bfloat16_t(123.0f), __short2bfloat16_rn(123));
+    EXPECT_EQ(bfloat16_t(123.0f), __short2bfloat16_rz(123));
+    EXPECT_EQ(bfloat16_t(123.0f), __short2bfloat16_rd(123));
+    EXPECT_EQ(bfloat16_t(123.0f), __short2bfloat16_ru(123));
+    EXPECT_EQ(bfloat16_t(456.0f), __ushort2bfloat16_rn(456));
+    EXPECT_EQ(bfloat16_t(456.0f), __ushort2bfloat16_rz(456));
+    EXPECT_EQ(bfloat16_t(456.0f), __ushort2bfloat16_rd(456));
+    EXPECT_EQ(bfloat16_t(456.0f), __ushort2bfloat16_ru(456));
+}
+
+TEST_F(TypeCastApiBfloat16Testsuite, TypeCastApiBfloat16ReinterpretTest)
+{
+    bfloat16_t x = bfloat16_t(1.5f);
+    short int bitValue = __bfloat16_as_short(x);
+    unsigned short int unsignedBitValue = __bfloat16_as_ushort(x);
+
+    EXPECT_EQ(x, __short_as_bfloat16(bitValue));
+    EXPECT_EQ(static_cast<unsigned short int>(bitValue), unsignedBitValue);
 }
 // ================================ Test type cast(bfloat16) end ==================================
 
@@ -361,6 +499,11 @@ TEST_F(TypeCastApiHif82Testsuite, TypeCastApiHif82Test)
     result3 = __asc_cvt_float2_to_fp8x2(f2x1, __ASC_SATFINITE, __ASC_E5M2);
     fres3 = static_cast<float>(result3);
     EXPECT_EQ(fres3, 16444.0f);
+
+    __asc_fp8_storage_t fp8Result = __asc_cvt_float_to_fp8(1.0f, __ASC_NOSAT, __ASC_E4M3);
+    EXPECT_EQ(static_cast<unsigned int>(fp8Result), 56U);
+    fp8Result = __asc_cvt_float_to_fp8(1.0f, __ASC_NOSAT, __ASC_E5M2);
+    EXPECT_EQ(static_cast<unsigned int>(fp8Result), 60U);
 
     hifloat8x2_t hif8x = {1, 2};
     float2 result4;

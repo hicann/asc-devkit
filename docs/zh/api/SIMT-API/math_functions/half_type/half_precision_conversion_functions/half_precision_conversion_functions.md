@@ -82,6 +82,26 @@
 
 -   **[\_\_half2int\_rna](__half2int_rna.md)**
 
+-   **[\_\_half2char\_rz](__half2char_rz.md)**
+
+-   **[\_\_half2uchar\_rz](__half2uchar_rz.md)**
+
+-   **[\_\_half2short\_rn](__half2short_rn.md)**
+
+-   **[\_\_half2short\_rz](__half2short_rz.md)**
+
+-   **[\_\_half2short\_rd](__half2short_rd.md)**
+
+-   **[\_\_half2short\_ru](__half2short_ru.md)**
+
+-   **[\_\_half2ushort\_rn](__half2ushort_rn.md)**
+
+-   **[\_\_half2ushort\_rz](__half2ushort_rz.md)**
+
+-   **[\_\_half2ushort\_rd](__half2ushort_rd.md)**
+
+-   **[\_\_half2ushort\_ru](__half2ushort_ru.md)**
+
 -   **[\_\_half2ull\_rz](__half2ull_rz.md)**
 
 -   **[\_\_half2ull\_rd](__half2ull_rd.md)**
@@ -160,6 +180,22 @@
 
 -   **[\_\_int2half\_rna\_sat](__int2half_rna_sat.md)**
 
+-   **[\_\_short2half\_rn](__short2half_rn.md)**
+
+-   **[\_\_short2half\_rz](__short2half_rz.md)**
+
+-   **[\_\_short2half\_rd](__short2half_rd.md)**
+
+-   **[\_\_short2half\_ru](__short2half_ru.md)**
+
+-   **[\_\_ushort2half\_rn](__ushort2half_rn.md)**
+
+-   **[\_\_ushort2half\_rz](__ushort2half_rz.md)**
+
+-   **[\_\_ushort2half\_rd](__ushort2half_rd.md)**
+
+-   **[\_\_ushort2half\_ru](__ushort2half_ru.md)**
+
 -   **[\_\_ull2half\_rn](__ull2half_rn.md)**
 
 -   **[\_\_ull2half\_rz](__ull2half_rz.md)**
@@ -184,6 +220,8 @@
 
 -   **[\_\_float22half2\_rn](__float22half2_rn.md)**
 
+-   **[\_\_float2half2\_rn](__float2half2_rn.md)**
+
 -   **[\_\_low2half](__low2half.md)**
 
 -   **[\_\_low2half2](__low2half2.md)**
@@ -204,6 +242,14 @@
 
 -   **[\_\_halves2half2](__halves2half2.md)**
 
+-   **[\_\_half2half2](__half2half2.md)**
+
 -   **[\_\_half22float2](__half22float2.md)**
 
 -   **[\_\_ushort\_as\_half](__ushort_as_half.md)**
+
+-   **[\_\_half\_as\_short](__half_as_short.md)**
+
+-   **[\_\_half\_as\_ushort](__half_as_ushort.md)**
+
+-   **[\_\_short\_as\_half](__short_as_half.md)**
