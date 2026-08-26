@@ -22,6 +22,7 @@
 #include "tensor_api/arch/cube/copy_trait.h"
 #include "tensor_api/arch/cube/mmad_trait.h"
 #include "impl/tensor_api/utils/extra_impl.h"
+#include "impl/tensor_api/utils/location_impl.h"
 
 namespace asc {
 namespace te {
@@ -34,6 +35,9 @@ namespace AscendC {
 namespace Te {
 
 using namespace asc::te;
+
+template <typename Pointer>
+using GetAttributeElementType = asc::te::get_attribute_element_type<Pointer>;
 
 enum class CacheMode : uint8_t {
     CACHE_MODE_NORMAL = 0,

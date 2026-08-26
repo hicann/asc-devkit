@@ -71,6 +71,12 @@ using NDC1HWC0LayoutPtn = asc::te::ndc1hwc0_layout_ptn;
 template <typename Iterator>
 using ViewEngine = asc::te::view_engine<Iterator>;
 
+template <typename DefaultTrait>
+struct legacy_trait_default {
+    using TraitType = typename DefaultTrait::trait_type;
+    static constexpr const TraitType value = DefaultTrait::value;
+};
+
 using CopyGM2L1 = asc::te::copy_gm_to_l1;
 using CopyL12UB = asc::te::copy_l1_to_ub;
 using CopyL12L0B = asc::te::copy_l1_to_l0b;
@@ -83,39 +89,39 @@ using CopyL0C2GM = asc::te::copy_l0c_to_gm;
 using CopyL0C2UB = asc::te::copy_l0c_to_ub;
 using CopyL0C2L1 = asc::te::copy_l0c_to_l1;
 using CopyGM2L1Trait = asc::te::gm_to_l1_trait;
-using CopyGM2L1TraitDefault = asc::te::gm_to_l1_trait_default;
+using CopyGM2L1TraitDefault = legacy_trait_default<asc::te::gm_to_l1_trait_default>;
 using CopyL12UBTrait = asc::te::l1_to_ub_trait;
-using CopyL12UBTraitDefault = asc::te::l1_to_ub_trait_default;
+using CopyL12UBTraitDefault = legacy_trait_default<asc::te::l1_to_ub_trait_default>;
 using CopyL12L0ATrait = asc::te::l1_to_l0a_trait;
-using CopyL12L0ATraitDefault = asc::te::l1_to_l0a_trait_default;
+using CopyL12L0ATraitDefault = legacy_trait_default<asc::te::l1_to_l0a_trait_default>;
 using CopyL12L0BTrait = asc::te::l1_to_l0b_trait;
-using CopyL12L0BTraitDefault = asc::te::l1_to_l0b_trait_default;
+using CopyL12L0BTraitDefault = legacy_trait_default<asc::te::l1_to_l0b_trait_default>;
 using CopyL12L0ScaleATrait = asc::te::l1_to_l0scalea_trait;
-using CopyL12L0ScaleATraitDefault = asc::te::l1_to_l0scalea_trait_default;
+using CopyL12L0ScaleATraitDefault = legacy_trait_default<asc::te::l1_to_l0scalea_trait_default>;
 using CopyL12L0ScaleBTrait = asc::te::l1_to_l0scaleb_trait;
-using CopyL12L0ScaleBTraitDefault = asc::te::l1_to_l0scaleb_trait_default;
+using CopyL12L0ScaleBTraitDefault = legacy_trait_default<asc::te::l1_to_l0scaleb_trait_default>;
 using CopyL12FBTrait = asc::te::l1_to_fixbuf_trait;
-using CopyL12FBTraitDefault = asc::te::l1_to_fixbuf_trait_default;
+using CopyL12FBTraitDefault = legacy_trait_default<asc::te::l1_to_fixbuf_trait_default>;
 using CopyL12BTTrait = asc::te::l1_to_biastable_trait;
-using CopyL12BTTraitDefault = asc::te::l1_to_biastable_trait_default;
-using CopyL0C2GMTraitDefault = asc::te::l0c_to_gm_trait_default;
-using CopyL0C2UBTraitDefault = asc::te::l0c_to_ub_trait_default;
-using CopyL0C2L1TraitDefault = asc::te::l0c_to_l1_trait_default;
+using CopyL12BTTraitDefault = legacy_trait_default<asc::te::l1_to_biastable_trait_default>;
+using CopyL0C2GMTraitDefault = legacy_trait_default<asc::te::l0c_to_gm_trait_default>;
+using CopyL0C2UBTraitDefault = legacy_trait_default<asc::te::l0c_to_ub_trait_default>;
+using CopyL0C2L1TraitDefault = legacy_trait_default<asc::te::l0c_to_l1_trait_default>;
 
 using CopyGM2UB = asc::te::copy_gm_to_ub;
 using CopyUB2L1 = asc::te::copy_ub_to_l1;
 using CopyUB2GM = asc::te::copy_ub_to_gm;
 using CopyUB2UB = asc::te::copy_ub_to_ub;
 using CopyGM2UBTrait = asc::te::gm_to_ub_trait;
-using CopyGM2UBTraitDefault = asc::te::gm_to_ub_trait_default;
+using CopyGM2UBTraitDefault = legacy_trait_default<asc::te::gm_to_ub_trait_default>;
 using CopyUB2L1Trait = asc::te::ub_to_l1_trait;
-using CopyUB2L1TraitDefault = asc::te::ub_to_l1_trait_default;
+using CopyUB2L1TraitDefault = legacy_trait_default<asc::te::ub_to_l1_trait_default>;
 using CopyUB2GMTrait = asc::te::ub_to_gm_trait;
-using CopyUB2GMTraitDefault = asc::te::ub_to_gm_trait_default;
+using CopyUB2GMTraitDefault = legacy_trait_default<asc::te::ub_to_gm_trait_default>;
 using CopyUB2UBTrait = asc::te::ub_to_ub_trait;
-using CopyUB2UBTraitDefault = asc::te::ub_to_ub_trait_default;
+using CopyUB2UBTraitDefault = legacy_trait_default<asc::te::ub_to_ub_trait_default>;
 
-using MmadTraitDefault = asc::te::mmad_trait_default;
+using MmadTraitDefault = legacy_trait_default<asc::te::mmad_trait_default>;
 using MmadOperation = asc::te::mmad_operation;
 
 // 兼容旧常量名（已改为 snake_case，此处保留 PascalCase 别名）

@@ -28,6 +28,25 @@ namespace Te {
 
 using namespace asc::te;
 
+namespace AttrInfo {
+using Shape = asc::te::attr_info::shape;
+using Stride = asc::te::attr_info::stride;
+using Row = asc::te::attr_info::row;
+using Column = asc::te::attr_info::column;
+} // namespace AttrInfo
+
+template <typename Info1, typename Info2, size_t Dim, typename Layout>
+__aicore__ inline constexpr decltype(auto) GetElement(const Layout& layout)
+{
+    return asc::te::get_element<Info1, Info2, Dim>(layout);
+}
+
+template <typename Info1, typename Info2, typename Layout>
+__aicore__ inline constexpr decltype(auto) GetElement(const Layout& layout)
+{
+    return asc::te::get_element<Info1, Info2>(layout);
+}
+
 template <typename Tensor>
 using GetMemLocation = get_mem_location<Tensor>;
 
