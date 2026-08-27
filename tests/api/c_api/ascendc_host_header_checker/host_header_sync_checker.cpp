@@ -12,8 +12,22 @@
 
 static void test_host_c_api_sync_0()
 {
+    using ::asc_lock;
     using ::asc_sync;
+    using ::asc_sync_block_arrive;
+    using ::asc_sync_block_wait;
+    using ::asc_sync_data_barrier;
+    using ::asc_sync_inter_arrive;
+    using ::asc_sync_inter_wait;
+    using ::asc_sync_intra_arrive;
+    using ::asc_sync_intra_wait;
     using ::asc_sync_mte2;
     using ::asc_sync_mte3;
+    using ::asc_sync_notify;
+    using ::asc_sync_pipe;
+    using ::asc_sync_subblock_arrive;
+    using ::asc_sync_subblock_wait;
     using ::asc_sync_vec;
+    using ::asc_sync_wait;
+    using ::asc_unlock;
 }

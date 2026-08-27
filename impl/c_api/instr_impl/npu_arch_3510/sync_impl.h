@@ -27,6 +27,11 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_data_barrier_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_lock_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_unlock_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_block_wait_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_inter_wait_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_subblock_wait_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_intra_wait_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_intra_arrive_impl.h"
 
 [[deprecated("NOTICE: asc_sync_vec() is deprecated. "
              "Please use asc_sync() instead")]]
@@ -37,11 +42,64 @@ __aicore__ inline void asc_sync_vec()
 
 __aicore__ inline void asc_sync_vec(int id) { asc_sync_vec_impl(id); }
 
+__aicore__ inline void asc_sync_pipe(pipe_t pipe) { asc_sync_pipe_impl(pipe); }
+
+__aicore__ inline void asc_sync_notify(pipe_t pipe, pipe_t tpipe, event_t id) { asc_sync_notify_impl(pipe, tpipe, id); }
+
+__aicore__ inline void asc_sync_wait(pipe_t pipe, pipe_t tpipe, event_t id) { asc_sync_wait_impl(pipe, tpipe, id); }
+
 __aicore__ inline void asc_sync_mte3(int id) { asc_sync_mte3_impl(id); }
 
 __aicore__ inline void asc_sync_mte2(int id) { asc_sync_mte2_impl(id); }
 
 __aicore__ inline void asc_sync() { asc_sync_impl(); }
+
+__aicore__ inline void asc_sync_block_arrive(pipe_t pipe, int64_t flag_id)
+{
+    asc_sync_block_arrive_impl(pipe, flag_id);
+}
+
+__aicore__ inline void asc_sync_subblock_arrive(pipe_t pipe, int64_t flag_id)
+{
+    asc_sync_subblock_arrive_impl(pipe, flag_id);
+}
+
+__aicore__ inline void asc_sync_inter_arrive(pipe_t pipe, int64_t flag_id)
+{
+    asc_sync_inter_arrive_impl(pipe, flag_id);
+}
+
+__aicore__ inline void asc_sync_data_barrier(mem_dsb_t arg) { asc_sync_data_barrier_impl(arg); }
+
+__aicore__ inline void asc_sync_intra_arrive(pipe_t pipe, uint64_t sync_id)
+{
+    asc_sync_intra_arrive_impl(pipe, sync_id);
+}
+
+__aicore__ inline void asc_sync_intra_wait(pipe_t pipe, uint64_t sync_id) { asc_sync_intra_wait_impl(pipe, sync_id); }
+
+__aicore__ inline void asc_sync_subblock_wait(pipe_t pipe, int64_t flag_id)
+{
+    asc_sync_subblock_wait_impl(pipe, flag_id);
+}
+
+__aicore__ inline void asc_sync_inter_wait(pipe_t pipe, int64_t flag_id) { asc_sync_inter_wait_impl(pipe, flag_id); }
+
+__aicore__ inline void asc_sync_block_wait(pipe_t pipe, int64_t flag_id) { asc_sync_block_wait_impl(pipe, flag_id); }
+
+__aicore__ inline void asc_lock(pipe_t pipe, uint8_t mutex_id) { asc_lock_impl(pipe, mutex_id); }
+
+__aicore__ inline void asc_lock(pipe_t pipe, uint8_t mutex_id, const asc_mutex_execute_mode mode)
+{
+    asc_lock_impl(pipe, mutex_id, mode);
+}
+
+__aicore__ inline void asc_unlock(pipe_t pipe, uint8_t mutex_id) { asc_unlock_impl(pipe, mutex_id); }
+
+__aicore__ inline void asc_unlock(pipe_t pipe, uint8_t mutex_id, const asc_mutex_execute_mode mode)
+{
+    asc_unlock_impl(pipe, mutex_id, mode);
+}
 
 #endif
 

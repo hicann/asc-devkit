@@ -82,4 +82,11 @@ constexpr std::integral_constant<asc_position_quarter_mode, asc_position_quarter
 constexpr std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
     ASC_DISPERSE_FOURTH_QUARTER;
 
+enum asc_mutex_execute_mode {
+    ASC_LOCK_BLOCK = 0,    // Block the execution of the pipeline indicated by pipe (Default).
+    ASC_LOCK_NON_BLOCK = 1 // Won't block execution of the pipeline.
+};
+
+using ascMutexExecuteMode = asc_mutex_execute_mode;
+
 #endif

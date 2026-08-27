@@ -25,14 +25,63 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_impl.h"
 
-#define asc_unlock_impl(pipe, mutex_id, mode)     \
-    do {                                          \
-        if constexpr ((mode) == ASC_LOCK_BLOCK) { \
-            rls_buf((pipe), (mutex_id), false);   \
-        } else {                                  \
-            rls_buf((pipe), (mutex_id), true);    \
-        }                                         \
-    } while (0)
+__aicore__ inline void asc_unlock_impl(pipe_t pipe, uint8_t mutex_id, const asc_mutex_execute_mode mode)
+{
+    if (mode == ASC_LOCK_BLOCK) {
+        if ASC_IS_AIC {
+            if (pipe == pipe_t::PIPE_S) {
+                rls_buf(pipe_t::PIPE_S, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_M) {
+                rls_buf(pipe_t::PIPE_M, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_MTE1) {
+                rls_buf(pipe_t::PIPE_MTE1, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_MTE2) {
+                rls_buf(pipe_t::PIPE_MTE2, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_FIX) {
+                rls_buf(pipe_t::PIPE_FIX, mutex_id, false);
+            }
+        } else if ASC_IS_AIV {
+            if (pipe == pipe_t::PIPE_S) {
+                rls_buf(pipe_t::PIPE_S, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_MTE2) {
+                rls_buf(pipe_t::PIPE_MTE2, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_MTE3) {
+                rls_buf(pipe_t::PIPE_MTE3, mutex_id, false);
+            } else if (pipe == pipe_t::PIPE_V) {
+                rls_buf(pipe_t::PIPE_V, mutex_id, false);
+            }
+        }
+    } else {
+        if ASC_IS_AIC {
+            if (pipe == pipe_t::PIPE_S) {
+                rls_buf(pipe_t::PIPE_S, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_M) {
+                rls_buf(pipe_t::PIPE_M, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_MTE1) {
+                rls_buf(pipe_t::PIPE_MTE1, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_MTE2) {
+                rls_buf(pipe_t::PIPE_MTE2, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_FIX) {
+                rls_buf(pipe_t::PIPE_FIX, mutex_id, true);
+            }
+        } else if ASC_IS_AIV {
+            if (pipe == pipe_t::PIPE_S) {
+                rls_buf(pipe_t::PIPE_S, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_MTE2) {
+                rls_buf(pipe_t::PIPE_MTE2, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_MTE3) {
+                rls_buf(pipe_t::PIPE_MTE3, mutex_id, true);
+            } else if (pipe == pipe_t::PIPE_V) {
+                rls_buf(pipe_t::PIPE_V, mutex_id, true);
+            }
+        }
+    }
+}
+
+__aicore__ inline void asc_unlock_impl(pipe_t pipe, uint8_t mutex_id)
+{
+    asc_unlock_impl(pipe, mutex_id, ASC_LOCK_BLOCK);
+}
 
 #endif
 

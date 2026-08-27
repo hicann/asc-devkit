@@ -13,42 +13,39 @@
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
 
-__aicore__ inline void wait_flag_dev_block_stub(pipe_t pipe, uint8_t flag_id)
-{
-    EXPECT_EQ(pipe, static_cast<pipe_t>(pipe_t::PIPE_S));
-    EXPECT_EQ(flag_id, static_cast<uint8_t>(11));
-}
-
-__aicore__ inline void wait_flag_dev_block_mode_stub(pipe_t pipe, int64_t flag_id)
-{
-    EXPECT_EQ(pipe, static_cast<pipe_t>(pipe_t::PIPE_S));
-    EXPECT_EQ(flag_id, static_cast<int64_t>(11));
-}
-
 class TEST_ASC_SYNC_BLOCK_WAIT : public testing::Test {
 protected:
-    void SetUp() {}
-    void TearDown() {}
+    void SetUp() { g_coreType = C_API_AIV_TYPE; }
+    void TearDown() { g_coreType = C_API_AIV_TYPE; }
 };
 
-TEST_F(TEST_ASC_SYNC_BLOCK_WAIT, TEST_ASC_SYNC_BLOCK_WAIT)
-{
-    MOCKER_CPP(wait_flag_dev, void(pipe_t, uint8_t)).times(1).will(invoke(wait_flag_dev_block_stub));
+#define TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(coreType, pipeVal)                                 \
+    void wait_flag_dev_block_mode_stub_##coreType##_##pipeVal(pipe_t pipe, int64_t flag_id) \
+    {                                                                                       \
+        EXPECT_EQ(pipe, pipeVal);                                                           \
+        EXPECT_EQ(flag_id, static_cast<int64_t>(11));                                       \
+    }                                                                                       \
+                                                                                            \
+    TEST_F(TEST_ASC_SYNC_BLOCK_WAIT, TEST_ASC_SYNC_BLOCK_WAIT_##coreType##_##pipeVal)       \
+    {                                                                                       \
+        g_coreType = coreType;                                                              \
+        MOCKER_CPP(wait_flag_dev, void(pipe_t, int64_t))                                    \
+            .times(1)                                                                       \
+            .will(invoke(wait_flag_dev_block_mode_stub_##coreType##_##pipeVal));            \
+                                                                                            \
+        pipe_t pipe = pipeVal;                                                              \
+        int64_t flag_id = static_cast<int64_t>(11);                                         \
+                                                                                            \
+        asc_sync_block_wait(pipe, flag_id);                                                 \
+        GlobalMockObject::verify();                                                         \
+    }
 
-    pipe_t pipe = static_cast<pipe_t>(pipe_t::PIPE_S);
-    uint8_t flag_id = static_cast<uint8_t>(11);
-
-    asc_sync_block_wait(pipe, flag_id);
-    GlobalMockObject::verify();
-}
-
-TEST_F(TEST_ASC_SYNC_BLOCK_WAIT, TEST_ASC_SYNC_BLOCK_WAIT_MODE)
-{
-    MOCKER_CPP(wait_flag_dev, void(pipe_t, int64_t)).times(1).will(invoke(wait_flag_dev_block_mode_stub));
-
-    pipe_t pipe = static_cast<pipe_t>(pipe_t::PIPE_S);
-    int64_t flag_id = static_cast<int64_t>(11);
-
-    asc_sync_block_wait(pipe, flag_id);
-    GlobalMockObject::verify();
-}
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIC_TYPE, PIPE_S);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIC_TYPE, PIPE_M);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIC_TYPE, PIPE_MTE1);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIC_TYPE, PIPE_MTE2);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIC_TYPE, PIPE_FIX);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIV_TYPE, PIPE_S);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIV_TYPE, PIPE_MTE2);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIV_TYPE, PIPE_MTE3);
+TEST_ASC_SYNC_BLOCK_WAIT_BY_PIPE(C_API_AIV_TYPE, PIPE_V);

@@ -15,31 +15,43 @@
 
 class TestAscSyncSubBlockArriveCAPI : public testing::Test {
 protected:
-    void SetUp() {}
-    void TearDown() {}
+    void SetUp() { g_coreType = C_API_AIV_TYPE; }
+    void TearDown() { g_coreType = C_API_AIV_TYPE; }
 };
 
-namespace {
-void ffts_cross_core_sync_stub(pipe_t pipe, uint64_t config)
-{
-    constexpr uint16_t SYNC_MODE_SHIFT_VALUE = 4;
-    constexpr uint16_t SYNC_FLAG_SHIFT_VALUE = 8;
+#define TEST_ASC_SYNC_SUBBLOCK_ARRIVE(pipeVal)                                                            \
+    void sync_subblock_arrive_2201_ffts_cross_core_sync_stub_##pipeVal(pipe_t pipe, uint64_t config)      \
+    {                                                                                                     \
+        constexpr uint16_t SYNC_MODE_SHIFT_VALUE = 4;                                                     \
+        constexpr uint16_t SYNC_FLAG_SHIFT_VALUE = 8;                                                     \
+                                                                                                          \
+        uint16_t mode = 0x01;                                                                             \
+        uint64_t flag_id = 2;                                                                             \
+        uint64_t expectedConfig =                                                                         \
+            (0x1 + ((mode & 0x3) << SYNC_MODE_SHIFT_VALUE) + ((flag_id & 0xf) << SYNC_FLAG_SHIFT_VALUE)); \
+        EXPECT_EQ(pipe, pipeVal);                                                                         \
+        EXPECT_EQ(config, expectedConfig);                                                                \
+    }                                                                                                     \
+                                                                                                          \
+    TEST_F(TestAscSyncSubBlockArriveCAPI, c_api_asc_sync_subblock_arrive_##pipeVal)                       \
+    {                                                                                                     \
+        MOCKER_CPP(ffts_cross_core_sync, void(pipe_t, uint64_t))                                          \
+            .times(1)                                                                                     \
+            .will(invoke(sync_subblock_arrive_2201_ffts_cross_core_sync_stub_##pipeVal));                 \
+                                                                                                          \
+        pipe_t pipe = pipeVal;                                                                            \
+        int64_t flag_id = 2;                                                                              \
+                                                                                                          \
+        asc_sync_subblock_arrive(pipe, flag_id);                                                          \
+        GlobalMockObject::verify();                                                                       \
+    }
 
-    uint16_t mode = 0x01;
-    uint64_t flag_id = 2;
-    uint64_t expectedConfig =
-        (0x1 + ((mode & 0x3) << SYNC_MODE_SHIFT_VALUE) + ((flag_id & 0xf) << SYNC_FLAG_SHIFT_VALUE));
-    EXPECT_EQ(pipe, pipe_t::PIPE_V);
-    EXPECT_EQ(config, expectedConfig);
-}
-} // namespace
-
-TEST_F(TestAscSyncSubBlockArriveCAPI, c_api_asc_sync_subblock_arrive_succ)
-{
-    pipe_t pipe = pipe_t::PIPE_V;
-    int64_t flag_id = 2;
-    MOCKER_CPP(ffts_cross_core_sync, void(pipe_t, uint64_t)).times(1).will(invoke(ffts_cross_core_sync_stub));
-
-    asc_sync_subblock_arrive(pipe, flag_id);
-    GlobalMockObject::verify();
-}
+// ==========asc_sync_subblock_arrive==========
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_S);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_V);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_M);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_MTE1);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_MTE2);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_MTE3);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_ALL);
+TEST_ASC_SYNC_SUBBLOCK_ARRIVE(PIPE_FIX);

@@ -16,19 +16,31 @@
 
 class TestSyncBlkWait : public testing::Test {
 protected:
-    void SetUp() {}
-    void TearDown() {}
+    void SetUp() { g_coreType = C_API_AIV_TYPE; }
+    void TearDown() { g_coreType = C_API_AIV_TYPE; }
 };
 
-namespace {
-void asc_sync_block_wait_stub(int64_t flagID) { EXPECT_EQ(33, flagID); }
-} // namespace
+#define TEST_ASC_SYNC_BLOCK_WAIT(coreType, pipeVal)                                                 \
+    void asc_sync_block_wait_stub_##coreType##_##pipeVal(int64_t flagID) { EXPECT_EQ(33, flagID); } \
+                                                                                                    \
+    TEST_F(TestSyncBlkWait, sync_block_wait_##coreType##_##pipeVal)                                 \
+    {                                                                                               \
+        g_coreType = coreType;                                                                      \
+        MOCKER_CPP(wait_flag_dev, void(int64_t))                                                    \
+            .times(1)                                                                               \
+            .will(invoke(asc_sync_block_wait_stub_##coreType##_##pipeVal));                         \
+                                                                                                    \
+        pipe_t pipe = pipeVal;                                                                      \
+        int64_t flagID = 33;                                                                        \
+                                                                                                    \
+        asc_sync_block_wait(pipe, flagID);                                                          \
+        GlobalMockObject::verify();                                                                 \
+    }
 
-TEST_F(TestSyncBlkWait, sync_block_wait_Succ)
-{
-    int64_t flagID = 33;
-    MOCKER_CPP(wait_flag_dev, void(int64_t)).times(1).will(invoke(asc_sync_block_wait_stub));
-
-    asc_sync_block_wait(pipe_t::PIPE_S, flagID);
-    GlobalMockObject::verify();
-}
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIC_TYPE, PIPE_M);
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIC_TYPE, PIPE_MTE1);
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIC_TYPE, PIPE_MTE2);
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIC_TYPE, PIPE_FIX);
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIV_TYPE, PIPE_MTE2);
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIV_TYPE, PIPE_MTE3);
+TEST_ASC_SYNC_BLOCK_WAIT(C_API_AIV_TYPE, PIPE_V);

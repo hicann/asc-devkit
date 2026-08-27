@@ -25,7 +25,28 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_impl.h"
 
-#define asc_sync_data_barrier_impl(arg) dsb((arg))
+__aicore__ inline void asc_sync_data_barrier_impl(mem_dsb_t arg)
+{
+    if ASC_IS_AIV {
+        if (arg == mem_dsb_t::DSB_ALL) {
+            dsb(mem_dsb_t::DSB_ALL);
+        } else if (arg == mem_dsb_t::DSB_DDR) {
+            dsb(mem_dsb_t::DSB_DDR);
+        } else if (arg == mem_dsb_t::DSB_UB) {
+            dsb(mem_dsb_t::DSB_UB);
+        } else if (arg == mem_dsb_t::DSB_SEQ) {
+            dsb(mem_dsb_t::DSB_SEQ);
+        }
+    } else if ASC_IS_AIC {
+        if (arg == mem_dsb_t::DSB_ALL) {
+            dsb(mem_dsb_t::DSB_ALL);
+        } else if (arg == mem_dsb_t::DSB_DDR) {
+            dsb(mem_dsb_t::DSB_DDR);
+        } else if (arg == mem_dsb_t::DSB_SEQ) {
+            dsb(mem_dsb_t::DSB_SEQ);
+        }
+    }
+}
 
 #endif
 
