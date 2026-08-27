@@ -202,7 +202,7 @@ If you want to quickly experience project building and operator sample execution
 
 - Restart clangd (VS Code: Command Palette -> "Clangd: Restart language server")
 
-- It is recommended to install the VS Code extension Ascend C Toolkit, which supports editing, compilation, execution, debugging, exception detection and performance tuning of Ascend C operator projects within VS Code. When opening the workspace of this repository, VS Code will prompt to install recommended extensions according to `.vscode/extensions.json`.
+- We recommend downloading and installing the Ascend C Toolkit VS Code extension from the [releases page](https://gitcode.com/opdevtools/plugin_release/releases). It supports editing, building, running, debugging, exception detection, and performance tuning for Ascend C operator projects in VS Code.
 
 - Recent updates of Ascend C Toolkit focus on enhancing environment resolution, standard custom operator creation, SoC settings, simulation analysis, NPU debugging, setting migration and stability for Atlas A2 series and Atlas A3 series products. For complete usage instructions and feedback, please refer to [CANN Discussion Area Usage Guide](https://gitcode.com/org/cann/discussions/54).
 

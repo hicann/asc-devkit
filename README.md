@@ -198,7 +198,7 @@ Ascend C采用分层架构设计，自下而上构建完整的算子开发技术
 
 - 重启clangd（VS Code: Command Palette -> "Clangd: Restart language server"）
 
-- 推荐安装VS Code扩展Ascend C Toolkit，用于在VS Code中完成Ascend C算子工程的编辑、编译、运行、调试、异常检测与性能调优等流程。打开本仓工作区时，VS Code会根据`.vscode/extensions.json`提示安装推荐扩展。
+- 推荐从[发布页面](https://gitcode.com/opdevtools/plugin_release/releases)下载并安装VS Code扩展Ascend C Toolkit，用于在VS Code中完成Ascend C算子工程的编辑、编译、运行、调试、异常检测与性能调优等流程。
 
 - Ascend C Toolkit近期更新重点增强Atlas A2系列产品和Atlas A3系列产品的环境解析、标准自定义算子创建、SoC设置、仿真分析、NPU调试、设置迁移与稳定性；完整使用说明和问题反馈请参考[CANN讨论区使用指导](https://gitcode.com/org/cann/discussions/54)。
 
