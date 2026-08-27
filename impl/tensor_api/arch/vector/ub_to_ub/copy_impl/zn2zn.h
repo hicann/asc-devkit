@@ -47,10 +47,10 @@ public:
         auto block_count = get_shape_batch_size(src_shape) *
             Std::ceil_division(get_shape_rows(src_shape), c0_element<src_type>);
         auto block_len = get_shape_columns(src_shape) * c0_size<>;
-        auto src_stride = get_row_stride(src.layout()) * sizeof(src_type);
-        auto dst_stride = get_row_stride(dst.layout()) * sizeof(dst_type);
+        auto src_gap = get_row_stride(src.layout()) * sizeof(src_type) - block_len;
+        auto dst_gap = get_row_stride(dst.layout()) * sizeof(dst_type) - block_len;
         emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len,
-            src_stride, dst_stride);
+            src_gap, dst_gap);
     }
 
 private:
@@ -76,10 +76,12 @@ private:
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src row shape size", "copy_ub_to_ub ZN path");
         uint32_t block_len = get_total_column_shape(src_layout)
                              * get_element<attr_info::shape, attr_info::row, 0>(src_layout) * sizeof(src_type);
-        int64_t src_stride = get_element<attr_info::stride, attr_info::row, 1>(src_layout) * sizeof(src_type);
-        int64_t dst_stride = get_element<attr_info::stride, attr_info::row, 1>(dst_layout) * sizeof(dst_type);
+        int64_t src_gap =
+            get_element<attr_info::stride, attr_info::row, 1>(src_layout) * sizeof(src_type) - block_len;
+        int64_t dst_gap =
+            get_element<attr_info::stride, attr_info::row, 1>(dst_layout) * sizeof(dst_type) - block_len;
 
-        emit_copy(dst, src, block_count, block_len, src_stride, dst_stride);
+        emit_copy(dst, src, block_count, block_len, src_gap, dst_gap);
     }
 };
 

@@ -32,18 +32,18 @@ class copy_ub_to_l1_common {
 protected:
     template <typename DstTensor, typename SrcTensor>
     __aicore__ inline static void emit_copy(const DstTensor& dst, const SrcTensor& src, uint16_t block_count,
-                                            uint32_t block_len, int64_t src_stride, int64_t dst_stride)
+                                            uint32_t block_len, int64_t src_gap, int64_t dst_gap)
     {
-        copy_ub_to_l1_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_stride,
-                                       dst_stride);
+        copy_ub_to_l1_instr::data_copy(dst.data().get(), src.data().get(), block_count, block_len, src_gap,
+                                       dst_gap);
     }
 
     template <typename T, typename U, typename DstOffset, typename SrcOffset>
     __aicore__ inline static void emit_copy(const T& dst, const U& src, const DstOffset& dst_offset,
-        const SrcOffset& src_offset, uint16_t block_count, uint32_t block_len, int64_t src_stride, int64_t dst_stride)
+        const SrcOffset& src_offset, uint16_t block_count, uint32_t block_len, int64_t src_gap, int64_t dst_gap)
     {
         copy_ub_to_l1_instr::data_copy((dst.data() + dst_offset).get(), (src.data() + src_offset).get(),
-            block_count, block_len, src_stride, dst_stride);
+            block_count, block_len, src_gap, dst_gap);
     }
 };
 

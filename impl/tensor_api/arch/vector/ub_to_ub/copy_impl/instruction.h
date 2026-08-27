@@ -31,14 +31,14 @@ class copy_ub_to_ub_instr {
 public:
     template <typename DataType>
     __aicore__ inline static void data_copy(__ubuf__ DataType* dst, __ubuf__ DataType* src, const uint16_t block_count,
-                                            const uint32_t block_len, const int64_t src_stride,
-                                            const int64_t dst_stride)
+                                            const uint32_t block_len, const int64_t src_gap,
+                                            const int64_t dst_gap)
     {
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "block_count", "copy_ub_to_ub instruction");
         TENSOR_API_DEBUG_CHECK(debug_check_block_len, block_len, debug_block_len_max, "copy_ub_to_ub instruction");
 
         asc_copy_ub2ub(reinterpret_cast<__ubuf__ void*>(dst), reinterpret_cast<__ubuf__ void*>(src), block_count,
-                       block_len, src_stride, dst_stride);
+                       block_len, src_gap, dst_gap);
     }
 };
 
