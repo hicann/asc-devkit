@@ -29,6 +29,8 @@
 
 在SIMT编程中，写入数据时会立即写入Global Memory，使其他核可见，因此不存在核间一致性问题。当从Global Memory读取数据时，该数据可能已被其他核修改，此时应使用dcci接口直接访问Global Memory，以获取最新数据。
 
+与通过地址定位并刷新指定Cache Line的`asc_dcci_single()`接口不同，`asc_dcci_entire()`刷新的是核内整个Data Cache，参数`dst`不参与刷新范围的定位，因此在`asc_dcci_entire()`中该参数没有实际意义。
+
 请注意，该接口耗时较大，**性能敏感的场景慎用**。
 
 ## 函数原型
