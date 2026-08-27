@@ -19,6 +19,7 @@
 #include "utils/base/sys_constants.h"
 #include "utils/common_types.h"
 #include "utils/std/type_traits.h"
+#include "tensor_api/experimental/utils/reg_enum.h"
 
 namespace AscendC {
 namespace Std {}
@@ -29,84 +30,9 @@ namespace te {
 
 namespace Std = AscendC::Std;
 
-/** @brief Data layout selected by a width-changing register cast. */
-enum class cast_layout {
-    unknow = -1,
-    zero,
-    one,
-    two,
-    three,
-};
-
-/** @brief Rounding behavior for register cast. */
-enum class cast_round_mode {
-    unknow = -1,
-    rint,
-    round,
-    floor,
-    ceil,
-    trunc,
-};
-
-/** @brief Saturation behavior for register cast. */
-enum class cast_sat_mode {
-    unknow = -1,
-    not_sat,
-    sat,
-};
-
-struct cast_options {
-    cast_layout layout = cast_layout::zero;
-    cast_round_mode round = cast_round_mode::rint;
-    cast_sat_mode sat = cast_sat_mode::not_sat;
-};
+enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
 
 enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent = 6 };
-
-enum class load_sideband_mode : uint8_t {
-    direct,
-    deintlv,
-    downsample,
-    unpack,
-    unpack4,
-    upsample,
-};
-
-enum class store_sideband_mode : uint8_t {
-    direct,
-    store_1st,
-    intlv,
-    pack,
-    pack_quarter,
-};
-
-enum class broadcast_mode : uint8_t {
-    elem,
-    datablock,
-    elem2datablock,
-};
-
-enum class mask_pattern : uint8_t {
-    all,
-    vl1,
-    vl2,
-    vl3,
-    vl4,
-    vl8,
-    vl16,
-    vl32,
-    vl64,
-    vl128,
-    every3,
-    every4,
-    half,
-    quarter,
-    none,
-};
-
-enum class reduce_scope : uint8_t { vector, datablock, pair };
-
-enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
 
 using _0 = Std::Int<0>;
 using _1 = Std::Int<1>;

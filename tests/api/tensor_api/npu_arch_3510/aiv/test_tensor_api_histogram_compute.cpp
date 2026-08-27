@@ -8,12 +8,10 @@
  * See LICENSE in the root of the software repository for the full text of the license.
  */
 
-#include <type_traits>
-#include <utility>
-
 #include <gtest/gtest.h>
 
 #include "tensor_api/stub/cce_stub.h"
+#include "tensor_api/experimental/vector_compute.h"
 #include "tensor_api/tensor.h"
 
 namespace {
@@ -27,16 +25,16 @@ constexpr asc::te::experimental::histogram_options cumulative_high_options {
 
 TEST(test_tensor_api_histogram_compute, compile_public_api_and_four_modes)
 {
-    using dst_type = asc::te::reg_tensor<uint16_t>;
-    using src_type = asc::te::reg_tensor<uint8_t>;
-    static_assert(std::is_same_v<decltype(asc::te::experimental::histograms(
-        std::declval<const dst_type&>(), std::declval<const src_type&>())), dst_type>);
-    static_assert(std::is_same_v<decltype(asc::te::experimental::histograms<frequency_high_options>(
-        std::declval<const dst_type&>(), std::declval<const src_type&>())), dst_type>);
-    static_assert(std::is_same_v<decltype(asc::te::experimental::histograms<cumulative_low_options>(
-        std::declval<const dst_type&>(), std::declval<const src_type&>())), dst_type>);
-    static_assert(std::is_same_v<decltype(asc::te::experimental::histograms<cumulative_high_options>(
-        std::declval<const dst_type&>(), std::declval<const src_type&>())), dst_type>);
+    using dst_type = asc::te::experimental::reg_tensor<uint16_t>;
+    using src_type = asc::te::experimental::reg_tensor<uint8_t>;
+    static_assert(AscendC::Std::is_same_v<decltype(asc::te::experimental::histograms(
+        AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())), dst_type>);
+    static_assert(AscendC::Std::is_same_v<decltype(asc::te::experimental::histograms<frequency_high_options>(
+        AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())), dst_type>);
+    static_assert(AscendC::Std::is_same_v<decltype(asc::te::experimental::histograms<cumulative_low_options>(
+        AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())), dst_type>);
+    static_assert(AscendC::Std::is_same_v<decltype(asc::te::experimental::histograms<cumulative_high_options>(
+        AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())), dst_type>);
 }
 
 } // namespace

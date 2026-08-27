@@ -8,12 +8,10 @@
  * See LICENSE in the root of the software repository for the full text of the license.
  */
 
-#include <type_traits>
-#include <utility>
-
 #include <gtest/gtest.h>
 
 #include "tensor_api/stub/cce_stub.h"
+#include "tensor_api/experimental/vector_compute.h"
 #include "tensor_api/tensor.h"
 
 namespace {
@@ -21,58 +19,58 @@ namespace {
 using namespace asc::te::experimental;
 
 template <typename T>
-using reg_type = asc::te::reg_tensor<T>;
+using reg_type = asc::te::experimental::reg_tensor<T>;
 
 template <typename T>
 void check_logical_not()
 {
-    static_assert(std::is_same_v<decltype(!std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(!AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
 }
 
 template <typename T>
 void check_bitwise_and()
 {
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() & std::declval<const reg_type<T>&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() & std::declval<const T&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const T&>() & std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() & AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() & AscendC::Std::declval<const T&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const T&>() & AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
 }
 
 template <typename T>
 void check_bitwise_or()
 {
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() | std::declval<const reg_type<T>&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() | std::declval<const T&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const T&>() | std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() | AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() | AscendC::Std::declval<const T&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const T&>() | AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
 }
 
 template <typename T>
 void check_bitwise_xor()
 {
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() ^ std::declval<const reg_type<T>&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() ^ std::declval<const T&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const T&>() ^ std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() ^ AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() ^ AscendC::Std::declval<const T&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const T&>() ^ AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
 }
 
 template <typename T, typename shift_type>
 void check_shift()
 {
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() << std::declval<const reg_type<shift_type>&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() << std::declval<const int16_t&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() >> std::declval<const reg_type<shift_type>&>()), reg_type<T>>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const reg_type<T>&>() >> std::declval<const int16_t&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() << AscendC::Std::declval<const reg_type<shift_type>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() << AscendC::Std::declval<const int16_t&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() >> AscendC::Std::declval<const reg_type<shift_type>&>()), reg_type<T>>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const reg_type<T>&>() >> AscendC::Std::declval<const int16_t&>()), reg_type<T>>);
 }
 
 TEST(test_tensor_api_logical_compute, compile_public_apis_and_supported_types)
@@ -117,12 +115,12 @@ TEST(test_tensor_api_logical_compute, compile_public_apis_and_supported_types)
     check_bitwise_xor<uint32_t>();
 
     using predicate_type = reg_type<bool>;
-    static_assert(std::is_same_v<decltype(
-        std::declval<const predicate_type&>() & std::declval<const predicate_type&>()), predicate_type>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const predicate_type&>() | std::declval<const predicate_type&>()), predicate_type>);
-    static_assert(std::is_same_v<decltype(
-        std::declval<const predicate_type&>() ^ std::declval<const predicate_type&>()), predicate_type>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const predicate_type&>() & AscendC::Std::declval<const predicate_type&>()), predicate_type>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const predicate_type&>() | AscendC::Std::declval<const predicate_type&>()), predicate_type>);
+    static_assert(AscendC::Std::is_same_v<decltype(
+        AscendC::Std::declval<const predicate_type&>() ^ AscendC::Std::declval<const predicate_type&>()), predicate_type>);
 
     check_shift<int8_t, int8_t>();
     check_shift<uint8_t, int8_t>();

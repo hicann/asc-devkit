@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include "tensor_api_runtime_validation_include.h"
+#include "tensor_api/experimental/vector_compute.h"
 
 namespace {
 
@@ -263,19 +264,19 @@ TEST_F(TensorApiDataStructureStrictValidation, TensorRegisterLoadStoreAndBroadca
 
     alignas(512) __ubuf__ int32_t data[4 * 8] = {};
     auto tensor = make_tensor_at<location::ub>(data, make_frame_layout<nd_layout_ptn, int32_t>(4, 8));
-    reg_tensor<int32_t> value0{};
-    reg_tensor<int32_t> value1{};
+    experimental::reg_tensor<int32_t> value0{};
+    experimental::reg_tensor<int32_t> value1{};
 
-    EXPECT_THROW((void)tensor.load(make_coord(-1, 0)), TrapException);
-    EXPECT_THROW((void)tensor.load(make_coord(0, 8)), TrapException);
-    EXPECT_THROW(tensor.load(make_coord(-1, 0), value0, value1), TrapException);
-    EXPECT_THROW(tensor.load(make_coord(0, 8), value0, value1), TrapException);
-    EXPECT_THROW((void)tensor.load_broadcast(make_coord(-1, 0)), TrapException);
-    EXPECT_THROW((void)tensor.load_broadcast(make_coord(0, 8)), TrapException);
-    EXPECT_THROW(tensor.store(make_coord(-1, 0), value0), TrapException);
-    EXPECT_THROW(tensor.store(make_coord(4, 0), value0), TrapException);
-    EXPECT_THROW(tensor.store(make_coord(-1, 0), value0, value1), TrapException);
-    EXPECT_THROW(tensor.store(make_coord(4, 0), value0, value1), TrapException);
+    EXPECT_THROW((void)experimental::load(tensor, make_coord(-1, 0)), TrapException);
+    EXPECT_THROW((void)experimental::load(tensor, make_coord(0, 8)), TrapException);
+    EXPECT_THROW(experimental::load(tensor, make_coord(-1, 0), value0, value1), TrapException);
+    EXPECT_THROW(experimental::load(tensor, make_coord(0, 8), value0, value1), TrapException);
+    EXPECT_THROW((void)experimental::load_broadcast(tensor, make_coord(-1, 0)), TrapException);
+    EXPECT_THROW((void)experimental::load_broadcast(tensor, make_coord(0, 8)), TrapException);
+    EXPECT_THROW(experimental::store(tensor, make_coord(-1, 0), value0), TrapException);
+    EXPECT_THROW(experimental::store(tensor, make_coord(4, 0), value0), TrapException);
+    EXPECT_THROW(experimental::store(tensor, make_coord(-1, 0), value0, value1), TrapException);
+    EXPECT_THROW(experimental::store(tensor, make_coord(4, 0), value0, value1), TrapException);
 }
 
 } // namespace

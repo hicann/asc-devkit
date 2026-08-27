@@ -2,7 +2,7 @@
 
 ## Overview
 
-This sample demonstrates how to use the Tensor API `asc::te::cast` to perform element-wise data type conversion. Both the input and output are two-dimensional ND tensors with shape `[16, 16]`, containing 256 elements.
+This sample demonstrates how to use the experimental Tensor API `asc::te::experimental::cast` to perform element-wise data type conversion. Both the input and output are two-dimensional ND tensors with shape `[16, 16]`, containing 256 elements.
 
 The sample covers six conversion scenarios between floating-point types and between integer and floating-point types. It also demonstrates the `unpack`, `unpack4`, `pack`, and `pack_quarter` memory access modes used for conversions between types of different widths. The computation is as follows:
 
@@ -93,21 +93,21 @@ y[i] = cast<To, Options>(x[i])
 
     1. Use `asc::te::make_tensor`, `asc::te::make_mem_ptr`, and `asc::te::make_frame_layout` to construct two-dimensional tensors in GM and UB.
     2. Wrap the MTE2 pipeline with `asc_lock/asc_unlock`, and use `asc::te::copy` to move the input from GM to UB.
-    3. Calculate the number of elements processed by each register operation based on the larger width of the source and destination types, and use `asc::te::update_mask` to set the valid-element mask.
+    3. Calculate the number of elements processed by each register operation based on the larger width of the source and destination types, and use `asc::te::experimental::update_mask` to set the valid-element mask.
     4. Use a normal `load` for equal-width conversions, `unpack` or `unpack4` load modes for widening conversions, and `pack` or `pack_quarter` store modes for narrowing conversions.
-    5. Call `asc::te::cast` with C++17 template parameters to perform register data type conversion.
+    5. Call `asc::te::experimental::cast` with C++17 template parameters to perform register data type conversion.
     6. Lock the Vector and MTE3 pipelines in sequence with the same mutex, and then move the result from UB to GM.
 
     The core conversion code is as follows:
 
     ```cpp
-    auto srcReg = src.load(coord);
-    srcReg = srcReg.with_mask(asc::te::update_mask<WiderT>(remain));
+    auto srcReg = asc::te::experimental::load(src, coord);
+    srcReg = srcReg.with_mask(asc::te::experimental::update_mask<WiderT>(remain));
 
-    constexpr asc::te::cast_options options = {
+    constexpr asc::te::experimental::cast_options options = {
         Layout, Round, Sat};
-    auto dstReg = asc::te::cast<DstT, options>(srcReg);
-    dst.store(coord, dstReg);
+    auto dstReg = asc::te::experimental::cast<DstT, options>(srcReg);
+    asc::te::experimental::store(dst, coord, dstReg);
     ```
 
     When the source and destination types have different widths, the sample specifies the corresponding sideband mode for `load` or `store` so that the register data layout matches the conversion instruction.
@@ -133,7 +133,7 @@ Run the following steps in the sample root directory to build and execute the op
   ```bash
   SCENARIO_NUM=1
   mkdir -p build && cd build
-  cmake -DSCENARIO_NUM=1 -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
+  cmake -DSCENARIO_NUM=1 -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   make -j
   python3 ../scripts/gen_data.py -scenarioNum=1
   ./demo
@@ -144,7 +144,7 @@ Run the following steps in the sample root directory to build and execute the op
   To use NPU simulation, add the following build option:
 
   ```bash
-  cmake -DCMAKE_ASC_RUN_MODE=sim -DSCENARIO_NUM=1 ..
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DSCENARIO_NUM=1 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   ```
 
   When switching the run mode, chip model, or scenario, clear the CMake cache in the `build` directory before reconfiguring the project.
@@ -155,6 +155,7 @@ Run the following steps in the sample root directory to build and execute the op
   | --- | --- |
   | `CMAKE_ASC_RUN_MODE` | Operator execution mode. Available values are `npu` and `sim`. The default is `npu`. |
   | `CMAKE_ASC_ARCHITECTURES` | NPU chip model. The default is `dav-3510`. |
+  | `CANN_ASC_USE_EXPERIMENTAL` | Experimental ASC API switch. This sample requires `ON`; the default is `OFF`. |
   | `SCENARIO_NUM` | Required data type conversion scenario number. The valid range is 1 to 6. |
 
 - Expected Result

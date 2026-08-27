@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include "tensor_api/stub/cce_stub.h"
+#include "tensor_api/experimental/vector_compute.h"
 #include "tensor_api/tensor.h"
 
 class TensorApiVectorDataReorder3510 : public testing::Test {};
@@ -18,11 +19,11 @@ class TensorApiVectorDataReorder3510 : public testing::Test {};
 template <typename T>
 __aicore__ inline void TestInterleave()
 {
-    asc::te::reg_tensor<T> src0 {};
-    asc::te::reg_tensor<T> src1 {};
+    asc::te::experimental::reg_tensor<T> src0 {};
+    asc::te::experimental::reg_tensor<T> src1 {};
 
-    auto [dst0, dst1] = asc::te::interleave<T>(src0, src1);
-    auto mask = asc::te::all_mask<uint8_t>();
+    auto [dst0, dst1] = asc::te::experimental::interleave<T>(src0, src1);
+    auto mask = asc::te::experimental::all_mask<uint8_t>();
     EXPECT_EQ(dst0.mask, mask.reg);
     EXPECT_EQ(dst1.mask, mask.reg);
 }
@@ -30,11 +31,11 @@ __aicore__ inline void TestInterleave()
 template <typename T>
 __aicore__ inline void TestDeinterleave()
 {
-    asc::te::reg_tensor<T> src0 {};
-    asc::te::reg_tensor<T> src1 {};
+    asc::te::experimental::reg_tensor<T> src0 {};
+    asc::te::experimental::reg_tensor<T> src1 {};
     
-    auto mask = asc::te::all_mask<uint8_t>();
-    auto [dst0, dst1] = asc::te::deinterleave<T>(src0, src1);
+    auto mask = asc::te::experimental::all_mask<uint8_t>();
+    auto [dst0, dst1] = asc::te::experimental::deinterleave<T>(src0, src1);
     EXPECT_EQ(dst0.mask, mask.reg);
     EXPECT_EQ(dst1.mask, mask.reg);
 }

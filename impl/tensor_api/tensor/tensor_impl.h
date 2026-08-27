@@ -263,6 +263,9 @@ base_tensor<EngineT, LayoutT>::make_sub_tensor(const SliceEngine& slice_engine, 
 }
 
 template <typename EngineT, typename LayoutT>
+__aicore__ inline local_tensor<EngineT, LayoutT>::local_tensor() = default;
+
+template <typename EngineT, typename LayoutT>
 __aicore__ inline global_tensor<EngineT, LayoutT>::global_tensor() = default;
 
 template <typename EngineT, typename LayoutT>

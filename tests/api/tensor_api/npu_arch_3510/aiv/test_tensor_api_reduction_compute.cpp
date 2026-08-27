@@ -8,19 +8,19 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include <type_traits>
-
 #include <gtest/gtest.h>
 
 #include "tensor_api/stub/cce_stub.h"
+#include "tensor_api/experimental/vector_compute.h"
 #include "tensor_api/tensor.h"
 
 namespace asc {
 namespace te {
+namespace experimental {
 
-static_assert(std::is_same_v<decltype(reduce_sum<float>(reg_tensor<float>{})), reg_tensor<float>>);
-static_assert(std::is_same_v<decltype(reduce_max<int16_t>(reg_tensor<int16_t>{})), reg_tensor<int16_t>>);
-static_assert(std::is_same_v<decltype(reduce_min<uint32_t>(reg_tensor<uint32_t>{})), reg_tensor<uint32_t>>);
+static_assert(AscendC::Std::is_same_v<decltype(reduce_sum<float>(reg_tensor<float>{})), reg_tensor<float>>);
+static_assert(AscendC::Std::is_same_v<decltype(reduce_max<int16_t>(reg_tensor<int16_t>{})), reg_tensor<int16_t>>);
+static_assert(AscendC::Std::is_same_v<decltype(reduce_min<uint32_t>(reg_tensor<uint32_t>{})), reg_tensor<uint32_t>>);
 
 __aicore__ inline void compile_reg_reduction(reg_tensor<float> float_src, reg_tensor<int16_t> int16_src)
 {
@@ -51,5 +51,6 @@ TEST(test_tensor_api_reduction_compute, compiles_supported_scopes)
     (void)compile_reduction;
 }
 
+} // namespace experimental
 } // namespace te
 } // namespace asc

@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include "tensor_api/stub/cce_stub.h"
+#include "tensor_api/experimental/vector_compute.h"
 #include "tensor_api/tensor.h"
 
 class TensorApiVectorCompareAndSelect3510 : public testing::Test {};
@@ -18,20 +19,21 @@ class TensorApiVectorCompareAndSelect3510 : public testing::Test {};
 template <typename T>
 __aicore__ inline void TestSelect()
 {
-    asc::te::reg_tensor<bool> condition {};
-    asc::te::reg_tensor<T> src0 {};
-    asc::te::reg_tensor<T> src1 {};
-    src0.mask = asc::te::all_mask<T>().reg;
+    asc::te::experimental::reg_tensor<bool> condition {};
+    asc::te::experimental::reg_tensor<T> src0 {};
+    asc::te::experimental::reg_tensor<T> src1 {};
+    src0.mask = asc::te::experimental::all_mask<T>().reg;
 
-    auto dst = asc::te::select(condition, src0, src1);
+    auto dst = asc::te::experimental::select(condition, src0, src1);
+    static_assert(AscendC::Std::is_same_v<decltype(dst), asc::te::experimental::reg_tensor<T>>);
     EXPECT_EQ(dst.mask, src0.mask);
 }
 
 template <typename T>
 __aicore__ inline void TestCompareRegTensor()
 {
-    asc::te::reg_tensor<T> src0 {};
-    asc::te::reg_tensor<T> src1 {};
+    asc::te::experimental::reg_tensor<T> src0 {};
+    asc::te::experimental::reg_tensor<T> src1 {};
 
     auto eq = src0 == src1;
     auto ne = src0 != src1;
@@ -50,7 +52,7 @@ __aicore__ inline void TestCompareRegTensor()
 template <typename T>
 __aicore__ inline void TestCompareScalar()
 {
-    asc::te::reg_tensor<T> src {};
+    asc::te::experimental::reg_tensor<T> src {};
     T scalar {};
 
     auto eq = src == scalar;

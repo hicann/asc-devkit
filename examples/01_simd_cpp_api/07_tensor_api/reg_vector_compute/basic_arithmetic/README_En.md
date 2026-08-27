@@ -82,7 +82,7 @@ Run the following steps in the sample root directory to build and execute the sa
 
   ```bash
   mkdir -p build && cd build
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   make -j
   python3 ../scripts/gen_data.py
   ./demo
@@ -95,6 +95,7 @@ Run the following steps in the sample root directory to build and execute the sa
   |--------|-------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation. |
   | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. |
+  | `CANN_ASC_USE_EXPERIMENTAL` | `ON` (required), `OFF` (default) | Enables experimental ASC APIs. |
 
 - Execution result.
 

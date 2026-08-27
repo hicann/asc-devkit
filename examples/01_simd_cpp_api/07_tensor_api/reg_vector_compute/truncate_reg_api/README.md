@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例介绍如何使用实验性寄存器 Tensor API `asc::te::trunc` 对浮点输入执行逐元素向零取整。样例输入和输出均为 `[16, 16]` 的二维 ND Tensor，共包含256个元素，输入与输出数据类型保持一致。
+本样例介绍如何使用实验性寄存器 Tensor API `asc::te::experimental::trunc` 对浮点输入执行逐元素向零取整。样例输入和输出均为 `[16, 16]` 的二维 ND Tensor，共包含256个元素，输入与输出数据类型保持一致。
 
 计算关系如下：
 
@@ -89,19 +89,19 @@ y[i] = trunc(x[i])
 
     1. 使用 `asc::te::make_tensor`、`asc::te::make_mem_ptr` 和 `asc::te::make_frame_layout` 构造GM、UB上的二维Tensor。
     2. 使用 `asc_lock/asc_unlock` 包围MTE2流水，通过 `asc::te::copy` 将输入从GM搬运到UB。
-    3. 根据寄存器字节数和元素类型大小计算单次处理元素数，使用 `asc::te::all_mask<T>()` 生成全有效掩码。
-    4. 使用Tensor的 `load` 接口将UB数据加载到 `asc::te::reg_tensor<T>`，调用 `asc::te::trunc` 向零取整，再通过Tensor的 `store` 接口写回UB。
+    3. 根据寄存器字节数和元素类型大小计算单次处理元素数，使用 `asc::te::experimental::all_mask<T>()` 生成全有效掩码。
+    4. 使用 `asc::te::experimental::load` 将UB数据加载到寄存器，调用 `asc::te::experimental::trunc` 向零取整，再通过 `asc::te::experimental::store` 写回UB。
     5. 使用同一个mutex依次锁定Vector和MTE3流水，再将结果从UB搬运回GM。
 
     核心计算代码如下：
 
     ```cpp
     const auto coord = asc::te::make_coord(offset / columnCount, offset % columnCount);
-    auto srcReg = src.load(coord);
-    srcReg.with_mask(asc::te::all_mask<T>());
+    auto srcReg = asc::te::experimental::load(src, coord);
+    srcReg.with_mask(asc::te::experimental::all_mask<T>());
 
-    auto dstReg = asc::te::trunc(srcReg);
-    dst.store(coord, dstReg);
+    auto dstReg = asc::te::experimental::trunc(srcReg);
+    asc::te::experimental::store(dst, coord, dstReg);
     ```
 
   - 调用实现
@@ -129,7 +129,7 @@ y[i] = trunc(x[i])
   ```bash
   SCENARIO_NUM=1
   mkdir -p build && cd build
-  cmake -DSCENARIO_NUM=${SCENARIO_NUM} -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
+  cmake -DSCENARIO_NUM=${SCENARIO_NUM} -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   make -j
   python3 ../scripts/gen_data.py -scenarioNum=${SCENARIO_NUM}
   ./demo
@@ -140,7 +140,7 @@ y[i] = trunc(x[i])
   使用NPU仿真时，可分别增加以下编译选项：
 
   ```bash
-  cmake -DCMAKE_ASC_RUN_MODE=sim -DSCENARIO_NUM=${SCENARIO_NUM} ..
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DSCENARIO_NUM=${SCENARIO_NUM} -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   ```
 
   切换运行模式、芯片型号或场景时，建议清除 `build` 目录中的CMake缓存后重新配置。
@@ -151,6 +151,7 @@ y[i] = trunc(x[i])
   | --- | --- |
   | `CMAKE_ASC_RUN_MODE` | 算子执行模式，可选 `npu`、`sim`，默认值为 `npu`。 |
   | `CMAKE_ASC_ARCHITECTURES` | NPU芯片型号，默认值为 `dav-3510`。 |
+  | `CANN_ASC_USE_EXPERIMENTAL` | 实验性ASC接口开关，本样例必须设为 `ON`，默认值为 `OFF`。 |
   | `SCENARIO_NUM` | 数据类型场景编号，必选，取值范围为1至3。 |
 
 - 执行结果
