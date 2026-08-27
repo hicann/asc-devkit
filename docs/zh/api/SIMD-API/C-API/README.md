@@ -42,7 +42,7 @@ NPU内部有不同的计算单元，在计算时往往需要把计算数据搬�
 - PIPE_M：矩阵计算流水线。
 - PIPE_MTE1：搬运操作。包括从L1 Buffer到L0A Buffer或L0B Buffer，从L1 Buffer到UB的搬运操作和L0A Buffer或L0B Buffer的初始化操作。
 - PIPE_MTE2：搬运操作。包括从GM到L1 Buffer、从GM到L0A Buffer或L0B Buffer、从GM到UB的搬运操作和L1 Buffer的初始化操作。
-- PIPE_MTE3：搬运操作。包括从UB到GM、从UB到L1 Buffer的操作和从UB到UB的搬运操作。
+- PIPE_MTE3：搬运操作。包括从UB到GM、从UB到L1 Buffer、从L1 Buffer到GM的操作和从UB到UB的搬运操作。
 - PIPE_FIX：Fixpipe流水线。
 - PIPE_ALL：所有流水线。
 
