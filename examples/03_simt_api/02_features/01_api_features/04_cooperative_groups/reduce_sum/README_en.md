@@ -2,7 +2,7 @@
 
 ## Overview
 
-This sample demonstrates the basic usage of the [cooperative groups API](../../../../../../docs/zh/api/SIMT-API/cooperative_groups/cooperative_groups.md) through reduction sum operations, highlighting the code abstraction capabilities provided by cooperative groups.
+This sample demonstrates the basic usage of the [cooperative groups API](../../../../../../docs/zh/api/SIMT-API/cooperative_groups/cooperative_groups_intro.md) through reduction sum operations, highlighting the code abstraction capabilities provided by cooperative groups.
 
 
 ## Supported Products

@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例通过归约求和算子展现[协作组API](../../../../../../docs/zh/api/SIMT-API/cooperative_groups/cooperative_groups.md)的基本用法，重点呈现了协作组提供的代码抽象能力。
+本样例通过归约求和算子展现[协作组API](../../../../../../docs/zh/api/SIMT-API/cooperative_groups/cooperative_groups_intro.md)的基本用法，重点呈现了协作组提供的代码抽象能力。
 ## 支持的产品
 
 - Ascend 950PR/Ascend 950DT

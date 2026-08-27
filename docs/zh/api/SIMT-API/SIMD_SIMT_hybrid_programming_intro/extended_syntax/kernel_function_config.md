@@ -81,7 +81,7 @@ __aicore__ inline void asc_vf_call(dim3 threadNums, Args &&...args)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| threadNums | 输入 | [dim3类型](./builtin_data_types.md#)，用于指定SIMT线程块内线程数量。线程总数为x * y * z，该值的大小必须小于等于2048，建议为32的倍数。 |
+| threadNums | 输入 | [dim3类型](./builtin_data_types.md#dim3)，用于指定SIMT线程块内线程数量。线程总数为x * y * z，该值的大小必须小于等于2048，建议为32的倍数。 |
 | args | 输入 | 可变参数，用于传递实参到SIMT入口核函数（Kernel）。 |
 
 以下示例展示了SIMD与SIMT混合编程场景下如何使用asc\_vf\_call调用\_\_simt\_vf\_\_函数。
