@@ -14,6 +14,7 @@ add_executable(ascendc_ut_aicpu_api
     ${ASCENDC_DIR}/tests/main.cpp
     ${ASCENDC_DIR}/impl/aicpu_api/aicpu_dump.cpp
     test_aicpu_dump.cpp
+    test_aicpu_dump_fifo.cpp
 )
 
 target_compile_definitions(ascendc_ut_aicpu_api PRIVATE
@@ -38,6 +39,8 @@ target_link_libraries(ascendc_ut_aicpu_api PRIVATE
     c_sec
     -Wl,--as-needed
 )
+
+target_link_options(ascendc_ut_aicpu_api PRIVATE "-Wl,--wrap=malloc")
 
 run_llt_test(
     TARGET ascendc_ut_aicpu_api
