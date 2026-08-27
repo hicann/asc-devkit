@@ -1,7 +1,7 @@
 # duplicate样例
 
 ## 概述
-本样例基于C API编程接口实现Duplicate运算（标量填充模式），主要调用[asc_duplicate_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_fill/asc_duplicate_scalar.md)接口。
+本样例基于C API编程接口实现Duplicate运算（标量填充模式），主要调用[asc_duplicate_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_broadcast/asc_duplicate_scalar.md)接口。
 - `asc_duplicate_scalar(矢量数据寄存器dst, scalar, mask)` 接口将一个标量值复制多次并填充到向量中
 - `asc_duplicate(矢量数据寄存器dst, 矢量数据寄存器src, mask)` 接口将源矢量数据寄存器的第一个元素复制多次并填充到向量中
 

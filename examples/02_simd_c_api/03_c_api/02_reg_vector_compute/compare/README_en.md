@@ -1,7 +1,7 @@
 # compare Example
 
 ## Overview
-This example implements data comparison functionality across multiple scenarios using the [asc_gt](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_gt.md) and [asc_gt_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_gt_scalar.md) APIs based on the C API programming interface.
+This example implements data comparison functionality across multiple scenarios using the [asc_gt](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_compare/asc_gt.md) and [asc_gt_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_compare/asc_gt_scalar.md) APIs based on the C API programming interface.
 This example supports two comparison scenarios. Select a scenario through the CMake build parameter `SCENARIO_NUM`.
   | SCENARIO_NUM | Comparison Scenario |
   | --- | --- |

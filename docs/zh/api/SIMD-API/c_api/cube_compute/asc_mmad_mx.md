@@ -129,7 +129,7 @@ PIPE_M
 
 - 本接口仅在AIC上生效，在AIV上调用将直接返回。
 - `left_height`、`n_dim`、`right_width`中的任意一个值为0时，接口将被视为NOP（空操作）。
-- 调用本接口前，需通过[asc_copy_l12l0a_mx](../cube_data_move/asc_copy_l12l0a_mx.md)和[asc_copy_l12l0b_mx](../cube_data_move/asc_copy_l12l0b_mx.md)等接口，将ScaleA和ScaleB矩阵分别搬入L0A_MX Buffer和L0B_MX Buffer。ScaleA和ScaleB矩阵的数据类型必须为`fp8_e8m0_t`，K方向上每个Scale元素对应32个输入矩阵元素。
+- 调用本接口前，需通过[asc_copy_l12l0a_mx](../cube_datamove/asc_copy_l12l0a_mx.md)和[asc_copy_l12l0b_mx](../cube_datamove/asc_copy_l12l0b_mx.md)等接口，将ScaleA和ScaleB矩阵分别搬入L0A_MX Buffer和L0B_MX Buffer。ScaleA和ScaleB矩阵的数据类型必须为`fp8_e8m0_t`，K方向上每个Scale元素对应32个输入矩阵元素。
 
 - 内存使用约束说明：
 
@@ -148,12 +148,12 @@ PIPE_M
 - UnitFlag约束说明：
 
   - 开启UnitFlag时，矩阵乘加指令与对应矩阵搬出指令需同时开启UnitFlag。当希望同一块L0C Buffer内存空间能持续只被多条矩阵乘加指令或多条矩阵搬出指令操作时，需将前n-1条指令的unitFlag值设置为2，维持被操作内存空间的持续占用状态，最后一条指令设置为3，解除被占用状态。
-  - 开启UnitFlag时，矩阵计算方向需与矩阵搬出读取顺序保持一致。矩阵搬出指令开启Nz2ND随路格式转换，或未进行随路格式转换但开启B8/B4量化并触发Channel Merge功能时，调用[asc_set_mmad_direction_n](./asc_set_mmad_direction_n.md)；其他场景调用[asc_set_mmad_direction_m](./asc_set_mmad_direction_m.md)。
-  - 开启UnitFlag时，建议矩阵乘加的计算数据量与矩阵搬出的数据量保持一致。两者不一致可能导致执行异常。需要清除UnitFlag产生的残留状态时，可调用[asc_set_l0c2gm_config](./asc_set_l0c2gm_config.md)，并将`enable_unit_flag`设置为true，将L0C Buffer中所有内存块的单元标志位设置为0并关闭UnitFlag。
+  - 开启UnitFlag时，矩阵计算方向需与矩阵搬出读取顺序保持一致。矩阵搬出指令开启Nz2ND随路格式转换，或未进行随路格式转换但开启B8/B4量化并触发Channel Merge功能时，调用[asc_set_mmad_direction_n](asc_set_mmad_direction_n.md)；其他场景调用[asc_set_mmad_direction_m](asc_set_mmad_direction_m.md)。
+  - 开启UnitFlag时，建议矩阵乘加的计算数据量与矩阵搬出的数据量保持一致。两者不一致可能导致执行异常。需要清除UnitFlag产生的残留状态时，可调用[asc_set_l0c2gm_config](../cube_datamove/asc_set_l0c2gm_config.md)，并将`enable_unit_flag`设置为true，将L0C Buffer中所有内存块的单元标志位设置为0并关闭UnitFlag。
 
 - 特殊值/边界值约束说明：
 
-  浮点类型的输入或输出包含inf/nan时，可通过[asc_set_ctrl](../sys_var/asc_set_ctrl.md)接口配置CTRL寄存器的CTRL\[48\]比特位控制计算时的模式：
+  浮点类型的输入或输出包含inf/nan时，可通过[asc_set_ctrl](../spr/asc_set_ctrl.md)接口配置CTRL寄存器的CTRL\[48\]比特位控制计算时的模式：
 
   - 设置为0时使用饱和模式，inf输出饱和为±MAX、nan输出饱和为0；
   - 设置为1时使用非饱和模式，inf/nan保持原输出。

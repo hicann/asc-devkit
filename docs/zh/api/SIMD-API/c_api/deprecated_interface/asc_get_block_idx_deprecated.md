@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口已废弃，请使用[内置变量block_idx](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#内置变量)结合[asc_get_sub_block_num](../sys_var/asc_get_sub_block_num.md)和[asc_get_sub_block_id](../sys_var/asc_get_sub_block_id.md)接口替代。**
+**该接口已废弃，请使用[内置变量block_idx](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#内置变量)结合[asc_get_sub_block_num](../utils/sys_var/asc_get_sub_block_num.md)和[asc_get_sub_block_id](../utils/sys_var/asc_get_sub_block_id.md)接口替代。**
 
 获取当前运行核（逻辑核）的索引。替代时需按逻辑位置计算：
 

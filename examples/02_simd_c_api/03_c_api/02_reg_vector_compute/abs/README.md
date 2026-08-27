@@ -1,7 +1,7 @@
 # abs样例
 
 ## 概述
-本样例基于C API编程接口实现Abs运算，主要调用[asc_abs](../../../../../docs/zh/api/SIMD-API/c_api/reg/arithmetic_compute/asc_abs.md)接口。
+本样例基于C API编程接口实现Abs运算，主要调用[asc_abs](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_abs.md)接口。
 以下单目运算的接口皆参考本样例：
 - asc_relu
 - asc_exp

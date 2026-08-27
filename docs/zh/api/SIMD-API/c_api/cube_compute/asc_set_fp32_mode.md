@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-本接口用于设置Mmad计算关闭HF32模式，其作用与[asc_enable_hf32](./asc_enable_hf32.md)相反，两个接口不同时生效。关闭HF32模式后，L0A Buffer与L0B Buffer中的`float`数据在参与Mmad计算之前不做舍入处理。
+本接口用于设置Mmad计算关闭HF32模式，其作用与[asc_enable_hf32](asc_enable_hf32.md)相反，两个接口不同时生效。关闭HF32模式后，L0A Buffer与L0B Buffer中的`float`数据在参与Mmad计算之前不做舍入处理。
 
 ## 函数原型
 
@@ -48,8 +48,8 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口需在矩阵乘加指令（[asc_mmad](./asc_mmad.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
-- FP32模式启用后会持续生效，不会自动关闭。后续矩阵乘加指令若不显式重新配置，将沿用当前模式。如需开启HF32模式，请重新调用[asc_enable_hf32](./asc_enable_hf32.md)接口。
+- 本接口需在矩阵乘加指令（[asc_mmad](asc_mmad.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
+- FP32模式启用后会持续生效，不会自动关闭。后续矩阵乘加指令若不显式重新配置，将沿用当前模式。如需开启HF32模式，请重新调用[asc_enable_hf32](asc_enable_hf32.md)接口。
 
 <!-- npu="950" id8 -->
 ## 调用示例

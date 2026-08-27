@@ -1,0 +1,20 @@
+# Reg矢量计算
+
+- **[Reg数据搬入](load/load.md)**
+- **[Reg聚合搬入](gather/gather.md)**
+- **[Reg数据搬出](store/store.md)**
+- **[Reg离散搬出](scatter/scatter.md)**
+- **[Reg间搬运](reg_copy/reg_copy.md)**
+- **[基础算术](reg_arith/reg_arith.md)**
+- **[逻辑计算](reg_logic/reg_logic.md)**
+- **[归约计算](reg_reduce/reg_reduce.md)**
+- **[广播操作](reg_broadcast/reg_broadcast.md)**
+- **[复合计算](reg_fused/reg_fused.md)**
+- **[比较计算](reg_compare/reg_compare.md)**
+- **[排布变换](reg_permute_sel/reg_permute_sel.md)**
+- **[索引操作](reg_index/reg_index.md)**
+- **[直方图](reg_histogram/reg_histogram.md)**
+- **[掩码寄存器操作](reg_mask/reg_mask.md)**
+- **[地址寄存器操作](reg_addr_reg/reg_addr_reg.md)**
+- **[类型转换](reg_convert/reg_convert.md)**
+- **[同步控制](reg_sync/reg_sync.md)**

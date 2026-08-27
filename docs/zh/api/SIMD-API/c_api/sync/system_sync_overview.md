@@ -2,7 +2,7 @@
 
 在编程中，同步是指协调多个执行单元（如线程、进程等）对共享资源的访问顺序和时机来确保程序的正确性。如果没有同步来严格控制执行顺序，则会出现结果不一致、行为不可预测等多种问题。
 
-AI Core的同步，总共分成2类：[核内同步](./intra_core_sync_overview.md)、[核间同步](./inter_core_sync_overview.md)。各类同步对应的接口如下。
+AI Core的同步，总共分成2类：[核内同步](intra_core_sync_overview.md)、[核间同步](inter_core_sync_overview.md)。各类同步对应的接口如下。
 
 **表1**  核内同步接口
 

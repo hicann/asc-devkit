@@ -26,9 +26,9 @@
 
 ## 功能说明
 
-**该接口已废弃，请使用[asc_set_atomic_add_int32](../simd_atomic/asc_set_atomic_add.md)替代。**
+**该接口已废弃，请使用[asc_set_atomic_add_int32](../atomic/datamove_atomic/asc_set_atomic_add.md)替代。**
 
-头文件路径：`"c_api/atomic/atomic.h"`。
+头文件路径：`"c_api/atomic/datamove_atomic.h"`。
 
 设置对后续的从Unified Buffer（UB）/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。
 
@@ -53,9 +53,9 @@ PIPE_S
 
 ## 约束说明
 
-- 使用完成后，建议清空原子操作的状态（详见[asc_set_atomic_none](../simd_atomic/asc_set_atomic_none.md)），以免影响后续相关指令功能。
+- 使用完成后，建议清空原子操作的状态（详见[asc_set_atomic_none](../atomic/datamove_atomic/asc_set_atomic_none.md)），以免影响后续相关指令功能。
 - 该指令执行前不会对GM的数据做清零操作，开发者需在需要时手动添加清零操作。
 
 ## 调用示例
 
-请参考[asc_set_atomic_add](../simd_atomic/asc_set_atomic_add.md)的调用示例。
+请参考[asc_set_atomic_add](../atomic/datamove_atomic/asc_set_atomic_add.md)的调用示例。

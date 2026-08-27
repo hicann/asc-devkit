@@ -1,7 +1,7 @@
 # cast样例
 
 ## 概述
-本样例基于C API编程接口实现Cast运算，主要调用[asc_half2int32_rd](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_half2int32.md)/[asc_float2int16_rna_sat](../../../../../docs/zh/api/SIMD-API/c_api/reg/data_type_convert/asc_float2int16.md)接口实现数据类型转换。  
+本样例基于C API编程接口实现Cast运算，主要调用[asc_half2int32_rd](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_half2int32.md)/[asc_float2int16_rna_sat](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_float2int16.md)接口实现数据类型转换。
 本样例支持两种数据类型转换场景，通过 CMake 编译参数 `SCENARIO_NUM` 选择场景。
   | SCENARIO_NUM | 数据类型转换 |
   | --- | --- |

@@ -32,14 +32,14 @@
 
 如上图所示：
 
-DMA搬运单元读写Global Memory，数据通过[asc_copy_ub2gm](../vector_data_move/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_data_move/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在Unified Buffer（UB）等Local Memory和Global Memory间交互，没有Cache一致性问题；
+DMA搬运单元读写Global Memory，数据通过[asc_copy_ub2gm](../vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在Unified Buffer（UB）等Local Memory和Global Memory间交互，没有Cache一致性问题；
 Scalar单元访问Global Memory，首先会访问每个核内的Data Cache，因此存在Data Cache与Global Memory的Cache一致性问题。
 该接口用来刷新Cache，保证Cache的一致性，使用场景如下：
 
 读取Global Memory的数据，但该数据可能在外部被其余核修改，此时需要使用asc_dcci接口，直接访问Global Memory，获取最新数据；
 用户通过Scalar单元写Global Memory的数据，希望立刻写出，也需要使用asc_dcci接口。
 
-Scalar单元访问UB数据时，该接口需配合[asc_set_ctrl()](../sys_var/asc_set_ctrl.md)接口使用，将CTRL[49]设置为1'b1，开启datacache模式。
+Scalar单元访问UB数据时，该接口需配合[asc_set_ctrl()](../spr/asc_set_ctrl.md)接口使用，将CTRL[49]设置为1'b1，开启datacache模式。
 
 <!-- npu="950" id8 -->
 针对Ascend 950PR/Ascend 950DT，不支持asc_dcci_entire_ub接口。

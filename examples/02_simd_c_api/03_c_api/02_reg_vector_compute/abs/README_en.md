@@ -1,7 +1,7 @@
 # abs Example
 
 ## Overview
-This example implements the Abs operation based on the C API programming interface, primarily calling the [asc_abs](../../../../../docs/zh/api/SIMD-API/c_api/reg/arithmetic_compute/asc_abs.md) API.
+This example implements the Abs operation based on the C API programming interface, primarily calling the [asc_abs](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_abs.md) API.
 - The asc_relu/asc_exp/asc_sqrt/asc_ln/asc_neg APIs can all refer to this example
 
 ## Supported Products and CANN Versions

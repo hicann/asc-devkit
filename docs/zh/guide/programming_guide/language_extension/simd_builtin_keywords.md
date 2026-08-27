@@ -444,8 +444,8 @@ __ubuf__ int * __gm__ ptr;
 |------|------|---------|
 | block_num | 当前任务配置的核数。 | 内置变量。 |
 | block_idx | 当前组合的索引。对于纯Cube场景，一个组合中有一个Cube Core；对于纯Vector场景，一个组合中有一个Vector Core；对于Mix（1,1）场景，一个组合中有一个Cube Core和一个Vector Core；对于Mix（1,2）场景，一个组合中有一个Cube Core和两个Vector Core。 | 内置变量。 |
-| sub_block_num | 组合中当前类型的核的数量。 | 非内置变量，通过[GetSubBlockNum](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetSubBlockNum_ISASI.md)或[asc_get_sub_block_num](../../../api/SIMD-API/c_api/sys_var/asc_get_sub_block_num.md)获取。 |
-| sub_block_idx | 当前核在组合内的位置。 | 非内置变量，通过[GetSubBlockIdx](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetSubBlockIdx_ISASI.md)或[asc_get_sub_block_id](../../../api/SIMD-API/c_api/sys_var/asc_get_sub_block_id.md)获取。 |
+| sub_block_num | 组合中当前类型的核的数量。 | 非内置变量，通过[GetSubBlockNum](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetSubBlockNum_ISASI.md)或[asc_get_sub_block_num](../../../api/SIMD-API/c_api/utils/sys_var/asc_get_sub_block_num.md)获取。 |
+| sub_block_idx | 当前核在组合内的位置。 | 非内置变量，通过[GetSubBlockIdx](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetSubBlockIdx_ISASI.md)或[asc_get_sub_block_id](../../../api/SIMD-API/c_api/utils/sys_var/asc_get_sub_block_id.md)获取。 |
 
 
 

@@ -1,7 +1,7 @@
 # muls Example
 
 ## Overview
-This example implements the Muls operation based on the C API programming interface, primarily calling the [asc_mul_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg/arithmetic_compute/asc_mul_scalar.md) API.
+This example implements the Muls operation based on the C API programming interface, primarily calling the [asc_mul_scalar](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_mul_scalar.md) API.
 - The asc_add_scalar/asc_max_scalar/asc_min_scalar APIs can all refer to this example
 
 ## Supported Products and CANN Versions

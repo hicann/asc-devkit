@@ -1,7 +1,7 @@
 # select Example
 
 ## Overview
-This example implements the Select operation based on the C API programming interface, primarily calling the [asc_select](../../../../../docs/zh/api/SIMD-API/c_api/reg/compare_and_select/asc_select.md) API.
+This example implements the Select operation based on the C API programming interface, primarily calling the [asc_select](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_select.md) API.
 
 ## Supported Products and CANN Versions
 

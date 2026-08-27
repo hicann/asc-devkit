@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口已废弃。其中asc_loadalign_brc_v2请使用[asc_loadalign_brc_datablock](../reg/reg_load/asc_loadalign_brc_datablock.md)，asc_loadalign_brc_v3请使用[asc_loadalign_brc_elem2datablock](../reg/reg_load/asc_loadalign_brc_elem2datablock.md)，asc_loadalign_unpack_v2请使用[asc_loadalign_unpack4](../reg/reg_load/asc_loadalign_unpack4.md)实现此功能。**
+**该接口已废弃。其中asc_loadalign_brc_v2请使用[asc_loadalign_brc_datablock](../reg_compute/load/asc_loadalign_brc_datablock.md)，asc_loadalign_brc_v3请使用[asc_loadalign_brc_elem2datablock](../reg_compute/load/asc_loadalign_brc_elem2datablock.md)，asc_loadalign_unpack_v2请使用[asc_loadalign_unpack4](../reg_compute/load/asc_loadalign_unpack4.md)实现此功能。**
 
 对齐数据搬运接口，从Unified Buffer（UB）连续对齐搬入目的操作数，支持多种搬入模式，接口不传入偏移，需要由用户自行更新源操作数的地址。
 
@@ -83,7 +83,7 @@ __simd_callee__ inline void asc_loadalign_brc_v3(vector_float& dst, __ubuf__ flo
 | dst       | 输出    | 目的操作数（矢量数据寄存器）。            |
 | src | 输入    | 源操作数（矢量）的起始地址。            |
 
-矢量数据寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
+矢量数据寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 

@@ -220,7 +220,7 @@ T6                                                Scalar.LOAD A -> 1
 <!-- npu="950" id3 -->
 #### Atomic访问导致的DCache缓存一致性
 
-[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持Scalar原子操作，Scalar原子操作可以看成对某个GM地址执行的读-改-写事件，但是Scalar原子操作会绕过DCache，因此会导致缓存一致性。例如C API [asc_atomic_add](../../../../api/SIMD-API/c_api/scalar_compute/asc_atomic_add.md)，该接口在指定GM地址上执行原子加操作。原子操作保证的是这一次读-改-写不会被其他原子更新打断，但它不会自动清理同一地址在DCache中的旧副本或Dirty副本。
+[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持Scalar原子操作，Scalar原子操作可以看成对某个GM地址执行的读-改-写事件，但是Scalar原子操作会绕过DCache，因此会导致缓存一致性。例如C API [asc_atomic_add](../../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)，该接口在指定GM地址上执行原子加操作。原子操作保证的是这一次读-改-写不会被其他原子更新打断，但它不会自动清理同一地址在DCache中的旧副本或Dirty副本。
 
 因此，如果同一GM地址此前被普通Scalar路径访问过，就需要分析原子事件和DCache事件的一致性问题：
 
@@ -343,7 +343,7 @@ RAW（Read After Write）场景要求后序读操作读取到前序写操作产�
 
 下表列出同一AI Core内Scalar写GM之后、消费者读取GM完整的软件维护操作序列。假设生产者和消费者访问同一地址，每个单元格都是从写后处理到读前处理的完整操作序列。
 
-表中的cache表示经过cache的访问，no cache表示不经过cache的访问,`VF_SIMT`表示经过cache的SIMT线程函数，MTE2表示经过MTE2的读取操作，MTE2（cache）指[多维数据搬运NDDMA](../../../../api/SIMD-API/c_api/vector_data_move/asc_ndim_copy_gm2ub.md)，MTE2.DCI指NDDMA Cache的[失效操作](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/NdDmaDci.md)或[asc_ndim_copy_dci](../../../../api/appendix/Release_Notes/CANN_9_1_0.md)。
+表中的cache表示经过cache的访问，no cache表示不经过cache的访问,`VF_SIMT`表示经过cache的SIMT线程函数，MTE2表示经过MTE2的读取操作，MTE2（cache）指[多维数据搬运NDDMA](../../../../api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)，MTE2.DCI指NDDMA Cache的[失效操作](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/NdDmaDci.md)或[asc_ndim_copy_dci](../../../../api/appendix/Release_Notes/CANN_9_1_0.md)。
 
 | 后续读取方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE2（cache） | MTE2（no cache） |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -528,7 +528,7 @@ WAR表不要求读端失效Cache副本，因为目标是读取写前旧值；维
 
 ### UB与DCache的缓存一致性
 
-UB与DCache的一致性问题主要出现在Scalar开启DCache模式读取UB的场景：Scalar访问UB路径时可以`CTRL[49]`控制Scalar读取UB时是否通过DCache读取；`CTRL[49] = 1'b0`时，Scalar直接从UB读取；`CTRL[49] = 1'b1`时，Scalar读取UB数据会经过DCache。相关说明见[asc_dcci](../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)和[asc_set_ctrl()](../../../../api/SIMD-API/c_api/sys_var/asc_set_ctrl.md)。
+UB与DCache的一致性问题主要出现在Scalar开启DCache模式读取UB的场景：Scalar访问UB路径时可以`CTRL[49]`控制Scalar读取UB时是否通过DCache读取；`CTRL[49] = 1'b0`时，Scalar直接从UB读取；`CTRL[49] = 1'b1`时，Scalar读取UB数据会经过DCache。相关说明见[asc_dcci](../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)和[asc_set_ctrl()](../../../../api/SIMD-API/c_api/spr/asc_set_ctrl.md)。
 
 #### Scalar以DCache模式访问UB带来的缓存一致性
 
@@ -613,7 +613,7 @@ C API中提供了[`asc_ub_dcci_single`](../../../../api/SIMD-API/c_api/cache_ctr
 
 ### MTE3随路原子操作与DCache一致性
 
-随路原子操作不是单独读取某个地址的Scalar事件，而是改变后续目的地址为GM的数据搬运行为。MTE3负责将UB等核内数据搬出到GM，因此`UB -> GM`是常见的随路原子使用路径。接口说明可参考C API [asc_set_atomic_add](../../../../api/SIMD-API/c_api/simd_atomic/asc_set_atomic_add.md)和[asc_set_atomic_none](../../../../api/SIMD-API/c_api/simd_atomic/asc_set_atomic_none.md)。
+随路原子操作不是单独读取某个地址的Scalar事件，而是改变后续目的地址为GM的数据搬运行为。MTE3负责将UB等核内数据搬出到GM，因此`UB -> GM`是常见的随路原子使用路径。接口说明可参考C API [asc_set_atomic_add](../../../../api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_add.md)和[asc_set_atomic_none](../../../../api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_none.md)。
 
 从一致性角度看，MTE3随路原子的目标是GM，不会自动处理Scalar DCache中已有的副本，因此需要关注以下关系：
 

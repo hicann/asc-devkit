@@ -57,7 +57,7 @@ PIPE_S
 
 ## 调用示例
 
-由于[asc_store_dev](../scalar_compute/asc_store_dev.md)接口向GM写数据时不经过DCache，因此开发者需要考虑如下场景：当GM上地址addr已经在DCache缓存并且其对应的Cache Line标记为"脏"（dirty，表示该数据已被修改但尚未写回到GM）时，开发者应该在asc_store_dev接口之前调用[asc_dcci](../cache_ctrl/asc_dcci.md)接口将addr对应的Cache Line立即写回GM，否则asc_store_dev接口写入addr的数据后续可能被DCache写回的脏数据覆盖。
+由于[asc_store_dev](../scalar_compute/scalar_store/asc_store_dev.md)接口向GM写数据时不经过DCache，因此开发者需要考虑如下场景：当GM上地址addr已经在DCache缓存并且其对应的Cache Line标记为"脏"（dirty，表示该数据已被修改但尚未写回到GM）时，开发者应该在asc_store_dev接口之前调用[asc_dcci](../cache_ctrl/asc_dcci.md)接口将addr对应的Cache Line立即写回GM，否则asc_store_dev接口写入addr的数据后续可能被DCache写回的脏数据覆盖。
 
 asc_dcci接口与asc_store_dev接口向GM写数据时硬件不能保证两个接口的执行顺序，因此开发者应该在asc_store_dev接口之前调用asc_sync_data_barrier接口对这两个接口进行同步，否则asc_store_dev接口写入addr的数据依然可能被DCache写回的脏数据覆盖。
 

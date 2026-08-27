@@ -53,8 +53,8 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口需在矩阵乘加指令（[asc_mmad](./asc_mmad.md)、[asc_mmad_mx](./asc_mmad_mx.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
-- 方向配置一旦写入会持续生效，后续矩阵乘加指令若不显式重新配置，将沿用当前方向配置。如需切换为逐列生成矩阵计算结果分形，请重新调用[asc_set_mmad_direction_m](./asc_set_mmad_direction_m.md)接口。
+- 本接口需在矩阵乘加指令（[asc_mmad](asc_mmad.md)、[asc_mmad_mx](asc_mmad_mx.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
+- 方向配置一旦写入会持续生效，后续矩阵乘加指令若不显式重新配置，将沿用当前方向配置。如需切换为逐列生成矩阵计算结果分形，请重新调用[asc_set_mmad_direction_m](asc_set_mmad_direction_m.md)接口。
 
 <!-- npu="950" id8 -->
 ## 调用示例

@@ -1,7 +1,7 @@
 # mergemode样例
 
 ## 概述
-本样例基于C API编程接口验证MERGING模式的行为特性，演示未激活mask位保留矢量数据寄存器dst原值的机制，使用[asc_copy](../../../../../docs/zh/api/SIMD-API/c_api/reg/reg_load/asc_copy.md)接口进行验证。
+本样例基于C API编程接口验证MERGING模式的行为特性，演示未激活mask位保留矢量数据寄存器dst原值的机制，使用[asc_copy](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_copy/asc_copy.md)接口进行验证。
 
 ## 本样例支持的产品及CANN软件版本
 

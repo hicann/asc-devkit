@@ -1,7 +1,7 @@
 # mul Example
 
 ## Overview
-This example implements element-wise multiplication based on the C API programming interface, primarily calling the [asc_mul](../../../../../docs/zh/api/SIMD-API/c_api/reg/arithmetic_compute/asc_mul.md) API.
+This example implements element-wise multiplication based on the C API programming interface, primarily calling the [asc_mul](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_mul.md) API.
 
 ## Supported Products and CANN Versions
 

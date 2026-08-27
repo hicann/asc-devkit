@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用[asc_int322uint16](../reg/data_type_convert/asc_int322uint16.md)的显式位置参数重载替代。**
+**该接口通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用[asc_int322uint16](../reg_compute/reg_convert/asc_int322uint16.md)的显式位置参数重载替代。**
 
 根据`mask`将`src`中的每个`int32_t`类型元素转换为`uint16_t`类型，并支持不同的饱和模式，结果写入`dst`。由于源操作数与目的操作数类型位宽比为2:1，写入数据时需要将一个`VL`大小的数据分为两部分，根据不同接口选择数据写入索引为奇数的位置或偶数的位置。参考伪代码：
 
@@ -49,7 +49,7 @@ def asc_int322uint16_v2(dst, src, mask):
             dst[2 * i + 1] = 0
 ```
 
-关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../reg/data_type_convert/rounding_mode.md)。
+关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../reg_compute/reg_convert/rounding_mode.md)。
 
 ### 迁移说明
 
@@ -60,7 +60,7 @@ def asc_int322uint16_v2(dst, src, mask):
 | 无位置后缀 | `ASC_POSITION_EVEN` |
 | `_v2` | `ASC_POSITION_ODD` |
 
-迁移时移除函数名中的位置后缀，并将对应位置常量作为第四个参数传入。新原型请参见[asc_int322uint16](../reg/data_type_convert/asc_int322uint16.md)。
+迁移时移除函数名中的位置后缀，并将对应位置常量作为第四个参数传入。新原型请参见[asc_int322uint16](../reg_compute/reg_convert/asc_int322uint16.md)。
 
 ## 函数原型
 
@@ -96,7 +96,7 @@ __simd_callee__ inline void asc_int322uint16(vector_uint16_t& dst,
 | src  | 输入      | 源操作数（矢量数据寄存器）。                                                                                       |
 | mask | 输入      | 掩码寄存器，用于控制各元素是否参与计算。`mask`中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 

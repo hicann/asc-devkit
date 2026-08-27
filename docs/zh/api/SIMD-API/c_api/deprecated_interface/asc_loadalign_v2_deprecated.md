@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口已废弃。其中asc_loadalign_brc_v2请使用[asc_loadalign_brc_datablock](../reg/reg_load/asc_loadalign_brc_datablock.md)，asc_loadalign_brc_v3请使用[asc_loadalign_brc_elem2datablock](../reg/reg_load/asc_loadalign_brc_elem2datablock.md)，asc_loadalign_unpack_v2请使用[asc_loadalign_unpack4](../reg/reg_load/asc_loadalign_unpack4.md)实现此功能。**
+**该接口已废弃。其中asc_loadalign_brc_v2请使用[asc_loadalign_brc_datablock](../reg_compute/load/asc_loadalign_brc_datablock.md)，asc_loadalign_brc_v3请使用[asc_loadalign_brc_elem2datablock](../reg_compute/load/asc_loadalign_brc_elem2datablock.md)，asc_loadalign_unpack_v2请使用[asc_loadalign_unpack4](../reg_compute/load/asc_loadalign_unpack4.md)实现此功能。**
 
 对齐数据搬运接口，从Unified Buffer（UB）连续对齐搬入目的操作数，支持多种搬入模式，接口通过地址寄存器传入偏移，用户可以选择更新偏移或者更新源操作数的地址。
 
@@ -82,9 +82,9 @@ __simd_callee__ inline void asc_loadalign_brc_v3(vector_float& dst, __ubuf__ flo
 | :----- | :------- | :------- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src | 输入 | 源操作数，UB中32B对齐的起始地址。 |
-| offset | 输入 | 地址寄存器，必须通过[asc_update_addr_reg](../reg/reg_data_types/asc_update_addr_reg.md)接口生成，用于记录相对`src`起始地址的偏移，单位为元素个数。 |
+| offset | 输入 | 地址寄存器，必须通过[asc_update_addr_reg](../reg_compute/reg_addr_reg/asc_update_addr_reg.md)接口生成，用于记录相对`src`起始地址的偏移，单位为元素个数。 |
 
-矢量数据寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
+矢量数据寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 

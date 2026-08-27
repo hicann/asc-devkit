@@ -1,7 +1,7 @@
 # arange Example
 
 ## Overview
-This example implements the Arange operation based on the C API programming interface, primarily calling the [asc_arange](../../../../../docs/zh/api/SIMD-API/c_api/reg/index_operate/asc_arange.md) API.
+This example implements the Arange operation based on the C API programming interface, primarily calling the [asc_arange](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_index/asc_arange.md) API.
 - The asc_arange API generates an increasing/decreasing index sequence starting from the provided scalar value
 - This example uses the increasing mode with a starting value of 0
 

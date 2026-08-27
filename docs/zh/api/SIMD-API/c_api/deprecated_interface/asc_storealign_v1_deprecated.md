@@ -1,4 +1,4 @@
-# asc_storealign_pack_v2
+# asc_storealign_pack_v2（废弃）
 
 ## 产品支持情况
 
@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口已废弃。请使用[asc_storealign_pack_quarter](../reg/reg_store/asc_storealign_pack_quarter.md)实现此功能。**
+**该接口已废弃。请使用[asc_storealign_pack_quarter](../reg_compute/store/asc_storealign_pack_quarter.md)实现此功能。**
 
 将矢量数据寄存器中由`mask`指示的有效32bit元素的低8bit数据压缩搬出到Unified Buffer（UB）。本接口不传入偏移量，用户需要自行更新目的操作数地址。
 
@@ -48,7 +48,7 @@ __simd_callee__ inline void asc_storealign_pack_v2(__ubuf__ float* dst_align32b,
 | src | 输入 | 源操作数（矢量数据寄存器）。支持的数据类型为`int32_t`、`uint32_t`、`float`。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示参与搬出的元素。对应位置为1时参与搬出，为0时不参与搬出。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 

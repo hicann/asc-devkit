@@ -48,25 +48,26 @@ NPU内部有不同的计算单元，在计算时往往需要把计算数据搬�
 - PIPE_FIX：Fixpipe流水线。
 - PIPE_ALL：所有流水线。
 
-可通过[同步控制](sync/sync_control.md)类API控制同一流水线内的运行顺序和不同流水线间的执行顺序。
+可通过[同步控制](sync/sync.md)类API控制同一流水线内的运行顺序和不同流水线间的执行顺序。
 
 ## API列表
 
 |      目录      |
 |-----------------------|
-| [数据结构](c_api.md#数据结构) |
-| [矢量计算](c_api.md#矢量计算) |
-| [数据搬运](c_api.md#数据搬运) |
-| [标量操作](c_api.md#标量操作) |
+| [基础定义](c_api.md#基础定义) |
+| [工具接口](c_api.md#工具接口) |
 | [矩阵计算](c_api.md#矩阵计算) |
-| [同步控制](c_api.md#同步控制) |
-| [系统变量](c_api.md#系统变量) |
-| [缓存控制](c_api.md#缓存控制) |
+| [矩阵计算搬运](c_api.md#矩阵计算搬运) |
+| [Memory矢量计算](c_api.md#memory矢量计算) |
+| [矢量数据搬运](c_api.md#矢量数据搬运) |
+| [Reg矢量计算](c_api.md#reg矢量计算) |
+| [标量计算](c_api.md#标量计算) |
 | [原子操作](c_api.md#原子操作) |
+| [缓存控制](c_api.md#缓存控制) |
+| [同步控制](c_api.md#同步控制) |
 | [其他操作](c_api.md#其他操作) |
-| [枚举类型](c_api.md#枚举类型) |
-| [Reg数据搬运](c_api.md#Reg数据搬运) |
-| [Reg矢量计算](c_api.md#Reg矢量计算) |
+| [特殊寄存器访问](c_api.md#特殊寄存器访问) |
+| [废弃接口](deprecated_interface/deprecated_interface.md) |
 
 ## 参考样例
 

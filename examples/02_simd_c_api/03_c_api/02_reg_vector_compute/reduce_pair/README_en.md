@@ -1,7 +1,7 @@
 # reduce_pair Example
 
 ## Overview
-This example implements the PairReduceElem operation based on the C API programming interface, primarily calling the [asc_pair_reduce_sum](../../../../../docs/zh/api/SIMD-API/c_api/reg/reduce_compute/asc_pair_reduce_sum.md) API (SUM mode).
+This example implements the PairReduceElem operation based on the C API programming interface, primarily calling the [asc_pair_reduce_sum](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_reduce/asc_pair_reduce_sum.md) API (SUM mode).
 - The asc_pair_reduce_sum API performs reduction sum on adjacent odd-even element pairs. Currently, only the SUM reduction mode is supported.
 
 

@@ -407,7 +407,7 @@ T3        Scalar.STORE_GM_DCache(flag) = 1
 
 ##### Case 3：前后访问都是不经过DCache的访问
 
-不经过DCache路径直接访问GM，不经过DCache，例如[asc_store_dev](../../../../api/SIMD-API/c_api/scalar_compute/asc_store_dev.md)、[WriteGmByPassDCache](../../../../api/SIMD-API/basic_api/scalar_compute/WriteGmByPassDCache_ISASI.md)、Scalar原子操作等接口。前后访问都不经过DCache时，无论访问同一地址还是不同地址，如果后序操作依赖前序访问已经完成，都需要用户插入DSB等待前序GM访问完成。
+不经过DCache路径直接访问GM，不经过DCache，例如[asc_store_dev](../../../../api/SIMD-API/c_api/scalar_compute/scalar_store/asc_store_dev.md)、[WriteGmByPassDCache](../../../../api/SIMD-API/basic_api/scalar_compute/WriteGmByPassDCache_ISASI.md)、Scalar原子操作等接口。前后访问都不经过DCache时，无论访问同一地址还是不同地址，如果后序操作依赖前序访问已经完成，都需要用户插入DSB等待前序GM访问完成。
 
 同地址WAW场景中，如果期望最终结果以后一次写入为准，不能只依赖代码顺序：
 
@@ -674,7 +674,7 @@ T0        ATOMIC_ADD dst, 1
 结果      GM[dst] = 2
 ```
 
-上例中的`ATOMIC_ADD`可使用[asc_atomic_add](../../../../api/SIMD-API/c_api/scalar_compute/asc_atomic_add.md)等接口实现。无论Core 0和Core 1的原子加按哪一种先后顺序生效，最终结果都是`2`，因此这个例子只说明原子操作避免了同地址并发更新丢失，并不说明原子操作能够建立用户期望的跨核顺序。
+上例中的`ATOMIC_ADD`可使用[asc_atomic_add](../../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)等接口实现。无论Core 0和Core 1的原子加按哪一种先后顺序生效，最终结果都是`2`，因此这个例子只说明原子操作避免了同地址并发更新丢失，并不说明原子操作能够建立用户期望的跨核顺序。
 
 当不同原子操作之间存在顺序要求时，仍需要显式同步。例如业务要求Core 0先执行原子求最大值，Core 1再执行原子累加：
 

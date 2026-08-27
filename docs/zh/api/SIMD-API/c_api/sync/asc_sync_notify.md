@@ -32,7 +32,7 @@
 - `asc_sync_wait`：当目的流水执行到该指令时，如果发现硬件中对应标志位为0，目的流水的后续指令将一直被阻塞；如果发现硬件中对应标志位为1，则将硬件中对应标志位设置为0，同时目的流水的后续指令开始执行。
 
 **图1**  `asc_sync_notify`和`asc_sync_wait`接口功能示意图    
-![](../../c_api/figures/asc_sync_notify.png)
+![](../figures/asc_sync_notify.png)
 
 ## 函数原型
 

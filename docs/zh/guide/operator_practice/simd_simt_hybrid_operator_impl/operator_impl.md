@@ -117,7 +117,7 @@ __global__ __vector__ void gather_and_adds_kernel(
 
 核函数（Kernel）中先后启动SIMT VF函数simt\_gather和SIMD VF函数simd\_adds：simt\_gather将GM中的离散数据读取到UB，simd\_adds对UB上的gather结果执行加1计算，并将结果原地写回UB。
 
-对于基于SIMD编程计算并写入UB的结果local\_output，调用[asc\_copy\_ub2gm\_align](../../../api/SIMD-API/c_api/vector_data_move/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)接口搬出到GM前，需要通过[asc\_sync\_notify](../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)/[asc\_sync\_wait](../../../api/SIMD-API/c_api/sync/asc_sync_wait.md)接口控制Vector计算流水和MTE3搬出流水的同步，确保adds计算结果写入UB后再启动搬出。
+对于基于SIMD编程计算并写入UB的结果local\_output，调用[asc\_copy\_ub2gm\_align](../../../api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)接口搬出到GM前，需要通过[asc\_sync\_notify](../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)/[asc\_sync\_wait](../../../api/SIMD-API/c_api/sync/asc_sync_wait.md)接口控制Vector计算流水和MTE3搬出流水的同步，确保adds计算结果写入UB后再启动搬出。
 
 ## SIMT VF实现
 
@@ -190,4 +190,4 @@ __simd_vf__ inline void simd_adds(
 
 simd\_adds函数实现对UB上的数据做加1计算。函数中循环repeat\_times次完成单核数据处理。input为SIMT阶段写入UB的gather结果，output为加1后的UB输出；本样例调用时input和output均传入local\_output。one\_repeat\_size表示每轮处理的float元素个数，repeat\_times表示完成count个元素所需的循环次数。
 
-循环中，使用[asc_loadalign](../../../api/SIMD-API/c_api/reg/reg_load/asc_loadalign.md)接口将数据从UB搬运到SIMD矢量数据寄存器，使用[asc_add_scalar](../../../api/SIMD-API/c_api/reg/arithmetic_compute/asc_add_scalar.md)接口完成数据加1运算，使用[asc_storealign](../../../api/SIMD-API/c_api/reg/reg_store/asc_storealign.md)接口将数据从SIMD矢量数据寄存器搬运到UB。
+循环中，使用[asc_loadalign](../../../api/SIMD-API/c_api/reg_compute/load/asc_loadalign.md)接口将数据从UB搬运到SIMD矢量数据寄存器，使用[asc_add_scalar](../../../api/SIMD-API/c_api/reg_compute/reg_arith/asc_add_scalar.md)接口完成数据加1运算，使用[asc_storealign](../../../api/SIMD-API/c_api/reg_compute/store/asc_storealign.md)接口将数据从SIMD矢量数据寄存器搬运到UB。

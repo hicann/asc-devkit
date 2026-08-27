@@ -1,4 +1,4 @@
-# asc_storeunalign_post
+# asc_storeunalign_post（废弃）
 
 ## 产品支持情况
 
@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**该接口已废弃。请使用[asc_squeeze_and_storeunalign_finalize](../reg/reg_store/asc_squeeze_and_storeunalign_finalize.md)实现此功能。**
+**该接口已废弃。请使用[asc_squeeze_and_storeunalign_finalize](../reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_finalize.md)实现此功能。**
 
 reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到Unified Buffer（UB）的尾块场景。
 
@@ -73,7 +73,7 @@ __simd_callee__ inline void asc_storeunalign_post(__ubuf__ int64_t* dst, vector_
     | dst | 输出 | 目的操作数（矢量）的起始地址。 |
     | src | 输入 | 非对齐寄存器，用于保存非对齐数据，长度32B。 |
 
-非对齐寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../reg/reg_data_types/data_type_definition.md)。
+非对齐寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
