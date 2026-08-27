@@ -89,6 +89,7 @@ target_compile_definitions(${HCCL_CHECKER_SELECTOR_TARGET} PRIVATE
 
 add_library(${HCCL_CHECKER_EXECUTOR_TARGET} STATIC
     ${HCCL_DEV_BASE}/src/ops/op_common/topo/topo_match_pcie_mix.cc
+    ${HCCL_DEV_BASE}/src/ops/op_common/topo/topo_match_ubx_1d.cc
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sole_executor.cc
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/executor/ins_reduce_scatter_parallel_executor.cc
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sequence_executor.cc
@@ -110,6 +111,7 @@ add_library(${HCCL_CHECKER_EXECUTOR_TARGET} STATIC
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/executor/ins_v2_all_to_all_v_sole_executor.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/executor/ins_v2_all_to_all_concurrent_executor.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/template/aicpu/ins_temp_all_to_all_v_mesh_1D.cc
+    ${HCCL_DEV_BASE}/src/ops/all_to_all_v/template/aicpu/ins_temp_ubx_all_to_all_v_mesh_1D.cc
 )
 
 target_include_directories(${HCCL_CHECKER_EXECUTOR_TARGET} PRIVATE
@@ -161,6 +163,7 @@ add_library(${HCCL_CHECKER_KERNEL_TARGET} STATIC
     ${HCCL_DEV_BASE}/src/ops/op_common/topo/topo_match_base.cc
     ${HCCL_DEV_BASE}/src/ops/op_common/topo/topo_match_pcie_mix.cc
     topo_match_aicpu_stub.cc
+    ${HCCL_DEV_BASE}/src/ops/op_common/topo/topo_match_ubx_1d.cc
 
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sole_executor.cc
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/executor/ins_reduce_scatter_parallel_executor.cc
@@ -181,6 +184,7 @@ add_library(${HCCL_CHECKER_KERNEL_TARGET} STATIC
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/executor/ins_v2_all_to_all_v_sole_executor.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/executor/ins_v2_all_to_all_concurrent_executor.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/template/aicpu/ins_temp_all_to_all_v_mesh_1D.cc
+    ${HCCL_DEV_BASE}/src/ops/all_to_all_v/template/aicpu/ins_temp_ubx_all_to_all_v_mesh_1D.cc
 )
 
 target_sources(${HCCL_CHECKER_KERNEL_TARGET} PRIVATE

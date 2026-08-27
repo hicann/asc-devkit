@@ -430,5 +430,7 @@ HcclResult CalcDataSplitByPortGroupZAxisDetour(
     std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset,
     const u32 level0ChannelNumPerRank, const u32 level1ChannelNumPerRank, const float level0DataRatio = 0.5f);
 
+bool IsAllConnetedWithTopo(const TopoInfoWithNetLayerDetails* topoInfo, const u32 netLayer, const CommTopo topoType);
+
 } // namespace mc2_ops_hccl
 #endif

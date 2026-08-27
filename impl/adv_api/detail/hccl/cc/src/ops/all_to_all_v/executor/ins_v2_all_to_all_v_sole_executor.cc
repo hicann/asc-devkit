@@ -13,11 +13,69 @@
 #include <limits>
 
 #include "ins_temp_all_to_all_v_mesh_1D.h"
+#include "ins_temp_ubx_all_to_all_v_mesh_1D.h"
 #include "topo_match_1d.h"
+#include "topo_match_ubx_1d.h"
 
 namespace mc2_ops_hccl {
 namespace {
-bool IsSupportedMesh1DTopo(Level0Shape topo) { return topo == Level0Shape::MESH_1D || topo == Level0Shape::CLOS; }
+bool IsSupportedMesh1DTopo(Level0Shape topo)
+{
+    return topo == Level0Shape::MESH_1D || topo == Level0Shape::CLOS || topo == Level0Shape::MESH_1D_CLOS;
+}
+
+HcclResult BuildResourceHierarchyInfo(
+    const OpParam& param, const TopoInfoWithNetLayerDetails& topoInfo,
+    const AlgHierarchyInfoForAllLevel& algHierarchyInfo, std::vector<std::vector<u32>>& templateHierarchyInfo)
+{
+    CHK_PRT_RET(
+        algHierarchyInfo.infos.empty() || algHierarchyInfo.infos[0].empty(),
+        HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] hierarchy info is empty."), HCCL_E_PARA);
+    if (topoInfo.level0Topo == Level0Shape::MESH_1D_CLOS && !topoInfo.level0PcieMix &&
+        param.engine != CommEngine::COMM_ENGINE_AIV) {
+        CHK_PRT_RET(
+            algHierarchyInfo.infos[0].size() != 2U,
+            HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] MESH_1D_CLOS requires two level-0 instances."), HCCL_E_PARA);
+        if (topoInfo.topoLevelNums == 1U || param.engine == CommEngine::COMM_ENGINE_CCU) {
+            templateHierarchyInfo = {algHierarchyInfo.infos[0][1]};
+        } else {
+            CHK_PRT_RET(
+                algHierarchyInfo.infos.size() <= 1U || algHierarchyInfo.infos[1].empty() ||
+                    algHierarchyInfo.infos[0][1].size() >= algHierarchyInfo.infos[1][0].size(),
+                HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] invalid MESH_1D_CLOS hierarchy sizes."), HCCL_E_PARA);
+            templateHierarchyInfo = {algHierarchyInfo.infos[0][1], algHierarchyInfo.infos[1][0]};
+        }
+    } else {
+        templateHierarchyInfo = algHierarchyInfo.infos[0];
+    }
+    return HCCL_SUCCESS;
+}
+
+HcclResult BuildExecutionHierarchyInfo(
+    const OpParam& param, const TopoInfoWithNetLayerDetails& topoInfo,
+    const AlgHierarchyInfoForAllLevel& algHierarchyInfo, std::vector<std::vector<u32>>& templateHierarchyInfo)
+{
+    CHK_PRT_RET(
+        algHierarchyInfo.infos.empty() || algHierarchyInfo.infos[0].empty(),
+        HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] execution hierarchy info is empty."), HCCL_E_PARA);
+    if (topoInfo.level0Topo == Level0Shape::MESH_1D_CLOS && !topoInfo.level0PcieMix &&
+        param.engine != CommEngine::COMM_ENGINE_AIV && algHierarchyInfo.infos.size() > 1U) {
+        CHK_PRT_RET(
+            algHierarchyInfo.infos[0].size() != 2U,
+            HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] MESH_1D_CLOS requires two level-0 instances."), HCCL_E_PARA);
+        if (topoInfo.topoLevelNums == 1U) {
+            templateHierarchyInfo = {algHierarchyInfo.infos[0][1]};
+        } else {
+            CHK_PRT_RET(
+                algHierarchyInfo.infos[1].empty(),
+                HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] execution hierarchy level is empty."), HCCL_E_PARA);
+            templateHierarchyInfo = algHierarchyInfo.infos[1];
+        }
+    } else {
+        templateHierarchyInfo = algHierarchyInfo.infos[0];
+    }
+    return HCCL_SUCCESS;
+}
 
 bool AddOverflows(u64 lhs, u64 rhs) { return lhs > std::numeric_limits<u64>::max() - rhs; }
 
@@ -57,10 +115,9 @@ HcclResult InsV2AlltoAllVSoleExecutor<AlgTopoMatch, InsAlgTemplate>::CalcRes(
             "[InsV2AlltoAllVSoleExecutor][CalcRes] unsupported level0Topo[%u].",
             static_cast<u32>(topoInfo->level0Topo)),
         HCCL_E_NOT_SUPPORT);
-    CHK_PRT_RET(
-        algHierarchyInfo.infos.empty() || algHierarchyInfo.infos[0].empty(),
-        HCCL_ERROR("[InsV2AlltoAllVSoleExecutor][CalcRes] hierarchy info is empty."), HCCL_E_PARA);
-    InsAlgTemplate algTemplate(param, topoInfo->userRank, algHierarchyInfo.infos[0]);
+    std::vector<std::vector<u32>> templateHierarchyInfo;
+    CHK_RET(BuildResourceHierarchyInfo(param, *topoInfo, algHierarchyInfo, templateHierarchyInfo));
+    InsAlgTemplate algTemplate(param, topoInfo->userRank, templateHierarchyInfo);
     return algTemplate.CalcRes(comm, param, topoInfo, resourceRequest);
 }
 
@@ -102,7 +159,18 @@ HcclResult InsV2AlltoAllVSoleExecutor<AlgTopoMatch, InsAlgTemplate>::ValidateAnd
         HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] hierarchy info is empty."), HCCL_E_PARA);
 
     remoteRankToChannelInfo_.clear();
-    CHK_RET(RestoreChannelMap(resCtx, remoteRankToChannelInfo_));
+    if (resCtx.topoInfo.level0Topo == Level0Shape::MESH_1D_CLOS && !resCtx.topoInfo.level0PcieMix &&
+        param.engine != CommEngine::COMM_ENGINE_AIV && param.engine != CommEngine::COMM_ENGINE_CCU) {
+        CHK_PRT_RET(
+            resCtx.channels.size() != 1U,
+            HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] MESH_1D_CLOS requires one channel group."), HCCL_E_PARA);
+        remoteRankToChannelInfo_.resize(1U);
+        for (const auto& channel : resCtx.channels[0]) {
+            remoteRankToChannelInfo_[0][channel.remoteRank].push_back(channel);
+        }
+    } else {
+        CHK_RET(RestoreChannelMap(resCtx, remoteRankToChannelInfo_));
+    }
     CHK_PRT_RET(
         rankSize_ > 1U && (remoteRankToChannelInfo_.empty() || remoteRankToChannelInfo_[0].empty()),
         HCCL_ERROR("[InsV2AlltoAllVSoleExecutor] restored channel map is empty."), HCCL_E_INTERNAL);
@@ -151,7 +219,9 @@ HcclResult InsV2AlltoAllVSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchestrate
     std::vector<u64> sendDispls(sourceSendDispls, sourceSendDispls + rankSize_);
     std::vector<u64> recvDispls(sourceRecvDispls, sourceRecvDispls + rankSize_);
 
-    InsAlgTemplate algTemplate(param, resCtx.topoInfo.userRank, resCtx.algHierarchyInfo.infos[0]);
+    std::vector<std::vector<u32>> templateHierarchyInfo;
+    CHK_RET(BuildExecutionHierarchyInfo(param, resCtx.topoInfo, resCtx.algHierarchyInfo, templateHierarchyInfo));
+    InsAlgTemplate algTemplate(param, resCtx.topoInfo.userRank, templateHierarchyInfo);
     const u64 scratchMultiplier =
         algTemplate.CalcScratchMultiple(tempAlgParams.buffInfo.inBuffType, tempAlgParams.buffInfo.outBuffType);
     u64 maxDataSizePerLoop = UB_MAX_DATA_SIZE;
@@ -241,13 +311,16 @@ HcclResult InsV2AlltoAllVSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchestrate
 }
 
 REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAlltoAllVSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
+    HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);
 REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAlltoAllSoleMeshSingleChannel, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
+    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshSingleChannel, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);
 REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAlltoAllSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
+    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);
+REGISTER_EXEC_V2(
+    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshUBX, InsV2AlltoAllVSoleExecutor, TopoMatchUBX1d,
+    InsTempUBXAllToAllVMesh1D);
 
 } // namespace mc2_ops_hccl

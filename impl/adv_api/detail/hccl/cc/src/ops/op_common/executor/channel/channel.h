@@ -63,7 +63,7 @@ HcclResult ProcessLinksForChannelMutiJetty(
 HcclResult CalcChannelRequestMeshClosMultiJetty(
     HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
     const std::vector<std::vector<u32>>& subcommInfo, std::vector<HcclChannelDesc>& channels, bool isIsolation = false,
-    bool expectMesh = false);
+    bool expectMesh = true);
 HcclResult GetProtocolByEngine(const OpParam& param, std::vector<CommProtocol>& protocols);
 } // namespace mc2_ops_hccl
 

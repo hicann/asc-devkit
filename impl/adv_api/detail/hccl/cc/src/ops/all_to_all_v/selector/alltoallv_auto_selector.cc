@@ -30,7 +30,7 @@ SelectorStatus AlltoAllVAutoSelector::SelectAicpuAlgo(
         return SelectorStatus::NOT_MATCH;
     }
     if (topoInfo->level0Topo == Level0Shape::MESH_1D || topoInfo->level0Topo == Level0Shape::CLOS) {
-        selectAlgName = "AicpuAlltoAllVSoleMesh";
+        selectAlgName = "AicpuAllToAllVSoleMesh";
         HCCL_INFO("[AlltoAllVAutoSelector] Algo match[%s].", selectAlgName.c_str());
         return SelectorStatus::MATCH;
     }

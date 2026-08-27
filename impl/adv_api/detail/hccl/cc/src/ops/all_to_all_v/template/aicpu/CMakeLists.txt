@@ -9,4 +9,5 @@
 # ----------------------------------------------------------------------------------------------------------
 target_sources(mc2_client PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ins_temp_all_to_all_v_mesh_1D.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ins_temp_ubx_all_to_all_v_mesh_1D.cc
 )

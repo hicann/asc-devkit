@@ -15,9 +15,9 @@
 namespace mc2_ops_hccl {
 namespace {
 constexpr u64 ALLTOALL_MULTI_CHANNEL_DATA_SIZE_LIMIT = 150ULL * 1024ULL * 1024ULL;
-constexpr const char* ALLTOALL_SINGLE_CHANNEL_ALG = "AicpuAlltoAllSoleMeshSingleChannel";
-constexpr const char* ALLTOALL_MULTI_CHANNEL_ALG = "AicpuAlltoAllSoleMesh";
-constexpr const char* ALLTOALLV_MESH_ALG = "AicpuAlltoAllVSoleMesh";
+constexpr const char* ALLTOALL_SINGLE_CHANNEL_ALG = "AicpuAllToAllSoleMeshSingleChannel";
+constexpr const char* ALLTOALL_MULTI_CHANNEL_ALG = "AicpuAllToAllSoleMesh";
+constexpr const char* ALLTOALLV_MESH_ALG = "AicpuAllToAllVSoleMesh";
 constexpr const char* ALLTOALL_CONCURRENT_ALG = "AicpuAllToAllSoleMeshConcurrent";
 constexpr const char* ALLTOALLV_CONCURRENT_ALG = "AicpuAllToAllVSoleMeshConcurrent";
 
