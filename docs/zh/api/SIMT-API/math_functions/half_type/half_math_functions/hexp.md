@@ -60,7 +60,7 @@ e的x次方。本接口受全局饱和寄存器的影响，特殊值如下：
 
 ## 需要包含的头文件
 
-使用half类型接口需要包含"simt\_api/asc\_fp16.h"头文件。
+使用half类型接口需要包含`simt_api/asc_fp16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_fp16.h"

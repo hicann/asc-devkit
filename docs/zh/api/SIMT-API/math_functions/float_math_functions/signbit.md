@@ -45,12 +45,12 @@ inline int signbit(float x)
 
 返回输入数据的符号位。
 
--   当x为+nan时，返回值为0。
--   当x为-nan时，返回值为1。
--   当x为inf时，返回值为0。
--   当x为-inf时，返回值为1。
--   当x为+0时，返回值为0。
--   当x为-0时，返回值为1。
+-   当`x`为+nan时，返回值为0。
+-   当`x`为-nan时，返回值为1。
+-   当`x`为inf时，返回值为0。
+-   当`x`为-inf时，返回值为1。
+-   当`x`为+0时，返回值为0。
+-   当`x`为-0时，返回值为1。
 
 ## 约束说明
 
@@ -58,7 +58,7 @@ inline int signbit(float x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

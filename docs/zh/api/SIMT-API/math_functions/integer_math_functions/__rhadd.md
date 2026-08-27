@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-获取int32类型数据x和y的向上取整平均值，避免中间求和溢出。
+获取int32类型数据`x`和`y`的向上取整平均值，避免中间求和溢出。
 
 ![](../../../figures/zh-cn_formulaimage_0000002585583711.png)
 
@@ -54,7 +54,7 @@ int __rhadd(int x, int y)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"

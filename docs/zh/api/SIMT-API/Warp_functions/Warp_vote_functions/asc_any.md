@@ -27,7 +27,7 @@
 
 判断是否有活跃线程的输入不为0。
 
-当Warp内所有活跃线程执行本接口后，对所有活跃线程的输入操作数predicate进行判断，所有活跃线程的predicate均为0，返回0，否则返回1。Warp内所有活跃线程返回相同的结果。
+当Warp内所有活跃线程执行本接口后，对所有活跃线程的输入操作数`predicate`进行判断，所有活跃线程的`predicate`均为0，返回0，否则返回1。Warp内所有活跃线程返回相同的结果。
 
 ## 函数原型
 
@@ -53,7 +53,7 @@ inline int32_t asc_any(int32_t predicate)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_warp\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_warp_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_warp_functions.h"

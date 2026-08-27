@@ -65,7 +65,7 @@ inline bfloat16_t __bfloat162bfloat16_rn(const bfloat16_t x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用该接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_bf16.h"

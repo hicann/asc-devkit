@@ -59,7 +59,7 @@ unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
 | --- | --- | --- |
 | x | 输入 | 源操作数，uint32_t类型，与y拼接成64比特位的整数，该整数的[0:31]位为x。 |
 | y | 输入 | 源操作数，uint32_t类型，与x拼接成64比特位的整数，该整数的[32:63]位为y。 |
-| s | 输入 | 选择器，uint32_t类型，用于指定如何从x和y组成的8个字节64比特位的整数中提取4字节数据。具体为，s[0:3]、s[4:7]、s[8:11]、s[12:15]表示的数据指定选取的字节在8个字节整数中的索引值0到7。 |
+| s | 输入 | 选择器，uint32_t类型，用于指定如何从x和y组成的8个字节64比特位的整数中提取4字节数据。其中，s[0:3]、s[4:7]、s[8:11]、s[12:15]分别对应4个要选取的字节，其值表示所选字节在8字节整数中的索引，索引范围为0到7。 |
 
 ## 返回值说明
 
@@ -74,7 +74,7 @@ unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"

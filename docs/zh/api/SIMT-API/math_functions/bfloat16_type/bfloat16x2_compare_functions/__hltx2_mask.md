@@ -80,12 +80,12 @@ unsigned int __hltx2_mask(bfloat16x2_t x, bfloat16x2_t y)
     </tr>
     <tr>
       <td>正常值</td>
-      <td>inf)</td>
+      <td>inf</td>
       <td>0xFFFF</td>
     </tr>
     <tr>
       <td>正常值</td>
-      <td>-inf)</td>
+      <td>-inf</td>
       <td>0x0000</td>
     </tr>
     <tr>
@@ -101,7 +101,7 @@ unsigned int __hltx2_mask(bfloat16x2_t x, bfloat16x2_t y)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用该接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_bf16.h"

@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-将x转换为归一化\[1/2, 1\)的有符号数乘以2的积分幂。返回归一化的有符号数，指数存储在exp中。
+将`x`转换为归一化\[1/2, 1\)的有符号数乘以2的积分幂。返回归一化的有符号数，指数存储在`exp`中。
 
 ![](../../../figures/zh-cn_formulaimage_0000002516816359.png)
 
@@ -58,7 +58,7 @@ inline float frexpf(float x, int *exp)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

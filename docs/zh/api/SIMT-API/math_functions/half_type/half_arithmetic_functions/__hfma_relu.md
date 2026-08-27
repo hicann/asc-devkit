@@ -104,7 +104,7 @@ x \* y + z的值，若结果为负数，置为0。本接口受全局饱和模式
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
+使用该接口需要包含`simt_api/asc_fp16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_fp16.h"

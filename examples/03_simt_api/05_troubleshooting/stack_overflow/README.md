@@ -15,7 +15,7 @@
 
 ## 支持的CANN软件版本
 
-- \>=CANN 9.1.0
+- \>= CANN 9.1.0
 
 ## 目录结构介绍
 
@@ -92,7 +92,7 @@ __global__ void simt_stack_overflow(int32_t* input, float* output, uint32_t tota
 
 **通过日志信息初步定位问题**：
 
-- Host侧在`aclrtSynchronizeStream`接口之后调用`aclGetRecentErrMsg()`接口获取Device侧的错误信息，实现如下：
+- Host侧在`aclrtSynchronizeStream()`接口之后调用`aclGetRecentErrMsg()`接口获取Device侧的错误信息，实现如下：
 
     ```cpp
     const char* err = aclGetRecentErrMsg();
@@ -189,7 +189,7 @@ __global__ void simt_recursive_stack_overflow(int32_t* input, float* output, uin
 
 **通过日志信息初步定位问题**：
 
-- Host侧在`aclrtSynchronizeStream`接口之后调用`aclGetRecentErrMsg()`接口获取Device侧的错误信息，实现如下：
+- Host侧在`aclrtSynchronizeStream()`接口之后调用`aclGetRecentErrMsg()`接口获取Device侧的错误信息，实现如下：
 
     ```cpp
     const char* err = aclGetRecentErrMsg();

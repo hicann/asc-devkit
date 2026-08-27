@@ -71,13 +71,13 @@ UB或Global Memory上的初始数据。
 
 -   原子操作保证对同一地址的读改写过程具有原子性，但不保证多个线程之间的执行顺序。对于依赖接口返回值判断线程先后顺序的场景，结果可能随线程调度变化而不同。
 -   本接口的性能受以下因素影响，相关原理请参见[原子操作机制](atomic_operations_intro.md#原子操作机制)。
-    -   内存空间：UB的访问路径比Global Memory短，通常具有更低的访问开销。当使用的数据类型支持UB（即int32\_t、uint32\_t）时，建议优先在UB中完成原子操作。
+    -   内存空间：UB的访问路径比Global Memory短，通常具有更低的访问开销。当使用的数据类型支持UB（即int32_t、uint32_t）时，建议优先在UB中完成原子操作。
     -   返回值：该接口无对应的性能优化指令，对于所有数据类型，程序中是否使用该接口返回值，接口性能基本一致。
     -   地址分布：Global Memory原子操作经过L2 Cache处理，L2 Cache以512B Cache Line为缓存管理单位，每条Cache Line包含4个128B扇区（Sector），Global Memory原子操作以128B Sector为处理粒度。目标地址集中在同一个Sector内时，处理效率较低；目标地址分布在更多Sector内时，处理效率较高。因此，业务允许时，建议将原子操作的目标地址分散到更多Sector中。
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_atomic\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_atomic_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_atomic_functions.h"
@@ -85,7 +85,7 @@ UB或Global Memory上的初始数据。
 
 ## 调用示例
 
-示例场景为：多个线程根据各自检测结果清除共享状态字中的某些bit，使用`asc_atomic_and`接口保证不同线程清除不同bit时不会覆盖彼此的修改。输入参数说明如下：
+示例场景为：多个线程根据各自检测结果清除共享状态字中的某些bit，使用`asc_atomic_and()`接口保证不同线程清除不同bit时不会覆盖彼此的修改。输入参数说明如下：
 
 | 名称 | 说明 |
 | --- | --- |
@@ -114,7 +114,7 @@ UB或Global Memory上的初始数据。
 
 -   SIMD与SIMT混合编程场景：
 
-    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间，\_\_ubuf\_\_表示UB内存空间。
+    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：`__gm__`表示Global Memory内存空间，`__ubuf__`表示UB内存空间。
 
     ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void clear_status_bits(__gm__ uint32_t *flags,

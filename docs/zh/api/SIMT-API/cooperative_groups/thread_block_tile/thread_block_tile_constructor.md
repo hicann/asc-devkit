@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-`thread_block_tile`不提供默认构造函数，可通过`tiled_partition`接口从另一个协作组中划分得到。
+`thread_block_tile`不提供默认构造函数，可通过`tiled_partition()`接口从另一个协作组中划分得到。
 
 ## 函数原型
 
@@ -79,7 +79,7 @@ thread_block_tile<Size, ParentT> tiled_partition(const ParentT& g)
     int main()
     {
         ...
-        simt_kernel<<<dim3(1), dim3(THREAD_NUM), 0, stream>>>(...);             // 线程块中创建的线程数必须小于等于 block_tile_memory 的模板参数
+        simt_kernel<<<dim3(1), dim3(THREAD_NUM), 0, stream>>>(...);             // 线程块中创建的线程数必须小于等于`block_tile_memory`的模板参数
         ...
     }
     ```

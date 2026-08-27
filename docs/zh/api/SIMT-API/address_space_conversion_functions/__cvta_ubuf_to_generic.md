@@ -47,8 +47,8 @@ void* __cvta_ubuf_to_generic(size_t rawbits)
 
 | 输入场景 | 返回值 |
 | --- | --- |
-| `rawbits`为`0`或`1` | 返回指针使用`__isUbuf`判断为1，但该指针不一定是可安全访问的UB地址。 |
-| `rawbits`为全1 | 返回指针使用`__isGlobal`、`__isUbuf`、`__isLocal`均判断为0。 |
+| rawbits为0或1 | 返回指针使用__isUbuf()判断为1，但该指针不一定是可安全访问的UB地址。 |
+| rawbits为全1 | 返回指针使用__isGlobal()、__isUbuf()、__isLocal()均判断为0。 |
 
 ## 约束说明
 
@@ -56,7 +56,7 @@ SIMD与SIMT混合编程场景不支持使用该接口。
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"

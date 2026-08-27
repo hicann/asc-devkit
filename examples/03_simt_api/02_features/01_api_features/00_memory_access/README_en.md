@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document presents memory access samples based on Ascend C SIMT, demonstrating Global Memory discrete access and cross-core data synchronization APIs in SIMT programming.
+This document presents memory access samples based on Ascend C SIMT, covering scenarios such as Global Memory discrete access, cross-core data synchronization, and UB subbank access in SIMT programming.
 
 ## Sample List
 

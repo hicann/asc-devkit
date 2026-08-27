@@ -39,7 +39,7 @@ static unsigned int thread_rank()
 
 ## 返回值说明
 
-当前线程在线程块内所有线程中的排名（等价于threadIdx.x + threadIdx.y * blockDim.x + threadIdx.z * blockDim.x * blockDim.y）。
+当前线程在线程块内所有线程中的排名（等价于`threadIdx.x + threadIdx.y * blockDim.x + threadIdx.z * blockDim.x * blockDim.y`）。
 
 ## 约束说明
 

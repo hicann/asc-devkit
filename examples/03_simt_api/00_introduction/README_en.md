@@ -2,7 +2,7 @@
 
 ## Overview
 
-Simple SIMT operator implementation examples based on Ascend C, demonstrating SIMT programming basic syntax, compilation, and <<<>>> based invocation methods.
+Simple SIMT operator implementation examples based on Ascend C, demonstrating SIMT programming basic syntax, compilation, and `<<<>>>` based invocation methods.
 
 ## Example List
 

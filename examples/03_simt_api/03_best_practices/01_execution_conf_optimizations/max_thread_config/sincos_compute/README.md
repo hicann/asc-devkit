@@ -25,7 +25,7 @@ sincos_compute/
 
 - 样例功能
 
-  使用sincosf函数同时计算sin和cos结果
+  使用`sincosf()`函数同时计算sin和cos结果
 
   ```
   sincosf(input[idx], output_sin + idx, output_cos + idx)

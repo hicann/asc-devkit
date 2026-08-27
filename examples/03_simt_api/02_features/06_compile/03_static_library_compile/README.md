@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例基于Gather算子，演示了将Host + Device混合.asc文件（含Kernel定义与<<<>>>内核调用）编译为**静态库（.a）**，再由Host侧.cpp链接调用的静态库编译流程。其中.asc文件的<<<>>>调用函数通过extern暴露给纯Host侧的.cpp。代码结构与调用关系如图 1 所示：
+本样例基于Gather算子，演示了将Host + Device混合.asc文件（含Kernel定义与`<<<>>>`内核调用）编译为**静态库（.a）**，再由Host侧.cpp链接调用的静态库编译流程。其中.asc文件的`<<<>>>`调用函数通过extern暴露给纯Host侧的.cpp。代码结构与调用关系如图 1 所示：
 
 <p align="center">
   <img src="./figures/static_library_compile.png" width="50%">
@@ -34,7 +34,7 @@ gather算子实现了从长度为100000的一维输入向量中获取指定索�
 
 ## 静态库编译介绍
 
-通过静态库编译，`.asc` 混合文件被编译为独立的 **静态库（.a）**，Host侧 `.cpp` 通过链接该 `.a` 完成调用。
+通过静态库编译，`.asc`混合文件被编译为独立的 **静态库（.a）**，Host侧`.cpp`通过链接该`.a`完成调用。
 
 ### bisheng命令行编译
 

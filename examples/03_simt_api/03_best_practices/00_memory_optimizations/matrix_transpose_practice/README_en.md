@@ -95,7 +95,7 @@ Therefore, the input element coordinates processed by this thread in GM are `inp
 | --- | --- |
 | Task Duration(μs) | Total task duration, including scheduling time to the accelerator, execution time on the accelerator, and response completion time |
 | aiv_time(μs) | Theoretical execution time of the task on the AI Vector Core, in microseconds |
-| aiv_total_cycles | Total execution cycles on each AI Vector Core compute unit after the task is assigned |
+| aiv_total_cycles | Total execution cycles on each AI Vector Core compute unit |
 | aiv_vec_time(μs) | Duration of vec-type instructions (vector computation instructions), in microseconds |
 | aiv_vec_ratio | Ratio of vec-type instruction cycles to total cycles |
 | aiv_scalar_time(μs) | Duration of scalar-type instructions (scalar computation instructions), in microseconds |
@@ -474,7 +474,7 @@ cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM
 msopprof simulator --soc-version=<soc_version> ./matrix_transpose
 ```
 
-> Before using simulation tuning, add the `-g` compilation option to `CMakeLists.txt` to generate debug information. This allows the simulator to collect instruction pipeline diagrams. For how to obtain `soc_version` and for more simulation tuning information, see the [simulator sample](../../../01_utilities/07_simulator).
+> Before using simulation tuning, add the `-g` compilation option to CMakeLists.txt to generate debug information. This allows the simulator to collect instruction pipeline diagrams. For how to obtain `soc_version` and for more simulation tuning information, see the [simulator sample](../../../01_utilities/07_simulator).
 
 After the command completes, a folder named `OPPROF_{timestamp}_XXX` is generated in the current directory. The artifact structure is as follows:
 

@@ -43,7 +43,7 @@ inline unsigned long long int __half2ull_rn(const half x)
 
 ## 返回值说明
 
-遵循CAST\_RINT模式，将half类型数据转换为usigned long long类型数据。特殊值如下：
+遵循CAST\_RINT模式，将half类型数据转换为unsigned long long类型数据。特殊值如下：
 
 | x值 | 返回值 |
 | --- | --- |
@@ -62,7 +62,7 @@ inline unsigned long long int __half2ull_rn(const half x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
+使用该接口需要包含`simt_api/asc_fp16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_fp16.h"

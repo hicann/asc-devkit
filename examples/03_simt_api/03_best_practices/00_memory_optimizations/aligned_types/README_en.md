@@ -103,7 +103,7 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
 
   - Invocation Implementation  
 
-    Use the kernel invocation operator <<<>>> to call the kernel function.
+    Use the kernel invocation operator `<<<>>>` to call the kernel function.
 
 ## Performance Analysis
 

@@ -72,12 +72,12 @@
 
 默认情况下，加载的数据会在DCache中保存。在计算过程中，部分热点数据会被多个线程多次使用，但另一部分数据在计算的过程中仅使用一次，这类数据不需要进行缓存，不应让这类数据与热点数据竞争DCache空间
 
-- **`asc_ldcg`**：加载数据时从Global Memory加载，适用于仅遍历一次的输入数据，减少其对DCache空间的占用
-- **`asc_ldca`**：加载数据时优先从DCache加载，适用于需要频繁访问的热点数据（如查找表），确保热点数据常驻DCache，减少从Global Memory重新加载的次数
-- **`asc_stcg`**：存储数据时直接写入Global Memory空间，适用于数据写到GM后不会再被使用，不需要使用Cache缓存，避免输出数据占用DCache空间影响热点数据的缓存
-- input数据通过`asc_ldcg`直接从GM加载，不缓存到DCache
-- sin_table数据通过`asc_ldca`优先从DCache加载，确保常驻DCache
-- output数据通过`asc_stcg`直接写入GM，不经过DCache缓存
+- **`asc_ldcg()`**：加载数据时从Global Memory加载，适用于仅遍历一次的输入数据，减少其对DCache空间的占用
+- **`asc_ldca()`**：加载数据时优先从DCache加载，适用于需要频繁访问的热点数据（如查找表），确保热点数据常驻DCache，减少从Global Memory重新加载的次数
+- **`asc_stcg()`**：存储数据时直接写入Global Memory空间，适用于数据写到GM后不会再被使用，不需要使用Cache缓存，避免输出数据占用DCache空间影响热点数据的缓存
+- input数据通过`asc_ldcg()`直接从GM加载，不缓存到DCache
+- sin_table数据通过`asc_ldca()`优先从DCache加载，确保常驻DCache
+- output数据通过`asc_stcg()`直接写入GM，不经过DCache缓存
 
 由于sin_table大小为32KB，可以缓存到DCache后不会被挤出，热点数据持续驻留DCache，可减少sin_table数据从GM→DCache的反复加载。
 
@@ -146,9 +146,9 @@ Case 0的场景中，加载input，output时会把数据缓存在DCache上，替
 **优化目标**：通过访存函数区分不同数据的缓存策略，确保sin查找表常驻DCache，减少GM访问次数，降低端到端耗时
 
 **核心优化**：
-- 使用`asc_ldcg`读取数据：每个输入数据仅访问一次，不需要使用DCache
-- 使用`asc_ldca`读取sin表数据：sin表是热点数据，需要频繁访问，确保数据常驻DCache
-- 使用`asc_stcg`写出数据：输出数据写到GM后不会再被使用，不需要使用DCache
+- 使用`asc_ldcg()`读取数据：每个输入数据仅访问一次，不需要使用DCache
+- 使用`asc_ldca()`读取sin表数据：sin表是热点数据，需要频繁访问，确保数据常驻DCache
+- 使用`asc_stcg()`写出数据：输出数据写到GM后不会再被使用，不需要使用DCache
 
 **关键代码**：
 
@@ -197,8 +197,8 @@ asc_stcg(&output[idx], y);
 ## 调优建议
 
 1. **识别热点数据**：在查表类算子中，查找表是频繁访问的热点数据，应优先保证其常驻DCache。
-2. **区分数据访问模式**：对于仅访问一次的数据（如输入数据），使用`asc_ldcg`避免其对DCache空间的占用；对于需要频繁访问的数据（如查找表），使用`asc_ldca`优先分配Cache空间。
-3. **避免写出数据占用Cache**：对于写入后不再读取的输出数据，使用`asc_stcg`避免其占用DCache空间。
+2. **区分数据访问模式**：对于仅访问一次的数据（如输入数据），使用`asc_ldcg()`避免其对DCache空间的占用；对于需要频繁访问的数据（如查找表），使用`asc_ldca()`优先分配Cache空间。
+3. **避免写出数据占用Cache**：对于写入后不再读取的输出数据，使用`asc_stcg()`避免其占用DCache空间。
 4. **关注DCache Read GM指标**：DCache Read GM次数的减少直接反映了Cache命中率提升和Global Memory访问延迟降低的效果。
 
 ## 编译运行
@@ -211,7 +211,7 @@ asc_stcg(&output[idx], y);
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **说明：** `${install_path}` 为CANN包安装目录，未指定安装目录时默认安装至 `/usr/local/Ascend` 下。
+  > **说明：** `${install_path}`为CANN包安装目录，未指定安装目录时默认安装至`/usr/local/Ascend`下。
 
 - 样例执行
 

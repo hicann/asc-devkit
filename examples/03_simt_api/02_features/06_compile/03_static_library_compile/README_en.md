@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example, based on the Gather operator, demonstrates the static library compilation flow where a Host + Device mixed .asc file (containing Kernel definition and <<<>>> kernel invocation) is compiled into a **static library (.a)**, which is then linked by a Host-side .cpp. The <<<>>> invocation function in the .asc file is exposed to the pure Host-side .cpp through extern. The code structure and call relationship are shown in Figure 1:
+This example, based on the Gather operator, demonstrates the static library compilation flow where a Host + Device mixed .asc file (containing Kernel definition and `<<<>>>` kernel invocation) is compiled into a **static library (.a)**, which is then linked by a Host-side .cpp. The `<<<>>>` invocation function in the .asc file is exposed to the pure Host-side .cpp through extern. The code structure and call relationship are shown in Figure 1:
 
 <p align="center">
   <img src="./figures/static_library_compile.png" width="50%">

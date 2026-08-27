@@ -2,7 +2,7 @@
 
 - **[grid_group简介](grid_group_intro.md)**
 
-- **[grid_group_constructor](grid_group_constructor.md)**
+- **[grid_group构造函数](grid_group_constructor.md)**
 
 - **[is_valid](is_valid.md)**
 

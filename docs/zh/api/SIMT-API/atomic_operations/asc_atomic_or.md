@@ -77,7 +77,7 @@ UB或Global Memory上的初始数据。
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_atomic\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_atomic_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_atomic_functions.h"
@@ -113,7 +113,7 @@ UB或Global Memory上的初始数据。
 
 -   SIMD与SIMT混合编程场景：
 
-    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间，\_\_ubuf\_\_表示UB内存空间。
+    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：`__gm__`表示Global Memory内存空间，`__ubuf__`表示UB内存空间。
 
     ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void merge_observed_flags(__gm__ uint32_t *flags,

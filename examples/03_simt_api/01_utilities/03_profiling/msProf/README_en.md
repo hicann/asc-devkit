@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example is based on the Gather operator and demonstrates how to collect on-board performance data using msProf. Users can quickly locate software and hardware performance bottlenecks of operators based on the output performance data, improving the efficiency of operator performance analysis.
+This example is based on the Gather operator and demonstrates how to collect on-board performance data using msOpProf. Users can quickly locate software and hardware performance bottlenecks of operators based on the output performance data, improving the efficiency of operator performance analysis.
 
 ## Supported Products
 

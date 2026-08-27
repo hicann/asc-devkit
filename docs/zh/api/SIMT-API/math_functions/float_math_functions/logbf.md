@@ -45,7 +45,7 @@ inline float logbf(float x)
 
 ## 返回值说明
 
-以2为底的x的对数，并向下取整后的值。
+以2为底的x的绝对值(|x|)的对数，并向下取整后的值。
 
 -   当x为inf时，返回值为inf。
 -   当x为-inf时，返回值为inf。
@@ -58,7 +58,7 @@ inline float logbf(float x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

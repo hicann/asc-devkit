@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-获取输入uint64类型数据x和y乘积的高64位。
+获取输入uint64类型数据`x`和`y`乘积的高64位。
 
 ![](../../../figures/zh-cn_formulaimage_0000002531050522.png)
 
@@ -54,7 +54,7 @@ unsigned long long __umul64hi(unsigned long long x, unsigned long long y)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"

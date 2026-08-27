@@ -51,7 +51,7 @@ unsigned long __brev(unsigned long x)
 
 ## 返回值说明
 
-输入数据的位反转值。当输入的类型为uint32\_t时，返回值的第n位对应输入数据的第31-n位；当输入的类型为uint64\_t时，返回值的第n位对应输入数据的第63-n位。
+输入数据的位反转值。当输入的类型为uint32_t时，返回值的第n位对应输入数据的第31-n位；当输入的类型为uint64_t时，返回值的第n位对应输入数据的第63-n位。
 
 -   当x为0时，类型为uint32\_t时，返回值为0。
 -   当x为0时，类型为uint64\_t时，返回值为0。
@@ -64,7 +64,7 @@ unsigned long __brev(unsigned long x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"

@@ -87,7 +87,7 @@ inline bfloat16x2_t asc_atomic_max(bfloat16x2_t *address, bfloat16x2_t val)
 
 UB或Global Memory上的初始数据。
 
-注意，由于底层硬件约束，half和bfloat16\_t类型的返回值不准确，禁止直接使用这些类型的返回值。half2和bfloat16x2\_t类型不受此限制。
+注意，由于底层硬件约束，half和bfloat16_t类型的返回值不准确，禁止直接使用这些类型的返回值。half2和bfloat16x2_t类型不受此限制。
 
 ## 约束说明
 
@@ -106,7 +106,7 @@ UB或Global Memory上的初始数据。
 
 ## 需要包含的头文件
 
-使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_atomic\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含`simt_api/device_atomic_functions.h`头文件，使用half和half2类型接口需要包含`simt_api/asc_fp16.h`头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/device_atomic_functions.h"
@@ -122,7 +122,7 @@ UB或Global Memory上的初始数据。
 
 ## 调用示例
 
-示例场景为：多个线程扫描分数数组，使用`asc_atomic_max`接口将全局最高分写入同一个结果地址。输入参数说明如下：
+示例场景为：多个线程扫描分数数组，使用`asc_atomic_max()`接口将全局最高分写入同一个结果地址。输入参数说明如下：
 
 | 名称 | 说明 |
 | --- | --- |
@@ -150,7 +150,7 @@ UB或Global Memory上的初始数据。
 
 -   SIMD与SIMT混合编程场景：
 
-    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：\_\_gm\_\_表示Global Memory内存空间，\_\_ubuf\_\_表示UB内存空间。
+    SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：`__gm__`表示Global Memory内存空间，`__ubuf__`表示UB内存空间。
 
     ```cpp
     __simt_vf__ __launch_bounds__(1024) inline void find_max_score(__gm__ uint32_t *max_score,

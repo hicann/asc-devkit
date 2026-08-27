@@ -26,7 +26,7 @@ sincos_compute/
 
 - Example Function
 
-  Use the sincosf function to compute sin and cos results simultaneously
+  Use the `sincosf()` function to compute sin and cos results simultaneously
 
   ```
   sincosf(input[idx], output_sin + idx, output_cos + idx)

@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-对输入数据x、y、z，计算|x - y| + z的结果，即前两个输入作差的绝对值与第三个输入的和。
+对输入数据`x`、`y`、`z`，计算`|x - y| + z`的结果，即前两个输入作差的绝对值与第三个输入的和。
 
 ## 函数原型
 
@@ -45,7 +45,7 @@ unsigned int __sad(int x, int y, unsigned int z)
 
 ## 返回值说明
 
-|x - y| + z的结果。
+`|x - y| + z`的结果。
 
 ## 约束说明
 
@@ -53,7 +53,7 @@ unsigned int __sad(int x, int y, unsigned int z)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_functions.h"

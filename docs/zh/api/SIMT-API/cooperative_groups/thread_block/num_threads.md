@@ -39,7 +39,7 @@ static unsigned int num_threads()
 
 ## 返回值说明
 
-当前线程所属线程块内的线程总数，即blockDim.x * blockDim.y * blockDim.z。
+当前线程所属线程块内的线程总数，即`blockDim.x * blockDim.y * blockDim.z`。
 
 ## 约束说明
 

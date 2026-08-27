@@ -60,7 +60,7 @@ inline bfloat16_t hlog(bfloat16_t x)
 
 ## 需要包含的头文件
 
-使用bfloat16\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用bfloat16\_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_bf16.h"

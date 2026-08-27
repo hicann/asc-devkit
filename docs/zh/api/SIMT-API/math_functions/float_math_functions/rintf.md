@@ -45,12 +45,12 @@ inline float rintf(float x)
 
 与输入浮点数最接近的整数值。特别场景说明如下：
 
--   当x为0时，返回值为0。
--   当x为0.5时，返回值为0。
--   当x为1.5时，返回值为2。
--   当x为nan时，返回值为nan。
--   当x为inf时，返回值为inf。
--   当x为-inf时，返回值为-inf。
+-   当`x`为0时，返回值为0。
+-   当`x`为0.5时，返回值为0。
+-   当`x`为1.5时，返回值为2。
+-   当`x`为nan时，返回值为nan。
+-   当`x`为inf时，返回值为inf。
+-   当`x`为-inf时，返回值为-inf。
 
 ## 约束说明
 
@@ -58,7 +58,7 @@ inline float rintf(float x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

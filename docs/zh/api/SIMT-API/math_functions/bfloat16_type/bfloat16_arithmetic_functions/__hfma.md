@@ -65,7 +65,7 @@ x \* y+ z的值。本接口不受全局饱和模式影响，特殊值如下：
 
 ## 需要包含的头文件
 
-使用bfloat16\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用bfloat16\_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_bf16.h"

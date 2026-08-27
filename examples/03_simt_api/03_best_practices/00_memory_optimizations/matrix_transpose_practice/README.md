@@ -94,7 +94,7 @@ uint32_t index = x_index + width * y_index;              // 61 + 1024 * 66
 | -------------------- | ----------------------------------------------------------------------------------------- |
 | Task Duration(μs)   | Task整体耗时，包含调度到加速器的时间、加速器上的执行时间以及响应结束时间                  |
 | aiv_time(μs)        | Task在AI Vector Core上的理论执行时间，单位为μs                                           |
-| aiv_total_cycles     | 该Task被分配到每个AI Vector Core计算单元上后，每个AI Vector Core计算单元上的执行cycle总数 |
+| aiv_total_cycles     | 该Task在每个AI Vector Core计算单元上的执行cycle总数 |
 | aiv_vec_time(μs)    | vec类型指令（向量类运算指令）耗时，单位为μs                                              |
 | aiv_vec_ratio        | vec类型指令（向量类运算指令）的cycle数在total cycle数中的占用比                           |
 | aiv_scalar_time(μs) | scalar类型指令（标量类运算指令）耗时，单位为μs                                           |
@@ -479,7 +479,7 @@ cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM
 msopprof simulator --soc-version=<soc_version> ./matrix_transpose
 ```
 
-> 使用仿真调优功能前，需要在 `CMakeLists.txt` 中添加 `-g` 编译选项，用于生成调试信息，使仿真器能够采集指令流水图。`soc_version` 获取方式及仿真调优其他说明可参考[仿真调优样例](../../../01_utilities/07_simulator)。
+> 使用仿真调优功能前，需要在 CMakeLists.txt 中添加 `-g` 编译选项，用于生成调试信息，使仿真器能够采集指令流水图。`soc_version` 获取方式及仿真调优其他说明可参考[仿真调优样例](../../../01_utilities/07_simulator)。
 
 命令完成后，会在当前目录下生成以 `OPPROF_{timestamp}_XXX` 命名的文件夹，产物结构如下：
 

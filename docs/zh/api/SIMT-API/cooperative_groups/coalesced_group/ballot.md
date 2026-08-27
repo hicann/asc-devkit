@@ -43,7 +43,7 @@ unsigned int ballot(int predicate) const
 
 ## 返回值说明
 
-32-bit的无符号整数：若`coalesced_group`组内线程输入的`predicate`不为0，则返回值中与线程rank对应的bit位为1，否则为0。
+32-bit的无符号整数：若`coalesced_group`组内线程输入的`predicate`不为0，则返回值中与线程`rank`对应的`bit`位为1，否则为0。
 
 ## 约束说明
 

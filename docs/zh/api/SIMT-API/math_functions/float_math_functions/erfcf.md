@@ -52,12 +52,12 @@ inline float erfcf(float x)
 ## 约束说明
 
 <!-- npu="950" id7 -->
-针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：本接口内部实现使用到了exp2f，由于exp2f不支持Subnormal场景，在极少数场景下内部指数计算结果为Subnormal数据，导致本接口最终结果为0。
+针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：本接口内部实现使用到了`exp2f()`，由于`exp2f()`不支持Subnormal场景，在极少数场景下内部指数计算结果为Subnormal数据，导致本接口最终结果为0。
 <!-- end id7 -->
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

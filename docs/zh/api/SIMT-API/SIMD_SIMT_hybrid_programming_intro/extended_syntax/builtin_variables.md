@@ -1,6 +1,6 @@
 # 内置变量
 
-当前提供了以下仅在Device上可用的dim3类型的内置变量：
+当前提供了以下仅在Device上可用的`dim3`类型的内置变量：
 
 -   <a id="blockdim"></a>blockDim
 

@@ -51,7 +51,7 @@ This sample implements a one-dimensional Gather operator in a simple scenario (w
   The implementation process of the gather_1d operator retrieves data at specified indices from the input (Global Memory). Based on the above data partitioning, it first calculates the index of data that the thread should process, then reads one element according to index[i] and writes it to output[i].
 
 - Invocation Implementation:  
-  Use the kernel call operator <<<>>> to launch the kernel.
+  Use the kernel call operator `<<<>>>` to launch the kernel.
 
 ## Build and Run
 

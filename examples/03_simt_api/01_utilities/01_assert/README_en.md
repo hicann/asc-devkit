@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example demonstrates how to use the `assert()` interface in SIMT programming for on-board functional debugging.
+This example demonstrates how to use the `assert()` interface in the SIMT programming model for on-board functional debugging.
 
 ## Supported Products
 

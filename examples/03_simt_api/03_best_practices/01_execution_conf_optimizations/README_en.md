@@ -2,7 +2,7 @@
 
 ## Overview
 
-Operator execution configuration optimization introduces gridDim/blockDim related configurations in SIMT programming model through direct invocation using <<<>>>. Currently, optimization cases for setting maximum thread count (sincos_compute) are provided to fully utilize registers and optimize operator execution performance; as well as thread block count configuration strategy samples (grid_dim_config), demonstrating thread block configuration optimization methods under different data size scenarios.
+Operator execution configuration optimization introduces `gridDim`/`blockDim` related configurations in the SIMT programming model through direct invocation using `<<<>>>`. Currently, optimization cases for setting the maximum thread count (`sincos_compute`) are provided to fully utilize registers and optimize operator execution performance; as well as thread block count configuration strategy samples (`grid_dim_config`), demonstrating thread block configuration optimization methods under different data size scenarios.
 
 ## Sample List
 

@@ -49,9 +49,9 @@ inline unsigned long long int __bfloat162ull_rn(const bfloat16_t x)
 |---|---|
 | ±0 | 0 |
 | nan | 0 |
-| inf | 18446744073709551615 |
+| inf | 18446744073709551615（ULLONG_MAX） |
 | -inf | 0 |
-| ASCRT_MAX_NORMAL_BF16 | 18446744073709551615 |
+| ASCRT_MAX_NORMAL_BF16 | 18446744073709551615（ULLONG_MAX） |
 | -ASCRT_MAX_NORMAL_BF16 | 0 |
 | 0.5 | 0 |
 | 1.5 | 2 |
@@ -65,7 +65,7 @@ inline unsigned long long int __bfloat162ull_rn(const bfloat16_t x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用该接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_bf16.h"

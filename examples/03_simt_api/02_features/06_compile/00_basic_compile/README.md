@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例基于Gather算子，演示了Host侧.cpp文件调用Host + Device混合.asc文件（含Kernel定义与<<<>>>内核调用）的基本编译流程。其中.asc文件中包含<<<>>>核函数调用的Host侧入口函数通过extern暴露给纯Host侧的.cpp。代码结构与调用关系如图 1 所示：
+本样例基于Gather算子，演示了Host侧.cpp文件调用Host + Device混合.asc文件（含Kernel定义与`<<<>>>`内核调用）的基本编译流程。其中.asc文件中包含`<<<>>>`核函数调用的Host侧入口函数通过extern暴露给纯Host侧的.cpp。代码结构与调用关系如图 1 所示：
 
 <p align="center">
   <img src="./figures/basic_compile.png" width="50%">
@@ -34,7 +34,7 @@ gather算子实现了从长度为100000的一维输入向量中获取指定索�
 
 ## 异构编译介绍
 
-本样例采用**异构编译**方式，Host侧 `.cpp` 与Device侧 `.asc` 分开编译后再链接。AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成Host二进制，AI Core SIMT代码由Device编译器编译成SIMT二进制，先将SIMT二进制链接成Fatbin文件，再与Host二进制合并生成可执行二进制。
+本样例采用**异构编译**方式，Host侧`.cpp`与Device侧`.asc`分开编译后再链接。AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成Host二进制，AI Core SIMT代码由Device编译器编译成SIMT二进制，先将SIMT二进制链接成Fatbin文件，再与Host二进制合并生成可执行二进制。
 
 ### bisheng命令行编译
 

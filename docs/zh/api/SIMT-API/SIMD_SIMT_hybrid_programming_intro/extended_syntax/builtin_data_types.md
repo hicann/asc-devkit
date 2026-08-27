@@ -246,7 +246,7 @@ SIMD与SIMT混合编程提供了用于构造短向量的函数。这些构造函
     inline bfloat16x2_t make_bfloat162(bfloat16_t x, bfloat16_t y)
     ```
 
-使用短向量构造函数需要包含simt\_api/vector\_functions.h，调用示例如下：
+使用短向量构造函数需要包含`simt_api/vector_functions.h`，调用示例如下：
 
 ```cpp
 #include "simt_api/vector_functions.h"

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example, based on the Gather operator, demonstrates the separate compilation flow where Device code in a Host + Device mixed .asc file is split into **multiple .asc files**. The separate compilation code structure and call relationship are shown in Figure 1 below, where `gather_compute.asc` is the **Device-side execution function** (defines the `gather_element` function and exposes it through extern for cross-file invocation), `gather_kernel.asc` is the **Host + Device mixed file** (containing the Kernel definition and <<<>>> kernel invocation, and calling the Device-side execution function in gather_compute.asc through extern), and `main.cpp` is pure Host-side code (calling the <<<>>> kernel launch function exposed by gather_kernel.asc through extern).
+This example, based on the Gather operator, demonstrates the separate compilation flow where Device code in a Host + Device mixed .asc file is split into **multiple .asc files**. The separate compilation code structure and call relationship are shown in Figure 1 below, where `gather_compute.asc` is the **Device-side execution function** (defines the `gather_element()` function and exposes it through extern for cross-file invocation), `gather_kernel.asc` is the **Host + Device mixed file** (containing the Kernel definition and `<<<>>>` kernel invocation, and calling the Device-side execution function in gather_compute.asc through extern), and `main.cpp` is pure Host-side code (calling the `<<<>>>` kernel launch function exposed by gather_kernel.asc through extern).
 
 <p align="center">
   <img src="./figures/separate_compile.png" width="50%">

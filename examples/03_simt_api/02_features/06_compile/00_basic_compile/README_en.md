@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example, based on the Gather operator, demonstrates the basic compilation flow where a Host-side .cpp file calls a Host + Device mixed .asc file (containing Kernel definition and <<<>>> kernel invocation). The .asc file contains a Host-side entry function with <<<>>> kernel function invocation exposed to the pure Host-side .cpp through extern. The code structure and call relationship are shown in Figure 1:
+This example, based on the Gather operator, demonstrates the basic compilation flow where a Host-side .cpp file calls a Host + Device mixed .asc file (containing Kernel definition and `<<<>>>` kernel invocation). The .asc file contains a Host-side entry function with `<<<>>>` kernel function invocation exposed to the pure Host-side .cpp through extern. The code structure and call relationship are shown in Figure 1:
 
 <p align="center">
   <img src="./figures/basic_compile.png" width="50%">

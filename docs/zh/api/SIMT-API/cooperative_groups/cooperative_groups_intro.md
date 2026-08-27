@@ -1,8 +1,8 @@
 # 协作组简介
 
-协作组（cooperative groups）是Ascend C SIMT编程模型的一种拓展，用于组织协作线程组。通过协作组能够更细粒度地管理线程，从而实现更高效的线程并行协作。
+协作组（cooperative groups）是Ascend C SIMT编程模型的一种扩展，用于组织协作线程组。通过协作组能够更细粒度地管理线程，从而实现更高效的线程并行协作。
 
-当前提供协作组类型有：
+当前提供的协作组类型有：
 
 - [thread_block](thread_block/thread_block_intro.md)：对线程块的抽象，提供统一的线程管理接口。
 - [coalesced_group](coalesced_group/coalesced_group_intro.md)：Warp中的活跃线程集合。

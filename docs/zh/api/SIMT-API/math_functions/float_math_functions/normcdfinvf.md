@@ -47,10 +47,10 @@ inline float normcdfinvf(float x)
 
 获取输入数据x的标准正态累积分布的逆函数。
 
--   当x为0时，返回值为-inf。
--   当x为nan时，返回值为nan。
--   当x为1时，返回值为inf。
--   当x∉\[0,1\]时，返回nan。
+-   当`x`为0时，返回值为-inf。
+-   当`x`为nan时，返回值为nan。
+-   当`x`为1时，返回值为inf。
+-   当`x`∉[0,1]时，返回nan。
 
 ## 约束说明
 
@@ -58,7 +58,7 @@ inline float normcdfinvf(float x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

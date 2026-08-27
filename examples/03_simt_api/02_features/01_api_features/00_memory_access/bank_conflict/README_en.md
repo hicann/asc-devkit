@@ -92,7 +92,7 @@ for (uint32_t i = 0; i < REPEAT_TIMES; ++i) {
 }
 ```
 
-**Table 2** Case implementation description
+**Table 1** Case implementation description
 
 | Case   | Scenario Description                                                 | Expected Access Characteristics                                                                |
 | ------ | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |

@@ -51,7 +51,7 @@
   gather_1d算子的实现流程为从输入input（Global Memory）中获取指定索引的数据。基于上述数据切分，首先计算线程应处理数据的索引，然后根据index[i]读取1个元素，并写入output[i]。
 
 - 调用实现：  
-  使用内核调用符<<<>>>启动Kernel。
+  使用内核调用符`<<<>>>`启动Kernel。
 
 ## 编译运行
 
@@ -63,7 +63,7 @@
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **说明：** `${install_path}` 为CANN包安装目录，未指定安装目录时默认安装至 `/usr/local/Ascend` 下。
+  > **说明：** `${install_path}`为CANN包安装目录，未指定安装目录时默认安装至`/usr/local/Ascend`下。
 
 - 样例执行
 

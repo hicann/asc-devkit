@@ -65,7 +65,7 @@ bfloat16x2_t __heqx2(bfloat16x2_t x, bfloat16x2_t y)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用该接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_bf16.h"

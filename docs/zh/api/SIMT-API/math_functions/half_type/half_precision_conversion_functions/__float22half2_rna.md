@@ -47,7 +47,7 @@ inline half2 __float22half2_rna(const float2 x)
 
 | x值 | 非饱和模式返回值 | 饱和模式返回值 |
 | --- | --- | --- |
-| ±0 | 0 | 0 |
+| 0 | 0 | 0 |
 | -0 | -0 | -0 |
 | nan | nan | 0 |
 | inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |
@@ -61,7 +61,7 @@ inline half2 __float22half2_rna(const float2 x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
+使用该接口需要包含`simt_api/asc_fp16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_fp16.h"

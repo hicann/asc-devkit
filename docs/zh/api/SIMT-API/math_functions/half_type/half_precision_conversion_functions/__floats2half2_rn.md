@@ -62,7 +62,7 @@ inline half2 __floats2half2_rn(const float x, const float y)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/asc\_fp16.h"头文件。
+使用该接口需要包含`simt_api/asc_fp16.h`头文件。
 
 ```cpp
 #include "simt_api/asc_fp16.h"

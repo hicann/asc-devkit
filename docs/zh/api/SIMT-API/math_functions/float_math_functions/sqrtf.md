@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-获取输入数据x的平方根。
+获取输入数据`x`的平方根。
 
 ![](../../../figures/zh-cn_formulaimage_0000002516816361.png)
 
@@ -61,7 +61,7 @@ inline float sqrtf(float x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

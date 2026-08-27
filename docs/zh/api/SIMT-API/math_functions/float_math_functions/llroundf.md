@@ -45,7 +45,7 @@ inline long long int llroundf(float x)
 
 对输入四舍五入后的整数。特别场景说明如下：
 
--   当x为nan时，返回值为0
+-   当`x`为nan时，返回值为0
 
 ## 约束说明
 
@@ -53,7 +53,7 @@ inline long long int llroundf(float x)
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/math\_functions.h"头文件。
+使用该接口需要包含`simt_api/math_functions.h`头文件。
 
 ```cpp
 #include "simt_api/math_functions.h"

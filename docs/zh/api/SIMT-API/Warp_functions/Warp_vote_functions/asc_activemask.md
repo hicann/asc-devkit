@@ -49,7 +49,7 @@ inline uint32_t asc_activemask()
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_warp\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_warp_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_warp_functions.h"

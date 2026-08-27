@@ -27,7 +27,7 @@
 
 在SIMT编程范式中，来自不同线程对同一份内存的读写操作可能造成**数据竞争**（Data Race），这是由于NPU架构的特性，线程的执行顺序和内存访问顺序可能不一致，从而导致其他线程看到的数据更新顺序与实际写入顺序不同。
 
-内存栅栏类接口可以解决这类多线程同步读写共享内存的问题，其中asc\_threadfence接口用于保证所有线程对同一份全局、共享内存的访问过程中，**写入操作的时序性和可见性**。
+内存栅栏类接口可以解决这类多线程同步读写共享内存的问题，其中`asc_threadfence()`接口用于保证所有线程对同一份全局、共享内存的访问过程中，**写入操作的时序性和可见性**。
 
 **关键特征**：
 
@@ -69,7 +69,7 @@ inline void asc_threadfence()
 
 ## 需要包含的头文件
 
-使用该接口需要包含"simt\_api/device\_sync\_functions.h"头文件。
+使用该接口需要包含`simt_api/device_sync_functions.h`头文件。
 
 ```cpp
 #include "simt_api/device_sync_functions.h"

@@ -29,18 +29,18 @@ Warp Shfl类接口主要实现Warp级数据交换，能够实现直接读取某�
 
 -   **Warp分组**
 
-    Warp内的线程可分为多个组，用户通过参数width配置分组宽度（分组的线程数），分组内的线程可进行数据交换，组内线程通过相对组内起始线程位置来标识索引，称为逻辑Lane ID。
+    Warp内的线程可分为多个组，用户通过参数`width`配置分组宽度（分组的线程数），分组内的线程可进行数据交换，组内线程通过相对组内起始线程位置来标识索引，称为逻辑Lane ID。
 
 -   **数据交换**
 
-    本接口主要是获取分组内指定线程持有的var值，用户通过参数src\_lane指定线程。如果src\_lane大于等于width，指定线程的逻辑Lane ID是src\_lane%width。
+    本接口主要是获取分组内指定线程持有的`var`值，用户通过参数`src_lane`指定线程。如果`src_lane`大于等于`width`，指定线程的逻辑Lane ID是`src_lane % width`。
 
 **主要使用场景**
 
 -   数据分发：将固定位置的线程数据广播给其他线程；
 -   动态数据交换：每个线程从不同的源线程读取数据；
 
-例如，Warp内32个活跃线程调用asc\_shfl\(LaneId, 5, 16\)接口，每个线程的返回值为当前线程所在分组内线程编号为5的var值。
+例如，Warp内32个活跃线程调用`asc_shfl(LaneId, 5, 16)`接口，每个线程的返回值为当前线程所在分组内线程编号为5的var值。
 
 **图1**  asc\_shfl结果示意图  
 ![](../../../figures/asc_shfl_result.png "asc_shfl结果示意图")
@@ -95,16 +95,16 @@ inline bfloat16x2_t asc_shfl(bfloat16x2_t var, int32_t src_lane, int32_t width =
 
 ## 返回值说明
 
-Warp内指定线程的var值。
+Warp内指定线程的`var`值。
 
 ## 约束说明
 
 -   如果目标线程是非活跃状态，获取到寄存器中未初始化的值。
--   若入参width不是2的倍数或超出32，返回值异常。
+-   若入参`width`不是2的倍数或超出32，返回值异常。
 
 ## 需要包含的头文件
 
-使用除half、half2、bfloat16\_t、bfloat16x2\_t类型之外的接口需要包含"simt\_api/device\_warp\_functions.h"头文件，使用half和half2类型接口需要包含"simt\_api/asc\_fp16.h"头文件，使用bfloat16\_t和bfloat16x2\_t类型接口需要包含"simt\_api/asc\_bf16.h"头文件。
+使用除half、half2、bfloat16_t、bfloat16x2_t类型之外的接口需要包含`simt_api/device_warp_functions.h`头文件，使用half和half2类型接口需要包含`simt_api/asc_fp16.h`头文件，使用bfloat16_t和bfloat16x2_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
 
 ```cpp
 #include "simt_api/device_warp_functions.h"

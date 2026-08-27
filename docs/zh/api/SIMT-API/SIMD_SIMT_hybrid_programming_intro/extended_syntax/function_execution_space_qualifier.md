@@ -38,7 +38,7 @@ SIMT VF函数定义中的关键修饰符说明如下：
 | \_\_gm\_\_ | 内存空间修饰符，标识内存空间为GM。 |
 | \_\_ubuf\_\_ | 内存空间修饰符，标识内存空间为UB。 |
 
-通过SIMT的[asc\_vf\_call](kernel_function_config.md#asc_vf_call调用)接口在核函数（Kernel）或\_\_aicore\_\_函数中调用，调用示例如下：
+通过SIMT的[asc\_vf\_call](kernel_function_config.md#asc_vf_call调用)接口在核函数（Kernel）或`__aicore__`函数中调用，调用示例如下：
 
 ```cpp
 asc_vf_call<function_name>(dim3(blockDim), arg1, arg2, ...);
