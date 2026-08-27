@@ -202,6 +202,7 @@ foreach(product_type ${BASIC_UT_PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},mc62cm12aa_BASIC>:__NPU_ARCH__=5102>
         $<$<STREQUAL:${product_type},mc62cm12aa_FRAMEWORK>:__NPU_ARCH__=5102>
         __disable_kernel_type_autoinfer__=
+        __callee__=
     )
 
     target_include_directories(ascendc_ut_basic_api_${product_type} PRIVATE

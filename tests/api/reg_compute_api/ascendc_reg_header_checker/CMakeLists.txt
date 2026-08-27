@@ -138,7 +138,7 @@ function(create_check_targets NPU_MODE MODE_SUFFIX MODE_DEFINES)
                 set(ALL_DEFINES ${MODE_DEFINES} ${CONFIG_DEFS})
                 set(ARCH_FLAG "--cce-aicore-arch=${CONFIG_NAME}")
             else()
-                set(ALL_DEFINES ${MODE_DEFINES} ${CONFIG_DEFS} "-D__NPU_ARCH__=${CONFIG_ARCH}" "-DASCENDC_CPU_DEBUG=1")
+                set(ALL_DEFINES ${MODE_DEFINES} ${CONFIG_DEFS} "-D__NPU_ARCH__=${CONFIG_ARCH}" "-DASCENDC_CPU_DEBUG=1" "-D__callee__=")
                 set(ARCH_FLAG "")
             endif()
 

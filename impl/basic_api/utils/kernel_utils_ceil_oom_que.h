@@ -42,7 +42,7 @@ __aicore__ constexpr inline uint32_t AlignUp(uint32_t a, uint32_t b) { return Di
 
 __aicore__ constexpr inline uint32_t ConstCeil(uint32_t a, uint32_t b) { return (a + b - 1) / b; }
 
-__aicore__ inline uint32_t Ceil(uint32_t a, uint32_t b) { return (a + b - 1) / b; }
+__aicore__ constexpr inline uint32_t Ceil(uint32_t a, uint32_t b) { return (a + b - 1) / b; }
 
 #if defined(__NPU_ARCH__) &&                                                                                      \
         ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) ||  \

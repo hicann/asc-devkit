@@ -222,7 +222,7 @@ template <typename T>
 constexpr __aicore__ inline uint64_t GetScalarBitcodeValue(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         uint64_t output;
     } data;
@@ -235,7 +235,7 @@ template <typename T, typename U>
 constexpr __aicore__ inline U GetScalarBitcodeValue(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         U output;
     } data;
@@ -248,7 +248,7 @@ template <typename T>
 constexpr __aicore__ inline half GetScalarBitcodeToHalf(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         half output;
     } data;

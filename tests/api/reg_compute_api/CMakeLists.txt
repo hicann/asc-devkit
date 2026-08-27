@@ -53,6 +53,7 @@ foreach(product_type ${MICRO_PRODUCT_TYPE_LIST})
         ASCENDC_DUMP=0
         $<$<STREQUAL:${product_type},ascend950pr_9599>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
         $<$<STREQUAL:${product_type},mc62cm12aa>:__NPU_ARCH__=5102>
+        __callee__=
     )
 
     target_include_directories(ascendc_ut_reg_compute_${product_type} PRIVATE

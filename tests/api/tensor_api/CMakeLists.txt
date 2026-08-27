@@ -23,10 +23,14 @@ set(ASCENDC_UT_HEADER
     ${CMAKE_CURRENT_LIST_DIR}/..
     ${ASCENDC_DIR}/
     ${ASCENDC_DIR}/include
+    ${ASCENDC_DIR}/include/basic_api
     ${ASCENDC_DIR}/include/c_api
+    ${ASCENDC_DIR}/include/simt_api
     ${ASCENDC_DIR}/include/utils
     ${ASCENDC_DIR}/impl
+    ${ASCENDC_DIR}/impl/basic_api
     ${ASCENDC_DIR}/impl/c_api
+    ${ASCENDC_DIR}/impl/simt_api
 )
 
 file(GLOB CONFIGURE_DEPENDS ASCENDC_UT_COMMON_SRC
@@ -65,6 +69,7 @@ foreach(product_type ${ASCENDC_UT_PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},NPU_ARCH_3510_AIC>:__NPU_ARCH__=3510>
         $<$<STREQUAL:${product_type},NPU_ARCH_3510_AIV>:__NPU_ARCH__=3510>
         __disable_kernel_type_autoinfer__=
+        __callee__=
     )
 
     target_include_directories(ascendc_ut_tensor_api_${product_type} PRIVATE

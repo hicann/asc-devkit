@@ -496,6 +496,7 @@ foreach(product_type ${PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},Kirin9030_AIV>:__NPU_ARCH__=3113;__DAV_L311__;__DAV_L311_VEC__;__DAV_L311_VEC__>
         $<$<STREQUAL:${product_type},ascend310B1>:__NPU_ARCH__=3002;__DAV_M300__>
         __disable_kernel_type_autoinfer__=
+        __callee__=
     )
 
     target_include_directories(ascendc_ut_adv_api_kernel_${product_type} PRIVATE

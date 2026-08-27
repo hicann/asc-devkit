@@ -85,6 +85,7 @@ foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
     target_compile_definitions(ascendc_ut_simt_api_${product_type} PRIVATE
         $<$<STREQUAL:${product_type},ascend950pr_9599>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
         $<$<STREQUAL:${product_type},mc62cm12aa>:__NPU_ARCH__=5102>
+        __callee__=
     )
 
     target_link_libraries(ascendc_ut_simt_api_${product_type} PRIVATE
@@ -124,6 +125,7 @@ foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
                 __NPU_ARCH__=3510
                 __DAV_C310__
                 __DAV_C310_VEC__
+                __callee__=
             )
 
             if("${target_name}" MATCHES "_ftz_true_")

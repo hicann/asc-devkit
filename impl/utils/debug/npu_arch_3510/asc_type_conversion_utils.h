@@ -23,7 +23,7 @@ template <typename T>
 constexpr __aicore__ inline uint64_t get_scalar_bitcode_value(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         uint64_t output;
     } data;
@@ -36,7 +36,7 @@ template <typename T, typename U>
 constexpr __aicore__ inline U get_scalar_bitcode_value(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         U output;
     } data;
@@ -53,13 +53,13 @@ constexpr uint32_t CONST_FP32_POS_INF = 0x7F800000;
 constexpr uint32_t CONST_FP32_NEG_INF = 0xFF800000;
 constexpr uint32_t CONST_FP32_MAN_LEN = 23;
 
-__aicore__ inline uint32_t fp32_constructor(uint32_t s, uint32_t e, uint32_t m)
+__aicore__ __callee__ inline uint32_t fp32_constructor(uint32_t s, uint32_t e, uint32_t m)
 {
     constexpr uint32_t fp32_max_man = 0x7FFFFF;
     return (((s) << 31) | ((e) << 23) | ((m)&fp32_max_man));
 }
 
-__aicore__ inline uint32_t hif8_to_fp32(const uint8_t fpVal)
+__aicore__ __callee__ inline uint32_t hif8_to_fp32(const uint8_t fpVal)
 {
     constexpr uint8_t hif8Nan = 0x80;
     constexpr uint8_t hif8PosInf = 0x6F;
@@ -150,28 +150,28 @@ __aicore__ inline uint32_t hif8_to_fp32(const uint8_t fpVal)
 }
 
 // FP8 (E5M2) -> Fp32
-__aicore__ inline bool fp8e5m2_is_nan(const uint16_t& x)
+__aicore__ __callee__ inline bool fp8e5m2_is_nan(const uint16_t& x)
 {
     constexpr int16_t fp8e5m2ExpMask = 0x7C;
     constexpr int16_t fp8e5m2ManMask = 0x3;
     return ((((x)&fp8e5m2ExpMask) == fp8e5m2ExpMask) && (((x)&fp8e5m2ManMask) != 0));
 }
 
-__aicore__ inline bool fp8e5m2_is_inf(const uint16_t& x)
+__aicore__ __callee__ inline bool fp8e5m2_is_inf(const uint16_t& x)
 {
     return ((x == static_cast<uint8_t>(0x7C)) || (x == static_cast<uint8_t>(0xFC))) ? true : false;
 }
 
-__aicore__ inline int8_t fp8e5m2_extract_sign(int8_t x) { return (((x) >> 7) & 0x1); }
+__aicore__ __callee__ inline int8_t fp8e5m2_extract_sign(int8_t x) { return (((x) >> 7) & 0x1); }
 
-__aicore__ inline int8_t fp8e5m2_extract_exp(int8_t x) { return (((x) >> 2) & 0x1F); }
+__aicore__ __callee__ inline int8_t fp8e5m2_extract_exp(int8_t x) { return (((x) >> 2) & 0x1F); }
 
-__aicore__ inline int8_t fp8e5m2_extract_man(uint8_t x)
+__aicore__ __callee__ inline int8_t fp8e5m2_extract_man(uint8_t x)
 {
     return ((((x) >> 0) & 0x3) | (((((x) >> 2) & 0x1F) > 0 ? 1 : 0) * 0x4));
 }
 
-__aicore__ inline void extract_fp8e5m2(const int8_t val, uint8_t& s, int8_t& e, uint8_t& m)
+__aicore__ __callee__ inline void extract_fp8e5m2(const int8_t val, uint8_t& s, int8_t& e, uint8_t& m)
 {
     constexpr uint32_t fp8e5m2ExpBias = 15;
     // 1.Extract
@@ -185,7 +185,7 @@ __aicore__ inline void extract_fp8e5m2(const int8_t val, uint8_t& s, int8_t& e, 
     }
 }
 
-__aicore__ inline uint32_t fp8e5m2_to_fp32(const uint8_t fpVal)
+__aicore__ __callee__ inline uint32_t fp8e5m2_to_fp32(const uint8_t fpVal)
 {
     constexpr uint32_t fp8e5m2ExpBias = 15;
     constexpr uint32_t fp8e5m2ManLen = 2;
@@ -243,21 +243,21 @@ __aicore__ inline uint32_t fp8e5m2_to_fp32(const uint8_t fpVal)
 constexpr uint32_t CONST_FP8E4M3_EXP_BIAS = 7;
 constexpr uint32_t CONST_FP8E4M3_MAN_LEN = 3;
 
-__aicore__ inline bool fp8e4m3_is_nan(const int8_t& x)
+__aicore__ __callee__ inline bool fp8e4m3_is_nan(const int8_t& x)
 {
     return (((x == static_cast<int8_t>(0x7F)) || (x == static_cast<int8_t>(0xFF))) ? true : false);
 }
 
-__aicore__ inline uint16_t fp8e4m3_extract_sign(uint8_t x) { return (((x) >> 7) & 0x1); }
+__aicore__ __callee__ inline uint16_t fp8e4m3_extract_sign(uint8_t x) { return (((x) >> 7) & 0x1); }
 
-__aicore__ inline uint16_t fp8e4m3_extract_exp(uint8_t x) { return (((x) >> CONST_FP8E4M3_MAN_LEN) & 0xF); }
+__aicore__ __callee__ inline uint16_t fp8e4m3_extract_exp(uint8_t x) { return (((x) >> CONST_FP8E4M3_MAN_LEN) & 0xF); }
 
-__aicore__ inline uint16_t fp8e4m3_extract_man(uint8_t x)
+__aicore__ __callee__ inline uint16_t fp8e4m3_extract_man(uint8_t x)
 {
     return ((((x) >> 0) & 0x7) | (((((x) >> CONST_FP8E4M3_MAN_LEN) & 0xF) > 0 ? 1 : 0) * 0x8));
 }
 
-__aicore__ inline void extract_fp8(const int8_t val, uint8_t& s, int8_t& e, uint8_t& m)
+__aicore__ __callee__ inline void extract_fp8(const int8_t val, uint8_t& s, int8_t& e, uint8_t& m)
 {
     // 1.Extract
     s = fp8e4m3_extract_sign(val);
@@ -270,7 +270,7 @@ __aicore__ inline void extract_fp8(const int8_t val, uint8_t& s, int8_t& e, uint
     }
 }
 
-__aicore__ inline uint32_t fp8e4m3_to_fp32(const int8_t fpVal)
+__aicore__ __callee__ inline uint32_t fp8e4m3_to_fp32(const int8_t fpVal)
 {
     constexpr uint8_t fp8ManHideBit = 0x8;
     uint32_t ret = 0;
@@ -321,7 +321,7 @@ __aicore__ inline uint32_t fp8e4m3_to_fp32(const int8_t fpVal)
 }
 
 // Fp4e2m1 -> Bf16
-__aicore__ inline bfloat16_t fp4e2m1_to_bfloat(const uint8_t fpVal)
+__aicore__ __callee__ inline bfloat16_t fp4e2m1_to_bfloat(const uint8_t fpVal)
 {
     constexpr uint16_t fp4e2m1ToBf16[16] = {0x0,    0x3F00, 0x3F80, 0x3FC0, 0x4000, 0x4040, 0x4080, 0x40C0,
                                             0x8000, 0xBF00, 0xBF80, 0xBFC0, 0xC000, 0xC040, 0xC080, 0xC0C0};
@@ -331,7 +331,7 @@ __aicore__ inline bfloat16_t fp4e2m1_to_bfloat(const uint8_t fpVal)
 }
 
 // Fp4e1m2 -> Bf16
-__aicore__ inline bfloat16_t fp4e1m2_to_bfloat(const uint8_t fpVal)
+__aicore__ __callee__ inline bfloat16_t fp4e1m2_to_bfloat(const uint8_t fpVal)
 {
     constexpr uint16_t fp4e1m2ToBf16[16] = {0x0,    0x3E80, 0x3F00, 0x3F40, 0x3F80, 0x3FA0, 0x3FC0, 0x3FE0,
                                             0x8000, 0xBE80, 0xBF00, 0xBF40, 0xBF80, 0xBFA0, 0xBFC0, 0xBFE0};
@@ -340,7 +340,7 @@ __aicore__ inline bfloat16_t fp4e1m2_to_bfloat(const uint8_t fpVal)
     return get_scalar_bitcode_value<uint16_t, bfloat16_t>(ret);
 }
 
-__aicore__ inline float bf16_to_fp32(const bfloat16_t& bVal)
+__aicore__ __callee__ inline float bf16_to_fp32(const bfloat16_t& bVal)
 {
     bfloat16_t bNum = bVal;
     uint32_t uiNum = (get_scalar_bitcode_value<bfloat16_t, uint32_t>(bNum)) << 16;

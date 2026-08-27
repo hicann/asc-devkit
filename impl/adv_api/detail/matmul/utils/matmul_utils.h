@@ -387,14 +387,14 @@ __aicore__ constexpr int32_t GetTypeSize()
 }
 
 template <typename T>
-__aicore__ inline T Ceil(T num1, T num2)
+__aicore__ inline constexpr T Ceil(T num1, T num2)
 {
-    ASCENDC_ASSERT((num2 > 0), { KERNEL_LOG(KERNEL_ERROR, "num2 is %d , which should be larger than 0", num2); });
+    ASCENDC_DEBUG_ASSERT((num2 > 0), { KERNEL_LOG(KERNEL_ERROR, "num2 is %d , which should be larger than 0", num2); });
     return (num1 + num2 - 1) / num2;
 }
 
 template <typename T>
-__aicore__ inline T CeilAlign(T num1, T num2)
+__aicore__ inline constexpr T CeilAlign(T num1, T num2)
 {
     ASSERT(num2 > 0);
     return Ceil(num1, num2) * num2;
@@ -547,12 +547,12 @@ __aicore__ inline void CopyTiling(const __gm__ TCubeTiling* gmCubeTiling, TCubeT
 }
 #endif
 template <typename A_TYPE, const auto& MM_CFG>
-constexpr bool isNormEnableScheduler = DoMatmulNorm(MM_CFG) && (A_TYPE::layout == LayoutMode::NONE) &&
-                                       !ToMatmulConfig(MM_CFG).intraBlockPartSum;
+constexpr bool isNormEnableScheduler =
+    DoMatmulNorm(MM_CFG) && (A_TYPE::layout == LayoutMode::NONE) && !ToMatmulConfig(MM_CFG).intraBlockPartSum;
 
 template <typename A_TYPE, const auto& MM_CFG>
-constexpr bool isNormDisableScheduler = DoMatmulNorm(MM_CFG) && ((A_TYPE::layout != LayoutMode::NONE) ||
-                                                                 ToMatmulConfig(MM_CFG).intraBlockPartSum);
+constexpr bool isNormDisableScheduler =
+    DoMatmulNorm(MM_CFG) && ((A_TYPE::layout != LayoutMode::NONE) || ToMatmulConfig(MM_CFG).intraBlockPartSum);
 
 template <const auto& MM_CFG>
 constexpr bool IsBasicBlockEnable = DoMatmulBasicBlock(MM_CFG) || DoMatmulSpecialBasicBlock(MM_CFG);
