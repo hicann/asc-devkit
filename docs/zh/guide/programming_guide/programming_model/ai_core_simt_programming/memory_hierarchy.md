@@ -20,7 +20,7 @@ SIMT线程可访问多种内存空间。下表汇总了SIMT编程中常见内存
 
 ## 全局内存（Global Memory）<a name="section8946131492119"></a>
 
-Device侧的全局内存是整个Grid中所有线程均可访问的内存空间。全局内存具有持久性：通过全局内存分配的空间及其存储的数据将持续保留，直到该内存空间被释放或应用程序终止。用户需在核函数（Kernel）启动前通过Runtime API完成全局内存的分配与初始化，核函数（Kernel）执行期间SIMT每个线程均可读写全局内存，执行完毕后可将结果拷贝回Host。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/README.md)。
+Device侧的全局内存是整个Grid中所有线程均可访问的内存空间。全局内存具有持久性：通过全局内存分配的空间及其存储的数据将持续保留，直到该内存空间被释放或应用程序终止。用户需在核函数（Kernel）启动前通过Runtime API完成全局内存的分配与初始化，核函数（Kernel）执行期间SIMT每个线程均可读写全局内存，执行完毕后可将结果拷贝回Host。有关Runtime API的更多信息与细节，可以参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
 
 运行在Device侧的核函数（Kernel）可以通过指针直接访问全局内存。下述代码展示了全局内存的简易示例。数组x、y、z均存储于全局内存中，通过以下核函数（Kernel）实现每个线程对全局内存的访问和存储。
 
@@ -123,7 +123,7 @@ GM上的SIMT栈空间用于保存线程私有运行时状态，按用途分为SI
 -   **SIMT Divergence栈空间**  
     用于存放SIMT分支发散场景下的程序计数器（PC，Program Counter）和活动掩码（Active Mask）。Warp内线程共享一个SIMT Divergence栈空间，每个Warp的栈空间默认大小为1024Byte。分支发散越频繁、控制流越复杂，该栈空间占用越高，严重时可能引发栈溢出。
 
-开发者可通过`--cce-res-usage`编译选项查看核函数（Kernel）的栈空间使用情况。若栈空间占用较高，应优先减少线程私有临时变量、控制调试打印的数据量、简化函数调用链并优化分支发散逻辑，以减少不必要的Global Memory访问。若业务确需调整栈空间大小，可通过`aclInit()`接口加载的配置文件进行设置：配置项`simt_stack_size`用于设置每个线程的SIMT通用栈空间大小，`simt_divergence_stack_size`用于设置SIMT Divergence栈空间大小，单位均为Byte。配置示例如下，更多说明请参考[aclInit()接口配置说明](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的“SIMT算子栈空间大小配置示例”。
+开发者可通过`--cce-res-usage`编译选项查看核函数（Kernel）的栈空间使用情况。若栈空间占用较高，应优先减少线程私有临时变量、控制调试打印的数据量、简化函数调用链并优化分支发散逻辑，以减少不必要的Global Memory访问。若业务确需调整栈空间大小，可通过`aclInit()`接口加载的配置文件进行设置：配置项`simt_stack_size`用于设置每个线程的SIMT通用栈空间大小，`simt_divergence_stack_size`用于设置SIMT Divergence栈空间大小，单位均为Byte。配置示例如下，更多说明请参考[aclInit()接口配置说明](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/API/runtimeapi/aclcppdevg_03_0022.html)中的“SIMT算子栈空间大小配置示例”。
 
 ```json
 {

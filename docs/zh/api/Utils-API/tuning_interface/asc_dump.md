@@ -142,7 +142,7 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 -   使用该接口时，在每个核上dump的数据总量不能大于30KB，请开发者自行控制打印的内容数据量，超出则不会打印。
 -   当`dump_size`的大小超过了`input`的实际元素个数时，会出现未定义问题。
 -   在计算数据量时，若dump的总长度未对齐，需要考虑padding数据的影响。当进行非对齐dump时，如果实际dump的元素长度不满足32字节对齐，系统会自动在其末尾补充一定数量的padding数据（这部分数据并不会打印），以满足对齐要求。
--   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过acl.json中的`"simd_printf_fifo_size_per_core"`字段进行配置，配置范围最小为1KB，最大为64MB（可通过[aclInit](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)接口调整）。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
+-   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过acl.json中的`"simd_printf_fifo_size_per_core"`字段进行配置，配置范围最小为1KB，最大为64MB（可通过[aclInit](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/API/runtimeapi/aclcppdevg_03_0022.html)接口调整）。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
 
 -   在`simd_vf`场景下，每个AIV核在单次`asc_vf_call`执行期间最多能使用2KB的UB空间；同一次`asc_vf_call`中的所有`simd_vf`的`asc_dump`和`printf`调用共享该预留空间。
 -   每次调用`simd_vf`的`asc_dump`时，除实际dump数据外，还会固定占用72字节的管理信息；实际dump数据需要按32字节向上对齐。
