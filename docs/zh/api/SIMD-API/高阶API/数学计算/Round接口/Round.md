@@ -103,5 +103,5 @@ AscendC::Round(dstLocal, srcLocal, sharedTmpBuffer, 512);
 输入数据(srcLocal):
 [ 6.6   -4.3   -8.6   ...   8.8   -8.3   6.5 ]
 输出数据(dstLocal):
-[ 7.0   -4.0   -9.0   ...   9.0   -8.0   7.0 ]
+[ 7.0   -4.0   -9.0   ...   9.0   -8.0   6.0 ]
 ```
