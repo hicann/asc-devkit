@@ -14,6 +14,7 @@ set(src_list
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_all_gather_mesh_1D_mem2mem.cc
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_all_gather_mesh_1D.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_kfc_all_gather_mesh_1D_mem2mem.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_kfc_all_gather_nhr_1D_multi_jetty_mem2mem.cc
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_all_gather_nhr_1D_mem2mem.cc
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_all_gather_2dies_mesh_1d_mem2mem.cc
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_all_gather_2dies_mesh_1D.cc

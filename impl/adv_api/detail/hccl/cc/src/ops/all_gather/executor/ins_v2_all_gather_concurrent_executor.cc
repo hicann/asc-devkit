@@ -16,10 +16,14 @@
 // AICPU template 头文件
 #include "ins_temp_all_gather_mesh_1D.h"
 #include "ins_temp_all_gather_nhr.h"
-
-constexpr u32 CLOS_PORT_NUM = 4;
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+#include "ccu_temp_kfc_all_gather_mesh_1D_mem2mem.h"
+#include "ccu_temp_kfc_all_gather_nhr_1D_multi_jetty_mem2mem.h"
+#endif
 
 namespace mc2_ops_hccl {
+
+constexpr u32 CLOS_PORT_NUM = 4;
 
 template <typename AlgTopoMatch, typename InsAlgTemplate0, typename InsAlgTemplate1>
 InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1>::InsV2AllGatherConcurrentExecutor()
@@ -61,7 +65,10 @@ HcclResult InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
     const AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resourceRequest)
 {
     // 初始化一些基本成员变量
-    InitCommInfo(param, topoInfo, algHierarchyInfo);
+    CHK_RET(InitCommInfo(param, topoInfo, algHierarchyInfo));
+    CHK_PRT_RET(
+        algHierarchyInfo.infos.empty() || algHierarchyInfo.infos[0].size() < 2,
+        HCCL_ERROR("[%s] algHierarchyInfo.infos[0] is invalid (empty or size < 2).", __func__), HCCL_E_PARA);
     // 拆分algHierarchyInfo
     std::vector<std::vector<u32>> temp0HierarchyInfo = {algHierarchyInfo.infos[0][0]};
     std::vector<std::vector<u32>> temp1HierarchyInfo = {algHierarchyInfo.infos[0][1]};
@@ -71,8 +78,8 @@ HcclResult InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
     // 调用计算资源的函数
     AlgResourceRequest temp0ResReq;
     AlgResourceRequest temp1ResReq;
-    temp0Alg->CalcRes(comm, param, topoInfo, temp0ResReq);
-    temp1Alg->CalcRes(comm, param, topoInfo, temp1ResReq);
+    CHK_RET(temp0Alg->CalcRes(comm, param, topoInfo, temp0ResReq));
+    CHK_RET(temp1Alg->CalcRes(comm, param, topoInfo, temp1ResReq));
 
     // 两个模板并行，资源累加
     resourceRequest.slaveThreadNum = temp0ResReq.slaveThreadNum + temp1ResReq.slaveThreadNum + 1;
@@ -171,14 +178,20 @@ HcclResult InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
 {
     AlgResourceRequest temp0Request;
     AlgResourceRequest temp1Request;
-    algTemplate0.GetRes(temp0Request); // 算法0需要的资源
-    algTemplate1.GetRes(temp1Request); // 算法1需要的资源
+    CHK_RET(algTemplate0.GetRes(temp0Request)); // 算法0需要的资源
+    CHK_RET(algTemplate1.GetRes(temp1Request)); // 算法1需要的资源
 
     auto tmp0ThreadsNum = temp0Request.slaveThreadNum + 1;
     auto tmp1ThreadsNum = temp1Request.slaveThreadNum + 1;
     auto tmp0NotifyOnMainThread = temp0Request.notifyNumOnMainThread;
     auto tmp1NotifyOnMainThread = temp1Request.notifyNumOnMainThread;
 
+    CHK_PRT_RET(
+        threads_.size() < tmp0ThreadsNum + tmp1ThreadsNum,
+        HCCL_ERROR(
+            "[%s] threads resource is not enough. threads.size=[%zu], tmp0ThreadsNum=[%u], tmp1ThreadsNum=[%u].",
+            __func__, threads_.size(), tmp0ThreadsNum, tmp1ThreadsNum),
+        HCCL_E_INTERNAL);
     tmp0Threads_.assign(threads_.begin(), threads_.begin() + tmp0ThreadsNum);
     tmp1Threads_.assign(threads_.begin() + tmp0ThreadsNum, threads_.end());
     // 用于两个算法同步
@@ -209,6 +222,9 @@ HcclResult InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
     HCCL_DEBUG("[InsV2AllGatherConcurrentExecutor][Orchestrate] strideCount[%lu]", strideCount_);
 
     // 拆分algHierarchyInfo
+    CHK_PRT_RET(
+        algHierarchyInfo_.infos.empty() || algHierarchyInfo_.infos[0].size() < 2,
+        HCCL_ERROR("[%s] algHierarchyInfo.infos[0] is invalid (empty or size < 2).", __func__), HCCL_E_PARA);
     std::vector<std::vector<u32>> temp0HierarchyInfo = {algHierarchyInfo_.infos[0][0]};
     std::vector<std::vector<u32>> temp1HierarchyInfo = {algHierarchyInfo_.infos[0][1]};
 
@@ -217,7 +233,7 @@ HcclResult InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
     InsAlgTemplate1 algTemplate1(param, myRank_, temp1HierarchyInfo);
 
     // 分配threads
-    PrepareResForTemplate(algTemplate0, algTemplate1);
+    CHK_RET(PrepareResForTemplate(algTemplate0, algTemplate1));
 
     // 分配channels或者ccuKernels
     if (param.engine == CommEngine::COMM_ENGINE_CCU) {
@@ -375,5 +391,11 @@ HcclResult InsV2AllGatherConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAl
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherConcurrentMesh1DNHR, InsV2AllGatherConcurrentExecutor, TopoMatchUBX,
     InsTempAllGatherMesh1D, InsTempAllGatherNHR);
+
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+REGISTER_EXECUTOR_BY_TWO_TEMPS(
+    HcclCMDType::HCCL_CMD_ALLGATHER, CcuSchedAllGatherConcurMeshNHRMultiLink, InsV2AllGatherConcurrentExecutor,
+    TopoMatchUBX, CcuTempKfcAllGatherMesh1DMem2Mem, CcuTempKfcAllGatherNHR1DMultiJettyMem2Mem);
+#endif
 
 } // namespace mc2_ops_hccl

@@ -69,6 +69,7 @@ asc-devkit:
       - impl/adv_api/detail/hccl/common/hccl_inner_def.h
       - impl/adv_api/detail/hccl/common/hccl_base.h
       - impl/adv_api/detail/hccl/common/hccl_aicpu_def.h
+      - impl/adv_api/detail/hccl/common/kfc_server_message.h
       - impl/adv_api/detail/hccl/impl/platform_v310/hccl_ccu_v0_def.h
       - impl/adv_api/detail/hccl/impl/platform_v310/hccl_ccu_v0.h
       - impl/adv_api/detail/hccl/impl/hccl_impl.h

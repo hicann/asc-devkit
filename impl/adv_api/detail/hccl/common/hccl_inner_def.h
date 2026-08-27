@@ -158,7 +158,7 @@ struct HcclOpResParam {
 } // namespace HcclContextDef
 constexpr uint16_t CCU_CKE_SIZE = 8;
 constexpr uint64_t CCU_XN_DATA_SIZE = 8;       // Number of bytes per xn
-constexpr uint16_t CCU_USED_XN_NUM = 15;       // Currently xn are used
+constexpr uint16_t CCU_USED_XN_NUM = 32;       // Maximum parameters loaded from a KFC message
 constexpr uint16_t CCU_MAX_MSG_NUM = 64;       // The message queue length sent to CCU
 constexpr uint16_t CCU_MSG_XN_NUM = 64;        // Maximum xn number, each CCU message body occupies 8 registers
                                                // the message body length is 64*8B=512B

@@ -9,6 +9,7 @@
  */
 #include "all_gather_auto_selector.h"
 #include "selector_registry.h"
+#include "kfc_server_protocol.h"
 
 namespace mc2_ops_hccl {
 constexpr u64 AG_2D_SMALL_DATA_SIZE = 1024 * 1024;
@@ -58,18 +59,28 @@ SelectorStatus AllGatherAutoSelector::SelectMeshAlgo(
 SelectorStatus AllGatherAutoSelector::SelectCcuScheduleUBXAlgo(
     const TopoInfoWithNetLayerDetails* topoInfo, std::string& selectAlgName, const u64 dataSize) const
 {
-    (void)topoInfo;
-    (void)selectAlgName;
-    (void)dataSize;
-    // Temporary KFC convergence: UBX CCU schedule variants are kept disabled until their registration path is restored.
-    HCCL_DEBUG("[AllGatherAutoSelector][%s] UBX topo is not supported for ccu schedule mode.", __func__);
-    return SelectorStatus::NOT_MATCH;
+    if (topoInfo->level0PcieMix) {
+        return SelectorStatus::NOT_MATCH;
+    }
+    bool meshNumEqualsClosNum = false;
+    CHK_PRT_RET(
+        CheckMeshNumEqualToClosNum(topoInfo, meshNumEqualsClosNum) != HCCL_SUCCESS,
+        HCCL_DEBUG("[AllGatherAutoSelector] CheckMeshNumEqualToClosNum failed."), SelectorStatus::NOT_MATCH);
+    if (dataSize > SMALL_COUNT_512KB && meshNumEqualsClosNum &&
+        topoInfo->userRankSize <= MAX_RANK_NUM_FOR_CONCURRENT_ALGO) {
+        selectAlgName = KFC_CONCURRENT_ALL_GATHER_ALG_NAME;
+        return SelectorStatus::MATCH;
+    }
+    selectAlgName = "CcuAllGatherMesh1DMem2Mem";
+    return SelectorStatus::MATCH;
 }
 
 SelectorStatus AllGatherAutoSelector::SelectCcuScheduleLevel0Algo(
     const TopoInfoWithNetLayerDetails* topoInfo, std::string& selectAlgName, const u64 dataSize) const
 {
-    (void)dataSize;
+    if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS) {
+        return SelectCcuScheduleUBXAlgo(topoInfo, selectAlgName, dataSize);
+    }
     // Temporary KFC convergence: route only regular Mesh1D to the KFC Mem2Mem implementation.
     if (topoInfo->level0Topo != Level0Shape::MESH_1D ||
         topoInfo->level0MeshType == Level0MeshType::TWO_DIE_NOT_REGULAR) {

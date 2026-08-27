@@ -12,10 +12,12 @@
 #define HCCL_CCU_KERNEL_KFC_SERVER_H
 
 #include <vector>
+#include <map>
 #include <ios>
 #include "utils.h"
 #include "ccu_kernel_utils.h"
 #include "ccu_kernel_alg_base.h"
+#include "kfc_server_protocol.h"
 
 namespace mc2_ops_hccl {
 constexpr uint64_t INVALID_U64 = UINT64_MAX;
@@ -26,15 +28,18 @@ constexpr uint32_t CCU_TASK_NUM_MAX = 64;
 
 // new---20260603
 struct CcuKernelArgKfcServer : CcuKernelArgBase {
-    uint64_t rankSize;
-    uint32_t rankId;
-    bool loadFromMem;
+    uint64_t rankSize = 0;
+    uint32_t rankId = 0;
+    bool loadFromMem = false;
+    KfcServerRole role = KfcServerRole::DEFAULT;
+    uint32_t jettyNum = 4;
     OpParam opParam;
     std::vector<std::vector<uint32_t>> subCommRanks;
+    std::vector<KfcNhrStepInfo> nhrStepInfoVector;
+    std::map<uint32_t, uint32_t> nhrRank2ChannelIdx;
 };
 
-// 第一层同步：missionId=0 与missionId>0之间的
-// 第二层同步：在missionId=0中，dieId=0与dieId=1之间的同步
+// 多mission由Host使用独立start/done区域调度；Server之间不在CCU侧同步。
 struct KfcServerContext : CcuKernelCtxBase {
     const CcuKernelArgKfcServer* arg;
 
