@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
  * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
  * CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
@@ -8,22 +8,27 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#warning "misc.h is deprecated.Please use c_api/utils/sys_init.h and c_api/utils/sys_misc.h."
+#if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
+#error "sys_misc.h cannot be used with compile flag --enable-simt enabled."
+#endif
 
 #if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H
 #endif
 
-#if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
-#error "misc.h cannot be used with compile flag --enable-simt enabled."
+#ifndef INCLUDE_C_API_UTILS_SYS_MISC_H
+#define INCLUDE_C_API_UTILS_SYS_MISC_H
+
+#include "c_api/defs/defs.h"
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+#include "impl/c_api/instr_impl/npu_arch_3510/misc_impl.h"
 #endif
 
-#ifndef INCLUDE_C_API_MISC_H
-#define INCLUDE_C_API_MISC_H
-
-#include "c_api/utils/sys_init.h"
-#include "c_api/utils/sys_misc.h"
+namespace __asc_aicore {
+__aicore__ inline void asc_nop();
+} // namespace __asc_aicore
 
 #endif
 

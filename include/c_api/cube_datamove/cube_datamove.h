@@ -40,6 +40,16 @@ __aicore__ inline void asc_set_l13d_fmatrix(asc_l13d_fmatrix_config& config);
 
 __aicore__ inline void asc_set_l0c2gm_channel_para(uint64_t config);
 
+__aicore__ inline uint64_t asc_get_l0c2gm_relu();
+
+__aicore__ inline uint64_t asc_get_l0c2gm_unitflag();
+
+__aicore__ inline uint64_t asc_get_l0c2gm_prequant();
+
+__aicore__ inline void asc_set_l0c2gm_nz2nd(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride);
+
+__aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_pre, bool enable_unit_flag);
+
 __aicore__ inline void asc_set_l3d_rpt_b(uint64_t config);
 
 __aicore__ inline void asc_set_l13d_padding(uint64_t config);

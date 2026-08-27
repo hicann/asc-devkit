@@ -33,8 +33,6 @@
 
 #include "c_api/composite/cube_compute_composite.h"
 
-__aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_pre, bool enable_unit_flag);
-
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ bfloat16_t* a_matrix, __cb__ bfloat16_t* b_matrix, uint16_t left_height,
     uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source,
@@ -93,11 +91,7 @@ __aicore__ inline void asc_enable_hf32_trans(uint32_t mode);
 __aicore__ inline void asc_enable_hf32();
 __aicore__ inline void asc_disable_hf32();
 __aicore__ inline void asc_set_fp32_mode();
-__aicore__ inline uint64_t asc_get_l0c2gm_relu();
-__aicore__ inline uint64_t asc_get_l0c2gm_unitflag();
-__aicore__ inline uint64_t asc_get_l0c2gm_prequant();
 __aicore__ inline void asc_set_l0c_copy_nz_para(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride);
-__aicore__ inline void asc_set_l0c2gm_nz2nd(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride);
 // ==========mmad_mx(e1m2/e1m2, e4m3/e5m2)==========
 __aicore__ inline void asc_mmad_mx(
     __cc__ float* c_matrix, __ca__ fp4x2_e1m2_t* a_matrix, __cb__ fp4x2_e1m2_t* b_matrix, uint16_t left_height,

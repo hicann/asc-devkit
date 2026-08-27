@@ -20,7 +20,7 @@
 #ifndef INCLUDE_C_API_ATOMIC_ATOMIC_H
 #define INCLUDE_C_API_ATOMIC_ATOMIC_H
 
-#include "c_api/atomic/memcpy_atomic.h"
+#include "c_api/atomic/datamove_atomic.h"
 #include "c_api/atomic/scalar_atomic.h"
 
 #endif

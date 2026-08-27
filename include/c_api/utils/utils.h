@@ -21,6 +21,7 @@
 #define INCLUDE_C_API_UTILS_UTILS_H
 
 #include "sys_init.h"
+#include "sys_misc.h"
 #include "sys_var.h"
 
 #endif

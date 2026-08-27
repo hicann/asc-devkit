@@ -18,9 +18,6 @@ static void test_host_c_api_cube_compute_0()
     using ::asc_enable_hf32;
     using ::asc_enable_hf32_trans;
     using ::asc_enable_hif8;
-    using ::asc_get_l0c2gm_prequant;
-    using ::asc_get_l0c2gm_relu;
-    using ::asc_get_l0c2gm_unitflag;
     using ::asc_mmad;
     using ::asc_mmad_mx;
     using ::asc_mmad_mx_sync;
@@ -31,8 +28,6 @@ static void test_host_c_api_cube_compute_0()
     using ::asc_mmad_sync;
     using ::asc_set_fp32_mode;
     using ::asc_set_hf32_round_mode;
-    using ::asc_set_l0c2gm_config;
-    using ::asc_set_l0c2gm_nz2nd;
     using ::asc_set_l0c_copy_nz_para;
     using ::asc_set_mmad_direction_m;
     using ::asc_set_mmad_direction_n;

@@ -9,7 +9,7 @@
  */
 
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
-#error "memcpy_atomic.h cannot be used with compile flag --enable-simt enabled."
+#error "datamove_atomic.h cannot be used with compile flag --enable-simt enabled."
 #endif
 
 #if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
@@ -17,8 +17,8 @@
 #define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H
 #endif
 
-#ifndef INCLUDE_C_API_ATOMIC_MEMCPY_ATOMIC_H
-#define INCLUDE_C_API_ATOMIC_MEMCPY_ATOMIC_H
+#ifndef INCLUDE_C_API_ATOMIC_DATAMOVE_ATOMIC_H
+#define INCLUDE_C_API_ATOMIC_DATAMOVE_ATOMIC_H
 
 #include "c_api/defs/defs.h"
 

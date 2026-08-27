@@ -45,11 +45,23 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl/asc_copy_l12bt_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl/asc_copy_l12ub_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl/asc_fill_l1_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_set_l0c2gm_config_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_set_l0c2gm_nz2nd_impl.h"
 
 constexpr uint8_t RELU_POST_DEFAULT = 0;
 constexpr bool CLIP_RELU_POST_DEFAULT = false;
 constexpr uint8_t ELTWISE_OP_DEFAULT = 0;
 constexpr uint64_t QUANT_POST_DEFAULT = 0;
+
+__aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_pre, bool enable_unit_flag)
+{
+    asc_set_l0c2gm_config_impl(relu_pre, quant_pre, enable_unit_flag);
+}
+
+__aicore__ inline void asc_set_l0c2gm_nz2nd(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride)
+{
+    asc_set_l0c2gm_nz2nd_impl(nd_num, src_nd_stride, dst_nd_stride);
+}
 
 __aicore__ inline void asc_copy_l12l0a_mx(
     uint64_t dst, __cbuf__ fp8_e8m0_t* src, uint16_t x_start_pos, uint16_t y_start_pos, uint8_t x_step, uint8_t y_step,

@@ -88,6 +88,9 @@ static void test_host_c_api_cube_datamove_2()
     using ::asc_fill_l0b_sync;
     using ::asc_fill_l1;
     using ::asc_fill_l1_sync;
+    using ::asc_get_l0c2gm_prequant;
+    using ::asc_get_l0c2gm_relu;
+    using ::asc_get_l0c2gm_unitflag;
     using ::asc_load_image_to_cbuf;
     using ::asc_load_image_to_cbuf_sync;
     using ::asc_set_gm2l1_loop1_stride;
@@ -96,7 +99,9 @@ static void test_host_c_api_cube_datamove_2()
     using ::asc_set_gm2l1_nz_para;
     using ::asc_set_gm2l1_pad;
     using ::asc_set_l0c2gm_channel_para;
+    using ::asc_set_l0c2gm_config;
     using ::asc_set_l0c2gm_lrelu_alpha;
+    using ::asc_set_l0c2gm_nz2nd;
     using ::asc_set_l0c2gm_quant_post;
     using ::asc_set_l0c2gm_relu_alpha;
     using ::asc_set_l0c_copy_params;

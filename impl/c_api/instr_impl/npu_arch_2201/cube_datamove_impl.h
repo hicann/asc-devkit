@@ -47,6 +47,19 @@
 #include "impl/c_api/instr_impl/npu_arch_2201/cube_datamove_impl/asc_copy_gm2l0b_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/cube_datamove_impl/asc_set_l13d_fmatrix_b_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/cube_datamove_impl/asc_set_l0c2gm_lrelu_alpha_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_2201/cube_compute_impl/asc_set_l0c2gm_config_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_2201/cube_compute_impl/asc_get_l0c2gm_config_impl.h"
+
+__aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_pre, bool enable_unit_flag)
+{
+    asc_set_l0c2gm_config_impl(relu_pre, quant_pre, enable_unit_flag);
+}
+
+__aicore__ inline uint64_t asc_get_l0c2gm_relu() { return asc_get_l0c2gm_relu_impl(); }
+
+__aicore__ inline uint64_t asc_get_l0c2gm_unitflag() { return asc_get_l0c2gm_unitflag_impl(); }
+
+__aicore__ inline uint64_t asc_get_l0c2gm_prequant() { return asc_get_l0c2gm_prequant_impl(); }
 
 __aicore__ inline void asc_copy_l12l0b_sparse(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, __cbuf__ int8_t* index, uint16_t start_index, uint8_t repeat)
