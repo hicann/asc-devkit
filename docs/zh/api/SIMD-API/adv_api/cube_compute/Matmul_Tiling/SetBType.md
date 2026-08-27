@@ -18,7 +18,7 @@ int32_t SetBType(TPosition pos, CubeFormat type, DataType dataType, bool isTrans
 | --- | --- | --- |
 | pos | 输入 | B矩阵所在的buffer位置，可设置为：TPosition::GM, TPosition::VECOUT, TPosition::TSCM。 |
 | type | 输入 | B矩阵的数据格式，可设置为：CubeFormat::ND，CubeFormat::NZ。 |
-| dataType | 输入 | B矩阵的数据类型，可设置为：DataType::DT_FLOAT、DataType::DT_FLOAT16、DataType::DT_BFLOAT16 、DataType::DT_INT8、DataType::DT_INT4、DataType::DT_FLOAT8_E4M3FN、DataType::DT_FLOAT8_E5M2、DataType::DT_HIFLOAT8。<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/SetBType_res.md#id1 --> |
+| dataType | 输入 | B矩阵的数据类型，可设置为：DataType::DT_FLOAT、DataType::DT_FLOAT16、DataType::DT_BFLOAT16 、DataType::DT_INT8、DataType::DT_INT4、DataType::DT_FLOAT8_E4M3FN、DataType::DT_FLOAT8_E5M2、DataType::DT_HIFLOAT8。 |
 | isTrans<a name="p47369411111"></a> | 输入 | B矩阵是否转置。<br><br>参数取值：<br>true：B矩阵转置；false：B矩阵不转置。 |
 
 ## 返回值说明
@@ -28,6 +28,8 @@ int32_t SetBType(TPosition pos, CubeFormat type, DataType dataType, bool isTrans
 ## 约束说明
 
 无
+
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Tiling/SetBType_res.md#id1 -->
 
 ## 调用示例
 

@@ -26,6 +26,7 @@
 <!-- npu="x90" id1 -->
 - Kirin X90：支持
 <!-- end id1 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id2 -->
 
 ### TrianUpperMatmulPolicy/TrianLowerMatmulPolicy
 
@@ -51,6 +52,7 @@
 <!-- npu="x90" id2 -->
 - Kirin X90：支持
 <!-- end id2 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id3 -->
 
 ### NBuffer33MatmulPolicy
 
@@ -76,6 +78,7 @@
 <!-- npu="x90" id3 -->
 - Kirin X90：支持
 <!-- end id3 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id4 -->
 
 ### MatmulWithScalePolicy/SplitMMatmulPolicy/SplitNMatmulPolicy
 
