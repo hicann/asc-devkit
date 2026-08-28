@@ -24,6 +24,16 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(VAdd, asc_add, vadd, vector_uint32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(VAdd, asc_add, vadd, vector_int32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(VAdd, asc_add, vadd, vector_float);
 
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_uint8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_int8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_half);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_uint32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(VAdd, asc_add, vadd, vector_float);
+
 #define TEST_VECTOR_COMPUTE_ADDC_INSTR(class_name, c_api_name, cce_name, data_type)             \
                                                                                                 \
     class TestVectorCompute##class_name####data_type##CApi : public testing::Test {             \

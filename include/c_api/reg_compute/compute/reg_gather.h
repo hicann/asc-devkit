@@ -25,6 +25,32 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl.h"
 #endif
 
+__simd_callee__ inline vector_int8_t asc_gather(vector_int8_t src, vector_uint8_t index);
+
+__simd_callee__ inline vector_uint8_t asc_gather(vector_uint8_t src, vector_uint8_t index);
+
+__simd_callee__ inline vector_int16_t asc_gather(vector_int16_t src, vector_uint16_t index);
+
+__simd_callee__ inline vector_uint16_t asc_gather(vector_uint16_t src, vector_uint16_t index);
+
+__simd_callee__ inline vector_int32_t asc_gather(vector_int32_t src, vector_uint32_t index);
+
+__simd_callee__ inline vector_uint32_t asc_gather(vector_uint32_t src, vector_uint32_t index);
+
+__simd_callee__ inline vector_float asc_gather(vector_float src, vector_uint32_t index);
+
+__simd_callee__ inline vector_half asc_gather(vector_half src, vector_uint16_t index);
+
+__simd_callee__ inline vector_bfloat16_t asc_gather(vector_bfloat16_t src, vector_uint16_t index);
+
+__simd_callee__ inline vector_fp8_e4m3fn_t asc_gather(vector_fp8_e4m3fn_t src, vector_uint8_t index);
+
+__simd_callee__ inline vector_hifloat8_t asc_gather(vector_hifloat8_t src, vector_uint8_t index);
+
+__simd_callee__ inline vector_fp8_e5m2_t asc_gather(vector_fp8_e5m2_t src, vector_uint8_t index);
+
+__simd_callee__ inline vector_fp8_e8m0_t asc_gather(vector_fp8_e8m0_t src, vector_uint8_t index);
+
 __simd_callee__ inline void asc_gather(vector_int8_t& dst, vector_int8_t src, vector_uint8_t index);
 
 __simd_callee__ inline void asc_gather(vector_uint8_t& dst, vector_uint8_t src, vector_uint8_t index);

@@ -12,3 +12,6 @@
 
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Exp, asc_exp, vexp, vector_half);
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Exp, asc_exp, vexp, vector_float);
+
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Exp, asc_exp, vexp, vector_half);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Exp, asc_exp, vexp, vector_float);

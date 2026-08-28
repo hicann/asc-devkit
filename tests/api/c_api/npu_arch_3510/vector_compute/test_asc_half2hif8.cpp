@@ -18,3 +18,9 @@ TEST_VECTOR_COMPUTE_VCVT_INSTR_1(Vcvt_rna, asc_half2hif8_rna, vcvt, vector_hiflo
 TEST_VECTOR_COMPUTE_VCVT_INSTR_1(Vcvt_rna_sat, asc_half2hif8_rna_sat, vcvt, vector_hifloat8_t, vector_half, 5);
 TEST_VECTOR_COMPUTE_VCVT_INSTR_1(Vcvt_rna_v2, asc_half2hif8_rna_v2, vcvt, vector_hifloat8_t, vector_half, 6);
 TEST_VECTOR_COMPUTE_VCVT_INSTR_1(Vcvt_rna_sat_v2, asc_half2hif8_rna_sat_v2, vcvt, vector_hifloat8_t, vector_half, 7);
+
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_1(Vcvt_rh, asc_half2hif8_rh, vcvt, vector_hifloat8_t, vector_half, 0);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_1(Vcvt_rh_sat, asc_half2hif8_rh_sat, vcvt, vector_hifloat8_t, vector_half, 1);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_1(Vcvt_rna, asc_half2hif8_rna, vcvt, vector_hifloat8_t, vector_half, 2);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_1(
+    Vcvt_rna_sat, asc_half2hif8_rna_sat, vcvt, vector_hifloat8_t, vector_half, 3);

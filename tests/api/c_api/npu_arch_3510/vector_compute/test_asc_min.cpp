@@ -19,3 +19,13 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmin, asc_min, vmin, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmin, asc_min, vmin, vector_uint32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmin, asc_min, vmin, vector_int32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmin, asc_min, vmin, vector_float);
+
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_uint8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_int8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_half);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_uint32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmin, asc_min, vmin, vector_float);

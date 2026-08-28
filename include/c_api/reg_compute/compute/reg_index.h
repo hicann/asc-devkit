@@ -24,6 +24,25 @@
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
 #endif
+__simd_callee__ inline vector_int8_t asc_arange(int8_t value);
+
+__simd_callee__ inline vector_int16_t asc_arange(int16_t value);
+
+__simd_callee__ inline vector_int32_t asc_arange(int32_t value);
+
+__simd_callee__ inline vector_half asc_arange(half value);
+
+__simd_callee__ inline vector_float asc_arange(float value);
+
+__simd_callee__ inline vector_int8_t asc_arange_descend(int8_t value);
+
+__simd_callee__ inline vector_int16_t asc_arange_descend(int16_t value);
+
+__simd_callee__ inline vector_int32_t asc_arange_descend(int32_t value);
+
+__simd_callee__ inline vector_half asc_arange_descend(half value);
+
+__simd_callee__ inline vector_float asc_arange_descend(float value);
 
 __simd_callee__ inline void asc_arange(vector_int8_t& dst, int8_t value);
 

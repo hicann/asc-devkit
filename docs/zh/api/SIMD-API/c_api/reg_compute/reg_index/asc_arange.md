@@ -45,8 +45,12 @@
 ### 递增模式
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_arange(vector_<dtype>& dst,
                                        <dtype> value)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_arange(<dtype> value)
 ```
 
 #### dtype支持数据类型
@@ -57,15 +61,23 @@ __simd_callee__ inline void asc_arange(vector_<dtype>& dst,
 
 ```c
 // 示例：以half标量为基值生成递增序列
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_arange(vector_half& dst,
                                        half value)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_half asc_arange(half value)
 ```
 
 ### 递减模式
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_arange_descend(vector_<dtype>& dst,
                                                <dtype> value)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_arange_descend(<dtype> value)
 ```
 
 #### dtype支持数据类型
@@ -76,8 +88,12 @@ __simd_callee__ inline void asc_arange_descend(vector_<dtype>& dst,
 
 ```c
 // 示例：以half标量为基值生成递减序列
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_arange_descend(vector_half& dst,
                                                half value)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_half asc_arange_descend(half value)
 ```
 
 ## 参数说明
@@ -104,11 +120,13 @@ __simd_callee__ inline void asc_arange_descend(vector_half& dst,
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
+- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
+- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - 整型dtype（int8_t、int16_t、int32_t）结果在超出该dtype可表示范围时回绕（wrap-around），不触发异常。例如int8_t取value=127时，序列前128个元素依次为127、−128、−127、…、-2；value=−128时，序列前128个元素依次为−128、−127、…、−1。
 
 ## 调用示例

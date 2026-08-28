@@ -21,6 +21,7 @@ protected:
 
 namespace {
 void vcvt_Stub(vector_float& dst, vector_half src, vector_bool mask, Literal part, Literal mode) {}
+void vcvt_Return_Stub(vector_float& dst, vector_half src, vector_bool mask, Literal part, Literal mode) {}
 } // namespace
 
 TEST_F(TestHalf2Float, half_to_float_Succ)
@@ -31,5 +32,18 @@ TEST_F(TestHalf2Float, half_to_float_Succ)
     MOCKER(vcvt, void(vector_float&, vector_half, vector_bool, Literal, Literal)).times(1).will(invoke(vcvt_Stub));
 
     asc_half2float(dst, src, mask);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestHalf2Float, half_to_float_return_Succ)
+{
+    vector_half src;
+    vector_bool mask;
+    MOCKER(vcvt, void(vector_float&, vector_half, vector_bool, Literal, Literal))
+        .times(1)
+        .will(invoke(vcvt_Return_Stub));
+
+    vector_float dst = asc_half2float(src, mask, ASC_POSITION_EVEN);
+    (void)dst;
     GlobalMockObject::verify();
 }

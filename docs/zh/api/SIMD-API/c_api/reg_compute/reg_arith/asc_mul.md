@@ -36,13 +36,19 @@ $$
 
 本接口仅在AIV上生效。
 
-## 函数原型
+## 函数原型（占位符形式）
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_mul(vector_<dtype>& dst,
                                     vector_<dtype> src0,
                                     vector_<dtype> src1,
                                     vector_bool mask)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_mul(vector_<dtype> src0,
+                                              vector_<dtype> src1,
+                                              vector_bool mask)
 ```
 
 ### dtype支持数据类型
@@ -52,11 +58,16 @@ __simd_callee__ inline void asc_mul(vector_<dtype>& dst,
 ### 函数原型典型示例
 
 ```c
-// 示例：对half矢量数据寄存器执行逐元素乘法
-__simd_callee__ inline void asc_mul(vector_half& dst,
-                                    vector_half src0,
-                                    vector_half src1,
+// 通过引用参数输出结果示例：float类型
+__simd_callee__ inline void asc_mul(vector_float& dst,
+                                    vector_float src0,
+                                    vector_float src1,
                                     vector_bool mask)
+
+// 通过函数返回值返回结果示例：float类型
+__simd_callee__ inline vector_float asc_mul(vector_float src0,
+                                            vector_float src1,
+                                            vector_bool mask)
 ```
 
 ## 参数说明
@@ -64,21 +75,23 @@ __simd_callee__ inline void asc_mul(vector_half& dst,
 **表1** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
-| :--- | :--- | :--- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+|---|---|---|
+| dst | 输出 | 目的操作数（矢量数据寄存器），仅适用于通过引用参数输出结果的函数原型。 |
 | src0 | 输入 | 源操作数（矢量数据寄存器）。 |
-| src1 | 输入 |源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器）。用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
+| src1 | 输入 | 源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值返回结果的函数原型返回逐元素乘法结果，返回值类型与源操作数类型一致。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
+- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
+- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `mask`需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
 
 ## 调用示例

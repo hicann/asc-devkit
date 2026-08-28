@@ -22,6 +22,12 @@ TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Vcvt_ru_v2, asc_half2int32_ru_v2, vcvt, vector_
 TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Vcvt_rz, asc_half2int32_rz, vcvt, vector_int32_t, vector_half, 8);
 TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Vcvt_rz_v2, asc_half2int32_rz_v2, vcvt, vector_int32_t, vector_half, 9);
 
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_4(Vcvt_rd, asc_half2int32_rd, vcvt, vector_int32_t, vector_half, 0);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_4(Vcvt_rn, asc_half2int32_rn, vcvt, vector_int32_t, vector_half, 1);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_4(Vcvt_rna, asc_half2int32_rna, vcvt, vector_int32_t, vector_half, 2);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_4(Vcvt_ru, asc_half2int32_ru, vcvt, vector_int32_t, vector_half, 3);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_4(Vcvt_rz, asc_half2int32_rz, vcvt, vector_int32_t, vector_half, 4);
+
 // ==========asc_int322uint16==========
 TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Vcvt, asc_int322uint16, vcvt, vector_uint16_t, vector_int32_t, 0);
 TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Vcvt_sat, asc_int322uint16_sat, vcvt, vector_uint16_t, vector_int32_t, 1);

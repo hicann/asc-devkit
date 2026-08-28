@@ -18,3 +18,11 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCMUL, asc_mul, vmul, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCMUL, asc_mul, vmul, vector_int32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCMUL, asc_mul, vmul, vector_uint32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCMUL, asc_mul, vmul, vector_float);
+
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_half);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_uint32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCMUL, asc_mul, vmul, vector_float);

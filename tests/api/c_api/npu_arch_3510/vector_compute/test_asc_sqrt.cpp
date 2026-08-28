@@ -12,3 +12,6 @@
 
 TEST_VECTOR_COMPUTE_UNARY_INSTR(VSQRT, asc_sqrt, vsqrt, vector_half);
 TEST_VECTOR_COMPUTE_UNARY_INSTR(VSQRT, asc_sqrt, vsqrt, vector_float);
+
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(VSQRT, asc_sqrt, vsqrt, vector_half);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(VSQRT, asc_sqrt, vsqrt, vector_float);

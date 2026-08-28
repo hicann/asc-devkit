@@ -37,8 +37,39 @@
         GlobalMockObject::verify();                                                                             \
     }
 
+#define TEST_VECTOR_COMPUTE_ARANGE_RETURN(data_type, index_type)                                                       \
+                                                                                                                       \
+    class TestVectorComputeReturnArange##data_type##CApi : public testing::Test {                                      \
+    protected:                                                                                                         \
+        void SetUp() {}                                                                                                \
+        void TearDown() {}                                                                                             \
+    };                                                                                                                 \
+                                                                                                                       \
+    namespace {                                                                                                        \
+    void vci##_##data_type##_Return_Stub(data_type& dst, index_type index, Literal order) {}                           \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(TestVectorComputeReturnArange##data_type##CApi, c_api_asc_arange_return_##data_type##_Succ)                 \
+    {                                                                                                                  \
+        index_type index;                                                                                              \
+                                                                                                                       \
+        MOCKER_CPP(vci, void(data_type&, index_type, Literal)).times(2).will(invoke(vci##_##data_type##_Return_Stub)); \
+                                                                                                                       \
+        data_type dst0 = asc_arange(index);                                                                            \
+        data_type dst1 = asc_arange_descend(index);                                                                    \
+        (void)dst0;                                                                                                    \
+        (void)dst1;                                                                                                    \
+        GlobalMockObject::verify();                                                                                    \
+    }
+
 TEST_VECTOR_COMPUTE_ARANGE(vector_int8_t, int8_t);
 TEST_VECTOR_COMPUTE_ARANGE(vector_int16_t, int16_t);
 TEST_VECTOR_COMPUTE_ARANGE(vector_int32_t, int32_t);
 TEST_VECTOR_COMPUTE_ARANGE(vector_half, half);
 TEST_VECTOR_COMPUTE_ARANGE(vector_float, float);
+
+TEST_VECTOR_COMPUTE_ARANGE_RETURN(vector_int8_t, int8_t);
+TEST_VECTOR_COMPUTE_ARANGE_RETURN(vector_int16_t, int16_t);
+TEST_VECTOR_COMPUTE_ARANGE_RETURN(vector_int32_t, int32_t);
+TEST_VECTOR_COMPUTE_ARANGE_RETURN(vector_half, half);
+TEST_VECTOR_COMPUTE_ARANGE_RETURN(vector_float, float);

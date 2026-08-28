@@ -71,6 +71,63 @@
         GlobalMockObject::verify();                                                                       \
     }
 
+#define TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(                                                               \
+    class_name, c_api_name, cce_name, data_type, vector_data_type, index_data_type)                               \
+                                                                                                                  \
+    class TestVectorDataMoveReturn##class_name##_##data_type##_CApi : public testing::Test {                      \
+    protected:                                                                                                    \
+        void SetUp() {}                                                                                           \
+        void TearDown() {}                                                                                        \
+    };                                                                                                            \
+                                                                                                                  \
+    namespace {                                                                                                   \
+    void cce_name##_##data_type##_Return_Stub(                                                                    \
+        vector_data_type& dst, __ubuf__ data_type* src, vector_##index_data_type index, vector_bool mask)         \
+    {}                                                                                                            \
+    }                                                                                                             \
+                                                                                                                  \
+    TEST_F(TestVectorDataMoveReturn##class_name##_##data_type##_CApi, c_api_name##_return_##data_type##_Succ)     \
+    {                                                                                                             \
+        __ubuf__ data_type* src = reinterpret_cast<__ubuf__ data_type*>(0);                                       \
+        vector_##index_data_type index;                                                                           \
+        vector_bool mask;                                                                                         \
+                                                                                                                  \
+        MOCKER_CPP(cce_name, void(vector_data_type&, __ubuf__ data_type*, vector_##index_data_type, vector_bool)) \
+            .times(1)                                                                                             \
+            .will(invoke(cce_name##_##data_type##_Return_Stub));                                                  \
+                                                                                                                  \
+        vector_data_type dst = c_api_name(src, index, mask);                                                      \
+        (void)dst;                                                                                                \
+        GlobalMockObject::verify();                                                                               \
+    }
+
+#define TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(class_name, c_api_name, cce_name, data_type, index_data_type) \
+                                                                                                                 \
+    class TestVectorDataMoveReturn##class_name##_##data_type##_CApi : public testing::Test {                     \
+    protected:                                                                                                   \
+        void SetUp() {}                                                                                          \
+        void TearDown() {}                                                                                       \
+    };                                                                                                           \
+                                                                                                                 \
+    namespace {                                                                                                  \
+    void cce_name##_##data_type##_Return_Stub(                                                                   \
+        vector_##data_type& dst, vector_##data_type src, vector_##index_data_type index)                         \
+    {}                                                                                                           \
+    }                                                                                                            \
+                                                                                                                 \
+    TEST_F(TestVectorDataMoveReturn##class_name##_##data_type##_CApi, c_api_name##_return_##data_type##_Succ)    \
+    {                                                                                                            \
+        vector_##data_type src;                                                                                  \
+        vector_##index_data_type index;                                                                          \
+                                                                                                                 \
+        MOCKER_CPP(cce_name, void(vector_##data_type&, vector_##data_type, vector_##index_data_type))            \
+            .times(1)                                                                                            \
+            .will(invoke(cce_name##_##data_type##_Return_Stub));                                                 \
+                                                                                                                 \
+        vector_##data_type dst = c_api_name(src, index);                                                         \
+        (void)dst;                                                                                               \
+        GlobalMockObject::verify();                                                                              \
+    }
 TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2, asc_gather, vgather2, int8_t, vector_int16_t, uint16_t);
 TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2, asc_gather, vgather2, uint8_t, vector_uint16_t, uint16_t);
 TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2, asc_gather, vgather2, int16_t, vector_int16_t, uint16_t);
@@ -99,6 +156,33 @@ TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, int16_
 TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, uint16_t, vector_uint16_t, uint32_t);
 TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, half, vector_half, uint32_t);
 TEST_VECTOR_DATAMOVE_GATHER_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, bfloat16_t, vector_bfloat16_t, uint32_t);
+
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, int16_t, vector_int16_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, uint16_t, vector_uint16_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, int32_t, vector_int32_t, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, uint32_t, vector_uint32_t, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, half, vector_half, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, float, vector_float, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, bfloat16_t, vector_bfloat16_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, fp8_e4m3fn_t, vector_fp8_e4m3fn_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, fp8_e5m2_t, vector_fp8_e5m2_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2, asc_gather, vgather2, fp8_e8m0_t, vector_fp8_e8m0_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, int8_t, uint8_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, uint8_t, uint8_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, int16_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, uint16_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, int32_t, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, uint32_t, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, half, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, bfloat16_t, uint16_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, fp8_e4m3fn_t, uint8_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, fp8_e5m2_t, uint8_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_1(Vselr, asc_gather, vselr, fp8_e8m0_t, uint8_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, int16_t, vector_int16_t, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, uint16_t, vector_uint16_t, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(Vgather2_BC, asc_gather, vgather2_bc, half, vector_half, uint32_t);
+TEST_VECTOR_DATAMOVE_GATHER_RETURN_INSTR_0(
+    Vgather2_BC, asc_gather, vgather2_bc, bfloat16_t, vector_bfloat16_t, uint32_t);
 
 class TestCApiVectorDataMoveAscGatherHifloat8 : public testing::Test {
 protected:
@@ -198,5 +282,92 @@ TEST_F(TestCApiVectorDataMoveAscGatherFloat, vselr_Succ)
     MOCKER_CPP(vselr, void(vector_uint32_t&, vector_uint32_t, vector_uint32_t)).times(1).will(invoke(vselr_float_stub));
 
     asc_gather(dst, src, index);
+    GlobalMockObject::verify();
+}
+
+namespace {
+void vgather2_hifloat8_return_stub(
+    vector_fp8_e5m2_t& dst, __ubuf__ float8_e5m2_t* src, vector_uint16_t index, vector_bool mask)
+{}
+void vgather2_int8_return_stub(
+    vector_fp8_e5m2_t& dst, __ubuf__ float8_e5m2_t* src, vector_uint16_t index, vector_bool mask)
+{}
+void vgather2_uint8_return_stub(
+    vector_fp8_e5m2_t& dst, __ubuf__ float8_e5m2_t* src, vector_uint16_t index, vector_bool mask)
+{}
+void vselr_hifloat8_return_stub(vector_uint8_t& dst, vector_uint8_t src, vector_uint8_t index) {}
+void vselr_float_return_stub(vector_uint32_t& dst, vector_uint32_t src, vector_uint32_t index) {}
+} // namespace
+
+TEST_F(TestCApiVectorDataMoveAscGatherHifloat8, vgather2_return_Succ)
+{
+    __ubuf__ hifloat8_t* src = reinterpret_cast<__ubuf__ hifloat8_t*>(0);
+    vector_uint16_t index;
+    vector_bool mask;
+
+    MOCKER_CPP(vgather2, void(vector_fp8_e5m2_t&, __ubuf__ float8_e5m2_t*, vector_uint16_t, vector_bool))
+        .times(1)
+        .will(invoke(vgather2_hifloat8_return_stub));
+
+    vector_hifloat8_t dst = asc_gather(src, index, mask);
+    (void)dst;
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCApiVectorDataMoveAscGatherInt8, vgather2_return_Succ)
+{
+    __ubuf__ int8_t* src = reinterpret_cast<__ubuf__ int8_t*>(0);
+    vector_uint16_t index;
+    vector_bool mask;
+
+    MOCKER_CPP(vgather2, void(vector_fp8_e5m2_t&, __ubuf__ float8_e5m2_t*, vector_uint16_t, vector_bool))
+        .times(1)
+        .will(invoke(vgather2_int8_return_stub));
+
+    vector_int8_t dst = asc_gather(src, index, mask);
+    (void)dst;
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCApiVectorDataMoveAscGatherUint8, vgather2_return_Succ)
+{
+    __ubuf__ uint8_t* src = reinterpret_cast<__ubuf__ uint8_t*>(0);
+    vector_uint16_t index;
+    vector_bool mask;
+
+    MOCKER_CPP(vgather2, void(vector_fp8_e5m2_t&, __ubuf__ float8_e5m2_t*, vector_uint16_t, vector_bool))
+        .times(1)
+        .will(invoke(vgather2_uint8_return_stub));
+
+    vector_uint8_t dst = asc_gather(src, index, mask);
+    (void)dst;
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCApiVectorDataMoveAscGatherHifloat8, vselr_return_Succ)
+{
+    vector_hifloat8_t src;
+    vector_uint8_t index;
+
+    MOCKER_CPP(vselr, void(vector_uint8_t&, vector_uint8_t, vector_uint8_t))
+        .times(1)
+        .will(invoke(vselr_hifloat8_return_stub));
+
+    vector_hifloat8_t dst = asc_gather(src, index);
+    (void)dst;
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCApiVectorDataMoveAscGatherFloat, vselr_return_Succ)
+{
+    vector_float src;
+    vector_uint32_t index;
+
+    MOCKER_CPP(vselr, void(vector_uint32_t&, vector_uint32_t, vector_uint32_t))
+        .times(1)
+        .will(invoke(vselr_float_return_stub));
+
+    vector_float dst = asc_gather(src, index);
+    (void)dst;
     GlobalMockObject::verify();
 }

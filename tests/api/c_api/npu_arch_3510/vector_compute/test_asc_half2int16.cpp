@@ -24,3 +24,15 @@ TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Half2int16_ru_sat, asc_half2int16_ru_sat, vcvt,
 
 TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Half2int16_rz, asc_half2int16_rz, vcvt, vector_int16_t, vector_half, 8);
 TEST_VECTOR_COMPUTE_VCVT_INSTR_4(Half2int16_rz_sat, asc_half2int16_rz_sat, vcvt, vector_int16_t, vector_half, 9);
+
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rn, asc_half2int16_rn, vcvt, vector_int16_t, vector_half, 0);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rn_sat, asc_half2int16_rn_sat, vcvt, vector_int16_t, vector_half, 1);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rna, asc_half2int16_rna, vcvt, vector_int16_t, vector_half, 2);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(
+    Half2int16_rna_sat, asc_half2int16_rna_sat, vcvt, vector_int16_t, vector_half, 3);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rd, asc_half2int16_rd, vcvt, vector_int16_t, vector_half, 4);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rd_sat, asc_half2int16_rd_sat, vcvt, vector_int16_t, vector_half, 5);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_ru, asc_half2int16_ru, vcvt, vector_int16_t, vector_half, 6);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_ru_sat, asc_half2int16_ru_sat, vcvt, vector_int16_t, vector_half, 7);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rz, asc_half2int16_rz, vcvt, vector_int16_t, vector_half, 8);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_4(Half2int16_rz_sat, asc_half2int16_rz_sat, vcvt, vector_int16_t, vector_half, 9);

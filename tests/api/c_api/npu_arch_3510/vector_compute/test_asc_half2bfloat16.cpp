@@ -24,3 +24,9 @@ TEST_VECTOR_COMPUTE_VCVT_INSTR_2(F322Bf16Ru, asc_half2bfloat16_ru, vcvt, vector_
 
 // rz(sat/no-sat)
 TEST_VECTOR_COMPUTE_VCVT_INSTR_2(F322Bf16Rz, asc_half2bfloat16_rz, vcvt, vector_bfloat16_t, vector_half, 50);
+
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_2(F322Bf16Rd, asc_half2bfloat16_rd, vcvt, vector_bfloat16_t, vector_half, 0);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_2(F322Bf16Rn, asc_half2bfloat16_rn, vcvt, vector_bfloat16_t, vector_half, 10);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_2(F322Bf16Rna, asc_half2bfloat16_rna, vcvt, vector_bfloat16_t, vector_half, 20);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_2(F322Bf16Ru, asc_half2bfloat16_ru, vcvt, vector_bfloat16_t, vector_half, 40);
+TEST_VECTOR_COMPUTE_VCVT_RETURN_INSTR_2(F322Bf16Rz, asc_half2bfloat16_rz, vcvt, vector_bfloat16_t, vector_half, 50);

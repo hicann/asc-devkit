@@ -19,3 +19,13 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmax, asc_max, vmax, vector_uint32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmax, asc_max, vmax, vector_float);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmax, asc_max, vmax, vector_half);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vmax, asc_max, vmax, vector_bfloat16_t);
+
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_uint8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_int8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_uint32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_float);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_half);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vmax, asc_max, vmax, vector_bfloat16_t);

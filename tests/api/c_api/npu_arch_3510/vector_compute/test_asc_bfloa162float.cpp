@@ -12,3 +12,5 @@
 
 TEST_VECTOR_COMPUTE_VCVT_INSTR_0(Vcvt, asc_bfloat162float, vcvt, vector_float, vector_bfloat16_t, 0);
 TEST_VECTOR_COMPUTE_VCVT_INSTR_0(Vcvt_v2, asc_bfloat162float_v2, vcvt, vector_float, vector_bfloat16_t, 1);
+
+TEST_VECTOR_COMPUTE_VCVT_RETURN_POS_INSTR_0(Vcvt, asc_bfloat162float, vcvt, vector_float, vector_bfloat16_t, 0);

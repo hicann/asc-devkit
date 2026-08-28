@@ -45,13 +45,19 @@
 ### UB源收集模式（占位符形式）
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_gather(vector_<dst_dtype>& dst,
                                        __ubuf__ <src_dtype>* src,
                                        vector_<index_dtype> index,
                                        vector_bool mask)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dst_dtype> asc_gather(__ubuf__ <src_dtype>* src,
+                                                     vector_<index_dtype> index,
+                                                     vector_bool mask)
 ```
 
-**表1**  UB源收集模式支持数据类型组合列表
+**表1** UB源收集模式支持数据类型组合列表
 
 | dst_dtype | src_dtype | index_dtype |
 | :---------- | :---------- | :-------------- |
@@ -75,25 +81,38 @@ __simd_callee__ inline void asc_gather(vector_<dst_dtype>& dst,
 | uint32_t | uint32_t | uint32_t |
 | float | float | uint32_t |
 
+> 说明：`int16_t/int8_t`、`uint16_t/uint8_t` 两组位宽扩展组合仅支持“通过引用参数输出结果”形式，“通过函数返回值返回结果”形式不支持。
+
 #### 函数原型典型示例
 
 ```c
 // 示例：dst_dtype/src_dtype/index_dtype数据类型分别为: int16_t/int16_t/uint16_t
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_gather(vector_int16_t& dst,
                                        __ubuf__ int16_t* src,
                                        vector_uint16_t index,
                                        vector_bool mask)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int16_t asc_gather(__ubuf__ int16_t* src,
+                                                 vector_uint16_t index,
+                                                 vector_bool mask)
 ```
 
 ### 寄存器源收集模式（占位符形式）
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_gather(vector_<dtype>& dst,
                                        vector_<dtype> src,
                                        vector_<index_dtype> index)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_gather(vector_<dtype> src,
+                                                 vector_<index_dtype> index)
 ```
 
-**表2**  寄存器源收集模式支持数据类型列表
+**表2** 寄存器源收集模式支持数据类型列表
 
 | dtype | index_dtype |
 | :---------- | :-------------- |
@@ -115,9 +134,14 @@ __simd_callee__ inline void asc_gather(vector_<dtype>& dst,
 
 ```c
 // 示例：dtype/index_dtype数据类型分别为: int16_t/uint16_t
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_gather(vector_int16_t& dst,
                                        vector_int16_t src,
                                        vector_uint16_t index)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int16_t asc_gather(vector_int16_t src,
+                                                 vector_uint16_t index)
 ```
 
 ## 参数说明
@@ -147,13 +171,55 @@ __simd_callee__ inline void asc_gather(vector_int16_t& dst,
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回收集结果，具体返回值类型如下。
+
+**表5** UB源收集模式返回值类型
+
+| src类型 | index类型 | 返回值类型 |
+|---|---|---|
+| `int8_t` | `vector_uint16_t` | `vector_int8_t` |
+| `uint8_t` | `vector_uint16_t` | `vector_uint8_t` |
+| `hifloat8_t` | `vector_uint16_t` | `vector_hifloat8_t` |
+| `fp8_e8m0_t` | `vector_uint16_t` | `vector_fp8_e8m0_t` |
+| `fp8_e5m2_t` | `vector_uint16_t` | `vector_fp8_e5m2_t` |
+| `fp8_e4m3fn_t` | `vector_uint16_t` | `vector_fp8_e4m3fn_t` |
+| `int16_t` | `vector_uint16_t` | `vector_int16_t` |
+| `int16_t` | `vector_uint32_t` | `vector_int16_t` |
+| `uint16_t` | `vector_uint16_t` | `vector_uint16_t` |
+| `uint16_t` | `vector_uint32_t` | `vector_uint16_t` |
+| `half` | `vector_uint16_t` | `vector_half` |
+| `half` | `vector_uint32_t` | `vector_half` |
+| `bfloat16_t` | `vector_uint16_t` | `vector_bfloat16_t` |
+| `bfloat16_t` | `vector_uint32_t` | `vector_bfloat16_t` |
+| `int32_t` | `vector_uint32_t` | `vector_int32_t` |
+| `uint32_t` | `vector_uint32_t` | `vector_uint32_t` |
+| `float` | `vector_uint32_t` | `vector_float` |
+
+**表6** 寄存器源收集模式返回值类型
+
+| src类型 | index类型 | 返回值类型 |
+|---|---|---|
+| `vector_int8_t` | `vector_uint8_t` | `vector_int8_t` |
+| `vector_uint8_t` | `vector_uint8_t` | `vector_uint8_t` |
+| `vector_hifloat8_t` | `vector_uint8_t` | `vector_hifloat8_t` |
+| `vector_fp8_e8m0_t` | `vector_uint8_t` | `vector_fp8_e8m0_t` |
+| `vector_fp8_e5m2_t` | `vector_uint8_t` | `vector_fp8_e5m2_t` |
+| `vector_fp8_e4m3fn_t` | `vector_uint8_t` | `vector_fp8_e4m3fn_t` |
+| `vector_int16_t` | `vector_uint16_t` | `vector_int16_t` |
+| `vector_uint16_t` | `vector_uint16_t` | `vector_uint16_t` |
+| `vector_half` | `vector_uint16_t` | `vector_half` |
+| `vector_bfloat16_t` | `vector_uint16_t` | `vector_bfloat16_t` |
+| `vector_int32_t` | `vector_uint32_t` | `vector_int32_t` |
+| `vector_uint32_t` | `vector_uint32_t` | `vector_uint32_t` |
+| `vector_float` | `vector_uint32_t` | `vector_float` |
 
 ## 约束说明
 
 ### 通用约束
 
-- 本接口在非AIV上调用直接返回。
+- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
+- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - 本接口在Vector Function（`__simd_vf__` 标记的函数）内调用，UB源收集模式时源操作数为UB地址、目的操作数为矢量数据寄存器，寄存器源收集模式时源/目的均为矢量数据寄存器。
 
 ### UB源收集模式约束
@@ -161,7 +227,7 @@ __simd_callee__ inline void asc_gather(vector_int16_t& dst,
 - UB地址空间外的指针不可作为`src`传入，源操作数在UB中的起始地址需要32B对齐。
 - `mask`需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
 - 对于`mask`筛选需要搬运的元素，对应的地址需要在UB有效范围内；对于`mask`未筛选的元素，对应的地址不会触发任何地址越界异常，同时`dst`中对应的元素将被置零。
-- 当`src`为b8数据类型，`dst`为b16数据类型时，目的操作数的低8位与源操作数相同，高8位自动补0。例如`src`为`int8_t`数据类型，`dst`为`int16_t`数据类型：
+- 当`src`为b8数据类型，`dst`为b16数据类型时，实现是编译器的软件仿真实现，通过函数返回值输出结果的函数原型不做支持。目的操作数的低8位与源操作数相同，高8位自动补0。例如`src`为`int8_t`数据类型，`dst`为`int16_t`数据类型：
 
     src：40 = 0b00101000 -> 0b0000000000101000，扩充至16位后等于40，即对应dst为40；
 
@@ -205,56 +271,67 @@ void print_data(const char* label, const std::vector<T>& values)
     std::cout << std::endl;
 }
 
-constexpr uint32_t BUFFER_BYTES = 256;
-__simd_vf__ inline void gather_vf(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
+constexpr uint32_t ELEMENT_COUNT = 128;
+
+__simd_vf__ inline void gather_vf(__ubuf__ uint16_t* output, __ubuf__ uint16_t* input)
 {
-    vector_bool mask = asc_create_mask_b8(PAT_ALL);
-    vector_uint8_t dst;
+    vector_bool mask = asc_create_mask_b16(PAT_ALL);
+    vector_uint16_t dst;
     asc_loadalign(dst, input);
-    vector_uint8_t index;
+    vector_uint16_t index;
     asc_loadalign(index, input);
     asc_gather(dst, input, index, mask);
     asc_storealign(output, dst, mask);
 }
 
-__global__ __vector__ void asc_gather_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+__global__ __vector__ void asc_gather_kernel(__gm__ uint16_t* output, __gm__ uint16_t* input)
 {
     asc_init();
-    __ubuf__ uint8_t output_local[BUFFER_BYTES], input_local[BUFFER_BYTES];
-    asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
-    asc_copy_gm2ub_align(output_local, input, BUFFER_BYTES);
+    __ubuf__ uint16_t output_local[ELEMENT_COUNT];
+    __ubuf__ uint16_t input_local[ELEMENT_COUNT];
+    asc_copy_gm2ub_align(input_local, input, ELEMENT_COUNT);
+    asc_copy_gm2ub_align(output_local, input, ELEMENT_COUNT);
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
     gather_vf(output_local, input_local);
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
-    asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);
+    asc_copy_ub2gm_align(output, output_local, ELEMENT_COUNT);
     asc_sync();
 }
 } // namespace
 
 int main()
 {
-    std::vector<uint8_t> input(BUFFER_BYTES), output(BUFFER_BYTES, 0xff);
-    for (uint32_t i = 0; i < BUFFER_BYTES; ++i) input[i] = static_cast<uint8_t>(255 - i);
+    std::vector<uint16_t> input(ELEMENT_COUNT);
+    std::vector<uint16_t> output(ELEMENT_COUNT, 0xff);
+    std::vector<uint16_t> golden(ELEMENT_COUNT);
+    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
+        input[i] = static_cast<uint16_t>(ELEMENT_COUNT - 1 - i);
+    }
+    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
+        golden[i] = input[input[i]];
+    }
     aclInit(nullptr);
     aclrtSetDevice(0);
-    uint8_t* input_device = nullptr;
-    aclrtMalloc(reinterpret_cast<void**>(&input_device), (BUFFER_BYTES) * sizeof(uint8_t),
+    uint16_t* input_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), (ELEMENT_COUNT) * sizeof(uint16_t),
         ACL_MEM_MALLOC_HUGE_FIRST);
-    uint8_t* output_device = nullptr;
-    aclrtMalloc(reinterpret_cast<void**>(&output_device), (BUFFER_BYTES) * sizeof(uint8_t),
+    uint16_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (ELEMENT_COUNT) * sizeof(uint16_t),
         ACL_MEM_MALLOC_HUGE_FIRST);
-    aclrtMemcpy(input_device, input.size() * sizeof(uint8_t), input.data(), input.size() * sizeof(uint8_t),
+    aclrtMemcpy(input_device, input.size() * sizeof(uint16_t), input.data(), input.size() * sizeof(uint16_t),
         ACL_MEMCPY_HOST_TO_DEVICE);
     asc_gather_kernel<<<1, 0>>>(output_device, input_device);
     aclrtSynchronizeDevice();
-    aclrtMemcpy(output.data(), output.size() * sizeof(uint8_t), output_device, output.size() * sizeof(uint8_t),
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint16_t), output_device, output.size() * sizeof(uint16_t),
         ACL_MEMCPY_DEVICE_TO_HOST);
     print_data("Input bytes", input);
     print_data("Output bytes", output);
-    const bool passed = true;
-    std::cout << "[Success] asc_gather completed." << std::endl;
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_gather completed." : "[Failed] asc_gather output mismatch.")
+              << std::endl;
     aclrtFree(input_device);
     aclrtFree(output_device);
     aclrtResetDevice(0);

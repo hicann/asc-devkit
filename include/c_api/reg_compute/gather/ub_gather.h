@@ -25,6 +25,41 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl.h"
 #endif
 
+__simd_callee__ inline vector_int8_t asc_gather(__ubuf__ int8_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint8_t asc_gather(__ubuf__ uint8_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int16_t asc_gather(__ubuf__ int16_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_gather(__ubuf__ uint16_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_gather(__ubuf__ int32_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_gather(__ubuf__ uint32_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_gather(__ubuf__ half* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_gather(__ubuf__ float* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_bfloat16_t asc_gather(__ubuf__ bfloat16_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp8_e4m3fn_t asc_gather(
+    __ubuf__ fp8_e4m3fn_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_hifloat8_t asc_gather(__ubuf__ hifloat8_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp8_e5m2_t asc_gather(__ubuf__ fp8_e5m2_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp8_e8m0_t asc_gather(__ubuf__ fp8_e8m0_t* src, vector_uint16_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int16_t asc_gather(__ubuf__ int16_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_gather(__ubuf__ uint16_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_gather(__ubuf__ half* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_bfloat16_t asc_gather(__ubuf__ bfloat16_t* src, vector_uint32_t index, vector_bool mask);
+
 __simd_callee__ inline void asc_gather(
     vector_int16_t& dst, __ubuf__ int8_t* src, vector_uint16_t index, vector_bool mask);
 
@@ -78,6 +113,84 @@ __simd_callee__ inline void asc_gather(vector_half& dst, __ubuf__ half* src, vec
 
 __simd_callee__ inline void asc_gather(
     vector_bfloat16_t& dst, __ubuf__ bfloat16_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int8_t asc_gather_datablock(
+    __ubuf__ int8_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint8_t asc_gather_datablock(
+    __ubuf__ uint8_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int16_t asc_gather_datablock(
+    __ubuf__ int16_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_gather_datablock(
+    __ubuf__ uint16_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_gather_datablock(
+    __ubuf__ int32_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_gather_datablock(
+    __ubuf__ uint32_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_gather_datablock(__ubuf__ half* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_gather_datablock(__ubuf__ float* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_bfloat16_t asc_gather_datablock(
+    __ubuf__ bfloat16_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp8_e4m3fn_t asc_gather_datablock(
+    __ubuf__ fp8_e4m3fn_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_hifloat8_t asc_gather_datablock(
+    __ubuf__ hifloat8_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp8_e5m2_t asc_gather_datablock(
+    __ubuf__ fp8_e5m2_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp4x2_e2m1_t asc_gather_datablock(
+    __ubuf__ fp4x2_e2m1_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp4x2_e1m2_t asc_gather_datablock(
+    __ubuf__ fp4x2_e1m2_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int4x2_t asc_gather_datablock(
+    __ubuf__ int4b_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_fp8_e8m0_t asc_gather_datablock(
+    __ubuf__ fp8_e8m0_t* src, vector_uint32_t index, vector_bool mask);
+
+__simd_callee__ inline vector_int8_t asc_gather_datablock(__ubuf__ int8_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_uint8_t asc_gather_datablock(__ubuf__ uint8_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_int16_t asc_gather_datablock(__ubuf__ int16_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_uint16_t asc_gather_datablock(__ubuf__ uint16_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_int32_t asc_gather_datablock(__ubuf__ int32_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_uint32_t asc_gather_datablock(__ubuf__ uint32_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_half asc_gather_datablock(__ubuf__ half* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_float asc_gather_datablock(__ubuf__ float* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_bfloat16_t asc_gather_datablock(__ubuf__ bfloat16_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_fp8_e4m3fn_t asc_gather_datablock(__ubuf__ fp8_e4m3fn_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_hifloat8_t asc_gather_datablock(__ubuf__ hifloat8_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_fp8_e5m2_t asc_gather_datablock(__ubuf__ fp8_e5m2_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_fp4x2_e2m1_t asc_gather_datablock(__ubuf__ fp4x2_e2m1_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_fp4x2_e1m2_t asc_gather_datablock(__ubuf__ fp4x2_e1m2_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_int4x2_t asc_gather_datablock(__ubuf__ int4b_t* src, vector_uint32_t index);
+
+__simd_callee__ inline vector_fp8_e8m0_t asc_gather_datablock(__ubuf__ fp8_e8m0_t* src, vector_uint32_t index);
 
 __simd_callee__ inline void asc_gather_datablock(
     vector_int8_t& dst, __ubuf__ int8_t* src, vector_uint32_t index, vector_bool mask);
