@@ -131,7 +131,7 @@ graph TD
 
 **参考示例**
 
-- [基于Tensor API的Matmul示例](../../examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_tensor_api/mmad_tensor_api.asc)
+- [基于Tensor API的Matmul示例](../../examples/01_simd_cpp_api/07_tensor_api/mmad_tensor_api/mmad_tensor_api.asc)
 
 ### 基础API（Basic API）：轻量化Tensor编程接口（TPipe/TQue自动化资源管理）
 

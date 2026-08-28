@@ -121,7 +121,7 @@ C++-level low-level programming interface for in-depth development of high-perfo
 - Production-grade high-performance operator development scenarios that require guaranteed code standardization, maintainability and scalability while pursuing ultimate hardware performance.
 
 **Reference Examples**
-- [Matmul Example Based on Tensor API](../../examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_tensor_api/mmad_tensor_api.asc)
+- [Matmul Example Based on Tensor API](../../examples/01_simd_cpp_api/07_tensor_api/mmad_tensor_api/mmad_tensor_api.asc)
 
 ---
 

@@ -239,7 +239,7 @@ for nBlock in N blocks:
 计算阶段的关键参数包括 `m/n/k` 尺寸、是否初始化 C 矩阵：
 
 ```cpp
-asc::te::mmad_params mmadParams{curM, curN, curK, unit_flag_mode::disable, true};
+asc::te::mmad_params mmadParams{curM, curN, curK, asc::te::unit_flag_mode::disable, true};
 mmadParams.init_with_zero = (kBlockIdx == 0);
 asc::te::mmad(mmadAtom.with(mmadParams), l0TensorC, l0TensorA, l0TensorB);
 ```

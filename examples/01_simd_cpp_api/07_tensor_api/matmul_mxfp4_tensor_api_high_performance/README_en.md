@@ -239,7 +239,7 @@ for nBlock in N blocks:
 Key parameters in the computation stage include `m/n/k` dimensions and whether to initialize the C matrix:
 
 ```cpp
-asc::te::mmad_params mmadParams{curM, curN, curK, unit_flag_mode::disable, true};
+asc::te::mmad_params mmadParams{curM, curN, curK, asc::te::unit_flag_mode::disable, true};
 mmadParams.init_with_zero = (kBlockIdx == 0);
 asc::te::mmad(mmadAtom.with(mmadParams), l0TensorC, l0TensorA, l0TensorB);
 ```
