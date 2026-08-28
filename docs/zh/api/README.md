@@ -839,7 +839,8 @@
                 -   [asc_hf32_round_mode](SIMD-API/c_api/defs/enum/asc_hf32_round_mode.md)
                 -   [asc_load_l2_cache_mode](SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)
                 -   [asc_store_l2_cache_mode](SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)
-            -   [数据类型](SIMD-API/c_api/defs/type/data_type_definition.md)
+            -   [数据类型](SIMD-API/c_api/defs/type/type.md)
+                -   [reg数据类型](SIMD-API/c_api/defs/type/data_type_definition.md)
             -   [常量](SIMD-API/c_api/defs/constant/constant.md)
                 -   [ASC_C_API_MRGSORT_ELEMENT_LEN](SIMD-API/c_api/defs/constant/asc_c_api_mrgsort_element_len.md)
                 -   [ASC_VDEQ_SIZE](SIMD-API/c_api/defs/constant/asc_vdeq_size.md)
@@ -2902,6 +2903,7 @@
             -   [abs](Utils-API/cpp_stdlib/math_functions/abs.md)
             -   [sqrt](Utils-API/cpp_stdlib/math_functions/sqrt.md)
             -   [ceil\_div](Utils-API/cpp_stdlib/math_functions/ceil_div.md)
+            -   [CeilDivision](Utils-API/cpp_stdlib/math_functions/CeilDivision.md)
 
         -   [容器函数](Utils-API/cpp_stdlib/container_functions/container_functions.md)
             -   [tuple](Utils-API/cpp_stdlib/container_functions/tuple.md)
