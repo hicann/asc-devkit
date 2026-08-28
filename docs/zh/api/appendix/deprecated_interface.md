@@ -334,9 +334,9 @@
 
     此接口后续版本会废弃。
 
-- [asc_exp_sub](../SIMD-API/c_api/reg_compute/reg_fused/asc_exp_sub_deprecated.md)接口
+- [asc_exp_sub](../SIMD-API/c_api/deprecated_interface/asc_exp_sub_deprecated.md)接口
 
-    此接口后续版本会废弃。
+    `half`输入且不带`src_pos`参数的`asc_exp_sub`原型以及`asc_exp_sub_v2`原型已废弃。`float`输入请使用`asc_exp_sub`原型，`half`输入请使用带显式`src_pos`参数的`asc_exp_sub_half2float`原型。
 
 - [asc_pack](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_deprecated.md)接口
 

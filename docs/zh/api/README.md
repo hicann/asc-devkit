@@ -1185,7 +1185,7 @@
                 -   [asc_mula](SIMD-API/c_api/reg_compute/reg_fused/asc_mula.md)
                 -   [asc_prelu](SIMD-API/c_api/reg_compute/reg_fused/asc_prelu.md)
                 -   [asc_relu](SIMD-API/c_api/reg_compute/reg_fused/asc_relu.md)
-                -   [asc_exp_sub (废弃)](SIMD-API/c_api/reg_compute/reg_fused/asc_exp_sub_deprecated.md)
+                -   [asc_exp_sub](SIMD-API/c_api/reg_compute/reg_fused/asc_exp_sub.md)
                 -   [asc_muls (废弃)](SIMD-API/c_api/reg_compute/reg_fused/asc_muls_deprecated.md)
             -   [比较计算](SIMD-API/c_api/reg_compute/reg_compare/reg_compare.md)
                 -   [asc_eq](SIMD-API/c_api/reg_compute/reg_compare/asc_eq.md)
@@ -1394,6 +1394,8 @@
             -   [asc_scatter（废弃）](SIMD-API/c_api/deprecated_interface/asc_scatter_deprecated.md)
             -   [asc_storeunalign_post（废弃）](SIMD-API/c_api/deprecated_interface/asc_storeunalign_post_deprecated.md)
             -   [asc_storeunalign_postupdate（废弃）](SIMD-API/c_api/deprecated_interface/asc_storeunalign_postupdate_deprecated.md)
+            -   [asc_exp_sub（废弃）](SIMD-API/c_api/deprecated_interface/asc_exp_sub_deprecated.md)
+
     -   [高阶API](SIMD-API/adv_api/adv_api.md)
         -   [高阶API列表](SIMD-API/adv_api/adv_api_list.md)
         -   [数据结构](SIMD-API/adv_api/data_structures/data_structures.md)

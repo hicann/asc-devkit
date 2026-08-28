@@ -428,6 +428,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |---|---|---|
 |[asc_abs_sub](reg_compute/reg_fused/asc_abs_sub.md)|逐元素计算差的绝对值。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_axpy](reg_compute/reg_fused/asc_axpy.md)|根据mask对源操作数src、value进行按元素做乘加操作，将结果写入目的操作数dst。|`c_api/reg_compute/compute/reg_fused.h`|
+|[asc_exp_sub](reg_compute/reg_fused/asc_exp_sub.md)|根据mask将src0与src1按元素相减，并计算以差值为指数的自然指数函数。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_fma](reg_compute/reg_fused/asc_fma.md)|逐元素乘加运算。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_leakyrelu](reg_compute/reg_fused/asc_leakyrelu.md)|按元素执行Leaky ReLU（Leaky Rectified Linear Unit）操作。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_madd](reg_compute/reg_fused/asc_madd.md)|madd（multiply-add），对源操作数执行逐元素乘法和加法。|`c_api/reg_compute/compute/reg_fused.h`|
@@ -701,7 +702,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_e2m1x22bfloat16 (废弃)](reg_compute/reg_convert/asc_e2m1x22bfloat16_deprecated.md)|将fp4x2_e2m1_t类型转换为bfloat16_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_e4m32float (废弃)](reg_compute/reg_convert/asc_e4m32float_deprecated.md)|将fp8_e4m3fn_t类型转换为float类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_e5m22float (废弃)](reg_compute/reg_convert/asc_e5m22float_deprecated.md)|将vector_fp8_e5m2_t类型的源操作数以256B为单位分为四部分，读取其中一部分元素，将其转换成vector_float类型并写入目的操作数。|`c_api/reg_compute/reg_convert.h`|
-|[asc_exp_sub (废弃)](reg_compute/reg_fused/asc_exp_sub_deprecated.md)|将src0与src1相减，差值作为e的指数计算。|`c_api/reg_compute/compute/reg_fused.h`|
+|[asc_exp_sub（废弃）](deprecated_interface/asc_exp_sub_deprecated.md)|`half`输入且不带`src_pos`参数的`asc_exp_sub`原型以及`asc_exp_sub_v2`原型已废弃，`half`输入请使用`asc_exp_sub_half2float`原型（显式传入`src_pos`参数）。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_float2bfloat16（废弃）](deprecated_interface/asc_float2bfloat16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2e4m3 (废弃)](reg_compute/reg_convert/asc_float2e4m3_deprecated.md)|将float类型转换为fp8_e4m3fn_t类型，支持RINT舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2e5m2 (废弃)](reg_compute/reg_convert/asc_float2e5m2_deprecated.md)|将float类型数据转换为fp8_e5m2类型。|`c_api/reg_compute/reg_convert.h`|
