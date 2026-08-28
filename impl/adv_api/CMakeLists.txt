@@ -66,7 +66,8 @@ if(NOT "${DPRODUCT_SIDE}" STREQUAL "device")
     DIRECTORY ${ASCENDC_INCLUDE_DIR}/adv_api/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/adv_api/
     ${INSTALL_OPTIONAL} COMPONENT asc-devkit
-    REGEX "hccl/internal" EXCLUDE)
+    REGEX "hccl/internal" EXCLUDE
+    PATTERN "experimental" EXCLUDE)
 
   install(
     FILES
