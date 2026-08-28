@@ -6,7 +6,7 @@
 
 | 目录名称 | 内容说明 |
 | ---- | ---- |
-| [01_simd_cpp_api](./01_simd_cpp_api) | Ascend C C++ API样例，覆盖入门、工具、功能特性、API类库、最佳实践和兼容性参考 |
+| [01_simd_cpp_api](./01_simd_cpp_api) | Ascend C C++ API样例，覆盖入门、工具、功能特性、API类库、最佳实践、兼容性参考和Tensor API编程样例 |
 | [02_simd_c_api](./02_simd_c_api) | Ascend C C API样例，覆盖基础调用、工具能力和接口特性 |
 | [03_simt_api](./03_simt_api) | Ascend C SIMT编程样例，覆盖入门、调试工具、核心特性和实践参考 |
 | [04_aicpu](./04_aicpu) | Ascend C AICPU编程样例，覆盖入门和功能特性 |

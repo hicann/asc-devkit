@@ -274,7 +274,8 @@ examples/
 │   │           └── README.md
 │   ├── 04_advanced_api/    # 高阶API示例
 │   ├── 05_best_practices/  # 最佳实践
-│   └── 06_compatibility_guide/  # 兼容性指南
+│   ├── 06_compatibility_guide/  # 兼容性指南
+│   └── 07_tensor_api/     # Tensor API示例
 ├── 02_simd_c_api/          # SIMD C API示例
 ├── 03_simt_api/            # SIMT API示例
 ├── 04_aicpu/               # AI CPU API示例

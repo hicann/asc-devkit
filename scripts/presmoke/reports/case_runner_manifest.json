@@ -135,11 +135,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/00_introduction/02_matrix/matmul_tensor_api",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/00_introduction/02_matrix/matmul_tensor_api/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/matmul_tensor_api",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/matmul_tensor_api/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/00_introduction/02_matrix/matmul_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/matmul_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1293,11 +1293,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_0",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_0/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_0",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_0/run.sh",
     "source": "readme",
     "confidence": "low",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1322,11 +1322,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_1",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_1/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_1",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_1/run.sh",
     "source": "readme",
     "confidence": "low",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1351,11 +1351,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_2",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_2/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_2",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_2/run.sh",
     "source": "readme",
     "confidence": "low",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1380,11 +1380,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_3",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api__scenario_3/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_3",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_3/run.sh",
     "source": "readme",
     "confidence": "low",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_in_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1409,11 +1409,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_0",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_0/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_0",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_0/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1437,11 +1437,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_1",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_1/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_1",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_1/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1465,11 +1465,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_2",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_2/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_2",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_2/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -1493,11 +1493,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_3",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api__scenario_3/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_3",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_3/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/copy_out_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -4787,11 +4787,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/03_matrix_compute/batch_matmul_tensor_api",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/03_matrix_compute/batch_matmul_tensor_api/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/03_basic_api/03_matrix_compute/batch_matmul_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -6558,11 +6558,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_tensor_api",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_tensor_api/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/mmad_tensor_api",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/mmad_tensor_api/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_tensor_api",
+    "source_case": "01_simd_cpp_api/07_tensor_api/mmad_tensor_api",
     "supported_archs": [
       "dav-3510"
     ],
@@ -11125,11 +11125,11 @@
     ]
   },
   {
-    "case": "01_simd_cpp_api/05_best_practices/01_matrix_compute/matmul_mxfp4_tensor_api_high_performance",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/05_best_practices/01_matrix_compute/matmul_mxfp4_tensor_api_high_performance/run.sh",
+    "case": "01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance/run.sh",
     "source": "readme",
     "confidence": "medium",
-    "source_case": "01_simd_cpp_api/05_best_practices/01_matrix_compute/matmul_mxfp4_tensor_api_high_performance",
+    "source_case": "01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance",
     "supported_archs": [
       "dav-3510"
     ],

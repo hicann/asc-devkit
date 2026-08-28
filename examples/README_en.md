@@ -6,7 +6,7 @@ This directory provides usage examples for different Ascend C programming modes,
 
 | Directory Name | Description |
 | --- | --- |
-| [01_simd_cpp_api](./01_simd_cpp_api) | Ascend C C++ API examples, covering getting started, tools, features, API libraries, best practices, and compatibility references |
+| [01_simd_cpp_api](./01_simd_cpp_api) | Ascend C C++ API examples, covering getting started, tools, features, API libraries, best practices, compatibility references, and Tensor API programming samples |
 | [02_simd_c_api](./02_simd_c_api) | Ascend C C API examples, covering basic invocation, tool capabilities, and API features |
 | [03_simt_api](./03_simt_api) | Ascend C SIMT programming examples, covering getting started, debugging tools, core features, and practice references |
 | [04_aicpu](./04_aicpu) | Ascend C AICPU programming examples, covering getting started and features |

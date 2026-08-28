@@ -10,9 +10,7 @@
 ## 样例列表
 | 目录名称 | 功能描述 | 支持的产品 |
 |--------------------------------------------------------------------------------------------| ---------------------------------------------------- | --- |
-| [batch_matmul_tensor_api](./batch_matmul_tensor_api) | 本样例基于Tensor API编程方式实现带Bias的Batch Matmul计算 | Ascend 950PR/Ascend 950DT |
 | [batch_matmul](./batch_matmul) |  本样例介绍在输入为float数据类型并且左、右矩阵均不转置的场景下，带batch的矩阵乘法，其中GM -> L1通路采用DataCopy（Nd2NzParams）批量搬运，L0C -> GM、L0C -> L1通路采用Fixpipe批量搬运，L1 -> L0A / L0B搬运和Mmad矩阵乘循环执行batch次 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
-| [conv2d_forward_tensor_api](./conv2d_forward_tensor_api) |  本样例基于Tensor API编程方式实现Conv2D Forward计算，支持NC1HWC0、NCHW、NHWC三种GM输入/输出格式，通过`CopyGM2L1`（随路格式转换）、`CopyL12L0A`（Img2Col空间展开）、`Mmad`（矩阵乘）和`CopyL0C2GM`完成完整卷积流程 | Ascend 950PR/Ascend 950DT |
 | [fixpipe_l0c2gm](./fixpipe_l0c2gm) |  本样例介绍如何使用Fixpipe将矩阵乘的结果从L0C Buffer搬出到GM（Global Memory） | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [fixpipe_l0c2l1](./fixpipe_l0c2l1) |  本样例介绍如何使用Fixpipe将矩阵乘的结果从L0C Buffer搬出到L1（L1 Buffer） | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [fixpipe_l0c2ub](./fixpipe_l0c2ub) |  本样例介绍如何使用Fixpipe将矩阵乘的结果从L0C Buffer搬出到UB（Unified Buffer） | Ascend 950PR/Ascend 950DT |
@@ -24,6 +22,5 @@
 | [mmad_gemv](./mmad_gemv) |  本样例介绍了GEMV（M=1）模式下的矩阵乘法 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [mmad_load3dv2](./mmad_load3dv2) |  本样例介绍LoadData（卷积数据搬运）v2指令在矩阵乘法中的使用场景和方法。LoadData（卷积数据搬运）v2可以将二维的A、B矩阵从L1搬运到L0A/L0B，其中 A 和 B 分别表示矩阵乘法的左右输入矩阵 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [mmad_mx](./mmad_mx)  |  本样例介绍了输入为ND格式，A、B矩阵为FP4（fp4x2_e1m2_t、fp4x2_e2m1_t）和FP8（fp8_e4m3fn_t、fp8_e5m2_t）数据类型，量化系数矩阵scaleA、scaleB为fp8_e8m0_t数据类型，左矩阵和左量化系数矩阵不转置、右矩阵和右量化系数矩阵转置共 4 种带有量化功能的矩阵乘（简称：MX矩阵乘法） | Ascend 950PR/Ascend 950DT |
-| [mmad_tensor_api](./mmad_tensor_api) |  本样例基于Tensor API编程方式实现动态Shape矩阵乘法和随路量化计算 | Ascend 950PR/Ascend 950DT |
 | [mmad_unitflag](./mmad_unitflag) |  本样例介绍了如何在调用Mmad指令时，使用unitFlag功能。 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [mmad_with_sparse](./mmad_with_sparse) |  本样例介绍基础API MmadWithSparse调用样例 | Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |

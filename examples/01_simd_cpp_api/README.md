@@ -8,3 +8,4 @@
 | [04_advanced_api](./04_advanced_api) | 基于Ascend C API类库的使用样例，通过<<<>>>直调的实现方式，介绍了数学库、激活函数等API类库 |
 | [05_best_practices](./05_best_practices) | 基于Ascend C的性能优化实践，聚焦于关键计算与内存访问的调优，旨在提升在Ascend平台上的运行效率 |
 | [06_compatibility_guide](./06_compatibility_guide) | 针对不兼容的特性，提供兼容性样例 |
+| [07_tensor_api](./07_tensor_api) | 基于Tensor API编程方式的样例，涵盖数据搬运、矩阵计算、卷积计算和高性能矩阵乘实践 |

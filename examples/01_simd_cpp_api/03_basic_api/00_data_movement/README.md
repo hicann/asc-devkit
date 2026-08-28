@@ -9,8 +9,6 @@
 | 目录名称 | 功能描述 | 支持的产品 |
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------| --- |
 | [broadcast_ub2l0c](./broadcast_ub2l0c) |  本样例基于BroadCastVecToMM实现数据广播搬运，将位于UB（Unified Buffer）上数据进行广播并搬运到L0C Buffer | Atlas 推理系列产品AI Core |
-| [copy_in_tensor_api](./copy_in_tensor_api) |  本样例介绍基于Tensor API实现Copy In接口与带Bias的动态Shape矩阵乘法，展示GM到L1、L1到L0的数据搬运以及Mmad矩阵乘加计算 | Ascend 950PR/Ascend 950DT |
-| [copy_out_tensor_api](./copy_out_tensor_api) |  本样例介绍基于Tensor API实现Copy Out接口与带Bias的动态Shape矩阵乘法，展示L0C到GM、L0C到UB的数据搬运以及Mmad矩阵乘加计算 | Ascend 950PR/Ascend 950DT |
 | [copy_ub2ub](./copy_ub2ub) |  本样例基于Copy实现数据搬运，适用于VECIN，VECOUT之间的数据搬运，支持mask连续模式和counter模式。 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [data_copy_gm2l1](./data_copy_gm2l1) |  本样例介绍如何使用DataCopy将输入数据从GM（Global Memory）搬出到L1（L1 Buffer） | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
 | [data_copy_gm2ub_nddma](./data_copy_gm2ub_nddma) |  本样例介绍如何使用多维数据搬运接口实现GM（Global Memory）到UB（Unified Buffer）通路的数据搬运，通过自由配置搬入的维度信息以及对应的Stride，可以用于Padding、Transpose、BroadCast、Slice等多种数据变换操作 | Ascend 950PR/Ascend 950DT |
