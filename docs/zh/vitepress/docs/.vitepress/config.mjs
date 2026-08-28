@@ -308,14 +308,7 @@ function extractBodyContent(html) {
   return html
 }
 
-function escapeCodeAngleBrackets(html) {
-  return html
-    .replace(/`([^`]+)`/g, (_, content) => '`' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '`')
-    .replace(/``([\s\S]*?)``/g, (_, content) => '``' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '``')
-}
-
 function normalizeHtml(html) {
-  html = escapeCodeAngleBrackets(html)
   html = html.replace(/<!--cann-filter:([\w,]+)-->/g, '<cann-filter npu-type="$1">')
   html = html.replace(/<!--\/cann-filter-->/g, '</cann-filter>')
   html = html.replace(/<!--\s*npu\s*=\s*"([^"]*)"\s+(\w+)\s*-->/g, '<cann-filter npu-type="$1">')
