@@ -21,18 +21,30 @@
 namespace asc {
 namespace te {
 namespace experimental {
-template <typename DataType = void, typename RegDataType = DataType>
-__simd_callee__ inline reg_pair<RegDataType> interleave(
-    const reg_tensor<RegDataType>& src0, const reg_tensor<RegDataType>& src1);
+/**
+ * @brief Interleaves elements from two register tensors.
+ * @tparam T Element type of the register tensors.
+ * @param src0 First source register tensor.
+ * @param src1 Second source register tensor.
+ * @return A pair of register tensors containing the interleaved elements. Both result tensors use a full mask.
+ */
+template <typename T>
+__simd_callee__ inline reg_pair<T> interleave(reg_tensor<T> src0, reg_tensor<T> src1);
 
-template <typename DataType = void, typename RegDataType = DataType>
-__simd_callee__ inline reg_pair<RegDataType> deinterleave(
-    const reg_tensor<RegDataType>& src0, const reg_tensor<RegDataType>& src1);
+/**
+ * @brief Deinterleaves elements from two register tensors.
+ * @tparam T Element type of the register tensors.
+ * @param src0 First source register tensor.
+ * @param src1 Second source register tensor.
+ * @return A pair of register tensors containing the deinterleaved elements. Both result tensors use a full mask.
+ */
+template <typename T>
+__simd_callee__ inline reg_pair<T> deinterleave(reg_tensor<T> src0, reg_tensor<T> src1);
 } // namespace experimental
 } // namespace te
 } // namespace asc
 
-#if defined(__NPU_ARCH__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/experimental/arch/vector/data_reorder_impl.h"
 #endif
 

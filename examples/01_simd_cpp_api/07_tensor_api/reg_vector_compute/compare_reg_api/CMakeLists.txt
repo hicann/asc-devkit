@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_ASC_RUN_MODE "npu" CACHE STRING "Run mode: npu, cpu, sim")
+set(CMAKE_ASC_RUN_MODE "npu" CACHE STRING "Run mode: npu, sim")
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
 option(CANN_ASC_USE_EXPERIMENTAL "Enable experimental CANN ASC APIs" OFF)
 
@@ -21,12 +21,6 @@ project(kernel_samples LANGUAGES ASC CXX)
 
 add_executable(demo
     compare_reg_api.asc
-)
-
-set(ASCEND_HOME "$ENV{ASCEND_HOME_PATH}")
-set(ASC_INCLUDE_DIR "${ASCEND_HOME}/asc/")
-include_directories(
-    "${ASC_INCLUDE_DIR}"
 )
 
 target_link_libraries(demo PRIVATE
@@ -45,7 +39,6 @@ endif()
 target_compile_definitions(demo PRIVATE
     SCENARIO_NUM=${SCENARIO_NUM}
 )
-
 
 target_compile_options(demo PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>

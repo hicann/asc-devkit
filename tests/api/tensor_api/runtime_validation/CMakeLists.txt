@@ -45,6 +45,7 @@ foreach(product_type ${ASCENDC_UT_RUNTIME_VALIDATION_PRODUCT_TYPE_LIST})
 
     target_compile_definitions(${target_name} PRIVATE
         UT_TEST
+        CANN_ASC_USE_EXPERIMENTAL
         ASCENDC_DEBUG=1
         ASCENDC_OOM=1
         ASCENDC_DUMP=0

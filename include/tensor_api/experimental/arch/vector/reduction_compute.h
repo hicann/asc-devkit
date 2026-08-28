@@ -40,7 +40,9 @@ __simd_callee__ inline reg_tensor<DstType> reduce_min(const reg_tensor<SrcType>&
 } // namespace te
 } // namespace asc
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/experimental/arch/vector/reduction_compute_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REDUCTION_COMPUTE_H
 

@@ -44,7 +44,7 @@ __simd_callee__ inline reg_tensor<T> operator>>(const reg_tensor<T>& src, const 
 } // namespace te
 } // namespace asc
 
-#if defined(__NPU_ARCH__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/experimental/arch/vector/logical_compute_impl.h"
 #endif
 

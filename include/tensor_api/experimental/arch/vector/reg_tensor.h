@@ -56,7 +56,7 @@ struct reg_pair {
 } // namespace te
 } // namespace asc
 
-#if defined(__NPU_ARCH__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/experimental/arch/vector/reg_tensor_impl.h"
 #endif
 

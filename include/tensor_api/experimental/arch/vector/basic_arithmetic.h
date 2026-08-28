@@ -102,7 +102,7 @@ __simd_callee__ inline decltype(auto) min(const T& a, const U& b);
 } // namespace te
 } // namespace asc
 
-#if defined(__NPU_ARCH__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/experimental/arch/vector/basic_arithmetic_impl.h"
 #endif
 

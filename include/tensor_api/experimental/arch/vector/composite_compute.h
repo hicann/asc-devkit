@@ -42,7 +42,7 @@ __simd_callee__ inline reg_tensor<half> muls_cast(const reg_tensor<float>& src, 
 } // namespace te
 } // namespace asc
 
-#if defined(__NPU_ARCH__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/experimental/arch/vector/composite_compute_impl.h"
 #endif
 
