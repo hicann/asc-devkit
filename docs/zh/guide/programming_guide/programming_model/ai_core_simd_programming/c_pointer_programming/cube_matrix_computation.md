@@ -258,7 +258,7 @@ __aicore__ inline void asc_set_l0c2gm_lrelu_alpha(half& config);
 
 `asc_mmad`是Ascend C封装NPU硬件能力的核心矩阵乘加接口，广泛应用于全连接、卷积等算子，实现C = A × B + C运算。计算输入取自L0A Buffer、L0B Buffer，结果写入L0C Buffer。不同产品对应的缓存分形格式前文已说明。
 
-![[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md) `asc_mmad`计算](../../../../figures/mmad_950.png)
+![950矩阵计算分形格式示意图](../../../../figures/mmad_950.png)
 
 表 矩阵计算矩阵A、B、C解释说明([NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md))
 | 矩阵计算逻辑 | 矩阵计算物理位置 | 维度 | 输入/输出数据格式 | 数据类型 |
