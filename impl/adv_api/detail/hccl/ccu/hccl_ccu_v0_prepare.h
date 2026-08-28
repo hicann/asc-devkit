@@ -198,6 +198,21 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     } else {
         CalcGoSize(normalSliceSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[11]);
     }
+
+    // Chunking params for large-shape path: partition mySliceSize into fixed chunkSize iterations
+    // so that rankSize * chunkSize never exceeds the fixed 16 MiB scratch buffer.
+    constexpr uint64_t arScratchSize = 16 * 1024 * 1024;
+    constexpr uint64_t minSliceAlign = 128;
+    uint64_t chunkSize = arScratchSize / ccuParam_.rankNum / minSliceAlign * minSliceAlign;
+    uint64_t mySliceSize = xnData_[8];
+    uint64_t fullChunkCount = mySliceSize == 0 ? 0 : (mySliceSize - 1) / chunkSize;
+    uint64_t tailSize = mySliceSize - fullChunkCount * chunkSize;
+    xnData_[15] = chunkSize;
+    xnData_[16] = tailSize;
+    xnData_[17] = UINT64_MAX - fullChunkCount;
+    KERNEL_LOG(
+        KERNEL_INFO, "AR chunk debug: mySlice=0x%llx, chunk=0x%llx, full=0x%llx, tail=0x%llx, loop=0x%llx\n",
+        mySliceSize, chunkSize, fullChunkCount, tailSize, xnData_[17]);
 }
 
 template <const auto& config>

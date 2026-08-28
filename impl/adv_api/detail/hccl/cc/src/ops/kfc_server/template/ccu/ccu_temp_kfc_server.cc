@@ -33,6 +33,8 @@ HcclResult InheritKfcServerKernelArg(
     const bool isReduceScatter =
         srcName == "CcuKernelKfcReduceScatterMesh1DMem2Mem" && param.opType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER;
     const bool isAlltoAll = srcName == "CcuKernelAlltoAllMesh1D" && param.opType == HcclCMDType::HCCL_CMD_ALLTOALL;
+    const bool isAllReduce =
+        srcName == "CcuKernelAllReduceMesh1DMem2Mem" && param.opType == HcclCMDType::HCCL_CMD_ALLREDUCE;
     if (isAllGatherNhr) {
         const auto* srcArg = static_cast<const CcuKernelArgKfcAllGatherNHR1DMultiJettyMem2Mem*>(srcKernel.kernelArg);
         CHK_PTR_NULL(srcArg);
@@ -43,7 +45,7 @@ HcclResult InheritKfcServerKernelArg(
         kfcArg->subCommRanks = srcArg->subCommRanks;
         kfcArg->nhrStepInfoVector = srcArg->stepInfoVector;
         kfcArg->nhrRank2ChannelIdx = srcArg->rank2ChannelIdx;
-    } else if (isAllGather || isReduceScatter || isAlltoAll) {
+    } else if (isAllGather || isReduceScatter || isAlltoAll || isAllReduce) {
         kfcArg->rankSize = subCommRanks[0].size();
         kfcArg->rankId = rankId;
         kfcArg->loadFromMem = false;
@@ -79,7 +81,7 @@ HcclResult CcuTempKfcServer::CalcRes(
 {
     HCCL_INFO("[CcuTempKfcServer::CalcRes start]");
     if (param.opType != HcclCMDType::HCCL_CMD_ALLGATHER && param.opType != HcclCMDType::HCCL_CMD_REDUCE_SCATTER &&
-        param.opType != HcclCMDType::HCCL_CMD_ALLTOALL) {
+        param.opType != HcclCMDType::HCCL_CMD_ALLTOALL && param.opType != HcclCMDType::HCCL_CMD_ALLREDUCE) {
         HCCL_ERROR("[CcuTempKfcServer::CalcRes] unsupported opType[%u]", static_cast<uint32_t>(param.opType));
         return HCCL_E_NOT_SUPPORT;
     }
@@ -117,7 +119,9 @@ HcclResult CcuTempKfcServer::CalcRes(
             sourceName == "CcuKernelAlltoAllMesh1D" && param.opType == HcclCMDType::HCCL_CMD_ALLTOALL;
         const bool roleMatches =
             missionNum == 1U || (missionIndex == 0U && isAllGather) || (missionIndex == 1U && isAllGatherNhr);
-        if ((!isAllGather && !isAllGatherNhr && !isReduceScatter && !isAlltoAll) || !roleMatches) {
+        const bool isAllReduce =
+            sourceName == "CcuKernelAllReduceMesh1DMem2Mem" && param.opType == HcclCMDType::HCCL_CMD_ALLREDUCE;
+        if ((!isAllGather && !isAllGatherNhr && !isReduceScatter && !isAlltoAll && !isAllReduce) || !roleMatches) {
             HCCL_ERROR(
                 "[CcuTempKfcServer::CalcRes] unsupported or misordered source kernel[%s] at mission[%u]",
                 resourceRequest.ccuKernelInfos[kernelIndex].kernelFuncName, missionIndex);

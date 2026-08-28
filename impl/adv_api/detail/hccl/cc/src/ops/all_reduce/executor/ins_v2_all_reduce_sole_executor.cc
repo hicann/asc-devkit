@@ -11,6 +11,9 @@
 #include "ins_v2_all_reduce_sole_executor.h"
 #include "ins_temp_all_reduce_mesh_1D_two_shot.h"
 #include "ins_temp_all_reduce_mesh_1D_one_shot.h"
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+#include "ccu_temp_kfc_all_reduce_mesh_1D_mem2mem.h"
+#endif
 
 namespace mc2_ops_hccl {
 
@@ -250,5 +253,11 @@ REGISTER_EXEC_V2(
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLREDUCE, AicpuAllReduceSoleMeshOneShot, InsV2AllReduceSoleExecutor, TopoMatch1D,
     InsTempAllReduceMesh1DOneShot);
+
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+REGISTER_EXEC_V2(
+    HcclCMDType::HCCL_CMD_ALLREDUCE, CcuSchedAllReduceSoleMesh, InsV2AllReduceSoleExecutor, TopoMatch1D,
+    CcuTempKfcAllReduceMesh1DMem2Mem);
+#endif
 
 } // namespace mc2_ops_hccl

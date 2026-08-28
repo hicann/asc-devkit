@@ -143,7 +143,8 @@ HcclResult CreateOpParamByBaseOpParam(
         u64 effectiveStrideCount = msg.strideCount;
         const u32 repeatCnt = (msg.addMsg.v1Msg.repeatCnt == 0U) ? 1U : static_cast<u32>(msg.addMsg.v1Msg.repeatCnt);
         if (effectiveStrideCount == 0U && repeatCnt > 1U &&
-            (msgOpType == HCCL_CMD_ALLGATHER || msgOpType == HCCL_CMD_REDUCE_SCATTER)) {
+            (msgOpType == HCCL_CMD_ALLGATHER || msgOpType == HCCL_CMD_REDUCE_SCATTER ||
+             msgOpType == HCCL_CMD_ALLREDUCE)) {
             effectiveStrideCount = msg.dataCnt * static_cast<u64>(repeatCnt);
             HCCL_INFO(
                 "[MC2_OPEN_DIAG][FormatStrideFallback] opType %u, dataCnt %llu, repeatCnt %u, "

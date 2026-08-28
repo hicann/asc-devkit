@@ -74,6 +74,8 @@ set(INCLUDE_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_reduce/selector
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_reduce/template
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_reduce/template/aicpu
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_reduce/template/ccu
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/all_reduce/template/ccu/kernel
 
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/kfc_server/executor
