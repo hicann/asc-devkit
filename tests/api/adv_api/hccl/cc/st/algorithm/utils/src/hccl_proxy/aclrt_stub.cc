@@ -67,9 +67,9 @@ aclError aclrtMalloc(void** devPtr, size_t size, aclrtMemMallocPolicy policy)
     u32 memType = static_cast<u32>(policy);
     HcclSim::SimNpu& simNpu = HcclSim::SimWorld::Global()->GetSimNpuByRankId(curr_dev_id);
     if (memType == BUFFER_INPUT_MARK) {
-        *devPtr = reinterpret_cast<void*>(simNpu.AllocMemory(BufferType::INPUT, size));
+        *devPtr = reinterpret_cast<void*>(simNpu.AllocMemory(HcclSim::BufferType::INPUT, size));
     } else if (memType == BUFFER_OUTPUT_MARK) {
-        *devPtr = reinterpret_cast<void*>(simNpu.AllocMemory(BufferType::OUTPUT, size));
+        *devPtr = reinterpret_cast<void*>(simNpu.AllocMemory(HcclSim::BufferType::OUTPUT, size));
     }
     return ACL_SUCCESS;
 }

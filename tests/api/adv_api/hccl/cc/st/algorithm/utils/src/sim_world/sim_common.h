@@ -15,7 +15,9 @@
 #include "dtype_common.h"
 #include "enum_factory.h"
 
+namespace HcclSim {
 MAKE_ENUM(BufferType, INPUT, OUTPUT, CCL, RESERVED)
+}
 
 using u8 = unsigned char;
 using u16 = unsigned short;
@@ -44,6 +46,7 @@ using ServerMeta = std::vector<PhyDeviceId>;
 using SuperPodMeta = std::vector<ServerMeta>;
 using TopoMeta = std::vector<SuperPodMeta>;
 
+namespace HcclSim {
 struct NpuPos {
     PodId superpodId; // 超节点Id
     SerId serverId;   // ServerId
@@ -55,6 +58,11 @@ struct MemBlock {
     uint64_t startAddr;
     uint64_t size;
 };
+} // namespace HcclSim
+
+using NpuPos = HcclSim::NpuPos;
+using MemBlock = HcclSim::MemBlock;
+using BufferType = HcclSim::BufferType;
 
 // ReduceScatterV AllGatherV使用
 struct VDataDesTag {

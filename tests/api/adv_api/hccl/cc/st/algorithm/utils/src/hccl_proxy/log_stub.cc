@@ -19,7 +19,21 @@
 #include <unistd.h>
 #include <securec.h>
 
-uint32_t logLevel = 0x03; // ERROR级别
+uint32_t logLevel = 0x03; // ERROR级别，可通过 HCCL_LOG_LEVEL 环境变量覆盖
+
+static uint32_t InitLogLevel()
+{
+    const char* envVal = std::getenv("HCCL_LOG_LEVEL");
+    if (envVal != nullptr) {
+        uint32_t val = static_cast<uint32_t>(std::strtoul(envVal, nullptr, 10));
+        if (val <= 0x10) {
+            return val;
+        }
+    }
+    return 0x03;
+}
+
+static uint32_t g_runtimeLogLevel = InitLogLevel();
 constexpr int TIME_FROM_1900 = 1900;
 constexpr int LOG_STUB_BUFFER_SIZE = 1024;
 std::map<int, std::string> LOG_LEVEL_STR_MAP = {
@@ -30,6 +44,8 @@ extern "C" {
 #endif
 
 int32_t CheckLogLevel(int32_t moduleId, int32_t logLevel) { return 1; }
+
+void SetTestLogLevel(uint32_t level) { g_runtimeLogLevel = (level <= 0x10) ? level : 0x01; }
 
 void GetCurTimeStr(char* timeStr, int len)
 {
@@ -73,7 +89,7 @@ void DlogPrintStub(int level, char* logBuffer)
 
 void DlogInner(int moduleId, int level, const char* fmt, ...)
 {
-    if (level < logLevel) {
+    if (level < g_runtimeLogLevel) {
         return;
     }
 
@@ -89,7 +105,7 @@ void DlogInner(int moduleId, int level, const char* fmt, ...)
 
 void DlogRecord(int moduleId, int level, const char* fmt, ...)
 {
-    if (level < logLevel) {
+    if (level < g_runtimeLogLevel) {
         return;
     }
 

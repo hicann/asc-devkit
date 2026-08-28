@@ -11,6 +11,9 @@ add_library(hccl-verifier STATIC "")
 add_library(${HCCL_CHECKER_VERIFIER_TARGET} ALIAS hccl-verifier)
 target_sources(hccl-verifier PRIVATE
     checker.cc
+    ccu_checker.cc
+    ccu_dag_checker.cc
+    ccu_runtime_checker.cc
     hccl_verifier.cc
 )
 
@@ -39,5 +42,6 @@ target_compile_definitions(hccl-verifier PRIVATE
 
 target_include_directories(hccl-verifier PUBLIC
     ${HCCL_CHECKER_COMMON_INCLUDE_LIST}
+    ${UTILS_DIR}/ccu_scenario
     ${UTILS_DIR}/pub_inc
 )

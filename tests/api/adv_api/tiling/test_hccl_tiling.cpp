@@ -187,10 +187,10 @@ protected:
     }
 };
 
-TEST_F(TestHcclTilingCcuKfc, UnsupportedOpTypeUsesDefaultVersion)
+TEST_F(TestHcclTilingCcuKfc, AllToAllCcuSchedUsesCcuNewVersion)
 {
     ExpectInitTilingVersion(
-        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE), "CcuAlltoAllMesh1D", 6U, INIT_TILING_VERSION);
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLTOALL), "CcuAlltoAllMesh1D", 6U, INIT_TILING_CCU_NEW_VERSION);
 }
 
 TEST_F(TestHcclTilingCcuKfc, UnsupportedCommEngineUsesDefaultVersion)

@@ -66,6 +66,12 @@ HcclResult HcclDfxRegOpInfo(HcclComm comm, void* dfxOpInfo)
     return HCCL_SUCCESS;
 }
 
+HcclResult HcclDfxRegOpInfoByCommId(char* commId, void* dfxOpInfo)
+{
+    HCCL_WARNING("[%s] not support.", __func__);
+    return HCCL_SUCCESS;
+}
+
 HcclResult HcclProfilingReportOp(HcclComm comm, uint64_t beginTime)
 {
     HCCL_WARNING("[%s] not support.", __func__);

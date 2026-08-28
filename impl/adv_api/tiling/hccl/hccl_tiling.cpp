@@ -31,7 +31,8 @@ namespace AscendC {
 namespace {
 
 static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
-    "CcuAllGatherMesh1DMem2Mem", "CcuSchedAllGatherConcurMeshNHRMultiLink", "CcuKfcReduceScatterMesh1DMem2Mem"};
+    "CcuAllGatherMesh1DMem2Mem", "CcuSchedAllGatherConcurMeshNHRMultiLink", "CcuKfcReduceScatterMesh1DMem2Mem",
+    "CcuAlltoAllMesh1D"};
 
 bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
 {

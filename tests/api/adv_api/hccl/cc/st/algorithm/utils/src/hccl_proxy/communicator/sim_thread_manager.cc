@@ -27,6 +27,9 @@ HcclResult SimThreadMgr::CommEngineToNotifyLoadType(CommEngine engine, NotifyLoa
         case COMM_ENGINE_AICPU_TS:
             type = NotifyLoadType::DEVICE_NOTIFY;
             break;
+        case COMM_ENGINE_CCU:
+            type = NotifyLoadType::HOST_NOTIFY;
+            break;
         default:
             HCCL_ERROR("[ThreadMgr] Unknown comm engine type: %d", engine);
             return HCCL_E_PARA;

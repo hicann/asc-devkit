@@ -23,7 +23,7 @@ public:
 
     std::string Describe() const
     {
-        return StringFormat("DataSlice[%s, offset=0x%llX, size=0x%llX]", type_.Describe().c_str(), offset_, size_);
+        return ::StringFormat("DataSlice[%s, offset=0x%llX, size=0x%llX]", type_.Describe().c_str(), offset_, size_);
     }
 
     inline BufferType GetType() const { return type_; }

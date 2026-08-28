@@ -31,7 +31,7 @@ struct LinkInfo {
 
     LinkInfo(LinkProtoStub proto) { linkProto = proto; }
 
-    std::string Describe() const { return StringFormat("link prototyp=%s", linkProto.Describe().c_str()); }
+    std::string Describe() const { return ::StringFormat("link prototyp=%s", linkProto.Describe().c_str()); }
 };
 
 class TaskStub {

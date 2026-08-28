@@ -25,7 +25,7 @@ constexpr int32_t HCCL_SUCCESS = 0;
 constexpr uint8_t HCCL_ONLY_COMPUTE = 1U;
 constexpr uint8_t HCCL_ASCEND910B = 1U;
 constexpr uint32_t MAX_DCCI_CNT = 64U;
-constexpr uint64_t DATA_TYPE_MAP[] = {1, 2, 4, 2, 4, 8, 8, 1, 8, 4, 8, 2, 0, 0, 1, 1, 1, 1, 1};
+constexpr uint64_t DATA_TYPE_MAP[] = {1, 2, 4, 2, 4, 8, 8, 1, 2, 4, 8, 2, 0, 0, 1, 1, 1, 1, 1};
 constexpr uint32_t DATA_TYPE_MAP_SIZE = sizeof(DATA_TYPE_MAP) / sizeof(DATA_TYPE_MAP[0]);
 static_assert(DATA_TYPE_MAP[HCCL_DATA_TYPE_MXFP8] == 1U, "MXFP8 elements occupy one byte");
 
