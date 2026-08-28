@@ -60,8 +60,8 @@ __simd_vf__ inline void GeluImplVF(__ubuf__ T* dst, __ubuf__ T* src, uint32_t co
         Reg::Add(tmpReg0, tmpReg0, srcVreg, mask);
         Reg::Muls(tmpReg0, tmpReg0, coefficientsB, mask);
         // exp(min(y, 0))
-        Reg::Mins(tmpReg1, tmpReg0, 0.0f, mask);
-        Reg::Exp(tmpReg1, tmpReg1, mask);
+        Reg::Mins(tmpReg2, tmpReg0, 0.0f, mask);
+        Reg::Exp(tmpReg1, tmpReg2, mask);
         // x / (exp^(-abs(y)) + 1)
         Reg::Abs(tmpReg2, tmpReg0, mask);
         Reg::Muls(tmpReg2, tmpReg2, -1.0f, mask);
@@ -86,8 +86,8 @@ __simd_callee__ inline void FastGeluCoreAlg(
 {
     constexpr float coefficients = -1.702f;
     constexpr float oneFloatScalar = 1.0f;
-    Reg::Muls(stackVreg, srcVreg, coefficients, mask);
-    Reg::Exp(stackVreg, stackVreg, mask);
+    Reg::Muls(dstVreg, srcVreg, coefficients, mask);
+    Reg::Exp(stackVreg, dstVreg, mask);
     Reg::Adds(stackVreg, stackVreg, oneFloatScalar, mask);
     Reg::Div(dstVreg, srcVreg, stackVreg, mask);
 }

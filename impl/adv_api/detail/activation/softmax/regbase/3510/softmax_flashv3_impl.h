@@ -136,7 +136,7 @@ __simd_vf__ __aicore__ inline void SoftmaxFlashV3NDNoUpdateImpl(
         Reg::Duplicate(sumVreg, 0);
         for (uint16_t k = 0; k < kRepeatTime; ++k) { // k / 64
             Reg::LoadAlign<float>(srcVreg, newSrcUb + i * srcK + k * repeatStride);
-            Reg::FusedExpSub(dstVreg, srcVreg, maxVreg, maskFull);
+            SoftmaxExpSub(dstVreg, srcVreg, maxVreg, maskFull);
             StoreIfNeedCast<T>(dstUb + i * srcK + k * repeatStride, dstVreg, maskFull);
             Reg::Add(sumVreg, sumVreg, dstVreg, maskFull);
         }
@@ -269,7 +269,7 @@ __simd_vf__ __aicore__ inline void SoftmaxFlashV3NDUpdateImpl(
         StoreIfNeedCast<U>(maxUb + i * blockStride, maxVreg, maskOneBlk);
         Reg::Sub(maxVreg, maxVreg, dstVreg, maskOneBlk);
         Reg::StoreAlign<float>(tmpUb + i * blockStride, maxVreg, maskOneBlk);
-        Reg::FusedExpSub(tmpVreg, tmpVreg, maxVreg, maskFull);
+        SoftmaxExpSub(tmpVreg, tmpVreg, maxVreg, maskFull);
         LoadIfNeedCast<U>(inputVreg, inExpSumUb + i * blockStride, maskOneBlk);
         Reg::Mul(sumVreg, tmpVreg, inputVreg, maskOneBlk);
         Reg::StoreAlign<float>(expSumUb + i * blockStride, sumVreg, maskOneBlk);
@@ -284,7 +284,7 @@ __simd_vf__ __aicore__ inline void SoftmaxFlashV3NDUpdateImpl(
         Reg::LoadAlign<float, Reg::LoadDist::DIST_BRC_B32>(maxVreg, tmpUb + i * blockStride);
         for (uint16_t k = 0; k < kRepeatTime; ++k) { // k / 64
             Reg::LoadAlign<float>(srcVreg, newSrcUb + i * srcK + k * repeatStride);
-            Reg::FusedExpSub(dstVreg, srcVreg, maxVreg, maskFull);
+            SoftmaxExpSub(dstVreg, srcVreg, maxVreg, maskFull);
             StoreIfNeedCast<T>(dstUb + i * srcK + k * repeatStride, dstVreg, maskFull);
             Reg::Add(sumVreg, sumVreg, dstVreg, maskFull);
         }

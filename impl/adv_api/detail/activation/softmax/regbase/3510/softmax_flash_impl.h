@@ -69,12 +69,12 @@ __simd_vf__ inline void SoftmaxFlashNDImpl(
         Reg::Max(maxVreg, maxVreg, tmpVreg, maskOneBlk);
         StoreIfNeedCast<T2>(maxUb + i * blockStride, maxVreg, maskOneBlk);
 
-        Reg::FusedExpSub(expMaxVreg, tmpVreg, maxVreg, maskOneBlk);
+        SoftmaxExpSub(expMaxVreg, tmpVreg, maxVreg, maskOneBlk);
         Reg::Duplicate(sumVreg, 0);
         Reg::Duplicate(maxVreg, maxVreg, maskFull);
         for (uint16_t j = 0; j < repeatTimes; ++j) {
             LoadIfNeedCast<T1>(srcVreg, srcUb + i * srcK + j * stride, maskFull);
-            Reg::FusedExpSub(tmpVreg, srcVreg, maxVreg, maskFull);
+            SoftmaxExpSub(tmpVreg, srcVreg, maxVreg, maskFull);
             StoreIfNeedCast<float>(workUb + i * srcK + j * stride, tmpVreg, maskFull);
             Reg::Add(sumVreg, sumVreg, tmpVreg, maskFull);
         }
@@ -163,14 +163,14 @@ __simd_vf__ inline void SoftmaxFlashNDWithTailImpl(
         Reg::Max(maxVreg, maxVreg, tmpVreg, maskOneBlk);
         StoreIfNeedCast<T2>(maxUb + i * blockStride, maxVreg, maskOneBlk);
 
-        Reg::FusedExpSub(expMaxVreg, tmpVreg, maxVreg, maskOneBlk);
+        SoftmaxExpSub(expMaxVreg, tmpVreg, maxVreg, maskOneBlk);
         Duplicate(sumVreg, 0);
         Duplicate(maxVreg, maxVreg, maskFull);
         sreg = originK;
         for (uint16_t j = 0; j < repeatTimes; ++j) {
             maskCnt = Reg::UpdateMask<uint32_t>(sreg);
             LoadIfNeedCast<T1>(srcVreg, srcUb + i * srcK + j * stride, maskFull);
-            Reg::FusedExpSub(tmpVreg, srcVreg, maxVreg, maskCnt);
+            SoftmaxExpSub(tmpVreg, srcVreg, maxVreg, maskCnt);
             StoreIfNeedCast<float>(workUb + i * srcK + j * stride, tmpVreg, maskCnt);
             Reg::Add(sumVreg, sumVreg, tmpVreg, maskFull);
         }

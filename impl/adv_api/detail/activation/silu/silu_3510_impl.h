@@ -39,8 +39,8 @@ __simd_vf__ inline void SiluComputeVF(__ubuf__ T* dst, __ubuf__ T* src, uint32_t
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         mask = Reg::UpdateMask<T>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
-        Reg::Muls(tmpReg0, srcVreg, -1.0f, mask);
-        Reg::Exp(tmpReg0, tmpReg0, mask);
+        Reg::Muls(dstVreg, srcVreg, -1.0f, mask);
+        Reg::Exp(tmpReg0, dstVreg, mask);
         Reg::Adds(tmpReg0, tmpReg0, 1.0f, mask);
         Reg::Div(dstVreg, srcVreg, tmpReg0, mask);
         Reg::StoreAlign(dst + i * oneRepElm, dstVreg, mask);

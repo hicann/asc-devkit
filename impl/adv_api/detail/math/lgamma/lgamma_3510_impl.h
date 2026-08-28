@@ -28,6 +28,8 @@
 
 namespace AscendC {
 namespace LgammaInternal {
+static constexpr Reg::DivSpecificMode divMode = {Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_TRUE};
+
 __simd_callee__ inline void LgammaCalPow70To023(
     Reg::RegTensor<float>& resReg, Reg::RegTensor<float>& tmpReg, Reg::MaskReg mask)
 {
@@ -48,7 +50,7 @@ __simd_callee__ inline void LgammaCalPow70To023(
     Reg::Mul(bReg, bReg, tmpReg, mask);
     Reg::Adds(bReg, bReg, f1, mask);
 
-    Reg::Div(resReg, aReg, bReg, mask);
+    Reg::Div<float, &divMode>(resReg, aReg, bReg, mask);
     Reg::Muls(aReg, tmpReg, fn05, mask);
     Reg::Add(resReg, resReg, aReg, mask);
 }
@@ -76,7 +78,7 @@ __simd_callee__ inline void LgammaCal023To073(
     Reg::Adds(aReg, srcReg, r0, mask);
     // b = r3 / x
     Reg::Duplicate(tmpReg, r3, mask);
-    Reg::Div(bReg, tmpReg, srcReg, mask);
+    Reg::Div<float, &divMode>(bReg, tmpReg, srcReg, mask);
     // c = b + r1
     Reg::Adds(cReg, bReg, r1, mask);
     // d = r6 - b
@@ -86,12 +88,12 @@ __simd_callee__ inline void LgammaCal023To073(
     Reg::Adds(eReg, bReg, r7, mask);
     // f = r5 / d
     Reg::Duplicate(tmpReg, r5, mask);
-    Reg::Div(fReg, tmpReg, dReg, mask);
+    Reg::Div<float, &divMode>(fReg, tmpReg, dReg, mask);
     // res = f - e
     Reg::Sub(resReg, fReg, eReg, mask);
     // res = r4 / res
     Reg::Duplicate(tmpReg, r4, mask);
-    Reg::Div(resReg, tmpReg, resReg, mask);
+    Reg::Div<float, &divMode>(resReg, tmpReg, resReg, mask);
     // res = res + f
     Reg::Add(resReg, resReg, fReg, mask);
     // res = res * a
@@ -179,17 +181,17 @@ __simd_callee__ inline void LgammaCal173To2(
     Reg::Adds(bReg, srcReg, r2, mask);
     // c = x / r5
     Reg::Duplicate(tmpReg, r5, mask);
-    Reg::Div(cReg, srcReg, tmpReg, mask);
+    Reg::Div<float, &divMode>(cReg, srcReg, tmpReg, mask);
     // d = r4 / a
     Reg::Duplicate(tmpReg, r4, mask);
-    Reg::Div(dReg, tmpReg, aReg, mask);
+    Reg::Div<float, &divMode>(dReg, tmpReg, aReg, mask);
     // res = r3 - c
     Reg::Duplicate(tmpReg, r3, mask);
     Reg::Sub(resReg, tmpReg, cReg, mask);
     // res = res + d
     Reg::Add(resReg, resReg, dReg, mask);
     // res = b / res
-    Reg::Div(resReg, bReg, resReg, mask);
+    Reg::Div<float, &divMode>(resReg, bReg, resReg, mask);
     // res = res + r0
     Reg::Adds(resReg, resReg, r0, mask);
     // res = res * a
@@ -215,23 +217,23 @@ __simd_callee__ inline void LgammaCal2To22(
     // b =  a - r0
     Reg::Adds(bReg, aReg, r0, mask);
     // c = a / b
-    Reg::Div(cReg, aReg, bReg, mask);
+    Reg::Div<float, &divMode>(cReg, aReg, bReg, mask);
     // c = r4 / c
     Reg::Duplicate(tmpReg, r4, mask);
-    Reg::Div(cReg, tmpReg, cReg, mask);
+    Reg::Div<float, &divMode>(cReg, tmpReg, cReg, mask);
     // res = r5 - c
     Reg::Duplicate(tmpReg, r5, mask);
     Reg::Sub(resReg, tmpReg, cReg, mask);
     // res = r3 / res
     Reg::Duplicate(tmpReg, r3, mask);
-    Reg::Div(resReg, tmpReg, resReg, mask);
+    Reg::Div<float, &divMode>(resReg, tmpReg, resReg, mask);
     // res = res + c
     Reg::Add(resReg, cReg, resReg, mask);
     // res = r1 - res
     Reg::Duplicate(tmpReg, r1, mask);
     Reg::Sub(resReg, tmpReg, resReg, mask);
     // res = b / res
-    Reg::Div(resReg, bReg, resReg, mask);
+    Reg::Div<float, &divMode>(resReg, bReg, resReg, mask);
 }
 
 __simd_callee__ inline void LgammaCal22To25(
@@ -253,7 +255,7 @@ __simd_callee__ inline void LgammaCal22To25(
     Reg::Adds(resReg, tmpReg, r4, mask);
     // res = r3 / res
     Reg::Duplicate(tmpReg, r3, mask);
-    Reg::Div(resReg, tmpReg, resReg, mask);
+    Reg::Div<float, &divMode>(resReg, tmpReg, resReg, mask);
     // b = r2 -res
     Reg::Duplicate(tmpReg, r2, mask);
     Reg::Sub(bReg, tmpReg, resReg, mask);
@@ -296,7 +298,7 @@ __simd_callee__ inline void LgammaCal25To3(
     Reg::Add(cReg, srcReg, cReg, mask);
     // d = r3 / d
     Reg::Duplicate(tmpReg, r3, mask);
-    Reg::Div(dReg, tmpReg, dReg, mask);
+    Reg::Div<float, &divMode>(dReg, tmpReg, dReg, mask);
     // d = d + r2
     Reg::Adds(dReg, dReg, r2, mask);
     // c = d + c
@@ -344,7 +346,7 @@ __simd_callee__ inline void LgammaCal3To8(
     Reg::Adds(bReg, bReg, f1, mask);
 
     // res = 0.5 * y + a / b
-    Reg::Div(aReg, aReg, bReg, mask);
+    Reg::Div<float, &divMode>(aReg, aReg, bReg, mask);
     Reg::Muls(bReg, tmpReg, f05, mask);
     Reg::Add(resReg, bReg, aReg, mask);
 
@@ -391,7 +393,7 @@ __simd_callee__ inline void LgammaCal8ToPow58(
     Reg::Ln(aReg, absReg, mask);
     // b = 1 / x
     Reg::Duplicate(tmpReg, f1, mask);
-    Reg::Div(bReg, tmpReg, absReg, mask);
+    Reg::Div<float, &divMode>(bReg, tmpReg, absReg, mask);
     // y = b * b
     Reg::Mul(tmpReg, bReg, bReg, mask);
 

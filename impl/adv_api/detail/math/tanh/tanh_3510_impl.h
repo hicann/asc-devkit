@@ -112,8 +112,8 @@ __simd_vf__ inline void TanhCompensationImpl(
 
         Reg::Abs(vregInputAbs, vregInput, preg);
         Reg::Mins(vregInput, vregInput, TanhInternal::FP32_TWENTY, preg);
-        Reg::Muls(vregInput, vregInput, TanhInternal::FP32_TWO, preg);
-        Reg::Exp(vregInput, vregInput, preg);
+        Reg::Muls(vregInputMid, vregInput, TanhInternal::FP32_TWO, preg);
+        Reg::Exp(vregInput, vregInputMid, preg);
         Reg::Adds(vregInputMid, vregInput, -1.0f, preg);
         Reg::Adds(vregInputSqr, vregInput, 1.0f, preg);
         Reg::Div(vregInputMid, vregInputMid, vregInputSqr, preg);

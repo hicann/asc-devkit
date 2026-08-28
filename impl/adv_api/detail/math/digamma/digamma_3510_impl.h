@@ -49,6 +49,8 @@ constexpr float tmp1HalfCalcConst[] = {1.0, 2.0};
 constexpr float picotCalcConst[] = {
     0.00326538085938f, 0.0242919921875f, 0.053466796875f, 0.133377909660f, 0.333332300186f};
 
+static constexpr Reg::DivSpecificMode divMode = {Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_TRUE};
+
 static constexpr Reg::CastTrait FLOAT_TO_INT_CAST_TRAIT = {
     Reg::RegLayout::ZERO, Reg::SatMode::NO_SAT, Reg::MaskMergeMode::ZEROING, RoundMode::CAST_ROUND};
 static constexpr Reg::CastTrait INT_TO_FLOAT_CAST_TRAIT = {
@@ -86,7 +88,7 @@ __simd_callee__ inline void DigammaPositive(
     Reg::Adds(tmpReg1, srcReg, 10.0f, fullMask);
     Reg::Ln(dstReg, tmpReg1, fullMask);
     Reg::Duplicate(tmpScalarReg, 1.0f, fullMask);
-    Reg::Div(tmpReg1, tmpScalarReg, tmpReg1, fullMask);
+    Reg::Div<float, &divMode>(tmpReg1, tmpScalarReg, tmpReg1, fullMask);
     Reg::Muls(tmpReg2, tmpReg1, 0.5f, fullMask);
     Reg::Sub(dstReg, dstReg, tmpReg2, fullMask);
     Reg::Mul(tmpReg1, tmpReg1, tmpReg1, fullMask);
@@ -120,31 +122,31 @@ __simd_callee__ inline void DigammaPositive(
     Reg::Duplicate(tmpScalarReg, 1.0f, fullMask);
     Reg::Div(tmpReg1, tmpScalarReg, srcReg, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[0U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[1U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[2U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[3U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[4U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[5U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[6U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[7U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Adds(tmpReg2, srcReg, tmp1CalcConst[8U], fullMask);
-    Reg::Div(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
+    Reg::Div<float, &divMode>(tmpReg2, tmpScalarReg, tmpReg2, fullMask);
     Reg::Add(tmpReg1, tmpReg1, tmpReg2, fullMask);
     Reg::Sub(dstReg, dstReg, tmpReg1, mask);
 }
@@ -250,7 +252,7 @@ __simd_vf__ inline void DigammaImpl(__ubuf__ float* dstUb, __ubuf__ float* srcUb
             Reg::Duplicate(tmpReg4, 0.0f, fullMask);
             DigammaSelect(tmpReg4, tmpReg1, negArgReg, mask2);
             Reg::Duplicate(tmpReg2, -1.0f, fullMask);
-            Reg::Div(tmpReg1, tmpReg2, tmpReg1, fullMask);
+            Reg::Div<float, &divMode>(tmpReg1, tmpReg2, tmpReg1, fullMask);
             DigammaSelect(tmpReg4, tmpReg1, negArgReg, mask1);
             Reg::Muls(tmpReg4, tmpReg4, DIGAMMA_PI, fullMask);
             Reg::Add(resultReg, resultReg, tmpReg4, fullMask);

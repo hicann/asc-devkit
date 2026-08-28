@@ -675,8 +675,8 @@ __simd_callee__ inline void GetPowFIntrinsicCore(
     Reg::RegTensor<float> tmpReg;
     Reg::Abs(tmpReg, baseReg, mask);
     Reg::Ln(tmpReg, tmpReg, mask);
-    Reg::Mul(dstReg, expReg, tmpReg, mask);
-    Reg::Exp(dstReg, dstReg, mask);
+    Reg::Mul(tmpReg, expReg, tmpReg, mask);
+    Reg::Exp(dstReg, tmpReg, mask);
 }
 
 template <typename T>

@@ -141,18 +141,32 @@ __aicore__ inline void DivImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     static_assert(
         (SupportType<T, uint16_t, int16_t, uint32_t, int32_t, half, float, int64_t, uint64_t, complex32, complex64>()),
         "current data type is not supported on current device!");
-    if constexpr (config.algo == DivAlgo::INTRINSIC || config.algo == DivAlgo::PRECISION_1ULP_FTZ_TRUE) {
+    if constexpr (
+#if !defined(__ASC_FTZ__)
+        config.algo == DivAlgo::PRECISION_1ULP_FTZ_TRUE ||
+        (config.algo == DivAlgo::INTRINSIC && !SupportType<T, half, float>())
+#else
+        config.algo == DivAlgo::INTRINSIC || config.algo == DivAlgo::PRECISION_1ULP_FTZ_TRUE
+#endif
+    ) {
+        static constexpr Reg::DivSpecificMode mode = {
+            Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_TRUE};
         if constexpr (SupportBytes<T, 8>() || SupportType<T, complex32>()) {
             BinaryContinuousImplTemplate<
-                T, Reg::RegTensor<T, Reg::RegTraitNumTwo>,
-                Reg::Div<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T, Reg::RegTraitNumTwo>>>(
+                T, Reg::RegTensor<T, Reg::RegTraitNumTwo>, Reg::Div<T, &mode, Reg::RegTensor<T, Reg::RegTraitNumTwo>>>(
                 dst, src0, src1, calCount);
         } else {
-            BinaryContinuousImplTemplate<
-                T, Reg::RegTensor<T>, Reg::Div<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>>(
+            BinaryContinuousImplTemplate<T, Reg::RegTensor<T>, Reg::Div<T, &mode, Reg::RegTensor<T>>>(
                 dst, src0, src1, calCount);
         }
-    } else if constexpr (config.algo == DivAlgo::DIFF_COMPENSATION || config.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE) {
+    } else if constexpr (
+#if !defined(__ASC_FTZ__)
+        (config.algo == DivAlgo::DIFF_COMPENSATION && !SupportType<T, float>()) ||
+        config.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE
+#else
+        config.algo == DivAlgo::DIFF_COMPENSATION || config.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE
+#endif
+    ) {
         static constexpr Reg::DivSpecificMode mode = {
             Reg::MaskMergeMode::ZEROING, true, DivAlgo::PRECISION_0ULP_FTZ_TRUE};
         if constexpr (SupportBytes<T, 8>()) {
@@ -162,7 +176,14 @@ __aicore__ inline void DivImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
             constexpr auto func = Reg::Div<T, &mode, Reg::RegTensor<T>>;
             BinaryContinuousImplTemplate<T, Reg::RegTensor<T>, func>(dst, src0, src1, calCount);
         }
-    } else if constexpr (config.algo == DivAlgo::PRECISION_0ULP_FTZ_FALSE) {
+    } else if constexpr (
+#if !defined(__ASC_FTZ__)
+        (config.algo == DivAlgo::DIFF_COMPENSATION && SupportType<T, float>()) ||
+        config.algo == DivAlgo::PRECISION_0ULP_FTZ_FALSE
+#else
+        config.algo == DivAlgo::PRECISION_0ULP_FTZ_FALSE
+#endif
+    ) {
         static constexpr Reg::DivSpecificMode mode = {
             Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_0ULP_FTZ_FALSE};
         if constexpr (SupportBytes<T, 8>()) {
@@ -172,7 +193,14 @@ __aicore__ inline void DivImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
             constexpr auto func = Reg::Div<T, &mode, Reg::RegTensor<T>>;
             BinaryContinuousImplTemplate<T, Reg::RegTensor<T>, func>(dst, src0, src1, calCount);
         }
-    } else if constexpr (config.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE) {
+    } else if constexpr (
+#if !defined(__ASC_FTZ__)
+        (config.algo == DivAlgo::INTRINSIC && SupportType<T, half, float>()) ||
+        config.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE
+#else
+        config.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE
+#endif
+    ) {
         static constexpr Reg::DivSpecificMode mode = {
             Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_FALSE};
         if constexpr (SupportBytes<T, 8>()) {

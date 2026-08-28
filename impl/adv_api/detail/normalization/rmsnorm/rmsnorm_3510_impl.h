@@ -98,6 +98,7 @@ __simd_callee__ inline void ComputeY(
     Reg::RegTensor<float> src2Reg;
     Reg::RegTensor<float> gammaReg;
     Reg::RegTensor<float> dstReg;
+    Reg::RegTensor<float> tmpReg;
     Reg::RegTensor<float> dstTailReg;
 
     static constexpr Reg::LnSpecificMode lnMode = {Reg::MaskMergeMode::ZEROING, LnAlgo::INTRINSIC};
@@ -120,8 +121,8 @@ __simd_callee__ inline void ComputeY(
             Reg::Adds(src2Reg, src2Reg, epsilon, maskFull);
             // step 5: rsqrt: ln + muls + exp
             Reg::Ln<float, &lnMode>(src2Reg, src2Reg, maskFull);
-            Reg::Muls(src2Reg, src2Reg, rsqrtExponent, maskFull);
-            Reg::Exp<float, &expMode>(src2Reg, src2Reg, maskFull);
+            Reg::Muls(tmpReg, src2Reg, rsqrtExponent, maskFull);
+            Reg::Exp<float, &expMode>(src2Reg, tmpReg, maskFull);
             // step 6: rms = xi * rsqrt
             Reg::Mul(src2Reg, srcReg, src2Reg, maskFull);
             // step 7: rms = rms * gamma
@@ -139,8 +140,8 @@ __simd_callee__ inline void ComputeY(
             Reg::Adds(src2Reg, src2Reg, epsilon, maskReg);
             // step 5: rsqrt: ln + muls + exp
             Reg::Ln<float, &lnMode>(src2Reg, src2Reg, maskReg);
-            Reg::Muls(src2Reg, src2Reg, rsqrtExponent, maskReg);
-            Reg::Exp<float, &expMode>(src2Reg, src2Reg, maskReg);
+            Reg::Muls(tmpReg, src2Reg, rsqrtExponent, maskReg);
+            Reg::Exp<float, &expMode>(src2Reg, tmpReg, maskReg);
             // step 6: rms = xi * rsqrt
             Reg::Mul(src2Reg, srcReg, src2Reg, maskReg);
             // step 7: rms = rms * gamma

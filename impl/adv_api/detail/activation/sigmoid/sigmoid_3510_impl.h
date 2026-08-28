@@ -50,8 +50,8 @@ __simd_vf__ inline void SigmoidImplVF(__ubuf__ T* dstUb, __ubuf__ T* srcUb, uint
         } else {
             Reg::LoadAlign(castReg, srcUb + i * B32_DATA_NUM_PER_REPEAT);
         }
-        Reg::Muls(tmpReg, castReg, -1.0f, preg);
-        Reg::Exp(tmpReg, tmpReg, preg);
+        Reg::Muls(dstReg, castReg, -1.0f, preg);
+        Reg::Exp(tmpReg, dstReg, preg);
 
         Reg::Adds(tmpReg, tmpReg, 1.0f, preg);
         Reg::Duplicate(dstReg, 1.0f, preg);

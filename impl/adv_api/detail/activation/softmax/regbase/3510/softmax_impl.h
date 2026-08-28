@@ -1135,8 +1135,8 @@ __no_simd_vf_fusion__ __simd_vf__ inline void SoftMaxGenericNDVFImpl(
         for (uint16_t j = 0; j < repeatTimes; ++j) {
             LoadIfNeedCast<T>(srcVreg0, srcUb + i * srcK + j * FLOAT_REPEAT_SIZE, pregFull);
             LoadIfNeedCast<T>(srcVreg1, srcUb + (i + halfM) * srcK + j * FLOAT_REPEAT_SIZE, pregFull);
-            Reg::FusedExpSub(tmpVreg0, srcVreg0, maxVreg0, pregFull);
-            Reg::FusedExpSub(tmpVreg1, srcVreg1, maxVreg1, pregFull);
+            SoftmaxExpSub(tmpVreg0, srcVreg0, maxVreg0, pregFull);
+            SoftmaxExpSub(tmpVreg1, srcVreg1, maxVreg1, pregFull);
             Reg::StoreAlign(workUb + i * srcK + j * FLOAT_REPEAT_SIZE, tmpVreg0, pregFull);
             Reg::StoreAlign(workUb + (i + halfM) * srcK + j * FLOAT_REPEAT_SIZE, tmpVreg1, pregFull);
             Reg::Add(sumVreg0, sumVreg0, tmpVreg0, pregFull);
@@ -1153,7 +1153,7 @@ __no_simd_vf_fusion__ __simd_vf__ inline void SoftMaxGenericNDVFImpl(
         Reg::LoadAlign<float, Reg::LoadDist::DIST_BRC_B32>(maxVreg0, maxUb + mainM);
         for (uint16_t j = 0; j < repeatTimes; ++j) {
             LoadIfNeedCast<T>(srcVreg0, srcUb + mainM * srcK + j * FLOAT_REPEAT_SIZE, pregFull);
-            Reg::FusedExpSub(tmpVreg0, srcVreg0, maxVreg0, pregFull);
+            SoftmaxExpSub(tmpVreg0, srcVreg0, maxVreg0, pregFull);
             Reg::StoreAlign(workUb + mainM * srcK + j * FLOAT_REPEAT_SIZE, tmpVreg0, pregFull);
             Reg::Add(sumVreg0, sumVreg0, tmpVreg0, pregFull);
         }

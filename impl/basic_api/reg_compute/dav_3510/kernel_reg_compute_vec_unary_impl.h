@@ -157,7 +157,7 @@ __simd_callee__ inline void ComplexAbsKernel(S& dstReg, V& srcReg, MaskReg& mask
     Mul<T, mode, RegTensor<typename ActualU::EleType>>(srcRealSquare, srcReal, srcReal, mask);
     Mul<T, mode, RegTensor<typename ActualU::EleType>>(srcImagSquare, srcImag, srcImag, mask);
     Add<T, mode, RegTensor<typename ActualU::EleType>>(srcRealSquare, srcRealSquare, srcImagSquare, mask);
-    Sqrt<T, mode, RegTensor<typename ActualU::EleType>>(dstReg, srcRealSquare, mask);
+    Sqrt<typename ActualU::EleType, mode, RegTensor<typename ActualU::EleType>>(dstReg, srcRealSquare, mask);
 }
 
 template <
@@ -259,7 +259,12 @@ __simd_callee__ inline void ExpImpl(U& dstReg, U& srcReg, MaskReg& mask)
         SupportEnum<sprMode.mrgMode, MaskMergeMode::ZEROING>(),
         "current Exp api only supported Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
-    if constexpr (sprMode.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE) {
+    if constexpr (
+        sprMode.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE
+#if !defined(__ASC_FTZ__)
+        || sprMode.algo == ExpAlgo::INTRINSIC
+#endif
+    ) {
         MaskReg maskSubnormal;
         U tmpReg;
         if constexpr (SupportType<ActualT, float>()) {
@@ -317,12 +322,12 @@ __simd_callee__ inline void SqrtFastInverseImpl(U& dstReg, U& srcReg, MaskReg& m
     constexpr float multiplyFactor1 = 0.000244140625f;
     constexpr uint32_t posInf = 0x7f800000u;
     constexpr uint32_t negZero = 0x80000000u;
-    RegTensor<T> regOne;
-    RegTensor<T> tmpReg;
-    RegTensor<T> errReg;
-    RegTensor<T> resReg;
-    RegTensor<T> dstRegCopy;
-    RegTensor<T> srcRegCopy = srcReg;
+    RegTensor<ActualT> regOne;
+    RegTensor<ActualT> tmpReg;
+    RegTensor<ActualT> errReg;
+    RegTensor<ActualT> resReg;
+    RegTensor<ActualT> dstRegCopy;
+    RegTensor<ActualT> srcRegCopy = srcReg;
     RegTensor<uint32_t> regNegOne;
     RegTensor<uint32_t> zeroReg;
 
@@ -381,51 +386,58 @@ __simd_callee__ inline void SqrtImpl(U& dstReg, U& srcReg, MaskReg& mask)
 
     if constexpr (sprMode.precisionMode) {
         static_assert(
-            SupportType<T, float>(),
+            SupportType<ActualT, float>(),
             "Reg Sqrt for high precision mode by using fast_inverse approach only supports float.");
-        SqrtFastInverseImpl<T, mode, U>(dstReg, srcReg, mask);
+        SqrtFastInverseImpl<ActualT, mode, U>(dstReg, srcReg, mask);
     } else {
-        if constexpr (sprMode.algo == SqrtAlgo::PRECISION_0ULP_FTZ_FALSE) {
+        if constexpr (sprMode.algo == SqrtAlgo::PRECISION_0ULP_FTZ_FALSE || sprMode.algo == SqrtAlgo::FAST_INVERSE) {
             static_assert(
-                SupportType<T, float>(),
+                SupportType<ActualT, float>(),
                 "Reg Sqrt for high precision mode by using fast_inverse approach only supports float.");
-            SqrtFastInverseImpl<T, mode, U>(dstReg, srcReg, mask);
-        } else if constexpr (sprMode.algo == SqrtAlgo::PRECISION_1ULP_FTZ_FALSE) {
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
-            MaskReg cmpMaskReg;
-            if constexpr (IsSameType<ActualT, half>::value) {
-                HalfUnion multiplyFactor0;
-                multiplyFactor0.i = 0x6C00;
-                HalfUnion multiplyFactor1;
-                multiplyFactor1.i = 0x2400;
-                HalfUnion subnormalThreshold;
-                subnormalThreshold.i = 0x03FF;
-
-                vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
-                vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
-                vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
-                vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
-                vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
-                vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
-            } else if constexpr (IsSameType<ActualT, float>::value) {
-                NotNumUnion multiplyFactor0;
-                multiplyFactor0.i = 0x4B800000;
-                NotNumUnion multiplyFactor1;
-                multiplyFactor1.i = 0x39800000;
-                NotNumUnion subnormalThreshold;
-                subnormalThreshold.i = 0x007FFFFF;
-
-                vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
-                vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
-                vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
-                vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
-                vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
-                vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
-            }
+            SqrtFastInverseImpl<ActualT, mode, U>(dstReg, srcReg, mask);
         } else {
-            vsqrt(dstReg, srcReg, mask, modeValue);
+#if !defined(__ASC_FTZ__)
+            constexpr bool useHardwareSqrt = sprMode.algo == SqrtAlgo::PRECISION_1ULP_FTZ_TRUE;
+#else
+            constexpr bool useHardwareSqrt = sprMode.algo != SqrtAlgo::PRECISION_1ULP_FTZ_FALSE;
+#endif
+            if constexpr (useHardwareSqrt) {
+                vsqrt(dstReg, srcReg, mask, modeValue);
+            } else {
+                RegTensor<ActualT> tmpReg;
+                RegTensor<ActualT> dstRegCopy;
+                RegTensor<ActualT> srcRegCopy = srcReg;
+                MaskReg cmpMaskReg;
+                if constexpr (IsSameType<ActualT, half>::value) {
+                    HalfUnion multiplyFactor0;
+                    multiplyFactor0.i = 0x6C00;
+                    HalfUnion multiplyFactor1;
+                    multiplyFactor1.i = 0x2400;
+                    HalfUnion subnormalThreshold;
+                    subnormalThreshold.i = 0x03FF;
+
+                    vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+                    vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
+                    vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
+                    vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
+                    vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
+                    vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
+                } else if constexpr (IsSameType<ActualT, float>::value) {
+                    NotNumUnion multiplyFactor0;
+                    multiplyFactor0.i = 0x4B800000;
+                    NotNumUnion multiplyFactor1;
+                    multiplyFactor1.i = 0x39800000;
+                    NotNumUnion subnormalThreshold;
+                    subnormalThreshold.i = 0x007FFFFF;
+
+                    vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+                    vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
+                    vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
+                    vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
+                    vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
+                    vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
+                }
+            }
         }
     }
 }
@@ -436,16 +448,21 @@ __simd_callee__ inline void LnCompute(U& dstReg, U& srcReg, MaskReg& mask)
     using ActualT = typename U::ActualT;
     constexpr LogSpecificMode sprMode = Internal::GetLogSpecificMode(mode);
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
-    if constexpr (sprMode.algo == LogAlgo::PRECISION_1ULP_FTZ_FALSE) {
+    if constexpr (
+        sprMode.algo == LogAlgo::PRECISION_1ULP_FTZ_FALSE
+#if !defined(__ASC_FTZ__)
+        || sprMode.algo == LogAlgo::INTRINSIC
+#endif
+    ) {
         if constexpr (IsSameType<ActualT, half>::value) {
             HalfUnion multiplyFactor;
             multiplyFactor.i = 0x6400; // 2^10
             HalfUnion subnormalThreshold;
             subnormalThreshold.i = 0x03FF;
             const half compensationFactor = -6.931471805599453094172; // -Ln(2^10);
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
+            RegTensor<ActualT> tmpReg;
+            RegTensor<ActualT> dstRegCopy;
+            RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
             vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
@@ -460,9 +477,9 @@ __simd_callee__ inline void LnCompute(U& dstReg, U& srcReg, MaskReg& mask)
             NotNumUnion subnormalThreshold;
             subnormalThreshold.i = 0x007FFFFF;
             constexpr float compensationFactor = -15.9423851528787421; // -Ln(2^23);
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
+            RegTensor<ActualT> tmpReg;
+            RegTensor<ActualT> dstRegCopy;
+            RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
             vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
@@ -502,13 +519,22 @@ __simd_callee__ inline void LogImpl(U& dstReg, U& srcReg, MaskReg& mask)
             static constexpr AscendC::Reg::LogSpecificMode logMode = {
                 MaskMergeMode::ZEROING, LogAlgo::PRECISION_1ULP_FTZ_FALSE};
             LnCompute<T, U, &logMode>(dstReg, srcReg, mask);
+        } else if constexpr (sprMode.algo == LnAlgo::PRECISION_1ULP_FTZ_TRUE) {
+            constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
+            vln(dstReg, srcReg, mask, modeValue);
         } else {
             static constexpr AscendC::Reg::LogSpecificMode logMode = {MaskMergeMode::ZEROING, LogAlgo::INTRINSIC};
             LnCompute<T, U, &logMode>(dstReg, srcReg, mask);
         }
     } else {
+#if !defined(__ASC_FTZ__)
+        static constexpr AscendC::Reg::LogSpecificMode logMode = {
+            MaskMergeMode::ZEROING, LogAlgo::PRECISION_1ULP_FTZ_FALSE};
+        LnCompute<T, U, &logMode>(dstReg, srcReg, mask);
+#else
         constexpr auto modeValue = GetMaskMergeMode<mode>();
         vln(dstReg, srcReg, mask, modeValue);
+#endif
     }
 }
 
@@ -569,16 +595,21 @@ __simd_callee__ inline void Log2Impl(U& dstReg, U& srcReg, MaskReg& mask)
         "current Log2 api only supports Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
     constexpr float ln2Reciprocal = 1.4426950408889634; // 1.0/Ln2;
-    if constexpr (sprMode.algo == Log2Algo::PRECISION_1ULP_FTZ_FALSE) {
+    if constexpr (
+        sprMode.algo == Log2Algo::PRECISION_1ULP_FTZ_FALSE
+#if !defined(__ASC_FTZ__)
+        || sprMode.algo == Log2Algo::INTRINSIC
+#endif
+    ) {
         if constexpr (SupportType<ActualT, half>()) {
             HalfUnion multiplyFactor;
             multiplyFactor.i = 0x6400; // 2^10
             HalfUnion subnormalThreshold;
             subnormalThreshold.i = 0x03FF;
             const half compensationFactor = -10; // -Log2(2^10);
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
+            RegTensor<ActualT> tmpReg;
+            RegTensor<ActualT> dstRegCopy;
+            RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
             vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
@@ -593,9 +624,9 @@ __simd_callee__ inline void Log2Impl(U& dstReg, U& srcReg, MaskReg& mask)
             NotNumUnion subnormalThreshold;
             subnormalThreshold.i = 0x007FFFFF;
             constexpr float compensationFactor = -23; // -Log2(2^23);
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
+            RegTensor<ActualT> tmpReg;
+            RegTensor<ActualT> dstRegCopy;
+            RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
             vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
@@ -631,16 +662,21 @@ __simd_callee__ inline void Log10Impl(U& dstReg, U& srcReg, MaskReg& mask)
         "current Log10 api only supports Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
     constexpr float ln10Reciprocal = 0.43429448190325176; // 1.0/Ln10;
-    if constexpr (sprMode.algo == Log10Algo::PRECISION_1ULP_FTZ_FALSE) {
+    if constexpr (
+        sprMode.algo == Log10Algo::PRECISION_1ULP_FTZ_FALSE
+#if !defined(__ASC_FTZ__)
+        || sprMode.algo == Log10Algo::INTRINSIC
+#endif
+    ) {
         if constexpr (SupportType<ActualT, half>()) {
             HalfUnion multiplyFactor;
             multiplyFactor.i = 0x6400; // 2^10
             HalfUnion subnormalThreshold;
             subnormalThreshold.i = 0x03FF;
             const half compensationFactor = -3.01029995663981; // -Log10(2^10);
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
+            RegTensor<ActualT> tmpReg;
+            RegTensor<ActualT> dstRegCopy;
+            RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
             vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
@@ -655,9 +691,9 @@ __simd_callee__ inline void Log10Impl(U& dstReg, U& srcReg, MaskReg& mask)
             NotNumUnion subnormalThreshold;
             subnormalThreshold.i = 0x007FFFFF;
             constexpr float compensationFactor = -6.923689900271567; // -Log10(2^23);
-            RegTensor<T> tmpReg;
-            RegTensor<T> dstRegCopy;
-            RegTensor<T> srcRegCopy = srcReg;
+            RegTensor<ActualT> tmpReg;
+            RegTensor<ActualT> dstRegCopy;
+            RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
             vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);

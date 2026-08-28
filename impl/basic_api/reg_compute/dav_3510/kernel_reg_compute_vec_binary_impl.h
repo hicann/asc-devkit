@@ -724,10 +724,11 @@ __simd_callee__ inline void ComplexDivKernel(U& dstReg, U& srcReg0, U& srcReg1, 
         equalZero, absSrc1Imag, zero, equalZero);
     RegTensor<typename ActualT::EleType> dstRealTmp0;
     RegTensor<typename ActualT::EleType> dstImagTmp0;
-    Div<typename ActualT::EleType, mode, RegTensor<typename ActualT::EleType>>(
+    static constexpr DivSpecificMode divMode = {MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_TRUE};
+    Div<typename ActualT::EleType, &divMode, RegTensor<typename ActualT::EleType>>(
         dstRealTmp0, src0Real, absSrc1Real, equalZero);
     Select(dstRealTmp, dstRealTmp0, zero, equalZero);
-    Div<typename ActualT::EleType, mode, RegTensor<typename ActualT::EleType>>(
+    Div<typename ActualT::EleType, &divMode, RegTensor<typename ActualT::EleType>>(
         dstImagTmp0, src0Imag, absSrc1Imag, equalZero);
     Select(dstImagTmp, dstImagTmp0, zero, equalZero);
 
@@ -860,7 +861,8 @@ __simd_callee__ inline void DivComplex32OnetraitImpl(U& dstReg, U& srcReg0, U& s
 
     B32TraitOneToTraitTwo(divTraitTwoSrcReg0, srcReg0);
     B32TraitOneToTraitTwo(divTraitTwoSrcReg1, srcReg1);
-    DivComplex32TwoImpl(divTraitTwoDstReg, divTraitTwoSrcReg0, divTraitTwoSrcReg1, maskTrait2);
+    DivComplex32TwoImpl<T, mode, Reg::RegTensor<ActualT, RegTraitNumTwo>>(
+        divTraitTwoDstReg, divTraitTwoSrcReg0, divTraitTwoSrcReg1, maskTrait2);
     B32TraitTwoToTraitOne(dstReg, divTraitTwoDstReg);
 }
 
@@ -886,6 +888,7 @@ __simd_callee__ inline void DivPrecisionImpl(U& dstReg, U& srcReg0, U& srcReg1, 
 
     // x = x1 + e
     // x = vsel(inf_nan_cmp_mask, x1, x)
+    using ActualT = typename U::ActualT;
     constexpr DivSpecificMode sprMode = Internal::GetDivSpecificMode(mode);
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
     constexpr uint32_t infNanBound = 0xff800000u;
@@ -895,9 +898,9 @@ __simd_callee__ inline void DivPrecisionImpl(U& dstReg, U& srcReg0, U& srcReg1, 
     constexpr uint32_t mantissaMask = 0x007FFFFFu;
     constexpr int32_t exponentBias = 127;
 
-    RegTensor<T> regNegZero;
-    RegTensor<T> tmpDst;
-    RegTensor<T> r, z, y;
+    RegTensor<ActualT> regNegZero;
+    RegTensor<ActualT> tmpDst;
+    RegTensor<ActualT> r, z, y;
     RegTensor<uint32_t> infNan;
 
     MaskReg cmpMaskReg;
@@ -916,8 +919,8 @@ __simd_callee__ inline void DivPrecisionImpl(U& dstReg, U& srcReg0, U& srcReg1, 
     RegTensor<uint32_t> src0ExpBits, src0Reg;
     RegTensor<int32_t> src0Exp;
     RegTensor<uint32_t> scaleBits;
-    RegTensor<T> scale;
-    RegTensor<T> aScaled, bScaled;
+    RegTensor<ActualT> scale;
+    RegTensor<ActualT> aScaled, bScaled;
     MaskReg needScaleMask;
     MaskReg noScaleMask;
 
@@ -942,9 +945,9 @@ __simd_callee__ inline void DivPrecisionImpl(U& dstReg, U& srcReg0, U& srcReg1, 
     vadds(newExp, k, exponentBias, needScaleMask, modeValue);
     vshls(scaleBits, (RegTensor<uint32_t>&)newExp, (int16_t)23, needScaleMask, modeValue);
 
-    RegTensor<T> scaleOne;
+    RegTensor<ActualT> scaleOne;
     vdup(scaleOne, 1.0f, mask, modeValue);
-    vsel(scale, (RegTensor<T>&)scaleBits, scaleOne, needScaleMask);
+    vsel(scale, (RegTensor<ActualT>&)scaleBits, scaleOne, needScaleMask);
 
     vmul(aScaled, srcReg0, scale, mask, modeValue);
     vmul(bScaled, srcReg1, scale, mask, modeValue);
@@ -952,7 +955,7 @@ __simd_callee__ inline void DivPrecisionImpl(U& dstReg, U& srcReg0, U& srcReg1, 
     vmuls(y, bScaled, -1.0f, mask, modeValue);
     r = aScaled;
     vmula(r, z, y, mask, modeValue);
-    RegTensor<T> rPre, rNext, zPre, zNext;
+    RegTensor<ActualT> rPre, rNext, zPre, zNext;
 
     vadds((vector_s32&)zPre, (vector_s32&)z, -1, mask, modeValue);
     vadds((vector_s32&)zNext, (vector_s32&)z, 1, mask, modeValue);
@@ -1435,18 +1438,20 @@ __simd_callee__ inline void DivImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
             "only float and complex64 data type is supported in precsion mode.");
     }
     if constexpr (sprMode.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE) {
-        static_assert(SupportType<T, half, float>(), "Reg Div for PRECISION_1ULP_FTZ_FALSE only supports half/float.");
+        static_assert(
+            SupportType<ActualT, half, float>(), "Reg Div for PRECISION_1ULP_FTZ_FALSE only supports half/float.");
     } else if constexpr (sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_FALSE) {
-        static_assert(SupportType<T, float>(), "Reg Div for PRECISION_0ULP_FTZ_FALSE only supports float.");
+        static_assert(SupportType<ActualT, float>(), "Reg Div for PRECISION_0ULP_FTZ_FALSE only supports float.");
     } else if constexpr (sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE) {
         static_assert(
-            SupportType<T, float, complex64>(), "Reg Div for PRECISION_0ULP_FTZ_TRUE only supports float/complex64.");
+            SupportType<ActualT, float, complex64>(),
+            "Reg Div for PRECISION_0ULP_FTZ_TRUE only supports float/complex64.");
     }
     if constexpr (SupportType<ActualT, complex32>()) {
         if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
-            DivComplex32TwoImpl(dstReg, srcReg0, srcReg1, mask);
+            DivComplex32TwoImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
         } else {
-            DivComplex32OnetraitImpl(dstReg, srcReg0, srcReg1, mask);
+            DivComplex32OnetraitImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
         }
     } else if constexpr (SupportBytes<ActualT, 8>()) {
         if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
@@ -1458,12 +1463,37 @@ __simd_callee__ inline void DivImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
                 dstReg, srcReg0, srcReg1, mask);
         }
     } else if constexpr (SupportType<ActualT, half>()) {
-        if constexpr (sprMode.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE) {
+        if constexpr (
+            sprMode.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE
+#if !defined(__ASC_FTZ__)
+            || sprMode.algo == DivAlgo::INTRINSIC
+#endif
+        ) {
             DivIEEE754HalfImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
         } else {
             vdiv(dstReg, srcReg0, srcReg1, mask, modeValue);
         }
     } else if constexpr (SupportType<ActualT, float>()) {
+#if !defined(__ASC_FTZ__)
+        if constexpr (sprMode.precisionMode) {
+            if constexpr (sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE) {
+                DivPrecisionImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+            } else {
+                DivIEEE754FloatImpl<T, mode, U, true>(dstReg, srcReg0, srcReg1, mask);
+            }
+        } else {
+            if constexpr (sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE) {
+                DivPrecisionImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+            } else if constexpr (sprMode.algo == DivAlgo::PRECISION_1ULP_FTZ_TRUE) {
+                vdiv(dstReg, srcReg0, srcReg1, mask, modeValue);
+            } else if constexpr (
+                sprMode.algo == DivAlgo::DIFF_COMPENSATION || sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_FALSE) {
+                DivIEEE754FloatImpl<T, mode, U, true>(dstReg, srcReg0, srcReg1, mask);
+            } else {
+                DivIEEE754FloatImpl<T, mode, U, false>(dstReg, srcReg0, srcReg1, mask);
+            }
+        }
+#else
         if constexpr (sprMode.precisionMode) {
             if constexpr (sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_FALSE) {
                 DivIEEE754FloatImpl<T, mode, U, true>(dstReg, srcReg0, srcReg1, mask);
@@ -1475,12 +1505,14 @@ __simd_callee__ inline void DivImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
                 DivIEEE754FloatImpl<T, mode, U, true>(dstReg, srcReg0, srcReg1, mask);
             } else if constexpr (sprMode.algo == DivAlgo::PRECISION_1ULP_FTZ_FALSE) {
                 DivIEEE754FloatImpl<T, mode, U, false>(dstReg, srcReg0, srcReg1, mask);
-            } else if constexpr (sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE) {
+            } else if constexpr (
+                sprMode.algo == DivAlgo::PRECISION_0ULP_FTZ_TRUE || sprMode.algo == DivAlgo::DIFF_COMPENSATION) {
                 DivPrecisionImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
             } else {
                 vdiv(dstReg, srcReg0, srcReg1, mask, modeValue);
             }
         }
+#endif
     } else {
         vdiv(dstReg, srcReg0, srcReg1, mask, modeValue);
     }

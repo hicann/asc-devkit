@@ -2269,9 +2269,11 @@ __simd_callee__ inline void GenVecCastDeqParam(
 
     // Gen b32 fullMask to deal scaleReg (which datatype is float)
     fullMask = Reg::CreateMask<uint32_t, Reg::MaskPattern::ALL>();
+    static constexpr Reg::DivSpecificMode divMode = {
+        Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_TRUE};
     Reg::Arange(scaleIndexReg, zero);
     Reg::Duplicate(tmpReg, gatherConstant);
-    Reg::Div(tmpReg, scaleIndexReg, tmpReg, fullMask);
+    Reg::Div<int32_t, &divMode>(tmpReg, scaleIndexReg, tmpReg, fullMask);
     Reg::Muls(tmpReg, tmpReg, gatherConstant, fullMask);
     Reg::Sub(scaleIndexReg, scaleIndexReg, tmpReg, fullMask);
     Reg::Gather(
@@ -2285,7 +2287,8 @@ __simd_callee__ inline void GenVecCastDeqParam(
     fullMask = Reg::CreateMask<uint16_t, Reg::MaskPattern::ALL>();
     Reg::Arange(offsetIndexReg, zero);
     Reg::Duplicate((Reg::RegTensor<int16_t>&)tmpReg, gatherConstant);
-    Reg::Div((Reg::RegTensor<int16_t>&)tmpReg, offsetIndexReg, (Reg::RegTensor<int16_t>&)tmpReg, fullMask);
+    Reg::Div<int16_t, &divMode>(
+        (Reg::RegTensor<int16_t>&)tmpReg, offsetIndexReg, (Reg::RegTensor<int16_t>&)tmpReg, fullMask);
     Reg::Muls((Reg::RegTensor<int16_t>&)tmpReg, (Reg::RegTensor<int16_t>&)tmpReg, gatherConstant, fullMask);
     Reg::Sub(offsetIndexReg, offsetIndexReg, (Reg::RegTensor<int16_t>&)tmpReg, fullMask);
     Reg::Gather(

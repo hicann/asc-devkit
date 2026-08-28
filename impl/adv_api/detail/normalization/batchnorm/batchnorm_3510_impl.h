@@ -279,8 +279,8 @@ __simd_callee__ inline void ComputeY(
             Reg::Adds(varReg, varReg, epsilon, maskFull);
             // rsqrt: ln + muls + exp
             Reg::Ln<float, &lnMode>(varReg, varReg, maskFull);
-            Reg::Muls(varReg, varReg, rsqrtExponent, maskFull);
-            Reg::Exp<float, &expMode>(varReg, varReg, maskFull);
+            Reg::Muls(diffReg, varReg, rsqrtExponent, maskFull);
+            Reg::Exp<float, &expMode>(varReg, diffReg, maskFull);
             // rsqrt * (x - mean)
             Reg::Sub(diffReg, srcReg, meanReg, maskFull);
             Reg::Mul(varReg, varReg, diffReg, maskFull);
@@ -301,8 +301,8 @@ __simd_callee__ inline void ComputeY(
             Reg::Adds(varReg, varReg, epsilon, maskReg);
             // rsqrt: ln + muls + exp
             Reg::Ln<float, &lnMode>(varReg, varReg, maskReg);
-            Reg::Muls(varReg, varReg, rsqrtExponent, maskReg);
-            Reg::Exp<float, &expMode>(varReg, varReg, maskReg);
+            Reg::Muls(diffReg, varReg, rsqrtExponent, maskReg);
+            Reg::Exp<float, &expMode>(varReg, diffReg, maskReg);
             // rsqrt * (x - mean)
             Reg::Sub(diffReg, srcReg, meanReg, maskReg);
             Reg::Mul(varReg, varReg, diffReg, maskReg);

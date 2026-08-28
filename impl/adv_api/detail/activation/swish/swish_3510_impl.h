@@ -39,8 +39,8 @@ __simd_vf__ inline void SwishComputeVF(
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         mask = Reg::UpdateMask<T>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
-        Reg::Muls(vreg0, srcVreg, scalarValue, mask);
-        Reg::Exp(vreg0, vreg0, mask);
+        Reg::Muls(dstVreg, srcVreg, scalarValue, mask);
+        Reg::Exp(vreg0, dstVreg, mask);
         Reg::Adds(vreg0, vreg0, 1.0f, mask);
         Reg::Div(dstVreg, srcVreg, vreg0, mask);
         Reg::StoreAlign(dst + i * oneRepElm, dstVreg, mask);
