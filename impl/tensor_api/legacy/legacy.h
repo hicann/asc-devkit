@@ -23,10 +23,6 @@
 
 #include "impl/tensor_api/legacy/legacy_atom.h"
 
-#define ASCENDC_TENSOR_API_LEGACY_DEPRECATED                                                                    \
-    [[deprecated("PascalCase Tensor API is deprecated. Please use the corresponding snake_case API in asc::te " \
-                 "instead.")]]
-
 namespace AscendC {
 namespace Te {
 
@@ -69,198 +65,190 @@ template <typename Tensor>
 inline constexpr bool IsAttrTensorV = asc::te::is_attr_tensor_v<Tensor>;
 
 template <typename LayoutType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto GetTotalColumnShape(const LayoutType& layout)
+__aicore__ inline constexpr auto GetTotalColumnShape(const LayoutType& layout)
 {
     return get_total_column_shape(layout);
 }
 
 template <typename LayoutType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto GetTotalRowShape(const LayoutType& layout)
+__aicore__ inline constexpr auto GetTotalRowShape(const LayoutType& layout)
 {
     return get_total_row_shape(layout);
 }
 
 template <typename Param>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline void SetMTE2NzPara(const Param& para)
+__aicore__ inline void SetMTE2NzPara(const Param& para)
 {
     set_mte2_nz_para(para);
 }
 
 template <typename FirstShape, typename... Shapes>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr Shape<FirstShape, Shapes...> MakeShape(
-    const FirstShape& value, const Shapes&... values)
+__aicore__ inline constexpr Shape<FirstShape, Shapes...> MakeShape(const FirstShape& value, const Shapes&... values)
 {
     return make_shape(value, values...);
 }
 
 template <typename FirstStride, typename... Strides>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr Stride<FirstStride, Strides...> MakeStride(
+__aicore__ inline constexpr Stride<FirstStride, Strides...> MakeStride(
     const FirstStride& value, const Strides&... values)
 {
     return make_stride(value, values...);
 }
 
 template <typename FirstCoord, typename... Coords>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr Coord<FirstCoord, Coords...> MakeCoord(
-    const FirstCoord& value, const Coords&... values)
+__aicore__ inline constexpr Coord<FirstCoord, Coords...> MakeCoord(const FirstCoord& value, const Coords&... values)
 {
     return make_coord(value, values...);
 }
 
 template <typename ShapeType, typename StrideType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeLayout(
-    const ShapeType& shape, const StrideType& stride)
+__aicore__ inline constexpr auto MakeLayout(const ShapeType& shape, const StrideType& stride)
 {
     return make_layout(shape, stride);
 }
 
 template <typename ShapeType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeLayout(const ShapeType& shape)
+__aicore__ inline constexpr auto MakeLayout(const ShapeType& shape)
 {
     return make_layout(shape);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto GetShape(const LayoutType& layout)
+__aicore__ inline constexpr auto GetShape(const LayoutType& layout)
 {
     return get_shape<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto GetShape(LayoutType& layout)
+__aicore__ inline constexpr auto GetShape(LayoutType& layout)
 {
     return get_shape<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto GetStride(const LayoutType& layout)
+__aicore__ inline constexpr auto GetStride(const LayoutType& layout)
 {
     return get_stride<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto GetStride(LayoutType& layout)
+__aicore__ inline constexpr auto GetStride(LayoutType& layout)
 {
     return get_stride<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Coshape(const LayoutType& layout)
+__aicore__ inline constexpr auto Coshape(const LayoutType& layout)
 {
     return coshape<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Cosize(const LayoutType& layout)
+__aicore__ inline constexpr auto Cosize(const LayoutType& layout)
 {
     return cosize<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Rank(const LayoutType& layout)
+__aicore__ inline constexpr auto Rank(const LayoutType& layout)
 {
     return rank<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Select(const LayoutType& layout)
+__aicore__ inline constexpr auto Select(const LayoutType& layout)
 {
     return select<Is...>(layout);
 }
 
 template <
     size_t I, size_t... Is, typename Tuple, typename = Std::enable_if_t<Std::is_tuple_v<Std::remove_cvref_t<Tuple>>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Get(Tuple&& tuple)
+__aicore__ inline constexpr auto Get(Tuple&& tuple)
 {
     return get<I, Is...>(static_cast<Tuple&&>(tuple));
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Get(const LayoutType& layout)
+__aicore__ inline constexpr auto Get(const LayoutType& layout)
 {
     return get<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Size(const LayoutType& layout)
+__aicore__ inline constexpr auto Size(const LayoutType& layout)
 {
     return size<Is...>(layout);
 }
 
 template <size_t... Is, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Capacity(const LayoutType& layout)
+__aicore__ inline constexpr auto Capacity(const LayoutType& layout)
 {
     return capacity<Is...>(layout);
 }
 
 template <typename Tensor, typename CoordType, typename Info>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr decltype(auto) Slice(
-    Tensor&& tensor, const CoordType& coord, const Info& info)
+__aicore__ inline constexpr decltype(auto) Slice(Tensor&& tensor, const CoordType& coord, const Info& info)
 {
     return slice(tensor, coord, info);
 }
 
 template <typename CoordType, typename ShapeType, typename StrideType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Crd2Idx(
-    const CoordType& coord, const ShapeType& shape, const StrideType& stride)
+__aicore__ inline constexpr auto Crd2Idx(const CoordType& coord, const ShapeType& shape, const StrideType& stride)
 {
     return crd2idx(coord, shape, stride);
 }
 
 template <typename CoordType, typename LayoutType, typename = Std::enable_if_t<asc::te::is_layout_v<LayoutType>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Crd2Idx(
-    const CoordType& coord, const LayoutType& layout)
+__aicore__ inline constexpr auto Crd2Idx(const CoordType& coord, const LayoutType& layout)
 {
     return crd2idx(coord, layout);
 }
 
 template <typename LayoutPattern, typename TraitType = Std::ignore_t, typename... Args>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args)
+__aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args)
 {
     return make_frame_layout<LayoutPattern, TraitType>(args...);
 }
 
 template <typename LayoutPattern, size_t C0Element, typename... Args>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args)
+__aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args)
 {
     return make_frame_layout<LayoutPattern, C0Element>(args...);
 }
 
 template <typename LayoutPattern, typename TraitType, typename ShapeType, typename StrideType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakePatternLayout(
-    const ShapeType& shape, const StrideType& stride)
+__aicore__ inline constexpr auto MakePatternLayout(const ShapeType& shape, const StrideType& stride)
 {
     return make_pattern_layout<LayoutPattern, TraitType>(shape, stride);
 }
 
 template <typename PtrPattern, typename Iterator>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto MakeLocationMemPtr(Iterator iterator)
+__aicore__ inline auto MakeLocationMemPtr(Iterator iterator)
 {
     return make_location_mem_ptr<PtrPattern>(iterator);
 }
 
 template <
     typename PtrPattern, typename DataType, typename Addr, asc::te::enable_make_ptr_by_trait<PtrPattern, Addr> = 0>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto MakeMemPtr(Addr address)
+__aicore__ inline auto MakeMemPtr(Addr address)
 {
     return make_mem_ptr<PtrPattern, DataType>(address);
 }
 
 template <typename PtrPattern, typename Iterator, asc::te::enable_make_hardware_ptr<PtrPattern, Iterator> = 0>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
 {
     return make_mem_ptr<PtrPattern>(iterator);
 }
 
 template <typename Iterator, asc::te::enable_make_ptr_by_iter<Iterator> = 0>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
 {
     return make_mem_ptr(iterator);
 }
 
 template <typename Iterator, typename... Args>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeTensor(
-    const Iterator& iterator, const Args&... args)
+__aicore__ inline constexpr auto MakeTensor(const Iterator& iterator, const Args&... args)
 {
     return make_tensor(iterator, args...);
 }
@@ -269,7 +257,7 @@ template <
     size_t... SqueezeDims, typename Input,
     typename = Std::enable_if_t<
         (asc::te::is_layout_v<Input> || asc::te::is_attr_tensor_v<Input>) && (sizeof...(SqueezeDims) > 0)>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Squeeze(const Input& value)
+__aicore__ inline constexpr auto Squeeze(const Input& value)
 {
     return squeeze<SqueezeDims...>(value);
 }
@@ -279,15 +267,14 @@ template <
     typename = Std::enable_if_t<
         (asc::te::is_layout_v<Input> || asc::te::is_attr_tensor_v<Input>) &&
         Std::is_tuple_v<Std::remove_cvref_t<Pattern>>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Squeeze(
-    const Input& value, const Pattern& pattern)
+__aicore__ inline constexpr auto Squeeze(const Input& value, const Pattern& pattern)
 {
     return squeeze(value, pattern);
 }
 
 // Mmad / MakeMmad: PascalCase 接口
 template <typename... Args, typename DstTensor, typename FmTensor, typename FilterTensor>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline void Mmad(
+__aicore__ inline void Mmad(
     const MmadAtom<MmadTraits<Args...>>& atom, const DstTensor& dst, const FmTensor& fm, const FilterTensor& filter)
 {
     atom.call(dst, fm, filter);
@@ -296,7 +283,7 @@ ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline void Mmad(
 template <
     typename... Args, typename DstTensor, typename FmTensor, typename FilterTensor, typename BiasTensor,
     Std::enable_if_t<asc::te::is_attr_tensor_v<BiasTensor>, int> = 0>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline void Mmad(
+__aicore__ inline void Mmad(
     const MmadAtom<MmadTraits<Args...>>& atom, const DstTensor& dst, const FmTensor& fm, const FilterTensor& filter,
     const BiasTensor& bias)
 {
@@ -304,22 +291,19 @@ ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline void Mmad(
 }
 
 template <typename MmadOperationType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeMmad(const MmadOperationType& operation)
+__aicore__ inline constexpr auto MakeMmad(const MmadOperationType& operation)
 {
     return MmadAtom<MmadOperationType>{};
 }
 
 template <typename MmadOperationType, typename MmadTraitType>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeMmad(
-    const MmadOperationType& operation, const MmadTraitType& trait)
+__aicore__ inline constexpr auto MakeMmad(const MmadOperationType& operation, const MmadTraitType& trait)
 {
     return MmadAtom<MmadTraits<MmadOperationType, MmadTraitType>>{};
 }
 
 } // namespace Te
 } // namespace AscendC
-
-#undef ASCENDC_TENSOR_API_LEGACY_DEPRECATED
 
 #endif // IMPL_TENSOR_API_LEGACY_LEGACY_H
 
