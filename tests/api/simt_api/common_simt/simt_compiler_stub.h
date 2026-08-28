@@ -15,7 +15,7 @@
 #include "kernel_vectorized.h"
 #include "simt_stub.h"
 #include "stub_def.h"
-#include "stub_fun.h"
+#include "simt_stub_fun.h"
 
 #include <cstdint>
 

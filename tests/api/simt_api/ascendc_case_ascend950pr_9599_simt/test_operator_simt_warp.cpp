@@ -9,7 +9,6 @@
  */
 #include <gtest/gtest.h>
 
-#include "kernel_operator.h"
 #include "simt_compiler_stub.h"
 #include "simt_api/asc_bf16.h"
 #include "simt_api/asc_fp16.h"

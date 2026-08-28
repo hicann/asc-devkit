@@ -20,7 +20,7 @@
 #include <cmath>
 #include <cfenv>
 #include "kernel_simt_cpu.h"
-#include "stub_fun.h"
+#include "simt_stub_fun.h"
 #include "kernel_fp16.h"
 #include "kernel_bf16.h"
 #include "kernel_vectorized.h"

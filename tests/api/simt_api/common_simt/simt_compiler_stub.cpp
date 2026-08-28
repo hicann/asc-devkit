@@ -9,8 +9,6 @@
  */
 
 #include "simt_compiler_stub.h"
-#include "basic_api/kernel_common.h"
-#include "basic_api/kernel_operator_utils_intf.h"
 #include "kernel_simt_cpu.h"
 #include "stub_def.h"
 #include <cmath>
@@ -44,20 +42,6 @@ int64_t clz(uint64_t x)
     return count;
 }
 int64_t bcnt1(uint64_t x) { return 0; }
-namespace AscendC {
-namespace check {
-bool CheckFunVecBinaryScalarImplForMaskArray(
-    VecBinaryScalarApiParams& chkParams, const uint64_t mask[], const char* intriName)
-{
-    return true;
-}
-bool CheckFunVecBinaryScalarImpl(VecBinaryScalarApiParams& chkParams, const uint64_t mask, const char* intriName)
-{
-    return true;
-}
-bool CheckFunVecBinaryScalarImpl(VecBinaryScalarApiParams& chkParams, const char* intriName) { return true; }
-} // namespace check
-} // namespace AscendC
 
 namespace {
 static uint64_t g_gridSyncArgs[5] = {0U, 0U, 0U, 0U, 0U};

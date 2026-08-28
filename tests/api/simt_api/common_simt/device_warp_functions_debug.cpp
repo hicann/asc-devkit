@@ -38,7 +38,7 @@ int32_t __any(int32_t predicate)
     return warp.WarpOp(predicate, custom_func);
 }
 
-int32_t __ballot(int32_t predicate)
+uint32_t __ballot(int32_t predicate)
 {
     uint32_t warp_id = AscendC::Simt::GetWarpId();
     uint32_t lane_id = AscendC::Simt::GetLaneId();

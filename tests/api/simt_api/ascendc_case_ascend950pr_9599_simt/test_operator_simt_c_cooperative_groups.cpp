@@ -478,7 +478,7 @@ TEST_F(CooperativeGroupsTestsuite, CoalescedThreadsUsesActiveMaskTest)
 
 TEST_F(CooperativeGroupsTestsuite, CoalescedGroupVoteFunctionsUseMaskedBallotTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(3).will(returnValue(0x0000000F));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(3).will(returnValue(0x0000000F));
 
     coalesced_group cg(0x0000000F);
     EXPECT_EQ(cg.any(1), 1);
@@ -490,7 +490,7 @@ TEST_F(CooperativeGroupsTestsuite, CoalescedGroupVoteFunctionsUseMaskedBallotTes
 
 TEST_F(CooperativeGroupsTestsuite, CoalescedGroupVoteFunctionsIgnoreOutsideMaskTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(2).will(returnValue(0x00000010));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(2).will(returnValue(0x00000010));
 
     coalesced_group cg(0x0000000F);
     EXPECT_EQ(cg.any(1), 0);
@@ -501,7 +501,7 @@ TEST_F(CooperativeGroupsTestsuite, CoalescedGroupVoteFunctionsIgnoreOutsideMaskT
 
 TEST_F(CooperativeGroupsTestsuite, CoalescedGroupBallotPacksSparseMaskTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(1).will(returnValue(0x00000011));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(1).will(returnValue(0x00000011));
 
     coalesced_group cg(0x00000055);
     EXPECT_EQ(cg.ballot(1), 0x5u);
@@ -511,7 +511,7 @@ TEST_F(CooperativeGroupsTestsuite, CoalescedGroupBallotPacksSparseMaskTest)
 
 TEST_F(CooperativeGroupsTestsuite, BinaryPartitionCoalescedGroupAllSamePredTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(1).will(returnValue(0x0000000F));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(1).will(returnValue(0x0000000F));
 
     coalesced_group cg(0x0000000F);
     coalesced_group result = binary_partition(cg, true);
@@ -525,7 +525,7 @@ TEST_F(CooperativeGroupsTestsuite, BinaryPartitionCoalescedGroupAllSamePredTest)
 
 TEST_F(CooperativeGroupsTestsuite, BinaryPartitionCoalescedGroupSplitTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(1).will(returnValue(0x00000005));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(1).will(returnValue(0x00000005));
 
     coalesced_group cg(0x0000000F);
     coalesced_group result = binary_partition(cg, true);
@@ -539,7 +539,7 @@ TEST_F(CooperativeGroupsTestsuite, BinaryPartitionCoalescedGroupSplitTest)
 
 TEST_F(CooperativeGroupsTestsuite, BinaryPartitionThreadBlockTileUsesTileMaskTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(1).will(returnValue(0x00000005));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(1).will(returnValue(0x00000005));
 
     thread_block tb = this_thread_block();
     auto tile4 = tiled_partition<4>(tb);
@@ -916,7 +916,7 @@ TEST_F(CooperativeGroupsTestsuite, SingleWarpThreadBlockTileBaseShflXorPassesLan
 
 TEST_F(CooperativeGroupsTestsuite, SingleWarpThreadBlockTileBaseVoteFunctionsUseTileMaskTest)
 {
-    MOCKER_CPP(__ballot, int32_t(int32_t)).times(3).will(returnValue(0x0000000F));
+    MOCKER_CPP(__ballot, uint32_t(int32_t)).times(3).will(returnValue(0x0000000F));
 
     single_warp_thread_block_tile_base<4> tile;
     EXPECT_EQ(tile.any(1), 1);
