@@ -8,8 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#warning "sys_var.h is deprecated.Please use utils/sys_var.h."
-
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "sys_var.h cannot be used with compile flag --enable-simt enabled."
 #endif

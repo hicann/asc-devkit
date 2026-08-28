@@ -8,8 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#warning "reg_store.h is deprecated.Please use store/storealign.h and store/storeunalign.h."
-
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "reg_store.h cannot be used with compile flag --enable-simt enabled."
 #endif

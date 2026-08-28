@@ -8,8 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#warning "reg_vector.h is deprecated.Please use c_api/reg_compute/reg_compute.h."
-
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "reg_vector.h cannot be used with compile flag --enable-simt enabled."
 #endif

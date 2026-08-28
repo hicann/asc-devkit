@@ -8,8 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#warning "union.h is deprecated.Please use c_api/defs/union.h."
-
 #ifndef INCLUDE_C_API_UTILS_UNION_H
 #define INCLUDE_C_API_UTILS_UNION_H
 

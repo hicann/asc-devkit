@@ -8,8 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#warning "reg_load.h is deprecated.Please use load/loadalign.h and load/loadunalign.h."
-
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "reg_load.h cannot be used with compile flag --enable-simt enabled."
 #endif
