@@ -6,7 +6,7 @@
 
 -   <a id="npu-arch"></a>**\_\_NPU\_ARCH\_\_**
 
-    \_\_NPU\_ARCH\_\_是Device侧AI Core代码中的预处理宏，用于标识AI处理器的架构版本。该宏由四位数字组成，其中前三位数字用于标识AI Core的IP核\(Intellectual Property Core\)类型，第四位数字标识该AI Core同一个IP核的配置版本。通过该宏，开发者可以针对不同AI处理器，差异化进行代码适配和优化。产品型号和NPU架构版本的对应关系如下：
+    \_\_NPU\_ARCH\_\_是Device侧AI Core代码中的预处理宏，用于标识AI处理器的架构版本。通过该宏，开发者可以针对不同AI处理器，差异化进行代码适配和优化。产品型号和NPU架构版本的对应关系如下：
 
     <!-- npu="950" id1 -->
     - Ascend 950PR/Ascend 950DT：3510
@@ -122,27 +122,29 @@
 
 -   **\_\_global\_\_**
 
-    \_\_global\_\_执行空间限定符声明一个核函数（Kernel）。核函数（Kernel）有如下性质：在Device上执行；只能被Host侧函数调用；\_\_global\_\_只是表示这是Device侧函数的入口，并不表示具体的设备类型，具体的设备类型由\_\_aicore\_\_标记。具有如下使用约束：
+    \_\_global\_\_执行空间限定符用于声明核函数（Kernel），具有如下属性：
 
-    -   一个\_\_global\_\_函数必须返回void类型，并且不能是class的成员函数。
-    -   主机侧调用\_\_global\_\_函数必须使用<<<\>\>\>异构调用语法。
-    -   \_\_global\_\_的调用是异步的，意味着函数返回，并不表示kernel函数在device侧已经执行完成，如果需要同步，需要使用Runtime同步接口显式同步，如**aclrtSynchronizeStream**接口。
+    -   在Device侧执行且只能被Host侧函数调用。
+    -   \_\_global\_\_修饰的函数必须返回void类型，并且不能是类的成员函数。
+    -   必须与\_\_aicore\_\_ / \_\_aicpu\_\_ / \_\_cube\_\_ / \_\_vector\_\_ / \_\_mix\_\_\(cube, vec\)搭配使用。
+    -   调用\_\_global\_\_修饰的函数时，必须使用<<<\>\>\>异构调用语法。
+    -   调用\_\_global\_\_修饰的函数是异步操作，即调用会在函数于Device侧执行完成前返回。如果需要同步，可调用Runtime同步接口显式同步，如**aclrtSynchronizeStream**接口。
 
 -   **\_\_aicore\_\_**
 
     \_\_aicore\_\_执行空间限定符声明一个函数，它具有如下属性：
 
-    -   在Device侧执行
-    -   只能被\_\_global\_\_函数，或者其他\_\_aicore\_\_函数调用
+    -   在Device侧执行。
+    -   在Device侧，只能被\_\_global\_\_修饰的函数或其他\_\_aicore\_\_修饰的函数调用。
+    -   Host侧函数调用\_\_global\_\_ \_\_aicore\_\_修饰的函数时，必须使用<<<\>\>\>异构调用语法。
 
     ```
-    // Only callable from device functions with same kind
-    // of execution space
+    // 仅可由具有相同执行空间类型的Device函数调用
     __aicore__ void bar() {}
 
-    // Define a kernel function execute on AI Core device
+    // 定义在AI Core上执行的核函数
     __global__ __aicore__ void foo() {
-      bar(); // OK.
+      bar(); // 正确
     }
     ```
 
@@ -150,25 +152,24 @@
 
     \_\_host\_\_执行空间限定符声明一个函数，它具有如下属性：
 
-    -   只能在Host侧执行
-    -   只能被Host侧函数调用
-    -   \_\_global\_\_ 和\_\_host\_\_不能一起使用
-
-    \_\_host\_\_限定符是可选项，无函数执行空间限定符定义的函数，默认是host函数。
+    -   只能在Host侧执行。
+    -   只能被Host侧函数调用。
+    -   \_\_global\_\_ 和\_\_host\_\_不能一起使用。
+    -   \_\_host\_\_限定符是可选项，未使用任何函数执行空间限定符修饰的函数默认为Host函数。 
 
     ```
     __aicore__ int f() {}
 
-    // defines a host side function
+    // 定义Host侧函数
     int foo() {}
 
-    // defines a host side function
+    // 定义Host侧函数
     __host__ int bar() {
-      f();     // Error.
-      foo();   // OK.
+      f();     // 错误
+      foo();   // 正确
     }
 
-    // Error.
+    // 错误
     __global__ __host__ void kfunc() {}
     ```
 
@@ -177,85 +178,62 @@
     AI CPU函数执行空间限定符\_\_aicpu\_\_用于指示函数是否为AI CPU核函数（Kernel），它具有如下属性：
 
     -   在Device侧执行且只能被Host侧函数调用，因此必须与\_\_global\_\_同时声明。
-    -   一个\_\_global\_\_ \_\_aicpu\_\_函数不能是void返回类型，并且入参只能是一个指针。
-    -   一个\_\_global\_\_ \_\_aicpu\_\_函数不能在.asc文件中进行定义，只能声明，且需要使用extern。
-    -   Host侧调用\_\_global\_\_ \_\_aicpu\_\_函数时必须使用<<<\>\>\>异构调用语法，输入的函数入参在入参指针的基础上需要输入从指针中读取的数据大小。
-    -   \_\_global\_\_的调用是异步的，意味着函数返回，并不表示kernel函数在Device侧已经执行完成，如果需要同步，需要使用Runtime同步接口显式同步，如**aclrtSynchronizeStream**接口
+    -   由\_\_global\_\_ \_\_aicpu\_\_修饰的函数，其返回类型不能为void，并且入参只能是一个指针。
+    -   由\_\_global\_\_ \_\_aicpu\_\_修饰的函数只能在.asc文件中使用extern进行声明，不能在该文件中定义。
+    -   Host侧调用\_\_global\_\_ \_\_aicpu\_\_修饰的函数时，必须使用<<<\>\>\>异构调用语法。调用时，除传入参数指针外，还需要指定从该指针读取的数据大小。
+    -   调用\_\_global\_\_修饰的函数是异步操作，即调用会在函数于Device侧执行完成前返回。如果需要同步，可调用Runtime同步接口显式同步，如**aclrtSynchronizeStream**接口。
 
     ```
-    // Define a AI CPU kernel function in AI CPU device file
-    __aicpu__ void foo() {} // Error, single __aicpu__ identifier without _global__
-    __global__ void foo() {} // Error, single __global__ identifier without __aicpu__
-    __global__ __aicpu__  void foo() {} // Error, return type is void
-    __global__ __aicpu__  int foo(void *a) {} // OK
-    __global__ __aicpu__  int foo(int a) {} // Error, input param is not pointer
-    __global__ __aicpu__  int foo(void *a, void *b) {} // Error, input param num is not one
+    // 在AI CPU Device文件中定义AI CPU核函数。
+    __aicpu__ void foo() {} // 错误，仅使用__aicpu__标识符，缺少__global__标识符
+    __global__ void foo() {} // 错误，仅使用__global__标识符，缺少__aicpu__标识符
+    __global__ __aicpu__  void foo() {} // 错误，返回类型为void
+    __global__ __aicpu__  int foo(void *a) {} // 正确
+    __global__ __aicpu__  int foo(int a) {} // 错误，入参不是指针类型
+    __global__ __aicpu__  int foo(void *a, void *b) {} // 错误，入参数量不为1
     ```
 
     ```
-    // Declare a AI CPU kernel function in .asc file
-    extern __global__ __aicpu__ uint32_t hello_world(void *args);// OK
+    // 在.asc文件中声明AI CPU核函数。
+    extern __global__ __aicpu__ uint32_t hello_world(void *args); // 正确
     ```
-
--   **\_\_inline\_\_**
-
-    \_\_inline\_\_限定符声明一个函数，它具有如下属性：
-
-    -   标识Device侧函数强制内联，可以减少函数频繁调用产生的指令压栈、出栈的开销，但可能会导致算子二进制增加。
-    -   和C++函数修饰符inline的主要区别是Device侧\_\_inline\_\_是强制内联，C++的inline则是根据编译器优化选择性内联。
-    -   AI Core对函数嵌套深度有限制，一般推荐嵌套深度不超过4层。使用强制内联可以减少调用层次。
 
 -   **\_\_cube\_\_**
 
-    标识该核函数（Kernel）仅在Cube核执行。针对耦合模式的硬件架构，该修饰符不生效。
+    \_\_cube\_\_用于标识仅在Cube核执行的核函数（Kernel），它具有如下属性：
+
+    -   针对耦合模式的硬件架构，该修饰符不生效。
+    -   在Device侧执行且只能被Host侧函数调用，因此必须与\_\_global\_\_同时声明。
+    -   Host侧调用\_\_global\_\_ \_\_cube\_\_修饰的函数时，必须使用<<<\>\>\>异构调用语法。
 
     ```
-    extern "C" __global__ __cube__ void mmad_custom(GM_ADDR a, GM_ADDR b, GM_ADDR c)
-    {
-        KernelMmad op;
-        op.Init(a, b, c);
-        op.Process();
-    }
+    __global__ __cube__ void mmad_custom(__gm__ uint8_t* a, __gm__ uint8_t* b, __gm__ uint8_t* bias, __gm__ uint8_t* c){...}
     ```
 
 -   **\_\_vector\_\_**
 
-    标识该核函数（Kernel）仅在Vector核执行。针对耦合模式的硬件架构，该修饰符不生效。
+    \_\_vector\_\_用于标识仅在Vector核执行的核函数（Kernel），它具有如下属性：
+    
+    -   针对耦合模式的硬件架构，该修饰符不生效。
+    -   在Device侧执行且只能被Host侧函数调用，因此必须与\_\_global\_\_同时声明。
+    -   Host侧调用\_\_global\_\_ \_\_vector\_\_修饰的函数时，必须使用<<<\>\>\>异构调用语法。
 
     ```
-     __vector__ __global__ __aicore__ void add_custom(){}
+    __global__ __vector__ void kernel(__gm__ float* x, __gm__ float* y){...}
     ```
 
 -   **\_\_mix\_\_\(cube, vec\)**
 
-    标识该核函数（Kernel）同时在Cube核和Vector核上执行。\(cube, vec\)分别表示核函数（Kernel）启动的Cube核和Vector核的配比，支持的配比为\(1, 0\)、\(0, 1\)、\(1, 1\)和\(1, 2\)。在该修饰符生效的非耦合架构上，`__mix__(1, 0)`等价于`__cube__`，`__mix__(0, 1)`等价于`__vector__`，可分别使用__cube__和__vector__替代。针对耦合模式的硬件架构，该修饰符不生效。
-
--   **\_\_schedmode\_\_\(mode\)**
-
-    标识该核函数（Kernel）的执行调度模式。如下图所示：
-
-    -   mode = 0 : normal mode，尽可能选择空闲物理核下发执行核函数（Kernel），若空闲物理核数无法满足当前核函数（Kernel）的需要，没有下发的部分等待核心空闲后执行。此时OP1和OP2算子会存在交叠执行（overlap）的情况。
-
-    -   mode = 1 : batch mode，在下发核函数（Kernel）时先进行判断，若空闲物理核数无法满足当前核函数（Kernel）的需要，则等待至空闲物理核数满足该核函数（Kernel）所需要的所有物理核时，同时下发执行，OP1和OP2的执行被切分（split）开，不会出现交叠执行的情况。
-
-    ![](../../figures/batchmode.png)
-
-    在多流并发场景，多算子并行执行时，若执行总核数超过最大物理核数，且多个算子逻辑使用SyncALL等核间同步接口时，建议设置mode为1，防止多个算子之间互相等待空闲核调度，导致死锁。默认值mode为0。
+    \_\_mix\_\_\(cube, vec\)用于标识同时在Cube核和Vector核上执行的核函数（Kernel），它具有如下属性：
+    
+    -   \(cube, vec\)分别表示核函数（Kernel）启动的Cube核和Vector核的配比，支持\(1, 0\)、\(0, 1\)、\(1, 1\)和\(1, 2\)。
+    -   在该修饰符生效的非耦合架构上，`__mix__(1, 0)`等价于`__cube__`，`__mix__(0, 1)`等价于`__vector__`，可分别使用`__cube__`和`__vector__`替代。
+    -   针对耦合模式的硬件架构，该修饰符不生效。
+    -   在Device侧执行且只能被Host侧函数调用，因此必须与\_\_global\_\_同时声明。
+    -   Host侧调用\_\_global\_\_ \_\_mix\_\_\(cube, vec\)修饰的函数时，必须使用<<<\>\>\>异构调用语法。
 
     ```
-     __schedmode__(1) __global__ __mix__(1, 2) void OP1() // OP1使用了SyncAll接口，且存在多流并发的可能，需要设置batch mode（mode 1）
-    {
-        AscendC::SyncAll();
-        ....
-    }
-     __schedmode__(1) __global__ __mix__(1, 2) void OP2() // OP2使用了SyncAll接口，且存在多流并发的可能，需要设置batch mode（mode 1）
-    {
-        AscendC::SyncAll();
-        ....
-    }
-    __schedmode__(0) __global__ __vector__ void OP3() {...} // OP3没有使用SyncAll接口，可以设置为normal mode(mode 0)，按照正常规则执行算子。
-    or
-    __global__ __vector__ void OP3() {...} // 不设置__schedmode__，默认为normal mode。
+    __global__ __mix__(1,2) void kernel(__gm__ float* x, __gm__ float* y){...}
     ```
 
 ## 函数标记宏<a name="section192521344610"></a>
@@ -304,22 +282,58 @@
     __simd_callee__ inline float add(float x, float y)
     ```
 
+-   \_\_schedmode\_\_\(mode\)
+
+    \_\_schedmode\_\_\(mode\)用于标识核函数（Kernel）的执行调度模式。如下图所示：
+
+    -   mode = 0 : normal mode，尽可能选择空闲物理核下发执行核函数（Kernel），若空闲物理核数无法满足当前核函数（Kernel）的需要，没有下发的部分等待核心空闲后执行。此时OP1和OP2算子会存在交叠执行（overlap）的情况。
+
+    -   mode = 1 : batch mode，在下发核函数（Kernel）时先进行判断，若空闲物理核数无法满足当前核函数（Kernel）的需要，则等待至空闲物理核数满足该核函数（Kernel）所需要的所有物理核时，同时下发执行，OP1和OP2的执行被切分（split）开，不会出现交叠执行的情况。
+
+    ![](../../figures/batchmode.png)
+
+    在多流并发场景，多算子并行执行时，若执行总核数超过最大物理核数，且多个算子逻辑使用SyncALL等核间同步接口时，建议设置mode为1，防止多个算子之间互相等待空闲核调度，导致死锁。默认值mode为0。
+
+    ```
+     __schedmode__(1) __global__ __mix__(1, 2) void OP1() // OP1使用了SyncAll接口，且存在多流并发的可能，需要设置batch mode（mode 1）
+    {
+        AscendC::SyncAll();
+        ....
+    }
+     __schedmode__(1) __global__ __mix__(1, 2) void OP2() // OP2使用了SyncAll接口，且存在多流并发的可能，需要设置batch mode（mode 1）
+    {
+        AscendC::SyncAll();
+        ....
+    }
+    __schedmode__(0) __global__ __vector__ void OP3() {...} // OP3没有使用SyncAll接口，可以设置为normal mode(mode 0)，按照正常规则执行算子。
+    or
+    __global__ __vector__ void OP3() {...} // 不设置__schedmode__，默认为normal mode。
+    ```
+
+-   \_\_inline\_\_
+
+    \_\_inline\_\_限定符声明一个函数，它具有如下属性：
+
+    -   标识Device侧函数强制内联，可以减少函数频繁调用产生的指令压栈、出栈的开销，但可能会导致算子二进制增加。
+    -   和C++函数修饰符inline的主要区别是Device侧\_\_inline\_\_是强制内联，C++的inline则是根据编译器优化选择性内联。
+    -   AI Core对函数嵌套深度有限制，一般推荐嵌套深度不超过4层。使用强制内联可以减少调用层次。
+
 ## 地址空间限定符<a name="section1624210295308"></a>
 
 AI Core具备多级独立片上存储，各个地址空间独立编址，具备各自的访存指令，根据架构差异，有些存储空间具备统一地址空间（Generic Address Space），有些则没有。设备侧编程基于语法扩展允许地址空间作为合法的类型限定符，以提供针对不同地址空间的访问能力和地址空间合法性检查。
 
-**表2**  地址空间映射关系
+**表1**  地址空间映射关系
 
 | 地址空间限定符 | AI Core物理存储空间 |
 |----------------|---------------------|
-| __gm__ | 设备侧内存GM |
-| __ubuf__ | Vector UB |
-| __ca__ | Cube L0A Buffer |
-| __cb__ | Cube L0B Buffer |
-| __cc__ | Cube L0C Buffer |
-| __cbuf__ | Cube L1 Buffer |
-| __fbuf__ | Fixpipe Buffer |
-| __ssbuf__ | SSBuffer |
+| \_\_gm\_\_ | 设备侧内存GM |
+| \_\_ubuf\_\_ | Vector UB |
+| \_\_ca\_\_ | Cube L0A Buffer |
+| \_\_cb\_\_ | Cube L0B Buffer |
+| \_\_cc\_\_ | Cube L0C Buffer |
+| \_\_cbuf\_\_ | Cube L1 Buffer |
+| \_\_fbuf\_\_ | Fixpipe Buffer |
+| \_\_ssbuf\_\_ | SSBuffer |
 
 地址空间限定符可以在变量声明中使用，用于指定对象分配的区域。如果对象的类型被地址空间名称限定，那么该对象将被分配在指定的地址空间中。同样地，对于指针，指向的类型可以通过地址空间进行限定，以指示所指向的对象所在的地址空间。
 
@@ -426,6 +440,7 @@ __ubuf__ int * __gm__ ptr;
 
 ## 内置常量<a name="section784531219338"></a>
 
+**表2**  内置常量
 | 常量名 | 取值 | 功能 |
 |--------|------|------|
 | constexpr int32_t g_coreType | AscendC::AIC<br>AscendC::AIV | 常量值由框架自动设置，AIC核下，配置为AscendC::AIC，AIV核下，配置为AscendC::AIV。可以通过对该常量值的判断，来实现了AIV与AIC核代码的区分和隔离。功能等同于直接使用ASCEND_IS_AIV、ASCEND_IS_AIC。 |
@@ -439,6 +454,8 @@ __ubuf__ int * __gm__ ptr;
 ## 内置变量<a name="section199434523343"></a>
 
 内置变量由框架自动设置，可在Device侧代码中直接引用，用于多核逻辑控制和数据分片。在Mix执行场景（本节指核函数使用`__mix__(1, 1)`或`__mix__(1, 2)`函数执行空间限定符）下，还需与部分非内置变量组合使用，各变量的说明及获取方式如下：
+
+**表3**  内置变量
 
 | 变量 | 说明 | 获取方式 |
 |------|------|---------|
@@ -458,6 +475,8 @@ $$
 
 下表以$\text{block\_num} = 4$为例，介绍不同场景下各个变量的取值以及logic_idx的计算方式（使用基础API [GetBlockIdx](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockIdx.md)可以直接获取logic_idx）：
 
+**表4**  不同场景下各个变量的取值以及logic_idx的计算方式
+
 | 场景 | 执行核 | block_idx | sub_block_num | sub_block_idx | logic_idx 
 |------|--------|-----------|---------------|---------------|-----------|
 | 纯Cube | AIC | 0、1、2、3 | 1 | 0 | 等于block_idx | 
@@ -475,6 +494,40 @@ $$
     <!-- end id7 -->
 
 -   使用**C API**时，对于纯Cube/纯Vector/Mix（1,1）场景，应使用内置变量block_idx获取当前核的逻辑位置；对于Mix（1,2）场景，应使用内置变量block_idx、asc_get_sub_block_num和asc_get_sub_block_id按公式计算logic_idx。
+
+## API内置数据类型
+
+使用以下数据类型时需要导入[SIMD API的头文件](../../../api/api_list.md#调用接口依赖的头文件和库文件说明)。
+
+**表5**  API内置数据类型
+
+| 类型 | 数据类型 | 描述 | Size（bit） | 取值范围 |
+| --- | --- | --- | --- | --- |
+| 整型 | int4b_t | 有符号4位整数。 | 4 | [-8, 7] |
+| 布尔型 | bool | 全0代表false，否则代表true。 | 8 | true、false |
+| 整型 | int4x2_t | 两个有符号4位整数打包为一个8比特存储单元。 | 8 | 每个元素的取值范围为[-8, 7]。 |
+| 整型 | int8_t | signed char | 8 | [-128, 127] |
+| 整型 | uint8_t | unsigned char | 8 | [0, 255] |
+| 浮点型 | fp4x2_e2m1_t | 两个由1位符号位、2位指数位和1位尾数位组成的浮点数打包为一个8比特存储单元。 | 8 | [-6, 6] |
+| 浮点型 | fp4x2_e1m2_t | 两个由1位符号位、1位指数位和2位尾数位组成的浮点数打包为一个8比特存储单元。 | 8 | [-7×2<sup>-2</sup>, 7×2<sup>-2</sup>] |
+| 浮点型 | hifloat8_t | 符号位宽为1，指数位宽和尾数位宽由点域编码决定。 | 8 | 点域编码决定数据精度与取值范围。 |
+| 浮点型 | fp8_e8m0_t | 符号位宽为0，指数位宽为8，尾数位宽为0。 | 8 | [2<sup>-127</sup>, 2<sup>127</sup>] |
+| 浮点型 | fp8_e5m2_t | 符号位宽为1，指数位宽为5，尾数位宽为2。 | 8 | [2<sup>13</sup> - 2<sup>16</sup>, 2<sup>16</sup> - 2<sup>13</sup>] |
+| 浮点型 | fp8_e4m3fn_t | 符号位宽为1，指数位宽为4，尾数位宽为3。 | 8 | [2<sup>6</sup> - 2<sup>9</sup>, 2<sup>9</sup> - 2<sup>6</sup>] |
+| 整型 | int16_t | signed short | 16 | [-32768, 32767] |
+| 整型 | uint16_t | unsigned short | 16 | [0, 65535] |
+| 浮点型 | half | 符号位宽为1，指数位宽为5，尾数位宽为10。 | 16 | [2<sup>5</sup> - 2<sup>16</sup>, 2<sup>16</sup> - 2<sup>5</sup>] |
+| 浮点型 | bfloat16_t | 符号位宽为1，指数位宽为8，尾数位宽为7。 | 16 | [2<sup>120</sup> - 2<sup>128</sup>, 2<sup>128</sup> - 2<sup>120</sup>] |
+| 整型 | int32_t | signed int | 32 | [-2147483648, 2147483647] |
+| 整型 | uint32_t | unsigned int | 32 | [0, 4294967295] |
+| 浮点型 | float | 符号位宽为1，指数位宽为8，尾数位宽为23。 | 32 | [2<sup>104</sup> - 2<sup>128</sup>, 2<sup>128</sup> - 2<sup>104</sup>] |
+| 复数型 | complex32 | 实部和虚部都是half类型的复数。 | 32 | 实部：[2<sup>5</sup> - 2<sup>16</sup>, 2<sup>16</sup> - 2<sup>5</sup>]，虚部：[2<sup>5</sup> - 2<sup>16</sup>, 2<sup>16</sup> - 2<sup>5</sup>] |
+| 整型 | int64_t | signed long | 64 | [-9223372036854775808, 9223372036854775807] |
+| 整型 | uint64_t | unsigned long | 64 | [0, 18446744073709551615] |
+| 浮点型 | double | 符号位宽为1，指数位宽为11，尾数位宽为52。 | 64 | [2<sup>971</sup> - 2<sup>1024</sup>, 2<sup>1024</sup> - 2<sup>971</sup>] |
+| 复数型 | complex64 | 实部和虚部都是float类型的复数。 | 64 | 实部：[2<sup>104</sup> - 2<sup>128</sup>, 2<sup>128</sup> - 2<sup>104</sup>]，虚部：[2<sup>104</sup> - 2<sup>128</sup>, 2<sup>128</sup> - 2<sup>104</sup>] |
+
+更多详细信息请参考[内置数据类型](../../../api/SIMD-API/basic_api/data_structures/builtin_data_types.md)。
 
 ## 核函数（Kernel）配置<a name="核函数配置"></a><a name="section97005415463"></a>
 
