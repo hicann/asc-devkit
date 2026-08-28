@@ -26,20 +26,25 @@
 
 ## 功能说明
 
-对Global Memory中address指向的元素执行原子赋值操作，即将该元素值设置为val。
+对Global Memory中`address`指向的单个元素执行原子交换操作。读取该元素的旧值`old_value`，将`val`写回该地址以替换旧值，并返回`old_value`。整个读取和写回过程为原子操作。
 
 ## 函数原型
 
-```cpp
-__aicore__ inline int32_t asc_atomic_exch(__gm__ int32_t *address, int32_t val)
+```c
+__aicore__ inline <dtype> asc_atomic_exch(__gm__ <dtype>* address,
+                                          <dtype> val)
+```
 
-__aicore__ inline uint32_t asc_atomic_exch(__gm__ uint32_t *address, uint32_t val)
+### dtype支持数据类型
 
-__aicore__ inline float asc_atomic_exch(__gm__ float *address, float val)
+dtype支持的数据类型为`int32_t`、`uint32_t`、`float`、`int64_t`、`uint64_t`。
 
-__aicore__ inline int64_t asc_atomic_exch(__gm__ int64_t *address, int64_t val)
+### 函数原型典型示例
 
-__aicore__ inline uint64_t asc_atomic_exch(__gm__ uint64_t *address, uint64_t val)
+```c
+// 示例：int32_t类型原子交换。
+__aicore__ inline int32_t asc_atomic_exch(__gm__ int32_t* address,
+                                          int32_t val)
 ```
 
 ## 参数说明
@@ -48,12 +53,12 @@ __aicore__ inline uint64_t asc_atomic_exch(__gm__ uint64_t *address, uint64_t va
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| address | 输出 | Global Memory的地址。 |
+| address | 输入 | Global Memory的地址。 |
 | val | 输入 | 源操作数。 |
 
 ## 返回值说明
 
-address地址中计算前的原始数据。
+`address`地址中计算前的原始数据。
 
 ## 流水类型
 
@@ -66,8 +71,81 @@ PIPE_S
 
 ## 调用示例
 
+将以下代码保存为`example.asc`后，执行对应的编译运行命令。
+
+<!-- npu="950" id8 -->
+
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
 ```cpp
-// dst为外部输入的int32_t类型的GM内存，此示例的初始值为10
-asc_dcci_entire_all();            // 手动同步
-int32_t old = asc_atomic_exch(dst, 20);  // 计算后dst = 20, old = 10
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+constexpr uint32_t ELEMENTS = 8;
+
+__global__ __vector__ void asc_atomic_exch_kernel(__gm__ uint32_t* output)
+{
+    asc_init();
+    // 确保Atomic访问GM前，目标Cache Line中的数据已写回。
+    asc_dcci_single(output);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    const uint32_t old_value = asc_atomic_exch(output, 5U);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    // Atomic绕过DCache，普通Scalar写前需使目标Cache Line中的旧副本失效。
+    asc_dcci_single(output);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    output[1] = old_value;
+    // 将普通Scalar写产生的Dirty Cache Line写回GM。
+    asc_dcci_single(output);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+}
+} // namespace
+
+int main()
+{
+    std::vector<uint32_t> input = {10, 0};
+    std::vector<uint32_t> golden = {5, 10};
+    input.resize(ELEMENTS, 0);
+    golden.resize(ELEMENTS, 0);
+    std::vector<uint32_t> output(ELEMENTS, 0xffffffffU);
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint32_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (ELEMENTS) * sizeof(uint32_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(output_device, input.size() * sizeof(uint32_t), input.data(), input.size() * sizeof(uint32_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_atomic_exch_kernel<<<1, 0>>>(output_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint32_t), output_device, output.size() * sizeof(uint32_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input", input);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_atomic_exch passed." : "[Failed] asc_atomic_exch failed.") << std::endl;
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```

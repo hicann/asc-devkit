@@ -26,14 +26,31 @@
 
 ## 功能说明
 
-对Global Memory中address指向的计数器执行原子递减操作，如果address上的数值等于0或大于指定数值val，则对address赋值为val，否则将address上数值减1。
+对Global Memory中`address`指向的一个`uint32_t`或`uint64_t`元素执行原子递减操作。读取该元素的旧值`old_value`，按照以下公式计算并写回新值`new_value`：
+
+$$
+new\_value = (old\_value == 0 || old\_value > val) ? val : (old\_value - 1)
+$$
+
+接口返回`old_value`。整个读取、判断和写回过程为原子操作。
 
 ## 函数原型
 
-```cpp
-__aicore__ inline uint32_t asc_atomic_dec(__gm__ uint32_t *address, uint32_t val)
+```c
+__aicore__ inline <dtype> asc_atomic_dec(__gm__ <dtype>* address,
+                                         <dtype> val)
+```
 
-__aicore__ inline uint64_t asc_atomic_dec(__gm__ uint64_t *address, uint64_t val)
+### dtype支持数据类型
+
+dtype支持的数据类型为`uint32_t`、`uint64_t`。
+
+### 函数原型典型示例
+
+```c
+// 示例：uint32_t类型标量原子递减。
+__aicore__ inline uint32_t asc_atomic_dec(__gm__ uint32_t* address,
+                                          uint32_t val)
 ```
 
 ## 参数说明
@@ -42,12 +59,12 @@ __aicore__ inline uint64_t asc_atomic_dec(__gm__ uint64_t *address, uint64_t val
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| address | 输出 | Global Memory的地址。 |
+| address | 输入 | Global Memory的地址。 |
 | val | 输入 | 源操作数。 |
 
 ## 返回值说明
 
-address地址中计算前的原始数据。
+`address`地址中计算前的原始数据。
 
 ## 流水类型
 
@@ -60,8 +77,81 @@ PIPE_S
 
 ## 调用示例
 
+将以下代码保存为`example.asc`后，执行对应的编译运行命令。
+
+<!-- npu="950" id8 -->
+
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
 ```cpp
-// counter为外部输入的uint32_t类型的GM内存，此示例的初始值为5
-asc_dcci_entire_all();            // 手动同步
-uint32_t old = asc_atomic_dec(counter, 9);  // 计算后counter = 4, old = 5
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+constexpr uint32_t ELEMENTS = 8;
+
+__global__ __vector__ void asc_atomic_dec_kernel(__gm__ uint32_t* output)
+{
+    asc_init();
+    // 确保Atomic访问GM前，目标Cache Line中的数据已写回。
+    asc_dcci_single(output);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    const uint32_t old_value = asc_atomic_dec(output, 20U);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    // Atomic绕过DCache，普通Scalar写前需使目标Cache Line中的旧副本失效。
+    asc_dcci_single(output);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+    output[1] = old_value;
+    // 将普通Scalar写产生的Dirty Cache Line写回GM。
+    asc_dcci_single(output);
+    asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
+}
+} // namespace
+
+int main()
+{
+    std::vector<uint32_t> input = {10, 0};
+    std::vector<uint32_t> golden = {9, 10};
+    input.resize(ELEMENTS, 0);
+    golden.resize(ELEMENTS, 0);
+    std::vector<uint32_t> output(ELEMENTS, 0xffffffffU);
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint32_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (ELEMENTS) * sizeof(uint32_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(output_device, input.size() * sizeof(uint32_t), input.data(), input.size() * sizeof(uint32_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_atomic_dec_kernel<<<1, 0>>>(output_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint32_t), output_device, output.size() * sizeof(uint32_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input", input);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_atomic_dec passed." : "[Failed] asc_atomic_dec failed.") << std::endl;
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```

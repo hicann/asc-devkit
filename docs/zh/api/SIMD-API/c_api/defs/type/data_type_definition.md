@@ -1,4 +1,4 @@
-# reg数据类型定义
+# Reg数据类型定义
 
 ## 产品支持情况
 
@@ -26,13 +26,13 @@
 
 ## 矢量数据寄存器
 
-矢量数据寄存器用于存储矢量数据，其位宽为VL（Vector Length），可存储VL/sizeof(T)的数据（T表示数据类型）。在Ascend 950PR/Ascend 950DT版本中，VL = 256B。例如对于矢量数据类型vector_float，该寄存器可存储的元素数量为256B / sizeof(float) = 64个。
+矢量数据寄存器用于存储矢量数据，其长度为`VL`（Vector Length）。在Ascend 950PR/Ascend 950DT产品中，`VL`为256字节，可存储`VL / sizeof(dtype)`个`dtype`类型的元素。例如，`vector_float`可存储`256 / sizeof(float) = 64`个`float`类型的元素。
 
-以下是以位宽为分类，列举的所有矢量数据寄存器的数据类型：
+矢量数据寄存器类型按位宽类别分类如下：
 
-**表1** 位宽分类
+**表1** 位宽类别
 
-| 位宽 | 矢量数据寄存器类型 |
+| 位宽类别 | 矢量数据寄存器类型 |
 | --- | --- |
 | b8 | vector_int8_t、vector_uint8_t、vector_int4x2_t、vector_fp4x2_e2m1_t、vector_fp4x2_e1m2_t、vector_hifloat8_t、vector_fp8_e4m3fn_t、vector_fp8_e5m2_t、vector_fp8_e8m0_t |
 | b16 | vector_int16_t、vector_uint16_t、vector_half、vector_bfloat16_t |
@@ -40,124 +40,160 @@
 | b64 | vector_int64_t、vector_uint64_t |
 
 **注意：**
-- vector_int4x2_t、vector_fp4x2_e2m1_t、vector_fp4x2_e1m2_t这三个矢量数据类型在内存中的排布需要将两个元素打包为一个字节的存储单元。
 
-- 矢量数据寄存器数据上限为32，超出上限的寄存器数据会写入预留的8K Unified Buffer（UB）内存中，可能会引发性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若两者均可用，优先复用寄存器。
+- `vector_int4x2_t`、`vector_fp4x2_e2m1_t`和`vector_fp4x2_e1m2_t`均为打包类型，两个4 bit元素共用一个字节的存储空间，因此归入`b8`位宽类别。
 
-- 寄存器的生命周期限定于单个VF内部。
+- 矢量数据寄存器的数量上限为32。超出上限的寄存器数据会写入预留的8KB Unified Buffer（UB）空间中，可能会引发性能劣化。编译器会自动复用生命周期结束的寄存器和预留空间；若两者均可用，则优先复用寄存器。
+
+- 寄存器的生命周期限定于单个Vector Function（VF）内部。
 
 ## 掩码寄存器
 
-掩码寄存器的类型为vector_bool，用于矢量计算中筛选参与计算的元素，其位宽为VL/8（即256/8=32字节=256bit）。当搬运掩码寄存器时，ubuf中地址偏移单位为字节。
+掩码寄存器的类型为`vector_bool`，用于在矢量计算中筛选参与计算的元素，其长度为`VL / 8`，即32字节（256 bit）。
 
-如图1所示，当操作数类型为b8时，每一个element对应1bit mask；当操作数类型为b16时，每一个element对应2bit mask，且仅2bit中的最低位是有效的；当操作数类型为b32时，每一个element对应4bit mask，且仅4bit中的最低位是有效的。
+如图1所示，当操作数类型为`b8`时，每个元素对应1 bit掩码；当操作数类型为`b16`时，每个元素对应2 bit掩码，且仅最低有效位（LSB）有效；当操作数类型为`b32`时，每个元素对应4 bit掩码，且仅最低有效位有效。
 
 **图1**  掩码寄存器
 
 ![掩码寄存器](../../figures/capi_mask.png)
 
-掩码寄存器设置支持多种灵活配置方式，可根据实际计算场景选择不同设置方式，以满足不同计算场景的需求。具体设置方式如下表所示：
+`b64`操作数的每个元素对应8 bit掩码，且仅最低有效位有效。由于掩码创建接口不支持`b64`模式，需要先通过[asc_create_mask_b32](../../reg_compute/reg_mask/asc_create_mask.md)创建`b32`掩码，再通过[asc_unpack_lower](../../reg_compute/reg_permute_sel/asc_unpack.md)将其展开为`b64`掩码。例如，创建所有`b64`元素均有效的掩码：
+
+```cpp
+vector_bool mask_b32 = asc_create_mask_b32(PAT_ALL);
+vector_bool mask_b64;
+asc_unpack_lower(mask_b64, mask_b32);
+```
+
+掩码寄存器支持以下设置方式，可根据实际计算场景选择：
 
 **表2** 掩码寄存器设置方式
 
 | 编号 | 设置方式 | 涉及接口 | 说明 |
 | :-- | :------------ | :------------ | :------------ |
-| 1 | 调用接口设置 | [asc_create_mask](../../reg_compute/reg_mask/asc_create_mask.md) | 可以设置参数指定mask的模式，即指定哪些位置的元素参与计算。 |
-| 2 | 调用接口设置 | [asc_update_mask](../../reg_compute/reg_mask/asc_update_mask.md) |&bull; 在循环外调用时设置固定的mask，mask表示在一次循环计算中前count个元素参与计算，每次以循环计算均使用此mask。<br>&bull; 在循环内调用时，表示计算中前count个元素参与计算，每次循环mask会自动更新。|
-| 3 | 从UB搬入 | [asc_loadalign_postupdate](../../reg_compute/load/asc_loadalign_postupdate.md) | 将掩码从UB搬入掩码寄存器。 |
-| 4 | 从矢量数据寄存器搬入 | [asc_copy](../../reg_compute/reg_copy/asc_copy.md) | 从矢量数据寄存器搬运至掩码寄存器。 |
+| 1 | 调用接口设置 | [asc_create_mask](../../reg_compute/reg_mask/asc_create_mask.md) | 通过参数指定掩码模式，即指定参与计算的元素位置。 |
+| 2 | 调用接口设置 | [asc_update_mask](../../reg_compute/reg_mask/asc_update_mask.md) | &bull; 在循环外调用时，设置固定掩码，表示每次循环中前`count`个元素参与计算。<br>&bull; 在循环内调用时，根据剩余的`count`生成当前循环的掩码，并自动更新`count`。 |
+| 3 | 从UB搬入 | [asc_loadalign](../../reg_compute/load/asc_loadalign.md)、[asc_loadalign_postupdate](../../reg_compute/load/asc_loadalign_postupdate.md)等接口 | 将掩码从UB搬入掩码寄存器。 |
+| 4 | 从矢量数据寄存器搬入 | [asc_copy](../../reg_compute/reg_copy/asc_copy.md) | 从`vector_uint16_t`或`vector_uint32_t`搬运至掩码寄存器。 |
 
 **注意：**
-掩码寄存器数量上限为8。超出限制上限的寄存器数据会写入预留的8K UB内存中，可能会引起性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若两者均可用，优先复用寄存器。
+
+掩码寄存器的数量上限为8。超出上限的寄存器数据会写入预留的8KB UB空间中，可能会引起性能劣化。编译器会自动复用生命周期结束的寄存器和预留空间；若两者均可用，则优先复用寄存器。
 
 ## 非对齐寄存器
 
-非对齐寄存器包括vector_load_unalign和vector_store_unalign。这些寄存器作为缓冲区，用于在UB和矢量数据寄存器之间进行连续的非对齐数据搬运，其中非对齐特指数据起始地址未按32字节对齐。在搬运过程中，非对齐数据首先被加载到专用的非对齐寄存器，随后通过相应的搬运接口完成数据的分块读取或写入。
+非对齐寄存器包括`vector_load_unalign`和`vector_store_unalign`。这两类寄存器作为缓冲区，用于在UB和矢量数据寄存器之间连续搬运非对齐数据。本节中的非对齐是指数据起始地址未按32字节对齐。搬运过程中，接口通过非对齐寄存器缓存首块或尾块数据，再完成数据的连续读取或写入。
 
-在读非对齐地址前，应该先通过[asc_loadunalign_pre](../../reg_compute/load/asc_loadunalign_pre.md)初始化，然后再调用[asc_loadunalign](../../reg_compute/load/asc_loadunalign.md)/[asc_loadunalign_postupdate](../../reg_compute/load/asc_loadunalign_postupdate.md)进行搬运。在写非对齐地址时，应该先调用[asc_storeunalign](../../reg_compute/store/asc_storeunalign.md)/[asc_storeunalign_postupdate](../../reg_compute/store/asc_storeunalign_postupdate.md)，再调用[asc_storeunalign_post](../../reg_compute/store/asc_storeunalign_post.md)/[asc_storeunalign_post_postupdate](../../reg_compute/store/asc_storeunalign_post_postupdate.md)进行后处理。
+从非对齐地址搬入数据前，应先调用[asc_loadunalign_pre](../../reg_compute/load/asc_loadunalign_pre.md)初始化，再调用[asc_loadunalign](../../reg_compute/load/asc_loadunalign.md)或[asc_loadunalign_postupdate](../../reg_compute/load/asc_loadunalign_postupdate.md)搬入数据。向非对齐地址搬出数据时，应先调用[asc_storeunalign](../../reg_compute/store/asc_storeunalign.md)或[asc_storeunalign_postupdate](../../reg_compute/store/asc_storeunalign_postupdate.md)，再调用与搬出模式匹配的[asc_storeunalign_post](../../reg_compute/store/asc_storeunalign_post.md)或[asc_storeunalign_post_postupdate](../../reg_compute/store/asc_storeunalign_post_postupdate.md)进行后处理。
 
 **注意：**
-vector_load_unalign寄存器和vector_store_unalign寄存器的数量上限均为4，超过数量上限会报错。
+
+`vector_load_unalign`寄存器和`vector_store_unalign`寄存器的数量上限均为4，超过数量上限会报错。
 
 ### 调用示例
 
+以下示例中，每次循环处理一个完整的`VL`。
+
 ```cpp
-__simd_vf__ inline void neg_vf(__ubuf__ int8_t* dst_addr, __ubuf__ int8_t* src_addr, uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+__simd_vf__ inline void neg_vf(__ubuf__ int8_t* dst_addr, __ubuf__ int8_t* src_addr,
+                               uint16_t one_repeat_size, uint16_t repeat_count)
 {
-    vector_int8_t src;
-    vector_int8_t dst;
-    vector_load_unalign ureg0;
-    vector_store_unalign ureg1;
-    vector_bool mask;
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        mask = asc_update_mask_b8(count);
-        asc_loadunalign_pre(ureg0, src_addr + i * one_repeat_size); // 非对齐搬入前的初始化
-        asc_loadunalign(src, ureg0, src_addr + i * one_repeat_size); // 配合vector_load_unalign的使用，非对齐搬入源数据
-        asc_neg(dst, src, mask);
-        asc_storeunalign(dst_addr + i * one_repeat_size, ureg1, dst, one_repeat_size); // 配合vector_store_unalign的使用，非对齐搬出目的数据
-        asc_storeunalign_post(dst_addr + i * one_repeat_size, ureg1, 0); // 处理非对齐搬出的尾块
+    vector_int8_t src_reg;
+    vector_int8_t dst_reg;
+    vector_load_unalign load_unalign_reg;
+    vector_store_unalign store_unalign_reg;
+    vector_bool mask = asc_create_mask_b8(PAT_ALL);
+    asc_loadunalign_pre(load_unalign_reg, src_addr);
+    for (uint16_t i = 0; i < repeat_count; ++i) {
+        asc_loadunalign_postupdate(src_reg, load_unalign_reg, src_addr, one_repeat_size);
+        asc_neg(dst_reg, src_reg, mask);
+        asc_storeunalign_postupdate(dst_addr, store_unalign_reg, dst_reg, one_repeat_size);
     }
+    asc_storeunalign_post_postupdate(dst_addr, store_unalign_reg, 0);
 }
 ```
 
 ## 地址寄存器
 
-地址寄存器的数据类型为addr_reg，用于存储地址偏移量。addr_reg通过[asc_update_addr_reg](../../reg_compute/reg_addr_reg/asc_update_addr_reg.md)初始化，然后在循环之中使用addr_reg存储地址偏移量。addr_reg在每层循环中根据所设置的步长进行自增。
+地址寄存器的类型为`addr_reg`，用于存储地址偏移量。通过[asc_update_addr_reg](../../reg_compute/reg_addr_reg/asc_update_addr_reg.md)在循环内生成地址寄存器后，地址寄存器会根据各层循环设置的步长计算偏移量。
 
-addr_reg的地址计算公式为：offset = Σ(index_i × stride_i)，其中index_i为第i层循环的迭代变量，stride_i为第i层循环的步长。
+`addr_reg`的偏移量计算公式为`offset = Σ(index_i × stride_i)`，其中`index_i`为第`i`层循环的迭代变量，`stride_i`为对应循环层的步长。地址寄存器中的偏移量以元素个数为单位。调用`asc_update_addr_reg_b8`、`asc_update_addr_reg_b16`和`asc_update_addr_reg_b32`生成地址寄存器时，每个元素分别按1字节、2字节和4字节计算实际地址偏移。
 
 **注意：**
-- addr_reg为地址偏移量寄存器，仅支持部分搬运指令使用，请根据Reg数据搬运接口函数原型选择。除了通过addr_reg设置地址偏移，还支持用户自行累加地址或通过PostUpdate模式进行地址自增，完整特性参考[Reg对齐搬入](../../reg_compute/load/load.md#reg对齐搬入)、[Reg非对齐搬入](../../reg_compute/load/load.md#reg非对齐搬入)、[Reg对齐搬出](../../reg_compute/store/store.md#reg对齐搬出)和[Reg非对齐搬出](../../reg_compute/store/store.md#reg非对齐搬出)。通过AddrReg地址偏移进行搬运时，需要满足对应搬运指令的地址对齐约束。
 
-- addr_reg的数量上限为8，超过8个可能会导致性能劣化。编译器会自动复用生命周期已经结束的addr_reg寄存器。
+- `addr_reg`仅适用于部分数据搬运接口，请根据具体接口的函数原型确认是否支持。除使用`addr_reg`外，还可以直接累加地址，或使用Post Update模式更新地址。完整的数据搬运方式请参见[Reg对齐搬入](../../reg_compute/load/load.md#reg对齐搬入)、[Reg非对齐搬入](../../reg_compute/load/load.md#reg非对齐搬入)、[Reg对齐搬出](../../reg_compute/store/store.md#reg对齐搬出)和[Reg非对齐搬出](../../reg_compute/store/store.md#reg非对齐搬出)。
 
-- 由于硬件循环(HardwareLoop)限制，addr_reg最多支持4层循环轴。
+- 使用`addr_reg`进行地址偏移时，实际访问地址必须满足对应数据搬运接口的地址对齐约束。
 
-### 调用示例<a id="example4"></a>
+- `asc_update_addr_reg`未提供`b64`模式。搬运`int64_t`或`uint64_t`数据时，应使用`asc_update_addr_reg_b32`生成地址寄存器。一个`int64_t`或`uint64_t`元素占用两个`b32`偏移单元，因此传入`asc_update_addr_reg_b32`的各维偏移量必须设置为期望的64位元素偏移量的2倍。例如：
 
-- 单参数版本
     ```cpp
-    __simd_vf__ inline void add_vf(__ubuf__ int8_t* dst_addr, __ubuf__ int8_t* src0_addr, __ubuf__ int8_t* src1_addr, uint32_t count,
-        uint16_t one_repeat_size, uint16_t repeat_time)
+    __simd_vf__ inline void load_int64_vf(__ubuf__ int64_t* src_addr,
+                                          uint32_t elements_per_repeat,
+                                          uint16_t repeat_count)
     {
-        vector_int8_t src0;
-        vector_int8_t src1;
-        vector_int8_t dst;
-        vector_bool mask;
-        addr_reg addr_reg;
-        for (uint16_t i = 0; i < repeat_time; ++i) {
-            addr_reg = asc_update_addr_reg_b8(one_repeat_size); // 通过初始化addr_reg，每一次循环，地址偏移one_repeat_size
-            mask = asc_update_mask_b8(count);
-            asc_loadalign(src0, src0_addr, addr_reg);
-            asc_loadalign(src1, src1_addr, addr_reg);
-            asc_add(dst, src0, src1, mask);
-            asc_storealign(dst_addr, dst, addr_reg, mask);
+        vector_int64_t src_reg;
+        addr_reg offset_reg;
+        for (uint16_t i = 0; i < repeat_count; ++i) {
+            offset_reg = asc_update_addr_reg_b32(elements_per_repeat * 2);
+            asc_loadalign(src_reg, src_addr, offset_reg);
         }
     }
     ```
 
-- 多参数版本（以4参数为例）
+- `addr_reg`的数量上限为8，超过8个可能会导致性能劣化。编译器会自动复用生命周期已结束的`addr_reg`寄存器。
+
+- 受硬件循环（Hardware Loop）限制，`addr_reg`最多支持4层循环。
+
+### 调用示例<a id="example4"></a>
+
+- 单参数版本
+
     ```cpp
-    __simd_vf__ inline void add_4d_vf(
+    __simd_vf__ inline void add_vf(__ubuf__ int8_t* dst_addr, __ubuf__ int8_t* src0_addr,
+                                   __ubuf__ int8_t* src1_addr, uint32_t count,
+                                   uint16_t one_repeat_size, uint16_t repeat_count)
+    {
+        vector_int8_t src0_reg;
+        vector_int8_t src1_reg;
+        vector_int8_t dst_reg;
+        vector_bool mask;
+        addr_reg offset_reg;
+        for (uint16_t i = 0; i < repeat_count; ++i) {
+            offset_reg = asc_update_addr_reg_b8(one_repeat_size);
+            mask = asc_update_mask_b8(count);
+            asc_loadalign(src0_reg, src0_addr, offset_reg);
+            asc_loadalign(src1_reg, src1_addr, offset_reg);
+            asc_add(dst_reg, src0_reg, src1_reg, mask);
+            asc_storealign(dst_addr, dst_reg, offset_reg, mask);
+        }
+    }
+    ```
+
+- 多参数版本（以4个步长参数为例）
+
+    ```cpp
+    __simd_vf__ inline void addr_reg_4d_vf(
         __ubuf__ float* dst_addr,
         __ubuf__ float* src_addr,
-        uint32_t n_stride,    // N间偏移 = C×H×W (float元素数)
-        uint32_t c_stride,    // C间偏移 = H×W (float元素数)
-        uint32_t h_stride,    // H间偏移 = W (float元素数)
-        uint32_t w_stride,    // W间偏移 = 64 (一个VL的float数)
-        uint16_t N, uint16_t C, uint16_t H, uint16_t W)
+        uint32_t n_stride,    // N维间偏移（float类型元素个数）
+        uint32_t c_stride,    // C维间偏移（float类型元素个数）
+        uint32_t h_stride,    // H维间偏移（float类型元素个数）
+        uint32_t w_stride,    // W维间偏移（float类型元素个数）
+        uint16_t n_count, uint16_t c_count, uint16_t h_count, uint16_t w_count)
     {
         vector_float src_reg, dst_reg;
         vector_bool mask = asc_create_mask_b32(PAT_ALL);
-        addr_reg a_reg;
-        for (uint16_t n = 0; n < N; n++) {
-            for (uint16_t c = 0; c < C; c++) {
-                for (uint16_t h = 0; h < H; h++) {
-                    for (uint16_t w = 0; w < W; w++) {
-                        a_reg = asc_update_addr_reg_b32(n_stride, c_stride, h_stride, w_stride);
-                        asc_loadalign(src_reg, src_addr, a_reg);
+        addr_reg offset_reg;
+        for (uint16_t n = 0; n < n_count; ++n) {
+            for (uint16_t c = 0; c < c_count; ++c) {
+                for (uint16_t h = 0; h < h_count; ++h) {
+                    for (uint16_t w = 0; w < w_count; ++w) {
+                        offset_reg = asc_update_addr_reg_b32(
+                            w_stride, h_stride, c_stride, n_stride);
+                        asc_loadalign(src_reg, src_addr, offset_reg);
                         asc_add(dst_reg, src_reg, src_reg, mask);
-                        asc_storealign(dst_addr, dst_reg, a_reg, mask);
+                        asc_storealign(dst_addr, dst_reg, offset_reg, mask);
                     }
                 }
             }

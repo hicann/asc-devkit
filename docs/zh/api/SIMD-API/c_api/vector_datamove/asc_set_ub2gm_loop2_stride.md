@@ -26,7 +26,11 @@
 
 ## 功能说明
 
-将数据从Unified Buffer（UB）搬运到Global Memory (GM)时，通过调用该接口设置外层循环中源操作数在相邻迭代间的数据块间隔，以及目的操作数在相邻迭代间的数据块间隔。
+本接口用于设置[asc_copy_ub2gm_align](./asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)使用循环搬运模式时，外层循环中相邻两次迭代源操作数数据块起始地址之间的偏移量，以及目的操作数数据块起始地址之间的偏移量。
+
+使用循环搬运模式时，还需通过[asc_set_ub2gm_loop_size](./asc_set_ub2gm_loop_size.md)设置循环次数，并通过[asc_set_ub2gm_loop1_stride](./asc_set_ub2gm_loop1_stride.md)设置内层循环`loop1`的步长。
+
+本接口仅在AIV上执行有效，在AIC上调用为空操作。
 
 以源操作数搬运场景为例，如下图所示。
 
@@ -34,18 +38,19 @@
 
 ## 函数原型
 
-```cpp
-__aicore__ inline void asc_set_ub2gm_loop2_stride(uint64_t loop2_src_stride, uint64_t loop2_dst_stride)
+```c
+__aicore__ inline void asc_set_ub2gm_loop2_stride(uint64_t loop2_src_stride,
+                                                  uint64_t loop2_dst_stride)
 ```
 
 ## 参数说明
 
 **表1** 参数说明
 
-| 参数名  | 输入/输出 | 描述 |
-| :----- | :------- | :------- |
-| loop2_src_stride | 输入 | 用于设置外层循环中相邻迭代源操作数的数据块间的间隔，单位为Byte，取值范围为[0, 2^21)，并且loop2_src_stride必须32B对齐。 |
-| loop2_dst_stride | 输入 | 用于设置外层循环中相邻迭代目的操作数的数据块间的间隔，单位为Byte，取值范围为[0, 2^40)。 |
+| 参数名 | 输入/输出 | 描述 |
+|---|---|---|
+| loop2_src_stride | 输入 | 外层循环中，相邻两次迭代源操作数数据块起始地址之间的偏移量，单位为字节。取值范围为[0, $2^{21}−1$]，且必须32字节对齐。 |
+| loop2_dst_stride | 输入 | 外层循环中，相邻两次迭代目的操作数数据块起始地址之间的偏移量，单位为字节。取值范围为[0, $2^{40}−1$]。 |
 
 ## 返回值说明
 
@@ -57,20 +62,90 @@ PIPE_S
 
 ## 约束说明
 
-每次设置循环相关参数后，需要进行寄存器的复位（循环次数设置为1），否则会影响下一次搬运的使用。
+- 本接口仅在AIV上生效，非AIV调用直接返回。
+- 调用`asc_copy_ub2gm_align`前，必须通过本接口、`asc_set_ub2gm_loop_size`和`asc_set_ub2gm_loop1_stride`完成循环次数及两层循环步长的配置。
+- `loop2`步长配置会持续生效，直至重新配置。若后续搬运任务使用不同的`loop2`步长，应在调用`asc_copy_ub2gm_align`前调用本接口重新配置。
+- `loop2_src_stride`必须32字节对齐。
+- 完成当前循环搬运任务后，需调用`asc_set_ub2gm_loop_size(1, 1)`将两层循环次数复位为1，否则可能影响下一次搬运。
 
 ## 调用示例
 
+将以下代码保存为`example.asc`后，执行对应的编译运行命令。
+
+<!-- npu="950" id8 -->
+
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
 ```cpp
-uint32_t loop1_size = 2;
-uint32_t loop2_size = 2;
-uint64_t loop1_src_stride = 96;
-uint64_t loop1_dst_stride = 128;
-uint64_t loop2_src_stride = 192;
-uint64_t loop2_dst_stride = 288;
-asc_set_ub2gm_loop_size(loop1_size, loop2_size);
-asc_set_ub2gm_loop1_stride(loop1_src_stride, loop1_dst_stride);
-asc_set_ub2gm_loop2_stride(loop2_src_stride, loop2_dst_stride);
-asc_copy_ub2gm_align(dst, src, 2, 48 * sizeof(int8_t), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 48, 48);
-asc_set_ub2gm_loop_size(1, 1);
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+
+constexpr uint32_t INPUT_BYTES = 256;
+constexpr uint32_t OUTPUT_BYTES = 128;
+
+__global__ __vector__ void asc_set_ub2gm_loop2_stride_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+{
+    asc_init();
+    __ubuf__ uint8_t local[INPUT_BYTES];
+    asc_copy_gm2ub_align(local, input, INPUT_BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
+    asc_set_ub2gm_loop_size(2, 2);
+    asc_set_ub2gm_loop1_stride(64, 32);
+    asc_set_ub2gm_loop2_stride(128, 64);
+    asc_copy_ub2gm_align(output, local, 1, 32, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 32, 32);
+    asc_set_ub2gm_loop_size(1, 1);
+    asc_sync_notify(PIPE_MTE3, PIPE_S, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE3, PIPE_S, EVENT_ID0);
+}
+
+void print_data(const char* name, const std::vector<uint8_t>& data)
+{
+    std::cout << name << ":";
+    const uint32_t count = data.size() < 32 ? data.size() : 32;
+    for (uint32_t i = 0; i < count; ++i) std::cout << ' ' << +data[i];
+    if (data.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+} // namespace
+
+int main()
+{
+    std::vector<uint8_t> input(INPUT_BYTES), output(OUTPUT_BYTES, 0), golden(OUTPUT_BYTES, 0);
+    for (uint32_t i = 0; i < INPUT_BYTES; ++i) input[i] = static_cast<uint8_t>(i + 1);
+    for (uint32_t block = 0; block < 4; ++block) {
+        const uint32_t source = (block / 2) * 128 + (block % 2) * 64;
+        for (uint32_t i = 0; i < 32; ++i) golden[block * 32 + i] = input[source + i];
+    }
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint8_t *input_device = nullptr, *output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), INPUT_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), OUTPUT_BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, INPUT_BYTES, input.data(), INPUT_BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(output_device, OUTPUT_BYTES, output.data(), OUTPUT_BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_set_ub2gm_loop2_stride_kernel<<<1, 0>>>(output_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), OUTPUT_BYTES, output_device, OUTPUT_BYTES, ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input", input);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_set_ub2gm_loop2_stride passed." : "[Failed] asc_set_ub2gm_loop2_stride failed.") << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```
