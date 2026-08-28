@@ -9,8 +9,10 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[asc_hf32_round_mode](defs/enum/asc_hf32_round_mode.md)|表示Mmad计算开启HF32模式时由FP32舍入到HF32的舍入模式管理策略。|`c_api/defs/enum.h`|
-|[asc_load_l2_cache_mode](defs/enum/asc_load_l2_cache_mode.md)|表示数据从GM搬运到UB时的L2 cache策略。|`c_api/defs/enum.h`|
-|[asc_store_l2_cache_mode](defs/enum/asc_store_l2_cache_mode.md)|表示数据从UB搬运到GM时的L2 cache策略。|`c_api/defs/enum.h`|
+|[asc_load_l2_cache_mode](defs/enum/asc_load_l2_cache_mode.md)|表示数据从GM搬运到UB时的L2 cache策略，也可用于标量load策略配置。|`c_api/defs/enum.h`|
+|[asc_override_strategy](defs/enum/asc_override_strategy.md)|表示饱和控制策略。|`c_api/defs/enum.h`|
+|[asc_saturation_mode](defs/enum/asc_saturation_mode.md)|表示饱和控制模式。|`c_api/defs/enum.h`|
+|[asc_store_l2_cache_mode](defs/enum/asc_store_l2_cache_mode.md)|表示数据从UB搬运到GM时的L2 cache策略，也可用于标量store策略配置。|`c_api/defs/enum.h`|
 
 ### 联合体
 
@@ -638,7 +640,10 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_dcci](cache_ctrl/asc_dcci.md)|用于刷新Cache，保证Cache的一致性。|`c_api/cache_ctrl/cache_ctrl.h`|
 |[asc_dci](cache_ctrl/asc_dci.md)|数据缓存失效，使整个数据缓存无效化。|`c_api/cache_ctrl/cache_ctrl.h`|
 |[asc_get_icache_preload_status](cache_ctrl/asc_get_icache_preload_status.md)|获取ICache的Preload的状态。|`c_api/cache_ctrl/cache_ctrl.h`|
+|[asc_get_scalar_load_cache_mode](cache_ctrl/asc_get_scalar_load_cache_mode.md)|获取标量load路径的L2 Cache管理策略。|`c_api/cache_ctrl/cache_ctrl.h`|
+|[asc_get_scalar_store_cache_mode](cache_ctrl/asc_get_scalar_store_cache_mode.md)|获取标量store路径的L2 Cache管理策略。|`c_api/cache_ctrl/cache_ctrl.h`|
 |[asc_icache_preload](cache_ctrl/asc_icache_preload.md)|从指令所在GM地址预加载数据到对应的cacheline中。|`c_api/cache_ctrl/cache_ctrl.h`|
+|[asc_set_scalar_cache_mode](cache_ctrl/asc_set_scalar_cache_mode.md)|配置标量单元访问Global Memory时的L2 Cache管理策略。|`c_api/cache_ctrl/cache_ctrl.h`|
 
 ## 同步控制
 
@@ -674,8 +679,12 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[asc_get_ctrl](spr/asc_get_ctrl.md)|读取CTRL寄存器（控制寄存器）的值。|`c_api/spr/spr.h`|
+|[asc_get_saturation_flag](spr/asc_get_saturation_flag.md)|读取指定饱和模式的开关状态。|`c_api/spr/spr.h`|
+|[asc_get_saturation_strategy](spr/asc_get_saturation_strategy.md)|读取饱和控制策略。|`c_api/spr/spr.h`|
 |[asc_get_squeeze_status](spr/asc_get_squeeze_status.md)|读取squeeze操作后保存至AR特殊寄存器的有效数据长度值。|`c_api/spr/spr.h`|
 |[asc_set_ctrl](spr/asc_set_ctrl.md)|设置CTRL寄存器（控制寄存器）的值。|`c_api/spr/spr.h`|
+|[asc_set_saturation_flag](spr/asc_set_saturation_flag.md)|设置指定饱和模式的开关状态。|`c_api/spr/spr.h`|
+|[asc_set_saturation_strategy](spr/asc_set_saturation_strategy.md)|设置饱和控制策略。|`c_api/spr/spr.h`|
 
 ## 废弃接口
 
