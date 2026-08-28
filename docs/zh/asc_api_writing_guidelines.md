@@ -915,7 +915,7 @@ DataCopy的使用说明中给出了DataCopyParams结构体参数的配置图示�
 【正例】
 
 ```cpp
-AscendC::Tpipe pipe;
+AscendC::TPipe pipe;
 AscendC::TQue<AscendC::TPosition::VECCALC, 1> tmpQue;
 pipe.InitBuffer(tmpQue, 1, bufferSize); // bufferSize 通过Host侧tiling参数获取
 AscendC::LocalTensor<uint8_t> sharedTmpBuffer = tmpQue.AllocTensor();

@@ -436,12 +436,12 @@ TEST_F(TestTiling, TestAxpyTiling)
     ```c++
     ::testing::GTEST_FLAG(filter) = "*Axpy*";
     ```
-  修改[build.sh](../../build.sh)，将all修改为需要执行的UT target，以执行核函数（Kernel）侧Ascend 910B1的UT为例，target即为ascendc_utest_ascend910B1_AIV。
-  ```
+  修改[build.sh](../../build.sh)，将all修改为需要执行的UT target，以执行核函数（Kernel）侧Ascend 910B1的UT为例，target即为ascendc_ut_adv_api_kernel_ascend910B1_AIV。
+  ```bash
   function build_test() {
     cmake_config
     # build all
-    build ascendc_utest_ascend910B1_AIV
+    build ascendc_ut_adv_api_kernel_ascend910B1_AIV
   }
   ```
   执行命令`bash build.sh -t`即可仅运行新增UT用例。

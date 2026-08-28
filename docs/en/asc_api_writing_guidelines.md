@@ -914,7 +914,7 @@ This interface only takes effect when the isSetMask template parameter of the ve
 [Positive Example]
 
 ```cpp
-AscendC::Tpipe pipe;
+AscendC::TPipe pipe;
 AscendC::TQue<AscendC::TPosition::VECCALC, 1> tmpQue;
 pipe.InitBuffer(tmpQue, 1, bufferSize); // bufferSize is obtained through Host-side tiling parameters
 AscendC::LocalTensor<uint8_t> sharedTmpBuffer = tmpQue.AllocTensor();

@@ -436,12 +436,12 @@ Before executing UT cases, modify the [CMakeLists.txt](../../tests/api/adv_api/C
     ```c++
     ::testing::GTEST_FLAG(filter) = "*Axpy*";
     ```
-  Modify [build.sh](../../build.sh), change all to needed UT target. Using the Ascend 910B1 kernel function-side UT as an example, the target is ascendc_utest_ascend910B1_AIV.
-  ```
+  Modify [build.sh](../../build.sh), change all to needed UT target. Using the Ascend 910B1 kernel function-side UT as an example, the target is ascendc_ut_adv_api_kernel_ascend910B1_AIV.
+  ```bash
   function build_test() {
     cmake_config
     # build all
-    build ascendc_utest_ascend910B1_AIV
+    build ascendc_ut_adv_api_kernel_ascend910B1_AIV
   }
   ```
   Execute command `bash build.sh -t` to run only new UT cases.
