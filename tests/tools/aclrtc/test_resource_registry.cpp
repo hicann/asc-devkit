@@ -753,6 +753,8 @@ TEST_F(ResourceRegistryTest, LoadManifestValidatesJsonOwnershipSourceAndDuplicat
     EXPECT_EQ(loadText("[]"), ResourceStatus::InvalidResource);
     EXPECT_EQ(loadText(R"({"source_file":"source.cpp"})"), ResourceStatus::InvalidResource);
     EXPECT_EQ(loadText(R"({"resource_id":1,"source_file":"source.cpp"})"), ResourceStatus::InvalidResource);
+    EXPECT_EQ(loadText(R"({"resource_id":""})"), ResourceStatus::InvalidResource);
+    EXPECT_EQ(stage.external.resources.find(""), stage.external.resources.end());
     EXPECT_EQ(loadText(R"({"resource_id":"metadata-only"})"), ResourceStatus::Success);
     EXPECT_TRUE(stage.external.resources.at("metadata-only")->data.sourceFilePath.empty());
     EXPECT_EQ(loadText(R"({"resource_id":"resource","source_file":1})"), ResourceStatus::InvalidResource);
@@ -1301,6 +1303,31 @@ TEST_F(ResourceRegistryTest, LoadReportsManifestFailure)
 
     EXPECT_EQ(registry_->Load(layout.soPath.c_str()), ResourceStatus::InvalidResource);
     EXPECT_EQ(registry_->FindResource("public-invalid-manifest"), nullptr);
+}
+
+TEST_F(ResourceRegistryTest, LoadRejectsEmptyResourceIdAndDoesNotCommitPartialBundle)
+{
+    const SourceLayout layout = CreateLayout("public-empty-resource-id");
+    const std::string validJson = R"({"resource_id":"valid-resource"})";
+    const std::string emptyJson = R"({"resource_id":""})";
+    AcCompileResourceManifest invalidManifests[] = {
+        {StringView(validJson), nullptr, 0U},
+        {StringView(emptyJson), nullptr, 0U},
+    };
+    AcCompileResourceBundle invalidBundle = MakeBundle(invalidManifests, 2U);
+    gBundleHeader = &invalidBundle.header;
+    MockSuccessfulLoader();
+
+    EXPECT_EQ(registry_->Load(layout.soPath.c_str()), ResourceStatus::InvalidResource);
+    EXPECT_EQ(registry_->FindResource(""), nullptr);
+    EXPECT_EQ(registry_->FindResource("valid-resource"), nullptr);
+
+    AcCompileResourceManifest validManifest{StringView(validJson), nullptr, 0U};
+    AcCompileResourceBundle validBundle = MakeBundle(&validManifest, 1U);
+    gBundleHeader = &validBundle.header;
+    EXPECT_EQ(registry_->Load(layout.soPath.c_str()), ResourceStatus::Success);
+    ResourceData output;
+    EXPECT_EQ(registry_->Lookup("valid-resource", output), ResourceStatus::Success);
 }
 
 TEST_F(ResourceRegistryTest, LoadAutomaticCachesFirstStatus)

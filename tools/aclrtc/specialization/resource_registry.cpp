@@ -323,6 +323,13 @@ ResourceStatus ParseResourceId(
         return ResourceStatus::InvalidResource;
     }
     resourceId = document.at("resource_id").get<std::string>();
+    if (resourceId.empty()) {
+        ASCENDLOGE(
+            "Compile resource manifest field is empty: source_type=%s so=%s manifest=%" PRIu64
+            " field=resource_id expected=non-empty string",
+            SourceTypeName(spec.sourceType), spec.path.c_str(), manifestIndex);
+        return ResourceStatus::InvalidResource;
+    }
     return ResourceStatus::Success;
 }
 
