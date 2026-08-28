@@ -24,45 +24,58 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/routing.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-constexpr CopyGM2L1Trait DEFAULT_COPY_GM_TO_L1_TRAIT;
+template <typename Trait, const Trait& trait, typename... Args>
+__aicore__ inline void copy_gm_to_l1::copy(const Args&... args)
+{
+    data_copy_impl<trait, Args...>(args...);
+}
 
-struct CopyGM2L1TraitDefault {
-    using TraitType = CopyGM2L1Trait;
-    static constexpr const TraitType value = DEFAULT_COPY_GM_TO_L1_TRAIT;
-};
+template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+__aicore__ inline void copy_gm_to_l1::data_copy_impl(const DstTensor& dst, const SrcTensor& src)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(
+        Std::is_same_v<dst_pos, location::l1>, "For copy_gm_to_l1, the destination tensor must be located in L1.");
+    static_assert(Std::is_same_v<src_pos, location::gm>, "For copy_gm_to_l1, the source tensor must be located in GM.");
+    using dst_layout = typename DstTensor::layout_type;
+    using src_layout = typename SrcTensor::layout_type;
+    using dst_layout_ptn = get_layout_pattern<dst_layout>;
+    using src_layout_ptn = get_layout_pattern<src_layout>;
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, dst.layout(), "dst", "copy_gm_to_l1");
+    TENSOR_API_DEBUG_CHECK(debug_check_layout, src.layout(), "src", "copy_gm_to_l1");
+    TENSOR_API_DEBUG_CHECK(debug_check_copy_size, src, dst, "copy_gm_to_l1");
+    using copy_gm_to_l1_impl =
+        typename copy_gm_to_l1_routing<current_arch_version, dst_layout_ptn, src_layout_ptn>::type;
+    copy_gm_to_l1_impl::template run<trait, DstTensor, SrcTensor>(dst, src);
+}
 
-struct CopyGM2L1 {
-public:
-    template <typename Tp, const Tp& traits, typename... Args>
-    __aicore__ inline static void Copy(const Args&... args)
-    {
-        if ASCEND_IS_AIC {
-            DataCopyImpl<traits, Args...>(args...);
-        }
-    }
+template <
+    const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+    typename CopyShape>
+__aicore__ inline void copy_gm_to_l1::data_copy_impl(
+    const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+    const CopyShape& copy_shape)
+{
+    using dst_pos = get_mem_location<DstTensor>;
+    using src_pos = get_mem_location<SrcTensor>;
+    static_assert(
+        Std::is_same_v<dst_pos, location::l1>, "For copy_gm_to_l1, the destination tensor must be located in L1.");
+    static_assert(Std::is_same_v<src_pos, location::gm>, "For copy_gm_to_l1, the source tensor must be located in GM.");
+    using dst_pattern = get_layout_pattern<typename DstTensor::layout_type>;
+    using src_pattern = get_layout_pattern<typename SrcTensor::layout_type>;
+    using copy_gm_to_l1_impl = typename copy_gm_to_l1_routing<current_arch_version, dst_pattern, src_pattern>::type;
+    auto resolved_dst_coord = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
+    auto resolved_src_coord = resolve_copy_coord(src.layout(), copy_shape, src_coord);
+    copy_gm_to_l1_impl::template run<trait, DstTensor, SrcTensor>(
+        dst, src, resolved_dst_coord, resolved_src_coord, copy_shape);
+}
 
-private:
-    template <const CopyGM2L1Trait& trait = DEFAULT_COPY_GM_TO_L1_TRAIT, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
-    {
-        using DstPos = GetMemLocation<T>;
-        using SrcPos = GetMemLocation<U>;
-        static_assert(Std::is_same_v<DstPos, Location::L1>, "CopyGM2L1 requires destination on L1");
-        static_assert(Std::is_same_v<SrcPos, Location::GM>, "CopyGM2L1 requires source on GM");
-        using DstLayout = typename T::layoutType;
-        using SrcLayout = typename U::layoutType;
-        using DstLayoutPtn = GetLayoutPattern<DstLayout>;
-        using SrcLayoutPtn = GetLayoutPattern<SrcLayout>;
-        using CopyGM2L1Impl = typename CopyGM2L1Routing<CURRENT_ARCH_VERSION, DstLayoutPtn, SrcLayoutPtn>::type;
-        CopyGM2L1Impl::template Run<trait, T, U>(dst, src);
-    }
-};
-
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_GM_TO_L1_COPY_H
 

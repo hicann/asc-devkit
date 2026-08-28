@@ -24,77 +24,137 @@
 
 #include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyGmToCbufScaleBNn2Nn {
+class copy_gm_to_l1_scaleb_nn2nn {
 public:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        DataCopyImpl<trait>(dst, src);
+        if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
+            TENSOR_API_DEBUG_CHECK(
+                debug_check_batch_count, get<0>(src.layout().shape()), "copy_gm_to_l1 scaleb_nn2nn path");
+        }
+        data_copy_impl<trait>(dst, src);
     }
 
-private:
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <
+        const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename CopyShape>
+    __aicore__ inline static void run(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const CopyShape& copy_shape)
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckGm2L1ScaleDataType<T, U>();
-    }
-
-    template <const CopyGM2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
-    {
-        CheckTemplate<trait, T, U>();
-        if constexpr (U::layoutType::depth == FIVE_DIM_DATA) {
-            auto srcLayout = src.Layout();
-            auto dstLayout = dst.Layout();
-            EmitCopy(
-                dst, src, RemoveBatchDim(srcLayout), RemoveBatchDim(dstLayout), Get<0>(srcLayout.Shape()),
-                Get<0>(srcLayout.Stride()), Get<0>(dstLayout.Stride()));
+        check_template<trait, DstTensor, SrcTensor>();
+        using type = typename SrcTensor::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        constexpr auto depth = SrcTensor::layout_type::depth;
+        uint32_t src_shape_col_b;
+        uint32_t src_shape_col_s;
+        uint32_t src_shape_row_b;
+        uint32_t src_stride_col_b;
+        uint32_t src_stride_col_s;
+        uint32_t dst_stride_col_b;
+        if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
+            src_shape_col_b = get<1, 1, 1>(src_shape);
+            src_shape_col_s = get<1, 1, 0>(src_shape);
+            src_shape_row_b = get<1, 0, 1>(src_shape);
+            src_stride_col_b = get<1, 1, 1>(src.layout().stride());
+            src_stride_col_s = get<1, 1, 0>(src.layout().stride());
+            dst_stride_col_b = get<1, 1, 1>(dst.layout().stride());
         } else {
-            EmitCopy(dst, src, src.Layout(), dst.Layout(), 1, 0, 0);
+            src_shape_col_b = get<1, 1>(src_shape);
+            src_shape_col_s = get<1, 0>(src_shape);
+            src_shape_row_b = get<0, 1>(src_shape);
+            src_stride_col_b = get<1, 1>(src.layout().stride());
+            src_stride_col_s = get<1, 0>(src.layout().stride());
+            dst_stride_col_b = get<1, 1>(dst.layout().stride());
+        }
+        uint32_t block_len = src_shape_row_b * sizeof(type) * src_shape_col_s * src_stride_col_s;
+        uint64_t src_stride = src_stride_col_b * sizeof(type);
+        uint32_t dst_stride = dst_stride_col_b * sizeof(type);
+        uint32_t batch_num = get_shape_batch_size(src_shape);
+        uint64_t src_batch_stride = 0;
+        if constexpr (depth == five_dim_data) {
+            src_batch_stride = get<0>(src.layout().stride());
+        }
+        for (uint32_t i = 0; i < batch_num; ++i) {
+            if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
+                auto dst_batch = make_single_batch_sub_tensor(dst, i);
+                copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
+                    dst_batch, src, dst_offset, src_offset + i * src_batch_stride, src_shape_col_b, block_len, 0, 0,
+                    src.engine().get_cache_mode(), src_stride, dst_stride);
+            } else {
+                copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
+                    dst, src, dst_offset, src_offset, src_shape_col_b, block_len, 0, 0, src.engine().get_cache_mode(),
+                    src_stride, dst_stride);
+            }
         }
     }
 
-    template <typename T, typename U, typename SrcLayout, typename DstLayout>
-    __aicore__ inline static void EmitCopy(
-        const T& dst, const U& src, const SrcLayout& srcLayout, const DstLayout& dstLayout, uint16_t batchNum,
-        uint64_t srcBatchStride, uint64_t dstBatchStride)
+private:
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static constexpr void check_template()
     {
-        using type = typename U::elementType;
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_gm_to_l1_scale_data_type<DstTensor, SrcTensor>();
+    }
 
-        auto srcShapeColB = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(srcLayout);
-        auto srcShapeColS = GetElement<AttrInfo::Shape, AttrInfo::Column, 0>(srcLayout);
-        auto srcShapeRowB = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(srcLayout);
-        auto srcStrideColB = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout);
-        auto srcStrideColS = GetElement<AttrInfo::Stride, AttrInfo::Column, 0>(srcLayout);
+    template <const gm_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
+    {
+        check_template<trait, DstTensor, SrcTensor>();
+        if constexpr (SrcTensor::layout_type::depth == five_dim_data) {
+            auto src_layout = src.layout();
+            auto dst_layout = dst.layout();
+            emit_copy(
+                dst, src, remove_batch_dim(src_layout), remove_batch_dim(dst_layout), get<0>(src_layout.shape()),
+                get<0>(src_layout.stride()), get<0>(dst_layout.stride()));
+        } else {
+            emit_copy(dst, src, src.layout(), dst.layout(), 1, 0, 0);
+        }
+    }
 
-        auto dstStrideColB = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout);
+    template <typename DstTensor, typename SrcTensor, typename SrcLayout, typename DstLayout>
+    __aicore__ inline static void emit_copy(
+        const DstTensor& dst, const SrcTensor& src, const SrcLayout& src_layout, const DstLayout& dst_layout,
+        uint16_t batch_num, uint64_t src_batch_stride, uint64_t dst_batch_stride)
+    {
+        using type = typename SrcTensor::element_type;
 
-        uint8_t cacheMode = src.Engine().GetCacheMode();
+        auto src_shape_col_b = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
+        auto src_shape_col_s = get_element<attr_info::shape, attr_info::column, 0>(src_layout);
+        auto src_shape_row_b = get_element<attr_info::shape, attr_info::row, 1>(src_layout);
+        auto src_stride_col_b = get_element<attr_info::stride, attr_info::column, 1>(src_layout);
+        auto src_stride_col_s = get_element<attr_info::stride, attr_info::column, 0>(src_layout);
 
-        // lprp mode, dst_stride % C0_SIZE should be 0
+        auto dst_stride_col_b = get_element<attr_info::stride, attr_info::column, 1>(dst_layout);
+
+        uint8_t cache_mode = src.engine().get_cache_mode();
+
+        // lprp mode, dst_stride % c0_size should be 0
         // multi rows copy, dst non-contiguous case
-        uint32_t blockCount = srcShapeColB;
-        uint32_t blockLen = srcShapeRowB * sizeof(type) * srcShapeColS * srcStrideColS;
-        uint64_t srcStride = srcStrideColB * sizeof(type);
-        uint32_t dstStride = dstStrideColB * sizeof(type);
+        uint32_t block_count = src_shape_col_b;
+        uint32_t block_len = src_shape_row_b * sizeof(type) * src_shape_col_s * src_stride_col_s;
+        uint64_t src_stride = src_stride_col_b * sizeof(type);
+        uint32_t dst_stride = dst_stride_col_b * sizeof(type);
 
-        uint8_t leftPaddingCnt = 0;
-        uint8_t rightPaddingCnt = 0;
-        for (uint16_t batchIndex = 0; batchIndex < batchNum; ++batchIndex) {
-            CopyGmToCbufAlignV2Base::CopyGmToCbufAlignV2(
-                (__cbuf__ half*)((dst.Data() + batchIndex * dstBatchStride).Get()),
-                (__gm__ half*)((src.Data() + batchIndex * srcBatchStride).Get()), blockCount, blockLen, leftPaddingCnt,
-                rightPaddingCnt, cacheMode, srcStride, dstStride);
+        uint8_t left_padding_cnt = 0;
+        uint8_t right_padding_cnt = 0;
+        for (uint16_t batch_index = 0; batch_index < batch_num; ++batch_index) {
+            copy_gm_to_l1_align_v2_instr::data_copy(
+                reinterpret_cast<__cbuf__ half*>((dst.data() + batch_index * dst_batch_stride).get()),
+                reinterpret_cast<__gm__ half*>((src.data() + batch_index * src_batch_stride).get()), block_count,
+                block_len, left_padding_cnt, right_padding_cnt, cache_mode, src_stride, dst_stride);
         }
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif
 

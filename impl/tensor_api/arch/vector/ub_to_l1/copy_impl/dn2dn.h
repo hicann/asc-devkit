@@ -24,51 +24,68 @@
 
 #include "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/data_copy.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyUbufToCbufDN : private CopyUbufToCbufCommon {
+class copy_ub_to_l1_dn : private copy_ub_to_l1_common {
 public:
-    template <const CopyUB2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        DataCopyImpl<trait, T, U>(dst, src);
+        data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
+    }
+
+    template <
+        const ub_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape)
+    {
+        check_template<trait, T, U>();
+        using src_type = typename U::element_type;
+        using dst_type = typename T::element_type;
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto rows = get_shape_rows(src_shape);
+        auto block_count = get_shape_columns(src_shape);
+        auto block_len = Std::ceil_division(rows, c0_element<src_type>);
+        auto src_stride = Std::ceil_division(get_column_stride(src.layout()) - rows, c0_element<src_type>);
+        auto dst_stride = Std::ceil_division(get_column_stride(dst.layout()) - rows, c0_element<dst_type>);
+        emit_copy(
+            dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_stride, dst_stride);
     }
 
 private:
-    template <const CopyUB2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckLayoutPattern<U, T>();
-        CheckDataType::CheckUB2L1DataType<T, U>();
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_ub_to_l1_data_type<DstTensor, SrcTensor>();
     }
 
-    template <const CopyUB2L1Trait& trait, typename T, typename U>
-    __aicore__ inline static void DataCopyImpl(const T& dst, const U& src)
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        using SrcType = typename U::elementType;
-        using DstType = typename T::elementType;
+        using src_type = typename SrcTensor::element_type;
+        using dst_type = typename DstTensor::element_type;
 
-        CheckTemplate<trait, T, U>();
+        check_template<trait, DstTensor, SrcTensor>();
 
-        auto dstLayout = dst.Layout();
-        auto srcLayout = src.Layout();
+        auto dst_layout = dst.layout();
+        auto src_layout = src.layout();
 
-        uint16_t blockCount = GetTotalColumnShape(srcLayout);
-        uint32_t blockLen = Std::ceil_division(GetTotalRowShape(srcLayout), C0_ELEMENT<SrcType>);
-        int64_t srcStride = Std::ceil_division(
-            GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) - GetTotalRowShape(srcLayout),
-            C0_ELEMENT<SrcType>);
-        int64_t dstStride = Std::ceil_division(
-            GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(dstLayout) - GetTotalRowShape(srcLayout),
-            C0_ELEMENT<DstType>);
+        uint16_t block_count = get_total_column_shape(src_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src column shape size", "copy_ub_to_l1 DN path");
+        uint32_t block_len = Std::ceil_division(get_total_row_shape(src_layout), c0_element<src_type>);
+        int64_t src_stride =
+            Std::ceil_division(get_column_stride(src_layout) - get_total_row_shape(src_layout), c0_element<src_type>);
+        int64_t dst_stride =
+            Std::ceil_division(get_column_stride(dst_layout) - get_total_row_shape(src_layout), c0_element<dst_type>);
 
-        EmitCopy(dst, src, blockCount, blockLen, srcStride, dstStride);
+        emit_copy(dst, src, block_count, block_len, src_stride, dst_stride);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_DN2DN_H
 

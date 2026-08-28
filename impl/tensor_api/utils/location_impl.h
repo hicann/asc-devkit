@@ -24,19 +24,19 @@
 
 #include "impl/tensor_api/utils/map_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
 #define TENSOR_API_QUAL_LOC_PAIRS(Q) \
-    Q(_gm__, GM)                     \
-    Q(_ubuf__, UB)                   \
-    Q(_cbuf__, L1)                   \
-    Q(_ca__, L0A)                    \
-    Q(_cb__, L0B)                    \
-    Q(_cc__, L0C)                    \
-    Q(_biasbuf__, BIAS)              \
-    Q(_fbuf__, FIXBUF)               \
-    Q(_ssbuf__, SSBUF)
+    Q(_gm__, gm)                     \
+    Q(_ubuf__, ub)                   \
+    Q(_cbuf__, l1)                   \
+    Q(_ca__, l0a)                    \
+    Q(_cb__, l0b)                    \
+    Q(_cc__, l0c)                    \
+    Q(_biasbuf__, bias)              \
+    Q(_fbuf__, fixbuf)               \
+    Q(_ssbuf__, ssbuf)
 
 #define TENSOR_API_USER_TYPES(M, ...) \
     M(int8_t, __VA_ARGS__)            \
@@ -66,7 +66,7 @@ namespace Te {
 
 #define TENSOR_API_GENERATE_ALL_TYPES(qual, loc) TENSOR_API_USER_TYPES(TENSOR_API_GEN_ONE_TYPE, qual)
 
-#define TENSOR_API_GEN_QUAL_TYPE_TUPLE(type, qual, loc) Std::tuple<TENSOR_API_TYPE_ALIAS(qual, type), Location::loc>,
+#define TENSOR_API_GEN_QUAL_TYPE_TUPLE(type, qual, loc) Std::tuple<TENSOR_API_TYPE_ALIAS(qual, type), location::loc>,
 
 #define TENSOR_API_PAIR_QUAL_LOC(qual, loc) TENSOR_API_USER_TYPES(TENSOR_API_GEN_QUAL_TYPE_TUPLE, qual, loc)
 
@@ -74,22 +74,23 @@ namespace Te {
 
 #define TENSOR_API_GEN_BASE_MAP(qual, loc) TENSOR_API_USER_TYPES(TENSOR_API_MAP_BASE, qual, loc)
 
-struct LocationTypeCombo {
+struct location_type_combo {
     TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_GENERATE_ALL_TYPES)
 
-    using locationType2Location = TupleMap<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_PAIR_QUAL_LOC) Std::tuple<void, void>>;
+    using location_type_to_location =
+        tuple_map<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_PAIR_QUAL_LOC) Std::tuple<void, void>>;
 
-    using locationType2Type = TupleMap<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_GEN_BASE_MAP) Std::tuple<void, void>>;
+    using location_type_to_type = tuple_map<TENSOR_API_QUAL_LOC_PAIRS(TENSOR_API_GEN_BASE_MAP) Std::tuple<void, void>>;
 };
 
-template <typename T>
-using GetAttributeLocation = typename LocationTypeCombo::locationType2Location::template Get<T>;
+template <typename Pointer>
+using get_attribute_location = typename location_type_combo::location_type_to_location::template get<Pointer>;
 
-template <typename T>
-using GetAttributeElementType = typename LocationTypeCombo::locationType2Type::template Get<T>;
+template <typename Pointer>
+using get_attribute_element_type = typename location_type_combo::location_type_to_type::template get<Pointer>;
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_UTILS_LOCATION_IMPL_H
 

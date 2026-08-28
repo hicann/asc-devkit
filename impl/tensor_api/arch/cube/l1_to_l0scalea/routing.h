@@ -25,30 +25,30 @@
 
 #include "impl/tensor_api/arch/cube/l1_to_l0scalea/copy_impl/scalea.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyL12L0ScaleAIgnore {
+class copy_l1_to_l0scalea_ignore {
 public:
-    template <const CopyL12L0ScaleATrait& trait, typename... Args>
-    __aicore__ inline void static Run(const Args&... args)
+    template <const l1_to_l0scalea_trait& trait, typename... Args>
+    __aicore__ inline void static run(const Args&... args)
     {
-        static_assert(Std::is_same_v<Args..., void>, "CopyL12L0ScaleAIgnore should not be called");
+        static_assert(Std::is_same_v<Args..., void>, "copy_l1_to_l0scalea_ignore should not be called");
     }
 };
 
-template <uint32_t Version, typename DstLayoutPattern, typename SrcLayoutPattern>
-struct CopyL12L0ScaleARouting {
-    using type = CopyL12L0ScaleAIgnore;
+template <uint32_t version, typename DstLayoutPattern, typename SrcLayoutPattern>
+struct copy_l1_to_l0scalea_routing {
+    using type = copy_l1_to_l0scalea_ignore;
 };
 
-template <uint32_t Version>
-struct CopyL12L0ScaleARouting<Version, ZZLayoutPtn, ZZLayoutPtn> {
-    using type = LoadDataL12L0MxScaleA3510;
+template <uint32_t version>
+struct copy_l1_to_l0scalea_routing<version, zz_layout_ptn, zz_layout_ptn> {
+    using type = load_data_l1_to_l0a_microscale;
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEA_ROUTING_H
 
 #if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

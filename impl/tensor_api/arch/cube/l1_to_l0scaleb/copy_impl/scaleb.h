@@ -19,78 +19,101 @@
  * \file scaleb.h
  * \brief
  */
-#ifndef IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_IMPL_SCALEB_H
-#define IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_IMPL_SCALEB_H
+#ifndef IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_IMPL_SCALE_B_H
+#define IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_IMPL_SCALE_B_H
 
 #include "impl/tensor_api/arch/cube/l1_to_l0scaleb/copy_impl/instruction.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class LoadDataL12L0MxScaleB3510 {
+class load_data_l1_to_l0b_microscale {
 public:
-    template <const CopyL12L0ScaleBTrait& trait, typename T, typename U>
-    __aicore__ inline static void Run(const T& dst, const U& src)
+    template <const l1_to_l0scaleb_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
     {
-        CheckTemplate<trait, T, U>();
-        if constexpr (T::layoutType::depth == FIVE_DIM_DATA) {
-            BatchLoadDataImpl<trait, T, U>(dst, src);
-        } else if constexpr (T::layoutType::depth == FOUR_DIM_DATA) {
-            LoadDataImpl<trait, T, U>(dst, src);
+        check_template<trait, DstTensor, SrcTensor>();
+        if constexpr (DstTensor::layout_type::depth == five_dim_data) {
+            batch_load_data_impl<trait, DstTensor, SrcTensor>(dst, src);
+        } else if constexpr (DstTensor::layout_type::depth == four_dim_data) {
+            load_data_impl<trait, DstTensor, SrcTensor>(dst, src);
         } else {
             static_assert(
-                T::layoutType::depth == FOUR_DIM_DATA || T::layoutType::depth == FIVE_DIM_DATA,
-                "LoadDataL12L0MxScaleB3510 only supports the plain fractal layout "
+                DstTensor::layout_type::depth == four_dim_data || DstTensor::layout_type::depth == five_dim_data,
+                "load_data_l1_to_l0b_microscale only supports the plain fractal layout "
                 "((row0,row1),(col0,col1)) or the batch layout (B,((row0,row1),(col0,col1))).");
         }
     }
 
+    template <
+        const l1_to_l0scaleb_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename CopyShape>
+    __aicore__ inline static void run(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const CopyShape& copy_shape)
+    {
+        check_template<trait, DstTensor, SrcTensor>();
+        auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
+        auto dst_offset = dst.layout()(dst_coord);
+        auto src_offset = src.layout()(src_coord);
+        auto m_step = get<1, 1>(src_shape);
+        auto k_step = get<0, 1>(src_shape);
+        auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src.layout()) >> 5;
+        auto dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst.layout()) >> 5;
+        uint64_t mx_dst_addr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>((dst.data() + dst_offset).get()));
+        load_l1_to_l0b_scale_instr::load_data_with_offset(
+            mx_dst_addr, src, _0{}, src_offset, 0, 0, m_step, k_step, src_stride, dst_stride);
+    }
+
 private:
-    template <const CopyL12L0ScaleBTrait& trait, typename T, typename U>
-    __aicore__ inline static constexpr void CheckTemplate()
+    template <const l1_to_l0scaleb_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static constexpr void check_template()
     {
-        CheckDataType::CheckL12L0ScaleBDataType<T, U>();
-        CheckLayoutPattern<T, U>();
+        check_data_type::check_l1_to_l0scaleb_data_type<DstTensor, SrcTensor>();
+        check_layout_pattern<DstTensor, SrcTensor>();
     }
 
-    template <typename DstT, typename SrcT, typename DstLayoutT, typename SrcLayoutT>
-    __aicore__ inline static void LoadDataFractal(
-        const DstT& dst, const SrcT& src, const DstLayoutT& dstLayout, const SrcLayoutT& srcLayout)
+    template <typename DstTensor, typename SrcTensor, typename DstLayout, typename SrcLayout>
+    __aicore__ inline static void load_data_fractal(
+        const DstTensor& dst, const SrcTensor& src, const DstLayout& dst_layout, const SrcLayout& src_layout)
     {
-        uint16_t mStartPosition = 0;
-        uint16_t kStartPosition = 0;
-        auto mStep = GetElement<AttrInfo::Shape, AttrInfo::Column, 1>(dstLayout);
-        auto kStep = GetElement<AttrInfo::Shape, AttrInfo::Row, 1>(dstLayout);
-        auto srcStride = GetElement<AttrInfo::Stride, AttrInfo::Column, 1>(srcLayout) >> 5;
-        auto dstStride = kStep;
-        uint64_t mxDstAddr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.Data().Get()));
-        LoadCbufToL0MxScaleB3510::LoadData(
-            mxDstAddr, src, mStartPosition, kStartPosition, mStep, kStep, srcStride, dstStride);
+        uint16_t m_start_position = 0;
+        uint16_t k_start_position = 0;
+        auto m_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
+        auto k_step = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0scaleb path");
+        TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0scaleb path");
+        auto src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) >> 5;
+        auto dst_stride = k_step;
+        uint64_t mx_dst_addr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.data().get()));
+        load_l1_to_l0b_scale_instr::load_data(
+            mx_dst_addr, src.data().get(), m_start_position, k_start_position, m_step, k_step, src_stride, dst_stride);
     }
 
-    template <const CopyL12L0ScaleBTrait& trait, typename T, typename U>
-    __aicore__ inline static void LoadDataImpl(const T& dst, const U& src)
+    template <const l1_to_l0scaleb_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void load_data_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        LoadDataFractal(dst, src, dst.Layout(), src.Layout());
+        load_data_fractal(dst, src, dst.layout(), src.layout());
     }
 
-    template <const CopyL12L0ScaleBTrait& trait, typename T, typename U>
-    __aicore__ inline static void BatchLoadDataImpl(const T& dst, const U& src)
+    template <const l1_to_l0scaleb_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void batch_load_data_impl(const DstTensor& dst, const SrcTensor& src)
     {
-        auto dstNoBatchLayout = RemoveBatchDim(dst.Layout());
-        auto srcNoBatchLayout = RemoveBatchDim(src.Layout());
-        auto batchNum = Get<0>(dst.Layout().Shape());
-        for (uint32_t i = 0; i < batchNum; ++i) {
-            LoadDataFractal(
-                dst(MakeCoord(i, MakeCoord(MakeCoord(0, 0), MakeCoord(0, 0)))),
-                src(MakeCoord(i, MakeCoord(MakeCoord(0, 0), MakeCoord(0, 0)))), dstNoBatchLayout, srcNoBatchLayout);
+        auto dst_no_batch_layout = remove_batch_dim(dst.layout());
+        auto src_no_batch_layout = remove_batch_dim(src.layout());
+        auto batch_num = get<0>(dst.layout().shape());
+        for (uint32_t i = 0; i < batch_num; ++i) {
+            load_data_fractal(
+                dst(make_coord(i, make_coord(make_coord(0, 0), make_coord(0, 0)))),
+                src(make_coord(i, make_coord(make_coord(0, 0), make_coord(0, 0)))), dst_no_batch_layout,
+                src_no_batch_layout);
         }
     }
 };
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
-#endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_IMPL_SCALEB_H
+#endif // IMPL_TENSOR_API_ARCH_CUBE_L1_TO_L0SCALEB_COPY_IMPL_SCALE_B_H
 
 #if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS

@@ -25,56 +25,56 @@
 #include "impl/tensor_api/utils/utils_impl.h"
 #include "impl/tensor_api/tensor/pointer_mem_impl.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-template <typename T = uint16_t>
-struct PtrTrait {
-    using type = T;
+template <typename DataType = uint16_t>
+struct ptr_trait {
+    using type = DataType;
 };
 
-template <typename T, typename = void>
-struct IsPtrTrait : Std::false_type {};
+template <typename Trait, typename = void>
+struct is_ptr_trait : Std::false_type {};
 
-template <typename T>
-struct IsPtrTrait<T, void_t<typename T::type>> : Std::true_type {};
+template <typename Trait>
+struct is_ptr_trait<Trait, void_t<typename Trait::type>> : Std::true_type {};
 
-template <typename T>
-using MemPtrTraitT = typename Std::conditional<IsPtrTrait<T>::value, T, PtrTrait<T>>::type;
+template <typename Trait>
+using mem_ptr_trait_t = typename Std::conditional<is_ptr_trait<Trait>::value, Trait, ptr_trait<Trait>>::type;
 
-template <typename Hardware, typename Arg>
-using EnableMakePtrByTrait =
-    Std::enable_if_t<IsHardwareV<Hardware> && !IsMemPtrIterator<Std::remove_cvref_t<Arg>>::value, int>;
+template <typename Hardware, typename PointerArg>
+using enable_make_ptr_by_trait =
+    Std::enable_if_t<is_hardware_v<Hardware> && !is_mem_ptr_iterator<Std::remove_cvref_t<PointerArg>>::value, int>;
 
-template <typename Hardware, typename Arg>
-using EnableMakeHardwarePtr =
-    Std::enable_if_t<IsHardwareV<Hardware> && IsMemPtrIterator<Std::remove_cvref_t<Arg>>::value, int>;
+template <typename Hardware, typename PointerArg>
+using enable_make_hardware_ptr =
+    Std::enable_if_t<is_hardware_v<Hardware> && is_mem_ptr_iterator<Std::remove_cvref_t<PointerArg>>::value, int>;
 
 template <typename Iterator>
-using EnableMakePtrByIter = Std::enable_if_t<IsMemPtrIterator<Std::remove_cvref_t<Iterator>>::value, int>;
+using enable_make_ptr_by_iter = Std::enable_if_t<is_mem_ptr_iterator<Std::remove_cvref_t<Iterator>>::value, int>;
 
-template <typename PtrPattern, typename DataType, typename Addr, EnableMakePtrByTrait<PtrPattern, Addr> = 0>
-__aicore__ inline auto MakeMemPtr(Addr arg)
+template <typename PtrPattern, typename DataType, typename Addr, enable_make_ptr_by_trait<PtrPattern, Addr> = 0>
+__aicore__ inline auto make_mem_ptr(Addr arg)
 {
-    using pointer = typename locationAttr<DataType>::locationMap::template Get<PtrPattern>;
-    return MakeLocationMemPtr<PtrPattern>(reinterpret_cast<pointer>(asc_get_phy_buf_addr(0) + arg));
+    using pointer = typename location_attr<DataType>::location_map::template get<PtrPattern>;
+    return make_location_mem_ptr<PtrPattern>(reinterpret_cast<pointer>(asc_get_phy_buf_addr(0) + arg));
 }
 
-template <typename PtrPattern, typename Iterator, EnableMakeHardwarePtr<PtrPattern, Iterator> = 0>
-__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+template <typename PtrPattern, typename Iterator, enable_make_hardware_ptr<PtrPattern, Iterator> = 0>
+__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
 {
-    return MakeLocationMemPtr<PtrPattern>(iterator);
+    return make_location_mem_ptr<PtrPattern>(iterator);
 }
 
-template <typename Iterator, EnableMakePtrByIter<Iterator> = 0>
-__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+template <typename Iterator, enable_make_ptr_by_iter<Iterator> = 0>
+__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
 {
-    using PtrPattern = GetAttributeLocation<typename IterEle<Iterator>::type*>;
-    return MakeLocationMemPtr<PtrPattern>(iterator);
+    using ptr_pattern = get_attribute_location<typename iter_ele<Iterator>::type*>;
+    return make_location_mem_ptr<ptr_pattern>(iterator);
 }
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_TENSOR_POINTER_PATTERN_H
 

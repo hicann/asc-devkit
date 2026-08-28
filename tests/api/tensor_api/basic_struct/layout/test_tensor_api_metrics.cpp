@@ -9,10 +9,10 @@
  */
 
 #include <gtest/gtest.h>
-#include "c_api/stub/cce_stub.h"
+#include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Layout_Metrics : public testing::Test {
+class tensor_api_layout_metrics : public testing::Test {
 protected:
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
@@ -20,28 +20,28 @@ protected:
     void TearDown() {}
 };
 
-TEST_F(Tensor_Api_Layout_Metrics, TetsLayoutMetrics)
+TEST_F(tensor_api_layout_metrics, test_layout_metrics)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto layout = MakeLayout(MakeShape(3, 4), MakeStride(7, 1));
+    auto layout = make_layout(make_shape(3, 4), make_stride(7, 1));
 
-    EXPECT_EQ(Rank(layout), 2);
-    EXPECT_EQ(Size(layout), 12);
-    EXPECT_EQ(Capacity(layout), 21);
-    EXPECT_EQ(Coshape(layout), 18);
-    EXPECT_EQ(Cosize(layout), 18);
+    EXPECT_EQ(rank(layout), 2);
+    EXPECT_EQ(size(layout), 12);
+    EXPECT_EQ(capacity(layout), 21);
+    EXPECT_EQ(coshape(layout), 18);
+    EXPECT_EQ(cosize(layout), 18);
 }
 
-TEST_F(Tensor_Api_Layout_Metrics, TestCrd2Idx)
+TEST_F(tensor_api_layout_metrics, test_crd_to_idx)
 {
-    using namespace AscendC::Te;
+    using namespace asc::te;
 
-    auto shape = MakeShape(MakeShape(2, 3), MakeShape(4, 5));
-    auto stride = MakeStride(MakeStride(1, 8), MakeStride(2, 24));
-    auto layout = MakeLayout(shape, stride);
-    auto coord = MakeCoord(MakeCoord(1, 2), MakeCoord(3, 4));
+    auto shape = make_shape(make_shape(2, 3), make_shape(4, 5));
+    auto stride = make_stride(make_stride(1, 8), make_stride(2, 24));
+    auto layout = make_layout(shape, stride);
+    auto coord = make_coord(make_coord(1, 2), make_coord(3, 4));
 
-    EXPECT_EQ(Crd2Idx(coord, shape, stride), layout(coord));
+    EXPECT_EQ(crd2idx(coord, shape, stride), layout(coord));
     EXPECT_EQ(layout(coord), 119);
 }

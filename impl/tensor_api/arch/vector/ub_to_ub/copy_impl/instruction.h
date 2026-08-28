@@ -22,50 +22,29 @@
 #ifndef IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_UB_COPY_IMPL_INSTRUCTION_H
 #define IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_UB_COPY_IMPL_INSTRUCTION_H
 
-#include "impl/tensor_api/tensor/pointer_pattern.h"
-#include "impl/tensor_api/tensor/tensor_impl.h"
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyUbufToUbufInstr {
+class copy_ub_to_ub_instr {
 public:
-    template <typename T, typename U, typename... Params>
-    __aicore__ inline static void DataCopy(const T& dst, const U& src, const Params&... params)
+    template <typename DataType>
+    __aicore__ inline static void data_copy(
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const uint16_t block_count, const uint32_t block_len,
+        const int64_t src_stride, const int64_t dst_stride)
     {
-        using srcType = typename U::elementType;
-        if constexpr (sizeof(srcType) == 1) {
-            CopyUbufToUbuf((__ubuf__ uint8_t*)(dst.Data().Get()), (__ubuf__ uint8_t*)(src.Data().Get()), params...);
-        } else if constexpr (sizeof(srcType) == 2) {
-            CopyUbufToUbuf((__ubuf__ uint16_t*)(dst.Data().Get()), (__ubuf__ uint16_t*)(src.Data().Get()), params...);
-        } else if constexpr (sizeof(srcType) == 4) {
-            CopyUbufToUbuf((__ubuf__ uint32_t*)(dst.Data().Get()), (__ubuf__ uint32_t*)(src.Data().Get()), params...);
-        } else if constexpr (sizeof(srcType) == 8) {
-            CopyUbufToUbuf((__ubuf__ uint32_t*)(dst.Data().Get()), (__ubuf__ uint32_t*)(src.Data().Get()), params...);
-        } else {
-            static_assert(
-                sizeof(srcType) == 1 || sizeof(srcType) == 2 || sizeof(srcType) == 4 || sizeof(srcType) == 8,
-                "Unsupported data type size for CopyUbufToUbuf");
-        }
-    }
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "block_count", "copy_ub_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_block_len, block_len, debug_block_len_max, "copy_ub_to_ub instruction");
 
-private:
-    template <typename T>
-    __aicore__ inline static void CopyUbufToUbuf(
-        __ubuf__ T* dst, __ubuf__ T* src, const uint16_t blockCount, const uint32_t blockLen, const int64_t srcStride,
-        const int64_t dstStride)
-    {
-        if ASCEND_IS_AIC {
-            return;
-        }
-
-        asc_copy_ub2ub(dst, src, blockCount, blockLen, srcStride, dstStride);
+        asc_copy_ub2ub(
+            reinterpret_cast<__ubuf__ void*>(dst), reinterpret_cast<__ubuf__ void*>(src), block_count, block_len,
+            src_stride, dst_stride);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_UB_COPY_IMPL_INSTRUCTION_H
 

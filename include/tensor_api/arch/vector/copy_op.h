@@ -20,16 +20,86 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 #define INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 
-namespace AscendC {
-namespace Te {
+#include "tensor_api/arch/vector/copy_trait.h"
 
-struct CopyGM2UB;
-struct CopyUB2L1;
-struct CopyUB2GM;
-struct CopyUB2UB;
+namespace asc {
+namespace te {
 
-} // namespace Te
-} // namespace AscendC
+struct gm_to_ub_params {
+    __aicore__ constexpr gm_to_ub_params() {}
+
+    __aicore__ constexpr gm_to_ub_params(
+        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_constant_pad = true)
+        : left_padding_count(left_padding_count),
+          right_padding_count(right_padding_count),
+          enable_constant_pad(enable_constant_pad)
+    {}
+
+    uint8_t left_padding_count = 0;
+    uint8_t right_padding_count = 0;
+    bool enable_constant_pad = true;
+};
+
+struct copy_gm_to_ub {
+    template <typename Trait, const Trait& trait, typename... Args>
+    __aicore__ inline static void copy(const Args&... args);
+};
+
+struct copy_ub_to_l1 {
+    template <typename Trait, const Trait& trait, typename... Args>
+    __aicore__ inline static void copy(const Args&... args);
+
+private:
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
+
+    template <
+        const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const ShapeType& copy_shape);
+};
+
+struct copy_ub_to_gm {
+    template <typename Trait, const Trait& trait, typename... Args>
+    __aicore__ inline static void copy(const Args&... args);
+
+private:
+    template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
+
+    template <
+        const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const ShapeType& copy_shape);
+};
+
+struct copy_ub_to_ub {
+    template <typename Trait, const Trait& trait, typename... Args>
+    __aicore__ inline static void copy(const Args&... args);
+
+private:
+    template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
+
+    template <
+        const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const ShapeType& copy_shape);
+};
+
+} // namespace te
+} // namespace asc
+
+#include "impl/tensor_api/arch/vector/gm_to_ub/copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_l1/copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_gm/copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_ub/copy.h"
 
 #endif // INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 

@@ -11,18 +11,29 @@
 #ifndef VERIFY_SINGLE_HEADER
 #include "include/tensor_api/tensor.h"
 #else
+#include "include/tensor_api/tensor/tensor.h"
 #include "include/tensor_api/algorithm/copy.h"
 #include "include/tensor_api/algorithm/mmad.h"
 #endif
 
 static void test_host_tensor_api_algorithm_copy()
 {
+#ifndef VERIFY_SINGLE_HEADER
     using AscendC::Te::Copy;
     using AscendC::Te::MakeCopy;
+#else
+    using asc::te::copy;
+    using asc::te::make_copy;
+#endif
 }
 
 static void test_host_tensor_api_algorithm_mmad()
 {
+#ifndef VERIFY_SINGLE_HEADER
     using AscendC::Te::MakeMmad;
     using AscendC::Te::Mmad;
+#else
+    using asc::te::make_mmad;
+    using asc::te::mmad;
+#endif
 }

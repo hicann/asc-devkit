@@ -24,38 +24,44 @@
 
 #include "impl/tensor_api/arch/utils/arch_utils.h"
 
-namespace AscendC {
-namespace Te {
+namespace asc {
+namespace te {
 
-class CopyMatrixCcToUbInstr {
+class copy_l0c_to_ub_instr {
 public:
-    template <QuantMode_t quantPre, typename T, typename U, typename... Params>
-    __aicore__ inline static void DataCopy(const T& dst, const U& src, const Params&... params)
+    template <
+        QuantMode_t quant_pre, typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset,
+        typename... Params>
+    __aicore__ inline static void data_copy_with_offset(
+        const DstTensor& dst, const SrcTensor& src, const DstOffset& dst_offset, const SrcOffset& src_offset,
+        const Params&... params)
     {
-        CopyMatrixCcToUb<quantPre>(dst.Data().Get(), src.Data().Get(), params...);
+        auto dst_data = dst.data() + dst_offset;
+        auto src_data = src.data() + src_offset;
+        data_copy<quant_pre>(dst_data.get(), src_data.get(), params...);
     }
 
-private:
-    template <QuantMode_t quantPre, typename T, typename U>
-    __aicore__ inline static void CopyMatrixCcToUb(
-        __ubuf__ T* dst, __cc__ U* src, uint32_t nSize, uint32_t mSize, uint32_t srcStride, uint32_t dstStride,
-        uint8_t dualDstCtl, bool reluEn, uint8_t unitFlag, bool subBlockId, bool isChannelSplit, bool nz2ndEn,
-        bool nz2dnEn)
+    template <QuantMode_t quant_pre, typename DstType, typename SrcType>
+    __aicore__ inline static void data_copy(
+        __ubuf__ DstType* dst, __cc__ SrcType* src, uint32_t n_size, uint32_t m_size, uint32_t src_stride,
+        uint32_t dst_stride, uint8_t dual_dst_ctl, bool relu_en, uint8_t unit_flag, uint8_t sub_block_id,
+        bool is_channel_split, bool nz2nd_en, bool nz2dn_en)
     {
-        if ASCEND_IS_AIV {
-            return;
-        }
-
+        TENSOR_API_DEBUG_CHECK(debug_check_block_count, n_size, "n_size", "copy_l0c_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_n, n_size, is_channel_split, nz2nd_en, nz2dn_en, "copy_l0c_to_ub");
+        TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_m, m_size, nz2nd_en, "copy_l0c_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_stride, src_stride, dst_stride, "copy_l0c_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, unit_flag, "copy_l0c_to_ub instruction");
         asc_copy_l0c2ub(
-            dst, src, static_cast<uint16_t>(nSize), static_cast<uint16_t>(mSize), dstStride,
-            static_cast<uint16_t>(srcStride), dualDstCtl, subBlockId, 0, unitFlag, static_cast<uint64_t>(quantPre),
-            static_cast<uint8_t>(reluEn), isChannelSplit, nz2ndEn, static_cast<uint64_t>(QuantMode_post::NoConv), 0,
-            false, 0, false, false, false, nz2dnEn);
+            dst, src, static_cast<uint16_t>(n_size), static_cast<uint16_t>(m_size), dst_stride,
+            static_cast<uint16_t>(src_stride), dual_dst_ctl, sub_block_id, 0, unit_flag,
+            static_cast<uint64_t>(quant_pre), static_cast<uint8_t>(relu_en), is_channel_split, nz2nd_en,
+            static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, nz2dn_en);
     }
 };
 
-} // namespace Te
-} // namespace AscendC
+} // namespace te
+} // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_UB_COPY_IMPL_INSTRUCTION_H
 

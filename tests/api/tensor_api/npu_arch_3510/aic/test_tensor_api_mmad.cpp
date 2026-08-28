@@ -9,47 +9,50 @@
  */
 
 #include <gtest/gtest.h>
-#include "c_api/stub/cce_stub.h"
+#include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
-class Tensor_Api_Mmad : public testing::Test {
+class tensor_api_mmad : public testing::Test {
 protected:
     void SetUp() { AscendC::SetGCoreType(1); }
     void TearDown() { AscendC::SetGCoreType(0); }
 };
 
-#define MMAD_INTERFACE_TEST(DST_TYPE, SRC_TYPE, M, N, K)                                                             \
-    TEST_F(Tensor_Api_Mmad, MmadInterface_##DST_TYPE##_##SRC_TYPE##_##M##_##N##_##K)                                 \
-    {                                                                                                                \
-        using namespace AscendC::Te;                                                                                 \
-        uint8_t a2Buf[256 * 256 * sizeof(SRC_TYPE)] = {0};                                                           \
-        uint8_t b2Buf[256 * 256 * sizeof(SRC_TYPE)] = {0};                                                           \
-        uint8_t c2Buf[256 * 256 * sizeof(DST_TYPE)] = {0};                                                           \
-                                                                                                                     \
-        auto a2Addr = reinterpret_cast<__ca__ SRC_TYPE*>(a2Buf);                                                     \
-        auto l0aTensor = MakeTensor(                                                                                 \
-            MakeMemPtr<Location::L0A>(a2Addr), MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<SRC_TYPE>>(M, K));    \
-                                                                                                                     \
-        auto b2Addr = reinterpret_cast<__cb__ SRC_TYPE*>(b2Buf);                                                     \
-        auto l0bTensor = MakeTensor(                                                                                 \
-            MakeMemPtr<Location::L0B>(b2Addr), MakeFrameLayout<ZNLayoutPtn, LayoutTraitDefault<SRC_TYPE>>(K, N));    \
-                                                                                                                     \
-        auto c2Addr = reinterpret_cast<__cc__ DST_TYPE*>(c2Buf);                                                     \
-        auto l0cTensor =                                                                                             \
-            MakeTensor(MakeMemPtr<Location::L0C>(c2Addr), MakeFrameLayout<NZLayoutPtn, LayoutTraitDefault<>>(M, N)); \
-                                                                                                                     \
-        MmadParams para;                                                                                             \
-        para.m = M;                                                                                                  \
-        para.n = N;                                                                                                  \
-        para.k = K;                                                                                                  \
-        para.unitFlag = 0;                                                                                           \
-        para.cmatrixInitVal = true;                                                                                  \
-                                                                                                                     \
-        auto mmadAtom = MakeMmad(MmadOperation{}, MmadTraitDefault{}).with(para);                                    \
-        Mmad(mmadAtom, l0cTensor, l0aTensor, l0bTensor);                                                             \
-        Mmad(mmadAtom, l0cTensor, l0aTensor, l0bTensor);                                                             \
-        Mmad(mmadAtom, l0cTensor, l0aTensor, l0bTensor);                                                             \
-        EXPECT_EQ(c2Addr[0], static_cast<DST_TYPE>(0));                                                              \
+#define MMAD_INTERFACE_TEST(dst_type, src_type, m_value, n_value, k_size)                              \
+    TEST_F(tensor_api_mmad, mmad_interface_##dst_type##_##src_type##_##m_value##_##n_value##_##k_size) \
+    {                                                                                                  \
+        using namespace asc::te;                                                                       \
+        uint8_t a2_buf[256 * 256 * sizeof(src_type)] = {0};                                            \
+        uint8_t b2_buf[256 * 256 * sizeof(src_type)] = {0};                                            \
+        uint8_t c2_buf[256 * 256 * sizeof(dst_type)] = {0};                                            \
+                                                                                                       \
+        auto a2_addr = reinterpret_cast<__ca__ src_type*>(a2_buf);                                     \
+        auto l0a_tensor = make_tensor(                                                                 \
+            make_mem_ptr<location::l0a>(a2_addr),                                                      \
+            make_frame_layout<nz_layout_ptn, layout_trait_default<src_type>>(m_value, k_size));        \
+                                                                                                       \
+        auto b2_addr = reinterpret_cast<__cb__ src_type*>(b2_buf);                                     \
+        auto l0b_tensor = make_tensor(                                                                 \
+            make_mem_ptr<location::l0b>(b2_addr),                                                      \
+            make_frame_layout<zn_layout_ptn, layout_trait_default<src_type>>(k_size, n_value));        \
+                                                                                                       \
+        auto c2_addr = reinterpret_cast<__cc__ dst_type*>(c2_buf);                                     \
+        auto l0c_tensor = make_tensor(                                                                 \
+            make_mem_ptr<location::l0c>(c2_addr),                                                      \
+            make_frame_layout<nz_layout_ptn, layout_trait_default<>>(m_value, n_value));               \
+                                                                                                       \
+        mmad_params para;                                                                              \
+        para.m = m_value;                                                                              \
+        para.n = n_value;                                                                              \
+        para.k = k_size;                                                                               \
+        para.unit_flag = unit_flag_mode::disable;                                                      \
+        para.init_with_zero = true;                                                                    \
+                                                                                                       \
+        auto mmad_atom = make_mmad(mmad_operation{}, mmad_trait_default{}).with(para);                 \
+        mmad(mmad_atom, l0c_tensor, l0a_tensor, l0b_tensor);                                           \
+        mmad(mmad_atom, l0c_tensor, l0a_tensor, l0b_tensor);                                           \
+        mmad(mmad_atom, l0c_tensor, l0a_tensor, l0b_tensor);                                           \
+        EXPECT_EQ(c2_addr[0], static_cast<dst_type>(0));                                               \
     }
 
 MMAD_INTERFACE_TEST(float, half, 16, 16, 16);

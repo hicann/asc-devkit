@@ -18,88 +18,62 @@
 #include "utils/base/sys_macros.h"
 #include "utils/base/sys_constants.h"
 #include "utils/common_types.h"
+#include "utils/std/type_traits.h"
 
 namespace AscendC {
-namespace Te {
-
-enum class CacheMode : uint8_t {
-    CACHE_MODE_NORMAL = 0,
-    CACHE_MODE_DISABLE = 4,
-    CACHE_MODE_LAST,
-    CACHE_MODE_PERSISTENT
-};
-
-enum class MmadType : uint8_t { NORMAL = 0, MX = 1 };
-
-struct MmadTrait {
-    __aicore__ constexpr MmadTrait(){};
-
-    __aicore__ constexpr MmadTrait(
-        int32_t fmOffsetIn, bool kDirectionAlignIn, bool cmatrixSourceIn, bool disableGemvIn, MmadType mmadTypeIn)
-    {
-        fmOffset = fmOffsetIn;
-        kDirectionAlign = kDirectionAlignIn;
-        cmatrixSource = cmatrixSourceIn;
-        disableGemv = disableGemvIn;
-        mmadType = mmadTypeIn;
-    };
-
-    int32_t fmOffset = 0;
-    bool kDirectionAlign = false;
-    bool cmatrixSource = false;
-    bool disableGemv = true;
-    MmadType mmadType = MmadType::NORMAL;
-};
-
-struct MmadParams {
-    __aicore__ constexpr MmadParams(){};
-
-    __aicore__ constexpr MmadParams(uint16_t mIn, uint16_t nIn, uint16_t kIn, uint8_t unitFlagIn, bool cmatrixInitValIn)
-        : m(mIn), n(nIn), k(kIn), unitFlag(unitFlagIn), cmatrixInitVal(cmatrixInitValIn){};
-
-    uint16_t m = 0;
-    uint16_t n = 0;
-    uint16_t k = 0;
-    uint8_t unitFlag = 0;
-    bool cmatrixInitVal = false;
-};
-
-enum class RoundMode : uint8_t { DEFAULT = 0, HYBRID };
-
-enum DualDstMode : uint8_t { DUAL_DST_DISABLE = 0, DUAL_DST_SPLIT_M, DUAL_DST_SPLIT_N };
-
-struct FixpipeParams {
-    __aicore__ constexpr FixpipeParams(){};
-
-    __aicore__ constexpr FixpipeParams(uint8_t unitFlagIn, bool subBlockIdIn = false)
-        : unitFlag(unitFlagIn), subBlockId(subBlockIdIn){};
-
-    uint8_t unitFlag = 0;
-
-    bool subBlockId = false;
-};
-
-template <typename T>
-struct Img2ColParams {
-    uint16_t mExtension = 0;
-    uint16_t kExtension = 0;
-    uint16_t mStartPt = 0;
-    uint16_t kStartPt = 0;
-    uint8_t padList[4] = {0, 0, 0, 0};
-    uint8_t strideW = 1;
-    uint8_t strideH = 1;
-    uint8_t filterW = 1;
-    uint8_t filterH = 1;
-    uint8_t dilationFilterW = 1;
-    uint8_t dilationFilterH = 1;
-    bool filterSizeW = false;
-    bool filterSizeH = false;
-    bool transpose = false;
-    bool fMatrixCtrl = false;
-    T padValue = 0;
-};
-
-} // namespace Te
+namespace Std {}
 } // namespace AscendC
+
+namespace asc {
+namespace te {
+
+namespace Std = AscendC::Std;
+
+enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
+
+using _0 = Std::Int<0>;
+using _1 = Std::Int<1>;
+using _2 = Std::Int<2>;
+using _3 = Std::Int<3>;
+using _4 = Std::Int<4>;
+using _5 = Std::Int<5>;
+using _6 = Std::Int<6>;
+using _7 = Std::Int<7>;
+using _8 = Std::Int<8>;
+using _9 = Std::Int<9>;
+using _10 = Std::Int<10>;
+using _16 = Std::Int<16>;
+using _24 = Std::Int<24>;
+using _32 = Std::Int<32>;
+using _64 = Std::Int<64>;
+using _128 = Std::Int<128>;
+using _256 = Std::Int<256>;
+using _512 = Std::Int<512>;
+using _1024 = Std::Int<1024>;
+using _2048 = Std::Int<2048>;
+using _4096 = Std::Int<4096>;
+
+struct keep_mark {
+    __aicore__ inline constexpr keep_mark() = default;
+};
+inline constexpr keep_mark _{};
+
+namespace location {
+struct invalid {};
+struct gm {};
+struct ub {};
+struct l1 {};
+struct l0a {};
+struct l0b {};
+struct l0scalea {};
+struct l0scaleb {};
+struct l0c {};
+struct bias {};
+struct fixbuf {};
+struct ssbuf {};
+} // namespace location
+
+} // namespace te
+} // namespace asc
 
 #endif // INCLUDE_TENSOR_API_UTILS_UTILS_H
