@@ -33,6 +33,11 @@
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_duplicate(vector_<dtype> src,
+                                                    vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_duplicate(vector_<dtype>& dst,
                                           vector_<dtype> src,
                                           vector_bool mask)
@@ -40,11 +45,15 @@ __simd_callee__ inline void asc_duplicate(vector_<dtype>& dst,
 
 ### dtype支持数据类型
 
-`dtype`取值为：`int8_t`、`uint8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+`dtype`取值为：`int8_t`、`uint8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
-**典型示例：**
+### 函数原型典型示例
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int8_t asc_duplicate(vector_int8_t src,
+                                                   vector_bool mask)
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_duplicate(vector_int8_t& dst,
                                           vector_int8_t src,
                                           vector_bool mask)
@@ -56,7 +65,7 @@ __simd_callee__ inline void asc_duplicate(vector_int8_t& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器），保存广播结果。数据类型需要与src保持一致。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器），保存广播结果。数据类型需要与src保持一致。仅无返回值类型接口包含该参数。 |
 | src | 输入 | 源操作数（矢量数据寄存器），其最低位元素作为待广播的数据。数据类型需要与dst保持一致。 |
 | mask | 输入 | 源操作数元素操作的有效指示（掩码寄存器）。mask筛选的元素在dst中填充为src的最低位元素，未筛选的元素在dst中置零。 |
 
@@ -64,7 +73,7 @@ __simd_callee__ inline void asc_duplicate(vector_int8_t& dst,
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存广播结果的矢量数据寄存器，数据类型与src保持一致。
 
 ## 约束说明
 
@@ -94,60 +103,31 @@ bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 #include "acl/acl.h"
 
 namespace {
-template <typename T>
-void print_data(const char* label, const std::vector<T>& values, uint32_t offset = 0)
-{
-    std::cout << label << ":";
-    const size_t remaining = values.size() - offset;
-    const size_t count = remaining < 8 ? remaining : 8;
-    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[offset + i];
-    if (remaining > count) std::cout << " ...";
-    std::cout << std::endl;
-}
-
 constexpr uint32_t ELEMENT_COUNT = 64;
 constexpr uint32_t ACTIVE_COUNT = 4;
-constexpr uint32_t RESULT_COUNT = 3;
-constexpr uint32_t LOWEST_ZERO_OFFSET = 0;
-constexpr uint32_t HIGHEST_ZERO_OFFSET = ELEMENT_COUNT;
-constexpr uint32_t HIGHEST_MERGE_OFFSET = ELEMENT_COUNT * 2;
-constexpr float INITIAL_VALUE = -7.0f;
 
-__simd_vf__ inline void duplicate_modes(__ubuf__ float* dst, __ubuf__ float* src)
+__simd_vf__ inline void duplicate(__ubuf__ float* dst, __ubuf__ float* src)
 {
     vector_float src_reg;
-    vector_float lowest_zero_reg;
-    vector_float highest_zero_reg;
-    vector_float highest_merge_reg;
     uint32_t active_count = ACTIVE_COUNT;
     uint32_t full_count = ELEMENT_COUNT;
     vector_bool active_mask = asc_update_mask_b32(active_count);
     vector_bool full_mask = asc_update_mask_b32(full_count);
 
     asc_loadalign(src_reg, src);
-    asc_loadalign(lowest_zero_reg, dst + LOWEST_ZERO_OFFSET);
-    asc_loadalign(highest_zero_reg, dst + HIGHEST_ZERO_OFFSET);
-    asc_loadalign(highest_merge_reg, dst + HIGHEST_MERGE_OFFSET);
-
-    asc_duplicate(lowest_zero_reg, src_reg, active_mask);
-    vdup(highest_zero_reg, src_reg, active_mask, POS_HIGHEST, MODE_ZEROING);
-    vdup(highest_merge_reg, src_reg, active_mask, POS_HIGHEST, MODE_MERGING);
-
-    asc_storealign(dst + LOWEST_ZERO_OFFSET, lowest_zero_reg, full_mask);
-    asc_storealign(dst + HIGHEST_ZERO_OFFSET, highest_zero_reg, full_mask);
-    asc_storealign(dst + HIGHEST_MERGE_OFFSET, highest_merge_reg, full_mask);
+    vector_float dst_reg = asc_duplicate(src_reg, active_mask);
+    asc_storealign(dst, dst_reg, full_mask);
 }
 
 __global__ __vector__ void asc_duplicate_kernel(__gm__ float* dst, __gm__ float* src)
 {
     asc_init();
-    __ubuf__ float dst_local[ELEMENT_COUNT * RESULT_COUNT];
+    __ubuf__ float dst_local[ELEMENT_COUNT];
     __ubuf__ float src_local[ELEMENT_COUNT];
-    asc_copy_gm2ub_align(dst_local, dst, sizeof(dst_local));
     asc_copy_gm2ub_align(src_local, src, sizeof(src_local));
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
-    duplicate_modes(dst_local, src_local);
+    duplicate(dst_local, src_local);
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_copy_ub2gm_align(dst, dst_local, sizeof(dst_local));
@@ -158,15 +138,10 @@ __global__ __vector__ void asc_duplicate_kernel(__gm__ float* dst, __gm__ float*
 int main()
 {
     std::vector<float> src(ELEMENT_COUNT);
-    std::vector<float> output(ELEMENT_COUNT * RESULT_COUNT, INITIAL_VALUE);
-    std::vector<float> golden(output.size());
+    std::vector<float> output(ELEMENT_COUNT);
+    std::vector<float> golden(ELEMENT_COUNT, 0.0f);
     for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) src[i] = static_cast<float>(i + 1);
-    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) {
-        const bool active = i < ACTIVE_COUNT;
-        golden[LOWEST_ZERO_OFFSET + i] = active ? src.front() : 0.0f;
-        golden[HIGHEST_ZERO_OFFSET + i] = active ? src.back() : 0.0f;
-        golden[HIGHEST_MERGE_OFFSET + i] = active ? src.back() : INITIAL_VALUE;
-    }
+    for (uint32_t i = 0; i < ACTIVE_COUNT; ++i) golden[i] = src.front();
 
     aclInit(nullptr);
     aclrtSetDevice(0);
@@ -175,20 +150,11 @@ int main()
     aclrtMalloc(reinterpret_cast<void**>(&dst_device), output.size() * sizeof(float), ACL_MEM_MALLOC_HUGE_FIRST);
     aclrtMemcpy(src_device, src.size() * sizeof(float), src.data(), src.size() * sizeof(float),
         ACL_MEMCPY_HOST_TO_DEVICE);
-    aclrtMemcpy(dst_device, output.size() * sizeof(float), output.data(), output.size() * sizeof(float),
-        ACL_MEMCPY_HOST_TO_DEVICE);
     asc_duplicate_kernel<<<1, 0>>>(dst_device, src_device);
     aclrtSynchronizeDevice();
     aclrtMemcpy(output.data(), output.size() * sizeof(float), dst_device, output.size() * sizeof(float),
         ACL_MEMCPY_DEVICE_TO_HOST);
 
-    std::cout << "Input lowest/highest: " << src.front() << ' ' << src.back() << std::endl;
-    print_data("Lowest + zero", output, LOWEST_ZERO_OFFSET);
-    print_data("Highest + zero", output, HIGHEST_ZERO_OFFSET);
-    print_data("Highest + merge", output, HIGHEST_MERGE_OFFSET);
-    print_data("Golden lowest + zero", golden, LOWEST_ZERO_OFFSET);
-    print_data("Golden highest + zero", golden, HIGHEST_ZERO_OFFSET);
-    print_data("Golden highest + merge", golden, HIGHEST_MERGE_OFFSET);
     const bool passed = output == golden;
     std::cout << (passed ? "[Success] asc_duplicate passed."
                         : "[Failed] asc_duplicate failed.") << std::endl;

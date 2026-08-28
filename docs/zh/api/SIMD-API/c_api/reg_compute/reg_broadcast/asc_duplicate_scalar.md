@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将标量值广播到目的操作数中。支持以下两种重载：
+将标量值广播到目的操作数中。支持带输出参数和带返回值两种接口形式，每种形式均支持以下两类重载：
 
 - 带mask：将标量值写入dst中被mask筛选的位置，未被mask筛选的位置置零。
 - 不带mask：将标量值写入dst的全部元素位置。
@@ -38,6 +38,10 @@
 ### 带mask（占位符形式）
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_duplicate_scalar(<dtype> value,
+                                                           vector_bool mask)
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
                                                  <dtype> value,
                                                  vector_bool mask)
@@ -50,6 +54,10 @@ __simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
 #### 函数原型典型示例
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int8_t asc_duplicate_scalar(int8_t value,
+                                                          vector_bool mask)
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
                                                  int8_t value,
                                                  vector_bool mask)
@@ -58,6 +66,10 @@ __simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
 ### 不带mask（占位符形式）
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_duplicate_scalar(<dtype> value)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
                                                  <dtype> value)
 ```
@@ -70,6 +82,10 @@ __simd_callee__ inline void asc_duplicate_scalar(vector_<dtype>& dst,
 #### 函数原型典型示例
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int8_t asc_duplicate_scalar(int8_t value)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
                                                  int8_t value)
 ```
@@ -80,21 +96,22 @@ __simd_callee__ inline void asc_duplicate_scalar(vector_int8_t& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器），保存广播结果。dst的元素数据类型用于确定函数重载。 |
-| value | 输入 | 源操作数（标量），作为待广播的数据。value可以使用与dst元素数据类型相同的标量类型，也可以使用能够隐式转换为该标量类型的实参。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器），保存广播结果。仅带输出参数的接口包含该参数，dst的元素数据类型用于确定函数重载。 |
+| value | 输入 | 源操作数（标量），作为待广播的数据。对于带返回值接口，value的数据类型用于确定函数重载和返回类型，建议传入类型明确的变量或使用显式类型转换。 |
 | mask | 输入 | 源操作数元素操作的有效指示（掩码寄存器），仅带mask的重载包含该参数。mask筛选的元素在dst中填充为value，未筛选的元素在dst中置零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+- 带返回值的接口返回广播结果，返回类型为与`dtype`对应的`vector_<dtype>`。
 
 ## 约束说明
 
 - 本接口为Reg矢量计算接口，只能在使用`__simd_vf__`标记的VF函数内调用，不支持在`__aicore__`函数中直接调用，仅在AIV上生效，在AIC上调用将直接返回。
 - 同一寄存器的数据依赖由硬件保序，无需额外插入同步指令。本接口与前后Reg数据搬运接口之间，如果不同寄存器访问同一UB地址且存在写后读或写后写依赖，需要调用[asc_mem_bar](../reg_sync/asc_mem_bar.md)进行同步。
 - 使用mask前，需要通过掩码设置或搬入接口完成初始化；未初始化的掩码寄存器内容不确定。
+- 调用带返回值接口时，应使用类型明确的变量或显式类型转换，例如`static_cast<uint8_t>(1)`，以匹配正确的函数原型。
 
 <!-- npu="950" id8 -->
 ## 调用示例
@@ -131,13 +148,11 @@ void print_data(const char* label, const std::vector<T>& values, uint32_t offset
 constexpr uint32_t ELEMENT_COUNT = 64;
 constexpr float FILL_VALUE = 3.5f;
 
-__simd_vf__ inline void duplicate_scalar_modes(__ubuf__ float* dst)
+__simd_vf__ inline void duplicate_scalar(__ubuf__ float* dst)
 {
-    vector_float dst_reg;
     uint32_t count = ELEMENT_COUNT;
     vector_bool mask = asc_update_mask_b32(count);
-    asc_loadalign(dst_reg, dst);
-    asc_duplicate_scalar(dst_reg, FILL_VALUE, mask);
+    vector_float dst_reg = asc_duplicate_scalar(FILL_VALUE, mask);
     asc_storealign(dst, dst_reg, mask);
 }
 
@@ -145,7 +160,7 @@ __global__ __vector__ void asc_duplicate_scalar_kernel(__gm__ float* dst)
 {
     asc_init();
     __ubuf__ float dst_local[ELEMENT_COUNT];
-    duplicate_scalar_modes(dst_local);
+    duplicate_scalar(dst_local);
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_copy_ub2gm_align(dst, dst_local, sizeof(dst_local));
@@ -155,10 +170,8 @@ __global__ __vector__ void asc_duplicate_scalar_kernel(__gm__ float* dst)
 
 int main()
 {
-    std::vector<float> src(ELEMENT_COUNT);
     std::vector<float> output(ELEMENT_COUNT, -1.0f);
     std::vector<float> golden(ELEMENT_COUNT, FILL_VALUE);
-    for (uint32_t i = 0; i < ELEMENT_COUNT; ++i) src[i] = static_cast<float>(i) * 0.25f + 1.0f;
 
     aclInit(nullptr);
     aclrtSetDevice(0);

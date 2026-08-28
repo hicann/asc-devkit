@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <type_traits>
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "include/c_api/asc_simd.h"
 
@@ -54,6 +55,37 @@ TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, bf
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, uint32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, int32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_INSTR(Vdups, asc_duplicate_scalar, vdup, float);
+
+#define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(c_api_name, cce_name, data_type)    \
+    TEST(TestVectorComputeVdupsReturn, data_type)                                             \
+    {                                                                                         \
+        data_type value;                                                                      \
+        vector_bool mask;                                                                     \
+                                                                                              \
+        static_assert(std::is_same_v<decltype(c_api_name(value, mask)), vector_##data_type>); \
+        MOCKER_CPP(cce_name, void(vector_##data_type&, data_type, vector_bool, Literal))      \
+            .times(1)                                                                         \
+            .will(invoke(cce_name##_##data_type##_Stub));                                     \
+                                                                                              \
+        vector_##data_type dst = c_api_name(value, mask);                                     \
+        (void)dst;                                                                            \
+        GlobalMockObject::verify();                                                           \
+    }
+
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, uint8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, int8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, fp8_e4m3fn_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, fp8_e8m0_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, uint16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, int16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, half);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, bfloat16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, uint32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, int32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR(asc_duplicate_scalar, vdup, float);
+
+#undef TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_RETURN_INSTR
 
 #define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_MERGE_INSTR(class_name, c_api_name, cce_name, data_type)   \
                                                                                                         \
@@ -135,3 +167,33 @@ TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_INSTR(Vbr, asc_duplicate_scalar, vbr, b
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_INSTR(Vbr, asc_duplicate_scalar, vbr, fp8_e4m3fn_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_INSTR(Vbr, asc_duplicate_scalar, vbr, fp8_e5m2_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_INSTR(Vbr, asc_duplicate_scalar, vbr, fp8_e8m0_t);
+
+#define TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(c_api_name, cce_name, data_type) \
+    TEST(TestVectorComputeVbrReturn, data_type)                                                \
+    {                                                                                          \
+        data_type value;                                                                       \
+                                                                                               \
+        static_assert(std::is_same_v<decltype(c_api_name(value)), vector_##data_type>);        \
+        MOCKER_CPP(cce_name, void(vector_##data_type&, data_type))                             \
+            .times(1)                                                                          \
+            .will(invoke(cce_name##_##data_type##_Stub));                                      \
+                                                                                               \
+        vector_##data_type dst = c_api_name(value);                                            \
+        (void)dst;                                                                             \
+        GlobalMockObject::verify();                                                            \
+    }
+
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, uint8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, int8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, uint16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, int16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, uint32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, int32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, half);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, float);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, bfloat16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, fp8_e4m3fn_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR(asc_duplicate_scalar, vbr, fp8_e8m0_t);
+
+#undef TEST_VECTOR_COMPUTE_DUPLICATE_SCALAR_VBR_RETURN_INSTR

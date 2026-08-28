@@ -96,7 +96,7 @@ constexpr uint16_t n_burst = 1;
 constexpr uint16_t len_burst = 1;
 //相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔为64个字节
 constexpr uint16_t src_gap = 1;
-//相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔为32个字节
+//相邻迭代间，目的操作数前一个分形与后一个分形起始地址的间隔为32个字节
 constexpr uint16_t dst_gap = 0;
 __cbuf__ half src[256];
 __cc__ half dst[256];

@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <type_traits>
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "include/c_api/asc_simd.h"
 
@@ -51,6 +52,37 @@ TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_bfloat16_t
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_uint32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_int32_t);
 TEST_VECTOR_COMPUTE_DUPLICATE_INSTR(Vdup, asc_duplicate, vdup, vector_float);
+
+#define TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(c_api_name, cce_name, data_type)      \
+    TEST(TestVectorComputeVdupReturn, data_type)                                         \
+    {                                                                                    \
+        data_type src0;                                                                  \
+        vector_bool mask;                                                                \
+                                                                                         \
+        static_assert(std::is_same_v<decltype(c_api_name(src0, mask)), data_type>);      \
+        MOCKER_CPP(cce_name, void(data_type&, data_type, vector_bool, int32_t, Literal)) \
+            .times(1)                                                                    \
+            .will(invoke(cce_name##_##data_type##_Stub));                                \
+                                                                                         \
+        data_type dst = c_api_name(src0, mask);                                          \
+        (void)dst;                                                                       \
+        GlobalMockObject::verify();                                                      \
+    }
+
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_uint8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_int8_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_fp8_e4m3fn_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_fp8_e5m2_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_fp8_e8m0_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_uint16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_int16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_half);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_uint32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_int32_t);
+TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR(asc_duplicate, vdup, vector_float);
+
+#undef TEST_VECTOR_COMPUTE_DUPLICATE_RETURN_INSTR
 
 #define TEST_VECTOR_COMPUTE_DUPLICATE_HIGHEST_INSTR(data_type)                                                        \
     namespace {                                                                                                       \
