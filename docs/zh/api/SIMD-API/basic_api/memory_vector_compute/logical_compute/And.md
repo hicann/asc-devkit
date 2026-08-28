@@ -123,11 +123,11 @@ $dst_i = src0_i \& src1_i$
 
 - 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md)。
-- 使用整个tensor参与计算接口符号重载时，运算量为目的LocalTensor的总长度。
+- 使用**整个tensor参与计算接口**符号重载时，运算量为目的LocalTensor的总长度。
 <!-- npu="A3,910b,310b,310p,910" id18 -->
 - 特别地，针对uint32_t/int32_t类型的And操作，支持通过ReinterpretCast的方式来实现：使用Local Tensor的ReinterpretCast转换成uint16_t/int16_t后再调用And进行计算。直接传入uint32_t/int32_t类型的数据，在不同版本型号上表现会有所差异，考虑到算子在各个版本中的兼容性，不建议使用这种直接传入的方式：
     <!-- npu="A3,910b" id19 -->
-    - 整个tensor参与计算和tensor前n个数据计算接口支持传入uint32_t/int32_t类型，但是tensor前n个数据计算的count需要设置为期望计算个数的2倍才能精度符合预期；tensor高维切分计算接口直接编译报错提示不支持该数据类型。上述说明适用于：
+    - **整个tensor参与计算接口**和**tensor前n个数据计算接口**支持传入`uint32_t`、`int32_t`类型。对于**tensor前n个数据计算接口**，`count`实际按照b16数据宽度计算，与传入的数据类型无关。若需计算N个b32数据，`count`需设置为2N。**tensor高维切分计算接口**会直接编译报错，提示不支持该数据类型。上述说明适用于：
       <!-- npu="A3" id20 -->
       - Atlas A3 训练系列产品/Atlas A3 推理系列产品。
       <!-- end id20 -->
