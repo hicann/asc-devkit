@@ -79,33 +79,21 @@ struct base_tensor {
     template <typename Coord, typename Info>
     __aicore__ inline constexpr decltype(auto) slice(const Coord& coord, const Info& info) const;
 
-    [[deprecated("Tensor() is deprecated. Please use tensor() instead.")]]
     __aicore__ inline constexpr decltype(auto) Tensor() const;
-    [[deprecated("Engine() is deprecated. Please use engine() instead.")]]
     __aicore__ inline constexpr decltype(auto) Engine() const;
-    [[deprecated("Engine() is deprecated. Please use engine() instead.")]]
     __aicore__ inline constexpr decltype(auto) Engine();
-    [[deprecated("Layout() is deprecated. Please use layout() instead.")]]
     __aicore__ inline constexpr decltype(auto) Layout() const;
-    [[deprecated("Data() is deprecated. Please use data() instead.")]]
     __aicore__ inline constexpr decltype(auto) Data() const;
-    [[deprecated("Data() is deprecated. Please use data() instead.")]]
     __aicore__ inline constexpr decltype(auto) Data();
-    [[deprecated("Shape() is deprecated. Please use shape() instead.")]]
     __aicore__ inline constexpr decltype(auto) Shape() const;
-    [[deprecated("Stride() is deprecated. Please use stride() instead.")]]
     __aicore__ inline constexpr decltype(auto) Stride() const;
-    [[deprecated("Size() is deprecated. Please use size() instead.")]]
     __aicore__ inline constexpr auto Size() const;
-    [[deprecated("Capacity() is deprecated. Please use capacity() instead.")]]
     __aicore__ inline constexpr auto Capacity() const;
 
     template <typename Coord, typename Info>
-    [[deprecated("Slice() is deprecated. Please use slice() instead.")]]
     __aicore__ inline constexpr decltype(auto) Slice(const Coord& coord, const Info& info);
 
     template <typename Coord, typename Info>
-    [[deprecated("Slice() is deprecated. Please use slice() instead.")]]
     __aicore__ inline constexpr decltype(auto) Slice(const Coord& coord, const Info& info) const;
 
 private:
@@ -136,7 +124,6 @@ struct global_tensor : public base_tensor<EngineT, LayoutT> {
     __aicore__ inline global_tensor();
     __aicore__ inline constexpr cache_mode get_cache_mode() const;
     __aicore__ inline constexpr void set_l2_cache_hint(cache_mode mode);
-    [[deprecated("SetL2CacheHint() is deprecated. Please use set_l2_cache_hint() instead.")]]
     __aicore__ inline constexpr void SetL2CacheHint(AscendC::Te::CacheMode mode);
 };
 
