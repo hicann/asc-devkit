@@ -49,7 +49,9 @@ protected:
     bool isDmaRead_{false};
 
 private:
+    HcclResult ValidateKernelRunParams(const TemplateResource& templateResource) const;
     bool CanReadLastStepToOutput() const;
+    bool CanSkipOwnSliceCopy() const;
     bool IsLastStepReadSlice(u32 algRank) const;
     HcclResult PrepareDataSplitForMultiChannel(const TemplateResource& templateResource);
     HcclResult LocalDataCopy(const std::vector<ThreadHandle>& threads, const u32& channelIdx);
@@ -69,7 +71,7 @@ private:
         u64 scratchBase;
     };
     SliceCalcInfo CalcSliceInfo(const AicpuNHRStepInfo& stepInfo, u32 rpt, u32 i, u32 channelIdx) const;
-    enum class StepBuildMode { NORMAL, LAST_STEP_WRITE_THEN_READ };
+    enum class StepBuildMode { NORMAL, LAST_STEP_READ_TO_OUTPUT };
     HcclResult BuildStepSlices(
         const ChannelInfo& channelSend, const ChannelInfo& channelRecv, const AicpuNHRStepInfo& stepInfo,
         const u32& channelIdx, StepBuildMode mode, std::vector<DataSlice>& txSrcSlices,
@@ -77,13 +79,13 @@ private:
     HcclResult RunStepNHR(
         const std::vector<ThreadHandle>& threads, const std::map<u32, std::vector<ChannelInfo>>& channels,
         const u32& channelIdx, u32 step, u32 nSteps, bool& postLocalCopyLaunched);
-    HcclResult BuildLastStepWriteThenReadSlices(
+    HcclResult BuildLastStepReadToOutputSlices(
         const ChannelInfo& channelSend, const ChannelInfo& channelRecv, const AicpuNHRStepInfo& stepInfo,
         const u32& channelIdx, std::vector<DataSlice>& txSrcSlices, std::vector<DataSlice>& txDstSlices,
         std::vector<DataSlice>& rxSrcSlices, std::vector<DataSlice>& rxDstSlices)
     {
         return BuildStepSlices(
-            channelSend, channelRecv, stepInfo, channelIdx, StepBuildMode::LAST_STEP_WRITE_THEN_READ, txSrcSlices,
+            channelSend, channelRecv, stepInfo, channelIdx, StepBuildMode::LAST_STEP_READ_TO_OUTPUT, txSrcSlices,
             txDstSlices, rxSrcSlices, rxDstSlices);
     }
     HcclResult BuildNormalStepSlices(
@@ -95,12 +97,14 @@ private:
             channelSend, channelRecv, stepInfo, channelIdx, StepBuildMode::NORMAL, txSrcSlices, txDstSlices,
             rxSrcSlices, rxDstSlices);
     }
-    HcclResult RunLastStepWriteThenRead(
+    HcclResult RunLastStepReadToOutput(
         const std::vector<ThreadHandle>& threads, const ChannelInfo& channelSend, const ChannelInfo& channelRecv,
         const AicpuNHRStepInfo& stepInfo, const u32& channelIdx, u32 step, bool& postLocalCopyLaunched);
     bool readLastStepToOutput_{false};
+    bool skipOwnSliceCopy_{false};
     std::vector<u32> lastStepReadSliceIdxs_;
     u64 dataTypeSize_{0};
+    u32 maxChannelsPerRank_{1};
     std::vector<u64> dataSplit_;
     std::vector<u64> dataOffset_;
     std::vector<u64> dataSplitTail_;

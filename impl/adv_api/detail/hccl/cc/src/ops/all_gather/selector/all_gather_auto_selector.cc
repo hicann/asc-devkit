@@ -137,12 +137,12 @@ SelectorStatus AllGatherAutoSelector::SelectAicpuAlgo(
         }
         // Level1Nhr 已在 CalcTopoShape 中设置（GCD==1 时为 true）
         if (topoInfo->Level1Nhr) {
-            selectAlgName = "InsAllGatherNHR";
+            selectAlgName = "AicpuAllGatherSoleNHR";
             HCCL_INFO("[AllGatherAutoSelector] Level1Nhr=true, select [%s]", selectAlgName.c_str());
         } else if (topoInfo->Level0Nhr) {
-            selectAlgName = "InsAllGatherNHR"; // 预留给NHRNHR
+            selectAlgName = "AicpuAllGatherSoleNHR"; // 预留给NHRNHR
         } else if (topoInfo->netLayerDetails.localNetInsSizeOfLayer[0] == 1) {
-            selectAlgName = "InsAllGatherNHR";
+            selectAlgName = "AicpuAllGatherSoleNHR";
         } else if (topoInfo->level0Topo == Level0Shape::MESH_1D) {
             selectAlgName = "InsAllGatherParallelMesh1DNHR";
         } else {
@@ -182,10 +182,10 @@ SelectorStatus AllGatherAutoSelector::SelectAicpuAlgo(
             } else if (isClosNumMultipleOfMeshNum && dataSize > SMALL_COUNT_512KB) {
                 selectAlgName = "InsAllGatherParallelMesh1DNHRUBX";
             } else {
-                selectAlgName = "InsAllGatherNHR";
+                selectAlgName = "AicpuAllGatherSoleNHR";
             }
         } else if (topoInfo->level0Topo == Level0Shape::CLOS) {
-            selectAlgName = "InsAllGatherNHR";
+            selectAlgName = "AicpuAllGatherSoleNHR";
         } else {
             HCCL_ERROR("[AllGatherAutoSelector] topo not match");
             return SelectorStatus::NOT_MATCH;

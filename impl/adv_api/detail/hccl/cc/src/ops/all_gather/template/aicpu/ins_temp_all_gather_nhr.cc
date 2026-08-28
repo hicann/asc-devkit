@@ -9,9 +9,14 @@
  */
 #include "ins_temp_all_gather_nhr.h"
 #include "alg_data_trans_wrapper.h"
+#include "channel.h"
 #include "template_utils.h"
 
 namespace mc2_ops_hccl {
+namespace {
+constexpr u32 POST_COPY_NOTIFY_IDX = 1;
+} // namespace
+
 InsTempAllGatherNHR::InsTempAllGatherNHR(
     const OpParam& param, const u32 rankId, const std::vector<std::vector<u32>>& subCommRanks)
     : InsAlgTemplateBase(param, rankId, subCommRanks)
@@ -23,11 +28,39 @@ HcclResult InsTempAllGatherNHR::CalcRes(
     HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
     AlgResourceRequest& resourceRequest)
 {
+    CHK_PTR_NULL(topoInfo);
     std::vector<HcclChannelDesc> level1Channels;
-    CHK_RET(CalcChannelRequestNhr(comm, param, topoInfo, subCommRanks_, level1Channels));
+    std::vector<HcclChannelDesc> myChannelDescs;
+    const u64 perDataSize = DATATYPE_SIZE_TABLE[param.DataDes.dataType];
+    const u64 dataSize = param.DataDes.count * perDataSize;
+    if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS && !topoInfo->level0PcieMix) {
+        const bool isIsolation =
+            !(IsAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH) || dataSize <= SMALL_SIZE_512KB);
+        CHK_RET(CalcChannelRequestNhrMultiJetty(comm, param, topoInfo, subCommRanks_, myChannelDescs, isIsolation));
+        for (const auto& channel : myChannelDescs) {
+            if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
+                level1Channels.push_back(channel);
+            }
+        }
+    } else {
+        CHK_RET(CalcChannelRequestNhr(comm, param, topoInfo, subCommRanks_, myChannelDescs));
+        level1Channels = myChannelDescs;
+    }
+    CHK_PRT_RET(
+        level1Channels.empty(), HCCL_ERROR("[InsTempAllGatherNHR][CalcRes] level1Channels is empty."),
+        HcclResult::HCCL_E_INTERNAL);
     resourceRequest.channels.push_back(level1Channels);
-    channelsPerRank_ = CalcChannelsPerRank(level1Channels);
-    HCCL_DEBUG(" %s channelsPerRank_ is %u ", __func__, channelsPerRank_);
+    channelsPerRank_ = CalcChannelsPerRankMin(level1Channels);
+    maxChannelsPerRank_ = CalcChannelsPerRank(level1Channels);
+    if (channelsPerRank_ > MAX_JETTY_NUM) {
+        HCCL_WARNING(
+            "[InsTempAllGatherNHR][CalcRes] channelsPerRank_ %u is greater than MAX_JETTY_NUM %u", channelsPerRank_,
+            MAX_JETTY_NUM);
+    } else {
+        HCCL_DEBUG(
+            "[InsTempAllGatherNHR][CalcRes] channelsPerRank_ is %u, maxChannelsPerRank_ is %u", channelsPerRank_,
+            maxChannelsPerRank_);
+    }
     CHK_RET(GetRes(resourceRequest));
     return HCCL_SUCCESS;
 }
@@ -40,7 +73,7 @@ HcclResult InsTempAllGatherNHR::GetRes(AlgResourceRequest& resourceRequest) cons
     resourceRequest.notifyNumOnMainThread = threadNum - 1;
     return HCCL_SUCCESS;
 }
-u64 InsTempAllGatherNHR::GetThreadNum() const { return channelsPerRank_ * 2; }
+u64 InsTempAllGatherNHR::GetThreadNum() const { return maxChannelsPerRank_ * 2; }
 
 u64 InsTempAllGatherNHR::CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType)
 {
@@ -77,6 +110,35 @@ HcclResult InsTempAllGatherNHR::PrepareDataSplitForMultiChannel(const TemplateRe
     return HCCL_SUCCESS;
 }
 
+HcclResult InsTempAllGatherNHR::ValidateKernelRunParams(const TemplateResource& templateResource) const
+{
+    CHK_PRT_RET(
+        dataType_ >= HcclDataType::HCCL_DATA_TYPE_RESERVED || DATATYPE_SIZE_TABLE[dataType_] == 0,
+        HCCL_ERROR("[InsTempAllGatherNHR] Rank [%u], invalid dataType [%u].", myRank_, static_cast<u32>(dataType_)),
+        HcclResult::HCCL_E_PARA);
+    const u32 checkDataTypeSize = DATATYPE_SIZE_TABLE[dataType_];
+    CHK_PRT_RET(
+        tempAlgParams_.sliceSize % checkDataTypeSize != 0 || tempAlgParams_.tailSize % checkDataTypeSize != 0,
+        HCCL_ERROR(
+            "[InsTempAllGatherNHR] Rank [%u], sliceSize [%llu] or tailSize [%llu] is not aligned to "
+            "dataTypeSize [%u].",
+            myRank_, tempAlgParams_.sliceSize, tempAlgParams_.tailSize, checkDataTypeSize),
+        HcclResult::HCCL_E_PARA);
+    CHK_PRT_RET(
+        threadNum_ > templateResource.threads.size(),
+        HCCL_ERROR(
+            "[InsTempAllGatherNHR] Rank [%u], requiredQueNum [%u] is greater than templateQueNum [%zu].", myRank_,
+            threadNum_, templateResource.threads.size()),
+        HcclResult::HCCL_E_INTERNAL);
+    CHK_PRT_RET(
+        channelsPerRank_ == 0 || channelsPerRank_ > maxChannelsPerRank_,
+        HCCL_ERROR(
+            "[InsTempAllGatherNHR] Rank [%u], channelsPerRank_[%u] is invalid, maxChannelsPerRank_[%u].", myRank_,
+            channelsPerRank_, maxChannelsPerRank_),
+        HcclResult::HCCL_E_INTERNAL);
+    return HCCL_SUCCESS;
+}
+
 HcclResult InsTempAllGatherNHR::KernelRun(
     const OpParam& param, const TemplateDataParams& tempAlgParams, const TemplateResource& templateResource)
 {
@@ -85,23 +147,20 @@ HcclResult InsTempAllGatherNHR::KernelRun(
         HCCL_INFO("[InsTempAllGatherNHR] Rank [%d], get slicesize zero.", myRank_);
         return HCCL_SUCCESS;
     }
-    threadNum_ = GetThreadNum();
-    if (templateResource.threads.size() < threadNum_) {
-        HCCL_ERROR(
-            "[InsTempAllGatherNHR] Rank [%d], thread num[%u] is not as expected[%u].", myRank_,
-            templateResource.threads.size(), threadNum_);
-        return HCCL_E_INTERNAL;
-    }
     tempAlgParams_ = tempAlgParams;
     dataType_ = param.DataDes.dataType;
     enableRemoteMemAccess_ = tempAlgParams.enableRemoteMemAccess;
+    threadNum_ = GetThreadNum();
+    CHK_RET(ValidateKernelRunParams(templateResource));
 
-    bool isPcieProtocal = IsPcieProtocol(templateResource.channels);
-    isDmaRead_ = isPcieProtocal;
+    isDmaRead_ = IsPcieProtocol(templateResource.channels);
     HCCL_DEBUG("[InsTempAllGatherNHR] Use Dma Read[%d]", isDmaRead_);
     CHK_RET(PrepareDataSplitForMultiChannel(templateResource));
     readLastStepToOutput_ = CanReadLastStepToOutput();
-    HCCL_DEBUG("[InsTempAllGatherNHR] Read last step to output[%d]", readLastStepToOutput_);
+    skipOwnSliceCopy_ = readLastStepToOutput_ && CanSkipOwnSliceCopy();
+    HCCL_DEBUG(
+        "[InsTempAllGatherNHR] Read last step to output[%d], skip own slice copy[%d]", readLastStepToOutput_,
+        skipOwnSliceCopy_);
 
     if (threadNum_ > 1) {
         std::vector<ThreadHandle> subThreads(
@@ -134,10 +193,15 @@ HcclResult InsTempAllGatherNHR::KernelRun(
 
 bool InsTempAllGatherNHR::CanReadLastStepToOutput() const
 {
-    return !isDmaRead_ && !enableRemoteMemAccess_ &&
-           tempAlgParams_.buffInfo.inputPtr == tempAlgParams_.buffInfo.outputPtr &&
-           tempAlgParams_.buffInfo.inBuffType == BufferType::OUTPUT &&
+    return !isDmaRead_ && !enableRemoteMemAccess_ && tempAlgParams_.buffInfo.outBuffType == BufferType::OUTPUT &&
+           tempAlgParams_.buffInfo.outputPtr != tempAlgParams_.buffInfo.hcclBuff.addr;
+}
+
+bool InsTempAllGatherNHR::CanSkipOwnSliceCopy() const
+{
+    return tempAlgParams_.buffInfo.inBuffType == BufferType::OUTPUT &&
            tempAlgParams_.buffInfo.outBuffType == BufferType::OUTPUT &&
+           tempAlgParams_.buffInfo.inputPtr == tempAlgParams_.buffInfo.outputPtr &&
            tempAlgParams_.buffInfo.inBuffBaseOff == tempAlgParams_.buffInfo.outBuffBaseOff &&
            tempAlgParams_.inputSliceStride == tempAlgParams_.outputSliceStride &&
            tempAlgParams_.inputRepeatStride == tempAlgParams_.outputRepeatStride;
@@ -191,25 +255,16 @@ HcclResult InsTempAllGatherNHR::BuildStepSlices(
         for (u32 i = 0; i < stepInfo.nSlices; ++i) {
             SliceCalcInfo info = CalcSliceInfo(stepInfo, rpt, i, channelIdx);
 
-            if (mode == StepBuildMode::LAST_STEP_WRITE_THEN_READ) {
-                if (i == 0) {
-                    txSrcSlices.emplace_back(
-                        tempAlgParams_.buffInfo.hcclBuff.addr, info.txScratchOff, info.txSliceSize,
-                        info.txSliceSize / dataTypeSize);
-                    txDstSlices.emplace_back(
-                        sendCclBuffAddr, info.txScratchOff, info.txSliceSize, info.txSliceSize / dataTypeSize);
-                } else {
-                    const u64 rxOutputOff = tempAlgParams_.buffInfo.outBuffBaseOff +
-                                            rpt * tempAlgParams_.outputRepeatStride +
-                                            tempAlgParams_.outputSliceStride * info.rxIdx + info.rxPartialOffset;
-                    rxSrcSlices.emplace_back(
-                        recvCclBuffAddr, info.rxScratchOff, info.rxSliceSize, info.rxSliceSize / dataTypeSize);
-                    rxDstSlices.emplace_back(
-                        tempAlgParams_.buffInfo.outputPtr, rxOutputOff, info.rxSliceSize,
-                        info.rxSliceSize / dataTypeSize);
-                    if (rpt == 0) {
-                        lastStepReadSliceIdxs_.push_back(info.rxIdx);
-                    }
+            if (mode == StepBuildMode::LAST_STEP_READ_TO_OUTPUT) {
+                const u64 rxOutputOff = tempAlgParams_.buffInfo.outBuffBaseOff +
+                                        rpt * tempAlgParams_.outputRepeatStride +
+                                        tempAlgParams_.outputSliceStride * info.rxIdx + info.rxPartialOffset;
+                rxSrcSlices.emplace_back(
+                    recvCclBuffAddr, info.rxScratchOff, info.rxSliceSize, info.rxSliceSize / dataTypeSize);
+                rxDstSlices.emplace_back(
+                    tempAlgParams_.buffInfo.outputPtr, rxOutputOff, info.rxSliceSize, info.rxSliceSize / dataTypeSize);
+                if (rpt == 0) {
+                    lastStepReadSliceIdxs_.push_back(info.rxIdx);
                 }
             } else {
                 txSrcSlices.emplace_back(
@@ -228,7 +283,7 @@ HcclResult InsTempAllGatherNHR::BuildStepSlices(
     return HCCL_SUCCESS;
 }
 
-HcclResult InsTempAllGatherNHR::RunLastStepWriteThenRead(
+HcclResult InsTempAllGatherNHR::RunLastStepReadToOutput(
     const std::vector<ThreadHandle>& threads, const ChannelInfo& channelSend, const ChannelInfo& channelRecv,
     const AicpuNHRStepInfo& stepInfo, const u32& channelIdx, u32 step, bool& postLocalCopyLaunched)
 {
@@ -236,39 +291,34 @@ HcclResult InsTempAllGatherNHR::RunLastStepWriteThenRead(
     std::vector<DataSlice> txDstSlices;
     std::vector<DataSlice> rxSrcSlices;
     std::vector<DataSlice> rxDstSlices;
-    CHK_RET(BuildLastStepWriteThenReadSlices(
+    CHK_RET(BuildLastStepReadToOutputSlices(
         channelSend, channelRecv, stepInfo, channelIdx, txSrcSlices, txDstSlices, rxSrcSlices, rxDstSlices));
 
-    TxRxChannels sendRecvChannels(channelSend, channelRecv);
-    const std::vector<DataSlice> emptySlices;
-    TxRxSlicesList writeSlicesList({txSrcSlices, txDstSlices}, {emptySlices, emptySlices});
-    SendRecvInfo writeInfo(sendRecvChannels, writeSlicesList);
-    CHK_PRT_RET(
-        SendRecvBatchWrite(writeInfo, threads[channelIdx]),
-        HCCL_ERROR("[InsTempAllGatherNHR] last step write failed (step=%u)", step), HCCL_E_INTERNAL);
-
     if (rxSrcSlices.empty()) {
-        return HCCL_SUCCESS;
+        return HcclResult::HCCL_SUCCESS;
     }
 
     const u32 postCopyThreadIdx = channelsPerRank_ + channelIdx;
     CHK_PRT_RET(
         postCopyThreadIdx >= threads.size(),
         HCCL_ERROR(
-            "[InsTempAllGatherNHR] post copy thread index[%u] is out of range[%u].", postCopyThreadIdx, threads.size()),
-        HCCL_E_INTERNAL);
-    constexpr u32 POST_COPY_NOTIFY_IDX = 1;
+            "[InsTempAllGatherNHR] post copy thread index[%u] is out of range[%zu].", postCopyThreadIdx,
+            threads.size()),
+        HcclResult::HCCL_E_INTERNAL);
+
     CHK_RET(PreSyncInterThreads(threads[channelIdx], {threads[postCopyThreadIdx]}, {POST_COPY_NOTIFY_IDX}));
     CHK_RET(PostLocalCopy(threads[postCopyThreadIdx], channelIdx));
     postLocalCopyLaunched = true;
 
+    const std::vector<DataSlice> emptySlices;
+    TxRxChannels sendRecvChannels(channelSend, channelRecv);
     TxRxSlicesList readSlicesList({emptySlices, emptySlices}, {rxSrcSlices, rxDstSlices});
-    SendRecvInfo readInfo(sendRecvChannels, readSlicesList);
+    SendRecvInfo readInfo(sendRecvChannels, readSlicesList, dataType_);
     CHK_PRT_RET(
         SendRecvBatchRead(readInfo, threads[channelIdx]),
-        HCCL_ERROR("[InsTempAllGatherNHR] last step read failed (step=%u)", step), HCCL_E_INTERNAL);
+        HCCL_ERROR("[InsTempAllGatherNHR] last step read failed (step=%u)", step), HcclResult::HCCL_E_INTERNAL);
 
-    return HCCL_SUCCESS;
+    return HcclResult::HCCL_SUCCESS;
 }
 
 HcclResult InsTempAllGatherNHR::RunStepNHR(
@@ -297,7 +347,7 @@ HcclResult InsTempAllGatherNHR::RunStepNHR(
 
     const bool readLastStepToOutput = readLastStepToOutput_ && step == nSteps - 1 && stepInfo.nSlices > 1;
     if (readLastStepToOutput) {
-        CHK_RET(RunLastStepWriteThenRead(
+        CHK_RET(RunLastStepReadToOutput(
             threads, channelSend, channelRecv, stepInfo, channelIdx, step, postLocalCopyLaunched));
         return HCCL_SUCCESS;
     }
@@ -411,8 +461,6 @@ HcclResult InsTempAllGatherNHR::PostLocalCopy(const ThreadHandle& thread, const 
         HCCL_INFO("[InsTempAllGatherNHR] PostLocalCopy skip because output is scratch");
         return HCCL_SUCCESS;
     }
-    u64 partialSliceSize = dataSplit_[channelIdx];
-    u64 partialOffset = dataOffset_[channelIdx];
     const u32 dataTypeSize = DATATYPE_SIZE_TABLE[dataType_];
     u32 myAlgRank = 0;
     CHK_RET(GetAlgRank(myRank_, subCommRanks_[0], myAlgRank));
@@ -421,10 +469,13 @@ HcclResult InsTempAllGatherNHR::PostLocalCopy(const ThreadHandle& thread, const 
         const u64 scratchRepeatStride = tempAlgParams_.sliceSize * templateRankSize_;
         const u64 scratchBase = tempAlgParams_.buffInfo.hcclBuffBaseOff + rpt * scratchRepeatStride;
 
+        u64 partialSliceSize = dataSplit_[channelIdx];
+        u64 partialOffset = dataOffset_[channelIdx];
+
         for (auto rank : subCommRanks_[0]) {
             u32 algRank = 0;
             CHK_RET(GetAlgRank(rank, subCommRanks_[0], algRank));
-            if (readLastStepToOutput_ && algRank == myAlgRank) {
+            if (readLastStepToOutput_ && skipOwnSliceCopy_ && algRank == myAlgRank) {
                 continue;
             }
             if (readLastStepToOutput_ && IsLastStepReadSlice(algRank)) {
