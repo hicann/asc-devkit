@@ -30,7 +30,7 @@ __aicore__ inline void asc_set_mask_count();
 
 __aicore__ inline void asc_set_mask_norm();
 
-__aicore__ inline void asc_set_vector_mask(uint64_t mask1, uint64_t mask0);
+__aicore__ inline void asc_set_vector_mask(uint64_t mask_high, uint64_t mask_low);
 
 #endif
 

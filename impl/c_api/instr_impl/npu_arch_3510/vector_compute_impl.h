@@ -72,6 +72,7 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_squeeze_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_unsqueeze_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_update_mask_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_set_vector_mask_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/vconv/asc_bfloat162float_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/vconv/asc_half2hif8_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/vconv/asc_half2int8_impl.h"
@@ -3313,6 +3314,12 @@ __simd_callee__ inline vector_bool asc_update_mask_b8(uint32_t& value) { return 
 __simd_callee__ inline vector_bool asc_update_mask_b16(uint32_t& value) { return asc_update_mask_b16_impl(value); }
 
 __simd_callee__ inline vector_bool asc_update_mask_b32(uint32_t& value) { return asc_update_mask_b32_impl(value); }
+
+// ==========asc_set_vector_mask==========
+__aicore__ inline void asc_set_vector_mask(uint64_t mask_high, uint64_t mask_low)
+{
+    asc_set_vector_mask_impl(mask_high, mask_low);
+}
 
 // ==========asc_half2int8(rd/ru/rz/rn/rna)==========
 [[deprecated("NOTICE: asc_half2int8_rd(vector_int8_t& dst, vector_half src, vector_bool mask) is deprecated. "
