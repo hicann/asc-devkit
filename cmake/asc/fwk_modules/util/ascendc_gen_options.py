@@ -76,6 +76,9 @@ def _parse_single_option(opts, opc_debug_config, opc_kernel_config):
     elif opts.startswith("--kernel-json-file"):
         opc_kernel_config.append(opts)
         return "kernel_config", None
+    elif opts.startswith("--simplified_key_mode"):
+        opc_kernel_config.append(opts)
+        return "kernel_config", None
     elif "--tiling_key" in opts:
         return "tiling_key", _handle_tiling_key(opts)
     elif "--kernel-template-input" in opts:
@@ -134,7 +137,7 @@ def _build_opc_config_str(
     if opc_kernel_config:
         if opc_config_str != "":
             opc_config_str += "@"
-        opc_config_str += " ".join(opc_kernel_config)
+        opc_config_str += "@".join(opc_kernel_config)
     return opc_config_str
 
 

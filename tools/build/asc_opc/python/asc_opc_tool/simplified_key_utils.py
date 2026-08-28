@@ -26,6 +26,20 @@ from opc_common import (
 )
 
 
+SIMPLIFIED_KEY_MAX_LEN = 1024
+CUSTOM_SIMPLIFIED_KEY_MAX_LEN = 256
+
+
+def _check_simplified_key_length(simplified_key, max_len, key_name):
+    key_len = len(simplified_key.encode("utf-8"))
+    if key_len >= max_len:
+        raise ValueError(
+            "{} length must be less than {} bytes, but got {} bytes.".format(
+                key_name, max_len, key_len
+            )
+        )
+
+
 def init_dynamic_param_and_optional_input(simplified_key_mode):
     if simplified_key_mode == 0:
         # default values for 0
@@ -172,6 +186,12 @@ def generate_simplified_key_mode(
 def infer_simplified_key_mode(op, opc_compile_args):
     simplified_key_configured = op.get(OpcOptions.SIMPLE_KEY, None)
     if simplified_key_configured is not None and simplified_key_configured != "":
+        _check_simplified_key_length(
+            simplified_key_configured,
+            CUSTOM_SIMPLIFIED_KEY_MAX_LEN,
+            "custom simplified_key",
+        )
+        logger.warn("Custom simplified_key is configured; custom mode 2 will be used.")
         return (2, None, None, None, None)
     has_invalid_option, has_non_null_attr, attr_str = check_attr_for_simpilified_key(
         op.get(CompileParam.ATTRS)
@@ -224,6 +244,11 @@ def generate_deterministic_for_simpilified_key(deterministic):
 def generate_custom_mode_simplified_key(
     op_type, op_simplified_key, deterministic_list, impl_mode_list
 ):
+    _check_simplified_key_length(
+        op_simplified_key,
+        CUSTOM_SIMPLIFIED_KEY_MAX_LEN,
+        "custom simplified_key",
+    )
     simplified_key = []
     for deterministic_str in deterministic_list:
         for impl_mode_str in impl_mode_list:
@@ -235,6 +260,9 @@ def generate_custom_mode_simplified_key(
                 + impl_mode_str
                 + "/"
                 + op_simplified_key
+            )
+            _check_simplified_key_length(
+                simplified_key_str, SIMPLIFIED_KEY_MAX_LEN, "simplified_key"
             )
             simplified_key.append(simplified_key_str)
             logger.info(

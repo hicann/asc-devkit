@@ -36,7 +36,7 @@
 
 首次接触建议从[快速入门](./aclnn_quick_start.md)开始，先用5分钟跑通AddCustom算子的端到端流程。跑通后再按以下路径逐步补齐细节。
 
-本指南共22个文档，按开发流程分为四个部分。首次阅读只需关注`[基础]`文档，遇到具体问题时再查阅`[扩展]`文档。
+本指南按开发流程组织为设计与实现、编译与部署、调用验证和参考文档。首次阅读只需关注`[基础]`文档，遇到具体问题时再查阅`[扩展]`文档。
 
 ### 设计与实现
 
@@ -49,6 +49,7 @@
 `[扩展]`（遇到具体问题时查阅）：
 - [通过TilingData传递属性信息](./design_and_implementation/tiling_data_attributes.md) — 适用于算子属性需要传递到核函数（Kernel）侧的场景。
 - [多分支策略](./design_and_implementation/multi_branch_strategy.md) — 适用于算子需要按场景拆分核函数（Kernel）入口的场景。
+- [GenSimplifiedKey回调实现](./design_and_implementation/gen_simplified_key.md) — 适用于需要按自定义Key选择预编译binary的场景。
 - [使用高阶API时配套的Tiling实现](./design_and_implementation/tiling_with_advanced_api.md) — 适用于开发Matmul/Conv等复杂算子的场景。
 - [开启Tiling下沉](../operator_graph_development/enable_tiling_sink.md) — 适用于需要在算子入图场景开启Tiling下沉的场景。
 
@@ -63,6 +64,7 @@
 - [交叉编译](./compilation_and_deployment/cross_compilation.md) — 适用于开发环境与运行环境架构不同的场景。
 - [编译过程调试](./compilation_and_deployment/compilation_debug.md) — 适用于遇到编译问题的场景。
 - [编译加速](./compilation_and_deployment/compilation_acceleration.md) — 适用于需要加速构建的场景。
+- [simplified key二进制配置JSON](./compilation_and_deployment/simplified_key_json_configuration.md) — 适用于按自定义Key编译多份binary的场景。
 
 ### 调用验证
 
@@ -71,6 +73,7 @@
 
 `[扩展]`：
 - [运行时加载机制](./invocation/runtime_loading_mechanism.md) — 适用于需要了解二段式调用模型和代码写法如何影响运行表现的场景。
+- [基于simplified key的运行时选择流程](./invocation/simplified_key_runtime_flow.md) — 适用于需要了解运行时如何选择预编译binary的场景。
 
 ### 参考文档
 

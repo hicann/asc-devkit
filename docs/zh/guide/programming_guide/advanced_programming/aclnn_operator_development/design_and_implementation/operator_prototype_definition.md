@@ -179,6 +179,22 @@ this->AICore()
 
 TilingData字段设计、Tiling函数写法、workspace设置和`numBlocks`配置见[Host侧Tiling实现](./host_tiling_implementation.md)。
 
+## 注册GenSimplifiedKey回调
+
+当算子需要依据运行时输入、输出或属性，从多份预编译核函数（Kernel）binary中快速选择一份时，可以注册`GenSimplifiedKey`回调。回调由算子开发者编写，只负责生成自定义simplified key片段；运行时框架负责在该片段前补齐算子类型和运行时公共维度，使用完整Key查找并选择对应的binary。
+
+在已有Tiling注册的`AICore()`链式调用中增加`SetGenSimplifiedKey`即可：
+
+```cpp
+this->AICore()
+    .SetTiling(optiling::TilingFunc)
+    .SetGenSimplifiedKey(optiling::GenSimplifiedKeyFunc);
+```
+
+该接口适用于同一算子存在多份二进制，且选择维度可由Host侧`TilingContext`读取的场景，例如输入dtype、format、shape分档或属性组合。回调生成的片段必须与编译配置JSON中每个`op_list`项的`simplified_key`严格对应；没有注册回调或不提供这类JSON时，保持原有binary匹配流程。
+
+回调的具体写法、约束及其与运行时选择的边界见[GenSimplifiedKey回调实现](./gen_simplified_key.md)。
+
 ## 配置指定AI处理器的差异化配置
 
 `AddConfig`为指定AI处理器设置差异化编译配置。
@@ -273,5 +289,6 @@ OP_ADD(AddCustom);
 
 - [算子功能设计](./operator_function_design.md)：了解如何确定算子的输入输出、属性和Host侧Tiling设计。
 - [Host侧Tiling实现](./host_tiling_implementation.md)：了解TilingData定义、Tiling函数编写和`SetTiling`关联关系。
+- [GenSimplifiedKey回调实现](./gen_simplified_key.md)：了解如何为预编译核函数（Kernel）binary生成自定义simplified key片段。
 - [核函数（Kernel）侧算子实现](./kernel_operator_implementation.md)：了解核函数（Kernel）入口格式、参数顺序和TilingData读取方式。
 - [命名转换规则对照表](../appendix/naming_conversion_table.md)：了解OpType、核函数（Kernel）入口和aclnn接口之间的命名转换关系。

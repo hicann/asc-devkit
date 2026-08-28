@@ -1,0 +1,75 @@
+{
+  "op_type": "AddCustomTemplate",
+  "op_list": [
+    {
+      "bin_filename": "AddCustomTemplate_FP16",
+      "simplified_key": "custom_fp16",
+      "inputs": [
+        {
+          "name": "x",
+          "index": 0,
+          "dtype": "float16",
+          "format": "ND",
+          "shape": [
+            -2
+          ]
+        },
+        {
+          "name": "y",
+          "index": 1,
+          "dtype": "float16",
+          "format": "ND",
+          "shape": [
+            -2
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "z",
+          "index": 0,
+          "dtype": "float16",
+          "format": "ND",
+          "shape": [
+            -2
+          ]
+        }
+      ]
+    },
+    {
+      "bin_filename": "AddCustomTemplate_FP32",
+      "simplified_key": "custom_fp32",
+      "inputs": [
+        {
+          "name": "x",
+          "index": 0,
+          "dtype": "float32",
+          "format": "ND",
+          "shape": [
+            -2
+          ]
+        },
+        {
+          "name": "y",
+          "index": 1,
+          "dtype": "float32",
+          "format": "ND",
+          "shape": [
+            -2
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "z",
+          "index": 0,
+          "dtype": "float32",
+          "format": "ND",
+          "shape": [
+            -2
+          ]
+        }
+      ]
+    }
+  ]
+}

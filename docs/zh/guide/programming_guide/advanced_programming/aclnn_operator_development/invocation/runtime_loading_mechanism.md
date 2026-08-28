@@ -140,4 +140,5 @@ TilingData中的tileNum决定每个Block上的分块个数：
 - [Host侧Tiling实现](../design_and_implementation/host_tiling_implementation.md) — Tiling函数、TilingData和workspace设置方法。
 - [多分支策略](../design_and_implementation/multi_branch_strategy.md) — TilingKey和核函数（Kernel）模板的配置方法。
 - [单算子API调用](./single_operator_api_call.md) — 两段式接口的使用方法。
+- [基于simplified key的运行时选择流程](./simplified_key_runtime_flow.md) — 回调生成simplified key并选择预编译binary的流程。
 - [算子动态库和静态库编译](../compilation_and_deployment/dynamic_static_lib_compilation.md) — 动态库/静态库形态下的集成方式。

@@ -672,4 +672,5 @@ Ascend C框架提供的编译选项介绍如下：
 - [算子动态库和静态库编译](./dynamic_static_lib_compilation.md) — 动态库/静态库编译方式。
 - [编译过程调试](./compilation_debug.md) — 查看实际编译命令、保留中间产物和常见错误诊断。
 - [编译加速](./compilation_acceleration.md) — 构建加速策略（选择性编译、缓存、增量编译等）。
+- [simplified key二进制配置JSON](./simplified_key_json_configuration.md) — 按自定义simplified key编译多份binary的配置方法。
 - [交叉编译](./cross_compilation.md) — 跨平台架构编译。

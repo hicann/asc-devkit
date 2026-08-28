@@ -161,6 +161,7 @@ class CompileKernel:
             kernel_json_file,
             _,
             kernel_template_input_info,
+            _,
         ) = ascendc_bin_param_build.parse_op_debug_config(
             opc_config_file, self.op_soc_ver
         )

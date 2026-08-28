@@ -14,7 +14,54 @@
 import json
 from asc_op_compile_base.common.utils import log as logger
 from op_manager import get_inout_info_from_opstore
-from constant import CompileParam, OpcOptions, OptionalInOutMode, OpParamType
+from constant import (
+    CompileParam,
+    OpDataType,
+    OpFormatType,
+    OpcOptions,
+    OptionalInOutMode,
+    OpParamType,
+)
+
+
+CUSTOM_BINARY_JSON_META = "_ascendc_custom_binary_json"
+VALID_DTYPES = set(OpDataType.DtypeValueDict)
+VALID_FORMATS = {
+    value[0] if isinstance(value, tuple) else value
+    for value in OpFormatType.FormatValueDict
+}
+
+
+def _check_binary_op(op, op_path):
+    stack = []
+    for field in (CompileParam.INPUTS, CompileParam.OUTPUTS):
+        tensors = op.get(field)
+        if not isinstance(tensors, list):
+            raise ValueError(f"{op_path}.{field}: expected array")
+        stack.extend(
+            (tensor, f"{op_path}.{field}[{index}]")
+            for index, tensor in enumerate(tensors)
+        )
+    while stack:
+        tensor, path = stack.pop()
+        if tensor is None or tensor == {}:
+            continue
+        if isinstance(tensor, list):
+            stack.extend(
+                (item, f"{path}[{index}]") for index, item in enumerate(tensor)
+            )
+            continue
+        if not isinstance(tensor, dict):
+            raise ValueError(f"{path}: expected object, array, or null")
+        for field, valid_values in (
+            (CompileParam.DTYPE, VALID_DTYPES),
+            (CompileParam.FORMAT, VALID_FORMATS),
+        ):
+            value = tensor.get(field)
+            if not isinstance(value, str) or value not in valid_values:
+                raise ValueError(f"{path}.{field} has invalid value '{value}'")
+        if not isinstance(tensor.get(CompileParam.SHAPE), list):
+            raise ValueError(f"{path}.{CompileParam.SHAPE}: expected array")
 
 
 def check_and_feed_optional_param(inout_infos, inouts):
@@ -85,6 +132,16 @@ def check_op_compilation_json(option, opc_compile_args):
     if "op_list" not in json_dict:
         logger.error("There is no op_list in json file[%s].", json_path)
         return False, None
+
+    custom_binary_meta = json_dict.pop(CUSTOM_BINARY_JSON_META, None)
+    if custom_binary_meta is not None:
+        source = json_path
+        try:
+            source, op_index = custom_binary_meta
+            _check_binary_op(json_dict[CompileParam.OP_LIST][0], f"op_list[{op_index}]")
+        except (KeyError, TypeError, ValueError) as error:
+            logger.error("Invalid BINARY_JSON file[%s]: %s", source, error)
+            return False, None
 
     if not check_op_optional_paramtype(json_dict, opc_compile_args):
         logger.error("Invalid json file content[%s].", json_path)
