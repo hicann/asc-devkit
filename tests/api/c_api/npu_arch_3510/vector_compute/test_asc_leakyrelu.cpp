@@ -9,6 +9,9 @@
  */
 
 #include "tests/api/c_api/npu_arch_3510/utils/test_binary_scalar_instr_utils.h"
+#include "tests/api/c_api/npu_arch_3510/utils/test_return_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(LeakyRelu, asc_leakyrelu, vlrelu, vector_float, float)
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(LeakyRelu, asc_leakyrelu, vlrelu, vector_half, half)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(LeakyRelu, asc_leakyrelu, vlrelu, vector_float, float)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(LeakyRelu, asc_leakyrelu, vlrelu, vector_half, half)

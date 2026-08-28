@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "tests/api/c_api/npu_arch_3510/utils/test_binary_scalar_instr_utils.h"
+#include "tests/api/c_api/npu_arch_3510/utils/test_return_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_uint8_t, int16_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_int8_t, int16_t);
@@ -18,3 +19,10 @@ TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshls, asc_shiftleft_scalar, vshls, vect
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_int16_t, int16_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_uint32_t, int16_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_int32_t, int16_t);
+
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_uint8_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_int8_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_uint16_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_int16_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_uint32_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshls, asc_shiftleft_scalar, vshls, vector_int32_t, int16_t)

@@ -25,19 +25,35 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
 // asc_leakyrelu float
-__simd_callee__ inline void asc_leakyrelu_impl(vector_float& dst, vector_float src, float value, vector_bool mask)
+__simd_callee__ inline void asc_leakyrelu_impl(vector_float& dst, vector_float src, float alpha, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vlrelu(dst, src, value, mask, MODE_ZEROING);
+        vlrelu(dst, src, alpha, mask, MODE_ZEROING);
     }
 }
 
 // asc_leakyrelu half
-__simd_callee__ inline void asc_leakyrelu_impl(vector_half& dst, vector_half src, half value, vector_bool mask)
+__simd_callee__ inline void asc_leakyrelu_impl(vector_half& dst, vector_half src, half alpha, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vlrelu(dst, src, value, mask, MODE_ZEROING);
+        vlrelu(dst, src, alpha, mask, MODE_ZEROING);
     }
+}
+
+// asc_leakyrelu float
+__simd_callee__ inline vector_float asc_leakyrelu_impl(vector_float src, float alpha, vector_bool mask)
+{
+    vector_float dst;
+    asc_leakyrelu_impl(dst, src, alpha, mask);
+    return dst;
+}
+
+// asc_leakyrelu half
+__simd_callee__ inline vector_half asc_leakyrelu_impl(vector_half src, half alpha, vector_bool mask)
+{
+    vector_half dst;
+    asc_leakyrelu_impl(dst, src, alpha, mask);
+    return dst;
 }
 
 #endif

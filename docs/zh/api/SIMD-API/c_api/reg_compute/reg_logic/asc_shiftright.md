@@ -26,10 +26,10 @@
 
 ## 功能说明
 
-根据掩码对源操作数矢量数据寄存器中的元素执行右移，右移位数由矢量数据寄存器`src1`中对应元素指定，并将结果写入目的操作数。掩码对应位置为1的元素参与计算，为0的元素在目的矢量数据寄存器中置零。计算公式如下：
+根据掩码对源操作数矢量数据寄存器中的元素执行右移，右移位数由矢量数据寄存器`shift`中对应元素指定，并将结果通过函数返回值返回或写入目的操作数。掩码对应位置为1的元素参与计算，为0的元素在输出结果中置零。计算公式如下：
 
 $$
-dst_i = src0_i \gg src1_i
+dst_i = src_i \gg shift_i
 $$
 
 根据源操作数的数据类型，右移操作分为以下两种情况：
@@ -42,9 +42,15 @@ $$
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype0> asc_shiftright(vector_<dtype0> src,
+                                                      vector_<dtype1> shift,
+                                                      vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_shiftright(vector_<dtype0>& dst,
-                                           vector_<dtype0> src0,
-                                           vector_<dtype1> src1,
+                                           vector_<dtype0> src,
+                                           vector_<dtype1> shift,
                                            vector_bool mask)
 ```
 
@@ -62,9 +68,15 @@ __simd_callee__ inline void asc_shiftright(vector_<dtype0>& dst,
 ### 函数原型典型示例
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_uint16_t asc_shiftright(vector_uint16_t src,
+                                                      vector_int16_t shift,
+                                                      vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_shiftright(vector_uint16_t& dst,
-                                           vector_uint16_t src0,
-                                           vector_int16_t src1,
+                                           vector_uint16_t src,
+                                           vector_int16_t shift,
                                            vector_bool mask)
 ```
 
@@ -74,16 +86,16 @@ __simd_callee__ inline void asc_shiftright(vector_uint16_t& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。数据类型须与`src0`一致。 |
-| src0 | 输入 | 源操作数（矢量数据寄存器）。 |
-| src1 | 输入 | 源操作数（矢量数据寄存器）。数据类型须与`src0`的位宽一致，且为有符号整数类型。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示参与计算的元素。对应位置为1时参与计算，为0时不参与计算且`dst`对应元素置零。需通过掩码设置接口预先赋值后再传入。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。仅无返回值类型接口包含该参数，数据类型须与`src`一致。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| shift | 输入 | 位移量（矢量数据寄存器）。数据类型须与`src`的位宽一致，且为有符号整数类型。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示参与计算的元素。对应位置为1时参与计算，为0时不参与计算且输出结果对应元素置零。需通过掩码设置接口预先赋值后再传入。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存右移结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 
@@ -92,13 +104,13 @@ __simd_callee__ inline void asc_shiftright(vector_uint16_t& dst,
 - 非AIV调用直接返回。
 - 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
 - `mask`需通过掩码设置接口预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- 掩码位为0的元素位置不参与右移运算，`dst`对应位置写0。
+- 掩码位为0的元素位置不参与右移运算，输出结果对应位置写0。
 
 ### 位移约束
 
-- `src1`中的元素不支持设置为负数，负数行为未定义。
-- 对于无符号整数，当位移量大于`src0`的数据类型位宽时，`dst`中的有效元素置零。
-- 对于有符号整数，当位移量大于`src0`的数据类型位宽时，`src0`中的元素小于0则`dst`对应位置写-1，`src0`中的元素大于或等于0则`dst`对应位置写0。
+- `shift`中的元素不支持设置为负数，负数行为未定义。
+- 对于无符号整数，当位移量大于`src`的数据类型位宽时，输出结果中的有效元素置零。
+- 对于有符号整数，当位移量大于`src`的数据类型位宽时，`src`中的元素小于0则输出结果对应位置写-1，`src`中的元素大于或等于0则输出结果对应位置写0。
 
 ## 调用示例
 
@@ -127,13 +139,12 @@ __simd_vf__ inline void shiftright_vf(__ubuf__ uint16_t* output,
                                       __ubuf__ uint16_t* input,
                                       __ubuf__ int16_t* shift)
 {
-    vector_uint16_t src0;
-    vector_int16_t src1;
-    vector_uint16_t dst;
+    vector_uint16_t src;
+    vector_int16_t shift_reg;
     vector_bool mask = asc_create_mask_b16(PAT_ALL);
-    asc_loadalign(src0, input);
-    asc_loadalign(src1, shift);
-    asc_shiftright(dst, src0, src1, mask);
+    asc_loadalign(src, input);
+    asc_loadalign(shift_reg, shift);
+    vector_uint16_t dst = asc_shiftright(src, shift_reg, mask);
     asc_storealign(output, dst, mask);
 }
 

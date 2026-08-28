@@ -47,9 +47,13 @@ __simd_callee__ inline void asc_madd(vector_half& dst, vector_half src0, vector_
 
 __simd_callee__ inline void asc_madd(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask);
 
-__simd_callee__ inline void asc_leakyrelu(vector_float& dst, vector_float src, float value, vector_bool mask);
+__simd_callee__ inline void asc_leakyrelu(vector_float& dst, vector_float src, float alpha, vector_bool mask);
 
-__simd_callee__ inline void asc_leakyrelu(vector_half& dst, vector_half src, half value, vector_bool mask);
+__simd_callee__ inline void asc_leakyrelu(vector_half& dst, vector_half src, half alpha, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_leakyrelu(vector_float src, float alpha, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_leakyrelu(vector_half src, half alpha, vector_bool mask);
 
 __simd_callee__ inline void asc_exp_sub(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask);
 
@@ -61,9 +65,13 @@ __simd_callee__ inline void asc_exp_sub_half2float(
     vector_float& dst, vector_half src0, vector_half src1, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
 
-__simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask);
+__simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vector_float alpha, vector_bool mask);
 
-__simd_callee__ inline void asc_prelu(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask);
+__simd_callee__ inline void asc_prelu(vector_half& dst, vector_half src0, vector_half alpha, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_prelu(vector_float src0, vector_float alpha, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_prelu(vector_half src0, vector_half alpha, vector_bool mask);
 
 //=================asc_mula==================
 __simd_callee__ inline void asc_mula(vector_int16_t& dst, vector_int16_t src0, vector_int16_t src1, vector_bool mask);

@@ -24,18 +24,32 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
-__simd_callee__ inline void asc_prelu_impl(vector_float& dst, vector_float src0, vector_float src1, vector_bool mask)
+__simd_callee__ inline void asc_prelu_impl(vector_float& dst, vector_float src0, vector_float alpha, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vprelu(dst, src0, src1, mask, MODE_UNKNOWN);
+        vprelu(dst, src0, alpha, mask, MODE_UNKNOWN);
     }
 }
 
-__simd_callee__ inline void asc_prelu_impl(vector_half& dst, vector_half src0, vector_half src1, vector_bool mask)
+__simd_callee__ inline void asc_prelu_impl(vector_half& dst, vector_half src0, vector_half alpha, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vprelu(dst, src0, src1, mask, MODE_UNKNOWN);
+        vprelu(dst, src0, alpha, mask, MODE_UNKNOWN);
     }
+}
+
+__simd_callee__ inline vector_float asc_prelu_impl(vector_float src0, vector_float alpha, vector_bool mask)
+{
+    vector_float dst;
+    asc_prelu_impl(dst, src0, alpha, mask);
+    return dst;
+}
+
+__simd_callee__ inline vector_half asc_prelu_impl(vector_half src0, vector_half alpha, vector_bool mask)
+{
+    vector_half dst;
+    asc_prelu_impl(dst, src0, alpha, mask);
+    return dst;
 }
 
 #endif

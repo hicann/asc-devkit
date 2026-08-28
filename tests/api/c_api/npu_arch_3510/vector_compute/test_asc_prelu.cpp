@@ -9,6 +9,9 @@
  */
 
 #include "tests/api/c_api/npu_arch_3510/utils/test_binary_instr_utils.h"
+#include "tests/api/c_api/npu_arch_3510/utils/test_return_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_BINARY_INSTR(PRelu, asc_prelu, vprelu, vector_float)
 TEST_VECTOR_COMPUTE_BINARY_INSTR(PRelu, asc_prelu, vprelu, vector_half)
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(PRelu, asc_prelu, vprelu, vector_float)
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(PRelu, asc_prelu, vprelu, vector_half)

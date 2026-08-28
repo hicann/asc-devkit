@@ -26,10 +26,10 @@
 
 ## 功能说明
 
-根据掩码将源操作数矢量数据寄存器中的元素左移，左移位数由标量立即数指定，并将结果写入目的操作数。掩码对应位置为1的元素参与计算，为0的元素在目的矢量数据寄存器中置零。计算公式如下：
+根据掩码将源操作数矢量数据寄存器中的元素左移，左移位数由标量立即数指定，并将结果通过函数返回值返回或写入目的操作数。掩码对应位置为1的元素参与计算，为0的元素在输出结果中置零。计算公式如下：
 
 $$
-dst_i = src_i \ll value
+dst_i = src_i \ll shift
 $$
 
 根据源操作数的数据类型，左移操作分为以下两种情况：
@@ -42,9 +42,15 @@ $$
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_shiftleft_scalar(vector_<dtype> src,
+                                                           int16_t shift,
+                                                           vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_shiftleft_scalar(vector_<dtype>& dst,
                                                  vector_<dtype> src,
-                                                 int16_t value,
+                                                 int16_t shift,
                                                  vector_bool mask)
 ```
 
@@ -55,9 +61,15 @@ __simd_callee__ inline void asc_shiftleft_scalar(vector_<dtype>& dst,
 ### 函数原型典型示例
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int8_t asc_shiftleft_scalar(vector_int8_t src,
+                                                          int16_t shift,
+                                                          vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_shiftleft_scalar(vector_int8_t& dst,
                                                  vector_int8_t src,
-                                                 int16_t value,
+                                                 int16_t shift,
                                                  vector_bool mask)
 ```
 
@@ -67,16 +79,16 @@ __simd_callee__ inline void asc_shiftleft_scalar(vector_int8_t& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的操作数（矢量数据寄存器）。数据类型须与`src`一致。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。仅无返回值类型接口包含该参数，数据类型须与`src`一致。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
-| value | 输入 | 源操作数（标量），类型为`int16_t`，不支持设置为负数。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示参与计算的元素。对应位置为1时参与计算，为0时不参与计算且`dst`对应元素置零。需通过掩码设置接口预先赋值后再传入。 |
+| shift | 输入 | 位移量（标量），类型为`int16_t`，不支持设置为负数。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示参与计算的元素。对应位置为1时参与计算，为0时不参与计算且输出结果对应元素置零。需通过掩码设置接口预先赋值后再传入。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存左移结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 
@@ -85,12 +97,12 @@ __simd_callee__ inline void asc_shiftleft_scalar(vector_int8_t& dst,
 - 非AIV调用直接返回。
 - 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
 - `mask`需通过掩码设置接口预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- 掩码位为0的元素位置不参与左移运算，`dst`对应位置写0。
+- 掩码位为0的元素位置不参与左移运算，输出结果对应位置写0。
 
 ### 位移约束
 
-- `value`不支持设置为负数，负数行为未定义。
-- 当`value`大于`src`的数据类型位宽时，`dst`中的有效元素置零。
+- `shift`不支持设置为负数，负数行为未定义。
+- 当`shift`大于`src`的数据类型位宽时，输出结果中的有效元素置零。
 
 ## 调用示例
 
@@ -118,10 +130,9 @@ constexpr uint32_t BUFFER_BYTES = ELEMENT_COUNT * sizeof(uint16_t);
 __simd_vf__ inline void shiftleft_scalar_vf(__ubuf__ uint16_t* output, __ubuf__ uint16_t* input)
 {
     vector_uint16_t src;
-    vector_uint16_t dst;
     vector_bool mask = asc_create_mask_b16(PAT_ALL);
     asc_loadalign(src, input);
-    asc_shiftleft_scalar(dst, src, 1, mask);
+    vector_uint16_t dst = asc_shiftleft_scalar(src, 1, mask);
     asc_storealign(output, dst, mask);
 }
 

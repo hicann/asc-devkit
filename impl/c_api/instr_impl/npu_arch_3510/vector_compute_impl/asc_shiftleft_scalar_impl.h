@@ -19,50 +19,92 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
 __simd_callee__ inline void asc_shiftleft_scalar_impl(
-    vector_uint8_t& dst, vector_uint8_t src, int16_t value, vector_bool mask)
+    vector_uint8_t& dst, vector_uint8_t src, int16_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, value, mask, MODE_ZEROING);
+        vshls(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftleft_scalar_impl(
-    vector_int8_t& dst, vector_int8_t src, int16_t value, vector_bool mask)
+    vector_int8_t& dst, vector_int8_t src, int16_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, value, mask, MODE_ZEROING);
+        vshls(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftleft_scalar_impl(
-    vector_uint16_t& dst, vector_uint16_t src, int16_t value, vector_bool mask)
+    vector_uint16_t& dst, vector_uint16_t src, int16_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, value, mask, MODE_ZEROING);
+        vshls(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftleft_scalar_impl(
-    vector_int16_t& dst, vector_int16_t src, int16_t value, vector_bool mask)
+    vector_int16_t& dst, vector_int16_t src, int16_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, value, mask, MODE_ZEROING);
+        vshls(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftleft_scalar_impl(
-    vector_uint32_t& dst, vector_uint32_t src, int16_t value, vector_bool mask)
+    vector_uint32_t& dst, vector_uint32_t src, int16_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, value, mask, MODE_ZEROING);
+        vshls(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftleft_scalar_impl(
-    vector_int32_t& dst, vector_int32_t src, int16_t value, vector_bool mask)
+    vector_int32_t& dst, vector_int32_t src, int16_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, value, mask, MODE_ZEROING);
+        vshls(dst, src, shift, mask, MODE_ZEROING);
     }
+}
+
+__simd_callee__ inline vector_uint8_t asc_shiftleft_scalar_impl(vector_uint8_t src, int16_t shift, vector_bool mask)
+{
+    vector_uint8_t dst;
+    asc_shiftleft_scalar_impl(dst, src, shift, mask);
+    return dst;
+}
+
+__simd_callee__ inline vector_int8_t asc_shiftleft_scalar_impl(vector_int8_t src, int16_t shift, vector_bool mask)
+{
+    vector_int8_t dst;
+    asc_shiftleft_scalar_impl(dst, src, shift, mask);
+    return dst;
+}
+
+__simd_callee__ inline vector_uint16_t asc_shiftleft_scalar_impl(vector_uint16_t src, int16_t shift, vector_bool mask)
+{
+    vector_uint16_t dst;
+    asc_shiftleft_scalar_impl(dst, src, shift, mask);
+    return dst;
+}
+
+__simd_callee__ inline vector_int16_t asc_shiftleft_scalar_impl(vector_int16_t src, int16_t shift, vector_bool mask)
+{
+    vector_int16_t dst;
+    asc_shiftleft_scalar_impl(dst, src, shift, mask);
+    return dst;
+}
+
+__simd_callee__ inline vector_uint32_t asc_shiftleft_scalar_impl(vector_uint32_t src, int16_t shift, vector_bool mask)
+{
+    vector_uint32_t dst;
+    asc_shiftleft_scalar_impl(dst, src, shift, mask);
+    return dst;
+}
+
+__simd_callee__ inline vector_int32_t asc_shiftleft_scalar_impl(vector_int32_t src, int16_t shift, vector_bool mask)
+{
+    vector_int32_t dst;
+    asc_shiftleft_scalar_impl(dst, src, shift, mask);
+    return dst;
 }
 #endif

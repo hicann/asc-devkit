@@ -26,10 +26,10 @@
 
 ## 功能说明
 
-根据掩码对源矢量数据寄存器中的元素执行Leaky ReLU操作，并将结果写入目的矢量数据寄存器。源操作数中大于0的元素直接写入目的操作数，小于或等于0的元素乘以标量立即数后写入目的操作数。掩码对应位置为1的元素参与计算，为0的元素在目的矢量数据寄存器中置零。计算公式如下：
+根据掩码对源矢量数据寄存器中的元素执行Leaky ReLU操作，并将结果通过函数返回值返回或写入目的矢量数据寄存器。源操作数中大于0的元素直接写入输出结果，小于或等于0的元素乘以标量立即数后写入输出结果。掩码对应位置为1的元素参与计算，为0的元素在输出结果中置零。计算公式如下：
 
 $$
-dst_i = \begin{cases} src_i & src_i > 0 \\ src_i \times value & src_i \leq 0 \end{cases}
+dst_i = \begin{cases} src_i & src_i > 0 \\ src_i \times \alpha & src_i \leq 0 \end{cases}
 $$
 
 本接口仅在AIV上生效。
@@ -37,9 +37,15 @@ $$
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_leakyrelu(vector_<dtype> src,
+                                                    <dtype> alpha,
+                                                    vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_leakyrelu(vector_<dtype>& dst,
                                           vector_<dtype> src,
-                                          dtype value,
+                                          <dtype> alpha,
                                           vector_bool mask)
 ```
 
@@ -50,9 +56,15 @@ __simd_callee__ inline void asc_leakyrelu(vector_<dtype>& dst,
 ### 函数原型典型示例
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_half asc_leakyrelu(vector_half src,
+                                                 half alpha,
+                                                 vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_leakyrelu(vector_half& dst,
                                           vector_half src,
-                                          half value,
+                                          half alpha,
                                           vector_bool mask)
 ```
 
@@ -62,16 +74,16 @@ __simd_callee__ inline void asc_leakyrelu(vector_half& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的操作数（矢量数据寄存器）。数据类型须与`src`一致。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。仅无返回值类型接口包含该参数，数据类型须与`src`一致。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
-| value | 输入 | 源操作数（标量）。数据类型须与`src`一致。 |
+| alpha | 输入 | 负半轴斜率（标量）。数据类型须与`src`一致。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。需通过掩码设置接口预先赋值后再传入。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存Leaky ReLU计算结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 
@@ -80,7 +92,7 @@ __simd_callee__ inline void asc_leakyrelu(vector_half& dst,
 - 非AIV调用直接返回。
 - 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
 - `mask`需通过掩码设置接口预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- 掩码位为0的元素位置不参与运算，`dst`对应位置写0。
+- 掩码位为0的元素位置不参与运算，输出结果对应位置写0。
 
 ### 计算约束
 
@@ -114,10 +126,9 @@ constexpr float ALPHA = 0.1f;
 __simd_vf__ inline void leakyrelu_vf(__ubuf__ float* output, __ubuf__ float* input)
 {
     vector_float src;
-    vector_float dst;
     vector_bool mask = asc_create_mask_b32(PAT_ALL);
     asc_loadalign(src, input);
-    asc_leakyrelu(dst, src, ALPHA, mask);
+    vector_float dst = asc_leakyrelu(src, ALPHA, mask);
     asc_storealign(output, dst, mask);
 }
 

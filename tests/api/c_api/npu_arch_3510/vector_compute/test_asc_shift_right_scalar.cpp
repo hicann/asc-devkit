@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "tests/api/c_api/npu_arch_3510/utils/test_binary_scalar_instr_utils.h"
+#include "tests/api/c_api/npu_arch_3510/utils/test_return_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_uint8_t, int16_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_int8_t, int16_t);
@@ -18,3 +19,10 @@ TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vec
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_int16_t, int16_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_uint32_t, int16_t);
 TEST_VECTOR_COMPUTE_BINARY_SCALAR_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_int32_t, int16_t);
+
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_uint8_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_int8_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_uint16_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_int16_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_uint32_t, int16_t)
+TEST_VECTOR_COMPUTE_BINARY_SCALAR_RETURN_INSTR(Vshrs, asc_shiftright_scalar, vshrs, vector_int32_t, int16_t)
