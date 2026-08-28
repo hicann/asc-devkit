@@ -48,6 +48,8 @@ __aicore__ inline void asc_sync_pipe_impl(pipe_t pipe)
             pipe_barrier(pipe_t::PIPE_MTE3);
         } else if (pipe == pipe_t::PIPE_ALL) {
             pipe_barrier(pipe_t::PIPE_ALL);
+        } else if (pipe == pipe_t::PIPE_V) {
+            pipe_barrier(pipe_t::PIPE_V);
         }
     }
 }
