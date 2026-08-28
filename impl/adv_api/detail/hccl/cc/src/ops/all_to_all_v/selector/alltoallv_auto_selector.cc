@@ -33,6 +33,13 @@ SelectorStatus AlltoAllVAutoSelector::SelectAicpuAlgo(
         selectAlgName = "AicpuAllToAllVSoleMesh";
         HCCL_INFO("[AlltoAllVAutoSelector] Algo match[%s].", selectAlgName.c_str());
         return SelectorStatus::MATCH;
+    } else if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS) {
+        // PCIE-SW定制机型，使用mesh1d算法
+        if (topoInfo->level0PcieMix) {
+            selectAlgName = "AicpuAllToAllVSoleMesh";
+            HCCL_INFO("[AlltoAllVAutoSelector][%s] Algo match[%s]", __func__, selectAlgName.c_str());
+            return SelectorStatus::MATCH;
+        }
     }
     if (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS || topoInfo->topoLevelNums != 1U || topoInfo->level0PcieMix) {
         HCCL_WARNING(

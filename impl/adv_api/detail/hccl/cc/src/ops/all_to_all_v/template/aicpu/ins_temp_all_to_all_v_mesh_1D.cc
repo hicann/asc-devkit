@@ -112,11 +112,12 @@ HcclResult InsTempAlltoAllVMesh1D::CalcRes(
     HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
     AlgResourceRequest& resourceRequest)
 {
-    CHK_PTR_NULL(topoInfo);
+    const bool isPcieMixMeshClos = topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS && topoInfo->level0PcieMix;
     CHK_PRT_RET(
-        topoInfo->level0Topo != Level0Shape::MESH_1D && topoInfo->level0Topo != Level0Shape::CLOS,
+        topoInfo->level0Topo != Level0Shape::MESH_1D && topoInfo->level0Topo != Level0Shape::CLOS && !isPcieMixMeshClos,
         HCCL_ERROR(
-            "[InsTempAlltoAllVMesh1D][CalcRes] unsupported level0Topo[%u].", static_cast<u32>(topoInfo->level0Topo)),
+            "[InsTempAlltoAllVMesh1D][CalcRes] unsupported level0Topo[%u], level0PcieMix[%d].",
+            static_cast<u32>(topoInfo->level0Topo), static_cast<int>(topoInfo->level0PcieMix)),
         HCCL_E_NOT_SUPPORT);
     CHK_PRT_RET(
         subCommRanks_.empty() || templateRankSize_ == 0U,
