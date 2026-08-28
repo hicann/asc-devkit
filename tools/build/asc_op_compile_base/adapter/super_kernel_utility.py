@@ -94,6 +94,7 @@ def check_exist_instrinsic_when_super_kernel(dst_i_file):
         "asc/impl",
         "impl/basic_api",
         "impl/c_api",
+        "include/c_api",
     ]
     result_symbol_list, path_list, line_result = check_exist_forbidden_symbols(
         dst_i_file, forbidden_apis, allow_path_mark
