@@ -3,7 +3,6 @@
     <dir_info install_mod="550">
         <path value="$(TARGET_ENV)/lib64"/>
         <path value="$(TARGET_ENV)/include" install_type="devel"/>
-        <path value="$(TARGET_ENV)/include/hccl" install_type="devel"/>
         <path value="$(TARGET_ENV)/include/version" install_type="devel"/>
         <path value="opp"/>
         <path value="opp/built-in"/>
@@ -12,10 +11,6 @@
         <path value="opp/built-in/op_impl/aicpu/kernel"/>
         <path value="opp/built-in/op_impl/aicpu/config"/>
     </dir_info>
-    <file_info value="include" copy_type="delivery" src_path="$(TARGET_ENV)/include/hccl" dst_path="include/hccl" install_path="$(TARGET_ENV)/include/hccl" install_type="devel" install_mod="440" optional="true">
-        <file value="hccl.h"/>
-        <file value="hccl_mc2.h"/>
-    </file_info>
     <file_info value="lib64" copy_type="delivery" src_path="$(TARGET_ENV)/lib64" dst_path="lib64" install_path="$(TARGET_ENV)/lib64" install_type="all" install_mod="440" optional="true">
         <file value="libasccomm_ccu.so" file_type="shared"/>
         <file value="libmc2_client.so" file_type="shared"/>
