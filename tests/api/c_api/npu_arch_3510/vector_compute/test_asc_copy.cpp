@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2025 Huawei Technologies Co., Ltd.
  * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
  * CANN Open Software License Agreement Version 2.0 (the "License").
@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <type_traits>
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "c_api/reg_compute/reg_copy.h"
 
@@ -100,3 +101,69 @@ TEST_VECTOR_COMPUTE_COPY_INSTR_0(COPY, asc_copy, vmov, vector_float);
 TEST_VECTOR_COMPUTE_COPY_INSTR_0(COPY, asc_copy, vmov, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_COPY_INSTR_1(COPY1, asc_copy, pmov, vector_bool);
 TEST_VECTOR_COMPUTE_COPY_INSTR_2(COPY2, asc_copy, pmov, vector_bool);
+
+// ==========asc_mask return-value overloads(u8/s8/half/u16/s16/float/u32/s32/bf16)==========
+#define TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(c_api_name, data_type)                \
+    TEST(TestVectorComputeMaskReturn, data_type)                                   \
+    {                                                                              \
+        data_type src;                                                             \
+        vector_bool mask;                                                          \
+                                                                                   \
+        static_assert(std::is_same_v<decltype(c_api_name(src, mask)), data_type>); \
+        MOCKER_CPP(vmov, void(data_type&, data_type, vector_bool, int32_t))        \
+            .times(1)                                                              \
+            .will(invoke(vmov##_##data_type##_Stub));                              \
+                                                                                   \
+        data_type dst = c_api_name(src, mask);                                     \
+        (void)dst;                                                                 \
+        GlobalMockObject::verify();                                                \
+    }
+
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_int8_t);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_uint8_t);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_int16_t);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_uint16_t);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_half);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_int32_t);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_uint32_t);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_float);
+TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV(asc_mask, vector_bfloat16_t);
+
+#undef TEST_VECTOR_COMPUTE_MASK_RETURN_VMOV
+
+// ==========asc_mask return-value overloads(bool with mask)==========
+#define TEST_VECTOR_COMPUTE_MASK_RETURN_PMOV_MASK(c_api_name, data_type)                                              \
+    TEST(TestVectorComputeMaskReturnPmovMask, data_type)                                                              \
+    {                                                                                                                 \
+        data_type src;                                                                                                \
+        vector_bool mask;                                                                                             \
+                                                                                                                      \
+        static_assert(std::is_same_v<decltype(c_api_name(src, mask)), data_type>);                                    \
+        MOCKER_CPP(pmov, void(data_type&, data_type, vector_bool)).times(1).will(invoke(pmov##_##data_type##_Stub1)); \
+                                                                                                                      \
+        data_type dst = c_api_name(src, mask);                                                                        \
+        (void)dst;                                                                                                    \
+        GlobalMockObject::verify();                                                                                   \
+    }
+
+TEST_VECTOR_COMPUTE_MASK_RETURN_PMOV_MASK(asc_mask, vector_bool);
+
+#undef TEST_VECTOR_COMPUTE_MASK_RETURN_PMOV_MASK
+
+// ==========asc_mask return-value overloads(bool without mask)==========
+#define TEST_VECTOR_COMPUTE_MASK_RETURN_PMOV(c_api_name, data_type)                                      \
+    TEST(TestVectorComputeMaskReturnPmov, data_type)                                                     \
+    {                                                                                                    \
+        data_type src;                                                                                   \
+                                                                                                         \
+        static_assert(std::is_same_v<decltype(c_api_name(src)), data_type>);                             \
+        MOCKER_CPP(pmov, void(data_type&, data_type)).times(1).will(invoke(pmov##_##data_type##_Stub2)); \
+                                                                                                         \
+        data_type dst = c_api_name(src);                                                                 \
+        (void)dst;                                                                                       \
+        GlobalMockObject::verify();                                                                      \
+    }
+
+TEST_VECTOR_COMPUTE_MASK_RETURN_PMOV(asc_mask, vector_bool);
+
+#undef TEST_VECTOR_COMPUTE_MASK_RETURN_PMOV

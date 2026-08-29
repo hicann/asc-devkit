@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <type_traits>
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "include/c_api/asc_simd.h"
 
@@ -76,3 +77,51 @@ TEST_VECTOR_COMPUTE_UNPACK(UnPackL, asc_unpack_lower, vunpack, vector_int32_t, v
 
 TEST_VECTOR_COMPUTE_PUNPACK(PunpackU, asc_unpack_upper, punpack);
 TEST_VECTOR_COMPUTE_PUNPACK(PunpackL, asc_unpack_lower, punpack);
+
+// ==========asc_unpack return-value overloads(u8/s8/u16/s16)==========
+#define TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(c_api_name, cce_name, dst_type, src_type) \
+    TEST(TestVectorComputeUnpackReturn, c_api_name##_##src_type)                          \
+    {                                                                                     \
+        src_type src;                                                                     \
+                                                                                          \
+        static_assert(std::is_same_v<decltype(c_api_name(src)), dst_type>);               \
+        MOCKER_CPP(cce_name, void(dst_type&, src_type&, Literal))                         \
+            .times(1)                                                                     \
+            .will(invoke(c_api_name##_##dst_type##_##src_type##_Stub));                   \
+                                                                                          \
+        dst_type dst = c_api_name(src);                                                   \
+        (void)dst;                                                                        \
+        GlobalMockObject::verify();                                                       \
+    }
+
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_upper, vunpack, vector_uint16_t, vector_uint8_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_upper, vunpack, vector_int16_t, vector_int8_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_upper, vunpack, vector_uint32_t, vector_uint16_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_upper, vunpack, vector_int32_t, vector_int16_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_lower, vunpack, vector_uint16_t, vector_uint8_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_lower, vunpack, vector_int16_t, vector_int8_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_lower, vunpack, vector_uint32_t, vector_uint16_t);
+TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR(asc_unpack_lower, vunpack, vector_int32_t, vector_int16_t);
+
+#undef TEST_VECTOR_COMPUTE_UNPACK_RETURN_INSTR
+
+// ==========asc_unpack return-value overloads(bool)==========
+#define TEST_VECTOR_COMPUTE_PUNPACK_RETURN_INSTR(c_api_name, cce_name)         \
+    TEST(TestVectorComputePunpackReturn, c_api_name)                           \
+    {                                                                          \
+        vector_bool src;                                                       \
+                                                                               \
+        static_assert(std::is_same_v<decltype(c_api_name(src)), vector_bool>); \
+        MOCKER_CPP(cce_name, void(vector_bool&, vector_bool, Literal))         \
+            .times(1)                                                          \
+            .will(invoke(c_api_name##_##vector_bool##_Stub));                  \
+                                                                               \
+        vector_bool dst = c_api_name(src);                                     \
+        (void)dst;                                                             \
+        GlobalMockObject::verify();                                            \
+    }
+
+TEST_VECTOR_COMPUTE_PUNPACK_RETURN_INSTR(asc_unpack_upper, punpack);
+TEST_VECTOR_COMPUTE_PUNPACK_RETURN_INSTR(asc_unpack_lower, punpack);
+
+#undef TEST_VECTOR_COMPUTE_PUNPACK_RETURN_INSTR

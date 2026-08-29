@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <type_traits>
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "c_api/reg_compute/compute/reg_mask.h"
 #include "c_api/reg_compute/reg_copy.h"
@@ -47,5 +48,32 @@ TEST_F(TestVectorComputeCopyMovvp, Copyu32_Succ)
     MOCKER_CPP(movvp, void(vector_bool&, vector_uint32_t, int16_t)).times(1).will(invoke(movvpu32_stub));
 
     asc_copy(dst, src, part);
+    GlobalMockObject::verify();
+}
+
+// ==========asc_extract_mask return-value overloads(u16/u32)==========
+TEST(TestVectorComputeExtractMaskReturn, VectorUint16)
+{
+    vector_uint16_t src;
+    int16_t part = static_cast<int16_t>(22);
+
+    static_assert(std::is_same_v<decltype(asc_extract_mask(src, part)), vector_bool>);
+    MOCKER_CPP(movvp, void(vector_bool&, vector_uint16_t, int16_t)).times(1).will(invoke(movvpu16_stub));
+
+    vector_bool dst = asc_extract_mask(src, part);
+    (void)dst;
+    GlobalMockObject::verify();
+}
+
+TEST(TestVectorComputeExtractMaskReturn, VectorUint32)
+{
+    vector_uint32_t src;
+    int16_t part = static_cast<int16_t>(22);
+
+    static_assert(std::is_same_v<decltype(asc_extract_mask(src, part)), vector_bool>);
+    MOCKER_CPP(movvp, void(vector_bool&, vector_uint32_t, int16_t)).times(1).will(invoke(movvpu32_stub));
+
+    vector_bool dst = asc_extract_mask(src, part);
+    (void)dst;
     GlobalMockObject::verify();
 }

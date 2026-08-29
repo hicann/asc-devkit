@@ -51,6 +51,34 @@ __simd_callee__ inline void asc_copy(vector_bool& dst, vector_uint16_t src, int1
 
 __simd_callee__ inline void asc_copy(vector_bool& dst, vector_uint32_t src, int16_t part);
 
+// ==========asc_mask return-value overloads(u8/s8/half/u16/s16/float/u32/s32/bf16/bool)==========
+__simd_callee__ inline vector_int8_t asc_mask(vector_int8_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint8_t asc_mask(vector_uint8_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int16_t asc_mask(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_mask(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_mask(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_mask(vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_mask(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_mask(vector_float src, vector_bool mask);
+
+__simd_callee__ inline vector_bfloat16_t asc_mask(vector_bfloat16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_bool asc_mask(vector_bool src, vector_bool mask);
+
+__simd_callee__ inline vector_bool asc_mask(vector_bool src);
+
+// ==========asc_extract_mask return-value overloads(u16/u32)==========
+__simd_callee__ inline vector_bool asc_extract_mask(vector_uint16_t src, int16_t part);
+
+__simd_callee__ inline vector_bool asc_extract_mask(vector_uint32_t src, int16_t part);
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)

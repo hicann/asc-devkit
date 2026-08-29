@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
+#include <type_traits>
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "include/c_api/asc_simd.h"
 
@@ -42,3 +43,25 @@ TEST_VECTOR_COMPUTE_UNSQUEEZE(vector_uint16_t);
 TEST_VECTOR_COMPUTE_UNSQUEEZE(vector_int16_t);
 TEST_VECTOR_COMPUTE_UNSQUEEZE(vector_uint32_t);
 TEST_VECTOR_COMPUTE_UNSQUEEZE(vector_int32_t);
+
+#define TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(c_api_name, data_type)                                   \
+    TEST(TestVectorComputeUnsqueezeReturn, data_type)                                                       \
+    {                                                                                                       \
+        vector_bool mask;                                                                                   \
+                                                                                                            \
+        static_assert(std::is_same_v<decltype(c_api_name(mask)), data_type>);                               \
+        MOCKER_CPP(vusqz, void(data_type&, vector_bool)).times(1).will(invoke(vusqz##_##data_type##_Stub)); \
+                                                                                                            \
+        data_type dst = c_api_name(mask);                                                                   \
+        (void)dst;                                                                                          \
+        GlobalMockObject::verify();                                                                         \
+    }
+
+TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(asc_unsqueeze_u8, vector_uint8_t);
+TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(asc_unsqueeze_s8, vector_int8_t);
+TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(asc_unsqueeze_u16, vector_uint16_t);
+TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(asc_unsqueeze_s16, vector_int16_t);
+TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(asc_unsqueeze_u32, vector_uint32_t);
+TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR(asc_unsqueeze_s32, vector_int32_t);
+
+#undef TEST_VECTOR_COMPUTE_UNSQUEEZE_RETURN_INSTR
