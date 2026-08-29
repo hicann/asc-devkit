@@ -26,25 +26,34 @@
 
 ## 功能说明
 
-从Unified Buffer（UB）中按dtype对齐的起始地址读取VL长度数据，并搬入矢量数据寄存器，搬运过程中数据格式和内容保持不变。连续搬入时，需要在每次调用前手动更新源地址。该接口为易用性接口，对性能有要求时可使用[asc_loadunalign](asc_loadunalign.md)或[asc_loadunalign_postupdate](asc_loadunalign_postupdate.md)。
+从Unified Buffer（UB）中按dtype对齐的起始地址读取VL长度数据，并通过函数返回值返回或写入目的矢量数据寄存器，搬运过程中数据格式和内容保持不变。连续搬入时，需要在每次调用前手动更新源地址。该接口为易用性接口，对性能有要求时可使用[asc_loadunalign](asc_loadunalign.md)或[asc_loadunalign_postupdate](asc_loadunalign_postupdate.md)。
 
 本接口仅在AIV上生效，非AIV调用直接返回。
 
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果。
+__simd_callee__ inline vector_<dtype> asc_load(__ubuf__ <dtype>* src)
+
+// 通过引用参数输出结果。
 __simd_callee__ inline void asc_load(vector_<dtype>& dst,
                                      __ubuf__ <dtype>* src)
 ```
 
 ### dtype支持数据类型
 
-dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
+- 返回值类型接口支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+- 无返回值类型接口支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`。
+
+当dtype为`int4b_t`时，目的矢量数据寄存器的实际类型为`vector_int4x2_t`。
 
 ### 函数原型典型示例
 
 ```c
 // 示例：float类型。
+__simd_callee__ inline vector_float asc_load(__ubuf__ float* src)
+
 __simd_callee__ inline void asc_load(vector_float& dst,
                                      __ubuf__ float* src)
 ```
@@ -55,14 +64,14 @@ __simd_callee__ inline void asc_load(vector_float& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的矢量数据寄存器。dtype必须与`src`一致，搬入VL长度数据。 |
+| dst | 输出 | 目的矢量数据寄存器。仅无返回值类型接口包含该参数。dtype必须与`src`一致，搬入VL长度数据。 |
 | src | 输入 | 源UB地址，实际读取地址必须按dtype对齐。 |
 
 矢量数据寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存搬入结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 

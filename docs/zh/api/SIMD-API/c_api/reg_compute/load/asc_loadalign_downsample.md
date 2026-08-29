@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-从Unified Buffer（UB）中32字节对齐的起始地址读取连续数据并进行2倍下采样。
+从Unified Buffer（UB）中32字节对齐的起始地址读取连续数据并进行2倍下采样，结果通过函数返回值返回或写入目的寄存器。
 
 - 当`dst`为矢量数据寄存器时，读取2×VL（512字节）长度数据，保留偶数下标元素后写入VL长度数据。
 - 当`dst`为掩码寄存器时，读取VL/4（64字节）长度数据，保留偶数下标bit后写入VL/8长度数据。
@@ -37,6 +37,8 @@
 - **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
 - **地址寄存器偏移搬入模式**：通过地址寄存器指定相对源起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬入场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 
+对齐搬入模式中，通过函数返回值返回掩码寄存器时，请使用[asc_loadalign_mask_downsample](asc_loadalign_mask_downsample.md)。
+
 本接口仅在AIV上生效，非AIV调用直接返回。
 
 ## 函数原型
@@ -44,6 +46,9 @@
 ### 对齐搬入模式
 
 ```c
+// 通过函数返回值返回矢量数据寄存器。
+__simd_callee__ inline vector_<dtype> asc_loadalign_downsample(__ubuf__ <dtype>* src)
+
 // 搬入矢量数据寄存器。
 __simd_callee__ inline void asc_loadalign_downsample(vector_<dtype>& dst,
                                                      __ubuf__ <dtype>* src)
@@ -60,6 +65,8 @@ dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`�
 
 ```c
 // 示例：half类型。
+__simd_callee__ inline vector_half asc_loadalign_downsample(__ubuf__ half* src)
+
 __simd_callee__ inline void asc_loadalign_downsample(vector_half& dst,
                                                      __ubuf__ half* src)
 ```
@@ -124,7 +131,7 @@ __simd_callee__ inline void asc_loadalign_downsample(vector_half& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的矢量数据寄存器或掩码寄存器。<br>&bull; 当`dst`为矢量数据寄存器，dtype必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
+| dst | 输出 | 目的矢量数据寄存器或掩码寄存器，仅无返回值类型接口包含该参数。<br>&bull; 当`dst`为矢量数据寄存器，dtype必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
 | src | 输入 | 源UB地址，实际读取地址必须按32字节对齐。 |
 
 ### 立即数偏移搬入模式
@@ -151,7 +158,7 @@ __simd_callee__ inline void asc_loadalign_downsample(vector_half& dst,
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存下采样搬入结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 

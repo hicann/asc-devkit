@@ -25,7 +25,7 @@
 <!-- end id7 -->
 
 ## 功能说明
-从Unified Buffer（UB）中按dtype对齐的起始地址读取一个元素，并将该元素广播到整个矢量数据寄存器。搬运过程中数据格式和内容保持不变。本接口提供三种功能模式：
+从Unified Buffer（UB）中按dtype对齐的起始地址读取一个元素，并将该元素广播到整个矢量数据寄存器。结果通过函数返回值返回或写入目的矢量数据寄存器，搬运过程中数据格式和内容保持不变。本接口提供三种功能模式：
 
 - **对齐搬入模式**：将UB源地址的数据搬入到矢量数据寄存器，由用户自行更新源地址。
 - **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
@@ -38,6 +38,10 @@
 ### 对齐搬入模式
 
 ```c
+// 通过函数返回值返回结果。
+__simd_callee__ inline vector_<dtype> asc_loadalign_brc_elem(__ubuf__ <dtype>* src)
+
+// 通过引用参数输出结果。
 __simd_callee__ inline void asc_loadalign_brc_elem(vector_<dtype>& dst,
                                                    __ubuf__ <dtype>* src)
 ```
@@ -50,6 +54,8 @@ dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`�
 
 ```c
 // 示例：int8_t类型。
+__simd_callee__ inline vector_int8_t asc_loadalign_brc_elem(__ubuf__ int8_t* src)
+
 __simd_callee__ inline void asc_loadalign_brc_elem(vector_int8_t& dst,
                                                    __ubuf__ int8_t* src)
 ```
@@ -104,7 +110,7 @@ __simd_callee__ inline void asc_loadalign_brc_elem(vector_half& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的矢量数据寄存器。dtype必须与`src`一致，搬入VL长度数据。 |
+| dst | 输出 | 目的矢量数据寄存器。仅无返回值类型接口包含该参数。dtype必须与`src`一致，搬入VL长度数据。 |
 | src | 输入 | 源UB地址，实际读取地址必须按dtype对齐。 |
 
 ### 立即数偏移搬入模式
@@ -131,7 +137,7 @@ __simd_callee__ inline void asc_loadalign_brc_elem(vector_half& dst,
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存广播搬入结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 

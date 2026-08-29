@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
+#include <type_traits>
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "tests/api/c_api/stub/cce_stub.h"
@@ -97,6 +98,18 @@ TEST_F(TestVectorDatamoveLoadAlignPlds, LoadAlignPlds_Succ)
     MOCKER_CPP(plds, void(vector_bool&, __ubuf__ uint32_t*, int32_t, Literal)).times(1).will(invoke(plds_stub));
 
     asc_loadalign(dst, src);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestVectorDatamoveLoadAlignPlds, LoadAlignMaskPlds_ReturnSucc)
+{
+    __ubuf__ uint32_t* src = reinterpret_cast<__ubuf__ uint32_t*>(22);
+
+    MOCKER_CPP(plds, void(vector_bool&, __ubuf__ uint32_t*, int32_t, Literal)).times(1).will(invoke(plds_stub));
+
+    static_assert(std::is_same_v<decltype(asc_loadalign_mask(src)), vector_bool>);
+    vector_bool dst = asc_loadalign_mask(src);
+    (void)dst;
     GlobalMockObject::verify();
 }
 

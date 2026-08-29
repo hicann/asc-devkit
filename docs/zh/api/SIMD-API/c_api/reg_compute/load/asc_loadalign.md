@@ -26,12 +26,14 @@
 
 ## 功能说明
 
-从Unified Buffer（UB）中32字节对齐的起始地址读取数据，并搬入矢量数据寄存器或掩码寄存器，搬运过程中数据格式和内容保持不变。本接口提供四种功能模式：
+从Unified Buffer（UB）中32字节对齐的起始地址读取数据，并通过函数返回值返回或写入目的矢量数据寄存器或掩码寄存器，搬运过程中数据格式和内容保持不变。本接口提供四种功能模式：
 
 - **连续对齐搬入模式**：将UB源地址的数据搬入到矢量数据寄存器或掩码寄存器，由用户自行更新源地址。
 - **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
 - **地址寄存器偏移搬入模式**：通过地址寄存器指定相对源起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬入场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 - **非连续对齐搬入模式**：单条指令非连续搬入8个`DataBlock`，每个`DataBlock`的数据量为32字节。支持配置数据块之间的地址步长和起始读取位置。
+
+连续对齐搬入模式中，通过函数返回值返回掩码寄存器时，请使用[asc_loadalign_mask](asc_loadalign_mask.md)。非连续对齐搬入模式中，通过函数返回值返回矢量数据寄存器时，请使用[asc_loadalign_datablock_strided](asc_loadalign_datablock_strided.md)。
 
 本接口仅在AIV上生效，非AIV调用直接返回。
 
@@ -40,6 +42,9 @@
 ### 连续对齐搬入模式
 
 ```c
+// 通过函数返回值返回矢量数据寄存器。
+__simd_callee__ inline vector_<dtype> asc_loadalign(__ubuf__ <dtype>* src)
+
 // 搬入矢量数据寄存器。
 __simd_callee__ inline void asc_loadalign(vector_<dtype>& dst,
                                           __ubuf__ <dtype>* src)
@@ -50,12 +55,17 @@ __simd_callee__ inline void asc_loadalign(vector_bool& dst,
 
 #### dtype支持数据类型
 
-dtype支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`、`uint64_t`。当dtype为`int4b_t`时，dst的实际类型为`vector_int4x2_t`。
+- 返回值类型接口支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+- 无返回值类型接口支持的数据类型为`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`、`int64_t`、`uint64_t`。
+
+当dtype为`int4b_t`时，目的矢量数据寄存器的实际类型为`vector_int4x2_t`。
 
 #### 函数原型典型示例
 
 ```c
 // 示例：float类型。
+__simd_callee__ inline vector_float asc_loadalign(__ubuf__ float* src)
+
 __simd_callee__ inline void asc_loadalign(vector_float& dst,
                                           __ubuf__ float* src)
 ```
@@ -145,7 +155,7 @@ __simd_callee__ inline void asc_loadalign(vector_float& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的矢量数据寄存器或掩码寄存器。<br>&bull; 当`dst`为矢量数据寄存器，`dtype`必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
+| dst | 输出 | 目的矢量数据寄存器或掩码寄存器，仅无返回值类型接口包含该参数。<br>&bull; 当`dst`为矢量数据寄存器，`dtype`必须与`src`一致，搬入VL长度数据。<br>&bull; 当`dst`为掩码寄存器，搬入VL/8长度数据。 |
 | src | 输入 | 源UB地址，实际读取地址必须按32字节对齐。 |
 
 ### 立即数偏移搬入模式
@@ -184,7 +194,7 @@ __simd_callee__ inline void asc_loadalign(vector_float& dst,
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存连续对齐搬入结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 

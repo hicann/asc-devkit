@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-从Unified Buffer（UB）中16字节对齐（b16类型）或32字节对齐（b32类型）的起始地址连续读取8个元素，并将每个元素广播到目的矢量数据寄存器对应的一个`DataBlock`（32字节）中。搬运过程中数据格式和内容保持不变。本接口提供三种功能模式：
+从Unified Buffer（UB）中16字节对齐（b16类型）或32字节对齐（b32类型）的起始地址连续读取8个元素，并将每个元素广播到输出结果对应的一个`DataBlock`（32字节）中。结果通过函数返回值返回或写入目的矢量数据寄存器，搬运过程中数据格式和内容保持不变。本接口提供三种功能模式：
 
 - **对齐搬入模式**：将UB源地址的数据搬入到矢量数据寄存器，由用户自行更新源地址。
 - **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
@@ -39,6 +39,10 @@
 ### 对齐搬入模式
 
 ```c
+// 通过函数返回值返回结果。
+__simd_callee__ inline vector_<dtype> asc_loadalign_brc_elem2datablock(__ubuf__ <dtype>* src)
+
+// 通过引用参数输出结果。
 __simd_callee__ inline void asc_loadalign_brc_elem2datablock(vector_<dtype>& dst,
                                                              __ubuf__ <dtype>* src)
 ```
@@ -51,8 +55,10 @@ dtype支持的数据类型为`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`i
 
 ```c
 // 示例：half类型。
+__simd_callee__ inline vector_half asc_loadalign_brc_elem2datablock(__ubuf__ half* src)
+
 __simd_callee__ inline void asc_loadalign_brc_elem2datablock(vector_half& dst,
-                                                            __ubuf__ half* src)
+                                                             __ubuf__ half* src)
 ```
 
 ### 立即数偏移搬入模式
@@ -105,7 +111,7 @@ __simd_callee__ inline void asc_loadalign_brc_elem2datablock(vector_half& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst | 输出 | 目的矢量数据寄存器。dtype必须与`src`一致，搬入VL长度数据。 |
+| dst | 输出 | 目的矢量数据寄存器。仅无返回值类型接口包含该参数。dtype必须与`src`一致，搬入VL长度数据。 |
 | src | 输入 | 源UB地址，实际读取地址必须满足对齐要求：b16类型必须按16字节对齐，b32类型必须按32字节对齐。 |
 
 ### 立即数偏移搬入模式
@@ -132,7 +138,7 @@ __simd_callee__ inline void asc_loadalign_brc_elem2datablock(vector_half& dst,
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存广播搬入结果的矢量数据寄存器，数据类型与`src`保持一致。
 
 ## 约束说明
 
