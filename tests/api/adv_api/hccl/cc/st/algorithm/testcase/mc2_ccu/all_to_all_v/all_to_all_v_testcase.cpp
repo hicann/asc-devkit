@@ -24,7 +24,7 @@ CcuStScenario MakeScenario(const TopoMeta& topoMeta, HcclDataType dataType, uint
     scenario.topoMeta = topoMeta;
     scenario.dataType = dataType;
     scenario.opType = HcclCMDType::HCCL_CMD_ALLTOALLV;
-    scenario.expectedAlgName = "CcuAlltoAllVMesh1D";
+    scenario.expectedAlgName = "CcuSchedAllToAllVSoleMesh";
     scenario.algConfig = scenario.expectedAlgName;
     scenario.sizes.resize(rankSize, std::vector<uint64_t>(rankSize));
     for (uint32_t source = 0; source < rankSize; ++source) {
@@ -38,122 +38,122 @@ CcuStScenario MakeScenario(const TopoMeta& topoMeta, HcclDataType dataType, uint
 
 } // namespace
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Fp16_100B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp16_100B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 100));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_4Rank_Fp16_64B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_4Rank_Fp16_64B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1, 2, 3}}}}, HCCL_DATA_TYPE_FP16, 64));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_8Rank_Fp16_64B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_8Rank_Fp16_64B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1, 2, 3, 4, 5, 6, 7}}}}, HCCL_DATA_TYPE_FP16, 64));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Fp32_100B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp32_100B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP32, 100));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Int8_100B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Int8_100B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 100));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Int32_100B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Int32_100B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT32, 100));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Bfp16_100B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Bfp16_100B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_BFP16, 100));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Fp16_1KB)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp16_1KB)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 1024));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_1B)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_1B)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 1));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_MemSliceMinus1)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_MemSliceMinus1)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 32767));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_MemSlice)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_MemSlice)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 32768));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_MemSlicePlus1)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_MemSlicePlus1)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 32769));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_LoopSizeMinus1)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_LoopSizeMinus1)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 262143));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_LoopSize)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_LoopSize)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 262144));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_LoopSizePlus1)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_LoopSizePlus1)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 262145));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_2xLoopSize)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_2xLoopSize)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 524288));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_2xLoopSizePlus1)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_2xLoopSizePlus1)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 524289));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_GroupCopy_Boundary_LoopSizePlusMemSlice)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_GroupCopy_Boundary_LoopSizePlusMemSlice)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT8, 294912));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Fp16_1MB)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp16_1MB)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 1024 * 1024));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Fp16_10MB)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp16_10MB)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 10 * 1024 * 1024));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_ZeroLength)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_ZeroLength)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 0));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_2Rank_Fp16_256MB)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp16_256MB)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 256ULL * 1024 * 1024));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_ForcedAlg)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_ForcedAlg)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 100));
 }
 
-TEST_F(CcuStAllToAllV, CcuAlltoAllVMesh1D_LogLevel_Control)
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_LogLevel_Control)
 {
     const TopoMeta topo{{{{0, 1}}}};
 

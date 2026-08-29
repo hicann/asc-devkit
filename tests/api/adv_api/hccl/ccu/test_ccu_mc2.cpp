@@ -379,8 +379,8 @@ TEST_F(CcuMc2TestSuite, algorithmMap_AllEntries)
     EXPECT_EQ(algorithmMap.at("CcuAllGatherMeshMem2Mem1D"), CcuAllGatherMeshMem2Mem1D);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherConcurMeshNHRMultiLink"), CcuSchedAllGatherConcurMeshNHRMultiLink);
     EXPECT_EQ(algorithmMap.at("CcuSchedReduceScatterSoleMesh"), CcuReduceScatterMeshMem2Mem1D);
-    EXPECT_EQ(algorithmMap.at("CcuAlltoAllMesh1D"), CcuAlltoAllMesh1D);
-    EXPECT_EQ(algorithmMap.at("CcuAlltoAllVMesh1D"), CcuAlltoAllVMesh1D);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllSoleMesh"), CcuSchedAllToAllSoleMesh);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllVSoleMesh"), CcuSchedAllToAllVSoleMesh);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllReduceSoleMesh"), CcuAllReduceMeshMem2Mem1D);
     EXPECT_EQ(algorithmMap.size(), 7U);
 }
@@ -397,8 +397,8 @@ TEST_F(CcuMc2TestSuite, AlgorithmType_EnumValues)
     EXPECT_EQ(CcuAllReduceMesh1D, 100);
     EXPECT_EQ(CcuAllReduceMeshMem2Mem1D, 101);
     EXPECT_EQ(CcuAllReduceMesh2DOneShot, 102);
-    EXPECT_EQ(CcuAlltoAllMesh1D, 150);
-    EXPECT_EQ(CcuAlltoAllVMesh1D, 151);
+    EXPECT_EQ(CcuSchedAllToAllSoleMesh, 150);
+    EXPECT_EQ(CcuSchedAllToAllVSoleMesh, 151);
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_CcuPath)

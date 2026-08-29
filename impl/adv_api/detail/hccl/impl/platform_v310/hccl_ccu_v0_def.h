@@ -30,8 +30,8 @@ enum class AlgorithmType : uint8_t {
     CcuAllReduceMesh2DOneShot,
     CcuReduceMesh1D,
     CcuReduceMesh2D,
-    CcuAlltoAllMesh1D,
-    CcuAlltoAllVMesh1D,
+    CcuSchedAllToAllSoleMesh,
+    CcuSchedAllToAllVSoleMesh,
     CcuHalfAll2AllVMesh1D
 };
 

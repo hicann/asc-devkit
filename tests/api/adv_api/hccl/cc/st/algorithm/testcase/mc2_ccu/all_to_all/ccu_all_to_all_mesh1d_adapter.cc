@@ -43,7 +43,7 @@ bool g_registered = []() {
     });
 
     CcuStAllToAll::RegisterVariant(
-        "CcuAlltoAllMesh1D",
+        "CcuSchedAllToAllSoleMesh",
         [](const CcuStScenario& scenario, const std::vector<KernelHandle>& handles) -> ScenarioData {
             return BuildMesh1DScenario(scenario, handles);
         });

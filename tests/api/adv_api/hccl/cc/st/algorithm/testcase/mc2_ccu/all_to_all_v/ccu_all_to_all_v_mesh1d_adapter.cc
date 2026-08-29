@@ -55,7 +55,7 @@ bool g_registered = []() {
     RegisterCaptureFunction(
         "CcuKernelAlltoAllVMesh1D", CaptureAllToAllVMesh1DKernel, ConvertAllToAllVArg,
         [](void* pointer) { delete static_cast<AllToAllVKernelConfig*>(pointer); });
-    CcuStAllToAllV::RegisterVariant("CcuAlltoAllVMesh1D", BuildAllToAllVMesh1DScenario);
+    CcuStAllToAllV::RegisterVariant("CcuSchedAllToAllVSoleMesh", BuildAllToAllVMesh1DScenario);
     return true;
 }();
 
