@@ -27,6 +27,7 @@ constexpr uint8_t HCCL_ASCEND910B = 1U;
 constexpr uint32_t MAX_DCCI_CNT = 64U;
 constexpr uint64_t DATA_TYPE_MAP[] = {1, 2, 4, 2, 4, 8, 8, 1, 2, 4, 8, 2, 0, 0, 1, 1, 1, 1, 1};
 constexpr uint32_t DATA_TYPE_MAP_SIZE = sizeof(DATA_TYPE_MAP) / sizeof(DATA_TYPE_MAP[0]);
+static_assert(DATA_TYPE_MAP[HCCL_DATA_TYPE_UINT16] == 2U, "UINT16 elements occupy two bytes");
 static_assert(DATA_TYPE_MAP[HCCL_DATA_TYPE_MXFP8] == 1U, "MXFP8 elements occupy one byte");
 
 __aicore__ inline uint64_t GetHcclDataTypeSize(HcclDataType dataType)
@@ -102,7 +103,6 @@ __aicore__ inline constexpr bool IsValidCcuRankNum(uint32_t rankNum)
 {
     return rankNum > 0U && rankNum <= HCCL_CCU_MAX_RANK_NUM;
 }
-
 struct HcclCombineOpParam {
     uint64_t workSpace;     // Address for communication between client and server,
                             // hccl requests and clears
@@ -180,7 +180,7 @@ struct CCUMsg {
 };
 
 struct CCUMsgExt { // AllToAllv HcclMsgExt trans for ccu
-    uint64_t sendSize;
+    uint64_t tailSize;
     uint64_t loopNum = UINT64_MAX - 1;
     uint64_t sendOffset;
     uint64_t recvOffset;

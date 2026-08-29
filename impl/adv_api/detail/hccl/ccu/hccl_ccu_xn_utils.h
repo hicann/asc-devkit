@@ -86,13 +86,24 @@ __aicore__ inline void AssembleHcclMsgExtForCCU(
 
     for (uint32_t i = 0U; i < ccuParam.rankNum; ++i) {
         uint64_t sendSize = allToAllVParam->sendCounts[i] * dataSize;
-        ccuMsgExt[i].sendSize = sendSize % CCU_MAX_COMM_DATA;
+        KERNEL_LOG(
+            KERNEL_INFO,
+            "ApiClient A2AV rank:%u, sendCounts:%llu, sdispls:%llu, recvCounts:%llu, rdispls:%llu, sendSizeBytes:%llu",
+            i, (unsigned long long)allToAllVParam->sendCounts[i], (unsigned long long)allToAllVParam->sdispls[i],
+            (unsigned long long)allToAllVParam->recvCounts[i], (unsigned long long)allToAllVParam->rdispls[i],
+            (unsigned long long)sendSize);
+        const uint64_t fullBlockCount = sendSize / CCU_MAX_COMM_DATA;
+        ccuMsgExt[i].tailSize = sendSize % CCU_MAX_COMM_DATA;
+        ccuMsgExt[i].loopNum = UINT64_MAX - 1U - fullBlockCount;
         ccuMsgExt[i].sendOffset = allToAllVParam->sdispls[i] * dataSize + sendSize * ccuParam.repeatIndex;
         ccuMsgExt[i].recvOffset =
             allToAllVParam->rdispls[i] * dataSize + (allToAllVParam->recvCounts[i] * dataSize) * ccuParam.repeatIndex;
         KERNEL_LOG(
-            KERNEL_INFO, "ApiClient ccuMsgExt rankIndex:%u, sendSize:%d, sendOffset:%d, recvOffset:%d", i,
-            ccuMsgExt[i].sendSize, ccuMsgExt[i].sendOffset, ccuMsgExt[i].recvOffset);
+            KERNEL_INFO,
+            "ApiClient ccuMsgExt rankIndex:%u, tailSize:%llu, loopNum:%llu, sendOffset:%llu, "
+            "recvOffset:%llu",
+            i, (unsigned long long)ccuMsgExt[i].tailSize, (unsigned long long)ccuMsgExt[i].loopNum,
+            (unsigned long long)ccuMsgExt[i].sendOffset, (unsigned long long)ccuMsgExt[i].recvOffset);
     }
 
     uint32_t tmpCnt = (sizeof(CCUMsgExt) * ccuParam.rankNum) / MAX_DCCI_CNT;

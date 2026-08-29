@@ -143,6 +143,7 @@ bool IsCcuKfcSupportedOp(uint32_t opType)
     return opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER) ||
            opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER) ||
            opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLTOALL) ||
+           opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLTOALLV) ||
            opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE);
 }
 } // namespace
@@ -543,6 +544,7 @@ HcclResult PrepareParamForAlltoAllV(
     u64 varMemSize = ALL_TO_ALL_V_VECTOR_NUM * userRankSize * sizeof(u64);
     param.varMemSize = varMemSize;
     param.opType = HcclCMDType::HCCL_CMD_ALLTOALLV;
+    param.reduceType = HcclReduceOp::HCCL_REDUCE_SUM;
     param.all2AllVDataDes.sendType = static_cast<HcclDataType>(ccTiling->srcDataType);
     param.all2AllVDataDes.recvType = static_cast<HcclDataType>(ccTiling->dstDataType);
     param.all2AllVDataDes.sendCounts = nullptr;
@@ -1003,15 +1005,24 @@ HcclResult PrepareCcuAlgorithmResource(
     HcclComm comm, uint32_t tilingIndex, const std::string& algName, OpParam& opParam,
     TopoInfoWithNetLayerDetails* topoInfo, OpResCtx& opResCtx, bool& skipGetRes)
 {
+    uint32_t userRank = 0;
+    HcclGetRankId(comm, &userRank);
     CHK_RET(HandleSingleRankAndCommMode(comm, opParam, skipGetRes));
     if (skipGetRes) {
+        HCCL_INFO("[CcuSelectAlg] rank[%u] skip resource allocation for single rank/comm mode", userRank);
         return HCCL_SUCCESS;
     }
-    HCCL_INFO("[CcuSelectAlg]HandleSingleRankAndCommMode[%u] successfully!", tilingIndex);
+    HCCL_INFO("[CcuSelectAlg]HandleSingleRankAndCommMode[%u] successfully! rank[%u]", tilingIndex, userRank);
 
     void* resCtxSequence = nullptr;
-    CHK_RET(GetCcuOpParamResCtx(comm, algName, opParam, topoInfo, opResCtx, &resCtxSequence));
-    HCCL_INFO("[CcuSelectAlg]GetCcuOpParamResCtx[%u] successfully!", tilingIndex);
+    HcclResult ret = GetCcuOpParamResCtx(comm, algName, opParam, topoInfo, opResCtx, &resCtxSequence);
+    if (ret != HCCL_SUCCESS) {
+        HCCL_ERROR(
+            "[CcuSelectAlg] rank[%u] GetCcuOpParamResCtx FAILED, ret[%d], algName[%s]", userRank, static_cast<int>(ret),
+            algName.c_str());
+        return ret;
+    }
+    HCCL_INFO("[CcuSelectAlg]GetCcuOpParamResCtx[%u] successfully! rank[%u]", tilingIndex, userRank);
     return HCCL_SUCCESS;
 }
 
@@ -1038,6 +1049,11 @@ HcclResult ProcessCcuTiling(
     HcclComm comm, void* stream, const std::string& topoTag, const Mc2CcTilingInner* ccTiling, uint32_t tilingIndex,
     const Mc2InitTilingInner* initTiling, OpResCtx& opResCtx)
 {
+    uint32_t userRank = 0;
+    HcclGetRankId(comm, &userRank);
+    HCCL_INFO(
+        "[CcuSelectAlg] rank[%u] ProcessCcuTiling[%u] START, opType[%u]", userRank, tilingIndex, ccTiling->opType);
+
     RunCcuSelectAlgCheck(ccTiling, tilingIndex);
 
     OpParam opParam{};
@@ -1051,9 +1067,16 @@ HcclResult ProcessCcuTiling(
     bool skipGetRes = false;
     CHK_RET(PrepareCcuAlgorithmResource(comm, tilingIndex, algName, opParam, topoInfo.get(), opResCtx, skipGetRes));
     if (skipGetRes) {
+        HCCL_INFO(
+            "[CcuSelectAlg] rank[%u] ProcessCcuTiling[%u] DONE (skipGetRes), opType[%u]", userRank, tilingIndex,
+            ccTiling->opType);
         return HCCL_SUCCESS;
     }
-    return CopyCcuOpParamToDevice(comm, tilingIndex, initTiling, opParam, opResCtx);
+    HcclResult copyRet = CopyCcuOpParamToDevice(comm, tilingIndex, initTiling, opParam, opResCtx);
+    HCCL_INFO(
+        "[CcuSelectAlg] rank[%u] ProcessCcuTiling[%u] DONE, opType[%u], ret[%d]", userRank, tilingIndex,
+        ccTiling->opType, static_cast<int>(copyRet));
+    return copyRet;
 }
 } // namespace
 
