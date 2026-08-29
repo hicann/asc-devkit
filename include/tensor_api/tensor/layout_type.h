@@ -43,6 +43,7 @@ struct nd_layout_ptn {};
 struct dn_layout_ptn {};
 struct nd_ext_layout_ptn {};
 struct dn_ext_layout_ptn {};
+struct one_dim_layout_ptn {};
 struct scalea_nd_layout_ptn {};
 struct scalea_dn_layout_ptn {};
 struct scaleb_nd_layout_ptn {};

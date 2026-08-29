@@ -98,15 +98,15 @@ void check_region_copy(
 
 template <typename DstTensor, typename SrcTensor>
 void check_whole_copy(
-    const DstTensor& dst, const SrcTensor& src, uint16_t block_count, uint16_t block_len, uint16_t src_stride,
-    uint16_t dst_stride)
+    const DstTensor& dst, const SrcTensor& src, uint16_t block_count, uint16_t block_len, uint16_t src_gap,
+    uint16_t dst_gap)
 {
     expected_dst = reinterpret_cast<__ubuf__ void*>(dst.data().get());
     expected_src = reinterpret_cast<__ubuf__ void*>(src.data().get());
     expected_block_count = block_count;
     expected_block_len = block_len;
-    expected_src_gap = src_stride;
-    expected_dst_gap = dst_stride;
+    expected_src_gap = src_gap;
+    expected_dst_gap = dst_gap;
 
     MOCKER_CPP(copy_ubuf_to_ubuf, void(__ubuf__ void*, __ubuf__ void*, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t))
         .times(1)
@@ -116,6 +116,22 @@ void check_whole_copy(
 }
 
 } // namespace
+
+TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_one_dim)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t copy_size = 64;
+    __ubuf__ int8_t src[copy_size] = {0};
+    __ubuf__ int8_t dst[copy_size] = {0};
+    auto layout = make_layout(make_shape(copy_size), make_stride(1));
+    auto src_tensor = make_tensor_at<location::ub>(src, layout);
+    auto dst_tensor = make_tensor_at<location::ub>(dst, layout);
+
+    static_assert(Std::is_same_v<get_layout_pattern<decltype(layout)>, one_dim_layout_ptn>);
+    check_whole_copy(dst_tensor, src_tensor, 1, 2, 0, 0);
+    check_region_copy(dst_tensor, src_tensor, make_coord(32), make_coord(16), make_shape(32), 1, 1, 0, 0);
+}
 
 TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_nd_to_nd)
 {
@@ -281,7 +297,7 @@ TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_dn_region_params)
     auto src_tensor = make_tensor_at<location::ub>(src, layout);
     auto dst_tensor = make_tensor_at<location::ub>(dst, layout);
 
-    check_region_copy(dst_tensor, src_tensor, make_coord(16, 3), make_coord(0, 5), make_shape(32, 2), 2, 1, 2, 2);
+    check_region_copy(dst_tensor, src_tensor, make_coord(16, 3), make_coord(0, 5), make_shape(32, 2), 2, 1, 1, 1);
 }
 
 TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_nz_region_params)
@@ -293,7 +309,7 @@ TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_nz_region_params)
     auto src_tensor = make_tensor_at<location::ub>(src, layout);
     auto dst_tensor = make_tensor_at<location::ub>(dst, layout);
 
-    check_region_copy(dst_tensor, src_tensor, make_coord(16, 32), make_coord(0, 0), make_shape(32, 32), 1, 32, 64, 64);
+    check_region_copy(dst_tensor, src_tensor, make_coord(16, 32), make_coord(0, 0), make_shape(32, 32), 1, 32, 32, 32);
 }
 
 TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_zn_region_params)
@@ -305,7 +321,7 @@ TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_zn_region_params)
     auto src_tensor = make_tensor_at<location::ub>(src, layout);
     auto dst_tensor = make_tensor_at<location::ub>(dst, layout);
 
-    check_region_copy(dst_tensor, src_tensor, make_coord(32, 16), make_coord(0, 0), make_shape(32, 32), 1, 32, 64, 64);
+    check_region_copy(dst_tensor, src_tensor, make_coord(32, 16), make_coord(0, 0), make_shape(32, 32), 1, 32, 32, 32);
 }
 
 TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_whole_shape_matches_whole)
@@ -314,16 +330,16 @@ TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_whole_shape_matches_whole)
     __ubuf__ int8_t src[64 * 64] = {0};
     __ubuf__ int8_t dst[64 * 64] = {0};
 
-    auto check = [&](const auto& layout, uint16_t block_count, uint16_t block_len, uint16_t stride) {
+    auto check = [&](const auto& layout, uint16_t block_count, uint16_t block_len, uint16_t gap) {
         auto src_tensor = make_tensor_at<location::ub>(src, layout);
         auto dst_tensor = make_tensor_at<location::ub>(dst, layout);
-        check_whole_copy(dst_tensor, src_tensor, block_count, block_len, stride, stride);
+        check_whole_copy(dst_tensor, src_tensor, block_count, block_len, gap, gap);
         check_region_copy(
-            dst_tensor, src_tensor, zero_coord, zero_coord, src_tensor.shape(), block_count, block_len, stride, stride);
+            dst_tensor, src_tensor, zero_coord, zero_coord, src_tensor.shape(), block_count, block_len, gap, gap);
     };
 
     check(make_frame_layout<nd_ext_layout_ptn, layout_trait_default<int8_t>>(64, 64), 64, 2, 0);
-    check(make_frame_layout<dn_ext_layout_ptn, layout_trait_default<int8_t>>(64, 64), 64, 2, 2);
-    check(make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(64, 64), 2, 64, 64);
-    check(make_frame_layout<zn_layout_ptn, layout_trait_default<int8_t>>(64, 64), 2, 64, 64);
+    check(make_frame_layout<dn_ext_layout_ptn, layout_trait_default<int8_t>>(64, 64), 64, 2, 0);
+    check(make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(64, 64), 2, 64, 0);
+    check(make_frame_layout<zn_layout_ptn, layout_trait_default<int8_t>>(64, 64), 2, 64, 0);
 }

@@ -73,6 +73,15 @@ struct check_dn_layout_pattern {
     }
 };
 
+struct check_one_dim_layout_pattern {
+    template <typename Tensor, typename TraitType>
+    __aicore__ inline static constexpr void check()
+    {
+        using layout_type = typename Tensor::layout_type;
+        static_assert(layout_type::rank_size == 1, "One-dim layout rank must be 1!");
+    }
+};
+
 struct check_nd_ext_layout_pattern {
     template <typename Tensor, typename TraitType>
     __aicore__ inline static constexpr void check()
@@ -247,6 +256,7 @@ using layout_pattern_check_set = tuple_map<
     Std::tuple<zn_layout_ptn, check_zn_layout_pattern>, Std::tuple<zz_layout_ptn, check_zz_layout_pattern>,
     Std::tuple<nn_layout_ptn, check_nn_layout_pattern>, Std::tuple<nz_layout_ptn, check_nz_layout_pattern>,
     Std::tuple<nd_layout_ptn, check_nd_layout_pattern>, Std::tuple<dn_layout_ptn, check_dn_layout_pattern>,
+    Std::tuple<one_dim_layout_ptn, check_one_dim_layout_pattern>,
     Std::tuple<nd_ext_layout_ptn, check_nd_ext_layout_pattern>,
     Std::tuple<dn_ext_layout_ptn, check_dn_ext_layout_pattern>,
     Std::tuple<scalea_nd_layout_ptn, check_scalea_nd_layout_pattern>,

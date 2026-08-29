@@ -1,0 +1,78 @@
+/**
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+#if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+#define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_ENUM_H
+#endif
+
+/*!
+ * \file reg_enum.h
+ * \brief
+ */
+#ifndef INCLUDE_TENSOR_API_EXPERIMENTAL_UTILS_REG_ENUM_H
+#define INCLUDE_TENSOR_API_EXPERIMENTAL_UTILS_REG_ENUM_H
+
+#include <cstdint>
+
+namespace asc {
+namespace te {
+namespace experimental {
+
+enum class load_sideband_mode : uint8_t {
+    direct,
+    deintlv,
+    downsample,
+    unpack,
+    unpack4,
+    upsample,
+};
+
+enum class store_sideband_mode : uint8_t {
+    direct,
+    store_1st,
+    intlv,
+    pack,
+    pack_quarter,
+};
+
+enum class broadcast_mode : uint8_t {
+    elem,
+    datablock,
+    elem2datablock,
+};
+
+enum class mask_pattern : uint8_t {
+    all,
+    vl1,
+    vl2,
+    vl3,
+    vl4,
+    vl8,
+    vl16,
+    vl32,
+    vl64,
+    vl128,
+    every3,
+    every4,
+    half,
+    quarter,
+    none,
+};
+} // namespace experimental
+} // namespace te
+} // namespace asc
+
+#endif // INCLUDE_TENSOR_API_EXPERIMENTAL_UTILS_REG_ENUM_H
+
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_ENUM_H)
+#undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_ENUM_H
+#endif

@@ -9,10 +9,10 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning \
-    "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/nz2nz.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
+#pragma message( \
+    "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/nz2nz.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use \"#include \"tensor_api/tensor.h\"\" and use public functions or variables defined in interface headers files.")
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_NZ2NZ_H
 #endif
 
 /*!
@@ -47,10 +47,9 @@ public:
         auto block_count =
             get_shape_batch_size(src_shape) * Std::ceil_division(get_shape_columns(src_shape), c0_element<src_type>);
         auto block_len = get_shape_rows(src_shape);
-        auto src_stride = get_column_stride(src.layout()) / c0_element<src_type> - block_len;
-        auto dst_stride = get_column_stride(dst.layout()) / c0_element<dst_type> - block_len;
-        emit_copy(
-            dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_stride, dst_stride);
+        auto src_gap = get_column_stride(src.layout()) / c0_element<src_type> - block_len;
+        auto dst_gap = get_column_stride(dst.layout()) / c0_element<dst_type> - block_len;
+        emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_gap, dst_gap);
     }
 
 private:
@@ -75,12 +74,12 @@ private:
         uint16_t block_count = get_element<attr_info::shape, attr_info::column, 1>(src_layout);
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, block_count, "src column shape size", "copy_ub_to_l1 NZ path");
         uint32_t block_len = get_total_row_shape(src_layout);
-        int64_t src_stride =
+        int64_t src_gap =
             get_element<attr_info::stride, attr_info::column, 1>(src_layout) / c0_element<src_type> - block_len;
-        int64_t dst_stride =
+        int64_t dst_gap =
             get_element<attr_info::stride, attr_info::column, 1>(dst_layout) / c0_element<dst_type> - block_len;
 
-        emit_copy(dst, src, block_count, block_len, src_stride, dst_stride);
+        emit_copy(dst, src, block_count, block_len, src_gap, dst_gap);
     }
 };
 
@@ -89,7 +88,8 @@ private:
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_NZ2NZ_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
+#if defined( \
+    UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_NZ2NZ_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_NZ2NZ_H
 #endif

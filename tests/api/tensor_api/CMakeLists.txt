@@ -64,6 +64,7 @@ foreach(product_type ${ASCENDC_UT_PRODUCT_TYPE_LIST})
 
     target_compile_definitions(ascendc_ut_tensor_api_${product_type} PRIVATE
         UT_TEST
+        CANN_ASC_USE_EXPERIMENTAL
         ASCENDC_OOM=1
         ASCENDC_DUMP=0
         $<$<STREQUAL:${product_type},NPU_ARCH_3510_AIC>:__NPU_ARCH__=3510>
