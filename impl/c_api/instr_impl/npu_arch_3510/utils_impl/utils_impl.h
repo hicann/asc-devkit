@@ -42,6 +42,18 @@ union asc_scalar_bitcode {
     uint64_t output;
 };
 
+union asc_3d_padding_bitcode {
+    __aicore__ asc_3d_padding_bitcode() {}
+    half input_half;
+    bfloat16_t input_bfloat16;
+    int16_t input_int16;
+    uint16_t input_uint16;
+    int32_t input_int32;
+    uint32_t input_uint32;
+    float input_float;
+    uint64_t output;
+};
+
 union asc_gm2l1_loop_size_config {
     uint64_t config;
     struct {

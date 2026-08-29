@@ -30,6 +30,37 @@ enum class asc_store_l2_cache_mode : uint8_t {
     NOTALLOC_CLEAN = 4
 };
 
+enum class asc_l13d_repeat_direction : uint8_t { M_DIRECTION = 0, K_DIRECTION = 1 };
+
+/**
+ * @brief Channel padding mode for GM->L1 copy (hardware pad_func_mode, 4-bit).
+ *
+ * Applies per 32-byte channel block. Distinct from burst left/right padding
+ * configured via asc_set_gm2l1_pad().
+ */
+enum class asc_channel_pad_mode : uint8_t {
+    // No padding; each 32-byte channel block passes through unchanged.
+    NONE = 0,
+    // Write path (expand): insert padding values within each 32-byte channel block.
+    // Expand: for every 1 source byte, insert 31 padding values.
+    EXPAND_1B = 1,
+    // Expand: for every 2 source bytes, insert 15 padding values.
+    EXPAND_2B = 2,
+    // Expand: for every 4 source bytes, insert 14 padding values.
+    EXPAND_4B = 3,
+    // Expand: for every 8 source bytes, insert 12 padding values.
+    EXPAND_8B = 4,
+    // Expand: for every 16 source bytes, insert 8 padding values.
+    EXPAND_16B = 5,
+    // Read path (compact): strip MSB bytes, keep the lowest valid region.
+    // Compact: per 32-byte source block, discard 28 MSB bytes, keep the lowest 4 bytes.
+    COMPACT_4B = 6,
+    // Compact: per 32-byte source block, discard 24 MSB bytes, keep the lowest 8 bytes.
+    COMPACT_8B = 7,
+    // Compact: per 32-byte source block, discard 16 MSB bytes, keep the lowest 16 bytes.
+    COMPACT_16B = 8,
+};
+
 enum class asc_hf32_round_mode : uint8_t {
     NEAREST_AWAY = 0,
     NEAREST_EVEN = 1,

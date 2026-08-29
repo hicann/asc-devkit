@@ -19,10 +19,12 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
-__aicore__ inline void asc_set_l0c_copy_nz_para_impl(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride)
+__aicore__ inline void asc_set_l0c_copy_nz_para_impl(
+    uint16_t matrix_num, uint16_t src_nz_matrix_stride, uint32_t dst_matrix_stride)
 {
     if ASC_IS_AIC {
-        uint64_t config = (dst_nd_stride << 32) | (src_nd_stride << 16) | nd_num;
+        uint64_t config = (static_cast<uint64_t>(dst_matrix_stride) << 32) |
+                          (static_cast<uint64_t>(src_nz_matrix_stride) << 16) | matrix_num;
         set_loop3_para(config);
     }
 }

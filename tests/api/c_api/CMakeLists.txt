@@ -63,6 +63,8 @@ file(GLOB ASCENDC_UT_ascend950pr_9599_AIC_CASE_SRC
     npu_arch_3510/cube_compute/*.cpp
     npu_arch_3510/cube_datamove/*.cpp
     npu_arch_3510/sys_var/test_asc_get_pipe_idle_slot_count.cpp
+    npu_arch_3510/sys_var/test_asc_set_l13d_padding.cpp
+    npu_arch_3510/sys_var/test_asc_set_l12l0_padding_val.cpp
 )
 
 file(GLOB ASCENDC_UT_ascend950pr_9599_AIV_CASE_SRC

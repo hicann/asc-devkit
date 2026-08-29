@@ -25,6 +25,18 @@ __aicore__ inline void asc_set_l3d_rpt_b_impl(uint64_t config)
         set_l3d_rpt_b(config);
     }
 }
+
+__aicore__ inline void asc_set_l3d_rpt_b_impl(
+    uint16_t repeat_stride, uint8_t repeat_times, asc_l13d_repeat_direction repeat_direction, uint16_t dst_stride_k,
+    uint16_t dst_start_pos_m)
+{
+    if ASC_IS_AIC {
+        uint64_t config = (static_cast<uint64_t>(dst_start_pos_m) << 48) | (static_cast<uint64_t>(dst_stride_k) << 32) |
+                          (static_cast<uint64_t>(repeat_direction) << 24) |
+                          (static_cast<uint64_t>(repeat_times) << 16) | static_cast<uint64_t>(repeat_stride);
+        set_l3d_rpt_b(config);
+    }
+}
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

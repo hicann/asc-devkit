@@ -29,8 +29,12 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_gm2l1_nz_para_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l0c2gm_quant_post_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l0c2gm_relu_alpha_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l0c_copy_relu_alpha_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l12l0_padding_val_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l13d_padding_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l12l0a_3d_padding_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l12l0b_3d_padding_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_gm2l1_padding_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_get_arch_ver_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_get_core_id_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l0c2gm_channel_para_impl.h"
@@ -96,14 +100,21 @@ __aicore__ inline void asc_get_arch_ver(uint32_t& core_version) { asc_get_arch_v
 
 __aicore__ inline int64_t asc_get_core_id() { return asc_get_core_id_impl(); }
 
-__aicore__ inline void asc_set_l0c_copy_channel_para(uint16_t src_nz_matrix_stride)
+__aicore__ inline void asc_set_l0c_copy_channel_para(uint16_t src_nz_fractal_stride)
 {
-    asc_set_l0c_copy_channel_para_impl(src_nz_matrix_stride);
+    asc_set_l0c_copy_channel_para_impl(src_nz_fractal_stride);
 }
 
 __aicore__ inline void asc_set_l0c2gm_channel_para(uint64_t config) { asc_set_l0c2gm_channel_para_impl(config); }
 
 __aicore__ inline void asc_set_l3d_rpt_b(uint64_t config) { asc_set_l3d_rpt_b_impl(config); }
+
+__aicore__ inline void asc_set_l13d_rpt_b(
+    uint16_t repeat_stride, uint8_t repeat_times, asc_l13d_repeat_direction repeat_direction, uint16_t dst_stride_k,
+    uint16_t dst_start_pos_m)
+{
+    asc_set_l3d_rpt_b_impl(repeat_stride, repeat_times, repeat_direction, dst_stride_k, dst_start_pos_m);
+}
 
 __aicore__ inline void asc_set_gm2l1_nz_para(uint64_t config) { asc_set_gm2l1_nz_para_impl(config); }
 
@@ -121,11 +132,91 @@ __aicore__ inline void asc_set_l13d_padding(int16_t config) { asc_set_l13d_paddi
 
 __aicore__ inline void asc_set_l13d_padding(uint16_t config) { asc_set_l13d_padding_impl(config); }
 
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint64_t config) { asc_set_l12l0a_3d_padding_impl(config); }
+__aicore__ inline void asc_set_l12l0a_3d_padding(int8_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint8_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(int16_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint16_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(half padding_value) { asc_set_l12l0a_3d_padding_impl(padding_value); }
+__aicore__ inline void asc_set_l12l0a_3d_padding(bfloat16_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(int32_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint32_t padding_value)
+{
+    asc_set_l12l0a_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0a_3d_padding(float padding_value) { asc_set_l12l0a_3d_padding_impl(padding_value); }
+
+__aicore__ inline void asc_set_l12l0b_3d_padding(uint64_t config) { asc_set_l12l0b_3d_padding_impl(config); }
+__aicore__ inline void asc_set_l12l0b_3d_padding(int8_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(uint8_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(int16_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(uint16_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(half padding_value) { asc_set_l12l0b_3d_padding_impl(padding_value); }
+__aicore__ inline void asc_set_l12l0b_3d_padding(bfloat16_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(int32_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(uint32_t padding_value)
+{
+    asc_set_l12l0b_3d_padding_impl(padding_value);
+}
+__aicore__ inline void asc_set_l12l0b_3d_padding(float padding_value) { asc_set_l12l0b_3d_padding_impl(padding_value); }
+
+__aicore__ inline void asc_set_gm2l1_padding(uint64_t config) { asc_set_gm2l1_padding_impl(config); }
+__aicore__ inline void asc_set_gm2l1_padding(int8_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(uint8_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(int16_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(uint16_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(half padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(bfloat16_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(int32_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(uint32_t padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(float padding_value) { asc_set_gm2l1_padding_impl(padding_value); }
+
 __aicore__ inline void asc_set_l12l0_padding_val(uint64_t config) { asc_set_l12l0_padding_val_impl(config); }
 
 __aicore__ inline void asc_set_l0c2gm_quant_post(uint64_t config) { asc_set_l0c2gm_quant_post_impl(config); }
 
 __aicore__ inline void asc_set_l0c2gm_relu_alpha(uint64_t config) { asc_set_l0c2gm_relu_alpha_impl(config); }
+
+__aicore__ inline void asc_set_l0c_copy_relu_alpha(float scalar_relu_pre_alpha)
+{
+    asc_set_l0c_copy_relu_alpha_impl(scalar_relu_pre_alpha);
+}
 
 __aicore__ inline int64_t asc_get_smmu_tag_version() { return asc_get_smmu_tag_version_impl(); }
 

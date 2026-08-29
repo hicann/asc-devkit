@@ -32,3 +32,20 @@ TEST_F(TestSysVarSetL3dRptB, c_api_get_set_l3d_rpt_b_Succ)
     asc_init();
     GlobalMockObject::verify();
 }
+
+namespace {
+void set_l3d_rpt_b_params_stub(uint64_t config)
+{
+    uint64_t expected = (static_cast<uint64_t>(5) << 48) | (static_cast<uint64_t>(4) << 32) |
+                        (static_cast<uint64_t>(1) << 24) | (static_cast<uint64_t>(3) << 16) | 2;
+    EXPECT_EQ(config, expected);
+}
+} // namespace
+
+TEST_F(TestSysVarSetL3dRptB, c_api_set_l13d_rpt_b_params_Succ)
+{
+    MOCKER_CPP(set_l3d_rpt_b, void(uint64_t)).times(1).will(invoke(set_l3d_rpt_b_params_stub));
+    asc_set_l13d_rpt_b(2, 3, asc_l13d_repeat_direction::K_DIRECTION, 4, 5);
+    asc_init();
+    GlobalMockObject::verify();
+}

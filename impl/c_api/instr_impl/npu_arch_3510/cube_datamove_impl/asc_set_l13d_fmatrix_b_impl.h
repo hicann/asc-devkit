@@ -31,6 +31,17 @@ __aicore__ inline void asc_set_l13d_fmatrix_b_impl(asc_l13d_fmatrix_config& conf
     }
 }
 
+__aicore__ inline void asc_set_l13d_fmatrix_b_impl(
+    uint16_t fmatrix_w, uint16_t fmatrix_h, uint8_t pad_left, uint8_t pad_right, uint8_t pad_top, uint8_t pad_bottom)
+{
+    if ASC_IS_AIC {
+        uint64_t config = static_cast<uint64_t>(fmatrix_w) | (static_cast<uint64_t>(fmatrix_h) << 16) |
+                          (static_cast<uint64_t>(pad_left) << 32) | (static_cast<uint64_t>(pad_right) << 40) |
+                          (static_cast<uint64_t>(pad_top) << 48) | (static_cast<uint64_t>(pad_bottom) << 56);
+        set_fmatrix_b(config);
+    }
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

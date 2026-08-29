@@ -22,6 +22,18 @@ protected:
 
 void set_l12l0_padding_val_Stub(uint64_t config) { EXPECT_EQ(config, static_cast<uint64_t>(11)); }
 
+#define TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(data_type)                  \
+    TEST(TestSysVarSetL12L0BPadding, c_api_set_new_padding_##data_type) \
+    {                                                                   \
+        g_coreType = C_API_AIC_TYPE;                                    \
+        data_type input = 33;                                           \
+        MOCKER_CPP(set_padding_b, void(uint64_t)).times(1);             \
+        asc_set_l12l0b_3d_padding(input);                               \
+        asc_init();                                                     \
+        GlobalMockObject::verify();                                     \
+        g_coreType = C_API_AIV_TYPE;                                    \
+    }
+
 TEST_F(TestSysVarSetL12L0PaddingVal, c_api_set_l12l0_padding_val_Succ)
 {
     int64_t input = 11;
@@ -30,3 +42,14 @@ TEST_F(TestSysVarSetL12L0PaddingVal, c_api_set_l12l0_padding_val_Succ)
     asc_init();
     GlobalMockObject::verify();
 }
+
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(uint64_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(int8_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(uint8_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(int16_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(uint16_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(half);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(bfloat16_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(int32_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(uint32_t);
+TEST_NEW_SYS_VAR_SET_L12L0B_PADDING(float);

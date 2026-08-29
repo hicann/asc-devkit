@@ -46,7 +46,7 @@ TEST_F(TestCubeDmamoveCopyL12UBCAPI, c_api_asc_copy_l12ub_Succ)
 {
     __ubuf__ void* dst = reinterpret_cast<__ubuf__ void*>(1);
     __cbuf__ void* src = reinterpret_cast<__cbuf__ void*>(2);
-    bool sub_blockid = false;
+    int8_t sub_blockid = 0;
     uint16_t n_burst = 3;
     uint16_t len_burst = 4;
     uint16_t src_gap_size = 5;
@@ -57,5 +57,23 @@ TEST_F(TestCubeDmamoveCopyL12UBCAPI, c_api_asc_copy_l12ub_Succ)
         .will(invoke(copy_cbuf_to_ubuf_Stub));
 
     asc_copy_l12ub(dst, src, sub_blockid, n_burst, len_burst, src_gap_size, dst_gap_size);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCubeDmamoveCopyL12UBCAPI, c_api_asc_copy_l12ub_sync_Succ)
+{
+    __ubuf__ void* dst = reinterpret_cast<__ubuf__ void*>(1);
+    __cbuf__ void* src = reinterpret_cast<__cbuf__ void*>(2);
+    int8_t sub_blockid = 0;
+    uint16_t n_burst = 3;
+    uint16_t len_burst = 4;
+    uint16_t src_gap_size = 5;
+    uint16_t dst_gap_size = 6;
+
+    MOCKER(copy_cbuf_to_ubuf, void(__ubuf__ void*, __cbuf__ void*, bool, uint16_t, uint16_t, uint16_t, uint16_t))
+        .times(1)
+        .will(invoke(copy_cbuf_to_ubuf_Stub));
+
+    asc_copy_l12ub_sync(dst, src, sub_blockid, n_burst, len_burst, src_gap_size, dst_gap_size);
     GlobalMockObject::verify();
 }
