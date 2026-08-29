@@ -93,6 +93,7 @@ struct CcuKernelCtxBase {
 
     std::map<std::string, CcuLoopEntity> loopMap;
     CcuLoopExecutors enginePool;
+    GroupLocalReduceVar localReduceVar;
 
     void CreateLoopEntity(std::string loopStr) { loopMap.emplace(loopStr, CcuLoopEntity()); }
 

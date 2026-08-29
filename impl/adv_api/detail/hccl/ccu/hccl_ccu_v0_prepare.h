@@ -314,18 +314,24 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     xnData_[4] = rankSliceOffset;
     xnData_[5] = 0;
     xnData_[6] = 0;
-    // XN7/XN8 carry the tail size and inverse total chunk count.
+    xnData_[7] = sliceSize;
+    xnData_[8] = UINT64_MAX - 1;
+    CalcGoSize(sliceSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[9]);
+    // KFC-specific parameters at [13..23] (homm template ignores these, uses templateDataParams).
     constexpr uint64_t scratchSize = 16 * 1024 * 1024;
     constexpr uint64_t minSliceAlign = 128;
     uint64_t chunkSize = scratchSize / ccuParam_.rankNum / minSliceAlign * minSliceAlign;
     uint64_t fullChunkCount = sliceSize == 0 ? 0 : (sliceSize - 1) / chunkSize;
     uint64_t chunkCount = sliceSize == 0 ? 0 : fullChunkCount + 1;
-    xnData_[7] = sliceSize - fullChunkCount * chunkSize;
-    xnData_[8] = UINT64_MAX - chunkCount;
+    uint64_t tailSize = sliceSize - fullChunkCount * chunkSize;
+    xnData_[13] = chunkSize;
+    xnData_[14] = UINT64_MAX - chunkCount;
+    xnData_[15] = tailSize;
+    CalcGoSize(chunkSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[16]);
+    CalcGoSize(tailSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[20]);
     KERNEL_LOG(
         KERNEL_INFO, "RS chunk debug: slice=0x%llx, chunk=0x%llx, full=0x%llx, tail=0x%llx, loop=0x%llx\n", sliceSize,
-        chunkSize, fullChunkCount, xnData_[7], xnData_[8]);
-    CalcGoSize(sliceSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[9]);
+        chunkSize, fullChunkCount, xnData_[15], xnData_[14]);
 }
 } // namespace AscendC
 
