@@ -287,6 +287,7 @@
         ```
 
     对于整数类型只有饱和模式。
+    L0C Buffer到GM搬运接口的边界值汇总请见[矩阵计算搬出相关接口边界值汇总](../../../../appendix/matrix_compute_move_out_interface_boundary_value_summary.md)。
 <!-- end id29 -->
 
 ## 调用示例<a id="zh-cn_topic_0000002542828493_section088124295117"></a>

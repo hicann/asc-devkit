@@ -196,6 +196,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
         ```
 
     对于整数类型只有饱和模式。
+    L0C Buffer到UB搬运接口的边界值汇总请见[矩阵计算搬出相关接口边界值汇总](../../../../appendix/matrix_compute_move_out_interface_boundary_value_summary.md)。
 <!-- end id18 -->
 
 <!-- npu="950" id20 -->
