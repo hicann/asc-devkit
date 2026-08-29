@@ -5,7 +5,7 @@ asc_load_l2_cache_mode用于表示数据从GM搬运到Unified Buffer（UB）时�
 - 向量搬运接口，例如[asc_copy_gm2ub_align](../../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)和[asc_ndim_copy_gm2ub](../../vector_datamove/asc_ndim_copy_gm2ub.md)。
 - 标量访存路径的load策略配置与查询，例如[asc_set_scalar_cache_mode](../../cache_ctrl/asc_set_scalar_cache_mode.md)和[asc_get_scalar_load_cache_mode](../../cache_ctrl/asc_get_scalar_load_cache_mode.md)。
 
-L2 Cache管理策略的影响可见[L2 Cache Mode最佳实践](../../../../../../../examples/02_simd_c_api/02_features/03_c_api/01_data_movement/00_set_l2_cache_mode/README.md)。
+L2 Cache管理策略的影响可见[L2 Cache Mode最佳实践](../../../../../../../examples/02_simd_c_api/02_features/00_data_movement/00_set_l2_cache_mode/README.md)。
 
 ## 枚举类具体定义
 

@@ -2,10 +2,12 @@
 
 ## Overview
 
-Based on Ascend C feature samples, this document introduces the implementation methods for writing operator samples using Framework, C_API, and other features.
+This directory contains data movement and performance optimization samples implemented using Ascend C C_API.
 
 ## Sample List
 
 | Directory Name | Description |
 | -------------- | ----------- |
-| [03_c_api](./03_c_api/) | This sample demonstrates the compilation process for building operator samples using C_API |
+| [00_data_movement](./00_data_movement) | Demonstrates data movement features and optimization methods. |
+| [01_reg_vector_compute](./01_reg_vector_compute) | Demonstrates Vector computation optimization methods based on Reg programming interfaces. |
+| [02_matrix_compute](./02_matrix_compute) | Demonstrates optimization methods for Cube matrix computation. |

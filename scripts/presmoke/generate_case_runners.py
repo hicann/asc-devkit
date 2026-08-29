@@ -76,9 +76,6 @@ NO_CMAKE_ARCH_INJECTION_CASES = {
     "02_simd_c_api/00_introduction/00_quickstart/hello_world_npu",
     "02_simd_c_api/00_introduction/01_add/c_api_delicacy_async_add",
     "02_simd_c_api/00_introduction/01_add/c_api_sync_add",
-    "02_simd_c_api/02_features/03_c_api/00_vector_compute/00_sync_add",
-    "02_simd_c_api/02_features/03_c_api/00_vector_compute/01_async_add",
-    "02_simd_c_api/02_features/03_c_api/00_vector_compute/02_c_api_delicacy_async_add",
 }
 
 TENSORFLOW_SKIP_REASON = "requires TensorFlow 2.6.5 environment; skipped by presmoke"
