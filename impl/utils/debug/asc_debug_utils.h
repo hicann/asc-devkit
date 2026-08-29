@@ -200,6 +200,27 @@ __aicore__ inline void do_overlow_skip(
     ringbuf_skip_with_info(writeInfo, ringBufAddr, ringBufLen);
 }
 
+#if __NPU_ARCH__ == 3510
+__aicore__ inline bool ringbuf_overflow_wait(__gm__ DebugBlockReadInfo* readInfo, __gm__ DebugBlockWriteInfo* writeInfo)
+{
+    constexpr uint32_t maxCounter = 15;
+    uint32_t counter = 0;
+    volatile uint64_t readofst = ld_dev((__gm__ uint64_t*)(&(readInfo->bufOffset)), 0);
+    volatile uint64_t writeofst = ld_dev((__gm__ uint64_t*)(&(writeInfo->bufOffset)), 0);
+    // notice all state which need to wait in function check_ringbuf_space has (w != r) before wait
+    while (readofst != writeofst) {
+        if (counter >= maxCounter) { // max wait 15 * 300ms, rts read gm per 200ms
+            return false;
+        }
+        ringbuf_wait_rts_sync(); // wait 20 * 15 ms
+        ++counter;
+        asc_entire_dcci((__gm__ uint64_t*)readInfo);
+        readofst = ld_dev((__gm__ uint64_t*)(&(readInfo->bufOffset)), 0);
+        writeofst = ld_dev((__gm__ uint64_t*)(&(writeInfo->bufOffset)), 0);
+    }
+    return true;
+}
+#else
 __aicore__ inline bool ringbuf_overflow_wait(__gm__ DebugBlockReadInfo* readInfo, __gm__ DebugBlockWriteInfo* writeInfo)
 {
     constexpr uint32_t maxCounter = 15;
@@ -215,6 +236,7 @@ __aicore__ inline bool ringbuf_overflow_wait(__gm__ DebugBlockReadInfo* readInfo
     }
     return true;
 }
+#endif
 
 __aicore__ inline bool check_ringbuf_space(__gm__ DebugBlockHeadInfo* blockInfo, const uint32_t& tlvLen)
 {
