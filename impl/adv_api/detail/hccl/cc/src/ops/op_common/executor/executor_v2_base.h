@@ -10,6 +10,7 @@
 #ifndef EXECUTOR_BASE_V2_H
 #define EXECUTOR_BASE_V2_H
 
+#include <string>
 #include "alg_param.h"
 #include "topo_host.h"
 #include "channel.h"
@@ -21,6 +22,7 @@
 #include "sal.h"
 #include "executor_base.h"
 #include "template_utils.h"
+#include "selector/alg_attrs.h"
 
 namespace mc2_ops_hccl {
 
@@ -37,6 +39,9 @@ public:
     virtual HcclResult CalcAlgHierarchyInfo(
         HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo) = 0;
 
+    virtual HcclResult CalcAlgHierarchyInfoV2(
+        TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo, const AlgAttrs& algAttrs);
+
     virtual HcclResult CalcRes(
         HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
         const AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resourceRequest) = 0;
@@ -45,6 +50,8 @@ public:
     virtual HcclResult Orchestrate(const OpParam& param, const AlgResourceCtxSerializable& resCtx) = 0;
 
     virtual HcclResult FastLaunch(const OpParam& param, const CcuFastLaunchCtx* resCtx);
+
+    virtual AlgAttrs GetAlgoMeta(const std::string& algName) const;
 
     HcclResult SetTempFastLaunchAddr(
         TemplateFastLaunchCtx& tempFastLaunchCtx, void* inputPtr, void* outputPtr, const HcclMem& hcclBuff) const;

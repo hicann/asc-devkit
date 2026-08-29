@@ -22,6 +22,22 @@ std::string InsCollAlgBase::Describe() const
     return s;
 }
 
+HcclResult InsCollAlgBase::CalcAlgHierarchyInfoV2(
+    TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo, const AlgAttrs& algAttrs)
+{
+    (void)topoInfo;
+    (void)algHierarchyInfo;
+    (void)algAttrs;
+    return HCCL_SUCCESS;
+}
+
+AlgAttrs InsCollAlgBase::GetAlgoMeta(const std::string& algName) const
+{
+    AlgAttrs attrs;
+    attrs.name = algName;
+    return attrs;
+}
+
 HcclResult InsCollAlgBase::RestoreChannelMap(
     const AlgResourceCtxSerializable& resCtx,
     std::vector<std::map<u32, std::vector<ChannelInfo>>>& rankIdToChannelInfo) const
@@ -30,8 +46,10 @@ HcclResult InsCollAlgBase::RestoreChannelMap(
     const size_t infosSize = algHierarchyInfo.infos.size();
     const size_t channelsSize = resCtx.channels.size();
     if (infosSize > channelsSize) {
-        HCCL_ERROR("[MC2_OPEN_DIAG][RestoreChannelMap] channel level out of range, infosSize[%zu], "
-            "channelsSize[%zu]", infosSize, channelsSize);
+        HCCL_ERROR(
+            "[MC2_OPEN_DIAG][RestoreChannelMap] channel level out of range, infosSize[%zu], "
+            "channelsSize[%zu]",
+            infosSize, channelsSize);
         return HcclResult::HCCL_E_INTERNAL;
     }
     rankIdToChannelInfo.resize(infosSize);

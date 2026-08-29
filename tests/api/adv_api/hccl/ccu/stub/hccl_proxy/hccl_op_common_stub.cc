@@ -56,7 +56,21 @@ HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctx
 InsCollAlgBase::InsCollAlgBase() {}
 InsCollAlgBase::~InsCollAlgBase() {}
 std::string InsCollAlgBase::Describe() const { return "InsCollAlgBase"; }
+HcclResult InsCollAlgBase::CalcAlgHierarchyInfoV2(
+    TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo, const AlgAttrs& algAttrs)
+{
+    (void)topoInfo;
+    (void)algHierarchyInfo;
+    (void)algAttrs;
+    return HCCL_SUCCESS;
+}
 HcclResult InsCollAlgBase::FastLaunch(const OpParam& param, const CcuFastLaunchCtx* resCtx) { return HCCL_SUCCESS; }
+AlgAttrs InsCollAlgBase::GetAlgoMeta(const std::string& algName) const
+{
+    AlgAttrs attrs;
+    attrs.name = algName;
+    return attrs;
+}
 
 class MockInsCollAlgBase : public InsCollAlgBase {
 public:

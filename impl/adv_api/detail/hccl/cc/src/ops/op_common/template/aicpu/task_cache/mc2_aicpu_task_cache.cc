@@ -286,6 +286,54 @@ void AddHcclMem(Digest128Builder& digest, const HcclMem& mem)
     digest.AddU64(mem.size);
 }
 
+void AddByteArray(Digest128Builder& digest, const uint8_t* data, size_t size)
+{
+    digest.AddU64(static_cast<uint64_t>(size));
+    for (size_t idx = 0U; idx < size; ++idx) {
+        digest.AddU8(data[idx]);
+    }
+}
+
+void AddEndpointDesc(Digest128Builder& digest, const EndpointDesc& endpoint)
+{
+    digest.AddU32(static_cast<uint32_t>(endpoint.protocol));
+    digest.AddU32(static_cast<uint32_t>(endpoint.commAddr.type));
+    AddByteArray(digest, endpoint.commAddr.raws, sizeof(endpoint.commAddr.raws));
+    digest.AddU32(static_cast<uint32_t>(endpoint.loc.locType));
+    AddByteArray(digest, endpoint.loc.raws, sizeof(endpoint.loc.raws));
+    AddByteArray(digest, endpoint.raws, sizeof(endpoint.raws));
+}
+
+void AddPhysicalLevel(Digest128Builder& digest, const PhysicalLevelInfo& level)
+{
+    digest.AddU64(static_cast<uint64_t>(level.localRanks.size()));
+    for (uint32_t rank : level.localRanks) {
+        digest.AddU32(rank);
+    }
+    digest.AddU32(static_cast<uint32_t>(level.view));
+    digest.AddU64(static_cast<uint64_t>(level.instSizeListByLayer.size()));
+    for (uint32_t size : level.instSizeListByLayer) {
+        digest.AddU32(size);
+    }
+    digest.AddU32(level.ref.netLayer);
+    digest.AddU32(level.ref.topoInstId);
+    digest.AddBool(level.hasTopoInst);
+    digest.AddU32(static_cast<uint32_t>(level.topoType));
+    digest.AddU32(static_cast<uint32_t>(level.locType));
+    digest.AddU64(static_cast<uint64_t>(level.protocols.size()));
+    for (CommProtocol protocol : level.protocols) {
+        digest.AddU32(static_cast<uint32_t>(protocol));
+    }
+    digest.AddU64(static_cast<uint64_t>(level.portNums.size()));
+    for (uint32_t portNum : level.portNums) {
+        digest.AddU32(portNum);
+    }
+    digest.AddU64(static_cast<uint64_t>(level.endpoints.size()));
+    for (const EndpointDesc& endpoint : level.endpoints) {
+        AddEndpointDesc(digest, endpoint);
+    }
+}
+
 void AddShapeFields(const OpParam& param, uint64_t inputSpan, uint64_t outputSpan, Digest128Builder& shape)
 {
     shape.AddU32(static_cast<uint32_t>(param.opType));
@@ -378,8 +426,13 @@ bool AddResourceFields(const OpParam& param, const AlgResourceCtxSerializable& r
     resource.AddBool(topo.is2DieFullMesh);
     resource.AddBool(topo.level0PcieMix);
     resource.AddBool(topo.level0BigClosRange);
-    resource.AddBool(topo.level2Uboe);
+    resource.AddBool(topo.topLevelUboe);
+    resource.AddBool(topo.level2UbRtp);
+    resource.AddBool(topo.hostDpuOnly);
+    resource.AddBool(topo.level0Symmetric);
+    resource.AddBool(topo.level1Symmetric);
     resource.AddU32(topo.topoInstDetailsOfLayerSize);
+    resource.AddBool(topo.isPod);
     resource.AddU32(static_cast<uint32_t>(topo.level0MeshType));
 
     resource.AddU32(topo.netLayerDetails.netLayerNum);
@@ -430,6 +483,10 @@ bool AddResourceFields(const OpParam& param, const AlgResourceCtxSerializable& r
             }
         }
     }
+    resource.AddU64(static_cast<uint64_t>(topo.physicalLevels.size()));
+    for (const PhysicalLevelInfo& level : topo.physicalLevels) {
+        AddPhysicalLevel(resource, level);
+    }
 
     resource.AddU64(static_cast<uint64_t>(resCtx.algHierarchyInfo.infos.size()));
     for (const auto& level : resCtx.algHierarchyInfo.infos) {
@@ -439,6 +496,13 @@ bool AddResourceFields(const OpParam& param, const AlgResourceCtxSerializable& r
             for (uint32_t rank : instance) {
                 resource.AddU32(rank);
             }
+        }
+    }
+    resource.AddU64(static_cast<uint64_t>(resCtx.algHierarchyInfo.physicalIdxForAlgoLevels.size()));
+    for (const auto& level : resCtx.algHierarchyInfo.physicalIdxForAlgoLevels) {
+        resource.AddU64(static_cast<uint64_t>(level.size()));
+        for (PhysicalLevelIndex index : level) {
+            resource.AddU32(static_cast<uint32_t>(index));
         }
     }
 
