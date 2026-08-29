@@ -73,10 +73,10 @@ $$
 __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix,
                                 __ca__ <a_dtype>* a_matrix,
                                 __cb__ <b_dtype>* b_matrix,
-                                uint16_t left_height,
-                                uint16_t n_dim,
-                                uint16_t right_width,
-                                uint8_t unit_flag,
+                                uint16_t m,
+                                uint16_t k,
+                                uint16_t n,
+                                asc_unit_flag_mode unit_flag_mode,
                                 bool disable_gemv,
                                 bool c_matrix_source,
                                 bool c_matrix_init_val)
@@ -106,10 +106,10 @@ __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix,
 __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
                                 __ca__ bfloat16_t* a_matrix,
                                 __cb__ bfloat16_t* b_matrix,
-                                uint16_t left_height,
-                                uint16_t n_dim,
-                                uint16_t right_width,
-                                uint8_t unit_flag,
+                                uint16_t m,
+                                uint16_t k,
+                                uint16_t n,
+                                asc_unit_flag_mode unit_flag_mode,
                                 bool disable_gemv,
                                 bool c_matrix_source,
                                 bool c_matrix_init_val)
@@ -124,8 +124,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 - asc_mmad接口：
 
   ```c
-  __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix, __ca__ <a_dtype>* a_matrix, __cb__ <b_dtype>* b_matrix, uint16_t left_height, uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
-  __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix, __ca__ <a_dtype>* a_matrix, __cb__ <b_dtype>* b_matrix, uint16_t left_height, uint16_t n_dim, uint16_t right_width, uint8_t feat_offset, uint8_t smask_offset, uint8_t unit_flag, bool k_direction_align, bool is_weight_offset, bool c_matrix_source, bool c_matrix_init_val)
+  __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix, __ca__ <a_dtype>* a_matrix, __cb__ <b_dtype>* b_matrix, uint16_t m, uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
   ```
 
   `c_dtype`、`a_dtype`、`b_dtype`的取值组合见下表：
@@ -142,8 +141,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 - asc_mmad_s4接口，当输入矩阵数据类型为`int4b_t`时调用此类接口：
 
   ```c
-  __aicore__ inline void asc_mmad_s4(__cc__ int32_t* c_matrix, __ca__ int4b_t* a_matrix, __cb__ int4b_t* b_matrix, uint16_t left_height, uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
-  __aicore__ inline void asc_mmad_s4(__cc__ int32_t* c_matrix, __ca__ int4b_t* a_matrix, __cb__ int4b_t* b_matrix, uint16_t left_height, uint16_t n_dim, uint16_t right_width, uint8_t feat_offset, uint8_t smask_offset, uint8_t unit_flag, bool k_direction_align, bool is_weight_offset, bool c_matrix_source, bool c_matrix_init_val)
+  __aicore__ inline void asc_mmad_s4(__cc__ int32_t* c_matrix, __ca__ int4b_t* a_matrix, __cb__ int4b_t* b_matrix, uint16_t m, uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
   ```
 <!-- end id13 -->
 
@@ -157,10 +155,10 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 | c_matrix | 输出 | 目的操作数，结果矩阵C在L0C Buffer中的起始地址，需按照1024字节对齐。数据类型由接口重载决定，具体请参见[支持的数据类型组合](#asc_mmad_data_type)。 |
 | a_matrix | 输入 | 源操作数，左矩阵A在L0A Buffer中的起始地址，需按照512字节对齐。数据类型由接口重载决定，具体请参见[支持的数据类型组合](#asc_mmad_data_type)。 |
 | b_matrix | 输入 | 源操作数，右矩阵B在L0B Buffer中的起始地址，需按照512字节对齐。数据类型由接口重载决定，具体请参见[支持的数据类型组合](#asc_mmad_data_type)。 |
-| left_height | 输入 | 左矩阵A和结果矩阵C的M维大小，单位为元素，取值范围为[0, 4095]。 |
-| n_dim | 输入 | 左矩阵A和右矩阵B的K维大小，单位为元素，取值范围为[0, 4095]。 |
-| right_width | 输入 | 右矩阵B和结果矩阵C的N维大小，单位为元素，取值范围为[0, 4095]。 |
-| unit_flag | 输入 | 用于控制矩阵乘加指令与矩阵搬出指令的细粒度并行，开启UnitFlag后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0：不开启UnitFlag。<br>&nbsp;&nbsp;&bull; 2：开启UnitFlag，硬件执行完指令后不改变单元标志位。<br>&nbsp;&nbsp;&bull; 3：开启UnitFlag，硬件执行完指令后改变单元标志位。<br>矩阵乘加指令与对应的矩阵搬出指令必须都开启或都不开启UnitFlag，开启后指令之间无需再插入同步指令。 |
+| m | 输入 | 左矩阵A和结果矩阵C的M维大小，单位为元素，取值范围为[0, 4095]。 |
+| k | 输入 | 左矩阵A和右矩阵B的K维大小，单位为元素，取值范围为[0, 4095]。 |
+| n | 输入 | 右矩阵B和结果矩阵C的N维大小，单位为元素，取值范围为[0, 4095]。 |
+| unit_flag_mode | 输入 | 用于控制矩阵乘加指令与矩阵搬出指令的细粒度并行，开启UnitFlag后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::DISABLE`：不开启UnitFlag。<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::ENABLE_KEEP`：开启UnitFlag，硬件执行完指令后不改变单元标志位。<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::ENABLE_UPDATE`：开启UnitFlag，硬件执行完指令后改变单元标志位。<br>矩阵乘加指令与对应的矩阵搬出指令必须都开启或都不开启UnitFlag，开启后指令之间无需再插入同步指令。 |
 | disable_gemv | 输入 | M为1时，配置是否关闭GEMV模式。<br>&nbsp;&nbsp;&bull; false：开启GEMV模式。<br>&nbsp;&nbsp;&bull; true：关闭GEMV模式。<br>M不为1时，该参数不生效。 |
 | c_matrix_source | 输入 | 当参数`c_matrix_init_val`为false时，配置矩阵C的初始值来源。<br>&nbsp;&nbsp;&bull; false：矩阵C的初始值来源于L0C Buffer。<br>&nbsp;&nbsp;&bull; true：矩阵C的初始值来源于BiasTable Buffer。 |
 | c_matrix_init_val | 输入 | 配置是否将矩阵C的初始值设置为0。<br>&nbsp;&nbsp;&bull; true：将矩阵C的初始值设置为0，参数`c_matrix_source`不生效。<br>&nbsp;&nbsp;&bull; false：不执行清零操作，矩阵C的初始值由参数`c_matrix_source`配置。 |
@@ -174,14 +172,11 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 | c_matrix | 输出 | 目的操作数，结果矩阵C在L0C Buffer中的起始地址，需按照1024字节对齐。 |
 | a_matrix | 输入 | 源操作数，左矩阵A在L0A Buffer中的起始地址，需按照512字节对齐。 |
 | b_matrix | 输入 | 源操作数，右矩阵B在L0B Buffer中的起始地址，需按照512字节对齐。 |
-| left_height | 输入 | 左矩阵A和结果矩阵C的M维大小，单位为元素，取值范围为[0, 4095]。 |
-| n_dim | 输入 | 左矩阵A和右矩阵B的K维大小，单位为元素，取值范围为[0, 4095]。 |
-| right_width | 输入 | 右矩阵B和结果矩阵C的N维大小，单位为元素，取值范围为[0, 4095]。 |
-| feat_offset | 输入 | 保留参数。 |
-| smask_offset | 输入 | 权重矩阵的偏移位。 |
-| unit_flag | 输入 | 用于控制矩阵乘加指令与矩阵搬出指令的细粒度并行，开启UnitFlag后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0：不开启UnitFlag。<br>&nbsp;&nbsp;&bull; 2：开启UnitFlag，硬件执行完指令后不改变单元标志位。<br>&nbsp;&nbsp;&bull; 3：开启UnitFlag，硬件执行完指令后改变单元标志位。<br>矩阵乘加指令与对应的矩阵搬出指令必须都开启或都不开启UnitFlag，开启后指令之间无需再插入同步指令。 |
-| k_direction_align | 输入 | K方向对齐的核心功能是通过`k_direction_align`参数控制在使用float数据类型时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。<br>取值说明如下：<br>&nbsp;&nbsp;&bull; false：K方向对齐到`ceil(n_dim / 8) * 8`。<br>&nbsp;&nbsp;&bull; true：K方向对齐到`ceil(n_dim / 16) * 16`。 |
-| is_weight_offset | 输入 | 启用weight matrix offset。 |
+| m | 输入 | 左矩阵A和结果矩阵C的M维大小，单位为元素，取值范围为[0, 4095]。 |
+| k | 输入 | 左矩阵A和右矩阵B的K维大小，单位为元素，取值范围为[0, 4095]。 |
+| n | 输入 | 右矩阵B和结果矩阵C的N维大小，单位为元素，取值范围为[0, 4095]。 |
+| unit_flag_mode | 输入 | 用于控制矩阵乘加指令与矩阵搬出指令的细粒度并行，开启UnitFlag后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::DISABLE`：不开启UnitFlag。<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::ENABLE_KEEP`：开启UnitFlag，硬件执行完指令后不改变单元标志位。<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::ENABLE_UPDATE`：开启UnitFlag，硬件执行完指令后改变单元标志位。<br>矩阵乘加指令与对应的矩阵搬出指令必须都开启或都不开启UnitFlag，开启后指令之间无需再插入同步指令。 |
+| k_direction_align | 输入 | K方向对齐的核心功能是通过`k_direction_align`参数控制在使用float数据类型时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。<br>取值说明如下：<br>&nbsp;&nbsp;&bull; false：K方向对齐到`ceil(k / 8) * 8`。<br>&nbsp;&nbsp;&bull; true：K方向对齐到`ceil(k / 16) * 16`。 |
 | c_matrix_source | 输入 | 当参数`c_matrix_init_val`为false时，配置矩阵C的初始值来源。<br>&nbsp;&nbsp;&bull; false：矩阵C的初始值来源于L0C Buffer。<br>&nbsp;&nbsp;&bull; true：矩阵C的初始值来源于BiasTable Buffer。 |
 | c_matrix_init_val | 输入 | 配置是否将矩阵C的初始值设置为0。<br>&nbsp;&nbsp;&bull; true：将矩阵C的初始值设置为0，参数`c_matrix_source`不生效。<br>&nbsp;&nbsp;&bull; false：不执行清零操作，矩阵C的初始值由参数`c_matrix_source`配置。 |
 <!-- end id15 -->
@@ -197,7 +192,7 @@ PIPE_M
 ## 约束说明
 
 - 本接口仅在AIC上生效，在AIV上调用将直接返回。
-- `left_height`、`n_dim`、`right_width`中的任意一个值为0时，接口将被视为NOP（空操作）。
+- `m`、`k`、`n`中的任意一个值为0时，接口将被视为NOP（空操作）。
 
 - 内存使用约束说明：
   <!-- npu="950" id10 -->
@@ -205,7 +200,7 @@ PIPE_M
 
       - L0C Buffer大小为256KB，L0A Buffer和L0B Buffer大小均为64KB。BiasTable Buffer大小为4KB。矩阵的起始地址和占用空间不能超出对应Buffer的范围。
       - 各矩阵的起始地址需满足[参数说明](#asc_mmad_param_table)中的对齐要求。操作数的其他地址约束请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
-      - 申请矩阵存储空间时，需使用按照分形大小补齐后的数值进行申请：M、N分别向上补齐到16的倍数，K向上补齐到K0的倍数，K0的取值为`32B / sizeof(dtype)`，`dtype`为矩阵的数据类型。`left_height`、`n_dim`和`right_width`仍传入矩阵的有效M、K、N值，补齐部分为无效数据，不参与结果矩阵有效区域的计算。
+      - 申请矩阵存储空间时，需使用按照分形大小补齐后的数值进行申请：M、N分别向上补齐到16的倍数，K向上补齐到K0的倍数，K0的取值为`32B / sizeof(dtype)`，`dtype`为矩阵的数据类型。`m`、`k`和`n`仍传入矩阵的有效M、K、N值，补齐部分为无效数据，不参与结果矩阵有效区域的计算。
       - 当M为1且`disable_gemv`为false时，将开启GEMV模式。此时从L0A Buffer读取矩阵A时按照ND格式读取，矩阵A需按照ND格式排布，起始地址仍需按照512字节对齐。
   <!-- end id10 -->
 
@@ -223,11 +218,11 @@ PIPE_M
 
 - 同步约束说明：
 
-  针对输入矩阵沿K轴分块计算，并将结果累加到同一块L0C Buffer的场景，当`(left_height / 16) * (right_width / 16) < 10`时，需在相邻两次矩阵乘加指令之间调用[asc_sync_pipe](../sync/asc_sync_pipe.md)，并将入参`pipe`设置为`PIPE_M`。
+  针对输入矩阵沿K轴分块计算，并将结果累加到同一块L0C Buffer的场景，当`(m / 16) * (n / 16) < 10`时，需在相邻两次矩阵乘加指令之间调用[asc_sync_pipe](../sync/asc_sync_pipe.md)，并将入参`pipe`设置为`PIPE_M`。
 
 - UnitFlag约束说明：
 
-  - 开启UnitFlag时，矩阵乘加指令与对应矩阵搬出指令需同时开启UnitFlag。当希望同一块L0C Buffer内存空间能持续只被多条矩阵乘加指令或多条矩阵搬出指令操作时，需将前n-1条指令的unitFlag值设置为2，维持被操作内存空间的持续占用状态，最后一条指令设置为3，解除被占用状态。
+  - 开启UnitFlag时，矩阵乘加指令与对应矩阵搬出指令需同时开启UnitFlag。当希望同一块L0C Buffer内存空间能持续只被多条矩阵乘加指令或多条矩阵搬出指令操作时，除最后一条外的指令需将`unit_flag_mode`设置为`asc_unit_flag_mode::ENABLE_KEEP`，维持被操作内存空间的持续占用状态，最后一条指令设置为`asc_unit_flag_mode::ENABLE_UPDATE`，解除被占用状态。
   - 开启UnitFlag时，矩阵计算方向需与矩阵搬出读取顺序保持一致。矩阵搬出指令开启Nz2ND随路格式转换，或未进行随路格式转换但开启B8/B4量化并触发Channel Merge功能时，调用[asc_set_mmad_direction_n](asc_set_mmad_direction_n.md)；其他场景调用[asc_set_mmad_direction_m](asc_set_mmad_direction_m.md)。
   - 开启UnitFlag时，建议矩阵乘加的计算数据量与矩阵搬出的数据量保持一致。两者不一致可能导致执行异常。需要清除UnitFlag产生的残留状态时，可调用[asc_set_l0c2gm_config](../cube_datamove/asc_set_l0c2gm_config.md)，并将`enable_unit_flag`设置为true，将L0C Buffer中所有内存块的单元标志位设置为0并关闭UnitFlag。
 
@@ -285,7 +280,7 @@ __global__ __cube__ void asc_mmad_kernel(__gm__ int8_t* a, __gm__ int8_t* b, __g
         static_cast<uint16_t>(2), static_cast<uint16_t>(1), static_cast<uint16_t>(0), static_cast<uint16_t>(0));
     asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
-    asc_mmad(c_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
+    asc_mmad(c_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_set_l0c_copy_nz_para(1, 0, 0);

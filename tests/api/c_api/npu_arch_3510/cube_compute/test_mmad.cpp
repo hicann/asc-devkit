@@ -13,6 +13,9 @@
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #define TEST_CUBE_COMPUTE_MMAD_INSTR(c_type, a_type, b_type, type_prefix)                                              \
                                                                                                                        \
     class TestMmad##type_prefix##CAPI : public testing::Test {                                                         \
@@ -22,6 +25,7 @@
     };                                                                                                                 \
                                                                                                                        \
     namespace {                                                                                                        \
+    uint8_t expected_unit_flag_##type_prefix = 1;                                                                      \
     void mad_##type_prefix##_params_Stub(                                                                              \
         __cc__ c_type* c_matrix, __ca__ a_type* a_matrix, __cb__ b_type* b_matrix, uint16_t left_height,               \
         uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool disable_gemv, bool c_matrix_source,              \
@@ -33,7 +37,7 @@
         EXPECT_EQ(left_height, static_cast<uint16_t>(4));                                                              \
         EXPECT_EQ(n_dim, static_cast<uint16_t>(5));                                                                    \
         EXPECT_EQ(right_width, static_cast<uint16_t>(6));                                                              \
-        EXPECT_EQ(unit_flag, static_cast<uint8_t>(1));                                                                 \
+        EXPECT_EQ(unit_flag, expected_unit_flag_##type_prefix);                                                        \
         EXPECT_EQ(disable_gemv, true);                                                                                 \
         EXPECT_EQ(c_matrix_source, false);                                                                             \
         EXPECT_EQ(c_matrix_init_val, true);                                                                            \
@@ -53,6 +57,35 @@
         bool c_matrix_source = false;                                                                                  \
         bool c_matrix_init_val = true;                                                                                 \
                                                                                                                        \
+        expected_unit_flag_##type_prefix = 1;                                                                          \
+        MOCKER_CPP(                                                                                                    \
+            mad, void(                                                                                                 \
+                     __cc__ c_type * c_matrix, __ca__ a_type * a_matrix, __cb__ b_type * b_matrix,                     \
+                     uint16_t left_height, uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool disable_gemv, \
+                     bool c_matrix_source, bool c_matrix_init_val))                                                    \
+            .times(1)                                                                                                  \
+            .will(invoke(mad_##type_prefix##_params_Stub));                                                            \
+                                                                                                                       \
+        asc_mmad(                                                                                                      \
+            c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,   \
+            c_matrix_init_val);                                                                                        \
+        GlobalMockObject::verify();                                                                                    \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(TestMmad##type_prefix##CAPI, mmad_enum_##type_prefix##_params_Succ)                                         \
+    {                                                                                                                  \
+        __cc__ c_type* c_matrix = reinterpret_cast<__cc__ c_type*>(1);                                                 \
+        __ca__ a_type* a_matrix = reinterpret_cast<__ca__ a_type*>(2);                                                 \
+        __cb__ b_type* b_matrix = reinterpret_cast<__cb__ b_type*>(3);                                                 \
+        uint16_t left_height = 4;                                                                                      \
+        uint16_t n_dim = 5;                                                                                            \
+        uint16_t right_width = 6;                                                                                      \
+        asc_unit_flag_mode unit_flag = asc_unit_flag_mode::ENABLE_KEEP;                                                \
+        bool disable_gemv = true;                                                                                      \
+        bool c_matrix_source = false;                                                                                  \
+        bool c_matrix_init_val = true;                                                                                 \
+                                                                                                                       \
+        expected_unit_flag_##type_prefix = 2;                                                                          \
         MOCKER_CPP(                                                                                                    \
             mad, void(                                                                                                 \
                      __cc__ c_type * c_matrix, __ca__ a_type * a_matrix, __cb__ b_type * b_matrix,                     \
@@ -80,6 +113,7 @@
         bool c_matrix_source = false;                                                                                  \
         bool c_matrix_init_val = true;                                                                                 \
                                                                                                                        \
+        expected_unit_flag_##type_prefix = 1;                                                                          \
         MOCKER_CPP(                                                                                                    \
             mad, void(                                                                                                 \
                      __cc__ c_type * c_matrix, __ca__ a_type * a_matrix, __cb__ b_type * b_matrix,                     \
@@ -103,3 +137,5 @@ TEST_CUBE_COMPUTE_MMAD_INSTR(float, half, half, half);
 TEST_CUBE_COMPUTE_MMAD_INSTR(float, float, float, float);
 TEST_CUBE_COMPUTE_MMAD_INSTR(int32_t, int8_t, int8_t, int8);
 TEST_CUBE_COMPUTE_MMAD_INSTR(float, hifloat8_t, hifloat8_t, hif8);
+
+#pragma GCC diagnostic pop

@@ -11,6 +11,26 @@
 #define __TESTS_C_API_STUB__
 #include <cstdint>
 #include "stub_fun.h"
+#include "c_api/utils/enum.h"
+
+template <typename C, typename A, typename B>
+inline void mad(
+    __cc__ C* c_matrix, __ca__ A* a_matrix, __cb__ B* b_matrix, uint16_t left_height, uint16_t n_dim,
+    uint16_t right_width, asc_unit_flag_mode unit_flag, bool disable_gemv, bool c_matrix_source, bool c_matrix_init_val)
+{
+    mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, static_cast<uint8_t>(unit_flag), disable_gemv,
+        c_matrix_source, c_matrix_init_val);
+}
+
+template <typename C, typename A, typename B>
+inline void mad_mx(
+    __cc__ C* c_matrix, __ca__ A* a_matrix, __cb__ B* b_matrix, uint16_t left_height, uint16_t n_dim,
+    uint16_t right_width, asc_unit_flag_mode unit_flag, bool disable_gemv, bool c_matrix_source, bool c_matrix_init_val)
+{
+    mad_mx(
+        c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, static_cast<uint8_t>(unit_flag), disable_gemv,
+        c_matrix_source, c_matrix_init_val);
+}
 
 // The compiler supports this overload, but it is missing from the CPU debug stub header.
 int64_t ld_dev(__gm__ int64_t* src, int16_t offset);

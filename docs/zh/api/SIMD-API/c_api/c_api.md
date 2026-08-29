@@ -748,3 +748,6 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_uint322uint8 (废弃)](reg_compute/reg_convert/asc_uint322uint8_deprecated.md)|将uint32_t类型转换为uint8_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint82uint16（废弃）](deprecated_interface/asc_uint82uint16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint82uint32 (废弃)](reg_compute/reg_convert/asc_uint82uint32_deprecated.md)|将uint8_t类型转换为uint32_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_mmad(废弃)](deprecated_interface/asc_mmad_deprecated.md)|矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|
+|[asc_mmad_mx(废弃)](deprecated_interface/asc_mmad_mx_deprecated.md)|带有量化系数的矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|
+|[asc_mmad_sparse(废弃)](deprecated_interface/asc_mmad_sparse_deprecated.md)|稀疏矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|

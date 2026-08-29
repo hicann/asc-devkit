@@ -359,3 +359,21 @@
 - [asc_abs_sync](../SIMD-API/c_api/deprecated_interface/asc_abs_sync_deprecated.md)接口
 
     `asc_abs_sync()`接口已废弃。请使用[asc_abs](../SIMD-API/c_api/vector_compute/vector_arith/asc_abs.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
+
+### 矩阵计算
+
+- [asc_mmad（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mmad_deprecated.md)接口
+
+    使用`uint8_t unit_flag`或`uint8_t feat_offset`入参的`asc_mmad()`和`asc_mmad_s4()`接口已废弃，请使用[asc_mmad](../SIMD-API/c_api/cube_compute/asc_mmad.md)接口。`asc_mmad_sync()`和`asc_mmad_s4_sync()`接口已废弃，请使用[asc_mmad](../SIMD-API/c_api/cube_compute/asc_mmad.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
+
+<!-- npu="950" id9 -->
+- [asc_mmad_mx（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mmad_mx_deprecated.md)接口
+
+    使用`uint8_t unit_flag`入参的`asc_mmad_mx()`接口已废弃，请使用[asc_mmad_mx](../SIMD-API/c_api/cube_compute/asc_mmad_mx.md)接口。`asc_mmad_mx_sync()`接口已废弃，请使用[asc_mmad_mx](../SIMD-API/c_api/cube_compute/asc_mmad_mx.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
+<!-- end id9 -->
+
+<!-- npu="A3,910b" id10 -->
+- [asc_mmad_sparse（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mmad_sparse_deprecated.md)接口
+
+    使用`uint8_t unit_flag`入参的`asc_mmad_sparse()`接口已废弃，请使用[asc_mmad_sparse](../SIMD-API/c_api/cube_compute/asc_mmad_sparse.md)接口。`asc_mmad_sparse_sync()`接口已废弃，请使用[asc_mmad_sparse](../SIMD-API/c_api/cube_compute/asc_mmad_sparse.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
+<!-- end id10 -->

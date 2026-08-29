@@ -13,6 +13,9 @@
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #define TEST_MMAD_MX_SYNC_INSTR(class_name, c_api_name, cce_name, dst_type, src0_type, src1_type)                    \
                                                                                                                      \
     class TestVectorCompute##class_name##_##src0_type##_##src1_type##_CApi : public testing::Test {                  \
@@ -65,3 +68,5 @@ TEST_MMAD_MX_SYNC_INSTR(MmadmxSync, asc_mmad_mx_sync, mad_mx, float, fp8_e4m3fn_
 TEST_MMAD_MX_SYNC_INSTR(MmadmxSync, asc_mmad_mx_sync, mad_mx, float, fp8_e4m3fn_t, fp8_e5m2_t)
 TEST_MMAD_MX_SYNC_INSTR(MmadmxSync, asc_mmad_mx_sync, mad_mx, float, fp8_e5m2_t, fp8_e4m3fn_t)
 TEST_MMAD_MX_SYNC_INSTR(MmadmxSync, asc_mmad_mx_sync, mad_mx, float, fp8_e5m2_t, fp8_e5m2_t)
+
+#pragma GCC diagnostic pop
