@@ -17,10 +17,6 @@
 
 #if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
 #include "utils/base/helpers.h"
-#include "utils/debug/asc_assert.h"
-#include "utils/debug/asc_dump.h"
-#include "utils/debug/asc_printf.h"
-#include "utils/debug/asc_time.h"
 #include "c_api/defs/defs.h"
 #include "c_api/atomic/atomic.h"
 #include "c_api/cache_ctrl/cache_ctrl.h"

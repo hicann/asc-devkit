@@ -15,10 +15,6 @@
 #ifndef INCLUDE_C_API_ASC_CUBE_H
 #define INCLUDE_C_API_ASC_CUBE_H
 
-#include "utils/debug/asc_assert.h"
-#include "utils/debug/asc_dump.h"
-#include "utils/debug/asc_printf.h"
-#include "utils/debug/asc_time.h"
 #include "c_api/defs/defs.h"
 #include "c_api/atomic/atomic.h"
 #include "c_api/cache_ctrl/cache_ctrl.h"
