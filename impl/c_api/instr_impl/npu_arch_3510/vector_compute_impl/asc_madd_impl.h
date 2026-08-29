@@ -27,4 +27,12 @@ __simd_callee__ inline void asc_madd_impl(vector_float& dst, vector_float src0, 
     }
 }
 
+__simd_callee__ inline void asc_madd_impl(
+    vector_bfloat16_t& dst, vector_bfloat16_t src0, vector_bfloat16_t src1, vector_bool mask)
+{
+    if ASC_IS_AIV {
+        vmadd(dst, src0, src1, mask, MODE_ZEROING);
+    }
+}
+
 #endif

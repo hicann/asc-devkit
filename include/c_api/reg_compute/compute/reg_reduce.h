@@ -37,6 +37,18 @@ __simd_callee__ inline void asc_reduce_max(vector_half& dst, vector_half src, ve
 
 __simd_callee__ inline void asc_reduce_max(vector_float& dst, vector_float src, vector_bool mask);
 
+__simd_callee__ inline vector_int16_t asc_reduce_max(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_max(vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_reduce_max(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_max(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_reduce_max(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_reduce_max(vector_float src, vector_bool mask);
+
 __simd_callee__ inline void asc_reduce_min(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_min(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
@@ -48,6 +60,18 @@ __simd_callee__ inline void asc_reduce_min(vector_uint32_t& dst, vector_uint32_t
 __simd_callee__ inline void asc_reduce_min(vector_half& dst, vector_half src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_min(vector_float& dst, vector_float src, vector_bool mask);
+
+__simd_callee__ inline vector_int16_t asc_reduce_min(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_min(vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_reduce_min(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_min(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_reduce_min(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_reduce_min(vector_float src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_min_datablock(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
 
@@ -61,9 +85,25 @@ __simd_callee__ inline void asc_reduce_min_datablock(vector_half& dst, vector_ha
 
 __simd_callee__ inline void asc_reduce_min_datablock(vector_float& dst, vector_float src, vector_bool mask);
 
+__simd_callee__ inline vector_int16_t asc_reduce_min_datablock(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_min_datablock(vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_reduce_min_datablock(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_min_datablock(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_reduce_min_datablock(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_reduce_min_datablock(vector_float src, vector_bool mask);
+
 __simd_callee__ inline void asc_pair_reduce_sum(vector_half& dst, vector_half src, vector_bool mask);
 
 __simd_callee__ inline void asc_pair_reduce_sum(vector_float& dst, vector_float src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_pair_reduce_sum(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_pair_reduce_sum(vector_float src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_max_datablock(vector_half& dst, vector_half src, vector_bool mask);
 
@@ -77,6 +117,18 @@ __simd_callee__ inline void asc_reduce_max_datablock(vector_uint32_t& dst, vecto
 
 __simd_callee__ inline void asc_reduce_max_datablock(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
 
+__simd_callee__ inline vector_int16_t asc_reduce_max_datablock(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_max_datablock(vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint16_t asc_reduce_max_datablock(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_max_datablock(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_reduce_max_datablock(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_reduce_max_datablock(vector_float src, vector_bool mask);
+
 __simd_callee__ inline void asc_reduce_sum(vector_int32_t& dst, vector_int16_t src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_sum(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
@@ -89,6 +141,18 @@ __simd_callee__ inline void asc_reduce_sum(vector_half& dst, vector_half src, ve
 
 __simd_callee__ inline void asc_reduce_sum(vector_float& dst, vector_float src, vector_bool mask);
 
+__simd_callee__ inline vector_int32_t asc_reduce_sum(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_sum(vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_sum(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_sum(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_reduce_sum(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_reduce_sum(vector_float src, vector_bool mask);
+
 __simd_callee__ inline void asc_reduce_sum_datablock(vector_half& dst, vector_half src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_sum_datablock(vector_float& dst, vector_float src, vector_bool mask);
@@ -100,6 +164,18 @@ __simd_callee__ inline void asc_reduce_sum_datablock(vector_int32_t& dst, vector
 __simd_callee__ inline void asc_reduce_sum_datablock(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask);
 
 __simd_callee__ inline void asc_reduce_sum_datablock(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_half asc_reduce_sum_datablock(vector_half src, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_reduce_sum_datablock(vector_float src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_sum_datablock(vector_uint16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_sum_datablock(vector_int16_t src, vector_bool mask);
+
+__simd_callee__ inline vector_uint32_t asc_reduce_sum_datablock(vector_uint32_t src, vector_bool mask);
+
+__simd_callee__ inline vector_int32_t asc_reduce_sum_datablock(vector_int32_t src, vector_bool mask);
 
 #endif
 

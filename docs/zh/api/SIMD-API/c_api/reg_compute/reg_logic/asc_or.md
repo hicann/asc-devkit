@@ -35,7 +35,7 @@
 计算公式如下：
 
 $$
-dst_i = src0_i | src1_i
+dst_i = src0_i \,|\, src1_i
 $$
 
 本接口仅在AIV上生效。

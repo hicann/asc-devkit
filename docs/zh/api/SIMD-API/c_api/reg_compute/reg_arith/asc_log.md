@@ -1,4 +1,4 @@
-# asc_ln
+# asc_log
 
 ## 产品支持情况
 
@@ -35,9 +35,9 @@ $$
 ## 函数原型
 
 ```c
-__simd_callee__ inline void asc_ln(vector_<dtype>& dst,
-                                   vector_<dtype> src,
-                                   vector_bool mask)
+__simd_callee__ inline void asc_log(vector_<dtype>& dst,
+                                    vector_<dtype> src,
+                                    vector_bool mask)
 ```
 
 ### dtype支持数据类型
@@ -48,9 +48,9 @@ __simd_callee__ inline void asc_ln(vector_<dtype>& dst,
 
 ```c
 // 示例：对half矢量数据寄存器按元素取自然对数
-__simd_callee__ inline void asc_ln(vector_half& dst,
-                                   vector_half src,
-                                   vector_bool mask)
+__simd_callee__ inline void asc_log(vector_half& dst,
+                                    vector_half src,
+                                    vector_bool mask)
 ```
 
 ## 参数说明
@@ -74,9 +74,9 @@ __simd_callee__ inline void asc_ln(vector_half& dst,
 - `dst`与`src`的数据类型需要保持一致。
 - `mask`掩码位为0时，`dst`对应元素置0。
 
+<!-- npu="950" id8 -->
 ## 调用示例
 
-<!-- npu="950" id8 -->
 将以下代码保存为`example.asc`后，可通过`bisheng`命令编译运行。其中，`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[__NPU_ARCH__](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
@@ -117,11 +117,11 @@ __simd_vf__ inline void compute(__ubuf__ float* dst, __ubuf__ float* src)
     uint32_t count = ELEMENT_COUNT;
     vector_bool mask = asc_update_mask_b32(count);
     asc_loadalign(src_reg, src);
-    asc_ln(dst_reg, src_reg, mask);
+    asc_log(dst_reg, src_reg, mask);
     asc_storealign(dst, dst_reg, mask);
 }
 
-__global__ __vector__ void asc_ln_kernel(__gm__ float* dst, __gm__ float* src)
+__global__ __vector__ void asc_log_kernel(__gm__ float* dst, __gm__ float* src)
 {
     asc_init();
     __ubuf__ float dst_local[ELEMENT_COUNT];
@@ -159,13 +159,13 @@ int main()
     aclrtMemcpy(src_device, src.size() * sizeof(float), src.data(), src.size() * sizeof(float),
         ACL_MEMCPY_HOST_TO_DEVICE);
 
-    asc_ln_kernel<<<1, 0>>>(dst_device, src_device);
+    asc_log_kernel<<<1, 0>>>(dst_device, src_device);
     aclrtSynchronizeDevice();
     aclrtMemcpy(output.data(), output.size() * sizeof(float), dst_device, output.size() * sizeof(float),
         ACL_MEMCPY_DEVICE_TO_HOST);
 
     const bool passed = compare_data(output, golden, 1e-3);
-    std::cout << (passed ? "[Success] asc_ln passed." : "[Failed] asc_ln failed.") << std::endl;
+    std::cout << (passed ? "[Success] asc_log passed." : "[Failed] asc_log failed.") << std::endl;
     aclrtFree(dst_device);
     aclrtFree(src_device);
     aclrtResetDevice(0);
