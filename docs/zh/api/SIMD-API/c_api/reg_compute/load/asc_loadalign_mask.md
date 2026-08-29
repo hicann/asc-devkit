@@ -46,8 +46,6 @@ __simd_callee__ inline vector_bool asc_loadalign_mask(__ubuf__ uint32_t* src)
 |---|---|---|
 | src | 输入 | 源UB地址，实际读取地址必须按32字节对齐，搬入VL/8长度数据。 |
 
-掩码寄存器的详细说明请参见[Reg数据类型定义](../../defs/type/data_type_definition.md)。
-
 ## 返回值说明
 
 返回保存连续对齐搬入结果的掩码寄存器，类型为`vector_bool`。

@@ -160,6 +160,8 @@
                 -   [MmadMx](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx.md)
                 -   [MmadBitMode](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadBitMode.md)
                 -   [MmadWithSparse](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadWithSparse.md)
+                -   [Conv2D（废弃）](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Conv2D_deprecated.md)
+                -   [Gemm（废弃）](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Gemm_deprecated.md)
             -   [Mmad计算关键特性说明](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_key_features/mmad_compute_key_features.md)
                 -   [GEMV](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_key_features/GEMV.md)
 
@@ -175,9 +177,6 @@
                 -   [K方向对齐约束](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_key_features/k_direction_alignment_constraint.md)
 
                 </cann-filter>
-
-                -   [Conv2D（废弃）](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Conv2D_deprecated.md)
-                -   [Gemm（废弃）](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Gemm_deprecated.md)
             -   [Mmad计算辅助配置接口](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_aux_config/mmad_compute_aux_config.md)
                 -   [SetMMColumnMajor/SetMMRowMajor](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_aux_config/SetMMColumnMajor-SetMMRowMajor.md)
                 -   [SetHF32Mode](SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_aux_config/SetHF32Mode.md)
@@ -1031,6 +1030,8 @@
         -   [Reg矢量计算](SIMD-API/c_api/reg_compute/reg_compute.md)
             -   [Reg数据搬入](SIMD-API/c_api/reg_compute/load/load.md)
                 -   [asc_loadalign](SIMD-API/c_api/reg_compute/load/asc_loadalign.md)
+                -   [asc_loadalign_datablock_strided](SIMD-API/c_api/reg_compute/load/asc_loadalign_datablock_strided.md)
+                -   [asc_loadalign_mask](SIMD-API/c_api/reg_compute/load/asc_loadalign_mask.md)
                 -   [asc_loadalign_brc_datablock](SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_datablock.md)
                 -   [asc_loadalign_brc_datablock_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_datablock_postupdate.md)
                 -   [asc_loadalign_brc_elem](SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_elem.md)
@@ -1040,6 +1041,7 @@
                 -   [asc_loadalign_deintlv](SIMD-API/c_api/reg_compute/load/asc_loadalign_deintlv.md)
                 -   [asc_loadalign_deintlv_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_deintlv_postupdate.md)
                 -   [asc_loadalign_downsample](SIMD-API/c_api/reg_compute/load/asc_loadalign_downsample.md)
+                -   [asc_loadalign_mask_downsample](SIMD-API/c_api/reg_compute/load/asc_loadalign_mask_downsample.md)
                 -   [asc_loadalign_downsample_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_downsample_postupdate.md)
                 -   [asc_loadalign_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_postupdate.md)
                 -   [asc_loadalign_unpack](SIMD-API/c_api/reg_compute/load/asc_loadalign_unpack.md)
@@ -1047,6 +1049,7 @@
                 -   [asc_loadalign_unpack4_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_unpack4_postupdate.md)
                 -   [asc_loadalign_unpack_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_unpack_postupdate.md)
                 -   [asc_loadalign_upsample](SIMD-API/c_api/reg_compute/load/asc_loadalign_upsample.md)
+                -   [asc_loadalign_mask_upsample](SIMD-API/c_api/reg_compute/load/asc_loadalign_mask_upsample.md)
                 -   [asc_loadalign_upsample_postupdate](SIMD-API/c_api/reg_compute/load/asc_loadalign_upsample_postupdate.md)
                 -   [asc_load](SIMD-API/c_api/reg_compute/load/asc_load.md)
                 -   [asc_loadunalign](SIMD-API/c_api/reg_compute/load/asc_loadunalign.md)

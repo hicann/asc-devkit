@@ -331,6 +331,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[asc_loadalign](reg_compute/load/asc_loadalign.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，NORM搬入模式。|`c_api/reg_compute/load/loadalign.h`|
+|[asc_loadalign_datablock_strided](reg_compute/load/asc_loadalign_datablock_strided.md)|对齐数据搬运接口，从UB非连续对齐搬入8个DataBlock，通过函数返回值返回矢量数据寄存器。|`c_api/reg_compute/load/loadalign.h`|
+|[asc_loadalign_mask](reg_compute/load/asc_loadalign_mask.md)|对齐数据搬运接口，从UB连续对齐搬入掩码数据，通过函数返回值返回掩码寄存器。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_brc_datablock](reg_compute/load/asc_loadalign_brc_datablock.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，读取一个DataBlock并广播到VL。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_brc_datablock_postupdate](reg_compute/load/asc_loadalign_brc_datablock_postupdate.md)|对齐数据搬运接口，读取一个DataBlock并广播到VL，启用Post Update。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_brc_elem](reg_compute/load/asc_loadalign_brc_elem.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，搬运一个元素并广播到VL。|`c_api/reg_compute/load/loadalign.h`|
@@ -340,6 +342,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_loadalign_deintlv](reg_compute/load/asc_loadalign_deintlv.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，随路完成deinterleave操作。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_deintlv_postupdate](reg_compute/load/asc_loadalign_deintlv_postupdate.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，随路完成deinterleave操作，启用postupdate模式，自动更新UB地址参数。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_downsample](reg_compute/load/asc_loadalign_downsample.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，2倍下采样模式。|`c_api/reg_compute/load/loadalign.h`|
+|[asc_loadalign_mask_downsample](reg_compute/load/asc_loadalign_mask_downsample.md)|对齐数据搬运接口，从UB连续对齐搬入掩码数据，2倍下采样模式，通过函数返回值返回掩码寄存器。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_downsample_postupdate](reg_compute/load/asc_loadalign_downsample_postupdate.md)|对齐数据搬运接口，2倍下采样模式，启用Post Update。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_postupdate](reg_compute/load/asc_loadalign_postupdate.md)|将数据从UB搬入MaskReg，使能post mod。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_unpack](reg_compute/load/asc_loadalign_unpack.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，解压缩模式。|`c_api/reg_compute/load/loadalign.h`|
@@ -347,6 +350,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_loadalign_unpack4_postupdate](reg_compute/load/asc_loadalign_unpack4_postupdate.md)|对齐数据搬运接口，解压缩模式，启用Post Update。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_unpack_postupdate](reg_compute/load/asc_loadalign_unpack_postupdate.md)|对齐数据搬运接口，解压缩模式，启用Post Update。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_upsample](reg_compute/load/asc_loadalign_upsample.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，2倍上采样模式。|`c_api/reg_compute/load/loadalign.h`|
+|[asc_loadalign_mask_upsample](reg_compute/load/asc_loadalign_mask_upsample.md)|对齐数据搬运接口，从UB连续对齐搬入掩码数据，2倍上采样模式，通过函数返回值返回掩码寄存器。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_upsample_postupdate](reg_compute/load/asc_loadalign_upsample_postupdate.md)|对齐数据搬运接口，2倍上采样模式，启用Post Update。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_load](reg_compute/load/asc_load.md)|reg计算数据搬运接口，支持从UB非32字节对齐的源地址src搬运至矢量数据寄存器，搬运量为VL。|`c_api/composite/loadunalign_composite.h`|
 |[asc_loadunalign](reg_compute/load/asc_loadunalign.md)|reg计算数据搬运接口，适用于从UB非32B对齐的起始地址连续搬入矢量数据寄存器的场景。|`c_api/reg_compute/load/loadunalign.h`|
