@@ -38,6 +38,8 @@ def asc_uint82uint16(dst, src, mask, src_pos):
         dst[i] = uint16(src[src_index]) if mask[src_index] else 0
 ```
 
+本接口为`reg`矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -61,7 +63,7 @@ __simd_callee__ inline void asc_uint82uint16(vector_uint16_t& dst,
 | dst  | 输出      | 目的操作数（矢量数据寄存器）。                                                                                     |
 | src  | 输入      | 源操作数（矢量数据寄存器）。                                                                                       |
 | mask | 输入      | 掩码寄存器，用于控制各元素是否参与计算。`mask`中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
-| src_pos | 输入 | 位置选择标签（编译器标签类型），类型为`std::integral_constant<asc_position_mode, asc_position_mode::EVEN>`或`std::integral_constant<asc_position_mode, asc_position_mode::ODD>`。取`ASC_POSITION_EVEN`时选择读取源操作数索引为偶数的位置；取`ASC_POSITION_ODD`时选择读取源操作数索引为奇数的位置。 |
+| src_pos | 输入 | 位置选择标签（编译器标签类型），取值如下：<br>&bull; `ASC_POSITION_EVEN`：选择读取源操作数索引为偶数的位置<br>&bull; `ASC_POSITION_ODD`：选择读取源操作数索引为奇数的位置。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -71,8 +73,10 @@ __simd_callee__ inline void asc_uint82uint16(vector_uint16_t& dst,
 
 ## 约束说明
 
+- 本接口非AIV调用直接返回。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
+- 读取`src`的奇数索引位置时，偶数索引位置的元素不参与计算；读取偶数索引位置时，奇数索引位置的元素不参与计算。
 
 ## 调用示例
 

@@ -43,6 +43,8 @@ def asc_float2bfloat16_rn(dst, src, mask, dst_pos):
 
 关于舍入模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
+本接口为`reg`矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -89,6 +91,7 @@ __simd_callee__ inline void asc_float2bfloat16_rn(vector_bfloat16_t& dst,
 
 ## 约束说明
 
+- 本接口非AIV调用直接返回。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - 结果写入`dst`的奇数索引位置时，偶数索引位置置0；结果写入偶数索引位置时，奇数索引位置置0。

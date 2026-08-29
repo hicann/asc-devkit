@@ -714,12 +714,20 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_float2bfloat16（废弃）](deprecated_interface/asc_float2bfloat16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2e4m3 (废弃)](reg_compute/reg_convert/asc_float2e4m3_deprecated.md)|将float类型转换为fp8_e4m3fn_t类型，支持RINT舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2e5m2 (废弃)](reg_compute/reg_convert/asc_float2e5m2_deprecated.md)|将float类型数据转换为fp8_e5m2类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_float2half（废弃）](deprecated_interface/asc_float2half_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2hif8 (废弃)](reg_compute/reg_convert/asc_float2hif8_deprecated.md)|将float类型转换为hifloat8_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
+|[asc_float2int16（废弃）](deprecated_interface/asc_float2int16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_float2int64（废弃）](deprecated_interface/asc_float2int64_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_get_ar_spr (废弃)](spr/asc_get_ar_spr_deprecated.md)|读取指定特殊寄存器的值。|`c_api/spr/spr.h`|
 |[asc_get_block_idx（废弃）](deprecated_interface/asc_get_block_idx_deprecated.md)|获取当前运行核的索引。|`c_api/utils/sys_var.h`|
 |[asc_get_block_num（废弃）](deprecated_interface/asc_get_block_num_deprecated.md)|获取AI核数。|`c_api/utils/sys_var.h`|
 |[asc_half2int4x2 (废弃)](reg_compute/reg_convert/asc_half2int4x2_deprecated.md)|将half类型数据转换为int4x2_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_hif82float (废弃)](reg_compute/reg_convert/asc_hif82float_deprecated.md)|将hifloat8_t类型数据转换为float类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_hif82half（废弃）](deprecated_interface/asc_hif82half_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int162float（废弃）](deprecated_interface/asc_int162float_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int162int32（废弃）](deprecated_interface/asc_int162int32_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int162uint32（废弃）](deprecated_interface/asc_int162uint32_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int162uint8（废弃）](deprecated_interface/asc_int162uint8_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322int16（废弃）](deprecated_interface/asc_int322int16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322int64（废弃）](deprecated_interface/asc_int322int64_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322uint16（废弃）](deprecated_interface/asc_int322uint16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
@@ -727,6 +735,10 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_int4x22bfloat16 (废弃)](reg_compute/reg_convert/asc_int4x22bfloat16_deprecated.md)|将int4x2_t类型转换为bfloat16_t类型，无舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int4x22half (废弃)](reg_compute/reg_convert/asc_int4x22half_deprecated.md)|将int4x2_t类型数据转换为half类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int4x22int16 (废弃)](reg_compute/reg_convert/asc_int4x22int16_deprecated.md)|将int4x2_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int642float（废弃）](deprecated_interface/asc_int642float_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int642int32（废弃）](deprecated_interface/asc_int642int32_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int82half（废弃）](deprecated_interface/asc_int82half_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int82int16（废弃）](deprecated_interface/asc_int82int16_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int82int32 (废弃)](reg_compute/reg_convert/asc_int82int32_deprecated.md)|将int8_t类型转换为int32_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_loadalign (废弃)](deprecated_interface/asc_loadalign_v1_deprecated.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，支持多种搬入模式，源操作数地址由用户更新。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign (废弃)](deprecated_interface/asc_loadalign_v2_deprecated.md)|对齐数据搬运接口，通过地址寄存器传入偏移，用户可选择更新偏移或源操作数地址。|`c_api/reg_compute/load/loadalign.h`|
@@ -751,7 +763,12 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_storeunalign_postupdate（废弃）](deprecated_interface/asc_storeunalign_postupdate_deprecated.md)|reg计算数据搬运接口，适用于从矢量数据寄存器或掩码寄存器连续非32B对齐的起始地址连续搬出到UB的场景。|`c_api/reg_compute/store/storeunalign.h`|
 |[asc_storeunalign_post（废弃）](deprecated_interface/asc_storeunalign_post_deprecated.md)|reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的尾块场景。|`c_api/reg_compute/store/storeunalign.h`|
 |[asc_uint322uint8 (废弃)](reg_compute/reg_convert/asc_uint322uint8_deprecated.md)|将uint32_t类型转换为uint8_t类型。|`c_api/reg_compute/reg_convert.h`|
-|[asc_uint82uint16（废弃）](deprecated_interface/asc_uint82uint16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint162uint32（废弃）](deprecated_interface/asc_uint162uint32_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint162uint8（废弃）](deprecated_interface/asc_uint162uint8_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint322int16（废弃）](deprecated_interface/asc_uint322int16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint322uint16（废弃）](deprecated_interface/asc_uint322uint16_deprecated.md)|通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint82half（废弃）](deprecated_interface/asc_uint82half_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint82uint16（废弃）](deprecated_interface/asc_uint82uint16_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint82uint32 (废弃)](reg_compute/reg_convert/asc_uint82uint32_deprecated.md)|将uint8_t类型转换为uint32_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_mmad(废弃)](deprecated_interface/asc_mmad_deprecated.md)|矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_mx(废弃)](deprecated_interface/asc_mmad_mx_deprecated.md)|带有量化系数的矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|

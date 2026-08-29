@@ -26,35 +26,52 @@
 
 ## 功能说明
 
-将int64_t类型数据转换为float，并支持多种舍入模式。
+将`int64_t`类型数据转换为`float`，并支持多种舍入模式。
 
 关于舍入模式的详细说明，请参见[舍入模式](rounding_mode.md)。
 
-由于源操作数与目的操作数类型位宽比为2:1，写入数据时需要将一个VL大小的数据分为两部分，根据不同接口选择数据写入索引为奇数的位置或偶数的位置。
+由于源操作数与目的操作数类型位宽比为2:1，写入数据时需要将一个`VL`大小的数据分为两部分，根据不同接口选择数据写入索引为奇数的位置或偶数的位置。
+
+```python
+# 位置判断仅用于说明接口语义，实际位置参数为编译期常量。
+# VL表示矢量数据寄存器位宽，取值256字节。
+def asc_int642float_rn(dst, src, mask, dst_pos):
+    offset = 0 if dst_pos == ASC_POSITION_EVEN else 1
+    for i in range(32):
+        dst[2 * i] = 0
+        dst[2 * i + 1] = 0
+        if mask[i]:
+            dst[2 * i + offset] = float(src[i])
+```
+
+本接口为`reg`矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
-```cpp
-// RINT舍入模式，数据写入索引为偶数的位置
-__simd_callee__ inline void asc_int642float_rn(vector_float& dst, vector_int64_t src, vector_bool mask)
-// RINT舍入模式，数据写入索引为奇数的位置
-__simd_callee__ inline void asc_int642float_rn_v2(vector_float& dst, vector_int64_t src, vector_bool mask)
-// ROUND舍入模式，数据写入索引为偶数的位置
-__simd_callee__ inline void asc_int642float_rna(vector_float& dst, vector_int64_t src, vector_bool mask)
-// ROUND舍入模式，数据写入索引为奇数的位置
-__simd_callee__ inline void asc_int642float_rna_v2(vector_float& dst, vector_int64_t src, vector_bool mask)
-// FLOOR舍入模式，数据写入索引为偶数的位置
-__simd_callee__ inline void asc_int642float_rd(vector_float& dst, vector_int64_t src, vector_bool mask)
-// FLOOR舍入模式，数据写入索引为奇数的位置
-__simd_callee__ inline void asc_int642float_rd_v2(vector_float& dst, vector_int64_t src, vector_bool mask)
-// CEIL舍入模式，数据写入索引为偶数的位置
-__simd_callee__ inline void asc_int642float_ru(vector_float& dst, vector_int64_t src, vector_bool mask)
-// CEIL舍入模式，数据写入索引为奇数的位置
-__simd_callee__ inline void asc_int642float_ru_v2(vector_float& dst, vector_int64_t src, vector_bool mask)
-// TRUNC舍入模式，数据写入索引为偶数的位置
-__simd_callee__ inline void asc_int642float_rz(vector_float& dst, vector_int64_t src, vector_bool mask)
-// TRUNC舍入模式，数据写入索引为奇数的位置
-__simd_callee__ inline void asc_int642float_rz_v2(vector_float& dst, vector_int64_t src, vector_bool mask)
+```c
+__simd_callee__ inline void asc_int642float_<round_mode>(vector_float& dst,
+                                                         vector_int64_t src,
+                                                         vector_bool mask,
+                                                         std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+
+__simd_callee__ inline void asc_int642float_<round_mode>(vector_float& dst,
+                                                         vector_int64_t src,
+                                                         vector_bool mask,
+                                                         std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+```
+
+### 占位符说明
+
+- `<round_mode>`表示支持的舍入模式，支持`rd`（`FLOOR`）、`rn`（`RINT`）、`rna`（`ROUND`）、`ru`（`CEIL`）和`rz`（`TRUNC`）。
+
+### 函数原型典型示例
+
+```c
+// 示例：向最近且偶数舍入（rn）偶数分块位置主原型，将`int64_t`矢量数据寄存器转换为`float`。
+__simd_callee__ inline void asc_int642float_rn(vector_float& dst,
+                                               vector_int64_t src,
+                                               vector_bool mask,
+                                               std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 ```
 
 ## 参数说明
@@ -65,7 +82,8 @@ __simd_callee__ inline void asc_int642float_rz_v2(vector_float& dst, vector_int6
 | --- | --- | --- |
 | dst | 输出 | 目的操作数（矢量数据寄存器）。|
 | src | 输入 | 源操作数（矢量数据寄存器）。|
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
+| dst_pos | 输入 | 位置选择标签（编译器标签类型），取值如下：<br>&bull; `ASC_POSITION_EVEN`：选择将结果写入目的操作数索引为偶数的位置<br>&bull; `ASC_POSITION_ODD`：选择将结果写入目的操作数索引为奇数的位置。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -75,15 +93,117 @@ __simd_callee__ inline void asc_int642float_rz_v2(vector_float& dst, vector_int6
 
 ## 约束说明
 
-- mask控制源操作数是否参与计算，源操作数不参与计算的元素在输出对应位置置零。
-- 当数据写入目的操作数索引为奇数的位置，索引为偶数位置的数值置零。反之亦然。
+- 本接口非AIV调用直接返回。
+- `src`与`dst`的数据类型需要与函数原型匹配。
+- `mask`掩码位为0时，`dst`对应元素置0。
+- 结果写入`dst`的奇数索引位置时，偶数索引位置置零；结果写入偶数索引位置时，奇数索引位置置零。
 
 ## 调用示例
 
-```cpp
-vector_int64_t src;
-vector_float dst;
-vector_bool mask = asc_create_mask_b32(PAT_ALL);
-asc_loadalign(src, src_addr); // src_addr是外部输入的Unified Buffer（UB）内存空间地址。
-asc_int642float_rn(dst, src, mask);
+
+<!-- npu="950" id8 -->
+
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[__NPU_ARCH__](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
+
+```c
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +values[i];
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
+template <typename T>
+bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, double tolerance = 0.0)
+{
+    if (actual.size() != expected.size()) return false;
+    for (size_t i = 0; i < actual.size(); ++i) {
+        if (actual[i] == expected[i]) continue;
+        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
+        if (diff > tolerance || diff < -tolerance) return false;
+    }
+    return true;
+}
+
+constexpr uint32_t BUFFER_BYTES = 256;
+__simd_vf__ inline void convert(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
+{
+    vector_bool mask = asc_create_mask_b32(PAT_ALL);
+    vector_float dst;
+    vector_int64_t src;
+    asc_loadalign(src, reinterpret_cast<__ubuf__ int64_t*>(input));
+    asc_int642float_rn(dst, src, mask, ASC_POSITION_EVEN);
+    asc_storealign(reinterpret_cast<__ubuf__ float*>(output), dst, mask);
+}
+__global__ __vector__ void asc_int642float_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
+{
+    asc_init();
+    __ubuf__ uint8_t output_local[BUFFER_BYTES];
+    __ubuf__ uint8_t input_local[BUFFER_BYTES];
+    asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    convert(output_local, input_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);
+    asc_sync();
+}
+} // namespace
+int main()
+{
+    constexpr uint8_t input_pattern[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    constexpr uint8_t golden_pattern[] = {0x00, 0x00, 0x80, 0x3f, 0x00, 0x00, 0x00, 0x00};
+    std::vector<uint8_t> input(BUFFER_BYTES);
+    std::vector<uint8_t> output(BUFFER_BYTES, 0xff);
+    std::vector<uint8_t> golden(BUFFER_BYTES);
+    for (size_t i = 0; i < BUFFER_BYTES; ++i) {
+        input[i] = input_pattern[i % sizeof(input_pattern)];
+        golden[i] = golden_pattern[i % sizeof(golden_pattern)];
+    }
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint8_t* input_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    uint8_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), (BUFFER_BYTES) * sizeof(uint8_t),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, input.size() * sizeof(uint8_t), input.data(), input.size() * sizeof(uint8_t),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_int642float_kernel<<<1, 0>>>(output_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(uint8_t), output_device, output.size() * sizeof(uint8_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    std::cout << "Conversion: vector_int64_t -> vector_float" << std::endl;
+    print_data("Input (raw bytes)", input);
+    print_data("Output (raw bytes)", output);
+    print_data("Golden (raw bytes)", golden);
+    const bool passed = compare_data(output, golden);
+    std::cout << (passed ? "[Success] asc_int642float_rn passed."
+                          : "[Failed] asc_int642float_rn failed.")
+              << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
+```
+
+<!-- end id8 -->
