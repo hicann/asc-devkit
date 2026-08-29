@@ -52,6 +52,7 @@ __simd_callee__ inline void asc_int4x22half_v4_impl(vector_half& dst, vector_int
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

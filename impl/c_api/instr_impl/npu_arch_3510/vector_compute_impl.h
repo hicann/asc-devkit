@@ -6754,6 +6754,11 @@ __simd_callee__ inline void asc_exp_sub(vector_float& dst, vector_float src0, ve
     asc_exp_sub_impl(dst, src0, src1, mask);
 }
 
+__simd_callee__ inline vector_float asc_exp_sub(vector_float src0, vector_float src1, vector_bool mask)
+{
+    return asc_exp_sub_impl(src0, src1, mask);
+}
+
 // ==========asc_exp_sub_half2float==========
 __simd_callee__ inline void asc_exp_sub_half2float(
     vector_float& dst, vector_half src0, vector_half src1, vector_bool mask,
@@ -6762,11 +6767,25 @@ __simd_callee__ inline void asc_exp_sub_half2float(
     asc_exp_sub_half2float_impl(dst, src0, src1, mask, src_pos);
 }
 
+__simd_callee__ inline vector_float asc_exp_sub_half2float(
+    vector_half src0, vector_half src1, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
+{
+    return asc_exp_sub_half2float_impl(src0, src1, mask, src_pos);
+}
+
 __simd_callee__ inline void asc_exp_sub_half2float(
     vector_float& dst, vector_half src0, vector_half src1, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 {
     asc_exp_sub_half2float_impl(dst, src0, src1, mask, src_pos);
+}
+
+__simd_callee__ inline vector_float asc_exp_sub_half2float(
+    vector_half src0, vector_half src1, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
+{
+    return asc_exp_sub_half2float_impl(src0, src1, mask, src_pos);
 }
 
 [[deprecated("NOTICE: asc_exp_sub_v2 with half inputs is deprecated. "

@@ -37,6 +37,7 @@ __simd_callee__ inline void asc_half2int16_rna_sat_impl(vector_int16_t& dst, vec
         vcvt(dst, src, mask, ROUND_A, RS_ENABLE, MODE_ZEROING);
     }
 }
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

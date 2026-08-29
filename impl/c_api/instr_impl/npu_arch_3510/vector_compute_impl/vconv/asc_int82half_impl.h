@@ -56,6 +56,23 @@ __simd_callee__ inline void asc_int82half_impl(
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
+__simd_callee__ inline vector_half asc_int82half_impl(
+    vector_int8_t src, vector_bool mask, std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
+{
+    vector_half dst;
+    asc_int82half_impl(dst, src, mask, src_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_half asc_int82half_impl(
+    vector_int8_t src, vector_bool mask, std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
+{
+    vector_half dst;
+    asc_int82half_impl(dst, src, mask, src_pos);
+    return dst;
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

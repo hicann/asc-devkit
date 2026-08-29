@@ -32,6 +32,7 @@ __simd_callee__ inline void asc_float2int32_rn_sat_impl(vector_int32_t& dst, vec
         vcvt(dst, src, mask, ROUND_R, RS_ENABLE, MODE_ZEROING);
     }
 }
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

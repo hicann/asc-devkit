@@ -53,4 +53,5 @@ __simd_callee__ inline void asc_int322float_rna_impl(vector_float& dst, vector_i
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif

@@ -50,4 +50,21 @@ __simd_callee__ inline void asc_int162uint32_impl(
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
+__simd_callee__ inline vector_uint32_t asc_int162uint32_impl(
+    vector_int16_t src, vector_bool mask, std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
+{
+    vector_uint32_t dst;
+    asc_int162uint32_impl(dst, src, mask, src_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_uint32_t asc_int162uint32_impl(
+    vector_int16_t src, vector_bool mask, std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
+{
+    vector_uint32_t dst;
+    asc_int162uint32_impl(dst, src, mask, src_pos);
+    return dst;
+}
+
 #endif

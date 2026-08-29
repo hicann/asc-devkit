@@ -65,6 +65,19 @@ __simd_callee__ inline void asc_exp_sub_half2float(
     vector_float& dst, vector_half src0, vector_half src1, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+__simd_callee__ inline vector_float asc_exp_sub(vector_float src0, vector_float src1, vector_bool mask);
+
+__simd_callee__ inline vector_float asc_exp_sub_half2float(
+    vector_half src0, vector_half src1, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline vector_float asc_exp_sub_half2float(
+    vector_half src0, vector_half src1, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+#endif
+
 __simd_callee__ inline void asc_prelu(vector_float& dst, vector_float src0, vector_float alpha, vector_bool mask);
 
 __simd_callee__ inline void asc_prelu(vector_half& dst, vector_half src0, vector_half alpha, vector_bool mask);

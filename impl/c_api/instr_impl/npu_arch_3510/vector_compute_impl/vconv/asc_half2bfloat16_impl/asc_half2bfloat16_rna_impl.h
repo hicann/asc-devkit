@@ -20,4 +20,5 @@ __simd_callee__ inline void asc_half2bfloat16_rna_impl(vector_bfloat16_t& dst, v
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif

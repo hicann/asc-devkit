@@ -33,6 +33,7 @@ __simd_callee__ inline void asc_float2int32_rd_sat_impl(vector_int32_t& dst, vec
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

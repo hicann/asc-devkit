@@ -70,4 +70,5 @@ __simd_callee__ inline void asc_half2int4x2_ru_sat_v4_impl(vector_int4x2_t& dst,
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
 #endif

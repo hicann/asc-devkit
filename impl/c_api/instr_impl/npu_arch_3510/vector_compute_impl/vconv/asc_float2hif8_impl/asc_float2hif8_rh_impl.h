@@ -155,6 +155,87 @@ __simd_callee__ inline void asc_float2hif8_rh_sat_impl(
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_sat_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_sat_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_sat_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_sat_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_sat_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_sat_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_hifloat8_t asc_float2hif8_rh_sat_impl(
+    vector_float src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos)
+{
+    vector_hifloat8_t dst;
+    asc_float2hif8_rh_sat_impl(dst, src, mask, dst_quarter_pos);
+    return dst;
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

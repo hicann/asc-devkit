@@ -86,4 +86,45 @@ __simd_callee__ inline void asc_e4m32float_impl(
     }
 }
 
+// ASC_RETURN_VALUE_VCONV_IMPL
+__simd_callee__ inline vector_float asc_e4m32float_impl(
+    vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        src_quarter_pos)
+{
+    vector_float dst;
+    asc_e4m32float_impl(dst, src, mask, src_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_float asc_e4m32float_impl(
+    vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        src_quarter_pos)
+{
+    vector_float dst;
+    asc_e4m32float_impl(dst, src, mask, src_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_float asc_e4m32float_impl(
+    vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        src_quarter_pos)
+{
+    vector_float dst;
+    asc_e4m32float_impl(dst, src, mask, src_quarter_pos);
+    return dst;
+}
+
+__simd_callee__ inline vector_float asc_e4m32float_impl(
+    vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        src_quarter_pos)
+{
+    vector_float dst;
+    asc_e4m32float_impl(dst, src, mask, src_quarter_pos);
+    return dst;
+}
+
 #endif
