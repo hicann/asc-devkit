@@ -26,9 +26,9 @@
 
 ## 功能说明
 
-将src中的浮点数元素按照TRUNC（向零方向截断）截断到整数值，结果仍保持原浮点数据类型写入dst，截断规则等价于C标准库`trunc`语义：向零方向舍入，即丢弃小数部分取整，正数向0方向取整（如1.7 → 1.0），负数向0方向取整（如-1.7 → -1.0），整数值保持不变。未被mask筛选的元素置零。
+将`src`中的浮点数元素按照TRUNC（向零方向截断）截断到整数值，结果仍保持原浮点数据类型。接口支持通过函数返回值返回结果，也支持通过引用和参数输出结果：前者直接返回截断结果，后者将截断结果写入`dst`。截断规则等价于C标准库`trunc`语义：向零方向舍入，即丢弃小数部分取整，正数向0方向取整（如1.7 -> 1.0），负数向0方向取整（如-1.7 -> -1.0），整数值保持不变。未被`mask`筛选的元素置零。
 
-关于舍入模式的详细说明请参见[舍入模式与饱和模式](rounding_mode.md)。
+关于舍入模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
 计算公式如下：
 
@@ -40,19 +40,29 @@ $$
 
 ## 函数原型
 
-```c
+```cpp
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_trunc(vector_<dtype> src,
+                                                 vector_bool mask)
+
+// 通过引用和参数输出结果
 __simd_callee__ inline void asc_trunc(vector_<dtype>& dst,
                                       vector_<dtype> src,
                                       vector_bool mask)
 ```
 
-#### dtype支持数据类型
-dtype支持的数据类型：half、bfloat16_t、float。
+### dtype支持数据类型
 
-#### 函数原型典型示例
+`<dtype>`取值为：`half`、`bfloat16_t`、`float`。
 
-```c
-// 示例：对half矢量数据寄存器执行截断。
+### 函数原型典型示例
+
+```cpp
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_half asc_trunc(vector_half src,
+                                              vector_bool mask)
+
+// 通过引用和参数输出结果
 __simd_callee__ inline void asc_trunc(vector_half& dst,
                                       vector_half src,
                                       vector_bool mask)
@@ -66,18 +76,19 @@ __simd_callee__ inline void asc_trunc(vector_half& dst,
 | --- | --- | --- |
 | dst | 输出 | 目的矢量数据寄存器，dtype须与src一致，掩码为真位置写入向零方向截断结果（仍以原浮点类型表示整数），掩码为假位置清零。 |
 | src | 输入 | 源矢量数据寄存器，dtype须与dst一致，提供待截断的浮点元素。 |
-| mask | 输入 | 源掩码寄存器，用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| mask | 输入 | 源掩码寄存器，用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果：返回`vector_half`、`vector_bfloat16_t`或`vector_float`类型的矢量数据寄存器，保存舍入结果。
+- 通过引用和参数输出结果：无返回值，舍入结果写入`dst`。
 
 ## 约束说明
 
 - 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，dst与mask为矢量数据寄存器/掩码寄存器。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`dst`与`mask`为矢量数据寄存器/掩码寄存器。
 - float类型只支持不饱和模式。
 
 ## 调用示例
@@ -122,26 +133,25 @@ bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, 
 }
 
 constexpr uint32_t BUFFER_BYTES = 256;
-__simd_vf__ inline void convert(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
+
+__simd_vf__ inline void trunc_vf(__ubuf__ uint8_t* output, __ubuf__ uint8_t* input)
 {
-    vector_bool mask = asc_create_mask_b8(PAT_ALL);
-    vector_half dst_0;
-    vector_half src_0;
-    asc_loadalign(dst_0, reinterpret_cast<__ubuf__ half*>(output));
-    asc_loadalign(src_0, reinterpret_cast<__ubuf__ half*>(input));
-    asc_trunc(dst_0, src_0, mask);
-    asc_storealign(reinterpret_cast<__ubuf__ half*>(output), dst_0, mask);
+    vector_bool mask = asc_create_mask_b16(PAT_ALL);
+    vector_half src;
+    asc_loadalign(src, reinterpret_cast<__ubuf__ half*>(input));
+    vector_half dst = asc_trunc(src, mask);
+    asc_storealign(reinterpret_cast<__ubuf__ half*>(output), dst, mask);
 }
+
 __global__ __vector__ void asc_trunc_kernel(__gm__ uint8_t* output, __gm__ uint8_t* input)
 {
     asc_init();
     __ubuf__ uint8_t output_local[BUFFER_BYTES];
     __ubuf__ uint8_t input_local[BUFFER_BYTES];
     asc_copy_gm2ub_align(input_local, input, BUFFER_BYTES);
-    asc_copy_gm2ub_align(output_local, input, BUFFER_BYTES);
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
-    convert(output_local, input_local);
+    trunc_vf(output_local, input_local);
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_copy_ub2gm_align(output, output_local, BUFFER_BYTES);

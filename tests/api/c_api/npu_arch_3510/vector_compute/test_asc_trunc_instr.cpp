@@ -41,23 +41,68 @@
         GlobalMockObject::verify();                                                                              \
     }
 
+#define TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(class_name, c_api_name, cce_name, dst_type, src_type) \
+                                                                                                           \
+    class TestVectorComputeReturn##c_api_name##dst_type##src_type##CApi : public testing::Test {           \
+    protected:                                                                                             \
+        void SetUp() {}                                                                                    \
+        void TearDown() {}                                                                                 \
+    };                                                                                                     \
+                                                                                                           \
+    namespace {                                                                                            \
+    void c_api_name##cce_name##Return_##dst_type##_##src_type##_Stub(                                      \
+        dst_type& dst, src_type src, int32_t part, vector_bool mask, int32_t mode)                         \
+    {}                                                                                                     \
+    }                                                                                                      \
+                                                                                                           \
+    TEST_F(                                                                                                \
+        TestVectorComputeReturn##c_api_name##dst_type##src_type##CApi,                                     \
+        c_api_name##_return_##dst_type##_##src_type##_Succ)                                                \
+    {                                                                                                      \
+        src_type src;                                                                                      \
+        vector_bool mask;                                                                                  \
+                                                                                                           \
+        MOCKER_CPP(cce_name, void(dst_type&, src_type, int32_t, vector_bool, int32_t))                     \
+            .times(1)                                                                                      \
+            .will(invoke(c_api_name##cce_name##Return_##dst_type##_##src_type##_Stub));                    \
+                                                                                                           \
+        dst_type dst = c_api_name(src, mask);                                                              \
+        (void)dst;                                                                                         \
+        GlobalMockObject::verify();                                                                        \
+    }
+
 // ==========asc_ceil==========
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_ceil, vtrc, vector_half, vector_half);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_ceil, vtrc, vector_bfloat16_t, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_ceil, vtrc, vector_float, vector_float);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_ceil, vtrc, vector_half, vector_half);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_ceil, vtrc, vector_bfloat16_t, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_ceil, vtrc, vector_float, vector_float);
 // ==========asc_floor==========
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_floor, vtrc, vector_half, vector_half);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_floor, vtrc, vector_bfloat16_t, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_floor, vtrc, vector_float, vector_float);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_floor, vtrc, vector_half, vector_half);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_floor, vtrc, vector_bfloat16_t, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_floor, vtrc, vector_float, vector_float);
 // ==========asc_rint==========
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_rint, vtrc, vector_half, vector_half);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_rint, vtrc, vector_bfloat16_t, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_rint, vtrc, vector_float, vector_float);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_rint, vtrc, vector_half, vector_half);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_rint, vtrc, vector_bfloat16_t, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_rint, vtrc, vector_float, vector_float);
 // ==========asc_round==========
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_round, vtrc, vector_half, vector_half);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_round, vtrc, vector_bfloat16_t, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_round, vtrc, vector_float, vector_float);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_round, vtrc, vector_half, vector_half);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_round, vtrc, vector_bfloat16_t, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_round, vtrc, vector_float, vector_float);
 // ==========asc_trunc==========
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_trunc, vtrc, vector_half, vector_half);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_trunc, vtrc, vector_bfloat16_t, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCONV_TRUNC_INSTR(ASCTRUNC, asc_trunc, vtrc, vector_float, vector_float);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_trunc, vtrc, vector_half, vector_half);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_trunc, vtrc, vector_bfloat16_t, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCONV_TRUNC_RETURN_INSTR(ASCTRUNC, asc_trunc, vtrc, vector_float, vector_float);
