@@ -1,4 +1,4 @@
-# asc_set_atomic_min_int（废弃）
+# asc_set_atomic_none（废弃）
 
 ## 产品支持情况
 
@@ -26,17 +26,15 @@
 
 ## 功能说明
 
-**该接口已废弃，请使用[asc_set_atomic_min_int32](asc_set_atomic_min.md)替代。**
+**该接口已废弃，请使用[asc_disable_dma_atomic](../atomic/datamove_atomic/asc_disable_dma_atomic.md)替代。**
 
-头文件路径：`"c_api/atomic/datamove_atomic.h"`。
-
-设置计算结果以原子比较的方式传输到GM。在拷贝前，将待传输的int32_t数据与GM中已有数据进行逐元素比较，并将最小值写入GM。
+与[asc_set_atomic_add](../atomic/datamove_atomic/asc_set_atomic_add.md)、[asc_set_atomic_max](../atomic/datamove_atomic/asc_set_atomic_max.md)、[asc_set_atomic_min](../atomic/datamove_atomic/asc_set_atomic_min.md)接口配合使用，用于在完成原子操作后关闭原子操作，避免影响后续搬运。
 
 ## 函数原型
 
-```cpp
-[[deprecated("NOTICE: asc_set_atomic_min_int is deprecated. Please use asc_set_atomic_min_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_min_int()
+```c
+[[deprecated("NOTICE: asc_set_atomic_none is deprecated. Please use asc_disable_dma_atomic instead.")]]
+__aicore__ inline void asc_set_atomic_none()
 ```
 
 ## 参数说明
@@ -53,8 +51,8 @@ PIPE_S
 
 ## 约束说明
 
-- 使用结束后，建议通过[asc_set_atomic_none](asc_set_atomic_none.md)关闭原子最小操作，以免影响后续相关指令功能。
+无
 
 ## 调用示例
 
-请参考[asc_set_atomic_min](asc_set_atomic_min.md)的调用示例。
+请参见[asc_disable_dma_atomic的调用示例](../atomic/datamove_atomic/asc_disable_dma_atomic.md#调用示例)。

@@ -13,4 +13,3 @@
 - **[asc_atomic_xor](asc_atomic_xor.md)**
 - **[asc_get_store_atomic_config](asc_get_store_atomic_config.md)**
 - **[asc_set_store_atomic_config_v1](asc_set_store_atomic_config_v1.md)**
-- **[asc_set_store_atomic_config_v2（废弃）](asc_set_store_atomic_config_v2_deprecated.md)**

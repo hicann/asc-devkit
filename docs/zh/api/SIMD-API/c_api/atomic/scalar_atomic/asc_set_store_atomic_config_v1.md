@@ -30,7 +30,7 @@
 
 ## 函数原型
 
-```cpp
+```c
 __aicore__ inline void asc_set_store_atomic_config_v1(uint16_t type, uint16_t op)
 ```
 
@@ -53,12 +53,12 @@ PIPE_S
 
 ## 约束说明
 
-- 使用完成后，建议通过[asc_set_atomic_none](../datamove_atomic/asc_set_atomic_none.md)清空原子操作的状态，以免影响后续相关指令功能。
+- 使用完成后，建议通过[asc_disable_dma_atomic](../datamove_atomic/asc_disable_dma_atomic.md)清空原子操作的状态，以免影响后续相关指令功能。
 - 该指令执行前不会对GM的数据做清零操作，开发者需在需要时手动添加清零操作。
 
 ## 调用示例
 
-```cpp
+```c
 uint16_t type = 1;
 uint16_t op = 0;
 asc_set_store_atomic_config_v1(type, op);

@@ -21,6 +21,7 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_max_float_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_add_bfloat_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_min_float_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_disable_dma_atomic_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_none_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_get_store_atomic_config_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_store_atomic_config_impl.h"
@@ -71,7 +72,13 @@ __aicore__ inline void asc_set_atomic_add_float() { asc_set_atomic_add_float_imp
 __aicore__ inline void asc_set_atomic_max_float16() { asc_set_atomic_max_float16_impl(); }
 
 /// Clears the atomic operation state, disabling any active atomic add/max/min.
-__aicore__ inline void asc_set_atomic_none() { asc_set_atomic_none_impl(); }
+__aicore__ inline void asc_disable_dma_atomic() { asc_disable_dma_atomic_impl(); }
+
+[[deprecated("NOTICE: asc_set_atomic_none is deprecated. Please use asc_disable_dma_atomic instead.")]]
+__aicore__ inline void asc_set_atomic_none()
+{
+    asc_disable_dma_atomic();
+}
 
 /// Enables atomic max for data transfer from Unified Buffer/L0C Buffer/L1 Buffer to
 /// Global Memory with bfloat16 precision (bfloat16_t).

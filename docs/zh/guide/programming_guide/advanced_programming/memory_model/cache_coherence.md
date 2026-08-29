@@ -613,7 +613,7 @@ C API中提供了[`asc_ub_dcci_single`](../../../../api/SIMD-API/c_api/cache_ctr
 
 ### MTE3随路原子操作与DCache一致性
 
-随路原子操作不是单独读取某个地址的Scalar事件，而是改变后续目的地址为GM的数据搬运行为。MTE3负责将UB等核内数据搬出到GM，因此`UB -> GM`是常见的随路原子使用路径。接口说明可参考C API [asc_set_atomic_add](../../../../api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_add.md)和[asc_set_atomic_none](../../../../api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_none.md)。
+随路原子操作不是单独读取某个地址的Scalar事件，而是改变后续目的地址为GM的数据搬运行为。MTE3负责将UB等核内数据搬出到GM，因此`UB -> GM`是常见的随路原子使用路径。接口说明可参考C API [asc_set_atomic_add](../../../../api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_add.md)和[asc_disable_dma_atomic](../../../../api/SIMD-API/c_api/atomic/datamove_atomic/asc_disable_dma_atomic.md)。
 
 从一致性角度看，MTE3随路原子的目标是GM，不会自动处理Scalar DCache中已有的副本，因此需要关注以下关系：
 

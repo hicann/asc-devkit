@@ -34,7 +34,7 @@
 
 ## 函数原型
 
-```cpp
+```c
 __aicore__ inline void asc_set_atomic_min_int8()
 __aicore__ inline void asc_set_atomic_min_int16()
 __aicore__ inline void asc_set_atomic_min_float16()
@@ -57,7 +57,7 @@ PIPE_S
 
 ## 约束说明
 
-- 使用结束后，建议通过[asc_set_atomic_none](asc_set_atomic_none.md)关闭原子最小操作，以免影响后续相关指令功能。
+- 使用结束后，建议通过[asc_disable_dma_atomic](asc_disable_dma_atomic.md)关闭原子最小操作，以免影响后续相关指令功能。
 - 该指令执行前不会对GM的数据做清零操作，开发者可以在需要时手动添加清零操作。
 <!-- npu="950" id9 -->
 - 针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到GM的通路。
@@ -75,7 +75,7 @@ asc_copy_ub2gm(dst, src0, total_length * sizeof(int8_t));
 asc_sync_pipe(PIPE_MTE3);
 asc_set_atomic_min_int8();
 asc_copy_ub2gm(dst, src1, total_length * sizeof(int8_t));
-asc_set_atomic_none();
+asc_disable_dma_atomic();
 ```
 
 结果示例：

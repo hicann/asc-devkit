@@ -12,24 +12,28 @@
 
 static void test_host_c_api_atomic_0()
 {
+    using ::asc_disable_dma_atomic;
     using ::asc_get_store_atomic_config;
     using ::asc_set_atomic_add_bfloat;
     using ::asc_set_atomic_add_float;
     using ::asc_set_atomic_add_float16;
     using ::asc_set_atomic_add_int;
     using ::asc_set_atomic_add_int16;
+    using ::asc_set_atomic_add_int32;
     using ::asc_set_atomic_add_int8;
     using ::asc_set_atomic_max_bfloat;
     using ::asc_set_atomic_max_float;
     using ::asc_set_atomic_max_float16;
     using ::asc_set_atomic_max_int;
     using ::asc_set_atomic_max_int16;
+    using ::asc_set_atomic_max_int32;
     using ::asc_set_atomic_max_int8;
     using ::asc_set_atomic_min_bfloat;
     using ::asc_set_atomic_min_float;
     using ::asc_set_atomic_min_float16;
     using ::asc_set_atomic_min_int;
     using ::asc_set_atomic_min_int16;
+    using ::asc_set_atomic_min_int32;
     using ::asc_set_atomic_min_int8;
     using ::asc_set_atomic_none;
     using ::asc_set_store_atomic_config_v1;
