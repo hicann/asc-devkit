@@ -6,9 +6,6 @@
 | --- | --- |
 | [LocalTensor](data_structures/LocalTensor/LocalTensor.md) | LocalTensor用于存放AI Core中Local Memory（内部存储）的数据，支持逻辑位置TPosition为VECIN、VECOUT、VECCALC、A1、A2、B1、B2、CO1、CO2。 |
 | [GlobalTensor](data_structures/GlobalTensor/GlobalTensor.md) | GlobalTensor用来存放Global Memory（外部存储）的全局数据。 |
-| [layout_structure](data_structure_TensorAPI/data_structure_TensorAPI.md) | Tensor API基础数据结构中Layout相关基础数据结构。 |
-| [tensor_structure](data_structure_TensorAPI/data_structure_TensorAPI.md) | Tensor API基础数据结构中Tensor相关数据结构。 |
-| [GetLayoutPattern](data_structure_TensorAPI/utils/GetLayoutPattern.md) | GetLayoutPattern用于从Layout类型中提取其LayoutPattern类型信息。 |
 | [Coordinate](aux_data_structures/Coordinate/Coordinate.md) | Coordinate本质上是一个元组（tuple），用于表示张量在不同维度的位置信息，即坐标值。 |
 | [Layout](aux_data_structures/Layout/Layout.md) | Layout数据结构是描述多维张量内存布局的基础模板类，通过编译时的形状（Shape）和步长（Stride）信息，实现逻辑坐标空间到一维内存地址空间的映射。 |
 | [TensorTrait](aux_data_structures/TensorTrait/TensorTrait.md) | TensorTrait数据结构是描述Tensor相关信息的基础模板类，包含Tensor的数据类型、逻辑位置和Layout内存布局。 |
@@ -113,38 +110,6 @@
 | [SetFixpipeNz2ndFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2ndFlag.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。 |
 | [SetFixPipeClipRelu](cube_compute_ISASI/cube_store_aux_config/SetFixPipeClipRelu.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路量化后，通过调用该接口设置ClipReLU操作的最大值。 |
 | [SetFixPipeAddr](cube_compute_ISASI/cube_store_aux_config/SetFixPipeAddr.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路量化后，通过调用该接口设置Elementwise操作时LocalTensor的地址。 |
-
-## 矩阵计算（TensorAPI，试验特性）
-
-### 矩阵数据搬入至L1
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [Copy（Global Memory到L1 Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_GMToL1.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将Global Memory中的数据搬运到L1 Buffer。`Copy`接口根据源张量和目的张量的存储位置、数据类型和Layout选择具体搬运实现。搬运块数、搬运长度、源/目的侧步长以及格式转换相关信息由Tensor Layout推导，用户不需要在`Copy`调用中额外传入搬运参数。 |
-
-### 矩阵数据搬入至L0
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [Copy（L1 Buffer到L0A Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_L1ToL0A.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的左矩阵数据搬运到L0A Buffer。 |
-| [Copy（L1 Buffer到L0B Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_L1ToL0B.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的右矩阵数据搬运到L0B Buffer。 |
-| [Copy（L1 Buffer到L0ScaleA Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_L1ToL0ScaleA.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的左矩阵缩放数据搬运到L0ScaleA Buffer。左矩阵缩放数据在L0ScaleA Buffer上的首地址由左矩阵在L0A Buffer的首地址的1/16推导出来。 |
-| [Copy（L1 Buffer到L0ScaleB Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_L1ToL0ScaleB.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的右矩阵缩放数据搬运到L0ScaleB Buffer。右矩阵缩放数据在L0ScaleB Buffer上的首地址由右矩阵在L0B Buffer的首地址的1/16推导出来。 |
-| [Copy（L1 Buffer到BiasTable Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_L1ToBiasTable.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的bias数据搬运到BiasTable Buffer，作为Mmad计算中的bias输入。 |
-| [Copy（L1 Buffer到Fixpipe Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_load/Copy_L1ToFixpipe.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的量化数据搬运到Fixpipe Buffer。量化数据可用于L0C输出到GM/UB时做随路量化。 |
-
-### Mmad计算
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [Mmad](cube_compute_TensorAPI/mmad_compute/Mmad.md) | `Mmad`接口用于完成L0A Buffer上左矩阵A和L0B Buffer上右矩阵B的矩阵乘加，结果写入L0C Buffer上结果矩阵C。默认模式为普通矩阵计算。 |
-
-### 矩阵计算的搬出
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [Copy（L0C Buffer到Global Memory数据搬运）](cube_compute_TensorAPI/cube_compute_store/Copy_L0CToGM.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到Global Memory。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到Global Memory时，接口会根据目的张量布局自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。 |
-| [Copy（L0C Buffer到Unified Buffer数据搬运）](cube_compute_TensorAPI/cube_compute_store/Copy_L0CToUB.md) | Tensor API通过`Copy`接口统一执行不同通路数据搬运。该接口用于将L0C Buffer中的矩阵计算结果搬运到UB。L0C Buffer中的数据通常为`Mmad`的输出，数据格式为`NZ`。搬运到UB时，接口会根据目的张量格式自动选择`NZ`到`ND`、`NZ`到`DN`或`NZ`到`NZ`的随路格式转换。 |
 
 ## Memory矢量计算
 

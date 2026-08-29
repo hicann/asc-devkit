@@ -11,6 +11,7 @@ Ascend C提供了一套层次化的API体系，涵盖了从底层C扩展到高�
 | API一级分类 | API二级分类 | 分类说明 |
 | --- | --- | --- |
 | [SIMD API](SIMD-API/basic_api/basic_api_list.md) | [基础API](SIMD-API/basic_api/basic_api.md) | 实现对硬件能力的抽象，开放芯片的能力，保证完备性和兼容性。标注为ISASI（Instruction Set Architecture Special Interface，硬件体系结构相关的接口）类别的API，不能保证跨硬件版本兼容。 |
+| [SIMD API](SIMD-API/SIMD-API.md) | [Tensor API](SIMD-API/tensor_api/tensor_api_list.md) | 通过Tensor及其Layout描述数据，并提供当前支持的数据搬运与矩阵计算能力。未覆盖的硬件能力可配合C API使用。 |
 | [SIMD API](SIMD-API/c_api/c_api.md) | [C API](SIMD-API/c_api/c_api.md) | 纯C接口，开放芯片完备编程能力，支持数组分配内存，一般基于指针编程，提供与业界一致的C语言编程体验。 |
 | [SIMD API](SIMD-API/adv_api/adv_api_list.md) | [高阶API](SIMD-API/adv_api/adv_api.md) | 实现一些常用的计算算法，用于提高编程开发效率，通常会调用多种基础API实现。高阶API包括数学库、Matmul、Softmax等API。高阶API可以保证兼容性。 |
 | [SIMT API](SIMT-API/overview.md) | - | 对标业界，提供单指令多线程API。以单条指令多个线程的形式来实现并行计算。SIMT编程主要用于向量计算，特别适合处理离散访问、复杂控制逻辑等场景。SIMT API支持两种编程模型：SIMT编程、SIMD与SIMT混合编程，具体支持的API请分别参见[SIMT编程API列表](SIMT-API/SIMT_programming_intro/api_list.md)、[SIMD与SIMT混合编程API列表](SIMT-API/SIMD_SIMT_hybrid_programming_intro/api_list.md)。 |
@@ -36,7 +37,7 @@ Ascend C提供了一套层次化的API体系，涵盖了从底层C扩展到高�
 | API能力层级| 开发场景 | 头文件 | 说明 | 对应的库文件 |
 | --- | --- | --- | --- | --- |
 | 基于C语言指针编程 | 开发任意算子（含融合算子） | c_api/asc_simd.h | 提供全量SIMD C API对外接口。 | 不涉及 |
-| 基于C++ Tensor编程 | 开发任意算子（含融合算子） | tensor_api/tensor.h | 提供全量SIMD C++ Tensor API对外接口。 | 不涉及 |
+| 基于C++ Tensor编程 | 开发数据搬运、矩阵计算及相关融合算子 | tensor_api/tensor.h | 提供当前支持的SIMD C++ Tensor API对外接口，未覆盖的能力可配合C API使用。 | 不涉及 |
 | 基于TPipe/TQue框架编程 | 开发任意算子（含融合算子） | basic_api/kernel_basic_intf.h | 提供全量SIMD基于TPipe/TQue框架编程对外接口。 | 不涉及 |
 | 基于TPipe/TQue框架编程 | 只开发矢量算子 | basic_api/kernel_vec_intf.h | 提供矢量计算依赖的SIMD基于TPipe/TQue框架编程对外接口。 | 不涉及 |
 | 基于TPipe/TQue框架编程 | 只开发矩阵算子 | basic_api/kernel_cube_intf.h | 提供矩阵计算依赖的SIMD基于TPipe/TQue框架编程对外接口。 | 不涉及 |
