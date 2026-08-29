@@ -140,12 +140,14 @@ __simd_callee__ inline uint32_t get_args_len_vf(uint32_t& args_num, Args&&... ar
 }
 
 template <typename... Args>
-__simd_callee__ inline uint32_t get_print_tlv_len_simd(uint32_t& args_num, __ubuf__ const char* fmt, Args&&... args)
+__simd_callee__ inline uint32_t get_print_tlv_len_simd(
+    uint32_t& args_num, __ubuf__ const char* fmt, __ubuf__ const char* dump_head, Args&&... args)
 {
     constexpr uint32_t print_info_len = sizeof(PrintTlv);
     const uint32_t args_len = get_args_len_vf(args_num, args...);
     const uint32_t fmt_len = get_cstring_len_vf(fmt);
-    return align_print_tlv_len(print_info_len + args_len + fmt_len);
+    const uint32_t dump_head_len = get_cstring_len_vf(dump_head) - 1;
+    return align_print_tlv_len(print_info_len + args_len + fmt_len + dump_head_len);
 }
 
 __simd_callee__ inline void set_print_tlv_info_vf(
@@ -169,20 +171,24 @@ __simd_callee__ inline void copy_fmt_to_ubuf(__ubuf__ uint8_t* dst, __ubuf__ con
 
 template <typename... Args>
 __simd_callee__ inline void set_print_tlv_data_vf(
-    __ubuf__ PrintTlv* print_tlv, __ubuf__ const char* fmt, Args&&... args)
+    __ubuf__ PrintTlv* print_tlv, __ubuf__ const char* fmt, __ubuf__ const char* dump_head, Args&&... args)
 {
-    const uint32_t str_len = get_cstring_len_vf(fmt);
+    const uint32_t dump_head_len = get_cstring_len_vf(dump_head) - 1;
+    const uint32_t fmt_len = get_cstring_len_vf(fmt);
     __ubuf__ uint8_t* param_addr = reinterpret_cast<__ubuf__ uint8_t*>(print_tlv + 1);
-    __ubuf__ uint8_t* fmt_addr = param_addr + print_tlv->fmtOffset - sizeof(uint64_t);
+    __ubuf__ uint8_t* dump_head_addr = param_addr + print_tlv->fmtOffset - sizeof(uint64_t);
+    __ubuf__ uint8_t* fmt_addr = dump_head_addr + dump_head_len;
 
-    copy_fmt_to_ubuf(fmt_addr, fmt, str_len);
+    copy_fmt_to_ubuf(dump_head_addr, dump_head, dump_head_len);
+    copy_fmt_to_ubuf(fmt_addr, fmt, fmt_len);
 
-    uint32_t str_param_offset = print_tlv->fmtOffset + str_len;
+    uint32_t str_param_offset = print_tlv->fmtOffset + dump_head_len + fmt_len;
     set_param_vf(param_addr, 0, str_param_offset, args...);
 }
 
 template <class... Args>
-__simd_callee__ inline void scalar_printf_impl(DumpType debug_type, __ubuf__ const char* fmt, Args&&... args)
+__simd_callee__ inline void scalar_printf_impl(
+    DumpType debug_type, __ubuf__ const char* fmt, __ubuf__ const char* dump_head, Args&&... args)
 {
     __ubuf__ BlockVFBufInfo* block_info = get_printf_ubuf_addr(0);
     if (block_info->flag != 0) {
@@ -190,19 +196,30 @@ __simd_callee__ inline void scalar_printf_impl(DumpType debug_type, __ubuf__ con
     }
 
     uint32_t args_num = 0;
-    const uint32_t tlv_len = get_print_tlv_len_simd(args_num, fmt, args...);
+    const uint32_t tlv_len = get_print_tlv_len_simd(args_num, fmt, dump_head, args...);
+    uint32_t write_len = block_info->writeLen;
+
+    if (tlv_len > block_info->length || write_len > block_info->length) {
+        block_info->flag = 1;
+        return;
+    }
+
+    if (write_len + tlv_len > block_info->length) {
+        wait_vf_debug_buffer_drained_and_reset(block_info);
+        write_len = 0;
+    }
+
     if (!reserve_debug_tlv(block_info, tlv_len)) {
         return;
     }
 
     __ubuf__ PrintTlv* print_tlv =
-        reinterpret_cast<__ubuf__ PrintTlv*>((__ubuf__ uint8_t*)(block_info->buffer) + block_info->writeLen);
+        reinterpret_cast<__ubuf__ PrintTlv*>((__ubuf__ uint8_t*)(block_info->buffer) + write_len);
     set_print_tlv_info_vf(debug_type, print_tlv, tlv_len, args_num, block_info->blockIdx);
-    set_print_tlv_data_vf(print_tlv, fmt, args...);
+    set_print_tlv_data_vf(print_tlv, fmt, dump_head, args...);
 
     block_info->magic = ASCENDC_SIMD_VF_MAGIC_NUMBER;
-    block_info->writeLen += tlv_len;
-    block_info->pidx += 1;
+    block_info->writeLen = write_len + tlv_len;
 }
 
 template <class... Args>
@@ -210,7 +227,29 @@ __simd_callee__ inline void printf_impl(__ubuf__ const char* fmt, Args&&... args
 {
 #if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
     enable_asc_diagnostics();
-    scalar_printf_impl(DumpType::DUMP_SCALAR, fmt, args...);
+    scalar_printf_impl(DumpType::DUMP_SCALAR, fmt, "", args...);
+#endif
+}
+
+template <class... Args>
+__simd_callee__ inline void printf_impl_assert(__ubuf__ const char* fmt, Args&&... args)
+{
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
+    enable_asc_assert();
+    scalar_printf_impl(DumpType::DUMP_ASSERT, fmt, "", args...);
+#endif
+}
+
+template <class... Args>
+__simd_callee__ inline void printf_impl_assert_msg(
+    __ubuf__ const char* assertion, __ubuf__ const char* file, unsigned int line, __ubuf__ const char* function,
+    __ubuf__ const char* fmt, Args&&... args)
+{
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
+    enable_asc_assert();
+    scalar_printf_impl(
+        DumpType::DUMP_ASSERT, fmt, "[ASSERT] %s:%u: %s: Assertion `%s' failed. ", file, line, function, assertion,
+        args...);
 #endif
 }
 

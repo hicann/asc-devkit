@@ -66,3 +66,15 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __trap();
 #endif
 
 #endif
+
+#if !defined(__ASCENDC_INCLUDE_INTERNAL_HEADERS__)
+#define __ASCENDC_INCLUDE_INTERNAL_HEADERS__
+
+#if (__NPU_ARCH__ == 3510) && !defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
+#include "impl/utils/debug/asc_simd_debug_enable.h"
+#include "impl/utils/debug/asc_assert_simd_impl.h"
+#endif
+
+#undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
+
+#endif

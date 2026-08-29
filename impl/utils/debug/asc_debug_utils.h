@@ -196,6 +196,7 @@ __aicore__ inline void do_overlow_skip(
 {
     if (writeInfo->bufOffset + minTlvLen >= ringBufLen) {
         ringbuf_skip_directly(writeInfo);
+        return;
     }
     ringbuf_skip_with_info(writeInfo, ringBufAddr, ringBufLen);
 }
@@ -316,12 +317,19 @@ __aicore__ static __attribute__((noinline)) void AscVFDebugInitUb()
 #endif
 }
 
+__aicore__ static __attribute__((noinline)) void AscVFDebugFinish()
+{
+#if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0) && !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && \
+    __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__)
+    __asc_simd_vf::asc_finish_flag();
+#endif
+}
+
 __aicore__ static __attribute__((noinline)) bool AscVFDebugTransferUb()
 {
 #if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0) && !defined(ASCENDC_CPU_DEBUG) && defined(__NPU_ARCH__) && \
     __NPU_ARCH__ == 3510 && !defined(__ASC_DISABLE_RESERVED_UBUF__)
     if (g_sysPrintFifoSpace != nullptr) {
-        pipe_barrier(PIPE_ALL);
         return asc_vf_debug_ub2gm();
     }
 #endif

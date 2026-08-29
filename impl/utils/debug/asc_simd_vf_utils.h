@@ -24,11 +24,13 @@ __simd_callee__ inline void init_debug_buffer(__ubuf__ BlockVFBufInfo* blockInfo
     blockInfo->magic = ASCENDC_SIMD_VF_MAGIC_NUMBER;
     blockInfo->length = ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE;
     blockInfo->writeLen = 0;
-    blockInfo->pidx = 0;
-    blockInfo->flag = 0;
     blockInfo->resv1 = 0;
+    blockInfo->flag = 0;
+    blockInfo->finish = 0;
     blockInfo->blockIdx = blockIdx;
+    blockInfo->assertFlag = BlockVFBufInfo::AssertState::IDLE;
     blockInfo->resv2 = 0;
+    blockInfo->readLen = 0;
 }
 
 __simd_callee__ inline bool reserve_debug_tlv(__ubuf__ BlockVFBufInfo* blockInfo, uint32_t tlvLen)

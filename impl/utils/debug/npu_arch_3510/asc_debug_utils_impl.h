@@ -47,6 +47,25 @@ __simd_callee__ constexpr inline uint32_t div_ceil(uint32_t a, uint32_t b)
 
 __simd_callee__ constexpr inline uint32_t align_up(uint32_t a, uint32_t b) { return div_ceil(a, b) * b; }
 
+__simd_callee__ inline void wait_vf_debug_buffer_drained(__ubuf__ BlockVFBufInfo* block_info)
+{
+    while (block_info->readLen != block_info->writeLen) {
+        __asm__ __volatile__("");
+    }
+}
+
+__simd_callee__ inline void reset_vf_debug_buffer(__ubuf__ BlockVFBufInfo* block_info)
+{
+    block_info->writeLen = 0;
+    block_info->readLen = 0;
+}
+
+__simd_callee__ inline void wait_vf_debug_buffer_drained_and_reset(__ubuf__ BlockVFBufInfo* block_info)
+{
+    wait_vf_debug_buffer_drained(block_info);
+    reset_vf_debug_buffer(block_info);
+}
+
 template <typename T>
 __simd_callee__ constexpr inline DumpTensorDataType get_dump_datatype_impl();
 
@@ -60,6 +79,13 @@ __simd_callee__ inline void enable_asc_diagnostics()
 {
 #if (!defined(ASCENDC_DUMP) || (ASCENDC_DUMP != 0)) || defined(ASCENDC_TIME_STAMP_ON)
     static const struct AscTlv __asc_debug_meta_section__ __attribute__((used, section(".ascend.meta"))) = {4, 4, 1};
+#endif
+}
+
+__simd_callee__ inline void enable_asc_assert()
+{
+#if (!defined(ASCENDC_DUMP) || (ASCENDC_DUMP != 0)) || defined(ASCENDC_TIME_STAMP_ON)
+    static const struct AscTlv __asc_assert_meta_section__ __attribute__((used, section(".ascend.meta"))) = {4, 4, 5};
 #endif
 }
 
@@ -97,9 +123,26 @@ __simd_callee__ __ubuf__ inline BlockVFBufInfo* get_printf_ubuf_addr(uint64_t ad
     return bufInfo;
 }
 
+__simd_callee__ inline void wait_vf_assert_handshake()
+{
+    __ubuf__ BlockVFBufInfo* block_info = get_printf_ubuf_addr(0);
+    wait_vf_debug_buffer_drained(block_info);
+    __ubuf__ volatile BlockVFBufInfo::AssertState* assertFlag = &block_info->assertFlag;
+    *assertFlag = BlockVFBufInfo::AssertState::RAISED;
+    while (*assertFlag != BlockVFBufInfo::AssertState::DRAINED) {
+        __asm__ __volatile__("");
+    }
+}
+
 __simd_callee__ __ubuf__ inline BlockVFBufInfo* init_printf_ubuf_addr(uint16_t blockIdx = 0)
 {
     return get_printf_ubuf_addr(get_vf_debug_reserved_ub_addr(), blockIdx);
+}
+
+__no_simd_vf_fusion__ __simd_vf__ static inline void asc_finish_flag()
+{
+    __ubuf__ BlockVFBufInfo* blockInfo = get_printf_ubuf_addr(0);
+    blockInfo->finish = 1;
 }
 
 __simd_callee__ inline void asc_copy_ub2ub(__ubuf__ void* dst, __ubuf__ void* src, uint32_t size)
@@ -109,6 +152,8 @@ __simd_callee__ inline void asc_copy_ub2ub(__ubuf__ void* dst, __ubuf__ void* sr
 } // namespace __asc_simd_vf
 
 namespace __asc_aicore {
+__aicore__ inline bool check_ringbuf_space(__gm__ DebugBlockHeadInfo* blockInfo, const uint32_t& tlvLen);
+
 __aicore__ inline void asc_entire_dcci_impl(__gm__ uint64_t* ptr)
 {
     dcci(ptr, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT);
@@ -241,41 +286,98 @@ __aicore__ inline void update_write_info(
     asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(writeInfo));
 }
 
+__aicore__ static bool count_vf_tlv_packages(__ubuf__ uint8_t* tlv, uint32_t tlvLen, uint32_t& packageNum)
+{
+    constexpr uint32_t tlvHeadLen = 2 * sizeof(uint32_t);
+
+    uint32_t offset = 0;
+
+    while (offset + tlvHeadLen <= tlvLen) {
+        __ubuf__ uint32_t* head = reinterpret_cast<__ubuf__ uint32_t*>(tlv + offset);
+        uint32_t payloadLen = head[1];
+
+        if (payloadLen > tlvLen - offset - tlvHeadLen) {
+            return false;
+        }
+
+        offset += tlvHeadLen + payloadLen;
+        packageNum += 1;
+    }
+
+    return packageNum != 0 && offset == tlvLen;
+}
+
+__aicore__ inline void asc_vf_debug_publish(
+    __ubuf__ BlockVFBufInfo* blockInfo, uint32_t curWriteLen, uint32_t curReadLen)
+{
+    const uint32_t tlvLen = curWriteLen - curReadLen;
+    __ubuf__ uint8_t* tlv = reinterpret_cast<__ubuf__ uint8_t*>(blockInfo->buffer) + curReadLen;
+
+    uint32_t packageNum = 0;
+    if (!count_vf_tlv_packages(tlv, tlvLen, packageNum)) {
+        blockInfo->flag = 1;
+        return;
+    }
+
+    __gm__ BlockRingBufInfo* blockRingBufInfo = get_block_ring_buf_info();
+    auto* debugBlockInfo = reinterpret_cast<__gm__ DebugBlockHeadInfo*>(blockRingBufInfo);
+    if (!check_ringbuf_space(debugBlockInfo, tlvLen)) {
+        return;
+    }
+    __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
+
+    constexpr uint32_t sizeU32 = sizeof(uint32_t);
+    const uint32_t totalWords = tlvLen / sizeU32;
+    auto* dstWords = reinterpret_cast<__gm__ uint32_t*>(dstTlv);
+    auto* srcWords = reinterpret_cast<__ubuf__ uint32_t*>(tlv);
+    for (uint32_t i = 0; i < totalWords; ++i) {
+        dstWords[i] = srcWords[i];
+    }
+    for (uint32_t i = totalWords * sizeU32; i < tlvLen; ++i) {
+        dstTlv[i] = tlv[i];
+    }
+    asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
+
+    __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
+    update_write_info(writeInfo, tlvLen, packageNum);
+    blockInfo->readLen = curWriteLen;
+}
+
 __aicore__ inline bool asc_vf_debug_ub2gm()
 {
     __ubuf__ BlockVFBufInfo* blockInfo = get_printf_ubuf_addr_aicore(0);
-    __ubuf__ uint8_t* tlv = reinterpret_cast<__ubuf__ uint8_t*>(blockInfo->buffer);
+    for (;;) {
+        uint32_t curReadLen = blockInfo->readLen;
+        uint32_t curWriteLen = blockInfo->writeLen;
 
-    __gm__ BlockRingBufInfo* blockRingBufInfo = get_block_ring_buf_info();
-    const bool isValidHeader = blockInfo->magic == ASCENDC_SIMD_VF_MAGIC_NUMBER &&
-                               blockInfo->length <= ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE &&
-                               blockInfo->writeLen <= blockInfo->length;
-    if (!isValidHeader) {
-        blockInfo->flag = 1;
-    }
-    const uint32_t tlvLen = isValidHeader ? blockInfo->writeLen : 0;
-    const uint32_t packageNum = isValidHeader ? blockInfo->pidx : 0;
-
-    sync_all_impl();
-    constexpr uint32_t sizeU32 = sizeof(uint32_t);
-    if (tlvLen > 0) {
-        __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
-        const uint32_t totalWords = tlvLen / sizeU32;
-        auto* dstWords = reinterpret_cast<__gm__ uint32_t*>(dstTlv);
-        auto* srcWords = reinterpret_cast<__ubuf__ uint32_t*>(tlv);
-        for (uint32_t i = 0; i < totalWords; ++i) {
-            dstWords[i] = srcWords[i];
+        const bool isValidHeader = blockInfo->magic == ASCENDC_SIMD_VF_MAGIC_NUMBER &&
+                                   blockInfo->length <= ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE &&
+                                   curWriteLen <= blockInfo->length;
+        if (!isValidHeader) {
+            blockInfo->flag = 1;
+            break;
         }
-        for (uint32_t i = totalWords * sizeU32; i < tlvLen; ++i) {
-            dstTlv[i] = tlv[i];
+        // The producer clears writeLen before readLen when resetting a drained UB buffer.
+        if (curReadLen > curWriteLen) {
+            continue;
         }
-        sync_all_impl();
 
-        asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
-    }
-    if (tlvLen > 0) {
-        __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
-        update_write_info(writeInfo, tlvLen, packageNum);
+        if (curReadLen < curWriteLen) {
+            asc_vf_debug_publish(blockInfo, curWriteLen, curReadLen);
+            if (blockInfo->flag != 0) {
+                break;
+            }
+            continue;
+        }
+
+        if (blockInfo->assertFlag == BlockVFBufInfo::AssertState::RAISED) {
+            blockInfo->assertFlag = BlockVFBufInfo::AssertState::DRAINED;
+            break;
+        }
+
+        if (blockInfo->finish == 1) {
+            break;
+        }
     }
     return blockInfo->flag != 0;
 }

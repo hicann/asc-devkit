@@ -16,21 +16,29 @@
 #define IMPL_UTILS_DEBUG_ASC_DEBUG_TYPES_H
 
 #ifndef ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE
-// Reserved UB space is 2K in total. 20 bytes for BlockVFBufInfo header, leaving 2028 bytes for buffer.
-#define ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE 2028
+// Reserved UB space is 2K in total. 24 bytes for BlockVFBufInfo header, leaving 2024 bytes for buffer.
+#define ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE 2024
 #endif
 
 #define ASCENDC_SIMD_VF_MAGIC_NUMBER 0xF0A00B0F
 
 struct BlockVFBufInfo {
+    enum class AssertState : uint8_t {
+        IDLE = 0U,
+        RAISED = 1U,
+        DRAINED = 2U,
+    };
+
     uint32_t magic = ASCENDC_SIMD_VF_MAGIC_NUMBER;
     uint32_t length = ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE;
     uint32_t writeLen = 0;
-    uint16_t pidx = 0;
+    uint16_t resv1 = 0;
     uint8_t flag = 0; // 0: normal, nonzero: overflow
-    uint8_t resv1 = 0;
+    uint8_t finish = 0;
     uint16_t blockIdx = 0;
-    uint16_t resv2 = 0;
+    AssertState assertFlag = AssertState::IDLE;
+    uint8_t resv2 = 0;
+    uint32_t readLen = 0;
     uint8_t buffer[ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE];
 };
 

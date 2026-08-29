@@ -105,9 +105,10 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args);
     __ubuf__ const char* fmt = "simd vf: int=%d, uint=%u, float=%f, string=%s\n";
     ```
 
--   在`simd_vf`场景下，每个AIV核在单次`asc_vf_call`执行期间最多能使用2KB的Unified Buffer（UB）空间；同一次`asc_vf_call`中的所有`simd_vf`的`printf`和`asc_dump`调用共享该预留空间。
+<!-- npu="950" id15 -->
+-   在`simd_vf`场景下，每个AIV核使用2KB预留UB空间作为FIFO临时缓冲区。同一次`asc_vf_call`中，`printf`、`asc_dump`和`assert`产生的累计调测数据可以超过2KB，但每条完整编码数据必须能放入该缓冲区；否则，该条数据不会打印。
 -   每次调用`simd_vf`的`printf`时，除格式字符串和参数外，还会固定占用32字节；整条打印数据需要按8字节对齐。
--   `simd_vf`调测接口不会检查上述预留空间是否越界。超过限制可能越界写入预留空间，导致打印结果异常，并可能影响算子执行。
+<!-- end id15 -->
 
 ## SIMD调用示例
 
