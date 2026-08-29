@@ -87,10 +87,9 @@ __global__ __cube__ void asc_enable_hf32_trans_kernel(
     __ca__ float a_l0[ELEMENTS];
     __cb__ float b_l0[ELEMENTS];
     __cc__ float c_l0[ELEMENTS];
-    constexpr uint64_t nz_config = (16ULL << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
     asc_copy_gm2l1_nd2nz(a_l1, a, DIM * sizeof(float), 0, DIM, DIM, 0, false);
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
     asc_copy_gm2l1_nd2nz(b_l1, b, DIM * sizeof(float), 0, DIM, DIM, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -103,7 +102,7 @@ __global__ __cube__ void asc_enable_hf32_trans_kernel(
     asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, 0, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

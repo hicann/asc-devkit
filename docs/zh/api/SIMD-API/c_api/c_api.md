@@ -79,6 +79,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_enable_hf32](cube_compute/asc_enable_hf32.md)|用于设置Mmad计算开启HF32模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。|`c_api/cube_compute/cube_compute.h`|
 |[asc_enable_hf32_trans](cube_compute/asc_enable_hf32_trans.md)|设置HF32模式取整方式，需要先使用asc_enable_hf32开启HF32取整模式。|`c_api/cube_compute/cube_compute.h`|
 |[asc_enable_hif8](cube_compute/asc_enable_hif8.md)|用于设置Mmad计算开启HiF8模式，开启该模式后L0A Buffer/L0B Buffer中的8bit数据将在参与矩阵乘法运算前被转化为hifloat8_t类型数据。|`c_api/cube_compute/cube_compute.h`|
+|[asc_disable_hif8](cube_compute/asc_disable_hif8.md)|用于设置Mmad计算关闭HiF8模式，设置该模式后L0A Buffer/L0B Buffer中的FP8数据在参与Mmad计算之前不会被转化为hifloat8_t类型数据。|`c_api/cube_compute/cube_compute.h`|
+|[asc_disable_hf32](cube_compute/asc_disable_hf32.md)|用于设置Mmad计算关闭HF32模式，设置该模式后L0A Buffer/L0B Buffer中的FP32数据在参与Mmad计算之前不做舍入处理。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad](cube_compute/asc_mmad.md)|完成矩阵乘加操作。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_mx](cube_compute/asc_mmad_mx.md)|完成包含放缩功能的矩阵乘加操作。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_sparse](cube_compute/asc_mmad_sparse.md)|完成矩阵乘加操作，传入的左矩阵A为稀疏矩阵，右矩阵B为稠密矩阵。|`c_api/cube_compute/cube_compute.h`|
@@ -124,6 +126,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_set_gm2l1_loop_size](cube_datamove/asc_set_gm2l1_loop_size.md)|将数据从GM搬运到L1 Buffer时，设置数据搬运流程中的循环次数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_gm2l1_nz_para](cube_datamove/asc_set_gm2l1_nz_para.md)|设置MTE2_NZ_PARA寄存器的值。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_gm2l1_pad](cube_datamove/asc_set_gm2l1_pad.md)|将数据从GM非对齐搬运到L1 Buffer时，设置连续搬运数据块左右两侧的填充值。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l0c_copy_nz_para](cube_datamove/asc_set_l0c_copy_nz_para.md)|数据搬运过程中进行随路格式转换（NZ格式转换为ND格式）时，设置格式转换的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l0c_copy_channel_para](cube_datamove/asc_set_l0c_copy_channel_para.md)|配置Nz2DN格式转换时源Nz矩阵中相邻行的地址偏移。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c2gm_channel_para](cube_datamove/asc_set_l0c2gm_channel_para.md)|对通道步长参数的专用寄存器的比特位进行设置。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c2gm_config](cube_datamove/asc_set_l0c2gm_config.md)|数据搬运过程中进行随路量化时，通过调用该接口设置量化流程中的矢量量化参数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c2gm_lrelu_alpha](cube_datamove/asc_set_l0c2gm_lrelu_alpha.md)|用于设置asc_copy_l0c2l1或asc_copy_l0c2gm接口计算过程中使用的Leaky ReLU alpha值。该值只支持half和float两种数据类型。|`c_api/cube_datamove/cube_datamove.h`|

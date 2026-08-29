@@ -160,7 +160,7 @@ __global__ __mix__(1, 2) void asc_copy_ub2l1_kernel(
         asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, 0, false, false, true);
         asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
         asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-        asc_set_l0c2gm_nz2nd(1, 0, 0);
+        asc_set_l0c_copy_nz_para(1, 0, 0);
         asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
             static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
             static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

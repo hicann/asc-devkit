@@ -152,7 +152,13 @@ PIPE_MTE1
 
 ### 2D分形搬运约束
 
+- m_step或k_step为0时不执行搬运，本接口被视为NOP（空操作）。应避免无意传入0，否则不会产生有效数据且会增加指令调度开销。
 - 最小搬运粒度为1个512字节的数据分形。矩阵边缘不足一个分形时，源矩阵需要补齐到完整分形；搬运会包含补齐区域中的无效数据。
+- 对于矩阵转置场景，不同的数据类型需要满足不同的m_step和k_step约束：b4数据类型时，m_step必须是4的倍数；b8数据类型时，m_step必须是2的倍数；b16数据类型时，m_step必须是1的倍数；b32数据类型时，k_step必须是2的倍数。
+- 对于矩阵转置场景，由于存在m_step和k_step约束，需要确保L1 Buffer预留足够的空间，避免发生读越界，导致搬运出现未定义行为；
+- 对于b8转置场景搬运，即调用`asc_copy_l12l0b_transpose`接口，假设C矩阵大小为（M，N），若$N > 32$且$N \bmod 32 \le 16$：
+  - 此场景下若只调用一次`asc_copy_l12l0b_transpose`搬运接口，由于b8转置场景最小搬运单位为两个分形，会导致N方向多搬1个无效分形，后续Mmad计算时需要让此分型参与计算，否则会导致计算结果错误，并且最后在矩阵搬出时，只搬出有效区域。在此调用方式下，计算的数据大小和搬出的数据大小不一致，导致无法在矩阵搬出时开启UnitFlag功能。
+  - 若多次调用for循环调用`asc_copy_l12l0b_transpose`搬运接口，需合理设置`dst_stride`参数，写入L0B Buffer时跳过转置多读的N方向无效分型，则Mmad计算时无需让此分型参与计算，计算和矩阵搬出的数据大小保持一致，此场景下可以在矩阵搬出时开启UnitFlag功能。但需要注意采用for循环多次搬运，会容易导致MTE1指令队列满，极致流水场景下可能会造成流水阻塞，需合理选择是否使用for循环多次搬运。
 
 ## 调用示例
 
@@ -193,10 +199,9 @@ __global__ __cube__ void AscCopyL12l0bKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     __cc__ int32_t c_l0[ELEMENTS];
 
     // 将A矩阵和B矩阵从GM搬入L1 Buffer，并转换为Nz格式。
-    constexpr uint64_t nz_config = (128ULL << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 128, 0);
     asc_copy_gm2l1_nd2nz(a_l1, a, K, 0, M, K, 0, false);
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 128, 0);
     asc_copy_gm2l1_nd2nz(b_l1, b, K, 0, N, K, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -213,7 +218,7 @@ __global__ __cube__ void AscCopyL12l0bKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
     // 将L0C Buffer中的Nz结果转换为ND格式并搬出到GM。
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

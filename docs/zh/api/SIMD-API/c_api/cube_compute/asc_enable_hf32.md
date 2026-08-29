@@ -106,7 +106,7 @@ PIPE_S
 ## 约束说明
 
 - 本接口需在矩阵乘加指令（[asc_mmad](asc_mmad.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
-- HF32模式启用后会持续生效，不会自动关闭。后续矩阵乘加指令若不显式重新配置，将沿用当前模式。如需关闭HF32模式，请重新调用[asc_set_fp32_mode](asc_set_fp32_mode.md)接口。
+- HF32模式启用后会持续生效，不会自动关闭。后续矩阵乘加指令若不显式重新配置，将沿用当前模式。如需关闭HF32模式，请重新调用[asc_disable_hf32](asc_disable_hf32.md)接口。
 - HF32模式启用后，FP32转换为HF32格式的舍入模式由配套的[asc_set_hf32_round_mode](asc_set_hf32_round_mode.md)接口配置，须在本接口之后调用该配套接口配置舍入模式，否则舍入模式沿用上次配置或默认值。
 - HF32模式仅对输入矩阵数据类型为`float`的矩阵乘加运算场景生效。
 
@@ -145,11 +145,10 @@ __global__ __cube__ void asc_enable_hf32_kernel(
     __cb__ float b_l0[ELEMENTS];
     __cc__ float fp32_l0[ELEMENTS];
     __cc__ float hf32_l0[ELEMENTS];
-    constexpr uint64_t nz_config = (16ULL << 32) | (1ULL << 16) | 1ULL;
 
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
     asc_copy_gm2l1_nd2nz(a_l1, a, DIM * sizeof(float), 0, DIM, DIM, 0, false);
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
     asc_copy_gm2l1_nd2nz(b_l1, b, DIM * sizeof(float), 0, DIM, DIM, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -157,7 +156,7 @@ __global__ __cube__ void asc_enable_hf32_kernel(
     asc_copy_l12l0b_transpose(b_l0, b_l1, 0, 0, 1, 2, 1, 1);
     asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
-    asc_set_fp32_mode();
+    asc_disable_hf32();
     asc_mmad(fp32_l0, a_l0, b_l0, DIM, DIM, DIM, 0, true, false, true);
     asc_sync_pipe(PIPE_M);
     asc_enable_hf32();
@@ -166,11 +165,11 @@ __global__ __cube__ void asc_enable_hf32_kernel(
     asc_sync_pipe(PIPE_M);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(fp32_output, fp32_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(hf32_output, hf32_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

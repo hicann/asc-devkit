@@ -30,7 +30,7 @@
 
 ## 函数原型
 
- ```cpp
+```cpp
 __aicore__ inline void asc_enable_fp8()
 ```
 

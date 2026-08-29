@@ -1,4 +1,4 @@
-# asc_set_l0c2gm_channel_para
+# asc_set_l0c_copy_channel_para
 
 ## 产品支持情况
 
@@ -26,14 +26,14 @@
 
 ## 功能说明
 
-本接口用于在L0C Buffer搬出并执行Nz2DN格式转换时，配置源Nz矩阵中相邻行的地址偏移。配置写入后，由后续开启Nz2DN功能的[asc_copy_l0c2gm](asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)或[asc_copy_l0c2ub](asc_copy_l0c2ub.md)接口使用；未开启Nz2DN功能时，本配置不生效。
+本接口用于在L0C Buffer搬出并执行Nz2DN格式转换时，配置源Nz矩阵中相邻行的地址偏移。配置写入后，由后续开启Nz2DN功能的[asc_copy_l0c2gm](./asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](./asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)或[asc_copy_l0c2ub](./asc_copy_l0c2ub.md)接口使用；未开启Nz2DN功能时，本配置不生效。
 
 本接口为矩阵搬出相关配置接口，仅在AIC上生效。
 
 ## 函数原型
 
 ```c
-__aicore__ inline void asc_set_l0c2gm_channel_para(uint64_t config)
+__aicore__ inline void asc_set_l0c_copy_channel_para(uint16_t src_nz_fractal_stride)
 ```
 
 ## 参数说明
@@ -42,14 +42,7 @@ __aicore__ inline void asc_set_l0c2gm_channel_para(uint64_t config)
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| config | 输入 | Nz2DN格式转换的源操作数相关配置。接口不检查或转换字段值，需按照[表2](#table2)完成拼装。 |
-
-**表2** config字段说明 <a id="table2"></a>
-
-| bit范围 | 描述 |
-|---|---|
-| 47:0 | 无效bit位，用户无需关注，设置为0即可。 |
-| 63:48 | 源矩阵Nz分形中相邻行的地址偏移，取值范围为[1, 65535]，单位为64字节（`16 × sizeof(dtype)`，`dtype`为L0C Buffer上数据的类型，支持`int32_t`和`float`）。 |
+| src_nz_fractal_stride | 输入 | Nz2DN格式转换配置源矩阵Nz分形中相邻行的地址偏移，取值范围为[1, 65535]，单位为64字节（`16 × sizeof(dtype)`，`dtype`为L0C Buffer上数据的类型，支持`int32_t`和`float`）。 |
 
 ## 返回值说明
 
@@ -61,10 +54,10 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口仅在AIC上生效，在AIV上调用将直接返回。
-- 本接口需在对应的L0C Buffer搬出接口执行前调用，且搬出接口需开启Nz2DN功能。配置会持续生效，直至再次调用本接口覆盖。
-- `config[63:48]`不能为0，除`config[63:48]`外的其他bit位不生效，设置为0即可；接口会将`config`整体写入，不会检查字段值。
-- 开启Nz2DN功能时，如果`config[63:48]`不等于1，则不能同时开启unitFlag。
+- 本接口非AIC调用直接返回。
+- 本接口需在对应的L0C Buffer搬出接口执行前调用，且搬出接口需开启Nz2DN功能，即搬出接口参数`enable_nz2dn`设置为`true`。
+- 开启Nz2DN功能，`src_nz_fractal_stride`不能为0。
+- 开启Nz2DN功能时，如果`src_nz_fractal_stride`不等于1，则不能同时开启UnitFlag。
 
 <!-- npu="950" id8 -->
 ## 调用示例
@@ -96,7 +89,7 @@ constexpr uint32_t C_ELEMENTS = M * N;
 constexpr uint16_t HALF_ONE = 0x3c00;
 constexpr uint16_t HALF_NEG_ONE = 0xbc00;
 
-__global__ __cube__ void asc_set_l0c2gm_channel_para_kernel(
+__global__ __cube__ void asc_set_l0c_copy_channel_para_kernel(
     __gm__ uint16_t* a, __gm__ uint16_t* b, __gm__ float* output)
 {
     asc_init();
@@ -162,7 +155,7 @@ int main()
     aclrtMalloc(reinterpret_cast<void**>(&output_device), output.size() * sizeof(float), ACL_MEM_MALLOC_HUGE_FIRST);
     aclrtMemcpy(a_device, a.size() * sizeof(uint16_t), a.data(), a.size() * sizeof(uint16_t), ACL_MEMCPY_HOST_TO_DEVICE);
     aclrtMemcpy(b_device, b.size() * sizeof(uint16_t), b.data(), b.size() * sizeof(uint16_t), ACL_MEMCPY_HOST_TO_DEVICE);
-    asc_set_l0c2gm_channel_para_kernel<<<1, 0>>>(a_device, b_device, output_device);
+    asc_set_l0c_copy_channel_para_kernel<<<1, 0>>>(a_device, b_device, output_device);
     aclrtSynchronizeDevice();
     aclrtMemcpy(output.data(), output.size() * sizeof(float), output_device, output.size() * sizeof(float),
         ACL_MEMCPY_DEVICE_TO_HOST);
@@ -170,8 +163,8 @@ int main()
     print_row("DN output row 0", output, 0);
     print_row("DN output row 16", output, 16 * M);
     const bool passed = output == golden;
-    std::cout << (passed ? "[Success] asc_set_l0c2gm_channel_para passed."
-                         : "[Failed] asc_set_l0c2gm_channel_para failed.") << std::endl;
+    std::cout << (passed ? "[Success] asc_set_l0c_copy_channel_para passed."
+                         : "[Failed] asc_set_l0c_copy_channel_para failed.") << std::endl;
     aclrtFree(a_device);
     aclrtFree(b_device);
     aclrtFree(output_device);

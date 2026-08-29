@@ -241,13 +241,11 @@ __global__ __cube__ void Conv2dForwardCapi(
     __cb__ half weight_l0[K_ALIGN * N_ALIGN];
     __cc__ float output_l0[M_ALIGN * N_ALIGN];
 
-    constexpr uint64_t fmap_nz_config = (static_cast<uint64_t>(H * W) << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(fmap_nz_config);
+    asc_set_gm2l1_nz_para(1, 1, H * W, 0);
     asc_copy_gm2l1_nd2nz(
         fmap_l1, fmap + batch_idx * FMAP_BATCH_SIZE, CIN * sizeof(half), 0, H * W, CIN, 0, false);
 
-    constexpr uint64_t weight_nz_config = (static_cast<uint64_t>(K_ALIGN) << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(weight_nz_config);
+    asc_set_gm2l1_nz_para(1, 1, K_ALIGN, 0);
     asc_copy_gm2l1_nd2nz(weight_l1, weight, COUT * sizeof(half), 0, K, COUT, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -286,7 +284,7 @@ __global__ __cube__ void Conv2dForwardCapi(
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(
         output + batch_idx * OUTPUT_BATCH_SIZE, output_l0, N, M, N, M_ALIGN, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::F322F16), 0, false, true, 0, 0, false, 0, false, false, false, false);

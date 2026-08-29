@@ -36,8 +36,8 @@
 
 本接口支持多种随路能力的组合，需通过配套接口预先配置量化参数、激活参数、通道参数等寄存器，再调用本接口完成搬运。
 
-- Nz2ND格式转换场景下，需通过[asc_set_l0c2gm_nz2nd](../asc_set_l0c2gm_nz2nd.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2nd`使用；
-- Nz2DN格式转换场景下，需通过[asc_set_l0c2gm_nz2nd](../asc_set_l0c2gm_nz2nd.md)、[asc_set_l0c2gm_channel_para](../asc_set_l0c2gm_channel_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2dn`使用；
+- Nz2ND格式转换场景下，需通过[asc_set_l0c_copy_nz_para](../asc_set_l0c_copy_nz_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2nd`使用；
+- Nz2DN格式转换场景下，需通过[asc_set_l0c_copy_nz_para](../asc_set_l0c_copy_nz_para.md)、[asc_set_l0c_copy_channel_para](../asc_set_l0c_copy_channel_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2dn`使用；
 - 随路scalar量化模式下，需通过[asc_set_l0c_copy_prequant](../asc_set_l0c_copy_prequant.md)设置随路scalar量化参数，并且需要搭配本接口`quant_pre_mode`使用;
 - 随路tensor量化模式下，需通过[asc_set_l0c2gm_config](../asc_set_l0c2gm_config.md)设置随路tensor量化使用tensor的起始地址，其中量化tensor的每个元素都代表一个量化参数，并且需要搭配本接口`quant_pre_mode`使用;
 - 随路激活模式下，需通过[asc_set_l0c2gm_relu_alpha](../asc_set_l0c2gm_relu_alpha.md)、[asc_set_l0c2gm_lrelu_alpha](../asc_set_l0c2gm_lrelu_alpha.md)预先配置ReLU/Leaky ReLU激活参数，并且需要搭配本接口`enable_clip_relu_pre`与`relu_pre_mode`使用；
@@ -217,8 +217,8 @@ PIPE_FIX
 - src与dst dtype组合需与`quant_pre_mode`量化模式匹配，否则会导致搬运结果不符合预期。
 - `enable_channel_split`仅在输出dtype为`float`且输出为Nz格式时可设为true。
 - 量化与激活模式中使用的量化系数不可为INF/NaN和非规格化数，否则会导致量化激活结果错误。
-- 开启Nz2DN转换时，需通过[asc_set_l0c2gm_channel_para](../asc_set_l0c2gm_channel_para.md)预先配置源矩阵步长，且源矩阵步长不可为0，否则会导致搬运异常。
-- 开启Nz2DN转换时，仅当通过[asc_set_l0c2gm_channel_para](../asc_set_l0c2gm_channel_para.md)配置源矩阵步长为1时，可同时开启UnitFlag功能。
+- 开启Nz2DN转换时，需通过[asc_set_l0c_copy_channel_para](../asc_set_l0c_copy_channel_para.md)预先配置源矩阵步长，且源矩阵步长不可为0，否则会导致搬运异常。
+- 开启Nz2DN转换时，仅当通过[asc_set_l0c_copy_channel_para](../asc_set_l0c_copy_channel_para.md)配置源矩阵步长为1时，可同时开启UnitFlag功能。
 - `enable_clip_relu_pre`设为Clip ReLU（标量模式）时需搭配`relu_pre_mode`与量化功能一起使用。
 
 ## 调用示例
@@ -262,10 +262,9 @@ __global__ __cube__ void AscCopyL0c2gmKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     __cc__ int32_t c_l0[ELEMENTS];
 
     // 将两个128x128的ND输入转换为MMAD所需的Nz排布。
-    constexpr uint64_t nz_config = (128ULL << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 128, 0);
     asc_copy_gm2l1_nd2nz(a_l1, a, K, 0, M, K, 0, false);
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(1, 1, 128, 0);
     asc_copy_gm2l1_nd2nz(b_l1, b, K, 0, N, K, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -282,7 +281,7 @@ __global__ __cube__ void AscCopyL0c2gmKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
     // 将L0C Buffer中的Nz结果转换为连续ND格式并搬出至GM。
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

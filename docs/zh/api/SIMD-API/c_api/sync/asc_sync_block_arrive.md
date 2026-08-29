@@ -136,7 +136,7 @@ __global__ __mix__(1, 2) void asc_sync_block_kernel(__gm__ half* input, __gm__ f
         asc_mmad(output_l0, matrix_a_l0, matrix_b_l0, MATRIX_DIM, MATRIX_DIM, MATRIX_DIM, 0, false, false, true);
         asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
         asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-        asc_set_l0c2gm_nz2nd(1, 2, MATRIX_ELEMENTS);
+        asc_set_l0c_copy_nz_para(1, 2, MATRIX_ELEMENTS);
         asc_copy_l0c2gm(output, output_l0, MATRIX_DIM, MATRIX_DIM, MATRIX_DIM, MATRIX_DIM, 0, 0, 0,
                         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
                         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

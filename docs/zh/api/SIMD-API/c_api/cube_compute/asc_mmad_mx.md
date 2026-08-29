@@ -191,16 +191,14 @@ __global__ __cube__ void asc_mmad_mx_kernel(__gm__ uint8_t* a, __gm__ uint8_t* s
     __cb__ fp8_e4m3fn_t b_l0[N * K];
     __cc__ float c_l0[M * N];
 
-    constexpr uint64_t matrix_config = (16ULL << 32) | (1ULL << 16) | 1ULL;
-    constexpr uint64_t scale_config = (1ULL << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(matrix_config);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
     asc_copy_gm2l1_nd2nz(a_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(a), K, 0, M, K, 0, false);
-    asc_set_gm2l1_nz_para(scale_config);
+    asc_set_gm2l1_nz_para(1, 1, 1, 0);
     asc_copy_gm2l1_dn2nz(reinterpret_cast<__cbuf__ half*>(scale_a_l1),
         reinterpret_cast<__gm__ half*>(scale_a), SCALE_K, 0, SCALE_K / 2, M, 0, false);
-    asc_set_gm2l1_nz_para(matrix_config);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
     asc_copy_gm2l1_nd2nz(b_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(b), K, 0, N, K, 0, false);
-    asc_set_gm2l1_nz_para(scale_config);
+    asc_set_gm2l1_nz_para(1, 1, 1, 0);
     asc_copy_gm2l1_dn2nz(reinterpret_cast<__cbuf__ half*>(scale_b_l1),
         reinterpret_cast<__gm__ half*>(scale_b), SCALE_K, 0, SCALE_K / 2, N, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -216,7 +214,7 @@ __global__ __cube__ void asc_mmad_mx_kernel(__gm__ uint8_t* a, __gm__ uint8_t* s
     asc_mmad_mx(c_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);

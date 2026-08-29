@@ -26,13 +26,17 @@
 
 ## 功能说明
 
-本接口用于配置Global Memory到L1 Buffer的ND2Nz和DN2Nz搬运参数。配置写入后，由后续的[asc_copy_gm2l1_nd2nz](asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)或[asc_copy_gm2l1_dn2nz](asc_copy_gm2l1_dn2nz.md)接口使用。
+本接口用于配置从Global Memory搬运至L1 Buffer过程中，ND2Nz或DN2Nz格式转换所需的目的地址布局，包括矩阵数量、目的Nz矩阵中相邻行的步长、相邻Z矩阵的步长以及相邻Nz矩阵的步长。配置完成后，由后续调用的[asc_copy_gm2l1_nd2nz](./asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)或[asc_copy_gm2l1_dn2nz](./asc_copy_gm2l1_dn2nz.md)接口使用。
+
+本接口只完成参数配置，不执行数据搬运。源地址步长、矩阵行数和矩阵列数等搬运参数由后续搬运接口配置。
 
 本接口为矩阵搬入相关配置接口，仅在AIC上生效。
 
 ## 函数原型
 
 ```c
+__aicore__ inline void asc_set_gm2l1_nz_para(uint16_t matrix_num, uint16_t dst_nz_n_stride, uint16_t dst_nz_c0_stride, uint16_t dst_nz_matrix_stride);
+
 __aicore__ inline void asc_set_gm2l1_nz_para(uint64_t config)
 ```
 
@@ -41,17 +45,32 @@ __aicore__ inline void asc_set_gm2l1_nz_para(uint64_t config)
 **表1** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
-|---|---|---|
-| config | 输入 | ND2Nz或DN2Nz搬运的64bit配置参数。接口不检查或转换字段值，需按照[表2](#table2)完成拼装。 |
+| --- | --- | --- |
+| matrix_num | 输入 | 源操作数中ND矩阵或DN矩阵的数量，取值范围为[0, 4095]。取值为0时，后续搬运接口将被视为NOP（空操作）。 |
+| dst_nz_n_stride | 输入 | 目的Nz矩阵中相邻行起始地址间的偏移。取值范围为[1, 16384]，单位为32字节。 |
+| dst_nz_c0_stride | 输入 | 目的Nz矩阵中相邻Z分形起始地址间的偏移。取值范围为[1, 16384]，单位为32字节。 |
+| dst_nz_matrix_stride | 输入 | 目的操作数中相邻Nz矩阵起始地址间的偏移，取值范围为[0, 65535]，单位为32字节。<br>&nbsp;&nbsp;&bull; 矩阵个数为1即`matrix_num`设置为1时，此参数无意义，设置为0即可。<br>&nbsp;&nbsp;&bull; 当`matrix_num`设置大于1时，`dst_nz_matrix_stride = 0`时，后写入的Nz矩阵会覆盖第一个Nz矩阵。 |
+| config | 输入 | ND2Nz或DN2Nz搬运的64bit配置参数。由`matrix_num`，`dst_nz_n_stride`，`dst_nz_c0_stride`与`dst_nz_matrix_stride`拼装而成，各比特位含义参加[表2](#table2)。 |
 
 **表2** config参数字段说明 <a id="table2"></a>
 
-| bit范围 | 描述 |
-|---|---|
-| 15:0 | 源矩阵中ND矩阵或DN矩阵的数量，取值范围为[0, 4095]。取值为0时，后续搬运接口将被视为NOP（空操作）。 |
-| 31:16 | 目的Nz矩阵中相邻行起始地址的偏移，取值范围为[1, 16384]，单位为32字节。 |
-| 47:32 | 目的Nz矩阵中相邻z矩阵起始地址的偏移，取值范围为[1, 16384]，单位为32字节。 |
-| 63:48 | 目的矩阵中相邻Nz矩阵起始地址的偏移，字段取值范围为[0, 65535]，单位为32字节。矩阵数量为1时，本字段无意义，设置为0即可。矩阵数量大于1且本字段为0时，后写入的Nz矩阵会覆盖第一个Nz矩阵。 |
+| 比特位范围 | 字段名称 | 描述 |
+| ---------- | ---------- | ---------- |
+| 15:0 | matrix_num | 源操作数中ND矩阵或DN矩阵的数量，取值范围为[0, 4095]。取值为0时，后续搬运接口将被视为NOP（空操作）。 |
+| 31:16 | dst_nz_n_stride | 目的Nz矩阵中相邻行起始地址间的偏移。取值范围为[1, 16384]，单位为32字节。 |
+| 47:32 | dst_nz_c0_stride | 目的Nz矩阵中相邻Z分形起始地址间的偏移。取值范围为[1, 16384]，单位为32字节。 |
+| 63:48 | dst_nz_matrix_stride | 目的操作数中相邻Nz矩阵起始地址间的偏移，取值范围为[0, 65535]，单位为32字节。<br>&nbsp;&nbsp;&bull; 矩阵个数为1即`matrix_num`设置为1时，此参数无意义，设置为0即可。<br>&nbsp;&nbsp;&bull; 当`matrix_num`设置大于1时，`dst_nz_matrix_stride = 0`时，后写入的Nz矩阵会覆盖第一个Nz矩阵。 |
+
+三个步长字段均以32字节为单位，字段值表示相应地址偏移包含的32字节块数。例如，字段值为2时，表示地址偏移为64字节。
+
+`config`可按如下方式拼装：
+
+```cpp
+uint64_t config = (static_cast<uint64_t>(dst_nz_matrix_stride) << 48) |
+                  (static_cast<uint64_t>(dst_nz_c0_stride) << 32) |
+                  (static_cast<uint64_t>(dst_nz_n_stride) << 16) |
+                  static_cast<uint64_t>(matrix_num);
+```
 
 ## 返回值说明
 
@@ -63,10 +82,10 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口仅在AIC上生效，在AIV上调用将直接返回。
-- 本接口需在对应的ND2Nz或DN2Nz搬运接口执行前调用，调用后配置会持续生效，直至再次调用本接口覆盖。
+- 本接口非AIC调用直接返回。
+- 本接口需在对应的ND2Nz或DN2Nz搬运接口执行前调用。
+- 搬运至L1 Buffer的数据不能重叠。如果步长配置导致重叠写入，硬件不会产生告警或错误，并且不保证重叠数据的写入顺序。
 - `config`的四个字段均为16bit，接口会将`config`整体写入，不会单独检查字段范围。拼装前需确保各字段满足[表2](#table2)中的取值要求，不得将超出16bit的值直接左移，否则高位会写入相邻字段。
-- 矩阵数量大于1时，需根据单个Nz矩阵占用的空间正确设置[63:48]字段，否则L1 Buffer上的数据会产生重叠。
 
 <!-- npu="950" id8 -->
 ## 调用示例
@@ -80,6 +99,9 @@ bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
 
 以下调用示例代码仅Ascend 950PR/Ascend 950DT产品支持。
+
+示例中每次搬运一个16×16的`half`类型ND矩阵。目的Nz矩阵的相邻行起始地址偏移为1个32B块，相邻Z矩阵起始地址偏移为16个32B块；由于每次只搬运一个矩阵，相邻Nz矩阵起始地址偏移配置为0。
+
 
 ```cpp
 #include <cstdint>
@@ -103,11 +125,14 @@ __global__ __cube__ void asc_set_gm2l1_nz_para_kernel(
     __cb__ half b_l0[ELEMENTS];
     __cc__ float c_l0[ELEMENTS];
 
-    // One ND matrix, adjacent N blocks, and a 16-element C0-column stride.
-    constexpr uint64_t nz_config = (16ULL << 32) | (1ULL << 16) | 1ULL;
-    asc_set_gm2l1_nz_para(nz_config);
+    // 三个目的地址步长字段的单位均为32B。
+    constexpr uint16_t matrix_num = 1;
+    constexpr uint16_t dst_nz_n_stride = 1;
+    constexpr uint16_t dst_nz_c0_stride = 16;
+    constexpr uint16_t dst_nz_matrix_stride = 0;
+    asc_set_gm2l1_nz_para(matrix_num, dst_nz_n_stride, dst_nz_c0_stride, dst_nz_matrix_stride);
     asc_copy_gm2l1_nd2nz(a_l1, reinterpret_cast<__gm__ half*>(a), DIM * sizeof(half), 0, DIM, DIM, 0, false);
-    asc_set_gm2l1_nz_para(nz_config);
+    asc_set_gm2l1_nz_para(matrix_num, dst_nz_n_stride, dst_nz_c0_stride, dst_nz_matrix_stride);
     asc_copy_gm2l1_nd2nz(b_l1, reinterpret_cast<__gm__ half*>(b), DIM * sizeof(half), 0, DIM, DIM, 0, false);
 
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -119,7 +144,7 @@ __global__ __cube__ void asc_set_gm2l1_nz_para_kernel(
     asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, 0, false, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
