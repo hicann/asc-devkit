@@ -60,9 +60,9 @@ constexpr uint32_t FIFO_MAGIC = 0xAE86U;
 
 #pragma pack(push, 1)
 struct AicpuPrintfMemInfo {
-    uint64_t printfMemAddr = 0U;
-    uint32_t printfMemSize = 0U;
-    uint32_t resv0 = 0U;
+    uint64_t printfMemAddr;
+    uint32_t printfMemSize;
+    uint32_t resv0;
 };
 
 union AicpuDfxAttrValue {
