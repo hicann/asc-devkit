@@ -12,22 +12,40 @@
 
 // ==========asc_eq(vcmp int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float)==========
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_int8_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_int8_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_uint8_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_uint8_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_int16_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_int16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_uint16_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_uint16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_half);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_half);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_int32_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_int32_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_uint32_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_uint32_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(ASCVEQ, asc_eq, vcmp_eq, vector_float);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(ASCVEQ, asc_eq, vcmp_eq, vector_float);
 
 // ==========asc_eq_scalar(vcmps int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float)==========
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_int8_t, int8_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_int8_t, int8_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_uint8_t, uint8_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_uint8_t, uint8_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_int16_t, int16_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_int16_t, int16_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_uint16_t, uint16_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_uint16_t, uint16_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_half, half);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_half, half);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_bfloat16_t, bfloat16_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_bfloat16_t, bfloat16_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_int32_t, int32_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_int32_t, int32_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_uint32_t, uint32_t);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_uint32_t, uint32_t);
 TEST_VECTOR_COMPUTE_VCMPS_INSTR(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_float, float);
+TEST_VECTOR_COMPUTE_VCMPS_INSTR_RETURN(ASCVEQS, asc_eq_scalar, vcmps_eq, vector_float, float);

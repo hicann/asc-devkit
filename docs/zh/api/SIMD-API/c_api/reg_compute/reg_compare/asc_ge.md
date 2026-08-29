@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-ge表示大于等于（greater than or equal to），该接口用于逐元素比较两个源操作数大小，将比较结果（$src0_i \geq src1_i$）写入目的操作数`dst`对应比特位，如果比较结果为真，则对应比特位为1，否则为0。
+ge表示大于等于（greater than or equal to），该接口用于逐元素比较两个源操作数大小，将比较结果（$src0_i \geq src1_i$）作为返回值返回或写入目的操作数`dst`对应比特位。如果比较结果为真，则对应比特位为1，否则为0。
 
 计算公式如下：
 
@@ -39,6 +39,12 @@ $$
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_bool asc_ge(vector_<dtype> src0,
+                                          vector_<dtype> src1,
+                                          vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_ge(vector_bool& dst,
                                    vector_<dtype> src0,
                                    vector_<dtype> src1,
@@ -53,6 +59,10 @@ __simd_callee__ inline void asc_ge(vector_bool& dst,
 
 ```c
 // 典型示例：half类型逐元素大于等于比较
+__simd_callee__ inline vector_bool asc_ge(vector_half src0,
+                                          vector_half src1,
+                                          vector_bool mask)
+
 __simd_callee__ inline void asc_ge(vector_bool& dst,
                                    vector_half src0,
                                    vector_half src1,
@@ -65,7 +75,7 @@ __simd_callee__ inline void asc_ge(vector_bool& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
-| dst | 输出 | 目的操作数（掩码寄存器）。 |
+| dst | 输出 | 目的操作数（掩码寄存器），仅用于无返回值原型。 |
 | src0 | 输入 | 源操作数（矢量数据寄存器）。 |
 | src1 | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。mask中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
@@ -74,16 +84,18 @@ __simd_callee__ inline void asc_ge(vector_bool& dst,
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果的函数原型返回比较结果，类型为掩码寄存器。
+- 通过引用参数输出结果的函数原型无返回值。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`dst`为掩码寄存器，`src0`和`src1`为矢量数据寄存器。
+- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
+- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`src0`和`src1`为矢量数据寄存器；无返回值原型中的`dst`为掩码寄存器。
 - `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- `mask`比特位为0时，`dst`对应比特位写0。
+- `mask`比特位为0时，计算结果对应比特位写0。
 - 浮点比较时，+0.0与-0.0视为相等。
-- 浮点比较输入含nan时，`dst`对应比特位写0。
+- 浮点比较输入含nan时，计算结果对应比特位写0。
 
 ## 调用示例
 

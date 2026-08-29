@@ -26,11 +26,11 @@
 
 ## 功能说明
 
-根据`mask`对源操作数`src0`、`src1`执行按位或（|）操作，将结果写入目的操作数`dst`。
+根据`mask`对源操作数`src0`、`src1`执行按位或（|）操作，将结果作为返回值返回或写入目的操作数`dst`。
 
-- 矢量数据寄存器按位或：对两个矢量数据寄存器执行按位或（|），结果写入目的矢量数据寄存器。
+- 矢量数据寄存器按位或：对两个矢量数据寄存器执行按位或（|），结果为矢量数据寄存器。
 
-- 掩码寄存器按位或：对两个掩码寄存器执行按位或（|），结果写入目的掩码寄存器。
+- 掩码寄存器按位或：对两个掩码寄存器执行按位或（|），结果为掩码寄存器。
 
 计算公式如下：
 
@@ -45,6 +45,12 @@ $$
 ### 矢量数据寄存器按位或
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_or(vector_<dtype> src0,
+                                             vector_<dtype> src1,
+                                             vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_or(vector_<dtype>& dst,
                                    vector_<dtype> src0,
                                    vector_<dtype> src1,
@@ -53,21 +59,33 @@ __simd_callee__ inline void asc_or(vector_<dtype>& dst,
 
 #### dtype支持数据类型
 
-`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`int32_t`、`uint32_t`、`float`。
+通过函数返回值返回结果的函数原型中，`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`int32_t`、`uint32_t`。
+
+通过引用参数输出结果的函数原型中，`dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`int32_t`、`uint32_t`、`float`。
 
 #### 函数原型典型示例
 
 ```c
-// 示例：对half矢量数据寄存器执行按位或
-__simd_callee__ inline void asc_or(vector_half& dst,
-                                   vector_half src0,
-                                   vector_half src1,
+// 示例：对int32_t矢量数据寄存器执行按位或
+__simd_callee__ inline vector_int32_t asc_or(vector_int32_t src0,
+                                             vector_int32_t src1,
+                                             vector_bool mask)
+
+__simd_callee__ inline void asc_or(vector_int32_t& dst,
+                                   vector_int32_t src0,
+                                   vector_int32_t src1,
                                    vector_bool mask)
 ```
 
 ### 掩码寄存器按位或
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_bool asc_or(vector_bool src0,
+                                          vector_bool src1,
+                                          vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_or(vector_bool& dst,
                                    vector_bool src0,
                                    vector_bool src1,
@@ -80,7 +98,7 @@ __simd_callee__ inline void asc_or(vector_bool& dst,
 
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
-| dst | 输出 | 目的操作数（矢量数据寄存器或掩码寄存器）。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器或掩码寄存器），仅用于无返回值原型。 |
 | src0 | 输入 | 源操作数（矢量数据寄存器或掩码寄存器）。 |
 | src1 | 输入 | 源操作数（矢量数据寄存器或掩码寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器）。<br>&bull;源操作数为矢量数据寄存器时，对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。<br>&bull;源操作数为掩码寄存器时，指示在计算过程中哪些bit有效。 |
@@ -89,16 +107,18 @@ __simd_callee__ inline void asc_or(vector_bool& dst,
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果的函数原型返回按位或结果，返回类型与`src0`、`src1`的数据类型一致。
+- 通过引用参数输出结果的函数原型无返回值。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
+- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
+- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
 - `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
 - 参与计算的元素个数由矢量长度（VL）决定：
     - 矢量数据寄存器按位或中元素个数 = VL ÷ sizeof(dtype)；
     - 掩码寄存器按位或中比特个数 = VL。
-- `mask`比特位为0时，`dst`对应比特位写0。
+- `mask`比特位为0时，计算结果对应比特位写0。
 
 ## 调用示例
 

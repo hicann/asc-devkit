@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将`src`中被`mask`选择的有效元素依次复制到`dst`中，有效元素在`dst`中从低到高连续排列，剩余位置元素置为0。
+将`src`中被`mask`选择的有效元素作为返回值返回或依次复制到`dst`中。有效元素在计算结果中从低到高连续排列，剩余位置元素置为0。
 
 本接口不会将有效数据大小保存至AR寄存器。如果需要筛选有效元素并将其连续搬出至Unified Buffer（UB），请参考[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)。
 
@@ -35,6 +35,11 @@
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_squeeze(vector_<dtype> src,
+                                                  vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_squeeze(vector_<dtype>& dst,
                                         vector_<dtype> src,
                                         vector_bool mask)
@@ -48,6 +53,9 @@ __simd_callee__ inline void asc_squeeze(vector_<dtype>& dst,
 
 ```c
 // 示例：对half矢量数据寄存器执行按掩码压缩
+__simd_callee__ inline vector_half asc_squeeze(vector_half src,
+                                               vector_bool mask)
+
 __simd_callee__ inline void asc_squeeze(vector_half& dst,
                                         vector_half src,
                                         vector_bool mask)
@@ -59,7 +67,7 @@ __simd_callee__ inline void asc_squeeze(vector_half& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器），仅用于无返回值原型。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。mask中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
 
@@ -67,14 +75,16 @@ __simd_callee__ inline void asc_squeeze(vector_half& dst,
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果的函数原型返回按掩码压缩后的结果，类型为矢量数据寄存器，与`src`的数据类型一致。
+- 通过引用参数输出结果的函数原型无返回值。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`dst`和`src`为矢量数据寄存器。
+- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
+- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`src`为矢量数据寄存器；无返回值原型中的`dst`为矢量数据寄存器。
 - `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- `mask`比特位为1的`src`元素按原顺序紧凑排列到`dst`低位；`mask`比特位为0的`src`元素不参与压缩，`dst`中压缩结果之后的剩余高位统一写0。
+- `mask`比特位为1的`src`元素按原顺序紧凑排列到计算结果低位；`mask`比特位为0的`src`元素不参与压缩，计算结果中压缩结果之后的剩余高位统一写0。
 
 ## 调用示例
 

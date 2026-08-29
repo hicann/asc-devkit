@@ -26,11 +26,11 @@
 
 ## 功能说明
 
-根据`mask`对源操作数`src`执行按位取反操作，将结果写入目的操作数`dst`。
+根据`mask`对源操作数`src`执行按位取反操作，将结果作为返回值返回或写入目的操作数`dst`。
 
-- 矢量数据寄存器按位取反：对矢量数据寄存器执行按位取反，结果写入目的矢量数据寄存器。
+- 矢量数据寄存器按位取反：对矢量数据寄存器执行按位取反，结果为矢量数据寄存器。
 
-- 掩码寄存器按位取反：对掩码寄存器按位取反，结果写入目的掩码寄存器。
+- 掩码寄存器按位取反：对掩码寄存器按位取反，结果为掩码寄存器。
 
 计算公式如下：
 
@@ -45,6 +45,11 @@ $$
 ### 矢量数据寄存器按位取反
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_not(vector_<dtype> src,
+                                              vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_not(vector_<dtype>& dst,
                                     vector_<dtype> src,
                                     vector_bool mask)
@@ -58,6 +63,9 @@ __simd_callee__ inline void asc_not(vector_<dtype>& dst,
 
 ```c
 // 示例：对half矢量数据寄存器执行按位取反
+__simd_callee__ inline vector_half asc_not(vector_half src,
+                                           vector_bool mask)
+
 __simd_callee__ inline void asc_not(vector_half& dst,
                                     vector_half src,
                                     vector_bool mask)
@@ -66,6 +74,11 @@ __simd_callee__ inline void asc_not(vector_half& dst,
 ### 掩码寄存器按位取反
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_bool asc_not(vector_bool src,
+                                           vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_not(vector_bool& dst,
                                     vector_bool src,
                                     vector_bool mask)
@@ -77,7 +90,7 @@ __simd_callee__ inline void asc_not(vector_bool& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
-| dst | 输出 | 目的操作数（矢量数据寄存器或掩码寄存器），用于存储取反结果。|
+| dst | 输出 | 目的操作数（矢量数据寄存器或掩码寄存器），用于存储取反结果，仅用于无返回值原型。|
 | src | 输入 | 源操作数（矢量数据寄存器或掩码寄存器）。|
 | mask | 输入 | 源操作数掩码（掩码寄存器）。<br>&bull;源操作数为矢量数据寄存器时，对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。<br>&bull;源操作数为掩码寄存器时，指示在计算过程中哪些bit有效。 |
 
@@ -85,21 +98,22 @@ __simd_callee__ inline void asc_not(vector_bool& dst,
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果的函数原型返回按位取反结果，返回类型与`src`的数据类型一致。
+- 通过引用参数输出结果的函数原型无返回值。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
+- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
+- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
 - `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
 - 参与计算的元素个数由矢量长度（VL）决定：
     - 矢量数据寄存器按位取反中元素个数 = VL ÷ sizeof(dtype)；
     - 掩码寄存器按位取反中比特个数 = VL。
-- `src`和`dst`的`dtype`需要保持一致。
-- `mask`比特位为0时，`dst`对应比特位写0。
+- `mask`比特位为0时，计算结果对应比特位写0。
 
 ## 调用示例
 
-将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：

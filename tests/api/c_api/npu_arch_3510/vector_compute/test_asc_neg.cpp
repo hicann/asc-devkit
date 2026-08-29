@@ -11,7 +11,12 @@
 #include "tests/api/c_api/npu_arch_3510/utils/test_unary_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Vneg, asc_neg, vneg, vector_int8_t);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Vneg, asc_neg, vneg, vector_int8_t);
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Vneg, asc_neg, vneg, vector_int16_t);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Vneg, asc_neg, vneg, vector_int16_t);
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Vneg, asc_neg, vneg, vector_half);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Vneg, asc_neg, vneg, vector_half);
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Vneg, asc_neg, vneg, vector_int32_t);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Vneg, asc_neg, vneg, vector_int32_t);
 TEST_VECTOR_COMPUTE_UNARY_INSTR(Vneg, asc_neg, vneg, vector_float);
+TEST_VECTOR_COMPUTE_UNARY_RETURN_INSTR(Vneg, asc_neg, vneg, vector_float);

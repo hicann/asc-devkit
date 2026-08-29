@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-根据`mask`对源操作数`src`按元素取相反数，并将结果写入目的操作数`dst`。
+根据`mask`对源操作数`src`按元素取相反数，并将结果作为返回值返回或写入目的操作数`dst`。
 
 计算公式如下：
 
@@ -39,6 +39,11 @@ $$
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_<dtype> asc_neg(vector_<dtype> src,
+                                              vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_neg(vector_<dtype>& dst,
                                     vector_<dtype> src,
                                     vector_bool mask)
@@ -52,6 +57,9 @@ __simd_callee__ inline void asc_neg(vector_<dtype>& dst,
 
 ```c
 // 示例：对half矢量寄存器取相反数
+__simd_callee__ inline vector_half asc_neg(vector_half src,
+                                           vector_bool mask)
+
 __simd_callee__ inline void asc_neg(vector_half& dst,
                                     vector_half src,
                                     vector_bool mask)
@@ -63,7 +71,7 @@ __simd_callee__ inline void asc_neg(vector_half& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
-| dst | 输出 | 目的操作数（矢量数据寄存器），用于存储取反结果。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器），用于存储取反结果，仅用于无返回值原型。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。mask中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
 
@@ -71,14 +79,16 @@ __simd_callee__ inline void asc_neg(vector_half& dst,
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果的函数原型返回取反结果，类型为矢量数据寄存器，与`src`的数据类型一致。
+- 通过引用参数输出结果的函数原型无返回值。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`dst`和`src`为矢量数据寄存器。
+- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
+- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`src`为矢量数据寄存器；无返回值原型中的`dst`为矢量数据寄存器。
 - `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- `mask`比特位为0时，`dst`对应比特位写0。
+- `mask`比特位为0时，计算结果对应比特位写0。
 - 整数输入为有符号整数类型的最小负值时，结果保留原值不变。
 - 浮点输入通过翻转符号位实现取反：正数变为对应负数，负数变为对应正数，+0.0变为-0.0，-0.0变为+0.0，+inf变为-inf，-inf变为+inf。
 - 浮点输入nan，取反结果为nan。

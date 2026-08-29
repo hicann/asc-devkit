@@ -12,11 +12,20 @@
 #include "tests/api/c_api/npu_arch_3510/utils/test_vcmps_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_uint8_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_uint8_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_int8_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_int8_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_uint16_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_uint16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_int16_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_int16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_half);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_half);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_bfloat16_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_uint32_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_uint32_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_int32_t);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_int32_t);
 TEST_VECTOR_COMPUTE_VCMP_INSTR(Vcmp_ge, asc_ge, vcmp_ge, vector_float);
+TEST_VECTOR_COMPUTE_VCMP_INSTR_RETURN(Vcmp_ge, asc_ge, vcmp_ge, vector_float);

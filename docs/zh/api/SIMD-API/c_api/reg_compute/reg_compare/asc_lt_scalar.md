@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-根据`mask`将源操作数`src`按元素与标量`value`进行二进制比较，若$src_i < value$则目的操作数对应结果位为1，否则为0。每个元素的比较结果占一个bit。计算公式如下：
+根据`mask`将源操作数`src`按元素与标量`value`进行二进制比较，若$src_i < value$则计算结果对应位为1，否则为0。计算结果作为返回值返回或写入目的操作数`dst`，每个元素的比较结果占一个bit。计算公式如下：
 
 $$
 dst_i =
@@ -41,6 +41,12 @@ $$
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_bool asc_lt_scalar(vector_<dtype> src,
+                                                 <dtype> value,
+                                                 vector_bool mask)
+
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_lt_scalar(vector_bool& dst,
                                           vector_<dtype> src,
                                           <dtype> value,
@@ -55,6 +61,10 @@ __simd_callee__ inline void asc_lt_scalar(vector_bool& dst,
 
 ```c
 // 示例：half源向量与标量小于比较
+__simd_callee__ inline vector_bool asc_lt_scalar(vector_half src,
+                                                 half value,
+                                                 vector_bool mask)
+
 __simd_callee__ inline void asc_lt_scalar(vector_bool& dst,
                                           vector_half src,
                                           half value,
@@ -67,7 +77,7 @@ __simd_callee__ inline void asc_lt_scalar(vector_bool& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（掩码寄存器）。 |
+| dst | 输出 | 目的操作数（掩码寄存器），仅用于无返回值原型。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | value | 输入 | 源操作数（标量）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。mask中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
@@ -76,16 +86,18 @@ __simd_callee__ inline void asc_lt_scalar(vector_bool& dst,
 
 ## 返回值说明
 
-无
+- 通过函数返回值返回结果的函数原型返回比较结果，类型为掩码寄存器。
+- 通过引用参数输出结果的函数原型无返回值。
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`dst`为掩码寄存器，`src`为矢量数据寄存器。
+- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
+- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`src`为矢量数据寄存器；无返回值原型中的`dst`为掩码寄存器。
 - `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
-- `mask`比特位为0时，`dst`对应比特位写0。
+- `mask`比特位为0时，计算结果对应比特位写0。
 - 浮点比较时，+0.0与-0.0视为相等。
-- 浮点比较输入含nan时，`dst`对应比特位写0。
+- 浮点比较输入含nan时，计算结果对应比特位写0。
 
 ## 调用示例
 

@@ -15,15 +15,21 @@
 #include "include/c_api/asc_simd.h"
 
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_uint8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vand, asc_and, vand, vector_uint8_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_int8_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vand, asc_and, vand, vector_int8_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_fp8_e4m3fn_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_fp8_e5m2_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_uint16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vand, asc_and, vand, vector_uint16_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_int16_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vand, asc_and, vand, vector_int16_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_half);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_bfloat16_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_uint32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vand, asc_and, vand, vector_uint32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_int32_t);
+TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(Vand, asc_and, vand, vector_int32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_float);
 
 #define TEST_VECTOR_COMPUTE_PAND_INSTR(class_name, c_api_name, cce_name, data_type)                         \
@@ -53,4 +59,30 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(Vand, asc_and, vand, vector_float);
         GlobalMockObject::verify();                                                                         \
     }
 
+#define TEST_VECTOR_COMPUTE_PAND_INSTR_RETURN(class_name, c_api_name, cce_name, data_type)                     \
+                                                                                                               \
+    namespace {                                                                                                \
+    void cce_name##_##data_type##_ReturnStub(data_type& dst, data_type src0, data_type src1, vector_bool mask) \
+    {                                                                                                          \
+        dst = src0;                                                                                            \
+    }                                                                                                          \
+    }                                                                                                          \
+                                                                                                               \
+    TEST_F(TestVectorCompute##class_name####data_type##CApi, c_api_name##_##data_type##_ReturnValueSucc)       \
+    {                                                                                                          \
+        data_type src0{};                                                                                      \
+        data_type src1{};                                                                                      \
+        vector_bool mask{};                                                                                    \
+        static_assert(std::is_same_v<decltype(c_api_name(src0, src1, mask)), data_type>);                      \
+                                                                                                               \
+        MOCKER_CPP(cce_name, void(data_type&, data_type, data_type, vector_bool))                              \
+            .times(1)                                                                                          \
+            .will(invoke(cce_name##_##data_type##_ReturnStub));                                                \
+                                                                                                               \
+        data_type result = c_api_name(src0, src1, mask);                                                       \
+        (void)result;                                                                                          \
+        GlobalMockObject::verify();                                                                            \
+    }
+
 TEST_VECTOR_COMPUTE_PAND_INSTR(Pand, asc_and, pand, vector_bool);
+TEST_VECTOR_COMPUTE_PAND_INSTR_RETURN(Pand, asc_and, pand, vector_bool);
