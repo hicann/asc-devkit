@@ -188,7 +188,7 @@ CcuResult GroupReduce(
 
         loops.loopParam[0] = loopParam;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0]};
-        ccu::LoopGroup group(paraCfg, offsetCfg, 1, grpLoops);
+        ccu::LoopGroup group(paraCfg, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
 
     CCU_IF(goSize.parallelParam != 0)
@@ -251,8 +251,7 @@ CcuResult GroupReduce(
         loops.loopParam[0] = loopCfg0;
         loops.loopParam[1] = loopCfg1;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0], *loops.loops[1]};
-        uint32_t loopNum = 2;
-        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, loopNum, grpLoops);
+        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
     return CCU_SUCCESS;
 }
@@ -333,7 +332,7 @@ CcuResult GroupBroadcast(
 
         loops.loopParam[0] = loopParam;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0]};
-        ccu::LoopGroup group(paraCfg, offsetCfg, 1, grpLoops);
+        ccu::LoopGroup group(paraCfg, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
 
     CCU_IF(goSize.parallelParam != 0)
@@ -385,8 +384,7 @@ CcuResult GroupBroadcast(
         loops.loopParam[0] = loopCfg0;
         loops.loopParam[1] = loopCfg1;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0], *loops.loops[1]};
-        uint32_t loopNum = 2;
-        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, loopNum, grpLoops);
+        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
     return CCU_SUCCESS;
 }
@@ -463,7 +461,7 @@ CcuResult GroupBroadcastWithoutMyRank(
 
         loops.loopParam[0] = loopParam;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0]};
-        ccu::LoopGroup group(paraCfg, offsetCfg, 1, grpLoops);
+        ccu::LoopGroup group(paraCfg, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
 
     CCU_IF(goSize.parallelParam != 0)
@@ -509,8 +507,7 @@ CcuResult GroupBroadcastWithoutMyRank(
         loops.loopParam[0] = loopCfg0;
         loops.loopParam[1] = loopCfg1;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0], *loops.loops[1]};
-        uint32_t loopNum = 2;
-        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, loopNum, grpLoops);
+        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
     return CCU_SUCCESS;
 }
@@ -610,7 +607,7 @@ CcuResult GroupReduceWithoutMyRank(
 
         loops.loopParam[0] = loopParam;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0]};
-        ccu::LoopGroup group(paraCfg, offsetCfg, 1, grpLoops);
+        ccu::LoopGroup group(paraCfg, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
 
     CCU_IF(goSize.parallelParam != 0)
@@ -667,8 +664,7 @@ CcuResult GroupReduceWithoutMyRank(
         loops.loopParam[0] = loopCfg0;
         loops.loopParam[1] = loopCfg1;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0], *loops.loops[1]};
-        uint32_t loopNum = 2;
-        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, loopNum, grpLoops);
+        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
     return CCU_SUCCESS;
 }
@@ -715,7 +711,7 @@ static void SetupLoopAddress(GroupCopyVar& var, ccu::LocalAddr& src, ccu::LocalA
 
 CcuResult GroupCopy(CcuKernelCtxBase& ctx, ccu::LocalAddr dst, ccu::LocalAddr src, GroupOpSizeVars goSize)
 {
-    GroupCopyVar var;
+    GroupCopyVar& var = ctx.GetGcVar();
     CCU_CHK_RET(CreateMultiOpCopy(ctx, var));
     auto& loops = ctx.loopMap["localcopy"];
 
@@ -737,7 +733,7 @@ CcuResult GroupCopy(CcuKernelCtxBase& ctx, ccu::LocalAddr dst, ccu::LocalAddr sr
         ccu::Variable offsetCfg;
         offsetCfg = GetOffsetParam(ctx.moConfig.memSlice, ctx.moConfig.msInterleave, 1);
         std::vector<ccu::Loop> grpLoops{*loops.loops[0]};
-        ccu::LoopGroup group(paraCfg, offsetCfg, 1, grpLoops);
+        ccu::LoopGroup group(paraCfg, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
 
     CCU_IF(goSize.parallelParam != 0)
@@ -765,8 +761,7 @@ CcuResult GroupCopy(CcuKernelCtxBase& ctx, ccu::LocalAddr dst, ccu::LocalAddr sr
         loops.loopParam[0] = loopCfg0;
         loops.loopParam[1] = loopCfg1;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0], *loops.loops[1]};
-        uint32_t loopNum = 2;
-        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, loopNum, grpLoops);
+        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
     return CCU_SUCCESS;
 }
@@ -867,7 +862,7 @@ CcuResult GroupLocalReduce(
 
         loops.loopParam[0] = loopParam;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0]};
-        ccu::LoopGroup group(paraCfg, offsetCfg, 1, grpLoops);
+        ccu::LoopGroup group(paraCfg, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
 
     CCU_IF(goSize.parallelParam != 0)
@@ -927,8 +922,7 @@ CcuResult GroupLocalReduce(
         loops.loopParam[0] = loopCfg0;
         loops.loopParam[1] = loopCfg1;
         std::vector<ccu::Loop> grpLoops{*loops.loops[0], *loops.loops[1]};
-        uint32_t loopNum = 2;
-        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, loopNum, grpLoops);
+        ccu::LoopGroup group(goSize.parallelParam, offsetCfg, ctx.moConfig.loopCount, grpLoops);
     }
     return CCU_SUCCESS;
 }

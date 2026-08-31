@@ -82,15 +82,18 @@ SelectorStatus AllGatherAutoSelector::SelectCcuScheduleLevel0Algo(
         return SelectCcuScheduleUBXAlgo(topoInfo, selectAlgName, dataSize);
     }
     // Temporary KFC convergence: route only regular Mesh1D to the KFC Mem2Mem implementation.
-    if (topoInfo->level0Topo != Level0Shape::MESH_1D ||
-        topoInfo->level0MeshType == Level0MeshType::TWO_DIE_NOT_REGULAR) {
+    if (topoInfo->level0Topo != Level0Shape::MESH_1D || topoInfo->level0MeshType != Level0MeshType::SINGLE_DIE) {
         HCCL_DEBUG(
             "[AllGatherAutoSelector] level0Topo[%d], level0MeshType[%d] is not supported for ccu schedule mode.",
             topoInfo->level0Topo, topoInfo->level0MeshType);
         return SelectorStatus::NOT_MATCH;
     }
 
-    selectAlgName = "CcuAllGatherMesh1DMem2Mem";
+    selectAlgName = "CcuKfcAllGatherMesh1DMem2Mem";
+    HCCL_INFO(
+        "[KFC][AllGather][Select] algorithm[%s], dataSize[%llu], level0Topo[%u], level0MeshType[%u]",
+        selectAlgName.c_str(), static_cast<unsigned long long>(dataSize), static_cast<uint32_t>(topoInfo->level0Topo),
+        static_cast<uint32_t>(topoInfo->level0MeshType));
     HCCL_DEBUG("[AllGatherAutoSelector][%s] Algo match[%s]", __func__, selectAlgName.c_str());
     return SelectorStatus::MATCH;
 }

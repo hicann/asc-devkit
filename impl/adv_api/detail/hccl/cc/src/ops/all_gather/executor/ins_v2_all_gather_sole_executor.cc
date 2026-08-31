@@ -174,6 +174,14 @@ HcclResult InsV2AllGatherSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchestrate
             "tempAlgParams.buffInfo.outBuffBaseOff [%u]",
             myRank_, loop, tempAlgParams.buffInfo.inBuffBaseOff, tempAlgParams.buffInfo.outBuffBaseOff);
 
+        HCCL_INFO(
+            "[KFCAG_DEBUG][OrchestrateLoop] rank[%u] loop[%llu] dataCount[%llu] dataTypeSize[%llu] "
+            "strideCount[%llu] dataSize[%llu] currDataCount[%llu] sliceSize[%llu] outputSliceStride[%llu] "
+            "inBuffBaseOff[%llu] outBuffBaseOff[%llu] repeatNum[%llu]",
+            myRank_, loop, dataCount_, dataTypeSize_, strideCount_, dataSize_, currDataCount, tempAlgParams.sliceSize,
+            tempAlgParams.outputSliceStride, tempAlgParams.buffInfo.inBuffBaseOff,
+            tempAlgParams.buffInfo.outBuffBaseOff, tempAlgParams.repeatNum);
+
         CHK_RET(algTemplate.KernelRun(param, tempAlgParams, templateAlgRes));
         processedDataCount += currDataCount;
     }
@@ -192,7 +200,7 @@ REGISTER_EXEC_V2(
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 
 REGISTER_EXEC_V2(
-    HcclCMDType::HCCL_CMD_ALLGATHER, CcuAllGatherMesh1DMem2Mem, InsV2AllGatherSoleExecutor, TopoMatch1D,
+    HcclCMDType::HCCL_CMD_ALLGATHER, CcuKfcAllGatherMesh1DMem2Mem, InsV2AllGatherSoleExecutor, TopoMatch1D,
     CcuTempKfcAllGatherMesh1DMem2Mem);
 
 #endif
