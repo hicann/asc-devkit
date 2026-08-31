@@ -375,7 +375,7 @@ private:
                                 {Hardware::FIXBUF, cpuFIXBUF}};
 #if defined(__NPU_ARCH__) && \
     (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-        hardwareCpuBufferMap.insert{{Hardware::PT, cpuPT}};
+        hardwareCpuBufferMap.insert({Hardware::PT, cpuPT});
 #endif
     }
 

@@ -889,7 +889,7 @@ def get_ops(ops_file: str) -> List[str]:
 
 def get_op_compile_option(option_file: str) -> dict:
     op_compile_option = None
-    if isinstance(option_file, str) and os.path.exist(option_file):
+    if isinstance(option_file, str) and os.path.exists(option_file):
         with open(option_file, "r", encoding="utf-8") as fh:
             op_compile_option = json.load(fh)
     return op_compile_option
