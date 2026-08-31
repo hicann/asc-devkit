@@ -40,15 +40,10 @@ template <
     typename T = DefaultType, HighLowPart pos = HighLowPart::LOWEST, MaskMergeMode mode = MaskMergeMode::ZEROING,
     typename S>
 __simd_callee__ inline void Duplicate(S& dstReg, S& srcReg, MaskReg& mask);
-
-template <typename T = DefaultType, typename U>
-__simd_callee__ inline void Interleave(U& dstReg0, U& dstReg1, U& srcReg0, U& srcReg1);
-
-template <typename T = DefaultType, typename U>
-__simd_callee__ inline void DeInterleave(U& dstReg0, U& dstReg1, U& srcReg0, U& srcReg1);
 } // namespace Reg
 } // namespace AscendC
 
+#include "kernel_reg_compute_vec_data_reorder_intf.h"
 #if defined(__NPU_ARCH__) &&                                                                                      \
         ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)) || \
     defined(__ASC_NPU_HOST__)

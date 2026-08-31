@@ -30,6 +30,7 @@
 #include "kernel_reg_compute_common_intf_impl.h"
 #include "kernel_reg_compute_copy_intf_impl.h"
 #include "kernel_reg_compute_vec_duplicate_intf_impl.h"
+#include "kernel_reg_compute_vec_data_reorder_intf_impl.h"
 #include "kernel_reg_compute_datacopy_intf_impl.h"
 #include "kernel_reg_compute_gather_mask_intf_impl.h"
 #include "kernel_reg_compute_pack_intf_impl.h"
