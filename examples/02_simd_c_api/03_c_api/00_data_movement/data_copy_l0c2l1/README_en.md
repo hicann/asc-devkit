@@ -1,8 +1,8 @@
-# data_copy_l0c2gm Example
+# data_copy_l0c2l1 Example
 
 ## Overview
 
-This example uses the Ascend C C API to move matrix-multiplication results from L0C Buffer to GM (Global Memory) through Fixpipe. It performs scalar or vector quantization, ReLU activation, and NZ2ND conversion during the movement. The ND-format input matrices A and B are converted to Nz while moved from GM to L1 Buffer, then processed through L0A Buffer and L0B Buffer by two K-axis matrix-multiplication chunks.
+This example uses the Ascend C C API to move matrix-multiplication results from L0C Buffer to L1 (L1 Buffer) through Fixpipe. It performs scalar or vector quantization, ReLU activation, and NZ2ND conversion during the movement. The ND-format input matrices A and B are converted to Nz while moved from GM to L1 Buffer, then processed through L0A Buffer and L0B Buffer by two K-axis matrix-multiplication chunks. For host-side verification, the example then copies the L1 output back to GM through UB.
 
 This example applies to Ascend 950PR/Ascend 950DT (`dav-3510`) and can run in NPU execution or NPU simulation mode. CPU debug mode is not provided.
 
@@ -15,20 +15,20 @@ This example applies to Ascend 950PR/Ascend 950DT (`dav-3510`) and can run in NP
 ## Directory Structure
 
 ```
-data_copy_l0c2gm
+data_copy_l0c2l1
 ├── scripts
 │   ├── gen_data.py                // Generates input and golden data
 │   └── verify_result.py           // Verifies output against golden data
 ├── data_utils.h                   // Data input/output helpers
 ├── CMakeLists.txt                 // CMake build file
-├── data_copy_l0c2gm.asc           // C API implementation and launcher
+├── data_copy_l0c2l1.asc           // C API implementation and launcher
 ├── README.md                      // Chinese example documentation
 └── README_en.md                   // English example documentation
 ```
 
 ## Detailed Scenario Description
 
-Use the `SCENARIO_NUM` build parameter to select a scenario. Every scenario uses the matrix-multiplication shape `[M, K, N] = [128, 128, 256]`; the K axis is split into two `[128, 64]` chunks. The kernel is named `data_copy_l0c2gm`.
+Use the `SCENARIO_NUM` build parameter to select a scenario. Every scenario uses the matrix-multiplication shape `[M, K, N] = [128, 128, 256]`; the K axis is split into two `[128, 64]` chunks. The kernel is named `data_copy_l0c2l1`.
 
 | SCENARIO_NUM | A/B type | L0C type | Output type and format | Quantization mode | ReLU | NZ2ND |
 |---|---|---|---|---|---|---|
@@ -41,7 +41,7 @@ Use the `SCENARIO_NUM` build parameter to select a scenario. Every scenario uses
 
 `SCENARIO_NUM` is passed by CMake as a compile-time macro. The kernel selects the corresponding scenario with `if constexpr`. After changing the scenario, recompile the project.
 
-The device-side flow is as follows. Each K chunk follows `GM→L1 Buffer (MTE2)→L0A Buffer/L0B Buffer (MTE1)→Mmad (M)`. `MTE1→MTE2` and `M→MTE1` protect L1 Buffer, L0A Buffer, and L0B Buffer reuse for the next chunk. The final `M→FIX` dependency ensures that Fixpipe moves the L0C Buffer result to GM after Mmad completes. `asc_sync_pipe(PIPE_ALL)` is called at the end of the kernel to ensure that all pipelines complete.
+The device-side flow is as follows. Each K chunk follows `GM→L1 Buffer (MTE2)→L0A Buffer/L0B Buffer (MTE1)→Mmad (M)`. `MTE1→MTE2` and `M→MTE1` protect L1 Buffer, L0A Buffer, and L0B Buffer reuse for the next chunk. The final `M→FIX→MTE1` dependency moves the L0C result to L1 and then uses `asc_copy_l12ub` to asynchronously move it to subblock0 UB; `asc_sync_pipe(PIPE_MTE1)` completes the transfer before `asc_sync_block_arrive` notifies the AIVs. `asc_sync_pipe(PIPE_ALL)` is called at the end of the kernel to ensure that all pipelines complete.
 
 **Scenario 1: int8 input, scalar dequantization, and ND half output**
 
@@ -79,7 +79,7 @@ The device-side flow is as follows. Each K chunk follows `GM→L1 Buffer (MTE2)�
 - Output: C `[128, 256]` in Nz `int8_t`
 - Implementation: Use `VREQ8` and enable ReLU
 
-For scenarios 2, 4, and 6, the parameters are moved from GM to L1 Buffer with `asc_copy_gm2l1`, then from L1 Buffer to Fixpipe Buffer with `asc_copy_l12fb`. `asc_set_l0c_copy_config` configures the vector-quantization parameter address. Its parameter address is expressed in 128B units, so the parameter file must be rounded up to 128B and any padding must be zero-filled. The `[256] uint64_t` parameters in this example occupy 2048B and already meet this requirement. Moving these parameters from L1 Buffer to Fixpipe Buffer transfers 2048B of data in 64B data blocks, so `len_burst` in `asc_copy_l12fb` is set to 32. `asc_sync_pipe(PIPE_FIX)` completes the L1 Buffer-to-Fixpipe Buffer movement and parameter configuration before Fixpipe moves the L0C Buffer result to GM.
+For scenarios 2, 4, and 6, the parameters are moved from GM to L1 Buffer with `asc_copy_gm2l1`, then from L1 Buffer to Fixpipe Buffer with `asc_copy_l12fb`. `asc_set_l0c_copy_config` configures the vector-quantization parameter address. Its parameter address is expressed in 128B units, so the parameter file must be rounded up to 128B and any padding must be zero-filled. The `[256] uint64_t` parameters in this example occupy 2048B and already meet this requirement. Moving these parameters from L1 Buffer to Fixpipe Buffer transfers 2048B of data in 64B data blocks, so `len_burst` in `asc_copy_l12fb` is set to 32. `asc_sync_pipe(PIPE_FIX)` completes the L1 Buffer-to-Fixpipe Buffer movement and parameter configuration before Fixpipe moves the L0C Buffer result to L1.
 
 ## Build and Run
 
