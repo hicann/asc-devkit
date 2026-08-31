@@ -23,6 +23,7 @@
 <!-- npu="910" id19 -->
 - Atlas 训练系列产品：支持
 <!-- end id19 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/atomic_operations/SetAtomicAdd_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 

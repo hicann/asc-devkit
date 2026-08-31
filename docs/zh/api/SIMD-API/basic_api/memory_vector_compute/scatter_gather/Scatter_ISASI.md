@@ -29,6 +29,7 @@
 >
 >该API不支持Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas A3 训练系列产品/Atlas A3 推理系列产品，如果需要在上述AI处理器实现数据离散功能，建议参考[Scatter兼容样例](../../../../../../../examples/01_simd_cpp_api/06_compatibility_guide/scatter)进行适配。
 <!-- end id8 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/scatter_gather/Scatter_ISASI_res.md#id1 -->
 
 ## 功能说明<a name="section17600329101418"></a>
 

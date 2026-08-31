@@ -25,6 +25,7 @@
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
 <!-- end id8 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/scatter_gather/Gatherb_ISASI_res.md#id1 -->
 
 ## 功能说明<a name="section17600329101418"></a>
 

@@ -29,6 +29,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：不支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_MX_res.md#id1 -->
 
 ## 功能说明<a id="section618mcpsimp"></a>
 

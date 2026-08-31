@@ -31,6 +31,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Div_res.md#id1 -->
 
 ### 传入config的原型
 
@@ -61,6 +62,7 @@
 <!-- npu="9030" id18 -->
 - Kirin 9030：不支持
 <!-- end id18 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Div_res.md#id2 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 

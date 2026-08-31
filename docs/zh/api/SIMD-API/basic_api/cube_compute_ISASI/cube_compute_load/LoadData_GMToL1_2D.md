@@ -29,6 +29,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2D_res.md#id1 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002567745223_section106841136114319"></a>
 

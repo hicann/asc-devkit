@@ -77,6 +77,7 @@ Ascend C提供b8\~b64（8bit\~64bit）四种不同位宽的数据类型，不同
 <!-- npu="910" id8 -->
 - Atlas 训练系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id8 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/data_structures/builtin_data_types_res.md#id1 -->
 
 ## 布尔型<a name="section82692022135113"></a>
 

@@ -29,6 +29,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/resource_management/TPipe/AllocEventID_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 

@@ -29,6 +29,7 @@
 <!-- npu="9030" id19 -->
 - Kirin 9030：不支持
 <!-- end id19 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/Copy_UBToUB_continuous_res.md#id1 -->
 
 ## 功能说明<a name="zh-cn_topic_0000002567699435_section106841136114319"></a>
 

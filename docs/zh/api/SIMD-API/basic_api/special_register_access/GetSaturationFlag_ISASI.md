@@ -29,6 +29,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：不支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/special_register_access/GetSaturationFlag_ISASI_res.md#id1 -->
 
 ## 功能说明
 

@@ -32,6 +32,7 @@
 <!-- npu="9030" id29 -->
 - Kirin 9030：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id29 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
 

@@ -31,6 +31,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll_res.md#id1 -->
 
 ### 硬同步（不支持config指定流水）原型
 
@@ -61,6 +62,7 @@
 <!-- npu="9030" id18 -->
 - Kirin 9030：支持
 <!-- end id18 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll_res.md#id2 -->
 
 ### 硬同步（支持config指定流水）原型
 
@@ -91,6 +93,7 @@
 <!-- npu="9030" id27 -->
 - Kirin 9030：不支持
 <!-- end id27 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll_res.md#id3 -->
 
 ## 功能说明<a id="section618mcpsimp"></a>
 

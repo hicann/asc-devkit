@@ -23,6 +23,7 @@
 <!-- npu="910" id15 -->
 - Atlas 训练系列产品：不支持
 <!-- end id15 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA_res.md#id1 -->
 
 ## 功能说明<a name="section474617392321"></a>
 

@@ -23,6 +23,7 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/scalar_compute/Nop_res.md#id1 -->
 
 ## 功能说明
 头文件路径为：`"basic_api/kernel_operator_utils_intf.h"`。

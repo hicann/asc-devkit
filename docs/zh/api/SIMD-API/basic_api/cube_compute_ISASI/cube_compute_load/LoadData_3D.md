@@ -31,6 +31,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：不支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D_res.md#id1 -->
 
 ### LoadData（卷积数据搬运） v2接口和LoadData（卷积数据搬运） v2 Pro接口
 
@@ -61,6 +62,7 @@
 <!-- npu="9030" id18 -->
 - Kirin 9030：不支持
 <!-- end id18 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D_res.md#id2 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002512171652_section106841136114319"></a>
 

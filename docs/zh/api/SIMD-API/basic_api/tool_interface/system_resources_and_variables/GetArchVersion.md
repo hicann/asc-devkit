@@ -23,6 +23,7 @@
 <!-- npu="910" id4 -->
 - Atlas 训练系列产品：支持
 <!-- end id4 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetArchVersion_res.md#id1 -->
 
 
 ## 功能说明
