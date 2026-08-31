@@ -173,7 +173,7 @@ if ASCEND_IS_AIC {
     CrossCoreSetFlag<2, PIPE_FIX>(SYNC_AIC_TO_AIV);  // 通知Vector
 }
 if ASCEND_IS_AIV {
-    CrossCoreWaitFlag(SYNC_AIC_TO_AIV);  // 等待Cube完成
+    CrossCoreWaitFlag<2>(SYNC_AIC_TO_AIV);  // 等待Cube完成
     // 处理数据...
     CrossCoreSetFlag<2, PIPE_MTE2>(SYNC_AIV_TO_AIC);
 }
@@ -349,7 +349,7 @@ workSpaceOffset = BASE_N × BASE_M × (coreIdx + (cubeTaskIdx % PIPELINE_DEPTH) 
 ```
 
 - 当`cubeTaskIdx < PIPELINE_DEPTH`时，Cube无需等待，直接写入新Slot
-- 当`cubeTaskIdx >= PIPELINE_DEPTH`时，Cube需等待Vector释放对应Slot（`CrossCoreWaitFlag(SYNC_AIV_TO_AIC)`）
+- 当`cubeTaskIdx >= PIPELINE_DEPTH`时，Cube需等待Vector释放对应Slot（`CrossCoreWaitFlag<2>(SYNC_AIV_TO_AIC)`）
 - 同步粒度为Iterate（=BASE_M×BASE_N），而非子块（=SINGLE_M×SINGLE_N）
 
 **4级流水时序**：

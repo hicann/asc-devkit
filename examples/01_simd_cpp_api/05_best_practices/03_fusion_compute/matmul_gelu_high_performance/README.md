@@ -189,7 +189,7 @@ AIC侧每完成一个 (baseM × baseN)大小子块的Fixpipe输出后，通过 `
 AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0x8);  // 通知AIV数据就绪
 
 // AIV侧 GeluFromGM() / GeluFromUB():
-AscendC::CrossCoreWaitFlag(0x8);  // 等待AIC侧Fixpipe完成
+AscendC::CrossCoreWaitFlag<0x2>(0x8);  // 等待AIC侧Fixpipe完成
 ```
 
 #### 3. `__mix__(1,2)` 模式下的多核切分

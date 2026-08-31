@@ -148,7 +148,7 @@ for i in range(g):
         DataCopyScale(curVecBaseN, alignBaseN, scaleOffset + offsetN);
         uint32_t curVecBaseM = vecBaseM;
         uint64_t mmOutOffset = mnConfig.workSpaceOffset + offsetN * mnConfig.baseM;
-        CrossCoreWaitFlag(SYNC_AIC_TO_AIV);
+        CrossCoreWaitFlag<2>(SYNC_AIC_TO_AIV);
         for (uint32_t offsetM = 0; offsetM < curCubeSingleM; offsetM += vecBaseM) {
              vecCount++;
             if (vecCount % taskRation != subBlockIdx) {
@@ -177,7 +177,7 @@ for i in range(g):
     ```
     if ASCEND_IS_AIC {
         if (cubeCount >= tiling->parallNum) {  // tiling->parallNum设置为4
-            CrossCoreWaitFlag(SYNC_AIV_TO_AIC);
+            CrossCoreWaitFlag<2>(SYNC_AIV_TO_AIC);
         }
         mm.SetOrgShape(mnConfig.m, tiling->n, tiling->k);
         mm.SetSingleShape(curSingleM, curSingleN, tiling->k);

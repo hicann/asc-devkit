@@ -30,9 +30,9 @@
 
     ```cpp
     // 每个核都应该有类似如下的成对调用CrossCoreSetFlag和CrossCoreWaitFlag
-    // modeId必须配置为0, pipe要一致，flagId要一致
+    // modeId必须配置为0，flagId要一致；CrossCoreWaitFlag的pipe使用默认值
     AscendC::CrossCoreSetFlag<0, PIPE_M>(0);       // 待前置PIPE_M流水任务完成后，通知调度模块
-    AscendC::CrossCoreWaitFlag(0);                 // 直到所有AIC都完成前置PIPE_M流水，调度模块更新flagId=0的计数器后，解除阻塞。
+    AscendC::CrossCoreWaitFlag<0>(0);              // 直到所有AIC都完成前置PIPE_M流水，调度模块更新flagId=0的计数器后，解除阻塞。
     ```
 
 以图1为例，演示N=2时，2个AI Core中的2个AIC进行全核同步。
@@ -55,9 +55,9 @@ AIC 2的CrossCoreSetFlag执行完后，此时调度模块感知到2个AIC均已�
 
 ```cpp
 // 每个AIV都应该有类似如下的成对调用CrossCoreSetFlag和CrossCoreWaitFlag
-// modeId必须配置为1, pipe要一致，flagId要一致
+// modeId必须配置为1，flagId要一致；CrossCoreWaitFlag的pipe使用默认值
 AscendC::CrossCoreSetFlag<1, PIPE_MTE3>(0);       // 待前置PIPE_MTE3流水任务完成后，通知调度模块
-AscendC::CrossCoreWaitFlag(0);                 // 直到该AI Core中的所有AIV都完成前置PIPE_MTE3流水，调度模块更新flagId=0的计数器后，解除阻塞。
+AscendC::CrossCoreWaitFlag<1>(0);                  // 直到该AI Core中的所有AIV都完成前置PIPE_MTE3流水，调度模块更新flagId=0的计数器后，解除阻塞。
 ```
 
 以图2为例，演示M=2时，1个AI Core中的2个AIV进行全核同步。
@@ -87,12 +87,12 @@ AIV 1-2的CrossCoreSetFlag执行完后，此时调度模块感知到2个AIV均�
 
 ```cpp
 // AIC和AIV都应该有类似如下的成对调用CrossCoreSetFlag和CrossCoreWaitFlag
-// modeId必须配置为2, pipe要一致，flagId要一致
+// modeId必须配置为2，flagId要一致；CrossCoreWaitFlag的pipe使用默认值
 if ASCEND_IS_AIV {
     AscendC::CrossCoreSetFlag<2, PIPE_MTE3>(0);       // 待前置PIPE_MTE3流水任务完成后，通知调度模块。必须要所有AIV都执行。
 }
 if ASCEND_IS_AIC {
-    AscendC::CrossCoreWaitFlag(0);                    // 直到该AI Core中的所有AIV都完成前置PIPE_MTE3流水，调度模块更新flagId=0的计数器后，AIC解除阻塞。
+    AscendC::CrossCoreWaitFlag<2>(0);                 // 直到该AI Core中的所有AIV都完成前置PIPE_MTE3流水，调度模块更新flagId=0的计数器后，AIC解除阻塞。
 }
 ```
 

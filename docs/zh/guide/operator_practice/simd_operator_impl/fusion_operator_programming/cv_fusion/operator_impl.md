@@ -295,7 +295,7 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 >    }
 >    if ASCEND_IS_AIV {
 >        ...
->        // AIV核通过AscendC::CrossCoreWaitFlag(flagId)接收同步flag
+>        // AIV核通过AscendC::CrossCoreWaitFlag<modeId>(flagId)接收同步flag
 >        // AIV核进行LeakyRelu计算
 >    } 
 >    ```

@@ -172,7 +172,7 @@ if ASCEND_IS_AIC {
     CrossCoreSetFlag<2, PIPE_FIX>(SYNC_AIC_TO_AIV);  // NotificationVector
 }
 if ASCEND_IS_AIV {
-    CrossCoreWaitFlag(SYNC_AIC_TO_AIV);  // Wait for Cube to complete
+    CrossCoreWaitFlag<2>(SYNC_AIC_TO_AIV);  // Wait for Cube to complete
     // Process data...
     CrossCoreSetFlag<2, PIPE_MTE2>(SYNC_AIV_TO_AIC);
 }
@@ -348,7 +348,7 @@ workSpaceOffset = BASE_N × BASE_M × (coreIdx + (cubeTaskIdx % PIPELINE_DEPTH) 
 ```
 
 - When `cubeTaskIdx < PIPELINE_DEPTH`, Cube does not need to wait and directly writes the new Slot.
-- When `cubeTaskIdx >= PIPELINE_DEPTH`, Cube needs to wait for Vector to release the corresponding Slot (`CrossCoreWaitFlag(SYNC_AIV_TO_AIC)`)
+- When `cubeTaskIdx >= PIPELINE_DEPTH`, Cube needs to wait for Vector to release the corresponding Slot (`CrossCoreWaitFlag<2>(SYNC_AIV_TO_AIC)`)
 - The synchronization granularity is Iterate (=BASE_M×BASE_N), not sub-block (=SINGLE_M×SINGLE_N)
 
 **Level 4 pipeline timing**:

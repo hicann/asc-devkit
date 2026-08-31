@@ -59,12 +59,14 @@ __aicore__ inline void CrossCoreSetFlag(uint16_t flagId)
 
 ### 模板参数及输入参数说明
 
+CrossCoreSetFlag的模板参数`modeId`和`pipe`均**没有默认值**，其取值用于配置硬件指令，调用接口时必须**显式传入**。与本接口不同，CrossCoreWaitFlag的两个模板参数均具有默认值，且在不同产品和同步模式下的生效情况不同，因此**两个接口对模板参数的传入要求并不相同**。具体请参见[CrossCoreWaitFlag模板参数说明](CrossCoreWaitFlag_ISASI.md#template-parameter-defaults)。
+
 **表1**  模板参数说明
 
 | 参数名 | 描述 |
 | --- | --- |
 | modeId | 核间同步的模式，不同产品对同步模式的支持情况请参见[modeId支持的取值说明](#modeId支持的取值说明)。<br>各个模式支持的对应核函数（Kernel）类型请参照[表3](#table3)。 |
-| pipe | 设置这条指令所在的流水类型。支持的流水类型为PIPE_V、PIPE_M、PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX，不支持PIPE_S和PIPE_ALL。不同产品对流水类型的支持情况请参见[pipe支持的流水类型说明](#pipe支持的流水类型说明)。 |
+| pipe | 标识在哪条流水的前序指令完成后，CrossCoreSetFlag才向调度模块发送通知。支持的流水类型为PIPE_V、PIPE_M、PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX，不支持PIPE_S和PIPE_ALL。不同产品对流水类型的支持情况请参见[pipe支持的流水类型说明](#pipe支持的流水类型说明)。 |
 
 **表2**  参数说明
 
@@ -188,7 +190,7 @@ __aicore__ inline void CrossCoreSetFlag(uint16_t flagId)
     // 当本AIV完成前置PIPE_MTE3(DataCopy)流水操作后，通知其他AIV核，本AIV已经完成。
     AscendC::CrossCoreSetFlag<0, PIPE_MTE3>(0);
     // 阻塞本AIV继续往下执行指令，直到其他AIV全部都完成PIPE_MTE3流水操作，才解除阻塞往下执行。
-    AscendC::CrossCoreWaitFlag(0);
+    AscendC::CrossCoreWaitFlag<0>(0);
     // 关闭原子累加。
     AscendC::DisableDmaAtomic();
 

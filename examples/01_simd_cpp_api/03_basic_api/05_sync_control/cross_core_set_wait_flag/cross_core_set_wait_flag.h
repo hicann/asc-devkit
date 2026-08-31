@@ -97,7 +97,7 @@ public:
         AscendC::LocalTensor<float> c1Local(AscendC::TPosition::CO1, c1LocalAddr, C_SIZE_ALIGN_L0);
 
         // 模式2：AIC等待本AI Core内2个AIV完成精度转换
-        AscendC::CrossCoreWaitFlag(SYNC_AIV_AIC_FLAG);
+        AscendC::CrossCoreWaitFlag<2>(SYNC_AIV_AIC_FLAG);
 
         CopyIn(a1Local, b1Local);
         SplitA(a1Local, a2Local);
@@ -107,7 +107,7 @@ public:
 
         // 模式0：8个AIC全核同步，确保原子累加结果正确
         AscendC::CrossCoreSetFlag<0, PIPE_FIX>(SYNC_AIC_FLAG);
-        AscendC::CrossCoreWaitFlag(SYNC_AIC_FLAG);
+        AscendC::CrossCoreWaitFlag<0>(SYNC_AIC_FLAG);
 
         // 模式2：AIC通知本AI Core内2个AIV可以执行LeakyRelu
         AscendC::CrossCoreSetFlag<2, PIPE_FIX>(SYNC_AIC_AIV_FLAG);
@@ -144,7 +144,7 @@ public:
         AscendC::CrossCoreSetFlag<2, PIPE_MTE3>(SYNC_AIV_AIC_FLAG);
 
         // 模式2：AIV等待本AI Core内AIC完成矩阵乘
-        AscendC::CrossCoreWaitFlag(SYNC_AIC_AIV_FLAG);
+        AscendC::CrossCoreWaitFlag<2>(SYNC_AIC_AIV_FLAG);
 
         float alpha = 0.001;
         AscendC::DataCopy(cLocal, CVectorGM, C_AIV_BLOCKS_LENGTH);
@@ -326,7 +326,7 @@ public:
         // 当本AIV完成前置PIPE_MTE3(DataCopy)流水操作后，通知其他AIV核，本AIV已经完成
         AscendC::CrossCoreSetFlag<0, PIPE_MTE3>(0);
         // 阻塞本AIV继续往下执行指令，直到其他AIV全部都完成PIPE_MTE3流水操作，才解除阻塞往下执行。
-        AscendC::CrossCoreWaitFlag(0);
+        AscendC::CrossCoreWaitFlag<0>(0);
         // 关闭原子累加
         AscendC::DisableDmaAtomic();
 
@@ -359,7 +359,7 @@ public:
             AscendC::SetAtomicAdd<float>();
             AscendC::DataCopy(atomicResultGm, xLocal, this->blockLength);
             AscendC::CrossCoreSetFlag<1, PIPE_MTE3>(0);
-            AscendC::CrossCoreWaitFlag(0);
+            AscendC::CrossCoreWaitFlag<1>(0);
             AscendC::DisableDmaAtomic();
 
             if (AscendC::GetBlockIdx() == 2) {

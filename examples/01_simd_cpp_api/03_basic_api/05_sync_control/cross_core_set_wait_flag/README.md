@@ -179,7 +179,7 @@ C = \sum_{i=1}^{8} A_i \cdot B_i
 $$
 
         // 模式2,每一个AICore内部，AIC等2个AIV
-        AscendC::CrossCoreWaitFlag(SYNC_AIV_AIC_FLAG);
+        AscendC::CrossCoreWaitFlag<2>(SYNC_AIV_AIC_FLAG);
 
         CopyIn(a1Local, b1Local);
         SplitA(a1Local, a2Local);
@@ -188,7 +188,7 @@ $$
         CopyOut(c1Local);
         // 模式0,8个AICore 包含的8个AIC同步
         AscendC::CrossCoreSetFlag<0, PIPE_FIX>(SYNC_AIC_FLAG);  
-        AscendC::CrossCoreWaitFlag(SYNC_AIC_FLAG);  
+        AscendC::CrossCoreWaitFlag<0>(SYNC_AIC_FLAG);
 
         // 模式2,每一个AICore内部，2个AIV等AIC
         AscendC::CrossCoreSetFlag<2, PIPE_FIX>(SYNC_AIC_AIV_FLAG);  
@@ -205,7 +205,7 @@ $$
 具体来说是对累加得到的C矩阵，沿 M 轴切分 16 份，分配至 16 个 AIV 中分别执行 LeakyRelu 运算。如图4所示，根据以上描述，需要使用核间同步模式2（单个AI Core内部2个AIV等一个AIC）。上述描述对应的代码段如下：
 
         // 模式2,每一个AICore内部，2个AIV等AIC
-        AscendC::CrossCoreWaitFlag(SYNC_AIC_AIV_FLAG);
+        AscendC::CrossCoreWaitFlag<2>(SYNC_AIC_AIV_FLAG);
 
         // 进行LeakyRelu运算
         float alpha = 0.001;
@@ -247,7 +247,7 @@ $$
         // 当本AIV完成前置PIPE_MTE3(DataCopy)流水操作后，通知其他AIV核，本AIV已经完成
         AscendC::CrossCoreSetFlag<0, PIPE_MTE3>(0);  
         // 阻塞本AIV继续往下执行指令，直到其他AIV全部都完成PIPE_MTE3流水操作，才解除阻塞往下执行。
-        AscendC::CrossCoreWaitFlag(0); 
+        AscendC::CrossCoreWaitFlag<0>(0);
 
 上述同步完成之后，此时atomicResultGm已经是16个AIV中矢量计算结果的累加值。
 如果上一步骤的同步插入不正确，那么从atomicResultGm往AIV搬运的数据可能是部分AIV中矢量计算结果的累加值，导致结果不准确。
