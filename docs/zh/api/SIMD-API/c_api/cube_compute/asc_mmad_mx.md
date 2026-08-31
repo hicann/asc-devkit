@@ -160,6 +160,8 @@ PIPE_M
 
   注意，应避免nan输入，否则可能会产生执行报错。
 
+  边界值计算结果请见[MmadMx接口边界值汇总](../../../appendix/mmad_mx_interface_boundary_value_summary.md)。
+
 <!-- npu="950" id8 -->
 ## 调用示例
 

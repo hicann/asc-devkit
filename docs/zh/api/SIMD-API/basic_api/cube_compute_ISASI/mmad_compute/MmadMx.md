@@ -186,6 +186,7 @@ MmadMx的计算公式为：C=(scaleA⊗A)*(scaleB⊗B)+Bias，“⊗”表示广
 - 对于fp4场景A/B矩阵的起始地址需要按照512字节对齐，对于fp8场景A/B矩阵的起始地址需要按照1024字节对齐。
 - 左矩阵A/B对应的scale矩阵起始地址为：A/B矩阵起始对应地址/16。
 - 其他特殊场景约束可参考[Mmad接口约束说明](Mmad.md#约束说明)。
+- 边界值计算结果请见[MmadMx接口边界值汇总](../../../../appendix/mmad_mx_interface_boundary_value_summary.md)。
 
 ## 调用示例
 
