@@ -51,6 +51,8 @@ private:
     std::vector<std::map<u32, std::vector<ChannelInfo>>> templateChannels_;
     std::vector<ThreadHandle> template0Threads_;
     std::vector<ThreadHandle> template1Threads_;
+    std::vector<CcuKernelHandle> tmp0CcuKernels_;
+    std::vector<CcuKernelHandle> tmp1CcuKernels_;
 };
 
 } // namespace mc2_ops_hccl

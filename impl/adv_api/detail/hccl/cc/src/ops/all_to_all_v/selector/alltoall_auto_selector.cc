@@ -76,6 +76,7 @@ SelectorStatus AlltoAllAutoSelector::SelectMesh1DClosAlgo(
     if ((isMeshNumEqualToClosNum == true) && (topoInfo->userRankSize <= CONCURRENT_RANK_LIMIT) &&
         (dataSize > BIG_DATA_SIZE_LIMIT)) {
         selectAlgName = "CcuSchedAllToAllSoleMeshConcurrent";
+        HCCL_INFO("[AlltoAllAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
     } else {
         selectAlgName = "CcuSchedAllToAllSoleMeshUBX";
     }

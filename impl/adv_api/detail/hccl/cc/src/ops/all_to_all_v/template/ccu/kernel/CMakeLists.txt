@@ -9,6 +9,7 @@
 # ----------------------------------------------------------------------------------------------------------
 set(src_list
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_all_to_all_mesh1d.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
 )
 
 target_sources(mc2_client PRIVATE

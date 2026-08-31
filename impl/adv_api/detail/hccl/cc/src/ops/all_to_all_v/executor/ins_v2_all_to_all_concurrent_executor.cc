@@ -15,6 +15,9 @@
 
 #include "alg_data_trans_wrapper.h"
 #include "ins_temp_all_to_all_v_mesh_1D.h"
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+#include "ccu_temp_kfc_all_to_all_mesh1d_multi_jetty.h"
+#endif
 
 namespace mc2_ops_hccl {
 namespace {
@@ -96,6 +99,34 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
 
     const std::vector<std::vector<u32>> meshSubComm = {meshRanks};
     const std::vector<std::vector<u32>> closSubComm = {closRanks};
+
+    InsAlgTemplate0 template0(param, topoInfo->userRank, meshSubComm);
+    InsAlgTemplate1 template1(param, topoInfo->userRank, closSubComm);
+    AlgResourceRequest request0;
+    AlgResourceRequest request1;
+
+    if (param.engine == CommEngine::COMM_ENGINE_CCU) {
+        CHK_RET(template0.CalcRes(comm, param, topoInfo, request0));
+        CHK_RET(template1.CalcRes(comm, param, topoInfo, request1));
+        CHK_PRT_RET(
+            request0.ccuKernelNum.empty() || request1.ccuKernelNum.empty(),
+            HCCL_ERROR("[InsV2AllToAllConcurrentExecutor][CalcRes] CCU kernel num is empty."), HCCL_E_INTERNAL);
+        resourceRequest.slaveThreadNum = request0.slaveThreadNum + request1.slaveThreadNum + 1U;
+        resourceRequest.notifyNumOnMainThread = request0.notifyNumOnMainThread + 1U;
+        resourceRequest.notifyNumPerThread = request0.notifyNumPerThread;
+        resourceRequest.notifyNumPerThread.push_back(request1.notifyNumOnMainThread + 1U);
+        resourceRequest.notifyNumPerThread.insert(
+            resourceRequest.notifyNumPerThread.end(), request1.notifyNumPerThread.begin(),
+            request1.notifyNumPerThread.end());
+        resourceRequest.ccuKernelNum.emplace_back(request0.ccuKernelNum[0]);
+        resourceRequest.ccuKernelNum.emplace_back(request1.ccuKernelNum[0]);
+        resourceRequest.ccuKernelInfos.insert(
+            resourceRequest.ccuKernelInfos.end(), request0.ccuKernelInfos.begin(), request0.ccuKernelInfos.end());
+        resourceRequest.ccuKernelInfos.insert(
+            resourceRequest.ccuKernelInfos.end(), request1.ccuKernelInfos.begin(), request1.ccuKernelInfos.end());
+        return HCCL_SUCCESS;
+    }
+
     std::vector<HcclChannelDesc> meshChannels;
     std::vector<HcclChannelDesc> closChannels;
     CHK_RET(CalcChannelRequestMesh1DWithPriorityTopo(
@@ -108,10 +139,6 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
             meshChannels.size(), meshRanks.size() - 1U),
         HCCL_E_INTERNAL);
 
-    InsAlgTemplate0 template0(param, topoInfo->userRank, meshSubComm);
-    InsAlgTemplate1 template1(param, topoInfo->userRank, closSubComm);
-    AlgResourceRequest request0;
-    AlgResourceRequest request1;
     CHK_RET(template0.CalcResByChannelDescs(param, meshChannels, request0));
     CHK_RET(template1.CalcResByChannelDescs(param, closChannels, request1));
     CHK_PRT_RET(
@@ -281,6 +308,14 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
     params.repeatNum = 1U;
     params.inputRepeatStride = 0U;
     params.outputRepeatStride = 0U;
+    const u64 inBaseOff = (splitData.sdispls[0] + processedCount) * dataTypeSize_;
+    const u64 outBaseOff = (splitData.rdispls[0] + processedCount) * dataTypeSize_;
+    CHK_PRT_RET(
+        MultiplyOverflows(splitData.sdispls[0] + processedCount, dataTypeSize_) ||
+            MultiplyOverflows(splitData.rdispls[0] + processedCount, dataTypeSize_),
+        HCCL_ERROR("[InsV2AllToAllConcurrentExecutor] base offset overflows."), HCCL_E_PARA);
+    params.buffInfo.inBuffBaseOff = inBaseOff;
+    params.buffInfo.outBuffBaseOff = outBaseOff;
     for (u32 rank = 0U; rank < rankSize_; ++rank) {
         if (splitData.sendCounts[rank] > processedCount) {
             CHK_PRT_RET(
@@ -333,7 +368,16 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
     CHK_PRT_RET(
         dataTypeSize_ == 0U, HCCL_ERROR("[InsV2AllToAllConcurrentExecutor] datatype size is zero."), HCCL_E_PARA);
     maxTmpMemSize_ = resCtx.cclMem.size;
-    CHK_RET(RestoreChannels(resCtx, algHierarchyInfo_.infos[0][0], algHierarchyInfo_.infos[0][1]));
+    if (param.engine == CommEngine::COMM_ENGINE_CCU) {
+        tmp0CcuKernels_.assign(resCtx.ccuKernels.begin(), resCtx.ccuKernels.begin() + resCtx.ccuKernelNum[0]);
+        tmp1CcuKernels_.assign(
+            resCtx.ccuKernels.begin() + resCtx.ccuKernelNum[0],
+            resCtx.ccuKernels.begin() + resCtx.ccuKernelNum[0] + resCtx.ccuKernelNum[1]);
+        template0Threads_.assign(1U, resCtx.threads[0]);
+        template1Threads_.assign(1U, resCtx.threads[resCtx.threads.size() > 1U ? 1U : 0U]);
+    } else {
+        CHK_RET(RestoreChannels(resCtx, algHierarchyInfo_.infos[0][0], algHierarchyInfo_.infos[0][1]));
+    }
     return OrchestrateLoop(param, resCtx);
 }
 
@@ -348,8 +392,13 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
 
     TemplateResource resource0{};
     TemplateResource resource1{};
-    resource0.channels = templateChannels_[0];
-    resource1.channels = templateChannels_[1];
+    if (param.engine == CommEngine::COMM_ENGINE_CCU) {
+        resource0.ccuKernels = tmp0CcuKernels_;
+        resource1.ccuKernels = tmp1CcuKernels_;
+    } else {
+        resource0.channels = templateChannels_[0];
+        resource1.channels = templateChannels_[1];
+    }
     resource0.threads = template0Threads_;
     resource1.threads = template1Threads_;
     for (TemplateResource* resource : {&resource0, &resource1}) {
@@ -431,5 +480,11 @@ REGISTER_EXECUTOR_BY_TWO_TEMPS(
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSoleMeshConcurrent, InsV2AllToAllConcurrentExecutor, TopoMatchUBX,
     InsTempAlltoAllVMesh1D, InsTempAlltoAllVMesh1D);
+
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+REGISTER_EXECUTOR_BY_TWO_TEMPS(
+    HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllSoleMeshConcurrent, InsV2AllToAllConcurrentExecutor, TopoMatchUBX,
+    CcuTempKfcAllToAllMesh1DMultiJetty, CcuTempKfcAllToAllMesh1DMultiJetty);
+#endif
 
 } // namespace mc2_ops_hccl
