@@ -227,7 +227,7 @@ private:
             uint32_t remainElements = totalElementsPerCore - startElement;
             uint32_t curLen = remainElements > actualDataCopyLen ? actualDataCopyLen : remainElements;
 
-            int32_t eventID = ((loopIdx & 1) == 0 ? EVENT_ID0 : EVENT_ID1);
+            event_t eventID = ((loopIdx & 1) == 0 ? EVENT_ID0 : EVENT_ID1);
 
             __ubuf__ half* xLocal = ((loopIdx & 1) == 0 ? xPing : xPong);
             __ubuf__ half* yLocal = ((loopIdx & 1) == 0 ? yPing : yPong);
