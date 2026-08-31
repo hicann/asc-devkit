@@ -27,6 +27,7 @@
 #include "tensor_api/tensor.h"
 #include "tensor_api/experimental/utils/reg_enum.h"
 #include "tensor_api/experimental/arch/vector/reg_tensor.h"
+#include "tensor_api/experimental/arch/vector/type_conversion.h"
 #include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 #include "tensor_api/experimental/arch/vector/reg_data_load.h"
 #include "tensor_api/experimental/arch/vector/reg_data_store.h"
