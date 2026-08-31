@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_ASC_RUN_MODE "npu" CACHE STRING "Run mode: npu, sim")
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
-set(SCENARIO_NUM "1" CACHE STRING "Scenario number (1-2)")
+set(SCENARIO_NUM "1" CACHE STRING "Scenario number (1-3)")
 
 find_package(ASC REQUIRED)
 
@@ -26,8 +26,8 @@ if(NOT CMAKE_ASC_RUN_MODE MATCHES "^(npu|sim)$")
     message(FATAL_ERROR "CMAKE_ASC_RUN_MODE must be npu or sim, but got ${CMAKE_ASC_RUN_MODE}.")
 endif()
 
-if(NOT SCENARIO_NUM MATCHES "^[1-2]$")
-    message(FATAL_ERROR "SCENARIO_NUM must be 1 or 2, but got ${SCENARIO_NUM}.")
+if(NOT SCENARIO_NUM MATCHES "^[1-3]$")
+    message(FATAL_ERROR "SCENARIO_NUM must be 1, 2 or 3, but got ${SCENARIO_NUM}.")
 endif()
 
 add_executable(demo data_copy_ub2l1.asc)
