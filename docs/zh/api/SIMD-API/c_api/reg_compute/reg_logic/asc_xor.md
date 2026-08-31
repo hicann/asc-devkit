@@ -29,15 +29,17 @@
 asc_xor支持两种接口：
 
 - 对矢量数据寄存器操作：
-    根据`mask`对源矢量数据寄存器`src0`和`src1`进行按位异或（^）操作，将结果写入目的矢量数据寄存器`dst`。未被`mask`筛选的位置被置为0。
+    根据`mask`对源矢量数据寄存器`src0`和`src1`进行按位异或（^）操作，将结果写入目的矢量数据寄存器`dst`或通过函数返回值返回。未被`mask`筛选的位置被置为0。
 - 对掩码寄存器操作：
-    根据`mask`对两个源掩码寄存器`src0`和`src1`进行按位异或（^）操作，将结果写入目的掩码数据寄存器`dst`。未被`mask`筛选的位置被置为0。
+    根据`mask`对两个源掩码寄存器`src0`和`src1`进行按位异或（^）操作，将结果写入目的掩码数据寄存器`dst`或通过函数返回值返回。未被`mask`筛选的位置被置为0。
 
 计算公式如下：
 
-$$
-dst_i = src0_i \oplus src1_i
-$$
+```python
+def asc_xor(dst, src0, src1, mask):
+    for i in range(len(src0)):
+        dst[i] = src0[i] ^ src1[i] if mask[i] else 0
+```
 
 本接口为`Reg`矢量计算接口，仅在AIV上生效。
 
@@ -46,6 +48,12 @@ $$
 ### 矢量数据寄存器按位异或
 
 ```c
+// 通过函数返回值返回结果。
+__simd_callee__ inline vector_<dtype> asc_xor(vector_<dtype> src0,
+                                               vector_<dtype> src1,
+                                               vector_bool mask)
+
+// 通过引用参数输出结果。
 __simd_callee__ inline void asc_xor(vector_<dtype>& dst,
                                     vector_<dtype> src0,
                                     vector_<dtype> src1,
@@ -58,6 +66,11 @@ __simd_callee__ inline void asc_xor(vector_<dtype>& dst,
 #### 函数原型典型示例
 
 ```c
+// 示例：对int8_t矢量数据寄存器执行按位异或，通过函数返回值返回结果。
+__simd_callee__ inline vector_int8_t asc_xor(vector_int8_t src0,
+                                              vector_int8_t src1,
+                                              vector_bool mask)
+
 // 示例：对int8_t矢量数据寄存器执行按位异或。
 __simd_callee__ inline void asc_xor(vector_int8_t& dst,
                                     vector_int8_t src0,
@@ -68,6 +81,12 @@ __simd_callee__ inline void asc_xor(vector_int8_t& dst,
 ### 掩码寄存器按位异或
 
 ```c
+// 通过函数返回值返回结果。
+__simd_callee__ inline vector_bool asc_xor(vector_bool src0,
+                                           vector_bool src1,
+                                           vector_bool mask)
+
+// 通过引用参数输出结果。
 __simd_callee__ inline void asc_xor(vector_bool& dst,
                                     vector_bool src0,
                                     vector_bool src1,
@@ -80,7 +99,7 @@ __simd_callee__ inline void asc_xor(vector_bool& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的矢量数据寄存器，写入按位异或结果。`dtype`须与`src0`、`src1`一致。 |
+| dst | 输出 | 目的矢量数据寄存器，仅无返回值类型接口包含该参数，写入按位异或结果。`dtype`须与`src0`、`src1`一致。 |
 | src0 | 输入 | 源矢量数据寄存器，参与按位异或的操作数。`dtype`须与`dst`一致。 |
 | src1 | 输入 | 源矢量数据寄存器，参与按位异或的操作数。`dtype`须与`dst`一致。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
@@ -89,7 +108,7 @@ __simd_callee__ inline void asc_xor(vector_bool& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的掩码寄存器，写入按位异或结果。 |
+| dst | 输出 | 目的掩码寄存器，仅无返回值类型接口包含该参数，写入按位异或结果。 |
 | src0 | 输入 | 源掩码寄存器，参与按位异或的操作数。 |
 | src1 | 输入 | 源掩码寄存器，参与按位异或的操作数。 |
 | mask | 输入 | 源掩码寄存器，用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
@@ -98,7 +117,7 @@ __simd_callee__ inline void asc_xor(vector_bool& dst,
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存按位异或结果的矢量数据寄存器或掩码寄存器，数据类型与`src0`保持一致。
 
 ## 约束说明
 

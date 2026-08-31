@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-将dst中数据根据mask进行解压缩。解压缩方式：dst中第0个元素置为0，dst中的第i个元素等于mask中从第0个到第(i-1)个元素中1的数量。mask最高位被忽略，不参与统计。
+将dst中数据根据mask进行解压缩，或将解压缩结果通过函数返回值返回。解压缩方式：dst中第0个元素置为0，dst中的第i个元素等于mask中从第0个到第(i-1)个元素中1的数量。mask最高位被忽略，不参与统计。
 
 具体算法如图1所示，dst的首位为0。对于后续元素，与dst[i-1]对应的有效mask位为1时，dst[i]的值为dst[i-1] + 1；对应的有效mask位为0时，dst[i]的值为dst[i-1]。
 
@@ -39,16 +39,37 @@
 ## 函数原型
 
 ```c
+// 通过函数返回值返回结果。
+__simd_callee__ inline vector_uint8_t asc_unsqueeze_u8(vector_bool mask)
+__simd_callee__ inline vector_int8_t asc_unsqueeze_s8(vector_bool mask)
+__simd_callee__ inline vector_uint16_t asc_unsqueeze_u16(vector_bool mask)
+__simd_callee__ inline vector_int16_t asc_unsqueeze_s16(vector_bool mask)
+__simd_callee__ inline vector_uint32_t asc_unsqueeze_u32(vector_bool mask)
+__simd_callee__ inline vector_int32_t asc_unsqueeze_s32(vector_bool mask)
+
+// 通过引用参数输出结果。
 __simd_callee__ inline void asc_unsqueeze(vector_<dtype>& dst,
                                           vector_bool mask)
 ```
 
 #### dtype支持数据类型
-dtype支持的数据类型：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+dtype支持的数据类型：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。返回值类型接口通过函数名后缀区分数据类型，对应关系如下：
+
+| 函数名后缀 | 数据类型 |
+|---|---|
+| u8 | uint8_t |
+| s8 | int8_t |
+| u16 | uint16_t |
+| s16 | int16_t |
+| u32 | uint32_t |
+| s32 | int32_t |
 
 #### 函数原型典型示例
 
 ```c
+// 示例：对int8_t矢量数据寄存器执行解压缩，通过函数返回值返回结果。
+__simd_callee__ inline vector_int8_t asc_unsqueeze_s8(vector_bool mask)
+
 // 示例：对int8_t矢量数据寄存器执行解压缩。
 __simd_callee__ inline void asc_unsqueeze(vector_int8_t& dst,
                                           vector_bool mask)
@@ -60,14 +81,14 @@ __simd_callee__ inline void asc_unsqueeze(vector_int8_t& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输入/输出 | 源和目的矢量数据寄存器，接口在掩码前缀计数过程中写入计数结果。 |
+| dst | 输入/输出 | 源和目的矢量数据寄存器，仅无返回值类型接口包含该参数，接口在掩码前缀计数过程中写入计数结果。 |
 | mask | 输入 | 源掩码寄存器，用于提供dst解压缩信息。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存解压缩结果的矢量数据寄存器，数据类型由函数名后缀决定（参见函数原型中的对应关系表）。
 
 ## 约束说明
 

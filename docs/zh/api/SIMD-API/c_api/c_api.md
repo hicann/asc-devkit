@@ -394,6 +394,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[asc_copy](reg_compute/reg_copy/asc_copy.md)|完成数据在寄存器内的搬运。|`c_api/reg_compute/reg_copy.h`|
+|[asc_extract_mask](reg_compute/reg_copy/asc_extract_mask.md)|从矢量数据寄存器中提取掩码寄存器，通过函数返回值返回结果。|`c_api/reg_compute/reg_copy.h`|
+|[asc_mask](reg_compute/reg_copy/asc_mask.md)|通过函数返回值返回矢量数据寄存器或掩码寄存器的掩码复制结果。|`c_api/reg_compute/reg_copy.h`|
 
 ### 同步控制
 

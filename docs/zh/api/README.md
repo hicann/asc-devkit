@@ -1077,6 +1077,8 @@
                 -   [asc_scatter](SIMD-API/c_api/reg_compute/scatter/asc_scatter.md)
             -   [Reg间搬运](SIMD-API/c_api/reg_compute/reg_copy/reg_copy.md)
                 -   [asc_copy](SIMD-API/c_api/reg_compute/reg_copy/asc_copy.md)
+                -   [asc_extract_mask](SIMD-API/c_api/reg_compute/reg_copy/asc_extract_mask.md)
+                -   [asc_mask](SIMD-API/c_api/reg_compute/reg_copy/asc_mask.md)
             -   [基础算术](SIMD-API/c_api/reg_compute/reg_arith/reg_arith.md)
                 -   [asc_abs](SIMD-API/c_api/reg_compute/reg_arith/asc_abs.md)
                 -   [asc_add](SIMD-API/c_api/reg_compute/reg_arith/asc_add.md)

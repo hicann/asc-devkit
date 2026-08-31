@@ -26,10 +26,10 @@
 
 ## 功能说明
 
-将src中低半部分或高半部分的元素以扩充位宽的方式写入dst，支持：
+将src中低半部分或高半部分的元素以扩充位宽的方式写入dst或通过函数返回值返回，支持：
 
-- asc_unpack_lower：取src的低半部分（LOWER），每个元素高位填0扩充位宽后写入dst。
-- asc_unpack_upper：取src的高半部分（HIGHER），每个元素高位填0扩充位宽后写入dst。
+- asc_unpack_lower：取src的低半部分（LOWER），每个元素高位填0扩充位宽后写入dst或通过函数返回值返回。
+- asc_unpack_upper：取src的高半部分（HIGHER），每个元素高位填0扩充位宽后写入dst或通过函数返回值返回。
 
 不同数据类型的扩充方式：
 
@@ -56,10 +56,15 @@
 ### 矢量数据寄存器解压缩
 
 ```c
-// 解压缩低位
+// 解压缩低位，通过函数返回值返回结果。
+__simd_callee__ inline vector_<dtype_dst> asc_unpack_lower(vector_<dtype_src> src)
+// 解压缩高位，通过函数返回值返回结果。
+__simd_callee__ inline vector_<dtype_dst> asc_unpack_upper(vector_<dtype_src> src)
+
+// 解压缩低位，通过引用参数输出结果。
 __simd_callee__ inline void asc_unpack_lower(vector_<dtype_dst>& dst,
                                              vector_<dtype_src> src)
-// 解压缩高位
+// 解压缩高位，通过引用参数输出结果。
 __simd_callee__ inline void asc_unpack_upper(vector_<dtype_dst>& dst,
                                              vector_<dtype_src> src)
 ```
@@ -77,6 +82,9 @@ dtype_src与dtype_dst支持的数据类型对如下：
 #### 函数原型典型示例
 
 ```c
+// 示例：将uint16_t矢量数据寄存器解压缩为uint32_t，通过函数返回值返回结果。
+__simd_callee__ inline vector_uint32_t asc_unpack_lower(vector_uint16_t src)
+
 // 示例：将uint16_t矢量数据寄存器解压缩为uint32_t。
 __simd_callee__ inline void asc_unpack_lower(vector_uint32_t& dst,
                                              vector_uint16_t src)
@@ -85,10 +93,15 @@ __simd_callee__ inline void asc_unpack_lower(vector_uint32_t& dst,
 ### 掩码寄存器解压缩
 
 ```c
-// 解压缩低位
+// 解压缩低位，通过函数返回值返回结果。
+__simd_callee__ inline vector_bool asc_unpack_lower(vector_bool src)
+// 解压缩高位，通过函数返回值返回结果。
+__simd_callee__ inline vector_bool asc_unpack_upper(vector_bool src)
+
+// 解压缩低位，通过引用参数输出结果。
 __simd_callee__ inline void asc_unpack_lower(vector_bool& dst,
                                              vector_bool src)
-// 解压缩高位
+// 解压缩高位，通过引用参数输出结果。
 __simd_callee__ inline void asc_unpack_upper(vector_bool& dst,
                                              vector_bool src)
 ```
@@ -99,21 +112,21 @@ __simd_callee__ inline void asc_unpack_upper(vector_bool& dst,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的矢量数据寄存器，读取src低半段或高半段元素，扩展位宽后写入dst全部有效位置，dst全部有效位置均被改写。 |
+| dst | 输出 | 目的矢量数据寄存器，仅无返回值类型接口包含该参数，读取src低半段或高半段元素，扩展位宽后写入dst全部有效位置，dst全部有效位置均被改写。 |
 | src | 输入 | 源矢量数据寄存器，取src低半段或高半段元素扩展位宽写入dst。 |
 
 **表2** 参数说明（操作数为掩码寄存器）
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的掩码寄存器，读取src低半段或高半段元素，扩展位宽后写入dst全部有效位置，dst全部有效位置均被改写。 |
+| dst | 输出 | 目的掩码寄存器，仅无返回值类型接口包含该参数，读取src低半段或高半段元素，扩展位宽后写入dst全部有效位置，dst全部有效位置均被改写。 |
 | src | 输入 | 源掩码寄存器，取src低半段或高半段元素扩展位宽写入dst。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+对于返回值类型接口，返回保存解压缩结果的矢量数据寄存器或掩码寄存器，数据类型与`dst`保持一致。
 
 ## 约束说明
 
