@@ -64,9 +64,9 @@ binary查找的优先级顺序：
 
 **开发阶段建议**：少分支或用选择性编译选项只编译当前验证的分支，加速迭代。**生产部署**：确保已发布的二进制配置覆盖实际会调用到的dtype/format、属性、TilingKey或模板参数组合。
 
-#### ASCEND_COMPUTE_UNIT范围
+#### ASCEND_SOC_SERIES/ASCEND_COMPUTE_UNIT范围
 
-离线编译产物需要包含当前运行芯片型号对应的核函数（Kernel）binary。开发阶段如果只验证单一芯片，可收窄`ASCEND_COMPUTE_UNIT`。需要跨芯片部署时，再按目标环境配置多个型号，如果离线编译产物里不包含当前运行芯片的核函数（Kernel）binary，运行时会失败。
+离线编译产物需要包含当前运行芯片型号对应的核函数（Kernel）binary。开发阶段如果只验证单一芯片，可收窄`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`；两者不能同时配置。需要跨芯片部署时，再按目标环境配置多个系列或型号。`ASCEND_SOC_SERIES`的输入大小写不敏感；产物目录和运行时查找规则不变。如果离线编译产物里不包含当前运行芯片的核函数（Kernel）binary，运行时会失败。
 
 ### 影响Host侧运行开销的写法
 

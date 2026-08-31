@@ -30,7 +30,7 @@ build_out/autogen/
 | aclnn接口参数与原型定义不匹配 | 检查`aclnn_<op>.h`中的函数签名，确认输入输出和属性参数是否正确映射。 |
 | 入图场景算子注册信息异常 | 检查`op_proto.cc`中的注册宏，确认OpType、dtype/format是否与Host侧定义一致。 |
 | 某个算子的调用代码未生成 | 检查`npu_op_code_gen`的`SRC`参数是否包含了该算子的Host侧源文件。 |
-| JOIN_OP_DEF相关芯片型号异常 | `JOIN_OP_DEF=True`时算子构建阶段不再显式传入`ASCEND_COMPUTE_UNIT`，需结合configure日志、`op_proto.cc`中的AddConfig和CMakePresets.json中的芯片型号确认目标型号是否被覆盖。 |
+| JOIN_OP_DEF相关芯片型号异常 | `JOIN_OP_DEF=True`时算子构建阶段不再显式传入`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`，需结合configure日志、`op_proto.cc`中的AddConfig和CMakePresets.json中的芯片型号确认目标型号是否被覆盖。 |
 
 ### 强制重新生成
 
@@ -133,7 +133,7 @@ build_out/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kern
 
 ### 部分芯片编译失败处理
 
-当`ASCEND_COMPUTE_UNIT`配置了多个芯片型号时，核函数（Kernel）编译会对每个芯片独立执行一轮。如果某个芯片的核函数（Kernel）编译失败，默认行为是终止整个构建流程。
+当`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`配置了多个芯片型号时，核函数（Kernel）编译会对每个芯片独立执行一轮。如果某个芯片的核函数（Kernel）编译失败，默认行为是终止整个构建流程。
 
 `ASCEND_SKIP_FAILED_COMPUTE_UNIT`选项允许跳过单个芯片的编译失败，继续编译其余芯片。适用场景：
 

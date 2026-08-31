@@ -172,14 +172,15 @@ npu_op_kernel_library(ascendc_kernels
 添加核函数（Kernel）目标编译选项。
 
 ```cmake
-npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIONS …)
+npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>... | SOC_SERIES <series>...] OPTIONS …)
 ```
 
 **参数说明：**
 
 - `<target_name>`（必选）：目标的名称。
 - `<op_type>`（必选）：定义配置生效的范围，取值为`ALL`、`OP_TYPE`。`ALL`表示对所有算子生效，`OP_TYPE`表示对特定算子生效。
-- `[COMPUTE_UNIT <soc_version>]`（可选）：用于设置算子在具体AI处理器型号上的编译选项，不填写该选项时默认对所有型号生效。
+- `[COMPUTE_UNIT <soc_version>...]`（可选）：用于设置算子在具体AI处理器型号上的编译选项，不填写该选项时默认对所有型号生效。与`SOC_SERIES`不能同时使用。
+- `[SOC_SERIES <series>...]`（可选）：用于按AI处理器系列设置编译选项。输入不区分大小写；与`COMPUTE_UNIT`不能同时使用。`SOC_SERIES`关键字后必须提供至少一个值；同一次调用同时提供`SOC_SERIES`和`COMPUTE_UNIT`，或只提供`SOC_SERIES`关键字不提供值，CMake配置阶段会报错。
 >[!NOTE]说明 
 >其中，AI处理器型号`soc_version`请通过以下方式获取：
 ><!-- npu="910b,910,310p,310b" id1 -->
@@ -213,13 +214,13 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIO
 ```cmake
 npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)   #为算子添加编译选项
 ```
-
+npu_op_kernel_options(ascendc_kernels AddCustom SOC_SERIES Ascendxxx Ascendyyy OPTIONS -DASCENDC_DEBUG)
 ### npu_op_kernel_sources
 
 描述核函数（Kernel）目标的源码信息，包括设置算子的核函数（Kernel）实现文件和源码路径等。
 
 ```cmake
-npu_op_kernel_sources(<target_name> [OP_TYPE <op_type>] [KERNEL_DIR <path>] [COMPUTE_UNIT <soc_version>] [KERNEL_FILE <file>])
+npu_op_kernel_sources(<target_name> [OP_TYPE <op_type>] [KERNEL_DIR <path>] [COMPUTE_UNIT <soc_version>... | SOC_SERIES <series>...] [KERNEL_FILE <file>])
 ```
 
 **参数说明：**
@@ -227,7 +228,8 @@ npu_op_kernel_sources(<target_name> [OP_TYPE <op_type>] [KERNEL_DIR <path>] [COM
 - `<target_name>`（必选）：目标的名称。
 - `[OP_TYPE <op_type>]`（可选）：算子类型，必须与`KERNEL_FILE`同时存在。
 - `[KERNEL_DIR <path>]`（可选）：指定核函数（Kernel）源码相对于`SRC_BASE`的相对路径。若算子的源码文件没有平铺在`SRC_BASE`目录（通过`npu_op_kernel_library`设置）下，可以通过`KERNEL_DIR`指定特定目录。
-- `[COMPUTE_UNIT <soc_version>]`（可选）：设置`KERNEL_FILE`在`<soc_version>`型号生效。默认`KERNEL_FILE`对所有型号生效。
+- `[COMPUTE_UNIT <soc_version>...]`（可选）：设置`KERNEL_FILE`在指定型号生效。默认`KERNEL_FILE`对所有型号生效。与`SOC_SERIES`不能同时使用。
+- `[SOC_SERIES <series>...]`（可选）：设置`KERNEL_FILE`在指定系列生效。输入不区分大小写；与`COMPUTE_UNIT`不能同时使用，`SOC_SERIES`关键字后必须提供至少一个值；同一次调用同时提供`SOC_SERIES`和`COMPUTE_UNIT`，或只提供`SOC_SERIES`关键字不提供值，CMake配置阶段会报错。
 - `[KERNEL_FILE <file>]`（可选）：指定算子入口的核函数（Kernel）实现文件名。若算子的核函数（Kernel）实现cpp文件需要自定义命名，需同时指定`OP_TYPE`（算子类型）和`KERNEL_FILE`（核函数（Kernel）实现cpp文件名），以配置两者之间的对应关系。不配置时，核函数（Kernel）实现cpp文件名和OpType之间需满足转换规则，参考[命名转换规则对照表](./naming_conversion_table.md)。
 
 **示例：**
@@ -240,7 +242,15 @@ npu_op_kernel_sources(ascendc_kernels
     KERNEL_FILE add_custom.cpp
 )
 ```
-
+也可以使用`SOC_SERIES`按系列指定：
+```cmake
+npu_op_kernel_sources(ascendc_kernels
+    OP_TYPE AddCustom
+    KERNEL_DIR ./Add
+    SOC_SERIES Ascendxxx
+    KERNEL_FILE add_custom.cpp
+)
+```
 ### npu_op_device_tiling_library
 
 创建Device侧Tiling库。使用该选项时，package的类型仅支持配置为RUN（run包模式）。

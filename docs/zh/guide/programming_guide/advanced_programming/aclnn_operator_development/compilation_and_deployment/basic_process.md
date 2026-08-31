@@ -20,7 +20,7 @@
 
 使用msOpGen生成的工程，已经包含完整CMake结构，不需要单独编写CMakeLists.txt处理；如果需要自行编写CMakeLists.txt，请参考[编译组织](#编译组织)。以[快速入门的AddCustom](../aclnn_quick_start.md)为例，msOpGen生成的算子工程编译部署只需三步：
 
-1. 修改`CMakePresets.json`，填写`ASCEND_COMPUTE_UNIT`（AI处理器型号）和`vendor_name`（厂商名称）等编译配置选项；
+1. 修改`CMakePresets.json`，填写`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`（二选一）以及`vendor_name`（厂商名称）等编译配置选项；
 2. 执行`./build.sh`，生成`custom_opp_*.run`安装包；
 3. 执行`./custom_opp_*.run`，安装到运行环境。
 
@@ -28,12 +28,15 @@
 
 ## 编译配置<a id="compile-configuration"></a>
 
-编译配置选项的必改参数有两个：
+编译配置选项的必改参数有两个，其中芯片系列配置在`ASCEND_SOC_SERIES`和`ASCEND_COMPUTE_UNIT`中二选一：
 
 | 参数名称 | 参数描述 | 默认值 |
 |---------|---------|--------|
+| ASCEND_SOC_SERIES | AI处理器系列，支持配置一个或多个值。输入不区分大小写，配置值会先归一为小写。 | 无 |
 | ASCEND_COMPUTE_UNIT | AI处理器型号，按实际运行芯片配置。 | "ascendxxx" |
 | vendor_name | 自定义算子所属厂商名称，用于形成`vendors/<vendor_name>`安装目录，避免与其他厂商算子包冲突；同一安装路径下`vendor_name`相同的算子包会安装到同一目录，同名文件会覆盖。 | "customize" |
+
+`ASCEND_SOC_SERIES`与`ASCEND_COMPUTE_UNIT`不能同时配置，且`ASCEND_SOC_SERIES`不能为空。
 
 除上述必改参数外，其他可选编译配置选项详情如下：
 
@@ -92,8 +95,8 @@
 直接在顶层CMakeLists.txt中设置变量，并通过`npu_op_*`接口配置编译行为，无需CMakePresets.json文件。
 
 ```cmake
-# 设置必要变量
-set(ASCEND_COMPUTE_UNIT "ascendxxyy")
+# 设置必要变量。也可以使用变量ASCEND_SOC_SERIES，二者不能同时设置。
+set(ASCEND_COMPUTE_UNIT "ascendxxxyy") | set(ASCEND_SOC_SERIES "Ascendxxx")
 set(vendor_name "customize")
 
 # 配置编译产物包（通过CONFIG参数替代ENABLE_SOURCE_PACKAGE / ENABLE_BINARY_PACKAGE等变量）
@@ -441,7 +444,13 @@ npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)
 # 2. 指定核函数（Kernel）源码
 npu_op_kernel_sources(ascendc_kernels
     OP_TYPE AddCustom                              #算子类型
-    COMPUTE_UNIT ascendxxyy                       # AI处理器型号
+    COMPUTE_UNIT ascendxxxyy                       # AI处理器型号
+    KERNEL_FILE add_custom.cpp                     # kernel实现文件名
+)
+或者
+npu_op_kernel_sources(ascendc_kernels
+    OP_TYPE AddCustom                              #算子类型
+    SOC_SERIES Ascendxxx                           # AI处理器型号
     KERNEL_FILE add_custom.cpp                     # kernel实现文件名
 )
 
@@ -609,7 +618,7 @@ npu_op_package_add(${package_name}
 在CMakeLists.txt中，用`npu_op_kernel_options`为核函数（Kernel）侧代码添加编译选项：
 
 ```cmake
-npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIONS ...)
+npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>... | SOC_SERIES <series>...] OPTIONS ...)
 ```
 
 **表4** 参数说明。
@@ -618,7 +627,8 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIO
 |---------|----------|---------|
 | target_name | 必选 | 核函数（Kernel）库的目标名称（如`ascendc_kernels`）。 |
 | op_type | 必选 | 算子类型。如需对所有算子生效，配置为`ALL`。 |
-| COMPUTE_UNIT | 可选 | AI处理器型号，不配置时对所有型号生效。 |
+| COMPUTE_UNIT | 可选 | AI处理器型号，不配置时对所有型号生效。与`SOC_SERIES`不能同时使用。 |
+| SOC_SERIES | 可选 | AI处理器系列，输入不区分大小写。与`COMPUTE_UNIT`不能同时使用。 |
 | OPTIONS | 必选 | 自定义编译选项，多个选项用空格间隔。支持`--save-temp-files`、`-g`、`-DASCENDC_DEBUG`等。 |
 
 **常见示例**：
@@ -628,7 +638,10 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>] OPTIO
 npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files)
 
 # 为特定算子在特定型号上开启AscendC调试宏
-npu_op_kernel_options(ascendc_kernels AddCustom COMPUTE_UNIT ascendxxyy OPTIONS -DASCENDC_DEBUG)
+npu_op_kernel_options(ascendc_kernels AddCustom COMPUTE_UNIT ascendxxxyy OPTIONS -DASCENDC_DEBUG)
+
+# 使用SOC_SERIES按系列配置，多个值用空格分隔
+npu_op_kernel_options(ascendc_kernels AddCustom SOC_SERIES Ascendxxx OPTIONS -DASCENDC_DEBUG)
 ```
 
 > [!NOTE]说明

@@ -155,7 +155,7 @@ ccache --show-stats -v
 |------|---------|---------|------|
 | `--tiling_key=1,2` | TilingKey编程算子，仅调试特定分支。 | `npu_op_kernel_options`的OPTIONS参数。 | 只编译指定TilingKey的核函数（Kernel），跳过其余。 |
 | `--kernel-template-input="D_T_X=float"` | 模板编程算子，仅调试特定模板参数组合。 | `npu_op_kernel_options`的OPTIONS参数。 | 只编译指定模板参数组合的核函数（Kernel）。 |
-| `ASCEND_COMPUTE_UNIT`收窄 | 开发阶段只跑当前SOC。 | 修改`CMakePresets.json`或cmake的ASCEND_COMPUTE_UNIT参数。 | 跳过其他芯片的核函数（Kernel）编译。 |
+| `ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`收窄 | 开发阶段只跑当前SOC。 | 修改`CMakePresets.json`或CMake配置参数；两者二选一。 | 跳过其他芯片的核函数（Kernel）编译。 |
 | `ENABLE_BINARY_PACKAGE=False` | 源码发布模式，不需要核函数（Kernel）二进制。 | CMakeLists.txt或cmake参数。 | 跳过核函数（Kernel） `.o`生成，保留核函数（Kernel）源码和必要配置。 |
 
 ### TilingKey选择编译
@@ -239,12 +239,12 @@ npu_op_kernel_options(ascendc_kernels AddCustomTemplate COMPUTE_UNIT Ascendxxyy 
 
 ### 收窄芯片范围
 
-`ASCEND_COMPUTE_UNIT`配置了多少个芯片型号，核函数（Kernel）侧通常就会按芯片型号分别编译。开发阶段如果只在当前机器上验证，可修改CMakeLists.txt里的ASCEND_COMPUTE_UNIT保留当前SOC或者临时只构建某个SOC。以下是CMake配置阶段临时设置只构建ascendxxyy SOC的示例：
+`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`配置了多少个芯片型号，核函数（Kernel）侧通常就会按芯片型号分别编译。开发阶段如果只在当前机器上验证，可修改CMakeLists.txt中的任一配置保留当前SOC，或者在CMake配置阶段临时只构建某个SOC。以下示例只构建ascendxxx SOC的示例：
 
 ```bash
-cmake -S . -B build_out --preset=default -DASCEND_COMPUTE_UNIT=ascendxxyy
+cmake -S . -B build_out --preset=default -DASCEND_SOC_SERIES=ascendxxx
 ```
-
+也可以使用参数`-DASCEND_COMPUTE_UNIT=ascendxxxyy`；两个参数不能同时传入。
 ### 跳过核函数（Kernel）二进制编译
 
 如果当前只需要生成源码包，或暂时不需要核函数（Kernel） `.o`二进制，可关闭二进制包生成。顶层`CMakeLists.txt`中应使用变量形式传递`ENABLE_BINARY_PACKAGE`：
