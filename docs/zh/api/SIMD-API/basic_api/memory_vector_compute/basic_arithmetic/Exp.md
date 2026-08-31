@@ -130,7 +130,7 @@ $dst_i = e^{src_i}$
 |---|---|
 | T | 操作数数据类型。 |
 | isSetMask | 是否在接口内部设置mask。<br>&bull; true，表示在接口内部设置mask。<br>&bull; false，表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值设置为占位符`MASK_PLACEHOLDER`，用于占位，无实际含义。 |
-| <!-- npu="950" id19 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置Subnormal计算模式，ExpConfig类型，定义如下：<br>enum&nbsp;class&nbsp;ExpAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;ExpConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;ExpAlgo&nbsp;algo&nbsp;=&nbsp;ExpAlgo::INTRINSIC;<br>};<br>通过ExpConfig结构体的参数algo来配置Subnormal计算模式。algo取值如下：<br>&bull; ExpAlgo::INTRINSIC、ExpAlgo::PRECISION_1ULP_FTZ_TRUE，使用单指令计算得出结果，所有Subnormal被近似为0。<br>&bull; ExpAlgo::PRECISION_1ULP_FTZ_FALSE，支持Subnormal数据计算。<br>该参数的默认值DEFAULT_EXP_CONFIG的取值如下：<br>constexpr&nbsp;ExpConfig&nbsp;DEFAULT_EXP_CONFIG&nbsp;=&nbsp;{&nbsp;ExpAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_EXP_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id19 --> |
+| <!-- npu="950" id19 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置精度计算模式，ExpConfig类型，定义如下：<br>enum&nbsp;class&nbsp;ExpAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;ExpConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;ExpAlgo&nbsp;algo&nbsp;=&nbsp;ExpAlgo::INTRINSIC;<br>};<br>通过ExpConfig结构体的参数algo来选择Exp算法并配置Subnormal模式，详细说明请参考[关键特性说明](#exp-key-features)。<br>algo的取值如下：<br>&bull; ExpAlgo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&bull; ExpAlgo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&bull; ExpAlgo::PRECISION_1ULP_FTZ_FALSE：通过软件仿真实现，支持Subnormal数据计算，最大精度误差为1ulp。<br><br>该参数的默认值DEFAULT_EXP_CONFIG的取值如下：<br>constexpr&nbsp;ExpConfig&nbsp;DEFAULT_EXP_CONFIG&nbsp;=&nbsp;{&nbsp;ExpAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_EXP_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id19 --> |
 
 **表2** 参数说明
 
@@ -178,22 +178,30 @@ T支持的数据类型为：half、float。
 <!-- end id21 -->
 
 <!-- npu="950" id24 -->
-## 关键特性<a name="section18972943153217"></a>
+## 关键特性<a id="exp-key-features"></a>
 
 针对Ascend 950PR/Ascend 950DT，有如下关键特性：
 
-**最大精度误差**：
+### 最大精度误差
 
-- ExpAlgo::INTRINSIC、ExpAlgo::PRECISION\_1ULP\_FTZ\_TRUE，最大精度误差为1ulp。
-- ExpAlgo::PRECISION\_1ULP\_FTZ\_FALSE，软仿实现，最大精度误差为1ulp。
+ExpAlgo::INTRINSIC、ExpAlgo::PRECISION_1ULP_FTZ_TRUE和ExpAlgo::PRECISION_1ULP_FTZ_FALSE的最大精度误差均为1ulp。
 
-**配置Subnormal模式**：
+### 配置Subnormal模式
 
-FTZ（Flush To Zero）：一种浮点运算模式，当结果为[Subnormal](../../data_structures/builtin_data_types.md#p7381131713310)时，将其直接清零（近似为0），而非保留其精确的微小数值。
+FTZ（Flush-To-Zero）：一种浮点运算模式，当结果为[Subnormal](../../data_structures/builtin_data_types.md#p7381131713310)时，将其直接清零（近似为0），而非保留其精确的微小数值。
 
-只有将algo设置为ExpAlgo::PRECISION\_1ULP\_FTZ\_false时，Exp接口才会保留并正确输出Subnormal结果；其他模式下Subnormal均被FTZ。
+#### 默认算法
 
-由于Subnormal的计算行为是通过软件仿真算法实现，一般场景推荐使用性能更好的ExpAlgo::INTRINSIC、ExpAlgo::PRECISION\_1ULP\_FTZ\_TRUE；需要精确Subnormal输出的场景（如特定数据精度要求的算法、避免除零错误）使用ExpAlgo::PRECISION\_1ULP\_FTZ\_FALSE。
+ExpAlgo::INTRINSIC为默认算法。--cce-ftz=false时保留Subnormal；--cce-ftz=true（默认值）时采用FTZ模式。
+
+#### 显式指定的算法
+
+- ExpAlgo::PRECISION_1ULP_FTZ_TRUE使用单指令计算，始终采用FTZ模式。
+- ExpAlgo::PRECISION_1ULP_FTZ_FALSE通过软件仿真实现，支持Subnormal数据计算。
+
+#### 使用建议
+
+由于保留Subnormal的计算行为通过软件仿真实现，在--cce-ftz=true（默认值）时，一般场景建议使用默认的ExpAlgo::INTRINSIC或显式选择ExpAlgo::PRECISION_1ULP_FTZ_TRUE，以获得更好的性能；需要精确输出Subnormal时，使用ExpAlgo::PRECISION_1ULP_FTZ_FALSE。
 <!-- end id24 -->
 
 ## 调用示例<a name="section176061616102911"></a>

@@ -130,7 +130,7 @@ $dst_i = \sqrt{src_i}$
 |---|---|
 | T | 操作数数据类型。 |
 | isSetMask | 是否在接口内部设置mask。<br>&bull; true，表示在接口内部设置mask。<br>&bull; false，表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值设置为占位符`MASK_PLACEHOLDER`，用于占位，无实际含义。 |
-| <!-- npu="950" id22 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置精度计算模式，SqrtConfig类型，定义如下：<br>enum&nbsp;class&nbsp;SqrtAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;FAST_INVERSE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_0ULP_FTZ_FALSE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;SqrtConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;SqrtAlgo&nbsp;algo&nbsp;=&nbsp;SqrtAlgo::INTRINSIC;<br>};<br>通过SqrtConfig结构体的参数algo来配置精度计算模式。algo取值如下：<br>&bull; SqrtAlgo::INTRINSIC、SqrtAlgo::PRECISION_1ULP_FTZ_TRUE，使用单指令计算得出结果，最大精度误差为1ulp。<br>&bull; SqrtAlgo::FAST_INVERSE、SqrtAlgo::PRECISION_0ULP_FTZ_FALSE，使用快速求逆算法得出结果。适用于输入值在[0, 85070596800837026223494223584045301760]范围内的计算。在该范围内，算法保证输出的最大精度误差为0ulp；当输入值大于85070596800837026223494223584045301760时，输出为0。目前，该算法仅支持float数据类型，并在该模式下支持Subnormal数据计算。<br>&bull; SqrtAlgo::PRECISION_1ULP_FTZ_FALSE，仅支持half类型的Subnormal数据计算，此时最大精度误差为1ulp。<br>该参数的默认值DEFAULT_SQRT_CONFIG的取值如下：<br>constexpr&nbsp;SqrtConfig&nbsp;DEFAULT_SQRT_CONFIG&nbsp;=&nbsp;{&nbsp;SqrtAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_SQRT_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id22 --> |
+| <!-- npu="950" id22 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置精度计算模式，SqrtConfig类型，定义如下：<br>enum&nbsp;class&nbsp;SqrtAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;FAST_INVERSE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_0ULP_FTZ_FALSE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;SqrtConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;SqrtAlgo&nbsp;algo&nbsp;=&nbsp;SqrtAlgo::INTRINSIC;<br>};<br>通过SqrtConfig结构体的参数algo来选择Sqrt算法并配置Subnormal模式，详细说明请参考[关键特性说明](#sqrt-key-features)。<br>algo的取值如下：<br>&bull; SqrtAlgo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&bull; SqrtAlgo::FAST_INVERSE和SqrtAlgo::PRECISION_0ULP_FTZ_FALSE：使用快速求逆算法得出结果。目前，该算法仅支持float数据类型，并在该模式下支持Subnormal数据计算。<br>&bull; SqrtAlgo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&bull; SqrtAlgo::PRECISION_1ULP_FTZ_FALSE：最大精度误差为1ulp，支持half类型的Subnormal数据计算。<br><br>该参数的默认值DEFAULT_SQRT_CONFIG的取值如下：<br>constexpr&nbsp;SqrtConfig&nbsp;DEFAULT_SQRT_CONFIG&nbsp;=&nbsp;{&nbsp;SqrtAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_SQRT_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id22 --> |
 
 **表2** 参数说明
 
@@ -180,25 +180,35 @@ T支持的数据类型为：half、float。
 
 - 如果src中的数值为非正数，可能会产生未知结果。
 
-<!-- npu="950" id24 -->
-## 关键特性<a name="section18972943153217"></a>
+<!-- npu="950" id35 -->
+## 关键特性<a id="sqrt-key-features"></a>
 
 针对Ascend 950PR/Ascend 950DT，有如下关键特性：
 
-**最大精度误差**：
+### 最大精度误差
 
-- SqrtAlgo::INTRINSIC、SqrtAlgo::PRECISION\_1ULP\_FTZ\_TRUE，最大精度误差为1ulp。
-- SqrtAlgo::PRECISION\_1ULP\_FTZ\_FALSE，软仿实现，最大精度误差为1ulp。
-- SqrtAlgo::FAST\_INVERSE、SqrtAlgo::PRECISION\_0ULP\_FTZ\_FALSE，软仿实现，最大精度误差为0ulp。
+- SqrtAlgo::INTRINSIC和SqrtAlgo::PRECISION_1ULP_FTZ_TRUE的最大精度误差为1ulp。
+- SqrtAlgo::FAST_INVERSE和SqrtAlgo::PRECISION_0ULP_FTZ_FALSE的最大精度误差为0ulp。
+- SqrtAlgo::PRECISION_1ULP_FTZ_FALSE的最大精度误差为1ulp。
 
-**配置Subnormal模式**：
+### 配置Subnormal模式
 
-FTZ（Flush To Zero）：一种浮点运算模式，当结果为[Subnormal](../../data_structures/builtin_data_types.md#p7381131713310)时，将其直接清零（近似为0），而非保留其精确的微小数值。
+FTZ（Flush-To-Zero）：一种浮点运算模式，当结果为[Subnormal](../../data_structures/builtin_data_types.md#p7381131713310)时，将其直接清零（近似为0），而非保留其精确的微小数值。
 
-只有将algo设置为SqrtAlgo::FAST\_INVERSE、SqrtAlgo::PRECISION\_0ULP\_FTZ\_FALSE、SqrtAlgo::PRECISION\_1ULP\_FTZ\_false时，Sqrt接口才会保留并正确输出Subnormal结果；其他模式下Subnormal均被FTZ。
+#### 默认算法
 
-由于Subnormal的计算行为是通过软件仿真算法实现，一般场景推荐使用性能更好的SqrtAlgo::INTRINSIC、SqrtAlgo::PRECISION\_1ULP\_FTZ\_TRUE；需要精确Subnormal输出的场景（如特定数据精度要求的算法、避免除零错误）使用SqrtAlgo::FAST\_INVERSE、SqrtAlgo::PRECISION\_0ULP\_FTZ\_FALSE、SqrtAlgo::PRECISION\_1ULP\_FTZ\_FALSE。
-<!-- end id24 -->
+SqrtAlgo::INTRINSIC为默认算法。--cce-ftz=false时保留Subnormal；--cce-ftz=true（默认值）时采用FTZ模式。
+
+#### 显式指定的算法
+
+- SqrtAlgo::PRECISION_1ULP_FTZ_TRUE使用单指令计算，始终采用FTZ模式。
+- SqrtAlgo::FAST_INVERSE和SqrtAlgo::PRECISION_0ULP_FTZ_FALSE使用快速求逆算法，仅支持float类型，并支持Subnormal数据计算。
+- SqrtAlgo::PRECISION_1ULP_FTZ_FALSE支持half类型的Subnormal数据计算。
+
+#### 使用建议
+
+在--cce-ftz=true（默认值）时，一般场景建议使用默认的SqrtAlgo::INTRINSIC或显式选择SqrtAlgo::PRECISION_1ULP_FTZ_TRUE，以获得更好的性能；需要精确输出Subnormal时，使用SqrtAlgo::FAST_INVERSE、SqrtAlgo::PRECISION_0ULP_FTZ_FALSE或SqrtAlgo::PRECISION_1ULP_FTZ_FALSE。
+<!-- end id35 -->
 
 ## 调用示例<a name="section176061616102911"></a>
 

@@ -161,6 +161,12 @@ struct SoftMaxParams {
 -   meanTensor、expSumTensor、maxTensor、expMaxTensor、inMeanTensor、inExpSumTensor、inMaxTensor的Tensor空间，last轴长度必须是32字节。
 -   不支持sharedTmpBuffer与源操作数和目的操作数地址重叠。
 
+<!-- npu="950" id7 -->
+-   针对Ascend 950PR/Ascend 950DT，接口内部计算对Subnormal的处理方式受编译选项`--cce-ftz`控制（默认值为`true`）：
+    -   配置为`false`时，计算过程中保留Subnormal，并按照其实际数值参与后续计算。
+    -   配置为`true`时，启用FTZ（Flush-To-Zero）模式，计算过程中产生或参与运算的Subnormal将按0处理，可能导致计算结果与保留Subnormal时存在精度差异。
+<!-- end id7 -->
+
 ## 调用示例
 
 本样例中输入srcTensor和输出dstTensor的shape大小为\[8, 1024\]，输入inMeanTensor、inExpSumTensor、inMaxTensor的shape大小为\[8, 8\]，数据类型为float；输出expMaxTensor的shape大小为\[8, 16\]，数据类型为half；输入和输出的数据排布格式为ND，srcTensor和dstTensor空间不复用，模板参数isUpdate为true。

@@ -136,7 +136,7 @@ $dst_i = src0_i / src1_i$
 |---|---|
 | T | 操作数数据类型。 |
 | isSetMask | 是否在接口内部设置mask。<br>&bull; true，表示在接口内部设置mask。<br>&bull; false，表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值设置为占位符`MASK_PLACEHOLDER`，用于占位，无实际含义。 |
-| <!-- npu="950" id19 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置精度计算模式，DivConfig类型，定义如下：<br>enum&nbsp;class&nbsp;DivAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;DIFF_COMPENSATION,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_0ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_0ULP_FTZ_FALSE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE<br>};<br>struct&nbsp;DivConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;DivAlgo&nbsp;algo&nbsp;=&nbsp;DivAlgo::INTRINSIC;<br>};<br>通过DivConfig结构体的参数algo来配置精度计算模式。algo取值如下：<br>&bull; DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE，使用单指令计算得出结果，最大精度误差为1ulp。<br>&bull; DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE，使用差值补偿算法得出结果，最大精度误差为0ulp。目前，该算法支持float数据类型。<br>&bull; DivAlgo::PRECISION_0ULP_FTZ_FALSE，支持Subnormal数据计算，使用差值补偿算法得出结果，最大精度误差为0ulp。目前，该算法支持float数据类型。<br>&bull; DivAlgo::PRECISION_1ULP_FTZ_FALSE，支持Subnormal数据计算，使用单指令计算得出结果，最大精度误差为1ulp。<br>该参数的默认值DEFAULT_DIV_CONFIG的取值如下：<br>constexpr&nbsp;DivConfig&nbsp;DEFAULT_DIV_CONFIG&nbsp;=&nbsp;{&nbsp;DivAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_DIV_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id19 --> |
+| <!-- npu="950" id19 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置精度计算模式，DivConfig类型，定义如下：<br>enum&nbsp;class&nbsp;DivAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;DIFF_COMPENSATION,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_0ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_0ULP_FTZ_FALSE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE<br>};<br>struct&nbsp;DivConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;DivAlgo&nbsp;algo&nbsp;=&nbsp;DivAlgo::INTRINSIC;<br>};<br>通过DivConfig结构体的参数algo来选择Div算法并配置Subnormal模式，详细说明请参考[关键特性说明](#div-key-features)。<br>algo的取值如下：<br>&bull; DivAlgo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&bull; DivAlgo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&bull; DivAlgo::DIFF_COMPENSATION：使用差值补偿算法，最大精度误差为0ulp。对于float数据类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&bull; DivAlgo::PRECISION_0ULP_FTZ_TRUE：使用差值补偿算法，最大精度误差为0ulp，采用FTZ模式。目前，该算法支持float数据类型。<br>&bull; DivAlgo::PRECISION_0ULP_FTZ_FALSE：使用差值补偿算法，支持Subnormal数据计算，最大精度误差为0ulp。目前，该算法支持float数据类型。<br>&bull; DivAlgo::PRECISION_1ULP_FTZ_FALSE：支持Subnormal数据计算，最大精度误差为1ulp。<br><br>该参数的默认值DEFAULT_DIV_CONFIG的取值如下：<br>constexpr&nbsp;DivConfig&nbsp;DEFAULT_DIV_CONFIG&nbsp;=&nbsp;{&nbsp;DivAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_DIV_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id19 --> |
 
 **表2** 参数说明
 
@@ -207,6 +207,35 @@ $dst_i = src0_i / src1_i$
   - tensor前n个数据连续计算不涉及8KB UB的占用。
 <!-- end id32 -->
 
+<!-- npu="950" id35 -->
+## 关键特性<a id="div-key-features"></a>
+
+针对Ascend 950PR/Ascend 950DT，有如下关键特性：
+
+### 最大精度误差
+
+- DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE和DivAlgo::PRECISION_1ULP_FTZ_FALSE的最大精度误差为1ulp。
+- DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE和DivAlgo::PRECISION_0ULP_FTZ_FALSE的最大精度误差为0ulp。
+
+### 配置Subnormal模式
+
+FTZ（Flush-To-Zero）：一种浮点运算模式，当结果为[Subnormal](../../data_structures/builtin_data_types.md#p7381131713310)时，将其直接清零（近似为0），而非保留其精确的微小数值。
+
+#### 默认算法
+
+DivAlgo::INTRINSIC为默认算法。--cce-ftz=false时保留Subnormal；--cce-ftz=true（默认值）时采用FTZ模式。
+
+#### 显式指定的算法
+
+- DivAlgo::DIFF_COMPENSATION支持float类型，Subnormal处理受--cce-ftz控制。
+- 名称中包含FTZ_FALSE的算法始终保留Subnormal。
+- 名称中包含FTZ_TRUE的算法始终采用FTZ模式。
+
+#### 使用建议
+
+在--cce-ftz=true（默认值）时，一般场景建议使用性能更优的DivAlgo::INTRINSIC或显式选择DivAlgo::PRECISION_1ULP_FTZ_TRUE、DivAlgo::PRECISION_0ULP_FTZ_TRUE；需要精确输出Subnormal时，使用DivAlgo::PRECISION_0ULP_FTZ_FALSE或DivAlgo::PRECISION_1ULP_FTZ_FALSE。
+<!-- end id35 -->
+
 ## 调用示例<a name="section642mcpsimp"></a>
 
 - tensor高维切分计算样例-mask连续模式
@@ -241,7 +270,7 @@ $dst_i = src0_i / src1_i$
     // Div 0ulp.
     static constexpr DivConfig config = { DivAlgo::DIFF_COMPENSATION };
     Div<T, config>(dstLocalX, srcLocalX, srcLocalY, 512);
-    // Div Subnormal.
+    // Div 0ulp精度及Subnormal模式。
     static constexpr DivConfig config2 = { DivAlgo::PRECISION_0ULP_FTZ_FALSE };
     Div<T, config2>(dstLocalX, srcLocalX, srcLocalY, 512);
     ```

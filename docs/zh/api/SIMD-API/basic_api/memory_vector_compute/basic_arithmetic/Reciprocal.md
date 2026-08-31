@@ -130,7 +130,7 @@ $dst_i = \frac{1}{src_i}$
 |---|---|
 | T | 操作数数据类型。 |
 | isSetMask | 是否在接口内部设置mask。<br>&bull; true，表示在接口内部设置mask。<br>&bull; false，表示在接口外部设置mask，开发者需要使用[SetVectorMask](../mask_operations/SetVectorMask.md)接口设置mask值。这种模式下，接口入参中的mask值设置为占位符`MASK_PLACEHOLDER`，用于占位，无实际含义。 |
-| <!-- npu="950" id19 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置Subnormal计算模式，ReciprocalConfig类型，定义如下：<br>enum&nbsp;class&nbsp;ReciprocalAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;ReciprocalConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;ReciprocalAlgo&nbsp;algo&nbsp;=&nbsp;ReciprocalAlgo::INTRINSIC;<br>};<br>通过ReciprocalConfig结构体的参数algo来配置Subnormal计算模式。algo取值如下：<br>&bull; ReciprocalAlgo::INTRINSIC、ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE，使用单指令计算得出结果，所有Subnormal被近似为0。<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE，支持Subnormal数据计算。<br>该参数的默认值DEFAULT_RECIPROCAL_CONFIG的取值如下：<br>constexpr&nbsp;ReciprocalConfig&nbsp;DEFAULT_RECIPROCAL_CONFIG&nbsp;=&nbsp;{&nbsp;ReciprocalAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_RECIPROCAL_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id19 --> |
+| <!-- npu="950" id19 -->config | 该参数仅支持Ascend 950PR/Ascend 950DT。<br>用于配置精度计算模式，ReciprocalConfig类型，定义如下：<br>enum&nbsp;class&nbsp;ReciprocalAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;ReciprocalConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;ReciprocalAlgo&nbsp;algo&nbsp;=&nbsp;ReciprocalAlgo::INTRINSIC;<br>};<br>通过ReciprocalConfig结构体的参数algo来选择Reciprocal算法并配置Subnormal模式，详细说明请参考[关键特性说明](#reciprocal-key-features)。<br>algo的取值如下：<br>&bull; ReciprocalAlgo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE：通过软件仿真实现，支持Subnormal数据计算，最大精度误差为1ulp。<br><br>该参数的默认值DEFAULT_RECIPROCAL_CONFIG的取值如下：<br>constexpr&nbsp;ReciprocalConfig&nbsp;DEFAULT_RECIPROCAL_CONFIG&nbsp;=&nbsp;{&nbsp;ReciprocalAlgo::INTRINSIC&nbsp;};<br>调用本原型时若不显式传入config参数，则默认使用DEFAULT_RECIPROCAL_CONFIG，此时行为与不传入config参数的原型等价。<!-- end id19 --> |
 
 **表2** 参数说明
 
@@ -202,6 +202,33 @@ $dst_i = \frac{1}{src_i}$
 
 - 如果src中的数值为0，可能会产生未知结果。
 - 使用Reciprocal时，half的算子结果对比误差不满足双千分之一的要求，float的算子结果对比误差不满足双万分之一的要求，如果需要高精度，建议使用[Div](Div.md)替代实现。
+
+<!-- npu="950" id35 -->
+## 关键特性<a id="reciprocal-key-features"></a>
+
+针对Ascend 950PR/Ascend 950DT，有如下关键特性：
+
+### 最大精度误差
+
+ReciprocalAlgo::INTRINSIC、ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE和ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE的最大精度误差均为1ulp。
+
+### 配置Subnormal模式
+
+FTZ（Flush-To-Zero）：一种浮点运算模式，当结果为[Subnormal](../../data_structures/builtin_data_types.md#p7381131713310)时，将其直接清零（近似为0），而非保留其精确的微小数值。
+
+#### 默认算法
+
+ReciprocalAlgo::INTRINSIC为默认算法。--cce-ftz=false时保留Subnormal；--cce-ftz=true（默认值）时采用FTZ模式。
+
+#### 显式指定的算法
+
+- ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE使用单指令计算，始终采用FTZ模式。
+- ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE通过软件仿真实现，支持Subnormal数据计算。
+
+#### 使用建议
+
+由于保留Subnormal的计算行为通过软件仿真实现，在--cce-ftz=true（默认值）时，一般场景建议使用默认的ReciprocalAlgo::INTRINSIC或显式选择ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE，以获得更好的性能；需要精确输出Subnormal时，使用ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE。
+<!-- end id35 -->
 
 ## 调用示例<a name="section176061616102911"></a>
 

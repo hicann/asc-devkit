@@ -49,9 +49,8 @@ __simd_callee__ inline void Div(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 | 参数名 | 描述 |
 | --- | --- |
 | T | 操作数数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
-| mode | 可配置为[MaskMergeMode](../aux_data_types/MaskMergeMode.md)枚举类型或DivSpecificMode的结构体指针。<br>&bull; 配置MaskMergeMode，选择MERGING模式或ZEROING模式。<br>&nbsp;&nbsp;&bull; ZEROING模式下，mask未筛选的元素在dstReg中置零。<br>&nbsp;&nbsp;&bull; MERGING模式当前不支持。<br>&bull; 配置DivSpecificMode<br><code>enum class DivAlgo {<br>    INTRINSIC = 0,<br>    DIFF_COMPENSATION,<br>    PRECISION_1ULP_FTZ_TRUE,<br>    PRECISION_0ULP_FTZ_TRUE,<br>    PRECISION_0ULP_FTZ_FALSE,<br>    PRECISION_1ULP_FTZ_FALSE<br>};<br>struct DivSpecificMode {<br>    MaskMergeMode mrgMode = MaskMergeMode::ZEROING,<br>    bool precisionMode = false;<br>    DivAlgo algo = DivAlgo::INTRINSIC;<br>};</code><br>当precisionMode为true时，使能更高精度的Div计算，使用差值补偿算法得出结果，最大精度误差为0ulp。目前只针对float数据类型生效。<br>&bull; algo：用于配置Subnormal模式，具体参考[关键特性说明](#关键特性说明)。<br>&nbsp;&nbsp;&bull; DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE，使用单指令计算得出结果，最大精度误差为1ulp。<br>&nbsp;&nbsp;&bull; DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE，使用差值补偿算法得出结果，最大精度误差为0ulp。目前，该算法支持float、complex64数据类型。<br>&nbsp;&nbsp;&bull; DivAlgo::PRECISION_0ULP_FTZ_FALSE，支持Subnormal数据计算，使用差值补偿算法得出结果，最大精度误差为0ulp。目前，该算法支持float数据类型。<br>&nbsp;&nbsp;&bull; DivAlgo::PRECISION_1ULP_FTZ_FALSE，支持Subnormal数据计算，最大精度误差为1ulp。目前，该算法支持half、float数据类型。 |
+| mode | 可配置为[MaskMergeMode](../aux_data_types/MaskMergeMode.md)枚举值或指向DivSpecificMode结构体的指针。<br>&bull; 配置MaskMergeMode：选择MERGING模式或ZEROING模式。<br>&nbsp;&nbsp;&bull; ZEROING模式下，mask未筛选的元素在dstReg中置零。<br>&nbsp;&nbsp;&bull; MERGING模式当前不支持。<br>&bull; 配置DivSpecificMode，定义如下：<br><code>enum class DivAlgo {<br>    INTRINSIC = 0,<br>    DIFF_COMPENSATION,<br>    PRECISION_1ULP_FTZ_TRUE,<br>    PRECISION_0ULP_FTZ_TRUE,<br>    PRECISION_0ULP_FTZ_FALSE,<br>    PRECISION_1ULP_FTZ_FALSE<br>};<br>struct DivSpecificMode {<br>    MaskMergeMode mrgMode = MaskMergeMode::ZEROING;<br>    bool precisionMode = false;<br>    DivAlgo algo = DivAlgo::INTRINSIC;<br>};</code><br>&bull; precisionMode：用于配置高精度Div计算。设置为true时，使用差值补偿算法，最大精度误差为0ulp，支持float、complex64类型。<br>&bull; algo：用于选择Div算法及配置Subnormal模式，详细说明请参考[关键特性说明](#关键特性说明)。<br>&nbsp;&nbsp;&bull; DivAlgo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&nbsp;&nbsp;&bull; DivAlgo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&nbsp;&nbsp;&bull; DivAlgo::DIFF_COMPENSATION：使用差值补偿算法，最大精度误差为0ulp。对于float、complex64类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&nbsp;&nbsp;&bull; DivAlgo::PRECISION_0ULP_FTZ_TRUE：使用差值补偿算法，最大精度误差为0ulp。<br>&nbsp;&nbsp;&bull; DivAlgo::PRECISION_0ULP_FTZ_FALSE：使用差值补偿算法，支持Subnormal数据计算，最大精度误差为0ulp。<br>&nbsp;&nbsp;&bull; DivAlgo::PRECISION_1ULP_FTZ_FALSE：支持Subnormal数据计算，最大精度误差为1ulp。 |
 | U | 源操作数和目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
-
 
 **表 2**  参数说明
 
@@ -65,10 +64,11 @@ __simd_callee__ inline void Div(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 ## 数据类型
 
 目的操作数与源操作数的数据类型需要保持一致。
-- 当模式为DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float、complex32、int64_t、uint64_t、complex64。
-- 当模式为DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE，支持的数据类型为：float、complex64。
-- 当模式为DivAlgo::PRECISION_0ULP_FTZ_FALSE，支持的数据类型为：float。
-- 当模式为DivAlgo::PRECISION_1ULP_FTZ_FALSE，支持的数据类型为：half、float。
+
+- 当模式为DivAlgo::INTRINSIC或DivAlgo::PRECISION_1ULP_FTZ_TRUE时，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float、complex32、int64_t、uint64_t、complex64。
+- 当模式为DivAlgo::DIFF_COMPENSATION或DivAlgo::PRECISION_0ULP_FTZ_TRUE时，支持的数据类型为：float、complex64。
+- 当模式为DivAlgo::PRECISION_0ULP_FTZ_FALSE时，支持的数据类型为：float。
+- 当模式为DivAlgo::PRECISION_1ULP_FTZ_FALSE时，支持的数据类型为：half、float。
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 
@@ -80,20 +80,30 @@ __simd_callee__ inline void Div(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 
 ## 关键特性说明
 
-**最大精度误差：**
+### 最大精度误差
 
-- 当precisionMode为false时，DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE、DivAlgo::PRECISION_1ULP_FTZ_FALSE，最大精度误差为1ulp。
-- 当precisionMode为true时，DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE、DivAlgo::PRECISION_0ULP_FTZ_FALSE，最大精度误差为0ulp。
+- precisionMode设置为true时，使用差值补偿算法进行高精度计算，最大精度误差为0ulp。
+- precisionMode设置为false时，DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE和DivAlgo::PRECISION_1ULP_FTZ_FALSE的最大精度误差为1ulp；DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE和DivAlgo::PRECISION_0ULP_FTZ_FALSE的最大精度误差为0ulp。
 
-**配置Subnormal模式：**
-<br>
-FTZ（Flush To Zero）：一种浮点运算模式，当结果为Subnormal时，将其直接清零（近似为0），而非保留其精确的微小数值。
-<br>
-只有将algo设置为DivAlgo::PRECISION_0ULP_FTZ_FALSE或者DivAlgo::PRECISION_1ULP_FTZ_FALSE时，Div接口才会保留并正确输出Subnormal结果；其他模式下Subnormal均被FTZ。
-<br>
-一般场景推荐使用性能更好的DivAlgo::INTRINSIC、DivAlgo::PRECISION_1ULP_FTZ_TRUE、DivAlgo::DIFF_COMPENSATION、DivAlgo::PRECISION_0ULP_FTZ_TRUE；需要精确Subnormal输出的场景（如特定数据精度要求的算法、避免除零错误）使用DivAlgo::PRECISION_0ULP_FTZ_FALSE、DivAlgo::PRECISION_1ULP_FTZ_FALSE。
+### 配置Subnormal模式
 
-**表 8**  Div Subnormal示例
+FTZ（Flush-To-Zero）：一种浮点运算模式，当结果为Subnormal时，将其直接清零（近似为0），而非保留其精确的微小数值。
+
+#### 默认算法
+
+DivAlgo::INTRINSIC支持整数、浮点和复数类型，具体支持范围请参考[数据类型](#数据类型)。对于half和float类型，--cce-ftz=false时保留Subnormal，等效于DivAlgo::PRECISION_1ULP_FTZ_FALSE；--cce-ftz=true（默认值）时采用FTZ模式，等效于DivAlgo::PRECISION_1ULP_FTZ_TRUE。对于整数类型，计算结果不涉及Subnormal，--cce-ftz对其无影响；对于complex32和complex64类型，实部和虚部分别为half和float，Subnormal处理遵循对应元素类型的--cce-ftz配置。
+
+#### 显式指定的算法
+
+- DivAlgo::DIFF_COMPENSATION支持float和complex64类型。--cce-ftz=false时保留Subnormal；--cce-ftz=true（默认值）时采用FTZ模式。
+- 名称中包含FTZ_FALSE的算法始终保留Subnormal。
+- 名称中包含FTZ_TRUE的算法始终采用FTZ模式。
+
+#### 使用建议
+
+一般场景建议使用性能更优的DivAlgo::PRECISION_1ULP_FTZ_TRUE或DivAlgo::PRECISION_0ULP_FTZ_TRUE；对于需要精确输出Subnormal的场景（如算法对数据精度有特殊要求或需避免除零错误），可将算法配置为DivAlgo::PRECISION_0ULP_FTZ_FALSE或DivAlgo::PRECISION_1ULP_FTZ_FALSE。
+
+**表 3**  Div Subnormal示例
 
 | 被除数输入 | 除数输入 | 输出（配置Subnormal模式） | 输出（不配置Subnormal模式） |
 | --- | --- | --- | --- |
@@ -112,8 +122,9 @@ __simd_vf__ inline void DivVF(__ubuf__ T* dstAddr, __ubuf__ T* src0Addr, __ubuf_
     AscendC::Reg::MaskReg mask;
     // 高精度模式
     // static constexpr AscendC::Reg::DivSpecificMode mode = {AscendC::Reg::MaskMergeMode::ZEROING, true};
-    // Subnormal模式
-    // static constexpr AscendC::Reg::DivSpecificMode mode = {AscendC::Reg::MaskMergeMode::ZEROING, true, DivAlgo::PRECISION_0ULP_FTZ_FALSE};
+    // 0ulp精度及Subnormal模式
+    // static constexpr AscendC::Reg::DivSpecificMode mode = {
+    //     AscendC::Reg::MaskMergeMode::ZEROING, true, AscendC::DivAlgo::PRECISION_0ULP_FTZ_FALSE};
     for (uint16_t i = 0; i < repeatTimes; i++) {
         mask = AscendC::Reg::UpdateMask<T>(count);
         AscendC::Reg::LoadAlign(srcReg0, src0Addr + i * oneRepeatSize);
@@ -125,4 +136,3 @@ __simd_vf__ inline void DivVF(__ubuf__ T* dstAddr, __ubuf__ T* src0Addr, __ubuf_
     }
 }
 ```
-

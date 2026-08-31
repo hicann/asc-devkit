@@ -51,7 +51,7 @@ __simd_callee__ inline void Log2(U& dstReg, U& srcReg, MaskReg& mask)
 | 参数名 | 描述 |
 | --- | --- |
 | T | 操作数数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
-| mode | 可配置为[MaskMergeMode](../aux_data_types/MaskMergeMode.md)枚举类型或Log2SpecificMode的结构体实例。<br>&bull; 配置MaskMergeMode枚举类型选择MERGING模式或ZEROING模式。<br>&nbsp;&nbsp;&bull; ZEROING模式下，mask未筛选的元素在dstReg中置零。<br>&nbsp;&nbsp;&bull; MERGING模式当前不支持。<br>&bull; Log2SpecificMode，定义如下：<br><code>enum class Log2Algo {<br>    INTRINSIC = 0,<br>    PRECISION_1ULP_FTZ_TRUE,<br>    PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct Log2SpecificMode{<br>    MaskMergeMode mrgMode = MaskMergeMode::ZEROING,<br>    Log2Algo algo = Log2Algo::INTRINSIC;<br>};</code><br>&bull; mrgMode：选择MERGING模式或ZEROING模式。<br>&bull; algo：用于配置Subnormal模式。<br>&nbsp;&nbsp;&bull; Log2Algo::INTRINSIC、Log2Algo::PRECISION_1ULP_FTZ_TRUE，所有Subnormal被近似为0。<br>&nbsp;&nbsp;&bull; Log2Algo::PRECISION_1ULP_FTZ_FALSE，支持Subnormal数据计算。 |
+| mode | 可配置为[MaskMergeMode](../aux_data_types/MaskMergeMode.md)枚举值或指向Log2SpecificMode结构体的指针。<br>&bull; 配置MaskMergeMode：选择MERGING模式或ZEROING模式。<br>&nbsp;&nbsp;&bull; ZEROING模式下，mask未筛选的元素在dstReg中置零。<br>&nbsp;&nbsp;&bull; MERGING模式当前不支持。<br>&bull; 配置Log2SpecificMode，定义如下：<br><code>enum class Log2Algo {<br>    INTRINSIC = 0,<br>    PRECISION_1ULP_FTZ_TRUE,<br>    PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct Log2SpecificMode {<br>    MaskMergeMode mrgMode = MaskMergeMode::ZEROING;<br>    Log2Algo algo = Log2Algo::INTRINSIC;<br>};</code><br>&bull; mrgMode：选择MERGING模式或ZEROING模式。<br>&bull; algo：用于选择Log2算法及配置Subnormal模式，详细说明请参考[关键特性说明](#关键特性说明)。<br>&nbsp;&nbsp;&bull; Log2Algo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&nbsp;&nbsp;&bull; Log2Algo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&nbsp;&nbsp;&bull; Log2Algo::PRECISION_1ULP_FTZ_FALSE：通过软件仿真实现，支持Subnormal数据计算，最大精度误差为1ulp。 |
 | U | 目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
 
 **表2**  参数说明
@@ -76,22 +76,30 @@ __simd_callee__ inline void Log2(U& dstReg, U& srcReg, MaskReg& mask)
 
 ## 关键特性说明
 
-**精度提升**
+### 精度提升
 
 当源操作数数据类型为half时，将half提升精度到float后进行计算，再将结果转为half后输出。
 
-**最大精度误差**
+### 最大精度误差
 
-- Log2Algo::INTRINSIC、Log2Algo::PRECISION_1ULP_FTZ_TRUE，最大精度误差为1ulp。
-- Log2Algo::PRECISION_1ULP_FTZ_FALSE，最大精度误差为1ulp。
+Log2Algo::INTRINSIC、Log2Algo::PRECISION_1ULP_FTZ_TRUE和Log2Algo::PRECISION_1ULP_FTZ_FALSE的最大精度误差均为1ulp。
 
-**配置Subnormal模式**：
-<br>
-FTZ（Flush To Zero）：一种浮点运算模式，当结果为Subnormal时，将其直接清零（近似为0），而非保留其精确的微小数值。
-<br>
-只有将algo设置为Log2Algo::PRECISION_1ULP_FTZ_FALSE时，Log2接口才会保留并正确输出Subnormal结果；其他模式下Subnormal均被FTZ。
-<br>
-一般场景推荐使用性能更好的Log2Algo::INTRINSIC、Log2Algo::PRECISION_1ULP_FTZ_TRUE；需要精确Subnormal输出的场景（如特定数据精度要求的算法、避免除零错误）使用Log2Algo::PRECISION_1ULP_FTZ_FALSE。
+### 配置Subnormal模式
+
+FTZ（Flush-To-Zero）：一种浮点运算模式，当结果为Subnormal时，将其直接清零（近似为0），而非保留其精确的微小数值。
+
+#### 默认算法
+
+Log2Algo::INTRINSIC为默认算法。--cce-ftz=false时保留Subnormal；--cce-ftz=true（默认值）时采用FTZ模式。
+
+#### 显式指定的算法
+
+- Log2Algo::PRECISION_1ULP_FTZ_TRUE使用单指令计算，始终采用FTZ模式。
+- Log2Algo::PRECISION_1ULP_FTZ_FALSE通过软件仿真实现，支持Subnormal数据计算。
+
+#### 使用建议
+
+由于保留Subnormal的计算行为通过软件仿真实现，在--cce-ftz=true（默认值）时，一般场景建议使用默认的Log2Algo::INTRINSIC或显式选择Log2Algo::PRECISION_1ULP_FTZ_TRUE，以获得更好的性能；需要精确输出Subnormal时，使用Log2Algo::PRECISION_1ULP_FTZ_FALSE。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
@@ -102,13 +110,14 @@ __simd_vf__ inline void Log2VF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_
     AscendC::Reg::RegTensor<T> srcReg;
     AscendC::Reg::RegTensor<T> dstReg;
     AscendC::Reg::MaskReg mask;
-    // Subnormal模式
-    // static constexpr AscendC::Reg::Log2SpecificMode mode = {MaskMergeMode::ZEROING, Log2Algo::PRECISION_1ULP_FTZ_FALSE};
+    // 1ulp精度及Subnormal模式
+    // static constexpr AscendC::Reg::Log2SpecificMode mode = {
+    //     AscendC::Reg::MaskMergeMode::ZEROING, AscendC::Log2Algo::PRECISION_1ULP_FTZ_FALSE};
     for (uint16_t i = 0; i < repeatTimes; i++) {
         mask = AscendC::Reg::UpdateMask<T>(count);
         AscendC::Reg::LoadAlign(srcReg, srcAddr + i * oneRepeatSize);
         AscendC::Reg::Log2(dstReg, srcReg, mask);
-        // Subnormal模式
+        // 1ulp精度及Subnormal模式
         // AscendC::Reg::Log2<T, &mode>(dstReg, srcReg, mask);
         AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, dstReg, mask);
     }
