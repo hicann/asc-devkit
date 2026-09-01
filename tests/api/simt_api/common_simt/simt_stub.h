@@ -60,48 +60,6 @@ T __shfl_xor(T var, int32_t lane_mask, int32_t width)
     return var;
 }
 
-int32_t __shfl(int32_t var, int32_t src_lane, int32_t width);
-uint32_t __shfl(uint32_t var, int32_t src_lane, int32_t width);
-float __shfl(float var, int32_t src_lane, int32_t width);
-int64_t __shfl(int64_t var, int32_t src_lane, int32_t width);
-uint64_t __shfl(uint64_t var, int32_t src_lane, int32_t width);
-half __shfl(half var, int32_t src_lane, int32_t width);
-half2 __shfl(half2 var, int32_t src_lane, int32_t width);
-
-int32_t __shfl_up(int32_t var, int32_t delta, int32_t width);
-uint32_t __shfl_up(uint32_t var, int32_t delta, int32_t width);
-float __shfl_up(float var, int32_t delta, int32_t width);
-int64_t __shfl_up(int64_t var, int32_t delta, int32_t width);
-uint64_t __shfl_up(uint64_t var, int32_t delta, int32_t width);
-
-int32_t __shfl_down(int32_t var, int32_t delta, int32_t width);
-uint32_t __shfl_down(uint32_t var, int32_t delta, int32_t width);
-float __shfl_down(float var, int32_t delta, int32_t width);
-int64_t __shfl_down(int64_t var, int32_t delta, int32_t width);
-uint64_t __shfl_down(uint64_t var, int32_t delta, int32_t width);
-
-int32_t __shfl_xor(int32_t var, int32_t lane_mask, int32_t width);
-uint32_t __shfl_xor(uint32_t var, int32_t lane_mask, int32_t width);
-float __shfl_xor(float var, int32_t lane_mask, int32_t width);
-int64_t __shfl_xor(int64_t var, int32_t lane_mask, int32_t width);
-uint64_t __shfl_xor(uint64_t var, int32_t lane_mask, int32_t width);
-
-half __shfl_up(half var, int32_t delta, int32_t width);
-half2 __shfl_up(half2 var, int32_t delta, int32_t width);
-half __shfl_down(half var, int32_t delta, int32_t width);
-half2 __shfl_down(half2 var, int32_t delta, int32_t width);
-half __shfl_xor(half var, int32_t lane_mask, int32_t width);
-half2 __shfl_xor(half2 var, int32_t lane_mask, int32_t width);
-
-bfloat16_t __shfl(bfloat16_t var, int32_t src_lane, int32_t width);
-bfloat16x2_t __shfl(bfloat16x2_t var, int32_t src_lane, int32_t width);
-bfloat16_t __shfl_up(bfloat16_t var, int32_t delta, int32_t width);
-bfloat16x2_t __shfl_up(bfloat16x2_t var, int32_t delta, int32_t width);
-bfloat16_t __shfl_down(bfloat16_t var, int32_t delta, int32_t width);
-bfloat16x2_t __shfl_down(bfloat16x2_t var, int32_t delta, int32_t width);
-bfloat16_t __shfl_xor(bfloat16_t var, int32_t lane_mask, int32_t width);
-bfloat16x2_t __shfl_xor(bfloat16x2_t var, int32_t lane_mask, int32_t width);
-
 static inline unsigned int __brev(unsigned int x)
 {
     unsigned int result = 0;
@@ -720,6 +678,10 @@ void __stg(__gm__ T* address, T val)
 }
 
 constexpr int32_t warpSize = 32;
+
+static int32_t laneid() { return 0; }
+
+static int32_t lanemask_lt() { return 0xFFFFFFFF; }
 
 #endif
 #endif

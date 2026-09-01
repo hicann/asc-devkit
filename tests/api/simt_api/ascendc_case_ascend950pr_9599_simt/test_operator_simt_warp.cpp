@@ -8,8 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
-
-#include "simt_compiler_stub.h"
 #include "simt_api/asc_bf16.h"
 #include "simt_api/asc_fp16.h"
 #include "simt_api/device_warp_functions.h"

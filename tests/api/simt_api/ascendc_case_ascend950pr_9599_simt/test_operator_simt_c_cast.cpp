@@ -10,7 +10,6 @@
 #include <gtest/gtest.h>
 #include <climits>
 #include <type_traits>
-#include "simt_compiler_stub.h"
 #include "simt_api/asc_bf16.h"
 #include "simt_api/asc_fp8.h"
 #include "impl/simt_api/internal_functions_impl.h"

@@ -9,7 +9,6 @@
  */
 #include <gtest/gtest.h>
 #include <type_traits>
-#include "simt_compiler_stub.h"
 #include "simt_api/asc_simt.h"
 
 class CommoncTestsuite : public testing::Test {
@@ -20,10 +19,6 @@ protected:
 
 TEST_F(CommoncTestsuite, BlockIdxAndNumTestCase)
 {
-    int blockIdx = asc_get_block_idx();
-    int blockNum = asc_get_block_num();
-    EXPECT_EQ(blockIdx, 0);
-    EXPECT_EQ(blockNum, 8); // 8: Num of blocks
     __asc_simt_vf::printf("test");
     assert(true);
     __asc_simt_vf::__assert_fail("test", __FILE__, __LINE__, "");

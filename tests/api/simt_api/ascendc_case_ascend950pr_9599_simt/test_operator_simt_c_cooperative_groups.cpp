@@ -10,7 +10,6 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include <type_traits>
-#include "simt_compiler_stub.h"
 #include "simt_api/device_functions.h"
 #include "simt_api/asc_fp16.h"
 #include "simt_api/asc_bf16.h"
