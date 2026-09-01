@@ -35,6 +35,7 @@ $$
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_axpy(vector_<dtype>& dst,
                                      vector_<dtype> src,
                                      <dtype> value,

@@ -34,16 +34,16 @@
 
 ![UB源收集模式](../../figures/asc_gather_ub.png)
 
-## 函数原型（占位符形式）
+## 函数原型
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_gather(vector_<dst_dtype>& dst,
                                        __ubuf__ <src_dtype>* src,
                                        vector_<index_dtype> index,
                                        vector_bool mask)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_<dst_dtype> asc_gather(__ubuf__ <src_dtype>* src,
                                                      vector_<index_dtype> index,
                                                      vector_bool mask)

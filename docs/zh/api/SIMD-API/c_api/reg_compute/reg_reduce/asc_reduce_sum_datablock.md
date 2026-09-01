@@ -48,11 +48,11 @@ def asc_reduce_sum_datablock(dst, src, mask):
 ## 函数原型
 
 ```c
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_<dst_dtype> asc_reduce_sum_datablock(vector_<src_dtype> src,
                                                                    vector_bool mask)
 
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_reduce_sum_datablock(vector_<dst_dtype>& dst,
                                                       vector_<src_dtype> src,
                                                       vector_bool mask)

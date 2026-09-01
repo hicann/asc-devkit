@@ -53,6 +53,7 @@
 ### 立即数偏移搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ <dtype>*& dst,
                                                         vector_store_unalign& unalign_reg,
                                                         vector_<dtype> src,
@@ -75,6 +76,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ uint8_t*& dst,
 ### 地址寄存器偏移搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ <dtype>* dst,
                                                         vector_store_unalign& unalign_reg,
                                                         vector_<dtype> src,
@@ -97,6 +99,7 @@ __simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ uint8_t* dst,
 ### 掩码寄存器搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ <dtype>*& dst,
                                                         vector_store_unalign& unalign_reg,
                                                         vector_bool src)

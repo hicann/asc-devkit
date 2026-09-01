@@ -51,6 +51,7 @@
 ### 矢量数据寄存器连续对齐搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_pack(__ubuf__ <dtype>* dst_align32b,
                                                 vector_<dtype> src,
                                                 vector_bool mask)

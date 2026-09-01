@@ -39,10 +39,10 @@ $$
 ## 函数原型
 
 ```c
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_bool asc_le(vector_<dtype> src0, vector_<dtype> src1, vector_bool mask)
 
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_le(vector_bool& dst, vector_<dtype> src0, vector_<dtype> src1, vector_bool mask)
 ```
 

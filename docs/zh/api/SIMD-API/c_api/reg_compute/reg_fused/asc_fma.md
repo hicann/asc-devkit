@@ -35,6 +35,7 @@ $$
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline vector_<dtype> asc_fma(vector_<dtype> src0,
                                               vector_<dtype> src1,
                                               vector_<dtype> src2,

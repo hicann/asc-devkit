@@ -50,16 +50,16 @@ $$
 
 ## 函数原型
 
-### 无进位输出加法（占位符形式）
+### 无进位输出加法
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_add(vector_<dtype>& dst,
                                     vector_<dtype> src0,
                                     vector_<dtype> src1,
                                     vector_bool mask)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_<dtype> asc_add(vector_<dtype> src0,
                                               vector_<dtype> src1,
                                               vector_bool mask)
@@ -84,7 +84,7 @@ __simd_callee__ inline vector_float asc_add(vector_float src0,
                                             vector_bool mask)
 ```
 
-### 带进位输出加法（占位符形式）
+### 带进位输出加法
 
 ```c
 __simd_callee__ inline void asc_add(vector_bool& carry,

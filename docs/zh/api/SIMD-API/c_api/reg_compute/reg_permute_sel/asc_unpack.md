@@ -56,15 +56,15 @@
 ### 矢量数据寄存器解压缩
 
 ```c
-// 解压缩低位，通过函数返回值返回结果。
+// 解压缩低位，通过函数返回值返回结果（占位符形式）。
 __simd_callee__ inline vector_<dtype_dst> asc_unpack_lower(vector_<dtype_src> src)
-// 解压缩高位，通过函数返回值返回结果。
+// 解压缩高位，通过函数返回值返回结果（占位符形式）。
 __simd_callee__ inline vector_<dtype_dst> asc_unpack_upper(vector_<dtype_src> src)
 
-// 解压缩低位，通过引用参数输出结果。
+// 解压缩低位，通过引用参数输出结果（占位符形式）。
 __simd_callee__ inline void asc_unpack_lower(vector_<dtype_dst>& dst,
                                              vector_<dtype_src> src)
-// 解压缩高位，通过引用参数输出结果。
+// 解压缩高位，通过引用参数输出结果（占位符形式）。
 __simd_callee__ inline void asc_unpack_upper(vector_<dtype_dst>& dst,
                                              vector_<dtype_src> src)
 ```

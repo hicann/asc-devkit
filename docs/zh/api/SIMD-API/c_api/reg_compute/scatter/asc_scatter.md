@@ -39,6 +39,7 @@
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_scatter(__ubuf__ <dtype>* dst,
                                         vector_<dtype> src,
                                         vector_<index_dtype> index,

@@ -31,7 +31,7 @@
 ## 函数原型
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_bfloat162float(vector_float& dst,
                                                vector_bfloat16_t src,
                                                vector_bool mask,
@@ -42,7 +42,7 @@ __simd_callee__ inline void asc_bfloat162float(vector_float& dst,
                                                vector_bool mask,
                                                std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_float asc_bfloat162float(vector_bfloat16_t src,
                                                        vector_bool mask,
                                                        std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)

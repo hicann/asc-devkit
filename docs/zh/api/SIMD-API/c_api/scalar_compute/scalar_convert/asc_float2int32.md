@@ -33,6 +33,7 @@
 ## 函数原型
 
 ```c
+// 占位符形式
 __aicore__ inline int32_t asc_float2int32_<round_mode>(float value)
 ```
 

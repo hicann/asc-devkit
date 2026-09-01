@@ -47,11 +47,13 @@ def asc_uint162uint8(dst, src, mask, dst_pos):
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_uint162uint8<sat_mode>(vector_uint8_t& dst,
                                                        vector_uint16_t src,
                                                        vector_bool mask,
                                                        std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 
+// 占位符形式
 __simd_callee__ inline void asc_uint162uint8<sat_mode>(vector_uint8_t& dst,
                                                        vector_uint16_t src,
                                                        vector_bool mask,

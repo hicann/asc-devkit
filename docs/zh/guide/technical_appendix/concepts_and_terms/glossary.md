@@ -466,7 +466,7 @@
 <td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p838817725912"><a name="p838817725912"></a><a name="p838817725912"></a>非对齐寄存器，用作缓冲区来优化UB和RegTensor之间连续不对齐地址访问的开销，适用于连续非对齐搬出场景。</p>
 </td>
 </tr>
-<tr id="row13357140113713"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p17392122195118"><a name="p17392122195118"></a><a name="p17392122195118"></a>UB/UB</p>
+<tr id="row13357140113713"><td class="cellrowborder" valign="top" width="22.978822978822976%" headers="mcps1.2.3.1.1 "><p id="p17392122195118"><a name="p17392122195118"></a><a name="p17392122195118"></a>Unified Buffer/UB</p>
 </td>
 <td class="cellrowborder" valign="top" width="77.02117702117702%" headers="mcps1.2.3.1.2 "><p id="p936692819517"><a name="p936692819517"></a><a name="p936692819517"></a>AI Core内部存储单元，主要用于矢量计算，与逻辑内存AscendC::TPosition::VECIN、AscendC::TPosition::VECOUT、AscendC::TPosition::VECCALC相对应。</p>
 </td>

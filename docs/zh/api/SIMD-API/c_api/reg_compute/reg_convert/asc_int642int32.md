@@ -49,11 +49,13 @@ def asc_int642int32(dst, src, mask, dst_pos):
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_int642int32<sat_mode>(vector_int32_t& dst,
                                                       vector_int64_t src,
                                                       vector_bool mask,
                                                       std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 
+// 占位符形式
 __simd_callee__ inline void asc_int642int32<sat_mode>(vector_int32_t& dst,
                                                       vector_int64_t src,
                                                       vector_bool mask,

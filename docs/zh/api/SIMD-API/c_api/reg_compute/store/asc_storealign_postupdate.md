@@ -44,6 +44,7 @@
 ### 矢量数据寄存器立即数偏移搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_postupdate(__ubuf__ <dtype>*& dst_align32b,
                                                        vector_<dtype> src,
                                                        int32_t offset,
@@ -66,6 +67,7 @@ __simd_callee__ inline void asc_storealign_postupdate(__ubuf__ int8_t*& dst_alig
 ### 矢量数据寄存器非连续对齐搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_postupdate(__ubuf__ <dtype>*& dst_align32b,
                                                        vector_<dtype> src,
                                                        uint16_t block_stride,
@@ -90,6 +92,7 @@ __simd_callee__ inline void asc_storealign_postupdate(__ubuf__ int8_t*& dst_alig
 ### 掩码寄存器立即数偏移搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_postupdate(__ubuf__ <dtype>*& dst,
                                                        vector_bool src,
                                                        int32_t offset)

@@ -45,11 +45,11 @@
 ### 递增模式
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_arange(vector_<dtype>& dst,
                                        <dtype> value)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_<dtype> asc_arange(<dtype> value)
 ```
 

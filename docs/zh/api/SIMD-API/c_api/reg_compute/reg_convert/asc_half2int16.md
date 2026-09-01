@@ -30,15 +30,15 @@
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](rounding_mode.md)。
 
-## 函数原型（占位符形式）
+## 函数原型
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_half2int16<round_mode><sat_mode>(vector_int16_t& dst,
                                                                  vector_half src,
                                                                  vector_bool mask)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_int16_t asc_half2int16<round_mode><sat_mode>(vector_half src,
                                                                            vector_bool mask)
 ```

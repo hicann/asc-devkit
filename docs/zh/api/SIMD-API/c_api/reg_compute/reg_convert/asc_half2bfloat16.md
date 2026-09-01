@@ -28,15 +28,15 @@
 
 根据`mask`将`src`中的每个参与计算的`half`类型元素转换为`bfloat16_t`类型，结果写入`dst`。
 
-## 函数原型（占位符形式）
+## 函数原型
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_half2bfloat16<round_mode>(vector_bfloat16_t& dst,
                                                           vector_half src,
                                                           vector_bool mask)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_bfloat16_t asc_half2bfloat16<round_mode>(vector_half src,
                                                                        vector_bool mask)
 ```

@@ -47,11 +47,13 @@ def asc_uint322int16(dst, src, mask, dst_pos):
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_uint322int16<sat_mode>(vector_int16_t& dst,
                                                        vector_uint32_t src,
                                                        vector_bool mask,
                                                        std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 
+// 占位符形式
 __simd_callee__ inline void asc_uint322int16<sat_mode>(vector_int16_t& dst,
                                                        vector_uint32_t src,
                                                        vector_bool mask,

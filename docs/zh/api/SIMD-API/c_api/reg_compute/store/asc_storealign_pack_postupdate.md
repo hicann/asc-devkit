@@ -40,6 +40,7 @@
 ### 矢量数据寄存器搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ <dtype>*& dst_align32b,
                                                            vector_<dtype> src,
                                                            int32_t offset,
@@ -62,6 +63,7 @@ __simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ uint32_t*& d
 ### 掩码寄存器搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ <dtype>*& dst,
                                                            vector_bool src,
                                                            int32_t offset)

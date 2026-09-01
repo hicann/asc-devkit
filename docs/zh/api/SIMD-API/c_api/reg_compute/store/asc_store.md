@@ -38,6 +38,7 @@
 ### 连续搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_store(__ubuf__ <dtype>* dst,
                                       vector_<dtype> src)
 ```

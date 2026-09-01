@@ -33,6 +33,7 @@
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ <dtype>*& dst_align32b,
                                                           vector_<dtype> src,
                                                           int32_t offset)

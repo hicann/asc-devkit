@@ -42,6 +42,7 @@ def asc_int322float_rn(dst, src, mask):
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_int322float_<round_mode>(vector_float& dst,
                                                          vector_int32_t src,
                                                          vector_bool mask)

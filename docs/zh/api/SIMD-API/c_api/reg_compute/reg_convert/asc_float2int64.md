@@ -48,11 +48,13 @@ def asc_float2int64_rn(dst, src, mask, dst_pos):
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_float2int64_<round_mode><sat_mode>(vector_int64_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask,
                                                                    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 
+// 占位符形式
 __simd_callee__ inline void asc_float2int64_<round_mode><sat_mode>(vector_int64_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask,

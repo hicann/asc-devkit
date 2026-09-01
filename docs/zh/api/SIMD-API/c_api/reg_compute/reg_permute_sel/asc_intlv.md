@@ -42,6 +42,7 @@
 ### 矢量数据寄存器交织模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_intlv(vector_<dtype>& dst0,
                                       vector_<dtype>& dst1,
                                       vector_<dtype> src0,

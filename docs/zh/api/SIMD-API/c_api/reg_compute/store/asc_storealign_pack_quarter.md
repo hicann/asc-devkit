@@ -41,6 +41,7 @@
 ### 对齐搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_pack_quarter(__ubuf__ <dtype>* dst_align32b,
                                                         vector_<dtype> src,
                                                         vector_bool mask)
@@ -61,6 +62,7 @@ __simd_callee__ inline void asc_storealign_pack_quarter(__ubuf__ int32_t* dst_al
 ### 立即数偏移搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_pack_quarter(__ubuf__ <dtype>* dst_align32b,
                                                         vector_<dtype> src,
                                                         int32_t offset,
@@ -83,6 +85,7 @@ __simd_callee__ inline void asc_storealign_pack_quarter(__ubuf__ int32_t* dst_al
 ### 地址寄存器偏移搬出模式
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storealign_pack_quarter(__ubuf__ <dtype>* dst_align32b,
                                                         vector_<dtype> src,
                                                         addr_reg offset,

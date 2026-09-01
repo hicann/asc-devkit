@@ -40,9 +40,10 @@ $$
 
 本接口仅在AIV上生效。
 
-## 函数原型（占位符形式）
+## 函数原型
 
 ```cpp
+// 占位符形式
 __simd_callee__ inline void asc_subc(vector_bool& carry,
                                      vector_<dtype>& dst,
                                      vector_<dtype> src0,

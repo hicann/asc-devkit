@@ -47,6 +47,7 @@
 ### 矢量数据寄存器复制到矢量数据寄存器
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_copy(vector_<dtype>& dst,
                                      vector_<dtype> src,
                                      vector_bool mask)

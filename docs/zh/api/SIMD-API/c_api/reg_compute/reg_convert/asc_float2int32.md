@@ -43,9 +43,10 @@ def asc_float2int32_rn(dst, src, mask):
 
 ## 函数原型
 
-### 模板原型（占位符形式）
+### 模板原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_float2int32_<round_mode><sat_mode>(vector_int32_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask)

@@ -41,6 +41,7 @@
 ## 函数原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_storeunalign(__ubuf__ <dtype>* dst,
                                              vector_store_unalign& unalign_reg,
                                              vector_<dtype> src,
