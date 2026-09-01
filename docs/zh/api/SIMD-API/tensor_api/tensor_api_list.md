@@ -54,10 +54,10 @@
 
 | 数据通路或接口名 | 功能描述 |
 | --- | --- |
-| [Global Memory到Unified Buffer](data_move/gm_ub_data_move/copy_gm_to_ub.md) | 使用`copy`将Global Memory中的数据搬运到Unified Buffer，支持坐标区域搬运。 |
-| [Unified Buffer到Global Memory](data_move/gm_ub_data_move/copy_ub_to_gm.md) | 使用`copy`将Unified Buffer中的数据搬运到Global Memory，支持坐标区域搬运。 |
+| [Global Memory到Unified Buffer](reg_vector_compute/reg_vector_compute_load/copy_gm_to_ub.md) | 使用`copy`将Global Memory中的数据搬运到Unified Buffer，支持坐标区域搬运。 |
+| [Unified Buffer到Global Memory](reg_vector_compute/reg_vector_compute_store/copy_ub_to_gm.md) | 使用`copy`将Unified Buffer中的数据搬运到Global Memory，支持坐标区域搬运。 |
 | [Global Memory到L1 Buffer](matrix_compute/cube_compute_load/copy_gm_to_l1.md) | 使用`copy`将Global Memory中的数据搬运到L1 Buffer，并支持多种矩阵格式转换和Batch搬运。 |
-| [Unified Buffer到L1 Buffer](data_move/l1_ub_data_move/copy_ub_to_l1.md) | 使用`copy`将Unified Buffer中的数据搬运到L1 Buffer。 |
+| [Unified Buffer到L1 Buffer](reg_vector_compute/reg_vector_compute_load/copy_ub_to_l1.md) | 使用`copy`将Unified Buffer中的数据搬运到L1 Buffer。 |
 | [L1 Buffer到Unified Buffer](matrix_compute/cube_compute_load/copy_l1_to_ub.md) | 使用`copy`将L1 Buffer中的数据搬运到Unified Buffer。 |
 | [L1 Buffer到L0A Buffer](matrix_compute/cube_compute_load/copy_l1_to_l0a.md) | 使用`copy`将L1 Buffer中的左矩阵数据搬运到L0A Buffer，支持矩阵格式转换和卷积特征图搬运。 |
 | [L1 Buffer到L0B Buffer](matrix_compute/cube_compute_load/copy_l1_to_l0b.md) | 使用`copy`将L1 Buffer中的右矩阵数据搬运到L0B Buffer，支持矩阵格式转换和Batch搬运。 |
@@ -68,7 +68,7 @@
 | [L0C Buffer到Global Memory](matrix_compute/cube_compute_store/copy_l0c_to_gm.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到Global Memory，支持格式转换和量化输出。 |
 | [L0C Buffer到Unified Buffer](matrix_compute/cube_compute_store/copy_l0c_to_ub.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到Unified Buffer，支持格式转换和量化输出。 |
 | [L0C Buffer到L1 Buffer](matrix_compute/cube_compute_store/copy_l0c_to_l1.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到L1 Buffer。 |
-| [Unified Buffer内部搬运](data_move/ub_ub_data_move/copy_ub_to_ub.md) | 使用`copy`完成Unified Buffer内部Tensor之间的数据搬运。 |
+| [Unified Buffer内部搬运](reg_vector_compute/reg_vector_compute_load/copy_ub_to_ub.md) | 使用`copy`完成Unified Buffer内部Tensor之间的数据搬运。 |
 
 ## 矩阵计算
 
@@ -100,9 +100,25 @@
 
 | 接口或类型名 | 功能描述 |
 | --- | --- |
+| [reg_tensor](reg_vector_compute/reg_tensor/reg_tensor.md) | 封装矢量数据寄存器及其掩码寄存器，用于寄存器数据计算。 |
+| [reg_pair](reg_vector_compute/reg_tensor/reg_pair.md) | 保存两个元素类型相同的`reg_tensor`，用于具有双结果的寄存器接口。 |
+| [all_mask](reg_vector_compute/mask_reg_compute/all_mask.md) | 创建与指定元素类型位宽匹配的全有效Mask寄存器。 |
+| [make_mask](reg_vector_compute/mask_reg_compute/make_mask.md) | 根据Mask模式和数据元素宽度创建Mask寄存器。 |
+| [none_mask](reg_vector_compute/mask_reg_compute/none_mask.md) | 创建与指定元素类型位宽匹配的全无效Mask寄存器。 |
+| [update_mask](reg_vector_compute/mask_reg_compute/update_mask.md) | 根据剩余待处理元素数生成有效位Mask，并更新剩余元素数量。 |
+| [interleave（掩码寄存器交织）](reg_vector_compute/mask_reg_compute/interleave.md) | 将两个Mask寄存器按指定元素宽度交织，返回低半部分和高半部分结果。 |
+| [deinterleave（掩码寄存器解交织）](reg_vector_compute/mask_reg_compute/deinterleave.md) | 将两个Mask寄存器按指定元素宽度解交织，返回偶数组和奇数组结果。 |
+| [load](reg_vector_compute/reg_data_load/load.md) | 将Unified Buffer中的数据搬入`reg_tensor`，支持多种数据排列方式。 |
+| [load_broadcast](reg_vector_compute/reg_data_load/load_broadcast.md) | 从Unified Buffer搬入数据，并按指定模式广播到`reg_tensor`。 |
+| [store](reg_vector_compute/reg_data_store/store.md) | 将`reg_tensor`中的数据搬出到Unified Buffer，支持多种数据排列方式。 |
+| [cast](reg_vector_compute/type_conversion/cast.md) | 转换寄存器数据类型，支持配置数据排布、舍入和饱和模式。 |
+| [trunc](reg_vector_compute/type_conversion/trunc.md) | 将Mask选中的浮点元素向零取整，并保留原数据类型。 |
 | [选择与比较](reg_vector_compute/compare_and_select/compare_and_select.md) | 根据mask的比特位值，从源操作数src0、src1中选择元素，得到目的操作数。 |
+| [select](reg_vector_compute/compare_and_select/select.md) | 根据条件Mask从两个源寄存器中逐元素选择数据。 |
 | [数据填充](reg_vector_compute/data_padding/data_padding.md) | 根据mask将源操作数src的最低位元素或者一个scalar操作数填充到目的操作数。 |
+| [fill](reg_vector_compute/data_padding/fill.md) | 将标量或源寄存器最低位元素广播并填充到目的寄存器。 |
 | [数据重排](reg_vector_compute/data_reorder/data_reorder.md) | 给定源操作数src0和src1，将src0和src1中的元素解交织存入结果操作数。 |
+| [deinterleave（数据寄存器解交织）](reg_vector_compute/data_reorder/deinterleave.md) | 将两个源寄存器中的元素解交织到两个结果寄存器。 |
 
 ## 工具接口
 

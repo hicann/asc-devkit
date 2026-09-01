@@ -2,4 +2,4 @@
 
 # 比较与选择
 
--   **[select](select.md)**
+- **[select](select.md)**

@@ -212,10 +212,10 @@ struct mmad_atom<mmad_traits<MmadOperation, Args...>> : mmad_traits<MmadOperatio
 
 | 功能 | Operation | Traits | Trait | Params |
 | :--- | :--- | :--- | :--- | :--- |
-| [Global Memory到Unified Buffer的数据搬运](data_move/gm_ub_data_move/copy_gm_to_ub.md) | `copy_gm_to_ub` | `copy_traits<copy_gm_to_ub, ...>` | `gm_to_ub_trait` | `gm_to_ub_params` |
-| [Unified Buffer到Global Memory的数据搬运](data_move/gm_ub_data_move/copy_ub_to_gm.md) | `copy_ub_to_gm` | `copy_traits<copy_ub_to_gm, ...>` | `ub_to_gm_trait` | 无 |
+| [Global Memory到Unified Buffer的数据搬运](reg_vector_compute/reg_vector_compute_load/copy_gm_to_ub.md) | `copy_gm_to_ub` | `copy_traits<copy_gm_to_ub, ...>` | `gm_to_ub_trait` | `gm_to_ub_params` |
+| [Unified Buffer到Global Memory的数据搬运](reg_vector_compute/reg_vector_compute_store/copy_ub_to_gm.md) | `copy_ub_to_gm` | `copy_traits<copy_ub_to_gm, ...>` | `ub_to_gm_trait` | 无 |
 | [Global Memory到L1 Buffer的数据搬运](matrix_compute/cube_compute_load/copy_gm_to_l1.md) | `copy_gm_to_l1` | `copy_traits<copy_gm_to_l1, ...>` | `gm_to_l1_trait` | 无 |
-| [Unified Buffer到L1 Buffer的数据搬运](data_move/l1_ub_data_move/copy_ub_to_l1.md) | `copy_ub_to_l1` | `copy_traits<copy_ub_to_l1, ...>` | `ub_to_l1_trait` | 无 |
+| [Unified Buffer到L1 Buffer的数据搬运](reg_vector_compute/reg_vector_compute_load/copy_ub_to_l1.md) | `copy_ub_to_l1` | `copy_traits<copy_ub_to_l1, ...>` | `ub_to_l1_trait` | 无 |
 | [L1 Buffer到Unified Buffer的数据搬运](matrix_compute/cube_compute_load/copy_l1_to_ub.md) | `copy_l1_to_ub` | `copy_traits<copy_l1_to_ub, ...>` | `l1_to_ub_trait` | 无 |
 | [L1 Buffer到L0A Buffer的数据搬运](matrix_compute/cube_compute_load/copy_l1_to_l0a.md) | `copy_l1_to_l0a` | `copy_traits<copy_l1_to_l0a, ...>` | `l1_to_l0a_trait` | `img2col_params<PadType>`，仅Img2Col场景使用 |
 | [L1 Buffer到L0B Buffer的数据搬运](matrix_compute/cube_compute_load/copy_l1_to_l0b.md) | `copy_l1_to_l0b` | `copy_traits<copy_l1_to_l0b, ...>` | `l1_to_l0b_trait` | 无 |
@@ -226,5 +226,5 @@ struct mmad_atom<mmad_traits<MmadOperation, Args...>> : mmad_traits<MmadOperatio
 | [L0C Buffer到Global Memory的数据搬运](matrix_compute/cube_compute_store/copy_l0c_to_gm.md) | `copy_l0c_to_gm` | `copy_traits<copy_l0c_to_gm, ...>` | `l0c_to_gm_trait` | `l0c_to_gm_params` |
 | [L0C Buffer到Unified Buffer的数据搬运](matrix_compute/cube_compute_store/copy_l0c_to_ub.md) | `copy_l0c_to_ub` | `copy_traits<copy_l0c_to_ub, ...>` | `l0c_to_ub_trait` | `l0c_to_ub_params` |
 | [L0C Buffer到L1 Buffer的数据搬运](matrix_compute/cube_compute_store/copy_l0c_to_l1.md) | `copy_l0c_to_l1` | `copy_traits<copy_l0c_to_l1, ...>` | `l0c_to_l1_trait` | `l0c_to_l1_params` |
-| [Unified Buffer到Unified Buffer的数据搬运](data_move/ub_ub_data_move/copy_ub_to_ub.md) | `copy_ub_to_ub` | `copy_traits<copy_ub_to_ub, ...>` | `ub_to_ub_trait` | 无 |
+| [Unified Buffer到Unified Buffer的数据搬运](reg_vector_compute/reg_vector_compute_load/copy_ub_to_ub.md) | `copy_ub_to_ub` | `copy_traits<copy_ub_to_ub, ...>` | `ub_to_ub_trait` | 无 |
 | [矩阵乘计算](matrix_compute/mmad_compute/mmad.md) | `mmad_operation` | `mmad_traits<mmad_operation, ...>` | `mmad_trait` | `mmad_params` |

@@ -30,8 +30,8 @@
 
 支持scalar和tensor两种模式：
 
--   scalar模式：将value广播到寄存器，并保存在目的寄存器中（如果有mask，则保存在目的寄存器中被mask筛选的位置）。
--   tensor模式：将src的最低位元素广播到寄存器，并保存在目的寄存器中被mask筛选的位置。
+- scalar模式：将value广播到寄存器，并保存在目的寄存器中（如果有mask，则保存在目的寄存器中被mask筛选的位置）。
+- tensor模式：将src的最低位元素广播到寄存器，并保存在目的寄存器中被mask筛选的位置。
 
 ## 函数原型
 
@@ -68,7 +68,6 @@
 ## 数据类型
 
 支持的数据类型为：int8_t、uint8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
-
 
 ## 返回值说明
 
