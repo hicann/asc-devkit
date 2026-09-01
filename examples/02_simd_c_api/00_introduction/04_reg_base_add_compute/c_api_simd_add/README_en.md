@@ -50,7 +50,7 @@ This sample implements the Add operator using the C_API interface. It is based o
 
     Step 1: Move the inputs x and y from Global Memory to Local Memory, storing them in xLocal and yLocal respectively.
 
-    Step 2: Load data from Unified Buffer to registers reg_src0 and reg_src1, use `asc_add` to perform addition on the register data, store the result in register reg_dst, and move the result back to zLocal after computation completes.
+    Step 2: Load data from Unified Buffer to registers src0 and src1, use `asc_add` to perform addition on the register data, store the result in register dst, and move the result back to zLocal after computation completes.
 
     Step 3: Move the output data from zLocal to the output z in Global Memory.
 
