@@ -23,6 +23,8 @@
 #ifndef IMPL_SIMT_API_COOPERATIVE_GROUPS_IMPL_H
 #define IMPL_SIMT_API_COOPERATIVE_GROUPS_IMPL_H
 
+#include <type_traits>
+
 namespace cooperative_groups {
 
 template <typename T, typename... Args>
