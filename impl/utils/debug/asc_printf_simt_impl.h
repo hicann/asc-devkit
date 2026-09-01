@@ -136,9 +136,9 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void enable_printf()
 template <uint32_t count = 1>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_nop()
 {
-#pragma unroll
+#pragma unroll 8
     for (uint32_t i = 0; i < count; ++i) {
-        asm volatile("NOP wait:0b0000000 stall:15" ::); // skip 15 cycle
+        __nop();
     }
 }
 
@@ -208,7 +208,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline __simt_gm__ RingBufWriteInfo* get_ring_buf
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void ring_buffer_wait(__simt_gm__ RingBufReadInfo* read_info, uint64_t end_offset)
 {
-    constexpr uint32_t nop_count = 3413; // max warp 64 * 800 / 15 = 3413
+    constexpr uint32_t nop_count = 2048; // reduce the pressure of L1 cache
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
     volatile uint64_t tmp =
         __ldg<LD_L2CacheType::L2_CACHE_HINT_NORMAL_FV, L1CacheType::NON_CACHEABLE>(&read_info->bufOffset);
