@@ -590,5 +590,7 @@
 | [SetCtrlSpr(ISASI)](special_register_access/SetCtrlSpr_ISASI.md) | 对CTRL寄存器（控制寄存器）的特定比特位进行设置。 |
 | [GetCtrlSpr(ISASI)](special_register_access/GetCtrlSpr_ISASI.md) | 读取CTRL寄存器（控制寄存器）特定比特位上的值。 |
 | [ResetCtrlSpr(ISASI)](special_register_access/ResetCtrlSpr_ISASI.md) | 重置CTRL寄存器（控制寄存器）的特定比特位。 |
-| [GetSaturationFlag(ISASI)](special_register_access/GetSaturationFlag_ISASI.md) | 获取计算/精度转换时饱和模式的开启状态。 |
-| [SetSaturationFlag(ISASI)](special_register_access/SetSaturationFlag_ISASI.md) | 设置饱和开关的标志位，以控制计算/精度转换时饱和模式的开启与关闭。 |
+| [GetSaturationFlag(ISASI)](special_register_access/GetSaturationFlag_ISASI.md) | 获取计算或精度转换时指定饱和模式的开启状态。 |
+| [SetSaturationFlag(ISASI)](special_register_access/SetSaturationFlag_ISASI.md) | 设置计算或精度转换时指定饱和模式的开启状态。 |
+| [GetSaturationStrategy](special_register_access/GetSaturationStrategy.md) | 获取当前使用的饱和模式配置策略。 |
+| [SetSaturationStrategy](special_register_access/SetSaturationStrategy.md) | 设置饱和模式配置策略，选择使用具体计算接口自身的饱和配置，或使用SetSaturationFlag设置的饱和模式。 |

@@ -759,6 +759,8 @@
             -   [ResetCtrlSpr\(ISASI\)](SIMD-API/basic_api/special_register_access/ResetCtrlSpr_ISASI.md)
             -   [GetSaturationFlag\(ISASI\)](SIMD-API/basic_api/special_register_access/GetSaturationFlag_ISASI.md)
             -   [SetSaturationFlag\(ISASI\)](SIMD-API/basic_api/special_register_access/SetSaturationFlag_ISASI.md)
+            -   [GetSaturationStrategy](SIMD-API/basic_api/special_register_access/GetSaturationStrategy.md)
+            -   [SetSaturationStrategy](SIMD-API/basic_api/special_register_access/SetSaturationStrategy.md)
 
     -   [C API](SIMD-API/c_api/README.md)
         -   [API列表](SIMD-API/c_api/c_api.md)

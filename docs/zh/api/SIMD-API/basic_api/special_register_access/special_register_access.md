@@ -13,3 +13,7 @@
 - **[GetSaturationFlag(ISASI)](GetSaturationFlag_ISASI.md)**
 
 - **[SetSaturationFlag(ISASI)](SetSaturationFlag_ISASI.md)**
+
+- **[GetSaturationStrategy](GetSaturationStrategy.md)**
+
+- **[SetSaturationStrategy](SetSaturationStrategy.md)**
