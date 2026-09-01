@@ -855,6 +855,7 @@
             -   [asc_set_l12l0_padding_val](SIMD-API/c_api/cube_datamove/asc_set_l12l0_padding_val.md)
             -   [asc_set_l13d_fmatrix](SIMD-API/c_api/cube_datamove/asc_set_l13d_fmatrix.md)
             -   [asc_set_l13d_fmatrix_b](SIMD-API/c_api/cube_datamove/asc_set_l13d_fmatrix_b.md)
+            -   [asc_set_l12l0a_3d_padding](SIMD-API/c_api/cube_datamove/asc_set_l12l0a_3d_padding.md)
             -   [asc_set_l13d_padding](SIMD-API/c_api/cube_datamove/asc_set_l13d_padding.md)
             -   [asc_set_l13d_rpt](SIMD-API/c_api/cube_datamove/asc_set_l13d_rpt.md)
             -   [asc_set_l13d_size](SIMD-API/c_api/cube_datamove/asc_set_l13d_size.md)

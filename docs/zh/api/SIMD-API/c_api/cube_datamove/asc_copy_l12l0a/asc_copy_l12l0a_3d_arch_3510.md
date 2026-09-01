@@ -34,7 +34,7 @@
 
 ![](../../../../figures/load3d_l1tol0a_demo.png "copyl12l0a_3d功能示意图")
 
-3D img2col搬运模式下，Feature Map的属性描述（fm_w、fm_h及四周padding）需通过[asc_set_l13d_fmatrix](../asc_set_l13d_fmatrix.md)预先配置，填充值与填充模式需通过[asc_set_l13d_padding](../asc_set_l13d_padding.md)预先配置；如需使用repeat模式，repeat方向、次数与步长需通过[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)预先配置。
+3D img2col搬运模式下，Feature Map的属性描述（fm_w、fm_h及四周padding）需通过[asc_set_l13d_fmatrix](../asc_set_l13d_fmatrix.md)预先配置，填充值与填充模式需通过[asc_set_l12l0a_3d_padding](../asc_set_l12l0a_3d_padding.md)预先配置；如需使用repeat模式，repeat方向、次数与步长需通过[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)预先配置。
 
 本接口仅在AIC上执行有效。
 
@@ -127,7 +127,7 @@ __aicore__ inline void asc_copy_l12l0a(__ca__ half* dst,
 | `filter_size_w` | 输入 | 是否在`filter_w`的基础上将卷积核width增加256个元素。<br>&nbsp;&nbsp;&bull; `true`：增加；<br>&nbsp;&nbsp;&bull; `false`：不增加。 |
 | `filter_size_h` | 输入 | 是否在`filter_h`的基础上将卷积核height增加256个元素。<br>&nbsp;&nbsp;&bull; `true`：增加；<br>&nbsp;&nbsp;&bull; `false`：不增加。 |
 | `transpose` | 输入 | 是否启用转置功能，对整个目标矩阵进行转置。<br>&nbsp;&nbsp;&bull; `false`：不开启转置；<br>&nbsp;&nbsp;&bull; `true`：开启转置。 |
-| `f_matrix_ctrl` | 输入 | 3D数据搬运Feature Map的属性描述寄存器组选择位，一般设置为`false`。<br>&nbsp;&nbsp;&bull; `true`：从右矩阵中获取Feature Map的属性描述，配合[asc_set_l13d_fmatrix_b](../asc_set_l13d_fmatrix_b.md)、[asc_set_l12l0b_3d_padding](../asc_set_l12l0_padding_val.md)、`asc_set_l13d_rpt_b`使用；<br>&nbsp;&nbsp;&bull; `false`：从左矩阵中获取FeatureMap的属性描述，配合[asc_set_l13d_fmatrix](../asc_set_l13d_fmatrix.md)、[asc_set_l12l0a_3d_padding](../asc_set_l13d_padding.md)、[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)使用。 |
+| `f_matrix_ctrl` | 输入 | 3D数据搬运Feature Map的属性描述寄存器组选择位，一般设置为`false`。<br>&nbsp;&nbsp;&bull; `true`：从右矩阵中获取Feature Map的属性描述，配合[asc_set_l13d_fmatrix_b](../asc_set_l13d_fmatrix_b.md)、[asc_set_l12l0b_3d_padding](../asc_set_l12l0_padding_val.md)、`asc_set_l13d_rpt_b`使用；<br>&nbsp;&nbsp;&bull; `false`：从左矩阵中获取FeatureMap的属性描述，配合[asc_set_l13d_fmatrix](../asc_set_l13d_fmatrix.md)、[asc_set_l12l0a_3d_padding](../asc_set_l12l0a_3d_padding.md)、[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)使用。 |
 | `channel_size` | 输入 | 源操作数的通道数N。<br>对于b32类型，`channel_size`除8的余数应当为0或4，最大值可取为65532。<br>对于b16类型，`channel_size`除16的余数应当为0，4或8，最大值可取为65528。<br>对于b8类型，`channel_size`除32的余数应当为0，4，8或16，最大值可取为65520。 |
 
 ## 返回值说明
@@ -152,7 +152,7 @@ PIPE_MTE1
 ### 3D img2col搬运模式约束
 
 - 此接口必须先调用[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)接口配置dst_stride参数，dst_stride为输出矩阵在height维度对齐后的大小。
-- 此接口需要先调用配套的寄存器设置接口[asc_set_l13d_fmatrix](../asc_set_l13d_fmatrix.md)与[asc_set_l13d_padding](../asc_set_l13d_padding.md)预先配置feature map描述、填充值与填充模式，否则会导致搬运接口不符合预期。如需使用repeat模式，须先调用[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)接口配置repeat方向、次数与步长。
+- 此接口需要先调用配套的寄存器设置接口[asc_set_l13d_fmatrix](../asc_set_l13d_fmatrix.md)与[asc_set_l12l0a_3d_padding](../asc_set_l12l0a_3d_padding.md)预先配置feature map描述、填充值与填充模式，否则会导致搬运接口不符合预期。如需使用repeat模式，须先调用[asc_set_l13d_rpt](../asc_set_l13d_rpt.md)接口配置repeat方向、次数与步长。
 - `k_extension`、`m_extension`或`channel_size`为`0`，`filter_w`为`0`且`filter_size_w`为`false`，或`filter_h`为`0`且`filter_size_h`为`false`时不执行搬运，本接口被视为NOP（空操作）。
 - 对于b32类型，`channel_size`除8的余数应当为0或4，最大值可取为65532。对于b16类型，`channel_size`除16的余数应当为0，4或8，最大值可取为65528。对于b8类型，`channel_size`除32的余数应当为0，4，8或16，最大值可取为65520。否则会导致搬运结果不符合预期。
 - `stride_w`与`stride_h`不可为0，传入0硬件按1处理。
@@ -329,7 +329,7 @@ __global__ __cube__ void Conv2dForwardCapi(
     fmatrix_config.padding_top_size = PAD_TOP;
     fmatrix_config.padding_bottom_size = PAD_BOTTOM;
     asc_set_l13d_fmatrix(fmatrix_config);
-    asc_set_l13d_padding(static_cast<half>(PAD_VALUE));
+    asc_set_l12l0a_3d_padding(static_cast<half>(PAD_VALUE));
     constexpr uint16_t repeat_stride = 0;
     constexpr uint8_t repeat_time = 1;
     constexpr uint8_t repeat_mode = 0;

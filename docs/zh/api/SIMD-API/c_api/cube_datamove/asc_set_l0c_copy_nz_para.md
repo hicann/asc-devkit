@@ -46,7 +46,7 @@ __aicore__ inline void asc_set_l0c_copy_nz_para(uint16_t matrix_num,
 | :----- | :------- | :------- |
 | matrix_num | 输入 | ND/DN矩阵的数量，取值范围为[1, 65535]。 |
 | src_nz_matrix_stride | 输入 | 源相邻Nz矩阵之间的偏移（相邻Nz矩阵头与头的间隔）。当nd_num配置为1时，src_nd_stride不生效，配置为0即可。取值范围为[0, 65535]，单位为64字节（`16 × sizeof(dtype)`，`dtype`为L0C Buffer上数据的类型，支持`int32_t`和`float`）。 |
-| dst_matrix_stride | 输入 | 目的相邻ND矩阵之间的偏移（相邻ND矩阵头与头的间隔）。当nd_num配置为1时，dst_nd_stride不生效，配置为0即可。取值范围为[0, 2^32-1]，单位为元素。 |
+| dst_matrix_stride | 输入 | 目的相邻ND/DN矩阵之间的偏移（相邻ND/DN矩阵头与头的间隔）。当matrix_num配置为1时，dst_matrix_stride不生效，配置为0即可。取值范围为[0, 2^32-1]，单位为元素。 |
 
 ## 返回值说明
 

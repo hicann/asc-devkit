@@ -120,7 +120,7 @@ __global__ __cube__ void asc_set_l0c2gm_channel_para_kernel(
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
-    asc_set_l0c_copy_channel_para(1);
+    asc_set_l0c2gm_channel_para(1ULL << 48);
     asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(output, c_l0, N, M, M, M, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, false,
