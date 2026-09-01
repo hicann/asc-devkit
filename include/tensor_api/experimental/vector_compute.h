@@ -31,6 +31,9 @@
 #include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 #include "tensor_api/experimental/arch/vector/reg_data_load.h"
 #include "tensor_api/experimental/arch/vector/reg_data_store.h"
+#include "tensor_api/experimental/arch/vector/data_reorder.h"
+#include "tensor_api/experimental/arch/vector/data_padding.h"
+#include "tensor_api/experimental/arch/vector/compare_and_select.h"
 
 #endif // INCLUDE_TENSOR_API_EXPERIMENTAL_VECTOR_COMPUTE_H
 

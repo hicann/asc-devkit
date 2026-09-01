@@ -28,6 +28,7 @@ Tensor API提供基于Tensor的数据搬运、矩阵计算和矢量计算能力�
 - [Algorithm](algorithm.md)：介绍数据搬运和矩阵计算中Operation、Trait与Atom的作用、组合关系及使用方式。
 - [矩阵计算](matrix_compute/matrix_compute.md)：介绍矩阵数据搬入、矩阵乘加、矩阵结果搬出和相关关键特性。
 - [数据搬运](data_move/data_move.md)：介绍多种数据搬运通路，包括Global Memory与Unified Buffer之间的双向搬运，Global Memory到L1 Buffer的搬运等。
+- [Reg矢量计算](reg_vector_compute/reg_vector_compute.md)：介绍reg矢量计算相关的接口。
 - [工具接口](utils/tool_functions.md)：介绍编译期整数、维度保留标记和Layout Pattern查询接口，以及Layout、Tensor、Coord、Shape和量化参数的类型判断等工具接口的使用方式。
 - [废弃接口](deprecated_interface/deprecated_interface.md)：介绍用于兼容的大驼峰风格接口。
 

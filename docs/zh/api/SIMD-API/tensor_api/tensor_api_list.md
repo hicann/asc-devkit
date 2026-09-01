@@ -94,9 +94,19 @@
 | [Batch搬运](matrix_compute/cube_store_key_features/batch_copy.md) | 介绍矩阵结果的多Batch搬出能力。 |
 | [L0C到Unified Buffer双目标模式](matrix_compute/cube_store_key_features/l0c_to_ub_dual_dst.md) | 介绍L0C到Unified Buffer的双目标搬出模式。 |
 
+## 矢量计算接口
+
+**表6**  矢量计算接口列表
+
+| 接口或类型名 | 功能描述 |
+| --- | --- |
+| [选择与比较](reg_vector_compute/compare_and_select/compare_and_select.md) | 根据mask的比特位值，从源操作数src0、src1中选择元素，得到目的操作数。 |
+| [数据填充](reg_vector_compute/data_padding/data_padding.md) | 根据mask将源操作数src的最低位元素或者一个scalar操作数填充到目的操作数。 |
+| [数据重排](reg_vector_compute/data_reorder/data_reorder.md) | 给定源操作数src0和src1，将src0和src1中的元素解交织存入结果操作数。 |
+
 ## 工具接口
 
-**表6**  工具接口列表
+**表7**  工具接口列表
 
 | 接口或类型名 | 功能描述 |
 | --- | --- |
@@ -107,7 +117,7 @@
 
 ## 废弃接口
 
-**表7**  废弃接口列表
+**表8**  废弃接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |
