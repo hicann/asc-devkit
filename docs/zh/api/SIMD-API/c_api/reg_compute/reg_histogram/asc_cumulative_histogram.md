@@ -81,17 +81,17 @@ __simd_callee__ inline void asc_cumulative_histogram_bin1(vector_uint16_t& dst,
 
 - 本接口在非AIV上调用直接返回。
 - 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
-- mask需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致参与统计的元素位置错误。
+- `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致参与统计的元素位置错误。
 
 ### 计算约束
 
-- mask用于筛选源操作数，不影响dst中未被累加位置的原有数据和写入行为。掩码位为0时，源操作数src对应位置的数值将被忽略，dst对应位置数值为忽略该位置src后统计得到的值。
-- dst中的统计结果在原有数据基础上累加。首次统计前需初始化dst；多次调用本接口时，后一次统计结果累加到前一次统计结果中。
-- dst的数据类型为`uint16_t`，单个统计结果的最大值为65535。用户需保证累加后的统计结果不超过该范围，否则会发生溢出。
+- `mask`用于筛选源操作数，不影响`dst`中未被累加位置的原有数据和写入行为。掩码位为0时，源操作数`src`对应位置的数值将被忽略，`dst`对应位置数值为忽略该位置`src`后统计得到的值。
+- `dst`中的统计结果在原有数据基础上累加。首次统计前需初始化`dst`；多次调用本接口时，后一次统计结果累加到前一次统计结果中。
+- `dst`的数据类型为`uint16_t`，单个统计结果的最大值为65535。用户需保证累加后的统计结果不超过该范围，否则会发生溢出。
 
 ## 调用示例
 
-将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
@@ -108,6 +108,7 @@ bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 
 #include "c_api/asc_simd.h"
 #include "acl/acl.h"
+
 namespace {
 template <typename T>
 void print_data(const char* label, const std::vector<T>& values)
@@ -124,19 +125,6 @@ bool compare_data(const std::vector<T>& actual, const std::vector<T>& expected, 
 {
     if (actual.size() != expected.size()) return false;
     for (size_t i = 0; i < actual.size(); ++i) {
-        if (actual[i] == expected[i]) continue;
-        const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
-        if (diff > tolerance || diff < -tolerance) return false;
-    }
-    return true;
-}
-
-template <typename T>
-bool compare_range_data(const std::vector<T>& actual, const std::vector<T>& expected,
-    size_t begin, size_t count, double tolerance = 0.0)
-{
-    if (begin + count > actual.size() || begin + count > expected.size()) return false;
-    for (size_t i = begin; i < begin + count; ++i) {
         if (actual[i] == expected[i]) continue;
         const double diff = static_cast<double>(actual[i]) - static_cast<double>(expected[i]);
         if (diff > tolerance || diff < -tolerance) return false;

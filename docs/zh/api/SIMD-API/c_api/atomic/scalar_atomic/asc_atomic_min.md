@@ -74,9 +74,9 @@ __aicore__ inline int32_t asc_atomic_min(__gm__ int32_t* address,
 - 对同一`address`的并发调用以原子方式完成“读取、比较、写回”，不会丢失更新；最终写入结果为各参与值中的最小值。
 - 本接口运行在标量流水（`PIPE_S`）上，同一标量流水内的数据依赖由指令执行顺序保证。若本接口与`PIPE_MTE2`或`PIPE_MTE3`上的数据搬运指令访问同一GM地址，且执行顺序影响结果，编译器无法自动完成跨流水同步，调用方需按实际依赖插入[asc_sync_pipe](../../sync/asc_sync_pipe.md)，或配合使用[asc_sync_notify](../../sync/asc_sync_notify.md)与[asc_sync_wait](../../sync/asc_sync_wait.md)保证执行顺序。
 - 本接口访问GM时绕过DCache，不维护缓存一致性。若其他核或其他通路通过缓存访问同一GM地址，调用方需使用[asc_dcci](../../cache_ctrl/asc_dcci.md)清理或失效对应Cache Line，并使用[asc_sync_data_barrier](../../sync/asc_sync_data_barrier.md)保证相关访存操作的执行顺序和数据可见性。详情可参考[Scalar原子操作与DCache一致性](../../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md#scalar原子操作与dcache一致性)。
-- float类型下接口的性能与接口返回值是否被使用有关，具体情况如下：
-    - 当使用接口返回值时，接口采用软仿实现，float类型下接口的性能低于其它数据类型。
-    - 当不使用接口返回值时，float类型下接口的性能与其它数据类型一致。
+- `float`类型下接口的性能与接口返回值是否被使用有关，具体情况如下：
+    - 当使用接口返回值时，接口采用软仿实现，`float`类型下接口的性能低于其它数据类型。
+    - 当不使用接口返回值时，`float`类型下接口的性能与其它数据类型一致。
 
     示例代码如下：
 
