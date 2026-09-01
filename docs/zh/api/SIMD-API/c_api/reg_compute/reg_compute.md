@@ -1,7 +1,8 @@
 # Reg矢量计算
 
 - **[Reg数据搬入](load/load.md)**
-- **[Reg聚合搬入](gather/gather.md)**
+- **[Reg聚合搬入](ub_gather/gather.md)**
+- **[Reg聚合](reg_gather/gather.md)**
 - **[Reg数据搬出](store/store.md)**
 - **[Reg离散搬出](scatter/scatter.md)**
 - **[Reg间搬运](reg_copy/reg_copy.md)**

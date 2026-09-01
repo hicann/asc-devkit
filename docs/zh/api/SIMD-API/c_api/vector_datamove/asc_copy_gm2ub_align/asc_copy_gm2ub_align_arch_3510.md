@@ -165,9 +165,11 @@ PIPE_MTE2
 ### 连续数据搬运约束
 
 - 若`size`非32字节对齐，搬运数据会补齐至32字节对齐，目的UB需要预留补齐后的空间。手动填充时，调用`asc_set_copy_pad_val`配置填充值；自动填充时，由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
+- `size`需满足dtype字节对齐：dtype为`int16_t`、`uint16_t`、`half`、`bfloat16_t`时需为2的倍数，dtype为`int32_t`、`uint32_t`、`float`时需为4的倍数。
 
 ### 高维切分数据搬运约束
 
+- `len_burst`需满足dtype字节对齐：dtype为`int16_t`、`uint16_t`、`half`、`bfloat16_t`时需为2的倍数，dtype为`int32_t`、`uint32_t`、`float`时需为4的倍数。
 - 当`left_padding_num`或`right_padding_num`非0时，`enable_constant_pad`不生效，必须在搬运前调用`asc_set_copy_pad_val`配置填充值。`left_padding_num`、`right_padding_num`对应的填充数据大小均不能超过32字节。
 - 当`dst_stride`不等于`burst_len`时，`dst_stride`要求32字节对齐。
 

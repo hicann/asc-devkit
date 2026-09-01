@@ -30,7 +30,7 @@
 
 ![](../../figures/asc_gather_datablock.png)
 
-其中，index中仅前8个元素有效，每个元素对应一个DataBlock。例如，第一个元素为96（3 * 32），表示选取DataBlock3写入dstReg中对应的位置。
+其中，index中仅前8个元素有效，每个元素对应一个DataBlock。例如，第一个元素为96（3 * 32），表示选取DataBlock3写入dst中对应的位置。
 
 ## 函数原型
 
@@ -147,7 +147,7 @@ __simd_callee__ inline vector_int8_t asc_gather_datablock(__ubuf__ int8_t* src,
 | dst | 输出 | 目的操作数（矢量数据寄存器），仅适用于通过引用参数输出结果的函数原型。 |
 | src | 输入 | 源操作数（矢量）的起始地址。 |
 | index | 输入 | 源操作数（矢量数据寄存器），表示dst中每个DataBlock在UB中相对于src的索引位置。索引位置要大于等于0且32B对齐，索引可以存在相同的值。**index仅前8个数有效，单位是字节。** |
-| mask | 输入 | 源操作数掩码（掩码寄存器）。**DataBlock搬运的有效指示，按b32格式解释。一个DataBlock对应4bit，仅每4bit中的最低位有效。由于index仅前8个元素有效，因此mask仅使用前8个b32元素对应的bit 0、4、8、12、16、20、24、28，分别控制dstReg中DataBlock0至DataBlock7是否更新，其余bit无效。** |
+| mask | 输入 | 源操作数掩码（掩码寄存器）。**DataBlock搬运的有效指示，按b32格式解释。一个DataBlock对应4bit，仅每4bit中的最低位有效。由于index仅前8个元素有效，因此mask仅使用前8个b32元素对应的bit 0、4、8、12、16、20、24、28，分别控制dst中DataBlock0至DataBlock7是否更新，其余bit无效。** |
 
 ### 无掩码控制
 
@@ -215,12 +215,13 @@ constexpr uint32_t INDEX_WORDS = 64;
 __simd_vf__ inline void gather_datablock_vf(
     __ubuf__ uint8_t* output, __ubuf__ uint8_t* data, __ubuf__ uint32_t* index)
 {
-    vector_bool mask = asc_create_mask_b32(PAT_ALL);
+    vector_bool gather_mask = asc_create_mask_b32(PAT_ALL);
     vector_uint32_t index_reg;
     asc_loadalign(index_reg, index);
     vector_uint8_t dst;
-    asc_gather_datablock(dst, data, index_reg, mask);
-    asc_storealign(output, dst, mask);
+    asc_gather_datablock(dst, data, index_reg, gather_mask);
+    vector_bool store_mask = asc_create_mask_b8(PAT_ALL);
+    asc_storealign(output, dst, store_mask);
 }
 
 __global__ __vector__ void asc_gather_datablock_kernel(

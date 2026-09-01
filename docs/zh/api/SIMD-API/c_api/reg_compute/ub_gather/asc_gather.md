@@ -28,21 +28,13 @@
 
 根据索引位置`index`将源操作数`src`按元素收集到目的操作数`dst`中。
 
-**[UB源收集模式](#ub源收集模式占位符形式)**：源操作数为UB地址，目的操作数为矢量数据寄存器。按`index`矢量寄存器中保存的逐元素索引，从UB中读取对应位置的元素写入`dst`对应位置，受`mask`掩码控制；`mask`比特位为0的位置对应`dst`位置写0。
+**UB源收集模式**：源操作数为UB地址，目的操作数为矢量数据寄存器。按`index`矢量寄存器中保存的逐元素索引，从UB中读取对应位置的元素写入`dst`对应位置，受`mask`掩码控制；`mask`比特位为0的位置对应`dst`位置写0。
 
 **图 1**  UB源收集模式
 
 ![UB源收集模式](../../figures/asc_gather_ub.png)
 
-**[寄存器源收集模式](#寄存器源收集模式)**：源操作数与目的操作数均为矢量数据寄存器。按 `index` 矢量寄存器中保存的逐元素索引，从`src`矢量数据寄存器中选择对应位置的元素写入`dst`对应位置，不使用掩码。
-
-**图 2**  寄存器源收集模式
-
-![寄存器源收集模式](../../figures/asc_gather_vec.png)
-
-## 函数原型
-
-### UB源收集模式（占位符形式）
+## 函数原型（占位符形式）
 
 ```c
 // 通过引用参数输出结果
@@ -57,6 +49,7 @@ __simd_callee__ inline vector_<dst_dtype> asc_gather(__ubuf__ <src_dtype>* src,
                                                      vector_bool mask)
 ```
 
+### 数据类型组合列表
 **表1** UB源收集模式支持数据类型组合列表
 
 | dst_dtype | src_dtype | index_dtype |
@@ -83,7 +76,7 @@ __simd_callee__ inline vector_<dst_dtype> asc_gather(__ubuf__ <src_dtype>* src,
 
 > 说明：`int16_t/int8_t`、`uint16_t/uint8_t` 两组位宽扩展组合仅支持“通过引用参数输出结果”形式，“通过函数返回值返回结果”形式不支持。
 
-#### 函数原型典型示例
+### 函数原型典型示例
 
 ```c
 // 示例：dst_dtype/src_dtype/index_dtype数据类型分别为: int16_t/int16_t/uint16_t
@@ -99,56 +92,9 @@ __simd_callee__ inline vector_int16_t asc_gather(__ubuf__ int16_t* src,
                                                  vector_bool mask)
 ```
 
-### 寄存器源收集模式（占位符形式）
-
-```c
-// 通过引用参数输出结果
-__simd_callee__ inline void asc_gather(vector_<dtype>& dst,
-                                       vector_<dtype> src,
-                                       vector_<index_dtype> index)
-
-// 通过函数返回值返回结果
-__simd_callee__ inline vector_<dtype> asc_gather(vector_<dtype> src,
-                                                 vector_<index_dtype> index)
-```
-
-**表2** 寄存器源收集模式支持数据类型列表
-
-| dtype | index_dtype |
-| :---------- | :-------------- |
-| int8_t | uint8_t |
-| uint8_t | uint8_t |
-| hifloat8_t | uint8_t |
-| fp8_e8m0_t | uint8_t |
-| fp8_e5m2_t | uint8_t |
-| fp8_e4m3fn_t | uint8_t |
-| int16_t | uint16_t |
-| uint16_t | uint16_t |
-| half | uint16_t |
-| bfloat16_t | uint16_t |
-| int32_t | uint32_t |
-| uint32_t | uint32_t |
-| float | uint32_t |
-
-#### 函数原型典型示例
-
-```c
-// 示例：dtype/index_dtype数据类型分别为: int16_t/uint16_t
-// 通过引用参数输出结果
-__simd_callee__ inline void asc_gather(vector_int16_t& dst,
-                                       vector_int16_t src,
-                                       vector_uint16_t index)
-
-// 通过函数返回值返回结果
-__simd_callee__ inline vector_int16_t asc_gather(vector_int16_t src,
-                                                 vector_uint16_t index)
-```
-
 ## 参数说明
 
-### UB源收集模式
-
-**表3** 参数说明
+**表2** 参数说明
 
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
@@ -157,62 +103,12 @@ __simd_callee__ inline vector_int16_t asc_gather(vector_int16_t src,
 | index | 输入 | 数据索引（矢量数据寄存器）。dst中每个元素在UB中相对于src的索引位置，单位是元素个数。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器）。mask用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-### 寄存器源收集模式
-
-**表4** 参数说明
-
-| 参数名  | 输入/输出 | 描述 |
-| :----- | :------- | :------- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
-| src | 输入 | 源操作数（矢量数据寄存器），dtype须与dst一致。 |
-| index | 输入 | 数据索引（矢量数据寄存器）。单位是元素个数，dst[i] = src[index[i]]。 |
-
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
 - 通过引用参数输出结果的函数原型无返回值。
-- 通过函数返回值输出结果的函数原型返回收集结果，具体返回值类型如下。
-
-**表5** UB源收集模式返回值类型
-
-| src类型 | index类型 | 返回值类型 |
-|---|---|---|
-| `int8_t` | `vector_uint16_t` | `vector_int8_t` |
-| `uint8_t` | `vector_uint16_t` | `vector_uint8_t` |
-| `hifloat8_t` | `vector_uint16_t` | `vector_hifloat8_t` |
-| `fp8_e8m0_t` | `vector_uint16_t` | `vector_fp8_e8m0_t` |
-| `fp8_e5m2_t` | `vector_uint16_t` | `vector_fp8_e5m2_t` |
-| `fp8_e4m3fn_t` | `vector_uint16_t` | `vector_fp8_e4m3fn_t` |
-| `int16_t` | `vector_uint16_t` | `vector_int16_t` |
-| `int16_t` | `vector_uint32_t` | `vector_int16_t` |
-| `uint16_t` | `vector_uint16_t` | `vector_uint16_t` |
-| `uint16_t` | `vector_uint32_t` | `vector_uint16_t` |
-| `half` | `vector_uint16_t` | `vector_half` |
-| `half` | `vector_uint32_t` | `vector_half` |
-| `bfloat16_t` | `vector_uint16_t` | `vector_bfloat16_t` |
-| `bfloat16_t` | `vector_uint32_t` | `vector_bfloat16_t` |
-| `int32_t` | `vector_uint32_t` | `vector_int32_t` |
-| `uint32_t` | `vector_uint32_t` | `vector_uint32_t` |
-| `float` | `vector_uint32_t` | `vector_float` |
-
-**表6** 寄存器源收集模式返回值类型
-
-| src类型 | index类型 | 返回值类型 |
-|---|---|---|
-| `vector_int8_t` | `vector_uint8_t` | `vector_int8_t` |
-| `vector_uint8_t` | `vector_uint8_t` | `vector_uint8_t` |
-| `vector_hifloat8_t` | `vector_uint8_t` | `vector_hifloat8_t` |
-| `vector_fp8_e8m0_t` | `vector_uint8_t` | `vector_fp8_e8m0_t` |
-| `vector_fp8_e5m2_t` | `vector_uint8_t` | `vector_fp8_e5m2_t` |
-| `vector_fp8_e4m3fn_t` | `vector_uint8_t` | `vector_fp8_e4m3fn_t` |
-| `vector_int16_t` | `vector_uint16_t` | `vector_int16_t` |
-| `vector_uint16_t` | `vector_uint16_t` | `vector_uint16_t` |
-| `vector_half` | `vector_uint16_t` | `vector_half` |
-| `vector_bfloat16_t` | `vector_uint16_t` | `vector_bfloat16_t` |
-| `vector_int32_t` | `vector_uint32_t` | `vector_int32_t` |
-| `vector_uint32_t` | `vector_uint32_t` | `vector_uint32_t` |
-| `vector_float` | `vector_uint32_t` | `vector_float` |
+- 通过函数返回值输出结果的函数原型返回收集结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 
@@ -220,7 +116,7 @@ __simd_callee__ inline vector_int16_t asc_gather(vector_int16_t src,
 
 - 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
 - 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
-- 本接口在Vector Function（`__simd_vf__` 标记的函数）内调用，UB源收集模式时源操作数为UB地址、目的操作数为矢量数据寄存器，寄存器源收集模式时源/目的均为矢量数据寄存器。
+- 本接口在Vector Function（`__simd_vf__` 标记的函数）内调用，源操作数为UB地址、目的操作数为矢量数据寄存器。
 
 ### UB源收集模式约束
 
@@ -236,10 +132,6 @@ __simd_callee__ inline vector_int16_t asc_gather(vector_int16_t src,
 - 当`src`与`dst`数据类型一致，但是与`index`数据类型不一致时，数据写入`dst`索引为偶数的位置，奇数索引位置置零。例如`src`为`int8_t`数据类型，`index`为`uint16_t`数据类型时，适用场景如下图：
 
 ![](../../figures/asc_gather_different_type.png)
-
-### 寄存器源收集模式约束
-
-- `src`为矢量数据寄存器类型，位宽是固定的[Vector Length (VL)](../../defs/type/data_type_definition.md)，存储的元素个数固定。如果`index`中索引值超出当前矢量数据寄存器中能存储的最大元素个数时，按照如下方式处理：设定当前矢量数据寄存器所能存储的最大数据元素个数为`VL_T`, `index`中索引值为`i`，索引值更新为`i % VL_T`。
 
 ## 调用示例
 
@@ -276,10 +168,9 @@ constexpr uint32_t ELEMENT_COUNT = 128;
 __simd_vf__ inline void gather_vf(__ubuf__ uint16_t* output, __ubuf__ uint16_t* input)
 {
     vector_bool mask = asc_create_mask_b16(PAT_ALL);
-    vector_uint16_t dst;
-    asc_loadalign(dst, input);
     vector_uint16_t index;
     asc_loadalign(index, input);
+    vector_uint16_t dst;
     asc_gather(dst, input, index, mask);
     asc_storealign(output, dst, mask);
 }
@@ -289,14 +180,13 @@ __global__ __vector__ void asc_gather_kernel(__gm__ uint16_t* output, __gm__ uin
     asc_init();
     __ubuf__ uint16_t output_local[ELEMENT_COUNT];
     __ubuf__ uint16_t input_local[ELEMENT_COUNT];
-    asc_copy_gm2ub_align(input_local, input, ELEMENT_COUNT);
-    asc_copy_gm2ub_align(output_local, input, ELEMENT_COUNT);
+    asc_copy_gm2ub_align(input_local, input, ELEMENT_COUNT * sizeof(uint16_t));
     asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
     gather_vf(output_local, input_local);
     asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
     asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
-    asc_copy_ub2gm_align(output, output_local, ELEMENT_COUNT);
+    asc_copy_ub2gm_align(output, output_local, ELEMENT_COUNT * sizeof(uint16_t));
     asc_sync();
 }
 } // namespace

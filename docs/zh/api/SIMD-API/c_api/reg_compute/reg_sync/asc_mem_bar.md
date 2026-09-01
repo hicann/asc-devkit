@@ -88,7 +88,7 @@ __simd_callee__ inline void asc_mem_bar(MEM_TYPE mem_type)
 - 读写依赖的场景下，如果读指令和写指令使用的寄存器相同，会触发寄存器保序，指令将会按照代码顺序执行，无需额外插入同步指令。
 - 冗余的同步指令会导致性能下降，可以通过外提出循环或者循环切分避免多次调用同步指令。
 - 当Unified Buffer（UB）数据存在依赖时，才需要插入同步，判断是否有依赖取决于指令读写的内存是否有重叠。部分搬运指令读写内存的模式如下：
-    - [asc_gather](../gather/asc_gather.md)/[asc_scatter](../scatter/asc_scatter.md)/[asc_gather_datablock](../gather/asc_gather_datablock.md)等指令取决于`index`地址偏移。
+    - [asc_gather](../ub_gather/asc_gather.md)/[asc_scatter](../scatter/asc_scatter.md)/[asc_gather_datablock](../ub_gather/asc_gather_datablock.md)等指令取决于`index`地址偏移。
     - [asc_loadalign_brc_elem](../load/asc_loadalign_brc_elem.md)单条指令读32B数据后将第一个元素进行广播。
 
 ## 调用示例

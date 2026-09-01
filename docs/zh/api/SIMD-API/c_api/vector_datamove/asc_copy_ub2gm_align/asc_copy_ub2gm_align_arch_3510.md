@@ -145,8 +145,13 @@ PIPE_MTE3
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../../general_description_and_constraints.md#存储单元说明)。
 - 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)，保证多个指令串行化，防止出现异常数据。
 
+### 连续数据搬运约束
+
+- `size`需满足dtype字节对齐：dtype为`int16_t`、`uint16_t`、`half`、`bfloat16_t`时需为2的倍数，dtype为`int32_t`、`uint32_t`、`float`时需为4的倍数。
+
 ### 高维切分数据搬运约束
 
+- `len_burst`需满足dtype字节对齐：dtype为`int16_t`、`uint16_t`、`half`、`bfloat16_t`时需为2的倍数，dtype为`int32_t`、`uint32_t`、`float`时需为4的倍数。
 - 当`src_stride`不等于`burst_len`时，`src_stride`要求32字节对齐。
 - 当`src_stride`设置为0时，可能会出现**硬件未定义行为**。如需将同一个源数据块Broadcast到GM的多个连续位置，建议使用loop功能，具体请参考[关键特性说明](#关键特性说明)。
 
