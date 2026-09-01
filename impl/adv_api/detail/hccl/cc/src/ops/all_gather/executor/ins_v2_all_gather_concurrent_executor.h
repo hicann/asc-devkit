@@ -41,7 +41,7 @@ private:
         const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
         const AlgHierarchyInfoForAllLevel& algHierarchyInfo);
 
-    void GetParallelDataSplit(std::vector<float>& splitDataSize) const;
+    void GetParallelDataSplit(const OpParam& param, std::vector<float>& splitDataSize) const;
 
     void GenTemplateAlgParams(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset,

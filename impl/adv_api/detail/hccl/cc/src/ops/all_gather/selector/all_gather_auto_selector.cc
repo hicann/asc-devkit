@@ -178,7 +178,7 @@ SelectorStatus AllGatherAutoSelector::SelectAicpuAlgo(
                 HCCL_ERROR("[AllGatherAutoSelector] CheckClosNumMultipleOfMeshNum failed."), SelectorStatus::NOT_MATCH);
             if (isMeshNumEqualToClosNum && (topoInfo->userRankSize <= MAX_RANK_NUM_FOR_CONCURRENT_ALGO)) {
                 if (dataSize > SMALL_COUNT_512KB) {
-                    selectAlgName = "InsAllGatherConcurrentMesh1DNHR";
+                    selectAlgName = "AicpuAllGatherConcurMeshNHR";
                 } else {
                     selectAlgName = "InsAllGatherMesh1D";
                 }
