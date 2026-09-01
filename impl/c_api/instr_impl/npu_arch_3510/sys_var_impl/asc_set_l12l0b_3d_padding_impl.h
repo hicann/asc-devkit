@@ -13,6 +13,8 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
+constexpr uint8_t ASC_3D_PADDING_B_SHIFT_BIT = 8;
+
 __aicore__ inline void asc_set_l12l0b_3d_padding_impl(uint64_t config)
 {
     if ASC_IS_AIC {
@@ -23,11 +25,12 @@ __aicore__ inline void asc_set_l12l0b_3d_padding_impl(uint64_t config)
 __aicore__ inline void asc_set_l12l0b_3d_padding_impl(int8_t padding_value)
 {
     uint64_t value = static_cast<uint64_t>(static_cast<uint8_t>(padding_value));
-    asc_set_l12l0b_3d_padding_impl((value << 8) | value);
+    asc_set_l12l0b_3d_padding_impl((value << ASC_3D_PADDING_B_SHIFT_BIT) | value);
 }
 __aicore__ inline void asc_set_l12l0b_3d_padding_impl(uint8_t padding_value)
 {
-    asc_set_l12l0b_3d_padding_impl((static_cast<uint64_t>(padding_value) << 8) | padding_value);
+    asc_set_l12l0b_3d_padding_impl(
+        (static_cast<uint64_t>(padding_value) << ASC_3D_PADDING_B_SHIFT_BIT) | padding_value);
 }
 __aicore__ inline void asc_set_l12l0b_3d_padding_impl(int16_t padding_value)
 {

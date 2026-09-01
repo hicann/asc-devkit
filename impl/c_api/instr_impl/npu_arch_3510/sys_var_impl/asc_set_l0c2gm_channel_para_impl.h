@@ -19,6 +19,8 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
+constexpr uint8_t ASC_L0C_COPY_CHANNEL_PARA_SHIFT = 48;
+
 __aicore__ inline void asc_set_l0c2gm_channel_para_impl(uint64_t config)
 {
     if ASC_IS_AIC {
@@ -29,7 +31,7 @@ __aicore__ inline void asc_set_l0c2gm_channel_para_impl(uint64_t config)
 __aicore__ inline void asc_set_l0c_copy_channel_para_impl(uint16_t src_nz_fractal_stride)
 {
     if ASC_IS_AIC {
-        uint64_t config = static_cast<uint64_t>(src_nz_fractal_stride) << 48;
+        uint64_t config = static_cast<uint64_t>(src_nz_fractal_stride) << ASC_L0C_COPY_CHANNEL_PARA_SHIFT;
         set_channel_para(config);
     }
 }
