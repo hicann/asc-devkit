@@ -11,5 +11,6 @@
 
 | 目录名称 | 功能描述 | 支持的产品 |
 |--------------------------------------------------------------------------------------------| ---------------------------------------------------- | --- |
+| [load_data_l12l0_950](./load_data_l12l0_950) |  本样例展示如何调用`asc_copy_l12l0a`/`asc_copy_l12l0b`及其`_transpose`接口，将A/B矩阵从L1搬运到L0A/L0B Buffer。 | Ascend 950PR/Ascend 950DT |
 | [mmad](./mmad) |  本样例以 int8_t 和 bfloat16 两种输入数据类型为例，演示如何通过C API实现矩阵乘法（C = A × B + Bias） | Ascend 950PR/Ascend 950DT |
 | [mmad_mx](./mmad_mx) | 本样例演示如何通过C API实现带量化功能的MX矩阵乘法。A、B矩阵使用FP4或FP8数据类型，ScaleA、ScaleB使用fp8_e8m0_t数据类型；包含C矩阵初始化为0、从BiasTable Buffer初始化以及从L0C累加三种场景，并介绍K轴对齐和FP8尾部清零 | Ascend 950PR/Ascend 950DT |
