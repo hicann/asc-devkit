@@ -26,45 +26,38 @@
 
 ## 功能说明
 
-reg计算数据搬运接口，适用于从矢量数据寄存器中**筛选出有效元素后**按照连续非32B对齐的起始地址连续搬出到Unified Buffer（UB）的尾块场景。
+Reg计算数据搬运接口，用于结束一组[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)连续搬出操作，将暂存在非对齐寄存器中的尾块写入Unified Buffer（UB）。
 
-搬运原理如下：
-记目的操作数的起始地址为dst_start，结束地址为dst_end，尾块元素个数为unalign_count = (dst_end - dst_end / 32 * 32) / sizeof(T)。则搬运的数据会分为两部分，分别是：
-- 32B对齐的主块部分UB[dst_start, dst_end - unalign_count * sizeof(T)]。
-- 非32B对齐的尾块部分UB[dst_end - unalign_count * sizeof(T), dst_end]。
-
-[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)接口执行时，会将主块搬出至UB，尾块暂存至非对齐寄存器[0, unalign_count]。本接口执行时，会将尾块从非对齐寄存器搬出至UB。因此需要先调用[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)，再调用本接口。
+本接口仅在AIV上生效。
 
 ## 函数原型
 
-```cpp
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ int8_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ uint8_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ fp4x2_e2m1_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ fp4x2_e1m2_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ int4b_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ fp8_e8m0_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ fp8_e5m2_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ fp8_e4m3fn_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ int16_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ uint16_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ half* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ bfloat16_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ int32_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ uint32_t* dst, vector_store_unalign src)
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ float* dst, vector_store_unalign src)
+```c
+__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(
+    __ubuf__ <dtype>* dst, vector_store_unalign src)
+```
+
+### dtype支持数据类型
+
+`int4b_t`、`int8_t`、`uint8_t`、`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+### 函数原型典型示例
+
+```c
+__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(
+    __ubuf__ float* dst, vector_store_unalign src)
 ```
 
 ## 参数说明
 
 **表1** 参数说明
 
-| 参数名  | 输入/输出 | 描述 |
-| :----- | :------- | :------- |
-| dst | 输出 | 目的操作数（矢量）的起始地址。 |
-| src | 输入 | 非对齐寄存器，用于保存非对齐数据，长度32B。 |
+| 参数名 | 输入/输出 | 描述 |
+| :--- | :--- | :--- |
+| dst | 输出 | 目的操作数在UB上的起始地址。地址不要求32B对齐，但需按`sizeof(dtype)`字节对齐；需与同组`asc_squeeze_and_storeunalign`调用中的`dst_addr`保持一致。 |
+| src | 输入 | 非对齐寄存器，长度为32B，保存待写入UB的尾块；需与同组`asc_squeeze_and_storeunalign`调用中的`src0`使用同一个寄存器。 |
 
-非对齐寄存器和地址寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
+非对齐寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -76,23 +69,125 @@ PIPE_V
 
 ## 约束说明
 
-- 该接口中的dst不需要32B对齐，需要和[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)配置的目的操作数地址及非对齐寄存器保持一致。
-- 需要保证目的操作数的地址写入非对齐寄存器中的数据后不越过UB可用容量上限，否则触发写越界异常。
+### 通用约束
+
+- 非AIV调用直接返回。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- UB容量上限为256KB，用户可用容量随编译选项与编程场景变化。目的操作数的尾块地址范围不可超过实际可用容量，否则会触发写越界异常。
+- 如果本接口与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化。
+
+### 指令约束
+
+- 调用本接口前，需先调用一次或多次[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)；每组连续搬出操作仅在最后一次主接口调用后执行一次本接口。
+- `dst`和`src`需分别与同组主接口调用中的`dst_addr`和`src0`保持一致。
 
 ## 调用示例
 
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id8 -->
+
 ```cpp
-__simd_vf__ inline void vf_squeeze_and_storeunalign(__ubuf__ half* dst_addr, __ubuf__ half* src_addr, uint32_t one_repeat_size, uint16_t repeat_time)
+#include <algorithm>
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+constexpr uint32_t ELEMENTS_PER_REGISTER = 64;
+constexpr uint32_t REPEAT_COUNT = 2;
+constexpr uint32_t SELECTED_PER_REGISTER = 22;
+constexpr uint32_t INPUT_COUNT = ELEMENTS_PER_REGISTER * REPEAT_COUNT;
+constexpr uint32_t OUTPUT_COUNT = SELECTED_PER_REGISTER * REPEAT_COUNT;
+
+__simd_vf__ inline void pack_selected(
+    __ubuf__ float* output, __ubuf__ float* register_output, __ubuf__ float* input)
 {
-    vector_half dst;
-    vector_half src;
-    vector_store_unalign ureg;
-    vector_bool mask = asc_create_mask_b16(PAT_M4);
+    vector_float src;
+    vector_float dst;
+    vector_store_unalign unalign_reg;
+    vector_bool squeeze_mask = asc_create_mask_b32(PAT_M3);
+    vector_bool store_mask = asc_create_mask_b32(PAT_ALL);
+
     asc_squeeze_and_storeunalign_init();
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        asc_loadalign_postupdate(src, src_addr, one_repeat_size);
-        asc_squeeze_and_storeunalign(dst_addr, dst, ureg, src, mask);
+    for (uint32_t repeat = 0; repeat < REPEAT_COUNT; ++repeat) {
+        asc_loadalign(src, input + repeat * ELEMENTS_PER_REGISTER);
+        asc_squeeze_and_storeunalign(output, dst, unalign_reg, src, squeeze_mask);
     }
-    asc_squeeze_and_storeunalign_finalize(dst_addr, ureg);
+    asc_squeeze_and_storeunalign_finalize(output, unalign_reg);
+    asc_storealign(register_output, dst, store_mask);
+}
+
+__global__ __vector__ void squeeze_and_store_kernel(
+    __gm__ float* output, __gm__ float* register_output, __gm__ float* input)
+{
+    asc_init();
+    __ubuf__ float input_local[INPUT_COUNT];
+    __ubuf__ float output_local[ELEMENTS_PER_REGISTER];
+    __ubuf__ float register_local[ELEMENTS_PER_REGISTER];
+    asc_copy_gm2ub_align(input_local, input, INPUT_COUNT * sizeof(float));
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    pack_selected(output_local, register_local, input_local);
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm_align(output, output_local, OUTPUT_COUNT * sizeof(float));
+    asc_copy_ub2gm_align(register_output, register_local, ELEMENTS_PER_REGISTER * sizeof(float));
+    asc_sync();
+}
+} // namespace
+
+int main()
+{
+    std::vector<float> input(INPUT_COUNT);
+    std::vector<float> output(OUTPUT_COUNT, 0.0F);
+    std::vector<float> register_output(ELEMENTS_PER_REGISTER, 0.0F);
+    std::vector<float> golden;
+    std::vector<float> register_golden(ELEMENTS_PER_REGISTER, 0.0F);
+    for (uint32_t i = 0; i < INPUT_COUNT; ++i) input[i] = static_cast<float>(i) + 0.5F;
+    for (uint32_t repeat = 0; repeat < REPEAT_COUNT; ++repeat) {
+        for (uint32_t i = 0; i < ELEMENTS_PER_REGISTER; i += 3) {
+            golden.push_back(input[repeat * ELEMENTS_PER_REGISTER + i]);
+        }
+    }
+    std::copy(golden.end() - SELECTED_PER_REGISTER, golden.end(), register_golden.begin());
+
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    float* input_device = nullptr;
+    float* output_device = nullptr;
+    float* register_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input_device), input.size() * sizeof(float),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), output.size() * sizeof(float),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&register_device), register_output.size() * sizeof(float),
+        ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input_device, input.size() * sizeof(float), input.data(), input.size() * sizeof(float),
+        ACL_MEMCPY_HOST_TO_DEVICE);
+    squeeze_and_store_kernel<<<1, 0>>>(output_device, register_device, input_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(float), output_device, output.size() * sizeof(float),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    aclrtMemcpy(register_output.data(), register_output.size() * sizeof(float), register_device,
+        register_output.size() * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
+
+    const bool passed = output == golden && register_output == register_golden;
+    std::cout << (passed ? "[Success] squeeze and unaligned store completed."
+                         : "[Failed] output mismatch.") << std::endl;
+    aclrtFree(input_device);
+    aclrtFree(output_device);
+    aclrtFree(register_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
 }
 ```
