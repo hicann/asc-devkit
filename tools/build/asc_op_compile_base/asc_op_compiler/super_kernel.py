@@ -571,6 +571,9 @@ auto_gen_{super_operator.kernel_name}_kernel_{arch}(void) {{\n"
         super_kernel_file += indent_code_func(
             f"//begin func call of sub operator {sub_operator.kernel_name}\n"
         )
+        super_kernel_file += indent_code_func(
+            sub_operator.get_notify_before_call_block(arch)
+        )
 
         # generate switch case func of dynamic
         super_kernel_file += gen_switch_case_call_block_of_dynamic_op(
@@ -800,6 +803,7 @@ def gen_2_real_stream_super_kernel_file(super_operator):
     for _, sub_operator in enumerate(sub_ops):
         if super_operator.sub_decl_list.get(sub_operator.kernel_name) is None:
             super_kernel_file += sub_operator.kernel_declare
+        super_kernel_params += sub_operator.params_before_kernel
         super_kernel_params += sub_operator.kernel_params
         if sub_operator.sub_op_task_type.value == SubOperatorType.DYNAMIC_OP.value:
             if super_operator.sub_decl_list.get(sub_operator.kernel_name) is None:
@@ -1241,6 +1245,9 @@ auto_gen_{super_operator.kernel_name}_kernel(void) {{\n'
     ):
         super_kernel_file += indent_code_func(
             f"//begin func call of sub operator {sub_operator.kernel_name}\n"
+        )
+        super_kernel_file += indent_code_func(
+            sub_operator.get_notify_before_call_block()
         )
 
         # generatre switch case func of dynamic

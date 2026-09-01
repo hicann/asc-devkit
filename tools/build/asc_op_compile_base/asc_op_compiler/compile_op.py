@@ -233,6 +233,13 @@ def _json_except_info(compile_info: CompileInfo):
             sub_dfx_info["send_event_list"] = compile_info.super_kernel_info[
                 "send_event_list"
             ][i]
+            notify_before_call_event_list = compile_info.super_kernel_info.get(
+                "notify_before_call_event_list", []
+            )
+            if notify_before_call_event_list and notify_before_call_event_list[i]:
+                sub_dfx_info["notify_before_call_event_list"] = (
+                    notify_before_call_event_list[i]
+                )
             sub_dfx_info["recv_event_list"] = compile_info.super_kernel_info[
                 "recv_event_list"
             ][i]
@@ -243,6 +250,10 @@ def _json_except_info(compile_info: CompileInfo):
                 ][i]
             else:
                 arg_list["notify_param_offset"] = None
+            if notify_before_call_event_list and notify_before_call_event_list[i]:
+                arg_list["notify_before_call_param_offset"] = (
+                    compile_info.super_kernel_info["notify_before_call_param_offset"][i]
+                )
             if compile_info.super_kernel_info["recv_event_list"][i]:
                 arg_list["wait_param_offset"] = compile_info.super_kernel_info[
                     "wait_param_offset"

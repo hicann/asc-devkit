@@ -41,6 +41,7 @@ from .super_kernel_constants import (
     AI_CORE_STR,
     ERR_CODE,
     SuperKernelKernelType,
+    STR_TO_SUPER_TASK_TYPE,
 )
 from .super_kernel_sub_op_infos import SubOperatorInfos
 
@@ -114,10 +115,68 @@ def get_sub_op_streamid(op_info):
     return -1
 
 
+def normalize_nop_ops(op_list):
+    """Remove NOP tasks and transfer their send events to same-stream real ops."""
+    if not any(op.get("task_type") == "nop" for op in op_list):
+        return op_list
+
+    normalized_ops = []
+    previous_op_by_stream = {}
+    pending_events_by_stream = {}
+    for index, op_info in enumerate(op_list):
+        task_type = STR_TO_SUPER_TASK_TYPE[op_info.get("task_type", "normal")]
+        if task_type != SubOperatorType.NOP_OP:
+            normalized_op = dict(op_info)
+            stream_id = get_sub_op_streamid(normalized_op)
+            pending_events = pending_events_by_stream.pop(stream_id, [])
+            if pending_events:
+                notify_before_call_event_list = list(
+                    normalized_op.get("notify_before_call_event_list", [])
+                )
+                normalized_op["notify_before_call_event_list"] = (
+                    notify_before_call_event_list + pending_events
+                )
+            normalized_ops.append(normalized_op)
+            previous_op_by_stream[stream_id] = normalized_op
+            continue
+
+        recv_event_list = op_info.get("recv_event_list", [])
+        if recv_event_list:
+            CommonUtility().ascendc_raise_python_err(
+                ERR_CODE,
+                f"NOP op at index {index} must not have recv events: {recv_event_list}",
+            )
+        if index == len(op_list) - 1:
+            CommonUtility().ascendc_raise_python_err(
+                ERR_CODE, f"NOP op at index {index} must not be the last op"
+            )
+
+        send_event_list = list(op_info.get("send_event_list", []))
+        if not send_event_list:
+            continue
+        stream_id = get_sub_op_streamid(op_info)
+        previous_op = previous_op_by_stream.get(stream_id)
+        if previous_op is not None:
+            previous_op["send_event_list"] = (
+                list(previous_op.get("send_event_list", [])) + send_event_list
+            )
+        else:
+            pending_events_by_stream.setdefault(stream_id, []).extend(send_event_list)
+
+    if pending_events_by_stream:
+        stream_id, event_list = next(iter(pending_events_by_stream.items()))
+        CommonUtility().ascendc_raise_python_err(
+            ERR_CODE,
+            f"NOP send events {event_list} have no following real op on stream "
+            f"{stream_id}",
+        )
+    return normalized_ops
+
+
 class SuperOperatorInfos:
     def __init__(self, kernel_infos, super_kernel_name):
         self.sub_decl_list = {}
-        self.op_list = kernel_infos["op_list"]
+        self.op_list = normalize_nop_ops(kernel_infos["op_list"])
         self.kernel_name: str = super_kernel_name
         self.compile_log_path = None
         self.creat_compile_log()
@@ -764,6 +823,8 @@ class SuperOperatorInfos:
         if CommonUtility.is_has_ffts_mode():
             param_offset += 1
         for sub_op in self.info_base:
+            if sub_op.notify_before_call_event_list:
+                param_offset += len(sub_op.notify_before_call_event_list)
             sub_op.param_offset = param_offset
             sub_op.code_gen(self.inner_event_id_set, self.enable_double_stream)
             param_offset += len(sub_op.kernel_params) + len(sub_op.extra_kernel_params)
@@ -1061,6 +1122,7 @@ class SuperOperatorInfos:
 
     def gen_super_kernel_params(self):
         for sub_operator in self.info_base:
+            self.super_kernel_params += sub_operator.params_before_kernel
             self.super_kernel_params += sub_operator.kernel_params
             if sub_operator.sub_op_task_type.value == SubOperatorType.DYNAMIC_OP.value:
                 self.super_kernel_params += sub_operator.extra_kernel_params
@@ -1208,6 +1270,12 @@ class SuperOperatorInfos:
         for sub_operator in self.info_base:
             notify_param_offset.append(sub_operator.notify_param_offset)
 
+        notify_before_call_param_offset = []
+        for sub_operator in self.info_base:
+            notify_before_call_param_offset.append(
+                sub_operator.notify_before_call_param_offset
+            )
+
         wait_param_offset = []
         for sub_operator in self.info_base:
             wait_param_offset.append(sub_operator.wait_param_offset)
@@ -1219,6 +1287,12 @@ class SuperOperatorInfos:
         send_event_list = []
         for sub_operator in self.info_base:
             send_event_list.append(sub_operator.send_event_list)
+
+        notify_before_call_event_list = []
+        for sub_operator in self.info_base:
+            notify_before_call_event_list.append(
+                sub_operator.notify_before_call_event_list
+            )
 
         sub_operator_info = []
         for sub_operator in self.info_base:
@@ -1318,3 +1392,10 @@ class SuperOperatorInfos:
             "send_event_list": send_event_list,
             "recv_event_list": recv_event_list,
         }
+        if any(notify_before_call_event_list):
+            self.compile_info["notify_before_call_param_offset"] = (
+                notify_before_call_param_offset
+            )
+            self.compile_info["notify_before_call_event_list"] = (
+                notify_before_call_event_list
+            )

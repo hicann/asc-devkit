@@ -66,6 +66,7 @@ class SuperKernelStreamFusionMode(enum.Enum):
 class SubOperatorType(enum.Enum):
     STATIC_OP = 0
     DYNAMIC_OP = 1
+    NOP_OP = 2
 
 
 class SuperKernelPreLoadMode(enum.Enum):
@@ -136,4 +137,5 @@ STR_TO_SK_KERNEL_TYPE = {
 STR_TO_SUPER_TASK_TYPE = {
     "normal": SubOperatorType.STATIC_OP,
     "dynamic": SubOperatorType.DYNAMIC_OP,
+    "nop": SubOperatorType.NOP_OP,
 }

@@ -72,6 +72,9 @@ class SubOperatorInfos:
         # stream fusion option will use kernel name for sync instr optiomization,
         # kernel name will be the same when fusing multi layer in one sk, separate them by index
         self.kernel_name_for_multi_stream: str = ""
+        self.notify_before_call_event_list = info_dict.get(
+            "notify_before_call_event_list", []
+        )
         self.send_event_list = info_dict.get("send_event_list", [])
         self.recv_event_list = info_dict.get("recv_event_list", [])
         self.send_info: dict = {}
@@ -136,14 +139,17 @@ class SubOperatorInfos:
     def _gen_code_for_dynamic_op(self):
         self.call_dynamic_switch_func: str = ""
         self.dynamic_impl_func_block: str = ""
+        self.params_before_kernel: list = []
         self.extra_kernel_params: list = []
         self.switch_func_called_flag: bool = False
         self.wait_block = {}
+        self.notify_before_call_block = ""
         self.notify_block = {}
         self.tmp_notify_block = {}
         self.is_last_op: bool = False
         self.param_offset = 0
         self.notify_param_offset = 0
+        self.notify_before_call_param_offset = 0
         self.wait_param_offset = 0
         self.with_sync_all: bool = False
 
@@ -191,29 +197,73 @@ class SubOperatorInfos:
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
         ]
 
-    def _gen_notify_block_for_core(self, inner_event_id_set, is_aic):
+    def _gen_notify_block_for_core(
+        self, inner_event_id_set, is_aic, event_list=None, notify_param_offset=None
+    ):
+        if event_list is None:
+            event_list = self.send_event_list
+        if notify_param_offset is None:
+            notify_param_offset = self.notify_param_offset
         notify_block = "if ASCEND_IS_AIC {\n" if is_aic else "if ASCEND_IS_AIV {\n"
         found = False
-        index = 0
-        for send_index in self.send_event_list:
+        for index, send_index in enumerate(event_list):
             if send_index not in inner_event_id_set:
                 CommonUtility.dump_compile_log(
-                    ["###Notify:", self.kernel_name, self.send_event_list[index]],
+                    ["###Notify:", self.kernel_name, event_list[index]],
                     CompileStage.SPLIT_SUB_OBJS,
                     self.compile_log_path,
                 )
+                param_offset = notify_param_offset + index
                 notify_block += (
-                    f"    // kernel={self.kernel_name}, ev={self.send_event_list[index]}, \
-param_offset={self.notify_param_offset + index}\n"
+                    f"    // kernel={self.kernel_name}, ev={event_list[index]}, \
+param_offset={param_offset}\n"
                 )
                 notify_block += self.gen_profiling_for_notify(send_index, False)
                 notify_block += f"    NotifyFunc<{str(is_aic).lower()}>("
-                notify_block += f"param_base[{self.notify_param_offset + index}]);\n"
+                notify_block += f"param_base[{param_offset}]);\n"
                 notify_block += self.gen_profiling_for_notify(send_index, True)
                 found = True
-            index += 1
         notify_block += "}\n"
         return notify_block, found
+
+    def gen_notify_before_call(self, enable_double_stream):
+        if len(self.notify_before_call_event_list) == 0:
+            self.notify_before_call_block = (
+                {"aic": "", "aiv": ""} if enable_double_stream else ""
+            )
+            return
+
+        notify_block_aic, found_aic = self._gen_notify_block_for_core(
+            set(),
+            True,
+            self.notify_before_call_event_list,
+            self.notify_before_call_param_offset,
+        )
+        notify_block_aiv, found_aiv = self._gen_notify_block_for_core(
+            set(),
+            False,
+            self.notify_before_call_event_list,
+            self.notify_before_call_param_offset,
+        )
+        if enable_double_stream:
+            self.notify_before_call_block = {"aic": "", "aiv": ""}
+            if self._is_aic_kernel_type():
+                self.notify_before_call_block["aic"] = (
+                    notify_block_aic if found_aic else ""
+                )
+            else:
+                self.notify_before_call_block["aiv"] = (
+                    notify_block_aiv if found_aiv else ""
+                )
+        elif self._is_aic_kernel_type():
+            self.notify_before_call_block = notify_block_aic if found_aic else ""
+        else:
+            self.notify_before_call_block = notify_block_aiv if found_aiv else ""
+
+    def get_notify_before_call_block(self, arch=None):
+        if isinstance(self.notify_before_call_block, dict):
+            return self.notify_before_call_block.get(arch, "")
+        return self.notify_before_call_block
 
     def _set_notify_block_single_stream(
         self, notify_block_aic, notify_block_aiv, found_aic, found_aiv
@@ -301,18 +351,32 @@ param_offset={self.wait_param_offset + index}\n"
                 self.wait_block = wait_block if found else ""
 
     def gen_notify_wait_from_outside(self, inner_event_id_set, enable_double_stream):
+        notify_before_call_event_num = len(self.notify_before_call_event_list)
+        send_event_num = len(self.send_event_list)
+        notify_before_call_params = [
+            f"__ac_notify_lock_{self.index}_{index}"
+            for index in range(notify_before_call_event_num)
+        ]
+        notify_param_end = notify_before_call_event_num + send_event_num
+        notify_params = [
+            f"__ac_notify_lock_{self.index}_{index}"
+            for index in range(notify_before_call_event_num, notify_param_end)
+        ]
+        if notify_before_call_event_num:
+            self.notify_before_call_param_offset = (
+                self.param_offset - notify_before_call_event_num
+            )
+        self.params_before_kernel += notify_before_call_params
         self.notify_param_offset = (
             self.param_offset + len(self.kernel_params) + len(self.extra_kernel_params)
         )
-        self.wait_param_offset = self.notify_param_offset + len(self.send_event_list)
-        self.extra_kernel_params += [
-            f"__ac_notify_lock_{self.index}_{index}"
-            for index in range(len(self.send_event_list))
-        ]
+        self.wait_param_offset = self.notify_param_offset + send_event_num
+        self.extra_kernel_params += notify_params
         self.extra_kernel_params += [
             f"__ac_wait_lock_{self.index}_{index}"
             for index in range(len(self.recv_event_list))
         ]
+        self.gen_notify_before_call(enable_double_stream)
         self.gen_notify_from_outside(inner_event_id_set, enable_double_stream)
         self.gen_wait_from_outside(inner_event_id_set, enable_double_stream)
 

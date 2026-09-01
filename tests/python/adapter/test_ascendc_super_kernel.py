@@ -27,6 +27,7 @@ sys.path.insert(0, FRAMEWORK_PATH)
 
 from adapter.get_op_tiling import *
 from adapter.ascendc_common_utility import CompileInfo
+from adapter.compile_op import _json_except_info
 from adapter.super_kernel_op_infos import *
 from adapter.super_kernel_sub_op_infos import *
 from adapter.super_kernel import *
@@ -428,6 +429,330 @@ class TestAscendSuperKernel(unittest.TestCase):
         # operator after each testcase
         mock.patch.stopall()
         print("-------------------TearDown-------------")
+
+    def test_normalize_nop_ops(self):
+        op_list = [
+            {
+                "bin_path": "",
+                "json_path": "",
+                "send_event_list": [10],
+                "stream_id": 0,
+                "task_type": "nop",
+            },
+            {
+                "bin_path": "",
+                "json_path": "",
+                "send_event_list": [12],
+                "stream_id": 0,
+                "task_type": "nop",
+            },
+            {
+                "bin_path": "op0.o",
+                "json_path": "op0.json",
+                "stream_id": 0,
+                "task_type": "normal",
+            },
+            {
+                "bin_path": "op1.o",
+                "json_path": "op1.json",
+                "stream_id": 1,
+                "task_type": "normal",
+            },
+            {
+                "bin_path": "",
+                "json_path": "",
+                "send_event_list": [11],
+                "stream_id": 0,
+                "task_type": "nop",
+            },
+            {
+                "bin_path": "op2.o",
+                "json_path": "op2.json",
+                "stream_id": 1,
+                "task_type": "normal",
+            },
+        ]
+
+        normalized = normalize_nop_ops(op_list)
+
+        self.assertEqual(len(normalized), 3)
+        self.assertEqual(normalized[0]["notify_before_call_event_list"], [10, 12])
+        self.assertEqual(normalized[0]["send_event_list"], [11])
+        self.assertNotIn("send_event_list", normalized[1])
+        self.assertEqual(op_list[0]["send_event_list"], [10])
+        self.assertNotIn("notify_before_call_event_list", op_list[2])
+
+    def test_normalize_nop_ops_rejects_invalid_input(self):
+        invalid_op_lists = [
+            [
+                {
+                    "json_path": "",
+                    "recv_event_list": [10],
+                    "stream_id": 0,
+                    "task_type": "nop",
+                },
+                {"json_path": "op0.json", "stream_id": 0},
+            ],
+            [
+                {"json_path": "op0.json", "stream_id": 0},
+                {"json_path": "", "stream_id": 0, "task_type": "nop"},
+            ],
+            [
+                {
+                    "json_path": "",
+                    "send_event_list": [10],
+                    "stream_id": 1,
+                    "task_type": "nop",
+                },
+                {"json_path": "op0.json", "stream_id": 0},
+            ],
+        ]
+
+        for op_list in invalid_op_lists:
+            with self.subTest(op_list=op_list):
+                with self.assertRaises(Exception):
+                    normalize_nop_ops(op_list)
+
+    def test_nop_notify_before_call(self):
+        op_options = {
+            "split-mode": 4,
+            "stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable,
+        }
+        with (
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}"),
+            mock.patch("json.load", return_value=op_json),
+            mock.patch.object(CommonUtility, "dump_compile_log"),
+        ):
+            sub_op = SubOperatorInfos(
+                0,
+                {
+                    "bin_path": "op0.o",
+                    "json_path": "op0.json",
+                    "notify_before_call_event_list": [10],
+                    "send_event_list": [11],
+                    "recv_event_list": [12],
+                    "stream_id": 0,
+                    "task_type": "normal",
+                },
+                0,
+                op_options,
+            )
+            sub_op.init_of_sub_operator_info()
+
+        sub_op.param_offset = 2
+        sub_op.kernel_type = SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY
+        sub_op.gen_notify_wait_from_outside(set(), False)
+
+        self.assertIn("ev=10, param_offset=1", sub_op.notify_before_call_block)
+        self.assertIn(
+            "NotifyFunc<false>(param_base[1])", sub_op.notify_before_call_block
+        )
+        self.assertIn("ev=11, param_offset=10", sub_op.notify_block)
+        self.assertIn("NotifyFunc<false>(param_base[10])", sub_op.notify_block)
+        self.assertIn("ev=12, param_offset=11", sub_op.wait_block)
+        self.assertEqual(
+            sub_op.params_before_kernel,
+            ["__ac_notify_lock_0_0"],
+        )
+        self.assertEqual(
+            sub_op.extra_kernel_params,
+            ["__ac_notify_lock_0_1", "__ac_wait_lock_0_0"],
+        )
+        sub_op.gen_notify_before_call(True)
+        self.assertEqual(sub_op.get_notify_before_call_block("aic"), "")
+        self.assertIn(
+            "NotifyFunc<false>(param_base[1])",
+            sub_op.get_notify_before_call_block("aiv"),
+        )
+
+    def test_nop_notify_before_call_is_emitted_before_real_kernel(self):
+        SetCurrentSocInfo("Ascend910B1")
+        kernel_infos = {
+            "op_list": [
+                {
+                    "bin_path": "",
+                    "json_path": "",
+                    "send_event_list": [10],
+                    "stream_id": 0,
+                    "task_type": "nop",
+                },
+                {
+                    "bin_path": "op0.o",
+                    "json_path": "op0.json",
+                    "stream_id": 0,
+                    "task_type": "normal",
+                },
+            ]
+        }
+        with (
+            mock.patch(
+                "builtins.open", new_callable=mock.mock_open, read_data="{}"
+            ) as json_open,
+            mock.patch("json.load", return_value=op_json),
+            mock.patch.object(CommonUtility, "dump_compile_log"),
+            mock.patch.object(SubOperatorInfos, "extract_sub_op_bin_files"),
+        ):
+            super_op = SuperOperatorInfos(kernel_infos, "super_kernel")
+
+        self.assertEqual(len(super_op.info_base), 1)
+        self.assertEqual(super_op.op_list[0]["json_path"], "op0.json")
+        self.assertNotIn(mock.call("", "r"), json_open.mock_calls)
+        self.assertEqual(super_op.compile_info["send_event_list"], [[]])
+        self.assertEqual(super_op.compile_info["notify_before_call_event_list"], [[10]])
+        self.assertEqual(super_op.compile_info["notify_before_call_param_offset"], [1])
+        self.assertEqual(super_op.compile_info["param_offset"], [2])
+        self.assertEqual(super_op.super_kernel_params[0], "__ac_notify_lock_0_0")
+
+        generated_file = mock.mock_open()
+        with (
+            mock.patch("os.open", return_value=10),
+            mock.patch("os.fdopen", generated_file),
+        ):
+            gen_super_kernel_file(super_op)
+        source = generated_file().write.call_args.args[0]
+        notify_call = "NotifyFunc<false>(param_base[1])"
+        sub_op = super_op.info_base[0]
+        kernel_call = f"{sub_op.sub_kernel_names[0]}({sub_op.param_offset});"
+        self.assertEqual(source.count(notify_call), 1)
+        self.assertLess(source.index(notify_call), source.index(kernel_call))
+
+    def test_nop_notify_offsets_follow_dynamic_extra_params(self):
+        op_options = {
+            "split-mode": 4,
+            "stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable,
+        }
+        with (
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}"),
+            mock.patch("json.load", return_value=op_json),
+            mock.patch.object(CommonUtility, "dump_compile_log"),
+        ):
+            sub_op = SubOperatorInfos(
+                0,
+                {
+                    "bin_path": "op0.o",
+                    "json_path": "op0.json",
+                    "notify_before_call_event_list": [10],
+                    "send_event_list": [11],
+                    "recv_event_list": [12],
+                    "stream_id": 0,
+                    "task_type": "dynamic",
+                },
+                0,
+                op_options,
+            )
+            sub_op.init_of_sub_operator_info()
+
+        dynamic_params = ["tiling_key", "block_num", "wait_lock"]
+        sub_op.param_offset = 2
+        sub_op.extra_kernel_params = list(dynamic_params)
+        sub_op.kernel_type = SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY
+        sub_op.gen_notify_wait_from_outside(set(), False)
+
+        self.assertIn(
+            "NotifyFunc<false>(param_base[1])", sub_op.notify_before_call_block
+        )
+        self.assertIn("NotifyFunc<false>(param_base[13])", sub_op.notify_block)
+        self.assertIn("WaitFunc<false>(param_base[14])", sub_op.wait_block)
+        self.assertEqual(
+            sub_op.extra_kernel_params,
+            dynamic_params + ["__ac_notify_lock_0_1", "__ac_wait_lock_0_0"],
+        )
+
+    def test_non_nop_compile_info_remains_unchanged(self):
+        SetCurrentSocInfo("Ascend910B1")
+        kernel_infos = {
+            "op_list": [
+                {
+                    "bin_path": "op0.o",
+                    "json_path": "op0.json",
+                    "send_event_list": [11],
+                    "stream_id": 0,
+                }
+            ]
+        }
+        with (
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}"),
+            mock.patch("json.load", return_value=op_json),
+            mock.patch.object(CommonUtility, "dump_compile_log"),
+            mock.patch.object(SubOperatorInfos, "extract_sub_op_bin_files"),
+        ):
+            super_op = SuperOperatorInfos(kernel_infos, "super_kernel")
+
+        self.assertEqual(super_op.compile_info["param_offset"], [1])
+        self.assertEqual(super_op.compile_info["notify_param_offset"], [9])
+        self.assertEqual(super_op.compile_info["send_event_list"], [[11]])
+        self.assertNotIn("notify_before_call_event_list", super_op.compile_info)
+        self.assertNotIn("notify_before_call_param_offset", super_op.compile_info)
+
+    def test_nop_notify_offsets_preserve_following_operator_params(self):
+        SetCurrentSocInfo("Ascend910B1")
+        kernel_infos = {
+            "op_list": [
+                {
+                    "bin_path": "",
+                    "json_path": "",
+                    "send_event_list": [10],
+                    "stream_id": 0,
+                    "task_type": "nop",
+                },
+                {
+                    "bin_path": "op0.o",
+                    "json_path": "op0.json",
+                    "send_event_list": [11],
+                    "stream_id": 0,
+                    "task_type": "normal",
+                },
+                {
+                    "bin_path": "op1.o",
+                    "json_path": "op1.json",
+                    "stream_id": 0,
+                    "task_type": "normal",
+                },
+            ]
+        }
+        with (
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}"),
+            mock.patch("json.load", return_value=op_json),
+            mock.patch.object(CommonUtility, "dump_compile_log"),
+            mock.patch.object(SubOperatorInfos, "extract_sub_op_bin_files"),
+        ):
+            super_op = SuperOperatorInfos(kernel_infos, "super_kernel")
+
+        self.assertEqual(super_op.compile_info["send_event_list"], [[11], []])
+        self.assertEqual(
+            super_op.compile_info["notify_before_call_event_list"], [[10], []]
+        )
+        self.assertEqual(super_op.compile_info["notify_param_offset"], [10, 19])
+        self.assertEqual(
+            super_op.compile_info["notify_before_call_param_offset"], [1, 0]
+        )
+        self.assertEqual(super_op.compile_info["param_offset"], [2, 11])
+        self.assertEqual(
+            super_op.super_kernel_params[:2],
+            ["__ac_notify_lock_0_0", "x_in___0"],
+        )
+        self.assertEqual(super_op.super_kernel_params[9], "__ac_notify_lock_0_1")
+
+        compile_info = CompileInfo()
+        compile_info.super_kernel_info = super_op.compile_info
+        with (
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}"),
+            mock.patch("json.load", return_value=op_json),
+        ):
+            dfx_info = _json_except_info(compile_info)
+        first_sub_op = next(iter(dfx_info["kernelList"].values()))[0]
+        self.assertEqual(first_sub_op["notify_before_call_event_list"], [10])
+        self.assertEqual(first_sub_op["arg_list"]["notify_before_call_param_offset"], 1)
+
+        generated_file = mock.mock_open()
+        with (
+            mock.patch("os.open", return_value=10),
+            mock.patch("os.fdopen", generated_file),
+        ):
+            gen_super_kernel_file(super_op)
+        source = generated_file().write.call_args.args[0]
+        self.assertIn("NotifyFunc<false>(param_base[1])", source)
+        self.assertIn("NotifyFunc<false>(param_base[10])", source)
 
     def test_ascendc_super_kernel_plus(self):
         with mock.patch("adapter.super_kernel.super_kernel_compile"):
