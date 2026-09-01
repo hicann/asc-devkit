@@ -36,6 +36,7 @@ using SteadyClock = std::chrono::steady_clock;
 constexpr uint64_t MAX_OUTPUT_READ_BYTES_PER_ITERATION = 64U * 1024U;
 constexpr int64_t MAX_PROCESS_WAIT_MILLISECONDS = 5;
 
+// Owns a file descriptor and guarantees that it is closed on every return path.
 class FileDescriptor final {
 public:
     explicit FileDescriptor(int value = -1) noexcept : value_(value) {}
@@ -71,6 +72,8 @@ private:
     int value_;
 };
 
+// Moves a pipe descriptor away from stdin/stdout/stderr so that the spawn-time
+// dup2 operations cannot accidentally overwrite another descriptor used below.
 bool RelocateFileDescriptorAboveStandardStreams(FileDescriptor& fileDescriptor) noexcept
 {
     if (fileDescriptor.Get() > STDERR_FILENO) {
@@ -88,6 +91,7 @@ bool RelocateFileDescriptorAboveStandardStreams(FileDescriptor& fileDescriptor) 
     return true;
 }
 
+// Releases partially initialized posix_spawn resources when setup fails.
 struct PosixSpawnResources {
     ~PosixSpawnResources() noexcept
     {
@@ -105,6 +109,8 @@ struct PosixSpawnResources {
     bool attributesInitialized_{false};
 };
 
+// Builds the null-terminated argv/envp layout required by posix_spawn. The
+// returned pointers remain valid only while the source strings are unchanged.
 std::vector<char*> BuildCStringPointers(const std::vector<std::string>& strings)
 {
     std::vector<char*> pointers;
@@ -121,6 +127,8 @@ enum class ProcessOutputKind : uint32_t {
     StandardError,
 };
 
+// Captures one child output stream and forwards each byte to both plog and the
+// optional mirrored output file.
 class ProcessOutputForwarder final {
 public:
     ProcessOutputForwarder(ProcessOutputKind outputKind, std::string executablePath, std::ofstream& outputLog)
@@ -131,6 +139,8 @@ public:
     int GetWriteFileDescriptor() const noexcept { return writeFileDescriptor_.Get(); }
     bool IsOpen() const noexcept { return readFileDescriptor_.Get() >= 0; }
 
+    // Creates a nonblocking, close-on-exec pipe for reading child output without
+    // delaying timeout checks or leaking unrelated descriptors into the child.
     bool CreatePipe() noexcept
     {
         int pipeFileDescriptors[2]{-1, -1};
@@ -159,6 +169,8 @@ public:
 
     void CloseWriteEnd() noexcept { writeFileDescriptor_.Close(); }
 
+    // Drains currently available data. Each call has a byte budget so a noisy
+    // stream cannot indefinitely postpone checking the child state and timeout.
     bool ForwardAvailableOutput() noexcept
     {
         char readBuffer[4096];
@@ -203,6 +215,8 @@ private:
         outputLog_.write(output, static_cast<std::streamsize>(outputBytes));
         outputLog_.flush();
         if (!outputLog_) {
+            // Mirroring is diagnostic only; a log I/O failure must not turn a
+            // successfully running compiler process into an executor failure.
             ASCENDLOGW("Failed to save process output; compilation will continue");
             outputLog_.close();
         }
@@ -230,6 +244,55 @@ private:
     FileDescriptor writeFileDescriptor_;
 };
 
+// Configures the child process group and redirects its output streams. Keeping
+// these file actions together preserves the ordering required before posix_spawn.
+bool ConfigureSpawnResources(
+    PosixSpawnResources& spawnResources, const ProcessOutputForwarder& stdoutForwarder,
+    const ProcessOutputForwarder& stderrForwarder) noexcept
+{
+    int setupResult = posix_spawnattr_init(&spawnResources.attributes_);
+    if (setupResult == 0) {
+        spawnResources.attributesInitialized_ = true;
+        // A dedicated group lets timeout handling terminate the whole command
+        // tree instead of leaving compiler/helper descendants behind.
+        setupResult = posix_spawnattr_setflags(&spawnResources.attributes_, POSIX_SPAWN_SETPGROUP);
+    }
+    if (setupResult == 0) {
+        setupResult = posix_spawnattr_setpgroup(&spawnResources.attributes_, 0);
+    }
+    if (setupResult == 0) {
+        setupResult = posix_spawn_file_actions_init(&spawnResources.fileActions_);
+        spawnResources.fileActionsInitialized_ = setupResult == 0;
+    }
+    const std::array<int, 2U> readFileDescriptors{
+        stdoutForwarder.GetReadFileDescriptor(), stderrForwarder.GetReadFileDescriptor()};
+    for (const int readFileDescriptor : readFileDescriptors) {
+        if (setupResult == 0) {
+            setupResult = posix_spawn_file_actions_addclose(&spawnResources.fileActions_, readFileDescriptor);
+        }
+    }
+    if (setupResult == 0) {
+        setupResult = posix_spawn_file_actions_adddup2(
+            &spawnResources.fileActions_, stdoutForwarder.GetWriteFileDescriptor(), STDOUT_FILENO);
+    }
+    if (setupResult == 0) {
+        setupResult = posix_spawn_file_actions_adddup2(
+            &spawnResources.fileActions_, stderrForwarder.GetWriteFileDescriptor(), STDERR_FILENO);
+    }
+    const std::array<int, 2U> writeFileDescriptors{
+        stdoutForwarder.GetWriteFileDescriptor(), stderrForwarder.GetWriteFileDescriptor()};
+    for (const int writeFileDescriptor : writeFileDescriptors) {
+        if (setupResult == 0) {
+            setupResult = posix_spawn_file_actions_addclose(&spawnResources.fileActions_, writeFileDescriptor);
+        }
+    }
+    if (setupResult != 0) {
+        ASCENDLOGE("Failed to configure process spawn: error=%d message=%s", setupResult, std::strerror(setupResult));
+        return false;
+    }
+    return true;
+}
+
 bool ContainsEmbeddedNull(const std::string& text) noexcept { return text.find('\0') != std::string::npos; }
 
 bool IsEnvironmentVariableNameValid(const std::string& name) noexcept
@@ -237,6 +300,8 @@ bool IsEnvironmentVariableNameValid(const std::string& name) noexcept
     return !name.empty() && name.find('=') == std::string::npos && !ContainsEmbeddedNull(name);
 }
 
+// waitpid cannot reliably observe a child when SIGCHLD is ignored or automatic
+// child reaping is enabled, so reject such process-wide signal configurations.
 bool CanWaitForChildProcesses() noexcept
 {
     struct sigaction sigchldDisposition {};
@@ -255,6 +320,7 @@ bool CanWaitForChildProcesses() noexcept
     return true;
 }
 
+// Validates every value before it is exposed through C-style process APIs.
 bool ValidateProcessExecutorRequest(const ProcessExecutorRequest& request) noexcept
 {
     if (!CanWaitForChildProcesses()) {
@@ -303,6 +369,9 @@ bool ValidateProcessExecutorRequest(const ProcessExecutorRequest& request) noexc
     return true;
 }
 
+// Creates a deterministic environment snapshot. Explicit removals are applied
+// first and explicit overrides last, so an override wins if a name appears in
+// both request lists.
 std::vector<std::string> BuildSpawnEnvironment(const ProcessExecutorRequest& request)
 {
     std::map<std::string, std::string> environmentByName;
@@ -330,6 +399,8 @@ std::vector<std::string> BuildSpawnEnvironment(const ProcessExecutorRequest& req
     return environmentEntries;
 }
 
+// Opens the optional combined stdout/stderr mirror. Failure is non-fatal because
+// process execution and plog forwarding can still proceed normally.
 void OpenMirroredOutputLog(const std::string& outputLogFilePath, std::ofstream& outputLog) noexcept
 {
     if (outputLogFilePath.empty()) {
@@ -342,6 +413,8 @@ void OpenMirroredOutputLog(const std::string& outputLogFilePath, std::ofstream& 
     ASCENDLOGW("Failed to open process output log; compilation will continue: path=%s", outputLogFilePath.c_str());
 }
 
+// The negative pid targets the process group created for the child, ensuring
+// timeout cleanup also reaches subprocesses started by the requested command.
 void SignalProcessGroup(pid_t processLeaderId, int signalNumber) noexcept
 {
     if (kill(-processLeaderId, signalNumber) == 0 || errno == ESRCH) {
@@ -353,6 +426,8 @@ void SignalProcessGroup(pid_t processLeaderId, int signalNumber) noexcept
         signalNumber, processGroupError, std::strerror(processGroupError));
 }
 
+// Owns the complete child lifecycle: spawn configuration, output forwarding,
+// timeout enforcement, termination, and final waitpid reaping.
 class ChildProcess final {
 public:
     explicit ChildProcess(const ProcessExecutorRequest& request)
@@ -371,6 +446,8 @@ public:
     ChildProcess(const ChildProcess&) = delete;
     ChildProcess& operator=(const ChildProcess&) = delete;
 
+    // Starts the requested executable in a dedicated process group with stdout
+    // and stderr redirected to the parent's forwarding pipes.
     bool Start()
     {
         OpenMirroredOutputLog(request_.mirroredOutputLogFilePath, outputLog_);
@@ -379,43 +456,7 @@ public:
         }
 
         PosixSpawnResources spawnResources;
-        int setupResult = posix_spawnattr_init(&spawnResources.attributes_);
-        if (setupResult == 0) {
-            spawnResources.attributesInitialized_ = true;
-            setupResult = posix_spawnattr_setflags(&spawnResources.attributes_, POSIX_SPAWN_SETPGROUP);
-        }
-        if (setupResult == 0) {
-            setupResult = posix_spawnattr_setpgroup(&spawnResources.attributes_, 0);
-        }
-        if (setupResult == 0) {
-            setupResult = posix_spawn_file_actions_init(&spawnResources.fileActions_);
-            spawnResources.fileActionsInitialized_ = setupResult == 0;
-        }
-        const std::array<int, 2U> readFileDescriptors{
-            stdoutForwarder_.GetReadFileDescriptor(), stderrForwarder_.GetReadFileDescriptor()};
-        for (const int readFileDescriptor : readFileDescriptors) {
-            if (setupResult == 0) {
-                setupResult = posix_spawn_file_actions_addclose(&spawnResources.fileActions_, readFileDescriptor);
-            }
-        }
-        if (setupResult == 0) {
-            setupResult = posix_spawn_file_actions_adddup2(
-                &spawnResources.fileActions_, stdoutForwarder_.GetWriteFileDescriptor(), STDOUT_FILENO);
-        }
-        if (setupResult == 0) {
-            setupResult = posix_spawn_file_actions_adddup2(
-                &spawnResources.fileActions_, stderrForwarder_.GetWriteFileDescriptor(), STDERR_FILENO);
-        }
-        const std::array<int, 2U> writeFileDescriptors{
-            stdoutForwarder_.GetWriteFileDescriptor(), stderrForwarder_.GetWriteFileDescriptor()};
-        for (const int writeFileDescriptor : writeFileDescriptors) {
-            if (setupResult == 0) {
-                setupResult = posix_spawn_file_actions_addclose(&spawnResources.fileActions_, writeFileDescriptor);
-            }
-        }
-        if (setupResult != 0) {
-            ASCENDLOGE(
-                "Failed to configure process spawn: error=%d message=%s", setupResult, std::strerror(setupResult));
+        if (!ConfigureSpawnResources(spawnResources, stdoutForwarder_, stderrForwarder_)) {
             return false;
         }
 
@@ -426,6 +467,8 @@ public:
         const int spawnResult = posix_spawn(
             &processLeaderId_, request_.arguments.front().c_str(), &spawnResources.fileActions_,
             &spawnResources.attributes_, argumentPointers.data(), environmentPointers.data());
+        // The parent must never retain pipe write ends; otherwise EOF would not
+        // be observable after the child closes its redirected streams.
         stdoutForwarder_.CloseWriteEnd();
         stderrForwarder_.CloseWriteEnd();
         if (spawnResult != 0) {
@@ -438,6 +481,8 @@ public:
         return true;
     }
 
+    // Pumps output while polling child state until normal completion, timeout,
+    // or an executor I/O/wait failure. Any unfinished child is then reaped.
     void Wait(ProcessExecutorResult& result) noexcept
     {
         const SteadyClock::time_point executionDeadline = startedAt_ + request_.executionTimeout;
@@ -451,6 +496,8 @@ public:
             const pid_t waitResult = WaitWithoutBlocking(waitStatus);
             if (waitResult == processLeaderId_) {
                 needsReaping_ = false;
+                // Capture bytes already queued between the last drain and the
+                // observed process exit before closing the forwarding pipes.
                 if (ForwardAvailableOutput()) {
                     SetResultFromWaitStatus(waitStatus, result);
                 }
@@ -513,6 +560,8 @@ private:
     {
         const std::chrono::milliseconds remainingTime =
             std::chrono::duration_cast<std::chrono::milliseconds>(executionDeadline - SteadyClock::now());
+        // Short bounded waits avoid busy-spinning while keeping timeout and
+        // process-exit detection responsive even when no output is produced.
         const int timeoutMilliseconds = static_cast<int>(
             std::max<int64_t>(1, std::min<int64_t>(remainingTime.count(), MAX_PROCESS_WAIT_MILLISECONDS)));
         std::array<pollfd, 2U> outputDescriptors{{
@@ -528,6 +577,8 @@ private:
         return false;
     }
 
+    // Requests graceful shutdown first, then force-kills the process group and
+    // performs the blocking wait required to prevent a zombie child.
     void TerminateAndReap() noexcept
     {
         if (!needsReaping_) {
@@ -572,11 +623,13 @@ private:
 
 } // namespace
 
+// Reports success only for a conventional zero exit status.
 bool ProcessExecutorResult::HasSuccessfulExit() const noexcept
 {
     return outcome == ProcessOutcome::Exited && terminationCode == 0;
 }
 
+// Returns a stable log-friendly name for the result category.
 const char* ProcessExecutorResult::GetOutcomeName() const noexcept
 {
     switch (outcome) {
@@ -593,6 +646,9 @@ const char* ProcessExecutorResult::GetOutcomeName() const noexcept
     }
 }
 
+// Validates the request and executes it synchronously. Operational failures are
+// represented by the default ExecutorFailure result; allocation failure remains
+// exceptional so callers do not lose an out-of-memory condition.
 ProcessExecutorResult ProcessExecutor::Execute(const ProcessExecutorRequest& request)
 {
     ProcessExecutorResult result;
