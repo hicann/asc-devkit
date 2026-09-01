@@ -307,6 +307,14 @@ add_executable(demo
   该编译选项用于在没有地址重叠的情况下移除不必要的内存同步指令，以提升性能。针对Ascend 950PR/Ascend 950DT，使用基础API的高维切分计算API时，默认会插入内存同步指令以确保在地址重叠等复杂场景下的数据正确性，但这些同步指令会带来性能开销。在追求极致性能的场景下，如果您可以确定代码在任何情况下都不会发生内存重叠，可以使用此选项。
  <!-- end id12 -->
 
+ <!-- npu="950" id20 -->
+ -   **ASCENDC\_USE\_LEGACY\_PRECISION** 用于控制SIMT API的实现版本，默认开关关闭。针对Ascend 950PR/Ascend 950DT，CANN 9.2.0版本对部分SIMT API的实现做了精度提升。如果您的算子对精度不敏感且发现性能发生劣化，可以开启此宏，让相关SIMT API回退到旧版本实现，以恢复原有性能水平，示例如下：
+     ```shell
+     bisheng <source_file>.asc -o <output_file> --npu-arch=dav-<npu architecture> -DASCENDC_USE_LEGACY_PRECISION
+     ```
+     仅在Ascend 950PR/Ascend 950DT支持该选项。
+ <!-- end id20 -->
+
 
 ### 内置链接库<a name="section57020345148"></a>
 
