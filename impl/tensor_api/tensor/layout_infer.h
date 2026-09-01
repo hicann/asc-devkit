@@ -27,6 +27,20 @@
 namespace asc {
 namespace te {
 
+constexpr size_t layout_infer_priority_step = 1;
+constexpr size_t layout_infer_priority_begin = 0;
+constexpr size_t layout_infer_priority_nd_ext = layout_infer_priority_begin;
+constexpr size_t layout_infer_priority_dn_ext = layout_infer_priority_nd_ext + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_nn = layout_infer_priority_dn_ext + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_nz = layout_infer_priority_nn + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_zz = layout_infer_priority_nz + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_zn = layout_infer_priority_zz + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_scalea_dn = layout_infer_priority_zn + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_scaleb_nd = layout_infer_priority_scalea_dn + layout_infer_priority_step;
+constexpr size_t layout_infer_priority_end = layout_infer_priority_scaleb_nd + layout_infer_priority_step;
+constexpr size_t layout_infer_first_element = 0;
+constexpr size_t layout_infer_second_element = layout_infer_first_element + layout_infer_priority_step;
+
 template <typename RowStride, typename ColumnStride>
 struct infer_flat_layout_pattern_impl {
     using type = Std::ignore_t;
@@ -53,64 +67,72 @@ struct infer_flat_layout_pattern
 
 template <
     typename ShapeRow0, typename ShapeRow1, typename ShapeColumn0, typename ShapeColumn1, typename StrideRow0,
-    typename StrideRow1, typename StrideColumn0, typename StrideColumn1, size_t Priority = 0, typename Enable = void>
+    typename StrideRow1, typename StrideColumn0, typename StrideColumn1, size_t Priority = layout_infer_priority_begin,
+    typename Enable = void>
 struct infer_nested_layout_pattern_impl {
     using type = typename infer_nested_layout_pattern_impl<
         ShapeRow0, ShapeRow1, ShapeColumn0, ShapeColumn1, StrideRow0, StrideRow1, StrideColumn0, StrideColumn1,
-        Priority + 1>::type;
+        Priority + layout_infer_priority_step>::type;
 };
 
 template <
     typename ShapeRow0, typename ShapeRow1, typename ShapeColumn0, typename ShapeColumn1, typename StrideRow0,
     typename StrideRow1, typename StrideColumn0, typename StrideColumn1>
 struct infer_nested_layout_pattern_impl<
-    ShapeRow0, ShapeRow1, ShapeColumn0, ShapeColumn1, StrideRow0, StrideRow1, StrideColumn0, StrideColumn1, 8> {
+    ShapeRow0, ShapeRow1, ShapeColumn0, ShapeColumn1, StrideRow0, StrideRow1, StrideColumn0, StrideColumn1,
+    layout_infer_priority_end> {
     using type = Std::ignore_t;
 };
 
 template <typename ShapeRow1, typename ShapeColumn1, typename StrideRow1>
-struct infer_nested_layout_pattern_impl<_1, ShapeRow1, _1, ShapeColumn1, _0, StrideRow1, _0, _1, 0> {
+struct infer_nested_layout_pattern_impl<
+    _1, ShapeRow1, _1, ShapeColumn1, _0, StrideRow1, _0, _1, layout_infer_priority_nd_ext> {
     using type = nd_ext_layout_ptn;
 };
 
 template <typename ShapeRow1, typename ShapeColumn1, typename StrideColumn1>
-struct infer_nested_layout_pattern_impl<_1, ShapeRow1, _1, ShapeColumn1, _0, _1, _0, StrideColumn1, 1> {
+struct infer_nested_layout_pattern_impl<
+    _1, ShapeRow1, _1, ShapeColumn1, _0, _1, _0, StrideColumn1, layout_infer_priority_dn_ext> {
     using type = dn_ext_layout_ptn;
 };
 
 template <typename ShapeRow1, typename ShapeColumn1, typename StrideColumn1>
-struct infer_nested_layout_pattern_impl<_2, ShapeRow1, _16, ShapeColumn1, _1, _32, _2, StrideColumn1, 2> {
+struct infer_nested_layout_pattern_impl<
+    _2, ShapeRow1, _16, ShapeColumn1, _1, _32, _2, StrideColumn1, layout_infer_priority_nn> {
     using type = nn_layout_ptn;
 };
 
 template <size_t ShapeRow0, typename ShapeRow1, size_t ShapeColumn0, typename ShapeColumn1, typename StrideColumn1>
 struct infer_nested_layout_pattern_impl<
     Std::Int<ShapeRow0>, ShapeRow1, Std::Int<ShapeColumn0>, ShapeColumn1, Std::Int<ShapeColumn0>,
-    Std::Int<ShapeRow0 * ShapeColumn0>, _1, StrideColumn1, 3, Std::enable_if_t<ShapeRow0 == fractal_fixed>> {
+    Std::Int<ShapeRow0 * ShapeColumn0>, _1, StrideColumn1, layout_infer_priority_nz,
+    Std::enable_if_t<ShapeRow0 == fractal_fixed>> {
     using type = nz_layout_ptn;
 };
 
 template <size_t ShapeRow0, typename ShapeRow1, size_t ShapeColumn0, typename ShapeColumn1, typename StrideRow1>
 struct infer_nested_layout_pattern_impl<
     Std::Int<ShapeRow0>, ShapeRow1, Std::Int<ShapeColumn0>, ShapeColumn1, Std::Int<ShapeColumn0>, StrideRow1, _1,
-    Std::Int<ShapeRow0 * ShapeColumn0>, 4, Std::enable_if_t<ShapeRow0 == fractal_fixed>> {
+    Std::Int<ShapeRow0 * ShapeColumn0>, layout_infer_priority_zz, Std::enable_if_t<ShapeRow0 == fractal_fixed>> {
     using type = zz_layout_ptn;
 };
 
 template <size_t ShapeRow0, typename ShapeRow1, size_t ShapeColumn0, typename ShapeColumn1, typename StrideRow1>
 struct infer_nested_layout_pattern_impl<
     Std::Int<ShapeRow0>, ShapeRow1, Std::Int<ShapeColumn0>, ShapeColumn1, _1, StrideRow1, Std::Int<ShapeRow0>,
-    Std::Int<ShapeRow0 * ShapeColumn0>, 5, Std::enable_if_t<ShapeColumn0 == fractal_fixed>> {
+    Std::Int<ShapeRow0 * ShapeColumn0>, layout_infer_priority_zn, Std::enable_if_t<ShapeColumn0 == fractal_fixed>> {
     using type = zn_layout_ptn;
 };
 
 template <typename ShapeRow1, typename ShapeColumn1, typename StrideColumn1>
-struct infer_nested_layout_pattern_impl<_1, ShapeRow1, _2, ShapeColumn1, _0, _2, _1, StrideColumn1, 6> {
+struct infer_nested_layout_pattern_impl<
+    _1, ShapeRow1, _2, ShapeColumn1, _0, _2, _1, StrideColumn1, layout_infer_priority_scalea_dn> {
     using type = scalea_dn_layout_ptn;
 };
 
 template <typename ShapeRow1, typename ShapeColumn1, typename StrideRow1>
-struct infer_nested_layout_pattern_impl<_2, ShapeRow1, _1, ShapeColumn1, _1, StrideRow1, _0, _2, 7> {
+struct infer_nested_layout_pattern_impl<
+    _2, ShapeRow1, _1, ShapeColumn1, _1, StrideRow1, _0, _2, layout_infer_priority_scaleb_nd> {
     using type = scaleb_nd_layout_ptn;
 };
 
@@ -151,8 +173,10 @@ struct infer_two_dim_layout_pattern<Row, Column, RowStride, ColumnStride, true, 
 template <typename Batch, typename MatrixShape, typename BatchStride, typename MatrixStride>
 struct infer_two_dim_layout_pattern<Batch, MatrixShape, BatchStride, MatrixStride, false, true, false, true>
     : infer_two_dim_layout_pattern<
-          typename Std::tuple_element<0, MatrixShape>::type, typename Std::tuple_element<1, MatrixShape>::type,
-          typename Std::tuple_element<0, MatrixStride>::type, typename Std::tuple_element<1, MatrixStride>::type> {};
+          typename Std::tuple_element<layout_infer_first_element, MatrixShape>::type,
+          typename Std::tuple_element<layout_infer_second_element, MatrixShape>::type,
+          typename Std::tuple_element<layout_infer_first_element, MatrixStride>::type,
+          typename Std::tuple_element<layout_infer_second_element, MatrixStride>::type> {};
 
 template <typename ShapeType, typename StrideType>
 struct infer_layout_pattern {
