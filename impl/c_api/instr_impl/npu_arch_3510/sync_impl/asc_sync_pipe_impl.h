@@ -14,6 +14,7 @@
  */
 
 #if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+
 #define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
 #endif
@@ -23,7 +24,30 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
-#define asc_sync_pipe_impl(pipe) pipe_barrier(pipe)
+__aicore__ inline void asc_sync_pipe_impl(pipe_t pipe)
+{
+    if ASC_IS_AIC {
+        if (pipe == pipe_t::PIPE_M) {
+            pipe_barrier(pipe_t::PIPE_M);
+        } else if (pipe == pipe_t::PIPE_MTE1) {
+            pipe_barrier(pipe_t::PIPE_MTE1);
+        } else if (pipe == pipe_t::PIPE_MTE2) {
+            pipe_barrier(pipe_t::PIPE_MTE2);
+        } else if (pipe == pipe_t::PIPE_ALL) {
+            pipe_barrier(pipe_t::PIPE_ALL);
+        } else if (pipe == pipe_t::PIPE_FIX) {
+            pipe_barrier(pipe_t::PIPE_FIX);
+        }
+    } else if ASC_IS_AIV {
+        if (pipe == pipe_t::PIPE_MTE2) {
+            pipe_barrier(pipe_t::PIPE_MTE2);
+        } else if (pipe == pipe_t::PIPE_MTE3) {
+            pipe_barrier(pipe_t::PIPE_MTE3);
+        } else if (pipe == pipe_t::PIPE_ALL) {
+            pipe_barrier(pipe_t::PIPE_ALL);
+        }
+    }
+}
 
 __aicore__ inline void asc_sync_vec_impl() { pipe_barrier(pipe_t::PIPE_ALL); }
 
@@ -35,7 +59,6 @@ __aicore__ inline void asc_sync_vec_impl(int id)
     wait_flag(pipe_t::PIPE_V, pipe_t::PIPE_MTE2, static_cast<event_t>(id));
     wait_flag(pipe_t::PIPE_V, pipe_t::PIPE_MTE3, static_cast<event_t>(id));
     wait_flag(pipe_t::PIPE_V, pipe_t::PIPE_S, static_cast<event_t>(id));
-    pipe_barrier(pipe_t::PIPE_V);
 }
 
 __aicore__ inline void asc_sync_mte2_impl(int id)
