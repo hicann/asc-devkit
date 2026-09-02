@@ -38,7 +38,7 @@ const std::map<HcclCMDType, std::string> OP_TYPE_TO_AICPU_SOLE_ALG_MAP = {
 };
 
 const std::map<HcclCMDType, std::string> OP_TYPE_TO_CCU_1D_ALG_MAP = {
-    {HcclCMDType::HCCL_CMD_ALLGATHER, "CcuAllGatherMesh1D"},
+    {HcclCMDType::HCCL_CMD_ALLGATHER, "CcuSchedAllGatherSoleMesh"},
     {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "CcuReduceScatterMesh1D"},
     {HcclCMDType::HCCL_CMD_ALLREDUCE, "CcuAllReduceMesh1D"},
     {HcclCMDType::HCCL_CMD_REDUCE, "CcuReduceMesh1D"},

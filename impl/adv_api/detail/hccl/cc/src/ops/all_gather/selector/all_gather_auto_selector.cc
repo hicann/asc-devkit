@@ -31,7 +31,7 @@ SelectorStatus AllGatherAutoSelector::SelectCcuMsAlgo(
         HCCL_WARNING("[Algo][AllGatherAutoSelector] ccu_ms does not support inplace allgather.");
         return SelectorStatus::NOT_MATCH;
     }
-    selectAlgName = "CcuAllGatherMesh1DMem2Mem";
+    selectAlgName = "CcuSchedAllGatherSoleMesh";
     HCCL_DEBUG("[AllGatherAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
     return SelectorStatus::MATCH;
 }
@@ -51,7 +51,7 @@ SelectorStatus AllGatherAutoSelector::SelectMeshAlgo(
         HCCL_WARNING("[Algo][AllGatherAutoSelector] ccu_ms does not support inplace allgather.");
         return SelectorStatus::NOT_MATCH;
     }
-    selectAlgName = "CcuAllGatherMesh1DMem2Mem";
+    selectAlgName = "CcuSchedAllGatherSoleMesh";
     HCCL_DEBUG("[AllGatherAutoSelector][%s] Algo match[%s]", __func__, selectAlgName.c_str());
     return SelectorStatus::MATCH;
 }
@@ -71,7 +71,7 @@ SelectorStatus AllGatherAutoSelector::SelectCcuScheduleUBXAlgo(
         selectAlgName = KFC_CONCURRENT_ALL_GATHER_ALG_NAME;
         return SelectorStatus::MATCH;
     }
-    selectAlgName = "CcuAllGatherMesh1DMem2Mem";
+    selectAlgName = "CcuSchedAllGatherSoleMesh";
     return SelectorStatus::MATCH;
 }
 
@@ -89,7 +89,7 @@ SelectorStatus AllGatherAutoSelector::SelectCcuScheduleLevel0Algo(
         return SelectorStatus::NOT_MATCH;
     }
 
-    selectAlgName = "CcuKfcAllGatherMesh1DMem2Mem";
+    selectAlgName = "CcuSchedAllGatherSoleMesh";
     HCCL_INFO(
         "[KFC][AllGather][Select] algorithm[%s], dataSize[%llu], level0Topo[%u], level0MeshType[%u]",
         selectAlgName.c_str(), static_cast<unsigned long long>(dataSize), static_cast<uint32_t>(topoInfo->level0Topo),
