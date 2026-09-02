@@ -252,7 +252,7 @@ __simd_vf__ inline void DigammaImpl(__ubuf__ float* dstUb, __ubuf__ float* srcUb
             Reg::Duplicate(tmpReg4, 0.0f, fullMask);
             DigammaSelect(tmpReg4, tmpReg1, negArgReg, mask2);
             Reg::Duplicate(tmpReg2, -1.0f, fullMask);
-            Reg::Div<float, &divMode>(tmpReg1, tmpReg2, tmpReg1, fullMask);
+            Reg::Div(tmpReg1, tmpReg2, tmpReg1, fullMask);
             DigammaSelect(tmpReg4, tmpReg1, negArgReg, mask1);
             Reg::Muls(tmpReg4, tmpReg4, DIGAMMA_PI, fullMask);
             Reg::Add(resultReg, resultReg, tmpReg4, fullMask);

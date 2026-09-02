@@ -465,7 +465,7 @@ __simd_callee__ inline void LnCompute(U& dstReg, U& srcReg, MaskReg& mask)
             RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
-            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
             vmuls(tmpReg, srcRegCopy, multiplyFactor.f, mask, modeValue);
             vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
             vln(dstRegCopy, srcRegCopy, mask, modeValue);
@@ -482,7 +482,7 @@ __simd_callee__ inline void LnCompute(U& dstReg, U& srcReg, MaskReg& mask)
             RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
-            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
             vmuls(tmpReg, srcRegCopy, multiplyFactor.f, mask, modeValue);
             vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
             vln(dstRegCopy, srcRegCopy, mask, modeValue);

@@ -114,9 +114,9 @@ __simd_vf__ inline void VecUnaryLevel2ImplFloat(__ubuf__ T* dst, __ubuf__ T* src
     Reg::MaskReg cmpMask;
     Reg::MaskReg maskFull = Reg::CreateMask<T>();
     static constexpr Reg::DivSpecificMode divMode = {
-        Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_TRUE};
+        Reg::MaskMergeMode::ZEROING, false, DivAlgo::PRECISION_1ULP_FTZ_FALSE};
     static constexpr Reg::SqrtSpecificMode sqrtMode = {
-        Reg::MaskMergeMode::ZEROING, false, SqrtAlgo::PRECISION_1ULP_FTZ_TRUE};
+        Reg::MaskMergeMode::ZEROING, false, SqrtAlgo::PRECISION_1ULP_FTZ_FALSE};
     Reg::Duplicate(regZero, 0.0f, maskFull);
     Reg::Duplicate(posInfReg, notNum0.f, maskFull);
     Reg::Duplicate(negInfReg, notNum1.f, maskFull);
