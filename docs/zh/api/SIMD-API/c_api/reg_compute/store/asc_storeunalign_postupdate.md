@@ -107,12 +107,12 @@ __simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ <dtype>*& dst,
 
 #### dtype支持数据类型
 
-`dtype`支持的数据类型为`uint8_t`、`uint16_t`、`uint32_t`。
+`dtype`支持的数据类型为`uint16_t`、`uint32_t`。
 
 #### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ uint8_t*& dst,
+__simd_callee__ inline void asc_storeunalign_postupdate(__ubuf__ uint16_t*& dst,
                                                         vector_store_unalign& unalign_reg,
                                                         vector_bool src)
 ```

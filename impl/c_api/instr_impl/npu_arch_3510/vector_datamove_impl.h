@@ -1478,6 +1478,8 @@ __simd_callee__ inline void asc_storeunalign_postupdate(
     asc_storeunalign_postupdate_impl(dst, src0, src1, count);
 }
 
+[[deprecated("NOTICE: asc_storeunalign_postupdate with a b8 destination and vector_bool source is deprecated. "
+             "Please use the b16 or b32 overload instead.")]]
 __simd_callee__ inline void asc_storeunalign_postupdate(
     __ubuf__ uint8_t*& dst, vector_store_unalign& src0, vector_bool src1)
 {

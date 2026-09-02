@@ -224,6 +224,10 @@
 
     此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
 
+- [asc_storeunalign_postupdate](../SIMD-API/c_api/deprecated_interface/asc_storeunalign_postupdate_deprecated.md)接口（掩码寄存器搬出模式的b8数据类型原型）
+
+    此接口后续版本会废弃，请使用b16或b32数据类型原型。
+
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
