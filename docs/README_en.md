@@ -14,7 +14,6 @@ Key directory structure is as follows:
 │   ├── asc_c_api_contributing.md      # Ascend C C API contribution guide
 │   ├── asc_doc_contributing.md        # Ascend C documentation contribution guide
 │   ├── asc_doc_design_rules.md        # Ascend C documentation design rules
-│   ├── asc_950_feature_guide.md       # Ascend 950PR/Ascend 950DT new feature guide
 │   ├── asc_how_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
 │   └── quick_start.md                 # Quick start documentation
 ├── en                                 # English documentation directory
@@ -24,7 +23,6 @@ Key directory structure is as follows:
 │   ├── asc_c_api_contributing.md      # Ascend C C API contribution guide
 │   ├── asc_doc_contributing.md        # Ascend C documentation contribution guide
 │   ├── asc_doc_design_rules.md        # Ascend C documentation design rules
-│   ├── asc_950_feature_guide.md       # Ascend 950PR/Ascend 950DT new feature guide
 │   ├── asc_how_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
 │   └── quick_start.md                 # Quick start documentation
 ├── README_en.md

@@ -14,7 +14,6 @@
 │   ├── asc_c_api_contributing.md      # Ascend C C API贡献指南
 │   ├── asc_doc_contributing.md        # Ascend C 资料贡献指南
 │   ├── asc_doc_design_rules.md        # Ascend C 资料设计规范
-│   ├── asc_950_feature_guide.md       # Ascend 950PR/Ascend 950DT新增特性导航
 │   ├── asc_how_to_choose_api.md       # Ascend C多层级编程接口选择参考文档
 │   └── quick_start.md                 # 快速入门文档
 ├── en                                 # 英文文档目录
@@ -24,7 +23,6 @@
 │   ├── asc_c_api_contributing.md      # Ascend C C API贡献指南
 │   ├── asc_doc_contributing.md        # Ascend C 资料贡献指南
 │   ├── asc_doc_design_rules.md        # Ascend C 资料设计规范
-│   ├── asc_950_feature_guide.md       # Ascend 950PR/Ascend 950DT新增特性导航
 │   ├── asc_how_to_choose_api.md       # Ascend C多层级编程接口选择参考文档
 │   └── quick_start.md                 # 快速入门文档
 ├── README_en.md

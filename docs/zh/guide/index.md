@@ -376,6 +376,8 @@
             -   [基础API迁移指导](cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/basic_api_migration.md)
             -   [高阶API迁移指导](cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/advanced_api_migration.md)
             -   [算子编译迁移指导](cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/op_compilation_migration.md)
+    -   [新特性使用指导](cross_gen_migration_guide/instructions_for_new_features/3510_new_features.md)
+        -   [3510新特性使用说明](cross_gen_migration_guide/instructions_for_new_features/3510_new_features.md)
 
 -   [技术附录](./technical_appendix/concepts_and_terms/glossary.md)
     -   [概念原理和术语](./technical_appendix/concepts_and_terms/glossary.md)
