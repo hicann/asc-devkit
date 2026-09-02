@@ -77,6 +77,19 @@ namespace {
 constexpr uint32_t ELEMENTS = 64;
 constexpr uint32_t BYTES = ELEMENTS * sizeof(float);
 
+__simd_vf__ inline void add_vf(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1)
+{
+    vector_float dst_reg;
+    vector_float src0_reg;
+    vector_float src1_reg;
+    uint32_t count = ELEMENTS;
+    vector_bool mask = asc_update_mask_b32(count);
+    asc_loadalign(src0_reg, src0);
+    asc_loadalign(src1_reg, src1);
+    asc_add(dst_reg, src0_reg, src1_reg, mask);
+    asc_storealign(dst, dst_reg, mask);
+}
+
 void print_data(const char* label, const std::vector<float>& data)
 {
     std::cout << label << ":";
@@ -91,7 +104,7 @@ __global__ __vector__ void asc_sync_kernel(__gm__ float* output, __gm__ float* s
     asc_copy_gm2ub_align(x, src0, BYTES);
     asc_copy_gm2ub_align(y, src1, BYTES);
     asc_sync();
-    asc_add(z, x, y, ELEMENTS);
+    add_vf(z, x, y);
     asc_sync();
     asc_copy_ub2gm_align(output, z, BYTES);
     asc_sync();
