@@ -323,35 +323,20 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t write_string(
     return str_len;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float bf16_to_float(bfloat16_t x)
-{
-    union Data {
-        bfloat16_t bf;
-        unsigned int i;
-    };
-    union Data d = {.bf = x};
-    unsigned int u = d.i << 16;
-    union Data2 {
-        float f;
-        unsigned int i;
-    };
-    union Data2 d2 = {.i = u};
-    return d2.f;
-}
-
 template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void write_scalar(
     __simt_gm__ BlockRingBufInfo* block_ring_buf_info, uint32_t write_ptr, T scalar)
 {
+    static_assert(!std::is_same_v<T, double>, "not support double type");
     TypeToByte8 tmp{0};
-    if constexpr (std::is_same_v<T, half> || std::is_same_v<T, float>) {
+    if constexpr (std::is_same_v<T, float>) {
         tmp.value_f32 = static_cast<float>(scalar);
     } else if constexpr (std::is_signed<T>::value) {
         tmp.value_s64 = static_cast<int64_t>(scalar);
     } else if constexpr (std::is_unsigned<T>::value) {
         tmp.value_u64 = static_cast<uint64_t>(scalar);
-    } else if constexpr (std::is_same_v<T, bfloat16_t>) {
-        tmp.value_f32 = bf16_to_float(scalar);
+    } else if constexpr (std::is_same_v<T, half> || std::is_same_v<T, bfloat16_t>) {
+        tmp.value_f32 = __cvt_float<ROUND::R, RoundingSaturation::RS_DISABLE_VALUE>(scalar);
     } else if constexpr (std::is_pointer<T>::value) {
         tmp.value_u64 = (uintptr_t)scalar;
     } else if constexpr (std::is_enum<T>::value) {
