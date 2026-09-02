@@ -18,7 +18,7 @@ AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以
 针对[NPU架构3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，硬件架构图如下，高亮部分展示了并行执行的计算单元和搬运单元。
 
 **图 2**  架构图<a name="zh-cn_topic_0000002542725361_fig31512113433"></a>  
-![](../../../../figures/ascend_950pr_950dt_architecture.png "Ascend_950PR_950DT_硬件架构图")
+![](../../../../figures/npu_3510_hw_arch_sync.png "Ascend_950PR_950DT_硬件架构图")
 
 <!-- end id2 -->
 

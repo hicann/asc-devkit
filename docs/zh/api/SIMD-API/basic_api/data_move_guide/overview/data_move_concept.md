@@ -21,7 +21,6 @@
 - **blockLen**：每个数据块的长度，以DataBlock（32字节）为单位。DataBlock是Ascend C数据搬运的最小寻址粒度。例如，搬运128个half类型元素（每个2字节，共256字节 = 8个DataBlock），则blockLen = 8。
 - **blockCount**：需要搬运的数据块个数。每轮搬运将依次取出blockCount个连续的数据块。
 - **srcStride/dstStride（srcGap/dstGap）**：相邻数据块之间的地址间隔（以DataBlock为单位）。当stride = blockLen时，数据在内存中实际是连续的；当stride\>blockLen时，表示每个数据块之间存在跳跃，实现了非连续（跨步）搬运。
-- **repeat**：重复搬运的轮数。整个搬运过程将在repeat轮中执行，每轮搬运blockCount个数据块，轮与轮之间的地址偏移由srcRepeatStride/dstRepeatStride控制。
 
 **适用场景**：Conv、Matmul等算子中常见的分块（Tiling）数据搬运，数据按固定步长在源或目的端非连续分布。参考[DataCopy（GM与UB高维切分数据搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_00000023829080211)、[DataCopy（GM与L1高维切分数据搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002543262916)等章节。
 
@@ -35,13 +34,13 @@
 
 ## 切片数据搬运（DataCopy切片）
 
-切片搬运支持从一个多维Tensor中提取一个矩形子区域（Slice）进行搬运。通过SliceInfo结构体数组描述源端和目的端每个维度上的切片参数（burstLen、beginOffset、endOffset等），可以实现1\~5维的灵活切片。切片搬运本质上是一种特殊的高维非连续搬运，但接口层面提供了更直观的多维配置方式。
+切片搬运支持从一个多维Tensor中提取一个矩形子区域（Slice）进行搬运。通过SliceInfo结构体数组描述源端和目的端每个维度上的切片参数（startIndex、endIndex、stride、burstLen、shapeValue），可以实现1\~5维的灵活切片。切片搬运本质上是一种特殊的高维非连续搬运，但接口层面提供了更直观的多维配置方式。
 
 **适用场景**：从大型特征图中提取ROI（Region of Interest）子区域、Pad模式下提取有效数据区域等。参考[DataCopy（GM与UB切片数据搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002568770166)章节。
 
 ## 随路格式转换搬运（ND2NZ/NZ2ND/DN2NZ）
 
-在昇腾的矩阵计算流程中，数据通常需要从ND（Standard Normal Data，标准数据排列，即NHWC/NCHW等常规格式）转换为NZ（Normal Normal Data，分形矩阵排列，即按小矩阵块组织的行列排布）格式，计算完成后再从NZ转回ND。Ascend C提供了“随路转换”能力——在数据搬运的同时完成格式转换，无需额外的转换指令，从而实现“搬运零开销格式转换”。
+在昇腾的矩阵计算流程中，数据通常需要从ND（标准数据排列，即NHWC/NCHW等常规格式）转换为NZ（分形矩阵排列，即按小矩阵块组织的行列排布）格式，计算完成后再从NZ转回ND。Ascend C提供了“随路转换”能力——在数据搬运的同时完成格式转换，无需额外的转换指令，从而实现“搬运零开销格式转换”。
 
 - **ND2NZ搬运**：数据从Global Memory搬运到UB/L1 Buffer的同时，将ND格式转换为NZ格式。通过Nd2NzParams参数配置源矩阵的分形维度信息。参考[DataCopy（GMToUB随路转换ND2NZ搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002349187356)、[DataCopy（GMToL1随路转换-ND2NZ搬运）](../GM_L1_or_L0_data_move.md#ZH-CN_TOPIC_0000002573902841)等章节。
 - **NZ2ND搬运**：数据从UB搬运到Global Memory的同时，将NZ格式转换回ND格式。通过Nz2NdParamsFull参数配置目的矩阵的维度信息。参考[DataCopy（UBToGM随路转换NZ2ND搬运）](../GM_UB_data_move.md#ZH-CN_TOPIC_0000002391805265)等章节。
@@ -65,7 +64,7 @@
 
 ## UB内部搬运（Copy）
 
-Copy是UB内部专用的数据搬运指令，支持VECIN/VECCALC/VECOUT之间的数据搬运。与DataCopy不同，Copy接口支持mask操作（可以按位控制哪些元素参与搬运）和DataBlock间隔控制，适用于矢量计算内部的数据重排和中间结果暂存。参考[Copy（UBToUB连续数据搬运）](../UB_UB_data_move.md#ZH-CN_TOPIC_0000002575088175)、[Copy（UBToUB掩码式高维数据搬运）](../UB_UB_data_move.md#ZH-CN_TOPIC_0000002575088175)等章节。
+Copy是UB内部专用的数据搬运指令，支持VECIN/VECCALC/VECOUT之间的数据搬运。与DataCopy不同，Copy接口支持mask操作（可以按位控制哪些元素参与搬运）和DataBlock间隔控制，适用于矢量计算内部的数据重排和中间结果暂存。参考[Copy（UBToUB连续数据搬运）](../UB_UB_data_move.md#ZH-CN_TOPIC_0000002575088175)、[Copy（UBToUB掩码式高维数据搬运）](../UB_UB_data_move.md#ZH-CN_TOPIC_0000002575088676)等章节。
 
 ## 矩阵分形搬运（LoadData（2D矩阵搬运）/LoadData（卷积数据搬运））
 

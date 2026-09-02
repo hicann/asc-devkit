@@ -24,7 +24,7 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 
 **图 2**  NPU架构版本3510下，AI Core硬件架构示意图  
 
-![](../../../../figures/ascend_950pr_950dt_architecture.png)
+![](../../../../figures/npu_3510_hw_arch_sync.png)
 <!-- end id2 -->
 
   > [!NOTE]说明
@@ -57,14 +57,17 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 | Global Memory | UB | MTE2 | 将Global Memory中的数据搬运至UB的同时完成ND到NZ格式的随路转换。 | DataCopy |
 | Global Memory | UB | MTE2 | 将Global Memory中的数据以NDDMA方式多维搬运至UB。 | DataCopy |
 | Global Memory | UB | MTE2 | 将Global Memory中的非对齐数据搬运至UB，并对边界无效区域做Padding填充。 | DataCopyPad |
+| UB | Global Memory | MTE3 | 将UB中的数据连续搬运至Global Memory。 | DataCopy |
+| UB | Global Memory | MTE3 | 将UB中的数据通过高维切分方式搬运至Global Memory。 | DataCopy |
+| UB | Global Memory | MTE3 | 将UB中的数据按切片方式搬运至Global Memory。 | DataCopy |
 | UB | Global Memory | MTE3 | 将UB中的数据搬运到Global Memory的同时完成NZ到ND格式的随路转换。 | DataCopy |
-| UB | Global Memory | MTE3 | 将UB中的非对齐数据搬运到Global Memory，并对边界无效区域做Padding填充。 | DataCopyPad |
+| UB | Global Memory | MTE3 | 将UB中的非对齐数据搬运至Global Memory，读取UB时使用dummy数据补齐，写入Global Memory时丢弃dummy数据。 | DataCopyPad |
 | UB | L1 Buffer | MTE3 | 将UB中的数据连续搬运至L1 Buffer。 | DataCopy |
 | UB | L1 Buffer | MTE3 | 将UB中的数据通过高维切分方式搬运至L1 Buffer。 | DataCopy |
 | UB | L1 Buffer | MTE3 | 将UB中的数据搬运到L1 Buffer的同时完成ND到NZ格式的随路转换。 | DataCopy |
 | UB | L1 Buffer | MTE3 | 将UB中的非对齐数据搬运到L1 Buffer，并对边界无效区域做Padding填充。 | DataCopyPad |
-| L1 Buffer | UB | MTE3 | 将L1 Buffer中的数据连续搬运至UB。 | DataCopyL1ToUB |
-| L1 Buffer | UB | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至UB。 | DataCopyL1ToUB |
+| L1 Buffer | UB | MTE1 | 将L1 Buffer中的数据连续搬运至UB。 | DataCopyL1ToUB |
+| L1 Buffer | UB | MTE1 | 将L1 Buffer中的数据通过高维切分方式搬运至UB。 | DataCopyL1ToUB |
 | L1 Buffer | Global Memory | MTE3 | 将L1 Buffer中的数据连续搬运至Global Memory。 | DataCopy |
 | L1 Buffer | Global Memory | MTE3 | 将L1 Buffer中的数据通过高维切分方式搬运至Global Memory。 | DataCopy |
 | L1 Buffer | L0A Buffer | MTE1 | 将L1 Buffer中的2D格式分形矩阵搬运至L0A Buffer作为Cube矩阵乘的左矩阵输入。 | LoadData（2D矩阵搬运） |
@@ -89,7 +92,7 @@ AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../
 | L0C Buffer | L1 Buffer | FixPipe | 将Cube计算结果从L0C Buffer搬运至L1 Buffer做中转，支持随路量化和激活。 | DataCopy |
 | L0C Buffer | L1 Buffer | FixPipe | 将Cube计算结果从L0C Buffer搬运至L1 Buffer做中转，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
 | L0C Buffer | UB | MTE3 | 将Cube计算结果从L0C Buffer搬运至UB，支持随路量化和激活后处理。 | DataCopy |
-| L0C Buffer | UB | MTE3 | 将Cube计算结果从L0C Buffer搬运至UB，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
+| L0C Buffer | UB | PIPE_FIX | 将Cube计算结果从L0C Buffer搬运至UB，通过FixPipe完成量化、激活、格式转换。 | FixPipe |
 | UB | UB | PIPE_V | UB内部连续数据搬移。 | DataCopy |
 | UB | UB | PIPE_V | UB内部通过高维切分方式搬移数据。 | DataCopy |
 | UB | UB | PIPE_V | UB内部连续数据搬移。 | Copy |

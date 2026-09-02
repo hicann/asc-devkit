@@ -31,7 +31,7 @@ DataCopy能够实现Global Memory和L1 Buffer之间的连续数据搬运，数�
 - L1 Buffer -> Global Memory
     - A1/B1 -> GM
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1连续数据搬运）](../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1连续数据搬运）](../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md)、[DataCopy（L1ToGM连续数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopy_L1ToGM_continuous.md)。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -62,7 +62,7 @@ DataCopy能够实现Global Memory和L1 Buffer之间的连续数据搬运和非�
 - L1 Buffer -> Global Memory
     - A1/B1 -> GM
 
-搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1高维切分数据搬运）](../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_highdim_split.md)。
+搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopy（GMToL1高维切分数据搬运）](../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_highdim_split.md)、[DataCopy（L1ToGM高维切分数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopy_L1ToGM_highdim_split.md)。
 
 src和dst分别为源操作数和目的操作数；repeatParams为搬运参数。
 
