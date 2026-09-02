@@ -9,7 +9,8 @@
  */
 
 #if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-
+#pragma message( \
+    "This is an internal header file and must not be used directly. Please include \\\"c_api/experimental/asc_get_pipe_idle_slot_count.h\\\" instead.")
 #define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
 #endif

@@ -8,9 +8,21 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
+#pragma message("union.h is deprecated.Please use c_api/defs/union.h.")
+
+#if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+#define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_UTILS_UNION_H
+#endif
+
 #ifndef INCLUDE_C_API_UTILS_UNION_H
 #define INCLUDE_C_API_UTILS_UNION_H
 
 #include "c_api/defs/union.h"
 
+#endif
+
+#if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_UTILS_UNION_H)
+#undef ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#undef UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_UTILS_UNION_H
 #endif

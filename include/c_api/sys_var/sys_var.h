@@ -8,8 +8,15 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
+#pragma message("sys_var.h is deprecated.Please use utils/sys_var.h.")
+
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "sys_var.h cannot be used with compile flag --enable-simt enabled."
+#endif
+
+#if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+#define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_SYS_VAR_SYS_VAR_H
 #endif
 
 #ifndef INCLUDE_C_API_SYS_VAR_SYS_VAR_H
@@ -17,4 +24,9 @@
 
 #include "c_api/utils/sys_var.h"
 
+#endif
+
+#if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_SYS_VAR_SYS_VAR_H)
+#undef ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#undef UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_SYS_VAR_SYS_VAR_H
 #endif
