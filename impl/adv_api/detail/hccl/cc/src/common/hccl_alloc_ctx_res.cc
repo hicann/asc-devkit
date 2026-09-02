@@ -853,12 +853,7 @@ HcclResult GetCcuOpParamResCtx(
     CHK_PRT_RET(
         executor.get() == nullptr, HCCL_ERROR("Fail to find executor for algName[%s]", algName.c_str()), HCCL_E_PARA);
     std::unique_ptr<AlgResourceCtxSerializable> resCtxHost = std::make_unique<AlgResourceCtxSerializable>();
-    HcclResult ret = AcquireAlgResources(comm, opParam, executor, topoInfo, resCtxHost, opResCtx, resCtxOut);
-    if (ret != HCCL_SUCCESS) {
-        HCCL_ERROR("[GetCcuOpParamResCtx] Current topo is not supported, failed to allocate CCU resource, "
-                   "please check topo information.");
-        return ret;
-    }
+    CHK_RET(AcquireAlgResources(comm, opParam, executor, topoInfo, resCtxHost, opResCtx, resCtxOut));
     CHK_PTR_NULL(*resCtxOut);
     return HCCL_SUCCESS;
 }

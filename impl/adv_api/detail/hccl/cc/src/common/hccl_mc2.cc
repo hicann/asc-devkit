@@ -380,8 +380,14 @@ HcclResult HcclAllocComResourceByTilingImpl(HcclComm comm, void* stream, void* m
             return HCCL_E_ALG_NOT_SUPPORTED;
         }
         CHK_RET(CheckCcuKfcFlow(mc2Tiling, ccTilingList, tilingNum));
-        CHK_RET(AllocComResourceByTilingCcu(
-            comm, stream, mc2Tiling, ccTilingList, tilingNum, commName, rankSize, userRank, opResCtx, ctxTag));
+        HCCL_INFO("[MC2_DEBUG] before AllocComResourceByTilingCcu.");
+        HcclResult ret = AllocComResourceByTilingCcu(
+            comm, stream, mc2Tiling, ccTilingList, tilingNum, commName, rankSize, userRank, opResCtx, ctxTag);
+        HCCL_INFO("[MC2_DEBUG] after AllocComResourceByTilingCcu, ret[%d].", ret);
+        CHK_PRT_RET(
+            ret != HCCL_SUCCESS,
+            HCCL_ERROR("[MC2_CCU_RESOURCE_ALLOC_FAIL] Failed to allocate CCU resource, please check topo information."),
+            ret);
     } else {
         HCCL_ERROR("[%s] unsupported commEngine[%u]", __func__, commEngine);
         return HCCL_E_NOT_SUPPORT;
