@@ -64,6 +64,7 @@ const std::unordered_map<std::string, std::string> RES_RESUSE_ALG = {
     {"InsReduceScatterMesh1DMeshChunk", "InsReduceScatterMeshClass"},
     {"AicpuAllReduceSoleMeshOneShot", "InsAllReduceMeshClass"},
     {"AicpuAllReduceSoleMeshTwoShot", "InsAllReduceMeshClass"},
+    {"AicpuAllReduceSoleMeshChunkTwoShot", "InsAllReduceMeshClass"},
     {"InsSend", "InsSendRecv"},
     {"InsRecv", "InsSendRecv"}};
 

@@ -17,6 +17,7 @@
 #include "alg_data_trans_wrapper.h"
 #include "coll_alg_v2_exec_registry.h"
 #include "cann_dispatch_bridge.h"
+#include "cann_host_bridge.h"
 #include "hcomm_primitives.h"
 #include "task_cache/mc2_aicpu_task_cache.h"
 #include "task_cache/mc2_aicpu_task_cache_runner.h"
