@@ -48,7 +48,8 @@ bfloat16x2_t __hgtux2(bfloat16x2_t x, bfloat16x2_t y)
 
 | x分量值 | y分量值 | 对应分量返回值 |
 |---|---|---|
-| 任一分量含nan | 1.0 |
+| nan | 任意值 | 1.0 |
+| 任意值 | nan | 1.0 |
 | inf | inf | 0 |
 | ±0 | ±0 | 0 |
 

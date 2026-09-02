@@ -84,13 +84,13 @@ bool __hbleux2(half2 x, half2 y)
     <td>false</td>
   </tr>
   <tr>
-    <td>(±inf, ±inf)</td>
     <td>(-inf, -inf)</td>
-    <td>false</td>
+    <td>(-inf, -inf)</td>
+    <td>true</td>
   </tr>
   <tr>
-    <td>(±inf, ±inf)</td>
-    <td>(±inf, ±inf)</td>
+    <td>(inf, inf)</td>
+    <td>(inf, inf)</td>
     <td>true</td>
   </tr>
 </table>

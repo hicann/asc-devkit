@@ -60,7 +60,7 @@ bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y)
 | >0 | -0 | -inf | -ASCRT_MAX_NORMAL_BF16 |
 | <0 | -0 | inf | ASCRT_MAX_NORMAL_BF16 |
 | ±0 | 非0 | 符号由x和y的符号异或决定，值为0 | 符号由x和y的符号异或决定，值为0 |
-| x，y任意一个为nan | nan | 0 |  |
+| x，y任意一个为nan | — | nan | 0 |
 
 ## 约束说明
 
@@ -78,22 +78,28 @@ bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelHdiv(bfloat16_t* dst, bfloat16_t* x, bfloat16_t* y)
+    __global__ __launch_bounds__(1024) void kernel_hdiv(bfloat16_t* dst, bfloat16_t* x, bfloat16_t* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hdiv(x[idx], y[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelHdiv(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_hdiv(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hdiv(x[idx], y[idx]);
     }
     ```

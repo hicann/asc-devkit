@@ -61,11 +61,11 @@ bfloat16x2_t __hmaxx2_nan(const bfloat16x2_t x, const bfloat16x2_t y)
     </tr>
     <tr>
       <td>inf</td>
-      <td>任意值</td>
+      <td>非nan</td>
       <td>inf</td>
     </tr>
     <tr>
-      <td>任意值</td>
+      <td>非nan</td>
       <td>inf</td>
       <td>inf</td>
     </tr>

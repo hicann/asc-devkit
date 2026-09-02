@@ -50,10 +50,10 @@ unsigned int __hgtux2_mask(half2 x, half2 y)
 | --- | --- | --- |
 | nan | 任意值 | 0xFFFF |
 | 任意值 | nan | 0xFFFF |
-| -0 | 0 | 0xFFFF |
+| -0 | 0 | 0x0 |
 | inf | 正常值 | 0xFFFF |
 | inf | -inf | 0xFFFF |
-| inf | 正常正数 | 0x0 |
+| inf | 正常正数 | 0xFFFF |
 
 ## 约束说明
 

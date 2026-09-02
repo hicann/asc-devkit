@@ -85,7 +85,7 @@ bfloat16x2_t __hfmax2(const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16
     </tr>
     <tr>
       <td>±inf</td>
-      <td>任意值</td>
+      <td>非±0</td>
       <td>0</td>
       <td>±inf</td>
     </tr>

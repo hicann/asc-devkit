@@ -47,10 +47,10 @@ inline float fabsf(float x)
 
 输入数据的绝对值。
 
--   当x为±0时，返回值为+0。
--   当x为nan时，返回值为nan。
--   当x为inf时，返回值为inf。
--   当x为-inf时，返回值为inf。
+- 当x为±0时，返回值为+0。
+- 当x为nan时，返回值为nan。
+- 当x为inf时，返回值为inf。
+- 当x为-inf时，返回值为inf。
 
 ## 约束说明
 

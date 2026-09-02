@@ -66,22 +66,33 @@ inline half hfloor(half x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel_hfloor(half* dst, half* x)
+    __global__ __launch_bounds__(1024) void kernel_hfloor(half* dst, half* x, uint32_t total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = hfloor(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel_hfloor(__gm__ half* dst, __gm__ half* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_hfloor(__gm__ half* dst, __gm__ half* x, uint32_t total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = hfloor(x[idx]);
+    }
+
+    __global__ __vector__ void run_hfloor(__gm__ half* dst, __gm__ half* x, uint32_t total_length)
+    {
+        asc_vf_call<kernel_hfloor>(dim3(1024), dst, x, total_length);
     }
     ```

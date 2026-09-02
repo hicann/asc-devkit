@@ -60,22 +60,33 @@ bool __hlt(half x, half y)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelHlt(bool* dst, half* x, half* y)
+    __global__ __launch_bounds__(1024) void kernel_hlt(bool* dst, half* x, half* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hlt(x[idx], y[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelHlt(__gm__ bool* dst, __gm__ half* x, __gm__ half* y)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_hlt(__gm__ bool* dst, __gm__ half* x, __gm__ half* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hlt(x[idx], y[idx]);
+    }
+
+    __global__ __vector__ void run_kernel_hlt(__gm__ bool* dst, __gm__ half* x, __gm__ half* y, uint32_t total_length)
+    {
+        asc_vf_call<kernel_hlt>(dim3(1024), dst, x, y, total_length);
     }
     ```

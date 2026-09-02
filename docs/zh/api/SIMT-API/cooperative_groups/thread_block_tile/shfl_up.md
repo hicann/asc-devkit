@@ -49,7 +49,7 @@ T shfl_up(T var, unsigned int delta) const
 
 ## 约束说明
 
-仅支持`thread_block_tile`的模板参数`Size`小于等于32的场景，即仅支持单Warp内线程子组。
+仅支持`thread_block_tile`的模板参数`Size`小于等于32且为2的幂（1、2、4、8、16、32）的场景，即仅支持单Warp内线程子组。
 
 ## 调用示例
 

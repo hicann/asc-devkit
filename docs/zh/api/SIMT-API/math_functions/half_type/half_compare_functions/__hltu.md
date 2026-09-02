@@ -60,22 +60,28 @@ bool __hltu(half x, half y)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelHltu(bool* dst, half* x, half* y)
+    __global__ __launch_bounds__(1024) void kernel_hltu(bool* dst, half* x, half* y, uint32_t total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hltu(x[idx], y[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelHltu(__gm__ bool* dst, __gm__ half* x, __gm__ half* y)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_hltu(__gm__ bool* dst, __gm__ half* x, __gm__ half* y, uint32_t total_length)
     {
-        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hltu(x[idx], y[idx]);
     }
     ```

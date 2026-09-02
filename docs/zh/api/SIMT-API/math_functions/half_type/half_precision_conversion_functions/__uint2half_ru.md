@@ -48,7 +48,7 @@ inline half __uint2half_ru(const unsigned int x)
 | x值 | 返回值 |
 | --- | --- |
 | 0 | 0 |
-| x>ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
+| x>ASCRT\_MAX\_NORMAL\_FP16 | inf |
 
 ## 约束说明
 
@@ -64,22 +64,28 @@ inline half __uint2half_ru(const unsigned int x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__uint2half_ru(half* dst, uint32_t* x)
+    __global__ __launch_bounds__(1024) void kernel__uint2half_ru(half* dst, uint32_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __uint2half_ru(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__uint2half_ru(__gm__ half* dst, __gm__ uint32_t* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__uint2half_ru(__gm__ half* dst, __gm__ uint32_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __uint2half_ru(x[idx]);
     }
     ```

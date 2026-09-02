@@ -52,10 +52,12 @@ half2 __hmulx2(const half2 x, const half2 y)
 | 任意值 | nan | nan | 0 |
 | ±0 | ±inf | nan | 0 |
 | ±inf | ±0 | nan | 0 |
-| inf | 非零 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| inf | 非无穷非0 | 符号由x和y符号异或决定，值为inf | 符号由x和y符号异或决定，值为ASCRT\_MAX\_NORMAL\_FP16 |
+| -inf | 非无穷非0 | 符号由x和y符号异或决定，值为inf | 符号由x和y符号异或决定，值为ASCRT\_MAX\_NORMAL\_FP16 |
 | inf | inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |
-| -inf | 非零 | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| -inf | -inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |
 | inf | -inf | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| -inf | inf | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
 | ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
 
 ## 约束说明

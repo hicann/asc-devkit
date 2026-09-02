@@ -57,6 +57,8 @@ inline half __int2half_ru_sat(const int x)
 
 ## 约束说明
 
+使用此接口前需将CTRL[60]寄存器设置为0，否则饱和模式不生效，设置方式请参见[控制饱和行为的方式](../../data_type_conversion/overview.md#section1194916101549)。
+
 SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生效。
 
 ## 需要包含的头文件
@@ -69,12 +71,15 @@ SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生
 
 ## 调用示例
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__int2half_ru_sat(__gm__ half* dst, __gm__ int32_t* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__int2half_ru_sat(__gm__ half* dst, __gm__ int32_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __int2half_ru_sat(x[idx]);
     }
     ```

@@ -47,6 +47,7 @@ inline bfloat16_t htrunc(bfloat16_t x)
 
 | x值 | 非饱和模式返回值 | 饱和模式返回值 |
 | --- | --- | --- |
+| ±0 | 0 | 0 |
 | inf | inf | ASCRT_MAX_NORMAL_BF16 |
 | -inf | -inf | -ASCRT_MAX_NORMAL_BF16 |
 | nan | nan | 0 |
@@ -65,22 +66,28 @@ inline bfloat16_t htrunc(bfloat16_t x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelTrunc(bfloat16_t* dst, bfloat16_t* x)
+    __global__ __launch_bounds__(1024) void kernel_trunc(bfloat16_t* dst, bfloat16_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = htrunc(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelTrunc(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_trunc(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = htrunc(x[idx]);
     }
     ```

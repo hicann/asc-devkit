@@ -51,8 +51,8 @@ inline int __half2int_rna(const half x)
 | nan | 0 |
 | inf | 2147483647（int32_t最大值） |
 | -inf | -2147483648（int32_t最小值） |
-| ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
-| -ASCRT\_MAX\_NORMAL\_FP16 | -ASCRT\_MAX\_NORMAL\_FP16 |
+| ASCRT\_MAX\_NORMAL\_FP16 | 65504 |
+| -ASCRT\_MAX\_NORMAL\_FP16 | -65504 |
 | 0.5 | 1 |
 
 ## 约束说明
@@ -72,9 +72,12 @@ inline int __half2int_rna(const half x)
 -   SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__half2int_rna(int32_t* dst, half* x)
+    __global__ __launch_bounds__(1024) void kernel__half2int_rna(int32_t* dst, half* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __half2int_rna(x[idx]);
     }
     ```
@@ -82,9 +85,12 @@ inline int __half2int_rna(const half x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__half2int_rna(__gm__ int32_t* dst, __gm__ half* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__half2int_rna(__gm__ int32_t* dst, __gm__ half* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __half2int_rna(x[idx]);
     }
     ```

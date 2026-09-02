@@ -43,7 +43,7 @@ inline half __float2half(const float x)
 
 ## 返回值说明
 
-将float类型数据按照CAST\_RINT模式转换为half类型数据。特殊值如下：
+将float类型数据按照CAST\_RINT模式转换为half类型数据。本接口受全局饱和寄存器的影响，特殊值如下：
 
 | x值 | 非饱和模式返回值 | 饱和模式返回值 |
 | --- | --- | --- |
@@ -68,22 +68,28 @@ inline half __float2half(const float x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__float2half(half* dst, float* x)
+    __global__ __launch_bounds__(1024) void kernel__float2half(half* dst, float* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __float2half(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2half(__gm__ half* dst, __gm__ float* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2half(__gm__ half* dst, __gm__ float* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __float2half(x[idx]);
     }
     ```

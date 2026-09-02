@@ -48,10 +48,11 @@ inline half __int2half_ru(const int x)
 | x值 | 返回值 |
 | --- | --- |
 | 0 | 0 |
-| ASCRT\_MAX\_NORMAL\_FP16 | inf |
-| x>ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
-| -ASCRT\_MAX\_NORMAL\_FP16 | -inf |
-| x<-ASCRT\_MAX\_NORMAL\_FP16 | -ASCRT\_MAX\_NORMAL\_FP16 |
+| ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
+| x>ASCRT\_MAX\_NORMAL\_FP16 | inf |
+| -ASCRT\_MAX\_NORMAL\_FP16 | -ASCRT\_MAX\_NORMAL\_FP16 |
+| -65535 | -ASCRT\_MAX\_NORMAL\_FP16 |
+| x≤-65536 | -inf |
 | 2049 | 2050 |
 | -2049 | -2048 |
 
@@ -69,22 +70,28 @@ inline half __int2half_ru(const int x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__int2half_ru(half* dst, int32_t* x)
+    __global__ __launch_bounds__(1024) void kernel__int2half_ru(half* dst, int32_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __int2half_ru(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__int2half_ru(__gm__ half* dst, __gm__ int32_t* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__int2half_ru(__gm__ half* dst, __gm__ int32_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __int2half_ru(x[idx]);
     }
     ```

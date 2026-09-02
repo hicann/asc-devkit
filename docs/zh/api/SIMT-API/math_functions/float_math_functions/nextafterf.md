@@ -50,11 +50,11 @@ inline float nextafterf(float x, float y)
 
 ## 返回值说明
 
--   x不等于y时，返回y方向上x之后下一个可表示的浮点值。
--   x等于y时，返回x。
--   若x、y任意一个为nan，返回nan。
--   若x=+inf，y不为nan，返回3.4028235e+38。
--   若x=-inf，y不为nan，返回-3.4028235e+38。
+- x不等于y时，返回y方向上x之后下一个可表示的浮点值。
+- x等于y时，返回x。
+- 若x、y任意一个为nan，返回nan。
+- 若x=+inf，y不等于+inf、不为nan，返回3.4028235e+38。
+- 若x=-inf，y不等于-inf、不为nan，返回-3.4028235e+38。
 
 ## 约束说明
 

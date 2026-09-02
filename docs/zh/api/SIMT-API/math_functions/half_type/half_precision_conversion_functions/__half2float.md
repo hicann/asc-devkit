@@ -67,22 +67,32 @@ inline float __half2float(const half x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__half2float(float* dst, half* x)
+    __global__ __launch_bounds__(1024) void kernel__half2float(float* dst, half* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __half2float(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__half2float(__gm__ float* dst, __gm__ half* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__half2float(__gm__ float* dst, __gm__ half* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __half2float(x[idx]);
+    }
+    __global__ __vector__ void cast_kernel(__gm__ float* dst, __gm__ half* x, uint32_t total_length)
+    {
+        asc_vf_call<kernel__half2float>(dim3(1024), dst, x, total_length);
     }
     ```

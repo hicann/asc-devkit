@@ -51,7 +51,8 @@ inline long long int __float2ll_rna(const float x)
 | nan | 0 |
 | inf | 9223372036854775807（INT64_MAX） |
 | -inf | -9223372036854775808（INT64_MIN） |
-| ASCRT_MAX_NORMAL_F | 9223372036854775807（INT64_MAX） |
+| 超出int64范围的正值（如ASCRT_MAX_NORMAL_F） | 9223372036854775807（INT64_MAX） |
+| 超出int64范围的负值（如-ASCRT_MAX_NORMAL_F） | -9223372036854775808（INT64_MIN） |
 
 ## 约束说明
 
@@ -67,22 +68,28 @@ inline long long int __float2ll_rna(const float x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__float2ll_rna(int64_t* dst, float* x)
+    __global__ __launch_bounds__(1024) void kernel__float2ll_rna(int64_t* dst, float* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __float2ll_rna(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2ll_rna(__gm__ int64_t* dst, __gm__ float* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2ll_rna(__gm__ int64_t* dst, __gm__ float* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __float2ll_rna(x[idx]);
     }
     ```

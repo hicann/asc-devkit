@@ -88,13 +88,13 @@ bfloat16x2_t __hfmax2_relu(const bfloat16x2_t x, const bfloat16x2_t y, const bfl
     <tr>
       <td>inf</td>
       <td>正数</td>
-      <td>任意值</td>
+      <td>非无穷大数值</td>
       <td>inf</td>
     </tr>
     <tr>
       <td>-inf</td>
       <td>正数</td>
-      <td>任意值</td>
+      <td>非无穷大数值</td>
       <td>0</td>
     </tr>
     <tr>

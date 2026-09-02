@@ -53,11 +53,11 @@ x \* y+ z的值。本接口不受全局饱和模式影响，特殊值如下：
 | --- | --- | --- | --- |
 | ±inf | ±0 | — | nan |
 | ±0 | ±inf | — | nan |
-| x*y = inf | -inf | nan |  |
-| x*y = -inf | inf | nan |  |
-| x*y+z超出ASCRT_MAX_NORMAL_BF16 | inf |  |  |
-| x*y+z小于-ASCRT_MAX_NORMAL_BF16 | -inf |  |  |
-| x、y、z任意一个为nan | nan |  |  |
+| x*y = inf | — | -inf | nan |
+| x*y = -inf | — | inf | nan |
+| x*y+z超出ASCRT_MAX_NORMAL_BF16 | — | — | inf |
+| x*y+z小于-ASCRT_MAX_NORMAL_BF16 | — | — | -inf |
+| x、y、z任意一个为nan | — | — | nan |
 
 ## 约束说明
 
@@ -73,20 +73,26 @@ x \* y+ z的值。本接口不受全局饱和模式影响，特殊值如下：
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelFma(bfloat16_t* dst, bfloat16_t* x, bfloat16_t* y, bfloat16_t* z){
+    __global__ __launch_bounds__(1024) void kernel_fma(bfloat16_t* dst, bfloat16_t* x, bfloat16_t* y, bfloat16_t* z, uint32_t total_length){
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hfma(x[idx], y[idx], z[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelFma(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y, __gm__ bfloat16_t* z){
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_fma(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y, __gm__ bfloat16_t* z, uint32_t total_length){
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hfma(x[idx], y[idx], z[idx]);
     }
     ```

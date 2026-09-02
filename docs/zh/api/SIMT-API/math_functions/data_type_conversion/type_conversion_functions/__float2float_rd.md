@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-将浮点数四舍五入取整，并遵循CAST\_FLOOR模式。
+将浮点数向下取整（向负无穷方向），并遵循CAST\_FLOOR模式。
 
 ## 函数原型
 
@@ -69,9 +69,12 @@ inline float __float2float_rd(const float x)
 SIMT编程场景：
 
 ```cpp
-__global__ __launch_bounds__(1024) void kernel__float2float_rd(float* dst, float* x)
+__global__ __launch_bounds__(1024) void kernel__float2float_rd(float* dst, float* x, uint32_t total_length)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx >= total_length) {
+        return;
+    }
     dst[idx] = __float2float_rd(x[idx]);
 }
 ```
@@ -79,9 +82,12 @@ __global__ __launch_bounds__(1024) void kernel__float2float_rd(float* dst, float
 SIMD与SIMT混合编程场景：
 
 ```cpp
-__simt_vf__ __launch_bounds__(1024) inline void kernel__float2float_rd(__gm__ float* dst, __gm__ float* x)
+__simt_vf__ __launch_bounds__(1024) inline void kernel__float2float_rd(__gm__ float* dst, __gm__ float* x, uint32_t total_length)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx >= total_length) {
+        return;
+    }
     dst[idx] = __float2float_rd(x[idx]);
 }
 ```

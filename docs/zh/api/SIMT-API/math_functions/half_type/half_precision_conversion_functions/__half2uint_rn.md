@@ -51,7 +51,7 @@ inline unsigned int __half2uint_rn(const half x)
 | nan | 0 |
 | inf | 4294967295（uint32_t最大值） |
 | -inf | 0 |
-| ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
+| ASCRT\_MAX\_NORMAL\_FP16 | 65504 |
 | -ASCRT\_MAX\_NORMAL\_FP16 | 0 |
 | ASCRT\_MIN\_DENORM\_FP16 | 0 |
 | 0.5 | 0 |
@@ -71,22 +71,33 @@ inline unsigned int __half2uint_rn(const half x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__half2uint_rn(uint32_t* dst, half* x)
+    __global__ __launch_bounds__(1024) void kernel__half2uint_rn(uint32_t* dst, half* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __half2uint_rn(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__half2uint_rn(__gm__ uint32_t* dst, __gm__ half* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__half2uint_rn(__gm__ uint32_t* dst, __gm__ half* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __half2uint_rn(x[idx]);
+    }
+
+    __global__ __vector__ void wrapper__half2uint_rn(__gm__ uint32_t* dst, __gm__ half* x, uint32_t total_length)
+    {
+        asc_vf_call<kernel__half2uint_rn>(dim3(1024), dst, x, total_length);
     }
     ```

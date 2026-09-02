@@ -58,7 +58,7 @@ inline half2 h2rsqrt(half2 x)
 
 ## 约束说明
 
-本接口支持的输入数据范围为x大于等于0，否则返回值为nan。
+本接口支持的输入数据范围为x大于等于0，否则非饱和模式下返回值为nan（饱和模式下的返回值参见返回值说明）。
 
 ## 需要包含的头文件
 
@@ -70,22 +70,28 @@ inline half2 h2rsqrt(half2 x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelRsqrt(half2* dst, half2* x)
+    __global__ __launch_bounds__(1024) void kernel_rsqrt(half2* dst, half2* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = h2rsqrt(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelRsqrt(__gm__ half2* dst, __gm__ half2* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_rsqrt(__gm__ half2* dst, __gm__ half2* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = h2rsqrt(x[idx]);
     }
     ```

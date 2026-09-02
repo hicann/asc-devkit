@@ -51,7 +51,7 @@ thread_block_tile<Size, ParentT> tiled_partition(const ParentT& g)
 
 - `Size`必须是$2^n$，当前可选值范围：1、2、4、8、16、32、64、128、256、512、1024、2048。
 - 当`Size`大于32时，即`Size`为64、128、256、512、1024、2048的跨Warp协作场景，必须使用[block_tile_memory](../thread_block/thread_block_constructor.md#block_tile_memory说明)创建父`thread_block`。并且用于创建父`thread_block`的`block_tile_memory`对象必须位于Global Memory或Unified Buffer（UB），不能是在栈空间中创建的对象。使用位于UB的对象性能优于位于Global Memory的。
-- 对于模板版本的接口，父组中的线程数必须能被`Size`整除。并且`Size`必须小于父组大小。
+- 对于模板版本的接口，父组中的线程数必须能被`Size`整除。并且如果父组是`thread_block_tile`，则`Size`必须小于父组大小。
 
 ## 调用示例
 

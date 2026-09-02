@@ -45,7 +45,7 @@ inline half2 h2tanh(half2 x)
 
 ## 返回值说明
 
-输入数据各元素的双曲正切值。特殊值如下：
+输入数据各元素的双曲正切值。本接口受全局饱和寄存器影响，特殊值如下：
 
 | x值 | 非饱和模式返回值 | 饱和模式返回值 |
 | --- | --- | --- |
@@ -70,22 +70,28 @@ inline half2 h2tanh(half2 x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelTanh(half2* dst, half2* x)
+    __global__ __launch_bounds__(1024) void kernel_tanh(half2* dst, half2* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = h2tanh(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelTanh(__gm__ half2* dst, __gm__ half2* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_tanh(__gm__ half2* dst, __gm__ half2* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = h2tanh(x[idx]);
     }
     ```

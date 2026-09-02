@@ -51,6 +51,8 @@ inline half2 __float22half2_rd_sat(const float2 x)
 | nan | nan | 0 |
 | inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |
 | -inf | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| x>ASCRT\_MAX\_NORMAL\_FP16 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| x<-ASCRT\_MAX\_NORMAL\_FP16 | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
 
 ## 约束说明
 

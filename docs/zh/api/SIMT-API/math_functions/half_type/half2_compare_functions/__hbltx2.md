@@ -62,8 +62,13 @@ bool __hbltx2(half2 x, half2 y)
     <td>false</td>
   </tr>
   <tr>
-    <td>±inf</td>
-    <td>±inf</td>
+    <td>inf</td>
+    <td>inf</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>-inf</td>
+    <td>-inf</td>
     <td>false</td>
   </tr>
 </table>

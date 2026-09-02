@@ -31,9 +31,9 @@ asc\_syncthreads接口用于**阻塞当前线程块内所有线程**，直到所
 
 **关键特征：**
 
--   该接口会阻塞线程执行，直到块内所有线程都到达同步点；
--   确保同步点之前的所有内存操作对块内所有线程可见；
--   常用于线程块内的数据共享、分阶段计算、并行归约等场景；
+- 该接口会阻塞线程执行，直到块内所有线程都到达同步点；
+- 确保同步点之前的所有内存操作对块内所有线程可见；
+- 常用于线程块内的数据共享、分阶段计算、并行归约等场景；
 
 下图展示了同一个线程块内多线程共享数据场景可能出现的问题：
 
@@ -61,10 +61,10 @@ inline void asc_syncthreads()
 
 ## 约束说明
 
--   线程块内所有线程必须都执行到同步点，否则会导致死锁。
+- 线程块内所有线程必须都执行到同步点，否则会导致死锁。
 
--   避免分支中调用本接口，除非能确保线程块内所有线程都进入该分支。
--   避免在循环次数不一致的情况下调用。
+- 避免分支中调用本接口，除非能确保线程块内所有线程都进入该分支。
+- 避免在循环次数不一致的情况下调用。
 
 ## 需要包含的头文件
 
@@ -78,10 +78,10 @@ inline void asc_syncthreads()
 
 完整样例请参考[MemoryFence样例](../../../../../../examples/03_simt_api/02_features/01_api_features/01_sync_instruction/memory_fence/README.md)。
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelSyncThreads(float* dst, int count)
+    __global__ __launch_bounds__(1024) void kernel_sync_threads(float* dst, int count)
     {
          int idx = threadIdx.x;
          if (idx > 0 && idx < count) {
@@ -94,21 +94,23 @@ inline void asc_syncthreads()
          if (idx == 0) {
              dst[0] = 0;
              for(int i = 1023; i > 0; i--) {
-                 dst[0] += dst[i];
+                 if (i < count) {
+                     dst[0] += dst[i];
+                 }
              }
          }
     }
     ```
 
-    ```
+    ```text
     输出结果:
     [1023, 1, 1, 1 …]
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelSyncThreads(__gm__ float* dst, int count)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_sync_threads(__gm__ float* dst, int count)
     {
          int idx = threadIdx.x;
          if (idx > 0 && idx < count) {
@@ -121,13 +123,15 @@ inline void asc_syncthreads()
          if (idx == 0) {
              dst[0] = 0;
              for(int i = 1023; i > 0; i--) {
-                 dst[0] += dst[i];
+                 if (i < count) {
+                     dst[0] += dst[i];
+                 }
              }
          }
     }
     ```
 
-    ```
+    ```text
     输出结果:
     [1023, 1, 1, 1 …]
     ```

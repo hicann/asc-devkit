@@ -57,7 +57,7 @@ inline bfloat16_t hrsqrt(bfloat16_t x)
 
 ## 约束说明
 
-本接口支持的输入数据范围为x大于等于0，否则返回值为nan。
+本接口支持的输入数据范围为x大于等于0，否则非饱和模式下返回值为nan，饱和模式下返回值为0。
 
 <!-- npu="950" id7 -->
 针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：本接口内部实现使用到了sqrtf，由于sqrtf不支持Subnormal场景，当输入x为Subnormal数据时，会导致本接口最终结果为+inf。
@@ -73,22 +73,28 @@ inline bfloat16_t hrsqrt(bfloat16_t x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelRsqrt(bfloat16_t* dst, bfloat16_t* x)
+    __global__ __launch_bounds__(1024) void kernel_rsqrt(bfloat16_t* dst, bfloat16_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = hrsqrt(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelRsqrt(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_rsqrt(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = hrsqrt(x[idx]);
     }
     ```

@@ -89,7 +89,7 @@ x \* y + z的值。本接口受全局饱和模式影响，特殊值如下：
     <td>ASCRT_MAX_NORMAL_FP16</td>
   </tr>
   <tr>
-    <td colspan="3">x*y+z小于ASCRT_MAX_NORMAL_FP16</td>
+    <td colspan="3">x*y+z小于-ASCRT_MAX_NORMAL_FP16</td>
     <td>-inf</td>
     <td>-ASCRT_MAX_NORMAL_FP16</td>
   </tr>
@@ -114,20 +114,26 @@ x \* y + z的值。本接口受全局饱和模式影响，特殊值如下：
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelFma(half* dst, half* x, half* y, half* z){
+    __global__ __launch_bounds__(1024) void kernel_fma(half* dst, half* x, half* y, half* z, uint32_t total_length){
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hfma(x[idx], y[idx], z[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelFma(__gm__ half* dst, __gm__ half* x, __gm__ half* y, __gm__ half* z){
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_fma(__gm__ half* dst, __gm__ half* x, __gm__ half* y, __gm__ half* z, uint32_t total_length){
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hfma(x[idx], y[idx], z[idx]);
     }
     ```

@@ -44,7 +44,7 @@ bfloat16x2_t __hdivx2(const bfloat16x2_t x, const bfloat16x2_t y)
 
 ## 返回值说明
 
-输入数据各分量相除的结果。相除的分量x和y满足：
+输入数据各分量相除的结果。本接口受全局饱和模式影响，相除的分量x和y满足：
 
 <table>
   <thead>

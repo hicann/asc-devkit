@@ -78,7 +78,7 @@ unsigned int __hleux2_mask(half2 x, half2 y)
   </tr>
   <tr>
     <td>inf</td>
-    <td>±inf</td>
+    <td>inf</td>
     <td>0xFFFF</td>
   </tr>
 </table>

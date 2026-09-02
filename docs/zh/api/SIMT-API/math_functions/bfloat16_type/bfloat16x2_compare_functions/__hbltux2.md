@@ -46,8 +46,8 @@ bool __hbltux2(bfloat16x2_t x, bfloat16x2_t y)
 
 比较输入各分量是否均满足第一个数小于第二个数的结果。
 
--   true：各分量均满足第一个数小于第二个数。
--   false：任一分量不满足第一个数小于第二个数。
+- true：各分量均满足第一个数小于第二个数。
+- false：任一分量不满足第一个数小于第二个数。
 
 特殊值如下：
 
@@ -62,7 +62,7 @@ bool __hbltux2(bfloat16x2_t x, bfloat16x2_t y)
   <tbody>
     <tr>
       <td colspan="2">任一分量含nan</td>
-      <td>true</td>
+      <td>该分量比较结果为true，但整体结果取决于其余分量</td>
     </tr>
     <tr>
       <td>-inf</td>

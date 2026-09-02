@@ -48,7 +48,8 @@ unsigned int __hneux2_mask(bfloat16x2_t x, bfloat16x2_t y)
 
 | x分量值 | y分量值 | 对应分量返回值 |
 |---|---|---|
-| 任一分量含nan | 0xFFFF |
+| nan | 任意值 | 0xFFFF |
+| 任意值 | nan | 0xFFFF |
 | ±0 | ±0 | 0x0000 |
 | inf | inf | 0x0000 |
 | -inf | -inf | 0x0000 |

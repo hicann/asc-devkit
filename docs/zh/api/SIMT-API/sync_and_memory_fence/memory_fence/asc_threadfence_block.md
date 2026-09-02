@@ -57,21 +57,25 @@ inline void asc_threadfence_block()
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelThreadFenceBlock(float* dst, float* src)
+    __global__ __launch_bounds__(1024) void kernel_thread_fence_block(float* dst, float* src)
     {
-        src[0] = src[0] + 1;
-        asc_threadfence_block();
-        dst[0] = src[0];
+        if (threadIdx.x == 0) {
+            src[0] = src[0] + 1;
+            asc_threadfence_block();
+        }
+        if (threadIdx.x == 1) {
+            dst[0] = src[0];
+        }
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelThreadFenceBlock(__gm__ float* dst, __gm__ float* src)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_thread_fence_block(__gm__ float* dst, __gm__ float* src)
     {
         src[0] = src[0] + 1;
         asc_threadfence_block();

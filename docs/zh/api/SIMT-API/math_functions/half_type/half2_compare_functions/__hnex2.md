@@ -61,8 +61,15 @@ half2 __hnex2(half2 x, half2 y)
     <td>-0</td>
     <td>0</td>
   </tr>
+  <tr>
+    <td colspan="2">±inf与相同值</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="2">±inf与不同值</td>
+    <td>1.0</td>
+  </tr>
 </table>
-
 
 ## 约束说明
 

@@ -48,9 +48,10 @@ inline float frexpf(float x, int *exp)
 
 将x转换为归一化\[1/2, 1\)的有符号数乘以2的积分幂时，返回该有符号数。
 
--   当x为inf时，返回值为inf，exp为0。
--   当x为-inf时，返回值为-inf，exp为0。
--   当x为nan时，返回值为nan，exp为0。
+- 当x为inf时，返回值为inf，exp为0。
+- 当x为-inf时，返回值为-inf，exp为0。
+- 当x为nan时，返回值为nan，exp为0。
+- 当x为0时，返回值为0，exp为0。
 
 ## 约束说明
 

@@ -54,7 +54,7 @@ inline half2 __floats2half2_rn(const float x, const float y)
 | inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |
 | x>ASCRT\_MAX\_NORMAL\_FP16 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
 | -inf | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
-| x<-ASCRT\_MAX\_NORMAL\_FP16 | -inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| x<-ASCRT\_MAX\_NORMAL\_FP16 | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
 
 ## 约束说明
 

@@ -47,7 +47,7 @@ inline half2 __float22half2_ro(const float2 x)
 
 | x值 | 非饱和模式返回值 | 饱和模式返回值 |
 | --- | --- | --- |
-| ±0 | 0 | 0 |
+| 0 | 0 | 0 |
 | -0 | -0 | -0 |
 | nan | nan | 0 |
 | inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |

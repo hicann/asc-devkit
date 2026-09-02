@@ -25,7 +25,7 @@
 
 ## 功能说明
 
-将浮点数四舍五入取整，并遵循CAST\_RINT模式。
+将浮点数按CAST\_RINT模式取整，四舍五入到最接近的偶数。
 
 ## 函数原型
 
@@ -75,9 +75,12 @@ float转float只支持非饱和行为。
 SIMT编程场景：
 
 ```cpp
-__global__ __launch_bounds__(1024) void kernel__float2float_rn(float* dst, float* x)
+__global__ __launch_bounds__(1024) void kernel__float2float_rn(float* dst, float* x, uint32_t total_length)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx >= total_length) {
+        return;
+    }
     dst[idx] = __float2float_rn(x[idx]);
 }
 ```
@@ -85,9 +88,12 @@ __global__ __launch_bounds__(1024) void kernel__float2float_rn(float* dst, float
 SIMD与SIMT混合编程场景：
 
 ```cpp
-__simt_vf__ __launch_bounds__(1024) inline void kernel__float2float_rn(__gm__ float* dst, __gm__ float* x)
+__simt_vf__ __launch_bounds__(1024) inline void kernel__float2float_rn(__gm__ float* dst, __gm__ float* x, uint32_t total_length)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx >= total_length) {
+        return;
+    }
     dst[idx] = __float2float_rn(x[idx]);
 }
 ```

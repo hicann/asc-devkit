@@ -61,8 +61,8 @@ bool __hbltux2(half2 x, half2 y)
     <td>false</td>
   </tr>
   <tr>
-    <td>任一分量为nan</td>
-    <td colspan="2">该分量比较结果为true，但整体结果取决于其余分量</td>
+    <td colspan="2">任一分量为nan</td>
+    <td>该分量的比较结果为true，整体结果取决于其余分量</td>
   </tr>
   <tr>
     <td>nan</td>

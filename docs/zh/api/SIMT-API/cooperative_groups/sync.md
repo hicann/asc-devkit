@@ -56,6 +56,8 @@ void sync(const GroupType& g)
 
 - 对于`grid_group`，该接口仅支持SIMT编程场景，不支持SIMD与SIMT混合编程场景。
 - 必须保证协作组内所有线程都能执行到同一个`sync(g)`调用，否则是未定义行为。
+- 使用`grid_group`执行跨线程块同步时，需确保Grid中的线程块总数不超过设备的AIV物理核数，以避免程序卡死。
+- `grid_group`的同步仅保证线程指令执行的同步，不保证各线程块的Data Cache和Global Memory间的缓存一致性。
 
 ## 调用示例
 

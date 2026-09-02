@@ -46,8 +46,8 @@ bool __hne(bfloat16_t x, bfloat16_t y)
 
 输入数据是否不相等的结果。
 
--   true：输入数据不相等。
--   false：输入数据相等，或者任一输入为nan。
+- true：输入数据不相等。
+- false：输入数据相等，或者任一输入为nan。
 
 ## 约束说明
 
@@ -63,22 +63,28 @@ bool __hne(bfloat16_t x, bfloat16_t y)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void KernelHne(bool* dst, bfloat16_t* x, bfloat16_t* y)
+    __global__ __launch_bounds__(1024) void kernel_hne(bool* dst, bfloat16_t* x, bfloat16_t* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hne(x[idx], y[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void KernelHne(__gm__ bool* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_hne(__gm__ bool* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __hne(x[idx], y[idx]);
     }
     ```

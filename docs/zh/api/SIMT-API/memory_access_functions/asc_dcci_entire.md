@@ -65,10 +65,10 @@ inline void asc_dcci_entire(void *dst)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernelDcci_entire(uint32_t* data, uint32_t* output) {
+    __global__ __launch_bounds__(1024) void kernel_dcci_entire(uint32_t* data, uint32_t* output) {
         // 线程块0的线程0进行数据写操作
         if (blockIdx.x == 0 && threadIdx.x == 0) {
             data[1] = 10;      // 写入数据
@@ -86,10 +86,10 @@ inline void asc_dcci_entire(void *dst)
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernelDcci_entire(__gm__ uint32_t* data, __gm__ uint32_t* output)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel_dcci_entire(__gm__ uint32_t* data, __gm__ uint32_t* output)
     {
         // 线程块0的线程0进行数据写操作
         if (blockIdx.x == 0 && threadIdx.x == 0) {

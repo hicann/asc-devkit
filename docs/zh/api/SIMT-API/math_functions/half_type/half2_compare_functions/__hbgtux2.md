@@ -75,7 +75,7 @@ bool __hbgtux2(half2 x, half2 y)
   <tr>
     <td>(有限正数, 有限正数)</td>
     <td>(inf, inf)</td>
-    <td>true</td>
+    <td>false</td>
   </tr>
   <tr>
     <td>(inf, inf)</td>
@@ -88,8 +88,7 @@ bool __hbgtux2(half2 x, half2 y)
     <td>false</td>
   </tr>
   <tr>
-    <td>(有限值, 有限值)</td>
-    <td>(有限值, 有限值)</td>
+    <td colspan="2">x各分量均小于y</td>
     <td>false</td>
   </tr>
   <tr>

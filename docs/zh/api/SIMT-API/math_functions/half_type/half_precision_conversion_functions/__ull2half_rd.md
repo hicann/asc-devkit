@@ -50,11 +50,11 @@ inline half __ull2half_rd(const unsigned long long int x)
 | 0 | 0 | 0 |
 | 2049 | 2048 | 2048 |
 | 4097 | 4096 | 4096 |
-| 8193 | ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
+| 8193 | 8192 | 8192 |
 | ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
 | 65505 | ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
-| x≥65535 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
-| 9223372036854775807（long long最大值） | inf | 9223372036854775807（long long最大值） |
+| x≥65536 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| 18446744073709551615（unsigned long long最大值） | inf | ASCRT\_MAX\_NORMAL\_FP16 |
 
 ## 约束说明
 
@@ -70,22 +70,28 @@ inline half __ull2half_rd(const unsigned long long int x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__ull2half_rd(half* dst, uint64_t* x)
+    __global__ __launch_bounds__(1024) void kernel__ull2half_rd(half* dst, uint64_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __ull2half_rd(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__ull2half_rd(__gm__ half* dst, __gm__ uint64_t* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__ull2half_rd(__gm__ half* dst, __gm__ uint64_t* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __ull2half_rd(x[idx]);
     }
     ```

@@ -46,14 +46,15 @@ bool __hbnex2(bfloat16x2_t x, bfloat16x2_t y)
 
 比较输入数据各分量是否均不相等的结果。
 
--   true：输入数据各分量均不相等。
--   false：输入数据任一分量相等。
+- true：输入数据各分量均不相等。
+- false：输入数据任一分量相等。
 
 特殊值如下：
 
 | x分量值 | y分量值 | 返回值 |
 |---|---|---|
-| 任一分量为nan | false |
+| nan | 任意值 | false |
+| 任意值 | nan | false |
 | ±0 | ±0  | false |
 | ±inf | ±inf | 相同符号inf返回false，不同符号inf返回true |
 

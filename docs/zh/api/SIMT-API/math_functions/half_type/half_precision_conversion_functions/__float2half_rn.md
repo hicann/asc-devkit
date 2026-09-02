@@ -43,14 +43,16 @@ inline half __float2half_rn(const float x)
 
 ## 返回值说明
 
-输入遵循CAST\_RINT模式转换成的半精度浮点数。特殊值如下：
+输入遵循CAST\_RINT模式转换成的半精度浮点数。本接口受全局饱和寄存器的影响，特殊值如下：
 
-| x值 | 返回值 |
-| --- | --- |
-| ±0 | ±0 |
-| nan | 0 |
-| inf | ASCRT\_MAX\_NORMAL\_FP16 |
-| -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| x值 | 非饱和模式返回值 | 饱和模式返回值 |
+| --- | --- | --- |
+| ±0 | ±0 | ±0 |
+| nan | nan | 0 |
+| inf | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| -inf | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| x>ASCRT\_MAX\_NORMAL\_FP16 | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| x<-ASCRT\_MAX\_NORMAL\_FP16 | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
 
 ## 约束说明
 
@@ -66,22 +68,28 @@ inline half __float2half_rn(const float x)
 
 ## 调用示例
 
--   SIMT编程场景：
+- SIMT编程场景：
 
     ```cpp
-    __global__ __launch_bounds__(1024) void kernel__float2half_rn(half* dst, float* x)
+    __global__ __launch_bounds__(1024) void kernel__float2half_rn(half* dst, float* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __float2half_rn(x[idx]);
     }
     ```
 
--   SIMD与SIMT混合编程场景：
+- SIMD与SIMT混合编程场景：
 
     ```cpp
-    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2half_rn(__gm__ half* dst, __gm__ float* x)
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2half_rn(__gm__ half* dst, __gm__ float* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
         dst[idx] = __float2half_rn(x[idx]);
     }
     ```
