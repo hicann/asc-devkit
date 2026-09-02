@@ -143,7 +143,8 @@ public:
     // delaying timeout checks or leaking unrelated descriptors into the child.
     bool CreatePipe() noexcept
     {
-        int pipeFileDescriptors[2]{-1, -1};
+        constexpr size_t pipeFileDescriptorCount = 2U;
+        int pipeFileDescriptors[pipeFileDescriptorCount]{-1, -1};
         if (pipe2(pipeFileDescriptors, O_CLOEXEC) != 0) {
             const int pipeError = errno;
             ASCENDLOGE(

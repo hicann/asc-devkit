@@ -189,6 +189,7 @@ bool FindSeparatedCompilerOutputOptionPosition(
 
 std::string FormatBytesAsCppInitializerList(const void* constantAddress, uint64_t constantByteCount)
 {
+    constexpr int32_t hexadecimalByteWidth = 2;
     const auto* constantBytes = static_cast<const uint8_t*>(constantAddress);
     std::ostringstream encodedBytes;
     encodedBytes << '{';
@@ -196,7 +197,7 @@ std::string FormatBytesAsCppInitializerList(const void* constantAddress, uint64_
         if (byteIndex != 0U) {
             encodedBytes << ", ";
         }
-        encodedBytes << "0x" << std::hex << std::nouppercase << std::setw(2) << std::setfill('0')
+        encodedBytes << "0x" << std::hex << std::nouppercase << std::setw(hexadecimalByteWidth) << std::setfill('0')
                      << static_cast<unsigned int>(constantBytes[byteIndex]);
     }
     encodedBytes << '}';
