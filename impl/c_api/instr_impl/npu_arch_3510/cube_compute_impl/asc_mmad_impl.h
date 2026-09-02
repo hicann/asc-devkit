@@ -217,6 +217,104 @@ __aicore__ inline void asc_mmad_sync_impl(
     asc_sync_post_process();
 }
 
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ bfloat16_t* a_matrix, __cb__ bfloat16_t* b_matrix, uint64_t bias, uint16_t m,
+    uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ fp8_e4m3fn_t* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint64_t bias, uint16_t m,
+    uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ fp8_e4m3fn_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint64_t bias, uint16_t m,
+    uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint64_t bias, uint16_t m,
+    uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint64_t bias, uint16_t m,
+    uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint64_t bias, uint16_t m, uint16_t k,
+    uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint64_t bias, uint16_t m, uint16_t k,
+    uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint64_t bias, uint16_t m, uint16_t k,
+    uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ int32_t*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
+
+__aicore__ inline void asc_mmad_impl(
+    __cc__ float* c_matrix, __ca__ hifloat8_t* a_matrix, __cb__ hifloat8_t* b_matrix, uint64_t bias, uint16_t m,
+    uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv)
+{
+    if ASC_IS_AIC {
+        uint64_t xd = ((uint64_t)c_matrix) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
+        mad((__cc__ float*)xd, a_matrix, b_matrix, m, k, n, static_cast<uint8_t>(unit_flag_mode), disable_gemv, true,
+            false);
+    }
+}
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
