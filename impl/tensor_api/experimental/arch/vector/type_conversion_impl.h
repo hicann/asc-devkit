@@ -16,7 +16,6 @@
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_IMPL_H
 
-#include "tensor_api/experimental/arch/vector/type_conversion.h"
 #include "impl/tensor_api/utils/constant_impl.h"
 
 namespace asc {

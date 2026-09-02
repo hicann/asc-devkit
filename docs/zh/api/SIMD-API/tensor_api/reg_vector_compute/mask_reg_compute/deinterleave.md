@@ -73,9 +73,8 @@ auto mask0 = asc::te::experimental::make_mask<
 auto mask1 = asc::te::experimental::make_mask<
     asc::te::experimental::mask_pattern::every4, float>();
 
-auto interleaved = asc::te::experimental::interleave<float>(mask0, mask1);
 auto restored = asc::te::experimental::deinterleave<float>(
-    interleaved.first, interleaved.second);
+    mask0, mask1);
 asc::te::experimental::reg_tensor<bool> restoredMask0 = restored.first;
 asc::te::experimental::reg_tensor<bool> restoredMask1 = restored.second;
 ```

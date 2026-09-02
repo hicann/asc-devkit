@@ -16,7 +16,6 @@
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_DATA_STORE_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_DATA_STORE_IMPL_H
 
-#include "tensor_api/experimental/arch/vector/reg_data_store.h"
 #include "impl/tensor_api/experimental/arch/utils/reg_utils.h"
 #include "tensor_api/tensor/tensor.h"
 

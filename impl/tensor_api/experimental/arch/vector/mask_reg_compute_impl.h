@@ -16,8 +16,6 @@
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_MASK_REG_COMPUTE_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_MASK_REG_COMPUTE_IMPL_H
 
-#include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
-
 namespace asc {
 namespace te {
 namespace experimental {

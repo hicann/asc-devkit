@@ -18,7 +18,6 @@
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_DATA_REORDER_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_DATA_REORDER_IMPL_H
 
-#include "tensor_api/experimental/arch/vector/data_reorder.h"
 #include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 
 namespace asc {
@@ -27,8 +26,8 @@ namespace experimental {
 namespace detail {
 template <typename T>
 inline constexpr bool is_data_reorder_support_type = AscendC::Std::is_one_of_v<
-    T, uint8_t, int8_t, fp8_e4m3fn_t, fp8_e8m0_t, fp8_e5m2_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t,
-    float>;
+    T, uint8_t, int8_t, fp8_e4m3fn_t, fp8_e8m0_t, fp8_e5m2_t, hifloat8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t,
+    int32_t, float>;
 } // namespace detail
 
 template <typename T>
@@ -37,8 +36,8 @@ __simd_callee__ inline reg_pair<T> interleave(reg_tensor<T> src0, reg_tensor<T> 
     static_assert(
         detail::is_data_reorder_support_type<T>,
         "interleave with reg_tensor<T> only supports "
-        "uint8_t, int8_t, fp8_e4m3fn_t, fp8_e8m0_t, fp8_e5m2_t, uint16_t, int16_t, half, bfloat16_t, "
-        "uint32_t, int32_t and float.");
+        "uint8_t, int8_t, fp8_e4m3fn_t, fp8_e8m0_t, fp8_e5m2_t, hifloat8_t, uint16_t, int16_t, half, "
+        "bfloat16_t, uint32_t, int32_t and float.");
     reg_pair<T> dst;
     asc_intlv(dst.first.reg, dst.second.reg, src0.reg, src1.reg);
     dst.first.with_mask(all_mask<T>());
@@ -52,8 +51,8 @@ __simd_callee__ inline reg_pair<T> deinterleave(reg_tensor<T> src0, reg_tensor<T
     static_assert(
         detail::is_data_reorder_support_type<T>,
         "deinterleave with reg_tensor<T> only supports "
-        "uint8_t, int8_t, fp8_e4m3fn_t, fp8_e8m0_t, fp8_e5m2_t, uint16_t, int16_t, half, bfloat16_t, "
-        "uint32_t, int32_t and float.");
+        "uint8_t, int8_t, fp8_e4m3fn_t, fp8_e8m0_t, fp8_e5m2_t, hifloat8_t, uint16_t, int16_t, half, "
+        "bfloat16_t, uint32_t, int32_t and float.");
     reg_pair<T> dst;
     asc_deintlv(dst.first.reg, dst.second.reg, src0.reg, src1.reg);
     dst.first.with_mask(all_mask<T>());

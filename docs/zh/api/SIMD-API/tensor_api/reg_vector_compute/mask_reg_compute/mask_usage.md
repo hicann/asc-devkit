@@ -30,17 +30,15 @@ auto src0Reg = asc::te::experimental::load(src0, asc::te::make_coord(offset)).wi
 auto src1Reg = asc::te::experimental::load(src1, asc::te::make_coord(offset)).with_mask(mask);
 ```
 
-对于双目的`deintlv`搬入模式，接口没有返回值，需分别绑定：
+对于返回`reg_pair`的`deintlv`搬入模式，需分别为两个成员绑定mask：
 
 ```cpp
-asc::te::experimental::reg_tensor<uint8_t> src0Reg;
-asc::te::experimental::reg_tensor<uint8_t> src1Reg;
-asc::te::experimental::load<asc::te::experimental::load_sideband_mode::deintlv>(
-    src, asc::te::make_coord(offset), src0Reg, src1Reg);
+auto srcReg = asc::te::experimental::load<asc::te::experimental::load_sideband_mode::deintlv>(
+    src, asc::te::make_coord(offset));
 
 auto mask = asc::te::experimental::all_mask<uint8_t>();
-src0Reg.with_mask(mask);
-src1Reg.with_mask(mask);
+srcReg.first.with_mask(mask);
+srcReg.second.with_mask(mask);
 ```
 
 ## 计算接口中的mask传递
@@ -69,4 +67,4 @@ asc::te::experimental::store(dst, asc::te::make_coord(offset), dstReg);
 
 ## 特殊接口说明
 
-- `interleave`、`deinterleave`等重排接口可能重新生成输出mask，不遵循普通多输入计算的传递规则，具体以对应接口说明为准。
+- `deinterleave`等重排接口可能重新生成输出mask，不遵循普通多输入计算的传递规则，具体以对应接口说明为准。

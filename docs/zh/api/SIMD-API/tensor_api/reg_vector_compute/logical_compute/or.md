@@ -1,6 +1,6 @@
 # or
 
-## 产品支持情况<a name="section1550532418810"></a>
+## 产品支持情况
 
 <!-- npu="950" id1 -->
 - Ascend 950PR/Ascend 950DT：支持
@@ -24,7 +24,7 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-## 功能说明<a name="section618mcpsimp"></a>
+## 功能说明
 
 头文件路径：`"tensor_api/experimental/vector_compute.h"`。
 
@@ -34,7 +34,7 @@ $$
 dst_i = src0_i \mathbin{|} src1_i
 $$
 
-## 函数原型<a name="section620mcpsimp"></a>
+## 函数原型
 
 ```cpp
 template <typename T>
@@ -42,7 +42,7 @@ __simd_callee__ inline reg_tensor<T> operator|(
     const reg_tensor<T>& src0, const reg_tensor<T>& src1)
 ```
 
-## 参数说明<a name="section622mcpsimp"></a>
+## 参数说明
 
 **表 1**  模板参数说明
 
@@ -61,16 +61,16 @@ __simd_callee__ inline reg_tensor<T> operator|(
 
 源操作数与返回值的数据类型保持一致。支持的数据类型为：bool、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 
-## 返回值说明<a name="section640mcpsimp"></a>
+## 返回值说明
 
 返回逐元素按位或结果，类型为reg_tensor&lt;T&gt;。返回值的mask与src0.mask相同；src0.mask对应位置为0时，返回值的对应元素置零。
 
-## 约束说明<a name="section633mcpsimp"></a>
+## 约束说明
 
 - `src0.mask`需通过`with_mask`接口预先设置。未设置时，mask的内容不确定，会导致参与计算的元素位置错误。
 - 参与计算的数据量由矢量长度VL决定。T不为bool时，元素个数为VL除以sizeof(T)；T为bool时，参与计算的bit数为VL。
 
-## 调用示例<a name="section642mcpsimp"></a>
+## 调用示例
 
 ```cpp
 #include "tensor_api/experimental/vector_compute.h"

@@ -16,7 +16,6 @@
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_TENSOR_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_TENSOR_IMPL_H
 
-#include "tensor_api/experimental/arch/vector/reg_tensor.h"
 #include "impl/tensor_api/utils/utils_impl.h"
 
 namespace asc {

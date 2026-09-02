@@ -28,7 +28,7 @@
 
 头文件路径为：`"tensor_api/arch/vector/experimental/reg_tensor.h"`，命名空间为`asc::te::experimental`。
 
-保存两个相同元素类型的`reg_tensor`，用于`interleave`、`deinterleave`等双结果接口。
+保存两个相同元素类型的`reg_tensor`，用于`deinterleave`等双结果接口。
 
 ## 定义原型
 
@@ -56,7 +56,7 @@ struct reg_pair {
 ## 调用示例
 
 ```cpp
-auto result = asc::te::experimental::interleave<float>(mask0, mask1);
+auto result = asc::te::experimental::deinterleave<float>(mask0, mask1);
 asc::te::experimental::reg_tensor<bool> first = result.first;
 asc::te::experimental::reg_tensor<bool> second = result.second;
 ```

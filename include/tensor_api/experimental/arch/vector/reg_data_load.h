@@ -28,45 +28,21 @@ namespace te {
 namespace experimental {
 
 /**
- * @brief Loads data from a UB tensor at the specified coordinate into a register tensor.
+ * @brief Loads data from a UB tensor at the specified coordinate into one or two register tensors.
  * @param tensor Source tensor located in UB.
  * @param coord Coordinate of the first source element.
- * @return A register tensor populated according to the selected sideband mode.
+ * @return A register pair for deintlv mode; otherwise, a register tensor.
  */
 template <load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Tensor, typename Coord>
 __simd_callee__ inline decltype(auto) load(const Tensor& tensor, const Coord& coord);
 
 /**
- * @brief Loads data from the beginning of a UB tensor into a register tensor.
+ * @brief Loads data from the beginning of a UB tensor into one or two register tensors.
  * @param tensor Source tensor located in UB.
- * @return A register tensor populated according to the selected sideband mode.
+ * @return A register pair for deintlv mode; otherwise, a register tensor.
  */
 template <load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Tensor>
 __simd_callee__ inline decltype(auto) load(const Tensor& tensor);
-
-/**
- * @brief Loads and deinterleaves data from a UB tensor at the specified coordinate into two register tensors.
- * @param tensor Source tensor located in UB.
- * @param coord Coordinate of the first source element.
- * @param dst0 First destination register tensor.
- * @param dst1 Second destination register tensor.
- * @note This overload supports only load_sideband_mode::deintlv.
- */
-template <
-    load_sideband_mode sideband_mode = load_sideband_mode::deintlv, typename Tensor, typename Coord,
-    typename RegDataType>
-__simd_callee__ inline void load(
-    const Tensor& tensor, const Coord& coord, reg_tensor<RegDataType>& dst0, reg_tensor<RegDataType>& dst1);
-
-/**
- * @brief Loads and deinterleaves data from the beginning of a UB tensor into two register tensors.
- * @param tensor Source tensor located in UB.
- * @param dst0 First destination register tensor.
- * @param dst1 Second destination register tensor.
- * @note This overload supports only load_sideband_mode::deintlv.
- */
-template <load_sideband_mode sideband_mode = load_sideband_mode::deintlv, typename Tensor, typename RegDataType>
-__simd_callee__ inline void load(const Tensor& tensor, reg_tensor<RegDataType>& dst0, reg_tensor<RegDataType>& dst1);
 
 /**
  * @brief Loads and broadcasts data from a UB tensor at the specified coordinate.

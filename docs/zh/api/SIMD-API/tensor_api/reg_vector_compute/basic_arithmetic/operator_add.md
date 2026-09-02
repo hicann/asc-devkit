@@ -24,7 +24,7 @@
 - Atlas 训练系列产品：不支持
 <!-- end id7 -->
 
-## 功能说明<a name="section618mcpsimp"></a>
+## 功能说明
 
 头文件路径：`"tensor_api/experimental/vector_compute.h"`。
 
@@ -34,7 +34,7 @@ $$
 dst_i = src0_i + src1_i
 $$
 
-## 函数原型<a name="section620mcpsimp"></a>
+## 函数原型
 
 - reg_tensor与reg_tensor
 
@@ -56,7 +56,7 @@ $$
         const T& scalar, const reg_tensor<T>& src)
     ```
 
-## 参数说明<a name="section622mcpsimp"></a>
+## 参数说明
 
 **表 1**  模板参数说明
 
@@ -77,11 +77,11 @@ $$
 
 源操作数与返回值的数据类型保持一致。支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
 
-## 返回值说明<a name="section640mcpsimp"></a>
+## 返回值说明
 
 返回逐元素求和结果，类型为reg_tensor&lt;T&gt;。reg_tensor与reg_tensor形式的返回值mask与src0.mask相同，包含标量的形式与src.mask相同；输入mask对应位置为0时，返回值的对应元素置零。
 
-## 约束说明<a name="section633mcpsimp"></a>
+## 约束说明
 
 ### 通用约束
 
@@ -92,7 +92,7 @@ $$
 - 整型数据加法溢出时按环绕策略处理。有符号类型的最大值加1得到该类型的最小值，最小值减1得到该类型的最大值；无符号类型的最大值加1得到0。
 - half、bfloat16_t和float类型按IEEE 754浮点加法规则计算，溢出以及nan、inf等特殊值的处理遵循浮点运算规则。
 
-## 调用示例<a name="section642mcpsimp"></a>
+## 调用示例
 
 ```cpp
 #include "tensor_api/experimental/vector_compute.h"
