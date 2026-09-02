@@ -24,18 +24,18 @@ This example demonstrates how to use the `printf()` interface in SIMT programmin
 
 - Operator Function:
 
-  This example demonstrates in detail the practice of using the `printf()` interface in SIMT kernel functions to print variable information for each thread during operator execution.
+  This example demonstrates in detail the practice of using the `printf()` interface in SIMT kernel functions to print variable information of threads during operator execution (the example limits printing to only some threads via `threadIdx.x < 3`).
 
 
 - Operator Implementation:
   ```cpp
-  __global__ void  simt_printf(float* input, uint32_t in_shape)
+  __global__ void simt_printf(float* input, uint32_t in_shape)
   {
       // Calculate global thread ID
       int32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
       if (threadIdx.x < 3) {
-      printf("[SIMT %s] thread index[%u], input data shape: %u\n", "print 1", idx, in_shape);
-      printf("[SIMT %s] input addr: %p value[%u]: %f\n", "print 2",  input, idx, input[idx]);
+          printf("[SIMT %s] thread index[%u], input data shape: %u\n", "print 1", idx, in_shape);
+          printf("[SIMT %s] input addr: %p value[%u]: %f\n", "print 2", input, idx, input[idx]);
       }
   }
   ```

@@ -103,14 +103,10 @@ When a hash collision occurs, a thread needs to determine whether the key stored
 - Operator Specifications:  
   <table>
   <tr><td rowspan="1" align="center">OpType</td><td colspan="4" align="center">insert_hash_table</td></tr>
-  </tr>
   <tr><td rowspan="3" align="center">Input</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
   <tr><td align="center">keys</td><td align="center">[1,N]</td><td align="center">int64_t</td><td align="center">ND</td></tr>
   <tr><td align="center">values</td><td align="center">[N,M]</td><td align="center">float</td><td align="center">ND</td></tr>
-  </tr>
-  </tr>
   <tr><td rowspan="1" align="center">Output</td><td align="center">table_addr</td><td align="center">[1,Z]</td><td align="center">Bucket</td><td align="center">ND</td></tr>
-  </tr>
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">insert_hash_table</td></tr>
   </table>
 

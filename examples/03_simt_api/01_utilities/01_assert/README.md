@@ -29,7 +29,7 @@
 
 - 算子实现:
   ```cpp
-  __global__ void  simt_assert(float* input, uint32_t in_shape)
+  __global__ void simt_assert(float* input, uint32_t in_shape)
   {
       // Calculate global thread ID
       int32_t idx = blockIdx.x * blockDim.x + threadIdx.x;

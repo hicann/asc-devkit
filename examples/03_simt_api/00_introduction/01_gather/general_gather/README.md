@@ -116,6 +116,7 @@
   <tr><td rowspan="1" align="center">算子输出</td><td align="center">output</td><td align="center">[128,2048,512]</td><td align="center">float</td><td align="center">ND</td><td align="center">收集后的输出张量</td></tr>
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">gather_custom_v2</td></tr>
   </table>
+
 - 约束说明：
   * indices：indices的前batch_dims维必须与input的前batch_dims维相同，即indices.shape[0:batch_dims] = input.shape[0:batch_dims]
   * axis：收集维度axis不能小于batch_dims，且必须小于input的维度数，即batch_dims <= axis < input.rank

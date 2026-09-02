@@ -21,7 +21,8 @@
 │   ├── sync_barrier.asc      // 场景1：小shape归约样例，展示 asc_syncthreads() 的线程块内同步用法
 │   ├── memory_fence.asc      // 场景2：大shape归约样例，展示 asc_threadfence() 与原子计数的线程块间协作用法
 │   ├── CMakeLists.txt        // 编译工程文件
-│   └── README.md
+│   ├── README.md
+│   └── README_en.md      // 英文版样例说明
 ```
 
 ## 样例描述
@@ -167,5 +168,5 @@
 
   执行结果如下，说明精度对比成功。
   ```
-  [Success] Case accuracy is verification passed.
+  [Success] Case accuracy verification passed.
   ```

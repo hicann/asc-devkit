@@ -116,6 +116,7 @@ This example implements a generalized shape Gather operator based on the Ascend 
   <tr><td rowspan="1" align="center">Operator Output</td><td align="center">output</td><td align="center">[128,2048,512]</td><td align="center">float</td><td align="center">ND</td><td align="center">output tensor after collection</td></tr>
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="5" align="center">gather_custom_v2</td></tr>
   </table>
+
 - Constraint Description:
   * indices: The first batch_dims dimensions of indices must match the first batch_dims dimensions of input, that is, indices.shape[0:batch_dims] = input.shape[0:batch_dims]
   * axis: The collection dimension axis cannot be less than batch_dims and must be less than the number of dimensions of input, that is, batch_dims <= axis < input.rank

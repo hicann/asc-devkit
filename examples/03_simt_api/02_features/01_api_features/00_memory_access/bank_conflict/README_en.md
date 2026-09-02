@@ -239,7 +239,7 @@ __aicore__ inline uint32_t get_ub_index_device(uint32_t thread_id)
 ...
 #elif SCENARIO_NUM == 3
     // 512B access stride returns addresses to different rows of the same bank and same subbank.
-    return thread_id * 128;
+    return thread_id * SAME_BANK_SUBBANK_STRIDE;
 ...
 }
 ```

@@ -84,7 +84,7 @@ int y = warp_id / tiles_x;                          // 像素行号：第几行W
 
 ```cpp
 // 每个线程先读取当前像素所在列的上、中、下三个像素。
-// in_image标识当前线程坐标是否在图像有效范围内（非边界像素），为false时像素值置0。
+// in_image标识当前线程坐标是否在图像有效范围内，为false时像素值置0。
 int top = in_image ? input[(y - 1) * width + x] : 0;
 int mid = in_image ? input[y * width + x] : 0;
 int bot = in_image ? input[(y + 1) * width + x] : 0;

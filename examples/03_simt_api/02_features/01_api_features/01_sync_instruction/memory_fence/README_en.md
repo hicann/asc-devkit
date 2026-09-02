@@ -21,7 +21,8 @@ The 2 scenarios correspond to reduction sum for small shape input and large shap
 │   ├── sync_barrier.asc      // Scenario 1: Small shape reduction example, demonstrating asc_syncthreads() intra-block synchronization usage
 │   ├── memory_fence.asc      // Scenario 2: Large shape reduction example, demonstrating asc_threadfence() and atomic counter inter-block coordination usage
 │   ├── CMakeLists.txt        // Build project file
-│   └── README.md
+│   ├── README.md
+│   └── README_en.md      // English version of the sample description
 ```
 
 ## Example Description
@@ -167,5 +168,5 @@ Run the following steps in the root directory of this example to build and execu
 
   The following output indicates that the accuracy verification is successful.
   ```
-  [Success] Case accuracy is verification passed.
+  [Success] Case accuracy verification passed.
   ```

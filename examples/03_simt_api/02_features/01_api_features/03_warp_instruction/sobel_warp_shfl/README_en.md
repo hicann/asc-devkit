@@ -84,7 +84,7 @@ As shown in the figure above, computing the Sobel magnitude requires obtaining 9
 
 ```cpp
 // Each thread first reads the top, middle, and bottom pixels in the current pixel's column.
-// in_image indicates whether the current thread coordinate is within the valid image range (non-boundary pixel); when false, pixel value is set to 0.
+// in_image indicates whether the current thread coordinate is within the valid image range; when false, pixel value is set to 0.
 int top = in_image ? input[(y - 1) * width + x] : 0;
 int mid = in_image ? input[y * width + x] : 0;
 int bot = in_image ? input[(y + 1) * width + x] : 0;

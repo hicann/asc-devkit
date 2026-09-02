@@ -133,16 +133,19 @@ __global__ void add2(T* x, T* y, T* z, uint64_t size)
     const U* y2 = reinterpret_cast<const U*>(y);
     U* z2 = reinterpret_cast<U*>(z);
 
-    uint64_t vectorSize = size / 2;
+    // Compute the for-loop boundary once via division here
+    uint64_t vector_size = size / 2;
     int32_t stride = gridDim.x * blockDim.x;
-    // Short vector loop processes even pairs (stride is still total threads)
-    for (int32_t idx = blockIdx.x * blockDim.x + threadIdx.x; idx < vectorSize; idx += stride) {
+
+    // Vectorized loop processes even pairs (stride is still the total number of threads)
+    for (int32_t idx = blockIdx.x * blockDim.x + threadIdx.x; idx < vector_size; idx += stride) {
         z2[idx] = x2[idx] + y2[idx];
     }
+
     // Handle last odd element (if size is odd, processed by global thread 0 at the end)
     if (blockIdx.x == 0 && threadIdx.x == 0 && (size % 2 != 0)) {
-        uint64_t lastIdx = size - 1;
-        z[lastIdx] = x[lastIdx] + y[lastIdx];
+        uint64_t last_idx = size - 1;
+        z[last_idx] = x[last_idx] + y[last_idx];
     }
 }
 ```

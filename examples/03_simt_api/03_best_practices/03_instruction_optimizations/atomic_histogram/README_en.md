@@ -58,7 +58,7 @@ This sample uses 2 Cases to form an optimization comparison. The kernel and coun
 | 0 | `histogram_gm_global` | GM |
 | 1 | `histogram_ub_block_local` | UB |
 
-Both Cases use the same number of thread blocks and threads, with identical input read method and total atomic update count; only the storage hierarchy of the atomic target differs.
+Both Cases use the same number of thread blocks and threads, with the same input read method. The number of atomic accumulations in the histogram counting stage is identical (both 262144); the main difference lies in the memory hierarchy of the target addresses for counting atomic accumulations.
 
 ### Performance Metric
 

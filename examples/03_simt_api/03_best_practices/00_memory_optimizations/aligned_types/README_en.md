@@ -137,7 +137,7 @@ This example selects 14 structs, grouped by `sizeof` into 4B, 8B, 16B, and 32B g
 
 - Comprehensive Analysis
 
-  The total data transferred in all test cases is uniformly 512MiB. Wider memory access instructions result in less total time and higher transfer efficiency. The latency differences between aligned and non-aligned groups are summarized as follows:
+  The total data transferred in all test cases is uniformly 512MiB; given the same struct size, type alignment makes memory access instructions wider, resulting in less total time and higher transfer efficiency. The latency differences between aligned and non-aligned groups are summarized as follows:
 
   | Struct Size                  | Aligned Task Duration(us) | Non-aligned Task Duration(us)  | Non-aligned / Aligned Task Duration |
   | :------------------------: | :-------------------: | :---------------------: | :---------: |

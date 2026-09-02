@@ -187,6 +187,7 @@ __ubuf__ float tile[TILES_PER_BLOCK][TILE_DIM][TILE_DIM];
 uint32_t local_tile = threadIdx.y >> 5;                // 0 or 1, distinguishing the two tiles in a thread block
 uint32_t ty = threadIdx.y & (TILE_DIM - 1);
 uint32_t tx = threadIdx.x;
+uint32_t tiles_x = width / TILE_DIM;
 
 uint32_t tile_id = blockIdx.x * TILES_PER_BLOCK + local_tile;
 uint32_t tile_y = tile_id / tiles_x;

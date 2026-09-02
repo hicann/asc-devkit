@@ -24,18 +24,18 @@
 
 - 算子功能:
 
-  本样例详细展示了在SIMT核函数中使用`printf()`接口的实践方式，实现对算子执行过程中打印每个线程的变量信息。
+  本样例详细展示了在SIMT核函数中使用`printf()`接口的实践方式，实现在算子执行过程中打印线程的变量信息（示例通过`threadIdx.x < 3`限制仅打印部分线程）。
 
 
 - 算子实现:
   ```cpp
-  __global__ void  simt_printf(float* input, uint32_t in_shape)
+  __global__ void simt_printf(float* input, uint32_t in_shape)
   {
       // Calculate global thread ID
       int32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
       if (threadIdx.x < 3) {
-      printf("[SIMT %s] thread index[%u], input data shape: %u\n", "print 1", idx, in_shape);
-      printf("[SIMT %s] input addr: %p value[%u]: %f\n", "print 2",  input, idx, input[idx]);
+          printf("[SIMT %s] thread index[%u], input data shape: %u\n", "print 1", idx, in_shape);
+          printf("[SIMT %s] input addr: %p value[%u]: %f\n", "print 2", input, idx, input[idx]);
       }
   }
   ```
