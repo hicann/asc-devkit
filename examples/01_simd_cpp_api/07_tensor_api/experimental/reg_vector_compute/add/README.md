@@ -19,8 +19,7 @@ dst[i] = src0[i] + src1[i]
 ```text
 ├── CMakeLists.txt                 // 编译工程
 ├── README.md                      // 样例说明
-├── data_utils.h                   // 数据读写函数
-└── add.asc                         // operator+接口样例实现
+└── add.asc                        // operator+接口样例实现
 ```
 
 ## 样例描述
@@ -70,9 +69,7 @@ dst[i] = src0[i] + src1[i]
   mkdir -p build && cd build
   cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   make -j
-  python3 ../scripts/gen_data.py
   ./demo
-  python3 ../scripts/verify_result.py
   ```
 
   使用 NPU 仿真模式时，在 CMake 命令中增加 `-DCMAKE_ASC_RUN_MODE=sim`。切换运行模式或芯片型号时，建议清除 `build` 目录中的 CMake 缓存后重新配置。
@@ -82,5 +79,5 @@ dst[i] = src0[i] + src1[i]
   验证成功时输出：
 
   ```text
-  test pass! verified float Reg Tensor operator+ results.
+  test pass!
   ```

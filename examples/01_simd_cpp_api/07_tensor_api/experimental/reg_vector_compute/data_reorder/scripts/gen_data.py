@@ -37,9 +37,6 @@ def gen_golden_data_simple():
     dst0.tofile("output/golden_dst0.bin")
     dst1.tofile("output/golden_dst1.bin")
 
-    print("dst0:\n", dst0)
-    print("dst1:\n", dst1)
-
 
 if __name__ == "__main__":
     gen_golden_data_simple()

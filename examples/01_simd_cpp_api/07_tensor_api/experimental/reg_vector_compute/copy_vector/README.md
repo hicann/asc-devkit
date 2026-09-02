@@ -60,9 +60,9 @@ shape为`[1024]` 的一维 tensor，场景5将 `[32, 24]` 输入填充为 `[32, 
   ```bash
   SCENARIO_NUM=1
   mkdir -p build && cd build
-  cmake -DSCENARIO_NUM=1 -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
+  cmake -DSCENARIO_NUM=${SCENARIO_NUM} -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   make -j
-  python3 ../scripts/gen_data.py --scenario_num=1
+  python3 ../scripts/gen_data.py --scenario_num=${SCENARIO_NUM}
   ./demo
   ```
 
@@ -71,7 +71,7 @@ shape为`[1024]` 的一维 tensor，场景5将 `[32, 24]` 输入填充为 `[32, 
   使用NPU仿真时，可分别增加以下编译选项：
 
   ```bash
-  cmake -DCMAKE_ASC_RUN_MODE=sim -DSCENARIO_NUM=1 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DSCENARIO_NUM=${SCENARIO_NUM} -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   ```
 
   切换运行模式、芯片型号或场景时，建议清除 `build` 目录中的CMake缓存后重新配置。

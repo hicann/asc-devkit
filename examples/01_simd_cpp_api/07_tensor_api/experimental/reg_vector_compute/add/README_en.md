@@ -19,8 +19,7 @@ dst[i] = src0[i] + src1[i]
 ```text
 ├── CMakeLists.txt                 // Build project
 ├── README.md                      // Sample description
-├── data_utils.h                   // Data input and output functions
-└── add.asc                         // operator+ interface sample implementation
+└── add.asc                        // operator+ interface sample implementation
 ```
 
 ## Sample Description
@@ -70,9 +69,7 @@ Perform the following steps in the sample root directory to build and run the sa
   mkdir -p build && cd build
   cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DCANN_ASC_USE_EXPERIMENTAL=ON ..
   make -j
-  python3 ../scripts/gen_data.py
   ./demo
-  python3 ../scripts/verify_result.py
   ```
 
   For NPU simulation mode, add `-DCMAKE_ASC_RUN_MODE=sim` to the CMake command. When changing the run mode or chip model, clear the CMake cache in the `build` directory before configuring the project again.
@@ -82,5 +79,5 @@ Perform the following steps in the sample root directory to build and run the sa
   Successful verification prints:
 
   ```text
-  test pass! verified float Reg Tensor operator+ results.
+  test pass!
   ```
