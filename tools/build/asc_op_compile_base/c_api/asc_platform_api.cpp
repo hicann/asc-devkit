@@ -33,6 +33,7 @@ const std::unordered_map<std::string, std::vector<platformconf::DPLATFORM>> soc_
     {Ascend_910_9382, {platformconf::DPLATFORM::ASCEND_910_93}},
     {Ascend_910_9372, {platformconf::DPLATFORM::ASCEND_910_93}},
     {Ascend_910_9362, {platformconf::DPLATFORM::ASCEND_910_93}},
+    {Ascend_910_9363, {platformconf::DPLATFORM::ASCEND_910_93}},
     {Ascend_910ProA, {platformconf::DPLATFORM::ASCEND_910}},
     {Ascend_910ProB, {platformconf::DPLATFORM::ASCEND_910}},
     {Ascend_910PremiumA, {platformconf::DPLATFORM::ASCEND_910}},
@@ -218,12 +219,12 @@ extern "C" int ASCSetSocSpec(const char* spec)
     CceConfBase* conf = CceConfBase::GetInstance();
     bool set_flag = true;
     const std::vector<std::string> soc_version_name = {
-        Ascend_910A,     Ascend_910B,     Ascend_910B1,    Ascend_910B2,       Ascend_910B3,    Ascend_910B4,
-        Ascend_910B4_1,  Ascend_910_9391, Ascend_910_9381, Ascend_910_9392,    Ascend_910_9382, Ascend_910_9372,
-        Ascend_910_9362, Ascend_910ProA,  Ascend_910ProB,  Ascend_910PremiumA, Hi3796CV300ES,   Hi3796CV300CS,
-        SD3403,          Hi3519AV200,     Ascend_310P1,    Ascend_310P2,       Ascend_310P3,    Ascend_310P4,
-        Ascend_310P5,    Ascend_310P7,    Ascend_610,      Ascend_610B1,       Ascend_610B2,    Ascend_310B1,
-        Ascend_310B2,    Ascend_310B3,    Ascend_310B4,    Ascend_031};
+        Ascend_910A,     Ascend_910B,     Ascend_910B1,    Ascend_910B2,    Ascend_910B3,       Ascend_910B4,
+        Ascend_910B4_1,  Ascend_910_9391, Ascend_910_9381, Ascend_910_9392, Ascend_910_9382,    Ascend_910_9372,
+        Ascend_910_9362, Ascend_910_9363, Ascend_910ProA,  Ascend_910ProB,  Ascend_910PremiumA, Hi3796CV300ES,
+        Hi3796CV300CS,   SD3403,          Hi3519AV200,     Ascend_310P1,    Ascend_310P2,       Ascend_310P3,
+        Ascend_310P4,    Ascend_310P5,    Ascend_310P7,    Ascend_610,      Ascend_610B1,       Ascend_610B2,
+        Ascend_310B1,    Ascend_310B2,    Ascend_310B3,    Ascend_310B4,    Ascend_031};
 
     std::string key = spec;
     if (key == Ascend_910) {

@@ -72,7 +72,8 @@ bool CceConfBase::IsC220()
            this->target_opti_compilation_infos_.GetSocVersion() == Ascend_910_9381 ||
            this->target_opti_compilation_infos_.GetSocVersion() == Ascend_910_9382 ||
            this->target_opti_compilation_infos_.GetSocVersion() == Ascend_910_9372 ||
-           this->target_opti_compilation_infos_.GetSocVersion() == Ascend_910_9362;
+           this->target_opti_compilation_infos_.GetSocVersion() == Ascend_910_9362 ||
+           this->target_opti_compilation_infos_.GetSocVersion() == Ascend_910_9363;
 }
 
 bool CceConfBase::IsM210()
@@ -490,25 +491,25 @@ bool CceConfBase::SetOptionalCoreType(const std::string& key)
     }
     if (key == core_type::kAscendVectorCoreType) {
         const std::set<std::string> soc_vector_core{
-            Ascend_610,        BS9SX1AA,          BS9SX1AB,         BS9SX1AC,         Ascend_031,
-            Ascend_910B1,      Ascend_910B2,      Ascend_910B2C,    Ascend_910B3,     Ascend_910B4,
-            Ascend_910B4_1,    Ascend_910_9391,   Ascend_910_9381,  Ascend_910_9392,  Ascend_910_9382,
-            Ascend_910_9372,   Ascend_910_9362,   Ascend_310B1,     Ascend_310B2,     Ascend_310B3,
-            Ascend_310B4,      Ascend_310P1,      Ascend_310P2,     Ascend_310P3,     Ascend_310P4,
-            Ascend_310P5,      Ascend_310P7,      Ascend_610B1,     Ascend_610B2,     AS31XM1X,
-            Ascend950PR_9599,  Ascend950PR_958a,  Ascend950PR_9589, Ascend950PR_958b, Ascend950PR_9579,
-            Ascend950PR_957b,  Ascend950PR_957bx, Ascend950PR_957c, Ascend950PR_957d, Ascend950PR_950z,
-            Ascend950DT_950x,  Ascend950DT_950y,  Ascend950DT_95A1, Ascend950DT_95A2, Ascend950DT_9591,
-            Ascend950DT_9592,  Ascend950DT_9595,  Ascend950DT_9596, Ascend950DT_9581, Ascend950DT_9582,
-            Ascend950DT_9582x, Ascend950DT_9583,  Ascend950DT_9584, Ascend950DT_9585, Ascend950DT_9586,
-            Ascend950DT_9587,  Ascend950DT_9588,  Ascend950DT_9571, Ascend950DT_9572, Ascend950DT_9573,
-            Ascend950DT_9574,  Ascend950DT_9575,  Ascend950DT_9576, Ascend950DT_9577, Ascend950DT_9578,
-            MC62CM13AA,        MC62DM23AA,        MC62CM13AB,       MC62DM23AB,       MC62CM12AA,
-            MC62DM22AA,        MC62CM12AC,        MC62DM22AC,       MC62CM12AD,       MC62DM22AD,
-            MC62CM12AE,        MC62DM22AE,        MC62CM12AF,       MC62DM22AF,       MC62CM12AB,
-            MC62DM22AB,        KirinX90,          Kirin9030,        KirinDev0000,     KirinDev0001,
-            KirinDev0002,      KirinDev0003,      MC32DM11AA,       MC32DM11AB,       MC32DM11AC,
-            Ascend350_354f,    Ascend350_355e,
+            Ascend_610,       BS9SX1AA,          BS9SX1AB,          BS9SX1AC,         Ascend_031,
+            Ascend_910B1,     Ascend_910B2,      Ascend_910B2C,     Ascend_910B3,     Ascend_910B4,
+            Ascend_910B4_1,   Ascend_910_9391,   Ascend_910_9381,   Ascend_910_9392,  Ascend_910_9382,
+            Ascend_910_9372,  Ascend_910_9362,   Ascend_910_9363,   Ascend_310B1,     Ascend_310B2,
+            Ascend_310B3,     Ascend_310B4,      Ascend_310P1,      Ascend_310P2,     Ascend_310P3,
+            Ascend_310P4,     Ascend_310P5,      Ascend_310P7,      Ascend_610B1,     Ascend_610B2,
+            AS31XM1X,         Ascend950PR_9599,  Ascend950PR_958a,  Ascend950PR_9589, Ascend950PR_958b,
+            Ascend950PR_9579, Ascend950PR_957b,  Ascend950PR_957bx, Ascend950PR_957c, Ascend950PR_957d,
+            Ascend950PR_950z, Ascend950DT_950x,  Ascend950DT_950y,  Ascend950DT_95A1, Ascend950DT_95A2,
+            Ascend950DT_9591, Ascend950DT_9592,  Ascend950DT_9595,  Ascend950DT_9596, Ascend950DT_9581,
+            Ascend950DT_9582, Ascend950DT_9582x, Ascend950DT_9583,  Ascend950DT_9584, Ascend950DT_9585,
+            Ascend950DT_9586, Ascend950DT_9587,  Ascend950DT_9588,  Ascend950DT_9571, Ascend950DT_9572,
+            Ascend950DT_9573, Ascend950DT_9574,  Ascend950DT_9575,  Ascend950DT_9576, Ascend950DT_9577,
+            Ascend950DT_9578, MC62CM13AA,        MC62DM23AA,        MC62CM13AB,       MC62DM23AB,
+            MC62CM12AA,       MC62DM22AA,        MC62CM12AC,        MC62DM22AC,       MC62CM12AD,
+            MC62DM22AD,       MC62CM12AE,        MC62DM22AE,        MC62CM12AF,       MC62DM22AF,
+            MC62CM12AB,       MC62DM22AB,        KirinX90,          Kirin9030,        KirinDev0000,
+            KirinDev0001,     KirinDev0002,      KirinDev0003,      MC32DM11AA,       MC32DM11AB,
+            MC32DM11AC,       Ascend350_354f,    Ascend350_355e,
         };
         if (soc_vector_core.find(this->target_opti_compilation_infos_.GetSocVersion()) == soc_vector_core.end()) {
             return false;

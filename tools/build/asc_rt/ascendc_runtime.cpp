@@ -79,6 +79,7 @@ bool AscendCheckSoCVersion(const char* socVersion, char* errMsg)
         {"ascend910b3", "ascend910b"},      {"ascend910b4", "ascend910b"},      {"ascend910b4-1", "ascend910b"},
         {"ascend910_9391", "ascend910b"},   {"ascend910_9381", "ascend910b"},   {"ascend910_9372", "ascend910b"},
         {"ascend910_9392", "ascend910b"},   {"ascend910_9382", "ascend910b"},   {"ascend910_9362", "ascend910b"},
+        {"ascend910_9363", "ascend910b"},
 
         {"ascend910a", "ascend910"},        {"ascend910proa", "ascend910"},     {"ascend910b", "ascend910"},
         {"ascend910prob", "ascend910"},     {"ascend910premiuma", "ascend910"},
@@ -105,6 +106,7 @@ bool AscendCheckSoCVersion(const char* socVersion, char* errMsg)
         {"ascend910_9392", "Ascend910_9392"},
         {"ascend910_9382", "Ascend910_9382"},
         {"ascend910_9362", "Ascend910_9362"},
+        {"ascend910_9363", "Ascend910_9363"},
 
         {"ascend910a", "Ascend910A"},
         {"ascend910proa", "Ascend910ProA"},

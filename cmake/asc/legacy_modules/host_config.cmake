@@ -7,7 +7,7 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
-set(ascend910b_list ascend910b1 ascend910b2 ascend910b2c ascend910b3 ascend910b4 ascend910b4-1 ascend910_9391 ascend910_9381 ascend910_9372 ascend910_9392 ascend910_9382 ascend910_9362)
+set(ascend910b_list ascend910b1 ascend910b2 ascend910b2c ascend910b3 ascend910b4 ascend910b4-1 ascend910_9391 ascend910_9381 ascend910_9372 ascend910_9392 ascend910_9382 ascend910_9362 ascend910_9363)
 set(ascend910_list  ascend910a ascend910proa ascend910b ascend910prob ascend910premiuma)
 set(ascend310p_list ascend310p1 ascend310p3 ascend310p5 ascend310p7 ascend310p3vir01 ascend310p3vir02 ascend310p3vir04 ascend310p3vir08)
 set(ascend310b_list ascend310b1 ascend310b2 ascend310b3 ascend310b4)

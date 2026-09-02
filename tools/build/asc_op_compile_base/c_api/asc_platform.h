@@ -117,6 +117,7 @@ constexpr const char* Ascend_910_9381 = "Ascend910_9381";
 constexpr const char* Ascend_910_9382 = "Ascend910_9382";
 constexpr const char* Ascend_910_9372 = "Ascend910_9372";
 constexpr const char* Ascend_910_9362 = "Ascend910_9362";
+constexpr const char* Ascend_910_9363 = "Ascend910_9363";
 constexpr const char* Ascend_950 = "Ascend950";
 constexpr const char* Ascend_350 = "Ascend350";
 constexpr const char* MC62CM12AA = "MC62CM12AA";
@@ -636,25 +637,26 @@ private:
     bool optional_set_l1_fusion_flag_{false};
     bool is_tik_regbase_{true};
     std::vector<std::string> soc_versions_{
-        Ascend_910A,       Ascend_910B,      Ascend_910ProA,   Ascend_910ProB,   Ascend_910PremiumA, Ascend_610,
-        BS9SX1AA,          BS9SX1AB,         BS9SX1AC,         Hi3796CV300ES,    Hi3796CV300CS,      SD3403,
-        Hi3519AV200,       Ascend_031,       Ascend_910B1,     Ascend_910B2,     Ascend_910B2C,      Ascend_910B3,
-        Ascend_910B4,      Ascend_910B4_1,   Ascend_310B,      Ascend_310B1,     Ascend_310B2,       Ascend_310B3,
-        Ascend_310B4,      Ascend_310P1,     Ascend_310P2,     Ascend_310P3,     Ascend_310P4,       Ascend_310P5,
-        Ascend_310P7,      Ascend_310P,      Ascend_610B,      Ascend_610B1,     Ascend_610B2,       Ascend_910_93,
-        Ascend_910_9391,   Ascend_910_9392,  Ascend_910_9381,  Ascend_910_9382,  Ascend_910_9372,    Ascend_910_9362,
-        kAscend610Lite,    BS9SX2AA,         BS9SX2AB,         MC61AM21AA,       MC61AM21AB,         Ascend_035,
-        Ascend_035A,       Ascend_035B,      AS31XM1,          AS31XM1X,         MC62CM13AA,         MC62DM23AA,
-        MC62CM13AB,        MC62DM23AB,       MC62CM12AA,       MC62DM22AA,       MC62CM12AC,         MC62DM22AC,
-        MC62CM12AD,        MC62DM22AD,       MC62CM12AE,       MC62DM22AE,       MC62CM12AF,         MC62DM22AF,
-        MC62CM12AB,        MC62DM22AB,       KirinX90,         Kirin9030,        Ascend950PR_9599,   Ascend950PR_958a,
-        Ascend950PR_9589,  Ascend950PR_958b, Ascend950PR_9579, Ascend950PR_957b, Ascend950PR_957bx,  Ascend950PR_957c,
-        Ascend950PR_957d,  Ascend950PR_950z, Ascend950DT_950x, Ascend950DT_950y, Ascend950DT_95A1,   Ascend950DT_95A2,
-        Ascend950DT_9591,  Ascend950DT_9592, Ascend950DT_9595, Ascend950DT_9596, Ascend950DT_9581,   Ascend950DT_9582,
-        Ascend950DT_9582x, Ascend950DT_9583, Ascend950DT_9584, Ascend950DT_9585, Ascend950DT_9586,   Ascend950DT_9587,
-        Ascend950DT_9588,  Ascend950DT_9571, Ascend950DT_9572, Ascend950DT_9573, Ascend950DT_9574,   Ascend950DT_9575,
-        Ascend950DT_9576,  Ascend950DT_9577, Ascend950DT_9578, MC32DM11AA,       MC32DM11AB,         MC32DM11AC,
-        Ascend350_354f,    Ascend350_355e,   KirinDev0000,     KirinDev0001,     KirinDev0002,       KirinDev0003};
+        Ascend_910A,      Ascend_910B,       Ascend_910ProA,   Ascend_910ProB,   Ascend_910PremiumA, Ascend_610,
+        BS9SX1AA,         BS9SX1AB,          BS9SX1AC,         Hi3796CV300ES,    Hi3796CV300CS,      SD3403,
+        Hi3519AV200,      Ascend_031,        Ascend_910B1,     Ascend_910B2,     Ascend_910B2C,      Ascend_910B3,
+        Ascend_910B4,     Ascend_910B4_1,    Ascend_310B,      Ascend_310B1,     Ascend_310B2,       Ascend_310B3,
+        Ascend_310B4,     Ascend_310P1,      Ascend_310P2,     Ascend_310P3,     Ascend_310P4,       Ascend_310P5,
+        Ascend_310P7,     Ascend_310P,       Ascend_610B,      Ascend_610B1,     Ascend_610B2,       Ascend_910_93,
+        Ascend_910_9391,  Ascend_910_9392,   Ascend_910_9381,  Ascend_910_9382,  Ascend_910_9372,    Ascend_910_9362,
+        Ascend_910_9363,  kAscend610Lite,    BS9SX2AA,         BS9SX2AB,         MC61AM21AA,         MC61AM21AB,
+        Ascend_035,       Ascend_035A,       Ascend_035B,      AS31XM1,          AS31XM1X,           MC62CM13AA,
+        MC62DM23AA,       MC62CM13AB,        MC62DM23AB,       MC62CM12AA,       MC62DM22AA,         MC62CM12AC,
+        MC62DM22AC,       MC62CM12AD,        MC62DM22AD,       MC62CM12AE,       MC62DM22AE,         MC62CM12AF,
+        MC62DM22AF,       MC62CM12AB,        MC62DM22AB,       KirinX90,         Kirin9030,          Ascend950PR_9599,
+        Ascend950PR_958a, Ascend950PR_9589,  Ascend950PR_958b, Ascend950PR_9579, Ascend950PR_957b,   Ascend950PR_957bx,
+        Ascend950PR_957c, Ascend950PR_957d,  Ascend950PR_950z, Ascend950DT_950x, Ascend950DT_950y,   Ascend950DT_95A1,
+        Ascend950DT_95A2, Ascend950DT_9591,  Ascend950DT_9592, Ascend950DT_9595, Ascend950DT_9596,   Ascend950DT_9581,
+        Ascend950DT_9582, Ascend950DT_9582x, Ascend950DT_9583, Ascend950DT_9584, Ascend950DT_9585,   Ascend950DT_9586,
+        Ascend950DT_9587, Ascend950DT_9588,  Ascend950DT_9571, Ascend950DT_9572, Ascend950DT_9573,   Ascend950DT_9574,
+        Ascend950DT_9575, Ascend950DT_9576,  Ascend950DT_9577, Ascend950DT_9578, MC32DM11AA,         MC32DM11AB,
+        MC32DM11AC,       Ascend350_354f,    Ascend350_355e,   KirinDev0000,     KirinDev0001,       KirinDev0002,
+        KirinDev0003};
     enum platformconf::TIK_VERSION current_tik_version_ = platformconf::TIK_VERSION::TIK_1_0;
     const std::map<const std::string, platformconf::TIK_VERSION> kStringToTikVersion = {
         {"TIK1.0", platformconf::TIK_VERSION::TIK_1_0}, {"TIK1.5", platformconf::TIK_VERSION::TIK_1_5}};
