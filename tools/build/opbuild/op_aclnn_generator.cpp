@@ -2562,7 +2562,8 @@ void AclnnOpGenerator::AclnnOpGenCodeRunForWorkspaceVersionImpl(
     }
     AclnnGenCodeDecImpl(decName, outfile);
     outfile << "#include \"" << decFile + "_v" + to_string(maxVersion) << ".h\"\n\n";
-    const char* str = "\n#ifdef __cplusplus\n"
+    outfile << "#define ACLNN_SUCCESS  0\n\n";
+    const char* str = "#ifdef __cplusplus\n"
                       "extern \"C\" {\n"
                       "#endif\n\n";
     outfile << str;
@@ -2577,7 +2578,10 @@ void AclnnOpGenerator::AclnnOpGenCodeRunForWorkspaceVersionImpl(
     AclnnOpGenIoParam(opDef.GetOutputs(), opdefName.outputsName, version, false, outfile);
     outfile << "        workspaceSize,\n";
     outfile << "        executor);\n";
-    outfile << "    if (NnopbaseDisableOptionalInput != NULL) {\n";
+    outfile << "    if (ret != ACLNN_SUCCESS) {\n";
+    outfile << "        return ret;\n";
+    outfile << "    }\n";
+    outfile << "    if (NnopbaseDisableOptionalInput != NULL && executor != nullptr) {\n";
     AclnnAddDisableInputIndex(opDef, version, outfile);
     outfile << "    }\n";
     outfile << "    return ret;\n";

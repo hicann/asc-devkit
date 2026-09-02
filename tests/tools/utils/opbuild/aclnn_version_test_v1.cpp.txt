@@ -3,6 +3,7 @@
 #include "aclnn_version_test_v1.h"
 #include "aclnn_version_test_v2.h"
 
+#define ACLNN_SUCCESS  0
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +42,10 @@ aclnnStatus aclnnVersionTestV1GetWorkspaceSize(
         yOut,
         workspaceSize,
         executor);
-    if (NnopbaseDisableOptionalInput != NULL) {
+    if (ret != ACLNN_SUCCESS) {
+        return ret;
+    }
+    if (NnopbaseDisableOptionalInput != NULL && executor != nullptr) {
         NnopbaseDisableOptionalInput(*executor, 3);
     }
     return ret;
