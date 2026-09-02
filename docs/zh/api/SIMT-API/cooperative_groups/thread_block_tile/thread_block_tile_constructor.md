@@ -99,7 +99,7 @@ thread_block_tile<Size, ParentT> tiled_partition(const ParentT& g)
         thread_block_tile<4, thread_block> tile4 = tiled_partition<4>(block);   // 按照4个线程为一组划分thread_block，对象类型中保留父组信息
 
         // 创建Size>32的thread_block_tile
-        __ubuf__ block_tile_memory<THREAD_NUM> scratch;
+        __ubuf__ block_tile_memory<THREAD_NUM> scratch = {};                    // 混合编程场景下需使用此方式在UB创建对象
         thread_block block_with_memory = this_thread_block(scratch);
         auto tile64 = tiled_partition<64>(block_with_memory);                   // 使用UB临时存储划分thread_block
         ...
