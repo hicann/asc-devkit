@@ -50,12 +50,6 @@ set(PACKAGE_FILES
     ${CANN_CMAKE_DIR}/scripts/install/multi_version.inc
 )
 
-set(CONF_FILES
-    ${CANN_CMAKE_DIR}/scripts/package/cfg/path.cfg
-)
-install(FILES ${CONF_FILES}
-    DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/conf COMPONENT asc-devkit
-)
 install(FILES ${PACKAGE_FILES}
    DESTINATION share/info/asc-devkit/script COMPONENT asc-devkit
 )

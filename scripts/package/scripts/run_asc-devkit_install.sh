@@ -165,10 +165,6 @@ new_install() {
         return 1
     fi
 
-    if [ -d "$common_parse_dir/tools/ascendc_tools" ];then
-        chmod 555 "$common_parse_dir/tools/ascendc_tools"
-    fi
-
     create_latest_linux_softlink
     return 0
 }
