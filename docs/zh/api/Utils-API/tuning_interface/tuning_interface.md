@@ -2,7 +2,7 @@
 
 -   **[printf](printf.md)**
 
--   **[assert](assert.md)**
+-   **[assert/ascendc\_assert](assert.md)**
 
 -   **[\_\_trap](__trap.md)**
 

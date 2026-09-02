@@ -49,7 +49,8 @@ __simd_callee__ constexpr inline uint32_t align_up(uint32_t a, uint32_t b) { ret
 
 __simd_callee__ inline void wait_vf_debug_buffer_drained(__ubuf__ BlockVFBufInfo* block_info)
 {
-    while (block_info->readLen != block_info->writeLen) {
+    // flag != 0: the consumer stopped draining, readLen will never catch up.
+    while (block_info->readLen != block_info->writeLen && block_info->flag == 0) {
         __asm__ __volatile__("");
     }
 }
@@ -127,9 +128,16 @@ __simd_callee__ inline void wait_vf_assert_handshake()
 {
     __ubuf__ BlockVFBufInfo* block_info = get_printf_ubuf_addr(0);
     wait_vf_debug_buffer_drained(block_info);
+    // Nobody left to acknowledge the handshake; drop the message but still let the caller trap.
+    if (block_info->flag != 0) {
+        return;
+    }
     __ubuf__ volatile BlockVFBufInfo::AssertState* assertFlag = &block_info->assertFlag;
     *assertFlag = BlockVFBufInfo::AssertState::RAISED;
     while (*assertFlag != BlockVFBufInfo::AssertState::DRAINED) {
+        if (block_info->flag != 0) {
+            break;
+        }
         __asm__ __volatile__("");
     }
 }
@@ -321,6 +329,14 @@ __aicore__ inline void asc_vf_debug_publish(
 
     __gm__ BlockRingBufInfo* blockRingBufInfo = get_block_ring_buf_info();
     auto* debugBlockInfo = reinterpret_cast<__gm__ DebugBlockHeadInfo*>(blockRingBufInfo);
+    // A batch larger than the ring buffer can never be published; retrying would spin forever and hang the kernel.
+    // Drop it: advance readLen to release the producer, raise flag to stop the transfer loop.
+    if (tlvLen > blockRingBufInfo->ringBufLen || sizeof(SkipTlv) >= blockRingBufInfo->ringBufLen) {
+        blockInfo->readLen = curWriteLen;
+        blockInfo->flag = 1;
+        return;
+    }
+    // Remaining failures are transient (RTS lagging); keep retrying.
     if (!check_ringbuf_space(debugBlockInfo, tlvLen)) {
         return;
     }
@@ -346,13 +362,16 @@ __aicore__ inline void asc_vf_debug_publish(
 __aicore__ inline bool asc_vf_debug_ub2gm()
 {
     __ubuf__ BlockVFBufInfo* blockInfo = get_printf_ubuf_addr_aicore(0);
+    // The VF unit updates these concurrently; without volatile the loads are hoisted and the loop
+    // works off a stale snapshot (finish == 1 while writeLen still reads 0), dropping every record.
+    __ubuf__ volatile BlockVFBufInfo* vInfo = blockInfo;
     for (;;) {
-        uint32_t curReadLen = blockInfo->readLen;
-        uint32_t curWriteLen = blockInfo->writeLen;
+        uint32_t curReadLen = vInfo->readLen;
+        uint32_t curWriteLen = vInfo->writeLen;
 
-        const bool isValidHeader = blockInfo->magic == ASCENDC_SIMD_VF_MAGIC_NUMBER &&
-                                   blockInfo->length <= ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE &&
-                                   curWriteLen <= blockInfo->length;
+        const bool isValidHeader = vInfo->magic == ASCENDC_SIMD_VF_MAGIC_NUMBER &&
+                                   vInfo->length <= ASCENDC_SIMD_VF_PRINTF_UBUF_MAX_SIZE &&
+                                   curWriteLen <= vInfo->length;
         if (!isValidHeader) {
             blockInfo->flag = 1;
             break;
@@ -370,12 +389,18 @@ __aicore__ inline bool asc_vf_debug_ub2gm()
             continue;
         }
 
-        if (blockInfo->assertFlag == BlockVFBufInfo::AssertState::RAISED) {
-            blockInfo->assertFlag = BlockVFBufInfo::AssertState::DRAINED;
+        if (vInfo->assertFlag == BlockVFBufInfo::AssertState::RAISED) {
+            vInfo->assertFlag = BlockVFBufInfo::AssertState::DRAINED;
             break;
         }
 
-        if (blockInfo->finish == 1) {
+        if (vInfo->finish == 1) {
+            // finish is set on the scalar unit; the VF writes may not be visible yet. Sync and re-check
+            // before concluding the buffer is empty, otherwise a pending record is silently dropped.
+            pipe_barrier(PIPE_ALL);
+            if (vInfo->readLen < vInfo->writeLen) {
+                continue;
+            }
             break;
         }
     }

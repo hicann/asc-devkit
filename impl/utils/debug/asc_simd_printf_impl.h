@@ -248,7 +248,7 @@ __simd_callee__ inline void printf_impl_assert_msg(
 #if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
     enable_asc_assert();
     scalar_printf_impl(
-        DumpType::DUMP_ASSERT, fmt, "[ASSERT] %s:%u: %s: Assertion `%s' failed. ", file, line, function, assertion,
+        DumpType::DUMP_ASSERT, fmt, "[ASSERT] %s:%u: %s: Assertion '%s' failed. ", file, line, function, assertion,
         args...);
 #endif
 }

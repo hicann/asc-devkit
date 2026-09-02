@@ -249,4 +249,4 @@ extern "C" __global__ __aicore__ void reduce_scatter_custom(
 | --- | --- |
 | MC2_BUFFER_LOCATION | 预留参数。计算和通信中间结果的Buffer存放位置。用户在Tiling侧可设置该字段。 |
 
-提示：调试含有HCCL高阶API的算子时，在算子编译工程中增加编译选项-DASCENDC\_DEBUG，可以开启异常场景拦截的能力，具体内容请参考并使用[assert接口](../../../basic_api/debug_interface/exception_detection/assert.md)。
+提示：调试含有HCCL高阶API的算子时，在算子编译工程中增加编译选项-DASCENDC\_DEBUG，可以开启异常场景拦截的能力，具体内容请参考并使用[assert接口](../../../../Utils-API/tuning_interface/assert.md)。

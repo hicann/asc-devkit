@@ -77,7 +77,6 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args);
 
 ## 约束说明
 
--   本接口不支持打印除换行符之外的其他转义字符。
 <!-- npu="950,A3,910b" id14 -->
 -   SIMT场景的支持情况如下：
       <!-- npu="950" id11 -->
@@ -106,8 +105,9 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args);
     ```
 
 <!-- npu="950" id15 -->
--   在`simd_vf`场景下，每个AIV核使用2KB预留UB空间作为FIFO临时缓冲区。同一次`asc_vf_call`中，`printf`、`asc_dump`和`assert`产生的累计调测数据可以超过2KB，但每条完整编码数据必须能放入该缓冲区；否则，该条数据不会打印。
+-   SIMD VF场景下，每个AIV核在单次`asc_vf_call`执行期间使用2KB预留UB空间临时保存调测数据。同一次`asc_vf_call`中的`assert`、`ascendc_assert`、`printf`和`asc_dump`共享该空间。该空间中的数据传输完成后会被复用，因此上述接口产生的累计调测数据可以超过2KB。单条调测数据必须能完整保存在该空间中，否则该条数据不会打印。
 -   每次调用`simd_vf`的`printf`时，除格式字符串和参数外，还会固定占用32字节；整条打印数据需要按8字节对齐。
+-   SIMD VF场景下，"simd\_printf\_fifo\_size\_per\_core"建议配置为3KB以上。配置过小且打印数据量较大时，部分调测数据不会被打印。
 <!-- end id15 -->
 
 ## SIMD调用示例

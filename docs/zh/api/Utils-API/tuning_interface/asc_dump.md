@@ -145,8 +145,9 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 -   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过acl.json中的`"simd_printf_fifo_size_per_core"`字段进行配置，配置范围最小为1KB，最大为64MB（可通过[aclInit](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/API/runtimeapi/aclcppdevg_03_0022.html)接口调整）。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
 
 <!-- npu="950" id16 -->
--   在`simd_vf`场景下，每个AIV核使用2KB预留UB空间作为FIFO临时缓冲区。同一次`asc_vf_call`中，`printf`、`asc_dump`和`assert`产生的累计调测数据可以超过2KB，但每条完整编码数据必须能放入该缓冲区；否则，该条数据不会打印。
+-   SIMD VF场景下，每个AIV核在单次`asc_vf_call`执行期间使用2KB预留UB空间临时保存调测数据。同一次`asc_vf_call`中的`assert`、`ascendc_assert`、`printf`和`asc_dump`共享该空间。该空间中的数据传输完成后会被复用，因此上述接口产生的累计调测数据可以超过2KB。单条调测数据必须能完整保存在该空间中，否则该条数据不会打印。
 -   每次调用`simd_vf`的`asc_dump`时，除实际dump数据外，还会固定占用72字节的管理信息；实际dump数据需要按32字节向上对齐。
+-   SIMD VF场景下，`simd_printf_fifo_size_per_core`建议配置为3KB以上。配置过小且打印数据量较大时，部分调测数据不会被打印。
 <!-- end id16 -->
 
 ## 调用示例

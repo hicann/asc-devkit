@@ -134,7 +134,7 @@
   rtDeviceSynchronize execution failed, reason=aicore exception
   ...
 
-  [ASSERT] <your_path>/09_log/log.asc:<line>: : Assertion `M < 100 && "M exceeds expected limit!"' failed.
+  [ASSERT] <your_path>/09_log/log.asc:<line>: : Assertion 'M < 100 && "M exceeds expected limit!"' failed.
   [INFO] Execution completed. Check for error messages above.
   ```
 

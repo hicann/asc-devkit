@@ -84,7 +84,7 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [printf](tuning_interface/printf.md) | 在算子核函数（Kernel）侧的实现代码中，需要输出日志信息时，调用printf接口打印相关内容。 |
-| [assert](tuning_interface/assert.md) | 本接口在SIMT VF调试场景下提供assert断言功能。在算子核函数（Kernel）侧的SIMT VF实现代码中，如果assert的内部条件判断不为真，则会输出assert条件，并将输入的信息格式化打印在屏幕上。 |
+| [assert/ascendc_assert](tuning_interface/assert.md) | 用于在算子核函数（Kernel）中检查指定条件。条件不成立时，接口打印断言失败信息并触发异常。 |
 | [__trap](tuning_interface/__trap.md) | 在SIMT VF实现代码中调用此接口会中断算子的运行。 |
 | [clock](tuning_interface/clock.md) | 本接口在SIMT VF调试场景中提供Clock时间戳功能，用于记录从程序启动到接口调用时刻所经历的时钟周期数（Cycle Count），便于精确分析执行延迟和性能瓶颈。 |
 | [asc\_dump](tuning_interface/asc_dump.md) | 将对应内存上的数据打印出来，同时支持打印自定义的附加信息（仅支持uint32\_t类型的信息），比如打印当前行号等。 |
