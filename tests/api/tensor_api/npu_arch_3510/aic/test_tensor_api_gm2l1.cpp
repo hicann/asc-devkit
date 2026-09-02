@@ -206,9 +206,9 @@ private:
     EXPECT_TRUE(result);                                                                                               \
     if (g_debug_print || !result) {                                                                                      \
         print_capture_data();                                                                                            \
-        print_tensor(gm_a);                                                                                              \
-        print_tensor(l1a_tensor);                                                                                        \
-        print_tensor(l1a_tensor_golden);                                                                                  \
+        ::print_tensor(gm_a);                                                                                            \
+        ::print_tensor(l1a_tensor);                                                                                      \
+        ::print_tensor(l1a_tensor_golden);                                                                               \
     }
 
 #define TEST_GM2L1_CONCAT_IMPL_(a, b, c, d) a##_##b##_##c##_##index##_##d
@@ -330,9 +330,9 @@ MAKE_BATCH_LAYOUT_FUNC(zn, zn_layout_ptn)
                 auto l1g = make_tensor(                                                                                \
                     make_mem_ptr<location::l1>(reinterpret_cast<data_type*>(l1a_buf_golden) + b * k_mat_stride),                    \
                     make_##l1_ptn<data_type>((m_value), (k_size)));                                                         \
-                print_tensor(gm_b);                                                                                    \
-                print_tensor(l1b);                                                                                    \
-                print_tensor(l1g);                                                                                    \
+                ::print_tensor(gm_b);                                                                                  \
+                ::print_tensor(l1b);                                                                                   \
+                ::print_tensor(l1g);                                                                                   \
             }                                                                                                         \
         }                                                                                                             \
     }
