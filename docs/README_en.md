@@ -1,5 +1,7 @@
 # Project Documentation
 
+English | [简体中文](./README.md)
+
 ## Directory Description
 Key directory structure is as follows:
 ```

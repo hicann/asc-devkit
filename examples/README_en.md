@@ -1,5 +1,7 @@
 # Ascend C Examples
 
+English | [简体中文](./README.md)
+
 This directory provides usage examples for different Ascend C programming modes, covering basic invocation, debugging tools, features, API libraries, performance practices, and other content.
 
 ## Example List

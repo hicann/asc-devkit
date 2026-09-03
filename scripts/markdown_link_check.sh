@@ -831,6 +831,9 @@ def readme_language(path):
 
 
 def readme_language_error(source, target_path, suffix):
+    if posixpath.dirname(target_path) == posixpath.dirname(source):
+        return None
+
     source_language = readme_language(source)
     if source_language is None or not target_path.startswith("examples/"):
         return None
