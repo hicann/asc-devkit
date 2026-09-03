@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 分别提取两个bfloat162输入的高16位，并填充到bfloat162中，返回填充后的数据。
 
 ## 函数原型
@@ -58,19 +60,13 @@ inline bfloat16x2_t __highs2bfloat162(const bfloat16x2_t x, const bfloat16x2_t y
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     // 使用短向量可提升数据搬运效率
     __aicore__ void simt_highs2bfloat162(bfloat16x2_t* input1, bfloat16x2_t* input2, bfloat16x2_t* output, uint32_t input_total_length)
     {
@@ -90,6 +86,8 @@ inline bfloat16x2_t __highs2bfloat162(const bfloat16x2_t x, const bfloat16x2_t y
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_highs2bfloat162(__gm__ bfloat16x2_t* input1, __gm__ bfloat16x2_t* input2, __gm__ bfloat16x2_t* output, uint32_t input_total_length)
     {

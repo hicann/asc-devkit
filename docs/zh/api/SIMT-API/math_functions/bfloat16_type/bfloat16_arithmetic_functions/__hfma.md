@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 对输入数据x、y、z，计算x与y相乘加上z的结果，并遵循CAST\_RINT模式对结果进行舍入处理。
 
 ![](../../../../figures/zh-cn_formulaimage_0000002545900872.png)
@@ -63,19 +65,13 @@ x \* y+ z的值。本接口不受全局饱和模式影响，特殊值如下：
 
 无
 
-## 需要包含的头文件
-
-使用bfloat16\_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(1024) void kernel_fma(bfloat16_t* dst, bfloat16_t* x, bfloat16_t* y, bfloat16_t* z, uint32_t total_length){
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
         if (idx >= total_length) {
@@ -88,6 +84,8 @@ x \* y+ z的值。本接口不受全局饱和模式影响，特殊值如下：
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_fma(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y, __gm__ bfloat16_t* z, uint32_t total_length){
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
         if (idx >= total_length) {

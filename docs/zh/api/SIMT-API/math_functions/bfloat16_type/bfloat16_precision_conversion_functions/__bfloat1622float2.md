@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 将bfloat16x2的两个分量分别转换为float，并填充到float2后返回。
 
 ## 函数原型
@@ -59,19 +61,13 @@ inline float2 __bfloat1622float2(const bfloat16x2_t x)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     // 使用短向量可提升数据搬运效率
     __aicore__ void simt_bfloat1622float2(bfloat16x2_t* input, float2* output, uint32_t input_total_length)
     {
@@ -91,6 +87,8 @@ inline float2 __bfloat1622float2(const bfloat16x2_t x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_bfloat1622float2(__gm__ bfloat16x2_t* input, __gm__ float2* output, uint32_t input_total_length)
     {

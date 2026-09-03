@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 指定输入x，获取2的x次方。
 
 ![](../../../../figures/zh-cn_formulaimage_0000002576421045.png)
@@ -60,19 +62,13 @@ inline bfloat16_t hexp2(bfloat16_t x)
 针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
 <!-- end id7 -->
 
-## 需要包含的头文件
-
-使用bfloat16_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(1024) void KernelExp2(bfloat16_t* dst, bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -83,6 +79,8 @@ inline bfloat16_t hexp2(bfloat16_t x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelExp2(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

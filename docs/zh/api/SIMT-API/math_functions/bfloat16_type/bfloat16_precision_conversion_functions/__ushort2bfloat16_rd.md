@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 遵循CAST\_FLOOR模式，将unsigned short int类型数据转换为bfloat16_t类型数据，返回转换后的值。
 
 ## 函数原型
@@ -57,19 +59,13 @@ inline bfloat16_t __ushort2bfloat16_rd(const unsigned short int x)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(1024) void kernel___ushort2bfloat16_rd(bfloat16_t* dst, unsigned short int* x, uint32_t input_total_length)
     {
         uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -83,6 +79,8 @@ inline bfloat16_t __ushort2bfloat16_rd(const unsigned short int x)
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel___ushort2bfloat16_rd(__gm__ bfloat16_t* dst, __gm__ unsigned short int* x, uint32_t input_total_length)
     {
         uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;

@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 获取输入数据的双曲正切值。
 
 ![](../../../../figures/zh-cn_formulaimage_0000002576421043.png)
@@ -57,19 +59,13 @@ inline bfloat16_t htanh(bfloat16_t x)
 
 无
 
-## 需要包含的头文件
-
-使用bfloat16_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(1024) void KernelTanh(bfloat16_t* dst, bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -80,6 +76,8 @@ inline bfloat16_t htanh(bfloat16_t x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelTanh(__gm__ bfloat16_t* dst, __gm__ bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 遵循CAST\_CEIL模式，将int32类型数据转换为bfloat16类型数据，返回转换后的值。
 
 ## 函数原型
@@ -59,19 +61,13 @@ inline bfloat16_t __int2bfloat16_ru(const int x)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(1024) void kernel__int2bfloat16_ru(bfloat16_t* dst, int32_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -82,6 +78,8 @@ inline bfloat16_t __int2bfloat16_ru(const int x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel__int2bfloat16_ru(__gm__ bfloat16_t* dst, __gm__ int32_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

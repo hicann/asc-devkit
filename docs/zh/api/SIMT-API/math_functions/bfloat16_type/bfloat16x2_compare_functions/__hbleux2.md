@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 比较两个bfloat16x2\_t类型数据的两个分量，当两个分量均满足第一个数小于或等于第二个数时，返回true。若任一输入的分量为nan，该分量的比较结果为true。
 
 ## 函数原型
@@ -81,19 +83,13 @@ bool __hbleux2(bfloat16x2_t x, bfloat16x2_t y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     // 使用短向量可提升数据搬运效率
     __global__ __launch_bounds__(1024) void simt_hbleux2(bfloat16_t* x, bfloat16_t* y, bool* dst, uint32_t input_total_length)
     {
@@ -111,6 +107,8 @@ bool __hbleux2(bfloat16x2_t x, bfloat16x2_t y)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_hbleux2(__gm__ bfloat16x2_t* x, __gm__ bfloat16x2_t* y, __gm__ bool* dst, uint32_t input_total_length)
     {

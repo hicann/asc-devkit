@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 比较两个bfloat16类型的数据，当第一个数据小于或等于第二个数据时，返回true。若任一输入为nan，返回true。
 
 ## 函数原型
@@ -53,19 +55,13 @@ bool __hleu(bfloat16_t x, bfloat16_t y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(1024) void KernelHleu(bool* dst, bfloat16_t* x, bfloat16_t* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -76,6 +72,8 @@ bool __hleu(bfloat16_t x, bfloat16_t y)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelHleu(__gm__ bool* dst, __gm__ bfloat16_t* x, __gm__ bfloat16_t* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
