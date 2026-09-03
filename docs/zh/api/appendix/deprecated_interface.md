@@ -180,14 +180,6 @@
 
     此接口后续版本会废弃，请使用[asc_storealign_pack_quarter_postupdate](../SIMD-API/c_api/reg_compute/store/asc_storealign_pack_quarter_postupdate.md)接口。
 
-- [asc_storealign (repeat stride)](../SIMD-API/c_api/reg_compute/store/asc_storealign_v5_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_storealign_postupdate](../SIMD-API/c_api/reg_compute/store/asc_storealign_postupdate.md)接口。
-
-- [asc_storealign_postupdate (repeat stride)](../SIMD-API/c_api/reg_compute/store/asc_storealign_v5_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_storealign_postupdate](../SIMD-API/c_api/reg_compute/store/asc_storealign_postupdate.md)接口。
-
 - [asc_storealign (多模式重载)](../SIMD-API/c_api/reg_compute/store/asc_storealign.md)接口
 
     原 `asc_storealign(dst, src, mask)` 通过函数名重载实现NORM/FIRST/PACK/PACKV2/INTLV等多种搬出模式，现收窄为仅NORM模式，其他模式拆分到独立函数。请使用[asc_storealign](../SIMD-API/c_api/reg_compute/store/asc_storealign.md)的新版本。
