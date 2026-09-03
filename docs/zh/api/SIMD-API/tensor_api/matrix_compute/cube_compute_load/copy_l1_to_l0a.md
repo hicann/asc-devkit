@@ -30,7 +30,7 @@
 
 Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的左矩阵数据搬运到L0A Buffer。
 
-接口支持完整Tensor搬运，也支持通过`dst_coord`、`src_coord`和`copy_shape`指定目的Tensor中的起始坐标、源Tensor中的起始坐标和搬运区域的形状，执行区域搬运。
+接口支持完整Tensor搬运，也支持通过`dst_coord`、`src_coord`和`copy_shape`指定目的张量中的起始坐标、源张量中的起始坐标和搬运区域的形状，执行区域搬运。
 
 该通路以512Byte数据分形为基本搬运单位。不同数据类型对应的分形矩阵形态如下：
 
@@ -43,9 +43,19 @@ Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用�
 | b16 | 16 * 16 |
 | b32 | 16 * 8 |
 
-接口支持非转置搬运、转置搬运和Img2Col卷积数据搬运。源张量和目的张量的layout需要匹配当前通路支持的格式组合。Img2Col场景中，源张量为`NC1HWC0`格式，目的张量为`NZ`格式，搬运过程中将卷积特征图展开为矩阵。
+接口支持非转置搬运、转置搬运和Img2Col卷积数据搬运。源张量和目的张量的Layout需要匹配当前通路支持的格式组合，具体如表2所示。
 
-接口支持Batch模式。Batch模式下，源张量和目的张量的layout需要在原有分形layout最前面增加Batch维，形状结构为`(b, 单矩阵形状)`，其中`b`表示Batch数量。用户可使用`make_frame_layout<nz_layout_ptn, DataType>(b, m, k)`或`make_frame_layout<zn_layout_ptn, DataType>(b, m, k)`构造带Batch维的layout。
+**表2**  搬运模式与格式组合
+
+| 搬运模式 | 源Layout -> 目的Layout |
+| :--- | :--- |
+| 非转置搬运 | `Nz -> Nz` |
+| 转置搬运 | `Zn -> Nz` |
+| Img2Col搬运 | `NC1HWC0 -> Nz`或`NDC1HWC0 -> Nz` |
+
+Img2Col场景中，搬运过程中会将卷积特征图展开为矩阵。
+
+接口支持Batch模式。Batch模式下，源张量和目的张量的Layout需要在原有分形Layout最前面增加Batch维，形状结构为`(b, 单矩阵形状)`，其中`b`表示Batch数量。源张量和目的张量的Batch数量必须一致，Batch维Stride需要与单Batch数据的物理占用空间一致，即`Batch维Stride = 单Batch Layout`的[capacity()](../../layout/capacity.md)。用户可使用`make_frame_layout<nz_layout_ptn, DataType>(b, m, k)`或`make_frame_layout<zn_layout_ptn, DataType>(b, m, k)`构造连续的Batch Layout。
 
 ## 函数原型
 
@@ -56,12 +66,29 @@ Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用�
     __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src)
     ```
 
+- 根据源张量和目的张量的存储位置自动推导搬运通路，使用默认trait执行L1 Buffer到L0A Buffer的数据搬运。
+
+    ```cpp
+    template <typename DstTensor, typename SrcTensor>
+    __aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src)
+    ```
+
 - 按指定源坐标、目的坐标和搬运形状执行L1 Buffer到L0A Buffer搬运。
 
     ```cpp
     template <typename Atom, typename DstTensor, typename SrcTensor, typename DstCoord,
         typename SrcCoord, typename CopyShape>
     __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst,
+        const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const CopyShape& copy_shape)
+    ```
+
+- 根据源张量和目的张量的存储位置自动推导搬运通路，使用默认trait按指定源坐标、目的坐标和搬运形状执行L1 Buffer到L0A Buffer搬运。
+
+    ```cpp
+    template <typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename CopyShape>
+    __aicore__ inline void copy(const DstTensor& dst,
         const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
         const CopyShape& copy_shape)
     ```
@@ -85,20 +112,25 @@ Img2Col搬运通过`copy_atom::with`绑定`img2col_params`后，使用相同的`
 
 ## 参数说明
 
-**表2**  模板参数说明
+**表3**  `copy`接口模板参数说明
 
 | 参数名 | 描述 |
 | :--- | :--- |
 | Atom | `copy_atom`的模板参数，由`make_copy`接口推导得到。 |
-| DstTensor | 目的张量类型，需为Tensor API Tensor类型。 |
-| SrcTensor | 源张量类型，需为Tensor API Tensor类型。 |
+| DstTensor | 目的张量类型。 |
+| SrcTensor | 源张量类型。 |
 | DstCoord | 目的张量起始坐标类型，也可为`zero_coord`。 |
 | SrcCoord | 源张量起始坐标类型，也可为`zero_coord`。 |
 | CopyShape | 搬运区域形状的类型。 |
+
+**表4**  `make_copy`接口模板参数说明
+
+| 参数名 | 描述 |
+| :--- | :--- |
 | CopyOperation | 搬运操作对象类型。 |
 | CopyTrait | 搬运trait对象类型。 |
 
-**表3**  `copy`接口参数说明
+**表5**  `copy`接口参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
@@ -109,7 +141,7 @@ Img2Col搬运通过`copy_atom::with`绑定`img2col_params`后，使用相同的`
 | src_coord | 输入 | 搬运区域在源张量中的起始坐标，也可传入`zero_coord`。 |
 | copy_shape | 输入 | 搬运区域的形状，用于指定搬运区域的大小。 |
 
-**表4**  `make_copy`接口参数说明
+**表6**  `make_copy`接口参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
@@ -148,7 +180,7 @@ struct l1_to_l0a_trait_default {
 
 ### img2col_params说明
 
-`img2col_params<PadType>`用于配置Img2Col搬运的目的矩阵范围、卷积核、滑动步长、膨胀和padding。源特征图的H、W和通道数由`NC1HWC0`源layout推导。
+`img2col_params<PadType>`用于配置Img2Col搬运的目的矩阵范围、卷积核大小、滑动步长、膨胀系数、padding大小和padding值。
 
 ```cpp
 template <typename PadType>
@@ -172,14 +204,14 @@ struct img2col_params {
 };
 ```
 
-**表5**  `img2col_params`成员说明
+**表7**  `img2col_params`成员说明
 
 | 成员 | 默认值 | 描述 |
 | :--- | :--- | :--- |
-| m_extension | `0` | 目的矩阵M轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最下侧分形时，b8和b16数据类型要求取值为16的倍数，b32数据类型无倍数要求；覆盖最下侧分形时无倍数要求。 |
-| k_extension | `0` | 目的矩阵K轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最右侧分形时，b8、b16和b32数据类型分别要求取值为32、16和8的倍数；覆盖最右侧分形时无倍数要求。 |
-| m_start_pos | `0` | 目的矩阵M轴的搬运起点，取值范围[0, 32767]。默认为0。 |
-| k_start_pos | `0` | 该指令在目的操作数width维度的起点，对于b32类型，应为8的倍数；对于b16类型，应为16的倍数；对于b8类型，应为32的倍数；对于b4类型，应为64的倍数。取值范围[0, 65535]。默认为0。|
+| m_extension | `0` | 目的矩阵M轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最下侧分形时，b4、b8和b16数据类型要求取值为16的倍数，b32数据类型无倍数要求；覆盖最下侧分形时无倍数要求。 |
+| k_extension | `0` | 目的矩阵K轴的搬运元素数，取值范围为[0, 65535]，为0时不执行搬运。搬运范围未覆盖目的矩阵最右侧分形时，b4、b8、b16和b32数据类型分别要求取值为64、32、16和8的倍数；覆盖最右侧分形时无倍数要求。 |
+| m_start_pos | `0` | 目的矩阵M轴的搬运起点，取值范围[0, 32767]。 |
+| k_start_pos | `0` | 该指令在目的操作数width维度的起点，对于b32类型，应为8的倍数；对于b16类型，应为16的倍数；对于b8类型，应为32的倍数；对于b4类型，应为64的倍数。取值范围[0, 65535]。 |
 | pad_list | `{0, 0, 0, 0}` | padding大小，依次为左、右、上、下，每个值的取值范围为[0, 255]。 |
 | stride_w | `1` | 卷积核在源特征图W轴的滑动步长，取值范围为[0, 63]。 |
 | stride_h | `1` | 卷积核在源特征图H轴的滑动步长，取值范围为[0, 63]。 |
@@ -196,22 +228,21 @@ struct img2col_params {
 
 ## 数据类型
 
-非Img2Col搬运支持的数据类型包括：
+支持的数据类型包括：
 
 `fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`half`、`bfloat16_t`、`int16_t`、`uint16_t`、`int32_t`、`uint32_t`、`float`。
 
 源张量和目的张量的数据类型需要保持一致。
 
-Img2Col搬运不支持b4数据类型，即不支持`fp4x2_e2m1_t`和`fp4x2_e1m2_t`。
-
 ## 返回值说明
 
-`copy`无返回值。`make_copy`返回`copy_atom`对象。
+- `copy`无返回值。
+- `make_copy`返回`copy_atom`对象。
 
 ## 约束说明
 
-- 目的地址位于L0A Buffer时，起始地址需要满足512Byte对齐要求。
-- 源地址位于L1 Buffer时，起始地址需要满足32Byte对齐要求。
+- 目的地址位于L0A Buffer，起始地址需要满足512Byte对齐要求。
+- 源地址位于L1 Buffer，起始地址需要满足32Byte对齐要求。
 - 特殊数据类型约束：L1 Buffer到L0A Buffer通路使能转置时，即`ZN2NZ`，支持的数据类型约束如下：
   - b32数据类型要求源矩阵形状在K轴方向16对齐。
   - b8数据类型要求源矩阵形状在M轴方向32对齐。
@@ -262,7 +293,7 @@ Img2Col搬运不支持b4数据类型，即不支持`fp4x2_e2m1_t`和`fp4x2_e1m2_
 
 ### Batch搬运
 
-当源张量和目的张量均使用带Batch维的layout时，`copy`接口会按照Batch维描述的数据范围完成L1 Buffer到L0A Buffer的数据搬运。非转置搬运时源张量、目的张量均为`NZ`格式，转置搬运时源张量为`ZN`格式，目的张量为`NZ`格式。
+当源张量和目的张量均使用带Batch维的Layout时，`copy`接口会按照Batch维描述的数据范围完成L1 Buffer到L0A Buffer的数据搬运。非转置搬运时源张量、目的张量均为`NZ`格式，转置搬运时源张量为`ZN`格式，目的张量为`NZ`格式。
 
 ### Img2Col搬运
 
@@ -348,8 +379,8 @@ __aicore__ inline void copy_img2col_l1_to_l0a()
     img2col_params<half> params;
     params.m_extension = m;
     params.k_extension = k;
-    prams.m_start_pos = 0;
-    prams.k_start_pos = 0;
+    params.m_start_pos = 0;
+    params.k_start_pos = 0;
     params.filter_w = 3;
     params.filter_h = 3;
     params.stride_w = 1;

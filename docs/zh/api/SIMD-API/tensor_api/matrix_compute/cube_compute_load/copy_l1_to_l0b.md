@@ -30,7 +30,7 @@
 
 Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用于将L1 Buffer中的右矩阵数据搬运到L0B Buffer。
 
-接口支持完整Tensor搬运，也支持通过`dst_coord`、`src_coord`和`copy_shape`指定目的Tensor中的起始坐标、源Tensor中的起始坐标和搬运区域的形状，执行区域搬运。
+接口支持完整Tensor搬运，也支持通过`dst_coord`、`src_coord`和`copy_shape`指定目的张量中的起始坐标、源张量中的起始坐标和搬运区域的形状，执行区域搬运。
 
 该通路以512Byte数据分形为基本搬运单位。不同数据类型对应的分形矩阵形态如下：
 
@@ -43,9 +43,16 @@ Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用�
 | b16 | 16 * 16 |
 | b32 | 8 * 16 |
 
-接口支持非转置搬运和转置搬运。源张量和目的张量的layout需要匹配当前通路支持的格式组合。
+接口支持非转置搬运和转置搬运。源张量和目的张量的Layout需要匹配当前通路支持的格式组合，具体如表2所示。
 
-接口支持Batch模式。Batch模式下，源张量和目的张量的layout需要在原有分形layout最前面增加Batch维，形状结构为`(b, 单矩阵形状)`，其中`b`表示Batch数量。用户可使用`make_frame_layout<zn_layout_ptn, DataType>(b, k, n)`或`make_frame_layout<nz_layout_ptn, DataType>(b, k, n)`构造带Batch维的layout。
+**表2**  搬运模式与格式组合
+
+| 搬运模式 | 源Layout -> 目的Layout |
+| :--- | :--- |
+| 非转置搬运 | `Zn -> Zn` |
+| 转置搬运 | `Nz -> Zn` |
+
+接口支持Batch模式。Batch模式下，源张量和目的张量的Layout需要在原有分形Layout最前面增加Batch维，形状结构为`(b, 单矩阵形状)`，其中`b`表示Batch数量。源张量和目的张量的Batch数量必须一致，Batch维stride需要与单Batch数据的物理占用空间一致，即`Batch维stride = 单Batch layout`的[capacity()](../../layout/capacity.md)；按字节计算时，`Batch维stride * sizeof(元素类型) = 单Batch数据的物理占用字节数`。用户可使用`make_frame_layout<zn_layout_ptn, DataType>(b, k, n)`或`make_frame_layout<nz_layout_ptn, DataType>(b, k, n)`构造连续的Batch Layout。
 
 ## 函数原型
 
@@ -56,12 +63,29 @@ Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用�
     __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst, const SrcTensor& src)
     ```
 
+- 根据源张量和目的张量的存储位置自动推导搬运通路，使用默认trait执行L1 Buffer到L0B Buffer的数据搬运。
+
+    ```cpp
+    template <typename DstTensor, typename SrcTensor>
+    __aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src)
+    ```
+
 - 按指定源坐标、目的坐标和搬运形状执行L1 Buffer到L0B Buffer搬运。
 
     ```cpp
     template <typename Atom, typename DstTensor, typename SrcTensor, typename DstCoord,
         typename SrcCoord, typename CopyShape>
     __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst,
+        const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const CopyShape& copy_shape)
+    ```
+
+- 根据源张量和目的张量的存储位置自动推导搬运通路，使用默认trait按指定源坐标、目的坐标和搬运形状执行L1 Buffer到L0B Buffer搬运。
+
+    ```cpp
+    template <typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename CopyShape>
+    __aicore__ inline void copy(const DstTensor& dst,
         const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
         const CopyShape& copy_shape)
     ```
@@ -83,20 +107,25 @@ Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用�
 
 ## 参数说明
 
-**表2**  模板参数说明
+**表3**  `copy`接口模板参数说明
 
 | 参数名 | 描述 |
 | :--- | :--- |
 | Atom | `copy_atom`的模板参数，由`make_copy`接口推导得到。 |
-| DstTensor | 目的张量类型，需为Tensor API Tensor类型。 |
-| SrcTensor | 源张量类型，需为Tensor API Tensor类型。 |
+| DstTensor | 目的张量类型。 |
+| SrcTensor | 源张量类型。 |
 | DstCoord | 目的张量起始坐标类型，也可为`zero_coord`。 |
 | SrcCoord | 源张量起始坐标类型，也可为`zero_coord`。 |
 | CopyShape | 搬运区域形状的类型。 |
+
+**表4**  `make_copy`接口模板参数说明
+
+| 参数名 | 描述 |
+| :--- | :--- |
 | CopyOperation | 搬运操作对象类型。 |
 | CopyTrait | 搬运trait对象类型。 |
 
-**表3**  `copy`接口参数说明
+**表5**  `copy`接口参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
@@ -107,7 +136,7 @@ Tensor API通过`copy`接口统一执行不同通路数据搬运。该接口用�
 | src_coord | 输入 | 搬运区域在源张量中的起始坐标，也可传入`zero_coord`。 |
 | copy_shape | 输入 | 搬运区域的形状，用于指定搬运区域的大小。 |
 
-**表4**  `make_copy`接口参数说明
+**表6**  `make_copy`接口参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :---: | :--- |
@@ -155,12 +184,13 @@ struct l1_to_l0b_trait_default {
 
 ## 返回值说明
 
-`copy`无返回值。`make_copy`返回`copy_atom`对象。
+- `copy`无返回值。
+- `make_copy`返回`copy_atom`对象。
 
 ## 约束说明
 
-- 目的地址位于L0B Buffer时，起始地址需要满足512Byte对齐要求。
-- 源地址位于L1 Buffer时，起始地址需要满足32Byte对齐要求。
+- 目的地址位于L0B Buffer，起始地址需要满足512Byte对齐要求。
+- 源地址位于L1 Buffer，起始地址需要满足32Byte对齐要求。
 - 特殊数据类型约束：L1 Buffer到L0B Buffer通路使能转置时，即`NZ2ZN`，支持的数据类型约束如下：
   - b32数据类型要求源矩阵形状在K轴方向16对齐。
   - b8数据类型要求源矩阵形状在M轴方向32对齐。
@@ -209,7 +239,7 @@ struct l1_to_l0b_trait_default {
 
 ### Batch搬运
 
-当源张量和目的张量均使用带Batch维的layout时，`copy`接口会按照Batch维描述的数据范围完成L1 Buffer到L0B Buffer的数据搬运。非转置搬运时源张量、目的张量均为`ZN`格式，转置搬运时源张量为`NZ`格式，目的张量为`ZN`格式。
+当源张量和目的张量均使用带Batch维的Layout时，`copy`接口会按照Batch维描述的数据范围完成L1 Buffer到L0B Buffer的数据搬运。非转置搬运时源张量、目的张量均为`ZN`格式，转置搬运时源张量为`NZ`格式，目的张量为`ZN`格式。Batch维位于最外层，源和目的Batch数量必须一致，并且每个Batch的Batch Stride应等于对应单Batch Layout的物理占用空间。
 
 ## 调用示例
 

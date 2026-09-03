@@ -42,12 +42,29 @@
         const DstTensor& dst, const SrcTensor& src)
     ```
 
+- 根据源张量和目的张量的存储位置自动推导搬运通路，使用默认trait执行L1 Buffer到Unified Buffer搬运。
+
+    ```cpp
+    template <typename DstTensor, typename SrcTensor>
+    __aicore__ inline void copy(const DstTensor& dst, const SrcTensor& src)
+    ```
+
 - 按指定源坐标、目的坐标和搬运形状执行L1 Buffer到Unified Buffer搬运。
 
     ```cpp
     template <typename Atom, typename DstTensor, typename SrcTensor, typename DstCoord,
         typename SrcCoord, typename CopyShape>
     __aicore__ inline void copy(const copy_atom<Atom>& atom, const DstTensor& dst,
+        const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const CopyShape& copy_shape)
+    ```
+
+- 根据源张量和目的张量的存储位置自动推导搬运通路，使用默认trait按指定源坐标、目的坐标和搬运形状执行L1 Buffer到Unified Buffer搬运。
+
+    ```cpp
+    template <typename DstTensor, typename SrcTensor, typename DstCoord,
+        typename SrcCoord, typename CopyShape>
+    __aicore__ inline void copy(const DstTensor& dst,
         const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
         const CopyShape& copy_shape)
     ```
