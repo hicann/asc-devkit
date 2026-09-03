@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/atomic/scalar_atomic.h"`。
+
 对Global Memory中`address`指向的单个元素执行原子交换操作。读取该元素的旧值`old_value`，将`val`写回该地址以替换旧值，并返回`old_value`。整个读取和写回过程为原子操作。
 
 ## 函数原型

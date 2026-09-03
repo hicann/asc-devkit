@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/composite/storeunalign_composite.h"`。
+
 将矢量数据寄存器中的数据搬出到Unified Buffer（UB），目的地址需按照`dtype`对齐。底层经非对齐搬出指令完成单次连续写入，搬运过程中数据格式和内容保持不变。在追求极致性能时，对齐场景推荐使用[asc_storealign](asc_storealign.md)接口。本接口在Vector Function（`__simd_vf__`标记的函数）内使用。本接口提供两种参数列表不同的功能模式：
 
 - **连续搬出模式**：将整个矢量数据寄存器内容写入`dst`起始地址，搬出量为一个矢量长度（`VL`，默认256字节）。

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/spr/spr.h"`。
+
 设置饱和控制策略，默认为开启全局饱和配置：
 
 - `asc_override_strategy::USE_API`：表示按单指令/API路径配置饱和。

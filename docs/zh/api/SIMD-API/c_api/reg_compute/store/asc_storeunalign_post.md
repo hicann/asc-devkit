@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/store/storeunalign.h"`。
+
 将非对齐寄存器中暂存的尾块写入Unified Buffer（UB），用于连续非对齐搬运收尾。本接口提供以下两种模式：
 
 - **立即数偏移搬出模式**：通过立即数指定相对目的起始地址的偏移，单位为元素，用户可选择手动更新偏移或更新目的地址，用于配合前序非对齐搬出接口[asc_storeunalign](asc_storeunalign.md)或[asc_storeunalign_postupdate掩码寄存器搬出模式](asc_storeunalign_postupdate.md)收尾。

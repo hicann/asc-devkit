@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+
 将图像数据从Global Memory搬运到L1 Buffer。
 
 ## 函数原型

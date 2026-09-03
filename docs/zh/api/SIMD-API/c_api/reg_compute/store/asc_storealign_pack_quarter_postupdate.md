@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/store/storealign.h"`。
+
 将矢量数据寄存器中的数据压缩搬出到Unified Buffer（UB），写入完成后启用Post Update模式自动累加目的地址指针，便于硬件循环内连续多次调用时无需手动维护目的地址。`mask`用于指示参与搬出的元素，`mask`对应位置为1时，将`src`中有效的32位元素中的低8bit数据写入压缩后对应的目的位置；`mask`对应位置为0时，对应元素不参与搬出，压缩后对应的目的位置保持原值。`offset`单位为元素。搬出完成后，目的地址累加`offset × sizeof(dtype)`字节。本接口在Vector Function（`__simd_vf__`标记的函数）内使用。
 
 本接口仅在AIV上执行有效。

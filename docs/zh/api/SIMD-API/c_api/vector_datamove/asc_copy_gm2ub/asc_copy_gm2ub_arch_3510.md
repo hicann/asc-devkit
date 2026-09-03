@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_datamove/vector_datamove.h"`。
+
 将数据从Global Memory (GM) 搬运到 Unified Buffer（UB）。
 
 ## 函数原型

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cube_compute/cube_compute.h"`。
+
 本接口用于设置Mmad计算关闭HiF8模式（与[asc_enable_hif8](./asc_enable_hif8.md)相反），调用此接口后L0A Buffer/L0B Buffer中的FP8数据在参与Mmad计算之前不会被转化为hifloat8_t类型数据。
 
 本接口为矩阵计算相关配置接口，仅在AIC上生效。

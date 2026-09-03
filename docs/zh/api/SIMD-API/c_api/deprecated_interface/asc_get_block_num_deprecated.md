@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/utils/sys_var.h"`。
+
 **该接口已废弃，请使用[内置变量block_num](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#内置变量)替代。**
 
 获取当前任务配置的核数，用于代码内部的多核逻辑控制等。建议在代码中直接使用内置变量`block_num`：

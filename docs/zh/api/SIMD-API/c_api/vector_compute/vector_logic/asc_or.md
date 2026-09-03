@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_logic.h"`。
+
 每对元素按位或运算，计算公式如下：
 $$
 dst_i = src0_i | src1_i

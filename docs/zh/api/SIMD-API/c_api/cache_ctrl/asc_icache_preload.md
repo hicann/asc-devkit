@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cache_ctrl/cache_ctrl.h"`。
+
 从指令所在GM地址预加载数据到对应的cacheline中。
 
 开发者手动调用该接口，能够从指令所在GM地址预加载指令到ICache中。

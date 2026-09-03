@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/spr/spr.h"`。
+
 读取squeeze操作后保存至AR特殊寄存器的有效数据长度值，用于配合[asc_squeeze_and_storeunalign](../reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口获取已连续搬出的有效数据量。
 
 ## 函数原型

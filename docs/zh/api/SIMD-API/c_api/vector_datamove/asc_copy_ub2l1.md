@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_datamove/vector_datamove.h"`。
+
 提供数据搬运功能，将数据从Unified Buffer (UB)搬运到L1 Buffer。
 
 本接口支持以下两种数据搬运方式：

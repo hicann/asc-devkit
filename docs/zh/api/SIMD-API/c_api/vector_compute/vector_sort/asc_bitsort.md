@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_sort.h"`。
+
 位图排序函数，一次迭代可以完成32个元素的排序，数据按如下描述结构进行保存：
 
 Score和Index分别存储在src0和src1中，按Score进行排序（Score大的元素排前面），排序后的Score与其对应的Index一起以（Score，Index）的结构存储在dst中。

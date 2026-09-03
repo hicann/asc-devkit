@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_reduce.h"`。
+
 执行数据块内的求最大值规约（Reduce Max）操作。
 
 ## 函数原型

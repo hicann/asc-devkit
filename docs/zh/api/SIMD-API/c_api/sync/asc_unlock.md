@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/sync/sync.h"`。
+
 用于同步AI Core内部异步流水的指令，直到当前流水的前序指令执行完成后，根据mutex_id释放对应Mutex。
 
 相对于[asc_sync_notify](asc_sync_notify.md)/[asc_sync_wait](asc_sync_wait.md)同步机制，使用asc_lock/asc_unlock接口有以下优势：

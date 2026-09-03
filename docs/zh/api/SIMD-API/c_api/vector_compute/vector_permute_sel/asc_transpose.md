@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_permute_sel.h"`。
+
 用于实现16*16的二维矩阵数据块转置。
 
 ## 函数原型

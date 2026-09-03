@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_fused.h"`。
+
 根据`mask`对源操作数`src0`、`src1`按元素相减后取绝对值，得到计算结果。计算公式如下：
 
 $$

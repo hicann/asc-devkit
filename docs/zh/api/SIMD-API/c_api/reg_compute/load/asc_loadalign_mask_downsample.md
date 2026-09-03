@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/load/loadalign.h"`。
+
 从Unified Buffer（UB）中32字节对齐的起始地址读取VL/4长度数据，保留偶数下标bit，得到VL/8长度数据，并通过函数返回值返回掩码寄存器。
 
 本接口与[asc_loadalign_downsample](asc_loadalign_downsample.md)对齐搬入模式中目的操作数为掩码寄存器的原型功能相同，区别在于本接口通过函数返回值返回结果。

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
+
 将`int64_t`类型数据转换为`float`，并支持多种舍入模式。
 
 关于舍入模式的详细说明，请参见[舍入模式](rounding_mode.md)。

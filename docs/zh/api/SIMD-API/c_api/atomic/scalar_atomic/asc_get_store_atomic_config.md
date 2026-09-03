@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/atomic/scalar_atomic.h"`。
+
 获取原子操作启用位与原子操作类型的值，可用于校验[asc_set_store_atomic_config_v1](asc_set_store_atomic_config_v1.md)和[asc_set_store_atomic_config_v2（废弃）](../../deprecated_interface/asc_set_store_atomic_config_v2_deprecated.md)设置的原子操作启用位和原子操作类型的值是否符合预期。
 
 <!-- npu="950" id8 -->

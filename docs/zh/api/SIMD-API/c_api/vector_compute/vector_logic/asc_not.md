@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_logic.h"`。
+
 按元素做按位取反，计算公式如下。
 $$
 dst_i = \sim src_i

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/composite/loadunalign_composite.h"`。
+
 从Unified Buffer（UB）中按dtype对齐的起始地址读取VL长度数据，并通过函数返回值返回或写入目的矢量数据寄存器，搬运过程中数据格式和内容保持不变。连续搬入时，需要在每次调用前手动更新源地址。该接口为易用性接口，对性能有要求时可使用[asc_loadunalign](asc_loadunalign.md)或[asc_loadunalign_postupdate](asc_loadunalign_postupdate.md)。
 
 本接口仅在AIV上生效，非AIV调用直接返回。

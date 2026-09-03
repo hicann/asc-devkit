@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_broadcast.h"`。
+
 执行矢量复制（Duplicate）操作，将标量值复制填充到矢量中。
 
 ## 函数原型

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/atomic/scalar_atomic.h"`。
+
 对Global Memory中`address`指向的一个`uint32_t`或`uint64_t`元素执行原子递增操作。读取该元素的旧值`old_value`，按照以下公式计算并写回新值`new_value`：
 
 $$

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_broadcast.h"`。
+
 将src的最高位元素广播到dst中被mask筛选的位置，dst中未被mask筛选的位置被置为0。
 
 ## 函数原型

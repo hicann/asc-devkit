@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+
 将矩阵由L1 Buffer搬运到L0C Buffer中。该搬运支持的数据类型如下：
 - bfloat16_t->bfloat16_t
 - half->half

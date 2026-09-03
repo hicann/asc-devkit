@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_reduce.h"`。
+
 执行数据块内的求最小值规约（Reduce Min）操作。
 
 ## 函数原型

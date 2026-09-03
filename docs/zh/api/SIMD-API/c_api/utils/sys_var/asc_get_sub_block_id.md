@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/utils/sys_var.h"`。
+
 获取AI Core上Vector核的ID。
 
 ## 函数原型

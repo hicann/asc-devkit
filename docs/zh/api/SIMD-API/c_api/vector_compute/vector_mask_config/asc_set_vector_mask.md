@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_mask_config.h"`。
+
 本API用于设置Mask值。某些矢量计算接口需要提前设置Mask，用于指示哪些数据参与计算。
 单独使用该API时可引入`c_api/vector_compute/compute/vector_mask_config.h`，整体使用C API时可引入`c_api/asc_simd.h`。
 <!-- npu="950" id8 -->

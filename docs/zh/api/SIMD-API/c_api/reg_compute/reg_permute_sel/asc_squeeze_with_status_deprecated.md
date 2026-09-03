@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_permute_sel.h"`。
+
 **该接口已废弃，请使用[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)实现筛选并连续搬出有效元素的功能。**
 
 将src中被mask选择的有效元素依次复制到dst，有效元素在dst上连续排列。dst中剩余位置元素置为0。

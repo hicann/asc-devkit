@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径为：`"c_api/atomic/atomic.h"`。
+头文件路径为：`"c_api/atomic/datamove_atomic.h"`。
 
 与[asc_set_atomic_add](asc_set_atomic_add.md)、[asc_set_atomic_max](asc_set_atomic_max.md)、[asc_set_atomic_min](asc_set_atomic_min.md)接口配合使用，用于在完成原子操作后关闭原子操作，避免影响后续搬运。
 

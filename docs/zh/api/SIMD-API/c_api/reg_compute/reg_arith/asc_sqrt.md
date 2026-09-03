@@ -27,6 +27,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_arith.h"`。
+
 该接口根据mask，对源操作数src进行按元素求开方操作，将结果写入目的操作数dst。
 
 计算公式如下：

@@ -27,6 +27,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_fused.h"`。
+
 按元素求积，并将结果转换为uint8_t类型。计算公式如下：
 $$
 dst_i = Cast(src0_i * src1_i)

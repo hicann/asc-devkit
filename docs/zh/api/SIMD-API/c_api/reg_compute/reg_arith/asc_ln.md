@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_arith.h"`。
+
 根据`mask`将源操作数`src`按元素取自然对数，将结果写入目的操作数`dst`。计算公式如下：
 
 $$

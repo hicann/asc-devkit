@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/scalar_compute/compute/scalar_convert.h"`。
+
 将`float`类型的标量转换为`int32_t`类型并返回。
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../../reg_compute/reg_convert/rounding_mode.md)。

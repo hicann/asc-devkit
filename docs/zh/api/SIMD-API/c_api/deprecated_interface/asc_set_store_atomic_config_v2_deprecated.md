@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/atomic/scalar_atomic.h"`。
+
 **该接口已废弃。原子加操作请使用[asc_atomic_add](../atomic/scalar_atomic/asc_atomic_add.md)实现。**
 
 设置原子操作启用位与原子操作类型的值。

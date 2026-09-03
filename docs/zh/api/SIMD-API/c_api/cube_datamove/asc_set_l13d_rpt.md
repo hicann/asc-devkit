@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+
 用于设置Load3Dv2接口的repeat参数。
 
 ## 函数原型

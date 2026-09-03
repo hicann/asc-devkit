@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_reduce.h"`。
+
 根据`mask`将源操作数`src`中每两个相邻元素相加，得到计算结果。结果连续保存在目的操作数`dst`的低半部分，`dst`的高半部分置0。以half数据类型为例，相加示意图如下：
 
 ![asc_pair_reduce_sum示意图](../../../../figures/reg_pair_reduce_elem.png)

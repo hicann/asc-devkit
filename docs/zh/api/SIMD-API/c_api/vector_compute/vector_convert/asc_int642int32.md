@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_convert.h"`。
+
 将int64_t类型数据转换为int32_t类型。
 
 ## 函数原型

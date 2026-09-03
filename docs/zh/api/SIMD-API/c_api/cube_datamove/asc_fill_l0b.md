@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+
 将value的二进制值赋值给dst，对L0B Buffer的Local Memory进行初始化。
 
 ## 函数原型

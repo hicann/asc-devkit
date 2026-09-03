@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_datamove/vector_datamove.h"`。
+
 本接口用于设置[asc_copy_ub2gm_align](./asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)使用循环搬运模式时的两层循环迭代次数。`loop1_size`用于设置内层循环`loop1`的迭代次数，`loop2_size`用于设置外层循环`loop2`的迭代次数。
 
 使用循环搬运模式时，还需通过[asc_set_ub2gm_loop1_stride](./asc_set_ub2gm_loop1_stride.md)和[asc_set_ub2gm_loop2_stride](./asc_set_ub2gm_loop2_stride.md)分别设置内层循环和外层循环中，相邻两次迭代源操作数数据块起始地址之间的偏移量，以及目的操作数数据块起始地址之间的偏移量。

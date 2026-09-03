@@ -27,6 +27,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_fused.h"`。
+
 对输入的int32_t类型的数据按元素做量化并转换为half类型。计算公式如下：
 $$
 dst_i = Cast(src_i * scale)

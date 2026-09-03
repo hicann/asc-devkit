@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_compare.h"`。
+
 为[asc_select](../vector_permute_sel/asc_select.md)操作设置作用于选择的Mask掩码。
 
 ## 函数原型

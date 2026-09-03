@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_datamove/vector_datamove.h"`。
+
 **此接口已废弃，源数据从GM非对齐搬运到Unified Buffer（UB）设置填补数据值请使用[asc_set_copy_pad_val](asc_set_copy_pad_val.md)进行设置。**
 
 将数据从Global Memory (GM) 非对齐搬运到 UB时，通过调用该接口设置连续搬运数据块左右两侧需要填补的数据值。

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_compare.h"`。
+
 根据`mask`将源操作数`src`按元素与标量`value`进行比较，若$src_i \geq value$，则对应结果位为1，否则为0。每个元素的比较结果占一个比特。计算公式如下：
 
 $$

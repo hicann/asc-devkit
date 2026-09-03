@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/scalar_compute/compute/scalar_bit.h"`。
+
 将`uint64_t`数据的指定二进制位置为1，其余位保持不变。返回修改后的`uint64_t`整数。
 
 ## 函数原型

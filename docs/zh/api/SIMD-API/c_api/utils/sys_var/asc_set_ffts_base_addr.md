@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/utils/sys_var.h"`。
+
 在[asc_sync_block_wait](../../sync/asc_sync_block_wait.md)和[asc_sync_block_arrive](../../sync/asc_sync_block_arrive.md)之前使用，设置核间同步寄存器的基地址。需要在Host侧调用接口aclrtGetHardwareSyncAddr获取，并作为参数传入。
 
 ```cpp

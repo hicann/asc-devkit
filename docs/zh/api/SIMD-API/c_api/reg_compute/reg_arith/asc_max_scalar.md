@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_arith.h"`。
+
 根据`mask`将源操作数`src`按元素与标量`value`进行比较，得到最大值作为计算结果。计算公式如下：
 
 $$

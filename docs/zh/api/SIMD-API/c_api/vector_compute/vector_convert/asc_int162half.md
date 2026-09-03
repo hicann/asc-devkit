@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_convert.h"`。
+
 将int16_t类型数据转换为half类型，支持多种舍入模式：
 - 不指定舍入模式：无舍入。
 - RINT舍入模式：四舍六入五成双舍入。

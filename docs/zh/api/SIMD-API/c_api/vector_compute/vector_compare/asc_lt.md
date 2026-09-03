@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_compare.h"`。
+
 按元素判断src0 < src1是否成立，若成立则输出结果dst上的对应比特位为1，否则为0。
 
 ## 函数原型

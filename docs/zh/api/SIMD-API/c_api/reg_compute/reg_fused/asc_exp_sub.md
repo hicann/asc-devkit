@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_fused.h"`。
+
 根据`mask`将`src0`与`src1`按元素相减，并计算以差值为指数的自然指数函数。
 
 - `asc_exp_sub`用于`float`类型输入。计算公式如下：

@@ -26,9 +26,9 @@
 
 ## 功能说明
 
-**该接口已废弃，请使用[asc_set_atomic_add_int32](../atomic/datamove_atomic/asc_set_atomic_add.md)替代。**
+头文件路径为：`"c_api/atomic/datamove_atomic.h"`。
 
-头文件路径：`"c_api/atomic/datamove_atomic.h"`。
+**该接口已废弃，请使用[asc_set_atomic_add_int32](../atomic/datamove_atomic/asc_set_atomic_add.md)替代。**
 
 设置对后续的从Unified Buffer（UB）/L0C Buffer/L1 Buffer到Global Memory的数据传输开启原子累加。累加的数据类型为int32_t。
 

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_arith.h"`。
+
 按元素做开方，计算公式如下：
 $$
 dst_i = \sqrt{src_i}

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/atomic/scalar_atomic.h"`。
+
 对Global Memory中`address`指向的单个元素执行原子减操作：读取该地址中的旧值`old_value`，计算`old_value`与输入标量值`val`的差，将结果`new_value`写回该地址，并返回`old_value`。整个读取、计算和写回过程为原子操作。
 
 计算公式如下：

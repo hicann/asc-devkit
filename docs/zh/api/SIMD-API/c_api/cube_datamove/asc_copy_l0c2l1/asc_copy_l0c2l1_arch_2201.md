@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+
 矩阵计算完成后，对结果进行量化处理，之后将处理结果搬运到L1 Buffer中。量化模式共分为9种，分别为：
 - NoQuant：不开启量化功能。
 - DEQF16：int32_t量化成half。量化结果不支持INF_NAN模式。

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_permute_sel.h"`。
+
 Reg计算数据搬运接口。将源矢量数据寄存器`src1`中被掩码`squeeze_mask`选中的元素压缩到目的矢量数据寄存器`dst`，并将这些元素连续搬出到Unified Buffer（UB）。压缩后的元素按其在`src1`中的顺序从`dst`的低位开始连续排列，`dst`中的剩余元素置0。
 
 本接口使用AR特殊寄存器记录当前连续搬出的有效数据总字节数。首次调用本接口前，需调用[asc_squeeze_and_storeunalign_init](asc_squeeze_and_storeunalign_init.md)清零AR寄存器。接口执行前，AR寄存器中的值表示相对于`dst_addr`的写入偏移，单位为字节；接口执行后，本次选中元素的总字节数会累加到AR寄存器中。连续调用本接口并保持`dst_addr`和`src0`不变，可将多组筛选结果连续写入UB，无需手动更新地址。AR寄存器中的值可通过[asc_get_squeeze_status](../../spr/asc_get_squeeze_status.md)接口获取。

@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_datamove/vector_datamove.h"`。
+
 本接口用于配置NDDMA高维切分搬运中`loop1`至`loop4`各维左右两侧的填充元素数。配置结果供后续调用[asc_ndim_copy_gm2ub](asc_ndim_copy_gm2ub.md)时使用。
 
 `loop0`的左右填充元素数由`asc_ndim_copy_gm2ub`的`loop0_lp_count`和`loop0_rp_count`参数配置，不通过本接口配置。

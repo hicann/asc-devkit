@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/sync/sync.h"`。
+
 该接口用于AI Core内部异步流水线之间的同步，可按需阻塞指定流水线的执行。
 
 根据mutex_id获取Mutex，若Mutex已被锁定，将阻塞后续指定流水指令队列，直到当前流水的前序指令中对应mutex_id的Mutex被asc_unlock释放。

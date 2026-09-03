@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/scalar_compute/compute/scalar_bit.h"`。
+
 获取输入`uint64_t`数据的二进制表示中值为0的位数。
 
 ## 函数原型

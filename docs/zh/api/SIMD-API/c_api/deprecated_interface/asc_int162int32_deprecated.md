@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
+
 **该接口通过接口后缀来控制目的操作数写入位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用[asc_int162int32](../reg_compute/reg_convert/asc_int162int32.md)的显式位置参数重载替代。**
 
 将src中int16_t类型的元素转换为int32_t类型，并将结果写入dst。

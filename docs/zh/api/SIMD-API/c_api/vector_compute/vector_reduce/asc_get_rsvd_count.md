@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/vector_compute/compute/vector_reduce.h"`。
+
 此接口用于获取执行[asc_reduce](asc_reduce.md)操作后剩余的元素数量。
 
 ## 函数原型

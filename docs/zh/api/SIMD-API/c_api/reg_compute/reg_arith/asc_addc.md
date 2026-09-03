@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_arith.h"`。
+
 该接口根据mask，对源操作数src0、src1及输入进位carry_src进行按元素求和操作，将结果写入目的操作数dst，同时将每个元素的进位结果写入carry（存放进位标志的掩码寄存器）。
 
 Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。若src0，src1，carry_src输入按位相加后最高位有进位，在carry中对应位置每4bit的最低位写1，否则写0。

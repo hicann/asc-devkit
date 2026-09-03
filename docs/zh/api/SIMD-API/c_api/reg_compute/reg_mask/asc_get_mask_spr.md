@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_mask.h"`。
+
 从SPR（Special Purpose Register）中读取mask值，并按数据类型格式化后返回。
 
 - 对于b16数据类型：从SPR读取mask共128bit数据，将每个bit扩展为2bit，拼成256bit掩码寄存器返回。

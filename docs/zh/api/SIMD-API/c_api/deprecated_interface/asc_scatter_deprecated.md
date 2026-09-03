@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/scatter/ub_scatter.h"`。
+
 **该接口已废弃。请使用[asc_scatter](../reg_compute/scatter/asc_scatter.md)实现此功能。**
 
 该指令会根据索引值index将源操作数src中的元素分散到目的操作数dst中。分散过程如下图所示：

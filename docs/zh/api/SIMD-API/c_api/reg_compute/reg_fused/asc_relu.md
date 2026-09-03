@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+头文件路径为：`"c_api/reg_compute/compute/reg_fused.h"`。
+
 根据`mask`对源操作数`src`按元素执行ReLU操作，得到计算结果。计算公式如下：
 
 $$
