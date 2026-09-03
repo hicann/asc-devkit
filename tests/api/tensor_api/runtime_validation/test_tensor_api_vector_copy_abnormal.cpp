@@ -375,4 +375,46 @@ TEST_F(TensorApiVectorCopyAbnormalValidation, DirectionalStrideRestrictionsCover
     expect_copy_trap<copy_ub_to_gm, location::ub, location::gm>(nz_misaligned_stride, nz_layout);
 }
 
+template <typename CopyCall>
+void expect_region_copy_trap(const CopyCall& call)
+{
+    EXPECT_THROW(call(), TrapException);
+}
+
+class TensorApiCopyValidation : public TensorApiVectorCopyAbnormalValidation {};
+
+TEST_F(TensorApiCopyValidation, RegionCopyRejectsInvalidArgs)
+{
+    using namespace asc::te;
+
+    alignas(512) half src_data[VALID_ROWS * VALID_COLUMNS] = {};
+    alignas(512) half dst_data[VALID_ROWS * VALID_COLUMNS] = {};
+    auto layout = make_frame_layout<nd_ext_layout_ptn, half>(VALID_ROWS, VALID_COLUMNS);
+    auto src = make_tensor_at<location::gm>(src_data, layout);
+    auto dst = make_tensor_at<location::ub>(dst_data, layout);
+    auto atom = make_copy(copy_gm_to_ub{});
+    auto valid_shape = make_shape(VALID_ROWS, VALID_COLUMNS);
+
+    expect_region_copy_trap([&] { copy(dst, src, make_coord(VALID_ROWS, 0), zero_coord, valid_shape); });
+    expect_region_copy_trap([&] { copy(atom, dst, src, zero_coord, make_coord(0, VALID_COLUMNS), valid_shape); });
+    EXPECT_NO_THROW((copy(dst, src, zero_coord, zero_coord, make_shape(0, VALID_COLUMNS))));
+    EXPECT_NO_THROW((copy(atom, dst, src, zero_coord, zero_coord, make_shape(0, VALID_COLUMNS))));
+    expect_region_copy_trap([&] { copy(dst, src, zero_coord, zero_coord, make_shape(-1, VALID_COLUMNS)); });
+    expect_region_copy_trap(
+        [&] { copy(dst, src, zero_coord, make_coord(VALID_ROWS - 1, 0), make_shape(2, VALID_COLUMNS)); });
+    expect_region_copy_trap(
+        [&] { copy(atom, dst, src, make_coord(VALID_ROWS - 1, 0), zero_coord, make_shape(2, VALID_COLUMNS)); });
+    expect_region_copy_trap(
+        [&] { copy(dst, src, make_coord(VALID_ROWS - 1, 0), zero_coord, make_shape(2, VALID_COLUMNS)); });
+    expect_region_copy_trap(
+        [&] { copy(atom, dst, src, zero_coord, make_coord(VALID_ROWS - 1, 0), make_shape(2, VALID_COLUMNS)); });
+
+    auto small_dst_layout = make_frame_layout<nd_ext_layout_ptn, half>(8, VALID_COLUMNS);
+    auto small_dst = make_tensor_at<location::ub>(dst_data, small_dst_layout);
+    expect_region_copy_trap([&] { copy(small_dst, src, zero_coord, zero_coord, valid_shape); });
+
+    EXPECT_NO_THROW((copy(dst, src, zero_coord, zero_coord, valid_shape)));
+    EXPECT_NO_THROW((copy(atom, dst, src, zero_coord, zero_coord, valid_shape)));
+}
+
 } // namespace
