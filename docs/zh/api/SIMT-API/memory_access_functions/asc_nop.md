@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 本接口的功能为生成一条空操作指令，占用当前线程15个时钟周期，不执行任何实际计算与访存操作。
 
 ## 函数原型
@@ -45,14 +47,6 @@ inline void asc_nop()
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 在生产者-消费者同步场景中，消费者通过轮询标记位来判断生成者是否完成数据的写入，`asc_nop`接口可用于降低轮询GM的频率，从而减少带宽压力。
@@ -60,6 +54,8 @@ inline void asc_nop()
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel_nop(uint32_t *data, uint32_t* flag)
     {
         ...
@@ -74,6 +70,8 @@ inline void asc_nop()
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_nop(__gm__ uint32_t *data, __gm__ uint32_t* flag)
     {
         ...

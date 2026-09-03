@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_atomic_functions.h"`（除half2、bfloat16x2\_t类型之外的接口）、`"simt_api/asc_fp16.h"`（half2类型接口）、`"simt_api/asc_bf16.h"`（bfloat16x2\_t类型接口）。
+
 对Unified Buffer（UB）或Global Memory上address的数值进行原子比较赋值操作，如果address上的数值等于指定数值compare，则对address赋值为指定数值val，否则address的数值不变。
 
 ## 函数原型
@@ -88,22 +90,6 @@ UB或Global Memory上的初始数据。
     -   返回值：该接口无对应的性能优化指令，对于所有数据类型，程序中是否使用该接口返回值，接口性能基本一致。
     -   地址分布：Global Memory原子操作经过L2 Cache处理，L2 Cache以512B Cache Line为缓存管理单位，每条Cache Line包含4个128B扇区（Sector），Global Memory原子操作以128B Sector为处理粒度。目标地址集中在同一个Sector内时，处理效率较低；目标地址分布在更多Sector内时，处理效率较高。因此，业务允许时，建议将原子操作的目标地址分散到更多Sector中。
 
-## 需要包含的头文件
-
-使用除half2、bfloat16x2\_t类型之外的接口需要包含`simt_api/device_atomic_functions.h`头文件，使用half2类型接口需要包含`simt_api/asc_fp16.h`头文件，使用bfloat16x2\_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/device_atomic_functions.h"
-```
-
-```cpp
-#include "simt_api/asc_fp16.h"
-```
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 完整样例请参考[InsertHashTable算子样例](../../../../../examples/03_simt_api/02_features/01_api_features/00_memory_access/insert_hash_table/README.md)。
@@ -122,6 +108,10 @@ UB或Global Memory上的初始数据。
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_atomic_functions.h"
+    #include "simt_api/asc_fp16.h"
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(256) void claim_task(uint32_t *owner,
                                                       uint32_t *claim_result,
                                                       uint32_t *worker_ids,
@@ -142,6 +132,10 @@ UB或Global Memory上的初始数据。
     SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：`__gm__`表示Global Memory内存空间，`__ubuf__`表示UB内存空间。
 
     ```cpp
+    #include "simt_api/device_atomic_functions.h"
+    #include "simt_api/asc_fp16.h"
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void claim_task(__gm__ uint32_t *owner,
                                                                __gm__ uint32_t *claim_result,
                                                                __gm__ uint32_t *worker_ids,

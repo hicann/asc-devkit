@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_sync_functions.h"`。
+
 在SIMT编程范式中，来自不同线程对同一份内存的读写操作可能造成**数据竞争**（Data Race），这是由于NPU架构的特性，线程的执行顺序和内存访问顺序可能不一致，从而导致其他线程看到的数据更新顺序与实际写入顺序不同。
 
 内存栅栏类接口可以解决这类多线程同步读写共享内存的问题，其中`asc_threadfence()`接口用于保证所有线程对同一份全局、共享内存的访问过程中，**写入操作的时序性和可见性**。
@@ -67,14 +69,6 @@ inline void asc_threadfence()
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_sync_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_sync_functions.h"
-```
-
 ## 调用示例
 
 完整样例请参考[MemoryFence样例](../../../../../../examples/03_simt_api/02_features/01_api_features/01_sync_instruction/memory_fence/README.md)。
@@ -84,6 +78,8 @@ inline void asc_threadfence()
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_sync_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelThreadFence(int32_t* data, int32_t* flag, int32_t* result)
     {
         if (blockIdx.x == 0 && threadIdx.x == 0) {
@@ -104,6 +100,8 @@ inline void asc_threadfence()
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_sync_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelThreadFence(
         __gm__ int32_t* data, __gm__ int32_t* flag, __gm__ int32_t* result)
     {

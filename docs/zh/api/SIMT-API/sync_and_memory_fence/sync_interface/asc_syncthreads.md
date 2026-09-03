@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_sync_functions.h"`。
+
 在SIMT（Single Instruction Multiple Threads）编程范式中，同一个线程块（Block）内的多个线程并行执行，但各线程的执行进度可能不同。当需要线程间协调工作、共享数据或确保某些操作按顺序执行时，必须使用同步机制。
 
 asc\_syncthreads接口用于**阻塞当前线程块内所有线程**，直到所有线程都执行到该同步点位置。
@@ -66,14 +68,6 @@ inline void asc_syncthreads()
 - 避免分支中调用本接口，除非能确保线程块内所有线程都进入该分支。
 - 避免在循环次数不一致的情况下调用。
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_sync_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_sync_functions.h"
-```
-
 ## 调用示例
 
 完整样例请参考[MemoryFence样例](../../../../../../examples/03_simt_api/02_features/01_api_features/01_sync_instruction/memory_fence/README.md)。
@@ -81,6 +75,8 @@ inline void asc_syncthreads()
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_sync_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel_sync_threads(float* dst, int count)
     {
          int idx = threadIdx.x;
@@ -110,6 +106,8 @@ inline void asc_syncthreads()
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_sync_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_sync_threads(__gm__ float* dst, int count)
     {
          int idx = threadIdx.x;

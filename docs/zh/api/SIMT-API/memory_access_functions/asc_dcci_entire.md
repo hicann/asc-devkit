@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 该接口用于刷新核内的整个Data Cache，保证数据读取时Cache的一致性。
 
 在SIMT编程中，写入数据时会立即写入Global Memory，使其他核可见，因此不存在核间一致性问题。当从Global Memory读取数据时，该数据可能已被其他核修改，此时应使用`asc_dcci_entire()`接口直接访问Global Memory，以获取最新数据。
@@ -55,19 +57,13 @@ inline void asc_dcci_entire(void *dst)
 
 输入必须为有效的Global Memory地址。传入非Global Memory地址或无效地址时，不能保证Cache刷新行为有效。
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel_dcci_entire(uint32_t* data, uint32_t* output) {
         // 线程块0的线程0进行数据写操作
         if (blockIdx.x == 0 && threadIdx.x == 0) {
@@ -89,6 +85,8 @@ inline void asc_dcci_entire(void *dst)
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_dcci_entire(__gm__ uint32_t* data, __gm__ uint32_t* output)
     {
         // 线程块0的线程0进行数据写操作

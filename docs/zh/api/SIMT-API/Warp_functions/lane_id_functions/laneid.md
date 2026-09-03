@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 获取线程在其所在Warp内的索引。
 
 ## 函数原型
@@ -45,14 +47,6 @@ int32_t laneid()
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。 
-
-```cpp
-#include "simt_api/device_functions.h" 
-```
-
 ## 调用示例
 
 下面示例使用`laneid()`计算全部输入数据的和，并把结果赋值到输出数据的第0位置上，示例中使用[asc_reduce_add](../Warp_reduce_functions/asc_reduce_add.md)，需另外包含`simt_api/device_warp_functions.h`头文件，使用[asc_atomic_add](../../atomic_operations/asc_atomic_add.md)，需另外包含`simt_api/device_atomic_functions.h`头文件。
@@ -60,6 +54,10 @@ int32_t laneid()
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+    #include "simt_api/device_warp_functions.h"
+    #include "simt_api/device_atomic_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel_laneid(int32_t* dst, int32_t* src, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -76,6 +74,10 @@ int32_t laneid()
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+    #include "simt_api/device_warp_functions.h"
+    #include "simt_api/device_atomic_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_laneid(__gm__ int32_t* dst, __gm__ int32_t* src, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

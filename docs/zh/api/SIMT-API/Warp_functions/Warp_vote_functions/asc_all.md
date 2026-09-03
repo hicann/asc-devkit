@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_warp_functions.h"`。
+
 判断是否所有活跃线程的输入均不为0。
 
 当Warp内所有活跃线程执行本接口后，对所有活跃线程的输入操作数`predicate`进行判断，所有活跃线程的`predicate`均不为0，返回1，否则返回0。Warp内所有活跃线程返回相同的结果。
@@ -51,14 +53,6 @@ inline int32_t asc_all(int32_t predicate)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_warp_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_warp_functions.h"
-```
-
 ## 调用示例
 
 以下样例比较两组输入数据，并由Lane 0写出当前Warp负责的数据是否全部相等。
@@ -66,6 +60,8 @@ inline int32_t asc_all(int32_t predicate)
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_warp_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelAll(
         const int32_t* input1, const int32_t* input2, int32_t* equal_flags, uint64_t total_length)
     {
@@ -86,6 +82,8 @@ inline int32_t asc_all(int32_t predicate)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_warp_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelAll(
         __gm__ const int32_t* input1, __gm__ const int32_t* input2, __gm__ int32_t* equal_flags,
         uint64_t total_length)

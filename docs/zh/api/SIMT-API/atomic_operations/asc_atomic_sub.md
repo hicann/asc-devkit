@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_atomic_functions.h"`（除half、half2、bfloat16_t、bfloat16x2_t类型之外的接口）、`"simt_api/asc_fp16.h"`（half、half2类型接口）、`"simt_api/asc_bf16.h"`（bfloat16_t、bfloat16x2_t类型接口）。
+
 对Unified Buffer（UB）或Global Memory上的数据与指定数据执行原子减操作，即在这些内存区域的数据中减去指定数据。
 
 ## 函数原型
@@ -97,22 +99,6 @@ inline bfloat16x2_t asc_atomic_sub(bfloat16x2_t* address, bfloat16x2_t val)
     -   返回值：该接口无对应的性能优化指令，对于所有数据类型，程序中是否使用该接口返回值，接口性能基本一致。
     -   地址分布：Global Memory原子操作经过L2 Cache处理，L2 Cache以512B Cache Line为缓存管理单位，每条Cache Line包含4个128B扇区（Sector），Global Memory原子操作以128B Sector为处理粒度。目标地址集中在同一个Sector内时，处理效率较低；目标地址分布在更多Sector内时，处理效率较高。因此，业务允许时，建议将原子操作的目标地址分散到更多Sector中。
 
-## 需要包含的头文件
-
-使用除half、half2、bfloat16_t、bfloat16x2_t类型之外的接口需要包含`simt_api/device_atomic_functions.h`头文件，使用half、half2类型接口需要包含`simt_api/asc_fp16.h`头文件，使用bfloat16_t、bfloat16x2_t类型接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/device_atomic_functions.h"
-```
-
-```cpp
-#include "simt_api/asc_fp16.h"
-```
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 示例场景为：多个线程处理资源申请量，使用`asc_atomic_sub`接口从共享剩余配额中扣减已消费数量。该用例假设申请总量不超过初始配额，避免无符号下溢。输入输出参数说明如下：
@@ -128,6 +114,10 @@ inline bfloat16x2_t asc_atomic_sub(bfloat16x2_t* address, bfloat16x2_t val)
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_atomic_functions.h"
+    #include "simt_api/asc_fp16.h"
+    #include "simt_api/asc_bf16.h"
+
     __global__ __launch_bounds__(256) void consume_quota(uint32_t *remaining,
                                                          uint32_t *requests,
                                                          uint32_t n)
@@ -146,6 +136,10 @@ inline bfloat16x2_t asc_atomic_sub(bfloat16x2_t* address, bfloat16x2_t val)
     SIMD与SIMT混合编程场景，需要显式使用地址空间限定符表示地址空间：`__gm__`表示Global Memory内存空间，`__ubuf__`表示UB内存空间。
 
     ```cpp
+    #include "simt_api/device_atomic_functions.h"
+    #include "simt_api/asc_fp16.h"
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void consume_quota(__gm__ uint32_t *remaining,
                                                                   __gm__ uint32_t *requests,
                                                                   uint32_t n)

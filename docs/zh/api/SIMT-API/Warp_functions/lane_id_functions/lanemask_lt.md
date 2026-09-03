@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 获取当前线程的一个32位掩码，在当前线程所属的Warp中，将“Lane ID严格小于当前线程”的线程的对应位设为1，其余位为0。
 
 如Lane ID为0的线程，调用本接口获取到32位掩码：0000 0000 0000 0000 0000 0000 0000 0000。
@@ -53,14 +55,6 @@ int32_t lanemask_lt()
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h" 
-```
-
 ## 调用示例
 
 下面示例使用`lanemask_lt()`统计当前Lane之前的线程数，并据此判断当前线程位于Warp的上半区还是下半区，再通过`asc_shfl()`分别广播上下半Warp中指定Lane的数据。示例中使用[asc_shfl](../Warp_shfl_functions/asc_shfl.md)，需另外包含`simt_api/device_warp_functions.h`头文件，其中`srcLane`的取值范围为[0, 15]。
@@ -68,6 +62,9 @@ int32_t lanemask_lt()
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+    #include "simt_api/device_warp_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel_lanemask_lt(int32_t* src, int32_t* dst, int32_t srcLane)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -82,6 +79,9 @@ int32_t lanemask_lt()
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+    #include "simt_api/device_warp_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) void kernel_lanemask_lt(__gm__ int32_t* src, __gm__ int32_t* dst, int32_t srcLane)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

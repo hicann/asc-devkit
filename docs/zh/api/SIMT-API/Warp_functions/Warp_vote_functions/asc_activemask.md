@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_warp_functions.h"`。
+
 查看Warp内所有线程是否为活跃状态。
 
 返回一个32bit的无符号整数，若Warp内某个线程是活跃（已结束线程是非活跃状态）的，则返回值中与线程Lane ID对应的bit位为1，否则为0。Warp内所有活跃线程返回相同的结果。
@@ -47,14 +49,6 @@ inline uint32_t asc_activemask()
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_warp_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_warp_functions.h"
-```
-
 ## 调用示例
 
 以下样例获取当前Warp中各个线程的活跃状态，并由Lane 0将结果写入GM。
@@ -62,6 +56,8 @@ inline uint32_t asc_activemask()
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_warp_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelActiveMask(uint32_t* active_masks, uint64_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -81,6 +77,8 @@ inline uint32_t asc_activemask()
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_warp_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelActiveMask(
         __gm__ uint32_t* active_masks, uint64_t total_length)
     {

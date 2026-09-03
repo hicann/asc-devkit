@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 将Global Memory内存空间的地址值转换为对应的指针并返回。
 
 ## 函数原型
@@ -54,19 +56,13 @@ void* __cvta_global_to_generic(size_t rawbits)
 
 SIMD与SIMT混合编程场景不支持使用该接口。
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 SIMT编程场景：
 
 ```cpp
+#include "simt_api/device_functions.h"
+
 __global__ __launch_bounds__(1024) void kernel__cvta_global_to_generic(uint32_t* dst, uint64_t addr_val)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
