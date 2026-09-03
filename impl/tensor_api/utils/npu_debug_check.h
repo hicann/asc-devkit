@@ -28,6 +28,40 @@
 namespace asc {
 namespace te {
 
+struct zero_coord_type;
+
+template <typename LayoutType, typename SliceShape>
+__aicore__ inline constexpr decltype(auto) resolve_copy_coord(const LayoutType&, const SliceShape&,
+                                                              const zero_coord_type&);
+
+template <typename LayoutType, typename SliceShape, typename Coord,
+          Std::enable_if_t<!Std::is_same_v<Std::remove_cvref_t<Coord>, zero_coord_type>, int> = 0>
+__aicore__ inline constexpr const Coord& resolve_copy_coord(const LayoutType&, const SliceShape&, const Coord&);
+
+template <typename Coord, typename LayoutType, typename SliceShape,
+          Std::enable_if_t<!is_layout_v<SliceShape>, int> = 0>
+__aicore__ inline decltype(auto) make_slice_shape(const Coord&, const LayoutType&, const SliceShape&);
+
+template <typename ShapeType>
+__aicore__ inline constexpr bool is_copy_shape_valid(const ShapeType& shape);
+
+template <typename ShapeType, size_t... indices>
+__aicore__ inline constexpr bool is_copy_shape_valid_impl(const ShapeType& shape, Std::index_sequence<indices...>)
+{
+    return (is_copy_shape_valid(Std::get<indices>(shape)) && ...);
+}
+
+template <typename ShapeType>
+__aicore__ inline constexpr bool is_copy_shape_valid(const ShapeType& shape)
+{
+    if constexpr (Std::is_tuple_v<Std::remove_cvref_t<ShapeType>>) {
+        return is_copy_shape_valid_impl(
+            shape, Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>>{});
+    } else {
+        return shape >= 0;
+    }
+}
+
 template <typename LayoutType, typename CoordType>
 __aicore__ inline constexpr void debug_check_coord(const tensor_api_assert_context& context, const LayoutType& layout,
                                                    const CoordType& coord, __gm__ const char* api_name)
@@ -85,6 +119,57 @@ __aicore__ inline constexpr void debug_check_copy_size(const tensor_api_assert_c
 {
     TENSOR_API_DEBUG_ASSERT_AT(context, (dst.size() >= src.size()),
                                TENSOR_API_REPORT_INTERNAL(report_copy_size_error, src, dst, api_name));
+}
+
+template <typename ShapeType>
+__aicore__ inline constexpr void debug_check_copy_shape(const tensor_api_assert_context& context,
+                                                        const ShapeType& shape, __gm__ const char* api_name)
+{
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (is_copy_shape_valid(shape)),
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check copy shape in %s; every copy shape dimension must be greater than or equal to 0.",
+            api_name));
+}
+
+template <typename SrcLayout, typename DstLayout, typename SrcCoord, typename DstCoord, typename CopyShape>
+__aicore__ inline constexpr void debug_check_copy_region(
+    const tensor_api_assert_context& context, const SrcLayout& src_layout, const DstLayout& dst_layout,
+    const SrcCoord& src_coord, const DstCoord& dst_coord, const CopyShape& copy_shape, __gm__ const char* api_name)
+{
+    auto actual_src_shape = make_slice_shape(src_coord, src_layout, copy_shape);
+    auto actual_dst_shape = make_slice_shape(dst_coord, dst_layout, copy_shape);
+    auto requested_size = product{}(copy_shape);
+    auto actual_src_size = product{}(actual_src_shape);
+    auto actual_dst_capacity = product{}(actual_dst_shape);
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (actual_src_size == requested_size),
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check source copy region in %s; src_coord and copy_shape must fit within the source tensor "
+            "boundary.",
+            api_name));
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (actual_dst_capacity == requested_size),
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check destination copy region in %s; dst_coord and copy_shape must fit within the destination "
+            "tensor boundary.",
+            api_name));
+}
+
+template <typename SrcTensor, typename DstTensor, typename DstCoord, typename SrcCoord, typename CopyShape>
+__aicore__ inline constexpr void debug_check_copy_region_args(
+    const tensor_api_assert_context& context, const DstTensor& dst, const SrcTensor& src,
+    const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape, __gm__ const char* api_name)
+{
+    debug_check_layout(context, dst.layout(), "dst", api_name);
+    debug_check_layout(context, src.layout(), "src", api_name);
+    debug_check_copy_shape(context, copy_shape, api_name);
+    auto resolved_dst_coord = resolve_copy_coord(dst.layout(), copy_shape, dst_coord);
+    auto resolved_src_coord = resolve_copy_coord(src.layout(), copy_shape, src_coord);
+    debug_check_coord(context, dst.layout(), resolved_dst_coord, api_name);
+    debug_check_coord(context, src.layout(), resolved_src_coord, api_name);
+    debug_check_copy_region(context, src.layout(), dst.layout(), resolved_src_coord, resolved_dst_coord, copy_shape,
+                            api_name);
 }
 
 template <typename LayoutType, typename CoordType, typename InfoType>
