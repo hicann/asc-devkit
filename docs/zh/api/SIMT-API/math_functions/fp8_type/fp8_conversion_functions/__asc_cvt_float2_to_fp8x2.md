@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_fp8.h"`。
+
 将float2类型数据的两个分量，按照CAST\_RINT模式转换为指定类型（float8\_e4m3x2\_t和float8\_e5m2x2\_t）的8位浮点数，并根据指定的饱和模式（饱和或非饱和）进行溢出处理。转换结果以位级打包形式存储为\_\_asc\_fp8x2\_storage\_t类型，该类型为16位无符号整数unsigned short int，用于存储float8\_e4m3x2\_t或float8\_e5m2x2\_t类型的数据。
 
 ## 函数原型
@@ -73,19 +75,13 @@ inline __asc_fp8x2_storage_t __asc_cvt_float2_to_fp8x2(const float2 x, const __a
 
 SIMT编程场景当前不支持使用该接口。
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_fp8.h`头文件。
-
-```cpp
-#include "simt_api/asc_fp8.h"
-```
-
 ## 调用示例
 
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_fp8.h"
+
     // 使用短向量可提升数据搬运效率
     __simt_vf__ __launch_bounds__(1024) inline void simt_asc_cvt_float2_to_fp8x2(__gm__ float2* input, __gm__ uint16_t* output, uint32_t input_total_length)
     {

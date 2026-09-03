@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 判断输入的指针是否指向Global Memory内存空间的地址。
 
 ## 函数原型
@@ -61,19 +63,13 @@ unsigned int __isGlobal(const void* ptr)
 
 SIMD与SIMT混合编程场景不支持使用该接口。
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 SIMT编程场景：
 
 ```cpp
+#include "simt_api/device_functions.h"
+
 __global__ __launch_bounds__(1024) void kernel_isGlobal(uint32_t* dst, uint32_t* src)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;

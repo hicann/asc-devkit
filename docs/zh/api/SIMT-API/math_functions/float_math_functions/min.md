@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/math_functions.h"`。
+
 获取两个输入数据中的最小值。
 
 ## 函数原型
@@ -59,19 +61,13 @@ float min(float x, float y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/math_functions.h`头文件。
-
-```cpp
-#include "simt_api/math_functions.h"
-```
-
 ## 调用示例
 
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __global__ __launch_bounds__(256) void compute_min(float *result, const float *x, const float *y, uint32_t input_total_length)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -85,6 +81,8 @@ float min(float x, float y)
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __simt_vf__ __launch_bounds__(256) inline void compute_min_vf(__gm__ float *result, __gm__ const float *x, __gm__ const float *y, uint32_t input_total_length)
     {
         const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
