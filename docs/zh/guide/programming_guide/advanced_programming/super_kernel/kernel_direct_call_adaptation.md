@@ -173,7 +173,7 @@ SK_BIND(original_func, 4, sk_func<0>, sk_func<1>, sk_func<2>, sk_func<3>);
 | `sk_func<0>` ~ `sk_func<3>` | 最多4个SK子函数，如果是模板函数需要手动实例化 |
 
 **掩码参数取值**：
-1/2/4/8分别代表不同bit位上置值的结果，比如8为第4bit置值的结果
+1/2/4/8/16分别代表不同bit位上置值的结果，比如8为第4bit置值的结果
 
 | 值 | 含义 |
 | --- | --- |
@@ -181,6 +181,7 @@ SK_BIND(original_func, 4, sk_func<0>, sk_func<1>, sk_func<2>, sk_func<3>);
 | 2 | early start set flag |
 | 4 | disable_dcci |
 | 8 | disable_batchmode_check |
+| 16 | blockdim_scale_up |
 
 > **注意**：
 > - SK子函数使用模板参数实例化出多个符号（推荐，代码更简洁）。
@@ -263,6 +264,7 @@ SK_BIND(add_custom, 4, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 1. 使用`SK_BIND`宏将原global函数与SK子函数绑定
 2. 支持最多4个SK子函数
 3. 第二个参数是掩码（uint64_t类型），用于配置SuperKernel特性：
+   - `16`表示blockdim scale up
    - `8`表示disable batchmode check
    - `4`表示disable dcci
    - `2`表示early start set flag
@@ -299,6 +301,7 @@ SK_BIND(add_custom, 4, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 
 | 值 | 含义 |
 | --- | --- |
+| 16 | blockdim scale up |
 | 8 | disable batchmode check |
 | 4 | disable dcci |
 | 2 | early start set flag |
