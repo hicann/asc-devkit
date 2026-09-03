@@ -66,6 +66,8 @@ AscendC::Fixpipe(cGM, c, fixpipeParams);
 
 开启与不开启unitFlag功能的完整示例：[UnitFlag示例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_unitflag)
 
+注意，开启unitFlag功能不会提升Mmad和Fixpipe指令的性能，性能提升源自于Mmad和Fixpipe指令的细粒度并行，降低了同步延迟。下表展示了是否开启unitFlag功能对Mmad指令性能的影响，实测数据显示开启unitFlag功能对性能无影响。
+
 **表1** 性能示例说明（以输入数据类型half为例，无业务实测表示忽略指令的前后序操作，只考虑单指令性能，包含带宽延迟等开销）
 
 | M | N | K | UnitFlag | LOOP_COUNT | Mmad理论值（cycle） | Mmad无业务实测值（cycle） |
