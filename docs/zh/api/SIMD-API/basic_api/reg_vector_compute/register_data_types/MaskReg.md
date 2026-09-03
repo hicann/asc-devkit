@@ -266,25 +266,39 @@ __simd_callee__ inline void Add(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
   }
   ```
 
+<!-- npu="910b,A3,950" id8 -->
 ### NPU架构版本2201与NPU架构版本3510之间Mask机制对比
 
 本节对比[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)在Normal模式的逐bit计算中Mask机制，与[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)基于Reg矢量计算中Mask机制的差异。
 
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品和Atlas A3 训练系列产品/Atlas A3 推理系列产品
+<!-- npu="910b" id9 -->
+- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品
 
   - Mask寄存器长度为256bit。
 
   - 每一个element对应1bit的Mask，数据类型不同，每次循环内能够处理的元素个数最大值不同。当操作数类型为b16时，一次循环中最多有128个元素参与计算；当操作数类型为b32时，一次循环中最多有64个元素参与计算；当操作数类型为b64时，一次循环中最多有32个元素参与计算。详细见[掩码相关参数](../../memory_vector_compute/SIMD_compute/mask.md#sheet2)。
+<!-- end id9 -->
 
+<!-- npu="A3" id10 -->
+- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品
+
+  - Mask寄存器长度为256bit。
+
+  - 每一个element对应1bit的Mask，数据类型不同，每次循环内能够处理的元素个数最大值不同。当操作数类型为b16时，一次循环中最多有128个元素参与计算；当操作数类型为b32时，一次循环中最多有64个元素参与计算；当操作数类型为b64时，一次循环中最多有32个元素参与计算。详细见[掩码相关参数](../../memory_vector_compute/SIMD_compute/mask.md#sheet2)。
+<!-- end id10 -->
+
+<!-- npu="950" id11 -->
 - 针对Ascend 950PR/Ascend 950DT
 
   - MaskReg寄存器长度为VL/8，即256bit。
 
   - 当操作数类型为b8时，每一个element对应1bit MaskReg；当操作数类型为b16时，每一个element对应2bit MaskReg，且仅2bit中的最低位是有效的；当操作数类型为b32时，每一个element对应4bit MaskReg，且仅4bit中的最低位是有效的。
+<!-- end id11 -->
 
 **图8** NPU架构版本2201的Memory矢量计算与NPU架构版本3510的Reg矢量计算Mask机制对比<a id="fig8"></a>
 
 ![](../../../../figures/memory_vs_reg_mask_comparison.png "NPU架构版本2201的Memory矢量计算与NPU架构版本3510的Reg矢量计算Mask机制对比")
+<!-- end id8 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

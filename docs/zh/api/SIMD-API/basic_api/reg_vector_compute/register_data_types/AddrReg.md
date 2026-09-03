@@ -105,10 +105,6 @@ __simd_callee__ inline AddrReg CreateAddrReg(uint16_t index0, uint32_t stride0, 
 | stride2 | 每次循环，第三层循环轴对应的地址偏移量，单位为element。 |
 | stride3 | 每次循环，第四层循环轴对应的地址偏移量，单位为element。 |
 
-## 支持的型号<a name="section156721693504"></a>
-
-Ascend 950PR/Ascend 950DT
-
 ## 约束说明<a name="section11585101304320"></a>
 
 - AddrReg 为地址偏移量寄存器，仅支持部分搬运指令使用，请根据Reg数据搬运接口函数原型选择，除了通过AddrReg设置地址偏移，支持用户自行累加地址或通过PostUpdate模式进行地址自增，完整特性见连续对齐搬入关键特性。通过AddrReg地址偏移进行搬运时，需要满足对应搬运指令的地址对齐约束。

@@ -35,13 +35,8 @@
 
 UnalignRegForLoad和UnalignRegForStore的具体使用方式请参考：[连续非对齐搬入（LoadUnAlign）](../reg_data_load/LoadUnAlign_continuous.md)、[连续非对齐搬出（StoreUnAlign）](../reg_data_store/StoreUnAlign_continuous.md)。
 
-## 支持的型号<a name="section156721693504"></a>
-
-Ascend 950PR/Ascend 950DT
-
 ## 约束说明<a name="section11585101304320"></a>
 
 - UnalignRegForLoad寄存器数量上限为4，超出后编译器将报错。
 
 - UnalignRegForStore寄存器数量上限为4，超出后编译器将报错。
-
