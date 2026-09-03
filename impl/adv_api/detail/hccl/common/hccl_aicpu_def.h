@@ -96,6 +96,8 @@ private:
 
     __aicore__ inline bool CheckCommonPrepareParamValid(const CommonPrepareParam& param);
 
+    __aicore__ inline bool CheckAlltoAllVPrepareParamValid(const CommonPrepareParam& param);
+
     // Clear the finishedTurnCnt before aicore exists to ensure the correctness of next launch.
     __aicore__ inline void ResetFinishedTurnCnt();
 

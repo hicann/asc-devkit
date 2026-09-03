@@ -103,6 +103,12 @@ __aicore__ inline constexpr bool IsValidCcuRankNum(uint32_t rankNum)
 {
     return rankNum > 0U && rankNum <= HCCL_CCU_MAX_RANK_NUM;
 }
+
+__aicore__ inline constexpr bool IsValidMsgExtRankNum(uint32_t rankNum)
+{
+    return rankNum > 0U && rankNum <= HCCL_MAX_RANK_NUM_V2;
+}
+
 struct HcclCombineOpParam {
     uint64_t workSpace;     // Address for communication between client and server,
                             // hccl requests and clears
