@@ -16,6 +16,7 @@ static void test_host_c_api_scalar_compute_0()
     using ::asc_clz;
     using ::asc_ffs;
     using ::asc_ffz;
+    using ::asc_float2half_ro;
     using ::asc_float2int32_rd;
     using ::asc_float2int32_rn;
     using ::asc_float2int32_rna;

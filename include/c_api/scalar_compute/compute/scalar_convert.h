@@ -28,6 +28,8 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl.h"
 #endif
 
+__aicore__ inline half asc_float2half_ro(float value);
+
 __aicore__ inline int32_t asc_float2int32_rd(float value);
 __aicore__ inline int32_t asc_float2int32_ru(float value);
 __aicore__ inline int32_t asc_float2int32_rn(float value);

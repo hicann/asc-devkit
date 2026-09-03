@@ -1252,6 +1252,7 @@
                 -   [asc_sflbits](SIMD-API/c_api/scalar_compute/scalar_bit/asc_sflbits.md)
                 -   [asc_zero_bits_cnt](SIMD-API/c_api/scalar_compute/scalar_bit/asc_zero_bits_cnt.md)
             -   [类型转换](SIMD-API/c_api/scalar_compute/scalar_convert/scalar_convert.md)
+                -   [asc_float2half](SIMD-API/c_api/scalar_compute/scalar_convert/asc_float2half.md)
                 -   [asc_float2int32](SIMD-API/c_api/scalar_compute/scalar_convert/asc_float2int32.md)
             -   [数据搬入](SIMD-API/c_api/scalar_compute/scalar_load/scalar_load.md)
                 -   [asc_load_dev](SIMD-API/c_api/scalar_compute/scalar_load/asc_load_dev.md)

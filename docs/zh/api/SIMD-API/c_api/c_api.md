@@ -619,6 +619,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
+|[asc_float2half](scalar_compute/scalar_convert/asc_float2half.md)|将float类型标量转换为half类型，舍入模式固定为ODD（最近邻奇数舍入）。|`c_api/scalar_compute/compute/scalar_convert.h`|
 |[asc_float2int32](scalar_compute/scalar_convert/asc_float2int32.md)|将float类型转化为int32_t类型，并支持多种舍入模式。|`c_api/scalar_compute/compute/scalar_convert.h`|
 
 ## 原子操作

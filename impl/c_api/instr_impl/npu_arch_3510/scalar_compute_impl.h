@@ -24,6 +24,7 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_ffs_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_store_dev_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_load_dev_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_float2half_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_float2int32_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_sflbits_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/asc_ffz_impl.h"
@@ -81,6 +82,9 @@ __aicore__ inline uint32_t asc_load_dev(__gm__ uint32_t* addr) { return asc_load
 __aicore__ inline int64_t asc_load_dev(__gm__ int64_t* addr) { return asc_load_dev_impl(addr); }
 
 __aicore__ inline uint64_t asc_load_dev(__gm__ uint64_t* addr) { return asc_load_dev_impl(addr); }
+
+// ==========asc_float2half (ro)==========
+__aicore__ inline half asc_float2half_ro(float value) { return asc_float2half_ro_impl(value); }
 
 // ==========asc_float2int32 (rd/ru/rn/rna)==========
 __aicore__ inline int32_t asc_float2int32_rd(float value) { return asc_float2int32_rd_impl(value); }
