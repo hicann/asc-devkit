@@ -16,7 +16,7 @@ AI Core采用分级存储架构，Cube矩阵计算采用「Global Memory（以�
 
 Tensor本质是基于数组的编程抽象，而非简单的内存地址封装，通过数组方式管理内存并执行计算，更匹配SIMD硬件执行模型。其核心思想是将原始内存地址抽象为Tensor对象，实现从“地址操作”到“对象管理”的编程层次提升。
 
-根据芯片分级存储架构，Tensor分为三类：**GlobalTensor**对应GM，存放算子输入/输出数据；**LocalTensor**对应片上内存（UB、L1 Buffer、L0A Buffer/L0B Buffer/L0C Buffer等缓冲区），承载计算过程数据；**RegTensor**对应寄存器，用于寄存器级矢量计算（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入）。Tensor体系持续演进：基础Tensor仅携带数据指针和大小信息，需手动传递操作参数；扩展Tensor（Tensor API）引入Layout概念，携带Shape和Stride信息，接口可自动推导搬运长度、计算元素数等参数，大幅降低编程复杂度。该能力引入的接口统一通过`AscendC::Te`命名空间调用（如`AscendC::Te::Mmad`）。
+根据芯片分级存储架构，Tensor分为三类：**GlobalTensor**对应GM，存放算子输入/输出数据；**LocalTensor**对应片上内存（UB、L1 Buffer、L0A Buffer/L0B Buffer/L0C Buffer等缓冲区），承载计算过程数据；**RegTensor**对应寄存器，用于寄存器级矢量计算（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入）。Tensor体系持续演进：基础Tensor仅携带数据指针和大小信息，需手动传递操作参数；扩展Tensor（Tensor API）引入Layout概念，携带Shape和Stride信息，接口可自动推导搬运长度、计算元素数等参数，大幅降低编程复杂度。该能力引入的接口统一通过`asc::te`命名空间调用（如`asc::te::mmad`）。
 
 #### 基础Tensor与扩展Tensor抽象定义
 
@@ -41,21 +41,26 @@ Tensor本质是基于数组的编程抽象，而非简单的内存地址封装�
 - 扩展Tensor（Tensor API）封装Shape和Stride信息，接口自动推导操作参数，实现编译期类型安全。开发者无需关注内存布局细节，一行代码即可完成切片、搬运与计算。当前能力赋能于Cube矩阵计算，后续将逐步支持Vector矢量计算。
 
     ```cpp
+    #include "tensor_api/tensor.h"
+
+    using namespace asc::te;
+
     __global__ __cube__ void matmul_custom(__gm__ half* a, __gm__ half* b, __gm__ half* c) {
-        // 实现代码示例，其中M, N, K为单核上GM上左右矩阵的大小, (baseM, K), (baseN, K)为搬运到L1上左右矩阵的大小
+        // 实现代码示例，其中m, n, k为单核上GM上左右矩阵的大小, (base_m, k), (k, base_n)为搬运到L1上左右矩阵的大小
         // 扩展Tensor（Tensor API）携带Layout信息，搬运接口自动推导参数
-        auto gmATensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(a), AscendC::Te::MakeFrameLayout<AscendC::Te::NDExtLayoutPtn>(M, K));
-        auto gmBTensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(b), AscendC::Te::MakeFrameLayout<AscendC::Te::NDExtLayoutPtn>(K, N));
+        auto gm_a_tensor = make_tensor(make_mem_ptr(a), make_frame_layout<nd_ext_layout_ptn>(m, k));
+        auto gm_b_tensor = make_tensor(make_mem_ptr(b), make_frame_layout<nd_ext_layout_ptn>(k, n));
         ...
         // __cbuf__ 为L1 Buffer的声明修饰符
-        __cbuf__ half l1ABuf[1024];
-        __cbuf__ half l1BBuf[1024];
-        auto l1ATensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(l1ABuf), AscendC::Te::MakeFrameLayout<AscendC::Te::NZLayoutPtn>(baseM, K));
-        auto l1BTensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(l1BBuf), AscendC::Te::MakeFrameLayout<AscendC::Te::NZLayoutPtn>(baseN, K));
+        __cbuf__ half l1_a_buf[1024];
+        __cbuf__ half l1_b_buf[1024];
+        auto l1_a_tensor = make_tensor(make_mem_ptr(l1_a_buf), make_frame_layout<nz_layout_ptn>(base_m, K));
+        auto l1_b_tensor = make_tensor(make_mem_ptr(l1_b_buf), make_frame_layout<nz_layout_ptn>(k, base_n));
         ...
         // 一行代码完成搬运，无需手动传入size参数
-        AscendC::Te::Copy(l1ATensor, gmATensor);
-        AscendC::Te::Copy(l1BTensor, gmBTensor);
+        auto copy_gm_to_l1_atom = make_copy(copy_gm_to_l1{}, gm_to_l1_trait_default{});
+        copy(copy_gm_to_l1_atom, l1_a_tensor, gm_a_tensor);
+        copy(copy_gm_to_l1_atom, l1_b_tensor, gm_b_tensor);
     }
     ```
 
@@ -154,14 +159,14 @@ __global__ __vector__ void add_custom(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm
 ```
 > 📌 其中AscendC::TPosition::VECCALC为对物理位置的逻辑抽象定义，与物理位置的映射参考文件[逻辑位置和物理存储的映射](../../../../../api/SIMD-API/general_description_and_constraints.md)。
 
-相比基础Tensor，[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入Layout描述并将其作为Tensor的核心属性，开发者可在Tensor创建时直接关联Shape与Stride信息，简化多维数据的布局管理。通过`MakeTensor`，开发者可灵活指定内存地址和Layout布局，更便捷地描述ND、NZ等典型数据排布。
+相比基础Tensor，[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入Layout描述并将其作为Tensor的核心属性，开发者可在Tensor创建时直接关联Shape与Stride信息，简化多维数据的布局管理。通过`make_tensor`，开发者可灵活指定内存地址和Layout布局，更便捷地描述ND、NZ等典型数据排布。
 
 ```cpp
 // UB buffer declaration
-__ubuf__ half ubBuffer[1024];
-auto ubPointer = AscendC::Te::MakeMemPtr(ubBuffer);
-// Extended Tensor: create through MakeTensor
-auto ubTensor = AscendC::Te::MakeTensor(ubPointer, AscendC::Te::MakeLayout(AscendC::Te::MakeShape(128, 64)));
+__ubuf__ half ub_buffer[1024];
+auto ub_ptr = make_mem_ptr(ub_buffer);
+// Extended Tensor: create through make_tensor
+auto ub_tensor = make_tensor(ub_ptr, make_layout(make_shape(128, 64)));
 ```
 > 📌 UB地址必须32字节对齐，以匹配硬件总线粒度和SIMD计算单元并行度，非对齐访问将导致运行时错误。
 

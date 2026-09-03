@@ -428,7 +428,7 @@ __global__ __cube__ void matmul_kernel(__gm__ half* x, __gm__ half* y, __gm__ fl
 > 📌 扩展Tensor（带有Layout）能力从[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)开始支持。
 
 > [!NOTE]说明
-> 本节扩展Tensor示例以CANN9.1.0接口为准。对于本节使用的Nz布局，`MakeFrameLayout`的类型模板参数可按需省略；示例显式传入`half`，用于确保Layout的类型和C0推导与Tensor数据类型一致，并非接口新增了强制参数。若代码将原始指针直接传入`MakeTensor`，或使用`Copy(dst, src)`形式调用搬运接口，需要分别使用`MakeMemPtr`封装内存指针，并通过`MakeCopy`构造与搬运通路匹配的`CopyAtom`，再调用`Copy(atomCopy, dst, src)`。
+> 本节扩展Tensor示例使用Tensor API接口。对于本节使用的Nz布局，`asc::te::make_frame_layout`的类型模板参数可按需省略；示例显式传入`half`，用于确保Layout的类型和C0推导与Tensor数据类型一致，并非接口新增了强制参数。在使用`asc::te::make_tensor`封装原始指针、以及调用搬运接口时，需遵循如下规范：原始内存指针必须经由`asc::te::make_mem_ptr`做封装处理，禁止直接传入裸指针调用`make_tensor`；执行数据搬运时，应先通过`asc::te::make_copy`构造与搬运通路相匹配的`copy_atom`对象，再以`asc::te::copy(atom, dst, src)`的形式完成搬运。
 
 ### Layout的层次化表述
 
@@ -477,83 +477,82 @@ Stride = ((C0_ELEMENT, C0_ELEMENT * Std::Int<16>{}), (Std::Int<1>{}, C0_ELEMENT 
 
 ### Layout的构造
 
-结合如上分形表达的描述，基于Layout的能力，C++ Tensor编程提供了原始的Layout构造接口。例如，需要创建一个形状为（128，256，128）的多维内存排布时，可通过`MakeLayout`接口直接构造。
+结合如上分形表达的描述，基于Layout的能力，C++ Tensor编程提供了原始的Layout构造接口。例如，需要创建一个形状为（128，256，128）的多维内存排布时，可通过`make_layout`接口直接构造。
 
 ```cpp
-auto threeDimLayout = AscendC::Te::MakeLayout(AscendC::Te::MakeShape(128, 256, 128));
+auto three_dim_layout = asc::te::make_layout(asc::te::make_shape(128, 256, 128));
 ```
 
-对于一个Nz分形的排布，也可以通过`MakeLayout`构造层次化的Layout表达。例如，对于外层大小为（128，256），数据类型为`half`的Nz数据，可以通过`MakeLayout`构造四维Layout排布：
+对于一个Nz分形的排布，也可以通过`make_layout`构造层次化的Layout表达。例如，对于外层大小为（128，256），数据类型为`half`的Nz数据，可以通过`make_layout`构造四维Layout排布：
 
 ```cpp
 // Define Nz fractal with shape (128, 256), its 4D representation is: ((16, 128 / 16), (16, 256 / 16))
-auto NzLayout = AscendC::Te::MakeLayout(AscendC::Te::MakeShape(
-    AscendC::Te::MakeShape(16, 8), AscendC::Te::MakeShape(16, 16)));
+auto nz_layout = asc::te::make_layout(
+    asc::te::make_shape(asc::te::make_shape(16, 8), asc::te::make_shape(16, 16)));
 ```
 
-Cube矩阵计算中对于不同的内部存储都有着自己独特的分形结构，为了简化用户的编写，C++ Tensor编程提供了`MakeFrameLayout`来简化用户编写生成如上的四维Layout定义：
+Cube矩阵计算中对于不同的内部存储都有着自己独特的分形结构，为了简化用户的编写，C++ Tensor编程提供了`make_frame_layout`来简化用户编写生成如上的四维Layout定义：
 
 ```cpp
-// Use MakeFrameLayout to simplify Nz fractal definition, user only needs to perceive the fractal structure of corresponding storage, no need to directly express 4D structure
-auto NzLayout = AscendC::Te::MakeFrameLayout<AscendC::Te::NZLayoutPtn, half>(128, 256);
+// Use make_frame_layout to simplify Nz fractal definition, user only needs to perceive the fractal structure of corresponding storage, no need to directly express 4D structure
+auto nz_layout = asc::te::make_frame_layout<asc::te::nz_layout_ptn, half>(128, 256);
 ```
 
 ### 基于Layout的Tensor表达
 
 扩展的Tensor是将上述Layout信息内置到Tensor结构中，由数据指针和数据布局组成。一个Tensor对象同时描述“数据放在哪里”和“数据长什么样”。
-C++ Tensor提供了`MakeTensor`函数，用于构造带有Layout的扩展Tensor结构。例如，定义一个形状为（128，256）、数据类型为`half`的Global Memory数据块，以及一个同等大小的L1 Buffer数据块（Nz分形布局），可表达为：
+C++ Tensor提供了`make_tensor`函数，用于构造带有Layout的扩展Tensor结构。例如，定义一个形状为（128，256）、数据类型为`half`的Global Memory数据块，以及一个同等大小的L1 Buffer数据块（Nz分形布局），可表达为：
 
 ```cpp
 // Construct Layout for Global Memory & L1 Buffer 
-auto globalLayout = AscendC::Te::MakeLayout(AscendC::Te::MakeShape(128, 256));
-auto l1Layout = AscendC::Te::MakeFrameLayout<AscendC::Te::NZLayoutPtn, half>(128, 256);
+auto global_layout = asc::te::make_layout(asc::te::make_shape(128, 256));
+auto l1_layout = asc::te::make_frame_layout<asc::te::nz_layout_ptn, half>(128, 256);
 
-// Construct GlobalTensor & L1 LocalTensor through memory pointer + Layout
-auto globalTensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(gmPtr), globalLayout);
-auto l1Tensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(l1Ptr), l1Layout);
+// Construct global_tensor & local_tensor through memory pointer + Layout
+auto global_tensor = asc::te::make_tensor(asc::te::make_mem_ptr(gm_ptr), global_layout);
+auto l1_tensor = asc::te::make_tensor(asc::te::make_mem_ptr(l1_ptr), l1_layout);
 ```
 
-扩展Tensor提供了`operator[]`元素访问、`operator()`子Tensor提取和`Slice()`切片提取等布局调整接口，大幅简化多维数据的操作流程。相较于基础Tensor需要手动计算偏移地址、步长参数和搬运长度，扩展Tensor的接口可自动推导这些底层参数，开发者只需关注数据逻辑即可。这种抽象封装方式不仅降低了编程复杂度，也减少了参数配置错误的风险，让开发者能将精力集中于算子性能优化与算法实现，显著提升开发效率。
+扩展Tensor提供了`operator[]`元素访问、`operator()`子Tensor提取和`slice`切片提取等布局调整接口，大幅简化多维数据的操作流程。相较于基础Tensor需要手动计算偏移地址、步长参数和搬运长度，扩展Tensor的接口可自动推导这些底层参数，开发者只需关注数据逻辑即可。这种抽象封装方式不仅降低了编程复杂度，也减少了参数配置错误的风险，让开发者能将精力集中于算子性能优化与算法实现，显著提升开发效率。
 
 ```cpp
 // Construct tensor for Global Memory
-auto globalLayout = AscendC::Te::MakeLayout(AscendC::Te::MakeShape(128, 256));
-auto globalTensor = AscendC::Te::MakeTensor(AscendC::Te::MakeMemPtr(gmPtr), globalLayout);
+auto global_layout = asc::te::make_layout(asc::te::make_shape(128, 256));
+auto global_tensor = asc::te::make_tensor(asc::te::make_mem_ptr(gm_ptr), global_layout);
 
-auto subTensor = globalTensor.Slice(AscendC::Te::MakeCoord(32, 64), AscendC::Te::MakeShape(32, 32));
+auto sub_tensor = global_tensor.slice(asc::te::make_coord(32, 64), asc::te::make_shape(32, 32));
 ```
 
 ### 矩阵搬运和计算
 
-基础搬运接口需手动传入`count`或`DataCopyParams`参数指定搬运长度和搬运模式。扩展Tensor携带Shape、Stride和存储位置信息，编译器自动推断搬运参数和物理通路，简化接口调用。同时提供**Atom定制接口**，开发者可基于`CopyTraits`自定义搬运行为（如自定义搬运模式、随路处理等），满足特殊场景定制需求。
+基础搬运接口需手动传入`count`或`DataCopyParams`参数指定搬运长度和搬运模式。扩展Tensor携带Shape、Stride和存储位置信息，编译器自动推断部分搬运参数和物理通路，简化接口调用。同时提供**Atom定制接口**，开发者可基于`copy_traits`自定义搬运行为（如自定义搬运模式、随路处理等），满足特殊场景定制需求。
 
-- **GM2L1搬运**：`Copy(atomCopy, dst, src)`搬运矩阵数据到L1 Buffer，支持随路格式转换（ND2NZ、DN2NZ、NZ2NZ等）。开发者定义源Tensor和目的Tensor的Layout，并使用`MakeCopy`构造GM到L1 Buffer的搬运原子对象，接口自动推导底层搬运参数和格式转换方式。
+- **GM2L1搬运**：`copy(atom, dst, src)`搬运矩阵数据到L1 Buffer，支持随路格式转换（ND2NZ、DN2NZ、NZ2NZ等）。开发者定义源Tensor和目的Tensor的Layout，并使用`make_copy`构造GM到L1 Buffer的搬运原子对象，接口自动推导底层搬运参数和格式转换方式。
 
 ```cpp
-// Construct GM-to-L1 CopyAtom with the default trait
-auto atomCopy = AscendC::Te::MakeCopy(
-    AscendC::Te::CopyGM2L1{}, AscendC::Te::CopyGM2L1TraitDefault{});
+// Construct GM-to-L1 copy_atom with the default trait
+auto atom = asc::te::make_copy(asc::te::copy_gm_to_l1{}, asc::te::gm_to_l1_trait_default{});
 
 // Copy equal-size tensors, and infer copy parameters from Layout
-AscendC::Te::Copy(atomCopy, l1Tensor, globalTensor);
+asc::te::copy(atom, l1_tensor, global_tensor);
 
 // Specify Global Tensor offset to copy a slice from Global Tensor
-AscendC::Te::Copy(atomCopy, l1BiasTensor,
-    globalBias.Slice(AscendC::Te::MakeCoord(0, j * baseN), AscendC::Te::MakeShape(1, curN)));
+asc::te::copy(atom, l1_bias_tensor,
+    global_bias.slice(asc::te::make_coord(0, j * base_n), asc::te::make_shape(1, cur_n)));
 ```
 
-- **L0C2GM搬出**：基于`CopyTraits`定制随路处理（如Fixpipe量化），将L0C Buffer计算结果搬出至GM。
+- **L0C2GM搬出**：基于`copy_traits`定制随路处理（如Fixpipe量化），将L0C Buffer计算结果搬出至GM。
 
 ```cpp
 // Fixpipe inline quantization example
-float quantValue = 0.5f;
-uint64_t quantScalar = static_cast<uint64_t>(*reinterpret_cast<int32_t*>(&quantValue));
-auto atomCopy = AscendC::Te::MakeCopy(
-    AscendC::Te::CopyL0C2GM{}, AscendC::Te::CopyL0C2GMTraitDefault{}).with(AscendC::Te::FixpipeParams{});
-AscendC::Te::Copy(atomCopy, globalC, l0CTensor, quantScalar);
+float quant_value = 0.5f;
+uint64_t quant_scalar = static_cast<uint64_t>(*reinterpret_cast<int32_t*>(&quant_value));
+auto atom = asc::te::make_copy(asc::te::copy_l0c_to_gm{}, asc::te::l0c_to_gm_trait_default{})
+                .with(asc::te::l0c_to_gm_params{});
+asc::te::copy(atom, global_c, l0c_tensor, quant_scalar);
 ```
 
-同样，L1 Buffer到L0A/L0B Buffer的搬运需要构造对应通路的`CopyAtom`，矩阵计算需要构造`MmadAtom`。开发者传入搬运或计算原子对象以及操作Tensor后，接口可根据Layout推导底层参数。
+同样，L1 Buffer到L0A/L0B Buffer的搬运需要构造对应通路的`copy_atom`，矩阵计算需要构造`mmad_atom`。开发者传入搬运或计算原子对象以及操作Tensor后，接口可根据Layout推导底层参数。
 
 ### 基于扩展Tensor的矩阵计算示例
 
