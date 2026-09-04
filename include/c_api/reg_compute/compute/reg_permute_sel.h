@@ -416,22 +416,6 @@ __simd_callee__ inline vector_bool asc_unpack_upper(vector_bool src);
 
 __simd_callee__ inline vector_bool asc_unpack_lower(vector_bool src);
 
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ int8_t** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ uint8_t** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ int16_t** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ uint16_t** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ half** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ int32_t** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ uint32_t** src_array);
-
-__aicore__ inline void asc_set_va_reg(ub_addr8_t addr, __ubuf__ float** src_array);
-
 [[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
              "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
 asc_squeeze_with_status(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask);

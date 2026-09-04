@@ -36,8 +36,8 @@ void scatter_vnchwconv_b8_stub_repeat(
 void scatter_vnchwconv_b16_stub_repeat(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
 {
-    EXPECT_EQ(ub_addr8_t::VA1, dst);
-    EXPECT_EQ(ub_addr8_t::VA3, src);
+    EXPECT_EQ(ub_addr8_t::VA2, dst);
+    EXPECT_EQ(ub_addr8_t::VA4, src);
     EXPECT_EQ(repeat, static_cast<uint8_t>(5));
     EXPECT_EQ(dst_stride, static_cast<uint16_t>(6));
     EXPECT_EQ(src_stride, static_cast<uint16_t>(7));
@@ -47,7 +47,7 @@ void scatter_vnchwconv_b32_stub_repeat(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
 {
     EXPECT_EQ(ub_addr8_t::VA4, dst);
-    EXPECT_EQ(ub_addr8_t::VA5, src);
+    EXPECT_EQ(ub_addr8_t::VA6, src);
     EXPECT_EQ(repeat, static_cast<uint8_t>(8));
     EXPECT_EQ(dst_stride, static_cast<uint16_t>(9));
     EXPECT_EQ(src_stride, static_cast<uint16_t>(10));
@@ -97,7 +97,7 @@ TEST_F(TestTransto5HDCAPI, asc_transto5hd_b16_repeat_Succ)
         .times(1)
         .will(invoke(scatter_vnchwconv_b16_stub_repeat));
 
-    asc_transto5hd_b16(ub_addr8_t::VA1, ub_addr8_t::VA3, repeat, dst_stride, src_stride);
+    asc_transto5hd_b16(ub_addr8_t::VA2, ub_addr8_t::VA4, repeat, dst_stride, src_stride);
     GlobalMockObject::verify();
 }
 
@@ -111,7 +111,7 @@ TEST_F(TestTransto5HDCAPI, asc_transto5hd_b16_repeat_sync_Succ)
         .times(1)
         .will(invoke(scatter_vnchwconv_b16_stub_repeat));
 
-    asc_transto5hd_b16_sync(ub_addr8_t::VA1, ub_addr8_t::VA3, repeat, dst_stride, src_stride);
+    asc_transto5hd_b16_sync(ub_addr8_t::VA2, ub_addr8_t::VA4, repeat, dst_stride, src_stride);
     GlobalMockObject::verify();
 }
 
@@ -125,7 +125,7 @@ TEST_F(TestTransto5HDCAPI, asc_transto5hd_b32_repeat_Succ)
         .times(1)
         .will(invoke(scatter_vnchwconv_b32_stub_repeat));
 
-    asc_transto5hd_b32(ub_addr8_t::VA4, ub_addr8_t::VA5, repeat, dst_stride, src_stride);
+    asc_transto5hd_b32(ub_addr8_t::VA4, ub_addr8_t::VA6, repeat, dst_stride, src_stride);
     GlobalMockObject::verify();
 }
 
@@ -139,6 +139,6 @@ TEST_F(TestTransto5HDCAPI, asc_transto5hd_b32_repeat_sync_Succ)
         .times(1)
         .will(invoke(scatter_vnchwconv_b32_stub_repeat));
 
-    asc_transto5hd_b32_sync(ub_addr8_t::VA4, ub_addr8_t::VA5, repeat, dst_stride, src_stride);
+    asc_transto5hd_b32_sync(ub_addr8_t::VA4, ub_addr8_t::VA6, repeat, dst_stride, src_stride);
     GlobalMockObject::verify();
 }

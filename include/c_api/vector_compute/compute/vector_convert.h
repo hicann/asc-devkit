@@ -26,6 +26,16 @@
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
 #endif
+
+// ==========asc_transto5hd(b8/b16/b32)==========
+__aicore__ inline void asc_transto5hd_b8(
+    ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride, bool dst_high_half,
+    bool src_high_half);
+__aicore__ inline void asc_transto5hd_b16(
+    ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride);
+__aicore__ inline void asc_transto5hd_b32(
+    ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride);
+
 __aicore__ inline void asc_bfloat162float(
     __ubuf__ float* dst, __ubuf__ bfloat16_t* src, uint8_t repeat, uint16_t dst_block_stride, uint16_t src_block_stride,
     uint16_t dst_repeat_stride, uint16_t src_repeat_stride);

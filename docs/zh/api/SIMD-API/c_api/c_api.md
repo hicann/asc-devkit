@@ -789,3 +789,4 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_mmad(废弃)](deprecated_interface/asc_mmad_deprecated.md)|矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_mx(废弃)](deprecated_interface/asc_mmad_mx_deprecated.md)|带有量化系数的矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_sparse(废弃)](deprecated_interface/asc_mmad_sparse_deprecated.md)|稀疏矩阵乘加计算接口。|`c_api/cube_compute/cube_compute.h`|
+| [asc_transto5hd_sync（废弃）](deprecated_interface/asc_transto5hd_sync_deprecated.md) | 数据格式转换接口。 |

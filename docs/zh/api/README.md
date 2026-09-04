@@ -1375,6 +1375,7 @@
             -   [asc_mmad（废弃）](SIMD-API/c_api/deprecated_interface/asc_mmad_deprecated.md)
             -   [asc_mmad_mx（废弃）](SIMD-API/c_api/deprecated_interface/asc_mmad_mx_deprecated.md)
             -   [asc_mmad_sparse（废弃）](SIMD-API/c_api/deprecated_interface/asc_mmad_sparse_deprecated.md)
+            -   [asc_transto5hd_sync（废弃）](SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)
 
     -   [Tensor API](SIMD-API/tensor_api/tensor_api.md)
         -   [Tensor API列表](SIMD-API/tensor_api/tensor_api_list.md)

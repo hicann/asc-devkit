@@ -610,7 +610,6 @@ static void test_host_c_api_reg_compute_17()
     using ::asc_round;
     using ::asc_scatter;
     using ::asc_select;
-    using ::asc_set_va_reg;
     using ::asc_shiftleft;
     using ::asc_shiftleft_scalar;
     using ::asc_shiftright;
