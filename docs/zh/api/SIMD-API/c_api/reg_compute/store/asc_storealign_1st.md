@@ -44,7 +44,7 @@
 
 ```c
 // 占位符形式
-__simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst_align32b,
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst,
                                                vector_<dtype> src)
 ```
 
@@ -55,7 +55,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst_align32b,
 #### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst,
                                                vector_int8_t src)
 ```
 
@@ -63,7 +63,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
 
 ```c
 // 占位符形式
-__simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst_align32b,
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst,
                                                vector_<dtype> src,
                                                int32_t offset)
 ```
@@ -75,7 +75,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst_align32b,
 #### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst,
                                                vector_int8_t src,
                                                int32_t offset)
 ```
@@ -84,7 +84,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
 
 ```c
 // 占位符形式
-__simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst_align32b,
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst,
                                                vector_<dtype> src,
                                                addr_reg offset)
 ```
@@ -96,7 +96,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ <dtype>* dst_align32b,
 #### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst,
                                                vector_int8_t src,
                                                addr_reg offset)
 ```
@@ -109,7 +109,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst_align32b | 输出 | 目的操作数的起始地址，类型为`__ubuf__ <dtype>*`，起始地址需dtype对齐。 |
+| dst | 输出 | 目的操作数的起始地址，类型为`__ubuf__ <dtype>*`，起始地址需dtype对齐。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。仅首个元素参与搬出，其余元素被忽略。 |
 
 ### 立即数偏移搬出模式
@@ -118,9 +118,9 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst_align32b | 输出 | 目的操作数的起始地址，类型为`__ubuf__ <dtype>*`，起始地址需dtype对齐。 |
+| dst | 输出 | 目的操作数的起始地址，类型为`__ubuf__ <dtype>*`，起始地址需dtype对齐。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。仅首个元素参与搬出，其余元素被忽略。 |
-| offset | 输入 | 相对`dst_align32b`起始地址的偏移量，类型为`int32_t`，单位为元素。 |
+| offset | 输入 | 相对`dst`起始地址的偏移量，类型为`int32_t`，单位为元素。 |
 
 ### 地址寄存器偏移搬出模式
 
@@ -128,7 +128,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst_align32b | 输出 | 目的操作数的起始地址，类型为`__ubuf__ <dtype>*`，起始地址需dtype对齐。 |
+| dst | 输出 | 目的操作数的起始地址，类型为`__ubuf__ <dtype>*`，起始地址需dtype对齐。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。仅首个元素参与搬出，其余元素被忽略。 |
 | offset | 输入 | 地址寄存器偏移，类型为`addr_reg`，由配套的地址寄存器构造接口预先构造，单位为元素。 |
 
@@ -143,13 +143,13 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst_align32b,
 ### 通用约束
 
 - 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，源操作数为矢量数据寄存器，目的操作数为UB地址，UB地址空间外的指针不可作为`dst_align32b`传入。
-- UB容量上限：UB总容量256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈+2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少）。`dst_align32b`偏移后不可超过实际可用容量。
+- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，源操作数为矢量数据寄存器，目的操作数为UB地址，UB地址空间外的指针不可作为`dst`传入。
+- UB容量上限：UB总容量256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈+2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少）。`dst`偏移后不可超过实际可用容量。
 - 如果本指令与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。
 
 ### 指令约束
 
-- `dst_align32b`起始地址需dtype对齐。，`offset`偏移后的实际访问地址需dtype对齐且需落在UB地址范围内。
+- `dst`起始地址需dtype对齐。，`offset`偏移后的实际访问地址需dtype对齐且需落在UB地址范围内。
 
 ## 调用示例
 

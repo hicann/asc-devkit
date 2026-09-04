@@ -36,7 +36,7 @@
 
 ```c
 // 占位符形式
-__simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ <dtype>*& dst_align32b,
+__simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ <dtype>*& dst,
                                                           vector_<dtype> src,
                                                           int32_t offset)
 ```
@@ -48,7 +48,7 @@ __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ <dtype>*& dst
 ### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ int8_t*& dst_align32b,
+__simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ int8_t*& dst,
                                                           vector_int8_t src,
                                                           int32_t offset)
 ```
@@ -59,9 +59,9 @@ __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ int8_t*& dst_
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst_align32b | 输入/输出 | 目的操作数（矢量）的起始地址，按指针引用传入（`__ubuf__ <dtype>*&`），搬运完成后该地址会被硬件自动Post Update。 |
+| dst | 输入/输出 | 目的操作数（矢量）的起始地址，按指针引用传入（`__ubuf__ <dtype>*&`），搬运完成后该地址会被硬件自动Post Update。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
-| offset | 输入 | 地址偏移量，单位为元素个数。**接口执行后**将`dst_align32b`指针的底层UB地址向后偏移`offset × sizeof(dtype)`字节。 |
+| offset | 输入 | 地址偏移量，单位为元素个数。**接口执行后**将`dst`指针的底层UB地址向后偏移`offset × sizeof(dtype)`字节。 |
 
 矢量数据寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -75,12 +75,12 @@ __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ int8_t*& dst_
 
 - 本接口非AIV调用直接返回。
 - 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
-- UB容量上限：UB总容量为256KB，默认预留6KB SIMD VF栈与2KB Ascend C预留空间后可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少。`dst_align32b`起始地址与Post Update累计偏移量之和不可超过实际可用容量，否则会报错。
+- UB容量上限：UB总容量为256KB，默认预留6KB SIMD VF栈与2KB Ascend C预留空间后可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少。`dst`起始地址与Post Update累计偏移量之和不可超过实际可用容量，否则会报错。
 - 如果本指令与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。
 
 ### 指令约束
 
-- `dst_align32b`起始地址需按照`dtype`数据类型对齐，Post Update后的`dst_align32b`新地址仍需满足`dtype`对齐，否则下一次调用本接口会报错。
+- `dst`起始地址需按照`dtype`数据类型对齐，Post Update后的`dst`新地址仍需满足`dtype`对齐，否则下一次调用本接口会报错。
 
 ## 调用示例
 

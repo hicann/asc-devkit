@@ -43,7 +43,7 @@
 
 ```c
 // 占位符形式
-__simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ <dtype>*& dst_align32b,
+__simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ <dtype>*& dst,
                                                            vector_<dtype> src,
                                                            int32_t offset,
                                                            vector_bool mask)
@@ -56,7 +56,7 @@ __simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ <dtype>*& ds
 #### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ uint32_t*& dst_align32b,
+__simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ uint32_t*& dst,
                                                            vector_uint32_t src,
                                                            int32_t offset,
                                                            vector_bool mask)
@@ -92,8 +92,8 @@ __simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ uint8_t*& ds
 
 | 参数名 | 输入/输出 | 描述 |
 |---|---|---|
-| dst_align32b | 输入/输出 | 目的操作数的起始地址，按指针引用传入。类型为`__ubuf__ <dtype>*&`，起始地址需32字节对齐。搬出完成后，该指针由硬件自动更新。 |
-| src | 输入 | 源操作数（矢量数据寄存器）。`dtype`须与`dst_align32b`一致。 |
+| dst | 输入/输出 | 目的操作数的起始地址，按指针引用传入。类型为`__ubuf__ <dtype>*&`，起始地址需32字节对齐。搬出完成后，该指针由硬件自动更新。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。`dtype`须与`dst`一致。 |
 | offset | 输入 | 地址偏移量，类型为`int32_t`，单位为元素。接口执行后，目的地址累加`offset × sizeof(dtype)`字节。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示参与搬出的元素。对应位置为1时参与搬出，为0时不参与搬出。需通过掩码设置接口预先赋值后再传入。 |
 
@@ -124,10 +124,10 @@ __simd_callee__ inline void asc_storealign_pack_postupdate(__ubuf__ uint8_t*& ds
 
 ### 矢量数据寄存器压缩搬出场景
 
-- `dst_align32b`起始地址需32字节对齐。
+- `dst`起始地址需32字节对齐。
 - `mask`需通过掩码设置接口预先赋值后再传入。未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
 - `mask`比特位为1的源操作数元素参与搬出，并将低半部分bit数据写入压缩后对应的目的位置；为0的元素不参与搬出，压缩后对应的目的位置保持原值。
-- `offset`的单位为元素。Post Update后的`dst_align32b`新地址仍需32字节对齐，且本次写出范围和更新后的地址均需落在UB可用容量范围内。
+- `offset`的单位为元素。Post Update后的`dst`新地址仍需32字节对齐，且本次写出范围和更新后的地址均需落在UB可用容量范围内。
 
 ### 掩码寄存器压缩搬出场景
 
