@@ -46,7 +46,9 @@ void ReserveLocalMemory(ReservedSize size)
 
 ## 调用示例<a name="zh-cn_topic_0000001647201621_zh-cn_topic_0000001442758437_section320753512363"></a>
 
-```
+### 自定义算子工程
+
+```cpp
 ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     uint64_t ub_size, l1_size;
@@ -60,5 +62,20 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
 }
 ```
 
-完整样例可参考[与数学库高阶API配合使用的样例](../../../SIMD-API/adv_api/math_compute/more_examples.md#section577043422516)。
+### Kernel直调
 
+```cpp
+void ReserveUbMemory()
+{
+    auto* ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();
+    if (ascendcPlatform == nullptr) {
+        return;
+    }
+    ascendcPlatform->ReserveLocalMemory(platform_ascendc::ReservedSize::RESERVED_SIZE_8K);
+    uint64_t ubSize;
+    ascendcPlatform->GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
+    // ... 使用ubSize
+}
+```
+
+完整样例可参考[与数学库高阶API配合使用的样例](../../../SIMD-API/adv_api/math_compute/more_examples.md#section577043422516)。

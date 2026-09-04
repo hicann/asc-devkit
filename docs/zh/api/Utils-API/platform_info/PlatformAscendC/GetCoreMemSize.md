@@ -63,7 +63,9 @@ void GetCoreMemSize(const CoreMemType &memType, uint64_t &size) const
 
 ## 调用示例<a name="zh-cn_topic_0000001597362348_zh-cn_topic_0000001442486577_section320753512363"></a>
 
-```
+### 自定义算子工程
+
+```cpp
 ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     uint64_t ub_size, l1_size;
@@ -74,3 +76,17 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
 }
 ```
 
+### Kernel直调
+
+```cpp
+void GetInfoFun()
+{
+    auto* ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();
+    if (ascendcPlatform == nullptr) {
+        return;
+    }
+    uint64_t ubSize;
+    ascendcPlatform->GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
+    // ... 使用ubSize
+}
+```

@@ -43,7 +43,9 @@ Ascend 950PR/Ascend 950DT不支持该接口，返回0
 
 ## 调用示例<a name="zh-cn_topic_0000001817714666_zh-cn_topic_0000001442758437_section320753512363"></a>
 
-```
+### 自定义算子工程
+
+```cpp
 ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto aivCoreNum = ascendcPlatform.GetCoreNumAiv();
@@ -54,3 +56,18 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
 }
 ```
 
+### Kernel直调
+
+```cpp
+void GetInfoFun()
+{
+    auto* ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();
+    if (ascendcPlatform == nullptr) {
+        return;
+    }
+    auto aivCoreNum = ascendcPlatform->GetCoreNumAiv();
+    auto vectorCoreNum = ascendcPlatform->GetCoreNumVector();
+    auto allVecCoreNums = aivCoreNum + vectorCoreNum;
+    // ... 根据allVecCoreNums自行设计切分策略
+}
+```

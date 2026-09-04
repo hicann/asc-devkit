@@ -38,7 +38,9 @@ Ascend 950PR/Ascend 950DT，分离模式，返回Cube Core的核数
 
 ## 调用示例<a name="zh-cn_topic_0000001675181281_zh-cn_topic_0000001442758437_section320753512363"></a>
 
-```
+### 自定义算子工程
+
+```cpp
 ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto aicNum = ascendcPlatform.GetCoreNumAic();
@@ -49,3 +51,17 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
 }
 ```
 
+### Kernel直调
+
+```cpp
+void GetInfoFun()
+{
+    auto* ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();
+    if (ascendcPlatform == nullptr) {
+        return;
+    }
+    auto aicNum = ascendcPlatform->GetCoreNumAic();
+    auto aivNum = ascendcPlatform->GetCoreNumAiv();
+    // ... 根据aicNum和aivNum自行设计切分策略
+}
+```

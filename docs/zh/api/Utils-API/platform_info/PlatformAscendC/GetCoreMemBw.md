@@ -61,7 +61,9 @@ void GetCoreMemBw(const CoreMemType &memType, uint64_t &bwSize) const
 
 ## 调用示例<a name="zh-cn_topic_0000001597681768_zh-cn_topic_0000001391767420_section320753512363"></a>
 
-```
+### 自定义算子工程
+
+```cpp
 ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     uint64_t l2_bw;
@@ -71,3 +73,17 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
 }
 ```
 
+### Kernel直调
+
+```cpp
+void GetInfoFun()
+{
+    auto* ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();
+    if (ascendcPlatform == nullptr) {
+        return;
+    }
+    uint64_t l2Bw;
+    ascendcPlatform->GetCoreMemBw(platform_ascendc::CoreMemType::L2, l2Bw);
+    // ... 使用l2Bw
+}
+```

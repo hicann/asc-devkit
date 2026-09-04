@@ -46,7 +46,9 @@ NpuArch GetCurNpuArch(void) const
 
 ## 调用示例<a name="zh-cn_topic_0000001664705472_zh-cn_topic_0000001442758437_section320753512363"></a>
 
-```
+### 自定义算子工程
+
+```cpp
 ge::graphStatus TilingXXX(gert::TilingContext* context) {
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto npuArch = ascendcPlatform.GetCurNpuArch();
@@ -59,3 +61,16 @@ ge::graphStatus TilingXXX(gert::TilingContext* context) {
 }
 ```
 
+### Kernel直调
+
+```cpp
+void GetInfoFun()
+{
+    auto* ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();
+    if (ascendcPlatform == nullptr) {
+        return;
+    }
+    auto npuArch = ascendcPlatform->GetCurNpuArch();
+    // ... 根据npuArch自行设计切分策略
+}
+```
