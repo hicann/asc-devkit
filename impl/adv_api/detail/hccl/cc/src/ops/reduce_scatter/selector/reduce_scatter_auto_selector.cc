@@ -344,8 +344,8 @@ SelectorStatus ReduceScatterAutoSelector::SelectMeshAlgoAicpuForMesh1DClos(
         }
     } else if (Is64BitDataType(opParam.DataDes.dataType) || opParam.reduceType == HcclReduceOp::HCCL_REDUCE_PROD) {
         selectAlgName = "InsReduceScatterAicpuReduceNHR";
-    } else if (isClosNumMultipleOfMeshNum && !IsSmallData(dataSize)) {
-        selectAlgName = "InsReduceScatterParallelMesh1DNHRUBX";
+    } else if (isClosNumMultipleOfMeshNum && IsLargeData(dataSize)) {
+        selectAlgName = "AicpuReduceScatterParallelMeshNHRUBX";
     } else {
         selectAlgName = "InsReduceScatterNHR";
     }
