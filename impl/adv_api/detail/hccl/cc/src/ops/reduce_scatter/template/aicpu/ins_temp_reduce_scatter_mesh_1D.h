@@ -47,6 +47,7 @@ public:
 
     void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub) override;
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override;
+    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels) override;
 
 protected:
     HcclResult RunReduceScatter(
@@ -55,7 +56,6 @@ protected:
     virtual HcclResult CalcDataSplitByPortGroup(
         const u64 totalDataCount, const u64 dataTypeSize, const std::vector<ChannelInfo>& channels,
         std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset);
-    virtual HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels);
     u64 processSize_{0};
     u64 count_{0};
     u32 channelsPerRank_{1};

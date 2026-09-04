@@ -23,11 +23,32 @@ HcclResult InsTempReduceScatterNHR::CalcRes(
     AlgResourceRequest& resourceRequest)
 {
     std::vector<HcclChannelDesc> channels;
-    CHK_RET(CalcChannelRequestNhr(comm, param, topoInfo, subCommRanks_, channels));
+    std::vector<HcclChannelDesc> myChannelDescs;
+    u64 perDataSize = DATATYPE_SIZE_TABLE[param.DataDes.dataType];
+    u64 dataSize = param.DataDes.count * perDataSize;
+    if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS && !topoInfo->level0PcieMix) {
+        bool isIsolation =
+            !(IsAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH) || dataSize <= SMALL_SIZE_512KB);
+        CHK_RET(CalcChannelRequestNhrMultiJetty(comm, param, topoInfo, subCommRanks_, myChannelDescs, isIsolation));
+        for (auto channel : myChannelDescs) {
+            if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
+                channels.push_back(channel);
+            }
+        }
+    } else {
+        CHK_RET(CalcChannelRequestNhr(comm, param, topoInfo, subCommRanks_, myChannelDescs));
+        channels = myChannelDescs;
+    }
     resourceRequest.channels.push_back(channels);
     u32 channelsPerRank = CalcChannelsPerRank(channels);
     HCCL_INFO("[InsTempReduceScatterNHR][CalcRes] channelsPerRank: [%u].", channelsPerRank);
     channelsPerRank_ = channelsPerRank;
+    if (channelsPerRank_ > MAX_JETTY_NUM) {
+        HCCL_ERROR(
+            " %s channelsPerRank_ %u is greater than MAX_JETTY_NUM %u", __func__, channelsPerRank_, MAX_JETTY_NUM);
+    } else {
+        HCCL_DEBUG(" %s channelsPerRank_ is %u ", __func__, channelsPerRank_);
+    }
     GetRes(resourceRequest);
     HCCL_INFO(
         "[InsTempReduceScatterNHR][CalcRes] slaveThreadNum: [%u], notifyNumOnMainThread: [%u].",
