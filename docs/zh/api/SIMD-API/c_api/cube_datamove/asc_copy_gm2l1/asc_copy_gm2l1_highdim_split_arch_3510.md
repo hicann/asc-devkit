@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
-将数据从Global Memory搬运到L1 Buffer，数据搬运时格式和内容保持不变。高维切分是指能够通过配置数据块个数、单个数据块长度、地址偏移等搬运参数实现非连续搬运。并且此接口支持在搬运过程中按通道padding模式对32字节粒度的数据插入或移除padding。其中padding值需要通过[asc_set_gm2l1_pad](../asc_set_gm2l1_pad.md)设置。
+将数据从Global Memory搬运到L1 Buffer，数据搬运时格式和内容保持不变。高维切分是指能够通过配置数据块个数、单个数据块长度、地址偏移等搬运参数实现非连续搬运。并且此接口支持在搬运过程中按通道padding模式对32字节粒度的数据插入或移除padding。其中padding值需要通过[asc_set_gm2l1_padding](../asc_set_gm2l1_padding.md)设置。
 
 本接口仅在AIC上执行有效。
 
@@ -36,7 +36,7 @@
 
 ### 高维切分数据搬运
 
-```cpp
+```c
 __aicore__ inline void asc_copy_gm2l1(__cbuf__ void* dst, __gm__ void* src, uint32_t n_burst,
                                       uint32_t len_burst, uint8_t pad_func_mode, uint64_t src_stride,
                                       uint32_t dst_stride)
@@ -57,9 +57,17 @@ __aicore__ inline void asc_copy_gm2l1_sync(__cbuf__ void* dst, __gm__ void* src,
 | src | 输入 | 源操作数，存储位置为GM。起始地址需要按照1字节对齐。 |
 | n_burst | 输入 | 搬运的数据块的个数。取值范围：[1, $2^{17}-1$]。 |
 | len_burst | 输入 | 搬运的每个数据块长度，单位32字节。取值范围：[1, $2^{17}-1$]。 |
-| pad_func_mode | 输入 | 4 bit值，指示通道上的padding功能，在32字节数据中插入padding值，或从每个32字节的读取数据中移除padding值。取值范围 [0, 8]：<br>&nbsp;&nbsp;&bull; `0`：不做padding；<br>&nbsp;&nbsp;&bull; `1`：每有1个字节的数据，插入31个padding值；<br>&nbsp;&nbsp;&bull; `2`：每有2个字节的数据，插入15个padding值；<br>&nbsp;&nbsp;&bull; `3`：每有4个字节的数据，插入14个padding值；<br>&nbsp;&nbsp;&bull; `4`：每有8个字节的数据，插入12个padding值；<br>&nbsp;&nbsp;&bull; `5`：每有16个字节的数据，插入8个padding值；<br>&nbsp;&nbsp;&bull; `6`：每有32个字节的数据，移除28个最高有效位数据，只保留4个最低有效位元素；<br>&nbsp;&nbsp;&bull; `7`：每有32个字节的数据，移除24个最高有效位数据，只保留8个最低有效位元素；<br>&nbsp;&nbsp;&bull; `8`：每有32个字节的数据，移除16个最高有效位数据，只保留16个最低有效位元素。 |
+| pad_func_mode | 输入 | 搬运过程中的填充或删除数据模式，取值范围：[0, 8]。填充模式是指在目的的数据中插入padding值，padding值需要通过[asc_set_gm2l1_padding](../asc_set_gm2l1_padding.md)设置。删除模式是指在从搬运的每个32字节中移除部分数据。<br>&nbsp;&nbsp;&bull; `0`：不做padding；<br>&nbsp;&nbsp;&bull; `1`：每有1个字节的数据，插入31个padding值，其中插入的每个padding的位宽为b8；<br>&nbsp;&nbsp;&bull; `2`：每有2个字节的数据，插入15个padding值，其中插入的每个padding的位宽为b16；<br>&nbsp;&nbsp;&bull; `3`：每有4个字节的数据，插入14个padding值，其中插入的每个padding的位宽为b16；<br>&nbsp;&nbsp;&bull; `4`：每有8个字节的数据，插入12个padding值，其中插入的每个padding的位宽为b16； <br>&nbsp;&nbsp;&bull; `5`：每有16个字节的数据，插入8个padding值，其中插入的每个padding的位宽为b16；<br>&nbsp;&nbsp;&bull; `6`：每有32个字节的数据，移除28个最高有效位数据，只保留4个最低有效位字节；<br>&nbsp;&nbsp;&bull; `7`：每有32个字节的数据，移除24个最高有效位数据，只保留8个最低有效位字节；<br>&nbsp;&nbsp;&bull; `8`：每有32个字节的数据，移除16个最高有效位数据，只保留16个最低有效位字节。 |
 | src_stride | 输入 | 源操作数相邻数据块之间的间隔（即前一个数据块起始地址与后一个数据块起始地址的差值），取值范围：[0, $2^{36}-1$]，单位32字节。<br>&nbsp;&nbsp;&bull; n_burst = 1时，`src_stride`无意义，设置为0即可。 |
 | dst_stride | 输入 | 目的操作数相邻数据块之间的间隔（即前一个数据块起始地址与后一个数据块起始地址的差值），取值范围：[0, $2^{17}-1$]，单位32字节。<br>&nbsp;&nbsp;&bull; n_burst = 1时，`dst_stride`无意义，设置为0即可。 |
+
+- 对于`pad_func_mode`设置为填充数据模式的场景：
+  - 填充模式下搬运的每个数据块长度`len_burst`必须设置为`1`，各个填充模式下填充后每个数据块长度均为32字节。
+  - 填充模式搬运一个数据块仅从源操作数GM里读取1/2/4/8/16个字节的数据，依次对应5种填充模式。
+  - 每一次数据块搬运都是从源操作数GM中连续读取，`src_stride`设置为`0`即可。
+- 对于`pad_func_mode`设置为删除数据模式的场景：
+  - 源操作数中一次数据块搬运，读取的数据为`len_burst * 32`个字节，目的操作数中的实际写入数据为`len_burst * 4/8/16`个字节，依次对应3中删除模式。
+  - 每一次数据块搬运都连续地往目的操作数L1 Buffer中写入，`dst_stride`设置为`0`即可。
 
 ## 返回值说明
 
@@ -85,13 +93,6 @@ PIPE_MTE2
 - `len_burst`取值范围为[1, $2^{17}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
 - `src_stride`取值范围为[0, $2^{36}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
 - `dst_stride`取值范围为[0, $2^{17}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
-- `pad_func_mode`取值范围为[0, 8]，未定义值会导致搬运结果异常，`pad_func_mode`中使用的padding值需要通过[asc_set_gm2l1_pad](../asc_set_gm2l1_pad.md)设置。
-- 对于插入padding值的场景：
-  - `len_burst`的单位为32个字节的指的是写入L1 Buffer的实际数据数，它必须设置为`1`，此时一次仅从GM里读取1/2/4/8/16个字节的数据。
-  - 每一次burst都是从GM中连续读取，`src_stride`设置为`0`即可。
-- 对于移除padding值的场景：
-  - 源操作数中一次burst操作的数据为`len_burst * 32`个字节，目的操作数中一次burst的实际数据为`len_burst * 4/8/16`个字节。
-  - 每一次`burst`后都连续地往L1 Buffer中写入，`dst_stride`设置为`0`即可。
 
 ## 调用示例
 
