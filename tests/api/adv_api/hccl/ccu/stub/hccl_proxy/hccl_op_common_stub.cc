@@ -42,6 +42,19 @@ namespace mc2_ops_hccl {
 
 bool g_stubCcuAlgorithmRegistered = true;
 
+// 强制算法执行器获取打桩：置true且（g_stubCcuAlgExecNullName为空或算法名匹配）时
+// CollAlgExecRegistryV2::GetAlgExec返回nullptr，使CheckForcedAlgResource校验失败，
+// 用于验证强制算法失败后回退到默认selector。指定算法名可避免影响回退后其他算法的资源计算。
+bool g_stubCcuAlgExecNull = false;
+std::string g_stubCcuAlgExecNullName;
+
+// 默认selector输出打桩：非空时ExecuteSelector::Run直接返回该算法名，用于控制回退后的算法选择结果。
+std::string g_stubSelectorAlgName;
+
+// HcclGetAlgRes资源不足打桩：置true时HcclGetAlgRes直接返回HCCL_E_UNAVAIL，
+// 用于验证checkOnly场景下UNAVAIL被翻译为HCCL_E_RES_NOT_SUFFICIENT（非checkOnly保持UNAVAIL原样）。
+bool g_stubCcuAlgResUnavailable = false;
+
 HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctxSize, void** ctx)
 {
     uint64_t actualSize = ctxSize;
@@ -147,6 +160,21 @@ ExecuteSelector::ExecuteSelector() {}
 
 HcclResult ExecuteSelector::Run(OpParam& param, TopoInfoWithNetLayerDetails* topoInfo, std::string& algName) const
 {
+    // 复刻真实selector的不支持组合校验（与reduce_scatter_auto_selector一致）：
+    // ReduceScatter不支持64位数据类型与PROD归约，校验失败直接返回NOT_SUPPORT。
+    // 该检查需在g_stubSelectorAlgName旁路之前，确保64位/PROD组合即使显式指定输出也被拒绝。
+    if (param.opType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER &&
+        (param.DataDes.dataType == HcclDataType::HCCL_DATA_TYPE_INT64 ||
+         param.DataDes.dataType == HcclDataType::HCCL_DATA_TYPE_UINT64 ||
+         param.DataDes.dataType == HcclDataType::HCCL_DATA_TYPE_FP64 ||
+         param.reduceType == HcclReduceOp::HCCL_REDUCE_PROD)) {
+        return HcclResult::HCCL_E_NOT_SUPPORT;
+    }
+    // 测试打桩：显式指定selector输出时直接返回，用于验证强制算法失败后的回退选择
+    if (!g_stubSelectorAlgName.empty()) {
+        algName = g_stubSelectorAlgName;
+        return HcclResult::HCCL_SUCCESS;
+    }
     static const std::map<HcclCMDType, std::string> ccuAlgMap = {
         {HcclCMDType::HCCL_CMD_ALLGATHER, "CcuAllGatherMesh1D"},
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "CcuReduceScatterMesh1D"},
@@ -288,6 +316,9 @@ bool CollAlgExecRegistryV2::IsRegistered(HcclCMDType opType, const std::string& 
 
 std::unique_ptr<InsCollAlgBase> CollAlgExecRegistryV2::GetAlgExec(HcclCMDType opType, const std::string& algTag)
 {
+    if (g_stubCcuAlgExecNull && (g_stubCcuAlgExecNullName.empty() || algTag == g_stubCcuAlgExecNullName)) {
+        return nullptr;
+    }
     return std::make_unique<MockInsCollAlgBase>();
 }
 
@@ -297,6 +328,11 @@ HcclResult HcclGetAlgRes(
 {
     if (resCtxDevice == nullptr) {
         return HCCL_E_PTR;
+    }
+
+    // 资源不足打桩：模拟CCU通道/实例资源不足，供checkOnly的UNAVAIL→RES_NOT_SUFFICIENT用例使用
+    if (g_stubCcuAlgResUnavailable) {
+        return HCCL_E_UNAVAIL;
     }
 
     // 资源复用逻辑：先尝试获取已存在的资源

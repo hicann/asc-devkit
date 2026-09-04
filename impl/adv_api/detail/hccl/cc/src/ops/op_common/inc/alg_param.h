@@ -685,8 +685,9 @@ struct OpParam { // 不申请ctx，每个算子单独下发
     ThreadHandle deviceOrderThread = 0;     // device侧保序流
     u64 varMemSize{0};
     u8 varData[0];
-    u64 ccuKfcArgs[4];  // 测试，ccu-kfc作为通信算子
-    bool isKfc = false; // 标记是否使用KFC Server kernel
+    u64 ccuKfcArgs[4];     // 测试，ccu-kfc作为通信算子
+    bool isKfc = false;    // 标记是否使用KFC Server kernel
+    bool checkRes = false; // 仅校验资源是否充足，不实际下发
 };
 
 struct AlgDesc {

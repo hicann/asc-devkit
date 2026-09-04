@@ -12,6 +12,7 @@ option(MC2_CLIENT_ENABLE_CCU "Build CCU algorithm implementations into mc2_clien
 
 set(INCLUDE_LIST
     ${HCCL_CC_INCLUDE_DIR}
+    ${ASCENDC_DIR}
     ${HCCL_CC_INCLUDE_DIR}/hcomm
     ${HCCL_CC_INCLUDE_DIR}/hcomm/types
     ${HCCL_CC_INCLUDE_DIR}/hcomm/hccl

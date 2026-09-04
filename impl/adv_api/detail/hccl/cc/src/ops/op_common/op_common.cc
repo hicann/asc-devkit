@@ -811,7 +811,14 @@ HcclResult HcclGetAlgRes(
             // ccu申请aiv内存用于存放resctx
             ctxEngine = COMM_ENGINE_AIV;
         }
+        HCCL_INFO(
+            "[asc][AlgoResource][HcclGetAlgRes] before HcclEngineCtxGet, algTag[%s], engine[%d], ctxEngine[%d].",
+            param.algTag, param.engine, ctxEngine);
         if (HcclEngineCtxGet(comm, param.algTag, ctxEngine, &ctx, &size) == HCCL_SUCCESS) {
+            HCCL_INFO(
+                "[asc][AlgoResource][HcclGetAlgRes] HcclEngineCtxGet HIT cache, algTag[%s], engine[%d], ctxEngine[%d], "
+                "ctxSize[%llu].",
+                param.algTag, param.engine, ctxEngine, static_cast<unsigned long long>(size));
             HCCL_DEBUG("Already have context, skip create, ctxSize is %u", param.ctxSize);
             isResourceReused = true;
             *resCtxSequence = ctx;
@@ -823,6 +830,10 @@ HcclResult HcclGetAlgRes(
 
             return HCCL_SUCCESS;
         }
+        HCCL_INFO(
+            "[asc][AlgoResource][HcclGetAlgRes] HcclEngineCtxGet MISS cache, algTag[%s], engine[%d], ctxEngine[%d], "
+            "will alloc new resource.",
+            param.algTag, param.engine, ctxEngine);
     }
 
     // 计算AlgHierarchyInfo
@@ -1349,6 +1360,13 @@ HcclResult GetAlgResCcu(
         HCCL_ERROR("failed to alloc alg resource.");
         return ret;
     }
+    // checkRes场景不需要device ctx：resCtxHost是host侧unique_ptr，随作用域自动释放，
+    // 这里跳过序列化与ctx申请，避免申请后无法回收的device内存
+    if (param.checkRes) {
+        HCCL_INFO("[GetAlgResCcu] checkRes only, skip serialize and device ctx alloc.");
+        return HCCL_SUCCESS;
+    }
+
     // 序列化
     std::vector<char> seq = resCtxHost->Serialize();
     uint64_t size = seq.size();
@@ -1382,31 +1400,36 @@ HcclResult HcclAllocAlgResourceCcu(
     return HCCL_E_NOT_SUPPORT;
 #else
     HCCL_INFO("Start to execute AllocAlgResource.");
-    void* cclBufferAddr;
-    uint64_t cclBufferSize;
-    // 从通信域获取CCL buffer
-    CHK_RET(HcclGetHcclBuffer(comm, &cclBufferAddr, &cclBufferSize));
-    // CCL IN使用所有的CCL Buffer，这个其实就是scratch buffer
-    resCtxHost->cclMem = HcclMem{HCCL_MEM_TYPE_DEVICE, cclBufferAddr, cclBufferSize};
+    // checkRes场景仅探测CCU kernel资源是否充足，不获取CCL buffer/token，也不申请thread与channel
+    if (!param.checkRes) {
+        void* cclBufferAddr;
+        uint64_t cclBufferSize;
+        // 从通信域获取CCL buffer
+        CHK_RET(HcclGetHcclBuffer(comm, &cclBufferAddr, &cclBufferSize));
+        // CCL IN使用所有的CCL Buffer，这个其实就是scratch buffer
+        resCtxHost->cclMem = HcclMem{HCCL_MEM_TYPE_DEVICE, cclBufferAddr, cclBufferSize};
 
-    // 在确保 cclMem 可用的前提下，更新所有 mission 的 token 占位符。
-    uint64_t token = GetTokenFromBuffInfo(cclBufferAddr, cclBufferSize);
-    if (resCtxHost->kfcServerArgs.size() < KFC_SERVER_ARG_NUM) {
-        HCCL_WARNING(
-            "[HcclAllocAlgResourceCcu] kfcServerArgs size[%zu] < 6, cannot update token",
-            resCtxHost->kfcServerArgs.size());
-    } else {
-        for (size_t offset = 0; offset + KFC_SERVER_TOKEN_ARG_INDEX < resCtxHost->kfcServerArgs.size();
-             offset += KFC_SERVER_ARG_NUM) {
-            resCtxHost->kfcServerArgs[offset + KFC_SERVER_TOKEN_ARG_INDEX] = token;
+        // 在确保 cclMem 可用的前提下，更新所有 mission 的 token 占位符。
+        uint64_t token = GetTokenFromBuffInfo(cclBufferAddr, cclBufferSize);
+        if (resCtxHost->kfcServerArgs.size() < KFC_SERVER_ARG_NUM) {
+            HCCL_WARNING(
+                "[HcclAllocAlgResourceCcu] kfcServerArgs size[%zu] < 6, cannot update token",
+                resCtxHost->kfcServerArgs.size());
+        } else {
+            for (size_t offset = 0; offset + KFC_SERVER_TOKEN_ARG_INDEX < resCtxHost->kfcServerArgs.size();
+                 offset += KFC_SERVER_ARG_NUM) {
+                resCtxHost->kfcServerArgs[offset + KFC_SERVER_TOKEN_ARG_INDEX] = token;
+            }
+            HCCL_INFO("[HcclAllocAlgResourceCcu] token[%llu] updated for all KFC missions", token);
         }
-        HCCL_INFO("[HcclAllocAlgResourceCcu] token[%llu] updated for all KFC missions", token);
     }
 
     resCtxHost->notifyNumOnMainThread = resRequest.notifyNumOnMainThread;
     resCtxHost->slaveThreadNum = resRequest.slaveThreadNum;
     resCtxHost->notifyNumPerThread = resRequest.notifyNumPerThread;
-    CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
+    if (!param.checkRes) {
+        CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
+    }
     CHK_RET(HcclGetChannelForCcu(comm, param, resRequest));
     CHK_RET(HcclGetCcuKernel(comm, param, resRequest, resCtxHost));
     return HCCL_SUCCESS;
@@ -1876,7 +1899,7 @@ static HcclResult BuildAggregatedResReq(AlgResourceRequest& resRequest, ResDescB
 // 任一 die 不足返回 HCCL_E_UNAVAIL 触发回退。函数内部销毁 reqDescs。
 static HcclResult ReuseExistingCcuIns(
     CcuInsHandle insHandle, ResDescByDie& reqDescs, AlgResourceRequest& resRequest,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost)
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, bool checkRes)
 {
     HCCL_INFO("[ReuseExistingCcuIns] reuse existing CcuIns, insHandle[%p], dieNum[%zu].", insHandle, reqDescs.size());
     bool allSufficient = true;
@@ -1926,6 +1949,10 @@ static HcclResult ReuseExistingCcuIns(
         HCCL_WARNING("[ReuseExistingCcuIns] existing CcuIns resource insufficient, try to fallback.");
         HCCL_RUN_INFO("[ReuseExistingCcuIns] insufficient res detail: %s", allDieInsuffSummary.c_str());
         return HCCL_E_UNAVAIL;
+    }
+    if (checkRes) {
+        HCCL_INFO("[ReuseExistingCcuIns] checkRes only, resource sufficient, skip kernel register.");
+        return HCCL_SUCCESS;
     }
     return RegisterCcuKernels(insHandle, resRequest, resCtxHost);
 }
@@ -2009,7 +2036,7 @@ static void CollectInsufficientResFromRemain(
 // 函数内部销毁 reqDescs。
 static HcclResult CreateAndAssignNewCcuIns(
     HcclComm comm, OpExecuteConfig opMode, ResDescByDie& reqDescs, AlgResourceRequest& resRequest,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost)
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, bool checkRes)
 {
     HCCL_INFO(
         "[CreateAndAssignNewCcuIns] no existing CcuIns, create new one, opMode[%u], dieNum[%zu].",
@@ -2061,6 +2088,10 @@ static HcclResult CreateAndAssignNewCcuIns(
     for (auto d : finalReqDescs) {
         HcommCcuInsResDescDestroy(d);
     }
+    if (checkRes) {
+        HCCL_INFO("[CreateAndAssignNewCcuIns] checkRes only, resource sufficient, skip kernel register.");
+        return HCCL_SUCCESS;
+    }
     return RegisterCcuKernels(newInsHandle, resRequest, resCtxHost);
 }
 
@@ -2068,7 +2099,7 @@ static HcclResult CreateAndAssignNewCcuIns(
 // -> 3a.容量充足则复用并注册 / 3b.新建实例并绑定 comm 后注册。接口返回 CCU_E_UNAVAIL 时触发回退。
 static HcclResult HcclGetCcuKernelDynamic(
     HcclComm comm, OpExecuteConfig opMode, AlgResourceRequest& resRequest,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost)
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, bool checkRes)
 {
     HCCL_INFO(
         "[HcclGetCcuKernelDynamic] start, opMode[%u], kernelNum[%zu].", static_cast<uint32_t>(opMode),
@@ -2104,8 +2135,9 @@ static HcclResult HcclGetCcuKernelDynamic(
 
     // 步骤3：有可复用实例走复用路径，否则新建；reqDescs 所有权转移给子函数
     // opMode 透传下去：新建路径需要根据模式取不同的默认阈值（MS 模式 LOOP/CCU_BUF 阈值更大）
-    HcclResult finalRet = hasReusableIns ? ReuseExistingCcuIns(insHandle, reqDescs, resRequest, resCtxHost) :
-                                           CreateAndAssignNewCcuIns(comm, opMode, reqDescs, resRequest, resCtxHost);
+    HcclResult finalRet = hasReusableIns ?
+                              ReuseExistingCcuIns(insHandle, reqDescs, resRequest, resCtxHost, checkRes) :
+                              CreateAndAssignNewCcuIns(comm, opMode, reqDescs, resRequest, resCtxHost, checkRes);
 
     // 资源不足导致回退时记一条 run info，便于运维统计动态资源申请的回退频率
     if (finalRet == HCCL_E_UNAVAIL) {
@@ -2140,7 +2172,13 @@ HcclResult HcclGetCcuKernel(
         HCCL_INFO(
             "[HcclGetCcuKernel] use dynamic resource apply flow, opMode[%u].",
             static_cast<uint32_t>(param.opExecuteConfig));
-        return HcclGetCcuKernelDynamic(comm, param.opExecuteConfig, resRequest, resCtxHost);
+        return HcclGetCcuKernelDynamic(comm, param.opExecuteConfig, resRequest, resCtxHost, param.checkRes);
+    }
+
+    // checkRes 仅在IsCcuDynamicResApiSupported为true的情况下生效
+    if (param.checkRes) {
+        HCCL_INFO("[HcclGetCcuKernel] checkRes but dynamic res api unsupported, skip check.");
+        return HCCL_SUCCESS;
     }
 
     // 兼容旧 hcomm 包
