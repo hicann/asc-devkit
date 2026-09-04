@@ -44,6 +44,12 @@
 - **立即数偏移搬出模式**：通过`int32_t offset`指定相对目的起始地址的偏移，偏移单位为**字节**，用户可选择更新偏移或更新目的地址。
 - **地址寄存器偏移搬出模式**：通过地址寄存器`addr_reg offset`指定相对目的起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的压缩搬出场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 
+以**b32位宽压缩至b16位宽搬出**过程为例，示意图如下：
+
+**图1** 压缩搬出数据
+
+![](../../../../figures/reg_store_pack.png)
+
 本接口仅在AIV上执行有效。
 
 从矢量数据寄存器压缩搬出到Unified Buffer（UB）的接口，根据`mask`将`src`中有效元素的低半部分bit数据连续存储于`dst`中，支持数据类型为`b16`、`b32`、`b64`。

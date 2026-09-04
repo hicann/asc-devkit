@@ -36,6 +36,12 @@
 - **立即数偏移搬出模式**：通过`int32_t offset`指定相对目的起始地址的元素偏移，用户可选择更新偏移或更新目的地址。
 - **地址寄存器偏移搬出模式**：通过地址寄存器`addr_reg offset`指定相对目的起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬出场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 
+以**b16位宽单点搬出**过程为例，示意图如下：
+
+**图1** b16单个元素搬出数据
+
+![](../../../../figures/reg_store_onept.png)
+
 本接口仅在AIV上执行有效。
 
 ## 函数原型
