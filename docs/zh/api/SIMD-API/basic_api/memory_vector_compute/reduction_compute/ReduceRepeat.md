@@ -126,6 +126,7 @@
     | `uint32_t` | `uint16_t`，`uint32_t` |
     | `half` | `half` |
     | `float` | `float` |
+
 <!-- end id18 -->
 
 <!-- npu="A3,910b,910,310p,310b,x90,9030" id19 -->

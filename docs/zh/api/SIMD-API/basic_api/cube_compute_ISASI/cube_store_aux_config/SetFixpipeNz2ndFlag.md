@@ -68,6 +68,7 @@ Atlas 200I/500 A2 推理产品
 | ndNum | 输入 | nd矩阵的数量，取值范围∈[1, 65535]。（[具体含义图示参见NZ2ND介绍特性章节](../cube_store_key_features/NZ2ND.md)） |
 | srcNdStride | 输入 | 以分形大小为单位的源步长，源相邻nz矩阵的偏移（头与头）。当ndNum大于1时，取值范围∈[1, 512]；当ndNum配置为1时，srcNdStride可配置为0，此时不生效。单位为1024B。 |
 | dstNdStride | 输入 | 目的相邻nd矩阵的偏移（头与头）。取值范围dstNdStride∈[1, 65535]，单位为element元素。 |
+
 <!-- end id11 -->
 
 <!-- npu="950" id15 -->
@@ -80,6 +81,7 @@ Atlas 200I/500 A2 推理产品
 | ndNum | 输入 | nd矩阵的数量，取值范围∈[1, 65535]。（[具体含义图示参见NZ2ND介绍特性章节](../cube_store_key_features/NZ2ND.md)） |
 | srcNdStride | 输入 | 以分形大小为单位的源步长，源相邻nz矩阵的偏移（头与头）。当ndNum配置为1时，srcNdStride配置为0即可，不生效。取值范围∈[0, 65535]，单位为C0_SIZE。 |
 | dstNdStride | 输入 | 目的相邻nd矩阵的偏移（头与头）。取值范围dstNdStride∈[1, 2^32-1]，单位为element元素。 |
+
 <!-- end id15 -->
 
 <!-- npu="x90,9030" id16 -->
@@ -97,6 +99,7 @@ Kirin 9030 处理器系列产品
 | ndNum | 输入 | nd矩阵的数量，取值范围∈[1, 65535]。（[具体含义图示参见NZ2ND介绍特性章节](../cube_store_key_features/NZ2ND.md)） |
 | srcNdStride | 输入 | 以分形大小为单位的源步长，源相邻nz矩阵的偏移（头与头）。当ndNum配置为1时，srcNdStride配置为0即可，不生效。取值范围∈[0, 65535]，单位为C0_SIZE。 |
 | dstNdStride | 输入 | 目的相邻nd矩阵的偏移（头与头）。取值范围dstNdStride∈[0, 65535]，单位为element元素。 |
+
 <!-- end id16 -->
 
 ## 数据类型

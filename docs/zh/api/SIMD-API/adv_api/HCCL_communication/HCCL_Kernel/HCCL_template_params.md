@@ -41,6 +41,7 @@ class Hccl;
 **表1**  Hccl类模板参数说明
 
 <a name="hccl-template-params"></a>
+
 | 参数名称 | 描述 |
 | --- | --- |
 | serverType | 支持的服务端类型。HcclServerType枚举类型，取值如下。<br>HCCL_SERVER_TYPE_AICPU：AI CPU服务端。<br>HCCL_SERVER_TYPE_CCU：CCU服务端。<br>HCCL_SERVER_TYPE_END：预留参数，不支持使用。<!-- npu="950" id7 --><br><br>对于Ascend 950PR/Ascend 950DT，当前仅支持HCCL_SERVER_TYPE_CCU。<!-- end id7 --><!-- npu="A3" id8 --><br><br>对于Atlas A3 训练系列产品/Atlas A3 推理系列产品，当前仅支持HCCL_SERVER_TYPE_AICPU。<!-- end id8 --><!-- npu="910b" id9 --><br><br>对于Atlas A2 训练系列产品/Atlas A2 推理系列产品，当前仅支持HCCL_SERVER_TYPE_AICPU。<!-- end id9 --> |

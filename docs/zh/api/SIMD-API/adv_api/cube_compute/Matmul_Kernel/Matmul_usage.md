@@ -63,6 +63,7 @@ Matmul的计算公式为：C = A \* B + Bias，其示意图如下。
     **表1**  MatmulType参数说明
 
     <a name="table1188045714378"></a>
+
     | 参数 | 说明 |
     | --- | --- |
     | POSITION | 内存逻辑位置。<!-- npu="950" id15 --><br><br>针对Ascend 950PR/Ascend 950DT：<br>    A矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>B矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>Bias可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>C矩阵可设置为TPosition::GM，TPosition::VECIN<br> 注意，A矩阵、B矩阵或Bias矩阵设置为TPosition::VECOUT或TPosition::TSCM时，对应矩阵用于单核计算的数据必须全部在Unified Buffer（UB）或L1 Buffer上，具体样例请参考[matmul_vecout样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_vecout)、[自定义数据来源为VECOUT的TSCM输入的Matmul算子样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_tscm_src_vecout)、[自定义数据来源为GM的TSCM输入的Matmul算子样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_tscm)。<!-- end id15 --><!-- npu="A3" id16 --><br><br>针对Atlas A3 训练系列产品/Atlas A3 推理系列产品：<br>    A矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>B矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>Bias可设置为TPosition::GM，TPosition::VECOUT<br>C矩阵可设置为TPosition::GM，TPosition::VECIN, TPosition::CO1<br>   注意，C矩阵设置为TPosition::CO1时，C矩阵的数据排布格式仅支持CubeFormat::NZ，C矩阵的数据类型仅支持float、int32_t。<!-- end id16 --><!-- npu="910b" id17 --><br>   <br>针对Atlas A2 训练系列产品/Atlas A2 推理系列产品：<br>    A矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>B矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>Bias可设置为TPosition::GM，TPosition::VECOUT<br>C矩阵可设置为TPosition::GM，TPosition::VECIN, TPosition::CO1<br>   注意，C矩阵设置为TPosition::CO1时，C矩阵的数据排布格式仅支持CubeFormat::NZ，C矩阵的数据类型仅支持float、int32_t。<!-- end id17 --><!-- npu="310p" id18 --><br><br>针对Atlas 推理系列产品AI Core：<br>    A矩阵可设置为TPosition::GM，TPosition::VECOUT<br>B矩阵可设置为TPosition::GM，TPosition::VECOUT<br>Bias可设置为TPosition::GM，TPosition::VECOUT<br>C矩阵可设置为TPosition::GM，TPosition::VECIN<!-- end id18 --><!-- npu="310b" id19 --><br>    <br>针对Atlas 200I/500 A2 推理产品：<br>    A矩阵可设置为TPosition::GM<br>B矩阵可设置为TPosition::GM<br>Bias可设置为TPosition::GM<br>C矩阵可设置为TPosition::GM<!-- end id19 --><!-- npu="x90" id1 --><br>    <br>针对Kirin X90:<br>    A矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br>B矩阵可设置为TPosition::GM，TPosition::VECOUT, TPosition::TSCM<br>Bias可设置为TPosition::GM，TPosition::VECOUT<br>C矩阵可设置为TPosition::GM，TPosition::CO1<!-- end id1 --><!-- npu="9030" id2 --><br>    <br>针对Kirin 9030：<br>    A矩阵可设置为TPosition::TSCM<br>B矩阵可设置为TPosition::TSCM<br>Bias可设置为TPosition::GM<br>C矩阵可设置为TPosition::GM<!-- end id2 --> |
@@ -79,6 +80,7 @@ Matmul的计算公式为：C = A \* B + Bias，其示意图如下。
     **表2**  Matmul输入输出数据类型的支持列表
 
     <a name="table1996113269499"></a>
+
     | A矩阵 | B矩阵 | Bias | C矩阵 | 支持平台 |
     | --- | --- | --- | --- | --- |
     | float | float | float/half | float/half/bfloat16_t | <!-- npu="950" id38 -->Ascend 950PR/Ascend 950DT<!-- end id38 --><!-- npu="A3" id39 --><br>    <br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<!-- end id39 --><!-- npu="910b" id40 --><br>   <br>Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id40 --><!-- npu="310b" id41 --><br>    <br>Atlas 200I/500 A2 推理产品<!-- end id41 --> |
@@ -101,6 +103,7 @@ Matmul的计算公式为：C = A \* B + Bias，其示意图如下。
     | bfloat16_t | bfloat16_t | bfloat16_t | float/half/bfloat16_t | <!-- npu="950" id83 -->Ascend 950PR/Ascend 950DT<!-- end id83 --> |
     | half | half | bfloat16_t | float/half/bfloat16_t | <!-- npu="950" id84 -->Ascend 950PR/Ascend 950DT<!-- end id84 --> |
     | int8_t | int8_t | int32_t | bfloat16_t | <!-- npu="950" id85 -->Ascend 950PR/Ascend 950DT<!-- end id85 --> |
+
     <!-- end id102 -->
 
     <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_usage_res.md#id6 -->

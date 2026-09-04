@@ -1160,6 +1160,7 @@ __global__ __mix__ void mix_kernel(__gm__ float* x, __gm__ float* y, __gm__ floa
 | --- | --- |
 | 基础API | AddDeqRelu、Select |
 | 高阶API | Digamma、Lgamma、Power、Sign、LayerNorm、DropOut、SelectWithBytesMask |
+
 <!-- end id5 -->
 
 <!-- npu="950" id6 -->
@@ -1178,4 +1179,5 @@ __global__ __mix__ void mix_kernel(__gm__ float* x, __gm__ float* y, __gm__ floa
 | 基础API > Kernel-Tiling | GET_TILING_DATA、GET_TILING_DATA_WITH_STRUCT、GET_TILING_DATA_MEMBER |
 | Utils API > 调测接口（SIMD VF） | printf、asc_dump_reg、asc_dump、asc_dump_ubuf |
 | 高阶API | AscendAntiQuant、AdjustSoftMaxRes、TopK |
+
 <!-- end id6 -->

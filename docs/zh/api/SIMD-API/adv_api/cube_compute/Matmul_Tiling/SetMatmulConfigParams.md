@@ -19,6 +19,7 @@ void SetMatmulConfigParams(const MatmulConfigParams& configParams)
 **表1**  参数说明
 
 <a name="table9646134355611"></a>
+
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | mmConfigTypeIn | 输入 | 设置Matmul的模板类型，需要与Matmul对象创建的模板一致，当前只支持配置为0或1。<br>0：代表Norm模板<br>1：代表MDL模板，默认值为1 |
@@ -52,6 +53,7 @@ struct MatmulConfigParams {
 **表2**  MatmulConfigParams结构体内参数说明
 
 <a name="table15780447181917"></a>
+
 | 参数名称 | 含义 |
 | --- | --- |
 | mmConfigType | 设置Matmul的模板类型，需要与Matmul对象创建的模板一致，当前只支持配置为0或1。<br>0：代表Norm模板<br>1：代表MDL模板，默认值为1 |

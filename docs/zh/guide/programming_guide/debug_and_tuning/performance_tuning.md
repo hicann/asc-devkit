@@ -222,6 +222,7 @@
        └──visualize_data.bin   # MindStudio Insight呈现文件
     ```
 **表4 msopprof simulator文件介绍**
+
 | 名称 | 说明 |
 |--|--|
 | dump文件夹 | 原始仿真生成的dump数据存放文件夹。 |

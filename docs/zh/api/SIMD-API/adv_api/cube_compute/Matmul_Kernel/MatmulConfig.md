@@ -9,6 +9,7 @@
 **表1**  模板特性
 
 <a id="template-features"></a>
+
 | 模板 | 实现 | 优点 | 推荐使用场景 |
 | --- | --- | --- | --- |
 | Norm | 支持L1缓存多个基本块，MTE2分多次从GM搬运基本块到L1，每次搬运一份基本块，已搬的基本块不清空。（举例说明：Tiling结构体中的[depthA1](../Matmul_Tiling/TCubeTiling_struct.md#deptha1)=6，代表搬入6份A矩阵基本块到L1，1次搬运一份基本块，MTE2进行6次搬运）。 | 可以提前启动MTE1流水（因为搬1份基本块就可以做MTE1后面的运算）。 | 默认开启Norm模板。 |
@@ -20,6 +21,7 @@
 **表2**  MatmulConfig参数说明
 
 <a id="matmulconfig-params"></a>
+
 | 参数 | 说明 | 支持模板：Norm, MDL, SpecialMDL, IBShare, BasicBlock, SpecialBasicBlock |
 | --- | --- | --- |
 | doNorm | 开启Norm模板。参数取值如下：<br>true：开启Norm模板。false：不开启Norm模板。<br><br>不指定模板的情况默认开启Norm模板。<!-- npu="9030" id1 --><br><br>Kirin 9030不支持此参数。<!-- end id1 --> | Norm |

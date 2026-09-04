@@ -22,6 +22,7 @@ MX格式的数据类型包含多种，例如MXFP8、MXFP4、MXFP16、MXINT4等�
 **表1**  MxMatmul支持MX格式的数据类型
 
 <a name="zh-cn_topic_0000002270097206_table5383144710452"></a>
+
 | 数据类型 | 私有元素数据类型 | 私有元素位宽（d） | 块大小(k) | 共享缩放因子数据类型 | 共享缩放因子位宽(w) |
 | --- | --- | --- | --- | --- | --- |
 | MXFP8 | fp8_e5m2_t | 8 | 32 | fp8_e8m0_t | 8 |
@@ -207,6 +208,7 @@ Host侧自动获取Tiling参数的关键步骤介绍如下：
 **表3**  MatmulTypeWithScale参数说明
 
 <a name="zh-cn_topic_0000002270097206_table14759942142014"></a>
+
 | 参数 | 说明 |
 | --- | --- |
 | POSITION | 左右矩阵的内存逻辑位置。<!-- npu="950" id2 --><br><br>针对Ascend 950PR/Ascend 950DT：<br><br>A矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<br><br>B矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM<!-- end id2 --><br><br>注意：A、B矩阵设置为TPosition::TSCM时，对应的Format仅支持CubeFormat::NZ。 |

@@ -5,6 +5,7 @@ TCubeTiling结构体包含Matmul Tiling切分算法的相关参数，被传递�
 **表1**  TCubeTiling结构说明
 
 <a id="tcubetiling-struct"></a>
+
 | 参数名称 | 数据类型 | 说明 |
 | --- | --- | --- |
 | usedCoreNum | int | 使用的AI处理器核数，请根据实际情况设置。取值范围为：[1, AI处理器最大核数]。该参数与shape相关参数的关系为：usedCoreNum = (M / singleCoreM) * (N / singleCoreN)。 |
@@ -38,6 +39,7 @@ TCubeTiling结构体包含Matmul Tiling切分算法的相关参数，被传递�
     **表2**  TCubeTiling约束条件
 
     <a name="table1275812182115"></a>
+
     | 约束条件 | 说明 |
     | --- | --- |
     | usedCoreNum <= aiCoreCnt | 使用核数小于等于当前AI处理器的最大核数 |
@@ -54,6 +56,7 @@ TCubeTiling结构体包含Matmul Tiling切分算法的相关参数，被传递�
     **表3**  MDL模板补充约束条件
 
     <a name="table1094616401179"></a>
+
     | 约束条件 | 说明 |
     | --- | --- |
     | Ka不全载时，即Ka / baseK > stepKa，stepM = 1 | K方向非全载时，M方向只能逐块搬运 |

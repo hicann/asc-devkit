@@ -12,6 +12,7 @@ AI CPU启动下发通信任务前，需获取固定的通信配置，如[表1](#
 **表1**  v2版本HCCL TilingData参数说明
 
 <a name="table4835205712588"></a>
+
 | 参数名 | 描述 |
 | --- | --- |
 | version | uint32_t类型。用于区分TilingData版本。<br><br>v2版本的TilingData结构体中，version字段仅支持取值为2。<br><br>注意：该字段在v2版本TilingData中的位置，同v1版本的preparePosition字段。当该字段取值为2时，为v2版本的结构体，当取值为1时，为v1版本的结构体，请使用[Mc2Msg结构体](v1_TilingData_deprecated.md#table4835205712588)。 |

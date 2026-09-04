@@ -441,6 +441,7 @@ __ubuf__ int * __gm__ ptr;
 ## 内置常量<a name="section784531219338"></a>
 
 **表2**  内置常量
+
 | 常量名 | 取值 | 功能 |
 |--------|------|------|
 | constexpr int32_t g_coreType | AscendC::AIC<br>AscendC::AIV | 常量值由框架自动设置，AIC核下，配置为AscendC::AIC，AIV核下，配置为AscendC::AIV。可以通过对该常量值的判断，来实现了AIV与AIC核代码的区分和隔离。功能等同于直接使用ASCEND_IS_AIV、ASCEND_IS_AIC。 |

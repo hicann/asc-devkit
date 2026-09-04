@@ -28,6 +28,7 @@ Ascend C API的操作数通常为[GlobalTensor](basic_api/data_structures/Global
 **表1**  TPosition与物理内存映射关系
 
 <a name="table07372185712"></a>
+
 | TPosition | 物理内存 |
 | --- | --- |
 | GM | Global Memory |
@@ -53,6 +54,7 @@ AI Core上的存储单元用于存储矢量计算、矩阵计算的源操作数�
 **表2**  不同存储单元的对齐要求
 
 <a name="table16278354141117"></a>
+
 | 存储单元 | 对齐要求 |
 | --- | --- |
 | Global Memory | 无对齐要求。 |

@@ -79,6 +79,7 @@ __simd_callee__ inline void Histograms(V& dstReg, S& srcReg, MaskReg& mask)
 ## 数据类型
 
 **表 3**  源操作数和目的操作数的数据类型对应表<a id="table3"></a>  
+
 | T数据类型 | U数据类型 |
 | ------ | ------ |
 | uint8_t | uint16_t |

@@ -53,6 +53,7 @@ __aicore__ inline void asc_copy_ub2ub_sync(__ubuf__ void* dst, __ubuf__ void* sr
 ## 参数说明
 
 **表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |
 | dst | 输出 | 目的UB地址。 |

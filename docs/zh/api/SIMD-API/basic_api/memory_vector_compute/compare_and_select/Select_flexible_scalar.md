@@ -81,6 +81,7 @@
 **表2**  参数说明
 
 <a name="table8955841508"></a>
+
 | 参数名称 | 输入/输出 | 含义 |
 | :--- | :--- | :--- |
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐 |

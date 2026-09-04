@@ -21,6 +21,7 @@ Cache Line是Cache加载、失效、写回的最小操作粒度。例如访问GM
 | AIC DCache | Scalar数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 64B | 32KB |
 | AIV DCache | Scalar数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 64B | 32KB |
 | SIMT DCache | SIMT数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 128B | 32KB~128KB |
+
 <!-- end id15 -->
 
 <!-- npu="A3,910b" id20 -->
@@ -33,6 +34,7 @@ Cache Line是Cache加载、失效、写回的最小操作粒度。例如访问GM
 | AIV ICache | Scalar取指缓存 | 只读，不考虑多个核之间的数据不一致问题 | 128B | 16KB |
 | AIC DCache | Scalar数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 64B | 16KB |
 | AIV DCache | Scalar数据缓存 | 每个核独立缓存，需要考虑多个核之间的数据一致性问题 | 64B | 32KB |
+
 <!-- end id20 -->
 
 同一份数据可能同时存在于GM、L2 Cache、DCache<!-- npu="950" id2 -->、SIMT DCache<!-- end id2 -->等多个位置。对于每个核独立维护的Cache，同一地址或同一Cache Line可能在不同核内形成不同副本：

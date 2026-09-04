@@ -14,6 +14,7 @@ OpParamDef &ValueDepend(Option value_depend, DependScope scope)
 ## 参数说明<a name="zh-cn_topic_0000001626329929_zh-cn_topic_0000001576875005_zh-cn_topic_0000001525424352_section75395119104"></a>
 
 <a name="zh-cn_topic_0000001626329929_zh-cn_topic_0000001576875005_zh-cn_topic_0000001575944081_table111938719446"></a>
+
 | 参数 | 输入/输出 | 说明 |
 | --- | --- | --- |
 | `value_depend` | 输入 | `REQUIRED`：表示算子的输入必须是Const类型。在调用算子的[SetCheckSupport](../OpAICoreDef/SetCheckSupport.md)时，会校验算子的输入是否是Const类型。若校验通过，则将此输入的值下发到算子；否则报错。`OPTIONAL`：表示算子的输入可以是Const类型，也可以不是Const类型。如果输入是Const类型，则将输入的值下发到算子，否则不下发。 |

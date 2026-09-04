@@ -7,6 +7,7 @@ TConv3DBpFilterTiling结构体包含Conv3dBackpropFilter算子规格信息及Til
 **表1**  TConv3DBpFilterTiling结构说明
 
 <a name="table1563162142915"></a>
+
 | 参数名称 | 说明 |
 | --- | --- |
 | batch | 输入GradOutput的Batch，单位元素。 |

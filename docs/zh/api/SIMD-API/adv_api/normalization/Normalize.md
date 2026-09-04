@@ -81,6 +81,7 @@ struct NormalizeConfig {
 **表2**  接口参数说明
 
 <a name="table2087718184450"></a>
+
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
 | output | 输出 | 目的操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |

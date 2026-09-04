@@ -194,6 +194,7 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
             | isAIVOnly=true | 14 | AIV：14 |
             | isAIVOnly=false（核函数（Kernel）使用`__mix__(1, 1)`修饰时） | 11、12、13 | AIC：11、12、13；AIV：12、13 |
             | isAIVOnly=false（核函数（Kernel）使用`__mix__(1, 2)`修饰时） | 11、12、13、28、29 | AIC：11、12、13、28、29；AIV：12、13 |
+
         <!-- end id28 -->
         <!-- npu="A3,910b" id29 -->
         - 针对[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，SyncAll硬件同步接口的flagId占用情况如表4所示：
@@ -204,6 +205,7 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
             | :--- | :--- | :--- |
             | isAIVOnly=true | 14 | AIV：14 |
             | isAIVOnly=false | 11、12、13 | AIC：11、12、13；AIV：12、13 |
+
         <!-- end id29 -->
 
 - 硬件同步接口和软件同步接口公共约束：使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致核函数（Kernel）“卡死”现象。

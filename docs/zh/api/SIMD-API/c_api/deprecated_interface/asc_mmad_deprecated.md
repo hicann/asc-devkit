@@ -185,6 +185,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 | disable_gemv | 输入 | M为1时，配置是否关闭GEMV模式。<br>&nbsp;&nbsp;&bull; false：开启GEMV模式。<br>&nbsp;&nbsp;&bull; true：关闭GEMV模式。<br>M不为1时，该参数不生效。 |
 | c_matrix_source | 输入 | 当参数`c_matrix_init_val`为false时，配置矩阵C的初始值来源。<br>&nbsp;&nbsp;&bull; false：矩阵C的初始值来源于L0C Buffer。<br>&nbsp;&nbsp;&bull; true：矩阵C的初始值来源于BiasTable Buffer。 |
 | c_matrix_init_val | 输入 | 配置是否将矩阵C的初始值设置为0。<br>&nbsp;&nbsp;&bull; true：将矩阵C的初始值设置为0，参数`c_matrix_source`不生效。<br>&nbsp;&nbsp;&bull; false：不执行清零操作，矩阵C的初始值由参数`c_matrix_source`配置。 |
+
 <!-- end id14 -->
 
 <!-- npu="A3,910b" id21 -->
@@ -205,6 +206,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 | is_weight_offset | 输入 | 无效参数，用户无需关注，传入false即可。 |
 | c_matrix_source | 输入 | 当`c_matrix_init_val`为false时，配置矩阵C的初始值是否来自BiasTable Buffer。 |
 | c_matrix_init_val | 输入 | 配置是否将矩阵C的初始值设置为0。 |
+
 <!-- end id21 -->
 
 ## 返回值说明

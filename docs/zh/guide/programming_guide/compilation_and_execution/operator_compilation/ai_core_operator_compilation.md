@@ -88,6 +88,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 ![aicore simt编译流程示意图](../../../figures/aicore_simt_comilation.png)
 
 ## 基本编译命令汇总
+
 |编译方式|AI Core SIMD编译命令| AI Core SIMT编译命令|
 |-|-|-|
 |异构编译| bisheng <source_file>.asc -o \<output_file\> --npu-arch=dav-\<npu architecture\> | bisheng <source_file>.asc -o <output_file> --npu-arch=dav-\<npu architecture\> **--enable-simt**|
@@ -97,6 +98,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 
 
 ## 常用的编译选项<a name="ZH-CN_TOPIC_0000002462746461"></a>
+
 | 选项 | 是否必需 | 说明 |
 |------|----------|------|
 | -help | 否 | 查看帮助。 |
@@ -244,6 +246,7 @@ add_executable(demo
     )
     ```
 **表1常用的CMAKE配置变量说明**
+
 | 变量名称 | 配置说明 |
 |--|--|
 | CMAKE_BUILD_TYPE | 编译模式选项，可配置为：Release或Debug。Release版本，不包含调试信息，编译最终发布的版本。Debug版本，包含调试信息，便于开发者开发和调试。配置其他值时CMake会发出警告，但不中止构建。 |
@@ -319,6 +322,7 @@ add_executable(demo
 ### 内置链接库<a name="section57020345148"></a>
 
 毕昇编译器默认链接的库文件，列表如下：
+
 | 名称 | 作用描述 |
 |------|----------|
 | libascendc_runtime.a | Ascend C算子参数等组装库。 |
@@ -333,6 +337,7 @@ add_executable(demo
 
 ### 高阶API常用链接库
 在使用高阶API时，必须链接以下库，因为这些库是高阶API功能所依赖的。在其他场景下，可以根据具体需求选择是否链接这些库。
+
 |链接库名称|作用描述|使用场景|动态库路径|
 |--|--|--|--|
 |libtiling_api.a|Tiling函数相关库。|使用高阶API相关的Tiling接口时需要链接。|${ASCEND_HOME_PATH}/lib64|

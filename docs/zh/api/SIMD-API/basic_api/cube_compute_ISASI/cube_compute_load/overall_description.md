@@ -49,6 +49,7 @@
 | [DataCopy（GMToL1随路转换-DN2NZ搬运）](DataCopy_GMToL1_DN2NZ.md) | 从GM搬运至L1 Buffer，搬运同时完成DN到NZ格式的转换。 | GM->L1 Buffer | DN格式权重数据搬入L1 Buffer并转换为NZ格式。 |
 | [DataCopyPad（GMToL1非对齐数据搬运）](DataCopyPad_GMToL1.md) | 将数据从GM非对齐搬运至L1 Buffer，支持在数据左/右侧自行填充。 | GM->L1 Buffer | GM中非对齐数据搬入L1 Buffer时进行补齐。 |
 | [LoadData（GMToL1-2D矩阵搬运V2）](LoadData_GMToL1_2DV2.md) | 使用2DV2指令以512B分形为单位搬运2D格式数据从GM到L1 Buffer。 | GM->L1 Buffer | 矩阵计算2D分形数据从GM搬入L1 Buffer。 |
+
 <!-- end id2 -->
 
 ## UB->L1 Buffer的接口分类与使用场景<a name="zh-cn_topic_0000002543771563_section_ub2l1"></a>
@@ -87,6 +88,7 @@
 | 接口类别 | 主要功能 | 支持通路 | 典型应用场景 |
 | --- | --- | --- | --- |
 | [LoadDataWithSparse](LoadDataWithSparse.md) | 搬运4选2结构化稀疏矩阵计算所需的稠密化权重矩阵和索引矩阵。 | L1 Buffer->L0B Buffer | 稀疏矩阵乘法计算数据搬入。 |
+
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
@@ -100,6 +102,7 @@
 | [LoadData（BitMode2D矩阵搬运）](LoadData_2D_BitMode.md) | LoadData（2D矩阵搬运V2）的bit模式变体，支持按位操作的数据搬运。 | L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer | 用于追求极致Scalar性能的普通矩阵数据搬运。 |
 | [LoadData（MX矩阵搬运）](LoadData_2D_MX.md) | LoadData（2D矩阵搬运V2）的MX格式扩展，支持MX格式矩阵数据搬运。 | L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer | MX浮点格式的矩阵数据搬入。 |
 | [LoadData（BitMode卷积数据搬运）](LoadData_3D_BitMode.md) | LoadData（卷积数据搬运）的bit模式变体，支持按位操作的3D数据搬运。 | L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer | 用于追求极致Scalar性能的卷积im2col展开与搬入。 |
+
 <!-- end id4 -->
 
 ## 辅助配置接口说明<a name="zh-cn_topic_0000002543771563_section_aux"></a>

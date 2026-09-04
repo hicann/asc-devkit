@@ -44,11 +44,13 @@ __simd_callee__ inline void asc_mem_bar(MEM_TYPE mem_type)
 ## 参数说明
 
 **表1** 参数说明
+
 | 参数名  | 输入/输出 | 描述 |
 | :----- | :------- | :------- |
 | mem_type | 输入 | 同步流水线的类型，类型为`MEM_TYPE`，取值范围见表2 `mem_type`取值说明。 |
 
 **表2** 本接口支持的mem_type取值范围说明（源流水线/目的流水线表示的含义见表3 Reg计算流水线说明）
+
 | 值  | 源流水线 | 目的流水线 |
 | ------ | -------- | -------- |
 | `VV_ALL` | `VEC_ALL` | `VEC_ALL` |
@@ -65,6 +67,7 @@ __simd_callee__ inline void asc_mem_bar(MEM_TYPE mem_type)
 | `ST_VST` | `SCALAR_STORE` | `VEC_STORE` |
 
 **表3** Reg计算流水线说明
+
 | 流水线 | 含义 |
 | ------ | -------- |
 | `VEC_STORE` | `SIMD_VF`函数内矢量写UB流水线。<br>对应寄存器到UB的搬运指令，例如[asc_storealign](../store/asc_storealign.md)。 |

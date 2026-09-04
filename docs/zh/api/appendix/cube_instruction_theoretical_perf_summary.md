@@ -48,6 +48,7 @@ $$
 | Mmad | float | float | 16 | 16 | 4 | 8 |
 | Mmad（开启[HF32](../SIMD-API/basic_api/cube_compute_ISASI/mmad_compute_key_features/HF32.md)） | float | float | 16 | 16 | 8 | 8 |
 | [MmadWithSparse](../SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadWithSparse.md) | int8_t | int8_t | 16 | 16 | 32 | 32 |
+
 <!-- end id5 -->
 
 <!-- npu="950" id6 -->
@@ -73,6 +74,7 @@ $$
 | MmadMx | fp8_e4m3fn_t | fp8_e5m2_t | 16 | 16 | 32 | 32 |
 | MmadMx | fp8_e5m2_t | fp8_e4m3fn_t | 16 | 16 | 32 | 32 |
 | MmadMx | fp8_e5m2_t | fp8_e5m2_t | 16 | 16 | 32 | 32 |
+
 <!-- end id6 -->
 
 ## 矩阵计算搬入类指令理论性能汇总
@@ -117,6 +119,7 @@ $$
 | 2、4、8 | 1 | $\left[\frac{512}{(strideW \times 2)}\right]$（最小不会低于32） | $\left[\frac{512}{(strideW \times 2 + 2)}\right]$（最小不会低于$\left[\frac{512}{16+2}\right]$） |
 | 2、4、8 | 大于1 | $\left[\frac{512}{(strideW \times 2 + n)}\right]$（最小不会低于32） | $\left[\frac{512}{(strideW \times 2 + 2 + n)}\right]$（最小不会低于$\left[\frac{512}{16+2}\right]$） |
 | 大于1，且不等于2、4、8 | 任意值 | 32 | $\left[\frac{512}{16+2}\right]$ |
+
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
@@ -162,6 +165,7 @@ $$
 | 2、4、8 | 1 | $\left[\frac{512}{(strideW \times 2)}\right]$（最小不会低于32） | $\left[\frac{512}{(strideW \times 2)}\right]$（最小不会低于32） |
 | 2、4、8 | 大于1 | $\left[\frac{512}{(strideW \times 2 + n)}\right]$（最小不会低于32） | $\left[\frac{512}{(strideW \times 2 + n)}\right]$（最小不会低于32） |
 | 大于1，且不等于2、4、8 | 任意值 | 32 | 32 |
+
 <!-- end id8 -->
 
 ## 矩阵计算搬出类指令理论性能汇总
@@ -194,6 +198,7 @@ $$
 | L0C Buffer->L1 Buffer | float | (V)QF322B8_PRE | NZ2NZ + Channel Merge | int8_t/uint8_t | 64 | 64 |
 | L0C Buffer->L1 Buffer | int32_t | (V)DEQF16 | NZ2NZ | half | 64 | 128 |
 | L0C Buffer->L1 Buffer | int32_t | (V)REQ8 | NZ2NZ + Channel Merge | int8_t/uint8_t | 64 | 64 |
+
 <!-- end id9 -->
 
 <!-- npu="950" id10 -->

@@ -187,6 +187,7 @@
 | ---------- | ---------- |
 | float | int8_t、uint8_t、hifloat8_t、fp8_e4m3fn_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、bfloat16_t、int32_t。 |
+
 <!-- end id19 -->
 
 <!-- npu="A3" id20 -->
@@ -196,6 +197,7 @@
 | ---------- | ---------- |
 | float | int8_t、uint8_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、int32_t。 |
+
 <!-- end id20 -->
 
 <!-- npu="910b" id21 -->
@@ -205,6 +207,7 @@
 | ---------- | ---------- |
 | float | int8_t、uint8_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、int32_t。 |
+
 <!-- end id21 -->
 
 <!-- npu="310b" id22 -->
@@ -214,6 +217,7 @@
 | ---------- | ---------- |
 | float | int8_t、uint8_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、int32_t。 |
+
 <!-- end id22 -->
 
 <!-- npu="x90" id23 -->
@@ -223,6 +227,7 @@
 | ---------- | ---------- |
 | float | int8_t、half。 |
 | int32_t | int8_t、half、int32_t。 |
+
 <!-- end id23 -->
 
 <!-- npu="9030" id24 -->
@@ -232,6 +237,7 @@
 | ---------- | ---------- |
 | float | half |
 | int32_t | half |
+
 <!-- end id24 -->
 
 ## 返回值说明

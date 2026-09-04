@@ -44,6 +44,7 @@
 | AIC      | `asc_copy_l12l0a`进行3D格式搬运时的`Padding`填充值 | 设置为0。                                                                                                                      |
 | AIV      | `Mask`                                             | 高位`Mask`和低位`Mask`均设置为`0xffffffffffffffff`。在`Normal`模式下，单次迭代内的所有元素均参与计算。                         |
 | AIV      | `GM->UB`与`UB->GM`搬运的循环次数                   | 内层循环次数和外层循环次数均设置为1，恢复为普通搬运模式。                                                                      |
+
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
@@ -55,6 +56,7 @@
 | AIV      | 原子累加状态   | 清空原子累加状态，后续数据搬运不执行原子累加。                                                         |
 | AIV      | `Mask`工作模式 | 设置为`Normal`模式。                                                                                   |
 | AIV      | `Mask`         | 高位`Mask`和低位`Mask`均设置为`0xffffffffffffffff`。在`Normal`模式下，单次迭代内的所有元素均参与计算。 |
+
 <!-- end id9 -->
 
 <!-- npu="910b" id10 -->
@@ -66,6 +68,7 @@
 | AIV      | 原子累加状态   | 清空原子累加状态，后续数据搬运不执行原子累加。                                                         |
 | AIV      | `Mask`工作模式 | 设置为`Normal`模式。                                                                                   |
 | AIV      | `Mask`         | 高位`Mask`和低位`Mask`均设置为`0xffffffffffffffff`。在`Normal`模式下，单次迭代内的所有元素均参与计算。 |
+
 <!-- end id10 -->
 
 ## 函数原型

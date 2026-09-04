@@ -33,6 +33,7 @@ Matmul量化/反量化包含两种模式：同一系数的量化/反量化模式
 **表2**  Matmul量化/反量化支持的数据类型
 
 <a name="zh-cn_topic_0000002298767893_table1996113269499"></a>
+
 | A矩阵 | B矩阵 | C矩阵 | 支持平台 |
 | --- | --- | --- | --- |
 | half | half | int8_t | <!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT<br><br><!-- end id1 --><!-- npu="A3" id2 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><br><!-- end id2 --><!-- npu="910b" id3 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id3 --> |

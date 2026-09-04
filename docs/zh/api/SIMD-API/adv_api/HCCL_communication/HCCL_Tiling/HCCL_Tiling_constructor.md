@@ -27,6 +27,7 @@ Mc2CcTilingConfig(const std::string& groupName, uint32_t opType, const std::stri
 **表2**  HcclCMDType参数说明
 
 <a name="table2469980529"></a>
+
 | 数据类型 | 说明 |
 | --- | --- |
 | HcclCMDType | 通信任务类型。HcclCMDType枚举类定义如下代码所示。<!-- npu="950" id10 --><br><br>针对Ascend 950PR/Ascend 950DT，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_ALLTOALLV、HCCL_CMD_HALF_ALLTOALLV。<!-- end id10 --><!-- npu="A3" id11 --><br><br>针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_ALLTOALLV、HCCL_CMD_BATCH_WRITE。<!-- end id11 --><!-- npu="910b" id12 --><br><br>针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_BATCH_WRITE。<!-- end id12 --> |

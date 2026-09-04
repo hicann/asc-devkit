@@ -76,6 +76,7 @@ Conv3dBackpropFilter的计算公式为：
     **表1**  ConvType说明
 
     <a name="table19081115275"></a>
+
     | 参数 | 说明 |
     | --- | --- |
     | POSITION | 内存逻辑位置。<br>    Input X矩阵可设置为TPosition::GM。<br>WeightSize可设置为TPosition::GM。<br>GradOutput矩阵可设置为TPosition::GM。<br>GradWeight矩阵可设置为TPosition::GM。 |
@@ -89,6 +90,7 @@ Conv3dBackpropFilter的计算公式为：
     | --- | --- | --- | --- | --- |
     | half | int32_t | half | float | <!-- npu="A3" id1 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id1 --><!-- npu="910b" id2 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id2 --> |
     | bfloat16_t | int32_t | bfloat16_t | float | <!-- npu="A3" id3 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id3 --><!-- npu="910b" id4 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id4 --> |
+
     <!-- end id5 -->
 
 2.  初始化操作。

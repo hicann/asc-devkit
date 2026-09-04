@@ -151,6 +151,7 @@ struct QuantizeParams {
 | bfloat16_t | float | CAST_ROUND(默认)<br>CAST_HYBRID |
 
 **表5**  DstT为int8_t支持的数据类型组合
+
 | SrcT | ScaleT/OffsetT |  roundMode |
 | --- | --- | --- |
 | half | half | CAST_RINT(默认)<br>CAST_ROUND<br>CAST_FLOOR<br>CAST_CEIL<br>CAST_TRUNC |
@@ -160,6 +161,7 @@ struct QuantizeParams {
 | bfloat16_t | float | CAST_RINT(默认)<br>CAST_ROUND<br>CAST_FLOOR<br>CAST_CEIL<br>CAST_TRUNC |
 
 **表6**  DstT为fp4x2_e1m2_t/fp4x2_e2m1_t支持的数据类型组合（当前均只支持PER_GROUP场景）
+
 | SrcT | ScaleT/OffsetT |  roundMode |
 | --- | --- | --- |
 | half | half | CAST_RINT(默认)<br>CAST_ROUND<br>CAST_FLOOR<br>CAST_CEIL<br>CAST_TRUNC |

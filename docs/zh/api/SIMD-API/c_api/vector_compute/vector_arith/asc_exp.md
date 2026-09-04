@@ -69,6 +69,7 @@ __aicore__ inline void asc_exp_sync(__ubuf__ float* dst, __ubuf__ float* src, ui
 | dst_repeat_stride |输入| 目的操作数相邻迭代间相同DataBlock的地址步长。 |
 | src_repeat_stride |输入| 源操作数相邻迭代间相同DataBlock的地址步长。 |
 |count|输入|参与计算的元素个数。|
+
 ## 返回值说明
 
 无

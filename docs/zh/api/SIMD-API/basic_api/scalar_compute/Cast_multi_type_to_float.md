@@ -78,6 +78,7 @@ __aicore__ constexpr inline U Cast(T bVal)
 | ------ | ------ |
 | T | 操作数数据类型。 |
 | U | 返回值数据类型。 |
+
 <!-- end id11 -->
 
 **表2**  接口参数说明

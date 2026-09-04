@@ -40,6 +40,7 @@ $$
     __aicore__ inline void Axpy(const LocalTensor<T>& dstTensor, const LocalTensor<U>& srcTensor, const U scalarValue, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
     ```
     Template parameter description
+
     | Parameter Name | Description |
     | ----------- | ----------- |
     | T | Destination operand data type, supported data types are half/float. |
@@ -47,6 +48,7 @@ $$
     | isReuseSource | This parameter is reserved, pass default value false. |
 
     Interface parameter description
+
     | Parameter Name | Input/Output | Description |
     | ----------- | ----------- |----------- |
     | dstTensor | Output | Destination operand. |
@@ -54,6 +56,7 @@ $$
     | scalarValue | Input | Scalar value. Supported data types are half/float. Scalar operand type needs to match srcTensor. |
     | sharedTmpBuffer | Input | Temporary buffer. Type is LocalTensor, supported TPosition is VECIN/VECCALC/VECOUT. Since the internal implementation of this interface needs extra temporary space to store intermediate variables during computation. Temporary space needs to be passed by developer through sharedTmpBuffer parameter. |
     | calCount | Input | Number of elements participating in computation. |
+
 - Tiling Side
 
     The kernel function interface requires developers to reserve/apply for temporary space. The size of this temporary space needs to be calculated on Tiling side based on obtained source operand shape size, computing high-level API required maximum (maxValue) temporary space and minimum temporary space (minValue) sizes. Therefore, Tiling side provides an interface for computing maxValue and minValue. Interface input parameters include source operand Tensor shape size and source operand data type byte size. Shape size parameter uses AscendC::TensorShape type, data type byte size uses `uint32_t` type. Output parameters include minValue and maxValue. Similar to isReuseSource parameter in Axpy interface, isReuseSource in Tiling interface is a reserved parameter.
@@ -61,6 +64,7 @@ $$
     void GetAxpyMaxMinTmpSize(const AscendC::TensorShape& srcShape, const uint32_t typeSize, const bool isReuseSource, uint32_t& maxValue, uint32_t& minValue);
     ```
     Interface parameter description
+
     | Parameter Name | Input/Output | Description |
     | ----------- | ----------- |----------- |
     | srcShape | Input | Input shape information. |
@@ -68,6 +72,7 @@ $$
     | isReuseSource | Input | Reserved parameter. |
     | maxValue | Output | Maximum temporary space size required by Axpy interface to complete computation. Space exceeding this value will not be used by the interface. Within the minimum temporary space to maximum temporary space range, as temporary space increases, the computation performance of the kernel function interface will improve. To achieve better performance, developers can apply for space based on actual memory usage. Maximum space size of 0 indicates computation does not need temporary space. |
     | minValue | Output | Minimum temporary space size required by Axpy interface to complete computation. To ensure correct functionality, temporary space applied for during interface computation cannot be smaller than this value. Minimum space size of 0 indicates computation does not need temporary space. |
+
 ### Develop API
 #### Write API External Interface
 - Kernel Function Side Interface

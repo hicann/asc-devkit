@@ -264,6 +264,7 @@ LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置�
 | LoadDataWithTranspose | L1 Buffer->L0B Buffer | b8（int8_t、uint8_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
 | LoadData（卷积数据搬运） | L1 Buffer->L0A Buffer | b8（int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
 | LoadData（卷积数据搬运） | L1 Buffer->L0B Buffer | b8（int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t）；<br>b16（half、bfloat16_t）；<br>b32（int32_t、uint32_t、float）。 |
+
 <!-- end id5 -->
 
 <!-- npu="950" id6 -->

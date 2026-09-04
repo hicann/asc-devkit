@@ -189,6 +189,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 | disable_gemv | 输入 | M为1时，配置是否关闭GEMV模式。<br>&nbsp;&nbsp;&bull; false：开启GEMV模式。<br>&nbsp;&nbsp;&bull; true：关闭GEMV模式。<br>M不为1时，该参数不生效。 |
 | c_matrix_source | 输入 | 仅不显式传入Bias起始地址的重载包含该参数。当参数`c_matrix_init_val`为false时，配置矩阵C的初始值来源。<br>&nbsp;&nbsp;&bull; false：矩阵C的初始值来源于L0C Buffer。<br>&nbsp;&nbsp;&bull; true：矩阵C的初始值来源于BiasTable Buffer，并固定从0地址开始读取。 |
 | c_matrix_init_val | 输入 | 仅不显式传入Bias起始地址的重载包含该参数。配置是否将矩阵C的初始值设置为0。<br>&nbsp;&nbsp;&bull; true：将矩阵C的初始值设置为0，参数`c_matrix_source`不生效。<br>&nbsp;&nbsp;&bull; false：不执行清零操作，矩阵C的初始值由参数`c_matrix_source`配置。 |
+
 <!-- end id14 -->
 
 <!-- npu="A3,910b" id15 -->
@@ -206,6 +207,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 | k_direction_align | 输入 | K方向对齐的核心功能是通过`k_direction_align`参数控制在使用float数据类型时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。<br>取值说明如下：<br>&nbsp;&nbsp;&bull; false：K方向对齐到`ceil(k / 8) * 8`。<br>&nbsp;&nbsp;&bull; true：K方向对齐到`ceil(k / 16) * 16`。 |
 | c_matrix_source | 输入 | 当参数`c_matrix_init_val`为false时，配置矩阵C的初始值来源。<br>&nbsp;&nbsp;&bull; false：矩阵C的初始值来源于L0C Buffer。<br>&nbsp;&nbsp;&bull; true：矩阵C的初始值来源于BiasTable Buffer。 |
 | c_matrix_init_val | 输入 | 配置是否将矩阵C的初始值设置为0。<br>&nbsp;&nbsp;&bull; true：将矩阵C的初始值设置为0，参数`c_matrix_source`不生效。<br>&nbsp;&nbsp;&bull; false：不执行清零操作，矩阵C的初始值由参数`c_matrix_source`配置。 |
+
 <!-- end id15 -->
 
 ## 返回值说明

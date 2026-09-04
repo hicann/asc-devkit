@@ -40,6 +40,7 @@ $$
     __aicore__ inline void Axpy(const LocalTensor<T>& dstTensor, const LocalTensor<U>& srcTensor, const U scalarValue, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
     ```
     模板参数说明
+
     | 参数名      | 描述 |
     | ----------- | ----------- |
     | T      |    目的操作数数据类型，支持数据类型为half/float。    |
@@ -47,6 +48,7 @@ $$
     | isReuseSource   |   该参数预留，传入默认值false即可。      |
 
     接口参数说明
+
     | 参数名      | 输入/输出 |  描述   |
     | ----------- | ----------- |----------- |
     | dstTensor      | 输出  | 目的操作数。    |
@@ -54,6 +56,7 @@ $$
     | scalarValue   | 输入  |scalar标量。支持的数据类型为half/float。scalar操作数的类型需要和srcTensor保持一致。      |
     | sharedTmpBuffer   | 输入  | 临时缓存。类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。由于该接口的内部实现需要额外的临时空间来存储计算过程中的中间变量。临时空间需要开发者通过sharedTmpBuffer入参传入。      |
     | calCount   | 输入 | 参与计算的元素个数。     | 
+
 - Tiling侧
 
     核函数（Kernel）侧接口的计算需要开发者预留/申请临时空间，该临时空间的大小需要在Tiling侧根据获取到的源操作数shape大小，计算高阶API所需的最大(maxValue)临时空间和最小临时空间(minValue)的大小。因此在Tiling侧提供一个用于计算maxValue和minValue的接口。接口的输入参数包括源操作数Tensor的shape大小和源操作数数据类型所占字节数，shape大小的参数使用AscendC::TensorShape类型，数据类型所占的字节数使用`uint32_t`类型，输出参数包括minValue和maxValue。与Axpy接口中的isReuseSource参数系统，Tiling接口中的isReuseSource为预留参数。
@@ -61,6 +64,7 @@ $$
     void GetAxpyMaxMinTmpSize(const AscendC::TensorShape& srcShape, const uint32_t typeSize, const bool isReuseSource, uint32_t& maxValue, uint32_t& minValue);
     ```
     接口参数说明
+
     | 参数名      | 输入/输出 |  描述   |
     | ----------- | ----------- |----------- |
     | srcShape      | 输入  | 输入的shape信息。   |
@@ -68,6 +72,7 @@ $$
     | isReuseSource   | 输入  |  预留参数。     |
     | maxValue   | 输出  | Axpy接口能完成计算所需的最大临时空间大小，超出该值的空间不会被接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间申请，最大空间大小为0表示计算不需要临时空间。      |
     | minValue   | 输出 | Axpy接口能完成计算所需的最小临时空间大小。为保证功能正确，接口计算时申请的临时空间不能小于该数值。最小空间大小为0表示计算不需要临时空间。   | 
+
 ### 开发API
 #### 编写API对外接口
 - 核函数（Kernel）侧接口

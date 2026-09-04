@@ -153,6 +153,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
 | ---------- | ---------- |
 | float | int8_t、uint8_t、hifloat8_t、fp8_e4m3fn_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、bfloat16_t、int32_t。 |
+
 <!-- end id14 -->
 
 <!-- npu="310b" id17 -->
@@ -162,6 +163,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
 | ---------- | ---------- |
 | float | int8_t、uint8_t、half、bfloat16_t、float。 |
 | int32_t | int8_t、uint8_t、half、int32_t。 |
+
 <!-- end id17 -->
 
 ## 返回值说明

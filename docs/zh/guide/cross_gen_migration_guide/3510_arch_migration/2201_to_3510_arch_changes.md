@@ -17,6 +17,7 @@
 - 搬运单元<a name="section_2201_to_3510_data_move_unit_changes"></a>
 
     **表1**  搬运单元变更
+
     | 3510变更 | 产生的影响 | 影响的API接口 |
     |----------|------------|---------------|
     | 删除L1 Buffer到GM的数据通路。 | 现有接口不支持从L1 Buffer直接搬运数据到GM。开发者需要在L1 Buffer分配一块空间存放单位矩阵，利用MMAD矩阵乘法计算输出到L0C Buffer，从L0C Buffer通过[Fixpipe（L0C到GM数据搬运）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)将数据搬运到GM。 | DataCopy/DumpTensor |
@@ -33,6 +34,7 @@
 - 计算单元<a name="section_2201_to_3510_compute_unit_changes"></a>
 
     **表2**  计算单元变更
+
     | 3510变更 | 产生的影响 | 影响的API接口 |
     |----------|------------|---------------|
     | Cube计算单元不支持s4类型。 | 对于int4b_t数据类型的矩阵乘计算，开发者需要先将int4b_t的数据Cast转换为int8_t类型，再进行Cube计算。 | Mmad |

@@ -113,6 +113,7 @@ template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE = C_TYPE, co
 **表1**  MatmulApiStaticTiling常量化Tiling参数说明
 
 <a name="table7939847143412"></a>
+
 | 参数 | 数据类型 | 说明 |
 | --- | --- | --- |
 | M, N, Ka, Kb,<br><br>singleCoreM, singleCoreN, singleCoreK,<br><br>baseM, baseN, baseK,<br><br>depthA1, depthB1,<br><br>stepM， stepN，stepKa，stepKb,<br><br>isBias,<br><br>transLength,<br><br>iterateOrder,<br><br>dbL0A, dbL0B,<br><br>dbL0C,<br><br>shareMode,<br><br>shareL1Size,<br><br>shareL0CSize,<br><br>shareUbSize,<br><br>batchM,<br><br>batchN,<br><br>singleBatchM,<br><br>singleBatchN,<br><br>mxTypePara | int32_t | 与[TCubeTiling](../Matmul_Tiling/TCubeTiling_struct.md)结构体中各同名参数含义一致。本结构体中的参数是常量化后的常数值。 |

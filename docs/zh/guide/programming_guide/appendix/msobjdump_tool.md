@@ -97,6 +97,7 @@
     **表3**  参数说明
 
     <a name="table121952819427"></a>
+
     | 参数（区分大小写） | 可选/必选 | 说明 |
     | ---- | ---- | ---- |
     | `--list-elf <elf_file>`，`-l` | 必选 | 获取ELF文件中包含的device信息文件列表，并打印显示。<br>`<elf_file>`表示待打印的ELF文件路径，如`/home/op_api/lib_api.so`。 |
@@ -134,6 +135,7 @@
 **表6**  kernel type信息
 
 <a name="table187419221164"></a>
+
 | KERNEL_TYPE | 说明 |
 | ---- | ---- |
 | `AICORE` | **该参数为预留参数，当前版本暂不支持。**<br>算子执行时仅会启动AI Core，比如用户在host侧设置blocknum为5，则会启动5个AI Core。 |

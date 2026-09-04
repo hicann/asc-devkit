@@ -107,6 +107,7 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 ## 参数说明
 
 **表1** 参数说明
+
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | T | 输入 | 待dump的数据类型。 |

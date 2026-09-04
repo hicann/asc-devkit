@@ -136,6 +136,7 @@ optype_collector工具用于采集内置/自定义算子包中指定AI处理器�
 ## 返回值<a name="section_optype_collector_return_code"></a>
 
 <a name="table_optype_collector_return_code"></a>
+
 | 返回值 | 说明 |
 | ---- | ---- |
 | `0` | 执行成功，且冲突检测模式下未发现OpType重名冲突。 |
@@ -147,6 +148,7 @@ optype_collector工具用于采集内置/自定义算子包中指定AI处理器�
 工具执行后会根据命令模式输出如下信息。
 
 <a name="table_optype_collector_output"></a>
+
 | 输出项 | 说明 |
 | ---- | ---- |
 | `[Scan Info]` | 展示本次扫描的AI处理器版本、`ASCEND_HOME_PATH`和`ASCEND_CUSTOM_OPP_PATH`。 |

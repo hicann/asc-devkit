@@ -114,6 +114,7 @@
 ## Memory矢量计算
 
 ### 数据搬运
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [DataCopy（GM与UB连续数据搬运）](memory_vector_compute/data_move/DataCopy_GMAndUB_continuous.md) | 支持Global Memory与UB之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
@@ -133,6 +134,7 @@
 | [Copy（UBToUB掩码式高维数据搬运）](memory_vector_compute/data_move/Copy_UBToUB_mask_highdim_split.md) | 支持UB和UB之间的数据搬运，数据搬运时格式和内容保持不变，支持mask操作和DataBlock间隔操作。 |
 
 ### 基础算术
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Exp](memory_vector_compute/basic_arithmetic/Exp.md) | Exp属于单目矢量类计算接口，负责将输入的tensor按元素取自然指数。 |
@@ -165,6 +167,7 @@
 | [LeakyRelu](memory_vector_compute/basic_arithmetic/LeakyRelu.md) | LeakyRelu属于双目标量类计算接口，输入为一个矢量tensor和一个标量scalar，LeakyRelu负责将矢量tensor内的每个元素执行Leaky ReLu（Leaky Rectified Linear Unit）操作。 |
 
 ### 逻辑计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Not](memory_vector_compute/logical_compute/Not.md) | 对元素做按位取反。 |
@@ -178,6 +181,7 @@
 | [ShiftRight（右移位数为Tensor）](memory_vector_compute/logical_compute/ShiftRight_shift_amount_tensor.md) | 源操作数内每个元素做右移。 |
 
 ### 复合计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Axpy](memory_vector_compute/composite_compute/Axpy.md) | 向量和标量的乘积，并将乘积结果逐元素加到的输出向量上。 |
@@ -196,6 +200,7 @@
 | [MulsCast(ISASI)](memory_vector_compute/composite_compute/MulsCast_ISASI.md) | 将矢量源操作数前count个数据与标量相乘再按照CAST_ROUND模式转换成half类型，并将计算结果写入dst，此接口支持标量在前和标量在后两种场景。 |
 
 ### 比较与选择
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Compare](memory_vector_compute/compare_and_select/Compare.md) | 逐元素比较两个tensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。 |
@@ -209,6 +214,7 @@
 | [GatherMask](memory_vector_compute/compare_and_select/GatherMask.md) | 以**内置固定模式**或者**用户自定义输入的Tensor**数值对应的二进制为gather mask（数据收集的掩码），从源操作数中选取元素写入目的操作数中。1为选取，0为不选取。 |
 
 ### 类型转换
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [SetDeqScale](memory_vector_compute/type_conversion_aux_config/SetDeqScale.md) | 本接口用于设置DEQSCALE寄存器的值，DEQSCALE寄存器位宽为64bit，用于Vector计算单元上的量化计算，寄存器中存放的参数在不同场景下的含义不同。 |
@@ -216,6 +222,7 @@
 | [Truncate(ISASI)](memory_vector_compute/type_conversion/Truncate_ISASI.md) | 将源操作数的浮点数元素截断到整数位，同时源操作数的数据类型保持不变。 |
 
 ### 归约计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [ReduceDataBlock](memory_vector_compute/reduction_compute/ReduceDataBlock.md) | `ReduceDataBlock`接口对输入数据以DataBlock为单位进行归约操作，根据模板参数`reduceType`，对每个DataBlock内的数据求和/求最大值/求最小值。 |
@@ -228,12 +235,14 @@
 | [GetReduceRepeatMaxMinSpr(ISASI)](memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatMaxMinSpr_ISASI.md) | 本接口用于获取调用ReduceRepeat时所有repeat内的最值及其索引，或获取调用ReduceMax/ReduceMin得到的最值。计算结果以全局变量形式存储，可以随时调用获取。 |
 
 ### 数据排布转换
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Transpose](memory_vector_compute/data_layout_conversion/Transpose.md) | Transpose接口用于实现16*16的二维矩阵数据块转置或者[N,C,H,W]与[N,H,W,C]数据格式互相转换。 |
 | [TransDataTo5HD](memory_vector_compute/data_layout_conversion/TransDataTo5HD.md) | TransDataTo5HD接口数据格式转换，一般用于将NCHW格式转换成NC1HWC0格式。特别的，也可以用于二维矩阵数据块的转置。完成转置功能时，相比于Transpose接口，Transpose仅支持16\*16大小的矩阵转置；本接口单次repeat内可处理512Byte的数据（16个DataBlock），根据数据类型不同，支持不同shape的矩阵转置，同时还可以支持多次repeat操作。 |
 
 ### 数据填充
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Duplicate](memory_vector_compute/data_padding/Duplicate.md) | Duplicate接口将一个变量或立即数复制多次并填充到向量中。 |
@@ -242,6 +251,7 @@
 | [VectorPadding(ISASI)](memory_vector_compute/data_padding/VectorPadding_ISASI.md) | 根据padMode（pad模式）与padSide（pad方向）对源操作数按照datablock进行填充操作。 |
 
 ### 排序组合（ISASI）
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [ProposalConcat](memory_vector_compute/sort_and_merge_ISASI/ProposalConcat.md) | 将连续元素合入Region Proposal内对应位置，每次迭代会将16个连续元素合入到16个Region Proposals的对应位置里。 |
@@ -253,6 +263,7 @@
 | [GetMrgSortResult](memory_vector_compute/sort_and_merge_ISASI/GetMrgSortResult.md) | GetMrgSortResult接口需与MrgSort接口配合使用。当MrgSort接口中的ifExhaustedSuspension参数设置为true时，若某个输入队列中的数据耗尽，MrgSort会停止执行。此时，可调用GetMrgSortResult接口来获取4个队列里已经处理过的数据个数。 |
 
 ### 离散与聚合
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Gather](memory_vector_compute/scatter_gather/Gather.md) | Gather接口接受输入张量（src）、地址偏移张量（srcOffset）和基地址（srcBaseAddr），根据基地址和地址偏移量确定输入张量的索引，将输入张量中对应元素收集到结果张量（dst）中。 |
@@ -260,6 +271,7 @@
 | [Scatter(ISASI)](memory_vector_compute/scatter_gather/Scatter_ISASI.md) | 给定一个连续的输入张量和一个目的地址偏移张量，Scatter指令根据偏移地址生成新的结果张量后将输入张量分散到结果张量中。 |
 
 ### 掩码操作
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [SetMaskCount](memory_vector_compute/mask_operations/SetMaskCount.md) | 设置Mask模式为Counter模式。该模式下，不需要开发者去感知迭代次数、处理非对齐的尾块等操作，可直接传入计算数据量，实际迭代次数由Vector计算单元自动推断。本接口推荐配合API中isSetMask模板参数使用，当isSetMask为false时，支持用户调用本接口手动管理Counter模式，并通过SetVectorMask设置Counter模式下参与计算的元素个数。 |
@@ -268,6 +280,7 @@
 | [ResetMask](memory_vector_compute/mask_operations/ResetMask.md) | 恢复mask的值为默认值（全1），表示矢量计算中每次迭代内的所有元素都将参与运算。 |
 
 ### 数据重排（ISASI）
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Interleave](memory_vector_compute/data_rearrange_ISASI/Interleave.md) | 给定源操作数src0和src1，将src0和src1中的元素交织存入结果操作数dst0和dst1中。 |
@@ -276,6 +289,7 @@
 ## Reg矢量计算
 
 ### 寄存器数据类型
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [RegTensor](reg_vector_compute/register_data_types/RegTensor.md) | Reg矢量计算基本单元，RegTensor位宽为VL（Vector Length），具体值可能因不同AI处理器型号而异。 |
@@ -284,6 +298,7 @@
 | [AddrReg](reg_vector_compute/register_data_types/AddrReg.md) | AddrReg即为Address Register（地址寄存器），是用于存储地址偏移量的寄存器。AddrReg应该通过CreateAddrReg API初始化，然后在循环中使用AddrReg存储地址偏移量。AddrReg在每层循环中根据所设置的stride进行自增。 |
 
 ### Reg数据搬运
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [连续对齐搬入](reg_vector_compute/reg_data_load/LoadAlign_continuous.md) | Reg矢量计算数据搬运接口，适用于从UB连续对齐搬入RegTensor。单搬入模式下，可以将数据从UB搬运到一个目的寄存器，双搬入模式下，可以将数据从UB搬运到两个目的寄存器。 |
@@ -297,6 +312,7 @@
 | [Move](reg_vector_compute/reg_data_load/Move.md) | 对srcReg中的有效元素逐个复制写入dstReg中对应位置处。 |
 
 ### MaskReg计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Move](reg_vector_compute/MaskReg_compute/Move.md) | 将src中的元素复制到dst中的对应位置。如果有输入mask，则仅复制被mask选定的有效元素，无效元素填0。 |
@@ -308,6 +324,7 @@
 | [MoveMask](reg_vector_compute/MaskReg_compute/MoveMask.md) | 从SetVectorMask设置的掩码寄存器{MASK1, MASK0}中读取Mask值，并按模板参数T对应的数据格式转换后写入返回值MaskReg。 |
 
 ### 基础算术
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Abs](reg_vector_compute/basic_arithmetic/Abs.md) | 对srcReg中的有效元素逐个取绝对值，并将结果写入dstReg对应位置。 |
@@ -336,6 +353,7 @@
 | [LeakyRelu](reg_vector_compute/basic_arithmetic/LeakyRelu.md) | 该接口用于按元素执行Leaky ReLU(Leaky Rectified Linear Unit)操作：当源操作数中某元素大于0时，直接将该元素写入目的操作数；否则将该元素乘以标量值scalarValue后写入目的操作数。 |
 
 ### 逻辑计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Not](reg_vector_compute/logical_compute/Not.md) | 本节介绍两种接口，分别用于对RegTensor和MaskReg进行有效bit进行取反运算得到结果并保存。 |
@@ -348,6 +366,7 @@
 | [ShiftRights](reg_vector_compute/logical_compute/ShiftRights.md) | 源操作数内每个元素做右移，右移的位数由输入参数scalarValue决定。 |
 
 ### 复合计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Axpy](reg_vector_compute/composite_compute/Axpy.md) | 根据mask对输入数据dstReg、srcReg、scalarValue按元素做乘加操作，将结果写入dstReg。 |
@@ -358,6 +377,7 @@
 | [MulsCast](reg_vector_compute/composite_compute/MulsCast.md) | src与scalar相乘的结果再按照CAST_ROUND模式转换成half类型，根据mask将计算结果写入dst。 |
 
 ### 比较与选择
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Compare](reg_vector_compute/compare_and_select/Compare.md) | 逐元素比较两个RegTensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。 |
@@ -366,12 +386,14 @@
 | [Squeeze](reg_vector_compute/compare_and_select/Squeeze.md) | 将传入的srcReg中被mask选择的有效元素依次复制到dstReg中，有效元素在dstReg中从低到高连续排列。dstReg中剩余位置元素置为0。 |
 
 ### 类型转换
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Cast](reg_vector_compute/type_conversion/Cast.md) | Cast用于数据类型精度转换，将源操作数数据类型转换成目的操作数数据类型，能够实现浮点转整数、浮点转浮点、整数转浮点、整数转整数的数据类型转换。 |
 | [Truncate](reg_vector_compute/type_conversion/Truncate.md) | 将源操作数中的浮点数元素截断为整数值（保留原数据类型），并存入目的操作数。 |
 
 ### 归约计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Reduce](reg_vector_compute/reduction_compute/Reduce.md) | 归约指令根据ReduceType，将数据集合简化为单一值或者更小的集合。 |
@@ -379,22 +401,26 @@
 | [PairReduceElem](reg_vector_compute/reduction_compute/PairReduceElem.md) | 将传入的srcReg中相邻两个数值相加，并将产生的结果保存在dstReg中的低位位置。 |
 
 ### 数据填充
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Duplicate](reg_vector_compute/data_padding/Duplicate.md) | 支持Scalar和Tensor两种模式。 |
 
 ### 离散操作
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Gather](reg_vector_compute/scatter_operations/Gather.md) | 该指令会根据索引值indexReg将源操作数srcReg按元素收集到目的操作数dstReg中。 |
 
 ### 数据重排
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Interleave](reg_vector_compute/data_reorder/Interleave.md) | 给定源操作数寄存器srcReg0和srcReg1，将srcReg0和srcReg1中的元素交织存入结果操作数dstReg0和dstReg1中。 |
 | [DeInterleave](reg_vector_compute/data_reorder/DeInterleave.md) | 给定源操作数寄存器srcReg0和srcReg1，将srcReg0和srcReg1中的元素解交织存入结果操作数dstReg0和dstReg1中。 |
 
 ### 数据压缩
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Unsqueeze](reg_vector_compute/data_compression/Unsqueeze.md) | 将dstReg中数据根据mask进行解压缩。解压缩方式：dstReg中第0个元素置为0，dstReg中的第i个元素等于mask中从第0个到第\(i-1\)个元素中1的数量。mask最高位被忽略不参与统计。 |
@@ -402,16 +428,19 @@
 | [UnPack](reg_vector_compute/data_compression/UnPack.md) | 对于无符号整型，将源操作数srcReg中低半部分或高半部分的元素以高位填0扩充位宽的方式写入dstReg。对于有符号整型，将源操作数srcReg中低半部分或高半部分的元素以保持符号位扩充位宽的方式写入dstReg。 |
 
 ### 直方图计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Histograms](reg_vector_compute/histogram_compute/Histograms.md) | 对直方图数据进行统计，在目的操作数dstReg的基础数据上加上源操作数srcReg数据的统计结果，包括数据的频率统计和累计统计。 |
 
 ### 索引操作
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Arange](reg_vector_compute/index_operations/Arange.md) | 该函数以传入的scalar的值为起始值，生成递增/递减的索引，并将索引保存在dstReg中。 |
 
 ### 同步控制
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [LocalMemBar](reg_vector_compute/sync_control/LocalMemBar.md) | Reg矢量计算宏函数内不同流水线之间的同步指令。该同步指令指定src源流水线和dst目的流水线，目的流水线将等待源流水线上所有指令完成才进行执行。读写场景下，当读指令使用的寄存器和写指令使用的寄存器相同时，可以触发寄存器保序，指令将会按照代码顺序执行，不需要插入同步指令，而当使用的寄存器不同时，如果要确保读写指令顺序执行，则需要插入同步指令，写写场景同理。 |
@@ -424,11 +453,13 @@
 | [CrossCoreWaitFlag(ISASI)](sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md) | 在核间同步场景中，CrossCoreSetFlag接口和CrossCoreWaitFlag接口配对工作，具体功能请参考[CrossCoreSetFlag](sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)。 |
 
 ### 系统变量访问
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [ClearSpr](reg_vector_compute/system_variable_access/ClearSpr.md) | 对指定的特殊寄存器进行清零。 |
 
 ### 辅助数据类型
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [PostLiteral](reg_vector_compute/aux_data_types/PostLiteral.md) | enum class PostLiteral  |
@@ -438,6 +469,7 @@
 | [RoundMode](reg_vector_compute/aux_data_types/RoundMode.md) | 控制舍入模式。 |
 
 ## 标量计算
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [GetBitCount](scalar_compute/GetBitCount.md) | 统计uint64_t类型数值的二进制表示中指定比特值（0或1）的出现次数。 |
@@ -452,6 +484,7 @@
 | [ReadGmByPassDCache(ISASI)](scalar_compute/ReadGmByPassDCache_ISASI.md) | 不经过DCache从GM地址上读数据。 |
 
 ## 资源管理
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [TPipe](resource_management/TPipe/TPipe.md) | TPipe是用来管理全局内存等资源的框架。通过TPipe类提供的接口可以完成内存等资源的分配管理操作。 |
@@ -469,6 +502,7 @@
 | [PopStackBuffer](resource_management/PopStackBuffer.md) | 在指定position（逻辑位置）申请临时空间，空间大小为指定position的全部剩余空间。 |
 
 ## 同步控制
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [TQueSync](sync_control/intra_core_sync/TQueSync_template_params.md) | TQueSync类提供同步控制接口，开发者可以使用这类API来自行完成同步控制。 |
@@ -482,6 +516,7 @@
 | [WaitPreTaskEnd](sync_control/inter_task_sync/WaitPreTaskEnd.md) | 在SuperKernel的子核函数（Kernel）中调用，调用前的指令可以和前序其他的子核函数（Kernel）实现并行，提升整体性能。SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子KernelN+1调用该接口之前的指令会和前序子KernelN实现并行。 |
 
 ## 缓存控制
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [DataCachePreload](cache_control/DataCachePreload.md) | 从源地址所在的特定GM地址预加载数据到DCache中，每次调用只能预加载一个Cache Line大小的数据。 |
@@ -490,6 +525,7 @@
 | [GetICachePreloadStatus(ISASI)](cache_control/GetICachePreloadStatus_ISASI.md) | GetICachePreloadStatus为调试接口，在ICachePreLoad后调用，用于获取ICache的PreLoad的状态：当返回值为0时，说明ICache的PreLoad已完成；当返回值为1时，说明ICache的PreLoad未完成。 |
 
 ## 原子操作
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [SetAtomicAdd](atomic_operations/SetAtomicAdd.md) | 对后续目的地址为GM的数据搬运开启原子累加。原子累加过程：将待拷贝的内容和GM已有内容进行求和，然后将求和结果写入GM。SetAtomicAdd接口可通过模板参数设定不同的累加数据类型。 |
@@ -506,6 +542,7 @@
 | [AtomicExch](atomic_operations/AtomicExch.md) | 在GM内存中执行原子交换操作。具体来说，它读取指定GM地址上的数据，并将新的值存储回同一地址。函数返回旧值。 |
 
 ## 调试接口
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [DumpTensor](debug_interface/onboard_print/DumpTensor.md) | 该接口可以打印Tensor的内容，同时支持打印自定义的标签（仅支持uint32_t数据类型的信息），比如打印当前行号等。 |
@@ -523,6 +560,7 @@
 | [MarkStamp](debug_interface/performance_stats/MarkStamp.md) | 用户通过调用接口，用于在算子执行过程中标记特定位置，便于后期通过流水图分析代码执行路径与性能热点。 |
 
 ## 工具接口
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Async](tool_interface/execution_mode/Async.md) | Async通过模板函数的方式对这种隔离模式进行了封装，提供了一个统一的接口，用于在不同执行单元（AIC或AIV）下执行特定函数，从而避免在代码中使用硬件条件分支。 |
@@ -550,6 +588,7 @@
 | [GetSubBlockIdx(ISASI)](tool_interface/system_resources_and_variables/GetSubBlockIdx_ISASI.md) | 在分离模式架构下，获取逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的逻辑索引。 |
 
 ## Cube分组管理（ISASI）
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [CreateCubeResGroup](cube_group_mgmt_ISASI/CubeResGroupHandle/CreateCubeResGroup.md) | 快速创建CubeResGroupHandle对象，内部完成消息队列空间和同步事件分配。推荐使用该接口，避免使用CubeResGroupHandle的构造函数创建对象，出现不同对象的消息队列空间冲突、同步事件错误等情况。 |
@@ -567,6 +606,7 @@
 | [GetKfcWorkspace](cube_group_mgmt_ISASI/KfcWorkspace/GetKfcWorkspace.md) | 获取用于CubeResGroupHandle消息通信区的内存地址。用户使用CubeResGroupHandle接口时，需要用此接口自主管理空间地址。 |
 
 ## Kernel-Tiling
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [GET_TILING_DATA](Kernel-Tiling/GET_TILING_DATA.md) | 用于获取算子kernel入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过TilingData结构注册注册了多个TilingData结构体，使用该接口返回默认注册的结构体。 |
@@ -583,6 +623,7 @@
 | [设置核函数（Kernel）类型](Kernel-Tiling/set_Kernel_type.md) | 用于用户自定义设置kernel类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
 
 ## 特殊寄存器访问
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [SetCtrlSpr(ISASI)](special_register_access/SetCtrlSpr_ISASI.md) | 对CTRL寄存器（控制寄存器）的特定比特位进行设置。 |

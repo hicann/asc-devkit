@@ -38,6 +38,7 @@ VF融合的性能优化详细内容请参考[算子实践参考-VF融合优化](
 
 ## 数据搬运优化
 Reg矢量计算API提供了下表所示多种搬运指令，合理选择搬运接口以及利用接口能力进行优化。连续非对齐场景优化的性能优化详细内容请参考[算子实践参考-连续非对齐场景优化](../../../../../guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/continuous_unaligned_optimization.md)。
+
 | 场景 | 描述 |
 | :-- | :-- | 
 | 连续对齐搬入(LoadAlign) | 能够实现数据从起始地址32B对齐的UB连续搬入RegTensor。 |

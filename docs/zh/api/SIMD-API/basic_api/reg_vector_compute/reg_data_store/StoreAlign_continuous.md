@@ -171,6 +171,7 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 - 当RegTrait为RegTraitNumOne时，单搬出正常模式（DIST_NORM）下，若目的UB的剩余空间不足256B，需要配置mask，保证搬出的有效元素数据量不大于UB剩余空间，且UB剩余空间不得小于32B。
 - 单搬出模式：b64数据类型只支持StoreDist中的DIST_NORM和DIST_PACK_B64模式。
 - 当RegTensor模板参数RegTrait为RegTraitNumOne和RegTraitNumTwo时，支持情况如下：
+
     | RegTensor模板参数RegTrait取值 | 支持的接口 | 支持的数据类型 |
     |-----|-----|-----|
     | RegTraitNumOne | 所有单搬出接口和双搬出接口 | b8/b16/b32/b64 |

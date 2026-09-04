@@ -73,6 +73,7 @@ def CreateVecIndex(dst, firstValue, count):
 | T | 操作数数据类型。 |
 
 **表2**  接口参数说明
+
 | 参数说明 | 输入/输出 | 含义 |
 | ------ | ------ | ------ |
 | dst | 输出 | 目的操作数，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。LocalTensor的起始地址需要按照32字节对齐。|

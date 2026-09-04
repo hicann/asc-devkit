@@ -41,6 +41,7 @@ MatmulCallBackFunc中包含3个可由用户自定义的回调函数接口，即�
 **表1**  MatmulCallBackFunc回调函数接口及参数说明
 
 <a name="table10989848113111"></a>
+
 | 回调函数功能 | 回调函数接口 | 参数说明 |
 | --- | --- | --- |
 | 可自定义设置不同的搬出数据片段数目等参数，实现将Matmul计算结果从L0C Buffer（CO1）搬出到GM的功能 | void DataCopyOut(const __gm__ void* gm, const LocalTensor<int8_t>& co1Local, const void* dataCopyOutParams, const uint64_t tilingPtr, const uint64_t dataPtr) | gm：输出的GM地址。<br><br>co1Local: L0C Buffer（CO1）上的计算结果。<br><br>dataCopyOutParams：Matmul定义的DataCopyOutParams结构体指针，具体定义如下方代码所示，供用户参考使用。<br><br>tilingPtr: 用户使用[SetUserDefInfo](SetUserDefInfo.md)设置的tiling参数地址。<br><br>dataPtr: 用户使用[SetSelfDefineData](SetSelfDefineData.md)设置的计算数据地址。 |

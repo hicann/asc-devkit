@@ -46,6 +46,7 @@ __simd_callee__ inline void UnPack(S& dstReg, V& srcReg)
 ## 参数说明<a name="section622mcpsimp"></a>
 
 **表 1**  模板参数说明
+
 | 参数名称 | 描述 |
 | ------ | ------ |
 | T | 目的操作数数据类型。<br> 源操作数和目的操作数的数据类型约束参考见[表 源操作数和目的操作数的数据类型对应表](#table3)。|
@@ -55,6 +56,7 @@ __simd_callee__ inline void UnPack(S& dstReg, V& srcReg)
 | V | 源操作数RegTensor类型。 |
 
 **表 2**  函数参数说明
+
 | 参数名称 | 描述 |
 | ------ | ------ |
 | dstReg | 目的操作数。<br> 类型为[RegTensor](../register_data_types/RegTensor.md)。|
@@ -67,6 +69,7 @@ __simd_callee__ inline void UnPack(S& dstReg, V& srcReg)
 ## 数据类型
 
 **表 3**  源操作数和目的操作数的数据类型对应表<a id="table3"></a> 
+
 | T数据类型 | U数据类型 |
 | ------ | ------ |
 | int16_t | int8_t |
@@ -75,6 +78,7 @@ __simd_callee__ inline void UnPack(S& dstReg, V& srcReg)
 | uint32_t | uint16_t |
 | int64_t | int32_t |
 | uint64_t | uint32_t |
+
 ## 约束说明<a name="section633mcpsimp"></a>
 
 无

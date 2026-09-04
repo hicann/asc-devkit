@@ -185,6 +185,7 @@
 - 该接口需要与`SetDeqScale`配合使用，使用关系映射表如下：
 
   **表**  CastDequant与SetDeqScale使用关系映射表
+
   |CastDequant使用场景|对应使用的SetDeqScale函数原型|
   |---|---|
   |输入类型为int16_t，关闭向量量化模式|<br>\_\_aicore\_\_ inline void SetDeqScale(float scale, int16_t offset, bool signMode)|

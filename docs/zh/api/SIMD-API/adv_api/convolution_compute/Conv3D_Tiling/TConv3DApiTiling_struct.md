@@ -7,6 +7,7 @@ TConv3DApiTiling结构体包含Conv3D算子规格信息及Tiling切分算法的�
 **表1**  TConv3DApiTiling结构说明
 
 <a name="table18244199192620"></a>
+
 | 参数名称 | 数据类型 | 说明 |
 | --- | --- | --- |
 | groups | uint32_t | 预留参数，当前仅支持为1。 |
