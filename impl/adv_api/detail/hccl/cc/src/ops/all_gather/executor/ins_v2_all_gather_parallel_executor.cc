@@ -19,6 +19,9 @@
 #include "topo_match_ubx.h"
 
 namespace mc2_ops_hccl {
+namespace {
+constexpr u32 REQUIRED_HIERARCHY_INFO_NUM = 2;
+} // namespace
 
 template <typename AlgTopoMatch, typename InsAlgTemplate0, typename InsAlgTemplate1>
 InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1>::InsV2AllGatherParallelExecutor()
@@ -43,6 +46,9 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     std::vector<std::vector<u32>> intraHierarchyInfo;
     std::vector<std::vector<u32>> interHierarchyInfo;
     if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS && !topoInfo->level0PcieMix) {
+        CHK_PRT_RET(
+            algHierarchyInfo.infos.empty() || algHierarchyInfo.infos[0].size() < REQUIRED_HIERARCHY_INFO_NUM,
+            HCCL_ERROR("[%s] algHierarchyInfo.infos[0] is invalid (empty or size < 2).", __func__), HCCL_E_PARA);
         intraHierarchyInfo = {algHierarchyInfo.infos[0][0]};
         std::vector<u32> closRanks;
         u32 meshSize = algHierarchyInfo.infos[0][0].size();
@@ -53,6 +59,10 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
         }
         interHierarchyInfo = {closRanks};
     } else {
+        CHK_PRT_RET(
+            algHierarchyInfo.infos.size() < REQUIRED_HIERARCHY_INFO_NUM || algHierarchyInfo.infos[0].empty() ||
+                algHierarchyInfo.infos[1].empty(),
+            HCCL_ERROR("[InsAllGatherParallelExecutor][CalcRes] Invalid topoInfo"), HcclResult::HCCL_E_INTERNAL);
         intraHierarchyInfo = algHierarchyInfo.infos[0];
         interHierarchyInfo = algHierarchyInfo.infos[1];
     }
@@ -62,8 +72,8 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     // 调用计算资源的函数
     AlgResourceRequest intraTempRequest;
     AlgResourceRequest interTempRequest;
-    intraTempAlg.CalcRes(comm, param, topoInfo, intraTempRequest);
-    interTempAlg.CalcRes(comm, param, topoInfo, interTempRequest);
+    CHK_RET(intraTempAlg.CalcRes(comm, param, topoInfo, intraTempRequest));
+    CHK_RET(interTempAlg.CalcRes(comm, param, topoInfo, interTempRequest));
     constexpr u32 SUB_MAIN_THREAD_NUM = 2;
     resourceRequest.notifyNumOnMainThread = SUB_MAIN_THREAD_NUM; // 用于两个template间同步
     resourceRequest.slaveThreadNum =
@@ -77,6 +87,10 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
         resourceRequest.notifyNumPerThread.end(), interTempRequest.notifyNumPerThread.begin(),
         interTempRequest.notifyNumPerThread.end());
     if (param.engine != COMM_ENGINE_CCU) {
+        CHK_PRT_RET(
+            intraTempRequest.channels.empty() || interTempRequest.channels.empty(),
+            HCCL_ERROR("[InsAllGatherParallelExecutor][CalcRes] intraTemplate or interTemplate has empty channels."),
+            HcclResult::HCCL_E_INTERNAL);
         resourceRequest.channels.emplace_back(intraTempRequest.channels[0]);
         resourceRequest.channels.emplace_back(interTempRequest.channels[0]);
     } else {
@@ -275,6 +289,10 @@ template <typename AlgTopoMatch, typename InsAlgTemplate0, typename InsAlgTempla
 HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1>::Orchestrate(
     const OpParam& param, const AlgResourceCtxSerializable& resCtx)
 {
+    if (resCtx.algHierarchyInfo.infos.empty() || resCtx.algHierarchyInfo.infos.size() < REQUIRED_HIERARCHY_INFO_NUM) {
+        HCCL_ERROR("[%s] algHierarchyInfo.infos is invalid (empty or size < 2).", __func__);
+        return HCCL_E_PARA;
+    }
     HCCL_INFO("[InsV2AllGatherParallelExecutor][Orchestrate] Orchestrate Start");
     maxTmpMemSize_ = resCtx.cclMem.size; // maxTmpMemSize_设定为cclIn的大小，op中将申请的HcclBuff全给了cclIn
     myRank_ = resCtx.topoInfo.userRank;
@@ -294,6 +312,12 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     HCCL_DEBUG("[InsV2AllGatherParallelExecutor][Orchestrate] strideCount[%lu]", strideCount_);
 
     if (resCtx.topoInfo.level0Topo == Level0Shape::MESH_1D_CLOS && !resCtx.topoInfo.level0PcieMix) {
+        CHK_PRT_RET(
+            resCtx.algHierarchyInfo.infos[0].size() < REQUIRED_HIERARCHY_INFO_NUM,
+            HCCL_ERROR(
+                "[%s] algHierarchyInfo.infos[0] size[%zu] is less than 2.", __func__,
+                resCtx.algHierarchyInfo.infos[0].size()),
+            HCCL_E_PARA);
         intraHierarchyInfo_ = {resCtx.algHierarchyInfo.infos[0][0]};
         std::vector<u32> closRanks;
         u32 meshSize = resCtx.algHierarchyInfo.infos[0][0].size();
@@ -304,19 +328,29 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
         }
         interHierarchyInfo_ = {closRanks};
     } else {
+        CHK_PRT_RET(
+            resCtx.algHierarchyInfo.infos[0].empty() || resCtx.algHierarchyInfo.infos[1].empty(),
+            HCCL_ERROR("[%s] algHierarchyInfo contains an empty hierarchy level.", __func__), HCCL_E_PARA);
         intraHierarchyInfo_ = resCtx.algHierarchyInfo.infos[0];
         interHierarchyInfo_ = resCtx.algHierarchyInfo.infos[1];
     }
     rankSizeLevel0_ = GetRankSize(intraHierarchyInfo_);
     rankSizeLevel1_ = GetRankSize(interHierarchyInfo_);
+    if (rankSizeLevel0_ == 0) {
+        HCCL_ERROR("[%s] rankSizeLevel0_ is 0.", __func__);
+        return HCCL_E_PARA;
+    }
     rankIdxLevel0_ = myRank_ % rankSizeLevel0_;
     rankIdxLevel1_ = myRank_ / rankSizeLevel0_;
     // 实例化算法模板类
     // 构建template
-    InsAlgTemplate0 intraTempAlg(param, resCtx.topoInfo.userRank, resCtx.algHierarchyInfo.infos[0]);
-    InsAlgTemplate1 interTempAlg(param, resCtx.topoInfo.userRank, resCtx.algHierarchyInfo.infos[1]);
+    InsAlgTemplate0 intraTempAlg(param, resCtx.topoInfo.userRank, intraHierarchyInfo_);
+    InsAlgTemplate1 interTempAlg(param, resCtx.topoInfo.userRank, interHierarchyInfo_);
+    if (param.engine == CommEngine::COMM_ENGINE_AICPU_TS) {
+        CHK_RET(interTempAlg.SetchannelsPerRank(interLinkMap_));
+    }
     // 将计算资源分配个每个算法
-    PrepareResForTemplate(intraTempAlg, interTempAlg);
+    CHK_RET(PrepareResForTemplate(intraTempAlg, interTempAlg));
     // 算法展开
 
     HcclResult ret = OrchestrateLoop(param, resCtx, intraTempAlg, interTempAlg);
@@ -338,12 +372,16 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     tempAlgIntra.GetRes(intraTempRequest);
     tempAlgInter.GetRes(interTempRequest);
     auto intraThreadsNum = intraTempRequest.slaveThreadNum + 1;
-    auto interThreadsNum = intraTempRequest.slaveThreadNum + 1;
+    auto interThreadsNum = interTempRequest.slaveThreadNum + 1;
     auto intraNotifyOnMainThread = intraTempRequest.notifyNumOnMainThread;
     auto interNotifyOnMainThread = interTempRequest.notifyNumOnMainThread;
 
-    intraThreads_.assign(threads_.begin() + 1, threads_.begin() + intraThreadsNum + 1);
-    interThreads_.assign(threads_.begin() + intraThreadsNum + 1, threads_.end());
+    CHK_PRT_RET(
+        threads_.size() < 1 + intraThreadsNum + interThreadsNum,
+        HCCL_ERROR("[%s] threads resource is not enough.", __func__), HCCL_E_INTERNAL);
+    intraThreads_.assign(threads_.begin() + 1, threads_.begin() + 1 + intraThreadsNum);
+    interThreads_.assign(
+        threads_.begin() + 1 + intraThreadsNum, threads_.begin() + 1 + intraThreadsNum + interThreadsNum);
     // 用于两个算法同步
     mainThread_ = threads_.at(0);
     templateMainThreads_.emplace_back(intraThreads_.at(0));
@@ -393,8 +431,12 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     u64 interScratchOffset = scratchMultipleIntra * scratchMemBlockSize;
 
     u64 maxCountPerLoop =
-        (std::min(static_cast<u64>(scratchMemBlockSize), static_cast<u64>(UB_MAX_DATA_SIZE)) / dataTypeSize_ / 10) * 10;
+        std::min(static_cast<u64>(scratchMemBlockSize), static_cast<u64>(UB_MAX_DATA_SIZE)) / dataTypeSize_;
+    CHK_PRT_RET(
+        maxCountPerLoop == 0, HCCL_ERROR("[InsV2AllGatherParallelExecutor][OrchestrateLoop] maxCountPerLoop is 0"),
+        HcclResult::HCCL_E_INTERNAL);
 
+    u64 alignSize = AICPU_ALIGN_SIZE;
     u32 loopTimes = dataCount_ / maxCountPerLoop + ((dataCount_ % maxCountPerLoop == 0) ? 0 : 1);
 
     TemplateResource interTempAlgRes;
@@ -423,13 +465,36 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
         intraTempAlgRes.channels = intraLinkMap_;
         interTempAlgRes.channels = interLinkMap_;
     }
-    for (u32 loopIndex = 0; loopIndex < loopTimes; loopIndex++) {
-        u64 currCount = (loopIndex == loopTimes - 1) ? (dataCount_ - loopIndex * maxCountPerLoop) : maxCountPerLoop;
+    u64 processedCount = 0;
+    u32 loopIndex = 0;
+    while (processedCount < dataCount_) {
+        u64 remainingCount = dataCount_ - processedCount;
+        u32 remainingLoopTimes = (loopIndex < loopTimes) ? (loopTimes - loopIndex) : 1;
+        u64 currCount = (remainingCount + remainingLoopTimes - 1) / remainingLoopTimes;
+        currCount = std::min(currCount, maxCountPerLoop);
         u64 dataCountPerLoopAixs0 = static_cast<u64>(dataSplitSize[0] * currCount);
         u64 dataCountPerLoopAixs1 = currCount - dataCountPerLoopAixs0;
+
+        if (remainingLoopTimes > 1) {
+            // 对两块数据分别进行4K对齐（向下取整）
+            if (dataCountPerLoopAixs0 * dataTypeSize_ >= alignSize) {
+                dataCountPerLoopAixs0 = dataCountPerLoopAixs0 * dataTypeSize_ / alignSize * alignSize / dataTypeSize_;
+            }
+            if (dataCountPerLoopAixs1 * dataTypeSize_ >= alignSize) {
+                dataCountPerLoopAixs1 = dataCountPerLoopAixs1 * dataTypeSize_ / alignSize * alignSize / dataTypeSize_;
+            }
+        } else {
+            dataCountPerLoopAixs0 = static_cast<u64>(dataSplitSize[0] * currCount);
+            dataCountPerLoopAixs1 = currCount - dataCountPerLoopAixs0;
+        }
+        CHK_PRT_RET(
+            dataCountPerLoopAixs0 + dataCountPerLoopAixs1 == 0,
+            HCCL_ERROR("[InsV2AllGatherParallelExecutor][OrchestrateLoop] currCount is 0"),
+            HcclResult::HCCL_E_INTERNAL);
+
         // 第一步开始前同步
         CHK_RET(PreSyncInterThreads(mainThread_, templateMainThreads_, syncNotifyOnTemplates_));
-        u64 dataOffset0 = loopIndex * maxCountPerLoop * dataTypeSize_;
+        u64 dataOffset0 = processedCount * dataTypeSize_;
         u64 dataOffset1 = dataOffset0 + dataCountPerLoopAixs0 * dataTypeSize_;
         // 数据0的server内的mesh算法
         GenTemplateAlgParamsIntra0(
@@ -455,6 +520,9 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
         CHK_RET(tempAlgIntra.KernelRun(param, tempAlgParamsIntra1, intraTempAlgRes));
         // 尾同步
         CHK_RET(PostSyncInterThreads(mainThread_, templateMainThreads_, syncNotifyOnMain_));
+
+        processedCount += dataCountPerLoopAixs0 + dataCountPerLoopAixs1;
+        loopIndex++;
     }
     return HcclResult::HCCL_SUCCESS;
 };
@@ -465,6 +533,9 @@ REGISTER_EXECUTOR_BY_TWO_TEMPS(
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRUBX, InsV2AllGatherParallelExecutor, TopoMatchUBX,
     InsTempAllGatherMesh1D, InsTempAllGatherNHR);
+REGISTER_EXECUTOR_BY_TWO_TEMPS(
+    HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRMultiJetty, InsV2AllGatherParallelExecutor,
+    TopoMatchUBX, InsTempAllGatherMesh1D, InsTempAllGatherNHR);
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRPcie, InsV2AllGatherParallelExecutor,
     TopoMatchPcieMix, InsTempAllGatherMesh1D, InsTempAllGatherNHR);

@@ -75,6 +75,17 @@ HcclResult InsTempAllGatherNHR::GetRes(AlgResourceRequest& resourceRequest) cons
 }
 u64 InsTempAllGatherNHR::GetThreadNum() const { return maxChannelsPerRank_ * 2; }
 
+HcclResult InsTempAllGatherNHR::SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels)
+{
+    CHK_PRT_RET(channels.empty(), HCCL_ERROR("[SetchannelsPerRank] channels is empty."), HCCL_E_INTERNAL);
+    channelsPerRank_ = CalcChannelsPerRankMin(channels);
+    maxChannelsPerRank_ = CalcChannelsPerRank(channels);
+    HCCL_INFO(
+        "[InsTempAllGatherNHR][SetchannelsPerRank] channelsPerRank_[%u], maxChannelsPerRank_[%u]", channelsPerRank_,
+        maxChannelsPerRank_);
+    return HCCL_SUCCESS;
+}
+
 u64 InsTempAllGatherNHR::CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType)
 {
     (void)inBuffType;

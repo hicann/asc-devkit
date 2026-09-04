@@ -183,7 +183,7 @@ SelectorStatus AllGatherAutoSelector::SelectAicpuAlgo(
                     selectAlgName = "InsAllGatherMesh1D";
                 }
             } else if (isClosNumMultipleOfMeshNum && dataSize > SMALL_COUNT_512KB) {
-                selectAlgName = "InsAllGatherParallelMesh1DNHRUBX";
+                selectAlgName = "InsAllGatherParallelMesh1DNHRMultiJetty";
             } else {
                 selectAlgName = "AicpuAllGatherSoleNHR";
             }

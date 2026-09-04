@@ -927,6 +927,12 @@ int32_t HcommWaitResponse(uint64_t handle, void* dst, size_t sizeByte, uint32_t*
 HcclResult HcclChannelGetRemoteMems(
     HcclComm comm, ChannelHandle channel, uint32_t* memNum, CommMem** remoteMems, char*** memTags)
 {
+    CHK_PTR_NULL(memNum);
+    CHK_PTR_NULL(remoteMems);
+    CHK_PTR_NULL(memTags);
+    *memNum = 0U;
+    *remoteMems = nullptr;
+    *memTags = nullptr;
     HCCL_WARNING("[%s] not support.", __func__);
     return HCCL_SUCCESS;
 }
