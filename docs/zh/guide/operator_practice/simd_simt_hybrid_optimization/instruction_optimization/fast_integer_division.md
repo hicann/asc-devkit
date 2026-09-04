@@ -1,10 +1,11 @@
 # 整数除法的快速算法<a name="ZH-CN_TOPIC_INTEGER_FAST_DIV"></a>
 
-<!-- npu="950" id1 -->
 >[!NOTE]说明 
 >该性能优化建议适用于如下型号：
+     <!-- npu="950" id1 -->
 >-   Ascend 950PR/Ascend 950DT
-<!-- end id1 -->
+     <!-- end id1 -->
+<!-- @ref: asc-devkit/res/docs/zh/guide/operator_practice/simd_simt_hybrid_optimization/instruction_optimization/fast_integer_division_res.md#id1 -->
 
 【优先级】低
 

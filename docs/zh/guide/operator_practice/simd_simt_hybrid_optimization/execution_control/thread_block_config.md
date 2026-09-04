@@ -1,10 +1,11 @@
 # 线程块数量配置优化
 
-<!-- npu="950" id1 -->
 >[!NOTE]说明 
 >该性能优化建议适用于如下型号：
+     <!-- npu="950" id1 -->
 >-   Ascend 950PR/Ascend 950DT
-<!-- end id1 -->
+     <!-- end id1 -->
+<!-- @ref: asc-devkit/res/docs/zh/guide/operator_practice/simd_simt_hybrid_optimization/execution_control/thread_block_config_res.md#id1 -->
 
 【优先级】高
 

@@ -2,11 +2,12 @@
 
 为提升向量计算在复杂控制流、离散访存等场景下的编程灵活性，在SIMD与SIMT深度融合的混合编程架构中：矩阵计算单元延续SIMD设计，向量计算单元则在SIMD基础上引入SIMT能力。这一设计确立了以SIMD为主、SIMT为辅的混合编程模型。
 
-<!-- npu="950" id1 -->
 >[!NOTE]说明 
 >该编程模型适用于如下型号：
+     <!-- npu="950" id1 -->
 >-   Ascend 950PR/Ascend 950DT
-<!-- end id1 -->
+     <!-- end id1 -->
+<!-- @ref: asc-devkit/res/docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/overview_res.md#id1 -->
 
 ## 混合编程的定位
 
