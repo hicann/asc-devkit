@@ -12,7 +12,8 @@
 #include <mockcpp/mockcpp.hpp>
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
-#include "c_api/utils_intf.h"
+#include "c_api/defs/union.h"
+#include "c_api/defs/enum.h"
 #include "c_api/npu_arch_2201/utils/test_unary_scalar_instr_utils.h"
 
 TEST_VECTOR_COMPUTE_UNARY_SCALAR_INSTR(Muls, asc_mul_scalar, vmuls, int16_t);

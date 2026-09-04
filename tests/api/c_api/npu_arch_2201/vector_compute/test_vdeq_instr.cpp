@@ -11,7 +11,8 @@
 #include <mockcpp/mockcpp.hpp>
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
-#include "c_api/utils_intf.h"
+#include "c_api/defs/union.h"
+#include "c_api/defs/enum.h"
 
 #define TEST_VECTOR_COMPUTE_VDEQ_INSTR(class_name, c_api_name, cce_name, dst_data_type, src_data_type)                 \
                                                                                                                        \

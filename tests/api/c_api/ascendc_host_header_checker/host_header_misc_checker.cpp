@@ -8,7 +8,8 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include "c_api/misc/misc.h"
+#include "c_api/utils/sys_init.h"
+#include "c_api/utils/sys_misc.h"
 
 static void test_host_c_api_misc_0()
 {

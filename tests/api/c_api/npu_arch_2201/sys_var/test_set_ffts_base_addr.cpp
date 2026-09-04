@@ -12,7 +12,8 @@
 #include <mockcpp/mockcpp.hpp>
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
-#include "c_api/utils_intf.h"
+#include "c_api/defs/union.h"
+#include "c_api/defs/enum.h"
 
 class TestSetFftsBaseAddr : public testing::Test {
 protected:

@@ -8,7 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include "c_api/sys_var/sys_var.h"
+#include "c_api/utils/sys_var.h"
 
 static void test_host_c_api_sys_var_0()
 {

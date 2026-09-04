@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "tests/api/c_api/stub/cce_stub.h"
-#include "include/c_api/sys_var/sys_var.h"
+#include "include/c_api/utils/sys_var.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_impl.h"
 
 class TestSysVarGetVfLen : public testing::Test {
