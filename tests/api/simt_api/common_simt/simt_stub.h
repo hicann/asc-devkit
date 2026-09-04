@@ -627,7 +627,7 @@ float8_e5m2x2_t __cvt_float8_e5m2x2_t(SRC_TYPE src)
     return res;
 }
 
-inline half2 __float22half2_rz(float2 const x)
+static half2 __float22half2_rz(float2 const x)
 {
     half2 res;
     res.x = __cvt_half<ROUND::CAST_TRUNC, RoundingSaturation::RS_DISABLE_VALUE>(x.x);

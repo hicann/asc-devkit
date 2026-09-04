@@ -598,6 +598,8 @@ static __SIMT_DEVICE_FUNCTIONS_DECL__ half2 __hcmadd(const half2 x, const half2 
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ float2 __half22float2(const half2 x);
 
+static __SIMT_DEVICE_FUNCTIONS_DECL__ half2 __float22half2_rz(const float2 x);
+
 #include "impl/simt_api/asc_fp16_impl.h"
 
 #endif
