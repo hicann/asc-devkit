@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_bf16.h"`。
+
 将bfloat16类型数据转换为half类型数据，并遵循CAST\_TRUNC模式，返回转换后的值。
 
 ## 函数原型
@@ -60,19 +62,13 @@ inline half __bfloat162half_rz_sat(const bfloat16_t x)
 
 SIMT编程场景由于无法设置CTRL寄存器，本接口的饱和模式不生效。
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/asc_bf16.h`头文件。
-
-```cpp
-#include "simt_api/asc_bf16.h"
-```
-
 ## 调用示例
 
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_bf16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel__bfloat162half_rz_sat(__gm__ half* dst, __gm__ bfloat16_t* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

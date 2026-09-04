@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_fp16.h"`。
+
 获取输入数据x各元素的平方根的倒数。
 
 ![](../../../../figures/zh-cn_formulaimage_0000002513174480.png)
@@ -60,19 +62,13 @@ inline half2 h2rsqrt(half2 x)
 
 本接口支持的输入数据范围为x大于等于0，否则非饱和模式下返回值为nan（饱和模式下的返回值参见返回值说明）。
 
-## 需要包含的头文件
-
-使用half2类型接口需要包含`simt_api/asc_fp16.h`头文件。
-
-```cpp
-#include "simt_api/asc_fp16.h"
-```
-
 ## 调用示例
 
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_fp16.h"
+
     __global__ __launch_bounds__(1024) void kernel_rsqrt(half2* dst, half2* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -86,6 +82,8 @@ inline half2 h2rsqrt(half2 x)
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_fp16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_rsqrt(__gm__ half2* dst, __gm__ half2* x, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

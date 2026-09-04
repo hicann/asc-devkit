@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/asc_fp16.h"`。
+
 获取以2为底，输入数据各元素的对数。
 
 ![](../../../../figures/zh-cn_formulaimage_0000002513174472.png)
@@ -59,19 +61,13 @@ inline half2 h2log2(half2 x)
 
 无
 
-## 需要包含的头文件
-
-使用half2类型接口需要包含`simt_api/asc_fp16.h`头文件。
-
-```cpp
-#include "simt_api/asc_fp16.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/asc_fp16.h"
+
     __global__ __launch_bounds__(1024) void KernelLog2(half2* dst, half2* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -82,6 +78,8 @@ inline half2 h2log2(half2 x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/asc_fp16.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelLog2(__gm__ half2* dst, __gm__ half2* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
