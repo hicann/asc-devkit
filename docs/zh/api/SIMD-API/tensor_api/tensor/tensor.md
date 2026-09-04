@@ -433,8 +433,10 @@ Tensor相关类型本身为类型定义，不直接返回值。
 using namespace asc::te;
 
 constexpr uint64_t gm_addr = 128;
+constexpr uint64_t l1_addr = 128;
 
 // 示例1：构造一个GM张量
+// gm_addr为uint64_t类型的GM地址偏移量，float为张量元素类型。
 auto gm_layout = make_layout(make_shape(128, 128), make_stride(128, 1));
 auto gm_tensor = make_tensor(make_mem_ptr<location::gm, float>(gm_addr), gm_layout);
 
@@ -455,6 +457,7 @@ auto sub_tensor = gm_tensor(make_coord(16, 16));
 auto slice_tensor = gm_tensor.slice(make_coord(0, 0), make_shape(32, 32));
 
 // 示例5：构造一个local_tensor
+// l1_addr为uint64_t类型的L1 Buffer地址偏移量，float为张量元素类型。
 auto local_layout = make_frame_layout<nz_layout_ptn, layout_trait_default<float>>(32, 32);
 auto local_tensor = make_tensor(make_mem_ptr<location::l1, float>(l1_addr), local_layout);
 auto local_data = local_tensor.data();

@@ -66,5 +66,5 @@ Is...必须为有效范围内的索引。
    using namespace asc::te;
 
   auto layout = make_layout(make_shape(10, 20), make_stride(1, 100));
-  auto size = size(layout); //size = 200
+  auto size_result = size(layout); // size_result = 200
   ```

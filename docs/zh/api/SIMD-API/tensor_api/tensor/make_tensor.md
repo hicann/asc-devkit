@@ -61,6 +61,8 @@ __aicore__ inline constexpr auto make_tensor(const Iterator& iter, const Args&..
 
   using namespace asc::te;
 
+  constexpr uint64_t gm_addr = 128;
+
   // 示例1：使用GM指针和layout创建global_tensor
   auto gm_ptr = make_mem_ptr<location::gm, half>(gm_addr);
   auto gm_layout = make_layout(make_shape(32, 32), make_stride(32, 1));
@@ -69,6 +71,7 @@ __aicore__ inline constexpr auto make_tensor(const Iterator& iter, const Args&..
   // 示例2：使用Local Memory指针和layout创建local_tensor
   constexpr int tile_num = 4;
   __cbuf__ half data_ptr[tile_num]; // 初始化
+  // data_ptr为__cbuf__ half类型数组，其物理位置为L1 Buffer。
   auto ptr = make_mem_ptr(data_ptr);
   auto layout = make_frame_layout<nz_layout_ptn, half>(32, 32);
   auto tensor = make_tensor(ptr, layout);
