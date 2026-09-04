@@ -654,6 +654,7 @@ struct OpParam { // 不申请ctx，每个算子单独下发
             void* recvCounts;
             void* sdispls;
             void* rdispls; // 指向变长区指针
+            void* peerRdispls;
         } all2AllVDataDes;
         struct {
             HcclDataType sendType;
