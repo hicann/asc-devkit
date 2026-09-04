@@ -154,7 +154,7 @@ Before reading this document, you should understand: xxx concept (link to Progra
 **Key Requirements**:
 - For operators with multiple implementation approaches (e.g., MemBase vs RegBase), start with an approach difference table + selection recommendations
 - First API occurrence in code → link to API Reference Manual; subsequent occurrences do not repeat
-- Optimization approaches that vary by architecture version must be annotated with `[Applicable Version: 仅xxx]` and linked to Cross-generation Migration Guide
+- Optimization approaches that vary by architecture version must be annotated with `[Applicable Version: only xxx]` and linked to Cross-generation Migration Guide
 
 ### Cross-generation Migration Guide Writing Conventions
 

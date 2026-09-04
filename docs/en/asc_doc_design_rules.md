@@ -67,7 +67,7 @@ The clauses in this specification are organized as follows:
 |-----------------|--------|--------------------|--------------------|
 | **Global Layer** | Directory tree | Users know what they are looking for | Directory depth ≤ 5 levels |
 | **Decision Layer** | Decision trees / comparison tables / selection guides | Know the requirement but not which option | Every multi-choice fork must have a decision tree or comparison table |
-| **Association Layer** | BLinks/specific introductions | Found A but need to understand related B | Five documents interlinked to form a navigable network |
+| **Association Layer** | Links/specific introductions | Found A but need to understand related B | Five documents interlinked to form a navigable network |
 
 **Specific Requirements**:
 
@@ -153,7 +153,7 @@ The following content from the Operator Practice Reference mentions the kernel f
 ``` text
 # Kernel Function Definition
 
-Define the kernel function according to the rules described in the kernel function section.
+Define the kernel function according to the rules described in the kernel function section. The kernel function is named matmul_custom and has three parameters, a, b, and c, where a and b are input memory and c is output memory. The function type qualifier __global__ identifies it as a kernel function that can be invoked with <<<>>>; the function type qualifier __cube__ identifies that the kernel function executes on the Cube core of the device-side AI Core.
 ```
 
 ### DOC-DISC-01 Five-document Link Interconnection
@@ -957,7 +957,7 @@ Matrix fractal formats define the layout rules for multidimensional tensors in m
 
 ## 5 Cross-Dimensional Design
 
-Some design requirements span multiple dimensions and must satisfy them simultaneously:
+Some design requirements span multiple dimensions of discoverability, readability, and completeness, and must be met simultaneously:
 
 | Design requirement | Discoverability | Readability | Completeness | Specific operation |
 |---------|---------|--------|--------|---------|
