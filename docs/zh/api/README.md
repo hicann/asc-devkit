@@ -3274,6 +3274,7 @@
     -   [原子操作类接口边界值汇总](appendix/atomic_operations_interface_boundary_value_summary.md)
     -   [SIMT接口软仿情况汇总](appendix/SIMT_interface_soft_simulation_summary.md)
     -   [SIMT接口精度标准汇总](appendix/SIMT_interface_precision_standard_summary.md)
+    -   [SIMT指令理论性能汇总](appendix/SIMT_instruction_theoretical_perf_summary.md)
     -   [废弃接口](appendix/deprecated_interface.md)
     -   [接口变更说明](appendix/interface_change_description.md)
     -   [Release Notes](appendix/Release_Notes/release_notes.md)

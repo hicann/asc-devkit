@@ -36,6 +36,8 @@
 
 - **[SIMT接口精度标准汇总](SIMT_interface_precision_standard_summary.md)**
 
+- **[SIMT指令理论性能汇总](SIMT_instruction_theoretical_perf_summary.md)**
+
 - **[废弃接口](deprecated_interface.md)**
 
 - **[接口变更说明](interface_change_description.md)**
