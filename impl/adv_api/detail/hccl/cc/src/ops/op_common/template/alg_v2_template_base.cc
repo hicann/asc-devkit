@@ -21,7 +21,10 @@ InsAlgTemplateBase::InsAlgTemplateBase(
       reduceOp_(param.reduceType),
       enableDetour_(param.enableDetour)
 {
-    if (subCommRanks.size() > 1) {
+    if (subCommRanks.empty()) {
+        HCCL_ERROR("[InsAlgTemplateBase] subCommRanks is empty, myRank[%u].", myRank_);
+        templateRankSize_ = 0;
+    } else if (subCommRanks.size() > 1) {
         templateRankSize_ = subCommRanks[0].size() * subCommRanks[1].size();
     } else {
         templateRankSize_ = subCommRanks[0].size();
