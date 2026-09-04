@@ -217,7 +217,7 @@ Scalar单元访问GM上的信号量，存在两种访问方式：
    使用 GlobalTensor的成员函数GetValue 和 SetValue 进行操作。这种情况下，开发者需要手动调用[DataCacheCleanAndInvalid](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/API/ascendcopapi/atlasascendc_api_07_0177.html)接口，以确保多核间数据的一致性。
 
 2. **不通过DCache 访问**
-   使用[WriteGmByPassDCache](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/API/ascendcopapi/atlasascendc_api_07_00089.html) 和 ReadGmByPassDCache。这种方式无需额外操作即可保证多核间数据的一致性。
+   使用[WriteGmBypassDCache](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/API/ascendcopapi/atlasascendc_api_07_00089.html) 和 ReadGmBypassDCache。这种方式无需额外操作即可保证多核间数据的一致性。
 
 两种方案在性能上的差异：不经过DCache，性能会较差，但是如果读写GM数据较少，可以考虑使用不经过DCache的方法。
 核间同步方案中也需要与核内同步配合使用，现将三处核内同步作用说明如下：

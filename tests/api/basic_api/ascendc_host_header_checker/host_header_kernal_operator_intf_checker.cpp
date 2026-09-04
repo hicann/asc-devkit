@@ -176,12 +176,12 @@ static void test_host_kernel_operator_scalar_intf()
     using AscendC::GetBitCount;
     using AscendC::GetSFFValue;
     using AscendC::GetUintDivMagicAndShift;
-    using AscendC::ReadGmByPassDCache;
+    using AscendC::ReadGmBypassDCache;
     using AscendC::ScalarCast;
     using AscendC::ScalarCountLeadingZero;
     using AscendC::ScalarGetCountOfValue;
     using AscendC::ScalarGetSFFValue;
-    using AscendC::WriteGmByPassDCache;
+    using AscendC::WriteGmBypassDCache;
 }
 
 static void test_host_kernel_operator_vec_reduce_intf()

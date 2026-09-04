@@ -40,7 +40,7 @@ This example introduces the invocation of DataSyncBarrier. This interface blocks
 The following describes the usage scenario of `DataSyncBarrier` in this example step by step:
 
 1. The system has two AIV cores, denoted as Core 0 and Core 1. Two variables `x` and `y` in GM both have an initial value of 1.
-2. Core 0 first writes `x=7` to `srcGm[1]` through the scalar pipeline interface `WriteGmByPassDCache`.
+2. Core 0 first writes `x=7` to `srcGm[1]` through the scalar pipeline interface `WriteGmBypassDCache`.
 3. Core 0 then inserts `DataSyncBarrier<AscendC::MemDsbT::DDR>()` to wait for the previous GM write operation to complete.
 4. Core 0 subsequently writes `y=6` to `srcGm[0]`.
 5. Core 1 continuously polls `srcGm[0]` until it reads `y=6`, then reads `srcGm[1]` and writes `2 * x` to the output.

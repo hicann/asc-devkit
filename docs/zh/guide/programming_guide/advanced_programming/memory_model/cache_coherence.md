@@ -215,9 +215,9 @@ T6                                                Scalar.LOAD A -> 1
 
 - 生产者通过Scalar写GM后，如果消费者需要从GM或其他路径读取该数据，生产者需要执行DCCI（例如`asc_dcci_single`）把Dirty数据写回GM。
 - 消费者如果担心本核DCache中有旧副本，读取前需要执行DCCI使旧副本失效。
-- 如果算法本身不需要DCache缓存，可以使用[ReadGmByPassDCache](<../../../../api/SIMD-API/basic_api/scalar_compute/ReadGmByPassDCache_ISASI.md>)和[WriteGmByPassDCache](<../../../../api/SIMD-API/basic_api/scalar_compute/WriteGmByPassDCache_ISASI.md>)直接读写GM。
+- 如果算法本身不需要DCache缓存，可以使用[ReadGmBypassDCache](<../../../../api/SIMD-API/basic_api/scalar_compute/ReadGmBypassDCache_ISASI.md>)和[WriteGmBypassDCache](<../../../../api/SIMD-API/basic_api/scalar_compute/WriteGmBypassDCache_ISASI.md>)直接读写GM。
 
-还有一类问题来自Cache Line粒度。普通Scalar写后续以64B Cache Line为单位写回；多个核即使写的是同一条Cache Line中的不同字段，也可能在各自写回整条Cache Line时覆盖对方结果。此类场景可以通过让不同核操作的地址至少相隔Cache Line大小，或使用ReadGmByPassDCache和WriteGmByPassDCache降低风险。
+还有一类问题来自Cache Line粒度。普通Scalar写后续以64B Cache Line为单位写回；多个核即使写的是同一条Cache Line中的不同字段，也可能在各自写回整条Cache Line时覆盖对方结果。此类场景可以通过让不同核操作的地址至少相隔Cache Line大小，或使用ReadGmBypassDCache和WriteGmBypassDCache降低风险。
 
 <!-- npu="950" id3 -->
 #### Atomic访问导致的DCache缓存一致性
@@ -331,7 +331,7 @@ T4        Scalar.LOAD A -> 1
 
 Scalar写GM可以分为两类：
 - cache: 普通Scalar写通过DCache修改GM，例如直接写`__gm__`地址；
-- no cache: 不经过DCache，直接向GM发起写操作，例如`WriteGmByPassDCache`等。
+- no cache: 不经过DCache，直接向GM发起写操作，例如`WriteGmBypassDCache`等。
 
 按照访问顺序，常见需要软件维护一致性的场景可以分为RAW、WAW和WAR三类：
 

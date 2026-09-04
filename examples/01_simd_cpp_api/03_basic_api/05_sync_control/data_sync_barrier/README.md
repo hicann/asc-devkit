@@ -40,7 +40,7 @@
 下面按步骤介绍本样例中 `DataSyncBarrier` 的使用场景：
 
 1. 系统中有两个 AIV 核，分别记为核 0 和核 1。GM 中的两个变量 `x` 和 `y` 初始值都为 1。
-2. 核 0 先通过标量流水接口`WriteGmByPassDCache`向 `srcGm[1]` 写入 `x=7`。
+2. 核 0 先通过标量流水接口`WriteGmBypassDCache`向 `srcGm[1]` 写入 `x=7`。
 3. 核 0 再插入 `DataSyncBarrier<AscendC::MemDsbT::DDR>()`，等待前一次 GM 写操作完成。
 4. 核 0 随后向 `srcGm[0]` 写入 `y=6`。
 5. 核 1 持续轮询 `srcGm[0]`，直到读到 `y=6`，再读取 `srcGm[1]`，并将 `2 * x` 写入输出。

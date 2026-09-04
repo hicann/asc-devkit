@@ -125,8 +125,8 @@ static void test_host_kernel_operator_scalar_intf()
 {
     using AscendC::Cast;
     using AscendC::GetUintDivMagicAndShift;
-    using AscendC::ReadGmByPassDCache;
-    using AscendC::WriteGmByPassDCache;
+    using AscendC::ReadGmBypassDCache;
+    using AscendC::WriteGmBypassDCache;
 }
 
 static void test_host_kernel_operator_sys_var_intf()

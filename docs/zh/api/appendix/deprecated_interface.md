@@ -1,5 +1,15 @@
 # 废弃接口<a name="ZH-CN_TOPIC_0000001724165365"></a>
 
+## 基础API
+
+- [WriteGmByPassDCache\(ISASI\)](../SIMD-API/basic_api/deprecated_interface/WriteGmByPassDCache_ISASI_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[WriteGmBypassDCache\(ISASI\)](../SIMD-API/basic_api/scalar_compute/WriteGmBypassDCache_ISASI.md)接口。
+
+- [ReadGmByPassDCache\(ISASI\)](../SIMD-API/basic_api/deprecated_interface/ReadGmByPassDCache_ISASI_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[ReadGmBypassDCache\(ISASI\)](../SIMD-API/basic_api/scalar_compute/ReadGmBypassDCache_ISASI.md)接口。
+
 ## C API
 
 ### 数据搬运

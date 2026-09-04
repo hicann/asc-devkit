@@ -16,14 +16,16 @@
 
 如下图1所示，开发者的预期结果：指令发射的顺序能够严格对应实际指令执行顺序，多次执行该段代码，无论执行多少次，最终GM数据均为data0 + data1 + data2 + data3，结果完全一致，实现确定性计算。
 
-**图1**  确定性计算场景，GM上数据变化过程<a name="zh-cn_topic_0000002552941426_fig71821376818"></a>  
+**图1**  确定性计算场景，GM上数据变化过程<a name="zh-cn_topic_0000002552941426_fig71821376818"></a>
+
 ![](../../../figures/deterministic_computation_gm_data_change_process.png "Deterministic computation scenario, GM data change process")
 
 但实际情况是，若开发者不做干预，程序每次运行时这些指令的执行顺序都可能发生变化，最终导致GM数据与预期结果不一致。下面列举两种可能的指令执行顺序及其对应的执行流程。
 
 ## 非确定性计算，结果1<a name="zh-cn_topic_0000002552941426_section027603463315"></a>
 
-**图2**  非确定性计算场景1，GM上数据变化过程<a name="zh-cn_topic_0000002552941426_fig273814664819"></a>  
+**图2**  非确定性计算场景1，GM上数据变化过程<a name="zh-cn_topic_0000002552941426_fig273814664819"></a>
+
 ![](../../../figures/non_deterministic_computation_1_gm_data_change_process.png "Non-deterministic computation scenario 1, GM data change process")
 
 如图2所示，该场景中指令执行流程如下：
@@ -45,7 +47,8 @@
 
 ## 非确定性计算，结果2<a name="zh-cn_topic_0000002552941426_section1547411390818"></a>
 
-**图3**  非确定性计算场景2，GM上数据变化过程<a name="zh-cn_topic_0000002552941426_fig1829915169912"></a>  
+**图3**  非确定性计算场景2，GM上数据变化过程<a name="zh-cn_topic_0000002552941426_fig1829915169912"></a>
+
 ![](../../../figures/non_deterministic_computation_2_gm_data_change_process.png "Non-deterministic computation scenario 2, GM data change process")
 
 如图3所示，该场景中指令执行流程如下：
@@ -98,20 +101,20 @@ if (GetBlockIdx() == 0) {
    向GM搬运数据data0;
    核间同步
 } else if (GetBlockIdx() == 1) {
-   核间同步    
-   SetAtomicAdd();         
+   核间同步
+   SetAtomicAdd();
    向GM搬运data1;
-   核间同步   
+   核间同步
 } else if (GetBlockIdx() == 2) {
    核间同步
-   SetAtomicAdd();         
-   向GM搬运data2;  
-   核间同步 
+   SetAtomicAdd();
+   向GM搬运data2;
+   核间同步
 } else if (GetBlockIdx() == 3) {
    核间同步
-   SetAtomicAdd();         
-   向GM搬运data3;   
-} 
+   SetAtomicAdd();
+   向GM搬运data3;
+}
 ```
 
 下面介绍如何基于硬件同步指令实现核内同步，以及如何基于软件同步方案实现核间同步。
@@ -149,7 +152,8 @@ if (GetBlockIdx() == 0) {
 
 - 当前核在执行搬运任务前，会通过Scalar单元不断读取该信号量的值。如果信号量不等于1，当前核会进入阻塞等待状态；当检测到信号量等于1时，当前核会解除阻塞，开始执行自己的数据搬运或原子操作。为确保信号量等于1之前，当前核不会执行搬运指令，需要在搬运指令之前插入核内同步3。
 
-**图4**  一对核之间软件同步方案流程图<a name="zh-cn_topic_0000002583421469_fig1491417244811"></a>  
+**图4**  一对核之间软件同步方案流程图<a name="zh-cn_topic_0000002583421469_fig1491417244811"></a>
+
 ![](../../../figures/software_synchronization_between_two_cores_flowchart.png "Software synchronization flowchart between two cores")
 
 Scalar单元访问GM上的信号量，存在两种访问方式：
@@ -160,7 +164,7 @@ Scalar单元访问GM上的信号量，存在两种访问方式：
 
 - 不通过DCache访问
 
-    使用[WriteGmByPassDCache](../scalar_compute/WriteGmByPassDCache_ISASI.md)和[ReadGmByPassDCache](../scalar_compute/ReadGmByPassDCache_ISASI.md)。这种方式无需额外操作即可保证多核间数据的一致性。
+    使用[WriteGmBypassDCache](../scalar_compute/WriteGmBypassDCache_ISASI.md)和[ReadGmBypassDCache](../scalar_compute/ReadGmBypassDCache_ISASI.md)。这种方式无需额外操作即可保证多核间数据的一致性。
 
 两种方案在性能上的差异：不经过DCache，性能会较差，但是如果读写GM数据较少，可以考虑使用不经过DCache的方法。
 
@@ -294,15 +298,15 @@ Scalar单元访问GM上的信号量，存在两种访问方式：
         // 在通知下一个核之前，等待当前核的任务完成。
         AscendC::SetFlag<AscendC::HardEvent::MTE3_S>(0);
         AscendC::WaitFlag<AscendC::HardEvent::MTE3_S>(0);
-        AscendC::WriteGmByPassDCache<int32_t>(addr + blockIdx * 32, 1);
+        AscendC::WriteGmBypassDCache<int32_t>(addr + blockIdx * 32, 1);
     } else if (blockIdx == 1) {
         int32_t preblockIdx = 3;
 
         // 核1等待核3，直到核3数据已完成累加。
         while (true) {
-            int32_t value = AscendC::ReadGmByPassDCache<int32_t>(addr + preblockIdx * 32);
+            int32_t value = AscendC::ReadGmBypassDCache<int32_t>(addr + preblockIdx * 32);
             if (value == 1) {
-                AscendC::WriteGmByPassDCache<int32_t>(addr + preblockIdx * 32, 0);
+                AscendC::WriteGmBypassDCache<int32_t>(addr + preblockIdx * 32, 0);
                 break;
             }
         }
@@ -323,9 +327,9 @@ Scalar单元访问GM上的信号量，存在两种访问方式：
 
         // 核2等待核0，直到核0已完成GM初始化。
         while (true) {
-            int32_t value = AscendC::ReadGmByPassDCache<int32_t>(addr + preblockIdx * 32);
+            int32_t value = AscendC::ReadGmBypassDCache<int32_t>(addr + preblockIdx * 32);
             if (value == 1) {
-                AscendC::WriteGmByPassDCache<int32_t>(addr + preblockIdx * 32, 0);
+                AscendC::WriteGmBypassDCache<int32_t>(addr + preblockIdx * 32, 0);
                 break;
             }
         }
@@ -345,15 +349,15 @@ Scalar单元访问GM上的信号量，存在两种访问方式：
         // 在通知下一个核之前，等待当前核的任务完成。
         AscendC::SetFlag<AscendC::HardEvent::MTE3_S>(0);
         AscendC::WaitFlag<AscendC::HardEvent::MTE3_S>(0);
-        AscendC::WriteGmByPassDCache<int32_t>(addr + blockIdx * 32, 1);
+        AscendC::WriteGmBypassDCache<int32_t>(addr + blockIdx * 32, 1);
     } else if (blockIdx == 3) {
         int32_t preblockIdx = 2;
 
         // 核3等待核2，直到核2数据已完成累加。
         while (true) {
-            int32_t value = AscendC::ReadGmByPassDCache<int32_t>(addr + preblockIdx * 32);
+            int32_t value = AscendC::ReadGmBypassDCache<int32_t>(addr + preblockIdx * 32);
             if (value == 1) {
-                AscendC::WriteGmByPassDCache<int32_t>(addr + preblockIdx * 32, 0);
+                AscendC::WriteGmBypassDCache<int32_t>(addr + preblockIdx * 32, 0);
                 break;
             }
         }
@@ -374,7 +378,7 @@ Scalar单元访问GM上的信号量，存在两种访问方式：
         // 在通知下一个核之前，等待当前核的任务完成。
         AscendC::SetFlag<AscendC::HardEvent::MTE3_S>(0);
         AscendC::WaitFlag<AscendC::HardEvent::MTE3_S>(0);
-        AscendC::WriteGmByPassDCache<int32_t>(addr + blockIdx * 32, 1);
+        AscendC::WriteGmBypassDCache<int32_t>(addr + blockIdx * 32, 1);
     }
     // GM结果：data0 + data2 + data3 + data1。
     ```

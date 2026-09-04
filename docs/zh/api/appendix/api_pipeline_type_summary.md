@@ -232,10 +232,9 @@
 
 | API接口名称 | 流水类型 |
 | --- | --- |
-| ReadGmByPassDCache(ISASI) | PIPE_S |
-| WriteGmByPassDCache(ISASI) | PIPE_S |
+| ReadGmBypassDCache(ISASI) | PIPE_S |
+| WriteGmBypassDCache(ISASI) | PIPE_S |
 | DataCachePreload | PIPE_S |
 | DataCacheCleanAndInvalid | PIPE_S |
 | ICachePreLoad(ISASI) | PIPE_S |
 | GetICachePreloadStatus(ISASI) | PIPE_S |
-

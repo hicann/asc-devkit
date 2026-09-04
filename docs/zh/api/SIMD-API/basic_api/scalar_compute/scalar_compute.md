@@ -16,6 +16,6 @@
 
 -   **[Nop](Nop.md)**
 
--   **[WriteGmByPassDCache\(ISASI\)](WriteGmByPassDCache_ISASI.md)**
+-   **[WriteGmBypassDCache\(ISASI\)](WriteGmBypassDCache_ISASI.md)**
 
--   **[ReadGmByPassDCache\(ISASI\)](ReadGmByPassDCache_ISASI.md)**
+-   **[ReadGmBypassDCache\(ISASI\)](ReadGmBypassDCache_ISASI.md)**

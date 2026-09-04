@@ -60,15 +60,15 @@ public:
             // 在通知下一个核之前，等待当前核的任务完成
             AscendC::SetFlag<AscendC::HardEvent::MTE3_S>(0);
             AscendC::WaitFlag<AscendC::HardEvent::MTE3_S>(0);
-            AscendC::WriteGmByPassDCache<int32_t>(addr + blockIdx * 32, 1);
+            AscendC::WriteGmBypassDCache<int32_t>(addr + blockIdx * 32, 1);
         } else if (blockIdx == 1) {
             int32_t preblockIdx = 3;
 
             // 核 1 等待核 3，直到核 3 数据已完成累加
             while (true) {
-                int32_t value = AscendC::ReadGmByPassDCache<int32_t>(addr + preblockIdx * 32);
+                int32_t value = AscendC::ReadGmBypassDCache<int32_t>(addr + preblockIdx * 32);
                 if (value == 1) {
-                    AscendC::WriteGmByPassDCache<int32_t>(addr + preblockIdx * 32, 0);
+                    AscendC::WriteGmBypassDCache<int32_t>(addr + preblockIdx * 32, 0);
                     break;
                 }
             }
@@ -89,9 +89,9 @@ public:
 
             // 核 2 等待核 0，直到核 0 数据已完成累加
             while (true) {
-                int32_t value = AscendC::ReadGmByPassDCache<int32_t>(addr + preblockIdx * 32);
+                int32_t value = AscendC::ReadGmBypassDCache<int32_t>(addr + preblockIdx * 32);
                 if (value == 1) {
-                    AscendC::WriteGmByPassDCache<int32_t>(addr + preblockIdx * 32, 0);
+                    AscendC::WriteGmBypassDCache<int32_t>(addr + preblockIdx * 32, 0);
                     break;
                 }
             }
@@ -111,15 +111,15 @@ public:
             // 在通知下一个核之前，等待当前核的任务完成
             AscendC::SetFlag<AscendC::HardEvent::MTE3_S>(0);
             AscendC::WaitFlag<AscendC::HardEvent::MTE3_S>(0);
-            AscendC::WriteGmByPassDCache<int32_t>(addr + blockIdx * 32, 1);
+            AscendC::WriteGmBypassDCache<int32_t>(addr + blockIdx * 32, 1);
         } else if (blockIdx == 3) {
             int32_t preblockIdx = 2;
 
             // 核 3 等待核 2，直到核 2 数据已完成累加
             while (true) {
-                int32_t value = AscendC::ReadGmByPassDCache<int32_t>(addr + preblockIdx * 32);
+                int32_t value = AscendC::ReadGmBypassDCache<int32_t>(addr + preblockIdx * 32);
                 if (value == 1) {
-                    AscendC::WriteGmByPassDCache<int32_t>(addr + preblockIdx * 32, 0);
+                    AscendC::WriteGmBypassDCache<int32_t>(addr + preblockIdx * 32, 0);
                     break;
                 }
             }
@@ -140,7 +140,7 @@ public:
             // 在通知下一个核之前，等待当前核的任务完成
             AscendC::SetFlag<AscendC::HardEvent::MTE3_S>(0);
             AscendC::WaitFlag<AscendC::HardEvent::MTE3_S>(0);
-            AscendC::WriteGmByPassDCache<int32_t>(addr + blockIdx * 32, 1);
+            AscendC::WriteGmBypassDCache<int32_t>(addr + blockIdx * 32, 1);
         }
     }
 

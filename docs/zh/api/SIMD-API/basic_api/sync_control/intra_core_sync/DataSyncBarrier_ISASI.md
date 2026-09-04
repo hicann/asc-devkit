@@ -59,22 +59,22 @@ __aicore__ inline void DataSyncBarrier()
 ```cpp
     if (blockIdx == 0) {
         // 先写入被依赖数据，再通过DataSyncBarrier等待GM访问完成。
-        AscendC::WriteGmByPassDCache<T>(reinterpret_cast<__gm__ T *>(srcGm) + 1, DATA_VALUE);
+        AscendC::WriteGmBypassDCache<T>(reinterpret_cast<__gm__ T *>(srcGm) + 1, DATA_VALUE);
         // DataSyncBarrier<DDR>阻塞后续GM写，确保上一条GM写对其他核可见。
         AscendC::DataSyncBarrier<AscendC::MemDsbT::DDR>();
         // 最后写入同步标记，block 1读到该标记后即可安全读取srcGm[1]。
-        AscendC::WriteGmByPassDCache<T>(reinterpret_cast<__gm__ T *>(srcGm), SYNC_FLAG);
+        AscendC::WriteGmBypassDCache<T>(reinterpret_cast<__gm__ T *>(srcGm), SYNC_FLAG);
     }
 
     if (blockIdx == 1) {
         while (true) {
             __gm__ T *addr = const_cast<__gm__ T *>(srcGlobal.GetPhyAddr());
             // 轮询GM第0个元素，等待block 0写入同步标记。
-            T flagValue = AscendC::ReadGmByPassDCache<T>(addr);
+            T flagValue = AscendC::ReadGmBypassDCache<T>(addr);
             if (flagValue == SYNC_FLAG) {
                 // DataSyncBarrier保证同步标记之前的srcGm[1]写入已完成。
-                T dataValue = AscendC::ReadGmByPassDCache<T>(addr + 1);
-                AscendC::WriteGmByPassDCache<T>(reinterpret_cast<__gm__ T *>(dstGm), 2 * dataValue);
+                T dataValue = AscendC::ReadGmBypassDCache<T>(addr + 1);
+                AscendC::WriteGmBypassDCache<T>(reinterpret_cast<__gm__ T *>(dstGm), 2 * dataValue);
                 return;
             }
         }

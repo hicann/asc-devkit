@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例组合调用 `ReadGmByPassDCache` 和 `WriteGmByPassDCache` 接口，实现不经过DCache从GM地址读取和写入数据。本样例会将读取的值加100后写入到输出地址。
+本样例组合调用 `ReadGmBypassDCache` 和 `WriteGmBypassDCache` 接口，实现不经过DCache从GM地址读取和写入数据。本样例会将读取的值加100后写入到输出地址。
 
 当多核操作GM地址时，如果数据无法对齐到Cache Line，经过DCache的方式下，由于按照Cache Line大小进行读写，会导致多核数据随机覆盖的问题。此时，可以采用不经过DCache直接读写GM地址的方式，从而避免上述随机覆盖的问题。
 
@@ -30,9 +30,9 @@
 ## 样例描述
 
 - 样例功能：  
-  组合调用 `ReadGmByPassDCache` 和 `WriteGmByPassDCache`，实现：
-  1. 使用 `ReadGmByPassDCache` 从 GM 地址逐个读取int32_t类型元素
-  2. 使用 `WriteGmByPassDCache` 将读出的值加100后，写入到输出GM地址
+  组合调用 `ReadGmBypassDCache` 和 `WriteGmBypassDCache`，实现：
+  1. 使用 `ReadGmBypassDCache` 从 GM 地址逐个读取int32_t类型元素
+  2. 使用 `WriteGmBypassDCache` 将读出的值加100后，写入到输出GM地址
 
 - 样例规格：
   <table>

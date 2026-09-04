@@ -407,7 +407,7 @@ T3        Scalar.STORE_GM_DCache(flag) = 1
 
 ##### Case 3：前后访问都是不经过DCache的访问
 
-不经过DCache路径直接访问GM，不经过DCache，例如[asc_store_dev](../../../../api/SIMD-API/c_api/scalar_compute/scalar_store/asc_store_dev.md)、[WriteGmByPassDCache](../../../../api/SIMD-API/basic_api/scalar_compute/WriteGmByPassDCache_ISASI.md)、Scalar原子操作等接口。前后访问都不经过DCache时，无论访问同一地址还是不同地址，如果后序操作依赖前序访问已经完成，都需要用户插入DSB等待前序GM访问完成。
+不经过DCache路径直接访问GM，不经过DCache，例如[asc_store_dev](../../../../api/SIMD-API/c_api/scalar_compute/scalar_store/asc_store_dev.md)、[WriteGmBypassDCache](../../../../api/SIMD-API/basic_api/scalar_compute/WriteGmBypassDCache_ISASI.md)、Scalar原子操作等接口。前后访问都不经过DCache时，无论访问同一地址还是不同地址，如果后序操作依赖前序访问已经完成，都需要用户插入DSB等待前序GM访问完成。
 
 同地址WAW场景中，如果期望最终结果以后一次写入为准，不能只依赖代码顺序：
 
@@ -554,7 +554,7 @@ T2        STORE ready = 1
 
 如果消费者访问GM时使用SIMT DCache，还需要同时结合SIMT DCache与GM的[缓存一致性](cache_coherence.md)要求处理旧副本。MEMBAR负责约束访问顺序，不负责自动失效消费者侧Cache副本。
 
- 
+
 #### 线程间访问
 
 SIMT的不同线程之间，不论访问是否为同一地址，硬件不自动保证线程间内存一致性。一个线程写入的数据，如果要被另一个线程读取，需要用户自行插入同步。

@@ -727,7 +727,7 @@
 </thead>
 <tbody><tr id="row1298763513418"><td class="cellrowborder" valign="top" width="29.630000000000003%" headers="mcps1.2.4.1.1 "><p id="p15987173524114"><a name="p15987173524114"></a><a name="p15987173524114"></a>基础API &gt; 标量计算</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.519999999999996%" headers="mcps1.2.4.1.2 "><p id="p12167195363614"><a name="p12167195363614"></a><a name="p12167195363614"></a>GetBitCount、CountLeadingZero、CountBitsCntSameAsSignBit、GetSFFValue、Cast（float转half、int32_t）、Cast（float转bfloat16_t）、Cast（多类型转float）、Nop、GetUintDivMagicAndShift、WriteGmByPassDCache、ReadGmByPassDCache</p>
+<td class="cellrowborder" valign="top" width="44.519999999999996%" headers="mcps1.2.4.1.2 "><p id="p12167195363614"><a name="p12167195363614"></a><a name="p12167195363614"></a>GetBitCount、CountLeadingZero、CountBitsCntSameAsSignBit、GetSFFValue、Cast（float转half、int32_t）、Cast（float转bfloat16_t）、Cast（多类型转float）、Nop、GetUintDivMagicAndShift、WriteGmBypassDCache、ReadGmBypassDCache</p>
 </td>
 <td class="cellrowborder" valign="top" width="25.85%" headers="mcps1.2.4.1.3 "><p id="p298711352411"><a name="p298711352411"></a><a name="p298711352411"></a>-</p>
 </td>

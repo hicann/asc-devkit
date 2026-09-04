@@ -480,8 +480,8 @@
 | [Cast（float转bfloat16_t）](scalar_compute/Cast_float_to_bfloat16.md) | float类型标量数据转换成bfloat16_t类型标量数据。 |
 | [Cast（多类型转float）](scalar_compute/Cast_multi_type_to_float.md) | 该接口将输入数据转换为float类型。 |
 | [Nop](scalar_compute/Nop.md) | 用户输入延迟的个数，实现延迟若干个cycle。 |
-| [WriteGmByPassDCache(ISASI)](scalar_compute/WriteGmByPassDCache_ISASI.md) | 不经过DCache向GM地址上写数据。 |
-| [ReadGmByPassDCache(ISASI)](scalar_compute/ReadGmByPassDCache_ISASI.md) | 不经过DCache从GM地址上读数据。 |
+| [WriteGmBypassDCache(ISASI)](scalar_compute/WriteGmBypassDCache_ISASI.md) | 不经过DCache向GM地址上写数据。 |
+| [ReadGmBypassDCache(ISASI)](scalar_compute/ReadGmBypassDCache_ISASI.md) | 不经过DCache从GM地址上读数据。 |
 
 ## 资源管理
 
