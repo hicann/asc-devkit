@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 获取当前线程所属的线程块在网格（grid）中的三维索引，返回值与内置变量`blockIdx`相同。
 
 ## 函数原型
@@ -50,6 +52,8 @@ static dim3 group_index()
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -63,6 +67,8 @@ static dim3 group_index()
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

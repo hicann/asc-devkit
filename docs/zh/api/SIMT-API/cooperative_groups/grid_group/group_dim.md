@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 获取当前Grid的线程块维度配置，与接口[dim_blocks](dim_blocks.md)功能相同。
 
 ## 函数原型
@@ -50,6 +52,8 @@ static dim3 group_dim()
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {

@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 `coalesced_group`不提供默认的构造函数，用户使用`coalesced_threads`函数创建`coalesced_group`对象。
 
 ## 函数原型
@@ -50,6 +52,8 @@ coalesced_group coalesced_threads()
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -64,6 +68,8 @@ coalesced_group coalesced_threads()
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

@@ -18,12 +18,6 @@
 
 - [sync](sync.md)：同步指定协作组内的所有线程，功能等价于调用该协作组对象的成员函数`sync()`。
 
-## 需包含的头文件
-
-```cpp
-#include "simt_api/cooperative_groups.h"
-```
-
 > [!NOTE]说明 
 > 所有协作组API均在`cooperative_groups`命名空间下，调用时需添加命名空间。  
 > `grid_group`仅支持SIMT编程场景，不支持SIMD与SIMT混合编程场景。

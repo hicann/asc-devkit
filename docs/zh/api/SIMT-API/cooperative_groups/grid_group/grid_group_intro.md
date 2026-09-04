@@ -17,12 +17,6 @@ static dim3 group_dim();
 static dim3 block_index();
 ```
 
-## 需包含的头文件
-
-```cpp
-#include "simt_api/cooperative_groups.h"
-```
-
 ## 约束说明
 
 `grid_group`仅支持SIMT编程场景，不支持SIMD与SIMT混合编程场景。

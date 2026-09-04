@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 `grid_group`不提供默认的构造函数，用户使用`this_grid`函数获取当前Grid对应的`grid_group`对象。
 
 ## 函数原型

@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 同步指定协作组内的所有线程，功能等价于调用该协作组对象的成员函数`sync()`。
 
 ## 函数原型
@@ -64,6 +66,8 @@ void sync(const GroupType& g)
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
@@ -80,6 +84,8 @@ void sync(const GroupType& g)
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __simt_vf__ inline void simt_kernel(...)
     {

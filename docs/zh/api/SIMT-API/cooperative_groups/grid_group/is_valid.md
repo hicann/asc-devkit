@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 判断当前`grid_group`是否可使用`sync()`接口进行跨线程块同步。`grid_group`默认支持同步功能，因此接口固定返回`true`。
 
 ## 函数原型
@@ -50,6 +52,8 @@ bool is_valid() const
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {

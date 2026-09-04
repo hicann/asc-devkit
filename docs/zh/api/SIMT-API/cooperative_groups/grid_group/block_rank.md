@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/cooperative_groups.h"`。
+
 获取当前线程所属线程块在Grid内所有线程块中的排名，排名从0开始计数。
 
 ## 函数原型
@@ -50,6 +52,8 @@ static unsigned long long block_rank()
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/cooperative_groups.h"
+
     using namespace cooperative_groups;
     __global__ void simt_kernel(...)
     {
