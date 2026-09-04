@@ -53,6 +53,7 @@ MstxTensor::MstxVecBrcbDesc g_vec_brcb;
 MstxTensor::MstxVecCopy g_vec_copy;
 MstxTensor::MstxDataCopyDesc g_data_copy;
 MstxTensor::MstxDataCopyPadDesc g_data_copy_pad;
+MstxTensor::MstxDataCopyPadV2Desc g_data_copy_pad_v2;
 
 extern "C" void __mstx_dfx_report_stub(int type, uint8_t size, void* desc)
 {
@@ -161,6 +162,13 @@ extern "C" void __mstx_dfx_report_stub(int type, uint8_t size, void* desc)
         case static_cast<int>(MstxReportType::MSTX_DATA_COPY_PAD): {
             if (desc && size == sizeof(MstxTensor::MstxDataCopyPadDesc)) {
                 g_data_copy_pad = *static_cast<MstxTensor::MstxDataCopyPadDesc*>(desc);
+            }
+            break;
+        }
+
+        case static_cast<int>(MstxReportType::MSTX_DATA_COPY_PAD_V2): {
+            if (desc && size == sizeof(MstxTensor::MstxDataCopyPadV2Desc)) {
+                g_data_copy_pad_v2 = *static_cast<MstxTensor::MstxDataCopyPadV2Desc*>(desc);
             }
             break;
         }
@@ -432,6 +440,25 @@ void CheckResult(MstxTensor::MstxDataCopyPadDesc& expect_desc, MstxTensor::MstxD
     EXPECT_EQ(expect_desc.rightPad, g_data_copy_pad.rightPad);
     // EXPECT_EQ(expect_desc.name[0], g_data_copy_pad.name[0]);
     // EXPECT_EQ(expect_desc.name[1], g_data_copy_pad.name[1]);
+}
+
+void CheckResult(MstxTensor::MstxDataCopyPadV2Desc& expect_desc, MstxTensor::MstxDataCopyPadV2Desc& g_data_copy_pad_v2)
+{
+    EXPECT_EQ(expect_desc.dst.space, g_data_copy_pad_v2.dst.space);
+    EXPECT_EQ(expect_desc.dst.addr, g_data_copy_pad_v2.dst.addr);
+    EXPECT_EQ(expect_desc.dst.size, g_data_copy_pad_v2.dst.size);
+    EXPECT_EQ(expect_desc.dst.dataBits, g_data_copy_pad_v2.dst.dataBits);
+    EXPECT_EQ(expect_desc.src.space, g_data_copy_pad_v2.src.space);
+    EXPECT_EQ(expect_desc.src.addr, g_data_copy_pad_v2.src.addr);
+    EXPECT_EQ(expect_desc.src.size, g_data_copy_pad_v2.src.size);
+    EXPECT_EQ(expect_desc.src.dataBits, g_data_copy_pad_v2.src.dataBits);
+    EXPECT_EQ(expect_desc.padMode, g_data_copy_pad_v2.padMode);
+    EXPECT_EQ(expect_desc.lenBurst, g_data_copy_pad_v2.lenBurst);
+    EXPECT_EQ(expect_desc.nBurst, g_data_copy_pad_v2.nBurst);
+    EXPECT_EQ(expect_desc.srcGap, g_data_copy_pad_v2.srcGap);
+    EXPECT_EQ(expect_desc.dstGap, g_data_copy_pad_v2.dstGap);
+    EXPECT_EQ(expect_desc.leftPad, g_data_copy_pad_v2.leftPad);
+    EXPECT_EQ(expect_desc.rightPad, g_data_copy_pad_v2.rightPad);
 }
 
 void CheckResult(

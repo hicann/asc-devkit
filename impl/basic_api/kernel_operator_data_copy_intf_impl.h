@@ -1422,7 +1422,7 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
     PrintTimeStamp(static_cast<uint32_t>(TimeStampId::TIME_STAMP_MTE2_DATACOPY));
 #endif
 #ifdef __MSTX_DFX_REPORT__
-    MstxTensor::GetMstxDataCopyPadInfo(dst, src, dataCopyParams, padParams, "DataCopyPad");
+    MstxTensor::GetMstxDataCopyPadInfoV2(dst, src, dataCopyParams, padParams, mode, "DataCopyPad");
 #endif
     using PrimType = PrimT<T>;
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
@@ -1463,7 +1463,7 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
     const GlobalTensor<T>& dst, const LocalTensor<T>& src, const DataCopyParams& dataCopyParams)
 {
 #ifdef __MSTX_DFX_REPORT__
-    MstxTensor::GetMstxDataCopyPadInfo(dst, src, dataCopyParams, "DataCopyPad");
+    MstxTensor::GetMstxDataCopyPadInfoV2(dst, src, dataCopyParams, mode, "DataCopyPad");
 #endif
     using PrimType = PrimT<T>;
 #if defined(ASCENDC_DEBUG) || defined(ASCENDC_CPU_DEBUG)
@@ -1621,7 +1621,7 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopyPad(
     PrintTimeStamp(static_cast<uint32_t>(TimeStampId::TIME_STAMP_MTE2_DATACOPY));
 #endif
 #ifdef __MSTX_DFX_REPORT__
-    MstxTensor::GetMstxDataCopyPadInfo(dst, src, dataCopyParams, padParams, "DataCopyPad");
+    MstxTensor::GetMstxDataCopyPadInfoV2(dst, src, dataCopyParams, padParams, mode, "DataCopyPad");
 #endif
 
 #if ASCENDC_CPU_DEBUG
@@ -1738,7 +1738,7 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
     const GlobalTensor<T>& dst, const LocalTensor<T>& src, const DataCopyExtParams& dataCopyParams)
 {
 #ifdef __MSTX_DFX_REPORT__
-    MstxTensor::GetMstxDataCopyPadInfo(dst, src, dataCopyParams, "DataCopyPad");
+    MstxTensor::GetMstxDataCopyPadInfoV2(dst, src, dataCopyParams, mode, "DataCopyPad");
 #endif
     using PrimType = PrimT<T>;
 #if (__NPU_ARCH__ != 5102)
