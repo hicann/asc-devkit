@@ -456,6 +456,7 @@ static void PrintfFifo(const char* fmt, va_list otherArgs)
 
 void printf(const char* fmt, ...)
 {
+#if (!defined(ASCENDC_DUMP) || (ASCENDC_DUMP != 0))
     va_list otherArgs;
     va_start(otherArgs, fmt);
 
@@ -467,6 +468,7 @@ void printf(const char* fmt, ...)
     }
 
     va_end(otherArgs);
+#endif
 }
 
 } // namespace AscendC
