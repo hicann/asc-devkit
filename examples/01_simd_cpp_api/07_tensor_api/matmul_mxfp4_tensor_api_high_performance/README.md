@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | > CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 > **说明：** 该样例依赖尚未正式发布的CANN特性，请使用最新的CANN master包。
 
@@ -140,7 +140,7 @@ Total blocks = 4 * 8 = 32
 对应的核索引计算如下：
 
 ```cpp
-constexpr uint32_t mIter = DivCeil(M, singleCoreM);
+constexpr uint32_t mIter = AscendC::Std::ceil_div(M, singleCoreM);
 uint32_t mIterIdx = block_idx % mIter;
 uint32_t nIterIdx = block_idx / mIter;
 ```

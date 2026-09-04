@@ -111,6 +111,9 @@ __host__ __aicore__ inline constexpr auto ceil_div(const T& a, const U& b)
 #if (defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1) || !defined(SPLIT_CORE_VEC)
     return ceil_div_generic(a, b);
 #else
+    if (__builtin_is_constant_evaluated()) {
+        return ReType(ceil_div_generic(a, b));
+    }
     return ReType(get_repeat_ceiling(a, b));
 #endif
 #else

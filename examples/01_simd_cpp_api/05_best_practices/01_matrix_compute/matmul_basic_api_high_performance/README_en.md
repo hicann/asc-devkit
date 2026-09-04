@@ -8,9 +8,9 @@ This example is based on the static Tensor programming paradigm, implementing hi
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
+| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -156,7 +156,7 @@ if ((kOffsetInChunkA + 1) == stepKa) {
 Split the matrix evenly along the M/N directions for parallel computation across multiple cores. On Atlas A2/A3 (`dav-2201`), use a 4×6 splitting strategy (4 blocks in the M direction and 6 blocks in the N direction, 24 cores in total) to satisfy 512B address alignment and reduce same-address access conflicts. On Ascend 950PR/Ascend 950DT (`dav-3510`), use a 32-core split (see the performance data section below):
 
 ```cpp
-constexpr uint32_t mIter = DivCeil(M, singleCoreM);
+constexpr uint32_t mIter = AscendC::Std::ceil_div(M, singleCoreM);
 uint32_t mIterIdx = AscendC::GetBlockIdx() % mIter;
 uint32_t nIterIdx = AscendC::GetBlockIdx() / mIter;
 ```
@@ -199,7 +199,7 @@ Before optimization, with `baseK=64`, loop count is 4:
 
 ```cpp
 AscendC::LoadData2DParams loadDataParams;
-for (int i = 0; i < DivCeil(baseK, CUBE_BLOCK); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(baseK, CUBE_BLOCK); ++i) {
     AscendC::LoadData(b2Local[i * dstOffset], b1Local[srcAddr + i * srcOffset], loadDataParams);
 }
 ```
@@ -252,8 +252,8 @@ The specific L2Cache splitting implementation is consistent with Case 6 in the [
 
 ```cpp
 // ProcessL2Cache: Split by M direction in rounds, each round 24 cores cover mIterPerRound M sub-blocks
-constexpr uint32_t mIterPerRound = DivCeil(M, singleCoreM * 2);
-constexpr uint32_t outerMLoopCount = DivCeil(mIterTotal, mIterPerRound);
+constexpr uint32_t mIterPerRound = AscendC::Std::ceil_div(M, singleCoreM * 2);
+constexpr uint32_t outerMLoopCount = AscendC::Std::ceil_div(mIterTotal, mIterPerRound);
 
 for (uint32_t outerMIdx = 0; outerMIdx < outerMLoopCount; outerMIdx++) {
     uint32_t mIterIdx = AscendC::GetBlockIdx() % mIterPerRound + outerMIdx * mIterPerRound;

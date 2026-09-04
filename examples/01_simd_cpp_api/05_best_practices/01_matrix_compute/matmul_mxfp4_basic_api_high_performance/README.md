@@ -9,7 +9,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构
 
@@ -140,7 +140,7 @@ Total blocks = 4 * 8 = 32
 对应的核索引计算如下：
 
 ```cpp
-constexpr uint32_t mIter = DivCeil(M, singleCoreM);
+constexpr uint32_t mIter = AscendC::Std::ceil_div(M, singleCoreM);
 uint32_t mIterIdx = AscendC::GetBlockIdx() % mIter;
 uint32_t nIterIdx = AscendC::GetBlockIdx() / mIter;
 
@@ -167,7 +167,7 @@ scale 的搬运粒度由 `scaleFactorKa=4`、`scaleFactorKb=4` 控制，一次�
 以 A 侧为例，`DataCopyInA` 使用 `Nd2NzParams` 一次搬入 `stepKa` 个 K 方向 base 块，每个base块为`baseM * baseK`：
 
 ```cpp
-constexpr uint32_t packedStepK = DivCeil(baseK * stepKa, 2);
+constexpr uint32_t packedStepK = AscendC::Std::ceil_div(baseK * stepKa, 2);
 AscendC::Nd2NzParams nd2nzA1Params;
 nd2nzA1Params.ndNum = 1;
 nd2nzA1Params.nValue = curM;
@@ -181,7 +181,7 @@ AscendC::DataCopy(a1Local, aGM[kChunkIdx * baseK + mBlockIdx * K * baseM], nd2nz
 scale 侧按 b16 搬运。由于 `Mmad` 读取数据时的最小分形需要 K 方向连续，对应地 scale 数据在 K 方向必须满足 2Byte 连续，因此使用 b16类型搬运以确保数据布局正确：
 
 ```cpp
-constexpr uint32_t stepScaleK = DivCeil(baseK * stepKa * scaleFactorKa, SCALE_CEIL_NUMBER);
+constexpr uint32_t stepScaleK = AscendC::Std::ceil_div(baseK * stepKa * scaleFactorKa, SCALE_CEIL_NUMBER);
 AscendC::Dn2NzParams dn2nzParams;
 dn2nzParams.dValue = curM;
 dn2nzParams.nValue = stepScaleK / 2;

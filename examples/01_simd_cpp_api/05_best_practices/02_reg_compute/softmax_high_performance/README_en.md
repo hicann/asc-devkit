@@ -21,7 +21,7 @@ This example uses single-core Softmax as a case study to demonstrate a complete 
 
 | Product | CANN Software Version |
 |---------|-----------------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

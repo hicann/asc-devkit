@@ -10,8 +10,8 @@ The example covers A / B matrix transposed and non-transposed input combinations
 
 | Product | CANN Version |
 |---------|-------------|
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
+| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -274,8 +274,8 @@ This section describes key differences by transfer mode.
 
 **`Load2D` non-transpose transfer: Scenarios 1 / 3 / 6 / 11**
 
-- A matrix non-transposed input `[m, k]`, use `Load2D` to transfer to L0A, for loop along m direction, transferring `CeilDivision(k, fractalShape[1])` fractals in k direction at once.
-- B matrix transposed input `[n, k]`, use `Load2D` to transfer to L0B, for loop along k direction, transferring `CeilDivision(n, fractalShape[0])` fractals in n direction at once.
+- A matrix non-transposed input `[m, k]`, use `Load2D` to transfer to L0A, for loop along m direction, transferring `AscendC::Std::ceil_div(k, fractalShape[1])` fractals in k direction at once.
+- B matrix transposed input `[n, k]`, use `Load2D` to transfer to L0B, for loop along k direction, transferring `AscendC::Std::ceil_div(n, fractalShape[0])` fractals in n direction at once.
 - Both A / B matrices complete L1 -> L0 transfer and large fractal layout format changes by configuring `srcStride`, `dstGap` and other parameters.
 
 **A-side `Load3Dv2` non-transpose transfer: Scenarios 2 / 4 / 7 / 12**
@@ -354,7 +354,7 @@ The subsequent code and parameter descriptions repeatedly use fractal and alignm
   }
   ```
 
-- `CeilDivision`: Ceiling division, generally used to compute the number of loops after ceiling alignment.
+- `ceil_div`: Ceiling division, generally used to compute the number of loops after ceiling alignment.
 - `mAlignValue`: m axis aligns to `mAlignValue`. For example, `mAlignValue = 32` means m axis aligns to 32; similarly `nAlignValue`, `kAlignValue`.
 - `mAlignL1` and `mAlignL0`: Aligned values of m axis when A matrix is on L1 and L0A respectively. Similarly `kAlignL1`, `kAlignL0`, `nAlignL1`, `nAlignL0`.
 - `srcoffset` and `dstoffset`: On L1, the LocalTensor address offset when A / B matrix outer axis loops once; on L0A / L0B, the LocalTensor address offset when A / B matrix outer axis loops once.
@@ -564,12 +564,12 @@ When the A matrix GM input is transposed to `[k, m]` and the L1 target layout is
 
 In scenario 14, if the float transposed input uses `LoadDataWithTranspose` to complete the L1 -> L0A transposed transfer, the A matrix on L1 needs to satisfy the Zz layout. Therefore the GM -> L1 stage needs to construct Zz with the following configuration:
 
-- `ndNum = CeilDivision(k, fractalShape[0])`, means splitting into 16 lines along the k-axis.
+- `ndNum = AscendC::Std::ceil_div(k, fractalShape[0])`, means splitting into 16 lines along the k-axis.
 - `nValue = fractalShape[0]`, each small ND matrix height is 16.
 - `dstNzMatrixStride = fractalShape[0] * CeilAlign(m, fractalShape[1] * fractalNum)`, controls the writing interval after adjacent small ND matrices are transferred.
 
 ```cpp
-nd2nzA1Params.ndNum = CeilDivision(k, fractalShape[0]);
+nd2nzA1Params.ndNum = AscendC::Std::ceil_div(k, fractalShape[0]);
 nd2nzA1Params.nValue = fractalShape[0];
 nd2nzA1Params.dValue = m;
 nd2nzA1Params.srcNdMatrixStride = fractalShape[0] * m;
@@ -622,12 +622,12 @@ When the B matrix GM input is not transposed `[k, n]` and the L1 target layout i
 
 In Scenario 14, if the float input is not transposed and `LoadDataWithTranspose` is used to complete the L1 -> L0B transposition transfer, the B matrix on L1 needs to satisfy the Zz layout. Therefore the GM -> L1 stage needs to construct Zz with the following configuration:
 
-- `ndNum = CeilDivision(k, fractalShape[0])`, means splitting into 16 lines along the k-axis.
+- `ndNum = AscendC::Std::ceil_div(k, fractalShape[0])`, means splitting into 16 lines along the k-axis.
 - `nValue = fractalShape[0]`, each small ND matrix height is 16.
 - `dstNzMatrixStride = fractalShape[0] * CeilAlign(n, fractalShape[1] * fractalNum)`, controls the writing interval after adjacent small ND matrices are transferred.
 
 ```cpp
-nd2nzB1Params.ndNum = CeilDivision(k, fractalShape[0]);
+nd2nzB1Params.ndNum = AscendC::Std::ceil_div(k, fractalShape[0]);
 nd2nzB1Params.nValue = fractalShape[0];
 nd2nzB1Params.dValue = n;
 nd2nzB1Params.srcNdMatrixStride = fractalShape[0] * n;
@@ -704,16 +704,16 @@ Key points of parameter configuration:
 - `ifTranspose = false`, indicating that only the large fractal layout format change of Nz -> Zz is carried out.
 
 ```cpp
-uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1]) * fractalSize;
 uint32_t srcOffset = fractalSize;
 // Nz -> Zz
 AscendC::LoadData2DParams loadDataParams;
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[1]);
-loadDataParams.srcStride = CeilDivision(m, fractalShape[0]);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[1]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(m, fractalShape[0]);
 // Between adjacent iterations in the K-axis direction, the distance between the end address of the previous fractal and the start address of the next fractal of the destination operand
 loadDataParams.dstGap = 0;
 loadDataParams.ifTranspose = false;
-for (int i = 0; i < CeilDivision(m, fractalShape[0]); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[0]); ++i) {
     AscendC::LoadData(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -782,7 +782,7 @@ Calling the `LoadDataWithTranspose` interface is as follows:
 Key points of parameter configuration:
 
 - Perform a for loop with the m-axis direction as the outer axis, and configure `repeatTimes` with the k-axis direction as the inner axis.
-- When transposed, multiple consecutive fractals are merged into a square matrix, so `repeatTimes = CeilDivision(k, fractalShape[0] * fractalNum)`.
+- When transposed, multiple consecutive fractals are merged into a square matrix, so `repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum)`.
 - `dstFracGap` is used to control the interval between fractals within the same transposition.
 
 ```cpp
@@ -790,22 +790,22 @@ Key points of parameter configuration:
 // According to the following function prototype, the data type of offset is uint32_t
 // __aicore__ inline LocalTensor operator[](const uint32_t offset) const
 // dstoffset should be solved based on the alignment of the A matrix on L0 in the width direction.
-uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1]) * fractalSize * fractalNum;
 // srcoffset should be solved based on the alignment of the A matrix on L1 in the height direction.
-uint32_t srcOffset = CeilDivision(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t srcOffset = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 
 AscendC::LoadData2dTransposeParams loadDataParams;
 // The starting position of the transfer is the square matrix in the source operand (0 is the first square matrix in the source operand)
 loadDataParams.startIndex = 0;
 // Number of iterations, each iteration transposes a square matrix
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 // Between adjacent iterations, the interval between the starting address of the previous fractal and the next fractal of the source operand. The unit is the size of the square matrix
 loadDataParams.srcStride = 1;
 // Between adjacent iterations, the interval between the end address of the first fractal of the previous iteration of the destination operand and the start address of the first fractal of the next iteration, unit: 512B
 loadDataParams.dstGap = 0;
 // The destination operand in each iteration transposes the interval between the end address of the previous fractal and the start address of the next fractal, the unit is 512B
-loadDataParams.dstFracGap = CeilDivision(k, fractalShape[1]) - 1;
-for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
+loadDataParams.dstFracGap = AscendC::Std::ceil_div(k, fractalShape[1]) - 1;
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1]); ++i) {
     AscendC::LoadDataWithTranspose(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -829,18 +829,18 @@ Key points of parameter configuration:
 - `ifTranspose = true`, means transpose each small fractal from L1 -> L0A.
 
 ```cpp
-uint32_t dstOffset = CeilDivision(k, fractalShape[0]) * fractalSize;
-uint32_t srcOffset = CeilDivision(k, fractalShape[0]) * fractalSize;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[0]) * fractalSize;
+uint32_t srcOffset = AscendC::Std::ceil_div(k, fractalShape[0]) * fractalSize;
 AscendC::LoadData2DParams loadDataParams;
 // Number of iterations, each iteration can process 512B data
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[0]);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0]);
 // Between adjacent iterations, the interval between the starting address of the previous fractal and the next fractal of the source operand, unit: 512B
 loadDataParams.srcStride = 1;
 // Between adjacent iterations, the interval between the end address of the previous fractal and the start address of the next fractal of the destination operand, unit: 512B
 loadDataParams.dstGap = 0;
 // Whether to enable the transpose function to transpose each fractal matrix, the default is false
 loadDataParams.ifTranspose = true;
-for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1]); ++i) {
     AscendC::LoadData(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -851,22 +851,22 @@ The diagram of calling the `LoadDataWithTranspose` interface is consistent with 
 
 ```cpp
 // dstoffset should be solved based on the alignment of the A matrix on L0 in the width direction.
-uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1]) * fractalSize * fractalNum;
 // srcoffset should be solved based on the alignment of the A matrix on L1 in the height direction.
-uint32_t srcOffset = CeilDivision(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t srcOffset = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 
 AscendC::LoadData2dTransposeParams loadDataParams;
 // The starting position of the transfer is the square matrix in the source operand (0 is the first square matrix in the source operand)
 loadDataParams.startIndex = 0;
 // Number of iterations, each iteration transposes a square matrix
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 // Between adjacent iterations, the interval between the starting address of the previous fractal and the next fractal of the source operand. The unit is the size of the square matrix
 loadDataParams.srcStride = 1;
 // Between adjacent iterations, the interval between the end address of the first fractal of the previous iteration of the destination operand and the start address of the first fractal of the next iteration, unit: 512B
 loadDataParams.dstGap = 0;
 // The destination operand in each iteration transposes the interval between the end address of the previous fractal and the start address of the next fractal, the unit is 512B
-loadDataParams.dstFracGap = CeilDivision(k, fractalShape[1]) - 1;
-for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
+loadDataParams.dstFracGap = AscendC::Std::ceil_div(k, fractalShape[1]) - 1;
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1]); ++i) {
     AscendC::LoadDataWithTranspose(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -971,11 +971,11 @@ As shown in Figure 15, when the A matrix on L1 meets the Zz layout, it can meet 
   Figure 15: Under float data type, L1 -> L0A transpose, calling LoadDataWithTranspose data layout diagram
 </div>
 
-Use the m-axis direction as the outer axis to perform a for loop (red box in Figure 15), and use the k-axis direction as the inner axis to configure loadDataParams.repeatTimes. As shown in Figure 15, the meanings of srcoffset and dstoffset are: on L1, the address offset of LocalTensor every time the m-axis direction of the A matrix is cycled; on L0A, the address offset of LocalTensor every time the m-axis direction of the A matrix is cycled. When configuring the `LoadData2dTransposeParams` structure, special attention needs to be paid to the fact that during transposition, two consecutive fractals are merged into one square. As shown in the figure, the blue and green boxes represent 2 squares, so loadDataParams.repeatTimes=CeilDivision(k, fractalShape[1] * fractalNum).
+Use the m-axis direction as the outer axis to perform a for loop (red box in Figure 15), and use the k-axis direction as the inner axis to configure loadDataParams.repeatTimes. As shown in Figure 15, the meanings of srcoffset and dstoffset are: on L1, the address offset of LocalTensor every time the m-axis direction of the A matrix is cycled; on L0A, the address offset of LocalTensor every time the m-axis direction of the A matrix is cycled. When configuring the `LoadData2dTransposeParams` structure, special attention needs to be paid to the fact that during transposition, two consecutive fractals are merged into one square. As shown in the figure, the blue and green boxes represent 2 squares, so loadDataParams.repeatTimes=AscendC::Std::ceil_div(k, fractalShape[1] * fractalNum).
 
 ```cpp
 // The shape of the A matrix on L0A is [m, k] and Zz layout, so the dstoffset needs to be solved based on the alignment of the A matrix in the K-axis direction.
-uint32_t dstOffset = CeilDivision(k, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
 // The shape of A matrix on L1 is [K, M] and Zz layout, so srcoffset is the number of elements contained in one fractal.
 uint32_t srcOffset = fractalSize * fractalNum;
 
@@ -983,14 +983,14 @@ AscendC::LoadData2dTransposeParams loadDataParams;
 // The starting position of the transfer is the square matrix in the source operand (0 is the first square matrix in the source operand)
 loadDataParams.startIndex = 0;
 // Number of iterations, each iteration transposes a square matrix
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[1] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[1] * fractalNum);
 // Between adjacent iterations, the interval between the starting address of the previous fractal and the next fractal of the source operand. The unit is the size of the square matrix
-loadDataParams.srcStride = CeilDivision(m, fractalShape[1] * fractalNum);
+loadDataParams.srcStride = AscendC::Std::ceil_div(m, fractalShape[1] * fractalNum);
 // Between adjacent iterations, the interval between the end address of the first fractal of the previous iteration of the destination operand and the start address of the first fractal of the next iteration, unit: 512B
 loadDataParams.dstGap = 1;
 // The destination operand in each iteration transposes the interval between the end address of the previous fractal and the start address of the next fractal, the unit is 512B
 loadDataParams.dstFracGap = 0;
-for (int i = 0; i < CeilDivision(m, fractalShape[1] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1] * fractalNum); ++i) {
     AscendC::LoadDataWithTranspose(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1021,17 +1021,17 @@ Key points of parameter configuration:
 ```cpp
 // srcOffset and dstOffset are the same
 // n-axis aligned with fractalShape[0]
-uint32_t dstOffset = CeilDivision(n, fractalShape[0]) * fractalSize;
-uint32_t srcOffset = CeilDivision(n, fractalShape[0]) * fractalSize;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0]) * fractalSize;
+uint32_t srcOffset = AscendC::Std::ceil_div(n, fractalShape[0]) * fractalSize;
 // Nz -> Zn
 AscendC::LoadData2DParams loadDataParams;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[0]);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[0]);
 loadDataParams.srcStride = 1;
 // Between adjacent iterations in the n-axis direction, the interval between the end address of the previous fractal and the start address of the next fractal of the destination operand
 loadDataParams.dstGap = 0;
 loadDataParams.ifTranspose = false;
 // k-axis aligned to fractalShape[1]
-for (int i = 0; i < CeilDivision(k, fractalShape[1]); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[1]); ++i) {
     AscendC::LoadData(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1060,15 +1060,15 @@ Key points of parameter configuration:
 - Fractal addresses within the same square remain continuous before and after the transposition, so `dstFracGap = 0`.
 
 ```cpp
-uint32_t dstOffset = CeilDivision(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 uint32_t srcOffset = fractalSize * fractalNum;
 AscendC::LoadData2dTransposeParams loadDataParams;
 loadDataParams.startIndex = 0;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[1]);
-loadDataParams.srcStride = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[1]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 loadDataParams.dstGap = 1;
 loadDataParams.dstFracGap = 0;
-for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum); ++i) {
     AscendC::LoadDataWithTranspose(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1088,15 +1088,15 @@ According to [Table 2](#table2), when the B matrix is transposed, the b matrix i
 As shown in Figure 18 above, use the k-axis direction as the outer axis to perform a for loop, and use the n-axis direction as the inner axis to configure loadDataParams.repeatTimes. Combined with the diagram and based on the aforementioned definitions of srcoffset and dstoffset, the following configuration information can be obtained.
 
 ```cpp
-uint32_t dstOffset = CeilDivision(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 uint32_t srcOffset = fractalSize * fractalNum;
 // Nz -> Zn
 AscendC::LoadData2DParams loadDataParams;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[0] * fractalNum);
-loadDataParams.srcStride = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum);
+loadDataParams.srcStride = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 loadDataParams.dstGap = 0;
 loadDataParams.ifTranspose = true;
-for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum); ++i) {
     AscendC::LoadData(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1107,15 +1107,15 @@ The diagram for calling the `LoadDataWithTranspose` interface is consistent with
 
 ```cpp
 // LoadDataWithTranspose: Nz -> Zn
-uint32_t dstOffset = CeilDivision(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 uint32_t srcOffset = fractalSize * fractalNum;
 AscendC::LoadData2dTransposeParams loadDataParams;
 loadDataParams.startIndex = 0;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[1]);
-loadDataParams.srcStride = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[1]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 loadDataParams.dstGap = 0;
 loadDataParams.dstFracGap = 0;
-for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum); ++i) {
     AscendC::LoadDataWithTranspose(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1198,26 +1198,26 @@ As shown in Figure 21, when the B matrix on L1 meets the Zz layout, it can meet 
   Figure 21: Under the float data type, L1 -> L0B transpose, calling LoadDataWithTranspose data layout diagram
 </div>
 
-When configuring the `LoadData2dTransposeParams` structure, special attention should be paid to the fact that two consecutive fractals are merged into one square during transposition, so loadDataParams.repeatTimes=CeilDivision(n, fractalShape[1] * fractalNum). In addition, since the two fractal addresses belonging to the same square matrix in the destination operand are no longer continuous, the parameter loadDataParams.dstFracGap = CeilDivision(n, fractalShape[0]) - 1 at this time.
+When configuring the `LoadData2dTransposeParams` structure, special attention should be paid to the fact that two consecutive fractals are merged into one square during transposition, so loadDataParams.repeatTimes=AscendC::Std::ceil_div(n, fractalShape[1] * fractalNum). In addition, since the two fractal addresses belonging to the same square matrix in the destination operand are no longer continuous, the parameter loadDataParams.dstFracGap = AscendC::Std::ceil_div(n, fractalShape[0]) - 1 at this time.
 
 ```cpp
 // The B matrix has a shape of [k, n] and a Zn layout on L0B, so the dstoffset must be solved based on the alignment of the B matrix in the N-axis direction.
-uint32_t dstOffset = CeilDivision(n, fractalShape[0]) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0]) * fractalSize * fractalNum;
 // The B matrix has a shape of [K, N] and a ZZ layout on L1, so the srcoffset must be solved based on the alignment of the B matrix in the N-axis direction.
-uint32_t srcOffset = CeilDivision(n, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
+uint32_t srcOffset = AscendC::Std::ceil_div(n, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
 
 AscendC::LoadData2dTransposeParams loadDataParams;
 // The starting position of the transfer is the square matrix in the source operand (0 is the first square matrix in the source operand)
 loadDataParams.startIndex = 0;
 // Number of iterations, each iteration transposes a square matrix
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[1] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[1] * fractalNum);
 // Between adjacent iterations, the interval between the starting address of the previous fractal and the next fractal of the source operand. The unit is the size of the square matrix
 loadDataParams.srcStride = 1;
 // Between adjacent iterations, the interval between the end address of the first fractal of the previous iteration of the destination operand and the start address of the first fractal of the next iteration, unit: 512B
 loadDataParams.dstGap = 0;
 // The destination operand in each iteration transposes the interval between the end address of the previous fractal and the start address of the next fractal, the unit is 512B
-loadDataParams.dstFracGap = CeilDivision(n, fractalShape[0]) - 1;
-for (int i = 0; i < CeilDivision(k, fractalShape[0]); ++i) {
+loadDataParams.dstFracGap = AscendC::Std::ceil_div(n, fractalShape[0]) - 1;
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0]); ++i) {
     AscendC::LoadDataWithTranspose(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1228,7 +1228,7 @@ The following will describe how to configure
 The members of the `MmadParams` structure of the `Mmad` instruction, and the specific meaning of each member variable will not be described again here.
 
 It should be noted that when the `Mmad` instruction is executed,
-The matrix calculation unit will continuously read multiple fractals from L0A/L0B to participate in the matrix multiplication calculation. The number of read fractals is calculated based on the values of the member variables m, n, and k of the `MmadParams` structure and the alignment requirements of the `Mmad` instructions on the axes of the A matrix and B matrix on L0A/L0B. Due to the `Mmad` instruction, that is, the A matrix fractal is [16, 32] and the B matrix fractal is [32, 16] to continuously read in fractals, that is to say, the total number of fractals continuously read in by the matrix calculation unit from L0A/L0B are: CeilDivision(m, 16) * CeilDivision(k, 32), CeilDivision(k, 32) * CeilDivision(n, 16).
+The matrix calculation unit will continuously read multiple fractals from L0A/L0B to participate in the matrix multiplication calculation. The number of read fractals is calculated based on the values of the member variables m, n, and k of the `MmadParams` structure and the alignment requirements of the `Mmad` instructions on the axes of the A matrix and B matrix on L0A/L0B. Due to the `Mmad` instruction, that is, the A matrix fractal is [16, 32] and the B matrix fractal is [32, 16] to continuously read in fractals, that is to say, the total number of fractals continuously read in by the matrix calculation unit from L0A/L0B are: AscendC::Std::ceil_div(m, 16) * AscendC::Std::ceil_div(k, 32), AscendC::Std::ceil_div(k, 32) * AscendC::Std::ceil_div(n, 16).
 
 Therefore, when the actual alignment requirements of the A matrix and the B matrix on each axis on L0A/L0B are inconsistent with the default alignment requirements of the `Mmad` instruction, it may result in continuous reading of fractals, incorrectly reading fractals completely filled with invalid data and ignoring fractals containing valid data.
 

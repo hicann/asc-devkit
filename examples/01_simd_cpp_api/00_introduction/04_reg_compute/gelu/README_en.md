@@ -40,7 +40,7 @@ The complete data path is: GM → UB → Register (step-by-step computation) →
 
 | Product | CANN Software Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Operator Implementation
 
@@ -118,7 +118,7 @@ __global__ __vector__ void gelu_custom(__gm__ uint8_t* x, __gm__ uint8_t* y)
 
     // Stage 2: Register computation
     constexpr uint32_t oneRepeatSize = AscendC::GetVecLen() / sizeof(float);
-    uint32_t loopNum = DivCeil(singleCoreLength, oneRepeatSize);
+    uint32_t loopNum = AscendC::Std::ceil_div(singleCoreLength, oneRepeatSize);
     __ubuf__ float* xAddr = reinterpret_cast<__ubuf__ float*>(xLocal.GetPhyAddr());
     __ubuf__ float* yAddr = reinterpret_cast<__ubuf__ float*>(yLocal.GetPhyAddr());
     asc_vf_call<GeluVfMethod2>(xAddr, yAddr, singleCoreLength, loopNum);

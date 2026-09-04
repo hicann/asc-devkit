@@ -21,7 +21,7 @@ This example demonstrates and verifies data transfer from a RegTensor (the basic
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 ```

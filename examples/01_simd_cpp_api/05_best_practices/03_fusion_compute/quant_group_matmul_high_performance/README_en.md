@@ -8,9 +8,9 @@ This example implements per-token quantization group matrix multiplication (Quan
 
 | Products | CANN Software Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 training series products/Atlas A3 inference series products | >= CANN 9.0.0 |
-| Atlas A2 training series products/Atlas A2 inference series products | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 training series products/Atlas A3 inference series products | >= CANN 9.2.0 |
+| Atlas A2 training series products/Atlas A2 inference series products | >= CANN 9.2.0 |
 
 ## Introduction to directory structure
 
@@ -187,16 +187,16 @@ The Process function uses the **continuous polling across Group** strategy to al
 **Blocking dimension description**:
 
 - **GroupM**: The number of M-dimensional rows of the current Group, dynamically read from groupList. In this example, each group has GroupM=1024
-- **numBlocksM = Ceil(GroupM, SINGLE_M)**: The number of sub-blocks of the current Group in the M direction. Ceil(1024, 128) = 8 under Atlas A2, Ceil(1024, 256) = 4 under Ascend 950PR
-- **numBlocksN = Ceil(N, SINGLE_N)**: The number of sub-blocks in the N direction, the same for all Groups. Ceil(8192, 1024) = 8
+- **numBlocksM = AscendC::Std::ceil_div(GroupM, SINGLE_M)**: The number of sub-blocks of the current Group in the M direction. AscendC::Std::ceil_div(1024, 128) = 8 under Atlas A2, AscendC::Std::ceil_div(1024, 256) = 4 under Ascend 950PR
+- **numBlocksN = AscendC::Std::ceil_div(N, SINGLE_N)**: The number of sub-blocks in the N direction, the same for all Groups. AscendC::Std::ceil_div(8192, 1024) = 8
 
 Each Group has a total of `numBlocksM × numBlocksN` sub-blocks, which are positioned by `(mIdx, nIdx)` two-dimensional coordinates. The size of each sub-block is `[SINGLE_M, SINGLE_N]`, and the Cube internal calculation is based on `[BASE_M, BASE_N]` granularity (each sub-block requires `SINGLE_N/BASE_N × SINGLE_M/BASE_M` Iterate times).
 
 ```cpp
 for (groupIdx = 0, preCount = 0; groupIdx < GROUP_NUM; ++groupIdx) {
     groupM = groupListGlobal.GetValue(groupIdx);          // The number of rows in this group, in this example =1024
-    numBlocksM = Ceil(groupM, SINGLE_M);                   // Number of blocks in M ​​direction
-    numBlocksN = Ceil(N, SINGLE_N);                         // Number of blocks in N direction, same for all groups = 8
+    numBlocksM = AscendC::Std::ceil_div(groupM, SINGLE_M);                   // Number of blocks in M ​​direction
+    numBlocksN = AscendC::Std::ceil_div(N, SINGLE_N);                         // Number of blocks in N direction, same for all groups = 8
     curCount = preCount + numBlocksM * numBlocksN;          // The upper bound of consecutive numbers including the remainder of the previous group
 
     // Core allocation formula: determine the first block number of the current Core in this Group

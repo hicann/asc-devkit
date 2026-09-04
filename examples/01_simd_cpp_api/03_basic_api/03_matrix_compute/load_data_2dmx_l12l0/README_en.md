@@ -14,7 +14,7 @@ The example takes FP4 / FP8 type A / B matrices and fp8_e8m0_t type scaleA / sca
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -327,8 +327,8 @@ The subsequent code and parameter descriptions repeatedly use fractal, alignment
 - `fractalShape`: Small fractal shape. This example involves FP4 and FP8 for A / B matrix input, scale matrices transferred using B16 view. Fractal information is shown in [Table 3](#table3).
 - `fractalSize`: Number of elements in 1 small fractal, see [Table 3](#table3).
 - `fractalNum`: When L1 -> L0A / L0B requires transpose, `LoadData` transposes by square matrix. `fractalNum` represents the number of small fractals in the square matrix, see [Table 3](#table3).
-- `packedK`: Equivalent column count in `DataCopy` parameters when transferring A / B matrix k direction using B8 view. FP4 input still has k elements, but during ND -> Nz transfer it is processed as B8 view, every 2 FP4 elements correspond to 1 B8 view element, so `packedK = CeilDivision(k, 2)`; FP8 input uses original element count, `packedK = k`.
-- `scaleK`: Aligned length of scale matrix k axis. `scaleK = CeilDivision(k, SCALE_BASE_FACTOR) * SCALE_EVEN_NUMBER`, where `SCALE_BASE_FACTOR = 64`, `SCALE_EVEN_NUMBER = 2`. In this example when `k = 70`, `scaleK = CeilDivision(70, 64) * 2 = 4`.
+- `packedK`: Equivalent column count in `DataCopy` parameters when transferring A / B matrix k direction using B8 view. FP4 input still has k elements, but during ND -> Nz transfer it is processed as B8 view, every 2 FP4 elements correspond to 1 B8 view element, so `packedK = AscendC::Std::ceil_div(k, 2)`; FP8 input uses original element count, `packedK = k`.
+- `scaleK`: Aligned length of scale matrix k axis. `scaleK = AscendC::Std::ceil_div(k, SCALE_BASE_FACTOR) * SCALE_EVEN_NUMBER`, where `SCALE_BASE_FACTOR = 64`, `SCALE_EVEN_NUMBER = 2`. In this example when `k = 70`, `scaleK = AscendC::Std::ceil_div(70, 64) * 2 = 4`.
 - `alignK`: Aligned length of A / B matrix k axis. The `MmadMx` interface in MX matrix multiplication requires k direction alignment to `SCALE_BASE_FACTOR = 64`, so `alignK = CeilAlign(k, SCALE_BASE_FACTOR) = CeilAlign(k, 64)`. In this example when `k = 70`, `alignK = CeilAlign(70, 64) = 128`. This 64-alignment requirement only applies to k direction; m / n directions still align to the corresponding data type's small fractal or square transpose granularity.
 
 <a name="table3"></a>
@@ -349,7 +349,7 @@ The subsequent code and parameter descriptions repeatedly use fractal, alignment
     <td align="center">[16, 64]</td>
     <td align="center">1024</td>
     <td align="center">4</td>
-    <td align="center"><code>CeilDivision(k, 2)</code></td>
+    <td align="center"><code>AscendC::Std::ceil_div(k, 2)</code></td>
   </tr>
     <tr>
     <td align="center"><span style="font-weight: bold;">FP8</span></td>
@@ -377,7 +377,7 @@ __aicore__ inline uint16_t CeilAlign(uint16_t size, uint16_t alignValue) {
 }
 ```
 
-- `CeilDivision`: Ceiling division, generally used to compute loop counts after ceiling alignment.
+- `ceil_div`: Ceiling division, generally used to compute loop counts after ceiling alignment.
 - `mAlignValue`: m axis aligns to `mAlignValue`. For example, when `mAlignValue = 16`, the m axis is aligned to 16. Similarly `nAlignValue`, `kAlignValue`.
 - `mAlignL1` and `mAlignL0`: Aligned values of m axis when A matrix is on L1 and L0A respectively. Similarly `kaAlignL1`, `kaAlignL0`, `nAlignL1`, `nAlignL0`, `kbAlignL1`, `kbAlignL0`.
 
@@ -468,8 +468,8 @@ A / B / scaleA / scaleB matrices have different alignment requirements on each a
   </tr>
   <tr>
     <td align="center"><span style="font-weight: bold;">k-axis Alignment</span></td>
-    <td align="center"><code>scaleK = CeilDivision(k, 64) * 2</code></td>
-    <td align="center"><code>scaleK = CeilDivision(k, 64) * 2</code></td>
+    <td align="center"><code>scaleK = AscendC::Std::ceil_div(k, 64) * 2</code></td>
+    <td align="center"><code>scaleK = AscendC::Std::ceil_div(k, 64) * 2</code></td>
   </tr>
 </table>
 
@@ -555,13 +555,13 @@ if constexpr (AscendC::IsSameType<TA, fp8_e4m3fn_t>::value || AscendC::IsSameTyp
 **DataCopy (Nd2NzParams)**
 
 - **nValue**: Takes `k`.
-- **dValue**: `CeilDivision(m, 2)` for FP4 data type; `m` for FP8 data type.
+- **dValue**: `AscendC::Std::ceil_div(m, 2)` for FP4 data type; `m` for FP8 data type.
 - **dstNzC0Stride**: Unit is 32B, takes the aligned row count of the Nz matrix on L1, i.e., the aligned length in k direction `alignK`.
 - **FP4 handling**: Per interface constraints, FP4 input is processed as B8 view during ND -> Nz, and parameters are configured accordingly.
 
 ```cpp
 AscendC::Nd2NzParams nd2nzA1Params;
-uint16_t aColValue = isFP4 ? CeilDivision(m, 2) : m;
+uint16_t aColValue = isFP4 ? AscendC::Std::ceil_div(m, 2) : m;
 nd2nzA1Params.ndNum = 1; // Number of ND matrices
 nd2nzA1Params.nValue = k; // Row count of source ND matrix
 nd2nzA1Params.dValue = aColValue; // Column count of source ND matrix configured as B8 view, 2 elements correspond to 1 B8 view element for FP4 input
@@ -585,7 +585,7 @@ AscendC::DataCopy(a1Local, aGM, nd2nzA1Params);
 auto padTensor = a1Local.template ReinterpretCast<uint16_t>();
 AscendC::InitConstValueParams<uint16_t> initConstValueParams;
 // repeatTimes represents iteration count; iterate in col direction.
-initConstValueParams.repeatTimes = CeilDivision(m, FP8_C0SIZE);
+initConstValueParams.repeatTimes = AscendC::Std::ceil_div(m, FP8_C0SIZE);
 // blockNum represents the number of data blocks (32B) initialized per iteration; here fill invalid rows at row direction tail.
 initConstValueParams.blockNum = alignK - k;
 // dstGap represents the distance from the end address of the previous iteration to the start address of the next iteration; skip valid data in row direction.
@@ -612,13 +612,13 @@ AscendC::Fill(padTensor[k * fractalShape[0]], initConstValueParams);
 **DataCopy (Nd2NzParams)**
 
 - **nValue**: Takes `k`.
-- **dValue**: `CeilDivision(n, 2)` for FP4 data type; `n` for FP8 data type.
+- **dValue**: `AscendC::Std::ceil_div(n, 2)` for FP4 data type; `n` for FP8 data type.
 - **dstNzC0Stride**: Unit is 32B, takes the aligned row count of the Nz matrix on L1, i.e., the aligned length in k direction `alignK`.
 - **FP4 handling**: Per interface constraints, FP4 input is processed as B8 view during ND -> Nz, and parameters are configured accordingly.
 
 ```cpp
 AscendC::Nd2NzParams nd2nzB1Params;
-uint16_t bColValue = isFP4 ? CeilDivision(n, 2) : n;
+uint16_t bColValue = isFP4 ? AscendC::Std::ceil_div(n, 2) : n;
 nd2nzB1Params.ndNum = 1; // Number of ND matrices
 nd2nzB1Params.nValue = k; // Row count of source ND matrix
 nd2nzB1Params.dValue = bColValue; // Column count of source ND matrix configured as B8 view, 2 elements correspond to 1 B8 view element for FP4 input
@@ -642,7 +642,7 @@ AscendC::DataCopy(b1Local, bGM, nd2nzB1Params);
 auto padTensor = b1Local.template ReinterpretCast<uint16_t>();
 AscendC::InitConstValueParams<uint16_t> initConstValueParams;
 // repeatTimes represents iteration count; iterate in col direction.
-initConstValueParams.repeatTimes = CeilDivision(n, FP8_C0SIZE);
+initConstValueParams.repeatTimes = AscendC::Std::ceil_div(n, FP8_C0SIZE);
 // blockNum represents the number of data blocks (32B) initialized per iteration; here fill invalid rows at row direction tail.
 initConstValueParams.blockNum = alignK - k;
 // dstGap represents the distance from the end address of the previous iteration to the start address of the next iteration; skip valid data in row direction.
@@ -902,11 +902,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // A matrix non-transposed input [m, k], L1 -> L0A no transpose needed
 // mStep/kStep represent row direction fractal count and col direction 32B block count respectively
-loadDataParams.mStep = CeilDivision(mAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(kaAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[1]);
 // srcStride/dstStride represent source/destination matrix col direction adjacent fractal start address interval, unit 512B
-loadDataParams.srcStride = CeilDivision(mAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(mAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = false;
 
 AscendC::LoadData2DMxParams loadMxDataParams;
@@ -914,7 +914,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep configure scaleA row/col direction transfer length; stride configured by row direction adjacent fractal interval
-loadMxDataParams.xStep = CeilDivision(scaleMAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleMAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -950,11 +950,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // A matrix transposed input [k, m], L1 -> L0A needs transpose
 // During transpose transfer, A matrix shape on L1 is [kaAlignL1, mAlignL1], row direction corresponds to logical k dimension, col direction corresponds to logical m dimension
-loadDataParams.mStep = CeilDivision(kaAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(mAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[1]);
 // srcStride/dstStride represent source/destination matrix col direction adjacent fractal start address interval, unit 512B
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = true;
 
 AscendC::LoadData2DMxParams loadMxDataParams;
@@ -962,7 +962,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep configure scaleA row/col direction transfer length; stride configured by row direction adjacent fractal interval
-loadMxDataParams.xStep = CeilDivision(scaleMAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleMAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -992,7 +992,7 @@ AscendC::LoadData(a2Local, a1Local, scaleA1Local, loadDataParams, loadMxDataPara
 - A matrix L1 -> L0A needs transpose, `loadDataParams.ifTranspose = true`.
 - For loop is used to avoid dirty data exceeding 1 fractal in m direction during single call.
 - `mStepAlign` represents the row direction fractal count per loop transfer, 4 for FP4, 2 for FP8.
-- `L0ALoopNum = CeilDivision(kaAlignL0, fractalShape[0] * fractalNum)`, `mStartPosition` increments with `loopIdx`.
+- `L0ALoopNum = AscendC::Std::ceil_div(kaAlignL0, fractalShape[0] * fractalNum)`, `mStartPosition` increments with `loopIdx`.
 - scaleA matrix is only transferred to L0A_MX in the first loop iteration; subsequent loops set `xStep = 0`, `yStep = 0` to skip transfer.
 - `dstOffset` records the destination address offset on L0A for each loop iteration, each loop skips dirty data fractals at the tail of m direction.
 
@@ -1005,10 +1005,10 @@ loadDataParams.kStartPosition = 0;
 // Transpose transfer requires mStep aligned by data type: 4 fractals for FP4, 2 fractals for FP8
 loadDataParams.mStep = mStepAlign;
 // kStep corresponds to 32B block count in A matrix source col direction
-loadDataParams.kStep = CeilDivision(mAlignL0, fractalShape[1]);
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL0, fractalShape[1]);
 // srcStride/dstStride represent source/destination matrix col direction adjacent fractal start address interval, unit 512B
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = true;
 
 AscendC::LoadData2DMxParams loadMxDataParams;
@@ -1020,7 +1020,7 @@ loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
 
 uint32_t dstOffset = 0;
-uint16_t L0ALoopNum = CeilDivision(kaAlignL0, fractalShape[0] * fractalNum);
+uint16_t L0ALoopNum = AscendC::Std::ceil_div(kaAlignL0, fractalShape[0] * fractalNum);
 for (uint16_t loopIdx = 0; loopIdx < L0ALoopNum; ++loopIdx) {
     // mStartPosition increments, A matrix updates start address along m direction each iteration, scaleA matrix completes full transfer in first for loop, subsequent for loops skip transfer
     loadDataParams.mStartPosition = mStepAlign * loopIdx;
@@ -1028,7 +1028,7 @@ for (uint16_t loopIdx = 0; loopIdx < L0ALoopNum; ++loopIdx) {
         loadMxDataParams.xStep = 0;
         loadMxDataParams.yStep = 0;
     } else {
-        loadMxDataParams.xStep = CeilDivision(scaleMAlignL1, fractalShape[0]);
+        loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleMAlignL1, fractalShape[0]);
         loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
     }
     AscendC::LoadData(a2Local[dstOffset], a1Local, scaleA1Local, loadDataParams, loadMxDataParams);
@@ -1071,11 +1071,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // B matrix transposed input [n, k], L1 -> L0B no transpose needed
 // mStep/kStep represent row direction fractal count and col direction 32B block count respectively
-loadDataParams.mStep = CeilDivision(nAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(kbAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[1]);
 // srcStride/dstStride represent source/destination matrix col direction adjacent fractal start address interval, unit 512B
-loadDataParams.srcStride = CeilDivision(nAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(nAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = false;
 
 // When configuring scaleB L1 -> L0B_MX transfer parameters, treat scaleNAlignL1 direction as row and scaleK direction as col
@@ -1085,7 +1085,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep configure scaleB row/col direction transfer length; stride configured by row direction adjacent fractal interval
-loadMxDataParams.xStep = CeilDivision(scaleNAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleNAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -1121,11 +1121,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // B matrix non-transposed input [k, n], L1 -> L0B needs transpose
 // During transpose transfer, B matrix shape on L1 is [kbAlignL1, nAlignL1], row direction corresponds to logical k dimension, col direction corresponds to logical n dimension
-loadDataParams.mStep = CeilDivision(kbAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(nAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[1]);
 // srcStride/dstStride represent source/destination matrix col direction adjacent fractal start address interval, unit 512B
-loadDataParams.srcStride = CeilDivision(kbAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = true;
 
 // When configuring scaleB L1 -> L0B_MX transfer parameters, treat scaleNAlignL1 direction as row and scaleK direction as col
@@ -1135,7 +1135,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep configure scaleB row/col direction transfer length; stride configured by row direction adjacent fractal interval
-loadMxDataParams.xStep = CeilDivision(scaleNAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleNAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -1151,7 +1151,7 @@ The MX matrix multiplication formula is `C = (scaleA ⊗ A) * (scaleB ⊗ B)`. T
 
 **Key configuration**
 
-- `mmadParams.k` is set to `alignK = CeilAlign(k, 64) = 128` to meet the requirement of 64 alignment in k direction for the `MmadMx` interface in MX matrix multiplication. This constraint comes from the MX matrix multiplied by the k-direction scale granularity: every 64 k elements correspond to 2 scale factors, `scaleK = CeilDivision(k, 64) * 2`; the m/n direction does not need to be aligned by 64.
+- `mmadParams.k` is set to `alignK = CeilAlign(k, 64) = 128` to meet the requirement of 64 alignment in k direction for the `MmadMx` interface in MX matrix multiplication. This constraint comes from the MX matrix multiplied by the k-direction scale granularity: every 64 k elements correspond to 2 scale factors, `scaleK = AscendC::Std::ceil_div(k, 64) * 2`; the m/n direction does not need to be aligned by 64.
 - `mmadParams.cmatrixInitVal = true` means initializing the C matrix.
 - In scenario 2/4, when A matrix is ​​transposed and inputs `[k, m]` and `LoadData` is called in a single time, more than one fractal is moved in the m direction. Therefore, `mmadParams.m` is set to `CeilAlign(m, fractalShape[0] * fractalNum)`, allowing the multi-moved fractals to participate in the calculation, and the results corresponding to the invalid fractals will be skipped when `Fixpipe` is subsequently moved out.
 - `mmadParams.m = m` in the remaining scenes. Scenario 5/6 Although the A matrix also transposes the input, the for loop method has avoided moving more than one fractal of dirty data in the m direction.

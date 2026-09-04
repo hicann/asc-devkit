@@ -8,7 +8,7 @@ This example demonstrates the usage of the register data type RegTensor and Mask
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

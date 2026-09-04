@@ -9,7 +9,7 @@ This example implements the Arange operation based on the Reg programming interf
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 ```

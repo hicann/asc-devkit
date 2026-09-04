@@ -8,9 +8,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
+| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -156,7 +156,7 @@ if ((kOffsetInChunkA + 1) == stepKa) {
 按 M/N 方向均匀切分矩阵到多核并行计算。以 Atlas A2/A3（dav-2201）为例，采用 4×6 切分策略（M 方向 4 块、N 方向 6 块，共 24 核）满足地址 512B 对齐，并减少同地址访问冲突；Ascend 950PR/950DT（dav-3510）下为 32 核切分（参见后文性能数据小节）：
 
 ```cpp
-constexpr uint32_t mIter = DivCeil(M, singleCoreM);
+constexpr uint32_t mIter = AscendC::Std::ceil_div(M, singleCoreM);
 uint32_t mIterIdx = AscendC::GetBlockIdx() % mIter;
 uint32_t nIterIdx = AscendC::GetBlockIdx() / mIter;
 ```
@@ -199,7 +199,7 @@ nd2nzParams.dValue = baseK * stepKa;  // 大包包含 stepKa 个 baseM * baseK
 
 ```cpp
 AscendC::LoadData2DParams loadDataParams;
-for (int i = 0; i < DivCeil(baseK, CUBE_BLOCK); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(baseK, CUBE_BLOCK); ++i) {
     AscendC::LoadData(b2Local[i * dstOffset], b1Local[srcAddr + i * srcOffset], loadDataParams);
 }
 ```
@@ -252,8 +252,8 @@ L2Cache 切分的具体实现与[高阶 API Matmul 样例](../matmul_high_perfor
 
 ```cpp
 // ProcessL2Cache: 按 M 方向分轮，每轮 24 核覆盖 mIterPerRound 份 M 子块
-constexpr uint32_t mIterPerRound = DivCeil(M, singleCoreM * 2);
-constexpr uint32_t outerMLoopCount = DivCeil(mIterTotal, mIterPerRound);
+constexpr uint32_t mIterPerRound = AscendC::Std::ceil_div(M, singleCoreM * 2);
+constexpr uint32_t outerMLoopCount = AscendC::Std::ceil_div(mIterTotal, mIterPerRound);
 
 for (uint32_t outerMIdx = 0; outerMIdx < outerMLoopCount; outerMIdx++) {
     uint32_t mIterIdx = AscendC::GetBlockIdx() % mIterPerRound + outerMIdx * mIterPerRound;

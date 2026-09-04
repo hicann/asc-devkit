@@ -15,7 +15,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -345,7 +345,7 @@ __simd_vf__ inline void GeluVfBasic(__ubuf__ float* xAddr, __ubuf__ float* yAddr
 ```cpp
 // 核函数中调用 VF 函数的代码片段
 constexpr uint32_t oneRepeatSize = AscendC::GetVecLen() / sizeof(float);
-uint32_t loopNum = DivCeil(n, oneRepeatSize);
+uint32_t loopNum = AscendC::Std::ceil_div(n, oneRepeatSize);
 __ubuf__ float* xAddr = reinterpret_cast<__ubuf__ float*>(xLocal.GetPhyAddr());
 __ubuf__ float* yAddr = reinterpret_cast<__ubuf__ float*>(yLocal.GetPhyAddr());
 // 通过 asc_vf_call 调用 VF 函数，传入 UB 地址、元素数 n 和循环次数

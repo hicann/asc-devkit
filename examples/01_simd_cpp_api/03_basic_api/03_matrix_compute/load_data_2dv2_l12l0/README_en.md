@@ -10,7 +10,7 @@ The example covers three input data types: int8_t, half, and float, as well as A
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -195,7 +195,7 @@ The subsequent code and parameter descriptions repeatedly use fractal and alignm
   }
   ```
 
-- `CeilDivision`: Ceiling division, generally used to compute loop counts after ceiling alignment.
+- `ceil_div`: Ceiling division, generally used to compute loop counts after ceiling alignment.
 - `mAlignValue`: m axis aligns to `mAlignValue`. For example, when `mAlignValue = 32`, the m axis is aligned to 32. Similarly `nAlignValue`, `kaAlignValue`, `kbAlignValue`.
 - `mAlignL1` and `mAlignL0`: Aligned values of m axis when A matrix is on L1 and L0A respectively. Similarly `nAlignL1`, `nAlignL0`, `kaAlignL1`, `kaAlignL0`, `kbAlignL1`, `kbAlignL0`.
 
@@ -363,8 +363,8 @@ When L1 -> L0A does not require transpose, the parameter configurations for B8 /
 
 Parameter configuration key points:
 
-- `mStep = CeilDivision(mAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the m axis.
-- `kStep = CeilDivision(kaAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the k axis.
+- `mStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the m axis.
+- `kStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the k axis.
 - `ifTranspose = false`, meaning only L1 Nz to L0A Nz layout transfer is performed, no transpose.
 
 ```cpp
@@ -375,10 +375,10 @@ kaAlignL0 = CeilAlign(k, fractalShape[1]); // 96
 AscendC::LoadData2DParamsV2 loadDataParams;
 loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
-loadDataParams.mStep = CeilDivision(mAlignL1, fractalShape[0]); // 3
-loadDataParams.kStep = CeilDivision(kaAlignL1, fractalShape[1]); // 3
-loadDataParams.srcStride = CeilDivision(mAlignL1, fractalShape[0]); // 3
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]); // 3
+loadDataParams.mStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[0]); // 3
+loadDataParams.kStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[1]); // 3
+loadDataParams.srcStride = AscendC::Std::ceil_div(mAlignL1, fractalShape[0]); // 3
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]); // 3
 loadDataParams.ifTranspose = false;
 loadDataParams.sid = 0;
 AscendC::LoadData(a2Local, a1Local, loadDataParams);
@@ -409,10 +409,10 @@ mAlignL1 = CeilAlign(m, fractalShape[1]); // 64
 mAlignL0 = CeilAlign(m, fractalShape[0] * fractalNum); // 64
 kaAlignL0 = CeilAlign(k, fractalShape[1]); // 96
 AscendC::LoadData2DParamsV2 loadDataParams;
-loadDataParams.mStep = CeilDivision(kaAlignL1, fractalShape[0]); // 6
-loadDataParams.kStep = CeilDivision(mAlignL1, fractalShape[1]); // 2
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]); // 6
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]); // 4
+loadDataParams.mStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 6
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[1]); // 2
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 6
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]); // 4
 loadDataParams.ifTranspose = true;
 loadDataParams.sid = 0;
 AscendC::LoadData(a2Local, a1Local, loadDataParams);
@@ -427,7 +427,7 @@ The following figure shows calling `Load2Dv2` multiple times in a for loop to co
   Figure 3: int8_t data type, L1 -> L0A transpose, for loop calling Load2Dv2 multiple times data layout diagram
 </div>
 
-When using for loop, transfer is done in segments along the L1 row direction (A matrix k axis), transferring 2 fractals in the k axis direction and `CeilDivision(mAlignL0, fractalShape[1])` fractals in the m axis direction each time. `dstStride` is configured with m direction valid data aligned to `fractalShape[0]`, skipping dirty data fractals at the tail of m direction when writing to L0A due to transpose over-read, so no extra dirty data fractals participate in `Mmad` computation in the m direction.
+When using for loop, transfer is done in segments along the L1 row direction (A matrix k axis), transferring 2 fractals in the k axis direction and `AscendC::Std::ceil_div(mAlignL0, fractalShape[1])` fractals in the m axis direction each time. `dstStride` is configured with m direction valid data aligned to `fractalShape[0]`, skipping dirty data fractals at the tail of m direction when writing to L0A due to transpose over-read, so no extra dirty data fractals participate in `Mmad` computation in the m direction.
 
 ```cpp
 kaAlignL1 = CeilAlign(k, fractalShape[0] * fractalNum); // 96
@@ -436,11 +436,11 @@ mAlignL0 = CeilAlign(m, fractalShape[0]); // 48
 kaAlignL0 = CeilAlign(k, fractalShape[1]); // 96
 // Input is int8 type, A matrix [k,m] transposed input, L1 -> L0A requires transpose
 // For loop calls Load2Dv2, iterating along k axis, each iteration transfers 2 fractals in k direction on L1, skips dirty data fractals at tail of m direction on L0A, extra transfer in m direction does not exceed 1 fractal
-uint16_t L0ALoopNum = CeilDivision(kaAlignL0, fractalShape[0] * fractalNum); // 3
+uint16_t L0ALoopNum = AscendC::Std::ceil_div(kaAlignL0, fractalShape[0] * fractalNum); // 3
 loadDataParams.mStep = INT8_M_STEP_ALIGN; // 2
-loadDataParams.kStep = CeilDivision(mAlignL0, fractalShape[1]); // 2
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]); // 6
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]); // 3
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL0, fractalShape[1]); // 2
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 6
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]); // 3
 loadDataParams.ifTranspose = true;
 uint32_t dstOffset = 0;
 for (uint16_t loopIdx = 0; loopIdx < L0ALoopNum; ++loopIdx) {
@@ -461,8 +461,8 @@ B16 input data type fractal is 16 * 16, one fractal is already a square. During 
 
 Parameter configuration key points:
 
-- `mStep = CeilDivision(kaAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the k axis.
-- `kStep = CeilDivision(mAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the m axis.
+- `mStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the k axis.
+- `kStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the m axis.
 - `ifTranspose = true`, meaning transpose is completed when transferring to L0A.
 
 ```cpp
@@ -471,10 +471,10 @@ mAlignL1 = CeilAlign(m, fractalShape[1]); // 48
 mAlignL0 = CeilAlign(m, fractalShape[0] * fractalNum); // 48
 kaAlignL0 = CeilAlign(k, fractalShape[1]); // 80
 AscendC::LoadData2DParamsV2 loadDataParams;
-loadDataParams.mStep = CeilDivision(kaAlignL1, fractalShape[0]); // 5
-loadDataParams.kStep = CeilDivision(mAlignL1, fractalShape[1]); // 3
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]); // 5
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]); // 3
+loadDataParams.mStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 5
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[1]); // 3
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 5
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]); // 3
 loadDataParams.ifTranspose = true;
 loadDataParams.sid = 0;
 AscendC::LoadData(a2Local, a1Local, loadDataParams);
@@ -497,10 +497,10 @@ mAlignL1 = CeilAlign(m, fractalShape[1] * fractalNum); // 48
 mAlignL0 = CeilAlign(m, fractalShape[0]); // 48
 kaAlignL0 = CeilAlign(k, fractalShape[1] * fractalNum); // 80
 AscendC::LoadData2DParamsV2 loadDataParams;
-loadDataParams.mStep = CeilDivision(kaAlignL1, fractalShape[0]); // 5
-loadDataParams.kStep = CeilDivision(mAlignL1, fractalShape[1]); // 6
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]); // 5
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]); // 3
+loadDataParams.mStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 5
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[1]); // 6
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]); // 5
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]); // 3
 loadDataParams.ifTranspose = true;
 loadDataParams.sid = 0;
 AscendC::LoadData(a2Local, a1Local, loadDataParams);
@@ -517,8 +517,8 @@ When L1 -> L0B does not require transpose, the parameter configurations for B8 /
 
 Parameter configuration key points:
 
-- `mStep = CeilDivision(nAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the n axis.
-- `kStep = CeilDivision(kbAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the k axis.
+- `mStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the n axis.
+- `kStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the k axis.
 - `ifTranspose = false`, meaning only L1 Nz to L0B Zn layout transfer is performed, no transpose.
 
 ```cpp
@@ -529,10 +529,10 @@ nAlignL0 = CeilAlign(n, fractalShape[0]); // 64
 AscendC::LoadData2DParamsV2 loadDataParams;
 loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
-loadDataParams.mStep = CeilDivision(nAlignL1, fractalShape[0]); // 4
-loadDataParams.kStep = CeilDivision(kbAlignL1, fractalShape[1]); // 9
-loadDataParams.srcStride = CeilDivision(nAlignL1, fractalShape[0]); // 4
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]); // 4
+loadDataParams.mStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[0]); // 4
+loadDataParams.kStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[1]); // 9
+loadDataParams.srcStride = AscendC::Std::ceil_div(nAlignL1, fractalShape[0]); // 4
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]); // 4
 loadDataParams.ifTranspose = false;
 loadDataParams.sid = 0;
 AscendC::LoadData(b2Local, b1Local, loadDataParams);
@@ -559,10 +559,10 @@ nAlignL1 = CeilAlign(n, fractalShape[1]); // 64
 kbAlignL0 = CeilAlign(k, fractalShape[1]); // 96
 nAlignL0 = CeilAlign(n, fractalShape[0] * fractalNum); // 64
 AscendC::LoadData2DParamsV2 loadDataParams;
-loadDataParams.mStep = CeilDivision(kbAlignL1, fractalShape[0]); // 6
-loadDataParams.kStep = CeilDivision(nAlignL1, fractalShape[1]); // 2
-loadDataParams.srcStride = CeilDivision(kbAlignL1, fractalShape[0]); // 6
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]); // 4
+loadDataParams.mStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]); // 6
+loadDataParams.kStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[1]); // 2
+loadDataParams.srcStride = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]); // 6
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]); // 4
 loadDataParams.ifTranspose = true;
 AscendC::LoadData(b2Local, b1Local, loadDataParams);
 ```
@@ -578,8 +578,8 @@ B16 input data type fractal is 16 * 16, one fractal is already a square. During 
 
 Parameter configuration key points:
 
-- `mStep = CeilDivision(kbAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the k axis.
-- `kStep = CeilDivision(nAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the n axis.
+- `mStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0])`, representing the number of small fractals in the row direction for the k axis.
+- `kStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[1])`, representing the number of small fractals in the col direction for the n axis.
 - `ifTranspose = true`, meaning transpose is completed when transferring to L0B.
 
 ```cpp
@@ -588,10 +588,10 @@ nAlignL1 = CeilAlign(n, fractalShape[1]); // 64
 kbAlignL0 = CeilAlign(k, fractalShape[1]); // 80
 nAlignL0 = CeilAlign(n, fractalShape[0] * fractalNum); // 64
 AscendC::LoadData2DParamsV2 loadDataParams;
-loadDataParams.mStep = CeilDivision(kbAlignL1, fractalShape[0]); // 5
-loadDataParams.kStep = CeilDivision(nAlignL1, fractalShape[1]); // 4
-loadDataParams.srcStride = CeilDivision(kbAlignL1, fractalShape[0]); // 5
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]); // 4
+loadDataParams.mStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]); // 5
+loadDataParams.kStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[1]); // 4
+loadDataParams.srcStride = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]); // 5
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]); // 4
 loadDataParams.ifTranspose = true;
 AscendC::LoadData(b2Local, b1Local, loadDataParams);
 ```
@@ -613,10 +613,10 @@ nAlignL1 = CeilAlign(n, fractalShape[1] * fractalNum); // 64
 kbAlignL0 = CeilAlign(k, fractalShape[1] * fractalNum); // 80
 nAlignL0 = CeilAlign(n, fractalShape[0]); // 64
 AscendC::LoadData2DParamsV2 loadDataParams;
-loadDataParams.mStep = CeilDivision(kbAlignL1, fractalShape[0]); // 5
-loadDataParams.kStep = CeilDivision(nAlignL1, fractalShape[1]); // 8
-loadDataParams.srcStride = CeilDivision(kbAlignL1, fractalShape[0]); // 5
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]); // 4
+loadDataParams.mStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]); // 5
+loadDataParams.kStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[1]); // 8
+loadDataParams.srcStride = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]); // 5
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]); // 4
 loadDataParams.ifTranspose = true;
 AscendC::LoadData(b2Local, b1Local, loadDataParams);
 ```

@@ -8,7 +8,7 @@ A Matmul example with A and B matrices as hifloat8, fp8_e4m3fn, or fp8_e5m2 data
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

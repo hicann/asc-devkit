@@ -6,8 +6,8 @@ A Matmul example where the user manages CO1 (L0C Buffer) independently. The comp
 
 | Product | CANN Version |
 |------|-------------|
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
+| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
 
 ## Build and Run
 Run the following steps in the root directory of this example to build and run the example.

@@ -11,8 +11,8 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
+| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -275,8 +275,8 @@ A / B矩阵在不同存储单元的数据排布格式见[表1](#表1)。其中L1
 
 **`Load2D`不转置搬运：场景1 / 3 / 6 / 11**
 
-- A矩阵不转置输入`[m, k]`，使用`Load2D`搬运到L0A，沿m方向for循环，一次搬运k轴方向上的`CeilDivision(k, fractalShape[1])`个分形。
-- B矩阵转置输入`[n, k]`，使用`Load2D`搬运到L0B，沿k方向for循环，一次搬运n方向上的`CeilDivision(n, fractalShape[0])`个分形。
+- A矩阵不转置输入`[m, k]`，使用`Load2D`搬运到L0A，沿m方向for循环，一次搬运k轴方向上的`AscendC::Std::ceil_div(k, fractalShape[1])`个分形。
+- B矩阵转置输入`[n, k]`，使用`Load2D`搬运到L0B，沿k方向for循环，一次搬运n方向上的`AscendC::Std::ceil_div(n, fractalShape[0])`个分形。
 - A / B矩阵均通过配置`srcStride`、`dstGap`等参数完成L1 -> L0搬运及大分形排布格式变化。
 
 **A侧`Load3Dv2`不转置搬运：场景2 / 4 / 7 / 12**
@@ -355,7 +355,7 @@ A / B矩阵在不同存储单元的数据排布格式见[表1](#表1)。其中L1
   }
   ```
 
-- `CeilDivision`：向上取整除法，一般用于求解向上对齐后的循环次数。
+- `ceil_div`：向上取整除法，一般用于求解向上对齐后的循环次数。
 - `mAlignValue`：m轴向`mAlignValue`对齐。例如`mAlignValue = 32`，代表m轴对齐到32；依次类推还有`nAlignValue`、`kAlignValue`。
 - `mAlignL1`和`mAlignL0`：A矩阵分别在L1和L0A上时，m轴对齐后的值。依次类推还有`kAlignL1`、`kAlignL0`、`nAlignL1`、`nAlignL0`。
 - `srcoffset`和`dstoffset`：在L1上，A / B矩阵外轴方向每循环一次时，LocalTensor的地址偏移量；在L0A / L0B上，A / B矩阵外轴方向每循环一次时，LocalTensor的地址偏移量。
@@ -565,12 +565,12 @@ A矩阵GM输入转置`[k, m]`且L1目标排布为Zz时，需要将源ND矩阵沿
 
 场景14中，float转置输入若使用`LoadDataWithTranspose`完成L1 -> L0A转置搬运，L1上的A矩阵需要满足Zz排布。因此GM -> L1阶段需要通过以下配置构造Zz：
 
-- `ndNum = CeilDivision(k, fractalShape[0])`，表示沿k轴按16行切分。
+- `ndNum = AscendC::Std::ceil_div(k, fractalShape[0])`，表示沿k轴按16行切分。
 - `nValue = fractalShape[0]`，每个小ND矩阵高度为16。
 - `dstNzMatrixStride = fractalShape[0] * CeilAlign(m, fractalShape[1] * fractalNum)`，控制相邻小ND矩阵搬运后的写入间隔。
 
 ```cpp
-nd2nzA1Params.ndNum = CeilDivision(k, fractalShape[0]);
+nd2nzA1Params.ndNum = AscendC::Std::ceil_div(k, fractalShape[0]);
 nd2nzA1Params.nValue = fractalShape[0];
 nd2nzA1Params.dValue = m;
 nd2nzA1Params.srcNdMatrixStride = fractalShape[0] * m;
@@ -623,12 +623,12 @@ B矩阵GM输入不转置`[k, n]`且L1目标排布为Zz时，与A矩阵构造Zz�
 
 场景14中，float不转置输入若使用`LoadDataWithTranspose`完成L1 -> L0B转置搬运，L1上的B矩阵需要满足Zz排布。因此GM -> L1阶段需要通过以下配置构造Zz：
 
-- `ndNum = CeilDivision(k, fractalShape[0])`，表示沿k轴按16行切分。
+- `ndNum = AscendC::Std::ceil_div(k, fractalShape[0])`，表示沿k轴按16行切分。
 - `nValue = fractalShape[0]`，每个小ND矩阵高度为16。
 - `dstNzMatrixStride = fractalShape[0] * CeilAlign(n, fractalShape[1] * fractalNum)`，控制相邻小ND矩阵搬运后的写入间隔。
 
 ```cpp
-nd2nzB1Params.ndNum = CeilDivision(k, fractalShape[0]);
+nd2nzB1Params.ndNum = AscendC::Std::ceil_div(k, fractalShape[0]);
 nd2nzB1Params.nValue = fractalShape[0];
 nd2nzB1Params.dValue = n;
 nd2nzB1Params.srcNdMatrixStride = fractalShape[0] * n;
@@ -705,16 +705,16 @@ A矩阵搬入L0A后目标排布为Zz。根据A矩阵是否需要转置，分为�
 - `ifTranspose = false`，表示仅进行Nz -> Zz的大分形排布格式变化。
 
 ```cpp
-uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1]) * fractalSize;
 uint32_t srcOffset = fractalSize;
 // Nz -> Zz
 AscendC::LoadData2DParams loadDataParams;
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[1]);
-loadDataParams.srcStride = CeilDivision(m, fractalShape[0]);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[1]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(m, fractalShape[0]);
 // K轴方向相邻迭代间，目的操作数前一个分形结束地址与后一个分形起始地址的间隔
 loadDataParams.dstGap = 0;
 loadDataParams.ifTranspose = false;
-for (int i = 0; i < CeilDivision(m, fractalShape[0]); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[0]); ++i) {
     AscendC::LoadData(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -783,7 +783,7 @@ loadDataParams.fMatrixCtrl = false;
 参数配置要点：
 
 - 以m轴方向作为外轴进行for循环，以k轴方向作为内轴配置`repeatTimes`。
-- 转置时连续多个分形合并为一个方块矩阵，因此`repeatTimes = CeilDivision(k, fractalShape[0] * fractalNum)`。
+- 转置时连续多个分形合并为一个方块矩阵，因此`repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum)`。
 - `dstFracGap`用于控制同一次转置内目的分形之间的间隔。
 
 ```cpp
@@ -791,22 +791,22 @@ loadDataParams.fMatrixCtrl = false;
 // 根据以下函数原型，offset的数据类型是uint32_t
 // __aicore__ inline LocalTensor operator[](const uint32_t offset) const
 // dstoffset要根据A矩阵在L0上，宽度方向的对齐来求解
-uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1]) * fractalSize * fractalNum;
 // srcoffset要根据A矩阵在L1上，高度方向的对齐来求解
-uint32_t srcOffset = CeilDivision(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t srcOffset = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 
 AscendC::LoadData2dTransposeParams loadDataParams;
 // 搬运起始位置为源操作数中第几个方块矩阵(0 为源操作数中第1个方块矩阵)
 loadDataParams.startIndex = 0;
 // 迭代次数，每次迭代转置一个方块矩阵
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 // 相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔。单位是方块矩阵的大小
 loadDataParams.srcStride = 1;
 // 相邻迭代间，目的操作数前一个迭代第一个分形的结束地址到下一个迭代第一个分形起始地址的间隔，单位：512B
 loadDataParams.dstGap = 0;
 // 每个迭代内目的操作数转置前一个分形结束地址与后一个分形起始地址的间隔，单位为512B
-loadDataParams.dstFracGap = CeilDivision(k, fractalShape[1]) - 1;
-for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
+loadDataParams.dstFracGap = AscendC::Std::ceil_div(k, fractalShape[1]) - 1;
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1]); ++i) {
     AscendC::LoadDataWithTranspose(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -830,18 +830,18 @@ for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
 - `ifTranspose = true`，表示从L1 -> L0A时对每个小分形进行转置。
 
 ```cpp
-uint32_t dstOffset = CeilDivision(k, fractalShape[0]) * fractalSize;
-uint32_t srcOffset = CeilDivision(k, fractalShape[0]) * fractalSize;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[0]) * fractalSize;
+uint32_t srcOffset = AscendC::Std::ceil_div(k, fractalShape[0]) * fractalSize;
 AscendC::LoadData2DParams loadDataParams;
 // 迭代次数，每个迭代可以处理512B数据
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[0]);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0]);
 // 相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔，单位：512B
 loadDataParams.srcStride = 1;
 // 相邻迭代间，目的操作数前一个分形结束地址与后一个分形起始地址的间隔，单位：512B
 loadDataParams.dstGap = 0;
 // 是否启用转置功能，对每个分形矩阵进行转置，默认为false
 loadDataParams.ifTranspose = true;
-for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1]); ++i) {
     AscendC::LoadData(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -852,22 +852,22 @@ for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
 
 ```cpp
 // dstoffset要根据A矩阵在L0上，宽度方向的对齐来求解
-uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1]) * fractalSize * fractalNum;
 // srcoffset要根据A矩阵在L1上，高度方向的对齐来求解
-uint32_t srcOffset = CeilDivision(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t srcOffset = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 
 AscendC::LoadData2dTransposeParams loadDataParams;
 // 搬运起始位置为源操作数中第几个方块矩阵(0 为源操作数中第1个方块矩阵)
 loadDataParams.startIndex = 0;
 // 迭代次数，每次迭代转置一个方块矩阵
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 // 相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔。单位是方块矩阵的大小
 loadDataParams.srcStride = 1;
 // 相邻迭代间，目的操作数前一个迭代第一个分形的结束地址到下一个迭代第一个分形起始地址的间隔，单位：512B
 loadDataParams.dstGap = 0;
 // 每个迭代内目的操作数转置前一个分形结束地址与后一个分形起始地址的间隔，单位为512B
-loadDataParams.dstFracGap = CeilDivision(k, fractalShape[1]) - 1;
-for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
+loadDataParams.dstFracGap = AscendC::Std::ceil_div(k, fractalShape[1]) - 1;
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1]); ++i) {
     AscendC::LoadDataWithTranspose(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -972,11 +972,11 @@ AscendC::LoadData(a2Local, a1Local, loadDataParams);
   图15：float数据类型下，L1 -> L0A转置，调用LoadDataWithTranspose数据排布示意图
 </div>
 
-以m轴方向作为外轴进行for循环（如图15红框部分），以k轴方向作为内轴来配置loadDataParams.repeatTimes。如图15所示，srcoffset和dstoffset的含义分别是：在L1上，A矩阵m轴方向每循环一次时，LocalTensor的地址偏移量；在L0A上，A矩阵m轴方向每循环一次时，LocalTensor的地址偏移量。配置`LoadData2dTransposeParams`结构体时，需要特别注意的是，由于转置时连续两个分形合并为一个方块，如图蓝色和绿色方框表示2个方块，因此loadDataParams.repeatTimes=CeilDivision(k, fractalShape[1] * fractalNum)。
+以m轴方向作为外轴进行for循环（如图15红框部分），以k轴方向作为内轴来配置loadDataParams.repeatTimes。如图15所示，srcoffset和dstoffset的含义分别是：在L1上，A矩阵m轴方向每循环一次时，LocalTensor的地址偏移量；在L0A上，A矩阵m轴方向每循环一次时，LocalTensor的地址偏移量。配置`LoadData2dTransposeParams`结构体时，需要特别注意的是，由于转置时连续两个分形合并为一个方块，如图蓝色和绿色方框表示2个方块，因此loadDataParams.repeatTimes=AscendC::Std::ceil_div(k, fractalShape[1] * fractalNum)。
 
 ```cpp
 // A矩阵在L0A上shape为[m，k]、Zz排布，因此dstoffset要根据A矩阵在K轴方向的对齐来求解
-uint32_t dstOffset = CeilDivision(k, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(k, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
 // A矩阵在L1上shape为[K,M]、Zz排布，因此srcoffset为1个分形包含的元素个数
 uint32_t srcOffset = fractalSize * fractalNum;
 
@@ -984,14 +984,14 @@ AscendC::LoadData2dTransposeParams loadDataParams;
 // 搬运起始位置为源操作数中第几个方块矩阵(0 为源操作数中第1个方块矩阵)
 loadDataParams.startIndex = 0;
 // 迭代次数，每次迭代转置一个方块矩阵
-loadDataParams.repeatTimes = CeilDivision(k, fractalShape[1] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(k, fractalShape[1] * fractalNum);
 // 相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔。单位是方块矩阵的大小
-loadDataParams.srcStride = CeilDivision(m, fractalShape[1] * fractalNum);
+loadDataParams.srcStride = AscendC::Std::ceil_div(m, fractalShape[1] * fractalNum);
 // 相邻迭代间，目的操作数前一个迭代第一个分形的结束地址到下一个迭代第一个分形起始地址的间隔，单位：512B
 loadDataParams.dstGap = 1;
 // 每个迭代内目的操作数转置前一个分形结束地址与后一个分形起始地址的间隔，单位为512B
 loadDataParams.dstFracGap = 0;
-for (int i = 0; i < CeilDivision(m, fractalShape[1] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(m, fractalShape[1] * fractalNum); ++i) {
     AscendC::LoadDataWithTranspose(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1022,17 +1022,17 @@ B矩阵搬入L0B后目标排布为Zn。根据B矩阵是否需要转置，分为�
 ```cpp
 // srcOffset和dstOffset相同
 // n轴向fractalShape[0]对齐
-uint32_t dstOffset = CeilDivision(n, fractalShape[0]) * fractalSize;
-uint32_t srcOffset = CeilDivision(n, fractalShape[0]) * fractalSize;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0]) * fractalSize;
+uint32_t srcOffset = AscendC::Std::ceil_div(n, fractalShape[0]) * fractalSize;
 // Nz -> Zn
 AscendC::LoadData2DParams loadDataParams;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[0]);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[0]);
 loadDataParams.srcStride = 1;
 // n轴方向相邻迭代间，目的操作数前一个分形结束地址与后一个分形起始地址的间隔
 loadDataParams.dstGap = 0;
 loadDataParams.ifTranspose = false;
 // k轴向fractalShape[1]对齐
-for (int i = 0; i < CeilDivision(k, fractalShape[1]); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[1]); ++i) {
     AscendC::LoadData(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1061,15 +1061,15 @@ for (int i = 0; i < CeilDivision(k, fractalShape[1]); ++i) {
 - 转置前后同一方块内的分形地址保持连续，因此`dstFracGap = 0`。
 
 ```cpp
-uint32_t dstOffset = CeilDivision(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 uint32_t srcOffset = fractalSize * fractalNum;
 AscendC::LoadData2dTransposeParams loadDataParams;
 loadDataParams.startIndex = 0;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[1]);
-loadDataParams.srcStride = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[1]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 loadDataParams.dstGap = 1;
 loadDataParams.dstFracGap = 0;
-for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum); ++i) {
     AscendC::LoadDataWithTranspose(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1089,15 +1089,15 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
 如上图18所示，以k轴方向作为外轴进行for循环，以n轴方向作为内轴来配置loadDataParams.repeatTimes。结合图示，并根据前述srcoffset和dstoffset的定义，可以得出如下配置信息。
 
 ```cpp
-uint32_t dstOffset = CeilDivision(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 uint32_t srcOffset = fractalSize * fractalNum;
 // Nz -> Zn
 AscendC::LoadData2DParams loadDataParams;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[0] * fractalNum);
-loadDataParams.srcStride = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum);
+loadDataParams.srcStride = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 loadDataParams.dstGap = 0;
 loadDataParams.ifTranspose = true;
-for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum); ++i) {
     AscendC::LoadData(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1108,15 +1108,15 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
 
 ```cpp
 // LoadDataWithTranspose: Nz -> Zn
-uint32_t dstOffset = CeilDivision(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0] * fractalNum) * fractalSize * fractalNum;
 uint32_t srcOffset = fractalSize * fractalNum;
 AscendC::LoadData2dTransposeParams loadDataParams;
 loadDataParams.startIndex = 0;
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[1]);
-loadDataParams.srcStride = CeilDivision(k, fractalShape[0] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[1]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum);
 loadDataParams.dstGap = 0;
 loadDataParams.dstFracGap = 0;
-for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0] * fractalNum); ++i) {
     AscendC::LoadDataWithTranspose(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1199,26 +1199,26 @@ loadDataParams.fMatrixCtrl = false;
   图21：float数据类型下，L1 -> L0B转置，调用LoadDataWithTranspose数据排布示意图
 </div>
 
-配置`LoadData2dTransposeParams`结构体时，需要特别注意的是，由于转置时连续两个分形合并为一个方块，因此loadDataParams.repeatTimes=CeilDivision(n, fractalShape[1] * fractalNum)。另外，由于在目的操作数中同属一个方块矩阵的两个分形地址不再连续，此时参数loadDataParams.dstFracGap = CeilDivision(n, fractalShape[0]) - 1。
+配置`LoadData2dTransposeParams`结构体时，需要特别注意的是，由于转置时连续两个分形合并为一个方块，因此loadDataParams.repeatTimes=AscendC::Std::ceil_div(n, fractalShape[1] * fractalNum)。另外，由于在目的操作数中同属一个方块矩阵的两个分形地址不再连续，此时参数loadDataParams.dstFracGap = AscendC::Std::ceil_div(n, fractalShape[0]) - 1。
 
 ```cpp
 // B矩阵在L0B上shape为[k, n]、Zn排布，因此dstoffset要根据B矩阵在N轴方向的对齐来求解
-uint32_t dstOffset = CeilDivision(n, fractalShape[0]) * fractalSize * fractalNum;
+uint32_t dstOffset = AscendC::Std::ceil_div(n, fractalShape[0]) * fractalSize * fractalNum;
 // B矩阵在L1上shape为[K,N]、ZZ排布，因此srcoffset要根据B矩阵在N轴方向的对齐来求解
-uint32_t srcOffset = CeilDivision(n, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
+uint32_t srcOffset = AscendC::Std::ceil_div(n, fractalShape[1] * fractalNum) * fractalSize * fractalNum;
 
 AscendC::LoadData2dTransposeParams loadDataParams;
 // 搬运起始位置为源操作数中第几个方块矩阵(0 为源操作数中第1个方块矩阵)
 loadDataParams.startIndex = 0;
 // 迭代次数，每次迭代转置一个方块矩阵
-loadDataParams.repeatTimes = CeilDivision(n, fractalShape[1] * fractalNum);
+loadDataParams.repeatTimes = AscendC::Std::ceil_div(n, fractalShape[1] * fractalNum);
 // 相邻迭代间，源操作数前一个分形与后一个分形起始地址的间隔。单位是方块矩阵的大小
 loadDataParams.srcStride = 1;
 // 相邻迭代间，目的操作数前一个迭代第一个分形的结束地址到下一个迭代第一个分形起始地址的间隔，单位：512B
 loadDataParams.dstGap = 0;
 // 每个迭代内目的操作数转置前一个分形结束地址与后一个分形起始地址的间隔，单位为512B
-loadDataParams.dstFracGap = CeilDivision(n, fractalShape[0]) - 1;
-for (int i = 0; i < CeilDivision(k, fractalShape[0]); ++i) {
+loadDataParams.dstFracGap = AscendC::Std::ceil_div(n, fractalShape[0]) - 1;
+for (int i = 0; i < AscendC::Std::ceil_div(k, fractalShape[0]); ++i) {
     AscendC::LoadDataWithTranspose(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
 }
 ```
@@ -1229,7 +1229,7 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0]); ++i) {
 `Mmad`指令的`MmadParams`结构体的成员，各个成员变量的具体含义这里不再赘述。
 
 需要注意的是当`Mmad`指令执行时，
-矩阵计算单元会从L0A/L0B连续读入多个分形参与矩阵乘计算，读入分形的数量根据`MmadParams`结构体的成员变量m、n、k的取值以及`Mmad`指令对L0A/L0B上A矩阵和B矩阵各个轴的对齐要求来计算的。由于`Mmad`指令，即A矩阵分形为[16, 32]、B矩阵分形为[32, 16]来连续读入分形的，也就是说矩阵计算单元从L0A/L0B连续读入的分形总数目分别为：CeilDivision(m, 16) * CeilDivision(k, 32)、CeilDivision(k, 32) * CeilDivision(n, 16)。
+矩阵计算单元会从L0A/L0B连续读入多个分形参与矩阵乘计算，读入分形的数量根据`MmadParams`结构体的成员变量m、n、k的取值以及`Mmad`指令对L0A/L0B上A矩阵和B矩阵各个轴的对齐要求来计算的。由于`Mmad`指令，即A矩阵分形为[16, 32]、B矩阵分形为[32, 16]来连续读入分形的，也就是说矩阵计算单元从L0A/L0B连续读入的分形总数目分别为：AscendC::Std::ceil_div(m, 16) * AscendC::Std::ceil_div(k, 32)、AscendC::Std::ceil_div(k, 32) * AscendC::Std::ceil_div(n, 16)。
 
 因此当L0A/L0B上对A矩阵和B矩阵在各个轴的实际对齐要求与`Mmad`指令默认的对齐要求不一致时，就可能导致连续读入分形时，错误读入完全由无效数据填充的分形而忽略了包含有效数据的分形。
 

@@ -8,7 +8,7 @@ This example uses the Ascend C C API to move matrix data from UB (Unified Buffer
 
 | Product | CANN version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

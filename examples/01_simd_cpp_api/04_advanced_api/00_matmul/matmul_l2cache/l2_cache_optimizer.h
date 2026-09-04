@@ -15,6 +15,8 @@
 #ifndef MATMUL_L2CACHE_L2_CACHE_OPTIMIZER_H
 #define MATMUL_L2CACHE_L2_CACHE_OPTIMIZER_H
 
+#include "utils/std/cmath.h"
+
 namespace CustomMatmulL2Cache {
 
 constexpr int64_t L2_TILE_THRESHOLD = 100 * 1024 * 1024;
@@ -62,8 +64,8 @@ public:
         m_ = shape.m;
         n_ = shape.n;
         k_ = shape.k;
-        mTileNum_ = AscendC::Ceil(m_, l1M);
-        nTileNum_ = AscendC::Ceil(n_, l1N);
+        mTileNum_ = AscendC::Std::ceil_div(m_, l1M);
+        nTileNum_ = AscendC::Std::ceil_div(n_, l1N);
         totalTileNum_ = mTileNum_ * nTileNum_;
         InitL2Tile();
     }
@@ -147,8 +149,8 @@ private:
                 int64_t curMinorDim = isNMajor ? i : j;
                 int64_t mL2TileNumTailTmp = GetTail(mTileNum_, curMajorDim);
                 int64_t nL2TileNumTailTmp = GetTail(nTileNum_, curMinorDim);
-                uint64_t mConflictTmp = AscendC::Ceil(blockNum_, mL2TileNumTailTmp);
-                uint64_t nConflictTmp = AscendC::Ceil(blockNum_, nL2TileNumTailTmp);
+                uint64_t mConflictTmp = AscendC::Std::ceil_div(blockNum_, mL2TileNumTailTmp);
+                uint64_t nConflictTmp = AscendC::Std::ceil_div(blockNum_, nL2TileNumTailTmp);
                 if (mConflict >= mConflictTmp && nConflict >= nConflictTmp) {
                     mConflict = mConflictTmp;
                     nConflict = nConflictTmp;
@@ -176,8 +178,8 @@ private:
         mL2TileNum_ = 0;
         nL2TileNum_ = 0;
         InitL2TileTail();
-        mL2BlockNum_ = AscendC::Ceil(mTileNum_, mL2TileNum_);
-        nL2BlockNum_ = AscendC::Ceil(nTileNum_, nL2TileNum_);
+        mL2BlockNum_ = AscendC::Std::ceil_div(mTileNum_, mL2TileNum_);
+        nL2BlockNum_ = AscendC::Std::ceil_div(nTileNum_, nL2TileNum_);
     }
 
     __aicore__ inline void GetCommonTileIndex(int64_t tileIdx)

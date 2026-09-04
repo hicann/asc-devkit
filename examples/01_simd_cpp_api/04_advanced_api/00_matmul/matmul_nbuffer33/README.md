@@ -7,9 +7,9 @@ NBuffer33算法的Matmul样例，实现搬入搬出带宽平衡从而提升效�
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
+| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 ```

@@ -8,9 +8,9 @@ Matmul样例M方向或者N方向切分输入的矩阵，将矩阵切分成多块
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
+| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 ```
@@ -90,8 +90,8 @@ Matmul样例M方向或者N方向切分输入的矩阵，将矩阵切分成多块
         for (int64_t i = maxMajor; i >= L1_MIN_UST_DIM; i--) {
             for (int64_t j = maxMinor; j >= minMinor; j--) {
                 if (GetTotalSize(j * l1M, i * l1N, k_) <= L2_TILE_THRESHOLD) { // 确保分块小于L2Cache阈值
-                    uint64_t mConflictTmp = DivCeil(blockNum_, mL2TileNumTailTmp); // 计算负载冲突值
-                    uint64_t nConflictTmp = DivCeil(blockNum_, nL2TileNumTailTmp);
+                    uint64_t mConflictTmp = AscendC::Std::ceil_div(blockNum_, mL2TileNumTailTmp); // 计算负载冲突值
+                    uint64_t nConflictTmp = AscendC::Std::ceil_div(blockNum_, nL2TileNumTailTmp);
                     if (mConflict >= mConflictTmp && nConflict >= nConflictTmp) { // 若冲突值更小，更新分块数量
                         mConflict = mConflictTmp;
                         nConflict = nConflictTmp;

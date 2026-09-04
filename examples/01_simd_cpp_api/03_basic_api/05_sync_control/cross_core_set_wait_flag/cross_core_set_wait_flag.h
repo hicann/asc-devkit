@@ -15,6 +15,7 @@
 
 #include "acl/acl.h"
 #include "kernel_operator.h"
+#include "utils/std/cmath.h"
 #include "data_utils.h"
 #include <iostream>
 #include <vector>
@@ -157,14 +158,9 @@ public:
     }
 
 private:
-    __aicore__ inline uint16_t CeilDiv(uint16_t numerator, uint16_t denominator)
-    {
-        return (numerator + denominator - 1) / denominator;
-    }
-
     __aicore__ inline uint16_t CeilAlign(uint16_t numerator, uint16_t denominator)
     {
-        return (numerator + denominator - 1) / denominator * denominator;
+        return static_cast<uint16_t>(AscendC::Std::ceil_div(numerator, denominator) * denominator);
     }
     __aicore__ inline void CopyIn(AscendC::LocalTensor<half>& a1Local, AscendC::LocalTensor<half>& b1Local)
     {
@@ -196,28 +192,28 @@ private:
         AscendC::SetFlag<AscendC::HardEvent::MTE2_MTE1>(EVENT_ID0);
         AscendC::WaitFlag<AscendC::HardEvent::MTE2_MTE1>(EVENT_ID0);
 
-        uint32_t dstOffset = CeilDiv(AIC_K, FRACTAL_SHAPE_1) * FRACTAL_SIZE;
+        uint32_t dstOffset = AscendC::Std::ceil_div(AIC_K, FRACTAL_SHAPE_1) * FRACTAL_SIZE;
         uint32_t srcOffset = FRACTAL_SIZE;
         AscendC::LoadData2DParams loadDataParams;
-        loadDataParams.repeatTimes = CeilDiv(AIC_K, FRACTAL_SHAPE_1);
-        loadDataParams.srcStride = CeilDiv(AIC_M, FRACTAL_SHAPE_0);
+        loadDataParams.repeatTimes = AscendC::Std::ceil_div(AIC_K, FRACTAL_SHAPE_1);
+        loadDataParams.srcStride = AscendC::Std::ceil_div(AIC_M, FRACTAL_SHAPE_0);
         loadDataParams.dstGap = 0;
         loadDataParams.ifTranspose = false;
-        for (int i = 0; i < CeilDiv(AIC_M, FRACTAL_SHAPE_0); ++i) {
+        for (int i = 0; i < AscendC::Std::ceil_div(AIC_M, FRACTAL_SHAPE_0); ++i) {
             AscendC::LoadData(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
         }
     }
     __aicore__ inline void SplitBTranspose(AscendC::LocalTensor<half>& b1Local, AscendC::LocalTensor<half>& b2Local)
     {
         constexpr uint16_t fractalNum = 1;
-        uint32_t dstOffset = CeilDiv(AIC_N, FRACTAL_SHAPE_0 * fractalNum) * FRACTAL_SIZE * fractalNum;
+        uint32_t dstOffset = AscendC::Std::ceil_div(AIC_N, FRACTAL_SHAPE_0 * fractalNum) * FRACTAL_SIZE * fractalNum;
         uint32_t srcOffset = FRACTAL_SIZE * fractalNum;
         AscendC::LoadData2DParams loadDataParams;
-        loadDataParams.repeatTimes = CeilDiv(AIC_N, FRACTAL_SHAPE_0 * fractalNum);
-        loadDataParams.srcStride = CeilDiv(AIC_K, FRACTAL_SHAPE_0 * fractalNum);
+        loadDataParams.repeatTimes = AscendC::Std::ceil_div(AIC_N, FRACTAL_SHAPE_0 * fractalNum);
+        loadDataParams.srcStride = AscendC::Std::ceil_div(AIC_K, FRACTAL_SHAPE_0 * fractalNum);
         loadDataParams.dstGap = 0;
         loadDataParams.ifTranspose = true;
-        for (int i = 0; i < CeilDiv(AIC_K, FRACTAL_SHAPE_0 * fractalNum); ++i) {
+        for (int i = 0; i < AscendC::Std::ceil_div(AIC_K, FRACTAL_SHAPE_0 * fractalNum); ++i) {
             AscendC::LoadData(b2Local[i * dstOffset], b1Local[i * srcOffset], loadDataParams);
         }
     }

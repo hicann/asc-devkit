@@ -7,9 +7,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
+| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 ```
@@ -43,9 +43,9 @@
   - Kernel关键步骤
     - 计算tailM、tailN、tailK，当tailM < singleCoreM || tailN < singleCoreN || tailK < singleCoreK时处理尾块，调用SetTail接口进行设置尾块大小。
       ```cpp
-      auto temp0 = DivCeil(tiling.M, tiling.singleCoreM);
-      auto temp1 = DivCeil(tiling.N, tiling.singleCoreN);
-      auto temp2 = DivCeil(tiling.Ka, tiling.singleCoreK);
+      auto temp0 = AscendC::Std::ceil_div(tiling.M, tiling.singleCoreM);
+      auto temp1 = AscendC::Std::ceil_div(tiling.N, tiling.singleCoreN);
+      auto temp2 = AscendC::Std::ceil_div(tiling.Ka, tiling.singleCoreK);
 
       auto divideKCoreNum = tiling.usedCoreNum / temp2;
       auto mCoreIndex = (blockIdx % divideKCoreNum) % temp0;

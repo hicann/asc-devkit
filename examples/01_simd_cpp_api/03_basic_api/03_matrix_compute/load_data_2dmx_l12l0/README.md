@@ -14,7 +14,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -327,8 +327,8 @@ A / B矩阵和scaleA / scaleB矩阵在不同存储单元的数据排布格式不
 - `fractalShape`：小分形的shape。本样例A / B矩阵输入涉及FP4和FP8，scale矩阵按B16视图搬运，分形相关信息见[表3](#表3)。
 - `fractalSize`：1个小分形包含的元素个数，具体见[表3](#表3)。
 - `fractalNum`：当从L1 -> L0A / L0B需要转置时，`LoadData`接口会按正方形矩阵转置。需要多个连续小分形合并为一个正方形矩阵时，`fractalNum`表示该正方形矩阵包含的小分形个数，具体见[表3](#表3)。
-- `packedK`：按B8视图搬运时，A / B矩阵k方向在`DataCopy`参数中的等效列数。FP4输入实际仍有k个元素，但在ND -> Nz搬运过程中按B8视图处理，k方向每2个FP4元素对应1个B8视图元素，因此`packedK = CeilDivision(k, 2)`；FP8输入按原始元素数配置，`packedK = k`。
-- `scaleK`：scale矩阵k轴对齐后的长度。`scaleK = CeilDivision(k, SCALE_BASE_FACTOR) * SCALE_EVEN_NUMBER`，其中`SCALE_BASE_FACTOR = 64`，`SCALE_EVEN_NUMBER = 2`。本样例中`k = 70`时，`scaleK = CeilDivision(70, 64) * 2 = 4`。
+- `packedK`：按B8视图搬运时，A / B矩阵k方向在`DataCopy`参数中的等效列数。FP4输入实际仍有k个元素，但在ND -> Nz搬运过程中按B8视图处理，k方向每2个FP4元素对应1个B8视图元素，因此`packedK = AscendC::Std::ceil_div(k, 2)`；FP8输入按原始元素数配置，`packedK = k`。
+- `scaleK`：scale矩阵k轴对齐后的长度。`scaleK = AscendC::Std::ceil_div(k, SCALE_BASE_FACTOR) * SCALE_EVEN_NUMBER`，其中`SCALE_BASE_FACTOR = 64`，`SCALE_EVEN_NUMBER = 2`。本样例中`k = 70`时，`scaleK = AscendC::Std::ceil_div(70, 64) * 2 = 4`。
 - `alignK`：A / B矩阵k轴对齐后的长度。MX矩阵乘法中`MmadMx`接口要求k方向按`SCALE_BASE_FACTOR = 64`对齐，因此`alignK = CeilAlign(k, SCALE_BASE_FACTOR) = CeilAlign(k, 64)`。本样例中`k = 70`时，`alignK = CeilAlign(70, 64) = 128`。该64对齐要求只作用于k方向，m / n方向仍按对应数据类型的小分形或正方形转置粒度对齐。
 
 <a name="表3"></a>
@@ -349,7 +349,7 @@ A / B矩阵和scaleA / scaleB矩阵在不同存储单元的数据排布格式不
     <td align="center">[16, 64]</td>
     <td align="center">1024</td>
     <td align="center">4</td>
-    <td align="center"><code>CeilDivision(k, 2)</code></td>
+    <td align="center"><code>AscendC::Std::ceil_div(k, 2)</code></td>
   </tr>
     <tr>
     <td align="center"><span style="font-weight: bold;">FP8</span></td>
@@ -377,7 +377,7 @@ __aicore__ inline uint16_t CeilAlign(uint16_t size, uint16_t alignValue) {
 }
 ```
 
-- `CeilDivision`：向上取整除法，一般用于求解向上对齐后的循环次数。
+- `ceil_div`：向上取整除法，一般用于求解向上对齐后的循环次数。
 - `mAlignValue`：m轴向`mAlignValue`对齐。例如`mAlignValue = 16`，代表m轴对齐到16；依次类推还有`nAlignValue`、`kAlignValue`。
 - `mAlignL1`和`mAlignL0`：A矩阵分别在L1和L0A上时，m轴对齐后的值。依次类推还有`kaAlignL1`、`kaAlignL0`、`nAlignL1`、`nAlignL0`、`kbAlignL1`、`kbAlignL0`。
 
@@ -468,8 +468,8 @@ A / B / scaleA / scaleB矩阵在L1和L0上各轴的对齐要求不同，后续�
   </tr>
   <tr>
     <td align="center"><span style="font-weight: bold;">k轴对齐</span></td>
-    <td align="center"><code>scaleK = CeilDivision(k, 64) * 2</code></td>
-    <td align="center"><code>scaleK = CeilDivision(k, 64) * 2</code></td>
+    <td align="center"><code>scaleK = AscendC::Std::ceil_div(k, 64) * 2</code></td>
+    <td align="center"><code>scaleK = AscendC::Std::ceil_div(k, 64) * 2</code></td>
   </tr>
 </table>
 
@@ -556,13 +556,13 @@ if constexpr (AscendC::IsSameType<TA, fp8_e4m3fn_t>::value || AscendC::IsSameTyp
 **DataCopy（Nd2NzParams）**
 
 - **nValue**：取`k`。
-- **dValue**：FP4数据类型下取`CeilDivision(m, 2)`；FP8数据类型下取`m`。
+- **dValue**：FP4数据类型下取`AscendC::Std::ceil_div(m, 2)`；FP8数据类型下取`m`。
 - **dstNzC0Stride**：单位为32B，取L1上Nz矩阵对齐后的行数，即k方向对齐后的长度`alignK`。
 - **FP4处理**：根据接口约束，FP4输入在ND -> Nz过程中按B8视图处理，参数配置也按B8视图设置。
 
 ```cpp
 AscendC::Nd2NzParams nd2nzA1Params;
-uint16_t aColValue = isFP4 ? CeilDivision(m, 2) : m;
+uint16_t aColValue = isFP4 ? AscendC::Std::ceil_div(m, 2) : m;
 nd2nzA1Params.ndNum = 1; // ND矩阵的数目
 nd2nzA1Params.nValue = k; // 源操作ND矩阵的行数
 nd2nzA1Params.dValue = aColValue; // 源操作ND矩阵按B8视图配置的列数，FP4输入时2个元素对应1个B8视图元素
@@ -586,7 +586,7 @@ AscendC::DataCopy(a1Local, aGM, nd2nzA1Params);
 auto padTensor = a1Local.template ReinterpretCast<uint16_t>();
 AscendC::InitConstValueParams<uint16_t> initConstValueParams;
 // repeatTimes表示迭代次数；以col方向做迭代。
-initConstValueParams.repeatTimes = CeilDivision(m, FP8_C0SIZE);
+initConstValueParams.repeatTimes = AscendC::Std::ceil_div(m, FP8_C0SIZE);
 // blockNum表示每次迭代初始化的数据块(32B)个数；这里每次填充row方向尾部无效行数。
 initConstValueParams.blockNum = alignK - k;
 // dstGap表示前一次迭代结束地址到后一次迭代起始地址的距离；跳过row方向有效数据。
@@ -613,13 +613,13 @@ AscendC::Fill(padTensor[k * fractalShape[0]], initConstValueParams);
 **DataCopy（Nd2NzParams）**
 
 - **nValue**：取`k`。
-- **dValue**：FP4数据类型下取`CeilDivision(n, 2)`；FP8数据类型下取`n`。
+- **dValue**：FP4数据类型下取`AscendC::Std::ceil_div(n, 2)`；FP8数据类型下取`n`。
 - **dstNzC0Stride**：单位为32B，取L1上Nz矩阵对齐后的行数，即k方向对齐后的长度`alignK`。
 - **FP4处理**：根据接口约束，FP4输入在ND -> Nz过程中按B8视图处理，参数配置也按B8视图设置。
 
 ```cpp
 AscendC::Nd2NzParams nd2nzB1Params;
-uint16_t bColValue = isFP4 ? CeilDivision(n, 2) : n;
+uint16_t bColValue = isFP4 ? AscendC::Std::ceil_div(n, 2) : n;
 nd2nzB1Params.ndNum = 1; // ND矩阵的数目
 nd2nzB1Params.nValue = k; // 源操作ND矩阵的行数
 nd2nzB1Params.dValue = bColValue; // 源操作ND矩阵按B8视图配置的列数，FP4输入时2个元素对应1个B8视图元素
@@ -643,7 +643,7 @@ AscendC::DataCopy(b1Local, bGM, nd2nzB1Params);
 auto padTensor = b1Local.template ReinterpretCast<uint16_t>();
 AscendC::InitConstValueParams<uint16_t> initConstValueParams;
 // repeatTimes表示迭代次数；以col方向做迭代。
-initConstValueParams.repeatTimes = CeilDivision(n, FP8_C0SIZE);
+initConstValueParams.repeatTimes = AscendC::Std::ceil_div(n, FP8_C0SIZE);
 // blockNum表示每次迭代初始化的数据块(32B)个数；这里每次填充row方向尾部无效行数。
 initConstValueParams.blockNum = alignK - k;
 // dstGap表示前一次迭代结束地址到后一次迭代起始地址的距离；跳过row方向有效数据。
@@ -900,11 +900,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // A矩阵不转置输入[m, k]，L1 -> L0A不需要转置
 // mStep/kStep分别表示搬运row方向分形数、col方向32B块数
-loadDataParams.mStep = CeilDivision(mAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(kaAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[1]);
 // srcStride/dstStride表示源/目的矩阵col方向相邻分形起始地址间隔，单位512B
-loadDataParams.srcStride = CeilDivision(mAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(mAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = false;
 
 AscendC::LoadData2DMxParams loadMxDataParams;
@@ -912,7 +912,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep配置scaleA的row/col方向搬运长度；stride按row方向相邻分形间隔配置
-loadMxDataParams.xStep = CeilDivision(scaleMAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleMAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -948,11 +948,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // A矩阵转置输入[k, m]，L1 -> L0A需要转置
 // 转置搬运时，L1上A矩阵shape为[kaAlignL1, mAlignL1]，row方向对应逻辑k维度，col方向对应逻辑m维度
-loadDataParams.mStep = CeilDivision(kaAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(mAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL1, fractalShape[1]);
 // srcStride/dstStride表示源/目的矩阵col方向相邻分形起始地址间隔，单位512B
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = true;
 
 AscendC::LoadData2DMxParams loadMxDataParams;
@@ -960,7 +960,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep配置scaleA的row/col方向搬运长度；stride按row方向相邻分形间隔配置
-loadMxDataParams.xStep = CeilDivision(scaleMAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleMAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -990,7 +990,7 @@ AscendC::LoadData(a2Local, a1Local, scaleA1Local, loadDataParams, loadMxDataPara
 - A矩阵L1 -> L0A需要转置，`loadDataParams.ifTranspose = true`。
 - for循环用于避免单次调用时m方向多搬脏数据超过1个分形。
 - `mStepAlign`表示每次循环搬运的row方向分形数，FP4取4，FP8取2。
-- `L0ALoopNum = CeilDivision(kaAlignL0, fractalShape[0] * fractalNum)`，`mStartPosition`随`loopIdx`递增。
+- `L0ALoopNum = AscendC::Std::ceil_div(kaAlignL0, fractalShape[0] * fractalNum)`，`mStartPosition`随`loopIdx`递增。
 - scaleA矩阵只在第一次循环搬运到L0A_MX，后续循环设置`xStep = 0`、`yStep = 0`跳过搬运。
 - `dstOffset`记录L0A上每次循环的目的地址偏移，每次循环跳过m方向尾部脏数据分形。
 
@@ -1003,10 +1003,10 @@ loadDataParams.kStartPosition = 0;
 // 转置搬运要求mStep按数据类型对齐：FP4为4个分形，FP8为2个分形
 loadDataParams.mStep = mStepAlign;
 // kStep对应A矩阵源col方向上的32B块数
-loadDataParams.kStep = CeilDivision(mAlignL0, fractalShape[1]);
+loadDataParams.kStep = AscendC::Std::ceil_div(mAlignL0, fractalShape[1]);
 // srcStride/dstStride表示源/目的矩阵col方向相邻分形起始地址间隔，单位512B
-loadDataParams.srcStride = CeilDivision(kaAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(mAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(kaAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(mAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = true;
 
 AscendC::LoadData2DMxParams loadMxDataParams;
@@ -1018,7 +1018,7 @@ loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
 
 uint32_t dstOffset = 0;
-uint16_t L0ALoopNum = CeilDivision(kaAlignL0, fractalShape[0] * fractalNum);
+uint16_t L0ALoopNum = AscendC::Std::ceil_div(kaAlignL0, fractalShape[0] * fractalNum);
 for (uint16_t loopIdx = 0; loopIdx < L0ALoopNum; ++loopIdx) {
     // mStartPosition递增，A矩阵每次搬运按m方向更新起始地址，scaleA矩阵第一次for循环全部搬运完成，后续for循环不进行搬运
     loadDataParams.mStartPosition = mStepAlign * loopIdx;
@@ -1026,7 +1026,7 @@ for (uint16_t loopIdx = 0; loopIdx < L0ALoopNum; ++loopIdx) {
         loadMxDataParams.xStep = 0;
         loadMxDataParams.yStep = 0;
     } else {
-        loadMxDataParams.xStep = CeilDivision(scaleMAlignL1, fractalShape[0]);
+        loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleMAlignL1, fractalShape[0]);
         loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
     }
     AscendC::LoadData(a2Local[dstOffset], a1Local, scaleA1Local, loadDataParams, loadMxDataParams);
@@ -1070,11 +1070,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // B矩阵转置输入[n, k]，L1->L0B不需要转置
 // mStep/kStep分别表示搬运row方向分形数、col方向32B块数
-loadDataParams.mStep = CeilDivision(nAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(kbAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[1]);
 // srcStride/dstStride表示源/目的矩阵col方向相邻分形起始地址间隔，单位512B
-loadDataParams.srcStride = CeilDivision(nAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(nAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = false;
 
 // 配置scaleB从L1->L0B_MX搬运的参数时，可将scaleNAlignL1的方向看做row，scaleK所在的方向看做col
@@ -1084,7 +1084,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep配置scaleB的row/col方向搬运长度；stride按row方向相邻分形间隔配置
-loadMxDataParams.xStep = CeilDivision(scaleNAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleNAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -1120,11 +1120,11 @@ loadDataParams.mStartPosition = 0;
 loadDataParams.kStartPosition = 0;
 // B矩阵不转置输入[k, n]，L1 -> L0B需要转置
 // 转置搬运时，L1上B矩阵shape为[kbAlignL1, nAlignL1]，row方向对应逻辑k维度，col方向对应逻辑n维度
-loadDataParams.mStep = CeilDivision(kbAlignL1, fractalShape[0]);
-loadDataParams.kStep = CeilDivision(nAlignL1, fractalShape[1]);
+loadDataParams.mStep = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]);
+loadDataParams.kStep = AscendC::Std::ceil_div(nAlignL1, fractalShape[1]);
 // srcStride/dstStride表示源/目的矩阵col方向相邻分形起始地址间隔，单位512B
-loadDataParams.srcStride = CeilDivision(kbAlignL1, fractalShape[0]);
-loadDataParams.dstStride = CeilDivision(nAlignL0, fractalShape[0]);
+loadDataParams.srcStride = AscendC::Std::ceil_div(kbAlignL1, fractalShape[0]);
+loadDataParams.dstStride = AscendC::Std::ceil_div(nAlignL0, fractalShape[0]);
 loadDataParams.ifTranspose = true;
 
 // 配置scaleB从L1->L0B_MX搬运的参数时，可将scaleNAlignL1的方向看做row，scaleK所在的方向看做col
@@ -1134,7 +1134,7 @@ AscendC::LoadData2DMxParams loadMxDataParams;
 loadMxDataParams.xStartPosition = 0;
 loadMxDataParams.yStartPosition = 0;
 // xStep/yStep配置scaleB的row/col方向搬运长度；stride按row方向相邻分形间隔配置
-loadMxDataParams.xStep = CeilDivision(scaleNAlignL1, fractalShape[0]);
+loadMxDataParams.xStep = AscendC::Std::ceil_div(scaleNAlignL1, fractalShape[0]);
 loadMxDataParams.yStep = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.srcStride = scaleK / SCALE_EVEN_NUMBER;
 loadMxDataParams.dstStride = scaleK / SCALE_EVEN_NUMBER;
@@ -1148,7 +1148,7 @@ MX矩阵乘法公式为`C = (scaleA ⊗ A) * (scaleB ⊗ B)`，`MmadMx`接口会
 
 **关键配置**
 
-- `mmadParams.k`设置为`alignK = CeilAlign(k, 64) = 128`，满足MX矩阵乘法中`MmadMx`接口对k方向64对齐的要求。该约束来自MX矩阵乘k方向scale粒度：每64个k元素对应2个scale因子，`scaleK = CeilDivision(k, 64) * 2`；m / n方向不需要按64对齐。
+- `mmadParams.k`设置为`alignK = CeilAlign(k, 64) = 128`，满足MX矩阵乘法中`MmadMx`接口对k方向64对齐的要求。该约束来自MX矩阵乘k方向scale粒度：每64个k元素对应2个scale因子，`scaleK = AscendC::Std::ceil_div(k, 64) * 2`；m / n方向不需要按64对齐。
 - `mmadParams.cmatrixInitVal = true`表示初始化C矩阵。
 - 场景2 / 4中，A矩阵转置输入`[k, m]`且单次调用`LoadData`，m方向多搬脏数据超过1个分形。因此`mmadParams.m`设置为`CeilAlign(m, fractalShape[0] * fractalNum)`，让多搬的分形参与计算，后续`Fixpipe`搬出时跳过无效分形对应的结果。
 - 其余场景中，`mmadParams.m = m`。场景5 / 6虽然A矩阵也转置输入，但for循环方式已避免m方向多搬脏数据超过1个分形。

@@ -8,9 +8,9 @@ The Matmul example splits the input matrix along the M or N direction, dividing 
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
+| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
 
 ## Directory Structure
 ```
@@ -90,8 +90,8 @@ The Matmul example splits the input matrix along the M or N direction, dividing 
         for (int64_t i = maxMajor; i >= L1_MIN_UST_DIM; i--) {
             for (int64_t j = maxMinor; j >= minMinor; j--) {
                 if (GetTotalSize(j * l1M, i * l1N, k_) <= L2_TILE_THRESHOLD) { // Ensure block is below L2 Cache threshold
-                    uint64_t mConflictTmp = DivCeil(blockNum_, mL2TileNumTailTmp); // Calculate load conflict value
-                    uint64_t nConflictTmp = DivCeil(blockNum_, nL2TileNumTailTmp);
+                    uint64_t mConflictTmp = AscendC::Std::ceil_div(blockNum_, mL2TileNumTailTmp); // Calculate load conflict value
+                    uint64_t nConflictTmp = AscendC::Std::ceil_div(blockNum_, nL2TileNumTailTmp);
                     if (mConflict >= mConflictTmp && nConflict >= nConflictTmp) { // If conflict value is smaller, update block count
                         mConflict = mConflictTmp;
                         nConflict = nConflictTmp;

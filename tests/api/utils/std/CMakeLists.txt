@@ -25,6 +25,7 @@ file(GLOB ASCENDC_UT_ascend910B1_CASE_SRC
 
 file(GLOB ASCENDC_UT_ascend950pr_9599_CASE_SRC
     cmath/test_abs.cpp
+    cmath/test_ceil_div.cpp
     cmath/test_sqrt.cpp
     type_traits/*.cpp
 )
