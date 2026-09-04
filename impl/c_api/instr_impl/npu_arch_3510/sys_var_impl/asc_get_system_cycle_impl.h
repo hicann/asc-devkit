@@ -25,9 +25,11 @@
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
+constexpr int64_t SYSTEM_CLOCK_FREQ_MHZ = 1000;
+
 __aicore__ inline int64_t asc_get_system_cycle_impl() { return get_sys_cnt(); }
 
-__aicore__ inline int64_t asc_get_system_clock_impl() { return get_sys_cnt() / 1000; }
+__aicore__ inline int64_t asc_get_system_clock_impl() { return get_sys_cnt() / SYSTEM_CLOCK_FREQ_MHZ; }
 
 #endif
 
