@@ -31,6 +31,7 @@
 #include "binary_stream.h"
 #include "hccl_ccu_res_dl.h"
 #include "ccu_types.h"
+#include "acl_base_rt.h"
 
 namespace mc2_ops_hccl {
 

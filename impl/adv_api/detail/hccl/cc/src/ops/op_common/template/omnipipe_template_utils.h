@@ -34,6 +34,8 @@ inline HcclResult PrepareOmniPipeDataSplitForMultiChannel(
     const TemplateResource& templateResource, std::vector<std::vector<std::vector<u64>>>& dataSplitVec,
     std::vector<std::vector<std::vector<u64>>>& dataOffsetVec)
 {
+    (void)algTemplate;
+
     dataSplitVec.clear();
     dataOffsetVec.clear();
     u32 dataTypeSize = SIZE_TABLE[dataType];

@@ -33,8 +33,10 @@ HcclResult InsKfcServerSoleExecutor<AlgTopoMatch, InsAlgTemplate>::CalcAlgHierar
 
 template <typename AlgTopoMatch, typename InsAlgTemplate>
 HcclResult InsKfcServerSoleExecutor<AlgTopoMatch, InsAlgTemplate>::InitCommInfo(
-    const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo)
+    const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo) const
 {
+    (void)param;
+    (void)topoInfo;
     HCCL_INFO("[InsKfcServerSoleExecutor][InitCommInfo]");
     return HCCL_SUCCESS;
 }

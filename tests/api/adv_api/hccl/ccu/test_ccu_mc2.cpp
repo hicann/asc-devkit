@@ -217,7 +217,7 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_AllGather)
 
     EXPECT_EQ(RunCcuSelectAlg(comm_, stream_, topoTag, ccTilingList, 1, resCtx), HCCL_SUCCESS);
     EXPECT_EQ(resCtx.opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER));
-    EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(CcuSchedAllGatherSoleMesh));
+    EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleMesh));
 }
 
 TEST_F(CcuMc2TestSuite, CcuSelectAlg_ReduceScatterKfcMesh1DMem2Mem)
@@ -239,7 +239,7 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_ReduceScatterKfcMesh1DMem2Mem)
 
     EXPECT_EQ(RunCcuSelectAlg(comm_, stream_, topoTag, ccTilingList, 1, resCtx), HCCL_SUCCESS);
     EXPECT_EQ(resCtx.opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER));
-    EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(CcuReduceScatterMeshMem2Mem1D));
+    EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMeshMem2Mem1D));
 }
 
 TEST_F(CcuMc2TestSuite, CcuSelectAlg_ReduceScatterRejectsInt8)
@@ -383,31 +383,35 @@ TEST_F(CcuMc2TestSuite, ObtainCommEngine_UnsupportedEngine)
 
 TEST_F(CcuMc2TestSuite, algorithmMap_AllEntries)
 {
-    EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherSoleMesh"), CcuSchedAllGatherSoleMesh);
-    EXPECT_EQ(algorithmMap.at("CcuAllGatherMeshMem2Mem1D"), CcuAllGatherMeshMem2Mem1D);
-    EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherConcurMeshNHRMultiLink"), CcuSchedAllGatherConcurMeshNHRMultiLink);
-    EXPECT_EQ(algorithmMap.at("CcuSchedReduceScatterSoleMesh"), CcuReduceScatterMeshMem2Mem1D);
-    EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllSoleMesh"), CcuSchedAllToAllSoleMesh);
-    EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllVSoleMesh"), CcuSchedAllToAllVSoleMesh);
-    EXPECT_EQ(algorithmMap.at("CcuSchedAllReduceSoleMesh"), CcuAllReduceMeshMem2Mem1D);
-    EXPECT_EQ(algorithmMap.size(), 7U);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherSoleMesh"), AlgorithmType::CcuSchedAllGatherSoleMesh);
+    EXPECT_EQ(algorithmMap.at("CcuAllGatherMeshMem2Mem1D"), AlgorithmType::CcuAllGatherMeshMem2Mem1D);
+    EXPECT_EQ(
+        algorithmMap.at("CcuSchedAllGatherConcurMeshNHRMultiLink"),
+        AlgorithmType::CcuSchedAllGatherConcurMeshNHRMultiLink);
+    EXPECT_EQ(algorithmMap.at("CcuSchedReduceScatterSoleMesh"), AlgorithmType::CcuReduceScatterMeshMem2Mem1D);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllSoleMesh"), AlgorithmType::CcuSchedAllToAllSoleMesh);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllVSoleMesh"), AlgorithmType::CcuSchedAllToAllVSoleMesh);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllReduceSoleMesh"), AlgorithmType::CcuAllReduceMeshMem2Mem1D);
+    EXPECT_EQ(algorithmMap.at("CcuAllGatherMesh1DMem2Mem"), AlgorithmType::CcuAllGatherMeshMem2Mem1D);
+    EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherMesh1DMem2Mem"), AlgorithmType::CcuAllGatherMeshMem2Mem1D);
+    EXPECT_EQ(algorithmMap.size(), 9U);
 }
 
 TEST_F(CcuMc2TestSuite, AlgorithmType_EnumValues)
 {
-    EXPECT_EQ(CcuAllGatherMesh1D, 0);
-    EXPECT_EQ(CcuAllGatherMeshMem2Mem1D, 1);
-    EXPECT_EQ(CcuAllGatherMesh2D, 2);
-    EXPECT_EQ(CcuSchedAllGatherConcurMeshNHRMultiLink, 3);
-    EXPECT_EQ(CcuReduceScatterMesh1D, 50);
-    EXPECT_EQ(CcuReduceScatterMeshMem2Mem1D, 51);
-    EXPECT_EQ(CcuReduceScatterMesh2D, 52);
-    EXPECT_EQ(CcuAllReduceMesh1D, 100);
-    EXPECT_EQ(CcuAllReduceMeshMem2Mem1D, 101);
-    EXPECT_EQ(CcuAllReduceMesh2DOneShot, 102);
-    EXPECT_EQ(CcuSchedAllToAllSoleMesh, 150);
-    EXPECT_EQ(CcuSchedAllToAllVSoleMesh, 151);
-    EXPECT_EQ(CcuSchedAllGatherSoleMesh, 152);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllGatherMesh1D), 0U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllGatherMeshMem2Mem1D), 1U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllGatherMesh2D), 2U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherConcurMeshNHRMultiLink), 3U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMesh1D), 50U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMeshMem2Mem1D), 51U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMesh2D), 52U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllReduceMesh1D), 100U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllReduceMeshMem2Mem1D), 101U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllReduceMesh2DOneShot), 102U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllSoleMesh), 150U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllVSoleMesh), 151U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleMesh), 152U);
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_CcuPath)
@@ -426,7 +430,7 @@ TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_CcuPath)
     EXPECT_NE(ctx->xnAddr, 0U);
     EXPECT_NE(ctx->ckeAddr, 0U);
     EXPECT_EQ(ctx->opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER));
-    EXPECT_EQ(ctx->algorithmType[0], static_cast<uint32_t>(CcuSchedAllGatherSoleMesh));
+    EXPECT_EQ(ctx->algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleMesh));
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_CcuAlgorithmNotRegistered)
@@ -453,7 +457,7 @@ TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_ReduceScatterCcuPath)
     OpResCtx* ctx = static_cast<OpResCtx*>(opResCtx);
     EXPECT_NE(ctx->res[0], 0U);
     EXPECT_EQ(ctx->opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER));
-    EXPECT_EQ(ctx->algorithmType[0], static_cast<uint32_t>(CcuReduceScatterMeshMem2Mem1D));
+    EXPECT_EQ(ctx->algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMeshMem2Mem1D));
 }
 
 // algConfig为合法强制算法名时：先尝试强制算法（注册/层级/资源计算校验），

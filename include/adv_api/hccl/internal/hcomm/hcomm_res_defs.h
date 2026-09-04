@@ -223,8 +223,8 @@ typedef struct {
  */
 static inline HcommResult EndpointDescInit(EndpointDesc* endpoint, uint32_t num)
 {
-    const HcommResult hcommEPointer = (HcommResult)2;  // 对齐HCCL_E_PTR
-    const HcommResult hcommEInternal = (HcommResult)4; // 对齐HCCL_E_INTERNAL
+    const HcommResult hcommEPointer = static_cast<HcommResult>(2);  // 对齐HCCL_E_PTR
+    const HcommResult hcommEInternal = static_cast<HcommResult>(4); // 对齐HCCL_E_INTERNAL
 
     for (uint32_t idx = 0; idx < num; ++idx) {
         if (endpoint == nullptr) {

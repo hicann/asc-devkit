@@ -29,7 +29,7 @@ public:
 protected:
     HcclResult TopoForLayer0(
         const HcclComm comm, uint32_t& layer0Size, const uint32_t myRank,
-        AlgHierarchyInfoForAllLevel& algHierarchyInfo) const;
+        AlgHierarchyInfoForAllLevel& algHierarchyInfo) const override;
     HcclResult TopoForLayer3(
         const HcclComm comm, uint32_t layer0Size, const uint32_t myRank,
         AlgHierarchyInfoForAllLevel& algHierarchyInfo) const;

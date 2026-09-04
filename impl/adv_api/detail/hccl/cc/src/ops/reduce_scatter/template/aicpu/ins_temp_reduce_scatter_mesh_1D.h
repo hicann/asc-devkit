@@ -53,7 +53,7 @@ protected:
     HcclResult RunReduceScatter(
         const std::map<u32, std::vector<ChannelInfo>>& channels, const std::vector<ThreadHandle>& threads,
         const TemplateDataParams& tempAlgParam);
-    virtual HcclResult CalcDataSplitByPortGroup(
+    HcclResult CalcDataSplitByPortGroup(
         const u64 totalDataCount, const u64 dataTypeSize, const std::vector<ChannelInfo>& channels,
         std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset);
     u64 processSize_{0};

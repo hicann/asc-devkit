@@ -24,7 +24,7 @@ public:
         AlgHierarchyInfoForAllLevel& algHierarchyInfo) override;
 
 protected:
-    HcclResult TopoForLayer0(
+    virtual HcclResult TopoForLayer0(
         const HcclComm comm, uint32_t& layer0Size, const uint32_t myRank,
         AlgHierarchyInfoForAllLevel& algHierarchyInfo) const;
     virtual HcclResult TopoForLayer1(

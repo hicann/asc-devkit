@@ -36,10 +36,10 @@ public:
     HcclResult KernelRun(
         const OpParam& param, const TemplateDataParams& tempAlgParams,
         const TemplateResource& templateResource) override;
-    HcclResult DoLocalCopy(const TemplateDataParams& tempAlgParams, const std::vector<ThreadHandle>& threads);
+    HcclResult DoLocalCopy(const TemplateDataParams& tempAlgParams, const std::vector<ThreadHandle>& threads) const;
 
 private:
-    HcclResult GetStepInfoList(std::vector<AicpuNHRStepInfo>& stepInfoList);
+    HcclResult GetStepInfoList(std::vector<AicpuNHRStepInfo>& stepInfoList) const;
     HcclResult RunNHR(const std::vector<ThreadHandle>& threads, u32 channelIdx);
 
     HcclResult GetNHRDataSize(

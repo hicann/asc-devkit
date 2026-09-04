@@ -41,10 +41,10 @@ public:
 
     u64 CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType) override;
     virtual u64 GetThreadNum() const;
-    virtual HcclResult CalcDataSplitByPortGroup(
+    HcclResult CalcDataSplitByPortGroup(
         const u64 totalDataCount, const u64 dataTypeSize, const std::vector<ChannelInfo>& channels,
-        std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset);
-    virtual HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels);
+        std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset) override;
+    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels) override;
     void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub) override;
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override;
 

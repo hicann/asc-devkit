@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "hccl/hccl_res.h"
+#include "hcomm_primitives.h"
 
 #ifdef __cplusplus
 extern "C" {

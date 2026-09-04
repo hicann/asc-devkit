@@ -336,8 +336,8 @@ HcclResult InsTempAllGatherNHR::RunStepNHR(
             "[InsTempAllGatherNHR][%s] rank[%u] invalid channel access, fromRankKey[%u] toRankKey[%u] channelIdx[%u] "
             "channels.size[%zu] fromChannelSize[%zu] toChannelSize[%zu]",
             __func__, myRank_, fromRankKey, toRankKey, channelIdx, channels.size(),
-            channels.count(fromRankKey) ? channels.at(fromRankKey).size() : 0,
-            channels.count(toRankKey) ? channels.at(toRankKey).size() : 0),
+            channels.count(fromRankKey) != 0 ? channels.at(fromRankKey).size() : 0,
+            channels.count(toRankKey) != 0 ? channels.at(toRankKey).size() : 0),
         HCCL_E_INTERNAL);
     const ChannelInfo& channelRecv = channels.at(fromRankKey)[channelIdx];
     const ChannelInfo& channelSend = channels.at(toRankKey)[channelIdx];

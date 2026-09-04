@@ -13,6 +13,7 @@
 #include <hccl/hccl_types.h>
 #include <acl/acl.h>
 #include "securec.h"
+#include "acl_base_rt.h"
 
 #ifndef HCOMM_WEAK_SYMBOL
 #define HCOMM_WEAK_SYMBOL __attribute__((weak))

@@ -39,7 +39,7 @@ public:
 
     u64 CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType) override;
     u64 GetThreadNum() const override;
-    void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub) override;
+    void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub) override;
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override;
 
 protected:

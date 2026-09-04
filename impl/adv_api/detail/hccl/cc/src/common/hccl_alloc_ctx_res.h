@@ -84,7 +84,7 @@ struct OpResCtx {
     bool isKfc[Hccl::MC2_MAX_OP_NUM]; // 用于标记是否走kfcServer
 };
 
-enum AlgorithmType {
+enum class AlgorithmType {
     CcuAllGatherMesh1D = 0,
     CcuAllGatherMeshMem2Mem1D,
     CcuAllGatherMesh2D,
@@ -101,13 +101,15 @@ enum AlgorithmType {
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
-    {"CcuAllGatherMeshMem2Mem1D", CcuAllGatherMeshMem2Mem1D},
-    {"CcuSchedAllGatherConcurMeshNHRMultiLink", CcuSchedAllGatherConcurMeshNHRMultiLink},
-    {"CcuSchedReduceScatterSoleMesh", CcuReduceScatterMeshMem2Mem1D},
-    {"CcuSchedAllToAllSoleMesh", CcuSchedAllToAllSoleMesh},
-    {"CcuSchedAllToAllVSoleMesh", CcuSchedAllToAllVSoleMesh},
-    {"CcuSchedAllReduceSoleMesh", CcuAllReduceMeshMem2Mem1D},
-    {"CcuSchedAllGatherSoleMesh", CcuSchedAllGatherSoleMesh}};
+    {"CcuAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
+    {"CcuAllGatherMeshMem2Mem1D", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
+    {"CcuSchedAllGatherConcurMeshNHRMultiLink", AlgorithmType::CcuSchedAllGatherConcurMeshNHRMultiLink},
+    {"CcuSchedReduceScatterSoleMesh", AlgorithmType::CcuReduceScatterMeshMem2Mem1D},
+    {"CcuSchedAllToAllSoleMesh", AlgorithmType::CcuSchedAllToAllSoleMesh},
+    {"CcuSchedAllToAllVSoleMesh", AlgorithmType::CcuSchedAllToAllVSoleMesh},
+    {"CcuSchedAllReduceSoleMesh", AlgorithmType::CcuAllReduceMeshMem2Mem1D},
+    {"CcuSchedAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
+    {"CcuSchedAllGatherSoleMesh", AlgorithmType::CcuSchedAllGatherSoleMesh}};
 
 typedef HcclResult (*OpParamPrepareFunc)(
     HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);
@@ -130,7 +132,7 @@ HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], ui
 HcclResult AllocCcuOpResCtx(HcclComm comm, const std::string& ctxTag, u32 rankSize, u32 userRank, OpResCtx& opResCtx);
 
 HcclResult HcclAllocOpResCtx(
-    HcclComm comm, const std::string& ctxTag, const std::vector<OpParam>& opParamVec, void* mc2Tiling,
+    HcclComm comm, const std::string& ctxTag, const std::vector<OpParam>& opParamVec, const void* mc2Tiling,
     const void* ccTilingList[], void** opResCtxPtr);
 
 // AllToAll适配AllToAllV

@@ -71,7 +71,7 @@ HcclResult InsTempAllGatherOmniPipeMesh1D::RunAllGatherMesh(
             myRank_, connectedRank, connectedAlgRank);
 
         CHK_PRT_RET(
-            threadIdx >= threads.size() || !channels.count(connectedRank),
+            threadIdx >= threads.size() || channels.count(connectedRank) == 0,
             HCCL_ERROR(
                 "[InsTempAllGatherOmniPipeMesh1D][RankID]=%u threadIdx=%u, threads.size=%u, "
                 "connectedRank=%d, channels.size=%u",

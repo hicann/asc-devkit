@@ -45,19 +45,19 @@ public:
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override;
 
 private:
-    void GetNotifyIdxMainToClos(std::vector<u32>& notifyIdxMianToSub);
-    void GetNotifyIdxClosToMain(std::vector<u32>& notifyIdxSubToMain);
-    void GetNotifyIdxMainToFullMesh(std::vector<u32>& notifyIdxMianToSub);
-    void GetNotifyIdxFullMeshToMain(std::vector<u32>& notifyIdxSubToMain);
+    void GetNotifyIdxMainToClos(std::vector<u32>& notifyIdxMianToSub) const;
+    void GetNotifyIdxClosToMain(std::vector<u32>& notifyIdxSubToMain) const;
+    void GetNotifyIdxMainToFullMesh(std::vector<u32>& notifyIdxMianToSub) const;
+    void GetNotifyIdxFullMeshToMain(std::vector<u32>& notifyIdxSubToMain) const;
     HcclResult InitParam(
         const OpParam& param, const TemplateDataParams& tempAlgParams, const TemplateResource& templateResource);
-    HcclResult GetBoardSendRecvMatrix(u32 n, std::vector<std::vector<u32>>& sendRecvMatrix);
-    HcclResult GetRankSendRecvMatrix(u32 board1, u32 board2, std::vector<std::vector<u32>>& rankSendRecvMatrix);
+    HcclResult GetBoardSendRecvMatrix(u32 n, std::vector<std::vector<u32>>& sendRecvMatrix) const;
+    HcclResult GetRankSendRecvMatrix(u32 board1, u32 board2, std::vector<std::vector<u32>>& rankSendRecvMatrix) const;
     HcclResult GetRankNumPerBoard(const TemplateResource& templateResource);
-    HcclResult CheckPathNum(const TemplateResource& templateResource);
+    HcclResult CheckPathNum(const TemplateResource& templateResource) const;
     HcclResult RunFullMeshSelfCopy(
         const TemplateDataParams& tempAlgParams, const TemplateResource& templateResource, u32 targetRank,
-        u32 fullMeshThreadId);
+        u32 fullMeshThreadId) const;
     HcclResult RunFullMeshPeer(
         const TemplateDataParams& tempAlgParams, const TemplateResource& templateResource, u32 targetRank,
         u32 fullMeshThreadId);
@@ -71,7 +71,7 @@ private:
         const ChannelInfo& channel, const std::vector<ThreadHandle>& threads, u32 queId,
         const std::vector<DataSlice>& txSrcSlices, const std::vector<DataSlice>& txDstSlices,
         const std::vector<DataSlice>& rxSrcSlices, const std::vector<DataSlice>& rxDstSlices, u64 sendDataSize,
-        u64 recvDataSize);
+        u64 recvDataSize) const;
     HcclResult SavePairwiseLocalCopy(const TemplateDataParams& tempAlgParams, u32 targetRank, u64 curRecvDataCount);
     HcclResult RunPairwise(
         const TemplateDataParams& tempAlgParams, const TemplateResource& templateResource, u32 targetBoard);
@@ -79,8 +79,8 @@ private:
     HcclResult InitBoardState(const TemplateResource& templateResource);
     HcclResult InitDataState(const TemplateDataParams& tempAlgParams);
     HcclResult InitThreadState(const TemplateResource& templateResource);
-    void LogInitState();
-    void LogDataSlices(const TemplateDataParams& tempAlgParams);
+    void LogInitState() const;
+    void LogDataSlices(const TemplateDataParams& tempAlgParams) const;
 
     u64 dataTypeSize_{0};
     bool isDmaRead_{false};

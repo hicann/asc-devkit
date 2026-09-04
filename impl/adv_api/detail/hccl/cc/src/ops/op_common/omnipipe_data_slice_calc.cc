@@ -8,6 +8,8 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include "omnipipe_data_slice_calc.h"
+#include <cmath>
+#include <securec.h>
 
 namespace mc2_ops_hccl {
 constexpr double BANDWIDTH_RATIO_BOUND = 10;
@@ -81,6 +83,9 @@ std::vector<OmniPipeSplitSliceInfo> OmniPipeSplitSliceInfoListAssign(
 void CalAllgather2DOffset(
     u64* xAGOffset, u64* yAGOffset, u64 stepNum, u64 xRankSize, u64 yRankSize, u64* xAGDataSize, u64* yAGDataSize)
 {
+    (void)xRankSize;
+    (void)yRankSize;
+
     HCCL_INFO("[CalAllgather2DOffset] start");
     xAGOffset[0] = 0; // 第一步发同轴，偏移为0
     yAGOffset[0] = 0; // 第一步发同轴，偏移为0
@@ -111,6 +116,9 @@ void CalReducescatter2DOffset(
     u64* xRSOffset, u64* yRSOffset, u64 stepNum, u64 xRankSize, u64 yRankSize, const u64* xRSDataSize,
     const u64* yRSDataSize)
 {
+    (void)xRankSize;
+    (void)yRankSize;
+
     HCCL_INFO("[CalReducescatter2DOffset] start");
     xRSOffset[0] = 0; // 第一步发斜对角，偏移为0
     yRSOffset[0] = 0;
@@ -172,7 +180,7 @@ u64 CalAllgatherDataSizeRatio2D(
         // 计算通信步数,计算固定max步
         step = maxStep;
         if (xRankSize - bandwidthRatio > 0) {
-            if (omniPipeRatio == 1) {
+            if (static_cast<int>(omniPipeRatio) == 1) {
                 // 等比为1时需要单独算步数
                 step = bandwidthRatio + 1;
             } else {
@@ -261,7 +269,7 @@ u64 CalAllgatherDataSize2D(
         // 计算通信步数,计算固定max步
         step = maxStep;
         if (xRankSize - bandwidthRatio > 0) {
-            if (omniPipeRatio == 1) {
+            if (static_cast<int>(omniPipeRatio) == 1) {
                 // 等比为1时需要单独算步数
                 step = bandwidthRatio + 1;
             } else {
@@ -357,7 +365,7 @@ u64 CalReducescatterDataSize2D(
         // 计算通信步数,计算固定5步
         step = maxStep;
         if (xRankSize - bandwidthRatio > 0) {
-            if (omniPipeRatio == 1) {
+            if (static_cast<int>(omniPipeRatio) == 1) {
                 // 等比为1时需要单独算步数，最后一步拆成两步，所以加2
                 step = bandwidthRatio + 2;
             } else {
@@ -871,6 +879,7 @@ std::vector<std::vector<u64>> CalRSDataSizeStep(
 
 std::vector<u64> OmniPipeSplitData(u64 rankSize, u64 count, u64 dataTypeSize)
 {
+    (void)dataTypeSize;
     std::vector<u64> omniPipeSplitSliceInfoList;
     u64 sliceCount = RoundUp(count, rankSize);
 
@@ -891,6 +900,8 @@ std::vector<u64> OmniPipeSplitData(u64 rankSize, u64 count, u64 dataTypeSize)
 std::vector<std::vector<u64>> OmniPipeSplitRankDataLoop(
     std::vector<u64> omniPipeSplitSliceInfoList, u64 maxDataCountPerLoop, u64 loopCount, u64 dataTypeSize)
 {
+    (void)dataTypeSize;
+
     std::vector<std::vector<u64>> omniPipeSplitRankDataLoop;
     u64 sliceNum = omniPipeSplitSliceInfoList.size();
 
@@ -972,6 +983,17 @@ OmniPipeSliceInfo CalcAGOmniPipeSliceInfo(OmniPipeSliceParam& omniPipeSliceParam
     u64 xAGOffset[rankSize][maxStepNum][maxStepNum]; // x轴偏移
     u64 yAGOffset[rankSize][maxStepNum][maxStepNum]; // y轴偏移
     u64 xyAGOffset[rankSize][maxStepNum];            // xy整体偏移
+    // 上述数组为变长数组，不能使用 {} 初始化；CalAllgatherDataSize2D 在单轴退化场景
+    // (xRankSize==1 或 yRankSize==1) 只写入其中一个轴的数组，另一个轴保持未写入状态，
+    // 故此处统一清零，避免后续按步数读取时取到未初始化值。
+    (void)memset_s(zAGDataSize, sizeof(zAGDataSize), 0, sizeof(zAGDataSize));
+    (void)memset_s(xyAGDataSize, sizeof(xyAGDataSize), 0, sizeof(xyAGDataSize));
+    (void)memset_s(xAGDataSize, sizeof(xAGDataSize), 0, sizeof(xAGDataSize));
+    (void)memset_s(yAGDataSize, sizeof(yAGDataSize), 0, sizeof(yAGDataSize));
+    (void)memset_s(zAGOffset, sizeof(zAGOffset), 0, sizeof(zAGOffset));
+    (void)memset_s(xAGOffset, sizeof(xAGOffset), 0, sizeof(xAGOffset));
+    (void)memset_s(yAGOffset, sizeof(yAGOffset), 0, sizeof(yAGOffset));
+    (void)memset_s(xyAGOffset, sizeof(xyAGOffset), 0, sizeof(xyAGOffset));
 
     int zConnerStep = 1;
     int xyConnerStep = 1;
@@ -1517,6 +1539,15 @@ OmniPipeSliceInfo CalcRSOmniPipeSliceInfo(OmniPipeSliceParam& omniPipeSliceParam
     u64 xRSOffset[rankSize][maxStepNum][maxStepNum]; // x轴偏移
     u64 yRSOffset[rankSize][maxStepNum][maxStepNum]; // y轴偏移
     u64 xyRSOffset[rankSize][maxStepNum];            // xy整体偏移
+    // 同 AG 路径：变长数组不能使用 {} 初始化，单轴退化场景下部分数组不会被写入，统一清零。
+    (void)memset_s(zRSDataSize, sizeof(zRSDataSize), 0, sizeof(zRSDataSize));
+    (void)memset_s(xyRSDataSize, sizeof(xyRSDataSize), 0, sizeof(xyRSDataSize));
+    (void)memset_s(xRSDataSize, sizeof(xRSDataSize), 0, sizeof(xRSDataSize));
+    (void)memset_s(yRSDataSize, sizeof(yRSDataSize), 0, sizeof(yRSDataSize));
+    (void)memset_s(zRSOffset, sizeof(zRSOffset), 0, sizeof(zRSOffset));
+    (void)memset_s(xRSOffset, sizeof(xRSOffset), 0, sizeof(xRSOffset));
+    (void)memset_s(yRSOffset, sizeof(yRSOffset), 0, sizeof(yRSOffset));
+    (void)memset_s(xyRSOffset, sizeof(xyRSOffset), 0, sizeof(xyRSOffset));
     std::vector<std::vector<std::vector<u64>>> axlesReduceDstAddr;
     // buffer分4块，第一块放自己的数据，2.3.4块放别人x.y.z发来的数据，起始地址为xCclBufferBaseOff,yCclBufferBaseOff,zCclBufferBaseOff补充buffer基础偏移计算
     u64 xCclBufferBaseOff = 0;

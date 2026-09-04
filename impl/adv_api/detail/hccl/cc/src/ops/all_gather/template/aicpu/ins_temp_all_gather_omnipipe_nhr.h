@@ -29,7 +29,7 @@ public:
     HcclResult KernelRun(
         const OpParam& param, const TemplateDataParams& tempAlgParams,
         const TemplateResource& templateResource) override;
-    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels);
+    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels) override;
 
 private:
     HcclResult RunAllGatherNHRChannel(

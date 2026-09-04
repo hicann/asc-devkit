@@ -11,7 +11,6 @@
 #define TOPO_MATCH_MESH
 #include <string>
 #include <vector>
-#include <map>
 #include <hccl/hccl_types.h>
 #include "alg_param.h"
 #include "topo_match_base.h"

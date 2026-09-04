@@ -60,7 +60,7 @@ HcclResult InsTempReduceScatterOmniPipeNHR::KernelRun(
 }
 
 HcclResult InsTempReduceScatterOmniPipeNHR::DoLocalCopy(
-    const TemplateDataParams& tempAlgParams, const std::vector<ThreadHandle>& threads)
+    const TemplateDataParams& tempAlgParams, const std::vector<ThreadHandle>& threads) const
 {
     HCCL_INFO("[InsTempReduceScatterOmniPipeNHR][DoLocalCopy] DoLocalCopy myRank_ = [%u]", myRank_);
     u32 rankIdx = 0;
@@ -199,7 +199,7 @@ HcclResult InsTempReduceScatterOmniPipeNHR::RunNHR(const std::vector<ThreadHandl
 }
 
 //  计算每轮收发的对端以及slice编号
-HcclResult InsTempReduceScatterOmniPipeNHR::GetStepInfoList(std::vector<AicpuNHRStepInfo>& stepInfoList)
+HcclResult InsTempReduceScatterOmniPipeNHR::GetStepInfoList(std::vector<AicpuNHRStepInfo>& stepInfoList) const
 {
     // 将本 rank 号转换成算法使用的索引号
     u32 u32x = 0;

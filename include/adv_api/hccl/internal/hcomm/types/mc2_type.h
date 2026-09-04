@@ -11,8 +11,6 @@
 #define HCCL_MC2_TYPE_H
 
 #include <string>
-#include <unordered_map>
-#include <vector>
 
 namespace Hccl { // 仅保留了a5 ccu kfc_server算子需要编译态常量
 
