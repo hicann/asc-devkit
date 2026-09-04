@@ -34,6 +34,10 @@
 - **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
 - **地址寄存器偏移搬入模式**：通过地址寄存器指定相对源起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬入场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 
+**图1** 广播搬入矢量数据寄存器
+
+![](../../figures/capi_loadalign_brc_elem.png)
+
 本接口仅在AIV上生效，非AIV调用直接返回。
 
 ## 函数原型

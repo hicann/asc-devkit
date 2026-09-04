@@ -30,6 +30,10 @@
 
 从Unified Buffer（UB）中按dtype对齐的起始地址读取一个元素，并将该元素广播到整个矢量数据寄存器。搬运过程中数据格式和内容保持不变。接口采用Post Update模式，搬运完成后自动更新源地址指针。
 
+**图1** 广播搬入矢量数据寄存器
+
+![](../../figures/capi_loadalign_brc_elem.png)
+
 本接口仅在AIV上生效，非AIV调用直接返回。
 
 ## 函数原型

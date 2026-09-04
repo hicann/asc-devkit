@@ -32,6 +32,10 @@
 
 本接口与[asc_loadalign](asc_loadalign.md)连续对齐搬入模式中目的操作数为掩码寄存器的原型功能相同，区别在于本接口通过函数返回值返回结果。
 
+**图1** 连续搬入掩码寄存器
+
+![](../../figures/capi_loadalign_mask_norm.png)
+
 本接口仅在AIV上生效，非AIV调用直接返回。
 
 ## 函数原型
