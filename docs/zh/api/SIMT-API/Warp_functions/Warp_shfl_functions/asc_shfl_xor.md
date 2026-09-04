@@ -103,8 +103,6 @@ Warp内指定线程的var值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(1024) void KernelShflXor(int32_t* dst)
     {
@@ -121,8 +119,6 @@ Warp内指定线程的var值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void KernelShflXor(__gm__ int32_t* dst)
     {
@@ -142,8 +138,6 @@ Warp内指定线程的var值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(1024) void KernelShflXorReduceSum(int32_t* dst)
     {
@@ -165,8 +159,6 @@ Warp内指定线程的var值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void KernelShflXorReduceSum(__gm__ int32_t* dst)
     {

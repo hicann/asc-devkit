@@ -109,8 +109,6 @@ UB或Global Memory上的初始数据。
 
     ```cpp
     #include "simt_api/device_atomic_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(256) void claim_task(uint32_t *owner,
                                                       uint32_t *claim_result,
@@ -133,8 +131,6 @@ UB或Global Memory上的初始数据。
 
     ```cpp
     #include "simt_api/device_atomic_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void claim_task(__gm__ uint32_t *owner,
                                                                __gm__ uint32_t *claim_result,

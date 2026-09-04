@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/math_functions.h"`。
+
 获取两个输入数据中的最小值。
 
 ![](../../../figures/zh-cn_formulaimage_0000002552510937.png)
@@ -52,19 +54,13 @@ inline unsigned int umin(const unsigned int x, const unsigned int y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/math_functions.h`头文件。
-
-```cpp
-#include "simt_api/math_functions.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelUmin(unsigned int* dst, unsigned int* x, unsigned int* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -75,6 +71,8 @@ inline unsigned int umin(const unsigned int x, const unsigned int y)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelUmin(__gm__ unsigned int* dst, __gm__ unsigned int* x, __gm__ unsigned int* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

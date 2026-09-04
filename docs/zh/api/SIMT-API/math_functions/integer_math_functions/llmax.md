@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/math_functions.h"`。
+
 获取两个输入数据中的最大值。
 
 ![](../../../figures/zh-cn_formulaimage_0000002521590972.png)
@@ -52,19 +54,13 @@ inline long long int llmax(const long long int x, const long long int y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/math_functions.h`头文件。
-
-```cpp
-#include "simt_api/math_functions.h"
-```
-
 ## 调用示例
 
 - SIMT编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel_llmax(long long int* dst, long long int* x, long long int* y, uint64_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -78,6 +74,8 @@ inline long long int llmax(const long long int x, const long long int y)
 - SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel_llmax(__gm__ long long int* dst, __gm__ long long int* x, __gm__ long long int* y, uint32_t total_length)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

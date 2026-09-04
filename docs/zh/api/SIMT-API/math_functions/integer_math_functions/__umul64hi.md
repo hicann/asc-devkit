@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 获取输入uint64类型数据`x`和`y`乘积的高64位。
 
 ![](../../../figures/zh-cn_formulaimage_0000002531050522.png)
@@ -52,19 +54,13 @@ unsigned long long __umul64hi(unsigned long long x, unsigned long long y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelUmul64hi(unsigned long long* dst, unsigned long long* x, unsigned long long* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -75,6 +71,8 @@ unsigned long long __umul64hi(unsigned long long x, unsigned long long y)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelUmul64hi(__gm__ unsigned long long* dst, __gm__ unsigned long long* x, __gm__ unsigned long long* y)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

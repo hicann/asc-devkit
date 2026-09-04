@@ -69,7 +69,6 @@ Warp内所有活跃线程输入val的最大值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
 
     __global__ __launch_bounds__(1024) void KernelReduceMax(int32_t* dst)
     {
@@ -84,7 +83,6 @@ Warp内所有活跃线程输入val的最大值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void KernelReduceMax(__gm__ int32_t* dst)
     {

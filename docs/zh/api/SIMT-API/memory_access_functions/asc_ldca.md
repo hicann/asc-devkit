@@ -213,8 +213,6 @@ inline half2 asc_ldca(half2* address)
 
     ```cpp
     #include "simt_api/device_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(1024) void kernel_asc_ldca(float* dst, float* src)
     {
@@ -229,8 +227,6 @@ inline half2 asc_ldca(half2* address)
 
     ```cpp
     #include "simt_api/device_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_ldca(__gm__ float* dst, __gm__ float* src)
     {

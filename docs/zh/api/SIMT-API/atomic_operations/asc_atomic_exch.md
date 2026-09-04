@@ -106,8 +106,6 @@ UB或Global Memory上的初始数据。
 
     ```cpp
     #include "simt_api/device_atomic_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(256) void publish_fault_status(uint32_t *status,
                                                                uint32_t *old_status,
@@ -131,8 +129,6 @@ UB或Global Memory上的初始数据。
 
     ```cpp
     #include "simt_api/device_atomic_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void publish_fault_status(__gm__ uint32_t *status,
                                                                         __gm__ uint32_t *old_status,

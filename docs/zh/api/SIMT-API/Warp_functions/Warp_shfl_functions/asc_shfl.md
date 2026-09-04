@@ -112,8 +112,6 @@ Warp内指定线程的`var`值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(1024) void kernel_shfl(int32_t* dst, int32_t total_num)
     {
@@ -132,8 +130,6 @@ Warp内指定线程的`var`值。
 
     ```cpp
     #include "simt_api/device_warp_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void kernel_shfl(__gm__ int32_t* dst, int32_t total_num)
     {

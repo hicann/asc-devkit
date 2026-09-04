@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 从输入数据的二进制最高有效位开始，返回连续的前导零的位数。
 
 ## 函数原型
@@ -57,19 +59,13 @@ int __clz(long x)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelClz(int* dst, int* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -78,6 +74,8 @@ int __clz(long x)
     ```
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelClz(int* dst, long long* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -88,6 +86,8 @@ int __clz(long x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelClz(__gm__ int* dst, __gm__ int* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -96,6 +96,8 @@ int __clz(long x)
     ```
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelClz(__gm__ int* dst, __gm__ long long* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

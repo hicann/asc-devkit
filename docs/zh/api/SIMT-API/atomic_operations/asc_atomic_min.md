@@ -122,8 +122,6 @@ UB或Global Memory上的初始数据。
 
     ```cpp
     #include "simt_api/device_atomic_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(256) void find_min_latency(uint32_t *min_latency,
                                                            uint32_t *latency,
@@ -144,8 +142,6 @@ UB或Global Memory上的初始数据。
 
     ```cpp
     #include "simt_api/device_atomic_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void find_min_latency(__gm__ uint32_t *min_latency,
                                                                     __gm__ uint32_t *latency,

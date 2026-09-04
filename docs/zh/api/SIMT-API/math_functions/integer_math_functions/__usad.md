@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 对输入数据x、y、z，计算|x - y| + z的结果，即前两个输入作差的绝对值与第三个输入的和。
 
 ## 函数原型
@@ -51,19 +53,13 @@ unsigned int __usad(unsigned int x, unsigned int y, unsigned int z)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelUsad(unsigned int* dst, unsigned int* x, unsigned int* y, unsigned int* z)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -74,6 +70,8 @@ unsigned int __usad(unsigned int x, unsigned int y, unsigned int z)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelUsad(__gm__ unsigned int* dst, __gm__ unsigned int* x, __gm__ unsigned int* y, __gm__ unsigned int* z)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;

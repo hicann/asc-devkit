@@ -206,8 +206,6 @@ inline void asc_stwt(half2* address, half2 val)
 
     ```cpp
     #include "simt_api/device_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __global__ __launch_bounds__(1024) void kernel_asc_stwt(float* dst, float* val, uint32_t input_total_length)
     {
@@ -225,8 +223,6 @@ inline void asc_stwt(half2* address, half2 val)
 
     ```cpp
     #include "simt_api/device_functions.h"
-    #include "simt_api/asc_fp16.h"
-    #include "simt_api/asc_bf16.h"
 
     __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_stwt(__gm__ float* dst, __gm__ float* val, uint32_t input_total_length)
     {

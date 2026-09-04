@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/math_functions.h"`。
+
 获取两个输入数据中的最大值，当入参为一个有符号整数、一个无符号整数时，有符号整数会先被转换为对应的无符号类型，再进行大小比较。
 
 ## 函数原型
@@ -110,19 +112,13 @@ unsigned long long int max(unsigned long long int x, long long int y)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/math_functions.h`头文件。
-
-```cpp
-#include "simt_api/math_functions.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __global__ __launch_bounds__(1024) void KernelMax(long long* dst, long long* x, long long* y, uint32_t input_total_length)
     {
         uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -136,6 +132,8 @@ unsigned long long int max(unsigned long long int x, long long int y)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/math_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void KernelMax(__gm__ long long* dst, __gm__ long long* x, __gm__ long long* y, uint32_t input_total_length)
     {
         uint32_t idx = threadIdx.x + blockIdx.x * blockDim.x;

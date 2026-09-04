@@ -25,6 +25,8 @@
 
 ## 功能说明
 
+头文件路径为：`"simt_api/device_functions.h"`。
+
 遵循CAST\_TRUNC模式，将浮点数转换为64位无符号整数，返回转换后的值。
 
 ## 函数原型
@@ -57,19 +59,13 @@ inline unsigned long long int __float2ull_rz(const float x)
 
 无
 
-## 需要包含的头文件
-
-使用该接口需要包含`simt_api/device_functions.h`头文件。
-
-```cpp
-#include "simt_api/device_functions.h"
-```
-
 ## 调用示例
 
 -   SIMT编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __global__ __launch_bounds__(1024) void kernel__float2ull_rz(uint64_t* dst, float* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -80,6 +76,8 @@ inline unsigned long long int __float2ull_rz(const float x)
 -   SIMD与SIMT混合编程场景：
 
     ```cpp
+    #include "simt_api/device_functions.h"
+
     __simt_vf__ __launch_bounds__(1024) inline void kernel__float2ull_rz(__gm__ uint64_t* dst, __gm__ float* x)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
