@@ -21,7 +21,6 @@
 #define INCLUDE_C_API_ASC_SIMD_H
 
 #include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
-#include "utils/base/helpers.h"
 
 #include "c_api/atomic/atomic.h"
 #include "c_api/cache_ctrl/cache_ctrl.h"
