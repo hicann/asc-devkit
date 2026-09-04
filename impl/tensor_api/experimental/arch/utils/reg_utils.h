@@ -75,7 +75,7 @@ inline constexpr bool supports_min_max_v =
 
 template <typename T>
 inline constexpr bool supports_or_v =
-    ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float>;
+    ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
 
 } // namespace detail
 } // namespace experimental

@@ -59,7 +59,7 @@ __simd_callee__ inline reg_tensor<T> operator|(
 
 ## 数据类型
 
-源操作数与返回值的数据类型保持一致。支持的数据类型为：bool、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+源操作数与返回值的数据类型保持一致。支持的数据类型为：bool、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
 
 ## 返回值说明
 

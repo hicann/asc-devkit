@@ -712,6 +712,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[asc_abs_sync（废弃）](deprecated_interface/asc_abs_sync_deprecated.md)|按元素取绝对值同步接口。|`c_api/composite/vector_compute_composite.h`|
+|[asc_and（废弃）](deprecated_interface/asc_and_deprecated.md)|`asc_and`的浮点类型重载已废弃，请使用同位宽的整数重载替代。|`c_api/reg_compute/compute/reg_logic.h`|
+|[asc_or（废弃）](deprecated_interface/asc_or_deprecated.md)|`asc_or`的浮点类型重载已废弃，请使用同位宽的整数重载替代。|`c_api/reg_compute/compute/reg_logic.h`|
 |[asc_bfloat162e1m2x2 (废弃)](reg_compute/reg_convert/asc_bfloat162e1m2x2_deprecated.md)|将bfloat16_t类型转换为fp4x2_e1m2_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_bfloat162e2m1x2 (废弃)](reg_compute/reg_convert/asc_bfloat162e2m1x2_deprecated.md)|将bfloat16_t类型转换为fp4x2_e2m1_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_bfloat162float（废弃）](deprecated_interface/asc_bfloat162float_deprecated.md)|通过接口后缀来控制源操作数读取位置（仅包括源操作数、目的操作数、掩码寄存器三个参数）的原型已废弃，请使用显式位置参数重载。|`c_api/reg_compute/reg_convert.h`|

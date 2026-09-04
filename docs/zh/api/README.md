@@ -1323,6 +1323,8 @@
             -   [asc_set_saturation_strategy](SIMD-API/c_api/spr/asc_set_saturation_strategy.md)
             -   [asc_get_ar_spr (废弃)](SIMD-API/c_api/spr/asc_get_ar_spr_deprecated.md)
         -   [废弃接口](SIMD-API/c_api/deprecated_interface/deprecated_interface.md)
+            -   [asc_and（废弃）](SIMD-API/c_api/deprecated_interface/asc_and_deprecated.md)
+            -   [asc_or（废弃）](SIMD-API/c_api/deprecated_interface/asc_or_deprecated.md)
             -   [asc_get_block_idx（废弃）](SIMD-API/c_api/deprecated_interface/asc_get_block_idx_deprecated.md)
             -   [asc_get_block_num（废弃）](SIMD-API/c_api/deprecated_interface/asc_get_block_num_deprecated.md)
             -   [asc_set_atomic_add_int（废弃）](SIMD-API/c_api/deprecated_interface/asc_set_atomic_add_int_deprecated.md)

@@ -19,12 +19,10 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_int8_t);
 TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCVOR, asc_or, vor, vector_int8_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_uint8_t);
 TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCVOR, asc_or, vor, vector_uint8_t);
-TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_half);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_int32_t);
 TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCVOR, asc_or, vor, vector_int32_t);
 TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_uint32_t);
 TEST_VECTOR_COMPUTE_BINARY_RETURN_INSTR(ASCVOR, asc_or, vor, vector_uint32_t);
-TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_float);
 
 #define TEST_VECTOR_COMPUTE_BINARY_INSTR_NOLI(class_name, c_api_name, cce_name, data_type)                  \
                                                                                                             \
@@ -80,3 +78,11 @@ TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_float);
 
 TEST_VECTOR_COMPUTE_BINARY_INSTR_NOLI(ASCVOR, asc_or, por, vector_bool);
 TEST_VECTOR_COMPUTE_BINARY_INSTR_NOLI_RETURN(ASCVOR, asc_or, por, vector_bool);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
+TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_half);
+TEST_VECTOR_COMPUTE_BINARY_INSTR(ASCVOR, asc_or, vor, vector_float);
+
+#pragma GCC diagnostic pop

@@ -225,6 +225,14 @@
 <!-- npu="950" id8 -->
 ### Reg矢量计算
 
+- [asc_and](../SIMD-API/c_api/deprecated_interface/asc_and_deprecated.md)接口（浮点类型重载）
+
+    `asc_and`的浮点类型重载已废弃，请按位宽选择对应整数重载替代，详情请参见[asc_and](../SIMD-API/c_api/reg_compute/reg_logic/asc_and.md)。
+
+- [asc_or](../SIMD-API/c_api/deprecated_interface/asc_or_deprecated.md)接口（浮点类型重载）
+
+    `asc_or`的浮点类型重载已废弃，请按位宽选择对应整数重载替代，详情请参见[asc_or](../SIMD-API/c_api/reg_compute/reg_logic/asc_or.md)。
+
 - [asc_float2bfloat16](../SIMD-API/c_api/deprecated_interface/asc_float2bfloat16_deprecated.md)接口（通过接口后缀来控制目的操作数写入位置的三参数原型）
 
     旧原型已废弃，请使用[asc_float2bfloat16](../SIMD-API/c_api/reg_compute/reg_convert/asc_float2bfloat16.md)的显式位置参数重载。
