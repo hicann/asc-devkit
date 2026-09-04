@@ -1,7 +1,7 @@
 # gather Example
 
 ## Overview
-This example implements the functionality of collecting elements from a vector data register by index, based on the C API programming interface, primarily calling the [asc_gather](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/gather/asc_gather.md) API.
+This example implements the functionality of collecting elements from a vector data register by index, based on the C API programming interface, primarily calling the [asc_gather](../../../../../docs/zh/api/SIMD-API/c_api/reg_compute/reg_gather/asc_gather.md) API.
 
 ## Supported Products and CANN Versions
 
