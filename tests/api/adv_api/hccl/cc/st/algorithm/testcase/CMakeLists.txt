@@ -88,15 +88,6 @@ target_compile_definitions(${HCCL_AICPU_ALLOC_CTX_TARGET} PRIVATE
     -DAICPU_COMPILE
 )
 
-# The test must exercise the mc2_client built from the current source tree even
-# when an older CANN installation is present in LD_LIBRARY_PATH.
-set_target_properties(${HCCL_AICPU_ALLOC_CTX_TARGET} PROPERTIES
-    BUILD_RPATH "$<TARGET_FILE_DIR:mc2_client>"
-)
-target_link_options(${HCCL_AICPU_ALLOC_CTX_TARGET} PRIVATE
-    -Wl,--disable-new-dtags
-)
-
 target_link_libraries(${HCCL_AICPU_ALLOC_CTX_TARGET} PRIVATE
     intf_llt_pub_basic
     mc2_client
@@ -108,9 +99,15 @@ target_link_libraries(${HCCL_AICPU_ALLOC_CTX_TARGET} PRIVATE
     dl
 )
 
-run_llt_test(
-    TARGET ${HCCL_AICPU_ALLOC_CTX_TARGET}
-    TASK_NUM 1
+# The test must exercise the mc2_client built from the current source tree even
+# when an older CANN installation is present in LD_LIBRARY_PATH.
+# Prepend local build directories to LD_LIBRARY_PATH so that locally built
+# libraries (libmc2_client.so, libmc2_compat.so) are loaded before any older
+# versions from the CANN installation.
+add_custom_command(
+    TARGET ${HCCL_AICPU_ALLOC_CTX_TARGET} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E env LD_LIBRARY_PATH=$<TARGET_FILE_DIR:mc2_client>:$<TARGET_FILE_DIR:mc2_compat>:$ENV{LD_LIBRARY_PATH} $<TARGET_FILE:${HCCL_AICPU_ALLOC_CTX_TARGET}>
+    COMMENT "Run ${HCCL_AICPU_ALLOC_CTX_TARGET} with local library path priority"
 )
 
 add_subdirectory(mc2_ccu)

@@ -48,6 +48,8 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_ubx.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_ubx_1d.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_pcie_mix.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_build.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_normalize.cc
     ${HCCL_CC_SRC_DIR}/common/hccl_alloc_ctx_res.cc
     ${HCCL_CC_SRC_DIR}/common/hccl_mc2.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/ccu_log.cc

@@ -12,6 +12,8 @@ set(src_list
     ${CMAKE_CURRENT_SOURCE_DIR}/topo_host.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/topo_match_1d.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/topo_match_base.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/physical_level_build.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/physical_level_normalize.cc
 )
 if(NOT HCCL_CANN_COMPAT_850)
     list(APPEND src_list

@@ -789,8 +789,8 @@ HcclResult HcclGetAlgRes(
     CHK_PTR_NULL(resCtxSequence);
     *resCtxSequence = nullptr;
     HCCL_INFO(
-        "[asc][AlgoResource][HcclGetAlgRes] start, opType[%d], algTag[%s], engine[%d], opMode[%d].", param.opType,
-        param.algTag, param.engine, param.opMode);
+        "[asc][AlgoResource][HcclGetAlgRes] start, opType[%d], algName[%s], algTag[%s], engine[%d], opMode[%d].",
+        param.opType, param.algName, param.algTag, param.engine, param.opMode);
 
     void* ctx = nullptr;
     bool increCreateChannelFlag = false;
@@ -841,11 +841,24 @@ HcclResult HcclGetAlgRes(
     HCCL_INFO(
         "[asc][AlgoResource][HcclGetAlgRes] before CalcAlgHierarchyInfo, opType[%d], algTag[%s].", param.opType,
         param.algTag);
-    HcclResult calcHierarchyRet = executor->CalcAlgHierarchyInfo(comm, topoInfo, algHierarchyInfo);
-    HCCL_INFO(
-        "[asc][AlgoResource][HcclGetAlgRes] after CalcAlgHierarchyInfo, ret[%d], levelNum[%zu].", calcHierarchyRet,
-        algHierarchyInfo.infos.size());
-    CHK_RET(calcHierarchyRet);
+    const bool useCannBridge =
+        (param.engine == COMM_ENGINE_AICPU_TS || param.engine == COMM_ENGINE_AICPU) &&
+        (param.opType == HcclCMDType::HCCL_CMD_ALLTOALL || param.opType == HcclCMDType::HCCL_CMD_ALLTOALLV ||
+         param.opType == HcclCMDType::HCCL_CMD_ALLREDUCE);
+    if (useCannBridge) {
+        AlgAttrs algAttrs = executor->GetAlgoMeta(std::string(param.algName));
+        HcclResult calcHierarchyRet = executor->CalcAlgHierarchyInfoV2(topoInfo, algHierarchyInfo, algAttrs);
+        HCCL_INFO(
+            "[asc][AlgoResource][HcclGetAlgRes] after CalcAlgHierarchyInfoV2, ret[%d], levelNum[%zu].",
+            calcHierarchyRet, algHierarchyInfo.infos.size());
+        CHK_RET(calcHierarchyRet);
+    } else {
+        HcclResult calcHierarchyRet = executor->CalcAlgHierarchyInfo(comm, topoInfo, algHierarchyInfo);
+        HCCL_INFO(
+            "[asc][AlgoResource][HcclGetAlgRes] after CalcAlgHierarchyInfo, ret[%d], levelNum[%zu].", calcHierarchyRet,
+            algHierarchyInfo.infos.size());
+        CHK_RET(calcHierarchyRet);
+    }
     // 资源计算
     AlgResourceRequest resRequest;
     HCCL_INFO(
