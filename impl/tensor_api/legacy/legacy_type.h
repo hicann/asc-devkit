@@ -123,6 +123,7 @@ using CopyUB2UBTraitDefault = legacy_trait_default<asc::te::ub_to_ub_trait_defau
 
 using MmadTraitDefault = legacy_trait_default<asc::te::mmad_trait_default>;
 using MmadOperation = asc::te::mmad_operation;
+using MmadOpWith = asc::te::mmad_op_with;
 
 // 兼容旧常量名（已改为 snake_case，此处保留 PascalCase 别名）
 template <typename DataType = Std::ignore_t>

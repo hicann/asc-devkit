@@ -57,6 +57,9 @@ public:
 };
 
 class load_l1_to_l0a_img2col_instr {
+private:
+    static constexpr uint32_t dst_stride_bit_offset = 32;
+
 public:
     __aicore__ inline static void set_f_matrix(uint16_t l1_h, uint16_t l1_w, const uint8_t pad_list[4])
     {
@@ -82,7 +85,7 @@ public:
         config.rpt_stride = 0;
         config.rpt_time = 1;
         config.rpt_mode = 0;
-        config.config |= static_cast<uint64_t>(dst_stride) << 32;
+        config.config |= static_cast<uint64_t>(dst_stride) << dst_stride_bit_offset;
         asc_set_l13d_rpt(config);
     }
 

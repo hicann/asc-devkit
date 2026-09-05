@@ -75,7 +75,11 @@ __aicore__ static __attribute__((noinline)) void print_fragment(print_session& s
         session.first_fragment = false;
         __asc_aicore::printf(fmt);
     } else {
+#if defined(ASCENDC_CPU_DEBUG)
+        __asc_aicore::printf(fmt);
+#else
         __asc_aicore::scalar_printf_impl(__asc_aicore::DumpType::DUMP_SCALAR, fmt, (__gm__ const char*)"");
+#endif
     }
 #else
     (void)session;
@@ -92,7 +96,11 @@ __aicore__ static __attribute__((noinline)) void print_fragment(print_session& s
         session.first_fragment = false;
         __asc_aicore::printf(fmt, arg);
     } else {
+#if defined(ASCENDC_CPU_DEBUG)
+        __asc_aicore::printf(fmt, arg);
+#else
         __asc_aicore::scalar_printf_impl(__asc_aicore::DumpType::DUMP_SCALAR, fmt, (__gm__ const char*)"", arg);
+#endif
     }
 #else
     (void)session;

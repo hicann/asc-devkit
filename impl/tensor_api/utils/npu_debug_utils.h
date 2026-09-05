@@ -9,7 +9,7 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
+#warning \
     "impl/tensor_api/utils/npu_debug_utils.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define TENSOR_API_DEBUG_UTILS_OWNS_INTERNAL_HEADER_ACCESS
@@ -84,8 +84,8 @@ template <typename ShapeType>
 __aicore__ inline constexpr bool is_shape_valid(const ShapeType& shape)
 {
     if constexpr (Std::is_tuple_v<Std::remove_cvref_t<ShapeType>>) {
-        return is_shape_valid_impl(shape,
-                                   Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>>{});
+        return is_shape_valid_impl(
+            shape, Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>>{});
     } else {
         return shape > 0;
     }
@@ -104,8 +104,8 @@ template <typename StrideType>
 __aicore__ inline constexpr bool is_stride_valid(const StrideType& stride)
 {
     if constexpr (Std::is_tuple_v<Std::remove_cvref_t<StrideType>>) {
-        return is_stride_valid_impl(stride,
-                                    Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<StrideType>>>{});
+        return is_stride_valid_impl(
+            stride, Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<StrideType>>>{});
     } else {
         return stride >= 0;
     }
@@ -115,8 +115,8 @@ template <typename CoordType, typename ShapeType>
 __aicore__ inline constexpr bool is_coord_in_shape(const CoordType& coord, const ShapeType& shape);
 
 template <typename CoordType, typename ShapeType, size_t... indices>
-__aicore__ inline constexpr bool is_coord_in_shape_impl(const CoordType& coord, const ShapeType& shape,
-                                                        Std::index_sequence<indices...>)
+__aicore__ inline constexpr bool is_coord_in_shape_impl(
+    const CoordType& coord, const ShapeType& shape, Std::index_sequence<indices...>)
 {
     return (is_coord_in_shape(Std::get<indices>(coord), Std::get<indices>(shape)) && ...);
 }
@@ -125,14 +125,16 @@ template <typename CoordType, typename ShapeType>
 __aicore__ inline constexpr bool is_coord_in_shape(const CoordType& coord, const ShapeType& shape)
 {
     if constexpr (Std::is_tuple_v<Std::remove_cvref_t<CoordType>>) {
-        static_assert(Std::is_tuple_v<Std::remove_cvref_t<ShapeType>>,
-                      "The coord and shape must describe compatible dimensions.");
+        static_assert(
+            Std::is_tuple_v<Std::remove_cvref_t<ShapeType>>,
+            "The coord and shape must describe compatible dimensions.");
         if constexpr (Std::is_tuple_v<Std::remove_cvref_t<ShapeType>>) {
-            static_assert(Std::tuple_size_v<Std::remove_cvref_t<CoordType>>
-                              == Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>,
-                          "The coord and shape must have the same rank.");
-            if constexpr (Std::tuple_size_v<Std::remove_cvref_t<CoordType>>
-                          == Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>) {
+            static_assert(
+                Std::tuple_size_v<Std::remove_cvref_t<CoordType>> == Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>,
+                "The coord and shape must have the same rank.");
+            if constexpr (
+                Std::tuple_size_v<Std::remove_cvref_t<CoordType>> ==
+                Std::tuple_size_v<Std::remove_cvref_t<ShapeType>>) {
                 return is_coord_in_shape_impl(
                     coord, shape, Std::make_index_sequence<Std::tuple_size_v<Std::remove_cvref_t<CoordType>>>{});
             }
@@ -171,10 +173,10 @@ struct debug_flat_tuple_format {
     using type = debug_tuple_unsupported;
 };
 
-#define TENSOR_API_DETAIL_DEFINE_FLAT_TUPLE_FORMAT(size)                                                               \
-    template <>                                                                                                        \
-    struct debug_flat_tuple_format<size> {                                                                             \
-        using type = debug_tuple_flat_##size;                                                                          \
+#define TENSOR_API_DETAIL_DEFINE_FLAT_TUPLE_FORMAT(size) \
+    template <>                                          \
+    struct debug_flat_tuple_format<size> {               \
+        using type = debug_tuple_flat_##size;            \
     }
 
 TENSOR_API_DETAIL_DEFINE_FLAT_TUPLE_FORMAT(1);
@@ -196,29 +198,31 @@ struct debug_tuple_format {
 
 template <typename... ValueTypes>
 struct debug_tuple_format<Std::tuple<ValueTypes...>> {
-    using type =
-        Std::conditional_t<are_debug_scalar_values_v<ValueTypes...>,
-                           typename debug_flat_tuple_format<sizeof...(ValueTypes)>::type, debug_tuple_unsupported>;
+    using type = Std::conditional_t<
+        are_debug_scalar_values_v<ValueTypes...>, typename debug_flat_tuple_format<sizeof...(ValueTypes)>::type,
+        debug_tuple_unsupported>;
 };
 
 template <typename Value00Type, typename Value01Type, typename Value10Type, typename Value11Type>
 struct debug_tuple_format<Std::tuple<Std::tuple<Value00Type, Value01Type>, Std::tuple<Value10Type, Value11Type>>> {
-    using type = Std::conditional_t<are_debug_scalar_values_v<Value00Type, Value01Type, Value10Type, Value11Type>,
-                                    debug_tuple_nested_2x2, debug_tuple_unsupported>;
+    using type = Std::conditional_t<
+        are_debug_scalar_values_v<Value00Type, Value01Type, Value10Type, Value11Type>, debug_tuple_nested_2x2,
+        debug_tuple_unsupported>;
 };
 
 template <typename LeadingType, typename Value0Type, typename Value1Type>
 struct debug_tuple_format<Std::tuple<LeadingType, Std::tuple<Value0Type, Value1Type>>> {
-    using type = Std::conditional_t<are_debug_scalar_values_v<LeadingType, Value0Type, Value1Type>,
-                                    debug_tuple_leading_scalar_flat_2, debug_tuple_unsupported>;
+    using type = Std::conditional_t<
+        are_debug_scalar_values_v<LeadingType, Value0Type, Value1Type>, debug_tuple_leading_scalar_flat_2,
+        debug_tuple_unsupported>;
 };
 
 template <typename LeadingType, typename Value00Type, typename Value01Type, typename Value10Type, typename Value11Type>
 struct debug_tuple_format<
     Std::tuple<LeadingType, Std::tuple<Std::tuple<Value00Type, Value01Type>, Std::tuple<Value10Type, Value11Type>>>> {
-    using type =
-        Std::conditional_t<are_debug_scalar_values_v<LeadingType, Value00Type, Value01Type, Value10Type, Value11Type>,
-                           debug_tuple_leading_scalar_nested_2x2, debug_tuple_unsupported>;
+    using type = Std::conditional_t<
+        are_debug_scalar_values_v<LeadingType, Value00Type, Value01Type, Value10Type, Value11Type>,
+        debug_tuple_leading_scalar_nested_2x2, debug_tuple_unsupported>;
 };
 
 template <typename ValueType>
@@ -234,38 +238,42 @@ enum class slice_error_kind { source_shape, slice_shape, coord };
 enum class tensor_layout_error_kind { shape, stride };
 
 template <typename FormatType>
-constexpr bool is_debug_slice_same_format_v =
-    is_one_of_attr_v<FormatType, debug_tuple_flat_1, debug_tuple_flat_2, debug_tuple_flat_3, debug_tuple_flat_4,
-                     debug_tuple_flat_5, debug_tuple_flat_6, debug_tuple_nested_2x2, debug_tuple_leading_scalar_flat_2,
-                     debug_tuple_leading_scalar_nested_2x2>;
+constexpr bool is_debug_slice_same_format_v = is_one_of_attr_v<
+    FormatType, debug_tuple_flat_1, debug_tuple_flat_2, debug_tuple_flat_3, debug_tuple_flat_4, debug_tuple_flat_5,
+    debug_tuple_flat_6, debug_tuple_nested_2x2, debug_tuple_leading_scalar_flat_2,
+    debug_tuple_leading_scalar_nested_2x2>;
 
 template <typename SourceFormatType, typename CoordFormatType, typename SliceFormatType>
 struct debug_slice_format_category {
-    static constexpr bool is_same_format = Std::is_same_v<SourceFormatType, CoordFormatType>
-                                           && Std::is_same_v<CoordFormatType, SliceFormatType>
-                                           && is_debug_slice_same_format_v<SourceFormatType>;
+    static constexpr bool is_same_format = Std::is_same_v<SourceFormatType, CoordFormatType> &&
+                                           Std::is_same_v<CoordFormatType, SliceFormatType> &&
+                                           is_debug_slice_same_format_v<SourceFormatType>;
     static constexpr bool is_flat_source =
-        Std::is_same_v<SourceFormatType, debug_tuple_flat_2> && Std::is_same_v<CoordFormatType, SliceFormatType>
-        && is_one_of_attr_v<CoordFormatType, debug_tuple_nested_2x2, debug_tuple_leading_scalar_flat_2,
-                            debug_tuple_leading_scalar_nested_2x2>;
-    static constexpr bool is_nested_source =
-        Std::is_same_v<SourceFormatType, debug_tuple_nested_2x2> && Std::is_same_v<CoordFormatType, SliceFormatType>
-        && is_one_of_attr_v<CoordFormatType, debug_tuple_flat_2, debug_tuple_leading_scalar_flat_2,
-                            debug_tuple_leading_scalar_nested_2x2>;
+        Std::is_same_v<SourceFormatType, debug_tuple_flat_2> && Std::is_same_v<CoordFormatType, SliceFormatType> &&
+        is_one_of_attr_v<
+            CoordFormatType, debug_tuple_nested_2x2, debug_tuple_leading_scalar_flat_2,
+            debug_tuple_leading_scalar_nested_2x2>;
+    static constexpr bool is_nested_source = Std::is_same_v<SourceFormatType, debug_tuple_nested_2x2> &&
+                                             Std::is_same_v<CoordFormatType, SliceFormatType> &&
+                                             is_one_of_attr_v<
+                                                 CoordFormatType, debug_tuple_flat_2, debug_tuple_leading_scalar_flat_2,
+                                                 debug_tuple_leading_scalar_nested_2x2>;
     static constexpr bool is_rank_expanded =
-        (Std::is_same_v<SourceFormatType, debug_tuple_flat_3> && Std::is_same_v<CoordFormatType, debug_tuple_flat_4>
-         && Std::is_same_v<SliceFormatType, debug_tuple_flat_4>)
-        || (Std::is_same_v<SourceFormatType, debug_tuple_flat_4> && Std::is_same_v<CoordFormatType, debug_tuple_flat_5>
-            && Std::is_same_v<SliceFormatType, debug_tuple_flat_5>)
-        || (Std::is_same_v<SourceFormatType, debug_tuple_flat_5> && Std::is_same_v<CoordFormatType, debug_tuple_flat_6>
-            && Std::is_same_v<SliceFormatType, debug_tuple_flat_6>);
+        (Std::is_same_v<SourceFormatType, debug_tuple_flat_3> && Std::is_same_v<CoordFormatType, debug_tuple_flat_4> &&
+         Std::is_same_v<SliceFormatType, debug_tuple_flat_4>) ||
+        (Std::is_same_v<SourceFormatType, debug_tuple_flat_4> && Std::is_same_v<CoordFormatType, debug_tuple_flat_5> &&
+         Std::is_same_v<SliceFormatType, debug_tuple_flat_5>) ||
+        (Std::is_same_v<SourceFormatType, debug_tuple_flat_5> && Std::is_same_v<CoordFormatType, debug_tuple_flat_6> &&
+         Std::is_same_v<SliceFormatType, debug_tuple_flat_6>);
 
     using type = Std::conditional_t<
         is_same_format, debug_slice_same_format_tag,
-        Std::conditional_t<is_flat_source, debug_slice_flat_source_tag,
-                           Std::conditional_t<is_nested_source, debug_slice_nested_source_tag,
-                                              Std::conditional_t<is_rank_expanded, debug_slice_rank_expanded_tag,
-                                                                 debug_slice_unsupported_format_tag>>>>;
+        Std::conditional_t<
+            is_flat_source, debug_slice_flat_source_tag,
+            Std::conditional_t<
+                is_nested_source, debug_slice_nested_source_tag,
+                Std::conditional_t<
+                    is_rank_expanded, debug_slice_rank_expanded_tag, debug_slice_unsupported_format_tag>>>>;
 };
 
 template <typename SourceFormatType, typename CoordFormatType, typename SliceFormatType>
@@ -277,9 +285,10 @@ struct is_debug_ext_shape : Std::false_type {};
 
 template <typename Value00Type, typename Value01Type, typename Value10Type, typename Value11Type>
 struct is_debug_ext_shape<Std::tuple<Std::tuple<Value00Type, Value01Type>, Std::tuple<Value10Type, Value11Type>>>
-    : Std::bool_constant<are_debug_scalar_values_v<Value00Type, Value01Type, Value10Type, Value11Type>
-                         && Std::is_constant<1, Std::remove_cvref_t<Value00Type>>::value
-                         && Std::is_constant<1, Std::remove_cvref_t<Value10Type>>::value> {};
+    : Std::bool_constant<
+          are_debug_scalar_values_v<Value00Type, Value01Type, Value10Type, Value11Type> &&
+          Std::is_constant<1, Std::remove_cvref_t<Value00Type>>::value &&
+          Std::is_constant<1, Std::remove_cvref_t<Value10Type>>::value> {};
 
 template <typename ShapeType>
 constexpr bool is_debug_ext_shape_v = is_debug_ext_shape<Std::remove_cvref_t<ShapeType>>::value;
@@ -290,9 +299,10 @@ struct is_debug_batch_ext_shape : Std::false_type {};
 template <typename BatchType, typename Value00Type, typename Value01Type, typename Value10Type, typename Value11Type>
 struct is_debug_batch_ext_shape<
     Std::tuple<BatchType, Std::tuple<Std::tuple<Value00Type, Value01Type>, Std::tuple<Value10Type, Value11Type>>>>
-    : Std::bool_constant<are_debug_scalar_values_v<BatchType, Value00Type, Value01Type, Value10Type, Value11Type>
-                         && Std::is_constant<1, Std::remove_cvref_t<Value00Type>>::value
-                         && Std::is_constant<1, Std::remove_cvref_t<Value10Type>>::value> {};
+    : Std::bool_constant<
+          are_debug_scalar_values_v<BatchType, Value00Type, Value01Type, Value10Type, Value11Type> &&
+          Std::is_constant<1, Std::remove_cvref_t<Value00Type>>::value &&
+          Std::is_constant<1, Std::remove_cvref_t<Value10Type>>::value> {};
 
 template <typename ShapeType>
 constexpr bool is_debug_batch_ext_shape_v = is_debug_batch_ext_shape<Std::remove_cvref_t<ShapeType>>::value;
@@ -343,6 +353,19 @@ __aicore__ inline constexpr auto get_debug_layout_pattern_name()
     }
 }
 
+struct debug_layout_index {
+    static constexpr size_t batch = 0;
+    static constexpr size_t data_shape = 1;
+    static constexpr size_t first_non_batch_dimension = 1;
+    static constexpr size_t second_non_batch_dimension = 2;
+    static constexpr size_t third_non_batch_dimension = 3;
+    static constexpr size_t fourth_non_batch_dimension = 4;
+    static constexpr size_t fifth_non_batch_dimension = 5;
+    static constexpr size_t first_nested_dimension = 0;
+    static constexpr size_t second_nested_dimension = 1;
+    static constexpr size_t nested_dimension_value = 1;
+};
+
 template <typename LayoutType>
 struct debug_layout_view {
     using layout_type = Std::remove_cvref_t<LayoutType>;
@@ -351,57 +374,72 @@ struct debug_layout_view {
     using shape_format_type = debug_tuple_format_t<shape_type>;
 
     static constexpr bool is_flat_matrix_pattern = is_one_of_attr_v<pattern_type, nd_layout_ptn, dn_layout_ptn>;
-    static constexpr bool is_ext_matrix_pattern = is_one_of_attr_v<pattern_type, nd_ext_layout_ptn, dn_ext_layout_ptn,
-                                                                   scalea_nd_layout_ptn, scaleb_dn_layout_ptn>;
-    static constexpr bool is_fractal_matrix_pattern =
-        is_one_of_attr_v<pattern_type, nz_layout_ptn, zn_layout_ptn, zz_layout_ptn, nn_layout_ptn, scalea_dn_layout_ptn,
-                         scaleb_nd_layout_ptn>;
+    static constexpr bool is_ext_matrix_pattern = is_one_of_attr_v<
+        pattern_type, nd_ext_layout_ptn, dn_ext_layout_ptn, scalea_nd_layout_ptn, scaleb_dn_layout_ptn>;
+    static constexpr bool is_fractal_matrix_pattern = is_one_of_attr_v<
+        pattern_type, nz_layout_ptn, zn_layout_ptn, zz_layout_ptn, nn_layout_ptn, scalea_dn_layout_ptn,
+        scaleb_nd_layout_ptn>;
     static constexpr bool is_conv_4d_pattern = is_one_of_attr_v<pattern_type, nchw_layout_ptn, nhwc_layout_ptn>;
     static constexpr bool is_conv_5d_pattern = is_one_of_attr_v<pattern_type, nc1hwc0_layout_ptn, ncdhw_layout_ptn>;
     static constexpr bool is_conv_6d_pattern = Std::is_same_v<pattern_type, ndc1hwc0_layout_ptn>;
 
     static constexpr bool has_batch =
-        (is_flat_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_flat_2>)
-        || (is_ext_matrix_pattern && is_debug_batch_ext_shape_v<shape_type>)
-        || (is_fractal_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_nested_2x2>)
-        || (is_conv_4d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_4>)
-        || (is_conv_5d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_5>)
-        || (is_conv_6d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_6>);
+        (is_flat_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_flat_2>) ||
+        (is_ext_matrix_pattern && is_debug_batch_ext_shape_v<shape_type>) ||
+        (is_fractal_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_nested_2x2>) ||
+        (is_conv_4d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_4>) ||
+        (is_conv_5d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_5>) ||
+        (is_conv_6d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_6>);
 
-    __aicore__ inline static constexpr auto pattern_name()
-    {
-        return get_debug_layout_pattern_name<pattern_type>();
-    }
+    __aicore__ inline static constexpr auto pattern_name() { return get_debug_layout_pattern_name<pattern_type>(); }
 
     __aicore__ inline static constexpr decltype(auto) batch(const layout_type& layout)
     {
-        return get<0>(layout.shape());
+        return get<debug_layout_index::batch>(layout.shape());
     }
 
     __aicore__ inline static constexpr decltype(auto) batch_stride(const layout_type& layout)
     {
-        return get<0>(layout.stride());
+        return get<debug_layout_index::batch>(layout.stride());
     }
 
     __aicore__ inline static constexpr auto shape(const layout_type& layout)
     {
         if constexpr (is_flat_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_flat_2>) {
-            return get<1>(layout.shape());
+            return get<debug_layout_index::data_shape>(layout.shape());
         } else if constexpr (is_ext_matrix_pattern && is_debug_batch_ext_shape_v<shape_type>) {
-            return make_shape(get<1, 0, 1>(layout.shape()), get<1, 1, 1>(layout.shape()));
+            return make_shape(
+                get<debug_layout_index::data_shape, debug_layout_index::first_nested_dimension,
+                    debug_layout_index::nested_dimension_value>(layout.shape()),
+                get<debug_layout_index::data_shape, debug_layout_index::second_nested_dimension,
+                    debug_layout_index::nested_dimension_value>(layout.shape()));
         } else if constexpr (is_ext_matrix_pattern && is_debug_ext_shape_v<shape_type>) {
-            return make_shape(get<0, 1>(layout.shape()), get<1, 1>(layout.shape()));
-        } else if constexpr (is_fractal_matrix_pattern
-                             && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_nested_2x2>) {
-            return get<1>(layout.shape());
+            return make_shape(
+                get<debug_layout_index::first_nested_dimension, debug_layout_index::nested_dimension_value>(
+                    layout.shape()),
+                get<debug_layout_index::second_nested_dimension, debug_layout_index::nested_dimension_value>(
+                    layout.shape()));
+        } else if constexpr (
+            is_fractal_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_nested_2x2>) {
+            return get<debug_layout_index::data_shape>(layout.shape());
         } else if constexpr (is_conv_4d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_4>) {
-            return make_shape(get<1>(layout.shape()), get<2>(layout.shape()), get<3>(layout.shape()));
+            return make_shape(
+                get<debug_layout_index::first_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::second_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::third_non_batch_dimension>(layout.shape()));
         } else if constexpr (is_conv_5d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_5>) {
-            return make_shape(get<1>(layout.shape()), get<2>(layout.shape()), get<3>(layout.shape()),
-                              get<4>(layout.shape()));
+            return make_shape(
+                get<debug_layout_index::first_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::second_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::third_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::fourth_non_batch_dimension>(layout.shape()));
         } else if constexpr (is_conv_6d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_6>) {
-            return make_shape(get<1>(layout.shape()), get<2>(layout.shape()), get<3>(layout.shape()),
-                              get<4>(layout.shape()), get<5>(layout.shape()));
+            return make_shape(
+                get<debug_layout_index::first_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::second_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::third_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::fourth_non_batch_dimension>(layout.shape()),
+                get<debug_layout_index::fifth_non_batch_dimension>(layout.shape()));
         } else {
             return layout.shape();
         }
@@ -410,22 +448,40 @@ struct debug_layout_view {
     __aicore__ inline static constexpr auto stride(const layout_type& layout)
     {
         if constexpr (is_flat_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_flat_2>) {
-            return get<1>(layout.stride());
+            return get<debug_layout_index::data_shape>(layout.stride());
         } else if constexpr (is_ext_matrix_pattern && is_debug_batch_ext_shape_v<shape_type>) {
-            return make_stride(get<1, 0, 1>(layout.stride()), get<1, 1, 1>(layout.stride()));
+            return make_stride(
+                get<debug_layout_index::data_shape, debug_layout_index::first_nested_dimension,
+                    debug_layout_index::nested_dimension_value>(layout.stride()),
+                get<debug_layout_index::data_shape, debug_layout_index::second_nested_dimension,
+                    debug_layout_index::nested_dimension_value>(layout.stride()));
         } else if constexpr (is_ext_matrix_pattern && is_debug_ext_shape_v<shape_type>) {
-            return make_stride(get<0, 1>(layout.stride()), get<1, 1>(layout.stride()));
-        } else if constexpr (is_fractal_matrix_pattern
-                             && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_nested_2x2>) {
-            return get<1>(layout.stride());
+            return make_stride(
+                get<debug_layout_index::first_nested_dimension, debug_layout_index::nested_dimension_value>(
+                    layout.stride()),
+                get<debug_layout_index::second_nested_dimension, debug_layout_index::nested_dimension_value>(
+                    layout.stride()));
+        } else if constexpr (
+            is_fractal_matrix_pattern && Std::is_same_v<shape_format_type, debug_tuple_leading_scalar_nested_2x2>) {
+            return get<debug_layout_index::data_shape>(layout.stride());
         } else if constexpr (is_conv_4d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_4>) {
-            return make_stride(get<1>(layout.stride()), get<2>(layout.stride()), get<3>(layout.stride()));
+            return make_stride(
+                get<debug_layout_index::first_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::second_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::third_non_batch_dimension>(layout.stride()));
         } else if constexpr (is_conv_5d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_5>) {
-            return make_stride(get<1>(layout.stride()), get<2>(layout.stride()), get<3>(layout.stride()),
-                               get<4>(layout.stride()));
+            return make_stride(
+                get<debug_layout_index::first_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::second_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::third_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::fourth_non_batch_dimension>(layout.stride()));
         } else if constexpr (is_conv_6d_pattern && Std::is_same_v<shape_format_type, debug_tuple_flat_6>) {
-            return make_stride(get<1>(layout.stride()), get<2>(layout.stride()), get<3>(layout.stride()),
-                               get<4>(layout.stride()), get<5>(layout.stride()));
+            return make_stride(
+                get<debug_layout_index::first_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::second_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::third_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::fourth_non_batch_dimension>(layout.stride()),
+                get<debug_layout_index::fifth_non_batch_dimension>(layout.stride()));
         } else {
             return layout.stride();
         }
@@ -437,22 +493,10 @@ struct tensor_layout_error_traits;
 
 template <>
 struct tensor_layout_error_traits<tensor_layout_error_kind::shape> {
-    __aicore__ inline static constexpr auto value_name()
-    {
-        return "shape";
-    }
-    __aicore__ inline static constexpr auto field_name()
-    {
-        return "Shape";
-    }
-    __aicore__ inline static constexpr auto value_description()
-    {
-        return "shape sizes";
-    }
-    __aicore__ inline static constexpr auto requirement()
-    {
-        return "greater than 0";
-    }
+    __aicore__ inline static constexpr auto value_name() { return "shape"; }
+    __aicore__ inline static constexpr auto field_name() { return "Shape"; }
+    __aicore__ inline static constexpr auto value_description() { return "shape sizes"; }
+    __aicore__ inline static constexpr auto requirement() { return "greater than 0"; }
 
     template <typename LayoutType>
     __aicore__ inline static constexpr decltype(auto) batch(const LayoutType& layout)
@@ -469,22 +513,10 @@ struct tensor_layout_error_traits<tensor_layout_error_kind::shape> {
 
 template <>
 struct tensor_layout_error_traits<tensor_layout_error_kind::stride> {
-    __aicore__ inline static constexpr auto value_name()
-    {
-        return "stride";
-    }
-    __aicore__ inline static constexpr auto field_name()
-    {
-        return "Stride";
-    }
-    __aicore__ inline static constexpr auto value_description()
-    {
-        return "stride values";
-    }
-    __aicore__ inline static constexpr auto requirement()
-    {
-        return "non-negative";
-    }
+    __aicore__ inline static constexpr auto value_name() { return "stride"; }
+    __aicore__ inline static constexpr auto field_name() { return "Stride"; }
+    __aicore__ inline static constexpr auto value_description() { return "stride values"; }
+    __aicore__ inline static constexpr auto requirement() { return "non-negative"; }
 
     template <typename LayoutType>
     __aicore__ inline static constexpr decltype(auto) batch(const LayoutType& layout)
@@ -504,10 +536,7 @@ struct debug_slice_info_view {
     static constexpr bool has_layout = false;
     static constexpr bool has_batch = false;
 
-    __aicore__ inline static constexpr decltype(auto) shape(const InfoType& info)
-    {
-        return info;
-    }
+    __aicore__ inline static constexpr decltype(auto) shape(const InfoType& info) { return info; }
 };
 
 template <typename InfoType>
@@ -517,20 +546,14 @@ struct debug_slice_info_view<InfoType, true> {
     static constexpr bool has_layout = true;
     static constexpr bool has_batch = layout_view_type::has_batch;
 
-    __aicore__ inline static constexpr auto pattern_name()
-    {
-        return layout_view_type::pattern_name();
-    }
+    __aicore__ inline static constexpr auto pattern_name() { return layout_view_type::pattern_name(); }
 
     __aicore__ inline static constexpr decltype(auto) batch(const InfoType& info)
     {
         return layout_view_type::batch(info);
     }
 
-    __aicore__ inline static constexpr auto shape(const InfoType& info)
-    {
-        return layout_view_type::shape(info);
-    }
+    __aicore__ inline static constexpr auto shape(const InfoType& info) { return layout_view_type::shape(info); }
 };
 
 template <size_t index, size_t tuple_index = 0, typename ValueType>

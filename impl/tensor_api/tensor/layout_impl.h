@@ -162,14 +162,16 @@ template <typename Coord, typename LayoutType, typename SliceShape, size_t... ba
 __aicore__ inline decltype(auto) make_flat_slice_impl(const Coord& coord, const LayoutType& layout,
                                                       const SliceShape& slice_shape, Std::index_sequence<batch_is...>)
 {
-    constexpr size_t block_idx = sizeof...(batch_is); // last element: the fractal block / logical (x, y)
-    auto inner_row = get<block_idx, 0, 0>(layout.shape());
-    auto inner_col = get<block_idx, 1, 0>(layout.shape());
+    constexpr size_t fractal_block_index = sizeof...(batch_is); // last element: the fractal block / logical (x, y)
+    auto inner_row = get<fractal_block_index, 0, 0>(layout.shape());
+    auto inner_col = get<fractal_block_index, 1, 0>(layout.shape());
 
-    auto real_row = Std::min(inner_row * get<block_idx, 0, 1>(layout.shape()) - get<block_idx, 0>(coord),
-                             get<block_idx, 0>(slice_shape));
-    auto real_col = Std::min(inner_col * get<block_idx, 1, 1>(layout.shape()) - get<block_idx, 1>(coord),
-                             get<block_idx, 1>(slice_shape));
+    auto real_row = Std::min(
+        inner_row * get<fractal_block_index, 0, 1>(layout.shape()) - get<fractal_block_index, 0>(coord),
+        get<fractal_block_index, 0>(slice_shape));
+    auto real_col = Std::min(
+        inner_col * get<fractal_block_index, 1, 1>(layout.shape()) - get<fractal_block_index, 1>(coord),
+        get<fractal_block_index, 1>(slice_shape));
     auto fractal_shape = make_fractal_shape(make_shape(real_row, real_col), make_shape(inner_row, inner_col));
 
     return make_shape(Std::min(get<batch_is>(layout.shape()) - get<batch_is>(coord), get<batch_is>(slice_shape))...,

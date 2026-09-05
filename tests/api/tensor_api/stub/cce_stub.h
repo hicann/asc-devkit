@@ -537,8 +537,6 @@ inline void img2colv2_cbuf_to_cb(__cb__ int16_t* dst, __cbuf__ int16_t* src, uin
 inline void img2colv2_cbuf_to_cb(__cb__ uint16_t* dst, __cbuf__ uint16_t* src, uint16_t step_k, uint16_t step_m, uint16_t pos_k, uint16_t pos_m, uint8_t stride_w, uint8_t stride_h, uint8_t w_k,
                         uint8_t h_k, uint8_t dilation_w, uint8_t dilation_h, bool filter_w, bool filter_h, bool transpose, bool fmatrix_ctrl, uint16_t size_channel) {}
 inline void wait_flag_dev(pipe_t pipe, uint8_t flag_id) {}
-inline void wait_intra_block(pipe_t pipe, uint8_t flag_id) {}
-inline void set_intra_block(pipe_t pipe, uint8_t sync_id) {}
 inline void rls_buf(pipe_t pipe, uint64_t buf_id, bool mode) {}
 
 inline void psts(vector_bool src, __ubuf__ uint32_t*& base, int32_t offset, Literal dist, Literal post) {}
