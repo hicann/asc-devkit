@@ -169,7 +169,13 @@ static void DoReduceScatterRead(KfcReduceScatterMesh1DMem2MemContext& ctx, uint3
         uint16_t rankMask = 1U << (rankIdx % BIT_NUM_PER_CKE);
 
         if (rankIdx == ctx.rankId) {
-            ccu::LocalCopy(ctx.scratchMem[rankIdx], ctx.myInput, ctx.sliceSize, ctx.events[eventIdx], rankMask);
+            if (ctx.rankSize <= REDUCE_SCATTER_GROUP_REDUCE_MAX_PIECE_CNT) {
+                // 本rank零搬运占位(对齐 hccl 上游):Phase3 由 DoReduceScatter 将本rank槽位替换为 input 直读
+                ccu::EventRecord(ctx.events[eventIdx], rankMask);
+            } else {
+                // >8P Pairwise 在 scratch 槽位原地折叠,本rank数据仍需落入 scratch
+                ccu::LocalCopy(ctx.scratchMem[rankIdx], ctx.myInput, ctx.sliceSize, ctx.events[eventIdx], rankMask);
+            }
         } else {
             ccu::Read(
                 ctx.channels[channelId], ctx.scratchMem[rankIdx], ctx.remoteInput[rankIdx], ctx.sliceSize,
@@ -237,6 +243,9 @@ static CcuResult DoReduceScatter(KfcReduceScatterMesh1DMem2MemContext& ctx)
     {
         if (ctx.rankSize <= REDUCE_SCATTER_GROUP_REDUCE_MAX_PIECE_CNT) {
             std::vector<ccu::LocalAddr> scratch = ctx.scratchMem;
+            // 本rank槽位直读 input(对齐 hccl ReduceLoopGroup 的 src 分支):规约循环 input->ccuBuf 单跳,
+            // 省 Phase1 的 LocalCopy;n/p 段的 scratchOrg 地址推进对替换项同样适用
+            scratch[ctx.rankId] = ctx.myInput;
             CCU_CHK_RET(
                 GroupLocalReduce(ctx, myOutput, scratch, ctx.goSize, ctx.dataType, ctx.outputDataType, ctx.reduceOp));
         } else {
