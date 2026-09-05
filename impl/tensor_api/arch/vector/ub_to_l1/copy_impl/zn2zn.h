@@ -9,10 +9,10 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/zn2zn.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
+#pragma message( \
+    "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/zn2zn.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use \"#include \"tensor_api/tensor.h\"\" and use public functions or variables defined in interface headers files.")
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ZN2ZN_H
 #endif
 
 /*!
@@ -35,22 +35,21 @@ public:
         data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
     }
 
-    template <const ub_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord,
-        typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, const DstCoord& dst_coord,
-        const SrcCoord& src_coord, const ShapeType& copy_shape)
+    template <
+        const ub_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape)
     {
         check_template<trait, T, U>();
         using src_type = typename U::element_type;
         using dst_type = typename T::element_type;
         auto src_shape = make_slice_shape(src_coord, src.layout(), copy_shape);
-        auto block_count = get_shape_batch_size(src_shape) *
-            Std::ceil_division(get_shape_rows(src_shape), c0_element<src_type>);
+        auto block_count =
+            get_shape_batch_size(src_shape) * Std::ceil_division(get_shape_rows(src_shape), c0_element<src_type>);
         auto block_len = get_shape_columns(src_shape);
         auto src_gap = get_row_stride(src.layout()) / c0_element<src_type> - block_len;
         auto dst_gap = get_row_stride(dst.layout()) / c0_element<dst_type> - block_len;
-        emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len,
-            src_gap, dst_gap);
+        emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_gap, dst_gap);
     }
 
 private:
@@ -89,7 +88,8 @@ private:
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ZN2ZN_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
+#if defined( \
+    UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ZN2ZN_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ZN2ZN_H
 #endif

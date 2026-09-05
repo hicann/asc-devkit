@@ -9,16 +9,12 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/experimental/arch/vector/mask_reg_compute_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use tensor_api/experimental/arch/vector/mask_reg_compute.h instead."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H__
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H
 #endif
 
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_MASK_REG_COMPUTE_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_MASK_REG_COMPUTE_IMPL_H
-
-#include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 
 namespace asc {
 namespace te {
@@ -28,9 +24,10 @@ namespace detail {
 template <typename DataType, typename PatternType>
 __simd_callee__ inline reg_tensor<bool> make_reg_mask(PatternType pattern)
 {
-    static_assert(sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t)
-                      || sizeof(DataType) == sizeof(uint32_t),
-                  "mask helpers only support 8-bit, 16-bit, and 32-bit element types");
+    static_assert(
+        sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t) ||
+            sizeof(DataType) == sizeof(uint32_t),
+        "mask helpers only support 8-bit, 16-bit, and 32-bit element types");
 
     reg_tensor<bool> result;
     if constexpr (sizeof(DataType) == sizeof(uint32_t)) {
@@ -46,9 +43,10 @@ __simd_callee__ inline reg_tensor<bool> make_reg_mask(PatternType pattern)
 template <typename DataType>
 __simd_callee__ inline reg_tensor<bool> make_updated_reg_mask(uint32_t& remain)
 {
-    static_assert(sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t)
-                      || sizeof(DataType) == sizeof(uint32_t),
-                  "update_mask only supports 8-bit, 16-bit, and 32-bit element types");
+    static_assert(
+        sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t) ||
+            sizeof(DataType) == sizeof(uint32_t),
+        "update_mask only supports 8-bit, 16-bit, and 32-bit element types");
 
     reg_tensor<bool> result;
     if constexpr (sizeof(DataType) == sizeof(uint32_t)) {
@@ -122,10 +120,11 @@ __simd_callee__ inline reg_tensor<bool> update_mask(uint32_t& remain)
 template <typename DataType>
 __simd_callee__ inline reg_pair<bool> interleave(reg_tensor<bool> src0, reg_tensor<bool> src1)
 {
-    static_assert(sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t)
-                      || sizeof(DataType) == sizeof(uint32_t),
-                  "interleave only supports 8-bit, 16-bit, and 32-bit element types");
- 
+    static_assert(
+        sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t) ||
+            sizeof(DataType) == sizeof(uint32_t),
+        "interleave with reg_tensor<bool> only supports b8, b16, and b32 element types");
+
     reg_pair<bool> result;
     if constexpr (sizeof(DataType) == sizeof(uint32_t)) {
         asc_intlv_b32(result.first.reg, result.second.reg, src0.reg, src1.reg);
@@ -136,14 +135,15 @@ __simd_callee__ inline reg_pair<bool> interleave(reg_tensor<bool> src0, reg_tens
     }
     return result;
 }
- 
+
 template <typename DataType>
 __simd_callee__ inline reg_pair<bool> deinterleave(reg_tensor<bool> src0, reg_tensor<bool> src1)
 {
-    static_assert(sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t)
-                      || sizeof(DataType) == sizeof(uint32_t),
-                  "deinterleave only supports 8-bit, 16-bit, and 32-bit element types");
- 
+    static_assert(
+        sizeof(DataType) == sizeof(uint8_t) || sizeof(DataType) == sizeof(uint16_t) ||
+            sizeof(DataType) == sizeof(uint32_t),
+        "deinterleave with reg_tensor<bool> only supports b8, b16, and b32 element types");
+
     reg_pair<bool> result;
     if constexpr (sizeof(DataType) == sizeof(uint32_t)) {
         asc_deintlv_b32(result.first.reg, result.second.reg, src0.reg, src1.reg);
@@ -161,7 +161,7 @@ __simd_callee__ inline reg_pair<bool> deinterleave(reg_tensor<bool> src0, reg_te
 
 #endif // IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_MASK_REG_COMPUTE_IMPL_H
 
-#if defined(__UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H__)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H__
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MASK_REG_COMPUTE_IMPL_H
 #endif

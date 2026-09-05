@@ -155,6 +155,11 @@ struct infer_layout_pattern {
     using type = Std::ignore_t;
 };
 
+template <typename Size, typename Stride>
+struct infer_layout_pattern<shape<Size>, stride<Stride>> {
+    using type = one_dim_layout_ptn;
+};
+
 template <typename Row, typename Column, typename RowStride, typename ColumnStride>
 struct infer_layout_pattern<shape<Row, Column>, stride<RowStride, ColumnStride>>
     : infer_two_dim_layout_pattern<Row, Column, RowStride, ColumnStride> {};
@@ -168,6 +173,11 @@ struct build_inferred_layout_trait {
 template <typename ShapeType, typename StrideType>
 struct infer_layout_trait {
     using type = Std::ignore_t;
+};
+
+template <typename Size, typename Stride>
+struct infer_layout_trait<shape<Size>, stride<Stride>> {
+    using type = layout_trait<Std::ignore_t, _1>;
 };
 
 template <typename Pattern, typename ShapeRow0, typename ShapeColumn0>

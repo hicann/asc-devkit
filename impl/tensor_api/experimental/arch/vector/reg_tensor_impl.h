@@ -9,16 +9,13 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/experimental/arch/vector/reg_tensor_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use tensor_api/experimental/arch/vector/reg_tensor.h instead."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_TENSOR_IMPL_H__
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_TENSOR_IMPL_H
 #endif
 
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_TENSOR_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_TENSOR_IMPL_H
 
-#include "tensor_api/experimental/arch/vector/reg_tensor.h"
 #include "impl/tensor_api/utils/utils_impl.h"
 
 namespace asc {
@@ -38,7 +35,7 @@ __simd_callee__ inline reg_tensor<DataType>& reg_tensor<DataType>::with_mask(con
 
 #endif // IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_TENSOR_IMPL_H
 
-#if defined(__UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_TENSOR_IMPL_H__)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_TENSOR_IMPL_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_TENSOR_IMPL_H__
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_TENSOR_IMPL_H
 #endif

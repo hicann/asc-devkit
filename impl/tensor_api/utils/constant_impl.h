@@ -142,7 +142,7 @@ inline constexpr bool is_data_type =
     || Std::is_integral_v<Std::remove_cvref_t<DataType>> || Std::is_floating_point_v<Std::remove_cvref_t<DataType>>;
 
 template <typename DataType>
-inline constexpr bool is_b4_type = is_one_of_attr_v<DataType, fp4x2_e1m2_t, fp4x2_e2m1_t>;
+inline constexpr bool is_b4_type = is_one_of_attr_v<DataType, fp4x2_e1m2_t, fp4x2_e2m1_t, int4x2_t>;
 
 template <typename DataType = Std::ignore_t>
 __aicore__ inline constexpr size_t get_c0_size()

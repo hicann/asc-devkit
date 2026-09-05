@@ -10,7 +10,7 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 #endif
 
 /*!
@@ -28,10 +28,11 @@ namespace te {
 struct gm_to_ub_params {
     __aicore__ constexpr gm_to_ub_params() {}
 
-    __aicore__ constexpr gm_to_ub_params(uint8_t left_padding_count, uint8_t right_padding_count,
-                                        bool enable_constant_pad = true) :
-        left_padding_count(left_padding_count), right_padding_count(right_padding_count),
-        enable_constant_pad(enable_constant_pad)
+    __aicore__ constexpr gm_to_ub_params(
+        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_constant_pad = true)
+        : left_padding_count(left_padding_count),
+          right_padding_count(right_padding_count),
+          enable_constant_pad(enable_constant_pad)
     {}
 
     uint8_t left_padding_count = 0;
@@ -52,10 +53,12 @@ private:
     template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
 
-    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
-        typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
-        const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape);
+    template <
+        const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const ShapeType& copy_shape);
 };
 
 struct copy_ub_to_gm {
@@ -66,10 +69,12 @@ private:
     template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
 
-    template <const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
-        typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
-        const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape);
+    template <
+        const ub_to_gm_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const ShapeType& copy_shape);
 };
 
 struct copy_ub_to_ub {
@@ -80,10 +85,12 @@ private:
     template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor>
     __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src);
 
-    template <const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord,
-        typename SrcCoord, typename ShapeType>
-    __aicore__ inline static void data_copy_impl(const DstTensor& dst, const SrcTensor& src,
-        const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape);
+    template <
+        const ub_to_ub_trait& trait, typename DstTensor, typename SrcTensor, typename DstCoord, typename SrcCoord,
+        typename ShapeType>
+    __aicore__ inline static void data_copy_impl(
+        const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord, const SrcCoord& src_coord,
+        const ShapeType& copy_shape);
 };
 
 } // namespace te
@@ -96,7 +103,7 @@ private:
 
 #endif // INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
 #endif

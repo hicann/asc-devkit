@@ -16,6 +16,7 @@
 #ifndef INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_LOGICAL_COMPUTE_H
 #define INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_LOGICAL_COMPUTE_H
 
+#include "tensor_api/tensor/tensor.h"
 #include "tensor_api/experimental/arch/vector/reg_tensor.h"
 
 namespace asc {
@@ -28,8 +29,8 @@ __simd_callee__ inline reg_tensor<T> operator!(const reg_tensor<T>& src);
 template <typename T, typename U>
 __simd_callee__ inline decltype(auto) operator&(const T& a, const U& b);
 
-template <typename T, typename U>
-__simd_callee__ inline decltype(auto) operator|(const T& a, const U& b);
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator|(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
 
 template <typename T, typename U>
 __simd_callee__ inline decltype(auto) operator^(const T& a, const U& b);

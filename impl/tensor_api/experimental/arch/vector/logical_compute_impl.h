@@ -9,10 +9,8 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/experimental/arch/vector/logical_compute_impl.h is internal and must not be used directly."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_LOGICAL_COMPUTE_IMPL
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_LOGICAL_COMPUTE_IMPL_H
 #endif
 
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_LOGICAL_COMPUTE_IMPL_H
@@ -23,52 +21,16 @@
 namespace asc {
 namespace te {
 namespace experimental {
-namespace detail {
 
-enum class bitwise_op {
-    bit_and,
-    bit_or,
-    bit_xor,
-};
-
-template <bitwise_op op, typename T>
-__simd_callee__ inline void check_bitwise_type()
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator|(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
 {
-    if constexpr (op == bitwise_op::bit_and) {
-        static_assert(supports_and_v<T>, "operator& does not support this element type");
-    } else if constexpr (op == bitwise_op::bit_or) {
-        static_assert(supports_or_v<T>, "operator| does not support this element type");
-    } else {
-        static_assert(supports_xor_v<T>, "operator^ does not support this element type");
-    }
-}
-
-template <bitwise_op op, typename T, typename U>
-__simd_callee__ inline decltype(auto) bitwise_compute(const T& a, const U& b)
-{
-    using elem_type = binary_elem_t<T, U>;
-    check_binary_reg_types<T, U>();
-    check_bitwise_type<op, elem_type>();
-
-    static_assert(!Std::is_same_v<elem_type, bool> || (is_reg_tensor_v<T> && is_reg_tensor_v<U>),
-        "bool bitwise operators require two reg_tensor<bool> operands");
-
-    vector_bool mask = binary_mask(a, b);
-    auto left = make_reg_operand<elem_type>(a, mask);
-    auto right = make_reg_operand<elem_type>(b, mask);
-    reg_tensor<elem_type> dst;
-    if constexpr (op == bitwise_op::bit_and) {
-        asc_and(dst.reg, left.reg, right.reg, mask);
-    } else if constexpr (op == bitwise_op::bit_or) {
-        asc_or(dst.reg, left.reg, right.reg, mask);
-    } else {
-        asc_xor(dst.reg, left.reg, right.reg, mask);
-    }
-    dst.mask = mask;
+    static_assert(detail::supports_or_v<T>, "operator| does not support this element type");
+    reg_tensor<T> dst;
+    asc_or(dst.reg, src0.reg, src1.reg, src0.mask);
+    dst.mask = src0.mask;
     return dst;
 }
-
-} // namespace detail
 
 template <typename T>
 __simd_callee__ inline reg_tensor<T> operator!(const reg_tensor<T>& src)
@@ -155,7 +117,7 @@ __simd_callee__ inline reg_tensor<T> operator>>(const reg_tensor<T>& src, const 
 
 #endif // IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_LOGICAL_COMPUTE_IMPL_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_LOGICAL_COMPUTE_IMPL)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_LOGICAL_COMPUTE_IMPL_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_LOGICAL_COMPUTE_IMPL
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_LOGICAL_COMPUTE_IMPL_H
 #endif

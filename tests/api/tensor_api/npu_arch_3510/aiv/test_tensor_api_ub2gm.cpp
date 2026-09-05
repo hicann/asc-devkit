@@ -9,6 +9,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <mockcpp/mockcpp.hpp>
 #include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
@@ -23,6 +24,22 @@ protected:
 };
 
 namespace {
+
+struct copy_ub_to_gm_capture {
+    uint32_t block_count = 0;
+    uint32_t block_len = 0;
+    uint64_t dst_stride = 0;
+    uint32_t src_stride = 0;
+};
+
+copy_ub_to_gm_capture g_copy_ub_to_gm_capture;
+
+void copy_ub_to_gm_stub(
+    __gm__ void*, __ubuf__ void*, uint8_t, uint32_t block_count, uint32_t block_len, uint8_t, uint64_t dst_stride,
+    uint32_t src_stride)
+{
+    g_copy_ub_to_gm_capture = {block_count, block_len, dst_stride, src_stride};
+}
 
 template <typename location_tag, typename pointer_type, typename layout_type>
 auto make_tensor_at(pointer_type ptr, const layout_type& layout)
@@ -55,6 +72,34 @@ void run_copy_default_paths(const dst_tensor_type& dst, const src_tensor_type& s
 }
 
 } // namespace
+
+TEST_F(tensor_api_vector_copy_3510, copy_ub_to_gm_one_dim)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t copy_size = 64;
+    __ubuf__ int8_t src[copy_size] = {0};
+    __gm__ int8_t dst[copy_size] = {0};
+
+    auto layout = make_layout(make_shape(copy_size), make_stride(0));
+    auto ub_tensor = make_tensor_at<location::ub>(src, layout);
+    auto gm_tensor = make_tensor_at<location::gm>(dst, layout);
+
+    static_assert(Std::is_same_v<get_layout_pattern<decltype(layout)>, one_dim_layout_ptn>);
+    MOCKER_CPP(
+        copy_ubuf_to_gm_align_v2,
+        void(__gm__ void*, __ubuf__ void*, uint8_t, uint32_t, uint32_t, uint8_t, uint64_t, uint32_t))
+        .times(1)
+        .will(invoke(copy_ub_to_gm_stub));
+
+    copy(gm_tensor, ub_tensor);
+
+    GlobalMockObject::verify();
+    EXPECT_EQ(g_copy_ub_to_gm_capture.block_count, 1);
+    EXPECT_EQ(g_copy_ub_to_gm_capture.block_len, copy_size);
+    EXPECT_EQ(g_copy_ub_to_gm_capture.dst_stride, 0);
+    EXPECT_EQ(g_copy_ub_to_gm_capture.src_stride, 0);
+}
 
 TEST_F(tensor_api_vector_copy_3510, copy_ub_to_gm_nd_to_nd)
 {
@@ -140,6 +185,26 @@ TEST_F(tensor_api_vector_copy_3510, copy_ub_to_gm_nz_to_nz)
 
     auto ub_tensor = make_tensor_at<location::ub>(src, make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(m, n));
     auto gm_tensor = make_tensor_at<location::gm>(dst, make_frame_layout<nz_layout_ptn, layout_trait_default<int8_t>>(m, n));
+
+    run_copy_call_paths<copy_ub_to_gm, ub_to_gm_trait_default>(gm_tensor, ub_tensor);
+    run_copy_default_paths<copy_ub_to_gm, ub_to_gm_trait_default>(gm_tensor, ub_tensor);
+
+    EXPECT_EQ(dst[0], 0);
+}
+
+TEST_F(tensor_api_vector_copy_3510, copy_ub_to_gm_zn_to_zn)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t m = 64;
+    constexpr uint32_t n = 64;
+    __ubuf__ int8_t src[m * n] = {0};
+    __gm__ int8_t dst[m * n] = {0};
+
+    auto ub_tensor =
+        make_tensor_at<location::ub>(src, make_frame_layout<zn_layout_ptn, layout_trait_default<int8_t>>(m, n));
+    auto gm_tensor =
+        make_tensor_at<location::gm>(dst, make_frame_layout<zn_layout_ptn, layout_trait_default<int8_t>>(m, n));
 
     run_copy_call_paths<copy_ub_to_gm, ub_to_gm_trait_default>(gm_tensor, ub_tensor);
     run_copy_default_paths<copy_ub_to_gm, ub_to_gm_trait_default>(gm_tensor, ub_tensor);

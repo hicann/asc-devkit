@@ -10,9 +10,13 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_DATA_STORE
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_DATA_STORE_H
 #endif
 
+/*!
+ * \file reg_data_store.h
+ * \brief Register data store interfaces.
+ */
 #ifndef INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_DATA_STORE_H
 #define INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_DATA_STORE_H
 
@@ -23,18 +27,48 @@ namespace asc {
 namespace te {
 namespace experimental {
 
-template <store_sideband_mode sideband_mode = store_sideband_mode::direct, typename Tensor, typename Coord,
+/**
+ * @brief Stores register data to a UB tensor at the specified coordinate.
+ * @param tensor Destination tensor located in UB.
+ * @param coord Coordinate of the first destination element.
+ * @param src Source register tensor.
+ * @note The tensor and register element types must match.
+ */
+template <
+    store_sideband_mode sideband_mode = store_sideband_mode::direct, typename Tensor, typename Coord,
     typename RegDataType>
 __simd_callee__ inline void store(Tensor& tensor, const Coord& coord, const reg_tensor<RegDataType>& src);
 
+/**
+ * @brief Stores register data at the beginning of a UB tensor.
+ * @param tensor Destination tensor located in UB.
+ * @param src Source register tensor.
+ * @note The tensor and register element types must match.
+ */
 template <store_sideband_mode sideband_mode = store_sideband_mode::direct, typename Tensor, typename RegDataType>
 __simd_callee__ inline void store(Tensor& tensor, const reg_tensor<RegDataType>& src);
 
-template <store_sideband_mode sideband_mode = store_sideband_mode::intlv, typename Tensor, typename Coord,
+/**
+ * @brief Interleaves two register tensors and stores the result at the specified coordinate of a UB tensor.
+ * @param tensor Destination tensor located in UB.
+ * @param coord Coordinate of the first destination element.
+ * @param src0 First source register tensor.
+ * @param src1 Second source register tensor.
+ * @note This overload supports only store_sideband_mode::intlv. The tensor and register element types must match.
+ */
+template <
+    store_sideband_mode sideband_mode = store_sideband_mode::intlv, typename Tensor, typename Coord,
     typename RegDataType>
-__simd_callee__ inline void store(Tensor& tensor, const Coord& coord, const reg_tensor<RegDataType>& src0,
-    const reg_tensor<RegDataType>& src1);
+__simd_callee__ inline void store(
+    Tensor& tensor, const Coord& coord, const reg_tensor<RegDataType>& src0, const reg_tensor<RegDataType>& src1);
 
+/**
+ * @brief Interleaves two register tensors and stores the result at the beginning of a UB tensor.
+ * @param tensor Destination tensor located in UB.
+ * @param src0 First source register tensor.
+ * @param src1 Second source register tensor.
+ * @note This overload supports only store_sideband_mode::intlv. The tensor and register element types must match.
+ */
 template <store_sideband_mode sideband_mode = store_sideband_mode::intlv, typename Tensor, typename RegDataType>
 __simd_callee__ inline void store(
     Tensor& tensor, const reg_tensor<RegDataType>& src0, const reg_tensor<RegDataType>& src1);
@@ -49,7 +83,7 @@ __simd_callee__ inline void store(
 
 #endif // INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_DATA_STORE_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_DATA_STORE)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_DATA_STORE_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_DATA_STORE
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_DATA_STORE_H
 #endif

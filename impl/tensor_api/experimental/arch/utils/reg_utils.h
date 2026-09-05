@@ -9,8 +9,6 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/experimental/arch/utils/reg_utils.h is an internal header file and must not be used directly."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_UTILS
 #endif
@@ -51,6 +49,22 @@ struct binary_elem_type<T, U, true> {
 
 template <typename T, typename U>
 using binary_elem_t = typename binary_elem_type<T, U>::type;
+
+template <typename T>
+inline constexpr bool is_b4_type_v = AscendC::Std::is_one_of_v<T, fp4x2_e1m2_t, fp4x2_e2m1_t, int4x2_t>;
+
+template <typename T>
+inline constexpr bool is_b8_type_v =
+    AscendC::Std::is_one_of_v<T, int8_t, uint8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, hifloat8_t>;
+
+template <typename T>
+inline constexpr bool is_b16_type_v = AscendC::Std::is_one_of_v<T, int16_t, uint16_t, half, bfloat16_t>;
+
+template <typename T>
+inline constexpr bool is_b32_type_v = AscendC::Std::is_one_of_v<T, int32_t, uint32_t, float>;
+
+template <typename T>
+inline constexpr bool is_b64_type_v = AscendC::Std::is_one_of_v<T, int64_t>;
 
 template <typename T, typename U>
 __simd_callee__ inline reg_tensor<T> make_reg_operand(const U& value, const vector_bool& mask)
@@ -101,7 +115,7 @@ inline constexpr bool supports_relu_v = ::AscendC::Std::is_one_of_v<T, half, int
 
 template <typename T>
 inline constexpr bool supports_add_sub_v =
-    ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
+        ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
 
 template <typename T>
 inline constexpr bool supports_carry_v = ::AscendC::Std::is_one_of_v<T, int32_t, uint32_t>;
@@ -118,12 +132,12 @@ inline constexpr bool supports_mul_scalar_v =
     ::AscendC::Std::is_one_of_v<T, int16_t, uint16_t, half, int32_t, uint32_t, float>;
 
 template <typename T>
-inline constexpr bool supports_div_v =
-    ::AscendC::Std::is_one_of_v<T, int16_t, uint16_t, half, int32_t, uint32_t, float>;
+inline constexpr bool supports_min_max_v =
+        ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
 
 template <typename T>
-inline constexpr bool supports_min_max_v =
-    ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
+inline constexpr bool supports_div_v =
+    ::AscendC::Std::is_one_of_v<T, int16_t, uint16_t, half, int32_t, uint32_t, float>;
 
 template <typename T>
 inline constexpr bool supports_not_v =
@@ -137,7 +151,7 @@ inline constexpr bool supports_and_v =
 
 template <typename T>
 inline constexpr bool supports_or_v =
-    ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float>;
+        ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float>;
 
 template <typename T>
 inline constexpr bool supports_xor_v =

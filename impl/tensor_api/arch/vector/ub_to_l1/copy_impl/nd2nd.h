@@ -9,10 +9,10 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/nd2nd.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
+#pragma message( \
+    "impl/tensor_api/arch/vector/ub_to_l1/copy_impl/nd2nd.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use \"#include \"tensor_api/tensor.h\"\" and use public functions or variables defined in interface headers files.")
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ND2ND_H
 #endif
 
 /*!
@@ -35,10 +35,10 @@ public:
         data_copy_impl<trait, DstTensor, SrcTensor>(dst, src);
     }
 
-    template <const ub_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord,
-        typename ShapeType>
-    __aicore__ inline static void run(const T& dst, const U& src, const DstCoord& dst_coord,
-        const SrcCoord& src_coord, const ShapeType& copy_shape)
+    template <
+        const ub_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape)
     {
         check_template<trait, T, U>();
         using src_type = typename U::element_type;
@@ -49,8 +49,7 @@ public:
         auto block_len = Std::ceil_division(columns, c0_element<src_type>);
         auto src_gap = Std::ceil_division(get_row_stride(src.layout()), c0_element<src_type>) - block_len;
         auto dst_gap = Std::ceil_division(get_row_stride(dst.layout()), c0_element<dst_type>) - block_len;
-        emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len,
-            src_gap, dst_gap);
+        emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, src_gap, dst_gap);
     }
 
 private:
@@ -82,12 +81,46 @@ private:
     }
 };
 
+class copy_ub_to_l1_one_dim : private copy_ub_to_l1_common {
+public:
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static void run(const DstTensor& dst, const SrcTensor& src)
+    {
+        check_template<trait, DstTensor, SrcTensor>();
+        using src_type = typename SrcTensor::element_type;
+        constexpr uint16_t block_count = 1;
+        uint32_t block_len = Std::ceil_division(get<0>(src.layout().shape()), c0_element<src_type>);
+        emit_copy(dst, src, block_count, block_len, 0, 0);
+    }
+
+    template <
+        const ub_to_l1_trait& trait, typename T, typename U, typename DstCoord, typename SrcCoord, typename ShapeType>
+    __aicore__ inline static void run(
+        const T& dst, const U& src, const DstCoord& dst_coord, const SrcCoord& src_coord, const ShapeType& copy_shape)
+    {
+        check_template<trait, T, U>();
+        using src_type = typename U::element_type;
+        constexpr uint16_t block_count = 1;
+        uint32_t block_len = Std::ceil_division(get<0>(copy_shape), c0_element<src_type>);
+        emit_copy(dst, src, dst.layout()(dst_coord), src.layout()(src_coord), block_count, block_len, 0, 0);
+    }
+
+private:
+    template <const ub_to_l1_trait& trait, typename DstTensor, typename SrcTensor>
+    __aicore__ inline static constexpr void check_template()
+    {
+        check_layout_pattern<SrcTensor, DstTensor>();
+        check_data_type::check_ub_to_l1_data_type<DstTensor, SrcTensor>();
+    }
+};
+
 } // namespace te
 } // namespace asc
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ND2ND_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
+#if defined( \
+    UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ND2ND_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_UB_TO_L1_COPY_IMPL_ND2ND_H
 #endif

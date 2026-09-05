@@ -9,10 +9,10 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/arch/vector/gm_to_ub/copy_impl/instruction.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
+#pragma message( \
+    "impl/tensor_api/arch/vector/gm_to_ub/copy_impl/instruction.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use \"#include \"tensor_api/tensor.h\"\" and use public functions or variables defined in interface headers files.")
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_INSTRUCTION_H
 #endif
 
 /*!
@@ -30,45 +30,46 @@ namespace te {
 class copy_gm_to_ub_instr {
 public:
     template <typename DataType>
-    __aicore__ inline static void
-    data_copy(__ubuf__ DataType* dst, __gm__ DataType* src, const uint16_t block_count, const uint32_t block_len,
-              const uint8_t left_padding_count, const uint8_t right_padding_count, const bool enable_constant_pad,
-              const asc_load_l2_cache_mode cache_mode, const int64_t src_stride, const int64_t dst_stride)
+    __aicore__ inline static void data_copy(
+        __ubuf__ DataType* dst, __gm__ DataType* src, const uint16_t block_count, const uint32_t block_len,
+        const uint8_t left_padding_count, const uint8_t right_padding_count, const bool enable_constant_pad,
+        const asc_load_l2_cache_mode cache_mode, const int64_t src_stride, const int64_t dst_stride)
     {
         using PaddingElementType = Std::conditional_t<(sizeof(DataType) > sizeof(uint32_t)), uint32_t, DataType>;
-        TENSOR_API_DEBUG_CHECK(debug_check_block_limit, block_count, debug_block_count_max, "block_count",
-                               "copy_gm_to_ub instruction");
-        TENSOR_API_DEBUG_CHECK(debug_check_block_limit, block_len, debug_gm_ub_block_len_max, "block_len",
-                               "copy_gm_to_ub instruction");
-        TENSOR_API_DEBUG_CHECK(debug_check_gm2ub_stride, dst_stride, block_len, block_count,
-                               "copy_gm_to_ub instruction");
-        TENSOR_API_DEBUG_CHECK(debug_check_gm2ub_padding<PaddingElementType>, left_padding_count, right_padding_count,
-                               dst_stride, block_len, block_count, "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(
+            debug_check_block_limit, block_count, debug_block_count_max, "block_count", "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(
+            debug_check_block_limit, block_len, debug_gm_ub_block_len_max, "block_len", "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(
+            debug_check_gm2ub_stride, dst_stride, block_len, block_count, "copy_gm_to_ub instruction");
+        TENSOR_API_DEBUG_CHECK(
+            debug_check_gm2ub_padding<PaddingElementType>, left_padding_count, right_padding_count, dst_stride,
+            block_len, block_count, "copy_gm_to_ub instruction");
 
         if constexpr (sizeof(DataType) == 1) {
-            asc_copy_gm2ub_align(reinterpret_cast<__ubuf__ uint8_t*>(dst), reinterpret_cast<__gm__ uint8_t*>(src),
-                                 block_count, block_len,
-                                 left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
-                                 dst_stride);
+            asc_copy_gm2ub_align(
+                reinterpret_cast<__ubuf__ uint8_t*>(dst), reinterpret_cast<__gm__ uint8_t*>(src), block_count,
+                block_len, left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
+                dst_stride);
         } else if constexpr (sizeof(DataType) == 2) {
-            asc_copy_gm2ub_align(reinterpret_cast<__ubuf__ uint16_t*>(dst), reinterpret_cast<__gm__ uint16_t*>(src),
-                                 block_count, block_len,
-                                 left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
-                                 dst_stride);
+            asc_copy_gm2ub_align(
+                reinterpret_cast<__ubuf__ uint16_t*>(dst), reinterpret_cast<__gm__ uint16_t*>(src), block_count,
+                block_len, left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
+                dst_stride);
         } else if constexpr (sizeof(DataType) == 4) {
-            asc_copy_gm2ub_align(reinterpret_cast<__ubuf__ uint32_t*>(dst), reinterpret_cast<__gm__ uint32_t*>(src),
-                                 block_count, block_len,
-                                 left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
-                                 dst_stride);
+            asc_copy_gm2ub_align(
+                reinterpret_cast<__ubuf__ uint32_t*>(dst), reinterpret_cast<__gm__ uint32_t*>(src), block_count,
+                block_len, left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
+                dst_stride);
         } else if constexpr (sizeof(DataType) == 8) {
-            asc_copy_gm2ub_align(reinterpret_cast<__ubuf__ uint32_t*>(dst), reinterpret_cast<__gm__ uint32_t*>(src),
-                                 block_count, block_len,
-                                 left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
-                                 dst_stride);
+            asc_copy_gm2ub_align(
+                reinterpret_cast<__ubuf__ uint32_t*>(dst), reinterpret_cast<__gm__ uint32_t*>(src), block_count,
+                block_len, left_padding_count, right_padding_count, enable_constant_pad, cache_mode, src_stride,
+                dst_stride);
         } else {
-            static_assert(sizeof(DataType) == 1 || sizeof(DataType) == 2 || sizeof(DataType) == 4
-                              || sizeof(DataType) == 8,
-                          "Unsupported data type size for CopyGmToUbufAlignV2");
+            static_assert(
+                sizeof(DataType) == 1 || sizeof(DataType) == 2 || sizeof(DataType) == 4 || sizeof(DataType) == 8,
+                "Unsupported data type size for CopyGmToUbufAlignV2");
         }
     }
 };
@@ -78,7 +79,8 @@ public:
 
 #endif // IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_INSTRUCTION_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
+#if defined( \
+    UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_INSTRUCTION_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_ARCH_VECTOR_GM_TO_UB_COPY_IMPL_INSTRUCTION_H
 #endif

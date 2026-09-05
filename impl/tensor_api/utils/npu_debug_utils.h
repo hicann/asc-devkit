@@ -316,6 +316,8 @@ __aicore__ inline constexpr auto get_debug_layout_pattern_name()
         return "nd_ext_layout_ptn";
     } else if constexpr (Std::is_same_v<PatternType, dn_ext_layout_ptn>) {
         return "dn_ext_layout_ptn";
+    } else if constexpr (Std::is_same_v<PatternType, one_dim_layout_ptn>) {
+        return "one_dim_layout_ptn";
     } else if constexpr (Std::is_same_v<PatternType, scalea_nd_layout_ptn>) {
         return "scalea_nd_layout_ptn";
     } else if constexpr (Std::is_same_v<PatternType, scalea_dn_layout_ptn>) {

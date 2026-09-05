@@ -70,6 +70,15 @@ struct check_dn_layout_pattern {
     }
 };
 
+struct check_one_dim_layout_pattern {
+    template <typename Tensor, typename TraitType>
+    __aicore__ inline static constexpr void check()
+    {
+        using layout_type = typename Tensor::layout_type;
+        static_assert(layout_type::rank_size == 1, "One-dim layout rank must be 1!");
+    }
+};
+
 struct check_nd_ext_layout_pattern {
     template <typename Tensor, typename TraitType>
     __aicore__ inline static constexpr void check()

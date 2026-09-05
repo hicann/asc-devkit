@@ -79,6 +79,35 @@ void run_copy_default_paths(const dst_tensor_type& dst, const src_tensor_type& s
 
 } // namespace
 
+TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_one_dim)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t copy_size = 64;
+    __gm__ int8_t src[copy_size] = {0};
+    __ubuf__ int8_t dst[copy_size] = {0};
+
+    auto layout = make_layout(make_shape(copy_size), make_stride(0));
+    auto gm_tensor = make_tensor_at<location::gm>(src, layout);
+    auto ub_tensor = make_tensor_at<location::ub>(dst, layout);
+
+    static_assert(Std::is_same_v<get_layout_pattern<decltype(layout)>, one_dim_layout_ptn>);
+    MOCKER_CPP(
+        copy_gm_to_ubuf_align_v2, void(
+                                      __ubuf__ uint8_t*, __gm__ uint8_t*, uint8_t, uint32_t, uint32_t, uint8_t, uint8_t,
+                                      bool, uint8_t, uint64_t, uint32_t))
+        .times(1)
+        .will(invoke(copy_gm_to_ub_stub));
+
+    copy(ub_tensor, gm_tensor);
+
+    GlobalMockObject::verify();
+    EXPECT_EQ(g_copy_gm_to_ub_capture.block_count, 1);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.block_len, copy_size);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.src_stride, 0);
+    EXPECT_EQ(g_copy_gm_to_ub_capture.dst_stride, 0);
+}
+
 TEST_F(tensor_api_vector_copy_3510, copy_gm_to_ub_nd_to_nd)
 {
     using namespace asc::te;

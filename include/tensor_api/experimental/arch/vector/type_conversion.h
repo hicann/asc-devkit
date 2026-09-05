@@ -10,9 +10,13 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_PUBLIC_TYPE_CONVERSION_H__
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_PUBLIC_TYPE_CONVERSION_H
 #endif
 
+/*!
+ * \file type_conversion.h
+ * \brief Register data type conversion interfaces.
+ */
 #ifndef INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_H
 #define INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_H
 
@@ -23,12 +27,26 @@ namespace asc {
 namespace te {
 namespace experimental {
 
-constexpr cast_options default_cast_ops = {
-    cast_layout::zero, cast_round_mode::rint, cast_sat_mode::not_sat};
+/**
+ * @brief Defines the default register cast options with zero layout, rint rounding, and no saturation.
+ */
+constexpr cast_options default_cast_ops = {cast_layout::zero, cast_round_mode::rint, cast_sat_mode::not_sat};
 
+/**
+ * @brief Converts the active elements of a register tensor to another element type.
+ * @param src Source register tensor.
+ * @return The converted register tensor with the source mask preserved.
+ * @note Source and destination element types must differ. Supported option combinations are architecture-dependent.
+ */
 template <typename DstType, const cast_options& opt = default_cast_ops, typename SrcType>
 __simd_callee__ inline reg_tensor<DstType> cast(const reg_tensor<SrcType>& src);
 
+/**
+ * @brief Truncates the fractional part of each active register element.
+ * @param src Source register tensor.
+ * @return The truncated register tensor with the source mask preserved.
+ * @note Supported element types are half, bfloat16_t, and float.
+ */
 template <typename T>
 __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src);
 
@@ -42,7 +60,7 @@ __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src);
 
 #endif // INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_PUBLIC_TYPE_CONVERSION_H__)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_PUBLIC_TYPE_CONVERSION_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_PUBLIC_TYPE_CONVERSION_H__
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_PUBLIC_TYPE_CONVERSION_H
 #endif

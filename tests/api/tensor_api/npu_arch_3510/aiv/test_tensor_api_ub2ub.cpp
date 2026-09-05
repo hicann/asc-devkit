@@ -117,6 +117,22 @@ void check_whole_copy(const DstTensor& dst, const SrcTensor& src, uint16_t block
 
 } // namespace
 
+TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_one_dim)
+{
+    using namespace asc::te;
+
+    constexpr uint32_t copy_size = 64;
+    __ubuf__ int8_t src[copy_size] = {0};
+    __ubuf__ int8_t dst[copy_size] = {0};
+    auto layout = make_layout(make_shape(copy_size), make_stride(0));
+    auto src_tensor = make_tensor_at<location::ub>(src, layout);
+    auto dst_tensor = make_tensor_at<location::ub>(dst, layout);
+
+    static_assert(Std::is_same_v<get_layout_pattern<decltype(layout)>, one_dim_layout_ptn>);
+    check_whole_copy(dst_tensor, src_tensor, 1, 2, 0, 0);
+    check_region_copy(dst_tensor, src_tensor, make_coord(32), make_coord(16), make_shape(32), 1, 1, 0, 0);
+}
+
 TEST_F(tensor_api_vector_copy_3510, copy_ub_to_ub_nd_to_nd)
 {
     using namespace asc::te;

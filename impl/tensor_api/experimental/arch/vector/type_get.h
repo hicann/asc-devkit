@@ -9,10 +9,8 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
-    "impl/tensor_api/experimental/arch/vector/type_get.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H__
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H
 #endif
 
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_GET_H
@@ -132,7 +130,7 @@ struct type_get<fp4x2_e1m2_t> {
 
 #endif // IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_GET_H
 
-#if defined(__UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H__)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef __UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H__
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TYPE_GET_H
 #endif
