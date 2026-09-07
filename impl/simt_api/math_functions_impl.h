@@ -962,50 +962,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanf(float x)
     return dst;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atan2f(float y, float x)
-{
-    if (isnan(y)) {
-        return y;
-    } else if (isnan(x)) {
-        return x;
-    }
-
-    int d = (y >= 0) ? 1 : -1;
-    if (y == 0.0f) {
-        if (x > 0.0f) {
-            return y;
-        }
-        uint32_t x_bits = *reinterpret_cast<uint32_t*>(&x);
-        if ((x_bits & ASCRT_NEG_SIGN_BIT_U) != 0) {
-            uint32_t y_bits = *reinterpret_cast<uint32_t*>(&y);
-            int zero_sign = ((y_bits & ASCRT_NEG_SIGN_BIT_U) != 0) ? -1 : 1;
-            return zero_sign * ASCRT_PI_F;
-        }
-        return y;
-    } else if (isinf(y) && isinf(x)) {
-        int s = 1;
-        if (x < 0) {
-            s = 3; // 3 : ATAN2_THREE
-        }
-        return d * ASCRT_PIO4_F * s;
-    } else if (isinf(y)) {
-        return d * ASCRT_PIO2_F;
-    } else if (isinf(x)) {
-        if (x > 0) {
-            d = 0;
-        }
-        return d * ASCRT_PI_F;
-    }
-
-    if (x == 0) {
-        return d * ASCRT_PIO2_F;
-    } else if (x > 0) {
-        d = 0;
-    }
-
-    return atanf(y / x) + d * ASCRT_PI_F;
-}
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x) { return logf((1.0f + x) / (1.0f - x)) / 2.0f; }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cos_poly(float x)
@@ -1053,15 +1009,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cosf(float x)
     return c;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
-{
-    float y = fabsf(x);
-    const float tmp = expf(y - ASCRT_SCALAR_LN2_F);
-    return tmp + 0.25f / tmp;
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x) { return cosf(x * ASCRT_PI_F); }
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
 {
     if (fabsf(x) > 1) {
@@ -1095,14 +1042,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float acosf(float x) { return ASCRT_PIO2_F - asinf(x); }
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acoshf(float x)
-{
-    if (x < 1) {
-        return ASCRT_INF_F / ASCRT_INF_F;
-    }
-    return logf(x + sqrtf(x * x - 1.0f));
-}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinf(float x)
 {
@@ -1147,29 +1086,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinhf(float x)
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x) { return sinf(x * ASCRT_PI_F); }
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
-{
-    if (fabsf(x) > 0.1f) {
-        return x > 0 ? logf(x + sqrtf(x * x + 1.0f)) : logf(sqrtf(x * x + 1.0f) - x) * (-1);
-    } else {
-        float square_v = 0;
-        float dst = 0;
-        float src = x;
-        float factor[] = {
-            1.0,
-            -0.16666666666666666666666666666667,
-            0.075,
-            -0.04464285714285714285714285714286,
-            0.03038194444444444444444444444444,
-            -0.02237215909090909090909090909091,
-            0.01735276442307692307692307692308,
-            -0.01396484375,
-        };
-        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
-        return dst;
-    }
-}
 
 #define __INTERNAL_SINCOSF(x, s, c)                                              \
     do {                                                                         \
@@ -1287,10 +1203,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, _
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x);
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x) { return powf(10.0f, x); }
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x) { return expf(x) - 1.0f; }
 
 #define __INTERNAL_FREXPF(x, exp)                        \
     do {                                                 \
@@ -1515,98 +1427,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log10f(float x) { return logf(x) / l
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x) { return logf(1.0f + x); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float logbf(float x)
-{
-    if (isnan(x)) {
-        return x;
-    }
-    if (x < 0) {
-        x = -x;
-    }
-    float inf = ASCRT_INF_F;
-    if (isinf(x)) {
-        return inf;
-    }
-    if (x == 0) {
-        return -inf;
-    }
-
-    uint32_t fp32_inf_exponent = 255;
-    uint32_t fp32_decimal_bit = 23;
-    uint32_t fp32_sign_bit = 256;
-    uint32_t fp32_exponent_h = 127;
-    uint32_t* exponent = reinterpret_cast<uint32_t*>(&x);
-    (*exponent) >>= fp32_decimal_bit;
-    uint32_t sign = fp32_sign_bit;
-    if ((*exponent) > sign) {
-        (*exponent) -= sign;
-    }
-    if ((*exponent) == fp32_inf_exponent) {
-        return inf;
-    } else {
-        float res = (*exponent);
-        res -= fp32_exponent_h;
-        return res;
-    }
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
-{
-    if (x == 0.0f || isnan(x)) {
-        return ASCRT_MIN_VAL_S;
-    }
-    if (isinf(x)) {
-        return ASCRT_MAX_VAL_S;
-    }
-    if (x < 0) {
-        x = -x;
-    }
-    return static_cast<int>(logbf(x));
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cbrtf(float x)
-{
-    uint32_t x_bits = *reinterpret_cast<uint32_t*>(&x);
-    int32_t exp_bits = (x_bits >> 23) & 0xFF;
-    if (x == 0.0f || exp_bits == 0xFF) {
-        return x;
-    }
-
-    // In order for Newtonian iteration method to converge quickly, we need to reduce x to a certain range(0.125, 8).
-    // Depending on the computer's float number storage structure, we can adjust the exponential part of x.
-    // the adjustment factor(k) ensures the exponent of x' is in (-3, 3)
-    int32_t exponent = exp_bits - 127;
-    int32_t k;
-    if (exponent >= 3) {              // 3:ensures the exponent of x' is in (-3, 3)
-        k = ((exponent - 3) / 3) + 1; // 3:ensures the exponent of x' is in (-3, 3)
-    } else if (exponent <= -4) {      //-4:ensures the exponent of x' is in (-3, 3)
-        k = (exponent + 1) / 3;       // 3:ensures the exponent of x' is in (-3, 3)
-    } else {
-        k = 0;
-    }
-
-    // get the adjusted x value
-    int32_t exp_adjusted_bits = exponent - 3 * k + 127;
-    uint32_t x_adjusted_bits = (x_bits & 0x7FFFFF) | (exp_adjusted_bits << 23);
-    float x_adjusted = *reinterpret_cast<float*>(&x_adjusted_bits);
-
-    // Newton's iteration method,f(x) = x^3 - b, x_i+1 = x_i - f(x_i)/f'(x_i) = (2*x_i + b/x_i^2)/3
-    // the initial value of x_i = 1.0
-    float y = 1.0f;
-    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
-    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
-    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
-    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
-    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
-
-    // adjust the exponent of y by k
-    uint32_t y_bits = *reinterpret_cast<uint32_t*>(&y);
-    int32_t yexp_bits = ((y_bits >> 23) & 0xFF) + k;
-    y_bits = (y_bits & 0x807FFFFF) | ((yexp_bits & 0xFF) << 23) | // 23:the number of bits to shift left
-             (x_bits & 0x80000000);
-    return *reinterpret_cast<float*>(&y_bits);
-}
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rcbrtf(float x)
 {
     if (x == 0.0f) {
@@ -1716,49 +1536,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_poly(float abs_x)
     poly = fmaf(poly, w, -0.13962108f);
     poly = fmaf(poly, w, 1.2329951f);
     return poly;
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
-{
-    float abs_x = fabsf(x);
-
-    float poly = __internal_cal_poly(abs_x);
-
-    float tmp2 = fmaf(2.0f, abs_x, 1.0f);
-    float inv_tmp2 = 1.0f / tmp2;
-    float q = poly * inv_tmp2;
-    float t = fmaf(abs_x, q * -2.0f, poly);
-    float u = t - q;
-    float v = fmaf(u, inv_tmp2, q);
-
-    float x_squared = abs_x * abs_x;
-    float neg_x2 = -x_squared;
-    float f1 = 1.442695f;
-    float scaled = neg_x2 * f1;
-    float int_part = scaled > 0 ? __floorf(x) : __ceilf(x);
-    float abs_part = fabsf(int_part);
-    uint32_t sign_bit = *reinterpret_cast<uint32_t*>(&int_part) & 0x80000000;
-    float clamped_bits = sign_bit | 0x42FC0000;
-    float clamped = *reinterpret_cast<float*>(&clamped_bits);
-    float safe_int = (abs_part > 126.0f) ? clamped : int_part;
-
-    float remainder = fmaf(safe_int, -0.6931472f, neg_x2);
-    remainder = fmaf(safe_int, 1.9046542e-9f, remainder);
-    float exponent_arg = remainder * f1;
-    float exponent_base = safe_int + 12583039.0f;
-    uint32_t exponent_bits = *reinterpret_cast<uint32_t*>(&exponent_base) << 23;
-    float exponent_scale = *reinterpret_cast<float*>(&exponent_bits);
-    float exp_val = exp2f(exponent_arg) * exponent_scale;
-
-    float term3 = fmaf(-abs_x, abs_x, x_squared);
-    float term4 = fmaf(exp_val, term3, exp_val);
-    float result = v * term4;
-
-    if (abs_x > 10.055f) {
-        result = 0.0f;
-    }
-
-    return (x < 0) ? (2.0f - result) : result;
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfinvf(float x)
@@ -3323,6 +3100,229 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
     return mod_res;
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acoshf(float x)
+{
+    if (x < 1) {
+        return ASCRT_INF_F / ASCRT_INF_F;
+    }
+    return logf(x + sqrtf(x * x - 1.0f));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
+{
+    if (fabsf(x) > 0.1f) {
+        return x > 0 ? logf(x + sqrtf(x * x + 1.0f)) : logf(sqrtf(x * x + 1.0f) - x) * (-1);
+    } else {
+        float square_v = 0;
+        float dst = 0;
+        float src = x;
+        float factor[] = {
+            1.0,
+            -0.16666666666666666666666666666667,
+            0.075,
+            -0.04464285714285714285714285714286,
+            0.03038194444444444444444444444444,
+            -0.02237215909090909090909090909091,
+            0.01735276442307692307692307692308,
+            -0.01396484375,
+        };
+        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
+        return dst;
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atan2f(float y, float x)
+{
+    if (isnan(y)) {
+        return y;
+    } else if (isnan(x)) {
+        return x;
+    }
+
+    int d = (y >= 0) ? 1 : -1;
+    if (y == 0.0f) {
+        if (x > 0.0f) {
+            return y;
+        }
+        uint32_t x_bits = *reinterpret_cast<uint32_t*>(&x);
+        if ((x_bits & ASCRT_NEG_SIGN_BIT_U) != 0) {
+            uint32_t y_bits = *reinterpret_cast<uint32_t*>(&y);
+            int zero_sign = ((y_bits & ASCRT_NEG_SIGN_BIT_U) != 0) ? -1 : 1;
+            return zero_sign * ASCRT_PI_F;
+        }
+        return y;
+    } else if (isinf(y) && isinf(x)) {
+        int s = 1;
+        if (x < 0) {
+            s = 3; // 3 : ATAN2_THREE
+        }
+        return d * ASCRT_PIO4_F * s;
+    } else if (isinf(y)) {
+        return d * ASCRT_PIO2_F;
+    } else if (isinf(x)) {
+        if (x > 0) {
+            d = 0;
+        }
+        return d * ASCRT_PI_F;
+    }
+
+    if (x == 0) {
+        return d * ASCRT_PIO2_F;
+    } else if (x > 0) {
+        d = 0;
+    }
+
+    return atanf(y / x) + d * ASCRT_PI_F;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cbrtf(float x)
+{
+    uint32_t x_bits = *reinterpret_cast<uint32_t*>(&x);
+    int32_t exp_bits = (x_bits >> 23) & 0xFF;
+    if (x == 0.0f || exp_bits == 0xFF) {
+        return x;
+    }
+
+    // In order for Newtonian iteration method to converge quickly, we need to reduce x to a certain range(0.125, 8).
+    // Depending on the computer's float number storage structure, we can adjust the exponential part of x.
+    // the adjustment factor(k) ensures the exponent of x' is in (-3, 3)
+    int32_t exponent = exp_bits - 127;
+    int32_t k;
+    if (exponent >= 3) {              // 3:ensures the exponent of x' is in (-3, 3)
+        k = ((exponent - 3) / 3) + 1; // 3:ensures the exponent of x' is in (-3, 3)
+    } else if (exponent <= -4) {      //-4:ensures the exponent of x' is in (-3, 3)
+        k = (exponent + 1) / 3;       // 3:ensures the exponent of x' is in (-3, 3)
+    } else {
+        k = 0;
+    }
+
+    // get the adjusted x value
+    int32_t exp_adjusted_bits = exponent - 3 * k + 127;
+    uint32_t x_adjusted_bits = (x_bits & 0x7FFFFF) | (exp_adjusted_bits << 23);
+    float x_adjusted = *reinterpret_cast<float*>(&x_adjusted_bits);
+
+    // Newton's iteration method,f(x) = x^3 - b, x_i+1 = x_i - f(x_i)/f'(x_i) = (2*x_i + b/x_i^2)/3
+    // the initial value of x_i = 1.0
+    float y = 1.0f;
+    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
+    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
+    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
+    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
+    y = (2.0f * y + x_adjusted / (y * y)) / 3.0f;
+
+    // adjust the exponent of y by k
+    uint32_t y_bits = *reinterpret_cast<uint32_t*>(&y);
+    int32_t yexp_bits = ((y_bits >> 23) & 0xFF) + k;
+    y_bits = (y_bits & 0x807FFFFF) | ((yexp_bits & 0xFF) << 23) | // 23:the number of bits to shift left
+             (x_bits & 0x80000000);
+    return *reinterpret_cast<float*>(&y_bits);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
+{
+    float y = fabsf(x);
+    const float tmp = expf(y - ASCRT_SCALAR_LN2_F);
+    return tmp + 0.25f / tmp;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x) { return cosf(x * ASCRT_PI_F); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
+{
+    float abs_x = fabsf(x);
+
+    float poly = __internal_cal_poly(abs_x);
+
+    float tmp2 = fmaf(2.0f, abs_x, 1.0f);
+    float inv_tmp2 = 1.0f / tmp2;
+    float q = poly * inv_tmp2;
+    float t = fmaf(abs_x, q * -2.0f, poly);
+    float u = t - q;
+    float v = fmaf(u, inv_tmp2, q);
+
+    float x_squared = abs_x * abs_x;
+    float neg_x2 = -x_squared;
+    float f1 = 1.442695f;
+    float scaled = neg_x2 * f1;
+    float int_part = scaled > 0 ? __floorf(x) : __ceilf(x);
+    float abs_part = fabsf(int_part);
+    uint32_t sign_bit = *reinterpret_cast<uint32_t*>(&int_part) & 0x80000000;
+    float clamped_bits = sign_bit | 0x42FC0000;
+    float clamped = *reinterpret_cast<float*>(&clamped_bits);
+    float safe_int = (abs_part > 126.0f) ? clamped : int_part;
+
+    float remainder = fmaf(safe_int, -0.6931472f, neg_x2);
+    remainder = fmaf(safe_int, 1.9046542e-9f, remainder);
+    float exponent_arg = remainder * f1;
+    float exponent_base = safe_int + 12583039.0f;
+    uint32_t exponent_bits = *reinterpret_cast<uint32_t*>(&exponent_base) << 23;
+    float exponent_scale = *reinterpret_cast<float*>(&exponent_bits);
+    float exp_val = exp2f(exponent_arg) * exponent_scale;
+
+    float term3 = fmaf(-abs_x, abs_x, x_squared);
+    float term4 = fmaf(exp_val, term3, exp_val);
+    float result = v * term4;
+
+    if (abs_x > 10.055f) {
+        result = 0.0f;
+    }
+
+    return (x < 0) ? (2.0f - result) : result;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x) { return powf(10.0f, x); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x) { return expf(x) - 1.0f; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float logbf(float x)
+{
+    if (isnan(x)) {
+        return x;
+    }
+    if (x < 0) {
+        x = -x;
+    }
+    float inf = ASCRT_INF_F;
+    if (isinf(x)) {
+        return inf;
+    }
+    if (x == 0) {
+        return -inf;
+    }
+
+    uint32_t fp32_inf_exponent = 255;
+    uint32_t fp32_decimal_bit = 23;
+    uint32_t fp32_sign_bit = 256;
+    uint32_t fp32_exponent_h = 127;
+    uint32_t* exponent = reinterpret_cast<uint32_t*>(&x);
+    (*exponent) >>= fp32_decimal_bit;
+    uint32_t sign = fp32_sign_bit;
+    if ((*exponent) > sign) {
+        (*exponent) -= sign;
+    }
+    if ((*exponent) == fp32_inf_exponent) {
+        return inf;
+    } else {
+        float res = (*exponent);
+        res -= fp32_exponent_h;
+        return res;
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
+{
+    if (x == 0.0f || isnan(x)) {
+        return ASCRT_MIN_VAL_S;
+    }
+    if (isinf(x)) {
+        return ASCRT_MAX_VAL_S;
+    }
+    if (x < 0) {
+        x = -x;
+    }
+    return static_cast<int>(logbf(x));
+}
+
 #else
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __internal_is_odd_integer_f32(float value)
@@ -3597,6 +3597,495 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
     }
     out |= sx;
     return reinterpret_cast<float&>(out);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acoshf(float x)
+{
+    // acosh(x) = ln(x + sqrt(x^2 - 1)), defined on [1, +inf). Inputs below 1 are out of domain and
+    // return NaN; a NaN input also fails this comparison and falls through to a NaN-producing path.
+    if (x < 1) {
+        return ASCRT_INF_F / ASCRT_INF_F;
+    }
+    // Work with the offset t = x - 1 throughout. Near x = 1 the term x^2 - 1 cancels catastrophically,
+    // so every branch below is expressed in t instead of x^2 - 1.
+    float t = x - 1.0f;
+    if (t <= 0.5f) {
+        // Near 1, factor out the square-root singularity: acosh(1 + t) = sqrt(2t) * P(t), where P is
+        // the Maclaurin series 1 - t/12 + 3t^2/160 - 5t^3/896 + 35t^4/18432 - 63t^5/90112
+        // + 231t^6/851968 - 143t^7/1310720 + 6435t^8/142606336. P is smooth and close to 1 on
+        // [0, 0.5], so evaluating it in Horner/fma form keeps the relative error near 1 ulp.
+        float factor = 0.000045124618889065459371f;
+        factor = __fma(factor, t, -0.000109100341796875f);
+        factor = __fma(factor, t, 0.00027113739657215774059f);
+        factor = __fma(factor, t, -0.00069930072128772735596f);
+        factor = __fma(factor, t, 0.0018988715019077062607f);
+        factor = __fma(factor, t, -0.0055803572759032249451f);
+        factor = __fma(factor, t, 0.018750000745058059692f);
+        factor = __fma(factor, t, -0.083333335816860198975f);
+        factor = __fma(factor, t, 1.0f);
+        return __sqrtf(2.0f * t) * factor;
+    }
+    // For large x, sqrt(x^2 - 1) rounds to x in float, so acosh(x) collapses to ln(2x) = ln(x) + ln(2).
+    // The threshold 2^23 + 1 is conservative and also keeps t * (x + 1) below the overflow limit.
+    if (x > 8388609.0f) {
+        return __logf(x) + 0.69314718246459960938f;
+    }
+    // Mid range: substitute x^2 - 1 = (x - 1)(x + 1) = t * (x + 1) into the defining formula, which
+    // avoids the cancellation of the direct x * x - 1 form while staying exact for the argument here.
+    return __logf(1.0f + t + __sqrtf(t * (x + 1.0f)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
+{
+    // asinh(x) = ln(x + sqrt(x^2 + 1)) is defined for all finite x and is odd, so the work below is done
+    // on |x| and the sign is reapplied at the end.
+    float ax = __fabsf(x);
+    // asinh(+-inf) = +-inf, returned directly to keep inf out of the sqrt/log paths.
+    if (ax == ASCRT_INF_F) {
+        return x;
+    }
+    // For tiny inputs the leading correction -x^3/6 sits far below the ulp of x, so asinh(x) rounds to x.
+    // This also returns -0.0 unchanged, which the signbit fixup at the end would otherwise have to handle.
+    if (ax < 1.0e-8f) {
+        return x;
+    }
+
+    float y;
+    if (ax <= 0.5f) {
+        // Small inputs: asinh(ax) = ax + ax^3 * P(ax^2) with P the Maclaurin series
+        // -1/6 + 3z/40 - 5z^2/112 + 35z^3/1152 - 63z^4/2816 + 231z^5/13312 - 143z^6/10240, z = ax^2.
+        // Keeping ax as the fma addend leaves the dominant term exact and confines rounding to the tail.
+        float z = ax * ax;
+        float p = -0.01396484375f;
+        p = __fma(p, z, 0.017352764423076923077f);
+        p = __fma(p, z, -0.022372159090909090909f);
+        p = __fma(p, z, 0.030381944444444444444f);
+        p = __fma(p, z, -0.044642857142857142857f);
+        p = __fma(p, z, 0.075f);
+        p = __fma(p, z, -0.16666666666666666667f);
+        y = __fma(ax * z, p, ax);
+    } else if (ax > 1.0e19f) {
+        // Large inputs: sqrt(ax^2 + 1) rounds to ax, so asinh(ax) collapses to ln(2 * ax) = ln(ax) + ln(2).
+        // The branch is required rather than an optimization: ax * ax overflows to inf past roughly 1.8e19.
+        y = __logf(ax) + 0.69314718246459960938f;
+    } else {
+        // Mid range: rewrite ax + s as 1 + u with u = ax + ax^2 / (1 + s). Since ax^2 = s^2 - 1, the
+        // quotient is exactly s - 1, so 1 + u is algebraically ax + s but recovers the low-order bits that
+        // the rounded s alone would drop, which measurably tightens the error of the following log.
+        float s = __sqrtf(__fma(ax, ax, 1.0f));
+        float u = ax + ax * ax / (1.0f + s);
+        y = __logf(1.0f + u);
+    }
+    // Restore the sign for the odd extension: asinh(-ax) = -asinh(ax).
+    return signbit(x) ? -y : y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atan2f(float y, float x)
+{
+    // atan2(y, x) is the angle of the point (x, y) over the full circle. The polynomial below only covers
+    // the first octant, so the magnitudes are reduced first and the octant is restored afterwards.
+    float ay = __fabsf(y);
+    float ax = __fabsf(x);
+    // Summing the magnitudes tests both arguments for NaN at once and propagates it as the result.
+    float sum = ax + ay;
+    if (__isnan(sum)) {
+        return sum;
+    }
+
+    // Order the magnitudes so the ratio lo / hi never exceeds 1, which is the polynomial's valid range.
+    bool y_gt_x = ay > ax;
+    float hi = y_gt_x ? ay : ax;
+    float lo = y_gt_x ? ax : ay;
+
+    float a = 0.0f;
+    if (hi != 0.0f) {
+        // The ratio lies in [0, 1]. atan is odd, so with z = r^2 the tail is even in r:
+        //   atan(r) = r + r^3 * P(z), P(z) = -0.33333197 + 0.19993925 z - 0.14207722 z^2 + 0.10640416 z^3
+        //             - 0.074792981 z^4 + 0.042200752 z^5 - 0.015681878 z^6 + 0.0027380611 z^7
+        // P is minimax-fitted, not a Taylor truncation (leading term -0.33333197, not -1/3): the error is
+        // flattened across all of [0, 1], so the coefficients cannot be extended by a series rule.
+        float r = lo / hi;
+        float z = r * r;
+        float p = 0.0027380611281841993332f;
+        p = __fma(z, p, -0.015681877732276916504f);
+        p = __fma(z, p, 0.042200751602649688721f);
+        p = __fma(z, p, -0.074792981147766113281f);
+        p = __fma(z, p, 0.10640415549278259277f);
+        p = __fma(z, p, -0.14207722246646881104f);
+        p = __fma(z, p, 0.19993925094604492188f);
+        p = __fma(z, p, -0.33333197236061096191f);
+        // Assemble r + r^3 * P(z). r is the dominant term, so passing it as the fma addend keeps it exact
+        // and confines rounding to the correction.
+        float t = __fma(z * p, r, r);
+
+        // Rebuild the full-circle angle from the octant. |y| == |x| is special-cased so the diagonals come
+        // out as the exactly rounded pi/4 and 3pi/4, and because inf/inf above makes r NaN.
+        if (ay == ax) {
+            a = signbit(x) ? 2.35619449615478515625f : 0.78539818525314331055f;
+        } else if (y_gt_x) {
+            // Steeper than the diagonal: the ratio r = ax/ay is the reciprocal of y/x, so
+            // atan(y/x) = pi/2 - atan(x/y) = pi/2 - t. A negative x lies in the second quadrant, so pi/2 + t.
+            float pio2 = 1.57079637050628662109f;
+            a = signbit(x) ? (pio2 + t) : (pio2 - t);
+        } else {
+            // Shallow angles need no reflection; a negative x mirrors the first octant into the second.
+            a = signbit(x) ? (3.14159274101257324219f - t) : t;
+        }
+    } else {
+        // Both arguments are zero. Sign of x picks pi or 0, matching atan2(+-0, -0) == +-pi.
+        a = signbit(x) ? 3.14159274101257324219f : 0.0f;
+    }
+
+    // atan2 is odd in y, so the sign of y (including -0.0) is reapplied last.
+    return signbit(y) ? -a : a;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cbrtf(float x)
+{
+    // cbrt is odd and preserves the sign of zero, so pass through 0, inf, and NaN unchanged.
+    if (x == 0.0f || __isinf(x) || __isnan(x)) {
+        return x;
+    }
+
+    float ax = __fabsf(x);
+    float loga;
+    if (ax < 1.175494350822287508e-38f) {
+        // Subnormal input: the exponent field is 0, so logf(ax) cannot recover the true binary
+        // exponent. Scale by 2^24 to bring it into normal range, then subtract log(2^24).
+        // 16.635532333438686 = 24 * ln2.
+        float scaled = ax * 16777216.0f;
+        loga = __logf(scaled) - 16.635532333438686f;
+    } else {
+        loga = __logf(ax);
+    }
+
+    // First estimate via the logarithm identity: cbrt(ax) = ax^(1/3) = exp(log(ax) / 3).
+    // inv2 = exp(-2/3 * loga) = ax^(-2/3), so y = ax * inv2 = ax^(1/3) is a high-accuracy seed.
+    // Starting from this seed (instead of 1.0) means a single Newton step suffices for 1 ULP.
+    float inv2 = __expf(loga * -0.6666666865348815918f);
+    float y = ax * inv2;
+
+    // One Newton-Raphson step for y^3 = ax:  y_{n+1} = y * (1 + (1 - y^3/ax) / 3).
+    // Here t = inv2 * y = y^2 / ax = y^3 / ax, so 1 - t is the relative residual of y^3/ax.
+    // Scaling by 1/3 gives the Newton correction; fma(y, corr, y) applies it with one rounding.
+    float t = inv2 * y;
+    float corr = __fma(-y, t, 1.0f) * 0.3333333432674407959f;
+    y = __fma(y, corr, y);
+    return signbit(x) ? -y : y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
+{
+    // cosh is even, so fold sign here and work on ax = |x| throughout. NaN and inf pass through unchanged.
+    float ax = __fabsf(x);
+    if (__isnan(ax) || __isinf(ax)) {
+        return ax;
+    }
+
+    // Range reduction: x = n * ln2 + r, with n = round(x / ln2). ln2 = 0.6931472... is split into a high
+    // and a low part below, so r carries double-precision-grade residual error and stays tiny.
+    // The factor 1.442695... is 1/ln2 = log2(e); truncf picks the nearest integer toward zero.
+    float n = truncf(ax * 1.4426950216293334961f);
+    if (__fabsf(n) > 126.0f) {
+        n = 126.0f;
+    }
+
+    // Subtract n*ln2 in two steps so the two constants don't share rounding.
+    float r = __fma(n, -0.69314718246459960938f, ax);
+    r = __fma(n, 1.9046542121259335545e-09f, r);
+
+    // Build scale = 2^n as an exact float by reusing the exponent field of (n + 12583037.0f).
+    // 12583037 = 0xBF80003: its exponent bits encode 2^0, so (n + 12583037.0f) shifted left by 23
+    // gives the bit pattern of 2^n with no rounding. Clamp |n| <= 126 to keep 2^n finite.
+    float scale_base = n + 12583037.0f;
+    uint32_t scale_bits = reinterpret_cast<uint32_t&>(scale_base) << 23;
+    float scale = reinterpret_cast<float&>(scale_bits);
+
+    // cosh(x) = (e^x + e^(-x)) / 2 = 2^n * (e^r + e^(-r)) / 2. With scale = 2^n and e = scale * expf(r),
+    // the (e^(-x)) half is 1/(8*e); the (e^x) half is 2*e. fma(e, 2, inv_term) assembles them with one
+    // rounding, and keeps inv_term (which can be tiny near overflow) from being lost in the addition.
+    float e = scale * __expf(r);
+    float inv_term = (1.0f / e) * 0.125f;
+    return __fma(e, 2.0f, inv_term);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x)
+{
+    // cos(pi * x). cospi is even and integer-valued at integers (+/-1), zero at half-integers.
+    if (__isnan(x)) {
+        return x;
+    }
+    if (__isinf(x)) {
+        return x * 0.0f;
+    }
+    // When |x| exceeds 2^24 the ulp is larger than 1, so x no longer has a fractional part and
+    // cos(pi * x) is mathematically 1 (x is an exact integer). Return early to skip the reduction.
+    if (__fabsf(x) > 16777216.0f) {
+        return 1.0f;
+    }
+
+    // Reduce by half-periods: k = rint(2x), r = x - k/2 lies in [-0.5, 0.5]. pi is never multiplied
+    // by x, so the float approximation of pi does not leak into the argument; it enters only via the
+    // polynomial coefficients below. k = __cvt_int32_t (round-to-nearest, RS enabled) and kf = rintf(t)
+    // are two views of the same rounding; the integer is used for quadrant selection, kf for fma.
+    float t = x + x;
+    int k = __cvt_int32_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_ENABLE_VALUE>(t);
+    float kf = rintf(t);
+    float r = __fma(-kf, 0.5f, x);
+    float z = r * r;
+
+    // Even branch: c approximates cos(pi * r) as a polynomial in z = r^2 (r in [-0.5, 0.5]).
+    // At r = 0 (integer x) this evaluates to exactly 1.0.
+    float c = __fma(z, 0.226860314607620239257812f, -1.334560394287109375f);
+    c = __fma(z, c, 4.058692455291748046875f);
+    c = __fma(z, c, -4.93480205535888671875f);
+    c = __fma(z, c, 1.0f);
+
+    // Odd branch: s approximates sin(pi * r) as r * (z * P(z)) so that it vanishes at r = 0.
+    // The linear-in-pi constant is folded into a single fma(r, pi_f, s) at the end, which keeps
+    // the half-integer points (r = +/-0.5, where cospi should be exactly 0) accurate.
+    float s = __fma(z, -0.592480242252349853515625f, 2.550144195556640625f);
+    s = __fma(z, s, -5.16771984100341796875f);
+    s = s * (r * z);
+    s = __fma(r, 3.1415927410125732421875f, s);
+
+    // Pick the branch by the parity of (k + 1): when k is even, 2x is even => x is integer => use c
+    // (gives +/-1); when k is odd, x is half-integer => use s (gives 0). q & 2 selects the sign.
+    int q = k + 1;
+    float y = ((q & 1) != 1) ? s : c;
+    return (q & 2) ? -y : y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
+{
+    // erfc is even in magnitude: erfc(x) = erfc(|x|) for x >= 0, and erfc(-x) = 2 - erfc(x).
+    float abs_x = __fabsf(x);
+
+    // Rational polynomial argument: map |x| from [0, +inf) into w in [-1, 1) via w = (|x|-4)/(|x|+4).
+    // At |x|=0, w=-1; at |x|=4, w=0; as |x|->inf, w->1. The w computation is reformulated with fma so
+    // that the intermediate (numerator - y*|x|) term does not lose precision near the mapping boundary.
+    float term1 = abs_x - 4.0f;
+    float term2 = abs_x + 4.0f;
+    float inv_term2 = 1.0f / term2;
+    float y = term1 * inv_term2;
+    float z = y + 1.0f;
+    float numerator = __fma(-4.0f, z, abs_x);
+    float tmp = __fma(-y, abs_x, numerator);
+    float w = __fma(inv_term2, tmp, y);
+
+    // 9th-degree minimax polynomial in w, evaluated with a single fma chain.
+    float poly = __fma(0.00089121708879247307777f, w, 0.0070457882247865200043f);
+    poly = __fma(poly, w, -0.015866896137595176697f);
+    poly = __fma(poly, w, 0.036429625004529953003f);
+    poly = __fma(poly, w, -0.066643431782722473145f);
+    poly = __fma(poly, w, 0.093814529478549957275f);
+    poly = __fma(poly, w, -0.10099056363105773926f);
+    poly = __fma(poly, w, 0.06809400022029876709f);
+    poly = __fma(poly, w, 0.015377387404441833496f);
+    poly = __fma(poly, w, -0.1396210789680480957f);
+    poly = __fma(poly, w, 1.232995152473449707f);
+
+    // Continued-fraction style assembly of the rational approximant v = poly / (2*|x| + 1).
+    // Splitting the division into q = poly/(2*|x|+1), t = poly - 2*|x|*q, u = t - q, v = u/(2*|x|+1) + q
+    // keeps two terms of similar magnitude from canceling outright when |x| is near 10.
+    float tmp2 = __fma(2.0f, abs_x, 1.0f);
+    float inv_tmp2 = 1.0f / tmp2;
+    float q = poly * inv_tmp2;
+    float t = __fma(abs_x, q * (-2.0f), poly);
+    float u = t - q;
+    float v = __fma(u, inv_tmp2, q);
+
+    // Gaussian kernel exp(-x^2). Factor -x^2 * log2(e) and split into an integer part (for the 2^k
+    // scaling) and a small remainder. ln2 is split into high/low parts so the remainder is double-precision.
+    float x_squared = abs_x * abs_x;
+    float neg_x2 = -x_squared;
+    float scaled = neg_x2 * 1.4426950216293334961f;
+    float int_part = truncf(scaled);
+    float abs_part = __fabsf(int_part);
+    // Preserve the sign of int_part when clamping: large |x| drives int_part toward -inf, but 2^(-126)
+    // is the smallest non-zero scale we can represent without flushing, so cap there.
+    uint32_t sign_bit = reinterpret_cast<uint32_t&>(int_part) & 0x80000000U;
+    uint32_t clamped_bits = sign_bit | 0x42FC0000U;
+    float clamped = reinterpret_cast<float&>(clamped_bits);
+    float safe_int = (abs_part > 126.0f) ? clamped : int_part;
+
+    // remainder = -x^2 - safe_int * ln2, split into two fma steps so the ln2 high/low parts don't share
+    // rounding. exponent_arg is the same remainder expressed in base-2 form (multiplied by log2(e)).
+    float remainder = __fma(safe_int, -0.69314718246459960938f, neg_x2);
+    remainder = __fma(safe_int, 1.9046542121259335545e-09f, remainder);
+    float exponent_arg = remainder * 1.4426950216293334961f;
+    // exponent_scale = 2^safe_int constructed exactly from the bit pattern of (safe_int + 12583039.0f).
+    float exponent_base = safe_int + 12583039.0f;
+    uint32_t exponent_bits = reinterpret_cast<uint32_t&>(exponent_base) << 23;
+    float exponent_scale = reinterpret_cast<float&>(exponent_bits);
+    float exp_val = __powf(2.0f, exponent_arg) * exponent_scale;
+
+    // term3 is theoretically 0 (= -|x|^2 + x_squared). Computing it with fma recovers the residual
+    // round-off of x_squared, which is then folded back into exp_val to nudge the last bit.
+    float term3 = __fma(-abs_x, abs_x, x_squared);
+    float term4 = __fma(exp_val, term3, exp_val);
+    float result = v * term4;
+
+    // For |x| > 10.055, erfc(|x|) underflows below the smallest normal in float32; return 0 exactly.
+    if (abs_x > 10.05500030517578125f) {
+        result = 0.0f;
+    }
+
+    // erfc(-x) = 2 - erfc(x); mirror for negative inputs.
+    return (x < 0.0f) ? (2.0f - result) : result;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x)
+{
+    // 10^x = 2^(x * log2(10)). Split x*log2(10) into an integer k and a small remainder r, then compute
+    // 2^k * 2^r with 2^k constructed exactly from the bit pattern.
+    if (__isnan(x)) {
+        return x;
+    }
+    if (__isinf(x)) {
+        return x > 0.0f ? x : 0.0f;
+    }
+
+    // t = x * (log2(10) / 252) + 0.5, a scaled-and-biased form of x * log2(10) used for floor reduction.
+    // log2(10) / 252 is precomputed so that floor(t * 252) directly yields the integer index k in the
+    // range [0, 252] (covering the full float32 overflow/underflow domain of 10^x).
+    float t = __fma(x, 0.0131822545081377029418945f, 0.5f);
+    if (t < 0.0f) {
+        t = 0.0f;
+    } else if (t > 1.0f) {
+        t = 1.0f;
+    }
+
+    // biased = floor(t*252) + 12582913. The constant 12582913 encodes 2^0 in its exponent field, so
+    // (biased << 23) reconstructs 2^k as an exact float. k = biased - 12583039 recovers the true integer
+    // exponent (12583039 = 12582913 + 126; the +126 bias centers the representable range).
+    float biased = __floorf(t * 252.0f) + 12582913.0f;
+    float k = biased - 12583039.0f;
+    uint32_t scale_bits = reinterpret_cast<uint32_t&>(biased) << 23;
+    float scale = reinterpret_cast<float&>(scale_bits);
+
+    // r = x * log2(10) - k, computed with log2(10) split into high and low parts so the constant error
+    // drops from ~1e-8 to ~1e-15. r is confined to [-0.5, 0.5], where __powf(2, r) is most accurate.
+    float r = __fma(x, 3.3219280242919921875f, -k);
+    r = __fma(x, 7.0595369550119357882e-08f, r);
+    return scale * __powf(2.0f, r);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x)
+{
+    // expm1f(x) = e^x - 1, computed accurately for small |x| where e^x-1 would otherwise lose
+    // precision to catastrophic cancellation. The approach follows the same range-reduction +
+    // 2^k * 2^r decomposition as expf: split x * log2(e) into integer k and remainder r, build
+    // 2^k exactly from its bit pattern, then reconstruct (2^k * 2^r) - 1 in a cancellation-safe form.
+    if (x == 0.0f) {
+        return x;
+    }
+    if (__isnan(x)) {
+        return x;
+    }
+    if (__isinf(x)) {
+        return x > 0.0f ? x : -1.0f;
+    }
+
+    // Clamp |x| to the float32 overflow threshold (log2(e) * 128 ~= 88.72) so the reduction below
+    // stays within the representable range; the clamped value still selects the correct overflow path.
+    float ax = __fabsf(x);
+    float z = x;
+    if (ax > 88.72283935546875f /* 0x42b17218 */) {
+        z = x > 0.0f ? 88.72283935546875f : -88.72283935546875f;
+    }
+
+    // biased = round(z * log2(e)) + 12583039. The constant 12583039 encodes 2^0 in its exponent
+    // field, so (biased << 23) reconstructs 2^k exactly. k = biased - 12583039 recovers the true
+    // integer exponent (12583039 = 12582913 + 126; the +126 bias centers the representable range).
+    float biased = __fma(z, 1.44269502162933349609375f /* 0x3fb8aa3b */, 12583039.0f);
+    float k = biased - 12583039.0f;
+
+    // r = z - k * ln(2), computed with ln(2) split into high and low parts so the constant error
+    // drops from ~1e-8 to ~1e-15. r is confined to [-0.5, 0.5], where the polynomial for 2^r - 1
+    // below is most accurate.
+    float r = __fma(-k, 0.69314712285995483398f /* 0x3f317217 */, z);
+    r = __fma(-k, 5.7699988786907852045e-08f /* 0x3377d1cf */, r);
+
+    // p = r * P(r), where P is the degree-4 minimax polynomial approximating (2^r - 1)/r - 1.
+    // em1_r = r * (1 + P(r)) = 2^r - 1, accurate to full precision near r = 0.
+    float p = __fma(r, 0.00138624827377498149871826f /* 0x3ab5b2c6 */, 0.0083664264529943466187f /* 0x3c091356 */);
+    p = __fma(r, p, 0.041665729135274887085f /* 0x3d2aa9af */);
+    p = __fma(r, p, 0.16666544973850250244f /* 0x3e2aaa59 */);
+    p = __fma(r, p, 0.50000017881393432617f /* 0x3f000003 */);
+    p = r * p;
+    float em1_r = __fma(r, p, r);
+
+    // scale = 2^k built from the bit pattern. For |k| >= 25 the exact product scale * em1_r would
+    // overflow/underflow, so factor out one power of two (subtract 1 from the exponent), apply it
+    // after the multiply by doubling y. k == -128 means the result has underflowed to 0.
+    uint32_t scale_bits = reinterpret_cast<uint32_t&>(biased) << 23;
+    bool large_k = k >= 25.0f;
+    if (large_k) {
+        scale_bits -= 0x00800000U;
+    }
+    float scale = (k != -128.0f) ? reinterpret_cast<float&>(scale_bits) : 0.0f;
+
+    // y = scale * em1_r - (1 - scale) = scale * (1 + em1_r) - 1 = 2^k * 2^r - 1 = e^x - 1.
+    // Forming (1 - scale) and fusing the subtraction into one fma avoids the catastrophic
+    // cancellation that a naive (scale * em1_r) + (scale - 1) would suffer when scale ~= 1.
+    float one_minus_scale = 1.0f - scale;
+    float y = __fma(scale, em1_r, -one_minus_scale);
+    if (large_k) {
+        y = y + y;
+    }
+    return y;
+}
+
+// Extract the unbiased base-2 exponent of |x| for a non-zero, finite x. Uses the float32 bit layout
+// directly: the exponent lives in bits [30:23] with a 127 bias (min normal is 2^-126 = 1.175e-38).
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t __internal_ilogbf_finite_abs(float ax)
+{
+    if (ax >= 1.17549435082228750797e-38f) {
+        // Normal or larger: exponent = (biased exponent field) - 127.
+        uint32_t bits = reinterpret_cast<uint32_t&>(ax);
+        return static_cast<int32_t>((bits >> 23) & 0xFFU) - 127;
+    }
+
+    // Subnormal: ax has no implicit leading 1, so its true exponent is below -126. Scale by 2^23
+    // (8388608) to renormalize into the normal range, then subtract the 23 extra bits we added.
+    float scaled = ax * 8388608.0f;
+    uint32_t bits = reinterpret_cast<uint32_t&>(scaled);
+    return static_cast<int32_t>((bits >> 23) & 0xFFU) - 127 - 23;
+}
+
+// logbf(x) = (float) floor(log2(|x|)) = the unbiased exponent of |x| as a float.
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float logbf(float x)
+{
+    if (__isnan(x)) {
+        return x; // NaN propagates.
+    }
+
+    float ax = __fabsf(x);
+    if (ax == 0.0f) {
+        return -ASCRT_INF_F; // logb(0) = -inf, matching the C standard.
+    }
+    if (ax == ASCRT_INF_F) {
+        return ASCRT_INF_F; // logb(inf) = +inf.
+    }
+
+    return static_cast<float>(__internal_ilogbf_finite_abs(ax));
+}
+
+// ilogbf(x): integer variant of logbf. Returns the unbiased exponent as int32_t, with the IEEE-754
+// special-value encoding: NaN or 0 -> INT_MIN (0x80000000), +inf / -inf -> INT_MAX (0x7FFFFFFF).
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
+{
+    if (__isnan(x) || x == 0.0f) {
+        return static_cast<int32_t>(0x80000000U); // INT_MIN: NaN and 0 map to this sentinel.
+    }
+
+    float ax = __fabsf(x);
+    if (ax == ASCRT_INF_F) {
+        return static_cast<int32_t>(0x7FFFFFFFU); // INT_MAX: infinity maps to this sentinel.
+    }
+
+    return __internal_ilogbf_finite_abs(ax);
 }
 
 #endif // ASCENDC_USE_LEGACY_PRECISION
