@@ -1,4 +1,4 @@
-# asc_int4x22half (废弃)
+# asc_int4x22half（废弃）
 
 ## 产品支持情况
 
@@ -28,6 +28,8 @@
 
 头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
 
+**该接口已废弃，后续版本将不再支持。**
+
 将int4x2类型数据转换为half类型。
 
 ## 函数原型
@@ -53,7 +55,7 @@ __simd_callee__ inline void asc_int4x22half_v4(vector_half& dst, vector_int4x2_t
 | src   | 输入 | 源操作数（矢量数据寄存器）。                                                            |
 | mask  | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -69,7 +71,7 @@ PIPE_V
 
 ## 调用示例
 
- ```cpp
+```cpp
 vector_half dst;
 vector_int4x2_t src;
 vector_bool mask = asc_create_mask_b8(PAT_ALL);

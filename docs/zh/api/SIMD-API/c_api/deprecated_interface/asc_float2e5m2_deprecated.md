@@ -1,4 +1,4 @@
-# asc_float2e5m2 (废弃)
+# asc_float2e5m2（废弃）
 
 ## 产品支持情况
 
@@ -28,9 +28,11 @@
 
 头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
 
+**该接口的无显式位置参数原型已废弃，请使用[asc_float2e5m2](../reg_compute/reg_convert/asc_float2e5m2.md)的显式位置参数重载替代。**
+
 将float类型数据转换为fp8_e5m2类型，支持RINT舍入模式，饱和/非饱和模式。
 
-关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](rounding_mode.md)。
+关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式](../reg_compute/reg_convert/rounding_mode.md)。
 
 ## 函数原型
 
@@ -63,7 +65,7 @@ __simd_callee__ inline void asc_float2e5m2_rn_sat_v4(vector_fp8_e5m2_t& dst, vec
 | src   | 输入 | 源操作数（矢量数据寄存器）。                                                            |
 | mask  | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
@@ -75,7 +77,7 @@ PIPE_V
 
 ## 约束说明
 
-- 开启饱和模式和非饱和模式时，需配置ctrl寄存器，ctrl寄存器的详细说明请参见[asc_set_ctrl.md](../../spr/asc_set_ctrl.md)。
+- 开启饱和模式和非饱和模式时，需配置ctrl寄存器，ctrl寄存器的详细说明请参见[asc_set_ctrl.md](../spr/asc_set_ctrl.md)。
 
 ## 调用示例
 

@@ -43,6 +43,7 @@ def asc_int322int64(dst, src, mask, src_pos):
 ## 函数原型
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_int322int64(vector_int64_t& dst,
                                             vector_int32_t src,
                                             vector_bool mask,
@@ -50,6 +51,15 @@ __simd_callee__ inline void asc_int322int64(vector_int64_t& dst,
 
 __simd_callee__ inline void asc_int322int64(vector_int64_t& dst,
                                             vector_int32_t src,
+                                            vector_bool mask,
+                                            std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int64_t asc_int322int64(vector_int32_t src,
+                                            vector_bool mask,
+                                            std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
+
+__simd_callee__ inline vector_int64_t asc_int322int64(vector_int32_t src,
                                             vector_bool mask,
                                             std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 ```
@@ -69,10 +79,13 @@ __simd_callee__ inline void asc_int322int64(vector_int64_t& dst,
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 
+- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
+- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 

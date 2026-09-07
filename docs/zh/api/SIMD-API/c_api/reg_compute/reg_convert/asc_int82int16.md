@@ -48,6 +48,7 @@ def asc_int82int16(dst, src, mask, src_pos):
 ## 函数原型
 
 ```c
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_int82int16(vector_int16_t& dst,
                                              vector_int8_t src,
                                              vector_bool mask,
@@ -55,6 +56,15 @@ __simd_callee__ inline void asc_int82int16(vector_int16_t& dst,
 
 __simd_callee__ inline void asc_int82int16(vector_int16_t& dst,
                                              vector_int8_t src,
+                                             vector_bool mask,
+                                             std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int16_t asc_int82int16(vector_int8_t src,
+                                             vector_bool mask,
+                                             std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
+
+__simd_callee__ inline vector_int16_t asc_int82int16(vector_int8_t src,
                                              vector_bool mask,
                                              std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 ```
@@ -68,17 +78,21 @@ __simd_callee__ inline void asc_int82int16(vector_int16_t& dst,
 | dst | 输出 | 目的操作数（矢量数据寄存器）。|
 | src | 输入 | 源操作数（矢量数据寄存器）。|
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
-| src_pos | 输入 | 位置选择标签（编译器标签类型），取值如下：<br>&bull; `ASC_POSITION_EVEN`：选择读取源操作数索引为偶数的位置<br>&bull; `ASC_POSITION_ODD`：选择读取源操作数索引为奇数的位置。 |
+| src_pos | 输入 | 位置选择标签（编译期标签分发，通过编译期重载选择对应实现），取值如下：<br>&bull; `ASC_POSITION_EVEN`：选择读取源操作数索引为偶数的位置<br>&bull; `ASC_POSITION_ODD`：选择读取源操作数索引为奇数的位置。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 
-- 本接口非AIV调用直接返回。
+- 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
+
+- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
+- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - 选择读取`src`的奇数索引位置时，偶数索引位置的元素不参与计算；选择读取偶数索引位置时，奇数索引位置的元素不参与计算。

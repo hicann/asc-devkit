@@ -65,7 +65,7 @@ __simd_callee__ inline void asc_int82int16_v2(vector_int16_t& dst, vector_int8_t
 
 ## 调用示例
 
- ```cpp
+```cpp
 vector_int16_t dst;
 vector_int8_t src;
 vector_bool mask = asc_create_mask_b8(PAT_ALL);

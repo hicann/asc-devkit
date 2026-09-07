@@ -80,7 +80,7 @@ __simd_callee__ inline vector_int32_t asc_half2int32_rd(vector_half src,
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 掩码寄存器，用于控制各元素是否参与计算。`mask`中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
-| src_pos | 输入 | 位置选择标签（编译器标签类型），类型为std::integral_constant<asc_position_mode, asc_position_mode::EVEN>或std::integral_constant<asc_position_mode, asc_position_mode::ODD>。取`ASC_POSITION_EVEN`时选择读取源数据索引为偶数的位置；取`ASC_POSITION_ODD`时选择读取源数据索引为奇数的位置。 |
+| src_pos | 输入 | 位置选择标签（编译期标签分发，通过编译期重载选择对应实现），类型为std::integral_constant<asc_position_mode, asc_position_mode::EVEN>或std::integral_constant<asc_position_mode, asc_position_mode::ODD>。取`ASC_POSITION_EVEN`时选择读取源数据索引为偶数的位置；取`ASC_POSITION_ODD`时选择读取源数据索引为奇数的位置。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -90,6 +90,8 @@ __simd_callee__ inline vector_int32_t asc_half2int32_rd(vector_half src,
 - 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
+
+- 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
 
 - 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
 - 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
