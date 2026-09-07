@@ -1055,6 +1055,8 @@
                 -   [asc_storealign_pack_quarter](SIMD-API/c_api/reg_compute/store/asc_storealign_pack_quarter.md)
                 -   [asc_storealign_pack_quarter_postupdate](SIMD-API/c_api/reg_compute/store/asc_storealign_pack_quarter_postupdate.md)
                 -   [asc_storealign_postupdate](SIMD-API/c_api/reg_compute/store/asc_storealign_postupdate.md)
+                -   [asc_storealign_squeeze_status](SIMD-API/c_api/reg_compute/store/asc_storealign_squeeze_status.md)
+                -   [asc_storealign_squeeze_status_postupdate](SIMD-API/c_api/reg_compute/store/asc_storealign_squeeze_status_postupdate.md)
                 -   [asc_store](SIMD-API/c_api/reg_compute/store/asc_store.md)
                 -   [asc_storeunalign](SIMD-API/c_api/reg_compute/store/asc_storeunalign.md)
                 -   [asc_storeunalign_post](SIMD-API/c_api/reg_compute/store/asc_storeunalign_post.md)

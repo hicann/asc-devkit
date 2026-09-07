@@ -89,6 +89,10 @@ mock_copy_matrix_cc_to_gm(int8_t, int32_t);
 #define __biasbuf__
 #endif
 
+inline void sprsts(Literal, __ubuf__ uint32_t*, int32_t) {}
+
+inline void sprsts(Literal, __ubuf__ uint32_t*&, int32_t, Literal) {}
+
 void vsts(
     vector_f8e4m3 data, __ubuf__ fp8_e4m3fn_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode);
 void vsts(vector_f8e5m2 data, __ubuf__ fp8_e5m2_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode);

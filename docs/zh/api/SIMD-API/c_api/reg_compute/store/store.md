@@ -11,6 +11,8 @@
 - **[asc_storealign_pack_quarter](asc_storealign_pack_quarter.md)**
 - **[asc_storealign_pack_quarter_postupdate](asc_storealign_pack_quarter_postupdate.md)**
 - **[asc_storealign_postupdate](asc_storealign_postupdate.md)**
+- **[asc_storealign_squeeze_status](asc_storealign_squeeze_status.md)**
+- **[asc_storealign_squeeze_status_postupdate](asc_storealign_squeeze_status_postupdate.md)**
 
 ## Reg非对齐搬出
 

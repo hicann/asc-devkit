@@ -373,6 +373,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_storealign_pack_quarter](reg_compute/store/asc_storealign_pack_quarter.md)|reg计算数据搬运接口，根据mask将src中有效元素的低8bits数据连续存储于dst中。|`c_api/reg_compute/store/storealign.h`|
 |[asc_storealign_pack_quarter_postupdate](reg_compute/store/asc_storealign_pack_quarter_postupdate.md)|reg计算数据搬运接口，根据mask将src中有效元素的低8bits数据连续存储于dst中，启用Post Update。|`c_api/reg_compute/store/storealign.h`|
 |[asc_storealign_postupdate](reg_compute/store/asc_storealign_postupdate.md)|reg计算数据搬运接口，从矢量数据寄存器连续对齐搬出到UB，NORM搬出模式，启用Post Update。|`c_api/reg_compute/store/storealign.h`|
+|[asc_storealign_squeeze_status](reg_compute/store/asc_storealign_squeeze_status.md)|将squeeze操作后保存在AR特殊寄存器中的有效数据长度写入UB。|`c_api/reg_compute/store/storealign.h`|
+|[asc_storealign_squeeze_status_postupdate](reg_compute/store/asc_storealign_squeeze_status_postupdate.md)|将squeeze操作后保存在AR特殊寄存器中的有效数据长度写入UB，并自动更新目的地址。|`c_api/reg_compute/store/storealign.h`|
 |[asc_store](reg_compute/store/asc_store.md)|reg计算数据搬运接口，适用于从矢量数据寄存器搬出到UB的场景，不区分是否对齐，在追求极致性能时，应尽量避免使用该接口。|`c_api/composite/storeunalign_composite.h`|
 |[asc_storeunalign](reg_compute/store/asc_storeunalign.md)|reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址连续搬出到UB的场景。|`c_api/reg_compute/store/storeunalign.h`|
 |[asc_storeunalign_post](reg_compute/store/asc_storeunalign_post.md)|reg计算数据搬运接口，适用于从矢量数据寄存器连续非32B对齐的起始地址搬出到UB的尾块场景。|`c_api/reg_compute/store/storeunalign.h`|

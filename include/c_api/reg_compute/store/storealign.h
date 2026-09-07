@@ -721,6 +721,12 @@ __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(
 __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(
     __ubuf__ float*& dst, vector_float src, int32_t offset, vector_bool mask);
 
+__simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst);
+
+__simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst, int32_t offset);
+
+__simd_callee__ inline void asc_storealign_squeeze_status_postupdate(__ubuf__ uint32_t*& dst, int32_t offset);
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_COMPUTE_STORE_STOREALIGN_H)

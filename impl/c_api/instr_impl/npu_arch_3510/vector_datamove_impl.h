@@ -24,6 +24,7 @@
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_load/asc_loadalign_postupdate_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_load/asc_loadunalign_pre_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_store/asc_storealign_impl.h"
+#include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_store/asc_storealign_squeeze_status_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_store/asc_storeunalign_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_store/asc_storeunalign_postupdate_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_store/asc_squeeze_and_storeunalign_impl.h"
@@ -10528,6 +10529,21 @@ __simd_callee__ inline void asc_storealign_pack_quarter_postupdate(
 asc_set_gm2ub_pad(uint32_t pad_val)
 {
     asc_set_gm2ub_pad_impl(pad_val);
+}
+
+__simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst)
+{
+    asc_storealign_squeeze_status_impl(dst);
+}
+
+__simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst, int32_t offset)
+{
+    asc_storealign_squeeze_status_impl(dst, offset);
+}
+
+__simd_callee__ inline void asc_storealign_squeeze_status_postupdate(__ubuf__ uint32_t*& dst, int32_t offset)
+{
+    asc_storealign_squeeze_status_postupdate_impl(dst, offset);
 }
 
 #endif
