@@ -10,15 +10,15 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_VECTOR_COPY_OP_H
 #endif
 
 /*!
- * \file copy_op.h
+ * \file vector_copy_op.h
  * \brief
  */
-#ifndef INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
-#define INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
+#ifndef INCLUDE_TENSOR_API_ARCH_VECTOR_VECTOR_COPY_OP_H
+#define INCLUDE_TENSOR_API_ARCH_VECTOR_VECTOR_COPY_OP_H
 
 #include "tensor_api/arch/vector/copy_trait.h"
 
@@ -96,14 +96,14 @@ private:
 } // namespace te
 } // namespace asc
 
-#include "impl/tensor_api/arch/vector/gm_to_ub/copy.h"
-#include "impl/tensor_api/arch/vector/ub_to_l1/copy.h"
-#include "impl/tensor_api/arch/vector/ub_to_gm/copy.h"
-#include "impl/tensor_api/arch/vector/ub_to_ub/copy.h"
+#include "impl/tensor_api/arch/vector/gm_to_ub/gm_to_ub_copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_l1/ub_to_l1_copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_gm/ub_to_gm_copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_ub/ub_to_ub_copy.h"
 
-#endif // INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
+#endif // INCLUDE_TENSOR_API_ARCH_VECTOR_VECTOR_COPY_OP_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_VECTOR_COPY_OP_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_OP_H
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_INCLUDE_TENSOR_API_ARCH_VECTOR_VECTOR_COPY_OP_H
 #endif

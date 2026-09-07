@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_NPU_ARCH_2201_ASC_TYPE_CONVERSION_UTILS_H
 #define IMPL_UTILS_DEBUG_NPU_ARCH_2201_ASC_TYPE_CONVERSION_UTILS_H
 
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 namespace __asc_aicore {
 
 __aicore__ inline float cast_type(const bfloat16_t& bVal)

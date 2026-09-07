@@ -16,7 +16,7 @@
 #define IMPL_UTILS_DEBUG_ASC_AICORE_DUMP_IMPL_H
 
 #ifndef ASCENDC_CPU_DEBUG
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 #include "impl/utils/common_types.h"
 #include "impl/utils/debug/asc_debug_types.h"
 #include "impl/utils/debug/asc_debug_utils.h"

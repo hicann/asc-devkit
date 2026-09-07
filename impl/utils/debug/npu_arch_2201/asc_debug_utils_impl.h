@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_NPU_ARCH_2201_ASC_DEBUG_UTILS_H
 #define IMPL_UTILS_DEBUG_NPU_ARCH_2201_ASC_DEBUG_UTILS_H
 
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 #include "impl/utils/debug/asc_debug_utils.h"
 
 namespace __asc_aicore {

@@ -21,7 +21,7 @@
 #endif
 
 #include "impl/utils/debug/asc_simd_debug_enable.h"
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 
 #if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510)
 #include "impl/utils/debug/asc_aicore_dump_impl.h"

@@ -35,6 +35,6 @@ file(
     ${ASCENDC_INSTALL_BASE_PATH}/asc/impl/basic_api/utils/sys_constants.h
     SYMBOLIC)
 file(
-    CREATE_LINK ../../utils/sys_macros.h
-    ${ASCENDC_INSTALL_BASE_PATH}/asc/impl/basic_api/utils/sys_macros.h
+    CREATE_LINK ../../utils/sys_macros_impl.h
+    ${ASCENDC_INSTALL_BASE_PATH}/asc/impl/basic_api/utils/sys_macros_impl.h
     SYMBOLIC)

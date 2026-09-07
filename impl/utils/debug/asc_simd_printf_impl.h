@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_ASC_SIMD_PRINTF_IMPL_H
 #define IMPL_UTILS_DEBUG_ASC_SIMD_PRINTF_IMPL_H
 
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 
 #ifndef ASCENDC_CPU_DEBUG
 #include "impl/utils/debug/asc_debug_utils.h"
