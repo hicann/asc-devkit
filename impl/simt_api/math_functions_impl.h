@@ -1170,60 +1170,71 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm4df(float a, float b, float c, 
     return 1.0f / norm4df(a, b, c, d);
 }
 
-#define __INTERNAL_NORMF(n, a)                                          \
-    do {                                                                \
-        if ((n) <= 0) {                                                 \
-            return fabsf((a)[0]);                                       \
-        }                                                               \
-        float m = 0;                                                    \
-        int remainder = (n) & 3;                                        \
-        int end = (n) - remainder;                                      \
-        if ((n) > 3) {                                                  \
-            for (int i = 0; i < end; i += 4) {                          \
-                float a0 = (a)[i];                                      \
-                float a1 = (a)[i + 1];                                  \
-                float a2 = (a)[i + 2];                                  \
-                float a3 = (a)[i + 3];                                  \
-                if (isinf(a0) || isinf(a1) || isinf(a2) || isinf(a3)) { \
-                    return ASCRT_INF_F;                                 \
-                }                                                       \
-                m = __fmaxf(m, fabsf(a0));                              \
-                m = __fmaxf(m, fabsf(a1));                              \
-                m = __fmaxf(m, fabsf(a2));                              \
-                m = __fmaxf(m, fabsf(a3));                              \
-            }                                                           \
-        }                                                               \
-        if (remainder != 0) {                                           \
-            for (int i = end; i < n; i++) {                             \
-                if (isinf((a)[i])) {                                    \
-                    return ASCRT_INF_F;                                 \
-                }                                                       \
-                m = __fmaxf(m, fabsf((a)[i]));                          \
-            }                                                           \
-        }                                                               \
-        if (m == 0.0f || isnan(m)) {                                    \
-            return m;                                                   \
-        }                                                               \
-        float sum = 0.0f;                                               \
-        if ((n) > 3) {                                                  \
-            for (int i = 0; i < end; i += 4) {                          \
-                float n0 = (a)[i] / m;                                  \
-                float n1 = (a)[i + 1] / m;                              \
-                float n2 = (a)[i + 2] / m;                              \
-                float n3 = (a)[i + 3] / m;                              \
-                sum = fmaf(n0, n0, sum);                                \
-                sum = fmaf(n1, n1, sum);                                \
-                sum = fmaf(n2, n2, sum);                                \
-                sum = fmaf(n3, n3, sum);                                \
-            }                                                           \
-        }                                                               \
-        if (remainder != 0) {                                           \
-            for (int i = end; i < n; i++) {                             \
-                float ni = (a)[i] / m;                                  \
-                sum = fmaf(ni, ni, sum);                                \
-            }                                                           \
-        }                                                               \
-        return m * sqrtf(sum);                                          \
+#define __INTERNAL_NORMF(n, a)                                                          \
+    do {                                                                                \
+        if ((n) <= 0) {                                                                 \
+            return fabsf((a)[0]);                                                       \
+        }                                                                               \
+        float m = 0;                                                                    \
+        int remainder = (n) & 3;                                                        \
+        int end = (n) - remainder;                                                      \
+        bool has_nan = false;                                                           \
+        if ((n) > 3) {                                                                  \
+            for (int i = 0; i < end; i += 4) {                                          \
+                float a0 = (a)[i];                                                      \
+                float a1 = (a)[i + 1];                                                  \
+                float a2 = (a)[i + 2];                                                  \
+                float a3 = (a)[i + 3];                                                  \
+                if (!isfinite(a0) || !isfinite(a1) || !isfinite(a2) || !isfinite(a3)) { \
+                    if (isinf(a0) || isinf(a1) || isinf(a2) || isinf(a3)) {             \
+                        return ASCRT_INF_F;                                             \
+                    }                                                                   \
+                    has_nan = true;                                                     \
+                }                                                                       \
+                m = __fmaxf(m, fabsf(a0));                                              \
+                m = __fmaxf(m, fabsf(a1));                                              \
+                m = __fmaxf(m, fabsf(a2));                                              \
+                m = __fmaxf(m, fabsf(a3));                                              \
+            }                                                                           \
+        }                                                                               \
+        if (remainder != 0) {                                                           \
+            for (int i = end; i < n; i++) {                                             \
+                float ai = (a)[i];                                                      \
+                if (!isfinite(ai)) {                                                    \
+                    if (isinf(ai)) {                                                    \
+                        return ASCRT_INF_F;                                             \
+                    }                                                                   \
+                    has_nan = true;                                                     \
+                }                                                                       \
+                m = __fmaxf(m, fabsf(ai));                                              \
+            }                                                                           \
+        }                                                                               \
+        if (has_nan) {                                                                  \
+            return ASCRT_NAN_F;                                                         \
+        }                                                                               \
+        if (m == 0.0f) {                                                                \
+            return m;                                                                   \
+        }                                                                               \
+        float sum = 0.0f;                                                               \
+        if ((n) > 3) {                                                                  \
+            for (int i = 0; i < end; i += 4) {                                          \
+                float n0 = (a)[i] / m;                                                  \
+                float n1 = (a)[i + 1] / m;                                              \
+                float n2 = (a)[i + 2] / m;                                              \
+                float n3 = (a)[i + 3] / m;                                              \
+                sum = fmaf(n0, n0, sum);                                                \
+                sum = fmaf(n1, n1, sum);                                                \
+                sum = fmaf(n2, n2, sum);                                                \
+                sum = fmaf(n3, n3, sum);                                                \
+            }                                                                           \
+        }                                                                               \
+        if (remainder != 0) {                                                           \
+            for (int i = end; i < n; i++) {                                             \
+                float ni = (a)[i] / m;                                                  \
+                sum = fmaf(ni, ni, sum);                                                \
+            }                                                                           \
+        }                                                                               \
+        return m * sqrtf(sum);                                                          \
     } while (0)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, float* a) { __INTERNAL_NORMF(n, a); }
