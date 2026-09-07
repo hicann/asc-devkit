@@ -630,7 +630,7 @@ __aicore__ inline void Process()
         每次循环移动一个分形，搬运m\*16个数。DataCopy参数说明如下：
 
         -   blockCount设置为m，共搬运m次。
-        -   blockLen设置为2，DataCopy指令一次搬运2个block，每个block16个数。
+        -   blockLen设置为2，DataCopy指令一次搬运2个32字节的数据块，共16个数。
         -   srcStride设置为0，每两次搬运间没有间隙。
         -   dstStride设置为\(nBlocks - 1\) \* 2，每两次搬运间隔2个block。
         -   每次循环迭代，目的矩阵偏移16，源矩阵偏移m\*16。
