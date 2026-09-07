@@ -870,8 +870,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanf(float x)
     return z;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x) { return 1.0f - (2.0f / (expf(2.0f * x) + 1.0f)); }
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x) { return tanf(x * ASCRT_PI_F); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_taylor_expand(
@@ -919,51 +917,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_sign(float& dst, float& sr
     dst = dst / denominator;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanf(float x)
-{
-    if (isnan(x)) {
-        return x;
-    }
-    float clip = fminf(x, 10000.0f); // 10000 : MAX_INPUT_VALUE
-    clip = fmaxf(clip, -10000.0f);   // -10000 : MIN_INPUT_VALUE
-    float abs_v = fabsf(clip);
-
-    float dst = 0;
-    float square_v = 0;
-    float tmp = 0;
-    float tmp2 = 0;
-
-    __internal_taylor_expand(dst, abs_v, square_v, 4);            // 4 : Taylor expansion count
-    __internal_atan_expand(tmp, abs_v, tmp2, 0.4142135623730950); // 0.4142135623730950 : TAN_PI_OF_8
-    __internal_taylor_expand(tmp2, tmp, square_v, 4);             // 4 : Taylor expansion count
-
-    tmp2 = tmp2 + ASCRT_PIO8_F;
-    dst = fminf(dst, tmp2);
-
-    tmp2 = abs_v + 1.0f;
-    tmp = abs_v - 1.0f;
-    tmp = tmp / tmp2;
-    tmp = fabsf(tmp);
-
-    __internal_taylor_expand(tmp2, tmp, square_v, 4); // 4 : Taylor expansion count
-    tmp2 = tmp2 + ASCRT_PIO4_F;
-    dst = fminf(dst, tmp2);
-
-    __internal_atan_expand(tmp2, tmp, square_v, 0.4142135623730950); // 0.4142135623730950 : TAN_PI_OF_8
-    __internal_taylor_expand(tmp, tmp2, square_v, 6);                // 6 : Taylor expansion count
-
-    tmp = tmp + ASCRT_PIO8_F;
-    tmp = tmp + ASCRT_PIO4_F;
-    dst = fminf(dst, tmp);
-
-    __internal_sign(tmp, clip, tmp2);
-
-    dst = dst * tmp;
-    return dst;
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x) { return logf((1.0f + x) / (1.0f - x)) / 2.0f; }
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cos_poly(float x)
 {
     x = x * x;
@@ -1009,40 +962,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cosf(float x)
     return c;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
-{
-    if (fabsf(x) > 1) {
-        return ASCRT_INF_F / ASCRT_INF_F;
-    }
-    float square_v = 0;
-    float dst = 0;
-    float src = x;
-    float factor[] = {
-        1.0,
-        0.16666666666666666666666666666667,
-        0.075,
-        0.04464285714285714285714285714286,
-        0.03038194444444444444444444444444,
-        0.02237215909090909090909090909091,
-        0.01735276442307692307692307692308,
-        0.01396484375,
-    };
-    if (fabsf(x) <= 0.7071067811865476f) {                       // 0.7071067811865476 : SCALAR_ACOS_MAX_LIMIT
-        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
-        return dst;
-    } else if (x < -0.7071067811865476f) { // -0.7071067811865476 : SCALAR_ACOS_MIN_LIMIT
-        src = sqrtf(1.0f - x * x);
-        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
-        return dst - ASCRT_PIO2_F;
-    } else {
-        src = sqrtf(1.0f - x * x);
-        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
-        return ASCRT_PIO2_F - dst;
-    }
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acosf(float x) { return ASCRT_PIO2_F - asinf(x); }
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinf(float x)
 {
     int quadrant;
@@ -1063,26 +982,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinf(float x)
     }
 
     return s;
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinhf(float x)
-{
-    if (fabsf(x) > 0.1f) {
-        return expf(x - ASCRT_SCALAR_LN2_F) - expf(x * (-1.0f) - ASCRT_SCALAR_LN2_F);
-    } else {
-        float square_v = 0;
-        float dst = 0;
-        float src = x;
-        float factor[] = {
-            1.0,
-            0.16666666666666666666666666666667,
-            0.00833333333333333333333333333333,
-            0.0001984126984126984,
-            2.7557319223985893e-06,
-            2.505210838544172e-08};
-        __internal_taylor_expand(dst, src, square_v, 5, factor); // 5: Taylor expansion count
-        return dst;
-    }
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x) { return sinf(x * ASCRT_PI_F); }
@@ -1424,8 +1323,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, __gm__ float* a) { ret
 #endif
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log10f(float x) { return logf(x) / logf(10.0f); }
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x) { return logf(1.0f + x); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rcbrtf(float x)
 {
@@ -3038,6 +2935,106 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int signbit(float x) { return signbitf(x);
 
 #if defined(ASCENDC_USE_LEGACY_PRECISION)
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x) { return 1.0f - (2.0f / (expf(2.0f * x) + 1.0f)); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanf(float x)
+{
+    if (isnan(x)) {
+        return x;
+    }
+    float clip = fminf(x, 10000.0f); // 10000 : MAX_INPUT_VALUE
+    clip = fmaxf(clip, -10000.0f);   // -10000 : MIN_INPUT_VALUE
+    float abs_v = fabsf(clip);
+
+    float dst = 0;
+    float square_v = 0;
+    float tmp = 0;
+    float tmp2 = 0;
+
+    __internal_taylor_expand(dst, abs_v, square_v, 4);            // 4 : Taylor expansion count
+    __internal_atan_expand(tmp, abs_v, tmp2, 0.4142135623730950); // 0.4142135623730950 : TAN_PI_OF_8
+    __internal_taylor_expand(tmp2, tmp, square_v, 4);             // 4 : Taylor expansion count
+
+    tmp2 = tmp2 + ASCRT_PIO8_F;
+    dst = fminf(dst, tmp2);
+
+    tmp2 = abs_v + 1.0f;
+    tmp = abs_v - 1.0f;
+    tmp = tmp / tmp2;
+    tmp = fabsf(tmp);
+
+    __internal_taylor_expand(tmp2, tmp, square_v, 4); // 4 : Taylor expansion count
+    tmp2 = tmp2 + ASCRT_PIO4_F;
+    dst = fminf(dst, tmp2);
+
+    __internal_atan_expand(tmp2, tmp, square_v, 0.4142135623730950); // 0.4142135623730950 : TAN_PI_OF_8
+    __internal_taylor_expand(tmp, tmp2, square_v, 6);                // 6 : Taylor expansion count
+
+    tmp = tmp + ASCRT_PIO8_F;
+    tmp = tmp + ASCRT_PIO4_F;
+    dst = fminf(dst, tmp);
+
+    __internal_sign(tmp, clip, tmp2);
+
+    dst = dst * tmp;
+    return dst;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x) { return logf((1.0f + x) / (1.0f - x)) / 2.0f; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
+{
+    if (fabsf(x) > 1) {
+        return ASCRT_INF_F / ASCRT_INF_F;
+    }
+    float square_v = 0;
+    float dst = 0;
+    float src = x;
+    float factor[] = {
+        1.0,
+        0.16666666666666666666666666666667,
+        0.075,
+        0.04464285714285714285714285714286,
+        0.03038194444444444444444444444444,
+        0.02237215909090909090909090909091,
+        0.01735276442307692307692307692308,
+        0.01396484375,
+    };
+    if (fabsf(x) <= 0.7071067811865476f) {                       // 0.7071067811865476 : SCALAR_ACOS_MAX_LIMIT
+        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
+        return dst;
+    } else if (x < -0.7071067811865476f) { // -0.7071067811865476 : SCALAR_ACOS_MIN_LIMIT
+        src = sqrtf(1.0f - x * x);
+        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
+        return dst - ASCRT_PIO2_F;
+    } else {
+        src = sqrtf(1.0f - x * x);
+        __internal_taylor_expand(dst, src, square_v, 7, factor); // 7 : Taylor expansion count
+        return ASCRT_PIO2_F - dst;
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acosf(float x) { return ASCRT_PIO2_F - asinf(x); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinhf(float x)
+{
+    if (fabsf(x) > 0.1f) {
+        return expf(x - ASCRT_SCALAR_LN2_F) - expf(x * (-1.0f) - ASCRT_SCALAR_LN2_F);
+    } else {
+        float square_v = 0;
+        float dst = 0;
+        float src = x;
+        float factor[] = {
+            1.0,
+            0.16666666666666666666666666666667,
+            0.00833333333333333333333333333333,
+            0.0001984126984126984,
+            2.7557319223985893e-06,
+            2.505210838544172e-08};
+        __internal_taylor_expand(dst, src, square_v, 5, factor); // 5: Taylor expansion count
+        return dst;
+    }
+}
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y) { return __powf(x, y); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x) { return powf(2.0f, x); }
@@ -3130,6 +3127,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
         return dst;
     }
 }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x) { return logf(1.0f + x); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float atan2f(float y, float x)
 {
@@ -3324,6 +3323,360 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
 }
 
 #else
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_asin_acos_reduced_arg(float abs_x)
+{
+    constexpr float threshold = 0.56000000238418579102f;
+
+    float reduced = 0.0f;
+    if (abs_x != 1.0f) {
+        const float half_one_minus_abs = fmaf(0.5f, -abs_x, 0.5f);
+        const float inv_sqrt = rsqrtf(half_one_minus_abs);
+        float sqrt_term = half_one_minus_abs * inv_sqrt;
+        const float correction = fmaf(-sqrt_term, inv_sqrt * 0.5f, 0.5f);
+        reduced = fmaf(sqrt_term, correction, sqrt_term);
+    }
+    return (abs_x > threshold) ? reduced : abs_x;
+}
+
+/**
+ * Computes tanh(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN propagates, and infinities saturate to signed one.
+ *
+ * For finite inputs, it uses a small-argument polynomial near zero and an
+ * exp2-based reconstruction for larger magnitudes:
+ *   tanh(x) = sign(x) * (1 - 2 / (exp(2|x|) + 1))
+ *
+ * The small-argument branch keeps the local odd polynomial around x = 0,
+ * while the large-argument branch saturates once the exponential tail is
+ * sufficiently close to one.
+ *
+ * @param x The input value.
+ * @return The computed tanhf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x)
+{
+    float ax = x < 0.0f ? -x : x;
+
+    // |x| < 0.6 branch: tanh(x) = x * (1 + z * p(z)) with z = x^2, p a 4-term minimax polynomial
+    // evaluated by Horner from the highest term down. The low-order coefficients approximate the
+    // -1/3 and 2/15 terms of the tanh Taylor series.
+    float z = x * x;
+    float p = __fma(0.015739683061838150024f, z, -0.052303962409496307373f);
+    p = __fma(p, z, 0.1331529766321182251f);
+    p = __fma(p, z, -0.33332768082618713379f);
+    float y_small = __fma(p * z, x, x);
+
+    // |x| >= 0.6 branch: tanh|x| = 1 - 2 / (e^(2|x|) + 1). Using |x| keeps the exponent from
+    // overflowing on the negative side.
+    float y_large = 1.0f - 2.0f / (__expf(2.0f * ax) + 1.0f);
+    // From |x| >= 9.010913848876953125 the result is exactly 1.0, so saturate before e^(2|x|) hits inf.
+    if (ax >= 9.010913848876953125f) {
+        y_large = 1.0f;
+    }
+
+    // 0.60000002384185791016 is the float nearest 0.6, the switch point between the two branches.
+    float yf = ax >= 0.60000002384185791016f ? y_large : y_small;
+    return copysignf(yf, x);
+    ;
+}
+
+/**
+ * Computes atan(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN propagates, and infinities map to signed pi/2.
+ *
+ * For finite inputs, it uses a reciprocal reduction for |x| > 1:
+ *   atan(x) = sign(x) * (pi/2 - atan(1/|x|))
+ *
+ * The reduced argument is then evaluated with an odd polynomial in x^2.
+ *
+ * @param x The input value.
+ * @return The computed atanf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanf(float x)
+{
+    // Use reciprocal reduction for large magnitudes.
+    const float abs_x = fabsf(x);
+    const bool use_reciprocal = abs_x > 1.0f;
+
+    float reduced = use_reciprocal ? (1.0f / abs_x) : abs_x;
+    const float reduced2 = reduced * reduced;
+
+    // Odd polynomial approximation in powers of x^2.
+    float poly = fmaf(reduced2, 0.00245002890005707741f, -0.014396979473531246185f);
+    poly = fmaf(reduced2, poly, 0.039849750697612762451f);
+    poly = fmaf(reduced2, poly, -0.072529748082160949707f);
+    poly = fmaf(reduced2, poly, 0.10518480092287063599f);
+    poly = fmaf(reduced2, poly, -0.14171802997589111328f);
+    poly = fmaf(reduced2, poly, 0.19988775253295898438f);
+    poly = fmaf(reduced2, poly, -0.33332940936088562012f);
+    poly *= reduced2;
+    float result = fmaf(reduced, poly, reduced);
+
+    // Recover the pi/2 complement for the reciprocal branch.
+    if (use_reciprocal) {
+        result = fmaf(0.93318945169448852539f, 1.6832555532455444336f, -result);
+    }
+
+    if (!(abs_x > ASCRT_INF_F)) {
+        result = __internal_with_sign_bit(result, x);
+    }
+
+    return result;
+}
+
+/**
+ * Computes asin(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN propagates, and |x| > 1 returns NaN.
+ *
+ * For finite inputs, it uses a reduced-argument polynomial for asin(|x|), and
+ * switches to a pi/2 correction near the endpoints:
+ *   asin(x) ~= reduced + polynomial(reduced)
+ *   asin(x) = pi/2 - 2 * reduced_path(x)  near |x| close to 1
+ *
+ * The sign of the original input is restored at the end.
+ *
+ * @param x The input value.
+ * @return The computed asinf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
+{
+    // Endpoint correction threshold and pi/2 split constants.
+    constexpr float threshold = 0.56000000238418579102f;
+    constexpr float half_pi_hi = 1.6832555532455444336f;
+    constexpr float half_pi_lo_scale = 0.93318945169448852539f;
+
+    // Reduce the argument into the polynomial training range.
+    const float abs_x = fabsf(x);
+    float reduced = __internal_asin_acos_reduced_arg(abs_x);
+    const float reduced2 = reduced * reduced;
+
+    // Odd polynomial approximation for asin(reduced).
+    float poly = fmaf(reduced2, 0.05025001987814903259f, 0.018773360177874565125f);
+    poly = fmaf(reduced2, poly, 0.046769052743911743164f);
+    poly = fmaf(reduced2, poly, 0.074823014438152313232f);
+    poly = fmaf(reduced2, poly, 0.16667181253433227539f);
+    poly *= reduced2;
+    float result = fmaf(reduced, poly, reduced);
+
+    // Near |x| = 1, switch to the complementary pi/2 correction.
+    if (abs_x > threshold) {
+        result = fmaf(half_pi_hi, half_pi_lo_scale, -2.0f * result);
+    }
+
+    if (!(result > ASCRT_INF_F)) {
+        result = __internal_with_sign_bit(result, x);
+    }
+
+    return result;
+}
+
+/**
+ * Computes acos(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN propagates, and |x| > 1 returns NaN.
+ *
+ * For finite inputs, it reuses the reduced asin-style core and then applies the
+ * complementary angle relation:
+ *   acos(x) = pi/2 - asin(x)
+ *
+ * The same endpoint threshold is used to switch between the direct reduced path
+ * and the pi/2 correction path.
+ *
+ * @param x The input value.
+ * @return The computed acosf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acosf(float x)
+{
+    // Endpoint correction threshold and pi/2 split constants.
+    constexpr float threshold = 0.56000000238418579102f;
+    constexpr float half_pi_hi = 1.6832555532455444336f;
+    constexpr float half_pi_lo_scale = 0.93318945169448852539f;
+
+    // Reuse the asin reduction with sign handling folded into the reduced argument.
+    const float abs_x = fabsf(x);
+    float reduced = __internal_asin_acos_reduced_arg(abs_x);
+    reduced = __internal_with_sign_bit(reduced, x);
+    const float reduced2 = reduced * reduced;
+
+    // Odd polynomial approximation for the reduced asin core.
+    float poly = fmaf(reduced2, 0.03538220748305320740f, 0.016980519518256187439f);
+    poly = fmaf(reduced2, poly, 0.030762933194637298584f);
+    poly = fmaf(reduced2, poly, 0.044709417968988418579f);
+    poly = fmaf(reduced2, poly, 0.074989043176174163818f);
+    poly = fmaf(reduced2, poly, 0.16666707396507263184f);
+    poly *= reduced2;
+    float asin_reduced = fmaf(reduced, poly, reduced);
+
+    // Build acos from the asin core and the pi/2 complement when needed.
+    float result = asin_reduced;
+    if (!(x > threshold)) {
+        const float correction = (abs_x > threshold) ? asin_reduced : -asin_reduced;
+        result = fmaf(half_pi_hi, half_pi_lo_scale, correction);
+    }
+    if (abs_x > threshold) {
+        result = result + result;
+    }
+    return result;
+}
+
+/**
+ * Computes sinh(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN and infinities propagate directly.
+ *
+ * For finite inputs, it uses a small-argument odd polynomial near zero and a
+ * split exp2-based reconstruction for larger magnitudes:
+ *   sinh(x) = (e^x - e^-x) / 2
+ *
+ * The large-argument branch reconstructs the exponential magnitude with a
+ * split exponent path to keep the intermediate values stable.
+ *
+ * @param x The input value.
+ * @return The computed sinhf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinhf(float x)
+{
+    // Use absolute value for the large-argument exponential reconstruction.
+    const float abs_x = fabsf(x);
+    const float x2 = x * x;
+
+    // Small-argument odd polynomial around zero.
+    float poly = fmaf(x2, 0.00000281695110970758826f, 0.00019836159481201320887f);
+    poly = fmaf(x2, poly, 0.0083333496004343032837f);
+    poly = fmaf(x2, poly, 0.16666667163372039795f);
+    poly *= x2;
+
+    // Split the exponent for the large-argument exp2 reconstruction.
+    float n = truncf(abs_x * 1.4426950216293334961f);
+    if (fabsf(n) > 126.0f) {
+        n = __internal_with_sign_bit(126.0f, n);
+    }
+
+    // Reconstruct the exponential tail with hi/lo corrections.
+    float r = fmaf(n, -0.69314718246459960938f, abs_x);
+    r = fmaf(n, 1.9046542121259335545e-09f, r);
+    const float exp2_residual = exp2f(r * 1.4426950216293334961f);
+
+    const float exponent_base = n + 12583037.0f;
+    const uint32_t exponent_base_bits = __float_as_uint(exponent_base);
+    const float exp_quarter = __uint_as_float(exponent_base_bits << 23) * exp2_residual;
+    float result = fmaf(exp_quarter, 2.0f, -0.125f / exp_quarter);
+    result = __internal_with_sign_bit(result, x);
+
+    // Near zero, switch to the polynomial branch.
+    if (abs_x < 1.0f) {
+        result = fmaf(poly, x, x);
+    }
+    return result;
+}
+
+/**
+ * Computes log1p(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * zero returns zero, x == -1 returns -inf, x < -1 returns NaN, +inf returns +inf,
+ * and NaN propagates.
+ *
+ * For finite values, it reduces 1 + x into a normalized interval and evaluates:
+ *   log1p(x) = log(1 + x)
+ *
+ * The reduction uses a bit-level decomposition around 1/2 and 4 so that the
+ * polynomial sees a small reduced argument and the exponent contribution is
+ * accumulated separately.
+ *
+ * @param x The input value.
+ * @return The computed log1pf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x)
+{
+    // Reduction constants for the log1p polynomial path.
+    constexpr uint32_t log1p_reduction_mask = 0xFF800000U;
+    constexpr uint32_t fp32_one_half_bits = 0x3F400000U;
+    constexpr uint32_t fp32_four_bits = 0x40800000U;
+    constexpr float poly_first_coeff = 0.04534861445426940918f;
+    constexpr uint32_t fp32_positive_inf_bits = 0x7F800000U;
+    constexpr uint32_t fp32_sign_bit = 0x80000000U;
+    constexpr uint32_t log1p_lower_bound_bits = 0xBF800001U;
+
+    // Build the reduced mantissa and exponent contribution from 1 + x.
+    const float one_add_x = 1.0f + x;
+    const uint32_t x_bits = __float_as_uint(x);
+    const uint32_t one_add_x_bits = __float_as_uint(one_add_x);
+
+    const uint32_t reduction_bits = (one_add_x_bits - fp32_one_half_bits) & log1p_reduction_mask;
+    const uint32_t normalized_x_bits = x_bits - reduction_bits;
+    const uint32_t range_scale_bits = fp32_four_bits - reduction_bits;
+    const float normalized_x = __uint_as_float(normalized_x_bits);
+    const float range_scale = __uint_as_float(range_scale_bits);
+    const float reduced = fmaf(0.25f, range_scale, -1.0f) + normalized_x;
+    const float exponent = static_cast<float>(static_cast<int32_t>(reduction_bits)) * 1.1920928955078125e-07f;
+
+    // Polynomial approximation for log1p(reduced).
+    float poly = fmaf(-poly_first_coeff, reduced, 0.10546888411045074463f);
+    poly = fmaf(poly, reduced, -0.13229703903198242188f);
+    poly = fmaf(poly, reduced, 0.14491446316242218018f);
+    poly = fmaf(poly, reduced, -0.16641564667224884033f);
+    poly = fmaf(poly, reduced, 0.19988867640495300293f);
+    poly = fmaf(poly, reduced, -0.25000196695327758789f);
+    poly = fmaf(poly, reduced, 0.33333510160446166992f);
+    poly = fmaf(poly, reduced, -0.5f);
+
+    const float reduced_poly = reduced * poly;
+    float output = fmaf(reduced_poly, reduced, reduced);
+    // Add the separate exponent contribution back as ln(2) * exponent.
+    output = fmaf(exponent, 0.69314718246459960938f, output);
+
+    // Positive infinity/NaN and all negative inputs enter the tail correction.
+    if (x_bits >= fp32_positive_inf_bits) {
+        // x is +inf/NaN or x < -1: generate the result via x * +inf + +inf.
+        // x == -1 keeps the -inf produced by the reduction and polynomial path above.
+        if (!(x_bits >= fp32_sign_bit && x_bits < log1p_lower_bound_bits)) {
+            output = fmaf(x, ASCRT_INF_F, ASCRT_INF_F);
+        }
+        // Inputs comparing equal to 0 select -0 so the sign of zero is preserved.
+        if (x == 0.0f) {
+            output = ASCRT_NEG_ZERO_F;
+        }
+    }
+    return output;
+}
+
+/**
+ * Computes atanh(x) for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN propagates, x == +/-1 returns signed infinity, and |x| > 1 returns NaN.
+ *
+ * For finite values, it uses the identity:
+ *   atanh(x) = 0.5 * log1p(2|x| / (1 - |x|))
+ *
+ * The sign of the original input is restored at the end.
+ *
+ * @param x The input value.
+ * @return The computed atanhf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x)
+{
+    constexpr float overflow_guard = 8.50705917302346158658e+37f;
+
+    // Use the log1p identity on the absolute value and restore sign at the end.
+    const float abs_x = fabsf(x);
+    float log_arg = (2.0f / (1.0f - abs_x)) * abs_x;
+
+    if (abs_x > overflow_guard) {
+        log_arg = -2.0f;
+    }
+    return __internal_with_sign_bit(0.5f, x) * log1pf(log_arg);
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __internal_is_odd_integer_f32(float value)
 {
