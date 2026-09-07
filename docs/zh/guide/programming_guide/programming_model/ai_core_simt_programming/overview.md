@@ -2,6 +2,8 @@
 
 ## 引言
 
+<!-- @ref: asc-devkit/res/docs/zh/guide/programming_guide/programming_model/ai_core_simt_programming/abstract_hardware_architecture_res.md#id1 -->
+
 SIMT（Single Instruction Multiple Thread，单指令多线程）编程是AI Core编程方式的一种重要补充，特别适用于离散数据访问、复杂控制逻辑和分支发散等场景。Ascend C支持与业界一致的SIMT编程模型，通过线程级并行实现数据并行计算，每个线程允许指令对数据进行独立寻址与计算，从而实现了更高的编程灵活性。本章将以**SIMT编程模型**为主线，遵循「宏观架构—线程调度—代码落地」的递进逻辑，完整覆盖SIMT算子开发全链路：阐述多线程并行架构的执行机制，拆解线程块内Warp调度的底层逻辑，并完成算子核函数（Kernel）计算逻辑的开发。
 
 ## 异构并行计算核心模型：SIMT编程范式
