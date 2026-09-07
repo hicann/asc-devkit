@@ -11,6 +11,7 @@
 #include "hccl_ccu_res.h"
 #include "ccu_assist_pub.h"
 #include "ccu_temp_kfc_all_reduce_mesh_1D_mem2mem.h"
+#include "kernel/ccu_kernel_kfc_all_reduce_mesh1d_mem2mem.h"
 
 namespace mc2_ops_hccl {
 
@@ -30,6 +31,7 @@ HcclResult CcuTempKfcAllReduceMesh1DMem2Mem::CalcRes(
 
     CcuKernelInfo kernelInfo;
     strcpy_s(kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelAllReduceMesh1DMem2Mem");
+    kernelInfo.kernelFunc = reinterpret_cast<void*>(CcuKfcAllReduceMesh1DMem2MemKernel);
 
     std::vector<HcclChannelDesc> channelDescs;
     if (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS) {
@@ -45,7 +47,12 @@ HcclResult CcuTempKfcAllReduceMesh1DMem2Mem::CalcRes(
         }
     }
 
-    // CcuKernelKfcServer replaces this placeholder before registration and reuses these Mesh1D channels.
+    auto kernelArg = std::make_shared<CcuKernelArgAllReduceKfc>();
+    kernelArg->rankSize = subCommRanks_[0].size();
+    kernelArg->rankId = mySubCommRank_;
+    kernelArg->opParam = param;
+    kernelArg->subCommRanks = subCommRanks_;
+    kernelInfo.setKernelArg(kernelArg);
     kernelInfo.channels = channelDescs;
     resourceRequest.ccuKernelInfos.push_back(kernelInfo);
     return HcclResult::HCCL_SUCCESS;

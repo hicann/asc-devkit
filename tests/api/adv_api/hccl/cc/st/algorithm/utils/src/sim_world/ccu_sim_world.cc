@@ -473,6 +473,21 @@ bool RuntimeWorld::ExecuteOne(std::vector<RankState>& states, size_t rankIndex, 
                                     }
                                     std::memmove(dstPtr, srcPtr, static_cast<size_t>(copyLen));
                                     state.events[bodyOp.immediate] |= bodyOp.mask;
+                                } else if (bodyOp.code == OpCode::LOCAL_REDUCE) {
+                                    const uint64_t reduceLen =
+                                        state.variables.count(bodyOp.src1) ? state.variables[bodyOp.src1] : 0;
+                                    if (reduceLen == 0) {
+                                        state.events[bodyOp.immediate] |= bodyOp.mask;
+                                        continue;
+                                    }
+                                    ResourceHandle srcBufHandle = bodyOp.src0 + msIdx;
+                                    ResourceHandle dstBufHandle = bodyOp.dst + msIdx;
+                                    state.buffers[srcBufHandle].resize(reduceLen);
+                                    state.buffers[dstBufHandle].resize(reduceLen);
+                                    ApplyReduceRaw(
+                                        state.buffers[dstBufHandle].data(), state.buffers[srcBufHandle].data(),
+                                        reduceLen, bodyOp.dataType, bodyOp.opType);
+                                    state.events[bodyOp.immediate] |= bodyOp.mask;
                                 } else if (bodyOp.code == OpCode::EVENT_WAIT) {
                                     uint16_t& value = state.events[bodyOp.src0];
                                     if ((value & bodyOp.mask) != bodyOp.mask) {

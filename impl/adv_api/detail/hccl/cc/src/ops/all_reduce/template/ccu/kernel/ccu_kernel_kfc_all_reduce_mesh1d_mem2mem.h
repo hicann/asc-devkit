@@ -20,6 +20,13 @@
 namespace mc2_ops_hccl {
 using namespace hcomm;
 
+struct CcuKernelArgAllReduceKfc : CcuKernelArgBase {
+    uint64_t rankSize;
+    uint32_t rankId;
+    OpParam opParam;
+    std::vector<std::vector<uint32_t>> subCommRanks;
+};
+
 CcuResult CcuKfcAllReduceMesh1DMem2MemKernel(
     ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable scratch,
     ccu::Variable currentRankSliceInputOffset, ccu::Variable currentRankSliceOutputOffset,

@@ -11,7 +11,9 @@
 #define HCCL_CCU_TEMP_KFC_ALL_REDUCE_MESH_1D_MEM2MEM_H
 
 #include "utils.h"
+#include "alg_param.h"
 #include "ccu_temp_kfc_mesh_1D_mem2mem_base.h"
+#include "kernel/ccu_kernel_kfc_all_reduce_mesh1d_mem2mem.h"
 
 namespace mc2_ops_hccl {
 
