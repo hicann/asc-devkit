@@ -26,7 +26,7 @@ template <typename T>
 struct is_integral {
 private:
     template <typename Tp, typename... Tps>
-    ASCENDC_HOST_AICORE inline static constexpr bool IsUnqualifiedAnyOf()
+    __host__ __aicore__ inline static constexpr bool IsUnqualifiedAnyOf()
     {
         return (... || is_same_v<remove_cv_t<Tp>, Tps>);
     }

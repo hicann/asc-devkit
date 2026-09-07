@@ -25,9 +25,9 @@ struct integral_constant {
     using value_type = Tp;
     using type = integral_constant;
 
-    ASCENDC_HOST_AICORE inline constexpr operator value_type() const noexcept { return value; }
+    __host__ __aicore__ inline constexpr operator value_type() const noexcept { return value; }
 
-    ASCENDC_HOST_AICORE inline constexpr value_type operator()() const noexcept { return value; }
+    __host__ __aicore__ inline constexpr value_type operator()() const noexcept { return value; }
 };
 
 template <typename Tp, Tp v>

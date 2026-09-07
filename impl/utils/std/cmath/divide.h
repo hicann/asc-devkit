@@ -19,7 +19,7 @@ namespace AscendC {
 namespace Std {
 
 template <typename T, typename U>
-ASCENDC_HOST_AICORE inline constexpr auto divide(const T& num1, const U& num2)
+__host__ __aicore__ inline constexpr auto divide(const T& num1, const U& num2)
 {
     return num1 / num2;
 }
