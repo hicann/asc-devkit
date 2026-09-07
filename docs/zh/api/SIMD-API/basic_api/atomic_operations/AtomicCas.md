@@ -29,11 +29,11 @@
 
 头文件路径为：`"basic_api/kernel_operator_atomic_intf.h"`。
 
-调用该接口后，可在指定GM地址上进行原子比较操作，读取**address**指向的GM地址上的旧值（**old_value**）与输入标量值**value1**进行比较：
+调用该接口后，可在指定GM地址上进行原子比较操作，读取`address`指向的GM地址上的旧值（`old_value`）与输入标量值`value1`进行比较：
 
-- 如果相等，则将输入标量值**value2**写入GM地址；
+- 如果相等，则将输入标量值`value2`写入GM地址；
 - 如果不相等，则GM地址上的值保持不变。
-返回该地址修改前的值（**old_value**）。
+返回该地址修改前的值（`old_value`）。
 
 计算公式如下：
 

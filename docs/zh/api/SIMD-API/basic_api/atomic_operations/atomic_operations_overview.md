@@ -29,10 +29,9 @@
 
 | 对应接口 | 接口功能描述 |
 | --- | --- |
-| [AtomicAdd](AtomicAdd.md) | 用于在指定GM地址上进行原子加操作，将address指向的GM地址上的旧值（old_value）与输入标量值（value）求和，将和结果（new_value）写回GM地址，返回该地址修改前的值（old_value）。 |
-| [AtomicMin](AtomicMin.md) | 用于在指定GM地址上进行原子取最小值操作，将address指向的GM地址上的旧值（old_value）与输入标量值（value）做比较，将较小值（new_value）写回GM地址，返回该地址修改前的值（old_value）。 |
-| [AtomicMax](AtomicMax.md) | 用于在指定GM地址上进行原子取大操作，将address指向的GM地址上的旧值（old_value）与输入的标量值（value）进行比较，将较大值（new_value）写回GM地址，返回该地址修改前的值（old_value）。 |
-| [AtomicCas](AtomicCas.md) | 在指定GM地址上进行原子比较操作，读取address指向的GM地址上的旧值（old_value）与输入标量值value1进行比较：如果相等，则将输入标量值value2写入GM地址；如果不相等，则GM地址上的值保持不变。返回该地址修改前的值（old_value）。 |
-| [AtomicExch](AtomicExch.md) | 用于在GM内存中执行原子交换操作，读取address指向的GM地址上的旧值（old_value），并将输入的标量值（value）替换旧值存储回同一地址，返回该地址修改前的值（old_value）。 |
-
+| [AtomicAdd](AtomicAdd.md) | 用于在指定GM地址上进行原子加操作，将`address`指向的GM地址上的旧值（`old_value`）与输入标量值（`value`）求和，将和结果（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
+| [AtomicMin](AtomicMin.md) | 用于在指定GM地址上进行原子取最小值操作，将`address`指向的GM地址上的旧值（`old_value`）与输入标量值（`value`）做比较，将较小值（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
+| [AtomicMax](AtomicMax.md) | 该接口用于在指定GM地址上进行原子取最大值操作，将`address`指向的GM地址上的旧值（`old_value`）与输入的标量值（`value`）进行比较，将较大值（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
+| [AtomicCas](AtomicCas.md) | 在指定GM地址上进行原子比较操作，读取`address`指向的GM地址上的旧值（`old_value`）与输入标量值`value1`进行比较：如果相等，则将输入标量值`value2`写入GM地址；如果不相等，则GM地址上的值保持不变。返回该地址修改前的值（`old_value`）。 |
+| [AtomicExch](AtomicExch.md) | 用于在GM内存中执行原子交换操作，读取`address`指向的GM地址上的旧值（`old_value`），并将输入的标量值（`value`）替换旧值存储回同一地址，返回该地址修改前的值（`old_value`）。 |
 <!-- end id1 -->

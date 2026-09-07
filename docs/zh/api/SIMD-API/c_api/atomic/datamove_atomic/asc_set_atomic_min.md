@@ -28,11 +28,9 @@
 
 头文件路径为：`"c_api/atomic/datamove_atomic.h"`。
 
-设置对后续的从Unified Buffer（UB）/L0C Buffer/L1 Buffer到GM的数据传输开启原子比较取小操作。数据类型支持int8_t、int16_t、half、bfloat16_t、int32_t、float。
-开启原子比较取小后，后续执行搬运操作从UB/L0C Buffer/L1 Buffer到GM时，将待拷贝的内容和GM已有内容进行比较，将最小值写入GM。
-<!-- npu="950" id8 -->
-特别地，针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到GM的通路。
-<!-- end id8 -->
+将待搬运到GM的数据和GM上已有数据进行比较，然后将两者中的最小值写入GM。本接口对后续目的地址为GM的数据搬运指令开启原子比较取小，不同产品支持的数据搬运通路请参考[约束说明](#约束说明)。
+
+接口可选择不同的函数原型来设定不同的比较取小数据类型。
 
 ## 函数原型
 
@@ -59,31 +57,120 @@ PIPE_S
 
 ## 约束说明
 
-- 使用结束后，建议通过[asc_disable_dma_atomic](asc_disable_dma_atomic.md)关闭原子最小操作，以免影响后续相关指令功能。
-- 该指令执行前不会对GM的数据做清零操作，开发者可以在需要时手动添加清零操作。
-<!-- npu="950" id9 -->
-- 针对Ascend 950PR/Ascend 950DT，不支持L1 Buffer到GM的通路。
-<!-- end id9 -->
+- 各个产品由于硬件架构不同，支持的数据通路也不同，具体情况如下：
+    <!-- npu="950" id11 -->
+    - Ascend 950PR/Ascend 950DT，支持的数据通路为UB/L0C Buffer->GM。
+    <!-- end id11 -->
+    <!-- npu="A3" id8 -->
+    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据通路为UB/L0C Buffer/L1 Buffer->GM。
+    <!-- end id8 -->
+    <!-- npu="910b" id9 -->
+    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据通路为UB/L0C Buffer/L1 Buffer->GM。
+    <!-- end id9 -->
+- 本接口调用后会对后续所有目的地址为GM的搬运指令开启原子操作，可以调用[asc_disable_dma_atomic](asc_disable_dma_atomic.md)接口关闭原子操作。
+- 该接口执行前不会自动将GM上已有数据置零。若开发者期望在原子取小前GM上的原始数据为零，则需手动清零。
+- 本接口仅对后续目的地址为GM的搬运指令（通过MTE1/MTE2/MTE3单元搬运）生效，对于标量写GM的指令（例如[asc_store_dev](../../scalar_compute/scalar_store/asc_store_dev.md)）不生效。
+- 本接口与紧邻的后续搬运指令之间的同步由硬件保证，因此以下示例中插入的多流水同步是不必要的：
+
+    ```c
+    asc_set_atomic_min_int8();
+
+    /*
+    asc_set_atomic_min_int8与asc_copy_ub2gm之间的同步由硬件保证，因此以下同步是不必要的。
+    asc_sync_notify(PIPE_S, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_S, PIPE_MTE3, EVENT_ID0);
+    */
+
+    asc_copy_ub2gm(dst, src1, total_length * sizeof(int8_t));
+    // 关闭原子操作。
+    asc_disable_dma_atomic();
+    ```
+
+- 后续搬运指令的操作数据类型需与所选接口设置的数据类型一致。
+- 本接口不能保证后续搬运指令的执行顺序，若需保证确定性的执行顺序请参考[关键特性说明](../key_features.md)。
 
 ## 调用示例
 
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id10 -->
+以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+<!-- end id10 -->
+
 ```cpp
-// total_length指参与计算的数据长度，dst是外部传入的int8_t类型的GM内存地址。
-constexpr uint32_t total_length = 256;
-__ubuf__ int8_t src0[total_length];
-__ubuf__ int8_t src1[total_length];
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
 
-asc_copy_ub2gm(dst, src0, total_length * sizeof(int8_t));
-asc_sync_pipe(PIPE_MTE3);
-asc_set_atomic_min_int8();
-asc_copy_ub2gm(dst, src1, total_length * sizeof(int8_t));
-asc_disable_dma_atomic();
-```
+namespace {
+constexpr uint32_t ELEMENTS = 64;
+constexpr uint32_t BYTES = ELEMENTS * sizeof(float);
 
-结果示例：
+template <typename T>
+void print_data(const char* label, const std::vector<T>& data)
+{
+    std::cout << label << ":";
+    const size_t count = data.size() < 8 ? data.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << +data[i];
+    if (data.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
 
-```
-输入数据src0：[1, 1, 1, ..., 1]  // int8_t类型
-输入数据src1：[2, 2, 2, ..., 2]  // int8_t类型
-输出数据dst：[1, 1, 1, ..., 1]   // int8_t类型
+__global__ __vector__ void asc_set_atomic_min_kernel(__gm__ float* output, __gm__ float* input0, __gm__ float* input1)
+{
+    asc_init();
+    __ubuf__ float local0[ELEMENTS];
+    __ubuf__ float local1[ELEMENTS];
+    asc_copy_gm2ub_align(local0, input0, BYTES);
+    asc_copy_gm2ub_align(local1, input1, BYTES);
+    asc_sync_notify(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_MTE3, EVENT_ID0);
+    asc_copy_ub2gm(output, local0, BYTES);
+    asc_set_atomic_min_float();
+    asc_sync_pipe(PIPE_MTE3);
+    asc_copy_ub2gm(output, local1, BYTES);
+    asc_disable_dma_atomic();
+    asc_sync();
+}
+
+}
+
+int main()
+{
+    std::vector<float> input0(ELEMENTS), input1(ELEMENTS), output(ELEMENTS), golden(ELEMENTS);
+    for (uint32_t i = 0; i < ELEMENTS; ++i) {
+        input0[i] = static_cast<float>(i % 8 + 1);
+        input1[i] = 2.0f;
+        golden[i] = input0[i] < input1[i] ? input0[i] : input1[i];
+    }
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    float *input0_device = nullptr, *input1_device = nullptr, *output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&input0_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&input1_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), BYTES, ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(input0_device, BYTES, input0.data(), BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(input1_device, BYTES, input1.data(), BYTES, ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_set_atomic_min_kernel<<<1, 0>>>(output_device, input0_device, input1_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), BYTES, output_device, BYTES, ACL_MEMCPY_DEVICE_TO_HOST);
+    print_data("Input0", input0);
+    print_data("Input1", input1);
+    print_data("Output", output);
+    print_data("Golden", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_set_atomic_min passed." : "[Failed] asc_set_atomic_min failed.") << std::endl;
+    aclrtFree(input0_device);
+    aclrtFree(input1_device);
+    aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
 ```
