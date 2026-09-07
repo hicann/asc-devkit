@@ -44,7 +44,7 @@ __aicore__ inline void asc_set_ctrl(uint64_t config)
 | :------ | :---  | :------------ |
 |config   |输入   |待设置的寄存器值。常用CTRL寄存器比特位说明参考表2。|
 
-**表2** 常用CTRL寄存器比特位说明
+**表2** 常用CTRL寄存器比特位说明<a id="ctrl_bit_desc"></a>
 
 |CTRL比特位    |功能|
 | :-------     | :---- |

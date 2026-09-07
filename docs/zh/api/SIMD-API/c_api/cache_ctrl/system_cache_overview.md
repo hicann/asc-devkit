@@ -1,0 +1,109 @@
+# 系统缓存概述
+
+## Cache类型
+
+Cache（缓存）的主要作用是在搬运单元或Scalar单元与外部存储之间提供一层高速缓冲，以降低数据访问延迟并提高带宽利用率。通常情况下，被频繁访问的数据会写入Cache，搬运单元或Scalar单元在执行过程中优先从Cache中读取数据；当Cache未命中时，再从外部存储加载数据并更新到Cache中。
+
+[表1](#table_cache_type)展示了不同类型的Cache的功能，不同产品中支持的Cache类型不同，具体情况如下：
+<!-- npu="950" id1 -->
+以[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)为例，图1展示了AI Core中支持的五类Cache（L2 Cache、DCache、ICache、SIMT DCache、NDDMA Cache）在硬件架构中的位置关系。
+
+**图1**  五类Cache在AI Core中的位置关系示意图    
+![](../../../figures/npu_3510_hw_arch_cache.png "atlas_950_cache_architecture_diagram")
+<!-- end id1 -->
+<!-- npu="A3,910b" id2 -->
+以[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)为例，图2展示了AI Core中支持的三类Cache（L2 Cache、DCache和ICache）在硬件架构中的位置关系。
+
+**图2**  三类Cache在AI Core中的位置关系示意图    
+![](../../../figures/atlas_a2_a3_cache_architecture_diagram.png "atlas_a2_a3_cache_architecture_diagram")
+<!-- end id2 -->
+
+**表1**  Cache类型及功能说明<a name="table_cache_type"></a>
+
+| Cache类型 | 说明 |
+|------------|------|
+| L2 Cache | L2 Cache作为二级缓存，专门用于存储频繁访问的数据和指令，以便减少对GM的读写。<br>&bull;通过MTE2单元读取GM时，优先从L2 Cache中读取数据；当L2 Cache未命中时，再从GM加载数据并更新到L2 Cache中。<br>&bull;通过Scalar单元读取GM时，优先从DCache中读取数据；当DCache未命中时，再从L2 Cache中读取数据。当L2 Cache也未命中时，再从GM加载数据并更新到L2 Cache和DCache中。<br>&bull;通过Scalar单元读取GM指令时，优先从ICache中读取指令；当ICache未命中时，再从L2 Cache中读取指令。当L2 Cache也未命中时，再从GM加载指令并更新到L2 Cache和ICache中。 |
+| DCache | DCache（Data Cache）用于缓存Scalar单元近期可能被重复访问的数据段。<br>通过Scalar单元读取GM时，优先从DCache中读取数据；当DCache未命中时，再从L2 Cache中读取数据。当L2 Cache也未命中时，再从GM加载数据并更新到L2 Cache和DCache中。 |
+| ICache | ICache（Instruction Cache）用于缓存Scalar单元最近使用或频繁使用的指令。<br>通过Scalar单元读取GM指令时，优先从ICache中读取指令；当ICache未命中时，再从L2 Cache中读取指令。当L2 Cache也未命中时，再从GM加载指令并更新到L2 Cache和ICache中。 |
+| SIMT DCache | SIMT访问GM需要经过SIMT DCache中转。数据流经由GM到SIMT DCache，再从SIMT DCache到SIMT寄存器，SIMT DCache充当中间缓冲层，减少对GM的直接访问次数。 |
+| NDDMA Cache | NDDMA Cache用于缓存最近或即将被[asc_ndim_copy_gm2ub](../vector_datamove/asc_ndim_copy_gm2ub.md)接口搬运的数据。 |
+
+关于各Cache的Cache Line大小、Cache大小、所在位置等硬件规格，请参考[缓存一致性Cache单元信息](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md#cache_unit_info)文档。
+
+## Cache操作及使用场景
+
+表2介绍了缓存的四种基础操作及其核心功能。
+
+**表2**  Cache操作及功能说明
+
+| 操作名称 | 功能说明 |
+|---------|---------|
+| Prefetch | 硬件根据访问模式自动将预期访问的数据提前加载到缓存，提升后续访问速度。 |
+| Preload | 软件通过显式指令将指定数据主动加载到缓存，为即将到来的读写操作做准备。 |
+| Invalid | &bull;将指定地址范围的Cache Line（缓存的最小操作单元）标记为"无效"，使其从缓存中移除。<br>&bull;保证下一次访问这些内存地址时，会从GM重新加载数据，而不是使用可能过期的缓存数据。<br>&bull;注意：Invalid操作不检查缓存行是否为"脏"（dirty，表示该数据已被修改但尚未写回到GM），若存在脏数据将被直接丢弃。 |
+| Clean | 将缓存中被修改过的数据（脏数据）写回到GM中，避免数据丢失。Clean操作不将缓存行标记为"无效"，缓存行仍保持有效状态。 |
+
+## Cache写策略与Cache一致性问题
+
+当向GM写入数据，并且启用Cache时，存在以下两种Cache写策略：延迟写回（Write-Back）和直写（Write-Through）。
+
+当向GM写数据时采取延迟写回策略，工作原理如下：
+
+- 开发者预期向GM写入数据（即期望数据直接写入GM），硬件实际行为是：
+    - 当数据被修改时，只在缓存中更新数据。
+    - 缓存中的数据标记为"脏"。
+    - 当该Cache Line被替换时（或通过软件显式执行Clean操作时），数据才会被写回GM，Cache Line何时被替换由硬件决定。
+
+- 替换Cache Line数据时：
+    - 当缓存空间不足需要替换数据时，检查被替换的数据是否为"脏"。
+    - 如果是"脏"数据，先将其写回到GM，然后再将该Cache Line替换出缓存。
+
+当向GM写入数据时，若采用直写（Write-Through）策略，其工作原理如下：
+
+- 开发者预期向GM写入数据（即期望数据直接写入GM），硬件实际行为是：
+    - 当数据被修改时，立即在缓存和GM中更新数据。
+    - 缓存行无需标记为"脏"。
+
+- 替换Cache Line数据时：
+
+    由于每次写数据都同步更新GM，因此缓存中的数据不存在"脏"状态，也无需在替换时额外写回GM。
+
+在延迟写回策略下，被修改的数据仅更新在本地缓存中，不会立即同步到GM。当其他核读取GM上同一地址时，获取的将是过时数据，从而导致不同核间缓存数据不一致。
+Cache一致性是多核中确保数据正确性的核心机制。简单来说，当多个核各自拥有独立的Cache时，它们可能同时缓存相同的数据。如果某个核修改了缓存中的数据，其他核的缓存副本就会变得“过时”，如果不及时同步，就会导致多个核间的数据不一致，进而引发计算错误。
+
+<!-- npu="950,A3,910b" id3 -->
+下面介绍不同产品中每种类型Cache是否需要考虑多核间数据不一致：
+<!-- npu="950" id4 -->
+- 针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，该产品支持的五类Cache在多核间数据一致性方面的情况如下：
+    - L2 Cache：多核间共享的缓存，因此不需要考虑多核间数据不一致的问题。
+    - DCache：多核独立缓存，因此需要考虑多核间数据一致性的问题。
+    - ICache：只读，因此不需要考虑多核间数据不一致的问题。
+    - NDDMA Cache：多核独立缓存，因此需要考虑多核间数据一致性的问题。
+    - SIMT DCache：在SIMT中，写入数据时会立即写入GM，不存在一致性问题；从GM读取数据时，多核独立缓存，需要考虑多核间数据一致性的问题。
+<!-- end id4 -->
+<!-- npu="A3,910b" id5 -->
+- 针对[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，支持的三类Cache在多核间数据一致性方面的情况如下：
+    - L2 Cache：多核间共享的缓存，因此不需要考虑多核间数据不一致的问题。
+    - DCache：多核独立缓存，因此需要考虑多核间数据一致性的问题。
+    - ICache：只读，因此不需要考虑多核间数据不一致的问题。
+<!-- end id5 -->
+<!-- end id3 -->
+
+关于Cache写策略与Cache一致性的更完整介绍，请参考[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)文档。
+
+## 缓存控制接口汇总
+
+表3按照Cache类型（L2 Cache、DCache、ICache、NDDMA Cache）汇总了与缓存控制相关的接口及其功能说明。
+
+**表3**  缓存控制接口汇总
+
+| Cache类型 | 接口名称 | 功能简述 |
+|-----------|---------|---------|
+| L2 Cache | [asc_copy_gm2ub_align](../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)（数据搬运，读GM） | 以该接口为例，从GM读数据的数据搬运接口，可通过[asc_load_l2_cache_mode](../defs/enum/asc_load_l2_cache_mode.md)枚举作为入参控制L2 Cache模式；[矩阵数据搬运](../cube_datamove/cube_datamove.md)和[矢量数据搬运](../vector_datamove/vector_datamove.md)中部分接口支持该入参，具体以各搬运接口的参数说明为准。 |
+| L2 Cache | [asc_copy_ub2gm_align](../vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)（数据搬运，写GM） | 以该接口为例，向GM写数据的数据搬运接口，可通过[asc_store_l2_cache_mode](../defs/enum/asc_store_l2_cache_mode.md)枚举作为入参控制L2 Cache模式；[矩阵数据搬运](../cube_datamove/cube_datamove.md)和[矢量数据搬运](../vector_datamove/vector_datamove.md)中部分接口支持该入参，具体以各搬运接口的参数说明为准。 |
+| DCache | [asc_datacache_preload](asc_datacache_preload.md) | `asc_datacache_preload`接口从源地址所在的特定GM地址预加载数据到DCache中，每次调用只能预加载一个Cache Line大小的数据。 |
+| DCache | [asc_dcci](asc_dcci.md) | 当Scalar单元访问GM时，按接口操作类型刷新Cache以保证一致性。读取可能被其他核修改的数据，或要求Scalar写入立即对外可见时，需要结合访问顺序选择清理、失效或清理并失效操作。 |
+| DCache | [asc_load_dev](../scalar_compute/scalar_load/asc_load_dev.md)/[asc_store_dev](../scalar_compute/scalar_store/asc_store_dev.md) | `asc_load_dev`不经过DCache从GM地址上读数据；`asc_store_dev`不经过DCache向GM地址上写数据。当多核操作GM地址时，若数据无法对齐到Cache Line，经过DCache的读写以Cache Line为粒度，可能引发多核数据随机覆盖问题，使用这两个接口不经过DCache直接读写GM可避免此问题。 |
+| ICache | [asc_icache_preload](asc_icache_preload.md) | 开发者手动调用`asc_icache_preload`，能够从指令所在GM地址预加载指令到ICache中。 |
+| ICache | [asc_get_icache_preload_status](asc_get_icache_preload_status.md) | `asc_get_icache_preload_status`为调试接口，在调用`asc_icache_preload`后调用，用于获取ICache的Preload状态。当返回值为0时，说明ICache的Preload已完成；当返回值为1时，说明ICache的Preload未完成。 |
+| NDDMA Cache | `asc_ndim_copy_dci` | 在使用[asc_ndim_copy_gm2ub](../vector_datamove/asc_ndim_copy_gm2ub.md)接口进行数据搬运前，按接口约束刷新NDDMA Cache以保证缓存为最新状态。 |

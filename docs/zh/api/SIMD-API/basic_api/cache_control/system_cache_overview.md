@@ -89,6 +89,9 @@ Cache一致性是多核中确保数据正确性的核心机制。简单来说，
     - ICache：只读，因此不需要考虑多核间数据不一致的问题。
 <!-- end id4 -->
 <!-- end id5 -->
+
+关于Cache写策略与Cache一致性的更完整介绍，请参考[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)文档。
+
 ## 缓存控制接口汇总<a name="zh-cn_topic_0000002583420201_section489931219616"></a>
 
 表3按照Cache类型（L2 Cache、DCache、ICache、NDDMA Cache）汇总了与缓存控制相关的接口及其功能说明。
@@ -103,4 +106,4 @@ Cache一致性是多核中确保数据正确性的核心机制。简单来说，
 | DCache | [ReadGmBypassDCache](../scalar_compute/ReadGmBypassDCache_ISASI.md)/[WriteGmBypassDCache](../scalar_compute/WriteGmBypassDCache_ISASI.md) | 不经过DCache向GM地址上**读**/**写**数据。使用场景：<br>&bull;当多个核写入的数据落在同一条Cache Line内时，经过DCache的读写将以64B为粒度，可能引发多核数据随机覆盖问题。使用该接口不经过DCache直接按操作数大小**读**/**写**GM，可避免此问题。<br>&bull;使用该接口不经过DCache直接向GM**读**/**写**数据，可避免由DCache缓存引发的多核间数据不一致问题。 |
 | ICache | [ICachePreLoad](ICachePreLoad_ISASI.md) | 开发者手动调用ICachePreLoad接口，能够从指令所在GM地址预加载指令到ICache中。 |
 | ICache | [GetICachePreloadStatus](GetICachePreloadStatus_ISASI.md) | GetICachePreloadStatus为调试接口，在调用ICachePreLoad后调用，用于获取ICache的PreLoad的状态。当返回值为0时，说明ICache的PreLoad已完成；当返回值为1时，说明ICache的PreLoad未完成。 |
-| NDDMA Cache | NdDmaDci | 在使用[DataCopy（GMToUB多维数据搬运NDDMA）](../../basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md)接口进行数据搬运前，需要使用NdDmaDci接口刷新NDDMA Cache缓存保证为最新状态。 |
+| NDDMA Cache | [NdDmaDci](../memory_vector_compute/data_move_aux_config/NdDmaDci.md) | 在使用[DataCopy（GMToUB多维数据搬运NDDMA）](../../basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md)接口进行数据搬运前，需要使用NdDmaDci接口刷新NDDMA Cache缓存保证为最新状态。 |

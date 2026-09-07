@@ -1268,6 +1268,7 @@
                 -   [asc_get_store_atomic_config](SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md)
                 -   [asc_set_store_atomic_config_v1](SIMD-API/c_api/atomic/scalar_atomic/asc_set_store_atomic_config_v1.md)
         -   [缓存控制](SIMD-API/c_api/cache_ctrl/cache_ctrl.md)
+            -   [系统缓存概述](SIMD-API/c_api/cache_ctrl/system_cache_overview.md)
             -   [asc_datacache_preload](SIMD-API/c_api/cache_ctrl/asc_datacache_preload.md)
             -   [asc_dcci](SIMD-API/c_api/cache_ctrl/asc_dcci.md)
             -   [asc_dci](SIMD-API/c_api/cache_ctrl/asc_dci.md)

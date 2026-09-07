@@ -8,7 +8,7 @@
 
 Cache用于缓存后续可能重复访问的数据或指令，降低访问GM的开销。一次Cache加载通常不是只加载被访问的单个字节或单个变量，而是把该地址所在的一段连续数据作为一个整体加载到Cache中，这个整体称为Cache Line。
 
-Cache Line是Cache加载、失效、写回的最小操作粒度。例如访问GM内存时，会将GM里一个Cache Line长度内相邻的数据加载到L2 Cache缓存，利用空间局部性提高访问效率。Cache Line是硬件真正搬入、标记、替换和写回缓存数据的最小粒度，直接影响性能和一致性。<!-- npu="950" id1 -->[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持L2 Cache、DCache、ICache、SIMT DCache、NDDMA Cache；<!-- end id1 -->[NPU架构版本2201](../../language_extension/simd_builtin_keywords.md)支持L2 Cache、DCache和ICache。本文讨论的通用Cache单元信息如下：
+Cache Line是Cache加载、失效、写回的最小操作粒度。例如访问GM内存时，会将GM里一个Cache Line长度内相邻的数据加载到L2 Cache缓存，利用空间局部性提高访问效率。Cache Line是硬件真正搬入、标记、替换和写回缓存数据的最小粒度，直接影响性能和一致性。<!-- npu="950" id1 -->[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持L2 Cache、DCache、ICache、SIMT DCache、NDDMA Cache；<!-- end id1 -->[NPU架构版本2201](../../language_extension/simd_builtin_keywords.md)支持L2 Cache、DCache和ICache。本文讨论的通用Cache单元信息如下：<a name="cache_unit_info"></a>
 
 <!-- npu="950" id15 -->
 **NPU架构版本3510Cache单元信息**
