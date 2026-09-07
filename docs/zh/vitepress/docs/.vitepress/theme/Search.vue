@@ -24,7 +24,7 @@ import type { SearchConfig } from './type'
 import { formatShowDate } from './utils'
 
 if (typeof window !== 'undefined' && !window.__pagefind__) {
-  import('/pagefind/pagefind.js').then(m => {
+  import(/* @vite-ignore */ `${import.meta.env.BASE_URL}pagefind/pagefind.js`).then(m => {
     if (!window.__pagefind__) {
       window.__pagefind__ = m
     }

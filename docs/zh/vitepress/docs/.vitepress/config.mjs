@@ -25,10 +25,17 @@ import {
 } from '../../scripts/api-support.mjs'
 import { loadGitTimestamps } from '../../scripts/git-timestamps.mjs'
 import { shellQuote } from '../../scripts/shell-utils.mjs'
+import {
+  createBaiduAnalyticsHead,
+  resolveBaiduAnalyticsSiteId,
+} from './baidu-analytics.mjs'
 
 const docsRoot = resolve(import.meta.dirname, '..')
 const repoRoot = resolve(import.meta.dirname, '..', '..', '..', '..', '..')
 const sourceDocsRoot = resolve(repoRoot, 'docs', 'zh')
+const baiduAnalyticsHead = createBaiduAnalyticsHead(
+  resolveBaiduAnalyticsSiteId(process.env)
+)
 
 function buildApiUnsupportedIndex(apiRoot) {
   const index = {}
@@ -890,7 +897,7 @@ function balanceDivTags(html) {
     },
   },
 
-  head: [],
+  head: baiduAnalyticsHead,
 
   themeConfig: {
     documentationBuild,
