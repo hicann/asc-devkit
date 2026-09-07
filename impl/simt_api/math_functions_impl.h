@@ -31,7 +31,20 @@
 
 #define ASCRT_FOUR_BYTE_LEN_U 32U
 constexpr float __internal_subnormal_boundary =
-    1.17549435e-38f; // 1.17549435e-38f: subnormal floating-point number boundary
+    1.17549435e-38f;                                      // 1.17549435e-38f: subnormal floating-point number boundary
+constexpr float __internal_fp32_scale_2p24 = 16777216.0f; // 2^24, used to lift subnormal inputs into the normal range.
+constexpr float __internal_fp32_log2e = 1.4426950216293334961f; // log2(e), used for ln-to-exp2 conversion.
+constexpr float __internal_fp32_ln2_hi =
+    0.69314718246459960938f; // High part of ln(2) for split residual reconstruction.
+constexpr float __internal_fp32_ln2_tail =
+    1.9046542121259335545e-09f; // Low tail of ln(2) for split residual reconstruction.
+constexpr float __internal_fp32_subnormal_exponent_fix =
+    -24.0f; // Exponent correction after scaling subnormals by 2^24.
+constexpr float __internal_fp32_log_exponent_scale =
+    1.1920928955078125e-07f;                             // 2^-23, converts exponent bits into log2 units.
+constexpr uint32_t __internal_fp32_exponent_shift = 23U; // Bit offset of the fp32 exponent field.
+constexpr float __internal_fp32_max_exp = 126.0f;        // Largest finite fp32 exponent used by the clamped paths.
+constexpr int32_t __internal_fp32_subnormal_bias = 149;  // Subnormal exponent/reference bias for fp32 reconstruction.
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long int lroundf(float x)
 {
@@ -698,36 +711,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float nextafterf(float x, float y)
     return x;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalbnf(float x, int32_t n)
-{
-    if (isinf(x) || isnan(x)) {
-        return x;
-    } else if (x == 0) {
-        return x;
-    }
-
-    float two = 2.0;
-    float fp32_exponent_mid_val = 127;
-
-    if (n < 0) {
-        n = -n;
-        if (n > fp32_exponent_mid_val) {
-            int mul_val_exp = n - fp32_exponent_mid_val;
-            n = fp32_exponent_mid_val;
-            x = x / __powf(two, static_cast<float>(mul_val_exp));
-        }
-        return x / __powf(two, n);
-    }
-    if (n > fp32_exponent_mid_val) {
-        int mul_val_exp = n - fp32_exponent_mid_val;
-        n = fp32_exponent_mid_val;
-        x = x * __powf(two, static_cast<float>(mul_val_exp));
-    }
-    return x * __powf(two, static_cast<float>(n));
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalblnf(float x, int64_t n) { return scalbnf(x, static_cast<int32_t>(n)); }
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmaxf(float x, float y)
 {
     if (isnan(x)) {
@@ -870,8 +853,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanf(float x)
     return z;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x) { return tanf(x * ASCRT_PI_F); }
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_taylor_expand(
     float& dst, float& src, float& square_v, uint32_t expand_level, float* factor)
 {
@@ -984,8 +965,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinf(float x)
     return s;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x) { return sinf(x * ASCRT_PI_F); }
-
 #define __INTERNAL_SINCOSF(x, s, c)                                              \
     do {                                                                         \
         int quadrant;                                                            \
@@ -1043,57 +1022,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincosf(float x, __ubuf__ float* s, _
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincosf(float x, __ubuf__ float* s, __gm__ float* c)
 {
     __INTERNAL_SINCOSF(x, s, c);
-}
-#endif
-#endif
-#endif
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
-#ifdef __NPU_ARCH__
-#ifndef ASCENDC_CPU_DEBUG
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, __ubuf__ float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, __gm__ float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, __ubuf__ float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, __gm__ float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, __ubuf__ float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, __gm__ float* c)
-{
-    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
 }
 #endif
 #endif
@@ -1630,53 +1558,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_compute_ln(float x)
     return y;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(float x)
-{
-    float frac = x - nearbyintf(x);
-    //  1/gamma(x + 1)
-    //  = 1 + γx + (γ^2 - pi^2/6) * x^2/2! + O(3)
-    float y = -0.00107286568f;         // -0.00107286568f  : Coefficient of O(8)
-    y = fmaf(y, frac, 0.00711105345f); // 0.00711105345f   : Coefficient of O(7)
-    y = fmaf(frac, y, -0.0096437186f); // -0.0096437186f   : Coefficient of O(6)
-    y = fmaf(frac, y, -0.042180188f);  // -0.042180188f    : Coefficient of O(5)
-    y = fmaf(frac, y, 0.166540906f);   // 0.166540906f     : Coefficient of O(4)
-    y = fmaf(frac, y, -0.0420036502f); // -0.0420036502f   : Coefficient of O(3)
-    y = fmaf(frac, y, -0.655878186f);  // -0.655878186f    : [0.577*0.577-pi*pi/6]/2
-    y = fmaf(frac, y, 0.577215672f);   // 0.577215672f     : Euler-Mascheroni constant
-    y = fmaf(frac, y, 1.0f);
-
-    if (x < -0.5f) {
-        //  1/gamma(x)
-        //  = 1/gamma(frac-1)
-        //  = 1/[frac*(frac-1)*gamma(frac+1)] = 1/[frac*x*gamma(frac+1)]
-        y = y * x * frac;
-    }
-    if (x <= 0.5f && x >= -0.5f) {
-        //  1/gamma(x)
-        //  = 1/gamma(frac)
-        //  = 1/[frac*gamma(x+1)]
-        y = y * frac;
-    }
-    //  1/(1/gamma(x))
-    if (fabsf(y) < 1.1754943e-38f) {
-        int32_t e = 0;
-        float m = frexpf(y, &e);
-        return ldexpf(1.0f / m, 0 - e);
-    } else {
-        return 1.0f / y;
-    }
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_abs_x(float x)
-{
-    float abs_x = fabsf(x);
-    if (abs_x > 41.0999985f) {
-        x = copysignf(41.0999985f, x);
-        abs_x = fabsf(x);
-    }
-    return abs_x;
-}
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y3(float ln_mantissa)
 {
     float y3 = 0.000656886259f;
@@ -1711,126 +1592,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y(float abs_x, float 
         y = y * 3.5527136e-15f; // 3.5527136e-15 : 2^-48
     }
     return y;
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_stirling_and_euler_reflection(float x)
-{
-    float abs_x = __internal_cal_abs_x(x);
-
-    //  Split the Stirling's Approximation into the main term and the remainder term
-    //  Calculate the main term: sqrt(2*pi*x) * (x/e)^x * x^(-1)
-    //  sqrt(2*pi*x) * (x/e)^(x-1)
-    //  = sqrt(2*pi) * x^(0.5)*(x/e)^x*x^(-1)
-    //  = sqrt(2*pi) * (x/e)^x*x^(-0.5)
-    //  = sqrt(2*pi) * [x^(x-0.5)/e^x]
-    //  = sqrt(2*pi) * 2^log[x^(x-0.5)/e^x]
-    //  = sqrt(2*pi) * 2^[(x-0.5)log(x) - xlog(e)]
-    //      note:
-    //          let y0 = [(x-0.5)log(x) - xlog(e)], split float-value[y0] into integer[i] and decimal[f]
-    //          let y01 = (x-0.5)log(x), y02 = xlog(e), then y0 = y01 - y02
-    //  = sqrt(2*pi) * 2^[i+f]
-    //  = sqrt(2*pi) * 2^f * 2^i
-    uint32_t u32 = reinterpret_cast<uint32_t&>(abs_x);
-    int32_t exp_u32 = (u32 - 1060439283) & 0xFF800000; // 0xFF800000: 2^128
-    int32_t man_u32 = u32 - exp_u32;
-    float mantissa = *reinterpret_cast<float*>(&man_u32);
-    float exponent = fmaf(static_cast<float>(exp_u32), 1.1920929e-07f, 0.0f); // 1.1920929e-07 : 2^-23
-    float ln_mantissa = 2.0f / (mantissa + 1.0f) * (mantissa - 1.0f);
-
-    //  log(x) = log(m*2^exp) = log(m) + exp= ln(m)/loge + exp
-    float log_x = fmaf(ln_mantissa, 1.44269502f, exponent); //  1.44269502f : log_2(e)
-
-    //  Calculates log(x)'s error-value
-    float log_x_diff = fmaf(ln_mantissa, 1.44269502f, exponent - log_x); //  1.44269502f : log_2(e)
-
-    float y3 = __internal_cal_y3(ln_mantissa);
-
-    float r = 2.0f * (mantissa - 1.0f - ln_mantissa) - ln_mantissa * (mantissa - 1.0f); // 2.0 :
-    log_x_diff = fmaf(1.0f / (mantissa + 1.0f) * r, 1.44269502f, log_x_diff);           //  1.44269502f : log_2(e)
-    log_x_diff = fmaf(ln_mantissa, 1.92513667e-08f, log_x_diff); // 1.92513667e-08f : Coefficient of O(1)
-    log_x_diff = fmaf(y3, ln_mantissa, log_x_diff);
-
-    float diff0 = log_x - (log_x + log_x_diff) + log_x_diff;
-    log_x = log_x + log_x_diff;
-
-    //  Calculates the exponent of Stirling's approximation
-    float y01 = log_x * (abs_x - 0.5f); //  0.5f : Coefficient of sqrt(x)
-    float y02 = 1.44269502f * abs_x;    //  1.44269502f : log_2(e)
-    float y0 = y01 - y02;
-
-    //  Calculates the exponent[y01] error-value
-    float diff1 = fmaf(log_x, abs_x - 0.5f, -y01);
-    diff1 = fmaf(diff0, abs_x - 0.5f, diff1);
-
-    //  Calculates the exponent[y02] error-value
-    float diff2 = fmaf(1.44269502f, abs_x, -y02); //  1.44269502f : log_2(e)
-    diff2 = fmaf(1.92596303e-08f, abs_x, diff2);
-    float y0_diff = (diff1 - diff2) - (y0 - y01 + y02);
-
-    float offset = 0.0f;
-    if (abs_x > 33.0f) { // 33.0f : threshold
-        offset = 48.0f;
-    }
-    if (x < 0.0f) {
-        y0 = offset - y0;
-        y0_diff = -y0_diff;
-    }
-
-    //  Split a float-value into integer[i] and decimal[f]
-    float i = nearbyintf(y0);
-    float f = y0 - i + y0_diff;
-
-    // 2^f * 2^i * sqrt(2*pi)
-    float y5 = powf(2.0f, f) * powf(2.0f, i) * 2.5066282f; //  2.5066282f : sqrt(2*PI)
-
-    //  Calculate Stirling's approximation remainder minus 1
-    //  y6 = {[1 + 1/(12*x) + 1/(288*x^2) - 139/(51840*x^3) - 571/(2488320*x^4)] - 1}*x^-1
-    float y6 = __internal_cal_y6(abs_x);
-    if (x > 0) {
-        //  y5 * (1.0f + y6)
-        return fmaf(y5, y6, y5);
-    } else {
-        //  According Euler's Reflection Formula
-        //  Gamma(x)Gamma(1-x)=PI/sin(pi*x)  ,  x<0
-        //  Gamma(x)Gamma(-x)(-x)=PI/sin(pi*x)
-        //  Gamma(x)
-        //  = pi / {sin(pi*x) * Gamma(-x) * (-x)}
-        //  = pi / {sin(pi*x) * Gamma(|x|) * (|x|)}
-        //  = pi / {sin(pi*x) * sqrt(2*pi*|x|) * (|x|/e)^|x|*y6*(x)}
-        //  = sqrt(2*pi*|x|) / {sin(pi*|x|) * 2 * |x| * (|x|/e)^|x|*y6*(|x|)}
-        //  = {sqrt(2*pi*|x|) * (|x|/e)^(x)} / {sin(pi*|x|) * 2* |x| * y6 * (|x|)}
-        //  = {[sqrt(2*pi*|x|) * (|x|/e)^(x)]/x} / {sin(pi*|x|) * 2 * x * y6}
-        //  = y5 / {sin(pi*|x|) * 2 * x * y6}
-        //  = y5 / {sin(pi*|x|) * x * y6} * 0.5
-
-        //  Remaining items of Stirling's Approximation
-        y6 = (y6 + 1);
-
-        //  sin(pi*|x|)
-        float sinpi = __internal_compute_sinpi(abs_x);
-
-        //  (y6 * x * sinpi)'s Error value
-        float y_diff = fmaf(y6 * x, sinpi, -y6 * x * sinpi);
-        float y7 = 1 / (y6 * x * sinpi);
-
-        return __internal_cal_y(abs_x, y_diff, y5, y7);
-    }
-}
-
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
-{
-    if (x == 0.0f) {
-        return 1.0f / x;
-    }
-    if (x < 0.0f && nearbyintf(x) == x) {
-        return ASCRT_INF_F / ASCRT_INF_F;
-    }
-    float abs_x = fabsf(x);
-    if (abs_x < 1.5f) {
-        return __internal_euler_gamma_function(x);
-    } else {
-        return __internal_stirling_and_euler_reflection(x);
-    }
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y0(float abs_x)
@@ -2934,7 +2695,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fdividef(float x, float y) { return 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int signbit(float x) { return signbitf(x); }
 
 #if defined(ASCENDC_USE_LEGACY_PRECISION)
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x) { return 1.0f - (2.0f / (expf(2.0f * x) + 1.0f)); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanf(float x)
@@ -3322,7 +3082,866 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
     return static_cast<int>(logbf(x));
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalbnf(float x, int32_t n)
+{
+    if (isinf(x) || isnan(x)) {
+        return x;
+    } else if (x == 0) {
+        return x;
+    }
+
+    float two = 2.0;
+    float fp32_exponent_mid_val = 127;
+
+    if (n < 0) {
+        n = -n;
+        if (n > fp32_exponent_mid_val) {
+            int mul_val_exp = n - fp32_exponent_mid_val;
+            n = fp32_exponent_mid_val;
+            x = x / __powf(two, static_cast<float>(mul_val_exp));
+        }
+        return x / __powf(two, n);
+    }
+    if (n > fp32_exponent_mid_val) {
+        int mul_val_exp = n - fp32_exponent_mid_val;
+        n = fp32_exponent_mid_val;
+        x = x * __powf(two, static_cast<float>(mul_val_exp));
+    }
+    return x * __powf(two, static_cast<float>(n));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalblnf(float x, int64_t n) { return scalbnf(x, static_cast<int32_t>(n)); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
+#ifdef __NPU_ARCH__
+#ifndef ASCENDC_CPU_DEBUG
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, __ubuf__ float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, __gm__ float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, __ubuf__ float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, __gm__ float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, __ubuf__ float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, __gm__ float* c)
+{
+    __INTERNAL_SINCOSF(x * ASCRT_PI_F, s, c);
+}
+#endif
+#endif
+#endif
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x) { return sinf(x * ASCRT_PI_F); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x) { return tanf(x * ASCRT_PI_F); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(float x)
+{
+    float frac = x - nearbyintf(x);
+    //  1/gamma(x + 1)
+    //  = 1 + γx + (γ^2 - pi^2/6) * x^2/2! + O(3)
+    float y = -0.00107286568f;         // -0.00107286568f  : Coefficient of O(8)
+    y = fmaf(y, frac, 0.00711105345f); // 0.00711105345f   : Coefficient of O(7)
+    y = fmaf(frac, y, -0.0096437186f); // -0.0096437186f   : Coefficient of O(6)
+    y = fmaf(frac, y, -0.042180188f);  // -0.042180188f    : Coefficient of O(5)
+    y = fmaf(frac, y, 0.166540906f);   // 0.166540906f     : Coefficient of O(4)
+    y = fmaf(frac, y, -0.0420036502f); // -0.0420036502f   : Coefficient of O(3)
+    y = fmaf(frac, y, -0.655878186f);  // -0.655878186f    : [0.577*0.577-pi*pi/6]/2
+    y = fmaf(frac, y, 0.577215672f);   // 0.577215672f     : Euler-Mascheroni constant
+    y = fmaf(frac, y, 1.0f);
+
+    if (x < -0.5f) {
+        //  1/gamma(x)
+        //  = 1/gamma(frac-1)
+        //  = 1/[frac*(frac-1)*gamma(frac+1)] = 1/[frac*x*gamma(frac+1)]
+        y = y * x * frac;
+    }
+    if (x <= 0.5f && x >= -0.5f) {
+        //  1/gamma(x)
+        //  = 1/gamma(frac)
+        //  = 1/[frac*gamma(x+1)]
+        y = y * frac;
+    }
+    //  1/(1/gamma(x))
+    if (fabsf(y) < 1.1754943e-38f) {
+        int32_t e = 0;
+        float m = frexpf(y, &e);
+        return ldexpf(1.0f / m, 0 - e);
+    } else {
+        return 1.0f / y;
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_abs_x(float x)
+{
+    float abs_x = fabsf(x);
+    if (abs_x > 41.0999985f) {
+        x = copysignf(41.0999985f, x);
+        abs_x = fabsf(x);
+    }
+    return abs_x;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_stirling_and_euler_reflection(float x)
+{
+    float abs_x = __internal_cal_abs_x(x);
+
+    //  Split the Stirling's Approximation into the main term and the remainder term
+    //  Calculate the main term: sqrt(2*pi*x) * (x/e)^x * x^(-1)
+    //  sqrt(2*pi*x) * (x/e)^(x-1)
+    //  = sqrt(2*pi) * x^(0.5)*(x/e)^x*x^(-1)
+    //  = sqrt(2*pi) * (x/e)^x*x^(-0.5)
+    //  = sqrt(2*pi) * [x^(x-0.5)/e^x]
+    //  = sqrt(2*pi) * 2^log[x^(x-0.5)/e^x]
+    //  = sqrt(2*pi) * 2^[(x-0.5)log(x) - xlog(e)]
+    //      note:
+    //          let y0 = [(x-0.5)log(x) - xlog(e)], split float-value[y0] into integer[i] and decimal[f]
+    //          let y01 = (x-0.5)log(x), y02 = xlog(e), then y0 = y01 - y02
+    //  = sqrt(2*pi) * 2^[i+f]
+    //  = sqrt(2*pi) * 2^f * 2^i
+    uint32_t u32 = reinterpret_cast<uint32_t&>(abs_x);
+    int32_t exp_u32 = (u32 - 1060439283) & 0xFF800000; // 0xFF800000: 2^128
+    int32_t man_u32 = u32 - exp_u32;
+    float mantissa = *reinterpret_cast<float*>(&man_u32);
+    float exponent = fmaf(static_cast<float>(exp_u32), 1.1920929e-07f, 0.0f); // 1.1920929e-07 : 2^-23
+    float ln_mantissa = 2.0f / (mantissa + 1.0f) * (mantissa - 1.0f);
+
+    //  log(x) = log(m*2^exp) = log(m) + exp= ln(m)/loge + exp
+    float log_x = fmaf(ln_mantissa, 1.44269502f, exponent); //  1.44269502f : log_2(e)
+
+    //  Calculates log(x)'s error-value
+    float log_x_diff = fmaf(ln_mantissa, 1.44269502f, exponent - log_x); //  1.44269502f : log_2(e)
+
+    float y3 = __internal_cal_y3(ln_mantissa);
+
+    float r = 2.0f * (mantissa - 1.0f - ln_mantissa) - ln_mantissa * (mantissa - 1.0f); // 2.0 :
+    log_x_diff = fmaf(1.0f / (mantissa + 1.0f) * r, 1.44269502f, log_x_diff);           //  1.44269502f : log_2(e)
+    log_x_diff = fmaf(ln_mantissa, 1.92513667e-08f, log_x_diff); // 1.92513667e-08f : Coefficient of O(1)
+    log_x_diff = fmaf(y3, ln_mantissa, log_x_diff);
+
+    float diff0 = log_x - (log_x + log_x_diff) + log_x_diff;
+    log_x = log_x + log_x_diff;
+
+    //  Calculates the exponent of Stirling's approximation
+    float y01 = log_x * (abs_x - 0.5f); //  0.5f : Coefficient of sqrt(x)
+    float y02 = 1.44269502f * abs_x;    //  1.44269502f : log_2(e)
+    float y0 = y01 - y02;
+
+    //  Calculates the exponent[y01] error-value
+    float diff1 = fmaf(log_x, abs_x - 0.5f, -y01);
+    diff1 = fmaf(diff0, abs_x - 0.5f, diff1);
+
+    //  Calculates the exponent[y02] error-value
+    float diff2 = fmaf(1.44269502f, abs_x, -y02); //  1.44269502f : log_2(e)
+    diff2 = fmaf(1.92596303e-08f, abs_x, diff2);
+    float y0_diff = (diff1 - diff2) - (y0 - y01 + y02);
+
+    float offset = 0.0f;
+    if (abs_x > 33.0f) { // 33.0f : threshold
+        offset = 48.0f;
+    }
+    if (x < 0.0f) {
+        y0 = offset - y0;
+        y0_diff = -y0_diff;
+    }
+
+    //  Split a float-value into integer[i] and decimal[f]
+    float i = nearbyintf(y0);
+    float f = y0 - i + y0_diff;
+
+    // 2^f * 2^i * sqrt(2*pi)
+    float y5 = powf(2.0f, f) * powf(2.0f, i) * 2.5066282f; //  2.5066282f : sqrt(2*PI)
+
+    //  Calculate Stirling's approximation remainder minus 1
+    //  y6 = {[1 + 1/(12*x) + 1/(288*x^2) - 139/(51840*x^3) - 571/(2488320*x^4)] - 1}*x^-1
+    float y6 = __internal_cal_y6(abs_x);
+    if (x > 0) {
+        //  y5 * (1.0f + y6)
+        return fmaf(y5, y6, y5);
+    } else {
+        //  According Euler's Reflection Formula
+        //  Gamma(x)Gamma(1-x)=PI/sin(pi*x)  ,  x<0
+        //  Gamma(x)Gamma(-x)(-x)=PI/sin(pi*x)
+        //  Gamma(x)
+        //  = pi / {sin(pi*x) * Gamma(-x) * (-x)}
+        //  = pi / {sin(pi*x) * Gamma(|x|) * (|x|)}
+        //  = pi / {sin(pi*x) * sqrt(2*pi*|x|) * (|x|/e)^|x|*y6*(x)}
+        //  = sqrt(2*pi*|x|) / {sin(pi*|x|) * 2 * |x| * (|x|/e)^|x|*y6*(|x|)}
+        //  = {sqrt(2*pi*|x|) * (|x|/e)^(x)} / {sin(pi*|x|) * 2* |x| * y6 * (|x|)}
+        //  = {[sqrt(2*pi*|x|) * (|x|/e)^(x)]/x} / {sin(pi*|x|) * 2 * x * y6}
+        //  = y5 / {sin(pi*|x|) * 2 * x * y6}
+        //  = y5 / {sin(pi*|x|) * x * y6} * 0.5
+
+        //  Remaining items of Stirling's Approximation
+        y6 = (y6 + 1);
+
+        //  sin(pi*|x|)
+        float sinpi = __internal_compute_sinpi(abs_x);
+
+        //  (y6 * x * sinpi)'s Error value
+        float y_diff = fmaf(y6 * x, sinpi, -y6 * x * sinpi);
+        float y7 = 1 / (y6 * x * sinpi);
+
+        return __internal_cal_y(abs_x, y_diff, y5, y7);
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
+{
+    if (x == 0.0f) {
+        return 1.0f / x;
+    }
+    if (x < 0.0f && nearbyintf(x) == x) {
+        return ASCRT_INF_F / ASCRT_INF_F;
+    }
+    float abs_x = fabsf(x);
+    if (abs_x < 1.5f) {
+        return __internal_euler_gamma_function(x);
+    } else {
+        return __internal_stirling_and_euler_reflection(x);
+    }
+}
+
 #else
+
+/**
+ * Scales a float by an integer power of two with clamped exponent handling.
+ *
+ * The implementation first clamps the requested exponent to a safe range so
+ * the intermediate scale factor does not overflow the fp32 exponent field.
+ *
+ * For small exponent magnitudes, the scale is formed directly as:
+ *   x * 2^n
+ *
+ * For larger magnitudes, the exponent is split into a high part and a residual:
+ *   n + 0x1FC = split_exponent * 3 + residual_exponent
+ *
+ * The result is then reconstructed with repeated multiplication by the split
+ * scale factor to keep the intermediate values in range:
+ *   result = x * 2^(residual_exponent) * (2^(split_exponent))^3
+ *
+ * @param x The input value.
+ * @param n The scaling exponent.
+ * @return The computed x * 2^n value with clamped exponent handling.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_scalbnf_clamped(float x, int32_t n)
+{
+    // Maximum absolute exponent used to keep the scale factor within the safe fp32 range.
+    constexpr int32_t max_scale_exponent = 0x116;
+    // Threshold above which the exponent is split into a high part and a residual part.
+    constexpr int32_t split_threshold = 0x65;
+    // Bias used when the exponent can be encoded directly into a single fp32 scale.
+    constexpr int32_t simple_exponent_bias = 0x7F;
+    // Bias used for the split-exponent path so the high/low parts stay well-formed.
+    constexpr int32_t split_exponent_bias = 0x1FC;
+    // Bit pattern for 1.0f, used as the default scale factor when no split is needed.
+    constexpr uint32_t fp32_one_bits = 0x3F800000U;
+    // Clamp the requested exponent to a bounded interval.
+    int32_t clamped_n = n > max_scale_exponent ? max_scale_exponent : n;
+    clamped_n = clamped_n < -max_scale_exponent ? -max_scale_exponent : clamped_n;
+
+    // Build either a direct exponent scale or a split high/residual scale.
+    uint32_t scale_bits = 0U;
+    uint32_t split_scale_bits = fp32_one_bits;
+    if (clamped_n >= split_threshold || clamped_n <= -split_threshold) {
+        const int32_t biased_exponent = clamped_n + split_exponent_bias;
+        const int32_t split_exponent = static_cast<uint32_t>(biased_exponent) >> 2U;
+        const int32_t residual_exponent = biased_exponent - split_exponent * 3;
+        split_scale_bits = static_cast<uint32_t>(split_exponent) << __internal_fp32_exponent_shift;
+        scale_bits = static_cast<uint32_t>(residual_exponent) << __internal_fp32_exponent_shift;
+    } else {
+        scale_bits = static_cast<uint32_t>(clamped_n + simple_exponent_bias) << __internal_fp32_exponent_shift;
+    }
+
+    // Apply the direct scale first, then fold in the split high-part scale three times.
+    float result = __uint_as_float(scale_bits) * x;
+    const float split_scale = __uint_as_float(split_scale_bits);
+    result = split_scale * result;
+    result = split_scale * result;
+    result = split_scale * result;
+    return result;
+}
+
+/**
+ * Scales a float by an integer power of two.
+ *
+ * This is a thin wrapper around the clamped scaling helper used by the SIMT
+ * math library.
+ *
+ * @param x The input value.
+ * @param n The scaling exponent.
+ * @return The computed x * 2^n value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalbnf(float x, int32_t n) { return __internal_scalbnf_clamped(x, n); }
+
+/**
+ * Scales a float by a long integer power of two.
+ *
+ * The long exponent is clamped to the same safe interval as scalbnf before
+ * being forwarded to the shared scaling helper.
+ *
+ * @param x The input value.
+ * @param n The scaling exponent.
+ * @return The computed x * 2^n value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalblnf(float x, int64_t n)
+{
+    // Clamp the long exponent to the same bounded interval used by scalbnf.
+    constexpr int64_t max_scale_exponent = 0x116;
+    int32_t clamped_n = 0;
+    if (n > max_scale_exponent) {
+        clamped_n = static_cast<int32_t>(max_scale_exponent);
+    } else if (n < -max_scale_exponent) {
+        clamped_n = static_cast<int32_t>(-max_scale_exponent);
+    } else {
+        clamped_n = static_cast<int32_t>(n);
+    }
+    return __internal_scalbnf_clamped(x, clamped_n);
+}
+
+/**
+ * Computes sin(pi * x) and cos(pi * x) with a shared reduced-argument path.
+ *
+ * The implementation first classifies special values, but keeps the main
+ * reduction and polynomial evaluation running on a safe substitute input.
+ * It then reduces x around the nearest half-integer multiple, evaluates the
+ * sine and cosine polynomials on the reduced argument, and selects the final
+ * branch by quadrant.
+ *
+ * Special values and very large finite inputs are overridden at the end:
+ *   - NaN/inf produce NaN results for both outputs
+ *   - |x| > 2^24 maps to sin(pi*x) = 0 and cos(pi*x) = 1
+ *
+ * @param x The input value.
+ * @param sin_result Output location for sin(pi * x).
+ * @param cos_result Output location for cos(pi * x).
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_sincospif_core(float x, float* sin_result, float* cos_result)
+{
+    constexpr float large_input_bound = __internal_fp32_scale_2p24;
+    constexpr float pi_hi = ASCRT_PI_F; // High-precision single-precision pi constant.
+
+    // Classify inputs first, but keep the main reduction path running on a safe value.
+    const bool is_nan = isnan(x);
+    const bool is_inf = isinf(x);
+    const bool is_special = is_nan || is_inf;
+    const bool is_large_input = !is_special && fabsf(x) > large_input_bound;
+    const float safe_x = is_special ? 0.0f : x;
+
+    // Reduce x to a small remainder around the nearest half-integer multiple.
+    const float two_x = safe_x + safe_x;
+    const int32_t quadrant = __float2int_rn(two_x);
+    const float rounded_two_x = __int2float_rn(quadrant);
+    const bool is_integer = !is_special && (truncf(x) == x);
+    const float reduced = fmaf(-rounded_two_x, 0.5f, safe_x);
+    const float reduced2 = reduced * reduced;
+
+    // sin(pi*r) polynomial on the reduced argument.
+    float sin_poly = fmaf(reduced2, -0.59248024225234985352f, 2.550144195556640625f);
+    sin_poly = fmaf(reduced2, sin_poly, -5.1677198410034179688f);
+    const float reduced3 = reduced * reduced2;
+    float sin_value = fmaf(sin_poly, reduced3, reduced * pi_hi);
+
+    // cos(pi*r) polynomial on the same reduced argument.
+    float cos_value = fmaf(reduced2, 0.22686031460762023926f, -1.334560394287109375f);
+    cos_value = fmaf(reduced2, cos_value, 4.0586924552917480469f);
+    cos_value = fmaf(reduced2, cos_value, -4.9348020553588867188f);
+    cos_value = fmaf(reduced2, cos_value, 1.0f);
+
+    // Select sin/cos branches and restore the correct signs for the quadrant.
+    float selected_sin = ((quadrant & 1) != 0) ? cos_value : sin_value;
+    float selected_cos = ((quadrant & 1) != 0) ? sin_value : cos_value;
+    if ((quadrant & 2) != 0) {
+        selected_sin = -selected_sin;
+    }
+    if (((quadrant + 1) & 2) != 0) {
+        selected_cos = -selected_cos;
+    }
+    if (is_integer) {
+        selected_sin = 0.0f * safe_x;
+    }
+
+    // Override the finite-path result for special and very large inputs.
+    float final_sin = selected_sin;
+    float final_cos = selected_cos;
+    if (is_special) {
+        const float nan_result = x - x;
+        final_sin = nan_result;
+        final_cos = nan_result;
+    } else if (is_large_input) {
+        final_sin = 0.0f * x;
+        final_cos = 1.0f;
+    }
+
+    *sin_result = final_sin;
+    *cos_result = final_cos;
+}
+
+#define __INTERNAL_SINCOSPIF(x, s, c)                             \
+    do {                                                          \
+        float sin_result = 0.0f;                                  \
+        float cos_result = 0.0f;                                  \
+        __internal_sincospif_core((x), &sin_result, &cos_result); \
+        *(s) = sin_result;                                        \
+        *(c) = cos_result;                                        \
+    } while (0)
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, float* c) { __INTERNAL_SINCOSPIF(x, s, c); }
+
+#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
+#ifdef __NPU_ARCH__
+#ifndef ASCENDC_CPU_DEBUG
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, __ubuf__ float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, __gm__ float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, __ubuf__ float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __ubuf__ float* s, __gm__ float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, __ubuf__ float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, __gm__ float* c)
+{
+    __INTERNAL_SINCOSPIF(x, s, c);
+}
+#endif
+#endif
+#endif
+
+/**
+ * Computes sin(pi * x) for float inputs.
+ *
+ * The implementation first handles special values and large magnitudes with
+ * fixed IEEE-style semantics:
+ *   - NaN / infinity propagate to NaN
+ *   - very large |x| collapse to signed zero
+ *
+ * The core reduction uses the nearest half-integer decomposition:
+ *   sin(pi * x) = sin(pi * r) or cos(pi * r)
+ * where r = x - round(2x) / 2
+ *
+ * The parity of round(2x) selects the sine or cosine polynomial path.
+ * A final sign flip is applied from the quadrant parity, and exact integers
+ * return signed zero.
+ *
+ * @param x The input value.
+ * @return The computed sin(pi * x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x)
+{
+    // Large inputs are reduced to signed zero to avoid loss of significance.
+    constexpr float large_input_bound = __internal_fp32_scale_2p24;
+    constexpr float pi_hi = ASCRT_PI_F; // High-precision single-precision pi constant.
+
+    // Keep a truncated copy so exact integers can be forced to signed zero later.
+    const float truncated_x = truncf(x);
+
+    // Reduce x around the nearest half-integer by working with 2x.
+    const float two_x = x + x;
+    const int32_t quadrant = __float2int_rn(two_x);
+    const float rounded_two_x = __int2float_rn(quadrant);
+    const bool use_cos_poly = ((quadrant & 1) != 0);
+
+    // Reduced argument r = x - round(2x)/2.
+    const float reduced = fmaf(-rounded_two_x, 0.5f, x);
+    const float reduced2 = reduced * reduced;
+
+    // Evaluate the sine or cosine polynomial branch depending on parity.
+    float poly = use_cos_poly ? 0.22686031460762023926f : -0.59248024225234985352f;
+    poly = fmaf(reduced2, poly, use_cos_poly ? -1.334560394287109375f : 2.550144195556640625f);
+    poly = fmaf(reduced2, poly, use_cos_poly ? 4.0586924552917480469f : -5.1677198410034179688f);
+
+    float result = 0.0f;
+    if (use_cos_poly) {
+        // Cosine branch for half-integer neighborhoods.
+        poly = fmaf(reduced2, poly, -4.9348020553588867188f);
+        result = fmaf(poly, reduced2, 1.0f);
+    } else {
+        // Sine branch for integer neighborhoods.
+        result = fmaf(poly, reduced * reduced2, reduced * pi_hi);
+    }
+
+    // Quadrant parity determines the final sign.
+    if ((quadrant & 2) != 0) {
+        result = -result;
+    }
+    // Exact integers map to signed zero.
+    if (truncated_x == x || fabsf(x) > large_input_bound) {
+        result = 0.0f * x;
+    }
+
+    return result;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_tanpif_small(float x)
+{
+    // Split pi into hi/lo parts so the argument reduction stays accurate.
+    constexpr float pi_hi = ASCRT_PI_F;                  // High-precision single-precision pi constant.
+    constexpr float pi_lo = -8.7422776573475857731e-08f; // Low-precision single-precision pi constant.
+    const float arg = fmaf(x, pi_hi, x * pi_lo);
+    return tanf(arg);
+}
+
+/**
+ * Computes tan(pi * x) for float inputs.
+ *
+ * The implementation first handles special values and large magnitudes with
+ * fixed IEEE-style semantics:
+ *   - NaN / infinity propagate to NaN
+ *   - very large |x| collapse to signed zero
+ *
+ * The core reduction uses the nearest integer decomposition:
+ *   tan(pi * x) = tan(pi * r), where r = x - round(x)
+ *
+ * For small |r|, the tangent polynomial is evaluated directly through a split
+ * pi argument:
+ *   tan(pi * r) = tanf(r * pi_hi + r * pi_lo)
+ *
+ * For half-integer neighborhoods, the implementation switches to the cotangent
+ * identity:
+ *   tan(pi * x) = sign(x) / tan(pi * (0.5 - |r|))
+ *
+ * Exact integers return signed zero, and exact half-integers return signed
+ * infinity.
+ *
+ * @param x The input value.
+ * @return The computed tan(pi * x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x)
+{
+    // Very large magnitudes are treated as zero after range reduction.
+    constexpr float large_input_bound = __internal_fp32_scale_2p24;
+    float result;
+    // Reduce x by the nearest integer and work on the fractional part.
+    const int32_t nearest_integer = __float2int_rn(x);
+    const float rounded_integer = __int2float_rn(nearest_integer);
+    const float reduced = x - rounded_integer;
+    const float abs_reduced = fabsf(reduced);
+
+    // Exact integers map to signed zero.
+    if (reduced == 0.0f || fabsf(x) >= large_input_bound) {
+        result = 0.0f * x;
+    } else if (abs_reduced == 0.5f) {
+        // Exact half-integers map to signed infinity.
+        result = __internal_with_sign_bit(ASCRT_INF_F, reduced);
+    } else if (abs_reduced <= 0.25f) {
+        // Small reduced arguments use the direct tangent polynomial path.
+        result = __internal_tanpif_small(reduced);
+    } else {
+        // Near half-integers, use tan(pi*x) = 1 / tan(pi*(0.5 - |r|)).
+        const float distance_to_half = 0.5f - abs_reduced;
+        const float cot_base = __internal_tanpif_small(distance_to_half);
+        const float r_cot_base = 1.0f / cot_base;
+        result = __internal_with_sign_bit(r_cot_base, reduced);
+    }
+    return result;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(float x)
+{
+    // Reduce the argument around the nearest integer when x is nonzero.
+    float reduced = x;
+    if (x != 0.0f) {
+        reduced = x - nearbyintf(x);
+    }
+
+    // Polynomial approximation for the Euler gamma correction term.
+    float poly = fmaf(reduced, -0.0010728656779974699020f, 0.0071110534481704235077f);
+    poly = fmaf(poly, reduced, -0.0096437186002731323242f);
+    poly = fmaf(poly, reduced, -0.042180188000202178955f);
+    poly = fmaf(poly, reduced, 0.16654090583324432373f);
+    poly = fmaf(poly, reduced, -0.04200365021824836731f);
+    poly = fmaf(poly, reduced, -0.65587818622589111328f);
+    poly = fmaf(poly, reduced, 0.57721567153930664062f);
+
+    // Build the denominator used by the reciprocal gamma correction path.
+    float scale = x < -0.5f ? x : 1.0f;
+    if (x <= 0.5f) {
+        scale = scale * reduced;
+    }
+
+    float denominator = fmaf(scale * poly, reduced, scale);
+    // Fall back to a scaled reciprocal when the denominator becomes subnormal.
+    if (fabsf(denominator) < __internal_subnormal_boundary) {
+        int32_t e = 0;
+        float m = frexpf(denominator, &e);
+        return ldexpf(1.0f / m, 0 - e);
+    }
+    return 1.0f / denominator;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_abs_x(float x)
+{
+    constexpr float tgamma_stirling_bound = 41.09999847412109375f;
+    // Clamp the absolute magnitude to the Stirling training range.
+    return fabsf(x) > tgamma_stirling_bound ? tgamma_stirling_bound : fabsf(x);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_stirling_and_euler_reflection(float x)
+{
+    // Constants used by the log/exp split, Stirling reconstruction, and tail handling.
+    constexpr float log2e_hi = __internal_fp32_log2e;     // High part of log2(e).
+    constexpr float log2e_lo = 1.925963033500011079e-08f; // Low part of log2(e); log2(e) ~= log2e_hi + log2e_lo.
+    constexpr float sqrt_two_pi = 2.5066282749176025391f; // sqrt(2*pi); leading constant of the Stirling main term.
+    constexpr float subnormal_scale = __internal_fp32_scale_2p24; // 2^24; lifts subnormal |x| into the normal range.
+    constexpr float subnormal_exponent_fix = __internal_fp32_subnormal_exponent_fix; // -24.0f; undoes the 2^24 scaling.
+    constexpr float log_exponent_scale =
+        __internal_fp32_log_exponent_scale;              // 2^-23; converts exponent bits to log2 domain.
+    constexpr uint32_t log_reduction_mask = 0xFF800000U; // Keeps sign+exponent bits, clears mantissa.
+    constexpr uint32_t sqrt_half_bits = 0x3F3504F3U;     // Bit pattern of sqrt(0.5); centers reduced mantissa near 1.
+    constexpr float large_reflection_bound = 33.0f;   // |x| threshold for pre-scaling the negative reflection branch.
+    constexpr float negative_exponent_offset = 48.0f; // Exponent offset injected to avoid intermediate underflow.
+    constexpr float exp2_overflow_abs_bound = 152.0f; // |exponent| beyond which 2^exponent overflows/underflows fp32.
+
+    // Clamp the Stirling input range and keep only the absolute magnitude.
+    const float abs_x = __internal_cal_abs_x(x);
+
+    const bool is_normal_x = abs_x >= __internal_subnormal_boundary;
+    const float log_input = is_normal_x ? abs_x : abs_x * subnormal_scale;
+    const float exponent_base = is_normal_x ? 0.0f : subnormal_exponent_fix;
+    const uint32_t log_input_bits = __float_as_uint(log_input);
+
+    // Split the logarithm reduction around sqrt(0.5) to keep the mantissa near 1.
+    const uint32_t reduction_bits = (log_input_bits - sqrt_half_bits) & log_reduction_mask;
+    const float mantissa = __uint_as_float(log_input_bits - reduction_bits);
+    const float exponent_part = fmaf(__uint2float_rn(reduction_bits), log_exponent_scale, exponent_base);
+
+    // Evaluate the log polynomial and its high/low residual corrections.
+    const float mantissa_minus_one = mantissa - 1.0f;
+    const float mantissa_plus_one = mantissa + 1.0f;
+    const float reciprocal = 1.0f / mantissa_plus_one;
+    const float reduced_hi = reciprocal * (mantissa_minus_one + mantissa_minus_one);
+    const float reduced_square = reduced_hi * reduced_hi;
+
+    float log_poly = fmaf(reduced_square, 0.0006568862590938807f, 0.0032181653659790754318f);
+    log_poly = fmaf(reduced_square, log_poly, 0.018033718690276145935f);
+    log_poly = fmaf(reduced_square, log_poly, 0.12022458761930465698f);
+    log_poly = reduced_square * log_poly;
+
+    const float log_x_rounded = fmaf(reduced_hi, log2e_hi, exponent_part);
+    float reduced_err = mantissa_minus_one - reduced_hi;
+    reduced_err = fmaf(mantissa_minus_one, -reduced_hi, reduced_err + reduced_err);
+    const float reduced_lo = reciprocal * reduced_err;
+
+    // Reconstruct log(x) as a high part plus a low residual.
+    float log_x_diff = exponent_part - log_x_rounded;
+    log_x_diff = fmaf(reduced_hi, log2e_hi, log_x_diff);
+    log_x_diff = fmaf(reduced_lo, log2e_hi, log_x_diff);
+    log_x_diff = fmaf(reduced_hi, log2e_lo, log_x_diff);
+    log_x_diff = fmaf(reduced_lo, log_poly * 3.0f, log_x_diff);
+    log_x_diff = fmaf(reduced_hi, log_poly, log_x_diff);
+
+    //  Calculates the exponent of Stirling's approximation
+    float log_x = log_x_rounded + log_x_diff;
+    const float log_x_round_err = log_x_diff - (log_x - log_x_rounded);
+    const float abs_x_minus_half = abs_x - 0.5f;
+    const float log_mul_hi = log_x * abs_x_minus_half;
+    const float exp_mul_hi = abs_x * log2e_hi;
+    float exponent_hi = log_mul_hi - exp_mul_hi;
+
+    // Accumulate the residual terms for the Stirling exponent.
+    float log_mul_err = fmaf(log_x, abs_x_minus_half, -log_mul_hi);
+    log_mul_err = fmaf(log_x_round_err, abs_x_minus_half, log_mul_err);
+    float exp_mul_err = fmaf(abs_x, log2e_hi, -exp_mul_hi);
+    exp_mul_err = fmaf(abs_x, log2e_lo, exp_mul_err);
+
+    const float exp_sum_hi = exp_mul_hi + exponent_hi;
+    const float exponent_round_err = exponent_hi - exp_sum_hi;
+    const float log_mul_round_err = log_mul_hi - exp_sum_hi;
+    const float exp_mul_round_err = -exp_mul_hi - exponent_round_err;
+    float exponent_lo = log_mul_round_err + exp_mul_round_err;
+    exponent_lo = exponent_lo + (log_mul_err - exp_mul_err);
+
+    const float offset = abs_x > large_reflection_bound ? negative_exponent_offset : 0.0f;
+    if (x < 0.0f) {
+        // Reflect the exponent for the negative-x branch.
+        exponent_hi = offset - exponent_hi;
+        exponent_lo = -exponent_lo;
+    }
+
+    // 2^exponent * sqrt(2*pi)
+    // Split the exponent into integer and fractional parts for exp2 reconstruction.
+    const float rounded_exponent = roundf(exponent_hi);
+    float exp2_fraction = exponent_hi - rounded_exponent;
+    exp2_fraction = exp2_fraction + exponent_lo;
+    const int32_t exp2_exponent = __float2int_rz(rounded_exponent);
+
+    // Evaluate the exp2 polynomial on the fractional part.
+    float exp2_poly = fmaf(exp2_fraction, 0.00015239251661114395f, 0.0013391353422775864601f);
+    exp2_poly = fmaf(exp2_fraction, exp2_poly, 0.0096188392490148544312f);
+    exp2_poly = fmaf(exp2_fraction, exp2_poly, 0.055503588169813156128f);
+    exp2_poly = fmaf(exp2_fraction, exp2_poly, 0.24022644758224487305f);
+    exp2_poly = fmaf(exp2_fraction, exp2_poly, __internal_fp32_ln2_hi);
+    exp2_poly = fmaf(exp2_fraction, exp2_poly, 1.0f);
+
+    const bool exponent_is_positive = rounded_exponent > 0.0f;
+    const uint32_t scale_hi_bits = exponent_is_positive ? 0x7F000000U : 0x02000000U;
+    const uint32_t scale_adjust = exponent_is_positive ? 0U : 0x83000000U;
+    const uint32_t scale_lo_bits =
+        (static_cast<uint32_t>(exp2_exponent) << __internal_fp32_exponent_shift) - scale_adjust;
+    float exp2_value = exp2_poly * __uint_as_float(scale_hi_bits);
+    exp2_value = exp2_value * __uint_as_float(scale_lo_bits);
+    // Clamp exp2 overflow in the Stirling branch.
+    if (fabsf(exponent_hi) > exp2_overflow_abs_bound) {
+        exp2_value = exponent_hi >= 0.0f ? ASCRT_INF_F : 0.0f;
+    }
+    const float y5 = exp2_value * sqrt_two_pi;
+
+    //  Calculate Stirling's approximation remainder minus 1
+    //  y6 = {[1 + 1/(12*x) + 1/(288*x^2) - 139/(51840*x^3) - 571/(2488320*x^4)] - 1}*x^-1
+    float y6 = __internal_cal_y6(abs_x);
+    if (x > 0.0f) {
+        //  y5 * (1.0f + y6)
+        return fmaf(y5, y6, y5);
+    } else {
+        //  Remaining items of Stirling's Approximation
+        y6 = (y6 + 1);
+
+        //  sin(pi*|x|)
+        // Reuse the sin(pi*x) style quadrant split for the reflection denominator.
+        const float two_abs_x = abs_x + abs_x;
+        const int32_t sinpi_quadrant = __float2int_rn(two_abs_x);
+        const float rounded_two_abs_x = __int2float_rn(sinpi_quadrant);
+        const bool use_cos_poly = ((sinpi_quadrant & 1) != 0);
+        float reduced_pi_arg = fmaf(rounded_two_abs_x, -0.5f, abs_x);
+        const float reduced_pi_arg_square = reduced_pi_arg * reduced_pi_arg;
+        float sinpi_poly = 0.0f;
+        if (use_cos_poly) {
+            sinpi_poly = fmaf(reduced_pi_arg_square, 0.22686031460762023926f, -1.334560394287109375f);
+            sinpi_poly = fmaf(reduced_pi_arg_square, sinpi_poly, 4.0586924552917480469f);
+            sinpi_poly = fmaf(reduced_pi_arg_square, sinpi_poly, -4.9348020553588867188f);
+            sinpi_poly = fmaf(reduced_pi_arg_square, sinpi_poly, 1.0f);
+        } else {
+            sinpi_poly = fmaf(reduced_pi_arg_square, -0.59248024225234985352f, 2.550144195556640625f);
+            sinpi_poly = fmaf(reduced_pi_arg_square, sinpi_poly, -5.1677198410034179688f);
+            sinpi_poly = fmaf(sinpi_poly, reduced_pi_arg * reduced_pi_arg_square, reduced_pi_arg * ASCRT_PI_F);
+        }
+        float sinpi = ((sinpi_quadrant & 2) != 0) ? -sinpi_poly : sinpi_poly;
+
+        // Track the residual of the reflection denominator for the final correction.
+        float y_diff = fmaf(y6 * x, sinpi, -y6 * x * sinpi);
+        float y7 = 1 / (y6 * x * sinpi);
+
+        return __internal_cal_y(abs_x, y_diff, y5, y7);
+    }
+}
+
+/**
+ * Computes the gamma function for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style semantics:
+ * NaN propagates, +inf returns +inf, -inf returns NaN, and zero returns signed
+ * infinity.
+ *
+ * For small |x|, it uses a local Euler-gamma polynomial path:
+ *   Gamma(x) ~= 1 / [ x * P(reduced) ]
+ *
+ * For larger magnitudes, it switches to a Stirling-style approximation:
+ *   Gamma(x) ~= sqrt(2*pi) * (x/e)^(x-1/2) * correction(x)
+ *
+ * Negative non-integers use Euler's reflection identity:
+ *   Gamma(x) = pi / (sin(pi*x) * Gamma(1-x))
+ *
+ * The reflection branch reuses the sin(pi*x) style reduction so the sign and
+ * half-integer behavior stay consistent.
+ *
+ * @param x The input value.
+ * @return The computed tgammaf(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
+{
+    constexpr float tgamma_stirling_bound = 41.09999847412109375f;
+
+    // Small magnitudes use the Euler gamma correction path; larger ones use Stirling/reflection.
+    float result = fabsf(x) < 1.5f ? __internal_euler_gamma_function(x) : __internal_stirling_and_euler_reflection(x);
+
+    // Integer inputs on the negative side are poles of gamma.
+    const float truncated_x = truncf(x);
+    if (truncated_x == x) {
+        result = x < 0.0f ? ASCRT_INF_F / ASCRT_INF_F : result;
+    }
+
+    // For large negative non-integers, odd integer truncations force a sign correction to zero.
+    if (x < -tgamma_stirling_bound && truncated_x != x) {
+        const int32_t truncated_int = __float2int_rz(truncated_x);
+        if ((truncated_int & 1) != 0) {
+            result = 0.0f;
+        }
+    }
+
+    // Special values follow IEEE-style gamma semantics.
+    if (isnan(x)) {
+        result = x;
+    }
+    if (x == ASCRT_INF_F) {
+        result = ASCRT_INF_F;
+    }
+    if (x == -ASCRT_INF_F) {
+        result = ASCRT_INF_F / ASCRT_INF_F;
+    }
+    if (x == 0.0f) {
+        result = 1.0f / x;
+    }
+    return result;
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_asin_acos_reduced_arg(float abs_x)
 {
