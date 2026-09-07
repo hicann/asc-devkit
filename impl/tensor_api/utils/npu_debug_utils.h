@@ -167,6 +167,7 @@ struct debug_tuple_flat_6 {};
 struct debug_tuple_nested_2x2 {};
 struct debug_tuple_leading_scalar_flat_2 {};
 struct debug_tuple_leading_scalar_nested_2x2 {};
+struct debug_tuple_leading_scalar_two_flat_2 {};
 
 template <size_t size>
 struct debug_flat_tuple_format {
@@ -225,6 +226,14 @@ struct debug_tuple_format<
         debug_tuple_leading_scalar_nested_2x2, debug_tuple_unsupported>;
 };
 
+template <typename LeadingType, typename Value00Type, typename Value01Type, typename Value10Type, typename Value11Type>
+struct debug_tuple_format<
+    Std::tuple<LeadingType, Std::tuple<Value00Type, Value01Type>, Std::tuple<Value10Type, Value11Type>>> {
+    using type = Std::conditional_t<
+        are_debug_scalar_values_v<LeadingType, Value00Type, Value01Type, Value10Type, Value11Type>,
+        debug_tuple_leading_scalar_two_flat_2, debug_tuple_unsupported>;
+};
+
 template <typename ValueType>
 using debug_tuple_format_t = typename debug_tuple_format<Std::remove_cvref_t<ValueType>>::type;
 
@@ -241,7 +250,7 @@ template <typename FormatType>
 constexpr bool is_debug_slice_same_format_v = is_one_of_attr_v<
     FormatType, debug_tuple_flat_1, debug_tuple_flat_2, debug_tuple_flat_3, debug_tuple_flat_4, debug_tuple_flat_5,
     debug_tuple_flat_6, debug_tuple_nested_2x2, debug_tuple_leading_scalar_flat_2,
-    debug_tuple_leading_scalar_nested_2x2>;
+    debug_tuple_leading_scalar_nested_2x2, debug_tuple_leading_scalar_two_flat_2>;
 
 template <typename SourceFormatType, typename CoordFormatType, typename SliceFormatType>
 struct debug_slice_format_category {
@@ -252,12 +261,12 @@ struct debug_slice_format_category {
         Std::is_same_v<SourceFormatType, debug_tuple_flat_2> && Std::is_same_v<CoordFormatType, SliceFormatType> &&
         is_one_of_attr_v<
             CoordFormatType, debug_tuple_nested_2x2, debug_tuple_leading_scalar_flat_2,
-            debug_tuple_leading_scalar_nested_2x2>;
-    static constexpr bool is_nested_source = Std::is_same_v<SourceFormatType, debug_tuple_nested_2x2> &&
-                                             Std::is_same_v<CoordFormatType, SliceFormatType> &&
-                                             is_one_of_attr_v<
-                                                 CoordFormatType, debug_tuple_flat_2, debug_tuple_leading_scalar_flat_2,
-                                                 debug_tuple_leading_scalar_nested_2x2>;
+            debug_tuple_leading_scalar_nested_2x2, debug_tuple_leading_scalar_two_flat_2>;
+    static constexpr bool is_nested_source =
+        Std::is_same_v<SourceFormatType, debug_tuple_nested_2x2> && Std::is_same_v<CoordFormatType, SliceFormatType> &&
+        is_one_of_attr_v<
+            CoordFormatType, debug_tuple_flat_2, debug_tuple_leading_scalar_flat_2,
+            debug_tuple_leading_scalar_nested_2x2, debug_tuple_leading_scalar_two_flat_2>;
     static constexpr bool is_rank_expanded =
         (Std::is_same_v<SourceFormatType, debug_tuple_flat_3> && Std::is_same_v<CoordFormatType, debug_tuple_flat_4> &&
          Std::is_same_v<SliceFormatType, debug_tuple_flat_4>) ||

@@ -28,20 +28,6 @@
 namespace asc {
 namespace te {
 
-struct zero_coord_type;
-
-template <typename LayoutType, typename SliceShape>
-__aicore__ inline constexpr decltype(auto) resolve_copy_coord(
-    const LayoutType&, const SliceShape&, const zero_coord_type&);
-
-template <
-    typename LayoutType, typename SliceShape, typename Coord,
-    Std::enable_if_t<!Std::is_same_v<Std::remove_cvref_t<Coord>, zero_coord_type>, int> = 0>
-__aicore__ inline constexpr const Coord& resolve_copy_coord(const LayoutType&, const SliceShape&, const Coord&);
-
-template <typename Coord, typename LayoutType, typename SliceShape, Std::enable_if_t<!is_layout_v<SliceShape>, int> = 0>
-__aicore__ inline decltype(auto) make_slice_shape(const Coord&, const LayoutType&, const SliceShape&);
-
 template <typename ShapeType>
 __aicore__ inline constexpr bool is_copy_shape_valid(const ShapeType& shape);
 

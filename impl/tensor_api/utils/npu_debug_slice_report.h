@@ -59,6 +59,9 @@ __aicore__ inline void report_slice_error_by_format(
             "((%lld, %lld), (%lld, %lld))", "(%lld, (%lld, %lld), (%lld, %lld))");
     } else if constexpr (Std::is_same_v<source_format_type, debug_tuple_leading_scalar_flat_2>) {
         TENSOR_API_DETAIL_REPORT_SLICE_SAME_FORMAT("(%lld, (%lld, %lld))", "(%lld, %lld, (%lld, %lld))");
+    } else if constexpr (Std::is_same_v<source_format_type, debug_tuple_leading_scalar_two_flat_2>) {
+        TENSOR_API_DETAIL_REPORT_SLICE_SAME_FORMAT(
+            "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, %lld, (%lld, %lld), (%lld, %lld))");
     } else {
         TENSOR_API_DETAIL_REPORT_SLICE_SAME_FORMAT(
             "(%lld, ((%lld, %lld), (%lld, %lld)))", "(%lld, %lld, ((%lld, %lld), (%lld, %lld)))");
@@ -85,6 +88,10 @@ __aicore__ inline void report_slice_error_by_format(
         TENSOR_API_DETAIL_REPORT_SLICE_WITH_FORMATS(
             "(%lld, %lld)", "(%lld, %lld, %lld)", "(%lld, (%lld, %lld))", "(%lld, (%lld, %lld))",
             "(%lld, %lld, (%lld, %lld))");
+    } else if constexpr (Std::is_same_v<coord_format_type, debug_tuple_leading_scalar_two_flat_2>) {
+        TENSOR_API_DETAIL_REPORT_SLICE_WITH_FORMATS(
+            "(%lld, %lld)", "(%lld, %lld, %lld)", "(%lld, (%lld, %lld), (%lld, %lld))",
+            "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, %lld, (%lld, %lld), (%lld, %lld))");
     } else {
         TENSOR_API_DETAIL_REPORT_SLICE_WITH_FORMATS(
             "(%lld, %lld)", "(%lld, %lld, %lld)", "(%lld, ((%lld, %lld), (%lld, %lld)))",
@@ -112,6 +119,10 @@ __aicore__ inline void report_slice_error_by_format(
         TENSOR_API_DETAIL_REPORT_SLICE_WITH_FORMATS(
             "((%lld, %lld), (%lld, %lld))", "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, (%lld, %lld))",
             "(%lld, (%lld, %lld))", "(%lld, %lld, (%lld, %lld))");
+    } else if constexpr (Std::is_same_v<coord_format_type, debug_tuple_leading_scalar_two_flat_2>) {
+        TENSOR_API_DETAIL_REPORT_SLICE_WITH_FORMATS(
+            "((%lld, %lld), (%lld, %lld))", "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, (%lld, %lld), (%lld, %lld))",
+            "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, %lld, (%lld, %lld), (%lld, %lld))");
     } else {
         TENSOR_API_DETAIL_REPORT_SLICE_WITH_FORMATS(
             "((%lld, %lld), (%lld, %lld))", "(%lld, (%lld, %lld), (%lld, %lld))",

@@ -133,6 +133,9 @@ __aicore__ inline void report_tensor_layout_error_impl(
     } else if constexpr (Std::is_same_v<format_type, debug_tuple_leading_scalar_nested_2x2>) {
         TENSOR_API_DETAIL_REPORT_LAYOUT_FORMATS(
             "(%lld, ((%lld, %lld), (%lld, %lld)))", "(%lld, %lld, ((%lld, %lld), (%lld, %lld)))");
+    } else if constexpr (Std::is_same_v<format_type, debug_tuple_leading_scalar_two_flat_2>) {
+        TENSOR_API_DETAIL_REPORT_LAYOUT_FORMATS(
+            "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, %lld, (%lld, %lld), (%lld, %lld))");
     } else if constexpr (view_type::has_batch) {
         TENSOR_API_DETAIL_ASSERT_FAIL(
             context,
@@ -252,6 +255,10 @@ __aicore__ inline void report_tensor_layout_error(
             TENSOR_API_DETAIL_REPORT_COPY_SIZE_WITH_FORMATS(                                                     \
                 src_shape_format, src_batch_shape_format, "(%lld, ((%lld, %lld), (%lld, %lld)))",                \
                 "(%lld, %lld, ((%lld, %lld), (%lld, %lld)))");                                                   \
+        } else if constexpr (Std::is_same_v<dst_format_type, debug_tuple_leading_scalar_two_flat_2>) {           \
+            TENSOR_API_DETAIL_REPORT_COPY_SIZE_WITH_FORMATS(                                                     \
+                src_shape_format, src_batch_shape_format, "(%lld, (%lld, %lld), (%lld, %lld))",                  \
+                "(%lld, %lld, (%lld, %lld), (%lld, %lld))");                                                     \
         } else {                                                                                                 \
             report_copy_size_unsupported(context, src, dst, api_name);                                           \
         }                                                                                                        \
@@ -324,6 +331,9 @@ __aicore__ inline void report_copy_size_error_impl(
     } else if constexpr (Std::is_same_v<src_format_type, debug_tuple_leading_scalar_nested_2x2>) {
         TENSOR_API_DETAIL_DISPATCH_COPY_DST(
             "(%lld, ((%lld, %lld), (%lld, %lld)))", "(%lld, %lld, ((%lld, %lld), (%lld, %lld)))");
+    } else if constexpr (Std::is_same_v<src_format_type, debug_tuple_leading_scalar_two_flat_2>) {
+        TENSOR_API_DETAIL_DISPATCH_COPY_DST(
+            "(%lld, (%lld, %lld), (%lld, %lld))", "(%lld, %lld, (%lld, %lld), (%lld, %lld))");
     } else {
         report_copy_size_unsupported(context, src, dst, api_name);
     }
