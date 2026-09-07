@@ -50,11 +50,11 @@ __aicore__ inline void asc_sync_notify(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| pipe | 输入 | 源流水类型，即“等待哪条流水的前序指令完成”。取值范围为`pipe_t`枚举：`PIPE_S`、`PIPE_V`、`PIPE_M`、`PIPE_MTE1`、`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_FIX`。 |
+| pipe | 输入 | 源流水类型，即“等待哪条流水的前序指令完成”。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。 |
 | tpipe | 输入 | 目标流水类型，即“解除哪条流水的`asc_sync_wait`阻塞”。取值范围与`pipe`相同，为`pipe_t`枚举。 |
 | id | 输入 | 同步事件ID，每对`pipe`与`tpipe`组合各自拥有8个独立的同步事件ID。取值范围为`event_t`枚举类型。 |
 
-`event_t`枚举定义如下：
+`event_t`枚举定义如下：<a id="event_t_enum"></a>
 
 ```c
 typedef enum {
@@ -75,7 +75,7 @@ typedef enum {
 
 ## 流水类型
 
-`PIPE_S`
+PIPE_S
 
 ## 约束说明
 

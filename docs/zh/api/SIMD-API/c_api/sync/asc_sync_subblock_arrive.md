@@ -48,7 +48,7 @@ __aicore__ inline void asc_sync_subblock_arrive(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
-| pipe | 输入 | 标识在哪条流水的前序指令完成后才允许向调度模块发送通知。 |
+| pipe | 输入 | 标识在哪条流水的前序指令完成后才允许向调度模块发送通知。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。本接口仅支持AIV调用，AIV支持的`pipe`取值请参考[约束说明](#约束说明)。 |
 | flag_id | 输入 | 核间同步的标记，用于标识同一组同步信号。取值范围为[0, 15]，每个`flag_id`各自拥有独立的4位计数器。 |
 
 ## 返回值说明
@@ -57,13 +57,14 @@ __aicore__ inline void asc_sync_subblock_arrive(pipe_t pipe,
 
 ## 流水类型
 
-`PIPE_S`
+PIPE_S
 
 ## 约束说明
 
+- 针对`asc_sync_subblock_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_subblock_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体请参考[asc_sync_subblock_wait](asc_sync_subblock_wait.md#约束说明)的约束说明。
+- 本接口仅支持AIV调用，AIV支持的`pipe`取值如下：`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_V`。
 - 用户需要确保配套使用（`flag_id`必须完全一致）`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`，否则会出现未定义行为。
 - 每个计数器最多连续累加15次（此时计数器的值为15），必须保证计数器的值不超过15，否则触发异常。
-- `pipe`不支持的取值：`PIPE_ALL`和`PIPE_S`。
 - 本接口不阻塞`pipe`流水中的后续指令。
 - `flag_id`取值范围为[0, 15]，超出范围值会被按位宽截断处理为低4位（例如，flagId=16时，截取后为0；flagId=17时，截取后为1）。
 

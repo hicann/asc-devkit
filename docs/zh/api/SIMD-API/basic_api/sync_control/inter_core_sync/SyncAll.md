@@ -103,8 +103,8 @@ SyncAll是核间同步控制接口，根据不同的函数原型介绍其功能�
 
 - 硬件同步接口：
     用于多个核之间的同步控制，支持以下同步场景：
-    - 纯Vector算子的全核同步，可参考[CrossCoreSetFlag的模式0](key_features.md#ZH-CN_TOPIC_0000002586300741)。
-    - 融合算子的全核同步，一次性实现三个核间同步能力（参考[CrossCoreSetFlag的关键特性说明](key_features.md#ZH-CN_TOPIC_0000002586300741)）：首先完成单个AI Core内，AIC与所有AIV同步（AIC等AIV）；接着完成多个AI Core间，所有AIC的同步；最后完成单个AI Core内，所有AIV与AIC同步（AIV等AIC）。
+    - 纯Vector算子的全核同步，可参考[CrossCoreSetFlag的模式0](key_features.md)。
+    - 融合算子的全核同步，一次性实现三个核间同步能力（参考[CrossCoreSetFlag的关键特性说明](key_features.md)）：首先完成单个AI Core内，AIC与所有AIV同步（AIC等AIV）；接着完成多个AI Core间，所有AIC的同步；最后完成单个AI Core内，所有AIV与AIC同步（AIV等AIC）。
 
 - 软件同步接口：
     仅支持纯Vector算子的多核（参与同步的核数可通过入参指定）同步。每一个AIV都向全局内存对应位置写入信号值1，接着每一个AIV都持续轮询全局内存中所有AIV对应的信号值，直到所有AIV核对应的信号值都变为1。

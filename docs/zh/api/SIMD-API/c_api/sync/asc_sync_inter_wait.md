@@ -41,9 +41,6 @@
 
 ```c
 __aicore__ inline void asc_sync_inter_wait(pipe_t pipe,
-                                           uint8_t flag_id)
-
-__aicore__ inline void asc_sync_inter_wait(pipe_t pipe,
                                            int64_t flag_id)
 ```
 
@@ -53,7 +50,7 @@ __aicore__ inline void asc_sync_inter_wait(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
-| pipe | 输入 | 标识阻塞哪条流水上后续指令，直到对应`flag_id`的计数器非0。 |
+| pipe | 输入 | 标识阻塞哪条流水上后续指令，直到对应`flag_id`的计数器非0。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。<br>本接口对参数`pipe`是否生效与NPU架构有关，具体请参考[约束说明](#约束说明)。 |
 | flag_id | 输入 | 核间同步的标记，用于标识同一组同步信号。取值范围为[0, 15]，每个`flag_id`各自拥有独立的4位计数器。 |
 
 ## 返回值说明
@@ -62,22 +59,23 @@ __aicore__ inline void asc_sync_inter_wait(pipe_t pipe,
 
 ## 流水类型
 
-`PIPE_S`
+PIPE_S
 
 ## 约束说明
 
-- 不同产品对参数`pipe`的生效情况如下：
+- 针对`asc_sync_inter_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_inter_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体情况如下：
     <!-- npu="950" id9 -->
-    - Ascend 950PR/Ascend 950DT，硬件支持配置核间同步模式和流水类型，输入参数`pipe`**生效**，此时`asc_sync_inter_wait`会阻塞**指定流水**的后续指令。
+    - 针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，硬件支持配置核间同步模式和流水类型，输入参数`pipe`**生效**，此时`asc_sync_inter_wait`会阻塞**指定流水**的后续指令。AIC和AIV支持的`pipe`取值如[表2](#aic_aiv_supported_pipe_3510)所示。
+
+        **表2**  NPU架构3510中AIC和AIV支持的`pipe`取值<a id="aic_aiv_supported_pipe_3510"></a>
+
+        | 核类型 | 支持的pipe取值 |
+        | :--- | :--- |
+        | AIC | `PIPE_S`、`PIPE_M`、`PIPE_MTE1`、`PIPE_MTE2`、`PIPE_FIX` |
+        | AIV | `PIPE_S`、`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_V` |
     <!-- end id9 -->
     <!-- npu="A3,910b" id10 -->
-    - 针对如下产品，硬件不支持配置核间同步模式和流水类型，输入参数`pipe`**不生效**，此时`asc_sync_inter_wait`会阻塞**全部流水**的后续指令。
-        <!-- npu="A3" id11 -->
-        - Atlas A3 训练系列产品/Atlas A3 推理系列产品
-        <!-- end id11 -->
-        <!-- npu="910b" id12 -->
-        - Atlas A2 训练系列产品/Atlas A2 推理系列产品
-        <!-- end id12 -->
+    - 针对[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，硬件不支持配置核间同步模式和流水类型，输入参数`pipe`**不生效**，此时`asc_sync_inter_wait`会阻塞**全部流水**的后续指令。
     <!-- end id10 -->
 - 用户需要确保配套使用（`flag_id`必须完全一致）`asc_sync_inter_arrive`和`asc_sync_inter_wait`，否则会出现未定义行为。
 - 每个计数器最多连续累加15次（此时计数器的值为15），必须保证计数器的值不超过15，否则触发异常。

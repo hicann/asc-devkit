@@ -28,12 +28,12 @@
 
 头文件路径为：`"c_api/sync/sync.h"`。
 
-完成同一流水线内的同步控制，用于在同一流水线内部约束执行顺序：
+完成同一流水内的同步控制，用于在同一流水内部约束执行顺序：
 
-- 传入`PIPE_ALL`时等待所有流水线的前序指令全部完成后才会对后序指令解除阻塞，此时功能等价于[asc_sync](asc_sync.md)。
-- 传入其他合法流水值时仅阻塞该流水线的后续指令，直至该流水线前序指令全部完成，不影响其他流水线的指令执行。
+- 传入`PIPE_ALL`时等待所有流水的前序指令全部完成后才会对后序指令解除阻塞，此时功能等价于[asc_sync](asc_sync.md)。
+- 传入其他合法流水值时仅阻塞该流水的后续指令，直至该流水前序指令全部完成，不影响其他流水线的指令执行。
 
-如图1所示，其作用是保证指定流水线中前序指令的所有数据读写全部完成后，该流水线的后序指令才能开始执行。
+如图1所示，其作用是保证指定流水线中前序指令的所有数据读写全部完成后，该流水的后序指令才能开始执行。
 
 **图1**  `asc_sync_pipe`接口功能示意图    
 ![](../figures/asc_sync_pipe.png)
@@ -50,7 +50,7 @@ __aicore__ inline void asc_sync_pipe(pipe_t pipe)
 
 | 参数名 | 输入/输出 | 描述 |
 | :--- | :--- | :--- |
-| pipe | 输入 | 阻塞的流水类别。支持的取值有`PIPE_V`、`PIPE_M`、`PIPE_MTE1`、`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_FIX`、`PIPE_ALL`，不支持`PIPE_S`。如果不关注流水类别，希望阻塞所有流水，可以传入`PIPE_ALL`。各流水类别的含义请参考[流水类型说明](intra_core_sync_overview.md)。 |
+| pipe | 输入 | 阻塞的流水类别。支持的取值有`PIPE_V`、`PIPE_M`、`PIPE_MTE1`、`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_FIX`、`PIPE_ALL`，不支持`PIPE_S`。如果不关注流水类别，希望阻塞所有流水，可以传入`PIPE_ALL`。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。 |
 
 ## 返回值说明
 
@@ -58,15 +58,15 @@ __aicore__ inline void asc_sync_pipe(pipe_t pipe)
 
 ## 流水类型
 
-`PIPE_S`
+PIPE_S
 
 ## 约束说明
 
 - Scalar流水之间的同步由硬件自动保证，`asc_sync_pipe`接口不支持`PIPE_S`单流水的同步。
 <!-- npu="950" id9 -->
-- 针对Ascend 950PR/Ascend 950DT，`PIPE_V`流水之间的同步由硬件自动保证。
+- 针对Ascend 950PR/Ascend 950DT，`PIPE_V`之间的同步由硬件自动保证。
 <!-- end id9 -->
-- `asc_sync_pipe(PIPE_ALL)`会等待所有流水线中所有先前提交的接口完成，这会对性能产生影响。若仅阻塞单条流水线即可解决问题，应避免随意调用`asc_sync_pipe(PIPE_ALL)`。
+- `asc_sync_pipe(PIPE_ALL)`会等待所有流水中所有先前提交的接口完成，这会对性能产生影响。若仅阻塞单条流水即可解决问题，应避免随意调用`asc_sync_pipe(PIPE_ALL)`。
 - `PIPE_MTE2`/`PIPE_MTE3`在搬运的目的地址有重叠的情况下需要开发者插入同步，保证多个搬运指令的串行化，防止出现异常数据。
 
 ## 调用示例

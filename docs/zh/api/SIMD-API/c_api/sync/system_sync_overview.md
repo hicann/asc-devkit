@@ -11,16 +11,20 @@ AI Core的同步，总共分成2类：[核内同步](intra_core_sync_overview.md
 | [asc_sync_notify](asc_sync_notify.md)/[asc_sync_wait](asc_sync_wait.md) | 多流水同步：同一核内不同流水之间的同步指令。`asc_sync_notify`负责发送通知，`asc_sync_wait`负责阻塞直到`asc_sync_notify`发送通知。 |
 | [asc_sync_pipe](asc_sync_pipe.md) | 单流水同步：同一核内相同流水之间的同步指令（不支持`PIPE_S`单流水同步）。 |
 | [asc_sync_data_barrier](asc_sync_data_barrier.md) | 阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可通过参数控制）执行结束。 |
-| [asc_lock](asc_lock.md)/[asc_unlock](asc_unlock.md) | 用于核内异步流水指令之间的同步处理，其功能类似于传统CPU中的锁机制。通过锁定指定流水再释放流水来完成流水间的同步依赖。 |
+| [asc_lock](asc_lock.md)/[asc_unlock](asc_unlock.md) | 多流水同步：用于核内异步流水指令之间的同步处理，其功能类似于传统CPU中的锁机制。通过锁定指定流水再释放流水来完成流水间的同步依赖。 |
+| [asc_sync_vec](asc_sync_vec.md) | 核内同步易用性接口：针对`PIPE_V`执行同步操作，保证`PIPE_V`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
+| [asc_sync_mte2](asc_sync_mte2.md) | 核内同步易用性接口：针对`PIPE_MTE2`执行同步操作，保证`PIPE_MTE2`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
+| [asc_sync_mte3](asc_sync_mte3.md) | 核内同步易用性接口：针对`PIPE_MTE3`执行同步操作，保证`PIPE_MTE3`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
+| [asc_sync](asc_sync.md) | 全部流水同步：同一核内所有流水之间的同步指令，功能与`asc_sync_pipe(PIPE_ALL)`等价。阻塞调用点后所有硬件流水的后序指令，直到调用点之前所有硬件流水的前序指令全部完成。 |
 
-如图1所示，支持的四种同步控制模式的功能描述如下：
+图1展示了四种同步控制模式，各模式的功能描述如下。该图基于核函数使用`__mix__(1, 2)`修饰、逻辑核数`numBlocks=4`的场景配置。
 
 - 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到`asc_sync_inter_arrive`时，`asc_sync_inter_wait`后续的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到`asc_sync_inter_arrive`时，`asc_sync_inter_wait`后续的指令才会执行。
 - 模式1：AI Core内部，AIV核之间的同步控制。如果两个AIV核都运行了`asc_sync_subblock_arrive`，`asc_sync_subblock_wait`后续的指令才会执行。
 - 模式2：AI Core内部，AIC与AIV之间的同步控制。在AIC核执行`asc_sync_block_arrive`之后，两个AIV上`asc_sync_block_wait`后续的指令才会继续执行；两个AIV都执行`asc_sync_block_arrive`后，AIC上`asc_sync_block_wait`后续的指令才能执行。
 - 模式4：AI Core内部，AIC与单个AIV之间的同步控制。在单个AIV核执行`asc_sync_intra_arrive`之后，AIC上`asc_sync_intra_wait`后续的指令才会继续执行；AIC执行`asc_sync_intra_arrive`后，单个AIV上`asc_sync_intra_wait`后续的指令才能执行。AIV0与AIV1可单独触发AIC等待。
 
-**图1**  同步控制模式示意图<a name="fig_sync_control_mode"></a>    
+**图1**  四种核间同步控制模式示意图<a id="fig_sync_control_mode"></a>    
 ![](../../../figures/3510_sync_control_mode_diagram.png)
 
 **表2**  核间同步接口

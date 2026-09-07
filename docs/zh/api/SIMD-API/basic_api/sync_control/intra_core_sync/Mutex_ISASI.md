@@ -2,7 +2,7 @@
 
 Mutex用于核内异步流水指令之间的同步控制，其功能类似于传统CPU中的锁机制。通过先锁定再释放指定流水来完成流水间的同步依赖，锁定/解锁指定流水对应Lock/Unlock接口。
 
-- [Lock](Lock.md)：根据MutexID获取Mutex，若Mutex已被锁定，将阻塞后续指定流水指令队列，直到当前流水的前序指令中对应MutexID的Mutex被[Unlock](Unlock.md)。
+- [Lock](Lock.md)：根据MutexID获取Mutex，若Mutex已被锁定，将阻塞指定流水上后续指令的执行，直到所有流水中具有相同MutexID的Mutex都已经被[Unlock](Unlock.md)释放。
 - [Unlock](Unlock.md)：直到当前流水的前序指令执行完成后，根据MutexID释放对应Mutex。
 
 **图 1**  Lock/UnLock接口<a name="fig58242463299"></a>  

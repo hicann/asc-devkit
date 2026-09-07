@@ -1,5 +1,8 @@
 # 同步控制
 
+- **[系统同步能力概述](system_sync_overview.md)**
+- **[核内同步能力概述](intra_core_sync_overview.md)**
+- **[核间同步能力概述](inter_core_sync_overview.md)**
 - **[asc_lock](asc_lock.md)**
 - **[asc_sync](asc_sync.md)**
 - **[asc_sync_block_arrive](asc_sync_block_arrive.md)**
@@ -18,6 +21,3 @@
 - **[asc_sync_vec](asc_sync_vec.md)**
 - **[asc_sync_wait](asc_sync_wait.md)**
 - **[asc_unlock](asc_unlock.md)**
-- **[核间同步能力概述](inter_core_sync_overview.md)**
-- **[核内同步能力概述](intra_core_sync_overview.md)**
-- **[系统同步能力概述](system_sync_overview.md)**
