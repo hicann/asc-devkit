@@ -36,6 +36,8 @@
 #define __simt_gm__ __gm__
 #else
 #include "__clang_cce_simt_atomic.h"
+#include "__clang_cce_simt_fp16.h"
+#include "__clang_cce_simt_bf16.h"
 #define __simt_gm__
 #endif
 
