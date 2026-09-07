@@ -2,13 +2,13 @@
 
 - **[Reg数据搬入](load/load.md)**
 - **[Reg聚合搬入](ub_gather/gather.md)**
-- **[Reg聚合](reg_gather/gather.md)**
 - **[Reg数据搬出](store/store.md)**
 - **[Reg离散搬出](scatter/scatter.md)**
 - **[Reg间搬运](reg_copy/reg_copy.md)**
 - **[基础算术](reg_arith/reg_arith.md)**
 - **[逻辑计算](reg_logic/reg_logic.md)**
 - **[归约计算](reg_reduce/reg_reduce.md)**
+- **[聚合操作](reg_gather/gather.md)**
 - **[广播操作](reg_broadcast/reg_broadcast.md)**
 - **[复合计算](reg_fused/reg_fused.md)**
 - **[比较计算](reg_compare/reg_compare.md)**
