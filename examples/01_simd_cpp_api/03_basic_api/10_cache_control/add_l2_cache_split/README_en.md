@@ -20,7 +20,7 @@ The sample uses one 384MB GM data buffer and runs two rounds of `data = data + 1
 ## Directory Structure
 
 ```text
-├── 10_add_l2_cache_split
+├── add_l2_cache_split
 │   ├── scripts
 │   │   ├── gen_data.py               // Input and golden data generation script
 │   │   └── verify_result.py          // Result verification script
@@ -102,7 +102,7 @@ The sample uses one 384MB GM data buffer and runs two rounds of `data = data + 1
 Run the following steps from the sample root directory.
 
 - Configure environment variables
-  Configure environment variables according to the [CANN installation guide](../../../../docs/zh/quick_start.md#prepare&install).
+  Configure environment variables according to the [CANN installation guide](../../../../../docs/zh/quick_start.md#prepare&install).
 
   ```bash
   source ${install_path}/cann/set_env.sh

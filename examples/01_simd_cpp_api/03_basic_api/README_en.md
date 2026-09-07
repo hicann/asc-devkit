@@ -2,7 +2,7 @@
 
 ## Overview
 
-This sample introduces the usage of Ascend C Basic API, including data movement, memory vector computation, Reg vector computation, matrix computation, resource management, synchronization control, atomic operations, TPipe/TQue, and utility APIs.
+This sample introduces the usage of Ascend C Basic API, including data movement, memory vector computation, Reg vector computation, matrix computation, resource management, synchronization control, atomic operations, TPipe/TQue, cache control, and utility APIs.
 
 ## Sample List
 
@@ -17,4 +17,4 @@ This sample introduces the usage of Ascend C Basic API, including data movement,
 | [06_atomic](./06_atomic) | This directory contains samples for multiple APIs related to atomic operations. Each sample is based on the Ascend C `<<<>>>` direct invocation method, supporting the implementation of both the main function and kernel function in the same cpp file.         |
 | [07_tpipe_tque](./07_tpipe_tque) | This directory contains samples for multiple APIs related to TPipe/TQue resource management. Each sample is based on the Ascend C `<<<>>>` direct invocation method, supporting the implementation of both the main function and kernel function in the same cpp file.         |
 | [09_utils](./09_utils) | This directory contains API samples related to utilities. Each sample is based on the Ascend C `<<<>>>` direct invocation method, supporting the implementation of both the main function and kernel function in the same cpp file.         |
-| [10_add_l2_cache_split](./10_add_l2_cache_split) | This sample compares no-split and 96MB L2-batch traversal orders for a fixed 384MB in-place Add workload, demonstrating how to improve the L2 Cache hit rate for repeated data access.|
+| [10_cache_control](./10_cache_control) | This directory contains samples related to cache control, introducing the usage of cache control APIs such as DataCachePreload and L2 Cache splitting, and demonstrating how to improve cache hit rate and reduce memory access latency by preloading data and adjusting data access order. |

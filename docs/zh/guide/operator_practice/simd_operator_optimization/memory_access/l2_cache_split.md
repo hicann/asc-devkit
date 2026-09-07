@@ -11,7 +11,7 @@
 - 使用20个Vector Core并行计算，每个元素执行两轮“加1”运算，最终结果为`data + 2`。
 - 反例不做L2 Cache切分，每轮把384MB数据作为一个整体进行搬入、计算、搬出。
 - 正例将384MB数据切分成B0至B3四个L2 Batch，每批包含96MB的数据量，每一批进行两轮加1计算。
-- 完整实现方法请参考[add_l2_cache_split样例](../../../../../../examples/01_simd_cpp_api/03_basic_api/10_add_l2_cache_split)。
+- 完整实现方法请参考[add_l2_cache_split样例](../../../../../../examples/01_simd_cpp_api/03_basic_api/10_cache_control/add_l2_cache_split)。
 
 两个场景的数据处理方式如下图所示。
 
