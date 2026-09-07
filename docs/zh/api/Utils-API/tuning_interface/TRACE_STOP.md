@@ -21,6 +21,7 @@
 <!-- npu="910" id6 -->
 - Atlas 训练系列产品：支持
 <!-- end id6 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/TRACE_STOP_res.md#id1 -->
 
 ## 功能说明
 

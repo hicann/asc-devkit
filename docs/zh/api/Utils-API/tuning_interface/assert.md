@@ -29,6 +29,7 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030：不支持
 <!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/assert_res.md#id1 -->
 
 不同产品对各编程场景的支持情况如下表所示。
 
