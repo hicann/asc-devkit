@@ -24,6 +24,7 @@
 
 #include "simt_api/device_types.h"
 #include "simt_api/math_constants.h"
+#include "impl/simt_api/device_functions_impl.h"
 #include "impl/simt_api/internal_functions_impl.h"
 
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
@@ -173,6 +174,103 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_sqrtf(float x)
 #endif
 #endif
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_log2f_positive_finite(float x, float& log2_hi, float& log2_lo)
+{
+    constexpr float subnormal_scale = 16777216.0f;   // 2^24, used to lift subnormals into the normal range.
+    constexpr float subnormal_exponent_fix = -24.0f; // Exponent offset that compensates the 2^24 rescale.
+    constexpr float log_exponent_scale =
+        1.1920928955078125e-07f;                         // 2^-23, converts biased exponent bits to a float scale.
+    constexpr uint32_t log_reduction_mask = 0xFF800000U; // Mask that keeps the exponent field for log reduction.
+    constexpr uint32_t sqrt_half_bits =
+        0x3F3504F3U; // Bit pattern used to center the mantissa reduction near sqrt(1/2).
+    constexpr float log2e_hi = 1.4426950216293334961f;     // High part of log2(e).
+    constexpr float log2e_lo = 1.9251366722983220825e-08f; // Low tail of log2(e) for compensation.
+
+    const bool is_normal_x = x >= __internal_subnormal_boundary;
+    const float log_input = is_normal_x ? x : x * subnormal_scale;
+    const float exponent_base = is_normal_x ? 0.0f : subnormal_exponent_fix;
+    const uint32_t log_input_bits = __float_as_uint(log_input);
+
+    const uint32_t reduction_bits = (log_input_bits - sqrt_half_bits) & log_reduction_mask;
+    const float mantissa = __uint_as_float(log_input_bits - reduction_bits);
+    const float exponent_part =
+        fmaf(__int2float_rn(static_cast<int32_t>(reduction_bits)), log_exponent_scale, exponent_base);
+
+    // Use r = 2 * (mantissa - 1) / (mantissa + 1).  This is the atanh-style log reduction; r is small
+    // around mantissa == 1, so a short odd-power correction polynomial is enough.
+    const float mantissa_minus_one = mantissa - 1.0f;
+    const float reciprocal = 1.0f / (mantissa + 1.0f);
+    const float reduced_hi = reciprocal * (mantissa_minus_one + mantissa_minus_one);
+    const float reduced_square = reduced_hi * reduced_hi;
+
+    // Polynomial correction for log(mantissa).The final multiply by reduced_square accounts
+    // for the higher-order terms.
+    float log_poly = fmaf(reduced_square, 0.0006568862590938807f, 0.0032181653659790754318f);
+    log_poly = fmaf(reduced_square, log_poly, 0.018033718690276145935f);
+    log_poly = fmaf(reduced_square, log_poly, 0.12022458761930465698f);
+    log_poly = reduced_square * log_poly;
+
+    // log2_hi carries the rounded main result.  The following reduced_err/reduced_lo path reconstructs the
+    // division residual so powf can later multiply log2(x) by y with a useful low part.
+    log2_hi = fmaf(reduced_hi, log2e_hi, exponent_part);
+    float reduced_err = mantissa_minus_one - reduced_hi;
+    reduced_err = fmaf(mantissa_minus_one, -reduced_hi, reduced_err + reduced_err);
+    const float reduced_lo = reciprocal * reduced_err;
+
+    // Accumulate low-order corrections: exponent rounding error, reduced_hi/reduced_lo conversion to log2,
+    // log2(e) low part, and the polynomial tail.  The output satisfies log2(x) ~= log2_hi + log2_lo.
+    log2_lo = exponent_part - log2_hi;
+    log2_lo = fmaf(reduced_hi, log2e_hi, log2_lo);
+    log2_lo = fmaf(reduced_lo, log2e_hi, log2_lo);
+    log2_lo = fmaf(reduced_hi, log2e_lo, log2_lo);
+    log2_lo = fmaf(reduced_lo, log_poly * 3.0f, log2_lo);
+    log2_lo = fmaf(reduced_hi, log_poly, log2_lo);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_exp2f_reconstruct(float x_hi, float x_lo)
+{
+    constexpr float ln2 = 0.69314718246459960938f; // ln(2), used to turn exp2 fractional reconstruction into exp().
+    constexpr float overflow_abs_bound =
+        152.0f; // Beyond this magnitude the reconstructed exp2 value overflows or underflows.
+    constexpr int32_t fp32_exponent_shift = 23; // Width of the fp32 exponent field shift.
+
+    const float rounded_x = roundf(x_hi);
+    const float exp2_fraction = (x_hi - rounded_x) + x_lo;
+    const int32_t exp2_exponent = __float2int_rz(rounded_x);
+
+    // Approximate 2^fraction as exp(fraction * ln2) on a small interval around zero.
+    float exp_poly = fmaf(exp2_fraction, 0.00015239251661114395f, 0.0013391353422775864601f);
+    exp_poly = fmaf(exp2_fraction, exp_poly, 0.0096188392490148544312f);
+    exp_poly = fmaf(exp2_fraction, exp_poly, 0.055503588169813156128f);
+    exp_poly = fmaf(exp2_fraction, exp_poly, 0.24022644758224487305f);
+    exp_poly = fmaf(exp2_fraction, exp_poly, ln2);
+    exp_poly = fmaf(exp2_fraction, exp_poly, 1.0f);
+
+    // Construct 2^rounded_x by multiplying two fp32 scale factors.  The split scale keeps both positive and
+    // negative exponents representable without doing a slow generic pow/ldexp path.
+    const bool rounded_x_is_positive = rounded_x > 0.0f;
+    const uint32_t scale_hi_bits = rounded_x_is_positive ? 0x7F000000U : 0x02000000U;
+    const uint32_t scale_adjust = rounded_x_is_positive ? 0U : 0x83000000U;
+    const uint32_t scale_lo_bits = (static_cast<uint32_t>(exp2_exponent) << fp32_exponent_shift) - scale_adjust;
+    float output = exp_poly * __uint_as_float(scale_hi_bits);
+    output = output * __uint_as_float(scale_lo_bits);
+
+    // Guard extreme inputs after polynomial reconstruction.  The sign of x_hi decides whether the result is
+    // +inf or +0.
+    if (fabsf(x_hi) > overflow_abs_bound) {
+        output = x_hi >= 0.0f ? ASCRT_INF_F : 0.0f;
+    }
+    return output;
+}
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_with_sign_bit(float value, float sign_source)
+{
+    constexpr uint32_t sign_mask = 0x80000000U;
+    constexpr uint32_t value_mask = 0x7FFFFFFFU;
+    const uint32_t value_bits = __float_as_uint(value) & value_mask;
+    const uint32_t sign_bits = __float_as_uint(sign_source) & sign_mask;
+    return __uint_as_float(value_bits | sign_bits);
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float expf(float x) { return __internal_expf(x); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logf(float x)
@@ -183,7 +281,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logf(float x)
     return __logf(x);
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x) { return logf(x) / logf(2.0f); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sqrtf(float x) { return __internal_sqrtf(x); }
 
@@ -555,69 +653,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_set_res_mod_neg(float mod
     return mod_res;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
-{
-    bool is_x_pos = x > 0;
-    float abs_x = fabsf(x);
-    float abs_y = fabsf(y);
-    bool is_x_nan = isnan(x);
-    bool is_y_nan = isnan(y);
-
-    bool is_inf_not_nan = isinf(abs_x) && !is_x_nan;
-    bool is_zero_not_nan = (abs_y == 0) && !is_y_nan;
-    if (is_inf_not_nan | is_zero_not_nan) {
-        return ASCRT_INF_F / ASCRT_INF_F;
-    }
-    if (is_y_nan || is_x_nan || abs_x < abs_y) {
-        bool gt_inf_or_nan = (abs_y > ASCRT_INF_F) || is_x_nan || is_y_nan;
-        float xy_val = (gt_inf_or_nan) ? (x + y) : x;
-        bool lt_zero_or_nan = (abs_x <= 0) || is_x_nan;
-        return (lt_zero_or_nan) ? (xy_val + x) : xy_val;
-    }
-
-    uint32_t* uabs_y = reinterpret_cast<uint32_t*>(&abs_y);
-    uint32_t y_man_bits = (*uabs_y) & ASCRT_MAN_BIT_FLOAT_U;
-    uint32_t* uabs_x = reinterpret_cast<uint32_t*>(&abs_x);
-    uint32_t x_exp_bits = (*uabs_x) & ASCRT_EXP_BIT_FLOAT_U;
-    uint32_t xy_bits = y_man_bits | x_exp_bits;
-
-    float xy_val = 0;
-    uint32_t* uxy_val = reinterpret_cast<uint32_t*>(&xy_val);
-    *uxy_val = xy_bits;
-    bool is_gt_x = (xy_val > abs_x) && !isnan(xy_val) && !is_x_nan;
-    float half_xy_val = xy_val * 0.5f;
-    xy_val = (is_gt_x) ? half_xy_val : xy_val;
-    float mod_res = abs_x;
-
-    if (xy_val < abs_y || isnan(xy_val) || is_y_nan) {
-        if (!is_x_pos) {
-            return __internal_set_res_mod_neg(mod_res);
-        }
-        return mod_res;
-    }
-    float sub_tmp;
-    bool xy_val_ge_y = true;
-    bool cmp_tmp;
-    while (xy_val_ge_y) {
-        sub_tmp = mod_res - xy_val;
-        cmp_tmp = mod_res < xy_val || isnan(mod_res) || isnan(xy_val);
-        mod_res = (cmp_tmp) ? mod_res : sub_tmp;
-        xy_val = xy_val * 0.5f;
-        xy_val_ge_y = (xy_val >= abs_y) || isnan(xy_val) || is_y_nan;
-    }
-    if (!is_x_pos) {
-        return __internal_set_res_mod_neg(mod_res);
-    }
-    return mod_res;
-}
-
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float remainderf(float x, float y)
 {
     int32_t quo = -1;
     return remquof(x, y, &quo);
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float copysignf(float x, float y) { return (y >= 0) ? fabsf(x) : -fabsf(x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float copysignf(float x, float y) { return __internal_with_sign_bit(x, y); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float nearbyintf(float x)
 {
@@ -1242,9 +1284,9 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, _
 #endif
 #endif
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y) { return __powf(x, y); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y);
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x) { return powf(2.0f, x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x) { return powf(10.0f, x); }
 
@@ -3133,6 +3175,348 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int min(unsigned long l
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fdividef(float x, float y) { return x / y; }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int signbit(float x) { return signbitf(x); }
+
+#if defined(ASCENDC_USE_LEGACY_PRECISION)
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y) { return __powf(x, y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x) { return powf(2.0f, x); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x) { return logf(x) / logf(2.0f); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
+{
+    bool is_x_pos = x > 0;
+    float abs_x = fabsf(x);
+    float abs_y = fabsf(y);
+    bool is_x_nan = isnan(x);
+    bool is_y_nan = isnan(y);
+
+    bool is_inf_not_nan = isinf(abs_x) && !is_x_nan;
+    bool is_zero_not_nan = (abs_y == 0) && !is_y_nan;
+    if (is_inf_not_nan | is_zero_not_nan) {
+        return ASCRT_INF_F / ASCRT_INF_F;
+    }
+    if (is_y_nan || is_x_nan || abs_x < abs_y) {
+        bool gt_inf_or_nan = (abs_y > ASCRT_INF_F) || is_x_nan || is_y_nan;
+        float xy_val = (gt_inf_or_nan) ? (x + y) : x;
+        bool lt_zero_or_nan = (abs_x <= 0) || is_x_nan;
+        return (lt_zero_or_nan) ? (xy_val + x) : xy_val;
+    }
+
+    uint32_t* uabs_y = reinterpret_cast<uint32_t*>(&abs_y);
+    uint32_t y_man_bits = (*uabs_y) & ASCRT_MAN_BIT_FLOAT_U;
+    uint32_t* uabs_x = reinterpret_cast<uint32_t*>(&abs_x);
+    uint32_t x_exp_bits = (*uabs_x) & ASCRT_EXP_BIT_FLOAT_U;
+    uint32_t xy_bits = y_man_bits | x_exp_bits;
+
+    float xy_val = 0;
+    uint32_t* uxy_val = reinterpret_cast<uint32_t*>(&xy_val);
+    *uxy_val = xy_bits;
+    bool is_gt_x = (xy_val > abs_x) && !isnan(xy_val) && !is_x_nan;
+    float half_xy_val = xy_val * 0.5f;
+    xy_val = (is_gt_x) ? half_xy_val : xy_val;
+    float mod_res = abs_x;
+
+    if (xy_val < abs_y || isnan(xy_val) || is_y_nan) {
+        if (!is_x_pos) {
+            return __internal_set_res_mod_neg(mod_res);
+        }
+        return mod_res;
+    }
+    float sub_tmp;
+    bool xy_val_ge_y = true;
+    bool cmp_tmp;
+    while (xy_val_ge_y) {
+        sub_tmp = mod_res - xy_val;
+        cmp_tmp = mod_res < xy_val || isnan(mod_res) || isnan(xy_val);
+        mod_res = (cmp_tmp) ? mod_res : sub_tmp;
+        xy_val = xy_val * 0.5f;
+        xy_val_ge_y = (xy_val >= abs_y) || isnan(xy_val) || is_y_nan;
+    }
+    if (!is_x_pos) {
+        return __internal_set_res_mod_neg(mod_res);
+    }
+    return mod_res;
+}
+
+#else
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __internal_is_odd_integer_f32(float value)
+{
+    const float half_trunc = truncf(value * 0.5f);
+    const float remainder = value - (half_trunc + half_trunc);
+    return fabsf(remainder) == 1.0f;
+}
+
+/**
+ * Computes x raised to the power y for float inputs.
+ *
+ * The implementation uses a split log2/exp2 reconstruction path for finite
+ * positive inputs:
+ *   powf(x, y) = exp2(y * log2(|x|))
+ *
+ * The logarithm is split into hi/lo parts and the product residual is preserved
+ * so the final exp2 reconstruction stays stable across a wide input range.
+ *
+ * Special-value handling follows IEEE-style pow semantics:
+ * - y == 0 or x == 1 returns 1
+ * - NaN propagates through x + y where required
+ * - x == 0 or |x| == inf follows sign and odd-integer rules
+ * - |y| == inf collapses to 0 or inf depending on |x| relative to 1
+ * - Negative bases require integer exponents; odd integers keep the sign
+ *
+ * @param x The base value.
+ * @param y The exponent value.
+ * @return The computed powf(x, y) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y)
+{
+    const float abs_x = fabsf(x);
+    const float abs_y = fabsf(y);
+
+    float output = ASCRT_NAN_F;
+
+    // Main path: powf(x, y) = exp2(y * log2(|x|)).
+    // The logarithm is split into hi/lo parts to reduce multiplication error.
+    float log2_hi = 0.0f;
+    float log2_lo = 0.0f;
+    __internal_log2f_positive_finite(abs_x, log2_hi, log2_lo);
+
+    // Preserve the product residual so exp2 reconstruction sees a tighter input.
+    const float log2_abs_x = log2_hi + log2_lo;
+    const float product_hi = log2_abs_x * y;
+    float product_lo = fmaf(log2_abs_x, y, -product_hi);
+    product_lo = fmaf(log2_lo - (log2_abs_x - log2_hi), y, product_lo);
+
+    // Rebuild the final value from the split exponent parts.
+    output = __internal_exp2f_reconstruct(product_hi, product_lo);
+
+    // Negative bases are only valid for integer exponents.
+    if (x < 0.0f) {
+        if (floorf(y) != y) {
+            output = ASCRT_NAN_F;
+        } else if (__internal_is_odd_integer_f32(y)) {
+            output = -output;
+        }
+    }
+
+    const bool x_is_zero_or_inf = (x == 0.0f || abs_x == ASCRT_INF_F);
+    const bool y_is_inf = (abs_y == ASCRT_INF_F);
+    const bool x_or_y_nan = (isnan(x) || isnan(y));
+    const bool y_is_odd_int = __internal_is_odd_integer_f32(y);
+
+    // Special values override the main-path result.
+    if (y == 0.0f || x == 1.0f) {
+        output = 1.0f;
+    } else if (x_is_zero_or_inf && isnan(y)) {
+        output = x + y;
+    } else if (x_is_zero_or_inf) {
+        // Zero and infinity follow sign/oddness rules for power semantics.
+        float special_output = x + x;
+        if (y < 0.0f) {
+            special_output = __internal_with_sign_bit(abs_x == ASCRT_INF_F ? 0.0f : ASCRT_INF_F, x);
+        }
+        output = y_is_odd_int ? special_output : fabsf(special_output);
+    } else if (y_is_inf && isnan(x)) {
+        output = x + y;
+    } else if (y_is_inf && x == -1.0f) {
+        output = 1.0f;
+    } else if (y_is_inf) {
+        // Infinite exponents collapse to 0 or inf depending on |x| relative to 1.
+        const bool result_is_inf = (abs_x > 1.0f && y > 0.0f) || (abs_x < 1.0f && y < 0.0f);
+        output = result_is_inf ? ASCRT_INF_F : 0.0f;
+    } else if (x_or_y_nan) {
+        output = x + y;
+    }
+
+    return output;
+}
+
+/**
+ * Computes 2 raised to the power x for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style
+ * semantics: NaN propagates, +inf returns +inf, and -inf returns 0.
+ *
+ * For finite inputs, it delegates to the split exp2 reconstruction helper:
+ *   exp2(x) = 2^x = exp2f(x_hi + x_lo)
+ *
+ * The helper keeps the integer and fractional parts separated so the final
+ * reconstruction stays stable across a wide input range.
+ *
+ * @param x The exponent value.
+ * @return The computed exp2f(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x)
+{
+    float res = __internal_exp2f_reconstruct(x, 0.0f);
+    if (isnan(x)) {
+        res = x;
+    }
+    if (x == ASCRT_INF_F) {
+        res = ASCRT_INF_F;
+    }
+    if (x == -ASCRT_INF_F) {
+        res = 0.0f;
+    }
+    return res;
+}
+
+/**
+ * Computes the base-2 logarithm for float inputs.
+ *
+ * The implementation first handles special values with fixed IEEE-style
+ * semantics: NaN propagates, +inf returns +inf, zero returns -inf, and
+ * negative inputs return NaN.
+ *
+ * For positive finite inputs, it splits the result into high and low parts:
+ *   log2(x) ~= log2_hi + log2_lo
+ *
+ * The positive-finite helper normalizes the input, reduces the mantissa with a
+ * small polynomial, and reconstructs the exponent contribution separately so
+ * the final sum keeps useful low-order precision.
+ *
+ * @param x The input value.
+ * @return The computed log2f(x) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x)
+{
+    float log2_hi = 0.0f;
+    float log2_lo = 0.0f;
+    __internal_log2f_positive_finite(x, log2_hi, log2_lo);
+    float res = log2_hi + log2_lo;
+    if (isnan(x)) {
+        res = x;
+    }
+    if (x == ASCRT_INF_F) {
+        res = ASCRT_INF_F;
+    }
+    if (x == 0.0f) {
+        res = -ASCRT_INF_F;
+    }
+    if (x < 0.0f) {
+        res = ASCRT_NAN_F;
+    }
+    return res;
+}
+
+/**
+ * Computes the floating-point remainder x mod y for float inputs.
+ *
+ * The implementation first handles special cases with IEEE-style semantics:
+ * invalid divisors, infinities, and NaN inputs return NaN; exact magnitude
+ * equality returns signed zero; and |x| < |y| returns x directly.
+ *
+ * For finite nonzero inputs, it works on the absolute-value bit patterns,
+ * normalizes subnormal operands, and repeatedly subtracts the divisor mantissa
+ * from the dividend mantissa while aligning exponents in base-2. This is a
+ * binary long-division style remainder computation.
+ *
+ * The final remainder is renormalized back to a float and the original sign of
+ * x is restored.
+ *
+ * @param x The dividend value.
+ * @param y The divisor value.
+ * @return The computed fmodf(x, y) value.
+ */
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
+{
+    // Reinterpret the inputs as raw float bit patterns and keep the sign of x.
+    uint32_t ux = reinterpret_cast<uint32_t&>(x);
+    uint32_t uy = reinterpret_cast<uint32_t&>(y);
+    uint32_t sx = ux & 0x80000000U;
+    ux &= 0x7FFFFFFFU;
+    uy &= 0x7FFFFFFFU;
+
+    // Invalid divisor, NaN, or infinity cases follow IEEE-style NaN propagation.
+    if (uy == 0U || ux >= 0x7F800000U || uy > 0x7F800000U) {
+        return ASCRT_INF_F / ASCRT_INF_F;
+    }
+    // If |x| < |y|, the remainder is x itself.
+    if (ux < uy) {
+        return x;
+    }
+    // If |x| == |y|, the remainder is signed zero with the sign of x.
+    if (ux == uy) {
+        return reinterpret_cast<float&>(sx);
+    }
+
+    // Extract exponents and build mantissas in normalized form.
+    int32_t ex = static_cast<int32_t>(ux >> 23);
+    int32_t ey = static_cast<int32_t>(uy >> 23);
+    uint32_t mx = ux;
+    uint32_t my = uy;
+
+    // Normalize subnormal x so the hidden leading bit is restored.
+    if (ex == 0) {
+        int32_t i = 0;
+        mx = ux;
+        while ((mx & 0x00800000U) == 0U) {
+            mx <<= 1;
+            i++;
+        }
+        ex = 1 - i;
+    } else {
+        mx = (ux & 0x007FFFFFU) | 0x00800000U;
+    }
+
+    // Normalize subnormal y in the same way.
+    if (ey == 0) {
+        int32_t i = 0;
+        my = uy;
+        while ((my & 0x00800000U) == 0U) {
+            my <<= 1;
+            i++;
+        }
+        ey = 1 - i;
+    } else {
+        my = (uy & 0x007FFFFFU) | 0x00800000U;
+    }
+
+    // Align x to y by repeatedly subtracting the divisor mantissa while
+    // shifting the dividend down one binary exponent step at a time.
+    while (ex > ey) {
+        uint32_t d = mx - my;
+        if ((d & 0x80000000U) == 0U) {
+            if (d == 0U) {
+                return reinterpret_cast<float&>(sx);
+            }
+            mx = d;
+        }
+        mx <<= 1;
+        ex--;
+    }
+
+    // Finish the aligned subtraction once exponents match.
+    uint32_t d = mx - my;
+    if ((d & 0x80000000U) == 0U) {
+        if (d == 0U) {
+            return reinterpret_cast<float&>(sx);
+        }
+        mx = d;
+    }
+
+    // Renormalize the remainder mantissa so it can be packed back to float.
+    while ((mx & 0x00800000U) == 0U) {
+        mx <<= 1;
+        ex--;
+    }
+
+    // Rebuild the float result, restore the sign of x, and return the remainder.
+    uint32_t out;
+    if (ex > 0) {
+        mx -= 0x00800000U;
+        out = mx | (static_cast<uint32_t>(ex) << 23);
+    } else {
+        mx >>= static_cast<uint32_t>(1 - ex);
+        out = mx;
+    }
+    out |= sx;
+    return reinterpret_cast<float&>(out);
+}
+
+#endif // ASCENDC_USE_LEGACY_PRECISION
 
 #endif
 #endif // IMPL_SIMT_API_MATH_FUNCTIONS_IMPL_H
