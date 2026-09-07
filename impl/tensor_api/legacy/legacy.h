@@ -277,7 +277,7 @@ template <typename... Args, typename DstTensor, typename FmTensor, typename Filt
 __aicore__ inline void Mmad(
     const MmadAtom<MmadTraits<Args...>>& atom, const DstTensor& dst, const FmTensor& fm, const FilterTensor& filter)
 {
-    atom.call(dst, fm, filter);
+    atom.Call(dst, fm, filter);
 }
 
 template <
@@ -287,7 +287,7 @@ __aicore__ inline void Mmad(
     const MmadAtom<MmadTraits<Args...>>& atom, const DstTensor& dst, const FmTensor& fm, const FilterTensor& filter,
     const BiasTensor& bias)
 {
-    atom.call(dst, fm, filter, bias);
+    atom.Call(dst, fm, filter, bias);
 }
 
 template <typename MmadOperationType>

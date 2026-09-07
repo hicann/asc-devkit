@@ -104,7 +104,7 @@ struct MmadTraits<MmadOp, MmadTraitsType, MmadOpWith, MmadTraitsWith> {
     }
 
     template <const TraitType& trait = defaultTrait, typename... Args>
-    __aicore__ inline void mmad_unpack(const Args&... args) const
+    __aicore__ inline void MmadUnpack(const Args&... args) const
     {
         using normalized_t = Std::remove_cvref_t<decltype(AscendC::Te::normalize_mmad_trait(TraitType{}))>;
         if constexpr (Std::is_same_v<TraitType, normalized_t>) {
@@ -113,12 +113,6 @@ struct MmadTraits<MmadOp, MmadTraitsType, MmadOpWith, MmadTraitsWith> {
             constexpr static normalized_t normalized_trait = AscendC::Te::normalize_mmad_trait(trait);
             MmadOp::template mmad<normalized_t, normalized_trait, Args...>(args..., params);
         }
-    }
-
-    template <const TraitType& trait = defaultTrait, typename... Args>
-    __aicore__ inline void call(const Args&... args) const
-    {
-        mmad_unpack<trait>(args...);
     }
 };
 
@@ -142,9 +136,9 @@ struct MmadAtom<MmadOperationType> : public MmadTraits<MmadOperationType> {
     static constexpr const TraitType defaultTrait = mmad_trait_type::defaultTrait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void call(const Params&... params) const
+    __aicore__ inline void Call(const Params&... params) const
     {
-        mmad_trait_type::template call<trait>(params...);
+        mmad_trait_type::template MmadUnpack<trait>(params...);
     }
 
     template <typename... TraitsArgs>
@@ -163,9 +157,9 @@ struct MmadAtom<MmadTraits<Args...>> : public MmadTraits<Args...> {
     static constexpr const TraitType defaultTrait = mmad_trait_type::defaultTrait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void call(const Params&... params) const
+    __aicore__ inline void Call(const Params&... params) const
     {
-        mmad_trait_type::template call<trait>(params...);
+        mmad_trait_type::template MmadUnpack<trait>(params...);
     }
 
     template <typename... TraitsArgs>
@@ -386,7 +380,7 @@ struct CopyAtom<CopyOperation> : public CopyTraits<CopyOperation> {
     static constexpr const TraitType defaultTrait = copy_trait_type::defaultTrait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void call(const Params&... params) const
+    __aicore__ inline void Call(const Params&... params) const
     {
         using traits_type = copy_trait_type;
         static_cast<const traits_type&>(*this).template CopyUnpack<trait, Params...>(params...);
@@ -408,7 +402,7 @@ struct CopyAtom<CopyTraits<Args...>> : public CopyTraits<Args...> {
     static constexpr const TraitType defaultTrait = copy_trait_type::defaultTrait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void call(const Params&... params) const
+    __aicore__ inline void Call(const Params&... params) const
     {
         using traits_type = copy_trait_type;
         static_cast<const traits_type&>(*this).template CopyUnpack<trait, Params...>(params...);
@@ -426,7 +420,7 @@ struct CopyAtom<CopyTraits<Args...>> : public CopyTraits<Args...> {
 template <typename AtomType, typename DstTensor, typename SrcTensor>
 __aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const SrcTensor& src)
 {
-    atom.call(dst, src);
+    atom.Call(dst, src);
 }
 
 template <
@@ -434,7 +428,7 @@ template <
     Std::enable_if_t<is_valid_quant_v<Quant>, int> = 0>
 __aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const SrcTensor& src, const Quant& quant)
 {
-    atom.call(dst, src, quant);
+    atom.Call(dst, src, quant);
 }
 
 template <typename CopyOperationType>

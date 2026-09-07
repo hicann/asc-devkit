@@ -12,6 +12,26 @@
 #include "tensor_api/stub/cce_stub.h"
 #include "include/tensor_api/tensor.h"
 
+struct legacy_copy_call_operation {
+    template <typename Trait, const Trait& trait, typename... Args>
+    static void Copy(const Args&...)
+    {
+        called = true;
+    }
+
+    static inline bool called = false;
+};
+
+struct legacy_mmad_call_operation {
+    template <typename Trait, const Trait& trait, typename... Args>
+    static void mmad(const Args&...)
+    {
+        called = true;
+    }
+
+    static inline bool called = false;
+};
+
 class tensor_api_legacy : public testing::Test {};
 
 TEST_F(tensor_api_legacy, normalize_legacy_enums)
@@ -174,4 +194,26 @@ TEST_F(tensor_api_legacy, bind_legacy_atom_params)
     EXPECT_EQ(mmad_atom.params.m, 16);
     EXPECT_EQ(mmad_atom.params.unit_flag, asc::te::unit_flag_mode::enable_keep);
     EXPECT_TRUE(mmad_atom.params.init_with_zero);
+}
+
+TEST_F(tensor_api_legacy, call_legacy_copy_atom)
+{
+    using namespace AscendC::Te;
+    using copy_traits_type = CopyTraits<legacy_copy_call_operation, asc::te::gm_to_l1_trait_default>;
+
+    legacy_copy_call_operation::called = false;
+    CopyAtom<copy_traits_type>{}.Call();
+
+    EXPECT_TRUE(legacy_copy_call_operation::called);
+}
+
+TEST_F(tensor_api_legacy, call_legacy_mmad_atom)
+{
+    using namespace AscendC::Te;
+    using mmad_traits_type = MmadTraits<legacy_mmad_call_operation, asc::te::mmad_trait_default>;
+
+    legacy_mmad_call_operation::called = false;
+    MmadAtom<mmad_traits_type>{}.Call();
+
+    EXPECT_TRUE(legacy_mmad_call_operation::called);
 }
