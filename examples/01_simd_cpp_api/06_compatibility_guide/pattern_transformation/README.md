@@ -93,21 +93,18 @@ Atlas A2/A3 系列产品中 L0A 数据排布为 Zz 分形，Ascend 950PR/Ascend 
 在 Atlas A2/A3 系列产品中，L1->L0A 需要由 Nz 分形转换成 Zz 分形，通过 LoadData（2D矩阵搬运） 接口实现，相关代码如下：
 
 ```cpp
-...
+constexpr uint32_t mBlocks = M / CUBE_BLOCK;
+constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
+int srcOffset = 0;
+int dstOffset = 0;
 for (uint32_t i = 0; i < mBlocks; ++i) {
-    constexpr uint32_t mBlocks = M / CUBE_BLOCK;
-    constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
-    int srcOffset = 0;
-    int dstOffset = 0;
-    for (uint32_t i = 0; i < mBlocks; ++i) {
-        AscendC::LoadData2DParams loadDataParams;
-        loadDataParams.repeatTimes = kBlocks;
-        loadDataParams.srcStride = mBlocks;
-        loadDataParams.ifTranspose = false;
-        AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-        srcOffset += CUBE_BLOCK * CUBE_BLOCK;
-        dstOffset += K * CUBE_BLOCK;
-    }
+    AscendC::LoadData2DParams loadDataParams;
+    loadDataParams.repeatTimes = kBlocks;
+    loadDataParams.srcStride = mBlocks;
+    loadDataParams.ifTranspose = false;
+    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
+    srcOffset += CUBE_BLOCK * CUBE_BLOCK;
+    dstOffset += K * CUBE_BLOCK;
 }
 ```
 
@@ -115,18 +112,17 @@ for (uint32_t i = 0; i < mBlocks; ++i) {
 
 ```cpp
 constexpr uint32_t mBlocks = M / CUBE_BLOCK;
-constexpr uint32_t kBlocks = K / CUBE_BLOCK;
-int srcOffset = 0;
-int dstOffset = 0;
-for (uint32_t i = 0; i < kBlocks; ++i) {
-    AscendC::LoadData2DParams loadDataParams;
-    loadDataParams.repeatTimes = mBlocks;
-    loadDataParams.srcStride = 1;
-    loadDataParams.ifTranspose = false;
-    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-    srcOffset += CUBE_BLOCK * CUBE_BLOCK * mBlocks;
-    dstOffset += CUBE_BLOCK * CUBE_BLOCK * mBlocks;
-}
+constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
+AscendC::LoadData2DParamsV2 loadDataParams;
+loadDataParams.mStartPosition = 0;  // M轴起始位置，单位为16个元素
+loadDataParams.kStartPosition = 0;  // K轴起始位置，单位为32字节
+loadDataParams.mStep = mBlocks;     // M轴搬运范围，单位为16个元素
+loadDataParams.kStep = kBlocks;     // K轴搬运范围，单位为32字节
+loadDataParams.srcStride = mBlocks; // 源相邻K轴分形间隔，单位为512字节
+loadDataParams.dstStride = mBlocks; // 目的相邻K轴分形间隔，单位为512字节
+loadDataParams.ifTranspose = false;
+loadDataParams.sid = 0;
+AscendC::LoadData(a2, a1, loadDataParams);
 ```
 
 
@@ -146,32 +142,61 @@ $$
 在Ascend 950PR/Ascend 950DT中，由于L0A为Nz分形，切分M轴后A1和A2不连续，为了不改变mmad计算的逻辑及后续的流水排布，需要通过LoadData（2D矩阵搬运）搬运指令，将整块Nz矩阵切分成两块子Nz矩阵，相关代码如下：
 
 ```cpp
-// 搬运上半部分 Nz 分形
-...
-for (uint32_t i = 0; i < kBlocks; ++i) {
-    ...
-    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-    ...
-}
-// 搬运下半部分 Nz 分形
-srcOffset = CUBE_BLOCK * CUBE_BLOCK * mBlocks / 2;  // 从下半开始
-for (uint32_t i = 0; i < kBlocks; ++i) {
-    ...
-    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-    ...
-}
+constexpr uint32_t mBlocks = M / CUBE_BLOCK;
+constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
+AscendC::LoadData2DParamsV2 loadDataParams;
+loadDataParams.mStartPosition = 0;      // 从A矩阵上半部分开始，单位为16个元素
+loadDataParams.kStartPosition = 0;      // K轴起始位置，单位为32字节
+loadDataParams.mStep = mBlocks / 2;     // 每次搬运一半M轴，单位为16个元素
+loadDataParams.kStep = kBlocks;         // K轴搬运范围，单位为32字节
+loadDataParams.srcStride = mBlocks;     // 源相邻K轴分形间隔，单位为512字节
+loadDataParams.dstStride = mBlocks / 2; // 子矩阵相邻K轴分形间隔，单位为512字节
+loadDataParams.ifTranspose = false;
+loadDataParams.sid = 0;
+// 搬运上半部分Nz分形
+AscendC::LoadData(a2, a1, loadDataParams);
+// 搬运下半部分Nz分形
+loadDataParams.mStartPosition = mBlocks / 2;
+AscendC::LoadData(a2[M * K / 2], a1, loadDataParams);
 ```
 
 
 ### L1->L0B
 
-L1 到 L0B 的搬运，所有产品均使用 LoadData（2D矩阵搬运） 完成 Nz 格式搬运，**无需兼容性适配**，相关代码如下：
+各产品的L0B数据排布均为Zn分形，L1到L0B的分形转换逻辑相同，但3510架构需要将LoadData（2D矩阵搬运）的参数结构体切换为`LoadData2DParamsV2`。
+
+Atlas A2/A3系列产品使用`LoadData2DParams`，相关代码如下：
 
 ```cpp
-...
+constexpr uint32_t srcStride = 512 / sizeof(U);
+constexpr uint32_t dstStride = N * CUBE_BLOCK;
+constexpr uint32_t kBlocks = K / CUBE_BLOCK;
+constexpr uint32_t nBlocks = N * sizeof(U) / C0_SIZE;
+AscendC::LoadData2DParams loadDataParams;
+loadDataParams.repeatTimes = nBlocks;
+loadDataParams.srcStride = kBlocks;
+loadDataParams.dstGap = 0;
+loadDataParams.ifTranspose = true;
 for (uint32_t i = 0; i < kBlocks; ++i) {
     AscendC::LoadData(b2[i * dstStride], b1[i * srcStride], loadDataParams);
 }
+```
+
+Ascend 950PR/Ascend 950DT系列产品使用`LoadData2DParamsV2`，相关代码如下：
+
+```cpp
+constexpr uint32_t kBlocks = K / CUBE_BLOCK;
+constexpr uint32_t nBlocks = N * sizeof(U) / C0_SIZE;
+AscendC::LoadData2DParamsV2 loadDataParams;
+loadDataParams.mStartPosition = 0;  // K轴起始位置，单位为16个元素
+loadDataParams.kStartPosition = 0;  // N轴起始位置，单位为32字节
+loadDataParams.mStep = kBlocks;     // K轴搬运范围，单位为16个元素
+loadDataParams.kStep = nBlocks;     // N轴搬运范围，单位为32字节
+loadDataParams.srcStride = kBlocks; // 源相邻N轴分形间隔，单位为512字节
+loadDataParams.dstStride = nBlocks; // 目的相邻K轴分形间隔，单位为512字节
+loadDataParams.ifTranspose = true;
+loadDataParams.sid = 0;
+AscendC::LoadData(b2, b1, loadDataParams);
 ```
 
 ### Compute

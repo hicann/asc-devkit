@@ -15,12 +15,21 @@
 
 #ifndef DATA_UTILS_H
 #define DATA_UTILS_H
+#include <iostream>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fstream>
+#include "acl/acl.h"
 
 #define ERROR_LOG(fmt, args...) fprintf(stdout, "[ERROR]  " fmt "\n", ##args)
+#define CHECK_ACL(x)                                                                        \
+    do {                                                                                    \
+        aclError __ret = x;                                                                 \
+        if (__ret != ACL_ERROR_NONE) {                                                      \
+            std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << __ret << std::endl; \
+        }                                                                                   \
+    } while (0);
 
 bool ReadFile(const std::string& filePath, size_t& fileSize, void* buffer, size_t bufferSize)
 {

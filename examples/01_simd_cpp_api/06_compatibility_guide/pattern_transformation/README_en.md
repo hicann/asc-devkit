@@ -92,21 +92,18 @@ In Atlas A2/A3 Series Products, the L0A data layout is Zz fractal, while in Asce
 In Atlas A2/A3 Series Products, L1->L0A requires transformation from Nz fractal to Zz fractal, implemented through the LoadData (2D matrix transfer) interface. The relevant code is as follows:
 
 ```cpp
-...
+constexpr uint32_t mBlocks = M / CUBE_BLOCK;
+constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
+int srcOffset = 0;
+int dstOffset = 0;
 for (uint32_t i = 0; i < mBlocks; ++i) {
-    constexpr uint32_t mBlocks = M / CUBE_BLOCK;
-    constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
-    int srcOffset = 0;
-    int dstOffset = 0;
-    for (uint32_t i = 0; i < mBlocks; ++i) {
-        AscendC::LoadData2DParams loadDataParams;
-        loadDataParams.repeatTimes = kBlocks;
-        loadDataParams.srcStride = mBlocks;
-        loadDataParams.ifTranspose = false;
-        AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-        srcOffset += CUBE_BLOCK * CUBE_BLOCK;
-        dstOffset += K * CUBE_BLOCK;
-    }
+    AscendC::LoadData2DParams loadDataParams;
+    loadDataParams.repeatTimes = kBlocks;
+    loadDataParams.srcStride = mBlocks;
+    loadDataParams.ifTranspose = false;
+    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
+    srcOffset += CUBE_BLOCK * CUBE_BLOCK;
+    dstOffset += K * CUBE_BLOCK;
 }
 ```
 
@@ -114,18 +111,17 @@ In Ascend 950PR/Ascend 950DT, L1->L0A does not require fractal transformation an
 
 ```cpp
 constexpr uint32_t mBlocks = M / CUBE_BLOCK;
-constexpr uint32_t kBlocks = K / CUBE_BLOCK;
-int srcOffset = 0;
-int dstOffset = 0;
-for (uint32_t i = 0; i < kBlocks; ++i) {
-    AscendC::LoadData2DParams loadDataParams;
-    loadDataParams.repeatTimes = mBlocks;
-    loadDataParams.srcStride = 1;
-    loadDataParams.ifTranspose = false;
-    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-    srcOffset += CUBE_BLOCK * CUBE_BLOCK * mBlocks;
-    dstOffset += CUBE_BLOCK * CUBE_BLOCK * mBlocks;
-}
+constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
+AscendC::LoadData2DParamsV2 loadDataParams;
+loadDataParams.mStartPosition = 0;  // M-axis start, in units of 16 elements
+loadDataParams.kStartPosition = 0;  // K-axis start, in units of 32 bytes
+loadDataParams.mStep = mBlocks;     // M-axis transfer range, in units of 16 elements
+loadDataParams.kStep = kBlocks;     // K-axis transfer range, in units of 32 bytes
+loadDataParams.srcStride = mBlocks; // Source K-axis fractal stride, in units of 512 bytes
+loadDataParams.dstStride = mBlocks; // Destination K-axis fractal stride, in units of 512 bytes
+loadDataParams.ifTranspose = false;
+loadDataParams.sid = 0;
+AscendC::LoadData(a2, a1, loadDataParams);
 ```
 
 
@@ -145,32 +141,61 @@ In Atlas A2/A3 Series Products, since L0A uses Zz fractal, A1 and A2 remain cont
 In Ascend 950PR/Ascend 950DT, since L0A uses Nz fractal, A1 and A2 are not continuous after M axis splitting. To avoid changing the mmad computation logic and subsequent pipeline arrangement, the LoadData (2D matrix transfer) instruction is used to split the entire Nz matrix into two sub-Nz matrices. The relevant code is as follows:
 
 ```cpp
+constexpr uint32_t mBlocks = M / CUBE_BLOCK;
+constexpr uint32_t kBlocks = K * sizeof(T) / C0_SIZE;
+AscendC::LoadData2DParamsV2 loadDataParams;
+loadDataParams.mStartPosition = 0;      // Start from the upper half, in units of 16 elements
+loadDataParams.kStartPosition = 0;      // K-axis start, in units of 32 bytes
+loadDataParams.mStep = mBlocks / 2;     // Transfer half of the M axis, in units of 16 elements
+loadDataParams.kStep = kBlocks;         // K-axis transfer range, in units of 32 bytes
+loadDataParams.srcStride = mBlocks;     // Source K-axis fractal stride, in units of 512 bytes
+loadDataParams.dstStride = mBlocks / 2; // Submatrix K-axis fractal stride, in units of 512 bytes
+loadDataParams.ifTranspose = false;
+loadDataParams.sid = 0;
 // Transfer the upper Nz fractal
-...
-for (uint32_t i = 0; i < kBlocks; ++i) {
-    ...
-    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-    ...
-}
+AscendC::LoadData(a2, a1, loadDataParams);
 // Transfer the lower Nz fractal
-srcOffset = CUBE_BLOCK * CUBE_BLOCK * mBlocks / 2;  // Start from the lower half
-for (uint32_t i = 0; i < kBlocks; ++i) {
-    ...
-    AscendC::LoadData(a2[dstOffset], a1[srcOffset], loadDataParams);
-    ...
-}
+loadDataParams.mStartPosition = mBlocks / 2;
+AscendC::LoadData(a2[M * K / 2], a1, loadDataParams);
 ```
 
 
 ### L1->L0B
 
-The L1 to L0B transfer uses LoadData (2D matrix transfer) for Nz format transfer on all products and **requires no compatibility adaptation**. The relevant code is as follows:
+L0B uses the Zn fractal on all products, and the L1-to-L0B fractal transformation logic remains the same. However, on the 3510 architecture, the LoadData (2D matrix transfer) parameter type must be changed to `LoadData2DParamsV2`.
+
+Atlas A2/A3 Series Products use `LoadData2DParams` as follows:
 
 ```cpp
-...
+constexpr uint32_t srcStride = 512 / sizeof(U);
+constexpr uint32_t dstStride = N * CUBE_BLOCK;
+constexpr uint32_t kBlocks = K / CUBE_BLOCK;
+constexpr uint32_t nBlocks = N * sizeof(U) / C0_SIZE;
+AscendC::LoadData2DParams loadDataParams;
+loadDataParams.repeatTimes = nBlocks;
+loadDataParams.srcStride = kBlocks;
+loadDataParams.dstGap = 0;
+loadDataParams.ifTranspose = true;
 for (uint32_t i = 0; i < kBlocks; ++i) {
     AscendC::LoadData(b2[i * dstStride], b1[i * srcStride], loadDataParams);
 }
+```
+
+Ascend 950PR/Ascend 950DT Series Products use `LoadData2DParamsV2` as follows:
+
+```cpp
+constexpr uint32_t kBlocks = K / CUBE_BLOCK;
+constexpr uint32_t nBlocks = N * sizeof(U) / C0_SIZE;
+AscendC::LoadData2DParamsV2 loadDataParams;
+loadDataParams.mStartPosition = 0;  // K-axis start, in units of 16 elements
+loadDataParams.kStartPosition = 0;  // N-axis start, in units of 32 bytes
+loadDataParams.mStep = kBlocks;     // K-axis transfer range, in units of 16 elements
+loadDataParams.kStep = nBlocks;     // N-axis transfer range, in units of 32 bytes
+loadDataParams.srcStride = kBlocks; // Source N-axis fractal stride, in units of 512 bytes
+loadDataParams.dstStride = nBlocks; // Destination K-axis fractal stride, in units of 512 bytes
+loadDataParams.ifTranspose = true;
+loadDataParams.sid = 0;
+AscendC::LoadData(b2, b1, loadDataParams);
 ```
 
 ### Compute
