@@ -10,21 +10,20 @@
 
 #if !defined(ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #pragma message( \
-    "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/asc_set_l0c2gm_nz2nd_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use \"#include \"c_api/asc_simd.h\"\" and use public functions or variables defined in interface headers files.")
+    "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_set_l0c2gm_quant_post_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use \"#include \"c_api/asc_simd.h\"\" and use public functions or variables defined in interface headers files.")
 #define ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
 #endif
 
-#ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_CUBE_COMPUTE_IMPL_ASC_SET_L0C2GM_NZ2ND_IMPL_H
-#define IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_CUBE_COMPUTE_IMPL_ASC_SET_L0C2GM_NZ2ND_IMPL_H
+#ifndef IMPL_CAPI_INSTR_IMPL_NPU_ARCH_3510_CUBE_DATAMOVE_IMPL_ASC_SET_L0C2GM_QUANT_POST_IMPL_H
+#define IMPL_CAPI_INSTR_IMPL_NPU_ARCH_3510_CUBE_DATAMOVE_IMPL_ASC_SET_L0C2GM_QUANT_POST_IMPL_H
 
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 
-__aicore__ inline void asc_set_l0c2gm_nz2nd_impl(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride)
+__aicore__ inline void asc_set_l0c2gm_quant_post_impl(uint64_t config)
 {
     if ASC_IS_AIC {
-        uint64_t config = (dst_nd_stride << 32) | (src_nd_stride << 16) | nd_num;
-        set_loop3_para(config);
+        set_quant_post(config);
     }
 }
 

@@ -13,34 +13,25 @@
 #include "c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
 
-class TestCubeComputeSetL0c2gmConfig : public testing::Test {
+class TestCubeDatamoveSetL0c2gmNz2nd : public testing::Test {
 protected:
     void SetUp() { g_coreType = C_API_AIC_TYPE; }
     void TearDown() { g_coreType = C_API_AIV_TYPE; }
 };
 
 namespace {
-void set_set_l0c2gm_config_Stub(uint64_t config) { EXPECT_EQ(0x8000000000000201, config); }
+void set_loop3_para_Stub(uint64_t config)
+{
+    uint64_t conf = 123;
+    EXPECT_EQ(conf, config);
+}
 } // namespace
 
-TEST_F(TestCubeComputeSetL0c2gmConfig, set_l0c2gm_config_Succ)
+TEST_F(TestCubeDatamoveSetL0c2gmNz2nd, set_l0c_copy_nz_para_Succ)
 {
-    MOCKER(set_fpc, void(uint64_t)).times(1).will(invoke(set_set_l0c2gm_config_Stub));
-    uint64_t relu_pre = 1;
-    uint64_t quant_pre = 2;
-    bool enable_unit_flag = true;
+    MOCKER(set_loop3_para, void(uint64_t)).times(1).will(invoke(set_loop3_para_Stub));
+    uint64_t config = 123;
 
-    asc_set_l0c2gm_config(relu_pre, quant_pre, enable_unit_flag);
-    GlobalMockObject::verify();
-}
-
-TEST_F(TestCubeComputeSetL0c2gmConfig, set_l0c_copy_config_Succ)
-{
-    MOCKER(set_fpc, void(uint64_t)).times(1).will(invoke(set_set_l0c2gm_config_Stub));
-    uint64_t relu_pre_addr = 1;
-    uint64_t quant_pre_addr = 2;
-    bool is_clean_unit_flag = true;
-
-    asc_set_l0c_copy_config(relu_pre_addr, quant_pre_addr, is_clean_unit_flag);
+    asc_set_l0c_copy_nz_para(config, 0, 0);
     GlobalMockObject::verify();
 }

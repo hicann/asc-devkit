@@ -28,7 +28,6 @@
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 
 #include "impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl.h"
-#include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl.h"
 
 #endif
 
@@ -57,6 +56,10 @@ __aicore__ inline uint64_t asc_get_l0c2gm_prequant();
 __aicore__ inline void asc_set_l0c2gm_nz2nd(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride);
 
 __aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_pre, bool enable_unit_flag);
+__aicore__ inline void asc_set_l0c_copy_config(
+    uint64_t relu_pre_addr, uint64_t quant_pre_addr, bool is_clean_unit_flag);
+__aicore__ inline void asc_set_l0c_copy_nz_para(
+    uint16_t matrix_num, uint16_t src_nz_matrix_stride, uint32_t dst_matrix_stride);
 __aicore__ inline void asc_set_l0c_copy_channel_para(uint16_t src_nz_fractal_stride);
 
 __aicore__ inline void asc_set_l3d_rpt_b(uint64_t config);

@@ -104,7 +104,9 @@ static void test_host_c_api_cube_datamove_2()
     using ::asc_set_l0c2gm_nz2nd;
     using ::asc_set_l0c2gm_quant_post;
     using ::asc_set_l0c2gm_relu_alpha;
+    using ::asc_set_l0c_copy_config;
     using ::asc_set_l0c_copy_lrelu_alpha;
+    using ::asc_set_l0c_copy_nz_para;
     using ::asc_set_l0c_copy_params;
     using ::asc_set_l0c_copy_prequant;
     using ::asc_set_l0c_copy_relu_alpha;

@@ -46,6 +46,16 @@ __aicore__ inline void asc_transpose(__ubuf__ int16_t* dst, __ubuf__ int16_t* sr
 
 __aicore__ inline void asc_transpose(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src);
 
+__aicore__ inline void asc_transto5hd_b8(
+    ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride, bool dst_high_half,
+    bool src_high_half);
+
+__aicore__ inline void asc_transto5hd_b16(
+    ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride);
+
+__aicore__ inline void asc_transto5hd_b32(
+    ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride);
+
 __aicore__ inline void asc_select(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count);
 
 __aicore__ inline void asc_select(
