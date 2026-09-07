@@ -31,6 +31,9 @@
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_gather_mask_intf.h"`。
 
 该接口用于对指定的特殊目的寄存器（SpecialPurposeReg）进行清零操作。通过模板参数spr指定目标特殊寄存器，调用后该寄存器的值被置为0，当前支持的特殊寄存器见[表 SpecialPurposeReg模板参数说明](#table2)。
+
+AR特殊寄存器通常配合[Squeeze](../compare_and_select/Squeeze.md)和[连续非对齐搬出](../reg_data_store/StoreUnAlign_continuous.md)的场景3（无需显式传入偏移量）接口使用。当Squeeze的模板参数`store`取值为`GatherMaskMode::STORE_REG`时，有效元素的总字节数会存入AR寄存器，并作为连续非对齐搬出时的地址偏移量。在首次调用连续非对齐搬出操作前，需调用本接口将AR寄存器清零。
+
 ## 函数原型<a name="section620mcpsimp"></a>
 
 ```cpp
@@ -62,22 +65,23 @@ __simd_callee__ inline void ClearSpr()
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
-如下示例中Gather Reg矢量计算API会存储有效元素的总字节数到AR寄存器中，在宏函数内for循环开始前通过ClearSpr对AR寄存器进行清零。
+如下示例中，[Squeeze](../../reg_vector_compute/compare_and_select/Squeeze.md) Reg矢量计算API的`GatherMaskMode::STORE_REG`模式会将有效元素的总字节数存储到AR寄存器中。在宏函数内for循环开始前，通过ClearSpr对AR寄存器进行清零。
 
 ```cpp
-template<typename T, typename U>
-__simd_vf__ inline void VFDemo(__ubuf__ T* dstAddr, __ubuf__ T* src0Addr, __ubuf__ U* src1Addr, uint32_t count, uint32_t oneRepeatSize, uint16_t repeatTimes)
+template <typename T>
+__simd_vf__ inline void SqueezeVF(__ubuf__ T* xAddr, __ubuf__ T* yAddr, uint32_t repeatTimes, uint32_t oneRepeatSize)
 {
-    AscendC::Reg::RegTensor<T> srcReg0, dstReg;
-    AscendC::Reg::RegTensor<U> srcReg1;
-    AscendC::Reg::MaskReg mask;
-    AscendC::Reg::LoadAlign(srcReg1, src1Addr);
+    AscendC::Reg::MaskReg mask = AscendC::Reg::CreateMask<T, AscendC::Reg::MaskPattern::M4>();
+    AscendC::Reg::RegTensor<T> xReg;
+    AscendC::Reg::RegTensor<T> yReg;
+    AscendC::Reg::UnalignRegForStore ureg;
+    // Squeeze在STORE_REG模式下会将有效元素的总字节数累加到AR寄存器，需先清零以初始化搬出偏移量。
     AscendC::Reg::ClearSpr<AscendC::SpecialPurposeReg::AR>();
-    for (uint16_t i = 0; i < repeatTimes; i++) {
-        mask = AscendC::Reg::UpdateMask<T>(count);
-        AscendC::Reg::LoadAlign(srcReg0, src0Addr + i * oneRepeatSize);
-        AscendC::Reg::Gather(dstReg, srcReg0, srcReg1);
-        AscendC::Reg::StoreAlign(dstAddr + i * oneRepeatSize, dstReg, mask);
+    for (uint16_t i = 0; i < repeatTimes; ++i) {
+        AscendC::Reg::LoadAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(xReg, xAddr, oneRepeatSize);
+        AscendC::Reg::Squeeze<T, AscendC::Reg::GatherMaskMode::STORE_REG>(yReg, xReg, mask);
+        AscendC::Reg::StoreUnAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(yAddr, yReg, ureg);
     }
+    AscendC::Reg::StoreUnAlignPost(yAddr, ureg);
 }
 ```

@@ -37,6 +37,16 @@
   - 单AI Core内单个AIV执行`asc_sync_intra_arrive`后向调度模块发送通知，接着调度模块将AIC对应`sync_id`的计数器增加1。
   - AIC上配对的`asc_sync_intra_wait`检测到对应`sync_id`的计数器非0后解除阻塞并将计数器减1。
 
+以图1为例，演示1个AI Core中AIV0与AIC进行同步（AIV0-1发起asc_sync_intra_arrive）。
+
+AIC 0中在执行asc_sync_intra_wait后，此时AIC 0 sync_id=0的计数器为0，后续所有指令全部被阻塞，需要等到1个AIV执行完asc_sync_intra_arrive。
+
+- AIV 0-0不需要执行asc_sync_intra_arrive。
+- AIV 0-1的PIPE_MTE3指令全部执行完毕后，asc_sync_intra_arrive生效。此时调度模块感知1个AIV已执行完asc_sync_intra_arrive，因此将AIC 0 sync_id=0的计数器值增加为1。AIC 0检测到对应的sync_id=0的计数器变为1，则AIC 0核解除阻塞，继续执行后续PIPE_FIX的指令，并且将计数器值减去1。
+
+**图1**  block内同步时序图（AIV进行asc_sync_intra_arrive）
+![](../figures/single_ai_core_aic_single_aiv_sync.png "block内同步时序图（AIV进行asc_sync_intra_arrive）")
+
 核间同步具体使用方法，请参考[调用示例](#调用示例)。
 
 ## 函数原型
