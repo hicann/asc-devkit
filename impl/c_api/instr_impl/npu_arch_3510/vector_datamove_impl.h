@@ -18,6 +18,7 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_VECTOR_DATAMOVE_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_VECTOR_DATAMOVE_IMPL_H
 
+#include "c_api/defs/macro.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/asc_get_mask_spr_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_load/asc_loadalign_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_load/asc_loadalign_v2_impl.h"
@@ -7767,6 +7768,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint8_t* dst, __gm__ uint8_
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7777,6 +7779,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int8_t* dst, __gm__ int8_t*
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7787,6 +7790,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint16_t* dst, __gm__ uint1
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7797,6 +7801,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int16_t* dst, __gm__ int16_
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int16_t* dst, __gm__ int16_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7807,6 +7812,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ uint32_t* dst, __gm__ uint3
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7817,6 +7823,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ int32_t* dst, __gm__ int32_
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int32_t* dst, __gm__ int32_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7827,6 +7834,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ half* dst, __gm__ half* src
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ half* dst, __gm__ half* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7837,6 +7845,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ float* dst, __gm__ float* s
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ float* dst, __gm__ float* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7847,6 +7856,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ hifloat8_t* dst, __gm__ hif
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7857,6 +7867,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ bfloat16_t* dst, __gm__ bfl
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7867,6 +7878,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -7877,6 +7889,7 @@ __aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e4m3fn_t* dst, __gm__ f
     asc_copy_gm2ub_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t size)
 {
     asc_copy_gm2ub_align_sync_impl(dst, src, size);
@@ -8080,6 +8093,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ uint8_t* dst, __ubuf__ uint8_
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint8_t* dst, __ubuf__ uint8_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8090,6 +8104,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ int8_t* dst, __ubuf__ int8_t*
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int8_t* dst, __ubuf__ int8_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8100,6 +8115,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ uint16_t* dst, __ubuf__ uint1
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint16_t* dst, __ubuf__ uint16_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8110,6 +8126,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ int16_t* dst, __ubuf__ int16_
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int16_t* dst, __ubuf__ int16_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8120,6 +8137,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ uint32_t* dst, __ubuf__ uint3
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint32_t* dst, __ubuf__ uint32_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8130,6 +8148,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ int32_t* dst, __ubuf__ int32_
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int32_t* dst, __ubuf__ int32_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8140,6 +8159,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ half* dst, __ubuf__ half* src
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ half* dst, __ubuf__ half* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8150,6 +8170,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ float* dst, __ubuf__ float* s
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ float* dst, __ubuf__ float* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8160,6 +8181,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ hifloat8_t* dst, __ubuf__ hif
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ hifloat8_t* dst, __ubuf__ hifloat8_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8170,6 +8192,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ bfloat16_t* dst, __ubuf__ bfl
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ bfloat16_t* dst, __ubuf__ bfloat16_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8180,6 +8203,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ fp8_e5m2_t* dst, __ubuf__ fp8
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ fp8_e5m2_t* dst, __ubuf__ fp8_e5m2_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8190,6 +8214,7 @@ __aicore__ inline void asc_copy_ub2gm_align(__gm__ fp8_e4m3fn_t* dst, __ubuf__ f
     asc_copy_ub2gm_align_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ fp8_e4m3fn_t* dst, __ubuf__ fp8_e4m3fn_t* src, uint32_t size)
 {
     asc_copy_ub2gm_align_sync_impl(dst, src, size);
@@ -8322,6 +8347,7 @@ __aicore__ inline void asc_copy_ub2l1(
     asc_copy_ub2l1_impl(dst, src, burst_count, burst_len, src_gap, dst_gap);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2l1 and asc_sync)
 __aicore__ inline void asc_copy_ub2l1_sync(__cbuf__ void* dst, __ubuf__ void* src, uint32_t size)
 {
     asc_copy_ub2l1_sync_impl(dst, src, size);
@@ -8339,6 +8365,7 @@ __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst, __gm__ void* src, uint
     asc_copy_gm2ub_impl(dst, src, size);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_gm2ub and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_sync(__ubuf__ void* dst, __gm__ void* src, uint32_t size)
 {
     asc_copy_gm2ub_sync_impl(dst, src, size);
@@ -8357,6 +8384,7 @@ __aicore__ inline void asc_copy_ub2gm(
     asc_copy_ub2gm_impl(dst, src, burst_count, burst_len, dst_stride, src_stride);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2gm and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_sync(__gm__ void* dst, __ubuf__ void* src, uint32_t size)
 {
     asc_copy_ub2gm_sync_impl(dst, src, size);
@@ -8375,6 +8403,7 @@ __aicore__ inline void asc_copy_ub2ub(
     asc_copy_ub2ub_impl(dst, src, burst_count, burst_len, src_gap, dst_gap);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy_ub2ub and asc_sync)
 __aicore__ inline void asc_copy_ub2ub_sync(__ubuf__ void* dst, __ubuf__ void* src, uint32_t size)
 {
     asc_copy_ub2ub_sync_impl(dst, src, size);

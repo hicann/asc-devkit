@@ -22,6 +22,7 @@
 
 #include "c_api/defs/constant.h"
 #include "c_api/defs/enum.h"
+#include "c_api/defs/macro.h"
 #include "c_api/defs/type.h"
 #include "c_api/defs/union.h"
 

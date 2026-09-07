@@ -18,6 +18,7 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_VECTOR_COMPUTE_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_VECTOR_COMPUTE_IMPL_H
 
+#include "c_api/defs/macro.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/utils_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_relu_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_update_addr_reg_impl.h"
@@ -9851,6 +9852,7 @@ __aicore__ inline void asc_bitsort(__ubuf__ half* dst, __ubuf__ half* src0, __ub
     asc_bitsort_impl(dst, src0, src1, repeat);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bitsort and asc_sync)
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat)
 {
@@ -9862,6 +9864,7 @@ __aicore__ inline void asc_bitsort(__ubuf__ float* dst, __ubuf__ float* src0, __
     asc_bitsort_impl(dst, src0, src1, repeat);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bitsort and asc_sync)
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat)
 {
@@ -9879,6 +9882,7 @@ __aicore__ inline void asc_mrgsort4(
         if_exhausted_suspension, valid_bit);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mrgsort4 and asc_sync)
 __aicore__ inline void asc_mrgsort4_sync(
     __ubuf__ half* dst, __ubuf__ half* src[ASC_C_API_MRGSORT_ELEMENT_LEN], uint8_t repeat, uint16_t element_length_0,
     uint16_t element_length_1, uint16_t element_length_2, uint16_t element_length_3, bool if_exhausted_suspension,
@@ -9899,6 +9903,7 @@ __aicore__ inline void asc_mrgsort4(
         if_exhausted_suspension, valid_bit);
 }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mrgsort4 and asc_sync)
 __aicore__ inline void asc_mrgsort4_sync(
     __ubuf__ float* dst, __ubuf__ float* src[ASC_C_API_MRGSORT_ELEMENT_LEN], uint8_t repeat, uint16_t element_length_0,
     uint16_t element_length_1, uint16_t element_length_2, uint16_t element_length_3, bool if_exhausted_suspension,
@@ -9912,6 +9917,7 @@ __aicore__ inline void asc_mrgsort4_sync(
 // ==========asc_transpose(int16_t/uint16_t)==========
 __aicore__ inline void asc_transpose(__ubuf__ int16_t* dst, __ubuf__ int16_t* src) { asc_transpose_impl(dst, src); }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_transpose and asc_sync)
 __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src)
 {
     asc_transpose_sync_impl(dst, src);
@@ -9919,6 +9925,7 @@ __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_
 
 __aicore__ inline void asc_transpose(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src) { asc_transpose_impl(dst, src); }
 
+ASC_DEPRECATED(9.2.0, "2028/09/03", asc_transpose and asc_sync)
 __aicore__ inline void asc_transpose_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src)
 {
     asc_transpose_sync_impl(dst, src);
