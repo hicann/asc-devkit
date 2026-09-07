@@ -18,15 +18,9 @@ using tensor_api_runtime_validation::TrapException;
 
 class TensorApiRuntimeValidation : public testing::Test {
 protected:
-    void SetUp() override
-    {
-        AscendC::SetGCoreType(2);
-    }
+    void SetUp() override { AscendC::SetGCoreType(2); }
 
-    void TearDown() override
-    {
-        AscendC::SetGCoreType(0);
-    }
+    void TearDown() override { AscendC::SetGCoreType(0); }
 };
 
 template <typename LocationType, typename PointerType, typename LayoutType>
@@ -82,6 +76,42 @@ TEST_F(TensorApiRuntimeValidation, SliceRejectsOutOfRangeCoordinate)
     auto slice_shape = make_shape(1, 1);
 
     EXPECT_THROW((void)slice(tensor, coord, slice_shape), TrapException);
+}
+
+TEST_F(TensorApiRuntimeValidation, SliceRejectsOutOfRangeCoordinateForLeadingScalarTwoFlatShape)
+{
+    using namespace asc::te;
+
+    __gm__ int32_t data[1024] = {};
+    auto shape = make_shape(2, make_shape(4, 4), make_shape(4, 4));
+    auto stride = make_stride(32, make_stride(8, 1), make_stride(8, 1));
+    auto tensor = make_tensor_at<location::gm>(data, make_layout(shape, stride));
+    auto coord = make_coord(2, make_coord(0, 0), make_coord(0, 0));
+    auto slice_shape = make_shape(1, make_shape(1, 1), make_shape(1, 1));
+
+    EXPECT_THROW((void)slice(tensor, coord, slice_shape), TrapException);
+}
+
+TEST_F(TensorApiRuntimeValidation, Crd2IdxRejectsOutOfRangeCoordinateForLeadingScalarTwoFlatShape)
+{
+    using namespace asc::te;
+
+    auto shape = make_shape(2, make_shape(4, 4), make_shape(4, 4));
+    auto stride = make_stride(32, make_stride(8, 1), make_stride(8, 1));
+    auto coord = make_coord(2, make_coord(0, 0), make_coord(0, 0));
+
+    EXPECT_THROW((void)crd2idx(coord, shape, stride), TrapException);
+}
+
+TEST_F(TensorApiRuntimeValidation, MakeTensorRejectsInvalidLeadingScalarTwoFlatShape)
+{
+    using namespace asc::te;
+
+    __gm__ int32_t data[1024] = {};
+    auto shape = make_shape(2, make_shape(4, 0), make_shape(4, 4));
+    auto stride = make_stride(32, make_stride(8, 1), make_stride(8, 1));
+
+    EXPECT_THROW((void)make_tensor(make_mem_ptr<location::gm>(data), shape, stride), TrapException);
 }
 
 TEST_F(TensorApiRuntimeValidation, SliceRejectsZeroShape)

@@ -9,7 +9,7 @@
  */
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#warning                                                                                                               \
+#warning \
     "impl/tensor_api/utils/npu_debug_check.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define TENSOR_API_DEBUG_CHECK_OWNS_INTERNAL_HEADER_ACCESS
@@ -27,20 +27,6 @@
 #ifdef ASCENDC_DEBUG
 namespace asc {
 namespace te {
-
-struct zero_coord_type;
-
-template <typename LayoutType, typename SliceShape>
-__aicore__ inline constexpr decltype(auto) resolve_copy_coord(const LayoutType&, const SliceShape&,
-                                                              const zero_coord_type&);
-
-template <typename LayoutType, typename SliceShape, typename Coord,
-          Std::enable_if_t<!Std::is_same_v<Std::remove_cvref_t<Coord>, zero_coord_type>, int> = 0>
-__aicore__ inline constexpr const Coord& resolve_copy_coord(const LayoutType&, const SliceShape&, const Coord&);
-
-template <typename Coord, typename LayoutType, typename SliceShape,
-          Std::enable_if_t<!is_layout_v<SliceShape>, int> = 0>
-__aicore__ inline decltype(auto) make_slice_shape(const Coord&, const LayoutType&, const SliceShape&);
 
 template <typename ShapeType>
 __aicore__ inline constexpr bool is_copy_shape_valid(const ShapeType& shape);
@@ -63,48 +49,54 @@ __aicore__ inline constexpr bool is_copy_shape_valid(const ShapeType& shape)
 }
 
 template <typename LayoutType, typename CoordType>
-__aicore__ inline constexpr void debug_check_coord(const tensor_api_assert_context& context, const LayoutType& layout,
-                                                   const CoordType& coord, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_coord(
+    const tensor_api_assert_context& context, const LayoutType& layout, const CoordType& coord,
+    __gm__ const char* api_name)
 {
-    TENSOR_API_DEBUG_ASSERT_AT(context, (is_coord_in_shape(coord, layout.shape())),
-                               TENSOR_API_REPORT_INTERNAL(report_coord_error, layout, coord, api_name));
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (is_coord_in_shape(coord, layout.shape())),
+        TENSOR_API_REPORT_INTERNAL(report_coord_error, layout, coord, api_name));
 }
 
 template <typename ShapeType, typename CoordType>
-__aicore__ inline constexpr void debug_check_coord_shape(const tensor_api_assert_context& context,
-                                                         const ShapeType& shape, const CoordType& coord,
-                                                         __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_coord_shape(
+    const tensor_api_assert_context& context, const ShapeType& shape, const CoordType& coord,
+    __gm__ const char* api_name)
 {
-    TENSOR_API_DEBUG_ASSERT_AT(context, (is_coord_in_shape(coord, shape)),
-                               TENSOR_API_REPORT_INTERNAL(report_coord_shape_error, shape, coord, api_name));
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (is_coord_in_shape(coord, shape)),
+        TENSOR_API_REPORT_INTERNAL(report_coord_shape_error, shape, coord, api_name));
 }
 
-#define TENSOR_API_DETAIL_CHECK_LAYOUT_STRIDE(ctx, value, name, api)                                                   \
-    TENSOR_API_DEBUG_ASSERT_AT(                                                                                        \
-        ctx, (is_stride_valid((value).stride())),                                                                      \
+#define TENSOR_API_DETAIL_CHECK_LAYOUT_STRIDE(ctx, value, name, api) \
+    TENSOR_API_DEBUG_ASSERT_AT(                                      \
+        ctx, (is_stride_valid((value).stride())),                    \
         TENSOR_API_REPORT_INTERNAL(report_tensor_layout_error<tensor_layout_error_kind::stride>, (value), name, api))
 
 template <typename LayoutType>
-__aicore__ inline constexpr void debug_check_layout(const tensor_api_assert_context& context, const LayoutType& layout,
-                                                    __gm__ const char* tensor_name, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_layout(
+    const tensor_api_assert_context& context, const LayoutType& layout, __gm__ const char* tensor_name,
+    __gm__ const char* api_name)
 {
-    TENSOR_API_DEBUG_ASSERT_AT(context, (is_shape_valid(layout.shape())),
-                               TENSOR_API_REPORT_INTERNAL(report_tensor_layout_error, layout, tensor_name, api_name));
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (is_shape_valid(layout.shape())),
+        TENSOR_API_REPORT_INTERNAL(report_tensor_layout_error, layout, tensor_name, api_name));
     TENSOR_API_DETAIL_CHECK_LAYOUT_STRIDE(context, layout, tensor_name, api_name);
 }
 
 template <typename LayoutType>
-__aicore__ inline constexpr void debug_check_make_tensor_shape(const tensor_api_assert_context& context,
-                                                               const LayoutType& layout)
+__aicore__ inline constexpr void debug_check_make_tensor_shape(
+    const tensor_api_assert_context& context, const LayoutType& layout)
 {
-    TENSOR_API_DEBUG_ASSERT_AT(context, (is_shape_valid(layout.shape())),
-                               TENSOR_API_REPORT_INTERNAL(report_tensor_layout_error, layout, "result", "make_tensor"));
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (is_shape_valid(layout.shape())),
+        TENSOR_API_REPORT_INTERNAL(report_tensor_layout_error, layout, "result", "make_tensor"));
     TENSOR_API_DETAIL_CHECK_LAYOUT_STRIDE(context, layout, "result", "make_tensor");
 }
 
 template <typename ShapeType, typename StrideType>
-__aicore__ inline constexpr void debug_check_make_tensor_shape(const tensor_api_assert_context& context,
-                                                               const ShapeType& shape, const StrideType& stride)
+__aicore__ inline constexpr void debug_check_make_tensor_shape(
+    const tensor_api_assert_context& context, const ShapeType& shape, const StrideType& stride)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (is_shape_valid(shape)),
@@ -113,17 +105,17 @@ __aicore__ inline constexpr void debug_check_make_tensor_shape(const tensor_api_
 }
 
 template <typename SrcTensorType, typename DstTensorType>
-__aicore__ inline constexpr void debug_check_copy_size(const tensor_api_assert_context& context,
-                                                       const SrcTensorType& src, const DstTensorType& dst,
-                                                       __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_copy_size(
+    const tensor_api_assert_context& context, const SrcTensorType& src, const DstTensorType& dst,
+    __gm__ const char* api_name)
 {
-    TENSOR_API_DEBUG_ASSERT_AT(context, (dst.size() >= src.size()),
-                               TENSOR_API_REPORT_INTERNAL(report_copy_size_error, src, dst, api_name));
+    TENSOR_API_DEBUG_ASSERT_AT(
+        context, (dst.size() >= src.size()), TENSOR_API_REPORT_INTERNAL(report_copy_size_error, src, dst, api_name));
 }
 
 template <typename ShapeType>
-__aicore__ inline constexpr void debug_check_copy_shape(const tensor_api_assert_context& context,
-                                                        const ShapeType& shape, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_copy_shape(
+    const tensor_api_assert_context& context, const ShapeType& shape, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (is_copy_shape_valid(shape)),
@@ -158,8 +150,8 @@ __aicore__ inline constexpr void debug_check_copy_region(
 
 template <typename SrcTensor, typename DstTensor, typename DstCoord, typename SrcCoord, typename CopyShape>
 __aicore__ inline constexpr void debug_check_copy_region_args(
-    const tensor_api_assert_context& context, const DstTensor& dst, const SrcTensor& src,
-    const DstCoord& dst_coord, const SrcCoord& src_coord, const CopyShape& copy_shape, __gm__ const char* api_name)
+    const tensor_api_assert_context& context, const DstTensor& dst, const SrcTensor& src, const DstCoord& dst_coord,
+    const SrcCoord& src_coord, const CopyShape& copy_shape, __gm__ const char* api_name)
 {
     debug_check_layout(context, dst.layout(), "dst", api_name);
     debug_check_layout(context, src.layout(), "src", api_name);
@@ -168,14 +160,13 @@ __aicore__ inline constexpr void debug_check_copy_region_args(
     auto resolved_src_coord = resolve_copy_coord(src.layout(), copy_shape, src_coord);
     debug_check_coord(context, dst.layout(), resolved_dst_coord, api_name);
     debug_check_coord(context, src.layout(), resolved_src_coord, api_name);
-    debug_check_copy_region(context, src.layout(), dst.layout(), resolved_src_coord, resolved_dst_coord, copy_shape,
-                            api_name);
+    debug_check_copy_region(
+        context, src.layout(), dst.layout(), resolved_src_coord, resolved_dst_coord, copy_shape, api_name);
 }
 
 template <typename LayoutType, typename CoordType, typename InfoType>
-__aicore__ inline constexpr void debug_check_slice_args(const tensor_api_assert_context& context,
-                                                        const LayoutType& layout, const CoordType& coord,
-                                                        const InfoType& info)
+__aicore__ inline constexpr void debug_check_slice_args(
+    const tensor_api_assert_context& context, const LayoutType& layout, const CoordType& coord, const InfoType& info)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (is_shape_valid(layout.shape())),
@@ -192,41 +183,43 @@ __aicore__ inline constexpr void debug_check_slice_args(const tensor_api_assert_
 #undef TENSOR_API_DETAIL_CHECK_LAYOUT_STRIDE
 
 template <typename ParamsType>
-__aicore__ inline constexpr void debug_check_mmad_params(const tensor_api_assert_context& context,
-                                                         const ParamsType& params, bool disable_gemv,
-                                                         __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_mmad_params(
+    const tensor_api_assert_context& context, const ParamsType& params, bool disable_gemv, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (params.m <= debug_mmad_dim_max),
-        TENSOR_API_LOG_INTERNAL("Failed to check m in %s, m must be in range [%u, %u]; current value is %u.", api_name,
-                                static_cast<unsigned int>(debug_mmad_dim_min),
-                                static_cast<unsigned int>(debug_mmad_dim_max), static_cast<unsigned int>(params.m)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check m in %s, m must be in range [%u, %u]; current value is %u.", api_name,
+            static_cast<unsigned int>(debug_mmad_dim_min), static_cast<unsigned int>(debug_mmad_dim_max),
+            static_cast<unsigned int>(params.m)));
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (params.n <= debug_mmad_dim_max),
-        TENSOR_API_LOG_INTERNAL("Failed to check n in %s, n must be in range [%u, %u]; current value is %u.", api_name,
-                                static_cast<unsigned int>(debug_mmad_dim_min),
-                                static_cast<unsigned int>(debug_mmad_dim_max), static_cast<unsigned int>(params.n)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check n in %s, n must be in range [%u, %u]; current value is %u.", api_name,
+            static_cast<unsigned int>(debug_mmad_dim_min), static_cast<unsigned int>(debug_mmad_dim_max),
+            static_cast<unsigned int>(params.n)));
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (params.k <= debug_mmad_dim_max),
-        TENSOR_API_LOG_INTERNAL("Failed to check k in %s, k must be in range [%u, %u]; current value is %u.", api_name,
-                                static_cast<unsigned int>(debug_mmad_dim_min),
-                                static_cast<unsigned int>(debug_mmad_dim_max), static_cast<unsigned int>(params.k)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check k in %s, k must be in range [%u, %u]; current value is %u.", api_name,
+            static_cast<unsigned int>(debug_mmad_dim_min), static_cast<unsigned int>(debug_mmad_dim_max),
+            static_cast<unsigned int>(params.k)));
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (disable_gemv || params.m == debug_gemv_m_size),
-        TENSOR_API_LOG_INTERNAL("Failed to check m in %s, m must be %u when GEMV is enabled; current value is %u.",
-                                api_name, static_cast<unsigned int>(debug_gemv_m_size),
-                                static_cast<unsigned int>(params.m)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check m in %s, m must be %u when GEMV is enabled; current value is %u.", api_name,
+            static_cast<unsigned int>(debug_gemv_m_size), static_cast<unsigned int>(params.m)));
 }
 
 template <typename ValueType>
-__aicore__ inline constexpr void debug_check_unit_flag(const tensor_api_assert_context& context,
-                                                       const ValueType& unit_flag, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_unit_flag(
+    const tensor_api_assert_context& context, const ValueType& unit_flag, __gm__ const char* api_name)
 {
     const auto unit_flag_value = static_cast<uint8_t>(unit_flag);
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
-        (unit_flag_value == debug_unit_flag_default || unit_flag_value == debug_unit_flag_keep
-         || unit_flag_value == debug_unit_flag_reset),
+        (unit_flag_value == debug_unit_flag_default || unit_flag_value == debug_unit_flag_keep ||
+         unit_flag_value == debug_unit_flag_reset),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check unitFlag in %s, unitFlag must be %u, %u, or %u; current value is %u.", api_name,
             static_cast<unsigned int>(debug_unit_flag_default), static_cast<unsigned int>(debug_unit_flag_keep),
@@ -234,21 +227,22 @@ __aicore__ inline constexpr void debug_check_unit_flag(const tensor_api_assert_c
 }
 
 template <typename CountType>
-__aicore__ inline constexpr void debug_check_block_count(const tensor_api_assert_context& context,
-                                                         const CountType& block_count, __gm__ const char* value_name,
-                                                         __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_block_count(
+    const tensor_api_assert_context& context, const CountType& block_count, __gm__ const char* value_name,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (block_count >= debug_block_count_min && block_count <= debug_block_count_max),
-        TENSOR_API_LOG_INTERNAL("Failed to check %s in %s, %s must be in range [%u, %u]; current value is %lld.",
-                                value_name, api_name, value_name, static_cast<unsigned int>(debug_block_count_min),
-                                static_cast<unsigned int>(debug_block_count_max), static_cast<long long>(block_count)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check %s in %s, %s must be in range [%u, %u]; current value is %lld.", value_name, api_name,
+            value_name, static_cast<unsigned int>(debug_block_count_min),
+            static_cast<unsigned int>(debug_block_count_max), static_cast<long long>(block_count)));
 }
 
 template <typename LengthType, typename MaxLengthType>
-__aicore__ inline constexpr void debug_check_block_len(const tensor_api_assert_context& context,
-                                                       const LengthType& block_len, const MaxLengthType& max_block_len,
-                                                       __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_block_len(
+    const tensor_api_assert_context& context, const LengthType& block_len, const MaxLengthType& max_block_len,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (block_len >= debug_block_len_min && block_len <= max_block_len),
@@ -259,28 +253,29 @@ __aicore__ inline constexpr void debug_check_block_len(const tensor_api_assert_c
 }
 
 template <typename ValueType, typename MaxValueType>
-__aicore__ inline constexpr void debug_check_block_limit(const tensor_api_assert_context& context,
-                                                         const ValueType& value, const MaxValueType& max_value,
-                                                         __gm__ const char* value_name, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_block_limit(
+    const tensor_api_assert_context& context, const ValueType& value, const MaxValueType& max_value,
+    __gm__ const char* value_name, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (value <= max_value),
-        TENSOR_API_LOG_INTERNAL("Failed to check %s in %s, %s must be in range [%u, %llu]; current value is %llu.",
-                                value_name, api_name, value_name, static_cast<unsigned int>(debug_copy_nop_value),
-                                static_cast<unsigned long long>(max_value), static_cast<unsigned long long>(value)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check %s in %s, %s must be in range [%u, %llu]; current value is %llu.", value_name, api_name,
+            value_name, static_cast<unsigned int>(debug_copy_nop_value), static_cast<unsigned long long>(max_value),
+            static_cast<unsigned long long>(value)));
 }
 
 template <typename StrideType, typename LengthType, typename CountType>
-__aicore__ inline constexpr void debug_check_gm2ub_stride(const tensor_api_assert_context& context,
-                                                          const StrideType& dst_stride, const LengthType& block_len,
-                                                          const CountType& block_count, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_gm2ub_stride(
+    const tensor_api_assert_context& context, const StrideType& dst_stride, const LengthType& block_len,
+    const CountType& block_count, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
-        (block_count == debug_copy_nop_value || block_len == debug_copy_nop_value
-         || (block_count == debug_single_block_count && dst_stride == debug_copy_nop_value)
-         || dst_stride == static_cast<StrideType>(block_len)
-         || (dst_stride > debug_copy_nop_value && dst_stride % debug_data_block_bytes == 0)),
+        (block_count == debug_copy_nop_value || block_len == debug_copy_nop_value ||
+         (block_count == debug_single_block_count && dst_stride == debug_copy_nop_value) ||
+         dst_stride == static_cast<StrideType>(block_len) ||
+         (dst_stride > debug_copy_nop_value && dst_stride % debug_data_block_bytes == 0)),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check dstStride in %s, for an active copy dstStride must equal blockLen, be a positive "
             "multiple of %u bytes, or be %u when blockCount is %u; current dstStride is %lld, blockLen is %llu, "
@@ -292,10 +287,10 @@ __aicore__ inline constexpr void debug_check_gm2ub_stride(const tensor_api_asser
 }
 
 template <typename ElementType, typename PaddingType, typename StrideType, typename LengthType, typename CountType>
-__aicore__ inline constexpr void
-debug_check_gm2ub_padding(const tensor_api_assert_context& context, const PaddingType& left_padding_count,
-                          const PaddingType& right_padding_count, const StrideType& dst_stride,
-                          const LengthType& block_len, const CountType& block_count, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_gm2ub_padding(
+    const tensor_api_assert_context& context, const PaddingType& left_padding_count,
+    const PaddingType& right_padding_count, const StrideType& dst_stride, const LengthType& block_len,
+    const CountType& block_count, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
@@ -315,9 +310,9 @@ debug_check_gm2ub_padding(const tensor_api_assert_context& context, const Paddin
             static_cast<unsigned int>(right_padding_count), static_cast<unsigned int>(sizeof(ElementType))));
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
-        (block_count == debug_copy_nop_value || block_len == debug_copy_nop_value
-         || dst_stride != static_cast<StrideType>(block_len)
-         || (left_padding_count == debug_copy_nop_value && right_padding_count == debug_copy_nop_value)),
+        (block_count == debug_copy_nop_value || block_len == debug_copy_nop_value ||
+         dst_stride != static_cast<StrideType>(block_len) ||
+         (left_padding_count == debug_copy_nop_value && right_padding_count == debug_copy_nop_value)),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check padding in %s, leftPaddingCount and rightPaddingCount must both be %u in active Compact "
             "mode; current leftPaddingCount is %u, rightPaddingCount is %u, dstStride is %lld, blockLen is %llu, "
@@ -328,15 +323,15 @@ debug_check_gm2ub_padding(const tensor_api_assert_context& context, const Paddin
 }
 
 template <typename StrideType, typename LengthType, typename CountType>
-__aicore__ inline constexpr void debug_check_ub2gm_stride(const tensor_api_assert_context& context,
-                                                          const StrideType& src_stride, const LengthType& block_len,
-                                                          const CountType& block_count, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_ub2gm_stride(
+    const tensor_api_assert_context& context, const StrideType& src_stride, const LengthType& block_len,
+    const CountType& block_count, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
-        (block_count == debug_copy_nop_value || block_len == debug_copy_nop_value
-         || (src_stride > debug_copy_nop_value
-             && (src_stride == static_cast<StrideType>(block_len) || src_stride % debug_data_block_bytes == 0))),
+        (block_count == debug_copy_nop_value || block_len == debug_copy_nop_value ||
+         (src_stride > debug_copy_nop_value &&
+          (src_stride == static_cast<StrideType>(block_len) || src_stride % debug_data_block_bytes == 0))),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check srcStride in %s, for an active copy srcStride must equal blockLen or be a positive "
             "multiple of %u bytes; current srcStride is %lld, blockLen is %llu, blockCount is %llu.",
@@ -345,8 +340,8 @@ __aicore__ inline constexpr void debug_check_ub2gm_stride(const tensor_api_asser
 }
 
 template <typename BatchType>
-__aicore__ inline constexpr void debug_check_batch_count(const tensor_api_assert_context& context,
-                                                         const BatchType& batch, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_batch_count(
+    const tensor_api_assert_context& context, const BatchType& batch, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (batch <= debug_batch_count_max),
@@ -357,9 +352,9 @@ __aicore__ inline constexpr void debug_check_batch_count(const tensor_api_assert
 }
 
 template <typename SrcBatchType, typename DstBatchType>
-__aicore__ inline constexpr void debug_check_batch_match(const tensor_api_assert_context& context,
-                                                         const SrcBatchType& src_batch, const DstBatchType& dst_batch,
-                                                         __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_batch_match(
+    const tensor_api_assert_context& context, const SrcBatchType& src_batch, const DstBatchType& dst_batch,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (src_batch == dst_batch),
@@ -370,9 +365,9 @@ __aicore__ inline constexpr void debug_check_batch_match(const tensor_api_assert
 }
 
 template <typename SrcColumnBytesType, typename DstColumnBytesType>
-__aicore__ inline constexpr void
-debug_check_l12bt_column_bytes(const tensor_api_assert_context& context, const SrcColumnBytesType& src_column_bytes,
-                               const DstColumnBytesType& dst_column_bytes, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_l12bt_column_bytes(
+    const tensor_api_assert_context& context, const SrcColumnBytesType& src_column_bytes,
+    const DstColumnBytesType& dst_column_bytes, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (src_column_bytes % debug_data_block_bytes == 0 && dst_column_bytes % debug_data_block_bytes == 0),
@@ -384,9 +379,9 @@ debug_check_l12bt_column_bytes(const tensor_api_assert_context& context, const S
 }
 
 template <typename SrcStrideType, typename DstStrideType>
-__aicore__ inline constexpr void
-debug_check_fixpipe_stride(const tensor_api_assert_context& context, const SrcStrideType& src_stride,
-                           const DstStrideType& dst_stride, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_fixpipe_stride(
+    const tensor_api_assert_context& context, const SrcStrideType& src_stride, const DstStrideType& dst_stride,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (dst_stride > debug_copy_nop_value),
@@ -395,19 +390,19 @@ debug_check_fixpipe_stride(const tensor_api_assert_context& context, const SrcSt
             static_cast<unsigned int>(debug_copy_nop_value), static_cast<unsigned int>(dst_stride)));
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (src_stride <= debug_fixpipe_src_stride_max),
-        TENSOR_API_LOG_INTERNAL("Failed to check srcStride in %s, srcStride must be at most %u; current value is %u.",
-                                api_name, static_cast<unsigned int>(debug_fixpipe_src_stride_max),
-                                static_cast<unsigned int>(src_stride)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check srcStride in %s, srcStride must be at most %u; current value is %u.", api_name,
+            static_cast<unsigned int>(debug_fixpipe_src_stride_max), static_cast<unsigned int>(src_stride)));
 }
 
 template <typename SizeType>
-__aicore__ inline constexpr void debug_check_fixpipe_m(const tensor_api_assert_context& context, const SizeType& m_size,
-                                                       bool nz2nd_en, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_fixpipe_m(
+    const tensor_api_assert_context& context, const SizeType& m_size, bool nz2nd_en, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
-        (m_size >= debug_fixpipe_m_min
-         && ((!nz2nd_en && m_size <= debug_fixpipe_m_max) || (nz2nd_en && m_size <= debug_fixpipe_m_nd_max))),
+        (m_size >= debug_fixpipe_m_min &&
+         ((!nz2nd_en && m_size <= debug_fixpipe_m_max) || (nz2nd_en && m_size <= debug_fixpipe_m_nd_max))),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check mSize in %s, mSize must be in range [%u, %u] when the dst format is ND and [%u, %u] "
             "otherwise; current mSize is %u, nz2ndEn is %u.",
@@ -417,15 +412,15 @@ __aicore__ inline constexpr void debug_check_fixpipe_m(const tensor_api_assert_c
 }
 
 template <typename SizeType>
-__aicore__ inline constexpr void debug_check_fixpipe_n(const tensor_api_assert_context& context, const SizeType& n_size,
-                                                       bool enable_channel_split, bool nz2nd_en, bool nz2dn_en,
-                                                       __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_fixpipe_n(
+    const tensor_api_assert_context& context, const SizeType& n_size, bool enable_channel_split, bool nz2nd_en,
+    bool nz2dn_en, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
-        (nz2nd_en || nz2dn_en
-         || (enable_channel_split ? n_size % debug_fixpipe_split_n_multiple == 0 :
-                                    n_size % debug_fixpipe_n_multiple == 0)),
+        (nz2nd_en || nz2dn_en ||
+         (enable_channel_split ? n_size % debug_fixpipe_split_n_multiple == 0 :
+                                 n_size % debug_fixpipe_n_multiple == 0)),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check nSize in %s NZ instruction, nSize must be divisible by %u when enableChannelSplit is "
             "enabled or by %u otherwise; current nSize is %u, enableChannelSplit is %u, nz2ndEn is %u, nz2dnEn is "
@@ -437,9 +432,9 @@ __aicore__ inline constexpr void debug_check_fixpipe_n(const tensor_api_assert_c
 }
 
 template <typename CountType, typename LengthType>
-__aicore__ inline constexpr void debug_check_copy_blocks(const tensor_api_assert_context& context,
-                                                         const CountType& block_count, const LengthType& block_len,
-                                                         __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_copy_blocks(
+    const tensor_api_assert_context& context, const CountType& block_count, const LengthType& block_len,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (block_count > debug_copy_nop_value),
@@ -454,9 +449,9 @@ __aicore__ inline constexpr void debug_check_copy_blocks(const tensor_api_assert
 }
 
 template <typename DataSizeType, typename StepType>
-__aicore__ inline constexpr void debug_check_l0_transpose(const tensor_api_assert_context& context, bool transpose,
-                                                          const DataSizeType& data_size, const StepType& k_step,
-                                                          __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_l0_transpose(
+    const tensor_api_assert_context& context, bool transpose, const DataSizeType& data_size, const StepType& k_step,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context,
@@ -469,19 +464,20 @@ __aicore__ inline constexpr void debug_check_l0_transpose(const tensor_api_asser
 }
 
 template <typename StepType>
-__aicore__ inline constexpr void debug_check_l0_step(const tensor_api_assert_context& context, const StepType& step,
-                                                     __gm__ const char* step_name, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_l0_step(
+    const tensor_api_assert_context& context, const StepType& step, __gm__ const char* step_name,
+    __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (step <= debug_l0_step_max),
-        TENSOR_API_LOG_INTERNAL("Failed to check %s in %s, %s must be at most %u; current value is %lld.", step_name,
-                                api_name, step_name, static_cast<unsigned int>(debug_l0_step_max),
-                                static_cast<long long>(step)));
+        TENSOR_API_LOG_INTERNAL(
+            "Failed to check %s in %s, %s must be at most %u; current value is %lld.", step_name, api_name, step_name,
+            static_cast<unsigned int>(debug_l0_step_max), static_cast<long long>(step)));
 }
 
 template <typename StepType>
-__aicore__ inline constexpr void debug_check_l0_m_step(const tensor_api_assert_context& context, const StepType& m_step,
-                                                       bool is_b4, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_l0_m_step(
+    const tensor_api_assert_context& context, const StepType& m_step, bool is_b4, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (m_step % (is_b4 ? debug_l0_b4_m_step_multiple : debug_l0_b8_m_step_multiple) == 0),
@@ -493,10 +489,9 @@ __aicore__ inline constexpr void debug_check_l0_m_step(const tensor_api_assert_c
 }
 
 template <typename SrcStrideType, typename SrcCapacityType, typename DstStrideType, typename DstCapacityType>
-__aicore__ inline constexpr void
-debug_check_l0_batch_stride(const tensor_api_assert_context& context, const SrcStrideType& src_stride,
-                            const SrcCapacityType& src_capacity, const DstStrideType& dst_stride,
-                            const DstCapacityType& dst_capacity, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_l0_batch_stride(
+    const tensor_api_assert_context& context, const SrcStrideType& src_stride, const SrcCapacityType& src_capacity,
+    const DstStrideType& dst_stride, const DstCapacityType& dst_capacity, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (src_stride == src_capacity && dst_stride == dst_capacity),
@@ -509,8 +504,8 @@ debug_check_l0_batch_stride(const tensor_api_assert_context& context, const SrcS
 }
 
 template <typename ElementType, typename ParamsType>
-__aicore__ inline constexpr void debug_check_img2col_coord(const tensor_api_assert_context& context,
-                                                           const ParamsType& params, __gm__ const char* api_name)
+__aicore__ inline constexpr void debug_check_img2col_coord(
+    const tensor_api_assert_context& context, const ParamsType& params, __gm__ const char* api_name)
 {
     TENSOR_API_DEBUG_ASSERT_AT(
         context, (params.m_start_pos <= debug_img2col_m_start_max),
@@ -522,8 +517,7 @@ __aicore__ inline constexpr void debug_check_img2col_coord(const tensor_api_asse
             static_cast<unsigned int>(sizeof(ElementType) * debug_img2col_data_bits_per_byte),
             static_cast<unsigned int>(debug_img2col_m_start_max)));
     TENSOR_API_DEBUG_ASSERT_AT(
-        context,
-        (params.k_start_pos % debug_img2col_k_start_multiple<ElementType> == debug_img2col_aligned_remainder),
+        context, (params.k_start_pos % debug_img2col_k_start_multiple<ElementType> == debug_img2col_aligned_remainder),
         TENSOR_API_LOG_INTERNAL(
             "Failed to check img2col start coordinate in %s, m_start_pos=%u, k_start_pos=%u, dataBits=%u; "
             "k_start_pos must be "
