@@ -28,7 +28,8 @@ HcclResult SendRecvWrite(const SendRecvInfo& sendRecvInfo, const ThreadHandle& t
 
 HcclResult SendRecvBatchWrite(const SendRecvInfo& sendRecvInfo, const ThreadHandle& thread);
 
-HcclResult SendRecvBatchWriteReduce(const SendRecvReduceInfo& sendRecvInfo, const ThreadHandle& thread);
+HcclResult SendRecvBatchWriteReduce(
+    const SendRecvReduceInfo& sendRecvInfo, const ThreadHandle& thread, bool fusePostNotify = false);
 
 HcclResult SendWriteReduce(const DataReduceInfo& sendInfo, const ThreadHandle& thread);
 

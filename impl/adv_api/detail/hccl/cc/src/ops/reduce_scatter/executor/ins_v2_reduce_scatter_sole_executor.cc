@@ -43,7 +43,7 @@ HcclResult InsV2ReduceScatterSoleExecutor<AlgTopoMatch, InsAlgTemplate>::CalcRes
     std::shared_ptr<InsAlgTemplate> algTemplate =
         std::make_shared<InsAlgTemplate>(param, topoInfo->userRank, algHierarchyInfo.infos[0]);
     // 调用计算资源的函数
-    algTemplate->CalcRes(comm, param, topoInfo, resourceRequest);
+    CHK_RET(algTemplate->CalcRes(comm, param, topoInfo, resourceRequest));
     return HCCL_SUCCESS;
 }
 
@@ -62,7 +62,13 @@ HcclResult InsV2ReduceScatterSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchest
     dataCount_ = param.DataDes.count;
     strideCount_ = param.DataDes.strideCount;
     dataType_ = param.DataDes.dataType;
+    CHK_PRT_RET(
+        static_cast<u32>(dataType_) >= HCCL_DATA_TYPE_RESERVED || DATATYPE_SIZE_TABLE[dataType_] == 0,
+        HCCL_ERROR("Invalid ReduceScatter datatype"), HCCL_E_PARA);
     dataTypeSize_ = DATATYPE_SIZE_TABLE[param.DataDes.dataType];
+    CHK_PRT_RET(
+        dataCount_ > UINT64_MAX / dataTypeSize_ || strideCount_ > UINT64_MAX / dataTypeSize_,
+        HCCL_ERROR("ReduceScatter count or stride overflows byte size"), HCCL_E_PARA);
     dataSize_ = dataCount_ * dataTypeSize_;
 
     HcclResult ret = OrchestrateLoop(param, resCtx);

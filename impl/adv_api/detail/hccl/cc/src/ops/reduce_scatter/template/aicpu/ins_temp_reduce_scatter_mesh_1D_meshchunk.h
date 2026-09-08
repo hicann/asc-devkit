@@ -47,6 +47,7 @@ public:
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override;
 
 private:
+    HcclResult PrepareSlicesAndValidate(const TemplateDataParams& params, const TemplateResource& resources);
     HcclResult RunReduceScatter(
         const std::map<u32, std::vector<ChannelInfo>>& channels, const std::vector<ThreadHandle>& threads,
         const TemplateDataParams& tempAlgParams, RankSliceInfo& sliceInfoVec);
@@ -61,6 +62,7 @@ private:
     u32 rankIdx_{0};
     u64 count_{0};
     u64 dataTypeSize_{0};
+    std::vector<uint64_t> chunkSizes_;
 };
 
 } // namespace mc2_ops_hccl

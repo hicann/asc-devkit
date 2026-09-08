@@ -220,6 +220,27 @@ TEST_F(Mc2AicpuTaskCacheTest, ComputesAllGatherAndReduceScatterStridedSpans)
     EXPECT_EQ(reduceScatterPlan.sizes[1], 871U * sizeof(float));
 }
 
+TEST_F(Mc2AicpuTaskCacheTest, MeshChunkStrideChangesShapeButNewUserAddressesRemainRelocatable)
+{
+    auto inputs = MakeTaskCacheInputs(HCCL_CMD_REDUCE_SCATTER);
+    std::strncpy(inputs.param.algName, "InsReduceScatterMesh1DMeshChunk", sizeof(inputs.param.algName) - 1U);
+    Mc2AicpuTaskCachePlan first, moved, strided;
+    ASSERT_EQ(BuildMc2AicpuTaskCachePlan(inputs.param, inputs.resCtx, first), HCCL_SUCCESS);
+    ASSERT_TRUE(first.enabled);
+    inputs.param.inputPtr = reinterpret_cast<void*>(0x400000000ULL);
+    inputs.param.outputPtr = reinterpret_cast<void*>(0x500000000ULL);
+    ASSERT_EQ(BuildMc2AicpuTaskCachePlan(inputs.param, inputs.resCtx, moved), HCCL_SUCCESS);
+    EXPECT_TRUE(moved.enabled);
+    EXPECT_EQ(first.tag, moved.tag);
+    EXPECT_NE(first.addrs[0], moved.addrs[0]);
+    EXPECT_NE(first.addrs[1], moved.addrs[1]);
+    ++inputs.param.DataDes.strideCount;
+    ASSERT_EQ(BuildMc2AicpuTaskCachePlan(inputs.param, inputs.resCtx, strided), HCCL_SUCCESS);
+    EXPECT_TRUE(strided.enabled);
+    EXPECT_NE(moved.tag, strided.tag);
+    EXPECT_EQ(strided.sizes[0], moved.sizes[0] + 7 * sizeof(float));
+}
+
 TEST_F(Mc2AicpuTaskCacheTest, InvalidAndOverlappingRangesBypassCache)
 {
     auto inputs = MakeTaskCacheInputs(HCCL_CMD_ALLGATHER);

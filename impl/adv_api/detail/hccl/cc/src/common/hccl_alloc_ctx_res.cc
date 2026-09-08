@@ -643,7 +643,15 @@ HcclResult CheckForcedAlgResource(
         HCCL_E_NOT_SUPPORT);
 
     AlgHierarchyInfoForAllLevel algHierarchyInfo;
-    HcclResult ret = executor->CalcAlgHierarchyInfo(comm, topoInfo, algHierarchyInfo);
+    HcclResult ret;
+    if (UseCannBridge(opParam)) {
+        // Match HcclGetAlgRes: bridge executors need the selected algorithm's topology metadata.
+        // opParam.algName is filled later, so use the explicit forced algorithm name here.
+        AlgAttrs algAttrs = executor->GetAlgoMeta(algName);
+        ret = executor->CalcAlgHierarchyInfoV2(topoInfo, algHierarchyInfo, algAttrs);
+    } else {
+        ret = executor->CalcAlgHierarchyInfo(comm, topoInfo, algHierarchyInfo);
+    }
     CHK_PRT_RET(
         ret != HCCL_SUCCESS,
         HCCL_WARNING(

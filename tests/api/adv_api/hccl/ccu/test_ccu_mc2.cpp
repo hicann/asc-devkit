@@ -21,6 +21,7 @@
 #include "sim_world.h"
 #include "topo_model.h"
 #include "sim_common.h"
+#include "stub/cann_host_bridge_stub.h"
 
 namespace mc2_ops_hccl {
 extern bool g_stubCcuAlgorithmRegistered;
@@ -56,6 +57,7 @@ static void StubCleanup()
     mc2_ops_hccl::g_stubCcuAlgExecNullName.clear();
     mc2_ops_hccl::g_stubSelectorAlgName.clear();
     mc2_ops_hccl::g_stubCcuAlgResUnavailable = false;
+    mc2_ops_hccl::g_cannBridgeTestState = {};
     unsetenv("HCCL_OP_EXPANSION_MODE");
 }
 
@@ -499,6 +501,95 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_ForcedAlgFallbackToSelector)
     EXPECT_EQ(ret2, HCCL_SUCCESS);
     EXPECT_TRUE(forcedAlgAccepted2);
     EXPECT_EQ(algName2, "CcuAllGatherMesh1DMem2Mem");
+}
+
+TEST_F(CcuMc2TestSuite, ForcedBridgeAlgorithmUsesMetadataAndV2)
+{
+    using namespace mc2_ops_hccl;
+    for (auto op : {HcclCMDType::HCCL_CMD_ALLREDUCE, HcclCMDType::HCCL_CMD_ALLTOALL, HcclCMDType::HCCL_CMD_ALLTOALLV}) {
+        for (auto engine : {COMM_ENGINE_AICPU, COMM_ENGINE_AICPU_TS}) {
+            g_cannBridgeTestState = {};
+            g_cannBridgeTestState.enabled = true;
+            OpParam param{};
+            param.opType = op;
+            param.engine = engine;
+            TopoInfoWithNetLayerDetails topo;
+            const std::string algName = "AicpuAllReduceParallelMeshNHR";
+            EXPECT_EQ(param.algName[0], '\0');
+            EXPECT_EQ(CheckForcedAlgResource(comm_, param, &topo, algName), HCCL_SUCCESS);
+            EXPECT_EQ(g_cannBridgeTestState.metadataName, algName);
+            EXPECT_EQ(g_cannBridgeTestState.legacyCalls, 0U);
+            EXPECT_EQ(g_cannBridgeTestState.v2Calls, 1U);
+            EXPECT_EQ(g_cannBridgeTestState.resourceCalls, 1U);
+        }
+    }
+}
+
+TEST_F(CcuMc2TestSuite, ForcedBridgeAlgorithmAcceptanceAndFallback)
+{
+    using namespace mc2_ops_hccl;
+    // -1 succeeds; 0/1/2 fail executor lookup, topology matching, and resource calculation.
+    for (int stage = -1; stage < 3; ++stage) {
+        g_cannBridgeTestState = {};
+        g_cannBridgeTestState.enabled = true;
+        g_cannBridgeTestState.missingExecutor = stage == 0;
+        g_cannBridgeTestState.hierarchyResult = stage == 1 ? HCCL_E_PARA : HCCL_SUCCESS;
+        g_cannBridgeTestState.resourceResult = stage == 2 ? HCCL_E_UNAVAIL : HCCL_SUCCESS;
+        Mc2CcTilingInner tiling{};
+        strcpy(tiling.algConfig, "AicpuAllReduceParallelMeshNHR");
+        OpParam param{};
+        param.opType = HcclCMDType::HCCL_CMD_ALLREDUCE;
+        param.engine = COMM_ENGINE_AICPU_TS;
+        std::string algName;
+        auto topo = std::make_unique<TopoInfoWithNetLayerDetails>();
+        bool accepted = true;
+        ASSERT_EQ(TryForcedAlgAndPrepareEngine(comm_, &tiling, param, algName, topo, accepted), HCCL_SUCCESS);
+        EXPECT_EQ(accepted, stage == -1);
+        EXPECT_EQ(algName, stage == -1 ? "AicpuAllReduceParallelMeshNHR" : "");
+        EXPECT_EQ(param.engine, COMM_ENGINE_AICPU_TS);
+        EXPECT_EQ(g_cannBridgeTestState.lookupCalls, 1U);
+        EXPECT_EQ(g_cannBridgeTestState.resourceCalls, stage == -1 || stage == 2 ? 1U : 0U);
+    }
+}
+
+TEST_F(CcuMc2TestSuite, AutomaticAndLegacyConfigSkipForcedBridgePrecheck)
+{
+    using namespace mc2_ops_hccl;
+    g_cannBridgeTestState.enabled = true;
+    for (const char* config : {"", "AllReduce=level0:doublering"}) {
+        Mc2CcTilingInner tiling{};
+        strcpy(tiling.algConfig, config);
+        OpParam param{};
+        param.opType = HcclCMDType::HCCL_CMD_ALLREDUCE;
+        param.engine = COMM_ENGINE_AICPU_TS;
+        std::string algName;
+        auto topo = std::make_unique<TopoInfoWithNetLayerDetails>();
+        bool accepted = true;
+        ASSERT_EQ(TryForcedAlgAndPrepareEngine(comm_, &tiling, param, algName, topo, accepted), HCCL_SUCCESS);
+        EXPECT_FALSE(accepted);
+        EXPECT_EQ(g_cannBridgeTestState.lookupCalls, 0U);
+        EXPECT_EQ(g_cannBridgeTestState.v2Calls, 0U);
+    }
+}
+
+TEST_F(CcuMc2TestSuite, LocalForcedAlgorithmKeepsLegacyHierarchy)
+{
+    using namespace mc2_ops_hccl;
+    g_cannBridgeTestState.enabled = true;
+    for (auto op : {HcclCMDType::HCCL_CMD_ALLGATHER, HcclCMDType::HCCL_CMD_REDUCE_SCATTER}) {
+        OpParam param{};
+        param.opType = op;
+        param.engine = COMM_ENGINE_AICPU_TS;
+        TopoInfoWithNetLayerDetails topo;
+        EXPECT_EQ(CheckForcedAlgResource(comm_, param, &topo, "local_algorithm"), HCCL_SUCCESS);
+    }
+    OpParam param{};
+    param.opType = HcclCMDType::HCCL_CMD_ALLREDUCE;
+    param.engine = COMM_ENGINE_CCU;
+    TopoInfoWithNetLayerDetails topo;
+    EXPECT_EQ(CheckForcedAlgResource(comm_, param, &topo, "ccu_algorithm"), HCCL_SUCCESS);
+    EXPECT_EQ(g_cannBridgeTestState.lookupCalls, 0U);
+    EXPECT_EQ(g_cannBridgeTestState.v2Calls, 0U);
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_AicpuPath)
