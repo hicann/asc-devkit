@@ -367,6 +367,10 @@
 
     此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
 
+- [asc_clear_ar_spr](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_clear_ar_spr_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign_init](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md)接口。
+
 - [asc_create_iter_reg](../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_create_iter_reg_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_update_addr_reg](../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md)接口。
