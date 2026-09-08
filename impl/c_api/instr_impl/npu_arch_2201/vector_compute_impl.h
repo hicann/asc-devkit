@@ -1554,7 +1554,7 @@ __aicore__ inline void asc_rsqrt(
 ASC_DEPRECATED(9.2.0, "2028/09/03", asc_rsqrt and asc_sync)
 __aicore__ inline void asc_rsqrt_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
-    asc_rsqrt_impl(dst, src, count);
+    asc_rsqrt_sync_impl(dst, src, count);
 }
 
 __aicore__ inline void asc_rsqrt(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
@@ -1572,7 +1572,7 @@ __aicore__ inline void asc_rsqrt(
 ASC_DEPRECATED(9.2.0, "2028/09/03", asc_rsqrt and asc_sync)
 __aicore__ inline void asc_rsqrt_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
-    asc_rsqrt_impl(dst, src, count);
+    asc_rsqrt_sync_impl(dst, src, count);
 }
 
 // ==========asc_sqrt(half/float)==========
