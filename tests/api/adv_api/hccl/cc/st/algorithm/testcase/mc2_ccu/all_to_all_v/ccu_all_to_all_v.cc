@@ -62,7 +62,6 @@ void CcuStAllToAllV::PrepareOpParam(OpParam& opParam, uint32_t rankSize, const C
     opParam.all2AllVDataDes.recvCounts = recvCounts.data();
     opParam.all2AllVDataDes.sdispls = sendDispls.data();
     opParam.all2AllVDataDes.rdispls = recvDispls.data();
-    opParam.isKfc = true;
 }
 
 ScenarioData CcuStAllToAllV::BuildScenarioData(const CcuStScenario& scenario, const std::vector<KernelHandle>& handles)

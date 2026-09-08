@@ -31,10 +31,10 @@ HcclResult CcuTempAlltoAllVMesh1D::CalcRes(
     AlgResourceRequest& resourceRequest)
 {
     CHK_PRT_RET(
-        param.opType != HcclCMDType::HCCL_CMD_ALLTOALLV || !param.isKfc,
+        param.opType != HcclCMDType::HCCL_CMD_ALLTOALLV,
         HCCL_ERROR(
-            "[CcuTempAlltoAllVMesh1D::CalcRes] only KFC AllToAllV is supported, opType[%u], isKfc[%d].",
-            static_cast<u32>(param.opType), static_cast<int>(param.isKfc)),
+            "[CcuTempAlltoAllVMesh1D::CalcRes] only AllToAllV is supported, opType[%u].",
+            static_cast<u32>(param.opType)),
         HCCL_E_NOT_SUPPORT);
     CHK_PRT_RET(
         tempRankSize_ < 2U || tempRankSize_ > CCU_MAX_RANK_SIZE || mySubCommRank_ >= tempRankSize_,

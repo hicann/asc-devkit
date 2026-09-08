@@ -155,7 +155,7 @@ ScenarioData BuildAllToAllVMesh1DScenario(const CcuStScenario& scenario, const s
             memory.parameter[base] = size;
             memory.parameter[base + 1] = std::numeric_limits<uint64_t>::max() - 1U;
             memory.parameter[base + 2] = sendOffsets[rank][peer];
-            memory.parameter[base + 3] = recvOffsets[peer][rank];
+            memory.parameter[base + 3] = recvOffsets[rank][peer];
             data.srcOffsets[rank][peer] = guard + sendOffsets[rank][peer];
             data.dstOffsets[rank][peer] = guard + recvOffsets[peer][rank];
             for (uint64_t byte = 0; byte < size; ++byte) {
