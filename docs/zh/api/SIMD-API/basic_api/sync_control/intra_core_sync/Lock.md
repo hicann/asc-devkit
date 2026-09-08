@@ -64,6 +64,13 @@ static __aicore__ inline void Lock(MutexID id)
 - 每个锁有固定的一个MutexID，在不同编程范式中，该ID的获取以及释放方式不同：
     - 采用[TPipe-TQue框架编程范式](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md)时，MutexID需要通过[AllocMutexID](AllocMutexID_ISASI.md)/[ReleaseMutexID](ReleaseMutexID_ISASI.md)进行申请释放。
     - 采用[静态Tensor编程范式](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md)时，MutexID由开发者自行管理，建议使用0-27，28-31为系统内部规划预留，不建议使用。
+- 调用`Lock`/`Unlock`时，如果由开发者自行管理MutexID，不得同时使用以下可能申请、取得或操作MutexID的资源管理接口：
+    - `TPipe`接口：[InitBuffer](../../resource_management/TPipe/InitBuffer.md)（仅指参数类型为`TQue`或`TQueBind`的重载）、[InitBufPool](../../resource_management/TPipe/InitBufPool.md)。
+    - `TBufPool`接口：[InitBuffer](../../resource_management/TBufPool/InitBuffer.md)、[InitBufPool](../../resource_management/TBufPool/InitBufPool.md)、[Reset](../../resource_management/TBufPool/Reset.md)。
+    - `TQue`接口：[AllocTensor](../../resource_management/TQue/AllocTensor.md)、[FreeTensor](../../resource_management/TQue/FreeTensor.md)、[EnQue](../../resource_management/TQue/EnQue.md)、[DeQue](../../resource_management/TQue/DeQue.md)。
+    - `TQueBind`接口：[InitBufHandle](../../resource_management/TQueBind/InitBufHandle.md)、[AllocTensor](../../resource_management/TQueBind/AllocTensor.md)、[FreeTensor](../../resource_management/TQueBind/FreeTensor.md)、[EnQue](../../resource_management/TQueBind/EnQue.md)、[DeQue](../../resource_management/TQueBind/DeQue.md)。
+
+    在相应架构和配置下，上述资源管理接口可能申请、分配或使用MutexID。开发者自行管理的MutexID不会登记到资源管理机制的MutexID分配记录中，可能与上述资源管理接口使用的MutexID重复，导致同步行为未定义。同时使用上述资源管理接口和`Lock`/`Unlock`时，`Lock`/`Unlock`使用的MutexID必须通过[AllocMutexID](AllocMutexID_ISASI.md)申请，并在使用结束后通过[ReleaseMutexID](ReleaseMutexID_ISASI.md)释放。
 - Lock与Unlock必须严格成对使用，并使用相同的pipe和id。此外，对应的Unlock必须始终写在Lock之后，否则属于未定义行为。
 
     ```cpp
