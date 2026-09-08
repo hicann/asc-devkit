@@ -84,6 +84,44 @@ __aicore__ inline constexpr gm_to_ub_params normalize_gm_to_ub_params(const Para
     }
 }
 
+template <typename CopyTraitsType>
+struct copy_traits_operation;
+
+template <typename CopyOperation, typename... CopyOpArgs>
+struct copy_traits_operation<asc::te::copy_traits<CopyOperation, CopyOpArgs...>> {
+    using type = CopyOperation;
+};
+
+template <typename CopyTraitsType>
+using copy_traits_operation_t = typename copy_traits_operation<CopyTraitsType>::type;
+
+template <typename CopyOperation, typename Params>
+__aicore__ inline constexpr decltype(auto) normalize_copy_params(const Params& params)
+{
+    using params_type = Std::remove_cvref_t<Params>;
+    if constexpr (Std::is_same_v<CopyOperation, copy_l0c_to_gm>) {
+        return normalize_l0c_to_gm_params(params);
+    } else if constexpr (Std::is_same_v<CopyOperation, copy_l0c_to_ub>) {
+        return normalize_l0c_to_ub_params(params);
+    } else if constexpr (Std::is_same_v<CopyOperation, copy_l0c_to_l1>) {
+        return normalize_l0c_to_l1_params(params);
+    } else if constexpr (Std::is_same_v<params_type, CopyGM2UBParams>) {
+        return normalize_gm_to_ub_params(params);
+    } else {
+        return params;
+    }
+}
+
+template <typename CopyOperation, typename PadType>
+__aicore__ inline constexpr decltype(auto) normalize_copy_params(const Img2ColParams<PadType>& params)
+{
+    if constexpr (Std::is_same_v<CopyOperation, copy_l1_to_l0a>) {
+        return normalize_img2col_params(params);
+    } else {
+        return params;
+    }
+}
+
 // MmadTraits: 独立的 PascalCase 模板，不依赖 mmad_traits
 template <typename MmadOperationType, typename... MmadOpArgs>
 struct MmadTraits {};
@@ -364,6 +402,20 @@ template <> struct CopyTraits<copy_l1_to_l0scaleb> : public CopyTraits<copy_l1_t
 template <> struct CopyTraits<copy_l1_to_fixbuf> : public CopyTraits<copy_l1_to_fixbuf, l1_to_fixbuf_trait_default> {};
 template <> struct CopyTraits<copy_l1_to_biastable> : public CopyTraits<copy_l1_to_biastable, l1_to_biastable_trait_default> {};
 
+template <typename AlwaysVoid, typename... Args>
+struct has_copy_traits_impl : Std::false_type {};
+
+template <typename CopyOperation, typename... CopyOpArgs>
+struct has_copy_traits_impl<
+    void_t<typename copy_traits<CopyOperation>::trait_type, typename copy_traits<CopyOperation, CopyOpArgs...>::trait_type,
+           decltype(copy_traits<CopyOperation, CopyOpArgs...>::default_trait)>,
+    CopyOperation, CopyOpArgs...>
+    : Std::bool_constant<Std::is_same_v<typename copy_traits<CopyOperation>::trait_type,
+                                        typename copy_traits<CopyOperation, CopyOpArgs...>::trait_type>> {};
+
+template <typename... Args>
+struct has_copy_traits : has_copy_traits_impl<void, Args...> {};
+
 // CopyAtom: 独立的 PascalCase 模板，不依赖 copy_atom
 template <typename... Args>
 struct CopyAtom;
@@ -412,6 +464,52 @@ struct CopyAtom<CopyTraits<Args...>> : public CopyTraits<Args...> {
     }
 };
 
+template <typename CopyOperation>
+struct CopyAtom<copy_traits<CopyOperation>> : public copy_traits<CopyOperation> {
+    using copy_trait_type = copy_traits<CopyOperation>;
+    using copy_operation_type = CopyOperation;
+    using TraitType = get_trait_member_type_t<copy_trait_type>;
+    using trait_type = TraitType;
+    static constexpr const TraitType defaultTrait = copy_trait_type::default_trait;
+
+    template <const TraitType& trait = defaultTrait, typename... Params>
+    __aicore__ inline void Call(const Params&... params) const
+    {
+        static_cast<const copy_trait_type&>(*this).template copy_unpack<trait, Params...>(params...);
+    }
+
+    template <typename... TraitsArgs>
+    __aicore__ inline auto with(TraitsArgs&&... args) const
+    {
+        auto traits = copy_trait_type::with(
+            normalize_copy_params<copy_operation_type>(static_cast<TraitsArgs&&>(args))...);
+        return CopyAtom<decltype(traits)>{traits};
+    }
+};
+
+template <typename... Args>
+struct CopyAtom<copy_traits<Args...>> : public copy_traits<Args...> {
+    using copy_trait_type = copy_traits<Args...>;
+    using copy_operation_type = copy_traits_operation_t<copy_trait_type>;
+    using TraitType = get_trait_member_type_t<copy_trait_type>;
+    using trait_type = TraitType;
+    static constexpr const TraitType defaultTrait = copy_trait_type::default_trait;
+
+    template <const TraitType& trait = defaultTrait, typename... Params>
+    __aicore__ inline void Call(const Params&... params) const
+    {
+        static_cast<const copy_trait_type&>(*this).template copy_unpack<trait, Params...>(params...);
+    }
+
+    template <typename... TraitsArgs>
+    __aicore__ inline auto with(TraitsArgs&&... args) const
+    {
+        auto traits = copy_trait_type::with(
+            normalize_copy_params<copy_operation_type>(static_cast<TraitsArgs&&>(args))...);
+        return CopyAtom<decltype(traits)>{traits};
+    }
+};
+
 // Copy / MakeCopy: PascalCase 接口
 template <typename AtomType, typename DstTensor, typename SrcTensor>
 __aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const SrcTensor& src)
@@ -430,13 +528,21 @@ __aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const Sr
 template <typename CopyOperationType>
 __aicore__ inline constexpr auto MakeCopy(const CopyOperationType& copy_operation)
 {
-    return CopyAtom<CopyOperationType>{};
+    if constexpr (has_copy_traits<CopyOperationType>::value) {
+        return CopyAtom<copy_traits<CopyOperationType>>{};
+    } else {
+        return CopyAtom<CopyOperationType>{};
+    }
 }
 
 template <typename CopyOperationType, typename CopyTraitType>
 __aicore__ inline constexpr auto MakeCopy(const CopyOperationType& copy_operation, const CopyTraitType& copy_trait)
 {
-    return CopyAtom<CopyTraits<CopyOperationType, CopyTraitType>>{};
+    if constexpr (has_copy_traits<CopyOperationType, CopyTraitType>::value) {
+        return CopyAtom<copy_traits<CopyOperationType, CopyTraitType>>{};
+    } else {
+        return CopyAtom<CopyTraits<CopyOperationType, CopyTraitType>>{};
+    }
 }
 
 } // namespace Te
