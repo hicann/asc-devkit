@@ -4,9 +4,7 @@
 
 - **[关键特性说明](key_features.md)**
 
-- **[TQueSync模板参数](TQueSync_template_params.md)**
-
-- **[SetFlag/WaitFlag](SetFlag-WaitFlag.md)**
+- **[TQueSync](TQueSync.md)**
 
 - **[SetFlag/WaitFlag\(ISASI\)](SetFlag_WaitFlag_ISASI.md)**
 
