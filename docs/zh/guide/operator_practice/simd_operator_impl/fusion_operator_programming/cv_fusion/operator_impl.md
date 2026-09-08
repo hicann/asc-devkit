@@ -284,10 +284,10 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 >    - 通过[ASCEND\_IS\_AIV和ASCEND\_IS\_AIC](../../../../programming_guide/language_extension/simd_builtin_keywords.md#li19530175294118)实现AIV和AIC代码之间的隔离。
 >    - 自行实现AIC和AIV核之间的同步：比如Matmul + LeakyRelu算子样例中，需要确保在AIC完成矩阵计算后，AIV再进行LeakyRelu的计算。
 >    - 使用高阶API Matmul时需要设置ASCENDC\_CUBE\_ONLY，表示仅在AIC侧调用Matmul API。
->    - 使用[设置核函数（Kernel）类型接口](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)设置核函数（Kernel）类型为KERNEL\_TYPE\_MIX\_xxx，同时启用AIV核和AIC核。
+>
+>    完整样例请参考[matmul_fused_manual样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_fused_manual)。
 >    ```
 >    #define ASCENDC_CUBE_ONLY // 指定Matmul运行在AIC上
->    KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);  // 设置核函数（Kernel）类型为KERNEL_TYPE_MIX_xxx
 >    if ASCEND_IS_AIC {
 >        ...
 >        // AIC核进行Matmul计算
@@ -299,4 +299,3 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 >        // AIV核进行LeakyRelu计算
 >    } 
 >    ```
->    完整样例请参考[matmul_fused_manual样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_fused_manual)。
