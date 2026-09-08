@@ -335,13 +335,13 @@ HcclResult InsTempAllGatherMesh1D::SetchannelsPerRank(const std::map<u32, std::v
     return HCCL_SUCCESS;
 }
 
-void InsTempAllGatherMesh1D::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub)
+void InsTempAllGatherMesh1D::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub)
 {
-    notifyIdxMianToSub.clear();
+    notifyIdxMainToSub.clear();
     u32 threadNum = GetThreadNum();
     u32 slaveThreadNum = threadNum - 1;
     for (u32 slaveThreadIdx = 0; slaveThreadIdx < slaveThreadNum; slaveThreadIdx++) {
-        notifyIdxMianToSub.push_back(0);
+        notifyIdxMainToSub.push_back(0);
     }
 }
 

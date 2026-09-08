@@ -147,9 +147,9 @@ struct BuffInfo {
     void* inputPtr = nullptr;  // userIn
     void* outputPtr = nullptr; // userOut
     HcclMem hcclBuff;          // 跨Rank缓存Buffer
-    BufferType inBuffType;
-    BufferType outBuffType;
-    BufferType hcclBuffType;
+    BufferType inBuffType = BufferType::DEFAULT;
+    BufferType outBuffType = BufferType::DEFAULT;
+    BufferType hcclBuffType = BufferType::DEFAULT;
     u64 inputSize = 0;
     u64 outputSize = 0;
     u64 hcclBuffSize = 0;

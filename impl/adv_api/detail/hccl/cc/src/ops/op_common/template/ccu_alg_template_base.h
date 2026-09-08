@@ -64,7 +64,7 @@ protected:
     HcclResult SelectChannelToVec(
         const HcclComm comm, const u32 myRankId, const u32 rmtRankId,
         const std::map<u32, std::vector<HcclChannelDesc>>& rankIdToChannelDesc, const u32 dieId,
-        std::map<u32, u32>& rank2ChannelIdx, std::vector<HcclChannelDesc>& channels);
+        std::map<u32, u32>& rank2ChannelIdx, std::vector<HcclChannelDesc>& channels) const;
 
     HcclResult GetDieInfoFromChannelDescs(
         const HcclComm comm, const std::map<u32, std::vector<HcclChannelDesc>>& rankIdToChannelDesc, u32 myRankId,

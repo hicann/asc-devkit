@@ -36,17 +36,17 @@ using LoopGroupConfig = ::CcuLoopGroupConfig;
 // ==================== 资源创建 ====================
 
 template <typename T>
-inline T GetResByChannel(ChannelHandle /*channel*/, uint32_t /*index*/)
+inline T GetResByChannel(ChannelHandle /*channel*/, uint32_t /*varIndex*/)
 {
     static_assert(
         sizeof(T) == 0, "ccu::GetResByChannel<T> is not specialized for this type T; "
                         "currently supported: Variable.");
 }
 template <>
-inline Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t index)
+inline Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t varIndex)
 {
     Variable v{detail::NoAllocTag{}};
-    CCU_THROW_IF_FAILED(CcuVariableCreateByChannel(channel, index, &v.handle), "CcuVariableCreateByChannel: failed");
+    CCU_THROW_IF_FAILED(CcuVariableCreateByChannel(channel, varIndex, &v.handle), "CcuVariableCreateByChannel: failed");
     return v;
 }
 

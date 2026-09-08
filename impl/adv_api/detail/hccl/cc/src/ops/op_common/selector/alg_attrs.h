@@ -10,7 +10,13 @@
 #ifndef ALG_ATTRS_H
 #define ALG_ATTRS_H
 
+#include <cstdint>
+#include <functional>
+#include <set>
 #include <string>
+#include <vector>
+
+#include "alg_param.h"
 
 namespace mc2_ops_hccl {
 

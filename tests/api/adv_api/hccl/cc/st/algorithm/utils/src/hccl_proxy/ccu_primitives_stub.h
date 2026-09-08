@@ -119,7 +119,7 @@ public:
 
 private:
     template <typename T>
-    friend T GetResByChannel(ChannelHandle channel, uint32_t index);
+    friend T GetResByChannel(ChannelHandle channel, uint32_t varIndex);
 };
 
 class AddressExpr {
@@ -233,10 +233,10 @@ private:
 };
 
 template <typename T>
-T GetResByChannel(ChannelHandle channel, uint32_t index) = delete;
+T GetResByChannel(ChannelHandle channel, uint32_t varIndex) = delete;
 
 template <>
-Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t index);
+Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t varIndex);
 Result LoadArg(Variable variable, uint32_t argId);
 Result Load(Variable address, Variable destination);
 Result Load(Variable address, Array<Variable>& destinations, uint32_t count);

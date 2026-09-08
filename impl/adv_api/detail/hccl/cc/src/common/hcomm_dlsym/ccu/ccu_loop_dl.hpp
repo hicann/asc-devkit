@@ -102,7 +102,7 @@ public:
     CcuLoopGroup Handle() const { return handle_; }
 
 private:
-    void AddLoops(const std::vector<Loop>& loops)
+    void AddLoops(const std::vector<Loop>& loops) const
     {
         for (const auto& loop : loops) {
             if (loop.IsVarBased()) {

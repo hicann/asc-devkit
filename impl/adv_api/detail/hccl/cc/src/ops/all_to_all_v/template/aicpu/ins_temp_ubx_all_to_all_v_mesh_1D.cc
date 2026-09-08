@@ -666,33 +666,33 @@ HcclResult InsTempUBXAllToAllVMesh1D::KernelRun(
     return HcclResult::HCCL_SUCCESS;
 }
 
-void InsTempUBXAllToAllVMesh1D::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub)
+void InsTempUBXAllToAllVMesh1D::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub)
 {
-    (void)notifyIdxMianToSub;
+    (void)notifyIdxMainToSub;
     return;
 }
 
-void InsTempUBXAllToAllVMesh1D::GetNotifyIdxMainToClos(std::vector<u32>& notifyIdxMianToSub) const
+void InsTempUBXAllToAllVMesh1D::GetNotifyIdxMainToClos(std::vector<u32>& notifyIdxMainToSub) const
 {
-    notifyIdxMianToSub.clear();
+    notifyIdxMainToSub.clear();
     if (threadNum_ <= 1) {
         return;
     }
     u32 slaveThreadNum = threadNum_ - 1 - maxRankNumPerBoard_;
     for (u32 slaveThreadIdx = 0; slaveThreadIdx < slaveThreadNum; slaveThreadIdx++) {
-        notifyIdxMianToSub.push_back(0);
+        notifyIdxMainToSub.push_back(0);
     }
 }
 
-void InsTempUBXAllToAllVMesh1D::GetNotifyIdxMainToFullMesh(std::vector<u32>& notifyIdxMianToSub) const
+void InsTempUBXAllToAllVMesh1D::GetNotifyIdxMainToFullMesh(std::vector<u32>& notifyIdxMainToSub) const
 {
-    notifyIdxMianToSub.clear();
+    notifyIdxMainToSub.clear();
     if (threadNum_ <= 1) {
         return;
     }
     u32 slaveThreadNum = threadNum_ - 1 - maxPathNum_;
     for (u32 slaveThreadIdx = 0; slaveThreadIdx < slaveThreadNum; slaveThreadIdx++) {
-        notifyIdxMianToSub.push_back(0);
+        notifyIdxMainToSub.push_back(0);
     }
 }
 

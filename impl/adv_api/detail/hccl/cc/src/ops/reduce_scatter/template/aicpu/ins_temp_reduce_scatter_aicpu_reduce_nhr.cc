@@ -293,9 +293,9 @@ HcclResult InsTempReduceScatterAicpuReduceNHR::GetStepInfo(u32 step, u32 nSteps,
     return HcclResult::HCCL_SUCCESS;
 }
 
-void InsTempReduceScatterAicpuReduceNHR::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub)
+void InsTempReduceScatterAicpuReduceNHR::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub)
 {
-    (void)notifyIdxMianToSub;
+    (void)notifyIdxMainToSub;
 }
 
 void InsTempReduceScatterAicpuReduceNHR::GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain)

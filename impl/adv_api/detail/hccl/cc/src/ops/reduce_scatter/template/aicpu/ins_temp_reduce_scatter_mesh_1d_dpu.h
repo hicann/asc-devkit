@@ -47,7 +47,7 @@ public:
         const u32 myRank, const std::vector<std::vector<uint32_t>>& subCommRanks) override;
     HcclResult PostLocalReduce(const TemplateDataParams& tempAlgParams, const std::vector<ThreadHandle>& threads);
 
-    void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub) override {}
+    void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub) override {}
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override {}
 
 private:

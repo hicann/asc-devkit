@@ -447,9 +447,9 @@ RemoteAddr::RemoteAddr(ResourceHandle remoteHandle, ResourceHandle addressHandle
 Event::Event() : handle(CompilerContext::Current().AllocateEvent()) {}
 
 template <>
-Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t index)
+Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t varIndex)
 {
-    return Variable(CompilerContext::Current().GetChannelVariable(channel, index));
+    return Variable(CompilerContext::Current().GetChannelVariable(channel, varIndex));
 }
 
 Result LoadArg(Variable variable, uint32_t argId)
