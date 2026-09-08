@@ -15,12 +15,14 @@
 #define protected public
 #include "include/adv_api/activation/softmax_tiling.h"
 #include "tiling_api.h"
+#include "experimental/bessel_i0_tiling.h"
 #include "platform_stub.h"
 #include "impl/adv_api/tiling/matmul/math_util.h"
 #include "impl/adv_api/tiling/matmul/matmul_tiling_algorithm.h"
 #include "impl/adv_api/detail/host_log.h"
 #include "tiling/platform/platform_ascendc.h"
 using namespace AscendC;
+using namespace AscendC::experimental;
 using namespace ge;
 using namespace std;
 using namespace matmul_tiling;
@@ -2367,6 +2369,22 @@ TEST_F(TestTiling, testReduceSumTiling)
     GetReduceSumMaxMinTmpSize(shape, ge::DataType::DT_INT32, ReducePattern::RA, true, true, maxSize, minSize);
     EXPECT_EQ(maxSize, 0);
     EXPECT_EQ(minSize, 0);
+}
+
+TEST_F(TestTiling, TestBesselI0Tiling)
+{
+    std::vector<int64_t> shapeDims = {128, 128};
+    auto besselI0Shape = ge::Shape(shapeDims);
+    uint32_t maxValue = 0;
+    uint32_t minValue = 0;
+    GetBesselI0MaxMinTmpSize(besselI0Shape, 4, false, maxValue, minValue);
+    EXPECT_EQ(maxValue, 0);
+    EXPECT_EQ(minValue, 0);
+    uint32_t maxLiveNodeCnt = 1;
+    uint32_t extraBuf = 1;
+    GetBesselI0TmpBufferFactorSize(4, maxLiveNodeCnt, extraBuf);
+    EXPECT_EQ(maxLiveNodeCnt, 0);
+    EXPECT_EQ(extraBuf, 0);
 }
 
 #else

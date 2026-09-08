@@ -136,6 +136,7 @@ add_library(
   ${CMAKE_CURRENT_SOURCE_DIR}/conv_backprop/conv3d_bp_filter_tiling.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/conv_backprop/conv3d_bp_input_tiling.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/conv_backprop/conv3d_bp_input_tiling_base.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/experimental/math/bessel_i0_tiling_impl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../detail/host_log.cpp
   ${ASCENDC_DIR}/impl/utils/tiling/platform/platform_ascendc.cpp
   ${ASCENDC_DIR}/impl/utils/tiling/template_argument.cpp

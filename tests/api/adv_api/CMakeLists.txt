@@ -368,6 +368,7 @@ file(GLOB ASCENDC_TEST_ascend950pr_9599_AIV_CASE_SRC_FILES
     index/arithprogression/test_operator_arithprogression.cpp
     #math
     math/clamp/test_operator_clamp.cpp
+    math/bessel_i0/test_operator_bessel_i0.cpp
     math/bitwise_and/test_operator_bitwise_and.cpp
     math/logical_and/test_operator_logical_and.cpp
     math/logical_ands/test_operator_logical_ands.cpp
@@ -563,6 +564,7 @@ file(GLOB ASCENDC_TILING_SRC_FILES
     ${ASCENDC_ADV_API_IMPL}/tiling/transpose/*.cpp
     ${ASCENDC_ADV_API_IMPL}/tiling/conv/*.cpp
     ${ASCENDC_ADV_API_IMPL}/tiling/conv_backprop/*.cpp
+    ${ASCENDC_ADV_API_IMPL}/tiling/experimental/math/*.cpp
     ${ASCENDC_ADV_API_IMPL}/detail/host_log.cpp
 )
 
