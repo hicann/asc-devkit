@@ -505,7 +505,7 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [TQueSync](sync_control/intra_core_sync/TQueSync_template_params.md) | TQueSync类提供同步控制接口，开发者可以使用这类API来自行完成同步控制。 |
+| [TQueSync](sync_control/intra_core_sync/TQueSync.md) | TQueSync类提供同步控制接口，开发者可以使用这类API来自行完成同步控制。 |
 | [IBSet](sync_control/inter_core_sync/IBSet.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [IBWait](sync_control/inter_core_sync/IBWait.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [SyncAll](sync_control/inter_core_sync/SyncAll.md) | SyncAll是核间同步控制接口。 |
