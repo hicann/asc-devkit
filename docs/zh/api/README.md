@@ -2089,6 +2089,7 @@
                 -   [SetCommBlockNum](SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/SetCommBlockNum.md)
                 -   [SetQueueNum](SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/SetQueueNum.md)
                 -   [SetCommEngine](SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/SetCommEngine.md)
+                -   [CheckOpResSufficient](SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/CheckOpResSufficient.md)
                 -   [v1版本TilingData（废弃）](SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/v1_TilingData_deprecated.md)
                 -   [v2版本TilingData（废弃）](SIMD-API/adv_api/HCCL_communication/HCCL_Tiling/v2_TilingData_deprecated.md)
 
