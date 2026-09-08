@@ -54,24 +54,6 @@ __simd_callee__ inline reg_tensor<T> operator!(const reg_tensor<T>& src)
 }
 
 template <typename T, typename U>
-__simd_callee__ inline decltype(auto) operator&(const T& a, const U& b)
-{
-    return detail::bitwise_compute<detail::bitwise_op::bit_and>(a, b);
-}
-
-template <typename T, typename U>
-__simd_callee__ inline decltype(auto) operator|(const T& a, const U& b)
-{
-    return detail::bitwise_compute<detail::bitwise_op::bit_or>(a, b);
-}
-
-template <typename T, typename U>
-__simd_callee__ inline decltype(auto) operator^(const T& a, const U& b)
-{
-    return detail::bitwise_compute<detail::bitwise_op::bit_xor>(a, b);
-}
-
-template <typename T, typename U>
 __simd_callee__ inline reg_tensor<T> operator<<(const reg_tensor<T>& src, const U& shift)
 {
     static_assert(detail::supports_shift_v<T>, "operator<< does not support this element type");
