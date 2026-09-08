@@ -1,4 +1,4 @@
-# asc_set_l3d_rpt_b
+# asc_set_l13d_rpt_b
 
 ## 产品支持情况
 
@@ -34,8 +34,12 @@
 
 ## 函数原型
 
-```c
-__aicore__ inline void asc_set_l3d_rpt_b(uint64_t config)
+```cpp
+__aicore__ inline void asc_set_l13d_rpt_b(uint16_t repeat_stride,
+                                          uint8_t repeat_times,
+                                          asc_l13d_repeat_direction repeat_direction,
+                                          uint16_t dst_stride_k,
+                                          uint16_t dst_start_pos_m)
 ```
 
 ## 参数说明
@@ -44,18 +48,11 @@ __aicore__ inline void asc_set_l3d_rpt_b(uint64_t config)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| config | 输入 | repeat模式相关配置。接口不检查或转换字段值，需按照表2完成拼装。 |
-
-**表2** config字段说明
-
-| 比特位 | 描述 |
-| --- | --- |
-| 15:0 | 相邻两次迭代起始位置的距离。M方向迭代时单位为16个元素；K方向迭代时单位为`32 / sizeof(data_type)`个元素，`data_type`为源操作数的数据类型。 |
-| 23:16 | M或K方向的迭代次数。 |
-| 24 | `0`：沿height（M）方向迭代；`1`：沿width（K）方向迭代。 |
-| 31:25 | 预留参数，当前须设置为0。 |
-| 47:32 | 目的矩阵K方向的步长，单位为512字节的分形。 |
-| 63:48 | 目的矩阵M方向的起始位置，单位为512字节的分形。 |
+| repeat_stride | 输入 | 相邻两次迭代起始位置的距离，取值范围：[0, 65535]。当`repeat_direction`为`asc_l13d_repeat_direction::M_DIRECTION`时，单位为16个元素；为`asc_l13d_repeat_direction::K_DIRECTION`时，单位为`32 / sizeof(data_type)`个元素，`data_type`为源操作数的数据类型。 |
+| repeat_times | 输入 | M或K方向的迭代次数，取值范围：[0, 255]。`0`表示不执行搬运，3D搬运接口被视为NOP（空操作）。 |
+| repeat_direction | 输入 | [asc_l13d_repeat_direction](../defs/enum/asc_l13d_repeat_direction.md)类型枚举值，表示repeat方向。<br>&nbsp;&nbsp;&bull; `asc_l13d_repeat_direction::M_DIRECTION`：沿height（M）方向迭代；<br>&nbsp;&nbsp;&bull; `asc_l13d_repeat_direction::K_DIRECTION`：沿width（K）方向迭代。 |
+| dst_stride_k | 输入 | 目的矩阵K方向的步长，取值范围：[0, 65535]，单位为512字节的分形。 |
+| dst_start_pos_m | 输入 | 目的矩阵M方向的起始位置，取值范围：[0, 65535]，单位为512字节的分形。 |
 
 ## 返回值说明
 
@@ -73,8 +70,6 @@ PIPE_S
 
 <!-- npu="950" id8 -->
 ## 调用示例
-
-`asc_set_l3d_rpt_b`需要调用者自行拼装64位配置。相同功能推荐使用参数化接口[asc_set_l13d_rpt_b](asc_set_l13d_rpt_b.md)，以下示例使用该接口配置右矩阵的repeat参数。
 
 以下示例使用`asc_copy_l12l0b`将2×2、16通道的全零Feature Map扩展为带一圈padding的4×4矩阵，并自动转置写入L0B Buffer。B侧padding值设置为2，`f_matrix_ctrl`设置为`true`。使用全1的L0A矩阵进行MMAD后，每个输出累加4×4区域中的12个padding位置，期望值为`12 × 2 = 24`。
 

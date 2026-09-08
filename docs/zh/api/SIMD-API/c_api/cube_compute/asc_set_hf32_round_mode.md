@@ -54,7 +54,7 @@ PIPE_S
 
 - 开启HF32模式后，若不调用本接口，则默认使用`NEAREST_EVEN`代表的舍入模式。
 - 本接口需在矩阵乘加指令（[asc_mmad](asc_mmad.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
-- 本接口配置的舍入模式仅在HF32模式开启期间生效，需先开启HF32模式再调用本接口，否则舍入模式配置不产生实际作用。
+- 本接口配置的舍入模式仅在HF32模式开启期间生效，若不开启HF32模式，舍入模式配置不产生实际作用。
 - 舍入模式配置后会持续生效，HF32模式关闭后再次开启仍将沿用上次的舍入模式配置，如需切换舍入模式，请重新调用本接口。
 
 <!-- npu="950" id8 -->
@@ -81,7 +81,7 @@ namespace {
 constexpr uint32_t DIM = 16, ELEMENTS = DIM * DIM;
 
 __global__ __cube__ void asc_set_hf32_round_mode_kernel(
-    __gm__ float* a, __gm__ float* b, __gm__ float* output, uint32_t nearest_away)
+    __gm__ float* a, __gm__ float* b, __gm__ float* output, asc_hf32_round_mode round_mode)
 {
     asc_init();
     __cbuf__ float a_l1[ELEMENTS], b_l1[ELEMENTS];
@@ -89,9 +89,11 @@ __global__ __cube__ void asc_set_hf32_round_mode_kernel(
     __cb__ float b_l0[ELEMENTS];
     __cc__ float c_l0[ELEMENTS];
     asc_set_gm2l1_nz_para(1, 1, 16, 0);
-    asc_copy_gm2l1_nd2nz(a_l1, a, DIM * sizeof(float), 0, DIM, DIM, 0, false);
+    asc_copy_gm2l1_nd2nz(a_l1, a, DIM * sizeof(float), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        DIM, DIM, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 16, 0);
-    asc_copy_gm2l1_nd2nz(b_l1, b, DIM * sizeof(float), 0, DIM, DIM, 0, false);
+    asc_copy_gm2l1_nd2nz(b_l1, b, DIM * sizeof(float), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        DIM, DIM, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_copy_l12l0a(a_l0, a_l1, 0, 0, 1, 2, 1, 1);
@@ -99,15 +101,14 @@ __global__ __cube__ void asc_set_hf32_round_mode_kernel(
     asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
     asc_enable_hf32();
-    asc_set_hf32_round_mode(nearest_away ? asc_hf32_round_mode::NEAREST_AWAY
-                                         : asc_hf32_round_mode::NEAREST_EVEN);
-    asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, 0, true, false, true);
+    asc_set_hf32_round_mode(round_mode);
+    asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_set_l0c_copy_nz_para(1, 0, 0);
-    asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
-        static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
-        static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
+    asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM,
+        asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, asc_unit_flag_mode::DISABLE, asc_quant_mode::NoQuant,
+        asc_relu_pre_mode::NONE, false, true, false, false);
     asc_sync_pipe(PIPE_ALL);
 }
 
@@ -139,9 +140,11 @@ int main()
     aclrtMalloc(reinterpret_cast<void**>(&even_device), ELEMENTS * sizeof(float), ACL_MEM_MALLOC_HUGE_FIRST);
     aclrtMemcpy(a_device, ELEMENTS * sizeof(float), a.data(), ELEMENTS * sizeof(float), ACL_MEMCPY_HOST_TO_DEVICE);
     aclrtMemcpy(b_device, ELEMENTS * sizeof(float), b.data(), ELEMENTS * sizeof(float), ACL_MEMCPY_HOST_TO_DEVICE);
-    asc_set_hf32_round_mode_kernel<<<1, 0>>>(a_device, b_device, away_device, 1);
+    asc_set_hf32_round_mode_kernel<<<1, 0>>>(
+        a_device, b_device, away_device, asc_hf32_round_mode::NEAREST_AWAY);
     aclrtSynchronizeDevice();
-    asc_set_hf32_round_mode_kernel<<<1, 0>>>(a_device, b_device, even_device, 0);
+    asc_set_hf32_round_mode_kernel<<<1, 0>>>(
+        a_device, b_device, even_device, asc_hf32_round_mode::NEAREST_EVEN);
     aclrtSynchronizeDevice();
     aclrtMemcpy(nearest_away.data(), ELEMENTS * sizeof(float), away_device, ELEMENTS * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
     aclrtMemcpy(nearest_even.data(), ELEMENTS * sizeof(float), even_device, ELEMENTS * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);

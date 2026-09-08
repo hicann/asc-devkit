@@ -28,13 +28,13 @@
 
 头文件路径为：`"c_api/cube_compute/cube_compute.h"`。
 
-本接口用于设置Mmad计算关闭HiF8模式（与[asc_enable_hif8](./asc_enable_hif8.md)相反），调用此接口后L0A Buffer/L0B Buffer中的FP8数据在参与Mmad计算之前不会被转化为hifloat8_t类型数据。
+本接口用于设置Mmad计算关闭HiF8模式，其作用与[asc_enable_hif8](./asc_enable_hif8.md)相反，两个接口不同时生效。关闭HiF8模式后，当矩阵乘加指令的左矩阵A和右矩阵B均以`fp8_e4m3fn_t`作为输入数据类型时，L0A Buffer和L0B Buffer中的数据在参与矩阵乘法运算前不会转换为`hifloat8_t`，而是直接以`fp8_e4m3fn_t`类型参与计算。
 
 本接口为矩阵计算相关配置接口，仅在AIC上生效。
 
 ## 函数原型
 
-```cpp
+```c
 __aicore__ inline void asc_disable_hif8()
 ```
 
@@ -52,9 +52,9 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口非AIC调用直接返回。
-- 需在[asc_mmad](./asc_mmad.md)执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
-- 与[asc_enable_hif8](./asc_enable_hif8.md)作用相反，二者不同时生效。
+- 本接口需在矩阵乘加指令（[asc_mmad](./asc_mmad.md)、[asc_mmad_mx](./asc_mmad_mx.md)）执行前调用，确保模式配置在矩阵乘加结果生成前生效。
+- HiF8模式关闭后会持续生效，后续矩阵乘加指令若不显式重新配置，将沿用当前模式。如需开启HiF8模式，请重新调用[asc_enable_hif8](./asc_enable_hif8.md)接口。
+- 本接口仅对矩阵乘加输入数据类型为`fp8_e4m3fn_t`×`fp8_e4m3fn_t`的场景生效，其他FP8数据类型组合（`fp8_e4m3fn_t`×`fp8_e5m2_t`、`fp8_e5m2_t`×`fp8_e4m3fn_t`、`fp8_e5m2_t`×`fp8_e5m2_t`）不支持HiF8模式选择，调用本接口不产生实际作用。
 
 <!-- npu="950" id8 -->
 ## 调用示例
@@ -97,9 +97,11 @@ __global__ __cube__ void asc_disable_hif8_kernel(
     __cc__ float hif8_l0[C_ELEMENTS], fp8_l0[C_ELEMENTS];
 
     asc_set_gm2l1_nz_para(1, 1, 16, 0);
-    asc_copy_gm2l1_nd2nz(a_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(a), K, 0, M, K, 0, false);
+    asc_copy_gm2l1_nd2nz(a_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(a), K,
+        asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, M, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 16, 0);
-    asc_copy_gm2l1_nd2nz(b_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(b), K, 0, N, K, 0, false);
+    asc_copy_gm2l1_nd2nz(b_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(b), K,
+        asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, N, K, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_copy_l12l0a(a_l0, a_l1, 0, 0, 1, 1, 1, 1);
@@ -108,22 +110,22 @@ __global__ __cube__ void asc_disable_hif8_kernel(
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
 
     asc_enable_hif8();
-    asc_mmad(hif8_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
+    asc_mmad(hif8_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_pipe(PIPE_M);
     asc_disable_hif8();
-    asc_mmad(fp8_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
+    asc_mmad(fp8_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_pipe(PIPE_M);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
     asc_set_l0c_copy_nz_para(1, 0, 0);
-    asc_copy_l0c2gm(hif8_output, hif8_l0, N, M, N, M, 0, 0, 0,
-        static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
-        static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
+    asc_copy_l0c2gm(hif8_output, hif8_l0, N, M, N, M,
+        asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, asc_unit_flag_mode::DISABLE, asc_quant_mode::NoQuant,
+        asc_relu_pre_mode::NONE, false, true, false, false);
     asc_set_l0c_copy_nz_para(1, 0, 0);
-    asc_copy_l0c2gm(fp8_output, fp8_l0, N, M, N, M, 0, 0, 0,
-        static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
-        static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
+    asc_copy_l0c2gm(fp8_output, fp8_l0, N, M, N, M,
+        asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, asc_unit_flag_mode::DISABLE, asc_quant_mode::NoQuant,
+        asc_relu_pre_mode::NONE, false, true, false, false);
     asc_sync_pipe(PIPE_ALL);
 }
 
