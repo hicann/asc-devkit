@@ -84,16 +84,20 @@ HcclResult InheritKfcServerKernelArg(
     return HCCL_SUCCESS;
 }
 
+namespace {
+uint32_t GetMySubCommRank(const std::vector<std::vector<u32>>& subCommRanks, const u32 rankId)
+{
+    auto it = std::find(subCommRanks[0].begin(), subCommRanks[0].end(), rankId);
+    return (it != subCommRanks[0].end()) ? static_cast<uint32_t>(std::distance(subCommRanks[0].begin(), it)) : 0;
+}
+} // namespace
+
 CcuTempKfcServer::CcuTempKfcServer(
     const OpParam& param, const u32 rankId, const std::vector<std::vector<u32>>& subCommRanks)
-    : CcuAlgTemplateBase(param, rankId, subCommRanks)
-{
-    tempRankSize_ = subCommRanks[0].size();
-    auto it = std::find(subCommRanks[0].begin(), subCommRanks[0].end(), rankId);
-    if (it != subCommRanks[0].end()) {
-        mySubCommRank_ = std::distance(subCommRanks[0].begin(), it);
-    }
-}
+    : CcuAlgTemplateBase(param, rankId, subCommRanks),
+      mySubCommRank_(GetMySubCommRank(subCommRanks, rankId)),
+      tempRankSize_(static_cast<uint32_t>(subCommRanks[0].size()))
+{}
 
 CcuTempKfcServer::~CcuTempKfcServer() {}
 

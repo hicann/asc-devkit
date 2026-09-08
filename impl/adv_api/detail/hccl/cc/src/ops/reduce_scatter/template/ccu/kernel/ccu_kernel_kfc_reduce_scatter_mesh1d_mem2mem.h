@@ -10,7 +10,6 @@
 #ifndef HCCL_CCU_KERNEL_KFC_REDUCE_SCATTER_MESH_1D_MEM2MEM_H
 #define HCCL_CCU_KERNEL_KFC_REDUCE_SCATTER_MESH_1D_MEM2MEM_H
 
-#include <vector>
 #include <ios>
 #include "utils.h"
 #include "ccu_kernel.h"

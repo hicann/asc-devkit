@@ -296,10 +296,10 @@ static void ResetReduceScatterAddr(KfcReduceScatterMesh1DMem2MemContext& ctx)
 // Phase3: 串行规约(CCU_WHILE(readRepeatNum)),逐子块推进 strides 后调 DoReduceScatter
 static CcuResult DoReduceScatterReduce(KfcReduceScatterMesh1DMem2MemContext& ctx)
 {
-    CCU_IF(ctx.readRepeatNum != UINT64_MAX)
+    CCU_IF(ctx.readRepeatNum != static_cast<uint64_t>(UINT64_MAX))
     {
         ctx.flag = 0;
-        CCU_WHILE(ctx.readRepeatNum != UINT64_MAX)
+        CCU_WHILE(ctx.readRepeatNum != static_cast<uint64_t>(UINT64_MAX))
         {
             ctx.readRepeatNum += ctx.constVar1;
             CCU_IF(ctx.flag != 0)
@@ -327,7 +327,7 @@ static CcuResult DoReduceScatterThreePhase(KfcReduceScatterMesh1DMem2MemContext&
     ctx.readRepeatNum = ctx.repeatNum;
 
     // Phase1: 第 1 路(不需地址步进)
-    CCU_IF(ctx.repeatNum != UINT64_MAX)
+    CCU_IF(ctx.repeatNum != static_cast<uint64_t>(UINT64_MAX))
     {
         ctx.repeatNum += ctx.constVar1;
         DoReduceScatterRead(ctx, 0);
@@ -335,7 +335,7 @@ static CcuResult DoReduceScatterThreePhase(KfcReduceScatterMesh1DMem2MemContext&
 
     // Phase1: 第 2~RS_UNROLL_NUM 路(需按 strides 步进)
     for (uint32_t i = 1; i < RS_UNROLL_NUM; i++) {
-        CCU_IF(ctx.repeatNum != UINT64_MAX)
+        CCU_IF(ctx.repeatNum != static_cast<uint64_t>(UINT64_MAX))
         {
             ctx.repeatNum += ctx.constVar1;
             for (uint64_t rankIdx = 0; rankIdx < ctx.rankSize; rankIdx++) {
@@ -352,7 +352,7 @@ static CcuResult DoReduceScatterThreePhase(KfcReduceScatterMesh1DMem2MemContext&
 
     // Phase2: 批量 WaitEvent
     for (uint32_t i = 0; i < RS_UNROLL_NUM; i++) {
-        CCU_IF(ctx.waitRepeatNum != UINT64_MAX)
+        CCU_IF(ctx.waitRepeatNum != static_cast<uint64_t>(UINT64_MAX))
         {
             ctx.waitRepeatNum += ctx.constVar1;
             DoReduceScatterWait(ctx, i);
@@ -374,7 +374,7 @@ static CcuResult DoRepeatReduceScatter(KfcReduceScatterMesh1DMem2MemContext& ctx
     ccu::Variable repeatNumAdd;
     repeatNumAdd = 1;
 
-    CCU_WHILE(ctx.chunkLoopNum != UINT64_MAX)
+    CCU_WHILE(ctx.chunkLoopNum != static_cast<uint64_t>(UINT64_MAX))
     {
         // 本 chunk 的参数:满 chunk 用 chunkSize/fullGoSize,尾 chunk 用 tailSize/tailGoSize
         ctx.currentSliceSize = ctx.chunkSize;
@@ -382,7 +382,7 @@ static CcuResult DoRepeatReduceScatter(KfcReduceScatterMesh1DMem2MemContext& ctx
         ctx.lastSliceSize = ctx.tailSize;
         ctx.sliceSize = ctx.chunkSize;
         ctx.goSize = ctx.fullGoSize;
-        CCU_IF(ctx.chunkLoopNum == UINT64_MAX - 1)
+        CCU_IF(ctx.chunkLoopNum == static_cast<uint64_t>(UINT64_MAX - 1))
         {
             ctx.currentSliceSize = ctx.tailSize;
             ctx.sliceSize = ctx.tailSize;
@@ -392,7 +392,7 @@ static CcuResult DoRepeatReduceScatter(KfcReduceScatterMesh1DMem2MemContext& ctx
 
         // 单 die 三阶段参数:repeatNum=1(哨兵 UINT64_MAX-1),strides=0,RS_UNROLL_NUM 休眠。
         // 多 die 时 repeatNum=rankSizeLevel1_、strides 由宿主下发,此处可扩展。
-        ctx.repeatNum = UINT64_MAX - 1;
+        ctx.repeatNum = static_cast<uint64_t>(UINT64_MAX - 1);
         ctx.readRepeatNum = ctx.repeatNum;
         ctx.waitRepeatNum = ctx.repeatNum;
         ctx.inputRepeatStride = 0;

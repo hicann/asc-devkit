@@ -11,6 +11,8 @@
 #include <cmath>
 #include <securec.h>
 
+#include <cmath>
+
 namespace mc2_ops_hccl {
 constexpr double BANDWIDTH_RATIO_BOUND = 10;
 constexpr double LOOP_SCALING_FACTOR = 0.9;

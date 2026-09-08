@@ -15,7 +15,6 @@
 #include "ccu_variable.hpp"
 #else
 #include <cstdint>
-#include <type_traits>
 #include "ccu_types_dl.h"
 #include "ccu_utils_dl.hpp"
 #include "ccu_primitives_impl_dl.h"
@@ -32,7 +31,7 @@ template <typename T>
 T GetResByChannel(ChannelHandle channel, uint32_t index);
 
 struct CondExpr {
-    Variable* var;
+    const Variable* var;
     uint64_t imm;
     CcuConditionType cond;
 };
@@ -81,9 +80,9 @@ public:
             *this, that, detail::CcuArithmeticOperatorType::ADDITION);
     }
 
-    CondExpr operator==(uint64_t immediate) { return CondExpr{this, immediate, CCU_CONDITION_EQ}; }
+    CondExpr operator==(uint64_t immediate) const { return CondExpr{this, immediate, CCU_CONDITION_EQ}; }
 
-    CondExpr operator!=(uint64_t immediate) { return CondExpr{this, immediate, CCU_CONDITION_NE}; }
+    CondExpr operator!=(uint64_t immediate) const { return CondExpr{this, immediate, CCU_CONDITION_NE}; }
 
     CcuVariableHandle handle{0};
 

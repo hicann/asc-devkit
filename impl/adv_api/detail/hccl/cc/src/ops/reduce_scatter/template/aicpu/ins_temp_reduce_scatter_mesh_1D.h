@@ -55,7 +55,7 @@ protected:
         const TemplateDataParams& tempAlgParam);
     HcclResult CalcDataSplitByPortGroup(
         const u64 totalDataCount, const u64 dataTypeSize, const std::vector<ChannelInfo>& channels,
-        std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset);
+        std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset) override;
     u64 processSize_{0};
     u64 count_{0};
     u32 channelsPerRank_{1};

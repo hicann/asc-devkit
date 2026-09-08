@@ -14,7 +14,7 @@ namespace mc2_ops_hccl {
 namespace {
 constexpr uint16_t A2A_OUTPUT_XN_ID = 1U;
 constexpr uint16_t A2A_TOKEN_XN_ID = 2U;
-constexpr uint16_t A2A_POST_SYNC_BIT = 1U << 5U;
+constexpr uint16_t A2A_POST_SYNC_BIT = static_cast<uint16_t>(1U << 5U);
 constexpr uint16_t A2A_CKE_IDX = 0U;
 
 struct KfcAllToAllContext : CcuKernelCtxBase {
@@ -105,7 +105,7 @@ CcuResult DoAllToAll(KfcAllToAllContext& ctx)
         dst.addr += ctx.dstOffset;
         dst.token = ctx.peerToken[rankIdx];
 
-        const uint16_t rankMask = 1U << rankIdx;
+        const uint16_t rankMask = static_cast<uint16_t>(1U << rankIdx);
         CCU_IF(ctx.sliceSize != 0)
         {
             CCU_CHK_RET(ccu::Write(ctx.channels[channelId], dst, src, ctx.sliceSize, ctx.event, rankMask));
@@ -125,7 +125,7 @@ CcuResult DoAllToAll(KfcAllToAllContext& ctx)
     localDst.addr += ctx.dstOffset;
     localDst.token = ctx.token;
     CCU_IF(ctx.sliceSize != 0) { CCU_CHK_RET(GroupCopy(ctx, localDst, localSrc, ctx.goSize)); }
-    CCU_CHK_RET(ccu::EventRecord(ctx.event, 1U << ctx.rankId));
+    CCU_CHK_RET(ccu::EventRecord(ctx.event, static_cast<uint16_t>(1U << ctx.rankId)));
 
     uint16_t waitMask = 0;
     for (uint32_t r = 0; r < ctx.rankSize; ++r) {

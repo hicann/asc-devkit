@@ -14,7 +14,6 @@
 #if CANN_VERSION_NUM >= 90100000
 #include "ccu_local_addr.hpp"
 #else
-#include <type_traits>
 #include "ccu_types_dl.h"
 #include "ccu_variable_dl.hpp"
 #include "ccu_address_dl.hpp"

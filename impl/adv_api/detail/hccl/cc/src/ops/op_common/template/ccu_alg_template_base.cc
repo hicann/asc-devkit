@@ -107,7 +107,7 @@ HcclResult CcuAlgTemplateBase::GetChannelDieId(
 /* nhr算法，需要遍历得到的channelDesc，判断使用几个die，如果是1个die，则还需要得到dieId。
    以便于算法挑选相应dieId的channelDesc */
 HcclResult CcuAlgTemplateBase::GetDieInfoFromChannelDescs(
-    HcclComm comm, const std::map<u32, std::vector<HcclChannelDesc>>& rankIdToChannelDesc, u32 myRankId,
+    const HcclComm comm, const std::map<u32, std::vector<HcclChannelDesc>>& rankIdToChannelDesc, u32 myRankId,
     uint32_t& dieNum, uint32_t& dieId)
 {
     constexpr u32 LINK_NUM_1 = 1;

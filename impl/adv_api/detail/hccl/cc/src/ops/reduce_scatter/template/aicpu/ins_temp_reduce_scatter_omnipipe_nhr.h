@@ -45,7 +45,8 @@ private:
     HcclResult GetNHRDataSize(
         const AicpuNHRStepInfo& st, const u32 channelIdx, void* sendCclBuffAddr, void* recvCclBuffAddr,
         const u32 dataTypeSize, const u64 rptNum, std::vector<DataSlice>& txSrcSlices,
-        std::vector<DataSlice>& txDstSlices, std::vector<DataSlice>& rxSrcSlices, std::vector<DataSlice>& rxDstSlices);
+        std::vector<DataSlice>& txDstSlices, std::vector<DataSlice>& rxSrcSlices,
+        std::vector<DataSlice>& rxDstSlices) const;
 
     TemplateDataParams tempAlgParams_;
     std::map<u32, std::vector<ChannelInfo>> channels_;
