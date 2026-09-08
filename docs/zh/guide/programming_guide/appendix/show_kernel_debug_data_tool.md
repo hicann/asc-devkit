@@ -25,6 +25,7 @@
 <!-- npu="910" id6 -->
 - Atlas 训练系列产品：不支持
 <!-- end id6 -->
+<!-- @ref: asc-devkit/res/docs/zh/guide/programming_guide/appendix/show_kernel_debug_data_tool_res.md#id1 -->
 
 ## 工具安装
 
