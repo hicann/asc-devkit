@@ -75,7 +75,6 @@ __simd_callee__ inline vector_float asc_bfloat162float(vector_bfloat16_t src,
 ## 约束说明
 
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
-
 - 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
 - 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
