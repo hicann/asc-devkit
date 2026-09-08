@@ -6,9 +6,11 @@
 
 -   **[thread_block](thread_block/thread_block.md)**
 
+-   **[thread_block_tile](thread_block_tile/thread_block_tile.md)**
+
 -   **[coalesced_group](coalesced_group/coalesced_group.md)**
 
--   **[thread_block_tile](thread_block_tile/thread_block_tile.md)**
+-   **[thread_group](thread_group/thread_group.md)**
 
 -   **[sync](sync.md)**
 
