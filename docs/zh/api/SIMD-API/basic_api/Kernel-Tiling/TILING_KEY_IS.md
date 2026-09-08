@@ -28,6 +28,8 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001610027821_section212607105720"></a>
 
+头文件路径为：`"utils/base/sys_macros.h"`。
+
 在核函数（Kernel）中判断本次执行时的tiling\_key是否等于host侧运行时设置的某个key，从而标识tiling\_key==key的一条kernel分支。
 
 ## 函数原型<a name="zh-cn_topic_0000001610027821_section1630753514297"></a>

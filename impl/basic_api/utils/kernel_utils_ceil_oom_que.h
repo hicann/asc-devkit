@@ -22,20 +22,6 @@
 #define ASCENDC_MODULE_UTILS_CEIL_OOM_QUE_H
 #include "kernel_utils_macros.h"
 namespace AscendC {
-#ifdef ASCENDC_CPU_DEBUG
-#define PRELOAD(len) \
-    {}
-
-#else
-#define PRELOAD(len)                                  \
-    do {                                              \
-        uint64_t pc;                                  \
-        asm volatile("mov %0, pc \n" : "=l"(pc) : :); \
-        preload((void*)pc, len);                      \
-    } while (0)
-
-#endif
-
 __aicore__ constexpr inline uint32_t DivCeil(uint32_t a, uint32_t b) { return (a + b - 1) / b; }
 
 __aicore__ constexpr inline uint32_t AlignUp(uint32_t a, uint32_t b) { return DivCeil(a, b) * b; }

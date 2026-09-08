@@ -8,4 +8,6 @@
 
 - **[ICachePreLoad\(ISASI\)](ICachePreLoad_ISASI.md)**  
 
+- **[PRELOAD](PRELOAD.md)**
+
 - **[GetICachePreloadStatus\(ISASI\)](GetICachePreloadStatus_ISASI.md)**  

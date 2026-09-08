@@ -522,6 +522,7 @@
 | [DataCachePreload](cache_control/DataCachePreload.md) | 从源地址所在的特定GM地址预加载数据到DCache中，每次调用只能预加载一个Cache Line大小的数据。 |
 | [DataCacheCleanAndInvalid](cache_control/DataCacheCleanAndInvalid.md) | 在AI Core内部，Scalar单元和DMA单元都可能对GM进行访问。 |
 | [ICachePreLoad(ISASI)](cache_control/ICachePreLoad_ISASI.md) | 开发者手动调用ICachePreLoad接口，能够从指令所在GM地址预加载指令到ICache中。 |
+| [PRELOAD](cache_control/PRELOAD.md) | 从当前指令所在的GM地址开始，将后续指令预加载到ICache中。 |
 | [GetICachePreloadStatus(ISASI)](cache_control/GetICachePreloadStatus_ISASI.md) | GetICachePreloadStatus为调试接口，在ICachePreLoad后调用，用于获取ICache的PreLoad的状态：当返回值为0时，说明ICache的PreLoad已完成；当返回值为1时，说明ICache的PreLoad未完成。 |
 
 ## 原子操作

@@ -625,6 +625,7 @@
             -   [DataCachePreload](SIMD-API/basic_api/cache_control/DataCachePreload.md)
             -   [DataCacheCleanAndInvalid](SIMD-API/basic_api/cache_control/DataCacheCleanAndInvalid.md)
             -   [ICachePreLoad\(ISASI\)](SIMD-API/basic_api/cache_control/ICachePreLoad_ISASI.md)
+            -   [PRELOAD](SIMD-API/basic_api/cache_control/PRELOAD.md)
             -   [GetICachePreloadStatus\(ISASI\)](SIMD-API/basic_api/cache_control/GetICachePreloadStatus_ISASI.md)
 
         -   [原子操作](SIMD-API/basic_api/atomic_operations/atomic_operations.md)

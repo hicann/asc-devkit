@@ -154,4 +154,110 @@ constexpr int32_t g_coreType = AscendC::MIX;
         __ASC_USE_RESERVED_UBUF_2, __ASC_USE_RESERVED_UBUF_1)                                         \
     (__VA_ARGS__)
 
+#ifndef __PLUGIN__KERNEL_META_TYPE_ENUME_DEFINED__
+#define __PLUGIN__KERNEL_META_TYPE_ENUME_DEFINED__
+enum KernelMetaType : uint8_t {
+    KERNEL_TYPE_AIV_ONLY,
+    KERNEL_TYPE_AIC_ONLY,
+    KERNEL_TYPE_MIX_AIV_1_0,
+    KERNEL_TYPE_MIX_AIC_1_0,
+    KERNEL_TYPE_MIX_AIC_1_1,
+    KERNEL_TYPE_MIX_AIC_1_2,
+    KERNEL_TYPE_AICORE,
+    KERNEL_TYPE_VECTORCORE,
+    KERNEL_TYPE_MIX_AICORE,
+    KERNEL_TYPE_MIX_VECTOR_CORE,
+    KERNEL_TYPE_MAX,
+};
+#endif
+
+#if defined(ASCENDC_CPU_DEBUG)
+#define ASCENDC_PRELOAD_IMPL(len) \
+    {}
+#else
+#define ASCENDC_PRELOAD_IMPL(len)                     \
+    do {                                              \
+        uint64_t pc;                                  \
+        asm volatile("mov %0, pc \n" : "=l"(pc) : :); \
+        preload((void*)pc, len);                      \
+    } while (0)
+#endif
+
+// In order to pass __COUNTER__ to variable name, need 3 times of MACRO to pass argument
+#define ASCENDC_TILING_STRUCT_SECTION_INIT_BASE_IMPL(counter, val)                                                    \
+    static const uint64_t __ascendc_tiling_struct_##counter __attribute__((used, section(".ascendc_tiling." #val))) = \
+        sizeof(val)
+#define ASCENDC_TILING_STRUCT_SECTION_INIT_IMPL(counter, val) ASCENDC_TILING_STRUCT_SECTION_INIT_BASE_IMPL(counter, val)
+
+#ifdef __CHECK_FEATURE_AT_PRECOMPILE
+#define ASCENDC_ENABLE_FEATURE_FOR_COMPILE_IMPL(f, val) auto __enable_feature_for_compile_##f = val
+#define ASCENDC_ENABLE_FEATURE_FOR_TILING_IMPL(expression, val) auto __enable_custom_tiling val = expression
+#define ASCENDC_REGISTER_NONE_TILING_IMPL \
+    auto __enable_no_register_custom_tiling ascendc_trigger_tiling_struct = default
+#else
+#define ASCENDC_ENABLE_FEATURE_FOR_COMPILE_IMPL(f, val)
+#define ASCENDC_ENABLE_FEATURE_FOR_TILING_IMPL(expression, val) \
+    ASCENDC_TILING_STRUCT_SECTION_INIT_IMPL(__COUNTER__, val)
+#define ASCENDC_REGISTER_NONE_TILING_IMPL
+#endif
+
+#ifndef ASCENDC_TILING_KEY_VAR_IMPL
+#ifndef TILING_KEY_VAR
+#if defined(ASCENDC_CPU_DEBUG)
+extern uint64_t g_tilingKey;
+#else
+#if __NPU_ARCH__ == 2002
+[[block_local]] uint64_t g_tilingKey;
+#else
+[[workgroup_local]] __gm__ uint64_t g_tilingKey;
+#endif
+#endif
+#define ASCENDC_TILING_KEY_VAR_IMPL g_tilingKey
+#else
+#define ASCENDC_TILING_KEY_VAR_IMPL TILING_KEY_VAR
+#endif
+#endif
+
+#define ASCENDC_KERNEL_TASK_TYPE_IMPL(key, value) ASCENDC_ENABLE_FEATURE_FOR_COMPILE_IMPL(key, value)
+#define ASCENDC_KERNEL_TASK_TYPE_DEFAULT_IMPL(value) ASCENDC_ENABLE_FEATURE_FOR_COMPILE_IMPL(default, value)
+#define ASCENDC_REGISTER_TILING_DEFAULT_IMPL(tiling_struct) \
+    ASCENDC_ENABLE_FEATURE_FOR_TILING_IMPL(default, tiling_struct)
+#define ASCENDC_REGISTER_TILING_FOR_TILINGKEY_IMPL(expression, tiling_struct) \
+    ASCENDC_ENABLE_FEATURE_FOR_TILING_IMPL(expression, tiling_struct)
+#define ASCENDC_TILING_KEY_IS_IMPL(k) (ASCENDC_TILING_KEY_VAR_IMPL == (k))
+
+#define ASCENDC_TILING_KEY_LIST_INOUT_IMPL(...) ASCENDC_TILING_KEY_LIST_INOUT_BASE_IMPL(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_LIST_INOUT_BASE_IMPL(...) \
+    ASCENDC_TILING_KEY_ARGS_CONCAT_IMPL(             \
+        ASCENDC_TILING_KEY_INDEX_INOUT_, ASCENDC_TILING_KEY_ARG_COUNT_IMPL(__VA_ARGS__)(__VA_ARGS__))
+
+#define ASCENDC_TILING_KEY_INDEX_INOUT_1(a) ASCENDC_TILING_KEY_VAR_IMPL == (a)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_2(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_1(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_3(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_2(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_4(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_3(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_5(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_4(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_6(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_5(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_7(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_6(__VA_ARGS__)
+#define ASCENDC_TILING_KEY_INDEX_INOUT_8(a, ...) \
+    ASCENDC_TILING_KEY_INDEX_INOUT_1(a) || ASCENDC_TILING_KEY_INDEX_INOUT_7(__VA_ARGS__)
+
+#define ASCENDC_TILING_KEY_ARG_COUNT_IMPL(...) \
+    ASCENDC_TILING_KEY_ARG_COUNT_BASE_IMPL(__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define ASCENDC_TILING_KEY_ARG_COUNT_BASE_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, N, ...) N
+
+#define ASCENDC_TILING_KEY_ARGS_CONCAT_IMPL(a, b) ASCENDC_TILING_KEY_ARGS_CONCAT_BASE_IMPL(a, b)
+#define ASCENDC_TILING_KEY_ARGS_CONCAT_BASE_IMPL(a, b) a##b
+
+#ifdef __CHECK_FEATURE_AT_PRECOMPILE
+#define ASCENDC_TILING_KEY_LIST_IMPL(...) (ASCENDC_TILING_KEY_LIST_INOUT_IMPL(__VA_ARGS__)) "TILING_KEY_LIST"
+#else
+#define ASCENDC_TILING_KEY_LIST_IMPL(...) (ASCENDC_TILING_KEY_LIST_INOUT_IMPL(__VA_ARGS__))
+#endif
+
 #endif
