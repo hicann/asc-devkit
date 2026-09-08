@@ -11,8 +11,10 @@
 #ifndef HCCL_CCU_TEMP_KFC_ALL_GATHER_NHR_1D_MULTI_JETTY_MEM2MEM_H
 #define HCCL_CCU_TEMP_KFC_ALL_GATHER_NHR_1D_MULTI_JETTY_MEM2MEM_H
 
+#include "utils.h"
 #include "ccu_alg_template_base.h"
 #include "kernel/ccu_kernel_kfc_all_gather_nhr1d_multi_jetty_mem2mem.h"
+#include "kfc_server_protocol.h"
 
 namespace mc2_ops_hccl {
 

@@ -36,7 +36,7 @@ using LoopGroupConfig = ::CcuLoopGroupConfig;
 // ==================== 资源创建 ====================
 
 template <typename T>
-inline T GetResByChannel(ChannelHandle /*channel*/, uint32_t /*index*/)
+inline T GetResByChannel(ChannelHandle /*channel*/, uint32_t /*varIndex*/)
 {
     static_assert(
         sizeof(T) == 0, "ccu::GetResByChannel<T> is not specialized for this type T; "

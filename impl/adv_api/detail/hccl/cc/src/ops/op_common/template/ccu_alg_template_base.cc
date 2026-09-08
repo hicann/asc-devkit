@@ -156,7 +156,7 @@ HcclResult CcuAlgTemplateBase::GetDieInfoFromChannelDescs(
 HcclResult CcuAlgTemplateBase::SelectChannelToVec(
     const HcclComm comm, const u32 myRankId, const u32 rmtRankId,
     const std::map<u32, std::vector<HcclChannelDesc>>& rankIdToChannelDesc, const u32 dieId,
-    std::map<u32, u32>& rank2ChannelIdx, std::vector<HcclChannelDesc>& channels)
+    std::map<u32, u32>& rank2ChannelIdx, std::vector<HcclChannelDesc>& channels) const
 {
     auto it = rank2ChannelIdx.find(rmtRankId);
     if (it != rank2ChannelIdx.end()) {

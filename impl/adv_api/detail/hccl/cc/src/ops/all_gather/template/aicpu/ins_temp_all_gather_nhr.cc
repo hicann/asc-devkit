@@ -506,13 +506,13 @@ HcclResult InsTempAllGatherNHR::PostLocalCopy(const ThreadHandle& thread, const 
     }
     return HCCL_SUCCESS;
 }
-void InsTempAllGatherNHR::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub)
+void InsTempAllGatherNHR::GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub)
 {
-    notifyIdxMianToSub.clear();
+    notifyIdxMainToSub.clear();
     u32 threadNum = GetThreadNum();
     u32 slaveThreadNum = threadNum - 1;
     for (u32 slaveThreadIdx = 0; slaveThreadIdx < slaveThreadNum; slaveThreadIdx++) {
-        notifyIdxMianToSub.push_back(0);
+        notifyIdxMainToSub.push_back(0);
     }
 }
 

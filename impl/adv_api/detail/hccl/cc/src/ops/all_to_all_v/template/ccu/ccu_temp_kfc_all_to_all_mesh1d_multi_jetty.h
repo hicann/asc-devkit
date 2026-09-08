@@ -11,6 +11,7 @@
 #ifndef HCCL_CCU_TEMP_KFC_ALL_TO_ALL_MESH1D_MULTI_JETTY_H
 #define HCCL_CCU_TEMP_KFC_ALL_TO_ALL_MESH1D_MULTI_JETTY_H
 
+#include "utils.h"
 #include "ccu_alg_template_base.h"
 #include "kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.h"
 
@@ -39,7 +40,8 @@ public:
         HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
         AlgResourceRequest& resourceRequest) override;
     HcclResult CalcResByChannelDescs(
-        const OpParam& param, const std::vector<HcclChannelDesc>& channelDescs, AlgResourceRequest& resourceRequest)
+        const OpParam& param, const std::vector<HcclChannelDesc>& channelDescs,
+        const AlgResourceRequest& resourceRequest) const
     {
         (void)param;
         (void)channelDescs;

@@ -41,13 +41,13 @@ public:
         AlgResourceRequest& resourceRequest) override;
     u64 CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType) override;
 
-    void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMianToSub) override;
+    void GetNotifyIdxMainToSub(std::vector<u32>& notifyIdxMainToSub) override;
     void GetNotifyIdxSubToMain(std::vector<u32>& notifyIdxSubToMain) override;
 
 private:
-    void GetNotifyIdxMainToClos(std::vector<u32>& notifyIdxMianToSub) const;
+    void GetNotifyIdxMainToClos(std::vector<u32>& notifyIdxMainToSub) const;
     void GetNotifyIdxClosToMain(std::vector<u32>& notifyIdxSubToMain) const;
-    void GetNotifyIdxMainToFullMesh(std::vector<u32>& notifyIdxMianToSub) const;
+    void GetNotifyIdxMainToFullMesh(std::vector<u32>& notifyIdxMainToSub) const;
     void GetNotifyIdxFullMeshToMain(std::vector<u32>& notifyIdxSubToMain) const;
     HcclResult InitParam(
         const OpParam& param, const TemplateDataParams& tempAlgParams, const TemplateResource& templateResource);

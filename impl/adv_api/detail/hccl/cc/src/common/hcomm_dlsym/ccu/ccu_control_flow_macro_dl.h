@@ -37,7 +37,7 @@
                          (int)CCU_SUCCESS :                                                                           \
                          (int)CcuWhileBegin(uid##_ce.var->handle, uid##_ce.imm, uid##_ce.cond, CCU_LABEL(uid)),       \
                      uid##_done = 0;                                                                                  \
-                 uid##_rc == (int)CCU_SUCCESS && !uid##_done;                                                         \
+                 uid##_rc == (int)CCU_SUCCESS && uid##_done == 0;                                                     \
                  uid##_done = 1, uid##_rc = (uid##_dwLbl != nullptr) ?                                                \
                                                 (int)CcuDoWhileEnd(                                                   \
                                                     uid##_ce.var->handle, uid##_ce.imm, uid##_ce.cond, uid##_dwLbl) : \
@@ -58,11 +58,11 @@
 
 #define CCU_ELSE_EXPAND(uid) CCU_ELSE_IMPL(uid)
 
-#define CCU_ELSE_IMPL(uid)                                                                                          \
-    for (const char *uid##_lbl = _CcuIfStackPopForElse(), *uid##_sen = uid##_lbl; uid##_sen != nullptr;             \
-         uid##_sen = nullptr)                                                                                       \
-        for (int uid##_rc = (int)CcuIfElse(uid##_lbl), uid##_done = 0; uid##_rc == (int)CCU_SUCCESS && !uid##_done; \
-             uid##_done = 1, uid##_rc = (int)CcuIfEnd(uid##_lbl))
+#define CCU_ELSE_IMPL(uid)                                                                              \
+    for (const char *uid##_lbl = _CcuIfStackPopForElse(), *uid##_sen = uid##_lbl; uid##_sen != nullptr; \
+         uid##_sen = nullptr)                                                                           \
+        for (int uid##_rc = (int)CcuIfElse(uid##_lbl), uid##_done = 0;                                  \
+             uid##_rc == (int)CCU_SUCCESS && uid##_done == 0; uid##_done = 1, uid##_rc = (int)CcuIfEnd(uid##_lbl))
 
 #define CCU_DO CCU_DO_EXPAND(CCU_CONCAT(__ccu_dw_, __COUNTER__))
 
@@ -70,7 +70,7 @@
 
 #define CCU_DO_IMPL(uid)                                                      \
     for (int uid##_rc = (int)CcuDoWhileBegin(CCU_LABEL(uid)), uid##_done = 0; \
-         uid##_rc == (int)CCU_SUCCESS && !uid##_done; uid##_done = 1, _CcuDoWhileStackPush(CCU_LABEL(uid)))
+         uid##_rc == (int)CCU_SUCCESS && uid##_done == 0; uid##_done = 1, _CcuDoWhileStackPush(CCU_LABEL(uid)))
 
 #endif // CANN_VERSION_NUM >= 90100000
 
