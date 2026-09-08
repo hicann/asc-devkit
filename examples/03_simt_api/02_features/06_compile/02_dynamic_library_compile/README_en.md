@@ -53,6 +53,8 @@ For more bisheng compilation options and usage, refer to [AI-Core Operator Compi
 In a CMake project, use `add_library` with the `SHARED` keyword to compile `.asc` files into a dynamic shared library:
 
 ```cmake
+# Enable SIMT compilation mode
+set(CMAKE_ASC_ENABLE_SIMT ON)
 # Compile .asc file into a dynamic shared library
 add_library(gather_kernel SHARED
     gather_kernel.asc

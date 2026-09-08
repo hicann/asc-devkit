@@ -10,7 +10,7 @@ This sample implements a simple scenario (fixed shape) 2D Gather operator using 
 
 ## Supported CANN Software Versions
 
-- \>= CANN 9.0.0
+- \>= CANN 9.1.0
 
 ## Directory Structure
 

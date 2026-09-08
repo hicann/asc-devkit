@@ -11,10 +11,11 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(SCENARIO_NUM 1 CACHE STRING "Case type to run (1-4)")
+
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
+set(CMAKE_ASC_ENABLE_SIMT ON)
 
 find_package(ASC REQUIRED)
-
 project(kernel_samples LANGUAGES ASC CXX)
 
 add_executable(demo
@@ -28,7 +29,7 @@ target_compile_definitions(demo PRIVATE
 )
 
 target_compile_options(demo PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} --enable-simt --cce-res-usage>
+    $<$<COMPILE_LANGUAGE:ASC>:--cce-res-usage>
 )
 
 target_link_libraries(demo PRIVATE

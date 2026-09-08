@@ -53,6 +53,8 @@ For more bisheng compilation options and usage, refer to [AI-Core Operator Compi
 In a CMake project, use `add_library` with the `STATIC` keyword to compile `.asc` files into a static library:
 
 ```cmake
+# Enable SIMT compilation mode
+set(CMAKE_ASC_ENABLE_SIMT ON)
 # Compile .asc file into a static library
 add_library(kernel STATIC
     kernel.asc)

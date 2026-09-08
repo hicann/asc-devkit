@@ -62,6 +62,8 @@ In a project, CMake can be used to more conveniently compile Ascend C SIMT opera
 # 1. Set compilation configuration variables
 # CMAKE_ASC_ARCHITECTURES: Specify NPU architecture version, this example only supports dav-3510, configurable via -DCMAKE_ASC_ARCHITECTURES=dav-xxxx
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture")
+# CMAKE_ASC_ENABLE_SIMT: Enable SIMT compilation mode
+set(CMAKE_ASC_ENABLE_SIMT ON)
 
 # 2. find_package(ASC) is the CMake command for finding and configuring the Ascend C compilation toolchain
 find_package(ASC)
@@ -76,18 +78,6 @@ add_executable(demo
 
 # 5. Set linker language to ASC
 set_target_properties(demo PROPERTIES LINKER_LANGUAGE ASC)
-
-# 6. Configure compilation options: --npu-arch specifies architecture version, --enable-simt enables SIMT mode
-target_compile_options(demo PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} --enable-simt>)
-```
-
-In future versions, SIMT mode can be enabled by setting `CMAKE_ASC_ENABLE_SIMT` to ON instead of the `--enable-simt` compilation option in step 6 above:
-
-```cmake
-# Enable SIMT compilation mode
-set(CMAKE_ASC_ENABLE_SIMT ON)
-```
 
 ## Build and Run
 

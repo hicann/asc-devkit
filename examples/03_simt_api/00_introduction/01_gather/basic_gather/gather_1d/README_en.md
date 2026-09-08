@@ -10,7 +10,7 @@ This sample implements a one-dimensional Gather operator in a simple scenario (w
 
 ## Supported CANN Software Versions
 
-- \>= CANN 9.0.0
+- \>= CANN 9.1.0
 
 ## Directory Structure
 

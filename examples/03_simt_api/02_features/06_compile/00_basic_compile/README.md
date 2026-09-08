@@ -62,6 +62,8 @@ bisheng host.cpp kernel.asc -o demo --npu-arch=dav-3510 --enable-simt -I${ASCEND
 # 1、设置编译配置变量
 # CMAKE_ASC_ARCHITECTURES：指定NPU架构版本，本样例仅支持 dav-3510，可通过-DCMAKE_ASC_ARCHITECTURES=dav-xxxx配置
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture")
+# CMAKE_ASC_ENABLE_SIMT：启用SIMT编译模式
+set(CMAKE_ASC_ENABLE_SIMT ON)
 
 # 2、find_package(ASC)是CMake中用于查找和配置Ascend C编译工具链的命令
 find_package(ASC)
@@ -76,18 +78,6 @@ add_executable(demo
 
 # 5、设置链接器语言为ASC
 set_target_properties(demo PROPERTIES LINKER_LANGUAGE ASC)
-
-# 6、配置编译选项：--npu-arch指定架构版本，--enable-simt启用SIMT模式
-target_compile_options(demo PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} --enable-simt>)
-```
-
-在后续版本，可通过设置 `CMAKE_ASC_ENABLE_SIMT` 为ON启用SIMT模式替代上述步骤6的 `--enable-simt`编译选项：
-
-```cmake
-# 启用SIMT编译模式
-set(CMAKE_ASC_ENABLE_SIMT ON)
-```
 
 ## 编译运行
 

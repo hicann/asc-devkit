@@ -10,15 +10,16 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-find_package(ASC REQUIRED)
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
+set(CMAKE_ASC_ENABLE_SIMT ON)
 
+find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
 set(SCENARIO_NUM "0" CACHE STRING "Case type to run (0-4)")
 if(NOT SCENARIO_NUM MATCHES "^[0-4]$")
     message(FATAL_ERROR "SCENARIO_NUM must be one of 0, 1, 2, 3, 4, but got ${SCENARIO_NUM}")
 endif()
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
 
 add_executable(demo
     bank_conflict.asc
@@ -26,16 +27,6 @@ add_executable(demo
 
 target_compile_definitions(demo PRIVATE
     SCENARIO_NUM=${SCENARIO_NUM}
-)
-
-# ======================================================================================
-# NPU 编译选项配置
-#
-# 说明：
-#   - 需根据实际部署的 NPU 硬件架构选择对应的 `npu-arch` 参数。
-# ======================================================================================
-target_compile_options(demo PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} --enable-simt>
 )
 
 target_link_libraries(demo PRIVATE

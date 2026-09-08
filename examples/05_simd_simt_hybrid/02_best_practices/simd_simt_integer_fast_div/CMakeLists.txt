@@ -10,12 +10,12 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-find_package(ASC REQUIRED)
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
 
+find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
 set(SCENARIO_NUM "0" CACHE STRING "Case type to run: 0 normal, 1 fast")
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
 
 add_executable(integer_div
     integer_div.asc
@@ -23,10 +23,6 @@ add_executable(integer_div
 
 target_compile_definitions(integer_div PRIVATE
     SCENARIO_NUM=${SCENARIO_NUM}
-)
-
-target_compile_options(integer_div PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>
 )
 
 target_link_libraries(integer_div PRIVATE

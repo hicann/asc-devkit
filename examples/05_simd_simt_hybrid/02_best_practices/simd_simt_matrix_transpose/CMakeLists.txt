@@ -10,12 +10,12 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-find_package(ASC REQUIRED)
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
 
+find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
 set(SCENARIO_NUM "4" CACHE STRING "Case type to run (0-4)")
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU ARCH, e.g. dav-3510")
 
 if(NOT SCENARIO_NUM MATCHES "^[0-4]$")
     message(FATAL_ERROR "SCENARIO_NUM must be one of 0, 1, 2, 3, 4.")
@@ -37,7 +37,7 @@ target_compile_definitions(matrix_transpose PRIVATE
 #   - `--cce-res-usage`用于输出寄存器和栈等编译资源信息，便于分析资源使用。
 # ======================================================================================
 target_compile_options(matrix_transpose PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} --cce-res-usage>
+    $<$<COMPILE_LANGUAGE:ASC>:--cce-res-usage>
 )
 
 target_link_libraries(matrix_transpose PRIVATE

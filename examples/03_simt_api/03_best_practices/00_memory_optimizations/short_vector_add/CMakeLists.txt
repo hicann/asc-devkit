@@ -10,6 +10,9 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
+set(CMAKE_ASC_ENABLE_SIMT ON)
+
 find_package(ASC REQUIRED)
 
 set(PROJECT_NAME "kernel_samples" CACHE STRING "Project name")
@@ -30,9 +33,4 @@ add_definitions(-DSCENARIO_NUM=${SCENARIO_NUM})
 set(TARGET_FILENAME "demo" CACHE STRING "Execution file name")
 add_executable(${TARGET_FILENAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/short_vector_add.asc
-)
-
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
-target_compile_options(${TARGET_FILENAME} PRIVATE
-        $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} --enable-simt>
 )

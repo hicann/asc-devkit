@@ -10,7 +10,7 @@ This example implements a generalized shape Gather operator based on the Ascend 
 
 ## Supported CANN Software Versions
 
-- \>= CANN 9.0.0
+- \>= CANN 9.1.0
 
 ## Directory Structure
 
