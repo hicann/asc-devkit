@@ -16,8 +16,14 @@ set(HCCL_CCU_ST_TARGET ascendc_ut_adv_api_ccu_st)
 set(HCCL_MC2_CCU_ALL_TO_ALL_V_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_to_all_v)
 set(HCCL_MC2_CCU_ALL_TO_ALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_to_all)
 set(HCCL_MC2_CCU_ALL_REDUCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_reduce)
+set(HCCL_MC2_CCU_ALL_GATHER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_gather)
 
 set(HCCL_SELECTOR_PRODUCT_SOURCES
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/selector/all_gather_auto_selector.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/executor/ins_v2_all_gather_sole_executor.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/template/ccu/ccu_temp_kfc_all_gather_mesh_1D_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/template/ccu/kernel/ccu_kernel_kfc_all_gather_mesh1d_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/template/ccu/kernel/ccu_kernel_kfc_all_gather_nhr1d_multi_jetty_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/selector/alltoall_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/selector/alltoallv_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/executor/ins_v2_all_to_all_v_sole_executor.cc
@@ -26,6 +32,7 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/ccu_temp_all_to_all_v_mesh_1D.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_v_mesh1d.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/selector/all_reduce_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/executor/ins_v2_all_reduce_sole_executor.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu/ccu_temp_kfc_all_reduce_mesh_1D_mem2mem.cc
@@ -34,6 +41,9 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/aicpu/ins_temp_all_reduce_mesh_1D_one_shot.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/aicpu/ins_temp_all_reduce_aicpu_reduce_nhr.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/aicpu/ins_temp_all_reduce_mesh_1D_two_shot_mesh_chunk.cc
+    ${HCCL_CC_SRC_DIR}/ops/kfc_server/executor/ins_kfc_server_sole_executor.cc
+    ${HCCL_CC_SRC_DIR}/ops/kfc_server/template/ccu/ccu_temp_kfc_server.cc
+    ${HCCL_CC_SRC_DIR}/ops/kfc_server/template/ccu/kernel/ccu_kernel_kfc_server.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/op_common.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/selector/auto_selector_base.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/selector/execute_selector.cc
@@ -78,6 +88,9 @@ add_executable(
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/all_reduce_testcase.cpp
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/ccu_all_reduce_mesh1d_mem2mem_adapter.cc
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/ccu_all_reduce.cc
+    ${HCCL_MC2_CCU_ALL_GATHER_DIR}/all_gather_testcase.cpp
+    ${HCCL_MC2_CCU_ALL_GATHER_DIR}/ccu_all_gather_kfc_server_adapter.cc
+    ${HCCL_MC2_CCU_ALL_GATHER_DIR}/ccu_all_gather.cc
     ${UTILS_DIR}/ccu_scenario/ccu_fixture.cc
     ${HCCL_SELECTOR_PRODUCT_SOURCES}
 )
@@ -89,9 +102,15 @@ target_include_directories(
     ${HCCL_MC2_CCU_ALL_TO_ALL_V_DIR}
     ${HCCL_MC2_CCU_ALL_TO_ALL_DIR}
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}
+    ${HCCL_MC2_CCU_ALL_GATHER_DIR}
     ${HCCL_CHECKER_COMMON_INCLUDE_LIST}
     ${UTILS_DIR}/ccu_scenario
     ${HCCL_CC_SRC_DIR}
+    ${HCCL_CC_SRC_DIR}/common
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/selector
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/executor
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/template/ccu
+    ${HCCL_CC_SRC_DIR}/ops/all_gather/template/ccu/kernel
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/selector
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/executor
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu
