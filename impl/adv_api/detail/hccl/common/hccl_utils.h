@@ -61,13 +61,13 @@ __aicore__ inline T ReadHBMData(__gm__ T* addr)
     Nop<800>();
 
     if constexpr (SupportBytes<T, 8>()) {
-        return ReadGmByPassDCache(reinterpret_cast<__gm__ uint64_t*>(addr));
+        return ReadGmBypassDCache(reinterpret_cast<__gm__ uint64_t*>(addr));
     } else if constexpr (SupportBytes<T, 4>()) {
-        return ReadGmByPassDCache(reinterpret_cast<__gm__ uint32_t*>(addr));
+        return ReadGmBypassDCache(reinterpret_cast<__gm__ uint32_t*>(addr));
     } else if constexpr (SupportBytes<T, 2>()) {
-        return ReadGmByPassDCache(reinterpret_cast<__gm__ uint16_t*>(addr));
+        return ReadGmBypassDCache(reinterpret_cast<__gm__ uint16_t*>(addr));
     } else {
-        return ReadGmByPassDCache(reinterpret_cast<__gm__ uint8_t*>(addr));
+        return ReadGmBypassDCache(reinterpret_cast<__gm__ uint8_t*>(addr));
     }
 
     DataSyncBarrier<MemDsbT::ALL>();
@@ -80,13 +80,13 @@ __aicore__ inline void WriteHBMData(__gm__ T* addr, T value)
     Nop();
 
     if constexpr (SupportBytes<T, 8>()) {
-        WriteGmByPassDCache(reinterpret_cast<__gm__ uint64_t*>(addr), (uint64_t)value);
+        WriteGmBypassDCache(reinterpret_cast<__gm__ uint64_t*>(addr), (uint64_t)value);
     } else if constexpr (SupportBytes<T, 4>()) {
-        WriteGmByPassDCache(reinterpret_cast<__gm__ uint32_t*>(addr), (uint32_t)value);
+        WriteGmBypassDCache(reinterpret_cast<__gm__ uint32_t*>(addr), (uint32_t)value);
     } else if constexpr (SupportBytes<T, 2>()) {
-        WriteGmByPassDCache(reinterpret_cast<__gm__ uint16_t*>(addr), (uint16_t)value);
+        WriteGmBypassDCache(reinterpret_cast<__gm__ uint16_t*>(addr), (uint16_t)value);
     } else {
-        WriteGmByPassDCache(reinterpret_cast<__gm__ uint8_t*>(addr), (uint8_t)value);
+        WriteGmBypassDCache(reinterpret_cast<__gm__ uint8_t*>(addr), (uint8_t)value);
     }
 
     DataSyncBarrier<MemDsbT::ALL>();
