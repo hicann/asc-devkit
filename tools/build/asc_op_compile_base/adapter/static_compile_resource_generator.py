@@ -736,6 +736,7 @@ class ManifestPackageWriter:
                         {
                             "name": constant_info.name,
                             "parameter_index": constant_info.parameter_index,
+                            "arg_type": "pointer",
                             "byte_size": constant_info.byte_size,
                             "file": _resource_placeholder(
                                 self._resource_path,

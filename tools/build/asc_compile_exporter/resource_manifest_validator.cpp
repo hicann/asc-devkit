@@ -18,6 +18,7 @@
 
 #include "ascendc_tool_log.h"
 #include "file_utils.h"
+#include "manifest_constant.h"
 #include "nlohmann/json.hpp"
 
 namespace ascendc {
@@ -313,49 +314,19 @@ bool ResourceManifestValidator::ValidateOptionArray(const std::string& name)
 
 bool ResourceManifestValidator::ValidateConstant(const Json& constant, std::set<std::string>& constantNames)
 {
-    if (!CheckAndLog(constant.is_object(), __LINE__, "invalid constant: expected an object") ||
-        !CheckAndLog(constant.contains("name"), __LINE__, "missing required constant field: name") ||
-        !CheckAndLog(
-            constant.contains("parameter_index"), __LINE__, "missing required constant field: parameter_index") ||
-        !CheckAndLog(constant.contains("byte_size"), __LINE__, "missing required constant field: byte_size") ||
-        !CheckAndLog(constant.contains("file"), __LINE__, "missing required constant field: file") ||
-        !CheckAndLog(constant.contains("template"), __LINE__, "missing required constant field: template") ||
-        !CheckAndLog(constant.size() == 5U, __LINE__, "invalid constant: expected exactly five fields") ||
-        !CheckAndLog(constant.at("name").is_string(), __LINE__, "invalid constant name: expected a string") ||
-        !CheckAndLog(
-            !constant.at("name").get_ref<const std::string&>().empty(), __LINE__,
-            "invalid constant name: expected a nonempty string") ||
-        !CheckAndLog(
-            constant.at("parameter_index").is_number_unsigned(), __LINE__,
-            "invalid parameter_index: expected an unsigned integer") ||
-        !CheckAndLog(
-            constant.at("byte_size").is_number_unsigned(), __LINE__,
-            "invalid byte_size: expected an unsigned integer") ||
-        !CheckAndLog(
-            constant.at("byte_size").get<Json::number_unsigned_t>() != 0U, __LINE__,
-            "invalid byte_size: expected a nonzero value") ||
-        !CheckAndLog(constant.at("file").is_string(), __LINE__, "invalid constant file: expected a string") ||
-        !CheckAndLog(constant.at("template").is_string(), __LINE__, "invalid constant template: expected a string") ||
-        !CheckAndLog(
-            !constant.at("template").get_ref<const std::string&>().empty(), __LINE__,
-            "invalid constant template: expected a nonempty string")) {
+    ManifestConstant parsed;
+    if (!parsed.ParseDefinition(constant)) {
         return false;
     }
-
-    const std::string name = constant.at("name").get_ref<const std::string&>();
-    const std::string file = constant.at("file").get_ref<const std::string&>();
     if (!CheckAndLog(
-            file.rfind(std::string(RESOURCE_ROOT_MARKER) + "/", 0U) == 0U, __LINE__,
+            parsed.GetTargetFile().rfind(std::string(RESOURCE_ROOT_MARKER) + "/", 0U) == 0U, __LINE__,
             "invalid constant file: expected ${resource}/<relative-path>") ||
-        !ValidateResourceReference(file) ||
-        !CheckAndLog(constantNames.insert(name).second, __LINE__, "duplicate constant name: name=" + name)) {
+        !ValidateResourceReference(parsed.GetTargetFile()) ||
+        !CheckAndLog(
+            constantNames.insert(parsed.GetName()).second, __LINE__,
+            "duplicate constant name: name=" + parsed.GetName())) {
         return false;
     }
-
-    ASCENDLOGD(
-        "Validated constant: name=%s parameter_index=%llu byte_size=%llu", name.c_str(),
-        static_cast<unsigned long long>(constant.at("parameter_index").get<Json::number_unsigned_t>()),
-        static_cast<unsigned long long>(constant.at("byte_size").get<Json::number_unsigned_t>()));
     return true;
 }
 

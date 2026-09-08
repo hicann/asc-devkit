@@ -148,7 +148,7 @@ void KernelSpecializationDiagnostics::AppendCommandToReplayScript(const Compilat
     }
     try {
         std::string replayLine = QuoteArgumentForReplayScript(compilationCommand.executablePath.string());
-        for (const std::string& argument : compilationCommand.commandArguments) {
+        for (const std::string& argument : compilationCommand.arguments) {
             replayLine += " " + QuoteArgumentForReplayScript(argument);
         }
         replayLine += '\n';

@@ -68,11 +68,10 @@ aclError CompilationPlanExecutor::ExecuteCompilationCommand(
     const CompilationCommand& compilationCommand, ProcessExecutorResult& executorResult) const
 {
     ProcessExecutorRequest executorRequest;
-    executorRequest.arguments.reserve(compilationCommand.commandArguments.size() + 1U);
+    executorRequest.arguments.reserve(compilationCommand.arguments.size() + 1U);
     executorRequest.arguments.emplace_back(compilationCommand.executablePath.string());
     executorRequest.arguments.insert(
-        executorRequest.arguments.end(), compilationCommand.commandArguments.begin(),
-        compilationCommand.commandArguments.end());
+        executorRequest.arguments.end(), compilationCommand.arguments.begin(), compilationCommand.arguments.end());
     executorRequest.mirroredOutputLogFilePath = specializationDiagnostics_.GetCompilationLogFilePath();
     executorRequest.executionTimeout = compilationCommand.commandKind == CompilationCommandKind::Compile ?
                                            commandExecutionLimits_.compileCommandTimeout :

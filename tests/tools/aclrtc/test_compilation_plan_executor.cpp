@@ -34,7 +34,6 @@ using ascendc::aclrtc::CompilationCommandExecutionLimits;
 using ascendc::aclrtc::CompilationCommandKind;
 using ascendc::aclrtc::CompilationPlanExecutor;
 using ascendc::aclrtc::KernelCompilationPlan;
-using ascendc::aclrtc::KernelCompilationVariant;
 using ascendc::aclrtc::KernelSpecializationDiagnostics;
 using namespace mockcpp;
 
@@ -68,9 +67,6 @@ pid_t ReapCommandProcess(pid_t processId, int* waitStatus, int)
     return waitResult;
 }
 
-static_assert(
-    std::is_same<std::underlying_type_t<KernelCompilationVariant>, uint32_t>::value,
-    "KernelCompilationVariant must have a stable width");
 static_assert(
     std::is_same<std::underlying_type_t<CompilationCommandKind>, uint32_t>::value,
     "CompilationCommandKind must have a stable width");

@@ -39,6 +39,7 @@ add_executable(asc_compile_exporter
   manifest_bundle_compiler.cpp
   resource_manifest_validator.cpp
   ../common/file_utils.cpp
+  ../common/manifest_constant.cpp
   ../common/process_executor.cpp
   ../common/directory_cleanup_guard.cpp
 )

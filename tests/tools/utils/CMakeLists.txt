@@ -207,6 +207,7 @@ add_executable(ascendc_ut_asc_compile_exporter
     asc_compile_exporter/test_file_utils.cpp
     asc_compile_exporter/test_manifest_bundle_types.cpp
     common/test_process_executor.cpp
+    common/test_manifest_constant.cpp
     asc_compile_exporter/test_resource_manifest_validator.cpp
     common/test_directory_cleanup_guard.cpp
     asc_compile_exporter/test_ascendc_tool_log.cpp
@@ -214,6 +215,7 @@ add_executable(ascendc_ut_asc_compile_exporter
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/collected_manifest_repository.cpp
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/manifest_bundle_compiler.cpp
     ${ASCENDC_DIR}/tools/build/asc_compile_exporter/resource_manifest_validator.cpp
+    ${ASCENDC_DIR}/tools/build/common/manifest_constant.cpp
     ${ASCENDC_DIR}/tools/build/common/file_utils.cpp
     ${ASCENDC_DIR}/tools/build/common/process_executor.cpp
     ${ASCENDC_DIR}/tools/build/common/directory_cleanup_guard.cpp

@@ -458,6 +458,9 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
         self.assertEqual(manifest["resource_id"], self.resource_id)
         self.assertEqual(manifest["kernels"][0]["kernel_name"], "add_custom_100000")
         self.assertEqual(manifest["kernels"][0]["constant_infos"][0]["byte_size"], 24)
+        self.assertEqual(
+            manifest["kernels"][0]["constant_infos"][0]["arg_type"], "pointer"
+        )
         self.assertTrue(os.path.isdir(os.path.join(self.output_dir, "resources")))
 
     def test_basic_mix_manifest_uses_static_wrapper_and_tiling_template(self):
@@ -673,6 +676,7 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
                 {
                     "name": "tiling_data",
                     "parameter_index": 4,
+                    "arg_type": "pointer",
                     "byte_size": 8,
                     "file": "${resource}/resources/include/add_custom_tiling_data.h",
                     "template": "@@STATIC_VALUE_tiling_data@@",
@@ -680,6 +684,7 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
                 {
                     "name": "block_dim",
                     "parameter_index": 5,
+                    "arg_type": "pointer",
                     "byte_size": 4,
                     "file": "${resource}/resources/include/add_custom_tiling_data.h",
                     "template": block_dim_template,

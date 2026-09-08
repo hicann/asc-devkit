@@ -12,6 +12,7 @@
 
 #include "compilation_plan_executor.h"
 #include "kernel_compilation_plan_builder.h"
+#include "compilation_manifest_parser.h"
 #include "kernel_compilation_workspace.h"
 #include "kernel_specialization_diagnostics.h"
 #include "ascendc_tool_log.h"
@@ -203,12 +204,18 @@ aclError KernelSpecializationSession::RunSpecializationWithMaterializedResource(
         specializationRequest.specializationSessionId);
     diagnostics.WriteManifestSnapshot(compilationResource.manifest);
 
-    KernelCompilationPlan compilationPlan;
+    CompilationManifest manifest;
     aclError specializationStatus =
-        KernelCompilationPlanBuilder(
-            specializationRequest, compilationResource.manifest, compilationWorkspace.GetWorktreePath(),
-            compilationResource.externalSourceDirectoryPath)
-            .BuildCompilationPlan(compilationPlan);
+        CompilationManifestParser(compilationResource.manifest)
+            .ParseSelected(specializationRequest.kernelName, specializationRequest.enableSuperKernel, manifest);
+    if (specializationStatus != ACLRTC_SUCCESS) {
+        return ReportSpecializationStatus(specializationRequest, diagnostics, specializationStatus);
+    }
+    KernelCompilationPlan compilationPlan;
+    specializationStatus = KernelCompilationPlanBuilder(
+                               specializationRequest, manifest, compilationWorkspace.GetWorktreePath(),
+                               compilationResource.externalSourceDirectoryPath)
+                               .BuildCompilationPlan(compilationPlan);
     if (specializationStatus != ACLRTC_SUCCESS) {
         return ReportSpecializationStatus(specializationRequest, diagnostics, specializationStatus);
     }
