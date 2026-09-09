@@ -365,4 +365,49 @@ TEST_F(HcclSuiteAIC, ReduceScatter_CcuReduceScatterMeshMem2Mem1D)
     EXPECT_EQ(hccl.Wait(handleId), HCCL_SUCCESS);
 }
 
+TEST_F(HcclSuiteAIC, ReduceScatter_CcuReduceScatterMeshMem2Mem1DPeerOnly)
+{
+    std::vector<uint8_t> workSpace(workSpaceSize);
+    HcclMsgArea* hcclMsgArea = GetHcclMsgArea(workSpace.data());
+    HcclCombineOpParam hcclCombineOpParam = GetHcclCombineOpParam(workSpace);
+    hcclCombineOpParam.opType[0] = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER);
+    hcclCombineOpParam.algorithmType[0] = static_cast<uint8_t>(AlgorithmType::CcuReduceScatterMeshMem2Mem1DPeerOnly);
+
+    Hccl<HcclServerType::HCCL_SERVER_TYPE_CCU> hccl;
+    hccl.Init(reinterpret_cast<GM_ADDR>(&hcclCombineOpParam));
+
+    HcclHandle handleId = hccl.ReduceScatter(
+        reinterpret_cast<__gm__ uint8_t*>(0x1234), reinterpret_cast<__gm__ uint8_t*>(0x4321), 10,
+        HcclDataType::HCCL_DATA_TYPE_INT8, HcclReduceOp::HCCL_REDUCE_SUM, 0, 1);
+
+    hccl.Commit(handleId);
+    EXPECT_EQ(handleId, 0);
+    EXPECT_EQ(hccl.Wait(handleId), HCCL_SUCCESS);
+}
+
+TEST_F(HcclSuiteAIC, ReduceScatterPeerOnlyChunkParams)
+{
+    constexpr uint64_t chunkSize = 256ULL * 1024ULL * 1024ULL;
+    constexpr uint64_t alignSize = 128ULL;
+    struct TestCase {
+        uint64_t sliceSize;
+        uint64_t expectedTailSize;
+        uint64_t expectedChunkCount;
+    };
+    const TestCase cases[] = {
+        {0, 0, 0},
+        {chunkSize, chunkSize, 1},
+        {chunkSize + alignSize, alignSize, 2},
+        {2 * chunkSize, chunkSize, 2},
+    };
+
+    for (const auto& testCase : cases) {
+        uint64_t tailSize = 0;
+        uint64_t chunkLoopNum = 0;
+        CalcPeerOnlyChunkParams(testCase.sliceSize, &tailSize, &chunkLoopNum);
+        EXPECT_EQ(tailSize, testCase.expectedTailSize);
+        EXPECT_EQ(UINT64_MAX - chunkLoopNum, testCase.expectedChunkCount);
+    }
+}
+
 } // namespace

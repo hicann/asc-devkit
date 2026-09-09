@@ -11,6 +11,7 @@ add_subdirectory(kernel)
 
 set(src_list
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem_peer_only.cc
     # Legacy direct-launch CCU templates are retained but use APIs unavailable in the KFC-only mc2_client.
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_reduce_scatter_mesh_1D_mem2mem.cc
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_temp_reduce_scatter_mesh_1D.cc
