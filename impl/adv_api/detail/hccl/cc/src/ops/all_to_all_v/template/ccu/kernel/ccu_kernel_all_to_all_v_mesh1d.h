@@ -10,7 +10,6 @@
 #ifndef HCCL_CCU_KERNEL_ALL_TO_ALL_V_MESH_1D_H
 #define HCCL_CCU_KERNEL_ALL_TO_ALL_V_MESH_1D_H
 
-#include <vector>
 #include "ccu_kernel_alg_base.h"
 
 namespace mc2_ops_hccl {

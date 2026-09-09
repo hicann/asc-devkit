@@ -21,7 +21,7 @@ constexpr uint16_t CACHE_EVICT_KERNEL_TIMEOUT_SEC = 27U * 68U;
 constexpr int32_t CACHE_EVICT_STREAM_TIMEOUT_MS = CACHE_EVICT_KERNEL_TIMEOUT_SEC * 1000;
 constexpr char CACHE_EVICT_KERNEL[] = "Mc2AicpuTaskCacheClearKernel";
 
-HcclResult LaunchCacheEvictKernel(HcclComm comm)
+HcclResult LaunchCacheEvictKernel(const HcclComm comm)
 {
     if (g_binKernelHandle == nullptr) {
         HCCL_INFO("[MC2_TASK_CACHE][Evict] mc2 server binary is not loaded, comm[%p].", comm);
@@ -39,7 +39,8 @@ HcclResult LaunchCacheEvictKernel(HcclComm comm)
     CHK_PRT_RET(
         ret != ACL_SUCCESS, HCCL_ERROR("[MC2_TASK_CACHE][Evict] args init failed, ret[%d].", ret), HCCL_E_RUNTIME);
     aclrtParamHandle paramHandle = nullptr;
-    ret = aclrtKernelArgsAppend(argsHandle, &comm, sizeof(comm), &paramHandle);
+    HcclComm commLocal = comm;
+    ret = aclrtKernelArgsAppend(argsHandle, &commLocal, sizeof(commLocal), &paramHandle);
     CHK_PRT_RET(
         ret != ACL_SUCCESS, HCCL_ERROR("[MC2_TASK_CACHE][Evict] args append failed, ret[%d].", ret), HCCL_E_RUNTIME);
     ret = aclrtKernelArgsFinalize(argsHandle);
@@ -74,7 +75,7 @@ HcclResult LaunchCacheEvictKernel(HcclComm comm)
     return result;
 }
 
-HcclResult Mc2TaskCacheCommStateCallback(HcclComm comm, int32_t state, void* args)
+HcclResult Mc2TaskCacheCommStateCallback(const HcclComm comm, int32_t state, void* args)
 {
     (void)args;
     if (state != COMM_STATE_DESTROY_POST && state != COMM_STATE_RESUME_POST) {

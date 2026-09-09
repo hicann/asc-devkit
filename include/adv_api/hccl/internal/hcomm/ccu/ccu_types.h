@@ -67,7 +67,6 @@ typedef struct {
     uint32_t addrOffset;
     uint32_t ccuBufferOffset;
     uint32_t eventOffset;
-
 } CcuLoopGroupConfig;
 
 typedef uint64_t CcuInsHandle;

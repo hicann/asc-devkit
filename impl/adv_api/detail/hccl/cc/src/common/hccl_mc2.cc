@@ -454,7 +454,7 @@ extern "C" HcclResult __attribute__((visibility("default"))) HcclAllocComResourc
 }
 
 namespace {
-CcuResult CopyOpResCtxToHost(void* opResCtx, OpResCtx& opResHost)
+CcuResult CopyOpResCtxToHost(const void* opResCtx, OpResCtx& opResHost)
 {
     HCCL_INFO("[CcuKernelLaunch]Obtain OpResCtx.");
     aclError aclRet = aclrtMemcpy(&opResHost, sizeof(OpResCtx), opResCtx, sizeof(OpResCtx), ACL_MEMCPY_DEVICE_TO_HOST);

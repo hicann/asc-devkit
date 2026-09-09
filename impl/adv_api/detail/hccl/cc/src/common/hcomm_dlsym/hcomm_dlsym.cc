@@ -77,7 +77,6 @@ void HcommDlInit(void)
     HCCL_INFO("Calling dlopen(\"libhcomm.so\", RTLD_NOW)");
 
     gLibHandle = dlopen("libhcomm.so", RTLD_NOW);
-
     if (!gLibHandle) {
         const char* dlErr = dlerror();
         HCCL_ERROR("[HcclWrapper] Failed to open libhcomm: %s", dlErr ? dlErr : "(null)");

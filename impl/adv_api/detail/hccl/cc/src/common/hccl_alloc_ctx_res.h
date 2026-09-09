@@ -86,18 +86,18 @@ struct OpResCtx {
 
 enum class AlgorithmType {
     CcuAllGatherMesh1D = 0,
-    CcuAllGatherMeshMem2Mem1D,
-    CcuAllGatherMesh2D,
+    CcuAllGatherMeshMem2Mem1D = 1,
+    CcuAllGatherMesh2D = 2,
     CcuSchedAllGatherConcurMeshNHRMultiLink = 3,
     CcuReduceScatterMesh1D = 50,
-    CcuReduceScatterMeshMem2Mem1D,
-    CcuReduceScatterMesh2D,
+    CcuReduceScatterMeshMem2Mem1D = 51,
+    CcuReduceScatterMesh2D = 52,
     CcuAllReduceMesh1D = 100,
-    CcuAllReduceMeshMem2Mem1D,
-    CcuAllReduceMesh2DOneShot,
+    CcuAllReduceMeshMem2Mem1D = 101,
+    CcuAllReduceMesh2DOneShot = 102,
     CcuSchedAllToAllSoleMesh = 150,
-    CcuSchedAllToAllVSoleMesh,
-    CcuSchedAllGatherSoleMesh,
+    CcuSchedAllToAllVSoleMesh = 151,
+    CcuSchedAllGatherSoleMesh = 152,
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
@@ -132,7 +132,7 @@ HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], ui
 HcclResult AllocCcuOpResCtx(HcclComm comm, const std::string& ctxTag, u32 rankSize, u32 userRank, OpResCtx& opResCtx);
 
 HcclResult HcclAllocOpResCtx(
-    HcclComm comm, const std::string& ctxTag, const std::vector<OpParam>& opParamVec, const void* mc2Tiling,
+    const HcclComm comm, const std::string& ctxTag, const std::vector<OpParam>& opParamVec, const void* mc2Tiling,
     const void* ccTilingList[], void** opResCtxPtr);
 
 // AllToAll适配AllToAllV

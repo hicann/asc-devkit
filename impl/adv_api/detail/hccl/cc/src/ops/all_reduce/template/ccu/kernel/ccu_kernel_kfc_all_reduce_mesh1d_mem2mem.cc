@@ -103,6 +103,7 @@ static CcuResult PairwiseLocalReduce(
     KfcAllReduceMesh1DMem2MemContext& ctx, ccu::LocalAddr myOutput, std::vector<ccu::LocalAddr>& inputVec,
     ccu::Variable sliceSize, HcclDataType dataType, HcclDataType outputDataType, HcclReduceOp opType)
 {
+    (void)outputDataType;
     ccu::Variable len;
 
     uint32_t remainPieces = ctx.rankSize;
@@ -401,7 +402,7 @@ static CcuResult BcastLocToRmt(
         if (ctx.rankSize % BIT_NUM_PER_CKE != 0 && eventIdx == (eventNum - 1)) {
             sigNum = ctx.rankSize % BIT_NUM_PER_CKE;
         }
-        ccu::EventWait(ctx.events[eventIdx], (1 << sigNum) - 1);
+        ccu::EventWait(ctx.events[eventIdx], static_cast<uint16_t>((1 << sigNum) - 1));
     }
     return CCU_SUCCESS;
 }
@@ -472,7 +473,7 @@ static CcuResult ReduceRmtToLoc(
         if (ctx.rankSize % BIT_NUM_PER_CKE != 0 && i == (eventNum - 1)) {
             sigNum = ctx.rankSize % BIT_NUM_PER_CKE;
         }
-        ccu::EventWait(ctx.events[i], (1 << sigNum) - 1);
+        ccu::EventWait(ctx.events[i], static_cast<uint16_t>((1 << sigNum) - 1));
     }
     CCU_CHK_RET(DoLocalReduce(ctx));
     return CCU_SUCCESS;
@@ -539,7 +540,7 @@ static CcuResult ReduceRmtToLocChunking(
         if (ctx.rankSize % BIT_NUM_PER_CKE != 0 && i == (eventNum - 1)) {
             sigNum = ctx.rankSize % BIT_NUM_PER_CKE;
         }
-        ccu::EventWait(ctx.events[i], (1 << sigNum) - 1);
+        ccu::EventWait(ctx.events[i], static_cast<uint16_t>((1 << sigNum) - 1));
     }
     if (ctx.rankSize <= GROUP_REDUCE_MAX_PIECE_CNT) {
         std::vector<ccu::LocalAddr> scratch = ctx.reduceScatterDst;
@@ -578,7 +579,7 @@ static CcuResult BcastLocToRmtChunking(
 
         ccu::Write(
             ctx.channels[channelIdx], ctx.remoteDstMem, ctx.srcMem, ctx.currentSliceSize, ctx.events[eventIdx],
-            1 << (rmtId % BIT_NUM_PER_CKE));
+            static_cast<uint16_t>(1 << (rmtId % BIT_NUM_PER_CKE)));
         channelIdx++;
     }
     uint32_t eventNum = (ctx.rankSize + BIT_NUM_PER_CKE - 1) / BIT_NUM_PER_CKE;
@@ -587,7 +588,7 @@ static CcuResult BcastLocToRmtChunking(
         if (ctx.rankSize % BIT_NUM_PER_CKE != 0 && eventIdx == (eventNum - 1)) {
             sigNum = ctx.rankSize % BIT_NUM_PER_CKE;
         }
-        ccu::EventWait(ctx.events[eventIdx], (1 << sigNum) - 1);
+        ccu::EventWait(ctx.events[eventIdx], static_cast<uint16_t>((1 << sigNum) - 1));
     }
     return CCU_SUCCESS;
 }
@@ -596,11 +597,11 @@ static CcuResult DoRepeatAllReduceChunking(KfcAllReduceMesh1DMem2MemContext& ctx
 {
     ccu::Variable one;
     one = 1;
-    CCU_WHILE(ctx.chunkLoopNum != UINT64_MAX)
+    CCU_WHILE(ctx.chunkLoopNum != static_cast<uint64_t>(UINT64_MAX))
     {
         ctx.currentSliceSize = ctx.chunkSize;
         ctx.goSize = ctx.fullGoSize;
-        CCU_IF(ctx.chunkLoopNum == UINT64_MAX - 1)
+        CCU_IF(ctx.chunkLoopNum == static_cast<uint64_t>(UINT64_MAX - 1))
         {
             ctx.currentSliceSize = ctx.tailSize;
             ctx.goSize = ctx.tailGoSize;

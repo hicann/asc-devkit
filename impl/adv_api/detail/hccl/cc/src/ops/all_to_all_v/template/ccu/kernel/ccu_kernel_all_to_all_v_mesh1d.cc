@@ -21,10 +21,10 @@ constexpr int A2AV_OUTPUT_XN_ID = 0;
 constexpr int A2AV_TOKEN_XN_ID = 1;
 constexpr int A2AV_PRE_SYNC_CKE_IDX = 0;
 constexpr int A2AV_POST_SYNC_CKE_IDX = 1;
-constexpr uint16_t A2AV_OUTPUT_BIT = 1U << A2AV_OUTPUT_XN_ID;
-constexpr uint16_t A2AV_TOKEN_BIT = 1U << A2AV_TOKEN_XN_ID;
+constexpr uint16_t A2AV_OUTPUT_BIT = static_cast<uint16_t>(1U << A2AV_OUTPUT_XN_ID);
+constexpr uint16_t A2AV_TOKEN_BIT = static_cast<uint16_t>(1U << A2AV_TOKEN_XN_ID);
 constexpr uint16_t A2AV_PRE_SYNC_BITS = A2AV_OUTPUT_BIT | A2AV_TOKEN_BIT;
-constexpr uint16_t A2AV_POST_SYNC_BIT = 1U << 5;
+constexpr uint16_t A2AV_POST_SYNC_BIT = static_cast<uint16_t>(1U << 5);
 constexpr uint32_t A2AV_BITS_PER_EVENT = 16;
 constexpr uint64_t A2AV_MAX_TRANSPORT_SIZE = 256ULL * 1024ULL * 1024ULL;
 constexpr uint64_t A2AV_GROUP_MEMSLICE_SIZE = 32ULL * 1024ULL;
@@ -110,20 +110,23 @@ CcuResult CcuAlltoAllVMesh1DKernel(
     completedRankCount = 0;
     one = 1;
     maxTransportSize = A2AV_MAX_TRANSPORT_SIZE;
-    CCU_WHILE(completedRankCount != rankSize)
+    CCU_WHILE(completedRankCount != static_cast<uint64_t>(rankSize))
     {
         channelIdx = 0;
         for (uint32_t rankIdx = 0; rankIdx < rankSize; rankIdx++) {
             const uint32_t extBase = rankIdx * A2AV_EXT_FIELD_NUM;
             const uint32_t eventIdx = rankIdx / A2AV_BITS_PER_EVENT;
-            const uint16_t rankMask = 1U << (rankIdx % A2AV_BITS_PER_EVENT);
+            const uint16_t rankMask = static_cast<uint16_t>(1U << (rankIdx % A2AV_BITS_PER_EVENT));
             ccu::Variable& loopNum = extArgs[extBase + A2AV_LOOP_NUM_IDX];
             ccu::Variable& tailSize = extArgs[extBase + A2AV_TAIL_SIZE_IDX];
 
-            CCU_IF(loopNum == UINT64_MAX) { CCU_CHK_RET(ccu::EventRecord(events[eventIdx], rankMask)); }
-            CCU_IF(loopNum != UINT64_MAX)
+            CCU_IF(loopNum == static_cast<uint64_t>(UINT64_MAX))
             {
-                CCU_IF(loopNum == UINT64_MAX - 1U)
+                CCU_CHK_RET(ccu::EventRecord(events[eventIdx], rankMask));
+            }
+            CCU_IF(loopNum != static_cast<uint64_t>(UINT64_MAX))
+            {
+                CCU_IF(loopNum == static_cast<uint64_t>(UINT64_MAX - 1U))
                 {
                     if (rankIdx == rankId) {
                         CCU_IF(tailSize != 0) { CCU_CHK_RET(GroupCopy(ctx, localDst, src[rankIdx], tailGoSize)); }
@@ -139,7 +142,7 @@ CcuResult CcuAlltoAllVMesh1DKernel(
                     }
                     completedRankCount += one;
                 }
-                CCU_IF(loopNum != UINT64_MAX - 1U)
+                CCU_IF(loopNum != static_cast<uint64_t>(UINT64_MAX - 1U))
                 {
                     if (rankIdx == rankId) {
                         CCU_CHK_RET(GroupCopy(ctx, localDst, src[rankIdx], fullBlockGoSize));
