@@ -202,7 +202,7 @@ extern "C" __global__ __aicore__ void KernelTestFixpipe12()
 }
 #endif
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if __NPU_ARCH__ == 3510
 // __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const
 // FixpipeParamsArch3510<config.format>& intriParams);
 extern "C" __global__ __aicore__ void KernelTestFixpipe13()

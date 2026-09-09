@@ -282,15 +282,15 @@ __aicore__ inline void FixpipeL0cToL1(
     // LOC -> L1 only n direction need fixpipeTiling, m no need fixpipeTiling
     if (intriParams.reluEn == true && intriParams.preReluMode == ReluMode::NO_RELU) {
         return copy_matrix_cc_to_cbuf(
-            (__cbuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), 0, calNSize, intriParams.mSize,
-            intriParams.dstStride, intriParams.srcStride, 0, static_cast<uint8_t>(intriParams.preClipReluMode),
+            (__cbuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), calNSize, intriParams.mSize,
+            intriParams.dstStride, intriParams.srcStride, static_cast<uint8_t>(intriParams.preClipReluMode),
             intriParams.unitFlag, static_cast<uint64_t>(intriParams.quantPre), static_cast<uint8_t>(intriParams.reluEn),
             false, nz2ndEn, static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false,
             false, false, nz2dnEn);
     } else {
         return copy_matrix_cc_to_cbuf(
-            (__cbuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), 0, calNSize, intriParams.mSize,
-            intriParams.dstStride, intriParams.srcStride, 0, static_cast<uint8_t>(intriParams.preClipReluMode),
+            (__cbuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), calNSize, intriParams.mSize,
+            intriParams.dstStride, intriParams.srcStride, static_cast<uint8_t>(intriParams.preClipReluMode),
             intriParams.unitFlag, static_cast<uint64_t>(intriParams.quantPre),
             static_cast<uint8_t>(intriParams.preReluMode), false, nz2ndEn,
             static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false, false,
