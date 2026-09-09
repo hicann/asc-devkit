@@ -28,11 +28,11 @@
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
-将数据从Global Memory (GM)搬运到L1 Buffer时，通过调用该接口设置内层循环中相邻迭代数据块间的间隔。
+将数据从Global Memory（GM）搬运到L1 Buffer时，设置[asc_copy_gm2l1_align](asc_copy_gm2l1_align.md)循环填充模式内层循环中相邻迭代数据块的源和目的L1间隔。
 
-以源操作数搬运场景为例，如下图所示。
+外层循环步长和两层循环次数需分别通过[asc_set_gm2l1_loop2_stride](asc_set_gm2l1_loop2_stride.md)和[asc_set_gm2l1_loop_size](asc_set_gm2l1_loop_size.md)配置。
 
-![源操作数搬运场景示例](../figures/source_operand_move_example.png)
+本接口仅在AIC上生效。
 
 ## 函数原型
 
@@ -44,10 +44,10 @@ __aicore__ inline void asc_set_gm2l1_loop1_stride(uint64_t loop1_src_stride, uin
 
 **表1** 参数说明
 
-|参数名|输入/输出|描述|
-|------------|------------|-----------|
-| loop1_src_stride     | 输入     | 内层循环中相邻迭代源操作数的数据块间的间隔，单位为Byte，取值范围为[0,2^40]。|
-| loop1_dst_stride     | 输入     | 内层循环中相邻迭代目标操作数的数据块间的间隔，单位为Byte，取值范围为[0,2^21]，且必须32B对齐。|
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| loop1_src_stride | 输入 | 内层循环中相邻迭代源操作数的数据块间隔，单位为字节，取值范围为[0, $2^{40}-1$]。 |
+| loop1_dst_stride | 输入 | 内层循环中相邻迭代目的L1数据块间隔，单位为字节，取值范围为[0, $2^{21}-1$]，且必须32字节对齐。 |
 
 ## 返回值说明
 
@@ -59,24 +59,23 @@ PIPE_S
 
 ## 约束说明
 
-无
+- 本接口在非AIC上调用直接返回。
+- 配置仅由[asc_copy_gm2l1_align](asc_copy_gm2l1_align.md)循环填充模式取用；循环填充模式不支持左右填充。
+- `loop1_dst_stride`必须32字节对齐，即使`loop1_size`为`1`也生效。
 
 ## 调用示例
 
+完整的2×2 GM到L1循环搬运、L1到UB回读和Host侧逐字节校验示例请参见[asc_set_gm2l1_loop_size调用示例](asc_set_gm2l1_loop_size.md#调用示例)。
+
+以下代码配置内层循环中相邻数据块的源间隔为64B、目的L1间隔为32B：
+
 ```cpp
+// loop1执行2次，loop2执行2次。
 asc_set_gm2l1_loop_size(2, 2);
-asc_set_gm2l1_loop1_stride(96, 128);
-asc_set_gm2l1_loop2_stride(192, 288);
-constexpr uint32_t n_burst = 2;
-constexpr uint32_t len_burst = 2;
-constexpr uint8_t left_padding_count = 0;
-constexpr uint8_t right_padding_count = 0;
-constexpr bool data_select_bit = false;
-constexpr uint8_t l2_cache_ctl = 0;
-constexpr uint64_t burst_src_stride = 0;
-constexpr uint32_t burst_dst_stride = 0;
-// src表示源操作数的起始地址
-__cbuf__ half dst[256];
-asc_copy_gm2l1_align(dst, src, n_burst, len_burst,  left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl, burst_src_stride, burst_dst_stride);
+// 内层循环：相邻迭代在GM相隔64B，在L1相隔32B。
+asc_set_gm2l1_loop1_stride(64, 32);
+asc_set_gm2l1_loop2_stride(128, 64);
+asc_copy_gm2l1_align(dst, src, 1, 32, 0, 0, false, 4, 0, 32);
+// 搬运结束后复位循环次数。
 asc_set_gm2l1_loop_size(1, 1);
 ```

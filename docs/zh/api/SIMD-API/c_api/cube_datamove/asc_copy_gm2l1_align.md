@@ -199,7 +199,6 @@ constexpr uint32_t INPUT_BYTES = BURST_COUNT * BURST_BYTES;
 constexpr uint32_t NORMAL_OUTPUT_BYTES = BURST_COUNT * NORMAL_STRIDE;
 constexpr uint32_t COMPACT_OUTPUT_BYTES = 160;
 constexpr uint8_t PAD_BYTE = 0xA5;
-constexpr uint32_t PAD_DWORD = 0xA5A5A5A5;
 constexpr uint8_t LEFT_PADDING = 4;
 constexpr uint8_t RIGHT_PADDING = 12;
 constexpr int64_t CROSS_CORE_FLAG_ID = 0x8;
@@ -239,7 +238,8 @@ __global__ __mix__(1, 2) void asc_copy_gm2l1_align_modes_kernel(  // __mix__：�
     if ASC_IS_AIC {
         asc_sync_intra_wait(PIPE_MTE1, AIV_TO_AIC_SYNC_ID);
         asc_sync_block_wait(PIPE_MTE1, CROSS_CORE_FLAG_ID);
-        asc_set_gm2l1_pad(PAD_DWORD);
+        uint8_t PAD_VALUE = 0xA5;
+        asc_set_gm2l1_pad(*reinterpret_cast<uint8_t*>(&PAD_VALUE));
         if (mode == static_cast<uint32_t>(PaddingMode::NORMAL)) {
             // Normal：dst stride为64B，每个48B burst尾部用该burst首字节填充16B。
             asc_copy_gm2l1_align(l1, input, BURST_COUNT, BURST_BYTES, 0, 0, false,
