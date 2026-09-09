@@ -11,6 +11,7 @@
 #include "process_executor.h"
 
 #include "ascendc_tool_log.h"
+#include "file_utils.h"
 
 #include <algorithm>
 #include <array>
@@ -111,12 +112,12 @@ struct PosixSpawnResources {
 
 // Builds the null-terminated argv/envp layout required by posix_spawn. The
 // returned pointers remain valid only while the source strings are unchanged.
-std::vector<char*> BuildCStringPointers(const std::vector<std::string>& strings)
+std::vector<char*> BuildCStringPointers(std::vector<std::string>& strings)
 {
     std::vector<char*> pointers;
     pointers.reserve(strings.size() + 1U);
-    for (const std::string& string : strings) {
-        pointers.push_back(const_cast<char*>(string.c_str()));
+    for (std::string& string : strings) {
+        pointers.push_back(&string[0]);
     }
     pointers.push_back(nullptr);
     return pointers;
@@ -158,7 +159,10 @@ public:
             return false;
         }
         const int readFlags = fcntl(readFileDescriptor_.Get(), F_GETFL, 0);
-        if (readFlags < 0 || fcntl(readFileDescriptor_.Get(), F_SETFL, readFlags | O_NONBLOCK) != 0) {
+        if (readFlags < 0 ||
+            fcntl(
+                readFileDescriptor_.Get(), F_SETFL,
+                static_cast<int>(static_cast<unsigned int>(readFlags) | static_cast<unsigned int>(O_NONBLOCK))) != 0) {
             const int flagError = errno;
             ASCENDLOGE(
                 "Failed to make process output pipe nonblocking: fd=%d errno=%d message=%s", readFileDescriptor_.Get(),
@@ -218,7 +222,9 @@ private:
         if (!outputLog_) {
             // Mirroring is diagnostic only; a log I/O failure must not turn a
             // successfully running compiler process into an executor failure.
-            ASCENDLOGW("Failed to save process output; compilation will continue");
+            ASCENDLOGW(
+                "Failed to save process output; compilation will continue: executable=%s stream=%s",
+                executablePath_.c_str(), GetOutputKindName());
             outputLog_.close();
         }
     }
@@ -313,7 +319,8 @@ bool CanWaitForChildProcesses() noexcept
             std::strerror(sigactionError));
         return false;
     }
-    if (sigchldDisposition.sa_handler == SIG_IGN || (sigchldDisposition.sa_flags & SA_NOCLDWAIT) != 0) {
+    if (sigchldDisposition.sa_handler == SIG_IGN ||
+        (static_cast<unsigned int>(sigchldDisposition.sa_flags) & static_cast<unsigned int>(SA_NOCLDWAIT)) != 0U) {
         ASCENDLOGE("Process execution requires waitable children; restore the default SIGCHLD disposition and remove "
                    "SA_NOCLDWAIT before invoking ProcessExecutor");
         return false;
@@ -407,8 +414,19 @@ void OpenMirroredOutputLog(const std::string& outputLogFilePath, std::ofstream& 
     if (outputLogFilePath.empty()) {
         return;
     }
-    outputLog.open(outputLogFilePath, std::ios::out | std::ios::binary | std::ios::app);
-    if (outputLog.is_open()) {
+    try {
+        if (FileUtils::OpenRegularFileForWrite(outputLogFilePath, outputLog, std::ios::app)) {
+            return;
+        }
+    } catch (const std::exception& exception) {
+        ASCENDLOGW(
+            "Exception while opening process output log; compilation will continue: path=%s message=%s",
+            outputLogFilePath.c_str(), exception.what());
+        return;
+    } catch (...) {
+        ASCENDLOGW(
+            "Unknown exception while opening process output log; compilation will continue: path=%s",
+            outputLogFilePath.c_str());
         return;
     }
     ASCENDLOGW("Failed to open process output log; compilation will continue: path=%s", outputLogFilePath.c_str());
@@ -462,7 +480,8 @@ public:
         }
 
         std::vector<std::string> environment = BuildSpawnEnvironment(request_);
-        std::vector<char*> argumentPointers = BuildCStringPointers(request_.arguments);
+        std::vector<std::string> ownedArguments = request_.arguments;
+        std::vector<char*> argumentPointers = BuildCStringPointers(ownedArguments);
         std::vector<char*> environmentPointers = BuildCStringPointers(environment);
         startedAt_ = SteadyClock::now();
         const int spawnResult = posix_spawn(
@@ -541,7 +560,7 @@ public:
     }
 
 private:
-    pid_t WaitWithoutBlocking(int& waitStatus) noexcept
+    pid_t WaitWithoutBlocking(int& waitStatus) const noexcept
     {
         pid_t waitResult;
         do {

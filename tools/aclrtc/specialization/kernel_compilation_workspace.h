@@ -34,7 +34,7 @@ public:
     KernelCompilationWorkspace& operator=(const KernelCompilationWorkspace&) = delete;
 
     boost::filesystem::path GetWorktreePath() const;
-    aclError CreateOutputDirectoriesAndApplySourcePatches(const KernelCompilationPlan& compilationPlan);
+    aclError CreateOutputDirectoriesAndApplySourcePatches(const KernelCompilationPlan& compilationPlan) const;
     aclError CleanupWorktreeBeforeElfPublication();
 
 private:

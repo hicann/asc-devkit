@@ -206,7 +206,7 @@ aclError KernelCompilationPlanBuilder::BindManifestCommand(
 }
 
 aclError KernelCompilationPlanBuilder::BindLinkCommand(
-    const CompilationManifest& spec, KernelCompilationPlan& plan) const
+    const CompilationManifest& manifest, KernelCompilationPlan& plan) const
 {
     CompilationCommand linkCommand;
     std::set<fs::path> requiredOutputDirectories{outputDirectoryPath_};
@@ -219,14 +219,14 @@ aclError KernelCompilationPlanBuilder::BindLinkCommand(
     }
     linkCommand.executablePath = linkerPath;
 
-    for (const std::string& option : spec.linkOptions) {
+    for (const std::string& option : manifest.linkOptions) {
         std::string resolvedOption;
         if (!ExpandPathAndEnvironmentReferences(option, "link_options", resolvedOption)) {
             return ACLRTC_ERROR_FAILURE;
         }
         linkCommand.arguments.emplace_back(std::move(resolvedOption));
     }
-    for (const std::string& input : spec.linkInputs) {
+    for (const std::string& input : manifest.linkInputs) {
         std::string resolvedInput;
         if (!ExpandPathAndEnvironmentReferences(input, "link_inputs", resolvedInput)) {
             return ACLRTC_ERROR_FAILURE;

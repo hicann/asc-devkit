@@ -14,7 +14,6 @@
 #include "kernel_specialization_types.h"
 
 #include <chrono>
-#include <cstddef>
 #include <cstdint>
 
 namespace ascendc {

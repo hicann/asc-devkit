@@ -11,6 +11,8 @@
 #include <gtest/gtest.h>
 
 #include <fstream>
+#include <boost/filesystem.hpp>
+#include <sys/stat.h>
 #include <string>
 #include <vector>
 
@@ -21,6 +23,7 @@
 
 namespace ascendc {
 namespace {
+namespace fs = boost::filesystem;
 
 using asc_compile_exporter_test::LstatPathExists;
 using asc_compile_exporter_test::ModuleTest;
@@ -92,6 +95,82 @@ TEST_F(ModuleTest, FileUtilsInspectsAndResolvesPaths)
     EXPECT_FALSE(FileUtils::ResolveSubdirectory("/tmp", root_, resolved));
 }
 
+TEST_F(ModuleTest, FileUtilsResolvesNewOutputUnderCanonicalParentWithoutCreatingIt)
+{
+    const std::string directory = FileUtils::JoinPath(root_, "output");
+    const std::string alias = FileUtils::JoinPath(root_, "output-alias");
+    ASSERT_TRUE(FileUtils::CreateDirectories(directory));
+    ASSERT_EQ(symlink(directory.c_str(), alias.c_str()), 0);
+    std::string resolved;
+    ASSERT_TRUE(FileUtils::ResolveRegularFilePathForWrite(alias + "/./new.log", resolved));
+    EXPECT_EQ(resolved, directory + "/new.log");
+    EXPECT_FALSE(FileUtils::PathExists(resolved));
+    WriteTestFile(resolved, "keep");
+    ASSERT_TRUE(FileUtils::ResolveRegularFilePathForWrite(alias + "/new.log", resolved));
+    EXPECT_EQ(ReadTestFile(resolved), "keep");
+}
+
+TEST_F(ModuleTest, FileUtilsRejectsInvalidOutputNamesAndSpecialFiles)
+{
+    const std::string regular = FileUtils::JoinPath(root_, "regular");
+    const std::string link = FileUtils::JoinPath(root_, "link");
+    const std::string danglingLink = FileUtils::JoinPath(root_, "dangling");
+    WriteTestFile(regular, "keep");
+    ASSERT_EQ(symlink(regular.c_str(), link.c_str()), 0);
+    ASSERT_EQ(symlink("missing", danglingLink.c_str()), 0);
+    const std::vector<std::string> invalidPaths{
+        "",
+        root_,
+        root_ + "/.",
+        root_ + "/..",
+        root_ + "/missing/file",
+        regular + "/file",
+        link,
+        danglingLink,
+        "/dev/null",
+        regular + std::string("\0suffix", 7U),
+        root_ + "/" + std::string(5000U, 'x')};
+    for (const std::string& path : invalidPaths) {
+        std::string resolved = "stale";
+        EXPECT_FALSE(FileUtils::ResolveRegularFilePathForWrite(path, resolved)) << path;
+        EXPECT_TRUE(resolved.empty()) << path;
+    }
+    EXPECT_EQ(ReadTestFile(regular), "keep");
+}
+
+TEST_F(ModuleTest, FileUtilsOpensCanonicalInputAndRejectsInvalidInputWithoutOpening)
+{
+    const std::string source = root_ + "/source";
+    const std::string alias = root_ + "/alias";
+    WriteTestFile(source, "source-text");
+    ASSERT_EQ(symlink(source.c_str(), alias.c_str()), 0);
+    std::ifstream input;
+    ASSERT_TRUE(FileUtils::OpenRegularFileForRead(alias, input));
+    std::string text;
+    input >> text;
+    EXPECT_EQ(text, "source-text");
+    EXPECT_FALSE(FileUtils::OpenRegularFileForRead(source, input));
+    input.close();
+    for (const std::string& path :
+         std::vector<std::string>{"", root_, root_ + "/missing", source + std::string("\0x", 2U)}) {
+        std::ifstream invalidInput;
+        EXPECT_FALSE(FileUtils::OpenRegularFileForRead(path, invalidInput));
+        EXPECT_FALSE(invalidInput.is_open());
+    }
+}
+
+TEST_F(ModuleTest, FileUtilsWritesAndAppendsTextThroughTheSameCheckedOpen)
+{
+    const std::string destination = root_ + "/log";
+    const std::string alias = root_ + "/alias";
+    ASSERT_TRUE(FileUtils::WriteTextFile(destination, "first", std::ios::trunc));
+    ASSERT_TRUE(FileUtils::WriteTextFile(destination, "second", std::ios::app));
+    EXPECT_EQ(ReadTestFile(destination), "firstsecond");
+    ASSERT_EQ(symlink(destination.c_str(), alias.c_str()), 0);
+    EXPECT_FALSE(FileUtils::WriteTextFile(alias, "unexpected", std::ios::trunc));
+    EXPECT_EQ(ReadTestFile(destination), "firstsecond");
+}
+
 TEST_F(ModuleTest, FileUtilsCreatesAndRemovesDirectoryTrees)
 {
     EXPECT_TRUE(FileUtils::CreateDirectories(""));
@@ -139,6 +218,123 @@ TEST_F(ModuleTest, FileUtilsReadsRegularFilesWithinSizeLimit)
     const std::string link = FileUtils::JoinPath(root_, "binary-link");
     ASSERT_EQ(symlink(binary.c_str(), link.c_str()), 0);
     EXPECT_FALSE(FileUtils::ReadRegularFile(link, 100U, data));
+}
+
+TEST_F(ModuleTest, FileUtilsWritesTextAtomicallyWithPrivatePermissions)
+{
+    const std::string destination = root_ + "/output";
+    WriteTestFile(destination, "original");
+    const std::string text("a\0b", 3U);
+    const mode_t previousMask = umask(0022);
+    const bool written = FileUtils::WriteTextFileAtomically(destination, text);
+    umask(previousMask);
+    ASSERT_TRUE(written);
+    EXPECT_EQ(ReadTestFile(destination), text);
+    struct stat status {};
+    ASSERT_EQ(stat(destination.c_str(), &status), 0);
+    EXPECT_EQ(status.st_mode & 0777U, 0600U);
+}
+
+TEST_F(ModuleTest, FileUtilsRemovesTemporaryCopyOnCallbackException)
+{
+    const std::string source = root_ + "/source";
+    const std::string destination = root_ + "/output";
+    WriteTestFile(source, "new");
+    WriteTestFile(destination, "original");
+    EXPECT_THROW(
+        FileUtils::CopyFileAtomically(
+            source, destination, []() -> bool { throw std::runtime_error("simulated cleanup failure"); }),
+        std::runtime_error);
+    EXPECT_EQ(ReadTestFile(destination), "original");
+    EXPECT_EQ(std::distance(fs::directory_iterator(root_), fs::directory_iterator()), 2);
+}
+
+TEST_F(ModuleTest, FileUtilsCopiesBeforeCleanupAndReplacesAfterCleanup)
+{
+    const std::string source = root_ + "/worktree/source";
+    const std::string destination = root_ + "/output";
+    const std::string bytes(150000U, 'x');
+    WriteTestFile(source, bytes);
+    WriteTestFile(destination, "original");
+    const mode_t previousMask = umask(0027);
+    const bool copied = FileUtils::CopyFileAtomically(source, destination, [&]() {
+        EXPECT_EQ(ReadTestFile(destination), "original");
+        return FileUtils::RemoveAll(root_ + "/worktree");
+    });
+    umask(previousMask);
+    ASSERT_TRUE(copied);
+    EXPECT_EQ(ReadTestFile(destination), bytes);
+    struct stat status {};
+    ASSERT_EQ(stat(destination.c_str(), &status), 0);
+    EXPECT_EQ(status.st_mode & 0777U, 0640U);
+}
+
+TEST_F(ModuleTest, FileUtilsUsesOriginalCanonicalParentForAtomicCopy)
+{
+    const std::string source = root_ + "/source";
+    const std::string first = root_ + "/first";
+    const std::string second = root_ + "/second";
+    const std::string alias = root_ + "/alias";
+    WriteTestFile(source, "new");
+    ASSERT_TRUE(FileUtils::CreateDirectories(first));
+    ASSERT_TRUE(FileUtils::CreateDirectories(second));
+    ASSERT_EQ(symlink(first.c_str(), alias.c_str()), 0);
+    ASSERT_TRUE(FileUtils::CopyFileAtomically(source, alias + "/output", [&]() {
+        return unlink(alias.c_str()) == 0 && symlink(second.c_str(), alias.c_str()) == 0;
+    }));
+    EXPECT_EQ(ReadTestFile(first + "/output"), "new");
+    EXPECT_FALSE(FileUtils::PathExists(second + "/output"));
+}
+
+TEST_F(ModuleTest, FileUtilsRemovesTemporaryCopyWhenRenameFails)
+{
+    const std::string source = root_ + "/source";
+    const std::string destination = root_ + "/output";
+    WriteTestFile(source, "new");
+    EXPECT_FALSE(FileUtils::CopyFileAtomically(
+        source, destination, [&]() { return FileUtils::CreateDirectories(destination); }));
+    EXPECT_TRUE(FileUtils::IsDirectory(destination));
+    EXPECT_EQ(std::distance(fs::directory_iterator(root_), fs::directory_iterator()), 2);
+}
+
+TEST_F(ModuleTest, FileUtilsKeepsExistingFilesWhenTemporaryNamesCollide)
+{
+    const std::string destination = root_ + "/output";
+    const std::string victim = root_ + "/victim";
+    WriteTestFile(victim, "preserve");
+    for (uint64_t sequence = 0U; sequence < 128U; ++sequence) {
+        const std::string collision =
+            destination + ".asc_tmp_" + std::to_string(getpid()) + "_" + std::to_string(sequence);
+        ASSERT_EQ(symlink(victim.c_str(), collision.c_str()), 0);
+    }
+    EXPECT_FALSE(FileUtils::WriteTextFileAtomically(destination, "unexpected"));
+    EXPECT_EQ(ReadTestFile(victim), "preserve");
+    EXPECT_EQ(std::distance(fs::directory_iterator(root_), fs::directory_iterator()), 129);
+}
+
+TEST_F(ModuleTest, FileUtilsRejectsMissingCopySourceBeforeCallingCleanup)
+{
+    bool cleanupCalled = false;
+    EXPECT_FALSE(FileUtils::CopyFileAtomically(root_ + "/missing", root_ + "/output", [&]() {
+        cleanupCalled = true;
+        return true;
+    }));
+    EXPECT_FALSE(cleanupCalled);
+    const std::string source = root_ + "/source";
+    WriteTestFile(source, "new");
+    ASSERT_TRUE(FileUtils::CopyFileAtomically(source, root_ + "/output"));
+    EXPECT_EQ(ReadTestFile(root_ + "/output"), "new");
+}
+
+TEST_F(ModuleTest, FileUtilsKeepsDestinationAndCleansTemporaryCopyWhenCallbackReturnsFalse)
+{
+    const std::string source = root_ + "/source";
+    const std::string destination = root_ + "/output";
+    WriteTestFile(source, "new");
+    WriteTestFile(destination, "original");
+    EXPECT_FALSE(FileUtils::CopyFileAtomically(source, destination, []() { return false; }));
+    EXPECT_EQ(ReadTestFile(destination), "original");
+    EXPECT_EQ(std::distance(fs::directory_iterator(root_), fs::directory_iterator()), 2);
 }
 
 TEST_F(ModuleTest, FileUtilsFinalizesStreamsAndCopiesFiles)

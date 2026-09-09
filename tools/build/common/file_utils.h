@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <fstream>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -34,6 +35,18 @@ public:
     static bool IsRegularFile(const std::string& path) noexcept;
     static bool IsSymlink(const std::string& path) noexcept;
     static bool ResolveCanonicalPath(const std::string& path, std::string& resolved);
+    // Read paths may resolve symlinks; callers requiring symlink rejection must
+    // check that policy separately (as ReadRegularFile does).
+    static bool ResolveRegularFilePathForRead(const std::string& path, std::string& resolved);
+    // Streams are borrowed and must be closed on entry; callers own their lifetime.
+    static bool OpenRegularFileForRead(const std::string& path, std::ifstream& borrowedInput);
+    static bool OpenRegularFileForWrite(
+        const std::string& path, std::ofstream& borrowedOutput, std::ios::openmode writeMode);
+    static bool WriteTextFile(const std::string& path, const std::string& text, std::ios::openmode writeMode);
+
+    // Resolves an existing regular file or a new filename under an existing canonical parent.
+    // Rejects symlinks and special files at the final component; does not create the file.
+    static bool ResolveRegularFilePathForWrite(const std::string& path, std::string& resolved);
     static bool ResolveDirectory(const std::string& path, std::string& resolved);
     static bool ResolveSubdirectory(const std::string& path, const std::string& root, std::string& resolved);
 
@@ -42,6 +55,13 @@ public:
 
     static bool ReadRegularFile(const std::string& path, uintmax_t maximum, std::vector<uint8_t>& data);
     static bool FinalizeOutput(std::ofstream& output);
+    static bool WriteTextFileAtomically(const std::string& destinationPath, const std::string& text);
+    // Runs beforeReplacement after copying and closing both files, before replacing
+    // the destination. A false result or exception leaves the destination unchanged;
+    // exceptions propagate after temporary-file cleanup. An empty callback is a no-op.
+    static bool CopyFileAtomically(
+        const std::string& sourcePath, const std::string& destinationPath,
+        const std::function<bool()>& beforeReplacement = {});
     static bool CopyFile(const std::string& source, const std::string& destination) noexcept;
 };
 

@@ -37,7 +37,7 @@ private:
 
     aclError RunSpecializationWithMaterializedResource(
         const NormalizedKernelSpecializationRequest& specializationRequest,
-        MaterializedKernelCompilationResource compilationResource);
+        MaterializedKernelCompilationResource compilationResource) const;
 
     static aclError ReportSpecializationStatus(
         const NormalizedKernelSpecializationRequest& specializationRequest,

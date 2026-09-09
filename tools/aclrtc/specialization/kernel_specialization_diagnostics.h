@@ -44,8 +44,6 @@ public:
         const boost::filesystem::path& outputElfPath, KernelElfPublicationStatus publicationStatus) noexcept;
 
 private:
-    void AppendTextToDiagnosticFile(const boost::filesystem::path& filePath, const std::string& text) noexcept;
-
     std::string specializationSessionId_;
     bool diagnosticsEnabled_{false};
     boost::filesystem::path resourceWorktreePath_;

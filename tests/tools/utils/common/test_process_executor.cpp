@@ -228,6 +228,22 @@ TEST(ProcessExecutorTest, MirrorsStandardOutputAndStandardErrorToOneLogFile)
     fs::remove(outputLogPath, ignoredError);
 }
 
+TEST(ProcessExecutorTest, DoesNotAppendOutputThroughSymlink)
+{
+    const fs::path root = fs::temp_directory_path() / fs::unique_path("process_executor_symlink_%%%%-%%%%");
+    fs::create_directories(root);
+    const fs::path victim = root / "existing.txt";
+    const fs::path log = root / "compile.log";
+    std::ofstream(victim.string()) << "preserve";
+    fs::create_symlink(victim, log);
+    ProcessExecutorRequest request = CreateProcessRequest({"/usr/bin/printf", "unexpected"});
+    request.mirroredOutputLogFilePath = log.string();
+
+    EXPECT_TRUE(ProcessExecutor::Execute(request).HasSuccessfulExit());
+    EXPECT_EQ(ReadTextFile(victim), "preserve");
+    fs::remove_all(root);
+}
+
 TEST(ProcessExecutorTest, DrainsProcessOutputLargerThanPipeCapacity)
 {
     constexpr uintmax_t outputByteCount = 200000U;

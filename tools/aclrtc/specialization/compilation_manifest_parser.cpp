@@ -21,15 +21,6 @@ using Json = nlohmann::json;
 constexpr char SCHEMA_VERSION[] = "1.0";
 constexpr char OPTIONS_PREFIX[] = "${options:";
 
-bool ReadBoundedNonnegativeInteger(const Json& value, uint64_t maximum, uint64_t& result)
-{
-    if (!value.is_number_integer() || (!value.is_number_unsigned() && value.get<int64_t>() < 0)) {
-        return false;
-    }
-    result = value.get<uint64_t>();
-    return result <= maximum;
-}
-
 } // namespace
 
 aclError CompilationManifestParser::ParseConstants(const Json& kernel, std::vector<ManifestConstant>& constants) const
@@ -71,54 +62,57 @@ aclError CompilationManifestParser::ExpandOptionsReference(
 
 aclError CompilationManifestParser::ParseCommand(
     const Json& command, const std::string& objectName, ManifestObjectKind objectKind, size_t index,
-    ManifestCommand& spec) const
+    ManifestCommand& parsedCommand) const
 {
     const std::string type = command.at("type").get<std::string>();
     if (type == "compile") {
-        spec.commandKind = CompilationCommandKind::Compile;
+        parsedCommand.commandKind = CompilationCommandKind::Compile;
     } else if (type == "objcopy") {
-        spec.commandKind = CompilationCommandKind::ObjectCopy;
+        parsedCommand.commandKind = CompilationCommandKind::ObjectCopy;
     } else {
         ASCENDLOGE(
             "Manifest object %s command[%zu] has unsupported type '%s'", objectName.c_str(), index, type.c_str());
         return ACLRTC_ERROR_FAILURE;
     }
-    spec.objectKind = objectKind;
-    spec.diagnosticLabel = objectName + "/" + type + "[" + std::to_string(index) + "]";
+    parsedCommand.objectKind = objectKind;
+    parsedCommand.diagnosticLabel = objectName + "/" + type + "[" + std::to_string(index) + "]";
     if (command.contains("stage")) {
-        uint64_t stage = 0U;
-        if (!ReadBoundedNonnegativeInteger(command.at("stage"), std::numeric_limits<uint32_t>::max(), stage)) {
-            ASCENDLOGE("Manifest command %s has invalid stage", spec.diagnosticLabel.c_str());
+        const Json& stage = command.at("stage");
+        if (!stage.is_number_integer() || (!stage.is_number_unsigned() && stage.get<int64_t>() < 0) ||
+            stage.get<uint64_t>() > std::numeric_limits<uint32_t>::max()) {
+            ASCENDLOGE(
+                "Manifest command %s stage must be an integer in the uint32_t range",
+                parsedCommand.diagnosticLabel.c_str());
             return ACLRTC_ERROR_FAILURE;
         }
-        spec.parallelStage = static_cast<uint32_t>(stage);
+        parsedCommand.parallelStage = stage.get<uint32_t>();
     }
     const auto argv = command.at("cmd").get<std::vector<std::string>>();
     if (argv.empty()) {
-        ASCENDLOGE("Manifest command %s has an empty cmd array", spec.diagnosticLabel.c_str());
+        ASCENDLOGE("Manifest command %s has an empty cmd array", parsedCommand.diagnosticLabel.c_str());
         return ACLRTC_ERROR_FAILURE;
     }
     std::vector<std::string> expandedArguments;
     for (size_t argumentIndex = 0U; argumentIndex < argv.size(); ++argumentIndex) {
         const aclError result = ExpandOptionsReference(
-            argv[argumentIndex], spec.diagnosticLabel + ".cmd[" + std::to_string(argumentIndex) + "]",
+            argv[argumentIndex], parsedCommand.diagnosticLabel + ".cmd[" + std::to_string(argumentIndex) + "]",
             expandedArguments);
         if (result != ACLRTC_SUCCESS) {
             return result;
         }
     }
     if (expandedArguments.empty()) {
-        ASCENDLOGE("Manifest command %s expands to an empty cmd array", spec.diagnosticLabel.c_str());
+        ASCENDLOGE("Manifest command %s expands to an empty cmd array", parsedCommand.diagnosticLabel.c_str());
         return ACLRTC_ERROR_FAILURE;
     }
-    spec.executable = std::move(expandedArguments.front());
+    parsedCommand.executable = std::move(expandedArguments.front());
     expandedArguments.erase(expandedArguments.begin());
-    spec.arguments = std::move(expandedArguments);
+    parsedCommand.arguments = std::move(expandedArguments);
     return ACLRTC_SUCCESS;
 }
 
 aclError CompilationManifestParser::ParseSelectedObjects(
-    const Json& kernel, bool enableSuperKernel, CompilationManifest& spec) const
+    const Json& kernel, bool enableSuperKernel, CompilationManifest& parsedManifest) const
 {
     bool foundBasic = false;
     bool foundSuperKernel = false;
@@ -154,10 +148,10 @@ aclError CompilationManifestParser::ParseSelectedObjects(
             if (result != ACLRTC_SUCCESS) {
                 return result;
             }
-            spec.commands.emplace_back(std::move(command));
+            parsedManifest.commands.emplace_back(std::move(command));
         }
         const auto outputs = object.at("outputs").get<std::vector<std::string>>();
-        spec.linkInputs.insert(spec.linkInputs.end(), outputs.begin(), outputs.end());
+        parsedManifest.linkInputs.insert(parsedManifest.linkInputs.end(), outputs.begin(), outputs.end());
     }
     if (!foundBasic) {
         ASCENDLOGE("Selected kernel is missing a required basic object");

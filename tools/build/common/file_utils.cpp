@@ -11,6 +11,12 @@
 #include "file_utils.h"
 
 #include <limits>
+#include <algorithm>
+#include <atomic>
+#include <cerrno>
+#include <cstdio>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/system/error_code.hpp>
@@ -21,6 +27,203 @@ namespace ascendc {
 namespace {
 
 namespace fs = boost::filesystem;
+
+// Owns a same-directory temporary file until replacement succeeds. Destruction
+// removes any unpublished file, including during exception unwinding.
+class AtomicFileWriter final {
+public:
+    AtomicFileWriter() = default;
+    ~AtomicFileWriter() noexcept;
+    AtomicFileWriter(const AtomicFileWriter&) = delete;
+    AtomicFileWriter& operator=(const AtomicFileWriter&) = delete;
+
+    // Each object writes one temporary file. Success means all I/O is complete and
+    // all descriptors are closed; the destination remains untouched until ReplaceDestinationAtomically succeeds.
+    bool WriteTextToTemporaryFile(const std::string& destinationPath, const std::string& text);
+    bool CopyFileToTemporaryFile(const std::string& sourcePath, const std::string& destinationPath);
+    bool ReplaceDestinationAtomically() noexcept;
+
+private:
+    int32_t CreateUniqueTemporaryFile(const std::string& destinationPath, mode_t permissions);
+
+    std::string canonicalDestinationPath_;
+    std::string ownedTemporaryFilePath_;
+    bool ownsTemporaryFile_{false};
+    bool temporaryFileWriteSucceeded_{false};
+};
+
+constexpr size_t FILE_COPY_BUFFER_BYTES = 64U * 1024U;
+
+class OwnedFileDescriptor final {
+public:
+    explicit OwnedFileDescriptor(int32_t descriptor) noexcept : descriptor_(descriptor) {}
+    ~OwnedFileDescriptor() noexcept { (void)Close(); }
+    OwnedFileDescriptor(const OwnedFileDescriptor&) = delete;
+    OwnedFileDescriptor& operator=(const OwnedFileDescriptor&) = delete;
+
+    int32_t Get() const noexcept { return descriptor_; }
+    bool Close() noexcept
+    {
+        if (descriptor_ < 0) {
+            return true;
+        }
+        const int32_t descriptor = descriptor_;
+        descriptor_ = -1;
+        if (close(descriptor) != 0) {
+            ASCENDLOGE("Failed to close file descriptor: fd=%d errno=%d", descriptor, errno);
+            return false;
+        }
+        return true;
+    }
+
+private:
+    int32_t descriptor_;
+};
+
+bool WriteAllBytes(int32_t borrowedFileDescriptor, const char* data, size_t byteCount) noexcept
+{
+    size_t writtenByteCount = 0U;
+    while (writtenByteCount < byteCount) {
+        const size_t chunkSize = std::min(byteCount - writtenByteCount, FILE_COPY_BUFFER_BYTES);
+        const ssize_t writeResult = write(borrowedFileDescriptor, data + writtenByteCount, chunkSize);
+        if (writeResult < 0 && errno == EINTR) {
+            continue;
+        }
+        if (writeResult <= 0) {
+            ASCENDLOGE(
+                "Failed to write temporary file: fd=%d written=%zu requested=%zu errno=%d", borrowedFileDescriptor,
+                writtenByteCount, byteCount, writeResult < 0 ? errno : 0);
+            return false;
+        }
+        writtenByteCount += static_cast<size_t>(writeResult);
+    }
+    return true;
+}
+
+bool CopyAllBytes(int32_t borrowedSourceDescriptor, int32_t borrowedDestinationDescriptor) noexcept
+{
+    char buffer[FILE_COPY_BUFFER_BYTES];
+    while (true) {
+        const ssize_t readByteCount = read(borrowedSourceDescriptor, buffer, sizeof(buffer));
+        if (readByteCount == 0) {
+            return true;
+        }
+        if (readByteCount < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            ASCENDLOGE("Failed to read copy source: fd=%d errno=%d", borrowedSourceDescriptor, errno);
+            return false;
+        }
+        if (!WriteAllBytes(borrowedDestinationDescriptor, buffer, static_cast<size_t>(readByteCount))) {
+            return false;
+        }
+    }
+}
+
+AtomicFileWriter::~AtomicFileWriter() noexcept
+{
+    if (ownsTemporaryFile_ && unlink(ownedTemporaryFilePath_.c_str()) != 0 && errno != ENOENT) {
+        ASCENDLOGW(
+            "Failed to remove unpublished temporary file: path=%s errno=%d", ownedTemporaryFilePath_.c_str(), errno);
+    }
+}
+
+int32_t AtomicFileWriter::CreateUniqueTemporaryFile(const std::string& destinationPath, mode_t permissions)
+{
+    if (!canonicalDestinationPath_.empty()) {
+        ASCENDLOGE("File replacement has already been prepared");
+        return -1;
+    }
+    if (!FileUtils::ResolveRegularFilePathForWrite(destinationPath, canonicalDestinationPath_)) {
+        return -1;
+    }
+    constexpr uint32_t maxCreationAttempts = 32U;
+    static std::atomic<uint64_t> temporaryFileSequence{0};
+    for (uint32_t attempt = 0U; attempt < maxCreationAttempts; ++attempt) {
+        // Allocate the cleanup path before acquiring the descriptor. O_EXCL
+        // rejects collisions without touching existing files or symlinks.
+        ownedTemporaryFilePath_ = canonicalDestinationPath_ + ".asc_tmp_" + std::to_string(getpid()) + "_" +
+                                  std::to_string(temporaryFileSequence.fetch_add(1U, std::memory_order_relaxed));
+        const int32_t descriptor =
+            open(ownedTemporaryFilePath_.c_str(), O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, permissions);
+        if (descriptor >= 0) {
+            ownsTemporaryFile_ = true;
+            return descriptor;
+        }
+        if (errno != EEXIST) {
+            break;
+        }
+    }
+    ASCENDLOGE(
+        "Failed to create temporary output file: destination=%s temporary=%s errno=%d", destinationPath.c_str(),
+        ownedTemporaryFilePath_.c_str(), errno);
+    return -1;
+}
+
+bool AtomicFileWriter::WriteTextToTemporaryFile(const std::string& destinationPath, const std::string& text)
+{
+    constexpr mode_t privateTextPermissions = 0600;
+    OwnedFileDescriptor output(CreateUniqueTemporaryFile(destinationPath, privateTextPermissions));
+    if (output.Get() < 0) {
+        return false;
+    }
+    const bool writeSucceeded = WriteAllBytes(output.Get(), text.data(), text.size());
+    const bool closeSucceeded = output.Close();
+    temporaryFileWriteSucceeded_ = writeSucceeded && closeSucceeded;
+    if (!temporaryFileWriteSucceeded_) {
+        ASCENDLOGE(
+            "Failed to prepare temporary output file: destination=%s temporary=%s", destinationPath.c_str(),
+            ownedTemporaryFilePath_.c_str());
+    }
+    return temporaryFileWriteSucceeded_;
+}
+
+bool AtomicFileWriter::CopyFileToTemporaryFile(const std::string& sourcePath, const std::string& destinationPath)
+{
+    std::string canonicalSourcePath;
+    if (!FileUtils::ResolveRegularFilePathForRead(sourcePath, canonicalSourcePath)) {
+        return false;
+    }
+    OwnedFileDescriptor input(open(canonicalSourcePath.c_str(), O_RDONLY | O_CLOEXEC));
+    if (input.Get() < 0) {
+        ASCENDLOGE("Failed to open copy source: path=%s errno=%d", sourcePath.c_str(), errno);
+        return false;
+    }
+    // open applies the caller's umask, preserving ordinary output-file permissions.
+    constexpr mode_t copiedFilePermissions = 0644;
+    OwnedFileDescriptor output(CreateUniqueTemporaryFile(destinationPath, copiedFilePermissions));
+    if (output.Get() < 0) {
+        return false;
+    }
+    const bool copySucceeded = CopyAllBytes(input.Get(), output.Get());
+    const bool sourceCloseSucceeded = input.Close();
+    const bool outputCloseSucceeded = output.Close();
+    temporaryFileWriteSucceeded_ = copySucceeded && sourceCloseSucceeded && outputCloseSucceeded;
+    if (!temporaryFileWriteSucceeded_) {
+        ASCENDLOGE(
+            "Failed to prepare file copy: source=%s destination=%s temporary=%s", sourcePath.c_str(),
+            destinationPath.c_str(), ownedTemporaryFilePath_.c_str());
+    }
+    return temporaryFileWriteSucceeded_;
+}
+
+bool AtomicFileWriter::ReplaceDestinationAtomically() noexcept
+{
+    if (!temporaryFileWriteSucceeded_) {
+        ASCENDLOGE(
+            "Cannot replace destination before temporary file write succeeds: destination=%s",
+            canonicalDestinationPath_.c_str());
+        return false;
+    }
+    if (rename(ownedTemporaryFilePath_.c_str(), canonicalDestinationPath_.c_str()) != 0) {
+        ASCENDLOGE("Failed to replace destination file: path=%s errno=%d", canonicalDestinationPath_.c_str(), errno);
+        return false;
+    }
+    ownsTemporaryFile_ = false;
+    temporaryFileWriteSucceeded_ = false;
+    return true;
+}
 
 } // namespace
 
@@ -137,6 +340,112 @@ bool FileUtils::ResolveCanonicalPath(const std::string& path, std::string& resol
     return true;
 }
 
+bool FileUtils::ResolveRegularFilePathForRead(const std::string& path, std::string& resolved)
+{
+    resolved.clear();
+    if (path.empty() || path.find('\0') != std::string::npos) {
+        ASCENDLOGE("Input file path must be nonempty and contain no embedded NUL");
+        return false;
+    }
+    if (!ResolveCanonicalPath(path, resolved)) {
+        return false;
+    }
+    if (!IsRegularFile(resolved)) {
+        ASCENDLOGE("Rejected non-regular input file: path=%s", path.c_str());
+        resolved.clear();
+        return false;
+    }
+    return true;
+}
+
+bool FileUtils::OpenRegularFileForRead(const std::string& path, std::ifstream& borrowedInput)
+{
+    std::string canonicalPath;
+    if (borrowedInput.is_open()) {
+        ASCENDLOGE("Cannot open file using an already open stream: path=%s", path.c_str());
+        return false;
+    }
+    if (!ResolveRegularFilePathForRead(path, canonicalPath)) {
+        return false;
+    }
+    borrowedInput.open(canonicalPath, std::ios::in | std::ios::binary);
+    if (!borrowedInput) {
+        ASCENDLOGE("Failed to open regular input file: path=%s", path.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool FileUtils::OpenRegularFileForWrite(
+    const std::string& path, std::ofstream& borrowedOutput, std::ios::openmode writeMode)
+{
+    std::string canonicalPath;
+    if (borrowedOutput.is_open()) {
+        ASCENDLOGE("Cannot open file using an already open stream: path=%s", path.c_str());
+        return false;
+    }
+    if (!ResolveRegularFilePathForWrite(path, canonicalPath)) {
+        return false;
+    }
+    borrowedOutput.open(canonicalPath, std::ios::out | std::ios::binary | writeMode);
+    if (!borrowedOutput) {
+        ASCENDLOGE("Failed to open regular output file: path=%s", path.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool FileUtils::WriteTextFile(const std::string& path, const std::string& text, std::ios::openmode writeMode)
+{
+    std::ofstream output;
+    if (!OpenRegularFileForWrite(path, output, writeMode)) {
+        return false;
+    }
+    output << text;
+    if (!FinalizeOutput(output)) {
+        ASCENDLOGE("Failed to finish writing text file: path=%s", path.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool FileUtils::ResolveRegularFilePathForWrite(const std::string& path, std::string& resolved)
+{
+    resolved.clear();
+    if (path.empty() || path.find('\0') != std::string::npos) {
+        ASCENDLOGE("Output file path must be nonempty and contain no embedded NUL");
+        return false;
+    }
+    const fs::path inputPath(path);
+    const fs::path filename = inputPath.filename();
+    if (filename.empty() || filename == "." || filename == "..") {
+        ASCENDLOGE("Output path must name a file: path=%s", path.c_str());
+        return false;
+    }
+    const std::string parentPath = inputPath.has_parent_path() ? inputPath.parent_path().string() : ".";
+    std::string canonicalParentPath;
+    if (!ResolveCanonicalPath(parentPath, canonicalParentPath)) {
+        return false;
+    }
+    boost::system::error_code error;
+    if (!fs::is_directory(fs::path(canonicalParentPath), error) || error) {
+        ASCENDLOGE(
+            "Failed to resolve output parent directory: path=%s error=%d message=%s", path.c_str(), error.value(),
+            error ? error.message().c_str() : "parent is not a directory");
+        return false;
+    }
+    const fs::path candidate = fs::path(canonicalParentPath) / filename;
+    const fs::file_status status = fs::symlink_status(candidate, error);
+    if (status.type() != fs::file_not_found && (error || !fs::is_regular_file(status))) {
+        ASCENDLOGE(
+            "Rejected output file: path=%s error=%d message=%s", path.c_str(), error.value(),
+            error ? error.message().c_str() : "output is not a regular file");
+        return false;
+    }
+    resolved = candidate.string();
+    return true;
+}
+
 bool FileUtils::ResolveDirectory(const std::string& path, std::string& resolved)
 {
     ASCENDLOGD("Resolving directory: path=%s", path.c_str());
@@ -152,24 +461,23 @@ bool FileUtils::ResolveDirectory(const std::string& path, std::string& resolved)
         resolved.clear();
         return false;
     }
-    const fs::path canonical = fs::canonical(fs::path(path), error);
-    if (error) {
-        ASCENDLOGE("Failed to resolve directory: path=%s error=%s", path.c_str(), error.message().c_str());
+    std::string canonicalPath;
+    if (!ResolveCanonicalPath(path, canonicalPath)) {
         resolved.clear();
         return false;
     }
-    if (!fs::is_directory(canonical, error) || error) {
+    if (!fs::is_directory(fs::path(canonicalPath), error) || error) {
         if (error) {
             ASCENDLOGE(
-                "Failed to inspect resolved directory: path=%s error=%s", canonical.string().c_str(),
+                "Failed to inspect resolved directory: path=%s error=%s", canonicalPath.c_str(),
                 error.message().c_str());
         } else {
-            ASCENDLOGE("Resolved path is not a directory: path=%s resolved=%s", path.c_str(), canonical.c_str());
+            ASCENDLOGE("Resolved path is not a directory: path=%s resolved=%s", path.c_str(), canonicalPath.c_str());
         }
         resolved.clear();
         return false;
     }
-    resolved = canonical.string();
+    resolved = canonicalPath;
     ASCENDLOGD("Resolved directory: path=%s resolved=%s", path.c_str(), resolved.c_str());
     return true;
 }
@@ -251,7 +559,7 @@ bool FileUtils::ReadRegularFile(const std::string& path, uintmax_t maximum, std:
         return false;
     }
     std::string canonicalPath;
-    if (!ResolveCanonicalPath(normalizedPath.string(), canonicalPath)) {
+    if (!ResolveRegularFilePathForRead(normalizedPath.string(), canonicalPath)) {
         return false;
     }
     const uintmax_t fileSize = fs::file_size(fs::path(canonicalPath), error);
@@ -296,6 +604,28 @@ bool FileUtils::FinalizeOutput(std::ofstream& output)
     }
     ASCENDLOGD("Finalized output stream");
     return true;
+}
+
+bool FileUtils::WriteTextFileAtomically(const std::string& destinationPath, const std::string& text)
+{
+    AtomicFileWriter writer;
+    return writer.WriteTextToTemporaryFile(destinationPath, text) && writer.ReplaceDestinationAtomically();
+}
+
+bool FileUtils::CopyFileAtomically(
+    const std::string& sourcePath, const std::string& destinationPath, const std::function<bool()>& beforeReplacement)
+{
+    AtomicFileWriter writer;
+    if (!writer.CopyFileToTemporaryFile(sourcePath, destinationPath)) {
+        return false;
+    }
+    if (beforeReplacement && !beforeReplacement()) {
+        ASCENDLOGE(
+            "File replacement cancelled by prerequisite failure: source=%s destination=%s", sourcePath.c_str(),
+            destinationPath.c_str());
+        return false;
+    }
+    return writer.ReplaceDestinationAtomically();
 }
 
 bool FileUtils::CopyFile(const std::string& source, const std::string& destination) noexcept

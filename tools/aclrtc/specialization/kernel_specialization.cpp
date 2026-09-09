@@ -10,6 +10,7 @@
 
 #include "kernel_specialization.h"
 
+#include "file_utils.h"
 #include "compilation_plan_executor.h"
 #include "kernel_compilation_plan_builder.h"
 #include "compilation_manifest_parser.h"
@@ -18,14 +19,8 @@
 #include "ascendc_tool_log.h"
 #include "resource_registry.h"
 
-#include <atomic>
 #include <boost/filesystem.hpp>
-#include <boost/system/error_code.hpp>
-#include <cerrno>
-#include <cstring>
-#include <fcntl.h>
 #include <memory>
-#include <unistd.h>
 
 namespace ascendc {
 namespace aclrtc {
@@ -36,86 +31,6 @@ using specialization_compile::ResourceData;
 using specialization_compile::ResourceRegistry;
 using specialization_compile::ResourceStatus;
 
-bool CopyFileDescriptorContents(
-    int sourceFileDescriptor, const fs::path& sourceFilePath, int destinationFileDescriptor,
-    const fs::path& destinationFilePath)
-{
-    char copyBuffer[64U * 1024U];
-    while (true) {
-        const ssize_t readByteCount = read(sourceFileDescriptor, copyBuffer, sizeof(copyBuffer));
-        if (readByteCount == 0) {
-            return true;
-        }
-        if (readByteCount < 0) {
-            if (errno == EINTR) {
-                continue;
-            }
-            const int readError = errno;
-            ASCENDLOGE(
-                "Failed to read linked kernel ELF while publishing: path=%s errno=%d message=%s",
-                sourceFilePath.c_str(), readError, std::strerror(readError));
-            return false;
-        }
-        ssize_t writtenByteCount = 0;
-        while (writtenByteCount < readByteCount) {
-            const ssize_t writeResult =
-                write(destinationFileDescriptor, copyBuffer + writtenByteCount, readByteCount - writtenByteCount);
-            if (writeResult < 0 && errno == EINTR) {
-                continue;
-            }
-            if (writeResult <= 0) {
-                const int writeError = errno;
-                ASCENDLOGE(
-                    "Failed to write linked kernel ELF while publishing: path=%s errno=%d message=%s",
-                    destinationFilePath.c_str(), writeError, std::strerror(writeError));
-                return false;
-            }
-            writtenByteCount += writeResult;
-        }
-    }
-}
-
-bool CreateUniqueTemporaryOutputFile(
-    const fs::path& outputElfPath, fs::path& temporaryOutputPath, int& temporaryOutputFileDescriptor)
-{
-    constexpr size_t maxTemporaryFileAttempts = 32U;
-    constexpr mode_t temporaryOutputFileMode = 0644;
-    static std::atomic<uint64_t> temporaryOutputFileSequence{0};
-    for (size_t attempt = 0U; attempt < maxTemporaryFileAttempts; ++attempt) {
-        temporaryOutputPath = outputElfPath.string() + ".aclrtc_tmp_" + std::to_string(getpid()) + "_" +
-                              std::to_string(temporaryOutputFileSequence.fetch_add(1U, std::memory_order_relaxed));
-        temporaryOutputFileDescriptor =
-            open(temporaryOutputPath.c_str(), O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, temporaryOutputFileMode);
-        if (temporaryOutputFileDescriptor >= 0) {
-            return true;
-        }
-        if (errno != EEXIST) {
-            const int createError = errno;
-            ASCENDLOGE(
-                "Failed to create temporary output ELF: path=%s parent=%s errno=%d message=%s; create the "
-                "output parent directory and ensure it is writable",
-                temporaryOutputPath.c_str(), outputElfPath.parent_path().c_str(), createError,
-                std::strerror(createError));
-            return false;
-        }
-    }
-    ASCENDLOGE(
-        "Failed to create a unique temporary output ELF after %zu attempts: output=%s", maxTemporaryFileAttempts,
-        outputElfPath.c_str());
-    return false;
-}
-
-void RemoveTemporaryOutputFileBestEffort(const fs::path& temporaryOutputPath)
-{
-    boost::system::error_code removeError;
-    fs::remove(temporaryOutputPath, removeError);
-    if (removeError) {
-        ASCENDLOGW(
-            "Failed to remove temporary output ELF: path=%s error=%d message=%s; remove the file manually if it "
-            "remains",
-            temporaryOutputPath.c_str(), removeError.value(), removeError.message().c_str());
-    }
-}
 } // namespace
 
 aclError KernelSpecializationSession::LoadAndMaterializeCompilationResource(
@@ -192,7 +107,7 @@ aclError KernelSpecializationSession::RunKernelSpecialization(
 
 aclError KernelSpecializationSession::RunSpecializationWithMaterializedResource(
     const NormalizedKernelSpecializationRequest& specializationRequest,
-    MaterializedKernelCompilationResource compilationResource)
+    MaterializedKernelCompilationResource compilationResource) const
 {
     const bool saveKernelMetaEnabled = IsKernelMetaSavingEnabled();
     KernelCompilationWorkspace compilationWorkspace(
@@ -239,61 +154,11 @@ aclError KernelSpecializationSession::PublishKernelElf(
     const fs::path& linkedKernelElfPath, const fs::path& outputElfPath,
     KernelCompilationWorkspace& compilationWorkspace) const
 {
-    const int linkedKernelFileDescriptor = open(linkedKernelElfPath.c_str(), O_RDONLY | O_CLOEXEC);
-    if (linkedKernelFileDescriptor < 0) {
-        const int openError = errno;
-        ASCENDLOGE(
-            "Failed to open linked kernel ELF: path=%s errno=%d message=%s", linkedKernelElfPath.c_str(), openError,
-            std::strerror(openError));
-        return ACLRTC_ERROR_FAILURE;
-    }
-
-    fs::path temporaryOutputPath;
-    int temporaryOutputFileDescriptor = -1;
-    if (!CreateUniqueTemporaryOutputFile(outputElfPath, temporaryOutputPath, temporaryOutputFileDescriptor)) {
-        if (close(linkedKernelFileDescriptor) != 0) {
-            const int closeError = errno;
-            ASCENDLOGW(
-                "Failed to close linked kernel ELF after publish setup failure: path=%s errno=%d message=%s",
-                linkedKernelElfPath.c_str(), closeError, std::strerror(closeError));
-        }
-        return ACLRTC_ERROR_FAILURE;
-    }
-
-    const bool copySucceeded = CopyFileDescriptorContents(
-        linkedKernelFileDescriptor, linkedKernelElfPath, temporaryOutputFileDescriptor, temporaryOutputPath);
-    const bool sourceCloseSucceeded = close(linkedKernelFileDescriptor) == 0;
-    const int sourceCloseError = sourceCloseSucceeded ? 0 : errno;
-    const bool destinationCloseSucceeded = close(temporaryOutputFileDescriptor) == 0;
-    const int destinationCloseError = destinationCloseSucceeded ? 0 : errno;
-    if (!copySucceeded || !sourceCloseSucceeded || !destinationCloseSucceeded) {
-        if (!sourceCloseSucceeded) {
-            ASCENDLOGE(
-                "Failed to close linked kernel ELF: path=%s errno=%d message=%s", linkedKernelElfPath.c_str(),
-                sourceCloseError, std::strerror(sourceCloseError));
-        }
-        if (!destinationCloseSucceeded) {
-            ASCENDLOGE(
-                "Failed to close temporary output ELF: path=%s errno=%d message=%s", temporaryOutputPath.c_str(),
-                destinationCloseError, std::strerror(destinationCloseError));
-        }
-        RemoveTemporaryOutputFileBestEffort(temporaryOutputPath);
-        return ACLRTC_ERROR_FAILURE;
-    }
-
-    const aclError worktreeCleanupStatus = compilationWorkspace.CleanupWorktreeBeforeElfPublication();
-    if (worktreeCleanupStatus != ACLRTC_SUCCESS) {
-        RemoveTemporaryOutputFileBestEffort(temporaryOutputPath);
-        return worktreeCleanupStatus;
-    }
-
-    boost::system::error_code renameError;
-    fs::rename(temporaryOutputPath, outputElfPath, renameError);
-    if (renameError) {
-        ASCENDLOGE(
-            "Failed to publish kernel ELF: source=%s target=%s error=%d message=%s", temporaryOutputPath.c_str(),
-            outputElfPath.c_str(), renameError.value(), renameError.message().c_str());
-        RemoveTemporaryOutputFileBestEffort(temporaryOutputPath);
+    const bool published =
+        FileUtils::CopyFileAtomically(linkedKernelElfPath.string(), outputElfPath.string(), [&compilationWorkspace]() {
+            return compilationWorkspace.CleanupWorktreeBeforeElfPublication() == ACLRTC_SUCCESS;
+        });
+    if (!published) {
         return ACLRTC_ERROR_FAILURE;
     }
     return ACLRTC_SUCCESS;

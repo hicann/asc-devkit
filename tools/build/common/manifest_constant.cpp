@@ -29,39 +29,39 @@ bool ReadNonnegativeInteger(const Json& value, uint64_t& result)
 }
 } // namespace
 
-bool ManifestConstant::ParseDefinition(const Json& constant)
+bool ManifestConstant::ParseDefinition(const Json& constantJson)
 {
-    if (!constant.is_object()) {
+    if (!constantJson.is_object()) {
         ASCENDLOGE("constant must be an object");
         return false;
     }
     for (const char* field : {"name", "parameter_index", "file", "template"}) {
-        if (!constant.contains(field)) {
+        if (!constantJson.contains(field)) {
             ASCENDLOGE("Missing required constant field: %s", field);
             return false;
         }
     }
     for (const char* field : {"name", "file", "template"}) {
-        if (!constant.at(field).is_string() || constant.at(field).get_ref<const std::string&>().empty()) {
+        if (!constantJson.at(field).is_string() || constantJson.at(field).get_ref<const std::string&>().empty()) {
             ASCENDLOGE("Constant field must be a nonempty string: %s", field);
             return false;
         }
     }
     ManifestConstant result;
-    if (!ReadNonnegativeInteger(constant.at("parameter_index"), result.parameterIndex_)) {
+    if (!ReadNonnegativeInteger(constantJson.at("parameter_index"), result.parameterIndex_)) {
         ASCENDLOGE("parameter_index must be a nonnegative integer");
         return false;
     }
-    const bool hasArgumentType = constant.contains("arg_type");
-    if (hasArgumentType && !constant.at("arg_type").is_string()) {
+    const bool hasArgumentType = constantJson.contains("arg_type");
+    if (hasArgumentType && !constantJson.at("arg_type").is_string()) {
         ASCENDLOGE("arg_type must be a string");
         return false;
     }
-    const std::string argumentType = hasArgumentType ? constant.at("arg_type").get<std::string>() : "struct";
-    const bool hasByteSize = constant.contains("byte_size");
+    const std::string argumentType = hasArgumentType ? constantJson.at("arg_type").get<std::string>() : "struct";
+    const bool hasByteSize = constantJson.contains("byte_size");
     if (argumentType == "pointer") {
         uint64_t byteCount = 0U;
-        if (!hasByteSize || !ReadNonnegativeInteger(constant.at("byte_size"), byteCount) || byteCount == 0U) {
+        if (!hasByteSize || !ReadNonnegativeInteger(constantJson.at("byte_size"), byteCount) || byteCount == 0U) {
             ASCENDLOGE("pointer constant requires a positive integer byte_size");
             return false;
         }
@@ -77,13 +77,13 @@ bool ManifestConstant::ParseDefinition(const Json& constant)
     }
     constexpr size_t requiredFieldCount = 4U;
     const size_t expectedFieldCount = requiredFieldCount + (hasArgumentType ? 1U : 0U) + (hasByteSize ? 1U : 0U);
-    if (constant.size() != expectedFieldCount) {
+    if (constantJson.size() != expectedFieldCount) {
         ASCENDLOGE("constant contains unexpected fields");
         return false;
     }
-    result.name_ = constant.at("name").get<std::string>();
-    result.targetFile_ = constant.at("file").get<std::string>();
-    result.templateText_ = constant.at("template").get<std::string>();
+    result.name_ = constantJson.at("name").get<std::string>();
+    result.targetFile_ = constantJson.at("file").get<std::string>();
+    result.templateText_ = constantJson.at("template").get<std::string>();
     result.definitionParsed_ = true;
     *this = std::move(result);
     return true;
