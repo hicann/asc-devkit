@@ -26,7 +26,7 @@
 #include "c_api/utils_intf.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_type.h"
 #include "impl/utils/common_types.h"
-#include "impl/utils/sys_macros.h"
+#include "utils/base/sys_macros.h"
 #include "utils/base/sys_constants.h"
 
 constexpr uint32_t C_API_AIC_TYPE = AscendC::AIC;
