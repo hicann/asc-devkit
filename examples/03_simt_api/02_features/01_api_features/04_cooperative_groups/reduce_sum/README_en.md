@@ -170,7 +170,7 @@ __global__ void reduce_block_tile(const int32_t* input, int32_t* output, int32_t
 
 The performance data of the three cases is listed below:
 
-| Case | Threads in the reduction | Halving rounds | Synchronization count and scope | Task Duration(us) |
+| Case | Threads in the reduction | Halving rounds | Synchronization count and scope | Task Duration(μs) |
 | :--: | :----: | :--: | :--: | :-----------------: |
 | Cross-block reduction | 4096 | 12 | 24 grid-level | 16.101 |
 | Whole-block reduction | 1024 | 10 | 20 block-level | 3.514 |
