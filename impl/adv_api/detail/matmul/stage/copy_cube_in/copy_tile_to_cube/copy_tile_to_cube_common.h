@@ -488,7 +488,7 @@ private:
                 MATMUL_MODULE(DataCopyWrapper)
                     ->CopyND2NZ(dst, src, curRow * baseHeight, curCol * baseWidth, tileHeight, tileWidth, orgWidth);
             }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
         } else if constexpr (INPUT_TYPE::format == CubeFormat::COLUMN_MAJOR) {
             if constexpr (sizeof(TransT) == sizeof(int8_t)) {
                 CopyDN2NZForInt8(

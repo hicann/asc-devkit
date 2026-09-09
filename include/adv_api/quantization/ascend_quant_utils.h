@@ -38,8 +38,9 @@ struct AscendQuantConfig {
     uint32_t scaleCount = 0;
     uint32_t workLocalSize = 0;
 
-#if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || \
-                                                         __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#if !defined(__NPU_ARCH__) ||                                                                          \
+    (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
+                               __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
     __aicore__ constexpr AscendQuantConfig(
         const uint32_t calcCount, const uint32_t offsetCount, const uint32_t scaleCount, const uint32_t workLocalSize,
         const bool hasOffset, const int32_t kDim, const RoundMode roundMode)
@@ -64,7 +65,7 @@ struct AscendQuantConfig {
 #endif
 };
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102)
 constexpr AscendQuantConfig ASCEND_QUANT_DEFAULT_CFG = {0, 0, 0, 0, false, 1, RoundMode::CAST_RINT};
 #else
 constexpr AscendQuantConfig ASCEND_QUANT_DEFAULT_CFG = {0, 0, 0, 0};

@@ -125,7 +125,7 @@ private:
 private:
     uint64_t ccOpTilingDataTable_[static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL)] = {0UL};
     uint64_t ccOpParamTable_[static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL)] = {0UL};
-#if __NPU_ARCH__ == 3510
+#if (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
     __gm__ OpResCtx* hcclContext_;
 #else
     __gm__ HcclCombineOpParam* hcclContext_;

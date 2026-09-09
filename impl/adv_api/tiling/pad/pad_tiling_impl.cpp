@@ -197,7 +197,8 @@ void GetUnPadMaxMinTmpSize(
     uint32_t srcWidth = shapeDims[1];
 
     auto npuArch = ascendcPlatform.GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_2201 || npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_2201 || npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 ||
+        npuArch == NpuArch::DAV_5102) {
         maxValue = 0;
         minValue = 0;
     } else {

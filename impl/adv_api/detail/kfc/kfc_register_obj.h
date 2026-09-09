@@ -34,7 +34,7 @@ __aicore__ inline void ClearWorkspace(__gm__ uint8_t* workspace)
     }
 #endif
 #endif
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
     SetAtomicNone();
     if ASCEND_IS_AIC {
         SetMaskNorm();
@@ -48,7 +48,7 @@ __aicore__ inline void ClearWorkspace(__gm__ uint8_t* workspace)
         SetVectorMask<uint64_t, MaskMode::NORMAL>((uint64_t)-1, (uint64_t)-1);
         SetMaskNorm();
     }
-#elif (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF == 0
+#elif (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF == 0
     if ASCEND_IS_AIC {
         SetAtomicNone();
         SetMaskNorm();
@@ -66,7 +66,7 @@ __aicore__ inline void ClearWorkspace(__gm__ uint8_t* workspace)
 #endif
 }
 
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF == 0
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF == 0
 constexpr bool DAV_310_ENABLE_GM = true;
 #else
 constexpr bool DAV_310_ENABLE_GM = false;
@@ -148,12 +148,12 @@ __aicore__ inline void InitCurObj(AscendC::TPipe* tpipe, T& a, Args&&... b)
 } // namespace AscendC
 
 #ifdef ASCENDC_CPU_DEBUG
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201))
 #ifdef ASCENDC_CUBE_ONLY
 #define REGIST_CUBE_OBJ(tpipe, workspace, ...) AscendC::InitCurObj(tpipe, __VA_ARGS__)
 
 #else
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
 template <class T, class... Args>
 __aicore__ inline void CountMatmulObj(AscendC::TPipe* tpipe, T& a, Args&&... b);
 
@@ -279,7 +279,7 @@ __aicore__ inline void CountMatmulObj(AscendC::TPipe* tpipe, T& a, Args&&... b)
 
 #define REGIST_CUBE_OBJ_REMOTE(tpipe, workspace, ...)
 #else
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
 #define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                       \
     using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;   \
     constexpr int8_t enableHardPollKfc =                                                             \
@@ -330,7 +330,7 @@ __aicore__ inline void CountMatmulObj(AscendC::TPipe* tpipe, T& a, Args&&... b)
 #elif defined(SPLIT_CORE_VEC)
 #ifdef ASCENDC_CUBE_ONLY
 #define REGIST_CUBE_OBJ(tpipe, workspace, ...) return
-#elif (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#elif (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
 #define REGIST_CUBE_OBJ(tpipe, workspace, ...)                                                       \
     using ASCubeObjConfig = AscendC::GetCubeObjConfig<decltype(AscendC::GetObjType(__VA_ARGS__))>;   \
     constexpr int8_t enableHardPollKfc =                                                             \

@@ -62,7 +62,7 @@ public:
         // The function exists when all AIVs exit. The client sends a Quit message when the destructor ends.
         return quitSize < MIX_NUM;
     }
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
     template <class T, class... Args>
     __aicore__ inline void Run(T& a, Args&&... b)
     {
@@ -281,7 +281,7 @@ private:
         ASSERT(msg != nullptr && "msg cannot be nullptr when kfc server run aux");
         ASSERT(subBlockID >= 0 && subBlockID < MIX_NUM && "sub block id should be [0, MIX_NUM)");
         if (a.cubeObj.cubeObj[0].IsSharedObj()) {
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
             if constexpr ((sizeof...(b) == 1)) {
                 // b == 1 and is tiling, a process, b == 1 and is mm, instID continue judge, may b
                 if constexpr (isTiling<Args...>()) {
@@ -324,7 +324,7 @@ private:
             }
             return true;
         } else {
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
             if (a.cubeObj.cubeObj[subBlockID].GetInstID() == KfcMsgGetInstID(msgHead)) {
 #else
             if (a.cubeObj.cubeObj[subBlockID].GetInstID() == KfcMsgGetInstID(msg->head)) {
@@ -411,7 +411,7 @@ private:
     GM_ADDR workspace;
     uint8_t quitSize;
     int lastMsgId = 1;
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510) && KFC_C310_SSBUF
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)) && KFC_C310_SSBUF
     uint32_t msgHead;
 #endif
 };

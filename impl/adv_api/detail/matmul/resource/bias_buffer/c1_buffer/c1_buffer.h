@@ -75,7 +75,7 @@ public:
 
     __aicore__ inline uint64_t GetBufferHeadAddr()
     {
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
         return GetTQueHeadAddr(qidBias_);
 #else
         return 0;
@@ -83,7 +83,7 @@ public:
     }
 
 private:
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
     static constexpr TQueConfig staticL1Evt = {
         .nd2nz = false,
         .nz2nd = false,

@@ -488,7 +488,7 @@ __aicore__ constexpr uint32_t GetL1UsedSize(const MatmulApiStaticTiling& tiling,
 template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE>
 __aicore__ constexpr void GetMxMatmulApiTiling(MatmulApiStaticTiling& tiling, int32_t l1Size)
 {
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
     using SrcAT = typename A_TYPE::T;
     using SrcBT = typename B_TYPE::T;
     if constexpr (HasScalePosition<A_TYPE>::value || HasScalePosition<B_TYPE>::value) {

@@ -61,7 +61,7 @@ void GetDigammaTmpBufferFactorSize(const uint32_t typeSize, uint32_t& maxLiveNod
         platform_ascendc::PlatformAscendCManager::GetInstance() != nullptr, return,
         "PlatformAscendCManager gets instance failed!");
     const auto npuArch = platform_ascendc::PlatformAscendCManager::GetInstance()->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
         extraBuffer = uint32_t(0);
         maxLiveNodeCount = (typeSize == sizeof(float)) ? 0 : DIGAMMA_HALF_CALC_FAC_Arch3510;
     } else {
@@ -81,7 +81,7 @@ void GetDigammaMaxMinTmpSize(
         "PlatformAscendCManager gets instance failed!");
 
     const auto npuArch = platform_ascendc::PlatformAscendCManager::GetInstance()->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
         maxValue = GetMaxTmpSizeArch3510(inputSize, typeSize);
         minValue = maxValue;
         return;

@@ -79,9 +79,9 @@ public:
     __aicore__ inline LoadToL0A(){};
     __aicore__ inline ~LoadToL0A(){};
 
-    __aicore__ inline void SetScalar(A_T scalar){};
+    __aicore__ inline void SetScalar(A_T scalar) {};
 
-    __aicore__ inline void Prepare(bool isATranspose, uint16_t aL1K, uint16_t aL1M){};
+    __aicore__ inline void Prepare(bool isATranspose, uint16_t aL1K, uint16_t aL1M) {};
 
     __aicore__ inline void Load(
         LocalTensor<A_T>& l0A, const LocalTensor<A_T>& l1A, uint16_t aL1M, uint16_t aL1K, uint16_t madM, uint16_t madK,
@@ -127,9 +127,9 @@ public:
     __aicore__ inline LoadToL0A(){};
     __aicore__ inline ~LoadToL0A(){};
 
-    __aicore__ inline void SetScalar(A_T scalar){};
+    __aicore__ inline void SetScalar(A_T scalar) {};
 
-    __aicore__ inline void Prepare(bool isATranspose, uint16_t aL1K, uint16_t aL1M){};
+    __aicore__ inline void Prepare(bool isATranspose, uint16_t aL1K, uint16_t aL1M) {};
 
     __aicore__ inline void Load(
         LocalTensor<L0A_T>& l0A, const LocalTensor<A_T>& l1A, uint16_t aL1M, uint16_t aL1K, uint16_t madM,
@@ -137,7 +137,7 @@ public:
         const LocalTensor<AuxDtype>& l1AAuxMatrix = {}, uint16_t aAuxL1K = 0, uint16_t aAuxL1KOffset = 0,
         uint16_t aAuxL1MOffset = 0) const
     {
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
         LoadData2DParamsV2 loadDataParams;
         loadDataParams.mStartPosition = 0;
         loadDataParams.kStartPosition = 0;

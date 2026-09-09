@@ -113,7 +113,7 @@ void GetLayerNormGradMaxMinTmpSize(
     platform_ascendc::PlatformAscendC* platform = platform_ascendc::PlatformAscendCManager::GetInstance();
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201) {
         // all tmp data stored as float
         if (isReuseSource && typeSize == LAYERNORM_GRAD_B32_BYTE_SIZE) {
             // no tmp buffer required
@@ -164,7 +164,7 @@ void GetLayerNormGradNDTilingInfo(
     const auto npuArch = platform->GetCurNpuArch();
     uint32_t oneCalSize = 0;
     uint32_t nohCalSize = 0;
-    if (npuArch == NpuArch::DAV_3510) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201) {
         // needless to calculate oneCalSize and nohCalSize
         oneCalSize = static_cast<uint32_t>(1);
         nohCalSize = static_cast<uint32_t>(1);

@@ -190,7 +190,7 @@ public:
     {
         struct MatrixL1Addr matrixL1Addr;
         matrixL1Addr = BASE_MODULE::GetMatrixL1Addr();
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
         if constexpr (PhyMxScalePosIsUB<A_TYPE>()) {
             matrixL1Addr.l1aScaleAddr = MATMUL_MODULE(CubeInBufferScaleA)->GetBufferHeadAddr();
         }

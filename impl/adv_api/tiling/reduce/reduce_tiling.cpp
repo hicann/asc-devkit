@@ -61,7 +61,7 @@ inline void CheckParams(
         shapeDims.size() == ALLOWED_SHAPE_DIM, return, "[%s][%s] srcShape dims must be 2.", apiName.c_str(),
         funcName.c_str());
     if (!((apiName == "ReduceMin" || apiName == "ReduceMax" || apiName == "ReduceSum") &&
-          (npuArch == NpuArch::DAV_3510))) {
+          (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201))) {
         ASCENDC_HOST_ASSERT(
             isSrcInnerPad, return, "[%s][%s] isSrcInnerPad must be true on this platform.", apiName.c_str(),
             funcName.c_str());
@@ -69,7 +69,7 @@ inline void CheckParams(
     ASCENDC_HOST_ASSERT(
         pattern == ReducePattern::AR || pattern == ReducePattern::RA, return,
         "[%s][%s] Currently only support AR and RA pattern.", apiName.c_str(), funcName.c_str());
-    if (!(npuArch == NpuArch::DAV_3510)) {
+    if (!(npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201)) {
         ASCENDC_HOST_ASSERT(
             first > 0 && last > 0, return, "[%s][%s] both first and last axis must be greater than 0.", apiName.c_str(),
             funcName.c_str());
@@ -218,7 +218,7 @@ void GetReduceMaxMaxMinTmpSize(
     platform_ascendc::PlatformAscendC* platform = platform_ascendc::PlatformAscendCManager::GetInstance();
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201) {
         ASCENDC_HOST_ASSERT(
             dataType == ge::DT_INT8 || dataType == ge::DT_UINT8 || dataType == ge::DT_INT16 ||
                 dataType == ge::DT_UINT16 || dataType == ge::DT_FLOAT16 || dataType == ge::DT_BF16 ||
@@ -244,7 +244,7 @@ void GetReduceMinMaxMinTmpSize(
     platform_ascendc::PlatformAscendC* platform = platform_ascendc::PlatformAscendCManager::GetInstance();
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201) {
         ASCENDC_HOST_ASSERT(
             dataType == ge::DT_INT8 || dataType == ge::DT_UINT8 || dataType == ge::DT_INT16 ||
                 dataType == ge::DT_UINT16 || dataType == ge::DT_FLOAT16 || dataType == ge::DT_BF16 ||
@@ -306,7 +306,7 @@ void GetReduceSumMaxMinTmpSize(
     platform_ascendc::PlatformAscendC* platform = platform_ascendc::PlatformAscendCManager::GetInstance();
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201) {
         ASCENDC_HOST_ASSERT(
             dataType == ge::DT_INT32 || dataType == ge::DT_UINT32 || dataType == ge::DT_FLOAT ||
                 dataType == ge::DT_INT64 || dataType == ge::DT_UINT64,

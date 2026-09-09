@@ -35,13 +35,13 @@ constexpr uint32_t ANTIQUANT_SINGLE_N_SIZE_BF16 = 64;
 constexpr uint32_t ANTIQUANT_SINGLE_N_SIZE_FP16 = 128;
 constexpr uint32_t ANTIQUANT_MAX_K = 255;
 constexpr uint32_t MAX_K_FOR_FP16_BRCB = 4096;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 constexpr uint32_t ANTIQUANT_FP4_PERGROUP_SIZE = 32;
 constexpr uint32_t ANTIQUANT_BF16_MAN_LEN = 7;
 #endif
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 struct AscendAntiQuantConfig {
     bool hasOffset;
     bool isTranspose;

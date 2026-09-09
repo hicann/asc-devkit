@@ -236,10 +236,11 @@ void GetPowerMaxMinTmpSize(
     auto npuArch = platform_ascendc::PlatformAscendCManager::GetInstance()->GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
         (npuArch == NpuArch::DAV_2201 || npuArch == NpuArch::DAV_2002 || npuArch == NpuArch::DAV_3510 ||
-         npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113),
+         npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003 ||
+         npuArch == NpuArch::DAV_3113),
         return, "GetPowerMaxMinTmpSize is not supported on current device!");
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003 ||
-        npuArch == NpuArch::DAV_3113) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113) {
         maxValue = GetPowerMaxTmpSizeArch3510(srcShape1, srcShape2, typeIsInt, isReuseSource);
         minValue = maxValue;
     } else {
@@ -258,11 +259,12 @@ void GetPowerTmpBufferFactorSize(
     const auto npuArch = platform_ascendc::PlatformAscendCManager::GetInstance()->GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
         (npuArch == NpuArch::DAV_2201 || npuArch == NpuArch::DAV_2002 || npuArch == NpuArch::DAV_3510 ||
-         npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113),
+         npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003 ||
+         npuArch == NpuArch::DAV_3113),
         return, "GetPowerTmpBufferFactorSize is not supported on current device!");
 
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003 ||
-        npuArch == NpuArch::DAV_3113) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113) {
         GetPowerTmpBufferFactorSizeArch3510(typeIsInt, typeSize, maxLiveNodeCount, extraBuffer);
     } else {
         GetPowerTmpBufferFactorSize(

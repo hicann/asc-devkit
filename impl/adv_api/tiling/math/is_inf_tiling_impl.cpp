@@ -38,7 +38,8 @@ void GetIsInfMaxMinTmpSize(
     auto npuArch = ascendcPlatform.GetCurNpuArch();
 
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return, "Unsupported NpuArch of IsInf API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102), return,
+        "Unsupported NpuArch of IsInf API.");
     maxValue = 0u;
     minValue = 0u;
 }
@@ -50,7 +51,8 @@ void GetIsInfTmpBufferFactorSize(
     HighLevelApiCheck::TypeSizeVerifyingParameters<ISINF_GET_TMP_BUFFER>(typeSize, SUPPORT_TYPESIZE);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return, "Unsupported NpuArch of IsInf API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102), return,
+        "Unsupported NpuArch of IsInf API.");
     extraBuf = 0u;
     maxLivedNodeCount = 0u;
 }

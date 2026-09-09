@@ -35,7 +35,7 @@ __aicore__ inline void FlushDataCacheAicpu(GlobalTensor<int64_t>& globalHcclMsgA
 {
     AscendC::Barrier();
     globalHcclMsgArea.SetGlobalBuffer((__gm__ int64_t*)gmAddr);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201))
     // Throttle A5 AICPU polling reads to avoid too many read requests per unit time causing a bus hang.
     constexpr uint32_t a5AicpuPollingReadThrottleNopCycles = 1000U;
     AscendC::Nop<a5AicpuPollingReadThrottleNopCycles>();
@@ -52,7 +52,7 @@ __aicore__ inline void FlushDataCacheAicpu(__gm__ void* gmAddr)
     FlushDataCacheAicpu(globalHcclMsgArea, gmAddr);
 }
 
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
 
 template <typename T>
 __aicore__ inline T ReadHBMData(__gm__ T* addr)

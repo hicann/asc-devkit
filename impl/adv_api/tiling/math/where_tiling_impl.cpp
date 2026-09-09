@@ -38,7 +38,8 @@ void GetWhereMaxMinTmpSize(
     HighLevelApiCheck::IsReuseSourceVerifyingParameters<WHERE_GET_MAX_MIN>(isReuseSource);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
 
-    ASCENDC_HOST_ASSERT((npuArch == NpuArch::DAV_3510), return, "Unsupported NpuArch for Where API.");
+    ASCENDC_HOST_ASSERT(
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201), return, "Unsupported NpuArch for Where API.");
     (void)srcShape;
     (void)typeSize;
     (void)isReuseSource;
@@ -53,7 +54,8 @@ void GetWhereTmpBufferFactorSize(
 {
     HighLevelApiCheck::TypeSizeVerifyingParameters<WHERE_GET_TMP_BUFFER>(typeSize, SUPPORT_TYPESIZE);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
-    ASCENDC_HOST_ASSERT((npuArch == NpuArch::DAV_3510), return, "Unsupported NpuArch of Where API.");
+    ASCENDC_HOST_ASSERT(
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201), return, "Unsupported NpuArch of Where API.");
     (void)typeSize;
     extraBuf = 0u;
     maxLivedNodeCount = 0u;

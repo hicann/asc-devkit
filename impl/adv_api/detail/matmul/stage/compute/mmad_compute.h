@@ -75,7 +75,7 @@ public:
             // C310 Not support mmadwithsparse
             MmadWithSparse(cMatrix, l0A, l0B, mmadParams);
         } else {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
             if constexpr (A_TYPE::format != CubeFormat::VECTOR) {
                 mmadParams.disableGemv = true;
             }

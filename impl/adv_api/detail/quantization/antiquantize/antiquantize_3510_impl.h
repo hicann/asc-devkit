@@ -27,7 +27,7 @@
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../basic_api/kernel_pop_stack_buffer.h"
 #include "antiquantize_common.h"
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 #include "../antiquant/ascend_antiquant_3510_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../antiquant/ascend_antiquant_l300_impl.h"

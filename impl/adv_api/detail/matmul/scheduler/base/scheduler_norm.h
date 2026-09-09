@@ -29,8 +29,8 @@ namespace AscendC {
 namespace Impl {
 namespace Detail {
 template <class A_TYPE, const auto& MM_CFG>
-constexpr bool isSingleLargeBMM = A_TYPE::layout == LayoutMode::NORMAL&& ToMatmulConfig(MM_CFG).batchMode
-                                  == BatchMode::SINGLE_LARGE_THAN_L1;
+constexpr bool isSingleLargeBMM =
+    A_TYPE::layout == LayoutMode::NORMAL && ToMatmulConfig(MM_CFG).batchMode == BatchMode::SINGLE_LARGE_THAN_L1;
 /*
     MatmulScheduler is considered entirely experimental.
     We retain the freedom to make incompatible changes, but do not guarantee the stability.
@@ -43,9 +43,8 @@ class MatmulScheduler<
     IMPL, A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE, MM_CFG, POLICY_TYPE,
     enable_if_t<
         (DoMatmulIBShareNorm(MM_CFG) || isNormEnableScheduler<A_TYPE, MM_CFG> || isSingleLargeBMM<A_TYPE, MM_CFG> ||
-         IsBasicBlockEnable<MM_CFG>)&&!MatmulFeatureTrait<MM_CFG>()
-            .IsSupportMNL0DB() &&
-        !isMxMatmul<A_TYPE, B_TYPE>>>
+         IsBasicBlockEnable<MM_CFG>) &&
+        !MatmulFeatureTrait<MM_CFG>().IsSupportMNL0DB() && !isMxMatmul<A_TYPE, B_TYPE>>>
     : public MatmulNormSchedulerBase<IMPL, A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE, MM_CFG, POLICY_TYPE> {
     MATMUL_USE_MODULE(MLoop);
     MATMUL_USE_MODULE(NLoop);
@@ -71,7 +70,7 @@ public:
     using BASE_MODULE =
         AscendC::Impl::Detail::MatmulNormSchedulerBase<IMPL, A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE, MM_CFG, POLICY_TYPE>;
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 2201)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 2201)
     __aicore__ inline void CheckBasicBlock()
     {
         ASCENDC_ASSERT((MM_CFG.basicM == MATMUL_MODULE(MatmulShapeTiling)->GetTiling().GetBaseM()), {
@@ -118,7 +117,7 @@ public:
 
     __aicore__ inline bool ScheduleOnce(bool enPartialSum)
     {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 2201)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 2201)
         if constexpr (DoMatmulBasicBlock(MM_CFG)) {
             CheckBasicBlock();
         }

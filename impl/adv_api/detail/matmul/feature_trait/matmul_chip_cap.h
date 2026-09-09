@@ -78,7 +78,7 @@ private:
         return CHIP_TYPE_L300;
 #elif __NPU_ARCH__ == 3113
         return CHIP_TYPE_L311;
-#elif defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
         return CHIP_TYPE_310;
 #elif __NPU_ARCH__ == 5102
         return CHIP_TYPE_510R2;

@@ -38,7 +38,7 @@
 #include "ascend_quant_v200_impl.h"
 #elif defined(__NPU_ARCH__) && __NPU_ARCH__ == 1001
 #include "ascend_quant_v100_impl.h"
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 #include "ascend_quant_3510_impl.h"
 #include "ascend_quant_per_group_3510_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
@@ -82,8 +82,8 @@ __aicore__ inline void AscendQuantImpl(
         dstTensor, srcTensor, stackTensor, scaleTensor, offsetTensor, scaleCount, offsetCount, calCount);
 }
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 template <typename dstT, typename srcT, bool isReuseSource = false>
 __aicore__ inline void AscendQuantImpl(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<srcT>& srcTensor, const float scale, const float offset,

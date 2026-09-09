@@ -31,7 +31,7 @@
 #include "../../api_check/kernel_check/quantization/antiquant/antiquant_check.h"
 #endif // ASCENDC_CPU_DEBUG
 #include "../../api_check/kernel_api_check.h"
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 #include "ascend_antiquant_3510_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
 #include "ascend_antiquant_c220_impl.h"
@@ -42,8 +42,8 @@
 #endif
 
 namespace AscendC {
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantInnerLoopF16(
     const LocalTensor<half>& dst, const LocalTensor<half>& src, const LocalTensor<half>& offset,
     const LocalTensor<half>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const BinaryRepeatParams& binaryParams,
@@ -57,8 +57,8 @@ __aicore__ inline void AntiQuantInnerLoopF16(
 }
 
 template <typename SrcType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantInnerLoop(
     const LocalTensor<half>& dst, const LocalTensor<SrcType>& src, const LocalTensor<half>& offset,
     const LocalTensor<half>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer,
@@ -76,8 +76,8 @@ __aicore__ inline void AntiQuantInnerLoop(
 }
 
 template <typename SrcType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantInnerLoop(
     const LocalTensor<half>& dst, const LocalTensor<SrcType>& src, const half offset, const half scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const UnaryRepeatParams& unaryParamsCastSrc,
@@ -95,8 +95,8 @@ __aicore__ inline void AntiQuantInnerLoop(
 }
 
 template <typename SrcType, typename DstType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantOuterLoop(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<DstType>& offset,
     const LocalTensor<DstType>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
@@ -135,8 +135,8 @@ __aicore__ inline void AntiQuantOuterLoop(
 }
 
 template <typename SrcType, typename DstType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantOuterLoop(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const DstType offset, const DstType scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
@@ -175,8 +175,8 @@ __aicore__ inline void AntiQuantOuterLoop(
 }
 
 template <typename SrcType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantNoTransposePerformance(
     const LocalTensor<half>& dst, const LocalTensor<SrcType>& src, const LocalTensor<half>& offset,
     const LocalTensor<half>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t K, const uint32_t N)
@@ -205,8 +205,8 @@ __aicore__ inline void AscendAntiQuantNoTransposePerformance(
 }
 
 template <typename SrcType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantNoTransposePerformanceTail(
     const LocalTensor<half>& dst, const LocalTensor<SrcType>& src, const LocalTensor<half>& offset,
     const LocalTensor<half>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t K, const uint32_t N,
@@ -252,8 +252,8 @@ __aicore__ inline void PreCast(
 }
 
 template <typename SrcType, typename DstType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantNoTransposeImplScalar(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<DstType>& offset,
     const LocalTensor<DstType>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount,
@@ -324,8 +324,8 @@ __aicore__ inline void AscendAntiQuantNoTranspose(
 }
 
 template <typename SrcType, typename DstType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantNoTranspose(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<DstType>& scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount, const uint32_t K,
@@ -348,8 +348,8 @@ __aicore__ inline void AscendAntiQuantNoTranspose(
 }
 
 template <typename SrcType, typename DstType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendAntiQuantNoTranspose(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const DstType offset, const DstType scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount, const uint32_t K,
@@ -360,8 +360,8 @@ __aicore__ inline void AscendAntiQuantNoTranspose(
 }
 
 template <typename SrcType, typename DstType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantImplScalar(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<DstType>& offset,
     const LocalTensor<DstType>& scale, const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount,
@@ -384,8 +384,8 @@ __aicore__ inline void AntiQuantImplScalar(
 }
 
 template <typename SrcType, typename DstType>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantImplScalar(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const LocalTensor<DstType>& scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount, const uint32_t K,
@@ -408,8 +408,8 @@ __aicore__ inline void AntiQuantImplScalar(
 }
 
 template <typename SrcType, typename DstType, bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantImplScalar(
     const LocalTensor<DstType>& dst, const LocalTensor<SrcType>& src, const DstType offset, const DstType scale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount, const uint32_t K,
@@ -420,8 +420,8 @@ __aicore__ inline void AntiQuantImplScalar(
 }
 
 template <bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantFp16TransposeMainImpl(
     const LocalTensor<half>& dst, const LocalTensor<half>& src, const LocalTensor<half>& scale,
     const LocalTensor<half>& offset, const uint32_t srcN, const uint32_t K)
@@ -446,8 +446,8 @@ __aicore__ inline void AntiQuantFp16TransposeMainImpl(
 }
 
 template <bool withOffset = true>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendAntiQuant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AntiQuantFp16TransposeTailImpl(
     const LocalTensor<half>& dst, const LocalTensor<half>& src, const LocalTensor<half>& scale,
     const LocalTensor<half>& offset, const uint32_t srcN, const uint32_t K)
@@ -664,7 +664,7 @@ __aicore__ inline void AscendAntiQuantImpl(
     AscendAntiQuantImpl<SrcType, DstType, isTranspose>(dst, src, offset, scale, sharedTmpBuffer, K, shapeInfo);
 }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 template <typename InputDataType, typename OutputDataType, bool isTranspose>
 __aicore__ inline void AscendAntiQuantImpl(
     const LocalTensor<OutputDataType>& dst, const LocalTensor<InputDataType>& src, const LocalTensor<fp8_e8m0_t>& scale,

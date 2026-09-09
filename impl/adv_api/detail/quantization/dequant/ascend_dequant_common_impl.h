@@ -31,7 +31,7 @@
 #include "../../api_check/kernel_check/quantization/dequant/dequant_check.h"
 #endif // ASCENDC_CPU_DEBUG
 #include "../../api_check/kernel_api_check.h"
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 #include "ascend_dequant_3510_impl.h"
 #endif
 
@@ -224,8 +224,8 @@ __aicore__ inline void UpdateDequantParams(DequantParams& params)
 
 // deqScale cast: scaleT(BF16 / FP32 / UINT64_T) -> FP32
 template <typename scaleT>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CastDeqscale(
     const LocalTensor<scaleT>& deqScale, AscendDequantParams<float>& params, uint32_t scaleSize)
 {
@@ -255,8 +255,8 @@ __aicore__ inline void CastDeqscale(
 }
 
 // srcTensor cast: int32_t -> FP32
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CastSrc(
     const LocalTensor<int32_t>& srcTensor, const LocalTensor<float>& dstTensor, UnaryRepeatParams& unaryParams,
     uint64_t counter)
@@ -268,8 +268,8 @@ __aicore__ inline void CastSrc(
 
 // k means tmpSpace size is k * dqParams.n
 // src FP32 * deqScale FP32  calculate k * dqParams.n (k >= 1) data to mul with deqScale
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void DequantMul(
     const LocalTensor<float>& srcTensor, const LocalTensor<float>& deqScaleTensor, const LocalTensor<float>& dstTensor,
     BinaryRepeatParams& binaryParams, DequantParams& dqParams, uint32_t k, uint32_t loopCount, uint32_t tail)
@@ -363,8 +363,8 @@ __aicore__ inline void CastDst(
 
 // each time calculate k * dqParams.n (k >= 1) data
 template <typename dstT, typename scaleT, bool isPureDqParams = false>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void CalculateByInner(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<int32_t>& srcTensor, const LocalTensor<scaleT>& deqScale,
     DequantParams& dqParams, AscendDequantParams<float>& ascendDqParams, uint32_t calCount)
@@ -430,8 +430,8 @@ __aicore__ inline void CalculateByInner(
 
 // calculate tmpAddr + for loop execution
 template <typename dstT, typename scaleT, bool isPureDqParams, DeQuantMode mode>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendDequantImpl(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<int32_t>& srcTensor, const LocalTensor<scaleT>& deqScale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, DequantParams& params, uint32_t calCount)
@@ -448,7 +448,7 @@ __aicore__ inline void AscendDequantImpl(
         "current combination of deqScale dtype and dstTensor dtype is not supported, please check the document");
     UpdateDequantParams<dstT, mode>(params);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
     DequantPerchannelImpl<dstT, scaleT, mode>(dstTensor, srcTensor, deqScale, params);
     return;
 #endif
@@ -524,8 +524,8 @@ __aicore__ inline void AscendDequantNoCalcountImpl(
 }
 
 template <typename dstT, typename scaleT, bool isPureDqParams, DeQuantMode mode>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendDequantScalarImpl(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<int32_t>& srcTensor, const scaleT deqScale,
     const LocalTensor<uint8_t>& sharedTmpBuffer, DequantParams& params)
@@ -539,7 +539,7 @@ __aicore__ inline void AscendDequantScalarImpl(
 
     UpdateDequantParams<dstT, mode>(params);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
     DequantPertensorImpl<dstT, scaleT, mode>(dstTensor, srcTensor, deqScale, params);
     return;
 #endif
@@ -560,8 +560,8 @@ __aicore__ inline void AscendDequantScalarImpl(
 }
 
 template <typename dstT, typename scaleT, DeQuantMode mode>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(
+    3510, "AscendDequant is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void AscendDequantScalarImpl(
     const LocalTensor<dstT>& dstTensor, const LocalTensor<int32_t>& srcTensor, const scaleT deqScale,
     DequantParams& params)
@@ -572,7 +572,7 @@ __aicore__ inline void AscendDequantScalarImpl(
     AscendDequantScalarImpl<dstT, scaleT, true, mode>(dstTensor, srcTensor, deqScale, sharedTmpBuffer, params);
 }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 template <
     typename dstT, typename srcT, typename scaleT, const AscendDeQuantConfig& config, const AscendDeQuantPolicy& policy>
 __aicore__ inline void AscendDequantImpl(

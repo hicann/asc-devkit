@@ -160,7 +160,7 @@ private:
         uint16_t bL1NOffset, uint16_t bL1KOffset, const LocalTensor<AuxDtype>& l1BAuxMatrix, uint16_t bAuxL1K,
         uint16_t bAuxL1KOffset, uint16_t bAuxL1NOffset) const
     {
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
         uint8_t mStep = CeilDiv(madN, HW_M0);
         uint8_t kStep = CeilDiv(madK, c0Size_);
 
@@ -197,7 +197,7 @@ private:
         uint16_t bL1NOffset, uint16_t bL1KOffset, const LocalTensor<AuxDtype>& l1BAuxMatrix, uint16_t bAuxL1K,
         uint16_t bAuxL1KOffset, uint16_t bAuxL1NOffset) const
     {
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
         uint8_t mStep = CeilDiv(madN, HW_M0);
         uint8_t kStep = CeilDiv(madK, c0Size_);
 

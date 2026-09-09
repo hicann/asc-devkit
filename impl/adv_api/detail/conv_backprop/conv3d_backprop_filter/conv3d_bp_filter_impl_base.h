@@ -97,7 +97,7 @@ public:
         DEFINE_STUCT_FIELD(uint32_t, bL1PadUpPing);
         DEFINE_STUCT_FIELD(uint32_t, bL1PadUpPong);
         DEFINE_STUCT_FIELD(uint32_t, curLoadKal1_);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
         DEFINE_STUCT_FIELD(AscendC::LoadData2DParamsV2, load2dv2_);
 #endif
         using LoadData3DParamsV2SrcT = AscendC::LoadData3DParamsV2<typename Intf::SrcT>;

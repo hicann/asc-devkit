@@ -34,7 +34,7 @@ namespace Detail {
  * We retain the freedom to make incompatible changes, but do not guarantee the stability.
  * CopyBiasIn is only for internal usage, does not support extension or customized specialization!
  */
-#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
 constexpr int32_t BIAS_TABLE_SIZE = 1024 * 4;
 #else
 constexpr int32_t BIAS_TABLE_SIZE = 1024;

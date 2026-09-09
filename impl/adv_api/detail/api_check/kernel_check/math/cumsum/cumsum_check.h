@@ -25,7 +25,7 @@
 #include "../../../../../../../include/adv_api/math/cumsum_utils.h"
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201)
 #include "cumsum_check_common.h"
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
 #include "cumsum_check_c310.h"
 #else
 #include "cumsum_check_aicore.h"

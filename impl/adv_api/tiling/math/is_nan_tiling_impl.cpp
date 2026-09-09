@@ -38,7 +38,8 @@ void GetIsNanMaxMinTmpSize(
     auto npuArch = ascendcPlatform.GetCurNpuArch();
 
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return, "Unsupported NpuArch of IsNan API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102), return,
+        "Unsupported NpuArch of IsNan API.");
     maxValue = 0u;
     minValue = 0u;
 }
@@ -50,7 +51,8 @@ void GetIsNanTmpBufferFactorSize(
     HighLevelApiCheck::TypeSizeVerifyingParameters<ISNAN_GET_TMP_BUFFER>(typeSize, SUPPORT_TYPESIZE);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return, "Unsupported NpuArch of IsNan API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102), return,
+        "Unsupported NpuArch of IsNan API.");
     extraBuf = 0u;
     maxLivedNodeCount = 0u;
 }

@@ -17,7 +17,7 @@
 
 #if __NPU_ARCH__ == 2201
 #include "platform_v220/hccl_aicpu.h"
-#elif __NPU_ARCH__ == 3510
+#elif (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
 #include "platform_v310/hccl_aicpu.h"
 #include "platform_v310/hccl_ccu_v0.h"
 #endif

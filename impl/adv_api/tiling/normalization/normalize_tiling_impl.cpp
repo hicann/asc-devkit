@@ -69,7 +69,7 @@ void GetNormalizeMaxMinTmpSize(
     platform_ascendc::PlatformAscendC* platform = platform_ascendc::PlatformAscendCManager::GetInstance();
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
         (void)srcShape;
         minValue = 0;
         maxValue = 0;

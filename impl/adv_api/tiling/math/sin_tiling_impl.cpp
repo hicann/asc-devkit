@@ -88,8 +88,9 @@ void GetSinTmpBufferFactorSize(
 
     auto npuArch = platform->GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_5102), return,
-        "Unsupported NpuArch of Cos API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_3003 ||
+         npuArch == NpuArch::DAV_5102),
+        return, "Unsupported NpuArch of Cos API.");
     if (config.algo == SinAlgo::POLYNOMIAL_APPROXIMATION) {
         extraBuf = 0;
         maxLiveNodeCount = 0;
@@ -116,8 +117,9 @@ void GetSinMaxMinTmpSize(
 
     auto npuArch = platform->GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_5102), return,
-        "Unsupported NpuArch of Cos API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_3003 ||
+         npuArch == NpuArch::DAV_5102),
+        return, "Unsupported NpuArch of Cos API.");
 
     if (config.algo == SinAlgo::POLYNOMIAL_APPROXIMATION) {
         maxValue = 0;

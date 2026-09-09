@@ -83,8 +83,8 @@ __aicore__ inline void SoftMaxGenericNDImpl(
     }
 }
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 template <bool isFlashV2 = false>
 __aicore__ inline void SoftMaxGenericNDImpl(
     const LocalTensor<half>& dst, const LocalTensor<half>& sumTensor, const LocalTensor<half>& maxTensor,
@@ -154,8 +154,8 @@ __aicore__ inline void SoftMaxNDImpl(
     const LocalTensor<T1>& src, const LocalTensor<float>& workLocal, const LastAxisShapeND& originalSrcShape,
     const SoftMaxTiling& tiling)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     SoftMaxGenericNDImpl(dst, sumTensor, maxTensor, src, workLocal, originalSrcShape, tiling);
 #else
     ReduceLastND reduceParam = {tiling.splitM, originalSrcShape.k, tiling.splitM,

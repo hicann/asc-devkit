@@ -28,8 +28,9 @@
 #include "kernel_tensor.h"
 #include "kernel_tiling/kernel_tiling.h"
 #include "include/adv_api/activation/softmax_utils.h"
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
+     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
 #include "../../../impl/adv_api/detail/activation/softmax/softmax_common.h"
 #include "../../../impl/adv_api/detail/activation/softmax/softmax_flash_base_impl.h"
 #endif
@@ -71,8 +72,9 @@ template <typename T, bool isReuseSource = false, bool isBasicBlock = false>
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
+     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
     TRACE_START(TraceId::SoftmaxFlash);
     SoftmaxFlashImpl<T, isReuseSource, isBasicBlock>(
         dstTensor, sumTensor, maxTensor, srcTensor, expMaxTensor, inSumTensor, inMaxTensor, tiling, isUpdate,
@@ -115,8 +117,9 @@ __aicore__ inline void SoftmaxFlash(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
+     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
     TRACE_START(TraceId::SoftmaxFlash);
     SoftmaxFlashImpl<T, isReuseSource, isBasicBlock>(
         dstTensor, sumTensor, maxTensor, srcTensor, expMaxTensor, inSumTensor, inMaxTensor, tiling, isUpdate,
@@ -162,8 +165,9 @@ __aicore__ inline void SoftmaxFlash(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
+     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
     TRACE_START(TraceId::SoftmaxFlash);
     SoftmaxFlashImpl<T, isReuseSource, isBasicBlock>(
         dstTensor, sumTensor, maxTensor, srcTensor, expMaxTensor, inSumTensor, inMaxTensor, sharedTmpBuffer, tiling,
@@ -208,8 +212,9 @@ __aicore__ inline void SoftmaxFlash(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
+     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5102)
     TRACE_START(TraceId::SoftmaxFlash);
     SoftmaxFlashImpl<T, isReuseSource, isBasicBlock>(
         dstTensor, sumTensor, maxTensor, srcTensor, expMaxTensor, inSumTensor, inMaxTensor, sharedTmpBuffer, tiling,

@@ -32,8 +32,8 @@
 
 namespace AscendC {
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 template <typename T>
 constexpr __aicore__ inline void SoftmaxApiSupportedTypeCheck()
 {
@@ -144,7 +144,7 @@ __aicore__ inline void UnaryComputeWithSpecialMask(
     }
 }
 
-};     // namespace AscendC
+}; // namespace AscendC
 #endif // IMPL_ACTIVATION_SOFTMAX_SOFTMAX_COMMON_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_SOFTMAX_COMMON_H__)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
