@@ -28,6 +28,8 @@
 
 头文件路径为：`"c_api/reg_compute/compute/reg_fused.h"`。
 
+**该接口已废弃。**
+
 对源操作数src和value进行乘法运算再按照数据类型转换的ROUND舍入模式转成half类型，根据mask将结果写入目的操作数dst。计算公式如下：
 
 $$
@@ -54,7 +56,7 @@ __simd_callee__ inline void asc_muls_v2(vector_half& dst, vector_float src, floa
 | value | 输入 | 源操作数（标量）。 |
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 

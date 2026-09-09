@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/reg_compute/compute/reg_permute_sel.h"`。
 
-**该接口已废弃，请使用 [asc_pack_to_low](asc_pack_to_low.md) 和 [asc_pack_to_high](asc_pack_to_high.md) 替代。**
+**该接口已废弃，请使用 [asc_pack_to_low](../reg_compute/reg_permute_sel/asc_pack_to_low.md) 和 [asc_pack_to_high](../reg_compute/reg_permute_sel/asc_pack_to_high.md) 替代。**
 
 将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的低半部分或高半部分。
 
@@ -60,7 +60,7 @@ __simd_callee__ inline void asc_pack_v2(vector_bool& dst, vector_bool src)
 | dst       | 输出    | 目的操作数（矢量数据寄存器/掩码寄存器）。            |
 | src | 输入    | 源操作数（矢量数据寄存器/掩码寄存器）。            |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 

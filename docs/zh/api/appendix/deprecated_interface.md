@@ -15,7 +15,7 @@
 ### 数据搬运
 
 <!-- npu="950" id1 -->
-- [asc_set_gm2ub_pad](../SIMD-API/c_api/vector_datamove/asc_set_gm2ub_pad_deprecated.md)接口
+- [asc_set_gm2ub_pad](../SIMD-API/c_api/deprecated_interface/asc_set_gm2ub_pad_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_set_copy_pad_val](../SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md)接口。
 <!-- end id1 -->
@@ -77,7 +77,7 @@
 
     此接口后续版本会废弃，请使用[内置变量block_num](../../guide/programming_guide/language_extension/simd_builtin_keywords.md#内置变量)。
 
-- [asc_get_ar_spr](../SIMD-API/c_api/spr/asc_get_ar_spr_deprecated.md)接口
+- [asc_get_ar_spr](../SIMD-API/c_api/deprecated_interface/asc_get_ar_spr_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_get_squeeze_status](../SIMD-API/c_api/spr/asc_get_squeeze_status.md)接口。
 
@@ -359,19 +359,19 @@
 
     旧原型已废弃，请使用[asc_half2uint8](../SIMD-API/c_api/reg_compute/reg_convert/asc_half2uint8.md)的显式位置参数重载。
 
-- [asc_squeeze_v2](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_deprecated.md)接口
+- [asc_squeeze_v2](../SIMD-API/c_api/deprecated_interface/asc_squeeze_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
 
-- [asc_squeeze_with_status](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_with_status_deprecated.md)接口
+- [asc_squeeze_with_status](../SIMD-API/c_api/deprecated_interface/asc_squeeze_with_status_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
 
-- [asc_clear_ar_spr](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_clear_ar_spr_deprecated.md)接口
+- [asc_clear_ar_spr](../SIMD-API/c_api/deprecated_interface/asc_clear_ar_spr_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign_init](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md)接口。
 
-- [asc_create_iter_reg](../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_create_iter_reg_deprecated.md)接口
+- [asc_create_iter_reg](../SIMD-API/c_api/deprecated_interface/asc_create_iter_reg_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_update_addr_reg](../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md)接口。
 
@@ -447,7 +447,7 @@
 
     旧原型已废弃，请使用[asc_uint322uint8](../SIMD-API/c_api/reg_compute/reg_convert/asc_uint322uint8.md)的显式位置参数重载。
 
-- [asc_muls](../SIMD-API/c_api/reg_compute/reg_fused/asc_muls_deprecated.md)接口
+- [asc_muls](../SIMD-API/c_api/deprecated_interface/asc_muls_deprecated.md)接口
 
     此接口后续版本会废弃。
 
@@ -455,11 +455,11 @@
 
     `half`输入且不带`src_pos`参数的`asc_exp_sub`原型以及`asc_exp_sub_v2`原型已废弃。`float`输入请使用`asc_exp_sub`原型，`half`输入请使用带显式`src_pos`参数的`asc_exp_sub_half2float`原型。
 
-- [asc_pack](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_deprecated.md)接口
+- [asc_pack](../SIMD-API/c_api/deprecated_interface/asc_pack_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_pack_to_low](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_low.md)接口。
 
-- [asc_pack_v2](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_deprecated.md)接口
+- [asc_pack_v2](../SIMD-API/c_api/deprecated_interface/asc_pack_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_pack_to_high](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_high.md)接口。
 

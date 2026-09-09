@@ -716,7 +716,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_set_saturation_flag](spr/asc_set_saturation_flag.md)|设置指定饱和模式的开关状态。|`c_api/spr/spr.h`|
 |[asc_set_saturation_strategy](spr/asc_set_saturation_strategy.md)|设置饱和控制策略。|`c_api/spr/spr.h`|
 
-## 废弃同步接口
+## 废弃接口
 
 | 废弃接口 | 说明 |
 | --- | --- |
@@ -724,12 +724,18 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 | [asc_add_relu_sync（废弃）](deprecated_interface/asc_add_relu_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_add_scalar_sync（废弃）](deprecated_interface/asc_add_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_add_sync（废弃）](deprecated_interface/asc_add_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_and（废弃）](deprecated_interface/asc_and_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_and_sync（废弃）](deprecated_interface/asc_and_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_axpy_sync（废弃）](deprecated_interface/asc_axpy_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_bfloat162e1m2x2（废弃）](deprecated_interface/asc_bfloat162e1m2x2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_bfloat162e2m1x2（废弃）](deprecated_interface/asc_bfloat162e2m1x2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_bfloat162float（废弃）](deprecated_interface/asc_bfloat162float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_bfloat162float_sync（废弃）](deprecated_interface/asc_bfloat162float_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_bfloat162int32（废弃）](deprecated_interface/asc_bfloat162int32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_bfloat162int32_sync（废弃）](deprecated_interface/asc_bfloat162int32_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_bitsort_sync（废弃）](deprecated_interface/asc_bitsort_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_brcb_sync（废弃）](deprecated_interface/asc_brcb_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_clear_ar_spr（废弃）](deprecated_interface/asc_clear_ar_spr_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_copy_gm2l0a_sync（废弃）](deprecated_interface/asc_copy_gm2l0a_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_copy_gm2l0b_sync（废弃）](deprecated_interface/asc_copy_gm2l0b_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_copy_gm2l1_align_sync（废弃）](deprecated_interface/asc_copy_gm2l1_align_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
@@ -772,6 +778,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 | [asc_copy_ub2gm_sync_arch_3510（废弃）](deprecated_interface/asc_copy_ub2gm_sync_arch_3510_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_copy_ub2l1_sync（废弃）](deprecated_interface/asc_copy_ub2l1_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_copy_ub2ub_sync（废弃）](deprecated_interface/asc_copy_ub2ub_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_create_iter_reg (废弃)](deprecated_interface/asc_create_iter_reg_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_datablock_reduce_max_sync（废弃）](deprecated_interface/asc_datablock_reduce_max_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_datablock_reduce_min_sync（废弃）](deprecated_interface/asc_datablock_reduce_min_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_datablock_reduce_sum_sync（废弃）](deprecated_interface/asc_datablock_reduce_sum_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
@@ -779,44 +786,87 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 | [asc_deq_int322half_sync（废弃）](deprecated_interface/asc_deq_int322half_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_div_sync（废弃）](deprecated_interface/asc_div_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_duplicate_sync（废弃）](deprecated_interface/asc_duplicate_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_e1m2x22bfloat16（废弃）](deprecated_interface/asc_e1m2x22bfloat16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_e2m1x22bfloat16（废弃）](deprecated_interface/asc_e2m1x22bfloat16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_e4m32float（废弃）](deprecated_interface/asc_e4m32float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_e5m22float（废弃）](deprecated_interface/asc_e5m22float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_eq_scalar_sync（废弃）](deprecated_interface/asc_eq_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_eq_sync（废弃）](deprecated_interface/asc_eq_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_exp_sub（废弃）](deprecated_interface/asc_exp_sub_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_exp_sync（废弃）](deprecated_interface/asc_exp_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_fill_l0a_sync（废弃）](deprecated_interface/asc_fill_l0a_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_fill_l0b_sync（废弃）](deprecated_interface/asc_fill_l0b_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_fill_l1_sync（废弃）](deprecated_interface/asc_fill_l1_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2bfloat16（废弃）](deprecated_interface/asc_float2bfloat16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_float2bfloat16_sync（废弃）](deprecated_interface/asc_float2bfloat16_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2e4m3（废弃）](deprecated_interface/asc_float2e4m3_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2e5m2（废弃）](deprecated_interface/asc_float2e5m2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_float2float_sync（废弃）](deprecated_interface/asc_float2float_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2half（废弃）](deprecated_interface/asc_float2half_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_float2half_sync（废弃）](deprecated_interface/asc_float2half_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2hif8（废弃）](deprecated_interface/asc_float2hif8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2int16（废弃）](deprecated_interface/asc_float2int16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_float2int16_sync（废弃）](deprecated_interface/asc_float2int16_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_float2int32_sync（废弃）](deprecated_interface/asc_float2int32_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_float2int64（废弃）](deprecated_interface/asc_float2int64_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_float2int64_sync（废弃）](deprecated_interface/asc_float2int64_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_fma_sync（废弃）](deprecated_interface/asc_fma_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_gather_datablock_sync（废弃）](deprecated_interface/asc_gather_datablock_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_gather_sync（废弃）](deprecated_interface/asc_gather_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_ge_scalar_sync（废弃）](deprecated_interface/asc_ge_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_ge_sync（废弃）](deprecated_interface/asc_ge_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_get_ar_spr (废弃)](deprecated_interface/asc_get_ar_spr_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_get_block_idx（废弃）](deprecated_interface/asc_get_block_idx_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_get_block_num（废弃）](deprecated_interface/asc_get_block_num_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_gt_scalar_sync（废弃）](deprecated_interface/asc_gt_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_gt_sync（废弃）](deprecated_interface/asc_gt_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_half2float（废弃）](deprecated_interface/asc_half2float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_half2float_sync（废弃）](deprecated_interface/asc_half2float_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_half2hif8（废弃）](deprecated_interface/asc_half2hif8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_half2int16_sync（废弃）](deprecated_interface/asc_half2int16_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_half2int32（废弃）](deprecated_interface/asc_half2int32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_half2int32_sync（废弃）](deprecated_interface/asc_half2int32_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_half2int4_sync（废弃）](deprecated_interface/asc_half2int4_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_half2int4x2（废弃）](deprecated_interface/asc_half2int4x2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_half2int8（废弃）](deprecated_interface/asc_half2int8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_half2int8_sync（废弃）](deprecated_interface/asc_half2int8_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_half2uint8（废弃）](deprecated_interface/asc_half2uint8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_half2uint8_sync（废弃）](deprecated_interface/asc_half2uint8_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_hif82float（废弃）](deprecated_interface/asc_hif82float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_hif82half（废弃）](deprecated_interface/asc_hif82half_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int162float（废弃）](deprecated_interface/asc_int162float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int162float_sync（废弃）](deprecated_interface/asc_int162float_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int162half_sync（废弃）](deprecated_interface/asc_int162half_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int162int32（废弃）](deprecated_interface/asc_int162int32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int162uint32（废弃）](deprecated_interface/asc_int162uint32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int162uint8（废弃）](deprecated_interface/asc_int162uint8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int322float_sync（废弃）](deprecated_interface/asc_int322float_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int322int16（废弃）](deprecated_interface/asc_int322int16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int322int16_sync（废弃）](deprecated_interface/asc_int322int16_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int322int64（废弃）](deprecated_interface/asc_int322int64_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int322int64_sync（废弃）](deprecated_interface/asc_int322int64_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int322uint16（废弃）](deprecated_interface/asc_int322uint16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int322uint8（废弃）](deprecated_interface/asc_int322uint8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int42half_sync（废弃）](deprecated_interface/asc_int42half_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int4x22bfloat16（废弃）](deprecated_interface/asc_int4x22bfloat16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int4x22half（废弃）](deprecated_interface/asc_int4x22half_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int4x22int16（废弃）](deprecated_interface/asc_int4x22int16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int642float（废弃）](deprecated_interface/asc_int642float_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int642float_sync（废弃）](deprecated_interface/asc_int642float_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int642int32（废弃）](deprecated_interface/asc_int642int32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int642int32_sync（废弃）](deprecated_interface/asc_int642int32_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int82half（废弃）](deprecated_interface/asc_int82half_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_int82half_sync（废弃）](deprecated_interface/asc_int82half_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int82int16（废弃）](deprecated_interface/asc_int82int16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_int82int32（废弃）](deprecated_interface/asc_int82int32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_le_scalar_sync（废弃）](deprecated_interface/asc_le_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_le_sync（废弃）](deprecated_interface/asc_le_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_leakyrelu_sync（废弃）](deprecated_interface/asc_leakyrelu_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_load_image_to_cbuf_sync（废弃）](deprecated_interface/asc_load_image_to_cbuf_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_loadalign (废弃)](deprecated_interface/asc_loadalign_v1_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_loadalign (废弃)](deprecated_interface/asc_loadalign_v2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_loadalign (废弃)](deprecated_interface/asc_loadalign_v3_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_loadalign (废弃)](deprecated_interface/asc_loadalign_v4_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_log_sync（废弃）](deprecated_interface/asc_log_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_lt_scalar_sync（废弃）](deprecated_interface/asc_lt_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_lt_sync（废弃）](deprecated_interface/asc_lt_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
@@ -824,6 +874,9 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 | [asc_max_sync（废弃）](deprecated_interface/asc_max_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_min_scalar_sync（废弃）](deprecated_interface/asc_min_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_min_sync（废弃）](deprecated_interface/asc_min_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_mmad（废弃）](deprecated_interface/asc_mmad_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_mmad_mx（废弃）](deprecated_interface/asc_mmad_mx_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_mmad_sparse（废弃）](deprecated_interface/asc_mmad_sparse_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_mrgsort4_sync（废弃）](deprecated_interface/asc_mrgsort4_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_mul_add_relu_sync（废弃）](deprecated_interface/asc_mul_add_relu_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_mul_add_sync（废弃）](deprecated_interface/asc_mul_add_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
@@ -831,10 +884,13 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 | [asc_mul_cast_half2uint8_sync（废弃）](deprecated_interface/asc_mul_cast_half2uint8_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_mul_scalar_sync（废弃）](deprecated_interface/asc_mul_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_mul_sync（废弃）](deprecated_interface/asc_mul_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_muls (废弃)](deprecated_interface/asc_muls_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_ne_scalar_sync（废弃）](deprecated_interface/asc_ne_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_ne_sync（废弃）](deprecated_interface/asc_ne_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_not_sync（废弃）](deprecated_interface/asc_not_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_or（废弃）](deprecated_interface/asc_or_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_or_sync（废弃）](deprecated_interface/asc_or_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_pack (废弃)](deprecated_interface/asc_pack_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_pair_reduce_sum_sync（废弃）](deprecated_interface/asc_pair_reduce_sum_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_rcp_sync（废弃）](deprecated_interface/asc_rcp_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_reduce_sync（废弃）](deprecated_interface/asc_reduce_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
@@ -843,14 +899,37 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 | [asc_repeat_reduce_min_sync（废弃）](deprecated_interface/asc_repeat_reduce_min_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_repeat_reduce_sum_sync（废弃）](deprecated_interface/asc_repeat_reduce_sum_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_rsqrt_sync（废弃）](deprecated_interface/asc_rsqrt_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_scatter（废弃）](deprecated_interface/asc_scatter_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_select_sync（废弃）](deprecated_interface/asc_select_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_set_atomic_add_int（废弃）](deprecated_interface/asc_set_atomic_add_int_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_set_atomic_max_int（废弃）](deprecated_interface/asc_set_atomic_max_int_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_set_atomic_min_int（废弃）](deprecated_interface/asc_set_atomic_min_int_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_set_atomic_none（废弃）](deprecated_interface/asc_set_atomic_none_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_set_gm2ub_pad（废弃）](deprecated_interface/asc_set_gm2ub_pad_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_set_store_atomic_config_v2（废弃）](deprecated_interface/asc_set_store_atomic_config_v2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_shiftleft_sync（废弃）](deprecated_interface/asc_shiftleft_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_shiftright_sync（废弃）](deprecated_interface/asc_shiftright_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_sqrt_sync（废弃）](deprecated_interface/asc_sqrt_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_squeeze_v2 (废弃)](deprecated_interface/asc_squeeze_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_squeeze_with_status（废弃）](deprecated_interface/asc_squeeze_with_status_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_storealign_pack_v2（废弃）](deprecated_interface/asc_storealign_v1_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_storealign_pack_v2（废弃）](deprecated_interface/asc_storealign_v2_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_storealign_pack_v2（废弃）](deprecated_interface/asc_storealign_v3_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_storealign_pack_postupdate_v2（废弃）](deprecated_interface/asc_storealign_v4_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_storeunalign_post（废弃）](deprecated_interface/asc_storeunalign_post_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_storeunalign_postupdate（废弃）](deprecated_interface/asc_storeunalign_postupdate_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_sub_relu_sync（废弃）](deprecated_interface/asc_sub_relu_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_sub_scalar_sync（废弃）](deprecated_interface/asc_sub_scalar_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_sub_sync（废弃）](deprecated_interface/asc_sub_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_transpose_sync（废弃）](deprecated_interface/asc_transpose_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_transto5hd_sync（废弃）](deprecated_interface/asc_transto5hd_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint162uint32（废弃）](deprecated_interface/asc_uint162uint32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint162uint8（废弃）](deprecated_interface/asc_uint162uint8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint322int16（废弃）](deprecated_interface/asc_uint322int16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint322uint16（废弃）](deprecated_interface/asc_uint322uint16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint322uint8（废弃）](deprecated_interface/asc_uint322uint8_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint82half（废弃）](deprecated_interface/asc_uint82half_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_uint82half_sync（废弃）](deprecated_interface/asc_uint82half_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint82uint16（废弃）](deprecated_interface/asc_uint82uint16_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
+| [asc_uint82uint32（废弃）](deprecated_interface/asc_uint82uint32_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
 | [asc_vdeq_int162b8_sync（废弃）](deprecated_interface/asc_vdeq_int162b8_sync_deprecated.md) | 该接口已废弃，替代关系及迁移方式请参见接口文档。 |
