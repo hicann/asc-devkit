@@ -100,35 +100,11 @@ __aicore__ inline void asc_copy_l0c2gm(__gm__ <dst_dtype>* dst,
                                        bool c0_pad_en,
                                        bool broadcast_en,
                                        bool enable_nz2dn)
-__aicore__ inline void asc_copy_l0c2gm_sync(__gm__ <dst_dtype>* dst,
-                                       __cc__ <src_dtype>* src,
-                                       uint16_t n_size,
-                                       uint16_t m_size,
-                                       uint32_t dst_stride,
-                                       uint16_t src_stride,
-                                       uint8_t l2_cache_mode,
-                                       uint8_t enable_clip_relu_pre,
-                                       uint8_t unit_flag_mode,
-                                       uint64_t quant_pre_mode,
-                                       uint8_t relu_pre_mode,
-                                       bool enable_channel_split,
-                                       bool enable_nz2nd,
-                                       uint64_t quant_post,
-                                       uint8_t relu_post,
-                                       bool clip_relu_post,
-                                       uint8_t eltwise_op,
-                                       bool eltwise_antq_en,
-                                       bool c0_pad_en,
-                                       bool broadcast_en,
-                                       bool enable_nz2dn)
 ```
 
 ### dtype支持的数据类型
 
 src dtype与dst dtype支持以下组合：
-
-- `src_dtype`为`int32_t`时，`dst_dtype`支持`int4b_t`、`int8_t`、`uint8_t`、`half`、`bfloat16_t`、`int32_t`。
-- `src_dtype`为`float`时，`dst_dtype`支持`int4b_t`、`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e4m3fn_t`、`half`、`bfloat16_t`、`float`。
 
 ### 函数原型典型示例
 

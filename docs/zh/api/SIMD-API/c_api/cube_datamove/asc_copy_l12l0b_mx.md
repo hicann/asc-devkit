@@ -51,15 +51,6 @@ __aicore__ inline void asc_copy_l12l0b_mx(uint64_t dst,
                                           uint8_t y_step,
                                           uint16_t src_stride,
                                           uint16_t dst_stride)
-
-__aicore__ inline void asc_copy_l12l0b_mx_sync(uint64_t dst,
-                                               __cbuf__ fp8_e8m0_t* src,
-                                               uint16_t x_start_pos,
-                                               uint16_t y_start_pos,
-                                               uint8_t x_step,
-                                               uint8_t y_step,
-                                               uint16_t src_stride,
-                                               uint16_t dst_stride)
 ```
 
 ## 参数说明

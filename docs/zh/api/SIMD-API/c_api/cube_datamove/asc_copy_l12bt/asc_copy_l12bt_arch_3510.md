@@ -76,9 +76,6 @@ __aicore__ inline void asc_copy_l12bt(uint64_t dst,
 __aicore__ inline void asc_copy_l12bt(uint64_t dst,
                                       __cbuf__ <dtype>* src,
                                       uint32_t size)
-__aicore__ inline void asc_copy_l12bt_sync(uint64_t dst,
-                                           __cbuf__ <dtype>* src,
-                                           uint32_t size)
 ```
 
 #### dtype支持的数据类型

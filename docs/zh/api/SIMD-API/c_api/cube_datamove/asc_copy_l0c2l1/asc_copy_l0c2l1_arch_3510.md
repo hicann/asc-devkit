@@ -119,33 +119,12 @@ __aicore__ inline void asc_copy_l0c2l1(__cbuf__ int4b_t* dst,
                                        bool c0_pad_en,
                                        bool broadcast_en,
                                        bool enable_nz2dn)
-__aicore__ inline void asc_copy_l0c2l1_sync(__cbuf__ int4b_t* dst,
-                                            __cc__ <src_dtype>* src,
-                                            uint16_t n_size,
-                                            uint16_t m_size,
-                                            uint32_t dst_stride,
-                                            uint16_t src_stride,
-                                            uint8_t l2_cache_mode,
-                                            uint8_t enable_clip_relu_pre,
-                                            uint8_t unit_flag_mode,
-                                            uint64_t quant_pre_mode,
-                                            uint8_t relu_pre_mode,
-                                            bool enable_channel_split,
-                                            bool enable_nz2nd,
-                                            uint64_t quant_post,
-                                            uint8_t relu_post,
-                                            bool clip_relu_post,
-                                            uint8_t eltwise_op,
-                                            bool eltwise_antq_en,
-                                            bool c0_pad_en,
-                                            bool broadcast_en,
-                                            bool enable_nz2dn)
 ```
 
 ### dtype支持的数据类型
 
 - 普通原型中，`src_dtype`为`int32_t`时，`dst_dtype`支持`half`、`int8_t`、`uint8_t`、`int32_t`；`src_dtype`为`float`时，`dst_dtype`支持`half`、`bfloat16_t`、`int8_t`、`uint8_t`、`float`。
-- 带`l2_cache_mode`及同步版本的原型中，`dst_dtype`为`int4b_t`，`src_dtype`支持`int32_t`、`float`。
+- 带`l2_cache_mode`的原型中，`dst_dtype`为`int4b_t`，`src_dtype`支持`int32_t`、`float`。
 
 ### 函数原型典型示例
 

@@ -74,5 +74,5 @@ PIPE_V
 constexpr uint32_t total_length = 128;
 __ubuf__ half src[total_length];
 __ubuf__ half dst[total_length];
-asc_abs(dst, src, total_length);
+asc_abs_sync(dst, src, total_length);
 ```

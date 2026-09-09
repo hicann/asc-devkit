@@ -64,10 +64,11 @@ uint16_t right_width = 16;  // N
 // 在 asc_mmad 前调用：以 FP8 格式参与矩阵运算（非 HiF8 转换路径）
 asc_enable_fp8();
 
-uint8_t unit_flag = 0;
+asc_unit_flag_mode unit_flag_mode = asc_unit_flag_mode::DISABLE;
 bool disable_gemv = false;
 bool c_matrix_source = false;
 bool c_matrix_init_val = true;
-asc_mmad_sync(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width,
-              unit_flag, disable_gemv, c_matrix_source, c_matrix_init_val);
+asc_mmad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width,
+         unit_flag_mode, disable_gemv, c_matrix_source, c_matrix_init_val);
+asc_sync();
 ```

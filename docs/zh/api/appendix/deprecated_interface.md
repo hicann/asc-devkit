@@ -497,3 +497,555 @@
 - [asc_transto5hd_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)接口
 
     此接口已废弃。请使用[asc_transto5hd](../SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transto5hd.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
+
+### 矩阵数据搬运
+
+- [asc_copy_gm2l0a_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l0a_sync_deprecated.md)接口
+
+    `asc_copy_gm2l0a_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l0a.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l0b_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l0b_sync_deprecated.md)接口
+
+    `asc_copy_gm2l0b_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l0b.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_align_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_align_sync_deprecated.md)接口
+
+    `asc_copy_gm2l1_align_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_align.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_dn2nz_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_dn2nz_sync_deprecated.md)接口
+
+    `asc_copy_gm2l1_dn2nz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_dn2nz.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_nd2nz_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_nd2nz_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_gm2l1_nd2nz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_nd2nz_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_nd2nz_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_gm2l1_nd2nz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_sync_2d_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_sync_2d_arch_3510_deprecated.md)接口
+
+    `asc_copy_gm2l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_2d_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_gm2l1_sync()`、`asc_copy_gm2l1_pad1_sync()`、`asc_copy_gm2l1_pad2_sync()`、`asc_copy_gm2l1_pad3_sync()`、`asc_copy_gm2l1_pad4_sync()`、`asc_copy_gm2l1_pad5_sync()`、`asc_copy_gm2l1_pad6_sync()`、`asc_copy_gm2l1_pad7_sync()`、`asc_copy_gm2l1_pad8_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2l1_sync_highdim_split_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_sync_highdim_split_arch_3510_deprecated.md)接口
+
+    `asc_copy_gm2l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l0c2gm_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2gm_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l0c2gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l0c2gm_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2gm_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_l0c2gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l0c2l1_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2l1_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l0c2l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l0c2l1_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2l1_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_l0c2l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l0c2ub_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2ub_sync_deprecated.md)接口
+
+    `asc_copy_l0c2ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2ub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12bt_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12bt_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l12bt_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12bt/asc_copy_l12bt_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12bt_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12bt_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12bt_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12bt/asc_copy_l12bt_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12fb_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12fb_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l12fb_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12fb_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12fb_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12fb_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12gm_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12gm_sync_deprecated.md)接口
+
+    `asc_copy_l12gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12gm.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0a_mx_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0a_mx_sync_deprecated.md)接口
+
+    `asc_copy_l12l0a_mx_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0a_mx.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0a_sync_2d_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0a_sync_2d_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12l0a_sync()`、`asc_copy_l12l0a_transpose_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0a_sync_3d_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0a_sync_3d_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12l0a_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_3d_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0a_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0a_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l12l0a_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0a_trans_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0a_trans_sync_deprecated.md)接口
+
+    `asc_copy_l12l0a_trans_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0a_trans.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_mx_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_mx_sync_deprecated.md)接口
+
+    `asc_copy_l12l0b_mx_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b_mx.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_sparse_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_sparse_sync_deprecated.md)接口
+
+    `asc_copy_l12l0b_sparse_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b_sparse.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_sync_2d_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_sync_2d_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12l0b_sync()`、`asc_copy_l12l0b_transpose_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_sync_3d_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_sync_3d_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12l0b_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l12l0b_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_trans_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_trans_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_l12l0b_trans_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0b_trans_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0b_trans_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_l12l0b_trans_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12l0c_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12l0c_sync_deprecated.md)接口
+
+    `asc_copy_l12l0c_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12l0c.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_l12ub_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12ub_sync_deprecated.md)接口
+
+    `asc_copy_l12ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l12ub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_fill_l0a_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_fill_l0a_sync_deprecated.md)接口
+
+    `asc_fill_l0a_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_fill_l0a.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_fill_l0b_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_fill_l0b_sync_deprecated.md)接口
+
+    `asc_fill_l0b_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_fill_l0b.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_fill_l1_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_fill_l1_sync_deprecated.md)接口
+
+    `asc_fill_l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_fill_l1.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_load_image_to_cbuf_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_load_image_to_cbuf_sync_deprecated.md)接口
+
+    `asc_load_image_to_cbuf_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_load_image_to_cbuf.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory数据搬运
+
+- [asc_copy_gm2ub_align_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_align_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_gm2ub_align_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2ub_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_gm2ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_gm2ub_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_gm2ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_sync_deprecated.md)接口
+
+    `asc_copy_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_ub2gm_align_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_align_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_ub2gm_align_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_ub2gm_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_sync_arch_2201_deprecated.md)接口
+
+    `asc_copy_ub2gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_ub2gm_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_sync_arch_3510_deprecated.md)接口
+
+    `asc_copy_ub2gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_ub2l1_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2l1_sync_deprecated.md)接口
+
+    `asc_copy_ub2l1_sync()`已废弃，请使用[asc_copy_ub2l1](../SIMD-API/c_api/vector_datamove/asc_copy_ub2l1.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_copy_ub2ub_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2ub_sync_deprecated.md)接口
+
+    `asc_copy_ub2ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_ub2ub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量算术运算
+
+- [asc_add_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_add_scalar_sync_deprecated.md)接口
+
+    `asc_add_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_add_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_add_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_add_sync_deprecated.md)接口
+
+    `asc_add_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_add.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_div_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_div_sync_deprecated.md)接口
+
+    `asc_div_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_div.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_exp_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_exp_sync_deprecated.md)接口
+
+    `asc_exp_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_exp.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_log_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_log_sync_deprecated.md)接口
+
+    `asc_log_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_log.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_max_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_max_scalar_sync_deprecated.md)接口
+
+    `asc_max_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_max_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_max_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_max_sync_deprecated.md)接口
+
+    `asc_max_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_max.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_min_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_min_scalar_sync_deprecated.md)接口
+
+    `asc_min_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_min_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_min_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_min_sync_deprecated.md)接口
+
+    `asc_min_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_min.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mul_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mul_scalar_sync_deprecated.md)接口
+
+    `asc_mul_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_mul_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mul_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mul_sync_deprecated.md)接口
+
+    `asc_mul_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_mul.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_rcp_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_rcp_sync_deprecated.md)接口
+
+    `asc_rcp_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_rcp.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_rsqrt_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_rsqrt_sync_deprecated.md)接口
+
+    `asc_rsqrt_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_rsqrt.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_sqrt_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_sqrt_sync_deprecated.md)接口
+
+    `asc_sqrt_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_sqrt.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_sub_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_sub_scalar_sync_deprecated.md)接口
+
+    `asc_sub_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_sub_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_sub_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_sub_sync_deprecated.md)接口
+
+    `asc_sub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_sub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量广播
+
+- [asc_brcb_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_brcb_sync_deprecated.md)接口
+
+    `asc_brcb_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_broadcast/asc_brcb.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_duplicate_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_duplicate_sync_deprecated.md)接口
+
+    `asc_duplicate_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_broadcast/asc_duplicate.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量比较
+
+- [asc_eq_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_eq_scalar_sync_deprecated.md)接口
+
+    `asc_eq_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_eq_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_eq_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_eq_sync_deprecated.md)接口
+
+    `asc_eq_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_eq.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_ge_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_ge_scalar_sync_deprecated.md)接口
+
+    `asc_ge_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_ge_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_ge_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_ge_sync_deprecated.md)接口
+
+    `asc_ge_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_ge.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_gt_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_gt_scalar_sync_deprecated.md)接口
+
+    `asc_gt_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_gt_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_gt_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_gt_sync_deprecated.md)接口
+
+    `asc_gt_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_gt.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_le_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_le_scalar_sync_deprecated.md)接口
+
+    `asc_le_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_le_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_le_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_le_sync_deprecated.md)接口
+
+    `asc_le_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_le.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_lt_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_lt_scalar_sync_deprecated.md)接口
+
+    `asc_lt_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_lt_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_lt_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_lt_sync_deprecated.md)接口
+
+    `asc_lt_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_lt.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_ne_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_ne_scalar_sync_deprecated.md)接口
+
+    `asc_ne_scalar_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_ne_scalar.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_ne_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_ne_sync_deprecated.md)接口
+
+    `asc_ne_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_ne.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量类型转换
+
+- [asc_bfloat162float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_bfloat162float_sync_deprecated.md)接口
+
+    `asc_bfloat162float_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_bfloat162float.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_bfloat162int32_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_bfloat162int32_sync_deprecated.md)接口
+
+    `asc_bfloat162int32_rn_sync()`、`asc_bfloat162int32_rna_sync()`、`asc_bfloat162int32_rd_sync()`、`asc_bfloat162int32_ru_sync()`、`asc_bfloat162int32_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_bfloat162int32.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_float2bfloat16_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_float2bfloat16_sync_deprecated.md)接口
+
+    `asc_float2bfloat16_rn_sync()`、`asc_float2bfloat16_rna_sync()`、`asc_float2bfloat16_rd_sync()`、`asc_float2bfloat16_ru_sync()`、`asc_float2bfloat16_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_float2bfloat16.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_float2float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_float2float_sync_deprecated.md)接口
+
+    `asc_float2float_rn_sync()`、`asc_float2float_rd_sync()`、`asc_float2float_ru_sync()`、`asc_float2float_rna_sync()`、`asc_float2float_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_float2float.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_float2half_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_float2half_sync_deprecated.md)接口
+
+    `asc_float2half_sync()`、`asc_float2half_rn_sync()`、`asc_float2half_rna_sync()`、`asc_float2half_rd_sync()`、`asc_float2half_ru_sync()`、`asc_float2half_rz_sync()`、`asc_float2half_ro_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_float2half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_float2int16_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_float2int16_sync_deprecated.md)接口
+
+    `asc_float2int16_rn_sync()`、`asc_float2int16_rna_sync()`、`asc_float2int16_rd_sync()`、`asc_float2int16_ru_sync()`、`asc_float2int16_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_float2int16.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_float2int32_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_float2int32_sync_deprecated.md)接口
+
+    `asc_float2int32_rn_sync()`、`asc_float2int32_rna_sync()`、`asc_float2int32_rd_sync()`、`asc_float2int32_ru_sync()`、`asc_float2int32_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_float2int32.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_float2int64_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_float2int64_sync_deprecated.md)接口
+
+    `asc_float2int64_rn_sync()`、`asc_float2int64_rna_sync()`、`asc_float2int64_rd_sync()`、`asc_float2int64_ru_sync()`、`asc_float2int64_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_float2int64.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_half2float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_half2float_sync_deprecated.md)接口
+
+    `asc_half2float_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_half2float.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_half2int16_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_half2int16_sync_deprecated.md)接口
+
+    `asc_half2int16_rn_sync()`、`asc_half2int16_rna_sync()`、`asc_half2int16_rd_sync()`、`asc_half2int16_ru_sync()`、`asc_half2int16_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_half2int16.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_half2int32_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_half2int32_sync_deprecated.md)接口
+
+    `asc_half2int32_rn_sync()`、`asc_half2int32_rna_sync()`、`asc_half2int32_rd_sync()`、`asc_half2int32_ru_sync()`、`asc_half2int32_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_half2int32.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_half2int4_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_half2int4_sync_deprecated.md)接口
+
+    `asc_half2int4_sync()`、`asc_half2int4_rn_sync()`、`asc_half2int4_rd_sync()`、`asc_half2int4_rna_sync()`、`asc_half2int4_ru_sync()`、`asc_half2int4_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_half2int4.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_half2int8_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_half2int8_sync_deprecated.md)接口
+
+    `asc_half2int8_sync()`、`asc_half2int8_rn_sync()`、`asc_half2int8_rna_sync()`、`asc_half2int8_rd_sync()`、`asc_half2int8_ru_sync()`、`asc_half2int8_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_half2int8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_half2uint8_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_half2uint8_sync_deprecated.md)接口
+
+    `asc_half2uint8_sync()`、`asc_half2uint8_rn_sync()`、`asc_half2uint8_rd_sync()`、`asc_half2uint8_rna_sync()`、`asc_half2uint8_ru_sync()`、`asc_half2uint8_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_half2uint8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int162float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int162float_sync_deprecated.md)接口
+
+    `asc_int162float_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int162float.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int162half_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int162half_sync_deprecated.md)接口
+
+    `asc_int162half_sync()`、`asc_int162half_rn_sync()`、`asc_int162half_rna_sync()`、`asc_int162half_rd_sync()`、`asc_int162half_ru_sync()`、`asc_int162half_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int162half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int322float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int322float_sync_deprecated.md)接口
+
+    `asc_int322float_sync()`、`asc_int322float_rn_sync()`、`asc_int322float_rna_sync()`、`asc_int322float_rd_sync()`、`asc_int322float_ru_sync()`、`asc_int322float_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int322float.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int322int16_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int322int16_sync_deprecated.md)接口
+
+    `asc_int322int16_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int322int16.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int322int64_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int322int64_sync_deprecated.md)接口
+
+    `asc_int322int64_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int322int64.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int42half_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int42half_sync_deprecated.md)接口
+
+    `asc_int42half_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int42half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int642float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int642float_sync_deprecated.md)接口
+
+    `asc_int642float_rd_sync()`、`asc_int642float_rn_sync()`、`asc_int642float_rna_sync()`、`asc_int642float_ru_sync()`、`asc_int642float_rz_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int642float.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int642int32_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int642int32_sync_deprecated.md)接口
+
+    `asc_int642int32_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int642int32.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_int82half_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_int82half_sync_deprecated.md)接口
+
+    `asc_int82half_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_int82half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_uint82half_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_uint82half_sync_deprecated.md)接口
+
+    `asc_uint82half_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_uint82half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量复合计算
+
+- [asc_add_relu_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_add_relu_sync_deprecated.md)接口
+
+    `asc_add_relu_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_add_relu.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_axpy_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_axpy_sync_deprecated.md)接口
+
+    `asc_axpy_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_axpy.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_deq_int162b8_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_deq_int162b8_sync_deprecated.md)接口
+
+    `asc_deq_int162b8_h_sync()`、`asc_deq_int162b8_l_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_deq_int162b8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_deq_int322half_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_deq_int322half_sync_deprecated.md)接口
+
+    `asc_deq_int322half_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_deq_int322half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_fma_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_fma_sync_deprecated.md)接口
+
+    `asc_fma_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_fma.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_leakyrelu_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_leakyrelu_sync_deprecated.md)接口
+
+    `asc_leakyrelu_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_leakyrelu.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mul_add_relu_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mul_add_relu_sync_deprecated.md)接口
+
+    `asc_mul_add_relu_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_mul_add_relu.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mul_add_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mul_add_sync_deprecated.md)接口
+
+    `asc_mul_add_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_mul_add.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mul_cast_half2int8_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mul_cast_half2int8_sync_deprecated.md)接口
+
+    `asc_mul_cast_half2int8_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_mul_cast_half2int8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mul_cast_half2uint8_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mul_cast_half2uint8_sync_deprecated.md)接口
+
+    `asc_mul_cast_half2uint8_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_mul_cast_half2uint8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_relu_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_relu_sync_deprecated.md)接口
+
+    `asc_relu_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_relu.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_sub_relu_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_sub_relu_sync_deprecated.md)接口
+
+    `asc_sub_relu_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_sub_relu.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_vdeq_int162b8_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_vdeq_int162b8_sync_deprecated.md)接口
+
+    `asc_vdeq_int162b8_h_sync()`、`asc_vdeq_int162b8_l_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_vdeq_int162b8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量Gather
+
+- [asc_gather_datablock_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_gather_datablock_sync_deprecated.md)接口
+
+    `asc_gather_datablock_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_gather/asc_gather_datablock.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_gather_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_gather_sync_deprecated.md)接口
+
+    `asc_gather_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_gather/asc_gather.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量逻辑运算
+
+- [asc_and_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_and_sync_deprecated.md)接口
+
+    `asc_and_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_logic/asc_and.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_not_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_not_sync_deprecated.md)接口
+
+    `asc_not_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_logic/asc_not.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_or_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_or_sync_deprecated.md)接口
+
+    `asc_or_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_logic/asc_or.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_shiftleft_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_shiftleft_sync_deprecated.md)接口
+
+    `asc_shiftleft_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_logic/asc_shiftleft.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_shiftright_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_shiftright_sync_deprecated.md)接口
+
+    `asc_shiftright_sync()`、`asc_shiftright_round_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_logic/asc_shiftright.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量排布变换
+
+- [asc_select_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_select_sync_deprecated.md)接口
+
+    `asc_select_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_permute_sel/asc_select.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_transpose_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_transpose_sync_deprecated.md)接口
+
+    `asc_transpose_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transpose.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量归约
+
+- [asc_datablock_reduce_max_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_datablock_reduce_max_sync_deprecated.md)接口
+
+    `asc_datablock_reduce_max_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_datablock_reduce_max.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_datablock_reduce_min_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_datablock_reduce_min_sync_deprecated.md)接口
+
+    `asc_datablock_reduce_min_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_datablock_reduce_min.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_datablock_reduce_sum_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_datablock_reduce_sum_sync_deprecated.md)接口
+
+    `asc_datablock_reduce_sum_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_datablock_reduce_sum.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_pair_reduce_sum_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_pair_reduce_sum_sync_deprecated.md)接口
+
+    `asc_pair_reduce_sum_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_pair_reduce_sum.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_reduce_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_reduce_sync_deprecated.md)接口
+
+    `asc_reduce_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_reduce.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_repeat_reduce_max_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_repeat_reduce_max_sync_deprecated.md)接口
+
+    `asc_repeat_reduce_max_index_value_sync()`、`asc_repeat_reduce_max_value_index_sync()`、`asc_repeat_reduce_max_only_value_sync()`、`asc_repeat_reduce_max_only_index_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_repeat_reduce_max.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_repeat_reduce_min_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_repeat_reduce_min_sync_deprecated.md)接口
+
+    `asc_repeat_reduce_min_index_value_sync()`、`asc_repeat_reduce_min_value_index_sync()`、`asc_repeat_reduce_min_only_value_sync()`、`asc_repeat_reduce_min_only_index_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_repeat_reduce_min.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_repeat_reduce_sum_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_repeat_reduce_sum_sync_deprecated.md)接口
+
+    `asc_repeat_reduce_sum_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_repeat_reduce_sum.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+### Memory矢量排序
+
+- [asc_bitsort_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_bitsort_sync_deprecated.md)接口
+
+    `asc_bitsort_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_sort/asc_bitsort.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
+- [asc_mrgsort4_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mrgsort4_sync_deprecated.md)接口
+
+    `asc_mrgsort4_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_sort/asc_mrgsort4.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。

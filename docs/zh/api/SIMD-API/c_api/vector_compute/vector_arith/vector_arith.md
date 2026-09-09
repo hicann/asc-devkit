@@ -17,4 +17,3 @@
 - **[asc_sqrt](asc_sqrt.md)**
 - **[asc_sub](asc_sub.md)**
 - **[asc_sub_scalar](asc_sub_scalar.md)**
-- **[asc_abs_sync（废弃）](../../deprecated_interface/asc_abs_sync_deprecated.md)**
