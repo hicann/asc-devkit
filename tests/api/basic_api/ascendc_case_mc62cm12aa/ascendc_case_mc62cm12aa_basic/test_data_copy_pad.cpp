@@ -7,6 +7,8 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
+#include <cstdint>
+#include <type_traits>
 #include <gtest/gtest.h>
 #define private public
 #define protect public
@@ -15,6 +17,10 @@
 
 using namespace std;
 using namespace AscendC;
+
+static_assert(
+    std::is_same<decltype(DataCopyExtParams::blockCount), uint16_t>::value,
+    "DataCopyExtParams::blockCount must be uint16_t on NPU architecture 5102");
 
 struct TestDataCopyPadParams {
     uint32_t dataSize;

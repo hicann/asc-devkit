@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <cstdint>
+#include <type_traits>
 #include <gtest/gtest.h>
 #include "kernel_operator.h"
 // #include "api_check/kernel_cpu_check.h"
@@ -15,6 +16,10 @@
 
 using namespace std;
 using namespace AscendC;
+
+static_assert(
+    std::is_same<decltype(DataCopyExtParams::blockCount), uint16_t>::value,
+    "DataCopyExtParams::blockCount must be uint16_t on NPU architecture 3510");
 
 struct TestDataCopyPadParams {
     uint32_t dataSize;
@@ -99,6 +104,14 @@ TEST_P(TestDataCopyPadSuite, TestDataCopyPadCases)
         EXPECT_EQ(dstGm[i], 0x00);
     }
     SetGCoreType(0);
+}
+
+TEST(DataCopyExtParamsSuite, BlockCountSupports16BitValue)
+{
+    constexpr uint16_t blockCount = UINT16_MAX;
+    DataCopyExtParams copyParams{blockCount, 1, 0, 0, 0};
+
+    EXPECT_EQ(copyParams.blockCount, blockCount);
 }
 
 class DataCopyPadStrideBoundarySuite : public testing::Test {
