@@ -15,26 +15,9 @@
 #include "ccu_kernel_kfc_server.h"
 #include "ccu_kernel_proxy.h"
 #include "kfc_server_protocol.h"
-#include "ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.h"
 
 #include <limits>
 #include <vector>
-
-namespace mc2_ops_hccl {
-
-// CcuKfcServerKernel dispatches multiple collectives from one translation unit.
-// This AllGather-only ST never enters the ReduceScatter branch, but the linker
-// still requires its symbol. Do not link or exercise the ReduceScatter kernel.
-CcuResult CcuReduceScatterMesh1DMem2MemKernel(
-    ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable,
-    ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable, ccu::Variable,
-    ccu::Variable, ccu::Variable, const ChannelHandle[], uint32_t, uint32_t, uint32_t, const HcclDataType&,
-    const HcclDataType&, const HcclReduceOp&)
-{
-    return CCU_E_NOT_SUPPORT;
-}
-
-} // namespace mc2_ops_hccl
 
 namespace HcclSim {
 namespace CcuSt {

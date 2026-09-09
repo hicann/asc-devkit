@@ -15,6 +15,7 @@
 set(HCCL_CCU_ST_TARGET ascendc_ut_adv_api_ccu_st)
 set(HCCL_MC2_CCU_ALL_TO_ALL_V_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_to_all_v)
 set(HCCL_MC2_CCU_ALL_TO_ALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_to_all)
+set(HCCL_MC2_CCU_REDUCE_SCATTER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/reduce_scatter)
 set(HCCL_MC2_CCU_ALL_REDUCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_reduce)
 set(HCCL_MC2_CCU_ALL_GATHER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_gather)
 
@@ -32,6 +33,16 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/ccu_temp_all_to_all_v_mesh_1D.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_v_mesh1d.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/selector/reduce_scatter_auto_selector.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sole_executor.cc
+    # aicpu 模板含 out-of-line 虚函数（key function）：executor 注册项经 vtable 急切实例化引用其符号，必须编入
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D_meshchunk.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_nhr.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_aicpu_reduce_nhr.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D_Z_axis_detour.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/selector/all_reduce_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/executor/ins_v2_all_reduce_sole_executor.cc
@@ -85,6 +96,9 @@ add_executable(
     ${HCCL_MC2_CCU_ALL_TO_ALL_DIR}/all_to_all_testcase.cpp
     ${HCCL_MC2_CCU_ALL_TO_ALL_DIR}/ccu_all_to_all_mesh1d_adapter.cc
     ${HCCL_MC2_CCU_ALL_TO_ALL_DIR}/ccu_all_to_all.cc
+    ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/reduce_scatter_testcase.cpp
+    ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/ccu_reduce_scatter.cc
+    ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/ccu_reduce_scatter_mesh1d_adapter.cc
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/all_reduce_testcase.cpp
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/ccu_all_reduce_mesh1d_mem2mem_adapter.cc
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/ccu_all_reduce.cc
@@ -101,6 +115,7 @@ target_include_directories(
     ${UTILS_DIR}/hccl_proxy
     ${HCCL_MC2_CCU_ALL_TO_ALL_V_DIR}
     ${HCCL_MC2_CCU_ALL_TO_ALL_DIR}
+    ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}
     ${HCCL_MC2_CCU_ALL_GATHER_DIR}
     ${HCCL_CHECKER_COMMON_INCLUDE_LIST}
@@ -115,6 +130,12 @@ target_include_directories(
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/executor
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/selector
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/executor
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/selector
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/executor
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu

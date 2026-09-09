@@ -171,6 +171,8 @@ public:
     LocalAddr(const LocalAddr& other) = default;
     LocalAddr(LocalAddr&& other) noexcept = default;
     LocalAddr& operator=(LocalAddr&& other) noexcept = default;
+    // 对齐 hcomm ccu_local_addr.hpp 的拷贝赋值：IR 快照语义（addr/token 逐成员发射赋值 IR，handle 不复制）
+    void operator=(const LocalAddr& other);
 
     Address addr;
     Variable token;
@@ -186,6 +188,8 @@ public:
     RemoteAddr(const RemoteAddr& other) = default;
     RemoteAddr(RemoteAddr&& other) noexcept = default;
     RemoteAddr& operator=(RemoteAddr&& other) noexcept = default;
+    // 对齐 hcomm ccu_remote_addr.hpp 的拷贝赋值：IR 快照语义（addr/token 逐成员发射赋值 IR，handle 不复制）
+    void operator=(const RemoteAddr& other);
 
     Address addr;
     Variable token;
