@@ -272,7 +272,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void thread_group::sync() const
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline tiled_group::tiled_group(unsigned int num_threads)
     : thread_group(group_type::tiled_group_type)
 {
-    _tiled_info.is_tiled = true;
     _tiled_info.num_threads = num_threads;
 }
 
@@ -285,6 +284,30 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int tiled_group::size() const { r
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int tiled_group::thread_rank() const
 {
     return __popc(_tiled_info.mask & lanemask_lt());
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline thread_group tiled_group::create_tiled_group(unsigned int tile_size) const
+{
+    const bool pow2 = ((tile_size & (tile_size - 1)) == 0);
+    if (tile_size == 0 || tile_size > warpSize || !pow2) {
+        __trap_internal();
+        return (*this);
+    }
+    if (num_threads() <= tile_size) {
+        return (*this);
+    }
+
+    unsigned int rank = thread_rank();
+    unsigned int base_offset = rank & ~(tile_size - 1);
+    unsigned int partition_size = min(num_threads() - base_offset, tile_size);
+    unsigned int mask = static_cast<unsigned int>(-1) >> (warpSize - partition_size);
+    mask <<= laneid() & ~(tile_size - 1);
+
+    tiled_group tile(partition_size);
+    tile._tiled_info.mask = mask;
+    tile._tiled_info.meta_group_rank = rank / tile_size;
+    tile._tiled_info.meta_group_size = (num_threads() + tile_size - 1) / tile_size;
+    return tile;
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline thread_block::thread_block()
@@ -488,42 +511,29 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline coalesced_group coalesced_group::create_ti
         return (*this);
     }
 
-    if (_tiled_info.is_tiled) {
-        unsigned int base_offset = (thread_rank() & (~(tile_size - 1)));
-        unsigned int mask_length = min(static_cast<unsigned int>(num_threads()) - base_offset, tile_size);
-        unsigned int mask = static_cast<unsigned int>(-1) >> (warpSize - mask_length);
-        mask <<= (laneid() & ~(tile_size - 1));
-        coalesced_group coalesced_tile = coalesced_group(mask);
-        coalesced_tile._tiled_info.is_tiled = true;
-        coalesced_tile._tiled_info.meta_group_rank = thread_rank() / tile_size;
-        coalesced_tile._tiled_info.meta_group_size = num_threads() / tile_size;
-        return coalesced_tile;
-    } else {
-        unsigned int mask = 0;
-        unsigned int member_rank = 0;
-        int seen_lanes = (thread_rank() / tile_size) * tile_size;
+    unsigned int mask = 0;
+    unsigned int member_rank = 0;
+    int seen_lanes = (thread_rank() / tile_size) * tile_size;
 
-        for (unsigned int bit_idx = 0; bit_idx < warpSize; bit_idx++) {
-            unsigned int lane_bit = _tiled_info.mask & (1U << bit_idx);
-            if (lane_bit) {
-                if (seen_lanes <= 0 && member_rank < tile_size) {
-                    mask |= lane_bit;
-                    member_rank++;
-                }
-                seen_lanes--;
+    for (unsigned int bit_idx = 0; bit_idx < warpSize; bit_idx++) {
+        unsigned int lane_bit = _tiled_info.mask & (1U << bit_idx);
+        if (lane_bit) {
+            if (seen_lanes <= 0 && member_rank < tile_size) {
+                mask |= lane_bit;
+                member_rank++;
             }
+            seen_lanes--;
         }
-        coalesced_group coalesced_tile = coalesced_group(mask);
-        coalesced_tile._tiled_info.meta_group_rank = thread_rank() / tile_size;
-        coalesced_tile._tiled_info.meta_group_size = (num_threads() + tile_size - 1) / tile_size;
-        return coalesced_tile;
     }
+    coalesced_group coalesced_tile = coalesced_group(mask);
+    coalesced_tile._tiled_info.meta_group_rank = thread_rank() / tile_size;
+    coalesced_tile._tiled_info.meta_group_size = (num_threads() + tile_size - 1) / tile_size;
+    return coalesced_tile;
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline coalesced_group::coalesced_group(unsigned int mask)
     : thread_group(group_type::coalesced_group_type)
 {
-    _tiled_info.is_tiled = false;
     _tiled_info.mask = mask;
     _tiled_info.num_threads = __popc(mask);
     _tiled_info.meta_group_rank = 0;
@@ -1167,9 +1177,15 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline thread_group tiled_partition(const thread_
     if (parent.get_type() == group_type::coalesced_group_type) {
         const coalesced_group* _cg = static_cast<const coalesced_group*>(&parent);
         return _cg->create_tiled_group(tilesz);
-    } else {
+    } else if (parent.get_type() == group_type::tiled_group_type) {
+        const tiled_group* _tg = static_cast<const tiled_group*>(&parent);
+        return _tg->create_tiled_group(tilesz);
+    } else if (parent.get_type() == group_type::thread_block_type) {
         const thread_block* _tb = static_cast<const thread_block*>(&parent);
         return _tb->create_tiled_group(tilesz);
+    } else {
+        __trap_internal();
+        return parent;
     }
 }
 

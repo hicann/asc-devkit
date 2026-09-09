@@ -122,7 +122,6 @@ protected:
     group_type _type;
 
     struct tiled_info {
-        bool is_tiled;
         unsigned int mask;
         unsigned int num_threads;
         unsigned int meta_group_rank;
@@ -152,6 +151,9 @@ public:
 
 protected:
     __SIMT_DEVICE_FUNCTIONS_DECL__ inline tiled_group(unsigned int num_threads);
+
+private:
+    __SIMT_DEVICE_FUNCTIONS_DECL__ inline thread_group create_tiled_group(unsigned int tile_size) const;
 };
 
 class thread_block : public thread_group {

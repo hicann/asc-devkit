@@ -1058,7 +1058,6 @@ TEST_F(CooperativeGroupsTestsuite, TiledPartitionThreadGroupMetadataTest)
     thread_block tb = this_thread_block();
     thread_group tg = tiled_partition(tb, 4);
     EXPECT_EQ(tg.get_type(), group_type::tiled_group_type);
-    EXPECT_TRUE(tg._tiled_info.is_tiled);
     EXPECT_EQ(tg._tiled_info.num_threads, 2u);
     EXPECT_EQ(tg._tiled_info.meta_group_rank, 2u);
     EXPECT_EQ(tg._tiled_info.meta_group_size, 3u);
@@ -1084,22 +1083,34 @@ TEST_F(CooperativeGroupsTestsuite, TiledPartitionCoalescedGroupNoSplitWhenTileIs
     EXPECT_EQ(result.meta_group_size(), 1ull);
 }
 
-TEST_F(CooperativeGroupsTestsuite, TiledPartitionAlreadyTiledCoalescedGroupTest)
+TEST_F(CooperativeGroupsTestsuite, TiledPartitionAlreadyTiledGroupTest)
 {
     SimtDimGuard guard(cce::dim3(6u, 1u, 1u), cce::dim3(5u, 0u, 0u));
     thread_block tb = this_thread_block();
     thread_group parent = tiled_partition(tb, 8);
 
     EXPECT_EQ(parent.get_type(), group_type::tiled_group_type);
-    EXPECT_TRUE(parent._tiled_info.is_tiled);
     EXPECT_EQ(parent.num_threads(), 6ull);
 
     thread_group result = tiled_partition(parent, 4);
     EXPECT_EQ(result.get_type(), group_type::tiled_group_type);
-    EXPECT_TRUE(result._tiled_info.is_tiled);
     EXPECT_EQ(result.num_threads(), 2ull);
     EXPECT_EQ(result._tiled_info.meta_group_rank, 1u);
     EXPECT_EQ(result._tiled_info.meta_group_size, 2u);
+}
+
+TEST_F(CooperativeGroupsTestsuite, TiledPartitionTiledGroupNoSplitWhenTileIsLargeEnoughTest)
+{
+    SimtDimGuard guard(cce::dim3(6u, 1u, 1u), cce::dim3(5u, 0u, 0u));
+    thread_block tb = this_thread_block();
+    thread_group parent = tiled_partition(tb, 8);
+
+    thread_group result = tiled_partition(parent, 8);
+    EXPECT_EQ(result.get_type(), group_type::tiled_group_type);
+    EXPECT_EQ(result.num_threads(), 6ull);
+    EXPECT_EQ(result._tiled_info.mask, parent._tiled_info.mask);
+    EXPECT_EQ(result._tiled_info.meta_group_rank, parent._tiled_info.meta_group_rank);
+    EXPECT_EQ(result._tiled_info.meta_group_size, parent._tiled_info.meta_group_size);
 }
 
 TEST_F(CooperativeGroupsTestsuite, SupportTypeSimtInternelTest)
