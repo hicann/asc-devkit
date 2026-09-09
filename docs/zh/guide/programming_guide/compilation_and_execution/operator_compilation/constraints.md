@@ -21,19 +21,50 @@
     }
     ```
 
-- bfloat16\_t等数据类型在Host端仅支持以C++模板的形式进行定义与声明，具体数据类型如下：
+- Host端支持Ascend C数据类型情况如下：
+  - 支持直接声明或使用的数据类型。
+    |  类别   |  数据类型  | 支持情况 |
+    |  ----  | ----  | ----  |
+    | 基本数据类型  | int4b_t、bool、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。 | 支持声明和使用 |
+    | 基本数据类型 |int4x2_t。| 仅支持声明 |
+    | 向量数据类型  | vector_bool、vector_int8_t、vector_uint8_t、vector_int16_t、vector_uint16_t、vector_half、vector_int32_t、vector_uint32_t、vector_float、vector_int64_t、vector_uint64_t、addr_reg、vector_store_unalign、vector_load_unalign。| 支持声明和使用 |
+    | 复数 | complex32、complex64。| 仅支持声明 |
+    
+    使用示例如下：
+      ```cpp
+      // 全局
+      bool flag = true;
+      vector_bool mask = {true, false};
+      complex32 i; // 仅支持声明
 
-    <!-- npu="950" id3 -->
-    **Ascend 950PR/Ascend 950DT**：bfloat16\_t、hifloat8\_t、fp8\_e5m2\_t、fp8\_e4m3fn\_t、fp8\_e8m0\_t、fp4x2\_e2m1\_t、fp4x2\_e1m2\_t、int4x2\_t。
-    <!-- end id3 -->
+      //函数内
+      void f()
+      {
+        int8_t x = 0;
+        vector_int8_t y = {0, 1};
+        int8_t y1 = y[0] + 1; // y1 == 1
+      }
+      ```
 
-    <!-- npu="910b" id4 -->
-    **Atlas A2 训练系列产品/Atlas A2 推理系列产品**：bfloat16\_t。
-    <!-- end id4 -->
+  - 支持以指针方式声明的数据类型。
+    |  类别  |  数据类型  |
+    |  ----  | ----  |
+    | 扩展数据类型  | fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e4m3fn_t、fp8_e5m2_t、fp8_e8m0_t、bfloat16_t。 |
+    | 扩展向量数据类型  | vector_hifloat8_t、vector_fp8_e4m3fn_t、vector_fp8_e5m2_t、vector_fp8_e8m0_t、vector_bfloat16_t。|
 
-    <!-- npu="A3" id5 -->
-    **Atlas A3 训练系列产品/Atlas A3 推理系列产品**：bfloat16\_t。
-    <!-- end id5 -->
+    使用示例如下：
+      ```cpp
+      // 全局声明
+      hifloat8_t *flag = nullptr;
+      vector_hifloat8_t *mask = nullptr;
+
+      //函数内声明
+      void f()
+      {
+        fp8_e4m3fn_t *x = nullptr;
+        vector_fp8_e5m2_t *y = nullptr;
+      }
+      ```
 
 - 暂不支持在函数空间外定义和使用device侧的字符串字面量。例如：
 
