@@ -1024,6 +1024,7 @@
             -   [asc_set_gm2ub_pad（废弃）](SIMD-API/c_api/vector_datamove/asc_set_gm2ub_pad_deprecated.md)
         -   [Reg矢量计算](SIMD-API/c_api/reg_compute/reg_compute.md)
             -   [Reg数据搬入](SIMD-API/c_api/reg_compute/load/load.md)
+                -   [Reg数据搬入概述](SIMD-API/c_api/reg_compute/load/reg_load_overview.md)
                 -   [asc_loadalign](SIMD-API/c_api/reg_compute/load/asc_loadalign.md)
                 -   [asc_loadalign_datablock_strided](SIMD-API/c_api/reg_compute/load/asc_loadalign_datablock_strided.md)
                 -   [asc_loadalign_mask](SIMD-API/c_api/reg_compute/load/asc_loadalign_mask.md)
