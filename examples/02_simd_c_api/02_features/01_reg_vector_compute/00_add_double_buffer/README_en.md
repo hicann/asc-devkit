@@ -251,6 +251,8 @@ Configure the CANN environment:
 source ${install_path}/cann/set_env.sh
 ```
 
+> **Note:** `${install_path}` is the CANN package installation directory. The default is `/usr/local/Ascend` for the root user and `${HOME}/Ascend` for non-root users.
+
 Build and run one scenario from this sample directory:
 
 ```bash

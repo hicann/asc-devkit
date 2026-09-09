@@ -200,6 +200,8 @@ FP4和FP8数据在K轴上的存储宽度不同，GM到L1搬运后的补齐范围
   source ${install_path}/cann/set_env.sh
   ```
 
+  > **说明：** `${install_path}`为CANN包安装目录；root用户默认为`/usr/local/Ascend`，非root用户默认为`${HOME}/Ascend`。
+
 - 安装输入数据生成脚本依赖：
 
   ```bash

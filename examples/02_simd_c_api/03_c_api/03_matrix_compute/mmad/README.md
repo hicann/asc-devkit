@@ -190,7 +190,7 @@ Mmad计算中包含了补齐的无效数据，需要配合Fixpipe指令在L0C搬
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **说明：** `${install_path}` 为 CANN 包安装目录，未指定时root用户默认安装至 `/usr/local/Ascend`，非root用户默认安装至`$HOME/Ascend`。
+  > **说明：** `${install_path}`为CANN包安装目录；root用户默认为`/usr/local/Ascend`，非root用户默认为`${HOME}/Ascend`。
 
 - 样例执行
 

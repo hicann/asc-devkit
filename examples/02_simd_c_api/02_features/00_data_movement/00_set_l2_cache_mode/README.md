@@ -287,7 +287,7 @@ __aicore__ inline void ProcessDoubleBufferImpl(asc_load_l2_cache_mode l2CacheMod
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **说明：** `${install_path}` 为 CANN 包安装目录。
+  > **说明：** `${install_path}`为CANN包安装目录；root用户默认为`/usr/local/Ascend`，非root用户默认为`${HOME}/Ascend`。
 
 - 样例执行
 

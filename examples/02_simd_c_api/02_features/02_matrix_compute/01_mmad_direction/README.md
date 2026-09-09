@@ -155,10 +155,12 @@ python3 ../scripts/verify_result.py -scenarioNum=$SCENARIO_NUM \
 配置CANN环境变量：
 
 ```bash
-source $INSTALL_PATH/cann/set_env.sh
+source ${install_path}/cann/set_env.sh
 ```
 
-其中`$INSTALL_PATH`为CANN包安装目录。在本样例目录编译并运行指定场景：
+> **说明：** `${install_path}`为CANN包安装目录；root用户默认为`/usr/local/Ascend`，非root用户默认为`${HOME}/Ascend`。
+
+在本样例目录编译并运行指定场景：
 
 ```bash
 SCENARIO_NUM=1

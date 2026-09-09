@@ -604,7 +604,7 @@ asc_copy_l12l0b_transpose(b_l0, b_l1, 0, 0,
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **说明：** `${install_path}` 为CANN包安装目录，未指定安装目录时默认安装至 `/usr/local/Ascend` 下。
+  > **说明：** `${install_path}`为CANN包安装目录；root用户默认为`/usr/local/Ascend`，非root用户默认为`${HOME}/Ascend`。
 - 样例执行
 
   在本样例目录下执行如下命令。

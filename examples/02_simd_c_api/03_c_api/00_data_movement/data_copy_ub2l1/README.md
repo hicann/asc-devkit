@@ -77,7 +77,7 @@
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **说明：**`${install_path}`为CANN软件包安装目录；root用户默认目录为`/usr/local/Ascend`，非root用户默认目录为`${HOME}/Ascend`。
+  > **说明：** `${install_path}`为CANN包安装目录；root用户默认为`/usr/local/Ascend`，非root用户默认为`${HOME}/Ascend`。
 
 - 运行样例
 

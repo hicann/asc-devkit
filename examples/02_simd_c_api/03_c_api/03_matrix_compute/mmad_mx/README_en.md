@@ -135,6 +135,8 @@ When changing K in this example, recalculate `PACKED_K`, `ScaleK`, and `ALIGN_K`
   source ${install_path}/cann/set_env.sh
   ```
 
+  > **Note:** `${install_path}` is the CANN package installation directory. The default is `/usr/local/Ascend` for the root user and `${HOME}/Ascend` for non-root users.
+
 - Install the data generation dependencies:
 
   ```bash

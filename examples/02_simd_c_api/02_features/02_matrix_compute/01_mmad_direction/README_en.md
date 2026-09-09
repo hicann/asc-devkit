@@ -155,10 +155,12 @@ python3 ../scripts/verify_result.py -scenarioNum=$SCENARIO_NUM \
 Configure CANN environment variables:
 
 ```bash
-source $INSTALL_PATH/cann/set_env.sh
+source ${install_path}/cann/set_env.sh
 ```
 
-`$INSTALL_PATH` is the CANN package installation directory. Build and run a selected scenario in the sample directory:
+> **Note:** `${install_path}` is the CANN package installation directory. The default is `/usr/local/Ascend` for the root user and `${HOME}/Ascend` for non-root users.
+
+Build and run a selected scenario in the sample directory:
 
 ```bash
 SCENARIO_NUM=1
