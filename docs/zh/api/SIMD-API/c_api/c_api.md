@@ -19,6 +19,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[asc_hf32_round_mode](defs/enum/asc_hf32_round_mode.md)|表示Mmad计算开启HF32模式时由FP32舍入到HF32的舍入模式管理策略。|`c_api/defs/enum.h`|
+|[asc_l13d_repeat_direction](defs/enum/asc_l13d_repeat_direction.md)|表示3D img2col搬运的repeat迭代方向。|`c_api/defs/enum.h`|
 |[asc_load_l2_cache_mode](defs/enum/asc_load_l2_cache_mode.md)|表示数据从GM搬运到UB时的L2 cache策略，也可用于标量load策略配置。|`c_api/defs/enum.h`|
 |[asc_override_strategy](defs/enum/asc_override_strategy.md)|表示饱和控制策略。|`c_api/defs/enum.h`|
 |[asc_saturation_mode](defs/enum/asc_saturation_mode.md)|表示饱和控制模式。|`c_api/defs/enum.h`|
@@ -78,14 +79,14 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_enable_fp8](cube_compute/asc_enable_fp8.md)|用于设置Mmad计算开启FP8模式，开启该模式后L0A Buffer/L0B Buffer中的FP8数据在参与Mmad计算之前不会被转化为hifloat8_t类型数据。|`c_api/cube_compute/cube_compute.h`|
 |[asc_enable_hf32](cube_compute/asc_enable_hf32.md)|用于设置Mmad计算开启HF32模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。|`c_api/cube_compute/cube_compute.h`|
 |[asc_enable_hf32_trans](cube_compute/asc_enable_hf32_trans.md)|设置HF32模式取整方式，需要先使用asc_enable_hf32开启HF32取整模式。|`c_api/cube_compute/cube_compute.h`|
-|[asc_enable_hif8](cube_compute/asc_enable_hif8.md)|用于设置Mmad计算开启HiF8模式，开启该模式后L0A Buffer/L0B Buffer中的8bit数据将在参与矩阵乘法运算前被转化为hifloat8_t类型数据。|`c_api/cube_compute/cube_compute.h`|
-|[asc_disable_hif8](cube_compute/asc_disable_hif8.md)|用于设置Mmad计算关闭HiF8模式，设置该模式后L0A Buffer/L0B Buffer中的FP8数据在参与Mmad计算之前不会被转化为hifloat8_t类型数据。|`c_api/cube_compute/cube_compute.h`|
+|[asc_enable_hif8](cube_compute/asc_enable_hif8.md)|开启HiF8模式。左矩阵A和右矩阵B均为fp8_e4m3fn_t类型时，数据参与矩阵乘法运算前转换为hifloat8_t类型。|`c_api/cube_compute/cube_compute.h`|
+|[asc_disable_hif8](cube_compute/asc_disable_hif8.md)|用于设置Mmad计算关闭HiF8模式。左矩阵A和右矩阵B均为fp8_e4m3fn_t类型时，数据不转换为hifloat8_t类型，直接以fp8_e4m3fn_t类型参与矩阵乘法运算。|`c_api/cube_compute/cube_compute.h`|
 |[asc_disable_hf32](cube_compute/asc_disable_hf32.md)|用于设置Mmad计算关闭HF32模式，设置该模式后L0A Buffer/L0B Buffer中的FP32数据在参与Mmad计算之前不做舍入处理。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad](cube_compute/asc_mmad.md)|完成矩阵乘加操作。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_mx](cube_compute/asc_mmad_mx.md)|完成包含放缩功能的矩阵乘加操作。|`c_api/cube_compute/cube_compute.h`|
 |[asc_mmad_sparse](cube_compute/asc_mmad_sparse.md)|完成矩阵乘加操作，传入的左矩阵A为稀疏矩阵，右矩阵B为稠密矩阵。|`c_api/cube_compute/cube_compute.h`|
 |[asc_set_fp32_mode](cube_compute/asc_set_fp32_mode.md)|用于设置Mmad计算开启FP32模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据在参与Mmad计算之前不做舍入处理。|`c_api/cube_compute/cube_compute.h`|
-|[asc_set_hf32_round_mode](cube_compute/asc_set_hf32_round_mode.md)|设置HF32模式舍入方式，使用该接口前需要先调用asc_enable_hf32开启HF32模式。|`c_api/cube_compute/cube_compute.h`|
+|[asc_set_hf32_round_mode](cube_compute/asc_set_hf32_round_mode.md)|设置HF32模式舍入方式，该配置仅在HF32模式开启期间生效。|`c_api/cube_compute/cube_compute.h`|
 |[asc_set_mmad_direction_m](cube_compute/asc_set_mmad_direction_m.md)|设置mmad计算时优先通过M/N中的M方向生成结果，然后通过N方向产生结果，M为矩阵的行，N为矩阵的列。|`c_api/cube_compute/cube_compute.h`|
 |[asc_set_mmad_direction_n](cube_compute/asc_set_mmad_direction_n.md)|设置mmad计算时优先通过M/N中的N方向生成结果，然后通过M方向产生结果，M为矩阵的行，N为矩阵的列。|`c_api/cube_compute/cube_compute.h`|
 
@@ -128,17 +129,21 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_set_l0c2gm_relu_alpha](cube_datamove/asc_set_l0c2gm_relu_alpha.md)|设置RELU_ALPHA寄存器的值。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_nz_para](cube_datamove/asc_set_l0c_copy_nz_para.md)|数据搬运过程中进行随路格式转换（NZ格式转换为ND格式）时，设置格式转换的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_channel_para](cube_datamove/asc_set_l0c_copy_channel_para.md)|配置Nz2DN格式转换时源Nz矩阵中相邻行的地址偏移。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l0c_copy_config](cube_datamove/asc_set_l0c_copy_config.md)|设置L0C Buffer搬出场景下随路tensor量化、随路tensor激活和UnitFlag功能的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l0c_copy_lrelu_alpha](cube_datamove/asc_set_l0c_copy_lrelu_alpha.md)|在L0C Buffer搬出过程中进行随路Scalar激活时，配置激活计算所需的缩放系数。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l0c_copy_relu_alpha](cube_datamove/asc_set_l0c_copy_relu_alpha.md)|在L0C Buffer搬出过程中进行随路Scalar激活时，配置激活计算所需的缩放系数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_params](cube_datamove/asc_set_l0c_copy_params.md)|DataCopy从L0C Buffer搬运到Global Memory或L1 Buffer过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_prequant](cube_datamove/asc_set_l0c_copy_prequant.md)|数据搬运过程中进行随路量化时，通过调用该接口设置量化流程中的标量量化参数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l12l0_padding_val](cube_datamove/asc_set_l12l0_padding_val.md)|设置PADDING_B寄存器的值。|`c_api/cube_datamove/cube_datamove.h`|
-|[asc_set_l13d_fmatrix](cube_datamove/asc_set_l13d_fmatrix.md)|设置Feature map属性描述，用于在调用[asc_copy_l12l0a](cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a.md)/[asc_copy_l12l0b](cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b.md)的3D格式搬运接口时配置填充数值。从左矩阵获取FeatureMap的属性时使用该接口。|`c_api/cube_datamove/cube_datamove.h`|
-|[asc_set_l13d_fmatrix_b](cube_datamove/asc_set_l13d_fmatrix_b.md)|设置Feature map属性描述，用于在调用[asc_copy_l12l0a](cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a.md)/[asc_copy_l12l0b](cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b.md)的3D格式搬运接口时配置填充数值。从右矩阵获取FeatureMap的属性时使用该接口。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l13d_fmatrix](cube_datamove/asc_set_l13d_fmatrix.md)|配置3D img2col搬运模式下左矩阵的Feature Map属性描述参数。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l13d_fmatrix_b](cube_datamove/asc_set_l13d_fmatrix_b.md)|配置3D img2col搬运模式下右矩阵的Feature Map属性描述参数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l12l0a_3d_padding](cube_datamove/asc_set_l12l0a_3d_padding.md)|设置3D左矩阵搬运填充值。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l12l0b_3d_padding](cube_datamove/asc_set_l12l0b_3d_padding.md)|设置3D右矩阵搬运填充值。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l13d_padding](cube_datamove/asc_set_l13d_padding.md)|设置Pad属性描述，用于在调用asc_copy_l12l0a接口时配置填充数值。|`c_api/cube_datamove/cube_datamove.h`|
-|[asc_set_l13d_rpt](cube_datamove/asc_set_l13d_rpt.md)|用于设置Load3Dv2接口的repeat参数。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l13d_rpt](cube_datamove/asc_set_l13d_rpt.md)|配置3D img2col搬运模式下使用repeat模式搬运左矩阵所需的参数。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l13d_rpt_b](cube_datamove/asc_set_l13d_rpt_b.md)|配置3D img2col搬运模式下使用repeat模式搬运右矩阵所需的参数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l13d_size](cube_datamove/asc_set_l13d_size.md)|设置[asc_copy_l12l0a](cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)/[asc_copy_l12l0b](cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_arch_2201.md)的3D格式搬运接口在L1 Buffer的边界值。|`c_api/cube_datamove/cube_datamove.h`|
-|[asc_set_l3d_rpt_b](cube_datamove/asc_set_l3d_rpt_b.md)|用于设置接口asc_copy_l12l0a、asc_copy_l12l0b的2D格式搬运的repeat参数。|`c_api/cube_datamove/cube_datamove.h`|
+|[asc_set_l3d_rpt_b](cube_datamove/asc_set_l3d_rpt_b.md)|通过64位配置值设置3D img2col搬运模式下使用repeat模式搬运右矩阵所需的参数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_copy_gm2l1](cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1.md)|将GM中的数据搬运到L1中。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_copy_gm2l1_nd2nz](cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz.md)|将GM中的数据搬运到L1中。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_copy_l0c2gm](cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm.md)|将L0C中的数据搬运到GM中。|`c_api/cube_datamove/cube_datamove.h`|

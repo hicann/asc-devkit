@@ -41,8 +41,8 @@
 - Nz2ND格式转换场景下，需通过[asc_set_l0c_copy_nz_para](asc_set_l0c_copy_nz_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2nd`使用；
 - Nz2DN格式转换场景下，需通过[asc_set_l0c_copy_nz_para](asc_set_l0c_copy_nz_para.md)、[asc_set_l0c_copy_channel_para](asc_set_l0c_copy_channel_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2dn`使用；
 - 随路scalar量化模式下，需通过[asc_set_l0c_copy_prequant](asc_set_l0c_copy_prequant.md)设置随路scalar量化参数，并且需要搭配本接口`quant_pre_mode`使用;
-- 随路tensor量化模式下，需通过[asc_set_l0c2gm_config](asc_set_l0c2gm_config.md)设置随路tensor量化使用tensor的起始地址，其中量化tensor的每个元素都代表一个量化参数，并且需要搭配本接口`quant_pre_mode`使用;
-- 随路激活模式下，需通过[asc_set_l0c2gm_relu_alpha](asc_set_l0c2gm_relu_alpha.md)、[asc_set_l0c2gm_lrelu_alpha](asc_set_l0c2gm_lrelu_alpha.md)预先配置ReLU/Leaky ReLU激活参数，并且需要搭配本接口`enable_clip_relu_pre`与`relu_pre_mode`使用；
+- 随路tensor量化模式下，需通过[asc_set_l0c_copy_config](asc_set_l0c_copy_config.md)设置随路tensor量化使用tensor的起始地址，其中量化tensor的每个元素都代表一个量化参数，并且需要搭配本接口`quant_pre_mode`使用;
+- 随路激活模式下，需通过[asc_set_l0c_copy_relu_alpha](asc_set_l0c_copy_relu_alpha.md)、[asc_set_l0c_copy_lrelu_alpha](asc_set_l0c_copy_lrelu_alpha.md)预先配置ReLU/Leaky ReLU激活参数，并且需要搭配本接口`enable_clip_relu_pre`与`relu_pre_mode`使用；
 
 `quant_pre_mode`量化模式参数支持的枚举值如下：
 
