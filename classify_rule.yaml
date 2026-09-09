@@ -110,9 +110,6 @@ asc-devkit:
       - impl/basic_api/dav_c310/kernel_operator_proposal_impl.h
       - impl/basic_api/dav_c310/kfc/kfc_comm_server.h
       - impl/adv_api/detail/reduce/**/*_3510_impl.h
-      - impl/basic_api/dav_m510/kfc/kfc_comm.h
-      - impl/basic_api/dav_m510/kfc/kfc_comm_client.h
-      - impl/basic_api/dav_m510/kfc/kfc_comm_server.h
       - impl/basic_api/dav_c310/kfc/kfc_comm_client.h
       - impl/basic_api/dav_3510/kernel_operator_reg_others_impl.h
       - impl/basic_api/kernel_operator_mm_bitmode_struct.h
@@ -267,7 +264,6 @@ asc-devkit:
       - impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/asc_set_vector_mask_impl.h
       - impl/basic_api/dav_c220/kernel_operator_reg_others_impl.h
       - impl/basic_api/dav_c220/kernel_operator_vec_others_impl.h
-      - impl/basic_api/dav_m510/kfc/kfc_log.h
       - impl/basic_api/dav_c220/kernel_operator_cube_others_impl.h
       - impl/basic_api/dav_c220/kfc/kfc_log.h
       - impl/basic_api/kernel_operator_intf_impl.h
