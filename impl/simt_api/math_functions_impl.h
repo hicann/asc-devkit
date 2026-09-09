@@ -1718,9 +1718,9 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_bessel_middle_trig_red_sl
     a = fmaf(static_cast<float>(q), ASCRT_MINUS_PIO2_LO_F, a);
     int64_t q2 = static_cast<int64_t>(a * ASCRT_2OPI_F);
     a = fmaf(static_cast<float>(q2), ASCRT_MINUS_PIO2_HI_F, a);
-    int q_mod = static_cast<int>((q + q2) % 4);
+    int q_mod = static_cast<int>((q + q2) % 4); // 4: number of quadrants
     if (q_mod < 0) {
-        q_mod += 4;
+        q_mod += 4; // 4: wrap negative modulo back into [0, 3]
     }
     a = a - 0.7853982f;
     *quadrant = q_mod;
@@ -1756,7 +1756,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_bessel_middle_sin_cosf_mi
     float s2 = r * r;
     float c = __internal_bessel_middle_cosf_poly(s2);
     float s = __internal_bessel_middle_sinf_poly(r, s2);
-    if (i & 2) {
+    if (i & 2) { // 2: bit mask selecting the quadrants where sin and cos flip sign
         s = 0.0f - s;
         c = 0.0f - c;
     }
@@ -1857,7 +1857,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0f_huge_range(float ax)
     int q = 0;
     if (alpha >= 105615.0f) {
         r = __internal_payne_hanek_radian_reduction(alpha, &q);
-        q = q & 3;
+        q = q & 3; // 3: mask of the low 2 bits, keep the quadrant index in [0, 3]
         r = r + static_cast<float>(q) * 1.57079637050628662109375f;
     }
 
@@ -1884,7 +1884,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1f_huge_range(float ax)
     int q = 0;
     if (alpha >= 105615.0f) {
         r = __internal_payne_hanek_radian_reduction(alpha, &q);
-        q = q & 3;
+        q = q & 3; // 3: mask of the low 2 bits, keep the quadrant index in [0, 3]
         r = r + static_cast<float>(q) * 1.57079637050628662109375f;
     }
 
@@ -1973,7 +1973,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y0f_huge_range(float ax)
     int q = 0;
     if (alpha >= 105615.0f) {
         r = __internal_payne_hanek_radian_reduction(alpha, &q);
-        q = q & 3;
+        q = q & 3; // 3: mask of the low 2 bits, keep the quadrant index in [0, 3]
         r = r + static_cast<float>(q) * 1.57079637050628662109375f;
     }
 
@@ -2011,7 +2011,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y1f_huge_range(float ax)
     int q = 0;
     if (alpha >= 105615.0f) {
         r = __internal_payne_hanek_radian_reduction(alpha, &q);
-        q = q & 3;
+        q = q & 3; // 3: mask of the low 2 bits, keep the quadrant index in [0, 3]
         r = r + static_cast<float>(q) * 1.57079637050628662109375f;
     }
 
@@ -3524,6 +3524,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ static inline int32_t __asc_float_mantissa_expone
     // Return the exponent aligned to the mantissa integer returned above.
     // Subnormals are treated as exponent -149, normals as unbiased exponent minus 23.
     const uint32_t exponent_bits = bits & ASCRT_EXP_BIT_FLOAT_U;
+    // -149: min subnormal exp, -150: bias + mantissa shift
     return exponent_bits == 0U ? -149 : (static_cast<int32_t>(exponent_bits >> 23U) - 150);
 }
 
@@ -3546,11 +3547,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ static inline float __asc_make_float_from_mantiss
         const int32_t mantissa_log2 = __asc_uint_floor_log2(mantissa);
         const int32_t result_exponent = exponent + mantissa_log2;
         // Clamp to fp32 range before reconstructing the final bit pattern.
-        if (result_exponent > 127) {
+        if (result_exponent > 127) { // 127: largest normal fp32 exponent, beyond it overflows to inf
             result = ASCRT_INF_F;
-        } else if (result_exponent < -149) {
+        } else if (result_exponent < -149) { // -149: exponent of the smallest fp32 subnormal, below it underflows to 0
             result = 0.0f;
-        } else if (result_exponent >= -126) {
+        } else if (result_exponent >= -126) { // -126: smallest normal fp32 exponent
             // Normal result: normalize mantissa and pack signless fp32 bits.
             const uint32_t normalized_mantissa = mantissa << static_cast<uint32_t>(23 - mantissa_log2);
             const uint32_t bits =
@@ -3858,10 +3859,10 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_sincospif_core(float x, fl
     // Select sin/cos branches and restore the correct signs for the quadrant.
     float selected_sin = ((quadrant & 1) != 0) ? cos_value : sin_value;
     float selected_cos = ((quadrant & 1) != 0) ? sin_value : cos_value;
-    if ((quadrant & 2) != 0) {
+    if ((quadrant & 2) != 0) { // 2: bit mask selecting the quadrants where sin flips sign
         selected_sin = -selected_sin;
     }
-    if (((quadrant + 1) & 2) != 0) {
+    if (((quadrant + 1) & 2) != 0) { // 2: bit mask, the +1 shifts cos parity so this selects where cos flips sign
         selected_cos = -selected_cos;
     }
     if (is_integer) {
@@ -4219,7 +4220,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x)
     }
 
     // Quadrant parity determines the final sign.
-    if ((quadrant & 2) != 0) {
+    if ((quadrant & 2) != 0) { // 2: parity mask, the second half-period flips the sign
         result = -result;
     }
     // Exact integers map to signed zero.
@@ -5161,7 +5162,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
     uint32_t out;
     if (ex > 0) {
         mx -= 0x00800000U;
-        out = mx | (static_cast<uint32_t>(ex) << 23);
+        out = mx | (static_cast<uint32_t>(ex) << 23); // 23: fp32 exponent field offset.
     } else {
         mx >>= static_cast<uint32_t>(1 - ex);
         out = mx;
@@ -5424,7 +5425,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x)
     // (gives +/-1); when k is odd, x is half-integer => use s (gives 0). q & 2 selects the sign.
     int q = k + 1;
     float y = ((q & 1) != 1) ? s : c;
-    return (q & 2) ? -y : y;
+    return (q & 2) ? -y : y; // 2: parity mask, second half-period flips the sign
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
@@ -5615,14 +5616,14 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t __internal_ilogbf_finite_abs(float
     if (ax >= 1.17549435082228750797e-38f) {
         // Normal or larger: exponent = (biased exponent field) - 127.
         uint32_t bits = reinterpret_cast<uint32_t&>(ax);
-        return static_cast<int32_t>((bits >> 23) & 0xFFU) - 127;
+        return static_cast<int32_t>((bits >> 23) & 0xFFU) - 127; // 23: fp32 exponent field offset
     }
 
     // Subnormal: ax has no implicit leading 1, so its true exponent is below -126. Scale by 2^23
     // (8388608) to renormalize into the normal range, then subtract the 23 extra bits we added.
     float scaled = ax * 8388608.0f;
     uint32_t bits = reinterpret_cast<uint32_t&>(scaled);
-    return static_cast<int32_t>((bits >> 23) & 0xFFU) - 127 - 23;
+    return static_cast<int32_t>((bits >> 23) & 0xFFU) - 127 - 23; // 23: fp32 exponent field offset
 }
 
 // logbf(x) = (float) floor(log2(|x|)) = the unbiased exponent of |x| as a float.
