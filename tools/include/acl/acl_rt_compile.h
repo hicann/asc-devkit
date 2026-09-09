@@ -10,7 +10,6 @@
 #ifndef ASCENDC_ACL_RT_COMPILE_H
 #define ASCENDC_ACL_RT_COMPILE_H
 #include <stddef.h>
-#include <stdint.h>
 
 #if defined(_MSC_VER)
 #if defined(ACLRTC_FUNC_VISIBILITY)
@@ -30,23 +29,6 @@ extern "C" {
 
 typedef int aclError;
 typedef void* aclrtcProg;
-
-typedef struct aclrtcKernelSpecRequest {
-    const char* resourceId;
-    const char* kernelEntry;
-
-    uint64_t argsCount;
-    const void* const* argsAddr;
-    const uint64_t* argsBytes;
-
-    const char* const* options;
-    uint64_t optionCount;
-
-    const char* const* skOptions;
-    uint64_t skOptionCount;
-
-    uint8_t reserved[256];
-} aclrtcKernelSpecRequest;
 
 /**
  * @brief Creates an instance of aclrtcProg with the given input parameters.
@@ -132,16 +114,6 @@ ACLRTC_API aclError aclrtcGetCompileLogSize(aclrtcProg prog, size_t* logSizeRet)
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
  */
 ACLRTC_API aclError aclrtcGetCompileLog(aclrtcProg prog, char* log);
-
-/**
- * @brief Specializes and compiles an ACLNN kernel from a registered JIT resource.
- * @param[in] request Kernel resource, entry, constant argument, and compiler option request.
- *                    The structure must be zero-initialized before setting fields.
- * @param[in] outPath Output path for the linked kernel ELF. A relative path is resolved against the current
- *                    working directory when this function is called.
- * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX
- */
-ACLRTC_API aclError aclrtcKernelSpecialization(const aclrtcKernelSpecRequest* request, const char* outPath);
 
 #ifdef __cplusplus
 }
