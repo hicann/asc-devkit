@@ -30,7 +30,7 @@
 
 将矩阵计算结果从L0C Buffer搬运至Global Memory，搬运过程中可同步支持随路量化、随路激活、随路格式转换（Nz2ND/Nz2DN）等能力组合。
 
-下图展示了随路量化、随路ReLU、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为Cast，其余为随路scalar/tensor量化模式。
+下图展示了随路量化、随路ReLU、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径，通过连线颜色区分支持的场景组合。下图中的F32-\>F16与F32-\>BF16为Cast，其余为随路scalar/tensor量化模式。
 
 **图1** asc_copy_l0c2gm随路功能组合
 
@@ -78,7 +78,7 @@
 
 ## 函数原型
 
-```cpp
+```c
 __aicore__ inline void asc_copy_l0c2gm(__gm__ <dst_dtype>* dst,
                                        __cc__ <src_dtype>* src,
                                        uint16_t n_size,
@@ -132,7 +132,7 @@ src dtype与dst dtype支持以下组合：
 
 ### 函数原型典型示例
 
-```cpp
+```c
 // 示例：将float类型数据转换为bfloat16_t类型后搬运。
 __aicore__ inline void asc_copy_l0c2gm(__gm__ bfloat16_t* dst,
                                        __cc__ float* src,
@@ -218,7 +218,7 @@ PIPE_FIX
 - `n_size`、`m_size`、`dst_stride`需根据dtype与功能模式确定对齐约束，详见参数说明，不满足对齐约束会导致搬运结果不符合预期。
 - src与dst dtype组合需与`quant_pre_mode`量化模式匹配，否则会导致搬运结果不符合预期。
 - `enable_channel_split`仅在输出dtype为`float`且输出为Nz格式时可设为true。
-- 量化与激活模式中使用的量化系数不可为INF/NaN和非规格化数，否则会导致量化激活结果错误。
+- 量化与激活模式中使用的量化系数不可为INF/NAN和非规格化数，否则会导致量化激活结果错误。
 - 开启Nz2DN转换时，需通过[asc_set_l0c_copy_channel_para](../asc_set_l0c_copy_channel_para.md)预先配置源矩阵步长，且源矩阵步长不可为0，否则会导致搬运异常。
 - 开启Nz2DN转换时，仅当通过[asc_set_l0c_copy_channel_para](../asc_set_l0c_copy_channel_para.md)配置源矩阵步长为1时，可同时开启UnitFlag功能。
 - `enable_clip_relu_pre`设为Clip ReLU（标量模式）时需搭配`relu_pre_mode`与量化功能一起使用。
@@ -287,7 +287,7 @@ __global__ __cube__ void AscCopyL0c2gmKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
         static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
         static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
-    asc_sync_pipe(PIPE_FIX);
+    asc_sync_pipe(PIPE_ALL);
 }
 
 template <typename T>
