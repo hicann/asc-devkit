@@ -816,7 +816,18 @@
 
 ## 协作组<a name="section_cooperative_groups"></a>
 
-**表27**  thread_block接口
+**表27**  thread_group接口
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [tiled_partition](../cooperative_groups/thread_group/thread_group_constructor.md) | 获取类型擦除后的thread_group子组对象。 |
+| [sync](../cooperative_groups/thread_group/sync.md) | 同步thread_group组内所有线程。 |
+| [size](../cooperative_groups/thread_group/size.md) | 获取thread_group组内线程总数。 |
+| [num_threads](../cooperative_groups/thread_group/num_threads.md) | 获取thread_group组内线程总数。 |
+| [thread_rank](../cooperative_groups/thread_group/thread_rank.md) | 获取当前线程在thread_group组内的排名。 |
+| [get_type](../cooperative_groups/thread_group/get_type.md) | 获取thread_group对象表示的协作组类型。 |
+
+**表28**  thread_block接口
 
 | 接口名 | 功能描述 |
 | --- | --- |
@@ -829,24 +840,6 @@
 | [group_index](../cooperative_groups/thread_block/group_index.md) | 获取当前线程块在网格中的三维索引。 |
 | [group_dim](../cooperative_groups/thread_block/group_dim.md) | 获取线程块的维度。 |
 | [dim_threads](../cooperative_groups/thread_block/dim_threads.md) | 获取线程块内线程的三维维度。 |
-
-**表28**  coalesced_group接口
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [coalesced_threads](../cooperative_groups/coalesced_group/coalesced_group_constructor.md) | 获取当前活跃线程组成的协作组对象。 |
-| [sync](../cooperative_groups/coalesced_group/sync.md) | 同步组内所有线程。 |
-| [size](../cooperative_groups/coalesced_group/size.md) | 获取组内线程总数。 |
-| [num_threads](../cooperative_groups/coalesced_group/num_threads.md) | 获取组内线程总数。 |
-| [thread_rank](../cooperative_groups/coalesced_group/thread_rank.md) | 获取当前线程在组内的排名。 |
-| [meta_group_rank](../cooperative_groups/coalesced_group/meta_group_rank.md) | 获取当前协作组在父组的排名。 |
-| [meta_group_size](../cooperative_groups/coalesced_group/meta_group_size.md) | 获取父组被划分时创建的子组数量。 |
-| [shfl](../cooperative_groups/coalesced_group/shfl.md) | 组内线程的数据交换，直接读取组内指定线程的数据。 |
-| [shfl_up](../cooperative_groups/coalesced_group/shfl_up.md) | 获取组内当前线程向前偏移delta的线程的数据。 |
-| [shfl_down](../cooperative_groups/coalesced_group/shfl_down.md) | 获取组内当前线程向后偏移delta的线程的数据。 |
-| [ballot](../cooperative_groups/coalesced_group/ballot.md) | 判断组内每个活跃线程的输入是否非零。 |
-| [any](../cooperative_groups/coalesced_group/any.md) | 判断是否有组内线程的输入不为0。 |
-| [all](../cooperative_groups/coalesced_group/all.md) | 判断是否所有组内线程的输入均不为0。 |
 
 **表29**  thread_block_tile接口
 
@@ -867,7 +860,25 @@
 | [any](../cooperative_groups/thread_block_tile/any.md) | 判断是否有组内线程的输入不为0。 |
 | [all](../cooperative_groups/thread_block_tile/all.md) | 判断是否所有组内线程的输入均不为0。 |
 
-**表30**  协作组通用与划分接口
+**表30**  coalesced_group接口
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [coalesced_threads](../cooperative_groups/coalesced_group/coalesced_group_constructor.md) | 获取当前活跃线程组成的协作组对象。 |
+| [sync](../cooperative_groups/coalesced_group/sync.md) | 同步组内所有线程。 |
+| [size](../cooperative_groups/coalesced_group/size.md) | 获取组内线程总数。 |
+| [num_threads](../cooperative_groups/coalesced_group/num_threads.md) | 获取组内线程总数。 |
+| [thread_rank](../cooperative_groups/coalesced_group/thread_rank.md) | 获取当前线程在组内的排名。 |
+| [meta_group_rank](../cooperative_groups/coalesced_group/meta_group_rank.md) | 获取当前协作组在父组的排名。 |
+| [meta_group_size](../cooperative_groups/coalesced_group/meta_group_size.md) | 获取父组被划分时创建的子组数量。 |
+| [shfl](../cooperative_groups/coalesced_group/shfl.md) | 组内线程的数据交换，直接读取组内指定线程的数据。 |
+| [shfl_up](../cooperative_groups/coalesced_group/shfl_up.md) | 获取组内当前线程向前偏移delta的线程的数据。 |
+| [shfl_down](../cooperative_groups/coalesced_group/shfl_down.md) | 获取组内当前线程向后偏移delta的线程的数据。 |
+| [ballot](../cooperative_groups/coalesced_group/ballot.md) | 判断组内每个活跃线程的输入是否非零。 |
+| [any](../cooperative_groups/coalesced_group/any.md) | 判断是否有组内线程的输入不为0。 |
+| [all](../cooperative_groups/coalesced_group/all.md) | 判断是否所有组内线程的输入均不为0。 |
+
+**表31**  协作组通用与划分接口
 
 | 接口名 | 功能描述 |
 | --- | --- |
