@@ -19,6 +19,7 @@
 
 #ifndef ASCENDC_CPU_DEBUG
 
+#include "impl/basic_api/utils/kernel_utils_constants.h"
 #include "impl/utils/debug/asc_debug_utils.h"
 
 namespace __asc_simd_vf {
@@ -28,6 +29,12 @@ __simd_callee__ inline uint32_t get_reg_dump_u32_count(uint32_t dump_size_bytes)
 }
 
 enum class DumpTensorPosition : uint16_t { GM = 0, UB, L1, L0A, L0B, L0C, BIAS, FIXBUF, REG, MAX };
+
+template <typename T>
+__simd_callee__ constexpr uint32_t get_reg_dump_max_elements()
+{
+    return static_cast<uint32_t>(AscendC::VECTOR_REG_WIDTH / sizeof(T));
+}
 
 template <DumpTensorPosition dumpPosition, typename T, typename U>
 __simd_callee__ inline void set_dump_tlv_info_vf(
@@ -110,8 +117,14 @@ template <DumpTensorPosition dumpPosition, typename T, typename U>
 __simd_callee__ inline void asc_dump_impl(U& src, uint32_t desc, uint32_t dump_size)
 {
 #if !(defined(ASCENDC_DUMP) && ASCENDC_DUMP == 0)
+    uint32_t actual_dump_size = dump_size;
+    if constexpr (dumpPosition == DumpTensorPosition::REG) {
+        const uint32_t max_elements = get_reg_dump_max_elements<T>();
+        actual_dump_size = dump_size > max_elements ? max_elements : dump_size;
+    }
+
     __ubuf__ BlockVFBufInfo* block_info = get_printf_ubuf_addr(0);
-    const uint32_t tlv_len = reserve_dump_tlv<T>(block_info, dump_size);
+    const uint32_t tlv_len = reserve_dump_tlv<T>(block_info, actual_dump_size);
     if (tlv_len == 0) {
         return;
     }
@@ -119,11 +132,11 @@ __simd_callee__ inline void asc_dump_impl(U& src, uint32_t desc, uint32_t dump_s
 
     __ubuf__ DumpTensorTlv* dump_tlv =
         (__ubuf__ DumpTensorTlv*)((__ubuf__ uint8_t*)(block_info->buffer) + block_info->writeLen);
-    set_dump_tlv_info_vf<dumpPosition, T>(src, dump_tlv, align_dump_len, desc, dump_size, block_info->blockIdx);
+    set_dump_tlv_info_vf<dumpPosition, T>(src, dump_tlv, align_dump_len, desc, actual_dump_size, block_info->blockIdx);
     if constexpr (dumpPosition == DumpTensorPosition::REG) {
-        set_dump_tlv_data_reg<T>(src, dump_tlv, align_dump_len, dump_size);
+        set_dump_tlv_data_reg<T>(src, dump_tlv, align_dump_len, actual_dump_size);
     } else {
-        set_dump_tlv_data_ubuf<T>(src, dump_tlv, align_dump_len, dump_size);
+        set_dump_tlv_data_ubuf<T>(src, dump_tlv, align_dump_len, actual_dump_size);
     }
 
     block_info->magic = ASCENDC_SIMD_VF_MAGIC_NUMBER;

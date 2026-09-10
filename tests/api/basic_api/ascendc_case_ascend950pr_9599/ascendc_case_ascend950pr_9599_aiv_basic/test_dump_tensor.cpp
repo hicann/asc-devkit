@@ -274,4 +274,32 @@ TEST_F(TestDumpTensorSuite, AscDumpRegWritesRegPosition)
     EXPECT_EQ(dumpTlv->desc, TEST_SIMD_VF_DUMP_DESC);
     EXPECT_EQ(dumpTlv->blockIdx, TEST_SIMD_VF_BLOCK_IDX);
 }
+
+TEST_F(TestDumpTensorSuite, AscDumpRegClampsOversizedRequestToOneVectorLength)
+{
+    BlockVFBufInfo blockInfo;
+    auto* dumpTlv = GetSimdVfDumpTlv(blockInfo);
+    vector_u32 input = {};
+    constexpr uint32_t requestedSize = 65;
+    constexpr uint32_t maxSize = 64;
+
+    __asc_simd_vf::asc_dump_reg<uint32_t>(input, TEST_SIMD_VF_DUMP_DESC, requestedSize);
+
+    EXPECT_EQ(dumpTlv->dumpSize, maxSize * sizeof(uint32_t));
+    EXPECT_EQ(blockInfo.flag, 0);
+}
+
+TEST_F(TestDumpTensorSuite, AscDumpUbufKeepsRequestedSizeBeyondOneVectorLength)
+{
+    BlockVFBufInfo blockInfo;
+    auto* dumpTlv = GetSimdVfDumpTlv(blockInfo);
+    uint32_t input[65] = {};
+    constexpr uint32_t requestedSize = 65;
+
+    __asc_simd_vf::asc_dump_ubuf<uint32_t>(
+        reinterpret_cast<__ubuf__ uint32_t*>(input), TEST_SIMD_VF_DUMP_DESC, requestedSize);
+
+    EXPECT_EQ(dumpTlv->dumpSize, requestedSize * sizeof(uint32_t));
+    EXPECT_EQ(blockInfo.flag, 0);
+}
 #endif
