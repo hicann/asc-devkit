@@ -40,12 +40,6 @@ Score和Index分别存储在src0和src1中，按Score进行排序（Score大的�
   __aicore__ inline void asc_bitsort(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat)
   ```
 
-- 同步计算
-  ```cpp
-  __aicore__ inline void asc_bitsort_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat)
-  __aicore__ inline void asc_bitsort_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat)
-  ```
-
 ## 参数说明
 
 **表1** 参数说明

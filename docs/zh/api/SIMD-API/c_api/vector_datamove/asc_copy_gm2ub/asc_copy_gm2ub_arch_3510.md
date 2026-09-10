@@ -44,12 +44,6 @@ __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst, __gm__ void* src, uint
 __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst, __gm__ void* src, uint16_t burst_count, uint16_t burst_len, uint16_t src_stride, uint16_t dst_stride)
 ```
 
-- 同步计算
-
-```cpp
-__aicore__ inline void asc_copy_gm2ub_sync(__ubuf__ void* dst, __gm__ void* src, uint32_t size)
-```
-
 ## 参数说明
 
 **表1** 参数说明

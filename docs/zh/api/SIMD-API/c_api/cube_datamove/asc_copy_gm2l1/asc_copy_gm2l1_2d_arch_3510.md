@@ -46,15 +46,6 @@ __aicore__ inline void asc_copy_gm2l1(__cbuf__ <dtype>* dst,
                                       uint16_t k_step,
                                       uint8_t decomp_mode,
                                       uint8_t l2_cache_ctl)
-__aicore__ inline void asc_copy_gm2l1_sync(__cbuf__ <dtype>* dst,
-                                           __gm__ <dtype>* src,
-                                           uint32_t m_start_position,
-                                           uint32_t k_start_position,
-                                           uint16_t dst_stride,
-                                           uint16_t m_step,
-                                           uint16_t k_step,
-                                           uint8_t decomp_mode,
-                                           uint8_t l2_cache_ctl)
 ```
 
 ### dtype支持的数据类型

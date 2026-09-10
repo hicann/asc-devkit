@@ -40,9 +40,6 @@
 __aicore__ inline void asc_copy_gm2l1(__cbuf__ void* dst, __gm__ void* src, uint32_t n_burst,
                                       uint32_t len_burst, uint8_t pad_func_mode, uint64_t src_stride,
                                       uint32_t dst_stride)
-__aicore__ inline void asc_copy_gm2l1_sync(__cbuf__ void* dst, __gm__ void* src, uint32_t n_burst,
-                                           uint32_t len_burst, uint8_t pad_func_mode, uint64_t src_stride,
-                                           uint32_t dst_stride)
 ```
 
 ## 参数说明

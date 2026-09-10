@@ -104,14 +104,6 @@ __aicore__ inline void asc_copy_l12l0b_trans(__cb__ <dtype>* dst,
                                              uint16_t dst_gap,
                                              uint16_t dst_frac_gap,
                                              uint16_t src_frac_gap)
-__aicore__ inline void asc_copy_l12l0b_trans_sync(__cb__ <dtype>* dst,
-                                                  __cbuf__ <dtype>* src,
-                                                  uint16_t index_id,
-                                                  uint8_t repeat,
-                                                  uint16_t src_stride,
-                                                  uint16_t dst_gap,
-                                                  uint16_t dst_frac_gap,
-                                                  uint16_t src_frac_gap)
 ```
 
 ### dtype支持的数据类型

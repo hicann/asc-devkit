@@ -38,9 +38,6 @@
 __aicore__ inline void asc_fill_l1(__cbuf__ <dst_dtype>* dst,
                                    <value_dtype> value,
                                    const asc_fill_value_config& config)
-__aicore__ inline void asc_fill_l1_sync(__cbuf__ <dst_dtype>* dst,
-                                        <value_dtype> value,
-                                        const asc_fill_value_config& config)
 ```
 
 ### dtype支持的数据类型
@@ -95,7 +92,7 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需要按照32字节对齐（L1 Buffer对齐要求），否则触发地址对齐异常。
 - L1 Buffer总容量为512KB。`dst`偏移量与实际占用空间之和不可超过L1 Buffer容量，否则触发地址溢出异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。调用`asc_fill_l1_sync`时，接口内部完成同步。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - `value`的数据类型需与`dst`的数据类型满足函数原型章节中的组合关系。两者数据类型不相同时，需要根据`dst`的数据类型转换`value`的值，具体请参考调用示例。
 
 ## 调用示例

@@ -76,17 +76,6 @@ __aicore__ inline void asc_copy_gm2l1_align(__cbuf__ <dtype>* dst,
                                             uint8_t l2_cache_ctl,
                                             uint64_t burst_src_stride,
                                             uint32_t burst_dst_stride)
-// 占位符形式
-__aicore__ inline void asc_copy_gm2l1_align_sync(__cbuf__ <dtype>* dst,
-                                                 __gm__ <dtype>* src,
-                                                 uint32_t n_burst,
-                                                 uint32_t len_burst,
-                                                 uint8_t left_padding_count,
-                                                 uint8_t right_padding_count,
-                                                 bool data_select_bit,
-                                                 uint8_t l2_cache_ctl,
-                                                 uint64_t burst_src_stride,
-                                                 uint32_t burst_dst_stride)
 ```
 
 ### dtype支持的数据类型

@@ -56,12 +56,6 @@
     __aicore__ inline void asc_copy_l12fb(__fbuf__ void* dst, __cbuf__ void* src, uint32_t size)
     ```
 
-- 同步搬运
-
-    ```c
-    __aicore__ inline void asc_copy_l12fb_sync(__fbuf__ void* dst, __cbuf__ void* src, uint32_t size)
-    ```
-
 ## 参数说明
 
 **表1** 参数说明
