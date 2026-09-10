@@ -23,7 +23,7 @@
 #define IMPL_TENSOR_API_ATOM_VECTOR_COPY_UB2L1_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
-#include "impl/tensor_api/arch/vector/ub_to_l1/ub_to_l1_copy.h"
+#include "impl/tensor_api/arch/vector/ub_to_l1/copy.h"
 #include "impl/tensor_api/atom/copy_traits_impl.h"
 
 namespace asc {

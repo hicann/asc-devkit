@@ -22,7 +22,7 @@
 #ifndef IMPL_TENSOR_API_ATOM_CUBE_COPY_L12L0B_H
 #define IMPL_TENSOR_API_ATOM_CUBE_COPY_L12L0B_H
 
-#include "impl/tensor_api/arch/cube/l1_to_l0b/l1_to_l0b_copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_l0b/copy.h"
 #include "impl/tensor_api/atom/copy_traits_impl.h"
 
 namespace asc {

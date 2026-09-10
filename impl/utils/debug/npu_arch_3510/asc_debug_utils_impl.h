@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_NPU_ARCH_3510_ASC_DEBUG_UTILS_H
 #define IMPL_UTILS_DEBUG_NPU_ARCH_3510_ASC_DEBUG_UTILS_H
 
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 #include "impl/utils/debug/asc_simd_vf_utils.h"
 
 namespace __asc_simd_vf {

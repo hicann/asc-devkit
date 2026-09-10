@@ -21,7 +21,7 @@
 #define __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_ASC_PRINTF_H__
 #endif
 
-#include "../../../impl/utils/sys_macros_impl.h"
+#include "../../../impl/utils/sys_macros.h"
 
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
 #include "simt_api/device_types.h"

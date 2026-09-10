@@ -21,7 +21,7 @@
 #ifndef ASCENDC_KERNEL_MACROS_H
 #define ASCENDC_KERNEL_MACROS_H
 
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 #include "utils/base/sys_constants.h"
 
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1

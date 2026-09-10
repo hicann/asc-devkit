@@ -9,11 +9,11 @@
  */
 
 /* !
- * \file std_tuple_impl.h
+ * \file tuple_impl.h
  * \brief
  */
-#ifndef IMPL_UTILS_STD_TUPLE_STD_TUPLE_IMPL_H
-#define IMPL_UTILS_STD_TUPLE_STD_TUPLE_IMPL_H
+#ifndef IMPL_STD_ASCENDC_STD_TUPLE_IMPL__H
+#define IMPL_STD_ASCENDC_STD_TUPLE_IMPL__H
 
 #include <cstdint>
 #include <type_traits>
@@ -222,4 +222,4 @@ ASCENDC_HOST_AICORE inline constexpr const typename tuple_element<N, tuple<Tps..
 } // namespace Std
 } // namespace AscendC
 
-#endif // IMPL_UTILS_STD_TUPLE_STD_TUPLE_IMPL_H
+#endif // IMPL_STD_ASCENDC_STD_TUPLE_IMPL__H

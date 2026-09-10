@@ -16,8 +16,3 @@ install(DIRECTORY ${ASCENDC_INCLUDE_DIR}/c_api
 install(DIRECTORY ${ASCENDC_IMPL_DIR}/c_api
   DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl ${INSTALL_OPTIONAL} COMPONENT asc-devkit
 )
-
-# Keep legacy installed include paths available during the compatibility period.
-install(CODE "file(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/c_api/sys_var\")" COMPONENT asc-devkit)
-install(CODE "file(CREATE_LINK ../defs/enum.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/c_api/utils/enum.h SYMBOLIC)" COMPONENT asc-devkit)
-install(CODE "file(CREATE_LINK ../utils/sys_var.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/c_api/sys_var/sys_var.h SYMBOLIC)" COMPONENT asc-devkit)
