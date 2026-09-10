@@ -7,4 +7,3 @@
 - **[asc_set_ctrl](asc_set_ctrl.md)**
 - **[asc_set_saturation_flag](asc_set_saturation_flag.md)**
 - **[asc_set_saturation_strategy](asc_set_saturation_strategy.md)**
-- **[asc_get_ar_spr (废弃)](asc_get_ar_spr_deprecated.md)**

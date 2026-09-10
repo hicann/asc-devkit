@@ -13,6 +13,10 @@
 
 ## Reg矢量计算
 
+### 地址寄存器操作
+
+- **[asc_create_iter_reg（废弃）](asc_create_iter_reg_deprecated.md)**
+
 ### Reg数据搬入
 
 - **[asc_loadalign (废弃)](asc_loadalign_v1_deprecated.md)**（BRCV2、BRCV3和UNPACKV2无偏移量原型）
@@ -33,20 +37,44 @@
 ### 复合计算
 
 - **[asc_exp_sub（废弃）](asc_exp_sub_deprecated.md)**
+- **[asc_muls（废弃）](asc_muls_deprecated.md)**
+
+### 逻辑计算
+
+- **[asc_and（废弃）](asc_and_deprecated.md)**
+- **[asc_or（废弃）](asc_or_deprecated.md)**
+
+### 排布变换
+
+- **[asc_clear_ar_spr（废弃）](asc_clear_ar_spr_deprecated.md)**
+- **[asc_pack（废弃）](asc_pack_deprecated.md)**
+- **[asc_squeeze_v2（废弃）](asc_squeeze_deprecated.md)**
+- **[asc_squeeze_with_status（废弃）](asc_squeeze_with_status_deprecated.md)**
 
 ### 类型转换
 
+- **[asc_bfloat162e1m2x2（废弃）](asc_bfloat162e1m2x2_deprecated.md)**
+- **[asc_bfloat162e2m1x2（废弃）](asc_bfloat162e2m1x2_deprecated.md)**
 - **[asc_bfloat162float（废弃）](asc_bfloat162float_deprecated.md)**
 - **[asc_bfloat162int32（废弃）](asc_bfloat162int32_deprecated.md)**
+- **[asc_e1m2x22bfloat16（废弃）](asc_e1m2x22bfloat16_deprecated.md)**
+- **[asc_e2m1x22bfloat16（废弃）](asc_e2m1x22bfloat16_deprecated.md)**
+- **[asc_e4m32float（废弃）](asc_e4m32float_deprecated.md)**
+- **[asc_e5m22float（废弃）](asc_e5m22float_deprecated.md)**
 - **[asc_float2bfloat16（废弃）](asc_float2bfloat16_deprecated.md)**
+- **[asc_float2e4m3（废弃）](asc_float2e4m3_deprecated.md)**
+- **[asc_float2e5m2（废弃）](asc_float2e5m2_deprecated.md)**
 - **[asc_float2half（废弃）](asc_float2half_deprecated.md)**
+- **[asc_float2hif8（废弃）](asc_float2hif8_deprecated.md)**
 - **[asc_float2int16（废弃）](asc_float2int16_deprecated.md)**
 - **[asc_float2int64（废弃）](asc_float2int64_deprecated.md)**
 - **[asc_half2float（废弃）](asc_half2float_deprecated.md)**
 - **[asc_half2hif8（废弃）](asc_half2hif8_deprecated.md)**
 - **[asc_half2int32（废弃）](asc_half2int32_deprecated.md)**
+- **[asc_half2int4x2（废弃）](asc_half2int4x2_deprecated.md)**
 - **[asc_half2int8（废弃）](asc_half2int8_deprecated.md)**
 - **[asc_half2uint8（废弃）](asc_half2uint8_deprecated.md)**
+- **[asc_hif82float（废弃）](asc_hif82float_deprecated.md)**
 - **[asc_hif82half（废弃）](asc_hif82half_deprecated.md)**
 - **[asc_int162float（废弃）](asc_int162float_deprecated.md)**
 - **[asc_int162int32（废弃）](asc_int162int32_deprecated.md)**
@@ -55,16 +83,27 @@
 - **[asc_int322int16（废弃）](asc_int322int16_deprecated.md)**
 - **[asc_int322int64（废弃）](asc_int322int64_deprecated.md)**
 - **[asc_int322uint16（废弃）](asc_int322uint16_deprecated.md)**
+- **[asc_int322uint8（废弃）](asc_int322uint8_deprecated.md)**
+- **[asc_int4x22bfloat16（废弃）](asc_int4x22bfloat16_deprecated.md)**
+- **[asc_int4x22half（废弃）](asc_int4x22half_deprecated.md)**
+- **[asc_int4x22int16（废弃）](asc_int4x22int16_deprecated.md)**
 - **[asc_int642float（废弃）](asc_int642float_deprecated.md)**
 - **[asc_int642int32（废弃）](asc_int642int32_deprecated.md)**
 - **[asc_int82half（废弃）](asc_int82half_deprecated.md)**
 - **[asc_int82int16（废弃）](asc_int82int16_deprecated.md)**
+- **[asc_int82int32（废弃）](asc_int82int32_deprecated.md)**
 - **[asc_uint162uint32（废弃）](asc_uint162uint32_deprecated.md)**
 - **[asc_uint162uint8（废弃）](asc_uint162uint8_deprecated.md)**
 - **[asc_uint322int16（废弃）](asc_uint322int16_deprecated.md)**
 - **[asc_uint322uint16（废弃）](asc_uint322uint16_deprecated.md)**
+- **[asc_uint322uint8（废弃）](asc_uint322uint8_deprecated.md)**
 - **[asc_uint82half（废弃）](asc_uint82half_deprecated.md)**
 - **[asc_uint82uint16（废弃）](asc_uint82uint16_deprecated.md)**
+- **[asc_uint82uint32（废弃）](asc_uint82uint32_deprecated.md)**
+
+## 矢量数据搬运
+
+- **[asc_set_gm2ub_pad（废弃）](asc_set_gm2ub_pad_deprecated.md)**
 
 ## 原子操作
 
@@ -79,7 +118,9 @@
 - **[asc_get_block_idx（废弃）](asc_get_block_idx_deprecated.md)**
 - **[asc_get_block_num（废弃）](asc_get_block_num_deprecated.md)**
 
-<!-- sync-deprecated-generated-start -->
+## 特殊寄存器访问
+
+- **[asc_get_ar_spr（废弃）](asc_get_ar_spr_deprecated.md)**
 
 ## 废弃同步接口
 
@@ -250,4 +291,3 @@
 
 - **[asc_bitsort_sync（废弃）](asc_bitsort_sync_deprecated.md)**
 - **[asc_mrgsort4_sync（废弃）](asc_mrgsort4_sync_deprecated.md)**
-<!-- sync-deprecated-generated-end -->

@@ -10,4 +10,3 @@
 - **[asc_prelu](asc_prelu.md)**
 - **[asc_relu](asc_relu.md)**
 - **[asc_exp_sub](asc_exp_sub.md)**
-- **[asc_muls (废弃)](asc_muls_deprecated.md)**

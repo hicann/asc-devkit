@@ -27,7 +27,7 @@
 
 头文件路径为：`"c_api/reg_compute/compute/reg_permute_sel.h"`。
 
-**该接口已废弃。请使用[asc_squeeze_and_storeunalign_init](asc_squeeze_and_storeunalign_init.md)实现此功能。**
+**该接口已废弃。请使用[asc_squeeze_and_storeunalign_init](../reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md)实现此功能。**
 
 对AR特殊寄存器进行清零操作。AR寄存器用于配合[asc_squeeze_with_status](asc_squeeze_with_status_deprecated.md)使用：当调用asc_squeeze_with_status时，有效元素的总字节数会被存入AR寄存器。在调用asc_squeeze_with_status之前，需调用该接口将AR寄存器清零。
 
@@ -54,7 +54,7 @@ __simd_callee__ inline void asc_clear_ar_spr()
 
 ## 调用示例
 
-将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：

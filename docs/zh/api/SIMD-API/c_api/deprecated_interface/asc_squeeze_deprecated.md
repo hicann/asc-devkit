@@ -28,11 +28,11 @@
 
 头文件路径为：`"c_api/reg_compute/compute/reg_permute_sel.h"`。
 
-**该接口已废弃，请使用[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)实现筛选并连续搬出有效元素的功能。**
+**该接口已废弃，请使用[asc_squeeze_and_storeunalign](../reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)实现筛选并连续搬出有效元素的功能。**
 
 将src中被mask选择的有效元素依次复制到dst，有效元素在dst上连续排列。dst中剩余位置元素置为0。
 
-asc_squeeze_v2接口搭配[asc_storeunalign_postupdate](../store/asc_storeunalign_postupdate.md)接口使用时，会将有效数据大小保存至AR寄存器，搬出时使用该值作为存储偏移量。AR寄存器中的数值可以通过[asc_get_squeeze_status](../../spr/asc_get_squeeze_status.md)接口获取。
+asc_squeeze_v2接口搭配[asc_storeunalign_postupdate](../reg_compute/store/asc_storeunalign_postupdate.md)接口使用时，会将有效数据大小保存至AR寄存器，搬出时使用该值作为存储偏移量。AR寄存器中的数值可以通过[asc_get_squeeze_status](../spr/asc_get_squeeze_status.md)接口获取。
 
 ## 函数原型
 
@@ -62,7 +62,7 @@ __simd_callee__ inline void asc_squeeze_v2(vector_float& dst, vector_float src, 
 | src       | 输入    | 源操作数（矢量数据寄存器）。 |
 | mask      | 输入    | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
 
-矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
+矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../defs/type/data_type_definition.md)。
 
 ## 返回值说明
 
