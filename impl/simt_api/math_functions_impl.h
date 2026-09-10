@@ -987,30 +987,39 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, __gm__ int* exp) { _
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float ldexpf(float x, int exp)
 {
-    if (x == 0.0f || isinf(x) || isnan(x) || exp == 0) {
-        return x;
-    }
-    if (exp > 280) { // 280: 1e-45*(2^280) = inf
-        return copysignf(ASCRT_INF_F, x);
-    }
-    if (exp < -280) { // -280: 3.4028234e+38*(2^-280) = 0
-        return copysignf(0.0f, x);
-    }
-    int32_t shift = 30;
-    if (exp > 0) {
-        while (exp > shift) {
-            x *= (1 << shift);
-            exp -= shift;
-        }
-        x *= (1 << exp);
+    float result;
+    const int32_t abs_exp = __fabsf(exp);
+    if (abs_exp >= 101) { // 101: switch to the multi-stage scaling path for larger exponent magnitudes.
+        // Match the compiled SIMT path: split the exponent into q / r form,
+        // then apply one larger scale followed by three equal scale factors.
+        const uint32_t exp_bits = static_cast<uint32_t>(exp + 508); // 508: bias used by the compiled path.
+        const uint32_t q = exp_bits >> 2;
+        const uint32_t r = exp_bits - (q << 2);
+        const float scale_q = __uint_as_float(q << 23);        // 23: float32 mantissa width; build 2^q.
+        const float scale_qr = __uint_as_float((q + r) << 23); // q + r: first-stage exponent chunk.
+        x *= scale_qr;
+        x *= scale_q;
+        x *= scale_q;
+        x *= scale_q;
+        result = x;
     } else {
-        while (exp < -30) { // -30: exp < -30, move 30
-            x *= 1.0f / (1 << shift);
-            exp += shift;
-        }
-        x *= 1.0f / (1 << (-exp));
+        result = x * __uint_as_float(
+                         static_cast<uint32_t>(exp + 127)
+                         << 23); // 23: float32 exponent starts at bit 23; 127: exponent bias.
     }
-    return x;
+
+    if (exp > 278) { // 278: beyond this positive shift, x * 2^exp overflows to +inf/-inf.
+        result = copysignf(ASCRT_INF_F, x);
+    }
+    if (exp < -278) { // -278: beyond this negative shift, x * 2^exp underflows to signed zero.
+        result = copysignf(0.0f, x);
+    }
+
+    if (x == 0.0f || isinf(x) || isnan(x) || exp == 0) {
+        result = x;
+    }
+
+    return result;
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float hypotf(float x, float y)
