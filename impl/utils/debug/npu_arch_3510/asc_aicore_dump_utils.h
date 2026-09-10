@@ -16,7 +16,7 @@
 #define IMPL_UTILS_DEBUG_NPU_ARCH_3510_ASC_AICORE_DUMP_UTILS_H
 
 #include "impl/utils/debug/asc_debug_utils.h"
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 
 namespace __asc_aicore {
 constexpr uint32_t ASC_DEBUG_BUS_UNLOCK_OFFSET = 0x078;

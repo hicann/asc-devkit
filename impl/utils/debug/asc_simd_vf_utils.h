@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_ASC_SIMD_VF_UTILS_H
 #define IMPL_UTILS_DEBUG_ASC_SIMD_VF_UTILS_H
 
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 #include "impl/utils/debug/asc_debug_types.h"
 
 namespace __asc_simd_vf {

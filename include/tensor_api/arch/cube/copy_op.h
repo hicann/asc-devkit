@@ -14,11 +14,11 @@
 #endif
 
 /*!
- * \file cube_copy_op.h
+ * \file copy_op.h
  * \brief
  */
-#ifndef INCLUDE_TENSOR_API_ARCH_CUBE_CUBE_COPY_OP_H
-#define INCLUDE_TENSOR_API_ARCH_CUBE_CUBE_COPY_OP_H
+#ifndef INCLUDE_TENSOR_API_ARCH_CUBE_COPY_OP_H
+#define INCLUDE_TENSOR_API_ARCH_CUBE_COPY_OP_H
 
 #include "tensor_api/arch/cube/copy_trait.h"
 
@@ -207,19 +207,19 @@ struct copy_l0c_to_l1 {
 } // namespace te
 } // namespace asc
 
-#include "impl/tensor_api/arch/cube/gm_to_l1/gm_to_l1_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_ub/l1_to_ub_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_l0a/l1_to_l0a_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_l0b/l1_to_l0b_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_l0scalea/l1_to_l0scalea_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_l0scaleb/l1_to_l0scaleb_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_fb/l1_to_fb_copy.h"
-#include "impl/tensor_api/arch/cube/l1_to_bt/l1_to_bt_copy.h"
-#include "impl/tensor_api/arch/cube/l0c_to_gm/l0c_to_gm_copy.h"
-#include "impl/tensor_api/arch/cube/l0c_to_ub/l0c_to_ub_copy.h"
-#include "impl/tensor_api/arch/cube/l0c_to_l1/l0c_to_l1_copy.h"
+#include "impl/tensor_api/arch/cube/gm_to_l1/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_ub/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_l0a/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_l0b/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_l0scalea/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_l0scaleb/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_fb/copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_bt/copy.h"
+#include "impl/tensor_api/arch/cube/l0c_to_gm/copy.h"
+#include "impl/tensor_api/arch/cube/l0c_to_ub/copy.h"
+#include "impl/tensor_api/arch/cube/l0c_to_l1/copy.h"
 
-#endif // INCLUDE_TENSOR_API_ARCH_CUBE_CUBE_COPY_OP_H
+#endif // INCLUDE_TENSOR_API_ARCH_CUBE_COPY_OP_H
 
 #if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS

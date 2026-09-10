@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_ASC_DEBUG_UTILS_IMPL_STUB_H
 #define IMPL_UTILS_DEBUG_ASC_DEBUG_UTILS_IMPL_STUB_H
 
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 
 namespace __asc_aicore {
 __aicore__ inline void asc_entire_dcci_impl(__gm__ uint64_t* ptr) {}

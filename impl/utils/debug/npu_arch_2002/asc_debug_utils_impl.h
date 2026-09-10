@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_NPU_ARCH_2002_ASC_DEBUG_UTILS_H
 #define IMPL_UTILS_DEBUG_NPU_ARCH_2002_ASC_DEBUG_UTILS_H
 
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 
 namespace __asc_aicore {
 __aicore__ inline void asc_entire_dcci_impl(__gm__ uint64_t* ptr) { dcci(ptr, cache_line_t::ENTIRE_DATA_CACHE); }

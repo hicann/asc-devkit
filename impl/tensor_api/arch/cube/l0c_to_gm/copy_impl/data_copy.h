@@ -23,7 +23,7 @@
 #define IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_GM_COPY_IMPL_DATA_COPY_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
-#include "impl/tensor_api/arch/cube/l1_to_fb/l1_to_fb_copy.h"
+#include "impl/tensor_api/arch/cube/l1_to_fb/copy.h"
 #include "impl/tensor_api/arch/cube/utils/l0c2out_utils.h"
 #include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/instruction.h"
 

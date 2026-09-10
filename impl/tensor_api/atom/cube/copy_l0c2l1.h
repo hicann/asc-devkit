@@ -23,7 +23,7 @@
 #define IMPL_TENSOR_API_ATOM_CUBE_COPY_L0C2L1_H
 
 #include "impl/tensor_api/utils/utils_impl.h"
-#include "impl/tensor_api/arch/cube/l0c_to_l1/l0c_to_l1_copy.h"
+#include "impl/tensor_api/arch/cube/l0c_to_l1/copy.h"
 #include "impl/tensor_api/atom/copy_traits_impl.h"
 
 namespace asc {

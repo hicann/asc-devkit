@@ -64,8 +64,8 @@ struct copy_atom<copy_traits<Args...>> : copy_traits<Args...> {
 } // namespace te
 } // namespace asc
 
-#include "tensor_api/arch/cube/cube_copy_op.h"
-#include "tensor_api/arch/vector/vector_copy_op.h"
+#include "tensor_api/arch/cube/copy_op.h"
+#include "tensor_api/arch/vector/copy_op.h"
 #include "impl/tensor_api/atom/copy_atom_impl.h"
 
 #endif // INCLUDE_TENSOR_API_ATOM_CUBE_COPY_ATOM_H

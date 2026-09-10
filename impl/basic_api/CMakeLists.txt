@@ -243,7 +243,7 @@ install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/kernel_utils.h \$E
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/kernel_utils_base.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/kernel_utils_base.h SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/kernel_npu_debug.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/kernel_npu_debug.h SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/utils \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/utils SYMBOLIC)" COMPONENT asc-devkit)
-install(CODE "file(CREATE_LINK ../../../../asc/impl/utils/sys_macros_impl.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/utils/sys_macros_impl.h SYMBOLIC)" COMPONENT asc-devkit)
+install(CODE "file(CREATE_LINK ../../../../asc/impl/utils/sys_macros.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/utils/sys_macros.h SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/utils/sys_constants.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/utils/sys_constants.h SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/utils/common_types.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/utils/common_types.h SYMBOLIC)" COMPONENT asc-devkit)
 

@@ -15,7 +15,7 @@
 #ifndef IMPL_UTILS_DEBUG_NPU_ARCH_5102_ASC_TYPE_CONVERSION_UTILS_H
 #define IMPL_UTILS_DEBUG_NPU_ARCH_5102_ASC_TYPE_CONVERSION_UTILS_H
 
-#include "impl/utils/sys_macros_impl.h"
+#include "impl/utils/sys_macros.h"
 namespace __asc_aicore {
 template <typename T>
 constexpr __aicore__ inline uint64_t get_scalar_bitcode_value(T scalarValue)
