@@ -105,7 +105,7 @@ AI Core内部存在Scalar流水、MTE流水、Fixpipe流水<!-- npu="950" id1 --
 Scalar负责标量控制、地址计算、标量计算、Scalar访存以及发射其他流水指令等操作。Scalar流水内的GM访问需要按GM地址、访问路径以及DCache的Cache Line粒度区分：
 
 - **访问不同GM地址**：不同地址之间没有天然的数据依赖，无论访问是否经过DCache，硬件不保证这些访问的完成顺序或对其他观察者的可见顺序与代码顺序一致。例如先写`data`、后写`flag`时，不能仅依赖代码顺序推断其他流水、其他AI Core或Host侧一定先看到`data`、再看到`flag`。
-- **访问同一GM地址**：普通Scalar通过DCache访问同一GM地址时，同地址访问结果与程序序保持一致。虽然流水内同地址访问结果与程序序保持一致，但是其他流水或其他AI Core想要观察到该写入结果时，还需要按CacheLine处理DCache中的Dirty副本或旧副本，参考[DCache与GM的缓存一致性](./cache_coherence.md#dcache与gm的缓存一致性)。
+- **访问同一GM地址**：普通Scalar通过DCache访问同一GM地址时，同地址访问结果与程序序保持一致。虽然流水内同地址访问结果与程序序保持一致，但是其他流水或其他AI Core想要观察到该写入结果时，还需要按Cache Line处理DCache中的Dirty副本或旧副本，参考[DCache与GM的缓存一致性](./cache_coherence.md#dcache与gm的缓存一致性)。
 - **同一GM地址混用不同访问路径**：同一地址访问中如果混用经过DCache和不经过DCache的路径，硬件不保证最终结果一定符合代码顺序，需要由软件额外处理访问完成和Cache副本问题。例如Scalar经过DCache读写和Scalar原子操作混用，需要用户显式插入同步保证内存一致性。
 
 ##### MTE/Fixpipe流水
