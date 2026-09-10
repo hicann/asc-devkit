@@ -27,6 +27,7 @@
 #ifndef IMPL_C_API_C_API_INSTR_IMPL_SYNC_C_API_IMPL_SYNC_C_API_IMPL_H
 #define IMPL_C_API_C_API_INSTR_IMPL_SYNC_C_API_IMPL_SYNC_C_API_IMPL_H
 
+#include "c_api/defs/defs.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 #include "impl/c_api/instr_impl/npu_arch_2201/sync_impl/asc_set_flag_impl.h"
@@ -42,12 +43,6 @@
 
 __aicore__ inline void asc_sync_vec(int id) { asc_sync_vec_impl(id); }
 
-[[deprecated("NOTICE: asc_sync_vec() is deprecated. "
-             "Please use asc_sync() instead")]]
-__aicore__ inline void asc_sync_vec()
-{
-    asc_sync_vec_impl();
-}
 __aicore__ inline void asc_sync_notify(pipe_t pipe, pipe_t tpipe, event_t id) { asc_sync_notify_impl(pipe, tpipe, id); }
 
 __aicore__ inline void asc_sync_wait(pipe_t pipe, pipe_t tpipe, event_t id) { asc_sync_wait_impl(pipe, tpipe, id); }
@@ -85,6 +80,9 @@ __aicore__ inline void asc_sync_subblock_wait(pipe_t pipe, int64_t flag_id)
 __aicore__ inline void asc_sync_block_wait(pipe_t pipe, int64_t flag_id) { asc_sync_block_wait_impl(pipe, flag_id); }
 
 __aicore__ inline void asc_sync_inter_wait(pipe_t pipe, int64_t flag_id) { asc_sync_inter_wait_impl(pipe, flag_id); }
+
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sync)
+__aicore__ inline void asc_sync_vec() { asc_sync_vec_impl(); }
 
 #endif
 

@@ -45,15 +45,16 @@ __aicore__ inline void asc_get_arch_ver(uint32_t& core_version);
 __aicore__ inline void asc_set_ffts_base_addr(uint64_t config);
 __aicore__ inline constexpr int64_t asc_get_vf_len();
 
-[[deprecated("NOTICE: asc_get_block_num is deprecated. "
-             "Please use block_num instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", block_num)
 __aicore__ inline int64_t asc_get_block_num();
 
-[[deprecated("NOTICE: asc_get_block_idx is deprecated. "
-             "Please use block_idx for pure Vector, pure Cube, and Mix(1, 1). "
-             "For Mix(1, 2), please use block_idx on the Cube core and "
-             "block_idx * asc_get_sub_block_num() + asc_get_sub_block_id() "
-             "on Vector cores instead.")]]
+/*
+Please use block_idx for pure Vector, pure Cube, and Mix(1, 1).
+For Mix(1, 2), please use block_idx on the Cube core and
+block_idx * asc_get_sub_block_num() + asc_get_sub_block_id()
+on Vector cores instead.
+*/
+ASC_DEPRECATED(9.2.0, "2027/09/07", block_idx and asc_get_sub_block_num and asc_get_sub_block_id)
 __aicore__ inline int64_t asc_get_block_idx();
 #endif
 

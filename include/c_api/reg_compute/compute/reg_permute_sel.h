@@ -416,141 +416,116 @@ __simd_callee__ inline vector_bool asc_unpack_upper(vector_bool src);
 
 __simd_callee__ inline vector_bool asc_unpack_lower(vector_bool src);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_int8_t& dst, vector_int8_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_int8_t& dst, vector_int8_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_half& dst, vector_half src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_half& dst, vector_half src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_float& dst, vector_float src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_float& dst, vector_float src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_hifloat8_t& dst, vector_hifloat8_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_hifloat8_t& dst, vector_hifloat8_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(
+    vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_with_status is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_with_status(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_with_status(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_int8_t& dst, vector_int8_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_int8_t& dst, vector_int8_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_half& dst, vector_half src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_half& dst, vector_half src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_float& dst, vector_float src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_float& dst, vector_float src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_hifloat8_t& dst, vector_hifloat8_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_hifloat8_t& dst, vector_hifloat8_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_squeeze_v2 is deprecated. "
-             "Please use asc_squeeze_and_storeunalign instead.")]] __simd_callee__ inline void
-asc_squeeze_v2(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask);
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign)
+__simd_callee__ inline void asc_squeeze_v2(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask);
 
-[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_low)
 __simd_callee__ inline void asc_pack(vector_uint8_t& dst, vector_uint16_t src);
 
-[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_low)
 __simd_callee__ inline void asc_pack(vector_uint8_t& dst, vector_int16_t src);
 
-[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_low)
 __simd_callee__ inline void asc_pack(vector_uint16_t& dst, vector_uint32_t src);
 
-[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_low)
 __simd_callee__ inline void asc_pack(vector_uint16_t& dst, vector_int32_t src);
 
-[[deprecated("NOTICE: asc_pack is deprecated.  Please use asc_pack_to_low instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_low)
 __simd_callee__ inline void asc_pack(vector_bool& dst, vector_bool src);
 
-[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_high)
 __simd_callee__ inline void asc_pack_v2(vector_uint8_t& dst, vector_uint16_t src);
 
-[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_high)
 __simd_callee__ inline void asc_pack_v2(vector_uint8_t& dst, vector_int16_t src);
 
-[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_high)
 __simd_callee__ inline void asc_pack_v2(vector_uint16_t& dst, vector_uint32_t src);
 
-[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_high)
 __simd_callee__ inline void asc_pack_v2(vector_uint16_t& dst, vector_int32_t src);
 
-[[deprecated("NOTICE: asc_pack_v2 is deprecated.  Please use asc_pack_to_high instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pack_to_high)
 __simd_callee__ inline void asc_pack_v2(vector_bool& dst, vector_bool src);
 
-[[deprecated("NOTICE: asc_clear_ar_spr is deprecated. Please use asc_squeeze_and_storeunalign_init instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_squeeze_and_storeunalign_init)
 __simd_callee__ inline void asc_clear_ar_spr();
 
 #endif

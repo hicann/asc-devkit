@@ -18,6 +18,7 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_2201_ATOMIC_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_2201_ATOMIC_IMPL_H
 
+#include "c_api/defs/defs.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/atomic_impl/asc_disable_dma_atomic_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/atomic_impl/asc_set_atomic_none_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/atomic_impl/asc_get_store_atomic_config_impl.h"
@@ -46,17 +47,6 @@
 
 __aicore__ inline void asc_disable_dma_atomic() { asc_disable_dma_atomic_impl(); }
 
-[[deprecated("NOTICE: asc_set_atomic_none is deprecated. Please use asc_disable_dma_atomic instead.")]]
-__aicore__ inline void asc_set_atomic_none()
-{
-    asc_disable_dma_atomic();
-}
-
-__aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config)
-{
-    asc_get_store_atomic_config_impl(config);
-}
-
 __aicore__ inline void asc_set_store_atomic_config_v1(uint16_t type, uint16_t op)
 {
     asc_set_store_atomic_config_v1_impl(type, op);
@@ -67,12 +57,6 @@ __aicore__ inline void asc_set_atomic_add_bfloat() { asc_set_atomic_add_bfloat_i
 __aicore__ inline void asc_set_atomic_add_float() { asc_set_atomic_add_float_impl(); }
 
 __aicore__ inline void asc_set_atomic_add_float16() { asc_set_atomic_add_float16_impl(); }
-
-[[deprecated("NOTICE: asc_set_atomic_add_int is deprecated. Please use asc_set_atomic_add_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_add_int()
-{
-    asc_set_atomic_add_int_impl();
-}
 
 __aicore__ inline void asc_set_atomic_add_int8() { asc_set_atomic_add_int8_impl(); }
 
@@ -86,12 +70,6 @@ __aicore__ inline void asc_set_atomic_max_float() { asc_set_atomic_max_float_imp
 
 __aicore__ inline void asc_set_atomic_max_float16() { asc_set_atomic_max_float16_impl(); }
 
-[[deprecated("NOTICE: asc_set_atomic_max_int is deprecated. Please use asc_set_atomic_max_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_max_int()
-{
-    asc_set_atomic_max_int_impl();
-}
-
 __aicore__ inline void asc_set_atomic_max_int8() { asc_set_atomic_max_int8_impl(); }
 
 __aicore__ inline void asc_set_atomic_max_int16() { asc_set_atomic_max_int16_impl(); }
@@ -104,17 +82,29 @@ __aicore__ inline void asc_set_atomic_min_float() { asc_set_atomic_min_float_imp
 
 __aicore__ inline void asc_set_atomic_min_float16() { asc_set_atomic_min_float16_impl(); }
 
-[[deprecated("NOTICE: asc_set_atomic_min_int is deprecated. Please use asc_set_atomic_min_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_min_int()
-{
-    asc_set_atomic_min_int_impl();
-}
-
 __aicore__ inline void asc_set_atomic_min_int8() { asc_set_atomic_min_int8_impl(); }
 
 __aicore__ inline void asc_set_atomic_min_int16() { asc_set_atomic_min_int16_impl(); }
 
 __aicore__ inline void asc_set_atomic_min_int32() { asc_set_atomic_min_int32_impl(); }
+
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_disable_dma_atomic)
+__aicore__ inline void asc_set_atomic_none() { asc_disable_dma_atomic(); }
+
+ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
+__aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config)
+{
+    asc_get_store_atomic_config_impl(config);
+}
+
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_add_int32)
+__aicore__ inline void asc_set_atomic_add_int() { asc_set_atomic_add_int_impl(); }
+
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_max_int32)
+__aicore__ inline void asc_set_atomic_max_int() { asc_set_atomic_max_int_impl(); }
+
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_min_int32)
+__aicore__ inline void asc_set_atomic_min_int() { asc_set_atomic_min_int_impl(); }
 
 #endif
 

@@ -67,8 +67,7 @@ __aicore__ inline void asc_unlock(pipe_t pipe, uint8_t mutex_id);
 
 __aicore__ inline void asc_unlock(pipe_t pipe, uint8_t mutex_id, const asc_mutex_execute_mode mode);
 
-[[deprecated("NOTICE: asc_sync_vec() is deprecated. "
-             "Please use asc_sync() instead")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sync)
 __aicore__ inline void asc_sync_vec();
 
 #endif
