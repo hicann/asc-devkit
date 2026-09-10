@@ -4,28 +4,26 @@
 
 本样例以adaptive_max_pool3d_grad算子为例，对比SIMD、混合编程两种实现方式的复杂度和性能数据，说明在连续和离散读写并存的场景中，混合编程可以兼顾性能和开发体验。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.2.0
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
 ```text
 ├── simd_simt_adaptive_max_pool3d_grad
-│   ├── figures                              // README中的图片资源。
-│   ├── adaptive_max_pool3d_grad_common.h    // 四个Case共用的流水同步等待工具函数。
-│   ├── adaptive_max_pool3d_grad_hybrid_ub.h // SIMD清零和SIMT静态UB回填实现。
-│   ├── adaptive_max_pool3d_grad_hybrid.h    // SIMD清零和SIMT GM回填实现。
-│   ├── adaptive_max_pool3d_grad_scalar.h    // SIMD清零和Scalar GM回填实现。
-│   ├── adaptive_max_pool3d_grad_simd.h      // SIMD向量API实现清零和回填。
-│   ├── adaptive_max_pool3d_grad_host.asc    // 统一main入口和Host侧运行逻辑。
-│   ├── CMakeLists.txt                       // 编译工程文件。
-│   ├── README.md                            // 中文样例说明。
-│   └── README_en.md                         // 英文样例说明。
+│   ├── figures                              // README中的图片资源
+│   ├── adaptive_max_pool3d_grad_common.h    // 四个Case共用的流水同步等待工具函数
+│   ├── adaptive_max_pool3d_grad_hybrid_ub.h // SIMD清零和SIMT静态UB回填实现
+│   ├── adaptive_max_pool3d_grad_hybrid.h    // SIMD清零和SIMT GM回填实现
+│   ├── adaptive_max_pool3d_grad_scalar.h    // SIMD清零和Scalar GM回填实现
+│   ├── adaptive_max_pool3d_grad_simd.h      // SIMD向量API实现清零和回填
+│   ├── adaptive_max_pool3d_grad_host.asc    // 统一main入口和Host侧运行逻辑
+│   ├── CMakeLists.txt                       // 编译工程文件
+│   ├── README.md                            // 样例说明文档
+│   └── README_en.md                         // 英文样例说明文档
 ```
 
 ## 样例描述
@@ -257,7 +255,7 @@ asc_copy_ub2gm_align(output_data + output_base_offset, output_ub, active_output_
 
 使用混合编程时，SIMD和SIMT的性能优化手段可以复用，性能优化的上限更高。
 
-## 对比总结
+## 性能对比总结
 
 所有Case的性能数据如下：
 
@@ -268,6 +266,8 @@ asc_copy_ub2gm_align(output_data + output_base_offset, output_ub, active_output_
 | 64 | 6763.949 | 455.944 | 340.51 | 294.406 |
 | 512 | 6997.266 | 2010.422 | 406.567 | 336.848 |
 | 4096 | 8182.059 | 9140.783 | 748.313 | 551.461 |
+
+## 调优建议
 
 在该样例中，存在连续（清零）和离散（梯度回填）两部分数据处理。对比四份核函数实现代码以及上面的性能数据，可以发现在代码编写方面，SIMT和Main Scalar的方式相比SIMD API更简单，而性能方面，SIMT比SIMD和Main Scalar耗时更低，且离散写的数据量越大，收益更高。因此，连续和离散（内存操作）并存的场景下，建议采用混合编程的方式，可以兼顾性能和良好的开发体验。
 
@@ -333,36 +333,34 @@ asc_copy_ub2gm_align(output_data + output_base_offset, output_ub, active_output_
   test pass!
   ```
 
-## 性能分析
+## 性能调试
 
 ### msOpProf工具介绍
+
 msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
-- 上板性能采集
+通过上板性能采集，可以直接测定算子在昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
 
-    通过上板性能采集，可以直接测定算子昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
+使用`msOpProf`工具获取详细性能数据：
 
-    使用`msOpProf`工具获取详细性能数据：
-    ```bash
-    msopprof ./adaptive_max_pool3d_grad simd profile   # 分析性能
-    ```
+```bash
+msopprof ./adaptive_max_pool3d_grad simd profile
+```
 
-    - 性能数据说明
+命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的性能数据文件夹，文件夹结构示例如下：
 
-      命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的文件夹，性能数据文件夹结构示例如下：
-
-      ```bash
-      ├──dump                       # 原始的性能数据，用户无需关注
-      ├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
-      ├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
-      ├──Memory.csv                 # UB，L1和主存储器读写带宽速率
-      ├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
-      ├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
-      ├──OpBasicInfo.csv            # 算子基础信息
-      ├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
-      ├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
-      └──visualize_data.bin         # MindStudio Insight呈现文件
-      ```
+```bash
+├──dump                       # 原始的性能数据，用户无需关注
+├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
+├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
+├──Memory.csv                 # UB，L1和主存储器读写带宽速率
+├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
+├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
+├──OpBasicInfo.csv            # 算子基础信息
+├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
+├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
+└──visualize_data.bin         # MindStudio Insight呈现文件
+```
 
 查看具体的性能分析结果：
 

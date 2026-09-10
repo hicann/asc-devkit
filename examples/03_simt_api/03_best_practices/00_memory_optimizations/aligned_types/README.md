@@ -4,28 +4,27 @@
 
   本样例量化展示**结构体类型对齐对Global Memory访存的影响**：结合Ascend 950PR/Ascend 950DT支持1B、2B、4B、8B、16B位宽的访存指令，构造多个大小不同的结构体做逐元素数据搬运，对比类型对齐带来的搬运效率差异。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-  - Ascend 950PR/Ascend 950DT
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
-## 支持的 CANN 软件版本
+## 目录结构介绍
 
-  - \>= CANN 9.1.0
-
-## 目录结构
-
-  ```
-  ├── aligned_types
-  │   ├── aligned_types.asc      // SIMT实现&调用样例
-  │   ├── CMakeLists.txt         // cmake编译文件
-  │   └── README.md
-  ```
+```text
+├── aligned_types
+│   ├── aligned_types.asc      // SIMT实现&调用样例
+│   ├── CMakeLists.txt         // cmake编译文件
+│   ├── README.md              // 样例说明文档
+│   └── README_en.md           // 英文样例说明文档
+```
 
 ## 样例描述
 
 本样例选取14个结构体，按`sizeof`分为4B、8B、16B、32B四组，每组做类型对齐与非对齐的对照；其中4B组覆盖`alignof=1`与`alignof=2`两档窄对齐，并补充2组字段类型不一致的混合结构体对照。测试时依次将长度为`num_elements`的输入数组`d_idata`整体复制到`d_odata`，对比搬运效率。
 
-- 基础概念
+- 基础概念：
 
   **1、alignof**
 
@@ -51,7 +50,7 @@
   struct Misalign3 { unsigned char r, g, b; }; // alignof=1 sizeof=3 (默认)
   ```
 
-- 关键参数
+- 关键参数：
 
   | 参数 | 值 | 说明 |
   |------|-----|------|
@@ -59,7 +58,7 @@
   | THREAD_COUNT   | 2048   | 单核2048线程，grid固定`<<<1, 2048>>>` |
   | num_elements   | MEM_BYTES / sizeof(TData) | 每个用例的元素数，随结构体大小自动伸缩 |
 
-- 样例规格
+- 样例规格：
 
   | 名称              | 字段                    | sizeof | alignof | num_elements  |
   |------------------|--------------------------|-------|--------|-----------|
@@ -78,36 +77,9 @@
   | Align32          | 8 × u32                  |  32B  |  32B   | 16777216  |
   | Misalign32       | 8 × u32                  |  32B  | **4B** | 16777216  |
 
-- 样例实现
+## 样例实现
 
-  - Kernel实现  
-
-    本样例总数据量固定为512MiB，采用单核2048线程完成数据搬运。核函数以模板方式实现，支持不同类型与对齐方式的结构体测试，执行逐元素搬运操作，具体实现如下：
-
-    ```
-    constexpr uint32_t THREAD_COUNT = 2048;                  // threads per block
-    constexpr size_t MEM_BYTES = 512ULL * 1024ULL * 1024ULL; // 总数据量 512 MiB
-    uint32_t num_elements = static_cast<uint32_t>(MEM_BYTES / sizeof(TData));
-
-    template <class TData>
-    __global__ __launch_bounds__(THREAD_COUNT) void aligned_type_kernel(
-        TData* d_odata, TData* d_idata, uint32_t num_elements)
-    {
-        const uint32_t tid = blockIdx.x * blockDim.x + threadIdx.x;
-        const uint32_t num_threads = blockDim.x * gridDim.x;
-        for (uint32_t pos = tid; pos < num_elements; pos += num_threads) {
-            d_odata[pos] = d_idata[pos];
-        }
-    }
-    ```
-
-  - 调用实现  
-
-    使用内核调用符`<<<>>>`调用核函数。
-
-## 性能分析
-
-- 性能指标说明
+### 性能指标说明
 
   |             字段名          | 字段含义                                             |
   |:---------------------------:|:-------------------------------------------------|
@@ -116,7 +88,30 @@
 
   除 Task Duration 外，本例中其余指标均展示的是所有 block 上性能指标的平均值。
 
-- 性能数据
+### Kernel实现
+
+本样例总数据量固定为512MiB，采用单核2048线程完成数据搬运。核函数以模板方式实现，支持不同类型与对齐方式的结构体测试，执行逐元素搬运操作，具体实现如下：
+
+```
+constexpr uint32_t THREAD_COUNT = 2048;                  // threads per block
+constexpr size_t MEM_BYTES = 512ULL * 1024ULL * 1024ULL; // 总数据量 512 MiB
+uint32_t num_elements = static_cast<uint32_t>(MEM_BYTES / sizeof(TData));
+
+template <class TData>
+__global__ __launch_bounds__(THREAD_COUNT) void aligned_type_kernel(
+    TData* d_odata, TData* d_idata, uint32_t num_elements)
+{
+    const uint32_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const uint32_t num_threads = blockDim.x * gridDim.x;
+    for (uint32_t pos = tid; pos < num_elements; pos += num_threads) {
+        d_odata[pos] = d_idata[pos];
+    }
+}
+```
+
+## 性能对比总结
+
+### 性能数据
 
   |       TData       | Task Duration(μs) | aiv_total_cycles |
   | :---------------: | :---------------: | :--------------: |
@@ -135,7 +130,7 @@
   |      Align32      |     52357.78      |   86396567.61    |
   |    Misalign32     |     77790.93      |   128352303.30   |
 
-- 综合分析
+### 综合分析
 
   本次所有测试用例的总搬运数据量统一为512MiB；在结构体大小相同的前提下，类型对齐使访存指令位宽更宽，总体耗时更少、搬运效率更高。将各对照组对齐前后的耗时差异汇总如下：
 
@@ -159,7 +154,7 @@
 
   综上说明，在数据总量不变时，相同大小的结构体，类型对齐可以提升搬运效率，且`alignof`越大效率越高，上限为16B。
 
-- 调优建议
+## 调优建议
 
   Ascend 950PR/Ascend 950DT支持1B、2B、4B、8B、16B五种位宽的访存指令，因此建议使用时，在不超过结构体大小的情况下，尽量选择更高的位宽。
 
@@ -197,7 +192,11 @@
   [Success] Case accuracy is verification passed.
   ```
 
-## 性能数据获取
+## 性能调试
+
+### msOpProf工具介绍
+
+msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
   使用 `msOpProf` 工具获取单个组件上的性能数据：
 

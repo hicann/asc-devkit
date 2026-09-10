@@ -11,13 +11,11 @@ This example uses fixed-divisor integer division computation to demonstrate inte
 | Case 0 | 0 | Standard division | SIMT threads directly use `/` for integer division, serving as the baseline version before fixed-divisor division optimization. |
 | Case 1 | 1 | Fast division | Precompute `magic` and `shift` for the fixed divisor. SIMT threads use multiplication and shift to replace standard division. |
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Versions
-
-- \>= CANN 9.2.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -25,7 +23,8 @@ This example uses fixed-divisor integer division computation to demonstrate inte
 ├── simd_simt_integer_fast_div
 │   ├── CMakeLists.txt          // Build project file
 │   ├── integer_div.asc         // Integer division example implementation
-│   └── README.md
+│   ├── README.md               // Sample documentation
+│   └── README_en.md            // English sample documentation
 ```
 
 ## Example Description
@@ -199,8 +198,6 @@ uint32_t result = (value + q) >> shift;
 
 ## Performance Comparison Summary
 
-### Ascend 950PR Performance Data
-
 **Overall Optimization Effect**:
 
 - Through the fast division optimization from Case 0 to Case 1, the example `Task Duration` decreases from 117.229μs to 103.889μs, a latency reduction of approximately 11.4%.
@@ -211,7 +208,7 @@ uint32_t result = (value + q) >> shift;
 | Case 0 | Standard division | 117.229 | 1.277 | 0.497 | 0.390 | 0.128 | 0.099 | 0.423 | 0.331 | 0.222 | 0.174 |
 | Case 1 | Fast division | 103.889 | 1.068 | 0.270 | 0.254 | 0.142 | 0.132 | 0.425 | 0.398 | 0.221 | 0.208 |
 
-### Optimization Key Points Summary
+## Tuning Recommendations
 
 | Optimization Method | Core Principle | Example Demonstration |
 |:---|:---|:---|
@@ -269,39 +266,36 @@ Run the following steps in the root directory of this example to build and run t
   [Success] Case accuracy is verification passed.
   ```
 
-### Performance Analysis
+## Performance Debugging
 
 ### Introduction to the msOpProf Tool
 
 `msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
-- On-device performance collection
+On-device performance collection directly measures the execution time of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
 
-    On-device performance collection directly measures the execution time of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
+Use the `msOpProf` tool to obtain detailed performance data.
 
-    Use the `msOpProf` tool to obtain detailed performance data.
+```bash
+msopprof ./integer_div
+```
 
-    ```bash
-    msopprof ./integer_div   # Analyze performance
-    ```
+After the command completes, a performance data folder named "OPPROF_{timestamp}_XXX" is generated in the default directory. The folder structure is as follows:
 
-    - Performance data description  
-      After the command completes, a folder named "OPPROF_{timestamp}_XXX" will be generated in the default directory. The performance data folder structure is as follows:
+```bash
+├──dump                       # Raw performance data; users do not need to inspect it
+├──ArithmeticUtilization.csv  # Cube/Vector instruction cycle proportions
+├──L2Cache.csv                # L2 Cache hit rate; affects MTE2. Plan data transfer logic properly to increase the hit rate
+├──Memory.csv                 # Read/write bandwidth rates of UB, L1, and main memory
+├──MemoryL0.csv               # Read/write bandwidth rates of L0A, L0B, and L0C
+├──MemoryUB.csv               # Read/write bandwidth rates from Vector and Scalar to UB
+├──OpBasicInfo.csv            # Basic operator information
+├──PipeUtilization.csv        # Durations and proportions of computation and data transfer units
+├──ResourceConflictRatio.csv  # Proportions of UB bank groups, bank conflicts, and resource conflicts among all instructions
+└──visualize_data.bin         # MindStudio Insight presentation file
+```
 
-      ```bash
-      ├──dump                       # Raw performance data; users do not need to inspect it
-      ├──ArithmeticUtilization.csv  # Cube/Vector instruction cycle proportions
-      ├──L2Cache.csv                # L2 Cache hit rate; affects MTE2. Plan data transfer logic properly to increase the hit rate
-      ├──Memory.csv                 # Read/write bandwidth rates of UB, L1, and main memory
-      ├──MemoryL0.csv               # Read/write bandwidth rates of L0A, L0B, and L0C
-      ├──MemoryUB.csv               # Read/write bandwidth rates from Vector and Scalar to UB
-      ├──OpBasicInfo.csv            # Basic operator information
-      ├──PipeUtilization.csv        # Durations and proportions of computation and data transfer units
-      ├──ResourceConflictRatio.csv  # Proportions of UB bank groups, bank conflicts, and resource conflicts among all instructions
-      └──visualize_data.bin         # MindStudio Insight presentation file
-      ```
-
-View the specific performance analysis results:
+View performance analysis results:
 
 ```bash
 # View Task Duration and various metrics

@@ -6,13 +6,11 @@ A histogram is a statistical method used to count the frequency of each value in
 
 <img src="figures/introduction.png" alt="intro" style="width: 60%; height: auto;">
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -21,8 +19,8 @@ A histogram is a statistical method used to count the frequency of each value in
 │   ├── figures                // Image resources for README
 │   ├── CMakeLists.txt         // Sample build script
 │   ├── histogram.asc          // Ascend C SIMT kernel implementation & Host invocation
-│   ├── README.md
-│   └── README_en.md
+│   ├── README.md              // Sample documentation
+│   └── README_en.md           // English sample documentation
 ```
 
 ## Sample Description
@@ -179,7 +177,7 @@ These two factors work together: the vast majority of atomic operations not only
 
 ---
 
-## Performance Summary
+## Performance Comparison Summary
 
 | Case | Count Location | Task Duration (μs) | Relative to Baseline |
 |:---:|:---:|:---:|:---:|
@@ -230,7 +228,11 @@ Run the following steps in the root directory of this sample to build and execut
   [Success] Case accuracy is verification passed.
   ```
 
-## Performance Analysis
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
 Use the `msopprof` tool to obtain detailed performance data:
 

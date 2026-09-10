@@ -4,13 +4,11 @@
 
 This example uses table-lookup sin computation to demonstrate data cache optimization strategies in the Ascend C SIMT programming model. The example includes 1 baseline version and 1 optimized version. In the baseline version, all data is loaded using the default method, and input, output, and sin table data compete for DCache space. The optimized version specifies different cache strategies for different types of data, ensuring that the frequently accessed sin lookup table remains resident in DCache, reducing Global Memory access count, demonstrating the data cache optimization tuning path in the SIMT programming model.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -19,7 +17,8 @@ This example uses table-lookup sin computation to demonstrate data cache optimiz
 │   ├── CMakeLists.txt              // CMake build file
 │   ├── data_cache_hint.asc         // SIMT data cache example implementation
 │   ├── figures                     // Image resources for README
-│   └── README.md
+│   ├── README.md                   // Sample documentation
+│   └── README_en.md                // English sample documentation
 ```
 
 ## Example Description
@@ -183,8 +182,6 @@ asc_stcg(&output[idx], y);
 
 ## Performance Comparison Summary
 
-### Ascend 950PR Performance Data
-
 **Overall Optimization Effect**:
 - From Case 0 baseline to Case 1 optimized version, Task Duration decreases from 56.82us to 50.895us, a reduction of approximately 10.4%
 - DCache Read GM decreases from 5064 to 3531, a reduction of approximately 30.2%, eliminating 1533 Global Memory accesses
@@ -237,7 +234,11 @@ Run the following steps in the root directory of this example to build and execu
   [Success] Case accuracy is verification passed.
   ```
 
-## Performance Analysis
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
 Use the `msOpProf` tool to collect detailed performance data:
 

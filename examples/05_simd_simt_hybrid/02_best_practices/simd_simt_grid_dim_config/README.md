@@ -4,13 +4,11 @@
 
 本样例以Gather计算为例，介绍Ascend C SIMD与SIMT混合编程场景下的线程块数量配置和vf函数调用优化思路。样例包含4个Case（16个场景），从空壳核函数调度开销到不同数据量下的线程块数量配置优化。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \> CANN 9.0.0
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | > CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -19,7 +17,8 @@
 │   ├── figures                // README中的图片资源
 │   ├── CMakeLists.txt         // 编译工程文件
 │   ├── grid_config.asc        // Ascend C算子实现 & 调用样例
-│   └── README.md
+│   ├── README.md              // 样例说明文档
+│   └── README_en.md           // 英文样例说明文档
 ```
 
 ## 样例描述
@@ -273,8 +272,6 @@ __global__ __vector__ void gather_kernel(..., uint32_t thread_num)
 
 ## 性能对比总结
 
-### Ascend 950PR性能数据
-
 **调度开销随线程块数量变化（Case 0）**：
 
 | SCENARIO_NUM | 线程块个数 | Task Duration(μs) |
@@ -361,35 +358,34 @@ __global__ __vector__ void gather_kernel(..., uint32_t thread_num)
   [Success] Case accuracy is verification passed.
   ```
 
-## 性能分析
+## 性能调试
 
 ### msOpProf工具介绍
+
 msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
-- 上板性能采集
+通过上板性能采集，可以直接测定算子在昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
 
-    通过上板性能采集，可以直接测定算子昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
+使用`msOpProf`工具获取详细性能数据：
 
-    使用 `msOpProf` 工具获取详细性能数据：
-    ```bash
-    msopprof ./grid_config   # 分析性能
-    ```
+```bash
+msopprof ./grid_config
+```
 
-    - 性能数据说明  
-      命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的文件夹,性能数据文件夹结构示例如下：
+命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的性能数据文件夹，文件夹结构示例如下：
 
-      ```bash
-      ├──dump                       # 原始的性能数据，用户无需关注
-      ├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
-      ├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
-      ├──Memory.csv                 # UB，L1和主存储器读写带宽速率
-      ├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
-      ├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
-      ├──OpBasicInfo.csv            # 算子基础信息
-      ├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
-      ├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
-      └──visualize_data.bin         # MindStudio Insight呈现文件
-      ```
+```bash
+├──dump                       # 原始的性能数据，用户无需关注
+├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
+├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
+├──Memory.csv                 # UB，L1和主存储器读写带宽速率
+├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
+├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
+├──OpBasicInfo.csv            # 算子基础信息
+├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
+├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
+└──visualize_data.bin         # MindStudio Insight呈现文件
+```
 
 查看具体的性能分析结果：
 

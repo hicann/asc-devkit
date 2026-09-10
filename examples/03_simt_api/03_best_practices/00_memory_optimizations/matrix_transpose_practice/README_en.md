@@ -4,13 +4,11 @@
 
 This example uses matrix transpose to demonstrate memory access optimization strategies in the Ascend C SIMT programming model. First, it establishes a GM contiguous read/write baseline with 1D contiguous copy and uses direct global memory transpose to expose the main cost of non-contiguous writes. Then, it introduces UB staging and 32x32 tiling to move the non-contiguous GM write into a transpose-direction UB access. Next, it compares launching Thread Blocks per tile group with fixing the Thread Block count to the hardware vector core count, and analyzes thread count selection through register spill under the 2048-thread configuration. After that, it eliminates bank conflicts during the transpose read phase through UB padding. Finally, it uses double buffering (Double Buffer) to remove the trailing synchronization in the loop, presenting the complete tuning path for SIMT matrix transpose.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -19,8 +17,8 @@ This example uses matrix transpose to demonstrate memory access optimization str
 │   ├── figures                     // Image resources for README
 │   ├── CMakeLists.txt              // Build project file
 │   ├── matrix_transpose.asc        // SIMT matrix transpose optimization path implementation
-│   ├── README.md
-│   └── README_en.md
+│   ├── README.md                   // Sample documentation
+│   └── README_en.md                // English sample documentation
 ```
 
 ## Example Description
@@ -377,8 +375,6 @@ The simulation instruction pipeline diagrams of Case 6 and Case 7 are shown in F
 
 ## Performance Comparison Summary
 
-### Ascend 950PR Performance Data
-
 | Case | Task Duration(μs) | aiv_time(μs) | aiv_total_cycles | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 0 | 6.262 | 4.971 | 8201.7 | 4.516 | 0.909 | 0.443 | 0.089 |
@@ -441,7 +437,11 @@ Run the following steps in the root directory of this example to build and execu
   [Success] Case accuracy verification passed.
   ```
 
-## Performance Analysis
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
 Use the `msOpProf` tool to collect detailed performance data:
 
@@ -464,29 +464,29 @@ After the command completes, a folder named `OPPROF_{timestamp}_XXX` is generate
 └── visualize_data.bin         # MindStudio Insight presentation file
 ```
 
-## Simulation Tuning
+- Simulation performance collection
 
-Use `msopprof simulator` to perform simulation performance analysis and generate visualized instruction pipeline diagrams. The commands are as follows:
+  Use `msopprof simulator` to perform simulation performance analysis and generate visualized instruction pipeline diagrams. The commands are as follows:
 
-```bash
-SCENARIO_NUM=7                                                                     # Select the execution scenario, options 0-7
-mkdir -p build && cd build;                                                        # Create and enter the build directory
-cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=$SCENARIO_NUM ..;make -j;  # Build the project
-msopprof simulator --soc-version=<soc_version> ./matrix_transpose
-```
+  ```bash
+  SCENARIO_NUM=7                                                                     # Select the execution scenario, options 0-7
+  mkdir -p build && cd build;                                                        # Create and enter the build directory
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=$SCENARIO_NUM ..;make -j;  # Build the project
+  msopprof simulator --soc-version=<soc_version> ./matrix_transpose
+  ```
 
 > Before using simulation tuning, add the `-g` compilation option to CMakeLists.txt to generate debug information. This allows the simulator to collect instruction pipeline diagrams. For how to obtain `soc_version` and for more simulation tuning information, see the [simulator sample](../../../01_utilities/07_simulator).
 
-After the command completes, a folder named `OPPROF_{timestamp}_XXX` is generated in the current directory. The artifact structure is as follows:
+  After the command completes, a folder named `OPPROF_{timestamp}_XXX` is generated in the current directory. The artifact structure is as follows:
 
-```text
-OPPROF_{timestamp}_XXX/
-├── dump                    // Raw performance data, which does not require user attention
-└── simulator
-    ├── core*.veccore*/     // Simulation instruction pipeline diagram files of each vector core
-    └── visualize_data.bin  // MindStudio Insight presentation file
-```
+  ```text
+  OPPROF_{timestamp}_XXX/
+  ├── dump                    // Raw performance data, which does not require user attention
+  └── simulator
+      ├── core*.veccore*/     // Simulation instruction pipeline diagram files of each vector core
+      └── visualize_data.bin  // MindStudio Insight presentation file
+  ```
 
-After the command completes, open `visualize_data.bin` in **MindStudio Insight** to view the visualized instruction pipeline diagrams.
+  After the command completes, open `visualize_data.bin` in **MindStudio Insight** to view the visualized instruction pipeline diagrams.
 
 For more information about how to use `msOpProf`, see [MindStudio Tool Tuning (msOpProf) Quick Start](https://www.hiascend.com/document/detail/zh/canncommercial/900/devaids/optool/docs/zh/quick_start/msopprof_quick_start.md).

@@ -11,13 +11,11 @@
 | Case 0 | 0 | 普通除法 | SIMT线程内直接使用 `/` 完成整数除法，作为固定除数除法优化前的基线版本。 |
 | Case 1 | 1 | 快速除法 | 针对固定除数预计算 `magic` 和 `shift`，SIMT线程内使用乘法和移位替代普通除法。 |
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.2.0
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -25,7 +23,8 @@
 ├── simd_simt_integer_fast_div
 │   ├── CMakeLists.txt          // 编译工程文件
 │   ├── integer_div.asc         // 整数除法样例实现
-│   └── README.md
+│   ├── README.md               // 样例说明文档
+│   └── README_en.md            // 英文样例说明文档
 ```
 
 ## 样例描述
@@ -199,8 +198,6 @@ uint32_t result = (value + q) >> shift;
 
 ## 性能对比总结
 
-### Ascend 950PR性能数据
-
 **综合优化效果**：
 
 - 通过Case 0到Case 1的快速除法优化，样例 `Task Duration` 从117.229μs降低到103.889μs，耗时下降约11.4%。
@@ -211,7 +208,7 @@ uint32_t result = (value + q) >> shift;
 | Case 0 | 普通除法 | 117.229 | 1.277 | 0.497 | 0.390 | 0.128 | 0.099 | 0.423 | 0.331 | 0.222 | 0.174 |
 | Case 1 | 快速除法 | 103.889 | 1.068 | 0.270 | 0.254 | 0.142 | 0.132 | 0.425 | 0.398 | 0.221 | 0.208 |
 
-### 优化要点总结
+## 调优建议
 
 | 优化手段 | 核心原理 | 样例体现 |
 |:---|:---|:---|
@@ -269,35 +266,34 @@ uint32_t result = (value + q) >> shift;
   [Success] Case accuracy is verification passed.
   ```
 
-### 性能分析
+## 性能调试
 
 ### msOpProf工具介绍
+
 msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
-- 上板性能采集
+通过上板性能采集，可以直接测定算子在昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
 
-    通过上板性能采集，可以直接测定算子昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
+使用`msOpProf`工具获取详细性能数据。
 
-    使用 `msOpProf` 工具获取详细性能数据。
-    ```bash
-    msopprof ./integer_div   # 分析性能
-    ```
+```bash
+msopprof ./integer_div
+```
 
-    - 性能数据说明  
-      命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的文件夹,性能数据文件夹结构示例如下：
+命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的性能数据文件夹，文件夹结构示例如下：
 
-      ```bash
-      ├──dump                       # 原始的性能数据，用户无需关注
-      ├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
-      ├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
-      ├──Memory.csv                 # UB，L1和主存储器读写带宽速率
-      ├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
-      ├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
-      ├──OpBasicInfo.csv            # 算子基础信息
-      ├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
-      ├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
-      └──visualize_data.bin         # MindStudio Insight呈现文件
-      ```
+```bash
+├──dump                       # 原始的性能数据，用户无需关注
+├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
+├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
+├──Memory.csv                 # UB，L1和主存储器读写带宽速率
+├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
+├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
+├──OpBasicInfo.csv            # 算子基础信息
+├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
+├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
+└──visualize_data.bin         # MindStudio Insight呈现文件
+```
 
 查看具体的性能分析结果：
 

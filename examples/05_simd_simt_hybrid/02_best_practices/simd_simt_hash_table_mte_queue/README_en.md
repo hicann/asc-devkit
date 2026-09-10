@@ -15,9 +15,9 @@ The following figure shows the data processing pipelines of the two cases.
 
 ![HashTable MTE value movement pipeline](./figures/hash_table_mte_pipeline.png)
 
-## Supported Products and CANN Software Version
+## Supported Products and CANN Versions
 
-| Product | CANN Software Version |
+| Product | CANN Version |
 |------|-------------|
 | Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
@@ -28,7 +28,8 @@ The following figure shows the data processing pipelines of the two cases.
 │   ├── CMakeLists.txt                // Compilation project file
 │   ├── figures                       // Image resources in the README
 │   ├── hash_table_mte_queue.asc      // Ascend C sample implementation
-│   ├── README.md                     // Sample description document
+│   ├── README.md                     // Sample documentation
+│   ├── README_en.md                  // English sample documentation
 │   └── scripts
 │       └── run.sh                    // Compiles and uses msOpProf to collect performance data of the two cases
 ```
@@ -252,8 +253,6 @@ __aicore__ inline void run_task() const
 
 ## Performance Comparison Summary
 
-### Performance Comparison on Ascend 950PR
-
 The performance data of each `dim` configuration is as follows:
 
 | dim | Case 0 Direct value writes by a SIMT Warp (μs) | Case 1 MTE task queue (μs) | Case 1 Speedup |
@@ -264,7 +263,7 @@ The performance data of each `dim` configuration is as follows:
 | 128 | 376.517 | 131.696 | 2.86x |
 | 256 | 585.892 | 204.030 | 2.87x |
 
-### Optimization Summary
+## Tuning Recommendations
 
 | Optimization | Core Principle | Sample Implementation |
 |:---|:---|:---|
@@ -273,7 +272,7 @@ The performance data of each `dim` configuration is as follows:
 
 ---
 
-## Compilation and Running
+## Build and Run
 
 In the sample root directory, perform the following steps to compile and run the sample.
 
@@ -333,43 +332,36 @@ In the sample root directory, perform the following steps to compile and run the
   Verification PASSED
   ```
 
-### Performance Analysis
+## Performance Debugging
 
-Use msOpProf to obtain performance data. The comparison script first runs the sample and checks `Verification PASSED`. After confirming that the result is correct, the script collects target kernel performance data by the `msopprof` command.
+### Introduction to the msOpProf Tool
 
-The Case 0 test method is as follows:
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
+
+On-device performance collection directly measures the execution time of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
+
+Use the `msOpProf` tool to obtain detailed performance data:
 
 ```bash
-cmake -DSCENARIO_NUM=0 -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
-make -j
-./hash_table_mte_queue 128
 msopprof ./hash_table_mte_queue 128
 ```
 
-The Case 1 test method is as follows:
+After the command completes, a performance data folder named "OPPROF_{timestamp}_XXX" is generated in the default directory. The folder structure is as follows:
 
 ```bash
-cmake -DSCENARIO_NUM=1 -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
-make -j
-./hash_table_mte_queue 128
-msopprof ./hash_table_mte_queue 128
+├──dump                       # Raw performance data; users do not need to inspect it
+├──ArithmeticUtilization.csv  # Cube/Vector instruction cycle proportions
+├──L2Cache.csv                # L2 Cache hit rate; affects MTE2. Plan data transfer logic properly to increase the hit rate
+├──Memory.csv                 # Read/write bandwidth rates of UB, L1, and main memory
+├──MemoryL0.csv               # Read/write bandwidth rates of L0A, L0B, and L0C
+├──MemoryUB.csv               # Read/write bandwidth rates from Vector and Scalar to UB
+├──OpBasicInfo.csv            # Basic operator information
+├──PipeUtilization.csv        # Durations and proportions of computation and data transfer units
+├──ResourceConflictRatio.csv  # Proportions of UB bank groups, bank conflicts, and resource conflicts among all instructions
+└──visualize_data.bin         # MindStudio Insight presentation file
 ```
 
-A directory with the `OPPROF_` prefix is generated in the current directory to store performance analysis data of the current kernel.
-
-```text
-OPPROF_xxxx_XXXXXXXX
-├── ArithmeticUtilization.csv
-├── L2Cache.csv
-├── Memory.csv
-├── MemoryL0.csv
-├── MemoryUB.csv
-├── OpBasicInfo.csv
-├── PipeUtilization.csv
-└── ResourceConflictRatio.csv
-```
-
-View detailed performance analysis results:
+View performance analysis results:
 
 ```bash
 # View basic information such as Task Duration.

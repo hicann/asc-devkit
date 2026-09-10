@@ -4,13 +4,11 @@
 
 本样例基于SIMT场景下的[matrix_transpose_practice样例](../../../03_simt_api/03_best_practices/00_memory_optimizations/matrix_transpose_practice)，采用SIMD与SIMT混合编程对自定义transpose算子进行进一步优化，通过混合编程中的MTE搬运与SIMT计算并行，提高矩阵转置性能。为了展示逐步优化过程，本样例从直接全局内存转置出发，引入MTE搬运、UB中转与32×32分块，对比按tile分组启动Thread Block与固定Thread Block数两种映射方式，增加UB padding降低bank冲突，最后借助双缓冲（Double Buffer）使MTE2搬入、SIMT VF转置和MTE3搬出流水并行，呈现SIMD与SIMT混合矩阵转置的调优路径。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN版本
-
-- CANN >= 9.2.0
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -59,7 +57,7 @@
 
 其中 `core`为硬件vector core数，通过 `aclrtGetDeviceInfo(ACL_DEV_ATTR_VECTOR_CORE_NUM)`在运行时查询获得。本样例中的性能数据基于 `core=64` 的测试环境采集得到。`tiles`为总tile数 `(W/32) × (H/32)`；处理1024×1024矩阵时，矩阵会被划分为32×32个tile，因此 `tiles=1024`。
 
-#### 性能指标说明
+### 性能指标说明
 
 | 指标                 | 说明                                                                                      |
 | -------------------- | ----------------------------------------------------------------------------------------- |
@@ -336,8 +334,6 @@ Case 3与Case 4的仿真指令流水图分别如图4、图5所示。从图4可�
 
 ## 性能对比总结
 
-### Ascend 950PR性能数据
-
 下面给出各个Case处理1024×1024 float矩阵时，在Ascend 950PR上的性能数据。
 
 | Case | Task Duration(μs) | aiv_time(μs) | aiv_total_cycles | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio |
@@ -409,7 +405,7 @@ Case 0距离理论下限较远，主要原因是转置写回导致同一Warp内�
   [Success] Case accuracy verification passed.
   ```
 
-## 性能分析
+## 性能调试
 
 ### msOpProf工具介绍
 
@@ -425,21 +421,20 @@ msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulat
   msopprof ./matrix_transpose
   ```
 
-  - 性能数据说明
-    命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的文件夹，性能数据文件夹结构示例如下：
+  命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的性能数据文件夹，文件夹结构示例如下：
 
-    ```bash
-    ├──dump                       # 原始的性能数据，用户无需关注
-    ├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
-    ├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
-    ├──Memory.csv                 # UB，L1和主存储器读写带宽速率
-    ├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
-    ├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
-    ├──OpBasicInfo.csv            # 算子基础信息
-    ├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
-    ├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
-    └──visualize_data.bin         # MindStudio Insight呈现文件
-    ```
+  ```bash
+  ├──dump                       # 原始的性能数据，用户无需关注
+  ├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
+  ├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
+  ├──Memory.csv                 # UB，L1和主存储器读写带宽速率
+  ├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
+  ├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
+  ├──OpBasicInfo.csv            # 算子基础信息
+  ├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
+  ├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
+  └──visualize_data.bin         # MindStudio Insight呈现文件
+  ```
 
   查看具体的性能分析结果：
 
@@ -447,6 +442,7 @@ msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulat
   # 查看Task Duration 以及各项数据
   cat ./OPPROF_*/PipeUtilization.csv
   ```
+
 - 仿真性能采集
 
   可以使用 `msopprof simulator` 进行仿真性能分析，生成可视化的指令流水图等信息。命令如下：

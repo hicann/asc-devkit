@@ -7,13 +7,11 @@ This sample uses sparse matrix-vector multiplication (SpMV) to demonstrate the i
 - **Case 1**: One thread processes one row of data. Because different rows have different numbers of non-zero elements, threads within the same Warp have inconsistent loop iterations, resulting in severe Warp Divergence.
 - **Case 2**: One Warp cooperatively processes one row of data, reducing Warp Divergence.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -21,8 +19,8 @@ This sample uses sparse matrix-vector multiplication (SpMV) to demonstrate the i
 ├── warp_divergence
 │   ├── CMakeLists.txt              // cmake compilation file
 │   ├── spmv.asc                    // SIMT SpMV sample implementation
-│   ├── README.md
-│   └── README_en.md
+│   ├── README.md                   // Sample documentation
+│   └── README_en.md                // English sample documentation
 ```
 
 ## Sample Description
@@ -163,8 +161,6 @@ if (lane_id == 0) {
 
 ## Performance Comparison Summary
 
-### Ascend 950PR Performance Data
-
 **Overall Optimization Effect**:
 - From the Case 1 baseline version to the Case 2 optimized version, the Task Duration decreases from 81.811μs to 31.772μs, reducing the duration by approximately 61.1%.
 
@@ -173,13 +169,13 @@ if (lane_id == 0) {
 | Case 1 | 81.811            | **1x**                | Baseline version: one thread processes one row of data          |
 | Case 2 | 31.772            | **0.39x duration**          | Warp cooperative processing of one row of data, reducing Warp Divergence, memory access coalescing |
 
-## Tuning Suggestions
+## Tuning Recommendations
 
 1. **Reduce Warp Divergence**: When threads within the same Warp enter different code execution paths due to branching, some threads need to wait for the remaining threads to complete the current branch, resulting in waste of computing resources. Common scenarios include inconsistent loop iterations and conditional branch differences. This sample addresses the scenario of inconsistent loop iterations by using Warp cooperative processing to make the loop iterations of threads within the same Warp basically the same, reducing Warp Divergence.
 
 2. **Leverage memory access coalescing**: Ensure that threads within a Warp access consecutive memory addresses to improve memory access efficiency.
 
-## Compilation and Running
+## Build and Run
 
 Perform the following steps in the root directory of this sample to compile and run the sample.
 - Configure environment variables  
@@ -215,7 +211,11 @@ Perform the following steps in the root directory of this sample to compile and 
   [Success] Case accuracy verification passed.
   ```
 
-## Performance Data Collection
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+  `msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
   Use the `msopprof` tool to collect performance data on a single component:
 

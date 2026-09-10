@@ -4,28 +4,26 @@
 
 This sample uses the adaptive_max_pool3d_grad operator to compare the implementation complexity and performance of SIMD and hybrid programming approaches. It shows that hybrid programming can provide both good performance and a better development experience when contiguous and discrete memory accesses coexist.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Version
-
-- CANN >= 9.2.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 
 ```text
 ├── simd_simt_adaptive_max_pool3d_grad
-│   ├── figures                              // Image resources for README.
-│   ├── adaptive_max_pool3d_grad_common.h    // Pipeline sync-wait helpers shared by the four cases.
-│   ├── adaptive_max_pool3d_grad_hybrid_ub.h // SIMD zeroing and SIMT static-UB scatter implementation.
-│   ├── adaptive_max_pool3d_grad_hybrid.h    // SIMD zeroing and SIMT GM scatter implementation.
-│   ├── adaptive_max_pool3d_grad_scalar.h    // SIMD zeroing and scalar GM scatter implementation.
-│   ├── adaptive_max_pool3d_grad_simd.h      // SIMD vector API implementation for zeroing and scatter.
-│   ├── adaptive_max_pool3d_grad_host.asc    // Unified main entry and host-side execution logic.
-│   ├── CMakeLists.txt                       // Build project file.
-│   ├── README.md                            // Chinese sample documentation.
-│   └── README_en.md                         // English sample documentation.
+│   ├── figures                              // Image resources for README
+│   ├── adaptive_max_pool3d_grad_common.h    // Pipeline sync-wait helpers shared by the four cases
+│   ├── adaptive_max_pool3d_grad_hybrid_ub.h // SIMD zeroing and SIMT static-UB scatter implementation
+│   ├── adaptive_max_pool3d_grad_hybrid.h    // SIMD zeroing and SIMT GM scatter implementation
+│   ├── adaptive_max_pool3d_grad_scalar.h    // SIMD zeroing and scalar GM scatter implementation
+│   ├── adaptive_max_pool3d_grad_simd.h      // SIMD vector API implementation for zeroing and scatter
+│   ├── adaptive_max_pool3d_grad_host.asc    // Unified main entry and host-side execution logic
+│   ├── CMakeLists.txt                       // Build project file
+│   ├── README.md                            // Sample documentation
+│   └── README_en.md                         // English sample documentation
 ```
 
 ## Sample Description
@@ -258,7 +256,7 @@ When there are few gradients to scatter, there are also few discrete GM writes, 
 
 When using hybrid programming, SIMD and SIMT performance optimization methods can be reused together, providing a higher optimization ceiling.
 
-## Comparison Summary
+## Performance Comparison Summary
 
 The performance data of all cases is shown below:
 
@@ -269,6 +267,8 @@ The performance data of all cases is shown below:
 | 64 | 6763.949 | 455.944 | 340.51 | 294.406 |
 | 512 | 6997.266 | 2010.422 | 406.567 | 336.848 |
 | 4096 | 8182.059 | 9140.783 | 748.313 | 551.461 |
+
+## Tuning Recommendations
 
 This sample contains two parts: contiguous data processing for zeroing and discrete data processing for gradient scatter. Comparing the four kernel implementations and the performance data above, in terms of code writing, SIMT and Main Scalar are simpler than the SIMD API, while in terms of performance, SIMT has lower latency than both SIMD and Main Scalar, and the larger the amount of discrete-write data, the greater the benefit. Therefore, in scenarios where contiguous and discrete memory operations coexist, hybrid programming is recommended, as it delivers both good performance and a good development experience.
 
@@ -337,40 +337,36 @@ Run the following steps in the root directory of this sample to build and execut
   test pass!
   ```
 
-## Performance Analysis
+## Performance Debugging
 
-### msOpProf Tool Introduction
+### Introduction to the msOpProf Tool
 
-msOpProf is a single-operator performance analysis tool. It provides two usage modes: `msopprof` and `msopprof simulator`. This tool helps users locate issues in operator memory access, operator code, and instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing in different run modes (on-device or simulation) and for different file forms (executable file or operator binary `.o` file).
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
-- On-device performance collection.
+On-device performance collection directly measures the runtime of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
 
-  On-device performance collection directly measures the runtime of an operator on an Ascend AI Processor. This method is suitable for quickly locating operator performance issues in an on-device environment.
+Use `msOpProf` to collect detailed performance data:
 
-  Use `msOpProf` to collect detailed performance data:
+```bash
+msopprof ./adaptive_max_pool3d_grad simd profile
+```
 
-  ```bash
-  msopprof ./adaptive_max_pool3d_grad simd profile   # Analyze performance.
-  ```
+After the command completes, a performance data folder named "OPPROF_{timestamp}_XXX" is generated in the default directory. The folder structure is as follows:
 
-  - Performance data description.
+```bash
+├──dump                       # Raw performance data. Users do not need to inspect it.
+├──ArithmeticUtilization.csv  # Cube/vector instruction cycle ratio.
+├──L2Cache.csv                # L2 Cache hit rate, which affects MTE2. Plan data movement properly to improve the hit rate.
+├──Memory.csv                 # UB, L1, and main memory read/write bandwidth.
+├──MemoryL0.csv               # L0A, L0B, and L0C read/write bandwidth.
+├──MemoryUB.csv               # Vector and Scalar read/write bandwidth to UB.
+├──OpBasicInfo.csv            # Basic operator information.
+├──PipeUtilization.csv        # Compute unit and movement unit latency and ratio.
+├──ResourceConflictRatio.csv  # Ratio of UB bank group, bank conflict, and resource conflict events among all instructions.
+└──visualize_data.bin         # MindStudio Insight presentation file.
+```
 
-    After the command is complete, a directory named in the `OPPROF_{timestamp}_XXX` format is generated in the default directory. The performance data directory structure is shown below:
-
-    ```bash
-    ├──dump                       # Raw performance data. Users do not need to inspect it.
-    ├──ArithmeticUtilization.csv  # Cube/vector instruction cycle ratio.
-    ├──L2Cache.csv                # L2 Cache hit rate, which affects MTE2. Plan data movement properly to improve the hit rate.
-    ├──Memory.csv                 # UB, L1, and main memory read/write bandwidth.
-    ├──MemoryL0.csv               # L0A, L0B, and L0C read/write bandwidth.
-    ├──MemoryUB.csv               # Vector and Scalar read/write bandwidth to UB.
-    ├──OpBasicInfo.csv            # Basic operator information.
-    ├──PipeUtilization.csv        # Compute unit and movement unit latency and ratio.
-    ├──ResourceConflictRatio.csv  # Ratio of UB bank group, bank conflict, and resource conflict events among all instructions.
-    └──visualize_data.bin         # MindStudio Insight presentation file.
-    ```
-
-View the detailed performance analysis result:
+View performance analysis results:
 
 ```bash
 # View Task Duration and other data.

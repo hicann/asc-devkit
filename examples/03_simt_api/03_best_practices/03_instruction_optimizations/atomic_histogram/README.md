@@ -8,13 +8,11 @@
 
 <img src="figures/introduction.png" alt="intro" style="width: 60%; height: auto;">
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.1.0
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -23,8 +21,8 @@
 │   ├── figures                // README中的图片资源
 │   ├── CMakeLists.txt         // 样例构建脚本
 │   ├── histogram.asc          // Ascend C SIMT核函数实现 & Host调用样例
-│   ├── README.md
-│   └── README_en.md
+│   ├── README.md              // 样例说明文档
+│   └── README_en.md           // 英文样例说明文档
 ```
 
 ## 样例描述
@@ -230,7 +228,11 @@ Case 1的Task Duration为7.95μs，相比Case 0的424.22μs下降至约1/53。�
   [Success] Case accuracy is verification passed.
   ```
 
-## 性能分析
+## 性能调试
+
+### msOpProf工具介绍
+
+msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
 使用`msOpProf`工具获取详细性能数据：
 

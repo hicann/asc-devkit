@@ -9,24 +9,24 @@ This example uses vector addition to demonstrate performance tuning methods for 
 - Case 1: half-type data processing (baseline)
 - Case 2: half2-type data processing
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
-```
-short_vector_add
+```text
+├── short_vector_add
 │   ├── scripts/             // Test script directory
 │   │   ├── gen_data.py      // Generate test input and golden data
 │   │   └── verify_result.py // Verify output results
 │   ├── CMakeLists.txt       // Build project file
 │   ├── data_utils.h         // Data read/write utility functions
-│   └── short_vector_add.asc // Ascend C operator implementation & invocation example
+│   ├── short_vector_add.asc // Ascend C operator implementation & invocation example
+│   ├── README.md            // Sample documentation
+│   └── README_en.md         // English sample documentation
 ```
 
 ## Example Description
@@ -187,6 +187,8 @@ In SIMT programming mode, L2 Cache accesses data in units of Cache Line = 128 by
   This width covers an entire physical Cache Line boundary, achieving 100% bandwidth utilization and maximizing transfer efficiency. Under the same physical fetch cycles, read bandwidth increases from 7.77 GB/s to 14.51 GB/s.
 
 
+## Performance Comparison Summary
+
 **Final Performance Summary**:
 - **Latency**: Decreases from **86.478 us** to **45.371 us**, a reduction of **47.5%**, equivalent to an overall performance improvement of **1.91x**.
 - **Cycle count**: Total CPU cycles decrease from **8,832,432** to **4,584,309**, a reduction of **48.1%**, confirming improved instruction issue density.
@@ -194,7 +196,7 @@ In SIMT programming mode, L2 Cache accesses data in units of Cache Line = 128 by
 
 ---
 
-### Optimization Key Points Summary
+## Tuning Recommendations
 
 | Optimization Method | Core Principle              | Applicable Scenarios                                                                                                                                                                                                                                                                                                                                               |
 |:-----|:------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -251,7 +253,11 @@ Run the following steps in the root directory of this example to build and execu
   test pass!
   ```
 
-## Performance Data Collection
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
 Use the `msOpProf` tool to collect performance data on a single component:
 

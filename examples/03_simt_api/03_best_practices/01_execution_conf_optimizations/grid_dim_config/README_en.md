@@ -4,13 +4,11 @@
 
 This example uses the Gather operator to demonstrate the impact of different thread block configuration strategies on operator performance under different data volume scenarios, and provides corresponding optimization guidance.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -18,7 +16,9 @@ This example uses the Gather operator to demonstrate the impact of different thr
 ├── grid_dim_config
 │   ├── figures                // Image resources for README
 │   ├── CMakeLists.txt         // Build project file
-│   └── grid_config.asc        // Ascend C operator implementation & invocation example
+│   ├── grid_config.asc        // Ascend C operator implementation & invocation example
+│   ├── README.md              // Sample documentation
+│   └── README_en.md           // English sample documentation
 ```
 
 ## Example Description
@@ -284,7 +284,11 @@ Run the following steps in the root directory of this example to build and execu
   [Success] Case accuracy is verification passed.
   ```
 
-## Performance Analysis
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
 Use the `msOpProf` tool to collect detailed performance data:
 

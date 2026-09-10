@@ -5,21 +5,20 @@
 
 This example uses sincos computation to demonstrate thread configuration optimization strategies in the Ascend C SIMT programming model. The example includes 1 baseline version and 1 optimized version. In the baseline version, `__launch_bounds__` is not set, and the compiler allocates resources based on the default value of 1024 (that is, 1024 threads per Block), causing register spill. The optimized version configures `__launch_bounds__(512)` to inform the compiler that the maximum number of threads per Block is 512, allowing the compiler to fully utilize hardware resources during compilation and avoid register spill, demonstrating the tuning path of optimizing performance through proper thread count configuration in the SIMT programming model.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Product | CANN Version |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## Directory Structure
 
 ```text
-sincos_compute/
+├── sincos_compute
 │   ├── CMakeLists.txt              // CMake build file
 │   ├── sincos_compute.asc          // sincos example implementation
-│   └── README.md
+│   ├── README.md                   // Sample documentation
+│   └── README_en.md                // English sample documentation
 ```
 
 ## Example Description
@@ -193,8 +192,6 @@ __global__ __launch_bounds__(512) void sincos_thread_512(float* input,
 
 ## Performance Comparison Summary
 
-### Ascend 950PR Performance Data
-
 **Overall Optimization Effect**:
 - From Case 0 baseline to Case 1 optimized version, Task Duration decreases from 102.47us to 96.22us, a reduction of approximately 6.1%
 - DCache Read Vector decreases from 640 to 512, DCache Write Vector decreases from 768 to 256
@@ -258,7 +255,11 @@ Run the following steps in the root directory of this example to build and execu
   [Success] Case accuracy is verification passed.
   ```
 
-## Performance Analysis
+## Performance Debugging
+
+### Introduction to the msOpProf Tool
+
+`msOpProf` is a single-operator performance analysis tool. It offers two usage methods: `msopprof` and `msopprof simulator`. The tool helps users identify anomalies in operator memory, operator code, and operator instructions, enabling comprehensive operator tuning. It currently supports performance data collection and automatic parsing for different run modes (on-device or simulation) and different file types (executables or operator binary `.o` files).
 
 Use the `msOpProf` tool to collect detailed performance data:
 

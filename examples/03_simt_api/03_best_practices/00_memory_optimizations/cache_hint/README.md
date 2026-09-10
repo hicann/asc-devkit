@@ -4,13 +4,11 @@
 
 本样例以查表法计算sin值为例，介绍Ascend C SIMT编程方式下的数据缓存优化思路。样例包含1个基线版本以及1个优化版本，基线版本中所有数据使用默认方式加载，输入、输出和sin表数据共同竞争DCache空间；优化版本为不同类型的数据指定不同的缓存策略，确保频繁访问的sin查找表常驻DCache，减少Global Memory访问次数，展示SIMT编程方式下数据缓存优化的调优路径。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.1.0
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -19,7 +17,8 @@
 │   ├── CMakeLists.txt              // cmake编译文件
 │   ├── data_cache_hint.asc         // SIMT数据缓存样例实现
 │   ├── figures                     // README中的图片资源
-│   └── README.md
+│   ├── README.md                   // 样例说明文档
+│   └── README_en.md                // 英文样例说明文档
 ```
 
 ## 样例描述
@@ -183,8 +182,6 @@ asc_stcg(&output[idx], y);
 
 ## 性能对比总结
 
-### Ascend 950PR性能数据
-
 **综合优化效果**：
 - 从Case 0基线版本到Case 1优化版本，Task Duration从56.82μs降低到50.895μs，耗时下降约10.4%
 - DCache Read GM从5064次降至3531次，减少约30.2%，减少1533次Global Memory访问
@@ -237,7 +234,11 @@ asc_stcg(&output[idx], y);
   [Success] Case accuracy is verification passed.
   ```
 
-## 性能分析
+## 性能调试
+
+### msOpProf工具介绍
+
+msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
 使用 `msOpProf` 工具获取详细性能数据：
 

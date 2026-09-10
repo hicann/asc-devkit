@@ -7,22 +7,20 @@
 - **Case 1**：一个线程处理一行数据，由于不同行的非零元素数量不同，同一Warp内线程的循环次数不一致，产生严重的Warp Divergence。
 - **Case 2**：一个Warp协作处理一行数据，减小Warp Divergence。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
+| 产品 | CANN软件版本 |
+|------|-------------|
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
 
-## 支持的CANN软件版本
-
-- \>= CANN 9.1.0
-
-## 目录结构
+## 目录结构介绍
 
 ```text
 ├── warp_divergence
 │   ├── CMakeLists.txt              // cmake编译文件
 │   ├── spmv.asc                    // SIMT SpMV 样例实现
-│   ├── README.md
-│   └── README_en.md
+│   ├── README.md                   // 样例说明文档
+│   └── README_en.md                // 英文样例说明文档
 ```
 
 ## 样例描述
@@ -163,8 +161,6 @@ if (lane_id == 0) {
 
 ## 性能对比总结
 
-### Ascend 950PR性能数据
-
 **综合优化效果**：
 - 从Case 1基线版本到Case 2优化版本，Task Duration从81.811μs降低到31.772μs，耗时下降约61.1%
 
@@ -215,7 +211,11 @@ if (lane_id == 0) {
   [Success] Case accuracy verification passed.
   ```
 
-## 性能数据获取
+## 性能调试
+
+### msOpProf工具介绍
+
+  msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
 
   使用 `msopprof` 工具获取单个组件上的性能数据：
 

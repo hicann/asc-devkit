@@ -29,6 +29,7 @@
 │   ├── figures                       // README中的图片资源
 │   ├── hash_table_mte_queue.asc      // Ascend C样例实现
 │   ├── README.md                     // 样例说明文档
+│   ├── README_en.md                  // 英文样例说明文档
 │   └── scripts
 │       └── run.sh                    // 编译并使用msOpProf采集两种Case性能数据
 ```
@@ -252,8 +253,6 @@ __aicore__ inline void run_task() const
 
 ## 性能对比总结
 
-### Ascend 950PR性能对比
-
 各dim配置下的性能数据如下：
 
 | dim | Case 0 SIMT Warp直接写value(μs) | Case 1 MTE task queue(μs) | Case 1加速比 |
@@ -264,7 +263,7 @@ __aicore__ inline void run_task() const
 | 128 | 376.517 | 131.696 | 2.86x |
 | 256 | 585.892 | 204.030 | 2.87x |
 
-### 优化要点总结
+## 调优建议
 
 | 优化手段 | 核心原理 | 样例体现 |
 |:---|:---|:---|
@@ -333,40 +332,33 @@ __aicore__ inline void run_task() const
   Verification PASSED
   ```
 
-### 性能分析
+## 性能调试
 
-使用msOpProf获取性能数据。对比脚本会先执行一次样例并检查`Verification PASSED`，确认结果正确后再通过`msopprof`命令采集目标kernel性能数据。
+### msOpProf工具介绍
 
-Case 0测试方式如下：
+msOpProf工具是单算子性能分析工具。包含msopprof和msopprof simulator两种使用方式。该工具协助用户定位算子内存、算子代码以及算子指令的异常，实现全方位的算子调优。当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。
+
+通过上板性能采集，可以直接测定算子在昇腾AI处理器上的运行时间。该方式适合在板环境中快速定位算子性能问题。
+
+使用`msOpProf`工具获取详细性能数据：
 
 ```bash
-cmake -DSCENARIO_NUM=0 -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
-make -j
-./hash_table_mte_queue 128
 msopprof ./hash_table_mte_queue 128
 ```
 
-Case 1测试方式如下：
+命令完成后，会在默认目录下生成以“OPPROF_{timestamp}_XXX”命名的性能数据文件夹，文件夹结构示例如下：
 
 ```bash
-cmake -DSCENARIO_NUM=1 -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
-make -j
-./hash_table_mte_queue 128
-msopprof ./hash_table_mte_queue 128
-```
-
-当前目录下会生成`OPPROF_`前缀的文件夹，保存当前kernel的性能分析数据。
-
-```text
-OPPROF_xxxx_XXXXXXXX
-├── ArithmeticUtilization.csv
-├── L2Cache.csv
-├── Memory.csv
-├── MemoryL0.csv
-├── MemoryUB.csv
-├── OpBasicInfo.csv
-├── PipeUtilization.csv
-└── ResourceConflictRatio.csv
+├──dump                       # 原始的性能数据，用户无需关注
+├──ArithmeticUtilization.csv  # cube/vector指令cycle占比
+├──L2Cache.csv                # L2 Cache命中率，影响MTE2，建议合理规划数据搬运逻辑，增加命中率
+├──Memory.csv                 # UB，L1和主存储器读写带宽速率
+├──MemoryL0.csv               # L0A，L0B，和L0C读写带宽速率
+├──MemoryUB.csv               # Vector和Scalar到UB的读写带宽速率
+├──OpBasicInfo.csv            # 算子基础信息
+├──PipeUtilization.csv        # 采集计算单元和搬运单元耗时和占比
+├──ResourceConflictRatio.csv  # UB上的bank group、bank conflict和资源冲突率在所有指令中的占比
+└──visualize_data.bin         # MindStudio Insight呈现文件
 ```
 
 查看具体的性能分析结果：
