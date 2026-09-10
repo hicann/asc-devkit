@@ -291,8 +291,13 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         FlushDataCache(reinterpret_cast<__gm__ uint8_t*>(&handleParamGM_[handleId]) + MAX_DCCI_CNT);
         CcuPrepareForAllToAllVWrite(&handleParamGM_[handleId]);
     } else if (handleParamGM_[handleId].commType.prepareType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER) {
-        ccuUsedXnNum_ = 24;
-        CcuPrepareForReduceScatterM2M(&handleParamGM_[handleId]);
+        if (GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMeshMem2Mem1DPeerOnly)) {
+            ccuUsedXnNum_ = 9;
+            CcuPrepareForReduceScatterPeerOnlyM2M(&handleParamGM_[handleId]);
+        } else {
+            ccuUsedXnNum_ = 24;
+            CcuPrepareForReduceScatterM2M(&handleParamGM_[handleId]);
+        }
     }
 }
 
@@ -508,21 +513,27 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
 }
 
 template <const auto& config>
+__aicore__ inline uint32_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::GetAlgorithmType(
+    HcclHandle handleId) const
+{
+    if (!newCcuFlag_ || handleId < 0 || handleId >= HCCL_MAX_HANDLE_ID) {
+        return UINT32_MAX;
+    }
+    const uint32_t prepareType = static_cast<uint32_t>(handleParamGM_[handleId].commType.prepareType);
+    for (uint32_t index = 0U; index < HCCL_API_MAX_OP_NUM; ++index) {
+        if (prepareType != static_cast<uint32_t>(HcclCMDType::HCCL_CMD_INVALID) &&
+            hcclNewContext_->opType[index] == prepareType) {
+            return hcclNewContext_->algorithmType[index];
+        }
+    }
+    return UINT32_MAX;
+}
+
+template <const auto& config>
 __aicore__ inline uint8_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::GetKfcMissionNum(
     HcclHandle handleId) const
 {
-    uint32_t prepareType = UINT32_MAX;
-    uint32_t algorithmType = UINT32_MAX;
-    if (newCcuFlag_ && handleId >= 0 && handleId < HCCL_MAX_HANDLE_ID) {
-        prepareType = static_cast<uint32_t>(handleParamGM_[handleId].commType.prepareType);
-        for (uint32_t index = 0U; index < HCCL_API_MAX_OP_NUM; ++index) {
-            if (prepareType != static_cast<uint32_t>(HcclCMDType::HCCL_CMD_INVALID) &&
-                hcclNewContext_->opType[index] == prepareType) {
-                algorithmType = hcclNewContext_->algorithmType[index];
-                break;
-            }
-        }
-    }
+    const uint32_t algorithmType = GetAlgorithmType(handleId);
     uint8_t missionNum = 1U;
     if (algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherConcurMeshNHRMultiLink)) {
         missionNum = KFC_MAX_MISSION_NUM;

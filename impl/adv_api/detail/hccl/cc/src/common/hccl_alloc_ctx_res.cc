@@ -148,7 +148,7 @@ bool IsCcuKfcSupportedOp(uint32_t opType)
 }
 } // namespace
 
-HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], uint32_t tilingNum)
+HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], uint32_t tilingNum, uint32_t rankSize)
 {
     CHK_PTR_NULL(mc2Tiling);
     CHK_PTR_NULL(ccTilingList);
@@ -165,6 +165,11 @@ HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], ui
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const auto* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
         CHK_PTR_NULL(ccTiling);
+        if (std::strcmp(ccTiling->algConfig, KFC_REDUCE_SCATTER_PEER_ONLY_ALG_NAME) == 0 && rankSize != 2U) {
+            HCCL_ERROR(
+                "Peer-only ReduceScatter requires rankSize 2, but got rankSize %u at tiling index %u.", rankSize, i);
+            return HCCL_E_NOT_SUPPORT;
+        }
         if (expectedOpType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_INVALID)) {
             expectedOpType = ccTiling->opType;
         }

@@ -349,7 +349,7 @@ HcclResult DispatchAllocByCommEngine(
             HCCL_INFO("[HcclAllocComResourceByTiling]Current ccu algorithm is not supported in mc2_client.");
             return HCCL_E_ALG_NOT_SUPPORTED;
         }
-        CHK_RET(CheckCcuKfcFlow(mc2Tiling, ccTilingList, tilingNum));
+        CHK_RET(CheckCcuKfcFlow(mc2Tiling, ccTilingList, tilingNum, rankSize));
         HCCL_INFO("[MC2_DEBUG] before AllocComResourceByTilingCcu.");
         HcclResult ret = AllocComResourceByTilingCcu(
             comm, stream, mc2Tiling, ccTilingList, tilingNum, commName, rankSize, userRank, opResCtx, ctxTag,
