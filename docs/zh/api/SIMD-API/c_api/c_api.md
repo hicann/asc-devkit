@@ -67,6 +67,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_get_sub_block_num](utils/sys_var/asc_get_sub_block_num.md)|分离模式下，获取一个AI Core上Cube Core（AIC）或者Vector Core（AIV）的数量。|`c_api/utils/sys_var.h`|
 |[asc_get_sys_virtual_base](utils/sys_var/asc_get_sys_virtual_base.md)|获取系统虚拟基地址。|`c_api/utils/sys_var.h`|
 |[asc_get_system_cycle](utils/sys_var/asc_get_system_cycle.md)|获取当前系统cycle数。|`c_api/utils/sys_var.h`|
+|[asc_get_system_clock](utils/sys_var/asc_get_system_clock.md)|获取当前系统时钟时间值（微秒）。|`c_api/utils/sys_var.h`|
 |[asc_get_vf_len](utils/sys_var/asc_get_vf_len.md)|获取Tensor位宽VL（Vector Length）的大小。|`c_api/utils/sys_var.h`|
 |[asc_set_ffts_base_addr](utils/sys_var/asc_set_ffts_base_addr.md)|在[asc_sync_block_arrive](sync/asc_sync_block_arrive.md)和[asc_sync_block_wait](sync/asc_sync_block_wait.md)之前使用，设置核间同步寄存器的基地址。|`c_api/utils/sys_var.h`|
 

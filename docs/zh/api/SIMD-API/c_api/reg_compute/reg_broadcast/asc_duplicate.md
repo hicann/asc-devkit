@@ -84,16 +84,17 @@ __simd_callee__ inline void asc_duplicate(vector_int8_t& dst,
 - 使用mask前，需要通过掩码设置或搬入接口完成初始化；未初始化的掩码寄存器内容不确定。
 - mask仅筛选dst中写入广播值的位置，不筛选src中的元素。无论mask的最低位是否有效，待广播的数据均为src的最低位元素。
 
-<!-- npu="950" id8 -->
 ## 调用示例
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
+<!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
+<!-- end id8 -->
 
 以下调用示例代码仅Ascend 950PR/Ascend 950DT产品支持。
 
@@ -167,4 +168,3 @@ int main()
     return passed ? 0 : 1;
 }
 ```
-<!-- end id8 -->

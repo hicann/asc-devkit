@@ -63,16 +63,17 @@ PIPE_S
 - 本接口仅在AIC上生效，在AIV上调用将直接返回。
 - 调用L0C Buffer搬出接口[asc_copy_l0c2gm](asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)、[asc_copy_l0c2ub](asc_copy_l0c2ub.md)并且需要进行随路Nz转ND格式之前，必须先调用本接口配置格式转换参数。
 
-<!-- npu="950" id8 -->
 ## 调用示例
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
+<!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
+<!-- end id8 -->
 
 以下调用示例代码仅Ascend 950PR/Ascend 950DT产品支持。
 
@@ -156,4 +157,3 @@ int main()
     return passed ? 0 : 1;
 }
 ```
-<!-- end id8 -->

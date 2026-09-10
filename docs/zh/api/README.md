@@ -787,6 +787,7 @@
                 -   [asc_get_sub_block_num](SIMD-API/c_api/utils/sys_var/asc_get_sub_block_num.md)
                 -   [asc_get_sys_virtual_base](SIMD-API/c_api/utils/sys_var/asc_get_sys_virtual_base.md)
                 -   [asc_get_system_cycle](SIMD-API/c_api/utils/sys_var/asc_get_system_cycle.md)
+                -   [asc_get_system_clock](SIMD-API/c_api/utils/sys_var/asc_get_system_clock.md)
                 -   [asc_get_vf_len](SIMD-API/c_api/utils/sys_var/asc_get_vf_len.md)
                 -   [asc_set_ffts_base_addr](SIMD-API/c_api/utils/sys_var/asc_set_ffts_base_addr.md)
         -   [矩阵计算](SIMD-API/c_api/cube_compute/cube_compute.md)

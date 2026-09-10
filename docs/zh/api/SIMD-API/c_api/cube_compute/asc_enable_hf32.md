@@ -114,16 +114,17 @@ PIPE_S
 - HF32模式启用后，FP32转换为HF32格式的舍入模式由配套的[asc_set_hf32_round_mode](asc_set_hf32_round_mode.md)接口配置，须在本接口之后调用该配套接口配置舍入模式，否则舍入模式沿用上次配置或默认值。
 - HF32模式仅对输入矩阵数据类型为`float`的矩阵乘加运算场景生效。
 
-<!-- npu="950" id12 -->
 ## 调用示例
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
+<!-- npu="950" id12 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
+<!-- end id12 -->
 
 以下调用示例代码仅Ascend 950PR/Ascend 950DT产品支持。
 
@@ -234,4 +235,3 @@ int main()
     return passed ? 0 : 1;
 }
 ```
-<!-- end id12 -->

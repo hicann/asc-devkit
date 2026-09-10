@@ -31,7 +31,6 @@
 和asc_copy_gm2ub_align接口配合使用，设置连续搬运数据块左右两侧需要填补的数据值。
 
 <!-- npu="950" id10 -->
-
 对于Ascend 950PR/Ascend 950DT产品：
 - 该接口仅对asc_copy_gm2ub_align接口有效。
 - fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t类型的数据需转换成int8_t类型后再调用本接口。

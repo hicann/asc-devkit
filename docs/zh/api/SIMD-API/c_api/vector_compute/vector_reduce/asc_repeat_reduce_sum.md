@@ -81,7 +81,6 @@ PIPE_V
 
 ## 调用示例
 
-
 ```cpp
 // 示例计算256个half的和，分2次迭代完成，计算结果为2组求和的值
 constexpr uint32_t total_length = 256;

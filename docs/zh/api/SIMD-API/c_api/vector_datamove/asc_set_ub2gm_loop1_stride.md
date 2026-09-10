@@ -75,7 +75,6 @@ PIPE_S
 将以下代码保存为`example.asc`后，执行对应的编译运行命令。
 
 <!-- npu="950" id8 -->
-
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
