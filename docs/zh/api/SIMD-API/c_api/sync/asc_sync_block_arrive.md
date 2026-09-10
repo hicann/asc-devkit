@@ -37,6 +37,8 @@
   - 单AI Core内M个AIV都执行`asc_sync_block_arrive`后向调度模块发送通知，接着调度模块将AIC对应`flag_id`的计数器增加1。
   - AIC上配对的`asc_sync_block_wait`检测到对应`flag_id`的计数器非0后解除阻塞并将计数器减1。
 
+该同步模式的具体执行原理，请参考[单个AI Core中AIC与AIV全核同步（模式2）](key_features.md#single_ai_core_aic_aiv_full_sync)中的代码片段及配套时序图。
+
 核间同步具体使用方法，请参考[调用示例](#调用示例)。
 
 ## 函数原型
@@ -65,6 +67,7 @@ PIPE_S
 
 ## 约束说明
 
+- 调用本接口的核函数不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_block_arrive`和`asc_sync_block_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
 - 针对`asc_sync_block_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_block_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体请参考[asc_sync_block_wait](asc_sync_block_wait.md#约束说明)的约束说明。
 - 不同NPU架构中AIC和AIV支持的`pipe`取值存在差异，具体情况如下：<a id="supported_pipe_combinations"></a>
     <!-- npu="950" id9 -->

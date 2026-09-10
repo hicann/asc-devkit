@@ -2,15 +2,20 @@
 
 如图1所示，本章节将配合时序图介绍CrossCoreSetFlag和CrossCoreWaitFlag配合使用时支持的四种同步控制模式各自实现的原理。
 
-- 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的所有流水中的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的所有流水中的指令才会执行。
-- 模式1：AI Core内部，AIV核之间的同步控制。如果两个AIV核都运行了CrossCoreSetFlag，CrossCoreWaitFlag后续的所有流水中的指令才会执行。
-- 模式2：AI Core内部，AIC与AIV之间的同步控制。在AIC核执行CrossCoreSetFlag之后，两个AIV上CrossCoreWaitFlag后续的所有流水中的指令才会继续执行；两个AIV都执行CrossCoreSetFlag后，AIC上CrossCoreWaitFlag后续的所有流水中的指令才能执行。
-- 模式4：AI Core内部，AIC与单个AIV之间的同步控制。AIV0与AIV1可单独触发AIC等待。
+- 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行。
+- 模式1：AI Core内部，AIV核之间的同步控制。如果两个AIV核都运行了CrossCoreSetFlag，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行。
+- 模式2：AI Core内部，AIC与AIV之间的同步控制。在AIC核执行CrossCoreSetFlag之后，两个AIV上CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会继续执行；两个AIV都执行CrossCoreSetFlag后，AIC上CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才能执行。
+- 模式4：AI Core内部，AIC与单个AIV之间的同步控制。在AIC核执行CrossCoreSetFlag之后，单个AIV上CrossCoreWaitFlag后续的由模板参数pipe指定的流水中的指令才会继续执行；单个AIV执行CrossCoreSetFlag后，AIC上CrossCoreWaitFlag后续的由模板参数pipe指定的流水中的指令才能执行。该模式仅在[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上支持。
+
+> [!NOTE]说明
+> 模式0、1、2下`CrossCoreWaitFlag`阻塞的流水类型因NPU架构而异：
+> - 在[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上，`CrossCoreWaitFlag`传入的`pipe`参数无效，无论取值为何都默认阻塞全部流水的后续指令，建议省略`pipe`参数并使用默认值。
+> - 在[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上，`CrossCoreWaitFlag`传入的`pipe`参数生效，阻塞由模板参数`pipe`指定的流水的后续指令。
 
 **图1**  同步控制模式示意图<a id="sync_control_mode_diagram"></a>    
 ![](../../../../figures/3510_sync_control_mode_diagram.png "同步控制模式示意图")
 
-下述同步特性均以如下场景配置为例：核函数使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。
+下述同步特性均以如下场景配置为例：核函数使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。**各核中与`flagId`对应的计数器初始值均为0。**
 
 <!-- npu="A3,910b" id1 -->
 

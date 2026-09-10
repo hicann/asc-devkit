@@ -3,6 +3,7 @@
 - **[系统同步能力概述](system_sync_overview.md)**
 - **[核内同步能力概述](intra_core_sync_overview.md)**
 - **[核间同步能力概述](inter_core_sync_overview.md)**
+- **[关键特性说明](key_features.md)**
 - **[asc_lock](asc_lock.md)**
 - **[asc_sync](asc_sync.md)**
 - **[asc_sync_block_arrive](asc_sync_block_arrive.md)**
