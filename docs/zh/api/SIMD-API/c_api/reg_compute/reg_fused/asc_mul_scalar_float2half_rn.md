@@ -40,33 +40,41 @@ $$
 
 ```c
 // 通过函数返回值返回结果，数据写入索引为偶数的位置
-__simd_callee__ inline vector_half asc_mul_scalar_float2half_rn(
-    vector_float src, float value, vector_bool mask,
-    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+__simd_callee__ inline vector_half asc_mul_scalar_float2half_rn(vector_float src,
+                                                                float value,
+                                                                vector_bool mask,
+                                                                std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 
 // 通过函数返回值返回结果，数据写入索引为奇数的位置
-__simd_callee__ inline vector_half asc_mul_scalar_float2half_rn(
-    vector_float src, float value, vector_bool mask,
-    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+__simd_callee__ inline vector_half asc_mul_scalar_float2half_rn(vector_float src,
+                                                                float value,
+                                                                vector_bool mask,
+                                                                std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
 
 // 通过引用参数输出结果，数据写入索引为偶数的位置
-__simd_callee__ inline void asc_mul_scalar_float2half_rn(
-    vector_half& dst, vector_float src, float value, vector_bool mask,
-    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+__simd_callee__ inline void asc_mul_scalar_float2half_rn(vector_half& dst,
+                                                         vector_float src,
+                                                         float value,
+                                                         vector_bool mask,
+                                                         std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 
 // 通过引用参数输出结果，数据写入索引为奇数的位置
-__simd_callee__ inline void asc_mul_scalar_float2half_rn(
-    vector_half& dst, vector_float src, float value, vector_bool mask,
-    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+__simd_callee__ inline void asc_mul_scalar_float2half_rn(vector_half& dst,
+                                                         vector_float src,
+                                                         float value,
+                                                         vector_bool mask,
+                                                         std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
 ```
 
 ### 函数原型典型示例
 
 ```c
 // 示例：对float矢量数据寄存器与float标量执行乘法后转换为half类型，结果写入偶数位置
-__simd_callee__ inline void asc_mul_scalar_float2half_rn(
-    vector_half& dst, vector_float src, float value, vector_bool mask,
-    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+__simd_callee__ inline void asc_mul_scalar_float2half_rn(vector_half& dst,
+                                                         vector_float src,
+                                                         float value,
+                                                         vector_bool mask,
+                                                         std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 ```
 
 ## 参数说明

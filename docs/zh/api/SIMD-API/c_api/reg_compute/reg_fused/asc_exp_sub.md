@@ -66,19 +66,17 @@
 
   ```c
   // 通过函数返回值返回结果（占位符形式）
-  __simd_callee__ inline vector_float asc_exp_sub_half2float(
-      vector_half src0,
-      vector_half src1,
-      vector_bool mask,
-      std::integral_constant<asc_position_mode, <src_pos>> src_pos)
+  __simd_callee__ inline vector_float asc_exp_sub_half2float(vector_half src0,
+                                                             vector_half src1,
+                                                             vector_bool mask,
+                                                             std::integral_constant<asc_position_mode, <src_pos>> src_pos)
 
   // 通过引用参数输出结果（占位符形式）
-  __simd_callee__ inline void asc_exp_sub_half2float(
-      vector_float& dst,
-      vector_half src0,
-      vector_half src1,
-      vector_bool mask,
-      std::integral_constant<asc_position_mode, <src_pos>> src_pos)
+  __simd_callee__ inline void asc_exp_sub_half2float(vector_float& dst,
+                                                     vector_half src0,
+                                                     vector_half src1,
+                                                     vector_bool mask,
+                                                     std::integral_constant<asc_position_mode, <src_pos>> src_pos)
   ```
 
   **占位符说明如下：**

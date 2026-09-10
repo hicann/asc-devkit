@@ -26,6 +26,8 @@
 
 ## 功能说明
 
+> 该接口已废弃，请使用[asc_mul_scalar_float2half_rn](../reg_compute/reg_fused/asc_mul_scalar_float2half_rn.md)替代。
+
 头文件路径为：`"c_api/reg_compute/compute/reg_fused.h"`。
 
 **该接口已废弃。**
