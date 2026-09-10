@@ -55,7 +55,7 @@ __simd_callee__ inline void Muls(S& dstReg, S& srcReg, U scalarValue, MaskReg& m
 <p id="p177491635184115"><a name="p177491635184115"></a><a name="p177491635184115"></a><span id="ph17501335124115"><a name="ph17501335124115"></a><a name="ph17501335124115"></a>Ascend 950PR/Ascend 950DT</span>，支持的数据类型为：int16_t/uint16_t/half/int32_t/uint32_t/float/complex32/int64_t/uint64_t/complex64</p>
 </td>
 </tr>
-<tr id="row18835145716587"><td class="cellrowborder" valign="top" width="18.61%" headers="mcps1.2.3.1.1 "><p id="p1383515717581"><a name="p1383515717581"></a><a name="p1383515717581"></a>S</p>
+<tr id="row18835145716587"><td class="cellrowborder" valign="top" width="18.61%" headers="mcps1.2.3.1.1 "><p id="p1383515717581"><a name="p1383515717581"></a><a name="p1383515717581"></a>U</p>
 </td>
 <td class="cellrowborder" valign="top" width="81.39%" headers="mcps1.2.3.1.2 "><p id="p1775118537244"><a name="p1775118537244"></a><a name="p1775118537244"></a>标量源操作数的数据类型</p>
 <p id="p45851742204115"><a name="p45851742204115"></a><a name="p45851742204115"></a><span id="ph9585942184118"><a name="ph9585942184118"></a><a name="ph9585942184118"></a>Ascend 950PR/Ascend 950DT</span>，支持的数据类型为：int16_t/uint16_t/half/int32_t/uint32_t/float/complex32/int64_t/uint64_t/complex64</p>
@@ -67,7 +67,7 @@ __simd_callee__ inline void Muls(S& dstReg, S& srcReg, U scalarValue, MaskReg& m
 <a name="ul1163765616511"></a><a name="ul1163765616511"></a><ul id="ul1163765616511"><li>ZEROING，mask未选中的元素在dstReg中置零。</li><li>MERGING，暂不支持。</li></ul>
 </td>
 </tr>
-<tr id="row6795538131917"><td class="cellrowborder" valign="top" width="18.61%" headers="mcps1.2.3.1.1 "><p id="p916243141912"><a name="p916243141912"></a><a name="p916243141912"></a>U</p>
+<tr id="row6795538131917"><td class="cellrowborder" valign="top" width="18.61%" headers="mcps1.2.3.1.1 "><p id="p916243141912"><a name="p916243141912"></a><a name="p916243141912"></a>S</p>
 </td>
 <td class="cellrowborder" valign="top" width="81.39%" headers="mcps1.2.3.1.2 "><p id="p5280148151414"><a name="p5280148151414"></a><a name="p5280148151414"></a><span id="ph19851723182011"><a name="ph19851723182011"></a><a name="ph19851723182011"></a>目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。</span></p>
 </td>
