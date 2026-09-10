@@ -84,6 +84,7 @@ __simd_callee__ inline vector_uint8_t asc_half2uint8_rd(vector_half src,
 | dst | 输出 | 目的操作数（矢量数据寄存器）。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | mask | 输入 | 掩码寄存器，用于控制各元素是否参与计算。`mask`中与元素对应的比特位为1时，该元素参与计算；为0时，该元素不参与计算。 |
+| dst_pos | 输入 | 位置选择标签（编译期标签分发，通过编译期重载选择对应实现），类型为`std::integral_constant<asc_position_mode, asc_position_mode::EVEN>`或`std::integral_constant<asc_position_mode, asc_position_mode::ODD>`。取`ASC_POSITION_EVEN`时选择将结果写入目的操作数索引为偶数的位置，其他位置清零；取`ASC_POSITION_ODD`时选择将结果写入目的操作数索引为奇数的位置，其他位置清零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 

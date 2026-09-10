@@ -28,23 +28,31 @@
 
 头文件路径为：`"c_api/reg_compute/compute/reg_broadcast.h"`。
 
-将src的最高位元素广播到dst中被mask筛选的位置，dst中未被mask筛选的位置被置为0。
+将源操作数`src`的最高位元素，即下标最大的元素，广播到目的操作数`dst`中被`mask`筛选的位置。`mask`仅筛选`dst`中的元素位置，不影响从`src`中读取的元素；`dst`中未被`mask`筛选的元素置0。
+
+本接口与[asc_duplicate](asc_duplicate.md)的区别是，本接口使用`src`的最高位元素作为待广播的数据，而`asc_duplicate`使用`src`的最低位元素。
+
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
 ```cpp
-__simd_callee__ inline void asc_duplicate_highest(vector_int8_t& dst, vector_int8_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_uint8_t& dst, vector_uint8_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_fp8_e8m0_t& dst, vector_fp8_e8m0_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_fp8_e5m2_t& dst, vector_fp8_e5m2_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_fp8_e4m3fn_t& dst, vector_fp8_e4m3fn_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_int16_t& dst, vector_int16_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_uint16_t& dst, vector_uint16_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_half& dst, vector_half src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_bfloat16_t& dst, vector_bfloat16_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_int32_t& dst, vector_int32_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_uint32_t& dst, vector_uint32_t src, vector_bool mask)
-__simd_callee__ inline void asc_duplicate_highest(vector_float& dst, vector_float src, vector_bool mask)
+// 占位符形式
+__simd_callee__ inline void asc_duplicate_highest(vector_<dtype>& dst,
+                                                  vector_<dtype> src,
+                                                  vector_bool mask)
+```
+
+**占位符说明如下：**
+
+- `<dtype>`取值为：`int8_t`、`uint8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
+
+### 函数原型典型示例
+
+```cpp
+__simd_callee__ inline void asc_duplicate_highest(vector_float& dst,
+                                                  vector_float src,
+                                                  vector_bool mask)
 ```
 
 ## 参数说明
@@ -53,9 +61,9 @@ __simd_callee__ inline void asc_duplicate_highest(vector_float& dst, vector_floa
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
-| src | 输入 | 源操作数（矢量数据寄存器）。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。mask未筛选的元素在输出中置零。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器），保存广播结果。被mask筛选的元素写入广播值，未被筛选的元素置0。数据类型需要与src保持一致。 |
+| src | 输入 | 源操作数（矢量数据寄存器），其最高位元素作为待广播的数据。数据类型需要与dst保持一致。 |
+| mask | 输入 | 目的操作数元素操作的有效指示（掩码寄存器）。对应比特位为1时，dst中的元素写入src的最高位元素；为0时，dst中的元素置0。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -63,24 +71,33 @@ __simd_callee__ inline void asc_duplicate_highest(vector_float& dst, vector_floa
 
 无
 
+## 流水类型
+
+PIPE_V
+
 ## 约束说明
 
-无
+- 本接口只能在使用`__simd_vf__`标记的Vector Function内调用，不支持在`__aicore__`函数中直接调用，仅在AIV上生效，在AIC上调用将直接返回。
+- 使用`mask`前，需要通过掩码设置或搬入接口完成初始化；未初始化的掩码寄存器内容不确定。
+- `mask`仅筛选`dst`中写入广播值的位置，不筛选`src`中的元素。无论`mask`的最高位是否有效，待广播的数据均为`src`的最高位元素。
+- 同一寄存器的数据依赖由硬件保序，无需额外插入同步指令。本接口与前后Reg数据搬运接口之间，如果不同寄存器访问同一UB地址且存在写后读或写后写依赖，需要调用[asc_mem_bar](../reg_sync/asc_mem_bar.md)进行同步。
 
 ## 调用示例
 
+以下示例将`src`的最高位元素广播到`dst`的前4个元素，`dst`中的其余元素置0。
+
 ```cpp
-__simd_vf__ inline void duplicate_highest_vf(__ubuf__ half* dst_addr, __ubuf__ half* src_addr,
-    uint32_t count, uint16_t one_repeat_size, uint16_t repeat_time)
+__simd_vf__ inline void duplicate_highest(__ubuf__ float* dst, __ubuf__ float* src)
 {
-    vector_half dst;
-    vector_half src;
-    vector_bool mask;
-    for (uint16_t i = 0; i < repeat_time; ++i) {
-        mask = asc_update_mask_b16(count);
-        asc_loadalign(src, src_addr + i * one_repeat_size);
-        asc_duplicate_highest(dst, src, mask);
-        asc_storealign(dst_addr + i * one_repeat_size, dst, mask);
-    }
+    vector_float dst_reg;
+    vector_float src_reg;
+    uint32_t active_count = 4;
+    uint32_t full_count = 64;
+    vector_bool active_mask = asc_update_mask_b32(active_count);
+    vector_bool full_mask = asc_update_mask_b32(full_count);
+
+    asc_loadalign(src_reg, src);
+    asc_duplicate_highest(dst_reg, src_reg, active_mask);
+    asc_storealign(dst, dst_reg, full_mask);
 }
 ```

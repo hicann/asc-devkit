@@ -32,13 +32,13 @@
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
-由于源操作数与目的操作数类型位宽比为1:2，读取数据时需要将一个`VL`大小的数据分为两部分，根据不同接口选择输入数据索引为奇数的位置或偶数的位置。伪代码如下：
+由于源操作数与目的操作数类型位宽比为1:2，读取数据时需要将一个`VL`大小的数据分为两部分，根据参数`src_pos`选择读取`src`索引为偶数的位置或奇数的位置。伪代码如下：
 
 ```python
 # 位置判断仅用于说明接口语义，实际位置参数为编译期常量。
 # VL表示矢量数据寄存器位宽，取值256字节。
-def asc_float2int64_rn(dst, src, mask, dst_pos):
-    offset = 0 if dst_pos == ASC_POSITION_EVEN else 1
+def asc_float2int64_rn(dst, src, mask, src_pos):
+    offset = 0 if src_pos == ASC_POSITION_EVEN else 1
     for i in range(VL // 8):
         dst[i] = 0
         if mask[2 * i + offset]:
@@ -54,21 +54,21 @@ def asc_float2int64_rn(dst, src, mask, dst_pos):
 __simd_callee__ inline void asc_float2int64_<round_mode><sat_mode>(vector_int64_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask,
-                                                                   std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+                                                                   std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
 
 __simd_callee__ inline void asc_float2int64_<round_mode><sat_mode>(vector_int64_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask,
-                                                                   std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+                                                                   std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 
 // 通过函数返回值返回结果
 __simd_callee__ inline vector_int64_t asc_float2int64_<round_mode><sat_mode>(vector_float src,
                                                                    vector_bool mask,
-                                                                   std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+                                                                   std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
 
 __simd_callee__ inline vector_int64_t asc_float2int64_<round_mode><sat_mode>(vector_float src,
                                                                    vector_bool mask,
-                                                                   std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
+                                                                   std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 ```
 
 - `<round_mode>`表示支持的舍入模式，支持`rd`（`FLOOR`）、`rn`（`RINT`）、`rna`（`ROUND`）、`ru`（`CEIL`）和`rz`（`TRUNC`）。
@@ -77,11 +77,11 @@ __simd_callee__ inline vector_int64_t asc_float2int64_<round_mode><sat_mode>(vec
 ### 函数原型典型示例
 
 ```c
-// RINT舍入模式，非饱和模式，数据写入索引为偶数的位置
+// RINT舍入模式，非饱和模式，读取源操作数索引为偶数的位置
 __simd_callee__ inline void asc_float2int64_rn(vector_int64_t& dst,
                                                vector_float src,
                                                vector_bool mask,
-                                               std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
+                                               std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)
 ```
 
 ## 参数说明
@@ -93,7 +93,7 @@ __simd_callee__ inline void asc_float2int64_rn(vector_int64_t& dst,
 | dst | 输出 | 目的操作数（矢量数据寄存器）。|
 | src | 输入 | 源操作数（矢量数据寄存器）。|
 | mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
-| dst_pos | 输入 | 位置选择标签（编译期标签分发，通过编译期重载选择对应实现），取值如下：<br>&bull; `ASC_POSITION_EVEN`：选择将结果写入目的操作数索引为偶数的位置，其他位置清零<br>&bull; `ASC_POSITION_ODD`：选择将结果写入目的操作数索引为奇数的位置，其他位置清零。 |
+| src_pos | 输入 | 位置选择标签（编译期标签分发，通过编译期重载选择对应实现），取值如下：<br>&bull; `ASC_POSITION_EVEN`：选择读取源操作数索引为偶数的位置<br>&bull; `ASC_POSITION_ODD`：选择读取源操作数索引为奇数的位置。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -105,13 +105,12 @@ __simd_callee__ inline void asc_float2int64_rn(vector_int64_t& dst,
 ## 约束说明
 
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
-- 位置选择标签选择目的操作数的写入地址，其他位置清零。
-
+- 位置选择标签用于选择源操作数中参与转换的元素索引。
 - 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
 - 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
-- 结果写入`dst`的奇数索引位置时，偶数索引位置置零；结果写入偶数索引位置时，奇数索引位置置零。
+- `src_pos`取`ASC_POSITION_EVEN`时读取`src`的偶数索引，取`ASC_POSITION_ODD`时读取`src`的奇数索引。
 - 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
 
 ## 调用示例

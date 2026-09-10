@@ -511,8 +511,8 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |---|---|---|
 |[asc_deintlv](reg_compute/reg_permute_sel/asc_deintlv.md)|给定源操作数src0和src1，将src0和src1中的元素解交织存入结果操作数dst0和dst1中。|`c_api/reg_compute/compute/reg_permute_sel.h`|
 |[asc_intlv](reg_compute/reg_permute_sel/asc_intlv.md)|将源操作数src0和src1中的元素交织存入目的操作数dst0和dst1中。|`c_api/reg_compute/compute/reg_permute_sel.h`|
-|[asc_pack_to_high](reg_compute/reg_permute_sel/asc_pack_to_high.md)|将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的高半部分（当数据类型为vector_bool时，每2bit选取其中的低位1bit）。|`c_api/reg_compute/compute/reg_permute_sel.h`|
-|[asc_pack_to_low](reg_compute/reg_permute_sel/asc_pack_to_low.md)|将源操作数中的元素选取低8位（b16）、低16位（b32）、低32位（b64）写入目的操作数的低半部分（当数据类型为vector_bool时，每2bit选取其中的低位1bit）。|`c_api/reg_compute/compute/reg_permute_sel.h`|
+|[asc_pack_to_high](reg_compute/reg_permute_sel/asc_pack_to_high.md)|将源操作数中的元素选取低8位（b16）或低16位（b32）写入目的操作数的高半部分（当操作数为掩码寄存器时，选取偶数索引的比特）。|`c_api/reg_compute/compute/reg_permute_sel.h`|
+|[asc_pack_to_low](reg_compute/reg_permute_sel/asc_pack_to_low.md)|将源操作数中的元素选取低8位（b16）或低16位（b32）写入目的操作数的低半部分（当操作数为掩码寄存器时，选取偶数索引的比特）。|`c_api/reg_compute/compute/reg_permute_sel.h`|
 |[asc_select](reg_compute/reg_permute_sel/asc_select.md)|根据mask的比特位值，从源操作数src0、src1中选择元素，得到目的操作数dst。|`c_api/reg_compute/compute/reg_permute_sel.h`|
 |[asc_squeeze](reg_compute/reg_permute_sel/asc_squeeze.md)|将src中被mask选择的有效元素依次复制到dst中，有效元素从低到高连续排列，剩余位置元素置为0。|`c_api/reg_compute/compute/reg_permute_sel.h`|
 |[asc_squeeze_and_storeunalign](reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)|reg计算数据搬运接口，适用于从矢量数据寄存器中筛选出有效元素后按照连续非32B对齐的起始地址连续搬出到UB的场景。|`c_api/reg_compute/compute/reg_permute_sel.h`|
