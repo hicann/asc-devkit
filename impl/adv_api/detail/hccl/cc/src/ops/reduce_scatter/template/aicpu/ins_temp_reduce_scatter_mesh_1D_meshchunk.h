@@ -53,7 +53,7 @@ private:
         const TemplateDataParams& tempAlgParams, const RankSliceInfo& sliceInfoVec);
     HcclResult DoMeshChunk(
         const std::map<u32, std::vector<ChannelInfo>>& channels, const std::vector<ThreadHandle>& threads,
-        const TemplateDataParams& tempAlgParams, const std::vector<uint64_t>& sliceSize, const u32& repeatIdx,
+        const TemplateDataParams& tempAlgParams, const std::vector<uint64_t>& sliceSize, const u32& repeatNum,
         const u32& myAlgRank, uint64_t& sliceSendOffset_, uint64_t& sliceRecvOffset_,
         const uint64_t& sliceRecvBaseOffset);
     void NotifyIdxMainToSubInMeshChunk(std::vector<u32>& notifyIdxMainToSub);
