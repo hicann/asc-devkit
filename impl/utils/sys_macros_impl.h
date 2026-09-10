@@ -203,6 +203,7 @@ enum KernelMetaType : uint8_t {
 
 #ifndef ASCENDC_TILING_KEY_VAR_IMPL
 #ifndef TILING_KEY_VAR
+#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #if defined(ASCENDC_CPU_DEBUG)
 extern uint64_t g_tilingKey;
 #else
@@ -210,6 +211,7 @@ extern uint64_t g_tilingKey;
 [[block_local]] uint64_t g_tilingKey;
 #else
 [[workgroup_local]] __gm__ uint64_t g_tilingKey;
+#endif
 #endif
 #endif
 #define ASCENDC_TILING_KEY_VAR_IMPL g_tilingKey
