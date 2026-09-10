@@ -79,15 +79,13 @@ __aicore__ inline uint32_t asc_atomic_dec(__gm__ uint32_t* address, uint32_t val
 __aicore__ inline uint64_t asc_atomic_dec(__gm__ uint64_t* address, uint64_t val);
 } // namespace __asc_aicore
 
-[[deprecated("NOTICE: asc_get_store_atomic_config is deprecated."
-             "Please use asc_atomic_add instead for atomic add operation.")]]
-__aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config);
-
 __aicore__ inline void asc_set_store_atomic_config_v1(uint16_t type, uint16_t op);
 
-[[deprecated("NOTICE: asc_set_store_atomic_config_v2 is deprecated."
-             "Please use asc_atomic_add instead for atomic add operation.")]] __aicore__ inline void
-asc_set_store_atomic_config_v2(uint16_t type, uint16_t op);
+ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
+__aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config);
+
+ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
+__aicore__ inline void asc_set_store_atomic_config_v2(uint16_t type, uint16_t op);
 
 #endif
 

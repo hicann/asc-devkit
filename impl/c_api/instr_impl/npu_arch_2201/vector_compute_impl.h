@@ -18,7 +18,7 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_2201_VECTOR_COMPUTE_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_2201_VECTOR_COMPUTE_IMPL_H
 
-#include "c_api/defs/macro.h"
+#include "c_api/defs/defs.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/asc_max_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/asc_mul_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/asc_add_impl.h"
@@ -174,7 +174,7 @@ __aicore__ inline void asc_add(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add and asc_sync)
 __aicore__ inline void asc_add_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_add_sync_impl(dst, src0, src1, count);
@@ -195,7 +195,7 @@ __aicore__ inline void asc_add(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add and asc_sync)
 __aicore__ inline void asc_add_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_add_sync_impl(dst, src0, src1, count);
@@ -216,7 +216,7 @@ __aicore__ inline void asc_add(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add and asc_sync)
 __aicore__ inline void asc_add_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -238,7 +238,7 @@ __aicore__ inline void asc_add(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add and asc_sync)
 __aicore__ inline void asc_add_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint32_t count)
 {
@@ -261,7 +261,7 @@ __aicore__ inline void asc_sub(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub and asc_sync)
 __aicore__ inline void asc_sub_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_sub_sync_impl(dst, src0, src1, count);
@@ -282,7 +282,7 @@ __aicore__ inline void asc_sub(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub and asc_sync)
 __aicore__ inline void asc_sub_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_sub_sync_impl(dst, src0, src1, count);
@@ -303,7 +303,7 @@ __aicore__ inline void asc_sub(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub and asc_sync)
 __aicore__ inline void asc_sub_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -325,7 +325,7 @@ __aicore__ inline void asc_sub(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub and asc_sync)
 __aicore__ inline void asc_sub_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint32_t count)
 {
@@ -348,7 +348,7 @@ __aicore__ inline void asc_mul(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul and asc_sync)
 __aicore__ inline void asc_mul_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_mul_sync_impl(dst, src0, src1, count);
@@ -369,7 +369,7 @@ __aicore__ inline void asc_mul(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul and asc_sync)
 __aicore__ inline void asc_mul_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_mul_sync_impl(dst, src0, src1, count);
@@ -390,7 +390,7 @@ __aicore__ inline void asc_mul(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul and asc_sync)
 __aicore__ inline void asc_mul_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -412,7 +412,7 @@ __aicore__ inline void asc_mul(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul and asc_sync)
 __aicore__ inline void asc_mul_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint32_t count)
 {
@@ -435,7 +435,7 @@ __aicore__ inline void asc_div(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_div and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_div and asc_sync)
 __aicore__ inline void asc_div_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_div_sync_impl(dst, src0, src1, count);
@@ -456,7 +456,7 @@ __aicore__ inline void asc_div(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_div and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_div and asc_sync)
 __aicore__ inline void asc_div_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_div_sync_impl(dst, src0, src1, count);
@@ -478,7 +478,7 @@ __aicore__ inline void asc_max(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max and asc_sync)
 __aicore__ inline void asc_max_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_max_sync_impl(dst, src0, src1, count);
@@ -499,7 +499,7 @@ __aicore__ inline void asc_max(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max and asc_sync)
 __aicore__ inline void asc_max_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_max_sync_impl(dst, src0, src1, count);
@@ -520,7 +520,7 @@ __aicore__ inline void asc_max(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max and asc_sync)
 __aicore__ inline void asc_max_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -542,7 +542,7 @@ __aicore__ inline void asc_max(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max and asc_sync)
 __aicore__ inline void asc_max_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint32_t count)
 {
@@ -565,7 +565,7 @@ __aicore__ inline void asc_min(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min and asc_sync)
 __aicore__ inline void asc_min_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_min_sync_impl(dst, src0, src1, count);
@@ -586,7 +586,7 @@ __aicore__ inline void asc_min(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min and asc_sync)
 __aicore__ inline void asc_min_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_min_sync_impl(dst, src0, src1, count);
@@ -607,7 +607,7 @@ __aicore__ inline void asc_min(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min and asc_sync)
 __aicore__ inline void asc_min_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -629,7 +629,7 @@ __aicore__ inline void asc_min(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min and asc_sync)
 __aicore__ inline void asc_min_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint32_t count)
 {
@@ -649,7 +649,7 @@ __aicore__ inline void asc_datablock_reduce_sum(__ubuf__ half* dst, __ubuf__ hal
     asc_datablock_reduce_sum_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_datablock_reduce_sum and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_datablock_reduce_sum and asc_sync)
 __aicore__ inline void asc_datablock_reduce_sum_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_datablock_reduce_sum_sync_impl(dst, src, count);
@@ -667,7 +667,7 @@ __aicore__ inline void asc_datablock_reduce_sum(__ubuf__ float* dst, __ubuf__ fl
     asc_datablock_reduce_sum_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_datablock_reduce_sum and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_datablock_reduce_sum and asc_sync)
 __aicore__ inline void asc_datablock_reduce_sum_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_datablock_reduce_sum_sync_impl(dst, src, count);
@@ -685,7 +685,7 @@ __aicore__ inline void asc_datablock_reduce_max(__ubuf__ half* dst, __ubuf__ hal
     asc_datablock_reduce_max_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_datablock_reduce_max and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_datablock_reduce_max and asc_sync)
 __aicore__ inline void asc_datablock_reduce_max_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_datablock_reduce_max_sync_impl(dst, src, count);
@@ -703,7 +703,7 @@ __aicore__ inline void asc_datablock_reduce_max(__ubuf__ float* dst, __ubuf__ fl
     asc_datablock_reduce_max_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_datablock_reduce_max and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_datablock_reduce_max and asc_sync)
 __aicore__ inline void asc_datablock_reduce_max_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_datablock_reduce_max_sync_impl(dst, src, count);
@@ -721,7 +721,7 @@ __aicore__ inline void asc_datablock_reduce_min(__ubuf__ half* dst, __ubuf__ hal
     asc_datablock_reduce_min_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_datablock_reduce_min and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_datablock_reduce_min and asc_sync)
 __aicore__ inline void asc_datablock_reduce_min_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_datablock_reduce_min_sync_impl(dst, src, count);
@@ -739,7 +739,7 @@ __aicore__ inline void asc_datablock_reduce_min(__ubuf__ float* dst, __ubuf__ fl
     asc_datablock_reduce_min_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_datablock_reduce_min and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_datablock_reduce_min and asc_sync)
 __aicore__ inline void asc_datablock_reduce_min_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_datablock_reduce_min_sync_impl(dst, src, count);
@@ -758,7 +758,7 @@ __aicore__ inline void asc_repeat_reduce_sum(__ubuf__ half* dst, __ubuf__ half* 
     asc_repeat_reduce_sum_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_sum and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_sum and asc_sync)
 __aicore__ inline void asc_repeat_reduce_sum_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_sum_sync_impl(dst, src, count);
@@ -776,7 +776,7 @@ __aicore__ inline void asc_repeat_reduce_sum(__ubuf__ float* dst, __ubuf__ float
     asc_repeat_reduce_sum_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_sum and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_sum and asc_sync)
 __aicore__ inline void asc_repeat_reduce_sum_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_sum_sync_impl(dst, src, count);
@@ -794,7 +794,7 @@ __aicore__ inline void asc_repeat_reduce_max_index_value(__ubuf__ half* dst, __u
     asc_repeat_reduce_max_index_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_index_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_index_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_index_value_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_max_index_value_sync_impl(dst, src, count);
@@ -812,7 +812,7 @@ __aicore__ inline void asc_repeat_reduce_max_index_value(__ubuf__ float* dst, __
     asc_repeat_reduce_max_index_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_index_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_index_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_index_value_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_max_index_value_sync_impl(dst, src, count);
@@ -830,7 +830,7 @@ __aicore__ inline void asc_repeat_reduce_max_value_index(__ubuf__ half* dst, __u
     asc_repeat_reduce_max_value_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_value_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_value_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_value_index_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_max_value_index_sync_impl(dst, src, count);
@@ -848,7 +848,7 @@ __aicore__ inline void asc_repeat_reduce_max_value_index(__ubuf__ float* dst, __
     asc_repeat_reduce_max_value_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_value_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_value_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_value_index_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_max_value_index_sync_impl(dst, src, count);
@@ -866,7 +866,7 @@ __aicore__ inline void asc_repeat_reduce_max_only_value(__ubuf__ half* dst, __ub
     asc_repeat_reduce_max_only_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_only_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_only_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_only_value_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_max_only_value_sync_impl(dst, src, count);
@@ -884,7 +884,7 @@ __aicore__ inline void asc_repeat_reduce_max_only_value(__ubuf__ float* dst, __u
     asc_repeat_reduce_max_only_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_only_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_only_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_only_value_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_max_only_value_sync_impl(dst, src, count);
@@ -902,7 +902,7 @@ __aicore__ inline void asc_repeat_reduce_max_only_index(__ubuf__ half* dst, __ub
     asc_repeat_reduce_max_only_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_only_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_only_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_only_index_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_max_only_index_sync_impl(dst, src, count);
@@ -920,7 +920,7 @@ __aicore__ inline void asc_repeat_reduce_max_only_index(__ubuf__ float* dst, __u
     asc_repeat_reduce_max_only_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_max_only_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_max_only_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_max_only_index_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_max_only_index_sync_impl(dst, src, count);
@@ -938,7 +938,7 @@ __aicore__ inline void asc_repeat_reduce_min_index_value(__ubuf__ half* dst, __u
     asc_repeat_reduce_min_index_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_index_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_index_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_index_value_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_min_index_value_sync_impl(dst, src, count);
@@ -956,7 +956,7 @@ __aicore__ inline void asc_repeat_reduce_min_index_value(__ubuf__ float* dst, __
     asc_repeat_reduce_min_index_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_index_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_index_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_index_value_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_min_index_value_sync_impl(dst, src, count);
@@ -974,7 +974,7 @@ __aicore__ inline void asc_repeat_reduce_min_value_index(__ubuf__ half* dst, __u
     asc_repeat_reduce_min_value_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_value_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_value_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_value_index_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_min_value_index_sync_impl(dst, src, count);
@@ -992,7 +992,7 @@ __aicore__ inline void asc_repeat_reduce_min_value_index(__ubuf__ float* dst, __
     asc_repeat_reduce_min_value_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_value_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_value_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_value_index_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_min_value_index_sync_impl(dst, src, count);
@@ -1010,7 +1010,7 @@ __aicore__ inline void asc_repeat_reduce_min_only_value(__ubuf__ half* dst, __ub
     asc_repeat_reduce_min_only_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_only_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_only_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_only_value_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_min_only_value_sync_impl(dst, src, count);
@@ -1028,7 +1028,7 @@ __aicore__ inline void asc_repeat_reduce_min_only_value(__ubuf__ float* dst, __u
     asc_repeat_reduce_min_only_value_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_only_value and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_only_value and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_only_value_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_min_only_value_sync_impl(dst, src, count);
@@ -1046,7 +1046,7 @@ __aicore__ inline void asc_repeat_reduce_min_only_index(__ubuf__ half* dst, __ub
     asc_repeat_reduce_min_only_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_only_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_only_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_only_index_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_repeat_reduce_min_only_index_sync_impl(dst, src, count);
@@ -1064,7 +1064,7 @@ __aicore__ inline void asc_repeat_reduce_min_only_index(__ubuf__ float* dst, __u
     asc_repeat_reduce_min_only_index_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_repeat_reduce_min_only_index and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_repeat_reduce_min_only_index and asc_sync)
 __aicore__ inline void asc_repeat_reduce_min_only_index_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_repeat_reduce_min_only_index_sync_impl(dst, src, count);
@@ -1096,7 +1096,7 @@ __aicore__ inline void asc_max_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max_scalar and asc_sync)
 __aicore__ inline void asc_max_scalar_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_max_scalar_sync_impl(dst, src, value, count);
@@ -1115,7 +1115,7 @@ __aicore__ inline void asc_max_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max_scalar and asc_sync)
 __aicore__ inline void asc_max_scalar_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_max_scalar_sync_impl(dst, src, value, count);
@@ -1134,7 +1134,7 @@ __aicore__ inline void asc_max_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max_scalar and asc_sync)
 __aicore__ inline void asc_max_scalar_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 {
     asc_max_scalar_sync_impl(dst, src, value, count);
@@ -1153,7 +1153,7 @@ __aicore__ inline void asc_max_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_max_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_max_scalar and asc_sync)
 __aicore__ inline void asc_max_scalar_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
     asc_max_scalar_sync_impl(dst, src, value, count);
@@ -1173,7 +1173,7 @@ __aicore__ inline void asc_mul_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_scalar and asc_sync)
 __aicore__ inline void asc_mul_scalar_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_mul_scalar_sync_impl(dst, src, value, count);
@@ -1192,7 +1192,7 @@ __aicore__ inline void asc_mul_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_scalar and asc_sync)
 __aicore__ inline void asc_mul_scalar_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_mul_scalar_sync_impl(dst, src, value, count);
@@ -1211,7 +1211,7 @@ __aicore__ inline void asc_mul_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_scalar and asc_sync)
 __aicore__ inline void asc_mul_scalar_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 {
     asc_mul_scalar_sync_impl(dst, src, value, count);
@@ -1230,7 +1230,7 @@ __aicore__ inline void asc_mul_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_scalar and asc_sync)
 __aicore__ inline void asc_mul_scalar_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
     asc_mul_scalar_sync_impl(dst, src, value, count);
@@ -1250,7 +1250,7 @@ __aicore__ inline void asc_add_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_scalar and asc_sync)
 __aicore__ inline void asc_add_scalar_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_add_scalar_sync_impl(dst, src, value, count);
@@ -1269,7 +1269,7 @@ __aicore__ inline void asc_add_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_scalar and asc_sync)
 __aicore__ inline void asc_add_scalar_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_add_scalar_sync_impl(dst, src, value, count);
@@ -1288,7 +1288,7 @@ __aicore__ inline void asc_add_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_scalar and asc_sync)
 __aicore__ inline void asc_add_scalar_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 {
     asc_add_scalar_sync_impl(dst, src, value, count);
@@ -1307,7 +1307,7 @@ __aicore__ inline void asc_add_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_scalar and asc_sync)
 __aicore__ inline void asc_add_scalar_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
     asc_add_scalar_sync_impl(dst, src, value, count);
@@ -1327,7 +1327,7 @@ __aicore__ inline void asc_sub_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_scalar and asc_sync)
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_sub_scalar_sync_impl(dst, src, value, count);
@@ -1346,7 +1346,7 @@ __aicore__ inline void asc_sub_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_scalar and asc_sync)
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_sub_scalar_sync_impl(dst, src, value, count);
@@ -1365,7 +1365,7 @@ __aicore__ inline void asc_sub_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_scalar and asc_sync)
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 {
     asc_sub_scalar_sync_impl(dst, src, value, count);
@@ -1384,7 +1384,7 @@ __aicore__ inline void asc_sub_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_scalar and asc_sync)
 __aicore__ inline void asc_sub_scalar_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
     asc_sub_scalar_sync_impl(dst, src, value, count);
@@ -1403,7 +1403,7 @@ __aicore__ inline void asc_leakyrelu(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_leakyrelu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_leakyrelu and asc_sync)
 __aicore__ inline void asc_leakyrelu_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_leakyrelu_sync_impl(dst, src, value, count);
@@ -1421,7 +1421,7 @@ __aicore__ inline void asc_leakyrelu(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_leakyrelu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_leakyrelu and asc_sync)
 __aicore__ inline void asc_leakyrelu_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_leakyrelu_sync_impl(dst, src, value, count);
@@ -1440,7 +1440,7 @@ __aicore__ inline void asc_exp(__ubuf__ half* dst, __ubuf__ half* src, uint32_t 
     asc_exp_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_exp and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_exp and asc_sync)
 __aicore__ inline void asc_exp_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_exp_sync_impl(dst, src, count);
@@ -1458,7 +1458,7 @@ __aicore__ inline void asc_exp(__ubuf__ float* dst, __ubuf__ float* src, uint32_
     asc_exp_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_exp and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_exp and asc_sync)
 __aicore__ inline void asc_exp_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_exp_sync_impl(dst, src, count);
@@ -1477,7 +1477,7 @@ __aicore__ inline void asc_abs(__ubuf__ half* dst, __ubuf__ half* src, uint32_t 
     asc_abs_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_abs and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_abs and asc_sync)
 __aicore__ inline void asc_abs_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_abs_sync_impl(dst, src, count);
@@ -1495,7 +1495,7 @@ __aicore__ inline void asc_abs(__ubuf__ float* dst, __ubuf__ float* src, uint32_
     asc_abs_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_abs and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_abs and asc_sync)
 __aicore__ inline void asc_abs_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_abs_sync_impl(dst, src, count);
@@ -1514,7 +1514,7 @@ __aicore__ inline void asc_rcp(
     asc_rcp_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_rcp and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_rcp and asc_sync)
 __aicore__ inline void asc_rcp_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_rcp_sync_impl(dst, src, count);
@@ -1532,7 +1532,7 @@ __aicore__ inline void asc_rcp(
     asc_rcp_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_rcp and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_rcp and asc_sync)
 __aicore__ inline void asc_rcp_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_rcp_sync_impl(dst, src, count);
@@ -1551,7 +1551,7 @@ __aicore__ inline void asc_rsqrt(
     asc_rsqrt_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_rsqrt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_rsqrt and asc_sync)
 __aicore__ inline void asc_rsqrt_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_rsqrt_impl(dst, src, count);
@@ -1569,7 +1569,7 @@ __aicore__ inline void asc_rsqrt(
     asc_rsqrt_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_rsqrt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_rsqrt and asc_sync)
 __aicore__ inline void asc_rsqrt_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_rsqrt_impl(dst, src, count);
@@ -1588,7 +1588,7 @@ __aicore__ inline void asc_sqrt(__ubuf__ half* dst, __ubuf__ half* src, uint32_t
     asc_sqrt_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sqrt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sqrt and asc_sync)
 __aicore__ inline void asc_sqrt_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_sqrt_sync_impl(dst, src, count);
@@ -1606,7 +1606,7 @@ __aicore__ inline void asc_sqrt(__ubuf__ float* dst, __ubuf__ float* src, uint32
     asc_sqrt_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sqrt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sqrt and asc_sync)
 __aicore__ inline void asc_sqrt_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_sqrt_sync_impl(dst, src, count);
@@ -1625,7 +1625,7 @@ __aicore__ inline void asc_relu(__ubuf__ half* dst, __ubuf__ half* src, uint32_t
     asc_relu_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_relu and asc_sync)
 __aicore__ inline void asc_relu_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_relu_sync_impl(dst, src, count);
@@ -1643,7 +1643,7 @@ __aicore__ inline void asc_relu(__ubuf__ float* dst, __ubuf__ float* src, uint32
     asc_relu_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_relu and asc_sync)
 __aicore__ inline void asc_relu_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_relu_sync_impl(dst, src, count);
@@ -1661,7 +1661,7 @@ __aicore__ inline void asc_relu(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, ui
     asc_relu_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_relu and asc_sync)
 __aicore__ inline void asc_relu_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_relu_sync_impl(dst, src, count);
@@ -1680,7 +1680,7 @@ __aicore__ inline void asc_log(__ubuf__ half* dst, __ubuf__ half* src, uint32_t 
     asc_log_count_impl_half(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_log and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_log and asc_sync)
 __aicore__ inline void asc_log_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_log_sync_impl_half(dst, src, count);
@@ -1698,7 +1698,7 @@ __aicore__ inline void asc_log(__ubuf__ float* dst, __ubuf__ float* src, uint32_
     asc_log_count_impl_float(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_log and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_log and asc_sync)
 __aicore__ inline void asc_log_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_log_sync_impl_float(dst, src, count);
@@ -1717,7 +1717,7 @@ __aicore__ inline void asc_not(
     asc_not_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_not and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_not and asc_sync)
 __aicore__ inline void asc_not_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_not_sync_impl(dst, src, count);
@@ -1735,7 +1735,7 @@ __aicore__ inline void asc_not(
     asc_not_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_not and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_not and asc_sync)
 __aicore__ inline void asc_not_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, uint32_t count)
 {
     asc_not_sync_impl(dst, src, count);
@@ -1757,7 +1757,7 @@ __aicore__ inline void asc_and(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_and and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_and and asc_sync)
 __aicore__ inline void asc_and_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -1779,7 +1779,7 @@ __aicore__ inline void asc_and(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_and and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_and and asc_sync)
 __aicore__ inline void asc_and_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, uint32_t count)
 {
@@ -1802,7 +1802,7 @@ __aicore__ inline void asc_or(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_or and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_or and asc_sync)
 __aicore__ inline void asc_or_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -1824,7 +1824,7 @@ __aicore__ inline void asc_or(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_or and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_or and asc_sync)
 __aicore__ inline void asc_or_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, uint32_t count)
 {
@@ -1845,7 +1845,7 @@ __aicore__ inline void asc_shiftleft(__ubuf__ int16_t* dst, __ubuf__ int16_t* sr
     asc_shiftleft_impl(dst, src, distance, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftleft and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftleft and asc_sync)
 __aicore__ inline void asc_shiftleft_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src, uint32_t distance, uint32_t count)
 {
@@ -1865,7 +1865,7 @@ __aicore__ inline void asc_shiftleft(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* 
     asc_shiftleft_impl(dst, src, distance, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftleft and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftleft and asc_sync)
 __aicore__ inline void asc_shiftleft_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, uint32_t distance, uint32_t count)
 {
@@ -1884,7 +1884,7 @@ __aicore__ inline void asc_shiftleft(__ubuf__ int32_t* dst, __ubuf__ int32_t* sr
     asc_shiftleft_impl(dst, src, distance, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftleft and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftleft and asc_sync)
 __aicore__ inline void asc_shiftleft_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src, uint32_t distance, uint32_t count)
 {
@@ -1904,7 +1904,7 @@ __aicore__ inline void asc_shiftleft(__ubuf__ uint32_t* dst, __ubuf__ uint32_t* 
     asc_shiftleft_impl(dst, src, distance, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftleft and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftleft and asc_sync)
 __aicore__ inline void asc_shiftleft_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, uint32_t distance, uint32_t count)
 {
@@ -1925,7 +1925,7 @@ __aicore__ inline void asc_shiftright(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftright and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftright and asc_sync)
 __aicore__ inline void asc_shiftright_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int32_t value, uint32_t count)
 {
     asc_shiftright_sync_impl(dst, src, value, count);
@@ -1944,7 +1944,7 @@ __aicore__ inline void asc_shiftright(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftright and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftright and asc_sync)
 __aicore__ inline void asc_shiftright_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
     asc_shiftright_sync_impl(dst, src, value, count);
@@ -1963,7 +1963,7 @@ __aicore__ inline void asc_shiftright(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftright and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftright and asc_sync)
 __aicore__ inline void asc_shiftright_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, uint32_t value, uint32_t count)
 {
@@ -1983,7 +1983,7 @@ __aicore__ inline void asc_shiftright(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftright and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftright and asc_sync)
 __aicore__ inline void asc_shiftright_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, uint32_t value, uint32_t count)
 {
@@ -2004,7 +2004,7 @@ __aicore__ inline void asc_shiftright_round(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftright_round and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftright_round and asc_sync)
 __aicore__ inline void asc_shiftright_round_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src, int32_t value, uint32_t count)
 {
@@ -2024,7 +2024,7 @@ __aicore__ inline void asc_shiftright_round(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_shiftright_round and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_shiftright_round and asc_sync)
 __aicore__ inline void asc_shiftright_round_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
@@ -2045,7 +2045,7 @@ __aicore__ inline void asc_min_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min_scalar and asc_sync)
 __aicore__ inline void asc_min_scalar_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_min_scalar_sync_impl(dst, src, value, count);
@@ -2064,7 +2064,7 @@ __aicore__ inline void asc_min_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min_scalar and asc_sync)
 __aicore__ inline void asc_min_scalar_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_min_scalar_sync_impl(dst, src, value, count);
@@ -2083,7 +2083,7 @@ __aicore__ inline void asc_min_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min_scalar and asc_sync)
 __aicore__ inline void asc_min_scalar_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, int16_t value, uint32_t count)
 {
     asc_min_scalar_sync_impl(dst, src, value, count);
@@ -2102,7 +2102,7 @@ __aicore__ inline void asc_min_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_min_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_min_scalar and asc_sync)
 __aicore__ inline void asc_min_scalar_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, int32_t value, uint32_t count)
 {
     asc_min_scalar_sync_impl(dst, src, value, count);
@@ -2141,7 +2141,7 @@ __aicore__ inline void asc_lt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_lt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_lt and asc_sync)
 __aicore__ inline void asc_lt_sync(
     __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2160,7 +2160,7 @@ __aicore__ inline void asc_lt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_lt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_lt and asc_sync)
 __aicore__ inline void asc_lt_sync(
     __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2180,7 +2180,7 @@ __aicore__ inline void asc_lt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_lt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_lt and asc_sync)
 __aicore__ inline void asc_lt_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2201,7 +2201,7 @@ __aicore__ inline void asc_lt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_lt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_lt and asc_sync)
 __aicore__ inline void asc_lt_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2222,7 +2222,7 @@ __aicore__ inline void asc_gt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gt and asc_sync)
 __aicore__ inline void asc_gt_sync(
     __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2241,7 +2241,7 @@ __aicore__ inline void asc_gt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gt and asc_sync)
 __aicore__ inline void asc_gt_sync(
     __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2261,7 +2261,7 @@ __aicore__ inline void asc_gt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gt and asc_sync)
 __aicore__ inline void asc_gt_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2282,7 +2282,7 @@ __aicore__ inline void asc_gt(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gt and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gt and asc_sync)
 __aicore__ inline void asc_gt_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2303,7 +2303,7 @@ __aicore__ inline void asc_ge(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ge and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ge and asc_sync)
 __aicore__ inline void asc_ge_sync(
     __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2322,7 +2322,7 @@ __aicore__ inline void asc_ge(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ge and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ge and asc_sync)
 __aicore__ inline void asc_ge_sync(
     __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2342,7 +2342,7 @@ __aicore__ inline void asc_ge(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ge and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ge and asc_sync)
 __aicore__ inline void asc_ge_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2363,7 +2363,7 @@ __aicore__ inline void asc_ge(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ge and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ge and asc_sync)
 __aicore__ inline void asc_ge_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2384,7 +2384,7 @@ __aicore__ inline void asc_eq(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq and asc_sync)
 __aicore__ inline void asc_eq_sync(
     __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2403,7 +2403,7 @@ __aicore__ inline void asc_eq(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq and asc_sync)
 __aicore__ inline void asc_eq_sync(
     __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2423,7 +2423,7 @@ __aicore__ inline void asc_eq(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq and asc_sync)
 __aicore__ inline void asc_eq_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2444,7 +2444,7 @@ __aicore__ inline void asc_eq(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq and asc_sync)
 __aicore__ inline void asc_eq_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2465,7 +2465,7 @@ __aicore__ inline void asc_eq(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq and asc_sync)
 __aicore__ inline void asc_eq_sync(
     __ubuf__ uint8_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2486,7 +2486,7 @@ __aicore__ inline void asc_ne(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ne and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ne and asc_sync)
 __aicore__ inline void asc_ne_sync(
     __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2505,7 +2505,7 @@ __aicore__ inline void asc_ne(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ne and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ne and asc_sync)
 __aicore__ inline void asc_ne_sync(
     __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2525,7 +2525,7 @@ __aicore__ inline void asc_ne(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ne and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ne and asc_sync)
 __aicore__ inline void asc_ne_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2546,7 +2546,7 @@ __aicore__ inline void asc_ne(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ne and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ne and asc_sync)
 __aicore__ inline void asc_ne_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2567,7 +2567,7 @@ __aicore__ inline void asc_le(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_le and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_le and asc_sync)
 __aicore__ inline void asc_le_sync(
     __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2586,7 +2586,7 @@ __aicore__ inline void asc_le(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_le and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_le and asc_sync)
 __aicore__ inline void asc_le_sync(
     __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride,
     uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)
@@ -2606,7 +2606,7 @@ __aicore__ inline void asc_le(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_le and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_le and asc_sync)
 __aicore__ inline void asc_le_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2627,7 +2627,7 @@ __aicore__ inline void asc_le(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_le and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_le and asc_sync)
 __aicore__ inline void asc_le_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint8_t repeat, uint8_t dst_block_stride,
     uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride,
@@ -2647,7 +2647,7 @@ __aicore__ inline void asc_lt_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_lt_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_lt_scalar and asc_sync)
 __aicore__ inline void asc_lt_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src, half value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2664,7 +2664,7 @@ __aicore__ inline void asc_lt_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_lt_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_lt_scalar and asc_sync)
 __aicore__ inline void asc_lt_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src, float value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2682,7 +2682,7 @@ __aicore__ inline void asc_gt_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gt_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gt_scalar and asc_sync)
 __aicore__ inline void asc_gt_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src, half value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2699,7 +2699,7 @@ __aicore__ inline void asc_gt_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gt_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gt_scalar and asc_sync)
 __aicore__ inline void asc_gt_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src, float value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2717,7 +2717,7 @@ __aicore__ inline void asc_ge_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ge_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ge_scalar and asc_sync)
 __aicore__ inline void asc_ge_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src, half value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2734,7 +2734,7 @@ __aicore__ inline void asc_ge_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ge_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ge_scalar and asc_sync)
 __aicore__ inline void asc_ge_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src, float value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2752,7 +2752,7 @@ __aicore__ inline void asc_eq_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq_scalar and asc_sync)
 __aicore__ inline void asc_eq_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src, half value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2769,7 +2769,7 @@ __aicore__ inline void asc_eq_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq_scalar and asc_sync)
 __aicore__ inline void asc_eq_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src, float value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2786,7 +2786,7 @@ __aicore__ inline void asc_eq_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_eq_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_eq_scalar and asc_sync)
 __aicore__ inline void asc_eq_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ int32_t* src, int32_t value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2804,7 +2804,7 @@ __aicore__ inline void asc_ne_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ne_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ne_scalar and asc_sync)
 __aicore__ inline void asc_ne_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src, half value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2821,7 +2821,7 @@ __aicore__ inline void asc_ne_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_ne_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_ne_scalar and asc_sync)
 __aicore__ inline void asc_ne_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src, float value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2839,7 +2839,7 @@ __aicore__ inline void asc_le_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_le_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_le_scalar and asc_sync)
 __aicore__ inline void asc_le_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src, half value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2856,7 +2856,7 @@ __aicore__ inline void asc_le_scalar(
         dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_le_scalar and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_le_scalar and asc_sync)
 __aicore__ inline void asc_le_scalar_sync(
     __ubuf__ uint8_t* dst, __ubuf__ float* src, float value, uint8_t repeat, uint16_t dst_block_stride,
     uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
@@ -2885,7 +2885,7 @@ __aicore__ inline void asc_select(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_select and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_select and asc_sync)
 __aicore__ inline void asc_select_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_select_sync_impl(dst, src0, src1, count);
@@ -2906,7 +2906,7 @@ __aicore__ inline void asc_select(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_select and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_select and asc_sync)
 __aicore__ inline void asc_select_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_select_sync_impl(dst, src0, src1, count);
@@ -2926,7 +2926,7 @@ __aicore__ inline void asc_reduce(
     asc_reduce_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_reduce and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_reduce and asc_sync)
 __aicore__ inline void asc_reduce_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, uint32_t count)
 {
@@ -2946,7 +2946,7 @@ __aicore__ inline void asc_reduce(
     asc_reduce_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_reduce and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_reduce and asc_sync)
 __aicore__ inline void asc_reduce_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src0, __ubuf__ uint32_t* src1, uint32_t count)
 {
@@ -2968,7 +2968,7 @@ __aicore__ inline void asc_add_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_relu and asc_sync)
 __aicore__ inline void asc_add_relu_sync(__ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_add_relu_sync_impl(dst, src0, src1, count);
@@ -2990,7 +2990,7 @@ __aicore__ inline void asc_add_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_relu and asc_sync)
 __aicore__ inline void asc_add_relu_sync(__ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_add_relu_sync_impl(dst, src0, src1, count);
@@ -3013,7 +3013,7 @@ __aicore__ inline void asc_add_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_relu and asc_sync)
 __aicore__ inline void asc_add_relu_sync(
     __ubuf__ int8_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -3036,7 +3036,7 @@ __aicore__ inline void asc_add_relu(__ubuf__ half* dst, __ubuf__ half* src0, __u
     asc_add_relu_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_relu and asc_sync)
 __aicore__ inline void asc_add_relu_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_add_relu_sync_impl(dst, src0, src1, count);
@@ -3057,7 +3057,7 @@ __aicore__ inline void asc_add_relu(__ubuf__ float* dst, __ubuf__ float* src0, _
     asc_add_relu_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_relu and asc_sync)
 __aicore__ inline void asc_add_relu_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
@@ -3080,7 +3080,7 @@ __aicore__ inline void asc_add_relu(
     asc_add_relu_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add_relu and asc_sync)
 __aicore__ inline void asc_add_relu_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -3100,7 +3100,7 @@ __aicore__ inline void asc_axpy(
     asc_axpy_impl(dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_axpy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_axpy and asc_sync)
 __aicore__ inline void asc_axpy_sync(__ubuf__ half* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_axpy_sync_impl(dst, src, value, count);
@@ -3118,7 +3118,7 @@ __aicore__ inline void asc_axpy(
     asc_axpy_impl(dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_axpy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_axpy and asc_sync)
 __aicore__ inline void asc_axpy_sync(__ubuf__ float* dst, __ubuf__ float* src, float value, uint32_t count)
 {
     asc_axpy_sync_impl(dst, src, value, count);
@@ -3136,7 +3136,7 @@ __aicore__ inline void asc_axpy(
     asc_axpy_impl(dst, src, value, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_axpy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_axpy and asc_sync)
 __aicore__ inline void asc_axpy_sync(__ubuf__ float* dst, __ubuf__ half* src, half value, uint32_t count)
 {
     asc_axpy_sync_impl(dst, src, value, count);
@@ -3148,7 +3148,7 @@ __aicore__ inline void asc_bitsort(__ubuf__ half* dst, __ubuf__ half* src0, __ub
     asc_bitsort_impl_half(dst, src0, src1, repeat);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bitsort and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bitsort and asc_sync)
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat)
 {
@@ -3160,7 +3160,7 @@ __aicore__ inline void asc_bitsort(__ubuf__ float* dst, __ubuf__ float* src0, __
     asc_bitsort_impl_float(dst, src0, src1, repeat);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bitsort and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bitsort and asc_sync)
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat)
 {
@@ -3183,7 +3183,7 @@ __aicore__ inline void asc_fma(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_fma and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_fma and asc_sync)
 __aicore__ inline void asc_fma_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_fma_sync_impl(dst, src0, src1, count);
@@ -3204,7 +3204,7 @@ __aicore__ inline void asc_fma(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_fma and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_fma and asc_sync)
 __aicore__ inline void asc_fma_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_fma_sync_impl(dst, src0, src1, count);
@@ -3225,7 +3225,7 @@ __aicore__ inline void asc_fma(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_fma and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_fma and asc_sync)
 __aicore__ inline void asc_fma_sync(__ubuf__ float* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_fma_sync_impl(dst, src0, src1, count);
@@ -3239,7 +3239,7 @@ __aicore__ inline void asc_gather_datablock(
     asc_gather_datablock_impl(dst, src, src_offset, dst_repeat_stride, dst_block_stride, repeat);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather_datablock and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather_datablock and asc_sync)
 __aicore__ inline void asc_gather_datablock_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, __ubuf__ uint32_t* src_offset, uint16_t dst_repeat_stride,
     uint8_t dst_block_stride, uint8_t repeat)
@@ -3254,7 +3254,7 @@ __aicore__ inline void asc_gather_datablock(
     asc_gather_datablock_impl(dst, src, src_offset, dst_repeat_stride, dst_block_stride, repeat);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather_datablock and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather_datablock and asc_sync)
 __aicore__ inline void asc_gather_datablock_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, __ubuf__ uint32_t* src_offset, uint16_t dst_repeat_stride,
     uint8_t dst_block_stride, uint8_t repeat)
@@ -3276,7 +3276,7 @@ __aicore__ inline void asc_gather(
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3296,7 +3296,7 @@ __aicore__ inline void asc_gather(
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3314,7 +3314,7 @@ __aicore__ inline void asc_gather(__ubuf__ half* dst, __ubuf__ half* src, __ubuf
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ half* dst, __ubuf__ half* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3334,7 +3334,7 @@ __aicore__ inline void asc_gather(
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ bfloat16_t* dst, __ubuf__ bfloat16_t* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3354,7 +3354,7 @@ __aicore__ inline void asc_gather(
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ int32_t* dst, __ubuf__ int32_t* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3374,7 +3374,7 @@ __aicore__ inline void asc_gather(
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3393,7 +3393,7 @@ __aicore__ inline void asc_gather(
     asc_gather_impl(dst, src, src_offset, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_gather and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_gather and asc_sync)
 __aicore__ inline void asc_gather_sync(
     __ubuf__ float* dst, __ubuf__ float* src, __ubuf__ uint32_t* src_offset, uint32_t count)
 {
@@ -3414,7 +3414,7 @@ __aicore__ inline void asc_mrgsort4(
         if_exhausted_suspension, valid_bit);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mrgsort4 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mrgsort4 and asc_sync)
 __aicore__ inline void asc_mrgsort4_sync(
     __ubuf__ half* dst, __ubuf__ half* src[ASC_C_API_MRGSORT_ELEMENT_LEN], uint8_t repeat, uint16_t element_length_0,
     uint16_t element_length_1, uint16_t element_length_2, uint16_t element_length_3, bool if_exhausted_suspension,
@@ -3435,7 +3435,7 @@ __aicore__ inline void asc_mrgsort4(
         if_exhausted_suspension, valid_bit);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mrgsort4 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mrgsort4 and asc_sync)
 __aicore__ inline void asc_mrgsort4_sync(
     __ubuf__ float* dst, __ubuf__ float* src[ASC_C_API_MRGSORT_ELEMENT_LEN], uint8_t repeat, uint16_t element_length_0,
     uint16_t element_length_1, uint16_t element_length_2, uint16_t element_length_3, bool if_exhausted_suspension,
@@ -3462,7 +3462,7 @@ __aicore__ inline void asc_mul_add(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_add and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_add and asc_sync)
 __aicore__ inline void asc_mul_add_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_mul_add_sync_impl(dst, src0, src1, count);
@@ -3483,7 +3483,7 @@ __aicore__ inline void asc_mul_add(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_add and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_add and asc_sync)
 __aicore__ inline void asc_mul_add_sync(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_mul_add_sync_impl(dst, src0, src1, count);
@@ -3505,7 +3505,7 @@ __aicore__ inline void asc_mul_add_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_add_relu and asc_sync)
 __aicore__ inline void asc_mul_add_relu_sync(
     __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
@@ -3527,7 +3527,7 @@ __aicore__ inline void asc_mul_add_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_add_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_add_relu and asc_sync)
 __aicore__ inline void asc_mul_add_relu_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
@@ -3551,7 +3551,7 @@ __aicore__ inline void asc_mul_cast_half2int8(
     asc_mul_cast_half2int8_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_cast_half2int8 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_cast_half2int8 and asc_sync)
 __aicore__ inline void asc_mul_cast_half2int8_sync(
     __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
@@ -3575,7 +3575,7 @@ __aicore__ inline void asc_mul_cast_half2uint8(
     asc_mul_cast_half2uint8_impl(dst, src0, src1, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_mul_cast_half2uint8 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mul_cast_half2uint8 and asc_sync)
 __aicore__ inline void asc_mul_cast_half2uint8_sync(
     __ubuf__ uint8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
@@ -3598,7 +3598,7 @@ __aicore__ inline void asc_sub_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_relu and asc_sync)
 __aicore__ inline void asc_sub_relu_sync(__ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_sub_relu_sync_impl(dst, src0, src1, count);
@@ -3619,7 +3619,7 @@ __aicore__ inline void asc_sub_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_relu and asc_sync)
 __aicore__ inline void asc_sub_relu_sync(__ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
     asc_sub_relu_sync_impl(dst, src0, src1, count);
@@ -3641,7 +3641,7 @@ __aicore__ inline void asc_sub_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_relu and asc_sync)
 __aicore__ inline void asc_sub_relu_sync(
     __ubuf__ int8_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -3663,7 +3663,7 @@ __aicore__ inline void asc_sub_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_relu and asc_sync)
 __aicore__ inline void asc_sub_relu_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)
 {
     asc_sub_relu_sync_impl(dst, src0, src1, count);
@@ -3684,7 +3684,7 @@ __aicore__ inline void asc_sub_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_relu and asc_sync)
 __aicore__ inline void asc_sub_relu_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, uint32_t count)
 {
@@ -3707,7 +3707,7 @@ __aicore__ inline void asc_sub_relu(
         src0_repeat_stride, src1_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_sub_relu and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sub_relu and asc_sync)
 __aicore__ inline void asc_sub_relu_sync(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, uint32_t count)
 {
@@ -3727,7 +3727,7 @@ __aicore__ inline void asc_bfloat162float(
     asc_bfloat162float_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bfloat162float and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bfloat162float and asc_sync)
 __aicore__ inline void asc_bfloat162float_sync(__ubuf__ float* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 {
     asc_bfloat162float_sync_impl(dst, src, count);
@@ -3747,7 +3747,7 @@ __aicore__ inline void asc_bfloat162int32_rna(__ubuf__ int32_t* dst, __ubuf__ bf
     asc_bfloat162int32_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bfloat162int32_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bfloat162int32_rna and asc_sync)
 __aicore__ inline void asc_bfloat162int32_rna_sync(__ubuf__ int32_t* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 {
     asc_bfloat162int32_rna_sync_impl(dst, src, count);
@@ -3766,7 +3766,7 @@ __aicore__ inline void asc_bfloat162int32_ru(__ubuf__ int32_t* dst, __ubuf__ bfl
     asc_bfloat162int32_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bfloat162int32_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bfloat162int32_ru and asc_sync)
 __aicore__ inline void asc_bfloat162int32_ru_sync(__ubuf__ int32_t* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 {
     asc_bfloat162int32_ru_sync_impl(dst, src, count);
@@ -3785,7 +3785,7 @@ __aicore__ inline void asc_bfloat162int32_rd(__ubuf__ int32_t* dst, __ubuf__ bfl
     asc_bfloat162int32_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bfloat162int32_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bfloat162int32_rd and asc_sync)
 __aicore__ inline void asc_bfloat162int32_rd_sync(__ubuf__ int32_t* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 {
     asc_bfloat162int32_rd_sync_impl(dst, src, count);
@@ -3804,7 +3804,7 @@ __aicore__ inline void asc_bfloat162int32_rn(__ubuf__ int32_t* dst, __ubuf__ bfl
     asc_bfloat162int32_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bfloat162int32_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bfloat162int32_rn and asc_sync)
 __aicore__ inline void asc_bfloat162int32_rn_sync(__ubuf__ int32_t* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 {
     asc_bfloat162int32_rn_sync_impl(dst, src, count);
@@ -3823,7 +3823,7 @@ __aicore__ inline void asc_bfloat162int32_rz(__ubuf__ int32_t* dst, __ubuf__ bfl
     asc_bfloat162int32_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_bfloat162int32_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bfloat162int32_rz and asc_sync)
 __aicore__ inline void asc_bfloat162int32_rz_sync(__ubuf__ int32_t* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 {
     asc_bfloat162int32_rz_sync_impl(dst, src, count);
@@ -3842,7 +3842,7 @@ __aicore__ inline void asc_half2float(__ubuf__ float* dst, __ubuf__ half* src, u
     asc_half2float_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2float and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2float and asc_sync)
 __aicore__ inline void asc_half2float_sync(__ubuf__ float* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2float_sync_impl(dst, src, count);
@@ -3861,7 +3861,7 @@ __aicore__ inline void asc_half2int16_rna(__ubuf__ int16_t* dst, __ubuf__ half* 
     asc_half2int16_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int16_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int16_rna and asc_sync)
 __aicore__ inline void asc_half2int16_rna_sync(__ubuf__ int16_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int16_rna_sync_impl(dst, src, count);
@@ -3879,7 +3879,7 @@ __aicore__ inline void asc_half2int16_ru(__ubuf__ int16_t* dst, __ubuf__ half* s
     asc_half2int16_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int16_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int16_ru and asc_sync)
 __aicore__ inline void asc_half2int16_ru_sync(__ubuf__ int16_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int16_ru_sync_impl(dst, src, count);
@@ -3897,7 +3897,7 @@ __aicore__ inline void asc_half2int16_rd(__ubuf__ int16_t* dst, __ubuf__ half* s
     asc_half2int16_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int16_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int16_rd and asc_sync)
 __aicore__ inline void asc_half2int16_rd_sync(__ubuf__ int16_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int16_rd_sync_impl(dst, src, count);
@@ -3915,7 +3915,7 @@ __aicore__ inline void asc_half2int16_rn(__ubuf__ int16_t* dst, __ubuf__ half* s
     asc_half2int16_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int16_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int16_rn and asc_sync)
 __aicore__ inline void asc_half2int16_rn_sync(__ubuf__ int16_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int16_rn_sync_impl(dst, src, count);
@@ -3933,7 +3933,7 @@ __aicore__ inline void asc_half2int16_rz(__ubuf__ int16_t* dst, __ubuf__ half* s
     asc_half2int16_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int16_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int16_rz and asc_sync)
 __aicore__ inline void asc_half2int16_rz_sync(__ubuf__ int16_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int16_rz_sync_impl(dst, src, count);
@@ -3952,7 +3952,7 @@ __aicore__ inline void asc_half2int32_rna(__ubuf__ int32_t* dst, __ubuf__ half* 
     asc_half2int32_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int32_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int32_rna and asc_sync)
 __aicore__ inline void asc_half2int32_rna_sync(__ubuf__ int32_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int32_rna_sync_impl(dst, src, count);
@@ -3970,7 +3970,7 @@ __aicore__ inline void asc_half2int32_ru(__ubuf__ int32_t* dst, __ubuf__ half* s
     asc_half2int32_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int32_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int32_ru and asc_sync)
 __aicore__ inline void asc_half2int32_ru_sync(__ubuf__ int32_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int32_ru_sync_impl(dst, src, count);
@@ -3988,7 +3988,7 @@ __aicore__ inline void asc_half2int32_rd(__ubuf__ int32_t* dst, __ubuf__ half* s
     asc_half2int32_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int32_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int32_rd and asc_sync)
 __aicore__ inline void asc_half2int32_rd_sync(__ubuf__ int32_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int32_rd_sync_impl(dst, src, count);
@@ -4006,7 +4006,7 @@ __aicore__ inline void asc_half2int32_rn(__ubuf__ int32_t* dst, __ubuf__ half* s
     asc_half2int32_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int32_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int32_rn and asc_sync)
 __aicore__ inline void asc_half2int32_rn_sync(__ubuf__ int32_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int32_rn_sync_impl(dst, src, count);
@@ -4024,7 +4024,7 @@ __aicore__ inline void asc_half2int32_rz(__ubuf__ int32_t* dst, __ubuf__ half* s
     asc_half2int32_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int32_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int32_rz and asc_sync)
 __aicore__ inline void asc_half2int32_rz_sync(__ubuf__ int32_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int32_rz_sync_impl(dst, src, count);
@@ -4043,7 +4043,7 @@ __aicore__ inline void asc_half2int4(__ubuf__ int4b_t* dst, __ubuf__ half* src, 
     asc_half2int4_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int4 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int4 and asc_sync)
 __aicore__ inline void asc_half2int4_sync(__ubuf__ int4b_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int4_sync_impl(dst, src, count);
@@ -4061,7 +4061,7 @@ __aicore__ inline void asc_half2int4_rna(__ubuf__ int4b_t* dst, __ubuf__ half* s
     asc_half2int4_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int4_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int4_rna and asc_sync)
 __aicore__ inline void asc_half2int4_rna_sync(__ubuf__ int4b_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int4_rna_sync_impl(dst, src, count);
@@ -4079,7 +4079,7 @@ __aicore__ inline void asc_half2int4_ru(__ubuf__ int4b_t* dst, __ubuf__ half* sr
     asc_half2int4_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int4_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int4_ru and asc_sync)
 __aicore__ inline void asc_half2int4_ru_sync(__ubuf__ int4b_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int4_ru_sync_impl(dst, src, count);
@@ -4097,7 +4097,7 @@ __aicore__ inline void asc_half2int4_rd(__ubuf__ int4b_t* dst, __ubuf__ half* sr
     asc_half2int4_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int4_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int4_rd and asc_sync)
 __aicore__ inline void asc_half2int4_rd_sync(__ubuf__ int4b_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int4_rd_sync_impl(dst, src, count);
@@ -4115,7 +4115,7 @@ __aicore__ inline void asc_half2int4_rn(__ubuf__ int4b_t* dst, __ubuf__ half* sr
     asc_half2int4_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int4_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int4_rn and asc_sync)
 __aicore__ inline void asc_half2int4_rn_sync(__ubuf__ int4b_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int4_rn_sync_impl(dst, src, count);
@@ -4133,7 +4133,7 @@ __aicore__ inline void asc_half2int4_rz(__ubuf__ int4b_t* dst, __ubuf__ half* sr
     asc_half2int4_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int4_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int4_rz and asc_sync)
 __aicore__ inline void asc_half2int4_rz_sync(__ubuf__ int4b_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int4_rz_sync_impl(dst, src, count);
@@ -4152,7 +4152,7 @@ __aicore__ inline void asc_half2int8(__ubuf__ int8_t* dst, __ubuf__ half* src, u
     asc_half2int8_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int8 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int8 and asc_sync)
 __aicore__ inline void asc_half2int8_sync(__ubuf__ int8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int8_sync_impl(dst, src, count);
@@ -4170,7 +4170,7 @@ __aicore__ inline void asc_half2int8_rna(__ubuf__ int8_t* dst, __ubuf__ half* sr
     asc_half2int8_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int8_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int8_rna and asc_sync)
 __aicore__ inline void asc_half2int8_rna_sync(__ubuf__ int8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int8_rna_sync_impl(dst, src, count);
@@ -4188,7 +4188,7 @@ __aicore__ inline void asc_half2int8_ru(__ubuf__ int8_t* dst, __ubuf__ half* src
     asc_half2int8_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int8_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int8_ru and asc_sync)
 __aicore__ inline void asc_half2int8_ru_sync(__ubuf__ int8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int8_ru_sync_impl(dst, src, count);
@@ -4206,7 +4206,7 @@ __aicore__ inline void asc_half2int8_rd(__ubuf__ int8_t* dst, __ubuf__ half* src
     asc_half2int8_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int8_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int8_rd and asc_sync)
 __aicore__ inline void asc_half2int8_rd_sync(__ubuf__ int8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int8_rd_sync_impl(dst, src, count);
@@ -4224,7 +4224,7 @@ __aicore__ inline void asc_half2int8_rn(__ubuf__ int8_t* dst, __ubuf__ half* src
     asc_half2int8_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int8_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int8_rn and asc_sync)
 __aicore__ inline void asc_half2int8_rn_sync(__ubuf__ int8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int8_rn_sync_impl(dst, src, count);
@@ -4242,7 +4242,7 @@ __aicore__ inline void asc_half2int8_rz(__ubuf__ int8_t* dst, __ubuf__ half* src
     asc_half2int8_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2int8_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2int8_rz and asc_sync)
 __aicore__ inline void asc_half2int8_rz_sync(__ubuf__ int8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2int8_rz_sync_impl(dst, src, count);
@@ -4261,7 +4261,7 @@ __aicore__ inline void asc_half2uint8(__ubuf__ uint8_t* dst, __ubuf__ half* src,
     asc_half2uint8_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2uint8 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2uint8 and asc_sync)
 __aicore__ inline void asc_half2uint8_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2uint8_sync_impl(dst, src, count);
@@ -4279,7 +4279,7 @@ __aicore__ inline void asc_half2uint8_rna(__ubuf__ uint8_t* dst, __ubuf__ half* 
     asc_half2uint8_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2uint8_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2uint8_rna and asc_sync)
 __aicore__ inline void asc_half2uint8_rna_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2uint8_rna_sync_impl(dst, src, count);
@@ -4297,7 +4297,7 @@ __aicore__ inline void asc_half2uint8_ru(__ubuf__ uint8_t* dst, __ubuf__ half* s
     asc_half2uint8_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2uint8_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2uint8_ru and asc_sync)
 __aicore__ inline void asc_half2uint8_ru_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2uint8_ru_sync_impl(dst, src, count);
@@ -4315,7 +4315,7 @@ __aicore__ inline void asc_half2uint8_rd(__ubuf__ uint8_t* dst, __ubuf__ half* s
     asc_half2uint8_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2uint8_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2uint8_rd and asc_sync)
 __aicore__ inline void asc_half2uint8_rd_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2uint8_rd_sync_impl(dst, src, count);
@@ -4333,7 +4333,7 @@ __aicore__ inline void asc_half2uint8_rn(__ubuf__ uint8_t* dst, __ubuf__ half* s
     asc_half2uint8_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2uint8_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2uint8_rn and asc_sync)
 __aicore__ inline void asc_half2uint8_rn_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2uint8_rn_sync_impl(dst, src, count);
@@ -4351,7 +4351,7 @@ __aicore__ inline void asc_half2uint8_rz(__ubuf__ uint8_t* dst, __ubuf__ half* s
     asc_half2uint8_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_half2uint8_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_half2uint8_rz and asc_sync)
 __aicore__ inline void asc_half2uint8_rz_sync(__ubuf__ uint8_t* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_half2uint8_rz_sync_impl(dst, src, count);
@@ -4370,7 +4370,7 @@ __aicore__ inline void asc_float2half(__ubuf__ half* dst, __ubuf__ float* src, u
     asc_float2half_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half and asc_sync)
 __aicore__ inline void asc_float2half_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_sync_impl(dst, src, count);
@@ -4388,7 +4388,7 @@ __aicore__ inline void asc_float2half_rn(__ubuf__ half* dst, __ubuf__ float* src
     asc_float2half_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half_rn and asc_sync)
 __aicore__ inline void asc_float2half_rn_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_rn_sync_impl(dst, src, count);
@@ -4406,7 +4406,7 @@ __aicore__ inline void asc_float2half_rna(__ubuf__ half* dst, __ubuf__ float* sr
     asc_float2half_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half_rna and asc_sync)
 __aicore__ inline void asc_float2half_rna_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_rna_sync_impl(dst, src, count);
@@ -4424,7 +4424,7 @@ __aicore__ inline void asc_float2half_rd(__ubuf__ half* dst, __ubuf__ float* src
     asc_float2half_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half_rd and asc_sync)
 __aicore__ inline void asc_float2half_rd_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_rd_sync_impl(dst, src, count);
@@ -4442,7 +4442,7 @@ __aicore__ inline void asc_float2half_ru(__ubuf__ half* dst, __ubuf__ float* src
     asc_float2half_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half_ru and asc_sync)
 __aicore__ inline void asc_float2half_ru_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_ru_sync_impl(dst, src, count);
@@ -4460,7 +4460,7 @@ __aicore__ inline void asc_float2half_rz(__ubuf__ half* dst, __ubuf__ float* src
     asc_float2half_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half_rz and asc_sync)
 __aicore__ inline void asc_float2half_rz_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_rz_sync_impl(dst, src, count);
@@ -4478,7 +4478,7 @@ __aicore__ inline void asc_float2half_ro(__ubuf__ half* dst, __ubuf__ float* src
     asc_float2half_ro_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2half_ro and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2half_ro and asc_sync)
 __aicore__ inline void asc_float2half_ro_sync(__ubuf__ half* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2half_ro_sync_impl(dst, src, count);
@@ -4497,7 +4497,7 @@ __aicore__ inline void asc_float2float_rn(__ubuf__ float* dst, __ubuf__ float* s
     asc_float2float_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2float_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2float_rn and asc_sync)
 __aicore__ inline void asc_float2float_rn_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2float_rn_sync_impl(dst, src, count);
@@ -4515,7 +4515,7 @@ __aicore__ inline void asc_float2float_rd(__ubuf__ float* dst, __ubuf__ float* s
     asc_float2float_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2float_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2float_rd and asc_sync)
 __aicore__ inline void asc_float2float_rd_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2float_rd_sync_impl(dst, src, count);
@@ -4533,7 +4533,7 @@ __aicore__ inline void asc_float2float_ru(__ubuf__ float* dst, __ubuf__ float* s
     asc_float2float_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2float_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2float_ru and asc_sync)
 __aicore__ inline void asc_float2float_ru_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2float_ru_sync_impl(dst, src, count);
@@ -4552,7 +4552,7 @@ __aicore__ inline void asc_float2float_rna(__ubuf__ float* dst, __ubuf__ float* 
     asc_float2float_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2float_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2float_rna and asc_sync)
 __aicore__ inline void asc_float2float_rna_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2float_rna_sync_impl(dst, src, count);
@@ -4570,7 +4570,7 @@ __aicore__ inline void asc_float2float_rz(__ubuf__ float* dst, __ubuf__ float* s
     asc_float2float_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2float_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2float_rz and asc_sync)
 __aicore__ inline void asc_float2float_rz_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2float_rz_sync_impl(dst, src, count);
@@ -4590,7 +4590,7 @@ __aicore__ inline void asc_float2int16_rna(__ubuf__ int16_t* dst, __ubuf__ float
     asc_float2int16_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int16_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int16_rna and asc_sync)
 __aicore__ inline void asc_float2int16_rna_sync(__ubuf__ int16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int16_rna_sync_impl(dst, src, count);
@@ -4608,7 +4608,7 @@ __aicore__ inline void asc_float2int16_ru(__ubuf__ int16_t* dst, __ubuf__ float*
     asc_float2int16_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int16_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int16_ru and asc_sync)
 __aicore__ inline void asc_float2int16_ru_sync(__ubuf__ int16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int16_ru_sync_impl(dst, src, count);
@@ -4626,7 +4626,7 @@ __aicore__ inline void asc_float2int16_rd(__ubuf__ int16_t* dst, __ubuf__ float*
     asc_float2int16_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int16_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int16_rd and asc_sync)
 __aicore__ inline void asc_float2int16_rd_sync(__ubuf__ int16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int16_rd_sync_impl(dst, src, count);
@@ -4644,7 +4644,7 @@ __aicore__ inline void asc_float2int16_rn(__ubuf__ int16_t* dst, __ubuf__ float*
     asc_float2int16_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int16_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int16_rn and asc_sync)
 __aicore__ inline void asc_float2int16_rn_sync(__ubuf__ int16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int16_rn_sync_impl(dst, src, count);
@@ -4662,7 +4662,7 @@ __aicore__ inline void asc_float2int16_rz(__ubuf__ int16_t* dst, __ubuf__ float*
     asc_float2int16_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int16_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int16_rz and asc_sync)
 __aicore__ inline void asc_float2int16_rz_sync(__ubuf__ int16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int16_rz_sync_impl(dst, src, count);
@@ -4682,7 +4682,7 @@ __aicore__ inline void asc_float2int32_rna(__ubuf__ int32_t* dst, __ubuf__ float
     asc_float2int32_rna_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int32_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int32_rna and asc_sync)
 __aicore__ inline void asc_float2int32_rna_sync(__ubuf__ int32_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int32_rna_sync_impl(dst, src, count);
@@ -4700,7 +4700,7 @@ __aicore__ inline void asc_float2int32_ru(__ubuf__ int32_t* dst, __ubuf__ float*
     asc_float2int32_ru_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int32_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int32_ru and asc_sync)
 __aicore__ inline void asc_float2int32_ru_sync(__ubuf__ int32_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int32_ru_sync_impl(dst, src, count);
@@ -4718,7 +4718,7 @@ __aicore__ inline void asc_float2int32_rd(__ubuf__ int32_t* dst, __ubuf__ float*
     asc_float2int32_rd_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int32_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int32_rd and asc_sync)
 __aicore__ inline void asc_float2int32_rd_sync(__ubuf__ int32_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int32_rd_sync_impl(dst, src, count);
@@ -4736,7 +4736,7 @@ __aicore__ inline void asc_float2int32_rn(__ubuf__ int32_t* dst, __ubuf__ float*
     asc_float2int32_rn_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int32_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int32_rn and asc_sync)
 __aicore__ inline void asc_float2int32_rn_sync(__ubuf__ int32_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int32_rn_sync_impl(dst, src, count);
@@ -4754,7 +4754,7 @@ __aicore__ inline void asc_float2int32_rz(__ubuf__ int32_t* dst, __ubuf__ float*
     asc_float2int32_rz_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int32_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int32_rz and asc_sync)
 __aicore__ inline void asc_float2int32_rz_sync(__ubuf__ int32_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int32_rz_sync_impl(dst, src, count);
@@ -4774,7 +4774,7 @@ __aicore__ inline void asc_float2int64_rna(__ubuf__ int64_t* dst, __ubuf__ float
     asc_float2int64_rna_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int64_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int64_rna and asc_sync)
 __aicore__ inline void asc_float2int64_rna_sync(__ubuf__ int64_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int64_rna_sync_impl(dst, src, count);
@@ -4792,7 +4792,7 @@ __aicore__ inline void asc_float2int64_ru(__ubuf__ int64_t* dst, __ubuf__ float*
     asc_float2int64_ru_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int64_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int64_ru and asc_sync)
 __aicore__ inline void asc_float2int64_ru_sync(__ubuf__ int64_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int64_ru_sync_impl(dst, src, count);
@@ -4810,7 +4810,7 @@ __aicore__ inline void asc_float2int64_rd(__ubuf__ int64_t* dst, __ubuf__ float*
     asc_float2int64_rd_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int64_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int64_rd and asc_sync)
 __aicore__ inline void asc_float2int64_rd_sync(__ubuf__ int64_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int64_rd_sync_impl(dst, src, count);
@@ -4828,7 +4828,7 @@ __aicore__ inline void asc_float2int64_rn(__ubuf__ int64_t* dst, __ubuf__ float*
     asc_float2int64_rn_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int64_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int64_rn and asc_sync)
 __aicore__ inline void asc_float2int64_rn_sync(__ubuf__ int64_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int64_rn_sync_impl(dst, src, count);
@@ -4846,7 +4846,7 @@ __aicore__ inline void asc_float2int64_rz(__ubuf__ int64_t* dst, __ubuf__ float*
     asc_float2int64_rz_count_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2int64_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2int64_rz and asc_sync)
 __aicore__ inline void asc_float2int64_rz_sync(__ubuf__ int64_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2int64_rz_sync_impl(dst, src, count);
@@ -4866,7 +4866,7 @@ __aicore__ inline void asc_float2bfloat16_rn(__ubuf__ bfloat16_t* dst, __ubuf__ 
     asc_float2bfloat16_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2bfloat16_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2bfloat16_rn and asc_sync)
 __aicore__ inline void asc_float2bfloat16_rn_sync(__ubuf__ bfloat16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2bfloat16_rn_sync_impl(dst, src, count);
@@ -4885,7 +4885,7 @@ __aicore__ inline void asc_float2bfloat16_rna(__ubuf__ bfloat16_t* dst, __ubuf__
     asc_float2bfloat16_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2bfloat16_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2bfloat16_rna and asc_sync)
 __aicore__ inline void asc_float2bfloat16_rna_sync(__ubuf__ bfloat16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2bfloat16_rna_sync_impl(dst, src, count);
@@ -4904,7 +4904,7 @@ __aicore__ inline void asc_float2bfloat16_rd(__ubuf__ bfloat16_t* dst, __ubuf__ 
     asc_float2bfloat16_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2bfloat16_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2bfloat16_rd and asc_sync)
 __aicore__ inline void asc_float2bfloat16_rd_sync(__ubuf__ bfloat16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2bfloat16_rd_sync_impl(dst, src, count);
@@ -4923,7 +4923,7 @@ __aicore__ inline void asc_float2bfloat16_ru(__ubuf__ bfloat16_t* dst, __ubuf__ 
     asc_float2bfloat16_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2bfloat16_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2bfloat16_ru and asc_sync)
 __aicore__ inline void asc_float2bfloat16_ru_sync(__ubuf__ bfloat16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2bfloat16_ru_sync_impl(dst, src, count);
@@ -4942,7 +4942,7 @@ __aicore__ inline void asc_float2bfloat16_rz(__ubuf__ bfloat16_t* dst, __ubuf__ 
     asc_float2bfloat16_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_float2bfloat16_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_float2bfloat16_rz and asc_sync)
 __aicore__ inline void asc_float2bfloat16_rz_sync(__ubuf__ bfloat16_t* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_float2bfloat16_rz_sync_impl(dst, src, count);
@@ -4961,7 +4961,7 @@ __aicore__ inline void asc_deq_int322half(__ubuf__ half* dst, __ubuf__ int32_t* 
     asc_deq_int322half_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_deq_int322half and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_deq_int322half and asc_sync)
 __aicore__ inline void asc_deq_int322half_sync(__ubuf__ half* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_deq_int322half_sync_impl(dst, src, count);
@@ -4980,7 +4980,7 @@ __aicore__ inline void asc_deq_int162b8_h(
     asc_deq_int162b8_h_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_deq_int162b8_h and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_deq_int162b8_h and asc_sync)
 __aicore__ inline void asc_deq_int162b8_h_sync(__ubuf__ int8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_deq_int162b8_h_sync_impl(dst, src, count);
@@ -4998,7 +4998,7 @@ __aicore__ inline void asc_deq_int162b8_h(
     asc_deq_int162b8_h_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_deq_int162b8_h and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_deq_int162b8_h and asc_sync)
 __aicore__ inline void asc_deq_int162b8_h_sync(__ubuf__ uint8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_deq_int162b8_h_sync_impl(dst, src, count);
@@ -5016,7 +5016,7 @@ __aicore__ inline void asc_deq_int162b8_l(
     asc_deq_int162b8_l_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_deq_int162b8_l and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_deq_int162b8_l and asc_sync)
 __aicore__ inline void asc_deq_int162b8_l_sync(__ubuf__ int8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_deq_int162b8_l_sync_impl(dst, src, count);
@@ -5034,7 +5034,7 @@ __aicore__ inline void asc_deq_int162b8_l(
     asc_deq_int162b8_l_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_deq_int162b8_l and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_deq_int162b8_l and asc_sync)
 __aicore__ inline void asc_deq_int162b8_l_sync(__ubuf__ uint8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_deq_int162b8_l_sync_impl(dst, src, count);
@@ -5053,7 +5053,7 @@ __aicore__ inline void asc_int42half(__ubuf__ half* dst, __ubuf__ int4b_t* src, 
     asc_int42half_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int42half and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int42half and asc_sync)
 __aicore__ inline void asc_int42half_sync(__ubuf__ half* dst, __ubuf__ int4b_t* src, uint32_t count)
 {
     asc_int42half_sync_impl(dst, src, count);
@@ -5072,7 +5072,7 @@ __aicore__ inline void asc_int82half(__ubuf__ half* dst, __ubuf__ int8_t* src, u
     asc_int82half_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int82half and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int82half and asc_sync)
 __aicore__ inline void asc_int82half_sync(__ubuf__ half* dst, __ubuf__ int8_t* src, uint32_t count)
 {
     asc_int82half_sync_impl(dst, src, count);
@@ -5091,7 +5091,7 @@ __aicore__ inline void asc_uint82half(__ubuf__ half* dst, __ubuf__ uint8_t* src,
     asc_uint82half_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_uint82half and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_uint82half and asc_sync)
 __aicore__ inline void asc_uint82half_sync(__ubuf__ half* dst, __ubuf__ uint8_t* src, uint32_t count)
 {
     asc_uint82half_sync_impl(dst, src, count);
@@ -5110,7 +5110,7 @@ __aicore__ inline void asc_int162half(__ubuf__ half* dst, __ubuf__ int16_t* src,
     asc_int162half_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162half and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162half and asc_sync)
 __aicore__ inline void asc_int162half_sync(__ubuf__ half* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162half_sync_impl(dst, src, count);
@@ -5129,7 +5129,7 @@ __aicore__ inline void asc_int162half_rna(__ubuf__ half* dst, __ubuf__ int16_t* 
     asc_int162half_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162half_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162half_rna and asc_sync)
 __aicore__ inline void asc_int162half_rna_sync(__ubuf__ half* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162half_rna_sync_impl(dst, src, count);
@@ -5148,7 +5148,7 @@ __aicore__ inline void asc_int162half_ru(__ubuf__ half* dst, __ubuf__ int16_t* s
     asc_int162half_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162half_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162half_ru and asc_sync)
 __aicore__ inline void asc_int162half_ru_sync(__ubuf__ half* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162half_ru_sync_impl(dst, src, count);
@@ -5167,7 +5167,7 @@ __aicore__ inline void asc_int162half_rd(__ubuf__ half* dst, __ubuf__ int16_t* s
     asc_int162half_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162half_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162half_rd and asc_sync)
 __aicore__ inline void asc_int162half_rd_sync(__ubuf__ half* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162half_rd_sync_impl(dst, src, count);
@@ -5186,7 +5186,7 @@ __aicore__ inline void asc_int162half_rn(__ubuf__ half* dst, __ubuf__ int16_t* s
     asc_int162half_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162half_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162half_rn and asc_sync)
 __aicore__ inline void asc_int162half_rn_sync(__ubuf__ half* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162half_rn_sync_impl(dst, src, count);
@@ -5205,7 +5205,7 @@ __aicore__ inline void asc_int162half_rz(__ubuf__ half* dst, __ubuf__ int16_t* s
     asc_int162half_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162half_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162half_rz and asc_sync)
 __aicore__ inline void asc_int162half_rz_sync(__ubuf__ half* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162half_rz_sync_impl(dst, src, count);
@@ -5224,7 +5224,7 @@ __aicore__ inline void asc_int162float(__ubuf__ float* dst, __ubuf__ int16_t* sr
     asc_int162float_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int162float and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int162float and asc_sync)
 __aicore__ inline void asc_int162float_sync(__ubuf__ float* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_int162float_sync_impl(dst, src, count);
@@ -5243,7 +5243,7 @@ __aicore__ inline void asc_int322float(
     asc_int322float_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322float and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322float and asc_sync)
 __aicore__ inline void asc_int322float_sync(__ubuf__ float* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322float_sync_impl(dst, src, count);
@@ -5263,7 +5263,7 @@ __aicore__ inline void asc_int322float_rna(
         dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322float_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322float_rna and asc_sync)
 __aicore__ inline void asc_int322float_rna_sync(__ubuf__ float* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322float_rna_sync_impl(dst, src, count);
@@ -5282,7 +5282,7 @@ __aicore__ inline void asc_int322float_ru(
     asc_int322float_ru_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322float_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322float_ru and asc_sync)
 __aicore__ inline void asc_int322float_ru_sync(__ubuf__ float* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322float_ru_sync_impl(dst, src, count);
@@ -5301,7 +5301,7 @@ __aicore__ inline void asc_int322float_rd(
     asc_int322float_rd_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322float_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322float_rd and asc_sync)
 __aicore__ inline void asc_int322float_rd_sync(__ubuf__ float* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322float_rd_sync_impl(dst, src, count);
@@ -5320,7 +5320,7 @@ __aicore__ inline void asc_int322float_rn(
     asc_int322float_rn_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322float_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322float_rn and asc_sync)
 __aicore__ inline void asc_int322float_rn_sync(__ubuf__ float* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322float_rn_sync_impl(dst, src, count);
@@ -5339,7 +5339,7 @@ __aicore__ inline void asc_int322float_rz(
     asc_int322float_rz_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322float_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322float_rz and asc_sync)
 __aicore__ inline void asc_int322float_rz_sync(__ubuf__ float* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322float_rz_sync_impl(dst, src, count);
@@ -5358,7 +5358,7 @@ __aicore__ inline void asc_int322int16(__ubuf__ int16_t* dst, __ubuf__ int32_t* 
     asc_int322int16_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322int16 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322int16 and asc_sync)
 __aicore__ inline void asc_int322int16_sync(__ubuf__ int16_t* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322int16_sync_impl(dst, src, count);
@@ -5377,7 +5377,7 @@ __aicore__ inline void asc_int322int64(__ubuf__ int64_t* dst, __ubuf__ int32_t* 
     asc_int322int64_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int322int64 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int322int64 and asc_sync)
 __aicore__ inline void asc_int322int64_sync(__ubuf__ int64_t* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_int322int64_sync_impl(dst, src, count);
@@ -5396,7 +5396,7 @@ __aicore__ inline void asc_int642int32(__ubuf__ int32_t* dst, __ubuf__ int64_t* 
     asc_int642int32_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int642int32 and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int642int32 and asc_sync)
 __aicore__ inline void asc_int642int32_sync(__ubuf__ int32_t* dst, __ubuf__ int64_t* src, uint32_t count)
 {
     asc_int642int32_sync_impl(dst, src, count);
@@ -5416,7 +5416,7 @@ __aicore__ inline void asc_int642float_rna(__ubuf__ float* dst, __ubuf__ int64_t
     asc_int642float_rna_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int642float_rna and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int642float_rna and asc_sync)
 __aicore__ inline void asc_int642float_rna_sync(__ubuf__ float* dst, __ubuf__ int64_t* src, uint32_t count)
 {
     asc_int642float_rna_sync_impl(dst, src, count);
@@ -5435,7 +5435,7 @@ __aicore__ inline void asc_int642float_ru(__ubuf__ float* dst, __ubuf__ int64_t*
     asc_int642float_ru_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int642float_ru and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int642float_ru and asc_sync)
 __aicore__ inline void asc_int642float_ru_sync(__ubuf__ float* dst, __ubuf__ int64_t* src, uint32_t count)
 {
     asc_int642float_ru_sync_impl(dst, src, count);
@@ -5454,7 +5454,7 @@ __aicore__ inline void asc_int642float_rd(__ubuf__ float* dst, __ubuf__ int64_t*
     asc_int642float_rd_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int642float_rd and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int642float_rd and asc_sync)
 __aicore__ inline void asc_int642float_rd_sync(__ubuf__ float* dst, __ubuf__ int64_t* src, uint32_t count)
 {
     asc_int642float_rd_sync_impl(dst, src, count);
@@ -5473,7 +5473,7 @@ __aicore__ inline void asc_int642float_rn(__ubuf__ float* dst, __ubuf__ int64_t*
     asc_int642float_rn_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int642float_rn and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int642float_rn and asc_sync)
 __aicore__ inline void asc_int642float_rn_sync(__ubuf__ float* dst, __ubuf__ int64_t* src, uint32_t count)
 {
     asc_int642float_rn_sync_impl(dst, src, count);
@@ -5492,7 +5492,7 @@ __aicore__ inline void asc_int642float_rz(__ubuf__ float* dst, __ubuf__ int64_t*
     asc_int642float_rz_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_int642float_rz and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_int642float_rz and asc_sync)
 __aicore__ inline void asc_int642float_rz_sync(__ubuf__ float* dst, __ubuf__ int64_t* src, uint32_t count)
 {
     asc_int642float_rz_sync_impl(dst, src, count);
@@ -5511,7 +5511,7 @@ __aicore__ inline void asc_vdeq_int162b8_h(
     asc_vdeqs162b8h_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_vdeq_int162b8_h and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_vdeq_int162b8_h and asc_sync)
 __aicore__ inline void asc_vdeq_int162b8_h_sync(__ubuf__ int8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_vdeqs162b8h_sync_impl(dst, src, count);
@@ -5529,7 +5529,7 @@ __aicore__ inline void asc_vdeq_int162b8_h(
     asc_vdeqs162b8h_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_vdeq_int162b8_h and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_vdeq_int162b8_h and asc_sync)
 __aicore__ inline void asc_vdeq_int162b8_h_sync(__ubuf__ uint8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_vdeqs162b8h_sync_impl(dst, src, count);
@@ -5548,7 +5548,7 @@ __aicore__ inline void asc_vdeq_int162b8_l(__ubuf__ int8_t* dst, __ubuf__ int16_
     asc_vdeqs162b8l_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_vdeq_int162b8_l and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_vdeq_int162b8_l and asc_sync)
 __aicore__ inline void asc_vdeq_int162b8_l_sync(__ubuf__ int8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_vdeqs162b8l_sync_impl(dst, src, count);
@@ -5566,7 +5566,7 @@ __aicore__ inline void asc_vdeq_int162b8_l(__ubuf__ uint8_t* dst, __ubuf__ int16
     asc_vdeqs162b8l_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_vdeq_int162b8_l and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_vdeq_int162b8_l and asc_sync)
 __aicore__ inline void asc_vdeq_int162b8_l_sync(__ubuf__ uint8_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_vdeqs162b8l_sync_impl(dst, src, count);
@@ -5575,7 +5575,7 @@ __aicore__ inline void asc_vdeq_int162b8_l_sync(__ubuf__ uint8_t* dst, __ubuf__ 
 // ==========asc_transpose(int16_t/uint16_t)==========
 __aicore__ inline void asc_transpose(__ubuf__ int16_t* dst, __ubuf__ int16_t* src) { asc_transpose_impl(dst, src); }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_transpose and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transpose and asc_sync)
 __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src)
 {
     asc_transpose_sync_impl(dst, src);
@@ -5583,7 +5583,7 @@ __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_
 
 __aicore__ inline void asc_transpose(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src) { asc_transpose_impl(dst, src); }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_transpose and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transpose and asc_sync)
 __aicore__ inline void asc_transpose_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src)
 {
     asc_transpose_sync_impl(dst, src);
@@ -5597,8 +5597,7 @@ __aicore__ inline void asc_transto5hd_b8(
     asc_transto5hd_b8_impl(dst, src, repeat, dst_stride, src_stride, dst_high_half, src_high_half);
 }
 
-[[deprecated("NOTICE: asc_transto5hd_b8_sync is deprecated. "
-             "Please use asc_transto5hd_b8 and asc_sync instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transto5hd_b8 and asc_sync)
 __aicore__ inline void asc_transto5hd_b8_sync(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride, bool dst_high_half,
     bool src_high_half)
@@ -5612,8 +5611,7 @@ __aicore__ inline void asc_transto5hd_b16(
     asc_transto5hd_b16_impl(dst, src, repeat, dst_stride, src_stride);
 }
 
-[[deprecated("NOTICE: asc_transto5hd_b16_sync is deprecated. "
-             "Please use asc_transto5hd_b16 and asc_sync instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transto5hd_b16 and asc_sync)
 __aicore__ inline void asc_transto5hd_b16_sync(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
 {
@@ -5626,8 +5624,7 @@ __aicore__ inline void asc_transto5hd_b32(
     asc_transto5hd_b32_impl(dst, src, repeat, dst_stride, src_stride);
 }
 
-[[deprecated("NOTICE: asc_transto5hd_b32_sync is deprecated. "
-             "Please use asc_transto5hd_b32 and asc_sync instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transto5hd_b32 and asc_sync)
 __aicore__ inline void asc_transto5hd_b32_sync(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
 {
@@ -5646,7 +5643,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ half* dst, half src, uint32_t coun
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ half* dst, half src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5663,7 +5660,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ int16_t* dst, int16_t src, uint32_
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ int16_t* dst, int16_t src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5680,7 +5677,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ uint16_t* dst, uint16_t src, uint3
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ uint16_t* dst, uint16_t src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5697,7 +5694,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ bfloat16_t* dst, bfloat16_t src, u
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ bfloat16_t* dst, bfloat16_t src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5714,7 +5711,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ float* dst, float src, uint32_t co
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ float* dst, float src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5731,7 +5728,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ int32_t* dst, int32_t src, uint32_
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ int32_t* dst, int32_t src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5748,7 +5745,7 @@ __aicore__ inline void asc_duplicate(__ubuf__ uint32_t* dst, uint32_t src, uint3
     asc_duplicate_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_duplicate and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_duplicate and asc_sync)
 __aicore__ inline void asc_duplicate_sync(__ubuf__ uint32_t* dst, uint32_t src, uint32_t count)
 {
     asc_duplicate_sync_impl(dst, src, count);
@@ -5762,7 +5759,7 @@ __aicore__ inline void asc_brcb(
     asc_brcb_impl(dst, src, dst_block_stride, dst_repeat_stride, repeat);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_brcb and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_brcb and asc_sync)
 __aicore__ inline void asc_brcb_sync(
     __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, uint16_t dst_block_stride, uint16_t dst_repeat_stride,
     uint8_t repeat)
@@ -5777,7 +5774,7 @@ __aicore__ inline void asc_brcb(
     asc_brcb_impl(dst, src, dst_block_stride, dst_repeat_stride, repeat);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_brcb and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_brcb and asc_sync)
 __aicore__ inline void asc_brcb_sync(
     __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, uint16_t dst_block_stride, uint16_t dst_repeat_stride,
     uint8_t repeat)
@@ -5801,7 +5798,7 @@ __aicore__ inline void asc_pair_reduce_sum(__ubuf__ half* dst, __ubuf__ half* sr
     asc_pair_reduce_sum_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_pair_reduce_sum and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pair_reduce_sum and asc_sync)
 __aicore__ inline void asc_pair_reduce_sum_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
 {
     asc_pair_reduce_sum_sync_impl(dst, src, count);
@@ -5819,7 +5816,7 @@ __aicore__ inline void asc_pair_reduce_sum(__ubuf__ float* dst, __ubuf__ float* 
     asc_pair_reduce_sum_impl(dst, src, count);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_pair_reduce_sum and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_pair_reduce_sum and asc_sync)
 __aicore__ inline void asc_pair_reduce_sum_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
 {
     asc_pair_reduce_sum_sync_impl(dst, src, count);
@@ -5838,7 +5835,7 @@ __aicore__ inline void asc_copy(
     asc_copy_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy and asc_sync)
 __aicore__ inline void asc_copy_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src, uint32_t count)
 {
     asc_copy_sync_impl(dst, src, count);
@@ -5856,7 +5853,7 @@ __aicore__ inline void asc_copy(
     asc_copy_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy and asc_sync)
 __aicore__ inline void asc_copy_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src, uint32_t count)
 {
     asc_copy_sync_impl(dst, src, count);
@@ -5874,7 +5871,7 @@ __aicore__ inline void asc_copy(
     asc_copy_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy and asc_sync)
 __aicore__ inline void asc_copy_sync(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, uint32_t count)
 {
     asc_copy_sync_impl(dst, src, count);
@@ -5892,7 +5889,7 @@ __aicore__ inline void asc_copy(
     asc_copy_impl(dst, src, repeat, dst_block_stride, src_block_stride, dst_repeat_stride, src_repeat_stride);
 }
 
-ASC_DEPRECATED(9.2.0, "2028/09/03", asc_copy and asc_sync)
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy and asc_sync)
 __aicore__ inline void asc_copy_sync(__ubuf__ uint32_t* dst, __ubuf__ uint32_t* src, uint32_t count)
 {
     asc_copy_sync_impl(dst, src, count);

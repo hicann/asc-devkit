@@ -33,8 +33,6 @@ __aicore__ inline void asc_set_atomic_add_int8();
 __aicore__ inline void asc_set_atomic_add_int16();
 __aicore__ inline void asc_set_atomic_add_int32();
 __aicore__ inline void asc_disable_dma_atomic();
-[[deprecated("NOTICE: asc_set_atomic_none is deprecated. Please use asc_disable_dma_atomic instead.")]]
-__aicore__ inline void asc_set_atomic_none();
 __aicore__ inline void asc_set_atomic_add_bfloat();
 __aicore__ inline void asc_set_atomic_add_float16();
 __aicore__ inline void asc_set_atomic_max_bfloat();
@@ -50,13 +48,16 @@ __aicore__ inline void asc_set_atomic_min_int8();
 __aicore__ inline void asc_set_atomic_min_int16();
 __aicore__ inline void asc_set_atomic_min_int32();
 
-[[deprecated("NOTICE: asc_set_atomic_add_int is deprecated. Please use asc_set_atomic_add_int32 instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_disable_dma_atomic)
+__aicore__ inline void asc_set_atomic_none();
+
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_add_int32)
 __aicore__ inline void asc_set_atomic_add_int();
 
-[[deprecated("NOTICE: asc_set_atomic_max_int is deprecated. Please use asc_set_atomic_max_int32 instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_max_int32)
 __aicore__ inline void asc_set_atomic_max_int();
 
-[[deprecated("NOTICE: asc_set_atomic_min_int is deprecated. Please use asc_set_atomic_min_int32 instead.")]]
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_min_int32)
 __aicore__ inline void asc_set_atomic_min_int();
 
 #endif

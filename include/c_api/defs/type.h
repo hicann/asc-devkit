@@ -16,6 +16,7 @@
 #ifndef INCLUDE_C_API_DEFS_TYPE_H
 #define INCLUDE_C_API_DEFS_TYPE_H
 
+#include "c_api/defs/macro.h"
 #include "impl/utils/common_types.h"
 
 using vector_uint8_t = vector_u8;
@@ -40,7 +41,7 @@ using vector_int4x2_t = vector_s4x2;
 using vector_fp4x2_e2m1_t = vector_f4e2m1x2;
 using vector_fp4x2_e1m2_t = vector_f4e1m2x2;
 // iter_reg has been deprecated, please use addr_reg instead.
-using iter_reg [[deprecated("iter_reg has been deprecated, please use addr_reg instead.")]] = addr_reg;
+using iter_reg ASC_DEPRECATED(9.2.0, "2027/09/07", addr_reg) = addr_reg;
 
 #endif
 

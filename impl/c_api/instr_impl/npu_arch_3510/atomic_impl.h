@@ -18,6 +18,7 @@
 #ifndef IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_ATOMIC_IMPL_H
 #define IMPL_C_API_INSTR_IMPL_NPU_ARCH_3510_ATOMIC_IMPL_H
 
+#include "c_api/defs/defs.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_add_float16_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_max_float_impl.h"
 #include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl/asc_set_atomic_add_bfloat_impl.h"
@@ -75,12 +76,6 @@ __aicore__ inline void asc_set_atomic_max_float16() { asc_set_atomic_max_float16
 /// Clears the atomic operation state, disabling any active atomic add/max/min.
 __aicore__ inline void asc_disable_dma_atomic() { asc_disable_dma_atomic_impl(); }
 
-[[deprecated("NOTICE: asc_set_atomic_none is deprecated. Please use asc_disable_dma_atomic instead.")]]
-__aicore__ inline void asc_set_atomic_none()
-{
-    asc_disable_dma_atomic();
-}
-
 /// Enables atomic max for data transfer from Unified Buffer/L0C Buffer/L1 Buffer to
 /// Global Memory with bfloat16 precision (bfloat16_t).
 __aicore__ inline void asc_set_atomic_max_bfloat() { asc_set_atomic_max_bfloat_impl(); }
@@ -127,42 +122,34 @@ __aicore__ inline void asc_set_atomic_min_int32() { asc_set_atomic_min_int32_imp
 
 // ==================== Deprecated interfaces ====================
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_disable_dma_atomic)
+__aicore__ inline void asc_set_atomic_none() { asc_disable_dma_atomic(); }
+
 /// \deprecated Use asc_atomic_add for atomic add operation instead.
-[[deprecated("NOTICE: asc_set_store_atomic_config_v2 is deprecated."
-             "Please use asc_atomic_add instead for atomic add operation.")]] __aicore__ inline void
-asc_set_store_atomic_config_v2(uint16_t type, uint16_t op)
+ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
+__aicore__ inline void asc_set_store_atomic_config_v2(uint16_t type, uint16_t op)
 {
     asc_set_store_atomic_config_v2_impl(type, op);
 }
 
 /// \deprecated Use asc_atomic_add for atomic add operation instead.
-[[deprecated("NOTICE: asc_get_store_atomic_config is deprecated on Ascend 950PR/Ascend 950DT."
-             "Please use asc_atomic_add instead for atomic add operation.")]] __aicore__ inline void
-asc_get_store_atomic_config(asc_store_atomic_config& config)
+ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
+__aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config)
 {
     asc_get_store_atomic_config_impl(config);
 }
 
 /// \deprecated Use asc_set_atomic_add_int32 instead.
-[[deprecated("NOTICE: asc_set_atomic_add_int is deprecated. Please use asc_set_atomic_add_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_add_int()
-{
-    asc_set_atomic_add_int_impl();
-}
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_add_int32)
+__aicore__ inline void asc_set_atomic_add_int() { asc_set_atomic_add_int_impl(); }
 
 /// \deprecated Use asc_set_atomic_max_int32 instead.
-[[deprecated("NOTICE: asc_set_atomic_max_int is deprecated. Please use asc_set_atomic_max_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_max_int()
-{
-    asc_set_atomic_max_int_impl();
-}
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_max_int32)
+__aicore__ inline void asc_set_atomic_max_int() { asc_set_atomic_max_int_impl(); }
 
 /// \deprecated Use asc_set_atomic_min_int32 instead.
-[[deprecated("NOTICE: asc_set_atomic_min_int is deprecated. Please use asc_set_atomic_min_int32 instead.")]]
-__aicore__ inline void asc_set_atomic_min_int()
-{
-    asc_set_atomic_min_int_impl();
-}
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_atomic_min_int32)
+__aicore__ inline void asc_set_atomic_min_int() { asc_set_atomic_min_int_impl(); }
 
 #endif
 
