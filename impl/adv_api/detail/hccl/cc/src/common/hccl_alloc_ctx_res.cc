@@ -33,7 +33,7 @@ CommEngine OpExecuteConfigToCommEngine(uint8_t commEngine)
     return COMM_ENGINE_RESERVED;
 }
 
-HcclResult CheckInputParam(const HcclComm comm, const void* mc2Tiling, const aclrtStream stream)
+HcclResult CheckInputParam(const void* comm, const void* mc2Tiling, const void* stream)
 {
     // 检查comm是否为空指针
     RPT_INPUT_ERR(

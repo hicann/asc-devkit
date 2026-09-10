@@ -379,7 +379,7 @@ HcclResult InsTempUBXAllToAllVMesh1D::RunPairwiseStep(const std::vector<ThreadHa
 HcclResult InsTempUBXAllToAllVMesh1D::RunPairwiseChannel(
     const TemplateDataParams& tempAlgParams, const std::vector<ChannelInfo>& channelSendRecv,
     const std::vector<ThreadHandle>& threads, u32 targetRank, u32 channelIndex, u64& innerSendOffset,
-    u64& innerRecvOffset, u64 curSendDataCount, u64 curRecvDataCount)
+    u64& innerRecvOffset, u64 curSendDataCount, u64 curRecvDataCount) const
 {
     const u32 linkNumSendRecv = channelSendRecv.size();
     const float dataSplitRate = static_cast<float>(1.0) / static_cast<float>(linkNumSendRecv);

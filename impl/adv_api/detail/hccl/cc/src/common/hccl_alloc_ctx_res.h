@@ -118,7 +118,7 @@ typedef HcclResult (*OpParamPrepareFunc)(
 
 CommEngine OpExecuteConfigToCommEngine(uint8_t commEngine);
 
-HcclResult CheckInputParam(const HcclComm comm, const void* mc2Tiling, const aclrtStream stream);
+HcclResult CheckInputParam(const void* comm, const void* mc2Tiling, const void* stream);
 
 HcclResult HcclGetTilingList(const void* mc2Tiling, const void* p[], uint32_t& cnt);
 

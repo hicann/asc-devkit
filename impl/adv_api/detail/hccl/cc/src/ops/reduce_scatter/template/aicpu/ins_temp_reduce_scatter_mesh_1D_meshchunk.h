@@ -50,7 +50,7 @@ private:
     HcclResult PrepareSlicesAndValidate(const TemplateDataParams& params, const TemplateResource& resources);
     HcclResult RunReduceScatter(
         const std::map<u32, std::vector<ChannelInfo>>& channels, const std::vector<ThreadHandle>& threads,
-        const TemplateDataParams& tempAlgParams, RankSliceInfo& sliceInfoVec);
+        const TemplateDataParams& tempAlgParams, const RankSliceInfo& sliceInfoVec);
     HcclResult DoMeshChunk(
         const std::map<u32, std::vector<ChannelInfo>>& channels, const std::vector<ThreadHandle>& threads,
         const TemplateDataParams& tempAlgParams, const std::vector<uint64_t>& sliceSize, const u32& repeatIdx,

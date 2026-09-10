@@ -66,7 +66,7 @@ private:
     HcclResult RunPairwiseChannel(
         const TemplateDataParams& tempAlgParams, const std::vector<ChannelInfo>& channelSendRecv,
         const std::vector<ThreadHandle>& threads, u32 targetRank, u32 channelIndex, u64& innerSendOffset,
-        u64& innerRecvOffset, u64 curSendDataCount, u64 curRecvDataCount);
+        u64& innerRecvOffset, u64 curSendDataCount, u64 curRecvDataCount) const;
     HcclResult RunPairwiseTransfer(
         const ChannelInfo& channel, const std::vector<ThreadHandle>& threads, u32 queId,
         const std::vector<DataSlice>& txSrcSlices, const std::vector<DataSlice>& txDstSlices,
