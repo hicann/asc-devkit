@@ -49,7 +49,11 @@ template <typename... Args>
 template <const typename copy_atom<copy_traits<Args...>>::trait_type& traits, typename... Params>
 __aicore__ inline void copy_atom<copy_traits<Args...>>::call(const Params&... params) const
 {
-    copy_traits_type::template copy_unpack<traits>(params...);
+    if constexpr (has_pascal_copy_unpack_method<void, copy_traits_type, trait_type, traits, Params...>::value) {
+        static_cast<const copy_traits_type&>(*this).template CopyUnpack<traits, Params...>(params...);
+    } else {
+        static_cast<const copy_traits_type&>(*this).template copy_unpack<traits, Params...>(params...);
+    }
 }
 
 template <typename... Args>

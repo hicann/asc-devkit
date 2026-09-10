@@ -27,6 +27,23 @@
 namespace asc {
 namespace te {
 
+template <typename AlwaysVoid, typename CopyOperation, typename Trait, const Trait& trait, typename... Args>
+struct has_pascal_copy_method : Std::false_type {};
+
+template <typename CopyOperation, typename Trait, const Trait& trait, typename... Args>
+struct has_pascal_copy_method<
+    void_t<decltype(CopyOperation::template Copy<Trait, trait, Args...>(std::declval<Args>()...))>, CopyOperation,
+    Trait, trait, Args...> : Std::true_type {};
+
+template <typename AlwaysVoid, typename CopyTraitsType, typename Trait, const Trait& trait, typename... Args>
+struct has_pascal_copy_unpack_method : Std::false_type {};
+
+template <typename CopyTraitsType, typename Trait, const Trait& trait, typename... Args>
+struct has_pascal_copy_unpack_method<
+    void_t<decltype(std::declval<const CopyTraitsType&>().template CopyUnpack<trait, Args...>(
+        std::declval<Args>()...))>,
+    CopyTraitsType, Trait, trait, Args...> : Std::true_type {};
+
 template <typename CopyOperation, typename CopyTrait, typename CopyOperationWith, typename CopyTraitWith>
 template <typename Params>
 __aicore__ inline constexpr copy_traits<CopyOperationWith, CopyTraitWith>
@@ -42,7 +59,11 @@ template <
 __aicore__ inline void copy_traits<CopyOperation, CopyTrait, CopyOperationWith, CopyTraitWith>::copy_unpack(
     const Args&... args) const
 {
-    CopyOperation::template copy<trait_type, trait, Args...>(args...);
+    if constexpr (has_pascal_copy_method<void, CopyOperation, trait_type, trait, Args...>::value) {
+        CopyOperation::template Copy<trait_type, trait, Args...>(args...);
+    } else {
+        CopyOperation::template copy<trait_type, trait, Args...>(args...);
+    }
 }
 
 } // namespace te
