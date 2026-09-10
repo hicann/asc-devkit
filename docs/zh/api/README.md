@@ -1280,6 +1280,7 @@
             -   [系统同步能力概述](SIMD-API/c_api/sync/system_sync_overview.md)
             -   [核内同步能力概述](SIMD-API/c_api/sync/intra_core_sync_overview.md)
             -   [核间同步能力概述](SIMD-API/c_api/sync/inter_core_sync_overview.md)
+            -   [关键特性说明](SIMD-API/c_api/sync/key_features.md)
             -   [asc_lock](SIMD-API/c_api/sync/asc_lock.md)
             -   [asc_sync](SIMD-API/c_api/sync/asc_sync.md)
             -   [asc_sync_block_arrive](SIMD-API/c_api/sync/asc_sync_block_arrive.md)
