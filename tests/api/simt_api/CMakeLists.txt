@@ -96,14 +96,6 @@ foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
         TARGET ascendc_ut_simt_api_${product_type}
         TASK_NUM 1
     )
-    add_subdirectory(math)
-    add_dependencies(ascendc_ut_simt_api_${product_type} math)
-    add_subdirectory(math_half)
-    add_dependencies(ascendc_ut_simt_api_${product_type} math_half)
-    add_subdirectory(math_bfloat16)
-    add_dependencies(ascendc_ut_simt_api_${product_type} math_bfloat16)
-    add_subdirectory(math_cpp)
-    add_dependencies(ascendc_ut_simt_api_${product_type} math_cpp)
 
     if("${product_type}" STREQUAL "ascend950pr_9599")
         set(SIMT_SUBNORMAL_TARGETS
