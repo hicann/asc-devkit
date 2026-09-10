@@ -12,33 +12,6 @@
 
 ## C API
 
-### 数据搬运
-
-<!-- npu="950" id1 -->
-- [asc_set_gm2ub_pad](../SIMD-API/c_api/deprecated_interface/asc_set_gm2ub_pad_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_set_copy_pad_val](../SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md)接口。
-<!-- end id1 -->
-
-<!-- npu="950" id2 -->
-- [asc_copy_gm2ub_align](../SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)接口（仅Ascend 950PR/Ascend 950DT上原高维切分搬运形式函数原型）
-
-    Ascend 950PR/Ascend 950DT上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
-<!-- end id2 -->
-
-<!-- npu="950" id3 -->
-- [asc_copy_ub2gm_align](../SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)接口（仅Ascend 950PR/Ascend 950DT上原高维切分搬运形式函数原型）
-
-    Ascend 950PR/Ascend 950DT上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_store_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
-<!-- end id3 -->
-
-<!-- npu="950" id4 -->
-- [asc_ndim_copy_gm2ub](../SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)
-
-    此接口的原函数原型已废弃，请使用[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
-<!-- end id4 -->
-
-
 ### 原子操作
 
 <!-- npu="950" id5 -->
@@ -77,6 +50,8 @@
 
     此接口后续版本会废弃，请使用[内置变量block_num](../../guide/programming_guide/language_extension/simd_builtin_keywords.md#内置变量)。
 
+### 特殊寄存器访问
+
 - [asc_get_ar_spr](../SIMD-API/c_api/deprecated_interface/asc_get_ar_spr_deprecated.md)接口
 
     此接口后续版本会废弃，请使用[asc_get_squeeze_status](../SIMD-API/c_api/spr/asc_get_squeeze_status.md)接口。
@@ -84,7 +59,9 @@
 <!-- end id6 -->
 
 <!-- npu="950" id7 -->
-### Reg数据搬运
+### Reg矢量计算
+
+#### Reg数据搬入
 
 - [asc_loadalign_brc_v2](../SIMD-API/c_api/deprecated_interface/asc_loadalign_v1_deprecated.md)接口（无偏移量原型）
 
@@ -174,6 +151,8 @@
 
     原asc_loadalign重载之一，已拆分为独立函数[asc_loadalign_upsample](../SIMD-API/c_api/reg_compute/load/asc_loadalign_upsample.md)。
 
+#### Reg数据搬出
+
 - [asc_storealign_pack_v2](../SIMD-API/c_api/deprecated_interface/asc_storealign_v1_deprecated.md)接口（无偏移量原型）
 
     此接口后续版本会废弃，请使用[asc_storealign_pack_quarter](../SIMD-API/c_api/reg_compute/store/asc_storealign_pack_quarter.md)接口。
@@ -233,7 +212,7 @@
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
-### Reg矢量计算
+#### 逻辑计算
 
 - [asc_and](../SIMD-API/c_api/deprecated_interface/asc_and_deprecated.md)接口（浮点类型重载）
 
@@ -242,6 +221,8 @@
 - [asc_or](../SIMD-API/c_api/deprecated_interface/asc_or_deprecated.md)接口（浮点类型重载）
 
     `asc_or`的浮点类型重载已废弃，请按位宽选择对应整数重载替代，详情请参见[asc_or](../SIMD-API/c_api/reg_compute/reg_logic/asc_or.md)。
+
+#### 类型转换
 
 - [asc_float2bfloat16](../SIMD-API/c_api/deprecated_interface/asc_float2bfloat16_deprecated.md)接口（通过接口后缀来控制目的操作数写入位置的三参数原型）
 
@@ -359,22 +340,6 @@
 
     旧原型已废弃，请使用[asc_half2uint8](../SIMD-API/c_api/reg_compute/reg_convert/asc_half2uint8.md)的显式位置参数重载。
 
-- [asc_squeeze_v2](../SIMD-API/c_api/deprecated_interface/asc_squeeze_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
-
-- [asc_squeeze_with_status](../SIMD-API/c_api/deprecated_interface/asc_squeeze_with_status_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
-
-- [asc_clear_ar_spr](../SIMD-API/c_api/deprecated_interface/asc_clear_ar_spr_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign_init](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md)接口。
-
-- [asc_create_iter_reg](../SIMD-API/c_api/deprecated_interface/asc_create_iter_reg_deprecated.md)接口
-
-    此接口后续版本会废弃，请使用[asc_update_addr_reg](../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md)接口。
-
 - [asc_bfloat162e2m1x2](../SIMD-API/c_api/deprecated_interface/asc_bfloat162e2m1x2_deprecated.md)接口
 
     旧原型已废弃，请使用[asc_bfloat162e2m1x2](../SIMD-API/c_api/reg_compute/reg_convert/asc_bfloat162e2m1x2.md)的显式位置参数重载。
@@ -447,6 +412,8 @@
 
     旧原型已废弃，请使用[asc_uint322uint8](../SIMD-API/c_api/reg_compute/reg_convert/asc_uint322uint8.md)的显式位置参数重载。
 
+#### 复合计算
+
 - [asc_muls](../SIMD-API/c_api/deprecated_interface/asc_muls_deprecated.md)接口
 
     此接口后续版本会废弃。
@@ -454,6 +421,20 @@
 - [asc_exp_sub](../SIMD-API/c_api/deprecated_interface/asc_exp_sub_deprecated.md)接口
 
     `half`输入且不带`src_pos`参数的`asc_exp_sub`原型以及`asc_exp_sub_v2`原型已废弃。`float`输入请使用`asc_exp_sub`原型，`half`输入请使用带显式`src_pos`参数的`asc_exp_sub_half2float`原型。
+
+#### 排布变换
+
+- [asc_squeeze_v2](../SIMD-API/c_api/deprecated_interface/asc_squeeze_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
+
+- [asc_squeeze_with_status](../SIMD-API/c_api/deprecated_interface/asc_squeeze_with_status_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md)接口。
+
+- [asc_clear_ar_spr](../SIMD-API/c_api/deprecated_interface/asc_clear_ar_spr_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_squeeze_and_storeunalign_init](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md)接口。
 
 - [asc_pack](../SIMD-API/c_api/deprecated_interface/asc_pack_deprecated.md)接口
 
@@ -463,6 +444,12 @@
 
     此接口后续版本会废弃，请使用[asc_pack_to_high](../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_high.md)接口。
 
+#### 地址寄存器操作
+
+- [asc_create_iter_reg](../SIMD-API/c_api/deprecated_interface/asc_create_iter_reg_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_update_addr_reg](../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md)接口。
+
 <!-- end id8 -->
 
 ### 同步控制
@@ -470,12 +457,6 @@
 - [asc_sync_vec（无入参原型）](../SIMD-API/c_api/sync/asc_sync_vec.md)接口
 
     `asc_sync_vec()`接口已废弃，请使用[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)执行针对所有流水线的同步操作。
-
-### 矢量计算
-
-- [asc_abs_sync](../SIMD-API/c_api/deprecated_interface/asc_abs_sync_deprecated.md)接口
-
-    `asc_abs_sync()`接口已废弃。请使用[asc_abs](../SIMD-API/c_api/vector_compute/vector_arith/asc_abs.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
 
 ### 矩阵计算
 
@@ -494,11 +475,7 @@
 
     使用`uint8_t unit_flag`入参的`asc_mmad_sparse()`接口已废弃，请使用[asc_mmad_sparse](../SIMD-API/c_api/cube_compute/asc_mmad_sparse.md)接口。`asc_mmad_sparse_sync()`接口已废弃，请使用[asc_mmad_sparse](../SIMD-API/c_api/cube_compute/asc_mmad_sparse.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
 <!-- end id10 -->
-- [asc_transto5hd_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)接口
-
-    此接口已废弃。请使用[asc_transto5hd](../SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transto5hd.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
-
-### 矩阵数据搬运
+### 矩阵计算搬运
 
 - [asc_copy_gm2l0a_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l0a_sync_deprecated.md)接口
 
@@ -648,7 +625,31 @@
 
     `asc_load_image_to_cbuf_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_load_image_to_cbuf.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory数据搬运
+### 矢量数据搬运
+
+<!-- npu="950" id1 -->
+- [asc_set_gm2ub_pad](../SIMD-API/c_api/deprecated_interface/asc_set_gm2ub_pad_deprecated.md)接口
+
+    此接口后续版本会废弃，请使用[asc_set_copy_pad_val](../SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md)接口。
+<!-- end id1 -->
+
+<!-- npu="950" id2 -->
+- [asc_copy_gm2ub_align](../SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)接口（仅Ascend 950PR/Ascend 950DT上原高维切分搬运形式函数原型）
+
+    Ascend 950PR/Ascend 950DT上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
+<!-- end id2 -->
+
+<!-- npu="950" id3 -->
+- [asc_copy_ub2gm_align](../SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)接口（仅Ascend 950PR/Ascend 950DT上原高维切分搬运形式函数原型）
+
+    Ascend 950PR/Ascend 950DT上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_store_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
+<!-- end id3 -->
+
+<!-- npu="950" id4 -->
+- [asc_ndim_copy_gm2ub](../SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)
+
+    此接口的原函数原型已废弃，请使用[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
+<!-- end id4 -->
 
 - [asc_copy_gm2ub_align_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_align_sync_arch_2201_deprecated.md)接口
 
@@ -686,7 +687,13 @@
 
     `asc_copy_ub2ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_datamove/asc_copy_ub2ub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量算术运算
+### Memory矢量计算
+
+#### 基础算术
+
+- [asc_abs_sync](../SIMD-API/c_api/deprecated_interface/asc_abs_sync_deprecated.md)接口
+
+    `asc_abs_sync()`接口已废弃。请使用[asc_abs](../SIMD-API/c_api/vector_compute/vector_arith/asc_abs.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
 
 - [asc_add_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_add_scalar_sync_deprecated.md)接口
 
@@ -752,7 +759,7 @@
 
     `asc_sub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_arith/asc_sub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量广播
+#### 广播操作
 
 - [asc_brcb_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_brcb_sync_deprecated.md)接口
 
@@ -762,7 +769,7 @@
 
     `asc_duplicate_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_broadcast/asc_duplicate.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量比较
+#### 比较计算
 
 - [asc_eq_scalar_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_eq_scalar_sync_deprecated.md)接口
 
@@ -812,7 +819,7 @@
 
     `asc_ne_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_compare/asc_ne.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量类型转换
+#### 类型转换
 
 - [asc_bfloat162float_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_bfloat162float_sync_deprecated.md)接口
 
@@ -910,7 +917,7 @@
 
     `asc_uint82half_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_convert/asc_uint82half.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量复合计算
+#### 复合计算
 
 - [asc_add_relu_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_add_relu_sync_deprecated.md)接口
 
@@ -964,7 +971,7 @@
 
     `asc_vdeq_int162b8_h_sync()`、`asc_vdeq_int162b8_l_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_fused/asc_vdeq_int162b8.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量Gather
+#### 聚合操作
 
 - [asc_gather_datablock_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_gather_datablock_sync_deprecated.md)接口
 
@@ -974,7 +981,7 @@
 
     `asc_gather_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_gather/asc_gather.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量逻辑运算
+#### 逻辑计算
 
 - [asc_and_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_and_sync_deprecated.md)接口
 
@@ -996,7 +1003,11 @@
 
     `asc_shiftright_sync()`、`asc_shiftright_round_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_logic/asc_shiftright.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量排布变换
+#### 排布变换
+
+- [asc_transto5hd_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)接口
+
+    此接口已废弃。请使用[asc_transto5hd](../SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transto5hd.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
 
 - [asc_select_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_select_sync_deprecated.md)接口
 
@@ -1006,7 +1017,7 @@
 
     `asc_transpose_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transpose.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量归约
+#### 归约计算
 
 - [asc_datablock_reduce_max_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_datablock_reduce_max_sync_deprecated.md)接口
 
@@ -1040,7 +1051,7 @@
 
     `asc_repeat_reduce_sum_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/vector_compute/vector_reduce/asc_repeat_reduce_sum.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-### Memory矢量排序
+#### 排序计算
 
 - [asc_bitsort_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_bitsort_sync_deprecated.md)接口
 
