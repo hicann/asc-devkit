@@ -60,7 +60,7 @@ assert(expr)
 -   kernel开发不要包含系统的assert.h，会导致宏定义冲突。
 -   assert接口调用形式与C语言一致，不需要使用AscendC命名空间。
 
--   该接口使用Dump功能，所有使用Dump功能的接口在每个核上Dump的数据总量不可超过1M。请开发者自行控制待打印的内容数据量，超出则不会打印。
+-   该接口使用Dump功能，所有使用Dump功能的接口在每个核上单次Dump的数据量不可超过1M。请开发者自行控制待打印的内容数据量，超出则不会打印。
 -   使用该接口时，若采用bisheng命令行编译，开发者需要手动链接相关的静态库；而使用CMake编译时，框架会自动处理链接问题，无需开发者额外关注。具体编译命令如下：通过--cce-aicpu-laicpu\_api为Device链接libaicpu\_api.a，通过--cce-aicpu-L指定libaicpu\_api.a的库路径。
 
     ```
