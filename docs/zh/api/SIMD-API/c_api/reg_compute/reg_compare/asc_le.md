@@ -42,10 +42,15 @@ $$
 
 ```c
 // 通过函数返回值返回结果（占位符形式）
-__simd_callee__ inline vector_bool asc_le(vector_<dtype> src0, vector_<dtype> src1, vector_bool mask)
+__simd_callee__ inline vector_bool asc_le(vector_<dtype> src0,
+                                          vector_<dtype> src1,
+                                          vector_bool mask)
 
 // 通过引用参数输出结果（占位符形式）
-__simd_callee__ inline void asc_le(vector_bool& dst, vector_<dtype> src0, vector_<dtype> src1, vector_bool mask)
+__simd_callee__ inline void asc_le(vector_bool& dst,
+                                   vector_<dtype> src0,
+                                   vector_<dtype> src1,
+                                   vector_bool mask)
 ```
 
 ### dtype支持数据类型
@@ -56,9 +61,14 @@ __simd_callee__ inline void asc_le(vector_bool& dst, vector_<dtype> src0, vector
 
 ```c
 // 典型示例：half类型逐元素小于等于比较
-__simd_callee__ inline vector_bool asc_le(vector_half src0, vector_half src1, vector_bool mask)
+__simd_callee__ inline vector_bool asc_le(vector_half src0,
+                                          vector_half src1,
+                                          vector_bool mask)
 
-__simd_callee__ inline void asc_le(vector_bool& dst, vector_half src0, vector_half src1, vector_bool mask)
+__simd_callee__ inline void asc_le(vector_bool& dst,
+                                   vector_half src0,
+                                   vector_half src1,
+                                   vector_bool mask)
 ```
 
 ## 参数说明
