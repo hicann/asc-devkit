@@ -431,6 +431,13 @@ LocalAddr::LocalAddr(ResourceHandle localHandle, ResourceHandle addressHandle, R
     : addr(addressHandle), token(tokenHandle), handle(localHandle)
 {}
 
+void LocalAddr::operator=(const LocalAddr& other)
+{
+    // 与 hcomm ccu_local_addr.hpp 对齐：addr/token 逐成员发射赋值 IR（快照语义），handle 不复制
+    addr = other.addr;
+    token = other.token;
+}
+
 RemoteAddr::RemoteAddr() : addr(0), token(0)
 {
     ResourceHandle addressHandle = 0;
@@ -443,6 +450,13 @@ RemoteAddr::RemoteAddr() : addr(0), token(0)
 RemoteAddr::RemoteAddr(ResourceHandle remoteHandle, ResourceHandle addressHandle, ResourceHandle tokenHandle)
     : addr(addressHandle), token(tokenHandle), handle(remoteHandle)
 {}
+
+void RemoteAddr::operator=(const RemoteAddr& other)
+{
+    // 与 hcomm ccu_remote_addr.hpp 对齐：addr/token 逐成员发射赋值 IR（快照语义），handle 不复制
+    addr = other.addr;
+    token = other.token;
+}
 
 Event::Event() : handle(CompilerContext::Current().AllocateEvent()) {}
 

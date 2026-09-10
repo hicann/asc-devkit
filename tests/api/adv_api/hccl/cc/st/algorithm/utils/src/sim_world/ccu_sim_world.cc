@@ -494,6 +494,25 @@ bool RuntimeWorld::ExecuteOne(std::vector<RankState>& states, size_t rankIndex, 
                                         return false;
                                     }
                                     value &= static_cast<uint16_t>(~bodyOp.mask);
+                                } else if (bodyOp.code == OpCode::LOCAL_REDUCE) {
+                                    // GroupLocalReduce 的 loop body：CcuBuffer 间逐源规约（buffers[0] += buffers[i]）
+                                    const uint64_t reduceLen =
+                                        state.variables.count(bodyOp.src1) ? state.variables[bodyOp.src1] : 0;
+                                    if (reduceLen == 0) {
+                                        state.events[bodyOp.immediate] |= bodyOp.mask;
+                                        continue;
+                                    }
+                                    std::vector<uint8_t>& dstBuffer = state.buffers[bodyOp.dst + msIdx];
+                                    std::vector<uint8_t>& srcBuffer = state.buffers[bodyOp.src0 + msIdx];
+                                    if (dstBuffer.size() < reduceLen) {
+                                        dstBuffer.resize(reduceLen);
+                                    }
+                                    if (srcBuffer.size() < reduceLen) {
+                                        srcBuffer.resize(reduceLen);
+                                    }
+                                    ApplyReduceRaw(
+                                        dstBuffer.data(), srcBuffer.data(), reduceLen, bodyOp.dataType, bodyOp.opType);
+                                    state.events[bodyOp.immediate] |= bodyOp.mask;
                                 }
                             }
                         }
