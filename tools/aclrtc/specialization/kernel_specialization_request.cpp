@@ -73,7 +73,7 @@ bool FindAsciiControlCharacter(
 bool OverridesCompilerOutputPath(const std::string& compilerOption)
 {
     return compilerOption == "-o" || compilerOption == "--output" ||
-           (compilerOption.size() > 2U && compilerOption.compare(0, 2, "-o") == 0) ||
+           (compilerOption.size() > sizeof("-o") - 1U && compilerOption.compare(0, sizeof("-o") - 1U, "-o") == 0) ||
            compilerOption.compare(0, sizeof("--output=") - 1U, "--output=") == 0;
 }
 

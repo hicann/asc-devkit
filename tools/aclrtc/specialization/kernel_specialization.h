@@ -29,7 +29,7 @@ struct MaterializedKernelCompilationResource {
 
 class KernelSpecializationSession final {
 public:
-    aclError RunKernelSpecialization(const aclrtcKernelSpecRequest* apiRequest, const char* outputElfPath);
+    aclError RunKernelSpecialization(const aclrtcKernelSpecRequest* apiRequest, const char* outputElfPath) const;
 
 private:
     static aclError LoadAndMaterializeCompilationResource(

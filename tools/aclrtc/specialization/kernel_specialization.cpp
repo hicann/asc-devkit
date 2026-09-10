@@ -79,7 +79,7 @@ aclError KernelSpecializationSession::ReportSpecializationStatus(
 }
 
 aclError KernelSpecializationSession::RunKernelSpecialization(
-    const aclrtcKernelSpecRequest* apiRequest, const char* outputElfPath)
+    const aclrtcKernelSpecRequest* apiRequest, const char* outputElfPath) const
 {
     if (apiRequest == nullptr) {
         ASCENDLOGE("aclrtcKernelSpecialization request must not be null");

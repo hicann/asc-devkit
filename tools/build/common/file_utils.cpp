@@ -123,7 +123,11 @@ bool CopyAllBytes(int32_t borrowedSourceDescriptor, int32_t borrowedDestinationD
 
 AtomicFileWriter::~AtomicFileWriter() noexcept
 {
-    if (ownsTemporaryFile_ && unlink(ownedTemporaryFilePath_.c_str()) != 0 && errno != ENOENT) {
+    if (!ownsTemporaryFile_) {
+        return;
+    }
+    const int32_t unlinkResult = unlink(ownedTemporaryFilePath_.c_str());
+    if (unlinkResult != 0 && errno != ENOENT) {
         ASCENDLOGW(
             "Failed to remove unpublished temporary file: path=%s errno=%d", ownedTemporaryFilePath_.c_str(), errno);
     }
