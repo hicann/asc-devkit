@@ -15,6 +15,8 @@
 using namespace mc2_ops_hccl;
 using namespace hcomm::CcuRep;
 
+HcclResult FillOpParamAlgName(OpParam& opParam, const std::string& algName);
+
 std::unordered_map<HcclCMDType, OpParamPrepareFunc> opParamPrepareFuncMap = {
     {HcclCMDType::HCCL_CMD_ALLGATHER, PrepareParamForAllGather},
     {HcclCMDType::HCCL_CMD_ALLREDUCE, PrepareParamForAllReduce},
@@ -624,6 +626,7 @@ HcclResult PrepareEngineForAlg(OpParam& opParam, const std::string& algName)
         CHK_RET(LoadAICPUKernel());
     }
     CHK_RET(SetOpParamAlgTag(opParam, algName));
+    CHK_RET(FillOpParamAlgName(opParam, algName));
     return HCCL_SUCCESS;
 }
 

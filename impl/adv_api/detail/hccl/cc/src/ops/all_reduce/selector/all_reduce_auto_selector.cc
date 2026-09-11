@@ -19,6 +19,7 @@ constexpr u64 AR_AICPU_1D_MAX_DATA_SIZE = 32 * 1024 * 1024;
 constexpr u64 AR_AICPU_1D_64DATATYPE_DATA_SIZE = 8 * 1024 * 1024;
 constexpr u64 AR_AICPU_SEQUENCE_DATA_SIZE = 4ULL * 1024 * 1024 * 1024;
 constexpr u64 AR_2P_DETOUR_DATA_SIZE = 8 * 1024 * 1024;
+constexpr u64 AR_PCIE_PARALLEL_MAX_DATA_SIZE = 32ULL * 1024ULL * 1024ULL;
 } // namespace
 
 SelectorStatus AllReduceAutoSelector::SelectAicpuAlgo(
@@ -67,6 +68,16 @@ SelectorStatus AllReduceAutoSelector::SelectAicpuAlgo(
         } else {
             selectAlgName = "AicpuAllReduceSoleMeshTwoShot";
         }
+        HCCL_INFO("[AllReduceAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
+        return SelectorStatus::MATCH;
+    }
+
+    // PCIe 定制机型：Mesh 无法全连通时，普通类型且 < 32MB 走 Parallel 四模板流水。
+    // 大数据量和特殊类型仍保持既有 Pipeline/Sequence/兜底选择语义。
+    if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS && topoInfo->level0PcieMix &&
+        !IsLayerAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH) && !specialDataOrReduce &&
+        dataSize < AR_PCIE_PARALLEL_MAX_DATA_SIZE) {
+        selectAlgName = "AicpuAllreduceParallelMeshNHRPcie";
         HCCL_INFO("[AllReduceAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
         return SelectorStatus::MATCH;
     }

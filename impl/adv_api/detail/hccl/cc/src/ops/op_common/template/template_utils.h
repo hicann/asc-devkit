@@ -488,5 +488,17 @@ HcclResult CalcDataSplitByPortGroupZAxisDetour(
 
 bool IsAllConnetedWithTopo(const TopoInfoWithNetLayerDetails* topoInfo, const u32 netLayer, const CommTopo topoType);
 
+enum class ParallelDataSplitType { REDUCE_SCATTER_WITH_LOCAL_REDUCE = 0, ALL_GATHER = 1, SCATTER = 2 };
+
+bool GetPortGroupSize(const std::map<u32, std::vector<ChannelInfo>>& channels, uint64_t& portGroupSize);
+
+// 返回值统一表示"先Mesh后Clos"数据片的目标比例，"先Clos后Mesh"数据片的比例为1减去该值。
+// fallbackRatio需按同一语义传入：公式无法计算时直接返回该回退值(已裁剪到[0, 1])。
+double CalcParallelDataSplitRatio(
+    uint64_t intraRankSize, uint64_t interRankSize, const std::map<u32, std::vector<ChannelInfo>>& intraChannels,
+    const std::map<u32, std::vector<ChannelInfo>>& interChannels, ParallelDataSplitType splitType,
+    double fallbackRatio);
+const char* ParallelDataSplitTypeToStr(ParallelDataSplitType splitType);
+
 } // namespace mc2_ops_hccl
 #endif

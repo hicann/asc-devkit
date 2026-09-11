@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <algorithm>
+#include <cmath>
 #include <future>
 #include <map>
 #include <numeric>
@@ -95,6 +96,9 @@ namespace mc2_ops_hccl {
 // 用于维护增量建链算子的host ctx信息
 thread_local std::map<std::string, std::unique_ptr<AlgResourceCtxSerializable>> g_hostCtx;
 constexpr u32 HOST_WAIT_AICPU_NOTIFYIDX = 0; // host主流wait aicpu流的notify idx
+
+// Selector 在文件前部调用，具体实现位于本文件末尾。
+HcclResult SetMultipleDimensionSplitRatio(HcclComm comm, OpParam& param);
 
 HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctxSize, void** ctx)
 {
@@ -224,6 +228,7 @@ HcclResult Selector(
         CHK_RET(LoadAICPUKernel()); // 该函数内部有防止重复加载的逻辑
     }
     CHK_RET(SetOpParamAlgTag(param, algName));
+    CHK_RET(SetMultipleDimensionSplitRatio(comm, param));
     HCCL_INFO(
         "[asc][AlgoSelect][Selector] end, opType[%d], algName[%s], algTag[%s], engine[%d], "
         "opExecuteConfig[%d].",
@@ -410,6 +415,12 @@ HcclResult HcclExecOp(
         return HCCL_E_INTERNAL;
     }
 
+    // HcclExecOp 在资源准备前需要知道最终 algName，才能对迁移后的 PCIe 算法选择本地 registry。
+    ret = sprintf_s(param.algName, sizeof(param.algName), "%s", algName.c_str());
+    if (ret <= 0) {
+        HCCL_ERROR("[%s] failed to fill param.algName", __func__);
+        return HCCL_E_INTERNAL;
+    }
     bool useCannResCtx = UseCannBridge(param);
 
     std::unique_ptr<InsCollAlgBase> executor = nullptr;
@@ -2680,6 +2691,76 @@ HcclResult CheckHostDPUOnly(const HcclComm comm, const TopoInfoWithNetLayerDetai
         HCCL_INFO("Using host dpu trans.");
         hostDPUOnly = true;
     }
+    return HCCL_SUCCESS;
+}
+
+static HcclResult GetCommMultipleDimensionSplitRatio(HcclComm comm, double& ratio, bool& isConfigured)
+{
+    // 值对齐 CANN >= 9.1 头文件中 HcclConfigType::HCCL_CONFIG_TYPE_MULTIPLE_DIMENSION_SPLIT_RATIO；
+    // 本地 hccl_comm.h 尚未收敛该成员，为避免对 include/adv_api 对外头的变更，此处使用局部常量直传。
+    constexpr HcclConfigType kCfgTypeSplitRatio = static_cast<HcclConfigType>(1);
+    ratio = 0.0;
+    isConfigured = false;
+    double commRatio = 0.0;
+    const uint32_t infoLen = sizeof(commRatio);
+    HcclResult ret = HcclConfigGetInfo(comm, kCfgTypeSplitRatio, infoLen, &commRatio);
+    if (ret == HCCL_E_NOT_SUPPORT) {
+        HCCL_INFO("[GetCommMultipleDimensionSplitRatio] comm config not set or not supported, ret[%d].", ret);
+        return HCCL_SUCCESS;
+    }
+    if (ret != HCCL_SUCCESS) {
+        HCCL_ERROR("[GetCommMultipleDimensionSplitRatio] HcclConfigGetInfo failed, ret[%d].", ret);
+        return ret;
+    }
+    if (!std::isfinite(commRatio) || commRatio < 0.0 || commRatio > 1.0) {
+        HCCL_ERROR(
+            "[GetCommMultipleDimensionSplitRatio] comm ratio[%f] is not finite or out of range[0, 1].", commRatio);
+        return HCCL_E_PARA;
+    }
+    if (commRatio == 0.0) {
+        HCCL_INFO("[GetCommMultipleDimensionSplitRatio] comm split ratio is not configured.");
+        return HCCL_SUCCESS;
+    }
+    ratio = commRatio;
+    isConfigured = true;
+    HCCL_INFO("[GetCommMultipleDimensionSplitRatio] comm ratio[%f] is configured.", commRatio);
+    return HCCL_SUCCESS;
+}
+
+HcclResult SetMultipleDimensionSplitRatio(HcclComm comm, OpParam& param)
+{
+    constexpr double defaultRatio = 0.5;
+
+    double commRatio = 0.0;
+    bool isCommConfigured = false;
+    HcclResult ret = GetCommMultipleDimensionSplitRatio(comm, commRatio, isCommConfigured);
+    if (ret != HCCL_SUCCESS) {
+        return ret;
+    }
+    if (isCommConfigured) {
+        param.opConfig.multipleDimensionSplitRatio = commRatio;
+        param.opConfig.multipleDimensionSplitRatioSource = MultipleDimensionSplitRatioSource::COMM_CONFIG;
+        HCCL_INFO("[SetMultipleDimensionSplitRatio] ratioSource[COMM_CONFIG], configuredRatio[%f]", commRatio);
+        return HCCL_SUCCESS;
+    }
+
+    double envRatio = 0.0;
+    if (GetExternalInputMultipleDimensionSplitRatio(envRatio)) {
+        if (!std::isfinite(envRatio) || envRatio < 0.0 || envRatio > 1.0) {
+            HCCL_WARNING(
+                "[SetMultipleDimensionSplitRatio] env ratio[%f] is out of range, use default ratio[%f]", envRatio,
+                defaultRatio);
+            envRatio = defaultRatio;
+        }
+        param.opConfig.multipleDimensionSplitRatio = envRatio;
+        param.opConfig.multipleDimensionSplitRatioSource = MultipleDimensionSplitRatioSource::ENV_CONFIG;
+        HCCL_INFO("[SetMultipleDimensionSplitRatio] ratioSource[ENV_CONFIG], configuredRatio[%f]", envRatio);
+        return HCCL_SUCCESS;
+    }
+
+    param.opConfig.multipleDimensionSplitRatio = defaultRatio;
+    param.opConfig.multipleDimensionSplitRatioSource = MultipleDimensionSplitRatioSource::BUILTIN_FORMULA;
+    HCCL_INFO("[SetMultipleDimensionSplitRatio] ratioSource[BUILTIN_FORMULA], configuredRatio[%f]", defaultRatio);
     return HCCL_SUCCESS;
 }
 } // namespace mc2_ops_hccl
