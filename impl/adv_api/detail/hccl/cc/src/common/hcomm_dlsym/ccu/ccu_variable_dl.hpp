@@ -17,6 +17,7 @@
 #include <cstdint>
 #include "ccu_types_dl.h"
 #include "ccu_utils_dl.hpp"
+#include "hcomm_primitives.h"
 #include "ccu_primitives_impl_dl.h"
 
 namespace AscendC {

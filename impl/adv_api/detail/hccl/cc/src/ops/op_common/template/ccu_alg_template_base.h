@@ -68,7 +68,7 @@ protected:
 
     HcclResult GetDieInfoFromChannelDescs(
         const HcclComm comm, const std::map<u32, std::vector<HcclChannelDesc>>& rankIdToChannelDesc, u32 myRankId,
-        uint32_t& dieNum, uint32_t& dieId);
+        uint32_t& dieNum, uint32_t& dieId) const;
 };
 } // namespace mc2_ops_hccl
 #endif // HCCLV2_CCU_ALG_TEMPLATE_BASE

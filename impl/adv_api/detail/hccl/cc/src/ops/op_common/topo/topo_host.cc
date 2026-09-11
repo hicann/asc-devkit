@@ -24,6 +24,11 @@
 #include "hccl_rank_graph_dl.h"
 #include "physical_level.h"
 
+// 老CANN的acl_rt.h没有设备形态(factor)查询接口, 由构建系统按平台注入开关, 未注入时默认0
+#ifndef HCCL_SUPPORT_DEV_FORM_FACTOR
+#define HCCL_SUPPORT_DEV_FORM_FACTOR 0
+#endif
+
 constexpr u32 FACTOR_NUM_TWO = 2;
 constexpr s32 DEVICE_PER_MODULE = 8;
 constexpr uint32_t NET_LAYER_NUM_TWO = 2;

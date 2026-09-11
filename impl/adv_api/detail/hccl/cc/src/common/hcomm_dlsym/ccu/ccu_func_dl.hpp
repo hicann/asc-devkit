@@ -51,15 +51,15 @@ struct FunctorTraits<R (C::*)(A...)> {
     using ReturnT = R;
 };
 
-// ---- 把 lambda 包装成 std::function<void(Variable*)>，按 N 展开 ----
+// ---- 把 lambda 包装成 std::function<void(const Variable*)>，按 N 展开 ----
 template <typename Lambda, std::size_t... Is>
-inline std::function<void(Variable*)> MakeBodyImpl(Lambda body, std::index_sequence<Is...>)
+inline std::function<void(const Variable*)> MakeBodyImpl(Lambda body, std::index_sequence<Is...>)
 {
-    return [body](Variable* formals) { body(formals[Is]...); };
+    return [body](const Variable* formals) { body(formals[Is]...); };
 }
 
 template <typename Lambda, std::size_t N>
-inline std::function<void(Variable*)> MakeBody(Lambda body)
+inline std::function<void(const Variable*)> MakeBody(Lambda body)
 {
     return MakeBodyImpl(body, std::make_index_sequence<N>{});
 }
@@ -87,11 +87,11 @@ public:
     const void* Key() const { return static_cast<const void*>(this); }
 
     // 在合成模式下调用：把 N 个 formal Variable 展开传给原 lambda。
-    void RunBody(Variable* formals) const { body_(formals); }
+    void RunBody(const Variable* formals) const { body_(formals); }
 
 private:
     uint32_t numIn_{0};
-    std::function<void(Variable*)> body_;
+    std::function<void(const Variable*)> body_;
 };
 
 // ccu::CallFunc：global / static ccu::Func 引用 NTTP（C++14 合法）。

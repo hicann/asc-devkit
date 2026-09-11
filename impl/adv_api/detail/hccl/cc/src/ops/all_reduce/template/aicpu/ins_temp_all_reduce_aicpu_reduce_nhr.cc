@@ -218,6 +218,7 @@ HcclResult InsTempAllReduceAicpuReduceNHR::RunReduce(
     const std::map<u32, std::vector<ChannelInfo>>& channels, const TemplateDataParams& tempAlgParams,
     const std::string& algTag)
 {
+    (void)channels;
     HCCL_INFO("[InsTempAllReduceAicpuReduceNHR][RunReduce] start");
     const BuffInfo& buffInfo = tempAlgParams.buffInfo;
     const u64 sliceSize = tempAlgParams.sliceSize;

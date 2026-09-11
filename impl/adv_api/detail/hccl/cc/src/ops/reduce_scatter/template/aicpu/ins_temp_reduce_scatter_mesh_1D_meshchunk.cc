@@ -8,7 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include "ins_temp_reduce_scatter_mesh_1D_meshchunk.h"
-#include <limits>
 
 namespace mc2_ops_hccl {
 InsTempReduceScatterMesh1DMeshChunk::InsTempReduceScatterMesh1DMeshChunk(
@@ -182,8 +181,9 @@ HcclResult InsTempReduceScatterMesh1DMeshChunk::PreCopy(
 
 HcclResult InsTempReduceScatterMesh1DMeshChunk::RunReduceScatter(
     const std::map<u32, std::vector<ChannelInfo>>& channels, const std::vector<ThreadHandle>& threads,
-    const TemplateDataParams& tempAlgParams, RankSliceInfo& sliceInfoVec)
+    const TemplateDataParams& tempAlgParams, const RankSliceInfo& sliceInfoVec)
 {
+    (void)sliceInfoVec;
     HCCL_INFO("[InsTempReduceScatterMesh1DMeshChunk][RunReduceScatter] myRank[%d]", myRank_);
     u32 myAlgRank = 0;
     CHK_RET(GetAlgRank(myRank_, subCommRanks_[0], myAlgRank));
