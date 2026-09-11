@@ -32,7 +32,7 @@ AdjustSoftMaxRes is used for post-processing of SoftMax computation results. Whe
 
 - Example function:
 
-  This example performs row-wise SoftMax computation on the input tensor and uses AdjustSoftMaxRes for post-processing of the computation result. When specified values (0xFF7FFFFF, that is, the maximum finite value of float type) exist in the input max, it adjusts the data at the corresponding positions in the output to custom values (0.0, that is, floating-point zero). This mechanism is commonly used in attention mask scenarios to set the softmax output of invalid positions to zero.
+  This example performs row-wise SoftMax computation on the input tensor and uses AdjustSoftMaxRes for post-processing of the computation result. `0xFF7FFFFF` is the IEEE 754 bit pattern of the minimum finite float value (approximately -3.4028235e+38). The data generation script sets the first input row to this value so that its max matches the specified value, and the corresponding SoftMax output row is adjusted to 0.0. This mechanism is commonly used in attention mask scenarios to set the SoftMax output of invalid positions to zero.
 
 - Example specifications:
 
