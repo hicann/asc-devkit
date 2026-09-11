@@ -408,8 +408,8 @@ __aicore__ inline void asc_load_image_to_cbuf_sync(
 {
     if ASC_IS_AIC {
         load_image_to_cbuf(
-            dst, hor_size, ver_size, hor_start_pos, ver_start_pos, src_hor_size, top_pad_size, bot_pad_size,
-            left_pad_size, right_pad_size, 0);
+            dst, static_cast<uint16_t>(hor_size - 1), static_cast<uint16_t>(ver_size - 1), hor_start_pos, ver_start_pos,
+            static_cast<uint16_t>(src_hor_size - 1), top_pad_size, bot_pad_size, left_pad_size, right_pad_size, 0);
         asc_sync_post_process();
     }
 }
@@ -421,8 +421,8 @@ __aicore__ inline void asc_load_image_to_cbuf_sync(
 {
     if ASC_IS_AIC {
         load_image_to_cbuf(
-            dst, hor_size, ver_size, hor_start_pos, ver_start_pos, src_hor_size, top_pad_size, bot_pad_size,
-            left_pad_size, right_pad_size, 0);
+            dst, static_cast<uint16_t>(hor_size - 1), static_cast<uint16_t>(ver_size - 1), hor_start_pos, ver_start_pos,
+            static_cast<uint16_t>(src_hor_size - 1), top_pad_size, bot_pad_size, left_pad_size, right_pad_size, 0);
         asc_sync_post_process();
     }
 }
