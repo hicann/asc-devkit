@@ -345,7 +345,7 @@ RAW（Read After Write）场景要求后序读操作读取到前序写操作产�
 
 下表列出同一AI Core内Scalar写GM之后、消费者读取GM完整的软件维护操作序列。假设生产者和消费者访问同一地址，每个单元格都是从写后处理到读前处理的完整操作序列。
 
-表中的cache表示经过cache的访问，no cache表示不经过cache的访问,`VF_SIMT`表示经过cache的SIMT线程函数，MTE2表示经过MTE2的读取操作，MTE2（cache）指[多维数据搬运NDDMA](../../../../api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)，MTE2.DCI指NDDMA Cache的[失效操作](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/NdDmaDci.md)或[asc_ndim_copy_dci](../../../../api/appendix/Release_Notes/CANN_9_1_0.md)。
+表中的cache表示经过cache的访问，no cache表示不经过cache的访问,`VF_SIMT`表示经过cache的SIMT线程函数，MTE2表示经过MTE2的读取操作，MTE2（cache）指[多维数据搬运NDDMA](../../../../api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)，MTE2.DCI指NDDMA Cache的[失效操作](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/NdDmaDci.md)或[asc_ndim_copy_dci](../../../../api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_dci.md)。
 
 | 后续读取方式（列，后发生）<br>╲<br>前序写入方式（行，先发生） | Scalar（cache） | Scalar（no cache） | VF_SIMT（cache） | VF_SIMT（no cache） | MTE2（cache） | MTE2（no cache） |
 | --- | --- | --- | --- | --- | --- | --- |

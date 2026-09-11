@@ -62,6 +62,8 @@ PIPE_MTE3
 
 - 本接口在非AIV上调用直接返回。
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
+- 如果需要执行多条asc_copy_ub2l1指令，且asc_copy_ub2l1指令的目的地址存在重叠，需要插入同步指令，保证多个asc_copy_ub2l1指令的串行化，防止出现异常数据。
+- 同步计算包含同步等待。
 
 ## 调用示例
 
