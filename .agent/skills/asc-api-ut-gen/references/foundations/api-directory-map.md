@@ -17,8 +17,8 @@
 | 高阶 API 参数/合法性检查 | `include/adv_api/` | `impl/adv_api/detail/api_check/kernel_check/` | `tests/api/adv_api/api_check/` | 属于高阶 API 的检查分支，目录结构与功能 UT 并行。 |
 | membase 基础 API - AIV/AIC/common/framework (`aiv`, `aic`) | `include/basic_api/`, `include/basic_api/core_mng/`, `include/basic_api/op_frame/` | `impl/basic_api/dav_*`, `impl/basic_api/utils/` | `tests/api/basic_api/ascendc_case_*` | 排除 `include/basic_api/reg_compute/`。按芯片、AIV/AIC/framework/basic 子目录拆分。 |
 | regbase 基础 API (`reg`) | `include/basic_api/reg_compute/` | `impl/basic_api/reg_compute/` | `tests/api/reg_compute_api/` | 当前有 `ascendc_case_ascend950pr_9599_reg_compute/`。 |
-| C API (`c_api`) | `include/c_api/` | `impl/c_api/instr_impl/npu_arch_2201/`, `impl/c_api/instr_impl/npu_arch_3510/` | `tests/api/c_api/npu_arch_2201/`, `tests/api/c_api/npu_arch_3510/` | AIC/AIV 由 CMake 按产品目标拆分；`tests/api/c_api/stub/` 为支撑目录。 |
-| C API register 子类 | `include/c_api/reg_compute/` | `impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_load/`, `impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/reg_store/`, 以及相关 `vector_compute_impl/*_reg_impl.h` | `tests/api/c_api/npu_arch_3510/vector_datamove/`, `tests/api/c_api/npu_arch_3510/vector_compute/`；2201 现有 reg 相关用例在 `tests/api/c_api/npu_arch_2201/vector_compute/` | 这是 C API 内部 register 风格接口，不等同于 `tests/api/reg_compute_api/`。 |
+| C API (`c_api`) | `include/c_api/` | `impl/c_api/memory_base_impl/`, `impl/c_api/reg_base_impl/` | `tests/api/c_api/npu_arch_2201/`, `tests/api/c_api/npu_arch_3510/` | AIC/AIV 由 CMake 按产品目标拆分；`tests/api/c_api/stub/` 为支撑目录。 |
+| C API register 子类 | `include/c_api/reg_compute/` | `impl/c_api/reg_base_impl/reg_arith_intf_impl.h`, `impl/c_api/reg_base_impl/npu_arch_3510/reg_convert_intf_impl.h`, 现用接口与废弃接口按重载分别归属 | `tests/api/c_api/npu_arch_3510/vector_datamove/`, `tests/api/c_api/npu_arch_3510/vector_compute/`；2201 现有 reg 相关用例在 `tests/api/c_api/npu_arch_2201/vector_compute/` | 这是 C API 内部 register 风格接口，不等同于 `tests/api/reg_compute_api/`。 |
 | SIMT API (`simt`) | `include/simt_api/`, `include/simt_api/cpp/` | `impl/simt_api/cpp/dav_3510/` | `tests/api/simt_api/ascendc_case_ascend950pr_9599_simt/`, `tests/api/simt_api/math*` | `common_simt/` 是共用测试支撑目录。默认 CMake 初始化产品为 `ascend950pr_9599`。 |
 | 工具类 API (`utils`) | `include/utils/` | `impl/utils/` | `tests/api/utils/` | 包含 context、debug、std、tiling、stub 等子类；`tests/api/utils/std/` 和 `tests/api/utils/tiling/` 有独立 CMake。 |
 | AICPU API | `include/aicpu_api/` | `impl/aicpu_api/` | `tests/api/aicpu_api/` | 独立于当前 `asc-api-ut-gen` 默认 API 类型。 |
@@ -66,20 +66,22 @@
 
 ## C API 子目录映射
 
+实现目录保持扁平，每个实际声明接口的公开头 `<header>.h` 对应 `<header>_intf_impl.h`。下表列出各类代表文件；atomic 另有 `scalar_atomic_intf_impl.h`，scalar_compute 按 bit/convert/load/store 拆分，vector_compute 按各公开头拆分。公共内部辅助代码位于各架构组的 `utils_impl.h`；聚合头、纯类型头和无独立函数实现的宏别名不生成空实现头。
+
 | C API 子类 | 声明目录 | 2201 实现/UT | 3510 实现/UT |
 |-----------|----------|--------------|--------------|
-| atomic | `include/c_api/atomic/` | `impl/c_api/instr_impl/npu_arch_2201/atomic_impl/`; 当前实际 UT 目录为 `tests/api/c_api/npu_arch_2201/simd_atomic/`，但 CMake glob 写的是 `npu_arch_2201/atomic/*.cpp`，新增前需核对 | `impl/c_api/instr_impl/npu_arch_3510/atomic_impl/`; `tests/api/c_api/npu_arch_3510/atomic/` |
-| cache_ctrl | `include/c_api/cache_ctrl/` | `impl/c_api/instr_impl/npu_arch_2201/cache_ctrl_impl/`; `tests/api/c_api/npu_arch_2201/cache_ctrl/` | `impl/c_api/instr_impl/npu_arch_3510/cache_ctrl_impl/`; `tests/api/c_api/npu_arch_3510/cache_ctrl/` |
-| cube_compute | `include/c_api/cube_compute/` | `impl/c_api/instr_impl/npu_arch_2201/cube_compute_impl/`; `tests/api/c_api/npu_arch_2201/cube_compute/` | `impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl/`; `tests/api/c_api/npu_arch_3510/cube_compute/` |
-| cube_datamove | `include/c_api/cube_datamove/` | `impl/c_api/instr_impl/npu_arch_2201/cube_datamove_impl/`; `tests/api/c_api/npu_arch_2201/cube_datamove/` | `impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl/`; `tests/api/c_api/npu_arch_3510/cube_datamove/` |
-| misc | `include/c_api/misc/` | `impl/c_api/instr_impl/npu_arch_2201/misc_impl/`; 当前扫描未发现 `tests/api/c_api/npu_arch_2201/misc/` | `impl/c_api/instr_impl/npu_arch_3510/misc_impl/`; `tests/api/c_api/npu_arch_3510/misc/` |
-| scalar_compute | `include/c_api/scalar_compute/` | `impl/c_api/instr_impl/npu_arch_2201/scalar_compute_impl/`; `tests/api/c_api/npu_arch_2201/scalar_compute/` | `impl/c_api/instr_impl/npu_arch_3510/scalar_compute_impl/`; `tests/api/c_api/npu_arch_3510/scalar_compute/` |
-| sync | `include/c_api/sync/` | `impl/c_api/instr_impl/npu_arch_2201/sync_impl/`; `tests/api/c_api/npu_arch_2201/sync/` | `impl/c_api/instr_impl/npu_arch_3510/sync_impl/`; `tests/api/c_api/npu_arch_3510/sync/` |
-| sys_var | `include/c_api/sys_var/` | `impl/c_api/instr_impl/npu_arch_2201/sys_var_impl/`; `tests/api/c_api/npu_arch_2201/sys_var/` | `impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/`; `tests/api/c_api/npu_arch_3510/sys_var/` |
-| utils | `include/c_api/utils/` | `impl/c_api/instr_impl/npu_arch_2201/utils_impl/`; `tests/api/c_api/npu_arch_2201/utils/` | `impl/c_api/instr_impl/npu_arch_3510/utils_impl/`; `tests/api/c_api/npu_arch_3510/utils/` |
-| vector_compute | `include/c_api/vector_compute/` | `impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/`; `tests/api/c_api/npu_arch_2201/vector_compute/` | `impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/`; `tests/api/c_api/npu_arch_3510/vector_compute/` |
-| vector_datamove | `include/c_api/vector_datamove/` | `impl/c_api/instr_impl/npu_arch_2201/vector_datamove_impl/`; `tests/api/c_api/npu_arch_2201/vector_datamove/` | `impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl/`; `tests/api/c_api/npu_arch_3510/vector_datamove/` |
-| reg_compute headers | `include/c_api/reg_compute/` | reg 相关 2201 现有用例在 `tests/api/c_api/npu_arch_2201/vector_compute/` | 3510 的 reg load/store 实现在 `vector_datamove_impl/reg_load/`、`vector_datamove_impl/reg_store/`，UT 归入 `vector_datamove/` 或 `vector_compute/` |
+| atomic | `include/c_api/atomic/` | `impl/c_api/memory_base_impl/datamove_atomic_intf_impl.h`; 当前实际 UT 目录为 `tests/api/c_api/npu_arch_2201/simd_atomic/`，但 CMake glob 写的是 `npu_arch_2201/atomic/*.cpp`，新增前需核对 | `impl/c_api/reg_base_impl/datamove_atomic_intf_impl.h`; `tests/api/c_api/npu_arch_3510/atomic/` |
+| cache_ctrl | `include/c_api/cache_ctrl/` | `impl/c_api/memory_base_impl/cache_ctrl_intf_impl.h`; `tests/api/c_api/npu_arch_2201/cache_ctrl/` | `impl/c_api/reg_base_impl/cache_ctrl_intf_impl.h`; `tests/api/c_api/npu_arch_3510/cache_ctrl/` |
+| cube_compute | `include/c_api/cube_compute/` | `impl/c_api/memory_base_impl/cube_compute_intf_impl.h`; `tests/api/c_api/npu_arch_2201/cube_compute/` | `impl/c_api/reg_base_impl/cube_compute_intf_impl.h`; `tests/api/c_api/npu_arch_3510/cube_compute/` |
+| cube_datamove | `include/c_api/cube_datamove/` | `impl/c_api/memory_base_impl/cube_datamove_intf_impl.h`; `tests/api/c_api/npu_arch_2201/cube_datamove/` | `impl/c_api/reg_base_impl/cube_datamove_intf_impl.h`; `tests/api/c_api/npu_arch_3510/cube_datamove/` |
+| misc | `include/c_api/misc/` | `impl/c_api/memory_base_impl/sys_init_intf_impl.h`; 当前扫描未发现 `tests/api/c_api/npu_arch_2201/misc/` | `impl/c_api/reg_base_impl/sys_init_intf_impl.h`; `tests/api/c_api/npu_arch_3510/misc/` |
+| scalar_compute | `include/c_api/scalar_compute/` | `impl/c_api/memory_base_impl/scalar_bit_intf_impl.h`; `tests/api/c_api/npu_arch_2201/scalar_compute/` | `impl/c_api/reg_base_impl/scalar_bit_intf_impl.h`; `tests/api/c_api/npu_arch_3510/scalar_compute/` |
+| sync | `include/c_api/sync/` | `impl/c_api/memory_base_impl/sync_intf_impl.h`; `tests/api/c_api/npu_arch_2201/sync/` | `impl/c_api/reg_base_impl/sync_intf_impl.h`; `tests/api/c_api/npu_arch_3510/sync/` |
+| sys_var | `include/c_api/utils/sys_var.h` | `impl/c_api/memory_base_impl/sys_var_intf_impl.h`; `tests/api/c_api/npu_arch_2201/sys_var/` | `impl/c_api/reg_base_impl/sys_var_intf_impl.h`; `tests/api/c_api/npu_arch_3510/sys_var/` |
+| utils | `include/c_api/utils/` | `impl/c_api/memory_base_impl/sys_var_intf_impl.h`; `tests/api/c_api/npu_arch_2201/utils/` | `impl/c_api/reg_base_impl/sys_var_intf_impl.h`; `tests/api/c_api/npu_arch_3510/utils/` |
+| vector_compute | `include/c_api/vector_compute/` | `impl/c_api/memory_base_impl/vector_arith_intf_impl.h`; `tests/api/c_api/npu_arch_2201/vector_compute/` | `impl/c_api/reg_base_impl/vector_sort_intf_impl.h`; `tests/api/c_api/npu_arch_3510/vector_compute/` |
+| vector_datamove | `include/c_api/vector_datamove/` | `impl/c_api/memory_base_impl/vector_datamove_intf_impl.h`; `tests/api/c_api/npu_arch_2201/vector_datamove/` | `impl/c_api/reg_base_impl/vector_datamove_intf_impl.h`; `tests/api/c_api/npu_arch_3510/vector_datamove/` |
+| reg_compute headers | `include/c_api/reg_compute/` | reg 相关 2201 现有用例在 `tests/api/c_api/npu_arch_2201/vector_compute/` | 3510 的 reg load/store 实现分别位于 `loadalign_intf_impl.h`、`loadunalign_intf_impl.h`、`storealign_intf_impl.h`、`storeunalign_intf_impl.h`，废弃重载位于 `npu_arch_3510/` 下的同名头，UT 归入 `vector_datamove/` 或 `vector_compute/` |
 
 ## 工具类 API 子目录映射
 

@@ -176,27 +176,23 @@ asc-devkit/
 │
 ├── impl/
 │   └── c_api/                    # C API implementation
-│       ├── instr_impl/           # Instruction implementation
-│       │   ├── npu_arch_2201/    # NPU ARCH 220X architecture
-│       │   │   ├── vector_compute_impl/
-│       │   │   │   ├── asc_abs_impl.h
-│       │   │   │   └── ...
-│       │   │   ├── vector_datamove_impl/
-│       │   │   │   ├── asc_copy_gm2ub_align_impl.h
-│       │   │   │   └── ...
-│       │   │   ├── vector_compute_impl.h
-│       │   │   ├── vector_datamove_impl.h
-│       │   │   └── ...
-│       │   └── npu_arch_3510/    # NPU ARCH 351X architecture
-│       │       ├── vector_compute_impl/
-│       │       │   ├── asc_abs_impl.h
-│       │       │   └── ...
-│       │       ├── vector_compute_impl.h
-│       │       └── ...
-│       ├── utils/
-│       │   └── c_api_utils_impl.cpp
-│       └── stub/                 # Stub
-│           └── cce_stub.h
+│       ├── CMakeLists.txt
+│       ├── memory_base_impl/     # 2201 implementations, one file per public interface header
+│       │   ├── utils_impl.h      # Shared internal helpers
+│       │   ├── datamove_atomic_intf_impl.h
+│       │   ├── scalar_atomic_intf_impl.h
+│       │   ├── vector_arith_intf_impl.h
+│       │   ├── vector_datamove_intf_impl.h
+│       │   └── ...
+│       └── reg_base_impl/        # Shared regbase implementations
+│           ├── utils_impl.h
+│           ├── reg_arith_intf_impl.h
+│           ├── loadalign_intf_impl.h
+│           ├── vector_datamove_intf_impl.h
+│           ├── ...
+│           └── npu_arch_3510/    # 3510-specific implementations, included by common headers under an architecture guard
+│               ├── reg_convert_intf_impl.h
+│               └── ...
 │
 ├── tests/
 │   └── api/

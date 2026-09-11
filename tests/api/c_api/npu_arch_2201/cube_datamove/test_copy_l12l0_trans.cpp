@@ -46,7 +46,9 @@ protected:
         uint16_t frac_gap = 8;                                                                                    \
         uint8_t repeat = 1;                                                                                       \
         bool enable_addr_decrement = false;                                                                       \
-        MOCKER_CPP(asc_sync_post_process).times(sync_time);                                                       \
+        MOCKER_CPP(pipe_barrier, void(pipe_t)).times(sync_time).will(invoke(+[](pipe_t pipe) {                    \
+            EXPECT_EQ(static_cast<int>(pipe), static_cast<int>(pipe_t::PIPE_ALL));                                \
+        }));                                                                                                      \
         MOCKER_CPP(                                                                                               \
             cce_name,                                                                                             \
             void(mem_pos data_type*, __cbuf__ data_type*, uint16_t, uint8_t, uint16_t, uint16_t, bool, uint16_t)) \

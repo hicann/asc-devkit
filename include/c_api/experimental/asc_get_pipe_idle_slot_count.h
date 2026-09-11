@@ -28,7 +28,7 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_get_pipe_idle_slot_count_impl.h"
+#include "impl/c_api/reg_base_impl/asc_get_pipe_idle_slot_count_intf_impl.h"
 #endif
 
 __aicore__ inline uint8_t asc_get_pipe_mte2_idle_slot_count();

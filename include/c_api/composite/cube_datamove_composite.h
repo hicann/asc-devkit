@@ -22,9 +22,9 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-#include "impl/c_api/instr_impl/npu_arch_2201/cube_datamove_impl.h"
+#include "impl/c_api/memory_base_impl/cube_datamove_composite_intf_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl.h"
+#include "impl/c_api/reg_base_impl/cube_datamove_composite_intf_impl.h"
 #endif
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_l12fb and asc_sync)
 __aicore__ inline void asc_copy_l12fb_sync(__fbuf__ void* dst, __cbuf__ void* src, uint32_t size);

@@ -176,27 +176,23 @@ asc-devkit/
 │
 ├── impl/
 │   └── c_api/                    # C API实现
-│       ├── instr_impl/           # 指令实现
-│       │   ├── npu_arch_2201/    # NPU ARCH 220X架构
-│       │   │   ├── vector_compute_impl/
-│       │   │   │   ├── asc_abs_impl.h
-│       │   │   │   └── ...
-│       │   │   ├── vector_datamove_impl/
-│       │   │   │   ├── asc_copy_gm2ub_align_impl.h
-│       │   │   │   └── ...
-│       │   │   ├── vector_compute_impl.h
-│       │   │   ├── vector_datamove_impl.h
-│       │   │   └── ...
-│       │   └── npu_arch_3510/    # NPU ARCH 351X架构
-│       │       ├── vector_compute_impl/
-│       │       │   ├── asc_abs_impl.h
-│       │       │   └── ...
-│       │       ├── vector_compute_impl.h
-│       │       └── ...
-│       ├── utils/
-│       │   └── c_api_utils_impl.cpp
-│       └── stub/                 # Stub
-│           └── cce_stub.h
+│       ├── CMakeLists.txt
+│       ├── memory_base_impl/     # 2201实现，与公开接口头逐文件对应
+│       │   ├── utils_impl.h      # 共享的内部辅助实现
+│       │   ├── datamove_atomic_intf_impl.h
+│       │   ├── scalar_atomic_intf_impl.h
+│       │   ├── vector_arith_intf_impl.h
+│       │   ├── vector_datamove_intf_impl.h
+│       │   └── ...
+│       └── reg_base_impl/        # regbase公共实现
+│           ├── utils_impl.h
+│           ├── reg_arith_intf_impl.h
+│           ├── loadalign_intf_impl.h
+│           ├── vector_datamove_intf_impl.h
+│           ├── ...
+│           └── npu_arch_3510/    # 3510专用实现，由公共实现头按架构宏包含
+│               ├── reg_convert_intf_impl.h
+│               └── ...
 │
 ├── tests/
 │   └── api/

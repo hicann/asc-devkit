@@ -23,9 +23,9 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-#include "impl/c_api/instr_impl/npu_arch_2201/atomic_impl.h"
+#include "impl/c_api/memory_base_impl/datamove_atomic_intf_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/atomic_impl.h"
+#include "impl/c_api/reg_base_impl/datamove_atomic_intf_impl.h"
 #endif
 
 __aicore__ inline void asc_set_atomic_add_float();

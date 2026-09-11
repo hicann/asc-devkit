@@ -22,9 +22,7 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-#include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl.h"
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
+#include "impl/c_api/memory_base_impl/vector_gather_intf_impl.h"
 #endif
 __aicore__ inline void asc_gather(
     __ubuf__ int16_t* dst, __ubuf__ int16_t* src, __ubuf__ uint32_t* src_offset, uint16_t dst_repeat_stride,
