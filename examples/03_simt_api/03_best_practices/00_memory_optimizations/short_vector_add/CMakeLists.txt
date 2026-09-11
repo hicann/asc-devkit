@@ -18,8 +18,6 @@ find_package(ASC REQUIRED)
 set(PROJECT_NAME "kernel_samples" CACHE STRING "Project name")
 project(${PROJECT_NAME} LANGUAGES ASC CXX)
 
-set(CMAKE_ASC_RUN_MODE "npu" CACHE STRING "Run mode: npu, sim")
-
 # 场景参数（通过命令行传入）
 # SCENARIO_NUM: 场景编号
 #   1 - half：half类型的向量处理，基线场景

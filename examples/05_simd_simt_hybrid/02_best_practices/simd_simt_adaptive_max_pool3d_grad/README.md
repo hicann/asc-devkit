@@ -305,10 +305,20 @@ asc_copy_ub2gm_align(output_data + output_base_offset, output_ub, active_output_
   ./adaptive_max_pool3d_grad hybrid_ub
   ```
 
+  使用NPU仿真模式时，添加`-DCMAKE_ASC_RUN_MODE=sim`参数即可。
+
+  示例如下：
+  ```bash
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DGRAD_DHW=16 ..;make -j;   # NPU仿真模式
+  ```
+
+  > **注意：** 切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
+
 - 编译选项说明
 
   | 选项             | 可选值      | 说明              |
   | ---------------- | ----------- | ----------------- |
+  | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
   | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT）。 |
   | `GRAD_DHW` | `1`、`2`、`4`、`8`、`16` | `grad/argmax`的D/H/W取值，三者相同，默认为`8`。每个`NC`平面回填的梯度数即`grad/argmax`的D×H×W，用于复现性能对比表格中的各档数据。 |
 

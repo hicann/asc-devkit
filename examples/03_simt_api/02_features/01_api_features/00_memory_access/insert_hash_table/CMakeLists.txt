@@ -16,23 +16,10 @@ set(CMAKE_ASC_ENABLE_SIMT ON)
 find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
-set(RUN_MODE "npu" CACHE STRING "Run mode: npu, sim")
-set(SOC_VERSION "" CACHE STRING "Simulator SOC version, e.g. Ascend950PR_9599")
-
 add_executable(demo
     insert_hash_table.asc
 )
 
-target_compile_options(demo PRIVATE
-    $<BUILD_INTERFACE:$<$<STREQUAL:${RUN_MODE},sim>:-g -O0>>
-)
-
-target_link_directories(demo PRIVATE
-    $<BUILD_INTERFACE:$<$<STREQUAL:${RUN_MODE},sim>:$ENV{ASCEND_HOME_PATH}/tools/simulator/${SOC_VERSION}/lib>>
-)
-
 target_link_libraries(demo PRIVATE
     m
-    $<BUILD_INTERFACE:$<$<STREQUAL:${RUN_MODE},sim>:runtime_camodel>>
-    $<BUILD_INTERFACE:$<$<STREQUAL:${RUN_MODE},sim>:npu_drv>>
 )

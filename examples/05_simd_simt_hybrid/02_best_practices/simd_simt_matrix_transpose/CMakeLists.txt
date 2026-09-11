@@ -33,7 +33,6 @@ target_compile_definitions(matrix_transpose PRIVATE
 # NPU 编译选项配置
 #
 # 说明：
-#   - 需根据实际部署的 NPU 硬件架构选择对应的 `npu-arch` 参数。
 #   - `--cce-res-usage`用于输出寄存器和栈等编译资源信息，便于分析资源使用。
 # ======================================================================================
 target_compile_options(matrix_transpose PRIVATE

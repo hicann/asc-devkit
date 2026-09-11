@@ -10,7 +10,6 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_ASC_RUN_MODE "npu" CACHE STRING "Run mode: npu, sim")
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
 set(SCENARIO_NUM "0" CACHE STRING "Scenario: 0=SIMT-DirectGM, 1=SIMD, 2=SIMT-NonContiguous, 3=SIMT-Contiguous")
 if (NOT SCENARIO_NUM MATCHES "^[0-3]$")

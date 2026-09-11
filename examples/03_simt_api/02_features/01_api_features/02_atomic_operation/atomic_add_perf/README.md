@@ -429,10 +429,20 @@ int32_t与int64_t在两种情形下的性能关系相反：不使用返回值时
   ./atomic_add_perf
   ```
 
+  使用NPU仿真模式时，添加`-DCMAKE_ASC_RUN_MODE=sim`参数即可。
+
+  示例如下：
+  ```bash
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=1 ..; make -j;   # NPU仿真模式
+  ```
+
+  > **注意：** 切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
+
   编译选项说明：
 
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
+  | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
   | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
   | `SCENARIO_NUM` | `1`-`16` | 待测场景编号。每个场景的规模（Block×Thread）、数据类型、是否使用返回值、`target_count`、`threads_per_target`和`target_stride`等均由源码中`get_scenario_config()`统一配置 |
   | `SKIP_VALIDATION` | `ON`/`OFF` | 是否跳过结果校验，默认`OFF`。Case 1/3的UB-only场景没有GM结果，会自动跳过校验；使用`msopprof`采集GM写回场景时建议设为`ON` |

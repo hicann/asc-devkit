@@ -616,10 +616,20 @@ The extend info: errcode:(341) errorStr: The address for VEC to access UB is out
     ./ub_usage_limit                            # 运行样例
     ```
 
+  使用NPU仿真模式时，添加`-DCMAKE_ASC_RUN_MODE=sim`参数即可。
+
+  示例如下：
+  ```bash
+  cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=$SCENARIO_NUM ..; make -j;   # NPU仿真模式
+  ```
+
+  > **注意：** 切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
+
 **编译选项说明**：
 
 | 选项 | 可选值 | 说明 |
 | --- | --- | --- |
+| `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
 | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
 | `SCENARIO_NUM` | `0`~`14` | 场景编号，默认值为`3`。CMake根据该选项只编译对应Case的Ascend C文件 |
 | `CMAKE_ASC_FLAGS` | ASC编译选项 | Case 1中可通过追加`--cce-disable-vf-stack-reserved-ubuf`关闭6KB VF预留，追加`--cce-disable-asc-reserved-ubuf`关闭2KB Ascend C API预留 |
