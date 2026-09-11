@@ -22,6 +22,8 @@
 namespace AscendC {
 using namespace HcclKfcProtocol;
 static_assert(KFC_CONCURRENT_AG_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllGather parameters exceed XN capacity");
+static_assert(
+    KFC_RS_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "Sole NHR MultiLink ReduceScatter parameters exceed XN capacity");
 static_assert(CCU_USED_XN_NUM <= CCU_MSG_XN_NUM, "KFC loaded parameters exceed the message slot");
 
 __aicore__ inline void CalcPeerOnlyChunkParams(uint64_t sliceSize, uint64_t* tailSize, uint64_t* chunkLoopNum)
@@ -379,6 +381,42 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         "PeerOnly RS prepare: input=0x%llx, output=0x%llx, rankOffset=0x%llx, slice=0x%llx, "
         "chunk=0x%llx, tail=0x%llx, loop=0x%llx\n",
         xnData_[1], xnData_[2], xnData_[4], sliceSize, CCU_MAX_COMM_DATA, xnData_[7], xnData_[8]);
+}
+
+// SoleNHRMultiLink（CcuSchedReduceScatterSoleNHRMultiLink）的 AIV prepare：
+// 将 hccl InsV2ReduceScatterSoleExecutor::OrchestrateLoop（loopTimes=1 单趟）+
+// CcuTempReduceScatterNhrMultiJettyMem2Mem1D::KernelRun 的 host 侧参数计算搬到设备侧。
+// 布局见 KfcReduceScatterSoleNhrParamIndex，与 KFC dispatch、kernel 形参逐槽一致。
+template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForReduceScatterSoleNhrM2M(
+    __gm__ CommonPrepareParamCcu* commParam)
+{
+    constexpr uint64_t hcclMinSliceAlign = 128U;
+    constexpr uint64_t nhrJettyNum = 1U; // 与 hccl CcuTempReduceScatterNhrMultiJettyMem2Mem1D 的 portNum=1 一致
+    const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
+    const uint64_t sliceSize = commParam->count * dataTypeSize; // 每 rank 输出份
+    const uint64_t repeatOffset = sliceSize * ccuParam_.repeatIndex;
+    const uint64_t sliceStride = commParam->strideCount == 0U ? sliceSize : commParam->strideCount * dataTypeSize;
+    const uint64_t inputBase = reinterpret_cast<uint64_t>(commParam->sendBuf) + repeatOffset;
+    const uint64_t outputBase = reinterpret_cast<uint64_t>(commParam->recvBuf) + repeatOffset;
+    // hccl 口径：sliceAlignCount = 128 / dataTypeSize（元素数）；portNum=1 时 sliceOneJettySize 不被消费
+    const uint64_t sliceAlignCount = hcclMinSliceAlign / dataTypeSize;
+    const uint64_t sliceOneJettySize = sliceSize / nhrJettyNum / sliceAlignCount * sliceAlignCount;
+    const uint64_t sliceLastJettySize = sliceSize - (nhrJettyNum - 1U) * sliceOneJettySize;
+
+    xnData_[KFC_RS_SOLE_NHR_OP_ID] = GetOpId(commParam);
+    xnData_[KFC_RS_SOLE_NHR_INPUT] = inputBase;
+    xnData_[KFC_RS_SOLE_NHR_OUTPUT] = outputBase;
+    xnData_[KFC_RS_SOLE_NHR_SLICE_SIZE] = sliceSize;
+    xnData_[KFC_RS_SOLE_NHR_INPUT_SLICE_STRIDE] = sliceStride;
+    xnData_[KFC_RS_SOLE_NHR_SLICE_ONE_JETTY_SIZE] = sliceOneJettySize;
+    xnData_[KFC_RS_SOLE_NHR_SLICE_LAST_JETTY_SIZE] = sliceLastJettySize;
+    xnData_[KFC_RS_SOLE_NHR_REPEAT_NUM_INV] = UINT64_MAX - 1U; // sole executor repeatNum=1
+    xnData_[KFC_RS_SOLE_NHR_INPUT_REPEAT_STRIDE] = 0U;         // sole executor 双 stride=0
+    xnData_[KFC_RS_SOLE_NHR_OUTPUT_REPEAT_STRIDE] = 0U;
+    KERNEL_LOG(
+        KERNEL_INFO, "RS sole-NHR prepare: slice=0x%llx, stride=0x%llx, lastJetty=0x%llx\n", sliceSize, sliceStride,
+        sliceLastJettySize);
 }
 } // namespace AscendC
 

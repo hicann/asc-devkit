@@ -71,6 +71,23 @@ enum KfcConcurrentAllToAllParamIndex : uint32_t {
     KFC_CONCURRENT_A2A_PARAM_NUM = 11,
 };
 
+// Sole NHR MultiLink（CcuSchedReduceScatterSoleNHRMultiLink）单帧 xnData 布局：
+// [0]=opId 哨兵，NHR 参数从 1 顺排。AIV prepare（CcuPrepareForReduceScatterSoleNhrM2M）写入、
+// KFC dispatch 逐槽转发、kernel 形参三处索引必须一致。
+enum KfcReduceScatterSoleNhrParamIndex : uint32_t {
+    KFC_RS_SOLE_NHR_OP_ID = 0,
+    KFC_RS_SOLE_NHR_INPUT = 1,
+    KFC_RS_SOLE_NHR_OUTPUT = 2,
+    KFC_RS_SOLE_NHR_SLICE_SIZE = 3,
+    KFC_RS_SOLE_NHR_INPUT_SLICE_STRIDE = 4,
+    KFC_RS_SOLE_NHR_SLICE_ONE_JETTY_SIZE = 5,
+    KFC_RS_SOLE_NHR_SLICE_LAST_JETTY_SIZE = 6,
+    KFC_RS_SOLE_NHR_REPEAT_NUM_INV = 7,
+    KFC_RS_SOLE_NHR_INPUT_REPEAT_STRIDE = 8,
+    KFC_RS_SOLE_NHR_OUTPUT_REPEAT_STRIDE = 9,
+    KFC_RS_SOLE_NHR_PARAM_NUM = 10,
+};
+
 } // namespace HcclKfcProtocol
 
 #endif

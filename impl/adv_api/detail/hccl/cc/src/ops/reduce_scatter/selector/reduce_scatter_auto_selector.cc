@@ -124,14 +124,62 @@ SelectorStatus ReduceScatterAutoSelector::SelectCcuScheduleAlgo(
         HCCL_WARNING("[ReduceScatterAutoSelector] KFC ReduceScatter does not support INT64, UINT64 or FP64.");
         return SelectorStatus::NOT_MATCH;
     }
-    if (topoInfo->topoLevelNums != 1 || topoInfo->level0Topo != Level0Shape::MESH_1D ||
-        topoInfo->level0MeshType != Level0MeshType::SINGLE_DIE) {
+    if (topoInfo->topoLevelNums != 1) {
+        HCCL_WARNING("[ReduceScatterAutoSelector] unsupported KFC topology, levelNum[%u].", topoInfo->topoLevelNums);
+        return SelectorStatus::NOT_MATCH;
+    }
+    if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS) {
+        return SelectCcuScheduleUBXAlgo(topoInfo, opParam, selectAlgName);
+    }
+    if (topoInfo->level0Topo != Level0Shape::MESH_1D || topoInfo->level0MeshType != Level0MeshType::SINGLE_DIE) {
         HCCL_WARNING(
             "[ReduceScatterAutoSelector] unsupported KFC topology, levelNum[%u], level0Topo[%d], meshType[%d].",
             topoInfo->topoLevelNums, topoInfo->level0Topo, topoInfo->level0MeshType);
         return SelectorStatus::NOT_MATCH;
     }
     return SelectMeshAlgoCcuSchedule(topoInfo, opParam, selectAlgName);
+}
+
+// UBX（MESH_1D_CLOS）机型：与 hccl SelectMeshAlgoCcuSchedule 的 UBX 分支对齐——
+// 同组 4P（meshNum==closNum 且 rankSize<=4）走 SoleMesh/Concurrent、矩形大数据走 Parallel/PipeLine，
+// 上述算法均未在本仓迁移，返回 NOT_MATCH；其余场景（hccl 的"1d NHR 算法"分支）选 SoleNHRMultiLink。
+// 注意：hccl REGISTER_ALG_ATTRS 的 CalcFrameNum <= MAX_FRAME_NUM_FOR_CCU_ALGO 门槛因 devkit 无
+// CalcFrameNum 未同步；IsSmallData 依赖 count，MC2 tiling 无 count 字段导致该保护失效（见迁移记录）。
+SelectorStatus ReduceScatterAutoSelector::SelectCcuScheduleUBXAlgo(
+    const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam, std::string& selectAlgName) const
+{
+    if (topoInfo->level0PcieMix) {
+        HCCL_WARNING("[ReduceScatterAutoSelector] pcie mixed topo is not supported yet for ccu sched mode.");
+        return SelectorStatus::NOT_MATCH;
+    }
+    u64 perDataSize = DATATYPE_SIZE_TABLE[opParam.DataDes.dataType];
+    u64 dataSize = opParam.DataDes.count * perDataSize;
+    bool isMeshNumEqualToClosNum = false;
+    bool isClosNumMultipleOfMeshNum = false;
+    CHK_PRT_RET(
+        CheckMeshNumEqualToClosNum(topoInfo, isMeshNumEqualToClosNum) != HCCL_SUCCESS,
+        HCCL_ERROR("[ReduceScatterAutoSelector] CheckMeshNumEqualToClosNum failed."), SelectorStatus::NOT_MATCH);
+    CHK_PRT_RET(
+        CheckClosNumMultipleOfMeshNum(topoInfo, isClosNumMultipleOfMeshNum) != HCCL_SUCCESS,
+        HCCL_ERROR("[ReduceScatterAutoSelector] CheckClosNumMultipleOfMeshNum failed."), SelectorStatus::NOT_MATCH);
+    if (isMeshNumEqualToClosNum && topoInfo->userRankSize <= MAX_RANK_NUM_FOR_CONCURRENT_ALGO) {
+        // 4P mesh：hccl 小数据走 SoleMesh、大数据走 ConcurMeshNHRMultiLink，均非本算法迁移范围
+        HCCL_INFO(
+            "[ReduceScatterAutoSelector][%s] UBX 4P-mesh group not migrated, meshEqualsClos[%d], rankSize[%u]",
+            __func__, static_cast<int>(isMeshNumEqualToClosNum), topoInfo->userRankSize);
+        return SelectorStatus::NOT_MATCH;
+    }
+    if (isClosNumMultipleOfMeshNum && !IsSmallData(dataSize)) {
+        // 矩形场景大数据：hccl 走 ParallelMeshNHRMultiLink / PipeLineMeshNHR，未迁移
+        HCCL_INFO(
+            "[ReduceScatterAutoSelector][%s] UBX rectangular large-data not migrated, dataSize[%llu]", __func__,
+            static_cast<unsigned long long>(dataSize));
+        return SelectorStatus::NOT_MATCH;
+    }
+    // 其余场景：1d NHR 算法（hccl else 分支）
+    selectAlgName = "CcuSchedReduceScatterSoleNHRMultiLink";
+    HCCL_INFO("[ReduceScatterAutoSelector][%s] UBX NHR Algo match [%s]", __func__, selectAlgName.c_str());
+    return SelectorStatus::MATCH;
 }
 
 SelectorStatus ReduceScatterAutoSelector::SelectMeshAlgoCcuSchedule(

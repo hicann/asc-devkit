@@ -56,10 +56,12 @@ private:
     void Create910DLinks(uint32_t srcRank, uint32_t dstRank);
     void InitL1L2TopoInsts(uint32_t podNum);
     void InitHostDpuInfo(uint32_t serverNum);
+    void InitUbxTopo();
 
 private:
     bool is2D{false};
     bool isDpuEnable{false};
+    bool isUbxTopo_{false};
     std::vector<uint32_t> allRankList_;
     std::map<uint32_t, std::vector<uint32_t>> serverId2RankList_;
     std::map<uint32_t, std::vector<uint32_t>> podId2RankList_;

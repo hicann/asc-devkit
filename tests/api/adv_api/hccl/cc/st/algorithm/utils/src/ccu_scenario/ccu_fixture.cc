@@ -176,10 +176,15 @@ void CcuStFixture::VerifyScenario(const CcuStScenario& scenario)
         HcclSim::SimWorld::Global()->Deinit();
         unsetenv("HCCL_OP_EXPANSION_MODE");
         unsetenv("ASCEND_ENABLE_CCU_KFC_BRANCH");
+        unsetenv("ENABLE_UBX_TOPO_FOR_LLT");
     }};
 
     setenv("HCCL_OP_EXPANSION_MODE", "CCU_SCHED", 1);
     setenv("ASCEND_ENABLE_CCU_KFC_BRANCH", "1", 1);
+    if (scenario.ubxTopo) {
+        // 须在 SimWorld init（各 rank TopoModel 构造）前设置，TopoModel 构造期读取
+        setenv("ENABLE_UBX_TOPO_FOR_LLT", "1", 1);
+    }
     mc2_ops_hccl::InitEnvConfig();
     HcclSim::SimWorld::Global()->Init(scenario.topoMeta, scenario.devType);
 

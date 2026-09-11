@@ -100,3 +100,86 @@ TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleMesh_2Rank_Fp16_MultiChunk)
 {
     VerifyScenario(MakeScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 20ULL * 1024 * 1024));
 }
+
+// ============================================================================
+// CcuSchedReduceScatterSoleNHRMultiLink（KFC NHR MultiJetty，portNum=1）
+// ============================================================================
+
+namespace {
+
+CcuStScenario MakeNhrMultiLinkScenario(
+    const TopoMeta& topoMeta, HcclDataType dataType, uint64_t count, HcclReduceOp reduceType = HCCL_REDUCE_SUM)
+{
+    const uint32_t rankSize = CcuStFixture::CountRanks(topoMeta);
+    const uint64_t typeSize = DATATYPE_SIZE_TABLE[dataType];
+    const uint64_t sliceSize = count * typeSize;
+    CcuStScenario scenario;
+    scenario.topoMeta = topoMeta;
+    scenario.dataType = dataType;
+    scenario.opType = HcclCMDType::HCCL_CMD_REDUCE_SCATTER;
+    scenario.expectedAlgName = "CcuSchedReduceScatterSoleNHRMultiLink";
+    scenario.algConfig = scenario.expectedAlgName;
+    scenario.count = count;
+    scenario.reduceType = reduceType;
+    scenario.sizes.assign(rankSize, std::vector<uint64_t>(rankSize, sliceSize));
+    scenario.ubxTopo = true; // NHR MultiJetty 通道计算需要 CLOS 型 L0 实例
+    return scenario;
+}
+
+} // namespace
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Fp16_50Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 50));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_4Rank_Fp16_32Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1, 2, 3}}}}, HCCL_DATA_TYPE_FP16, 32));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_8Rank_Fp16_32Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1, 2, 3, 4, 5, 6, 7}}}}, HCCL_DATA_TYPE_FP16, 32));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Fp32_25Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP32, 25));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Bfp16_50Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_BFP16, 50));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Int32_25Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_INT32, 25));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Fp16_512Elem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 512));
+}
+
+// 大尺寸：NHR 无 chunk 循环，单 turn 全量搬运（WriteReduce 直接远端规约）
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_8Rank_Fp16_512KElem)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1, 2, 3, 4, 5, 6, 7}}}}, HCCL_DATA_TYPE_FP16, 512 * 1024));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_ZeroLength)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 0));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Fp32_Max)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP32, 25, HCCL_REDUCE_MAX));
+}
+
+TEST_F(CcuStReduceScatter, CcuSchedReduceScatterSoleNHRMultiLink_2Rank_Fp16_Min)
+{
+    VerifyScenario(MakeNhrMultiLinkScenario(TopoMeta{{{{0, 1}}}}, HCCL_DATA_TYPE_FP16, 50, HCCL_REDUCE_MIN));
+}
