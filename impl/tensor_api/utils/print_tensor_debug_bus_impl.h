@@ -85,9 +85,29 @@ struct debug_bus_chunk {
 };
 
 template <AscendC::Hardware Hardware>
+__aicore__ inline constexpr uint64_t get_debug_bus_loop_steplen()
+{
+    if constexpr (Hardware == AscendC::Hardware::BIAS || Hardware == AscendC::Hardware::FIXBUF) {
+        return 8U;
+    } else {
+        return 32U;
+    }
+}
+
+template <AscendC::Hardware Hardware>
+__aicore__ inline constexpr uint32_t get_debug_bus_local_addr_shift()
+{
+    if constexpr (Hardware == AscendC::Hardware::L1) {
+        return 5U;
+    } else {
+        return 0U;
+    }
+}
+
+template <AscendC::Hardware Hardware>
 __aicore__ inline uint32_t get_debug_bus_local_offset(uint64_t local_address)
 {
-    return static_cast<uint32_t>(local_address >> __asc_aicore::get_debug_bus_local_addr_shift<Hardware>());
+    return static_cast<uint32_t>(local_address >> get_debug_bus_local_addr_shift<Hardware>());
 }
 
 template <AscendC::Hardware Hardware>
@@ -109,7 +129,7 @@ __aicore__ inline void read_debug_bus_data(uint64_t debug_bus_address, debug_bus
 {
     chunk.word0 = __asc_aicore::debug_bus_read_reg(debug_bus_address, __asc_aicore::ASC_DEBUG_BUS_DATA_OFFSET);
     chunk.word1 = __asc_aicore::debug_bus_read_reg(debug_bus_address, __asc_aicore::ASC_DEBUG_BUS_DATA_OFFSET + 4U);
-    if constexpr (__asc_aicore::get_debug_bus_loop_steplen<Hardware>() == 32U) {
+    if constexpr (get_debug_bus_loop_steplen<Hardware>() == 32U) {
         chunk.word2 = __asc_aicore::debug_bus_read_reg(debug_bus_address, __asc_aicore::ASC_DEBUG_BUS_DATA_OFFSET + 8U);
         chunk.word3 =
             __asc_aicore::debug_bus_read_reg(debug_bus_address, __asc_aicore::ASC_DEBUG_BUS_DATA_OFFSET + 12U);
@@ -178,7 +198,7 @@ struct debug_bus_tensor_reader {
     __aicore__ inline void emit(print_session& session, const Coord& coord)
     {
         constexpr uint32_t ELEMENT_BITS = is_b4_type<Data> ? 4U : sizeof(Data) * 8U;
-        constexpr uint64_t CHUNK_BYTES = __asc_aicore::get_debug_bus_loop_steplen<Hardware>();
+        constexpr uint64_t CHUNK_BYTES = get_debug_bus_loop_steplen<Hardware>();
         uint64_t element_index = static_cast<uint64_t>(tensor.layout()(coord));
         uint64_t bit_address = reinterpret_cast<uint64_t>(tensor.data().get()) * 8U + element_index * ELEMENT_BITS;
         uint64_t chunk_address = (bit_address >> 3) & ~(CHUNK_BYTES - 1U);
