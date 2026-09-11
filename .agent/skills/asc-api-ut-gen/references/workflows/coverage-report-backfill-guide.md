@@ -187,7 +187,7 @@ flowchart TD
 
 ### 7.1 先确定“对外 API”，不要只盯内部 impl
 
-覆盖率页面通常落在 `impl/` 或 `instr_impl/` 下，但补 UT 时，必须回溯到对应的：
+覆盖率页面通常落在 `impl/` 下（C API 为 `impl/c_api/memory_base_impl/` 和 `impl/c_api/reg_base_impl/`），但补 UT 时，必须回溯到对应的：
 - `include/basic_api`
 - `include/c_api`
 - `include/adv_api`

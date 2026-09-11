@@ -22,11 +22,9 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-#include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl.h"
-#include "impl/c_api/instr_impl/npu_arch_2201/vector_datamove_impl.h"
+#include "impl/c_api/memory_base_impl/vector_compute_composite_intf_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
-#include "impl/c_api/instr_impl/npu_arch_3510/vector_datamove_impl.h"
+#include "impl/c_api/reg_base_impl/vector_compute_composite_intf_impl.h"
 #endif
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_add and asc_sync)
 __aicore__ inline void asc_add_sync(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count);

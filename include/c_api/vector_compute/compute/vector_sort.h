@@ -22,9 +22,9 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-#include "impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl.h"
+#include "impl/c_api/memory_base_impl/vector_sort_intf_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
+#include "impl/c_api/reg_base_impl/vector_sort_intf_impl.h"
 #endif
 __aicore__ inline void asc_get_vms4_sr(uint16_t sorted_num[4]);
 

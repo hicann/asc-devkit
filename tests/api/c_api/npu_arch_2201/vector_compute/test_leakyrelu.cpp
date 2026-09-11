@@ -47,8 +47,9 @@
         EXPECT_EQ(a, static_cast<data_type>(33));                                                                      \
     }                                                                                                                  \
                                                                                                                        \
-    void cce_name##_##data_type##_set_vector_mask_Stub(uint32_t mask0)                                                 \
+    void cce_name##_##data_type##_set_vector_mask_Stub(uint64_t mask1, uint64_t mask0)                                 \
     {                                                                                                                  \
+        EXPECT_EQ(mask1, static_cast<uint64_t>(0));                                                                    \
         EXPECT_EQ(mask0, static_cast<uint64_t>(44));                                                                   \
     }                                                                                                                  \
     }                                                                                                                  \
@@ -82,7 +83,7 @@
         __ubuf__ data_type* src = reinterpret_cast<__ubuf__ data_type*>(22);                                           \
         data_type a = static_cast<data_type>(33);                                                                      \
         uint32_t count = static_cast<uint32_t>(44);                                                                    \
-        MOCKER_CPP(asc_set_mask_count_begin, void(uint32_t))                                                           \
+        MOCKER_CPP(set_vector_mask, void(uint64_t, uint64_t))                                                          \
             .times(1)                                                                                                  \
             .will(invoke(cce_name##_##data_type##_set_vector_mask_Stub));                                              \
                                                                                                                        \
@@ -103,7 +104,7 @@
         __ubuf__ data_type* src = reinterpret_cast<__ubuf__ data_type*>(22);                                           \
         data_type a = static_cast<data_type>(33);                                                                      \
         uint32_t count = static_cast<uint32_t>(44);                                                                    \
-        MOCKER_CPP(asc_set_mask_count_begin, void(uint32_t))                                                           \
+        MOCKER_CPP(set_vector_mask, void(uint64_t, uint64_t))                                                          \
             .times(1)                                                                                                  \
             .will(invoke(cce_name##_##data_type##_set_vector_mask_Stub));                                              \
                                                                                                                        \

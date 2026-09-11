@@ -112,7 +112,9 @@ void vcopy_stub(
         __ubuf__ data_type* dst = reinterpret_cast<__ubuf__ data_type*>(11);                                        \
         __ubuf__ data_type* src = reinterpret_cast<__ubuf__ data_type*>(22);                                        \
         uint32_t size = static_cast<uint32_t>(256 / sizeof(data_type));                                             \
-        MOCKER_CPP(asc_sync_post_process).times(sync_times);                                                        \
+        MOCKER_CPP(pipe_barrier, void(pipe_t)).times(sync_times).will(invoke(+[](pipe_t pipe) {                     \
+            EXPECT_EQ(static_cast<int>(pipe), static_cast<int>(pipe_t::PIPE_ALL));                                  \
+        }));                                                                                                        \
         MOCKER_CPP(                                                                                                 \
             vcopy, void(__ubuf__ data_type*, __ubuf__ data_type*, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t)) \
             .times(1)                                                                                               \
@@ -126,7 +128,7 @@ void vcopy_stub(
     {                                                                                                               \
         __ubuf__ data_type* dst = reinterpret_cast<__ubuf__ data_type*>(11);                                        \
         __ubuf__ data_type* src = reinterpret_cast<__ubuf__ data_type*>(22);                                        \
-        MOCKER_CPP(asc_sync_post_process).times(0);                                                                 \
+        MOCKER_CPP(pipe_barrier, void(pipe_t)).times(0);                                                            \
         MOCKER_CPP(                                                                                                 \
             vcopy, void(__ubuf__ data_type*, __ubuf__ data_type*, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t)) \
             .times(1)                                                                                               \

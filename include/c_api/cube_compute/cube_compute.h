@@ -22,13 +22,9 @@
 #include "c_api/defs/defs.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
-
-#include "impl/c_api/instr_impl/npu_arch_2201/cube_compute_impl.h"
-
+#include "impl/c_api/memory_base_impl/cube_compute_intf_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-
-#include "impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl.h"
-
+#include "impl/c_api/reg_base_impl/cube_compute_intf_impl.h"
 #endif
 
 #include "c_api/composite/cube_compute_composite.h"

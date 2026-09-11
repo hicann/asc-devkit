@@ -22,11 +22,8 @@ asc-devkit:
       - impl/basic_api/kernel_macros.h
       - impl/basic_api/kernel_prof_trace*.h
       - impl/utils/**/*.h
+      - impl/c_api/reg_base_impl/npu_arch_3510/sync_intf_impl.h
       - impl/experimental/tensor_api/utils/*.h
-      - impl/c_api/instr_impl/npu_arch_2201/utils_impl/**/*.h
-      - impl/c_api/instr_impl/npu_arch_3510/utils_impl/**/*.h
-      - impl/c_api/instr_impl/npu_arch_3510/utils_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/misc_impl.h
       - impl/basic_api/reg_compute/kernel_reg_compute_struct_intf_impl.h
       - impl/basic_api/reg_compute/kernel_reg_compute_common_intf_impl.h
       - impl/basic_api/reg_compute/kernel_reg_compute_intf_impl.h
@@ -61,8 +58,6 @@ asc-devkit:
       - impl/basic_api/dav_m310/kernel_operator_vec_vconv_impl.h
       - impl/basic_api/dav_m200/kernel_operator_dump_tensor_impl.h
       - impl/basic_api/dav_c220/kernel_operator_dump_tensor_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/debug_impl/printf_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/debug_impl.h
       - impl/basic_api/common_types.h
       - impl/basic_api/kernel_operator_gemm_base_impl.h
       - impl/basic_api/kernel_operator_gemm_intf_impl.h
@@ -76,19 +71,6 @@ asc-devkit:
       - impl/adv_api/detail/hccl/impl/hccl_v220_impl.h
       - impl/adv_api/detail/hccl/impl/hccl_v310_impl.h
       - impl/adv_api/detail/hccl/cc
-      - impl/c_api/instr_impl/npu_arch_2201/sync_impl/asc_sync_data_barrier_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_data_barrier_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/sync_impl/asc_set_flag_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/sync_impl/asc_wait_flag_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_wait_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_sync_notify_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_lock_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sync_impl/asc_unlock_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/sync_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sync_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/asc_transto5hd_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl/asc_transto5hd_impl.h
-      - impl/c_api/instr_impl/npu_arch_3510/sys_var_impl/asc_get_vf_len_impl.h
       - impl/basic_api/dav_c310/kernel_operator_determine_compute_sync_impl.h
       - impl/tensor_api/arch/utils/*.h
       - impl/tensor_api/utils/*.h
@@ -261,7 +243,6 @@ asc-devkit:
       - impl/simt_api/cpp/kernel_simt_bessel_intf_impl.h
       - impl/simt_api/cpp/kernel_simt_cast_intf_impl.h
       - impl/simt_api/cpp/kernel_simt_atomic_intf_impl.h
-      - impl/c_api/instr_impl/npu_arch_2201/vector_compute_impl/asc_set_vector_mask_impl.h
       - impl/basic_api/dav_c220/kernel_operator_reg_others_impl.h
       - impl/basic_api/dav_c220/kernel_operator_vec_others_impl.h
       - impl/basic_api/dav_c220/kernel_operator_cube_others_impl.h

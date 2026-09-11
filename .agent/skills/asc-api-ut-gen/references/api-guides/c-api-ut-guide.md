@@ -111,7 +111,7 @@ Mock 函数签名必须与底层指令完全一致，并在 stub 中断言所有
 读取顺序：
 
 1. 目标 API 头文件：`include/c_api/**` 中的函数签名、重载和结构体声明。
-2. 目标架构 impl：`impl/c_api/**`、`impl/c_api/instr_impl/**` 中的真实字段赋值、默认值、条件编译和指令调用。
+2. 目标架构 impl：`impl/c_api/**`、`impl/c_api/{memory_base_impl,reg_base_impl}/**` 中的真实字段赋值、默认值、条件编译和指令调用。
 3. 底层 stub：`tests/api/c_api/stub/cce_stub.h` 中的 mock/stub 函数签名。
 4. 已有同架构同类 UT：确认字段初始化、mockcpp 写法和断言习惯。
 

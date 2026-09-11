@@ -108,7 +108,7 @@ expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "\`__cbuf__\`" "C 
 expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "\`__fbuf__\`" "C API fbuf pointer marker"
 expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "本表不是固定全集" "C API pointer marker list not exhaustive"
 expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "\`__aicore__\`、\`__simd_callee__\` 等函数限定符不是指针类型标记" "C API function qualifier is not pointer marker"
-expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "impl/c_api/instr_impl/**" "C API impl struct source"
+expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "impl/c_api/{memory_base_impl,reg_base_impl}/**" "C API impl struct source"
 expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "底层 stub 签名" "C API stub signature source"
 expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "不能只验证本 guide 中列出的常见字段" "C API no fixed attribute list"
 expect_fixed "${REFERENCES_DIR}/api-guides/c-api-ut-guide.md" "Stub 已逐项断言所有 attribute/结构体字段" "C API struct field assertion checklist"
@@ -170,7 +170,7 @@ expect_fixed "${REFERENCES_DIR}/README.md" "api-directory-map.md" "API directory
 expect_fixed "${REFERENCES_DIR}/README.md" "generation-constraints.json" "generation constraints reference"
 expect_fixed "${REFERENCES_DIR}/foundations/api-directory-map.md" "API 目录映射表" "API directory map title"
 expect_fixed "${REFERENCES_DIR}/foundations/api-directory-map.md" "tests/api/reg_compute_api/" "reg compute test mapping"
-expect_fixed "${REFERENCES_DIR}/foundations/api-directory-map.md" "impl/c_api/instr_impl/npu_arch_3510/" "C API implementation mapping"
+expect_fixed "${REFERENCES_DIR}/foundations/api-directory-map.md" "impl/c_api/reg_base_impl/" "C API implementation mapping"
 expect_fixed "${REFERENCES_DIR}/foundations/api-directory-map.md" "ascendc_case_ascend950pr_9599_aiv_basic" "950 AIV basic test mapping"
 if grep -Eq 'Tensor API|tensor_api|experimental/tensor_api|tests/api/tensor_api' "${REFERENCES_DIR}/foundations/api-directory-map.md"; then
     fail "current asc-api-ut-gen skill must ignore Tensor API mappings"

@@ -21,10 +21,6 @@
 #define INCLUDE_C_API_REG_COMPUTE_REG_SYNC_H
 #include "c_api/defs/defs.h"
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
-#include "impl/c_api/instr_impl/npu_arch_3510/vector_compute_impl.h"
-#endif
-
 #define asc_mem_bar mem_bar
 
 #endif

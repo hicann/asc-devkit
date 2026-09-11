@@ -45,7 +45,7 @@ The `include/` and `impl/` top-level directory structures have a one-to-one corr
 | `include/adv_api/math/xxx.h` | `impl/adv_api/detail/math/xxx/xxx_common_impl.h` | |
 | `include/adv_api/math/xxx_tiling.h` | `impl/adv_api/tiling/math/xxx_tiling_impl.cpp` | |
 | `include/adv_api/<cat>/xxx.h` | `impl/adv_api/detail/<cat>/xxx/xxx_common_impl.h` | |
-| `include/c_api/<category>/<category>.h` | `impl/c_api/instr_impl/npu_arch_<NNNN>/<category>_impl/asc_<api>_impl.h` | C API uses `npu_arch_` prefix directory |
+| `include/c_api/<category>/<header>.h` | `impl/c_api/memory_base_impl/<header>_intf_impl.h`, `impl/c_api/reg_base_impl/<header>_intf_impl.h` | Public headers follow the existing category hierarchy and directly include matching common implementation headers, which include 3510-specific implementations under `reg_base_impl/npu_arch_3510/` with an architecture guard. Shared internal helpers belong in each architecture group's `utils_impl.h`. |
 
 ---
 
@@ -91,7 +91,7 @@ exp_check_common.h
 |---------|--------|---------|------|
 | Basic API | `kernel_<name>_intf.h` | Dispatch: `kernel_<name>_intf_impl.h`; arch impl: `dav_<arch>/kernel_<name>_impl.h` | `kernel_operator_vec_binary_intf.h` |
 | High-level API | `<name>.h` | `<name>_common_impl.h` | `axpy.h` / `axpy_common_impl.h` |
-| C API | `<category>.h` | `asc_<api>_impl.h` | `vector_compute.h` / `asc_add_impl.h` |
+| C API | `<header>.h` | `<header>_intf_impl.h` | `scalar_atomic.h` / `scalar_atomic_intf_impl.h` |
 | Tiling | `<name>_tiling.h` | `<name>_tiling_impl.cpp` | `axpy_tiling.h` |
 
 ---
@@ -100,7 +100,7 @@ exp_check_common.h
 
 ### Naming Format
 
-Architecture-specific implementations for basic API are placed under the `impl/basic_api/dav_<code>/` directory, in the format `dav_` + architecture code. For high-level API, architecture-specific implementations reside in `impl/adv_api/detail/<category>/<api>/<api>_<arch>_impl.h`, dispatched by the public header via `#if __NPU_ARCH__`. C API uses the `npu_arch_<NNNN>/` prefix directory; see the C API mapping table above.
+Architecture-specific implementations for basic API are placed under the `impl/basic_api/dav_<code>/` directory, in the format `dav_` + architecture code. For high-level API, architecture-specific implementations reside in `impl/adv_api/detail/<category>/<api>/<api>_<arch>_impl.h`, dispatched by the public header via `#if __NPU_ARCH__`. C API places 2201 implementations in `impl/c_api/memory_base_impl/`, shared regbase implementations in `impl/c_api/reg_base_impl/`, and 3510-specific implementations in its `npu_arch_3510/` directory. Matching common headers include the specific headers under an architecture guard.
 
 ### Architecture Code Mapping (Examples)
 
@@ -234,14 +234,23 @@ When adding a complete API, create and modify files according to the following c
 ### C API Checklist
 
 ```text
-□ include/c_api/<category>/<category>.h or add function declarations to existing file
+□ include/c_api/<category>/<header>.h
+    Add declarations in the existing category hierarchy; reuse an existing header when appropriate
 
-□ impl/c_api/instr_impl/npu_arch_<NNNN>/<category>_impl/asc_<api>_impl.h
-    Architecture-specific implementation
+□ impl/c_api/memory_base_impl/<header>_intf_impl.h
+    Direct 2201 implementations and necessary helpers in the matching public header's implementation file
 
-□ impl/c_api/instr_impl/npu_arch_<NNNN>/<category>_impl.h
-    Add #include "<category>_impl/asc_<api>_impl.h" in the aggregate header
-    (when adding a new category, also register the public header in include/c_api/asc_simd.h)
+□ impl/c_api/reg_base_impl/<header>_intf_impl.h
+    Shared regbase implementations, included directly by the matching public header
+
+□ impl/c_api/reg_base_impl/npu_arch_3510/<header>_intf_impl.h
+    3510-specific implementations, included by matching common headers under __NPU_ARCH__ == 3510
+    Do not include common interface implementation headers in reverse; retain necessary utility dependencies only
+    Register new public categories in the corresponding public entry headers
+
+    Do not create empty implementations for aggregate headers, type headers or macro aliases.
+    Architecture-specific interfaces still use matching common dispatch headers.
+    Shared internal helpers belong in each architecture group's utils_impl.h; avoid redundant forwarding layers.
 
 □ tests/api/c_api/npu_arch_<arch>/<category>/test_asc_<api>.cpp
     Mock test
