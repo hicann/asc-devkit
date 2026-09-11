@@ -29,11 +29,11 @@
         uint16_t right_pad_size, uint8_t sid)                                                                          \
     {                                                                                                                  \
         EXPECT_EQ(dst, reinterpret_cast<__ubuf__ data_type*>(11));                                                     \
-        EXPECT_EQ(hor_size, static_cast<uint16_t>(1));                                                                 \
-        EXPECT_EQ(ver_size, static_cast<uint16_t>(1));                                                                 \
+        EXPECT_EQ(hor_size, static_cast<uint16_t>(0));                                                                 \
+        EXPECT_EQ(ver_size, static_cast<uint16_t>(0));                                                                 \
         EXPECT_EQ(hor_start_pos, static_cast<uint16_t>(0));                                                            \
         EXPECT_EQ(ver_start_pos, static_cast<uint16_t>(0));                                                            \
-        EXPECT_EQ(src_hor_size, static_cast<uint16_t>(1));                                                             \
+        EXPECT_EQ(src_hor_size, static_cast<uint16_t>(0));                                                             \
         EXPECT_EQ(top_pad_size, static_cast<uint8_t>(0));                                                              \
         EXPECT_EQ(bot_pad_size, static_cast<uint8_t>(0));                                                              \
         EXPECT_EQ(left_pad_size, static_cast<uint16_t>(0));                                                            \
