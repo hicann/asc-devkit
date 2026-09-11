@@ -21,6 +21,10 @@ def get_saturation(data, data_type):
     return np.clip(data, np.iinfo(data_type).min, np.iinfo(data_type).max)
 
 
+def round_half_away_from_zero(data):
+    return np.copysign(np.floor(np.abs(data) + 0.5), data)
+
+
 def gen_golden_data_simple(scenario_num):
     total_length = 256
     if scenario_num == 1:
@@ -32,7 +36,8 @@ def gen_golden_data_simple(scenario_num):
         src_data_type = np.float32
         dst_data_type = np.int16
         x = np.random.uniform(-100, 100, [1, total_length]).astype(src_data_type)
-        golden = get_saturation(np.round(x), dst_data_type).astype(dst_data_type)
+        rounded = round_half_away_from_zero(x)
+        golden = get_saturation(rounded, dst_data_type).astype(dst_data_type)
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
     x.tofile("./input/input_x.bin")
