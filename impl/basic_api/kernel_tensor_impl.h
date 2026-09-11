@@ -1325,6 +1325,7 @@ __aicore__ inline const __gm__ typename GlobalTensor<T>::PrimType* GlobalTensor<
 template <typename T>
 __aicore__ inline __gm__ typename GlobalTensor<T>::PrimType* GlobalTensor<T>::GetPhyAddr(const uint64_t offset) const
 {
+    this->CheckGlobalBuffer("GetPhyAddr");
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
     if constexpr (SupportType<PrimType, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>()) {
         ASCENDC_DEBUG_ASSERT(
@@ -1415,6 +1416,7 @@ __aicore__ inline void GlobalTensor<T>::DcciWriteCache(__gm__ U* buffer)
 template <typename T>
 __aicore__ inline __inout_pipe__(S) typename GlobalTensor<T>::PrimType GlobalTensor<T>::GetValue(const uint64_t offset)
 {
+    this->CheckGlobalBuffer("GetValue");
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
     if constexpr (SupportType<PrimType, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>()) {
         __gm__ uint8_t* addr =
@@ -1459,6 +1461,7 @@ template <typename T>
 __aicore__ inline __inout_pipe__(S)
     typename GlobalTensor<T>::PrimType GlobalTensor<T>::GetValue(const uint64_t offset) const
 {
+    this->CheckGlobalBuffer("GetValue");
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
     if constexpr (SupportType<PrimType, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>()) {
         __gm__ uint8_t* addr =
@@ -1521,6 +1524,7 @@ template <typename T>
 __aicore__ inline __inout_pipe__(S) __gm__
 typename GlobalTensor<T>::PrimType& GlobalTensor<T>::operator()(const uint64_t offset)
 {
+    this->CheckGlobalBuffer("operator()");
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
     __gm__ PrimType* addr = ExtractL2CacheGmAddr(this->address_);
     DcciReadCache(addr + offset);
@@ -1536,6 +1540,7 @@ template <typename T>
 __aicore__ inline __inout_pipe__(S) __gm__
 typename GlobalTensor<T>::PrimType& GlobalTensor<T>::operator()(const uint64_t offset) const
 {
+    this->CheckGlobalBuffer("operator()");
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
     __gm__ PrimType* addr = ExtractL2CacheGmAddr(this->address_);
 #ifdef __ASCENDC_SUPER_KERNEL_ENABLE_GM_GET_SET_VALUE_DCCI__
@@ -1553,6 +1558,7 @@ typename GlobalTensor<T>::PrimType& GlobalTensor<T>::operator()(const uint64_t o
 template <typename T>
 __aicore__ inline void GlobalTensor<T>::SetValue(const uint64_t offset, typename GlobalTensor<T>::PrimType value)
 {
+    this->CheckGlobalBuffer("SetValue");
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
     if constexpr (SupportType<PrimType, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>()) {
         __gm__ uint8_t* addr =
@@ -1666,6 +1672,7 @@ __aicore__ inline uint64_t GlobalTensor<T>::GetSize() const
 template <typename T>
 __aicore__ inline GlobalTensor<T> GlobalTensor<T>::operator[](const uint64_t offset) const
 {
+    this->CheckGlobalBuffer("operator[]");
     GlobalTensor result = *this;
     if constexpr (IsHalfByteDataType<PrimType>()) {
         result.address_ = result.address_ + offset / INT4_TWO;
@@ -1736,6 +1743,7 @@ template <typename T>
 template <typename U>
 __aicore__ inline GlobalTensor<U> GlobalTensor<T>::ReinterpretCast() const
 {
+    this->CheckGlobalBuffer("ReinterpretCast");
     GlobalTensor<U> output;
     output.address_ = reinterpret_cast<__gm__ U*>(reinterpret_cast<__gm__ int64_t*>(this->address_));
     output.oriAddress_ = reinterpret_cast<__gm__ U*>(reinterpret_cast<__gm__ int64_t*>(this->oriAddress_));

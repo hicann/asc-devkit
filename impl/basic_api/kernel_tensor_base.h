@@ -24,6 +24,9 @@
 #include "kernel_utils.h"
 #include "kernel_operator_layout.h"
 #include "kernel_operator_tensor_trait.h"
+#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__
+#include "../utils/debug/asc_aicore_printf_impl.h"
+#endif
 
 namespace AscendC {
 using TBufHandle = uint8_t*;
@@ -234,6 +237,7 @@ public:
     using PrimType = PrimT<T>;
     __aicore__ inline void SetAddr(const uint64_t offset)
     {
+        CheckGlobalBuffer("SetAddr");
         if constexpr (IsSameType<PrimType, int4b_t>::value) {
             address_ = address_ + offset / INT4_TWO;
             oriAddress_ = oriAddress_ + offset / INT4_TWO;
@@ -252,8 +256,30 @@ public:
     }
 
 public:
+#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__
+    __gm__ PrimType* address_ = nullptr;
+    __gm__ PrimType* oriAddress_ = nullptr;
+#else
     __gm__ PrimType* address_;
     __gm__ PrimType* oriAddress_;
+#endif
+
+protected:
+    __aicore__ inline void CheckGlobalBuffer(__gm__ const char* apiName) const
+    {
+#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__
+        if (address_ == nullptr || oriAddress_ == nullptr) {
+            __asc_aicore::printf_impl_assert(
+                "[ASSERT] GlobalTensor::%s requires a non-null GM buffer. "
+                "Call SetGlobalBuffer before accessing the tensor.\n",
+                apiName);
+            // Keep the guard effective even when diagnostic printing is disabled.
+            trap();
+        }
+#else
+        (void)apiName;
+#endif
+    }
 };
 
 template <typename T>

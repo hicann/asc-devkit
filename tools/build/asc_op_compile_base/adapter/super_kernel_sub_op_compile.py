@@ -250,9 +250,7 @@ def gen_sub_super_kernel_compile_options(
         )
         == "1"
     ):
-        compile_option_tuple.compile_options.append(
-            "-D__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__"
-        )
+        compile_option_tuple.compile_options.append("-D__ASCENDC_SUPER_KERNEL_DEBUG__")
     stream_fusion_mode = compile_info.super_kernel_info["sp_options"].get(
         "stream-fusion", SuperKernelStreamFusionMode.StreamFusionDisable
     )

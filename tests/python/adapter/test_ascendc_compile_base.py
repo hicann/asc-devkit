@@ -13,6 +13,7 @@ import os
 import sys
 import unittest
 from unittest import mock
+from itertools import product
 import tbe
 from tbe.common.platform import set_current_compile_soc_info, get_soc_spec
 from tbe.common import buildcfg
@@ -323,10 +324,64 @@ class TestAscendCCompileBase(unittest.TestCase):
                     gen_sub_super_kernel_compile_options(
                         compile_option_tuple, tiling_info, compile_info
                     )
-                macro = "-D__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__"
+                macro = "-D__ASCENDC_SUPER_KERNEL_DEBUG__"
                 self.assertEqual(
                     macro in compile_option_tuple.compile_options, should_enable
                 )
+
+    def test_global_tensor_gm_check_compile_options(self):
+        check_macro = "-D__ASCENDC_SUPER_KERNEL_DEBUG__"
+        dcci_macro = "-D__ASCENDC_SUPER_KERNEL_ENABLE_GM_GET_SET_VALUE_DCCI__"
+        dump_options = (
+            None,
+            "-DASCENDC_DUMP=0",
+            "-DASCENDC_DUMP=1",
+            "-DASCENDC_DUMP",
+            "-UASCENDC_DUMP",
+        )
+        for sub_combine, enabled, static_shape, dump_option in product(
+            (False, True), ("0", "1"), (False, True), dump_options
+        ):
+            with self.subTest(
+                sub_combine=sub_combine,
+                enabled=enabled,
+                static_shape=static_shape,
+                dump_option=dump_option,
+            ), tbe.common.context.op_context.OpContext():
+                ctx = tbe.common.context.get_context()
+                with mock.patch.object(
+                    ctx,
+                    "get_addition",
+                    side_effect=lambda key: sub_combine
+                    if key == "super_kernel_sub_combine"
+                    else None,
+                ):
+                    options = CompileOptionTuple(
+                        [dump_option] if dump_option else [], []
+                    )
+                    tiling = TilingInfo()
+                    tiling.static_shape_flag = static_shape
+                    info = CompileInfo()
+                    info.super_kernel_info = {
+                        "sp_options": {
+                            "debug-per-op-max-core-num": enabled,
+                            "stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable,
+                        }
+                    }
+                    gen_sub_super_kernel_compile_options(options, tiling, info)
+                    should_check = sub_combine and enabled == "1"
+                    self.assertEqual(
+                        check_macro in options.compile_options, should_check
+                    )
+                    self.assertNotIn("-DASCENDC_DEBUG", options.compile_options)
+                    actual_dump = [
+                        option
+                        for option in options.compile_options
+                        if option in dump_options
+                    ]
+                    self.assertEqual(actual_dump, [dump_option] if dump_option else [])
+                    if should_check:
+                        self.assertNotIn(dcci_macro, options.compile_options)
 
     def test_gen_sub_super_kernel_early_start_compile_options(self):
         # early start sub kernel disable
