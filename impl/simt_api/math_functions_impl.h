@@ -997,11 +997,12 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float ldexpf(float x, int exp)
         const uint32_t r = exp_bits - (q << 2);
         const float scale_q = __uint_as_float(q << 23);        // 23: float32 mantissa width; build 2^q.
         const float scale_qr = __uint_as_float((q + r) << 23); // q + r: first-stage exponent chunk.
-        x *= scale_qr;
-        x *= scale_q;
-        x *= scale_q;
-        x *= scale_q;
-        result = x;
+        float temp_x = x;
+        temp_x *= scale_qr;
+        temp_x *= scale_q;
+        temp_x *= scale_q;
+        temp_x *= scale_q;
+        result = temp_x;
     } else {
         result = x * __uint_as_float(
                          static_cast<uint32_t>(exp + 127)
