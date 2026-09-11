@@ -12,6 +12,7 @@
 | [data_copy_l0c2gm](./data_copy_l0c2gm) | 本样例展示通过asc_copy_l0c2gm将L0C（L0C Buffer）中的矩阵乘计算结果搬运到GM（Global Memory），并在搬运过程中完成标量和Vector量化、ReLU激活以及Nz格式到ND格式的转换。 | Ascend 950PR/Ascend 950DT |
 | [data_copy_l0c2l1](./data_copy_l0c2l1) | 本样例展示通过asc_copy_l0c2l1将L0C（L0C Buffer）中的矩阵乘计算结果搬运到L1（L1 Buffer），并在搬运过程中完成标量和Vector量化、ReLU激活以及Nz格式到ND格式的转换。 | Ascend 950PR/Ascend 950DT |
 | [data_copy_l0c2ub](./data_copy_l0c2ub) | 本样例展示通过asc_copy_l0c2ub将L0C（L0C Buffer）中的矩阵乘计算结果搬运到UB（Unified Buffer），并在搬运过程中完成标量和Vector量化、ReLU激活以及Nz格式到ND格式的转换。 | Ascend 950PR/Ascend 950DT |
+| [data_copy_ub2l1](./data_copy_ub2l1) | 本样例展示通过asc_copy_ub2l1将矩阵数据从UB（Unified Buffer）搬运到L1（L1 Buffer），包含非对齐shape下的UB->L1矩阵乘场景，以及GM->UB->L1 Buffer->UB->GM双向数据通路场景。 | Ascend 950PR/Ascend 950DT |
 | [reg_load_gather](./reg_load_gather) | 本样例演示离散数据搬入的过程，包含按元素索引的`asc_gather`和按数据块（DataBlock）索引的`asc_gather_datablock`两种场景。 | Ascend 950PR/Ascend 950DT |
 | [reg_load_store_align](./reg_load_store_align) | 本样例展示使用Reg矢量计算接口实现UB（Unified Buffer）与矢量数据寄存器之间的连续和非连续的对齐数据搬运。 | Ascend 950PR/Ascend 950DT |
 | [reg_load_store_mask](./reg_load_store_mask) | 本样例展示使用Reg矢量计算接口实现UB（Unified Buffer）与掩码寄存器之间的加载和存储，以及基于掩码寄存器进行数据选择的操作。 | Ascend 950PR/Ascend 950DT |
