@@ -21,7 +21,7 @@
 #include "c_api/defs/defs.h"
 #include <cstdint>
 #include <type_traits>
-#include "impl/utils/sys_macros.h"
+#include "utils/base/sys_macros.h"
 #include "utils/base/sys_constants.h"
 
 constexpr uint32_t C_API_AIC_TYPE = AscendC::AIC;
