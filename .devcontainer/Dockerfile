@@ -53,8 +53,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get install -y --no-install-recommends \
         tzdata lsb-release ca-certificates openssl gnupg2 \
         curl wget openssh-client iputils-ping net-tools lsof \
-        zip unzip \
-        build-essential cmake ninja-build ccache pkg-config \
+        zip unzip rpm \
+        build-essential cmake ninja-build ccache pkg-config patch \
         autoconf automake libtool \
         gdb gdbserver lcov \
         git git-lfs \

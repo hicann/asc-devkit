@@ -37,7 +37,7 @@ Pybind适用于快速将C++函数暴露给Python，实现高效接口绑定。�
     at::Tensor ascendc_add(const at::Tensor& x, const at::Tensor& y)
     {
         // 运行资源申请，通过c10_npu::getCurrentNPUStream()的函数获取当前NPU上的流
-        auto aclStream = c10_npu::getCurrentNPUStream().stream(false);
+        auto aclStream = c10_npu::getCurrentNPUStream().stream(true);
         // 分配Device侧输出内存
         at::Tensor z = at::empty_like(x);
         uint32_t numBlocks = 8;
@@ -111,7 +111,7 @@ Pybind适用于快速将C++函数暴露给Python，实现高效接口绑定。�
     at::Tensor ascendc_add(const at::Tensor& x, const at::Tensor& y)
     {
         // 运行资源申请，通过c10_npu::getCurrentNPUStream()的函数获取当前NPU上的流
-        auto aclStream = c10_npu::getCurrentNPUStream().stream(false);
+        auto aclStream = c10_npu::getCurrentNPUStream().stream(true);
         // 分配Device侧输出内存
         at::Tensor z = at::empty_like(x);
         uint32_t numBlocks = 8;
