@@ -55,6 +55,8 @@ PIPE_S
 
 ## 约束说明
 
+量化参数不能为inf/nan和非规格化数。
+
 支持以下三种传参形式：
 - 同时设置relu_pre和quant_pre。
 - 仅传入relu_pre，quant_pre传入0。

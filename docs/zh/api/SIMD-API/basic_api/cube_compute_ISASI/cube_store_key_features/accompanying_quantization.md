@@ -74,6 +74,10 @@ VQF322F32_PRE,         // Vector_Quant_Float32_2_Float32: float量化成float，
 <!-- end id4 -->
 <!-- end id2 -->
 
+## 约束说明
+
+量化参数不能为inf/nan和非规格化数。
+
 ## 使用示例
 
 完整样例请参考[fixpipe\_l0c2gm样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2gm)。
