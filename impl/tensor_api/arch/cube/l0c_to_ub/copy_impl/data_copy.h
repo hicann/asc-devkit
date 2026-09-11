@@ -66,9 +66,10 @@ public:
         constexpr bool is_dn_format = is_l0c_out_dn_format_v<DstTensor>;
         copy_l0c_to_ub_instr::data_copy_with_offset<quant_pre, DstTensor, SrcTensor>(
             dst, src, dst_offset, src_offset, copy_params.n_size, copy_params.m_size, copy_params.src_stride,
-            copy_params.dst_stride, static_cast<uint8_t>(trait.dual_dst_ctl), trait.enable_relu,
-            static_cast<uint8_t>(params.unit_flag), params.sub_block_id, trait.enable_channel_split, is_nd_format,
-            is_dn_format);
+            copy_params.dst_stride, static_cast<asc_dual_dst_mode>(trait.dual_dst_ctl),
+            trait.enable_relu ? asc_relu_pre_mode::NORMAL : asc_relu_pre_mode::NONE,
+            static_cast<asc_unit_flag_mode>(params.unit_flag), static_cast<int8_t>(params.sub_block_id),
+            trait.enable_channel_split, is_nd_format, is_dn_format);
     }
 
 private:
@@ -83,18 +84,18 @@ private:
         constexpr bool is_dn_format = is_l0c_out_dn_format_v<DstTensor>;
         auto copy_params = make_l0c_out_copy_params<DstTensor, SrcTensor>(dst_layout, src_layout);
 
-        bool relu_en = trait.enable_relu;
-        uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
+        auto relu_pre = trait.enable_relu ? asc_relu_pre_mode::NORMAL : asc_relu_pre_mode::NONE;
+        auto unit_flag = static_cast<asc_unit_flag_mode>(params.unit_flag);
         bool nz2nd_en = is_nd_format;
         bool nz2dn_en = is_dn_format;
 
         bool is_channel_split = trait.enable_channel_split;
 
-        uint8_t dual_dst_ctl = static_cast<uint8_t>(trait.dual_dst_ctl);
-        uint8_t sub_block_id = params.sub_block_id;
+        auto dual_dst_ctl = static_cast<asc_dual_dst_mode>(trait.dual_dst_ctl);
+        int8_t sub_block_id = static_cast<int8_t>(params.sub_block_id);
         copy_l0c_to_ub_instr::data_copy<quant_pre>(
             dst.data().get(), src.data().get(), copy_params.n_size, copy_params.m_size, copy_params.src_stride,
-            copy_params.dst_stride, dual_dst_ctl, relu_en, unit_flag, sub_block_id, is_channel_split, nz2nd_en,
+            copy_params.dst_stride, dual_dst_ctl, relu_pre, unit_flag, sub_block_id, is_channel_split, nz2nd_en,
             nz2dn_en);
     }
 };
@@ -137,9 +138,10 @@ public:
             auto dst_offset = base_dst_offset + dst.layout()(dst_coord);
             copy_l0c_to_ub_instr::data_copy_with_offset<quant_pre>(
                 dst, src(src_coord), dst_offset, src_offset, cal_n_size, copy_params.m_size, copy_params.src_stride,
-                copy_params.dst_stride, static_cast<uint8_t>(trait.dual_dst_ctl), trait.enable_relu,
-                static_cast<uint8_t>(params.unit_flag), params.sub_block_id, trait.enable_channel_split,
-                is_l0c_out_nd_format_v<DstTensor>, is_l0c_out_dn_format_v<DstTensor>);
+                copy_params.dst_stride, static_cast<asc_dual_dst_mode>(trait.dual_dst_ctl),
+                trait.enable_relu ? asc_relu_pre_mode::NORMAL : asc_relu_pre_mode::NONE,
+                static_cast<asc_unit_flag_mode>(params.unit_flag), static_cast<int8_t>(params.sub_block_id),
+                trait.enable_channel_split, is_l0c_out_nd_format_v<DstTensor>, is_l0c_out_dn_format_v<DstTensor>);
         }
     }
 
@@ -206,18 +208,18 @@ private:
             dst_stride = get_element<attr_info::stride, attr_info::column, 1>(dst_layout);
         }
 
-        const bool relu_en = trait.enable_relu;
-        const uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
+        const auto relu_pre = trait.enable_relu ? asc_relu_pre_mode::NORMAL : asc_relu_pre_mode::NONE;
+        const auto unit_flag = static_cast<asc_unit_flag_mode>(params.unit_flag);
 
         constexpr bool nz2nd_en = is_nd_format;
         constexpr bool nz2dn_en = is_dn_format;
 
         const bool channel_split = trait.enable_channel_split;
-        uint8_t sub_block_id = params.sub_block_id;
-        uint8_t dual_dst_ctl = static_cast<uint8_t>(trait.dual_dst_ctl);
+        int8_t sub_block_id = static_cast<int8_t>(params.sub_block_id);
+        const auto dual_dst_ctl = static_cast<asc_dual_dst_mode>(trait.dual_dst_ctl);
 
         return Std::make_tuple(
-            n_size, m_size, src_stride, dst_stride, dual_dst_ctl, relu_en, unit_flag, sub_block_id, channel_split,
+            n_size, m_size, src_stride, dst_stride, dual_dst_ctl, relu_pre, unit_flag, sub_block_id, channel_split,
             nz2nd_en, nz2dn_en);
     }
 

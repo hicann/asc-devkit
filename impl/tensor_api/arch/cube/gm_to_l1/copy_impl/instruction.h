@@ -67,7 +67,7 @@ public:
     template <typename DataType>
     __aicore__ inline static void data_copy(
         __cbuf__ DataType* dst, __gm__ DataType* src, uint32_t block_count, uint32_t block_len,
-        uint8_t left_padding_cnt, uint8_t right_padding_cnt, uint8_t cache_mode, uint64_t src_stride,
+        uint8_t left_padding_cnt, uint8_t right_padding_cnt, asc_load_l2_cache_mode cache_mode, uint64_t src_stride,
         uint32_t dst_stride)
     {
         if constexpr (sizeof(DataType) == sizeof(int8_t)) {
@@ -118,8 +118,9 @@ public:
     template <typename DataType>
     __aicore__ inline static void data_copy(
         __cbuf__ DataType* dst, __gm__ DataType* src, uint16_t nd_num, uint16_t loop2_dst_stride,
-        uint16_t loop3_dst_stride, uint16_t loop4_dst_stride, uint64_t loop1_src_stride, uint8_t cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride, bool enable_small_c0)
+        uint16_t loop3_dst_stride, uint16_t loop4_dst_stride, uint64_t loop1_src_stride,
+        asc_load_l2_cache_mode cache_mode, uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride,
+        bool enable_small_c0)
     {
         uint64_t mte2_nz_para = static_cast<uint64_t>(loop4_dst_stride) << 48; // MTE2_NZ_PARA[63:48]
         mte2_nz_para |= static_cast<uint64_t>(loop3_dst_stride) << 32;         // MTE2_NZ_PARA[47:32]
@@ -170,8 +171,9 @@ public:
     template <typename DataType>
     __aicore__ inline static void data_copy(
         __cbuf__ DataType* dst, __gm__ DataType* src, uint16_t dn_num, uint16_t loop2_dst_stride,
-        uint16_t loop3_dst_stride, uint16_t loop4_dst_stride, uint64_t loop1_src_stride, uint8_t cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride, bool enable_small_c0)
+        uint16_t loop3_dst_stride, uint16_t loop4_dst_stride, uint64_t loop1_src_stride,
+        asc_load_l2_cache_mode cache_mode, uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride,
+        bool enable_small_c0)
     {
         uint64_t mte2_nz_para = static_cast<uint64_t>(loop4_dst_stride) << 48; // MTE2_NZ_PARA[63:48]
         mte2_nz_para |= static_cast<uint64_t>(loop3_dst_stride) << 32;         // MTE2_NZ_PARA[47:32]

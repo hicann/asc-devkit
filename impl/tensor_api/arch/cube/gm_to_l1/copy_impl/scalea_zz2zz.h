@@ -86,11 +86,11 @@ public:
                 auto dst_batch = make_single_batch_sub_tensor(dst, i);
                 copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
                     dst_batch, src, dst_offset, src_offset + i * src_batch_stride, src_shape_rows_b, block_len, 0, 0,
-                    src.engine().get_cache_mode(), src_stride, dst_stride);
+                    static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode()), src_stride, dst_stride);
             } else {
                 copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
-                    dst, src, dst_offset, src_offset, src_shape_rows_b, block_len, 0, 0, src.engine().get_cache_mode(),
-                    src_stride, dst_stride);
+                    dst, src, dst_offset, src_offset, src_shape_rows_b, block_len, 0, 0,
+                    static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode()), src_stride, dst_stride);
             }
         }
     }
@@ -134,7 +134,7 @@ private:
         auto dst_shape_columns = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
         auto dst_stride_rows = get_element<attr_info::stride, attr_info::row, 1>(dst_layout);
 
-        uint8_t cache_mode = src.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
 
         // lprp mode, dst_stride % c0_size should be 0
         // multi rows copy, dst non-contiguous case

@@ -55,7 +55,7 @@ public:
             loop4_src_stride = loop4_src_stride >> 1;
             loop1_src_stride = loop1_src_stride >> 1;
         }
-        uint8_t cache_mode = src.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
 
         copy_gm_to_l1_multi_nd2nz_instr::data_copy(
             dst.data().get(), src.data().get(), nd_num, loop2_dst_stride, loop3_dst_stride, loop4_dst_stride,
@@ -87,7 +87,8 @@ public:
         }
         copy_gm_to_l1_multi_nd2nz_instr::data_copy_with_offset(
             dst, src, dst_offset, src_offset, nd_num, 1, loop3_dst_stride, loop4_dst_stride, loop1_src_stride,
-            src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride, false);
+            static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode()), n_value, d_value, loop4_src_stride,
+            false);
     }
 };
 

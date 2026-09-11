@@ -45,7 +45,7 @@ public:
     template <QuantMode_t quant_pre, typename DstType, typename SrcType>
     __aicore__ inline static void data_copy(
         __cbuf__ DstType* dst, __cc__ SrcType* src, uint32_t n_size, uint32_t m_size, uint32_t src_stride,
-        uint32_t dst_stride, bool relu_en, uint8_t unit_flag, bool is_channel_split)
+        uint32_t dst_stride, asc_relu_pre_mode relu_pre, asc_unit_flag_mode unit_flag, bool is_channel_split)
     {
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, n_size, "n_size", "copy_l0c_to_l1 instruction");
         TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_m, m_size, false, "copy_l0c_to_l1 instruction");
@@ -54,9 +54,7 @@ public:
 
         asc_copy_l0c2l1(
             dst, src, static_cast<uint16_t>(n_size), static_cast<uint16_t>(m_size), dst_stride,
-            static_cast<uint16_t>(src_stride), 0, unit_flag, static_cast<uint64_t>(quant_pre),
-            static_cast<uint8_t>(relu_en), is_channel_split, false, static_cast<uint64_t>(QuantMode_post::NoConv), 0,
-            false, 0, 0, false);
+            static_cast<uint16_t>(src_stride), unit_flag, quant_pre, relu_pre, is_channel_split, false, false, false);
     }
 };
 

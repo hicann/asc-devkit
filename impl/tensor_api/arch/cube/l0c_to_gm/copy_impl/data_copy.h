@@ -69,8 +69,9 @@ public:
         constexpr bool is_dn_format = is_l0c_out_dn_format_v<DstTensor>;
         copy_l0c_to_gm_instr::data_copy_with_offset<quant_pre, DstTensor, SrcTensor>(
             dst, src, dst_offset, src_offset, copy_params.n_size, copy_params.m_size, copy_params.src_stride,
-            copy_params.dst_stride, dst.engine().get_cache_mode(), trait.enable_relu,
-            static_cast<uint8_t>(params.unit_flag), trait.enable_channel_split, is_nd_format, is_dn_format);
+            copy_params.dst_stride, static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode()),
+            trait.enable_relu, static_cast<asc_unit_flag_mode>(params.unit_flag), trait.enable_channel_split,
+            is_nd_format, is_dn_format);
     }
 
 private:
@@ -86,11 +87,11 @@ private:
         auto copy_params = make_l0c_out_copy_params<DstTensor, SrcTensor>(dst_layout, src_layout);
 
         bool relu_en = trait.enable_relu;
-        uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
+        auto unit_flag = static_cast<asc_unit_flag_mode>(params.unit_flag);
         bool nz2nd_en = is_nd_format;
         bool nz2dn_en = is_dn_format;
 
-        uint8_t cache_mode = dst.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode());
         bool is_channel_split = trait.enable_channel_split;
 
         copy_l0c_to_gm_instr::data_copy<quant_pre>(
@@ -143,9 +144,9 @@ public:
             auto dst_offset = base_dst_offset + dst.layout()(dst_coord);
             copy_l0c_to_gm_instr::data_copy_with_offset<quant_pre>(
                 dst, src(src_coord), dst_offset, src_offset, cal_n_size, copy_params.m_size, copy_params.src_stride,
-                copy_params.dst_stride, dst.engine().get_cache_mode(), trait.enable_relu,
-                static_cast<uint8_t>(params.unit_flag), trait.enable_channel_split, is_l0c_out_nd_format_v<DstTensor>,
-                is_l0c_out_dn_format_v<DstTensor>);
+                copy_params.dst_stride, static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode()),
+                trait.enable_relu, static_cast<asc_unit_flag_mode>(params.unit_flag), trait.enable_channel_split,
+                is_l0c_out_nd_format_v<DstTensor>, is_l0c_out_dn_format_v<DstTensor>);
         }
     }
 
@@ -213,12 +214,12 @@ private:
         }
 
         const bool relu_enable = trait.enable_relu;
-        const uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
+        const auto unit_flag = static_cast<asc_unit_flag_mode>(params.unit_flag);
 
         constexpr bool nz2nd_enable = is_nd_format;
         constexpr bool nz2dn_enable = is_dn_format;
 
-        const uint8_t cache_mode = dst.engine().get_cache_mode();
+        const auto cache_mode = static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode());
         const bool channel_split = trait.enable_channel_split;
         return Std::make_tuple(
             n_size, m_size, src_stride, dst_stride, cache_mode, relu_enable, unit_flag, channel_split, nz2nd_enable,

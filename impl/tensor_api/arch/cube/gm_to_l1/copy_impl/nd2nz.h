@@ -98,7 +98,7 @@ public:
         uint16_t loop3_dst_stride = dst_nz_c0_stride; // loop3_dst_stride = dst_nz_c0_Stride
         // loop4_dst_stride: dst_nz_matrix_stride * size_of_dst_type / C0_size
         uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / c0_element<type>);
-        uint8_t cache_mode = src.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
 
         copy_gm_to_l1_multi_nd2nz_instr::data_copy(
             dst.data().get(), src.data().get(), nd_num, loop2_dst_stride, loop3_dst_stride, loop4_dst_stride,
@@ -125,7 +125,7 @@ public:
         uint64_t loop4_src_stride = src_nd_matrix_stride * sizeof(type);
         uint16_t loop3_dst_stride = dst_column_stride / c0_element<type>;
         uint16_t loop4_dst_stride = static_cast<uint16_t>(dst_nz_matrix_stride / c0_element<type>);
-        uint8_t cache_mode = src.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
         copy_gm_to_l1_multi_nd2nz_instr::data_copy_with_offset(
             dst, src, dst_offset, src_offset, nd_num, 1, loop3_dst_stride, loop4_dst_stride, loop1_src_stride,
             cache_mode, n_value, d_value, loop4_src_stride, false);
