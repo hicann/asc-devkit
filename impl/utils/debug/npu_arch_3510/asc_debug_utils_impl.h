@@ -49,9 +49,9 @@ __simd_callee__ constexpr inline uint32_t align_up(uint32_t a, uint32_t b) { ret
 
 __simd_callee__ inline void wait_vf_debug_buffer_drained(__ubuf__ BlockVFBufInfo* block_info)
 {
+    __ubuf__ volatile BlockVFBufInfo* vInfo = block_info;
     // flag != 0: the consumer stopped draining, readLen will never catch up.
-    while (block_info->readLen != block_info->writeLen && block_info->flag == 0) {
-        __asm__ __volatile__("");
+    while (vInfo->readLen != vInfo->writeLen && vInfo->flag == 0) {
     }
 }
 
@@ -128,17 +128,10 @@ __simd_callee__ inline void wait_vf_assert_handshake()
 {
     __ubuf__ BlockVFBufInfo* block_info = get_printf_ubuf_addr(0);
     wait_vf_debug_buffer_drained(block_info);
-    // Nobody left to acknowledge the handshake; drop the message but still let the caller trap.
-    if (block_info->flag != 0) {
-        return;
-    }
-    __ubuf__ volatile BlockVFBufInfo::AssertState* assertFlag = &block_info->assertFlag;
-    *assertFlag = BlockVFBufInfo::AssertState::RAISED;
-    while (*assertFlag != BlockVFBufInfo::AssertState::DRAINED) {
-        if (block_info->flag != 0) {
-            break;
-        }
-        __asm__ __volatile__("");
+    __ubuf__ volatile BlockVFBufInfo* vInfo = block_info;
+    // Preserve the assertion even when its diagnostic was dropped. A stopped consumer cannot acknowledge it.
+    vInfo->assertFlag = BlockVFBufInfo::AssertState::RAISED;
+    while (vInfo->assertFlag != BlockVFBufInfo::AssertState::DRAINED && vInfo->flag == 0) {
     }
 }
 
@@ -374,37 +367,32 @@ __aicore__ inline bool asc_vf_debug_ub2gm()
                                    curWriteLen <= vInfo->length;
         if (!isValidHeader) {
             blockInfo->flag = 1;
-            break;
-        }
-        // The producer clears writeLen before readLen when resetting a drained UB buffer.
-        if (curReadLen > curWriteLen) {
+        } else if (curReadLen > curWriteLen) {
+            // The producer clears writeLen before readLen when resetting a drained UB buffer.
             continue;
-        }
-
-        if (curReadLen < curWriteLen) {
+        } else if (curReadLen < curWriteLen) {
             asc_vf_debug_publish(blockInfo, curWriteLen, curReadLen);
-            if (blockInfo->flag != 0) {
-                break;
-            }
-            continue;
-        }
-
-        if (vInfo->assertFlag == BlockVFBufInfo::AssertState::RAISED) {
-            vInfo->assertFlag = BlockVFBufInfo::AssertState::DRAINED;
-            break;
-        }
-
-        if (vInfo->finish == 1) {
-            // finish is set on the scalar unit; the VF writes may not be visible yet. Sync and re-check
-            // before concluding the buffer is empty, otherwise a pending record is silently dropped.
-            pipe_barrier(PIPE_ALL);
-            if (vInfo->readLen < vInfo->writeLen) {
+            if (vInfo->flag == 0) {
                 continue;
             }
-            break;
+        } else if (vInfo->assertFlag == BlockVFBufInfo::AssertState::RAISED) {
+            vInfo->assertFlag = BlockVFBufInfo::AssertState::DRAINED;
+        } else if (vInfo->finish != 1) {
+            continue;
         }
+
+        // Acknowledge a drained assertion before waiting for SEND. On overflow the VF skips the handshake.
+        pipe_barrier(PIPE_ALL);
+        // The snapshot taken before observing finish may predate the last VF writes.
+        if (vInfo->flag == 0 && vInfo->readLen < vInfo->writeLen) {
+            continue;
+        }
+        if (vInfo->assertFlag != BlockVFBufInfo::AssertState::IDLE) {
+            trap();
+        }
+        break;
     }
-    return blockInfo->flag != 0;
+    return vInfo->flag != 0;
 }
 } // namespace __asc_aicore
 
