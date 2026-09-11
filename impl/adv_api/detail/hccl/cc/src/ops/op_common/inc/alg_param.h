@@ -19,6 +19,7 @@
 #include <functional>
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include "ccu_datatype_v1.h"
 #include "hccl_comm.h"
 #include "hccl_common.h"
@@ -402,9 +403,21 @@ static_assert(
 static_assert(
     sizeof(CcuFastLaunchCtx) % alignof(ThreadHandle) == 0, "CcuFastLaunchCtx must preserve ThreadHandle alignment");
 
+struct ParallelChannelPortInfo {
+    bool isValid = false;
+    bool isInterPod = false;
+    uint64_t intraPortGroupSize = 0;
+    uint64_t interPortGroupSize = 0;
+};
+
+static_assert(
+    std::is_trivially_copyable<ParallelChannelPortInfo>::value,
+    "ParallelChannelPortInfo must be trivially copyable for serialization");
+
 // A5用了cntNotify
 struct AlgResourceRequest {
     double dieSplitRatio = 0.0;
+    ParallelChannelPortInfo parallelPortInfo;
     u32 notifyNumOnMainThread = 0;
     u32 slaveThreadNum = 0;
     std::vector<u32> notifyNumPerThread;
@@ -502,6 +515,7 @@ struct AlgResourceCtxSerializable {
     // ccu的
     std::vector<u32> ccuKernelNum;
     std::vector<CcuKernelHandle> ccuKernels;
+    ParallelChannelPortInfo parallelPortInfo;
     u32 topoInfoSeqSize = 0;
     TopoInfoWithNetLayerDetails topoInfo; // 提取的拓扑信息
     std::vector<uint64_t> kfcServerArgs;  // kfc server算子入参
@@ -533,6 +547,7 @@ struct AlgResourceCtxSerializable {
         binaryStream << ccuKernelNum;
         binaryStream << ccuKernels;
         binaryStream << dieSplitRatio;
+        binaryStream << parallelPortInfo;
         binaryStream << kfcServerArgs;
         binaryStream << kfcServerArgSize;
         std::vector<char> seq = topoInfo.Serialize();
@@ -571,6 +586,7 @@ struct AlgResourceCtxSerializable {
         binaryStream >> ccuKernelNum;
         binaryStream >> ccuKernels;
         binaryStream >> dieSplitRatio;
+        binaryStream >> parallelPortInfo;
         binaryStream >> kfcServerArgs;
         binaryStream >> kfcServerArgSize;
         binaryStream >> topoInfoSeqSize;
