@@ -9,7 +9,7 @@ scale在L1 Buffer、Bias Table Buffer和Fixpipe Buffer中的数据，展示dav-3
 
 | 产品 | CANN软件版本 | HDK版本 |
 |------|-------------|---------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 | >= 25.7.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 | >= 25.7.RC1.6 |
 
 ## 目录结构介绍
 

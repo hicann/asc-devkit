@@ -120,7 +120,7 @@ DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
 - 在Ascend 950PR/Ascend 950DT下新增BiasTable Buffer和Fixpipe Buffer的Tensor数据打印。
 <!-- end id111 -->
 <!-- npu="950" id112 -->
-- 针对Ascend 950PR/Ascend 950DT，使用该接口打印L1 Buffer、BiasTable Buffer或Fixpipe Buffer数据时，HDK版本需要至少升级到25.7.0以上。
+- 针对Ascend 950PR/Ascend 950DT，使用该接口打印L1 Buffer、BiasTable Buffer或Fixpipe Buffer数据时，HDK版本需要至少升级到25.7.RC1.6以上。
 <!-- end id112 -->
 <!-- npu="950" id113 -->
 - 针对Ascend 950PR/Ascend 950DT，打印Fixpipe Buffer中的Tensor信息场景：
