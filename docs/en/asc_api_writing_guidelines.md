@@ -1058,11 +1058,13 @@ bool, int4b_t, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0
 
 ## 12 Figure Guidelines
 
+For figure templates, refer to [Ascend C Drawing Templates](../zh/figures/asc_templates.xml) (draw.io templates).
+
 ### API-FIGURE-00 Figure Fonts and Sizes Must Meet Requirements
 
 [Level] Mandatory
 
-[Description] Chinese text must use Founder Lanting Hei Simplified, and English text must use Huawei Sans. Chinese text must not be smaller than 9pt (equivalent to 12 pixels), full-width characters; English text must not be smaller than 8pt (equivalent to 10 pixels), half-width characters.
+[Description] Founder Lanting Hei Simplified must be used. Chinese text must not be smaller than 9pt (equivalent to 12 pixels), full-width characters; English text must not be smaller than 8pt (equivalent to 10 pixels), half-width characters.
 
 ### API-FIGURE-01 Figure Width Must Meet Requirements
 
@@ -1074,7 +1076,7 @@ bool, int4b_t, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0
 
 [Level] Mandatory
 
-[Description] After completing the drawing, click to fit the page to the drawing, and add a white background to ensure that dark lines in the figure are still clearly visible under the dark theme of IDEs and browsers.
+[Description] After completing the drawing, add a white background to ensure that dark lines in the figure are still clearly visible under the dark theme of IDEs and browsers.
 
 ### API-FIGURE-03 Connections Between Figures Must Use No-Jump Line Style
 
