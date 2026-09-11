@@ -135,7 +135,7 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 ## 约束说明
 
 <!-- npu="950" id8 -->
--   针对Ascend 950PR/Ascend 950DT，在使用该接口打印L1 Buffer、BiasTable Buffer或Fixpipe Buffer数据时，HDK版本需要至少升级到25.7.0以上。
+-   针对Ascend 950PR/Ascend 950DT，在使用该接口打印L1 Buffer、BiasTable Buffer或Fixpipe Buffer数据时，HDK版本需要至少升级到25.7.RC1.6以上。
 <!-- end id8 -->
 <!-- npu="950" id15 -->
 -   针对Ascend 950PR/Ascend 950DT，打印Fixpipe Buffer中的Tensor信息场景：
