@@ -139,6 +139,7 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
+- 量化参数不能为inf/nan和非规格化数。
 - 开发者需要保证DataCopyEnhancedParams中的isRelu参数配置和量化系数deqValue/量化参数向量deqTensorAddr的ReLU标志位配置一致：都开启或都不开启。
 - 如果有随路精度转换，操作数的blockLen单位需要减半。
 

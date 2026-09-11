@@ -235,6 +235,7 @@ struct l0c_to_l1_params {
 
 ## 约束说明
 
+- 量化和ReLU参数不能为inf/nan和非规格化数。
 - `dst`必须位于L1 Buffer，`src`必须位于L0C Buffer。
 - Trait和Params的配置需要与数据类型、Layout和量化模式匹配。
 - 使用坐标搬运时，coord和copy_shape需要与对应张量的形状结构匹配，且搬运范围不能越界。

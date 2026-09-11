@@ -64,6 +64,7 @@ PIPE_S
 
 ## 约束说明
 
+- 量化参数不能为inf/nan和非规格化数。
 - 本接口仅在AIC上生效，在AIV上调用将直接返回。
 <!-- npu="950" id8 -->
 - 针对Ascend 950PR/Ascend 950DT，用于存储tensor量化参数的Fixpipe Buffer大小为4KB，用于存储tensor激活参数的Fixpipe Buffer大小为2KB，两块存储空间相互独立，地址均从0开始。tensor量化参数和tensor激活参数的起始地址和占用空间不能超出对应Buffer的范围。
