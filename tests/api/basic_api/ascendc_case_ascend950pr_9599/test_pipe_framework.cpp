@@ -8,7 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
-#define __ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__
+#define __ASCENDC_SUPER_KERNEL_DEBUG__
 #include "kernel_tpipe_impl.h"
 #include <vector>
 using namespace AscendC;

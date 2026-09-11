@@ -3514,7 +3514,7 @@ class TestCompileOp(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertNotIn(
-            "__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__",
+            "__ASCENDC_SUPER_KERNEL_DEBUG__",
             wrapper_text,
         )
         self.assertIn(f'#include "{cce_file}"', wrapper_text)
@@ -10867,9 +10867,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
         with open(compile_info.gen_kernel_func_file, "r") as file:
-            self.assertNotIn(
-                "__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__", file.read()
-            )
+            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", file.read())
         os.remove(compile_info.gen_kernel_func_file)
         compile_info.super_kernel_info["sp_options"]["debug-per-op-max-core-num"] = "1"
         with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
@@ -10887,7 +10885,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
             lines = " ".join(lines)
             self.assertNotEqual(lines.find(" __attribute__((aligned(512))) "), -1)
             self.assertNotEqual(lines.find(" __sk__"), -1)
-            self.assertNotIn("__ENABLE_SUPER_KERNEL_INNER_CORE_SYNC_CHECK__", lines)
+            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", lines)
             self.assertIn(
                 "AscendC::g_superKernelSetWaitFlagCountDifference = "
                 "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE;",
