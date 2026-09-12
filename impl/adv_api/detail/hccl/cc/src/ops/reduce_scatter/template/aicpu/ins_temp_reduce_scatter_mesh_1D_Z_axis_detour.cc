@@ -78,7 +78,7 @@ HcclResult InsTempReduceScatterMesh1DZAxisDetour::SetchannelsPerRank(
     if (channelsPerRank_ > 1) {
         level0ChannelNumPerRank_ = MESH_CHANNELS_NUM;
         level1ChannelNumPerRank_ = channelsPerRank_ - level0ChannelNumPerRank_;
-        level0DataRatio_ = 0.5f;
+        level0DataRatio_ = (templateRankSize_ == 2) ? 0.25f : 0.5f;
     }
     HCCL_INFO(
         "[InsTempReduceScatterMesh1DZAxisDetour][SetchannelsPerRank], channelsPerRank_[%u], "
