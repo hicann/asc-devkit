@@ -25,6 +25,9 @@
 #endif
 
 #include "tensor_api/tensor.h"
+
+#if (ASC_DEVKIT_VERSION_NUM >= 902000000)
+#if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
 #include "tensor_api/experimental/utils/reg_enum.h"
 #include "tensor_api/experimental/arch/vector/reg_tensor.h"
 #include "tensor_api/experimental/arch/vector/type_conversion.h"
@@ -39,6 +42,25 @@
 #include "tensor_api/experimental/arch/vector/compare_and_select.h"
 #include "tensor_api/experimental/arch/vector/reg_data_load.h"
 #include "tensor_api/experimental/arch/vector/reg_data_store.h"
+#endif
+#else
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
+#include "tensor_api/experimental/utils/reg_enum.h"
+#include "tensor_api/experimental/arch/vector/reg_tensor.h"
+#include "tensor_api/experimental/arch/vector/type_conversion.h"
+#include "tensor_api/experimental/arch/vector/basic_arithmetic.h"
+#include "tensor_api/experimental/arch/vector/logical_compute.h"
+#include "tensor_api/experimental/arch/vector/composite_compute.h"
+#include "tensor_api/experimental/arch/vector/reduction_compute.h"
+#include "tensor_api/experimental/arch/vector/histogram_compute.h"
+#include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
+#include "tensor_api/experimental/arch/vector/data_reorder.h"
+#include "tensor_api/experimental/arch/vector/data_padding.h"
+#include "tensor_api/experimental/arch/vector/compare_and_select.h"
+#include "tensor_api/experimental/arch/vector/reg_data_load.h"
+#include "tensor_api/experimental/arch/vector/reg_data_store.h"
+#endif
+#endif
 
 #endif // INCLUDE_TENSOR_API_EXPERIMENTAL_VECTOR_COMPUTE_H
 

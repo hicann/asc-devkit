@@ -16,7 +16,7 @@
 #ifndef IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_IMPL_H
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_TYPE_CONVERSION_IMPL_H
 
-#include "impl/tensor_api/utils/constant_impl.h"
+#include "impl/tensor_api/experimental/arch/utils/reg_utils.h"
 
 namespace asc {
 namespace te {
@@ -31,7 +31,7 @@ struct reg_cast_op {
 template <typename T>
 struct cast_element_bits {
     using data_type = Std::remove_cvref_t<T>;
-    static constexpr uint32_t value = is_b4_type<data_type> ? 4U : sizeof(data_type) * 8U;
+    static constexpr uint32_t value = is_b4_type_v<data_type> ? 4U : sizeof(data_type) * 8U;
 };
 
 } // namespace detail

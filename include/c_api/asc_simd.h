@@ -33,14 +33,21 @@
 #include "c_api/vector_datamove/vector_datamove.h"
 #include "c_api/vector_compute/vector_compute.h"
 
+#if (ASC_DEVKIT_VERSION_NUM >= 902000000)
 #if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
 #include "c_api/reg_compute/reg_convert.h"
 #include "c_api/reg_compute/reg_load.h"
 #include "c_api/reg_compute/reg_store.h"
 #include "c_api/reg_compute/reg_vector.h"
-
 #endif
-
+#else
+#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
+#include "c_api/reg_compute/reg_convert.h"
+#include "c_api/reg_compute/reg_load.h"
+#include "c_api/reg_compute/reg_store.h"
+#include "c_api/reg_compute/reg_vector.h"
+#endif
+#endif
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_C_API_H)
