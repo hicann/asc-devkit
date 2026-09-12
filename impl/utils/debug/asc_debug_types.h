@@ -192,18 +192,6 @@ struct TimeStampTlv {
     uint32_t resvMem[2];                                              // reserved
 };
 
-struct BlockRingBufInfo {
-    uint32_t length = 0U;      // total size per block (include head and r/w info)
-    uint32_t coreId = 0U;      // current core id
-    uint32_t blockNum = 0U;    // total core num
-    uint32_t ringBufLen = 0U;  // fifo buff size (print tlv storage)
-    uint16_t magic = 0U;       // magic number
-    uint16_t flag = 0U;        // 0: simd, 1: simt
-    uint32_t rsv = 0U;         // reserve
-    uint64_t ringBufAddr = 0U; // start addr of fifo buff
-    uint32_t resvMem[6];       // reserved
-};
-
 struct RingBufWriteInfo {
     uint32_t type = static_cast<uint32_t>(DumpType::DUMP_BUFI); // DumpType = DUMP_BUFI
     uint32_t length = 0U;                                       // u64 + u64
@@ -263,18 +251,6 @@ enum class DumpType : uint8_t {
     DUMP_BUFI,
     DUMP_BUFO,
     DUMP_SKIP
-};
-
-struct BlockRingBufInfo {
-    uint32_t length = 0U;      // total size per block (include head and r/w info)
-    uint32_t coreId = 0U;      // current core id
-    uint32_t blockNum = 0U;    // total core num
-    uint32_t ringBufLen = 0U;  // fifo buff size (print tlv storage)
-    uint16_t magic = 0U;       // magic number
-    uint16_t flag = 0U;        // 0: simd, 1: simt
-    uint32_t rsv = 0U;         // reserve
-    uint64_t ringBufAddr = 0U; // start addr of fifo buff
-    uint32_t resvMem[6];       // reserved
 };
 
 struct RingBufWriteInfo {

@@ -160,6 +160,7 @@ __simd_callee__ inline void asc_copy_ub2ub(__ubuf__ void* dst, __ubuf__ void* sr
 } // namespace __asc_simd_vf
 
 namespace __asc_aicore {
+__aicore__ __gm__ inline DebugBlockHeadInfo* get_block_info();
 __aicore__ inline bool check_ringbuf_space(__gm__ DebugBlockHeadInfo* blockInfo, const uint32_t& tlvLen);
 
 __aicore__ inline void asc_entire_dcci_impl(__gm__ uint64_t* ptr)
@@ -258,28 +259,19 @@ __aicore__ __ubuf__ inline BlockVFBufInfo* init_printf_ubuf_addr_aicore(uint16_t
     return __asc_simd_vf::init_printf_ubuf_addr(blockIdx);
 }
 
-__aicore__ __gm__ inline BlockRingBufInfo* get_block_ring_buf_info()
-{
-    const uint32_t blockIdx = asc_debug_get_core_idx_impl();
-    const uint32_t blockLength = reinterpret_cast<__gm__ BlockRingBufInfo*>(g_sysPrintFifoSpace)->length;
-    __gm__ BlockRingBufInfo* blockInfo =
-        reinterpret_cast<__gm__ BlockRingBufInfo*>(g_sysPrintFifoSpace + blockLength * blockIdx);
-    return blockInfo;
-}
-
-__aicore__ inline __gm__ RingBufReadInfo* get_ring_buf_read_info(__gm__ BlockRingBufInfo* block_ring_buf_info)
+__aicore__ inline __gm__ RingBufReadInfo* get_ring_buf_read_info(__gm__ DebugBlockHeadInfo* block_ring_buf_info)
 {
     __gm__ uint8_t* blockHead = reinterpret_cast<__gm__ uint8_t*>(block_ring_buf_info);
-    return reinterpret_cast<__gm__ RingBufReadInfo*>(blockHead + sizeof(BlockRingBufInfo));
+    return reinterpret_cast<__gm__ RingBufReadInfo*>(blockHead + sizeof(DebugBlockHeadInfo));
 }
 
-__aicore__ inline __gm__ RingBufWriteInfo* get_ring_buf_write_info(__gm__ BlockRingBufInfo* block_ring_buf_info)
+__aicore__ inline __gm__ RingBufWriteInfo* get_ring_buf_write_info(__gm__ DebugBlockHeadInfo* block_ring_buf_info)
 {
     __gm__ uint8_t* ringBufAddr = reinterpret_cast<__gm__ uint8_t*>(block_ring_buf_info->ringBufAddr);
     return reinterpret_cast<__gm__ RingBufWriteInfo*>(ringBufAddr + block_ring_buf_info->ringBufLen);
 }
 
-__aicore__ __gm__ inline uint8_t* call_get_ring_buf_tlv(__gm__ BlockRingBufInfo* block_ring_buf_info)
+__aicore__ __gm__ inline uint8_t* call_get_ring_buf_tlv(__gm__ DebugBlockHeadInfo* block_ring_buf_info)
 {
     __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(block_ring_buf_info);
     __gm__ uint8_t* ringBufAddr = reinterpret_cast<__gm__ uint8_t*>(block_ring_buf_info->ringBufAddr);
@@ -327,11 +319,14 @@ __aicore__ inline void asc_vf_debug_publish(
         return;
     }
 
-    __gm__ BlockRingBufInfo* blockRingBufInfo = get_block_ring_buf_info();
-    auto* debugBlockInfo = reinterpret_cast<__gm__ DebugBlockHeadInfo*>(blockRingBufInfo);
+    __gm__ DebugBlockHeadInfo* debugBlockInfo = get_block_info();
+    if (debugBlockInfo == nullptr) {
+        blockInfo->flag = 1;
+        return;
+    }
     // A batch larger than the ring buffer can never be published; retrying would spin forever and hang the kernel.
     // Drop it: advance readLen to release the producer, raise flag to stop the transfer loop.
-    if (tlvLen > blockRingBufInfo->ringBufLen || sizeof(SkipTlv) >= blockRingBufInfo->ringBufLen) {
+    if (tlvLen > debugBlockInfo->ringBufLen || sizeof(SkipTlv) >= debugBlockInfo->ringBufLen) {
         blockInfo->readLen = curWriteLen;
         blockInfo->flag = 1;
         return;
@@ -340,7 +335,7 @@ __aicore__ inline void asc_vf_debug_publish(
     if (!check_ringbuf_space(debugBlockInfo, tlvLen)) {
         return;
     }
-    __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(blockRingBufInfo));
+    __gm__ uint8_t* dstTlv = reinterpret_cast<__gm__ uint8_t*>(call_get_ring_buf_tlv(debugBlockInfo));
 
     constexpr uint32_t sizeU32 = sizeof(uint32_t);
     const uint32_t totalWords = tlvLen / sizeU32;
@@ -354,7 +349,7 @@ __aicore__ inline void asc_vf_debug_publish(
     }
     asc_entire_dcci_impl(reinterpret_cast<__gm__ uint64_t*>(dstTlv));
 
-    __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(blockRingBufInfo);
+    __gm__ RingBufWriteInfo* writeInfo = get_ring_buf_write_info(debugBlockInfo);
     update_write_info(writeInfo, tlvLen, packageNum);
     blockInfo->readLen = curWriteLen;
 }
