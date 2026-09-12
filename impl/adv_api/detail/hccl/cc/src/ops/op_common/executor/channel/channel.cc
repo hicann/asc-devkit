@@ -746,7 +746,8 @@ HcclResult CalcChannelRequestMeshClosMultiJetty(
         HCCL_ERROR("[CalcChannelRequestMeshClosMultiJetty] local rank[%u] is absent.", topoInfo->userRank),
         HCCL_E_PARA);
     CHK_PRT_RET(
-        param.engine != CommEngine::COMM_ENGINE_AICPU && param.engine != CommEngine::COMM_ENGINE_AICPU_TS,
+        param.engine != CommEngine::COMM_ENGINE_AICPU && param.engine != CommEngine::COMM_ENGINE_AICPU_TS &&
+            param.engine != CommEngine::COMM_ENGINE_CCU,
         HCCL_ERROR("[CalcChannelRequestMeshClosMultiJetty] unsupported engine[%u].", static_cast<u32>(param.engine)),
         HCCL_E_NOT_SUPPORT);
 

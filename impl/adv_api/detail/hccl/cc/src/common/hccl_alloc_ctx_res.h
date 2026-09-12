@@ -96,10 +96,14 @@ enum class AlgorithmType {
     CcuAllReduceMesh1D = 100,
     CcuAllReduceMeshMem2Mem1D = 101,
     CcuAllReduceMesh2DOneShot = 102,
+    CcuReduceMesh1D,
+    CcuReduceMesh2D,
     CcuSchedAllToAllSoleMesh = 150,
     CcuSchedAllToAllVSoleMesh = 151,
-    CcuSchedAllGatherSoleMesh = 152,
+    CcuHalfAll2AllVMesh1D,
+    CcuSchedAllGatherSoleMesh,
     CcuSchedReduceScatterSoleNHRMultiLink = 154,
+    CcuSchedAllToAllSoleMeshConcurrent,
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
@@ -110,6 +114,7 @@ static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
     {"CcuSchedReduceScatterSoleMeshPeerOnly", AlgorithmType::CcuReduceScatterMeshMem2Mem1DPeerOnly},
     {"CcuSchedAllToAllSoleMesh", AlgorithmType::CcuSchedAllToAllSoleMesh},
     {"CcuSchedAllToAllVSoleMesh", AlgorithmType::CcuSchedAllToAllVSoleMesh},
+    {"CcuSchedAllToAllSoleMeshConcurrent", AlgorithmType::CcuSchedAllToAllSoleMeshConcurrent},
     {"CcuSchedAllReduceSoleMesh", AlgorithmType::CcuAllReduceMeshMem2Mem1D},
     {"CcuSchedAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
     {"CcuSchedAllGatherSoleMesh", AlgorithmType::CcuSchedAllGatherSoleMesh},

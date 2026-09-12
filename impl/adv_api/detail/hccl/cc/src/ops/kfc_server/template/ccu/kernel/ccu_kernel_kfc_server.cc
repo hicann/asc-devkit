@@ -255,13 +255,21 @@ static void DispatchKfcSubKernel(ccu::Array<ccu::Variable>& param, KfcServerCont
             param[HBM_PARAM_IDX_8], ctx.arg->channels, ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize),
             ctx.arg->rankId);
     } else if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_ALLTOALL) {
-        if (ctx.arg->role == KfcServerRole::ALL_TO_ALL_MULTI_JETTY) {
+        if (ctx.arg->role == KfcServerRole::ALL_TO_ALL_MESH) {
             CcuKfcAllToAllMesh1DMultiJettyKernel(
-                param[KFC_CONCURRENT_A2A_INPUT], param[KFC_CONCURRENT_A2A_OUTPUT], ctx.token,
-                param[KFC_CONCURRENT_A2A_SLICE_SIZE], param[KFC_CONCURRENT_A2A_SRC_STRIDE],
-                param[KFC_CONCURRENT_A2A_SRC_OFFSET], param[KFC_CONCURRENT_A2A_DST_OFFSET],
-                param[KFC_CONCURRENT_A2A_GO_SIZE_0], param[KFC_CONCURRENT_A2A_GO_SIZE_1],
-                param[KFC_CONCURRENT_A2A_GO_SIZE_2], param[KFC_CONCURRENT_A2A_GO_SIZE_3], ctx.arg->channels,
+                param[KFC_CONCURRENT_A2A_MESH_INPUT], param[KFC_CONCURRENT_A2A_MESH_OUTPUT], ctx.token,
+                param[KFC_CONCURRENT_A2A_MESH_SLICE_SIZE], param[KFC_CONCURRENT_A2A_MESH_SRC_STRIDE],
+                param[KFC_CONCURRENT_A2A_MESH_SRC_OFFSET], param[KFC_CONCURRENT_A2A_MESH_DST_OFFSET],
+                param[KFC_CONCURRENT_A2A_MESH_GO_SIZE_0], param[KFC_CONCURRENT_A2A_MESH_GO_SIZE_1],
+                param[KFC_CONCURRENT_A2A_MESH_GO_SIZE_2], param[KFC_CONCURRENT_A2A_MESH_GO_SIZE_3], ctx.arg->channels,
+                ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId);
+        } else if (ctx.arg->role == KfcServerRole::ALL_TO_ALL_CLOS) {
+            CcuKfcAllToAllMesh1DMultiJettyKernel(
+                param[KFC_CONCURRENT_A2A_CLOS_INPUT], param[KFC_CONCURRENT_A2A_CLOS_OUTPUT], ctx.token,
+                param[KFC_CONCURRENT_A2A_CLOS_SLICE_SIZE], param[KFC_CONCURRENT_A2A_CLOS_SRC_STRIDE],
+                param[KFC_CONCURRENT_A2A_CLOS_SRC_OFFSET], param[KFC_CONCURRENT_A2A_CLOS_DST_OFFSET],
+                param[KFC_CONCURRENT_A2A_CLOS_GO_SIZE_0], param[KFC_CONCURRENT_A2A_CLOS_GO_SIZE_1],
+                param[KFC_CONCURRENT_A2A_CLOS_GO_SIZE_2], param[KFC_CONCURRENT_A2A_CLOS_GO_SIZE_3], ctx.arg->channels,
                 ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId);
         } else {
             CcuAlltoAllMesh1DKernel(
