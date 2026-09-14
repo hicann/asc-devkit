@@ -569,6 +569,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_half2hif8](reg_compute/reg_convert/asc_half2hif8.md)|将half类型转换为hifloat8_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_half2int16](reg_compute/reg_convert/asc_half2int16.md)|将half类型数据转换为int16_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_half2int32](reg_compute/reg_convert/asc_half2int32.md)|将half类型数据转换为int32_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
+|[asc_half2int4x2](reg_compute/reg_convert/asc_half2int4x2.md)|将half类型转换为int4x2_t类型，并支持多种舍入模式和饱和/非饱和模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_half2int8](reg_compute/reg_convert/asc_half2int8.md)|将half类型转换为int8_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_half2uint8](reg_compute/reg_convert/asc_half2uint8.md)|将half类型转换为uint8_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_hif82half](reg_compute/reg_convert/asc_hif82half.md)|将hifloat8_t类型数据转换为half类型。|`c_api/reg_compute/reg_convert.h`|
@@ -581,6 +582,9 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_int322int16](reg_compute/reg_convert/asc_int322int16.md)|将int32_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322int64](reg_compute/reg_convert/asc_int322int64.md)|将int32_t类型转换为int64_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322uint16](reg_compute/reg_convert/asc_int322uint16.md)|将int32_t类型转换为uint16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int4x22bfloat16](reg_compute/reg_convert/asc_int4x22bfloat16.md)|将int4x2_t类型转换为bfloat16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int4x22half](reg_compute/reg_convert/asc_int4x22half.md)|将int4x2_t类型转换为half类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int4x22int16](reg_compute/reg_convert/asc_int4x22int16.md)|将int4x2_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int642float](reg_compute/reg_convert/asc_int642float.md)|将int64_t类型数据转换为float类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int642int32](reg_compute/reg_convert/asc_int642int32.md)|将int64_t类型转换为int32_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int82half](reg_compute/reg_convert/asc_int82half.md)|将int8_t类型转换为half类型。|`c_api/reg_compute/reg_convert.h`|

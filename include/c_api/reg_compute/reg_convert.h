@@ -3016,6 +3016,267 @@ __simd_callee__ inline void asc_half2uint8_rz_sat(
     vector_uint8_t& dst, vector_half src, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
 
+// ==========vector_int4x2 position-aware conversion overloads==========
+__simd_callee__ inline void asc_int4x22int16(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22int16(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22int16(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22int16(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22half(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22half(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22half(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22half(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22bfloat16(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22bfloat16(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22bfloat16(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_int4x22bfloat16(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        src_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rd_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rn_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rna_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_ru_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER>
+        dst_quarter_pos);
+
+__simd_callee__ inline void asc_half2int4x2_rz_sat(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER>
+        dst_quarter_pos);
+
 // ==========Deprecated conversion interfaces==========
 
 // Legacy overloads without explicit position arguments.

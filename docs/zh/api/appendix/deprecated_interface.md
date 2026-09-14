@@ -380,21 +380,21 @@
 
     旧原型已废弃，请使用[asc_hif82float](../SIMD-API/c_api/reg_compute/reg_convert/asc_hif82float.md)的显式位置参数重载。
 
-- [asc_half2int4x2](../SIMD-API/c_api/deprecated_interface/asc_half2int4x2_deprecated.md)接口
+- [asc_half2int4x2](../SIMD-API/c_api/deprecated_interface/asc_half2int4x2_deprecated.md)接口（通过接口后缀来控制目的操作数写入位置的三参数原型）
 
-    此接口后续版本会废弃。
+    旧原型已废弃，请使用[asc_half2int4x2](../SIMD-API/c_api/reg_compute/reg_convert/asc_half2int4x2.md)的显式位置参数重载。
 
-- [asc_int4x22int16](../SIMD-API/c_api/deprecated_interface/asc_int4x22int16_deprecated.md)接口
+- [asc_int4x22int16](../SIMD-API/c_api/deprecated_interface/asc_int4x22int16_deprecated.md)接口（通过接口后缀来控制目的操作数写入位置的三参数原型）
 
-    此接口后续版本会废弃。
+    旧原型已废弃，请使用[asc_int4x22int16](../SIMD-API/c_api/reg_compute/reg_convert/asc_int4x22int16.md)的显式位置参数重载。
 
-- [asc_int4x22half](../SIMD-API/c_api/deprecated_interface/asc_int4x22half_deprecated.md)接口
+- [asc_int4x22half](../SIMD-API/c_api/deprecated_interface/asc_int4x22half_deprecated.md)接口（通过接口后缀来控制目的操作数写入位置的三参数原型）
 
-    此接口后续版本会废弃。
+    旧原型已废弃，请使用[asc_int4x22half](../SIMD-API/c_api/reg_compute/reg_convert/asc_int4x22half.md)的显式位置参数重载。
 
-- [asc_int4x22bfloat16](../SIMD-API/c_api/deprecated_interface/asc_int4x22bfloat16_deprecated.md)接口
+- [asc_int4x22bfloat16](../SIMD-API/c_api/deprecated_interface/asc_int4x22bfloat16_deprecated.md)接口（通过接口后缀来控制目的操作数写入位置的三参数原型）
 
-    此接口后续版本会废弃。
+    旧原型已废弃，请使用[asc_int4x22bfloat16](../SIMD-API/c_api/reg_compute/reg_convert/asc_int4x22bfloat16.md)的显式位置参数重载。
 
 - [asc_int82int32](../SIMD-API/c_api/deprecated_interface/asc_int82int32_deprecated.md)接口
 

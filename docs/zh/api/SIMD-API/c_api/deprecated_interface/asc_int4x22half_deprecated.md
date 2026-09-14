@@ -26,11 +26,11 @@
 
 ## 功能说明
 
-头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
+**该接口的无显式位置参数原型已废弃，请使用[asc_int4x22half](../reg_compute/reg_convert/asc_int4x22half.md)的显式位置参数重载替代。**
 
-**该接口已废弃，后续版本将不再支持。**
+`int4x2_t`将两个连续的4bit有符号整数打包为一个8bit存储单元。本接口根据`mask`将参与计算的4bit有符号整数转换为`half`类型。
 
-将int4x2类型数据转换为half类型。
+由于每个4bit有符号整数的位宽小于1Byte，实际处理时，同一`int4x2_t`存储单元内的两个4bit有符号整数共同对应`mask`中的一个掩码位。该掩码位为1时，两个4bit有符号整数同时参与转换，转换结果为两个连续存放的`half`类型元素；为0时，对应的两个`half`类型元素均置0。
 
 ## 函数原型
 
@@ -61,10 +61,6 @@ __simd_callee__ inline void asc_int4x22half_v4(vector_half& dst, vector_int4x2_t
 
 无
 
-## 流水类型
-
-PIPE_V
-  
 ## 约束说明
 
 无
