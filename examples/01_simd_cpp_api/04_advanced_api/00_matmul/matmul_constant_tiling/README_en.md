@@ -1,6 +1,6 @@
 # Matmul Constant Tiling Example
 ## Overview
-A Matmul example with constant Tiling. Constant Tiling converts some or all Tiling parameters from variables to constant values during compilation, and the constant Tiling parameters are used during example execution.
+A Matmul example with constant Tiling. Constant Tiling converts some or all Tiling parameters from variables to constant values at compile time. The example uses these constant Tiling parameters during execution.
 
 ## Supported Products and CANN Versions
 

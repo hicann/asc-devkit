@@ -155,7 +155,7 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ int8_t* dst,
 
 ### 指令约束
 
-- `dst`起始地址需dtype对齐。，`offset`偏移后的实际访问地址需dtype对齐且需落在UB地址范围内。
+- `dst`起始地址需dtype对齐，`offset`偏移后的实际访问地址需dtype对齐且需落在UB地址范围内。
 
 ## 调用示例
 

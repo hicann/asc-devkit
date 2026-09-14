@@ -36,7 +36,7 @@
 
 | saturation_mode | enable_sat=true | enable_sat=false | 说明 |
 | :--- | :--- | :--- | :--- |
-| FLOAT | 饱和 | 非饱和 | 浮点计算及部分浮点精度转换场景的饱和控制，默认为非饱和状态。浮点数计算时支持half数据类型；浮点数精度转换时支持hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、half、bfloat16_t数据类型。。 |
+| FLOAT | 饱和 | 非饱和 | 浮点计算及部分浮点精度转换场景的饱和控制，默认为非饱和状态。浮点数计算时支持half数据类型；浮点数精度转换时支持hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、half、bfloat16_t数据类型。 |
 | FLOAT8 | 饱和 | 非饱和 | fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t相关场景的饱和控制，默认为饱和状态。 |
 | INT | 饱和 | 截断 | 整数计算溢出时的饱和/截断控制，默认为非饱和状态。 |
 | CAST | 饱和 | 截断 | 浮点转整数或整数转整数时的精度转换饱和控制，默认为饱和状态。仅在饱和策略为`USE_GLOBAL`时生效。 |
