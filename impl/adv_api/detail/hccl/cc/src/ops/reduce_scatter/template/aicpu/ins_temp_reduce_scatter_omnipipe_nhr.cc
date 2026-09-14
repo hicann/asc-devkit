@@ -71,6 +71,7 @@ HcclResult InsTempReduceScatterOmniPipeNHR::DoLocalCopy(
         HCCL_ERROR("[%s]subCommRanks_ or myRank_ is error.", __func__);
         return HCCL_E_INTERNAL;
     }
+    (void)rankIdx;
 
     // 区分前后搬运
     void* srcAddr;
@@ -86,7 +87,7 @@ HcclResult InsTempReduceScatterOmniPipeNHR::DoLocalCopy(
         return HCCL_E_PARA;
     }
     // 这里的循环precopy是ranksize-1，postcopy是1
-    for (auto i = 0; i < tempAlgParams.repeatNum; ++i) {
+    for (u64 i = 0; i < tempAlgParams.repeatNum; ++i) {
         auto srcSlice = DataSlice(
             srcAddr, tempAlgParams.buffInfo.inBuffBaseOff + i * tempAlgParams.inputSliceStride, tempAlgParams.sliceSize,
             tempAlgParams.count);

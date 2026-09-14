@@ -100,6 +100,7 @@ HcclResult InsTempReduceScatterOmniPipeMesh1D::DoLocalCopy(
         HCCL_ERROR("[%s]subCommRanks_ or myRank_ is error.", __func__);
         return HCCL_E_INTERNAL;
     }
+    (void)rankIdx;
 
     // 区分前后搬运
     void* srcAddr;
@@ -116,7 +117,7 @@ HcclResult InsTempReduceScatterOmniPipeMesh1D::DoLocalCopy(
         HCCL_ERROR("[%s]InputBufferType Error.", __func__);
         return HCCL_E_PARA;
     }
-    for (auto i = 0; i < tempAlgParams.repeatNum; ++i) {
+    for (u64 i = 0; i < tempAlgParams.repeatNum; ++i) {
         // sliceSize，count按照rank从0~i的顺序给
         auto srcSlice = DataSlice(
             srcAddr, tempAlgParams.buffInfo.inBuffBaseOff + i * tempAlgParams.inputSliceStride, tempAlgParams.sliceSize,

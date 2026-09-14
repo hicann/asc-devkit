@@ -105,6 +105,7 @@ HcclResult InsTempAllGatherOmniPipeNHR::DoLastStepCopyNhr(
                                     tempAlgParams_.stepSliceInfo.outputOmniPipeSliceStride[rxIdx][rpt];
                 rxScratchBase += dataOffsetVec_[rxIdx][rpt][channelIdx];
                 const u64 txScratchOff = txScratchBase + tempAlgParams_.stepSliceInfo.stepInputSliceStride[txIdx];
+                (void)txScratchOff;
                 const u64 rxScratchOff = rxScratchBase + tempAlgParams_.stepSliceInfo.stepInputSliceStride[rxIdx];
                 u64 txOutBase = tempAlgParams_.buffInfo.inBuffBaseOff +
                                 tempAlgParams_.omniReadDstStepSliceInfo.inputOmniPipeSliceStride[txIdx][rpt];
@@ -114,6 +115,7 @@ HcclResult InsTempAllGatherOmniPipeNHR::DoLastStepCopyNhr(
                 rxOutBase += dataOffsetVec_[rxIdx][rpt][channelIdx];
                 const u64 txOutOff = txOutBase + tempAlgParams_.omniReadDstStepSliceInfo.stepInputSliceStride[txIdx] +
                                      tempAlgParams_.processedDataCount * dataTypeSize;
+                (void)txOutOff;
                 const u64 rxOutOff = rxOutBase + tempAlgParams_.omniReadDstStepSliceInfo.stepInputSliceStride[rxIdx] +
                                      tempAlgParams_.processedDataCount * dataTypeSize;
                 DataSlice rxSrcSlices = DataSlice(

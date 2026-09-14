@@ -79,6 +79,7 @@ HcclResult InsTempAllGatherOmniPipeMesh1D::RunAllGatherMesh(
             HcclResult::HCCL_E_INTERNAL);
 
         ThreadHandle currQue = threads[threadIdx];
+        (void)currQue;
 
         std::vector<DataSlice> txSrcSlices, txDstSlices, rxSrcSlices, rxDstSlices;
 

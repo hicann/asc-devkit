@@ -295,6 +295,7 @@ HcclResult InsTempAllReduceMesh1DTwoShotMeshChunk::RunAllgather(
 
             // 发送，未过滤size为0的情况
             void* txCclBuffAddr = linkSendRecv.remoteCclMem.addr;
+            (void)txCclBuffAddr;
             DataSlice ssrcSlice = DataSlice(
                 rxCclBuffAddr, tempAlgParams.buffInfo.hcclBuffBaseOff + sliceInfoVec[myAlgRank_][0].offset,
                 sliceInfoVec[myAlgRank_][0].size, sliceInfoVec[myAlgRank_][0].size / dataTypeSize_);
