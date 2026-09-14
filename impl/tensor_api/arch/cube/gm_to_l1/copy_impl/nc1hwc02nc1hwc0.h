@@ -40,7 +40,7 @@ public:
         auto dst_layout = dst.layout();
 
         // (N, C1, H, W, C0): C1 axis stride = H*W*C0, H axis stride = W*C0.
-        uint8_t cache_mode = src.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
         uint32_t c1 = get<1>(dst_layout.shape());
         uint32_t row_elems = get<2>(dst_layout.stride()); // W*C0 (dst packed H stride)
 
@@ -101,8 +101,8 @@ public:
                 block_len >>= 1;
             }
             copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
-                dst, src, dst_offset, src_offset, c1, block_len, 0, 0, src.engine().get_cache_mode(), src_stride,
-                dst_stride);
+                dst, src, dst_offset, src_offset, c1, block_len, 0, 0,
+                static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode()), src_stride, dst_stride);
         } else {
             uint32_t block_len = row_elems * sizeof(type);
             if constexpr (is_b4_type<type>) {
@@ -112,8 +112,8 @@ public:
                 auto dst_h = dst(make_coord(0, 0, i, 0, 0));
                 auto row_offset = src_offset + i * get<2>(src.layout().stride());
                 copy_gm_to_l1_align_v2_instr::data_copy_with_offset(
-                    dst_h, src, dst_offset, row_offset, c1, block_len, 0, 0, src.engine().get_cache_mode(), src_stride,
-                    dst_stride);
+                    dst_h, src, dst_offset, row_offset, c1, block_len, 0, 0,
+                    static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode()), src_stride, dst_stride);
             }
         }
     }

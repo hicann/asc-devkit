@@ -58,12 +58,12 @@ private:
         if constexpr (trait.mmad_type == mmad_type::normal) {
             check_template_for_normal<trait, CTensor, ATensor, BTensor>();
             mmad_instr::mmad(
-                dst, fm, filter, params.m, params.k, params.n, static_cast<uint8_t>(params.unit_flag),
+                dst, fm, filter, params.m, params.k, params.n, static_cast<asc_unit_flag_mode>(params.unit_flag),
                 trait.disable_gemv, trait.init_with_btbuf, params.init_with_zero);
         } else if constexpr (trait.mmad_type == mmad_type::mx) {
             check_template_for_mx<trait, CTensor, ATensor, BTensor>();
             mmad_mx_instr::mmad(
-                dst, fm, filter, params.m, params.k, params.n, static_cast<uint8_t>(params.unit_flag),
+                dst, fm, filter, params.m, params.k, params.n, static_cast<asc_unit_flag_mode>(params.unit_flag),
                 trait.disable_gemv, trait.init_with_btbuf, params.init_with_zero);
         }
     }

@@ -262,54 +262,45 @@ __aicore__ inline constexpr QuantMode_t get_quant_mode()
 class set_register_instr {
 public:
     __aicore__ inline static void set_register(
-        uint64_t quant, uint32_t nd_num, uint32_t dst_n_d_stride, uint32_t src_n_d_stride)
+        uint64_t quant, uint32_t nd_num, uint32_t dst_nd_stride, uint32_t src_nd_stride)
     {
         set_quant_pre(quant);
-        set_loop3_para<uint64_t>(nd_num, dst_n_d_stride, src_n_d_stride);
+        set_loop3_para(nd_num, dst_nd_stride, src_nd_stride);
     }
 
     __aicore__ inline static void set_register(
-        uint64_t quant, uint32_t dn_num, uint32_t dst_d_n_stride, uint32_t src_n_z_matrix_stride,
-        uint32_t src_n_z_c0_stride)
+        uint64_t quant, uint32_t dn_num, uint32_t dst_dn_stride, uint32_t src_nz_matrix_stride,
+        uint32_t src_nz_c0_stride)
     {
         set_quant_pre(quant);
-        set_loop3_para<uint64_t>(dn_num, dst_d_n_stride, src_n_z_matrix_stride);
-        set_channel_para<uint64_t>(src_n_z_c0_stride);
+        set_loop3_para(dn_num, dst_dn_stride, src_nz_matrix_stride);
+        set_channel_para(src_nz_c0_stride);
     }
 
-    __aicore__ inline static void set_register(uint32_t nd_num, uint32_t dst_n_d_stride, uint32_t src_n_d_stride)
+    __aicore__ inline static void set_register(uint32_t nd_num, uint32_t dst_nd_stride, uint32_t src_nd_stride)
     {
-        set_loop3_para<uint64_t>(nd_num, dst_n_d_stride, src_n_d_stride);
+        set_loop3_para(nd_num, dst_nd_stride, src_nd_stride);
     }
 
     __aicore__ inline static void set_register(
-        uint32_t dn_num, uint32_t dst_d_n_stride, uint32_t src_n_z_matrix_stride, uint32_t src_n_z_c0_stride)
+        uint32_t dn_num, uint32_t dst_dn_stride, uint32_t src_nz_matrix_stride, uint32_t src_nz_c0_stride)
     {
-        set_loop3_para<uint64_t>(dn_num, dst_d_n_stride, src_n_z_matrix_stride);
-        set_channel_para<uint64_t>(src_n_z_c0_stride);
+        set_loop3_para(dn_num, dst_dn_stride, src_nz_matrix_stride);
+        set_channel_para(src_nz_c0_stride);
     }
 
 private:
-    static constexpr uint32_t shift_loop3_dst_stride = 32;
-    static constexpr uint32_t shift_loop3_src_matrix = 16;
-    static constexpr uint32_t shift_channel_c0_stride = 48;
-
     __aicore__ inline static void set_quant_pre(uint64_t quant) { asc_set_l0c_copy_prequant(quant); }
 
-    template <typename RegisterType>
     __aicore__ inline static void set_loop3_para(uint32_t num, uint32_t dst_stride, uint32_t src_stride)
     {
-        asc_set_l0c2gm_nz2nd(
-            static_cast<RegisterType>(num), static_cast<RegisterType>(src_stride),
-            static_cast<RegisterType>(dst_stride));
+        asc_set_l0c_copy_nz_para(
+            static_cast<uint16_t>(num), static_cast<uint16_t>(src_stride), static_cast<uint32_t>(dst_stride));
     }
 
-    template <typename RegisterType>
-    __aicore__ inline static void set_channel_para(uint32_t src_n_z_c0_stride)
+    __aicore__ inline static void set_channel_para(uint32_t src_nz_c0_stride)
     {
-        RegisterType channel_para = 0;
-        channel_para |= static_cast<RegisterType>(src_n_z_c0_stride) << shift_channel_c0_stride;
-        asc_set_l0c2gm_channel_para(channel_para);
+        asc_set_l0c_copy_channel_para(static_cast<uint16_t>(src_nz_c0_stride));
     }
 };
 

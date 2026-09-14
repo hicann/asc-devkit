@@ -51,9 +51,9 @@ public:
         uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
         uint32_t dst_stride = get<1>(dst_layout.stride());
 
-        uint8_t cache_mode = dst.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode());
         bool relu_en = trait.enable_relu;
-        uint8_t unit_flag = static_cast<uint8_t>(params.unit_flag);
+        auto unit_flag = static_cast<asc_unit_flag_mode>(params.unit_flag);
         bool is_channel_split = trait.enable_channel_split;
 
         copy_l0c_to_gm_instr::data_copy<quant_pre>(
@@ -80,8 +80,9 @@ public:
         uint32_t src_stride = get_element<attr_info::stride, attr_info::column, 1>(src_layout) / fractal_fixed;
         uint32_t dst_stride = get<1>(dst.layout().stride());
         copy_l0c_to_gm_instr::data_copy_with_offset<quant_pre>(
-            dst, src, dst_offset, src_offset, n_size, m_size, src_stride, dst_stride, dst.engine().get_cache_mode(),
-            trait.enable_relu, static_cast<uint8_t>(params.unit_flag), trait.enable_channel_split, false, true);
+            dst, src, dst_offset, src_offset, n_size, m_size, src_stride, dst_stride,
+            static_cast<asc_store_l2_cache_mode>(dst.engine().get_cache_mode()), trait.enable_relu,
+            static_cast<asc_unit_flag_mode>(params.unit_flag), trait.enable_channel_split, false, true);
     }
 };
 

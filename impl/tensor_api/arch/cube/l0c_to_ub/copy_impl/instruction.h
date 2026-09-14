@@ -44,8 +44,8 @@ public:
     template <QuantMode_t quant_pre, typename DstType, typename SrcType>
     __aicore__ inline static void data_copy(
         __ubuf__ DstType* dst, __cc__ SrcType* src, uint32_t n_size, uint32_t m_size, uint32_t src_stride,
-        uint32_t dst_stride, uint8_t dual_dst_ctl, bool relu_en, uint8_t unit_flag, uint8_t sub_block_id,
-        bool is_channel_split, bool nz2nd_en, bool nz2dn_en)
+        uint32_t dst_stride, asc_dual_dst_mode dual_dst_ctl, asc_relu_pre_mode relu_pre, asc_unit_flag_mode unit_flag,
+        int8_t sub_block_id, bool is_channel_split, bool nz2nd_en, bool nz2dn_en)
     {
         TENSOR_API_DEBUG_CHECK(debug_check_block_count, n_size, "n_size", "copy_l0c_to_ub instruction");
         TENSOR_API_DEBUG_CHECK(debug_check_fixpipe_n, n_size, is_channel_split, nz2nd_en, nz2dn_en, "copy_l0c_to_ub");
@@ -54,9 +54,8 @@ public:
         TENSOR_API_DEBUG_CHECK(debug_check_unit_flag, unit_flag, "copy_l0c_to_ub instruction");
         asc_copy_l0c2ub(
             dst, src, static_cast<uint16_t>(n_size), static_cast<uint16_t>(m_size), dst_stride,
-            static_cast<uint16_t>(src_stride), dual_dst_ctl, sub_block_id, 0, unit_flag,
-            static_cast<uint64_t>(quant_pre), static_cast<uint8_t>(relu_en), is_channel_split, nz2nd_en,
-            static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, nz2dn_en);
+            static_cast<uint16_t>(src_stride), sub_block_id, dual_dst_ctl, unit_flag, quant_pre, relu_pre,
+            is_channel_split, nz2nd_en, nz2dn_en, false);
     }
 };
 

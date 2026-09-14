@@ -334,7 +334,7 @@ auto stride_info = layout_obj.get<1>();
 // stride_info = (4, 1)
 
 constexpr auto depth = decltype(layout_obj)::depth;
-// depth = 1
+// depth = 2
 
 constexpr auto full_rank = decltype(layout_obj)::rank_size;
 // full_rank = 2

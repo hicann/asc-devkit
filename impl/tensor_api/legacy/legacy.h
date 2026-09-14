@@ -305,6 +305,14 @@ __aicore__ inline constexpr auto MakeMmad(const MmadOperationType& operation, co
 } // namespace Te
 } // namespace AscendC
 
+// Keep unqualified legacy calls source-compatible after the implementation
+// types moved to asc::te. ADL associates MakeMemPtr results with asc::te.
+namespace asc {
+namespace te {
+using ::AscendC::Te::MakeTensor;
+} // namespace te
+} // namespace asc
+
 #endif // IMPL_TENSOR_API_LEGACY_LEGACY_H
 
 #if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H)

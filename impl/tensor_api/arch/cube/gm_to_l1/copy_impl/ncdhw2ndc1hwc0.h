@@ -67,7 +67,7 @@ public:
             loop4_src_stride = loop4_src_stride >> 1;
             loop1_src_stride = loop1_src_stride >> 1;
         }
-        uint8_t cache_mode = src.engine().get_cache_mode();
+        auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
 
         // Per depth slice: index the slice with tensor(coord) to offset the address (engine moves by
         // Layout()(coord); pattern/trait preserved), same idiom as the batch-loop scenarios. The DMA
@@ -116,8 +116,8 @@ public:
             auto depth_dst_offset = dst_offset + d * get<1>(dst_layout.stride());
             copy_gm_to_l1_multi_dn2nz_instr::data_copy_with_offset(
                 dst, src, depth_dst_offset, depth_src_offset, dn_num, loop2_dst_stride, loop3_dst_stride,
-                loop4_dst_stride, loop1_src_stride, src.engine().get_cache_mode(), n_value, d_value, loop4_src_stride,
-                false);
+                loop4_dst_stride, loop1_src_stride, static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode()),
+                n_value, d_value, loop4_src_stride, false);
         }
     }
 };

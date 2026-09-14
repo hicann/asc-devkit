@@ -56,7 +56,7 @@ private:
     template <typename CType, typename AType, typename BType>
     __aicore__ inline static void mmad_impl(
         __cc__ CType* dst, __ca__ AType* fm, __cb__ BType* filter, uint16_t m, uint16_t k, uint16_t n,
-        uint8_t unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
+        asc_unit_flag_mode unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
     {
         if constexpr (Std::is_same_v<AType, hifloat8_t> && Std::is_same_v<BType, hifloat8_t>) {
             set_ctrl_for_hifloat8();
@@ -85,7 +85,7 @@ private:
     template <typename CType, typename AType, typename BType>
     __aicore__ inline static void mmad_impl(
         __cc__ CType* dst, __ca__ AType* fm, __cb__ BType* filter, uint64_t bias, uint16_t m, uint16_t k, uint16_t n,
-        int8_t unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
+        asc_unit_flag_mode unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
     {
         uint64_t xd = reinterpret_cast<uint64_t>(dst) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
         if constexpr (Std::is_same_v<AType, hifloat8_t> && Std::is_same_v<BType, hifloat8_t>) {
@@ -116,7 +116,7 @@ private:
     template <typename CType, typename AType, typename BType>
     __aicore__ inline static void mmad_impl(
         __cc__ CType* dst, __ca__ AType* fm, __cb__ BType* filter, uint16_t m, uint16_t k, uint16_t n,
-        uint8_t unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
+        asc_unit_flag_mode unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
     {
         asc_mmad_mx(dst, fm, filter, m, k, n, unit_flag, disable_gemv, init_with_btbuf, init_with_zero);
     }
@@ -137,7 +137,7 @@ private:
     template <typename CType, typename AType, typename BType>
     __aicore__ inline static void mmad_impl(
         __cc__ CType* dst, __ca__ AType* fm, __cb__ BType* filter, uint64_t bias, uint16_t m, uint16_t k, uint16_t n,
-        int8_t unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
+        asc_unit_flag_mode unit_flag, bool disable_gemv, bool init_with_btbuf, bool init_with_zero)
     {
         uint64_t xd = reinterpret_cast<uint64_t>(dst) & 0xffffffffULL | ((bias & 0xffffffffULL) << 32);
         asc_mmad_mx(
