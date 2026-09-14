@@ -17,6 +17,7 @@ import './code-theme.css'
 import './search-overrides.css'
 
 import './filter.css'
+import './ascendops-theme.css'
 import './code-copy.js'
 
 export default {

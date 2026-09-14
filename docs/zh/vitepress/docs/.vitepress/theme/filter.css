@@ -112,6 +112,42 @@
   color: var(--vp-c-brand-1);
 }
 
+/* Keep linked group titles navigable while the remaining row toggles children. */
+.VPSidebarItem.collapsible.is-link > .item > .link {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.VPSidebarItem.collapsible.is-link > .item > .link > .text {
+  flex-grow: 0;
+}
+
+.VPSidebarItem.collapsible.is-link > .item > .sidebar-row-toggle {
+  align-self: stretch;
+  flex: 1 1 24px;
+  min-width: 12px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.VPSidebarItem.collapsible.is-link > .item > .sidebar-row-toggle:hover {
+  background: color-mix(in srgb, var(--vp-c-brand-soft) 56%, transparent);
+}
+
+.VPSidebarItem.collapsible.is-link.is-active > .item {
+  border-radius: 6px;
+  background: var(--vp-c-brand-soft);
+}
+
+.VPSidebarItem.collapsible.is-link.is-active > .item > .link {
+  background: transparent;
+}
+
 .home-layout .VPFeatures .items {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

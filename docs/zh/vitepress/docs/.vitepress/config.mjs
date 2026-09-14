@@ -25,6 +25,7 @@ import {
 } from '../../scripts/api-support.mjs'
 import { loadGitTimestamps } from '../../scripts/git-timestamps.mjs'
 import { shellQuote } from '../../scripts/shell-utils.mjs'
+import { patchVitePressSidebarItem } from '../../scripts/vitepress-sidebar-patch.mjs'
 import {
   createBaiduAnalyticsHead,
   resolveBaiduAnalyticsSiteId,
@@ -874,12 +875,7 @@ function balanceDivTags(html) {
             '<ClientOnly><VPSidebarGroup :items="sidebarGroups" :key="key" /></ClientOnly>'
           )
         } else if (id.includes('VPSidebarItem')) {
-          result = result.replace('depth < 5', 'true')
-          result = result.replace('props.depth + 2 === 7', 'props.depth + 2 >= 7')
-          result = result.replace(
-            '<div v-if="item.items && item.items.length" class="items">',
-            '<div v-if="item.items && item.items.length && !collapsed" class="items">'
-          )
+          result = patchVitePressSidebarItem(result)
         }
         if (result === code) return null
         return result
