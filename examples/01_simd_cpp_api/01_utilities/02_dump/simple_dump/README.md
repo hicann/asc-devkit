@@ -64,8 +64,6 @@
   - id：自定义标识符，用于区分不同dump数据
   - dumpSize：dump数据元素个数
 
-  注意：`asc_dump_l1buf`接口仅支持Atlas A2训练系列产品/Atlas A2推理系列产品/Atlas A3训练系列产品/Atlas A3推理系列产品。
-
 - 调用实现
 
   使用内核调用符<<<>>>调用核函数。
