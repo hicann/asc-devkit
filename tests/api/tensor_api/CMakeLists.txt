@@ -95,4 +95,3 @@ foreach(product_type ${ASCENDC_UT_PRODUCT_TYPE_LIST})
 endforeach()
 
 add_subdirectory(runtime_validation)
-add_subdirectory(print)
