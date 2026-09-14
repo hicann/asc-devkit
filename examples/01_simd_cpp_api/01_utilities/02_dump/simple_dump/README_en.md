@@ -64,8 +64,6 @@ This example introduces the usage of the asc_dump_xxx series APIs to enable tens
   - id: Custom identifier used to distinguish different dump data
   - dumpSize: Number of dump data elements
 
-  Notice: The `asc_dump_l1buf` API only supports Atlas A2 Training Series Products/Atlas A2 Inference Series Products/Atlas A3 Training Series Products/Atlas A3 Inference Series Products.
-
 - Invocation implementation
 
   Use the kernel launch syntax <<<>>> to call the kernel function.
