@@ -23,6 +23,8 @@
 │   └── README.md
 ```
 
+本样例已提供输入配置目录和Binary JSON，直接编译无需创建。开发自己的算子时，需要自行准备Binary JSON；`op_host/config/<soc>`只是推荐目录，CMake不会自动创建。`build`目录下的配置文件由编译流程生成。
+
 ## 样例说明
 
 `AddCustomTemplate`实现`z = x + y`，支持`float16`和`float32`输入输出。
