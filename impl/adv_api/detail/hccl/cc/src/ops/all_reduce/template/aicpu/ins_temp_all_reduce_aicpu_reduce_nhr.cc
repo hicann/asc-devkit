@@ -131,6 +131,7 @@ HcclResult InsTempAllReduceAicpuReduceNHR::CalcSlice(u64 chunkSize)
     sliceInfoVec_ = RankSliceInfo(templateRankSize_);
 
     u64 unitAlignSize = DATATYPE_SIZE_TABLE[dataType_];
+    (void)unitAlignSize;
     u64 dataSize = chunkSize * templateRankSize_;
 
     u64 accumOff = 0;

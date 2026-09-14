@@ -519,6 +519,7 @@ InsV2ReduceScatterOmniPipeExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate
 
         // 5.3 for外层2d
         u32 axisReduceId = 0; // 轴间reduce从计算slice的结果中获取
+        (void)axisReduceId;
         std::vector<TemplateDataParams> axisReduceTempParams;
         for (u32 i = 0; i < level2StepCount; i++) {
             HCCL_INFO("[InsV2ReduceScatterOmniPipeExecutor][OrchestrateLoop]Step [%u] in level2", i);

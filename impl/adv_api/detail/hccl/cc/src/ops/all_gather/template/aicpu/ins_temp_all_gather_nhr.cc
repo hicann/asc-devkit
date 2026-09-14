@@ -441,6 +441,7 @@ HcclResult InsTempAllGatherNHR::LocalDataCopy(const std::vector<ThreadHandle>& t
     CHK_RET(GetAlgRank(myRank_, subCommRanks_[0], myAlgRank));
 
     u64 sliceSize = tempAlgParams_.sliceSize;
+    (void)sliceSize;
     const u32 dataTypeSize = DATATYPE_SIZE_TABLE[dataType_];
     u64 partialSliceSize = dataSplit_[channelIdx];
     u64 partialOffset = dataOffset_[channelIdx];

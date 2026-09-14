@@ -125,14 +125,14 @@ HcclResult InsTempUBXAllToAllVMesh1D::GetBoardSendRecvMatrix(u32 n, std::vector<
     // 创建环形排列：0固定，其余1到n-1
     std::vector<int> ring(n);
     ring[0] = 0;
-    for (int i = 1; i < n; i++) {
+    for (u32 i = 1; i < n; i++) {
         ring[i] = i;
     }
 
     // 生成n-1轮调度
-    for (int round = 0; round < n - 1; round++) {
+    for (u32 round = 0; round < n - 1; round++) {
         // 生成本轮配对：首尾对称配对
-        for (int i = 0; i < n / UBX_BOARD_PAIR_SIZE; i++) {
+        for (u32 i = 0; i < n / UBX_BOARD_PAIR_SIZE; i++) {
             int a = ring[i];
             int b = ring[n - 1 - i];
 
@@ -152,9 +152,9 @@ HcclResult InsTempUBXAllToAllVMesh1D::GetBoardSendRecvMatrix(u32 n, std::vector<
         ring[1] = last;
     }
     // 打印矩阵
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n - 1; j++) {
-            HCCL_DEBUG("sendRecvMatrix[%d][%d] = %d", i, j, sendRecvMatrix[i][j]);
+    for (u32 i = 0; i < n; i++) {
+        for (u32 j = 0; j < n - 1; j++) {
+            HCCL_DEBUG("sendRecvMatrix[%u][%u] = %u", i, j, sendRecvMatrix[i][j]);
         }
     }
     // 举个例子：n = 8 的时候，矩阵如下
@@ -184,10 +184,10 @@ HcclResult InsTempUBXAllToAllVMesh1D::GetRankSendRecvMatrix(
         }
     }
     // 打印矩阵
-    for (int i = 0; i < rankSendRecvMatrix.size(); i++) {
-        for (int j = 0; j < rankNumPerBoard_; j++) {
+    for (size_t i = 0; i < rankSendRecvMatrix.size(); i++) {
+        for (u32 j = 0; j < rankNumPerBoard_; j++) {
             HCCL_DEBUG(
-                "myRank is [%u], board1 is[%u], board2 is [%u], rankSendRecvMatrix[%d][%d] = [%d]", myAlgRank_, board1,
+                "myRank is [%u], board1 is[%u], board2 is [%u], rankSendRecvMatrix[%zu][%u] = [%u]", myAlgRank_, board1,
                 board2, i, j, rankSendRecvMatrix[i][j]);
         }
     }
