@@ -49,6 +49,6 @@ Public network address statements contained in this project code are shown below
 | Maintenance upgrade file directory | 770 (rwxrwx---) |
 | Business data files | 640 (rw-r-----) |
 | Business data file directory | 750 (rwxr-x---) |
-| Key component, private key, certificate, ciphertext file directory | 700 (rwx—----) |
+| Key component, private key, certificate, ciphertext file directory | 700 (rwx------) |
 | Key component, private key, certificate, encrypted ciphertext | 600 (rw-------) |
 | Encryption/decryption interfaces, encryption/decryption scripts | 500 (r-x------)
