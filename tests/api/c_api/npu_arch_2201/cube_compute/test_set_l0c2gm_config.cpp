@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "c_api/stub/cce_stub.h"
-#include "c_api/asc_simd.h"
+#include "c_api/cube_datamove/cube_datamove.h"
 
 class TestCubeComputeSetL0c2gmConfig : public testing::Test {
 protected:
@@ -31,5 +31,13 @@ TEST_F(TestCubeComputeSetL0c2gmConfig, set_l0c2gm_config_Succ)
     bool enable_unit_flag = true;
 
     asc_set_l0c2gm_config(relu_pre, quant_pre, enable_unit_flag);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCubeComputeSetL0c2gmConfig, set_l0c_copy_config_Succ)
+{
+    MOCKER(set_fpc, void(uint64_t)).times(1).will(invoke(set_set_l0c2gm_config_Stub));
+
+    asc_set_l0c_copy_config(1, 2, true);
     GlobalMockObject::verify();
 }

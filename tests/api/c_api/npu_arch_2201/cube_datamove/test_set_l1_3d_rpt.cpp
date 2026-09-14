@@ -28,3 +28,15 @@ TEST_F(TestCubeDmamoveSetL13DRpt, set_l1_3d_rpt_uint32_t_Succ)
     EXPECT_EQ(config.rpt_mode, 0);
     GlobalMockObject::verify();
 }
+
+namespace {
+void set_l3d_rpt_stub(uint64_t config) { EXPECT_EQ(0x0005000400020001, config); }
+} // namespace
+
+TEST_F(TestCubeDmamoveSetL13DRpt, set_l1_3d_rpt_parameterized_Succ)
+{
+    MOCKER(set_l3d_rpt, void(uint64_t)).times(1).will(invoke(set_l3d_rpt_stub));
+
+    asc_set_l13d_rpt(1, 2, asc_l13d_repeat_direction::M_DIRECTION, 4, 5);
+    GlobalMockObject::verify();
+}
