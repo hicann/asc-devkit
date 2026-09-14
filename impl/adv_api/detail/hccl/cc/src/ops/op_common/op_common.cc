@@ -1440,6 +1440,7 @@ HcclResult HcclAllocAlgResourceCcu(
     resCtxHost->notifyNumOnMainThread = resRequest.notifyNumOnMainThread;
     resCtxHost->slaveThreadNum = resRequest.slaveThreadNum;
     resCtxHost->notifyNumPerThread = resRequest.notifyNumPerThread;
+    resCtxHost->parallelPortInfo = resRequest.parallelPortInfo;
     if (!param.checkRes) {
         CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
     }
