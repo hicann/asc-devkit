@@ -1,6 +1,6 @@
 # Matmul常量化样例
 ## 概述
-Tiling常量化的Matmul样例。Tiling常量化即在编译期期间将部分或全部Tiling参数由变量转化为常数值，在样例执行时将使用常量化的Tiling参数。
+Tiling常量化的Matmul样例。Tiling常量化即在编译期间将部分或全部Tiling参数由变量转化为常数值，在样例执行时将使用常量化的Tiling参数。
 
 ## 本样例支持的产品及CANN软件版本
 
