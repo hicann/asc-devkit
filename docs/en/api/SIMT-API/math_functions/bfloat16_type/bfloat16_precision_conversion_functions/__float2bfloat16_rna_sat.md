@@ -1,0 +1,62 @@
+# \_\_float2bfloat16\_rna\_sat
+
+<!-- md-trans-meta sourceCommit=2bc2b38d5648dc61f632186b01ba7f36c2295b13 translatedAt=2026-08-29T07:53:37.389Z pushedAt=2026-08-29T09:42:03.825Z -->
+
+## Applicable Products
+
+- Ascend 950PR/Ascend 950DT: Supported
+- Atlas A3 training products/Atlas A3 inference products: Not supported
+- Atlas A2 training products/Atlas A2 inference products: Not supported
+- Atlas 200I/500 A2 inference product: Not supported
+- Atlas inference products AI Core: Not supported
+- Atlas inference products Vector Core: Not supported
+- Atlas training products: Not supported
+
+## Description
+
+In saturation mode, converts a floating-point value to bfloat16 precision according to the CAST_ROUND mode, and returns the converted value.
+
+## Function Prototype
+
+```
+inline bfloat16_t __float2bfloat16_rna_sat(const float x)
+```
+
+## Parameters
+
+**Table 1**  Parameters
+
+| Parameter | Input/Output | Description |
+| --- | --- | --- |
+| x | Input | Source operand. |
+
+## Return Value
+
+The bfloat16 data converted from the input in saturation mode according to the CAST_ROUND mode.
+
+## Constraints
+
+Before using this interface, set the CTRL[60] register to 0; otherwise, the saturation mode will not take effect. For the setting method, see [Methods for Controlling Saturation Behavior](../../data_type_conversion/overview_258.md#methods-for-controlling-saturation-behavior).
+
+In SIMT programming scenarios, since the CTRL register cannot be set, the saturation mode of this interface does not take effect.
+
+## Header Files to Include
+
+To use this API, include the "simt\_api/asc\_bf16.h" header file.
+
+```
+#include "simt_api/asc_bf16.h"
+```
+
+## Example
+
+-   SIMD and SIMT hybrid programming scenario:
+
+    ```
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__float2bfloat16_rna_sat(__gm__ bfloat16_t* dst, __gm__ float* x)
+    {
+        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        dst[idx] = __float2bfloat16_rna_sat(x[idx]);
+    }
+    ```
+

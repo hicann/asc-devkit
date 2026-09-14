@@ -1,0 +1,278 @@
+# MulAddRelu<a name="ZH-CN_TOPIC_0000001787851724"></a>
+
+<!-- md-trans-meta sourceCommit=93c993b00c4f6138f380f7a2d742660ee1403179 translatedAt=2026-09-09T09:04:02.428Z -->
+
+## Applicable Products<a name="section1550532418810"></a>
+
+<!-- npu="950" id7 -->
+- Ascend 950PR/Ascend 950DT: Supported
+<!-- end id7 -->
+<!-- npu="A3" id8 -->
+- Atlas A3 training products/Atlas A3 inference products: Supported
+<!-- end id8 -->
+<!-- npu="910b" id9 -->
+- Atlas A2 training products/Atlas A2 inference products: Supported
+<!-- end id9 -->
+<!-- npu="310b" id10 -->
+- Atlas 200I/500 A2 inference products: Supported
+<!-- end id10 -->
+<!-- npu="310p" id11 -->
+- Atlas inference products AI Core: Supported
+<!-- end id11 -->
+<!-- npu="310p" id12 -->
+- Atlas inference products Vector Core: Not supported
+<!-- end id12 -->
+<!-- npu="910" id13 -->
+- Atlas training products: Not supported
+<!-- end id13 -->
+
+
+## Description<a name="section618mcpsimp"></a>
+
+Header file path: `"basic_api/kernel_operator_vec_ternary_scalar_intf.h"`.
+
+Multiplies **src0** and **dst** element-wise, adds **src1**, and then performs ReLU computation (comparing the result with 0 and taking the larger value). The final result is stored in **dst**. The calculation formula is as follows:
+
+$$
+dst_j = Relu((src0_i \times dst_i) + src1_i)
+$$
+
+## Prototype<a name="section620mcpsimp"></a>
+
+- Computation on the first n data of the tensor
+
+  ```cpp
+  template <typename T>
+  __aicore__ inline void MulAddRelu(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, const int32_t& count)
+  ```
+
+- High-dimensional splitting computation of the tensor
+  - Bitwise mask mode
+
+    ```cpp
+    template <typename T, bool isSetMask = true>
+    __aicore__ inline void MulAddRelu(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, uint64_t mask[], const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
+    ```
+
+  - Continuous mask mode
+
+    ```cpp
+    template <typename T, bool isSetMask = true>
+    __aicore__ inline void MulAddRelu(const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<T>& src1, uint64_t mask, const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
+    ```
+
+## Parameters<a name="section622mcpsimp"></a>
+
+**Table 1** Template parameters
+
+| Parameter | Description |
+| :----- | :--- |
+| T | Data type of the operand. |
+| isSetMask | Whether to set the mask inside the API.<br>&bull; true: the mask is set inside the API.<br>&bull; false: the mask is set outside the API. In this case, developers need to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode, the mask value in the API input parameter is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning. |
+
+**Table 2** Parameters
+
+| Parameter | Input/Output | Description |
+| :----- | :-------- | :--- |
+| dst | Input/Output | Destination operand.<br>The type is [LocalTensor](../../data_structures/LocalTensor/LocalTensor.md), and the supported TPosition is VECIN/VECCALC/VECOUT. |
+| src0, src1 | Input | Source operands.<br>The type is LocalTensor, and the supported TPosition is VECIN/VECCALC/VECOUT. |
+| count | Input | Number of elements that participate in the computation.<br>**Note: The value range of this parameter is related to the data type of the operand. Different data types support different maximum numbers of elements that can be processed, and the maximum amount of data to be processed cannot exceed the UB size limit.** |
+| mask[]/mask | Input | **mask** controls the elements that participate in the computation in each iteration.<br>For details about the settings, see [Mask](../SIMD_compute/mask.md). |
+| repeatTime | Input | Number of repeated iterations.<br>The vector computation unit reads 256 bytes of consecutive data for computation each time. To complete the processing of the input data, multiple iterations (repeat) are required to read and compute all the data. repeatTime indicates the number of iterations.<br>For details about this parameter, see [high-dimensional split](../SIMD_compute/high_dimension_slicing.md). |
+| repeatParams | Input | Parameters that control the address stride of the operands. The type is [BinaryRepeatParams](../../aux_data_structures/BinaryRepeatParams.md), which includes parameters such as the address stride of the same datablock between adjacent iterations of the operands and the address stride of different datablocks within the same iteration of the operands.<br>For details about the address stride parameters between adjacent iterations, see [repeatStride](../SIMD_compute/high_dimension_slicing.md). For details about the address stride parameters of DataBlocks within the same iteration, see [dataBlockStride](../SIMD_compute/high_dimension_slicing.md). |
+
+## Data Type
+
+<!-- npu="950" id1 -->
+Ascend 950PR/Ascend 950DT: The supported data types are half, float, int64_t, and uint64_t.
+<!-- end id1 -->
+
+<!-- npu="A3" id2 -->
+Atlas A3 training products/Atlas A3 inference products support the following data types: half and float.
+<!-- end id2 -->
+
+<!-- npu="910b" id3 -->
+Atlas A2 training products/Atlas A2 inference products support the following data types: half and float.
+<!-- end id3 -->
+
+<!-- npu="310b" id4 -->
+Atlas 200I/500 A2 inference products support the following data types: half and float.
+<!-- end id4 -->
+
+<!-- npu="310p" id5 -->
+Atlas inference products AI Core support the following data types: half and float.
+<!-- end id5 -->
+
+## Return Value<a name="section640mcpsimp"></a>
+
+None
+
+## Constraints<a name="section633mcpsimp"></a>
+
+- For address alignment constraints, see [Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).
+- For operand address overlap constraints, see [General Address Overlap Constraints](../../../general_description_and_constraints.md#section668772811100).
+- The actual use of the MulAddRelu instruction is affected by bank conflicts.
+
+    In the non-overlapping address scenario, data at three different addresses (dst, src0, and src1) cannot be read in a single beat. Therefore, only half of the theoretical parallelism can be achieved, and the theoretical parallelism is halved on the original basis. In the overlapping address scenario, the original theoretical parallelism is maintained.
+<!-- npu="950" id6 -->
+- For Ascend 950PR/Ascend 950DT, the int64\_t and uint64\_t data types support only the API for computing the first n data of a tensor.
+<!-- end id6 -->
+
+## Example<a name="section837496171220"></a>
+
+- Example of the high-dimensional split computation API - continuous mask mode.
+
+  ```cpp
+  uint64_t mask = 128;
+  // repeatTime = 2. Compute 128 numbers per iteration, 256 numbers in total.
+  // dstBlkStride, src0BlkStride, src1BlkStride = 1. Data is read and written continuously within a single iteration.
+  // dstRepStride, src0RepStride, src1RepStride = 8. Data is read and written continuously between adjacent iterations.
+  AscendC::MulAddRelu(dstLocal, src0Local, src1Local, mask, 2, { 1, 1, 1, 8, 8, 8 });
+  ```
+
+- Example of the high-dimensional split computation API - bitwise mask mode.
+
+  ```cpp
+  uint64_t mask[2] = { UINT64_MAX, UINT64_MAX };
+  // repeatTime = 2. Compute 128 numbers per iteration, 256 numbers in total.
+  // dstBlkStride, src0BlkStride, src1BlkStride = 1. Data is read and written continuously within a single iteration.
+  // dstRepStride, src0RepStride, src1RepStride = 8. Data is read and written continuously between adjacent iterations.
+  AscendC::MulAddRelu(dstLocal, src0Local, src1Local, mask, 2, { 1, 1, 1, 8, 8, 8 });
+  ```
+
+- Example of computing the first n data of a tensor.
+
+  ```cpp
+  AscendC::MulAddRelu(dstLocal, src0Local, src1Local, 256);
+  ```
+
+The result is as follows:
+
+```plain
+Input data src0Local:
+[ 77.25   59.84  -39.5    19.3   -45.88   11.81  -60.75  -99.6   -12.164
+  25.75  100.    -68.    -48.12   -4.504 -78.5   -53.4    71.56  -33.5
+ -78.75   81.6    61.25   -6.414 -31.77  -50.38   84.9   -75.56   89.06
+ -50.7    93.     99.75    8.1    58.34  -47.3    40.78  -98.94   41.34
+  98.5   -21.11   30.7    39.3   -82.06  -34.88  -51.44  -91.7   -33.12
+  71.2   -66.3   -60.2    52.84  -75.9   -18.31  -85.3    92.5    62.22
+  92.2    87.44  -77.56   26.64   31.47  -60.97   85.8   -48.47   74.2
+  42.62  -49.8    77.56  -15.     47.5   -26.66  -97.1    -3.28   99.25
+ -95.4    72.    -16.97  -50.12  -68.5    75.1    63.2   -34.72   79.56
+  97.1   -60.47  -99.3   -59.5   -54.2   -23.62  -10.74   74.8   -18.3
+   3.81  -72.2    15.21   31.55    9.5    22.08  -88.     77.5     7.3
+  68.44  -40.7   -27.53   39.03   -6.84   43.28    4.81   26.75   -8.59
+  95.44  -40.22   98.94   74.4   -84.8    -8.72   42.44   63.1    14.14
+ -93.25   22.77  -39.1   -18.75  -26.22  -56.62   -8.43   25.14   43.66
+  40.     63.44   87.94  -94.75   36.44   24.17  -91.2    33.66  -67.1
+  52.6    81.     32.88   69.25   23.27   30.23   82.56   49.3   -59.78
+  81.2    28.94   45.03  -49.22  -99.2    -6.19    1.262 -94.3    83.6
+ -17.7   -61.     47.4   -50.62    1.013  32.97   87.7    -5.93  -13.36
+  20.45  -18.45   -9.2    33.03  -50.7   -89.1   -93.4    10.3   -60.72
+  44.84   12.664  39.1   -81.9   -37.1     5.215 -91.9    85.44   76.9
+ -70.5   -39.22   59.8   -11.78    4.875 -98.     83.94  -31.03  -58.84
+ -38.56   39.44   97.    -53.     97.75  -69.25   54.4    27.03  -42.66
+  24.94  -56.97   -7.105  71.3    15.28  -39.84   79.7    51.28   76.25
+   7.203  77.56  -15.26  -74.06   59.38   64.5   -63.3   -34.38  -24.98
+ -54.03  -23.53   -9.875  46.12   34.94  -67.9    96.25   65.3   -88.06
+  66.5    65.6   -76.75   77.2    29.73   63.28   41.25  -20.84   34.6
+  37.78  -72.44   58.25    9.4   -50.56   29.28   28.2     4.438 -10.35
+  79.06   62.75  -11.51  -15.16   -4.055 -10.016   4.887  94.1   -50.25
+  15.055  18.45    8.78   28.25 ]
+Input data src1Local:
+[-20.95    -1.547  -46.25    27.14    43.16    21.44    65.6     78.25
+ -72.9     25.39     2.133   76.3     17.56   -96.9    -41.16   -10.734
+  -2.305   74.5    -42.2    -63.44   -67.5    -11.62   -78.44    52.66
+  18.8     45.16   -35.94    82.44   -53.9     10.54   -86.9    -55.9
+   7.22    85.3     14.32   -57.53    52.9    -92.4     45.      31.64
+  40.56    42.06    70.25    -1.671  -24.27    74.9     34.56    96.44
+  19.27    -9.76    96.1    -85.8     26.34    83.1    -66.8     63.03
+  29.69    39.22   -55.      53.2    -68.75     0.5854  57.9     -8.53
+ -39.62    36.06    66.     -34.56    50.4     59.16   -66.1     54.06
+  60.1    -30.06    88.3    -72.06   -22.34   -52.34    39.4    -59.28
+  10.266  -54.7     59.44    14.49   -86.94    98.7     10.25   -75.75
+ -70.06     6.758  -43.66    17.42   -81.3     23.22    33.5     50.72
+  -5.547   44.78    71.2     28.7     92.06   -68.3    -89.     -69.2
+  28.95   -63.72    49.53    15.29    23.06    89.44    87.4    -87.3
+  91.44    80.3     22.9     -1.456  -69.94   -99.3     40.47    11.984
+ -28.7    -32.22   -84.     -17.67    70.3    -79.     -83.6     42.56
+ -67.     -46.53   -84.4     -0.7954 -15.34   -71.7    -81.25    24.62
+ -63.7     81.8     85.44    73.2    -99.1     15.29   -85.6     78.5
+ -54.12    47.03    46.38   -31.78    58.84   -21.9     83.6     60.88
+ -53.4    -52.3    -47.3     20.2     -8.055  -67.3    -52.16   -20.8
+  11.1     36.8    -22.06   -57.53   -42.34   -59.66    -0.651  -34.25
+ -19.33   -80.5    -33.62    28.31   -89.7    -41.5     -8.9    -58.44
+ -54.16   -87.4    -63.66     6.664   -7.562   95.06    85.3     82.25
+  27.75   -25.39    88.06   -94.56    86.8     68.     -26.05     8.14
+ -42.94   -35.      29.12   -64.9     38.7     29.42    15.31   -28.3
+ -56.47    79.44   -96.8    -64.8     81.5    -69.3    -23.36   -95.75
+ -56.62    77.75   -23.1     67.94   -29.03   -14.69     0.5996 -17.05
+ -73.75    95.6     79.25   -61.7      5.363   88.1    -15.086   58.66
+ -20.7     90.9     42.7    -51.22     0.3909  77.1    -69.3     70.75
+  89.7     95.1     56.1    -72.4    -99.9    -11.64     1.984  -86.6
+ -22.22   -24.44    12.5    -46.66    77.7     46.28   -48.3    -19.03
+ -16.61    64.44    -4.758  -20.9     80.2     67.      12.9    -71.75  ]
+Input data dstLocal:
+[-69.5     -8.8    -38.3     19.9    -70.      71.75   -23.17   -13.48
+  70.     -31.16    29.6     -2.914   47.6     83.5    -33.75    44.25
+ -87.9      3.54    46.1     53.8     -4.164  -83.56   -35.6     58.47
+ -43.56   -38.03    63.72     4.9    -25.56    73.7     34.7     96.3
+ -58.34   -56.78   -39.44    82.5     34.4    -30.34    -4.72   -97.75
+   2.406  -83.1     17.06    41.34   -45.84   -35.6     19.58    27.45
+   4.258  -95.25    -7.418  -10.34    99.06   -84.3     -2.508  -14.805
+  44.72    27.14    64.44   -16.69   -48.28    73.94    72.2     71.75
+ -72.7    -43.72   -65.3    -17.75    16.02    35.     -57.6     87.75
+  91.6    -44.53   -82.     -54.44   -23.61   -71.5     86.75   -83.5
+  39.16   -60.2     51.22   -63.2     61.8     53.9    -13.016   78.4
+ -55.1    -59.94   -88.25   -12.35    83.4     94.44   -38.28   -59.38
+ -98.06    54.94   -11.664  -22.66   -94.3     65.06    89.56   -74.44
+  17.98    29.78   -98.06    95.6     -4.26   -65.5      2.662  -76.9
+  26.03   -22.84    40.6    -78.6     58.56   -25.34   -73.9     -2.59
+ -86.9     52.75    69.7     48.66    -8.95   -57.84   -87.3    -43.84
+ -26.36    72.3      0.1203  57.88    96.56    43.6     94.44    76.1
+ -58.47    82.1    -46.03    82.2    -67.94   -80.75    91.4    -46.4
+  77.56   -39.25    92.25   -83.8    -17.25   -42.72    -3.533   18.4
+ -17.6     80.94    64.      72.6     53.66   -19.17   -34.88    73.94
+ -80.1    -65.8     -8.6     62.     -64.9    -31.45   -25.12   -98.1
+  75.75    -6.44    66.75     4.11   -62.22   -74.56    17.61    85.4
+  -0.5825 -39.28    -0.2615 -88.5     67.1    -78.25    -7.7    -82.75
+  98.1     62.12    73.9    -98.8    -78.6    -88.44    49.97    98.6
+ -14.484  -18.44   -15.57    87.8    -46.56   -71.75    61.7     16.42
+ -71.56    91.4    -35.03   -61.78   -10.39   -44.1     96.44    92.7
+   5.785  -59.75   -57.22   -63.1    -71.6     87.06     3.691  -69.44
+ -15.84   -73.56     4.08   -27.5     41.7     88.6     21.4    -73.3
+  91.9     29.28   100.     -19.3    -52.88    28.23   -42.72    68.25
+  60.9    -48.4    -31.86    74.25   -40.8    -21.61    78.3    -90.56
+ -56.47    -9.51    80.8    -32.28    11.18    34.34    65.9     98.8
+  24.83    82.9    -92.6    -67.06    51.9     -8.68   -55.03   -75.    ]
+Output data dstLocal:
+[   0.      0.   1467.    411.5  3256.    869.   1474.   1421.      0.
+    0.   2962.    274.5     0.      0.   2608.      0.      0.      0.
+    0.   4328.      0.    524.5  1053.      0.      0.   2920.   5640.
+    0.      0.   7364.    194.1  5564.   2768.      0.   3916.   3352.
+ 3442.    548.      0.      0.      0.   2940.      0.      0.   1495.
+    0.      0.      0.    244.2  7220.    232.    796.5  9184.      0.
+    0.      0.      0.    762.   1973.   1071.      0.      0.   5412.
+ 3050.   3580.      0.   1046.      0.      0.      0.    122.75 8768.
+    0.      0.   1479.   2656.   1595.      0.   5520.   2840.   3126.
+    0.      0.   6292.      0.      0.    317.8     0.      0.   1104.
+    0.    909.   1187.   3004.      0.      0.   8624.   4300.      0.
+    0.   3930.      0.   3408.    440.    807.5    79.5     0.      0.
+    0.   2724.    351.      0.      0.    279.5  1746.      0.    758.
+ 2264.      0.    113.25 1600.      0.      0.      0.      0.      0.
+    0.      0.      0.      0.      0.   1398.      0.   1395.      0.
+ 4028.      0.   2782.      0.   1985.      0.      0.   4420.   2852.
+ 6240.      0.   4204.   4092.   1770.    242.6    79.2     0.      0.
+    0.      0.   3462.      0.      0.      0.   6464.    486.    916.
+    0.      0.    554.5     0.   1273.   8712.      0.      0.      0.
+  212.5     0.      0.      0.      0.      0.   3520.      0.      0.
+    0.   3164.      0.   1057.    506.      0.   6288.   2972.   4716.
+ 3478.   1945.   9576.    724.5     0.   1107.   4712.      0.   3090.
+ 1553.      0.    452.   6596.      0.   2398.      0.      0.   7328.
+  572.    392.    989.   4212.      0.      0.      0.      0.   1718.
+  782.   1827.     38.97    0.   1461.      0.   2045.      0.      0.
+ 2038.   6608.   1430.      0.    916.5     0.   2886.      0.      0.
+    0.      0.      0.      0.      0.      0.      0.      0.      0.
+    0.    779.      0.      0.      0.      0.    469.5     0.   3350.
+  861.5     0.      0.      0.  ]
+```

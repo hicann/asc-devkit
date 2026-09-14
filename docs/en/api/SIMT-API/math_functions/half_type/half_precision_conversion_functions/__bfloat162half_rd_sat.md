@@ -1,0 +1,62 @@
+# \_\_bfloat162half\_rd\_sat
+
+<!-- md-trans-meta sourceCommit=2bc2b38d5648dc61f632186b01ba7f36c2295b13 translatedAt=2026-09-04T00:36:50.586Z pushedAt=2026-09-04T11:39:11.834Z -->
+
+## Applicable Products
+
+- Ascend 950PR/Ascend 950DT: Supported
+- Atlas A3 training products/Atlas A3 inference products: Not supported
+- Atlas A2 training products/Atlas A2 inference products: Not supported
+- Atlas 200I/500 A2 inference product: Not supported
+- Atlas inference products AI Core: Not supported
+- Atlas inference products Vector Core: Not supported
+- Atlas training products: Not supported
+
+## Description
+
+In saturation mode, converts bfloat16 type data to half type data following the CAST\_FLOOR mode and returns the converted value.
+
+## Function Prototype
+
+```
+inline half __bfloat162half_rd_sat(const bfloat16_t x)
+```
+
+## Parameters
+
+**Table 1**  Parameters
+
+| Parameter | Input/Output | Description |
+| --- | --- | --- |
+| x | Input | Source operand. |
+
+## Return Value
+
+Returns the half type data converted from the input following the CAST\_FLOOR mode in saturation mode.
+
+## Constraints
+
+Before using this API, set the CTRL\[60\] register to 0; otherwise, the saturation mode does not take effect. For details about how to set it, see [Methods for Controlling Saturation Behavior](../../data_type_conversion/overview_258.md#methods-for-controlling-saturation-behavior).
+
+In SIMT programming scenarios, the CTRL register cannot be set, so the saturation mode of this API does not take effect.
+
+## Header Files to Include
+
+To use this API, include the "simt\_api/asc\_bf16.h" header file.
+
+```
+#include "simt_api/asc_bf16.h"
+```
+
+## Example
+
+-   SIMD and SIMT hybrid programming scenario:
+
+    ```
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__bfloat162half_rd_sat(__gm__ half* dst, __gm__ bfloat16_t* x)
+    {
+        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        dst[idx] = __bfloat162half_rd_sat(x[idx]);
+    }
+    ```
+

@@ -1,0 +1,13 @@
+# Document Organization<a name="ZH-CN_TOPIC_0000002533052471"></a>
+
+<!-- md-trans-meta sourceCommit=5ac36e94e68ec9e51e8b66b637216dd7c30b9b13 translatedAt=2026-08-26T12:32:24.310Z pushedAt=2026-09-06T07:51:04.207Z -->
+
+This guide is a comprehensive technical manual for **AscendC operator development**, systematically covering core technologies such as the SIMD/SIMT programming model, language extension features, C++ library APIs, compilation and execution mechanisms, debugging and tuning, and advanced programming. The document serves both introductory learning and in-depth practice, catering to developers at different levels. Beginner developers can build a complete technical foundation with this guide, while experienced operator engineers can deepen their technical capabilities, fully leverage the hardware computing power of Ascend AI processors, and complete the development and performance optimization of custom operators with high quality.
+
+The overall structure of this document and the core content of each chapter are as follows:
+- **[Programming model](programming_model/programming_model.md)**: Provides an in-depth analysis of the underlying principles and application paradigms of the native SIMD/SIMT programming model of AscendC.
+- **[Compilation and execution](compilation_and_execution/compilation_and_execution.md)**: Explains the operator kernel call mechanism and fully describes the entire process of project compilation and program execution.
+- **[Language extension](language_extension/language_extension_layer.md)**: Introduces, one by one, the extended syntax, built-in keywords, and underlying system functions of the SIMD and SIMT programming systems.
+- **[C++ library APIs](library_api/library_api.md)**: Organizes the layered API system of AscendC, including the C++ basic APIs based on tensor programming, the TPipe/TQue framework APIs, the high-level APIs of general single-core algorithms, and the operator template library for multi-core operator development.
+- **[Debugging and tuning](debug_and_tuning/debug_and_tuning.md)**: Introduces the implementation methods, supporting tools, and engineering practices for locating operator functional issues, performance analysis, and targeted tuning.
+- **[Advanced programming](advanced_programming/advanced_programming.md)**: Elaborates on advanced development techniques, covering SIMD/SIMT hybrid programming, the hardware architecture of AI processors, hardware specifications and usage constraints, as well as high-level solutions such as aclnn operator engineering and GE graph integration.
