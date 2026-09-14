@@ -8,7 +8,7 @@
 
 - CMake编译选项控制方式
     - 核函数（Kernel）直调工程
-        修改CMakeList.txt文件中中ascendc_compile_definitions命令增加ASCENDC_DUMP=0宏定义来关闭ASCENDC_DUMP开关。示例如下：
+        修改CMakeLists.txt文件中中ascendc_compile_definitions命令增加ASCENDC_DUMP=0宏定义来关闭ASCENDC_DUMP开关。示例如下：
         ```plain
         // 关闭所有算子的打印功能
         ascendc_compile_definitions({kernel_target_name} PRIVATE
