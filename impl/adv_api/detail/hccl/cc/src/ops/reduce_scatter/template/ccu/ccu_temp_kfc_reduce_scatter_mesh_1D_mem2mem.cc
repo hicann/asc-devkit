@@ -33,7 +33,22 @@ HcclResult CcuTempKfcReduceScatterMesh1DMem2Mem::CalcRes(
         kernelInfo.kernelFuncName, sizeof(kernelInfo.kernelFuncName), "CcuKernelKfcReduceScatterMesh1DMem2Mem"));
 
     std::vector<HcclChannelDesc> channelDescs;
-    CHK_RET(CalcChannelRequestMesh1D(comm, param, topoInfo, subCommRanks_, channelDescs));
+    // UBX（MESH_1D_CLOS，mesh/clos 同层）机型：CalcChannelRequestMesh1D 按协议逐链路建通道，会把每对端
+    // 的全部 clos 链路收进 kernelInfo（实测每对 18 条，2P 即超 CCU_MAX_RANK_SIZE=16 上限），
+    // 须与 AG 的 KFC Mesh 模板/hccl 母本同款：走 WithPriorityTopo 按对端选 1 条 mesh 优先链路。
+    if (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS) {
+        CHK_RET(CalcChannelRequestMesh1D(comm, param, topoInfo, subCommRanks_, channelDescs));
+    } else {
+        CHK_RET(CalcChannelRequestMesh1DWithPriorityTopo(
+            comm, param, topoInfo, subCommRanks_, channelDescs, CommTopo::COMM_TOPO_1DMESH));
+        for (const auto& channel : channelDescs) {
+            if (channel.channelProtocol != COMM_PROTOCOL_UBC_CTP) {
+                HCCL_ERROR(
+                    "[CcuTempKfcReduceScatterMesh1DMem2Mem][CalcRes] channelProtocol: %u", channel.channelProtocol);
+                return HCCL_E_INTERNAL;
+            }
+        }
+    }
 
     auto kernelArg = std::make_shared<CcuKernelArgKfcReduceScatterMesh1DMem2Mem>();
     kernelArg->rankSize = subCommRanks_[0].size();

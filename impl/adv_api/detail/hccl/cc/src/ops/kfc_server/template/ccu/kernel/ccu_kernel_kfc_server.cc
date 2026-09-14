@@ -13,6 +13,7 @@
 #include "../../../../all_gather/template/ccu/kernel/ccu_kernel_kfc_all_gather_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../all_reduce/template/ccu/kernel/ccu_kernel_kfc_all_reduce_mesh1d_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.h"
+#include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_peer_only.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d.h"
@@ -35,6 +36,9 @@ static_assert(
 static_assert(
     KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
     "Concurrent AllToAll parameters exceed the KFC server load width");
+static_assert(
+    KFC_CONCURRENT_RS_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
+    "Concurrent ReduceScatter parameters exceed the KFC server load width");
 static_assert(KFC_MAX_MISSION_NUM == 2U, "KFC server CKE partitioning expects two missions");
 static_assert(KFC_SIGNAL_REGIONS_PER_MISSION == 2U, "Each KFC mission requires commit and done regions");
 
@@ -224,6 +228,30 @@ static void DispatchKfcSubKernel(ccu::Array<ccu::Variable>& param, KfcServerCont
                 static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->jettyNum,
                 ctx.arg->opParam.DataDes.dataType, ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType,
                 ctx.arg->nhrStepInfoVector, ctx.arg->nhrRank2ChannelIdx);
+        } else if (ctx.arg->role == KfcServerRole::REDUCE_SCATTER_NHR) {
+            // 并发 RS 的 NHR mission 读 [16..24] 区间（见 KfcConcurrentReduceScatterParamIndex）。
+            CcuKfcReduceScatterNHR1DMultiJettyMem2MemKernel(
+                param[KFC_CONCURRENT_RS_NHR_INPUT], param[KFC_CONCURRENT_RS_NHR_OUTPUT], ctx.token,
+                param[KFC_CONCURRENT_RS_NHR_SLICE_SIZE], param[KFC_CONCURRENT_RS_NHR_INPUT_SLICE_STRIDE],
+                param[KFC_CONCURRENT_RS_NHR_SLICE_ONE_JETTY_SIZE], param[KFC_CONCURRENT_RS_NHR_SLICE_LAST_JETTY_SIZE],
+                param[KFC_CONCURRENT_RS_NHR_REPEAT_NUM_INV], param[KFC_CONCURRENT_RS_NHR_INPUT_REPEAT_STRIDE],
+                param[KFC_CONCURRENT_RS_NHR_OUTPUT_REPEAT_STRIDE], ctx.arg->channels, ctx.arg->channelCount,
+                static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->jettyNum,
+                ctx.arg->opParam.DataDes.dataType, ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType,
+                ctx.arg->nhrStepInfoVector, ctx.arg->nhrRank2ChannelIdx);
+        } else if (ctx.arg->role == KfcServerRole::REDUCE_SCATTER_MESH) {
+            // 并发 RS 的 Mesh mission 读 [1..15] 紧凑区间，形参顺序与 kernel 定义一致。
+            CcuReduceScatterMesh1DMem2MemKernel(
+                param[KFC_CONCURRENT_RS_MESH_INPUT], param[KFC_CONCURRENT_RS_MESH_OUTPUT], ctx.token,
+                param[KFC_CONCURRENT_RS_MESH_SCRATCH], param[KFC_CONCURRENT_RS_MESH_RANK_SLICE_OFFSET],
+                param[KFC_CONCURRENT_RS_MESH_CHUNK_SIZE], param[KFC_CONCURRENT_RS_MESH_CHUNK_LOOP_NUM],
+                param[KFC_CONCURRENT_RS_MESH_TAIL_SIZE], param[KFC_CONCURRENT_RS_MESH_FULL_GO_ADDR_OFFSET],
+                param[KFC_CONCURRENT_RS_MESH_FULL_GO_LOOP_PARAM], param[KFC_CONCURRENT_RS_MESH_FULL_GO_PARALLEL_PARAM],
+                param[KFC_CONCURRENT_RS_MESH_FULL_GO_RESIDUAL], param[KFC_CONCURRENT_RS_MESH_TAIL_GO_ADDR_OFFSET],
+                param[KFC_CONCURRENT_RS_MESH_TAIL_GO_LOOP_PARAM], param[KFC_CONCURRENT_RS_MESH_TAIL_GO_PARALLEL_PARAM],
+                param[KFC_CONCURRENT_RS_MESH_TAIL_GO_RESIDUAL], ctx.arg->channels, ctx.arg->channelCount,
+                static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->opParam.DataDes.dataType,
+                ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType);
         } else {
             // SoleMesh 路径保持 homm 兼容布局：[0..12] homm 专用 + [13..23] KFC chunk 参数。
             CcuReduceScatterMesh1DMem2MemKernel(

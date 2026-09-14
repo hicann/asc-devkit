@@ -248,6 +248,13 @@ TEST_F(TestHcclTilingCcuKfc, ReduceScatterCcuSchedUsesCcuNewVersion)
         INIT_TILING_CCU_NEW_VERSION);
 }
 
+TEST_F(TestHcclTilingCcuKfc, ReduceScatterConcurMeshNHRMultiLinkCcuSchedUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER), "CcuSchedReduceScatterConcurMeshNHRMultiLink", 6U,
+        INIT_TILING_CCU_NEW_VERSION);
+}
+
 TEST_F(TestHcclTilingCcuKfc, ReduceScatterPeerOnlyCcuSchedUsesCcuNewVersion)
 {
     ExpectInitTilingVersion(

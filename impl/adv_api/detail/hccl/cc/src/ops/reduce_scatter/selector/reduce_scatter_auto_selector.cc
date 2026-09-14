@@ -141,8 +141,8 @@ SelectorStatus ReduceScatterAutoSelector::SelectCcuScheduleAlgo(
 }
 
 // UBX（MESH_1D_CLOS）机型：与 hccl SelectMeshAlgoCcuSchedule 的 UBX 分支对齐——
-// 同组 4P（meshNum==closNum 且 rankSize<=4）走 SoleMesh/Concurrent、矩形大数据走 Parallel/PipeLine，
-// 上述算法均未在本仓迁移，返回 NOT_MATCH；其余场景（hccl 的"1d NHR 算法"分支）选 SoleNHRMultiLink。
+// 同组 4P（meshNum==closNum 且 rankSize<=4）小数据走 SoleMesh、大数据走 Mesh+NHR 并发（ConcurMeshNHRMultiLink），
+// 矩形大数据走 Parallel/PipeLine（未迁移，返回 NOT_MATCH）；其余场景（hccl 的"1d NHR 算法"分支）选 SoleNHRMultiLink。
 // 注意：hccl REGISTER_ALG_ATTRS 的 CalcFrameNum <= MAX_FRAME_NUM_FOR_CCU_ALGO 门槛因 devkit 无
 // CalcFrameNum 未同步；IsSmallData 依赖 count，MC2 tiling 无 count 字段导致该保护失效（见迁移记录）。
 SelectorStatus ReduceScatterAutoSelector::SelectCcuScheduleUBXAlgo(
@@ -163,11 +163,15 @@ SelectorStatus ReduceScatterAutoSelector::SelectCcuScheduleUBXAlgo(
         CheckClosNumMultipleOfMeshNum(topoInfo, isClosNumMultipleOfMeshNum) != HCCL_SUCCESS,
         HCCL_ERROR("[ReduceScatterAutoSelector] CheckClosNumMultipleOfMeshNum failed."), SelectorStatus::NOT_MATCH);
     if (isMeshNumEqualToClosNum && topoInfo->userRankSize <= MAX_RANK_NUM_FOR_CONCURRENT_ALGO) {
-        // 4P mesh：hccl 小数据走 SoleMesh、大数据走 ConcurMeshNHRMultiLink，均非本算法迁移范围
-        HCCL_INFO(
-            "[ReduceScatterAutoSelector][%s] UBX 4P-mesh group not migrated, meshEqualsClos[%d], rankSize[%u]",
-            __func__, static_cast<int>(isMeshNumEqualToClosNum), topoInfo->userRankSize);
-        return SelectorStatus::NOT_MATCH;
+        // 同一组 4P mesh：小数据走 1d mesh 算法，大数据走 mesh+clos 并行算法（均与 hccl 对齐）
+        if (IsSmallData(dataSize)) {
+            selectAlgName = "CcuSchedReduceScatterSoleMesh";
+            HCCL_INFO("[ReduceScatterAutoSelector][%s] UBX small-data match [%s]", __func__, selectAlgName.c_str());
+            return SelectorStatus::MATCH;
+        }
+        selectAlgName = "CcuSchedReduceScatterConcurMeshNHRMultiLink";
+        HCCL_INFO("[ReduceScatterAutoSelector][%s] UBX concurrent Algo match [%s]", __func__, selectAlgName.c_str());
+        return SelectorStatus::MATCH;
     }
     if (isClosNumMultipleOfMeshNum && !IsSmallData(dataSize)) {
         // 矩形场景大数据：hccl 走 ParallelMeshNHRMultiLink / PipeLineMeshNHR，未迁移
