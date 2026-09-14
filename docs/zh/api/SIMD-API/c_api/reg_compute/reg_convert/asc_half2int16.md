@@ -36,12 +36,12 @@
 
 ```c
 // 通过引用参数输出结果（占位符形式）
-__simd_callee__ inline void asc_half2int16<round_mode><sat_mode>(vector_int16_t& dst,
+__simd_callee__ inline void asc_half2int16_<round_mode><sat_mode>(vector_int16_t& dst,
                                                                  vector_half src,
                                                                  vector_bool mask)
 
 // 通过函数返回值返回结果（占位符形式）
-__simd_callee__ inline vector_int16_t asc_half2int16<round_mode><sat_mode>(vector_half src,
+__simd_callee__ inline vector_int16_t asc_half2int16_<round_mode><sat_mode>(vector_half src,
                                                                            vector_bool mask)
 ```
 

@@ -34,12 +34,12 @@
 
 ```c
 // 通过引用参数输出结果（占位符形式）
-__simd_callee__ inline void asc_half2bfloat16<round_mode>(vector_bfloat16_t& dst,
+__simd_callee__ inline void asc_half2bfloat16_<round_mode>(vector_bfloat16_t& dst,
                                                           vector_half src,
                                                           vector_bool mask)
 
 // 通过函数返回值返回结果（占位符形式）
-__simd_callee__ inline vector_bfloat16_t asc_half2bfloat16<round_mode>(vector_half src,
+__simd_callee__ inline vector_bfloat16_t asc_half2bfloat16_<round_mode>(vector_half src,
                                                                        vector_bool mask)
 ```
 
