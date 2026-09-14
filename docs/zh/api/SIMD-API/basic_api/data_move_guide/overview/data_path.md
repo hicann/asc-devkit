@@ -5,7 +5,7 @@
 <!-- npu="910b,A3" id1 -->
 AI Core是昇腾处理器的核心计算单元，以[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)为例，其内部分层存储架构如图1所示，主要包含以下组成部分：
 
-- **计算单元（图中黄色高亮）：**  包括Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元，分别负责矩阵乘加、向量运算和标量控制流。
+- **计算单元（图中绿色高亮）：**  包括Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元，分别负责矩阵乘加、向量运算和标量控制流。
 - **存储单元：**  按层级由外到内依次为Global Memory（GM，位于AI Core外部）、L1 Buffer、L0A/L0B/L0C Buffer、Unified Buffer（UB）、BiasTable Buffer、Fixpipe Buffer等。各存储单元的容量与对齐要求各异，详情参见[内存层级架构](./overall_constraints.md#地址对齐约束)。
 - **搬运单元（图中黄色高亮）：**  包括MTE1（Memory Transfer Engine 1）、MTE2、MTE3和FixPipe，负责数据在不同存储单元之间的DMA传输。其中MTE2负责GM  ->  Local Memory方向的搬运，MTE3负责Local Memory -> GM方向的搬运，MTE1负责L1 Buffer -> L0 Buffer方向的数据搬运，FixPipe负责将计算结果从L0C Buffer中通过[随路量化](../../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)和[随路激活](../../cube_compute_ISASI/cube_store_key_features/accompanying_relu.md)的方式搬出。
 
