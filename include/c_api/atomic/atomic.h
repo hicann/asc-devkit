@@ -38,8 +38,6 @@ __aicore__ inline void asc_set_atomic_add_int16();
 __aicore__ inline void asc_set_atomic_add_int32();
 
 __aicore__ inline void asc_set_atomic_none();
-[[deprecated("NOTICE: asc_get_store_atomic_config is deprecated."
-             "Please use asc_atomic_add instead for atomic add operation.")]]
 __aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config);
 __aicore__ inline void asc_set_store_atomic_config_v1(uint16_t type, uint16_t op);
 __aicore__ inline void asc_set_atomic_add_bfloat();
