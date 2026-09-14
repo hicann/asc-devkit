@@ -30,10 +30,6 @@ constexpr uint32_t C_API_AIV_TYPE = AscendC::AIV;
 
 constexpr uint32_t C_API_MIX_TYPE = AscendC::MIX;
 
-#define ASC_IS_AIV ASCEND_IS_AIV
-
-#define ASC_IS_AIC ASCEND_IS_AIC
-
 constexpr uint16_t ASC_C_API_ONE_DATABLOCK_SIZE = 32;
 
 __aicore__ inline void asc_sync_post_process() { pipe_barrier(pipe_t::PIPE_ALL); }

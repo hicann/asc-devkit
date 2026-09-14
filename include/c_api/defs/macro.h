@@ -15,4 +15,7 @@
     [[deprecated("Deprecated since " #version ", Will be removed after " removal_date ", Use " #replacement \
                  " instead.")]]
 
+#define ASC_IS_AIV ASCEND_IS_AIV
+#define ASC_IS_AIC ASCEND_IS_AIC
+
 #endif
