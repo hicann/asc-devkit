@@ -17,7 +17,7 @@ extern HcclResult __attribute__((visibility("default"))) CheckOpResSufficient(
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| comm | 输入 | 初始化后的通信域指针。<br>HcclComm类型的定义可参见[HcclComm](https://gitcode.com/cann/hcomm/blob/master/docs/zh/api_ref/comm_mgr_c/data_type_definition/HcclComm.md)。 |
+| comm | 输入 | 初始化后的通信域指针。<br>HcclComm类型的定义可参见[HcclComm](https://gitcode.com/cann/hcomm/blob/9.2.0/docs/zh/api_ref/comm_mgr_c/data_type_definition/HcclComm.md)。 |
 | stream | 输入 | stream类型为aclrtStream，用于维护一些异步操作的执行顺序，确保按照应用程序中的代码调用顺序在Device上执行。stream创建等管理接口请参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。 |
 | mc2Tiling | 输入 | MC2算子的Tiling信息，通过[GetTiling](GetTiling.md)接口组装到算子[TilingData结构体](TilingData_struct.md)中。 |
 

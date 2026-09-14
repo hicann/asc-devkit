@@ -143,7 +143,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 <!-- npu="950" id1 -->
 > [!NOTE] SIMD与SIMT混合场景的动态UB配置
 >
-> 使能SIMD与SIMT混合编程时，需要为SIMT预留至少32KB Data Cache。Host侧Tiling需要根据核函数（Kernel）使用的静态UB、预留空间和Data Cache大小确定动态UB大小，并调用[`SetDynUBufSize`](https://gitcode.com/cann/metadef/blob/master/docs/zh/api/gert_namespace/tilingcontext/SetDynUBufSize.md)进行设置；可调用[`GetDynUBufSize`](https://gitcode.com/cann/metadef/blob/master/docs/zh/api/gert_namespace/tilingcontext/GetDynUBufSize.md)查询已设置的动态UB大小。
+> 使能SIMD与SIMT混合编程时，需要为SIMT预留至少32KB Data Cache。Host侧Tiling需要根据核函数（Kernel）使用的静态UB、预留空间和Data Cache大小确定动态UB大小，并调用[`SetDynUBufSize`](https://gitcode.com/cann/metadef/blob/9.2.0/docs/zh/api/gert_namespace/tilingcontext/SetDynUBufSize.md)进行设置；可调用[`GetDynUBufSize`](https://gitcode.com/cann/metadef/blob/9.2.0/docs/zh/api/gert_namespace/tilingcontext/GetDynUBufSize.md)查询已设置的动态UB大小。
 >
 > 假设TilingFunc已经根据核函数（Kernel）的实际需求计算得到`dynUBufSize`，调用示例如下：
 >
