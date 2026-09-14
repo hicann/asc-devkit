@@ -55,6 +55,10 @@ struct CcuStScenario {
 
     // In-place operation (e.g. AllReduce input==output)
     bool inPlace = false;
+
+    // UBX（MESH_1D_CLOS）拓扑模式：L0 建模为覆盖全 server rank 的 CLOS 实例（端口字节对齐非隔离口），
+    // 供 NHR MultiJetty 通道计算（ProcessLinksForChannelMutiJetty）在 sim 下可产出通道。
+    bool ubxTopo = false;
 };
 
 } // namespace CcuSt

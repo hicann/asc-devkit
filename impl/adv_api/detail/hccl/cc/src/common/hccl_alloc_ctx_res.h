@@ -99,6 +99,9 @@ enum class AlgorithmType {
     CcuSchedAllToAllSoleMesh = 150,
     CcuSchedAllToAllVSoleMesh = 151,
     CcuSchedAllGatherSoleMesh = 152,
+    // 9.2.0 上 153 空闲（无 A2A 并发等 master 尾部隐式编号占用），与设备侧同值。
+    CcuSchedReduceScatterConcurMeshNHRMultiLink = 153,
+    CcuSchedReduceScatterSoleNHRMultiLink = 154,
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
@@ -111,7 +114,9 @@ static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
     {"CcuSchedAllToAllVSoleMesh", AlgorithmType::CcuSchedAllToAllVSoleMesh},
     {"CcuSchedAllReduceSoleMesh", AlgorithmType::CcuAllReduceMeshMem2Mem1D},
     {"CcuSchedAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
-    {"CcuSchedAllGatherSoleMesh", AlgorithmType::CcuSchedAllGatherSoleMesh}};
+    {"CcuSchedAllGatherSoleMesh", AlgorithmType::CcuSchedAllGatherSoleMesh},
+    {"CcuSchedReduceScatterConcurMeshNHRMultiLink", AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink},
+    {"CcuSchedReduceScatterSoleNHRMultiLink", AlgorithmType::CcuSchedReduceScatterSoleNHRMultiLink}};
 
 typedef HcclResult (*OpParamPrepareFunc)(
     HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);

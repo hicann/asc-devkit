@@ -13,7 +13,9 @@
 #include "ins_temp_reduce_scatter_nhr.h"
 #include "ins_temp_reduce_scatter_mesh_1D.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
-#include "ccu_temp_reduce_scatter_mesh_1D_mem2mem.h"
+#include "ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem.h"
+#include "ccu_temp_kfc_reduce_scatter_nhr_1D_multi_jetty_mem2mem.h"
+#include "topo_match_concurrent_v2.h"
 #endif
 namespace mc2_ops_hccl {
 namespace {
@@ -74,45 +76,9 @@ HcclResult InsReduceScatterConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, Ins
     resourceRequest.notifyNumPerThread.insert(
         resourceRequest.notifyNumPerThread.end(), temp1ResReq.notifyNumPerThread.begin(),
         temp1ResReq.notifyNumPerThread.end());
-    // 分别获取两种拓扑的链路，这里约束temp0为mesh拓扑，走mesh算法；temp1为clos拓扑，走nhr算法
-    std::vector<HcclChannelDesc> channelDescs0;
-    std::vector<HcclChannelDesc> channelDescsTemp0;
-    CHK_RET(CalcChannelRequestMesh1DWithPriorityTopo(
-        comm, param, topoInfo, temp0HierarchyInfo, channelDescsTemp0, CommTopo::COMM_TOPO_1DMESH));
-    for (auto channel : channelDescsTemp0) {
-        if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
-            channelDescs0.push_back(channel);
-        }
-    }
-
-    CHK_PRT_RET(
-        channelDescs0.empty(), HCCL_ERROR("[%s] channelDescs0.size()[%zu] is zero.", __func__, channelDescs0.size()),
-        HcclResult::HCCL_E_INTERNAL);
-
-    std::vector<HcclChannelDesc> channelDescs1;
-    std::vector<HcclChannelDesc> channelDescsTemp1;
-
-    CHK_RET(CalcChannelRequestNhrMultiJetty(comm, param, topoInfo, temp1HierarchyInfo, channelDescsTemp1));
-
-    for (auto channel : channelDescsTemp1) {
-        if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
-            channelDescs1.push_back(channel);
-        }
-    }
-
-    CHK_PRT_RET(
-        channelDescs1.empty(), HCCL_ERROR("[%s] channelDescs1.size()[%zu] is zero.", __func__, channelDescs1.size()),
-        HcclResult::HCCL_E_INTERNAL);
-
-    // 两者数量应相等
-    CHK_PRT_RET(
-        channelDescs0.size() != channelDescs1.size(),
-        HCCL_ERROR(
-            "[%s] channelDescs0.size()[%zu] is not equal to channelDescs1.size()[%zu]", __func__, channelDescs0.size(),
-            channelDescs1.size()),
-        HcclResult::HCCL_E_INTERNAL);
-
     if (param.engine == CommEngine::COMM_ENGINE_CCU) {
+        // KFC 路径（对齐 InsV2AllGatherConcurrentExecutor）：通道由各模板 CalcRes 自行计算并随 kernelInfo
+        // 下发，executor 不做通道预计算——Mesh 与 NHR MultiJetty 的通道数天然不同，无相等约束。
         resourceRequest.ccuKernelNum.insert(
             resourceRequest.ccuKernelNum.end(), temp0ResReq.ccuKernelNum.begin(), temp0ResReq.ccuKernelNum.end());
         resourceRequest.ccuKernelNum.insert(
@@ -123,6 +89,47 @@ HcclResult InsReduceScatterConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, Ins
         resourceRequest.ccuKernelInfos.insert(
             resourceRequest.ccuKernelInfos.end(), temp1ResReq.ccuKernelInfos.begin(), temp1ResReq.ccuKernelInfos.end());
     } else if (param.engine == CommEngine::COMM_ENGINE_AICPU || param.engine == CommEngine::COMM_ENGINE_AICPU_TS) {
+        // AICPU 路径：通道由 executor 统一申请下发，需预计算两种拓扑的链路
+        // （约束 temp0 为 mesh 拓扑走 mesh 算法；temp1 为 clos 拓扑走 nhr 算法）。
+        std::vector<HcclChannelDesc> channelDescs0;
+        std::vector<HcclChannelDesc> channelDescsTemp0;
+        CHK_RET(CalcChannelRequestMesh1DWithPriorityTopo(
+            comm, param, topoInfo, temp0HierarchyInfo, channelDescsTemp0, CommTopo::COMM_TOPO_1DMESH));
+        for (auto channel : channelDescsTemp0) {
+            if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
+                channelDescs0.push_back(channel);
+            }
+        }
+
+        CHK_PRT_RET(
+            channelDescs0.empty(),
+            HCCL_ERROR("[%s] channelDescs0.size()[%zu] is zero.", __func__, channelDescs0.size()),
+            HcclResult::HCCL_E_INTERNAL);
+
+        std::vector<HcclChannelDesc> channelDescs1;
+        std::vector<HcclChannelDesc> channelDescsTemp1;
+
+        CHK_RET(CalcChannelRequestNhrMultiJetty(comm, param, topoInfo, temp1HierarchyInfo, channelDescsTemp1));
+
+        for (auto channel : channelDescsTemp1) {
+            if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
+                channelDescs1.push_back(channel);
+            }
+        }
+
+        CHK_PRT_RET(
+            channelDescs1.empty(),
+            HCCL_ERROR("[%s] channelDescs1.size()[%zu] is zero.", __func__, channelDescs1.size()),
+            HcclResult::HCCL_E_INTERNAL);
+
+        // 两者数量应相等
+        CHK_PRT_RET(
+            channelDescs0.size() != channelDescs1.size(),
+            HCCL_ERROR(
+                "[%s] channelDescs0.size()[%zu] is not equal to channelDescs1.size()[%zu]", __func__,
+                channelDescs0.size(), channelDescs1.size()),
+            HcclResult::HCCL_E_INTERNAL);
+
         resourceRequest.channels.resize(1);
         resourceRequest.channels[0].insert(
             resourceRequest.channels[0].end(), channelDescs0.begin(), channelDescs0.end());
@@ -405,4 +412,14 @@ InsReduceScatterConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterConcurMeshNHR, InsReduceScatterConcurrentExecutor,
     TopoMatchUBX, InsTempReduceScatterMesh1D, InsTempReduceScatterNHR);
+
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+// KFC 并发 RS：mission0 = Mesh Mem2Mem 流，mission1 = NHR MultiJetty 流（kernelInfo 顺序须与 role 匹配）。
+// TopoMatchConcurrentV2 与 hccl 同语义：mesh 组与 clos 组为同一组 rank（mesh 与 clos 同在 layer0），
+// 区别于 TopoMatchUBX 的"layer0 mesh + layer1 同序号卡"两层结构。
+REGISTER_EXECUTOR_BY_TWO_TEMPS(
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuSchedReduceScatterConcurMeshNHRMultiLink,
+    InsReduceScatterConcurrentExecutor, TopoMatchConcurrentV2, CcuTempKfcReduceScatterMesh1DMem2Mem,
+    CcuTempKfcReduceScatterNHR1DMultiJettyMem2Mem);
+#endif
 } // namespace mc2_ops_hccl

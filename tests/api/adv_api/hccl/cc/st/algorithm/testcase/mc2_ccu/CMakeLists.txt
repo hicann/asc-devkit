@@ -29,6 +29,7 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_v_mesh1d.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/selector/reduce_scatter_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/executor/ins_v2_reduce_scatter_sole_executor.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/executor/ins_reduce_scatter_concurrent_executor.cc
     # aicpu 模板含 out-of-line 虚函数（key function）：executor 注册项经 vtable 急切实例化引用其符号，必须编入
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D_meshchunk.cc
@@ -36,7 +37,12 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_aicpu_reduce_nhr.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/aicpu/ins_temp_reduce_scatter_mesh_1D_Z_axis_detour.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/ccu_temp_kfc_reduce_scatter_mesh_1D_mem2mem_peer_only.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/ccu_temp_kfc_reduce_scatter_nhr_1D_multi_jetty_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_peer_only.cc
+    ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/selector/all_reduce_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/executor/ins_v2_all_reduce_sole_executor.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu/ccu_temp_kfc_all_reduce_mesh_1D_mem2mem.cc
@@ -68,6 +74,7 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_ubx.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_ubx_1d.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_pcie_mix.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_concurrent_v2.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_build.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_normalize.cc
     ${HCCL_CC_SRC_DIR}/common/hccl_alloc_ctx_res.cc
@@ -89,6 +96,7 @@ add_executable(
     ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/reduce_scatter_testcase.cpp
     ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/ccu_reduce_scatter.cc
     ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/ccu_reduce_scatter_mesh1d_adapter.cc
+    ${HCCL_MC2_CCU_REDUCE_SCATTER_DIR}/ccu_reduce_scatter_nhr_multilink_adapter.cc
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/all_reduce_testcase.cpp
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/ccu_all_reduce_mesh1d_mem2mem_adapter.cc
     ${HCCL_MC2_CCU_ALL_REDUCE_DIR}/ccu_all_reduce.cc
