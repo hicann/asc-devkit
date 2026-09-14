@@ -18,7 +18,6 @@
 #ifndef IMPL_C_API_MEMORY_BASE_IMPL_SCALAR_ATOMIC_INTF_IMPL_H
 #define IMPL_C_API_MEMORY_BASE_IMPL_SCALAR_ATOMIC_INTF_IMPL_H
 
-ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
 __aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config)
 {
     config.config = get_st_atomic_cfg();
