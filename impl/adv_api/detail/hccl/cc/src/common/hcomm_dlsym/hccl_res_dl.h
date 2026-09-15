@@ -19,6 +19,12 @@ extern "C" {
 #endif
 
 DECL_SUPPORT_FLAG(HcclThreadExportToCommEngine);
+DECL_WEAK_FUNC(
+    HcclResult, HcclChannelQuery, HcclComm comm, CommEngine engine, const HcclChannelDesc* channelDescs,
+    uint32_t channelNum, ChannelHandle* channels);
+DECL_SUPPORT_FLAG(HcclChannelQuery);
+DECL_WEAK_FUNC(HcclResult, HcclChannelDestroy, HcclComm comm, const ChannelHandle* channels, uint32_t channelNum);
+DECL_SUPPORT_FLAG(HcclChannelDestroy);
 // 动态库管理接口（大驼峰命名）
 void HcclResDlInit(void* libHcommHandle);
 

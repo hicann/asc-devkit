@@ -318,6 +318,29 @@ HcclResult HcclChannelAcquire(
         simComm->GetIdentifier(), channelTag.c_str(), engine, channelDescList, listNum, channelList);
 }
 
+HcclResult HcclChannelQuery(
+    HcclComm comm, CommEngine engine, const HcclChannelDesc* channelDescList, uint32_t listNum,
+    ChannelHandle* channelList)
+{
+    CHK_PTR_NULL(comm);
+    (void)engine;
+    for (uint32_t i = 0; i < listNum; i++) {
+        channelList[i] = 0; // 全部视为新建
+    }
+    return HCCL_SUCCESS;
+}
+
+HcclResult HcclChannelDestroy(HcclComm comm, const ChannelHandle* channels, uint32_t channelNum)
+{
+    CHK_PTR_NULL(comm);
+    (void)channels;
+    (void)channelNum;
+    return HCCL_SUCCESS;
+}
+
+bool HcommIsSupportHcclChannelQuery() { return true; }
+bool HcommIsSupportHcclChannelDestroy() { return true; }
+
 HcclResult HcclEngineCtxCreate(HcclComm comm, const char* ctxTag, CommEngine engine, uint64_t size, void** ctx)
 {
     auto simComm = static_cast<HcclSim::SimCommunicator*>(comm);

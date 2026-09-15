@@ -46,6 +46,7 @@
 #include "ccu_launch_dl.h"
 #include "ccu_res_dl.h"
 #include "hccl_ccu_res_dl.h"
+#include "hccl_res_dl.h"
 #include "ccu_log.h"
 #include "hcomm/ccu/ccu_assist_pub.h"
 #include "kfc_server_protocol.h"
@@ -1400,6 +1401,22 @@ HcclResult GetAlgResCcu(
 #endif
 }
 
+static HcclResult ReleaseCcuAcquiredChannels(HcclComm comm, AlgResourceRequest& resRequest)
+{
+    if (!HcommIsSupportHcclChannelDestroy() || resRequest.acquiredChannels.empty()) {
+        return HCCL_SUCCESS;
+    }
+    HcclResult ret = HcclChannelDestroy(comm, resRequest.acquiredChannels.data(), resRequest.acquiredChannels.size());
+    if (ret != HCCL_SUCCESS) {
+        HCCL_WARNING(
+            "[ReleaseCcuAcquiredChannels] HcclChannelDestroy failed, ret[%d], channelNum[%zu].", ret,
+            resRequest.acquiredChannels.size());
+    }
+    HCCL_INFO("[ReleaseCcuAcquiredChannels] release [%zu] channels.", resRequest.acquiredChannels.size());
+    resRequest.acquiredChannels.clear();
+    return HCCL_SUCCESS;
+}
+
 HcclResult HcclAllocAlgResourceCcu(
     HcclComm comm, const OpParam& param, AlgResourceRequest& resRequest,
     std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost)
@@ -1443,9 +1460,17 @@ HcclResult HcclAllocAlgResourceCcu(
     resCtxHost->parallelPortInfo = resRequest.parallelPortInfo;
     if (!param.checkRes) {
         CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
+        CHK_RET(HcclGetChannelForCcu(comm, param, resRequest));
+        CHK_RET(HcclGetCcuKernel(comm, param, resRequest, resCtxHost));
+        return HCCL_SUCCESS;
     }
-    CHK_RET(HcclGetChannelForCcu(comm, param, resRequest));
-    CHK_RET(HcclGetCcuKernel(comm, param, resRequest, resCtxHost));
+    HcclResult ret = HcclGetChannelForCcu(comm, param, resRequest);
+    if (ret == HCCL_SUCCESS) {
+        ret = HcclGetCcuKernel(comm, param, resRequest, resCtxHost);
+    }
+    // 资源预检查场景下，释放本次新建的channel
+    ReleaseCcuAcquiredChannels(comm, resRequest);
+    CHK_RET(ret);
     return HCCL_SUCCESS;
 #endif
 }
@@ -1471,14 +1496,35 @@ HcclResult HcclGetChannelForCcu(HcclComm comm, const OpParam& param, AlgResource
         kernelChannels.resize(channelNum);
 
         if (channelNum > 0) {
+            // 查询已存在的通道，existingChannels[i]非0表示通道已存在可复用，为0表示需新建；
+            std::vector<ChannelHandle> existingChannels;
+            if (HcommIsSupportHcclChannelQuery()) {
+                existingChannels.assign(channelNum, 0);
+                auto queryRet = HcclChannelQuery(
+                    comm, param.engine, kernelChannelRequest.data(), channelNum, existingChannels.data());
+                if (queryRet != HCCL_SUCCESS) {
+                    HCCL_WARNING("[HcclChannelQuery] failed, ret[%d], treat all as new channels.", queryRet);
+                }
+            }
             // 需要资源回退。返回资源不够
             auto ret =
                 HcclChannelAcquire(comm, param.engine, kernelChannelRequest.data(), channelNum, kernelChannels.data());
             if (ret == HCCL_E_UNAVAIL) {
                 HCCL_WARNING("[HcclChannelAcquire] channel unavailable, channel num[%u].", channelNum);
+                // 释放当前kernel之前已申请的新增通道
+                ReleaseCcuAcquiredChannels(comm, resRequest);
                 return HCCL_E_UNAVAIL;
             } else {
                 CHK_RET(ret);
+            }
+
+            if (!existingChannels.empty()) {
+                // 记录新增通道（existingChannels[i]为0表示该通道是本次HcclChannelAcquire新建的）
+                for (u32 i = 0; i < existingChannels.size(); ++i) {
+                    if (existingChannels[i] == 0) {
+                        resRequest.acquiredChannels.push_back(kernelChannels[i]);
+                    }
+                }
             }
             // 从首条channel获取dieId，作为kernel所属dieId保存（同一kernel的所有channel在同一die上）
             EndpointDesc localEndpoint = kernelChannelRequest[0].localEndpoint;
@@ -1632,7 +1678,8 @@ static bool IsCcuDynamicResApiSupported()
            HcommIsSupportHcommCcuInsResDescSetNum() && HcommIsSupportHcommCcuInsResDescQueryNum() &&
            HcommIsSupportHcommCcuInsCreate() && HcommIsSupportHcommCcuInsDestroy() &&
            HcommIsSupportHcommCcuInsQueryResDesc() && HcommIsSupportHcommCcuQueryRemainResDesc() &&
-           HcommIsSupportHcommCcuKernelQueryResReq() && HcommIsSupportHcclCommAssignCcuIns();
+           HcommIsSupportHcommCcuKernelQueryResReq() && HcommIsSupportHcclCommAssignCcuIns() &&
+           HcommIsSupportHcclChannelDestroy() && HcommIsSupportHcclChannelQuery();
 }
 
 // 按 dieId 维护资源描述符集合；HcommCcuInsResDescCreate 接口要求每个 desc 必须绑定一个 dieId，
