@@ -18,7 +18,7 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
 
 -   工程化算子开发方式
 
-    在tiling函数中先通过GetWorkspaceSizes接口获取workspace大小的存放位置，再设置workspace的大小，框架侧会为其申请对应大小的设备侧Global Memory，在对应的算子kernel侧实现时可以使用这块workspace内存。在使用[Matmul核函数（Kernel）侧接口](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。
+    在tiling函数中先通过GetWorkspaceSizes接口获取workspace大小的存放位置，再设置workspace的大小，框架侧会为其申请对应大小的设备侧Global Memory，在对应的算子核函数（Kernel）侧实现时可以使用这块workspace内存。在使用[Matmul核函数（Kernel）侧接口](../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。
 
     ```
     // 用户自定义的tiling函数
@@ -39,7 +39,7 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
     }
     ```
 
-    在device侧kernel入口处的workspace为用户的workspace指针：
+    在device侧核函数（Kernel）入口处的workspace为用户的workspace指针：
 
     ```
     // 用户写的核函数（Kernel），核函数（Kernel）必须包括GM_ADDR workspace入参，位置需要放在tiling之前
@@ -52,4 +52,4 @@ workspace是设备侧Global Memory上的一块内存。workspace内存分为两�
 
 -   核函数（Kernel）直调算子开发场景
 
-    需要使用workspace空间时，建议开启编译选项[HAVE\_WORKSPACE](../kernel_direct_call_from_sample.md#li1103101565014)。host侧开发者仍需要自行申请workspace的空间，并传入。在使用Matmul核函数（Kernel）侧接口等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。系统workspace大小可以通过PlatformAscendCManager的GetLibApiWorkSpaceSize接口获取。开启[HAVE\_WORKSPACE](../kernel_direct_call_from_sample.md#li1103101565014)后，开发者在kernel侧入参处获取的workspace为偏移了系统workspace后的用户workspace。
+    需要使用workspace空间时，建议开启编译选项[HAVE\_WORKSPACE](../kernel_direct_call_from_sample.md#li1103101565014)。host侧开发者仍需要自行申请workspace的空间，并传入。在使用Matmul核函数（Kernel）侧接口等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。系统workspace大小可以通过PlatformAscendCManager的GetLibApiWorkSpaceSize接口获取。开启[HAVE\_WORKSPACE](../kernel_direct_call_from_sample.md#li1103101565014)后，开发者在核函数（Kernel）侧入参处获取的workspace为偏移了系统workspace后的用户workspace。

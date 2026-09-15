@@ -34,7 +34,7 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
         AllGatherCustomTilingData, tilingData, tilingGM); // AllGatherCustomTilingData为对应算子头文件定义的结构体
 
     Hccl<HcclServerType::HCCL_SERVER_TYPE_AICPU> hccl; // 通过模板入参的方式选择硬件类型
-    GM_ADDR contextGM = GetHcclContext<0>(); // AscendC自定义算子kernel中，通过此方式获取HCCL context
+    GM_ADDR contextGM = GetHcclContext<0>(); // AscendC自定义算子核函数（Kernel）中，通过此方式获取HCCL context
 
     hccl.InitV2(contextGM, &tilingData);
     ```
@@ -50,7 +50,7 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
     GET_TILING_DATA_WITH_STRUCT(AllGatherCustomTilingData, tilingData, tilingGM);
 
     Hccl hccl;
-    GM_ADDR contextGM = GetHcclContext<0>(); // AscendC自定义算子kernel中，通过此方式获取HCCL context
+    GM_ADDR contextGM = GetHcclContext<0>(); // AscendC自定义算子核函数（Kernel）中，通过此方式获取HCCL context
 
     hccl.InitV2(contextGM, &tilingData);
     if (SetCcTilingV2(offsetof(AllGatherCustomTilingData, mc2CcTiling)) != HCCL_SUCCESS) {
@@ -177,7 +177,7 @@ extern "C" __global__ __aicore__ void reduce_scatter_custom(
     GET_TILING_DATA_WITH_STRUCT(ReduceScatterCustomTilingData, tilingData, tilingGM);
 
     Hccl hccl;
-    GM_ADDR contextGM = AscendC::GetHcclContext<0>(); // AscendC自定义算子kernel中，通过此方式获取HCCL context
+    GM_ADDR contextGM = AscendC::GetHcclContext<0>(); // AscendC自定义算子核函数（Kernel）中，通过此方式获取HCCL context
     if (AscendC::g_coreType == AIV) {                 // 指定AIV核通信
         hccl.InitV2(contextGM, &tilingData);
         auto ret = hccl.SetCcTilingV2(offsetof(ReduceScatterCustomTilingData, reduceScatterCcTiling));
@@ -220,7 +220,7 @@ extern "C" __global__ __aicore__ void reduce_scatter_custom(
     GET_TILING_DATA_WITH_STRUCT(ReduceScatterCustomTilingData, tilingData, tilingGM);
 
     Hccl hccl;
-    GM_ADDR contextGM = AscendC::GetHcclContext<0>(); // AscendC自定义算子kernel中，通过此方式获取HCCL context
+    GM_ADDR contextGM = AscendC::GetHcclContext<0>(); // AscendC自定义算子核函数（Kernel）中，通过此方式获取HCCL context
     if (AscendC::g_coreType == AIV) {                 // 指定AIV核通信
         hccl.InitV2(contextGM, &tilingData);
         auto ret = hccl.SetCcTilingV2(offsetof(ReduceScatterCustomTilingData, reduceScatterCcTiling));

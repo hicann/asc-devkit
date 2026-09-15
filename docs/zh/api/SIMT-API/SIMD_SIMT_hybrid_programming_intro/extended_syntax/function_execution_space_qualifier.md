@@ -36,7 +36,7 @@ SIMT VF函数定义中的关键修饰符说明如下：
 | \_\_simt_vf\_\_ | 函数标识符，标识SIMT VF函数。 |
 | inline | 建议内联，实际是否内联由编译器决定。 |
 | \_\_gm\_\_ | 内存空间修饰符，标识内存空间为GM。 |
-| \_\_ubuf\_\_ | 内存空间修饰符，标识内存空间为UB。 |
+| \_\_ubuf\_\_ | 内存空间修饰符，标识内存空间为Unified Buffer（UB）。 |
 
 通过SIMT的[asc\_vf\_call](kernel_function_config.md#asc_vf_call调用)接口在核函数（Kernel）或`__aicore__`函数中调用，调用示例如下：
 
@@ -46,7 +46,7 @@ asc_vf_call<function_name>(dim3(blockDim), arg1, arg2, ...);
 
 SIMT VF函数有以下约束：
 
--   入参仅支持Ascend C的[内置数据类型](builtin_data_types.md)（int32\_t、uint32\_t、float、half等）及其组成的指针、数组、结构体类型，且指针类型必须指向GM或者Unified Buffer（UB）内存。
+-   入参仅支持Ascend C的[内置数据类型](builtin_data_types.md)（int32\_t、uint32\_t、float、half等）及其组成的指针、数组、结构体类型，且指针类型必须指向GM或者UB内存。
 -   函数返回类型必须是void。
 -   SIMT VF内只能调用\_\_simt\_callee\_\_函数或\_\_callee\_\_函数。
 

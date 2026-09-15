@@ -37,8 +37,8 @@
 | --- | --- | --- |
 | srcShape | 输入 | 输入srcTensor的shape信息，参数类型为[AscendC::TensorShape](../../data_structures/TensorShape.md)。 |
 | dataTypeSize | 输入 | 计算的数据类型，比如half=2。 |
-| isFront | 输入 | 是否只计算![](../../../../figures/zh-cn_formulaimage_0000001722356465.png)，和kernel侧的SoftmaxGrad接口一致，默认false。 |
-| isReuseSource | 输入 | 与kernel侧接口配置保持一致。 |
+| isFront | 输入 | 是否只计算![](../../../../figures/zh-cn_formulaimage_0000001722356465.png)，和核函数（Kernel）侧的SoftmaxGrad接口一致，默认false。 |
+| isReuseSource | 输入 | 与核函数（Kernel）侧接口配置保持一致。 |
 
 **表2**  SoftmaxGrad SoftMaxGradTilingFunc接口参数列表
 
@@ -47,7 +47,7 @@
 | srcShape | 输入 | 输入srcTensor的shape信息，参数类型为[AscendC::TensorShape](../../data_structures/TensorShape.md)。 |
 | localWorkSpaceSize | 输入 | 剩余的可供SoftmaxGrad接口计算的临时空间大小，单位为Byte。localWorkSpaceSize的取值必须大于GetSoftMaxGradMinTmpSize接口返回的计算所需的最小临时空间大小。 |
 | dataTypeSize | 输入 | 计算的数据类型，比如half=2。 |
-| isFront | 输入 | 是否只计算![](../../../../figures/zh-cn_formulaimage_0000001723260621.png)，和kernel侧的SoftmaxGrad接口一致，默认false。 |
+| isFront | 输入 | 是否只计算![](../../../../figures/zh-cn_formulaimage_0000001723260621.png)，和核函数（Kernel）侧的SoftmaxGrad接口一致，默认false。 |
 | softmaxGradTiling | 输出 | 输出SoftmaxGrad接口所需的tiling信息，支持optiling::SoftMaxTiling形式入参和AscendC::tiling::SoftMaxTiling形式入参。 |
 
 ## 返回值说明

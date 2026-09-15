@@ -30,11 +30,11 @@
 
 头文件路径为：`"utils/base/sys_macros.h"`。
 
-用于用户自定义设置kernel类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。
+用于用户自定义设置核函数（Kernel）类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。
 
 ## 函数原型<a name="zh-cn_topic_0000001610027821_section1630753514297"></a>
 
--   设置全局默认的kernel type，对所有的tiling key生效。
+-   设置全局默认的核函数（Kernel）类型，对所有的tiling key生效。
 
     当前支持在自定义算子工程和核函数（Kernel）直调工程中使用。
 
@@ -42,7 +42,7 @@
     KERNEL_TASK_TYPE_DEFAULT(value)
     ```
 
--   设置某一个具体的tiling key对应的kernel type。
+-   设置某一个具体的tiling key对应的核函数（Kernel）类型。
 
     当前仅支持在自定义算子工程中使用。
 
@@ -74,7 +74,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.2.4.1.2 "><p id="p18921181812316"><a name="p18921181812316"></a><a name="p18921181812316"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p14921918033"><a name="p14921918033"></a><a name="p14921918033"></a>设置的kernel类型，可选值范围，kernel类型具体说明请参考<a href="#table76335324910">表2</a>。不同硬件架构支持的参数取值不同，具体支持的参数取值请参考<a href="#li693212153417">kernel&nbsp;type取值约束</a>。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p14921918033"><a name="p14921918033"></a><a name="p14921918033"></a>设置的核函数（Kernel）类型，可选值范围，核函数（Kernel）类型具体说明请参考<a href="#table76335324910">表2</a>。不同硬件架构支持的参数取值不同，具体支持的参数取值请参考<a href="#li693212153417">kernel&nbsp;type取值约束</a>。</p>
 <a name="screen2031620461932"></a><a name="screen2031620461932"></a><pre class="screen" codetype="Cpp" id="screen2031620461932">enum KernelMetaType {
     KERNEL_TYPE_AIV_ONLY,
     KERNEL_TYPE_AIC_ONLY,
@@ -93,7 +93,7 @@
 </tbody>
 </table>
 
-**表2**  kernel type取值说明
+**表2**  核函数（Kernel）类型取值说明
 
 <a name="table76335324910"></a>
 <table><thead align="left"><tr id="row13633133211918"><th class="cellrowborder" valign="top" width="35.8%" id="mcps1.2.3.1.1"><p id="p196346329913"><a name="p196346329913"></a><a name="p196346329913"></a>参数</p>
@@ -160,7 +160,7 @@
 
 ## 约束说明<a name="zh-cn_topic_0000001610027821_section65498832"></a>
 
--   <a name="li693212153417"></a>kernel type取值约束
+-   <a name="li693212153417"></a>核函数（Kernel）类型取值约束
     <!-- npu="950" id100 -->
     -   Ascend 950PR/Ascend 950DT，支持KERNEL\_TYPE\_AIV\_ONLY、 KERNEL\_TYPE\_AIC\_ONLY、KERNEL\_TYPE\_MIX\_AIV\_1\_0、KERNEL\_TYPE\_MIX\_AIC\_1\_0、KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2。
     <!-- end id100 -->
@@ -174,16 +174,16 @@
     -   Atlas 推理系列产品，支持KERNEL\_TYPE\_AICORE、KERNEL\_TYPE\_MIX\_VECTOR\_CORE。
     <!-- end id103 -->
 
--   **KERNEL\_TASK\_TYPE**优先级高于**KERNEL\_TASK\_TYPE\_DEFAULT**，同时设置了全局kernel type和某一个tiling key的kernel type，该tiling key的kernel type以**KERNEL\_TASK\_TYPE**设置的为准。
--   没有设置全局默认kernel type的情况下，如果开发者只为其中的某几个tiling key设置kernel type，即部分tiling key没有设置kernel type，会导致算子kernel编译报错。
--   当设置具体的kernel task type时，用户的算子实现需要与kernel type相匹配。比如用户设置kernel type为KERNEL\_TYPE\_MIX\_AIC\_1\_2，则算子内部实现应与核配比AIC:AIV为1:2相对应；若用户设置kernel type为KERNEL\_TYPE\_AIC\_ONLY，则算子内部实现应该为纯cube逻辑，不应该存在vector部分的逻辑。其他的kernel type类似。
--   当纯cube或者纯vec算子强制设定kernel type为MIX类型时，workspace的大小不能设置为0，需要设置一个大于0的值（比如16、32等）。
+-   **KERNEL\_TASK\_TYPE**优先级高于**KERNEL\_TASK\_TYPE\_DEFAULT**，同时设置了全局核函数（Kernel）类型和某一个tiling key的核函数（Kernel）类型，该tiling key的核函数（Kernel）类型以**KERNEL\_TASK\_TYPE**设置的为准。
+-   没有设置全局默认核函数（Kernel）类型的情况下，如果开发者只为其中的某几个tiling key设置核函数（Kernel）类型，即部分tiling key没有设置核函数（Kernel）类型，会导致算子核函数（Kernel）编译报错。
+-   当设置具体的核函数（Kernel）任务类型时，用户的算子实现需要与核函数（Kernel）类型相匹配。比如用户设置核函数（Kernel）类型为KERNEL\_TYPE\_MIX\_AIC\_1\_2，则算子内部实现应与核配比AIC:AIV为1:2相对应；若用户设置核函数（Kernel）类型为KERNEL\_TYPE\_AIC\_ONLY，则算子内部实现应该为纯cube逻辑，不应该存在vector部分的逻辑。其他的核函数（Kernel）类型类似。
+-   当纯cube或者纯vec算子强制设定核函数（Kernel）类型为MIX类型时，workspace的大小不能设置为0，需要设置一个大于0的值（比如16、32等）。
 -   使用[Tiling模板编程](../../../Utils-API/Tiling_template_programming/Tiling_template_programming.md)时，需要通过ASCENDC\_TPL\_KERNEL\_TYPE\_SEL设置核函数（Kernel）类型即可，无需再通过该接口进行设置，本接口不生效。
 
 ## 调用示例<a name="zh-cn_topic_0000001610027821_section97001499599"></a>
 
 -   示例一：启用VectorCore样例
-    1.  完成算子kernel侧开发时，需要通过本接口启用Vector Core，算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。示例如下：
+    1.  完成算子核函数（Kernel）侧开发时，需要通过本接口启用Vector Core，算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。示例如下：
 
         ```
         extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *workspace, __gm__ uint8_t *tiling)
@@ -221,7 +221,7 @@
         }
         ```
 
--   示例二：设置某一个具体的tiling key对应的kernel type。如下代码为伪代码，不可直接运行。
+-   示例二：设置某一个具体的tiling key对应的核函数（Kernel）类型。如下代码为伪代码，不可直接运行。
 
     ```
     extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *workspace, __gm__ uint8_t *tiling)
@@ -232,12 +232,12 @@
         }
         KernelAdd op;
         op.Init(x, y, z, tilingData.numBlocks, tilingData.totalLength, tilingData.tileNum);
-        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_AIV_ONLY); // 设置默认的kernel类型为纯AIV类型
+        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_AIV_ONLY); // 设置默认的核函数（Kernel）类型为纯AIV类型
         if (TILING_KEY_IS(1)) {
-            KERNEL_TASK_TYPE(1, KERNEL_TYPE_MIX_AIV_1_0); // 设置tiling key=1对应的kernel类型为MIX AIV 1:0
+            KERNEL_TASK_TYPE(1, KERNEL_TYPE_MIX_AIV_1_0); // 设置tiling key=1对应的核函数（Kernel）类型为MIX AIV 1:0
             op.Process1();
         } else if (TILING_KEY_IS(2)) {
-            KERNEL_TASK_TYPE(2, KERNEL_TYPE_AIV_ONLY); // 设置tiling key=2对应的kernel类型为纯AIV类型
+            KERNEL_TASK_TYPE(2, KERNEL_TYPE_AIV_ONLY); // 设置tiling key=2对应的核函数（Kernel）类型为纯AIV类型
             op.Process2();
         }
         // ...

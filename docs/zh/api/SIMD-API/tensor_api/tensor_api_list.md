@@ -54,11 +54,11 @@
 
 | 数据通路或接口名 | 功能描述 |
 | --- | --- |
-| [Global Memory到Unified Buffer](reg_vector_compute/vector_compute_load/copy_gm_to_ub.md) | 使用`copy`将Global Memory中的数据搬运到Unified Buffer，支持坐标区域搬运。 |
-| [Unified Buffer到Global Memory](reg_vector_compute/vector_compute_store/copy_ub_to_gm.md) | 使用`copy`将Unified Buffer中的数据搬运到Global Memory，支持坐标区域搬运。 |
+| [Global Memory到Unified Buffer](reg_vector_compute/vector_compute_load/copy_gm_to_ub.md) | 使用`copy`将Global Memory中的数据搬运到Unified Buffer（UB），支持坐标区域搬运。 |
+| [Unified Buffer到Global Memory](reg_vector_compute/vector_compute_store/copy_ub_to_gm.md) | 使用`copy`将UB中的数据搬运到Global Memory，支持坐标区域搬运。 |
 | [Global Memory到L1 Buffer](matrix_compute/cube_compute_load/copy_gm_to_l1.md) | 使用`copy`将Global Memory中的数据搬运到L1 Buffer，并支持多种矩阵格式转换和Batch搬运。 |
-| [Unified Buffer到L1 Buffer](reg_vector_compute/vector_compute_load/copy_ub_to_l1.md) | 使用`copy`将Unified Buffer中的数据搬运到L1 Buffer。 |
-| [L1 Buffer到Unified Buffer](matrix_compute/cube_compute_load/copy_l1_to_ub.md) | 使用`copy`将L1 Buffer中的数据搬运到Unified Buffer。 |
+| [Unified Buffer到L1 Buffer](reg_vector_compute/vector_compute_load/copy_ub_to_l1.md) | 使用`copy`将UB中的数据搬运到L1 Buffer。 |
+| [L1 Buffer到Unified Buffer](matrix_compute/cube_compute_load/copy_l1_to_ub.md) | 使用`copy`将L1 Buffer中的数据搬运到UB。 |
 | [L1 Buffer到L0A Buffer](matrix_compute/cube_compute_load/copy_l1_to_l0a.md) | 使用`copy`将L1 Buffer中的左矩阵数据搬运到L0A Buffer，支持矩阵格式转换和卷积特征图搬运。 |
 | [L1 Buffer到L0B Buffer](matrix_compute/cube_compute_load/copy_l1_to_l0b.md) | 使用`copy`将L1 Buffer中的右矩阵数据搬运到L0B Buffer，支持矩阵格式转换和Batch搬运。 |
 | [L1 Buffer到L0ScaleA Buffer](matrix_compute/cube_compute_load/copy_l1_to_l0scalea.md) | 使用`copy`将L1 Buffer中的ScaleA数据搬运到L0ScaleA Buffer。 |
@@ -66,9 +66,9 @@
 | [L1 Buffer到BiasTable Buffer](matrix_compute/cube_compute_load/copy_l1_to_biastable.md) | 使用`copy`将L1 Buffer中的Bias数据搬运到BiasTable Buffer。 |
 | [L1 Buffer到Fixpipe Buffer](matrix_compute/cube_compute_load/copy_l1_to_fixbuf.md) | 使用`copy`将L1 Buffer中的量化参数搬运到Fixpipe Buffer。 |
 | [L0C Buffer到Global Memory](matrix_compute/cube_compute_store/copy_l0c_to_gm.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到Global Memory，支持格式转换和量化输出。 |
-| [L0C Buffer到Unified Buffer](matrix_compute/cube_compute_store/copy_l0c_to_ub.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到Unified Buffer，支持格式转换和量化输出。 |
+| [L0C Buffer到Unified Buffer](matrix_compute/cube_compute_store/copy_l0c_to_ub.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到UB，支持格式转换和量化输出。 |
 | [L0C Buffer到L1 Buffer](matrix_compute/cube_compute_store/copy_l0c_to_l1.md) | 使用`copy`将L0C Buffer中的矩阵结果搬运到L1 Buffer。 |
-| [Unified Buffer内部搬运](reg_vector_compute/vector_compute_load/copy_ub_to_ub.md) | 使用`copy`完成Unified Buffer内部Tensor之间的数据搬运。 |
+| [Unified Buffer内部搬运](reg_vector_compute/vector_compute_load/copy_ub_to_ub.md) | 使用`copy`完成UB内部Tensor之间的数据搬运。 |
 
 ## 矩阵计算
 
@@ -85,14 +85,14 @@
 | [unit_flag](matrix_compute/mmad_compute_key_features/unit_flag.md) | 介绍mmad与后续矩阵数据搬出之间的细粒度并行控制。 |
 | [mmad计算辅助配置](matrix_compute/mmad_compute_aux_config.md) | 列出mmad计算所需的C API辅助配置接口。 |
 | [矩阵计算搬入总体说明](matrix_compute/cube_compute_load/overall_description.md) | 说明矩阵数据从Global Memory或L1 Buffer搬入各级矩阵计算Buffer的通路。 |
-| [矩阵计算搬出总体说明](matrix_compute/cube_compute_store/overall_description.md) | 说明矩阵结果从L0C Buffer搬出到Global Memory、Unified Buffer或L1 Buffer的通路。 |
+| [矩阵计算搬出总体说明](matrix_compute/cube_compute_store/overall_description.md) | 说明矩阵结果从L0C Buffer搬出到Global Memory、UB或L1 Buffer的通路。 |
 | [矩阵搬出关键特性](matrix_compute/cube_store_key_features/cube_store_key_features.md) | 介绍随路量化、随路ReLU、通道拆分、通道合并、Batch搬运和双目标模式。 |
 | [随路量化](matrix_compute/cube_store_key_features/quant_pre.md) | 介绍矩阵结果搬出过程中的随路量化能力。 |
 | [随路ReLU](matrix_compute/cube_store_key_features/relu_pre.md) | 介绍矩阵结果搬出过程中的随路ReLU能力。 |
 | [F32 Channel Split](matrix_compute/cube_store_key_features/f32_channel_split.md) | 介绍F32结果搬出时的通道拆分能力。 |
 | [Int8 Channel Merge](matrix_compute/cube_store_key_features/int8_channel_merge.md) | 介绍Int8结果搬出时的通道合并能力。 |
 | [Batch搬运](matrix_compute/cube_store_key_features/batch_copy.md) | 介绍矩阵结果的多Batch搬出能力。 |
-| [L0C到Unified Buffer双目标模式](matrix_compute/cube_store_key_features/l0c_to_ub_dual_dst.md) | 介绍L0C到Unified Buffer的双目标搬出模式。 |
+| [L0C到Unified Buffer双目标模式](matrix_compute/cube_store_key_features/l0c_to_ub_dual_dst.md) | 介绍L0C到UB的双目标搬出模式。 |
 
 ## 矢量计算接口
 
@@ -107,9 +107,9 @@
 | [none_mask](reg_vector_compute/mask_reg_compute/none_mask.md) | 创建与指定元素类型位宽匹配的全无效Mask寄存器。 |
 | [update_mask](reg_vector_compute/mask_reg_compute/update_mask.md) | 根据剩余待处理元素数生成有效位Mask，并更新剩余元素数量。 |
 | [deinterleave（掩码寄存器解交织）](reg_vector_compute/mask_reg_compute/deinterleave.md) | 将两个Mask寄存器按指定元素宽度解交织，返回偶数组和奇数组结果。 |
-| [load](reg_vector_compute/reg_data_load/load.md) | 将Unified Buffer中的数据搬入`reg_tensor`，支持多种数据排列方式。 |
-| [load_broadcast](reg_vector_compute/reg_data_load/load_broadcast.md) | 从Unified Buffer搬入数据，并按指定模式广播到`reg_tensor`。 |
-| [store](reg_vector_compute/reg_data_store/store.md) | 将`reg_tensor`中的数据搬出到Unified Buffer，支持多种数据排列方式。 |
+| [load](reg_vector_compute/reg_data_load/load.md) | 将UB中的数据搬入`reg_tensor`，支持多种数据排列方式。 |
+| [load_broadcast](reg_vector_compute/reg_data_load/load_broadcast.md) | 从UB搬入数据，并按指定模式广播到`reg_tensor`。 |
+| [store](reg_vector_compute/reg_data_store/store.md) | 将`reg_tensor`中的数据搬出到UB，支持多种数据排列方式。 |
 | [cast](reg_vector_compute/type_conversion/cast.md) | 转换寄存器数据类型，支持配置数据排布、舍入和饱和模式。 |
 | [trunc](reg_vector_compute/type_conversion/trunc.md) | 将Mask选中的浮点元素向零取整，并保留原数据类型。 |
 | [log](reg_vector_compute/basic_arithmetic/log.md) | 对源操作数中的有效元素逐元素计算自然对数。 |

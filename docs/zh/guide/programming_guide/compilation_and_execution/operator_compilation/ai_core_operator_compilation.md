@@ -276,7 +276,7 @@ add_executable(demo
 ### 内置编译宏开关<a name="section57020345148"></a>
 
 内置编译宏开关列表如下：
- -   **ASCENDC\_DUMP** 用于控制Dump开关，默认开关打开，开发者调用printf/DumpTensor/assert后会有信息打印（需要注意直调工程的kernel文件内存在host函数，如果在host函数内调用了printf接口，也会触发kernel内的printf相关初始化动作，进而影响kernel的执行性能\)；设置为0后，表示开关关闭。示例如下：
+ -   **ASCENDC\_DUMP** 用于控制Dump开关，默认开关打开，开发者调用printf/DumpTensor/assert后会有信息打印（需要注意直调工程的核函数（Kernel）文件内存在host函数，如果在host函数内调用了printf接口，也会触发核函数（Kernel）内的printf相关初始化动作，进而影响核函数（Kernel）的执行性能\)；设置为0后，表示开关关闭。示例如下：
      ```shell
      # 关闭所有算子的printf打印功能
      bisheng <source_file>.asc -o <output_file> --npu-arch=dav-<npu architecture> -DASCENDC_DUMP=0

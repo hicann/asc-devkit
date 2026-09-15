@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
-将数据从L1 Buffer搬运到Unified Buffer，按数据块个数、单个数据块长度以及源/目间隔实现连续与非连续搬运。数据搬运时格式和内容保持不变。
+将数据从L1 Buffer搬运到Unified Buffer（UB），按数据块个数、单个数据块长度以及源/目间隔实现连续与非连续搬运。数据搬运时格式和内容保持不变。
 
 本接口仅在AIC上执行有效。
 

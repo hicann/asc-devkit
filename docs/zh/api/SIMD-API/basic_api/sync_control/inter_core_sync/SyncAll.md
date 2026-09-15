@@ -163,7 +163,7 @@ SyncAll硬件同步和软件同步接口的内部实现不同，约束条件也�
 - 软件同步接口约束：
     - gmWorkspace缓存申请的空间大小要求大于等于GetBlockNum()*32Bytes，并且缓存的值需要初始化为0。目前常见的有两种初始化方式：
         - 通过在host侧进行初始化操作，确保传入该接口时，gmWorkspace缓存已经初始化为0；
-        - 在kernel侧初始化的时候对gmWorkspace缓存初始化，需要注意的是，每个核上都需要初始化全部的gmWorkspace缓存空间。
+        - 在核函数（Kernel）侧初始化的时候对gmWorkspace缓存初始化，需要注意的是，每个核上都需要初始化全部的gmWorkspace缓存空间。
     - ubWorkspace申请的空间大小要求大于等于GetBlockNum()*32Bytes。
     - 在纯Vector算子场景中，若所有AIV核默认参与同步，推荐采用性能更优的硬件同步接口；若需指定部分AIV核参与同步，则应使用软件同步接口，并通过入参usedCores完成配置。
     - usedCores传入数值不能超过算子调用时指定的逻辑AI Core中AIV的数量：GetBlockNum()*GetTaskRatio()，不传此参数表示全核软同步。

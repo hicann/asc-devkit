@@ -97,7 +97,7 @@ __simd_callee__ inline reg_tensor<T> trunc(reg_tensor<T> src)
 
 ## 调用示例
 
-以下示例对UB中的一段浮点数据执行向0取整。[update_mask](../mask_reg_compute/update_mask.md)`<T>(remain)`根据剩余待处理元素数生成当前循环的mask，并通过引用参数自动更新`remain`，因此完整寄存器块和尾块可以使用同一计算流程。
+以下示例对Unified Buffer（UB）中的一段浮点数据执行向0取整。[update_mask](../mask_reg_compute/update_mask.md)`<T>(remain)`根据剩余待处理元素数生成当前循环的mask，并通过引用参数自动更新`remain`，因此完整寄存器块和尾块可以使用同一计算流程。
 
 ```cpp
 template <typename SrcTensor, typename DstTensor>

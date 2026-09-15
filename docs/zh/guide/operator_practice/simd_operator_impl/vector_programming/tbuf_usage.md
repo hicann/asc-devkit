@@ -93,7 +93,7 @@ pipe.InitBuffer(tmpBuf0, totalLength * sizeof(float));
 pipe.InitBuffer(tmpBuf1, totalLength * sizeof(float));
 ```
 
-基于矢量编程范式，核函数（Kernel）需要实现3个基本任务：CopyIn，Compute，CopyOut。与[基础矢量算子实现](basic_vector_operator.md#zh-cn_topic_0000002201157438_section10423482111)相同，核函数按顺序进行CopyIn，Compute，CopyOut。其中，CopyIn，CopyOut与[基础矢量算子的CopyIn](basic_vector_operator.md#copyin-implementation)、[基础矢量算子的CopyOut](basic_vector_operator.md#copyout-implementation)的实现没有差异，此处不过多赘述。Compute的实现步骤如下：
+基于矢量编程范式，核函数（Kernel）需要实现3个基本任务：CopyIn，Compute，CopyOut。与[基础矢量算子实现](basic_vector_operator.md#zh-cn_topic_0000002201157438_section10423482111)相同，核函数（Kernel）按顺序进行CopyIn，Compute，CopyOut。其中，CopyIn，CopyOut与[基础矢量算子的CopyIn](basic_vector_operator.md#copyin-implementation)、[基础矢量算子的CopyOut](basic_vector_operator.md#copyout-implementation)的实现没有差异，此处不过多赘述。Compute的实现步骤如下：
 
 1.  使用[DeQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/DeQue.md)从Unified Buffer（UB，VECIN）的Queue中取出LocalTensor。
 2.  使用TBuf.[Get](../../../../api/SIMD-API/basic_api/resource_management/TBuf/Get.md)从TBuf上获取全部长度的Tensor作为临时内存。

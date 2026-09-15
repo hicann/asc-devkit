@@ -111,7 +111,7 @@ EngineType engine             // 计算引擎
 | `__in_pipe__(V)` | 流水线输入标注 | `__aicore__ inline __in_pipe__(V) void Copy(...)` |
 | `__out_pipe__(V)` | 流水线输出标注 | `__aicore__ inline __out_pipe__(MTE3) void Copy(...)` |
 | `__BLOCK_LOCAL__ __inline__` | Block级线程局部变量 | `__BLOCK_LOCAL__ __inline__ TPipe* g_tPipePtr` |
-| `__ubuf__` | UB地址空间 | `__ubuf__ half* dst` |
+| `__ubuf__` | Unified Buffer（UB）地址空间 | `__ubuf__ half* dst` |
 
 ---
 

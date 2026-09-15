@@ -70,7 +70,7 @@ $$
     | srcShape | Input | Input shape information. |
     | typeSize | Input | Operator input data type size, in bytes. For example, if operator input data type is half, pass 2 here. |
     | isReuseSource | Input | Reserved parameter. |
-    | maxValue | Output | Maximum temporary space size required by Axpy interface to complete computation. Space exceeding this value will not be used by the interface. Within the minimum temporary space to maximum temporary space range, as temporary space increases, the computation performance of the kernel function interface will improve. To achieve better performance, developers can apply for space based on actual memory usage. Maximum space size of 0 indicates computation does not need temporary space. |
+    | maxValue | Output | Maximum temporary space size required by Axpy interface to complete computation. Space exceeding this value will not be used by the interface. Within the minimum temporary space to maximum temporary space range, as temporary space increases, the computation performance of the kernel function-side interface will improve. To achieve better performance, developers can apply for space based on actual memory usage. Maximum space size of 0 indicates computation does not need temporary space. |
     | minValue | Output | Minimum temporary space size required by Axpy interface to complete computation. To ensure correct functionality, temporary space applied for during interface computation cannot be smaller than this value. Minimum space size of 0 indicates computation does not need temporary space. |
 
 ### Develop API

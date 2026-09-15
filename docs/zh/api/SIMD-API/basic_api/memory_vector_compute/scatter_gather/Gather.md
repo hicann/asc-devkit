@@ -84,7 +84,7 @@ def Gather(dst, src, count, srcOffset, srcBaseAddr):
 | src | 输入 | 源操作数，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要按照32字节对齐。<br><br>数据类型和dst保持一致。 |
 | srcOffset | 输入 | 每个元素在src中对应的地址偏移，类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>LocalTensor的起始地址需要32字节对齐。<br><br>该偏移量是相对于src的起始基地址srcBaseAddr而言的。单位为字节。取值要求见[约束说明](#约束说明)。 |
 | srcBaseAddr | 输入 | 用于指定Gather操作中源操作数的起始位置，单位为字节。取值应保证src元素类型位宽对齐，否则会导致非预期行为。 |
-| count | 输入 | 参与计算的元素个数。<br><br>参数取值范围和操作数的数据类型有关，数据类型不同，能够处理的元素个数最大值不同，最大处理的数据量不能超过UB大小限制。 |
+| count | 输入 | 参与计算的元素个数。<br><br>参数取值范围和操作数的数据类型有关，数据类型不同，能够处理的元素个数最大值不同，最大处理的数据量不能超过Unified Buffer（UB）大小限制。 |
 | mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。<br><br>设置详见[掩码操作](../mask_operations/mask_operations.md)。 |
 | repeatTime | 输入 | 指令迭代次数。针对不同的型号，每个迭代处理的DataBlock可能存在差异，详见[约束说明](#约束说明)。|
 | dstRepStride | 输入 | 相邻迭代间的地址步长，单位是DataBlock（32Bytes）。 |
@@ -116,7 +116,7 @@ Atlas 推理系列产品AI Core，支持的数据类型为：int16_t、uint16_t�
 - 不支持源操作数与目的操作数使用同一块内存地址。
 - srcOffset的取值要求如下：
   - 取值应保证src元素类型位宽对齐。
-  - 偏移地址后不能超出Unified Buffer（UB）大小数据的范围。
+  - 偏移地址后不能超出UB大小数据的范围。
   <!-- npu="950,310b" id13 -->
   - 针对以下型号，地址偏移的取值范围：当操作数为8位时，取值范围为[0, 2^16-1]；当操作数为16位时，取值范围为[0, 2^17-1]，当操作数为32位或者64位时，不能超出uint32_t的范围。
     <!-- npu="950" id14 -->

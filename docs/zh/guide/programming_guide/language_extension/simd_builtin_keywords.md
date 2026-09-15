@@ -142,7 +142,7 @@
     // 仅可由具有相同执行空间类型的Device函数调用
     __aicore__ void bar() {}
 
-    // 定义在AI Core上执行的核函数
+    // 定义在AI Core上执行的核函数（Kernel）
     __global__ __aicore__ void foo() {
       bar(); // 正确
     }
@@ -184,7 +184,7 @@
     -   调用\_\_global\_\_修饰的函数是异步操作，即调用会在函数于Device侧执行完成前返回。如果需要同步，可调用Runtime同步接口显式同步，如**aclrtSynchronizeStream**接口。
 
     ```
-    // 在AI CPU Device文件中定义AI CPU核函数。
+    // 在AI CPU Device文件中定义AI CPU核函数（Kernel）。
     __aicpu__ void foo() {} // 错误，仅使用__aicpu__标识符，缺少__global__标识符
     __global__ void foo() {} // 错误，仅使用__global__标识符，缺少__aicpu__标识符
     __global__ __aicpu__  void foo() {} // 错误，返回类型为void
@@ -194,7 +194,7 @@
     ```
 
     ```
-    // 在.asc文件中声明AI CPU核函数。
+    // 在.asc文件中声明AI CPU核函数（Kernel）。
     extern __global__ __aicpu__ uint32_t hello_world(void *args); // 正确
     ```
 
@@ -469,7 +469,7 @@ __ubuf__ int * __gm__ ptr;
 
 ## 内置变量<a name="section199434523343"></a>
 
-内置变量由框架自动设置，可在Device侧代码中直接引用，用于多核逻辑控制和数据分片。在Mix执行场景（本节指核函数使用`__mix__(1, 1)`或`__mix__(1, 2)`函数执行空间限定符）下，还需与部分非内置变量组合使用，各变量的说明及获取方式如下：
+内置变量由框架自动设置，可在Device侧代码中直接引用，用于多核逻辑控制和数据分片。在Mix执行场景（本节指核函数（Kernel）使用`__mix__(1, 1)`或`__mix__(1, 2)`函数执行空间限定符）下，还需与部分非内置变量组合使用，各变量的说明及获取方式如下：
 
 **表3**  内置变量
 

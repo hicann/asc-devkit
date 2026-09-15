@@ -2,7 +2,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_zh-cn_topic_0000001525424352_section36583473819"></a>
 
-配置自定义算子调用的kernel函数接口名称，functionName固定为“RunCpuKernel”。
+配置自定义算子调用的核函数（Kernel）接口名称，functionName固定为“RunCpuKernel”。
 
 ## 函数原型<a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_zh-cn_topic_0000001525424352_section13230182415108"></a>
 
@@ -25,7 +25,7 @@ OpHostCPUDef &FunctionName(const char *value)
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_zh-cn_topic_0000001575944081_p320343694214"><a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_zh-cn_topic_0000001575944081_p320343694214"></a><a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_zh-cn_topic_0000001575944081_p320343694214"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_p12935163055011"><a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_p12935163055011"></a><a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_p12935163055011"></a><span>算子调用的kernel函数接口名称，</span><span>functionName固定为“RunCpuKernel”。</span></p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_p12935163055011"><a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_p12935163055011"></a><a name="zh-cn_topic_0000001575610072_zh-cn_topic_0000001526442954_p12935163055011"></a><span>算子调用的核函数（Kernel）接口名称，</span><span>functionName固定为“RunCpuKernel”。</span></p>
 </td>
 </tr>
 </tbody>

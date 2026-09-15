@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-kernel侧Asinh接口的计算需要开发者预留/申请临时空间，最大临时空间（maxTmpBuffer）和输入所占空间（inputSize \* typeSize）存在以下关系：
+核函数（Kernel）侧Asinh接口的计算需要开发者预留/申请临时空间，最大临时空间（maxTmpBuffer）和输入所占空间（inputSize \* typeSize）存在以下关系：
 
 **maxTmpBuffer = maxLiveNodeCount \* inputSize \* typeSize + extraBuffer**
 

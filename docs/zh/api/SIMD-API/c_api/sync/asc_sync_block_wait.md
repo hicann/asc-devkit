@@ -65,7 +65,7 @@ PIPE_S
 
 ## 约束说明
 
-- 调用本接口的核函数不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_block_arrive`和`asc_sync_block_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
+- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_block_arrive`和`asc_sync_block_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
 - 针对`asc_sync_block_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_block_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体情况如下：
     <!-- npu="950" id8 -->
     - 针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，硬件支持配置核间同步模式和流水类型，输入参数`pipe`**生效**，此时`asc_sync_block_wait`会阻塞由**`pipe`指定的流水**的后续指令。AIC和AIV支持的`pipe`取值如[表2](#aic_aiv_supported_pipe_3510)所示。

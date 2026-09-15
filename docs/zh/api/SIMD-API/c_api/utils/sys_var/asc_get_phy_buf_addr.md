@@ -58,7 +58,7 @@ PIPE_S
 
 ## 调用示例
 
-本示例模拟Kernel手工规划Unified Buffer的场景：通过0字节、32字节和64字节三个偏移分别获取两个源操作数和一个目的操作数的物理地址，在Unified Buffer中完成加法后将结果写入GM。该方法适用于需要自行管理片上内存布局的底层实现；不能与[以数组方式申请内存的方法](../../general_description_and_constraints.md#以数组方式申请内存)混用。
+本示例模拟核函数（Kernel）手工规划Unified Buffer（UB）的场景：通过0字节、32字节和64字节三个偏移分别获取两个源操作数和一个目的操作数的物理地址，在UB中完成加法后将结果写入GM。该方法适用于需要自行管理片上内存布局的底层实现；不能与[以数组方式申请内存的方法](../../general_description_and_constraints.md#以数组方式申请内存)混用。
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
@@ -86,7 +86,7 @@ constexpr uint32_t BYTES = ELEMENTS * sizeof(uint32_t);
  * 本示例说明：
  * - 每段Unified Buffer空间按32字节对齐，避免不同操作数重叠。
  * - asc_get_phy_buf_addr根据偏移返回片上物理地址。
- * - Kernel在手工分配的Unified Buffer空间中完成10+32，并将结果写入GM。
+ * - 核函数（Kernel）在手工分配的Unified Buffer空间中完成10+32，并将结果写入GM。
  */
 __global__ __vector__ void asc_get_phy_buf_addr_kernel(__gm__ uint32_t* output)
 {

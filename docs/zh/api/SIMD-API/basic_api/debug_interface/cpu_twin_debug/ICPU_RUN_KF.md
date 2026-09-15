@@ -49,7 +49,7 @@
 
 | 参数名称 | 输入/输出 | 描述 |
 | ------ | ------ | ------ |
-| func | 输入 | 算子的kernel函数指针。|
+| func | 输入 | 算子的核函数（Kernel）指针。|
 | numBlocks | 输入 | 算子的核心数，corenum。|
 | ... | 输入 | 所有的入参和出参，依次填入，当前参数个数限制为32个，超出32时会出现编译错误。 |
 
@@ -60,7 +60,7 @@
 ## 约束说明<a name="zh-cn_topic_0000001963799134_zh-cn_topic_0000001541924164_section794123819592"></a>
 
 - 为了保留接口兼容，推荐[<<<>>>](../../../../../guide/programming_guide/debug_and_tuning/functional_debug/cpu_twin_debug.md)编译使用。
-- 除了func、blkdim以外，其他的变量都必须是通过[GmAlloc](GmAlloc.md)分配的共享内存的指针；传入的参数的数量和顺序都必须和kernel保持一致。
+- 除了func、blkdim以外，其他的变量都必须是通过[GmAlloc](GmAlloc.md)分配的共享内存的指针；传入的参数的数量和顺序都必须和核函数（Kernel）保持一致。
 
 ## 调用示例<a name="zh-cn_topic_0000001963799134_zh-cn_topic_0000001541924164_section82241477610"></a>
 

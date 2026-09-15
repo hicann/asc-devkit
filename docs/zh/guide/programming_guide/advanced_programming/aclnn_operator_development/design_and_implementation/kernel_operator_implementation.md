@@ -27,7 +27,7 @@
 ```cpp
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
 {
-    // 核函数具体内容
+    // 核函数（Kernel）具体内容
     // ...
 }
 ```
@@ -39,7 +39,7 @@ template <typename D_T_X, typename D_T_Y, typename D_T_Z, int TILE_NUM, int IS_S
 __global__ __aicore__ void add_custom_template(GM_ADDR x, GM_ADDR y, GM_ADDR z,
                                                GM_ADDR workspace, GM_ADDR tiling)
 {
-    // 核函数具体内容
+    // 核函数（Kernel）具体内容
     // ...
 }
 ```

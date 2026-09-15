@@ -113,7 +113,7 @@ UB或Global Memory上的初始数据。
 | 名称 | 说明 |
 | --- | --- |
 | `scores` | 每个元素表示一个候选分数。 |
-| `max_score` | Global Memory中的最大值结果，kernel启动前初始化为足够小的值。 |
+| `max_score` | Global Memory中的最大值结果，核函数（Kernel）启动前初始化为足够小的值。 |
 | `n` | 分数数量。 |
 
 核心代码实现如下：

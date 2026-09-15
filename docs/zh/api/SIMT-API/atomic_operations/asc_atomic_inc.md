@@ -75,7 +75,7 @@ UB或Global Memory上的初始数据。
 
 | 名称 | 说明 |
 | --- | --- |
-| `ticket` | Global Memory中的环形计数器，kernel启动前初始化。 |
+| `ticket` | Global Memory中的环形计数器，核函数（Kernel）启动前初始化。 |
 | `slots` | 保存每个线程获得的槽位编号。 |
 | `capacity` | 环形队列容量。 |
 | `n` | 需要分配槽位的线程数。 |

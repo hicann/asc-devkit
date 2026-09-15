@@ -63,7 +63,7 @@ __simd_callee__ inline reg_pair<bool> deinterleave(
 
 - `src0`和`src1`可以是同一个`reg_tensor<bool>`对象。
 - 本接口应在Vector Function（`__simd_vf__`标记的函数）内调用。
-- Mask寄存器数量上限为8。超出限制上限的寄存器数据会写入预留的8K UB内存中，可能引起性能劣化。
+- Mask寄存器数量上限为8。超出限制上限的寄存器数据会写入预留的8K Unified Buffer（UB）内存中，可能引起性能劣化。
 
 ## 调用示例
 

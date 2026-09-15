@@ -95,13 +95,13 @@ OP_ADD(AlltoallvDoubleCommCustom);
 
 如下为该自定义算子Tiling Data声明和实现。
 
-该自定义算子Tiling Data的声明中：首先定义version字段，设置为2，表明为v2版本的通信算子Tiling结构体。其次，定义mc2HcommCnt字段，本例AlltoallvDoubleCommCustom算子的kernel实现中，共2个AlltoAllV通信任务，该参数取值为2。然后定义server通用参数配置，Mc2ServerCfg。最后，定义2个Mc2HcommCfg结构体，表示各通信域中的每个通信任务参数配置。
+该自定义算子Tiling Data的声明中：首先定义version字段，设置为2，表明为v2版本的通信算子Tiling结构体。其次，定义mc2HcommCnt字段，本例AlltoallvDoubleCommCustom算子的核函数（Kernel）实现中，共2个AlltoAllV通信任务，该参数取值为2。然后定义server通用参数配置，Mc2ServerCfg。最后，定义2个Mc2HcommCfg结构体，表示各通信域中的每个通信任务参数配置。
 
 ```
 // HCCL TilingData声明
 BEGIN_TILING_DATA_DEF(AlltoallvDoubleCommCustomTilingData)
     TILING_DATA_FIELD_DEF(uint32_t, version); // HCCL tiling结构体的版本，设为2
-    // 各通信域中的通信算子总个数，当前最多支持3个。AlltoallvDoubleCommCustom算子kernel实现中每个通信域中均用了1个AlltoAllV，因此设为2
+    // 各通信域中的通信算子总个数，当前最多支持3个。AlltoallvDoubleCommCustom算子核函数（Kernel）实现中每个通信域中均用了1个AlltoAllV，因此设为2
     TILING_DATA_FIELD_DEF(uint32_t, mc2HcommCnt);
     TILING_DATA_FIELD_DEF_STRUCT(Mc2ServerCfg, serverCfg); // server通用参数配置，融合算子级
     // 各通信域中的每个通信任务参数配置，算子级，共有mc2HcommCnt个Mc2HcommCfg

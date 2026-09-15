@@ -29,7 +29,7 @@ ge::graphStatus TilingXXX(gert::TilingContext* context)
 
 ### Kernel直调
 
-Kernel直调不通过`gert::TilingContext`获取平台信息，可通过[PlatformAscendCManager](../PlatformAscendCManager.md)直接获取`PlatformAscendC`指针后调用相同的平台信息接口。
+核函数（Kernel）直调不通过`gert::TilingContext`获取平台信息，可通过[PlatformAscendCManager](../PlatformAscendCManager.md)直接获取`PlatformAscendC`指针后调用相同的平台信息接口。
 
 ```cpp
 void GetInfoFun()

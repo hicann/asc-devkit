@@ -16,7 +16,7 @@ AIC/AIV多核结构如下图2所示，AIC/AIV按group划分。一个group内包�
 
 **表1**  group配置
 
-| 算子类型 | 函数执行空间限定符 | Kernel类型 | block/subblock | 1：N |
+| 算子类型 | 函数执行空间限定符 | 核函数（Kernel）类型 | block/subblock | 1：N |
 | --- | --- | --- | --- | --- |
 | Cube算子 | `__cube__` | `KERNEL_TYPE_AIC_ONLY` | AIC为block，无subblock | 不涉及 |
 | Vector算子 | `__vector__` | `KERNEL_TYPE_AIV_ONLY` | AIV为block，无subblock | 不涉及 |

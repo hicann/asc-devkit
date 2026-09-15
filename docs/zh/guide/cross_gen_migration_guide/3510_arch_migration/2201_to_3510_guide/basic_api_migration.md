@@ -15,7 +15,7 @@
 | 矩阵计算 | 不支持从GM直接搬运到L0A Buffer或L0B Buffer | LoadData | [通过L1 Buffer中转](#gm-to-l0a-l0b-migration) |
 | 矩阵计算 | 不支持直接初始化L0A Buffer或L0B Buffer | Fill、LoadData | [先初始化L1 Buffer再搬运](#fill-l0a-l0b-migration) |
 | 矩阵计算 | Fixpipe原生参数结构体及部分参数单位发生变化 | Fixpipe | [切换Fixpipe参数结构体](#fixpipe-params-migration) |
-| 系统变量访问 | 不支持监视指定范围内的UB读写 | CheckLocalMemoryIA | [删除CheckLocalMemoryIA调用](#check-local-memory-ia-migration) |
+| 系统变量访问 | 不支持监视指定范围内的Unified Buffer（UB）读写 | CheckLocalMemoryIA | [删除CheckLocalMemoryIA调用](#check-local-memory-ia-migration) |
 
 ## 矢量计算<a id="vector-compute"></a>
 
@@ -56,7 +56,7 @@ AscendC::Ln<half, CONFIG>(dstLocal, srcLocal, count);
 
 **说明**：硬件删除L1 Buffer到GM的通路，无法将数据从L1 Buffer直接搬运到GM中。现有接口不支持L1 Buffer到GM的直接搬运。
 
-**兼容方案**：对于纯Cube计算场景：在GM多分配一个单位矩阵，通过Mmad矩阵乘法计算输出到L0C Buffer，再从L0C Buffer通过Fixpipe搬运到GM。对于Vector和Cube计算融合场景，可以通过L1 Buffer搬运到Unified Buffer（UB），再搬运到GM。以下以纯Cube计算场景为例进行说明，介绍算子核心流程。
+**兼容方案**：对于纯Cube计算场景：在GM多分配一个单位矩阵，通过Mmad矩阵乘法计算输出到L0C Buffer，再从L0C Buffer通过Fixpipe搬运到GM。对于Vector和Cube计算融合场景，可以通过L1 Buffer搬运到UB，再搬运到GM。以下以纯Cube计算场景为例进行说明，介绍算子核心流程。
 
 **迁移示例**：
 

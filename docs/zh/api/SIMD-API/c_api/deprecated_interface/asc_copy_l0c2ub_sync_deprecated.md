@@ -30,7 +30,7 @@
 
 **`asc_copy_l0c2ub_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l0c2ub.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
 
-将矩阵计算结果从L0C Buffer搬运至Unified Buffer，搬运过程中可同步支持随路量化、随路激活、随路格式转换（Nz2ND/Nz2DN）等能力组合。
+将矩阵计算结果从L0C Buffer搬运至Unified Buffer（UB），搬运过程中可同步支持随路量化、随路激活、随路格式转换（Nz2ND/Nz2DN）等能力组合。
 
 下图展示了随路量化、随路ReLU、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为Cast，其余为随路scalar/tensor量化模式。
 

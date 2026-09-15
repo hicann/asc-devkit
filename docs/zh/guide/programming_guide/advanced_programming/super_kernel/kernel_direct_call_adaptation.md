@@ -251,7 +251,7 @@ SK_BIND(add_custom, 4, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 
 1. 复制原global函数的代码
 2. 根据原global函数的实际参数定义参数结构体（对于小于4字节的类型使用`alignas(4)`）
-3. 修改函数签名为`__sk__ __vector__ void func_sk(const ArgsStruct *args, sk::SkSystemArgs *sysArgs)`（根据原函数的Kernel Type添加对应标识）
+3. 修改函数签名为`__sk__ __vector__ void func_sk(const ArgsStruct *args, sk::SkSystemArgs *sysArgs)`（根据原函数的核函数（Kernel）类型添加对应标识）
 4. 如果算子未使用`AscendC::GetBlockNum()`，可以省略`sk::SkSystemArgs *sysArgs`参数
 5. 使用模板参数实例化出多个符号（模板参数仅用于实例化出不同的符号，不影响函数逻辑）
 6. 从结构体中获取参数

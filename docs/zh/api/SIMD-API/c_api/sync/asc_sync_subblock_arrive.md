@@ -63,7 +63,7 @@ PIPE_S
 
 ## 约束说明
 
-- 调用本接口的核函数不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
+- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
 - 针对`asc_sync_subblock_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_subblock_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体请参考[asc_sync_subblock_wait](asc_sync_subblock_wait.md#约束说明)的约束说明。
 - 本接口仅支持AIV调用，AIV支持的`pipe`取值如下：`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_V`。
 - 用户需要确保配套使用（`flag_id`必须完全一致）`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`，否则会出现未定义行为。
@@ -103,7 +103,7 @@ constexpr int64_t FLAG_ID = 8;
 
 /*
  * 本示例说明：
- * - 采用__mix__(1, 2)标识核函数，同一AI Core内包含2个AIV。
+ * - 采用__mix__(1, 2)标识核函数（Kernel），同一AI Core内包含2个AIV。
  * - 两个AIV分别将各自的数据从GM搬入UB。
  * - 两个AIV分别将一组数据从UB搬运至GM（PIPE_MTE3）操作执行完后，才能执行asc_sync_subblock_arrive向调度模块发送通知。
  * - 各AIV中从GM读取数据（PIPE_MTE2）的操作被asc_sync_subblock_wait阻塞，直到两个AIV均执行了asc_sync_subblock_arrive后才能执行。

@@ -126,7 +126,7 @@ $$
 - 搬运至L1 Buffer的数据不能重叠，如果存在重叠写入，硬件不会产生任何警告或错误，并且不保证重叠数据的写入顺序。
 
 <!-- npu="950" id13 -->
-- 针对Ascend 950PR/Ascend 950DT，支持ub->L1 Buffer的1:2硬通道的方式；同时提供1:1的兼容模式，解决A2/A3的代码迁移兼容问题，这种模式通过Global Memory进行中转，效率稍低。
+- 针对Ascend 950PR/Ascend 950DT，支持UB->L1 Buffer的1:2硬通道的方式；同时提供1:1的兼容模式，解决A2/A3的代码迁移兼容问题，这种模式通过Global Memory进行中转，效率稍低。
 <!-- end id13 -->
 
 - Nd2NzParams结构体参数的值需在取值范围内，参数取值范围如[表4](#table_ub_nd2nz_range)所示。

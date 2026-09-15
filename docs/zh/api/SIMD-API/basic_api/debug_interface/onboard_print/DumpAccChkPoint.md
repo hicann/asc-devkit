@@ -37,7 +37,7 @@
 
 该接口Dump指定Tensor的内容。同时支持打印自定义的标签（仅支持uint32_t数据类型的信息），比如打印当前行号等。区别于[DumpTensor](DumpTensor.md)，使用该接口可以支持指定偏移位置的Tensor打印。
 
-在算子kernel侧实现代码中需要打印偏移后Tensor数据的地方，调用DumpAccChkPoint接口打印相关内容。样例如下：
+在算子核函数（Kernel）侧实现代码中需要打印偏移后Tensor数据的地方，调用DumpAccChkPoint接口打印相关内容。样例如下：
 
 ```cpp
 AscendC::DumpAccChkPoint(srcLocal, 5, 32, dataLen);

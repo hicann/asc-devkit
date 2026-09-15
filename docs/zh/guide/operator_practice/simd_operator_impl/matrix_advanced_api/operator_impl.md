@@ -2,7 +2,7 @@
 
 ## 实现流程<a name="zh-cn_topic_0000001622514006_section6935163720564"></a>
 
-上文介绍了Matmul矩阵乘的数据切分方案和数据流。Ascend C提供一组Matmul高阶API，封装了这些常用的切分和数据搬运、计算的算法逻辑，方便用户快速实现Matmul矩阵乘法的运算操作。开发者在host侧通过调用API自动获取Tiling参数，该参数传递到kernel侧后，在初始化操作时传入，通过几个简单的API即可完成矩阵乘操作。完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/00_introduction/02_matrix/matmul_advanced_api)。
+上文介绍了Matmul矩阵乘的数据切分方案和数据流。Ascend C提供一组Matmul高阶API，封装了这些常用的切分和数据搬运、计算的算法逻辑，方便用户快速实现Matmul矩阵乘法的运算操作。开发者在host侧通过调用API自动获取Tiling参数，该参数传递到核函数（Kernel）侧后，在初始化操作时传入，通过几个简单的API即可完成矩阵乘操作。完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/00_introduction/02_matrix/matmul_advanced_api)。
 
 **图1**  矩阵编程流程示意图<a name="zh-cn_topic_0000001622514006_fig264116391245"></a>  
 ![](../../../figures/mat_prog_flow.png "矩阵编程流程示意图")
@@ -59,7 +59,7 @@ host侧自动获取Tiling参数的关键步骤介绍如下：
     ```
 
 <a name="zh-cn_topic_0000001622514006_li1032116474330"></a>
-kernel侧使用Matmul API矩阵乘运算的具体步骤如下：
+核函数（Kernel）侧使用Matmul API矩阵乘运算的具体步骤如下：
 
 1.  **创建Matmul对象。**
 
@@ -127,7 +127,7 @@ kernel侧使用Matmul API矩阵乘运算的具体步骤如下：
 
 ## 设置Shape信息<a name="zh-cn_topic_0000001622514006_section736714343331"></a>
 
-在实现Host Tiling时可以设置Shape信息，用于Tiling计算；kernel侧运行时也可以修改部分Shape信息，用于尾块设置、Matmul复用（多个Matmul计算复用一个Matmul对象）等场景。本节对涉及到的Shape概念进行介绍，并给出host侧和kernel侧设置Tiling信息的指导。
+在实现Host Tiling时可以设置Shape信息，用于Tiling计算；核函数（Kernel）侧运行时也可以修改部分Shape信息，用于尾块设置、Matmul复用（多个Matmul计算复用一个Matmul对象）等场景。本节对涉及到的Shape概念进行介绍，并给出host侧和核函数（Kernel）侧设置Tiling信息的指导。
 
 -   orgShape：M、N、K
 -   singleCoreShape：singleCoreM、singleCoreN、singleCoreK

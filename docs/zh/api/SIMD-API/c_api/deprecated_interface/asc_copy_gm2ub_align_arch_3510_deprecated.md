@@ -28,7 +28,7 @@
 
 **高维切分搬运接口已废弃，请使用`asc_load_l2_cache_mode`类型枚举值进行L2 Cache管理策略配置，新接口形式请参见[asc_copy_gm2ub_align高维切分数据搬运接口](../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md#高维切分数据搬运)。**
 
-提供数据非对齐搬运的功能，将数据从Global Memory (GM)搬运到Unified Buffer (UB)，并支持8位/16位/32位数据类型搬运。
+提供数据非对齐搬运的功能，将数据从Global Memory (GM)搬运到Unified Buffer（UB），并支持8位/16位/32位数据类型搬运。
 
 本接口为高维切分搬运方式。若搬运数据长度非32字节对齐，会将搬运数据补齐至32字节对齐。可通过配置参数`dst_stride`选择Normal模式或Compact模式。非32字节对齐场景支持以下两种填充方式：
 

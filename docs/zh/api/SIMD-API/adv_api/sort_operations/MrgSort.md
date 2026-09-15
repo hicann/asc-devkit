@@ -81,7 +81,7 @@ __aicore__ inline void MrgSort(const LocalTensor<T>& dst, const MrgSortSrcList<T
 | --- | --- | --- |
 | dst | 输出 | 目的操作数，存储经过排序后的数据。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | sortList | 输入 | 源操作数，支持2-4个队列，并且每个队列都已经排好序，类型为MrgSortSrcList结构体，具体请参考下表。MrgSortSrcList中传入要合并的队列，定义如下方代码所示。 |
-| elementCountList | 输入 | 四个源队列的长度（排序方式一：8Bytes结构的数目，排序方式二：16*sizeof(T)Bytes结构的数目），类型为长度为4的uint16_t数据类型的数组，理论上每个元素取值范围[0, 4095]，但不能超出UB的存储空间。 |
+| elementCountList | 输入 | 四个源队列的长度（排序方式一：8Bytes结构的数目，排序方式二：16*sizeof(T)Bytes结构的数目），类型为长度为4的uint16_t数据类型的数组，理论上每个元素取值范围[0, 4095]，但不能超出Unified Buffer（UB）的存储空间。 |
 | sortedNum | 输出 | 耗尽模式下（即isExhaustedSuspension为true时），停止合并时每个队列已排序的元素个数。 |
 | validBit | 输入 | 有效队列个数，取值如下：<br>0b11：前两条队列有效<br>0b111：前三条队列有效<br>0b1111：四条队列全部有效 |
 | repeatTime | 输入 | 迭代次数，每一次源操作数和目的操作数跳过四个队列总长度。取值范围：repeatTime∈[1,255]。<br>repeatTime参数生效是有条件的，需要同时满足以下四个条件：<br>srcLocal包含四条队列并且validBit=15。<br>四个源队列的长度一致。<br>四个源队列连续存储。<br>isExhaustedSuspension为false。 |

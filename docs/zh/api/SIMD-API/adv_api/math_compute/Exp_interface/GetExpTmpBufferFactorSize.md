@@ -10,7 +10,7 @@
 
     **currentShapeSize = \(currBuff - extraBuf\) / maxLiveNodeCount / typeSize**
 
--   算子实现需要调用两个kernel侧API KernelIntf1、KernelIntf2，利用两个GetXxxTmpBufferFactorSize（其中Xxx为需要调用的两个高阶API）接口的两组输出值\(maxLiveNodeCount、extraBuffer\)以及当前现有的临时空间，推导单次最大计算元素数量currentShapeSize为：
+-   算子实现需要调用两个核函数（Kernel）侧API KernelIntf1、KernelIntf2，利用两个GetXxxTmpBufferFactorSize（其中Xxx为需要调用的两个高阶API）接口的两组输出值\(maxLiveNodeCount、extraBuffer\)以及当前现有的临时空间，推导单次最大计算元素数量currentShapeSize为：
 
     **currentShapeSize1 = \(currBuff - extraBuf1\) / maxLiveNodeCount1 / typeSize**
 

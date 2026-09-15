@@ -82,7 +82,7 @@
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN、VECCALC、VECOUT。 |
 | src | 输入 | 源操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN、VECCALC、VECOUT。 |
 | sharedTmpBuffer | 输入 | 指令执行期间存储中间结果，用于内部计算所需操作空间，需特别注意空间大小。详情请参考[关键特性说明](#关键特性说明)。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN、VECCALC、VECOUT。 |
-| count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD_compute/continuous_compute.md)。最大处理的数据量不能超过UB大小限制。 |
+| count | 输入 | 参与计算的元素个数。关于该参数的具体说明请参考[连续计算](../SIMD_compute/continuous_compute.md)。最大处理的数据量不能超过Unified Buffer（UB）大小限制。 |
 | mask/mask[] | 输入 | `mask`用于控制每次迭代内参与计算的源操作数。详细设置参考[掩码概述](../SIMD_compute/mask.md)。 |
 | repeatTime | 输入 | 迭代次数。关于该参数的具体描述请参考[高维切分](../SIMD_compute/high_dim_split.md)。**注：与高维切分中不同的是，`repeatTime`可以支持更大的取值范围，保证不超过int32_t的最大值即可。** |
 | srcRepStride | 输入 | 源操作数相邻迭代间的地址步长，即源操作数每次迭代跳过的DataBlock数目。取值范围为[0, $2^{16}-1$]。 |
@@ -145,7 +145,7 @@
   <!-- end id22 -->
 <!-- end id18 -->
 
-- `srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合Unified Buffer（UB）的实际大小避免出现越界。
+- `srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合UB的实际大小避免出现越界。
 - 如果存在多个最大值，该指令会将最小索引写入目的操作数。
 - `dst`结果存储顺序为最大值，最大值索引，若不需要索引，只会存储最大值。
 - 索引按操作数的数据类型存储，读取索引需要将类型转换到整型。请参考[ReduceRepeat关键特性说明](./ReduceRepeat.md#关键特性说明)。

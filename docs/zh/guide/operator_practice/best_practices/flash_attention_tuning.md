@@ -33,7 +33,7 @@
 
 按照FlashAttention反向计算流程的实现，简介整体计算流程如下。对本算子的算法感兴趣的用户可简单了解，无需重点关注。
 
-1.  重计算p，本步骤重计算了FlashAttention流程中的softmax结果p，计算结果保存在ub中。
+1.  重计算p，本步骤重计算了FlashAttention流程中的softmax结果p，计算结果保存在Unified Buffer（UB）中。
 
     ![](../../figures/zh-cn_formulaimage_0000002098517589.png)
 
@@ -70,7 +70,7 @@
 
 通过观察分析流水图和Profiling数据，结合优化经验来判断性能瓶颈点。在优化过程中不同阶段可能会出现不同的瓶颈点，需要不断优化以达到最佳性能。
 
--   根据优化经验，循环间会存在一些不必要的性能开销，循环越多性能可能越差；满足Unified Buffer（UB）最大空间限制的情况下，UB切分的基本块越大，循环越少。算子中通过InitBuffer接口分配UB buffer大小。
+-   根据优化经验，循环间会存在一些不必要的性能开销，循环越多性能可能越差；满足UB最大空间限制的情况下，UB切分的基本块越大，循环越少。算子中通过InitBuffer接口分配UB buffer大小。
 
     ```
     pipe->InitBuffer(ubBuffer, 120 * 1024);  

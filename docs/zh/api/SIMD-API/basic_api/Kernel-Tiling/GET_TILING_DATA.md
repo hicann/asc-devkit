@@ -28,7 +28,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
 
-用于获取算子kernel入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过[TilingData结构注册](../../../Utils-API/Tiling_data_structure_register/TilingData_struct_register.md)注册了多个TilingData结构体，使用该接口返回默认注册的结构体。
+用于获取算子核函数（Kernel）入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过[TilingData结构注册](../../../Utils-API/Tiling_data_structure_register/TilingData_struct_register.md)注册了多个TilingData结构体，使用该接口返回默认注册的结构体。
 
 ## 函数原型<a name="zh-cn_topic_0000001526206862_section1630753514297"></a>
 
@@ -66,8 +66,8 @@ GET_TILING_DATA(tiling_data, tiling_arg)
 
 ## 约束说明<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
--   本函数需在算子kernel代码处使用，并且传入的tiling\_data参数不需要声明类型。
--   暂不支持kernel直调工程。
+-   本函数需在算子核函数（Kernel）代码处使用，并且传入的tiling\_data参数不需要声明类型。
+-   暂不支持核函数（Kernel）直调工程。
 
 ## 调用示例<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

@@ -37,7 +37,7 @@
 | --- | --- | --- |
 | srcShape | 输入 | 输入srcTensor的shape信息，参数类型为[AscendC::TensorShape](../../data_structures/TensorShape.md)。 |
 | dataTypeSize | 输入 | 参与计算的max和sum的数据类型，比如half=2。 |
-| isReuseSource | 输入 | 与kernel侧接口配置保持一致。 |
+| isReuseSource | 输入 | 与核函数（Kernel）侧接口配置保持一致。 |
 
 **表2**  SoftMax/SimpleSoftMax SoftMaxTilingFunc接口参数列表
 

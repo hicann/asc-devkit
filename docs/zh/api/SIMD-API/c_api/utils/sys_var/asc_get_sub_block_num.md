@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/utils/sys_var.h"`。
 
-在[分离模式](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)下读取当前AI Core上Cube Core（AIC）或Vector Core（AIV）的数量。该值在kernel启动前配置，运行中不可修改。
+在[分离模式](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)下读取当前AI Core上Cube Core（AIC）或Vector Core（AIV）的数量。该值在核函数（Kernel）启动前配置，运行中不可修改。
 
 ## 函数原型
 
@@ -58,7 +58,7 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口读取的subblock维度保存在只读特殊寄存器中，由系统控制器（System Controller，SC）在kernel启动前配置，kernel运行期间不可修改，连续两次调用返回值相同。
+- 本接口读取的subblock维度保存在只读特殊寄存器中，由系统控制器（System Controller，SC）在核函数（Kernel）启动前配置，核函数（Kernel）运行期间不可修改，连续两次调用返回值相同。
 - 返回值反映当前AI Core的subblock数量，仅在[分离模式](../../../../../guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md)下有意义。非分离模式下返回值的语义以SC配置为准。
 
 ## 调用示例

@@ -36,7 +36,7 @@
 头文件路径为：`"basic_api/kernel_operator_dump_tensor_intf.h"`。
 
 该接口可以打印Tensor的内容，同时支持打印自定义的标签（仅支持uint32_t数据类型的信息），比如打印当前行号等。
-在算子kernel侧实现代码中需要打印Tensor数据的地方，调用DumpTensor接口打印相关内容。样例如下：
+在算子核函数（Kernel）侧实现代码中需要打印Tensor数据的地方，调用DumpTensor接口打印相关内容。样例如下：
 
 ```cpp
 AscendC::DumpTensor(srcLocal, 5, dataLen);

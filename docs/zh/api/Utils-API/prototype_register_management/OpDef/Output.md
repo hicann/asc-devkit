@@ -37,5 +37,5 @@ OpParamDef &Output(const char *name)
 
 ## 约束说明<a name="zh-cn_topic_0000001549347676_zh-cn_topic_0000001576870901_zh-cn_topic_0000001575944081_section19165124931511"></a>
 
-参数注册的顺序需要和算子kernel入口函数一致。
+参数注册的顺序需要和算子核函数（Kernel）入口函数一致。
 

@@ -445,13 +445,13 @@ npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)
 npu_op_kernel_sources(ascendc_kernels
     OP_TYPE AddCustom                              #算子类型
     COMPUTE_UNIT ascendxxxyy                       # AI处理器型号
-    KERNEL_FILE add_custom.cpp                     # kernel实现文件名
+    KERNEL_FILE add_custom.cpp                     # 核函数（Kernel）实现文件名
 )
 或者
 npu_op_kernel_sources(ascendc_kernels
     OP_TYPE AddCustom                              #算子类型
     SOC_SERIES Ascendxxx                           # AI处理器型号
-    KERNEL_FILE add_custom.cpp                     # kernel实现文件名
+    KERNEL_FILE add_custom.cpp                     # 核函数（Kernel）实现文件名
 )
 
 # 3. 编译核函数（Kernel）库

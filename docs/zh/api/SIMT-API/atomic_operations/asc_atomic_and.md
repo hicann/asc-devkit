@@ -84,7 +84,7 @@ UB或Global Memory上的初始数据。
 | 名称 | 说明 |
 | --- | --- |
 | `flags` | Global Memory中的共享状态位。 |
-| `clear_bits` | 每个元素表示需要清除的bit，kernel内部会转换为AND掩码。 |
+| `clear_bits` | 每个元素表示需要清除的bit，核函数（Kernel）内部会转换为AND掩码。 |
 | `n` | 掩码数量。 |
 
 核心代码实现如下：

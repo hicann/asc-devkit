@@ -802,7 +802,7 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [__isGlobal](../address_space_predicate_functions/__isGlobal.md) | 判断输入的指针是否指向Global Memory内存空间的地址。 |
-| [__isUbuf](../address_space_predicate_functions/__isUbuf.md) | 判断输入的指针是否指向UB内存空间的地址。 |
+| [__isUbuf](../address_space_predicate_functions/__isUbuf.md) | 判断输入的指针是否指向Unified Buffer（UB）内存空间的地址。 |
 | [__isLocal](../address_space_predicate_functions/__isLocal.md) | 判断输入的指针是否指向栈空间的地址。 |
 
 ## 地址空间转换函数

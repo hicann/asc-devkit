@@ -84,7 +84,7 @@ UB或Global Memory上的初始数据。
 | 名称 | 说明 |
 | --- | --- |
 | `observed_flags` | 每个元素表示一个线程观察到的特征位。 |
-| `flags` | Global Memory中的汇总bitmask，kernel启动前清零。 |
+| `flags` | Global Memory中的汇总bitmask，核函数（Kernel）启动前清零。 |
 | `n` | 特征来源数量。 |
 
 核心代码实现如下：

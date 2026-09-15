@@ -67,7 +67,7 @@ AI Core中的计算单元主要包括Scalar、Vector和Cube三类。
 
 | 计算方式 | 数据暂存位置 | 特点 | 适用场景 |
 | --- | --- | --- | --- |
-| Membase | Local Memory（UB） | 每步计算结果写回UB | NPU架构版本2201 |
+| Membase | Unified Buffer（UB） | 每步计算结果写回UB | NPU架构版本2201 |
 | Regbase | 寄存器（VF Reg） | 中间结果可暂存寄存器，减少UB读写 | NPU架构版本3510 |
 
 >[!NOTE]说明

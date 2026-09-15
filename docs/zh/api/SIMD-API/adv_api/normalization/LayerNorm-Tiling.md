@@ -2,20 +2,20 @@
 
 ## 功能说明
 
-Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计算时所需的Tiling参数。
+Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm核函数（Kernel）计算时所需的Tiling参数。
 
 获取Tiling参数主要分为如下两步：
 
 1.  先通过**GetLayerNormMaxMinTmpSize**获取LayerNorm接口计算所需最大和最小临时空间大小，用于合理分配计算空间。
 
-    kernel侧LayerNorm接口的计算需要开发者预留/申请临时空间，**GetLayerNormMaxMinTmpSize**用于在host侧获取预留/申请的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到kernel侧使用。
+    核函数（Kernel）侧LayerNorm接口的计算需要开发者预留/申请临时空间，**GetLayerNormMaxMinTmpSize**用于在host侧获取预留/申请的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到核函数（Kernel）侧使用。
 
     -   为保证功能正确，预留/申请的临时空间大小不能小于最小临时空间大小；
-    -   在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
+    -   在最小临时空间-最大临时空间范围内，随着临时空间增大，核函数（Kernel）侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
 
-2.  通过**GetLayerNormNDTilingInfo**获取LayerNorm kernel侧接口所需tiling参数，需要传入输入shape，剩余的可供LayerNorm接口计算的空间大小和计算的数据类型。
+2.  通过**GetLayerNormNDTilingInfo**获取LayerNorm核函数（Kernel）侧接口所需tiling参数，需要传入输入shape，剩余的可供LayerNorm接口计算的空间大小和计算的数据类型。
 
-    LayerNorm Tiling结构体的定义如下，开发者无需关注该Tiling结构的具体信息，只需要传递到kernel侧，传入LayerNorm高阶API接口，直接进行使用即可。
+    LayerNorm Tiling结构体的定义如下，开发者无需关注该Tiling结构的具体信息，只需要传递到核函数（Kernel）侧，传入LayerNorm高阶API接口，直接进行使用即可。
 
     -   输出归一化结果、均值和方差的LayerNorm接口所需的Tiling结构体
 
@@ -134,19 +134,19 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
 
 | 接口 | 输入/输出 | 功能 |
 | --- | --- | --- |
-| srcShape | 输入 | 输出归一化结果、均值和方差的LayerNorm接口：<br>输入数据inputX的shape信息{B, S, storageHLength, originHLength}，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)，包括当前输入的inputX的shape信息，以及地址对齐前（如存在H轴补齐操作）的原有shape信息。<br>在API支持的场景下，storageHLength和originHLength保持一致。<br><br>输出归一化结果、均值和标准差的倒数的LayerNorm接口：<br>输入数据inputX的shape信息{A, R}，A轴长度可以在kernel接口中动态指定，但范围不能超过此参数中A的大小。 |
+| srcShape | 输入 | 输出归一化结果、均值和方差的LayerNorm接口：<br>输入数据inputX的shape信息{B, S, storageHLength, originHLength}，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)，包括当前输入的inputX的shape信息，以及地址对齐前（如存在H轴补齐操作）的原有shape信息。<br>在API支持的场景下，storageHLength和originHLength保持一致。<br><br>输出归一化结果、均值和标准差的倒数的LayerNorm接口：<br>输入数据inputX的shape信息{A, R}，A轴长度可以在核函数（Kernel）接口中动态指定，但范围不能超过此参数中A的大小。 |
 | typeSize | 输入 | 输入数据inputX的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | isReuseSource | 输入 | 是否复用源操作数的内存空间，与[LayerNorm](LayerNorm.md)接口一致。 |
 | isComputeRstd | 输入 | 是否计算标准差的倒数rstd。用于Tiling中区分选择的LayerNorm API。 |
 | isOnlyOutput | 输入 | 是否只输出y，不输出均值mean与标准差的倒数rstd。当前该参数仅支持false，y、mean和rstd的结果全都输出。 |
-| maxValue | 输出 | 输出LayerNorm接口所需的tiling信息（最大临时空间大小）。<br><br>LayerNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | 输出LayerNorm接口所需的tiling信息（最大临时空间大小）。<br><br>LayerNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，核函数（Kernel）侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | 输出LayerNorm接口所需的tiling信息（最小临时空间大小）。<br><br>LayerNorm接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。 |
 
 **表2**  GetLayerNormNDTilingInfo和GetLayerNormNDTillingInfo接口参数列表
 
 | 参数名称 | 输入/输出 | 含义 |
 | --- | --- | --- |
-| srcShape | 输入 | 输出归一化结果、均值和方差的LayerNorm接口：<br>输入数据inputX的shape信息{B, S, storageHLength, originHLength}，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)，包括当前输入的inputX的shape信息，以及地址对齐前（如存在H轴补齐操作）的原有shape信息。<br><br>输出归一化结果、均值和标准差的倒数的LayerNorm接口：<br>输入数据inputX的shape信息{A, R}，A轴长度可以在kernel接口中动态指定，但范围不能超过此参数中A的大小。 |
+| srcShape | 输入 | 输出归一化结果、均值和方差的LayerNorm接口：<br>输入数据inputX的shape信息{B, S, storageHLength, originHLength}，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)，包括当前输入的inputX的shape信息，以及地址对齐前（如存在H轴补齐操作）的原有shape信息。<br><br>输出归一化结果、均值和标准差的倒数的LayerNorm接口：<br>输入数据inputX的shape信息{A, R}，A轴长度可以在核函数（Kernel）接口中动态指定，但范围不能超过此参数中A的大小。 |
 | stackBufferSize | 输入 | 可供LayerNorm接口使用的空间大小，单位Byte。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | isReuseSource | 输入 | 是否可以复用inputX的内存空间。 |
@@ -163,7 +163,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
 
 ## 调用示例
 
-如下样例介绍了使用输出方差的LayerNorm高阶API时，host侧获取Tiling参数的流程以及该参数如何在kernel侧使用。样例中输入Tensor的shape大小为\[2, 16, 64\]，输入的数据类型为half。
+如下样例介绍了使用输出方差的LayerNorm高阶API时，host侧获取Tiling参数的流程以及该参数如何在核函数（Kernel）侧使用。样例中输入Tensor的shape大小为\[2, 16, 64\]，输入的数据类型为half。
 
 1.  将LayerNormTiling结构体参数增加至TilingData结构体，作为TilingData结构体的一个字段。
 
@@ -177,7 +177,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     END_TILING_DATA_DEF;
     ```
 
-2.  Tiling实现函数中，首先调用GetLayerNormMaxMinTmpSize接口获取LayerNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后调用GetLayerNormNDTilingInfo接口根据输入shape、剩余的可供计算的空间大小等信息获取LayerNorm kernel侧接口所需tiling参数。
+2.  Tiling实现函数中，首先调用GetLayerNormMaxMinTmpSize接口获取LayerNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后调用GetLayerNormNDTilingInfo接口根据输入shape、剩余的可供计算的空间大小等信息获取LayerNorm核函数（Kernel）侧接口所需tiling参数。
 
     ```
     namespace optiling {
@@ -210,7 +210,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
+3.  对应的核函数（Kernel）侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
 
     ```
     extern "C" __global__ __aicore__ void func_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
@@ -224,7 +224,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     }
     ```
 
-如下样例介绍了使用输出标准差的倒数的LayerNorm高阶API时，host侧获取Tiling参数的流程以及该参数如何在kernel侧使用。样例中输入Tensor的shape大小为\[2, 64\]，输入的数据类型为half。
+如下样例介绍了使用输出标准差的倒数的LayerNorm高阶API时，host侧获取Tiling参数的流程以及该参数如何在核函数（Kernel）侧使用。样例中输入Tensor的shape大小为\[2, 64\]，输入的数据类型为half。
 
 1.  将LayerNormTiling结构体参数增加至TilingData结构体，作为TilingData结构体的一个字段。
 
@@ -238,7 +238,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     END_TILING_DATA_DEF;
     ```
 
-2.  Tiling实现函数中，首先调用GetLayerNormMaxMinTmpSize接口获取LayerNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后调用GetLayerNormNDTilingInfo接口根据输入shape、剩余的可供计算的空间大小等信息获取LayerNorm kernel侧接口所需tiling参数。
+2.  Tiling实现函数中，首先调用GetLayerNormMaxMinTmpSize接口获取LayerNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后调用GetLayerNormNDTilingInfo接口根据输入shape、剩余的可供计算的空间大小等信息获取LayerNorm核函数（Kernel）侧接口所需tiling参数。
 
     ```
     namespace optiling {
@@ -276,7 +276,7 @@ Ascend C提供一组LayerNorm Tiling API，方便用户获取LayerNorm kernel计
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
+3.  对应的核函数（Kernel）侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的LayerNormTiling信息传入LayerNorm接口参与计算。
 
     ```
     extern "C" __global__ __aicore__ void func_custom(

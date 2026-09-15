@@ -2,20 +2,20 @@
 
 ## 功能说明
 
-Ascend C提供RmsNorm Tiling API，方便用户获取RmsNorm kernel计算时所需的Tiling参数。
+Ascend C提供RmsNorm Tiling API，方便用户获取RmsNorm核函数（Kernel）计算时所需的Tiling参数。
 
 获取Tiling参数主要分为如下两步：
 
 1.  通过**GetRmsNormMaxMinTmpSize**获取RmsNorm接口计算所需最大和最小临时空间大小。
 
-    kernel侧RmsNorm接口的计算需要开发者预留/申请临时空间，**GetRmsNormMaxMinTmpSize**用于在host侧获取预留/申请的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到kernel侧使用。
+    核函数（Kernel）侧RmsNorm接口的计算需要开发者预留/申请临时空间，**GetRmsNormMaxMinTmpSize**用于在host侧获取预留/申请的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到核函数（Kernel）侧使用。
 
     -   为保证功能正确，预留/申请的临时空间大小不能小于最小临时空间大小；
-    -   在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
+    -   在最小临时空间-最大临时空间范围内，随着临时空间增大，核函数（Kernel）侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
 
-2.  通过**GetRmsNormTilingInfo**获取RmsNorm kernel侧接口所需tiling参数。
+2.  通过**GetRmsNormTilingInfo**获取RmsNorm核函数（Kernel）侧接口所需tiling参数。
 
-    RmsNorm Tiling结构体的定义如下，开发者无需关注该tiling结构的具体信息，只需要传递到kernel侧，传入RmsNorm高阶API接口，直接进行使用即可。
+    RmsNorm Tiling结构体的定义如下，开发者无需关注该tiling结构的具体信息，只需要传递到核函数（Kernel）侧，传入RmsNorm高阶API接口，直接进行使用即可。
 
     ```
     struct RmsNormTiling {
@@ -56,9 +56,9 @@ bool GetRmsNormTilingInfo(const AscendC::TensorShape& srcShape, const AscendC::T
 | --- | --- | --- |
 | srcShape | 输入 | 输入的shape信息，参数类型为[AscendC::TensorShape](../data_structures/TensorShape.md)。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
-| maxValue | 输出 | RmsNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。最大空间大小为0表示计算不需要临时空间。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | RmsNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，核函数（Kernel）侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。最大空间大小为0表示计算不需要临时空间。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | RmsNorm接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。最小空间大小为0表示计算不需要临时空间。 |
-| isBasicBlock | 输入 | 是否要开启基本块计算，与kernel侧接口一致，默认false。 |
+| isBasicBlock | 输入 | 是否要开启基本块计算，与核函数（Kernel）侧接口一致，默认false。 |
 
 **表2**  GetRmsNormTilingInfo接口参数说明
 
@@ -69,7 +69,7 @@ bool GetRmsNormTilingInfo(const AscendC::TensorShape& srcShape, const AscendC::T
 | stackBufferByteSize | 输入 | 剩余的可供RmsNorm接口计算的空间大小，单位为Byte。通过GetRmsNormMaxMinTmpSize获取最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为stackBufferByteSize传入。 |
 | typeSize | 输入 | 输入的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | tiling | 输出 | RmsNorm计算所需Tiling信息。 |
-| isBasicBlock | 输入 | 是否要开启基本块计算，与kernel侧接口一致，默认false。若开启基本块，则需要保证originSrcShape的H也是32B对齐。 |
+| isBasicBlock | 输入 | 是否要开启基本块计算，与核函数（Kernel）侧接口一致，默认false。若开启基本块，则需要保证originSrcShape的H也是32B对齐。 |
 
 ## 返回值说明
 
@@ -94,7 +94,7 @@ bool GetRmsNormTilingInfo(const AscendC::TensorShape& srcShape, const AscendC::T
     END_TILING_DATA_DEF;
     ```
 
-2.  Tiling实现函数中，首先调用**GetRmsNormMaxMinTmpSize**接口获取RmsNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后根据输入shape、剩余的可供计算的空间大小等信息获取RmsNorm kernel侧接口所需tiling参数。
+2.  Tiling实现函数中，首先调用**GetRmsNormMaxMinTmpSize**接口获取RmsNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后根据输入shape、剩余的可供计算的空间大小等信息获取RmsNorm核函数（Kernel）侧接口所需tiling参数。
 
     ```
     namespace optiling {
@@ -130,7 +130,7 @@ bool GetRmsNormTilingInfo(const AscendC::TensorShape& srcShape, const AscendC::T
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的RmsNorm Tiling信息传入RmsNorm接口参与计算。完整的kernel侧样例请参考[RmsNorm](RmsNorm.md)。
+3.  对应的核函数（Kernel）侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的RmsNorm Tiling信息传入RmsNorm接口参与计算。完整的核函数（Kernel）侧样例请参考[RmsNorm](RmsNorm.md)。
 
     ```
     extern "C" __global__ __aicore__ void rmsnorm_custom(GM_ADDR inputGm, GM_ADDR gammaGm, GM_ADDR outputGm, GM_ADDR tiling)

@@ -82,7 +82,7 @@ AscendC::LocalTensor<T> src0Local = ubAllocator.Alloc<T, TOTAL_LENGTH>();
 AscendC::LocalTensor<T> src1Local = ubAllocator.Alloc<T, TOTAL_LENGTH>();
 AscendC::LocalTensor<T> dstLocal = ubAllocator.Alloc<T, TOTAL_LENGTH>();
 
-// 在第一条搬运指令前调用，使之前的指令可与前序子kernel并行执行。
+// 在第一条搬运指令前调用，使之前的指令可与前序子核函数（Kernel）并行执行。
 AscendC::WaitPreTaskEnd();
 
 AscendC::DataCopy(src0Local, src0Global, TOTAL_LENGTH);

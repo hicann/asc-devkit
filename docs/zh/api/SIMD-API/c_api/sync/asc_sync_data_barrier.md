@@ -114,7 +114,7 @@ __global__ __vector__ void asc_sync_data_barrier_kernel(__gm__ int32_t* shared, 
         }
         const int32_t value = asc_load_dev(shared + 1);
         asc_store_dev(output, 2 * value);
-        // 等待结果写入GM后退出核函数。
+        // 等待结果写入GM后退出核函数（Kernel）。
         asc_sync_data_barrier(mem_dsb_t::DSB_DDR);
     }
 }

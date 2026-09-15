@@ -189,10 +189,10 @@ C_FORMAT_FRACTAL_NZ_C0_8</pre>
 </tr>
 <tr id="row17351183522212"><td class="cellrowborder" valign="top" width="31.57315731573157%" headers="mcps1.2.4.1.1 "><p id="p18352143518225"><a name="p18352143518225"></a><a name="p18352143518225"></a>ASCENDC_TPL_KERNEL_TYPE_DECL(args0, ...)</p>
 </td>
-<td class="cellrowborder" valign="top" width="20.59205920592059%" headers="mcps1.2.4.1.2 "><p id="p1435293519223"><a name="p1435293519223"></a><a name="p1435293519223"></a>定义算子模板参数的kernel类型</p>
+<td class="cellrowborder" valign="top" width="20.59205920592059%" headers="mcps1.2.4.1.2 "><p id="p1435293519223"><a name="p1435293519223"></a><a name="p1435293519223"></a>定义算子模板参数的核函数（Kernel）类型</p>
 </td>
 <td class="cellrowborder" valign="top" width="47.83478347834784%" headers="mcps1.2.4.1.3 "><p id="p4637141672417"><a name="p4637141672417"></a><a name="p4637141672417"></a>args0：参数名</p>
-<p id="p06378169245"><a name="p06378169245"></a><a name="p06378169245"></a>args1-argsn：后续为若干kernel类型。</p>
+<p id="p06378169245"><a name="p06378169245"></a><a name="p06378169245"></a>args1-argsn：后续为若干核函数（Kernel）类型。</p>
 <p id="p195465652615"><a name="p195465652615"></a><a name="p195465652615"></a>当前支持的核函数（Kernel）类型如下：</p>
 <a name="ul2054135610267"></a><a name="ul2054135610267"></a><ul id="ul2054135610267"><li>ASCENDC_TPL_AIV_ONLY // 算子执行时仅启动AI Core上的Vector核</li><li>ASCENDC_TPL_AIC_ONLY // 算子执行时仅启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIV_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Vector核</li><li>ASCENDC_TPL_MIX_AIC_1_0 // AIC、AIV混合场景下，算子执行时仅会启动AI Core上的Cube核</li><li>ASCENDC_TPL_MIX_AIC_1_1 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：1</li><li>ASCENDC_TPL_MIX_AIC_1_2 // AIC、AIV混合场景下，算子执行时会同时启动AI Core上的Cube核和Vector核，比例为1：2</li><li>ASCENDC_TPL_AICORE // 算子执行时仅会启动AI Core</li><li>ASCENDC_TPL_VECTORCORE // 该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_AICORE  //  该参数为预留参数，当前版本暂不支持</li><li>ASCENDC_TPL_MIX_VECTOR_CORE // 算子执行时会同时启动AI Core和Vector Core</li></ul>
 <p id="p176510543512"><a name="p176510543512"></a><a name="p176510543512"></a>本接口只允许与ASCENDC_TPL_SHARED_KERNEL_TYPE_SEL(args0, ...)配合使用。</p>

@@ -26,7 +26,7 @@
 |------|---------------------|---------------|
 | **MTE2搬运粒度小** | 虽已建立三级流水，但每次DataCopyIn仅搬入一个 `baseM×baseK` 块，MTE2指令发射次数多 | 大包搬运 → 一次搬入 `stepKa` 个block，减少发射次数 |
 | **MTE1指令队列压力大** | LoadData2D需按 `CUBE_BLOCK`（16B）粒度循环发射多条指令，MTE1队列深度仅32，容易成为瓶颈 | LoadData3D → 单条指令完成整个base切片搬运 |
-| **Scalar运行时开销** | Tiling参数在kernel内用Scalar动态计算，增加流水线停顿 | 常量Tiling → 模板参数编译期确定，消除Scalar开销 |
+| **Scalar运行时开销** | Tiling参数在核函数（Kernel）内用Scalar动态计算，增加流水线停顿 | 常量Tiling → 模板参数编译期确定，消除Scalar开销 |
 | **Cube/Fixpipe串行** | Mmad与Fixpipe指令级同步，Cube需等待结果全部写回才能开始下一轮计算 | UnitFlag → 512B粒度MMAD-FIXPIPE流水重叠 |
 | **MTE2带宽瓶颈** | 中级优化多核并行后，B矩阵被多核反复从GM读取，MTE2成为性能瓶颈 | L2Cache优化 → B矩阵跨轮驻留L2Cache，减少GM访问 |
 

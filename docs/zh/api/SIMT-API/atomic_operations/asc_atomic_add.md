@@ -115,7 +115,7 @@ UB或Global Memory上的初始数据。
 | 名称 | 说明 |
 | --- | --- |
 | `status` | 每个元素表示一条状态记录，0为正常，非0为异常。 |
-| `error_count` | Global Memory中的异常计数器，kernel启动前清零。 |
+| `error_count` | Global Memory中的异常计数器，核函数（Kernel）启动前清零。 |
 | `n` | 输入元素个数。 |
 
 核心代码实现如下：

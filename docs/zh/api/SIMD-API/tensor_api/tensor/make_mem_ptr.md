@@ -72,7 +72,7 @@ make_mem_ptr提供三种调用形式：
 | location::l0scalea | L0 ScaleA Buffer | MX矩阵计算ScaleA缓存 |
 | location::l0scaleb | L0 ScaleB Buffer | MX矩阵计算ScaleB缓存 |
 | location::l0c | L0C Buffer | 矩阵计算结果缓存 |
-| location::ub | UB | 统一缓存，矢量计算的数据存储区 |
+| location::ub | Unified Buffer（UB） | 统一缓存，矢量计算的数据存储区 |
 | location::bias | BiasTable Buffer | 偏置表缓存，带偏置矩阵计算的偏置存放区 |
 | location::fixbuf | Fixpipe Buffer | Fixpipe输出缓存，L0C到GM/UB的中转区 |
 

@@ -15,7 +15,7 @@
 **图1**  同步控制模式示意图<a id="sync_control_mode_diagram"></a>    
 ![](../../../../figures/3510_sync_control_mode_diagram.png "同步控制模式示意图")
 
-下述同步特性均以如下场景配置为例：核函数使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。**各核中与`flagId`对应的计数器初始值均为0。**
+下述同步特性均以如下场景配置为例：核函数（Kernel）使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。**各核中与`flagId`对应的计数器初始值均为0。**
 
 <!-- npu="A3,910b" id1 -->
 
@@ -41,7 +41,7 @@
 以图2为例，演示2个AI Core中的2个AIC（AIC0、AIC1）进行全核同步，代码片段如下：
 
 ```cpp
-// 进行核间同步时，即使只有AIC参与同步也不能用__cube__修饰核函数，具体原因请参考CrossCoreSetFlag的约束说明。
+// 进行核间同步时，即使只有AIC参与同步也不能用__cube__修饰核函数（Kernel），具体原因请参考CrossCoreSetFlag的约束说明。
 if (ASCEND_IS_AIC) {
     // 每个核都应该有类似如下的成对调用CrossCoreSetFlag和CrossCoreWaitFlag。
     // modeId必须配置为0，flagId要一致；CrossCoreWaitFlag的pipe使用默认值。
@@ -69,7 +69,7 @@ AIC1的CrossCoreSetFlag执行完后，此时调度模块感知到2个AIC均已�
 以图3为例，演示第0个AI Core中的2个AIV（AIV0-0、AIV0-1）进行全核同步，代码片段如下：
 
 ```cpp
-// 进行核间同步时，即使只有AIV参与同步也不能用__vector__修饰核函数，具体原因请参考CrossCoreSetFlag的约束说明。
+// 进行核间同步时，即使只有AIV参与同步也不能用__vector__修饰核函数（Kernel），具体原因请参考CrossCoreSetFlag的约束说明。
 if (ASCEND_IS_AIV) {
     if (AscendC:: GetBlockIdx() <= 1) {
         // 参与同步的2个AIV属于第0个AI Core。

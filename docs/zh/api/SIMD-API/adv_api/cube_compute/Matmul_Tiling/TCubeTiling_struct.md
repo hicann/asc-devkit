@@ -15,7 +15,7 @@ TCubeTiling结构体包含Matmul Tiling切分算法的相关参数，被传递�
 | <a id="deptha1"></a>depthA1, depthB1 | int | depthA1、depthB1分别表示L1 Buffer（A1）、L1 Buffer（B1）中全载基本块的份数，depthA1为L1 Buffer（A1）中全载baseM * baseK的份数，depthB1为L1 Buffer（B1）中全载baseN * baseK的份数。<br><br>注意：该参数取值必须大于0。 |
 | stepM， stepN，stepKa，stepKb<a name="p139009583566"></a> | int | stepM为左矩阵在L1 Buffer（A1）中缓存的buffer M方向上baseM的倍数。<br><br>stepN为右矩阵在L1 Buffer（B1）中缓存的buffer N方向上baseN的倍数。<br><br>stepKa为左矩阵在L1 Buffer（A1）中缓存的buffer Ka方向上baseK的倍数。<br><br>stepKb为右矩阵在L1 Buffer（B1）中缓存的buffer Kb方向上baseK的倍数。<br><br>注意：该参数取值必须大于0。 |
 | isBias<a name="p2051215216314"></a> | int | 是否启用Bias，参数取值如下：<br>0：不启用Bias（默认值）。1：启用Bias。<br><br>注意：该参数不支持除上述外的其他取值，设置为其他值时参数行为未定义。 |
-| transLength<a name="p1620315053211"></a> | int | max(A1Length, B1Length, C1Length, BiasLength)。其中，A1Length, B1Length, C1Length, BiasLength分别表示A/B/C/Bias矩阵在计算过程中需要临时占用的UB空间大小。 |
+| transLength<a name="p1620315053211"></a> | int | max(A1Length, B1Length, C1Length, BiasLength)。其中，A1Length, B1Length, C1Length, BiasLength分别表示A/B/C/Bias矩阵在计算过程中需要临时占用的Unified Buffer（UB）空间大小。 |
 | iterateOrder | int | 一次Iterate计算出[baseM, baseN]大小的C矩阵分片，Iterate完成后，Matmul会自动偏移下一次Iterate输出的C矩阵位置，iterOrder表示自动偏移的顺序。参数取值如下：<br>0：先往M轴方向偏移再往N轴方向偏移。1：先往N轴方向偏移再往M轴方向偏移。<br><br>注意：该参数不支持除上述外的其他取值，设置为其他值时参数行为未定义。 |
 | dbL0A, dbL0B,<br><br>dbL0C | int | MTE1是否开启double buffer。<br><br>dbL0A：左矩阵MTE1是否开启double buffer；dbL0B：右矩阵MTE1是否开启double buffer；dbL0C：MMAD是否开启double buffer。参数取值如下：<br>1：不开启double buffer。2：开启double buffer。<br><br>注意：该参数不支持除上述外的其他取值，设置为其他值时参数行为未定义。 |
 | shareMode | int | 该参数预留，开发者无需关注。 |

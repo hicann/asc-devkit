@@ -4,7 +4,7 @@
 
 本节将重点介绍如何启用Atlas 推理系列产品中的Vector Core。学习本节内容之前，建议您先熟悉[算子实现](../../../operator_practice/simd_operator_impl/vector_programming/overview.md)、[基于样例工程完成Kernel直调](../kernel_direct_call_from_sample.md)、[工程化算子开发](../../advanced_programming/aclnn_operator_development/overview.md)的相关内容，掌握基于AI Core的算子端到端开发流程。在此基础上本章将重点阐述启用Vector Core时的差异点。具体如下：
 
-1.  完成算子kernel侧开发时，需要通过宏[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)启用Vector Core，算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。如下的代码样例展示了启用Vector Core的方法：
+1.  完成算子核函数（Kernel）侧开发时，需要通过宏[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)启用Vector Core，算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。如下的代码样例展示了启用Vector Core的方法：
 
     ```
     extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *workspace, __gm__ uint8_t *tiling)
@@ -26,8 +26,8 @@
     }
     ```
 
-2.  完成host侧tiling开发时，设置的numBlocks代表的是AI Core和Vector Core的总数，比如用户在host侧设置numBlocks为10，则会启动总数为10的AI Core和Vector Core；为保证启动Vector Core，设置数值应大于AI Core的核数。您可以通过[GetCoreNumAic](../../../../api/Utils-API/platform_info/PlatformAscendC/GetCoreNumAic.md)接口获取AI Core的核数，[GetCoreNumVector](../../../../api/Utils-API/platform_info/PlatformAscendC/GetCoreNumVector.md)接口获取Vector Core的核数。如下代码片段，分别为使用kernel直调工程和自定义算子工程时的设置样例，此处设置为AI Core和Vector Core的总和，表示所有AI Core和Vector Core都启动。
-    -   kernel直调工程
+2.  完成host侧tiling开发时，设置的numBlocks代表的是AI Core和Vector Core的总数，比如用户在host侧设置numBlocks为10，则会启动总数为10的AI Core和Vector Core；为保证启动Vector Core，设置数值应大于AI Core的核数。您可以通过[GetCoreNumAic](../../../../api/Utils-API/platform_info/PlatformAscendC/GetCoreNumAic.md)接口获取AI Core的核数，[GetCoreNumVector](../../../../api/Utils-API/platform_info/PlatformAscendC/GetCoreNumVector.md)接口获取Vector Core的核数。如下代码片段，分别为使用核函数（Kernel）直调工程和自定义算子工程时的设置样例，此处设置为AI Core和Vector Core的总和，表示所有AI Core和Vector Core都启动。
+    -   核函数（Kernel）直调工程
 
         ```
         auto ascendcPlatform = platform_ascendc::PlatformAscendCManager::GetInstance();

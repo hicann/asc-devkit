@@ -2,9 +2,9 @@
 
 ## 样例一<a name="section5279737173215"></a>
 
-下面的样例展示了数学库kernel侧API和Tiling API GetXxxMaxMinTmpSize的配套使用方法，具体流程如下：
+下面的样例展示了数学库核函数（Kernel）侧API和Tiling API GetXxxMaxMinTmpSize的配套使用方法，具体流程如下：
 
-Host侧调用Tiling接口，获取所需临时空间的大小，并将其写入tiling data中；kernel侧再读取tiling data，获取相应的临时空间大小，并根据此分配临时空间。
+Host侧调用Tiling接口，获取所需临时空间的大小，并将其写入tiling data中；核函数（Kernel）侧再读取tiling data，获取相应的临时空间大小，并根据此分配临时空间。
 
 Host侧Tiling API使用[AscendC::TensorShape](../data_structures/TensorShape.md)描述输入数据的Tensor形状，使用样例如下：
 
@@ -58,7 +58,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 } // namespace optiling
 ```
 
-kernel侧读取tiling data，获取相应的临时空间大小，并根据此分配临时空间：
+核函数（Kernel）侧读取tiling data，获取相应的临时空间大小，并根据此分配临时空间：
 
 ```
 #include "kernel_operator.h"
@@ -249,9 +249,9 @@ extern "C" __global__ __aicore__ void math_custom(GM_ADDR srcGm, GM_ADDR dstGm, 
 
 ## 样例三<a name="section488747123318"></a>
 
-下面的样例展示了数学库kernel侧API和Tiling API GetXxxTmpBufferFactorSize的配套使用方法，具体流程如下：
+下面的样例展示了数学库核函数（Kernel）侧API和Tiling API GetXxxTmpBufferFactorSize的配套使用方法，具体流程如下：
 
-Host侧调用Tiling接口，获取maxLiveNodeCount和extraBuf，并推算算子单次最大计算元素数量，将其写入tiling data中；kernel侧再读取tiling data，获取该值，基于该值分配临时空间。
+Host侧调用Tiling接口，获取maxLiveNodeCount和extraBuf，并推算算子单次最大计算元素数量，将其写入tiling data中；核函数（Kernel）侧再读取tiling data，获取该值，基于该值分配临时空间。
 
 Host侧Tiling API使用样例:
 
@@ -326,7 +326,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 } // namespace optiling
 ```
 
-kernel侧样例:
+核函数（Kernel）侧样例:
 
 ```
 #include "kernel_operator.h"

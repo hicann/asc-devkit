@@ -342,7 +342,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
-|[asc_loadalign](reg_compute/load/asc_loadalign.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，NORM搬入模式。|`c_api/reg_compute/load/loadalign.h`|
+|[asc_loadalign](reg_compute/load/asc_loadalign.md)|对齐数据搬运接口，从Unified Buffer（UB）连续对齐搬入目的操作数，NORM搬入模式。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_datablock_strided](reg_compute/load/asc_loadalign_datablock_strided.md)|对齐数据搬运接口，从UB非连续对齐搬入8个DataBlock，通过函数返回值返回矢量数据寄存器。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_mask](reg_compute/load/asc_loadalign_mask.md)|对齐数据搬运接口，从UB连续对齐搬入掩码数据，通过函数返回值返回掩码寄存器。|`c_api/reg_compute/load/loadalign.h`|
 |[asc_loadalign_brc_datablock](reg_compute/load/asc_loadalign_brc_datablock.md)|对齐数据搬运接口，从UB连续对齐搬入目的操作数，读取一个DataBlock并广播到VL。|`c_api/reg_compute/load/loadalign.h`|

@@ -59,7 +59,7 @@ __aicore__ inline int32_t Wait(HcclHandle handleId)
 REGISTER_TILING_DEFAULT(ReduceScatterCustomTilingData); // ReduceScatterCustomTilingData为对应算子头文件定义的结构体
 GET_TILING_DATA_WITH_STRUCT(ReduceScatterCustomTilingData, tilingData, tilingGM);
 Hccl hccl;
-GM_ADDR contextGM = AscendC::GetHcclContext<0>(); // AscendC自定义算子kernel中，通过此方式获取HCCL context
+GM_ADDR contextGM = AscendC::GetHcclContext<0>(); // AscendC自定义算子核函数（Kernel）中，通过此方式获取HCCL context
 __gm__ void* mc2InitTiling = (__gm__ void*)(&tiling->mc2InitTiling);
 __gm__ void* mc2CcTiling = (__gm__ void*)(&(tiling->mc2CcTiling));
 hccl.InitV2(contextGM, &tilingData);

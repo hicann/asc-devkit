@@ -180,7 +180,7 @@ int main()
     std::vector<float> output(ELEMENTS);
     const std::vector<float> golden(ELEMENTS, static_cast<float>(K));
 
-    // 分配Device内存、启动Kernel并校验结果。
+    // 分配Device内存、启动核函数（Kernel）并校验结果。
     aclInit(nullptr);
     aclrtSetDevice(0);
     float* output_device = nullptr;

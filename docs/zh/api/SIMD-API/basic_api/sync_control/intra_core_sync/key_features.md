@@ -263,7 +263,7 @@ AscendC::Add(zLocal, xLocal, yLocal, blockLength);
 根据开发场景不同，添加该编译选项的方式如下：
 
 - 直接使用毕昇编译器的场景，可以直接在编译命令中添加该编译选项。
-- 使用Ascend C kernel直调算子工程，可以通过`ascendc_compile_options`添加该编译选项。
+- 使用Ascend C核函数（Kernel）直调算子工程，可以通过`ascendc_compile_options`添加该编译选项。
 - 使用Ascend C自定义算子开发工程，可以通过`add_ops_compile_options`添加该编译选项。
 
 如下的代码文件sync_log_test.h：

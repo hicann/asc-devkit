@@ -132,7 +132,7 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
 
 ```cpp
 AscendC::DataCopy(dstGlobal, dstLocal, TOTAL_LENGTH);
-// 在最后一条搬运指令后调用，使之后的指令可与后续子kernel并行执行。
+// 在最后一条搬运指令后调用，使之后的指令可与后续子核函数（Kernel）并行执行。
 AscendC::SetNextTaskStart();
 ```
 

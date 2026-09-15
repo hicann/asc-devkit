@@ -98,7 +98,7 @@ __vector__ __global__ void add_custom(__gm__ float* x, __gm__ float* y, __gm__ f
 
 该接口提供CPU域/NPU域调试场景下的格式化输出功能。
 
-在算子kernel侧实现代码中需要输出日志信息的地方调用[printf](../../../../../api/Utils-API/tuning_interface/printf.md)接口打印相关内容。
+在算子核函数（Kernel）侧实现代码中需要输出日志信息的地方调用[printf](../../../../../api/Utils-API/tuning_interface/printf.md)接口打印相关内容。
 
 示例如下：
 
@@ -112,7 +112,7 @@ AscendC::printf("add blockIdx=%d\n", AscendC::GetBlockIdx());
 
 基于算子工程开发的算子，可以使用该接口Dump指定[LocalTensor](../../../../../api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_intro.md)的内容。同时支持打印自定义的附加信息（仅支持uint32\_t数据类型的信息），比如打印当前行号等。
 
-在算子kernel侧实现代码中需要打印Tensor数据的地方调用[DumpTensor](../../../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)接口打印相关内容。样例如下：
+在算子核函数（Kernel）侧实现代码中需要打印Tensor数据的地方调用[DumpTensor](../../../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)接口打印相关内容。样例如下：
 
 ```cpp
 // 向量计算: z = x + y

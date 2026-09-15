@@ -85,7 +85,7 @@
 
 <tr id="row124534535416"><td class="cellrowborder" valign="top" width="24.54%" headers="mcps1.2.3.1.1 "><p id="p144516455548"><a name="p144516455548"></a><a name="p144516455548"></a>MemoryUB.csv</p>
 </td>
-<td class="cellrowborder" valign="top" width="75.46000000000001%" headers="mcps1.2.3.1.2 "><p id="p845134505416"><a name="p845134505416"></a><a name="p845134505416"></a>mte/vector/scalar采集ub读写带宽速率，可参考MemoryUB（UB读写带宽速率）。
+<td class="cellrowborder" valign="top" width="75.46000000000001%" headers="mcps1.2.3.1.2 "><p id="p845134505416"><a name="p845134505416"></a><a name="p845134505416"></a>mte/vector/scalar采集UB读写带宽速率，可参考MemoryUB（UB读写带宽速率）。</p>
 </td>
 </tr>
 

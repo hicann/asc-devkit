@@ -2,18 +2,18 @@
 
 ## 功能说明
 
-GroupNorm Tiling API用于获取GroupNorm kernel计算时所需的Tiling参数。获取Tiling参数主要分为如下两步：
+GroupNorm Tiling API用于获取GroupNorm核函数（Kernel）计算时所需的Tiling参数。获取Tiling参数主要分为如下两步：
 
 1.  通过**GetGroupNormMaxMinTmpSize**获取GroupNorm接口计算所需最大和最小临时空间大小。
 
-    kernel侧GroupNorm接口的计算需要开发者预留/申请临时空间，**GetGroupNormMaxMinTmpSize**用于在host侧获取预留/申请的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到kernel侧使用。
+    核函数（Kernel）侧GroupNorm接口的计算需要开发者预留/申请临时空间，**GetGroupNormMaxMinTmpSize**用于在host侧获取预留/申请的最大最小临时空间大小，开发者基于此范围选择合适的空间大小作为Tiling参数传递到核函数（Kernel）侧使用。
 
     -   为保证功能正确，预留/申请的临时空间大小不能小于最小临时空间大小；
-    -   在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
+    -   在最小临时空间-最大临时空间范围内，随着临时空间增大，核函数（Kernel）侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。
 
-2.  通过**GetGroupNormNDTilingInfo**获取GroupNorm kernel侧接口所需tiling参数。
+2.  通过**GetGroupNormNDTilingInfo**获取GroupNorm核函数（Kernel）侧接口所需tiling参数。
 
-    GroupNorm Tiling结构体的定义如下，开发者无需关注该tiling结构的具体信息，只需要传递到kernel侧，传入GroupNorm高阶API接口，直接进行使用即可。
+    GroupNorm Tiling结构体的定义如下，开发者无需关注该tiling结构的具体信息，只需要传递到核函数（Kernel）侧，传入GroupNorm高阶API接口，直接进行使用即可。
 
     ```
     struct GroupNormTiling {
@@ -74,7 +74,7 @@ void GetGroupNormNDTilingInfo(const AscendC::TensorShape& srcShape, const uint32
 | typeSize | 输入 | 输入数据inputX的数据类型大小，单位为字节。比如输入的数据类型为half，此处应传入2。 |
 | isReuseSource | 输入 | 中间变量是否能够复用输入内存。 |
 | groupNum | 输入 | 在C维度上的分组数。 |
-| maxValue | 输出 | 输出GroupNorm接口所需的tiling信息（最大临时空间大小）。<br><br>GroupNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，kernel侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
+| maxValue | 输出 | 输出GroupNorm接口所需的tiling信息（最大临时空间大小）。<br><br>GroupNorm接口能完成计算所需的最大临时空间大小，超出该值的空间不会被该接口使用。在最小临时空间-最大临时空间范围内，随着临时空间增大，核函数（Kernel）侧接口计算性能会有一定程度的优化提升。为了达到更好的性能，开发者可以根据实际的内存使用情况进行空间预留/申请。<br>maxValue仅作为参考值，有可能大于Unified Buffer（UB）剩余空间的大小，该场景下，开发者需要根据UB剩余空间的大小来选取合适的临时空间大小。 |
 | minValue | 输出 | 输出GroupNorm接口所需的tiling信息（最小临时空间大小）。<br><br>GroupNorm接口能完成计算所需最小临时空间大小。为保证功能正确，接口计算时预留/申请的临时空间不能小于该数值。 |
 
 **表2**  GetGroupNormNDTilingInfo接口参数列表：
@@ -98,7 +98,7 @@ void GetGroupNormNDTilingInfo(const AscendC::TensorShape& srcShape, const uint32
 
 ## 调用示例
 
-如下样例介绍了host侧获取Tiling参数的流程以及该参数如何在kernel侧使用。样例中输入Tensor的shape大小为\[2，16，8, 8\]，输入的数据类型为half。
+如下样例介绍了host侧获取Tiling参数的流程以及该参数如何在核函数（Kernel）侧使用。样例中输入Tensor的shape大小为\[2，16，8, 8\]，输入的数据类型为half。
 
 1.  将GroupNormTiling结构体参数增加至TilingData结构体，作为TilingData结构体的一个字段。
 
@@ -116,7 +116,7 @@ void GetGroupNormNDTilingInfo(const AscendC::TensorShape& srcShape, const uint32
     END_TILING_DATA_DEF;
     ```
 
-2.  Tiling实现函数中，首先调用**GetGroupNormMaxMinTmpSize**接口获取GroupNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后根据输入shape、剩余的可供计算的空间大小等信息获取GroupNorm kernel侧接口所需tiling参数。
+2.  Tiling实现函数中，首先调用**GetGroupNormMaxMinTmpSize**接口获取GroupNorm接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小，然后根据输入shape、剩余的可供计算的空间大小等信息获取GroupNorm核函数（Kernel）侧接口所需tiling参数。
 
     ```
     namespace optiling {
@@ -148,7 +148,7 @@ void GetGroupNormNDTilingInfo(const AscendC::TensorShape& srcShape, const uint32
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的GroupNorm Tiling信息传入GroupNorm接口参与计算。
+3.  对应的核函数（Kernel）侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的GroupNorm Tiling信息传入GroupNorm接口参与计算。
 
     ```
     extern "C" __global__ __aicore__ void groupnorm_custom(

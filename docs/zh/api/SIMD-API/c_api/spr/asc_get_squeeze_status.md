@@ -54,7 +54,7 @@ PIPE_S
 
 ## 调用示例
 
-本示例模拟稀疏数据压缩场景：输入包含256个`uint16_t`数据，掩码选择每4个数据中的第1个，连续筛选并搬出64个有效数据。Kernel通过`asc_get_squeeze_status`获取已搬出的有效字节数，Host侧检查返回值是否为128字节。筛选流程完成后，需要调用[asc_squeeze_and_storeunalign_finalize](../reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_finalize.md)搬出尾块。
+本示例模拟稀疏数据压缩场景：输入包含256个`uint16_t`数据，掩码选择每4个数据中的第1个，连续筛选并搬出64个有效数据。核函数（Kernel）通过`asc_get_squeeze_status`获取已搬出的有效字节数，Host侧检查返回值是否为128字节。筛选流程完成后，需要调用[asc_squeeze_and_storeunalign_finalize](../reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_finalize.md)搬出尾块。
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行。产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 

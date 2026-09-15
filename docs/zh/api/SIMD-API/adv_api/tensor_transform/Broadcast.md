@@ -93,7 +93,7 @@
 
 另外，提供了一个核函数（Kernel）侧计算Tiling的接口，针对Broadcast的实现计算Tiling，获取Tiling结果。该接口的模板参数功能与支持动态shape的Broadcast接口模板参数相同，其余参数说明请参见[表5](#table5458981523)。
 
--   **kernel侧tiling计算接口**
+-   **核函数（Kernel）侧tiling计算接口**
 
     <!-- npu="950" id12 -->
     仅在Ascend 950PR/Ascend 950DT上支持。
@@ -145,7 +145,7 @@
 | srcShape | 输入 | 输入tensor的shape：uint32_t类型的数组，长度取值范围为[1, 9]。输入/输出的shape维度数目必须一致，且满足条件dstShape[i] >= srcShape[i]。<br><br>当srcShape[i]的值为1，且dstShape[i]不等于srcShape[i]时，表示i轴为广播轴。 |
 | tiling | 输入 | Broadcast接口所需的Tiling信息。BroadcastTiling*类型，通过调用核函数（Kernel）侧的tiling计算接口GetBroadcastTilingInfo获取。 |
 
-**表5**  kernel侧tiling计算接口参数说明
+**表5**  核函数（Kernel）侧tiling计算接口参数说明
 
 <a name="table5458981523"></a>
 

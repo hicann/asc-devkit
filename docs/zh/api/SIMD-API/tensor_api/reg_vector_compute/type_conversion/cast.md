@@ -130,7 +130,7 @@ constexpr cast_options default_cast_ops = {
 - 位宽比为4时，可选择`zero`、`one`、`two`或`three`，对应每组中的第0至第3个位置。
 - 源、目的类型位宽相同时，使用`zero`。
 
-`cast`只完成寄存器计算，不会隐式调整UB中的数据排布。连续处理Tensor数据时，应使`local_tensor::load`、`cast_options::layout`和`local_tensor::store`的排布保持一致。常见用法如下：
+`cast`只完成寄存器计算，不会隐式调整Unified Buffer（UB）中的数据排布。连续处理Tensor数据时，应使`local_tensor::load`、`cast_options::layout`和`local_tensor::store`的排布保持一致。常见用法如下：
 
 | 转换方向 | 搬入 | 搬出 |
 | --- | --- | --- |

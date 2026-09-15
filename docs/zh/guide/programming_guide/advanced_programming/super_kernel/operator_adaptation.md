@@ -136,4 +136,4 @@ Cache刷新机制示意图如下图所示：
 
 ## 核函数（Kernel）直调算子的额外适配
 
-对于使用`<<<>>>`方式开发的Ascend C算子，目前仅支持在npugraph_ex后端融合进SuperKernel。此类算子除需遵循上述通用约束外，还需要在算子kernel入口侧增加SuperKernel入口函数。具体方法请参考[核函数（Kernel）直调算子额外适配说明](kernel_direct_call_adaptation.md)。
+对于使用`<<<>>>`方式开发的Ascend C算子，目前仅支持在npugraph_ex后端融合进SuperKernel。此类算子除需遵循上述通用约束外，还需要在算子核函数（Kernel）入口侧增加SuperKernel入口函数。具体方法请参考[核函数（Kernel）直调算子额外适配说明](kernel_direct_call_adaptation.md)。

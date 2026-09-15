@@ -148,12 +148,12 @@ Ascend C资料体系由**五份**核心文档组成，通过交叉链接形成�
 
 **关联层**：
 
-如下算子实践参考文档内容中提及核函数，但未进行解释核函数的规则或添加链接：
+如下算子实践参考文档内容中提及核函数（Kernel），但未进行解释核函数（Kernel）的规则或添加链接：
 
 ``` text
 # 核函数定义
 
-根据核函数中介绍的规则进行核函数的定义。核函数名为matmul_custom，有3个参数a，b，c，其中a，b都为输入内存，c为输出内存。使用函数类型限定符__global__来标识它是一个核函数，可以被<<<>>>调用；使用函数类型限定符__cube__来标识该核函数在设备端aicore上的Cube核执行。
+根据核函数（Kernel）中介绍的规则进行核函数（Kernel）的定义。核函数（Kernel）名为matmul_custom，有3个参数a，b，c，其中a，b都为输入内存，c为输出内存。使用函数类型限定符__global__来标识它是一个核函数（Kernel），可以被<<<>>>调用；使用函数类型限定符__cube__来标识该核函数（Kernel）在设备端aicore上的Cube核执行。
 ```
 
 ### DOC-DISC-01 五文档链接联动
@@ -185,7 +185,7 @@ Ascend C资料体系由**五份**核心文档组成，通过交叉链接形成�
 
 【正例】
 
-**L0**：在如下入门教程中提到了核函数这一概念，概念详细内容链接到编程指南中。
+**L0**：在如下入门教程中提到了核函数（Kernel）这一概念，概念详细内容链接到编程指南中。
 
 ```text
 3. **启动NPU计算任务**：调用Device侧预先编写的[核函数](../../programming_guide/programming_model/ai_core_simd_programming/kernel_function.md)，NPU开始并行计算。
@@ -228,10 +228,10 @@ Ascend C资料体系由**五份**核心文档组成，通过交叉链接形成�
 **L5**：在如下算子实践参考文档中首次提及矢量编程范式这一编程概念，链接到该概念的权威解释。
 
 ```text
-基于Ascend C方式实现基础矢量算子核函数的流程如下所示。
+基于Ascend C方式实现基础矢量算子核函数（Kernel）的流程如下所示。
 -   算子分析：分析算子的数学表达式、输入、输出以及计算逻辑的实现，明确需要调用的Ascend C接口。
--   核函数定义：定义Ascend C算子入口函数。
--   根据[矢量编程范式](../../../programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md#section116515238815)实现算子类：完成核函数的内部实现，包括3个基本任务：CopyIn，Compute，CopyOut。
+-   核函数（Kernel）定义：定义Ascend C算子入口函数。
+-   根据[矢量编程范式](../../../programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md#section116515238815)实现算子类：完成核函数（Kernel）的内部实现，包括3个基本任务：CopyIn，Compute，CopyOut。
 ```
 
 **L6**：在如下算子实践参考文档中，性能优化方案因架构版本不同而存在差异，需要链接到跨代迁移指南呈现架构差异。
@@ -437,7 +437,7 @@ inQueueY.FreeTensor(yLocal);
 | SPMD vs SIMD vs SIMT | SPMD=编程模型、SIMD=指令执行模式、SIMT=线程执行模式 | 层级关系图 |
 | 四步法(Tiling→搬→算→搬) vs TPipe四步(Alloc→EnQue→...) | 编程流程vs流水管理范式 | 对比表 |
 | DMA vs MTE vs DataCopy | 三层名同一件事 | 术语映射表 |
-| MemBase(基础API) vs RegBase(VF融合API) | 计算位置不同(UB vs寄存器)、Load/Store次数不同 | 对比表+场景推荐 |
+| MemBase(基础API) vs RegBase(VF融合API) | 计算位置不同(Unified Buffer（UB） vs寄存器)、Load/Store次数不同 | 对比表+场景推荐 |
 | Block vs CTA | Ascend C编程单元vs CUDA等价概念 | 竞品映射表 |
 | `LocalTensor` vs `GlobalTensor` vs `TBuf` | 计算用/外部用/临时用缓冲区 | 对照表+场景推荐 |
 | `__ubuf__` vs `__cbuf__` vs `__gm__` | UB空间/L1空间/GM空间地址限定符 | 对照表 |
@@ -453,7 +453,7 @@ inQueueY.FreeTensor(yLocal);
 | 地址空间限定符 | AI Core物理存储空间 |
 |----------------|---------------------|
 | \_\_gm\_\_ | 设备侧内存GM |
-| \_\_ubuf\_\_ | Vector Unified Buffer |
+| \_\_ubuf\_\_ | UB |
 | \_\_ca\_\_ | Cube L0A Buffer |
 | \_\_cb\_\_ | Cube L0B Buffer |
 | \_\_cc\_\_ | Cube L0C Buffer |
@@ -635,9 +635,9 @@ AscendC::Mutex::Unlock<PIPE_MTE2>(mutex_id);
 
 第一类代码：**算子原型定义**，声明算子的接口信息，包括输入、输出和属性，以及支持的dtype、format。
 
-第二类代码：**Host侧Tiling实现**，在Kernel执行前准备运行参数。Kernel在AI Core上运行前，需要知道本次输入一共有多少数据、如何切核并启动多少个Block、每个Block内部如何继续切分、是否需要额外workspace，以及是否需要设置调度模式等launch配置。
+第二类代码：**Host侧Tiling实现**，在核函数（Kernel）执行前准备运行参数。核函数（Kernel）在AI Core上运行前，需要知道本次输入一共有多少数据、如何切核并启动多少个Block、每个Block内部如何继续切分、是否需要额外workspace，以及是否需要设置调度模式等launch配置。
 
-第三类代码：**Kernel侧算子实现**，在AI Core上执行的实际计算。Kernel侧根据Tiling传入的参数，从GM搬运数据到UB，在UB上完成计算，再把结果写回GM。
+第三类代码：**核函数（Kernel）侧算子实现**，在AI Core上执行的实际计算。核函数（Kernel）侧根据Tiling传入的参数，从GM搬运数据到UB，在UB上完成计算，再把结果写回GM。
 
 本文的功能设计，就是在写这三类代码前，先确定每一类代码需要表达什么。
 ```
@@ -673,7 +673,7 @@ AscendC::Mutex::Unlock<PIPE_MTE2>(mutex_id);
 | 元素数量范围 | 明确最小值、最大值、对齐粒度 | "8元素"约束未文档化 |
 | 格式限制 | ND/NZ/FRACTAL等格式支持情况 | 格式切换的偏移计算差异 |
 | 使用模式限制 | 直调/工程模式/调试模式的差异 | PipeBarrier仅特定模式可用 |
-| 多核/多实例限制 | kernel内只读、核间同步要求 | 配置参数只读语义未说明 |
+| 多核/多实例限制 | 核函数（Kernel）内只读、核间同步要求 | 配置参数只读语义未说明 |
 | API组合限制 | 互斥API/必需搭配API | 文档推荐的组合实际不支持 |
 
 **操作要求**：约束信息从规格说明书和assert代码中提取，集中展示在首次定义处。
@@ -765,8 +765,8 @@ AscendC::Mutex::Unlock<PIPE_MTE2>(mutex_id);
 
 | 层级 | 定位 | 篇幅 | 要求 |
 |------|------|------|------|
-| **Minimal** | 最小可运行示例 | <30行核心代码 | 核函数的代码片段和完整样例链接 |
-| **Standard** | 典型用法示例 | 50-150行 | 包含核函数定义和调用的代码片段 |
+| **Minimal** | 最小可运行示例 | <30行核心代码 | 核函数（Kernel）的代码片段和完整样例链接 |
+| **Standard** | 典型用法示例 | 50-150行 | 包含核函数（Kernel）定义和调用的代码片段 |
 
 **各文档的具体要求**：
 

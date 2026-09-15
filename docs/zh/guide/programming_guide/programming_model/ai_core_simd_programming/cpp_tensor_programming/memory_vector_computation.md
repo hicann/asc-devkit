@@ -12,7 +12,7 @@ Memory矢量计算的数据流为：数据搬入 → 计算 → 数据搬出。�
 
 ## Memory矢量计算内存管理
 
-Memory矢量编程的核心是基于Local Memory（UB）完成矢量计算，要求开发者先将输入数据从Global Memory（以下简称GM）搬入UB，再通过Vector计算指令执行运算。UB的管理依赖LocalTensor对象实现，开发者可通过LocalMemAllocator分配器申请UB空间，为后续矢量计算提供存储载体。
+Memory矢量编程的核心是基于UB完成矢量计算，要求开发者先将输入数据从Global Memory（以下简称GM）搬入UB，再通过Vector计算指令执行运算。UB的管理依赖LocalTensor对象实现，开发者可通过LocalMemAllocator分配器申请UB空间，为后续矢量计算提供存储载体。
 
 ### 基础Tensor(不带Layout)定义
 

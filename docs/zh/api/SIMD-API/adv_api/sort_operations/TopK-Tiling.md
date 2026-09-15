@@ -4,14 +4,14 @@
 
 用于获取TopK Tiling参数。
 
-Ascend C提供TopK Tiling API，方便用户获取TopK kernel计算时所需的Tiling参数。
+Ascend C提供TopK Tiling API，方便用户获取TopK核函数（Kernel）计算时所需的Tiling参数。
 
 获取Tiling参数主要分为如下两步：
 
 1.  获取TopK接口计算所需最小和最大临时空间大小，注意该步骤不是必须的，只是作为一个参考，供合理分配计算空间。
-2.  获取TopK kernel侧接口所需tiling参数。
+2.  获取TopK核函数（Kernel）侧接口所需tiling参数。
 
-    TopK Tiling结构体的定义如下，开发者无需关注该tiling结构的具体信息，只需要传递到kernel侧，传入TopK高阶API接口，直接进行使用即可。
+    TopK Tiling结构体的定义如下，开发者无需关注该tiling结构的具体信息，只需要传递到核函数（Kernel）侧，传入TopK高阶API接口，直接进行使用即可。
 
     ```
     struct TopkTiling {
@@ -78,10 +78,10 @@ bool TopKTilingFunc(const platform_ascendc::PlatformAscendC& ascendcPlatform, co
 | inner | 输入 | 表示TopK接口输入srcLocal的内轴长度，该参数的取值为32的整数倍。 |
 | outter | 输入 | 表示TopK接口输入srcLocal的外轴长度。 |
 | k | 输入 | 获取前k个最大值或最小值及其对应的索引。 |
-| isReuseSource | 输入 | 中间变量是否能够复用输入内存。与kernel侧接口的isReuseSrc保持一致。 |
-| isInitIndex | 输入 | 是否传入输入数据对应的索引，与kernel侧接口一致。 |
-| mode | 输入 | 选择TopKMode::TOPK_NORMAL模式或者TopKMode::TOPK_NSMALL模式，与kernel侧接口一致。 |
-| isLargest | 输入 | 表示降序/升序，true表示降序，false表示升序。与kernel侧接口一致。 |
+| isReuseSource | 输入 | 中间变量是否能够复用输入内存。与核函数（Kernel）侧接口的isReuseSrc保持一致。 |
+| isInitIndex | 输入 | 是否传入输入数据对应的索引，与核函数（Kernel）侧接口一致。 |
+| mode | 输入 | 选择TopKMode::TOPK_NORMAL模式或者TopKMode::TOPK_NSMALL模式，与核函数（Kernel）侧接口一致。 |
+| isLargest | 输入 | 表示降序/升序，true表示降序，false表示升序。与核函数（Kernel）侧接口一致。 |
 | dataType | 输入 | 表示待排序数据的数据类型，参数类型为[AscendC::TensorDataType](../data_structures/TensorDataType.md)。该参数的取值与核函数（Kernel）接口参数srcLocal的数据类型保持一致。 |
 | config | 输入 | TopK计算的相关配置，TopKConfig类型定义如下方代码所示，包括算法选择、取最大值或最小值、是否对结果排序。该参数的配置需要与TopK核函数（Kernel）接口模板参数的配置保持一致。<br>algo：选择的排序算法。默认为MERGE_SORT算法，当前仅支持RADIX_SELECT算法，用户需要显式指定algo为TopKAlgo::RADIX_SELECT。<br>order：表示获取前k个最大值或者获取前k个最小值，取值如下：UNSET：默认值，按照函数参数isLargest的配置实现。isLargest为true时，取前k个最大值及其对应的索引，isLargest为false，取前k个最小值及其对应的索引。LARGEST：表示取前k个最大值及其对应的索引。取值为LARGEST时，函数参数isLargest的配置不生效。SMALLEST：表示取前k个最小值及其对应的索引。取值为SMALLEST时，函数参数isLargest的配置不生效。<br>sorted：表示是否对输出结果进行排序。取值为true，对输出结果进行排序；取值为false，不对输出结果进行排序。 |
 | dataTypeSize | 输入 | 参与计算的srcLocal数据类型的大小，比如half=2， float=4 |
@@ -107,9 +107,9 @@ enum class TopKOrder { UNSET, LARGEST, SMALLEST };
 | outter | 输入 | 表示TopK接口输入srcLocal的外轴长度。 |
 | k | 输入 | 获取前k个最大值或最小值及其对应的索引。 |
 | dataTypeSize | 输入 | 参与计算的srcLocal数据类型的大小，比如half=2， float=4。 |
-| isInitIndex | 输入 | 是否传入输入数据对应的索引，与kernel侧接口一致。 |
-| mode | 输入 | 选择TopKMode::TOPK_NORMAL模式或者TopKMode::TOPK_NSMALL模式，与kernel侧接口一致。 |
-| isLargest | 输入 | 表示降序/升序，true表示降序，false表示升序。与kernel侧接口一致。 |
+| isInitIndex | 输入 | 是否传入输入数据对应的索引，与核函数（Kernel）侧接口一致。 |
+| mode | 输入 | 选择TopKMode::TOPK_NORMAL模式或者TopKMode::TOPK_NSMALL模式，与核函数（Kernel）侧接口一致。 |
+| isLargest | 输入 | 表示降序/升序，true表示降序，false表示升序。与核函数（Kernel）侧接口一致。 |
 | topKTiling | 输出 | 输出TopK接口所需的tiling信息。 |
 
 ## 返回值说明
@@ -124,7 +124,7 @@ TopKTilingFunc返回值为true/false，true表示成功拿到TopK的Tiling各项
 
 ## 调用示例
 
-如下样例介绍了使用TopK高阶API时host侧获取Tiling参数的流程以及该参数如何在kernel侧使用。
+如下样例介绍了使用TopK高阶API时host侧获取Tiling参数的流程以及该参数如何在核函数（Kernel）侧使用。
 
 1.  将TopK Tiling结构体参数增加至TilingData结构体，作为TilingData结构体的一个字段。
 
@@ -151,7 +151,7 @@ TopKTilingFunc返回值为true/false，true表示成功拿到TopK的Tiling各项
     } // namespace optiling
     ```
 
-2.  Tiling实现函数中，首先调用GetTopKMaxMinTmpSize接口获取TopK接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小；然后根据输入shape等信息获取TopK kernel侧接口所需tiling参数。MERGE\_SORT算法参考如下调用示例。
+2.  Tiling实现函数中，首先调用GetTopKMaxMinTmpSize接口获取TopK接口能完成计算所需最大/最小临时空间大小，根据该范围结合实际的内存使用情况设置合适的空间大小；然后根据输入shape等信息获取TopK核函数（Kernel）侧接口所需tiling参数。MERGE\_SORT算法参考如下调用示例。
 
     ```
     namespace optiling {
@@ -273,7 +273,7 @@ TopKTilingFunc返回值为true/false，true表示成功拿到TopK的Tiling各项
     } // namespace optiling
     ```
 
-3.  对应的kernel侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的TopK Tiling信息传入TopK接口参与计算。完整的kernel侧样例请参考[调用示例](TopK.md#section94691236101419)。
+3.  对应的核函数（Kernel）侧通过在核函数（Kernel）中调用GET\_TILING\_DATA获取TilingData，继而将TilingData中的TopK Tiling信息传入TopK接口参与计算。完整的核函数（Kernel）侧样例请参考[调用示例](TopK.md#section94691236101419)。
 
     ```
     extern "C" __global__ __aicore__ void topk_custom(

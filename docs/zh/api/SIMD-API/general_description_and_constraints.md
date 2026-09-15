@@ -15,7 +15,7 @@
 > - 基础API：不涉及
 > - 高阶API：因高阶 API 配套 Host Tiling 接口，需要链接 `libtiling_api.a`。
 
-为方便开发者使用，Ascend C基础API和高阶API均支持通过包含kernel\_operator.h文件来调用相应接口。如无特殊说明，包含该头文件即可满足接口调用需求。若API文档中有特殊说明，则应遵循API的具体说明。
+为方便开发者使用，Ascend C基础API和高阶API均支持通过包含核函数（Kernel）\_operator.h文件来调用相应接口。如无特殊说明，包含该头文件即可满足接口调用需求。若API文档中有特殊说明，则应遵循API的具体说明。
 
 ```
 #include "kernel_operator.h"

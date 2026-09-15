@@ -30,7 +30,7 @@
 
 **`asc_copy_ub2gm_align_sync`接口已废弃，请使用[asc_copy_ub2gm_align连续数据搬运](../vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md#连续数据搬运)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
 
-提供数据非对齐搬运的功能，将数据从Unified Buffer (UB)搬运到Global Memory (GM)，并支持8位/16位/32位数据类型搬运。
+提供数据非对齐搬运的功能，将数据从Unified Buffer（UB）搬运到Global Memory (GM)，并支持8位/16位/32位数据类型搬运。
 
 本接口为同步搬运接口，不支持设置填充值。若搬运数据长度非32字节对齐，硬件在读取UB数据时自动补充dummy假数据，将搬运数据补齐至32字节对齐。写入GM时会丢弃补充的dummy假数据。
 

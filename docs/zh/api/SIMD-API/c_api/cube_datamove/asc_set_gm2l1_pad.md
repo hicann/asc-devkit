@@ -84,7 +84,7 @@ bisheng examples.asc -o main --npu-arch=dav-3510
 #include <cstdint>
 #include "c_api/asc_simd.h"
 
-// 该核函数在AIC上执行GM到L1的搬运。
+// 该核函数（Kernel）在AIC上执行GM到L1的搬运。
 __global__ __cube__ void Gm2L1AlignPadExample(__gm__ uint8_t* src)
 {
     asc_init();

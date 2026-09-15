@@ -80,7 +80,7 @@ $$
 | :----- | :-------- | :--- |
 | dst | 输入/输出 | 目的操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
 | src0、src1 | 输入 | 源操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-| count | 输入 | 参与计算的元素个数。<br>**注：参数取值范围和操作数的数据类型有关，数据类型不同，能够处理的元素个数最大值不同，最大处理的数据量不能超过UB大小限制。** |
+| count | 输入 | 参与计算的元素个数。<br>**注：参数取值范围和操作数的数据类型有关，数据类型不同，能够处理的元素个数最大值不同，最大处理的数据量不能超过Unified Buffer（UB）大小限制。** |
 | mask[]/mask | 输入 | mask用于控制每次迭代内参与计算的元素。<br>设置详见[掩码操作](../SIMD_compute/mask.md)。 |
 | repeatTime | 输入 | 重复迭代次数。<br>矢量计算单元，每次读取连续的256Bytes数据进行计算，为完成对输入数据的处理，必须通过多次迭代（repeat）才能完成所有数据的读取与计算。repeatTime表示迭代的次数。<br>关于该参数的具体描述请参考[高维切分](../SIMD_compute/high_dim_split.md)。 |
 | repeatParams | 输入 | 控制操作数地址步长的参数。[BinaryRepeatParams](../../aux_data_structures/BinaryRepeatParams.md)类型，包含操作数相邻迭代间相同datablock的地址步长，操作数同一迭代内不同datablock的地址步长等参数。<br>相邻迭代间的地址步长参数说明请参考[repeatStride](../SIMD_compute/high_dim_split.md)；同一迭代内DataBlock的地址步长参数说明请参考[dataBlockStride](../SIMD_compute/high_dim_split.md)。 |
@@ -142,7 +142,7 @@ Kirin 9030，支持的数据类型为：half、float。
 
     地址不重叠场景下，无法在一拍读取dst、src0、src1三块不同地址下的数据，因此只能达到一半的理论并行度，理论并行度将在原有基础上减半；在地址重叠场景下，则保持原有理论并行度。
 <!-- npu="950" id22 -->
-- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+- 对UB空间的占用说明。针对Ascend 950PR/Ascend 950DT：
   - tensor高维切分计算接口占用8KB UB临时空间。
   - tensor前n个数据连续计算接口不涉及8KB UB临时空间的占用。
 <!-- end id22 -->

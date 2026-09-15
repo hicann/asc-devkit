@@ -54,7 +54,7 @@ PIPE_S
 
 ## 调用示例
 
-本示例模拟核间同步初始化检查场景：Host侧通过`aclrtGetHardwareSyncAddr`获取硬件同步地址，Kernel将该地址转换为`uint64_t`类型并调用`asc_set_ffts_base_addr`完成设置，再通过`asc_get_ffts_base_addr`回读。Host侧检查设置值与回读值是否一致。完成该配置后，才能使用[asc_sync_block_arrive](../../sync/asc_sync_block_arrive.md)和[asc_sync_block_wait](../../sync/asc_sync_block_wait.md)进行核间同步。
+本示例模拟核间同步初始化检查场景：Host侧通过`aclrtGetHardwareSyncAddr`获取硬件同步地址，核函数（Kernel）将该地址转换为`uint64_t`类型并调用`asc_set_ffts_base_addr`完成设置，再通过`asc_get_ffts_base_addr`回读。Host侧检查设置值与回读值是否一致。完成该配置后，才能使用[asc_sync_block_arrive](../../sync/asc_sync_block_arrive.md)和[asc_sync_block_wait](../../sync/asc_sync_block_wait.md)进行核间同步。
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
@@ -83,8 +83,8 @@ constexpr uint64_t UNSET_VALUE = ~0ULL;
 /*
  * 本示例说明：
  * - ffts_addr由Host侧调用aclrtGetHardwareSyncAddr获得。
- * - Kernel将ffts_addr转换为uint64_t类型并设置核间同步寄存器基地址。
- * - Kernel回读基地址，Host侧检查设置值与回读值是否一致。
+ * - 核函数（Kernel）将ffts_addr转换为uint64_t类型并设置核间同步寄存器基地址。
+ * - 核函数（Kernel）回读基地址，Host侧检查设置值与回读值是否一致。
  */
 __global__ __vector__ void asc_get_ffts_base_addr_kernel(
     __gm__ uint64_t* output, __gm__ uint64_t* ffts_addr)

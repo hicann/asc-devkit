@@ -30,7 +30,7 @@
 
 头文件路径为：`"utils/base/sys_macros.h"`。
 
-用于在kernel侧注册用户使用标准C++语法自定义的默认TilingData结构体。
+用于在核函数（Kernel）侧注册用户使用标准C++语法自定义的默认TilingData结构体。
 
 注册TilingData结构体用于告知框架侧用户使用标准C++语法来定义TilingData，同时告知框架TilingData结构体类型，用于框架做tiling数据解析。
 
@@ -71,7 +71,7 @@ REGISTER_TILING_DEFAULT(TILING_STRUCT)
 ```
 extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *tiling)
 {
-    REGISTER_TILING_DEFAULT(optiling::TilingData); // 用于在kernel侧注册用户使用标准C++语法自定义的默认TilingData结构体
+    REGISTER_TILING_DEFAULT(optiling::TilingData); // 用于在核函数（Kernel）侧注册用户使用标准C++语法自定义的默认TilingData结构体
     GET_TILING_DATA(tilingData, tiling);
     KernelAdd op;
     op.Init(x, y, z, tilingData.blkDim, tilingData.totalSize, tilingData.splitTile);

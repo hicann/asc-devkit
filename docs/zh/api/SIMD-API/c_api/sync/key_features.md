@@ -15,7 +15,7 @@
 **图1**  同步控制模式示意图<a id="sync_control_mode_diagram"></a>    
 ![](../../../figures/3510_sync_control_mode_diagram.png "同步控制模式示意图")
 
-下述同步特性均以如下场景配置为例：核函数使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。**各核中与`flag_id`或`sync_id`对应的计数器初始值均为0。**
+下述同步特性均以如下场景配置为例：核函数（Kernel）使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。**各核中与`flag_id`或`sync_id`对应的计数器初始值均为0。**
 
 模式0、模式1和模式2在NPU架构版本2201和3510上均支持。以下各节的同步流程对两种架构均适用，架构差异仅体现在`wait`接口传入的`pipe`参数是否生效以及阻塞的流水范围上，具体以各节的说明为准。
 
@@ -43,7 +43,7 @@
 以图2为例，演示2个AI Core中的2个AIC（AIC0、AIC1）进行全核同步，代码片段如下：
 
 ```cpp
-// 进行核间同步时，即使只有AIC参与同步也不能用__cube__修饰核函数，具体原因请参考asc_sync_inter_arrive的约束说明。
+// 进行核间同步时，即使只有AIC参与同步也不能用__cube__修饰核函数（Kernel），具体原因请参考asc_sync_inter_arrive的约束说明。
 if ASC_IS_AIC {
     // 每个核都应该有类似如下的成对调用asc_sync_inter_arrive和asc_sync_inter_wait。
     // 两个接口的flag_id必须一致；两个接口都必须显式传入pipe，asc_sync_inter_wait会阻塞pipe参数指定的流水。
@@ -77,7 +77,7 @@ AIC1的`asc_sync_inter_arrive`执行完后，此时调度模块感知到2个AIC�
 以图3为例，演示第0个AI Core中的2个AIV（AIV0-0、AIV0-1）进行全核同步，代码片段如下：
 
 ```cpp
-// 进行核间同步时，即使只有AIV参与同步也不能用__vector__修饰核函数，具体原因请参考asc_sync_subblock_arrive的约束说明。
+// 进行核间同步时，即使只有AIV参与同步也不能用__vector__修饰核函数（Kernel），具体原因请参考asc_sync_subblock_arrive的约束说明。
 if ASC_IS_AIV {
     if (block_idx == 0) {
         // 参与同步的2个AIV属于第0个AI Core。

@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/vector_datamove/vector_datamove.h"`。
 
-将数据从Unified Buffer（UB）搬运到Unified Buffer（UB）。
+将数据从Unified Buffer（UB）搬运到UB。
 
 本接口支持连续数据搬运和高维切分数据搬运。连续数据搬运按`size`指定的字节数在UB内连续搬运，如图1所示；高维切分数据搬运按`n_burst`指定搬运的数据块个数，每个数据块按`len_burst`指定的DataBlock个数搬运，并通过`src_gap`和`dst_gap`指定源操作数和目的操作数相邻数据块之间的间隔，如图2所示。
 

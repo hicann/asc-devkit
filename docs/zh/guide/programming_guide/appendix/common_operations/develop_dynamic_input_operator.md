@@ -1,11 +1,11 @@
 # 如何开发动态输入算子<a name="ZH-CN_TOPIC_0000002098772922"></a>
 
-动态输入算子是指算子的输入个数是动态的，例如AddN，将N个输入tensor累加到一起，输出一个tensor，输入tensor的个数是不固定的。动态输入算子的开发在构造和解析输入数据方面有差异：核函数（Kernel）的入参采用ListTensorDesc的结构存储输入数据信息，对应的，调用时需构造TensorList结构保存参数信息。下面基于kernel直调和工程化算子开发两种开发方式分别介绍具体开发流程。
+动态输入算子是指算子的输入个数是动态的，例如AddN，将N个输入tensor累加到一起，输出一个tensor，输入tensor的个数是不固定的。动态输入算子的开发在构造和解析输入数据方面有差异：核函数（Kernel）的入参采用ListTensorDesc的结构存储输入数据信息，对应的，调用时需构造TensorList结构保存参数信息。下面基于核函数（Kernel）直调和工程化算子开发两种开发方式分别介绍具体开发流程。
 
 >[!NOTE]说明 
 >下文仅列出代码片段，完整样例请参考[动态输入算子样例](../../../../../../examples/01_simd_cpp_api/03_basic_api/04_memory_management/list_tensor_desc_input)。
 
--   kernel直调
+-   核函数（Kernel）直调
     -   参考[ListTensorDesc](../../../../api/SIMD-API/basic_api/aux_data_structures/ListTensorDesc.md)数据结构自行定义ListTensorDesc和TensorDesc结构体，并将实际的输入数据保存至ListTensorDesc结构中。示例如下:
 
         ptrOffset传入为ListTensorDesc首地址和数据指针首地址dataPtr之间的偏移量，tensorDesc中保存两个输入的tensor描述信息， dataPtr传入为保存输入数据的地址指针。
@@ -33,7 +33,7 @@
             inputDesc = {(1 + (1 + SHAPE_DIM) * TENSOR_DESC_NUM) * sizeof(uint64_t), {xDesc, yDesc}, {(uintptr_t)xDevice, (uintptr_t)yDevice}};
         ```
 
-    -   kernel侧调用时，直接传入ListTensorDesc表达的输入信息。示例如下：
+    -   核函数（Kernel）侧调用时，直接传入ListTensorDesc表达的输入信息。示例如下：
 
         ```
             // Allocate ListTensorDesc device memory
@@ -48,7 +48,7 @@
             list_tensor_desc_input_custom<<<numBlocks, 0, stream>>>(inputDescInDevice, zDevice, tiling);
         ```
     
-    -   kernel侧算子实现，入参需传入动态结构的数据（srcList），并使用AscendC::ListTensorDesc结构做解析。示例如下：
+    -   核函数（Kernel）侧算子实现，入参需传入动态结构的数据（srcList），并使用AscendC::ListTensorDesc结构做解析。示例如下：
 
         ```
         __global__ __vector__ void list_tensor_desc_input_custom(GM_ADDR srcList, GM_ADDR z, AddCustomTilingData tiling)
@@ -107,7 +107,7 @@
         } // namespace ge
         ```
 
-    -   kernel侧算子实现，入参需传入动态结构的数据，并使用AscendC::ListTensorDesc结构做解析。
+    -   核函数（Kernel）侧算子实现，入参需传入动态结构的数据，并使用AscendC::ListTensorDesc结构做解析。
 
         核函数（Kernel）入参需传入动态结构的数据，例如GM\_ADDR srcList，示例如下。
 

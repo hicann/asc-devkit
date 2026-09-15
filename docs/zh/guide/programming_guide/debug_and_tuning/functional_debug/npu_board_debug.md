@@ -21,7 +21,7 @@ DumpTensor是SIMD编程场景独有的打印功能，用于NPU域上板打印指
 
 **具体的使用方法如下**：
 
-在算子kernel侧实现代码中需要输出日志信息的地方调用DumpTensor接口打印相关内容。
+在算子核函数（Kernel）侧实现代码中需要输出日志信息的地方调用DumpTensor接口打印相关内容。
 
 如下所示，srcLocal表示待打印的Tensor；5表示用户的自定义附加信息，比如当前的代码行号；dataLen表示元素个数。DumpTensor接口的使用说明和具体约束请参考[DumpTensor](../../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)。
 

@@ -77,7 +77,7 @@ PIPE_S
 
 ## 约束说明
 
-- 调用本接口的核函数不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_intra_arrive`和`asc_sync_intra_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 2)`。
+- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_intra_arrive`和`asc_sync_intra_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 2)`。
 - 针对`asc_sync_intra_arrive`接口，传入的`pipe`参数**生效**，AIC和AIV支持的`pipe`取值如[表2](#aic_aiv_supported_pipe)所示。<a id="supported_pipe_combinations"></a>
 
   **表2**  AIC和AIV支持的`pipe`取值<a id="aic_aiv_supported_pipe"></a>
@@ -129,7 +129,7 @@ constexpr uint64_t SYNC_ID = 8;
 
 /*
  * 本示例说明：
- * - 采用__mix__(1, 2)标识核函数，核函数启动1个AI Core，共包含1个AIC和2个AIV。
+ * - 采用__mix__(1, 2)标识核函数（Kernel），核函数（Kernel）启动1个AI Core，共包含1个AIC和2个AIV。
  * - AIV0将矩阵从GM搬入UB。
  * - AIV0将矩阵从UB搬运至L1 Buffer（PIPE_MTE3）操作执行完后，才能执行asc_sync_intra_arrive向调度模块发送通知。
  * - AIC中从L1 Buffer搬运数据到L0A Buffer、L0B Buffer（PIPE_MTE1）的操作被asc_sync_intra_wait阻塞，直到AIV0执行了asc_sync_intra_arrive后才能执行。

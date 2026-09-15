@@ -77,7 +77,7 @@ __simd_callee__ inline void asc_duplicate_highest_merge(vector_float& dst,
 - 使用`mask`前，需要通过掩码设置或搬入接口完成初始化；未初始化的掩码寄存器内容不确定。
 - `mask`仅筛选`dst`中写入广播值的位置，不筛选`src`中的元素。无论`mask`的最高位是否有效，待广播的数据均为`src`的最高位元素。
 - 调用接口前需要初始化`dst`，否则未被`mask`筛选的元素值不确定。
-- 同一寄存器的数据依赖由硬件保序，无需额外插入同步指令。本接口与前后Reg数据搬运接口之间，如果不同寄存器访问同一UB地址且存在写后读或写后写依赖，需要调用[asc_mem_bar](../reg_sync/asc_mem_bar.md)进行同步。
+- 同一寄存器的数据依赖由硬件保序，无需额外插入同步指令。本接口与前后Reg数据搬运接口之间，如果不同寄存器访问同一Unified Buffer（UB）地址且存在写后读或写后写依赖，需要调用[asc_mem_bar](../reg_sync/asc_mem_bar.md)进行同步。
 
 ## 调用示例
 

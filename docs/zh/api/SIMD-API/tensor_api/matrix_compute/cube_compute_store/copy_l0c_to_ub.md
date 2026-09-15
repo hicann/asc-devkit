@@ -167,7 +167,7 @@ L0C Buffer到UB搬运支持不量化输出、`float`到`half`或`bfloat16_t`的�
 
 ### copy_l0c_to_ub说明
 
-`copy_l0c_to_ub`用于标识L0C Buffer到Unified Buffer数据搬运通路，仅列出其public内容：
+`copy_l0c_to_ub`用于标识L0C Buffer到UB数据搬运通路，仅列出其public内容：
 
 ```cpp
 struct copy_l0c_to_ub {
@@ -176,7 +176,7 @@ struct copy_l0c_to_ub {
 };
 ```
 
-`copy`静态成员函数用于接收Trait和搬运参数，并分发L0C Buffer到Unified Buffer数据搬运。
+`copy`静态成员函数用于接收Trait和搬运参数，并分发L0C Buffer到UB数据搬运。
 
 ### l0c_to_ub_trait说明
 

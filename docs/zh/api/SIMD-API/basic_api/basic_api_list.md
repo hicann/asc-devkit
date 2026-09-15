@@ -10,7 +10,7 @@
 | [Layout](aux_data_structures/Layout/Layout.md) | Layout数据结构是描述多维张量内存布局的基础模板类，通过编译时的形状（Shape）和步长（Stride）信息，实现逻辑坐标空间到一维内存地址空间的映射。 |
 | [TensorTrait](aux_data_structures/TensorTrait/TensorTrait.md) | TensorTrait数据结构是描述Tensor相关信息的基础模板类，包含Tensor的数据类型、逻辑位置和Layout内存布局。 |
 | [ShapeInfo](aux_data_structures/ShapeInfo.md) | 存放LocalTensor或GlobalTensor的shape信息。 |
-| [ListTensorDesc](aux_data_structures/ListTensorDesc.md) | 解析符合指定内存排布格式的数据，在kernel侧根据索引获取存储对应数据的地址及shape信息。 |
+| [ListTensorDesc](aux_data_structures/ListTensorDesc.md) | 解析符合指定内存排布格式的数据，在核函数（Kernel）侧根据索引获取存储对应数据的地址及shape信息。 |
 | [TensorDesc](aux_data_structures/TensorDesc/TensorDesc.md) | 储存ListTensorDesc.GetDesc()中根据index获取对应的Tensor描述信息。 |
 | [UnaryRepeatParams](aux_data_structures/UnaryRepeatParams.md) | 控制单操作数地址步长的数据结构，包含相邻迭代间和同一迭代内DataBlock的地址步长参数。 |
 | [BinaryRepeatParams](aux_data_structures/BinaryRepeatParams.md) | 控制双操作数地址步长的数据结构，包含相邻迭代间和同一迭代内DataBlock的地址步长参数。 |
@@ -550,14 +550,14 @@
 | [DumpAccChkPoint](debug_interface/onboard_print/DumpAccChkPoint.md) | 该接口Dump指定Tensor的内容。同时支持打印自定义的标签（仅支持uint32_t数据类型的信息），比如打印当前行号等。区别于DumpTensor，使用该接口可以支持指定偏移位置的Tensor打印。 |
 | [PrintTimeStamp](debug_interface/onboard_print/PrintTimeStamp.md) | 提供时间戳打点功能，用于在算子核函数（Kernel）代码中标记关键执行点。 |
 | [Trap](debug_interface/exception_detection/Trap.md) | 在核函数（Kernel）侧调用，NPU模式下会中断AI Core的运行，CPU模式下等同于assert。可用于核函数（Kernel）侧异常场景的调试。 |
-| [CheckLocalMemoryIA(ISASI)](debug_interface/exception_detection/CheckLocalMemoryIA_ISASI.md) | check设定范围内的UB读写行为，如果有设定范围的读写行为则会出现EXCEPTION报错，无设定范围的读写行为则不会报错。 |
+| [CheckLocalMemoryIA(ISASI)](debug_interface/exception_detection/CheckLocalMemoryIA_ISASI.md) | check设定范围内的Unified Buffer（UB）读写行为，如果有设定范围的读写行为则会出现EXCEPTION报错，无设定范围的读写行为则不会报错。 |
 | [GmAlloc](debug_interface/cpu_twin_debug/GmAlloc.md) | 进行核函数（Kernel）的CPU侧运行验证时，用于创建共享内存：在/tmp目录下创建一个共享文件，并返回该文件的映射指针。 |
 | [ICPU_RUN_KF](debug_interface/cpu_twin_debug/ICPU_RUN_KF.md) | 进行核函数（Kernel）的CPU侧运行验证时，CPU调测总入口，完成CPU侧的算子程序调用。 |
 | [ICPU_SET_TILING_KEY](debug_interface/cpu_twin_debug/ICPU_SET_TILING_KEY.md) | 用于指定本次CPU调测使用的tilingKey。调测执行时，将只执行算子核函数（Kernel）中该tilingKey对应的分支。 |
 | [GmFree](debug_interface/cpu_twin_debug/GmFree.md) | 进行核函数（Kernel）的CPU侧运行验证时，用于释放通过GmAlloc申请的共享内存。 |
 | [SetKernelMode](debug_interface/cpu_twin_debug/SetKernelMode.md) | 针对分离模式，CPU调测时，设置内核模式为单AIV模式，单AIC模式或者MIX模式，以分别支持单AIV矢量算子，单AIC矩阵算子，MIX混合算子的CPU调试。不调用该接口的情况下，默认为MIX模式。为保证算子代码在多个硬件平台兼容，耦合模式下也可以调用，该场景下接口不会生效，不影响正常调试。 |
-| [MetricsProfStart](debug_interface/performance_stats/MetricsProfStart.md) | 用于设置性能数据采集信号启动，和MetricsProfStop配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
-| [MetricsProfStop](debug_interface/performance_stats/MetricsProfStop.md) | 设置性能数据采集信号停止，和MetricsProfStart配合使用。使用msOpProf工具进行算子上板调优时，可在kernel侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
+| [MetricsProfStart](debug_interface/performance_stats/MetricsProfStart.md) | 用于设置性能数据采集信号启动，和MetricsProfStop配合使用。使用msOpProf工具进行算子上板调优时，可在核函数（Kernel）侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
+| [MetricsProfStop](debug_interface/performance_stats/MetricsProfStop.md) | 设置性能数据采集信号停止，和MetricsProfStart配合使用。使用msOpProf工具进行算子上板调优时，可在核函数（Kernel）侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
 | [MarkStamp](debug_interface/performance_stats/MarkStamp.md) | 用户通过调用接口，用于在算子执行过程中标记特定位置，便于后期通过流水图分析代码执行路径与性能热点。 |
 
 ## 工具接口
@@ -610,18 +610,18 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [GET_TILING_DATA](Kernel-Tiling/GET_TILING_DATA.md) | 用于获取算子kernel入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过TilingData结构注册注册了多个TilingData结构体，使用该接口返回默认注册的结构体。 |
+| [GET_TILING_DATA](Kernel-Tiling/GET_TILING_DATA.md) | 用于获取算子核函数（Kernel）入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过TilingData结构注册注册了多个TilingData结构体，使用该接口返回默认注册的结构体。 |
 | [GET_TILING_DATA_WITH_STRUCT](Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md) | 使用该接口指定结构体名称，可获取指定的tiling信息，并填入对应的Tiling结构体中，此函数会以宏展开的方式进行编译。与GET\_TILING\_DATA的区别是：GET\_TILING\_DATA只能获取默认注册的结构体，该接口可以根据指定的结构体名称获取对应的结构体，常用于针对不同的TilingKey注册了不同结构体的情况下。 |
 | [GET_TILING_DATA_MEMBER](Kernel-Tiling/GET_TILING_DATA_MEMBER.md) | 用于获取tiling结构体的成员变量。 |
 | [GET_TILING_DATA_PTR_WITH_STRUCT](Kernel-Tiling/GET_TILING_DATA_PTR_WITH_STRUCT.md) | 在使用该宏时，开发者可以通过指定结构体名称来获取相应的Tiling信息，并将其填入对应的Tiling结构体中。完成填充后，该宏将返回一个指向该Tiling结构体的指针，并使用\_\_tiling\_data\_ptr\_\_修饰符对该指针进行修饰。这种修饰方式能够确保在动静态Shape场景下代码的统一性和兼容性。 |
 | [COPY_TILING_WITH_STRUCT](Kernel-Tiling/COPY_TILING_WITH_STRUCT.md) | 拷贝Tiling结构体，并返回指向拷贝后的Tiling结构体的指针。该宏适用于嵌套结构体场景，可拷贝结构体的子结构体成员变量。该宏将指定结构体拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
 | [COPY_TILING_WITH_ARRAY](Kernel-Tiling/COPY_TILING_WITH_ARRAY.md) | 拷贝指定大小的数组内容到目标数组中，并返回指向拷贝后数组的指针。适用于拷贝一个结构体的数组成员变量的场景。该宏将指定数组拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
-| [TILING_KEY_IS](Kernel-Tiling/TILING_KEY_IS.md) | 在核函数（Kernel）中判断本次执行时的tiling_key是否等于host侧运行时设置的某个key，从而标识tiling_key==key的一条kernel分支。 |
+| [TILING_KEY_IS](Kernel-Tiling/TILING_KEY_IS.md) | 在核函数（Kernel）中判断本次执行时的tiling_key是否等于host侧运行时设置的某个key，从而标识tiling_key==key的一条核函数（Kernel）分支。 |
 | [TILING_KEY_LIST](Kernel-Tiling/TILING_KEY_LIST.md) | TILING_KEY_LIST函数用于在核函数（Kernel）中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。 |
-| [REGISTER_TILING_DEFAULT](Kernel-Tiling/REGISTER_TILING_DEFAULT.md) | 用于在kernel侧注册用户使用标准C++语法自定义的默认TilingData结构体。 |
-| [REGISTER_TILING_FOR_TILINGKEY](Kernel-Tiling/REGISTER_TILING_FOR_TILINGKEY.md) | 用于在kernel侧注册与TilingKey相匹配的TilingData自定义结构体；该接口需提供一个逻辑表达式，逻辑表达式以字符串“TILING_KEY_VAR”代指实际TilingKey，表达TilingKey所满足的范围。 |
+| [REGISTER_TILING_DEFAULT](Kernel-Tiling/REGISTER_TILING_DEFAULT.md) | 用于在核函数（Kernel）侧注册用户使用标准C++语法自定义的默认TilingData结构体。 |
+| [REGISTER_TILING_FOR_TILINGKEY](Kernel-Tiling/REGISTER_TILING_FOR_TILINGKEY.md) | 用于在核函数（Kernel）侧注册与TilingKey相匹配的TilingData自定义结构体；该接口需提供一个逻辑表达式，逻辑表达式以字符串“TILING_KEY_VAR”代指实际TilingKey，表达TilingKey所满足的范围。 |
 | [REGISTER_NONE_TILING](Kernel-Tiling/REGISTER_NONE_TILING.md) | 在核函数（Kernel）侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套GET\_TILING\_DATA\_WITH\_STRUCT，GET\_TILING\_DATA\_MEMBER， |
-| [设置核函数（Kernel）类型](Kernel-Tiling/set_Kernel_type.md) | 用于用户自定义设置kernel类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
+| [设置核函数（Kernel）类型](Kernel-Tiling/set_Kernel_type.md) | 用于用户自定义设置核函数（Kernel）类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
 
 ## 特殊寄存器访问
 

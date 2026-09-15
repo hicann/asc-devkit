@@ -75,14 +75,14 @@ T3        STORE flag = 1
 
 NPU硬件架构中有多个层级，它们具有异步并行的特征：
 - Host侧通过Stream向Device侧异步下发任务；
-- Device侧的一个Kernel可以由多个AI Core并行执行；
+- Device侧的一个核函数（Kernel）可以由多个AI Core并行执行；
 - 每个AI Core内部又存在多条可以异步并行执行的流水。
 
 这些硬件层级决定了NPU编程中的内存一致性维护通常需要按访问范围分层处理：
 
 - 同一AI Core内，不同流水访问同一地址或通过UB/GM传递数据时，需要核内同步。
 - 不同AI Core之间，通过GM共享数据或传递标志时，需要核间同步。
-- Host侧和Device侧之间，由于Kernel执行、异步拷贝和Stream任务下发都是异步的，需要Host-Device同步。
+- Host侧和Device侧之间，由于核函数（Kernel）执行、异步拷贝和Stream任务下发都是异步的，需要Host-Device同步。
 
 #### 流水间一致性
 
@@ -719,7 +719,7 @@ T1        ARRIVE sync_point
 
 ### 异步下发语义
 
-Host侧通过Runtime向Device侧下发Kernel、异步内存拷贝等任务。对于异步任务，Host侧接口返回通常只表示任务已经下发到Stream，不表示任务已经在Device侧执行完成。Host线程会继续向下执行，Device任务则在对应Stream中等待调度和执行。
+Host侧通过Runtime向Device侧下发核函数（Kernel）、异步内存拷贝等任务。对于异步任务，Host侧接口返回通常只表示任务已经下发到Stream，不表示任务已经在Device侧执行完成。Host线程会继续向下执行，Device任务则在对应Stream中等待调度和执行。
 
 如果Host后续代码依赖Device任务的结果，不能只依赖Host侧代码顺序，需要显式等待Device任务完成。
 

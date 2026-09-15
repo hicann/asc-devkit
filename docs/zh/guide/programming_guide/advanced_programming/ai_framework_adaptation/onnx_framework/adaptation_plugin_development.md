@@ -27,7 +27,7 @@ LeakyReluCustom
 │   │   ├── leaky_relu_custom_plugin.cc // ONNX框架适配插件实现文件    
 │   ├── CMakeLists.txt
 ├── op_host                      // host侧实现文件
-├── op_kernel                    // kernel侧实现文件
+├── op_kernel                    // 核函数（Kernel）侧实现文件
 └── scripts                      // 自定义算子工程打包相关脚本所在目录
 ```
 

@@ -65,7 +65,7 @@ PIPE_S
 
 ## 调用示例
 
-本示例模拟运行环境兼容性诊断场景：Kernel读取SMMU标签版本并写入GM，Host侧按照返回值说明解析年、月、日和同日子版本字段。部分设备可能返回0，示例仅检查Kernel是否完成写回，不把非零值作为成功条件。
+本示例模拟运行环境兼容性诊断场景：核函数（Kernel）读取SMMU标签版本并写入GM，Host侧按照返回值说明解析年、月、日和同日子版本字段。部分设备可能返回0，示例仅检查核函数（Kernel）是否完成写回，不把非零值作为成功条件。
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
@@ -93,7 +93,7 @@ constexpr uint64_t UNSET_VALUE = ~0ULL;
 
 /*
  * 本示例说明：
- * - Kernel调用asc_get_smmu_tag_version读取SMMU标签版本。
+ * - 核函数（Kernel）调用asc_get_smmu_tag_version读取SMMU标签版本。
  * - 原始版本值写入GM并刷新对应的Cache Line。
  * - Host侧按照接口定义解析各版本字段，便于记录运行环境信息。
  */

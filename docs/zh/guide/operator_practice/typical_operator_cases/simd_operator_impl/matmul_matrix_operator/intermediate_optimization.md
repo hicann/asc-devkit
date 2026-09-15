@@ -30,7 +30,7 @@
 | **B矩阵搬运等待** | A和B依次搬运，B数据到位晚导致L1缓冲区欠载 | 优先搬B → 先B后 调度 |
 | MTE2单条搬运指令粒度小 | DataCopyIn每次搬入一个 `baseM×baseK` 块，MTE2指令发射次数多 | 大包搬运 → 一次搬入 `stepKa` 个block |
 | MTE1指令队列压力大 | LoadData2D一次只能搬一个16×K切片，需for循环多次发射 | LoadData3D → 单条指令完成搬运 |
-| Tiling参数运行时计算 | 所有参数在kernel内用Scalar计算，增加流水线停顿 | 常量Tiling → 编译期确定 |
+| Tiling参数运行时计算 | 所有参数在核函数（Kernel）内用Scalar计算，增加流水线停顿 | 常量Tiling → 编译期确定 |
 | L0C写回阻塞 | `Fixpipe` 与Mmad串行，Cube 等待写回完成再计算 | UnitFlag → 512B粒度MMAD-FIXPIPE重叠 |
 | L2Cache未充分利用 | 当前实现中B矩阵每次均从GM读取，多核反复访问GM导致MTE2带宽压力大；L2Cache纯读带宽约3~4倍于GM，但当前实现未能利用这一特性 | 沿M方向切分A矩阵，使B矩阵跨轮驻留L2Cache，减少GM访问次数，有效降低MTE2耗时 |
 

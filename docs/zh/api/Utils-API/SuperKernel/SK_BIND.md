@@ -73,7 +73,7 @@
 ```cpp
 #include "kernel_operator.h"
 
-// 原普通kernel保留（用于非SuperKernel场景）
+// 原普通核函数（Kernel）保留（用于非SuperKernel场景）
 __global__ __vector__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, uint32_t totalLength) 
 { 
     KernelAdd op; 

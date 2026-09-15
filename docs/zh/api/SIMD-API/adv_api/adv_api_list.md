@@ -80,7 +80,7 @@
 | [DeepNorm](normalization/DeepNorm.md) | 在深层神经网络训练过程中，可以替代LayerNorm的一种归一化方法。 |
 | [GroupNorm](normalization/GroupNorm.md) | 将输入的C维度分为groupNum组，对每一组数据进行标准化。 |
 | [LayerNorm](normalization/LayerNorm.md) | 将输入数据收敛到[0, 1]之间，可以规范网络层输入输出数据分布的一种归一化方法。 |
-| [LayerNorm-Tiling](normalization/LayerNorm-Tiling.md) | LayerNorm的Tiling参数配置接口，用于获取LayerNorm kernel计算时所需的Tiling参数。 |
+| [LayerNorm-Tiling](normalization/LayerNorm-Tiling.md) | LayerNorm的Tiling参数配置接口，用于获取LayerNorm核函数（Kernel）计算时所需的Tiling参数。 |
 | [LayerNormGrad](normalization/LayerNormGrad.md) | 用于计算LayerNorm的反向传播梯度。 |
 | [LayerNormGrad-Tiling](normalization/LayerNormGrad-Tiling.md) | LayerNormGrad的Tiling参数配置接口，用于设置反向传播梯度计算所需的分片参数。 |
 | [LayerNormGradBeta](normalization/LayerNormGradBeta.md) | 用于获取反向beta/gmma的数值，和LayerNormGrad共同输出pdx, gmma和beta。 |

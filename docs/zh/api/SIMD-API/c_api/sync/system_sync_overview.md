@@ -17,7 +17,7 @@ AI Core的同步，总共分成2类：[核内同步](intra_core_sync_overview.md
 | [asc_sync_mte3](asc_sync_mte3.md) | 核内同步易用性接口：针对`PIPE_MTE3`执行同步操作，保证`PIPE_MTE3`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
 | [asc_sync](asc_sync.md) | 全部流水同步：同一核内所有流水之间的同步指令，功能与`asc_sync_pipe(PIPE_ALL)`等价。阻塞调用点后所有硬件流水的后序指令，直到调用点之前所有硬件流水的前序指令全部完成。 |
 
-图1展示了四种同步控制模式，各模式的功能描述如下。该图基于核函数使用`__mix__(1, 2)`修饰、逻辑核数`numBlocks=4`的场景配置。
+图1展示了四种同步控制模式，各模式的功能描述如下。该图基于核函数（Kernel）使用`__mix__(1, 2)`修饰、逻辑核数`numBlocks=4`的场景配置。
 
 - 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到`asc_sync_inter_arrive`时，`asc_sync_inter_wait`后续的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到`asc_sync_inter_arrive`时，`asc_sync_inter_wait`后续的指令才会执行。
 - 模式1：AI Core内部，AIV核之间的同步控制。如果两个AIV核都运行了`asc_sync_subblock_arrive`，`asc_sync_subblock_wait`后续的指令才会执行。

@@ -219,7 +219,7 @@ int main()
         }
     }
 
-    // 分配Device内存、执行Kernel并取回结果。
+    // 分配Device内存、执行核函数（Kernel）并取回结果。
     aclInit(nullptr);
     aclrtSetDevice(0);
     int8_t *a_device = nullptr, *b_device = nullptr;

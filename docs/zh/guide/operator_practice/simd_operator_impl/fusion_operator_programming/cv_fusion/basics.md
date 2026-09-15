@@ -56,7 +56,7 @@ Ascend C提供**融合算子的编程范式**，方便开发者基于该范式�
 整个过程的示例代码如下（伪代码）。完整样例请参考[MatmulLeakyRelu](../../../../../../../examples/01_simd_cpp_api/00_introduction/03_fusion_operation/matmul_leakyrelu_advanced_api)。
 
 ```
-// kernel入口函数，mix场景，AIC:AIV=1:2
+// 核函数（Kernel）入口函数，mix场景，AIC:AIV=1:2
 __global__ __mix__(1, 2) void matmul_leakyrelu_custom(__gm__ uint8_t* a, __gm__ uint8_t* b, __gm__ uint8_t* bias,
     __gm__ uint8_t* c, __kfc_workspace__ __gm__ uint8_t* workspace, AscendC::tiling::TCubeTiling tiling)
 {

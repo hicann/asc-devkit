@@ -207,7 +207,7 @@
             input_bias = np.random.randint(-10, 10, [N]).astype(np.float32)
             alpha = 0.001
             golden = (np.matmul(input_a.astype(np.float32), input_b.astype(np.float32)) + input_bias).astype(np.float32)
-            # golden = np.where(golden >= 0, golden, golden * alpha) # 与kernel保持一致，golden生成也需注释相应的LeakyRelu计算
+            # golden = np.where(golden >= 0, golden, golden * alpha) # 与核函数（Kernel）保持一致，golden生成也需注释相应的LeakyRelu计算
             os.system("mkdir -p input")
             os.system("mkdir -p output")
             input_a.tofile("./input/x1_gm.bin")

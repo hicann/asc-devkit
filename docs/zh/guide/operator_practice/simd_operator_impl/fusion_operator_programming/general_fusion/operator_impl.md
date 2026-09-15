@@ -673,7 +673,7 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
     ├── CustomOp                 // msOpGen生成的AllGatherMatmul自定义算子工程 
     │   ├── cmake 
     │   ├── op_host             // host侧实现文件 
-    │   ├── op_kernel           // kernel侧实现文件 
+    │   ├── op_kernel           // 核函数（Kernel）侧实现文件
     │   ├── scripts             // 自定义算子工程打包相关脚本所在目录 
     │   ├── build.sh            // 编译入口脚本 
     │   ├── CMakeLists.txt      // 算子工程的CMakeLists.txt 

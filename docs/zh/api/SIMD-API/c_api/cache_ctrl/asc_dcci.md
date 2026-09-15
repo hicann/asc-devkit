@@ -30,7 +30,7 @@
 
 如图1所示，在AI Core内部，访问Global Memory（GM）与Unified Buffer（UB）的方式分为以下两种：
 
-- DMA搬运单元读写GM，数据通过[asc_copy_ub2gm](../vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在Unified Buffer（UB）等Local Memory和GM间交互，不经过DCache，因此不需要考虑Cache一致性问题。
+- DMA搬运单元读写GM，数据通过[asc_copy_ub2gm](../vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在UB等Local Memory和GM间交互，不经过DCache，因此不需要考虑Cache一致性问题。
 - Scalar单元访问GM，若经过Dcache，首先会访问每个核内的DCache，因此存在DCache与GM的Cache一致性问题，具体原因请参考[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)。
 
 **图1**  DataCache内存层次示意图
