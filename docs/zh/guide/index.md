@@ -211,7 +211,7 @@
                 -   [尾核切分](operator_practice/simd_operator_impl/vector_programming/multi_core_tiling/tail_core_split.md)
                 -   [尾核尾块切分](operator_practice/simd_operator_impl/vector_programming/multi_core_tiling/tail_core_tail_block_split.md)
 
-            -   [DoubleBuffer场景](operator_practice/simd_operator_impl/vector_programming/double_buffer_scenario.md)
+            -   [Double Buffer场景](operator_practice/simd_operator_impl/vector_programming/double_buffer_scenario.md)
             -   [Broadcast场景](operator_practice/simd_operator_impl/vector_programming/broadcast_scenario.md)
             -   [非对齐场景](operator_practice/simd_operator_impl/vector_programming/unaligned_scenario.md)
 
@@ -278,7 +278,7 @@
             -   [核函数内删除Workspace相关冗余操作](operator_practice/simd_operator_optimization/overhead_optimization/remove_workspace_redundancy.md)
             -   [设置DCI编译选项来减少算子尾开销](operator_practice/simd_operator_optimization/overhead_optimization/dci_compile_option.md)
         -   [流水编排](operator_practice/simd_operator_optimization/pipeline_scheduling/pipeline_scheduling.md)
-            -   [开启DoubleBuffer](operator_practice/simd_operator_optimization/pipeline_scheduling/enable_double_buffer.md)
+            -   [开启Double Buffer](operator_practice/simd_operator_optimization/pipeline_scheduling/enable_double_buffer.md)
             -   [启用Iterate或IterateAll异步接口避免AIC/AIV同步依赖](operator_practice/simd_operator_optimization/pipeline_scheduling/enable_iterate_avoid_sync.md)
 
         -   [内存访问](operator_practice/simd_operator_optimization/memory_access/memory_access.md)
@@ -389,7 +389,7 @@
         -   [内存访问原理](./technical_appendix/concepts_and_terms/memory_access/scalar_read_write.md)
             -   [Scalar读写数据](./technical_appendix/concepts_and_terms/memory_access/scalar_read_write.md)
         -   [性能优化技术原理](./technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)
-            -   [DoubleBuffer](./technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)
+            -   [Double Buffer](./technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md)
     -   [C++标准支持](./technical_appendix/cpp_standard_support/overview.md)
         -   [概述](./technical_appendix/cpp_standard_support/overview.md)
         -   [Device侧C/C++语法限制](./technical_appendix/cpp_standard_support/syntax_restrictions/syntax_restrictions.md)

@@ -42,7 +42,7 @@
 <td class="cellrowborder" rowspan="2" valign="top" width="42.89%" headers="mcps1.2.4.1.2 "><p id="p7261787283"><a name="p7261787283"></a><a name="p7261787283"></a><span>通过任务并行化、异步调度等方法，提升硬件资源利用率，实现更高的吞吐率。</span></p>
 <p id="p8265289289"><a name="p8265289289"></a><a name="p8265289289"></a></p>
 </td>
-<td class="cellrowborder" valign="top" width="44.56%" headers="mcps1.2.4.1.3 "><p id="p10261383288"><a name="p10261383288"></a><a name="p10261383288"></a><a href="pipeline_scheduling/enable_double_buffer.md">开启DoubleBuffer</a></p>
+<td class="cellrowborder" valign="top" width="44.56%" headers="mcps1.2.4.1.3 "><p id="p10261383288"><a name="p10261383288"></a><a name="p10261383288"></a><a href="pipeline_scheduling/enable_double_buffer.md">开启Double Buffer</a></p>
 </td>
 </tr>
 <tr id="row1136613722817"><td class="cellrowborder" valign="top" headers="mcps1.2.4.1.1 "><p id="p226138122819"><a name="p226138122819"></a><a name="p226138122819"></a><a href="pipeline_scheduling/enable_iterate_avoid_sync.md">启用Iterate或IterateAll异步接口避免AIC/AIV同步依赖</a></p>
