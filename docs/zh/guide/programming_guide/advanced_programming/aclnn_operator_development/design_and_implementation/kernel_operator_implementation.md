@@ -1,6 +1,6 @@
 # 基本流程
 
-本文属于基础内容，介绍aclnn工程化算子开发方式中核函数（Kernel）侧的基本接入流程，重点说明核函数（Kernel）入口函数格式、参数顺序、TilingData处理和编译期信息获取方式。Global Memory地址绑定、Unified Buffer（UB）管理、数据搬运、计算和同步等核函数（Kernel）核心实现方法，请参考[核函数（Kernel）](../../../programming_model/ai_core_simd_programming/kernel_function.md)。
+本文属于基础内容，介绍aclnn工程化算子开发方式中核函数（Kernel）侧的基本接入流程，重点说明核函数（Kernel）入口函数格式、参数顺序、核函数（Kernel）类型设置、TilingData处理和编译期信息获取方式。
 
 ## 核函数（Kernel）格式
 
@@ -84,7 +84,25 @@ AddCustom的核函数（Kernel）入口按以下步骤串联算子实现：
 4. 调用`Add`完成逐元素加法计算。
 5. 将计算结果从Local Memory搬运回Global Memory。
 
-`Process`根据`tileNum`循环执行步骤3至步骤5，直到当前Block的所有Tile处理完成。搬运和计算之间需要根据数据依赖做好同步，具体实现请参考[核函数（Kernel）](../../../programming_model/ai_core_simd_programming/kernel_function.md)。
+`Process`根据`tileNum`循环执行步骤3至步骤5，直到当前Block的所有Tile处理完成。搬运和计算之间需要根据数据依赖做好同步。
+
+## 设置核函数（Kernel）类型
+
+在aclnn工程化算子开发方式中，核函数（Kernel）入口使用`__global__ __aicore__`修饰，并在入口函数体内通过`KERNEL_TASK_TYPE_DEFAULT`接口设置默认的核函数（Kernel）类型，该设置对所有TilingKey生效。
+
+例如，AddCustom仅执行Vector计算，可以将默认类型设置为`KERNEL_TYPE_AIV_ONLY`。以下代码展示入口中的类型设置位置：
+
+```cpp
+extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z,
+                                                  GM_ADDR workspace, GM_ADDR tiling)
+{
+    KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_AIV_ONLY);
+}
+```
+
+需要为特定TilingKey设置不同类型时，可以使用`KERNEL_TASK_TYPE(key, value)`接口。接口的产品支持情况、类型取值及使用约束请参考[设置核函数（Kernel）类型](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)。
+
+在Tiling模板编程场景中，在模板参数定义头文件的`ASCENDC_TPL_ARGS_SEL`内使用`ASCENDC_TPL_KERNEL_TYPE_SEL`设置该组模板参数组合的核函数（Kernel）类型。同一个`ASCENDC_TPL_SEL`下，选择显式设置类型时，每个`ASCENDC_TPL_ARGS_SEL`都需要配置此接口。接口详情及支持的类型请参考[模板参数定义](../../../../../api/Utils-API/Tiling_template_programming/template_params_definition.md)。
 
 ## TilingData处理
 

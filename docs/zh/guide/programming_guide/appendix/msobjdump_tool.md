@@ -1,6 +1,6 @@
 # msobjdump工具<a name="ZH-CN_TOPIC_0000002028951292"></a>
 
-本工具主要针对工程编译生成的算子ELF文件（Executable and Linkable Format）提供解析和解压功能，并将结果信息以可读形式呈现，方便开发者直观获得kernel文件信息。当前支持解析融合编译工程和自定义算子工程生成的相关产物。
+本工具主要针对工程编译生成的算子ELF文件（Executable and Linkable Format）提供解析和解压功能，并将结果信息以可读形式呈现，方便开发者直观获得kernel文件信息。当前支持解析核函数（Kernel）直调工程和自定义算子工程生成的相关产物。
 
 >[!NOTE]说明 
 >- ELF文件是一种用于二进制文件、可执行文件、目标代码、共享库和核心转储的文件格式，包括常见的\*.a、\*.so文件等。ELF文件常见构成如下：
@@ -73,7 +73,7 @@
 
     | 参数（区分大小写） | 可选/必选 | 说明 |
     | ---- | ---- | ---- |
-    | `--dump-elf <elf_file>`，`-d` | 必选 | 解析ELF文件中包含的device信息，如文件名、文件类型、文件长度、符号表等，并终端打屏显示。<br>`<elf_file>`表示待解析ELF文件路径，如`/home/op_api/lib_api.so`。支持两种打印模式：<br>简单打印：默认仅打印部分device信息。<br>全量打印：与`--verbose`配套使用，开启全量device信息打屏显示。<br>融合编译工程和自定义算子工程的打印字段分别参见<a href="#table94384560259">表4</a>和<a href="#table-aclnn-meta-fields">表5</a>。 |
+    | `--dump-elf <elf_file>`，`-d` | 必选 | 解析ELF文件中包含的device信息，如文件名、文件类型、文件长度、符号表等，并终端打屏显示。<br>`<elf_file>`表示待解析ELF文件路径，如`/home/op_api/lib_api.so`。支持两种打印模式：<br>简单打印：默认仅打印部分device信息。<br>全量打印：与`--verbose`配套使用，开启全量device信息打屏显示。<br>核函数（Kernel）直调工程和自定义算子工程的打印字段分别参见<a href="#table94384560259">表4</a>和<a href="#table-aclnn-meta-fields">表5</a>。 |
     | `--verbose`，`-V` | 可选 | 必须与`--dump-elf`配套使用，用于开启ELF文件中全量打印device信息功能。 |
 
 -   **解压ELF文件的命令**
@@ -103,7 +103,7 @@
     | ---- | ---- | ---- |
     | `--list-elf <elf_file>`，`-l` | 必选 | 获取ELF文件中包含的device信息文件列表，并打印显示。<br>`<elf_file>`表示待打印的ELF文件路径，如`/home/op_api/lib_api.so`。 |
 
-**表4**  融合编译工程支持的ELF解析字段说明<a name="table94384560259"></a>
+**表4**  核函数（Kernel）直调工程支持的ELF解析字段说明<a name="table94384560259"></a>
 
 | 字段名 | 含义 | 是否必选 | 打印说明 |
 | ---- | ---- | ---- | ---- |
@@ -147,11 +147,11 @@
 | `AIC_ROLLBACK` | 算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Cube Core使用。 |
 | `AIV_ROLLBACK` | 算子执行时会同时启动AI Core和Vector Core，此时AI Core会当成Vector Core使用。 |
 
-## 使用样例（融合编译工程）<a name="section_fusion_compile_msobjdump"></a>
+## 使用样例（核函数（Kernel）直调工程）<a name="section_fusion_compile_msobjdump"></a>
 
-以融合编译工程生成的可执行文件为例，假设`${build_dir}`为工程构建目录，编译生成的可执行文件名为`demo`。对于该类产物，工具会基于可执行文件中的device相关信息进行解析，其中`--dump-elf`用于展示binary meta与function meta信息，`--list-elf`用于查看可提取的device文件名，`--extract-elf`用于将解析出的device文件落盘。调用样例可参考[msobjdump样例](https://gitcode.com/cann/asc-tools/tree/master/examples/04_msobjdump)。
+以核函数（Kernel）直调工程生成的可执行文件为例，假设`${build_dir}`为工程构建目录，编译生成的可执行文件名为`demo`。对于该类产物，工具会基于可执行文件中的device相关信息进行解析，其中`--dump-elf`用于展示binary meta与function meta信息，`--list-elf`用于查看可提取的device文件名，`--extract-elf`用于将解析出的device文件落盘。调用样例可参考[msobjdump样例](https://gitcode.com/cann/asc-tools/tree/master/examples/04_msobjdump)。
 
--   **解析融合编译工程产物**
+-   **解析核函数（Kernel）直调工程产物**
 
     支持两种打印方式，请按需选取，解析字段含义参见[表4](#table94384560259)。
 
@@ -232,7 +232,7 @@
         ......
         ```
 
--   **获取融合编译工程产物中的device文件列表**
+-   **获取核函数（Kernel）直调工程产物中的device文件列表**
 
     ```
     msobjdump --list-elf ${build_dir}/demo
@@ -244,7 +244,7 @@
     ELF file    0: demo.aicore.o
     ```
 
--   **解压融合编译工程产物中的device文件并落盘**
+-   **解压核函数（Kernel）直调工程产物中的device文件并落盘**
 
     ```
     msobjdump --extract-elf ${build_dir}/demo
