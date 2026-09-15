@@ -39,6 +39,7 @@ static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
     "CcuSchedAllToAllVSoleMesh",
     "CcuSchedAllReduceSoleMesh",
     "CcuSchedReduceScatterSoleMeshPeerOnly",
+    "CcuSchedAllToAllMesh1DMultiJetty",
     "CcuSchedReduceScatterSoleNHRMultiLink",
     "CcuSchedAllToAllSoleMeshConcurrent",
     "CcuSchedReduceScatterConcurMeshNHRMultiLink"};

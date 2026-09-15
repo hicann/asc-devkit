@@ -107,6 +107,7 @@ enum class AlgorithmType {
     CcuSchedAllToAllSoleMeshConcurrent,
     // 153/155 已被 master 尾部隐式编号占用（AllGatherSoleMesh/AllToAllSoleMeshConcurrent），ConcurRS 顺延 156。
     CcuSchedReduceScatterConcurMeshNHRMultiLink = 156,
+    CcuSchedAllToAllMesh1DMultiJetty = 157,
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
@@ -119,6 +120,7 @@ static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
     {"CcuSchedAllToAllSoleMesh", AlgorithmType::CcuSchedAllToAllSoleMesh},
     {"CcuSchedAllToAllVSoleMesh", AlgorithmType::CcuSchedAllToAllVSoleMesh},
     {"CcuSchedAllToAllSoleMeshConcurrent", AlgorithmType::CcuSchedAllToAllSoleMeshConcurrent},
+    {"CcuSchedAllToAllMesh1DMultiJetty", AlgorithmType::CcuSchedAllToAllMesh1DMultiJetty},
     {"CcuSchedAllReduceSoleMesh", AlgorithmType::CcuAllReduceMeshMem2Mem1D},
     {"CcuSchedAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
     {"CcuSchedAllGatherSoleMesh", AlgorithmType::CcuSchedAllGatherSoleMesh},

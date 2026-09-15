@@ -42,6 +42,9 @@ constexpr uint32_t MAX_NOTIFY_COUNT = 8192;
 using ChannelHandle = uint64_t;
 using ThreadHandle = uint64_t;
 using PhyDeviceId = uint32_t;
+// TopoMeta 中 phyId 的最高位标记：server 内全部 phyId 携带该标记时，按 MESH_1D_CLOS
+// （单方向 1D Mesh 实例 + 覆盖 server 全部 rank 的 CLOS 实例，共 2 个实例）建模
+constexpr PhyDeviceId MESH_1D_CLOS_PHYID_MARK = 0x80000000U;
 using ServerMeta = std::vector<PhyDeviceId>;
 using SuperPodMeta = std::vector<ServerMeta>;
 using TopoMeta = std::vector<SuperPodMeta>;

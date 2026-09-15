@@ -45,7 +45,7 @@ private:
     void Init910BLinkMap();
     void Init910CLinkMap();
     void Init910DLinkMap();
-    void InitTopoInstsMap(uint32_t serverId, uint32_t rankId, const std::vector<uint32_t>& phyIds);
+    void InitTopoInstsMap(uint32_t serverId, uint32_t rankId, const std::vector<uint32_t>& phyIds, bool mesh1dClos);
     std::vector<uint32_t> GetAllRanks(const std::vector<uint32_t>& phyIds, uint32_t rankId);
     std::vector<uint32_t> CheckRowPeerDevice(const std::vector<uint32_t>& phyIds, uint32_t rankId, uint32_t rowId);
     std::vector<uint32_t> CheckColPeerDevice(const std::vector<uint32_t>& phyIds, uint32_t rankId, uint32_t colId);

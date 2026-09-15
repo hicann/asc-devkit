@@ -36,8 +36,16 @@ TopoModel::TopoModel(const TopoMeta& topoMeta)
         uint32_t rankNumInPod = 0;
         for (auto& server : pod) {
             uint32_t rankNumInServer = 0;
-            InitTopoInstsMap(serverId, rankId, server);
-            for (auto& phyId : server) {
+            // 剥离 MESH_1D_CLOS 标记位，server 内全部 phyId 均携带标记时按 MESH_1D_CLOS 建模
+            std::vector<uint32_t> phyIds;
+            phyIds.reserve(server.size());
+            bool mesh1dClos = !server.empty();
+            for (auto markedPhyId : server) {
+                phyIds.push_back(markedPhyId & ~MESH_1D_CLOS_PHYID_MARK);
+                mesh1dClos = mesh1dClos && (markedPhyId & MESH_1D_CLOS_PHYID_MARK) != 0;
+            }
+            InitTopoInstsMap(serverId, rankId, phyIds, mesh1dClos);
+            for (auto phyId : phyIds) {
                 rankId2PhyId_[rankId] = phyId;
                 rankId2ServerId_[rankId] = serverId;
                 rankId2PodId_[rankId] = superpodId;
@@ -121,7 +129,8 @@ void TopoModel::InitL1L2TopoInsts(uint32_t podNum)
     level2TopoInsts_.push_back(0);
 }
 
-void TopoModel::InitTopoInstsMap(uint32_t serverId, uint32_t rankId, const std::vector<uint32_t>& phyIds)
+void TopoModel::InitTopoInstsMap(
+    uint32_t serverId, uint32_t rankId, const std::vector<uint32_t>& phyIds, bool mesh1dClos)
 {
     for (auto phyId : phyIds) {
         auto rowId = phyId / GRID_SIZE;
@@ -150,6 +159,12 @@ void TopoModel::InitTopoInstsMap(uint32_t serverId, uint32_t rankId, const std::
         if (rowRankIds.size() > 1 && colRankIds.size() > 1) {
             is2D = true;
             dev2TopoInsts_[serverId][phyId].push_back(SERVER_CLOS_INSTID);
+        }
+
+        // MESH_1D_CLOS场景：仅单方向mesh（X/Y异或）+ 覆盖server内全部rank的CLOS实例，共2个实例
+        if (mesh1dClos && (rowRankIds.size() > 1) != (colRankIds.size() > 1)) {
+            dev2TopoInsts_[serverId][phyId].push_back(SERVER_CLOS_INSTID);
+            instId2RankIds_[serverId][SERVER_CLOS_INSTID] = GetAllRanks(phyIds, rankId);
         }
     }
 }
@@ -404,6 +419,29 @@ void TopoModel::GetEndpointDesc(
                 return;
             }
         }
+    }
+
+    // 非 UBX 的 L0 查询（如 MESH_1D_CLOS 标记位拓扑）：返回 topo 实例内全部 rank 的 endpoint
+    // （GetTopoTypeByLink 按实例成员 endpoint 归属判定 link 所属实例）
+    if (layer == NetLayerL0) {
+        const uint32_t serverId = rankId2ServerId_[curRank];
+        const auto serverIt = instId2RankIds_.find(serverId);
+        if (serverIt == instId2RankIds_.end() || descNum == nullptr || endpointDesc == nullptr) {
+            *descNum = 0;
+            return;
+        }
+        const auto instIt = serverIt->second.find(topoInstId);
+        if (instIt == serverIt->second.end()) {
+            *descNum = 0;
+            return;
+        }
+        const uint32_t capacity = *descNum;
+        const uint32_t count = std::min(capacity, static_cast<uint32_t>(instIt->second.size()));
+        for (uint32_t i = 0; i < count; i++) {
+            endpointDesc[i] = rankId2Endpoint_[instIt->second[i]];
+        }
+        *descNum = count;
+        return;
     }
 
     // 仅支持hostdpu使用，暂时仅支持layer1的出框的通信对端查询
