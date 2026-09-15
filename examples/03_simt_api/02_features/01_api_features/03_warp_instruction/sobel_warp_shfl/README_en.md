@@ -4,13 +4,11 @@
 
 This example uses Sobel edge detection to demonstrate how to reuse data loaded by adjacent threads through Warp shuffle instructions to complete 3x3 convolution computation, and how to implement compact output of edge pixels in combination with [asc_ballot()](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_vote_functions/asc_ballot.md).
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

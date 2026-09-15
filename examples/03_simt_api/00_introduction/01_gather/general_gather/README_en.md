@@ -4,13 +4,11 @@
 
 This example implements a generalized shape Gather operator based on the Ascend C SIMT programming model, including the basic gather and enhanced gather_v2. The gather operator collects specified rows from a two-dimensional input tensor, while the gather_v2 operator supports collecting data along a specified dimension from multi-dimensional input tensors and supports batch_dims batch processing mode. This example demonstrates the development method for operators with discrete memory access in generalized scenarios.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Versions
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

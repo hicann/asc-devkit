@@ -6,13 +6,11 @@ This example demonstrates the complete usage of the Ascend log function in SIMT 
 
 For more log function details, refer to: [Ascend Log Function Reference](https://hiascend.com/document/redirect/CannCommunitylogref)
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

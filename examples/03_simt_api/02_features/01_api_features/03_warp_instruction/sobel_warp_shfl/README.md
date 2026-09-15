@@ -4,13 +4,11 @@
 
 本样例以Sobel边缘检测为例，展示了如何通过Warp shuffle指令复用相邻线程加载的数据来完成 3×3 卷积计算，以及结合[asc_ballot()](../../../../../../docs/zh/api/SIMT-API/Warp_functions/Warp_vote_functions/asc_ballot.md)实现边缘像素的紧凑输出。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.1.0
+| 产品 | CANN软件版本 |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 

@@ -4,12 +4,11 @@
 
 This example is a SIMT programming introductory example. It uses the `<<<>>>` kernel launch operator to complete the basic process of running and verifying the example kernel function on the NPU side. The kernel function prints output results using `printf()`.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Versions
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

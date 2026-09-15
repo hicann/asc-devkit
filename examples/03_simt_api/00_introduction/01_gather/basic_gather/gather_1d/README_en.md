@@ -4,13 +4,11 @@
 
 This sample implements a one-dimensional Gather operator in a simple scenario (with fixed shape) using the Ascend C SIMT programming mode. It collects elements at specified indices from a one-dimensional input, demonstrating the development method for discrete memory access operators in simplified scenarios.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Versions
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

@@ -4,13 +4,11 @@
 
 This example introduces UB bank conflicts that may occur when multiple threads in the same Warp access UB in the Ascend C SIMT programming model. The example constructs 5 cases with different UB read address patterns, demonstrating typical scenarios such as same-address merge, cross-bank/subbank distributed access, same 8B-range merge for contiguous float access, same-subbank different-row conflicts, and same-index subbank conflicts within the same bank group.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

@@ -9,13 +9,11 @@ This example contains two cases:
 - Case 1: A large array in stack space causes stack overflow. You can increase the stack space through a configuration file, but using UB to store a large amount of temporary data is recommended.
 - Case 2: When recursive functions are used, an excessively large recursion depth causes stack overflow. You need to control the recursion depth or use an iterative algorithm instead of a recursive algorithm.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

@@ -3,13 +3,11 @@
 ## Overview
 
 This example uses the Roll operator to demonstrate how to register custom operators using PyTorch's torch.library mechanism.
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

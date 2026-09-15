@@ -3,14 +3,11 @@
 ## 概述
 
 本样例通过归约求和算子展现[协作组API](../../../../../../docs/zh/api/SIMT-API/cooperative_groups/cooperative_groups_intro.md)的基本用法，重点呈现了协作组提供的代码抽象能力。
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.2.0
-
+| 产品 | CANN软件版本 |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.2.0 |
 
 ## 目录结构介绍
 

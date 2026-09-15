@@ -4,13 +4,11 @@
 
 This sample implements a simple scenario (fixed shape) 2D Gather operator using the Ascend C SIMT programming mode. It collects specified m rows of data from the input tensor, demonstrating the development method for discrete memory access operators in simplified scenarios.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Versions
-
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

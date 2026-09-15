@@ -4,12 +4,11 @@
 
 This example uses Add computation to demonstrate the compilation, execution, result verification, and performance data collection flow of Ascend C programs in CAmodel simulation mode. Users can obtain simulation performance data through `msopprof simulator` to analyze performance bottlenecks and improve performance analysis efficiency.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

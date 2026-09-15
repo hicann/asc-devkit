@@ -4,13 +4,11 @@
 
 本样例介绍Ascend C SIMT编程方式下同一个Warp内多个线程访问UB时的bank冲突现象。样例通过5个case构造不同的UB读地址模式，展示同地址合并、跨bank/subbank分散访问、连续float访问中的同一8B范围合并、同subbank不同行冲突，以及同一bank group内同编号subbank冲突等典型场景。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.1.0
+| 产品 | CANN软件版本 |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 

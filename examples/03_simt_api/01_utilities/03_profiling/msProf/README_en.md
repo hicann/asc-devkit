@@ -4,12 +4,11 @@
 
 This example is based on the Gather operator and demonstrates how to collect on-board performance data using msOpProf. Users can quickly locate software and hardware performance bottlenecks of operators based on the output performance data, improving the efficiency of operator performance analysis.
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Software Version
-- \>= CANN 9.1.0
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## Directory Structure
 

@@ -4,13 +4,11 @@
 
 本样例基于Ascend C SIMT编程方式实现支持泛化shape的Gather算子，包括基础版gather和增强版gather_v2。gather算子从二维输入张量中采集指定索引的行数据，gather_v2算子支持从多维输入张量中按指定维度收集数据，并支持batch_dims批量处理模式。样例展示了泛化场景下离散内存访问类算子的开发方法。
 
-## 支持的产品
+## 本样例支持的产品及CANN软件版本
 
-- Ascend 950PR/Ascend 950DT
-
-## 支持的CANN软件版本
-
-- \>= CANN 9.1.0
+| 产品 | CANN软件版本 |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 

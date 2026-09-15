@@ -5,14 +5,11 @@
 This sample demonstrates the basic usage of the [cooperative groups API](../../../../../../docs/zh/api/SIMT-API/cooperative_groups/cooperative_groups_intro.md) through reduction sum operations, highlighting the code abstraction capabilities provided by cooperative groups.
 
 
-## Supported Products
+## Supported Products and CANN Versions
 
-- Ascend 950PR/Ascend 950DT
-
-## Supported CANN Versions
-
-- \>= CANN 9.2.0
-
+| Products | CANN Versions |
+|---|---|
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.2.0 |
 
 ## Directory Structure
 
