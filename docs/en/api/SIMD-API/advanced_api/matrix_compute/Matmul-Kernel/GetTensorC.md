@@ -96,11 +96,11 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 
  <a id="non-sequential-write"></a>
 **Figure 1** Non-continuous write mode diagram  
-![](../../../../figures/non-continuous-write-mode-diagram.png "Non-continuous write mode diagram")
+![](../../../../figures/non_continuous_write_mode_schematic_diagram.png "Non-continuous write mode diagram")
 
 <a id="sequential-write"></a>
 **Figure 2** Continuous write mode diagram  
-![](../../../../figures/continuous-write-mode-diagram.png "Continuous write mode diagram")
+![](../../../../figures/continuous_write_mode_schematic_diagram.png "Continuous write mode diagram")
 
 ## Return Value
 

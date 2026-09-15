@@ -97,7 +97,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 |---|---|
 | T | Data type of the operand. |
 | U | Data type of scalarValue. |
-| isSetMask | Whether to set the mask inside the API.<br>&bull; true: The mask is set inside the API.<br>&bull; false: The mask is set outside the API. The developer needs to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode:<br>&nbsp;&nbsp;&bull; For the API that computes the first n data of a tensor, the count input parameter does not take effect. It is recommended to set it to 1.<br>&nbsp;&nbsp;&bull; For the API that computes high-dimensional splitting of a tensor, the mask input parameter is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning.<br><!-- npu="950,310b" id21 -->For the following models, the isSetMask parameter in the API for computing the first n data of a tensor does not take effect, and the default value can be retained.<br>&bull; <!-- npu="950" id22 -->Ascend 950PR/Ascend 950DT<!-- end id22 --><br>&bull; <!-- npu="310b" id23 -->Atlas 200I/500 A2 Inference Product<!-- end id23 --><!-- end id21 --> |
+| isSetMask | Whether to set the mask inside the API.<br>&bull; true: The mask is set inside the API.<br>&bull; false: The mask is set outside the API. The developer needs to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode:<br>&nbsp;&nbsp;&bull; For the API that computes the first n data of a tensor, the count input parameter does not take effect. It is recommended to set it to 1.<br>&nbsp;&nbsp;&bull; For the API that computes high-dimensional splitting of a tensor, the mask input parameter is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning.<br>For the following models, the isSetMask parameter in the API for computing the first n data of a tensor does not take effect, and the default value can be retained.<br>&bull; Ascend 950PR/Ascend 950DT<br>&bull; Atlas inference products |
 
 **Table 2** Parameters
 
@@ -122,7 +122,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 - For Atlas A2 training products/Atlas A2 inference products, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
 <!-- end id11 -->
 <!-- npu="310b" id12 -->
-- For Atlas 200I/500 A2 Inference Product, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
+- For Atlas inference products, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
 <!-- end id12 -->
 
 ## Data Type
@@ -137,7 +137,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 - For Atlas A2 training products/Atlas A2 inference products, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
-- For Atlas 200I/500 A2 Inference Product, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
+- For Atlas inference products, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
 <!-- end id16 -->
 
 ## Return Value<a name="section194321251175110"></a>

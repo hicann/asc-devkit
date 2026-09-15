@@ -112,7 +112,7 @@ Atlas A2 training products/Atlas A2 inference products support the following dat
 <!-- end id4 -->
 
 <!-- npu="310b" id5 -->
-Atlas 200I/500 A2 Inference Product supports the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+Atlas inference products supports the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id5 -->
 
 <!-- npu="310p" id6 -->

@@ -73,7 +73,7 @@ For example, the summation result of [a1, a2, a3, a4, a5, a6, ...] is [a1+a2, a3
 | src | Input | Source operand.<br>The type is [LocalTensor](../../data_structures/LocalTensor/LocalTensor.md). The supported TPosition values are VECIN, VECCALC, and VECOUT (the storage location is Unified Buffer). |
 | mask[]/mask | Input | `mask` controls the source operands that participate in the computation in each iteration. For details, see [Mask Overview](../SIMD_compute/mask.md). |
 | repeatTime | Input | Number of iterations. The value range is [0, 255]. |
-| dstRepStride | Input | Address stride between adjacent iterations of the destination operand, in the unit of the length after one repeatTime reduction, that is, 128 bytes. The value range is [0, $2^{16}-1$].<!-- npu="910" id24 --><br>**Note: Atlas training series products do not support setting this parameter to 0.** <!-- end id24 -->|
+| dstRepStride | Input | Address stride between adjacent iterations of the destination operand, in the unit of the length after one repeatTime reduction, that is, 128 bytes. The value range is [0, $2^{16}-1$].<!-- npu="910" id24 --><br>**Note: Atlas training products do not support setting this parameter to 0.** <!-- end id24 -->|
 | srcBlkStride | Input | Address stride of a DataBlock within a single iteration, in the unit of 32 bytes. The value range is [0, $2^{16}-1$]. |
 | srcRepStride | Input | Address stride between adjacent iterations of the source operand, that is, the number of DataBlocks skipped by the source operand in each iteration. The value range is [0, $2^{16}-1$]. |
 
@@ -87,19 +87,19 @@ The supported data types are as follows:
 - Ascend 950PR/Ascend 950DT: half and float are supported.
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 training series products/Atlas A3 inference series products: half and float are supported.
+- Atlas A3 training products/Atlas A3 inference products: half and float are supported.
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 training series products/Atlas A2 inference series products: half and float are supported.
+- Atlas A2 training products/Atlas A2 inference products: half and float are supported.
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 inference products: half and float are supported.
 <!-- end id11 -->
 <!-- npu="310p" id12 -->
-- Atlas inference series products AI Core: half and float are supported.
+- Atlas inference products AI Core: half and float are supported.
 <!-- end id12 -->
 <!-- npu="910" id13 -->
-- Atlas training series products: half is supported.
+- Atlas training products: half is supported.
 <!-- end id13 -->
 
 The data types of the destination operand and the source operand must be consistent.

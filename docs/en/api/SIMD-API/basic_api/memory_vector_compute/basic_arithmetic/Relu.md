@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: Supported
+- Atlas training products: Supported
 <!-- end id7 -->
 ## Description<a name="section618mcpsimp"></a>
 
@@ -87,19 +87,19 @@ $dst_i = \max(0, src_i)$
 - For Ascend 950PR/Ascend 950DT, the data types supported by T are half, int32_t, float, and int64_t. The int64_t data type is supported only by the API for computing the first n data of a tensor.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 training series products/Atlas A3 inference series products, the data types supported by T are half, int32_t, and float.
+- For Atlas A3 training products/Atlas A3 inference products, the data types supported by T are half, int32_t, and float.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 training series products/Atlas A2 inference series products, the data types supported by T are half, int32_t, and float.
+- For Atlas A2 training products/Atlas A2 inference products, the data types supported by T are half, int32_t, and float.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - For Atlas 200I/500 A2 inference products, the data types supported by T are half, int32_t, and float.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- For Atlas inference series products AI Core, the data types supported by T are half, int32_t, and float.
+- For Atlas inference products AI Core, the data types supported by T are half, int32_t, and float.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- For Atlas training series products, the data type supported by T is half.
+- For Atlas training products, the data type supported by T is half.
 <!-- end id15 -->
 ## Return Value<a name="section38228281712"></a>
 

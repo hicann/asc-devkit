@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=e1d69e702c9c347bfbdba7ca2ed786dab14f1ccf translatedAt=2026-09-08T01:17:42.247Z -->
 
-> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/programming_model/ai_core_simd_programming/thread_architecture.md) in the programming guide to understand the relevant prerequisites.
+> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/programming_model/ai_core_simt_programming/thread_architecture.md) in the programming guide to understand the relevant prerequisites.
 
 A warp is the basic unit of SIMT thread execution and scheduling. Threads within a thread block are divided into multiple warps according to their linear thread IDs, and a warp currently contains 32 threads. Threads within the same warp execute the same instruction stream, but each thread has its own registers and lane ID, allowing it to process different data addresses and branch paths.
 

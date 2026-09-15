@@ -184,7 +184,7 @@ Atlas training products support only mode 0.
     <!-- end id10 -->
 
     <!-- npu="310p" id11 -->
-    - Atlas inference series product AI Core: half/float.
+    - Atlas inference products AI Core: half/float.
     <!-- end id11 -->
 
     <!-- npu="910" id12 -->
@@ -209,7 +209,7 @@ None
 - For Ascend 950PR/Ascend 950DT, data types int8\_t/uint8\_t/complex32/int64\_t/uint64\_t/complex64 support only the API for computing the first n data of a tensor.
 <!-- end id13 -->
 
-<!-- npu="910b，A3，310p" id17 -->
+<!-- npu="910b, A3, 310p" id17 -->
 - For the following models, when mode 1 and mode 2 are used, 8 KB of Unified Buffer space must be reserved as the temporary data storage area of the API:
 
     <!-- npu="A3" id14 -->
@@ -224,8 +224,8 @@ None
 <!-- end id17 -->
 <!-- npu="310b" id33 -->
 - Atlas 200I/500 A2 inference products do not support the following function prototypes:
-  - The function prototype that does not pass the mask parameter in Select mode 1 of tensor high-dimensional slicing computation [SetVectorMask](../mask_operations/SetVectorMask.md) and [SetCmpMask_ISASI](SetCmpMask_ISASI.md)).
-  - The function prototype that does not take the mask parameter in tensor high-dimensional splitting computation Select mode 0 and mode 2 must be used together with [SetVectorMask](../mask_operations/SetVectorMask.md) and [SetCmpMask_ISASI](SetCmpMask_ISASI.md)).
+  - The function prototype that does not pass the mask parameter in Select mode 1 of tensor high-dimensional slicing computation [SetVectorMask](../mask_operations/SetVectorMask.md) and [SetCmpMask_ISASI](SetCmpMask_ISASI.md).
+  - The function prototype that does not take the mask parameter in tensor high-dimensional splitting computation Select mode 0 and mode 2 must be used together with [SetVectorMask](../mask_operations/SetVectorMask.md) and [SetCmpMask_ISASI](SetCmpMask_ISASI.md).
 <!-- end id33 -->
 
 

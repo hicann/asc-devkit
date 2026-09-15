@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=e1d69e702c9c347bfbdba7ca2ed786dab14f1ccf translatedAt=2026-08-28T07:16:47.266Z -->
 
-> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/programming_model/ai_core_simd_programming/thread_architecture.md) in the programming guide to understand the relevant prerequisites.
+> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/programming_model/ai_core_simt_programming/thread_architecture.md) in the programming guide to understand the relevant prerequisites.
 
 SIMT programming typically requires a large number of threads to access Global Memory in parallel. Memory access functions are used to explicitly control the cache path and cache consistency maintenance method when accessing Global Memory, helping developers select the appropriate load, store, or cache invalidation interface based on data reuse characteristics, write-back methods, and cross-core visibility requirements.
 

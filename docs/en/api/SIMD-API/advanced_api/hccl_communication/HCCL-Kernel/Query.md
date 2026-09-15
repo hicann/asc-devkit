@@ -5,12 +5,12 @@
 ## Applicable Products
 
 - Ascend 950PR/Ascend 950DT: Not supported
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products: Supported
-- Atlas A2 Training Series Products/Atlas A2 Inference Series Products: Supported
-- Atlas 200I/500 A2 Inference Product: Not supported
-- Atlas Inference Series Products AI Core: Not supported
-- Atlas Inference Series Products Vector Core: Not supported
-- Atlas Training Series Products: Not supported
+- Atlas A3 training products/Atlas A3 inference products: Supported
+- Atlas A2 training products: Supported
+- Atlas inference products: Not supported
+- Atlas inference products AI Core: Not supported
+- Atlas inference products Vector Core: Not supported
+- Atlas training products: Not supported
 
 ## Description
 

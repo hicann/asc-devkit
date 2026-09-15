@@ -6,7 +6,7 @@
 
 This case performs performance analysis and optimization on the Matmul operator. The Matmul operator implements matrix multiplication, which mainly includes data load-in and load-out pipelines and the Cube computation pipeline.
 
-Taking matrix dimensions M = 4096, N = 5120, K = 4096, input data type half, output data type float, and output format ND as an example, the performance verification platform is Atlas A2 Training Series/Atlas A2 Inference Series. This case introduces the optimization methods for the Matmul operator, including optimizing core partitioning logic and basic blocks, as well as enabling large package loading.
+Taking matrix dimensions M = 4096, N = 5120, K = 4096, input data type half, output data type float, and output format ND as an example, the performance verification platform is Atlas A2 training products/Atlas A2 inference products. This case introduces the optimization methods for the Matmul operator, including optimizing core partitioning logic and basic blocks, as well as enabling large package loading.
 
 -   Core partitioning logic: Enable as many Cube cores as possible to implement parallel computation.
 -   Basic blocks: Select the optimal baseM, baseN, and baseK parameters, where baseM, baseN, and baseK are parameters in Matmul Tiling.

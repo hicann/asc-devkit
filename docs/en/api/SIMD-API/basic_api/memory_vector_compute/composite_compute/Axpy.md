@@ -101,7 +101,7 @@ PAR indicates the number of elements that the vector computation unit can proces
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-**Table** Data type combinations supported by Atlas A3 training series/Atlas A3 inference products
+**Table** Data type combinations supported by Atlas A3 training products/Atlas A3 inference products
 
 | src data type | scalarValue data type | dst data type | PAR |
 | ----------- | -------------- | ----------- | --- |
@@ -111,7 +111,7 @@ PAR indicates the number of elements that the vector computation unit can proces
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-**Table** Data type combinations supported by Atlas A2 training series/Atlas A2 inference products
+**Table** Data type combinations supported by Atlas A2 training products/Atlas A2 inference products
 
 | src data type | scalarValue data type | dst data type | PAR |
 | ----------- | -------------- | ----------- | --- |

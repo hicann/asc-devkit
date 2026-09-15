@@ -10,9 +10,9 @@ Currently, the support for this capability is as follows:
 
 Ascend 950PR/Ascend 950DT do not support re-execution of the computing-communication convergence operator.
 
-Atlas A2 Training Series/Atlas A2 Inference Series do not support re-execution of the computing-communication convergence operator.
+Atlas A2 training products/Atlas A2 inference products do not support re-execution of the computing-communication convergence operator.
 
-Atlas A3 Training Series/Atlas A3 Inference Series support re-execution of the computing-communication convergence operator.
+Atlas A3 training products/Atlas A3 inference products support re-execution of the computing-communication convergence operator.
 
 **Figure 1** Communication task retry mechanism<a name="zh-cn_topic_0000002400328453_fig774612491699"></a>  
 ![](../../../../figures/communication_task_retry_mechanism.png "Communication task retry mechanism")

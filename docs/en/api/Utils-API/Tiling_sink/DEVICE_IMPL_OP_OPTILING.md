@@ -4,7 +4,7 @@
 
 ## Description<a name="zh-cn_topic_0000001867289945_zh-cn_topic_0000001389787297_section36583473819"></a>
 
-In the [Tiling Offload](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/advanced_programming/operator_graph_development/enable_tiling_offload.md) scenario, this macro definition is used to generate a registration class for Tiling Offload, and then register the **Tiling** function to be offloaded by calling the member function of the registration class.
+In the [Tiling Offload](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/advanced_programming/operator_graph_development/enable_tiling_offload.md) scenario, this macro definition is used to generate a registration class for Tiling Offload, and then register the **Tiling** function to be offloaded by calling the member function of the registration class.
 
 ## Prototype<a name="zh-cn_topic_0000001867289945_zh-cn_topic_0000001389787297_section13230182415108"></a>
 

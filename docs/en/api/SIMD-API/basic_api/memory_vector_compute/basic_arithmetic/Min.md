@@ -89,7 +89,7 @@ $dst_i = min(src0_i, src1_i)$
 - For Atlas A2 training products/Atlas A2 inference products, the data types supported by T are int16_t, half, int32_t, and float.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- For Atlas 200I/500 A2 Inference Product, the data types supported by T are int16_t, half, int32_t, and float.
+- For Atlas inference products, the data types supported by T are int16_t, half, int32_t, and float.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
 - For Atlas inference products AI Core, the data types supported by T are int16_t, half, int32_t, and float.

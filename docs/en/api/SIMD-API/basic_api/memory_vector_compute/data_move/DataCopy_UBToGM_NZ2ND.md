@@ -37,7 +37,7 @@ The supported data paths are as follows (represented by [logical position TPosit
 - Unified Buffer -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id1 -->
-    - CO2 -> GM (supported only by the AI Core of Atlas inference series products)
+    - CO2 -> GM (supported only by the AI Core of Atlas inference products)
     <!-- end id1 -->
 
 ## Prototype<a name="section1792117555586"></a>
@@ -108,15 +108,15 @@ Taking the float data type as an example, the NZ2ND conversion diagram is as fol
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-- Atlas A3 training series products/Atlas A3 inference series products, supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A3 training products/Atlas A3 inference products, supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->
-- Atlas A2 training series products/Atlas A2 inference series products, supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A2 training products/Atlas A2 inference products, supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core support the following data types: int16_t, uint16_t, half, int32_t, uint32_t, float.
+- Atlas inference products AI Core support the following data types: int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id5 -->
 
 ## Return Value<a name="section129001927113216"></a>

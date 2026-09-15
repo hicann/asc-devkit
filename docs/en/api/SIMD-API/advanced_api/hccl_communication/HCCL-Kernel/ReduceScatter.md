@@ -66,9 +66,9 @@ Returns the identifier **handleId** of the task, where **handleId** is greater t
 
 -   If the [config template parameter](hccl_template_parameter.md#hccl-template-params) of the HCCL object does not specify the core that issues the communication task, this API can be called only on either the AIC core or the AIV core. If the [config template parameter](hccl_template_parameter.md#hccl-template-params) of the HCCL object specifies the core that issues the communication task, this API can be called on both the AIC core and the AIV core at the same time. The API internally issues the communication task on only one of the AIC core or the AIV core based on the specified core type.
 
--   For Atlas A2 training series products/Atlas A2 inference series products, within a communication domain, the total number of calls to all Prepare APIs cannot exceed 63.
+-   For Atlas A2 training products/Atlas A2 inference products, within a communication domain, the total number of calls to all Prepare APIs cannot exceed 63.
 
--   For Atlas A3 training series products/Atlas A3 inference series products, within a communication domain, the total number of calls to all Prepare APIs and the InterHcclGroupSync API cannot exceed 63.
+-   For Atlas A3 training products/Atlas A3 inference products, within a communication domain, the total number of calls to all Prepare APIs and the InterHcclGroupSync API cannot exceed 63.
 
 -   For Ascend 950PR/Ascend 950DT, within a communication domain, the total number of calls to all Prepare APIs cannot exceed 63.
 

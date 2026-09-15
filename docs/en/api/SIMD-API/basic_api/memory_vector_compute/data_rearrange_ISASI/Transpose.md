@@ -110,7 +110,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-**Table** Memory required by sharedTmpBuffer on Atlas A3 Training Series/Atlas A3 Inference Series<a id="table4"></a>
+**Table** Memory required by sharedTmpBuffer on Atlas A3 training products/Atlas A3 inference products<a id="table4"></a>
 
 | transposeType | Size required by sharedTmpBuffer |
 | :-- | :-- |
@@ -120,7 +120,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-**Table** Memory required by sharedTmpBuffer on Atlas A2 Training Series/Atlas A2 Inference Series<a id="table4"></a>
+**Table** Memory required by sharedTmpBuffer on Atlas A2 training products/Atlas A2 inference products<a id="table4"></a>
 
 | transposeType | Size Required by sharedTmpBuffer |
 | :-- | :-- |
@@ -130,7 +130,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 <!-- end id3 -->
 
 <!-- npu="310b" id4 -->
-**Table**  Memory required by sharedTmpBuffer on Atlas 200I/500 A2 Inference Product<a id="table4"></a>
+**Table**  Memory required by sharedTmpBuffer on Atlas inference products<a id="table4"></a>
 
 | transposeType | Size Required by sharedTmpBuffer |
 | :-- | :-- |
@@ -156,15 +156,15 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
   <!-- end id6 -->
 
   <!-- npu="A3" id7 -->
-  On Atlas A3 Training Series/Atlas A3 Inference Series, the data types supported by the operand are: int16_t, uint16_t, half.
+  On Atlas A3 training products/Atlas A3 inference products, the data types supported by the operand are: int16_t, uint16_t, half.
   <!-- end id7 -->
 
   <!-- npu="910b" id8 -->
-  On Atlas A2 Training Series/Atlas A2 Inference Series, the data types supported by the operand are: int16_t, uint16_t, half.
+  On Atlas A2 training products/Atlas A2 inference products, the data types supported by the operand are: int16_t, uint16_t, half.
   <!-- end id8 -->
 
   <!-- npu="310b" id9 -->
-  On Atlas 200I/500 A2 Inference Product, the data types supported by the operand are: int16_t, uint16_t, half.
+  On Atlas inference products, the data types supported by the operand are: int16_t, uint16_t, half.
   <!-- end id9 -->
 
   <!-- npu="310p" id10 -->
@@ -183,15 +183,15 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
     <!-- end id12 -->
 
     <!-- npu="A3" id13 -->
-    For Atlas A3 Training Series products/Atlas A3 Inference Series products, the operand supports the following data type: uint16_t.
+    For Atlas A3 training products/Atlas A3 inference products, the operand supports the following data type: uint16_t.
     <!-- end id13 -->
 
     <!-- npu="910b" id14 -->
-    For Atlas A2 Training Series products/Atlas A2 Inference Series products, the operand supports the following data type: uint16_t.
+    For Atlas A2 training products/Atlas A2 inference products, the operand supports the following data type: uint16_t.
     <!-- end id14 -->
 
     <!-- npu="310b" id15 -->
-    For Atlas 200I/500 A2 Inference Products, the operand supports the following data type: uint16_t.
+    For Atlas inference productss, the operand supports the following data type: uint16_t.
     <!-- end id15 -->
 
     <!-- npu="310p" id16 -->
@@ -205,11 +205,11 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
     <!-- end id17 -->
 
     <!-- npu="A3" id18 -->
-    For Atlas A3 Training Series/Atlas A3 Inference Series, the data types supported by the operand are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+    For Atlas A3 training products/Atlas A3 inference products, the data types supported by the operand are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
     <!-- end id18 -->
 
     <!-- npu="910b" id19 -->
-    For Atlas A2 Training Series/Atlas A2 Inference Series, the data types supported by the operand are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+    For Atlas A2 training products/Atlas A2 inference products, the data types supported by the operand are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
     <!-- end id19 -->
 
     <!-- npu="310p" id20 -->

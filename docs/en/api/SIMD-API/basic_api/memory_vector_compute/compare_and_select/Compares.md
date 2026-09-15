@@ -115,7 +115,7 @@ Supports multiple comparison modes:
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- For Atlas inference series AI Core, this is a reserved parameter and is ineffective.
+- For Atlas inference products AI Core, this is a reserved parameter and is ineffective.
 <!-- end id5 -->
 
 ## Data Type
@@ -145,7 +145,7 @@ Supports multiple comparison modes:
 <!-- end id9 -->
 
 <!-- npu="310p" id10 -->
-- For Atlas inference series products AI Core
+- For Atlas inference products AI Core
     - The supported data types of T are half and float.
     - The data type supported by U is uint8_t.
 <!-- end id10 -->

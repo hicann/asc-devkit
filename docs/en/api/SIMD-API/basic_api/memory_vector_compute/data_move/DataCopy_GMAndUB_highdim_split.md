@@ -136,7 +136,7 @@ The data types supported by the source operand and the destination operand must 
 <!-- end id4 -->
 
 <!-- npu="310b" id5 -->
-- Atlas 200I/500 A2 Inference Product: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, and double.
+- Atlas inference products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, and double.
 <!-- end id5 -->
 
 <!-- npu="310p" id6 -->

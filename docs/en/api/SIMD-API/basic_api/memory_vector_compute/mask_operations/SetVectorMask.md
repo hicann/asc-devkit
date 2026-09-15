@@ -86,7 +86,7 @@ None
 - This API takes effect only when the isSetMask template parameter of the vector computation API is set to false. After use, call [ResetMask](ResetMask.md) to restore the mask to its default value.
 
 <!-- npu="910b,A3" id1 -->
-- For Atlas A3 training series products/Atlas A3 inference series products and Atlas A2 training series products/Atlas A2 inference series products, mask = 0 indicates that the instruction does not perform the computation operation, and this API is treated as a NOP (no operation).
+- For Atlas A3 training products/Atlas A3 inference products and Atlas A2 training products/Atlas A2 inference products, mask = 0 indicates that the instruction does not perform the computation operation, and this API is treated as a NOP (no operation).
 <!-- end id1 -->
 
 ## Calling Examples<a name="section837496171220"></a>

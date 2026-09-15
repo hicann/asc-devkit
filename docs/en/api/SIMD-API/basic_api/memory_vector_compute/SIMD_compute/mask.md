@@ -28,14 +28,14 @@ The mask application mechanism based on the first n data computation API of a Te
 > <!-- npu="A3,910b" id1 -->
 > - For the following models, Mask is a hardware-native capability. When the Tensor First N Data Computation API is called, the API internally sets Mask to Counter mode and restores it to the system-default Normal mode after the computation is complete.
 >   <!-- npu="A3" id2 -->
->   - Atlas A3 Training Series Products/Atlas A3 Inference Series Products
+>   - Atlas A3 training products/Atlas A3 inference products
 >   <!-- end id2 -->
 >   <!-- npu="910b" id3 -->
->   - Atlas A2 Training Series Products/Atlas A2 Inference Series Products
+>   - Atlas A2 training products/Atlas A2 inference products
 >   <!-- end id3 -->
 > <!-- end id1 -->
 > <!-- npu="950" id4 -->
-> On Ascend 950PR/Ascend 950DT, Mask is implemented through software emulation to ensure compatibility, and the capabilities provided by its underlying hardware differ to a certain extent from those of Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products.<br>
+> On Ascend 950PR/Ascend 950DT, Mask is implemented through software emulation to ensure compatibility, and the capabilities provided by its underlying hardware differ to a certain extent from those of Atlas A2 training products/Atlas A2 inference products and Atlas A3 training products/Atlas A3 inference products.<br>
 > It is recommended to use the Tensor First N Data Computation API, which achieves compatibility by calling the [Reg Vector Computation API](../../reg_vector_compute/reg_vector_computation.md) through VF. The Tensor First N Data Computation API does not switch Mask mode to Normal mode internally. If Mask has been set to Counter mode through [SetMaskCount](../mask_operations/SetMaskCount.md) before this API is called, it remains in Counter mode after the call. When Normal mode is required for subsequent computation, [SetMaskNorm](../mask_operations/SetMaskNorm.md) must be called manually to set it.
 > <!-- end id4 -->
 

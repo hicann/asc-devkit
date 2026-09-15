@@ -93,7 +93,7 @@ template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE = C_TYPE, co
 
 | Parameter | Data Type | Description |
 | --- | --- | --- |
-| M, N, Ka, Kb,<br><br>singleCoreM, singleCoreN, singleCoreK,<br><br>baseM, baseN, baseK,<br><br>depthA1, depthB1,<br><br>stepM， stepN，stepKa，stepKb,<br><br>isBias,<br><br>transLength,<br><br>iterateOrder,<br><br>dbL0A, dbL0B,<br><br>dbL0C,<br><br>shareMode,<br><br>shareL1Size,<br><br>shareL0CSize,<br><br>shareUbSize,<br><br>batchM,<br><br>batchN,<br><br>singleBatchM,<br><br>singleBatchN,<br><br>mxTypePara | int32_t | The meaning is the same as that of the parameters with the same names in the [TCubeTiling](../Matmul-Tiling/tcubetiling_structure.md) structure. The parameters in this structure are constants after constant compilation. |
+| M, N, Ka, Kb,<br><br>singleCoreM, singleCoreN, singleCoreK,<br><br>baseM, baseN, baseK,<br><br>depthA1, depthB1,<br><br>stepM, stepN, stepKa, stepKb,<br><br>isBias,<br><br>transLength,<br><br>iterateOrder,<br><br>dbL0A, dbL0B,<br><br>dbL0C,<br><br>shareMode,<br><br>shareL1Size,<br><br>shareL0CSize,<br><br>shareUbSize,<br><br>batchM,<br><br>batchN,<br><br>singleBatchM,<br><br>singleBatchN,<br><br>mxTypePara | int32_t | The meaning is the same as that of the parameters with the same names in the [TCubeTiling](../Matmul-Tiling/tcubetiling_structure.md) structure. The parameters in this structure are constants after constant compilation. |
 | cfg | [MatmulConfig](MatmulConfig.md#matmulconfig-params) | Parameter configuration of the Matmul template. |
 
 ## Return Value

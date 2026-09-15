@@ -330,13 +330,13 @@ When the Mmad basic API is used for matrix multiplication, the data layout of th
 
     The ND-\>ND\_ALIGN transformation process is shown in the following figure. Assume that the data type of the result matrix C of matrix multiplication is int32\_t and it is output to VECOUT. The original matrix is not 32-byte aligned in the N direction. After ND\_ALIGN is set, zeros are padded after it to align it to 32 bytes.
 
-    ![](../../../figures/nd2nz-conversion-schematic-diagram.png)
+    ![](../../../figures/nd2nz_conversion_diagram.png)
 
 -   **VECTOR**: VECTOR is a data format used in the
 <a name="li51557161818"></a>[GEMV](../../../operator_practice/simd_operator_impl/matrix_advanced_api/feature_scenarios/cube_vector_multiplication.md) (General Matrix-Vector Multiply) scenario. Configuring the matrix in the VECTOR data layout means that the input data is a vector.
 
     **Figure 2**  Schematic diagram of matrix A in the Vector format for GEMV scenario input<a name="fig172015331814"></a>  
-    ![](../../../figures/gemv-scenario-input-vector-format-matrix-a-schematic-diagram.png "Schematic diagram of matrix A in the Vector format for GEMV scenario input")
+    ![](../../../figures/gemv_scenario_input_vector_format_a_matrix_diagram.png "Schematic diagram of matrix A in the Vector format for GEMV scenario input")
 
 ## COLUMN\_MAJOR<a name="section14365456143720"></a>
 

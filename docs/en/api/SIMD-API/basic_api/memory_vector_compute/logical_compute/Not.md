@@ -83,19 +83,19 @@ $dst_i = \sim src_i$
 - For Ascend 950PR/Ascend 950DT, T supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, and uint64_t. The data types int8_t, uint8_t, int64_t, and uint64_t are supported only by the APIs for computing the first n data of a tensor.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 training series products/Atlas A3 inference series products, T supports the following data types: int16_t and uint16_t.
+- For Atlas A3 training products/Atlas A3 inference products, T supports the following data types: int16_t and uint16_t.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 training series products/Atlas A2 inference series products, T supports the following data types: int16_t and uint16_t.
+- For Atlas A2 training products/Atlas A2 inference products, T supports the following data types: int16_t and uint16_t.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - For Atlas 200I/500 A2 inference products, T supports the following data types: int16_t and uint16_t.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- For Atlas inference series products AI Core, T supports the following data types: int16_t and uint16_t.
+- For Atlas inference products AI Core, T supports the following data types: int16_t and uint16_t.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- For Atlas training series products, T supports the following data types: int16_t and uint16_t.
+- For Atlas training products, T supports the following data types: int16_t and uint16_t.
 <!-- end id15 -->
 ## Return Value<a name="section640mcpsimp"></a>
 

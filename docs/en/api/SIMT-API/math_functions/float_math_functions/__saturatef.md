@@ -87,6 +87,6 @@ To use this API, include the **simt\_api/device\_functions.h** header file.
 The input and output examples are as follows:
 
 ```
-x：0.25, 0.75, 1.25, 1.75
+x: 0.25, 0.75, 1.25, 1.75
 result: 0.25 0.75 1 1
 ```

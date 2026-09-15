@@ -112,15 +112,15 @@ The ND2NZ conversion diagram in enableSmallC0 mode is as follows:
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-- Atlas A3 training series products/Atlas A3 inference series products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A3 training products/Atlas A3 inference products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->
-- Atlas A2 training series products/Atlas A2 inference series products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A2 training products/Atlas A2 inference products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+- Atlas inference products AI Core, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id5 -->
 
 ## Return Value<a name="section446456163012"></a>
@@ -146,7 +146,7 @@ None
     | dstNzMatrixStride | [1, 65535] |
 
 <!-- npu="310p" id6 -->
-- For the AI Core of Atlas inference series products, reserve 8 KB of Unified Buffer space as the temporary data storage area for this API.
+- For the AI Core of Atlas inference products, reserve 8 KB of Unified Buffer space as the temporary data storage area for this API.
 <!-- end id6 -->
 
 ## Example<a name="section10309141400"></a>

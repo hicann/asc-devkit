@@ -189,13 +189,13 @@ The detailed breakdown of the computation process is as follows:
 - For Ascend 950PR/Ascend 950DT, no temporary space needs to be allocated.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 training series/Atlas A3 inference series, you must ensure that at least src0.GetSize() * 32 + src1.GetSize() * 32 bytes of space is allocated.
+- For Atlas A3 training products/Atlas A3 inference products, you must ensure that at least src0.GetSize() * 32 + src1.GetSize() * 32 bytes of space is allocated.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 training series/Atlas A2 inference series, you must ensure that at least src0.GetSize() * 32 + src1.GetSize() * 32 bytes of space are allocated.
+- For Atlas A2 training products/Atlas A2 inference products, you must ensure that at least src0.GetSize() * 32 + src1.GetSize() * 32 bytes of space are allocated.
 <!-- end id12 -->
 <!-- npu="310p" id13 -->
-- For Atlas inference series AI Core, you must ensure that at least src0OffsetLocal.GetSize() * sizeof(uint32_t) bytes of space are allocated.
+- For Atlas inference products AI Core, you must ensure that at least src0OffsetLocal.GetSize() * sizeof(uint32_t) bytes of space are allocated.
 <!-- end id13 -->
 
 ## Data Type

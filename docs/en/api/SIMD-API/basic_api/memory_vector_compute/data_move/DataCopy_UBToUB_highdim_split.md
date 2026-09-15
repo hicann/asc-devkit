@@ -111,11 +111,11 @@ For continuous transfer scenarios, it is recommended to use [UB-to-UB continuous
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-- Atlas A3 Training Series products/Atlas A3 Inference Series products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas A3 training products/Atlas A3 inference products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-- Atlas A2 Training Series products/Atlas A2 Inference Series products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas A2 training products/Atlas A2 inference products, supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id3 -->
 
 <!-- npu="310p" id4 -->

@@ -96,19 +96,19 @@ $dst_i = |src_i|$
     - The data types supported by U are complex32 and complex64. When U is of the complex32 type, T must be of the half type. When U is of the complex64 type, T must be of the float type.
 <!-- end id12 -->
 <!-- npu="A3" id13 -->
-- For Atlas A3 training series products/Atlas A3 inference series products, the data types supported by T are half and float.
+- For Atlas A3 training products/Atlas A3 inference products, the data types supported by T are half and float.
 <!-- end id13 -->
 <!-- npu="910b" id14 -->
-- For Atlas A2 training series products/Atlas A2 inference series products, the data types supported by T are half and float.
+- For Atlas A2 training products/Atlas A2 inference products, the data types supported by T are half and float.
 <!-- end id14 -->
 <!-- npu="310b" id15 -->
 - For Atlas 200I/500 A2 inference products, the data types supported by T are int16_t, half, and float.
 <!-- end id15 -->
 <!-- npu="310p" id16 -->
-- For Atlas inference series products AI Core, the data types supported by T are: half, float.
+- For Atlas inference products AI Core, the data types supported by T are: half, float.
 <!-- end id16 -->
 <!-- npu="910" id17 -->
-- For Atlas training series products, the data types supported by T are: half, float.
+- For Atlas training products, the data types supported by T are: half, float.
 <!-- end id17 -->
 ## Return Value<a name="section640mcpsimp"></a>
 

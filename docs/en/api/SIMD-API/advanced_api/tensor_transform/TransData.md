@@ -5,17 +5,11 @@
 ## Applicable Products
 
 - Ascend 950PR/Ascend 950DT: Supported
-
 - Atlas A3 training products/Atlas A3 inference products: Supported
-
 - Atlas A2 training products/Atlas A2 inference products: Supported
-
 - Atlas 200I/500 A2 inference products: Not supported
-
 - Atlas inference products AI Core: Not supported
-
 - Atlas inference products Vector Core: Not supported
-
 - Atlas training products: Not supported
 
 ## Description
@@ -75,7 +69,6 @@ The data format conversion scenarios supported by this API include the following
 Because the internal implementation of this API involves complex mathematical computation, additional temporary space is required to store intermediate variables during the computation process. The temporary space can be allocated in two ways: **passing it via the sharedTmpBuffer input parameter** and **allocation by the API framework**.
 
 -   Pass it through the sharedTmpBuffer input parameter. This tensor is used as temporary space for processing, and the API framework no longer applies for it. In this method, you can manage the sharedTmpBuffer memory space and reuse this memory after the API call is complete. The memory is not repeatedly applied for and released, offering high flexibility and high memory utilization.
-
 -   The API framework applies for temporary space. You do not need to apply for it, but must reserve the size of the temporary space.
 
 When **sharedTmpBuffer** is passed, you need to apply for space for the tensor; when the API framework applies for temporary space, you need to reserve temporary space. The temporary space size **BufferSize** is obtained as follows: use the API provided in [GetTransDataMaxMinTmpSize](GetTransDataMaxMinTmpSize.md) to obtain the size of the space range that needs to be reserved.
@@ -88,8 +81,8 @@ When **sharedTmpBuffer** is passed, you need to apply for space for the tensor; 
 | --- | --- |
 | config | Specifies the data format conversion scenario. The following four conversion scenarios are currently supported: NCDHW -> NDC1HWC0, NDC1HWC0 -> NCDHW, NCDHW -> FRACTAL_Z_3D, and FRACTAL_Z_3D -> NCDHW. This parameter is of the **TransDataConfig** type, whose definition is shown in the following code.<br><br>A configuration example is as follows.<br>constexpr AscendC::TransDataConfig config1 = {AscendC::DataFormat::NCDHW, AscendC::DataFormat::FRACTAL_Z_3D}; |
 | T | Data type of the operand. The supported data types are int16_t, uint16_t, half, and bfloat16_t. |
-| U | Shape information of the source operand, of the [Layout](../../../basic_api/aux_data_structures/Layout/Layout.md) type.<br>AscendC::Layout ncdhwLayout = AscendC::MakeLayout(AscendC::MakeShape(n, c, d, h, w), AscendC::MakeStride()); |
-| S | Shape information of the destination operand, of the [Layout](../../../basic_api/aux_data_structures/Layout/Layout.md) type.<br>AscendC::Layout fractalzLayout = AscendC::MakeLayout(AscendC::MakeShape(d, c1, h, w, n1, n0, c0), AscendC::MakeStride()); |
+| U | Shape information of the source operand, of the [Layout](../../basic_api/aux_data_structures/Layout/Layout.md) type.<br>AscendC::Layout ncdhwLayout = AscendC::MakeLayout(AscendC::MakeShape(n, c, d, h, w), AscendC::MakeStride()); |
+| S | Shape information of the destination operand, of the [Layout](../../basic_api/aux_data_structures/Layout/Layout.md) type.<br>AscendC::Layout fractalzLayout = AscendC::MakeLayout(AscendC::MakeShape(d, c1, h, w, n1, n0, c0), AscendC::MakeStride()); |
 
 ```
 struct TransDataConfig {
@@ -113,48 +106,10 @@ enum class DataFormat : uint8_t {
 
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
-| dstTensor | Output | Destination operand.<br><br>The type is [LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md), and the supported TPosition is VECIN/VECCALC/VECOUT. |
-| srcTensor | Input | Source operand.<br><br>The type is [LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md), and the supported TPosition values are VECIN/VECCALC/VECOUT.<br><br>The data type of the source operand must be consistent with that of the destination operand. |
-| sharedTmpBuffer | Input | Temporary buffer.<br><br>The type is [LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md), and the supported TPosition is VECIN/VECCALC/VECOUT.<br><br>Used to store intermediate variables during complex computation inside TransData, provided by you.<br><br>For how to obtain the temporary space size BufferSize, see [GetTransDataMaxMinTmpSize](GetTransDataMaxMinTmpSize.md). |
-| params | Input | Shape information of the source operand and the destination operand. This parameter is of the **TransDataParams** data type, whose definition and configuration example are as follows, where the template parameters T and U must be of the [Layout](../../../basic_api/aux_data_structures/Layout/Layout.md) type. The Shape dimensions specified by this parameter must be consistent with the dimensions corresponding to the Format in **config**. |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+| dstTensor | Output | Destination operand.<br><br>The type is [LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md), and the supported TPosition is VECIN/VECCALC/VECOUT. |
+| srcTensor | Input | Source operand.<br><br>The type is [LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md), and the supported TPosition values are VECIN/VECCALC/VECOUT.<br><br>The data type of the source operand must be consistent with that of the destination operand. |
+| sharedTmpBuffer | Input | Temporary buffer.<br><br>The type is [LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md), and the supported TPosition is VECIN/VECCALC/VECOUT.<br><br>Used to store intermediate variables during complex computation inside TransData, provided by you.<br><br>For how to obtain the temporary space size BufferSize, see [GetTransDataMaxMinTmpSize](GetTransDataMaxMinTmpSize.md). |
+| params | Input | Shape information of the source operand and the destination operand. This parameter is of the **TransDataParams** data type, whose definition and configuration example are as follows, where the template parameters T and U must be of the [Layout](../../basic_api/aux_data_structures/Layout/Layout.md) type. The Shape dimensions specified by this parameter must be consistent with the dimensions corresponding to **Format** in **config**. |
 
 ```
 template <typename T, typename U>
@@ -175,51 +130,9 @@ None
 ## Constraints
 
 -   For the alignment requirements of operand addresses, see [General Address Alignment Constraints](../../general_description_and_constraints.md#section796754519912).
-
 -   Overlap between source and destination operand addresses is not supported.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -   Overlap between **sharedTmpBuffer** and source or destination operand addresses is not supported.
-
 -   For NCDHW-format input, if the combined axis of the H axis and W axis is not 32-byte aligned, you need to pad data on the combined axis to make it 32-byte aligned before calling this API. When calling this API, you should pass the original shape (that is, the shape before axis combination) in the parameter that specifies shape information. For example, if the original shape of the input is \[1, 16, 2, 3, 5\], you need to pad the input data to the shape \[1, 16, 2, 16\], and the padded data is invalid data.
-
 -   For NCDHW-format output, the API implementation combines the H axis and W axis and pads data on the combined axis to achieve 32-byte alignment. When calling this API, you should pass the original shape (that is, the shape before axis combination) in the parameter that specifies shape information. For example, if the original target shape in NCDHW format is \[1, 16, 2, 3, 5\], the actual output is data of the shape \[1, 16, 2, 16\], where the data padded by the API is invalid data.
 
 ## Examples

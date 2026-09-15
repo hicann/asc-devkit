@@ -48,11 +48,11 @@ In SIMT programming, when using <<<\>\>\> to call a function decorated with the 
 <<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>
 ```
 
-The execution configuration is determined by four parameters. For detailed usage, see [Kernel Function Configuration](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/language_extension/SIMT-BuiltIn_keyword.md#kernel-function-configuration):
+The execution configuration is determined by four parameters. For detailed usage, see [Kernel Function Configuration](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/language_extension/SIMT-BuiltIn_keyword.md#kernel-function-configuration):
 
 -   blocks\_per\_grid: int or dim3 type, used to specify the dimensions and scale of the grid. blocks\_per\_grid.x \* blocks\_per\_grid.y \* blocks\_per\_grid.z equals the total number of thread blocks launched.
 -   threads\_per\_block: int or dim3 type, used to specify the dimensions and scale of each thread block. threads\_per\_block.x \* threads\_per\_block.y \* threads\_per\_block.z equals the number of threads contained in each thread block, and must be less than or equal to the \_\_launch\_bounds\_\_ configuration.
--   dyn\_ubuf\_size: size\_t type, used to specify the size of shared memory dynamically allocated for each thread block, in bytes. This memory is used for arrays. For detailed usage, see the "dynamic allocation" method in [Shared Memory](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/programming_model/ai_core_simt_programming/memory_hierarchy.md#shared-memory).
+-   dyn\_ubuf\_size: size\_t type, used to specify the size of shared memory dynamically allocated for each thread block, in bytes. This memory is used for arrays. For detailed usage, see the "dynamic allocation" method in [Shared Memory](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/programming_model/ai_core_simt_programming/memory_hierarchy.md#shared-memory).
 -   stream: aclrtStream type pointer, specifying the associated stream, used to maintain the execution order of asynchronous operations.
 
 The following example shows how to declare and call a kernel function.

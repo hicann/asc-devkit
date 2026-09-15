@@ -91,11 +91,11 @@ AscendC::RmsNorm<dataType, isBasicBlock>(dstLocal, srcLocal, gammaLocal, epsilon
 The example result is as follows:
 
 ```
-输入数据(srcLocal, shape:[1, 1, 16]):
+Input data (srcLocal, shape:[1, 1, 16]):
 [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 ]
-输入数据(gammaLocal, shape:[16]):
+Input data (gammaLocal, shape:[16]):
 [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 ]
-输出数据(dstLocal):
+Output data (dstLocal):
 [ 0.          0.11359233  0.4543693   1.022331    1.8174772   2.8398082   4.089324    5.566024
   7.269909    9.200979   11.359233   13.744672   16.357296   19.197104   22.264095   25.558275 ]
 ```

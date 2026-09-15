@@ -115,7 +115,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 - For Atlas A2 training products/Atlas A2 inference products, the data types supported by T and U are int16_t, half, int32_t, and float.
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
-- For Atlas 200I/500 A2 Inference Product, the data types supported by T and U are int16_t, half, int32_t, and float.
+- For Atlas inference products, the data types supported by T and U are int16_t, half, int32_t, and float.
 <!-- end id16 -->
 <!-- npu="310p" id17 -->
 - For Atlas inference products AI Core, the data types supported by T and U are int16_t, half, int32_t, and float.

@@ -73,7 +73,7 @@ When computing the maximum or minimum value, the corresponding index can be retu
 | src | Input | Source operand.<br>The type is [LocalTensor](../../data_structures/LocalTensor/LocalTensor.md), and the supported TPosition values are VECIN, VECCALC, and VECOUT (the storage location is Unified Buffer). |
 | mask[]/mask | Input | `mask` controls the source operands that participate in the computation in each iteration. For details, see [Mask Overview](../SIMD_compute/mask.md). |
 | repeatTime | Input | Number of iterations. The value range is [0, 255]. |
-| dstRepStride | Input | Address stride between adjacent iterations of the destination operand, in the unit of the length after one repeatTime reduction. The value range is [0, $2^{16}-1$].<br>**Note: The unit of dstRepStride is affected by the operand data type, `reduceType`, and `order` parameters.** See [Table 3](#tab3):<br>&bull; When both the index and the extreme value are returned, the unit is twice the byte length of the dst data type;<br>&bull; When only the extreme value is returned, the unit is the byte length of the dst data type;<br>&bull; When only the index is returned, the unit is the byte length of the uint32_t type.<!-- npu="910" id35 --><br>**Note: Atlas training series products do not support configuring 0.** <!-- end id35 -->|
+| dstRepStride | Input | Address stride between adjacent iterations of the destination operand, in the unit of the length after one repeatTime reduction. The value range is [0, $2^{16}-1$].<br>**Note: The unit of dstRepStride is affected by the operand data type, `reduceType`, and `order` parameters.** See [Table 3](#tab3):<br>&bull; When both the index and the extreme value are returned, the unit is twice the byte length of the dst data type;<br>&bull; When only the extreme value is returned, the unit is the byte length of the dst data type;<br>&bull; When only the index is returned, the unit is the byte length of the uint32_t type.<!-- npu="910" id35 --><br>**Note: Atlas training products do not support configuring 0.** <!-- end id35 -->|
 | srcBlkStride | Input | Address stride of the DataBlock within a single iteration, in the unit of 32 bytes. The value range is [0, $2^{16}-1$]. |
 | srcRepStride | Input | Address stride between adjacent iterations of the source operand, that is, the number of DataBlocks skipped by the source operand in each iteration. The value range is [0, $2^{16}-1$]. |
 | order | Input | When the reduction operation type is MAX or MIN, specifies the relative position of the maximum value and the index value in dst and the return result behavior. The parameter type is the `ReduceOrder` enum, and the default value is `ORDER_VALUE_INDEX`.<br>The values of `ReduceOrder` are as follows:<br>&bull; `ORDER_VALUE_INDEX`: indicates that value is in the lower half, and the return result storage order is [value, index].<br>&bull; `ORDER_INDEX_VALUE`: indicates that index is in the lower half, and the return result storage order is [index, value].<br>&bull; `ORDER_ONLY_VALUE`: indicates that only the extreme value is returned, and the return result storage order is [value].<br>&bull; `ORDER_ONLY_INDEX`: indicates that only the index of the extreme value is returned, and the return result storage order is [index].<br>**Note: When the reduction operation type is SUM, this parameter does not take effect.** |
@@ -88,19 +88,19 @@ When computing the maximum or minimum value, the corresponding index can be retu
 - Ascend 950PR/Ascend 950DT: int16_t, uint16_t, half, int32_t, uint32_t, and float are supported.
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 training series products/Atlas A3 inference series products: half and float are supported.
+- Atlas A3 training products/Atlas A3 inference products: half and float are supported.
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 training series products/Atlas A2 inference series products: half and float are supported.
+- Atlas A2 training products/Atlas A2 inference products: half and float are supported.
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: half and float are supported.
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: half and float are supported.
+- Atlas inference products AI Core: half and float are supported.
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training series products support half.
+- Atlas training products support half.
 <!-- end id6 -->
 
 <!-- npu="950" id7 -->
@@ -133,7 +133,7 @@ When computing the maximum or minimum value, the corresponding index can be retu
 - Atlas inference products AI Core
 <!-- end id11 -->
 <!-- npu="910" id12 -->
-- Atlas training series products
+- Atlas training products
 <!-- end id12 -->
 <!-- end id24 -->
 
@@ -186,19 +186,19 @@ None
     - Ascend 950PR/Ascend 950DT supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
     <!-- end id15 -->
     <!-- npu="A3" id16 -->
-    - Atlas A3 training series products/Atlas A3 inference series products support `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
+    - Atlas A3 training products/Atlas A3 inference products support `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
     <!-- end id16 -->
     <!-- npu="910b" id17 -->
-    - Atlas A2 training series products/Atlas A2 inference series products support `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
+    - Atlas A2 training products/Atlas A2 inference products support `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
     <!-- end id17 -->
     <!-- npu="310b" id18 -->
     - Atlas 200I/500 A2 inference products support `ORDER_VALUE_INDEX` and `ORDER_ONLY_VALUE`.
     <!-- end id18 -->
     <!-- npu="310p" id19 -->
-    - Atlas inference series products AI Core support `ORDER_VALUE_INDEX` and `ORDER_INDEX_VALUE`.
+    - Atlas inference products AI Core support `ORDER_VALUE_INDEX` and `ORDER_INDEX_VALUE`.
     <!-- end id19 -->
     <!-- npu="910" id20 -->
-    - Atlas training series products support `ORDER_VALUE_INDEX`.
+    - Atlas training products support `ORDER_VALUE_INDEX`.
     <!-- end id20 -->
 
 ## Key Feature Description

@@ -7,7 +7,7 @@
 [Description] When performing quantization on the matrix multiplication result in an operator implementation, you can move the quantization parameters to C2PIPE2GM (Fixpipe Buffer) and call the Fixpipe API once to implement quantization of the matrix multiplication result. Compared with the process of moving the matrix multiplication result from CO1 (L0C) to GM, then from GM to UB, and performing quantization on UB, this approach involves fewer data movement operations and higher memory usage efficiency.
 
 >[!NOTE] Note
->This performance optimization method takes effect only for Atlas A2 Training Series products/Atlas A2 Inference Series products.
+>This performance optimization method takes effect only for Atlas A2 training products/Atlas A2 inference products.
 
 **Figure 1**  Negative example data flow<a name="fig1775910202351"></a>  
 ![](../../../figures/negative_sample_data_flow_diagram_78.png "negative-example-data-flow-78")

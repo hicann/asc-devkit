@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: Supported
+- Atlas training products: Supported
 <!-- end id7 -->
 
 
@@ -71,8 +71,8 @@ __aicore__ inline void ProposalConcat(const LocalTensor<T>& dst, const LocalTens
 </thead>
 <tbody><tr id="zh-cn_topic_0000001429830437_row1835857145817"><td class="cellrowborder" valign="top" width="13.58%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000001429830437_p5835457165816"><a name="zh-cn_topic_0000001429830437_p5835457165816"></a><a name="zh-cn_topic_0000001429830437_p5835457165816"></a>T</p></td>
 <td class="cellrowborder" valign="top" width="86.42%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001429830437_p168351657155818"><a name="zh-cn_topic_0000001429830437_p168351657155818"></a><a name="zh-cn_topic_0000001429830437_p168351657155818"></a>Data type of the operand.</p>
-<p id="p7265124521915"><a name="p7265124521915"></a><a name="p7265124521915"></a><span id="ph194756336178"><a name="ph194756336178"></a><a name="ph194756336178"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a>Atlas training series products</term></span>, supported data type: half</p>
-<p id="p12659457192"><a name="p12659457192"></a><a name="p12659457192"></a><span id="ph750620211814"><a name="ph750620211814"></a><a name="ph750620211814"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas inference series products</term>AI Core</span>, supported data types: half/float</p></td>
+<p id="p7265124521915"><a name="p7265124521915"></a><a name="p7265124521915"></a><span id="ph194756336178"><a name="ph194756336178"></a><a name="ph194756336178"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a>Atlas training products</term></span>, supported data type: half</p>
+<p id="p12659457192"><a name="p12659457192"></a><a name="p12659457192"></a><span id="ph750620211814"><a name="ph750620211814"></a><a name="ph750620211814"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas inference products</term>AI Core</span>, supported data types: half/float</p></td>
 </tr>
 </tbody>
 </table>

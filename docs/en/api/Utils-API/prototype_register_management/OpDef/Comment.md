@@ -44,7 +44,7 @@ OpDef &Comment(CommentSection section, const char *comment)
 
 When you use the **CATEGORY** parameter to set the operator grouping name, a code file with the same name is generated. If the file name is too long, it may exceed the tar package file name length limit during compilation, causing an error.
 
-For details, see [File Name Too Long Error During Operator Project Compilation](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/appendix/faq/file_name_too_long_error_during_operator_project_compilation.md).
+For details, see [File Name Too Long Error During Operator Project Compilation](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/appendix/faq/file_name_too_long_error_during_operator_project_compilation.md).
 
 ## Example<a name="zh-cn_topic_0000002091517061_zh-cn_topic_0000001526111046_zh-cn_topic_0000001575944081_section320753512363"></a>
 

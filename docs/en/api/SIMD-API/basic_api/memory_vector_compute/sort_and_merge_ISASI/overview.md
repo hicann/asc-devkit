@@ -5,7 +5,7 @@
 Region Proposal (RP) is a candidate box used in object detection algorithms to locate potential target regions. Region Proposal uses a specific data structure for storage and management to support efficient sorting and filtering operations. In business scenarios, to filter out the regions most likely to contain targets from a large number of Region Proposals, the proposals need to be sorted by the confidence score of each RP.
 
 <!-- npu="A3,910b" id1 -->
-Take Atlas A3 Training Series/Atlas A3 Inference Series and Atlas A2 Training Series/Atlas A2 Inference Series as an example:
+Take Atlas A3 training products/Atlas A3 inference products and Atlas A2 training products/Atlas A2 inference products as an example:
 
 Region Proposal supports two data types: half/float.
 

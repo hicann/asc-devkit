@@ -8,9 +8,9 @@
 - Atlas A3 training products/Atlas A3 inference products: supported
 - Atlas A2 training products/Atlas A2 inference products: supported
 - Atlas 200I/500 A2 inference products: not supported
-- Atlas inference series products AI Core: not supported
-- Atlas inference series products Vector Core: not supported
-- Atlas training series products: not supported
+- Atlas inference products AI Core: not supported
+- Atlas inference products Vector Core: not supported
+- Atlas training products: not supported
 
 ## Description
 

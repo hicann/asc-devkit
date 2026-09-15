@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id30 -->
 <!-- npu="910" id31 -->
-- Atlas training series products: Supported
+- Atlas training products: Supported
 <!-- end id31 -->
 
 ## Description
@@ -93,19 +93,19 @@ The supported data types are as follows:
 - Ascend 950PR/Ascend 950DT: int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, and uint64_t are supported.
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 training series products/Atlas A3 inference series products: half and float are supported.
+- Atlas A3 training products/Atlas A3 inference products: half and float are supported.
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 training series products/Atlas A2 inference series products: half and float are supported.
+- Atlas A2 training products/Atlas A2 inference products: half and float are supported.
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: supports half and float.
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series product AI Core: supports half and float.
+- Atlas inference products AI Core: supports half and float.
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training series product: supports half.
+- Atlas training products: supports half.
 <!-- end id6 -->
 
 ## Return Value
@@ -155,7 +155,7 @@ None
   - Atlas inference products AI Core
   <!-- end id14 -->
   <!-- npu="910" id15 -->
-  - Atlas training series products
+  - Atlas training products
   <!-- end id15 -->
 <!-- end id17 -->
 

@@ -172,7 +172,7 @@ Different data type conversions support different rounding modes. For details, s
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-**Table**  Data type combinations supported by Atlas A3 training series/Atlas A3 inference series
+**Table**  Data type combinations supported by Atlas A3 training products/Atlas A3 inference products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -204,7 +204,7 @@ Different data type conversions support different rounding modes. For details, s
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-**Table**  Data type combinations supported by Atlas A2 training series/Atlas A2 inference series
+**Table**  Data type combinations supported by Atlas A2 training products/Atlas A2 inference products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -266,7 +266,7 @@ Different data type conversions support different rounding modes. For details, s
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-**Table**  Data type combinations supported by the Atlas inference series AI Core
+**Table**  Data type combinations supported by the Atlas inference products AI Core
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -287,7 +287,7 @@ Different data type conversions support different rounding modes. For details, s
 <!-- end id5 -->
 
 <!-- npu="910" id6 -->
-**Table**  Data type combinations supported by the Atlas training series products
+**Table**  Data type combinations supported by the Atlas training products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |

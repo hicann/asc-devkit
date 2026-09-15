@@ -22,7 +22,7 @@ The main method to avoid same-address access is to **adjust the data access orde
 
 **Adjusting the Data Access Order**
 
-This section uses the scenario of transferring a half-type input with the shape [6144, 512] from GM to UB on an Atlas A2 training series product/Atlas A2 inference series product or an Atlas A3 training series product/Atlas A3 inference series product as an example to illustrate how to avoid same-address access conflicts by adjusting the data access order. In this scenario, 48 cores participate in the transfer, that is, `numBlocks=48`.
+This section uses the scenario of transferring a half-type input with the shape [6144, 512] from GM to UB on an Atlas A2 training products/Atlas A2 inference products or an Atlas A3 training products/Atlas A3 inference products as an example to illustrate how to avoid same-address access conflicts by adjusting the data access order. In this scenario, 48 cores participate in the transfer, that is, `numBlocks=48`.
 
 To demonstrate the impact of same-address conflicts, L2Cache hint is disabled in the preceding scenario. Each row of the input data is 1024 bytes (512 half values), the Tile is \([128, 64]\), and `DataCopyPad` is used to move data from GM to UB. Each core loads the entire input matrix once, the N dimension is split into 64 columns, and the amount of data moved in a single operation is `128 * 64 * 2` bytes. In the original implementation, all cores access the same input matrix in the same mBlockIdx order, which makes them likely to access the same GM address segment at the same time. In the optimized implementation, each core rotates the access order within the block group according to \((mBlockIdx + blockIdx) \% numBlocks\), reducing the probability of same-address access conflicts.
 

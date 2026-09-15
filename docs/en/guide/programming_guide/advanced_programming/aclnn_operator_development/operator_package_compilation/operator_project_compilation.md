@@ -133,7 +133,7 @@ The preceding compilation process is illustrated as follows:
         </tr>
         <tr id="row557188202813"><td class="cellrowborder" valign="top" width="28.63%" headers="mcps1.2.4.1.1 "><p id="p157138192812"><a name="p157138192812"></a><a name="p157138192812"></a>ASCEND_PACK_SHARED_LIBRARY</p>
         </td>
-        <td class="cellrowborder" valign="top" width="41.47%" headers="mcps1.2.4.1.2 "><p id="p1857212842815"><a name="p1857212842815"></a><a name="p1857212842815"></a>Whether to enable <a href="../dynamic-and-static-library-compilation.md">dynamic library compilation</a>.</p>
+        <td class="cellrowborder" valign="top" width="41.47%" headers="mcps1.2.4.1.2 "><p id="p1857212842815"><a name="p1857212842815"></a><a name="p1857212842815"></a>Whether to enable <a href="../operator_dynamic_and_static_library_compilation.md">dynamic library compilation</a>.</p>
         </td>
         <td class="cellrowborder" valign="top" width="29.9%" headers="mcps1.2.4.1.3 "><p id="p10572178142818"><a name="p10572178142818"></a><a name="p10572178142818"></a>"False"</p>
         </td>

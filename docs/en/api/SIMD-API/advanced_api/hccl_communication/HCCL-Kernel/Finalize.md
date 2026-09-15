@@ -27,7 +27,7 @@ __aicore__ inline void Finalize()
 
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
-| sync | Input | Whether to wait for the server to complete the communication task. The parameter is of the bool type. The values are as follows:<br>true: default value, indicating that the client detects and waits for the last communication task to complete.<br>false: indicating that the client exits directly without waiting for the communication task to complete.<br><br>For Atlas A3 Training Series Products/Atlas A3 Inference Series Products, this parameter supports the default value true, and supports the value false only when the communication task is [BatchWrite](BatchWrite.md).<br><br>For Atlas A2 Training Series Products/Atlas A2 Inference Series Products, this parameter supports only the default value true. |
+| sync | Input | Whether to wait for the server to complete the communication task. The parameter is of the bool type. The values are as follows:<br>true: default value, indicating that the client detects and waits for the last communication task to complete.<br>false: indicating that the client exits directly without waiting for the communication task to complete.<br><br>For Atlas A3 training products/Atlas A3 inference products, this parameter supports the default value true, and supports the value false only when the communication task is [BatchWrite](BatchWrite.md).<br><br>For Atlas A2 training products/Atlas A2 inference products, this parameter supports only the default value true. |
 
 ## Return Value
 

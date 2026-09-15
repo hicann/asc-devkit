@@ -31,7 +31,7 @@
 
 Header file path: `"basic_api/kernel_operator_vec_transpose_intf.h"`.
 
-The TransDataTo5HD API performs data format conversion, generally used to convert the NCHW format to the [NC1HWC0 format](../../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_detailed_explanation.md#nc1hwc0-formats). In particular, it can also be used to transpose two-dimensional matrix data blocks. When performing transposition, compared with the Transpose API, Transpose supports only matrix transposition of 16\*16 size; this API can process 512 bytes of data (16 DataBlocks) within a single repeat. Depending on the data type, it supports matrix transposition of different shapes, and it also supports multiple repeat operations.
+The TransDataTo5HD API performs data format conversion, generally used to convert the NCHW format to the [NC1HWC0 format](../../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_detailed_explanation.md#nc1hwc0-format). In particular, it can also be used to transpose two-dimensional matrix data blocks. When performing transposition, compared with the Transpose API, Transpose supports only matrix transposition of 16\*16 size; this API can process 512 bytes of data (16 DataBlocks) within a single repeat. Depending on the data type, it supports matrix transposition of different shapes, and it also supports multiple repeat operations.
 
 To help developers understand, for ground truth computation, see [TransDataTo5HD ground truth computation](https://gitcode.com/cann/asc-devkit/blob/9.1.0/examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/transpose/scripts/gen_data.py).
 
@@ -93,15 +93,15 @@ Ascend 950PR/Ascend 950DT, the supported data types are: int8_t, uint8_t, int16_
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-Atlas A3 Training Series/Atlas A3 Inference Series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+Atlas A3 training products/Atlas A3 inference products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-Atlas A2 Training Series/Atlas A2 Inference Series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+Atlas A2 training products/Atlas A2 inference products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id3 -->
 
 <!-- npu="310b" id4 -->
-Atlas 200I/500 A2 Inference Product, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+Atlas inference products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->

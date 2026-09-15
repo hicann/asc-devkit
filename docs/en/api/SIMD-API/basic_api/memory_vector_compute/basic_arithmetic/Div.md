@@ -141,19 +141,19 @@ $dst_i = src0_i / src1_i$
 - For Ascend 950PR/Ascend 950DT, the data types supported by T are: int16_t, uint16_t, half, int32_t, uint32_t, float, complex32, int64_t, uint64_t, and complex64. The data types complex32, int64_t, uint64_t, and complex64 are supported only by the API for computing the first n data of a tensor and by operator overloading where the entire tensor participates in computation.
 <!-- end id20 -->
 <!-- npu="A3" id21 -->
-- For Atlas A3 training series products/Atlas A3 inference series products, the data types supported by T are: half and float.
+- For Atlas A3 training products/Atlas A3 inference products, the data types supported by T are: half and float.
 <!-- end id21 -->
 <!-- npu="910b" id22 -->
-- For Atlas A2 training series products/Atlas A2 inference series products, the data types supported by T are: half and float.
+- For Atlas A2 training products/Atlas A2 inference products, the data types supported by T are: half and float.
 <!-- end id22 -->
 <!-- npu="310b" id23 -->
 - For Atlas 200I/500 A2 inference products, the data types supported by T are: half and float.
 <!-- end id23 -->
 <!-- npu="310p" id24 -->
-- For Atlas inference series products AI Core, the data types supported by T are: half and float.
+- For Atlas inference products AI Core, the data types supported by T are: half and float.
 <!-- end id24 -->
 <!-- npu="910" id25 -->
-- For Atlas training series products, T supports the following data types: half and float.
+- For Atlas training products, T supports the following data types: half and float.
 <!-- end id25 -->
 ## Return Value<a name="section640mcpsimp"></a>
 

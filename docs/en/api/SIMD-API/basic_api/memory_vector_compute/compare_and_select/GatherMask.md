@@ -77,11 +77,11 @@ The repeatTimes value does not take effect. The number of iterations of the inst
     <!-- end id13 -->
 
     <!-- npu="A3" id14 -->
-    Atlas A3 training series products/Atlas A3 inference series products: Configuration method 1 is supported.
+    Atlas A3 training products/Atlas A3 inference products: Configuration method 1 is supported.
     <!-- end id14 -->
 
     <!-- npu="910b" id15 -->
-    Atlas A2 training series products/Atlas A2 inference series products: Configuration method 1 is supported.
+    Atlas A2 training products/Atlas A2 inference products: Configuration method 1 is supported.
     <!-- end id15 -->
 
     <!-- npu="310b" id16 -->
@@ -89,7 +89,7 @@ The repeatTimes value does not take effect. The number of iterations of the inst
     <!-- end id16 -->
 
     <!-- npu="310p" id17 -->
-    Atlas inference series products AI Core: Configuration method 2 is supported.
+    Atlas inference products AI Core: Configuration method 2 is supported.
     <!-- end id17 -->
 
 Figure 1 uses built-in fixed mode 2 for calculation, and each repeat takes elements at odd indices.
@@ -181,7 +181,7 @@ Figure 2 and Figure 3 use the user-defined mode for calculation. The custom inpu
 
 <!-- npu="A3" id21 -->
 
-**Table** Data type combination cases of Atlas A3 training series/Atlas A3 inference series
+**Table** Data type combination cases of Atlas A3 training products/Atlas A3 inference products
 
 | src0 data type | src1Pattern data type | dst data type |
 | --- | --- | --- |
@@ -197,7 +197,7 @@ Figure 2 and Figure 3 use the user-defined mode for calculation. The custom inpu
 
 <!-- npu="910b" id22 -->
 
-**Table** Data type combination cases of Atlas A2 training series/Atlas A2 inference series
+**Table** Data type combination cases of Atlas A2 training products/Atlas A2 inference products
 
 | src0 data type | src1Pattern data type | dst data type |
 | --- | --- | --- |
@@ -228,7 +228,7 @@ Figure 2 and Figure 3 use the user-defined mode for calculation. The custom inpu
 
 <!-- npu="310p" id24 -->
 
-**Table**  Atlas inference series product AI Core data type combination cases
+**Table**  Atlas inference products AI Core data type combination cases
 
 | src0 data type | src1Pattern data type | dst data type |
 | --- | --- | --- |

@@ -63,7 +63,7 @@ Use the msOpProf tool to obtain the [operator simulation pipeline diagram](../..
 
 ## Designing an Optimization Solution<a name="section81265422311"></a>
 
-In the default MIX mode, the user initiates a message on the AIV side. After the message is relayed through the message communication framework, Matmul computation is executed on the AIC side. Based on this process, when writing operator code with the Matmul advanced API, the user can use the [REGIST\_MATMUL\_OBJ](../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-kernel/REGIST_MATMUL_OBJ.md) macro without distinguishing between AIV and AIC. However, this message processing mechanism also introduces additional performance overhead, as shown in [Figure 1 Process diagram of Matmul in the default MIX mode](#fig0672118378).
+In the default MIX mode, the user initiates a message on the AIV side. After the message is relayed through the message communication framework, Matmul computation is executed on the AIC side. Based on this process, when writing operator code with the Matmul advanced API, the user can use the [REGIST\_MATMUL\_OBJ](../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-Kernel/REGIST_MATMUL_OBJ.md) macro without distinguishing between AIV and AIC. However, this message processing mechanism also introduces additional performance overhead, as shown in [Figure 1 Process diagram of Matmul in the default MIX mode](#fig0672118378).
 
 The specific steps to implement the default MIX mode are as follows:
 

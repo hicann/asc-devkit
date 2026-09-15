@@ -4,7 +4,7 @@
 
 ## Description<a name="zh-cn_topic_0000001600307121_zh-cn_topic_0000001576870453_zh-cn_topic_0000001525424352_section36583473819"></a>
 
-Different hardware forms may define operator prototypes differently. You can add an [OpAICoreConfig](OpAICoreConfig/OpAICoreConfig.md) to [register differentiated operator prototypes](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/advanced_programming/aclnn_operator_development/operator_prototype_definition.md) for different AI processor models. The REGISTER\_OP\_AICORE\_CONFIG macro allows you to add a separate file to register differentiated information of an operator on different hardware forms without modifying the original registration.
+Different hardware forms may define operator prototypes differently. You can add an [OpAICoreConfig](OpAICoreConfig/OpAICoreConfig.md) to [register differentiated operator prototypes](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/advanced_programming/aclnn_operator_development/operator_prototype_definition.md) for different AI processor models. The REGISTER\_OP\_AICORE\_CONFIG macro allows you to add a separate file to register differentiated information of an operator on different hardware forms without modifying the original registration.
 
 To use this registration macro, include the following header file:
 

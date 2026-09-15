@@ -6,7 +6,7 @@
 
 In some scenarios, the same operator supports different prototype inputs on different AI processor models.
 
-Through this API, you can [register differentiated operator prototypes](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/advanced_programming/aclnn_operator_development/operator_prototype_definition.md) for different AI processor models. After this API is called, an **OpParamDef** structure is returned, through which you can subsequently configure the operator input information.
+Through this API, you can [register differentiated operator prototypes](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/advanced_programming/aclnn_operator_development/operator_prototype_definition.md) for different AI processor models. After this API is called, an **OpParamDef** structure is returned, through which you can subsequently configure the operator input information.
 
 ## Prototype<a name="zh-cn_topic_0000001712470512_zh-cn_topic_0000001526111046_zh-cn_topic_0000001525424352_section13230182415108"></a>
 

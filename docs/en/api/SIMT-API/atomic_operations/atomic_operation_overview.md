@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=e1d69e702c9c347bfbdba7ca2ed786dab14f1ccf translatedAt=2026-09-07T09:30:58.153Z pushedAt=2026-09-08T00:54:26.293Z -->
 
-> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/programming_model/ai_core_simd_programming/thread_architecture.md) in the programming guide to understand the relevant prerequisites.
+> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/programming_model/ai_core_simt_programming/thread_architecture.md) in the programming guide to understand the relevant prerequisites.
 
 SIMT atomic operations ensure the atomicity of a read-modify-write process on the same address, preventing lost updates when multiple threads concurrently update the same address. Atomic operations are commonly used in scenarios such as counting, state preemption, histogram statistics, parallel reduction, and shared state bit updates.
 

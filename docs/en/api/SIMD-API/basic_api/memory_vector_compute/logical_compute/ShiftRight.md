@@ -97,7 +97,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 |---|---|
 | T | Data type of the operand. |
 | U | Data type of scalarValue. |
-| isSetMask | Whether to set the mask inside the API.<br>&bull; true: The mask is set inside the API.<br>&bull; false: The mask is set outside the API. The developer needs to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode:<br>&nbsp;&nbsp;&bull; For the API that computes the first n data of a tensor, the count input parameter does not take effect. It is recommended to set it to 1.<br>&nbsp;&nbsp;&bull; For the API that computes high-dimensional slicing of a tensor, the mask value in the input parameters is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning.<br><!-- npu="950,310b" id21 -->For the following models, the isSetMask parameter in the API for computing the first n data of a tensor does not take effect. Keep the default value.<br>&bull; <!-- npu="950" id22 -->Ascend 950PR/Ascend 950DT<!-- end id22 --><br>&bull; <!-- npu="310b" id23 -->Atlas 200I/500 A2 Inference Product<!-- end id23 --><!-- end id21 --> |
+| isSetMask | Whether to set the mask inside the API.<br>&bull; true: The mask is set inside the API.<br>&bull; false: The mask is set outside the API. The developer needs to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode:<br>&nbsp;&nbsp;&bull; For the API that computes the first n data of a tensor, the count input parameter does not take effect. It is recommended to set it to 1.<br>&nbsp;&nbsp;&bull; For the API that computes high-dimensional slicing of a tensor, the mask value in the input parameters is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning.<br>For the following models, the isSetMask parameter in the API for computing the first n data of a tensor does not take effect. Keep the default value.<br>&bull; Ascend 950PR/Ascend 950DT<br>&bull; Atlas inference products |
 
 **Table 2** Parameters
 
@@ -110,7 +110,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 | mask[]/mask | Input | **mask** controls the elements that participate in the computation in each iteration. For details, see [Mask](../SIMD_compute/mask.md). |
 | repeatTime | Input | Number of repeated iterations. The vector computation unit reads 256 consecutive bytes of data for computation each time. To complete the processing of the input data, multiple iterations (repeat) are required to read and compute all the data. repeatTime indicates the number of iterations.<br>For details about this parameter, see [High-Dimensional Slicing](../SIMD_compute/high_dimension_slicing.md). |
 | repeatParams | Input | Parameters that control the address stride of the operands. The type is [UnaryRepeatParams](../../aux_data_structures/UnaryRepeatParams.md), which includes parameters such as the address stride of the same DataBlock between adjacent iterations of the operands and the address stride of different DataBlocks within the same iteration of the operands.<br>For details about the address stride parameters between adjacent iterations, see [repeatStride](../SIMD_compute/high_dimension_slicing.md). For details about the address stride parameters of DataBlocks within the same iteration, see [dataBlockStride](../SIMD_compute/high_dimension_slicing.md). |
-| roundEn | Input | Switch for enabling the rounding function. Supported data type: bool. true indicates enabled, and false indicates disabled. It takes effect only when src is of the int16\_t/int32\_t type.<br>Example: Enable the rounding function. The data type of src is int16\_t. Perform an arithmetic right shift of src by 5 bits. If the 5th bit of the src\_ele binary number is 1, the value of dst\_ele is the result of the arithmetic right shift of src\_ele by 5 bits plus 1.<br>src\_ele = 17 = 0b00000000000**1**0001, the 5th bit is 1<br>dst\_ele = arithmetic\_right\_shift(src\_ele, 5) + 1 = 0b00000000000**00000** + 1 = 0b00000000000**00001**<br><!-- npu="310b" id24 -->For Atlas 200I/500 A2 Inference Product, enabling the rounding function is not supported. Only false can be passed in.<!-- end id24 --><br><!-- npu="950" id25 -->For Ascend 950PR/Ascend 950DT, enabling the rounding function is not supported. Only false can be passed in.<!-- end id25 --> |
+| roundEn | Input | Switch for enabling the rounding function. Supported data type: bool. true indicates enabled, and false indicates disabled. It takes effect only when src is of the int16\_t/int32\_t type.<br>Example: Enable the rounding function. The data type of src is int16\_t. Perform an arithmetic right shift of src by 5 bits. If the 5th bit of the src\_ele binary number is 1, the value of dst\_ele is the result of the arithmetic right shift of src\_ele by 5 bits plus 1.<br>src\_ele = 17 = 0b00000000000**1**0001, the 5th bit is 1<br>dst\_ele = arithmetic\_right\_shift(src\_ele, 5) + 1 = 0b00000000000**00000** + 1 = 0b00000000000**00001**<br><!-- npu="310b" id24 -->For Atlas inference products, enabling the rounding function is not supported. Only false can be passed in.<!-- end id24 --><br><!-- npu="950" id25 -->For Ascend 950PR/Ascend 950DT, enabling the rounding function is not supported. Only false can be passed in.<!-- end id25 --> |
 
 ### scalarValue Value Description
 
@@ -124,7 +124,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 - For Atlas A2 training products/Atlas A2 inference products, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- For Atlas 200I/500 A2 Inference Products, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
+- For Atlas inference productss, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
 <!-- end id13 -->
 
 ## Data Type
@@ -139,7 +139,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 - For Atlas A2 training products/Atlas A2 inference products, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
 <!-- end id16 -->
 <!-- npu="310b" id17 -->
-- For Atlas 200I/500 A2 Inference Products, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
+- For Atlas inference productss, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
 <!-- end id17 -->
 
 ## Return Value<a name="section194321251175110"></a>

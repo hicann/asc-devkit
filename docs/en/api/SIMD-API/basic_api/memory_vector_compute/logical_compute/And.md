@@ -89,19 +89,19 @@ $dst_i = src0_i \& src1_i$
 - For Ascend 950PR/Ascend 950DT, the data types supported by T are int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, and uint64_t. The data types int8_t, uint8_t, int64_t, and uint64_t are supported only by the API for computing the first n data of a tensor.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 training series products/Atlas A3 inference series products, the data types supported by T are int16_t and uint16_t.
+- For Atlas A3 training products/Atlas A3 inference products, the data types supported by T are int16_t and uint16_t.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 training series products/Atlas A2 inference series products, the data types supported by T are int16_t and uint16_t.
+- For Atlas A2 training products/Atlas A2 inference products, the data types supported by T are int16_t and uint16_t.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - For Atlas 200I/500 A2 inference products, the data types supported by T are int16_t and uint16_t.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- For Atlas inference series products AI Core, the data types supported by T are int16_t and uint16_t.
+- For Atlas inference products AI Core, the data types supported by T are int16_t and uint16_t.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- For Atlas training series products, the data types supported by T are int16_t and uint16_t.
+- For Atlas training products, the data types supported by T are int16_t and uint16_t.
 <!-- end id15 -->
 ## Return Value<a name="section640mcpsimp"></a>
 
@@ -126,10 +126,10 @@ None
     <!-- npu="A3,910b" id22 -->
     - The APIs for computation with the entire tensor and with the first n data elements of the tensor support passing the uint32_t/int32_t type. However, for computation with the first n data elements of the tensor, count must be set to twice the expected number of elements to achieve the expected precision. The API for high-dimensional slicing computation of the tensor directly reports a compilation error indicating that this data type is not supported. The preceding description applies to:
       <!-- npu="A3" id23 -->
-      - Atlas A3 training series products/Atlas A3 inference series products.
+      - Atlas A3 training products/Atlas A3 inference products.
       <!-- end id23 -->
       <!-- npu="910b" id24 -->
-      - Atlas A2 training series products/Atlas A2 inference series products.
+      - Atlas A2 training products/Atlas A2 inference products.
       <!-- end id24 -->
     <!-- end id22 -->
     <!-- npu="310b" id25 -->
@@ -142,7 +142,7 @@ None
       - Atlas inference products AI Core.
       <!-- end id27 -->
       <!-- npu="910" id28 -->
-      - Atlas training series products.
+      - Atlas training products.
       <!-- end id28 -->
     <!-- end id26 -->
 <!-- end id21 -->

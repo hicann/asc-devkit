@@ -154,11 +154,11 @@ The data types supported by the source operand and destination operand must be c
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-- Atlas A3 Training Series products/Atlas A3 Inference Series products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A3 training products/Atlas A3 inference products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->
-- Atlas A2 Training Series products/Atlas A2 Inference Series products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A2 training products/Atlas A2 inference products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->

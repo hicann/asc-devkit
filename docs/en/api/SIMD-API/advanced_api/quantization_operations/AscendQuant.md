@@ -10,7 +10,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 - Atlas inference products AI Core: Supported
 - Atlas inference products Vector Core: Not supported
-- Atlas Training Series: Supported
+- Atlas training products: Supported
 
 ## Description
 

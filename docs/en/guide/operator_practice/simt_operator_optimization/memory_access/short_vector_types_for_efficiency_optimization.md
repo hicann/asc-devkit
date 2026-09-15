@@ -80,7 +80,7 @@
 
   **Extended Scenarios**
 
-  Short vector types are not limited to half2. For more supported types, see the complete [short vector type list](../../../../api/SIMT-API/SIMT_programming_intro/extended_syntax/built_in_data_types_139.md#short-vector-types). For operators supported by short vector types, see the [SIMT built-in keywords](../../../programming_guide/language_extension/SIMT-BuiltIn_keyword.md#operators).
+  Short vector types are not limited to half2. For more supported types, see the complete [short vector type list](../../../../api/SIMT-API/SIMT_programming_intro/extended_syntax/built_in_data_types_139.md#short-vector-type). For operators supported by short vector types, see the [SIMT built-in keywords](../../../programming_guide/language_extension/SIMT-BuiltIn_keyword.md#operators).
 
 
-[Summary] In SIMT operators, by leveraging [short vector data types](../../../../api/SIMT-API/SIMT_programming_intro/extended_syntax/built_in_data_types_139.md#short-vector-types), the bandwidth utilization of a single Warp can reach 100%, while the number of issued instructions is streamlined, significantly improving overall memory access efficiency.
+[Summary] In SIMT operators, by leveraging [short vector data types](../../../../api/SIMT-API/SIMT_programming_intro/extended_syntax/built_in_data_types_139.md#short-vector-type), the bandwidth utilization of a single Warp can reach 100%, while the number of issued instructions is streamlined, significantly improving overall memory access efficiency.

@@ -48,7 +48,7 @@ asc_vf_call<function_name>(dim3(blockDim), arg1, arg2, ...);
 
 The SIMT VF function has the following constraints:
 
--   The input parameters support only Ascend C [built-in data types](built_in_data_type_144) (int32\_t, uint32\_t, **float**, **half**, etc.) and the pointer, array, and structure types composed of them, and pointer types must point to GM or UB memory.
+-   The input parameters support only Ascend C [built-in data types](built_in_data_type_144.md) (int32\_t, uint32\_t, **float**, **half**, etc.) and the pointer, array, and structure types composed of them, and pointer types must point to GM or UB memory.
 -   The function return type must be **void**.
 -   Within a SIMT VF, only \_\_simt\_callee\_\_ functions or \_\_callee\_\_ functions can be called.
 
@@ -68,6 +68,6 @@ uint32_t result = simt_helper(arg1, arg2, ...);
 
 This function has the following constraints:
 
--   Input parameters support only Ascend C [built-in data types](built_in_data_type_144) (int32\_t, uint32\_t, float, half, and so on) and their corresponding pointer types.
--   The function return value can only be an Ascend C [built-in data type](built_in_data_type_144) (int32\_t, uint32\_t, float, half, and so on) or its corresponding pointer type.
+-   Input parameters support only Ascend C [built-in data types](built_in_data_type_144.md) (int32\_t, uint32\_t, float, half, and so on) and their corresponding pointer types.
+-   The function return value can only be an Ascend C [built-in data types](built_in_data_type_144.md) (int32\_t, uint32\_t, float, half, and so on) or its corresponding pointer type.
 -   Only \_\_simt\_callee\_\_ functions or \_\_callee\_\_ functions can be called inside the function.

@@ -81,7 +81,7 @@ Performs pseudo-quantization computation element by element. For example, pseudo
 ## Implementation Principle
 
 **Figure 1**  AscendAntiQuant algorithm block diagram  
-![](../../../figures/AscendAntiQuant_algorithm_block_diagram_1.png "AscendAntiQuant algorithm block diagram")
+![](../../../figures/AscendAntiQuant_algorithm_block_diagram.png "AscendAntiQuant algorithm block diagram")
 
 As shown in the preceding figure, this is the algorithm block diagram of a typical AscendAntiQuant scenario. The computation process is divided into the following steps, all of which are performed on the Vector:
 

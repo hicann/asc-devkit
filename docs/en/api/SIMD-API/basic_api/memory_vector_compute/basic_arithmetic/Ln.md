@@ -25,7 +25,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: Supported
+- Atlas training products: Supported
 <!-- end id7 -->
 ### Prototype with config
 

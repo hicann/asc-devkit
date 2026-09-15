@@ -6,9 +6,9 @@
 
 Loads the corresponding Tiling dynamic library based on the input path. After developers complete the operator implementation using the engineering-based operator development approach, they can obtain the corresponding Tiling dynamic library file through **operator package compilation** or **operator dynamic library compilation**.
 
--   Operator package compilation: The dynamic library corresponding to the Tiling implementation is liboptiling.so in the operator package deployment directory. For the specific path, see [operator package deployment](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/advanced_programming/aclnn_operator_development/operator_package_compilation/operator_package_deployment.md).
+-   Operator package compilation: The dynamic library corresponding to the Tiling implementation is liboptiling.so in the operator package deployment directory. For the specific path, see [operator package deployment](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/advanced_programming/aclnn_operator_development/operator_package_compilation/operator_package_deployment.md).
 
--   Dynamic library compilation: The Tiling implementation is integrated into the operator dynamic library libcust\_opapi.so. For the specific path, see [operator dynamic library and static library compilation](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming-guide/programming_guide/advanced_programming/aclnn_operator_development/operator_dynamic_and_static_library_compilation.md).
+-   Dynamic library compilation: The Tiling implementation is integrated into the operator dynamic library libcust\_opapi.so. For the specific path, see [operator dynamic library and static library compilation](../../../../guide/programming_guide/advanced_programming/aclnn_operator_development/operator_dynamic_and_static_library_compilation.md).
 
 ## Prototype<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section13230182415108"></a>
 

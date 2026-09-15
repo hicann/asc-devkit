@@ -95,15 +95,15 @@ The source operand and destination operand support the same data types.
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-- Atlas A3 Training Series/Atlas A3 Inference Series, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A3 training products/Atlas A3 inference products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-- Atlas A2 Training Series/Atlas A2 Inference Series, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A2 training products/Atlas A2 inference products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id3 -->
 
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 Inference Product, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas inference products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id4 -->
 
 ## Return Value

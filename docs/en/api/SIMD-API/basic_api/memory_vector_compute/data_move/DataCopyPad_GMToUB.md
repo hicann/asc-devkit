@@ -177,11 +177,11 @@ For the definitions of the structure parameters listed in the following tables, 
 <!-- end id6 -->
 
 <!-- npu="A3" id7 -->
-- Atlas A3 training series products/Atlas A3 inference series products support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas A3 training products/Atlas A3 inference products support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id7 -->
 
 <!-- npu="910b" id8 -->
-- Atlas A2 training series products/Atlas A2 inference series products support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas A2 training products/Atlas A2 inference products support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id8 -->
 
 <!-- npu="310b" id9 -->

@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: Supported
+- Atlas training products: Supported
 <!-- end id7 -->
 ## Description<a name="section618mcpsimp"></a>
 
@@ -95,7 +95,7 @@ $dst_i = src0_i | src1_i$
 - For Atlas A2 training products/Atlas A2 inference products, the data types supported by T are int16_t and uint16_t.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- For Atlas 200I/500 A2 Inference Product, the data types supported by T are int16_t and uint16_t.
+- For Atlas inference products, the data types supported by T are int16_t and uint16_t.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
 - For Atlas inference products AI Core, the data types supported by T are int16_t and uint16_t.

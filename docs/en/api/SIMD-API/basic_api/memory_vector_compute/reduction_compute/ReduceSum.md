@@ -91,13 +91,13 @@ The supported data types are as follows:
 - Ascend 950PR/Ascend 950DT: half, float, int64_t, and uint64_t.
 <!-- end id6 -->
 <!-- npu="A3" id7 -->
-- Atlas A3 Training Series/Atlas A3 Inference Series: half and float.
+- Atlas A3 training products/Atlas A3 inference products: half and float.
 <!-- end id7 -->
 <!-- npu="910b" id8 -->
-- Atlas A2 Training Series/Atlas A2 Inference Series: half and float.
+- Atlas A2 training products/Atlas A2 inference products: half and float.
 <!-- end id8 -->
 <!-- npu="310b" id9 -->
-- Atlas 200I/500 A2 Inference Product: half and float.
+- Atlas inference products: half and float.
 <!-- end id9 -->
 <!-- npu="310p" id10 -->
 - Atlas Inference Series AI Core supports half and float.
@@ -142,7 +142,7 @@ None
   - Atlas inference products AI Core
   <!-- end id4 -->
   <!-- npu="910" id5 -->
-  - Atlas training series products
+  - Atlas training products
   <!-- end id5 -->
     <!-- end id1 -->
 
@@ -177,13 +177,13 @@ The `ReduceSum` API completes the summation within each repeat by tree accumulat
 - Ascend 950PR/Ascend 950DT adopts method 2.
 <!-- end id15 -->
 <!-- npu="A3" id16 -->
-- For Atlas A3 Training Series products/Atlas A3 Inference Series products, the tensor first-n-data computation API adopts method 1, and the tensor high-dimensional splitting computation API adopts method 2.
+- For Atlas A3 training products/Atlas A3 inference products, the tensor first-n-data computation API adopts method 1, and the tensor high-dimensional splitting computation API adopts method 2.
 <!-- end id16 -->
 <!-- npu="910b" id17 -->
-- For Atlas A2 Training Series products/Atlas A2 Inference Series products, the tensor first-n-data computation API adopts method 1, and the tensor high-dimensional splitting computation API adopts method 2.
+- For Atlas A2 training products/Atlas A2 inference products, the tensor first-n-data computation API adopts method 1, and the tensor high-dimensional splitting computation API adopts method 2.
 <!-- end id17 -->
 <!-- npu="310b" id18 -->
-- Atlas 200I/500 A2 Inference Product adopts method 2.
+- Atlas inference products adopts method 2.
 <!-- end id18 -->
 <!-- npu="310p" id19 -->
 - Atlas Inference Series AI Core adopts method 2.

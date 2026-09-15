@@ -123,7 +123,7 @@ None
     uint16_t singleDataSize = elementCount / 4; // Queue length.
     const uint16_t elementCountList[4] = {singleDataSize, singleDataSize, singleDataSize, singleDataSize}; // Length of the four queues.
     uint32_t sortedNum[4];
-    // 合并sortList中的4条队列
+    // Merge the four queues in sortList.
     AscendC::MrgSort<half, false>(sortTmpLocal, sortList, elementCountList, sortedNum, 0b1111, 1);
     ```
 

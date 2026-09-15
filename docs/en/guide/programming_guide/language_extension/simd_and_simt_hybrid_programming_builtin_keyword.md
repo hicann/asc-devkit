@@ -28,7 +28,7 @@ The key modifiers in the SIMT VF function definition are described as follows:
 | \_\_gm\_\_ | Memory space modifier that identifies the memory space as GM. |
 | \_\_ubuf\_\_ | Memory space modifier that identifies the memory space as UB. |
 
-A SIMT VF function can be called only in a kernel function or a \_\_aicore\_\_ function. The call API is [asc\_vf\_call](../../../api/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config_147.md#asc_vf_call), as shown in the following example:
+A SIMT VF function can be called only in a kernel function or a \_\_aicore\_\_ function. The call API is [asc\_vf\_call](../../../api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config_147.md#asc_vf_call), as shown in the following example:
 
 ```
 asc_vf_call<function_name>(dim3(blockDim), arg1, arg2, ...);

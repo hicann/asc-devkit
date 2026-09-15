@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=e3c8c70b3f5d27f3770063ae4b535bc75d904e3e translatedAt=2026-08-26T12:21:35.800Z pushedAt=2026-09-06T03:00:13.870Z -->
 
-[Basic APIs](../../../../api/SIMD-API/basic_api/basic_apis.md) abstract hardware capabilities, expose chip capabilities, and ensure completeness and compatibility. APIs marked as Instruction Set Architecture Special Interface (ISASI) cannot guarantee compatibility across hardware versions.
+[Basic APIs](../../../../api/SIMD-API/basic_api/basic_api.md) abstract hardware capabilities, expose chip capabilities, and ensure completeness and compatibility. APIs marked as Instruction Set Architecture Special Interface (ISASI) cannot guarantee compatibility across hardware versions.
 
 **Based on their functions, the APIs are classified into the following categories**:
 

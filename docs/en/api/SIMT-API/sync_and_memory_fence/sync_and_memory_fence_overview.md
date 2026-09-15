@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=e1d69e702c9c347bfbdba7ca2ed786dab14f1ccf translatedAt=2026-09-04T00:31:05.974Z pushedAt=2026-09-07T06:34:23.533Z -->
 
-> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/programming_guide/programming_model/ai_core_simt_programming/thread_architecture.md) in the programming guide to understand the related prerequisites.
+> **Prerequisites**: This document involves SIMT thread organization concepts such as Grid, Thread Block, Thread, and Warp. It is recommended that you first read [Thread Architecture](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/programming_model/ai_core_simt_programming/thread_architecture.md) in the programming guide to understand the related prerequisites.
 
 In a SIMT program, different Threads may have different execution progress and memory access arrival order. When data dependencies exist between threads, you need to use a synchronization interface or a memory fence interface to constrain the execution order and memory visibility.
 

@@ -7,7 +7,7 @@
 [Description] Due to the internal design constraints of the AI processor, when data is moved from Global Memory to Local Memory, ensuring that the GM address is 512-byte aligned can maximize bandwidth efficiency. The following figures show the single-core bandwidth efficiency under 512-byte alignment and 32-byte alignment: when moving the same amount of data, in the case of the largest bandwidth difference, the 32-byte alignment scenario can only achieve 70% of the bandwidth of the 512-byte alignment scenario.
 
 >[!NOTE] Note
->- This performance optimization method takes effect only on Atlas A2 training series products/Atlas A2 inference series products.
+>- This performance optimization method takes effect only on Atlas A2 training products/Atlas A2 inference products.
 >- The test data is related to the processor model, and slight jitter may occur during actual testing. The specific bandwidth values may not be strictly consistent with the test data below.
 
 **Figure 1**  Comparison of the measured bandwidth difference between 512-byte alignment and 32-byte alignment in the GM-\>UB direction<a name="fig5376636154310"></a>  

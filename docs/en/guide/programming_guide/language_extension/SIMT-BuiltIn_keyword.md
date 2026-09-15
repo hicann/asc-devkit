@@ -100,7 +100,7 @@ The following built-in variables of the dim3 structure are available only on the
 
     -   For a one-dimensional thread block, the thread ID is blockIdx.x \* blockDim.x + threadIdx.x.
 
-        ![](../../figures/thread-id-illustration-1.png)
+        ![](../../figures/thread_id_illustration_1.png)
 
     -   For a two-dimensional thread block, the thread ID is a two-dimensional structure, and its calculation formula is as follows:
 
@@ -275,20 +275,20 @@ Where:
 
 -   threads_per_block: dim3 type, used to specify the dimensions and size of each thread block. threads_per_block.x * threads_per_block.y * threads_per_block.z is equal to the number of threads in each thread block, which must be less than or equal to the __launch_bounds__ configuration.
 
--   dyn_ubuf_size: size_t type, used to specify the size of shared memory dynamically allocated for each thread block, in bytes. This memory is used by arrays. For specific usage, see the "dynamic allocation" method in [Shared Memory](../编程模型/AI-Core-SIMT编程/内存层级.md#共享内存).
+-   dyn_ubuf_size: size_t type, used to specify the size of shared memory dynamically allocated for each thread block, in bytes. This memory is used by arrays. For specific usage, see the "dynamic allocation" method in [Shared Memory](../programming_model/ai_core_simt_programming/memory_hierarchy.md#shared-memory).
 
 -   stream: aclrtStream type, specifies the associated stream, used to maintain the execution order of asynchronous operations.
 
 The following example shows how kernel functions are declared and called.
 
 ```
-// 声明
+// Declaration
 __global__ void add_custom(float* x, float* y, float* z, uint64_t total_length);
-// 调用
+// Call
 uint32_t blocks_per_grid = 48; // Number of thread blocks (Grid size)
 uint32_t threads_per_block = 256; // Number of threads per block (Block size)
 size_t dyn_ubuf_size = 1024; // need 1024 Byte dynamic memory
-add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, z, 1024); //blocks_per_grid和threads_per_block会被隐式转换为dim3类型
+add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, z, 1024); // blocks_per_grid and threads_per_block will be implicitly converted to the dim3 type.
 ```
 
     Before the function is executed, the preceding configuration parameters are validated. If blocks_per_grid or threads_per_block exceeds the maximum allowed scale of the device, or if dyn_ubuf_size exceeds the remaining shared memory available after static memory is allocated, the function will fail to execute.

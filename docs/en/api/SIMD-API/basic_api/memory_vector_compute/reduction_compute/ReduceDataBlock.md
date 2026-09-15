@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id26 -->
 <!-- npu="910" id27 -->
-- Atlas training series products: Supported
+- Atlas training products: Supported
 <!-- end id27 -->
 
 ## Description
@@ -73,7 +73,7 @@ As shown in Figure 1, the `ReduceDataBlock` API performs reduction on the input 
 | src | Input | Source operand.<br>The type is [LocalTensor](../../data_structures/LocalTensor/LocalTensor.md), and the supported TPosition values are VECIN, VECCALC, and VECOUT (stored in the Unified Buffer). |
 | mask[]/mask | Input | `mask` controls the source operands that participate in the computation in each iteration. For details, see [Mask Overview](../SIMD_compute/mask.md). |
 | repeatTime | Input | Number of iterations. The value range is [0, 255]. |
-| dstRepStride | Input | Address stride between adjacent iterations of the destination operand.<br>The unit is the length after one `repeatTime` reduction. For the `half` data type, the unit is 16 bytes; for the `float` data type, the unit is 32 bytes. The value range is [0, $2^{16}-1$].<!-- npu="910" id20 --><br>**Note: Atlas training series products do not support configuring 0.** <!-- end id20 -->|
+| dstRepStride | Input | Address stride between adjacent iterations of the destination operand.<br>The unit is the length after one `repeatTime` reduction. For the `half` data type, the unit is 16 bytes; for the `float` data type, the unit is 32 bytes. The value range is [0, $2^{16}-1$].<!-- npu="910" id20 --><br>**Note: Atlas training products do not support configuring 0.** <!-- end id20 -->|
 | srcBlkStride | Input | Address stride between DataBlocks within a single iteration of the source operand, in 32 bytes. The value range is [0, $2^{16}-1$]. |
 | srcRepStride | Input | Address stride between adjacent iterations of the source operand, that is, the number of DataBlocks skipped in each iteration of the source operand. The value range is [0, $2^{16}-1$]. |
 
@@ -87,19 +87,19 @@ The supported data types are as follows:
 - Ascend 950PR/Ascend 950DT: half and float.
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 training series products/Atlas A3 inference series products: half and float.
+- Atlas A3 training products/Atlas A3 inference products: half and float.
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 training series products/Atlas A2 inference series products: half and float.
+- Atlas A2 training products/Atlas A2 inference products: half and float.
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: half and float.
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: half and float.
+- Atlas inference products AI Core: half and float.
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training series products support half.
+- Atlas training products support half.
 <!-- end id6 -->
 
 The data types of the destination operand and the source operand must be consistent.

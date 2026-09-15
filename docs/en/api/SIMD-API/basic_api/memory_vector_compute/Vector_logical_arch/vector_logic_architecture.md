@@ -7,7 +7,7 @@
 The Vector computation unit is dedicated to vector computation. As shown in the following figure, the highlighted part shows the Vector computation unit and its associated storage units.
 
 <!-- npu="A3,910b" id1 -->
-- For Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products, the Vector logical architecture is shown in Figure 1.
+- For Atlas A3 training products/Atlas A3 inference products and Atlas A2 training products/Atlas A2 inference products, the Vector logical architecture is shown in Figure 1.
 
   **Figure 1** Vector computation unit architecture
 
@@ -47,7 +47,7 @@ The Vector computation unit is dedicated to vector computation. As shown in the 
 To improve the efficiency and throughput of data access, the Unified Buffer adopts a structure of equal-sized memory modules (banks). When multiple read/write instructions access the Unified Buffer concurrently, these instructions cannot be executed simultaneously due to hardware resource limitations, resulting in bank conflicts. In this case, the instructions must wait in a queue for resources and cannot be completed within a single instruction cycle.
 
 <!-- npu="A3,910b" id3 -->
-- For Atlas A3 Training Series Products/Atlas A3 Inference Series Products, Atlas A2 Training Series Products/Atlas A2 Inference Series Products
+- For Atlas A3 training products/Atlas A3 inference products, Atlas A2 training products/Atlas A2 inference products
   - Unified Buffer Memory Structure
 
     **Figure 3** Unified Buffer memory structure diagram
@@ -61,7 +61,7 @@ To improve the efficiency and throughput of data access, the Unified Buffer adop
 
   - Bank conflict optimization
 
-    For details, see [Avoiding Bank Conflicts (NPU Architecture Version 2201)](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_bank_conflict_npu_arch_2201.md).
+    For details, see [Avoiding Bank Conflicts (NPU Architecture Version 2201)](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_bank_conflict_npu_arch_2201.md).
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
@@ -79,5 +79,5 @@ To improve the efficiency and throughput of data access, the Unified Buffer adop
 
   - Bank conflict optimization
 
-    For details, see [Avoiding Bank Conflicts (NPU Architecture Version 3510)](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_bank_conflict_npu_arch_3510.md).
+    For details, see [Avoiding Bank Conflicts (NPU Architecture Version 3510)](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/avoid_bank_conflict_npu_arch_3510.md).
 <!-- end id4 -->

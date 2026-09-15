@@ -42,12 +42,12 @@ __aicore__ inline HcclHandle BatchWrite(GM_ADDR batchWriteInfo, uint32_t itemNum
 
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
-| **batchWriteInfo** | Input | Global Memory address of the communication task information. The related information of a group of communication data must be saved in the specified format. When executing a communication task, multiple groups of communication task information can be specified at the same time to send data in batches. The structure is defined as shown in the following code.<br><br>For Atlas A3 Training Series Products/Atlas A3 Inference Series Products:<br>**type**: Reserved parameter, with a value of 0.<br>**res1[5]**: Reserved parameter. This value does not need to be filled in.<br>**length**: Length of the data to be copied.<br>**srcAddrLow**: Lower 32 bits of the source address of the data to be copied.<br>**srcAddrHigh**: Upper 32 bits of the source address of the data to be copied.<br>**dstAddrLow**: Lower 32 bits of the destination address of the data to be copied.<br>**dstAddrHigh**: Upper 32 bits of the destination address of the data to be copied.<br>**res2[4]**: Reserved parameter. This value does not need to be filled in.<br><br>For Atlas A2 Training Series Products/Atlas A2 Inference Series Products:<br>**localBuf**: Window address of the data sent by the local end.<br>**remoteBuf**: Window address of the data received by the peer end.<br>**count**: Number of data elements sent by this communication task.<br>**dataType**: Data type of the data sent by this communication task. For supported types, see [HcclDataType parameter description](hccl_usage.md#table116710585514).<br>**remoteRankId**: Card number of the destination card to which this communication task sends data. |
-| **itemNum** | Input | Number of batch tasks. The value of this parameter must be consistent with the number of groups of communication task information in **batchWriteInfo**.<br><br>For Atlas A3 Training Series Products/Atlas A3 Inference Series Products, the value of this parameter cannot be greater than or equal to 2048. |
-| **queueID** | Input | ID of the queue where the current communication resides, with a default value of 0.<br><br>For Atlas A2 Training Series Products/Atlas A2 Inference Series Products, this parameter supports only the value 0. |
+| **batchWriteInfo** | Input | Global Memory address of the communication task information. The related information of a group of communication data must be saved in the specified format. When executing a communication task, multiple groups of communication task information can be specified at the same time to send data in batches. The structure is defined as shown in the following code.<br><br>For Atlas A3 training products/Atlas A3 inference products:<br>**type**: Reserved parameter, with a value of 0.<br>**res1[5]**: Reserved parameter. This value does not need to be filled in.<br>**length**: Length of the data to be copied.<br>**srcAddrLow**: Lower 32 bits of the source address of the data to be copied.<br>**srcAddrHigh**: Upper 32 bits of the source address of the data to be copied.<br>**dstAddrLow**: Lower 32 bits of the destination address of the data to be copied.<br>**dstAddrHigh**: Upper 32 bits of the destination address of the data to be copied.<br>**res2[4]**: Reserved parameter. This value does not need to be filled in.<br><br>For Atlas A2 training products/Atlas A2 inference products:<br>**localBuf**: Window address of the data sent by the local end.<br>**remoteBuf**: Window address of the data received by the peer end.<br>**count**: Number of data elements sent by this communication task.<br>**dataType**: Data type of the data sent by this communication task. For supported types, see [HcclDataType parameter description](hccl_usage.md#table116710585514).<br>**remoteRankId**: Card number of the destination card to which this communication task sends data. |
+| **itemNum** | Input | Number of batch tasks. The value of this parameter must be consistent with the number of groups of communication task information in **batchWriteInfo**.<br><br>For Atlas A3 training products/Atlas A3 inference products, the value of this parameter cannot be greater than or equal to 2048. |
+| **queueID** | Input | ID of the queue where the current communication resides, with a default value of 0.<br><br>For Atlas A2 training products/Atlas A2 inference products, this parameter supports only the value 0. |
 
 ```
-// Atlas A3 Training Series Products/Atlas A3 Inference Series Products.
+// Atlas A3 training products/Atlas A3 inference products.
 struct BatchWriteItem {
     uint64_t type;
     uint32_t res1[5];
@@ -59,7 +59,7 @@ struct BatchWriteItem {
     uint32_t res2[4];
 };
 
-// Atlas A2 Training Series Products/Atlas A2 Inference Series Products.
+// Atlas A2 training products/Atlas A2 inference products.
 struct BatchWriteItem {
     uint64_t localBuf;
     uint64_t remoteBuf;
@@ -85,7 +85,7 @@ Returns the identifier **handleId** of the task, where **handleId** is greater t
 
 -   Point-to-point communication between different AI Servers
 
-    On Atlas A2 Training Series Products/Atlas A2 Inference Series Products, assume that the local card needs to send different data to specified locations on cards 2 and 3 of other AI Servers. By calling the BatchWrite API once, batch point-to-point communication is implemented.
+    On Atlas A2 training products/Atlas A2 inference products, assume that the local card needs to send different data to specified locations on cards 2 and 3 of other AI Servers. By calling the BatchWrite API once, batch point-to-point communication is implemented.
 
     ```
     struct BatchWriteItem {
@@ -163,7 +163,7 @@ Returns the identifier **handleId** of the task, where **handleId** is greater t
 <a id="multi-queue-p2p"></a>
 -   Point-to-point communication over multiple queues
 
-    On Atlas A3 Training Series products/Atlas A3 Inference Series products, to copy a segment of data to two different Global Memory addresses, you can call the BatchWrite API once to implement batch point-to-point communication.
+    On Atlas A3 training products/Atlas A3 inference products, to copy a segment of data to two different Global Memory addresses, you can call the BatchWrite API once to implement batch point-to-point communication.
 
     ```
     struct BatchWriteItem {

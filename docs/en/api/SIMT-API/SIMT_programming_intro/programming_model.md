@@ -96,7 +96,7 @@ UB (Unified Buffer) is a memory space accessible to all threads within the same 
 4.  Data cache: A Data Cache space dedicated to SIMT. After deducting the static memory, dynamic memory, and reserved space from the UB, the remaining memory is the Data Cache. The Data Cache is at least 32 KB. When the remaining space exceeds 128 KB, the Data Cache size is fixed at 128 KB. The specific calculation formula is as follows:
 
     ```
-    DataCache = min(UB总大小(256KB) – 静态内存 – 动态内存 – 预留空间(8KB), 128KB)
+    DataCache = min(Total size of UB (256 KB) – Static memory – Dynamic memory – Reserved space (8 KB), 128 KB)
     ```
 
     If DataCache is less than 32 KB, a verification error occurs.

@@ -15,7 +15,7 @@
 | [GetReduceRepeatMaxMinSpr(ISASI)](../reduction_compute_aux_config/GetReduceRepeatMaxMinSpr_ISASI.md) | Obtains the maximum/minimum values and their indexes in all repeats when `ReduceRepeat<MAX/MIN>` is called, or obtains the maximum/minimum values obtained by calling `ReduceMax` and `ReduceMin`. | 1 element (1 index) |
 
 
-For Atlas A3 Training Series/Atlas A3 Inference Series and Atlas A2 Training Series/Atlas A2 Inference Series, the following usage suggestions apply when using reduction computation APIs.
+For Atlas A3 training products/Atlas A3 inference products and Atlas A2 training products/Atlas A2 inference products, the following usage suggestions apply when using reduction computation APIs.
 
 - `ReduceDataBlock`
   - **Recommended scenarios**:
