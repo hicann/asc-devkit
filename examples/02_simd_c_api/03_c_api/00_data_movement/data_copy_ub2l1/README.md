@@ -54,7 +54,7 @@
 
 - 输入：A逻辑规格为`[127, 129]`，按`[128, 144]`补齐后以`half` Nz格式存储；B输入不参与该场景
 - 输出：A经L1往返后的`[128, 144]` Nz格式数据，`half`类型
-- 实现：场景3使用`asc_get_phy_buf_addr`按固定offset管理UB和L1地址，避免AIC写入的UB地址与AIV读取的UB地址不一致。AIV侧通过`asc_copy_gm2ub`和`asc_copy_ub2l1`完成GM->UB->L1搬运；AIC侧等待L1数据就绪后，通过`asc_copy_l12ub_sync`完成L1 Buffer->UB同步搬运；随后AIV侧等待AIC通知，再通过`asc_copy_ub2gm`将UB数据写回GM。
+- 实现：场景3使用`asc_get_phy_buf_addr`按固定offset管理UB和L1地址，避免AIC写入的UB地址与AIV读取的UB地址不一致。AIV侧通过`asc_copy_gm2ub`和`asc_copy_ub2l1`完成GM->UB->L1搬运；AIC侧等待L1数据就绪后，通过`asc_copy_l12ub`和`asc_sync`完成L1 Buffer->UB同步搬运；随后AIV侧等待AIC通知，再通过`asc_copy_ub2gm`将UB数据写回GM。
 
 ### 数据流与同步
 

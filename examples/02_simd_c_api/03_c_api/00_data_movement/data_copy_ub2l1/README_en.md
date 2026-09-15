@@ -54,7 +54,7 @@ Use the `SCENARIO_NUM` build parameter to select an input scenario. Scenarios 1 
 
 - Input: A has the logical shape `[127, 129]` and is padded to `[128, 144]` in `half` Nz format. B input is not used in this scenario
 - Output: The `[128, 144]` Nz-format A data after the L1 round trip, in `half` type
-- Implementation: Scenario 3 uses `asc_get_phy_buf_addr` to manage UB and L1 addresses with fixed offsets, avoiding a mismatch between the UB address written by AIC and the UB address read by AIV. The AIV side uses `asc_copy_gm2ub` and `asc_copy_ub2l1` for GM->UB->L1. After the L1 data is ready, the AIC side uses `asc_copy_l12ub_sync` for synchronous L1->UB movement. The AIV side then waits for the AIC notification and writes the UB data back to GM with `asc_copy_ub2gm`.
+- Implementation: Scenario 3 uses `asc_get_phy_buf_addr` to manage UB and L1 addresses with fixed offsets, avoiding a mismatch between the UB address written by AIC and the UB address read by AIV. The AIV side uses `asc_copy_gm2ub` and `asc_copy_ub2l1` for GM->UB->L1. After the L1 data is ready, the AIC side uses `asc_copy_l12ub` followed by `asc_sync` for synchronous L1->UB movement. The AIV side then waits for the AIC notification and writes the UB data back to GM with `asc_copy_ub2gm`.
 
 ### Data Flow and Synchronization
 
