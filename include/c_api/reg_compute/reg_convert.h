@@ -1034,6 +1034,2319 @@ __simd_callee__ inline vector_float asc_int642float_rna(
 __simd_callee__ inline vector_float asc_int642float_rna(
     vector_int64_t src, vector_bool mask, std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
 
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int4x2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e1m2_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp4x2_e2m1_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int4x2_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e4m3fn_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e1m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e1m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e1m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e1m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e2m1_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e2m1_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e2m1_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_fp4x2_e2m1_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e5m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e5m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e5m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_fp8_e5m2_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_hifloat8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_hifloat8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_hifloat8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_hifloat8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_hifloat8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_hifloat8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_uint16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_uint16_t src, vector_bool mask,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint32_t& dst, vector_uint8_t src, vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_bfloat16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_float& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e4m3fn_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_fp8_e5m2_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RO> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RO> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RO> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_half& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RO> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_hifloat8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_bfloat16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int64_t& dst, vector_float src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> round_mode,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_int32_t& dst, vector_int64_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint16_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_int32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint16_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_SECOND_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_THIRD_QUARTER> dst_pos);
+
+__simd_callee__ inline void asc_cast(
+    vector_uint8_t& dst, vector_uint32_t src, vector_bool mask,
+    std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> saturation_mode,
+    std::integral_constant<asc_position_quarter_mode, asc_position_quarter_mode::DISPERSE_FOURTH_QUARTER> dst_pos);
 #endif
 
 // ==========asc_bfloat162half(rd/ru/rz/rn/rna)==========

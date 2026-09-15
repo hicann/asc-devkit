@@ -68,15 +68,15 @@ enum class asc_hf32_round_mode : uint8_t {
 };
 
 enum class asc_saturation_mode : uint8_t {
-    FLOAT = 48,  // 浮点数计算和浮点数精度转换饱和模式
-    FLOAT8 = 50, // 浮点数精度转换时NaN饱和模式
-    INT = 53,    // 整数计算指令饱和模式
-    CAST = 59    // 浮点数转整数或整数转整数精度转换饱和模式
+    FLOAT = 48,  // Saturation mode for floating-point computation and precision conversion.
+    FLOAT8 = 50, // NaN saturation mode for floating-point precision conversion.
+    INT = 53,    // Saturation mode for integer computation instructions.
+    CAST = 59    // Saturation mode for floating-point-to-integer and integer-to-integer conversions.
 };
 
 enum class asc_override_strategy : uint8_t {
-    USE_API = 0,   // 饱和模式为单指令设置饱和
-    USE_GLOBAL = 1 // 饱和模式为全局设置饱和
+    USE_API = 0,   // Configure saturation mode per instruction.
+    USE_GLOBAL = 1 // Configure saturation mode globally.
 };
 
 enum class asc_position_mode { EVEN = 0, ODD };
@@ -90,6 +90,32 @@ enum class asc_position_quarter_mode {
     DISPERSE_THIRD_QUARTER,
     DISPERSE_FOURTH_QUARTER
 };
+
+enum class asc_cast_round_mode : uint8_t {
+    RN = 0, // Round to nearest, ties to even.
+    RNA,    // Round to nearest, ties away from zero.
+    RD,     // Round toward negative infinity.
+    RU,     // Round toward positive infinity.
+    RZ,     // Round toward zero.
+    RO,     // Round to nearest odd.
+    RH      // Hybrid rounding mode for hifloat8_t output, using stochastic rounding.
+};
+
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RN> ASC_CAST_RN;
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RNA> ASC_CAST_RNA;
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RD> ASC_CAST_RD;
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RU> ASC_CAST_RU;
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RZ> ASC_CAST_RZ;
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RO> ASC_CAST_RO;
+constexpr std::integral_constant<asc_cast_round_mode, asc_cast_round_mode::RH> ASC_CAST_RH;
+
+enum class asc_cast_saturation_mode : uint8_t {
+    NO_SAT = 0, // Non-saturation mode.
+    SAT         // Saturation mode.
+};
+
+constexpr std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::NO_SAT> ASC_CAST_NO_SAT;
+constexpr std::integral_constant<asc_cast_saturation_mode, asc_cast_saturation_mode::SAT> ASC_CAST_SAT;
 
 enum class asc_dual_dst_mode : uint8_t { DUAL_DST_DISABLE = 0, DUAL_DST_SPLIT_M = 1, DUAL_DST_SPLIT_N = 2 };
 
