@@ -1024,6 +1024,7 @@
             -   [asc_copy_ub2gm_align_arch_2201](SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_2201.md)
             -   [asc_copy_ub2gm_align_arch_3510](SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)
         -   [Reg矢量计算](SIMD-API/c_api/reg_compute/reg_compute.md)
+            -   [概述](SIMD-API/c_api/reg_compute/overview.md)
             -   [Reg数据搬入](SIMD-API/c_api/reg_compute/load/load.md)
                 -   [Reg数据搬入概述](SIMD-API/c_api/reg_compute/load/reg_load_overview.md)
                 -   [asc_loadalign](SIMD-API/c_api/reg_compute/load/asc_loadalign.md)
