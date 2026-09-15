@@ -23,17 +23,14 @@ namespace mc2_ops_hccl {
 namespace {
 constexpr u32 CONCURRENT_TEMPLATE_NUM = 2U;
 constexpr u32 CLOS_PORT_NUM = 4U;
+constexpr u32 MESH_BW_CCU = 11U;
+constexpr u32 CLOS_BW_CCU = 10U;
 constexpr u32 MESH_BW_AICPU_TS = 10U;
 constexpr u32 CLOS_BW_AICPU_TS = 12U;
 
 bool AddOverflows(u64 lhs, u64 rhs) { return lhs > std::numeric_limits<u64>::max() - rhs; }
 
 bool MultiplyOverflows(u64 lhs, u64 rhs) { return lhs != 0U && rhs > std::numeric_limits<u64>::max() / lhs; }
-
-bool IsAicpuEngine(CommEngine engine)
-{
-    return engine == CommEngine::COMM_ENGINE_AICPU || engine == CommEngine::COMM_ENGINE_AICPU_TS;
-}
 
 bool ContainsRank(const std::vector<u32>& ranks, u32 rank)
 {
@@ -46,10 +43,6 @@ template <typename AlgTopoMatch, typename InsAlgTemplate0, typename InsAlgTempla
 HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1>::ValidateParam(
     const OpParam& param, u32 rankSize, u32 myRank) const
 {
-    CHK_PRT_RET(
-        !IsAicpuEngine(param.engine),
-        HCCL_ERROR("[InsV2AllToAllConcurrentExecutor] unsupported engine[%u].", static_cast<u32>(param.engine)),
-        HCCL_E_NOT_SUPPORT);
     CHK_PRT_RET(
         rankSize <= 1U || rankSize > 4U,
         HCCL_ERROR("[InsV2AllToAllConcurrentExecutor] unsupported rankSize[%u].", rankSize), HCCL_E_NOT_SUPPORT);
@@ -106,8 +99,13 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
     AlgResourceRequest request1;
 
     if (param.engine == CommEngine::COMM_ENGINE_CCU) {
-        CHK_RET(template0.CalcRes(comm, param, topoInfo, request0));
-        CHK_RET(template1.CalcRes(comm, param, topoInfo, request1));
+        std::vector<HcclChannelDesc> meshChannels;
+        std::vector<HcclChannelDesc> closChannels;
+        CHK_RET(CalcChannelRequestMesh1DWithPriorityTopo(
+            comm, param, topoInfo, meshSubComm, meshChannels, CommTopo::COMM_TOPO_1DMESH));
+        CHK_RET(CalcChannelRequestMeshClosMultiJetty(comm, param, topoInfo, closSubComm, closChannels, false, false));
+        CHK_RET(template0.CalcResByChannelDescs(param, meshChannels, request0));
+        CHK_RET(template1.CalcResByChannelDescs(param, closChannels, request1));
         CHK_PRT_RET(
             request0.ccuKernelNum.empty() || request1.ccuKernelNum.empty(),
             HCCL_ERROR("[InsV2AllToAllConcurrentExecutor][CalcRes] CCU kernel num is empty."), HCCL_E_INTERNAL);
@@ -238,8 +236,12 @@ HcclResult InsV2AllToAllConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlg
         data.sdispls.resize(rankSize_);
         data.rdispls.resize(rankSize_);
     }
-    const u32 meshFactor = param.engine == CommEngine::COMM_ENGINE_AICPU_TS ? MESH_BW_AICPU_TS : rankSize_ - 1U;
-    const u32 closFactor = param.engine == CommEngine::COMM_ENGINE_AICPU_TS ? CLOS_BW_AICPU_TS : CLOS_PORT_NUM;
+    const u32 meshFactor = param.engine == CommEngine::COMM_ENGINE_CCU      ? MESH_BW_CCU :
+                           param.engine == CommEngine::COMM_ENGINE_AICPU_TS ? MESH_BW_AICPU_TS :
+                                                                              rankSize_ - 1U;
+    const u32 closFactor = param.engine == CommEngine::COMM_ENGINE_CCU      ? CLOS_BW_CCU :
+                           param.engine == CommEngine::COMM_ENGINE_AICPU_TS ? CLOS_BW_AICPU_TS :
+                                                                              CLOS_PORT_NUM;
     const u32 totalFactor = meshFactor + closFactor;
     CHK_PRT_RET(
         totalFactor == 0U, HCCL_ERROR("[InsV2AllToAllConcurrentExecutor] split factor is zero."), HCCL_E_INTERNAL);

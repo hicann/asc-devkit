@@ -320,6 +320,40 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
 }
 
 template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForConcurrentAllToAll(
+    __gm__ CommonPrepareParamCcu* commParam)
+{
+    constexpr uint64_t meshBandwidth = 11U;
+    constexpr uint64_t totalBandwidth = 21U;
+    constexpr uint64_t splitAlignment = 128U;
+    const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
+    const uint64_t totalSize = commParam->count * dataTypeSize;
+    const uint64_t repeatOffset = totalSize * ccuParam_.repeatIndex;
+    const uint64_t meshSize = (totalSize * meshBandwidth / totalBandwidth / splitAlignment) * splitAlignment;
+    const uint64_t closSize = totalSize - meshSize;
+    const uint64_t strideSize = commParam->strideCount == 0U ? totalSize : commParam->strideCount * dataTypeSize;
+    const uint64_t inputBase = reinterpret_cast<uint64_t>(commParam->sendBuf) + repeatOffset;
+    const uint64_t outputBase = reinterpret_cast<uint64_t>(commParam->recvBuf) + repeatOffset;
+
+    xnData_[KFC_CONCURRENT_A2A_OP_ID] = GetOpId(commParam);
+    xnData_[KFC_CONCURRENT_A2A_MESH_INPUT] = inputBase;
+    xnData_[KFC_CONCURRENT_A2A_MESH_OUTPUT] = outputBase;
+    xnData_[KFC_CONCURRENT_A2A_MESH_SLICE_SIZE] = meshSize;
+    xnData_[KFC_CONCURRENT_A2A_MESH_SRC_STRIDE] = strideSize;
+    xnData_[KFC_CONCURRENT_A2A_MESH_SRC_OFFSET] = 0U;
+    xnData_[KFC_CONCURRENT_A2A_MESH_DST_OFFSET] = strideSize * ccuParam_.rankId;
+    CalcGoSize(meshSize, CCU_LOOP_COUNT_M2M_AG, CCU_MEMSLICE_SIZE * 8U, &xnData_[KFC_CONCURRENT_A2A_MESH_GO_SIZE_0]);
+
+    xnData_[KFC_CONCURRENT_A2A_CLOS_INPUT] = inputBase + meshSize;
+    xnData_[KFC_CONCURRENT_A2A_CLOS_OUTPUT] = outputBase + meshSize;
+    xnData_[KFC_CONCURRENT_A2A_CLOS_SLICE_SIZE] = closSize;
+    xnData_[KFC_CONCURRENT_A2A_CLOS_SRC_STRIDE] = strideSize;
+    xnData_[KFC_CONCURRENT_A2A_CLOS_SRC_OFFSET] = 0U;
+    xnData_[KFC_CONCURRENT_A2A_CLOS_DST_OFFSET] = strideSize * ccuParam_.rankId;
+    CalcGoSize(closSize, CCU_LOOP_COUNT_M2M_AG, CCU_MEMSLICE_SIZE * 8U, &xnData_[KFC_CONCURRENT_A2A_CLOS_GO_SIZE_0]);
+}
+
+template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForReduceScatterM2M(
     __gm__ CommonPrepareParamCcu* commParam)
 {

@@ -555,7 +555,8 @@ HcclResult BuildMc2AicpuTaskCachePlan(
         SetBypass(plan, "hcomm task cache symbols incomplete");
         return HCCL_SUCCESS;
     }
-    if (!IsSupportedOp(param.opType) || param.engine != CommEngine::COMM_ENGINE_AICPU_TS) {
+    if (!IsSupportedOp(param.opType) ||
+        (param.engine != CommEngine::COMM_ENGINE_AICPU_TS && param.engine != CommEngine::COMM_ENGINE_CCU)) {
         SetBypass(plan, "unsupported op or engine");
         return HCCL_SUCCESS;
     }

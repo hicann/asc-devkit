@@ -41,12 +41,11 @@ public:
         AlgResourceRequest& resourceRequest) override;
     HcclResult CalcResByChannelDescs(
         const OpParam& param, const std::vector<HcclChannelDesc>& channelDescs,
-        const AlgResourceRequest& resourceRequest) const
+        AlgResourceRequest& resourceRequest) const
     {
-        (void)param;
-        (void)channelDescs;
-        (void)resourceRequest;
-        return HCCL_SUCCESS;
+        CHK_RET(GetRes(resourceRequest));
+        resourceRequest.ccuKernelNum.push_back(1U);
+        return CalcResByChannelDescsImpl(param, channelDescs, resourceRequest);
     }
     HcclResult KernelRun(
         const OpParam& param, const TemplateDataParams& templateDataParams,
@@ -56,6 +55,9 @@ public:
     u64 CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType) override;
 
 private:
+    HcclResult CalcResByChannelDescsImpl(
+        const OpParam& param, const std::vector<HcclChannelDesc>& channelDescs,
+        AlgResourceRequest& resourceRequest) const;
     uint32_t mySubCommRank_ = 0;
     uint32_t tempRankSize_ = 0;
 };

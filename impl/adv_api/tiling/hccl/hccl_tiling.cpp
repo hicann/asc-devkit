@@ -39,7 +39,8 @@ static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
     "CcuSchedAllReduceSoleMesh",
     "CcuSchedReduceScatterSoleMeshPeerOnly",
     "CcuSchedReduceScatterSoleNHRMultiLink",
-    "CcuSchedReduceScatterConcurMeshNHRMultiLink"};
+    "CcuSchedReduceScatterConcurMeshNHRMultiLink",
+    "CcuSchedAllToAllSoleMeshConcurrent"};
 
 bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
 {
