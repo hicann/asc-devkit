@@ -11,7 +11,6 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
 
-import argparse
 import sys
 import numpy as np
 
@@ -22,13 +21,9 @@ absolute_tol = 1e-9
 error_tol = 1e-4
 
 
-def verify_result(scenario_num, output, golden):
-    if scenario_num in [2, 3]:
-        output_type = np.float32
-    else:
-        output_type = np.int32
-    output = np.fromfile(output, dtype=output_type).reshape(-1)
-    golden = np.fromfile(golden, dtype=output_type).reshape(-1)
+def verify_result(output, golden):
+    output = np.fromfile(output, dtype=np.float32).reshape(-1)
+    golden = np.fromfile(golden, dtype=np.float32).reshape(-1)
     different_element_results = np.isclose(
         output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True
     )
@@ -37,41 +32,24 @@ def verify_result(scenario_num, output, golden):
         real_index = different_element_indexes[index]
         golden_data = golden[real_index]
         output_data = output[real_index]
-        if scenario_num in [2, 3]:
-            print(
-                "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f"
-                % (
-                    real_index,
-                    golden_data,
-                    output_data,
-                    abs(output_data - golden_data) / golden_data,
-                )
+        print(
+            "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f"
+            % (
+                real_index,
+                golden_data,
+                output_data,
+                abs(output_data - golden_data) / golden_data,
             )
-        else:
-            print(
-                "data index: %06d, expected: %d, actual: %d, rdiff: %-.6f"
-                % (
-                    real_index,
-                    golden_data,
-                    output_data,
-                    abs(output_data - golden_data) / golden_data,
-                )
-            )
+        )
         if index == 100:
             break
     error_ratio = float(different_element_indexes.size) / golden.size
-    print("error ratio: %.4f, tolerance: %.4f" % (error_ratio, error_tol))
     return error_ratio <= error_tol
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-scenarioNum", type=int, default=1, choices=[1, 2, 3])
-    parser.add_argument("output", type=str)
-    parser.add_argument("golden", type=str)
-    args = parser.parse_args()
     try:
-        res = verify_result(args.scenarioNum, args.output, args.golden)
+        res = verify_result(sys.argv[1], sys.argv[2])
         if not res:
             raise ValueError("[ERROR] result error")
         else:

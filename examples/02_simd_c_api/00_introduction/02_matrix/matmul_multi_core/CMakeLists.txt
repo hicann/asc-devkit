@@ -8,6 +8,7 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
 
+
 cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
@@ -17,17 +18,7 @@ find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
 add_executable(demo
-    mmad.asc
-)
-
-set(SCENARIO_NUM "1" CACHE STRING "SCENARIO_NUM, e.g. 1 2 3")
-if(NOT SCENARIO_NUM MATCHES "^[1-3]$")
-    message(FATAL_ERROR "SCENARIO_NUM must be 1, 2 or 3, but got ${SCENARIO_NUM}")
-endif()
-
-message(STATUS "[INFO] SCENARIO_NUM is ${SCENARIO_NUM}")
-target_compile_definitions(demo PRIVATE
-    SCENARIO_NUM=${SCENARIO_NUM}
+    matmul_multi_core.asc
 )
 
 target_compile_options(demo PRIVATE

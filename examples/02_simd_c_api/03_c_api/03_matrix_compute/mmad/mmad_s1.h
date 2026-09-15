@@ -15,11 +15,6 @@
 
 #pragma once
 
-#ifndef ceil_div
-#define ceil_div(a, b) (((a) + (b) - 1) / (b))
-#define ceil_align(a, b) (ceil_div(a, b) * (b))
-#endif
-
 // ========== 场景1 常量 ==========
 constexpr uint32_t S1_C0_SIZE = 32;
 constexpr uint32_t S1_FRACTAL_NUM = 2;
@@ -30,7 +25,7 @@ constexpr uint32_t S1_A_L0_SIZE = ceil_align(M, BLOCK_CUBE) * ceil_align(K, S1_C
 constexpr uint32_t S1_B_L1_SIZE = ceil_align(K, BLOCK_CUBE* S1_FRACTAL_NUM) * ceil_align(N, S1_C0_SIZE);
 constexpr uint32_t S1_B_L0_SIZE = ceil_align(K, S1_C0_SIZE) * ceil_align(N, BLOCK_CUBE* S1_FRACTAL_NUM);
 constexpr uint32_t S1_C_L0_SIZE = ceil_align(M, BLOCK_CUBE) * ceil_align(N, BLOCK_CUBE);
-constexpr uint32_t S1_BIAS_BYTES = ceil_align(ceil_div(N * sizeof(int32_t), 32), 2) * 32;
+constexpr uint32_t S1_BIAS_BYTES = ceil_align(AscendC::Std::ceil_div(N * sizeof(int32_t), 32), 2) * 32;
 constexpr uint32_t S1_BIAS_ELEMS = S1_BIAS_BYTES / sizeof(int32_t);
 
 // ========== 阶段1：GM → L1 ==========
@@ -101,10 +96,10 @@ __aicore__ inline void s1_split_matrix_a_to_l0a(__ca__ int8_t* dst, __cbuf__ int
 
     uint16_t m_start_position = 0;
     uint16_t k_start_position = 0;
-    uint8_t m_step = ceil_div(M, BLOCK_CUBE);
-    uint8_t k_step = ceil_div(K, S1_C0_SIZE);
-    int16_t src_stride = ceil_div(M, BLOCK_CUBE);
-    uint16_t dst_stride = ceil_div(M, BLOCK_CUBE);
+    uint8_t m_step = AscendC::Std::ceil_div(M, BLOCK_CUBE);
+    uint8_t k_step = AscendC::Std::ceil_div(K, S1_C0_SIZE);
+    int16_t src_stride = AscendC::Std::ceil_div(M, BLOCK_CUBE);
+    uint16_t dst_stride = AscendC::Std::ceil_div(M, BLOCK_CUBE);
 
     asc_copy_l12l0a(dst, src, m_start_position, k_start_position, m_step, k_step, src_stride, dst_stride);
 
@@ -115,13 +110,14 @@ __aicore__ inline void s1_split_matrix_b_to_l0b_trans(__cb__ int8_t* dst, __cbuf
 {
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID1);
 
-    constexpr uint32_t k_blocks = ceil_div(K, BLOCK_CUBE * S1_FRACTAL_NUM);
-    constexpr uint32_t dst_offset = ceil_div(N, BLOCK_CUBE * S1_FRACTAL_NUM) * S1_FRACTAL_SIZE * S1_FRACTAL_NUM;
+    constexpr uint32_t k_blocks = AscendC::Std::ceil_div(K, BLOCK_CUBE * S1_FRACTAL_NUM);
+    constexpr uint32_t dst_offset =
+        AscendC::Std::ceil_div(N, BLOCK_CUBE * S1_FRACTAL_NUM) * S1_FRACTAL_SIZE * S1_FRACTAL_NUM;
     constexpr uint32_t src_offset = S1_FRACTAL_SIZE * S1_FRACTAL_NUM;
 
     uint16_t index_id = 0;
-    uint8_t repeat = ceil_div(N, S1_C0_SIZE);
-    uint16_t src_stride = ceil_div(K, BLOCK_CUBE * S1_FRACTAL_NUM) * 2;
+    uint8_t repeat = AscendC::Std::ceil_div(N, S1_C0_SIZE);
+    uint16_t src_stride = AscendC::Std::ceil_div(K, BLOCK_CUBE * S1_FRACTAL_NUM) * 2;
     uint16_t dst_gap = 1;
     uint16_t dst_frac_gap = 0;
     uint16_t src_frac_gap = 0;
@@ -162,13 +158,13 @@ __aicore__ inline void s1_compute_mmad(__cc__ int32_t* c_matrix, __ca__ int8_t* 
     uint16_t left_height = M;
     uint16_t n_dim = K;
     uint16_t right_width = ceil_align(N, BLOCK_CUBE * S1_FRACTAL_NUM);
-    uint8_t unit_flag = 0;
+    asc_unit_flag_mode unit_flag_mode = asc_unit_flag_mode::DISABLE;
     bool disable_gemv = true;
     bool c_matrix_source = true;
     bool c_matrix_init_val = false;
 
     asc_mmad(
-        c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
+        c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag_mode, disable_gemv, c_matrix_source,
         c_matrix_init_val);
 
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);

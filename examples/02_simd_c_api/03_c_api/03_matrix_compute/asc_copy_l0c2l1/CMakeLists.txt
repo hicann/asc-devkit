@@ -17,18 +17,31 @@ find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
 add_executable(demo
-    mmad.asc
+    asc_copy_l0c2l1.asc
 )
 
-set(SCENARIO_NUM "1" CACHE STRING "SCENARIO_NUM, e.g. 1 2 3")
-if(NOT SCENARIO_NUM MATCHES "^[1-3]$")
-    message(FATAL_ERROR "SCENARIO_NUM must be 1, 2 or 3, but got ${SCENARIO_NUM}")
+target_link_libraries(demo PRIVATE)
+
+# 场景参数（通过命令行传入）
+# SCENARIO_NUM: 场景编号
+#   1 - 输出格式Nz，输出到L1的数据类型为half
+#   2 - 输出格式Nz，输出到L1的数据类型为int8_t，使能Scalar量化
+#   3 - 输出格式Nz，输出到L1的数据类型为int8_t，使能Vector量化
+#   4 - 输出格式Nz，输出到L1的数据类型为half，使能relu
+set(SCENARIO_NUM "1" CACHE STRING "Scene number (1-4)")
+message(STATUS "[INFO] SCENARIO_NUM is ${SCENARIO_NUM}")
+
+if(NOT SCENARIO_NUM MATCHES "^[1-4]$")
+    message(FATAL_ERROR "SCENARIO_NUM must be 1, 2, 3 or 4, but got ${SCENARIO_NUM}")
 endif()
 
-message(STATUS "[INFO] SCENARIO_NUM is ${SCENARIO_NUM}")
-target_compile_definitions(demo PRIVATE
-    SCENARIO_NUM=${SCENARIO_NUM}
-)
+add_definitions(-DSCENARIO_NUM=${SCENARIO_NUM})
+
+string(REGEX MATCH "([0-9]+)" ARCH_NUM "${CMAKE_ASC_ARCHITECTURES}")
+
+add_definitions(-DASC_ARCHITECTURES=${ARCH_NUM})
+
+message(STATUS "[INFO] ARCH_NUM is ${ARCH_NUM}")
 
 target_compile_options(demo PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>
