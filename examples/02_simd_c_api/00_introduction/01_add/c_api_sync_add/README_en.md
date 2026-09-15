@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example uses C_API interfaces to implement the Add operator example, based on synchronous data movement and computation interfaces.
+This example uses C_API interfaces to implement the Add operator, pairing asynchronous data movement and computation interfaces with explicit `asc_sync` calls.
 
 ## Supported Products
 
