@@ -18,18 +18,33 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
+|[asc_channel_pad_mode](defs/enum/asc_channel_pad_mode.md)|表示GM到L1 Buffer搬运时，每个32字节通道块的填充或压缩模式。|`c_api/defs/enum.h`|
+|[asc_dual_dst_mode](defs/enum/asc_dual_dst_mode.md)|表示L0C Buffer数据搬出时的双目标拆分模式。|`c_api/defs/enum.h`|
 |[asc_hf32_round_mode](defs/enum/asc_hf32_round_mode.md)|表示Mmad计算开启HF32模式时由FP32舍入到HF32的舍入模式管理策略。|`c_api/defs/enum.h`|
 |[asc_l13d_repeat_direction](defs/enum/asc_l13d_repeat_direction.md)|表示3D img2col搬运的repeat迭代方向。|`c_api/defs/enum.h`|
 |[asc_load_l2_cache_mode](defs/enum/asc_load_l2_cache_mode.md)|表示数据从GM搬运到UB时的L2 cache策略，也可用于标量load策略配置。|`c_api/defs/enum.h`|
+|[asc_mutex_execute_mode](defs/enum/asc_mutex_execute_mode.md)|表示互斥锁的阻塞或非阻塞执行模式。|`c_api/defs/enum.h`|
 |[asc_override_strategy](defs/enum/asc_override_strategy.md)|表示饱和控制策略。|`c_api/defs/enum.h`|
+|[asc_position_mode](defs/enum/asc_position_mode.md)|表示源或目的操作数在寄存器中的奇偶位置。|`c_api/defs/enum.h`|
+|[asc_position_quarter_mode](defs/enum/asc_position_quarter_mode.md)|表示源或目的操作数在寄存器中的四分之一位置。|`c_api/defs/enum.h`|
+|[asc_quant_mode](defs/enum/asc_quant_mode.md)|表示L0C Buffer数据搬出时的类型转换或量化模式。|`c_api/defs/enum.h`|
+|[asc_relu_pre_mode](defs/enum/asc_relu_pre_mode.md)|表示L0C Buffer数据搬出时的随路ReLU模式。|`c_api/defs/enum.h`|
 |[asc_saturation_mode](defs/enum/asc_saturation_mode.md)|表示饱和控制模式。|`c_api/defs/enum.h`|
 |[asc_store_l2_cache_mode](defs/enum/asc_store_l2_cache_mode.md)|表示数据从UB搬运到GM时的L2 cache策略，也可用于标量store策略配置。|`c_api/defs/enum.h`|
+|[asc_unit_flag_mode](defs/enum/asc_unit_flag_mode.md)|表示矩阵计算或矩阵搬出接口执行后的UnitFlag行为。|`c_api/defs/enum.h`|
 
 ### 数据类型
 
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
 |[reg数据类型定义](defs/type/data_type_definition.md)|介绍C API的矢量数据寄存器、掩码寄存器、非对齐寄存器和地址寄存器数据类型。|`c_api/defs/type.h`|
+
+### 宏
+
+|API名称|说明|最细粒度公共头文件|
+|---|---|---|
+|[ASC_DEPRECATED](defs/macro/asc_deprecation.md)|为C API声明添加废弃属性和编译告警信息。|`c_api/defs/macro.h`|
+|[ASC_IS_AIC/ASC_IS_AIV](defs/macro/asc_is_aic-asc_is_aiv.md)|判断当前编译的代码路径是Cube Core（AIC）还是Vector Core（AIV）代码路径。|`c_api/defs/macro.h`|
 
 ### 常量
 
@@ -56,6 +71,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
+|[asc_get_arch_ver](utils/sys_var/asc_get_arch_ver.md)|获取当前AI处理器架构版本号。|`c_api/utils/sys_var.h`|
 |[asc_get_core_id](utils/sys_var/asc_get_core_id.md)|获取当前核的编号。|`c_api/utils/sys_var.h`|
 |[asc_get_ffts_base_addr](utils/sys_var/asc_get_ffts_base_addr.md)|获取核间同步寄存器的基地址。|`c_api/utils/sys_var.h`|
 |[asc_get_phy_buf_addr](utils/sys_var/asc_get_phy_buf_addr.md)|基于偏移量获取片上实际物理地址。|`c_api/utils/sys_var.h`|
@@ -128,8 +144,6 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_set_l0c2gm_nz2nd](cube_datamove/asc_set_l0c2gm_nz2nd.md)|数据搬运过程中进行随路格式转换（NZ格式转换为ND格式）时，设置格式转换的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c2gm_quant_post](cube_datamove/asc_set_l0c2gm_quant_post.md)|设置QUANT_POST寄存器的值。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c2gm_relu_alpha](cube_datamove/asc_set_l0c2gm_relu_alpha.md)|设置RELU_ALPHA寄存器的值。|`c_api/cube_datamove/cube_datamove.h`|
-|[asc_set_l0c_copy_nz_para](cube_datamove/asc_set_l0c_copy_nz_para.md)|数据搬运过程中进行随路格式转换（NZ格式转换为ND格式）时，设置格式转换的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
-|[asc_set_l0c_copy_channel_para](cube_datamove/asc_set_l0c_copy_channel_para.md)|配置Nz2DN格式转换时源Nz矩阵中相邻行的地址偏移。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_config](cube_datamove/asc_set_l0c_copy_config.md)|设置L0C Buffer搬出场景下随路tensor量化、随路tensor激活和UnitFlag功能的相关配置。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_lrelu_alpha](cube_datamove/asc_set_l0c_copy_lrelu_alpha.md)|在L0C Buffer搬出过程中进行随路Scalar激活时，配置激活计算所需的缩放系数。|`c_api/cube_datamove/cube_datamove.h`|
 |[asc_set_l0c_copy_relu_alpha](cube_datamove/asc_set_l0c_copy_relu_alpha.md)|在L0C Buffer搬出过程中进行随路Scalar激活时，配置激活计算所需的缩放系数。|`c_api/cube_datamove/cube_datamove.h`|
@@ -422,6 +436,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_div](reg_compute/reg_arith/asc_div.md)|按元素执行除法运算。|`c_api/reg_compute/compute/reg_arith.h`|
 |[asc_exp](reg_compute/reg_arith/asc_exp.md)|对源操作数逐元素计算指数。|`c_api/reg_compute/compute/reg_arith.h`|
 |[asc_ln](reg_compute/reg_arith/asc_ln.md)|对源操作数逐元素计算自然对数。|`c_api/reg_compute/compute/reg_arith.h`|
+|[asc_log](reg_compute/reg_arith/asc_log.md)|对源操作数逐元素计算自然对数。|`c_api/reg_compute/compute/reg_arith.h`|
 |[asc_max](reg_compute/reg_arith/asc_max.md)|按元素求最大值。|`c_api/reg_compute/compute/reg_arith.h`|
 |[asc_max_scalar](reg_compute/reg_arith/asc_max_scalar.md)|按元素求矢量和标量的最大值。|`c_api/reg_compute/compute/reg_arith.h`|
 |[asc_min](reg_compute/reg_arith/asc_min.md)|根据mask对源操作数src0、src1进行按元素求最小值操作，将结果写入目的操作数dst。|`c_api/reg_compute/compute/reg_arith.h`|
@@ -485,6 +500,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_fma](reg_compute/reg_fused/asc_fma.md)|逐元素乘加运算。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_leakyrelu](reg_compute/reg_fused/asc_leakyrelu.md)|按元素执行Leaky ReLU（Leaky Rectified Linear Unit）操作。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_madd](reg_compute/reg_fused/asc_madd.md)|madd（multiply-add），对源操作数执行逐元素乘法和加法。|`c_api/reg_compute/compute/reg_fused.h`|
+|[asc_mul_scalar_float2half_rn](reg_compute/reg_fused/asc_mul_scalar_float2half_rn.md)|将float类型源操作数逐元素乘以标量后，按照RINT舍入模式转换为half类型。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_mula](reg_compute/reg_fused/asc_mula.md)|根据掩码将两个源寄存器按元素相乘，并与目的寄存器累加。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_prelu](reg_compute/reg_fused/asc_prelu.md)|源操作数src0大于0的情况下直接将src0写入目的操作数dst，否则将src0 * src1的结果写入dst。|`c_api/reg_compute/compute/reg_fused.h`|
 |[asc_relu](reg_compute/reg_fused/asc_relu.md)|逐元素执行ReLU运算。|`c_api/reg_compute/compute/reg_fused.h`|
@@ -554,12 +570,21 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
+|[asc_bfloat162e1m2x2](reg_compute/reg_convert/asc_bfloat162e1m2x2.md)|将bfloat16_t类型转换为fp4x2_e1m2_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
+|[asc_bfloat162e2m1x2](reg_compute/reg_convert/asc_bfloat162e2m1x2.md)|将bfloat16_t类型转换为fp4x2_e2m1_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_bfloat162float](reg_compute/reg_convert/asc_bfloat162float.md)|将bfloat16_t类型转换为float类型，无舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_bfloat162half](reg_compute/reg_convert/asc_bfloat162half.md)|将bfloat16_t类型转换为half类型，并支持多种舍入模式和饱和/非饱和模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_bfloat162int32](reg_compute/reg_convert/asc_bfloat162int32.md)|将bfloat16_t类型数据转换为int32_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_ceil](reg_compute/reg_convert/asc_ceil.md)|将源操作数中的浮点数元素按照CEIL（向正无穷方向舍入）模式舍入到整数值，结果保持原浮点数据类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_e1m2x22bfloat16](reg_compute/reg_convert/asc_e1m2x22bfloat16.md)|将fp4x2_e1m2_t类型转换为bfloat16_t类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
+|[asc_e2m1x22bfloat16](reg_compute/reg_convert/asc_e2m1x22bfloat16.md)|将fp4x2_e2m1_t类型转换为bfloat16_t类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
+|[asc_e4m32float](reg_compute/reg_convert/asc_e4m32float.md)|将fp8_e4m3fn_t类型转换为float类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
+|[asc_e5m22float](reg_compute/reg_convert/asc_e5m22float.md)|将fp8_e5m2_t类型转换为float类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2bfloat16](reg_compute/reg_convert/asc_float2bfloat16.md)|将float类型转换为bfloat16_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
+|[asc_float2e4m3](reg_compute/reg_convert/asc_float2e4m3.md)|将float类型转换为fp8_e4m3fn_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
+|[asc_float2e5m2](reg_compute/reg_convert/asc_float2e5m2.md)|将float类型转换为fp8_e5m2_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2half](reg_compute/reg_convert/asc_float2half.md)|将float类型转换为half类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
+|[asc_float2hif8](reg_compute/reg_convert/asc_float2hif8.md)|将float类型转换为hifloat8_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2int16](reg_compute/reg_convert/asc_float2int16.md)|将float类型转换为int16_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2int32](reg_compute/reg_convert/asc_float2int32.md)|将float类型转换为int32_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_float2int64](reg_compute/reg_convert/asc_float2int64.md)|将float类型转换为int64_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
@@ -572,6 +597,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_half2int4x2](reg_compute/reg_convert/asc_half2int4x2.md)|将half类型转换为int4x2_t类型，并支持多种舍入模式和饱和/非饱和模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_half2int8](reg_compute/reg_convert/asc_half2int8.md)|将half类型转换为int8_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
 |[asc_half2uint8](reg_compute/reg_convert/asc_half2uint8.md)|将half类型转换为uint8_t类型，并支持多种舍入模式。|`c_api/reg_compute/reg_convert.h`|
+|[asc_hif82float](reg_compute/reg_convert/asc_hif82float.md)|将hifloat8_t类型转换为float类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_hif82half](reg_compute/reg_convert/asc_hif82half.md)|将hifloat8_t类型数据转换为half类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int162float](reg_compute/reg_convert/asc_int162float.md)|将int16_t类型转换为float类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int162half](reg_compute/reg_convert/asc_int162half.md)|将int16_t类型转换为half类型。|`c_api/reg_compute/reg_convert.h`|
@@ -582,6 +608,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_int322int16](reg_compute/reg_convert/asc_int322int16.md)|将int32_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322int64](reg_compute/reg_convert/asc_int322int64.md)|将int32_t类型转换为int64_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int322uint16](reg_compute/reg_convert/asc_int322uint16.md)|将int32_t类型转换为uint16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int322uint8](reg_compute/reg_convert/asc_int322uint8.md)|将int32_t类型转换为uint8_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int4x22bfloat16](reg_compute/reg_convert/asc_int4x22bfloat16.md)|将int4x2_t类型转换为bfloat16_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int4x22half](reg_compute/reg_convert/asc_int4x22half.md)|将int4x2_t类型转换为half类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int4x22int16](reg_compute/reg_convert/asc_int4x22int16.md)|将int4x2_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
@@ -589,6 +616,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_int642int32](reg_compute/reg_convert/asc_int642int32.md)|将int64_t类型转换为int32_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int82half](reg_compute/reg_convert/asc_int82half.md)|将int8_t类型转换为half类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_int82int16](reg_compute/reg_convert/asc_int82int16.md)|将int8_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_int82int32](reg_compute/reg_convert/asc_int82int32.md)|将int8_t类型转换为int32_t类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_rint](reg_compute/reg_convert/asc_rint.md)|将源操作数中的浮点数元素按照RINT（四舍六入五成双）模式舍入到整数值，结果保持原浮点数据类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_round](reg_compute/reg_convert/asc_round.md)|将源操作数中的浮点数元素按照ROUND（四舍五入）模式舍入到整数值，结果保持原浮点数据类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_trunc](reg_compute/reg_convert/asc_trunc.md)|将源操作数中的浮点数元素按照TRUNC（向零方向截断）模式截断到整数值，结果保持原浮点数据类型。|`c_api/reg_compute/reg_convert.h`|
@@ -596,8 +624,10 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_uint162uint8](reg_compute/reg_convert/asc_uint162uint8.md)|将uint16_t类型转换为uint8_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint322int16](reg_compute/reg_convert/asc_uint322int16.md)|将uint32_t类型转换为int16_t类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint322uint16](reg_compute/reg_convert/asc_uint322uint16.md)|将uint32_t类型转换为uint16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint322uint8](reg_compute/reg_convert/asc_uint322uint8.md)|将uint32_t类型转换为uint8_t类型，并支持指定转换结果的写入位置。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint82half](reg_compute/reg_convert/asc_uint82half.md)|将uint8_t类型转换为half类型。|`c_api/reg_compute/reg_convert.h`|
 |[asc_uint82uint16](reg_compute/reg_convert/asc_uint82uint16.md)|将uint8_t类型转换为uint16_t类型。|`c_api/reg_compute/reg_convert.h`|
+|[asc_uint82uint32](reg_compute/reg_convert/asc_uint82uint32.md)|将uint8_t类型转换为uint32_t类型，并支持指定源数据的读取位置。|`c_api/reg_compute/reg_convert.h`|
 
 ### 同步控制
 
