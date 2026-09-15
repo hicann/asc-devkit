@@ -11,7 +11,7 @@ English | [简体中文](./README.md)
 [![examples](https://img.shields.io/badge/examples-repo-orange.svg?style=flat)](examples)
 [![asc-tools](https://img.shields.io/badge/asc--tools-repo-6f42c1.svg?style=flat)](https://gitcode.com/cann/asc-tools)
 [![license](https://img.shields.io/badge/license-CANN_Open_2.0-lightgrey.svg)](LICENSE)
-[![contributing](https://img.shields.io/badge/CONTRIBUTING-teal)](CONTRIBUTING.md)
+[![contributing](https://img.shields.io/badge/CONTRIBUTING-teal)](CONTRIBUTING_en.md)
 [![SIG](https://img.shields.io/badge/SIG-ascendc-yellow)](https://gitcode.com/cann/community/tree/master/CANN/sigs/ascendc)
 
 </div>
@@ -43,7 +43,7 @@ English | [简体中文](./README.md)
 - VitePress documentation site built to provide AscendC document preview capability ([PR#2547](https://gitcode.com/cann/asc-devkit/pull/2547)).
 - Overview of performance optimization for hybrid SIMD and SIMT programming added ([PR#2736](https://gitcode.com/cann/asc-devkit/pull/2736)).
 
-For detailed information on all historical releases and updates, please refer to [CHANGELOG.md](./CHANGELOG.md).
+For detailed information on all historical releases and updates, please refer to [CHANGELOG_en.md](./CHANGELOG_en.md).
 
 ## 🚀 Overview
 
@@ -99,7 +99,7 @@ The capability definition and description of each layer are as follows:
 - **Python Frontend (PyAsc)**: Encapsulates the full underlying programmability of the chip based on Python language, continuously improves Tensor programming capability under the Layout system, adds support for SIMT programming model, and enables development of high-performance operators through Python interfaces.
 
 ### How to Select Multi-layer APIs for Operator Development
-- **Development in C/C++**: Please refer to [Ascend C Multi-level API Selection Guide](./docs/zh/asc_how_to_choose_api.md) for details
+- **Development in C/C++**: Please refer to [Ascend C Multi-level API Selection Guide](./docs/en/asc_how_to_choose_api.md) for details
 - **Python-based development for full programmability and ultimate performance**: Ascend C Python frontend [PyAsc](https://gitcode.com/cann/pyasc) is recommended
 - **Python-based development for rapid verification and ease of use**: [PyPTO](https://gitcode.com/cann/pypto) is recommended
 
@@ -136,8 +136,8 @@ This repository mainly contains Ascend C programming APIs and necessary cmake bu
 
 If you want to quickly experience project building and operator sample execution, please refer to the following documents for tutorials.
 
-- [Compilation and Building](docs/zh/quick_start.md): Introduces environment setup, compilation & execution, and local verification.
-- [Sample Execution](examples/README.md): Provides operator development samples and introduces the end-to-end execution method.
+- [Compilation and Building](docs/en/quick_start.md): Introduces environment setup, compilation & execution, and local verification.
+- [Sample Execution](examples/README_en.md): Provides operator development samples and introduces the end-to-end execution method.
 
 ## 🧰 clangd/IDE Support
 
@@ -227,7 +227,7 @@ If you want to quickly experience project building and operator sample execution
   | Document | Description |
   |----------|-------------|
   |[CANN Community Contribution Guide](https://gitcode.com/cann/community)| General processing flow of CANN community Issues, PRs, etc. |
-  |[ASC-DevKit Contribution Guide](./CONTRIBUTING.md) | Contribution guide for Ascend C APIs, documents and samples. |
+  |[ASC-DevKit Contribution Guide](./CONTRIBUTING_en.md) | Contribution guide for Ascend C APIs, documents and samples. |
 
 - **Others**
 

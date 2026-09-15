@@ -203,7 +203,7 @@ git clone https://gitcode.com/cann/asc-devkit.git
 > [!NOTE] 使用前须知
 > 如您使用**容器化技术**，容器中已为您安装好依赖，可跳过此步骤。
 
-以下为本开源仓源码编译和examples算子样例编译运行的基础依赖条件，您可参考仓库内[DevContainer Python依赖（以 Python 3.12 为例）](../../.devcontainer/requirements.txt)：
+以下为本开源仓源码编译和examples算子样例编译运行的基础依赖条件。Python依赖可参考仓库内[DevContainer Python依赖（以 Python 3.12 为例）](../../.devcontainer/requirements.txt)：
 
 - python >= 3.9.0
 - gcc >= 7.3.0 / g++ >= 7.3.0 (注意：要求gcc与g++版本一致)
