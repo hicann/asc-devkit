@@ -449,14 +449,14 @@ __simd_callee__ inline void asc_bfloat162half_rd_sat(vector_half& dst, vector_bf
 __simd_callee__ inline void asc_bfloat162half_rn(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vcvt(dst, src, mask, RS_DISABLE, ROUND_C, MODE_ZEROING);
+        vcvt(dst, src, mask, RS_DISABLE, ROUND_R, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_bfloat162half_rn_sat(vector_half& dst, vector_bfloat16_t src, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vcvt(dst, src, mask, RS_ENABLE, ROUND_C, MODE_ZEROING);
+        vcvt(dst, src, mask, RS_ENABLE, ROUND_R, MODE_ZEROING);
     }
 }
 
