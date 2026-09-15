@@ -168,11 +168,15 @@
 
 ## 矢量数据搬运
 
+- **[asc_copy_gm2ub_align_arch_3510（废弃）](asc_copy_gm2ub_align_arch_3510_deprecated.md)**
 - **[asc_copy_gm2ub_align_sync_arch_2201（废弃）](asc_copy_gm2ub_align_sync_arch_2201_deprecated.md)**
+- **[asc_copy_gm2ub_align_sync_arch_3510（废弃）](asc_copy_gm2ub_align_sync_arch_3510_deprecated.md)**
 - **[asc_copy_gm2ub_sync_arch_2201（废弃）](asc_copy_gm2ub_sync_arch_2201_deprecated.md)**
 - **[asc_copy_gm2ub_sync_arch_3510（废弃）](asc_copy_gm2ub_sync_arch_3510_deprecated.md)**
 - **[asc_copy_sync（废弃）](asc_copy_sync_deprecated.md)**
+- **[asc_copy_ub2gm_align_arch_3510（废弃）](asc_copy_ub2gm_align_arch_3510_deprecated.md)**
 - **[asc_copy_ub2gm_align_sync_arch_2201（废弃）](asc_copy_ub2gm_align_sync_arch_2201_deprecated.md)**
+- **[asc_copy_ub2gm_align_sync_arch_3510（废弃）](asc_copy_ub2gm_align_sync_arch_3510_deprecated.md)**
 - **[asc_copy_ub2gm_sync_arch_2201（废弃）](asc_copy_ub2gm_sync_arch_2201_deprecated.md)**
 - **[asc_copy_ub2gm_sync_arch_3510（废弃）](asc_copy_ub2gm_sync_arch_3510_deprecated.md)**
 - **[asc_copy_ub2l1_sync（废弃）](asc_copy_ub2l1_sync_deprecated.md)**

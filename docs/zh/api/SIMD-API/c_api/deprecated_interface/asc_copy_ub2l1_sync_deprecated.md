@@ -62,6 +62,7 @@ PIPE_MTE3
 
 - 本接口在非AIV上调用直接返回。
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
+- 同步计算包含同步等待。
 
 ## 调用示例
 
