@@ -14,7 +14,7 @@ In the era of large models, the demand for computing power is surging at an unpr
 
 To meet the requirements of different scenarios, Ascend C builds a multi-level API system ranging from single-instruction abstraction and single-core common algorithms to multi-core operators. Its overall logical architecture is as follows:
 
-<img src="../../figures/architecture.png" alt="Architecture" width="850px" height="580px">
+<img src="../figures/architecture.png" alt="Architecture" width="850px" height="580px">
 
 - **Language extension layer C API**: A pure C interface that provides array memory allocation and pointer-based computation interfaces, continuing the familiar C programming experience in the industry while fully opening up chip capabilities. Ascend 950PR/Ascend 950DT add SIMT and SIMD/SIMT hybrid programming capabilities.
 - **Basic API**: A C++ class library abstracted at the single-instruction level, generally based on Tensor programming, and gradually improving the Tensor programming experience through Layout.
@@ -94,7 +94,7 @@ To meet the requirements of different scenarios, Ascend C builds a multi-level A
 <div style=" margin: 5px 0; padding: 8px; background: #fff; border-left: 3px solid #3b82f6; border-radius: 4px;">
 <strong style="color: #1a1a1a;"><span style="color: #3b82f6;">💻</span> Practice Consolidation</strong><br/>
 <span style="color: #666; font-size: 14px;">• <a href="../operator_practice/simd_operator_impl/vector_programming/overview.md" style="color: #3b82f6; font-size: 14px;">Typical SIMD Vector Operator Development</a></span><br/>
-<span style="color: #666; font-size: 14px;">• <a href="../operator_practice/simd_operator_impl/vector_programming/matrix_basic_api/decoupled_mode.md" style="color: #3b82f6; font-size: 14px;">Typical SIMD Matrix Operator Development</a></span><br/>
+<span style="color: #666; font-size: 14px;">• <a href="../operator_practice/simd_operator_impl/matrix_basic_api/decoupled_mode.md" style="color: #3b82f6; font-size: 14px;">Typical SIMD Matrix Operator Development</a></span><br/>
 <span style="color: #666; font-size: 14px;">• <a href="../operator_practice/simt_operator_impl/operator_implementation.md" style="color: #3b82f6; font-size: 14px;">Typical SIMT Operator Development</a></span>
 </div>
 

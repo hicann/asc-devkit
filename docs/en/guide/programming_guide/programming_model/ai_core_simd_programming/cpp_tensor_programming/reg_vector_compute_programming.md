@@ -168,7 +168,7 @@ AscendC::Reg::MaskReg mask = AscendC::Reg::UpdateMask<T>(remainCount);
 
 #### Creating an Address Register
 
-[`CreateAddrReg`](../../../../../api/basic_api/reg_vector_compute/register_data_types/AddrReg.md) is used to create an `AddrReg` that stores the UB offset, supporting up to four levels of loop jumps.
+[`CreateAddrReg`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/register_data_types/AddrReg.md) is used to create an `AddrReg` that stores the UB offset, supporting up to four levels of loop jumps.
 
 ```cpp
 AscendC::Reg::AddrReg aReg;

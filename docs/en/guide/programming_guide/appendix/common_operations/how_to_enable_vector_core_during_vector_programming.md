@@ -6,7 +6,7 @@ For Atlas inference products, in addition to AI Core, the hardware architecture 
 
 This section focuses on how to enable Vector Core in Atlas inference products. Before learning this section, you are advised to familiarize yourself with [Operator Implementation](../../../operator_practice/simd_operator_impl/vector_programming/overview.md), [Kernel Launch Based on a Sample Project](../completing_kernel_launch_based_on_sample_project.md), and [Engineering-based Operator Development](../../advanced_programming/aclnn_operator_development/overview.md), and master the end-to-end operator development process based on AI Core. On this basis, this chapter focuses on the differences when Vector Core is enabled. The details are as follows:
 
-1.  When developing the kernel side of an operator, you need to enable Vector Core through the macro [KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/setting_kernel_type.md). During operator execution, both AI Core and Vector Core are started simultaneously, and AI Core is used as Vector Core. The following code sample shows how to enable Vector Core:
+1.  When developing the kernel side of an operator, you need to enable Vector Core through the macro [KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_kernel_type.md). During operator execution, both AI Core and Vector Core are started simultaneously, and AI Core is used as Vector Core. The following code sample shows how to enable Vector Core:
 
     ```
     extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *workspace, __gm__ uint8_t *tiling)

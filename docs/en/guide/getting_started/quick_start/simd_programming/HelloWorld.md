@@ -4,7 +4,7 @@
 
 This getting-started example implements a Hello World operator based on Ascend C SIMD to help you quickly get started. It covers the complete process of implementing the kernel function on the Device side, invoking it on the Host side, and compiling and running the operator, helping developers build an overall understanding.
 
-Before you start, install the required CANN software package by referring to the [environment setup](../../environment_setup.md). For the complete sample, see [hello\_world](../../../../../examples/01_simd_cpp_api/00_introduction/00_quickstart/hello_world/README.md).
+Before you start, install the required CANN software package by referring to the [environment setup](../../environment_setup.md). For the complete sample, see [hello\_world](../../../../../../examples/01_simd_cpp_api/00_introduction/00_quickstart/hello_world/README.md).
 
 - **Hello World feature overview**:
 

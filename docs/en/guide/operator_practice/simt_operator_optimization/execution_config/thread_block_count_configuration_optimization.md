@@ -18,7 +18,7 @@ After determining the physical core count, you also need to set the thread block
 >
 > A useful intuition is that all physical cores can process approximately "physical core count × maximum thread count per core" threads in parallel at one time. When the data volume is far larger than this order of magnitude, setting the thread block count to the physical core count can fully utilize the hardware computing power. When the data volume is comparable to or even smaller than this order of magnitude, the proportion of fixed scheduling overhead in the total duration becomes sensitive, and the optimal thread block count is no longer obvious, so you need to use the msOpProf tool for actual measurement.
 
-For the sample corresponding to this optimization method, see the [kernel function launch configuration performance tuning sample](../../../../../examples/03_simt_api/03_best_practices/01_execution_conf_optimizations/grid_dim_config/README.md).
+For the sample corresponding to this optimization method, see the [kernel function launch configuration performance tuning sample](../../../../../../examples/03_simt_api/03_best_practices/01_execution_conf_optimizations/grid_dim_config/README.md).
 
 ## Large Data Volume Scenario
 The following uses the Gather operator as an example to compare the performance differences of different thread block count configurations in a large data volume scenario (`1024*2048`, that is, 2097152 elements).

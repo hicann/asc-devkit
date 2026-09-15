@@ -26,7 +26,7 @@ Ascend C provides the twin debugging feature, which locates logic issues in the 
 
     The preceding error log generally only helps locate the code line where the error occurs, but cannot identify the specific error. Next, use gdb debugging or printf printing to further pinpoint the error.
 
-2.  Perform gdb debugging. The following sample shows how to start the CPU-side running program of the leakyrelu operator. This sample program directly throws an exception. Run it directly in gdb and view the call stack information to analyze and locate the issue. In other scenarios, you can use basic gdb operations such as setting breakpoints for debugging. For details about debugging Ascend C programs with gdb, see [CPU Domain Twin Debugging](../../debugging_and_tuning/functional_debug/cpu_domain_twin_debugging.md).
+2.  Perform gdb debugging. The following sample shows how to start the CPU-side running program of the leakyrelu operator. This sample program directly throws an exception. Run it directly in gdb and view the call stack information to analyze and locate the issue. In other scenarios, you can use basic gdb operations such as setting breakpoints for debugging. For details about debugging Ascend C programs with gdb, see [CPU Domain Twin Debugging](../../debug_and_tuning/functional_debug/cpu_domain_twin_debugging.md).
     1.  Use gdb to start the program to be debugged and enter the gdb interface for debugging.
 
         ```

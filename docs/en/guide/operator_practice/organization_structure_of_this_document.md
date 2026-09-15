@@ -14,7 +14,7 @@ This document guides developers in developing high-performance operators on Asce
 -   Be able to independently develop Ascend C operators.
 -   Be proficient in using performance analysis tools to obtain performance data.
 
-You can obtain the learning materials for the above content by clicking [here](https://www.hiascend.com/en/ascend-c).
+You can obtain the learning materials for the above content by clicking [here](https://www.hiascend.com/cann/ascend-c).
 
 ## Problems That Can Be Solved<a name="section235444416411"></a>
 

@@ -144,7 +144,7 @@ Define the kernel function according to the rules described in the [kernel funct
         uint32_t indexTotalLengthPerBlock = indexTotalLength / AscendC::GetBlockNum();
         ```
 
-    2.  Use the [Alloc](../../../api/SIMD-API/basic_api/resource_management/localmemallocator/alloc.md) API to apply for Unified Buffer memory space, and use this Tensor as the output of the `simt_gather` function.
+    2.  Use the [Alloc](../../../api/SIMD-API/basic_api/resource_management/LocalMemAllocator/Alloc.md) API to apply for Unified Buffer memory space, and use this Tensor as the output of the `simt_gather` function.
     3.  Use the [asc_vf_call](../../../api/SIMT-API/SIMD_SIMT_hybrid_programming_intro/extended_syntax/kernel_function_config_147.md) API to start the SIMT_VF function `simt_gather`. The first parameter is a [dim3](../../programming_guide/language_extension/SIMT-BuiltIn_keyword.md#li1136665405) structure, which represents the three-dimensional thread hierarchy. In this example, it is initialized to `dim3(1024)`, using the one-dimensional definition with a total of 1024 threads.
 
     ```

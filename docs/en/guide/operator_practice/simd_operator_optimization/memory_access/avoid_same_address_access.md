@@ -18,7 +18,7 @@ As shown in the following figure, the cores in an AI Core simultaneously issue r
 
 ![](../../../figures/best_practice_optimization_reduce_usage_section.png)
 
-The main method to avoid same-address access is to **adjust the data access order**. For the sample described below, see optimization point 4 in [DataCopy Best Practices Sample](../../../../../examples/01_simd_cpp_api/05_best_practices/04_memory_access/data_copy).
+The main method to avoid same-address access is to **adjust the data access order**. For the sample described below, see optimization point 4 in [DataCopy Best Practices Sample](../../../../../../examples/01_simd_cpp_api/05_best_practices/04_memory_access/data_copy).
 
 **Adjusting the Data Access Order**
 

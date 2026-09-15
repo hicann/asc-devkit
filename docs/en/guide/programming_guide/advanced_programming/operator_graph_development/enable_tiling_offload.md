@@ -117,7 +117,7 @@ The following uses the AddCustom operator as an example to describe how to imple
 
 -   Operator kernel function implementation
 
-    Currently, tiling sinking supports only fused operators. To simulate a fused operator scenario, use the [KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/setting_kernel_type.md) API to force the operator to run in a mixed AIC and AIV scenario.
+    Currently, tiling sinking supports only fused operators. To simulate a fused operator scenario, use the [KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_kernel_type.md) API to force the operator to run in a mixed AIC and AIV scenario.
 
     ```
     extern "C" __global__ __aicore__ void add_custom_tiling_sink(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)

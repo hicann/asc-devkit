@@ -52,7 +52,7 @@ After DoubleBuffer is enabled, each data block is divided into two blocks of equ
 
 When DoubleBuffer is disabled, only the start address of the last block on each core needs to be processed. When DoubleBuffer is enabled, the length of the data block to be processed is halved, so the start addresses of the last two data blocks need to be processed.
 
-To enable DoubleBuffer, refer to [InitBuffer API Prototype](../../../../api/SIMD-API/basic_api/resource-management/TPipe/InitBuffer.md) and set the num parameter to 2, that is, BUFFER\_NUM.
+To enable DoubleBuffer, refer to [InitBuffer API Prototype](../../../../api/SIMD-API/basic_api/resource_management/TPipe/InitBuffer.md) and set the num parameter to 2, that is, BUFFER\_NUM.
 
 ```
 this->initBufferLength = AscendC::Std::max(this->tileLength, this->lastTileLength);

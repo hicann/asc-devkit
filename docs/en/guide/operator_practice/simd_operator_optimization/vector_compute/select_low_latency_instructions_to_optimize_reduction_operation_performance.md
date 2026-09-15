@@ -24,7 +24,7 @@ Perform the preceding process for each row separately to obtain the final reduct
 
 Because the ReduceSum API is implemented by combining multiple instructions, in general, for scenarios with a large amount of data and many loops, the performance of the binary accumulation approach \> the performance of the single-instruction ReduceRepeat operation \> the performance of the ReduceSum API. For scenarios with a small amount of data or special shapes, the approaches need to be analyzed separately based on conditions such as instruction execution time and the number of executed instructions.
 
-The following provides the core code snippets and performance data comparison between the binary accumulation approach and the reduction instruction approach. For the complete sample, see [ReduceCustom](../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/reduce).
+The following provides the core code snippets and performance data comparison between the binary accumulation approach and the reduction instruction approach. For the complete sample, see [ReduceCustom](../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/reduce).
 
 [Performance Data]
 
@@ -112,7 +112,7 @@ For example, for data of the float type with a shape size of 256, the reduction 
 
 By analyzing the performance data of a single instruction (which developers can test on their own), it can be seen that the performance of one ReduceDataBlock operation plus one ReduceRepeat operation is better than that of using ReduceRepeat twice, and is also better than the approach of using ReduceDataBlock three times.
 
-The following provides the core code snippets and performance data comparison of the three approaches above. For the complete sample, see [ReduceCustom](../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/reduce).
+The following provides the core code snippets and performance data comparison of the three approaches above. For the complete sample, see [ReduceCustom](../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/reduce).
 
 [Performance Data]
 

@@ -4,7 +4,7 @@
 
 This example is an introductory practice that implements the Add operator based on Ascend C SIMD to help you get started quickly. It presents the complete process of Device-side kernel function implementation, Host-side invocation, and compilation and running, helping you build an overall understanding. Before you begin, install the required CANN software package by referring to the [environment setup](../../environment_setup.md).
 
-The following describes the Add operator implementation based on the C API and the C++ API respectively. For the complete sample code, see the [Add operator example based on the C API](../../../../../examples/02_simd_c_api/00_introduction/01_add/c_api_async_add/README.md) and [Add operator example based on the C++ API](../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md).
+The following describes the Add operator implementation based on the C API and the C++ API respectively. For the complete sample code, see the [Add operator example based on the C API](../../../../../../examples/02_simd_c_api/00_introduction/01_add/c_api_async_add/README.md) and [Add operator example based on the C++ API](../../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md).
 
 - **Add operator feature overview**:
 
@@ -194,10 +194,10 @@ In addition, based on the C/C++ programming APIs at different levels and differe
 
 | API Level | Vector Computation Type | Add Operator Example | Description |
 |--------------|-----------|--------------|--------------|
-| SIMD C API | Pointer-based Memory vector computation | [Memory Vector Computation Add Operator Example (same as the C API implementation sample above)](../../../../../examples/02_simd_c_api/00_introduction/01_add/c_api_async_add/README.md) | Follows C language development habits and is easy to get started with |
-| SIMD C API | Reg vector computation based on pointer and Reg computation | [Reg Vector Computation Add Operator Example](../../../../../examples/02_simd_c_api/00_introduction/04_reg_base_add_compute/c_api_simd_add/README.md) | Follows C language development habits and delivers a higher performance ceiling |
-| Basic API | Tensor-based Memory vector computation | [Memory Vector Computation Add Operator Example (same as the C++ Tensor implementation sample above)](../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md) | Matches Tensor programming habits and is easy to get started with |
-| Basic API | Tensor-based Reg vector computation | [Reg Vector Computation Add Operator Example](../../../../../examples/01_simd_cpp_api/00_introduction/04_reg_compute/add/README.md) | Matches Tensor programming habits and delivers a higher performance ceiling |
+| SIMD C API | Pointer-based Memory vector computation | [Memory Vector Computation Add Operator Example (same as the C API implementation sample above)](../../../../../../examples/02_simd_c_api/00_introduction/01_add/c_api_async_add/README.md) | Follows C language development habits and is easy to get started with |
+| SIMD C API | Reg vector computation based on pointer and Reg computation | [Reg Vector Computation Add Operator Example](../../../../../../examples/02_simd_c_api/00_introduction/04_reg_base_add_compute/c_api_simd_add/README.md) | Follows C language development habits and delivers a higher performance ceiling |
+| Basic API | Tensor-based Memory vector computation | [Memory Vector Computation Add Operator Example (same as the C++ Tensor implementation sample above)](../../../../../../examples/01_simd_cpp_api/00_introduction/01_add/add/README.md) | Matches Tensor programming habits and is easy to get started with |
+| Basic API | Tensor-based Reg vector computation | [Reg Vector Computation Add Operator Example](../../../../../../examples/01_simd_cpp_api/00_introduction/04_reg_compute/add/README.md) | Matches Tensor programming habits and delivers a higher performance ceiling |
 
 > [!NOTE] Note
 > On top of the traditional [UB](../../../technical_appendix/concepts_and_terms/glossary.md) cache system, the new-generation Ascend 950PR/Ascend 950DT architecture opens up register programmability, with each register being 256B in size. Register-based vector computation is called Reg vector computation, while vector computation based on the traditional UB is called Memory vector computation.

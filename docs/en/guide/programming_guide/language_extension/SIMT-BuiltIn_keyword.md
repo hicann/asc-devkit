@@ -291,18 +291,18 @@ size_t dyn_ubuf_size = 1024; // need 1024 Byte dynamic memory
 add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, z, 1024); // blocks_per_grid and threads_per_block will be implicitly converted to the dim3 type.
 ```
 
-    Before the function is executed, the preceding configuration parameters are validated. If blocks_per_grid or threads_per_block exceeds the maximum allowed scale of the device, or if dyn_ubuf_size exceeds the remaining shared memory available after static memory is allocated, the function will fail to execute.
+Before the function is executed, the preceding configuration parameters are validated. If blocks_per_grid or threads_per_block exceeds the maximum allowed scale of the device, or if dyn_ubuf_size exceeds the remaining shared memory available after static memory is allocated, the function will fail to execute.
 
-    The number of registers used by a kernel function significantly affects the number of resident warps. The number of registers used by a kernel function is specified by the __launch_bounds__() qualifier or the __maxnreg__() qualifier.
-    When using the preceding two optional configuration qualifiers, note the following constraints:
+The number of registers used by a kernel function significantly affects the number of resident warps. The number of registers used by a kernel function is specified by the __launch_bounds__() qualifier or the __maxnreg__() qualifier.
+When using the preceding two optional configuration qualifiers, note the following constraints:
 
-    -   __launch_bounds__ or __maxnreg__ can be used only in __global__ functions.
+-   __launch_bounds__ or __maxnreg__ can be used only in __global__ functions.
 
-    -   The same function cannot be configured with both __launch_bounds__ and __maxnreg__.
+-   The same function cannot be configured with both __launch_bounds__ and __maxnreg__.
 
-    During concurrent execution of multiple threads, using fewer registers per thread allows more threads to reside on the AI processor. Therefore, the compiler uses a heuristic algorithm to keep register spilling and the number of instructions at a minimum while reducing register usage as much as possible. An application can limit the launch bounds by using the __launch_bounds__() qualifier in the __global__ function definition, providing additional information to help the compiler optimize this process. This is an optional configuration.
+During concurrent execution of multiple threads, using fewer registers per thread allows more threads to reside on the AI processor. Therefore, the compiler uses a heuristic algorithm to keep register spilling and the number of instructions at a minimum while reducing register usage as much as possible. An application can limit the launch bounds by using the __launch_bounds__() qualifier in the __global__ function definition, providing additional information to help the compiler optimize this process. This is an optional configuration.
 
-    -   __launch_bounds__(N) <a name="li23861114618"></a>
+-   __launch_bounds__(N) <a name="li23861114618"></a>
 
     Function marker macro, optionally configured on a kernel function, used to specify the maximum number of threads for launching the kernel function. The maximum number of threads determines the number of registers that can be allocated to each thread. For the specific correspondence, see the following table. Registers are used to store local variables in a thread. If the number of local variables exceeds the number of registers, issues such as stack overflow are likely to occur. It is recommended that the maximum number of threads be consistent with the number of dim3 threads when the kernel function is launched.
 

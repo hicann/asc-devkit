@@ -4,7 +4,7 @@
 
 ## Description<a name="zh-cn_topic_0000002299608693_section310824820358"></a>
 
-The independent operation mechanism of AIC and AIV is also called dual-master mode. In [separate mode](../../../../Programming Guide/Advanced Programming/Hardware Implementation/Basic Architecture.md#li188191010204418), unlike MIX mode (which includes Cube computation and vector computation) that drives AIC through the message mechanism, dual-master mode allows AIC and AIV to run code independently without relying on message-driven execution. Enabling dual-master mode improves Matmul computation performance. By default, dual-master mode is disabled and must be enabled through the enableMixDualMaster parameter in MatmulConfig.
+The independent operation mechanism of AIC and AIV is also called dual-master mode. In [separate mode](../../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md#li188191010204418), unlike MIX mode (which includes Cube computation and vector computation) that drives AIC through the message mechanism, dual-master mode allows AIC and AIV to run code independently without relying on message-driven execution. Enabling dual-master mode improves Matmul computation performance. By default, dual-master mode is disabled and must be enabled through the enableMixDualMaster parameter in MatmulConfig.
 
 ## Scenarios<a name="zh-cn_topic_0000002299608693_section118051016163613"></a>
 

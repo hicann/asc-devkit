@@ -63,5 +63,5 @@ The [synchronization control](sync/synchronization_control.md) APIs can be used 
 
 ## Example
 
-For the C API samples of Atlas A3 training products/Atlas A3 inference products, see [C API Add sample](../../../../examples/02_simd_c_api/00_introduction/01_add).
-For the C API samples of Ascend 950PR/Ascend 950DT, see [C API Add sample](../../../../examples/02_simd_c_api/00_introduction/04_reg_base_add_compute).
+For the C API samples of Atlas A3 training products/Atlas A3 inference products, see [C API Add sample](../../../../../examples/02_simd_c_api/00_introduction/01_add).
+For the C API samples of Ascend 950PR/Ascend 950DT, see [C API Add sample](../../../../../examples/02_simd_c_api/00_introduction/04_reg_base_add_compute).
