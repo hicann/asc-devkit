@@ -56,6 +56,41 @@ enum KfcConcurrentAllGatherParamIndex : uint32_t {
     KFC_CONCURRENT_AG_PARAM_NUM = 30,
 };
 
+// Parallel Mesh+NHR AllGather uses the same two persistent KFC missions as the
+// concurrent variant, but each mission executes twice.  The payload therefore
+// carries invariant addresses/sizes; the server reconstructs the four
+// phase-specific TemplateDataParams from these values and its static topology.
+enum KfcParallelAllGatherParamIndex : uint32_t {
+    KFC_PARALLEL_AG_OP_ID = 0,
+    KFC_PARALLEL_AG_INPUT = 1,
+    KFC_PARALLEL_AG_OUTPUT = 2,
+    KFC_PARALLEL_AG_TOTAL_SIZE = 3,
+    KFC_PARALLEL_AG_OUTPUT_STRIDE = 4,
+    KFC_PARALLEL_AG_PART0_SIZE = 5,
+    KFC_PARALLEL_AG_PART1_SIZE = 6,
+    KFC_PARALLEL_AG_PART1_OFFSET = 7,
+    KFC_PARALLEL_AG_MESH_PHASE_DONE_ADDR = 8,
+    KFC_PARALLEL_AG_NHR_PHASE_DONE_ADDR = 9,
+    KFC_PARALLEL_AG_PART0_GO_SIZE_0 = 10,
+    KFC_PARALLEL_AG_PART0_GO_SIZE_1 = 11,
+    KFC_PARALLEL_AG_PART0_GO_SIZE_2 = 12,
+    KFC_PARALLEL_AG_PART0_GO_SIZE_3 = 13,
+    KFC_PARALLEL_AG_PART1_GO_SIZE_0 = 14,
+    KFC_PARALLEL_AG_PART1_GO_SIZE_1 = 15,
+    KFC_PARALLEL_AG_PART1_GO_SIZE_2 = 16,
+    KFC_PARALLEL_AG_PART1_GO_SIZE_3 = 17,
+    KFC_PARALLEL_AG_PART0_SLICE_PER_JETTY = 18,
+    KFC_PARALLEL_AG_PART0_LAST_SLICE_PER_JETTY = 19,
+    KFC_PARALLEL_AG_PART1_SLICE_PER_JETTY = 20,
+    KFC_PARALLEL_AG_PART1_LAST_SLICE_PER_JETTY = 21,
+    KFC_PARALLEL_AG_PARAM_NUM = 22,
+    // These two words live in the same 32-XN queue record. They are GM
+    // rendezvous flags shared by the Mesh and NHR CCU missions.
+    KFC_PARALLEL_AG_MESH_PHASE_DONE_STORAGE = 30,
+    KFC_PARALLEL_AG_NHR_PHASE_DONE_STORAGE = 31,
+    KFC_PARALLEL_AG_STORAGE_NUM = 32,
+};
+
 enum KfcConcurrentAllToAllParamIndex : uint32_t {
     KFC_CONCURRENT_A2A_OP_ID = 0,
     KFC_CONCURRENT_A2A_MESH_INPUT = 1,

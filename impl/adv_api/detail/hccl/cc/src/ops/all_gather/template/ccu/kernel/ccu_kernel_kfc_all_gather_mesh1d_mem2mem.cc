@@ -275,6 +275,14 @@ static CcuResult DoRepeatAllGather(KfcAllGatherMesh1DMem2MemContext& ctx)
     return CCU_SUCCESS;
 }
 
+static void AddVariableNTimes(ccu::Variable& result, const ccu::Variable& value, uint32_t times)
+{
+    result = 0U;
+    for (uint32_t i = 0; i < times; ++i) {
+        result += value;
+    }
+}
+
 CcuResult CcuKfcAllGatherMesh1DMem2MemKernel(
     ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable outputOffset,
     ccu::Variable sliceSize, ccu::Variable goSize0, ccu::Variable goSize1, ccu::Variable goSize2, ccu::Variable goSize3,
@@ -302,6 +310,71 @@ CcuResult CcuKfcAllGatherMesh1DMem2MemKernel(
     CCU_CHK_RET(PreSync(ctx));
     ctx.sliceSize = (ctx.rankId == ctx.rankSize - 1) ? ctx.lastSliceSize : ctx.normalSliceSize;
     CCU_IF(ctx.sliceSize != 0) { CCU_CHK_RET(DoRepeatAllGather(ctx)); }
+    CCU_CHK_RET(PostSync(ctx));
+    return CCU_SUCCESS;
+}
+
+CcuResult CcuKfcParallelAllGatherMesh1DMem2MemKernel(
+    ccu::Variable inputBase, ccu::Variable outputBase, ccu::Variable tokenInfo, ccu::Variable outputStride,
+    ccu::Variable part0Size, ccu::Variable part1Size, ccu::Variable part1Offset, ccu::Variable meshPhaseDoneAddr,
+    ccu::Variable nhrPhaseDoneAddr, ccu::Variable part0GoSize0, ccu::Variable part0GoSize1, ccu::Variable part0GoSize2,
+    ccu::Variable part0GoSize3, ccu::Variable part1GoSize0, ccu::Variable part1GoSize1, ccu::Variable part1GoSize2,
+    ccu::Variable part1GoSize3, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSizeLevel0,
+    uint32_t rankIdxLevel0, uint32_t rankSizeLevel1, uint32_t rankIdxLevel1)
+{
+    KfcAllGatherMesh1DMem2MemContext ctx;
+    ctx.channels = channels;
+    ctx.channelCount = channelCount;
+    ctx.rankSize = rankSizeLevel0;
+    ctx.rankId = rankIdxLevel0;
+    InitCcuKernelCtxBase(ctx);
+    CCU_CHK_RET(InitResource(ctx));
+
+    ccu::Variable zero;
+    ccu::Variable one;
+    ccu::Variable phase0Output;
+    ccu::Variable phase0OutputOffset;
+    ccu::Variable phase1Buffer;
+    ccu::Variable phase1RankOffset;
+    ccu::Variable phase1RepeatNumInv;
+    ccu::Variable phase1RepeatStride;
+    ccu::Variable phase0GroupOffset;
+    ccu::Variable phase0RepeatNumInv;
+    zero = 0U;
+    one = 1U;
+    AddVariableNTimes(phase0GroupOffset, outputStride, rankIdxLevel1 * rankSizeLevel0);
+    phase0Output = outputBase + phase0GroupOffset;
+    AddVariableNTimes(phase0OutputOffset, outputStride, rankIdxLevel0);
+    phase1Buffer = outputBase + part1Offset;
+    AddVariableNTimes(phase1RankOffset, outputStride, rankIdxLevel0);
+    phase1RepeatNumInv = UINT64_MAX - rankSizeLevel1;
+    phase0RepeatNumInv = UINT64_MAX - 1U;
+    AddVariableNTimes(phase1RepeatStride, outputStride, rankSizeLevel0);
+
+    // Stage 0: Mesh gathers part0 inside each level-0 group.
+    CCU_CHK_RET(LoadArgs(
+        ctx, inputBase, phase0Output, tokenInfo, phase0OutputOffset, part0Size, part0GoSize0, part0GoSize1,
+        part0GoSize2, part0GoSize3, zero, phase0RepeatNumInv, zero, zero, part0Size, zero));
+    CCU_CHK_RET(PreSync(ctx));
+    ctx.sliceSize = part0Size;
+    CCU_IF(part0Size != 0) { CCU_CHK_RET(DoRepeatAllGather(ctx)); }
+    CCU_CHK_RET(PostSync(ctx));
+
+    // Both missions must finish stage 0 before either reads its stage-0 output.
+    CCU_CHK_RET(ccu::Store(meshPhaseDoneAddr, one));
+    ccu::Variable nhrDone;
+    nhrDone = 0U;
+    CCU_WHILE(nhrDone != 1U) { CCU_CHK_RET(ccu::Load(nhrPhaseDoneAddr, nhrDone)); }
+
+    // Stage 1: Mesh propagates part1 (already gathered by NHR) across all
+    // level-1 groups. Input and output are the same gathered output buffer.
+    CCU_CHK_RET(LoadArgs(
+        ctx, phase1Buffer, phase1Buffer, tokenInfo, phase1RankOffset, part1Size, part1GoSize0, part1GoSize1,
+        part1GoSize2, part1GoSize3, phase1RankOffset, phase1RepeatNumInv, phase1RepeatStride, phase1RepeatStride,
+        part1Size, one));
+    CCU_CHK_RET(PreSync(ctx));
+    ctx.sliceSize = part1Size;
+    CCU_IF(part1Size != 0) { CCU_CHK_RET(DoRepeatAllGather(ctx)); }
     CCU_CHK_RET(PostSync(ctx));
     return CCU_SUCCESS;
 }

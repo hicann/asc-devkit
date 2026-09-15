@@ -30,6 +30,15 @@ HcclResult InheritKfcServerKernelArg(
     auto kfcArg = std::make_shared<CcuKernelArgKfcServer>();
 
     kfcArg->role = GetKfcServerRole(param.algName, missionIndex);
+    if (param.algName != nullptr && std::strcmp(param.algName, KFC_PARALLEL_ALL_GATHER_ALG_NAME) == 0) {
+        const auto* baseArg = static_cast<const CcuKernelArgBase*>(srcKernel.kernelArg);
+        CHK_PTR_NULL(baseArg);
+        kfcArg->algSubType = baseArg->algSubType;
+        kfcArg->algArg = baseArg->algArg;
+        CHK_PRT_RET(
+            kfcArg->algSubType != KFC_PARALLEL_ALL_GATHER_SUB_TYPE || !kfcArg->algArg,
+            HCCL_ERROR("[ParallelAllGather] missing algorithm arguments"), HCCL_E_PARA);
+    }
     const bool isAllGather =
         srcName == "CcuKernelAllGatherMesh1DMem2Mem" && param.opType == HcclCMDType::HCCL_CMD_ALLGATHER;
     const bool isAllGatherKfc =

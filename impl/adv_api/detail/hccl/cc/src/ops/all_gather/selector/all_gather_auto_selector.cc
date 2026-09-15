@@ -15,6 +15,7 @@ namespace mc2_ops_hccl {
 constexpr u64 AG_2D_SMALL_DATA_SIZE = 1024 * 1024;
 constexpr u32 MAX_RANK_NUM_FOR_CONCURRENT_ALGO = 4;
 constexpr u32 PCIE_BASIC_RS_MAX_DATA_SIZE = 4 * 1024 * 1024;
+constexpr u64 OMNI_UBX_AG_DATA_SIZE = 16 * 1024 * 1024;
 
 SelectorStatus AllGatherAutoSelector::SelectCcuMsAlgo(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam,
@@ -63,13 +64,26 @@ SelectorStatus AllGatherAutoSelector::SelectCcuScheduleUBXAlgo(
         return SelectorStatus::NOT_MATCH;
     }
     bool meshNumEqualsClosNum = false;
+    bool closNumMultipleOfMeshNum = false;
     CHK_PRT_RET(
         CheckMeshNumEqualToClosNum(topoInfo, meshNumEqualsClosNum) != HCCL_SUCCESS,
         HCCL_DEBUG("[AllGatherAutoSelector] CheckMeshNumEqualToClosNum failed."), SelectorStatus::NOT_MATCH);
-    if (dataSize > SMALL_COUNT_512KB && meshNumEqualsClosNum &&
-        topoInfo->userRankSize <= MAX_RANK_NUM_FOR_CONCURRENT_ALGO) {
-        selectAlgName = KFC_CONCURRENT_ALL_GATHER_ALG_NAME;
-        return SelectorStatus::MATCH;
+    CHK_PRT_RET(
+        CheckClosNumMultipleOfMeshNum(topoInfo, closNumMultipleOfMeshNum) != HCCL_SUCCESS,
+        HCCL_DEBUG("[AllGatherAutoSelector] CheckClosNumMultipleOfMeshNum failed."), SelectorStatus::NOT_MATCH);
+    if (dataSize > SMALL_COUNT_512KB) {
+        if (meshNumEqualsClosNum && topoInfo->userRankSize <= MAX_RANK_NUM_FOR_CONCURRENT_ALGO) {
+            selectAlgName = KFC_CONCURRENT_ALL_GATHER_ALG_NAME;
+            return SelectorStatus::MATCH;
+        }
+        if (closNumMultipleOfMeshNum && dataSize < OMNI_UBX_AG_DATA_SIZE) {
+            selectAlgName = KFC_PARALLEL_ALL_GATHER_ALG_NAME;
+            return SelectorStatus::MATCH;
+        }
+        // The upstream selector uses Pipeline or SoleNHR here. Those CCU-KFC
+        // algorithms are not present in asc-devkit yet, so fall back instead
+        // of silently selecting the wrong Mesh-only implementation.
+        return SelectorStatus::NOT_MATCH;
     }
     selectAlgName = "CcuSchedAllGatherSoleMesh";
     return SelectorStatus::MATCH;

@@ -8,10 +8,15 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include "ins_v2_all_gather_parallel_executor.h"
+#include <cstring>
 #include <cmath>
 #include "alg_data_trans_wrapper.h"
 #include "ins_temp_all_gather_mesh_1D.h"
 #include "ins_temp_all_gather_nhr.h"
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+#include "ccu_temp_kfc_all_gather_mesh_1D_mem2mem.h"
+#include "ccu_temp_kfc_all_gather_nhr_1D_multi_jetty_mem2mem.h"
+#endif
 #include "topo_match_pcie_mix.h"
 #include "alg_data_trans_wrapper.h"
 
@@ -42,6 +47,12 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     const AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resourceRequest)
 {
     myRank_ = topoInfo->userRank;
+    if (param.algName != nullptr && std::strcmp(param.algName, "CcuSchedAllGatherParallelMeshNHRMultiLink") == 0 &&
+        (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS || topoInfo->level0PcieMix ||
+         topoInfo->topoLevelNums != 1U)) {
+        HCCL_ERROR("[ParallelAllGather] requires a single Mesh/CLOS topology layer");
+        return HCCL_E_NOT_SUPPORT;
+    }
     // 构建template
     std::vector<std::vector<u32>> intraHierarchyInfo;
     std::vector<std::vector<u32>> interHierarchyInfo;
@@ -52,6 +63,7 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
         intraHierarchyInfo = {algHierarchyInfo.infos[0][0]};
         std::vector<u32> closRanks;
         u32 meshSize = algHierarchyInfo.infos[0][0].size();
+        CHK_PRT_RET(meshSize == 0U, HCCL_ERROR("[ParallelAllGather] empty Mesh group"), HCCL_E_PARA);
         for (auto rank : algHierarchyInfo.infos[0][1]) {
             if (rank % meshSize == topoInfo->userRank % meshSize) {
                 closRanks.push_back(rank);
@@ -74,6 +86,45 @@ HcclResult InsV2AllGatherParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
     AlgResourceRequest interTempRequest;
     CHK_RET(intraTempAlg.CalcRes(comm, param, topoInfo, intraTempRequest));
     CHK_RET(interTempAlg.CalcRes(comm, param, topoInfo, interTempRequest));
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+    if (param.algName != nullptr && std::strcmp(param.algName, KFC_PARALLEL_ALL_GATHER_ALG_NAME) == 0) {
+        // 原 hccl 的四组 TemplateDataParams 依赖这两个维度。不能仅将
+        // Server 的 Mesh rankId 当作全局 rank，也不能由 Server 猜 NHR 步骤。
+        CHK_PRT_RET(
+            intraTempRequest.ccuKernelInfos.size() != 1U || interTempRequest.ccuKernelInfos.size() != 1U,
+            HCCL_ERROR("[ParallelAllGather] expected one Mesh and one NHR kernel"), HCCL_E_PARA);
+        auto mesh = std::make_shared<CcuKernelArgBase>();
+        intraTempRequest.ccuKernelInfos[0].setKernelArg(mesh);
+        auto* nhr =
+            static_cast<CcuKernelArgKfcAllGatherNHR1DMultiJettyMem2Mem*>(interTempRequest.ccuKernelInfos[0].kernelArg);
+        CHK_PTR_NULL(nhr);
+        auto arg = std::make_shared<KfcParallelAllGatherArg>();
+        arg->rankSizeLevel0 = intraHierarchyInfo[0].size();
+        arg->rankIdxLevel0 = topoInfo->userRank % arg->rankSizeLevel0;
+        arg->rankSizeLevel1 = nhr->rankSize;
+        arg->rankIdxLevel1 = nhr->rankId;
+        // 地址公式要求矩形、连续的 row-major rank 布局；强制指定算法也须检查。
+        CHK_PRT_RET(
+            arg->rankSizeLevel0 < 2U || arg->rankSizeLevel1 < 2U ||
+                arg->rankSizeLevel0 * arg->rankSizeLevel1 != topoInfo->userRankSize,
+            HCCL_ERROR("[ParallelAllGather] unsupported rectangular rank layout"), HCCL_E_PARA);
+        for (uint32_t i = 0; i < arg->rankSizeLevel0; ++i) {
+            CHK_PRT_RET(
+                intraHierarchyInfo[0][i] != arg->rankIdxLevel1 * arg->rankSizeLevel0 + i,
+                HCCL_ERROR("[ParallelAllGather] non-contiguous Mesh ranks"), HCCL_E_PARA);
+        }
+        for (uint32_t i = 0; i < arg->rankSizeLevel1; ++i) {
+            CHK_PRT_RET(
+                interHierarchyInfo[0][i] != i * arg->rankSizeLevel0 + arg->rankIdxLevel0,
+                HCCL_ERROR("[ParallelAllGather] non-contiguous NHR ranks"), HCCL_E_PARA);
+        }
+        arg->jettyNum = nhr->jettyNum;
+        arg->stepInfoVector = nhr->stepInfoVector;
+        arg->rank2ChannelIdx = nhr->rank2ChannelIdx;
+        mesh->algSubType = nhr->algSubType = KFC_PARALLEL_ALL_GATHER_SUB_TYPE;
+        mesh->algArg = nhr->algArg = arg;
+    }
+#endif
     constexpr u32 SUB_MAIN_THREAD_NUM = 2;
     resourceRequest.notifyNumOnMainThread = SUB_MAIN_THREAD_NUM; // 用于两个template间同步
     resourceRequest.slaveThreadNum =
@@ -539,5 +590,10 @@ REGISTER_EXECUTOR_BY_TWO_TEMPS(
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRPcie, InsV2AllGatherParallelExecutor,
     TopoMatchPcieMix, InsTempAllGatherMesh1D, InsTempAllGatherNHR);
+#if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
+REGISTER_EXECUTOR_BY_TWO_TEMPS(
+    HcclCMDType::HCCL_CMD_ALLGATHER, CcuSchedAllGatherParallelMeshNHRMultiLink, InsV2AllGatherParallelExecutor,
+    TopoMatchUBX, CcuTempKfcAllGatherMesh1DMem2Mem, CcuTempKfcAllGatherNHR1DMultiJettyMem2Mem);
+#endif
 } // namespace mc2_ops_hccl
 // 算法注册
