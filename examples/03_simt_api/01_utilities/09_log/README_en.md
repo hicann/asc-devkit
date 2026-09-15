@@ -123,19 +123,19 @@ Run the following steps in the root directory of this example to build and execu
   ```bash
   [INFO] Input shape: 12288
   [INFO] Launching kernel with assert(total_length < 100)...
-  Ascend Error: <your_path>/09_log/log.asc:88 code=507035 EZ9999: Inner Error!
+  Ascend Error: <your_path>/09_log/log.asc:86 code=507035 EZ9999: Internal error!
   ...
   rtDeviceSynchronize execution failed, reason=vector core exception
   ...
 
-  [ASSERT] <your_path>/09_log/log.asc:47: void add_custom(float *, float *, float *, uint64_t): Assertion `total_length < 100 && "Total length exceeds expected limit!"' failed.
+  [ASSERT] <your_path>/09_log/log.asc:44: void add_custom(float *, float *, float *, uint64_t): Assertion `total_length < 100 && "Total length exceeds expected limit!"' failed.
   [INFO] Execution completed. Check for error messages above.
   ```
 
   > **Note:**
   > - `<your_path>` represents the absolute path of the example code directory, which is replaced with the actual path in the output
   > - Key error message interpretation:
-  >   - `Ascend Error: ... code=507035 EZ9999: Inner Error!` -- Low-level error code returned by the ACL interface
+  >   - `Ascend Error: ... code=507035 EZ9999: Internal error!` -- Low-level error code returned by the ACL interface
   >   - `vector core exception` -- AI Core execution exception, Kernel task failed
   >   - `Assertion 'total_length < 100 ...' failed` -- Specific location and condition of the assertion failure, helping locate the problem code
 

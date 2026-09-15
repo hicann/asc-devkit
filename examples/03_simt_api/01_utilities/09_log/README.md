@@ -123,19 +123,19 @@
   ```bash
   [INFO] Input shape: 12288
   [INFO] Launching kernel with assert(total_length < 100)...
-  Ascend Error: <your_path>/09_log/log.asc:88 code=507035 EZ9999: Inner Error!
+  Ascend Error: <your_path>/09_log/log.asc:86 code=507035 EZ9999: Internal error!
   ...
   rtDeviceSynchronize execution failed, reason=vector core exception
   ...
 
-  [ASSERT] <your_path>/09_log/log.asc:47: void add_custom(float *, float *, float *, uint64_t): Assertion `total_length < 100 && "Total length exceeds expected limit!"' failed.
+  [ASSERT] <your_path>/09_log/log.asc:44: void add_custom(float *, float *, float *, uint64_t): Assertion `total_length < 100 && "Total length exceeds expected limit!"' failed.
   [INFO] Execution completed. Check for error messages above.
   ```
 
   > **说明：**
   > - `<your_path>` 表示样例代码所在目录的绝对路径，实际输出中会替换为具体路径
   > - 关键错误信息解读：
-  >   - `Ascend Error: ... code=507035 EZ9999: Inner Error!` — ACL接口返回的底层错误码
+  >   - `Ascend Error: ... code=507035 EZ9999: Internal error!` — ACL接口返回的底层错误码
   >   - `vector core exception` — AI Core执行异常，Kernel任务失败
   >   - `Assertion 'total_length < 100 ...' failed` — 断言失败的具体位置和条件，帮助定位问题代码
 

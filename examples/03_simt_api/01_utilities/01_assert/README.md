@@ -91,6 +91,6 @@
   [SIMT] trap check start 2!
   [SIMT] trap check start 3!
   [SIMT] trap check start 3!
-  [ASSERT] xxx/assert.asc:32: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
-  [ASSERT] xxx/assert.asc:32: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
+  [ASSERT] xxx/assert.asc:31: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
+  [ASSERT] xxx/assert.asc:31: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
   ```
