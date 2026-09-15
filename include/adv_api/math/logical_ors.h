@@ -28,8 +28,7 @@
 #include "kernel_tensor.h"
 #include "include/adv_api/math/logical_ors_utils.h"
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #include "../../../impl/adv_api/detail/math/logical_ors/logical_ors_common_impl.h"
 #endif
 
@@ -45,8 +44,7 @@ namespace AscendC {
 template <const LogicalOrsConfig& config = DEFAULT_LOGICAL_ORS_CONFIG, typename T, typename U, typename S>
 __aicore__ inline void LogicalOrs(const LocalTensor<T>& dst, const U& src0, const S& src1, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
     LogicalOrsImpl<config, T, U, S>(dst, src0, src1, count);
 #endif
 }

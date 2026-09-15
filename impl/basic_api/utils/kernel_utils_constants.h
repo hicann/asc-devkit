@@ -49,8 +49,8 @@ const bool DEFAULT_REPEAT_STRIDE_MODE = 0;
 const bool STRIDE_SIZE_MODE = 0;
 const int32_t ONE_BYTE_BIT_SIZE = 8;
 const uint16_t MASK_ARRAY_SIZE = 4;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 const int32_t B32_BIT_SIZE = 32;
 #endif
 const uint32_t TOTAL_L0A_SIZE = 64 * 1024;
@@ -86,16 +86,8 @@ constexpr uint32_t POWER_INT32_BITS = 32;
 constexpr uint32_t INT4_TWO = 2;
 constexpr uint32_t INT4_BIT_NUM = 4;
 
-#if (__NPU_ARCH__ == 5102)
-// int2b_t param
-constexpr uint32_t INT2_FOUR = 4;
-constexpr uint32_t INT1_EIGHT = 8;
-constexpr uint32_t INT2_BIT_NUM = 2;
-constexpr uint32_t INT1_BIT_NUM = 1;
-#endif
-
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 // int3b_t param
 constexpr uint32_t INT3_BIT_NUM = 3;
 // int2b_t param
@@ -114,18 +106,7 @@ constexpr float DEQ_SHIFT_RIGHT_17_BIT = 1.0 / DEQ_SHIFT_LEFT_17_BIT;
 constexpr int8_t ADDDEQRELU_MASK_MODE_ONE = 1;
 constexpr int8_t ADDDEQRELU_MASK_MODE_TWO = 2;
 
-#if (__NPU_ARCH__ == 5102)
-const int32_t TOTAL_VEC_LOCAL_SIZE = 248 * 1024;
-const uint32_t TOTAL_UB_SIZE = 248 * 1024;
-const uint32_t TMP_UB_OFFSET = 248 * 1024;
-const uint32_t TOTAL_L1_SIZE = 1024 * 1024;
-const uint32_t SINGLE_MSG_SIZE = 64;
-const uint32_t CACHE_LINE_SIZE = 64;
-const uint32_t TOTAL_L0C_SIZE = 256 * 1024;
-const uint32_t VECTOR_REG_WIDTH = 256;
-const uint32_t VECTOR_REG_WIDTH_2XVL = 512;
-const uint32_t ONE_BLOCK_SIZE = 32;
-#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 1001) || (__NPU_ARCH__ == 2002))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 1001) || (__NPU_ARCH__ == 2002))
 const int32_t TOTAL_VEC_LOCAL_SIZE = 248 * 1024;
 const uint32_t TOTAL_UB_SIZE = 256 * 1024;
 
@@ -152,14 +133,6 @@ const uint32_t SINGLE_MSG_SIZE = 64;
 const uint32_t CACHE_LINE_SIZE = 64;
 const uint32_t TOTAL_L0C_SIZE = 128 * 1024;
 const uint32_t VECTOR_REG_WIDTH = 256;
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003)
-const int32_t TOTAL_VEC_LOCAL_SIZE = 118 * 1024;
-const uint32_t TOTAL_UB_SIZE = 118 * 1024;
-const uint32_t TMP_UB_OFFSET = 118 * 1024;
-const uint32_t TOTAL_L1_SIZE = 1024 * 1024;
-const uint32_t VECTOR_REG_WIDTH = 256;
-const uint32_t ONE_BLOCK_SIZE = 32;
-const uint32_t TOTAL_L0C_SIZE = 128 * 1024;
 #elif (__NPU_ARCH__ == 3102)
 const int32_t TOTAL_VEC_LOCAL_SIZE = 184 * 1024;
 const uint32_t TOTAL_UB_SIZE = 256 * 1024;
@@ -179,14 +152,6 @@ const uint32_t CACHE_LINE_SIZE = 64;
 const uint32_t TOTAL_L0C_SIZE = 256 * 1024;
 const uint32_t VECTOR_REG_WIDTH = 256;
 const uint32_t VECTOR_REG_WIDTH_2XVL = 512;
-const uint32_t ONE_BLOCK_SIZE = 32;
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3113)
-const int32_t TOTAL_VEC_LOCAL_SIZE = 118 * 1024;
-const uint32_t TOTAL_UB_SIZE = 118 * 1024;
-const uint32_t TMP_UB_OFFSET = 118 * 1024;
-const uint32_t TOTAL_L1_SIZE = 512 * 1024;
-const uint32_t TOTAL_L0C_SIZE = 64 * 1024;
-const uint32_t VECTOR_REG_WIDTH = 256;
 const uint32_t ONE_BLOCK_SIZE = 32;
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
 const int32_t TOTAL_VEC_LOCAL_SIZE = 120 * 1024;
@@ -241,7 +206,7 @@ const uint16_t ONE_BLK_SIZE = 32;
 const int32_t CUBE_MAX_SIZE = 256;
 #endif
 
-#else // defined(__NPU_HOST__) || defined(__ASCC_HOST__)
+#else
 
 #ifndef ASCC_PARAM_BLOCK_CUBE
 #define ASCC_PARAM_BLOCK_CUBE
@@ -269,12 +234,12 @@ const int32_t SRC_GAP_SIZE_BYTE = 32;
 const int32_t DST_BURST_LEN_SIZE_ELE = 256;
 const int32_t VREDUCE_PER_REP_OUTPUT = 2;
 const uint16_t ONE_PARAM_SIZE = 8;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 const int32_t BLOCK_COUT = 16;
 const uint16_t TWO_BLK_SIZE = 64;
 #endif
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 const uint16_t AIV_CORE_NUM = 72;
 #else
 const uint16_t AIV_CORE_NUM = 50;
@@ -304,7 +269,7 @@ const int32_t B16_DATA_NUM_PER_REPEAT = 128;
 const int32_t B32_DATA_NUM_PER_REPEAT = 64;
 #endif
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 const uint32_t B64_DATA_NUM_PER_REPEAT = 32;
 const uint32_t B4_BYTE_SIZE_PER_REPEAT = 64;
 const uint32_t L1_DUMP_UB_SIZE = TOTAL_UB_SIZE - 32 * 1024;
@@ -329,12 +294,8 @@ constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
 #elif (__NPU_ARCH__ == 3102)
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
-#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003)
-constexpr size_t RESERVED_WORKSPACE = 0;
-#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3113))
-constexpr size_t RESERVED_WORKSPACE = 0;
 #elif defined(__NPU_ARCH__) && \
     (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
@@ -552,7 +513,7 @@ struct GetPadValueType {
     using Type = T;
 };
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 // To support FP8 datacopypad, pad type needs transfer to b8
 template <>
 struct GetPadValueType<fp8_e5m2_t> {
@@ -659,14 +620,8 @@ struct IntegerSubType {
 
 using int4b_t = integer_sub_type<INT4_BIT_NUM, true>;
 
-#if (__NPU_ARCH__ == 5102)
-using int2b_t = IntegerSubType<INT2_BIT_NUM, true>;
-using int1b_t = IntegerSubType<INT1_BIT_NUM, true>;
-using uint1b_t = IntegerSubType<INT1_BIT_NUM, false>;
-#endif
-
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 using uint4b_t = IntegerSubType<INT4_BIT_NUM, false>;
 using uint3b_t = IntegerSubType<INT3_BIT_NUM, false>;
 using uint2b_t = IntegerSubType<INT2_BIT_NUM, false>;
@@ -707,7 +662,7 @@ struct BasicAPIMaskStruct {
 template <typename T>
 __aicore__ constexpr bool IsHalfByteDataType()
 {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     return SupportType<T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>();
 #else
     return IsSameType<T, int4b_t>::value;
@@ -724,20 +679,8 @@ struct SizeOfBits<int4b_t> {
     static int const value = INT4_BIT_NUM;
 };
 
-#if (__NPU_ARCH__ == 5102)
-template <>
-struct SizeOfBits<int2b_t> {
-    static constexpr uint32_t value = INT2_BIT_NUM;
-};
-
-template <>
-struct SizeOfBits<uint1b_t> {
-    static constexpr uint32_t value = INT1_BIT_NUM;
-};
-#endif
-
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 template <>
 struct SizeOfBits<uint4b_t> {
     static int const value = INT4_BIT_NUM;
@@ -754,7 +697,7 @@ struct SizeOfBits<uint2b_t> {
 };
 #endif
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 template <>
 struct SizeOfBits<fp4x2_e2m1_t> {
     static constexpr uint32_t value = INT4_BIT_NUM;

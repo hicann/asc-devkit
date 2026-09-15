@@ -33,12 +33,6 @@ __aicore__ inline __sync_alias__ LocalTensor<T> TBuf<pos>::Get(uint32_t len)
     uint32_t dataLen;
     if constexpr (IsSameType<PrimType, int4b_t>::value) {
         dataLen = len / INT4_TWO;
-#if (__NPU_ARCH__ == 5102)
-    } else if constexpr (IsSameType<T, int2b_t>::value) {
-        dataLen = len / INT2_FOUR;
-    } else if constexpr (IsSameType<T, uint1b_t>::value) {
-        dataLen = len / INT1_EIGHT;
-#endif
     } else {
         dataLen = len * sizeof(PrimType);
     }
@@ -81,12 +75,6 @@ __aicore__ inline __sync_alias__ LocalTensor<T> TBuf<pos>::Get()
     using PrimType = PrimT<T>;
     if constexpr (IsSameType<PrimType, int4b_t>::value) {
         return Get<T>(bufLen * INT4_TWO);
-#if (__NPU_ARCH__ == 5102)
-    } else if constexpr (IsSameType<T, int2b_t>::value) {
-        return Get<T>(bufLen * INT2_FOUR);
-    } else if constexpr (IsSameType<T, uint1b_t>::value) {
-        return Get<T>(bufLen * INT1_EIGHT);
-#endif
     } else {
         return Get<T>(bufLen / sizeof(PrimType));
     }

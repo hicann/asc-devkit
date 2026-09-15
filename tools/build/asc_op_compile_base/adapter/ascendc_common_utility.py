@@ -534,7 +534,7 @@ class CommonUtility:
             res: True means soc version support workspace offset way
         """
         short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-        if short_soc_version in ["Ascend950", "MC62", "MC32DM11A"]:
+        if short_soc_version in ["Ascend950"]:
             return True
         return False
 
@@ -613,47 +613,11 @@ class CommonUtility:
         return False
 
     @staticmethod
-    def is_m510():
-        """return if current soc version is m510
-
-        Returns:
-            res: True means m510
-        """
-        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-        if short_soc_version in ["MC62", "MC32DM11A"]:
-            return True
-        return False
-
-    @staticmethod
-    def is_l300():
-        """return if current soc version is l300
-
-        Returns:
-            res: True means l300
-        """
-        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-        if short_soc_version in ["KirinX90"]:
-            return True
-        return False
-
-    @staticmethod
-    def is_l311():
-        """return if current soc version is l311
-
-        Returns:
-            res: True means l311
-        """
-        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-        if short_soc_version in ["Kirin9030"]:
-            return True
-        return False
-
-    @staticmethod
     def is_l510():
         """return if current soc version is l510
 
         Returns:
-            res: True means l311
+            res: True means l510
         """
         short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
         if short_soc_version in ["KirinDev0000"]:
@@ -665,7 +629,7 @@ class CommonUtility:
         """return if current soc version is l516
 
         Returns:
-            res: True means l311
+            res: True means l516
         """
         short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
         if short_soc_version in ["KirinDev0001", "KirinDev0002", "KirinDev0003"]:
@@ -674,7 +638,7 @@ class CommonUtility:
 
     @staticmethod
     def get_chip_version():
-        """get chip version for (c220/c310/510r2)
+        """get chip version for (c220/c310)
 
         Returns:
             chip_version: chip version
@@ -682,8 +646,6 @@ class CommonUtility:
         chip_version = "c220"
         if CommonUtility.is_c310():
             chip_version = "c310"
-        elif CommonUtility.is_m510():
-            chip_version = "510r2"
         return chip_version
 
     @staticmethod

@@ -35,11 +35,6 @@ file(GLOB ASCENDC_TEST_ascend950pr_9599_MICRO_CASE_SRC_FILES
     ascendc_case_ascend950pr_9599_reg_compute/*.cpp
 )
 
-# mc62cm12aa micro test cases
-file(GLOB ASCENDC_TEST_mc62cm12aa_MICRO_CASE_SRC_FILES
-    ascendc_case_mc62cm12aa_reg_compute/*.cpp
-)
-
 foreach(product_type ${MICRO_PRODUCT_TYPE_LIST})
     add_executable(ascendc_ut_reg_compute_${product_type}
         ${ASCENDC_DIR}/tests/main_global.cpp
@@ -52,7 +47,6 @@ foreach(product_type ${MICRO_PRODUCT_TYPE_LIST})
         ASCENDC_OOM=1
         ASCENDC_DUMP=0
         $<$<STREQUAL:${product_type},ascend950pr_9599>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
-        $<$<STREQUAL:${product_type},mc62cm12aa>:__NPU_ARCH__=5102>
         __callee__=
     )
 
@@ -70,7 +64,6 @@ foreach(product_type ${MICRO_PRODUCT_TYPE_LIST})
     target_link_libraries(ascendc_ut_reg_compute_${product_type} PRIVATE
         $<BUILD_INTERFACE:intf_llt_pub_basic>
         $<$<STREQUAL:${product_type},ascend950pr_9599>:tikicpulib::ascend950pr_9599>
-        $<$<STREQUAL:${product_type},mc62cm12aa>:tikicpulib::mc62cm12aa>
         kernel_tiling
         -Wl,--no-as-needed
         error_manager

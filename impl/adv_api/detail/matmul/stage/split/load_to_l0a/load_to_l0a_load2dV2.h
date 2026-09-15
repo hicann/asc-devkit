@@ -46,7 +46,7 @@ public:
     __aicore__ inline ~LoadToL0A(){};
 
     __aicore__ inline void Prepare(bool isATranspose, uint16_t aL1K, uint16_t aL1M) const {};
-    __aicore__ inline void SetScalar(A_T scalar){};
+    __aicore__ inline void SetScalar(A_T scalar) {};
 
     __aicore__ inline void Load(
         const LocalTensor<L0A_T>& dst, const LocalTensor<A_T>& aMatrix, uint16_t aL1M, uint16_t aL1K, uint16_t madM,
@@ -112,23 +112,7 @@ private:
                 LoadData(dst[dstOffset], aMatrix, loadDataParams);
                 dstOffset += dstAddrStride;
             }
-        }
-#if __NPU_ARCH__ == 5102
-        else if constexpr (IsSupportB4<A_T>()) {
-            uint16_t l0ALoop = loadDataParams.mStep / M_STEP_MIN_VAL_B4;
-            uint64_t dstOffset = 0;
-            uint64_t dstAddrStride = CeilAlign(madM, ALIGN_NUM) * ONE_BLK_SIZE * 2;
-            loadDataParams.mStep = M_STEP_MIN_VAL_B4;
-            uint16_t oriMstartPos = loadDataParams.mStartPosition;
-            // K axis is m direction, and M axis is k direction in load2dv2 intrin
-            for (uint16_t idx = 0; idx < l0ALoop; ++idx) {
-                loadDataParams.mStartPosition = oriMstartPos + M_STEP_MIN_VAL_B4 * idx;
-                LoadData(dst[dstOffset], aMatrix, loadDataParams);
-                dstOffset += dstAddrStride;
-            }
-        }
-#endif
-        else if constexpr (IsSameType<A_T, float>::value) {
+        } else if constexpr (IsSameType<A_T, float>::value) {
             // in case of mdl && basek=8, the unit of mStartPosition is 16, so don't use it
             loadDataParams.mStartPosition = 0;
             loadDataParams.kStartPosition = 0;

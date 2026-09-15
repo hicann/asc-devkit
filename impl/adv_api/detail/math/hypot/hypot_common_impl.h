@@ -16,8 +16,7 @@
 #endif
 #ifndef LIB_MATH_HYPOT_IMPL_H
 #define LIB_MATH_HYPOT_IMPL_H
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
 // Implementation Process
@@ -156,19 +155,11 @@ __simd_vf__ inline void VfHypotImpl(__ubuf__ T* dstUb, __ubuf__ T* src0Ub, __ubu
 
     if constexpr (IsSameType<T, float>::value) {
         Reg::Duplicate((Reg::RegTensor<uint32_t>&)vRegInf, HypotInternal::INF);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-        Reg::Duplicate((Reg::RegTensor<uint32_t>&)vRegOne, HypotInternal::ONE);
-#else
         Reg::Duplicate((Reg::RegTensor<uint32_t>&)vRegOne, 1.0f);
-#endif
         Reg::Duplicate((Reg::RegTensor<uint32_t>&)vRegZero, 0);
     } else if constexpr (IsSameType<T, half>::value) {
         Reg::Duplicate((Reg::RegTensor<uint16_t>&)vRegInf, HypotInternal::HALF_INF);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-        Reg::Duplicate((Reg::RegTensor<uint16_t>&)vRegOne, HypotInternal::HALF_ONE);
-#else
         Reg::Duplicate((Reg::RegTensor<uint16_t>&)vRegOne, 1.0f);
-#endif
         Reg::Duplicate((Reg::RegTensor<uint16_t>&)vRegZero, 0);
     } else if constexpr (IsSameType<T, bfloat16_t>::value) {
         Reg::Duplicate((Reg::RegTensor<uint16_t>&)vRegInf, HypotInternal::B_HALF_INF);

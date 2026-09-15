@@ -143,7 +143,7 @@ void GetTopKMaxMinTmpSize310(
     const int32_t inner, const int32_t outter, const bool isInitIndex, enum TopKMode mode, uint32_t& maxValue,
     uint32_t& minValue)
 {
-    // total：(Inner*8B)*2
+    // total: (Inner*8B)*2
     if (mode == TopKMode::TOPK_NORMAL) {
         maxValue = TOPK_CALC_FAC * static_cast<uint32_t>(inner);
         if (!isInitIndex) {
@@ -165,7 +165,7 @@ void GetTopKMaxMinTmpSize220(
     const int32_t inner, const int32_t outter, const bool isInitIndex, enum TopKMode mode, uint32_t& maxValue,
     uint32_t& minValue, const bool isLargest)
 {
-    // total：(Inner*4+inner*4)*2
+    // total: (Inner*4+inner*4)*2
     if ((mode == TopKMode::TOPK_NORMAL) && (isInitIndex)) {
         minValue = TOPK_CALC_FAC * static_cast<uint32_t>(inner);
         maxValue = minValue;
@@ -429,7 +429,7 @@ bool TopKTilingFunc(
         } else {
             SetTopkNSmallVal200(inner, outter, k, dataTypeSize, topKTiling);
         }
-    } else if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003) {
+    } else if (npuArch == NpuArch::DAV_3510) {
         topKTiling.set_allDataSize(inner * outter);
         if (mode == TopKMode::TOPK_NORMAL) {
             SetTopkNormalVal310(inner, outter, k, dataTypeSize, isInitIndex, topKTiling);
@@ -498,7 +498,7 @@ bool GetTopKMaxMinTmpSize(
     const auto npuArch = ascendcPlatform.GetCurNpuArch();
     if (npuArch == NpuArch::DAV_2002) {
         GetTopKMaxMinTmpSize200(inner, outter, mode, maxValue, minValue, dataTypeSize);
-    } else if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_3003) {
+    } else if (npuArch == NpuArch::DAV_3510) {
         GetTopKMaxMinTmpSize310(inner, outter, isInitIndex, mode, maxValue, minValue);
     } else {
         GetTopKMaxMinTmpSize220(inner, outter, isInitIndex, mode, maxValue, minValue, isLargest);
@@ -515,9 +515,7 @@ bool GetTopKMaxMinTmpSize(
     ASCENDC_HOST_ASSERT((platform != nullptr), return false, "Failed to get PlatformAscendC");
 
     auto npuArch = platform->GetCurNpuArch();
-    ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return false,
-        "Unsupported NpuArch of Topk radix select API.");
+    ASCENDC_HOST_ASSERT((npuArch == NpuArch::DAV_3510), return false, "Unsupported NpuArch of Topk radix select API.");
 
     ASCENDC_HOST_ASSERT((inner % 32 == 0), return false, "The value of inner must be an integer multiple of 32.");
     ASCENDC_HOST_ASSERT(

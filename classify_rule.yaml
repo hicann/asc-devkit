@@ -15,9 +15,6 @@ asc-devkit:
       - tests
       - include/**/*.h
       - tools/**/*.h
-      - impl/**/dav_l300/*.h
-      - impl/**/dav_l311/*.h
-      - impl/**/dav_m510/*.h
       - impl/**/dav_5161/*.h
       - impl/basic_api/kernel_macros.h
       - impl/basic_api/kernel_prof_trace*.h
@@ -92,9 +89,6 @@ asc-devkit:
       - impl/basic_api/dav_c310/kernel_operator_proposal_impl.h
       - impl/basic_api/dav_c310/kfc/kfc_comm_server.h
       - impl/adv_api/detail/reduce/**/*_3510_impl.h
-      - impl/basic_api/dav_m510/kfc/kfc_comm.h
-      - impl/basic_api/dav_m510/kfc/kfc_comm_client.h
-      - impl/basic_api/dav_m510/kfc/kfc_comm_server.h
       - impl/basic_api/dav_c310/kfc/kfc_comm_client.h
       - impl/basic_api/dav_3510/kernel_operator_reg_others_impl.h
       - impl/basic_api/kernel_operator_mm_bitmode_struct.h
@@ -127,7 +121,6 @@ asc-devkit:
       - impl/basic_api/dav_c220/core_mng/roc/*.h
       - impl/basic_api/dav_c220/kernel_operator_vec_vpadding_impl.h
       - impl/basic_api/dav_c220/kernel_operator_cache_impl.h
-      - impl/basic_api/dav_m510/kernel_operator_vec_gather_impl.h
       - impl/basic_api/dav_m300/kernel_operator_vec_gather_impl.h
       - impl/basic_api/dav_m300/kernel_operator_vec_vpadding_impl.h
       - impl/basic_api/dav_m300/kernel_operator_determine_compute_sync_impl.h
@@ -248,7 +241,6 @@ asc-devkit:
       - impl/simt_api/cpp/kernel_simt_atomic_intf_impl.h
       - impl/basic_api/dav_c220/kernel_operator_reg_others_impl.h
       - impl/basic_api/dav_c220/kernel_operator_vec_others_impl.h
-      - impl/basic_api/dav_m510/kfc/kfc_log.h
       - impl/basic_api/dav_c220/kernel_operator_cube_others_impl.h
       - impl/basic_api/dav_c220/kfc/kfc_log.h
       - impl/basic_api/kernel_operator_intf_impl.h

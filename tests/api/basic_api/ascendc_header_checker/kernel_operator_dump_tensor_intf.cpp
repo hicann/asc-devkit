@@ -8,7 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#if __NPU_ARCH__ != 5102 && __NPU_ARCH__ != 3102
+#if __NPU_ARCH__ != 3102
 #ifndef VERIFY_SINGLE_HEADER
 #include "kernel_operator.h"
 #else

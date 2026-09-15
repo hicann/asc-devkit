@@ -37,8 +37,7 @@ void GetFmaMaxMinTmpSize(
     HighLevelApiCheck::IsReuseSourceVerifyingParameters<FMA_GET_MAX_MIN>(isReuseSource);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
 
-    ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return, "Unsupported NpuArch of Fma API.");
+    ASCENDC_HOST_ASSERT((npuArch == NpuArch::DAV_3510), return, "Unsupported NpuArch of Fma API.");
     maxValue = 0u;
     minValue = 0u;
 }
@@ -49,8 +48,7 @@ void GetFmaTmpBufferFactorSize(
 {
     HighLevelApiCheck::TypeSizeVerifyingParameters<FMA_GET_TMP_BUFFER>(typeSize, SUPPORT_TYPESIZE);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
-    ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_5102), return, "Unsupported NpuArch of Fma API.");
+    ASCENDC_HOST_ASSERT((npuArch == NpuArch::DAV_3510), return, "Unsupported NpuArch of Fma API.");
     extraBuf = 0u;
     maxLivedNodeCount = 0u;
 }

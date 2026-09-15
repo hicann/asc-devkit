@@ -22,7 +22,7 @@
 
 #include <cassert>
 #include "impl/utils/sys_macros.h"
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 #include "simt_api/device_types.h"
 #include "impl/utils/debug/asc_assert_simt_impl.h"
 
@@ -32,7 +32,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __trap();
 #endif
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
-#if (__NPU_ARCH__ == 2002) || (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 2002) || (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510)
 #include "impl/utils/debug/asc_aicore_assert_impl.h"
 #endif
 #endif

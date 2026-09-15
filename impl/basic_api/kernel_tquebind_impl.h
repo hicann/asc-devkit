@@ -115,12 +115,6 @@ __aicore__ inline __sync_alias__ void TQueBind<src, dst, depth, mask>::AllocTens
             break;
         }
     } while (true);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-        GetBuffImpl<srcPipe, false>(ret->bufId);
-        ReleaseBuffImpl<srcPipe, false>(ret->bufId);
-    } else
-#endif
     {
         WaitFlag<freeBufEvt>(ret->freeBufEvtID);
     }
@@ -215,13 +209,6 @@ __aicore__ inline __sync_alias__ bool TQueBind<src, dst, depth, mask>::EnQue(TBu
     DEBUG_CODE(ptr->userEnQueEvt = enQueUserEvt);
     DEBUG_CODE(ptr->state = TBufState::ENQUE);
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-        constexpr pipe_t srcUserPipe = GetPipeByPos(srcUserPos, dstUserPos);
-        GetBuffImpl<srcUserPipe, true>(ptr->bufId);
-        ReleaseBuffImpl<srcUserPipe, true>(ptr->bufId);
-    } else
-#endif
     {
         // when src and dst both ub, should insert pipe v barrier
         if constexpr (enQueUserEvt == HardEvent::V_V) {
@@ -277,12 +264,6 @@ __aicore__ inline __sync_alias__ bool TQueBind<src, dst, depth, mask>::EnQue(TBu
     DEBUG_CODE(ptr->state = TBufState::ENQUE);
     if constexpr (depth == 0) {
         // If the AIC is not entered, the AIV does not process any event ID.
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-        if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-            GetBuffImpl<srcPipe, true>(ptr->bufId);
-            ReleaseBuffImpl<srcPipe, true>(ptr->bufId);
-        } else
-#endif
         {
             if constexpr ((GetPosition(src, dst) != TPosition::TSCM)) {
                 SetFlag<enQueEvt>(ptr->enQueEvtID);
@@ -292,12 +273,6 @@ __aicore__ inline __sync_alias__ bool TQueBind<src, dst, depth, mask>::EnQue(TBu
         /* Add for TSCM
          * for 220, aiv just send message, no need add this set/wait
          */
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-        if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-            GetBuffImpl<srcPipe, true>(ptr->bufId);
-            ReleaseBuffImpl<srcPipe, true>(ptr->bufId);
-        } else
-#endif
         {
 #if __NPU_ARCH__ == 2201
             // If the AIC is not entered, the AIV does not process any event ID.
@@ -345,12 +320,6 @@ __aicore__ inline void TQueBind<src, dst, depth, mask>::DeQue(LocalTensor<T>& in
     static_assert((depth == 0), "can not DeQue tensor in place while tque's depth is non zero");
     auto bufHandle = input.GetBufferHandle();
     auto ptr = reinterpret_cast<TBufType*>(bufHandle);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-        GetBuffImpl<dstPipe, false>(ptr->bufId);
-        ReleaseBuffImpl<dstPipe, false>(ptr->bufId);
-    } else
-#endif
     {
         WaitFlag<enQueEvt>(ptr->enQueEvtID);
     }
@@ -393,12 +362,6 @@ __aicore__ inline __sync_alias__ TBufHandle TQueBind<src, dst, depth, mask>::DeQ
      * for 220, aiv just send message, no need add this set/wait
      */
     DEBUG_CODE(ptr->state = TBufState::DEQUE);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-        GetBuffImpl<dstPipe, false>(ptr->bufId);
-        ReleaseBuffImpl<dstPipe, false>(ptr->bufId);
-    } else
-#endif
     {
 #if __NPU_ARCH__ == 2201
         if (g_coreType != AIV || (GetPosition(src, dst) != TPosition::TSCM)) {
@@ -480,13 +443,6 @@ __aicore__ inline __sync_alias__ TBufHandle TQueBind<src, dst, depth, mask>::DeQ
 #endif
     DEBUG_CODE(ptr->state = TBufState::DEQUE);
     // when src and dst both ub, should insert pipe v barrier
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-        constexpr pipe_t dstUserPipe = GetPipeByPos(dstUserPos, srcUserPos);
-        GetBuffImpl<dstUserPipe, false>(ptr->bufId);
-        ReleaseBuffImpl<dstUserPipe, false>(ptr->bufId);
-    } else
-#endif
     {
         if constexpr (deQueUserEvt == HardEvent::V_V) {
             WaitFlag<deQueUserEvt>(0);
@@ -528,12 +484,6 @@ __aicore__ inline void TQueBind<src, dst, depth, mask>::FreeBuffer(TBufHandle bu
         (ptr->state != TBufState::FREE),
         KERNEL_LOG_INTERNAL(KERNEL_ERROR, "ptr state is %d, which can not be FREE", static_cast<int32_t>(ptr->state)));
     if constexpr (depth == 0) {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-        if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-            GetBuffImpl<dstPipe, true>(ptr->bufId);
-            ReleaseBuffImpl<dstPipe, true>(ptr->bufId);
-        } else
-#endif
         {
             if constexpr (!IsAivTscm(src, dst)) {
                 // in 220 version, event changed from v to M_MTE1 on condition C1 -> C2
@@ -541,12 +491,6 @@ __aicore__ inline void TQueBind<src, dst, depth, mask>::FreeBuffer(TBufHandle bu
             }
         }
     } else {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-        if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-            GetBuffImpl<dstPipe, true>(ptr->bufId);
-            ReleaseBuffImpl<dstPipe, true>(ptr->bufId);
-        } else
-#endif
         {
             if constexpr (!IsAivTscm(src, dst)) {
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 1001) && (__NPU_ARCH__ != 2002)
@@ -619,12 +563,6 @@ __aicore__ inline TBufHandle TQueBind<src, dst, depth, mask>::AllocBuffer()
                     }
                 }
             }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-            if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-                GetBuffImpl<srcPipe, false>(ret->bufId);
-                ReleaseBuffImpl<srcPipe, false>(ret->bufId);
-            } else
-#endif
             {
                 if (ret->freeBufEvtID != INVALID_TEVENTID) {
                     if constexpr (enableLoopQueue) {
@@ -687,11 +625,6 @@ template <TPosition src, TPosition dst, int32_t depth, auto mask>
 __aicore__ inline void TQueBind<src, dst, depth, mask>::FreeAllEvent()
 {
     static_assert((depth != 0), "can not use FreeAllEvent api while depth is zero");
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    if constexpr (UseBufIdSync<TQueBind<src, dst, depth, mask>>()) {
-        return;
-    } else
-#endif
     {
         auto ptr = this->bufStart;
         for (int i = 0; i < this->bufNum; i++, ptr++) {

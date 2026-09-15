@@ -58,33 +58,7 @@ public:
         const LocalTensor<TransT>& dst, const GlobalTensor<SrcT>& src, const int32_t row, const int32_t col,
         const int32_t height, const int32_t width, const int32_t gRow, uint64_t qtable0, uint64_t qtable1 = 0,
         const bool kAlignToC0Size = false)
-    {
-#if __NPU_ARCH__ == 5102
-        constexpr int32_t c0Size = AuxGetC0Size<TransT>();
-        int32_t dstStride = 0;
-        if (kAlignToC0Size) {
-            dstStride = Ceil(height, c0Size) * c0Size / BLOCK_CUBE;
-        } else {
-            dstStride = Ceil(height, BLOCK_CUBE);
-        }
-
-        LoadData2DParamsV2 loadDataParams;
-        loadDataParams.srcStride = Ceil(gRow, BLOCK_CUBE);
-        loadDataParams.mStartPosition = Ceil(row, BLOCK_CUBE);
-        ;
-        loadDataParams.kStartPosition = Ceil(col, c0Size);
-        loadDataParams.dstStride = static_cast<uint16_t>(dstStride);
-        loadDataParams.mStep = Ceil(height, BLOCK_CUBE);
-        loadDataParams.kStep = Ceil(width, c0Size);
-
-        Nd2NzParamsV2 nd2nzParams;
-        nd2nzParams.lookupTable0 = qtable0;
-        if constexpr (DecompMode(MM_CFG) == DecompressionMode::DECOMP_4bitTo8bit) {
-            nd2nzParams.lookupTable1 = qtable1;
-        }
-        LoadData(dst, src, loadDataParams, nd2nzParams);
-#endif
-    }
+    {}
 
     __aicore__ inline void CopyNZ2NZ(
         const LocalTensor<TransT>& dst, const LocalTensor<SrcT>& src, const int32_t row, const int32_t col,

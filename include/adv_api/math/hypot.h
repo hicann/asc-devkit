@@ -27,8 +27,7 @@
 
 #include "kernel_tensor.h"
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #include "../../../impl/adv_api/detail/math/hypot/hypot_common_impl.h"
 #endif
 
@@ -84,8 +83,7 @@ __aicore__ inline void Hypot(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& src0Tensor, const LocalTensor<T>& src1Tensor,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t calCount)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
     HypotImpl(dstTensor, src0Tensor, src1Tensor, sharedTmpBuffer, calCount);
 #endif
 }
@@ -129,8 +127,7 @@ __aicore__ inline void Hypot(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& src0Tensor, const LocalTensor<T>& src1Tensor,
     const uint32_t calCount)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
     HypotImpl(dstTensor, src0Tensor, src1Tensor, calCount);
 #endif
 }

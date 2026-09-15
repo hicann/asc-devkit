@@ -50,8 +50,8 @@
 #define ASCENDC_SHAPE(dimValue, ...) \
     dimValue, (const uint32_t[]) { __VA_ARGS__ }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 #define SetBitOn(flag, bit) ((flag) = ((flag) | ((uint64_t)(1) << (bit))))
 
 #define GetBit(flag, bit) (((flag) >> (bit)) & (1))
@@ -195,7 +195,7 @@ struct OpSystemRunCfg {
 inline __gm__ struct OpSystemRunCfg g_opL2CacheHintCfg = {0};
 static const struct BinaryMetaAscFeature __asc_feature_l2cache__
     __attribute__((used, section(".ascend.meta"))) = {4, 4, 3};
-#else  // ifndef __NPU_DEVICE__
+#else
 extern __gm__ struct OpSystemRunCfg g_opSystemRunCfg;
 #endif // __NPU_DEVICE__
 #endif // L2_CACHE_HINT
@@ -234,9 +234,8 @@ enum class CacheMode { CACHE_MODE_DISABLE = 0, CACHE_MODE_NORMAL = 1, CACHE_MODE
 
 enum class CacheRwMode { READ = 1, WRITE = 2, RW = 3 };
 
-#if defined(__NPU_ARCH__) &&                                                                             \
-        (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-         __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163) ||                        \
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+                              __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163) ||                        \
     defined(__ASC_NPU_HOST__)
 constexpr uint64_t L2_CACHE_OFFSET = 60;
 constexpr uint64_t L2_CACHE_OFFSET_MASK = (1ul << L2_CACHE_OFFSET) - 1;
@@ -290,7 +289,7 @@ __aicore__ inline __gm__ T* L2CacheAlter(__gm__ T* addr, CacheMode mode)
 #if defined(L2_CACHE_HINT) && defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201)
 #ifdef __NPU_DEVICE__
     uint64_t l2CacheOffset = g_opL2CacheHintCfg.l2Cacheoffset;
-#else  // ifndef __NPU_DEVICE__
+#else
     uint64_t l2CacheOffset = g_opSystemRunCfg.l2Cacheoffset;
 #endif // __NPU_DEVICE__
     if (mode == CacheMode::CACHE_MODE_DISABLE) {
@@ -375,8 +374,8 @@ struct SknlKernelMap {
 
 #define ENABLE_DETERMINISTIC() ENABLE_FEATURE_FOR_COMPILE(deterministic, 1)
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 #define KERNEL_TASK_TYPE(key, value)
 #define KERNEL_TASK_TYPE_DEFAULT(value)
 #else

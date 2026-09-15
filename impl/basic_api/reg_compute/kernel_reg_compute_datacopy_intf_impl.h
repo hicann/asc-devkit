@@ -23,19 +23,9 @@
 #ifndef ASCENDC_KERNEL_REG_COMPUTE_DATACOPY_INTERFACE_IMPL_H
 #define ASCENDC_KERNEL_REG_COMPUTE_DATACOPY_INTERFACE_IMPL_H
 
-#if __NPU_ARCH__ == 3003
-#include "../../basic_api/reg_compute/dav_l300/kernel_reg_compute_datacopy_impl.h"
-#elif __NPU_ARCH__ == 3113
-#include "../../basic_api/reg_compute/dav_l311/kernel_reg_compute_datacopy_impl.h"
-#elif __NPU_ARCH__ == 5102
-#include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_datacopy_impl.h"
-#include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_datacopy_load_impl.h"
-#include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_datacopy_store_impl.h"
-#else
 #include "../../basic_api/reg_compute/dav_3510/kernel_reg_compute_datacopy_impl.h"
 #include "../../basic_api/reg_compute/dav_3510/kernel_reg_compute_datacopy_load_impl.h"
 #include "../../basic_api/reg_compute/dav_3510/kernel_reg_compute_datacopy_store_impl.h"
-#endif
 
 namespace AscendC {
 namespace Reg {

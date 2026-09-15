@@ -97,7 +97,7 @@ public:
                     }
                 }
             } else {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
                 Barrier();
 #endif
                 if constexpr (IsCopyFromUB<INPUT_TYPE, MM_CFG>()) {
@@ -455,25 +455,6 @@ private:
         }
     }
 
-#if __NPU_ARCH__ == 5102
-    __aicore__ inline void GetQtable(
-        uint64_t& qtable0, uint64_t& qtable1, int32_t curRow, int32_t curCol, int32_t baseHeight)
-    {
-        uint16_t qtableIndex = curRow + curCol * Ceil(MATMUL_MODULE(CopyCubeInParams)->GetSingleHeight(), baseHeight);
-
-        if constexpr (
-            DecompMode(MM_CFG) == DecompressionMode::DECOMP_1bitTo4bit ||
-            DecompMode(MM_CFG) == DecompressionMode::DECOMP_2bitTo4bit) {
-            qtable0 = MATMUL_MODULE(QtableProcessor)->GetQtable(qtableIndex);
-        } else if constexpr (DecompMode(MM_CFG) == DecompressionMode::DECOMP_4bitTo8bit) {
-            qtable0 = MATMUL_MODULE(QtableProcessor)->GetQtable(2 * qtableIndex);
-            qtable1 = MATMUL_MODULE(QtableProcessor)->GetQtable(2 * qtableIndex + 1);
-        } else {
-            ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Unsupported Decompression Mode."); });
-        }
-    }
-#endif
-
     __aicore__ inline void CopyTileToCubeFromGM(
         const LocalTensor<TransT>& dst, const GlobalTensor<SrcT>& src, int32_t curRow, int32_t curCol,
         int32_t tileHeight, int32_t tileWidth, int32_t baseHeight, int32_t baseWidth, int32_t orgHeight,
@@ -488,7 +469,7 @@ private:
                 MATMUL_MODULE(DataCopyWrapper)
                     ->CopyND2NZ(dst, src, curRow * baseHeight, curCol * baseWidth, tileHeight, tileWidth, orgWidth);
             }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
         } else if constexpr (INPUT_TYPE::format == CubeFormat::COLUMN_MAJOR) {
             if constexpr (sizeof(TransT) == sizeof(int8_t)) {
                 CopyDN2NZForInt8(
@@ -500,23 +481,6 @@ private:
             }
 #endif
         } else if constexpr (INPUT_TYPE::format == CubeFormat::NZ) {
-#if __NPU_ARCH__ == 5102
-            if constexpr (IsDecompMode<MM_CFG>() && INPUT_TYPE::TAG == InputTypeTag::B) {
-                uint64_t qtable0 = 0;
-                uint64_t qtable1 = 0;
-                GetQtable(qtable0, qtable1, curRow, curCol, baseHeight);
-                MATMUL_MODULE(DataCopyWrapper)
-                    ->CopyNZ2NZDecompMode(
-                        dst, src, curRow * baseHeight, curCol * baseWidth, tileHeight, tileWidth, orgHeight, qtable0,
-                        qtable1, iskRowDirec);
-            } else {
-                MATMUL_MODULE(DataCopyWrapper)
-                    ->CopyNZ2NZ(
-                        dst, src, curRow * baseHeight, curCol * baseWidth, tileHeight, tileWidth, orgHeight,
-                        iskRowDirec);
-            }
-
-#else
             MATMUL_MODULE(DataCopyWrapper)
                 ->CopyNZ2NZ(
                     dst, src, curRow * baseHeight, curCol * baseWidth, tileHeight, tileWidth, orgHeight, iskRowDirec);
@@ -526,7 +490,6 @@ private:
                 padZeroSize /= INT4_TWO;
             }
             PadZeroForL1(dst, tileHeight, tileWidth, baseHeight, baseWidth, padZeroSize);
-#endif
         } else if constexpr (INPUT_TYPE::format == CubeFormat::VECTOR) {
             MATMUL_MODULE(DataCopyWrapper)->CopyVector2A1(dst, src, curCol * baseWidth, Ceil(tileWidth, c0Size_));
         } else if constexpr (INPUT_TYPE::format == CubeFormat::SCALAR) {
@@ -541,7 +504,7 @@ private:
         const LocalTensor<TransT>& dst, const LocalTensor<SrcT>& src, int32_t curRow, int32_t curCol,
         int32_t tileHeight, int32_t tileWidth, int32_t widthFactor)
     {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3002 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3002)
         auto baseHeight = MATMUL_MODULE(CopyCubeInParams)->template GetBaseHeight<IS_TRANS>();
         auto baseWidth = MATMUL_MODULE(CopyCubeInParams)->template GetBaseWidth<IS_TRANS>();
         auto orgHeight = MATMUL_MODULE(CopyCubeInParams)->template GetOrgHeight<IS_TRANS, IS_INTRA_BLOCK>();

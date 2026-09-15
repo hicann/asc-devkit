@@ -66,22 +66,9 @@ private:
     {
         // Check if the bias is batched or not
         if constexpr (!ToMatmulConfig(MM_CFG).isBiasBatch) {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-            uint16_t stride = 4 / sizeof(BiasT);
-            Nd2NzParams intriParams{static_cast<uint16_t>(dataLen), 1, 1, 1, 1, 1, 1, stride};
-            if constexpr (std::is_same_v<BiasT, half>) {
-                DataCopy(bias, srcTensor, intriParams);
-            } else {
-                if ((dataLen * sizeof(BiasT) % ONE_BLOCK_SIZE) != 0) {
-                    dataLen = CeilAlign(dataLen, ONE_BLOCK_SIZE / sizeof(BiasT));
-                }
-                DataCopy(bias, srcTensor, dataLen);
-            }
-#else
             Nd2NzParams intriParams{1, 1, static_cast<uint16_t>(dataLen), 0, static_cast<uint16_t>(dataLen), 1, 1, 0};
             // Not batched, only copy the data once
             DataCopy(bias, srcTensor, intriParams);
-#endif
         } else {
             // Batched, copy dataNum data by one instr
             auto dstStride = CeilAlign(dataLen, c0Size_);

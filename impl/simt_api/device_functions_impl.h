@@ -25,7 +25,7 @@
 #include "simt_api/device_types.h"
 #include "impl/simt_api/internal_functions_impl.h"
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 
 #define ASCRT_Y_OFFSET 1 // 1 : offset of y
 #define ASCRT_Z_OFFSET 2 // 2 : offset of z

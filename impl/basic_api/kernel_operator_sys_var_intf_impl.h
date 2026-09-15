@@ -36,17 +36,11 @@
 #include "dav_m310/kernel_operator_sys_var_impl.h"
 #elif __NPU_ARCH__ == 3510
 #include "dav_3510/kernel_operator_sys_var_impl.h"
-#elif (__NPU_ARCH__ == 5102)
-#include "dav_m510/kernel_operator_sys_var_impl.h"
-#elif __NPU_ARCH__ == 3003
-#include "dav_l300/kernel_operator_sys_var_impl.h"
-#elif __NPU_ARCH__ == 3113
-#include "dav_l311/kernel_operator_sys_var_impl.h"
 #elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 #include "dav_5161/kernel_operator_sys_var_impl.h"
 #endif
 
-#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510)
 #ifdef __SUPER_KERNEL_DYNAMIC_BLOCK_NUM__
 __BLOCK_LOCAL__ __inline__ uint32_t g_super_kernel_dynamic_block_num;
 #endif
@@ -97,7 +91,7 @@ __aicore__ inline void Trap() { TrapImpl(); }
 
 __aicore__ inline int64_t GetSystemCycle() { return GetSystemCycleImpl(); }
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
+#if __NPU_ARCH__ == 3510
 template <SpecialPurposeReg spr>
 __aicore__ inline int64_t GetSpr()
 {

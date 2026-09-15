@@ -115,13 +115,9 @@ INSTANTIATE_TEST_CASE_P(
         SiluTestParams{1024, sizeof(float), main_Silu_test<float>},
         SiluTestParams{2048, sizeof(float), main_Silu_test<float>},
         SiluTestParams{4096, sizeof(float), main_Silu_test<float>},
-        SiluTestParams{8192, sizeof(float), main_Silu_test<float>}
-#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)) // 用例超出kirinx90 9030 ub size
-        ,
+        SiluTestParams{8192, sizeof(float), main_Silu_test<float>},
         SiluTestParams{32768, sizeof(half), main_Silu_test<half>},
-        SiluTestParams{16384, sizeof(float), main_Silu_test<float>}
-#endif
-        ));
+        SiluTestParams{16384, sizeof(float), main_Silu_test<float>}));
 
 TEST_P(SiluTestSuite, SiluTestCase)
 {

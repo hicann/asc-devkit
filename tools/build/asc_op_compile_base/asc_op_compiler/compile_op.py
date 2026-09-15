@@ -533,9 +533,9 @@ def _gen_kernel_func_declare_head(
     dfx_generator = DFXSectionGenerator()
     func_params = []
     super_kernel_params = []
-    needs_ffts = (is_mix or is_single_and_using_hard_sync) and not (
-        CommonUtility.is_c310() or CommonUtility.is_m510()
-    )
+    needs_ffts = (
+        is_mix or is_single_and_using_hard_sync
+    ) and not CommonUtility.is_c310()
     workspace_idx = 0
     if needs_ffts:
         func_params.append("GM_ADDR ffts_addr")
@@ -973,7 +973,7 @@ def gen_kernel_fun(
         source += "    AscendC::WriteBackOverflow(overflowStatus);\n"
 
     if not global_var_storage.get_variable("ascendc_enable_super_kernel") and (
-        CommonUtility.is_c310() or CommonUtility.is_m510()
+        CommonUtility.is_c310()
     ):
         check_custom_dcci_end_false(compile_option_tuple)
 
@@ -1541,10 +1541,6 @@ def compile_kernel_and_meta(
             _compile_ascendc_cce_v220_with_kernel_type(
                 compile_info, compile_option_tuple, tiling_info
             )
-    elif CommonUtility.is_m510():
-        compile_info.code_channel = CORE_TYPE_CUBE
-        compile_info.hard_sync = False
-        _compile_ascendc_cce_m510(compile_info, compile_option_tuple, tiling_info)
     elif CommonUtility.is_regbase():
         _compile_ascendc_cce_regbase(compile_info, compile_option_tuple, tiling_info)
     elif CommonUtility.is_v200() and compile_info.no_set_kernel_type is False:
@@ -2170,7 +2166,7 @@ def compile_op(
         [] if compile_options is None else compile_options, []
     )
     need_impl_mode_macro = (
-        (CommonUtility.is_c310() or CommonUtility.is_m510())
+        CommonUtility.is_c310()
         and isinstance(op_info.impl_mode, str)
         and op_info.impl_mode != ""
     )
@@ -2278,7 +2274,7 @@ def compile_op_with_customized_config(
         [] if compile_options is None else compile_options, []
     )
     need_impl_mode_macro = (
-        (CommonUtility.is_c310() or CommonUtility.is_m510())
+        CommonUtility.is_c310()
         and isinstance(op_info.impl_mode, str)
         and op_info.impl_mode != ""
     )
@@ -3249,33 +3245,6 @@ def get_core_info(compile_info: CompileInfo):
         return arch, sub_core_type, optional_core
     else:
         raise Exception(f"invalid code_channel = {compile_info.code_channel}")
-
-
-def _compile_ascendc_cce_m510(
-    compile_info: CompileInfo, compile_option_tuple, tiling_info: TilingInfo
-):
-    """call cce-c to compile a AscendC.cce file, generate a binary file and a json file
-
-    Args:
-        compile_info (CompileInfo): compile info for generate .o and .json
-        compile_options (list): compile options for bisheng
-        tiling_info (TilingInfo): tiling info
-    """
-    sub_core_type = "AIC"
-    optional_core = "AiCore"
-    arch = None
-    set_soc_spec(optional_core)
-    tiling_key_list = call_bisheng_v220(
-        compile_info, compile_option_tuple, tiling_info, arch, compile_info.code_channel
-    )
-    _gen_non_mix_sub_json(compile_info, tiling_info, sub_core_type)
-    if not tiling_info.static_shape_flag:
-        _dynamic_kernel_list_to_json(
-            compile_info.kernel_name,
-            tiling_key_list,
-            compile_info.enable_deterministic,
-            compile_info.tiling_key_deterministic,
-        )
 
 
 def _compile_ascendc_cce_regbase(

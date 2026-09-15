@@ -73,11 +73,9 @@ uint32_t GetAscendAntiQuantMaxTmpSize(
     AscendC::TensorDataType inputDataType, AscendC::TensorDataType outputDataType)
 {
     CheckAntiQuantHostCommon("AscendAntiQuant", "GetAscendAntiQuantMaxTmpSize", srcShape, isTranspose, inputDataType);
-#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
     if (inputDataType == ge::DT_FLOAT4_E2M1 || inputDataType == ge::DT_FLOAT4_E1M2) {
         return GetAscendAntiQuantTmpSizeOfFp4(scaleShape, isTranspose);
     }
-#endif
     if (outputDataType == ge::DT_FLOAT16) {
         return 0;
     }
@@ -110,11 +108,9 @@ uint32_t GetAscendAntiQuantMinTmpSize(
     AscendC::TensorDataType inputDataType, AscendC::TensorDataType outputDataType)
 {
     CheckAntiQuantHostCommon("AscendAntiQuant", "GetAscendAntiQuantMinTmpSize", srcShape, isTranspose, inputDataType);
-#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
     if (inputDataType == ge::DT_FLOAT4_E2M1 || inputDataType == ge::DT_FLOAT4_E1M2) {
         return GetAscendAntiQuantTmpSizeOfFp4(scaleShape, isTranspose);
     }
-#endif
     if (outputDataType == ge::DT_FLOAT16) {
         return 0;
     }

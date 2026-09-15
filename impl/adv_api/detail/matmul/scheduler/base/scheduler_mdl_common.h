@@ -144,12 +144,6 @@ private:
         } else {
             kL1Stride = MATMUL_MODULE(KLoop)->GetBaseBlockShape() * BASE_MODULE::c0Size_;
         }
-#if __NPU_ARCH__ == 5102
-        int32_t kL1StrideB = CeilAlign(MATMUL_MODULE(KLoop)->GetBaseShape(), BASE_MODULE::c0SizeB_);
-        if constexpr (IsStaticPaddingEnable(MM_CFG)) {
-            kL1StrideB = MATMUL_MODULE(MatmulShapeTiling)->GetTiling().GetBaseK();
-        }
-#endif
         // start k inner loop
         MATMUL_MODULE(KLoop)->InnerStart();
         do {
@@ -163,11 +157,7 @@ private:
                 ComputeKDB(a1, b1, aL0Params, bL0Params, isATranspose, isBTranspose, !enPartialSum, true);
             }
             aL0Params.kAxisL1Offset += kL1Stride;
-#if __NPU_ARCH__ == 5102
-            bL0Params.kAxisL1Offset += kL1StrideB;
-#else
             bL0Params.kAxisL1Offset += kL1Stride;
-#endif
         } while (MATMUL_MODULE(KLoop)->InnerNext());
         if constexpr (MatmulFeatureTrait<MM_CFG>().IsSupportMNL0DB()) {
             MATMUL_MODULE(BiasScheduler)->Free(bias);
@@ -217,9 +207,6 @@ private:
         BASE_MODULE::SplitPrepare(enPartialSum, isATranspose, isBTranspose, aL0Params, bL0Params, sL0CInit, sL0CLast);
         // prepare for Split
         int32_t kL1Stride = MATMUL_MODULE(KLoop)->GetBaseBlockShape() * BASE_MODULE::c0Size_;
-#if __NPU_ARCH__ == 5102
-        int32_t kL1StrideB = CeilAlign(MATMUL_MODULE(KLoop)->GetBaseShape(), BASE_MODULE::c0SizeB_);
-#endif
         // start k inner loop
         MATMUL_MODULE(KLoop)->InnerStart();
         do {
@@ -233,11 +220,7 @@ private:
                 ComputeKDB(a1, b1, aL0Params, bL0Params, isATranspose, isBTranspose, sL0CInit, sL0CLast);
             }
             aL0Params.kAxisL1Offset += kL1Stride;
-#if __NPU_ARCH__ == 5102
-            bL0Params.kAxisL1Offset += kL1StrideB;
-#else
             bL0Params.kAxisL1Offset += kL1Stride;
-#endif
         } while (MATMUL_MODULE(KLoop)->InnerNext());
     }
 
@@ -343,11 +326,7 @@ private:
                                        MATMUL_MODULE(MatmulShapeInfo)->GetOrgKb() :
                                        MATMUL_MODULE(MatmulShapeTiling)->GetTiling().GetSingleCoreK();
         } else {
-#if __NPU_ARCH__ == 5102
-            bL0Params.kAxisL1Len = CeilAlign(MATMUL_MODULE(KLoop)->GetTileShapeB(), BASE_MODULE::c0Size_);
-#else
             bL0Params.kAxisL1Len = MATMUL_MODULE(KLoop)->GetTileBlockShapeB() * BASE_MODULE::c0Size_;
-#endif
         }
         MATMUL_MODULE(LoadToA2)->Prepare(isATranspose, aL0Params.kAxisL1Len, aL0Params.axisL1Len);
         MATMUL_MODULE(LoadToB2)->Prepare(isBTranspose, bL0Params.kAxisL1Len);

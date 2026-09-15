@@ -49,7 +49,7 @@ extern "C" __global__ __aicore__ void KernelTestDuplicate3()
     AscendC::Duplicate(dst, scalarValue, count);
 }
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 // __aicore__ inline void Duplicate(const LocalTensor<T>& dst, const LocalTensor<T>& src, const int32_t& count);
 extern "C" __global__ __aicore__ void KernelTestDuplicate4()
 {

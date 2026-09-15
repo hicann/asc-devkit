@@ -22,7 +22,7 @@
 #ifndef IMPL_API_CHECK_KERNEL_CHECK_MATH_WHERE_WHERE_CHECK_H_
 #define IMPL_API_CHECK_KERNEL_CHECK_MATH_WHERE_WHERE_CHECK_H_
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "where_check_aicore.h"
 #endif
 
@@ -33,7 +33,7 @@ __aicore__ inline void CheckFuncWhere(
     __gm__ const char* name, const LocalTensor<T>& dst, const U& src0, const S& src1, const LocalTensor<V>& condition,
     const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     CheckFuncClassWhere<T, U, S, V> checkFun(name);
     checkFun.VerifyingParameters(dst, src0, src1, condition, count);
 #endif

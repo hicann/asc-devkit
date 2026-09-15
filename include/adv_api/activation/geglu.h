@@ -26,8 +26,7 @@
 #define LIB_ACTIVATION_GEGLU_H
 
 #include "kernel_tensor.h"
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #include "../../../impl/adv_api/detail/activation/geglu/geglu_3510_impl.h"
 #else
 #include "../../../impl/adv_api/detail/activation/geglu/geglu_common_impl.h"

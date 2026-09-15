@@ -28,13 +28,7 @@
 #include "../../../../../include/adv_api/sort/sort_utils.h"
 
 namespace AscendC {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003)
-constexpr auto singleSortElementCount = singleSortElementCountL300;
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3113)
-constexpr auto singleSortElementCount = singleSortElementCountL311;
-#else
 constexpr auto singleSortElementCount = singleSortElementCountArch3510;
-#endif
 
 namespace Reg {
 namespace internal {
@@ -486,15 +480,15 @@ __simd_vf__ inline void UpdateValueAndIndexByLocalIndex(
                 (__ubuf__ uint32_t*)(currSortedIndex + 2 * i * GetVecLen() / sizeof(uint16_t)));
             GatherAndStoreB64Elements(
                 localOffset1, maskHighP0, (__ubuf__ uint32_t*)prevSortedIndex,
-                (__ubuf__
-                     uint32_t*)(currSortedIndex + 2 * i * GetVecLen() / sizeof(uint16_t) + GetVecLen() / sizeof(uint32_t)));
+                (__ubuf__ uint32_t*)(currSortedIndex + 2 * i * GetVecLen() / sizeof(uint16_t) +
+                                     GetVecLen() / sizeof(uint32_t)));
             GatherAndStoreB64Elements(
                 localOffset2, maskLowP1, (__ubuf__ uint32_t*)prevSortedIndex,
                 (__ubuf__ uint32_t*)(currSortedIndex + (2 * i + 1) * GetVecLen() / sizeof(uint16_t)));
             GatherAndStoreB64Elements(
                 localOffset3, maskHighP1, (__ubuf__ uint32_t*)prevSortedIndex,
-                (__ubuf__
-                     uint32_t*)(currSortedIndex + (2 * i + 1) * GetVecLen() / sizeof(uint16_t) + GetVecLen() / sizeof(uint32_t)));
+                (__ubuf__ uint32_t*)(currSortedIndex + (2 * i + 1) * GetVecLen() / sizeof(uint16_t) +
+                                     GetVecLen() / sizeof(uint32_t)));
         } else {
             RegTensor<uint32_t> vecIndex0;
             RegTensor<uint32_t> vecIndex1;
@@ -546,8 +540,8 @@ __simd_vf__ inline void UpdateValueAndIndexByLocalIndex(
                 (__ubuf__ uint32_t*)(currSortedIndex + i * GetVecLen() / sizeof(uint16_t)));
             GatherAndStoreB64Elements(
                 localOffset1, maskHigh, (__ubuf__ uint32_t*)prevSortedIndex,
-                (__ubuf__
-                     uint32_t*)(currSortedIndex + i * GetVecLen() / sizeof(uint16_t) + GetVecLen() / sizeof(uint32_t)));
+                (__ubuf__ uint32_t*)(currSortedIndex + i * GetVecLen() / sizeof(uint16_t) +
+                                     GetVecLen() / sizeof(uint32_t)));
         } else {
             RegTensor<uint32_t> indexU32P0;
             RegTensor<uint32_t> indexU32P1;
@@ -1357,7 +1351,7 @@ __aicore__ inline void SortImpl(
 }
 } // namespace internal
 } // namespace Reg
-};     // namespace AscendC
+}; // namespace AscendC
 #endif // IMPL_SORT_SORT_SORT_IMPL_H
 
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_SORT_SORT_SORT_IMPL_H__)

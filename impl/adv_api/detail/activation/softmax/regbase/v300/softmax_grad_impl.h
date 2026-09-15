@@ -74,7 +74,7 @@ __aicore__ inline void SoftmaxGradFrontGenericNDImpl(
     ReduceSumImpl(dstTensor[offset2], srcBuffer, reduceBuffer, reduceSumParam);
 }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 __aicore__ inline void SoftmaxGradFrontGenericNDImpl(
     const LocalTensor<float>& dstTensor, const LocalTensor<float>& gradTensor, const LocalTensor<float>& srcTensor,
     const LocalTensor<float>& workLocal, const SoftMaxTiling& tiling, const LastAxisShapeND& originalSrcShape)
@@ -120,7 +120,7 @@ __aicore__ inline void SoftmaxGradFrontNDImpl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& gradTensor, const LocalTensor<T>& srcTensor,
     const LocalTensor<float>& workLocal, const SoftMaxTiling& tiling, const LastAxisShapeND& originalSrcShape)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     SoftmaxGradFrontGenericNDImpl(dstTensor, gradTensor, srcTensor, workLocal, tiling, originalSrcShape);
 #else
     ReduceLastND reduceSumParam = {tiling.splitM, originalSrcShape.k, tiling.splitM,

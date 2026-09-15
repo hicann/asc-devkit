@@ -47,7 +47,6 @@ constexpr uint16_t NUM_SIXTEEN = 16;
 constexpr uint16_t NUM_THIRTYTWO = 32;
 constexpr uint16_t NUM_FORTYEIGHT = 48;
 
-#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
 /**
  * @class MatmulClientBase
  *
@@ -330,7 +329,7 @@ public:
     __aicore__ inline void SetTensorA(const LocalTensor<SrcAT>& leftMatrix, bool isTransposeA = false)
     {
         if constexpr (ToMatmulConfig(MM_CFG).enableMixDualMaster) {
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
             ASSERT("SetTensorA localTensor not support when enableMixDualMaster is enabled");
 #endif
             return;
@@ -384,7 +383,7 @@ public:
     __aicore__ inline void SetTensorB(const LocalTensor<SrcBT>& rightMatrix, bool isTransposeB = false)
     {
         if constexpr (ToMatmulConfig(MM_CFG).enableMixDualMaster) {
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
             ASSERT("SetTensorB localTensor not support when enableMixDualMaster is enabled");
 #endif
             return;
@@ -431,7 +430,7 @@ public:
     __aicore__ inline void SetBias(const LocalTensor<BiasT>& inputBias)
     {
         if constexpr (ToMatmulConfig(MM_CFG).enableMixDualMaster) {
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
             ASSERT("SetBias localTensor not support when enableMixDualMaster is enabled");
 #endif
             return;
@@ -986,7 +985,7 @@ public:
             KERNEL_LOG(KERNEL_ERROR, "IterateAll is not supported for PartialOutput.");
         });
         if constexpr (ToMatmulConfig(MM_CFG).enableMixDualMaster) {
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
             ASSERT("IterateAll localTensor not support when enableMixDualMaster is enabled");
 #endif
             return;
@@ -3151,10 +3150,6 @@ class MatmulClient : public MatmulClientBase<A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE, 
 public:
     __aicore__ inline MatmulClient() {}
 };
-#else
-// Kirin MatmulClient
-#include "../../../impl/adv_api/detail/matmul/kfc/matmul_client_impl_aicore.h"
-#endif
 } // namespace AscendC
 #endif
 

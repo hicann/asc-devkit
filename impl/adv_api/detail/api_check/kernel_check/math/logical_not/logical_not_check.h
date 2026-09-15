@@ -22,7 +22,7 @@
 #ifndef IMPL_API_CHECK_KERNEL_CHECK_MATH_LOGICAL_NOT_LOGICAL_NOT_CHECK_H_
 #define IMPL_API_CHECK_KERNEL_CHECK_MATH_LOGICAL_NOT_LOGICAL_NOT_CHECK_H_
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "logical_not_check_common.h"
 #endif
 
@@ -32,7 +32,7 @@ template <typename T, typename U, bool isReuseSource>
 __aicore__ inline void CheckFuncLogicalNot(
     __gm__ const char* name, const LocalTensor<T>& dst, const LocalTensor<U>& src, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     CheckFuncClassLogicalNot<T, U, isReuseSource> checkFun(name);
     checkFun.VerifyingParameters(dst, src, count);
 #endif

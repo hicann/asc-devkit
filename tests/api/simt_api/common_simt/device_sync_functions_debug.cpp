@@ -17,7 +17,7 @@
 #include "stub_def.h"
 #include "kernel_simt_cpu.h"
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 void __sync_workitems() { AscendC::Simt::Sync(); }
 
 void __threadfence() {}

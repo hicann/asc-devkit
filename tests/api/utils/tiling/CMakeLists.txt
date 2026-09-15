@@ -67,11 +67,6 @@ foreach(product_type ${PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_MICRO>:__NPU_ARCH__=3510>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_SIMT>:__NPU_ARCH__=3510>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIC>:__NPU_ARCH__=3510>
-        $<$<STREQUAL:${product_type},mc62cm12aa_AIC>:__NPU_ARCH__=5102>
-        $<$<STREQUAL:${product_type},mc62cm12aa_BASIC>:__NPU_ARCH__=5102>
-        $<$<STREQUAL:${product_type},mc62cm12aa_FRAMEWORK>:__NPU_ARCH__=5102>
-        $<$<STREQUAL:${product_type},mc62cm12aa_MICRO>:__NPU_ARCH__=5102>
-        $<$<STREQUAL:${product_type},mc62cm12aa_SIMT>:__NPU_ARCH__=5102>
     )
 
     target_include_directories(ascendc_ut_tiling_utils_${product_type} PRIVATE

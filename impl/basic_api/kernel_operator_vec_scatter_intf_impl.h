@@ -35,12 +35,6 @@
 #include "dav_m310/kernel_operator_vec_scatter_impl.h"
 #elif __NPU_ARCH__ == 3510
 #include "dav_3510/kernel_operator_vec_scatter_impl.h"
-#elif (__NPU_ARCH__ == 5102)
-#include "dav_m510/kernel_operator_vec_scatter_impl.h"
-#elif (__NPU_ARCH__ == 3003)
-#include "dav_l300/kernel_operator_vec_scatter_impl.h"
-#elif (__NPU_ARCH__ == 3113)
-#include "dav_l311/kernel_operator_vec_scatter_impl.h"
 #endif
 
 #pragma begin_pipe(V)
@@ -49,7 +43,7 @@ template <typename T>
 __aicore__ inline void ScatterCheck()
 {
     using PrimType = PrimT<T>;
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
     ASCENDC_ASSERT(
         (SupportType<
             PrimType, uint8_t, int8_t, half, bfloat16_t, uint16_t, int16_t, float, uint32_t, int32_t, uint64_t,
@@ -158,7 +152,7 @@ __aicore__ inline void Scatter(
     using PrimType = PrimT<T>;
     ScatterCheck<T>();
     uint32_t vectorRegWidth = 256;
-#if (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510)
     ScatterImpl(
         (__ubuf__ PrimType*)dst.GetPhyAddr(), (__ubuf__ PrimType*)src.GetPhyAddr(),
         (__ubuf__ uint32_t*)dstOffset.GetPhyAddr(), dstBaseAddr, count);
@@ -169,24 +163,8 @@ __aicore__ inline void Scatter(
     } else {
         elementCountSingleRepeat = 64;
     }
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
-    vectorRegWidth = VECTOR_REG_WIDTH;
-#endif
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
-    elementCountSingleRepeat = vectorRegWidth / sizeof(T);
-    uint32_t repeatStride = vectorRegWidth / ONE_BLK_SIZE;
-#endif
     const uint32_t elementCountTail = count % elementCountSingleRepeat;
     const uint8_t repeatTime = count / elementCountSingleRepeat;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
-    if (repeatTime > 0) {
-        Scatter(dst, src, dstOffset, dstBaseAddr, (uint64_t)elementCountSingleRepeat, repeatTime, repeatStride);
-    }
-    if (elementCountTail > 0) {
-        const uint32_t offset = count - elementCountTail;
-        Scatter(dst, src[offset], dstOffset[offset], dstBaseAddr, (uint64_t)elementCountTail, 1, repeatStride);
-    }
-#else
     if (repeatTime > 0) {
         Scatter(
             dst, src, dstOffset, dstBaseAddr, static_cast<uint64_t>(elementCountSingleRepeat), repeatTime,
@@ -198,7 +176,6 @@ __aicore__ inline void Scatter(
             dst, src[offset], dstOffset[offset], dstBaseAddr, static_cast<uint64_t>(elementCountTail), 1,
             DEFAULT_REPEAT_STRIDE);
     }
-#endif
 #endif
 }
 } // namespace AscendC

@@ -199,7 +199,7 @@ C API使用独立的哨兵命名空间：
 3. **架构条件include**
 
    ```cpp
-   #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+   #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
    #include "reg_compute/kernel_reg_compute_utils.h"
    #endif
    ```
@@ -318,7 +318,7 @@ namespace AscendC {
 ### 架构条件宏
 
 ```cpp
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     // 架构特定代码
 #endif
 

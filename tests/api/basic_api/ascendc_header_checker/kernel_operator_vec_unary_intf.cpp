@@ -452,7 +452,7 @@ extern "C" __global__ __aicore__ void KernelTestNot3()
     AscendC::Not(dst, src, count);
 }
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 // __aicore__ inline void Neg(const LocalTensor<T> &dst, const LocalTensor<T> &src, const uint32_t count);
 extern "C" __global__ __aicore__ void KernelTestNeg1()
 {

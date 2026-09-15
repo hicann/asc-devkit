@@ -30,7 +30,7 @@
 #include "impl/simt_api/internal_functions_impl.h"
 #include "impl/simt_api/math_functions_impl.h"
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 
 constexpr uint32_t __INTERNAL_HALF_INF = 0x7C00;
 constexpr uint32_t __INTERNAL_HALF_NEG_INF = 0xFC00;

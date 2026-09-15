@@ -127,7 +127,7 @@ __aicore__ inline void DuplicateLastDimImpl(
     }
 }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510)
 __aicore__ inline void BrcbLastDimImpl(
     const LocalTensor<float>& dst, const LocalTensor<float>& src, const uint32_t bsLength, const uint32_t hLength)
 {
@@ -171,7 +171,7 @@ __aicore__ inline void BrcbLastDimImpl(
 __aicore__ inline void BroadcastLastDimImpl(
     const LocalTensor<float>& dst, const LocalTensor<float>& src, const uint32_t dstSize, const uint32_t srcSize)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510)
     BrcbLastDimImpl(dst, src, srcSize, dstSize / srcSize);
 #else
     DuplicateLastDimImpl(dst, src, srcSize, dstSize / srcSize);

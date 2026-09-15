@@ -14,7 +14,7 @@
 #include "kernel_operator_atomic_intf.h"
 #endif
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3510))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 
 // __aicore__ inline T AtomicAdd(__gm__ T *address, T value);
 extern "C" __global__ __aicore__ void KernelTestAtomicAdd1()

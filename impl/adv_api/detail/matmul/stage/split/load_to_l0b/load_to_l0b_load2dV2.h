@@ -128,23 +128,7 @@ private:
                 LoadData(dst[dstOffset], bMatrix, loadDataParams);
                 dstOffset += dstAddrStride;
             }
-        }
-#if __NPU_ARCH__ == 5102
-        else if constexpr (IsSupportB4<B_T>()) {
-            uint16_t l0BLoop = loadDataParams.mStep / M_STEP_MIN_VAL_B4;
-            uint64_t dstOffset = 0;
-            uint64_t dstAddrStride = CeilAlign(madN, ALIGN_NUM) * ONE_BLK_SIZE * 2;
-            loadDataParams.mStep = M_STEP_MIN_VAL_B4;
-            uint16_t oriMstartPos = loadDataParams.mStartPosition;
-            // K axis is m direction, and M axis is k direction in load2dv2 intrin
-            for (uint16_t idx = 0; idx < l0BLoop; ++idx) {
-                loadDataParams.mStartPosition = oriMstartPos + M_STEP_MIN_VAL_B4 * idx;
-                LoadData(dst[dstOffset], bMatrix, loadDataParams);
-                dstOffset += dstAddrStride;
-            }
-        }
-#endif
-        else if constexpr (IsSameType<B_T, float>::value) {
+        } else if constexpr (IsSameType<B_T, float>::value) {
             // in case of mdl && basek=8, the unit of mStartPosition is 16, so don't use it
             loadDataParams.mStartPosition = 0;
             loadDataParams.kStartPosition = 0;

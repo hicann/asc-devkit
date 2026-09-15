@@ -17,7 +17,7 @@
 #endif
 
 #include "simt_api/device_types.h"
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 #include "impl/utils/debug/asc_printf_simt_impl.h"
 #endif
 #include "utils/debug/asc_assert.h"
@@ -30,12 +30,12 @@
 #endif
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 
 template <auto funcPtr, typename... Args>
 __aicore__ inline void asc_vf_call(dim3 threadNums, Args&&... args)
 {
-#if (defined(__NPU_ARCH__) && __NPU_ARCH__ == 5102) || defined(SPLIT_CORE_VEC) || defined(ASCENDC_CPU_DEBUG)
+#if defined(SPLIT_CORE_VEC) || defined(ASCENDC_CPU_DEBUG)
     cce::async_invoke<funcPtr>(threadNums, args...);
 #endif
 }

@@ -67,7 +67,7 @@ public:
 
     __aicore__ inline QuantMode_t GetMatmulQuantMode() { return quantMode_; }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     __aicore__ inline bool IsQuantSenario() { return isPerChannel_ || isPerTensor_; }
 #endif
 

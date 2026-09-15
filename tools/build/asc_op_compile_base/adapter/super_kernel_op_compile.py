@@ -428,7 +428,7 @@ def compile_super_kernel(kernel_info, compile_log_path, enable_features: dict = 
         compile_option_tuple.mllvm_options.append("--cce-long-call=true")
         compile_option_tuple.mllvm_options.append("-mllvm")
         compile_option_tuple.mllvm_options.append("-cce-aicore-long-call")
-    if CommonUtility.is_c310() or CommonUtility.is_m510():
+    if CommonUtility.is_c310():
         compile_option_tuple.compile_options.append("--cce-no-dcache-flush")
     if kernel_info["timestamp_option"]:
         compile_options.append(

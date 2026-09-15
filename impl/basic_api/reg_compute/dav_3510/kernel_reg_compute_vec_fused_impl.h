@@ -85,15 +85,9 @@ __simd_callee__ inline void FusedExpSubImpl(S& dstReg, V& srcReg0, V& srcReg1, M
     using ActualU = typename V::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(Std::is_same_v<U, DefaultType> || Std::is_same_v<U, ActualU>, "U type is not correct!");
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    static_assert(
-        SupportType<Tuple<ActualT, ActualU>, Tuple<half, half>, Tuple<float, float>>(),
-        "current data type is not supported on current device!");
-#else
     static_assert(
         SupportType<Tuple<ActualT, ActualU>, Tuple<float, float>, Tuple<float, half>>(),
         "current data type is not supported on current device!");
-#endif
     static_assert(
         SupportEnum<layout, RegLayout::ZERO, RegLayout::ONE>(),
         "current ExpSub api only supported RegLayout ZERO, ONE on current device!");

@@ -116,7 +116,7 @@ private:
                 { KERNEL_LOG(KERNEL_ERROR, "if split N when copy cube out, NZ is not supported"); });
             CopyOutNZ2NZ<enSequentialWrite, T, isIntraBlock>(
                 dst, co1Local, curRow, curCol, baseHeight, baseWidth, baseBlockHeight, baseBlockWidth);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
         } else if constexpr (C_TYPE::format == CubeFormat::COLUMN_MAJOR) {
             CopyOutNZ2DN<enSequentialWrite, T, isIntraBlock>(
                 dst, co1Local, curRow, curCol, baseHeight, baseWidth, baseBlockHeight, baseBlockWidth);
@@ -244,15 +244,9 @@ private:
                 fixpipe.SetMcgShfMode(FIXPIPE_MODE);
             }
         }
-#if __NPU_ARCH__ == 5102
-        if constexpr (IsSameTypeV<typename A_TYPE::T, half> && IsSameTypeV<typename B_TYPE::T, half>) {
-            uint8_t fixShiftValue = 58 - MATMUL_CONST_PARAM_VAR.fixShiftValue;
-            fixpipe.SetFixShiftValue(fixShiftValue);
-        }
-#endif
     }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     template <bool enSequentialWrite, class T, bool isIntraBlock = false>
     __aicore__ inline void CopyOutNZ2NZ(
         const T& dst, const LocalTensor<SrcT>& co1Local, int32_t curRow, int32_t curCol, int32_t baseHeight,
@@ -399,11 +393,7 @@ private:
                         GetOrgM<isIntraBlock>()) +
                     static_cast<int64_t>(curRow * MATMUL_MODULE(MatmulShapeTiling)->GetTiling().GetBaseM()) *
                         DST_C0SIZE;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-                stride = static_cast<uint32_t>(GetOrgM<isIntraBlock>() * DST_C0SIZE);
-#else
                 stride = static_cast<uint32_t>(GetOrgM<isIntraBlock>() * DST_C0SIZE * sizeof(DstT) / ONE_BLK_SIZE);
-#endif
             } else {
                 dstOffset =
                     static_cast<int64_t>(

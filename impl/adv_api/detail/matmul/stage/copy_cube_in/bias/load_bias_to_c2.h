@@ -80,31 +80,11 @@ public:
             if constexpr (GetBitSize<L0cT>() == GetBitSize<BiasT>()) {
                 lenBurst = CeilAlign(lenBurst, DOUBLE_NUM);
             }
-#if __NPU_ARCH__ == 5102
-            DataCopyParams biasParam{1, lenBurst, 0, 0};
-            if constexpr (IsTypeOneOfV<BiasT, half, bfloat16_t, float>) {
-                uint8_t fixShiftValue = (58 - MATMUL_CONST_PARAM_VAR.fixShiftValue);
-                biasParam.fixShiftVal = fixShiftValue;
-            }
-            DataCopy(biasC2, bias, biasParam);
-#else
             DataCopy(biasC2, bias, {1, lenBurst, 0, 0});
-#endif
             return;
         }
         uint16_t lenBurst = (dataLen * oneDataLen * 2 + 63) / 64;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-        if constexpr (std::is_same_v<BiasT, half>) {
-            DataCopy(biasC2, bias, {1, lenBurst, 0, 0});
-        } else if constexpr (!std::is_same_v<BiasT, float>) {
-            if ((dataLen * sizeof(BiasT) % ONE_BLOCK_SIZE) != 0) {
-                dataLen = CeilAlign(dataLen, ONE_BLOCK_SIZE / sizeof(BiasT));
-            }
-            DataCopy(biasC2, bias, dataLen);
-        }
-#else
         DataCopy(biasC2, bias, {1, lenBurst, 0, 0});
-#endif
     }
 };
 

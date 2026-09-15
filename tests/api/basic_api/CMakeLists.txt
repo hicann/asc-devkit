@@ -135,29 +135,6 @@ file(GLOB ASCENDC_TEST_ascend950pr_9599_AIC_CASE_SRC_FILES
     ascendc_case_ascend950pr_9599/ascendc_case_ascend950pr_9599_aic/*.cpp
 )
 
-# mc62cm12aa basic test cases
-file(GLOB ASCENDC_TEST_mc62cm12aa_BASIC_CASE_SRC_FILES
-    ascendc_case_common/test_kernel_pop_stack_buffer.cpp
-    ascendc_case_common/test_kernel_tensor.cpp
-    ascendc_case_common/test_type_check.cpp
-    ascendc_case_mc62cm12aa/ascendc_case_mc62cm12aa_basic/*.cpp
-)
-
-# mc62cm12aa framework test cases
-file(GLOB ASCENDC_TEST_mc62cm12aa_FRAMEWORK_CASE_SRC_FILES
-    ascendc_case_common/test_kernel_pop_stack_buffer.cpp
-    ascendc_case_common/test_kernel_tensor.cpp
-    ascendc_case_common/test_type_check.cpp
-    ascendc_case_mc62cm12aa/ascendc_case_mc62cm12aa_framework/*.cpp
-)
-
-# mc62cm12aa aic test cases
-file(GLOB ASCENDC_TEST_mc62cm12aa_AIC_CASE_SRC_FILES
-    ascendc_case_common/test_kernel_tensor.cpp
-    ascendc_case_common/test_type_check.cpp
-    ascendc_case_mc62cm12aa/ascendc_case_mc62cm12aa_aic/*.cpp
-)
-
 foreach(product_type ${BASIC_UT_PRODUCT_TYPE_LIST})
     add_executable(ascendc_ut_basic_api_${product_type}
         ${ASCENDC_DIR}/tests/main_global.cpp
@@ -176,9 +153,6 @@ foreach(product_type ${BASIC_UT_PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIC>:../common/k3_pvwrap.cpp>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_BASIC>:../common/k3_pvwrap.cpp>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_FRAMEWORK>:../common/k3_pvwrap.cpp>
-        $<$<STREQUAL:${product_type},mc62cm12aa_AIC>:../common/k3_pvwrap.cpp>
-        $<$<STREQUAL:${product_type},mc62cm12aa_BASIC>:../common/k3_pvwrap.cpp>
-        $<$<STREQUAL:${product_type},mc62cm12aa_FRAMEWORK>:../common/k3_pvwrap.cpp>
         ${ASCENDC_TEST_${product_type}_CASE_SRC_FILES}
         $<$<STREQUAL:${product_type},ascend910B1_AIV_MSTX>:${ASCENDC_TEST_ascend910B1_AIV_MSTX_CASE_SRC_FILES}>
     )
@@ -198,9 +172,6 @@ foreach(product_type ${BASIC_UT_PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIC>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_CUBE__>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_BASIC>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_FRAMEWORK>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
-        $<$<STREQUAL:${product_type},mc62cm12aa_AIC>:__NPU_ARCH__=5102>
-        $<$<STREQUAL:${product_type},mc62cm12aa_BASIC>:__NPU_ARCH__=5102>
-        $<$<STREQUAL:${product_type},mc62cm12aa_FRAMEWORK>:__NPU_ARCH__=5102>
         __disable_kernel_type_autoinfer__=
         __callee__=
     )
@@ -231,9 +202,6 @@ foreach(product_type ${BASIC_UT_PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIC>:tikicpulib::ascend950pr_9599>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_BASIC>:tikicpulib::ascend950pr_9599>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV_FRAMEWORK>:tikicpulib::ascend950pr_9599>
-        $<$<STREQUAL:${product_type},mc62cm12aa_AIC>:tikicpulib::mc62cm12aa>
-        $<$<STREQUAL:${product_type},mc62cm12aa_BASIC>:tikicpulib::mc62cm12aa>
-        $<$<STREQUAL:${product_type},mc62cm12aa_FRAMEWORK>:tikicpulib::mc62cm12aa>
         -Wl,--no-as-needed
         error_manager
         mmpa

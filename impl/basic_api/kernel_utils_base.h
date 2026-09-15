@@ -33,7 +33,7 @@
 #include "kernel_scalar_convert.h"
 
 namespace AscendC {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 namespace Internal {
 __BLOCK_LOCAL__ extern __inline__ half g_deqValue;
 }
@@ -44,17 +44,7 @@ public:
 
     __aicore__ static inline int32_t GetC0Size() { return DEFAULT_C0_SIZE; }
 
-    __aicore__ static inline void InitCoupledArchSpr()
-    {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-        set_padding(static_cast<uint64_t>(0));
-        set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
-        uint64_t loopSizePara = (1uL << 21) | 1uL;
-        set_loop_size_ubtoout(loopSizePara);
-        set_loop_size_outtoub(loopSizePara);
-        set_st_atomic_cfg(0b00100100);
-#endif
-    }
+    __aicore__ static inline void InitCoupledArchSpr() {}
 
     __aicore__ static inline void InitSplitArchSpr()
     {
@@ -73,8 +63,8 @@ public:
 
     __aicore__ static inline void InitSocStateImpl()
     {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 #else
         set_atomic_none();
 #endif
@@ -86,17 +76,13 @@ public:
         } else {
             set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
         }
-#elif (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#elif (__NPU_ARCH__ == 3510)
         set_mask_norm();
         Internal::g_deqValue = static_cast<half>(1);
         uint64_t prevCtrl = get_ctrl() & 0x1000000000000;
         uint64_t val = 0x1000000000000008 | prevCtrl;
         set_ctrl(val);
-#if (__NPU_ARCH__ == 5102)
-        InitCoupledArchSpr();
-#else
         InitSplitArchSpr();
-#endif
 #elif __NPU_ARCH__ == 3002
         set_padding(static_cast<uint64_t>(0));
 #endif
@@ -119,7 +105,7 @@ public:
             return;
         }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
         if (sizeof(T) >= sizeof(int32_t)) {
             ASCENDC_ASSERT(
@@ -145,12 +131,6 @@ public:
         int32_t typeLen = 0;
         if constexpr (IsSameType<T, int4b_t>::value) {
             typeLen = DEFAULT_BLOCK_SIZE * INT4_TWO;
-#if (__NPU_ARCH__ == 5102)
-        } else if constexpr (IsSameType<T, int2b_t>::value) {
-            typeLen = DEFAULT_BLOCK_SIZE * INT2_FOUR;
-        } else if constexpr (IsSameType<T, uint1b_t>::value) {
-            typeLen = DEFAULT_BLOCK_SIZE * INT1_EIGHT;
-#endif
         } else {
             typeLen = DEFAULT_BLOCK_SIZE / sizeof(T);
         }
@@ -183,10 +163,9 @@ public:
         set_mask_norm();
     }
 
-#if defined(__NPU_ARCH__) &&                                                                                 \
-    ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || \
-     (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || \
-     (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || \
+     __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     __aicore__ static inline void SetOverflow(uint64_t ctrlValue)
     {
         // set CTRL[48] is 1 --- inf/nan mode
@@ -272,10 +251,9 @@ public:
         (void)addr;
     }
 
-#if defined(__NPU_ARCH__) &&                                                                                 \
-    ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || \
-     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || \
-     (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || \
+     __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     template <typename T>
     __aicore__ static inline __fbuf__ T* GetTemporaryFbBufferAddr(const int32_t bufferOffset, const int32_t bufferSize)
     {
@@ -356,8 +334,8 @@ public:
         return gmLen;
     }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+                              __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     __aicore__ static inline uint64_t GetGMLen(const uint64_t& srcEleSize, const Dn2NzParams& intriParams)
     {
         uint64_t gmLen = (intriParams.dnNum - 1) * intriParams.srcDnMatrixStride * srcEleSize +
@@ -423,7 +401,7 @@ public:
                 if (oriGmAddr >= l2Cacheoffset) {
                     oriGmAddr -= l2Cacheoffset;
                 }
-#else  // ifndef __NPU_DEVICE__
+#else
                 if (oriGmAddr >= g_opSystemRunCfg.l2Cacheoffset) {
                     oriGmAddr -= g_opSystemRunCfg.l2Cacheoffset;
                 }
@@ -435,10 +413,9 @@ public:
 #endif // L2_CACHE_HINT
         constexpr uint64_t errCode = 0X5A5A0001;
         if (status) {
-#if defined(__NPU_ARCH__) &&                                                                                 \
-    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || \
-     (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || \
-     (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || \
+     __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
             trap();
 #else
             trap(errCode);
@@ -477,8 +454,8 @@ public:
         CheckGmMemOverflow(gmAddr, isSrc, gmLen);
     }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+                              __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     template <typename T>
     __aicore__ static inline void CheckGmMemOverflowDn2Nz(
         __gm__ T* gmAddr, __gm__ uint8_t* workSpace, const bool& isSrc, const Dn2NzParams& intriParams)
@@ -488,7 +465,7 @@ public:
         uint64_t gmLen = GetGMLen(srcEleSize, intriParams);
         CheckGmMemOverflow(gmAddr, isSrc, gmLen);
     }
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 3003 && __NPU_ARCH__ != 3113)
+#if defined(__NPU_ARCH__)
     template <typename T, uint8_t dim>
     __aicore__ static inline void CheckGmMemOverflowNddma(__gm__ T* gmAddr, const MultiCopyLoopInfo<dim>& params)
     {

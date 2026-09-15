@@ -180,7 +180,7 @@ __simd_vf__ inline void VFDropOutByteModeCalc(
     Reg::RegTensor<uint8_t> vMaskReg;
     Reg::RegTensor<half> vFP16Reg;
     Reg::RegTensor<float> vFP32Reg;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 3003) && (__NPU_ARCH__ != 3113)
+#if defined(__NPU_ARCH__)
     Reg::RegTensor<bfloat16_t> vBF16Reg;
 #endif
     Reg::MaskReg maskReg;
@@ -194,7 +194,7 @@ __simd_vf__ inline void VFDropOutByteModeCalc(
         if constexpr (sizeof(T) == 2) {
             Reg::LoadAlign<uint8_t, Reg::LoadDist::DIST_UNPACK_B8>(vMaskReg, maskUb + i * repeatElm);
             Reg::Cast<half, uint8_t, layoutZMrgZ>(vFP16Reg, vMaskReg, maskReg);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 3003) && (__NPU_ARCH__ != 3113)
+#if defined(__NPU_ARCH__)
             if constexpr (SupportType<T, half>()) {
                 Reg::Mul(vDstReg, vFP16Reg, vSrcReg, maskReg);
             } else {
@@ -225,7 +225,7 @@ __simd_vf__ inline void VFDropOutByteModeCalcInfo(
     Reg::RegTensor<uint8_t> vMaskReg;
     Reg::RegTensor<half> vFP16Reg;
     Reg::RegTensor<float> vFP32Reg;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 3003) && (__NPU_ARCH__ != 3113)
+#if defined(__NPU_ARCH__)
     Reg::RegTensor<bfloat16_t> vBF16Reg;
 #endif
     Reg::MaskReg maskReg;
@@ -241,7 +241,7 @@ __simd_vf__ inline void VFDropOutByteModeCalcInfo(
                 Reg::LoadAlign<uint8_t, Reg::LoadDist::DIST_UNPACK_B8>(
                     vMaskReg, maskUb + loopH * info.maskLastAxis + loopW * repeatElm);
                 Reg::Cast<half, uint8_t, layoutZMrgZ>(vFP16Reg, vMaskReg, maskReg);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 3003) && (__NPU_ARCH__ != 3113)
+#if defined(__NPU_ARCH__)
                 if constexpr (SupportType<T, half>()) {
                     Reg::Mul(vDstReg, vFP16Reg, vSrcReg, maskReg);
                 } else {

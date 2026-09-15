@@ -21,7 +21,7 @@
 #endif
 #ifndef IMPL_MATH_DIGAMMA_DIGAMMA_COMMON_IMPL_H
 #define IMPL_MATH_DIGAMMA_DIGAMMA_COMMON_IMPL_H
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #include "digamma_3510_impl.h"
 #else
 #include "../../../../../include/basic_api/kernel_tensor.h"

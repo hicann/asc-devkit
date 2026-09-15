@@ -48,12 +48,6 @@ public:
         mmadParams.k = mmadK;
         mmadParams.n = mmadN;
 
-#if __NPU_ARCH__ == 5102
-        if constexpr (IsSameTypeV<A_T, half>) {
-            mmadParams.fixShiftVal = MATMUL_CONST_PARAM_VAR.fixShiftValue;
-        }
-#endif
-
         if constexpr (MatmulFeatureTrait<MM_CFG>::IsUnitFlagEnabled()) {
             mmadParams.unitFlag = unitFlag;
         }
@@ -75,7 +69,7 @@ public:
             // C310 Not support mmadwithsparse
             MmadWithSparse(cMatrix, l0A, l0B, mmadParams);
         } else {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
             if constexpr (A_TYPE::format != CubeFormat::VECTOR) {
                 mmadParams.disableGemv = true;
             }

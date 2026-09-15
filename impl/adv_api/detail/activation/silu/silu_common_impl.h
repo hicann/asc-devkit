@@ -65,7 +65,7 @@ __aicore__ inline __inout_pipe__(V) void SiluCompute(
     ans = (std::is_same<T, half>::value) || (std::is_same<T, float>::value);
     ASCENDC_ASSERT(ans, { KERNEL_LOG(KERNEL_ERROR, "type must be half or float"); });
 #endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002)
     SetMaskCount();
     SetVectorMask<T>(0, dataSize);
     SiluCalcSimplified<T>(dstLocal, srcLocal, 1);

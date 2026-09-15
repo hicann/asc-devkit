@@ -23,7 +23,7 @@ constexpr uint32_t float_neg_inf = 0xFF800000;
 constexpr uint32_t float_max_nan = 0x7FFFFFFF;
 constexpr uint32_t sign_bit_shift = 31;
 constexpr uint32_t sign_bit_mask = 1;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
 float __expf(float x) { return exp(x); }
 
 float __logf(float x) { return log(x); }

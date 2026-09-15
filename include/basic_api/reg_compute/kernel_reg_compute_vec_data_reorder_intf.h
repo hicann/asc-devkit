@@ -38,9 +38,7 @@ __simd_callee__ inline void DeInterleave(U& dstReg0, U& dstReg1, U& srcReg0, U& 
 } // namespace Reg
 } // namespace AscendC
 
-#if defined(__NPU_ARCH__) &&                                                                                      \
-        ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)) || \
-    defined(__ASC_NPU_HOST__)
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510 || defined(__ASC_NPU_HOST__)
 #include "../../../impl/basic_api/reg_compute/kernel_reg_compute_vec_data_reorder_intf_impl.h"
 #endif
 #endif // ASCENDC_MODULE_REG_COMPUTE_VEC_DATA_REORDER_INTERFACE_H

@@ -161,25 +161,6 @@ public:
             }
         }
     }
-#if __NPU_ARCH__ == 5102
-    __aicore__ inline void WaitIterateAll()
-    {
-        event_t eventIDFixToMte2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::FIX_MTE2));
-        SetFlag<HardEvent::FIX_MTE2>(eventIDFixToMte2);
-        WaitFlag<HardEvent::FIX_MTE2>(eventIDFixToMte2);
-    }
-
-    __aicore__ inline void SetLookupTable(const GlobalTensor<uint64_t>& qtableTensor)
-    {
-        MATMUL_MODULE(QtableProcessor)->SetLookupTable(qtableTensor);
-    }
-
-#endif
-
-#if __NPU_ARCH__ == 5102
-    __aicore__ inline void SetFixShiftValue(uint8_t value) { MATMUL_PARAM_VAR.fixShiftValue = value; }
-    __aicore__ inline uint8_t GetFixShiftValue() const { return MATMUL_CONST_PARAM_VAR.fixShiftValue; }
-#endif
 
 #endif
 };

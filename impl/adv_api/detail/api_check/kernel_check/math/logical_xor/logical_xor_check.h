@@ -21,7 +21,7 @@
 
 #ifndef IMPL_API_CHECK_KERNEL_CHECK_MATH_LOGICAL_XOR_LOGICAL_XOR_CHECK_H
 #define IMPL_API_CHECK_KERNEL_CHECK_MATH_LOGICAL_XOR_LOGICAL_XOR_CHECK_H
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "logical_xor_check_c310.h"
 #endif
 
@@ -32,7 +32,7 @@ __aicore__ inline void CheckFuncLogicalXor(
     __gm__ const char* name, const LocalTensor<T>& dst, const LocalTensor<U>& src0, const LocalTensor<U>& src1,
     const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     CheckFuncClassLogicalXor<T, U, isReuseSource> checkFun(name);
     checkFun.VerifyingParameters(dst, src0, src1, count);
 #endif

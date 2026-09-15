@@ -114,14 +114,7 @@ public:
     {
         if (BASE_MODULE::enableBias_ && MATMUL_MODULE(KLoop)->FirstOuterIter()) {
             auto biasC2 = MATMUL_MODULE(C2Buffer)->Allocate();
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-            if constexpr (std::is_same_v<BiasT, half>) {
-                srcOffset = srcOffset * 2; // half bias, fp32 in L1 (with dummy data)
-            }
             MATMUL_MODULE(LoadBias2C2)->Load(biasC2, biasC1[srcOffset], dataLen);
-#else
-            MATMUL_MODULE(LoadBias2C2)->Load(biasC2, biasC1[srcOffset], dataLen);
-#endif
             MATMUL_MODULE(C2Buffer)->EnQue();
             MATMUL_MODULE(C2Buffer)->DeQue();
         }

@@ -196,7 +196,7 @@ struct MatmulTiling {
     }
     __aicore__ inline int32_t GetShareUbSize() const
     {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2002 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2002)
         return 0;
 #else
         if constexpr (IsSameTypeV<TILING_TYPE, MatmulApiStaticTiling>) {

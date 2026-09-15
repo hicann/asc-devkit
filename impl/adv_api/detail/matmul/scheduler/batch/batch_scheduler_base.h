@@ -113,18 +113,6 @@ public:
             MATMUL_MODULE(BiasScheduler)->Init(tiling.GetBatchNum());
         }
 
-#if __NPU_ARCH__ == 5102
-        if constexpr (
-            IsSameTypeV<TransAT, half> && IsSameTypeV<TransBT, half> && IsTypeOneOfV<DstT, half, bfloat16_t>) {
-            constexpr float FIX_VAL_RECIPROCAL = 1.0f;
-            const uint64_t quantScalar =
-                static_cast<const uint64_t>(*reinterpret_cast<const int32_t*>(&FIX_VAL_RECIPROCAL));
-            MATMUL_MODULE(MatmulQuantProcessor)->SetQuantScalar(quantScalar);
-        } else if (IsTypeOneOfV<TransAT, half, int8_t> && IsTypeOneOfV<DstT, int8_t, uint8_t, half, bfloat16_t>) {
-            MATMUL_MODULE(MatmulQuantProcessor)->Init(tiling.GetBaseN());
-        }
-#endif
-
         InitShareBufEnd(var.tpipe_);
     }
 
@@ -435,11 +423,6 @@ public:
         MATMUL_MODULE(BatchCopyCubeInB)->Destroy();
         MATMUL_MODULE(BiasScheduler)->End();
         MATMUL_MODULE(CubeOutBuffer)->Destroy();
-#if __NPU_ARCH__ == 5102
-        if constexpr (IsTypeOneOfV<TransAT, half, int8_t> && IsTypeOneOfV<DstT, int8_t, uint8_t, half, bfloat16_t>) {
-            MATMUL_MODULE(MatmulQuantProcessor)->Destroy();
-        }
-#endif
     }
 
     __aicore__ inline void SetNBatchOutNum(int32_t nBatchOutNum) { nBatchOutNum_ = nBatchOutNum; }
@@ -624,11 +607,7 @@ public:
 
 private:
     constexpr static int32_t c0Size_ = AuxGetC0Size<TransAT>();
-#if __NPU_ARCH__ == 5102
-    constexpr static int32_t c0SizeB_ = AuxGetC0Size<TransBT>();
-#else
     constexpr static int32_t c0SizeB_ = c0Size_;
-#endif
     int32_t nBatchOutNum_;
 };
 } // namespace Detail

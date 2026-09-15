@@ -57,7 +57,6 @@ __aicore__ inline void ICachePreLoad(const int64_t preFetchLen);
 __aicore__ inline int64_t GetICachePreloadStatus();
 
 } // namespace AscendC
-
 #if defined(__NPU_ARCH__)
 #include "../../impl/basic_api/kernel_operator_cache_intf_impl.h"
 #endif

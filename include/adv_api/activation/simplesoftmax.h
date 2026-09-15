@@ -28,9 +28,8 @@
 #include "kernel_tensor.h"
 #include "kernel_tiling/kernel_tiling.h"
 #include "include/adv_api/activation/softmax_utils.h"
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002)
 #include "../../../impl/adv_api/detail/activation/softmax/softmax_common.h"
 #include "../../../impl/adv_api/detail/activation/softmax/simple_softmax_base_impl.h"
 #endif
@@ -62,9 +61,8 @@ __aicore__ inline void SimpleSoftMax(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002)
     SimpleSoftMaxImpl<T, T, isReuseSource, isBasicBlock, isDataFormatNZ, config>(
         dstTensor, inSumTensor, inMaxTensor, srcTensor, tiling, softmaxShapeInfo);
 #endif
@@ -94,9 +92,8 @@ __aicore__ inline void SimpleSoftMax(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002)
     SimpleSoftMaxImpl<half, float, isReuseSource, isBasicBlock, isDataFormatNZ, config>(
         dstTensor, inSumTensor, inMaxTensor, srcTensor, tiling, softmaxShapeInfo);
 #endif
@@ -130,9 +127,8 @@ __aicore__ inline void SimpleSoftMax(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002)
     SimpleSoftMaxImpl<T, T, isReuseSource, isBasicBlock, isDataFormatNZ, config>(
         dstTensor, inSumTensor, inMaxTensor, srcTensor, sharedTmpBuffer, tiling, softmaxShapeInfo);
 #endif
@@ -165,9 +161,8 @@ __aicore__ inline void SimpleSoftMax(
     if ASCEND_IS_AIC {
         return;
     }
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 3002)
     SimpleSoftMaxImpl<half, float, isReuseSource, isBasicBlock, isDataFormatNZ, config>(
         dstTensor, inSumTensor, inMaxTensor, srcTensor, sharedTmpBuffer, tiling, softmaxShapeInfo);
 #endif

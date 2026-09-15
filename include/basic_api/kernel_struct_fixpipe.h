@@ -34,8 +34,7 @@
 #include "stub_fun.h"
 #endif
 
-#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || \
-    (__NPU_ARCH__ == 5163)
+#if (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)
 #define CANN_ASC_ENABLE_FIX_SHIFT
 #endif
 
@@ -48,52 +47,34 @@ enum class CO2Layout : uint8_t {
 
 struct FixpipeConfig {
     CO2Layout format;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     bool isToUB;
-#endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-    bool enableFixVal = false;
 #endif
 
     __aicore__ constexpr inline FixpipeConfig(CO2Layout format_)
         : format(format_)
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
           ,
           isToUB(false)
-#endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-          ,
-          enableFixVal(false)
 #endif
     {}
     __aicore__ constexpr inline FixpipeConfig(CO2Layout format_, bool isToUB_)
         : format(format_)
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
           ,
           isToUB(isToUB_)
-#endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-          ,
-          enableFixVal(false)
 #endif
     {}
     __aicore__ constexpr inline FixpipeConfig(CO2Layout format_, bool isToUB_, bool enableFixVal_)
         : format(format_)
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
           ,
           isToUB(isToUB_)
-#endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
-          ,
-          enableFixVal(enableFixVal_)
 #endif
     {}
 };
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
-#if (__NPU_ARCH__ == 5102)
-constexpr FixpipeConfig CFG_NZ_FIX = {CO2Layout::NZ, false, true};
-#endif
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ, false};
 constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR, false};
 constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR, false};

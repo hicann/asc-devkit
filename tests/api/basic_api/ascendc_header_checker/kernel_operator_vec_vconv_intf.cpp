@@ -182,7 +182,7 @@ extern "C" __global__ __aicore__ void KernelTestSetDeqScale3()
     AscendC::SetDeqScale(vdeq, vdeqInfo);
 }
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 // __aicore__ inline void Truncate(const LocalTensor<T> &dst, const LocalTensor<T> &src, const uint32_t count);
 extern "C" __global__ __aicore__ void KernelTestTruncate1()
 {

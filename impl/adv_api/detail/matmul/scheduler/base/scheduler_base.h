@@ -112,33 +112,20 @@ public:
                                                    tiling.GetBaseM() * tiling.GetBaseN();
 
         uint32_t lenFactor = 1;
-#if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || \
-    (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510
         if constexpr (MdlInitScene<MM_CFG> && ToMatmulConfig(MM_CFG).scheduleType == ScheduleType::OUTER_PRODUCT) {
             lenFactor = DOUBLE_SIZE;
         }
 #endif
         MATMUL_MODULE(CubeOutBuffer)->Init(baseMN, lenFactor);
         if constexpr (NormInitScene<MM_CFG>) {
-#if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || \
-    (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510
             MATMUL_MODULE(BiasScheduler)->Init();
 #endif
         } else {
             MATMUL_MODULE(BiasScheduler)->Init();
         }
         MATMUL_MODULE(MatmulQuantProcessor)->Init(tiling.GetBaseN());
-#if __NPU_ARCH__ == 5102
-        if constexpr (IsSameTypeV<SrcAT, half> && IsSameTypeV<SrcBT, half> && IsTypeOneOfV<DstT, half, bfloat16_t>) {
-            constexpr float FIX_VAL_RECIPROCAL = 1.0f;
-            const uint64_t quantScalar =
-                static_cast<const uint64_t>(*reinterpret_cast<const int32_t*>(&FIX_VAL_RECIPROCAL));
-            MATMUL_MODULE(MatmulQuantProcessor)->SetQuantScalar(quantScalar);
-        }
-        if constexpr (IsDecompMode<MM_CFG>()) {
-            InitQtableProcessor();
-        }
-#endif
 
         if constexpr (MdlInitScene<MM_CFG>) {
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 1001
@@ -356,20 +343,6 @@ protected:
             WaitFlag<HardEvent::MTE3_MTE1>(eventID);
         }
     }
-
-#if __NPU_ARCH__ == 5102
-    __aicore__ inline void InitQtableProcessor()
-    {
-        auto shapeInfo = MATMUL_MODULE(MatmulShapeInfo);
-        uint32_t qtableNum =
-            Ceil(shapeInfo->GetSingleCoreK(), MATMUL_MODULE(MatmulShapeTiling)->GetTiling().GetBaseK()) *
-            Ceil(shapeInfo->GetSingleCoreN(), MATMUL_MODULE(MatmulShapeTiling)->GetTiling().GetBaseN());
-
-        constexpr int32_t B42B8_TWO = 2;
-        qtableNum = DecompMode(MM_CFG) == DecompressionMode::DECOMP_4bitTo8bit ? qtableNum * B42B8_TWO : qtableNum;
-        MATMUL_MODULE(QtableProcessor)->Init(qtableNum);
-    }
-#endif
 
     __aicore__ inline void CheckSupportTrianMatmul()
     {

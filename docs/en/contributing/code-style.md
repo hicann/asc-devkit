@@ -199,7 +199,7 @@ Organize includes in the following order, with a blank line separating each grou
 3. **Architecture-Conditional Includes**
 
    ```cpp
-   #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+   #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
    #include "reg_compute/kernel_reg_compute_utils.h"
    #endif
    ```
@@ -318,7 +318,7 @@ Log levels: `KERNEL_DEBUG`, `KERNEL_INFO`, `KERNEL_WARN`, `KERNEL_ERROR`
 ### Architecture Conditional Macros
 
 ```cpp
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     // architecture-specific code
 #endif
 

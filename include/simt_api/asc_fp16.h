@@ -19,7 +19,7 @@
 #include "simt_api/asc_simt.h"
 #include "simt_api/device_types.h"
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 
 #define ASCRT_INF_FP16 __ushort_as_half((unsigned short)0x7C00U)
 #define ASCRT_MAX_NORMAL_FP16 __ushort_as_half((unsigned short)0x7BFFU)

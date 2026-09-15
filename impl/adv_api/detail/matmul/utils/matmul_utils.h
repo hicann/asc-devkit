@@ -121,56 +121,34 @@ struct CopyGMParams {
     bool isComputeLineByLine{false};
 };
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-#else
 template <>
 struct GetMmDstType<float> {
     using Type = float;
 };
-#endif
 
 template <>
 struct GetMmDstType<int8_t> {
     using Type = int32_t;
 };
 
-#if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || \
-    (__NPU_ARCH__ == 3510)
+#if __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510
 template <>
 struct GetMmDstType<bfloat16_t> {
     using Type = float;
 };
 #endif
 
-#if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || \
-    (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510
 template <>
 struct GetMmDstType<int4b_t> {
     using Type = int32_t;
 };
 #endif
 
-#if __NPU_ARCH__ == 5102
-template <>
-struct GetMmDstType<int16_t> {
-    using Type = int32_t;
-};
-
-template <>
-struct GetMmDstType<half> {
-    using Type = int32_t;
-};
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
-template <>
-struct GetMmDstType<half> {
-    using Type = half;
-};
-#else
 template <>
 struct GetMmDstType<half> {
     using Type = float;
 };
-#endif
 
 template <typename>
 struct IsGlobalTensor : falseType {};
@@ -239,8 +217,7 @@ __aicore__ constexpr bool PhyPosIsL1(TPosition pos)
     if (pos == TPosition::A1 || pos == TPosition::B1 || pos == TPosition::SHM || pos == TPosition::TSCM) {
         return true;
     }
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002)
     if (pos == TPosition::C1) {
         return true;
     }
@@ -259,7 +236,7 @@ __aicore__ constexpr bool PhyPosIsUB(TPosition pos)
     if (pos == TPosition::C2) {
         return false;
     }
-#elif (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#elif defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
     if (pos == TPosition::C1 || pos == TPosition::C2 || pos == TPosition::CO2 || pos == TPosition::C2PIPE2GM) {
         return false;
     }
@@ -277,7 +254,7 @@ __aicore__ constexpr bool PhyPosIsGM(TPosition pos)
     if (pos == TPosition::GM) {
         return true;
     }
-#if (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 2201
     if (pos == TPosition::CO2) {
         return true;
     }
@@ -579,14 +556,6 @@ constexpr bool MdlInitScene = DoMatmulMDL(MM_CFG) || DoMatmulSpecialMDL(MM_CFG);
 template <const auto& MM_CFG>
 __aicore__ inline constexpr static bool IsDecompMode()
 {
-#if __NPU_ARCH__ == 5102
-    if constexpr (
-        DecompMode(MM_CFG) == DecompressionMode::DECOMP_1bitTo4bit ||
-        DecompMode(MM_CFG) == DecompressionMode::DECOMP_2bitTo4bit ||
-        DecompMode(MM_CFG) == DecompressionMode::DECOMP_4bitTo8bit) {
-        return true;
-    }
-#endif
     return false;
 }
 

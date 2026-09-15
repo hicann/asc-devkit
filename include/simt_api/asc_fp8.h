@@ -30,7 +30,7 @@ typedef unsigned short int __asc_fp8x2_storage_t;
 
 typedef unsigned char __asc_fp8_storage_t;
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 
 #include "simt_api/asc_bf16.h"
 #include "simt_api/device_types.h"

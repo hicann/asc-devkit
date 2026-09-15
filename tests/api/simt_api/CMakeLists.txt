@@ -42,12 +42,6 @@ file(GLOB ASCENDC_TEST_ascend950pr_9599_SIMT_CASE_SRC_FILES
     ascendc_case_ascend950pr_9599_simt/*.cpp
 )
 
-# mc62cm12aa simt test cases
-file(GLOB ASCENDC_TEST_mc62cm12aa_SIMT_CASE_SRC_FILES
-    common_simt/*.cpp
-    ascendc_case_mc62cm12aa_simt/*.cpp
-)
-
 add_library(simt_api_test_common INTERFACE)
 target_compile_definitions(simt_api_test_common INTERFACE
     UT_TEST
@@ -84,7 +78,6 @@ foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
 
     target_compile_definitions(ascendc_ut_simt_api_${product_type} PRIVATE
         $<$<STREQUAL:${product_type},ascend950pr_9599>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
-        $<$<STREQUAL:${product_type},mc62cm12aa>:__NPU_ARCH__=5102>
         __callee__=
     )
 

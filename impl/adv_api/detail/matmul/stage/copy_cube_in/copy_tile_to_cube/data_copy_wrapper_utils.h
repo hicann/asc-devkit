@@ -285,39 +285,11 @@ __aicore__ inline void TransDataNZBMatrix(
     }
 }
 
-#if __NPU_ARCH__ == 5102
-template <typename SrcT, typename TransT>
-__aicore__ inline void CopyNZ2NZImplByLoadData(
-    const LocalTensor<TransT>& dst, const GlobalTensor<SrcT>& src, const int32_t row, const int32_t col,
-    const int32_t height, const int32_t width, const int32_t gRow, const bool kAlignToC0Size = false)
-{
-    constexpr int32_t c0Size_ = AuxGetC0Size<TransT>();
-    int32_t dstStride = 0;
-    if (kAlignToC0Size) {
-        dstStride = Ceil(height, c0Size_) * c0Size_ / BLOCK_CUBE;
-    } else {
-        dstStride = Ceil(height, BLOCK_CUBE);
-    }
-
-    LoadData2DParamsV2 loadDataParams;
-    loadDataParams.srcStride = Ceil(gRow, BLOCK_CUBE);
-    loadDataParams.mStartPosition = Ceil(row, BLOCK_CUBE);
-    loadDataParams.kStartPosition = Ceil(col, c0Size_);
-    loadDataParams.dstStride = static_cast<uint16_t>(dstStride);
-    loadDataParams.mStep = Ceil(height, BLOCK_CUBE);
-    loadDataParams.kStep = Ceil(width, c0Size_);
-    LoadData(dst, src, loadDataParams);
-}
-#endif
-
 template <typename SrcT, typename TransT, bool HasScalePos = false>
 __aicore__ inline void CopyNZ2NZImpl(
     const LocalTensor<TransT>& dst, const GlobalTensor<SrcT>& src, const int32_t row, const int32_t col,
     const int32_t height, const int32_t width, const int32_t gRow, const bool kAlignToC0Size = false)
 {
-#if __NPU_ARCH__ == 5102
-    CopyNZ2NZImplByLoadData(dst, src, row, col, height, width, gRow, kAlignToC0Size);
-#else
     ASCENDC_ASSERT((gRow >= height), {
         KERNEL_LOG(
             KERNEL_ERROR,
@@ -359,7 +331,6 @@ __aicore__ inline void CopyNZ2NZImpl(
             {nburst, static_cast<uint16_t>(blockLen), static_cast<uint16_t>(srcStride),
              static_cast<uint16_t>(dstStride)});
     }
-#endif
 }
 
 template <typename SrcT, typename TransT>

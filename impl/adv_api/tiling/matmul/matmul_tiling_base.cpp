@@ -30,25 +30,6 @@ namespace matmul_tiling {
 constexpr int32_t MIN_MNK_SIZE = 16;
 constexpr int32_t ALIGN_SIZE = 32;
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3113)
-constexpr int32_t L0C_SIZE = 64 * 1024;
-constexpr int32_t L0A_SIZE = 32 * 1024;
-constexpr int32_t L0B_SIZE = 32 * 1024;
-
-constexpr int32_t BT_SIZE = 1024;
-
-constexpr int32_t UB_SIZE = 118 * 1024;
-constexpr int32_t L1_SIZE = 512 * 1024; // do not support nfc
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003)
-constexpr int32_t L0C_SIZE = 128 * 1024;
-constexpr int32_t L0A_SIZE = 64 * 1024;
-constexpr int32_t L0B_SIZE = 64 * 1024;
-
-constexpr int32_t BT_SIZE = 1024;
-
-constexpr int32_t UB_SIZE = 118 * 1024;
-constexpr int32_t L1_SIZE = 1024 * 1024; // do not support nfc
-#else
 // for ascend910b
 constexpr int32_t L1_SIZE = 512 * 1024 - 256;
 constexpr int32_t L0C_SIZE = 128 * 1024;
@@ -57,7 +38,6 @@ constexpr int32_t L0B_SIZE = 64 * 1024;
 // ascend310B & ascend910B BT size
 constexpr int32_t BT_SIZE = 1024;
 constexpr int32_t UB_SIZE = 192 * 1024 - 256;
-#endif
 
 #define CHECK_TILING_PARAMETER(val, debugInfo)                                                           \
     TILING_LOG_DEBUG("%s: %d", debugInfo, val);                                                          \

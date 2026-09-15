@@ -27,8 +27,7 @@
 #include "floor_v200_impl.h"
 #elif defined(__NPU_ARCH__) && __NPU_ARCH__ == 3002
 #include "floor_v300_impl.h"
-#elif defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#elif defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
 #include "floor_3510_impl.h"
 #endif
 

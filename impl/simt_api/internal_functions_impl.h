@@ -25,7 +25,7 @@
 
 #include "simt_api/device_types.h"
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510)
 
 enum class __RoundMode {
     CAST_RINT = 0,
