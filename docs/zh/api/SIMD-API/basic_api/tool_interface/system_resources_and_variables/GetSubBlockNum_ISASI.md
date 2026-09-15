@@ -43,9 +43,9 @@ __aicore__ inline int64_t GetSubBlockNum()
 
 ## 返回值说明
 
-在融合编译场景下，不同[算子类型](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#section1074418132518)在AIC和AIV上调用该接口的返回值如下：
+在核函数（Kernel）直调工程场景下，不同[算子类型](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#section1074418132518)在AIC和AIV上调用该接口的返回值如下：
 
-**表1** 融合编译场景返回值列表
+**表1** 通过函数执行空间限定符设置核函数（Kernel）类型时的返回值
 
 | 算子类型 | 限定符 | AIC | AIV |
 | --- | --- | --- | --- |
@@ -58,14 +58,14 @@ __aicore__ inline int64_t GetSubBlockNum()
 
 在自定义算子工程和核函数（Kernel）直调工程场景下，不同核函数（Kernel）类型（通过[设置核函数（Kernel）类型](../../Kernel-Tiling/set_Kernel_type.md)设置）在AIC和AIV上调用该接口的返回值如下：
 
-**表2** 自定义算子工程和核函数（Kernel）直调工程场景返回值列表
+**表2** 通过Kernel Type接口设置核函数（Kernel）类型时的返回值
 
 | 核函数（Kernel）类型 | KERNEL_TYPE_AIV_ONLY | KERNEL_TYPE_AIC_ONLY | KERNEL_TYPE_MIX_AIC_1_2 | KERNEL_TYPE_MIX_AIC_1_1 | KERNEL_TYPE_MIX_AIC_1_0 | KERNEL_TYPE_MIX_AIV_1_0 |
 | --- | --- | --- | --- | --- | --- | --- |
 | AIV | 1 | - | 2 | 1 | - | 1 |
 | AIC | - | 1 | 1 | 1 | 1 | - |
 
-**注意，两种场景中返回值的含义相同，仅设置类型的方式不同，编写算子时推荐使用融合编译。**
+**注意，两种场景中返回值的含义相同，仅设置类型的方式不同，编写算子时推荐使用核函数（Kernel）直调工程。**
 
 ## 约束说明
 

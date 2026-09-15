@@ -9,7 +9,7 @@
         - Atlas 推理系列产品
         <!-- end id2 -->
 
-- 核函数（Kernel）推荐使用 \_\_cube\_\_ / \_\_vector\_\_ / \_\_mix\_\_(cube, vec)进行标记，KERNEL\_TASK\_TYPE\_DEFAULT接口即将废弃。
+- 核函数（Kernel）使用 \_\_cube\_\_ / \_\_vector\_\_ / \_\_mix\_\_(cube, vec)进行标记。
 
 - 纯Scalar算子无法实现自动推导
     需手动标记核函数（Kernel）类型，推荐设置为纯Vector类型，添加\_\_vector\_\_ attribute进行标记：
