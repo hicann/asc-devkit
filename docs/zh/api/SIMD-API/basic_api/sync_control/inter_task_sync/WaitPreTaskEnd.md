@@ -26,12 +26,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id16 -->
-<!-- npu="x90" id17 -->
-- Kirin X90：支持，仅保证编译兼容，实际功能不生效。
-<!-- end id17 -->
-<!-- npu="9030" id18 -->
-- Kirin 9030：支持，仅保证编译兼容，实际功能不生效。
-<!-- end id18 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>

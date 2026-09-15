@@ -23,12 +23,6 @@
 <!-- npu="910" id9 -->
 - Atlas 训练系列产品：不支持
 <!-- end id9 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/math_compute/Sin_interface/Sin_res.md#id1 -->
 
 ## 功能说明

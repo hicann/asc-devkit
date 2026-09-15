@@ -595,7 +595,7 @@ For scenarios with too many function prototypes, using only unordered lists woul
 [Description] When different prototypes support different chip models, the supported hardware models for each prototype must be clearly specified.
 
 ```text
-<!-- npu="950,A3,910b,310b,x90,9030" id15 -->
+<!-- npu="950,A3,910b,310b" id15 -->
 - This prototype supports the following product models:
 
     <!-- npu="950" id16 -->
@@ -613,14 +613,6 @@ For scenarios with too many function prototypes, using only unordered lists woul
     <!-- npu="310b" id19 -->
     Atlas 200I/500 A2 Inference Products 
     <!-- end id19 -->
-
-    <!-- npu="x90" id20 -->
-    Kirin X90 
-    <!-- end id20 -->
-
-    <!-- npu="9030" id21 -->
-    Kirin 9030 
-    <!-- end id21 -->
 
     ```cpp
     template<pipe_t AIV_PIPE = PIPE_MTE3, pipe_t AIC_PIPE = PIPE_FIX, bool FORCE = false>

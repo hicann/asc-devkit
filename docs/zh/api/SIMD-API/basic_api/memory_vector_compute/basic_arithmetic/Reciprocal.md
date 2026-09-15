@@ -25,12 +25,6 @@
 <!-- npu="910" id7 -->
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
-<!-- npu="x90" id8 -->
-- Kirin X90：支持
-<!-- end id8 -->
-<!-- npu="9030" id9 -->
-- Kirin 9030：支持
-<!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Reciprocal_res.md#id1 -->
 
 ### 传入config的原型
@@ -56,12 +50,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
-<!-- npu="x90" id17 -->
-- Kirin X90：不支持
-<!-- end id17 -->
-<!-- npu="9030" id18 -->
-- Kirin 9030：不支持
-<!-- end id18 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Reciprocal_res.md#id2 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -163,12 +151,6 @@ $dst_i = \frac{1}{src_i}$
 <!-- npu="910" id25 -->
 - 针对Atlas 训练系列产品，T支持的数据类型为：half、float。
 <!-- end id25 -->
-<!-- npu="x90" id26 -->
-- 针对Kirin X90，T支持的数据类型为：half、float。
-<!-- end id26 -->
-<!-- npu="9030" id27 -->
-- 针对Kirin 9030，T支持的数据类型为：half、float。
-<!-- end id27 -->
 
 ## 返回值说明<a name="section15227195416231"></a>
 

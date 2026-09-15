@@ -26,12 +26,6 @@
 <!-- npu="910" id27 -->
 - Atlas 训练系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id27 -->
-<!-- npu="x90" id28 -->
-- Kirin X90：支持，仅保证编译兼容，实际功能不生效。
-<!-- end id28 -->
-<!-- npu="9030" id29 -->
-- Kirin 9030：支持，仅保证编译兼容，实际功能不生效。
-<!-- end id29 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -51,7 +45,7 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
-<!-- npu="950,A3,910b,310b,x90,9030" id10 -->
+<!-- npu="950,A3,910b,310b" id10 -->
 - 该原型支持如下产品型号：
 
     <!-- npu="950" id1 -->
@@ -69,14 +63,6 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
     <!-- npu="310b" id4 -->
     Atlas 200I/500 A2 推理产品 
     <!-- end id4 -->
-
-    <!-- npu="x90" id5 -->
-    Kirin X90 
-    <!-- end id5 -->
-
-    <!-- npu="9030" id6 -->
-    Kirin 9030 
-    <!-- end id6 -->
 
     ```cpp
     template<pipe_t AIV_PIPE = PIPE_MTE3, pipe_t AIC_PIPE = PIPE_FIX, bool FORCE = false>

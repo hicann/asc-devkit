@@ -596,7 +596,7 @@ Gather的功能说明中未给出图示说明，仅通过文字难以理解。
 【描述】不同原型支持的芯片型号不同时，须明确写明每种原型支持的硬件型号。
 
 ```text
-<!-- npu="950,A3,910b,310b,x90,9030" id15 -->
+<!-- npu="950,A3,910b,310b" id15 -->
 - 该原型支持如下产品型号：
 
     <!-- npu="950" id16 -->
@@ -614,14 +614,6 @@ Gather的功能说明中未给出图示说明，仅通过文字难以理解。
     <!-- npu="310b" id19 -->
     Atlas 200I/500 A2 推理产品 
     <!-- end id19 -->
-
-    <!-- npu="x90" id20 -->
-    Kirin X90 
-    <!-- end id20 -->
-
-    <!-- npu="9030" id21 -->
-    Kirin 9030 
-    <!-- end id21 -->
 
     ```cpp
     template<pipe_t AIV_PIPE = PIPE_MTE3, pipe_t AIC_PIPE = PIPE_FIX, bool FORCE = false>

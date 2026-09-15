@@ -23,9 +23,6 @@
 <!-- npu="910" id10 -->
 - Atlas 训练系列产品：不支持
 <!-- end id10 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id2 -->
 
 ### TrianUpperMatmulPolicy/TrianLowerMatmulPolicy
@@ -49,9 +46,6 @@
 <!-- npu="910" id16 -->
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
-<!-- npu="x90" id2 -->
-- Kirin X90：支持
-<!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id3 -->
 
 ### NBuffer33MatmulPolicy
@@ -75,9 +69,6 @@
 <!-- npu="910" id22 -->
 - Atlas 训练系列产品：不支持
 <!-- end id22 -->
-<!-- npu="x90" id3 -->
-- Kirin X90：支持
-<!-- end id3 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id4 -->
 
 ### MatmulWithScalePolicy/SplitMMatmulPolicy/SplitNMatmulPolicy
@@ -101,9 +92,6 @@
 <!-- npu="910" id28 -->
 - Atlas 训练系列产品：不支持
 <!-- end id28 -->
-<!-- npu="x90" id4 -->
-- Kirin X90：不支持
-<!-- end id4 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/MatmulPolicy_res.md#id1 -->
 
 ## 功能说明

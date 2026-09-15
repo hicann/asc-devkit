@@ -21,9 +21,6 @@
 <!-- npu="910" id8 -->
 - Atlas 训练系列产品：不支持
 <!-- end id8 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateBatch_res.md#id1 -->
 
 ## 功能说明
@@ -152,7 +149,7 @@
 -   Atlas 推理系列产品AI Core上，Bias不支持复用，Bias的shape大小必须为Batch \* N。
 <!-- end id12 -->
 -   使用该接口时，A矩阵、B矩阵不支持int4b\_t类型的输入，即BatchMatmul不支持int4b\_t类型的矩阵输入。
-<!-- npu="950,A3,910b,310p,x90" id17 -->
+<!-- npu="950,A3,910b,310p" id17 -->
 -   支持的数据类型<a id="li12616155731722"></a>
 
     <!-- npu="950" id13 -->
@@ -171,9 +168,6 @@
     Atlas 推理系列产品AI Core，支持的数据类型为：half、bfloat16_t、int32_t、float。
     <!-- end id16 -->
 
-    <!-- npu="x90" id2 -->
-    Kirin X90，支持的数据类型为：half、int32_t。
-    <!-- end id2 -->
 <!-- end id17 -->
 
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateBatch_res.md#id2 -->

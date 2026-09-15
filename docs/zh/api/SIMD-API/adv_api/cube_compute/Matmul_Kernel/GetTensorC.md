@@ -21,12 +21,6 @@
 <!-- npu="910" id8 -->
 - Atlas 训练系列产品：不支持
 <!-- end id8 -->
-<!-- npu="x90" id1 -->
-- Kirin X90：支持
-<!-- end id1 -->
-<!-- npu="9030" id2 -->
-- Kirin 9030：支持
-<!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/GetTensorC_res.md#id1 -->
 
 ## 功能说明
@@ -103,7 +97,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 
 | 参数名 | 描述 |
 | --- | --- |
-| sync | 设置同步或者异步模式：同步模式设置为true；异步模式设置为false。<!-- npu="950" id9 --><br><br>Ascend 950PR/Ascend 950DT支持异步模式。<!-- end id9 --><!-- npu="A3" id10 --><br><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品支持异步模式。<!-- end id10 --><!-- npu="910b" id11 --><br><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品支持异步模式。<!-- end id11 --><!-- npu="310p" id12 --><br><br>Atlas 推理系列产品AI Core不支持异步模式。<!-- end id12 --><!-- npu="310b" id13 --><br><br>Atlas 200I/500 A2 推理产品不支持异步模式。<!-- end id13 --><!-- npu="x90" id3 --><br><br>Kirin X90支持异步模式。<!-- end id3 --> |
+| sync | 设置同步或者异步模式：同步模式设置为true；异步模式设置为false。<!-- npu="950" id9 --><br><br>Ascend 950PR/Ascend 950DT支持异步模式。<!-- end id9 --><!-- npu="A3" id10 --><br><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品支持异步模式。<!-- end id10 --><!-- npu="910b" id11 --><br><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品支持异步模式。<!-- end id11 --><!-- npu="310p" id12 --><br><br>Atlas 推理系列产品AI Core不支持异步模式。<!-- end id12 --><!-- npu="310b" id13 --><br><br>Atlas 200I/500 A2 推理产品不支持异步模式。<!-- end id13 --> |
 
 **表2**  接口参数说明
 
@@ -131,7 +125,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 -   传入的C矩阵地址空间大小需要保证不小于baseM \* baseN。
 -   异步场景时，需要使用一块临时空间来缓存Iterate计算结果，调用GetTensorC时会在该临时空间中获取C的矩阵分片。临时空间通过[SetWorkspace](SetWorkspace.md)接口进行设置。SetWorkspace接口需要在Iterate接口之前调用。
 -   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
-<!-- npu="950,A3,910b,310p,310b,x90,9030" id28 -->
+<!-- npu="950,A3,910b,310p,310b" id28 -->
 -   支持的数据类型<a id="li12616155731720"></a>
 
     <!-- npu="950" id14 -->
@@ -153,14 +147,6 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
     <!-- npu="310b" id18 -->
     Atlas 200I/500 A2 推理产品，支持的数据类型为：half、float、bfloat16_t、int32_t。
     <!-- end id18 -->
-
-    <!-- npu="x90" id4 -->
-    Kirin X90，支持的数据类型为：half、int8_t、int32_t。
-    <!-- end id4 -->
-
-    <!-- npu="9030" id5 -->
-    Kirin 9030，支持的数据类型为：half。
-    <!-- end id5 -->
 
 -   支持的数据格式<a id="li12616155731721"></a>
 
