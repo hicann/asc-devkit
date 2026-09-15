@@ -202,11 +202,12 @@ git clone https://gitcode.com/cann/asc-devkit.git
 > [!NOTE] Before Use
 > If you use **containerization technology**, dependencies are already installed in the container. You can skip this step.
 
-The following are basic dependencies for source code compilation and examples operator compilation and running in this open source repository:
+The following are basic dependencies for compiling the source code and compiling and running the operator examples in this repository. For Python dependencies, see [DevContainer Python dependencies (Python 3.12 example)](../../.devcontainer/requirements.txt):
 
 - python >= 3.9.0
 - gcc >= 7.3.0 / g++ >= 7.3.0 (Note: gcc and g++ versions must be consistent)
 - cmake >= 3.16.0
+- pkg-config >= 0.29.0
 
 ### ⚡ Compile and Install<a name="compile&install"></a>
 
