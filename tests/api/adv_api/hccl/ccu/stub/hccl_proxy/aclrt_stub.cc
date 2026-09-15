@@ -27,6 +27,13 @@ using namespace hccl;
 using namespace mc2_ops_hccl;
 thread_local uint32_t curr_dev_id = UINT32_MAX;
 
+namespace mc2_ops_hccl {
+extern DevType g_stubDeviceType;
+bool g_stubAclrtMemcpyFail = false;
+uint32_t g_stubAclrtMemcpyCallCount = 0U;
+uint32_t g_stubAclrtMemcpyFailOnCall = 0U;
+} // namespace mc2_ops_hccl
+
 extern "C" unsigned int HcclLaunchAicpuKernel(mc2_ops_hccl::OpParam* param);
 
 #ifdef __cplusplus
@@ -77,6 +84,12 @@ aclError aclrtStreamGetId(aclrtStream stream, int32_t* streamId_)
 
 aclError aclrtMemcpy(void* dst, size_t destMax, const void* src, size_t count, aclrtMemcpyKind kind)
 {
+    ++mc2_ops_hccl::g_stubAclrtMemcpyCallCount;
+    if (mc2_ops_hccl::g_stubAclrtMemcpyFail ||
+        (mc2_ops_hccl::g_stubAclrtMemcpyFailOnCall != 0U &&
+         mc2_ops_hccl::g_stubAclrtMemcpyCallCount == mc2_ops_hccl::g_stubAclrtMemcpyFailOnCall)) {
+        return ACL_ERROR_INTERNAL_ERROR;
+    }
     if (dst == nullptr || src == nullptr) {
         HCCL_ERROR("[aclrtMemcpy] invalid input dst or src");
         return ACL_ERROR_INVALID_PARAM;
@@ -121,7 +134,7 @@ const char* aclrtGetSocName()
 
 HcclResult hrtGetDeviceType(DevType& devType)
 {
-    devType = DevType::DEV_TYPE_950;
+    devType = mc2_ops_hccl::g_stubDeviceType;
     return HCCL_SUCCESS;
 }
 

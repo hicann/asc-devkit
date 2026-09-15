@@ -55,6 +55,9 @@ std::string g_stubSelectorAlgName;
 // 用于验证checkOnly场景下UNAVAIL被翻译为HCCL_E_RES_NOT_SUFFICIENT（非checkOnly保持UNAVAIL原样）。
 bool g_stubCcuAlgResUnavailable = false;
 
+HcclResult g_stubHcomCheckDataTypeResult = HCCL_SUCCESS;
+HcclResult g_stubHcomCheckReductionOpResult = HCCL_SUCCESS;
+
 HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctxSize, void** ctx)
 {
     uint64_t actualSize = ctxSize;
@@ -117,9 +120,9 @@ HcclResult HcclCheckTag(const char* tag) { return HcclResult::HCCL_SUCCESS; }
 
 HcclResult CheckDataType(HcclDataType dataType, bool needReduce) { return HcclResult::HCCL_SUCCESS; }
 
-HcclResult HcomCheckDataType(HcclDataType dataType) { return HcclResult::HCCL_SUCCESS; }
+HcclResult HcomCheckDataType(HcclDataType dataType) { return g_stubHcomCheckDataTypeResult; }
 
-HcclResult HcomCheckReductionOp(HcclReduceOp op) { return HcclResult::HCCL_SUCCESS; }
+HcclResult HcomCheckReductionOp(HcclReduceOp op) { return g_stubHcomCheckReductionOpResult; }
 
 HcclResult HcomCheckUserRank(const u32 totalRanks, const u32 userRank) { return HcclResult::HCCL_SUCCESS; }
 
@@ -361,6 +364,9 @@ HcclResult HcclGetAlgRes(
                 resCtxHost->kfcServerArgs[5] = token;
             }
         }
+        // Provide one valid launch pair so the public MC2 launch UT reaches HcommCcuKernelLaunch.
+        resCtxHost->threads = {1U};
+        resCtxHost->ccuKernels = {1U};
     }
 
     // 序列化并创建新资源

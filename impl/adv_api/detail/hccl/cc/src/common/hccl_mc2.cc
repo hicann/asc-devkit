@@ -18,7 +18,10 @@
 #include "ccu_assist_pub.h"
 #include "hccl_ccu_res.h"
 #include "adapter_acl.h"
+#include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "kfc_server_protocol.h"
+#include "ccu_launch_dl.h"
+#include <new>
 
 using namespace mc2_ops_hccl;
 
@@ -43,6 +46,21 @@ const char* GetMc2OpTypeName(HcclCMDType opType)
 } // namespace
 
 constexpr uint32_t ALG_CONFIG_SIZE = 128;
+
+static HcclApi::Mc2LaunchVersion GetMc2LaunchVersionByCommEngine(uint8_t commEngine)
+{
+    switch (static_cast<OpExecuteConfig>(commEngine)) {
+        case OpExecuteConfig::CCU_MS:
+        case OpExecuteConfig::CCU_SCHED:
+            return HcclApi::Mc2LaunchVersion::MC2_CCU_LAUNCH_VERSION;
+        case OpExecuteConfig::AICPU:
+        case OpExecuteConfig::AICPU_TS:
+            return HcclApi::Mc2LaunchVersion::MC2_AICPU_LAUNCH_VERSION;
+        default:
+            return HcclApi::Mc2LaunchVersion::MC2_AICPU_LAUNCH_VERSION;
+    }
+}
+
 struct HcclOpArgs {
     HcclDataType srcDataType;
     HcclDataType dstDataType;
@@ -60,6 +78,151 @@ struct HcclOpArgs {
         count = 0;
     }
 };
+
+struct Mc2OpArgs {
+    HcclApi::Mc2LaunchVersion version = HcclApi::Mc2LaunchVersion::MC2_AICPU_LAUNCH_VERSION;
+    uint8_t commEngine = static_cast<uint8_t>(OpExecuteConfig::AICPU);
+    HcclDataType srcDataType = HCCL_DATA_TYPE_FP16;
+    HcclDataType dstDataType = HCCL_DATA_TYPE_FP16;
+    HcclReduceOp reduceType = HCCL_REDUCE_SUM;
+    std::string algConfig;
+};
+
+struct Mc2CcuBuiltinCtx {
+    HcclComm comm = nullptr;
+    Mc2OpArgs ccArgs;
+    OpResCtx opResCtx{};
+    std::string ctxTag;
+    void* deviceOpResCtx = nullptr;
+    uint32_t deviceOpResCtxSize = 0U;
+};
+
+static_assert(
+    sizeof(OpResCtx) == sizeof(HcclApi::OpResCtx), "Host and device OpResCtx layouts must have the same size.");
+
+bool IsSupportedMc2OpType(HcclCMDType opType)
+{
+    return opType == HcclCMDType::HCCL_CMD_ALLGATHER || opType == HcclCMDType::HCCL_CMD_ALLREDUCE ||
+           opType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER || opType == HcclCMDType::HCCL_CMD_ALLTOALLV ||
+           opType == HcclCMDType::HCCL_CMD_ALLTOALL;
+}
+
+HcclResult CheckMc2CcuDeviceType(const char* apiName)
+{
+    DevType deviceType = DevType::DEV_TYPE_COUNT;
+    HcclResult ret = hrtGetDeviceType(deviceType);
+    if (ret != HCCL_SUCCESS) {
+        HCCL_ERROR("[%s] failed to get device type, ret[%d].", apiName, ret);
+        return ret;
+    }
+    if (deviceType != DevType::DEV_TYPE_950) {
+        HCCL_ERROR(
+            "[%s] unsupported device type[%u], MC2 CCU path only supports device type 950.", apiName,
+            static_cast<uint32_t>(deviceType));
+        return HCCL_E_NOT_SUPPORT;
+    }
+    return HCCL_SUCCESS;
+}
+
+std::string BuildMc2Tag(HcclComm comm, HcclCMDType opType, const std::string& algConfig)
+{
+    char commName[COMM_INDENTIFIER_MAX_LENGTH] = {0};
+    if (HcclGetCommName(comm, commName) != HCCL_SUCCESS) {
+        (void)strcpy_s(commName, sizeof(commName), "mc2_ccu");
+    }
+    std::string tag = std::string(commName) + "_" + GetMc2OpTypeName(opType);
+    if (!algConfig.empty()) {
+        tag += "_" + algConfig;
+    }
+    return tag;
+}
+
+HcclResult BuildMc2CcTiling(HcclComm comm, uint8_t ccType, const Mc2OpArgs& ccArgs, Mc2CcTilingInner& ccTiling)
+{
+    const HcclCMDType opType = static_cast<HcclCMDType>(ccType);
+    CHK_PRT_RET(
+        !IsSupportedMc2OpType(opType), HCCL_ERROR("[BuildMc2CcTiling] unsupported ccType[%u]", ccType),
+        HCCL_E_NOT_SUPPORT);
+
+    const std::string tag = BuildMc2Tag(comm, opType, ccArgs.algConfig);
+    CHK_SAFETY_FUNC_RET(strcpy_s(ccTiling.groupName, sizeof(ccTiling.groupName), tag.c_str()));
+    CHK_SAFETY_FUNC_RET(strcpy_s(ccTiling.algConfig, sizeof(ccTiling.algConfig), ccArgs.algConfig.c_str()));
+    ccTiling.version = static_cast<uint8_t>(static_cast<uint32_t>(HcclApi::Mc2LaunchVersion::MC2_CCU_LAUNCH_VERSION));
+    ccTiling.commEngine = ccArgs.commEngine;
+    ccTiling.srcDataType = static_cast<uint8_t>(ccArgs.srcDataType);
+    ccTiling.dstDataType = static_cast<uint8_t>(ccArgs.dstDataType);
+    ccTiling.opType = static_cast<uint32_t>(opType);
+    ccTiling.reduceType = static_cast<uint32_t>(ccArgs.reduceType);
+    return HCCL_SUCCESS;
+}
+
+HcclResult BuildTagsAndValidate(
+    const void* ccTilingList[], uint32_t tilingNum, const char* commName, u32 rankSize, u32 userRank,
+    std::string topoTag[], std::string& ctxTag);
+
+HcclResult BuildMc2BuiltinCtx(
+    HcclComm comm, uint8_t ccType, const Mc2OpArgs& ccArgs, std::unique_ptr<Mc2CcuBuiltinCtx>& builtinCtx)
+{
+    CHK_PRT_RET(
+        builtinCtx != nullptr, HCCL_ERROR("[BuildMc2BuiltinCtx] builtinCtx must be null before build"), HCCL_E_PARA);
+    builtinCtx = std::make_unique<Mc2CcuBuiltinCtx>();
+    builtinCtx->comm = comm;
+    builtinCtx->ccArgs = ccArgs;
+
+    Mc2CcTilingInner ccTiling{};
+    CHK_RET(BuildMc2CcTiling(comm, ccType, ccArgs, ccTiling));
+
+    uint32_t rankSize = 0U;
+    uint32_t userRank = 0U;
+    CHK_RET(HcclGetRankSize(comm, &rankSize));
+    CHK_RET(HcclGetRankId(comm, &userRank));
+    char commName[COMM_INDENTIFIER_MAX_LENGTH] = {0};
+    CHK_RET(HcclGetCommName(comm, commName));
+
+    const void* ccTilingList[Hccl::MC2_MAX_OP_NUM] = {&ccTiling};
+    std::string topoTag[Hccl::MC2_MAX_OP_NUM];
+    CHK_RET(BuildTagsAndValidate(ccTilingList, 1U, commName, rankSize, userRank, topoTag, builtinCtx->ctxTag));
+    CHK_RET(AllocCcuOpResCtx(comm, builtinCtx->ctxTag, rankSize, userRank, builtinCtx->opResCtx));
+    builtinCtx->opResCtx.version = static_cast<uint32_t>(HcclApi::Mc2LaunchVersion::MC2_CCU_LAUNCH_VERSION);
+
+    Mc2InitTilingInner initTiling{};
+    initTiling.version = INIT_TILING_CCU_NEW_VERSION;
+    initTiling.mc2HcommCnt = 1U;
+    initTiling.offset[0] = 0U;
+    CHK_RET(CcuSelectAlg(comm, nullptr, topoTag, ccTilingList, 1U, &initTiling, builtinCtx->opResCtx));
+    return HCCL_SUCCESS;
+}
+
+HcclResult CreateMc2DeviceOpResCtx(Mc2CcuBuiltinCtx& builtinCtx)
+{
+    const std::string tagOpResCtx = builtinCtx.ctxTag + "_opResCtx";
+    void* opResCtxPtr = nullptr;
+    constexpr uint64_t opResCtxSize = sizeof(OpResCtx);
+    CHK_RET(GetOrCreateCcuCtx(builtinCtx.comm, tagOpResCtx, opResCtxSize, &opResCtxPtr));
+    aclError aclRet =
+        aclrtMemcpy(opResCtxPtr, opResCtxSize, &builtinCtx.opResCtx, opResCtxSize, ACL_MEMCPY_HOST_TO_DEVICE);
+    CHK_PRT_RET(
+        aclRet != ACL_SUCCESS,
+        HCCL_ERROR(
+            "[CreateMc2DeviceOpResCtx] aclrtMemcpy H2D failed, ret[%d], dst[%p], size[%llu].", aclRet, opResCtxPtr,
+            static_cast<unsigned long long>(opResCtxSize)),
+        HCCL_E_RUNTIME);
+
+    builtinCtx.deviceOpResCtx = opResCtxPtr;
+    builtinCtx.deviceOpResCtxSize = static_cast<uint32_t>(opResCtxSize);
+    HCCL_INFO(
+        "[CreateMc2DeviceOpResCtx] opResCtx[%p], size[%u], workspace[0x%llx], workspaceSize[%llu], "
+        "rank[%llu/%llu], xnAddr[0x%llx], ckeAddr[0x%llx], scratch[0x%llx].",
+        builtinCtx.deviceOpResCtx, builtinCtx.deviceOpResCtxSize,
+        static_cast<unsigned long long>(builtinCtx.opResCtx.workSpace),
+        static_cast<unsigned long long>(builtinCtx.opResCtx.workSpaceSize),
+        static_cast<unsigned long long>(builtinCtx.opResCtx.rankId),
+        static_cast<unsigned long long>(builtinCtx.opResCtx.rankSize),
+        static_cast<unsigned long long>(builtinCtx.opResCtx.xnAddr),
+        static_cast<unsigned long long>(builtinCtx.opResCtx.ckeAddr),
+        static_cast<unsigned long long>(builtinCtx.opResCtx.res[0]));
+    return HCCL_SUCCESS;
+}
 
 HcclResult Mc2KfcAllocOpArgs(void** opArgs)
 {
@@ -585,24 +748,11 @@ void LogKernelLaunchArgs(
 }
 } // namespace
 
-CcuResult CcuKernelLaunch(const HcclComm comm, void* opResCtx)
+CcuResult LaunchCcuKernel(const HcclComm comm, const OpParam& opParamHost)
 {
     CHK_PRT_RET(comm == nullptr, HCCL_ERROR("[%s] comm is nullptr.", __func__), CCU_E_PTR);
-    CHK_PRT_RET(opResCtx == nullptr, HCCL_ERROR("[%s] opResCtx is nullptr.", __func__), CCU_E_PTR);
-
-    // HcclEngineCtxCreate分配的OpResCtx、OpParam和序列化资源均位于device，需逐层拷贝到host。
-    OpResCtx opResHost{};
-    CcuResult ret = CopyOpResCtxToHost(opResCtx, opResHost);
-    if (ret != CCU_SUCCESS) {
-        return ret;
-    }
-    OpParam opParamHost{};
-    ret = CopyOpParamToHost(opResHost, opParamHost);
-    if (ret != CCU_SUCCESS) {
-        return ret;
-    }
     AlgResourceCtxSerializable resourceCtx;
-    ret = LoadResourceCtx(opParamHost, resourceCtx);
+    CcuResult ret = LoadResourceCtx(opParamHost, resourceCtx);
     if (ret != CCU_SUCCESS) {
         return ret;
     }
@@ -629,3 +779,207 @@ CcuResult CcuKernelLaunch(const HcclComm comm, void* opResCtx)
     }
     return CCU_SUCCESS;
 }
+
+CcuResult CcuKernelLaunch(const HcclComm comm, void* opResCtx)
+{
+    CHK_PRT_RET(comm == nullptr, HCCL_ERROR("[%s] comm is nullptr.", __func__), CCU_E_PTR);
+    CHK_PRT_RET(opResCtx == nullptr, HCCL_ERROR("[%s] opResCtx is nullptr.", __func__), CCU_E_PTR);
+
+    // HcclEngineCtxCreate分配的OpResCtx、OpParam和序列化资源均位于device，需逐层拷贝到host。
+    OpResCtx opResHost{};
+    CcuResult ret = CopyOpResCtxToHost(opResCtx, opResHost);
+    if (ret != CCU_SUCCESS) {
+        return ret;
+    }
+    OpParam opParamHost{};
+    ret = CopyOpParamToHost(opResHost, opParamHost);
+    if (ret != CCU_SUCCESS) {
+        return ret;
+    }
+    return LaunchCcuKernel(comm, opParamHost);
+}
+
+extern "C" {
+uint32_t __attribute__((visibility("default"))) Mc2GetCcArgs(void** ccArgs)
+{
+    CHK_PTR_NULL(ccArgs);
+    auto* args = new (std::nothrow) Mc2OpArgs();
+    CHK_PRT_RET(args == nullptr, HCCL_ERROR("[Mc2GetCcArgs] allocate args failed"), HCCL_E_INTERNAL);
+    *ccArgs = args;
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2FreeCcArgs(void* ccArgs)
+{
+    CHK_PTR_NULL(ccArgs);
+    delete static_cast<Mc2OpArgs*>(ccArgs);
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2SetCcCommEngine(void* ccArgs, uint8_t commEngine)
+{
+    CHK_PTR_NULL(ccArgs);
+    if (commEngine != static_cast<uint8_t>(OpExecuteConfig::CCU_MS) &&
+        commEngine != static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED) &&
+        commEngine != static_cast<uint8_t>(OpExecuteConfig::AICPU) &&
+        commEngine != static_cast<uint8_t>(OpExecuteConfig::AICPU_TS)) {
+        HCCL_ERROR("[Mc2SetCcCommEngine] unsupported commEngine[%u]", commEngine);
+        return HCCL_E_NOT_SUPPORT;
+    }
+    auto* args = static_cast<Mc2OpArgs*>(ccArgs);
+    args->commEngine = commEngine;
+    args->version = GetMc2LaunchVersionByCommEngine(commEngine);
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2SetCcAlgConfig(void* ccArgs, const char* algConfig)
+{
+    CHK_PTR_NULL(ccArgs);
+    CHK_PTR_NULL(algConfig);
+    auto* args = static_cast<Mc2OpArgs*>(ccArgs);
+    args->algConfig = algConfig;
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2SetCcSrcDataType(void* ccArgs, uint8_t srcDataType)
+{
+    CHK_PTR_NULL(ccArgs);
+    CHK_RET(HcomCheckDataType(static_cast<HcclDataType>(srcDataType)));
+    auto* args = static_cast<Mc2OpArgs*>(ccArgs);
+    args->srcDataType = static_cast<HcclDataType>(srcDataType);
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2SetCcDstDataType(void* ccArgs, uint8_t dstDataType)
+{
+    CHK_PTR_NULL(ccArgs);
+    CHK_RET(HcomCheckDataType(static_cast<HcclDataType>(dstDataType)));
+    auto* args = static_cast<Mc2OpArgs*>(ccArgs);
+    args->dstDataType = static_cast<HcclDataType>(dstDataType);
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2SetCcReduceType(void* ccArgs, uint8_t reduceType)
+{
+    CHK_PTR_NULL(ccArgs);
+    CHK_RET(HcomCheckReductionOp(static_cast<HcclReduceOp>(reduceType)));
+    auto* args = static_cast<Mc2OpArgs*>(ccArgs);
+    args->reduceType = static_cast<HcclReduceOp>(reduceType);
+    return HCCL_SUCCESS;
+}
+
+uint32_t __attribute__((visibility("default"))) Mc2AcquireCcResCtx(
+    HcclComm comm, uint8_t ccType, void* ccArgs, void** ccResCtx, uint32_t* ccResCtxSize)
+{
+    CHK_PTR_NULL(comm);
+    CHK_PTR_NULL(ccArgs);
+    CHK_PTR_NULL(ccResCtx);
+    CHK_PTR_NULL(ccResCtxSize);
+    *ccResCtx = nullptr;
+    *ccResCtxSize = 0U;
+
+    auto* args = static_cast<Mc2OpArgs*>(ccArgs);
+    HCCL_INFO(
+        "[Mc2AcquireCcResCtx] start, comm[%p], ccType[%u], args[%p], version[%u], commEngine[%u], "
+        "srcDataType[%u], dstDataType[%u], reduceType[%u], algConfig[%s].",
+        comm, ccType, ccArgs, static_cast<uint32_t>(args->version), args->commEngine,
+        static_cast<uint32_t>(args->srcDataType), static_cast<uint32_t>(args->dstDataType),
+        static_cast<uint32_t>(args->reduceType), args->algConfig.c_str());
+    const HcclApi::Mc2LaunchVersion expectedVersion = GetMc2LaunchVersionByCommEngine(args->commEngine);
+    if (args->version != expectedVersion) {
+        HCCL_ERROR(
+            "[Mc2AcquireCcResCtx] unsupported args version[%u], expected[%u] for commEngine[%u].",
+            static_cast<uint32_t>(args->version), static_cast<uint32_t>(expectedVersion), args->commEngine);
+        return HCCL_E_NOT_SUPPORT;
+    }
+
+    if (args->commEngine == static_cast<uint8_t>(OpExecuteConfig::CCU_MS) ||
+        args->commEngine == static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED)) {
+        CHK_RET(CheckMc2CcuDeviceType(__func__));
+        std::unique_ptr<Mc2CcuBuiltinCtx> builtinCtx;
+        CHK_RET(BuildMc2BuiltinCtx(comm, ccType, *args, builtinCtx));
+        CHK_RET(CreateMc2DeviceOpResCtx(*builtinCtx));
+
+        if (builtinCtx != nullptr) {
+            HCCL_INFO(
+                "[Mc2AcquireCcResCtx] built ctx, ctxTag[%s], algConfig[%s], opType[%u], algorithmType[%u], "
+                "isKfc[%u], rank[%llu/%llu], workspace[0x%llx], workspaceSize[%llu], xnAddr[0x%llx], "
+                "ckeAddr[0x%llx], opParam[0x%llx], opParamSize[%llu], opResCtx[%p], ccResCtxSize[%u].",
+                builtinCtx->ctxTag.c_str(), builtinCtx->ccArgs.algConfig.c_str(), builtinCtx->opResCtx.opType[0],
+                builtinCtx->opResCtx.algorithmType[0], static_cast<uint32_t>(builtinCtx->opResCtx.isKfc[0]),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.rankId),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.rankSize),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.workSpace),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.workSpaceSize),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.xnAddr),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.ckeAddr),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.algInfo[0].opParam),
+                static_cast<unsigned long long>(builtinCtx->opResCtx.opParamSize[0]), builtinCtx->deviceOpResCtx,
+                builtinCtx->deviceOpResCtxSize);
+        }
+
+        *ccResCtxSize = builtinCtx->deviceOpResCtxSize;
+        *ccResCtx = builtinCtx->deviceOpResCtx;
+        HCCL_INFO("[Mc2AcquireCcResCtx] end, ccResCtx[%p], ccResCtxSize[%u].", *ccResCtx, *ccResCtxSize);
+        return HCCL_SUCCESS;
+    }
+
+    HCCL_ERROR("[Mc2AcquireCcResCtx] unsupported commEngine[%u]", args->commEngine);
+    return HCCL_E_NOT_SUPPORT;
+}
+
+void __attribute__((visibility("default"))) Mc2CcKernelLaunch(void* stream, void* ccResCtx, uint32_t ccResCtxSize)
+{
+    if (ccResCtx == nullptr) {
+        HCCL_ERROR("[Mc2CcKernelLaunch] ccResCtx is nullptr.");
+        return;
+    }
+
+    if (ccResCtxSize < sizeof(OpResCtx)) {
+        HCCL_ERROR(
+            "[Mc2CcKernelLaunch] invalid ccResCtxSize[%u], expected at least[%zu].", ccResCtxSize, sizeof(OpResCtx));
+        return;
+    }
+
+    OpResCtx opResHost{};
+    CcuResult loadRet = CopyOpResCtxToHost(ccResCtx, opResHost);
+    if (loadRet != CCU_SUCCESS) {
+        HCCL_ERROR("[Mc2CcKernelLaunch] failed to load OpResCtx, ret[%d].", loadRet);
+        return;
+    }
+
+    OpParam opParamHost{};
+    loadRet = CopyOpParamToHost(opResHost, opParamHost);
+    if (loadRet != CCU_SUCCESS) {
+        HCCL_ERROR("[Mc2CcKernelLaunch] failed to load OpParam, ret[%d].", loadRet);
+        return;
+    }
+
+    const HcclComm comm = static_cast<HcclComm>(opParamHost.hcclComm);
+    switch (opParamHost.engine) {
+        case COMM_ENGINE_CCU: {
+            HcclResult deviceRet = CheckMc2CcuDeviceType(__func__);
+            if (deviceRet != HCCL_SUCCESS) {
+                HCCL_ERROR("[Mc2CcKernelLaunch] CCU launch is not supported, ret[%d].", deviceRet);
+                return;
+            }
+            // The CCU launch stream is carried by the thread handles in the resource context.
+            (void)stream;
+            CcuResult launchRet = LaunchCcuKernel(comm, opParamHost);
+            if (launchRet != CCU_SUCCESS) {
+                HCCL_ERROR("[Mc2CcKernelLaunch] CcuKernelLaunch failed, ret[%d].", launchRet);
+            }
+            return;
+        }
+        case COMM_ENGINE_AICPU:
+        case COMM_ENGINE_AICPU_TS:
+            HCCL_INFO(
+                "[Mc2CcKernelLaunch] AICPU branch is reserved, comm[%p], commEngine[%u], stream[%p].", comm,
+                static_cast<uint32_t>(opParamHost.engine), stream);
+            return;
+        default:
+            HCCL_ERROR("[Mc2CcKernelLaunch] unsupported commEngine[%u].", static_cast<uint32_t>(opParamHost.engine));
+            return;
+    }
+}
+} // extern "C"

@@ -436,12 +436,14 @@ HcclResult PrepareParamForAllGather(
     param.opType = HcclCMDType::HCCL_CMD_ALLGATHER;
     param.reduceType = HcclReduceOp::HCCL_REDUCE_SUM;
     param.DataDes.dataType = static_cast<HcclDataType>(ccTiling->srcDataType);
+    param.DataDes.outputType = static_cast<HcclDataType>(ccTiling->dstDataType);
     param.DataDes.count = 0;
 
     HCCL_INFO("Print PrepareParamForAllGather.");
     CHK_RET(PrintOpsCommParam(param));
     HCCL_INFO("opType %u", static_cast<uint32_t>(param.opType));
     HCCL_INFO("DataDes.dataType %u", static_cast<uint32_t>(param.DataDes.dataType));
+    HCCL_INFO("DataDes.outputType %u", static_cast<uint32_t>(param.DataDes.outputType));
     HCCL_INFO("DataDes.count %lu", param.DataDes.count);
     HCCL_INFO("Execute PrepareParamForAllGather success.");
     return HCCL_SUCCESS;
@@ -491,6 +493,7 @@ HcclResult PrepareParamForReduceScatter(
     param.opType = HcclCMDType::HCCL_CMD_REDUCE_SCATTER;
     param.reduceType = static_cast<HcclReduceOp>(ccTiling->reduceType);
     param.DataDes.dataType = static_cast<HcclDataType>(ccTiling->srcDataType);
+    param.DataDes.outputType = static_cast<HcclDataType>(ccTiling->dstDataType);
     param.DataDes.count = 0;
 
     HCCL_INFO("Print PrepareParamForReduceScatter.");
@@ -498,6 +501,7 @@ HcclResult PrepareParamForReduceScatter(
     HCCL_INFO("opType %u", static_cast<uint32_t>(param.opType));
     HCCL_INFO("reduceType %u", static_cast<uint32_t>(param.reduceType));
     HCCL_INFO("DataDes.dataType %u", static_cast<uint32_t>(param.DataDes.dataType));
+    HCCL_INFO("DataDes.outputType %u", static_cast<uint32_t>(param.DataDes.outputType));
     HCCL_INFO("DataDes.count %lu", param.DataDes.count);
     HCCL_INFO("Execute PrepareParamForReduceScatter success.");
     return HCCL_SUCCESS;

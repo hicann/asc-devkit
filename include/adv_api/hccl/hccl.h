@@ -290,7 +290,7 @@ public:
      * @param [in] initTiling: Address of InitTilingData
      * @note Must be called first to initialize Hccl instance.
      */
-    __aicore__ inline void InitV2(GM_ADDR context, const void* initTiling);
+    __aicore__ inline void InitV2(GM_ADDR context, const void* initTiling = nullptr);
 
     /*!
      * @class Hccl

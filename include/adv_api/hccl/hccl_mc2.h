@@ -14,6 +14,8 @@
 #include <hccl/hccl_res.h>
 #include <ccu/ccu_types.h>
 
+using Mc2Result = uint32_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -111,6 +113,82 @@ extern HcclResult __attribute__((visibility("default"))) CheckOpResSufficient(
     HcclComm comm, void* stream, void* mc2Tiling);
 
 extern CcuResult CcuKernelLaunch(HcclComm comm, void* opResCtx);
+
+/**
+ * @brief Allocate the opaque ccArgs object for MC2 builtin APIs.
+ * @param ccArgs Output pointer to store the allocated ccArgs object.
+ * @return HCCL_SUCCESS on success, otherwise a failure code.
+ * @note The returned object must be released by Mc2FreeCcArgs.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2GetCcArgs(void** ccArgs);
+
+/**
+ * @brief Free the opaque ccArgs object for MC2 builtin APIs.
+ * @param ccArgs Opaque argument object returned by Mc2GetCcArgs.
+ * @return HCCL_SUCCESS on success, otherwise a failure code.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2FreeCcArgs(void* ccArgs);
+
+/**
+ * @brief Set the comm engine for MC2 builtin API arguments.
+ *        The matching launch version is updated automatically according to the engine.
+ * @param ccArgs Opaque argument object created by Mc2GetCcArgs.
+ * @param commEngine Comm engine value.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2SetCcCommEngine(void* ccArgs, uint8_t commEngine);
+
+/**
+ * @brief Set the algorithm config for MC2 builtin API arguments.
+ * @param ccArgs Opaque argument object created by Mc2GetCcArgs.
+ * @param algConfig Algorithm config string.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2SetCcAlgConfig(void* ccArgs, const char* algConfig);
+
+/**
+ * @brief Set the source data type for MC2 builtin API arguments.
+ * @param ccArgs Opaque argument object created by Mc2GetCcArgs.
+ * @param srcDataType Source data type.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2SetCcSrcDataType(void* ccArgs, uint8_t srcDataType);
+
+/**
+ * @brief Set the destination data type for MC2 builtin API arguments.
+ * @param ccArgs Opaque argument object created by Mc2GetCcArgs.
+ * @param dstDataType Destination data type.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2SetCcDstDataType(void* ccArgs, uint8_t dstDataType);
+
+/**
+ * @brief Set the reduce type for MC2 builtin API arguments.
+ * @param ccArgs Opaque argument object created by Mc2GetCcArgs.
+ * @param reduceType Reduce type.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2SetCcReduceType(void* ccArgs, uint8_t reduceType);
+
+/**
+ * @brief Allocate the opaque ccResCtx object for MC2 builtin APIs.
+ * @param comm Communication domain handle.
+ * @param ccType MC2 operation type.
+ * @param ccArgs Opaque argument object created by Mc2GetCcArgs.
+ * @param ccResCtx Output pointer to store the allocated resource context.
+ * @param ccResCtxSize Output size of the allocated resource context.
+ * @note The returned context is owned by the communication domain and should not be freed by the caller.
+ *       The CCU path currently supports Ascend 950 only.
+ */
+extern Mc2Result __attribute__((visibility("default"))) Mc2AcquireCcResCtx(
+    HcclComm comm, uint8_t ccType, void* ccArgs, void** ccResCtx, uint32_t* ccResCtxSize);
+
+/**
+ * @brief Launch MC2 builtin kernel from the prepared resource context.
+ * @param stream Stream reserved for the AICPU launch path. It is ignored by the CCU path.
+ * @param ccResCtx Device-side resource context returned by Mc2AcquireCcResCtx.
+ * @param ccResCtxSize Size of the resource context.
+ * @note The launch path dispatches by commEngine in the OpParam referenced by the context.
+ *       The CCU path currently supports Ascend 950 only and obtains its launch stream
+ *       from the thread resource embedded in ccResCtx.
+ */
+extern void __attribute__((visibility("default"))) Mc2CcKernelLaunch(
+    void* stream, void* ccResCtx, uint32_t ccResCtxSize);
 
 #ifdef __cplusplus
 }

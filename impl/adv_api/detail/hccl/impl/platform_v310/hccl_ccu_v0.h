@@ -138,7 +138,6 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::I
     } else {
         hcclContext_ = (__gm__ HcclCombineOpParam*)context;
     }
-
     constexpr uint64_t workspaceAlignMask = 0x1ffU;
     constexpr uint64_t layoutSize =
         MAX_DCCI_CNT + sizeof(CommonPrepareParamCcu) * static_cast<uint64_t>(HCCL_MAX_HANDLE_ID) +
@@ -212,13 +211,19 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::InitV2(
     GM_ADDR context, const void* initTiling)
 {
-    HcclTilingVersion version =
-        (initTiling != nullptr ? HcclTilingVersion::ONLINE_COMPILATION_TILING_VERSION :
-                                 HcclTilingVersion::DEPRECATED_TILING_VERSION);
+    newCcuFlag_ = false;
+    HcclTilingVersion version = HcclTilingVersion::DEPRECATED_TILING_VERSION;
     if (initTiling != nullptr) {
+        version = HcclTilingVersion::ONLINE_COMPILATION_TILING_VERSION;
         const Mc2InitTilingInner* tilingInner = static_cast<const Mc2InitTilingInner*>(initTiling);
         if (tilingInner->version == INIT_TILING_CCU_NEW_VERSION) {
             newCcuFlag_ = true;
+        }
+    } else if (context != nullptr) {
+        __gm__ const HcclApi::OpResCtx* opResCtx = reinterpret_cast<__gm__ const HcclApi::OpResCtx*>(context);
+        if (opResCtx->version == static_cast<uint32_t>(HcclApi::Mc2LaunchVersion::MC2_CCU_LAUNCH_VERSION)) {
+            newCcuFlag_ = true;
+            version = HcclTilingVersion::CONTEXT_DECOUPLE_VERSION;
         }
     }
     InitInner(context, version);
@@ -390,6 +395,9 @@ template <bool commit>
 __aicore__ inline HcclHandle HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CommonPrepareImpl(
     const CommonPrepareParam& commonPrepareParam)
 {
+    ASCENDC_HCCL_API_ASSERT(
+        isInited_, { return INVALID_HANDLE_ID; },
+        "Call Prepare failed, please ensure Hccl::Init func has been called successfully already!");
     if (unlikely(commonPrepareParam.repeat == 0U)) {
         return INVALID_HANDLE_ID;
     }
@@ -631,17 +639,16 @@ __aicore__ inline int32_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>
     ASCENDC_HCCL_API_ASSERT(
         isInited_, { return HCCL_FAILED; },
         "Call Wait failed, please ensure Hccl::Init func has been called successfully already!");
-    ASCENDC_HCCL_API_ASSERT(
-        handleCommitCnt_[handleId] > 0, { return HCCL_FAILED; }, "Call Wait failed,  commitCnt [%u] is invalid.",
-        handleCommitCnt_[handleId]);
-    ASCENDC_HCCL_API_ASSERT(
-        handleId < curHandleId_, { return HCCL_FAILED; },
-        "Call Wait failed,  handleId = %u is invalid please call Preapre Interface before Wait.", handleId);
-
     if (unlikely(handleId >= HCCL_MAX_HANDLE_ID || handleId <= INVALID_HANDLE_ID)) {
         KERNEL_LOG(KERNEL_ERROR, "Call Wait failed, handleId[%u] is invalid.", handleId);
         return HCCL_FAILED;
     }
+    ASCENDC_HCCL_API_ASSERT(
+        handleId < curHandleId_, { return HCCL_FAILED; },
+        "Call Wait failed,  handleId = %u is invalid please call Preapre Interface before Wait.", handleId);
+    ASCENDC_HCCL_API_ASSERT(
+        handleCommitCnt_[handleId] > 0, { return HCCL_FAILED; }, "Call Wait failed,  commitCnt [%u] is invalid.",
+        handleCommitCnt_[handleId]);
 
     if (unlikely(handleNeedCommitCnt_[handleId] <= 0)) {
         KERNEL_LOG(

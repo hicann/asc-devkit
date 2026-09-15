@@ -344,6 +344,11 @@ uint16_t CcuBuf::Id() const { return 0; }
 
 } // namespace hcomm
 
+namespace mc2_ops_hccl {
+bool g_stubHcommCcuKernelLaunchFail = false;
+uint32_t g_stubHcommCcuKernelLaunchCallCount = 0U;
+} // namespace mc2_ops_hccl
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -364,6 +369,10 @@ CcuResult HcommCcuKernelRegisterEnd(CcuInsHandle insHandle) { return CCU_SUCCESS
 CcuResult HcommCcuKernelLaunch(
     ThreadHandle threadHandle, CcuKernelHandle kernelHandle, const void* taskArgs, uint32_t argSize)
 {
+    ++mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount;
+    if (mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail) {
+        return CCU_E_INTERNAL;
+    }
     return CCU_SUCCESS;
 }
 
