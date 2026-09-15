@@ -53,12 +53,13 @@ inline float y1f(float x)
 -   当x=0时，返回值为-inf。
 -   当x=inf时，返回值为0。
 -   当x=nan时，返回值为nan。
+-   在快速计算模式（[--cce-use-fast-math](../../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#常用的编译选项)设置为`true`）下，若内部中间计算值的除数为Subnormal数据，则接口返回值为-inf。
 
 ## 约束说明
 
-<!-- npu="950" id7 -->
--   针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：本接口内部实现使用到了除法运算符。由于除法运算符不支持Subnormal场景，在极少数场景下内部中间计算值的除数为Subnormal数据，会导致本接口最终结果为-inf。
-<!-- end id7 -->
+本接口受编译选项`--cce-use-fast-math`的影响。
+-   --cce-use-fast-math=true：开启快速计算模式。本接口内部实现使用到了除法运算符，由于快速计算模式下除法运算符不支持Subnormal场景，因此本接口不支持内部中间计算值的除数为Subnormal数据的场景。
+-   --cce-use-fast-math=false：支持Subnormal场景的高精度计算。
 
 ## 调用示例
 

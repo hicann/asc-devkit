@@ -69,11 +69,13 @@ y/x的反正切值。
 | 1 | inf | π/2 |
 | 1 | -inf | -π/2 |
 
+在快速计算模式（[--cce-use-fast-math](../../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#常用的编译选项)设置为`true`）下，若仅y为Subnormal数据且x为非Subnormal的正数，则返回值为0。
+
 ## 约束说明
 
-<!-- npu="950" id7 -->
-针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：本接口内部实现使用到了除法运算符，由于除法运算符不支持Subnormal场景，当x和y均为Subnormal数据时，本接口最终返回nan；当仅y为Subnormal数据且x为正数且非Subnormal数据时，本接口最终返回0；当仅y为Subnormal数据且x为负数且非Subnormal数据时，本接口最终返回与y同号的π。
-<!-- end id7 -->
+本接口受编译选项`--cce-use-fast-math`的影响。
+-   --cce-use-fast-math=true：开启快速计算模式。本接口内部实现使用到了除法运算符，由于快速计算模式下除法运算符不支持Subnormal场景，因此本接口不支持仅y为Subnormal数据且x为非Subnormal的正数的场景。
+-   --cce-use-fast-math=false：支持Subnormal场景的高精度计算。
 
 ## 调用示例
 

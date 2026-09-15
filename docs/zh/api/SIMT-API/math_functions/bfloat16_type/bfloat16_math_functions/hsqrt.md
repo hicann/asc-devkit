@@ -61,10 +61,6 @@ inline bfloat16_t hsqrt(bfloat16_t x)
 
 本接口支持的输入数据范围为x大于等于0，否则非饱和模式下返回值为nan，饱和模式下返回值为0。
 
-<!-- npu="950" id7 -->
-针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
-<!-- end id7 -->
-
 ## 调用示例
 
 - SIMT编程场景：

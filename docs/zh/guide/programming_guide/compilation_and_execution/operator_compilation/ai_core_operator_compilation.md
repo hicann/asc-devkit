@@ -123,7 +123,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 | --cce-ftz=false/true | 否 | 控制非规格化数（极小数）的处理方式。true表示将非规格化数直接刷新为0，可提升性能；false表示保留非规格化数，精度更高但性能可能较低，默认值为true。当前支持SIMD和SIMT，其中SIMD仅支持NPU架构版本3510。 |
 | --cce-prec-div=false/true | 否 | 是否使用精确的除法计算，默认为false。当前只支持SIMT。 |
 | --cce-prec-sqrt=false/true | 否 | 是否使用精确的平方根函数，默认false。当前只支持SIMT。 |
-| --cce-use-fast-math=false/true | 否 | 是否开启快速计算模式，开启时相当于--cce-ftz=true --cce-prec-div=false --cce-prec-sqrt=false（若有冲突，以--cce-ftz，--cce-prec-div，--cce-prec-sqrt设置的为准）。当前只支持SIMT。 |
+| --cce-use-fast-math=false/true | 否 | 是否开启快速计算模式，默认true。开启时相当于--cce-ftz=true --cce-prec-div=false --cce-prec-sqrt=false（若有冲突，以--cce-ftz，--cce-prec-div，--cce-prec-sqrt设置的为准）。当前只支持SIMT。 |
 
 >[!NOTE]说明
 ><!-- npu="A3,910b,910,310p,310b" id13 -->
