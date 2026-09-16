@@ -17,6 +17,7 @@
 
 namespace AscendC {
 
+// 本枚举为 AIC 侧 hccl_alloc_ctx_res.h AlgorithmType 的镜像，显式值处（3/53/153）必须与宿主侧一致
 enum class AlgorithmType : uint8_t {
     CcuAllGatherMesh1D = 0,
     CcuAllGatherMeshMem2Mem1D,
@@ -38,7 +39,9 @@ enum class AlgorithmType : uint8_t {
     // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（154）。
     CcuSchedReduceScatterSoleNHRMultiLink = 154,
     CcuSchedAllToAllSoleMeshConcurrent,
-    CcuSchedReduceScatterConcurMeshNHRMultiLink = 156
+    // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（156，master 尾部隐式编号已占用 153/155）。
+    CcuSchedReduceScatterConcurMeshNHRMultiLink = 156,
+    CcuSchedAllToAllMesh1DMultiJetty = 157
 };
 
 template <const auto& config>
@@ -126,6 +129,7 @@ private:
     __aicore__ inline void CcuPrepareForAllGather(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForAllReduce(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForAllToAll(__gm__ CommonPrepareParamCcu* commParam);
+    __aicore__ inline void CcuPrepareForAllToAllMultiJetty(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForAllToAllV(
         __gm__ CommonPrepareParamCcu* commParam, __gm__ AlltoAllVParamCcu* allToAllVParam);
     __aicore__ inline void CcuPrepareForAllToAllVWrite(__gm__ CommonPrepareParamCcu* commParam);

@@ -89,6 +89,33 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
 }
 
 template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllToAllMultiJetty(
+    __gm__ CommonPrepareParamCcu* commParam)
+{
+    uint64_t dataSize = GetHcclDataTypeSize(commParam->dataType);
+    xnData_[KFC_A2A_MJ_OP_ID] = GetOpId(commParam);
+    uint64_t offset = commParam->count * ccuParam_.repeatIndex * dataSize;
+    xnData_[KFC_A2A_MJ_INPUT] = (uint64_t)commParam->sendBuf + offset;
+    xnData_[KFC_A2A_MJ_OUTPUT] = (uint64_t)commParam->recvBuf + offset;
+    uint64_t sliceSizeAlltoall = commParam->count * dataSize;
+    uint64_t strideSize = commParam->strideCount == 0 ? sliceSizeAlltoall : commParam->strideCount * dataSize;
+    xnData_[KFC_A2A_MJ_SLICE_SIZE] = sliceSizeAlltoall;
+    xnData_[KFC_A2A_MJ_SRC_STRIDE] = strideSize;
+    xnData_[KFC_A2A_MJ_SRC_OFFSET] = 0;
+    xnData_[KFC_A2A_MJ_DST_OFFSET] = strideSize * ccuParam_.rankId;
+    uint64_t loopCount = 8;
+    CalcGoSize(sliceSizeAlltoall, loopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_A2A_MJ_GO_SIZE_0]);
+    constexpr uint64_t splitAlignment = 128U;
+    // 升 N>1 时须与 template 侧 A2A_JETTY_NUM 同步修改（ccu_temp_all_to_all_mesh1d_multi_jetty.cc）
+    constexpr uint64_t a2aJettyNum = 1U;
+    const uint64_t a2aSliceSizePerJetty = (sliceSizeAlltoall / a2aJettyNum / splitAlignment) * splitAlignment;
+    const uint64_t a2aLastSliceSizePerJetty = sliceSizeAlltoall - a2aSliceSizePerJetty * (a2aJettyNum - 1U);
+    xnData_[KFC_A2A_MJ_SLICE_SIZE_PER_JETTY] = a2aSliceSizePerJetty;
+    xnData_[KFC_A2A_MJ_LAST_SLICE_SIZE_PER_JETTY] = a2aLastSliceSizePerJetty;
+    return;
+}
+
+template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllToAllVWrite(
     __gm__ CommonPrepareParamCcu* commParam)
 {

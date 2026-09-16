@@ -32,6 +32,7 @@ constexpr uint32_t KFC_SERVER_SIGNAL_REGION_NUM = KFC_SIGNAL_REGION_NUM;
 
 constexpr char KFC_CONCURRENT_ALL_GATHER_ALG_NAME[] = "CcuSchedAllGatherConcurMeshNHRMultiLink";
 constexpr char KFC_CONCURRENT_ALL_TO_ALL_ALG_NAME[] = "CcuSchedAllToAllSoleMeshConcurrent";
+constexpr char KFC_A2A_MULTI_JETTY_ALG_NAME[] = "CcuSchedAllToAllMesh1DMultiJetty";
 constexpr char KFC_REDUCE_SCATTER_PEER_ONLY_ALG_NAME[] = "CcuSchedReduceScatterSoleMeshPeerOnly";
 constexpr char KFC_REDUCE_SCATTER_PEER_ONLY_KERNEL_NAME[] = "CcuKernelKfcReduceScatterMesh1DMem2MemPeerOnly";
 constexpr char KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME[] = "CcuSchedReduceScatterConcurMeshNHRMultiLink";
@@ -74,6 +75,12 @@ enum class KfcServerRole : uint32_t {
 
 inline KfcServerRole GetKfcServerRole(const char* algName, uint32_t missionIndex)
 {
+    if (algName == nullptr) {
+        return KfcServerRole::DEFAULT;
+    }
+    if (std::strcmp(algName, KFC_A2A_MULTI_JETTY_ALG_NAME) == 0) {
+        return KfcServerRole::ALL_TO_ALL_MULTI_JETTY;
+    }
     if (GetKfcServerMissionNum(algName) == KFC_MAX_MISSION_NUM) {
         if (std::strcmp(algName, KFC_CONCURRENT_ALL_TO_ALL_ALG_NAME) == 0) {
             return missionIndex == 0U ? KfcServerRole::ALL_TO_ALL_MESH : KfcServerRole::ALL_TO_ALL_CLOS;

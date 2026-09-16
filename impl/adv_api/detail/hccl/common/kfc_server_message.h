@@ -82,6 +82,23 @@ enum KfcConcurrentAllToAllParamIndex : uint32_t {
     KFC_CONCURRENT_A2A_PARAM_NUM = 21,
 };
 
+enum KfcAllToAllMultiJettyParamIndex : uint32_t {
+    KFC_A2A_MJ_OP_ID = 0,
+    KFC_A2A_MJ_INPUT = 1,
+    KFC_A2A_MJ_OUTPUT = 2,
+    KFC_A2A_MJ_SLICE_SIZE = 3,
+    KFC_A2A_MJ_SRC_STRIDE = 4,
+    KFC_A2A_MJ_SRC_OFFSET = 5,
+    KFC_A2A_MJ_DST_OFFSET = 6,
+    KFC_A2A_MJ_GO_SIZE_0 = 7,
+    KFC_A2A_MJ_GO_SIZE_1 = 8,
+    KFC_A2A_MJ_GO_SIZE_2 = 9,
+    KFC_A2A_MJ_GO_SIZE_3 = 10,
+    KFC_A2A_MJ_SLICE_SIZE_PER_JETTY = 11,
+    KFC_A2A_MJ_LAST_SLICE_SIZE_PER_JETTY = 12,
+    KFC_A2A_MJ_PARAM_NUM = 13,
+};
+
 // Sole NHR MultiLink（CcuSchedReduceScatterSoleNHRMultiLink）单帧 xnData 布局：
 // [0]=opId 哨兵，NHR 参数从 1 顺排。AIV prepare（CcuPrepareForReduceScatterSoleNhrM2M）写入、
 // KFC dispatch 逐槽转发、kernel 形参三处索引必须一致。

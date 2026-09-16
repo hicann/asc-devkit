@@ -78,10 +78,10 @@ SelectorStatus AlltoAllAutoSelector::SelectMesh1DClosAlgo(
         selectAlgName = "CcuSchedAllToAllSoleMeshConcurrent";
         HCCL_INFO("[AlltoAllAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
     } else {
-        selectAlgName = "CcuSchedAllToAllSoleMeshUBX";
+        selectAlgName = "CcuSchedAllToAllMesh1DMultiJetty";
+        HCCL_INFO("[AlltoAllAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
     }
-    HCCL_WARNING("[AlltoAllAutoSelector][%s] algo[%s] not registered, fallback.", __func__, selectAlgName.c_str());
-    return SelectorStatus::NOT_MATCH;
+    return SelectorStatus::MATCH;
 }
 
 SelectorStatus AlltoAllAutoSelector::SelectSingleLevelAlgo(

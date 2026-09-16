@@ -27,6 +27,17 @@ CcuStScenario MakeScenario(const TopoMeta& topoMeta, HcclDataType dataType, uint
     return scenario;
 }
 
+// 单server内全部 phyId 携带 MESH_1D_CLOS_PHYID_MARK 时，TopoModel 按 MESH_1D_CLOS 建模
+// （单方向 1D Mesh 实例 + 覆盖 server 全部 rank 的 CLOS 实例，selector 判定 meshNum==closNum）
+TopoMeta MakeMesh1dClosTopo(const std::vector<uint32_t>& phyIds)
+{
+    ServerMeta server;
+    for (auto phyId : phyIds) {
+        server.push_back(phyId | MESH_1D_CLOS_PHYID_MARK);
+    }
+    return TopoMeta{{server}};
+}
+
 } // namespace
 
 // ===== 拓扑泛化（FP16, CcuSchedAllToAllSoleMesh）=====
@@ -251,4 +262,26 @@ TEST_F(CcuStAllToAll, CcuSchedAllToAllSoleMesh_LogLevel_Control_2Rank_SingleDie_
     }
     std::string errorOnlyOutput = testing::internal::GetCapturedStdout();
     EXPECT_EQ(errorOnlyOutput.find("INFO"), std::string::npos);
+}
+
+// ===== MultiJetty（MESH_1D_CLOS 双实例：单方向 Mesh + CLOS）=====
+// selector 语义（alltoall_auto_selector.cc SelectMesh1DClosAlgo）：
+// meshNum==closNum 且 rankSize<=4 且 dataSize>512B → CcuSchedAllToAllSoleMeshConcurrent，否则 MultiJetty
+
+TEST_F(CcuStAllToAll, CcuSchedAllToAllMesh1DMultiJetty_4Rank_Mesh1DClos_Fp16_100B)
+{
+    // 100B <= BIG_DATA_SIZE_LIMIT(512B)，Concurrent 让位条件不满足 → MultiJetty
+    TopoMeta topo = MakeMesh1dClosTopo({0, 1, 2, 3});
+    CcuStScenario scenario = MakeScenario(topo, HCCL_DATA_TYPE_FP16, 100);
+    scenario.expectedAlgName = "CcuSchedAllToAllMesh1DMultiJetty";
+    VerifyScenario(scenario);
+}
+
+TEST_F(CcuStAllToAll, CcuSchedAllToAllMesh1DMultiJetty_8Rank_Mesh1DClos_Fp16_64B)
+{
+    // rankSize=8 > CONCURRENT_RANK_LIMIT(4)，Concurrent 让位条件必然不满足 → MultiJetty
+    TopoMeta topo = MakeMesh1dClosTopo({0, 1, 2, 3, 4, 5, 6, 7});
+    CcuStScenario scenario = MakeScenario(topo, HCCL_DATA_TYPE_FP16, 64);
+    scenario.expectedAlgName = "CcuSchedAllToAllMesh1DMultiJetty";
+    VerifyScenario(scenario);
 }

@@ -276,7 +276,10 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         ccuUsedXnNum_ = 26;
         CcuPrepareForAllReduceM2M(&handleParamGM_[handleId]);
     } else if (handleParamGM_[handleId].commType.prepareType == HcclCMDType::HCCL_CMD_ALLTOALL) {
-        if (GetKfcMissionNum(handleId) == KFC_MAX_MISSION_NUM) {
+        if (GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllMesh1DMultiJetty)) {
+            ccuUsedXnNum_ = KFC_A2A_MJ_PARAM_NUM;
+            CcuPrepareForAllToAllMultiJetty(&handleParamGM_[handleId]);
+        } else if (GetKfcMissionNum(handleId) == KFC_MAX_MISSION_NUM) {
             ccuUsedXnNum_ = KFC_CONCURRENT_A2A_PARAM_NUM;
             CcuPrepareForConcurrentAllToAll(&handleParamGM_[handleId]);
         } else {
