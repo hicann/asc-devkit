@@ -14,7 +14,7 @@
 #endif
 
 /*!
- * \file copy_trait.h
+ * \file vector_copy_trait.h
  * \brief
  */
 #ifndef INCLUDE_TENSOR_API_ARCH_VECTOR_COPY_TRAIT_H

@@ -9,7 +9,7 @@
  */
 
 /*!
- * \file copy_trait.h
+ * \file cube_copy_trait.h
  * \brief
  */
 #ifndef INCLUDE_TENSOR_API_ARCH_CUBE_COPY_TRAIT_H

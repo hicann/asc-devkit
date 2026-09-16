@@ -23,7 +23,7 @@
 #define IMPL_TENSOR_API_ARCH_CUBE_L0C_TO_GM_ROUTING_H
 
 #include "impl/tensor_api/arch/cube/utils/l0c2out_utils.h"
-#include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/data_copy.h"
+#include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/l0c_to_gm_data_copy.h"
 #include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/nz2nchw.h"
 #include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/nz2ncdhw.h"
 #include "impl/tensor_api/arch/cube/l0c_to_gm/copy_impl/nz2nhwc.h"

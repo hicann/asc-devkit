@@ -56,7 +56,7 @@ private:
 } // namespace te
 } // namespace asc
 
-#include "impl/tensor_api/arch/cube/mmad/mmad.h"
+#include "impl/tensor_api/arch/cube/mmad/mmad_impl.h"
 
 #endif // INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_OP_H
 

@@ -19,7 +19,7 @@
 #define IMPL_TENSOR_API_LEGACY_LEGACY_UTILS_H
 
 #include "include/tensor_api/utils/utils.h"
-#include "tensor_api/arch/cube/copy_trait.h"
+#include "tensor_api/arch/cube/cube_copy_trait.h"
 #include "tensor_api/arch/cube/mmad_trait.h"
 #include "impl/tensor_api/utils/extra_impl.h"
 #include "impl/tensor_api/utils/location_impl.h"
