@@ -89,7 +89,7 @@ $$
 
 **图1** Mmad接口矩阵乘分形示意图（Ascend 950PR/Ascend 950DT）<a id="zh_cn_topic_mmad_section2_figure1"></a>
 
-![Mmad接口计算分形示意图](../../../../figures/mmad_demo_a5.png)
+![Mmad接口计算分形示意图](../../../../figures/mmad_demo_950.png)
 <!-- end id19 -->
 
 <!-- npu="A3,910b" id20 -->
