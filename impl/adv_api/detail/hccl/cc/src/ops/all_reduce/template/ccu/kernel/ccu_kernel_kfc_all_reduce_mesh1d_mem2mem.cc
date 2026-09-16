@@ -521,12 +521,16 @@ static CcuResult ReduceRmtToLocChunking(
     for (uint32_t rankIdx = 0; rankIdx < ctx.rankSize; rankIdx++) {
         uint32_t eventIdx = rankIdx / BIT_NUM_PER_CKE;
         if (rankIdx == ctx.rankId) {
-            ccu::LocalAddr src;
-            src.addr = ctx.reduceScatterSrc[rankIdx].addr;
-            src.token = ctx.reduceScatterSrc[rankIdx].token;
-            ccu::LocalCopy(
-                ctx.reduceScatterDst[rankIdx], src, ctx.currentSliceSize, ctx.events[eventIdx],
-                1 << (rankIdx % BIT_NUM_PER_CKE));
+            if (ctx.rankSize <= GROUP_REDUCE_MAX_PIECE_CNT) {
+                ccu::EventRecord(ctx.events[eventIdx], 1 << (rankIdx % BIT_NUM_PER_CKE));
+            } else {
+                ccu::LocalAddr src;
+                src.addr = ctx.reduceScatterSrc[rankIdx].addr;
+                src.token = ctx.reduceScatterSrc[rankIdx].token;
+                ccu::LocalCopy(
+                    ctx.reduceScatterDst[rankIdx], src, ctx.currentSliceSize, ctx.events[eventIdx],
+                    1 << (rankIdx % BIT_NUM_PER_CKE));
+            }
         } else {
             ccu::Read(
                 ctx.channels[channelIdx], ctx.reduceScatterDst[rankIdx], ctx.reduceScatterSrc[rankIdx],
@@ -544,6 +548,8 @@ static CcuResult ReduceRmtToLocChunking(
     }
     if (ctx.rankSize <= GROUP_REDUCE_MAX_PIECE_CNT) {
         std::vector<ccu::LocalAddr> scratch = ctx.reduceScatterDst;
+        scratch[ctx.rankId].addr = ctx.reduceScatterSrc[ctx.rankId].addr;
+        scratch[ctx.rankId].token = ctx.reduceScatterSrc[ctx.rankId].token;
         CCU_CHK_RET(GroupLocalReduce(
             ctx, ctx.localDstMem, scratch, ctx.goSize, ctx.dataType, ctx.outputDataType, ctx.reduceOp));
     } else {
