@@ -28,6 +28,8 @@ inline __gm__ uint8_t* __gm__ g_sysPrintFifoSpace = nullptr;
 
 #if __NPU_ARCH__ == 2002
 #include "impl/utils/debug/npu_arch_2002/asc_debug_utils_impl.h"
+#elif __NPU_ARCH__ == 3002
+#include "impl/utils/debug/npu_arch_3002/asc_debug_utils_impl.h"
 #elif __NPU_ARCH__ == 2201
 #include "impl/utils/debug/npu_arch_2201/asc_debug_utils_impl.h"
 #elif __NPU_ARCH__ == 3510
