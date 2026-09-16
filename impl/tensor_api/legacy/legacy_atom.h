@@ -13,6 +13,10 @@
 
 #include "impl/tensor_api/legacy/legacy_type.h"
 
+#define ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED                                                           \
+    [[deprecated("PascalCase Tensor API is deprecated. Please use the corresponding snake_case API in asc::te " \
+                 "instead.")]]
+
 namespace AscendC {
 namespace Te {
 
@@ -275,7 +279,7 @@ struct CopyTraits<CopyOp, Traits, CopyOpWith, TraitsWith> {
     }
 
     template <const TraitType& trait = defaultTrait, typename... Args>
-    __aicore__ inline void CopyUnpack(const Args&... args) const
+    ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void CopyUnpack(const Args&... args) const
     {
         using normalized_t = Std::remove_cvref_t<decltype(normalize_copy_trait(Traits::value))>;
         if constexpr (Std::is_same_v<TraitType, normalized_t>) {
@@ -307,7 +311,7 @@ struct CopyTraitsWithParams {
     __aicore__ inline constexpr CopyTraitsWithParams(Params params) : params(params) {}
 
     template <const TraitType& trait = defaultTrait, typename... Args>
-    __aicore__ inline void CopyUnpack(const Args&... args) const
+    ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void CopyUnpack(const Args&... args) const
     {
         using normalized_t = Std::remove_cvref_t<decltype(normalize_copy_trait(Traits::value))>;
         if constexpr (Std::is_same_v<TraitType, normalized_t>) {
@@ -434,7 +438,7 @@ struct CopyAtom<CopyOperation> : public CopyTraits<CopyOperation> {
     static constexpr const TraitType defaultTrait = copy_trait_type::defaultTrait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void Call(const Params&... params) const
+    ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void Call(const Params&... params) const
     {
         using traits_type = copy_trait_type;
         static_cast<const traits_type&>(*this).template CopyUnpack<trait, Params...>(params...);
@@ -456,7 +460,7 @@ struct CopyAtom<CopyTraits<Args...>> : public CopyTraits<Args...> {
     static constexpr const TraitType defaultTrait = copy_trait_type::defaultTrait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void Call(const Params&... params) const
+    ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void Call(const Params&... params) const
     {
         using traits_type = copy_trait_type;
         static_cast<const traits_type&>(*this).template CopyUnpack<trait, Params...>(params...);
@@ -479,7 +483,7 @@ struct CopyAtom<copy_traits<CopyOperation>> : public copy_traits<CopyOperation> 
     static constexpr const TraitType defaultTrait = copy_trait_type::default_trait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void Call(const Params&... params) const
+    ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void Call(const Params&... params) const
     {
         static_cast<const copy_trait_type&>(*this).template copy_unpack<trait, Params...>(params...);
     }
@@ -502,7 +506,7 @@ struct CopyAtom<copy_traits<Args...>> : public copy_traits<Args...> {
     static constexpr const TraitType defaultTrait = copy_trait_type::default_trait;
 
     template <const TraitType& trait = defaultTrait, typename... Params>
-    __aicore__ inline void Call(const Params&... params) const
+    ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void Call(const Params&... params) const
     {
         static_cast<const copy_trait_type&>(*this).template copy_unpack<trait, Params...>(params...);
     }
@@ -518,7 +522,8 @@ struct CopyAtom<copy_traits<Args...>> : public copy_traits<Args...> {
 
 // Copy / MakeCopy: PascalCase 接口
 template <typename AtomType, typename DstTensor, typename SrcTensor>
-__aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const SrcTensor& src)
+ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void Copy(
+    const AtomType& atom, const DstTensor& dst, const SrcTensor& src)
 {
     atom.Call(dst, src);
 }
@@ -526,13 +531,15 @@ __aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const Sr
 template <
     typename AtomType, typename DstTensor, typename SrcTensor, typename Quant,
     Std::enable_if_t<is_valid_quant_v<Quant>, int> = 0>
-__aicore__ inline void Copy(const AtomType& atom, const DstTensor& dst, const SrcTensor& src, const Quant& quant)
+ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline void Copy(
+    const AtomType& atom, const DstTensor& dst, const SrcTensor& src, const Quant& quant)
 {
     atom.Call(dst, src, quant);
 }
 
 template <typename CopyOperationType>
-__aicore__ inline constexpr auto MakeCopy(const CopyOperationType& copy_operation)
+ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline constexpr auto MakeCopy(
+    const CopyOperationType& copy_operation)
 {
     if constexpr (has_copy_traits<CopyOperationType>::value) {
         return CopyAtom<copy_traits<CopyOperationType>>{};
@@ -542,7 +549,8 @@ __aicore__ inline constexpr auto MakeCopy(const CopyOperationType& copy_operatio
 }
 
 template <typename CopyOperationType, typename CopyTraitType>
-__aicore__ inline constexpr auto MakeCopy(const CopyOperationType& copy_operation, const CopyTraitType& copy_trait)
+ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED __aicore__ inline constexpr auto MakeCopy(
+    const CopyOperationType& copy_operation, const CopyTraitType& copy_trait)
 {
     if constexpr (has_copy_traits<CopyOperationType, CopyTraitType>::value) {
         return CopyAtom<copy_traits<CopyOperationType, CopyTraitType>>{};
@@ -553,5 +561,7 @@ __aicore__ inline constexpr auto MakeCopy(const CopyOperationType& copy_operatio
 
 } // namespace Te
 } // namespace AscendC
+
+#undef ASCENDC_TENSOR_API_LEGACY_FUNCTION_DEPRECATED
 
 #endif // IMPL_TENSOR_API_LEGACY_LEGACY_ATOM_H
