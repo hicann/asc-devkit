@@ -21,7 +21,7 @@ enum class asc_position_quarter_mode {
 
 | 枚举值 | 取值 | 说明 | 对应常量 |
 | --- | --- | --- | --- |
-| `DISPERSE_FIRST_QUARTER` | 0 | 选择第一个四分之一位置。 | `ASC_DISPERSE_FIRST_QUARTER` |
-| `DISPERSE_SECOND_QUARTER` | 1 | 选择第二个四分之一位置。 | `ASC_DISPERSE_SECOND_QUARTER` |
-| `DISPERSE_THIRD_QUARTER` | 2 | 选择第三个四分之一位置。 | `ASC_DISPERSE_THIRD_QUARTER` |
-| `DISPERSE_FOURTH_QUARTER` | 3 | 选择第四个四分之一位置。 | `ASC_DISPERSE_FOURTH_QUARTER` |
+| DISPERSE_FIRST_QUARTER | 0 | 选择第一个四分之一位置。 | ASC_DISPERSE_FIRST_QUARTER |
+| DISPERSE_SECOND_QUARTER | 1 | 选择第二个四分之一位置。 | ASC_DISPERSE_SECOND_QUARTER |
+| DISPERSE_THIRD_QUARTER | 2 | 选择第三个四分之一位置。 | ASC_DISPERSE_THIRD_QUARTER |
+| DISPERSE_FOURTH_QUARTER | 3 | 选择第四个四分之一位置。 | ASC_DISPERSE_FOURTH_QUARTER |

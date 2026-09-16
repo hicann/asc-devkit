@@ -20,6 +20,6 @@ enum class asc_unit_flag_mode : uint8_t {
 
 | 枚举值 | 取值 | 说明 |
 | --- | --- | --- |
-| `DISABLE` | 0 | 不使能UnitFlag。 |
-| `ENABLE_KEEP` | 2 | 使能UnitFlag，硬件执行完指令后不改变单元标志位。 |
-| `ENABLE_UPDATE` | 3 | 使能UnitFlag，硬件执行完指令后改变单元标志位。 |
+| DISABLE | 0 | 不使能UnitFlag。 |
+| ENABLE_KEEP | 2 | 使能UnitFlag，硬件执行完指令后不改变单元标志位。 |
+| ENABLE_UPDATE | 3 | 使能UnitFlag，硬件执行完指令后改变单元标志位。 |

@@ -17,10 +17,10 @@
 
 ## 取值说明
 
-|当前代码路径|`ASC_IS_AIC`条件结果|`ASC_IS_AIV`条件结果|
-|---|---|---|
-|AIC|`true`|`false`|
-|AIV|`false`|`true`|
+| 当前代码路径 | `ASC_IS_AIC`条件结果 | `ASC_IS_AIV`条件结果 |
+| --- | --- | --- |
+| AIC | `true` | `false` |
+| AIV | `false` | `true` |
 
 ## 约束说明
 

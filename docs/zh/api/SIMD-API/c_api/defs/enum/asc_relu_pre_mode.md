@@ -21,7 +21,7 @@ enum class asc_relu_pre_mode : uint8_t {
 
 | 枚举值 | 取值 | 说明 |
 | --- | --- | --- |
-| `NONE` | 0 | 不执行随路ReLU。 |
-| `NORMAL` | 1 | 执行普通ReLU。 |
-| `SCALAR` | 2 | 使用Scalar参数执行随路ReLU。 |
-| `VECTOR` | 3 | 使用Vector参数执行随路ReLU。 |
+| NONE | 0 | 不执行随路ReLU。 |
+| NORMAL | 1 | 执行普通ReLU。 |
+| SCALAR | 2 | 使用Scalar参数执行随路ReLU。 |
+| VECTOR | 3 | 使用Vector参数执行随路ReLU。 |

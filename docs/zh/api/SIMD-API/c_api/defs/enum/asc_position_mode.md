@@ -22,5 +22,5 @@ constexpr std::integral_constant<asc_position_mode, asc_position_mode::ODD> ASC_
 
 | 枚举值 | 取值 | 说明 | 对应常量 |
 | --- | --- | --- | --- |
-| `EVEN` | 0 | 选择偶数位置。 | `ASC_POSITION_EVEN` |
-| `ODD` | 1 | 选择奇数位置。 | `ASC_POSITION_ODD` |
+| EVEN | 0 | 选择偶数位置。 | ASC_POSITION_EVEN |
+| ODD | 1 | 选择奇数位置。 | ASC_POSITION_ODD |

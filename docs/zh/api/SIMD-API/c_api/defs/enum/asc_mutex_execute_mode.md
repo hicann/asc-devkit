@@ -21,5 +21,5 @@ using ascMutexExecuteMode = asc_mutex_execute_mode;
 
 | 枚举值 | 取值 | 说明 |
 | --- | --- | --- |
-| `ASC_LOCK_BLOCK` | 0 | 阻塞`pipe`指定流水的执行，为默认模式。 |
-| `ASC_LOCK_NON_BLOCK` | 1 | 不阻塞流水的执行。 |
+| ASC_LOCK_BLOCK | 0 | 阻塞`pipe`指定流水的执行，为默认模式。 |
+| ASC_LOCK_NON_BLOCK | 1 | 不阻塞流水的执行。 |

@@ -20,6 +20,6 @@ enum class asc_dual_dst_mode : uint8_t {
 
 | 枚举值 | 取值 | 说明 |
 | --- | --- | --- |
-| `DUAL_DST_DISABLE` | 0 | 关闭双目标模式。 |
-| `DUAL_DST_SPLIT_M` | 1 | 开启双目标模式，沿M方向拆分数据。 |
-| `DUAL_DST_SPLIT_N` | 2 | 开启双目标模式，沿N方向拆分数据。 |
+| DUAL_DST_DISABLE | 0 | 关闭双目标模式。 |
+| DUAL_DST_SPLIT_M | 1 | 开启双目标模式，沿M方向拆分数据。 |
+| DUAL_DST_SPLIT_N | 2 | 开启双目标模式，沿N方向拆分数据。 |
