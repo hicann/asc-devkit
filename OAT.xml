@@ -35,6 +35,7 @@
                 <filteritem type="filename" name="package.json" desc="package metadata file"/>
                 <filteritem type="filename" name="pnpm-lock.yaml" desc="dependency lock file"/>
                 <filteritem type="filename" name="requirements.txt" desc="dependency metadata file"/>
+                <filteritem type="filepath" name="scripts/presmoke/schedules/.*" desc="presmoke schedule data files"/>
             </filefilter>
             <filefilter name="copyrightPolicyFilter" desc="Filters for copyright header policies">
                 <filteritem type="filename" name="*.gitignore" desc="git ignore file"/>
@@ -59,6 +60,7 @@
                 <filteritem type="filename" name="package.json" desc="package metadata file"/>
                 <filteritem type="filename" name="pnpm-lock.yaml" desc="dependency lock file"/>
                 <filteritem type="filename" name="requirements.txt" desc="dependency metadata file"/>
+                <filteritem type="filepath" name="scripts/presmoke/schedules/.*" desc="presmoke schedule data files"/>
             </filefilter>
             <filefilter name="licenseFileNamePolicyFilter" desc="Filters for LICENSE file policies">
             </filefilter>

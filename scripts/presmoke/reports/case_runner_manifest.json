@@ -14886,5 +14886,29 @@
       "make -j",
       "./demo"
     ]
+  },
+  {
+    "case": "03_simt_api/presmoke_math__simt",
+    "runner": "scripts/presmoke/cases/03_simt_api/presmoke_math__simt/run.sh",
+    "source_case": "03_simt_api/00_introduction",
+    "supported_archs": [
+      "dav-2201"
+    ],
+    "supported_modes": [
+      "npu"
+    ],
+    "skip": false
+  },
+  {
+    "case": "05_simd_simt_hybrid/presmoke_math__hybrid",
+    "runner": "scripts/presmoke/cases/05_simd_simt_hybrid/presmoke_math__hybrid/run.sh",
+    "source_case": "03_simt_api/00_introduction",
+    "supported_archs": [
+      "dav-2201"
+    ],
+    "supported_modes": [
+      "npu"
+    ],
+    "skip": false
   }
 ]
