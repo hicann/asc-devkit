@@ -19,5 +19,5 @@ enum class asc_l13d_repeat_direction : uint8_t {
 
 | 枚举值 | 取值 | repeat迭代方向 | `repeat_stride`单位 |
 | --- | --- | --- | --- |
-| `M_DIRECTION` | 0 | 沿height（M）方向迭代。 | 16个元素。 |
-| `K_DIRECTION` | 1 | 沿width（K）方向迭代。 | `32 / sizeof(data_type)`个元素。其中，`data_type`为3D搬运接口源操作数的数据类型。 |
+| M_DIRECTION | 0 | 沿height（M）方向迭代。 | 16个元素。 |
+| K_DIRECTION | 1 | 沿width（K）方向迭代。 | `32 / sizeof(data_type)`个元素。其中，`data_type`为3D搬运接口源操作数的数据类型。 |
