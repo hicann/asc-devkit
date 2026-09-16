@@ -17,13 +17,13 @@
 - Atlas inference products: Not Supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas Inference Series AI Core: Not Supported
+- Atlas inference products AI Core: Not Supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas Inference Series Vector Core: Not Supported
+- Atlas inference products Vector Core: Not Supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas Training Series: Not Supported
+- Atlas training products: Not Supported
 <!-- end id7 -->
 
 ## Function Description<a name="section618mcpsimp"></a>
@@ -114,7 +114,7 @@ None
 
 ## Constraints<a name="section633mcpsimp"></a>
 
-- Because when the Kernel type is KERNEL_TYPE_AIC_ONLY or KERNEL_TYPE_AIV_ONLY, the hardware does not enable the scheduling module, and thus inter-core synchronization cannot be performed normally, the configurations of [Kernel Type](../../Kernel-Tiling/Setting Kernel Type.md) or [Function Modifier](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/language_extension/SIMD-BuiltIn_keyword.md#section1074418132518) for different synchronization modes are as follows:
+- Because when the Kernel type is KERNEL_TYPE_AIC_ONLY or KERNEL_TYPE_AIV_ONLY, the hardware does not enable the scheduling module, and thus inter-core synchronization cannot be performed normally, the configurations of [Kernel Type](../../Kernel-Tiling/set_kernel_type.md) or [Function Modifier](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/language_extension/SIMD-BuiltIn_keyword.md#section1074418132518) for different synchronization modes are as follows:
     - In pure Vector/Cube scenarios (Mode 0 or Mode 1), it is recommended to set the Kernel type to KERNEL\_TYPE\_MIX\_AIV\_1\_0 or KERNEL\_TYPE\_MIX\_AIC\_1\_0. For other supported Kernel types, see Table 3.
     - For mixed Vector and Cube scenarios (Mode 2 and Mode 4), the Kernel type must be flexibly configured based on the ratio of AIC to AIV in the AI Core. For the function modifiers and Kernel types supported by different modes, see Table 3.
 

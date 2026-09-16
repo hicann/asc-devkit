@@ -2,10 +2,10 @@
 
 <!-- md-trans-meta sourceCommit=0364dcce9ab16d714270f168ec9546fd7620f90f translatedAt=2026-08-27T12:21:50.184Z -->
 
-- [System Initialization](System Initialization/System Initialization.md)
+- [System Initialization](system_init/system_initialization.md)
 
-- [Execution Mode](Execution Mode/Execution Mode.md)
+- [Execution Mode](execution_mode/execution_mode.md)
 
-- [NumericLimits Utility Class](NumericLimits Utility Class/NumericLimits Utility Class.md)
+- [NumericLimits Utility Class](NumericLimits_utils/numericlimits_tool_class.md)
 
-- [System Resources and Variables](System Resources and Variables/System Resources and Variables.md)
+- [System Resources and Variables](system_resources_and_variables/system_resource_and_variable.md)

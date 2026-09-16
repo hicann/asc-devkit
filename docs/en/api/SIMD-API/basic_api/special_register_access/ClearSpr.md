@@ -57,7 +57,7 @@ None
 
 ## Constraints<a name="section162221734202016"></a>
 
-This API can only be called outside a VF function, with the namespace **AscendC** and the function marker **__aicore__**. If it needs to be called inside a VF, the namespace is **AscendC::Reg** and the function marker is **__simd_callee__**. For details, see [ClearSpr](../RegVector Computation/System Variable Access/ClearSpr.md).
+This API can only be called outside a VF function, with the namespace **AscendC** and the function marker **__aicore__**. If it needs to be called inside a VF, the namespace is **AscendC::Reg** and the function marker is **__simd_callee__**. For details, see [ClearSpr](../reg_vector_compute/system_variable_access/ClearSpr.md).
 
 ## Example<a name="section849174212202"></a>
 

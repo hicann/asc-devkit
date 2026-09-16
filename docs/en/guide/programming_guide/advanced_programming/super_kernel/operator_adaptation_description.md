@@ -118,7 +118,7 @@ Example:
 
 - **Inter-task synchronization**
 
-    When programming on the kernel side, developers can further improve performance by calling the two inter-task APIs [SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task sync/SetNextTaskStart.md) and [WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task sync/WaitPreTaskEnd.md).
+    When programming on the kernel side, developers can further improve performance by calling the two inter-task APIs [SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md) and [WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md).
 
     - Instructions after calling `SetNextTaskStart` can achieve parallelism with subsequent other sub-kernels, improving overall performance. As shown in [Figure 1](#fig37581010773), SuperKernel calls sub-kernels in sequence. To ensure that data between sub-kernels does not interfere with each other, inter-operator synchronization is inserted between sub-kernels for ordering. After sub-kernel<sub>N-1</sub> calls this API, the subsequent instructions achieve parallelism with the following sub-kernel<sub>N</sub>.
 

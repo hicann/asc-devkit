@@ -147,7 +147,7 @@ None
 
 ## Example<a id="section6461234123118"></a>
 
-For the complete transfer process, see [Load2DV2 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_2dv2_l12l0). For the use of **Load2DBitMode**, refer to the following example, where cube A on L1 uses NZ data layout with shape [M,K], and the **LoadData** instruction is called to complete the Nz2Nz transfer from L1 Buffer to L0A Buffer.
+For the complete transfer process, see [Load2DV2 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_2dv2_l12l0). For the use of **Load2DBitMode**, refer to the following example, where cube A on L1 uses NZ data layout with shape [M,K], and the **LoadData** instruction is called to complete the Nz2Nz transfer from L1 Buffer to L0A Buffer.
 
 - Example 1: Use **LoadData2DParamsV2** to construct **Load2DBitModeParam**
 

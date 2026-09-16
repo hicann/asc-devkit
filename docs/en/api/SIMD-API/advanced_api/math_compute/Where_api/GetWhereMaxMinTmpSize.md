@@ -21,7 +21,7 @@ void GetWhereMaxMinTmpSize(const platform_ascendc::PlatformAscendC& ascendcPlatf
 
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
-| ascendcPlatform | Input | Platform information passed in. For the definition of PlatformAscendC, see [Constructors and Destructors](../../../../Utils-API/Platform Information/PlatformAscendC/Constructors and Destructors.md). |
+| ascendcPlatform | Input | Platform information passed in. For the definition of PlatformAscendC, see [Constructors and Destructors](../../../../Utils-API/platform_info/PlatformAscendC/constructors_and_destructors.md). |
 | srcShape | Input | Shape information passed in. |
 | typeSize | Input | Size of the input data type, in bytes. For example, if the input data type is half, pass 2. |
 | isReuseSource | Input | Reserved parameter. Pass the default value false. |

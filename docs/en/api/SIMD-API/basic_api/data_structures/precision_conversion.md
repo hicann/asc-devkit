@@ -420,7 +420,7 @@ Store the source value in the destination operand in int16_t format, with no pre
 
 ### int32_t → half
 
-The current data type combination is only supported for use with the [SetDeqScale](../Memory Vector Calculation/Type Conversion Auxiliary Configuration API/SetDeqScale.md) API to perform data quantization and complete precision conversion. The precision rounding mode does not take effect.
+The current data type combination is only supported for use with the [SetDeqScale](../memory_vector_compute/type_conversion_aux_config/SetDeqScale.md) API to perform data quantization and complete precision conversion. The precision rounding mode does not take effect.
 
 Output: $src / 2^{17} \times scale \times 2^{17}$.
 

@@ -41,7 +41,7 @@ The parameters used in the pseudocode are described as follows:
 - In each group of numbers derived from the destination DN cube, each row of elements is further treated as a group of numbers, and the start address of each group of numbers is **dst_block_addr**.
 - **src_ele_addr** is the address of each element in a column of the NZ cube, and **dst_ele_addr** is the address of each element in a row of the DN cube. The two are in a one-to-one correspondence, which completes the NZ2DN format conversion.
 
-The following parameters are user-configurable parameters for NZ2DN. For their meanings and value ranges, see [Fixpipe Transfer Parameters (FixpipeParamsArch3510)](../cube_compute_store/Fixpipe_L0CToGM.md#Parameters):
+The following parameters are user-configurable parameters for NZ2DN. For their meanings and value ranges, see [Fixpipe Transfer Parameters (FixpipeParamsArch3510)](../cube_compute_store/Fixpipe_L0CToGM.md#parameters):
 
 - **dnNum** indicates the number of matrices to be converted from NZ to DN.
 - **mSize** and **nSize** indicate the dimensions of the cube in the m direction and n direction, respectively.

@@ -343,7 +343,7 @@ None
 
     Atlas A2 training products/Atlas A2 inference products, the supported data types are: half, bfloat16\_t.
 
-    Atlas Inference Series AI Core supports the following data type: half.
+    Atlas inference products AI Core supports the following data type: half.
 
 ## Examples
 

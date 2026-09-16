@@ -40,7 +40,7 @@ Allocates a **Tensor** from the **Que**. The size of the **Tensor** is the lengt
     __aicore__ inline LocalTensor<T> AllocTensor()
     ```
 
--   **inplace** API: Directly uses the passed-in **Tensor** as the object for memory management, which reduces the overhead of repeatedly creating **Tensor** objects. For usage guidance, see [Tensor In-place Operation](../../../../../guide/programming_guide/appendix/common_operations/how_to_use_tensor_in_place_operations_to_improve_operator_performance.md).
+-   **inplace** API: Directly uses the passed-in **Tensor** as the object for memory management, which reduces the overhead of repeatedly creating **Tensor** objects. For usage guidance, see [Tensor In-place Operation](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/appendix/common_operations/how_to_use_tensor_in_place_operations_to_improve_operator_performance.md).
 
     ```
     template <typename T>

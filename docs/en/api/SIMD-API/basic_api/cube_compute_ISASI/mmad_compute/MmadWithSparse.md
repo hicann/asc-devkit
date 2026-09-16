@@ -40,7 +40,7 @@ $$
 C = A \times B + C
 $$
 
-For a complete example, please refer to [MmadWithSparse sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/mmad_with_sparse).
+For a complete example, please refer to [MmadWithSparse sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_with_sparse).
 
 **Table 1** Explanation of matrices A, B, and C in sparse cube computation
 
@@ -154,7 +154,7 @@ None
 
 ## Example
 
-For a complete usage sample, see [MmadWithSparse sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/mmad_with_sparse).
+For a complete usage sample, see [MmadWithSparse sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_with_sparse).
 
 ```cpp
 AscendC::LocalTensor<int8_t> a1Local(AscendC::TPosition::A1, a1Addr, aSize);

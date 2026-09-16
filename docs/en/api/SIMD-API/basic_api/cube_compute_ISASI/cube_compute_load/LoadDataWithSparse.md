@@ -84,4 +84,4 @@ None
 
 ## Example<a name="zh-cn_topic_0000002512171654_section088124295117"></a>
 
-This API is used together with Sparse Mmad. For a complete example, see [MmadWithSparse example](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/mmad_with_sparse).
+This API is used together with Sparse Mmad. For a complete example, see [MmadWithSparse example](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_with_sparse).

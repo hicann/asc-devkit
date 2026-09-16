@@ -59,8 +59,8 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 | Parameter | Input/Output | Meaning |
 | ---------- | ----------- | ------ |
-| dst | Output | Destination operand, of type **LocalTensor**.<br>For fractal constraints, see [cube computation input transfer constraints](cube computation input transfer constraints.md).<br>For start address alignment constraints, see [alignment constraints](cube computation input transfer constraints.md).<br>The data type must be consistent with that of **src**.<br>Supported physical storage locations are L0A Buffer (TPosition: A2)/L0B Buffer (TPosition: B2). |
-| src | Input | Source operand, of type **LocalTensor**.<br>For fractal constraints, see [cube computation input transfer constraints](cube computation input transfer constraints.md).<br>For start address alignment constraints, see [alignment constraints](cube computation input transfer constraints.md).<br>The data type must be consistent with that of **dst**.<br>Supported physical storage location is L1 Buffer (TPosition: A1/B1). |
+| dst | Output | Destination operand, of type **LocalTensor**.<br>For fractal constraints, see [cube computation input transfer constraints](matrix_computation_input_movement_constraint.md).<br>For start address alignment constraints, see [alignment constraints](matrix_computation_input_movement_constraint.md).<br>The data type must be consistent with that of **src**.<br>Supported physical storage locations are L0A Buffer (TPosition: A2)/L0B Buffer (TPosition: B2). |
+| src | Input | Source operand, of type **LocalTensor**.<br>For fractal constraints, see [cube computation input transfer constraints](matrix_computation_input_movement_constraint.md).<br>For start address alignment constraints, see [alignment constraints](matrix_computation_input_movement_constraint.md).<br>The data type must be consistent with that of **dst**.<br>Supported physical storage location is L1 Buffer (TPosition: A1/B1). |
 | loadDataParams | Input | **LoadData** parameter structure, of type **LoadData2DParamsV2**. For details, see [Table 3](#table_load2dv2_params). |
 
 **Table 3** Parameter description of the LoadData2DParamsV2 structure<a id="table_load2dv2_params"></a>
@@ -157,7 +157,7 @@ The transpose diagrams for each data type are as follows:
 
 ## Example
 
-The following code snippet shows only part of the sample code. For the complete usage sample, see [Load2DV2 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_2dv2_l12l0).
+The following code snippet shows only part of the sample code. For the complete usage sample, see [Load2DV2 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_2dv2_l12l0).
 
 ```cpp
 // Load2DV2: Nz -> Nz

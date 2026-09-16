@@ -22,7 +22,7 @@ Compared with dispatching individual operators, SuperKernel delivers performance
 
 - **Reduced kernel launch overhead**: Sub-kernels that originally required multiple launches are now launched through a single SuperKernel launch, reducing task scheduling overhead.
 - **Reduced task scheduling wait time**: Scheduling gaps between multiple independent tasks are avoided.
-- **Pipelined parallelism between operators**: Through the inter-task synchronization APIs provided in SuperKernel ([SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task sync/SetNextTaskStart.md) and [WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task sync/WaitPreTaskEnd.md)), some instructions between sub-kernels can be executed in parallel, further reducing the end-to-end latency.
+- **Pipelined parallelism between operators**: Through the inter-task synchronization APIs provided in SuperKernel ([SetNextTaskStart](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart.md) and [WaitPreTaskEnd](../../../../api/SIMD-API/basic_api/sync_control/inter_task_sync/WaitPreTaskEnd.md)), some instructions between sub-kernels can be executed in parallel, further reducing the end-to-end latency.
 
 ## Supported Enabling Methods
 

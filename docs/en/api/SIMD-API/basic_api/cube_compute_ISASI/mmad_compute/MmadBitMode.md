@@ -172,4 +172,4 @@ None
 
 ## Example
 
-For examples, see [Mmad example](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/mmad).
+For examples, see [Mmad example](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad).

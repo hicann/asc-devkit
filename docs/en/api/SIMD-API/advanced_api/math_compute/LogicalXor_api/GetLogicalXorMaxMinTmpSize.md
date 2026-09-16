@@ -21,7 +21,7 @@ void GetLogicalXorMaxMinTmpSize(const platform_ascendc::PlatformAscendC& ascendc
 
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
-| ascendcPlatform | Input | Input platform information. For the definition of PlatformAscendC, see [Constructors and Destructors](../../../../Utils-API/Platform Information/platform_info/constructors_and_destructors.md). |
+| ascendcPlatform | Input | Input platform information. For the definition of PlatformAscendC, see [Constructors and Destructors](../../../../Utils-API/platform_info/PlatformAscendC/constructors_and_destructors.md). |
 | srcShape | Input | Input shape information. |
 | typeSize | Input | Size of the input data type, in bytes. For example, if the input data type is half, pass 2 here. |
 | isReuseSource | Input | This parameter is reserved. Pass the default value **false**. |

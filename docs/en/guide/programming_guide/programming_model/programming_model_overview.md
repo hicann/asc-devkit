@@ -111,8 +111,7 @@ To improve the programming flexibility of vector computation in scenarios such a
 
 - **Limitations**: Currently supports only the Ascend 950PR/Ascend 950DT chip architecture.
 
-- **Learning path**: For details, see [AI Core SIMT Programming](./ai_core_simt_programming/overview.md). For operator development, see [SIMT Operator Implementation](../../operator_practice/simt_operator
-_impl/simt_operator_implementation.md).
+- **Learning path**: For details, see [AI Core SIMT Programming](./ai_core_simt_programming/overview.md). For operator development, see [SIMT Operator Implementation](../../operator_practice/simt_operator_impl/simt_operator_implementation.md).
 
 ### SIMD and SIMT Hybrid Programming
 

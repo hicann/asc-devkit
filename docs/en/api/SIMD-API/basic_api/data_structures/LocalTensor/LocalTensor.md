@@ -2,9 +2,9 @@
 
 <!-- md-trans-meta sourceCommit=0364dcce9ab16d714270f168ec9546fd7620f90f translatedAt=2026-08-27T13:07:56.297Z -->
 
--   **[LocalTensor Introduction](LocalTensor Introduction.md)**  
+-   **[LocalTensor Introduction](localtensor_introduction.md)**  
 
--   **[LocalTensor Constructor](LocalTensor Constructor.md)**  
+-   **[LocalTensor Constructor](localtensor_constructor.md)**  
 
 -   **[SetValue](SetValue.md)**  
 

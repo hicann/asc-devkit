@@ -323,9 +323,9 @@ Example 2: The parameter values are described as follows. See [Figure 7](#fig769
 ## Example<a name="zh-cn_topic_0000002549846732_section088124295117"></a>
 
 <!-- npu="950" id19 -->
-For the complete sample, see the [fixpipe\_l0c2ub sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/fixpipe_l0c2ub).
+For the complete sample, see the [fixpipe\_l0c2ub sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2ub).
 
-- Example: Path L0C Buffer-\>UB. The input matrices A and B use the **half** data type, and the output cube C uses **float**. The default configuration enables Nz2Nd format conversion. For the complete sample, see the [sample link](https://gitcode.com/cann/asc-devkit/blob/9.1.0/examples/01_simd_cpp_api/03_basic_api/01_cube_compute/fixpipe_l0c2ub).
+- Example: Path L0C Buffer-\>UB. The input matrices A and B use the **half** data type, and the output cube C uses **float**. The default configuration enables Nz2Nd format conversion. For the complete sample, see the [sample link](https://gitcode.com/cann/asc-devkit/blob/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2ub).
 
     ```cpp
     AscendC::LocalTensor<outputType> cUB;

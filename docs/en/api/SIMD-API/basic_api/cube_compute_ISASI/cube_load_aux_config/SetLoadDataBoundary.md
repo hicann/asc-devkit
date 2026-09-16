@@ -30,9 +30,9 @@
 
 The header file path is `"basic_api/kernel_operator_mm_intf.h"`.
 
-Sets the L1 Buffer (TPosition: A1/B1) boundary value required by the [LoadData (convolution data loading)](../cube computation loading in/Load3D.md) API.
+Sets the L1 Buffer (TPosition: A1/B1) boundary value required by the [LoadData (convolution data loading)](../cube_compute_load/Load3D.md) API.
 
-If, when the [LoadData (convolution data loading)](../cube computation loading in/Load3D.md) instruction processes the source operand, the address of the source operand on A1/B1 exceeds the set boundary, data is read starting from the start address of A1/B1.
+If, when the [LoadData (convolution data loading)](../cube_compute_load/Load3D.md) instruction processes the source operand, the address of the source operand on A1/B1 exceeds the set boundary, data is read starting from the start address of A1/B1.
 
 ## Prototype<a name="section620mcpsimp"></a>
 

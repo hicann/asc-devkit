@@ -51,7 +51,7 @@ __aicore__ inline int64_t GetSpr()
 
 | Value | Meaning |
 |------|------|
-| AR | Usually used together with the [Squeeze](../reg_vector_compute/comparison and selection/Squeeze.md) Reg vector calculation API. The [Squeeze](../reg_vector_compute/comparison and selection/Squeeze.md) Reg vector calculation API stores the total number of bytes of valid elements into the AR special register. |
+| AR | Usually used together with the [Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md) Reg vector calculation API. The [Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md) Reg vector calculation API stores the total number of bytes of valid elements into the AR special register. |
 
 ## Data Types<a name="section3853852112218"></a>
 

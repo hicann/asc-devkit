@@ -101,15 +101,15 @@ Ascend 950PR/Ascend 950DT: supported data types are int8_t, uint8_t, int16_t, ui
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-Atlas A3 Training products/Atlas A3 Inference products: supported data types are uint16_t and uint32_t.
+Atlas A3 training products/Atlas A3 inference products: supported data types are uint16_t and uint32_t.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-Atlas A2 Training products/Atlas A2 Inference products: supported data types are uint16_t and uint32_t.
+Atlas A2 training products/Atlas A2 inference products: supported data types are uint16_t and uint32_t.
 <!-- end id3 -->
 
 <!-- npu="310b" id4 -->
-Atlas 200I/500 A2 Inference products: supported data types are int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, and int64_t.
+Atlas 200I/500 A2 inference products: supported data types are int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, and int64_t.
 <!-- end id4 -->
 
 ## Constraints<a name="section633mcpsimp"></a>

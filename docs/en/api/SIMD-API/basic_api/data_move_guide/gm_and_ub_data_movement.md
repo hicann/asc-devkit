@@ -94,7 +94,7 @@ The moved data is used for [vector computation](../memory_vector_compute/memory_
 
 This API is a software simulation API designed from the perspective of ease of use. It supports sliced data movement, extracting a subset of a multi-dimensional Tensor for movement.
 
-The supported data paths are as follows (represented by [logical position TPosition](../auxiliary data structures/TPosition.md)):
+The supported data paths are as follows (represented by [logical position TPosition](../aux_data_structures/TPosition.md)):
 
 - Global Memory -> Unified Buffer
     - GM -> VECIN
@@ -104,7 +104,7 @@ The supported data paths are as follows (represented by [logical position TPosit
     - CO2 -> GM (supported only on the AI Core of Atlas inference products)
     <!-- end id3 -->
 
-The moved data is used for [vector computation](../memory_vector_compute/Memory vector computation.md). For the specific API, see [DataCopy (GM and UB - Sliced Data Movement)](../memory_vector_compute/data movement/DataCopy_GMAndUB_slice.md).
+The moved data is used for [vector computation](../memory_vector_compute/memory_vector_computation.md). For the specific API, see [DataCopy (GM and UB - Sliced Data Movement)](../memory_vector_compute/data_move/DataCopy_GMAndUB_slice.md).
 
 **src** and **dst** are the source operand and destination operand, respectively. **dstSliceInfo** and **srcSliceInfo** are the slice information of the destination and source operands, respectively, of the type **SliceInfo**. **dimValue** is the operand dimension information.
 
@@ -126,12 +126,12 @@ The moved data is used for [vector computation](../memory_vector_compute/Memory 
 
 This API is a software simulation API designed from the perspective of ease of use. It supports ND-to-NZ format conversion during data movement from Global Memory to Unified Buffer.
 
-The supported data paths are as follows (represented by [logical position TPosition](../auxiliary data structures/TPosition.md)):
+The supported data paths are as follows (represented by [logical position TPosition](../aux_data_structures/TPosition.md)):
 
 - Global Memory -> Unified Buffer
     - GM -> VECIN
 
-The moved data is used for [vector computation](../memory_vector_compute/Memory vector computation.md). For details about the API, see [DataCopy (GM -> UB - inline conversion ND2NZ movement)](../memory_vector_compute/data movement/DataCopy_GMToUB_ND2NZ.md).
+The moved data is used for [vector computation](../memory_vector_compute/memory_vector_computation.md). For details about the API, see [DataCopy (GM -> UB - inline conversion ND2NZ movement)](../memory_vector_compute/data_move/DataCopy_GMToUB_ND2NZ.md).
 
 **src** and **dst** are the source operand and destination operand, respectively. **intriParams** is the movement parameters of the **Nd2NzParams** type, which configures the ND-to-NZ format conversion information.
 
@@ -176,12 +176,12 @@ __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<T>
 
 The multi-dimensional data movement API, compared with the basic data movement API, allows more flexible configuration of the dimension information to be moved in and the corresponding Stride.
 
-The specifically supported data paths are as follows (represented by [logical position TPosition](../auxiliary data_structures/TPosition.md)):
+The specifically supported data paths are as follows (represented by [logical position TPosition](../aux_data_structures/TPosition.md)):
 
 - Global Memory -> Unified Buffer
     - GM -> VECIN
 
-The moved data is used for [vector computation](../memory_vector_compute/Memory vector computation.md). For the specific API, see [DataCopy (GM -> UB - Multi-dimensional Data Movement NDDMA)](../memory_vector_compute/data movement/DataCopy_GMToUB_NDDMA.md).
+The moved data is used for [vector computation](../memory_vector_compute/memory_vector_computation.md). For the specific API, see [DataCopy (GM -> UB - Multi-dimensional Data Movement NDDMA)](../memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md).
 
 **src** and **dst** are the source operand and destination operand, respectively; **params** is the movement parameters of the **NdDmaParams** type, which configures the multi-dimensional movement information.
 

@@ -71,7 +71,7 @@ The specifically supported data paths are as follows (represented by [logical po
     - VECOUT -> VECIN
     - VECOUT -> VECCALC
 
-The transferred data is used for [vector computation](../memory_vector_compute/Memory vector computation.md). For the specific API, refer to [Copy (UB -> UB continuous data transfer)](../memory_vector_compute/data transfer/Copy_UBToUB_continuous.md).
+The transferred data is used for [vector computation](../memory_vector_compute/memory_vector_computation.md). For the specific API, refer to [Copy (UB -> UB continuous data transfer)](../memory_vector_compute/data_move/Copy_UBToUB_continuous.md).
 
 **src** and **dst** are the source operand and destination operand, respectively; **count** is the number of elements transferred continuously.
 

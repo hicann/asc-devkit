@@ -43,7 +43,7 @@ None
 
 ## Constraints<a name="section633mcpsimp"></a>
 
-This API does not support [Tensor in-place operations](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/Appendix/Common Operations/How to Use Tensor In-place Operations to Improve Operator Performance.md), that is, the scenario where the depth of **TQue** is set to 0.
+This API does not support [Tensor in-place operations](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/appendix/common_operations/how_to_use_tensor_in_place_operations_to_improve_operator_performance.md), that is, the scenario where the depth of **TQue** is set to 0.
 
 ## Return Value<a name="section640mcpsimp"></a>
 
@@ -67,3 +67,4 @@ AscendC::LocalTensor<half> tensor3 = que.AllocTensor<half>();
 AscendC::LocalTensor<half> tensor4 = que.AllocTensor<half>();
 ret = que.HasIdleBuffer(); // Four memory blocks are allocated by AllocTensor, and no idle memory is available, so the return value is false. Continuing to call AllocTensor will report an error.
 ```
+

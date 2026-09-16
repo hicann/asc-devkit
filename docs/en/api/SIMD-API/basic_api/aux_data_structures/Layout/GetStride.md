@@ -44,7 +44,7 @@ None
 
 ## Return Value<a name="zh-cn_topic_0000002042526794_zh-cn_topic_0000001602767550_zh-cn_topic_0000001600123102_section25791320141317"></a>
 
-A **Stride** object that describes the memory access stride. It is a **Stride** structure type (an alias of the [Std::tuple](../../../../Utils-API/cpp_stdlib/Container Functions/Container Functions.md) type), defined as follows:
+A **Stride** object that describes the memory access stride. It is a **Stride** structure type (an alias of the [Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md) type), defined as follows:
 
 ```cpp
 template <typename... Strides>

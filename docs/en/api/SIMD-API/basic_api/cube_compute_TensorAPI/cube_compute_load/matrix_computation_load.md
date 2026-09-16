@@ -2,9 +2,9 @@
 
 <!-- md-trans-meta sourceCommit=e9bec8b34ada6c37c20391d212da5ebf088e2e8b translatedAt=2026-08-27T17:13:48.006Z -->
 
-- **[General Description](General Description.md)**
+- **[General Description](general_description.md)**
 
-- **[L1-L0A-L0B Buffer Memory Structure Introduction](../../cube_compute_ISASI/Data Movement into Cube Computation/L1-L0A-B Memory Structure Introduction.md)**
+- **[L1-L0A-L0B Buffer Memory Structure Introduction](../../cube_compute_ISASI/cube_compute_load/l1_l0a_b_memory_structure_introduction.md)**
 
 - **[Copy (Data Movement from Global Memory to L1 Buffer)](Copy_GMToL1.md)**
 

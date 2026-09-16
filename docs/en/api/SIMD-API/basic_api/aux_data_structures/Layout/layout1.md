@@ -48,7 +48,7 @@ Returns the **Layout** instantiated object.
 
 ## Constraints<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section19165124931511"></a>
 
-The **Shape** and **Stride** structures passed in when constructing a **Layout** object must be of the [Std::tuple](../../../../Utils-API/cpp_stdlib/Container Functions/Container Functions.md) structure type and comply with the usage constraints of the **Std::tuple** structure type.
+The **Shape** and **Stride** structures passed in when constructing a **Layout** object must be of the [Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md) structure type and comply with the usage constraints of the **Std::tuple** structure type.
 
 ## Example<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section320753512363"></a>
 

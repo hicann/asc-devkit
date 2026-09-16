@@ -269,7 +269,7 @@ None
 ## Example<a id="zh-cn_topic_0000002542828493_section088124295117"></a>
 
 <!-- npu="950,A3,910b" id30 -->
-For the complete Fixpipe sample, see [fixpipe\_l0c2gm sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/fixpipe_l0c2gm).
+For the complete Fixpipe sample, see [fixpipe\_l0c2gm sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2gm).
 
 - Example: path L0C Buffer-\>GM. The input matrices A and B are of the half data type, and the output cube C is of the float data type, with NZ2ND format conversion enabled.
 

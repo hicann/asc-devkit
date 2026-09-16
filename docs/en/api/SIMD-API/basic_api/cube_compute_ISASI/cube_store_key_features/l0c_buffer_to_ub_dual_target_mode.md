@@ -52,4 +52,4 @@ Enabling dual-target mode in NZ2ND mode is shown in the following figure, which 
 
 ![](../../../../figures/nz2nd_l0c2ub_dual_dst.png)
 
-For the complete sample, see [fixpipe_l0c2ub](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/fixpipe_l0c2ub).
+For the complete sample, see [fixpipe_l0c2ub](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2ub).

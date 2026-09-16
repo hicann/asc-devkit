@@ -126,7 +126,7 @@ None
 
 - The dstBlkStride parameter in the BrcbRepeatParams structure does not support being set to 0. Setting it to 0 may cause undefined behavior.
 <!-- npu="310p" id7 -->
-- For the Atlas Inference Series AI Core, reserve 8 KB of Unified Buffer space as the temporary data storage area for the API.
+- For the Atlas inference products AI Core, reserve 8 KB of Unified Buffer space as the temporary data storage area for the API.
 <!-- end id7 -->
 
 ## Key Feature Description

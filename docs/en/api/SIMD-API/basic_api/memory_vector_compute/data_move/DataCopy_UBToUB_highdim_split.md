@@ -119,7 +119,7 @@ For continuous transfer scenarios, it is recommended to use [UB-to-UB continuous
 <!-- end id3 -->
 
 <!-- npu="310p" id4 -->
-- Atlas Inference Series AI Core supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas inference products AI Core supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id4 -->
 
 <!-- npu="910" id5 -->

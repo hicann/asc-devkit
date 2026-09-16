@@ -207,7 +207,7 @@ __simd_callee__ inline void Add(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 
 - Method 3<a id="method3"></a>
 
-  Adopt [LoadAlign](../Reg data move-in/LoadAlign_MaskReg.md) to move the Mask from UB to MaskReg. Set the Mask in UB.
+  Adopt [LoadAlign](../reg_data_load/LoadAlign_MaskReg.md) to move the Mask from UB to MaskReg. Set the Mask in UB.
 
   ```cpp
   template <typename T>
@@ -227,7 +227,7 @@ __simd_callee__ inline void Add(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 
 - Method 4<a id="method4"></a>
 
-  Adopt [MaskGenWithRegTensor](../Reg data move-in/MaskGenWithRegTensor_MaskReg.md) to move the Mask from RegTensor to MaskReg. Set the Mask in RegTensor.
+  Adopt [MaskGenWithRegTensor](../reg_data_load/MaskGenWithRegTensor_MaskReg.md) to move the Mask from RegTensor to MaskReg. Set the Mask in RegTensor.
 
   ```cpp
   template <typename T>
@@ -250,7 +250,7 @@ __simd_callee__ inline void Add(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 
 - Method 5<a id="method5"></a>
 
-  Adopt [MoveMask](../MaskReg computation/MoveMask.md) to read the Mask value from the mask register {MASK1,MASK0} set by SetVectorMask, convert it according to the data format corresponding to the template parameter T, and then write it to the return value MaskReg. For the b16 type, the complete 128-bit {MASK1,MASK0} is read, and each bit is replicated as 2 bits; for the b32 type, the 64-bit MASK0 is read, and each bit is replicated as 4 bits.
+  Adopt [MoveMask](../MaskReg_compute/MoveMask.md) to read the Mask value from the mask register {MASK1,MASK0} set by SetVectorMask, convert it according to the data format corresponding to the template parameter T, and then write it to the return value MaskReg. For the b16 type, the complete 128-bit {MASK1,MASK0} is read, and each bit is replicated as 2 bits; for the b32 type, the 64-bit MASK0 is read, and each bit is replicated as 4 bits.
 
   ```cpp
   template <typename T>

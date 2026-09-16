@@ -71,7 +71,7 @@ Returns the data at the GM address before the atomic operation.
 ## Constraints<a name="section24727811123"></a>
 
 - When the compiler automatic synchronization feature is enabled (see [Automatic Synchronization Usage Constraints](../sync_control/intra_core_sync/key_feature_description.md#automatic-synchronization-constraints)), the compiler can automatically insert synchronization between **PIPE_MTE2**/**PIPE_MTE3** and **PIPE_S** (see [Compiler Automatic Synchronization](../sync_control/intra_core_sync/key_feature_description.md#tpipe-tque-framework-programming-paradigm-and-compiler-automatic-synchronization-support)). However, **AtomicMin** is a scalar operation. When reading from and writing to GM, if there is a data dependency with the transfer units (**MTE2**/**MTE3**), the compiler cannot automatically insert synchronization. In this case, developers need to manually insert synchronization based on the actual situation.
-- Scalar atomic operations bypass the DCache. You need to call the [DataCacheCleanAndInvalid](../Cache Control/DataCacheCleanAndInvalid.md) API to ensure consistency between GM and the DCache.
+- Scalar atomic operations bypass the DCache. You need to call the [DataCacheCleanAndInvalid](../cache_control/DataCacheCleanAndInvalid.md) API to ensure consistency between GM and the DCache.
 
 ## Example<a name="section191505489122"></a>
 

@@ -370,7 +370,7 @@ The following figure shows the data layout changes during the transfer process:
 
 ![](../../../../figures/loaddatawithtrans_l12l0a_b8.png)
 
-The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [load\_data\_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [load\_data\_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 // Solve dstoffset based on the width-direction alignment of the A cube on the L0 Buffer.
@@ -393,7 +393,7 @@ for (int i = 0; i < CeilDivision(m, fractalShape[1]); ++i) {
 
 ### Example of int8_t Data Type with A and B Matrices Requiring Transpose
 
-In this example, the input cube a is of the int8_t type with a shape of [40,70], the input cube b is of the int8_t type with a shape of [70,50], and the output c is of the int32_t type. Cube a is transposed from A1 to A2, and cube b is transposed from B1 to B2, after which Mmad computation and Fixpipe computation are performed. The example code snippet is shown below, which only presents part of the code in the sample. For the complete sample, see [LoadData_L12L0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+In this example, the input cube a is of the int8_t type with a shape of [40,70], the input cube b is of the int8_t type with a shape of [70,50], and the output c is of the int32_t type. Cube a is transposed from A1 to A2, and cube b is transposed from B1 to B2, after which Mmad computation and Fixpipe computation are performed. The example code snippet is shown below, which only presents part of the code in the sample. For the complete sample, see [LoadData_L12L0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 uint16_t m = 40, k = 70, n = 50;
@@ -430,7 +430,7 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
 
 ### Example of a scenario where cube transpose is required for A and B matrices of the half data type
 
-In this example, the input a cube is of the half type with a shape of [40,70], the input b cube is of the half type with a shape of [70,50], and the output c is of the float type. The a cube is transposed from A1 to A2, and the b cube is transposed from B1 to B2. The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [LoadData_L12L0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+In this example, the input a cube is of the half type with a shape of [40,70], the input b cube is of the half type with a shape of [70,50], and the output c is of the float type. The a cube is transposed from A1 to A2, and the b cube is transposed from B1 to B2. The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [LoadData_L12L0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 uint16_t m = 40, k = 70, n = 50;
@@ -467,7 +467,7 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0] * fractalNum); ++i) {
 
 ### Example of a scenario where matrices A and B require transpose for the float data type
 
-In this example, the input cube a is of the float type with a shape of [40,70], the input cube b is of the float type with a shape of [70,50], and the output c is of the float type. Cube a is transposed from A1 to A2, and cube b is transposed from B1 to B2. The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [LoadData_L12L0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+In this example, the input cube a is of the float type with a shape of [40,70], the input cube b is of the float type with a shape of [70,50], and the output c is of the float type. Cube a is transposed from A1 to A2, and cube b is transposed from B1 to B2. The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [LoadData_L12L0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 uint32_t m = 40, k = 70, n = 50;
@@ -505,7 +505,7 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0]); ++i) {
 <!-- npu="950" id20 -->
 ### Example of Using the LoadData2dTransposeParamsV2 Structure as a Parameter
 
-This example uses the LoadData2dTransposeParamsV2 structure as a parameter. The input cube a is of the int8_t type with a shape of [128,128] and an input data format of NZ. The input cube b is of the int8_t type with a shape of [128,256] and an input data format of NZ. The output c is of the float type. Cube a is not transposed from A1 to A2, while cube b is transposed from B1 to B2. This example only demonstrates the API invocation process, and the remaining computation and data movement are not for reference. For the complete example, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+This example uses the LoadData2dTransposeParamsV2 structure as a parameter. The input cube a is of the int8_t type with a shape of [128,128] and an input data format of NZ. The input cube b is of the int8_t type with a shape of [128,256] and an input data format of NZ. The output c is of the float type. Cube a is not transposed from A1 to A2, while cube b is transposed from B1 to B2. This example only demonstrates the API invocation process, and the remaining computation and data movement are not for reference. For the complete example, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 uint32_t m = 256;

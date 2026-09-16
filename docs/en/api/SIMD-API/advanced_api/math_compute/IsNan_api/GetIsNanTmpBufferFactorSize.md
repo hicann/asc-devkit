@@ -49,7 +49,7 @@ When the **currentShapeSize** \* **typeSize** derived from **maxLivedNodeCount**
 
 ## Examples
 
-For the complete calling example, see [More Examples](../More Examples-83.md).
+For the complete calling example, see [More Samples](../more_samples_83.md).
 
 ```
 uint32_t maxLivedNodeCount = 0;

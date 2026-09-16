@@ -22,7 +22,7 @@
 
 -   **[Auxiliary Configuration APIs for Reduction Computation](reduction_compute_aux_config/reduction_computation_auxiliary_config_api.md)**
 
--   **[Data Layout Conversion](data_rearrange_ISASI/data_layout_conversion.md)**  
+-   **[Data Layout Conversion](data_layout_conversion/data_layout_conversion.md)**  
 
 -   **[Data Padding](data_padding/data_padding.md)**  
 

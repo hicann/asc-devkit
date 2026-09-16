@@ -4,7 +4,7 @@
 
 ## Overview<a name="ZH-CN_TOPIC_0000002543262920"></a>
 
-The data movement between the L1 Buffer and the L0 Buffer provides flexible API support and can fully adapt to diverse computation scenarios (see [Table 1](#zh-cn_topic_0000002535057808_table12546123753110)). Among them, the data movement from L1 Buffer to L0A Buffer and from L1 Buffer to L0B Buffer is used for cube computation (see [Cube Computation Input](../cube_compute_ISASI/cube computation input/cube computation input.md)), and the data movement from L0C Buffer to L1 Buffer is used for cube computation output, completing the output process of cube computation (see [Cube Computation Output](../cube_compute_ISASI/cube computation output/cube computation output.md)).
+The data movement between the L1 Buffer and the L0 Buffer provides flexible API support and can fully adapt to diverse computation scenarios (see [Table 1](#zh-cn_topic_0000002535057808_table12546123753110)). Among them, the data movement from L1 Buffer to L0A Buffer and from L1 Buffer to L0B Buffer is used for cube computation (see [Cube Computation Input](../cube_compute_ISASI/cube_compute_load/matrix_computation_load.md)), and the data movement from L0C Buffer to L1 Buffer is used for cube computation output, completing the output process of cube computation (see [Cube Computation Output](../cube_compute_ISASI/cube_compute_store/matrix_computation_storage.md)).
 
 **Table 1**  Overview of data movement APIs between the L1 Buffer and the L0 Buffer<a name="zh-cn_topic_0000002535057808_table12546123753110"></a>
 

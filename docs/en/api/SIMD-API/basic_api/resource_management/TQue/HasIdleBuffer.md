@@ -67,3 +67,4 @@ AscendC::LocalTensor<half> tensor3 = que.AllocTensor<half>();
 AscendC::LocalTensor<half> tensor4 = que.AllocTensor<half>();
 ret = que.HasIdleBuffer(); // Four memory blocks are allocated by AllocTensor, and no idle memory is available, so the return value is false. Continuing to call AllocTensor will report an error.
 ```
+

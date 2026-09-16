@@ -57,7 +57,7 @@ In the fusion compilation scenario, the return values of calling this API on AIC
 | Mix operator | \_\_mix\_\_(1, 1) | 1 | 1 |
 | Mix operator | \_\_mix\_\_(1, 2) | 1 | 2 |
 
-In the custom operator project and Kernel direct invocation project scenarios, the return values of calling this API on AIC and AIV for different Kernel types (set through [Setting the Kernel Type](../../Kernel-Tiling/Setting the Kernel Type.md)) are as follows:
+In the custom operator project and Kernel direct invocation project scenarios, the return values of calling this API on AIC and AIV for different Kernel types (set through [Setting the Kernel Type](../../Kernel-Tiling/set_kernel_type.md)) are as follows:
 
 **Table 2** Return values in the custom operator project and Kernel direct invocation project scenarios
 

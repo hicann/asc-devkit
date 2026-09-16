@@ -27,7 +27,7 @@
 <!-- end id7 -->
 ## Description<a name="section618mcpsimp"></a>
 
-After in-line quantization is performed during DataCopy data movement ([L0C Buffer->GM](../Cube Computation Move-Out/DataCopy_L0CToGM.md)), call this API to set the maximum value for the ClipReLU operation.
+After in-line quantization is performed during DataCopy data movement ([L0C Buffer->GM](../cube_compute_store/DataCopy_L0CToGM.md)), call this API to set the maximum value for the ClipReLU operation.
 
 The ClipReLU calculation formula is `min(clipReluMaxVal, srcData)`, where `clipReluMaxVal` is the maximum value set through this API and `srcData` is the source data.
 

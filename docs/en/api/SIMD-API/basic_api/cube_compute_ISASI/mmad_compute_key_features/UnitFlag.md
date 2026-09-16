@@ -66,7 +66,7 @@ fixpipeParams.unitFlag = 3;
 AscendC::Fixpipe(cGM, c, fixpipeParams);
 ```
 
-Complete example of enabling and disabling the unitFlag feature: [UnitFlag example](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/01_cube_compute/mmad_unitflag)
+Complete example of enabling and disabling the unitFlag feature: [UnitFlag example](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_unitflag)
 
 **Table 1** Performance example description (using the half input data type as an example; "no business measurement" means that the preceding and following operations of the instruction are ignored, and only the single-instruction performance is considered, including overheads such as bandwidth latency)
 

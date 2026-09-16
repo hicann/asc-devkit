@@ -69,7 +69,7 @@ MXMmad is a cube multiplication with quantized coefficients X, meaning that both
     **Figure 4** Layout format of the scaleB cube at different positions<a name="zh-cn_topic_0000002563445163_fig599218260112"></a>  
     ![](../../../../figures/scale_b_cube_layout.png "Layout format of the scaleB cube at different positions")
 
-For specific implementation, see [MXmmad sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_2dmx_l12l0).
+For specific implementation, see [MXmmad sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_2dmx_l12l0).
 <!-- end id1 -->
 
 <!-- npu="910b,A3" id2 -->

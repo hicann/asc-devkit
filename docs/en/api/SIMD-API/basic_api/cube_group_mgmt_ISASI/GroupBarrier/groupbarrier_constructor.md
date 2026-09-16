@@ -89,7 +89,7 @@ Returns a **GroupBarrier** object instance.
 ## Constraints<a name="zh-cn_topic_0000001526206862_section65498832"></a>
 
 -   When this API is used, the last 1600B of the UB space is occupied.
--   This API cannot be used together with [REGIST\_MATMUL\_OBJ](../../../High-level API/Cube Computation/Matmul-Kernel-side API/REGIST_MATMUL_OBJ.md). When the resource management APIs are used, the user manages the inter-core communication between AIC and AIV. Inside REGIST\_MATMUL\_OBJ, the framework manages the inter-core communication between AIC and AIV. Using both at the same time may cause exceptions such as incorrect communication messages.
+-   This API cannot be used together with [REGIST\_MATMUL\_OBJ](../../../advanced_api/matrix_compute/Matmul-Kernel/REGIST_MATMUL_OBJ.md). When the resource management APIs are used, the user manages the inter-core communication between AIC and AIV. Inside REGIST\_MATMUL\_OBJ, the framework manages the inter-core communication between AIC and AIV. Using both at the same time may cause exceptions such as incorrect communication messages.
 
 ## Example<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

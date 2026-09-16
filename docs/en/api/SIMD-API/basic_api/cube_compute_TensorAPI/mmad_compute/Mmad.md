@@ -227,10 +227,10 @@ MX Mmad typically requires the movement of the left cube scaling data ScaleA and
 - [UnitFlag](../mmad_compute_key_features/UnitFlag.md)
 - [GEMV](../mmad_compute_key_features/GEMV.md)
 - [HF32](../mmad_compute_key_features/HF32.md)
-- [L1 to L0 ScaleA Data Movement](../Cube Computation Move In/Copy_L1ToL0ScaleA.md)
-- [L1 to L0 ScaleB Data Movement](../Cube Computation Move In/Copy_L1ToL0ScaleB.md)
-- [L0C to GM Data Movement](../Cube Computation Move Out/Copy_L0CToGM.md)
-- [L0C to UB Data Movement](../Cube Computation Move Out/Copy_L0CToUB.md)
+- [L1 to L0 ScaleA Data Movement](../cube_compute_load/Copy_L1ToL0ScaleA.md)
+- [L1 to L0 ScaleB Data Movement](../cube_compute_load/Copy_L1ToL0ScaleB.md)
+- [L0C to GM Data Movement](../cube_compute_store/Copy_L0CToGM.md)
+- [L0C to UB Data Movement](../cube_compute_store/Copy_L0CToUB.md)
 
 ## Example
 

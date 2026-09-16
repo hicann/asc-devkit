@@ -138,7 +138,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-**Table**  Memory required by sharedTmpBuffer on Atlas Inference Series AI Core<a id="table4"></a>
+**Table**  Memory required by sharedTmpBuffer on Atlas inference products AI Core<a id="table4"></a>
 
 | transposeType | Size Required by sharedTmpBuffer |
 | :-- | :-- |
@@ -168,11 +168,11 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
   <!-- end id9 -->
 
   <!-- npu="310p" id10 -->
-  For Atlas Inference Series AI Core, the operand supports the following data types: int16_t, uint16_t, half.
+  For Atlas inference products AI Core, the operand supports the following data types: int16_t, uint16_t, half.
   <!-- end id10 -->
 
   <!-- npu="910" id11 -->
-  For Atlas Training Series products, the operand supports the following data types: int16_t, uint16_t, half.
+  For Atlas training products, the operand supports the following data types: int16_t, uint16_t, half.
   <!-- end id11 -->
 
 - Enhanced Transpose:
@@ -195,7 +195,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
     <!-- end id15 -->
 
     <!-- npu="310p" id16 -->
-    For Atlas Inference Series AI Core, the operand supports the following data type: uint16_t.
+    For Atlas inference products AI Core, the operand supports the following data type: uint16_t.
     <!-- end id16 -->
 
   - When transposeType is TRANSPOSE\_NCHW2NHWC or TRANSPOSE\_NHWC2NCHW:
@@ -213,7 +213,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
     <!-- end id19 -->
 
     <!-- npu="310p" id20 -->
-    For Atlas Inference Series AI Core, the data types supported by the operand are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+    For Atlas inference products AI Core, the data types supported by the operand are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
     <!-- end id20 -->
 
 ## Return Value

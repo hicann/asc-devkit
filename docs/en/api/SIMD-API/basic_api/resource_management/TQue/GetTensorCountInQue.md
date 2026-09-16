@@ -43,7 +43,7 @@ None
 
 ## Constraints<a name="section633mcpsimp"></a>
 
-This API does not support [Tensor in-place operations](../../../../../guide/programming_guide/appendix/common_operations/how_to_use_tensor_in_place_operations_to_improve_operator_performance.md), that is, the scenario where the **depth** of **TQue** is set to 0.
+This API does not support [Tensor in-place operations](https://gitcode.com/cann/asc-devkit/blob/9.1.0/docs/en/guide/programming_guide/appendix/common_operations/how_to_use_tensor_in_place_operations_to_improve_operator_performance.md), that is, the scenario where the **depth** of **TQue** is set to 0.
 
 ## Return Value<a name="section640mcpsimp"></a>
 
@@ -62,3 +62,4 @@ AscendC::LocalTensor<half> tensor1 = que.AllocTensor<half>();
 que.EnQue(tensor1);// Enqueue the tensor into the VECOUT queue.
 int32_t numb = que.GetTensorCountInQue();
 ```
+

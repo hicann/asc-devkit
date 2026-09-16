@@ -390,9 +390,9 @@
                 -   [GetReduceRepeatSumSpr\(ISASI\)](SIMD-API/basic_api/memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatSumSpr_ISASI.md)
                 -   [GetReduceRepeatMaxMinSpr\(ISASI\)](SIMD-API/basic_api/memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatMaxMinSpr_ISASI.md)
 
-            -   [Data Layout Conversion](SIMD-API/basic_api/memory_vector_compute/data_rearrange_ISASI/data_layout_conversion.md)
-                -   [Transpose](SIMD-API/basic_api/memory_vector_compute/data_rearrange_ISASI/Transpose.md)
-                -   [TransDataTo5HD](SIMD-API/basic_api/memory_vector_compute/data_rearrange_ISASI/TransDataTo5HD.md)
+            -   [Data Layout Conversion](SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/data_layout_conversion.md)
+                -   [Transpose](SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/Transpose.md)
+                -   [TransDataTo5HD](SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/TransDataTo5HD.md)
 
             -   [Data Fill](SIMD-API/basic_api/memory_vector_compute/data_padding/data_padding.md)
                 -   [Duplicate](SIMD-API/basic_api/memory_vector_compute/data_padding/Duplicate.md)

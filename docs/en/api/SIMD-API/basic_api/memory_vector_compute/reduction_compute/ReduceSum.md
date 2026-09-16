@@ -100,10 +100,10 @@ The supported data types are as follows:
 - Atlas inference products: half and float.
 <!-- end id9 -->
 <!-- npu="310p" id10 -->
-- Atlas Inference Series AI Core supports half and float.
+- Atlas inference products AI Core supports half and float.
 <!-- end id10 -->
 <!-- npu="910" id11 -->
-- Atlas Training Series supports half.
+- Atlas training products supports half.
 <!-- end id11 -->
 
 ## Return Value
@@ -186,10 +186,10 @@ The `ReduceSum` API completes the summation within each repeat by tree accumulat
 - Atlas inference products adopts method 2.
 <!-- end id18 -->
 <!-- npu="310p" id19 -->
-- Atlas Inference Series AI Core adopts method 2.
+- Atlas inference products AI Core adopts method 2.
 <!-- end id19 -->
 <!-- npu="910" id20 -->
-- Atlas Training Series adopts method 2.
+- Atlas training products adopts method 2.
 <!-- end id20 -->
 
 ## Example

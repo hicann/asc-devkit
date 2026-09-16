@@ -39,7 +39,7 @@ The supported data paths are as follows (represented by [logical position TPosit
 - Unified Buffer -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id1 -->
-    - CO2 -> GM (supported only by the AI Core of Atlas Inference Series products)
+    - CO2 -> GM (supported only by the AI Core of Atlas inference products)
     <!-- end id1 -->
 
 ## Prototype<a name="zh-cn_topic_0000002565968945_section82039854412"></a>
@@ -162,7 +162,7 @@ The data types supported by the source operand and destination operand must be c
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- Atlas Inference Series products AI Core: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+- Atlas inference products AI Core: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id5 -->
 
 ## Return Value

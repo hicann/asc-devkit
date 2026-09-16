@@ -147,7 +147,7 @@ The supported input/output data type combinations are as follows:
 | int8_t | float | float |
 | int8_t | float | half |
 | int8_t | float | bfloat16_t |
-| hifloat8_t | half | half |  |
+| hifloat8_t | half | half |
 | hifloat8_t | bfloat16_t | bfloat16_t |
 | hifloat8_t | float | float |
 | hifloat8_t | float | half |

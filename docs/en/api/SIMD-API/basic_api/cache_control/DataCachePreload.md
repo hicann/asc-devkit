@@ -62,3 +62,4 @@ Frequently calling this API may cause congestion in the reservation station (a h
 AscendC::GlobalTensor<uint64_t> srcGlobal;
 int64_t cacheOffset = 0;
 AscendC::DataCachePreload(srcGlobal, cacheOffset);
+```

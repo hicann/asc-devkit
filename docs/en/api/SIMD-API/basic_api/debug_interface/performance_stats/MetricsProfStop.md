@@ -31,7 +31,7 @@
 
 The header file path is `"basic_api/kernel_prof_trace_intf.h"`.
 
-It is recommended to use the [asc_prof_stop](../../../../Utils-API/debugging APIs/asc_prof_stop.md) API to set the start of the performance data collection signal. This API applies to both C and C++ programming.
+It is recommended to use the [asc_prof_stop](../../../../Utils-API/tuning_interface/asc_prof_stop.md) API to set the start of the performance data collection signal. This API applies to both C and C++ programming.
 
 Sets the stop of the performance data collection signal and is used together with [MetricsProfStart](MetricsProfStart.md). When using the **msOpProf** tool for on-board operator tuning, you can call **MetricsProfStart** and **MetricsProfStop** before and after the kernel-side code segment to specify the range of the code segment to be tuned.
 

@@ -64,3 +64,4 @@ tensor1 = que.DeQue<half>(); // Move the tensor out of the VECOUT queue.
 que.FreeTensor<half>(tensor1);
 que.FreeAllEvent();
 ```
+

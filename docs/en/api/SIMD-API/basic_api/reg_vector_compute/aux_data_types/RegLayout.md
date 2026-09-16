@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=unknown translatedAt=2026-08-31T12:49:57.852Z -->
 
-When the source operand and destination operand have different bit widths, the computation amount of a single instruction is determined by the data type with the larger bit width. RegLayout is used to control the layout of elements with the smaller bit width in the register. For more feature descriptions, see [Cast](../Type Conversion/Cast-45.md).
+When the source operand and destination operand have different bit widths, the computation amount of a single instruction is determined by the data type with the larger bit width. RegLayout is used to control the layout of elements with the smaller bit width in the register. For more feature descriptions, see [Cast](../type_conversion/Cast-45.md).
 ```cpp
 enum class RegLayout { 
     UNKNOWN = -1, 

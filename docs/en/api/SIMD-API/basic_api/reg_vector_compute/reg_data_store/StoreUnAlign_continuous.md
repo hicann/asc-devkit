@@ -67,7 +67,7 @@ The non-aligned register **UnalignRegForStore** serves as a temporary buffer for
     __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, AddrReg& areg)
     ```
 
-- API that uses the AR register to store the offset: used together with [Squeeze](../Comparison and Selection/Squeeze.md). Squeeze stores the total number of bytes of valid elements into the AR special register, and this API uses the number of valid elements in the AR register as the storage offset.
+- API that uses the AR register to store the offset: used together with [Squeeze](../compare_and_select/Squeeze.md). Squeeze stores the total number of bytes of valid elements into the AR special register, and this API uses the number of valid elements in the AR register as the storage offset.
 
     ```cpp
     template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>

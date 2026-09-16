@@ -116,7 +116,7 @@ struct CopyL0C2UBTrait {
 |roundMode|`RoundMode::DEFAULT`|Rounding mode. `RoundMode::HYBRID` is supported only in the quantized output scenario where the source type is `float` and the destination type is `hifloat8_t`.|
 |enableRelu|`false`|Whether to enable inline Relu.|
 |enableChannelSplit|`false`|Whether to enable output data channel splitting.|
-|dualDstCtl|`DUAL_DST_DISABLE`|Dual-objective model control. The value can be `DUAL_DST_DISABLE`, `DUAL_DST_SPLIT_M`, or `DUAL_DST_SPLIT_N`. For details, see also [L0C Buffer to Unified Buffer dual-objective model](../cube move-out key feature description/l0c_to_ub_dual_dst.md).|
+|dualDstCtl|`DUAL_DST_DISABLE`|Dual-objective model control. The value can be `DUAL_DST_DISABLE`, `DUAL_DST_SPLIT_M`, or `DUAL_DST_SPLIT_N`. For details, see also [L0C Buffer to Unified Buffer dual-objective model](../cube_store_key_features/l0c_to_ub_dual_dst.md).|
 
 Example of using a custom trait:
 

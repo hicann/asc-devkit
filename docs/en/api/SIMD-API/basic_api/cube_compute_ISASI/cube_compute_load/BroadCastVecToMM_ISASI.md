@@ -63,7 +63,7 @@ __aicore__ inline void BroadCastVecToMM(const LocalTensor<T> &dst, const LocalTe
 
 ## Data Types
 
-Atlas Inference Series products AI Core: Supported data types are half, int32_t, and float.
+Atlas inference products AI Core: Supported data types are half, int32_t, and float.
 
 ## Constraints<a name="section633mcpsimp"></a>
 

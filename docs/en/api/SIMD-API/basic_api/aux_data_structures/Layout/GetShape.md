@@ -44,7 +44,7 @@ None
 
 ## Return Value<a name="zh-cn_topic_0000002078447573_zh-cn_topic_0000001576806829_zh-cn_topic_0000001339187720_section25791320141317"></a>
 
-Returns a **Shape** object that describes the tensor shape. The **Shape** structure type (an alias of the [Std::tuple](../../../../Utils-API/cpp_stdlib/Container Functions/Container Functions.md) type) is defined as follows:
+Returns a **Shape** object that describes the tensor shape. The **Shape** structure type (an alias of the [Std::tuple](../../../../Utils-API/cpp_stdlib/container_functions/container_functions.md) type) is defined as follows:
 
 ```cpp
 template <typename... Shapes>

@@ -6,7 +6,7 @@
 
 In Tiling template programming, developers call this API to automatically generate and configure the **TilingKey**.
 
-To use this API, include the header file that defines the template parameters and template parameter combinations. For details, see [Tiling Template Programming](Tiling Template Programming.md).
+To use this API, include the header file that defines the template parameters and template parameter combinations. For details, see [Tiling Template Programming](tiling_template_programming.md).
 
 ## Prototype<a name="zh-cn_topic_0000001867289945_zh-cn_topic_0000001389787297_section13230182415108"></a>
 

@@ -116,12 +116,12 @@ The moved data is used for [cube computation](../cube_compute_ISASI/cube_compute
 
 This API mainly moves data from Global Memory to the L1 Buffer and supports converting the data from the [DN](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_detailed_explanation.md) format to the [NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_detailed_explanation.md) format during data movement.
 
-The specifically supported data paths are (represented by [logical position TPosition](../auxiliary data_structures/TPosition.md)):
+The specifically supported data paths are (represented by [logical position TPosition](../aux_data_structures/TPosition.md)):
 
 - Global Memory -> L1 Buffer
     - GM -> A1/B1
 
-The moved data is used for [cube computation](../cube_compute_ISASI/cube_compute_ISASI.md). For API specifics, refer to [DataCopy (GM -> L1 - Inline Conversion - DN2NZ Movement)](../cube_compute_ISASI/cube computation data movement in/DataCopy_GMToL1_DN2NZ.md).
+The moved data is used for [cube computation](../cube_compute_ISASI/cube_compute_ISASI.md). For API specifics, refer to [DataCopy (GM -> L1 - Inline Conversion - DN2NZ Movement)](../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_DN2NZ.md).
 
 **src** and **dst** are the source operand and destination operand, respectively; **intriParams** is the DN2NZ movement configuration parameter.
 

@@ -4,7 +4,7 @@
 
 - **[General Description](general_description.md)**
 
-- **[L0C Buffer Memory Structure](../../cube_compute_ISASI/Cube Computation Offload/l0c_buffer_memory_structure_introduction.md)**
+- **[L0C Buffer Memory Structure](../../cube_compute_ISASI/cube_compute_store/l0c_buffer_memory_structure_introduction.md)**
 
 - **[Copy (Data Transfer from L0C Buffer to Global Memory)](Copy_L0CToGM.md)**
 

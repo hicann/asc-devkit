@@ -43,7 +43,7 @@ None
 
 ## Return Value<a name="section640mcpsimp"></a>
 
-Returns the [TPosition](../../auxiliary data structures/TPosition.md) logical position where the **LocalTensor** is located.
+Returns the [TPosition](../../aux_data_structures/TPosition.md) logical position where the **LocalTensor** is located.
 
 ## Constraints<a name="section633mcpsimp"></a>
 

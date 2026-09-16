@@ -150,7 +150,7 @@ None
 - For address alignment constraints, see [Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).
 - For operand address overlap constraints, see [Address Overlap Constraints](../../../general_description_and_constraints.md#section668772811100).
 - When the source operand data type is half and the destination operand data type is float, address overlap is not supported.
-- The actual use of the MulAddDst instruction is affected by [bank conflicts](https://gitcode.com/cann/asc-devkit/tree/9.1.0/docs/guide/operator-practice-reference/simd-operator-performance-optimization/memory-access/avoiding-ub-bank-conflicts/overview.md).  
+- The actual use of the MulAddDst instruction is affected by [bank conflicts](https://gitcode.com/cann/asc-devkit/tree/9.1.0/docs/en/guide/operator-practice-reference/simd-operator-performance-optimization/memory-access/avoiding-ub-bank-conflicts/overview.md).  
   In the non-overlapping address scenario, data at three different addresses of dst, src0, and src1 cannot be read in a single beat, so only half of the theoretical parallelism can be achieved, and the theoretical parallelism is halved on the original basis. In the overlapping address scenario, the original theoretical parallelism is maintained.
 - When using the tensor high-dimensional split calculation API, if the data type of src and scalar is half and the data type of dst is float, at most 64 input data elements are processed in one iteration.
 <!-- npu="950" id6 -->

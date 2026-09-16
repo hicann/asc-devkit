@@ -58,7 +58,7 @@ Cube C is a 1\* 256 vector, which can be divided into 16 sub-vectors of 1 \* 16,
 
 ![GEMV mode cube multiplication illustration demo](../../../../figures/mmad_gemv_demo.png "GEMV mode cube multiplication illustration demo")
 
-For a complete example of the GEMV feature, see [GEMV sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/01_cube_compute/mmad_gemv).
+For a complete example of the GEMV feature, see [GEMV sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad_gemv).
 
 ```cpp
 AscendC::MmadParams mmadParams;

@@ -71,3 +71,4 @@ que.EnQue(tensor3);// Add tensor3 to the VECOUT queue.
 que.EnQue(tensor4);// Add tensor4 to the VECOUT queue.
 ret = que.VacantInQue(); // Returns false. Continuing the enqueue operation (Enque) will report an error.
 ```
+

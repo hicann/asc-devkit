@@ -2,9 +2,9 @@
 
 <!-- md-trans-meta sourceCommit=unknown translatedAt=2026-08-31T11:52:43.611Z -->
 
--   **[CubeResGroupHandle Usage](CubeResGroupHandle Usage.md)**  
+-   **[CubeResGroupHandle Usage](cuberesgrouphandle_usage_description.md)**  
 
--   **[CubeResGroupHandle Constructor](CubeResGroupHandle Constructor.md)**  
+-   **[CubeResGroupHandle Constructor](cuberesgrouphandle_constructor.md)**  
 
 -   **[CreateCubeResGroup](CreateCubeResGroup.md)**  
 

@@ -420,7 +420,7 @@ None
 -   For operand address alignment requirements, see [General Address Alignment Constraints](../../general_description_and_constraints.md#section796754519912).
 -   The data length of the input and output operands participating in the computation must be 32B-aligned.
 -   When Scale is of the float type, its value range is still the value range of the half type.
--   Atlas Training Series products support only PER\_TENSOR quantization, and do not support PER\_CHANNEL quantization.
+-   Atlas training products support only PER\_TENSOR quantization, and do not support PER\_CHANNEL quantization.
 -   The PER\_TOKEN/PER\_GROUP scenario is supported only on Ascend 950PR/Ascend 950DT.
 -   In the PER\_TOKEN/PER\_GROUP scenario, the data volume in the continuous computation direction (that is, the n direction) must be 32B-aligned.
 

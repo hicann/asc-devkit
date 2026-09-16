@@ -243,7 +243,7 @@ The following figure shows the data layout changes during the transfer process:
 
 ![](../../../../figures/load2d_l12l0a_nontrans.png)
 
-The sample code snippet is as follows. Only part of the code in the sample is shown. For the complete sample, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+The sample code snippet is as follows. Only part of the code in the sample is shown. For the complete sample, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 uint32_t dstOffset = CeilDivision(k, fractalShape[1]) * fractalSize;
@@ -265,7 +265,7 @@ The following figure shows the data layout changes during the transfer process:
 
 ![](../../../../figures/load2d_l12l0a_trans.png)
 
-The sample code snippet is as follows. Only part of the code in the sample is shown. For the complete sample, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+The sample code snippet is as follows. Only part of the code in the sample is shown. For the complete sample, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 uint32_t dstOffset = CeilDivision(k, fractalShape[0]) * fractalSize;

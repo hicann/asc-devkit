@@ -19,13 +19,13 @@
 - Atlas inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas Inference Series AI Core: Supported
+- Atlas inference products AI Core: Supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas Inference Series Vector Core: Not supported
+- Atlas inference products Vector Core: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas Training Series: Supported
+- Atlas training products: Supported
 <!-- end id7 -->
 ### Load3Dv2 and Load3Dv2Pro APIs
 
@@ -42,13 +42,13 @@
 - Atlas inference products: Supported
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- Atlas Inference Series AI Core: Supported
+- Atlas inference products AI Core: Supported
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- Atlas Inference Series Vector Core: Not supported
+- Atlas inference products Vector Core: Not supported
 <!-- end id15 -->
 <!-- npu="910" id16 -->
-- Atlas Training Series: Not supported
+- Atlas training products: Not supported
 <!-- end id16 -->
 ## Function Description<a id="zh-cn_topic_0000002512171652_section106841136114319"></a>
 
@@ -177,11 +177,11 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 **Load3Dv1 API:**
 
 <!-- npu="310p" id20 -->
-- Atlas Inference Series AI Core, supported data types: int8_t, uint8_t, half.
+- Atlas inference products AI Core, supported data types: int8_t, uint8_t, half.
 <!-- end id20 -->
 
 <!-- npu="910" id21 -->
-- Atlas Training Series, supported data types: int8_t, uint8_t, half.
+- Atlas training products, supported data types: int8_t, uint8_t, half.
 <!-- end id21 -->
 <!-- end id19 -->
 
@@ -211,7 +211,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- end id26 -->
 
 <!-- npu="310p" id27 -->
-- For the AI Core of Atlas Inference Series products, the supported data types are: int4b_t, int8_t, uint8_t, half.
+- For the AI Core of Atlas inference products, the supported data types are: int4b_t, int8_t, uint8_t, half.
 <!-- end id27 -->
 
 <!-- end id22 -->
@@ -265,7 +265,7 @@ None
 - The value range constraints for channelSize in the LoadData3DParamsV2 structure are as follows: <a id="zh-cn_topic_0000002512171652_channelsize_constraint"></a>
 
     <!-- npu="310p" id36 -->
-    - For Atlas Inference Series AI Core: for half, channelSize can be 4, 8, 16, N\*16+4, N\*16+8; for int8_t/uint8_t, channelSize can be 4, 8, 16, 32, N\*32+4, N\*32+8, N\*32+16; for int4b_t, channelSize can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
+    - For Atlas inference products AI Core: for half, channelSize can be 4, 8, 16, N\*16+4, N\*16+8; for int8_t/uint8_t, channelSize can be 4, 8, 16, 32, N\*32+4, N\*32+8, N\*32+16; for int4b_t, channelSize can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
     <!-- end id36 -->
 
     <!-- npu="950,A3,910b,310b" id37 -->
@@ -495,7 +495,7 @@ In the following example: cube A is transposed, with shape [k, m]. Under the b32
 
 In this case, the Load3D API can be called to implement the transposition of cube A. When the Load3DV2 instruction is called, before writing to the L0A Buffer, the height and width axes of cube A are first aligned to 16 and 8, respectively. Then the instruction transposes the entire cube A and also transposes each fractal, so that the cube A finally written to the L0A Buffer is in ZZ layout.
 
-The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+The sample code snippet is as follows, showing only part of the code in the sample. For the complete sample, see [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 // The Load3Dv2 instruction completes the img2col process. It can be seen that after img2col, the height of cube A is ho * wo. According to the calculation formulas of ho and wo, substituting parameters such as the convolution kernel width, convolution kernel sliding stride, and convolution kernel dilation coefficient, it can be seen that the height of cube A is CeilAlign(k, fractalShape[0]). After img2col, the width of cube A is ci * kh * kw. Substituting kh=1 and kw=1, it can be seen that the width of cube A is CeilAlign(m, fractalShape[1]). Finally, configure loadDataParams.enTranspose = true to transpose the entire cube A and also transpose each fractal within it.
@@ -532,4 +532,4 @@ loadDataParams.fCubeCtrl = false;
 AscendC::LoadData(a2Local, a1Local, loadDataParams);
 ```
 
-For information about how to use Load3D for 2D data transfer, see the corresponding scenario in [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+For information about how to use Load3D for 2D data transfer, see the corresponding scenario in [load_data_l12l0 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).

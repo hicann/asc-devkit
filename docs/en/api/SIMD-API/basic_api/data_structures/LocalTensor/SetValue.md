@@ -67,7 +67,7 @@ None
 
 ## Constraints<a name="section633mcpsimp"></a>
 
-Do not use **SetValue** extensively to assign values to **LocalTensor**, as this degrades performance. For large-batch assignment, select the [data filling basic API](../../memory_vector_compute/data filling/data filling.md) or the data filling high-order API ([Pad](../../../high-order API/tensor transformation/Pad.md), [Broadcast](../../../high-order API/tensor transformation/Broadcast.md)) based on the actual scenario. For scenarios that require generating an increasing sequence, select [Arange](../../../high-order API/index computation/Arange-94.md).
+Do not use **SetValue** extensively to assign values to **LocalTensor**, as this degrades performance. For large-batch assignment, select the [data filling basic API](../../memory_vector_compute/data_padding/data_padding.md) or the data filling high-order API ([Pad](../../../advanced_api/tensor_transform/Pad.md), [Broadcast](../../../advanced_api/tensor_transform/Broadcast.md)) based on the actual scenario. For scenarios that require generating an increasing sequence, select [Arange](../../../advanced_api/index_compute/Arange-94.md).
 
 ## Example<a name="section17531157161314"></a>
 

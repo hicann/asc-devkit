@@ -34,7 +34,7 @@ To improve the handling of irregular memory addresses, Reg vector computation su
 
 - **UnalignRegForStore** is a non-aligned store-out register. When writing a non-aligned address, first call **StoreUnAlign**, and then use **StoreUnAlignPost** for post-processing (write the data in **UnalignRegForStore** to the non-aligned UB address).
 
-For details about how to use **UnalignRegForLoad** and **UnalignRegForStore**, see [Continuous Non-aligned Load-in (LoadUnAlign)](../Reg Data Load-in/LoadUnAlign_continuous.md) and [Continuous Non-aligned Store-out (StoreUnAlign)](../Reg Data Store-out/StoreUnAlign_continuous.md).
+For details about how to use **UnalignRegForLoad** and **UnalignRegForStore**, see [Continuous Non-aligned Load-in (LoadUnAlign)](../reg_data_load/LoadUnAlign_continuous.md) and [Continuous Non-aligned Store-out (StoreUnAlign)](../reg_data_store/StoreUnAlign_continuous.md).
 
 ## Applicable Products<a name="section156721693504"></a>
 

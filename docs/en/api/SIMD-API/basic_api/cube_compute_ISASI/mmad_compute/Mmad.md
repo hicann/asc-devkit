@@ -309,4 +309,4 @@ None
 
 ## Example
 
-For a cube multiplication sample, see [Mmad sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/01_cube_compute/mmad).
+For a cube multiplication sample, see [Mmad sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/mmad).

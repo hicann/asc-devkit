@@ -62,3 +62,4 @@ AscendC::LocalTensor<half> tensor1 = que.AllocTensor<half>();
 que.EnQue(tensor1);// Add the tensor to the VECOUT queue.
 int32_t numb = que.GetTensorCountInQue();
 ```
+

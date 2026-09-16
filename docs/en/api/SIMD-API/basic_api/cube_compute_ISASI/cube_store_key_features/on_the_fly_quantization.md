@@ -76,4 +76,4 @@ The following table describes the bit field meanings of the quantization paramet
 
 ## Usage Example
 
-For a complete sample, see [fixpipe_l0c2gm sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/fixpipe_l0c2gm).
+For a complete sample, see [fixpipe_l0c2gm sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2gm).

@@ -4,7 +4,7 @@
 
 ## Overview<a name="ZH-CN_TOPIC_0000002574022823"></a>
 
-Data movement between L1 Buffer/L0C Buffer and Unified Buffer provides flexible API support that can fully adapt to diverse computation scenarios (see [Table 1](#zh-cn_topic_0000002534897870_table1417935217588)). Among them, data movement from Unified Buffer to L1 Buffer is used for cube computation (see [Cube Computation Data Loading](../cube_compute_ISASI/cube_compute_fractal_intro/Cube Computation Data Loading.md)), while data movement from L0C Buffer to Unified Buffer and from L1 Buffer to Unified Buffer is used to move cube computation results out, completing the output flow of cube computation (see [Cube Computation Data Moving Out](../cube_compute_ISASI/cube_compute_fractal_intro/Cube Computation Data Moving Out.md)).
+Data movement between L1 Buffer/L0C Buffer and Unified Buffer provides flexible API support that can fully adapt to diverse computation scenarios (see [Table 1](#zh-cn_topic_0000002534897870_table1417935217588)). Among them, data movement from Unified Buffer to L1 Buffer is used for cube computation (see [Cube Computation Data Loading](../cube_compute_ISASI/cube_compute_load/matrix_computation_load.md)), while data movement from L0C Buffer to Unified Buffer and from L1 Buffer to Unified Buffer is used to move cube computation results out, completing the output flow of cube computation (see [Cube Computation Data Moving Out](../cube_compute_ISASI/cube_compute_store/matrix_computation_storage.md)).
 
 **Table 1**  Overview of data movement APIs between L1 Buffer/L0C Buffer and Unified Buffer<a name="zh-cn_topic_0000002534897870_table1417935217588"></a>
 

@@ -35,7 +35,7 @@ Provides the timestamping feature for marking key execution points in the operat
 
 - **descId**: User-defined identifier used to distinguish different timestamping positions.
 - **rsv**: Reserved value, defaulting to 0, which requires no attention.
-- **timeStamp**: Current system cycle count, used to calculate the time difference. For the time conversion rule, see [GetSystemCycle(ISASI)](../../Tool APIs/System Resources and Variables/GetSystemCycle_ISASI.md).
+- **timeStamp**: Current system cycle count, used to calculate the time difference. For the time conversion rule, see [GetSystemCycle(ISASI)](../../tool_interface/system_resources_and_variables/GetSystemCycle_ISASI.md).
 - **pcPtr**: PC pointer value. Users do not need to pay attention to it unless there is a special requirement.
 - **entry**: Cycle count at which the operator starts execution. Users do not need to pay attention to it unless there is a special requirement.
 

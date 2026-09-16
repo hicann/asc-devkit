@@ -104,7 +104,7 @@ Ascend 950PR/Ascend 950DT supports the following data types: bool, int8_t, uint8
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-Atlas A3 training products/Atlas A3 Inference products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+Atlas A3 training products/Atlas A3 inference products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->

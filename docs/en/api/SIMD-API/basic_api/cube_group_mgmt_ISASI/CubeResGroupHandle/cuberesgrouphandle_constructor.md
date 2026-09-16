@@ -85,7 +85,7 @@ As shown in the following figure, for CubeResGroupHandle1, **blockStart** is 4 a
 -   **blockStart** and **blockSize** must be even numbers.
 -   When this API is used, the last 1600B + sizeof\(CubeMsgType\) of the UB space is occupied.
 -   One AIC can belong to only one **CubeGroupHandle**, that is, the \[blockStart / 2, blockStart / 2 + blockSize / 2\] intervals of multiple **CubeGroupHandle** objects must not overlap.
--   This API cannot be used together with [REGIST\_MATMUL\_OBJ](../../../high-level API/cube computation/Matmul-Kernel-side API/REGIST_MATMUL_OBJ.md). When the resource management API is used, the user manages the inter-core communication between AIC and AIV. In **REGIST\_MATMUL\_OBJ**, the framework manages the inter-core communication between AIC and AIV. Using them together may cause exceptions such as incorrect communication messages.
+-   This API cannot be used together with [REGIST\_MATMUL\_OBJ](../../../advanced_api/matrix_compute/Matmul-Kernel/REGIST_MATMUL_OBJ.md). When the resource management API is used, the user manages the inter-core communication between AIC and AIV. In **REGIST\_MATMUL\_OBJ**, the framework manages the inter-core communication between AIC and AIV. Using them together may cause exceptions such as incorrect communication messages.
 
 ## Example<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
 

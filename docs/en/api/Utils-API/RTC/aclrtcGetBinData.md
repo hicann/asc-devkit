@@ -59,7 +59,7 @@ aclError aclrtcGetBinData(aclrtcProg prog, char *binData)
 
 ## Return Value<a name="section640mcpsimp"></a>
 
-**aclError** is a variable of the int type. For details, see [RTC Error Codes](RTC Error Codes.md).
+**aclError** is a variable of the int type. For details, see [RTC Error Codes](rtc_error_codes.md).
 
 ## Constraints<a name="section633mcpsimp"></a>
 

@@ -2,11 +2,11 @@
 
 <!-- md-trans-meta sourceCommit=f6490d1e030d257ee55f3f1600bffece5a8bd3f7 translatedAt=2026-08-27T13:47:17.985Z -->
 
-- **[In-Kernel Synchronization Overview](In-Kernel Synchronization Overview.md)**  
+- **[In-Kernel Synchronization Overview](intra_core_synchronization_capability_overview.md)**  
 
 - **[Key Feature Description](key_feature_description.md)**  
 
-- **[TQueSync Template Parameters](TQueSync Template Parameters.md)**  
+- **[TQueSync Template Parameters](tquesync_template_parameter.md)**  
 
 - **[SetFlag/WaitFlag](SetFlag-WaitFlag.md)**   
 

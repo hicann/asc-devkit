@@ -192,7 +192,7 @@ The following figure shows the data layout changes during the copy process:
 
 ![](../../../../figures/datacopy_gm2l1_nd2nz_demo.png)
 
-The sample code snippet is as follows. Only part of the code in the sample is shown. For the complete sample, see [DataCopy_GM2L1 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_cube_compute/load_data_l12l0).
+The sample code snippet is as follows. Only part of the code in the sample is shown. For the complete sample, see [DataCopy_GM2L1 sample](https://gitcode.com/cann/asc-devkit/tree/9.1.0/examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0).
 
 ```cpp
 // m=40,k=56,fractalShape[0] = 16,fractalShape[1] = 16,fractalSize = 16 * fractalShape[1]

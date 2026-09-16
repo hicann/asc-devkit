@@ -4,21 +4,21 @@
 
 -   **[Overview](./overview.md)**  
 
--   **[Register Data Type](register_data_types/Register Data Type.md)**  
+-   **[Register Data Type](register_data_types/register_data_type.md)**  
 
--   **[Auxiliary Data Type](aux_data_types/Auxiliary Data Type.md)** 
+-   **[Auxiliary Data Type](aux_data_types/auxiliary_data_type.md)** 
 
--   **[VF Invocation](VF Invocation/VF Invocation.md)**  
+-   **[VF Invocation](vf_call/vf_invoke.md)**  
 
--   **[Key Features](Key Features/key_feature_description.md)**  
+-   **[Key Features](key_features/key_feature_description.md)**  
 
--   **[Reg Data Load](Reg Data Load/Reg Data Load.md)**  
+-   **[Reg Data Load](reg_data_load/reg_data_load.md)**  
 
--   **[Reg Data Store](Reg Data Store/Reg Data Store.md)**  
+-   **[Reg Data Store](reg_data_store/reg_data_storage.md)**  
 
--   **[MaskReg Computation](MaskReg Computation/MaskReg Computation.md)**  
+-   **[MaskReg Computation](MaskReg_compute/maskreg_computation.md)**  
 
--   **[Basic Arithmetic](Basic Arithmetic/Basic Arithmetic-14.md)**  
+-   **[Basic Arithmetic](basic_arithmetic/basic_arithmetic_14.md)**  
 
 -   **[logical operations](logical_compute/logic_computation_31.md)**  
 

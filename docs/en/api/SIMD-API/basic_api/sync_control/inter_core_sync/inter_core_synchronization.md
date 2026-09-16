@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=e3c8c70b3f5d27f3770063ae4b535bc75d904e3e translatedAt=2026-08-27T13:27:01.084Z -->
 
-- **[Inter-core Synchronization Overview](Inter-core Synchronization Overview.md)**  
+- **[Inter-core Synchronization Overview](inter_core_synchronization_capability_overview.md)**  
 
 - **[Key Features](key_feature_description.md)**  
 

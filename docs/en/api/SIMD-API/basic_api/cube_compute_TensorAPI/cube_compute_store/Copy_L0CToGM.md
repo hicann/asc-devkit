@@ -180,11 +180,11 @@ When `quant` is not passed in, the API selects the non-quantized or direct conve
 
 - The source cube uses the `NZ` format, with an address requirement of 64-byte alignment. When the destination cube uses the `DN` or `ND` format, the address requirement is 1-byte alignment; when it uses the `NZ` format, the address requirement is 32-byte alignment.
 - When the destination cube is output in the `NZ` format, the size in the N direction must be a multiple of 16; in the `b8` type channel merge scenario, it must be a multiple of 32; and in the `float` scenario with `enableChannelSplit` channel split enabled, it must be a multiple of 8.
-- The tensor quantization parameter tensor must be located in the L1 Buffer, with an element type of `uint64_t` and an address requirement of 32-byte alignment. See details in [inline quantization](../cube move-out key feature/quant_pre.md).
+- The tensor quantization parameter tensor must be located in the L1 Buffer, with an element type of `uint64_t` and an address requirement of 32-byte alignment. See details in [inline quantization](../cube_store_key_features/quant_pre.md).
 - When `unitFlag` is enabled, `Mmad` must be enabled at the same time.
 - When `RoundMode::HYBRID` is used, the source type must be `float` and the destination type must be `hifloat8_t`.
-- `enableChannelSplit` takes effect only when both the source type and the destination type are `float` and the destination format is `NZ`. See details in [F32 Channel Split](../cube move-out key feature/f32_channel_split.md).
-- The channel merge feature is automatically enabled by hardware and cannot be configured through parameters. See details in [Int8 Channel Merge](../cube move-out key feature/int8_channel_merge.md).
+- `enableChannelSplit` takes effect only when both the source type and the destination type are `float` and the destination format is `NZ`. See details in [F32 Channel Split](../cube_store_key_features/f32_channel_split.md).
+- The channel merge feature is automatically enabled by hardware and cannot be configured through parameters. See details in [Int8 Channel Merge](../cube_store_key_features/int8_channel_merge.md).
 
 ## Key Features
 

@@ -105,11 +105,11 @@ Atlas inference products, the supported data types are: int8_t, uint8_t, int16_t
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-Atlas Inference Series products (AI Core) support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, and float.
+Atlas inference products (AI Core) support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, and float.
 <!-- end id5 -->
 
 <!-- npu="910" id6 -->
-Atlas Training Series products support the following data types: int8_t, uint8_t, int16_t, uint16_t, and half.
+Atlas training products support the following data types: int8_t, uint8_t, int16_t, uint16_t, and half.
 <!-- end id6 -->
 
 ## Constraints<a name="zh-cn_topic_0000001521260417_section633mcpsimp"></a>

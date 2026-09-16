@@ -4,7 +4,7 @@
 
 This section introduces key features of Mmad cube computation, including GEMV, HF32, and UnitFlag, to help you understand different computation modes, precision modes, and fine-grained synchronization mechanisms.
 
-Before reading this section, it is recommended that you first understand the [Mmad](../mmad_compute/Mmad.md) API and [cube computation fractal introduction](../../cube_compute_ISASI/cube computation fractal introduction/cube computation fractal introduction.md).
+Before reading this section, it is recommended that you first understand the [Mmad](../mmad_compute/Mmad.md) API and [cube computation fractal introduction](../../cube_compute_ISASI/cube_compute_fractal_intro/matrix_computation_fractal_introduction.md).
 
 - **[GEMV](GEMV.md)**
 

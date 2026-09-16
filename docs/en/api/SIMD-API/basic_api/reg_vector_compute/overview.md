@@ -49,5 +49,5 @@ __aicore__ inline void Compute()
 ```
 
 >[!NOTE] Note
->- Data movement between GM and UB must be completed through [GM and UB Data Movement](../Memory Vector Calculation/Data Movement/Data Movement.md).
+>- Data movement between GM and UB must be completed through [GM and UB Data Movement](../memory_vector_compute/data_move/data_movement.md).
 >- The pipeline type of Vector Function is PIPE_V, and synchronization dependencies inside Vector Function are inserted through the [LocalMemBar](./sync_control/LocalMemBar.md) API.
