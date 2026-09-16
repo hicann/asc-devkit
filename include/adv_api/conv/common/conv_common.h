@@ -36,6 +36,8 @@ enum class ConvFormat : uint32_t {
     NC1HWC0,
     NDC1HWC0,
     FRACTAL_Z_3D,
+    FRACTAL_Z,
+    NC1HWC04,
     MAX
 };
 } // namespace ConvCommonApi

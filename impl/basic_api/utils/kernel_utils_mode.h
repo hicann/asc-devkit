@@ -51,7 +51,16 @@ FRACTAL_Z    -> ND              HCNT  -> HCN   [0:-4,-4,-3*-2,-1] -> [0:-2,-2,-1
 */
 enum class ClipReluMode { NOCLIP_RELU = 0, CLIP_RELU = 1 };
 
-enum class ReluMode { NO_RELU = 0, NORMAL_RELU = 1, SCALAR_RELU = 2, VECTOR_RELU = 3 };
+enum class ReluMode {
+    NO_RELU = 0,
+    NORMAL_RELU = 1,
+    SCALAR_RELU = 2,
+    VECTOR_RELU = 3,
+    LUT_GELU = 4,
+    LUT_SILU = 5,
+    LUT_SIGMOID = 6,
+    LUT_TANH = 7
+};
 
 union NotNumUnion {
     float f;

@@ -22,6 +22,20 @@
 namespace ConvCommonApi {
 using matmul_tiling::TPosition;
 
-enum class ConvDtype : uint32_t { FLOAT16 = 0, FLOAT32, BF16, INT4, INT8, UINT8, INT32, INT64, UINT64, CONVDTYPEMAX };
+enum class ConvDtype : uint32_t {
+    FLOAT16 = 0,
+    FLOAT32,
+    BF16,
+    INT4,
+    INT8,
+    UINT8,
+    INT16,
+    UINT16,
+    INT32,
+    UINT32,
+    INT64,
+    UINT64,
+    CONVDTYPEMAX
+};
 } // namespace ConvCommonApi
 #endif

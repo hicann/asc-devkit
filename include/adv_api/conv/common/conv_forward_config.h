@@ -60,7 +60,11 @@ struct GetDstType<float> {
 
 template <>
 struct GetDstType<half> {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165)
+    using Type = int32_t;
+#else
     using Type = float;
+#endif
 };
 
 template <>
@@ -72,6 +76,18 @@ template <>
 struct GetDstType<int8_t> {
     using Type = int32_t;
 };
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165)
+template <>
+struct GetDstType<int16_t> {
+    using Type = int32_t;
+};
+
+template <>
+struct GetDstType<fp8_e4m3fn_t> {
+    using Type = int32_t;
+};
+#endif
 
 template <AscendC::TPosition POSITION, ConvCommonApi::ConvFormat FORMAT, typename TYPE>
 struct ConvType {
