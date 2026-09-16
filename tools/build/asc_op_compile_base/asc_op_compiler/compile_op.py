@@ -495,6 +495,17 @@ the superkernel cannot be integrated with the operator.",
         )
 
 
+def _omit_super_kernel_workspace(tiling_info: TilingInfo):
+    # Only omit an explicitly empty workspace for static A5 sub-operators.
+    return (
+        global_var_storage.get_variable("ascendc_enable_super_kernel") is True
+        and CommonUtility.is_c310()
+        and CommonUtility.is_support_workspace_offset()
+        and tiling_info.static_shape_flag
+        and (tiling_info.raw_run_info or {}).get("workspaces") == [0]
+    )
+
+
 def _gen_kernel_func_declare_head_with_workspace(
     tiling_info: TilingInfo, super_kernel_params, func_params
 ):
@@ -511,8 +522,9 @@ def _gen_kernel_func_declare_head_with_workspace(
             dfx_generator.insert_param(DFXArgInfo("tiling", DFXParamType.TILING))
     else:
         if tiling_info.static_shape_flag:
-            func_params.append("GM_ADDR workspace")
-            super_kernel_params.append("workspace")
+            if not _omit_super_kernel_workspace(tiling_info):
+                func_params.append("GM_ADDR workspace")
+                super_kernel_params.append("workspace")
         else:
             func_params.append("GM_ADDR workspace")
             func_params.append("GM_ADDR tiling")
@@ -856,8 +868,13 @@ def gen_kernel_fun(
         )
     else:
         source += _gen_set_mc2_ctx_param(opinfo)
-        source += "    AscendC::SetSysWorkspaceForce(workspace);\n"
-        source += "    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n"
+        if _omit_super_kernel_workspace(tiling_info):
+            source += "    GM_ADDR usrWorkspace = nullptr;\n"
+        else:
+            source += "    AscendC::SetSysWorkspaceForce(workspace);\n"
+            source += (
+                "    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n"
+            )
 
         # restart enable begin position
         if global_var_storage.get_variable("ascendc_enable_aicore_exception_restart"):
