@@ -301,16 +301,25 @@ __simd_callee__ inline void ComplexMulKernel(U& dstReg, U& srcReg0, U& srcReg1, 
     RegTensor<typename ActualT::EleType>& src1Imag = (RegTensor<typename ActualT::EleType>&)srcReg1.reg[1];
     RegTensor<typename ActualT::EleType>& dstReal = (RegTensor<typename ActualT::EleType>&)dstReg.reg[0];
     RegTensor<typename ActualT::EleType>& dstImag = (RegTensor<typename ActualT::EleType>&)dstReg.reg[1];
-    RegTensor<typename ActualT::EleType> e;
-    RegTensor<typename ActualT::EleType> f;
-    RegTensor<typename ActualT::EleType> g;
-    RegTensor<typename ActualT::EleType> h;
-    Mul(e, src0Real, src1Real, mask);
-    Mul(f, src0Imag, src1Imag, mask);
-    Mul(g, src0Imag, src1Real, mask);
-    Mul(h, src0Real, src1Imag, mask);
-    Sub(dstReal, e, f, mask);
-    Add(dstImag, g, h, mask);
+    if constexpr (SupportType<ActualT, complex32>()) {
+        RegTensor<typename ActualT::EleType> e;
+        RegTensor<typename ActualT::EleType> f;
+        RegTensor<typename ActualT::EleType> g;
+        RegTensor<typename ActualT::EleType> h;
+        Mul(e, src0Real, src1Real, mask);
+        Mul(f, src0Imag, src1Imag, mask);
+        Mul(g, src0Imag, src1Real, mask);
+        Mul(h, src0Real, src1Imag, mask);
+        Sub(dstReal, e, f, mask);
+        Add(dstImag, g, h, mask);
+    } else {
+        RegTensor<typename ActualT::EleType> src0ImagMinus;
+        Muls(src0ImagMinus, src0Imag, -1, mask);
+        Mul(dstReal, src0ImagMinus, src1Imag, mask);
+        MulAddDst(dstReal, src0Real, src1Real, mask);
+        Mul(dstImag, src0Imag, src1Real, mask);
+        MulAddDst(dstImag, src0Real, src1Imag, mask);
+    }
 }
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
