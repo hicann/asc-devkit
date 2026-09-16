@@ -30,12 +30,12 @@
 
 如图1所示，在AI Core内部，访问Global Memory（GM）与Unified Buffer（UB）的方式分为以下两种：
 
-- DMA搬运单元读写GM，数据通过[asc_copy_ub2gm](../vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在Unified Buffer（UB）等Local Memory和GM间交互，不经过DCache，因此不需要考虑Cache一致性问题。
-- Scalar单元访问GM，若经过Dcache，首先会访问每个核内的DCache，因此存在DCache与GM的Cache一致性问题，具体原因请参考[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)。
+- DMA搬运单元读写GM，数据通过[asc_copy_ub2gm](../vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm.md)和[asc_copy_gm2ub](../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub.md)等接口在UB等Local Memory和GM间交互，不经过Data Cache（DCache），因此不需要考虑Cache一致性问题。
+- Scalar单元访问GM，若经过DCache，首先会访问每个核内的DCache，因此存在DCache与GM的Cache一致性问题，具体原因请参考[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)。
 
-**图1**  DataCache内存层次示意图
+**图1**  DCache内存层次示意图
 
-![](../figures/dcci.png "DataCache内存层次示意图")
+![](../figures/dcci.png "DCache内存层次示意图")
 
 asc_dcci接口用于解决上述一致性问题，其功能可以拆解为两部分：
 
@@ -50,7 +50,7 @@ asc_dcci接口用于解决上述一致性问题，其功能可以拆解为两部
 - 用户通过Scalar单元写GM的数据，希望立刻写出，也需要使用asc_dcci接口。
 
 > [!NOTE]说明
-> - 标量单元读写GM时，若调用的是[asc_load_dev](../scalar_compute/scalar_load/asc_load_dev.md)和[asc_store_dev](../scalar_compute/scalar_store/asc_store_dev.md)这一对接口，则读写数据不经过DCache，无需调用asc_dcci接口。
+> - Scalar单元读写GM时，若调用的是[asc_load_dev](../scalar_compute/scalar_load/asc_load_dev.md)和[asc_store_dev](../scalar_compute/scalar_store/asc_store_dev.md)这一对接口，则读写数据不经过DCache，无需调用asc_dcci接口。
 > - Scalar单元读写UB时是否经过DCache，由[asc_set_ctrl](../spr/asc_set_ctrl.md)接口配置的CTRL[49]位控制，该bit位默认值为1'b0，即默认不经过DCache。CTRL[49]的详细说明请参考[asc_set_ctrl](../spr/asc_set_ctrl.md#ctrl_bit_desc)的常用CTRL寄存器比特位说明。
 
 ## 函数原型

@@ -24,9 +24,9 @@ AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以
 
 下图示例描述了一个常见的Vector计算数据流：
 
-1. 先通过DMA执行单元将数据从Global Memory搬入到Local Memory；
+1. 先通过DMA执行单元将数据从Global Memory（GM）搬入到Local Memory；
 2. 进行计算；
-3. 然后再通过DMA执行单元将计算结果从Local Memory搬出到Global Memory。
+3. 然后再通过DMA执行单元将计算结果从Local Memory搬出到GM。
 
 ![](../../../../figures/vector_compute_data_flow.png "Vector_计算_数据流示意图")
 
