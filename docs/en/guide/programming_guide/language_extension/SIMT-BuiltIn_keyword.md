@@ -1,4 +1,4 @@
-# SIMT BuiltIn Keywords<a name="ZH-CN_TOPIC_0000002477663934"></a>
+# SIMT Built-In Keywords<a name="ZH-CN_TOPIC_0000002477663934"></a>
 
 <!-- md-trans-meta sourceCommit=2bc2b38d5648dc61f632186b01ba7f36c2295b13 translatedAt=2026-08-26T12:27:59.963Z pushedAt=2026-09-06T09:05:12.876Z -->
 
@@ -263,7 +263,7 @@ res[idx] = x[idx] > y[idx] ? x[idx] : y[idx];
 
 ## Kernel Function Configuration<a name="section97005415463"></a>
 
-When calling a function modified by the __global__ qualifier, the execution configuration must be specified. The execution configuration is specified by inserting an expression in the following form between the function name and the parenthesized argument list:
+When calling a function modified by the \_\_global\_\_ qualifier, the execution configuration must be specified. The execution configuration is specified by inserting an expression in the following form between the function name and the parenthesized argument list:
 
 ```
 <<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>
@@ -294,16 +294,14 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 Before the function is executed, the preceding configuration parameters are validated. If blocks_per_grid or threads_per_block exceeds the maximum allowed scale of the device, or if dyn_ubuf_size exceeds the remaining shared memory available after static memory is allocated, the function will fail to execute.
 
 The number of registers used by a kernel function significantly affects the number of resident warps. The number of registers used by a kernel function is specified by the __launch_bounds__() qualifier or the __maxnreg__() qualifier.
+
 When using the preceding two optional configuration qualifiers, note the following constraints:
-
 -   __launch_bounds__ or __maxnreg__ can be used only in __global__ functions.
-
 -   The same function cannot be configured with both __launch_bounds__ and __maxnreg__.
 
 During concurrent execution of multiple threads, using fewer registers per thread allows more threads to reside on the AI processor. Therefore, the compiler uses a heuristic algorithm to keep register spilling and the number of instructions at a minimum while reducing register usage as much as possible. An application can limit the launch bounds by using the __launch_bounds__() qualifier in the __global__ function definition, providing additional information to help the compiler optimize this process. This is an optional configuration.
-
--   __launch_bounds__(N) <a name="li23861114618"></a>
-
+-   \_\_launch\_bounds\_\_(N) <a name="li23861114618"></a>
+  
     Function marker macro, optionally configured on a kernel function, used to specify the maximum number of threads for launching the kernel function. The maximum number of threads determines the number of registers that can be allocated to each thread. For the specific correspondence, see the following table. Registers are used to store local variables in a thread. If the number of local variables exceeds the number of registers, issues such as stack overflow are likely to occur. It is recommended that the maximum number of threads be consistent with the number of dim3 threads when the kernel function is launched.
 
     **Table 5**  Number of threads and available registers per thread for __launch_bounds__
@@ -325,28 +323,19 @@ During concurrent execution of multiple threads, using fewer registers per threa
     The parameter N of __launch_bounds__(N) must meet the following requirements:
 
     -   N >= dimx * dimy * dimz, where dimx, dimy, and dimz are the dim3 structure that represents threads.
-
     -   The value range of N is 1 to 2048.
-
     -   If __launch_bounds__ is not configured, the maximum number of threads defaults to 1024.
 
-    To support underlying performance tuning, an application can use the __maxnreg__() qualifier in the __global__ function definition to convey the performance tuning intent to the compiler. This qualifier directly limits the maximum number of registers that can be allocated to a single thread within a thread block.
+To support underlying performance tuning, an application can use the __maxnreg__() qualifier in the __global__ function definition to convey the performance tuning intent to the compiler. This qualifier directly limits the maximum number of registers that can be allocated to a single thread within a thread block.
 
-    -   __maxnreg__(N) <a name="section_maxnreg"></a>
+-   \_\_maxnreg\_\_\(N\) <a name="section_maxnreg"></a>
 
     Function marker macro, optionally configured on a kernel function, used to specify at compile time the maximum number of registers that can be allocated to a single thread within a thread block.
 
+    Parameters of \_\_maxnreg\_\_\(N\) must meet the following requirements:
+    -   The value of N is an integer in (0, 128].
     -   If the input value N is in the range (0, 16], each thread can use up to 16 registers; if the input value N is in the range (16, 32], each thread can use up to 32 registers; if the input value N is in the range (32, 64], each thread can use up to 64 registers; if the input value N is in the range (64, 128], each thread can use up to 128 registers;
-
-    -   If __maxnreg__ is not configured, the maximum number of registers allocatable to a single thread defaults to 32.
-
-    The maximum number of registers available to each thread imposes a limit on the number of threads actually launched per block. For the specific correspondence, see the following table.
-
-    **Table 6**  Maximum number of registers allocatable per thread and number of threads actually launchable per block for __maxnreg__
-
-    -   If the input value N is in the range (0, 16], each thread can use up to 16 registers; if the input value N is in the range (16, 32], each thread can use up to 32 registers; if the input value N is in the range (32, 64], each thread can use up to 64 registers; if the input value N is in the range (64, 128], each thread can use up to 128 registers;
-
-    -   If __maxnreg__ is not configured, the maximum number of registers allocatable to a single thread defaults to 32.
+    -   If \_\_maxnreg\_\_ is not configured, the maximum number of registers allocatable to a single thread defaults to 32.
 
     The maximum number of registers available to each thread imposes a limit on the number of threads actually launched per block. For the specific correspondence, see the following table.
 
