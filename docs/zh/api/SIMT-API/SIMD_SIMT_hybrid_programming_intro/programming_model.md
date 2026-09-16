@@ -102,7 +102,9 @@ UB是同一线程块内所有线程均可访问的内存空间，位于每个AIV
 4.  Data Cache：SIMT专有的Data Cache空间，UB内扣除静态内存、动态内存以及预留空间以后，剩余内存大小为Data Cache，Data Cache最小为32KB，剩余空间超过128KB时Data Cache大小固定为128KB，具体计算公式为：
 
     ```
-    DataCache = UB总大小（256KB） - 静态内存 - 动态内存 - 预留空间(8KB)
+    Data Cache空间大小 = min(UB总大小（256KB） - 静态内存 - 动态内存 - 预留空间（8KB）, 128KB)
     ```
 
     若DataCache小于32KB，会出现校验报错。
+
+更多UB内存的排布、复用、对齐等规则，详见[SIMD与SIMT混合编程场景的UB内存划分](../../../guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分)。

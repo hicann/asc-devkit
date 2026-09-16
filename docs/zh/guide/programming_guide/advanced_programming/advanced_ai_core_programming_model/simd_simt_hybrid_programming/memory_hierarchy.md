@@ -11,12 +11,10 @@
 
 ## UB划分<a name="ZH-CN_TOPIC_0000002563309890"></a>
 
-UB内存空间总大小为256KB。UB按功能划分为四个主要区域，从低地址到高地址依次为静态内存、动态内存、预留空间和Data Cache，如下图所示。
+UB内存空间总大小为256KB。除了用户申请的动静态内存，UB还需要预留一定的空间供内部使用，因此用户在配置动静态内存大小时，并不能用满全部UB空间。UB按功能划分为四个主要区域，从低地址到高地址依次为静态内存、动态内存、预留空间和Data Cache，如下图所示。
 
 **图2** SIMD与SIMT混合编程UB内存分配  
 ![](../../../../figures/simt_ub.png "UB内存分配图")
-
-### 内存空间说明<a name="zh-cn_topic_0000002571697985_section19291134194"></a>
 
 1.  静态内存：从内存的起始地址分配一段指定大小的内存空间，其大小在编译时确定，不可动态修改。
 
@@ -37,38 +35,47 @@ UB内存空间总大小为256KB。UB按功能划分为四个主要区域，从�
 
     由于动态内存均从静态内存结束位置之后开始分配，因此只能选择其中一种方式申请动态内存，否则可能导致地址空间重叠，从而引发未定义行为。
 
-3.  预留空间：编译器和Ascend C的预留空间，大小固定为8KB。
-4.  Data Cache：SIMT专有的Data Cache空间，可分配的内存大小范围为32KB到128KB，具体计算公式如下：
+3.  预留空间：编译器和Ascend C的预留空间，大小为8KB，其中6KB作为SIMD与SIMT各类寄存器溢出栈空间，2KB为Ascend C接口内部预留空间。
+4.  Data Cache：SIMT专有的Data Cache空间，用于SIMT线程访问全局内存时的数据缓存，Data Cache的空间可配置范围为**最小32KB、最大128KB**，实际内存大小受用户配置的静态和动态内存大小影响，具体计算公式如下：
 
     ```
-    Data Cache空间大小 = min(UB总大小（256KB） - 静态内存 - 动态内存 - 预留空间（8KB）, 128KB)
+    Data Cache空间大小 = min(UB总大小（256KB） - 静态内存 - 动态内存 - 预留空间（默认8KB）, 128KB)
     ```
+    Data Cache空间上限为**128KB**，即使静态与动态内存申请较少，Data Cache实际分配大小也不会超出该上限。
 
-    Data Cache作为访问GM内存的缓存，其大小会影响算子的访存效率。若Data Cache小于32KB，执行时会出现校验报错并退出，因此申请内存时需确保预留足够的Data Cache空间。
-
-由于Data Cache、预留空间与用户申请的UB内存共用同一块UB，因此开发者无法使用全部UB空间，应确保SIMT和SIMD各个执行空间中的实际UB访问范围都不超过已申请的静态内存和动态内存大小。
-
-静态内存和动态内存的声明或配置限定了用户使用UB内存的有效范围。若用户配置的内存大小不足，甚至未申请内存即直接访问UB地址，访问地址可能越过用户动、静态内存边界并落入Data Cache区域。由于Data Cache容量由UB总量扣除静态内存、动态内存和预留空间后确定，所以用户共享内存配置偏小会扩大可分配给Data Cache的剩余空间。当程序执行越过已申请的动、静态内存边界，发生越界写入行为时，未必立即表现为内存分配失败，但可能破坏SIMT全局内存访问的数据缓存，导致计算结果不稳定或算子精度异常。
-
-> [!NOTE]说明
->
-> 用户可选择禁用预留空间，禁用方法为：编译时增加[--cce-disable-vf-stack-reserved-ubuf](../../../compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#ZH-CN_TOPIC_0000002462746461)选项。开启该选项后，编译器不再预留该部分UB空间，该空间可作为普通UB空间使用，Data Cache空间可按如下公式估算：
-> ```
-> Data Cache空间大小 = min(UB总大小（256KB） - 静态内存 - 动态内存 - 预留空间（8KB）, 128KB)
-> ```
-> 使用该选项时，仍需保证Data Cache空间不小于32KB，且Data Cache空间上限仍为128KB。开启该选项后，编译器将无法使用预留UB空间作为寄存器溢出的缓存空间，开发者需保证不会发生寄存器溢出。
-
-混合编程模式下，可在SIMT VF、SIMD VF和MainScalar执行空间申请静态内存和动态内存。MainScalar是指Device侧在VF函数外部的执行空间。下图为不同执行空间申请内存时对应的UB内存排布示意图。
+混合编程场景下，可在SIMT VF、SIMD VF和MainScalar执行空间中使用动静态内存。MainScalar是指Device侧在VF函数外部的执行空间。下图为不同执行空间申请内存时对应的UB内存排布示意图。
 
 **图3** 不同执行空间的UB内存排布  
-<img src="../../../../figures/simt_layout.png" alt="内存排布" style="width:80%; height:auto;">
+<img src="../../../../figures/simt_simd_ub_layout.png" alt="内存排布">
 
-用户在申请静态内存和动态内存时需要注意：
+UB内存的排布遵循以下规则：
 
--   多次申请的静态内存在UB上按一定的首地址对齐规则排布：
+- 全局仅有一份动态内存。不同执行空间获取到的动态内存均位于同一地址空间，动态内存的大小由kernel launch时配置的动态内存大小决定。
+- 由于AIV上VF是串行执行的，为提升UB资源利用率，VF之间复用同一份静态内存，该内存大小取决于各个VF所需静态内存最大值。
+- 用户在一个Kernel内申请的动态内存首地址固定按照32B对齐，静态内存按如下首地址对齐规则排布：
     -   默认情况下，申请到的静态内存首地址按照32B对齐；
-    -   支持用户使用`__align__(N)`手动指定对齐，优先级高于默认对齐。
--   动态内存大小在`<<<...>>>`执行时动态配置，全局只有一份，因此不同执行位置申请的动态内存返回的首地址均相同。
+    -   用户可以通过`alignas(N)`手动指定对齐方式，该配置的优先级高于默认对齐方式。
+- 预留空间和Data Cache位于UB地址空间的高地址区域。Data Cache的实际大小取决于动静态内存实际占用的空间。
+
+### Data Cache内存空间说明<a name="zh-cn_topic_0000002571697985_section19291134194"></a>
+
+Data Cache作为访问GM内存的缓存，其大小会影响算子的访存效率。若Data Cache小于32KB，执行时会出现校验报错并退出，因此申请内存时需确保预留足够的Data Cache空间。
+
+由于Data Cache、预留空间与用户申请的动静态内存共用同一块UB，开发者无法使用全部UB空间。Data Cache的容量由UB总量扣除动静态内存和预留空间计算所得，用户配置的共享内存越小，留给Data Cache的空间就越大，即共享内存大小实际上隐式决定了Data Cache的容量，直至其达到128KB上限。
+
+若用户配置的内存大小不足，甚至未申请内存即直接访问UB地址，访问地址可能越过动、静态内存边界并落入Data Cache区域，属于未定义行为，非常危险。此类越界写入可能破坏SIMT全局内存访问的数据缓存，导致算子功能异常。
+
+### 禁用预留空间
+
+若用户需要使用更多UB内存，可通过禁用预留空间来扩大可用UB空间。禁用方法为编译时增加如下编译选项：
+
+- [--cce-disable-vf-stack-reserved-ubuf](../../../compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#ZH-CN_TOPIC_0000002462746461)：关闭6KB的SIMD与SIMT各类寄存器溢出栈空间。
+- [--cce-disable-asc-reserved-ubuf](../../../compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#ZH-CN_TOPIC_0000002462746461)：关闭2KB的Ascend C接口内部预留空间。
+
+以上编译选项可独立使用，也可同时使用。开启后，编译器不再预留对应部分UB空间，该空间可作为普通UB空间使用。但开发者需要自行确认禁用预留空间的影响：
+
+- 开启`--cce-disable-vf-stack-reserved-ubuf`后，编译器将无法使用预留UB空间作为寄存器溢出的缓存空间，开发者需保证不会发生相关寄存器溢出，否则将会编译报错。
+- 开启`--cce-disable-asc-reserved-ubuf`后，[使用预留UB空间的API](../../../programming_model/ai_core_simd_programming/cpp_tensor_programming/static_tensor_programming.md#section_reserved_ubuf_api)无法正常使用，需要手动调整API调用方式或替换为不依赖预留UB空间的实现。
 
 ## 数据通路
 
@@ -89,7 +96,7 @@ UB内存空间总大小为256KB。UB按功能划分为四个主要区域，从�
     -   写数据时，底层会确保数据立即写出到GM，从而确保其他通路读取到最新数据；
     -   读数据时，默认访存的底层实现与[asc\_ldca](../../../../../api/SIMT-API/memory_access_functions/asc_ldca.md)的实现一致。若访问的内存数据在SIMT Data Cache中命中，默认会读取Cache数据，可能导致读取到的数据与GM中的最新数据不一致。
 -   在MainScalar执行空间通过Cache读写GM上的数据时，读写均可能存在一致性问题：
-    -   写数据时，数据会先写入Cache，底层无法保证数据立即刷新到GM上，此时其他通路读取到的可能是旧数据。可使用缓存控制使数据立即刷新到GM上，保证其它通路读到的是最新数据，具体详见[asc\_dcci](../../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)中的内容；
+    -   写数据时，数据会先写入Cache，底层无法保证数据立即刷新到GM上，此时其他通路读取到的可能是旧数据。可使用缓存控制使数据立即刷新到GM上，保证其他通路读到的是最新数据，具体详见[asc\_dcci](../../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)中的内容；
     -   读数据时，若访问的内存在Cache中命中，将不会读取GM中的最新数据，可能导致读取到的数据失效。
 
 在SIMT VF执行空间读GM上的数据时，对于上述缓存数据与GM数据不一致的问题，可以通过以下的方式解决：
