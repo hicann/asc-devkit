@@ -60,9 +60,7 @@ inline float exp2f(float x)
 
 ## 约束说明
 
-<!-- npu="950" id7 -->
-针对Ascend 950PR/Ascend 950DT，本接口不支持Subnormal场景：处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
-<!-- end id7 -->
+无
 
 ## 调用示例
 
