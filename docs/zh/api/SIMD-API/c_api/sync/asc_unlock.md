@@ -79,6 +79,8 @@ PIPE_S
   | AIC | `PIPE_S`、`PIPE_M`、`PIPE_MTE1`、`PIPE_MTE2`、`PIPE_FIX` |
   | AIV | `PIPE_S`、`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_V` |
 
+- `mutex_id`由开发者自行管理。开发者需要根据同步依赖关系规划`mutex_id`，同一组同步依赖需要使用相同的`mutex_id`，不同同步依赖建议使用不同的`mutex_id`，否则实际同步行为可能与预期不符。例如[双缓冲样例](../../../../../../examples/02_simd_c_api/02_features/01_reg_vector_compute/00_add_double_buffer/README.md)中，ping缓冲和pong缓冲对应两组相互独立的搬入、计算、搬出流水，需要使用不同的`mutex_id`，才能保持两组流水的同步关系相互独立并行。
+
 - `asc_lock`与`asc_unlock`必须严格成对使用，并使用相同的`pipe`、`mutex_id`和`mode`。此外，对应的`asc_unlock`必须始终写在`asc_lock`之后，否则属于未定义行为。
 
     ```cpp
