@@ -53,6 +53,6 @@ def gen_golden_data(scenarioNum=1):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-scenarioNum", type=int, default=1, choices=range(1, 8))
+    parser.add_argument("-scenarioNum", type=int, default=1, choices=range(1, 5))
     args = parser.parse_args()
     gen_golden_data(args.scenarioNum)
