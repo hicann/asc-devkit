@@ -864,7 +864,7 @@
 </tr>
 <tr id="row6778713162710"><td class="cellrowborder" valign="top" width="29.630000000000003%" headers="mcps1.2.4.1.1 "><p id="p20882139162713"><a name="p20882139162713"></a><a name="p20882139162713"></a>基础API &gt; 同步控制 &gt; 核内同步</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.519999999999996%" headers="mcps1.2.4.1.2 "><p id="p2882133915277"><a name="p2882133915277"></a><a name="p2882133915277"></a>SetFlag/WaitFlag、PipeBarrier、DataSyncBarrier</p>
+<td class="cellrowborder" valign="top" width="44.519999999999996%" headers="mcps1.2.4.1.2 "><p id="p2882133915277"><a name="p2882133915277"></a><a name="p2882133915277"></a>SetFlag/WaitFlag、PipeBarrier、DataSyncBarrier、Mutex::Lock、Mutex::Unlock、AllocMutexID、ReleaseMutexID</p>
 </td>
 <td class="cellrowborder" valign="top" width="25.85%" headers="mcps1.2.4.1.3 "><p id="p8882133922716"><a name="p8882133922716"></a><a name="p8882133922716"></a>-</p>
 </td>
