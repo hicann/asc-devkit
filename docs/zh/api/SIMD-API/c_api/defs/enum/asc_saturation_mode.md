@@ -6,10 +6,10 @@ asc_saturation_mode用于表示饱和控制所作用的模式类型，在调用[
 
 ```cpp
 enum class asc_saturation_mode : uint8_t {
-    FLOAT,
-    FLOAT8,
-    INT,
-    CAST
+    FLOAT = 48,
+    FLOAT8 = 50,
+    INT = 53,
+    CAST = 59
 };
 ```
 

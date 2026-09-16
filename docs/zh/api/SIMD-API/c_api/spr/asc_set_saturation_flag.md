@@ -68,6 +68,7 @@ PIPE_S
 ## 约束说明
 
 - `enable_sat`是API语义参数：同一布尔值在不同模式下的关闭语义不同（INT为截断，FLOAT/FLOAT8/CAST为非饱和或截断），请以表1为准。
+- 当对`FLOAT`开启饱和模式前，需要通过[asc_set_saturation_strategy](asc_set_saturation_strategy.md)开启全局饱和配置方可生效；当`saturation_mode`为`FLOAT8`时，还需要先对`FLOAT`开启饱和模式才能生效。
 - 当`saturation_mode`为`CAST`时，还需将饱和策略设置为`asc_override_strategy::USE_GLOBAL`，CAST才会生效。可通过[asc_set_saturation_strategy](asc_set_saturation_strategy.md)配置。
 - 本接口仅修改对应模式的饱和配置，不影响其他模式。
 
