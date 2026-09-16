@@ -1,4 +1,4 @@
-# asc_set_l13d_padding
+# asc_set_l13d_padding（废弃）
 
 ## 产品支持情况
 
@@ -26,9 +26,11 @@
 
 ## 功能说明
 
+**`asc_set_l13d_padding`接口已废弃。请使用[asc_set_l12l0a_3d_padding](../cube_datamove/asc_set_l12l0a_3d_padding.md)接口替代。**
+
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
-设置Pad属性描述，用于在调用[asc_copy_l12l0a](asc_copy_l12l0a/asc_copy_l12l0a.md)接口时配置填充数值。
+设置Pad属性描述，用于在调用[asc_copy_l12l0a](../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a.md)接口时配置填充数值。
 
 ## 函数原型
 

@@ -30,10 +30,10 @@
 
 用于设置[asc_copy_gm2l1_align](asc_copy_gm2l1_align.md)接口的常量填充值。调用`asc_copy_gm2l1_align`时，以下场景使用本接口设置的值：
 
-- `data_select_bit`设置为`true`，且`left_padding_count`与`right_padding_count`均为`0`时，Normal填充模式或Compact填充模式的填充数据使用本接口设置的值。
-- `left_padding_count`或`right_padding_count`非`0`时，进入左右填充模式。此时硬件强制使用本接口设置的值，`data_select_bit`设置无效。
+- `enable_data_select`设置为`true`，且`left_padding_count`与`right_padding_count`均为`0`时，Normal填充模式或Compact填充模式的填充数据使用本接口设置的值。
+- `left_padding_count`或`right_padding_count`非`0`时，进入左右填充模式。此时硬件强制使用本接口设置的值，`enable_data_select`设置无效。
 
-当`data_select_bit`设置为`false`且未开启左右填充模式时，填充数据取每个连续数据块的首元素，本接口设置的值不生效。
+当`enable_data_select`设置为`false`且未开启左右填充模式时，填充数据取每个连续数据块的首元素，本接口设置的值不生效。
 
 本接口仅在AIC上生效。
 
@@ -94,10 +94,10 @@ __global__ __cube__ void Gm2L1AlignPadExample(__gm__ uint8_t* src)
     constexpr uint32_t N_BURST = 3;
     constexpr uint32_t LEN_BURST = 48;
     constexpr uint32_t DST_STRIDE = 64;
-    constexpr uint8_t L2_CACHE_CTL = 4;
+    constexpr asc_load_l2_cache_mode L2_CACHE_MODE = asc_load_l2_cache_mode::NOTALLOC_KEEP;
     // 配置常量填充值；uint8_t填充字节为0xA5，实参会提升为接口要求的uint32_t类型。
     asc_set_gm2l1_pad(*reinterpret_cast<uint8_t*>(&PAD_VALUE));
-    // data_select_bit=true，Normal模式每个48B数据块的尾部填充16B常量值。
-    asc_copy_gm2l1_align(dst, src, N_BURST, LEN_BURST, 0, 0, true, L2_CACHE_CTL, LEN_BURST, DST_STRIDE);
+    // enable_data_select=true，Normal模式每个48B数据块的尾部填充16B常量值。
+    asc_copy_gm2l1_align(dst, src, N_BURST, LEN_BURST, 0, 0, true, L2_CACHE_MODE, LEN_BURST, DST_STRIDE);
 }
 ```

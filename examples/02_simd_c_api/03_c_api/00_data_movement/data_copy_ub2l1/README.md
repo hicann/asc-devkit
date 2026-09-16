@@ -62,7 +62,7 @@
 2. 场景1中，AIV侧建立PIPE_MTE2和PIPE_MTE3同步后，调用`asc_copy_ub2l1`将Nz格式数据从UB连续搬运到L1 Buffer。场景2中，AIV侧先建立PIPE_MTE2到PIPE_V同步，再调用`copy_ub_nd_to_nz`，由其按C0列块调用`asc_copy_ub2ub`将UB中的ND格式数据重排为Nz格式数据；随后建立V到MTE3同步，并调用`asc_copy_ub2l1`将数据从UB连续搬运到L1 Buffer。
 3. 场景1和场景2中，`__mix__(1, 2)`启动两个AIV。AIV0完成实际数据搬运后调用`asc_sync_intra_arrive`通知AIC侧，两个AIV均调用[`asc_sync_block_arrive`](../../../../../docs/zh/api/SIMD-API/c_api/sync/asc_sync_block_arrive.md)参与组内同步；AIC侧先通过`asc_sync_intra_wait`等待，再通过`asc_sync_block_wait`等待组内同步完成后读取L1 Buffer数据。
 4. 场景1和场景2中，AIC侧调用`asc_copy_l12l0a`和`asc_copy_l12l0b_transpose`，将L1 Buffer中的Nz格式数据分别搬运到L0A Buffer和L0B Buffer；再通过`asc_sync_notify`和`asc_sync_wait`建立MTE1到M同步，调用`asc_mmad`完成非对齐逻辑规格的矩阵乘计算。
-5. 场景1和场景2中，AIC侧通过`asc_sync_notify`和`asc_sync_wait`建立M到FIX同步后，调用`asc_set_l0c2gm_nz2nd`配置Nz格式到ND格式的转换，再通过Fixpipe接口`asc_copy_l0c2gm`将`[127, 130]`的计算结果搬运到GM。
+5. 场景1和场景2中，AIC侧通过`asc_sync_notify`和`asc_sync_wait`建立M到FIX同步后，调用`asc_set_l0c_copy_nz_para`配置Nz格式到ND格式的转换，再通过Fixpipe接口`asc_copy_l0c2gm`将`[127, 130]`的计算结果搬运到GM。
 6. 场景3中，AIV0使用固定UB offset完成GM->UB->L1 Buffer后通过`asc_sync_intra_arrive`通知AIC侧，两个AIV均调用`asc_sync_block_arrive`参与组内同步；AIC侧将L1 Buffer数据同步搬运到AIV0对应的固定UB offset，并通过`asc_sync_intra_arrive`通知AIV0；AIV0通过`asc_copy_ub2gm`将往返后的数据写回GM。
 
 上述过程按需建立流水依赖；核函数结束时调用`asc_sync_pipe(PIPE_ALL)`，确保全部流水完成。

@@ -251,9 +251,9 @@ __global__ __cube__ void AscCopyL12l0aKernel(__gm__ int8_t* a, __gm__ int8_t* b,
 
     // 配置Nz格式，并将128 x 128矩阵从GM搬入L1 Buffer。
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
-    asc_copy_gm2l1_nd2nz(a_l1, a, K, 0, M, K, 0, false);
+    asc_copy_gm2l1_nd2nz(a_l1, a, K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, M, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
-    asc_copy_gm2l1_nd2nz(b_l1, b, K, 0, N, K, 0, false);
+    asc_copy_gm2l1_nd2nz(b_l1, b, K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, N, K, 0, false);
     // Wait until both GM-to-L1 transfers finish before PIPE_MTE1 reads L1 Buffer.
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
@@ -265,15 +265,14 @@ __global__ __cube__ void AscCopyL12l0aKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
 
     // Multiply A and B after PIPE_MTE1 has produced both operands.
-    asc_mmad(c_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
+    asc_mmad(c_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
     // 将L0C中的Nz结果转换为ND格式并搬回GM。
     asc_set_l0c_copy_nz_para(1, 0, 0);
-    asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
-        static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
-        static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
+    asc_copy_l0c2gm(output, c_l0, N, M, N, M, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        asc_unit_flag_mode::DISABLE, QuantMode_t::NoQuant, asc_relu_pre_mode::NONE, false, true, false, false);
     asc_sync_pipe(PIPE_FIX);
 }
 

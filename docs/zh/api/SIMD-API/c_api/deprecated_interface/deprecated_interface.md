@@ -1,10 +1,33 @@
 # 废弃接口
 
+## 矩阵数据搬运
+
+- **[asc_copy_gm2l1_align（废弃）](asc_copy_gm2l1_align_deprecated.md)**（旧常规重载和同步接口）
+
 ## 矩阵计算
 
+- **[asc_enable_fp8（废弃）](asc_enable_fp8_deprecated.md)**
+- **[asc_enable_hf32_trans（废弃）](asc_enable_hf32_trans_deprecated.md)**
+- **[asc_set_fp32_mode（废弃）](asc_set_fp32_mode_deprecated.md)**
+- **[asc_set_l0c2gm_quant_post（废弃）](asc_set_l0c2gm_quant_post_deprecated.md)**
 - **[asc_mmad（废弃）](asc_mmad_deprecated.md)**
 - **[asc_mmad_mx（废弃）](asc_mmad_mx_deprecated.md)**
 - **[asc_mmad_sparse（废弃）](asc_mmad_sparse_deprecated.md)**
+- **[asc_set_l0c2gm_channel_para（废弃）](asc_set_l0c2gm_channel_para_deprecated.md)**
+- **[asc_set_l0c2gm_config（废弃）](asc_set_l0c2gm_config_deprecated.md)**
+- **[asc_set_l0c2gm_lrelu_alpha（废弃）](asc_set_l0c2gm_lrelu_alpha_deprecated.md)**
+- **[asc_set_l0c2gm_nz2nd（废弃）](asc_set_l0c2gm_nz2nd_deprecated.md)**
+- **[asc_set_l0c2gm_relu_alpha（废弃）](asc_set_l0c2gm_relu_alpha_deprecated.md)**
+- **[asc_set_l12l0_padding_val（废弃）](asc_set_l12l0_padding_val_deprecated.md)**
+- **[asc_set_l13d_padding（废弃）](asc_set_l13d_padding_deprecated.md)**
+- **[asc_copy_gm2l1_dn2nz（废弃）](asc_copy_gm2l1_dn2nz_deprecated.md)**
+- **[asc_copy_gm2l1_nd2nz（废弃）](asc_copy_gm2l1_nd2nz_deprecated.md)**
+- **[asc_copy_gm2l1（高维切分旧形式，废弃）](asc_copy_gm2l1_highdim_deprecated.md)**
+- **[asc_copy_gm2l1（2D矩阵搬运旧形式，废弃）](asc_copy_gm2l1_2d_deprecated.md)**
+- **[asc_copy_l12ub_sync（废弃）](asc_copy_l12ub_sync_deprecated.md)**
+- **[asc_copy_l0c2gm（废弃）](asc_copy_l0c2gm_deprecated.md)**
+- **[asc_copy_l0c2l1（废弃）](asc_copy_l0c2l1_deprecated.md)**
+- **[asc_copy_l0c2ub（废弃）](asc_copy_l0c2ub_deprecated.md)**
 
 ## 矩阵计算搬运
 
@@ -18,10 +41,8 @@
 - **[asc_copy_gm2l1_sync_arch_2201（废弃）](asc_copy_gm2l1_sync_arch_2201_deprecated.md)**
 - **[asc_copy_gm2l1_sync_highdim_split_arch_3510（废弃）](asc_copy_gm2l1_sync_highdim_split_arch_3510_deprecated.md)**
 - **[asc_copy_l0c2gm_sync_arch_2201（废弃）](asc_copy_l0c2gm_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l0c2gm_sync_arch_3510（废弃）](asc_copy_l0c2gm_sync_arch_3510_deprecated.md)**
 - **[asc_copy_l0c2l1_sync_arch_2201（废弃）](asc_copy_l0c2l1_sync_arch_2201_deprecated.md)**
 - **[asc_copy_l0c2l1_sync_arch_3510（废弃）](asc_copy_l0c2l1_sync_arch_3510_deprecated.md)**
-- **[asc_copy_l0c2ub_sync（废弃）](asc_copy_l0c2ub_sync_deprecated.md)**
 - **[asc_copy_l12bt_sync_arch_2201（废弃）](asc_copy_l12bt_sync_arch_2201_deprecated.md)**
 - **[asc_copy_l12bt_sync_arch_3510（废弃）](asc_copy_l12bt_sync_arch_3510_deprecated.md)**
 - **[asc_copy_l12fb_sync_arch_2201（废弃）](asc_copy_l12fb_sync_arch_2201_deprecated.md)**

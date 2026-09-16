@@ -233,23 +233,24 @@ C语言编程提供了`asc_copy_l0c2gm`来使能发挥芯片的各种随路能�
 ```c
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    uint64_t quant_post, uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op,
-    bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn);
+    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
+    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
+    bool enable_nz2dn, bool enable_clip_relu_pre);
 
 ```
 
 另外，对于`unit_flag_mode`、`enable_nz2nd`参数的设置，需配置相应寄存器参数以启用不同功能。对应的接口和处理能力如下：
 ```c
 // 1.0 When performing inline quantization during data movement, call this interface to set vector quantization parameters in the quantization flow.
-__aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre_addr, uint64_t quant_pre_addr, bool enable_unit_flag);
+__aicore__ inline void asc_set_l0c_copy_config(
+    uint64_t relu_pre_addr, uint64_t quant_pre_addr, bool is_clean_unit_flag);
 
 // 2.0 When performing inline format conversion (NZ to ND) during data movement, call this interface to set format conversion configuration.
-__aicore__ inline void asc_set_l0c2gm_nz2nd(uint64_t nd_num, uint64_t src_nd_stride, uint64_t dst_nd_stride);
+__aicore__ inline void asc_set_l0c_copy_nz_para(
+    uint16_t matrix_num, uint16_t src_nz_matrix_stride, uint32_t dst_matrix_stride);
 
 // 3.0 Set the value in RELU_ALPHA register. This is a 64-bit register storing the alpha value used in Scalar ReLU during fixpipe or cube instructions.
-__aicore__ inline void asc_set_l0c2gm_lrelu_alpha(half& config);
+__aicore__ inline void asc_set_l0c_copy_lrelu_alpha(float scalar_relu_pre_alpha);
 ```
 
 详细说明可参考接口说明文档[Cube接口说明](../../../../../api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm.md)。
@@ -291,7 +292,7 @@ constexpr uint16_t k = 64;
 
 // 2.2 Feature parameters
 // unit_flag: Controls fine-grained parallelism of Mmad and Fixpipe instructions. When enabled, results are transferred out immediately after computing each fractal.
-uint8_t unit_flag = 0;
+asc_unit_flag_mode unit_flag = asc_unit_flag_mode::DISABLE;
 // disable_gemv: Configures whether to enable GEMV mode when M=1
 bool disable_gemv = false;
 // enable_cube_init: Enables C matrix initial value loading. false: do not initialize L0C; true: load initial value from BT Buffer.
@@ -314,8 +315,8 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
     ...
     // 1. Step 1: Data transfer in (Global Memory → L1 Buffer), execution pipeline is PIPE_MTE2
     asc_lock(PIPE_MTE2, mutex_id);
-    asc_copy_gm2l1_nd2nz(a_l1_buf, a_gm, 128, 1, BLOCK_M, BLOCK_K, 0, false);
-    asc_copy_gm2l1_nd2nz(b_l1_buf, b_gm, 64, 1, BLOCK_K, BLOCK_N, 0, false);
+    asc_copy_gm2l1_nd2nz(a_l1_buf, a_gm, 128, asc_load_l2_cache_mode::NORMAL_LAST_VICTIM, BLOCK_M, BLOCK_K, 0, false);
+    asc_copy_gm2l1_nd2nz(b_l1_buf, b_gm, 64, asc_load_l2_cache_mode::NORMAL_LAST_VICTIM, BLOCK_K, BLOCK_N, 0, false);
     asc_unlock(PIPE_MTE2, mutex_id);
     ...
     // 2. Step 2: Data transfer in (L1 Buffer → L0A/B Buffer), execution pipeline is PIPE_MTE1
@@ -326,13 +327,14 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
     ...
     // 3. Step 3: Matrix computation (L0A/B Buffer → L0C Buffer), execution pipeline is PIPE_M
     asc_lock(PIPE_M, mutex_id);
-    asc_mmad(l0c_buf, l0a_buf, l0b_buf, BLOCK_M, BLOCK_K, BLOCK_N, 0, false, false, false);
+    asc_mmad(l0c_buf, l0a_buf, l0b_buf, BLOCK_M, BLOCK_K, BLOCK_N, asc_unit_flag_mode::DISABLE, false, false, false);
     asc_unlock(PIPE_M, mutex_id);
     ...
     // 4. Step 4: Data transfer out (L0C Buffer → Global Memory), execution pipeline is PIPE_MTE3
     asc_lock(PIPE_MTE3, mutex_id);
-    asc_copy_l0c2gm(c_gm, l0c_buf, BLOCK_N, BLOCK_M, BLOCK_N, 16, 1, 0,
-        0, QuantMode_t::NoQuant, 0, false, true, 0, 0, false, false, 0, false, false, false, false, false, false);
+    asc_copy_l0c2gm(c_gm, l0c_buf, BLOCK_N, BLOCK_M, BLOCK_N, 16,
+        asc_store_l2_cache_mode::NORMAL_LAST_VICTIM, asc_unit_flag_mode::DISABLE, QuantMode_t::NoQuant,
+        asc_relu_pre_mode::NONE, false, true, false, false);
     asc_unlock(PIPE_MTE3, mutex_id);
 }
 ```

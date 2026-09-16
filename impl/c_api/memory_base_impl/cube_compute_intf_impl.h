@@ -74,6 +74,7 @@ __aicore__ inline void asc_set_hf32_round_mode(asc_hf32_round_mode hf32_round_mo
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_hf32_round_mode)
 __aicore__ inline void asc_enable_hf32_trans(uint32_t mode)
 {
     constexpr int32_t HF32_TRANS_MODE_BIT = 47;
@@ -93,6 +94,7 @@ __aicore__ inline void asc_mmad_sparse(
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_disable_hf32)
 __aicore__ inline void asc_set_fp32_mode()
 {
     constexpr int32_t HF32_MODE_BIT = 46;
@@ -121,6 +123,12 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ float* c_matrix, __ca__ bfloat16_t* a_matrix, __cb__ bfloat16_t* b_matrix, uint16_t m, uint16_t k,
+        uint16_t n, asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source,
+        bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ bfloat16_t* a_matrix, __cb__ bfloat16_t* b_matrix, uint16_t left_height,
     uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source,
@@ -132,6 +140,12 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ float* c_matrix, __ca__ bfloat16_t* a_matrix, __cb__ bfloat16_t* b_matrix, uint16_t m, uint16_t k,
+        uint16_t n, asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source,
+        bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ bfloat16_t* a_matrix, __cb__ bfloat16_t* b_matrix, uint16_t left_height,
     uint16_t n_dim, uint16_t right_width, uint8_t feat_offset, uint8_t smask_offset, uint8_t unit_flag,
@@ -153,6 +167,11 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t m, uint16_t k, uint16_t n,
+        asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
@@ -163,6 +182,11 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t m, uint16_t k, uint16_t n,
+        asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t feat_offset, uint8_t smask_offset, uint8_t unit_flag, bool k_direction_align,
@@ -184,6 +208,11 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t m, uint16_t k, uint16_t n,
+        asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
@@ -194,6 +223,11 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t m, uint16_t k, uint16_t n,
+        asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t feat_offset, uint8_t smask_offset, uint8_t unit_flag, bool k_direction_align,
@@ -215,6 +249,11 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t m, uint16_t k, uint16_t n,
+        asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
@@ -225,6 +264,11 @@ __aicore__ inline void asc_mmad(
     }
 }
 
+ASC_DEPRECATED(
+    9.2.0, "2027/09/07",
+    asc_mmad(
+        __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t m, uint16_t k, uint16_t n,
+        asc_unit_flag_mode unit_flag_mode, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val))
 __aicore__ inline void asc_mmad(
     __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t feat_offset, uint8_t smask_offset, uint8_t unit_flag, bool k_direction_align,

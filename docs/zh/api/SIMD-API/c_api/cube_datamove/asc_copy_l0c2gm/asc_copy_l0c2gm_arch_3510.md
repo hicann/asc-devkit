@@ -85,21 +85,14 @@ __aicore__ inline void asc_copy_l0c2gm(__gm__ <dst_dtype>* dst,
                                        uint16_t m_size,
                                        uint32_t dst_stride,
                                        uint16_t src_stride,
-                                       uint8_t l2_cache_mode,
-                                       uint8_t enable_clip_relu_pre,
-                                       uint8_t unit_flag_mode,
-                                       uint64_t quant_pre_mode,
-                                       uint8_t relu_pre_mode,
+                                       asc_store_l2_cache_mode l2_cache_mode,
+                                       asc_unit_flag_mode unit_flag_mode,
+                                       asc_quant_mode quant_pre_mode,
+                                       asc_relu_pre_mode relu_pre_mode,
                                        bool enable_channel_split,
                                        bool enable_nz2nd,
-                                       uint64_t quant_post,
-                                       uint8_t relu_post,
-                                       bool clip_relu_post,
-                                       uint8_t eltwise_op,
-                                       bool eltwise_antq_en,
-                                       bool c0_pad_en,
-                                       bool broadcast_en,
-                                       bool enable_nz2dn)
+                                       bool enable_nz2dn,
+                                       bool enable_clip_relu_pre)
 ```
 
 ### dtype支持的数据类型
@@ -116,21 +109,14 @@ __aicore__ inline void asc_copy_l0c2gm(__gm__ bfloat16_t* dst,
                                        uint16_t m_size,
                                        uint32_t dst_stride,
                                        uint16_t src_stride,
-                                       uint8_t l2_cache_mode,
-                                       uint8_t enable_clip_relu_pre,
-                                       uint8_t unit_flag_mode,
-                                       uint64_t quant_pre_mode,
-                                       uint8_t relu_pre_mode,
+                                       asc_store_l2_cache_mode l2_cache_mode,
+                                       asc_unit_flag_mode unit_flag_mode,
+                                       asc_quant_mode quant_pre_mode,
+                                       asc_relu_pre_mode relu_pre_mode,
                                        bool enable_channel_split,
                                        bool enable_nz2nd,
-                                       uint64_t quant_post,
-                                       uint8_t relu_post,
-                                       bool clip_relu_post,
-                                       uint8_t eltwise_op,
-                                       bool eltwise_antq_en,
-                                       bool c0_pad_en,
-                                       bool broadcast_en,
-                                       bool enable_nz2dn)
+                                       bool enable_nz2dn,
+                                       bool enable_clip_relu_pre)
 ```
 
 ## 参数说明
@@ -145,30 +131,14 @@ __aicore__ inline void asc_copy_l0c2gm(__gm__ bfloat16_t* dst,
 | m_size | 输入 | 源Nz矩阵在M方向上的大小，取值范围为$[1, 2^{16}-1]$。<br>对于DN输出场景：<br>&nbsp;&nbsp;&bull; 若`dst_dtype`设置为`int4b_t`，`m_size`必须为2的倍数。<br> |
 | dst_stride | 输入 | 目的矩阵步长，取值范围为$[1, 2^{32}-1]$。<br>&nbsp;&nbsp;&bull; 若不开启Nz2ND功能，`dst_stride`表示目的Nz矩阵中相邻Z排布的起始地址偏移，单位为元素。<br>&nbsp;&nbsp;&bull; 若开启Nz2ND/Nz2DN功能，`dst_stride`表示目的ND/DN矩阵每一行中的元素个数，单位为元素。<br>对于`dst_dtype`设置为`int4b_t`的输出场景，`dst_stride`必须为2的倍数。 |
 | src_stride | 输入 | 源Nz矩阵中相邻Z排布的起始地址偏移，单位为64字节，即$16\times\operatorname{sizeof}(T)$，其中$T$为`src`的数据类型。取值范围为$[0, 2^{16}-1]$。 |
-| l2_cache_mode | 输入 | 配置输出GM数据在L2 Cache中的管理策略。取值需为已定义的策略，即0、1、2或4，其他值触发L2 Cache策略异常。取值说明见[表2](#l2_cache_mode_values)。 |
-| enable_clip_relu_pre | 输入 | 是否开启Clip ReLU，需搭配Normal ReLU一起使用，且需要开启量化功能，取值如下：<br>&nbsp;&nbsp;&bull; `0`：不开启Clip ReLU。<br>&nbsp;&nbsp;&bull; `1`：开启Clip ReLU（scalar模式）。<br> |
-| unit_flag_mode | 输入 | UnitFlag是MMAD类指令和矩阵搬出类指令细粒度的并行功能，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; `0`：不开启UnitFlag。<br>&nbsp;&nbsp;&bull; `2`：开启UnitFlag，硬件执行完指令之后，不复位单元标记位。<br>&nbsp;&nbsp;&bull; `3`：开启UnitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将MMAD类指令和矩阵搬出类指令的UnitFlag值设置为2或3。 |
+| l2_cache_mode | 输入 | 配置输出GM数据在L2 Cache中的管理策略。仅支持`asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM`、`asc_store_l2_cache_mode::NORMAL_LAST_VICTIM`、`asc_store_l2_cache_mode::NORMAL_PERSISTENT`和`asc_store_l2_cache_mode::NOTALLOC_CLEAN`。 |
+| unit_flag_mode | 输入 | UnitFlag是MMAD类指令和矩阵搬出类指令细粒度的并行功能，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::DISABLE`：不开启UnitFlag。<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::ENABLE_KEEP`：开启UnitFlag，硬件执行完指令之后，不复位单元标记位。<br>&nbsp;&nbsp;&bull; `asc_unit_flag_mode::ENABLE_UPDATE`：开启UnitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将MMAD类指令和矩阵搬出类指令的UnitFlag值设置为`asc_unit_flag_mode::ENABLE_KEEP`或`asc_unit_flag_mode::ENABLE_UPDATE`。 |
 | quant_pre_mode | 输入 | 预处理阶段量化模式，取值见[功能说明](#功能说明)。 |
-| relu_pre_mode | 输入 | 预处理阶段ReLU模式控制，取值如下：<br>&nbsp;&nbsp;&bull; `0`：不开启ReLU。<br>&nbsp;&nbsp;&bull; `1`：开启Normal ReLU。<br>&nbsp;&nbsp;&bull; `2`：开启Scalar ReLU。<br>&nbsp;&nbsp;&bull; `3`：开启Vector ReLU。<br> |
+| relu_pre_mode | 输入 | 预处理阶段ReLU模式控制，取值如下：<br>&nbsp;&nbsp;&bull; `asc_relu_pre_mode::NONE`：不开启ReLU。<br>&nbsp;&nbsp;&bull; `asc_relu_pre_mode::NORMAL`：开启Normal ReLU。<br>&nbsp;&nbsp;&bull; `asc_relu_pre_mode::SCALAR`：开启Scalar ReLU。<br>&nbsp;&nbsp;&bull; `asc_relu_pre_mode::VECTOR`：开启Vector ReLU。<br> |
 | enable_channel_split | 输入 | 是否开启通道拆分功能。仅在`src_dtype`和`dst_dtype`均为`float`且输出为Nz格式时可开启。<br>&nbsp;&nbsp;&bull; `false`：不开启。<br>&nbsp;&nbsp;&bull; `true`：开启。<br> |
 | enable_nz2nd | 输入 | Nz2ND格式转换使能。<br>&nbsp;&nbsp;&bull; `false`：关闭Nz2ND转换。<br>&nbsp;&nbsp;&bull; `true`：开启Nz2ND转换。<br> |
-| quant_post | 输入 | 预留参数，当前须设置为0。 |
-| relu_post | 输入 | 预留参数，当前须设置为0。 |
-| clip_relu_post | 输入 | 预留参数，当前须设置为`false`。 |
-| eltwise_op | 输入 | 预留参数，当前须设置为0。 |
-| eltwise_antq_en | 输入 | 预留参数，当前须设置为`false`。 |
-| c0_pad_en | 输入 | 预留参数，当前须设置为`false`。 |
-| broadcast_en | 输入 | 预留参数，当前须设置为`false`。 |
 | enable_nz2dn | 输入 | Nz2DN格式转换使能。<br>&nbsp;&nbsp;&bull; `false`：关闭Nz2DN转换。<br>&nbsp;&nbsp;&bull; `true`：开启Nz2DN转换。<br> |
-
-**表2** l2_cache_mode取值说明 <a id="l2_cache_mode_values"></a>
-
-| 取值 | 模式 | 含义 |
-|------|------|------|
-| 0 | `NORMAL模式` | 启用L2 Cache，并将分配的Cache Line标记为高替换优先级。 |
-| 1 | `LAST模式` | &bull; 启用L2 Cache，并将分配的Cache Line标记为低替换优先级。<br>&bull; **LAST模式，功能暂不支持。** |
-| 2 | `PERSISTENT模式` | &bull; 启用L2 Cache。已存入L2 Cache中的数据可能被替换，若需确保特定GM的数据始终保留在L2 Cache中，可采用驻留模式。<br>&bull; 注意，被标记为驻留模式的Cache Line只能被其他同样被标记为驻留模式的Cache Line替换。<br>&bull; **PERSISTENT模式，功能暂不支持。** |
-| 4 | `DISABLE模式` | 不启用L2 Cache，每次都直接从GM中读取，并保持已有Cache Line的状态不变。 |
+| enable_clip_relu_pre | 输入 | 是否开启Clip ReLU，需搭配Normal ReLU一起使用，且需要开启量化功能，取值如下：<br>&nbsp;&nbsp;&bull; `false`：不开启Clip ReLU。<br>&nbsp;&nbsp;&bull; `true`：开启Clip ReLU（scalar模式）。<br> |
 
 ## 返回值说明
 
@@ -241,9 +211,9 @@ __global__ __cube__ void AscCopyL0c2gmKernel(__gm__ int8_t* a, __gm__ int8_t* b,
 
     // 将两个128x128的ND输入转换为MMAD所需的Nz排布。
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
-    asc_copy_gm2l1_nd2nz(a_l1, a, K, 0, M, K, 0, false);
+    asc_copy_gm2l1_nd2nz(a_l1, a, K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, M, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
-    asc_copy_gm2l1_nd2nz(b_l1, b, K, 0, N, K, 0, false);
+    asc_copy_gm2l1_nd2nz(b_l1, b, K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, N, K, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
 
@@ -254,16 +224,16 @@ __global__ __cube__ void AscCopyL0c2gmKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
 
     // 执行128x128x128矩阵乘并将结果写入L0C Buffer。
-    asc_mmad(c_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
+    asc_mmad(c_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
     // 将L0C Buffer中的Nz结果转换为连续ND格式并搬出至GM。
     asc_set_l0c_copy_nz_para(1, 0, 0);
-    asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
-        static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
-        static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
-    asc_sync_pipe(PIPE_ALL);
+    asc_copy_l0c2gm(output, c_l0, N, M, N, M, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        asc_unit_flag_mode::DISABLE, asc_quant_mode::NoQuant, asc_relu_pre_mode::NONE,
+        false, true, false, false);
+    asc_sync_pipe(PIPE_FIX);
 }
 
 template <typename T>

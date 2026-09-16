@@ -151,7 +151,7 @@
   1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`：A、B、Bias 从 GM 搬运至 L1 Buffer（ND → Nz）；
   2. `asc_copy_l12l0a`：A 从 L1 Buffer搬运至 L0A Buffer；`asc_copy_l12l0b_trans`：B 从 L1 Buffer转置搬运至 L0B Buffer；`asc_copy_l12bt`：Bias 从 L1 Buffer搬运至 BT；
   3. `asc_mmad`：矩阵乘加，C 矩阵初始值来源于 BT；
-  4. `asc_copy_l0c2gm` + `asc_set_l0c2gm_nz2nd`：结果从 L0C Buffer搬运至 GM（Nz → ND）；
+  4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`：结果从 L0C Buffer搬运至 GM（Nz → ND）；
 - 说明：int8_t类型输入，B矩阵不转置场景下，N轴向2 * 16对齐，填充了全部是无效数据的32 * 16的分形。如下图1所示，如果设置`right_width = N`，就会导致读入编号为3、7的分形，同时又没能将包含有效数据的编号为9、10的分形读入。因此需要设置：`right_width = CeilAlign(N, BLOCK_CUBE * fractalNum)`，此时会读入全部分形，虽然矩阵计算结果中包含了无效数据参与计算的结果，但是在`asc_copy_l0c2gm`指令搬出数据时通过设置`n_size = N`来保证无效数据参与计算的结果不会被搬出。
 <p align="center">
   <img src="figures/mmad_s8_L0B_转置.png" width="700">
@@ -170,7 +170,7 @@
   1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`：A、B 从 GM 搬运至 L1 Buffer（B 以转置后的 ND 排布存放于 GM）；
   2. `asc_copy_l12l0a`：A 从 L1 Buffer搬运至 L0A Buffer；`asc_copy_l12l0b`：B 从 L1 Buffer直接搬运至 L0B Buffer（B 已在 L1 Buffer中转置为 Nz 排布）；
   3. `asc_mmad`：两次调用。首次 `c_matrix_init_val = true` 将 C 初始化为 0 并计算 A×B；第二次 `c_matrix_init_val = false`、`c_matrix_source = false` 以 CO1 为初值累加第二次 A×B；
-  4. `asc_copy_l0c2gm` + `asc_set_l0c2gm_nz2nd`：结果从 L0C Buffer搬运至 GM；
+  4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`：结果从 L0C Buffer搬运至 GM；
 
 **场景 3：float 输入，float 输出，A/B 转置，显式传入 Bias 地址**
 

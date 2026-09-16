@@ -460,6 +460,39 @@
 
 ### 矩阵计算
 
+- [asc_enable_fp8（废弃）](../SIMD-API/c_api/deprecated_interface/asc_enable_fp8_deprecated.md)接口
+
+    请使用[asc_disable_hif8](../SIMD-API/c_api/cube_compute/asc_disable_hif8.md)接口。
+
+- [asc_set_fp32_mode（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_fp32_mode_deprecated.md)接口
+
+    请使用[asc_disable_hf32](../SIMD-API/c_api/cube_compute/asc_disable_hf32.md)接口。
+
+- [asc_enable_hf32_trans（废弃）](../SIMD-API/c_api/deprecated_interface/asc_enable_hf32_trans_deprecated.md)接口
+
+    请使用[asc_set_hf32_round_mode](../SIMD-API/c_api/cube_compute/asc_set_hf32_round_mode.md)接口。
+
+- [asc_set_l0c2gm_quant_post（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l0c2gm_quant_post_deprecated.md)接口
+
+    此接口已废弃，暂无替代接口。
+
+- [asc_set_l0c2gm_nz2nd（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l0c2gm_nz2nd_deprecated.md)接口：请使用[asc_set_l0c_copy_nz_para](../SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_nz_para.md)接口。
+- [asc_set_l0c2gm_channel_para（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l0c2gm_channel_para_deprecated.md)接口：请使用[asc_set_l0c_copy_channel_para](../SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_channel_para.md)接口。
+- [asc_set_l0c2gm_config（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l0c2gm_config_deprecated.md)接口：请使用[asc_set_l0c_copy_config](../SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_config.md)接口。
+- [asc_set_l12l0_padding_val（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l12l0_padding_val_deprecated.md)接口：请使用[asc_set_l12l0b_3d_padding](../SIMD-API/c_api/cube_datamove/asc_set_l12l0b_3d_padding.md)接口。
+- [asc_set_l13d_padding（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l13d_padding_deprecated.md)接口：请使用[asc_set_l12l0a_3d_padding](../SIMD-API/c_api/cube_datamove/asc_set_l12l0a_3d_padding.md)接口。
+- [asc_set_l0c2gm_relu_alpha（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l0c2gm_relu_alpha_deprecated.md)接口：请使用[asc_set_l0c_copy_relu_alpha](../SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_relu_alpha.md)接口。
+- [asc_set_l0c2gm_lrelu_alpha（废弃）](../SIMD-API/c_api/deprecated_interface/asc_set_l0c2gm_lrelu_alpha_deprecated.md)接口：请使用[asc_set_l0c_copy_lrelu_alpha](../SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_lrelu_alpha.md)接口。
+- [asc_copy_gm2l1_align（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_align_deprecated.md)接口（旧常规重载和同步接口）：请使用[asc_copy_gm2l1_align](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_align.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_gm2l1_dn2nz（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_dn2nz_deprecated.md)接口：旧常规重载及`asc_copy_gm2l1_dn2nz_sync`已废弃，请使用[asc_copy_gm2l1_dn2nz](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_dn2nz.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_gm2l1_nd2nz（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_nd2nz_deprecated.md)接口：旧常规重载及`asc_copy_gm2l1_nd2nz_sync`已废弃，请使用[asc_copy_gm2l1_nd2nz](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_gm2l1（高维切分旧形式，废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_highdim_deprecated.md)接口：请使用带[asc_channel_pad_mode](../SIMD-API/c_api/defs/enum/asc_channel_pad_mode.md)参数的[asc_copy_gm2l1_arch_3510（高维切分数据搬运）](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_gm2l1（2D矩阵搬运旧形式，废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l1_2d_deprecated.md)接口：请使用带[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)参数的[asc_copy_gm2l1_arch_3510（2D矩阵搬运模式）](../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_2d_arch_3510.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_l12ub_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12ub_sync_deprecated.md)接口：请使用[asc_copy_l12ub](../SIMD-API/c_api/cube_datamove/asc_copy_l12ub.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_l0c2gm（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2gm_deprecated.md)接口：旧参数形式和`asc_copy_l0c2gm_sync`接口已废弃，请使用[asc_copy_l0c2gm](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_l0c2l1（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2l1_deprecated.md)接口：旧参数形式和`asc_copy_l0c2l1_sync`接口已废弃，请使用[asc_copy_l0c2l1](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+- [asc_copy_l0c2ub（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2ub_deprecated.md)接口：旧参数形式和`asc_copy_l0c2ub_sync`接口已废弃，请使用[asc_copy_l0c2ub](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2ub.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
+
 - [asc_mmad（废弃）](../SIMD-API/c_api/deprecated_interface/asc_mmad_deprecated.md)接口
 
     使用`uint8_t unit_flag`或`uint8_t feat_offset`入参的`asc_mmad()`和`asc_mmad_s4()`接口已废弃，请使用[asc_mmad](../SIMD-API/c_api/cube_compute/asc_mmad.md)接口。`asc_mmad_sync()`和`asc_mmad_s4_sync()`接口已废弃，请使用[asc_mmad](../SIMD-API/c_api/cube_compute/asc_mmad.md)接口和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口。
@@ -517,10 +550,6 @@
 
     `asc_copy_l0c2gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
-- [asc_copy_l0c2gm_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2gm_sync_arch_3510_deprecated.md)接口
-
-    `asc_copy_l0c2gm_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
-
 - [asc_copy_l0c2l1_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2l1_sync_arch_2201_deprecated.md)接口
 
     `asc_copy_l0c2l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_2201.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
@@ -528,10 +557,6 @@
 - [asc_copy_l0c2l1_sync_arch_3510（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2l1_sync_arch_3510_deprecated.md)接口
 
     `asc_copy_l0c2l1_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
-
-- [asc_copy_l0c2ub_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l0c2ub_sync_deprecated.md)接口
-
-    `asc_copy_l0c2ub_sync()`已废弃，请使用[对应的非同步接口](../SIMD-API/c_api/cube_datamove/asc_copy_l0c2ub.md)和[asc_sync](../SIMD-API/c_api/sync/asc_sync.md)接口替代。
 
 - [asc_copy_l12bt_sync_arch_2201（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_l12bt_sync_arch_2201_deprecated.md)接口
 
