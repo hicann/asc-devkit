@@ -1,6 +1,6 @@
 # asc_load_l2_cache_mode
 
-asc_load_l2_cache_mode用于表示数据从GM搬运到Unified Buffer（UB）时的L2 cache管理策略，可用于：
+asc_load_l2_cache_mode用于表示数据从GM搬运到Unified Buffer（UB）时的L2 Cache管理策略，可用于：
 
 - 向量搬运接口，例如[asc_copy_gm2ub_align](../../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)和[asc_ndim_copy_gm2ub](../../vector_datamove/asc_ndim_copy_gm2ub.md)。
 - 标量访存路径的load策略配置与查询，例如[asc_set_scalar_cache_mode](../../cache_ctrl/asc_set_scalar_cache_mode.md)和[asc_get_scalar_load_cache_mode](../../cache_ctrl/asc_get_scalar_load_cache_mode.md)。
@@ -24,7 +24,7 @@ enum class asc_load_l2_cache_mode : uint8_t {
 
 **表1** 枚举值说明
 
-|枚举值|L2 cache管理策略|
+|枚举值|L2 Cache管理策略|
 |------|-----------|
 | NORMAL_FIRST_VICTIM | 启用L2 Cache，并且将分配的Cache Line标记为高替换优先级。 |
 | NORMAL_LAST_VICTIM | 启用L2 Cache，并且将分配的Cache Line标记为低替换优先级。 |

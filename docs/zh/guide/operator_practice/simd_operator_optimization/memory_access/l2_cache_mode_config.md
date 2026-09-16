@@ -69,7 +69,7 @@ zGm.SetGlobalBuffer((__gm__ half *)z + startM * totalN + startN, bufferSize);</p
 <td class="cellrowborder" valign="top" width="50.51104837924658%" headers="mcps1.1.4.1.3 "><a name="screen271414925813"></a><a name="screen271414925813"></a><pre class="screen" codetype="Cpp" id="screen271414925813">xGm.SetGlobalBuffer((__gm__ half *)x + startM * totalN + startN, bufferSize);
 yGm.SetGlobalBuffer((__gm__ half *)y + startM * totalN + startN, bufferSize);
 zGm.SetGlobalBuffer((__gm__ half *)z + startM * totalN + startN, bufferSize);
-// disable the L2 cache mode of x and y
+// disable the L2 Cache mode of x and y
 xGm.SetL2CacheHint(AscendC::CacheMode::CACHE_MODE_DISABLE);
 yGm.SetL2CacheHint(AscendC::CacheMode::CACHE_MODE_DISABLE);</pre>
 </td>

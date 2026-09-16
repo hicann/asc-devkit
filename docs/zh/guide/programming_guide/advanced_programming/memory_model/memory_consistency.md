@@ -2,6 +2,8 @@
 
 本文介绍NPU编程中的内存一致性问题，说明不同执行单元、不同AI Core、不同Stream以及Host侧和Device侧之间如何建立可预期的读写顺序。本文重点讨论“操作顺序和可见性”，缓存副本写回、失效等问题请参考[缓存一致性](cache_coherence.md)。
 
+相关示例涉及Global Memory（GM）、Unified Buffer（UB）和Data Cache（DCache）等内存。
+
 ## 内存一致性基本概念
 
 ### 什么是内存一致性
