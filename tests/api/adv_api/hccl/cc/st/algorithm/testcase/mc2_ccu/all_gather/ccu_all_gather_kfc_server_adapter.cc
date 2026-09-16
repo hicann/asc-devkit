@@ -104,6 +104,18 @@ void FillKfcQueue(RankMemory& memory, uint32_t rank, uint64_t sliceSize, uint64_
     memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_LAST_SLICE_SIZE] = sliceSize;
     memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_INPUT_OUTPUT_EQUAL] = 0U;
 
+    // The local copy uses GroupCopy; a zero GoSize only builds zero-length
+    // copies, so fill it exactly like CcuTempKfcAllGatherMesh1DMem2Mem does.
+    mc2_ops_hccl::LoopGroupConfig config{};
+    config.msInterleave = mc2_ops_hccl::CCU_MS_INTERLEAVE;
+    config.loopCount = mc2_ops_hccl::CCU_MS_LOCAL_COPY_LOOP_COUNT;
+    config.memSlice = mc2_ops_hccl::CCU_MS_SIZE * mc2_ops_hccl::LOCAL_COPY_MS_PER_LOOP;
+    const auto goSize = mc2_ops_hccl::CalGoSize(sliceSize, config);
+    memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_GO_SIZE_0] = goSize[0];
+    memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_GO_SIZE_1] = goSize[1];
+    memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_GO_SIZE_2] = goSize[2];
+    memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_GO_SIZE_3] = goSize[3];
+
     // Queue entry 1 terminates the persistent server after the AllGather task.
     memory.parameter[KFC_QUEUE_PARAM_WORDS] = std::numeric_limits<uint64_t>::max();
     memory.parameter[KFC_CKE_WORD_OFFSET] = 1U;
