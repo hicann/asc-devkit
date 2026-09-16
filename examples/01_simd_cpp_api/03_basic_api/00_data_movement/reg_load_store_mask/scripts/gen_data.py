@@ -73,8 +73,8 @@ if __name__ == "__main__":
         "-scenarioNum",
         type=int,
         default=1,
-        choices=[1, 2, 3, 4, 5, 6],
-        help="Scenario number: 1-6",
+        choices=[1, 2],
+        help="Scenario number: 1-2",
     )
     args = parser.parse_args()
     gen_golden_data(args.scenarioNum)
