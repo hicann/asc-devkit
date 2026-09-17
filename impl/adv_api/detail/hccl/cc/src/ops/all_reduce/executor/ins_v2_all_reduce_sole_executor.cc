@@ -10,6 +10,7 @@
 
 #include "ins_v2_all_reduce_sole_executor.h"
 #include "ins_temp_all_reduce_mesh_1D_two_shot.h"
+#include "ins_temp_all_reduce_nhr.h"
 #include "ins_temp_all_reduce_mesh_1D_one_shot.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 #include "ccu_temp_kfc_all_reduce_mesh_1D_mem2mem.h"
@@ -17,7 +18,25 @@
 #include "ins_temp_all_reduce_aicpu_reduce_nhr.h"
 #include "ins_temp_all_reduce_mesh_1D_two_shot_mesh_chunk.h"
 
+#include <type_traits>
+
 namespace mc2_ops_hccl {
+
+namespace {
+template <typename InsAlgTemplate>
+typename std::enable_if<std::is_base_of<InsAlgTemplateBase, InsAlgTemplate>::value, HcclResult>::type
+SetChannelsPerRankIfSupported(InsAlgTemplate& algTemplate, const std::map<u32, std::vector<ChannelInfo>>& channels)
+{
+    return algTemplate.SetchannelsPerRank(channels);
+}
+
+template <typename InsAlgTemplate>
+typename std::enable_if<!std::is_base_of<InsAlgTemplateBase, InsAlgTemplate>::value, HcclResult>::type
+SetChannelsPerRankIfSupported(InsAlgTemplate&, const std::map<u32, std::vector<ChannelInfo>>&)
+{
+    return HCCL_SUCCESS;
+}
+} // namespace
 
 template <typename AlgTopoMatch, typename InsAlgTemplate>
 InsV2AllReduceSoleExecutor<AlgTopoMatch, InsAlgTemplate>::InsV2AllReduceSoleExecutor()
@@ -113,6 +132,9 @@ HcclResult InsV2AllReduceSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchestrate
     // 构建template
     std::shared_ptr<InsAlgTemplate> algTemplate =
         std::make_shared<InsAlgTemplate>(param, resCtx.topoInfo.userRank, resCtx.algHierarchyInfo.infos[0]);
+    if (param.engine == CommEngine::COMM_ENGINE_AICPU_TS && resCtx.topoInfo.isPod) {
+        CHK_RET(SetChannelsPerRankIfSupported(*algTemplate, templateAlgRes.channels));
+    }
     u32 templateScratchMultiplier =
         algTemplate->CalcScratchMultiple(tempAlgParams.buffInfo.inBuffType, tempAlgParams.buffInfo.outBuffType);
 
@@ -251,6 +273,10 @@ HcclResult InsV2AllReduceSoleExecutor<AlgTopoMatch, InsAlgTemplate>::FastLaunch(
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLREDUCE, AicpuAllReduceSoleMeshTwoShot, InsV2AllReduceSoleExecutor, TopoMatch1D,
     InsTempAllReduceMesh1DTwoShot);
+
+REGISTER_EXEC_V2(
+    HcclCMDType::HCCL_CMD_ALLREDUCE, AicpuAllReduceSoleNHR, InsV2AllReduceSoleExecutor, TopoMatch1D,
+    InsTempAllReduceNHR);
 
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLREDUCE, AicpuAllReduceSoleMeshOneShot, InsV2AllReduceSoleExecutor, TopoMatch1D,

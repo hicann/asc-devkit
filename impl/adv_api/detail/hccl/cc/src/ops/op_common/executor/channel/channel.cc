@@ -487,6 +487,17 @@ HcclResult CalcChannelRequestNhr(
         std::vector<uint32_t> netLayersVector(netLayers, netLayers + netLayerNum);
 
         for (auto netLayer : netLayersVector) {
+            // A one-level NHR over a multi-level graph must use the upper full-domain
+            // link. Keep level 0 only for the single-server PCIE-SW special case.
+            const bool isNeedLevel0NhrChannel =
+                ((topoInfo->level0Topo == Level0Shape::CLOS || topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS) &&
+                 topoInfo->level0PcieMix && topoInfo->serverNum == 1);
+            HCCL_INFO(
+                "[CalcChannelRequestNhr] isNeedLevel0NhrChannel[%d] Need to calc NHR channel in level0",
+                isNeedLevel0NhrChannel);
+            if (netLayerNum > 1 && netLayer == 0 && !isNeedLevel0NhrChannel) {
+                continue;
+            }
             CommLink* linkList = nullptr;
             u32 listSize;
             CHK_RET(HcclRankGraphGetLinks(comm, netLayer, myRank, subcommInfo[0][rankIdx], &linkList, &listSize));

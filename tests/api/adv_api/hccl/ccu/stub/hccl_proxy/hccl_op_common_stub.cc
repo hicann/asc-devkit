@@ -187,7 +187,7 @@ HcclResult ExecuteSelector::Run(OpParam& param, TopoInfoWithNetLayerDetails* top
     static const std::map<HcclCMDType, std::string> aicpuAlgMap = {
         {HcclCMDType::HCCL_CMD_ALLGATHER, "InsAllGatherMesh"},
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "InsReduceScatterNHR"},
-        {HcclCMDType::HCCL_CMD_ALLREDUCE, "InsAllReduceNHR"},
+        {HcclCMDType::HCCL_CMD_ALLREDUCE, "AicpuAllReduceSoleNHR"},
         {HcclCMDType::HCCL_CMD_ALLTOALL, "InsAlltoAllMesh"},
         {HcclCMDType::HCCL_CMD_ALLTOALLV, "InsAlltoAllvMesh"},
     };
