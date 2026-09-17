@@ -9,10 +9,12 @@
  */
 
 #include "ins_v2_all_reduce_parallel_executor.h"
+#include <algorithm>
 #include "ins_temp_reduce_scatter_mesh_1D.h"
 #include "ins_temp_reduce_scatter_nhr.h"
 #include "ins_temp_all_gather_mesh_1D.h"
 #include "ins_temp_all_gather_nhr.h"
+#include "topo_match_multilevel.h"
 #include "topo_match_pcie_mix.h"
 #include <cmath>
 
@@ -172,6 +174,8 @@ HcclResult InsAllReduceParallelExecutor<
     dataType_ = param.DataDes.dataType;
     dataTypeSize_ = DATATYPE_SIZE_TABLE[param.DataDes.dataType];
     dataSize_ = dataCount_ * dataTypeSize_;
+    multipleDimensionSplitRatio_ = param.opConfig.multipleDimensionSplitRatio;
+    multipleDimensionSplitRatioSource_ = param.opConfig.multipleDimensionSplitRatioSource;
 
     // 获取算法Topo信息
     vTopo_ = resCtx.algHierarchyInfo.infos; // 本通信域内的通信平面
@@ -226,9 +230,15 @@ template <
 void InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, InsAlgTemplate2, InsAlgTemplate3>::
     GetParallelDataSplit(std::vector<float>& splitDataSize) const
 {
-    constexpr double ratio = 0.5;
-    splitDataSize.push_back(ratio);
-    splitDataSize.push_back(ratio);
+    double ratio = multipleDimensionSplitRatio_;
+    if (multipleDimensionSplitRatioSource_ == MultipleDimensionSplitRatioSource::BUILTIN_FORMULA) {
+        ratio = CalcParallelDataSplitRatio(
+            intraLocalRankSize_, interLocalRankSize_, intraLinks_, interLinks_,
+            ParallelDataSplitType::REDUCE_SCATTER_WITH_LOCAL_REDUCE, multipleDimensionSplitRatio_);
+    }
+    ratio = std::max(0.0, std::min(ratio, 1.0));
+    splitDataSize.push_back(static_cast<float>(ratio));
+    splitDataSize.push_back(static_cast<float>(1.0 - ratio));
     HCCL_INFO(
         "[InsAllReduceParallelExecutor] meshFirstRatio[%f], closFirstRatio[%f]", splitDataSize[0], splitDataSize[1]);
     return;
@@ -978,6 +988,10 @@ InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, Ins
 }
 
 // 算法注册
+REGISTER_EXECUTOR_BY_FOUR_TEMPS(
+    HcclCMDType::HCCL_CMD_ALLREDUCE, AicpuAllReduceParallelMeshNHR, InsAllReduceParallelExecutor, TopoMatchMultilevel,
+    InsTempReduceScatterMesh1D, InsTempReduceScatterNHR, InsTempAllGatherMesh1D, InsTempAllGatherNHR);
+
 REGISTER_EXECUTOR_BY_FOUR_TEMPS(
     HcclCMDType::HCCL_CMD_ALLREDUCE, AicpuAllreduceParallelMeshNHRPcie, InsAllReduceParallelExecutor, TopoMatchPcieMix,
     InsTempReduceScatterMesh1D, InsTempReduceScatterNHR, InsTempAllGatherMesh1D, InsTempAllGatherNHR);

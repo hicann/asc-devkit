@@ -141,6 +141,10 @@ private:
     u64 scratchOffsetCountIntraStage1_;
     u64 outputPtrOffsetIntra_;
 
+    double multipleDimensionSplitRatio_{0.5};
+    MultipleDimensionSplitRatioSource multipleDimensionSplitRatioSource_ =
+        MultipleDimensionSplitRatioSource::BUILTIN_FORMULA;
+
     std::vector<std::vector<std::vector<u32>>> vTopo_;
 
     std::vector<ThreadHandle> intraThreads_;
