@@ -182,7 +182,7 @@ The initialization function mainly completes the following:
 
 -   Set the Global Memory addresses of the input and output Global Tensors.
 
-In this example, the allocation scheme is as follows: the total data length TOTAL\_LENGTH is 1 \* 2048. Use the [SetGlobalBuffer](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/SetGlobalBuffer.md) API of the GlobalTensor class to set the start address and length of the Global Memory on this core.
+    In this example, the allocation scheme is as follows: the total data length TOTAL\_LENGTH is 1 \* 2048. Use the [SetGlobalBuffer](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/SetGlobalBuffer.md) API of the GlobalTensor class to set the start address and length of the Global Memory on this core.
 
     ```
     xGm.SetGlobalBuffer((__gm__ half *)x, TOTAL_LENGTH);
@@ -235,9 +235,10 @@ Based on the vector programming paradigm, the kernel function implementation is 
     inQueueY.EnQue(yLocal);
     ```
 
-<a id="copyout-implementation"></a>
+
 2.  Stage2: Compute implementation.
 
+    <a id="copyout-implementation"></a>
     1.  Use [DeQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/DeQue.md) to take LocalTensor out of VECIN.
     2.  Use the Ascend C API [Add](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md) to complete the vector computation.
     3.  Use [EnQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/EnQue.md) to put the LocalTensor of the computation result into the VECOUT queue.

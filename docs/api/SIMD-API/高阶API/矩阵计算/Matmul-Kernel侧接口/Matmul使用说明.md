@@ -97,8 +97,8 @@ Kernel侧实现Matmul矩阵乘运算的步骤概括为：
     | int8_t | int8_t | int32_t | bfloat16_t | Ascend 950PR/Ascend 950DT |
 
 2.  初始化操作。
-<a name="li5878185413338"></a>
 
+    <a name="li5878185413338"></a>
     ```
     REGIST_MATMUL_OBJ(&pipe, GetSysWorkSpacePtr(), mm, &tiling); // 初始化matmul对象，参数含义请参考REGIST_MATMUL_OBJ章节
     ```

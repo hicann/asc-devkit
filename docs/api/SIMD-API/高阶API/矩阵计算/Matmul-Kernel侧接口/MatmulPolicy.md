@@ -65,8 +65,8 @@
     ![](../../../../figures/下三角模板策略示意图.png "下三角模板策略示意图")
 
 -   NBuffer33MatmulPolicy（NBuffer33模板策略）
-<a name="li194081238103913"></a>
 
+    <a name="li194081238103913"></a>
     一次矩阵乘指令计算的结果为[baseM \* baseN](../Matmul-Tiling类/TCubeTiling结构体.md#tcubetiling-struct)大小的矩阵块，称该矩阵块为基本块。单核计算的A矩阵切分为3x3个基本块，该3x3个A矩阵的基本块全载和保持在L1 Buffer中，每次与3x1个B矩阵的基本块计算矩阵乘，同时DoubleBuffer并行搬入下次计算所需的3x1个B矩阵基本块，直到singleCoreN方向的矩阵乘计算完成。NBuffer33模板策略如下图所示，图中[singleCoreM、singleCoreN、singleCoreK](../Matmul-Tiling类/TCubeTiling结构体.md#tcubetiling-struct)表示单核内A、B矩阵的shape大小，单核计算的A矩阵切分为3x3个基本块，3x3个基本块全载在L1 Buffer上，这些基本块每次与B矩阵的3x1个基本块计算矩阵乘。
 
     **图3**  NBuffer33模板策略示意图  

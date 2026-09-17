@@ -67,8 +67,8 @@ The **MatmulPolicy** template parameter defines the Matmul extensible module str
     ![](../../../../figures/trianlowermatmulpolicy.png)
 
 -   **NBuffer33MatmulPolicy**
-<a name="li194081238103913"></a>
 
+    <a name="li194081238103913"></a>
     The result of a single matrix multiplication instruction is a matrix block of size [baseM \* baseN](../Matmul-Tiling/tcubetiling_structure.md#tcubetiling-struct), which is called a base block. The A matrix computed by a single core is divided into 3x3 base blocks. All these 3x3 base blocks of the A matrix are loaded and kept in the L1 Buffer, and each time they are multiplied with 3x1 base blocks of the B matrix. Meanwhile, DoubleBuffer loads the next 3x1 base blocks of the B matrix required for the next computation in parallel, until the matrix multiplication in the singleCoreN direction is completed. The NBuffer33 template strategy is shown in the following figure, where [singleCoreM, singleCoreN, singleCoreK](../Matmul-Tiling/tcubetiling_structure.md#tcubetiling-struct) represent the shape sizes of the A and B matrices within a single core. The A matrix computed by a single core is divided into 3x3 base blocks, all of which are loaded onto the L1 Buffer, and these base blocks are multiplied with 3x1 base blocks of the B matrix each time.
 
     **Figure 3** NBuffer33MatmulPolicy  

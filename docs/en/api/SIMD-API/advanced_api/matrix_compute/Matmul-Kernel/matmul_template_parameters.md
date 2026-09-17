@@ -79,7 +79,7 @@ template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE = C_TYPE, co
 
     MATMUL\_POLICY\_DEFAULT\_OF is defined as follows to simplify the type declaration of MATMUL\_POLICY. For details about how to use this template parameter, see [MatmulPolicy](MatmulPolicy.md).
 
- ```
+    ```
     #define MATMUL_POLICY_DEFAULT_OF(DEFAULT)      \
     template <const auto& = MM_CFG, typename ...>  \
             class MATMUL_POLICY = AscendC::Impl::Detail::DEFAULT
