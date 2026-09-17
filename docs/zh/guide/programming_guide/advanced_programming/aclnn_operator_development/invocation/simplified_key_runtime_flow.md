@@ -2,6 +2,8 @@
 
 本文介绍配置`GenSimplifiedKey`后的运行时流程。该机制用于从同一算子的多份预编译核函数（Kernel）binary中选择与本次调用条件匹配的一份。算子开发者负责提供回调和编译配置JSON；运行时框架负责调用回调、组装完整simplified key、查找并选择binary。
 
+完整可运行样例请参考[自定义simplified key编译样例](../../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op_simplified_key)。
+
 回调的实现见[GenSimplifiedKey回调实现](../design_and_implementation/gen_simplified_key.md)，JSON的提供和编译产物见[simplified key二进制配置JSON](../compilation_and_deployment/simplified_key_json_configuration.md)。
 
 ## 运行时流程

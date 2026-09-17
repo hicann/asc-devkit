@@ -4,6 +4,16 @@
 
 回调的编写和注册方式见[GenSimplifiedKey回调实现](../design_and_implementation/gen_simplified_key.md)，运行时选择过程见[基于simplified key的运行时选择流程](../invocation/simplified_key_runtime_flow.md)。
 
+完整可运行样例请参考[自定义simplified key编译样例](../../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op_simplified_key)。
+
+## 配置目录和文件准备
+
+使用`--kernel-json-file`时，Binary JSON是用户提供的输入文件。`op_host/config/<soc>`只是推荐的存放位置，CMake不会自动创建该目录或文件。
+
+- 仓库样例已提供对应目录和JSON，直接编译无需创建。
+- 自定义工程需要自行准备Binary JSON，并让`--kernel-json-file`指向实际路径；目录名和文件名可以按工程调整。
+- `build/.../binary/config/<soc>`是编译生成的输出目录，无需预先创建。
+
 ## JSON如何提供
 
 将JSON放在算子工程现有的Host侧配置目录中，并按AI处理器型号划分。例如`AddCustomTemplate`样例使用：
