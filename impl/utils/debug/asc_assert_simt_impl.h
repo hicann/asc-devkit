@@ -47,7 +47,9 @@ static __attribute__((noinline)) __SIMT_DEVICE_FUNCTIONS_DECL__ void __assert_fa
     const char* __assertion, const char* __file, unsigned int __line, const char* __function, const char* fmt,
     Args&&... args) noexcept
 {
-    __assert_fail(__assertion, __file, __line, __function);
+    simt_printf_impl_assert_msg(
+        "[ASSERT] %s:%u: %s: Assertion `%s' failed. ", __file, __line, __function, __assertion, fmt, args...);
+    __trap();
 }
 #else
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __trap()
@@ -72,7 +74,9 @@ static __attribute__((noinline)) __SIMT_DEVICE_FUNCTIONS_DECL__ void __assert_fa
     const __gm__ char* __assertion, const __gm__ char* __file, unsigned int __line, const __gm__ char* __function,
     const __gm__ char* fmt, Args&&... args) noexcept
 {
-    __assert_fail(__assertion, __file, __line, __function);
+    simt_printf_impl_assert_msg(
+        "[ASSERT] %s:%u: %s: Assertion `%s' failed. ", __file, __line, __function, __assertion, fmt, args...);
+    __trap();
 }
 #endif
 } // namespace __asc_simt_vf

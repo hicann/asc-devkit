@@ -2,13 +2,15 @@
 
 ## Overview
 
-This example demonstrates how to use the `assert()` interface in the SIMT programming model for on-board functional debugging.
+This example demonstrates how to use the `assert()` and `ascendc_assert()` interfaces in the SIMT programming model for on-board functional debugging.
+
+`ascendc_assert()` supports the message form: when the assertion condition fails, it prints the standard assert header followed by a user-defined formatted message (printf-style format string with variadic arguments), which helps locate problems with business context.
 
 ## Supported Products and CANN Versions
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | \>= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -23,7 +25,7 @@ This example demonstrates how to use the `assert()` interface in the SIMT progra
 
 - Operator Function:
 
-  This example demonstrates in detail the practice of using the `assert()` interface in SIMT implementation functions to debug assertions during operator execution.
+  This example demonstrates in detail the practice of using the `assert()` and `ascendc_assert()` interfaces in SIMT implementation functions to debug assertions during operator execution. The `ascendc_assert()` part demonstrates the message form (with format string and arguments).
 
 
 - Operator Implementation:
@@ -40,7 +42,9 @@ This example demonstrates how to use the `assert()` interface in the SIMT progra
           printf("[SIMT] %s\n", "trap check 1!");
       } else if(threadIdx.x < 5) {
           printf("[SIMT] %s\n", "trap check 2!");
-          assert(in_shape > 1);
+          // Message form: on failure prints the assert header plus the user-defined message, then traps
+          ascendc_assert(in_shape >= MIN_SHAPE, "in_shape %u must be >= %u\n", in_shape, MIN_SHAPE);
+          ascendc_assert(input != nullptr, "input tensor of thread %u is nullptr\n", threadIdx.x);
           printf("[SIMT] %s\n", "trap check 3!");
       }
   }
@@ -68,6 +72,11 @@ Run the following steps in the root directory of this example to build and execu
   ./demo                        # Run the example
   ```
 
+  The example controls `in_shape` via a command-line argument to demonstrate different assert paths:
+
+  - Without arguments (default `in_shape=128`): the `ascendc_assert()` condition holds and does not trigger; the `assert()` condition fails and triggers (message-less form, prints the assertion text only).
+  - `./demo 32` (`in_shape=32 < 64`): the `assert()` condition holds and does not trigger; the `ascendc_assert()` condition fails and triggers the message-form assert, which prints the assert header and the user-defined message, then traps.
+
   When using NPU simulation mode, add the `-DCMAKE_ASC_RUN_MODE=sim` parameter.
 
   Example:
@@ -88,18 +97,17 @@ Run the following steps in the root directory of this example to build and execu
   ```
   [SIMT] trap check 2!
   [SIMT] trap check 2!
-  [SIMT] trap check 2!
-  [SIMT] trap check 2!
-  [SIMT] trap check 2!
-  [SIMT] trap check 2!
-  [SIMT] trap check 2!
-  [SIMT] trap check 2!
   [SIMT] trap check start 1!
   [SIMT] trap check start 1!
   [SIMT] trap check start 2!
   [SIMT] trap check start 2!
   [SIMT] trap check start 3!
   [SIMT] trap check start 3!
-  [ASSERT] xxx/assert.asc:31: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
-  [ASSERT] xxx/assert.asc:31: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
+  [ASSERT] xxx/assert.asc:37: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
+  [ASSERT] xxx/assert.asc:37: void simt_assert(float *, uint32_t): Assertion `in_shape < 1' failed.
+  ```
+
+  Passing an argument smaller than 64 (e.g. `./demo 32`) triggers the message-form assert, which prints the assert header followed by the user-defined message (the trailing `in_shape 32 must be >= 64`):
+  ```
+  [ASSERT] xxx/assert.asc:43: void simt_assert(float *, uint32_t): Assertion `in_shape >= MIN_SHAPE' failed. in_shape 32 must be >= 64
   ```
