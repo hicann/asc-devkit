@@ -1255,9 +1255,9 @@ __aicore__ inline void WaitFlagImpl(const HardEvent event, int32_t eventID)
             break;
     }
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-    if constexpr (event == HardEvent::S_V || event == HardEvent::S_MTE2) {
+    if (event == HardEvent::S_V || event == HardEvent::S_MTE2) {
         dcci((__gm__ uint64_t*)0, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_UB);
-    } else if constexpr (event == HardEvent::S_MTE3) {
+    } else if (event == HardEvent::S_MTE3) {
         dcci((__gm__ uint64_t*)0, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT);
     }
 #endif
