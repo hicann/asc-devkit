@@ -58,6 +58,12 @@ __aicore__ inline void asc_enable_hf32()
     set_ctrl(sbitset1(get_ctrl(), HF32_MODE_BIT));
 }
 
+__aicore__ inline void asc_disable_hf32()
+{
+    constexpr int32_t HF32_MODE_BIT = 46;
+    set_ctrl(sbitset0(get_ctrl(), HF32_MODE_BIT));
+}
+
 __aicore__ inline void asc_set_hf32_round_mode(asc_hf32_round_mode hf32_round_mode)
 {
     constexpr int32_t HF32_TRANS_MODE_BIT = 47;

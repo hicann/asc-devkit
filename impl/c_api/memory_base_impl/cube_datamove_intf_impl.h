@@ -20,6 +20,22 @@
 
 #include "impl/c_api/memory_base_impl/utils_impl.h"
 
+constexpr uint8_t ASC_L13D_RPT_REPEAT_TIMES_SHIFT = 16;
+constexpr uint8_t ASC_L13D_RPT_DIRECTION_SHIFT = 24;
+constexpr uint8_t ASC_L13D_RPT_DST_STRIDE_K_SHIFT = 32;
+constexpr uint8_t ASC_L13D_RPT_DST_START_POS_M_SHIFT = 48;
+constexpr uint8_t ASC_L13D_FMATRIX_H_SHIFT = 16;
+constexpr uint8_t ASC_L13D_FMATRIX_PAD_LEFT_SHIFT = 32;
+constexpr uint8_t ASC_L13D_FMATRIX_PAD_RIGHT_SHIFT = 40;
+constexpr uint8_t ASC_L13D_FMATRIX_PAD_TOP_SHIFT = 48;
+constexpr uint8_t ASC_L13D_FMATRIX_PAD_BOTTOM_SHIFT = 56;
+constexpr uint8_t ASC_L13D_FMATRIX_B_H_SHIFT = 16;
+constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_LEFT_SHIFT = 32;
+constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_RIGHT_SHIFT = 40;
+constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_TOP_SHIFT = 48;
+constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_BOTTOM_SHIFT = 56;
+constexpr uint8_t ASC_3D_PADDING_SHIFT_BIT = 8;
+
 __aicore__ inline void asc_copy_l12l0b_sparse(
     __cb__ int8_t* dst, __cbuf__ int8_t* src, __cbuf__ int8_t* index, uint16_t start_index, uint8_t repeat)
 {
@@ -1539,6 +1555,18 @@ __aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_p
     }
 }
 
+__aicore__ inline void asc_set_l0c_copy_config(uint64_t relu_pre_addr, uint64_t quant_pre_addr, bool is_clean_unit_flag)
+{
+    if ASC_IS_AIC {
+        asc_capi_fpc_reg_config config;
+        config.config = 0;
+        config.relu_units = relu_pre_addr;
+        config.quant_units = quant_pre_addr;
+        config.unit_flag = is_clean_unit_flag;
+        set_fpc(config.config);
+    }
+}
+
 __aicore__ inline uint64_t asc_get_l0c2gm_relu()
 {
     if ASC_IS_AIC {
@@ -1573,6 +1601,20 @@ __aicore__ inline void asc_set_l13d_rpt(asc_load3d_v2_config& config)
 {
     if ASC_IS_AIC {
         set_l3d_rpt(config.config);
+    }
+}
+
+__aicore__ inline void asc_set_l13d_rpt(
+    uint16_t repeat_stride, uint8_t repeat_times, asc_l13d_repeat_direction repeat_direction, uint16_t dst_stride_k,
+    uint16_t dst_start_pos_m)
+{
+    if ASC_IS_AIC {
+        uint64_t config = (static_cast<uint64_t>(dst_start_pos_m) << ASC_L13D_RPT_DST_START_POS_M_SHIFT) |
+                          (static_cast<uint64_t>(dst_stride_k) << ASC_L13D_RPT_DST_STRIDE_K_SHIFT) |
+                          (static_cast<uint64_t>(repeat_direction) << ASC_L13D_RPT_DIRECTION_SHIFT) |
+                          (static_cast<uint64_t>(repeat_times) << ASC_L13D_RPT_REPEAT_TIMES_SHIFT) |
+                          static_cast<uint64_t>(repeat_stride);
+        set_l3d_rpt(config);
     }
 }
 
@@ -1632,10 +1674,123 @@ __aicore__ inline void asc_set_l13d_padding(uint16_t config)
     }
 }
 
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint64_t config)
+{
+    if ASC_IS_AIC {
+        set_padding(config);
+    }
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(int8_t padding_value)
+{
+    uint64_t value = static_cast<uint64_t>(static_cast<uint8_t>(padding_value));
+    asc_set_l12l0a_3d_padding((value << ASC_3D_PADDING_SHIFT_BIT) | value);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint8_t padding_value)
+{
+    asc_set_l12l0a_3d_padding((static_cast<uint64_t>(padding_value) << ASC_3D_PADDING_SHIFT_BIT) | padding_value);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(int16_t padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_int16 = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint16_t padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_uint16 = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(half padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_half = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(bfloat16_t padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_bfloat16 = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(int32_t padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_int32 = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(uint32_t padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_uint32 = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_l12l0a_3d_padding(float padding_value)
+{
+    asc_3d_padding_bitcode bitcode;
+    bitcode.output = 0;
+    bitcode.input_float = padding_value;
+    asc_set_l12l0a_3d_padding(bitcode.output);
+}
+
+__aicore__ inline void asc_set_gm2l1_padding(uint64_t config) { asc_set_l12l0a_3d_padding(config); }
+__aicore__ inline void asc_set_gm2l1_padding(int8_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(uint8_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(int16_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(uint16_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(half padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(bfloat16_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(int32_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(uint32_t padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+__aicore__ inline void asc_set_gm2l1_padding(float padding_value) { asc_set_l12l0a_3d_padding(padding_value); }
+
 __aicore__ inline void asc_set_l13d_fmatrix(asc_l13d_fmatrix_config& config)
 {
     if ASC_IS_AIC {
         set_fmatrix(config.config);
+    }
+}
+
+__aicore__ inline void asc_set_l13d_fmatrix(
+    uint16_t fmatrix_w, uint16_t fmatrix_h, uint8_t pad_left, uint8_t pad_right, uint8_t pad_top, uint8_t pad_bottom)
+{
+    if ASC_IS_AIC {
+        uint64_t config = static_cast<uint64_t>(fmatrix_w) |
+                          (static_cast<uint64_t>(fmatrix_h) << ASC_L13D_FMATRIX_H_SHIFT) |
+                          (static_cast<uint64_t>(pad_left) << ASC_L13D_FMATRIX_PAD_LEFT_SHIFT) |
+                          (static_cast<uint64_t>(pad_right) << ASC_L13D_FMATRIX_PAD_RIGHT_SHIFT) |
+                          (static_cast<uint64_t>(pad_top) << ASC_L13D_FMATRIX_PAD_TOP_SHIFT) |
+                          (static_cast<uint64_t>(pad_bottom) << ASC_L13D_FMATRIX_PAD_BOTTOM_SHIFT);
+        set_fmatrix(config);
+    }
+}
+
+__aicore__ inline void asc_set_l13d_fmatrix_b(
+    uint16_t fmatrix_w, uint16_t fmatrix_h, uint8_t pad_left, uint8_t pad_right, uint8_t pad_top, uint8_t pad_bottom)
+{
+    if ASC_IS_AIC {
+        uint64_t config = static_cast<uint64_t>(fmatrix_w) |
+                          (static_cast<uint64_t>(fmatrix_h) << ASC_L13D_FMATRIX_B_H_SHIFT) |
+                          (static_cast<uint64_t>(pad_left) << ASC_L13D_FMATRIX_B_PAD_LEFT_SHIFT) |
+                          (static_cast<uint64_t>(pad_right) << ASC_L13D_FMATRIX_B_PAD_RIGHT_SHIFT) |
+                          (static_cast<uint64_t>(pad_top) << ASC_L13D_FMATRIX_B_PAD_TOP_SHIFT) |
+                          (static_cast<uint64_t>(pad_bottom) << ASC_L13D_FMATRIX_B_PAD_BOTTOM_SHIFT);
+        set_fmatrix_b(config);
     }
 }
 
@@ -1657,6 +1812,13 @@ __aicore__ inline void asc_set_l0c2gm_lrelu_alpha(float& config)
 {
     if ASC_IS_AIC {
         set_lrelu_alpha(config);
+    }
+}
+
+__aicore__ inline void asc_set_l0c_copy_lrelu_alpha(float scalar_relu_pre_alpha)
+{
+    if ASC_IS_AIC {
+        set_lrelu_alpha(scalar_relu_pre_alpha);
     }
 }
 

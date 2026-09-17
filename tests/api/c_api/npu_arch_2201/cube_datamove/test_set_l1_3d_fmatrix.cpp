@@ -61,3 +61,19 @@ TEST_F(TestCubeDmamoveSetL13DFmatrixB, asc_set_l13d_fmatrix_b_Succ)
     asc_set_l13d_fmatrix_b(config);
     GlobalMockObject::verify();
 }
+
+TEST_F(TestCubeDmamoveSetL13DFmatrix, set_l1_3d_fmatrix_parameterized_Succ)
+{
+    MOCKER(set_fmatrix, void(uint64_t)).times(1).will(invoke(set_fmatrix_stub));
+
+    asc_set_l13d_fmatrix(2, 1, 3, 4, 5, 6);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestCubeDmamoveSetL13DFmatrixB, set_l1_3d_fmatrix_b_parameterized_Succ)
+{
+    MOCKER(set_fmatrix_b, void(uint64_t)).times(1).will(invoke(set_fmatrix_b_stub));
+
+    asc_set_l13d_fmatrix_b(2, 1, 3, 4, 5, 6);
+    GlobalMockObject::verify();
+}
