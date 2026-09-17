@@ -31,21 +31,17 @@
   按元素做反量化计算，比如将int8_t数据类型反量化为half数据类型。
 
 - 样例规格：
-  <table border="2" align="left">
-  <caption>表1：样例输入输出规格</caption>
-  <tr><td rowspan="1" align="center">样例类型(OpType)</td><td colspan="4" align="center"> antiquant </td></tr>
 
-  <tr><td rowspan="5" align="center">样例输入</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">src</td><td align="center">[8, 128]</td><td align="center">int8_t</td><td align="center">ND</td></tr>
-  <tr><td align="center">offset</td><td align="center">[1, 128]</td><td align="center">half</td><td align="center">ND</td></tr>
-  <tr><td align="center">scale</td><td align="center">[1, 128]</td><td align="center">half</td><td align="center">ND</td></tr>
-  <tr><td rowspan="2" align="center">样例输出</td></tr>
-  <tr><td align="center">dst</td><td align="center">[8, 128]</td><td align="center">half</td><td align="center">ND</td></tr>
-  <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">antiquant_custom</td></tr>
-  </table>
-  <br clear="left" />
-<br />
+  **表1：样例输入输出规格**
+
+  | 类别 | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | 样例类型(OpType) | antiquant | - | - | - |
+  | 样例输入 | src | [8, 128] | int8_t | ND |
+  | 样例输入 | offset | [1, 128] | half | ND |
+  | 样例输入 | scale | [1, 128] | half | ND |
+  | 样例输出 | dst | [8, 128] | half | ND |
+  | 核函数名 | antiquant_custom | - | - | - |
 
 - 样例实现：  
   本样例中实现的是固定shape为输入src[8, 128]、offset[1, 128]、scale[1, 128]，输出dst[8, 128]的antiquant_custom样例。按元素做反量化计算，将int8_t类型数据转换为half类型数据。

@@ -30,23 +30,15 @@
   QuantCustom单样例，对输入tensor按元素做量化计算，将half/float数据类型量化为int8_t数据类型。
 
 - 样例规格：
-  <table border="2" align="left">
-  <caption>表1：样例输入输出规格</caption>
-  <tr><td rowspan="1" align="center">样例类型(OpType)</td><td colspan="4" align="center"> quant </td></tr>
 
-  <tr><td rowspan="3" align="center">样例输入</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">inputGm</td><td align="center">[1，1024]</td><td align="center">float</td><td align="center">ND</td></tr>
+  **表1：样例输入输出规格**
 
-
-  <tr><td rowspan="2" align="center">样例输出</td></tr>
-  <tr><td align="center">outputGm</td><td align="center">[1，1024]</td><td align="center">int8_t</td><td align="center">ND</td></tr>
-
-
-  <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">quant_custom</td></tr>
-  </table>
-  <br clear="left" />
-<br />
+  | 类别 | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | 样例类型(OpType) | quant | - | - | - |
+  | 样例输入 | inputGm | [1，1024] | float | ND |
+  | 样例输出 | outputGm | [1，1024] | int8_t | ND |
+  | 核函数名 | quant_custom | - | - | - |
 
 - 样例实现:  
   本样例实现了固定shape输入inputGm[1，1024]，量化参数scale=2.0、offset=0.9。本样例为PER_TENSOR场景（按张量量化），将float数据类型量化为int8_t数据类型。

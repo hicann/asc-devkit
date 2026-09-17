@@ -35,19 +35,16 @@
   $$Swish(x)=x/(1 + e^{(-\beta x)})$$
 
 - 样例规格：  
-  <table border="2" align="left">
-  <caption>表1：样例规格表</caption>
-  <tr><td align="center" rowspan="1">样例类型</td><td align="center" colspan="4"> swiglu </td></tr>
 
-  <tr><td align="center" rowspan="4">样例输入</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">src0</td><td align="center">[1, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td align="center">src1</td><td align="center">[1, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td align="center" rowspan="2">样例输出</td></tr>
-  <tr><td align="center">dst</td><td align="center">[1, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
+  **表1：样例规格表**
 
-  <tr><td align="center" rowspan="1">核函数名</td><td align="center" colspan="4">swiglu_custom</td></tr>
-  </table>
+  | 类别 | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | 样例类型 | swiglu | - | - | - |
+  | 样例输入 | src0 | [1, 32] | float | ND |
+  | 样例输入 | src1 | [1, 32] | float | ND |
+  | 样例输出 | dst | [1, 32] | float | ND |
+  | 核函数名 | swiglu_custom | - | - | - |
 
 - 样例实现：  
   本样例实现的是固定shape的样例，输入元素个数为32。通过Tiling机制将计算参数（dataLength、sharedTmpBufferSize）从Host端传递到Device端，支持灵活配置计算规模。
