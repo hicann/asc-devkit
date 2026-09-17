@@ -675,6 +675,21 @@ def _gen_kernel_func_declare_head(
     return source, workspace_idx, called_func_params, called_func_params_type
 
 
+def _gen_usr_workspace_codes():
+    workspace_ptr = "AscendC::GetUserWorkspace(workspace)"
+    if CommonUtility.is_support_workspace_offset():
+        workspace_ptr = "workspace + AscendC::RESERVED_WORKSPACE"
+        if CommonUtility.is_c310():
+            return (
+                "#if ENABLE_CV_COMM_VIA_SSBUF != 0 && __MIX_CORE_AIC_RATION__ != 1\n"
+                "    GM_ADDR usrWorkspace = workspace;\n"
+                "#else\n"
+                f"    GM_ADDR usrWorkspace = {workspace_ptr};\n"
+                "#endif\n"
+            )
+    return f"    GM_ADDR usrWorkspace = {workspace_ptr};\n"
+
+
 def _gen_set_workspace_codes(
     is_mix: bool,
     is_single_and_using_hard_sync: bool,
@@ -683,20 +698,7 @@ def _gen_set_workspace_codes(
     compile_options: list,
     compile_info: CompileInfo,
 ):
-    # set workspace
-    source = ""
-    if global_var_storage.get_variable("ascendc_enable_dump_workspace") is True or (
-        not CommonUtility.is_support_workspace_offset()
-    ):
-        source += "    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n"
-    else:
-        source += (
-            "#if ENABLE_CV_COMM_VIA_SSBUF != 0 && __MIX_CORE_AIC_RATION__ != 1\n"
-            "    GM_ADDR usrWorkspace = workspace;\n"
-            "#else\n"
-            "    GM_ADDR usrWorkspace = workspace + AscendC::RESERVED_WORKSPACE;\n"
-            "#endif\n"
-        )
+    source = _gen_usr_workspace_codes()
     if "oom" in get_current_build_config("tir.op_debug_config"):
         source = add_op_param_to_workspace(
             opinfo, tiling_info, source, compile_options, compile_info

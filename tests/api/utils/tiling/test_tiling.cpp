@@ -217,6 +217,11 @@ TEST_F(TestTiling, TestPlatformAscendC)
     platfrom_stub_set_chip_version("Ascend950");
     platfrom_stub_set_npuarch("3510");
     EXPECT_EQ(plat.GetLibApiWorkSpaceSize(), 16 * 1024 * 1024);
+    platfrom_stub_set_chip_version("MC62");
+    platfrom_stub_set_npuarch("5102");
+    EXPECT_EQ(plat.GetLibApiWorkSpaceSize(), 1024);
+    platfrom_stub_set_chip_version("Ascend950");
+    platfrom_stub_set_npuarch("3510");
     MOCKER_CPP(
         &fe::PlatFormInfos::GetPlatformResWithLock,
         bool(fe::PlatFormInfos::*)(const std::string&, const std::string&, std::string&))
