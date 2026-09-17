@@ -393,14 +393,14 @@ __global__ __vector__ void ub_limit_simd_simt_vf_kernel(__gm__ uint32_t* output)
 
 **样例目标**：
 
-说明MainScalar、SIMD VF和SIMT VF中声明的静态UB共同占用当前Kernel的静态内存区域，统计UB用量时需要合计；同时说明三处名称不同的动态UB声明具有相同首地址，共用Kernel启动时配置的动态UB空间。
+说明MainScalar、SIMD VF和SIMT VF中的静态UB布局关系：VF之间复用同一份静态UB，该内存大小取决于各个VF所需静态内存最大值，MainScalar的静态UB单独排布；同时说明三处名称不同的动态UB声明具有相同首地址，共用Kernel启动时配置的动态UB空间。
 
 **核心实现**：
 
-Case 2分别在MainScalar、SIMD VF和SIMT VF中声明静态UB。根据[SIMD与SIMT混合编程内存层级](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分)，混合编程模式下可在这三个执行空间申请静态内存，动态内存位于静态内存之后；静态UB的实际排布请参考该文档。MainScalar声明1KB的`main_static_ub`，SIMD VF声明2KB静态UB，SIMT VF声明4KB静态UB。本Case中三处声明大小均满足默认要求，因此静态内存区域占用为：
+Case 2分别在MainScalar、SIMD VF和SIMT VF中声明静态UB。根据[SIMD与SIMT混合编程内存层级](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分)，混合编程模式下可在这三个执行空间申请静态内存，动态内存位于静态内存之后；静态UB的实际排布请参考该文档。MainScalar声明1KB的`main_static_ub`，SIMD VF声明2KB静态UB，SIMT VF声明4KB静态UB。由于AIV上VF是串行执行的，VF之间复用同一份静态UB，其大小取决于各个VF所需静态内存最大值，即`max(2KB, 4KB) = 4KB`；MainScalar的静态UB单独排布在UB起始位置。本Case中三处声明大小均满足默认要求，因此静态内存区域占用为：
 
 ```text
-静态内存区域占用 = 1KB + 2KB + 4KB = 7168B
+静态内存区域占用 = 1KB（MainScalar） + max(2KB, 4KB)（VF复用） = 5120B
 ```
 
 MainScalar、SIMD VF和SIMT VF分别访问各自声明的静态UB数组，使静态UB声明参与当前Kernel布局。以下代码展示MainScalar、SIMD VF和SIMT VF中的静态UB和动态UB声明：
@@ -421,24 +421,24 @@ MainScalar、SIMD VF和SIMT VF分别将各自静态UB数组和动态UB数组的�
 
 **执行结果**：
 
-本Case中MainScalar、SIMD VF和SIMT VF的静态UB首地址分别为`0x0`、`0x400`和`0xc00`；静态内存区域总占用为7168B，换算为十六进制是`0x1c00`。动态UB位于静态内存之后，因此首地址为`0x1c00`。运行结果如下：
+本Case中MainScalar的静态UB首地址为`0x0`；SIMD VF和SIMT VF复用同一份静态UB，首地址均为`0x400`；静态内存区域总占用为5120B，换算为十六进制是`0x1400`。动态UB位于静态内存之后，因此首地址为`0x1400`。运行结果如下：
 
 | SCENARIO_NUM | 场景 | 执行结果 |
 | --- | --- | --- |
 | 6 | 静态UB和动态UB布局 | 运行通过 |
 
 ```text
-[Case2] static_total_bytes=7168
-[Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0xc00
-[Case2] main_dynamic_ub=0x1c00, simd_dynamic_ub=0x1c00, simt_dynamic_ub=0x1c00
+[Case2] static_total_bytes=5120
+[Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0x400
+[Case2] main_dynamic_ub=0x1400, simd_dynamic_ub=0x1400, simt_dynamic_ub=0x1400
 [Case2] result=PASSED
 ```
 
-本Case中三处静态UB首地址按声明大小依次累加；动态UB首地址均为`0x1c00`，与本Case静态内存区域占用对应的地址一致。
+本Case中MainScalar的静态UB单独排布在UB起始位置；SIMD VF和SIMT VF复用同一份静态UB，该内存大小取决于各VF所需静态内存最大值，因此两处首地址相同。动态UB位于静态内存之后；MainScalar、SIMD VF和SIMT VF声明的动态UB名称不同，但首地址相同，共用Kernel启动时配置的动态UB空间。
 
 **结论**：
 
-MainScalar、SIMD VF和SIMT VF中声明的静态UB共同占用当前Kernel的静态内存区域，统计UB用量时需要合计。动态UB位于静态内存之后；MainScalar、SIMD VF和SIMT VF声明的动态UB名称不同，但首地址相同，共用Kernel启动时配置的动态UB空间。更多UB排布说明请参考[SIMD与SIMT混合编程内存层级](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分)。
+MainScalar的静态UB单独排布；由于AIV上VF串行执行，VF之间复用同一份静态UB，该内存大小取决于各个VF所需静态内存最大值，统计UB用量时需按“MainScalar静态UB + 各VF静态UB最大值”计算。动态UB位于静态内存之后；MainScalar、SIMD VF和SIMT VF声明的动态UB名称不同，但首地址相同，共用Kernel启动时配置的动态UB空间。更多UB排布说明请参考[SIMD与SIMT混合编程内存层级](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分)。
 
 ### Case 3：不同执行位置的UB越界访问结果
 
@@ -610,8 +610,7 @@ The extend info: errcode:(341) errorStr: The address for VEC to access UB is out
     ```bash
     SCENARIO_NUM=3                              # 选择场景，可选0~14
     mkdir -p build && cd build                  # 创建并进入build目录
-    cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 \
-      -DSCENARIO_NUM=${SCENARIO_NUM} ..         # 配置工程
+    cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=${SCENARIO_NUM} ..   # 配置工程
     make -j                                     # 编译工程
     ./ub_usage_limit                            # 运行样例
     ```
@@ -646,9 +645,7 @@ make -j
 Case 1通过`SCENARIO_NUM=2~5`选择VF调用场景，并可通过`CMAKE_ASC_FLAGS`追加关闭预留空间的编译选项。以“同时调用SIMD VF和SIMT VF，并关闭全部预留”为例：
 
 ```bash
-cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 \
-  -DSCENARIO_NUM=5 \
-  -DCMAKE_ASC_FLAGS="--cce-disable-vf-stack-reserved-ubuf --cce-disable-asc-reserved-ubuf" ..
+cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=5 -DCMAKE_ASC_FLAGS="--cce-disable-vf-stack-reserved-ubuf --cce-disable-asc-reserved-ubuf" ..
 make -j
 ./ub_usage_limit
 ```
@@ -695,9 +692,9 @@ make -j
 - Case 2运行后输出如下信息：
 
     ```text
-    [Case2] static_total_bytes=7168
-    [Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0xc00
-    [Case2] main_dynamic_ub=0x1c00, simd_dynamic_ub=0x1c00, simt_dynamic_ub=0x1c00
+    [Case2] static_total_bytes=5120
+    [Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0x400
+    [Case2] main_dynamic_ub=0x1400, simd_dynamic_ub=0x1400, simt_dynamic_ub=0x1400
     [Case2] result=PASSED
     ```
 

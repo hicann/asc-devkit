@@ -395,11 +395,15 @@ In SIMD and SIMT hybrid programming, whether a VF is called, whether a SIMT VF i
 
 **Objective**:
 
-Explain that static UB declarations in MainScalar, a SIMD VF, and a SIMT VF jointly occupy the current kernel's static memory region and must be counted together. Also explain that the three differently named dynamic UB declarations have the same start address and share the region configured at kernel launch.
+Explain the static UB layout across MainScalar, a SIMD VF, and a SIMT VF: VFs reuse the same static UB region whose size is the maximum of all VFs' static UB, while MainScalar's static UB is laid out separately. Also explain that the three differently named dynamic UB declarations have the same start address and share the region configured at kernel launch.
 
 **Core implementation**:
 
-Case 2 declares static UB separately in MainScalar, a SIMD VF, and a SIMT VF. According to the [SIMD and SIMT hybrid programming memory hierarchy](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分), static memory can be allocated in MainScalar, SIMD VF, and SIMT VF in mixed programming, and dynamic memory follows static memory. For the actual static UB layout, see that document. MainScalar declares a 1 KB `main_static_ub` array, the SIMD VF declares 2 KB, and the SIMT VF declares 4 KB. In this Case, all three declarations satisfy the default requirements, so the static memory region occupies 7168 bytes.
+Case 2 declares static UB separately in MainScalar, a SIMD VF, and a SIMT VF. According to the [SIMD and SIMT hybrid programming memory hierarchy](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分), static memory can be allocated in MainScalar, SIMD VF, and SIMT VF in mixed programming, and dynamic memory follows static memory. For the actual static UB layout, see that document. MainScalar declares a 1 KB `main_static_ub` array, the SIMD VF declares 2 KB, and the SIMT VF declares 4 KB. Because VFs are executed serially on the AIV, VFs reuse the same static UB region whose size is the maximum of all VFs' static UB, that is, `max(2 KB, 4 KB) = 4 KB`; MainScalar's static UB is laid out separately at the start of UB. In this Case, all three declarations satisfy the default requirements, so the static memory region occupies 5120 bytes:
+
+```text
+Static memory region = 1 KB (MainScalar) + max(2 KB, 4 KB) (reused by VFs) = 5120 bytes
+```
 
 MainScalar, the SIMD VF, and the SIMT VF each access their static UB array so that these static UB declarations participate in the current kernel layout. The following code shows the static and dynamic UB declarations in MainScalar, the SIMD VF, and the SIMT VF:
 
@@ -419,24 +423,24 @@ MainScalar, the SIMD VF, and the SIMT VF convert the start addresses of their st
 
 **Execution result**:
 
-The static UB start addresses in MainScalar, the SIMD VF, and the SIMT VF are `0x0`, `0x400`, and `0xc00`, respectively. The static memory region occupies 7168 bytes, which is `0x1c00` in hexadecimal. Dynamic UB follows static memory, so its start address is `0x1c00`. The result is as follows:
+The static UB start address in MainScalar is `0x0`. The SIMD VF and the SIMT VF reuse the same static UB region, so both start at `0x400`. The static memory region occupies 5120 bytes, which is `0x1400` in hexadecimal. Dynamic UB follows static memory, so its start address is `0x1400`. The result is as follows:
 
 | SCENARIO_NUM | Scenario | Result |
 | --- | --- | --- |
 | 6 | Static and dynamic UB layout | Passed |
 
 ```text
-[Case2] static_total_bytes=7168
-[Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0xc00
-[Case2] main_dynamic_ub=0x1c00, simd_dynamic_ub=0x1c00, simt_dynamic_ub=0x1c00
+[Case2] static_total_bytes=5120
+[Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0x400
+[Case2] main_dynamic_ub=0x1400, simd_dynamic_ub=0x1400, simt_dynamic_ub=0x1400
 [Case2] result=PASSED
 ```
 
-In this Case, the three static UB start addresses accumulate according to the declaration sizes. The dynamic UB start address is `0x1c00` in all three locations, matching the address corresponding to the static memory region in this Case.
+In this Case, MainScalar's static UB is laid out separately at the start of UB. The SIMD VF and the SIMT VF reuse the same static UB region whose size is the maximum of all VFs' static UB, so the two start addresses are identical. The dynamic UB start address is `0x1400` in all three locations, matching the address corresponding to the static memory region in this Case.
 
 **Conclusion**:
 
-Static UB declarations in MainScalar, the SIMD VF, and the SIMT VF jointly occupy the current kernel's static memory region and must be counted together. Dynamic UB follows static memory. The three dynamic arrays have different names but the same start address and share the region configured at kernel launch. For more UB layout information, see [SIMD and SIMT hybrid programming memory hierarchy](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分).
+MainScalar's static UB is laid out separately. Because VFs are executed serially on the AIV, VFs reuse the same static UB region whose size is the maximum of all VFs' static UB; therefore, count UB usage as "MainScalar static UB + the maximum static UB among all VFs". Dynamic UB follows static memory. The three dynamic arrays have different names but the same start address and share the region configured at kernel launch. For more UB layout information, see [SIMD and SIMT hybrid programming memory hierarchy](../../../../docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md#ub划分).
 
 ### Case 3: UB Out-of-Bounds Access Results at Different Execution Locations
 
@@ -608,8 +612,7 @@ Run the following steps in the sample root directory to build and execute the sa
     ```bash
     SCENARIO_NUM=3                              # Select a scenario: 0-14
     mkdir -p build && cd build                  # Create and enter the build directory
-    cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 \
-      -DSCENARIO_NUM=${SCENARIO_NUM} ..         # Configure the project
+    cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=${SCENARIO_NUM} ..   # Configure the project
     make -j                                     # Build the project
     ./ub_usage_limit                            # Run the sample
     ```
@@ -644,9 +647,7 @@ make -j
 For Case 1, use `SCENARIO_NUM=2-5` to select the VF-call scenario, and append compiler options that disable reserved UB through `CMAKE_ASC_FLAGS` if needed. The following example calls both a SIMD VF and a SIMT VF with all reserved UB disabled:
 
 ```bash
-cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 \
-  -DSCENARIO_NUM=5 \
-  -DCMAKE_ASC_FLAGS="--cce-disable-vf-stack-reserved-ubuf --cce-disable-asc-reserved-ubuf" ..
+cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=5 -DCMAKE_ASC_FLAGS="--cce-disable-vf-stack-reserved-ubuf --cce-disable-asc-reserved-ubuf" ..
 make -j
 ./ub_usage_limit
 ```
@@ -693,9 +694,9 @@ The following examples show execution results for each Case.
 - For Case 2, the following information is displayed after execution:
 
     ```text
-    [Case2] static_total_bytes=7168
-    [Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0xc00
-    [Case2] main_dynamic_ub=0x1c00, simd_dynamic_ub=0x1c00, simt_dynamic_ub=0x1c00
+    [Case2] static_total_bytes=5120
+    [Case2] main_static_ub=0x0, simd_static_ub=0x400, simt_static_ub=0x400
+    [Case2] main_dynamic_ub=0x1400, simd_dynamic_ub=0x1400, simt_dynamic_ub=0x1400
     [Case2] result=PASSED
     ```
 
