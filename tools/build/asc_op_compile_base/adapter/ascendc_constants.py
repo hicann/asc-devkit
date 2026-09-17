@@ -189,3 +189,11 @@ class CompileOptionTuple:
     def __init__(self, compile_options, mllvm_options):
         self.compile_options = compile_options
         self.mllvm_options = mllvm_options
+
+
+DEFAULT_TILING_KEY = "0"
+COMPILE_INFO_KEY = "compileInfo"
+GEN_PLACE_HOLDER_STR = "gen_placeholder"
+TILING_KEY_SEARCH_KEYWORD = (
+    "Contents of section"  # used in new tiling to search tiling section lines
+)
