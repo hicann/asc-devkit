@@ -23,9 +23,9 @@
 ## 相关文档
 
 - [CONTRIBUTING.md](../../../CONTRIBUTING.md) — 贡献总流程
-- [asc_adv_api_contributing.md](../asc_adv_api_contributing.md) — 高阶API开发流程
-- [asc_basic_api_contributing.md](../asc_basic_api_contributing.md) — 基础API开发流程
-- [asc_c_api_contributing.md](../asc_c_api_contributing.md) — C API开发流程
-- [asc_doc_contributing.md](../asc_doc_contributing.md) — 文档贡献流程
+- [asc_adv_api_contributing.md](./asc_adv_api_contributing.md) — 高阶API开发流程
+- [asc_basic_api_contributing.md](./asc_basic_api_contributing.md) — 基础API开发流程
+- [asc_c_api_contributing.md](./asc_c_api_contributing.md) — C API开发流程
+- [asc_doc_contributing.md](./asc_doc_contributing.md) — 文档贡献流程
 
 ---

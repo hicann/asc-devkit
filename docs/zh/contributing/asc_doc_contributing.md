@@ -12,7 +12,7 @@ Ascend C资料体系包含五份核心文档，开发者可以通过提交PR对�
 | 算子实践参考 | 算子实现、性能优化、调优案例 | `docs/zh/guide/operator_practice/` |
 | 跨代迁移兼容性指南 | API兼容策略、架构变更映射、迁移步骤 | `docs/zh/guide/cross_gen_migration_guide/` |
 
-在阅读本文档前，请确保您已了解昇腾AI处理器硬件架构。零基础开发者推荐先阅读[入门教程](./guide/getting_started/ascend_c_overview_and_learning_path.md)；已有基础的开发者推荐先阅读[Ascend C编程指南](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC)。
+在阅读本文档前，请确保您已了解昇腾AI处理器硬件架构。零基础开发者推荐先阅读[入门教程](../guide/getting_started/ascend_c_overview_and_learning_path.md)；已有基础的开发者推荐先阅读[Ascend C编程指南](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC)。
 
 ---
 
@@ -46,7 +46,7 @@ Ascend C资料体系包含五份核心文档，开发者可以通过提交PR对�
 
 ## 编写规范
 
-Ascend C资料遵循[《Ascend C资料设计规范》](./asc_doc_design_rules.md)的三个维度要求：可获取性、可读性、完备性。以下是针对常见编写场景的具体规范。
+Ascend C资料遵循[《Ascend C资料设计规范》](../asc_doc_design_rules.md)的三个维度要求：可获取性、可读性、完备性。以下是针对常见编写场景的具体规范。
 
 ### 通用规范
 
@@ -121,7 +121,7 @@ API参考手册是**接口详情权威源**，每个API页面必须包含以下�
 | 9 | 关键特性说明 | 条件必须 | 矩阵/向量计算类API如涉及关键硬件特性（HF32、GEMV、UnitFlag等），须有对应特性说明节；简单API可省略 |
 | 10 | 调用示例  | ✅ 必须 | 代码片段示例 + 链接到样例库（如有对应样例，如果接口没有对应样例可省略链接） |
 
-各个结构的详细写作规范请阅读[Ascend C API写作规范](./asc_api_writing_guidelines.md)。
+各个结构的详细写作规范请阅读[Ascend C API写作规范](../asc_api_writing_guidelines.md)。
 
 ---
 
@@ -251,7 +251,7 @@ __aicore__ inline void ExampleKernel(__gm__ uint8_t* x) {  // __aicore__=核函�
 提交资料PR前，请逐项检查：
 
 **内容正确性**：
-- [ ] 所有硬件参数值（容量、粒度、范围）与[硬件规格](./guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/architecture_spec.md)保持一致
+- [ ] 所有硬件参数值（容量、粒度、范围）与[硬件规格](../guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/architecture_spec.md)保持一致
 - [ ] "固定值"等绝对性描述已经核实（很多"固定值"实际由配置参数决定）
 - [ ] 数据通路描述与实际路径一致（不与其他文档矛盾）
 

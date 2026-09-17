@@ -433,4 +433,4 @@ cd {ASC_DEVKIT_PATH}/build/tests/api/basic_api
 - asc-devkit 仓库: `{ASC_DEVKIT_PATH}`
 - CANN 包路径: `{CANN_PATH}`
 - 环境设置脚本: `{CANN_PATH}/set_env.sh`
-- 基础 API 贡献指南: `{ASC_DEVKIT_PATH}/docs/asc_basic_api_contributing.md`
+- 基础 API 贡献指南: `{ASC_DEVKIT_PATH}/docs/zh/contributing/asc_basic_api_contributing.md`

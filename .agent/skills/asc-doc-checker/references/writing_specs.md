@@ -5,7 +5,7 @@
 | 检查范围 | 权威源 | 主要条款 |
 |---|---|---|
 | API 章节和导航 | `docs/zh/asc_api_writing_guidelines.md` | `API-STRUCT-*` |
-| API 页面必需和条件章节 | `docs/zh/asc_doc_contributing.md` | API参考页面编写规范 |
+| API 页面必需和条件章节 | `docs/zh/contributing/asc_doc_contributing.md` | API参考页面编写规范 |
 | 产品支持和芯片标签 | `docs/zh/asc_api_writing_guidelines.md` | `API-PROD-*`、`API-CUSTOM-*` |
 | 功能、原型、参数、返回值、约束和示例 | `docs/zh/asc_api_writing_guidelines.md` | `API-FUNC-*`、`API-PROTO-*`、`API-PARAM-*`、`API-RET-*`、`API-CONST-*`、`API-EXAMPLE-*` |
 | 数据类型和术语 | `docs/zh/asc_api_writing_guidelines.md` | `API-SOFTWARE-*`、`API-TERM-00` |

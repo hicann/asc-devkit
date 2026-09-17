@@ -11,13 +11,13 @@ description: |
 ## 权威资料
 
 开始检查前，完整读取 `docs/zh/asc_api_writing_guidelines.md`。该文件是规则的主要权威来源；
-API 页面必需与条件章节由 `docs/zh/asc_doc_contributing.md` 补充。与本技能的示例、参考资料或
+API 页面必需与条件章节由 `docs/zh/contributing/asc_doc_contributing.md` 补充。与本技能的示例、参考资料或
 现有文档存在冲突时，以这两份现行规范为准。
 
 按检查对象按需读取以下现行资料：
 
 - API 内容页：`docs/zh/asc_api_writing_guidelines.md` 中对应的 `API-*` 条款。
-- API 页面章节清单：`docs/zh/asc_doc_contributing.md` 中的“API参考页面编写规范”。
+- API 页面章节清单：`docs/zh/contributing/asc_doc_contributing.md` 中的“API参考页面编写规范”。
 - 导航或索引页：`docs/zh/api/README.md` 及 `API-STRUCT-*` 条款。
 - 术语：`docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md`。
 - 已更名接口：`docs/zh/api/appendix/interface_change_description.md`。

@@ -19,7 +19,7 @@ Ascend C高阶API的开发流程主要包括如下步骤：
   - 单算子测试
 ---
 ## 自定义开发全新API
-下面以高阶API `Axpy`为例，介绍如何从零开始，开发一个高阶API。本案例删除了部分非必要代码，您可以在代码仓的[axpy.h](../../include/adv_api/math/axpy.h)、[axpy_tiling.h](../../include/adv_api/math/axpy_tiling.h)、[axpy_tiling_intf.h](../../include/adv_api/math/axpy_tiling_intf.h)、[axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h)、[axpy_tiling_impl.cpp](../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp)文件中查看全部代码。
+下面以高阶API `Axpy`为例，介绍如何从零开始，开发一个高阶API。本案例删除了部分非必要代码，您可以在代码仓的[axpy.h](../../../include/adv_api/math/axpy.h)、[axpy_tiling.h](../../../include/adv_api/math/axpy_tiling.h)、[axpy_tiling_intf.h](../../../include/adv_api/math/axpy_tiling_intf.h)、[axpy_common_impl.h](../../../impl/adv_api/detail/math/axpy/axpy_common_impl.h)、[axpy_tiling_impl.cpp](../../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp)文件中查看全部代码。
 ### 设计API
 axpy的功能为源操作数`srcTensor`中每个元素与标量求积后，与目的操作数`dstTensor`中的对应元素相加，计算公式如下。
 
@@ -77,7 +77,7 @@ $$
 #### 编写API对外接口
 - 核函数（Kernel）侧接口
     
-    在`include/adv_api/`对应分类的目录下，新增[axpy.h](../../include/adv_api/math/axpy.h)文件。根据上述分析设计的API函数原型，编写对外接口的代码，函数实现中调用AxpyImpl的实现。
+    在`include/adv_api/`对应分类的目录下，新增[axpy.h](../../../include/adv_api/math/axpy.h)文件。根据上述分析设计的API函数原型，编写对外接口的代码，函数实现中调用AxpyImpl的实现。
     ```c++
     template <typename T, typename U, bool isReuseSource = false>
     __aicore__ inline void Axpy(const LocalTensor<T>& dstTensor, const LocalTensor<U>& srcTensor, const U scalarValue,
@@ -88,7 +88,7 @@ $$
     ```
 - Tiling侧接口
     
-    在`include/adv_api/`对应分类的目录下，新增[axpy_tiling.h](../../include/adv_api/math/axpy_tiling.h)文件。根据上述分析设计的Tiling侧接口，编写函数声明。
+    在`include/adv_api/`对应分类的目录下，新增[axpy_tiling.h](../../../include/adv_api/math/axpy_tiling.h)文件。根据上述分析设计的Tiling侧接口，编写函数声明。
     ```c++
     #include "../utils/types.h"
 
@@ -96,7 +96,7 @@ $$
     ```
 - 在公共文件中引入头文件。
 
-    [include/adv_api/kernel_api.h](../../include/adv_api/kernel_api.h)文件中包含了所有高阶API头文件，建议在该文件中引入新增API的头文件，这样在调用高阶API时，只需要引入`"kernel_api.h"`。
+    [include/adv_api/kernel_api.h](../../../include/adv_api/kernel_api.h)文件中包含了所有高阶API头文件，建议在该文件中引入新增API的头文件，这样在调用高阶API时，只需要引入`"kernel_api.h"`。
     ```c++
     #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 1001 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201)
     // ...
@@ -105,7 +105,7 @@ $$
     #endif // __NPU_ARCH__ == 1001 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201
     ```
     
-    [include/adv_api/tiling_api.h](../../include/adv_api/tiling_api.h)文件中包含了所有高阶API的TIling接口头文件，建议在该文件中引入新增的Tiling接口头文件，这样在调用高阶API的Tiling函数时，只需要引入`"tiling_api.h"`。
+    [include/adv_api/tiling_api.h](../../../include/adv_api/tiling_api.h)文件中包含了所有高阶API的TIling接口头文件，建议在该文件中引入新增的Tiling接口头文件，这样在调用高阶API的Tiling函数时，只需要引入`"tiling_api.h"`。
     ```c++
     #include "math/axpy_tiling.h"
     ```
@@ -113,7 +113,7 @@ $$
 #### 编写API内部实现
 - 核函数（Kernel）侧实现
 
-    在核函数（Kernel）接口实现文件路径[impl/adv_api/detail](../../impl/adv_api/detail)的相应类别目录（本案例为`math`）下新增`axpy`目录，在该目录下新增接口实现文件[axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h)，然后在该实现文件中编写接口实现代码。
+    在核函数（Kernel）接口实现文件路径[impl/adv_api/detail](../../../impl/adv_api/detail)的相应类别目录（本案例为`math`）下新增`axpy`目录，在该目录下新增接口实现文件[axpy_common_impl.h](../../../impl/adv_api/detail/math/axpy/axpy_common_impl.h)，然后在该实现文件中编写接口实现代码。
 
     首先，引入必要的头文件。
     ```c++
@@ -217,7 +217,7 @@ $$
     ```
 - Tiling侧实现
 
-     在Tiling接口实现文件路径[impl/adv_api/tiling](../../impl/adv_api/tiling)的相应类别目录（本案例为`math`）下新增接口实现文件[axpy_tiling_impl.cpp](../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp)，然后在该实现文件中编写接口实现代码。
+     在Tiling接口实现文件路径[impl/adv_api/tiling](../../../impl/adv_api/tiling)的相应类别目录（本案例为`math`）下新增接口实现文件[axpy_tiling_impl.cpp](../../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp)，然后在该实现文件中编写接口实现代码。
 
     首先，引入必要的头文件。
     ```c++
@@ -288,7 +288,7 @@ $$
         return AXPY_ONE_REPEAT_BYTE_SIZE * (typeSize == sizeof(float) ? AXPY_FLOAT_CALC_PROC : AXPY_HALF_CALC_PROC);
     }
     ```
-    编写完Tiling侧实现文件后，需要在[impl/adv_api/tiling/CMakeLists.txt](../../impl/adv_api/tiling/CMakeLists.txt)中引入该文件。具体方式为：在`add_library(tiling_api STATIC ...)`语句中新增文件路径`${CMAKE_CURRENT_SOURCE_DIR}/math/axpy_tiling_impl.cpp`。
+    编写完Tiling侧实现文件后，需要在[impl/adv_api/tiling/CMakeLists.txt](../../../impl/adv_api/tiling/CMakeLists.txt)中引入该文件。具体方式为：在`add_library(tiling_api STATIC ...)`语句中新增文件路径`${CMAKE_CURRENT_SOURCE_DIR}/math/axpy_tiling_impl.cpp`。
 ## 基于原有API进阶开发
 若开发者基于当前仓库已有的API进行进阶特性开发，设计API的过程与前述内容相同。开发代码时，考虑对原有函数实现重载或新增代码分支，根据进阶特性的算法功能，确定需要使用的基础API，并完成编码。例如，原有API对部分数据类型不支持，假设Axpy不支持目的操作数元素为float类型，那么就需要对`AxpyIntrinsicsImpl`函数进行重载，实现dstTensor数据类型为float的函数功能。
 ```c++
@@ -318,7 +318,7 @@ UT测试使用gTest作为测试框架，一般验证接口编译是否正常，�
 ##### UT编码
 ###### 核函数（Kernel）侧
 
-在UT目录[tests/api/adv_api/math](../../tests/api/adv_api/math)下新增目录`axpy`、文件[test_operator_axpy.cpp](../../tests/api/adv_api/math/axpy/test_operator_axpy.cpp)。UT实现主要包括如下三部分：
+在UT目录[tests/api/adv_api/math](../../../tests/api/adv_api/math)下新增目录`axpy`、文件[test_operator_axpy.cpp](../../../tests/api/adv_api/math/axpy/test_operator_axpy.cpp)。UT实现主要包括如下三部分：
 1. 引入头文件
     ```c++
     #include <gtest/gtest.h>
@@ -412,7 +412,7 @@ UT测试使用gTest作为测试框架，一般验证接口编译是否正常，�
         ```
 ###### Tiling侧
 
-Tiling接口的UT目前统一在[tests/api/adv_api/tiling/test_tiling.cpp](../../tests/api/adv_api/tiling/test_tiling.cpp)文件中，在该文件中添加相应测试函数即可。
+Tiling接口的UT目前统一在[tests/api/adv_api/tiling/test_tiling.cpp](../../../tests/api/adv_api/tiling/test_tiling.cpp)文件中，在该文件中添加相应测试函数即可。
 ```c++
 TEST_F(TestTiling, TestAxpyTiling)
 {
@@ -427,7 +427,7 @@ TEST_F(TestTiling, TestAxpyTiling)
 }
 ```
 ##### 修改cmake文件
-在执行UT用例前，需要修改[CMakeLists.txt](../../tests/api/adv_api/CMakeLists.txt)文件，由于核函数（Kernel）侧和Tiling侧的UT执行对象不同，需要在不同的target下添加测试文件。以核函数（Kernel）侧验证Atlas A2 训练系列产品/Atlas A2 推理系列产品的UT为例，将UT测试文件路径添加到用例的源文件列表`ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`中，即新增文件路径`${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`。Tiling侧同理，需要将测试文件添加到`ASCENDC_TILING_TEST_SRC_FILES`列表。
+在执行UT用例前，需要修改[CMakeLists.txt](../../../tests/api/adv_api/CMakeLists.txt)文件，由于核函数（Kernel）侧和Tiling侧的UT执行对象不同，需要在不同的target下添加测试文件。以核函数（Kernel）侧验证Atlas A2 训练系列产品/Atlas A2 推理系列产品的UT为例，将UT测试文件路径添加到用例的源文件列表`ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`中，即新增文件路径`${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`。Tiling侧同理，需要将测试文件添加到`ASCENDC_TILING_TEST_SRC_FILES`列表。
 ##### 执行UT
 - 执行全量UT用例
   
@@ -437,11 +437,11 @@ TEST_F(TestTiling, TestAxpyTiling)
   ```
 - 仅运行新增UT用例
 
-  打开[tests/main_global.cpp](../../tests/main_global.cpp)文件，在main函数中return前的最后一行添加下面的代码，利用gTest的过滤器根据单元测试的单元名字过滤测试用例。
+  打开[tests/main_global.cpp](../../../tests/main_global.cpp)文件，在main函数中return前的最后一行添加下面的代码，利用gTest的过滤器根据单元测试的单元名字过滤测试用例。
     ```c++
     ::testing::GTEST_FLAG(filter) = "*Axpy*";
     ```
-  修改[build.sh](../../build.sh)，将all修改为需要执行的UT target，以执行核函数（Kernel）侧Ascend 910B1的UT为例，target即为ascendc_ut_adv_api_kernel_ascend910B1_AIV。
+  修改[build.sh](../../../build.sh)，将all修改为需要执行的UT target，以执行核函数（Kernel）侧Ascend 910B1的UT为例，target即为ascendc_ut_adv_api_kernel_ascend910B1_AIV。
   ```bash
   function build_test() {
     cmake_config
@@ -454,11 +454,11 @@ TEST_F(TestTiling, TestAxpyTiling)
 完成高阶API编码后，通过实现算子功能，在算子中调用该API，来测试API的功能，具体参考如下步骤。
 - 编译安装。
 
-  将新增或修改的API源码编译并安装到环境中，具体方式请参考[编译安装](./quick_start.md#compile&install)。
+  将新增或修改的API源码编译并安装到环境中，具体方式请参考[编译安装](../quick_start.md#compile&install)。
 - 创建简易自定义算子工程并测试。
 
   自定义开发算子，创建简易自定义算子工程后，通过调用单算子测试API功能。关于算子开发和简易自定义算子工程的详细内容请参考[Ascend C编程指南](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC)。
 
 
 ## 合入代码
-当开发者完成高阶API的编码和测试后，请参考[贡献指南](../../CONTRIBUTING.md)将代码合入本仓库。
+当开发者完成高阶API的编码和测试后，请参考[贡献指南](../../../CONTRIBUTING.md)将代码合入本仓库。

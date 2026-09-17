@@ -23,9 +23,9 @@
 ## Related Documents
 
 - [CONTRIBUTING_en.md](../../../CONTRIBUTING_en.md) — Contribution process
-- [asc_adv_api_contributing.md](../asc_adv_api_contributing.md) — High-level API development process
-- [asc_basic_api_contributing.md](../asc_basic_api_contributing.md) — Basic API development process
-- [asc_c_api_contributing.md](../asc_c_api_contributing.md) — C API development process
-- [asc_doc_contributing.md](../asc_doc_contributing.md) — Documentation contribution process
+- [asc_adv_api_contributing.md](./asc_adv_api_contributing.md) — High-level API development process
+- [asc_basic_api_contributing.md](./asc_basic_api_contributing.md) — Basic API development process
+- [asc_c_api_contributing.md](./asc_c_api_contributing.md) — C API development process
+- [asc_doc_contributing.md](./asc_doc_contributing.md) — Documentation contribution process
 
 ---

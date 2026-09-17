@@ -1619,7 +1619,7 @@
       "expect": {
         "minResults": 1,
         "targets": [
-          { "exact": "/asc_basic_api_contributing", "grade": 3 }
+          { "exact": "/contributing/asc_basic_api_contributing", "grade": 3 }
         ]
       }
     },
@@ -1631,7 +1631,7 @@
       "expect": {
         "minResults": 1,
         "targets": [
-          { "exact": "/asc_c_api_contributing", "grade": 3 }
+          { "exact": "/contributing/asc_c_api_contributing", "grade": 3 }
         ]
       }
     },

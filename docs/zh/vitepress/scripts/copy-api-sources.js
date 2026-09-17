@@ -70,9 +70,9 @@ console.log(`copied ${files.length} .md files to docs/public/api-source/files/`)
 console.log(`generated bundle.json (${bundleSize} MB) with ${Object.keys(bundle).length} entries`)
 
 const contribFiles = [
-  'asc_adv_api_contributing.md',
-  'asc_basic_api_contributing.md',
-  'asc_c_api_contributing.md',
+  'contributing/asc_adv_api_contributing.md',
+  'contributing/asc_basic_api_contributing.md',
+  'contributing/asc_c_api_contributing.md',
   'asc_how_to_choose_api.md',
   'quick_start.md',
 ]
@@ -85,7 +85,9 @@ let copiedCount = 0
 for (const f of contribFiles) {
   const src = path.join(contribSrcDir, f)
   if (fs.existsSync(src)) {
-    fs.copyFileSync(src, path.join(contribDstDir, f))
+    const dst = path.join(contribDstDir, f)
+    fs.mkdirSync(path.dirname(dst), { recursive: true })
+    fs.copyFileSync(src, dst)
     copiedCount++
   }
 }
@@ -97,7 +99,9 @@ fs.mkdirSync(contribEnDst, { recursive: true })
 for (const f of contribFiles) {
   const src = path.join(contribEnDir, f)
   if (fs.existsSync(src)) {
-    fs.copyFileSync(src, path.join(contribEnDst, f))
+    const dst = path.join(contribEnDst, f)
+    fs.mkdirSync(path.dirname(dst), { recursive: true })
+    fs.copyFileSync(src, dst)
     copiedCount++
   }
 }

@@ -46,7 +46,7 @@ If you have practical experience with Ascend C operator performance optimization
 
 ## Writing Conventions
 
-Ascend C documentation follows the three-dimensional requirements defined in the [Ascend C Documentation Design Principles](./asc_doc_design_rules.md): discoverability, readability, and completeness. Below are specific conventions for common writing scenarios.
+Ascend C documentation follows the three-dimensional requirements defined in the [Ascend C Documentation Design Principles](../asc_doc_design_rules.md): discoverability, readability, and completeness. Below are specific conventions for common writing scenarios.
 
 ### General Conventions
 
@@ -121,7 +121,7 @@ The API Reference Manual is the **interface detail authority source**. Each API 
 | 9 | Key Feature Description | Conditionally required | Matrix/vector computation APIs involving key hardware features such as HF32, GEMV, or UnitFlag must include corresponding feature descriptions; simple APIs may omit this section |
 | 10 | Code Example | ✅ Required | Provides a code snippet and a link to the sample repository when a corresponding sample exists; the link may be omitted when no sample is available |
 
-For detailed writing requirements for each section, see the [Ascend C API Writing Guidelines](./asc_api_writing_guidelines.md).
+For detailed writing requirements for each section, see the [Ascend C API Writing Guidelines](../asc_api_writing_guidelines.md).
 
 ---
 
@@ -251,7 +251,7 @@ Refer to existing cases under `operator_practice/best_practices/` (e.g., FlashAt
 Before submitting a documentation PR, check each item:
 
 **Content Accuracy**:
-- [ ] All hardware parameter values (capacity, granularity, range) are consistent with [Architecture Specifications](../../docs/zh/guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/architecture_spec.md)
+- [ ] All hardware parameter values (capacity, granularity, range) are consistent with [Architecture Specifications](../../../docs/zh/guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/architecture_spec.md)
 - [ ] "Fixed value" and other absolute descriptions have been verified (many "fixed values" are actually determined by configuration parameters)
 - [ ] Data path descriptions match actual routes (no contradictions with other documents)
 

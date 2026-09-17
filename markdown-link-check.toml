@@ -48,6 +48,7 @@ exclude = [
     "^https://docs\\.docker\\.com/$",
     "^https://docs\\.docker\\.com/reference/cli/docker/buildx/$",
     "^https://ccache\\.dev/documentation\\.html$",
+    "//img\\.shields\\.io/badge/",
 ]
 
 exclude_path = [

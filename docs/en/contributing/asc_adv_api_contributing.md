@@ -19,7 +19,7 @@ Ascend C high-level API development process mainly includes the following steps:
   - Single operator testing
 ---
 ## Custom Development of Brand-new API
-Below uses high-level API `Axpy` as an example to introduce how to develop a high-level API from scratch. This case removes some unnecessary code. You can view all code in the repository files [axpy.h](../../include/adv_api/math/axpy.h), [axpy_tiling.h](../../include/adv_api/math/axpy_tiling.h), [axpy_tiling_intf.h](../../include/adv_api/math/axpy_tiling_intf.h), [axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h), [axpy_tiling_impl.cpp](../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp).
+Below uses high-level API `Axpy` as an example to introduce how to develop a high-level API from scratch. This case removes some unnecessary code. You can view all code in the repository files [axpy.h](../../../include/adv_api/math/axpy.h), [axpy_tiling.h](../../../include/adv_api/math/axpy_tiling.h), [axpy_tiling_intf.h](../../../include/adv_api/math/axpy_tiling_intf.h), [axpy_common_impl.h](../../../impl/adv_api/detail/math/axpy/axpy_common_impl.h), [axpy_tiling_impl.cpp](../../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp).
 ### Design API
 Axpy's function is to multiply each element in source operand `srcTensor` with a scalar, then add it with the corresponding element in destination operand `dstTensor`. The calculation formula is as follows.
 
@@ -77,7 +77,7 @@ $$
 #### Write API External Interface
 - Kernel Function Side Interface
     
-    In the corresponding category directory under `include/adv_api/`, add new file [axpy.h](../../include/adv_api/math/axpy.h). Based on the above analyzed and designed API function prototype, write external interface code. Function implementation calls AxpyImpl implementation.
+    In the corresponding category directory under `include/adv_api/`, add new file [axpy.h](../../../include/adv_api/math/axpy.h). Based on the above analyzed and designed API function prototype, write external interface code. Function implementation calls AxpyImpl implementation.
     ```c++
     template <typename T, typename U, bool isReuseSource = false>
     __aicore__ inline void Axpy(const LocalTensor<T>& dstTensor, const LocalTensor<U>& srcTensor, const U scalarValue,
@@ -88,7 +88,7 @@ $$
     ```
 - Tiling Side Interface
     
-    In the corresponding category directory under `include/adv_api/`, add new file [axpy_tiling.h](../../include/adv_api/math/axpy_tiling.h). Based on the above analyzed and designed Tiling side interface, write function declaration.
+    In the corresponding category directory under `include/adv_api/`, add new file [axpy_tiling.h](../../../include/adv_api/math/axpy_tiling.h). Based on the above analyzed and designed Tiling side interface, write function declaration.
     ```c++
     #include "../utils/types.h"
 
@@ -96,7 +96,7 @@ $$
     ```
 - Include header files in common files.
 
-    [include/adv_api/kernel_api.h](../../include/adv_api/kernel_api.h) file includes all high-level API header files. Recommend including new API header files in this file, so when calling high-level APIs, only need to include `"kernel_api.h"`.
+    [include/adv_api/kernel_api.h](../../../include/adv_api/kernel_api.h) file includes all high-level API header files. Recommend including new API header files in this file, so when calling high-level APIs, only need to include `"kernel_api.h"`.
     ```c++
     #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 1001 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201)
     // ...
@@ -105,7 +105,7 @@ $$
     #endif // __NPU_ARCH__ == 1001 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201
     ```
     
-    [include/adv_api/tiling_api.h](../../include/adv_api/tiling_api.h) file includes all high-level API Tiling interface header files. Recommend including new Tiling interface header files in this file, so when calling high-level API Tiling functions, only need to include `"tiling_api.h"`.
+    [include/adv_api/tiling_api.h](../../../include/adv_api/tiling_api.h) file includes all high-level API Tiling interface header files. Recommend including new Tiling interface header files in this file, so when calling high-level API Tiling functions, only need to include `"tiling_api.h"`.
     ```c++
     #include "math/axpy_tiling.h"
     ```
@@ -113,7 +113,7 @@ $$
 #### Write API Internal Implementation
 - Kernel Function Side Implementation
 
-    In the kernel function interface implementation path [impl/adv_api/detail](../../impl/adv_api/detail), add a new `axpy` directory under the corresponding category directory (`math` in this case). In this directory, add new interface implementation file [axpy_common_impl.h](../../impl/adv_api/detail/math/axpy/axpy_common_impl.h), then write interface implementation code in this implementation file.
+    In the kernel function interface implementation path [impl/adv_api/detail](../../../impl/adv_api/detail), add a new `axpy` directory under the corresponding category directory (`math` in this case). In this directory, add new interface implementation file [axpy_common_impl.h](../../../impl/adv_api/detail/math/axpy/axpy_common_impl.h), then write interface implementation code in this implementation file.
 
     First, include necessary header files.
     ```c++
@@ -217,7 +217,7 @@ $$
     ```
 - Tiling Side Implementation
 
-    In Tiling interface implementation file path [impl/adv_api/tiling](../../impl/adv_api/tiling) corresponding category directory (this case is `math`), add new interface implementation file [axpy_tiling_impl.cpp](../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp), then write interface implementation code in this implementation file.
+    In Tiling interface implementation file path [impl/adv_api/tiling](../../../impl/adv_api/tiling) corresponding category directory (this case is `math`), add new interface implementation file [axpy_tiling_impl.cpp](../../../impl/adv_api/tiling/math/axpy_tiling_impl.cpp), then write interface implementation code in this implementation file.
 
     First, include necessary header files.
     ```c++
@@ -288,7 +288,7 @@ $$
         return AXPY_ONE_REPEAT_BYTE_SIZE * (typeSize == sizeof(float) ? AXPY_FLOAT_CALC_PROC : AXPY_HALF_CALC_PROC);
     }
     ```
-    After writing Tiling side implementation file, need to include this file in [impl/adv_api/tiling/CMakeLists.txt](../../impl/adv_api/tiling/CMakeLists.txt). Specifically: add file path `${CMAKE_CURRENT_SOURCE_DIR}/math/axpy_tiling_impl.cpp` in `add_library(tiling_api STATIC ...)` statement.
+    After writing Tiling side implementation file, need to include this file in [impl/adv_api/tiling/CMakeLists.txt](../../../impl/adv_api/tiling/CMakeLists.txt). Specifically: add file path `${CMAKE_CURRENT_SOURCE_DIR}/math/axpy_tiling_impl.cpp` in `add_library(tiling_api STATIC ...)` statement.
 ## Advanced Development Based on Existing API
 If developers perform advanced feature development based on existing APIs in current repository, the design API process is the same as described above. When developing code, consider reloading existing function implementations or adding new code branches. Based on advanced feature algorithm function, determine needed basic APIs and complete coding. For example, if existing API does not support some data types, suppose Axpy does not support destination operand element as float type, then need to overload `AxpyIntrinsicsImpl` function to implement dstTensor data type as float function.
 ```c++
@@ -318,7 +318,7 @@ UT testing uses gTest as testing framework, generally verifies interface compila
 ##### UT Coding
 ###### Kernel Function Side
 
-In UT directory [tests/api/adv_api/math](../../tests/api/adv_api/math), add new directory `axpy`, file [test_operator_axpy.cpp](../../tests/api/adv_api/math/axpy/test_operator_axpy.cpp). UT implementation mainly includes the following three parts:
+In UT directory [tests/api/adv_api/math](../../../tests/api/adv_api/math), add new directory `axpy`, file [test_operator_axpy.cpp](../../../tests/api/adv_api/math/axpy/test_operator_axpy.cpp). UT implementation mainly includes the following three parts:
 1. Include header files
     ```c++
     #include <gtest/gtest.h>
@@ -412,7 +412,7 @@ In UT directory [tests/api/adv_api/math](../../tests/api/adv_api/math), add new 
         ```
 ###### Tiling Side
 
-Tiling interface UT is currently unified in [tests/api/adv_api/tiling/test_tiling.cpp](../../tests/api/adv_api/tiling/test_tiling.cpp) file. Add corresponding test function in this file.
+Tiling interface UT is currently unified in [tests/api/adv_api/tiling/test_tiling.cpp](../../../tests/api/adv_api/tiling/test_tiling.cpp) file. Add corresponding test function in this file.
 ```c++
 TEST_F(TestTiling, TestAxpyTiling)
 {
@@ -427,7 +427,7 @@ TEST_F(TestTiling, TestAxpyTiling)
 }
 ```
 ##### Modify cmake file
-Before executing UT cases, modify the [CMakeLists.txt](../../tests/api/adv_api/CMakeLists.txt) file. Since kernel function-side UTs and Tiling-side UTs have different test targets, add the test files to their respective targets. Using the kernel function-side UT for Atlas A2 training series products/Atlas A2 inference series products as an example, add the UT test file path to the case source file list `ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`, that is, add the new file path `${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`. For the Tiling-side UT, add the test file to the `ASCENDC_TILING_TEST_SRC_FILES` list.
+Before executing UT cases, modify the [CMakeLists.txt](../../../tests/api/adv_api/CMakeLists.txt) file. Since kernel function-side UTs and Tiling-side UTs have different test targets, add the test files to their respective targets. Using the kernel function-side UT for Atlas A2 training series products/Atlas A2 inference series products as an example, add the UT test file path to the case source file list `ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`, that is, add the new file path `${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`. For the Tiling-side UT, add the test file to the `ASCENDC_TILING_TEST_SRC_FILES` list.
 ##### Execute UT
 - Execute all UT cases
   
@@ -437,11 +437,11 @@ Before executing UT cases, modify the [CMakeLists.txt](../../tests/api/adv_api/C
   ```
 - Run only new UT cases
 
-  Open [tests/main_global.cpp](../../tests/main_global.cpp) file, add the following code in the last line before return in main function. Use gTest filter to filter test cases based on unit test unit name.
+  Open [tests/main_global.cpp](../../../tests/main_global.cpp) file, add the following code in the last line before return in main function. Use gTest filter to filter test cases based on unit test unit name.
     ```c++
     ::testing::GTEST_FLAG(filter) = "*Axpy*";
     ```
-  Modify [build.sh](../../build.sh), change all to needed UT target. Using the Ascend 910B1 kernel function-side UT as an example, the target is ascendc_ut_adv_api_kernel_ascend910B1_AIV.
+  Modify [build.sh](../../../build.sh), change all to needed UT target. Using the Ascend 910B1 kernel function-side UT as an example, the target is ascendc_ut_adv_api_kernel_ascend910B1_AIV.
   ```bash
   function build_test() {
     cmake_config
@@ -454,11 +454,11 @@ Before executing UT cases, modify the [CMakeLists.txt](../../tests/api/adv_api/C
 After completing high-level API coding, test API functionality by implementing operator function and calling the API in the operator. Refer to the following steps.
 - Compile and install.
 
-  Compile and install new or modified API source code to environment. For specific method, refer to [Compile and Install](./quick_start.md#compile&install).
+  Compile and install new or modified API source code to environment. For specific method, refer to [Compile and Install](../quick_start.md#compile&install).
 - Create simple custom operator project and test.
 
   Custom develop operator, after creating simple custom operator project, test API functionality by calling single operator. For detailed content about operator development and simple custom operator project, refer to [Ascend C Programming Guide](https://www.hiascend.com/document/redirect/CannCommunityOpdevAscendC).
 
 
 ## Merge Code
-When developers complete high-level API coding and testing, please refer to [Contribution Guide](../../CONTRIBUTING_en.md) to merge code into this repository.
+When developers complete high-level API coding and testing, please refer to [Contribution Guide](../../../CONTRIBUTING_en.md) to merge code into this repository.

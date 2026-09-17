@@ -7,23 +7,15 @@ Key directory structure is as follows:
 ```
 ├── zh                             # Chinese documentation directory
 │   ├── api                        # API documentation directory
-│   ├── contributing               # Code contribution standards directory (code style, API design, directory structure, testing, etc.)
+│   ├── contributing               # Contribution guide directory (API contribution guides, code contribution standards, etc.)
 │   ├── figures                    # Image directory
 │   ├── guide                      # Ascend C operator develop guide
 │   ├── vitepress                      # docs build directory
-│   ├── asc_adv_api_contributing.md    # Ascend C high-level API contribution guide
-│   ├── asc_basic_api_contributing.md  # Ascend C basic API contribution guide
-│   ├── asc_c_api_contributing.md      # Ascend C C API contribution guide
-│   ├── asc_doc_contributing.md        # Ascend C documentation contribution guide
 │   ├── asc_doc_design_rules.md        # Ascend C documentation design rules
 │   ├── asc_how_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
 │   └── quick_start.md                 # Quick start documentation
 ├── en                                 # English documentation directory
-│   ├── contributing                   # Code contribution standards directory (code style, API design, directory structure, testing, etc.)
-│   ├── asc_adv_api_contributing.md    # Ascend C high-level API contribution guide
-│   ├── asc_basic_api_contributing.md  # Ascend C basic API contribution guide
-│   ├── asc_c_api_contributing.md      # Ascend C C API contribution guide
-│   ├── asc_doc_contributing.md        # Ascend C documentation contribution guide
+│   ├── contributing                   # Contribution guide directory (API contribution guides, code contribution standards, etc.)
 │   ├── asc_doc_design_rules.md        # Ascend C documentation design rules
 │   ├── asc_how_to_choose_api.md       # Ascend C Multi-Level Programming Interface Selection Guide
 │   └── quick_start.md                 # Quick start documentation
@@ -37,10 +29,10 @@ To help developers quickly familiarize with this project, corresponding document
 | Document | Target Audience | Content Introduction |
 |---|---|---|
 | [API List](./zh/api/README.md) | Users developing customized APIs or operators based on Ascend C open source repository. | Introduces all APIs included in the project. |
-| [High-level API Contribution Guide](./en/asc_adv_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C high-level API. High-level API abstracts and encapsulates common algorithms based on single-core, implementing commonly used computational algorithms to improve operator development efficiency. |
-| [Basic API Contribution Guide](./en/asc_basic_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C basic API. Basic API implements abstraction of hardware capabilities, opening chip capabilities, ensuring completeness and compatibility. |
-| [C API Contribution Guide](./en/asc_c_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C C API. C API provides pure C style interfaces, conforming to C language operator development habits, opening complete chip programming capabilities. |
-| [Documentation Contribution Guide](./en/asc_doc_contributing.md) | Developers improving existing Ascend C documentation. | Introduces the writing and contribution specifications for each chapter of Ascend C documentation. |
+| [High-level API Contribution Guide](./en/contributing/asc_adv_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C high-level API. High-level API abstracts and encapsulates common algorithms based on single-core, implementing commonly used computational algorithms to improve operator development efficiency. |
+| [Basic API Contribution Guide](./en/contributing/asc_basic_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C basic API. Basic API implements abstraction of hardware capabilities, opening chip capabilities, ensuring completeness and compatibility. |
+| [C API Contribution Guide](./en/contributing/asc_c_api_contributing.md) | Users developing customized APIs based on Ascend C open source repository. | Introduces how to extend or develop Ascend C C API. C API provides pure C style interfaces, conforming to C language operator development habits, opening complete chip programming capabilities. |
+| [Documentation Contribution Guide](./en/contributing/asc_doc_contributing.md) | Developers improving existing Ascend C documentation. | Introduces the writing and contribution specifications for each chapter of Ascend C documentation. |
 | [Documentation Design Rules](./en/asc_doc_design_rules.md) | Developers improving existing Ascend C documentation. | Introduces the Ascend C documentation architecture and overall design principles. |
 | [Code Contribution Standards](./en/contributing/README.md) | Developers contributing code to Ascend C. | Index of contribution standards: code style, API design, directory structure, testing. |
 | [Ascend C Getting Started Guide](./zh/guide/getting_started/ascend_c_overview_and_learning_path.md) | Beginners of Ascend C | Introduces basic concepts of operator programming and the Ascend C learning path, helping developers quickly get started with operator development. |
