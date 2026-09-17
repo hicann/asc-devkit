@@ -19,10 +19,20 @@ extern "C" __simd_vf__ void datacopy_test()
     AscendC::Reg::RegTensor<uint8_t> a, b, c;
     AscendC::Reg::RegTensor<uint16_t> d, e, f;
     AscendC::Reg::RegTensor<uint64_t> h;
+#if __NPU_ARCH__ == 3510
+    AscendC::Reg::RegTensor<uint64_t, AscendC::Reg::RegTraitNumTwo> i;
+#endif
     AscendC::Reg::RegTensor<uint32_t> j;
+#if __NPU_ARCH__ == 3510
+    AscendC::Reg::RegTensor<complex32, AscendC::Reg::RegTraitNumTwo> k;
+#endif
     AscendC::Reg::AddrReg a1, b1, c1;
     __ubuf__ uint8_t* aAddr;
     __ubuf__ uint32_t* bAddr;
+#if __NPU_ARCH__ == 3510
+    __ubuf__ uint64_t* hAddr;
+    __ubuf__ complex32* kAddr;
+#endif
     AscendC::Reg::MaskReg mask;
     AscendC::Reg::UnalignRegForLoad u1;
 
@@ -107,6 +117,10 @@ extern "C" __simd_vf__ void datacopy_test()
     // template <typename T = DefaultType, typename U>
     // __simd_callee__ inline void Load(U& dstReg, __ubuf__ T* srcAddr);
     AscendC::Reg::Load(a, aAddr);
+#if __NPU_ARCH__ == 3510
+    AscendC::Reg::Load<uint64_t>(i, hAddr);
+    AscendC::Reg::Load(k, kAddr);
+#endif
 
     // vlda/vldu
     // template <typename T>
@@ -132,6 +146,12 @@ extern "C" __simd_vf__ void datacopy_test()
     // template <typename T = DefaultType, typename U>
     // __simd_callee__ inline void Store(__ubuf__ T* dstAddr, U& srcReg, uint32_t count);
     AscendC::Reg::Store(aAddr, a, 5);
+#if __NPU_ARCH__ == 3510
+    AscendC::Reg::Store<uint64_t>(hAddr, i);
+    AscendC::Reg::Store<uint64_t>(hAddr, i, 64);
+    AscendC::Reg::Store(kAddr, k);
+    AscendC::Reg::Store(kAddr, k, 128);
+#endif
 
     // vstu/vsta
     // template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>

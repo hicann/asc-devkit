@@ -1282,12 +1282,13 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
             Reg::MaskReg selMask, maskReg;
             Reg::RegTensor<uint8_t> selReg;
             Reg::UnalignReg ureg, uregDup;
-            // Unalign DataCopy do not support TraitNumTwo right now
-            Reg::LoadUnAlignPre(uregDup, (__ubuf__ T*)src0);
-            Reg::LoadUnAlign(tmpReg, uregDup, (__ubuf__ T*)src0);
+            // Load one register of packed 64-bit data before splitting it for broadcast.
+            Reg::RegTensor<uint32_t> packedReg;
+            Reg::LoadUnAlignPre(uregDup, (__ubuf__ uint32_t*)src0);
+            Reg::LoadUnAlign(packedReg, uregDup, (__ubuf__ uint32_t*)src0);
             Reg::DeInterleave<uint32_t>(
-                (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[1],
-                (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[0]);
+                (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[1], packedReg,
+                packedReg);
             Reg::MaskReg maskFull = Reg::CreateMask<uint32_t, Reg::MaskPattern::ALL>();
             Reg::Duplicate(src0Reg, tmpReg, maskFull);
             Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
@@ -1357,12 +1358,14 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
             Reg::MaskReg selMask, maskReg;
             Reg::RegTensor<uint8_t> selReg;
             Reg::UnalignReg ureg, uregDup;
-            Reg::LoadUnAlignPre(uregDup, (__ubuf__ T*)src1);
-            Reg::LoadUnAlign(tmpReg, uregDup, (__ubuf__ T*)src1);
+            // Load one register of packed 64-bit data before splitting it for broadcast.
+            Reg::RegTensor<uint32_t> packedReg;
+            Reg::LoadUnAlignPre(uregDup, (__ubuf__ uint32_t*)src1);
+            Reg::LoadUnAlign(packedReg, uregDup, (__ubuf__ uint32_t*)src1);
             Reg::MaskReg maskFull = Reg::CreateMask<uint32_t, Reg::MaskPattern::ALL>();
             Reg::DeInterleave<uint32_t>(
-                (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[1],
-                (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[0]);
+                (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[1], packedReg,
+                packedReg);
             Reg::Duplicate(src1Reg, tmpReg, maskFull);
             Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
             for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {

@@ -18,6 +18,7 @@
 | [data_copy_ub2l1](./data_copy_ub2l1) |  本样例在Mmad矩阵乘场景下，基于DataCopy实现UB（Unified Buffer）到L1（L1 Buffer）的数据搬运 | Ascend 950PR/Ascend 950DT |
 | [reg_auxscalar](./reg_auxscalar) |  本样例演示使用AuxScalar方式从UB读取多个标量数据参与计算 | Ascend 950PR/Ascend 950DT |
 | [reg_load_gather](./reg_load_gather) |  本样例演示使用Gather接口实现离散数据搬入，包含高维Gather（源为LocalTensor）和GatherB（按DataBlock收集）两种场景 | Ascend 950PR/Ascend 950DT |
+| [reg_load_store](./reg_load_store) |  本样例演示Load和Store易用性接口在RegTraitNumOne和RegTraitNumTwo场景下的非对齐数据搬运 | Ascend 950PR/Ascend 950DT |
 | [reg_load_store_align](./reg_load_store_align) |  本样例实现UB(Unified Buffer)对RegTensor(Reg矢量计算基本单元)的连续和非连续的对齐数据搬运操作 | Ascend 950PR/Ascend 950DT |
 | [reg_load_store_mask](./reg_load_store_mask) |  本样例实现UB(Unified Buffer)对MaskReg(掩码寄存器)的搬入搬出，以及使用mask进行掩码搬出的操作 | Ascend 950PR/Ascend 950DT |
 | [reg_load_store_unalign](./reg_load_store_unalign) |  本样例实现UB(Unified Buffer)对RegTensor(Reg矢量计算基本单元)的非对齐数据搬运操作 | Ascend 950PR/Ascend 950DT |

@@ -18,18 +18,18 @@ using Reg::MaskReg;
 using Reg::RegTensor;
 using Reg::UpdateMask;
 
-template <typename T, int mode, int count, int traitNum>
+template <typename T, int mode, int count, int traitNum, typename StorageT = T>
 class KernelMicroDataCopyB64 {
 public:
     __aicore__ inline KernelMicroDataCopyB64() {}
     __aicore__ inline void Init(GM_ADDR srcGm, GM_ADDR dstGm, uint32_t totalNum)
     {
-        const int alginSize = static_cast<int>(32 / sizeof(T));
+        const int alginSize = static_cast<int>(32 / sizeof(StorageT));
         dstSize = (totalNum + alginSize - 1) / alginSize * alginSize;
-        srcGlobal.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(srcGm), dstSize);
-        dstGlobal.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(dstGm), dstSize);
-        pipe.InitBuffer(inQueue, 1, dstSize * sizeof(T));
-        pipe.InitBuffer(outQueue, 1, dstSize * sizeof(T));
+        srcGlobal.SetGlobalBuffer(reinterpret_cast<__gm__ StorageT*>(srcGm), dstSize);
+        dstGlobal.SetGlobalBuffer(reinterpret_cast<__gm__ StorageT*>(dstGm), dstSize);
+        pipe.InitBuffer(inQueue, 1, dstSize * sizeof(StorageT));
+        pipe.InitBuffer(outQueue, 1, dstSize * sizeof(StorageT));
     }
 
     __aicore__ inline void Process()
@@ -42,9 +42,9 @@ public:
 private:
     __aicore__ inline void CopyIn()
     {
-        LocalTensor<T> srcLocal = inQueue.AllocTensor<T>();
+        LocalTensor<StorageT> srcLocal = inQueue.AllocTensor<StorageT>();
         DataCopy(srcLocal, srcGlobal, dstSize);
-        inQueue.EnQue<T>(srcLocal);
+        inQueue.EnQue<StorageT>(srcLocal);
     }
 
     __aicore__ inline void ComputeMode0(__ubuf__ T* dst, __ubuf__ T* src)
@@ -207,12 +207,35 @@ private:
         }
     }
 
+    __aicore__ inline void ComputeLoadTraitTwo(__ubuf__ T* dst, __ubuf__ T* src)
+    {
+        Reg::RegTensor<T, Reg::RegTraitNumTwo> srcReg;
+        Reg::MaskReg mask = Reg::CreateMask<T, Reg::MaskPattern::ALL, Reg::RegTraitNumTwo>();
+        Reg::Load(srcReg, src);
+        Reg::StoreAlign(dst, srcReg, mask);
+    }
+
+    __aicore__ inline void ComputeStoreTraitTwo(__ubuf__ T* dst, __ubuf__ T* src)
+    {
+        Reg::RegTensor<T, Reg::RegTraitNumTwo> srcReg;
+        Reg::Load(srcReg, src);
+        Reg::Store(dst, srcReg);
+    }
+
+    __aicore__ inline void ComputeStoreTraitTwoWithCount(__ubuf__ T* dst, __ubuf__ T* src)
+    {
+        Reg::RegTensor<T, Reg::RegTraitNumTwo> srcReg;
+        constexpr uint32_t calcount = GetVecLen() * 2 / sizeof(T);
+        Reg::Load(srcReg, src);
+        Reg::Store(dst, srcReg, calcount);
+    }
+
     __aicore__ inline void Compute()
     {
-        LocalTensor<T> dstLocal = outQueue.AllocTensor<T>();
+        LocalTensor<StorageT> dstLocal = outQueue.AllocTensor<StorageT>();
         LocalTensor<uint32_t> tmp = dstLocal.template ReinterpretCast<uint32_t>();
-        Duplicate(tmp, static_cast<uint32_t>(0), dstSize * 2);
-        LocalTensor<T> srcLocal = inQueue.DeQue<T>();
+        Duplicate(tmp, static_cast<uint32_t>(0), dstSize * sizeof(StorageT) / sizeof(uint32_t));
+        LocalTensor<StorageT> srcLocal = inQueue.DeQue<StorageT>();
 
         __ubuf__ T* src = (__ubuf__ T*)srcLocal[0].GetPhyAddr();
         __ubuf__ T* dst = (__ubuf__ T*)dstLocal[0].GetPhyAddr();
@@ -240,23 +263,35 @@ private:
                 __ubuf__ T* src1 = (__ubuf__ T*)srcLocal[dstSize - count].GetPhyAddr();
                 __ubuf__ T* dst1 = (__ubuf__ T*)dstLocal[dstSize - count].GetPhyAddr();
                 ComputeMode8(dst1, src1);
+            } else if constexpr (mode == 901) {
+                __ubuf__ T* src1 = (__ubuf__ T*)srcLocal[1].GetPhyAddr();
+                __ubuf__ T* dst1 = (__ubuf__ T*)dstLocal[1].GetPhyAddr();
+                ComputeLoadTraitTwo(dst1, src1);
+            } else if constexpr (mode == 902) {
+                __ubuf__ T* src1 = (__ubuf__ T*)srcLocal[1].GetPhyAddr();
+                __ubuf__ T* dst1 = (__ubuf__ T*)dstLocal[1].GetPhyAddr();
+                ComputeStoreTraitTwo(dst1, src1);
+            } else if constexpr (mode == 903) {
+                __ubuf__ T* src1 = (__ubuf__ T*)srcLocal[1].GetPhyAddr();
+                __ubuf__ T* dst1 = (__ubuf__ T*)dstLocal[1].GetPhyAddr();
+                ComputeStoreTraitTwoWithCount(dst1, src1);
             }
         }
 
-        outQueue.EnQue<T>(dstLocal);
+        outQueue.EnQue<StorageT>(dstLocal);
         inQueue.FreeTensor(srcLocal);
     }
 
     __aicore__ inline void CopyOut()
     {
-        LocalTensor<T> dstLocal = outQueue.DeQue<T>();
+        LocalTensor<StorageT> dstLocal = outQueue.DeQue<StorageT>();
         DataCopy(dstGlobal, dstLocal, dstSize);
         outQueue.FreeTensor(dstLocal);
     }
 
 private:
-    GlobalTensor<T> srcGlobal;
-    GlobalTensor<T> dstGlobal;
+    GlobalTensor<StorageT> srcGlobal;
+    GlobalTensor<StorageT> dstGlobal;
 
     TPipe pipe;
     TQue<TPosition::VECIN, 1> inQueue;
@@ -264,10 +299,10 @@ private:
     uint32_t dstSize;
 };
 
-template <typename T, int mode, int count, int traitNum>
+template <typename T, int mode, int count, int traitNum, typename StorageT = T>
 __global__ __aicore__ void MicroDatacopyB64(uint8_t* dstGm, uint8_t* srcGm, uint32_t size)
 {
-    KernelMicroDataCopyB64<T, mode, count, traitNum> op;
+    KernelMicroDataCopyB64<T, mode, count, traitNum, StorageT> op;
     op.Init(srcGm, dstGm, size);
     op.Process();
 }
@@ -297,8 +332,8 @@ class MicroDatacopyB64Testsuite
     TEST_P(MicroDatacopyB64Testsuite_mode##mode1##count1##traitNum1, MicroDatacopyB64TestCase) \
     {                                                                                          \
         auto param = GetParam();                                                               \
-        uint8_t srcGm[param.size] = {0};                                                       \
-        uint8_t dstGm[param.size] = {0};                                                       \
+        uint8_t srcGm[param.size * sizeof(uint64_t)] = {0};                                    \
+        uint8_t dstGm[param.size * sizeof(uint64_t)] = {0};                                    \
         param.cal_func(dstGm, srcGm, param.size);                                              \
         for (int32_t i = 0; i < (sizeof(dstGm) / sizeof(dstGm[0])); i++) {                     \
             EXPECT_EQ(dstGm[i], 0x00);                                                         \
@@ -347,3 +382,60 @@ MICRO_DATACOPY_B64_TEST_CASE(300, 128, 2);
 MICRO_DATACOPY_B64_TEST_CASE(500, 128, 2);
 MICRO_DATACOPY_B64_TEST_CASE(600, 128, 2);
 MICRO_DATACOPY_B64_TEST_CASE(700, 128, 2);
+
+TEST(TestMicroDatacopyB64, LoadRegTraitNumTwoFromUnalignedAddress)
+{
+    constexpr uint32_t size = 65;
+    constexpr uint32_t alignedSize = 68;
+    uint64_t srcGm[alignedSize] = {0};
+    uint64_t dstGm[alignedSize] = {0};
+
+    MicroDatacopyB64<uint64_t, 901, 0, 2>(reinterpret_cast<uint8_t*>(dstGm), reinterpret_cast<uint8_t*>(srcGm), size);
+
+    for (uint32_t i = 0; i < alignedSize; ++i) {
+        EXPECT_EQ(dstGm[i], 0);
+    }
+}
+
+TEST(TestMicroDatacopyComplex32, LoadRegTraitNumTwoFromUnalignedAddress)
+{
+    constexpr uint32_t size = 129;
+    constexpr uint32_t alignedSize = 136;
+    uint32_t srcGm[alignedSize] = {0};
+    uint32_t dstGm[alignedSize] = {0};
+
+    MicroDatacopyB64<complex32, 901, 0, 2, uint32_t>(
+        reinterpret_cast<uint8_t*>(dstGm), reinterpret_cast<uint8_t*>(srcGm), size);
+
+    for (uint32_t i = 0; i < alignedSize; ++i) {
+        EXPECT_EQ(dstGm[i], 0);
+    }
+}
+
+TEST(TestMicroDatacopyB64, StoreRegTraitNumTwoToUnalignedAddress)
+{
+    constexpr uint32_t size = 65;
+    constexpr uint32_t alignedSize = 68;
+    uint64_t srcGm[alignedSize] = {0};
+    uint64_t dstGm[alignedSize] = {0};
+
+    MicroDatacopyB64<uint64_t, 902, 0, 2>(reinterpret_cast<uint8_t*>(dstGm), reinterpret_cast<uint8_t*>(srcGm), size);
+
+    for (uint32_t i = 0; i < alignedSize; ++i) {
+        EXPECT_EQ(dstGm[i], 0);
+    }
+}
+
+TEST(TestMicroDatacopyB64, StoreRegTraitNumTwoWithCountToUnalignedAddress)
+{
+    constexpr uint32_t size = 65;
+    constexpr uint32_t alignedSize = 68;
+    uint64_t srcGm[alignedSize] = {0};
+    uint64_t dstGm[alignedSize] = {0};
+
+    MicroDatacopyB64<uint64_t, 903, 0, 2>(reinterpret_cast<uint8_t*>(dstGm), reinterpret_cast<uint8_t*>(srcGm), size);
+
+    for (uint32_t i = 0; i < alignedSize; ++i) {
+        EXPECT_EQ(dstGm[i], 0);
+    }
+}
