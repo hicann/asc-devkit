@@ -11,7 +11,7 @@
 #define __TESTS_C_API_STUB__
 #include <cstdint>
 #include "stub_fun.h"
-#include "c_api/utils/enum.h"
+#include "c_api/defs/enum.h"
 
 template <typename C, typename A, typename B>
 inline void mad(
