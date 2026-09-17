@@ -30,23 +30,16 @@
   该样例对输入tensor按元素做反量化计算，将int32_t数据类型反量化为float等数据类型。
 
 - 样例规格：
-  <table border="2" align="left">
-  <caption>表1：样例输入输出规格</caption>
-  <tr><td rowspan="1" align="center">样例类型(OpType)</td><td colspan="4" align="center"> dequant </td></tr>
 
-  <tr><td rowspan="4" align="center">样例输入</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-   <tr><td align="center">inputGm</td><td align="center">[128, 32]</td><td align="center">int32_t</td><td align="center">ND</td></tr>
-   <tr><td align="center">deqScaleGm</td><td align="center">[1，32]</td><td align="center">float</td><td align="center">ND</td></tr>
+  **表1：样例输入输出规格**
 
-   <tr><td rowspan="2" align="center">样例输出</td></tr>
-   <tr><td align="center">outputGm</td><td align="center">[128, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
-
-
-  <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">dequant_custom</td></tr>
-  </table>
-  <br clear="left" />
-<br />
+  | 类别 | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | 样例类型(OpType) | dequant | - | - | - |
+  | 样例输入 | inputGm | [128, 32] | int32_t | ND |
+  | 样例输入 | deqScaleGm | [1，32] | float | ND |
+  | 样例输出 | outputGm | [128, 32] | float | ND |
+  | 核函数名 | dequant_custom | - | - | - |
 
 - 样例实现：  
    本样例中实现的是固定shape输入为inputGm[128, 32], scaleGm[1，32]，输出为outputGm[128, 32]。按元素做反量化计算，将int32_t数据类型反量化为float等数据类型。

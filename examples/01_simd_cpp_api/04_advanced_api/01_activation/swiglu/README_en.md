@@ -35,19 +35,16 @@ This example uses the SwiGLU high-level API in large language model and Mixture 
   $$Swish(x)=x/(1 + e^{(-\beta x)})$$
 
 - Example specifications:  
-  <table border="2" align="left">
-  <caption>Table 1: Example Specifications</caption>
-  <tr><td align="center" rowspan="1">Example Type</td><td align="center" colspan="4"> swiglu </td></tr>
 
-  <tr><td align="center" rowspan="4">Example Input</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">src0</td><td align="center">[1, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td align="center">src1</td><td align="center">[1, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td align="center" rowspan="2">Example Output</td></tr>
-  <tr><td align="center">dst</td><td align="center">[1, 32]</td><td align="center">float</td><td align="center">ND</td></tr>
+  **Table 1: Example Specifications**
 
-  <tr><td align="center" rowspan="1">Kernel Function Name</td><td align="center" colspan="4">swiglu_custom</td></tr>
-  </table>
+  | Category | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | Example Type | swiglu | - | - | - |
+  | Example Input | src0 | [1, 32] | float | ND |
+  | Example Input | src1 | [1, 32] | float | ND |
+  | Example Output | dst | [1, 32] | float | ND |
+  | Kernel Function Name | swiglu_custom | - | - | - |
 
 - Example implementation:  
   This example implements a fixed-shape example with 32 input elements. The Tiling mechanism passes computation parameters (dataLength, sharedTmpBufferSize) from the host side to the device side, supporting flexible configuration of computation scale.

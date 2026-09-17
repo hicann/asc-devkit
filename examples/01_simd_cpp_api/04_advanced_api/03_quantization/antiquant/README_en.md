@@ -31,21 +31,17 @@ This example uses the [AscendAntiQuant](../../../../../docs/zh/api/SIMD-API/adv_
   Perform element-wise dequantization, for example converting int8_t data type to half data type.
 
 - Example specifications:
-  <table border="2" align="left">
-  <caption>Table 1: Example Input/Output Specifications</caption>
-  <tr><td rowspan="1" align="center">Example Type (OpType)</td><td colspan="4" align="center"> antiquant </td></tr>
 
-  <tr><td rowspan="5" align="center">Example Input</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">src</td><td align="center">[8, 128]</td><td align="center">int8_t</td><td align="center">ND</td></tr>
-  <tr><td align="center">offset</td><td align="center">[1, 128]</td><td align="center">half</td><td align="center">ND</td></tr>
-  <tr><td align="center">scale</td><td align="center">[1, 128]</td><td align="center">half</td><td align="center">ND</td></tr>
-  <tr><td rowspan="2" align="center">Example Output</td></tr>
-  <tr><td align="center">dst</td><td align="center">[8, 128]</td><td align="center">half</td><td align="center">ND</td></tr>
-  <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">antiquant_custom</td></tr>
-  </table>
-  <br clear="left" />
-<br />
+  **Table 1: Example Input/Output Specifications**
+
+  | Category | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | Example Type (OpType) | antiquant | - | - | - |
+  | Example Input | src | [8, 128] | int8_t | ND |
+  | Example Input | offset | [1, 128] | half | ND |
+  | Example Input | scale | [1, 128] | half | ND |
+  | Example Output | dst | [8, 128] | half | ND |
+  | Kernel Function Name | antiquant_custom | - | - | - |
 
 - Example implementation:  
   This example implements an antiquant_custom example with fixed shapes of input src[8, 128], offset[1, 128], scale[1, 128], and output dst[8, 128]. It performs element-wise dequantization, converting int8_t type data to half type data.

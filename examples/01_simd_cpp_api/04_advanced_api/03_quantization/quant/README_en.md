@@ -30,23 +30,15 @@ This example uses the [AscendQuant](../../../../../docs/zh/api/SIMD-API/adv_api/
   QuantCustom single example, performing element-wise quantization on the input tensor, converting half/float data types to int8_t data type.
 
 - Example specifications:
-  <table border="2" align="left">
-  <caption>Table 1: Example Input/Output Specifications</caption>
-  <tr><td rowspan="1" align="center">Example Type (OpType)</td><td colspan="4" align="center"> quant </td></tr>
 
-  <tr><td rowspan="3" align="center">Example Input</td></tr>
-  <tr><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">inputGm</td><td align="center">[1, 1024]</td><td align="center">float</td><td align="center">ND</td></tr>
+  **Table 1: Example Input/Output Specifications**
 
-
-  <tr><td rowspan="2" align="center">Example Output</td></tr>
-  <tr><td align="center">outputGm</td><td align="center">[1, 1024]</td><td align="center">int8_t</td><td align="center">ND</td></tr>
-
-
-  <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">quant_custom</td></tr>
-  </table>
-  <br clear="left" />
-<br />
+  | Category | name | shape | data type | format |
+  | --- | --- | --- | --- | --- |
+  | Example Type (OpType) | quant | - | - | - |
+  | Example Input | inputGm | [1, 1024] | float | ND |
+  | Example Output | outputGm | [1, 1024] | int8_t | ND |
+  | Kernel Function Name | quant_custom | - | - | - |
 
 - Example implementation:  
   This example implements a fixed shape input inputGm[1, 1024] with quantization parameters scale=2.0 and offset=0.9. This example is for the PER_TENSOR scenario (per-tensor quantization), converting float data type to int8_t data type.
