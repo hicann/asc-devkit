@@ -132,6 +132,10 @@ repeatStride是指相邻迭代间相同DataBlock的地址步长。
 mask用于控制每次迭代内参与计算的元素。可以按位控制哪些元素参与计算，bit位的值为1表示参与计算，0表示不参与。
 mask实际取值范围和操作数的数据类型有关。当操作数为16位时，mask包含2个uint64_t数据，mask0、mask1∈[0, 2^64-1]并且不同时为0；当操作数为32位时，mask包含1个uint64_t数据，mask0∈(0, 2^64-1]；当操作数为64位时，mask包含1个uint64_t数据，mask0∈(0, 2^32-1]。 <br/>
 
+<!-- npu="A3,910b" id5 -->
+针对[NPU架构版本2201](../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)，前n个数据计算（连续计算）接口会改写Mask的值。调用此类接口后，如果后续需要调用高维切分计算接口，须先调用[asc_set_vector_mask](vector_compute/vector_mask_config/asc_set_vector_mask.md)重新设置Mask值，否则计算结果可能不符合预期。
+<!-- end id5 -->
+
 具体样例如下：
 
 ```cpp
