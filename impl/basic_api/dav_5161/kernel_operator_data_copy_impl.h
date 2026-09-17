@@ -159,7 +159,7 @@ __aicore__ inline void CopyCbufToGmAlignV2(
     // ISA/API: Is the ND matrix number to be moved
     uint64_t ndNum = 1;
     // ISA/API: unit of element
-    uint16_t loop2Size = burstLength;
+    uint16_t loop2Size = burstLength / sizeof(T);
     // ISA/API: unit of element
     uint32_t loop3Size = blockCount;
     // ISA: loop2SrcStride = 1, and does not to be set by programmer.
@@ -923,7 +923,7 @@ __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, cons
     // ISA/API: Is the ND matrix number to be moved
     uint64_t ndNum = 1;
     // ISA/API: unit of element
-    uint16_t loop2Size = intriParams.blockLen;
+    uint16_t loop2Size = intriParams.blockLen / sizeof(T);
     // ISA/API: unit of element
     uint32_t loop3Size = intriParams.blockCount;
     // ISA: loop2SrcStride = 1, and does not to be set by programmer.
@@ -973,7 +973,7 @@ __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, cons
     // ISA/API: Is the ND matrix number to be moved
     uint64_t ndNum = 1;
     // ISA/API: unit of element
-    uint16_t loop2Size = intriParams.blockLen;
+    uint16_t loop2Size = intriParams.blockLen / sizeof(T);
     // ISA/API: unit of element
     uint32_t loop3Size = intriParams.blockCount;
     // ISA: loop2SrcStride = 1, and does not to be set by programmer.
@@ -997,6 +997,22 @@ __aicore__ inline void DataCopyPadL12GMImpl(__gm__ T* dst, __cbuf__ T* src, cons
 #endif
 }
 
+#pragma begin_pipe(V)
+template <typename T>
+__aicore__ inline void DataCopyUB2UBIntf(
+    const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const DataCopyParams& intriParams)
+{
+    DataCopyUB2UBImpl(
+        (__ubuf__ PrimT<T>*)dstLocal.GetPhyAddr(), (__ubuf__ PrimT<T>*)srcLocal.GetPhyAddr(), intriParams);
+}
+#pragma end_pipe
+
+template <typename T>
+__aicore__ inline void DataCopyL12UBIntf(
+    const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const DataCopyParams& intriParams)
+{
+    DataCopyL12UBImpl((__ubuf__ T*)dstLocal.GetPhyAddr(), (__cbuf__ T*)srcLocal.GetPhyAddr(), intriParams);
+}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_DATA_COPY_IMPL_H
 

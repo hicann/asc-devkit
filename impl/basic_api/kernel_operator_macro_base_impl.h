@@ -146,7 +146,7 @@ __aicore__ inline void ConvFixImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<S>& filter, const LocalTensor<V>& bias,
     const ConvFixBitModeParams& convFixParams)
 {
-    ConvFixCal(
+    ConvFixCal<T, U, S, V>(
         (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)fm.GetPhyAddr(),
         (__cb__ PrimT<S>*)filter.GetPhyAddr(), (uint64_t)bias.GetPhyAddr(), convFixParams);
 }
@@ -156,7 +156,7 @@ __aicore__ inline void ConvFixImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<S>& filter, const LocalTensor<V>& bias,
     const ConvFixParams& convFixParams)
 {
-    ConvFixCal(
+    ConvFixCal<T, U, S, V>(
         (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)fm.GetPhyAddr(),
         (__cb__ PrimT<S>*)filter.GetPhyAddr(), (uint64_t)bias.GetPhyAddr(), convFixParams);
 }
@@ -186,7 +186,7 @@ __aicore__ inline void MmadFixImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& left, const LocalTensor<S>& right, const LocalTensor<V>& bias,
     const MmadFixBitModeParams& mmadFixParams)
 {
-    MmadFixCal(
+    MmadFixCal<T, U, S, V>(
         (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)left.GetPhyAddr(),
         (__cb__ PrimT<S>*)right.GetPhyAddr(), (uint64_t)bias.GetPhyAddr(), mmadFixParams);
 }
@@ -196,7 +196,7 @@ __aicore__ inline void MmadFixImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& left, const LocalTensor<S>& right, const LocalTensor<V>& bias,
     const MmadFixParams& mmadFixParams)
 {
-    MmadFixCal(
+    MmadFixCal<T, U, S, V>(
         (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)left.GetPhyAddr(),
         (__cb__ PrimT<S>*)right.GetPhyAddr(), (uint64_t)bias.GetPhyAddr(), mmadFixParams);
 }
@@ -226,7 +226,7 @@ __aicore__ inline void MmadMxFixImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& left, const LocalTensor<S>& right, const LocalTensor<V>& bias,
     const MmadFixBitModeParams& mmadFixParams)
 {
-    MmadMxFixCal(
+    MmadMxFixCal<T, U, S, V>(
         (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)left.GetPhyAddr(),
         (__cb__ PrimT<S>*)right.GetPhyAddr(), (uint64_t)bias.GetPhyAddr(), mmadFixParams);
 }
@@ -236,7 +236,7 @@ __aicore__ inline void MmadMxFixImpl(
     const LocalTensor<T>& dst, const LocalTensor<U>& left, const LocalTensor<S>& right, const LocalTensor<V>& bias,
     const MmadFixParams& mmadFixParams)
 {
-    MmadMxFixCal(
+    MmadMxFixCal<T, U, S, V>(
         (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)left.GetPhyAddr(),
         (__cb__ PrimT<S>*)right.GetPhyAddr(), (uint64_t)bias.GetPhyAddr(), mmadFixParams);
 }

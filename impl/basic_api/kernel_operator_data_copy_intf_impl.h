@@ -416,7 +416,11 @@ __aicore__ inline void DataCopy(
             CheckTensorAlign<T>(
                 src, ONE_BLK_SIZE, "src",
                 "DataCopy from L1 Buffer(A1/B1/C1) to Fixpipe Buffer(C2PIPE2GM)"); // 32B align
+#if (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)
+            DataCopyL12FBImpl((uint64_t)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), repeatParams);
+#else
             DataCopyL12FBImpl((__fbuf__ PrimType*)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), repeatParams);
+#endif
 #endif
 #if (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)
         } else if (dstHWPos == Hardware::PT) {
@@ -1754,7 +1758,8 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyPad(
     if (srcHWPos == Hardware::UB) {
         DataCopyPadUB2GMImpl<T, mode>(
             (__gm__ PrimType*)dst.GetPhyAddr(), (__ubuf__ PrimType*)src.GetPhyAddr(), dataCopyParams, cacheMode);
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     } else if (srcHWPos == Hardware::L1) {
         DataCopyPadL12GMImpl<T, mode>(
             (__gm__ PrimType*)dst.GetPhyAddr(), (__cbuf__ PrimType*)src.GetPhyAddr(), dataCopyParams);
