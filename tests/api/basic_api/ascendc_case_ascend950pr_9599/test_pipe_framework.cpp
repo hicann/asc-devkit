@@ -759,7 +759,7 @@ TEST_F(TEST_TPIPE, testLocalTensorSetBufferLen)
     TQue<TPosition::VECOUT, 4> que;
     int32_t num = 2;
     int32_t len = 1024;
-    int32_t bufLen = 512;
+    int32_t bufLen = 128;
     pipe.InitBuffer(que, num, len);
     LocalTensor<int32_t> tensor1 = que.AllocTensor<int32_t>();
     LocalTensor<int32_t> tensor2 = que.AllocTensor<int32_t>();
@@ -767,9 +767,11 @@ TEST_F(TEST_TPIPE, testLocalTensorSetBufferLen)
     tensor2.SetBufferLen(bufLen);
 
     EXPECT_EQ(tensor1.address_.bufferAddr, 0);
-    EXPECT_EQ(tensor1.address_.dataLen, bufLen);
+    EXPECT_EQ(tensor1.address_.dataLen, bufLen * sizeof(int32_t));
+    EXPECT_EQ(tensor1.GetSize(), bufLen);
     EXPECT_EQ(tensor2.address_.bufferAddr, len);
-    EXPECT_EQ(tensor2.address_.dataLen, bufLen);
+    EXPECT_EQ(tensor2.address_.dataLen, bufLen * sizeof(int32_t));
+    EXPECT_EQ(tensor2.GetSize(), bufLen);
 }
 
 /* **************************** TQue GetBufferPos ****************************** */

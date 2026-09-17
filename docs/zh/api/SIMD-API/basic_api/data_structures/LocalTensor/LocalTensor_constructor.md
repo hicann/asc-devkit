@@ -255,7 +255,7 @@ AscendC::LocalTensor<float> tmpBuffer1 = tempBmm2Queue.AllocTensor<float>();
 AscendC::LocalTensor<half> tmpHalfBuffer;
 tmpHalfBuffer.SetAddrWithOffset(tmpBuffer1, calcSize * 2);
 
-// 示例16 SetBufferLen如下示例将申请的Tensor长度修改为1024(单位为字节)
+// 示例16 SetBufferLen：将申请的Tensor长度修改为1024个元素，float类型对应4096字节
 AscendC::LocalTensor<float> tmpBuffer2 = tempBmm2Queue.AllocTensor<float>();
 tmpBuffer2.SetBufferLen(1024);
 

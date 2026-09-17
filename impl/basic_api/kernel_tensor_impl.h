@@ -1029,14 +1029,14 @@ LocalTensor<T>::GetLength() const
 template <typename T>
 __aicore__ inline void LocalTensor<T>::SetBufferLen(uint32_t dataLen)
 {
-    this->address_.dataLen = dataLen;
+    this->address_.dataLen = dataLen * sizeof(PrimType);
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
     if ASCEND_IS_AIV {
-        this->address_.bufferAddr = set_ub_addr_upper_bound(this->address_.bufferAddr, dataLen * sizeof(T));
+        this->address_.bufferAddr = set_ub_addr_upper_bound(this->address_.bufferAddr, dataLen * sizeof(PrimType));
     }
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
     if (GetPhyType(AscendC::TPosition(this->GetPosition())) == Hardware::UB) {
-        this->address_.bufferAddr = set_ub_addr_upper_bound(this->address_.bufferAddr, dataLen * sizeof(T));
+        this->address_.bufferAddr = set_ub_addr_upper_bound(this->address_.bufferAddr, dataLen * sizeof(PrimType));
     }
 #endif
 }

@@ -21,6 +21,26 @@ namespace {
 int32_t RaiseStubCreateTensor(int32_t i) { return 0; }
 } // namespace
 
+template <typename T>
+class TEST_TENSOR_SET_BUFFER_LEN : public testing::Test {};
+
+using SetBufferLenTypes = testing::Types<uint8_t, uint16_t, float, TensorTrait<float>>;
+TYPED_TEST_SUITE(TEST_TENSOR_SET_BUFFER_LEN, SetBufferLenTypes);
+
+TYPED_TEST(TEST_TENSOR_SET_BUFFER_LEN, ElementCount)
+{
+    using PrimType = PrimT<TypeParam>;
+    TPipe pipe;
+    TBuf<TPosition::VECCALC> buffer;
+    pipe.InitBuffer(buffer, 1024);
+    LocalTensor<TypeParam> tensor = buffer.Get<TypeParam>();
+    for (uint32_t elementCount : {128U, 32U, 0U}) {
+        tensor.SetBufferLen(elementCount);
+        EXPECT_EQ(tensor.GetSize(), elementCount);
+        EXPECT_EQ(tensor.address_.dataLen, elementCount * sizeof(PrimType));
+    }
+}
+
 /* **************************** LocalTensor Print ****************************** */
 struct PrintTensorParams {
     string dataType;
