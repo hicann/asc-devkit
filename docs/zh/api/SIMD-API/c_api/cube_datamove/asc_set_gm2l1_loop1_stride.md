@@ -75,7 +75,7 @@ asc_set_gm2l1_loop_size(2, 2);
 // 内层循环：相邻迭代在GM相隔64B，在L1相隔32B。
 asc_set_gm2l1_loop1_stride(64, 32);
 asc_set_gm2l1_loop2_stride(128, 64);
-asc_copy_gm2l1_align(dst, src, 1, 32, 0, 0, false, 4, 0, 32);
+asc_copy_gm2l1_align(dst, src, 1, 32, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 32);
 // 搬运结束后复位循环次数。
 asc_set_gm2l1_loop_size(1, 1);
 ```

@@ -21,8 +21,6 @@ protected:
 };
 
 namespace {
-void set_l0c2gm_relu_alpha_Stub(uint64_t config) { EXPECT_EQ(config, static_cast<uint64_t>(1)); }
-
 void set_l0c_copy_relu_alpha_float_stub(uint64_t config)
 {
     asc_3d_padding_bitcode bitcode;
@@ -31,15 +29,6 @@ void set_l0c_copy_relu_alpha_float_stub(uint64_t config)
     EXPECT_EQ(config, bitcode.output & 0xFFFFE000u);
 }
 } // namespace
-
-TEST_F(TestSysVarSetL0c2gmReluAlpha, c_api_set_l0c2gm_relu_alpha_Succ)
-{
-    int64_t input = 1;
-    MOCKER_CPP(set_relu_alpha, void(uint64_t)).times(1).will(invoke(set_l0c2gm_relu_alpha_Stub));
-    asc_set_l0c2gm_relu_alpha(input);
-    asc_init();
-    GlobalMockObject::verify();
-}
 
 TEST_F(TestSysVarSetL0c2gmReluAlpha, c_api_set_l0c_copy_relu_alpha_float_Succ)
 {

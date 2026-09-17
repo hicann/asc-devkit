@@ -1,4 +1,4 @@
-# asc_copy_gm2l1_nd2nz_arch_3510
+# asc_copy_gm2l1_nd2nz_arch_3510（废弃）
 
 ## 产品支持情况
 
@@ -26,11 +26,13 @@
 
 ## 功能说明
 
+**`asc_copy_gm2l1_nd2nz`的旧常规重载和`asc_copy_gm2l1_nd2nz_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_nd2nz](../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)接口；同步场景请额外调用`asc_sync`。**
+
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
 将数据从Global Memory搬运到L1 Buffer，并在搬运过程中将源端按N维连续排布的ND格式数据转换为L1 Buffer侧的Nz分形排布，使其满足后续矩阵计算对分形列连续性的要求。该接口也适用于卷积格式NHWC（ND）转换为NC1HWC0格式等转换场景。
 
-进行ND2Nz格式搬运前，需先通过[asc_set_gm2l1_nz_para](../asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵的stride与ND矩阵搬运个数。
+进行ND2Nz格式搬运前，需先通过[asc_set_gm2l1_nz_para](../cube_datamove/asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵的stride与ND矩阵搬运个数。
 
 本接口仅在AIC上执行有效。
 
@@ -38,19 +40,27 @@
 
 **图1** ND2Nz与DN2Zn示意图<a id="nd2nz_equivalent_conversion"></a>
 
-![](../../../../figures/datacopy_gm2l1_nd2nz_copy.png)
+![](../../../figures/datacopy_gm2l1_nd2nz_copy.png)
 
 ## 函数原型
 
 ```cpp
 __aicore__ inline void asc_copy_gm2l1_nd2nz(__cbuf__ <dtype>* dst,
                                             __gm__ <dtype>* src,
-                                             uint64_t src_d_value,
-                                             asc_load_l2_cache_mode l2_cache_mode,
-                                             uint16_t n_value,
-                                             uint32_t d_value,
-                                             uint64_t src_nd_matrix_stride,
-                                             bool enable_small_c0)
+                                            uint64_t loop1_src_stride,
+                                            uint8_t l2_cache_ctl,
+                                            uint16_t n_value,
+                                            uint32_t d_value,
+                                            uint64_t loop4_src_stride,
+                                            bool enable_small_c0)
+__aicore__ inline void asc_copy_gm2l1_nd2nz_sync(__cbuf__ <dtype>* dst,
+                                            __gm__ <dtype>* src,
+                                            uint64_t loop1_src_stride,
+                                            uint8_t l2_cache_ctl,
+                                            uint16_t n_value,
+                                            uint32_t d_value,
+                                            uint64_t loop4_src_stride,
+                                            bool enable_small_c0)
 ```
 
 ### dtype支持的数据类型
@@ -63,12 +73,20 @@ dtype支持的数据类型为`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`�
 // 示例：half类型的ND到Nz格式搬运。
 __aicore__ inline void asc_copy_gm2l1_nd2nz(__cbuf__ half* dst,
                                             __gm__ half* src,
-                                             uint64_t src_d_value,
-                                             asc_load_l2_cache_mode l2_cache_mode,
-                                             uint16_t n_value,
-                                             uint32_t d_value,
-                                             uint64_t src_nd_matrix_stride,
-                                             bool enable_small_c0)
+                                            uint64_t loop1_src_stride,
+                                            uint8_t l2_cache_ctl,
+                                            uint16_t n_value,
+                                            uint32_t d_value,
+                                            uint64_t loop4_src_stride,
+                                            bool enable_small_c0)
+__aicore__ inline void asc_copy_gm2l1_nd2nz_sync(__cbuf__ <dtype>* dst,
+                                                 __gm__ <dtype>* src,
+                                                 uint64_t loop1_src_stride,
+                                                 uint8_t l2_cache_ctl,
+                                                 uint16_t n_value,
+                                                 uint32_t d_value,
+                                                 uint64_t loop4_src_stride,
+                                                 bool smallc0_en)
 ```
 
 ## 参数说明
@@ -79,18 +97,27 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(__cbuf__ half* dst,
 |---|---|---|
 | dst | 输出 | 目的操作数，存储位置为L1 Buffer。起始地址需要按照32字节对齐。 |
 | src | 输入 | 源操作数，存储位置为GM。起始地址需要按照1字节对齐。 |
-| src_d_value | 输入 | 源矩阵相邻行起始地址之间的偏移，单位为字节。取值范围：[0, $2^{40}-1$]。 |
-| l2_cache_mode | 输入 | 使用[asc_load_l2_cache_mode](../../defs/enum/asc_load_l2_cache_mode.md)枚举值配置输入GM数据在L2 Cache中的管理策略。仅支持`asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM`、`asc_load_l2_cache_mode::NORMAL_LAST_VICTIM`、`asc_load_l2_cache_mode::NORMAL_PERSISTENT`和`asc_load_l2_cache_mode::NOTALLOC_KEEP`。 |
+| loop1_src_stride | 输入 | 源矩阵相邻行起始地址之间的偏移，单位为字节。取值范围：[0, $2^{40}-1$]。 |
+| l2_cache_ctl | 输入 | 配置输入的GM数据在L2 Cache中的管理策略。取值需为已定义的策略（0/1/2/4之一），其他值触发L2 Cache策略异常。取值说明见[表2](#l2_cache_ctl_values)。 |
 | n_value | 输入 | 源矩阵中ND矩阵的行数，单位为元素，取值范围：[1, 65535]。 |
 | d_value | 输入 | 源矩阵中ND矩阵的列数，单位为元素，取值范围：[1, $2^{21}-1$]。搬运过程中，当$d\_value \times \mathrm{sizeof}(\mathrm{dtype})$不满足32字节对齐时，硬件在目的矩阵中自动补0至32字节对齐。 |
-| src_nd_matrix_stride | 输入 | 源矩阵相邻ND矩阵起始地址间的偏移，单位为字节。取值范围：[0, $2^{40}-1$]。<br>&nbsp;&nbsp;&bull; 源矩阵ND矩阵个数为1时，此参数无意义，设置为0即可。<br>&nbsp;&nbsp;&bull; 源矩阵ND矩阵个数大于1时，当`src_nd_matrix_stride = 0`时，表示重复搬出源矩阵的第一个ND矩阵。 |
-| enable_small_c0 | 输入 | SmallC0模式开关，仅当$d\_value \le 4$时可开启，否则导致搬运异常。<br>&nbsp;&nbsp;&bull; `false`：不开启SmallC0模式，按标准Nz格式的C0（32字节）排布搬运；<br>&nbsp;&nbsp;&bull; `true`：开启SmallC0模式，搬运过程中搬运的数据量不满足$4 \times \mathrm{sizeof}(\mathrm{dtype})$字节对齐时，硬件在目的矩阵中自动补0至$4 \times \mathrm{sizeof}(\mathrm{dtype})$字节对齐。 |
+| loop4_src_stride | 输入 | 源矩阵相邻ND矩阵起始地址间的偏移，单位为字节。取值范围：[0, $2^{40}-1$]。<br>&nbsp;&nbsp;&bull; 源矩阵ND矩阵个数为1时，此参数无意义，设置为0即可。<br>&nbsp;&nbsp;&bull; 源矩阵ND矩阵个数大于1时，当`loop4_src_stride = 0`时，表示重复搬出源矩阵的第一个ND矩阵。 |
+| smallc0_en | 输入 | SmallC0模式开关，仅当$d\_value \le 4$时可开启，否则导致搬运异常。<br>&nbsp;&nbsp;&bull; `false`：不开启SmallC0模式，按标准Nz格式的C0（32字节）排布搬运；<br>&nbsp;&nbsp;&bull; `true`：开启SmallC0模式，搬运过程中搬运的数据量不满足$4 \times \mathrm{sizeof}(\mathrm{dtype})$字节对齐时，硬件在目的矩阵中自动补0至$4 \times \mathrm{sizeof}(\mathrm{dtype})$字节对齐。 |
+
+**表2** `l2_cache_ctl`取值说明 <a id="l2_cache_ctl_values"></a>
+
+| 取值 | 模式 | 含义 |
+|------|------|------|
+| 0 | Normal模式 | 启用L2 Cache，并将分配的Cache Line标记为高替换优先级。 |
+| 1 | Last模式 | &bull; 启用L2 Cache，并将分配的Cache Line标记为低替换优先级。<br>&bull; **Last模式暂不支持。**|
+| 2 | Persistent模式 | &bull; 启用L2 Cache。已存入L2 Cache中的数据可能被替换，若需确保特定GM的数据始终保留在L2 Cache中，可采用驻留模式。<br>&bull; 被标记为驻留模式的Cache Line只能被其他同样标记为驻留模式的Cache Line替换。<br>&bull; **Persistent模式暂不支持。**|
+| 4 | Disable模式 | 不启用L2 Cache，每次都直接从GM中读取，并保持已有Cache Line的状态不变。 |
 
 ND到Nz的格式转换如[图2](#nd2nz_conversion)所示。
 
 **图2**  ND2Nz转换示意图<a id="nd2nz_conversion"></a>
 
-![ND2Nz格式转换后的数据排布](../../figures/asc_copy_gm2l1_nd2nz.png)
+![ND2Nz格式转换后的数据排布](../figures/asc_copy_gm2l1_nd2nz.png)
 
 ## 返回值说明
 
@@ -107,21 +134,21 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需要按照32字节对齐（L1 Buffer对齐要求），否则会导致搬运异常。
 - `src`起始地址需要按照1字节对齐（GM对齐要求），否则会导致搬运异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，`dst`偏移量与搬运大小之和不可越界，否则触发异常。
 
 ### ND2Nz搬运约束
 
-- 调用本指令前，需要先调用[asc_set_gm2l1_nz_para](../asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵步长与ND矩阵搬运个数。
-- `src_d_value`取值范围为[0, $2^{40}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
+- 调用本指令前，需要先调用[asc_set_gm2l1_nz_para](../cube_datamove/asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵步长与ND矩阵搬运个数。
+- `loop1_src_stride`取值范围为[0, $2^{40}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
 - `n_value`取值范围为[1, 65535]，超出取值范围的值会被截断，导致搬运结果不符合预期。
 - `d_value`取值范围为[1, $2^{21}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
-- `src_nd_matrix_stride`取值范围为[0, $2^{40}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
-- `enable_small_c0`设置为`true`时，$d\_value \le 4$，否则导致搬运异常。
+- `loop4_src_stride`取值范围为[0, $2^{40}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
+- `smallc0_en`设置为`true`时，$d\_value \le 4$，否则导致搬运异常。
 
 ## 调用示例
 
-将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[`__NPU_ARCH__`](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[`__NPU_ARCH__`](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
@@ -159,11 +186,9 @@ __global__ __cube__ void AscCopyGm2l1Nd2nzKernel(__gm__ int8_t* a, __gm__ int8_t
 
     // 将两个128 x 128的ND矩阵从GM搬入L1并转换为Nz格式。
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
-    asc_copy_gm2l1_nd2nz(a_l1, a, K * sizeof(int8_t), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM,
-        M, K, 0, false);
+    asc_copy_gm2l1_nd2nz(a_l1, a, K, 0, M, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
-    asc_copy_gm2l1_nd2nz(b_l1, b, K * sizeof(int8_t), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM,
-        N, K, 0, false);
+    asc_copy_gm2l1_nd2nz(b_l1, b, K, 0, N, K, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
 
@@ -176,13 +201,14 @@ __global__ __cube__ void AscCopyGm2l1Nd2nzKernel(__gm__ int8_t* a, __gm__ int8_t
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
 
     // 计算128 x 128矩阵乘，并将结果从L0C搬回GM。
-    asc_mmad(c_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
+    asc_mmad(c_l0, a_l0, b_l0, M, K, N, 0, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
     asc_set_l0c_copy_nz_para(1, 0, 0);
-    asc_copy_l0c2gm(output, c_l0, N, M, N, M, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
-        asc_unit_flag_mode::DISABLE, QuantMode_t::NoQuant, asc_relu_pre_mode::NONE, false, true, false, false);
+    asc_copy_l0c2gm(output, c_l0, N, M, N, M, 0, 0, 0,
+        static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
+        static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
     asc_sync_pipe(PIPE_FIX);
 }
 

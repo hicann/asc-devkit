@@ -1,4 +1,4 @@
-# asc_copy_l0c2ub_sync（废弃）
+# asc_copy_l0c2ub（废弃）
 
 ## 产品支持情况
 
@@ -26,9 +26,9 @@
 
 ## 功能说明
 
-头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
+**`asc_copy_l0c2ub`的旧参数形式及`asc_copy_l0c2ub_sync`接口已废弃。请使用[asc_copy_l0c2ub](../cube_datamove/asc_copy_l0c2ub.md)接口和[asc_sync](../sync/asc_sync.md)接口替代。**
 
-**`asc_copy_l0c2ub_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l0c2ub.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
 将矩阵计算结果从L0C Buffer搬运至Unified Buffer，搬运过程中可同步支持随路量化、随路激活、随路格式转换（Nz2ND/Nz2DN）等能力组合。
 
@@ -43,8 +43,8 @@
 - Nz2ND格式转换场景下，需通过[asc_set_l0c_copy_nz_para](../cube_datamove/asc_set_l0c_copy_nz_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2nd`使用；
 - Nz2DN格式转换场景下，需通过[asc_set_l0c_copy_nz_para](../cube_datamove/asc_set_l0c_copy_nz_para.md)、[asc_set_l0c_copy_channel_para](../cube_datamove/asc_set_l0c_copy_channel_para.md)预先配置格式转换参数，并且需要搭配本接口`enable_nz2dn`使用；
 - 随路scalar量化模式下，需通过[asc_set_l0c_copy_prequant](../cube_datamove/asc_set_l0c_copy_prequant.md)设置随路scalar量化参数，并且需要搭配本接口`quant_pre_mode`使用;
-- 随路tensor量化模式下，需通过[asc_set_l0c2gm_config](../cube_datamove/asc_set_l0c2gm_config.md)设置随路tensor量化使用tensor的起始地址，其中量化tensor的每个元素都代表一个量化参数，并且需要搭配本接口`quant_pre_mode`使用;
-- 随路激活模式下，需通过[asc_set_l0c2gm_relu_alpha](../cube_datamove/asc_set_l0c2gm_relu_alpha.md)、[asc_set_l0c2gm_lrelu_alpha](../cube_datamove/asc_set_l0c2gm_lrelu_alpha.md)预先配置ReLU/Leaky ReLU激活参数，并且需要搭配本接口`enable_clip_relu_pre`与`relu_pre_mode`使用；
+- 随路tensor量化模式下，需通过[asc_set_l0c_copy_config](../cube_datamove/asc_set_l0c_copy_config.md)设置随路tensor量化使用tensor的起始地址，其中量化tensor的每个元素都代表一个量化参数，并且需要搭配本接口`quant_pre_mode`使用;
+- 随路激活模式下，需通过[asc_set_l0c_copy_relu_alpha](../cube_datamove/asc_set_l0c_copy_relu_alpha.md)、[asc_set_l0c_copy_lrelu_alpha](../cube_datamove/asc_set_l0c_copy_lrelu_alpha.md)预先配置ReLU/Leaky ReLU激活参数，并且需要搭配本接口`enable_clip_relu_pre`与`relu_pre_mode`使用；
 
 `quant_pre_mode`量化模式参数支持的枚举值如下：
 
@@ -83,6 +83,28 @@
 ### 模板原型（占位符形式）
 
 ```cpp
+__aicore__ inline void asc_copy_l0c2ub(__ubuf__ <dst_dtype>* dst,
+                                       __cc__ <src_dtype>* src,
+                                       uint16_t n_size,
+                                       uint16_t m_size,
+                                       uint32_t dst_stride,
+                                       uint16_t src_stride,
+                                       uint8_t dual_dst_ctrl,
+                                       bool sub_blockid,
+                                       uint8_t enable_clip_relu_pre,
+                                       uint8_t unit_flag_mode,
+                                       uint64_t quant_pre_mode,
+                                       uint8_t relu_pre_mode,
+                                       bool enable_channel_split,
+                                       bool enable_nz2nd,
+                                       uint64_t quant_post,
+                                       uint8_t relu_post,
+                                       bool clip_relu_post,
+                                       uint8_t eltwise_op,
+                                       bool eltwise_antq_en,
+                                       bool c0_pad_en,
+                                       bool broadcast_en,
+                                       bool enable_nz2dn)
 __aicore__ inline void asc_copy_l0c2ub_sync(__ubuf__ <dst_dtype>* dst,
                                             __cc__ <src_dtype>* src,
                                             uint16_t n_size,
@@ -110,6 +132,37 @@ __aicore__ inline void asc_copy_l0c2ub_sync(__ubuf__ <dst_dtype>* dst,
 ### dtype支持的数据类型
 
 src dtype与dst dtype支持以下组合：
+
+- `src_dtype`为`int32_t`时，`dst_dtype`支持`int4b_t`、`int8_t`、`uint8_t`、`half`、`bfloat16_t`、`int32_t`。
+- `src_dtype`为`float`时，`dst_dtype`支持`int4b_t`、`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e4m3fn_t`、`half`、`bfloat16_t`、`float`。
+
+### 函数原型典型示例
+
+```cpp
+// 示例：将float类型数据转换为half类型后搬运。
+__aicore__ inline void asc_copy_l0c2ub(__ubuf__ half* dst,
+                                       __cc__ float* src,
+                                       uint16_t n_size,
+                                       uint16_t m_size,
+                                       uint32_t dst_stride,
+                                       uint16_t src_stride,
+                                       uint8_t dual_dst_ctrl,
+                                       bool sub_blockid,
+                                       uint8_t enable_clip_relu_pre,
+                                       uint8_t unit_flag_mode,
+                                       uint64_t quant_pre_mode,
+                                       uint8_t relu_pre_mode,
+                                       bool enable_channel_split,
+                                       bool enable_nz2nd,
+                                       uint64_t quant_post,
+                                       uint8_t relu_post,
+                                       bool clip_relu_post,
+                                       uint8_t eltwise_op,
+                                       bool eltwise_antq_en,
+                                       bool c0_pad_en,
+                                       bool broadcast_en,
+                                       bool enable_nz2dn)
+```
 
 ## 参数说明
 
@@ -232,7 +285,7 @@ __global__ __mix__(1, 2) void AscCopyL0c2ubKernel(__gm__ int8_t* a, __gm__ int8_
 
         // 将L0C Buffer中的Nz结果转换为连续ND格式并搬出至AIV侧UB。
         asc_set_l0c_copy_nz_para(1, 0, ELEMENTS);
-        asc_copy_l0c2ub_sync(output_ub, c_l0, N, M, N, M, 0, false, 0, 0,
+        asc_copy_l0c2ub(output_ub, c_l0, N, M, N, M, 0, false, 0, 0,
             static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
             static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
         asc_sync_block_arrive(PIPE_FIX, 0x8);

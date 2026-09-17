@@ -42,7 +42,7 @@ A complete matrix multiplication involves the following data movement stages and
 | 1 | GM → L1 | `asc_set_gm2l1_nz_para` + `asc_copy_gm2l1_nd2nz` / `asc_copy_gm2l1_dn2nz` | A and B are ND on GM and Nz on L1 |
 | 2 | L1 → L0A / L0B / BT | `asc_copy_l12l0a`, `asc_copy_l12l0b`, `asc_copy_l12bt` | A is Nz on L0A, B is Zn on L0B, Bias is a 1-D tensor of shape [N] |
 | 3 | Multiply-accumulate | `asc_mmad` | C is Nz on L0C, and its initial value comes from BT |
-| 4 | L0C → GM | `asc_set_l0c2gm_nz2nd` + `asc_copy_l0c2gm` | C is Nz on L0C and ND on GM |
+| 4 | L0C → GM | `asc_set_l0c_copy_nz_para` + `asc_copy_l0c2gm` | C is Nz on L0C and ND on GM |
 
 The buffer sizes on L1, L0A, L0B, and L0C are aligned to the fractal requirements. The Mmad computation includes padded invalid data; setting `m_size = M` and `n_size = N` in `asc_copy_l0c2gm` ensures that results over the padded region are not moved out. In addition, `asc_copy_gm2l1_nd2nz` and `asc_copy_gm2l1_dn2nz` pad with zeros only along the K axis, so the rows that A and B gain along the M and N axes for alignment are never written. This sample calls `asc_fill_l1` to clear them explicitly, keeping uninitialized data out of the Mmad computation.
 

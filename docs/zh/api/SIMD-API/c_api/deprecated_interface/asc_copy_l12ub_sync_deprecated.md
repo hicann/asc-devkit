@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
 **`asc_copy_l12ub_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12ub.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
 

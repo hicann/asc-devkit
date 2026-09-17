@@ -121,7 +121,8 @@ __global__ __mix__(1, 2) void LoopKernel(  // __mix__：AIC搬运到L1，AIV将�
         asc_set_gm2l1_loop_size(2, 2);
         asc_set_gm2l1_loop1_stride(64, 32);
         asc_set_gm2l1_loop2_stride(128, 64);
-        asc_copy_gm2l1_align(l1, input, 1, 32, 0, 0, false, 4, 0, 32);
+        asc_copy_gm2l1_align(
+            l1, input, 1, 32, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_KEEP, 0, 32);
         // 避免循环配置影响下一次GM→L1搬运。
         asc_set_gm2l1_loop_size(1, 1);
         asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);

@@ -180,11 +180,11 @@ __aicore__ inline void s1_copy_result_to_gm(__gm__ int32_t* dst, __cc__ int32_t*
 {
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
 
-    uint64_t nd_num = 1;
-    uint64_t src_nd_stride = 0;
-    uint64_t dst_nd_stride = 0;
+    uint16_t matrix_num = 1;
+    uint16_t src_nz_matrix_stride = 0;
+    uint32_t dst_matrix_stride = 0;
 
-    asc_set_l0c2gm_nz2nd(nd_num, src_nd_stride, dst_nd_stride);
+    asc_set_l0c_copy_nz_para(matrix_num, src_nz_matrix_stride, dst_matrix_stride);
 
     uint16_t n_size = N;
     uint16_t m_size = M;

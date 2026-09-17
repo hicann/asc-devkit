@@ -1543,6 +1543,7 @@ __aicore__ inline void asc_copy_gm2l0b(
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l0c_copy_config)
 __aicore__ inline void asc_set_l0c2gm_config(uint64_t relu_pre, uint64_t quant_pre, bool enable_unit_flag)
 {
     if ASC_IS_AIC {
@@ -1637,6 +1638,7 @@ __aicore__ inline void asc_set_l0c_copy_prequant(uint64_t config)
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l12l0a_3d_padding)
 __aicore__ inline void asc_set_l13d_padding(uint64_t config)
 {
     if ASC_IS_AIC {
@@ -1647,6 +1649,7 @@ __aicore__ inline void asc_set_l13d_padding(uint64_t config)
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l12l0a_3d_padding)
 __aicore__ inline void asc_set_l13d_padding(half config)
 {
     if ASC_IS_AIC {
@@ -1656,6 +1659,7 @@ __aicore__ inline void asc_set_l13d_padding(half config)
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l12l0a_3d_padding)
 __aicore__ inline void asc_set_l13d_padding(int16_t config)
 {
     if ASC_IS_AIC {
@@ -1665,6 +1669,7 @@ __aicore__ inline void asc_set_l13d_padding(int16_t config)
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l12l0a_3d_padding)
 __aicore__ inline void asc_set_l13d_padding(uint16_t config)
 {
     if ASC_IS_AIC {
@@ -1801,6 +1806,7 @@ __aicore__ inline void asc_set_l13d_fmatrix_b(asc_l13d_fmatrix_config& config)
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l0c_copy_lrelu_alpha)
 __aicore__ inline void asc_set_l0c2gm_lrelu_alpha(half& config)
 {
     if ASC_IS_AIC {
@@ -1808,6 +1814,7 @@ __aicore__ inline void asc_set_l0c2gm_lrelu_alpha(half& config)
     }
 }
 
+ASC_DEPRECATED(9.2.0, "2027/09/07", asc_set_l0c_copy_lrelu_alpha)
 __aicore__ inline void asc_set_l0c2gm_lrelu_alpha(float& config)
 {
     if ASC_IS_AIC {

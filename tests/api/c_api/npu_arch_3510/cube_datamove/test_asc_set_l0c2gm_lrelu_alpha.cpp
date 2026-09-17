@@ -27,24 +27,6 @@ void set_lrelu_alpha_stub(T config)
 }
 } // namespace
 
-TEST_F(TestCubeDmamoveSetL0c2GmLreluAlpha, asc_set_l0c2gm_lrelu_alpha_float_succ)
-{
-    MOCKER(set_lrelu_alpha, void(float)).times(1).will(invoke(set_lrelu_alpha_stub<float>));
-
-    float config = 25.0;
-    asc_set_l0c2gm_lrelu_alpha(config);
-    GlobalMockObject::verify();
-}
-
-TEST_F(TestCubeDmamoveSetL0c2GmLreluAlpha, asc_set_l0c2gm_lrelu_alpha_half_succ)
-{
-    MOCKER(set_lrelu_alpha, void(half)).times(1).will(invoke(set_lrelu_alpha_stub<half>));
-
-    half config = 25.0;
-    asc_set_l0c2gm_lrelu_alpha(config);
-    GlobalMockObject::verify();
-}
-
 TEST_F(TestCubeDmamoveSetL0c2GmLreluAlpha, asc_set_l0c_copy_lrelu_alpha_float_succ)
 {
     MOCKER(set_lrelu_alpha, void(float)).times(1).will(invoke(set_lrelu_alpha_stub<float>));

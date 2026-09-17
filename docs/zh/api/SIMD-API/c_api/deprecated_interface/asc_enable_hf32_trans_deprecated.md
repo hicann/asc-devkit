@@ -1,4 +1,4 @@
-# asc_enable_hf32_trans
+# asc_enable_hf32_trans（废弃）
 
 ## 产品支持情况
 
@@ -26,9 +26,11 @@
 
 ## 功能说明
 
+**`asc_enable_hf32_trans`接口已废弃。请使用[asc_set_hf32_round_mode](../cube_compute/asc_set_hf32_round_mode.md)接口替代。**
+
 头文件路径为：`"c_api/cube_compute/cube_compute.h"`。
 
-本接口用于设置HF32模式舍入方式，使用该接口前需要先使用[asc_enable_hf32](asc_enable_hf32.md)开启HF32模式。
+本接口用于设置HF32模式舍入方式，使用该接口前需要先使用[asc_enable_hf32](../cube_compute/asc_enable_hf32.md)开启HF32模式。
 
 ## 函数原型
 
@@ -54,7 +56,7 @@ PIPE_S
 
 ## 约束说明
 
-- 本接口需在矩阵乘加指令（[asc_mmad](asc_mmad.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
+- 本接口需在矩阵乘加指令（[asc_mmad](../cube_compute/asc_mmad.md)）执行前调用，以此来确保模式配置在矩阵乘加计算过程中生效。
 - 本接口配置的舍入模式仅在HF32模式开启期间生效，需先开启HF32模式再调用本接口，否则舍入模式配置不产生实际作用。
 - 舍入模式配置后会持续生效，HF32模式关闭后再次开启仍将沿用上次的舍入模式配置，如需切换舍入模式，请重新调用本接口。
 

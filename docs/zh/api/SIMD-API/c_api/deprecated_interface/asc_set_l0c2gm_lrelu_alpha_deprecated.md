@@ -1,4 +1,4 @@
-# asc_set_l0c2gm_lrelu_alpha
+# asc_set_l0c2gm_lrelu_alpha（废弃）
 
 ## 产品支持情况
 
@@ -25,6 +25,8 @@
 <!-- end id7 -->
 
 ## 功能说明
+
+**`asc_set_l0c2gm_lrelu_alpha`接口已废弃。请使用[asc_set_l0c_copy_lrelu_alpha](../cube_datamove/asc_set_l0c_copy_lrelu_alpha.md)接口替代。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 

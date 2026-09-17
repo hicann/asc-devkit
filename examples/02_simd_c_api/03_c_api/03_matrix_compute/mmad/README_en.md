@@ -2,13 +2,13 @@
 
 ## Overview
 
-This example uses int8_t and bfloat16 as two input data types to demonstrate how to implement matrix multiplication (C = A x B + Bias) through the C API. The pipeline functions for each scenario are split into separate header files (`mmad_s1.h` / `mmad_s2.h`), and the main file `mmad.asc` dispatches by scenario at the kernel function entry through `if constexpr (scenario_num)`.
+This example uses int8_t, bfloat16, and float input data types to demonstrate how to implement matrix multiplication (C = A x B + Bias) through the C API. The pipeline functions for each scenario are split into separate header files (`mmad_s1.h` / `mmad_s2.h` / `mmad_s3.h`), and the main file `mmad.asc` dispatches by scenario at the kernel function entry through `if constexpr (scenario_num)`.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -23,6 +23,7 @@ This example uses int8_t and bfloat16 as two input data types to demonstrate how
 │   ├── data_utils.h                // Data read/write functions
 │   ├── mmad_s1.h                   // Constants and complete pipeline function for Scenario 1
 │   ├── mmad_s2.h                   // Constants and complete pipeline function for Scenario 2
+│   ├── mmad_s3.h                   // Constants and complete pipeline function for Scenario 3
 │   ├── mmad.asc                    // Example main file (common constants, kernel function entry, Host-side main function)
 │   ├── README_en.md                // English example documentation
 │   └── README.md                   // Example documentation
@@ -30,7 +31,7 @@ This example uses int8_t and bfloat16 as two input data types to demonstrate how
 
 ## Example Description
 
-A complete matrix multiplication involves the following data transfer process: Global Memory -> L1 Buffer, L1 Buffer -> L0A / L0B Buffer, L1 Buffer -> BiasTable Buffer, L0C Buffer -> Global Memory. The data layout formats in different storage units are shown in the table below.
+A complete matrix multiplication involves the following data transfer process: Global Memory -> L1 Buffer, L1 Buffer -> L0A Buffer / L0B Buffer, L1 Buffer -> BiasTable Buffer, L0C Buffer -> Global Memory. The data layout formats in different storage units are shown in the table below.
 
 <a name="table1"></a>
 <table border="2" align="center">
@@ -45,15 +46,15 @@ A complete matrix multiplication involves the following data transfer process: G
     <td>Input A, B matrices and output C matrix are in ND layout.</td>
   </tr>
   <tr>
-    <td>L1 Buffer (L1)</td>
+    <td>L1 Buffer</td>
     <td>A, B matrices are in Nz layout.</td>
   </tr>
   <tr>
-    <td>L0A Buffer (L0A)</td>
+    <td>L0A Buffer</td>
     <td>A matrix is in Nz layout.</td>
   </tr>
   <tr>
-    <td>L0B Buffer (L0B)</td>
+    <td>L0B Buffer</td>
     <td>B matrix is in Zn layout.</td>
   </tr>
   <tr>
@@ -61,21 +62,21 @@ A complete matrix multiplication involves the following data transfer process: G
     <td>Bias is a 1D Tensor with shape [N].</td>
   </tr>
   <tr>
-    <td>L0C Buffer (L0C)</td>
+    <td>L0C Buffer</td>
     <td>C matrix is in Nz layout.</td>
   </tr>
 </table>
 
-The matrix multiplication formula: C = A x B + Bias, where A, B, Bias, C matrices must satisfy shapes [M, K], [K, N], [N] and [M, N] respectively. Bias is only enabled in Scenario 1, and its data type correspondence with the C matrix is shown in the table below.
+The matrix multiplication formula: C = A x B + Bias, where A, B, Bias, C matrices must satisfy shapes [M, K], [K, N], [N] and [M, N] respectively. Bias is enabled in Scenarios 1 and 3, and its data type correspondence with the C matrix is shown in the table below.
 
 <a name="table2"></a>
 <table border="2" align="center">
 <caption style="font-weight: normal;">
-    <span style="font-weight: bold; font-size: 1.2em;">Table 2: Data Type Correspondence Between L0C and Input Bias</span></caption>
+    <span style="font-weight: bold; font-size: 1.2em;">Table 2: Data Type Correspondence Between L0C Buffer and Input Bias</span></caption>
   <tr>
-    <td>Bias Data Type on GM/L1</td>
+    <td>Bias Data Type on GM/L1 Buffer</td>
     <td>Bias Data Type on BT (BiasTable Buffer)</td>
-    <td>Matrix Computation Output Data Type on L0C</td>
+    <td>Matrix Computation Output Data Type on L0C Buffer</td>
   </tr>
   <tr>
     <td>int32_t</td>
@@ -125,6 +126,14 @@ The scenarios corresponding to different values of the compilation parameter `SC
     <td>Transposed</td>
     <td>Without Bias, C matrix initial value from CO1 (accumulated from two Mmad operations)</td>
   </tr>
+  <tr>
+    <td>3</td>
+    <td>float</td>
+    <td>float</td>
+    <td>Transposed</td>
+    <td>Transposed</td>
+    <td>With Bias, explicitly passing the Bias address in BT</td>
+  </tr>
 </table>
 
 ### Scenario Details
@@ -139,10 +148,10 @@ This example selects scenarios through the compilation parameter `SCENARIO_NUM`.
   - Bias [1, 40] int32_t;
 - Output: C [30, 40] int32_t, ND format;
 - Implementation (see `mmad_s1.h` for details):
-  1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`: Transfer A, B, Bias from GM to L1 (ND -> Nz);
-  2. `asc_copy_l12l0a`: Transfer A from L1 to L0A; `asc_copy_l12l0b_trans`: Transfer B from L1 to L0B with transposition; `asc_copy_l12bt`: Transfer Bias from L1 to BT;
+  1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`: Transfer A, B, Bias from GM to L1 Buffer (ND -> Nz);
+  2. `asc_copy_l12l0a`: Transfer A from L1 Buffer to L0A Buffer; `asc_copy_l12l0b_trans`: Transfer B from L1 Buffer to L0B Buffer with transposition; `asc_copy_l12bt`: Transfer Bias from L1 Buffer to BT;
   3. `asc_mmad`: Matrix multiply-add, C matrix initial value from BT;
-  4. `asc_copy_l0c2gm` + `asc_set_l0c2gm_nz2nd`: Transfer result from L0C to GM (Nz -> ND);
+   4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`: : Transfer result from L0C Buffer to GM (Nz -> ND);
 - Description: For int8_t type input with B matrix not transposed, the N axis aligns to 2 * 16, filling a 32 * 16 fractal with all invalid data. As shown in Figure 1 below, if `right_width = N` is set, it would read fractals numbered 3 and 7 while failing to read fractals numbered 9 and 10 that contain valid data. Therefore, set: `right_width = CeilAlign(N, BLOCK_CUBE * fractalNum)`, which reads all fractals. Although the matrix computation result includes results from invalid data participation, the `asc_copy_l0c2gm` instruction ensures that results from invalid data are not transferred out by setting `n_size = N` during data transfer.
 <p align="center">
   <img src="figures/mmad_s8_L0B_转置.png" width="700">
@@ -158,27 +167,47 @@ Figure 1: int8_t type, B not transposed, N axis actual alignment requirement dif
   - B transposed [40, 70] bfloat16_t, ND format;
 - Output: C [30, 40] float, ND format;
 - Implementation (see `mmad_s2.h` for details):
-  1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`: Transfer A, B from GM to L1 (B is stored in GM with transposed ND layout);
-  2. `asc_copy_l12l0a`: Transfer A from L1 to L0A; `asc_copy_l12l0b`: Transfer B directly from L1 to L0B (B is already transposed to Nz layout in L1);
+  1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`: Transfer A, B from GM to L1 Buffer (B is stored in GM with transposed ND layout);
+  2. `asc_copy_l12l0a`: Transfer A from L1 Buffer to L0A Buffer; `asc_copy_l12l0b`: Transfer B directly from L1 Buffer to L0B Buffer (B is already transposed to Nz layout in L1 Buffer);
   3. `asc_mmad`: Called twice. The first call with `c_matrix_init_val = true` initializes C to 0 and computes A x B; the second call with `c_matrix_init_val = false` and `c_matrix_source = false` uses CO1 as initial value to accumulate the second A x B;
-  4. `asc_copy_l0c2gm` + `asc_set_l0c2gm_nz2nd`: Transfer result from L0C to GM;
+  4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`: Transfer result from L0C Buffer to GM;
+
+**Scenario 3: float input, float output, A/B transposed, explicitly passing the Bias address**
+
+- Input:
+  - A transposed [70, 30] float, ND format;
+  - B transposed [40, 70] float, ND format;
+  - Bias [1, 40] float;
+- Output: C [30, 40] float, ND format;
+- Implementation (see `mmad_s3.h` for details):
+  1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`: Transfer transposed A, B, and Bias from GM to L1 Buffer;
+  2. `asc_copy_l12l0a_transpose`: Transpose A from L1 Buffer to L0A Buffer; `asc_copy_l12l0b`: Transfer B from L1 Buffer to L0B Buffer; `asc_copy_l12bt`: Transfer Bias from L1 Buffer to BT address 0;
+  3. `asc_mmad`: Explicitly pass BT address 0 as the Bias address and set `disable_gemv = false` to perform matrix multiplication and addition;
+  4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`: Transfer result from L0C Buffer to GM (Nz -> ND);
+- Description: Matrix A is transposed and transferred from L1 Buffer to L0A Buffer by `asc_copy_l12l0a_transpose`. The storage lengths in the M and K directions of L0A Buffer are calculated by `ceil_align(M, BLOCK_CUBE)` and `ceil_align(K, S3_C0_SIZE * S3_FRACTAL_NUM)`, respectively. For the current specifications, M is aligned from 30 to 32, and K is aligned from 70 to 80. Scenario 3 uses the explicit Bias address overload for `dav-3510`. Because M is not 1, `disable_gemv` does not take effect in this scenario.
+<p align="center">
+  <img src="figures/mmad_f32_L0A_转置.png" width="1100">
+</p>
+<p align="center">
+Figure 2: L0A Buffer data layout after transposed transfer of the float matrix A
+</p>
 
 ### Matrix Multiplication (Mmad)
 
 The following describes how to configure the parameters of the `asc_mmad` instruction. The specific meaning of each parameter is not repeated here.
 
-Note that when executing the `asc_mmad` instruction, the matrix computation unit continuously reads multiple fractals from L0A/L0B to participate in matrix multiplication computation. The number of fractals read is determined by the values of `left_height`, `n_dim`, `right_width`, and the alignment requirements of the `asc_mmad` instruction for A and B matrix axes on L0A/L0B.
+Note that when executing the `asc_mmad` instruction, the matrix computation unit continuously reads multiple fractals from L0A Buffer/L0B Buffer to participate in matrix multiplication computation. The number of fractals read is determined by the values of `left_height`, `n_dim`, `right_width`, and the alignment requirements of the `asc_mmad` instruction for A and B matrix axes on L0A Buffer/L0B Buffer.
 
-As shown in Figure 2, taking b16 input type as an example, the `asc_mmad` instruction reads data continuously according to A matrix fractal [16, 16] and B matrix fractal [16, 16]. At this point, the total number of fractals read by the matrix computation unit from L0A/L0B are 2 x 5 = 10 and 5 x 3 = 15 respectively, and the total number of fractals written to L0C is 2 x 3 = 6.
+As shown in Figure 3, taking b16 input type as an example, the `asc_mmad` instruction reads data continuously according to A matrix fractal [16, 16] and B matrix fractal [16, 16]. At this point, the total number of fractals read by the matrix computation unit from L0A Buffer/L0B Buffer are 2 x 5 = 10 and 5 x 3 = 15 respectively, and the total number of fractals written to L0C Buffer is 2 x 3 = 6.
 
 <p align="center">
   <img src="figures/mmad_f16_A5.png" width="900">
 </p>
 <p align="center">
-Figure 2: bfloat16 type, Nz layout on L0A, Mmad data layout diagram
+Figure 3: bfloat16 type, Nz layout on L0A Buffer, Mmad data layout diagram
 </p>
 
-The Mmad computation includes padded invalid data, which needs to be excluded during the L0C to GM transfer process by the Fixpipe instruction, eliminating the invalid data filled during Mmad computation.
+The Mmad computation includes padded invalid data, which needs to be excluded during the L0C Buffer to GM transfer process by the Fixpipe instruction, eliminating the invalid data filled during Mmad computation.
 
 ## Build and Run
 
@@ -189,7 +218,7 @@ Run the following steps in the root directory of this example to build and execu
   source ${install_path}/cann/set_env.sh
   ```
 
-  > **Note:** `${install_path}` is the CANN package installation directory. When no installation directory is specified, the default installation path for root users is `/usr/local/Ascend`, and for non-root users it is `$HOME/Ascend`.
+  > **Note:** `${install_path}` is the CANN package installation directory. The default is `/usr/local/Ascend` for the root user and `${HOME}/Ascend` for non-root users.
 
 - Run the example
 
@@ -216,7 +245,7 @@ Run the following steps in the root directory of this example to build and execu
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
   | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture, corresponds to Ascend 950PR/Ascend 950DT |
-  | `SCENARIO_NUM` | `1` (default), `2` | Scenario number, corresponding to int8_t and bfloat16 input data types respectively |
+  | `SCENARIO_NUM` | `1` (default), `2`, `3` | Scenario number, corresponding to int8_t, bfloat16, and float input data types respectively |
 
 - Execution result
 

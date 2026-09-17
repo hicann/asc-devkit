@@ -169,13 +169,12 @@ __global__ __mix__(1, 2) void asc_copy_ub2l1_kernel(
         asc_copy_l12l0b_transpose(b_l0, b_l1, 0, 0, 1, 1, 1, 1);
         asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
         asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
-        asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, 0, false, false, true);
+        asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, asc_unit_flag_mode::DISABLE, false, false, true);
         asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
         asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
         asc_set_l0c_copy_nz_para(1, 0, 0);
-        asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, 0, 0, 0,
-            static_cast<uint64_t>(QuantMode_t::NoQuant), 0, false, true,
-            static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, 0, false, false, false, false);
+        asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
+            asc_unit_flag_mode::DISABLE, QuantMode_t::NoQuant, asc_relu_pre_mode::NONE, false, true, false, false);
         asc_sync_pipe(PIPE_FIX);
     }
     asc_sync_pipe(PIPE_ALL);

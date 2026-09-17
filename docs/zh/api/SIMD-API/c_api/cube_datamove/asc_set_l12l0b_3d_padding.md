@@ -121,9 +121,9 @@ __global__ __cube__ void asc_copy_l12l0b_3d_bside_kernel(
     __cc__ float output_l0[COUT * M_ALIGN];
 
     asc_set_gm2l1_nz_para(1, 1, H * W, 0);
-    asc_copy_gm2l1_nd2nz(fmap_l1, fmap, CIN * sizeof(half), 0, H * W, CIN, 0, false);
+    asc_copy_gm2l1_nd2nz(fmap_l1, fmap, CIN * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, H * W, CIN, 0, false);
     asc_set_gm2l1_nz_para(1, 1, K_ALIGN, 0);
-    asc_copy_gm2l1_nd2nz(weight_l1, weight, K * sizeof(half), 0, COUT, K, 0, false);
+    asc_copy_gm2l1_nd2nz(weight_l1, weight, K * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, COUT, K, 0, false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
 
@@ -146,7 +146,7 @@ __global__ __cube__ void asc_copy_l12l0b_3d_bside_kernel(
 
     asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
-    asc_mmad(output_l0, weight_l0, fmap_l0, COUT, K_ALIGN, M, 0, false, false, true);
+    asc_mmad(output_l0, weight_l0, fmap_l0, COUT, K_ALIGN, M, asc_unit_flag_mode::DISABLE, false, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_set_l0c_copy_nz_para(1, 0, 0);
