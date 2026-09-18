@@ -146,7 +146,7 @@ Kirin 9030，支持数据类型为：half。
     <!-- end id21 -->
 
 <!-- npu="950" id22 -->
-- 特别针对Ascend 950PR/Ascend 950DT，设置dstGap参数无效。
+- 特别针对Ascend 950PR/Ascend 950DT，该接口为兼容性实现，相较于Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品，由于L0A Buffer上支持的分形由Zz改为了Nz，所以不能直接复用算子实现代码，需要根据分型变化重新适配，具体适配方案请参考[基础API迁移指导](../../../../../guide/cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/basic_api_migration.md#矩阵计算)中矩阵计算小节。
 <!-- end id22 -->
 
 ## 关键特性说明

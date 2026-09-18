@@ -129,7 +129,7 @@ C语言编程提供了`asc_set_gm2l1_nz_para`和`asc_copy_gm2l1_nd2nz`接口来�
 |---------|---------|---------------|-------------|
 | Global Memory → L1 Buffer   | 随路转换ND2NZ搬运  | `asc_copy_gm2l1_nd2nz` | ![ND->Nz](../../../../figures/ND_Nz.png) |
 | L1 Buffer → L0A Buffer  | 将L1 Buffer数据搬运到L0A Buffer中  | `asc_copy_l12l0a` | ![Nz->Zz](../../../../figures/Nz_Zz.png)<br>[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)上L0A分形为Nz，搬运时为Nz-Nz |
-| L1 Buffer → L0A Buffer  | 将L1 Buffer数据搬运到L0B Buffer中  | `asc_copy_l12l0b` | ![Nz->Zn](../../../../figures/Nz_Zn.png)|
+| L1 Buffer → L0B Buffer  | 将L1 Buffer数据搬运到L0B Buffer中  | `asc_copy_l12l0b` | ![Nz->Zn](../../../../figures/Nz_Zn.png)|
 
 [NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)
 
