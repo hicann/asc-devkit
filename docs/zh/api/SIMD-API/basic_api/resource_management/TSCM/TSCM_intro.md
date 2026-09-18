@@ -70,6 +70,7 @@ que.FreeTensor(a2);</pre>
 >-   由于TSCM分配的Buffer中存储着同步事件eventID，且该结构伴随着与Cube类高阶API如（Matmul高阶API，宏函数调用方式\)共同使用，故同一个TPosition上TSCM Buffer的数量与硬件的同步事件eventID以及Matmul对象数量有关。
 >    **L1 Buffer（TSCM）从Unified Buffer（UB，VECIN）发起的Buffer块数量与Matmul对象数量之和最大为10个。**
 >    **不允许申请的TSCM Buffer超出规格限制，超出规格可能会引起未定义行为。**
+>-   从UB发起的L1 Buffer（TSCM）队列内部实现会占用核间同步flagId，若与CrossCoreSetFlag/CrossCoreWaitFlag同时使用需注意避免flagId冲突，详见[核间同步flagId占用说明](../../sync_control/inter_core_sync/key_features.md#inter_core_sync_flagid_usage)。
 
 如下是一个简单的使用示例：
 

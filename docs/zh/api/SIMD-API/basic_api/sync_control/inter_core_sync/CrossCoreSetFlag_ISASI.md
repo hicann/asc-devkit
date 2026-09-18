@@ -112,7 +112,7 @@ CrossCoreSetFlag的模板参数`modeId`和`pipe`均**没有默认值**，其取�
     - AIC发起的flagId 16-31的CrossCoreSetFlag操作对应AIV1 CrossCoreWaitFlag中flagId 0-15的操作。
 <!-- end id13 -->
 
-此外，当本接口与Matmul高阶API或SyncAll接口同时使用时，开发者自行使用的flagId还需注意避免与这些接口内部已占用的flagId冲突，详见[约束说明](#flagId冲突说明)中的flagId占用情况。
+此外，当本接口与Matmul高阶API或SyncAll接口同时使用时，开发者自行使用的flagId还需注意避免与这些接口内部已占用的flagId冲突，详见[核间同步flagId占用说明](key_features.md#inter_core_sync_flagid_usage)。
 
 ## 返回值说明<a id="section640mcpsimp"></a>
 
@@ -133,12 +133,7 @@ CrossCoreSetFlag的模板参数`modeId`和`pipe`均**没有默认值**，其取�
         | 2 | \_\_mix\_\_(1, 1)、\_\_mix\_\_(1, 2) | KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2 |
         | 4 | \_\_mix\_\_(1, 2) | KERNEL\_TYPE\_MIX\_AIC\_1\_2 |
 
-<a id="flagId冲突说明"></a>
-
-- 以下接口内部实现中使用了CrossCoreSetFlag和CrossCoreWaitFlag会占用一部分flagId，开发者同时使用CrossCoreSetFlag/CrossCoreWaitFlag与以下接口时，需注意避免flagId使用冲突：
-
-    - Matmul高阶API占用的flagId范围与定义的Matmul对象数目相关，假设定义了N个Matmul对象，Matmul高阶API内部占用的flagId范围为\[0, 2 \* N - 1\]。Matmul最多支持定义4个对象，此时flagId占用范围为\[0,7\]。
-    - SyncAll硬件同步接口占用的flagId情况请参考[flagId占用情况](SyncAll.md#syncall_flagId冲突说明)。
+- 以下接口内部实现中使用了CrossCoreSetFlag和CrossCoreWaitFlag会占用一部分flagId，开发者同时使用CrossCoreSetFlag/CrossCoreWaitFlag与这些接口时，需注意避免flagId使用冲突，各接口flagId占用的完整说明参见[核间同步flagId占用说明](key_features.md#inter_core_sync_flagid_usage)。
 
 - 用户需要确保配套使用CrossCoreSetFlag和CrossCoreWaitFlag，否则会出现未定义行为。
 - 核间同步的模式为模式0、1、2时，模板参数pipe不支持设置为PIPE\_ALL，PIPE\_S。
