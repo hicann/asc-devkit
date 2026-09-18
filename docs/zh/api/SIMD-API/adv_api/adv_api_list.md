@@ -174,6 +174,12 @@
 | --- | --- |
 | [HCCL通信类](HCCL_communication/HCCL_communication.md) | 在AI Core侧编排集合通信任务。 |
 
+##  AIN通信类
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [AIN通信类](https://gitcode.com/cann/asc-comm/blob/9.2.0/docs/zh/api/aicore/ain/README.md) | 在AI Core侧编排单边通信任务。 |
+
 ##  卷积计算
 
 | 接口名 | 功能描述 |

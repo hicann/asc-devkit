@@ -24,6 +24,8 @@
 
 -   **[HCCL通信类](HCCL_communication/HCCL_communication.md)**  
 
+-   **[AIN通信类](https://gitcode.com/cann/asc-comm/blob/9.2.0/docs/zh/api/aicore/ain/README.md)**  
+
 -   **[卷积计算](convolution_compute/convolution_compute.md)**  
 
 -   **[随机函数](random_functions/random_functions.md)**  

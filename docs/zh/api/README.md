@@ -2283,6 +2283,8 @@
                 -   [SetHcclContext](SIMD-API/adv_api/HCCL_communication/HCCL-Context/SetHcclContext.md)
                 -   [GetHcclContext](SIMD-API/adv_api/HCCL_communication/HCCL-Context/GetHcclContext.md)
 
+        -   [AIN通信类<a name="sub_menu"></a>](https://gitcode.com/cann/asc-comm/blob/9.2.0/docs/zh/api/aicore/ain/README.md)
+
         -   [卷积计算](SIMD-API/adv_api/convolution_compute/convolution_compute.md)
             -   [Conv3D核函数（Kernel）侧接口](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Conv3d_Kernel.md)
                 -   [Conv3D使用说明](SIMD-API/adv_api/convolution_compute/Conv3D_Kernel/Conv3D_usage.md)
@@ -3481,6 +3483,7 @@
     -   [SIMT接口软仿情况汇总](appendix/SIMT_interface_soft_simulation_summary.md)
     -   [SIMT接口精度标准汇总](appendix/SIMT_interface_precision_standard_summary.md)
     -   [SIMT指令理论性能汇总](appendix/SIMT_instruction_theoretical_perf_summary.md)
+    -   [预留接口](https://gitcode.com/cann/asc-comm/blob/9.2.0/docs/zh/api/reserve.md)
     -   [废弃接口](appendix/deprecated_interface.md)
     -   [接口变更说明](appendix/interface_change_description.md)
     -   [Release Notes](appendix/Release_Notes/release_notes.md)

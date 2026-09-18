@@ -38,6 +38,8 @@
 
 - **[SIMT指令理论性能汇总](SIMT_instruction_theoretical_perf_summary.md)**
 
+- **[预留接口](https://gitcode.com/cann/asc-comm/blob/9.2.0/docs/zh/api/reserve.md)**
+
 - **[废弃接口](deprecated_interface.md)**
 
 - **[接口变更说明](interface_change_description.md)**
