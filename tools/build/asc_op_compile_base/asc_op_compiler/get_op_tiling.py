@@ -2237,7 +2237,7 @@ def generate_static_tiling_struct_file(
 
 
 def static_post_process_of_workspace(context, run_info, workspace_size):
-    if workspace_size >= 0:
+    if workspace_size > 0:
         if len(run_info["workspaces"]) > 1:
             msg = "the num of workspace can not large than 1"
             raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, msg)
