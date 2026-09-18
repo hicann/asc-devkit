@@ -332,7 +332,7 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
 
     -   **与其它接口的flagId冲突**
 
-        Matmul高阶API和SyncAll硬件同步接口内部实现中使用了CrossCoreSetFlag和CrossCoreWaitFlag会占用一部分flagId，开发者同时使用以上两个接口与CrossCoreSetFlag/CrossCoreWaitFlag时，需注意避免flagId使用冲突，具体情况参考[CrossCoreSetFlag的flagId冲突说明](../../../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md#flagId冲突说明)。
+        部分接口内部实现中使用了CrossCoreSetFlag和CrossCoreWaitFlag，会占用一部分flagId，开发者同时使用这些接口与CrossCoreSetFlag/CrossCoreWaitFlag时，需注意避免flagId使用冲突，各接口flagId占用的完整说明（含各NPU架构版本的差异）参考[核间同步flagId占用说明](../../../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/key_features.md#inter_core_sync_flagid_usage)。
 
     -   **计数器限制**
 

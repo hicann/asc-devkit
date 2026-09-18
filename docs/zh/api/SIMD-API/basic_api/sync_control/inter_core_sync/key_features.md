@@ -1,5 +1,98 @@
 # 关键特性说明<a id="inter_core_sync_key_features"></a>
 
+本文档主要介绍核间同步的两个关键事项：
+
+- 核间同步flagId的占用情况，说明各接口内部占用的flagId取值范围，帮助开发者在使用CrossCoreSetFlag/CrossCoreWaitFlag时避免flagId冲突。
+- 各核间同步控制模式的实现原理，配合时序图介绍模式0、1、2、4各自的工作机制。
+
+## 核间同步flagId占用说明<a id="inter_core_sync_flagid_usage"></a>
+
+### 概述
+
+开发者使用[CrossCoreSetFlag](CrossCoreSetFlag_ISASI.md)和[CrossCoreWaitFlag](CrossCoreWaitFlag_ISASI.md)接口进行核间同步时，需要传入核间同步标记**flagId**，每个flagId对应一个用于控制同步的计数器。
+
+部分接口的内部实现也会占用一部分flagId。当开发者同时使用这些接口与CrossCoreSetFlag/CrossCoreWaitFlag时，若flagId发生冲突（即相互独立的同步操作复用了同一个flagId），其对应的计数器会被错误地共享和修改，导致核间同步行为异常：可能出现阻塞无法解除而使程序卡死，或同步提前完成、阻塞提前解除而导致计算结果错误。
+
+因此，当开发者同时调用CrossCoreSetFlag/CrossCoreWaitFlag与这些占用flagId的接口时，应**避开各接口内部已占用的flagId**，选用未被占用的flagId。各接口flagId的占用情况按**所属模式**和**NPU架构版本**分别参见[模式0、1、2的flagId占用](#inter_core_sync_flagid_mode012)和[模式4的flagId占用](#inter_core_sync_flagid_mode4)。
+
+- **核间同步模式与flagId空间**
+    - 核间同步分为**模式0、1、2**与**模式4**，两者的底层硬件指令不同，flagId相互独立：
+        - 模式0、1、2：每个AIC和每个AIV各自有16个flagId，取值范围为0-15。
+        - 模式4：AIC有32个flagId（0-31），AIV有16个flagId（0-15）。
+    - 因此，避让冲突时需按**所属模式**分别查看对应表格。
+- **适用架构**
+    CrossCoreSetFlag/CrossCoreWaitFlag仅在[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)和[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)两个NPU架构版本上支持，故flagId冲突避让仅需关注以下两个NPU架构：
+    - 2201架构：Atlas A2训练系列产品/Atlas A2推理系列产品、Atlas A3训练系列产品/Atlas A3推理系列产品。
+    - 3510架构：Ascend 950PR/Ascend 950DT。
+
+### 模式0、1、2的flagId占用<a id="inter_core_sync_flagid_mode012"></a>
+
+**表1**  模式0、1、2flagId占用情况
+
+| 接口 | 限定条件 | 占用flagId | 各计算核占用情况 | NPU架构版本 |
+| :--- | :--- | :--- | :--- | :--- |
+| [SyncAll](SyncAll.md) | `isAIVOnly=true` | 14 | AIV：14 | 2201、3510 |
+| [SyncAll](SyncAll.md) | `isAIVOnly=false` | 11、12、13 | AIC：11、12、13；AIV：12、13 | 2201、3510 |
+| [SetNextTaskStart](../inter_task_sync/SetNextTaskStart.md) | SuperKernel子核函数（Kernel）中调用 | 11、14 | AIC：11；AIV：14 | 2201、3510 |
+| [WaitPreTaskEnd](../inter_task_sync/WaitPreTaskEnd.md) | SuperKernel子核函数（Kernel）中调用 | 11、12、13、14 | AIC：11、12、13；AIV：12、13、14 | 2201、3510 |
+| [Matmul](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md) | 定义N个Matmul对象 | `[0, 2N-1]` | AIV/AIC按对象与subBlock分配 | 2201 |
+| [Matmul](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md) | SuperKernel融合场景（[GetTaskRatio](../../tool_interface/system_resources_and_variables/GetTaskRatio.md)返回2，即1:2配比） | 15 | AIV：15 | 2201 |
+
+### 模式4的flagId占用<a id="inter_core_sync_flagid_mode4"></a>
+
+**表2**  模式4flagId占用情况
+
+| 接口 | 限定条件 | 占用flagId | 各计算核占用情况 | NPU架构版本 |
+| :--- | :--- | :--- | :--- | :--- |
+| [SyncAll](SyncAll.md) | `isAIVOnly=false`（核函数（Kernel）使用`__mix__(1, 2)`修饰时） | 12、13、28、29 | AIC：12、13、28、29；AIV：12、13 | 3510 |
+| [WaitPreTaskEnd](../inter_task_sync/WaitPreTaskEnd.md) | SuperKernel子核函数（Kernel）中调用 | 12、13、28、29 | AIC：12、13、28、29；AIV：12、13 | 3510 |
+| [Matmul](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md) | 定义N个[Matmul对象](../../../adv_api/cube_compute/Matmul_Kernel/REGIST_MATMUL_OBJ.md) | `[0, N+17]` | AIC/AIV按对象、eventType、subBlock分配 | 3510 |
+| [Matmul](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md) | A矩阵和B矩阵同时开启[IBSHARE](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_usage.md#p84551411817)的场景 | 15 | AIV：15 | 3510 |
+| [TSCM](../../resource_management/TSCM/TSCM.md) | 从UB发起的L1 Buffer（TSCM）队列 | 0~11（从11向下逐个分配） | AIV | 3510 |
+| [DataCopy（GM→L1）](../../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md) | 无 | 1、17 | AIC：1、17；AIV：1 | 3510 |
+
+### 各接口限定条件说明
+
+#### SyncAll
+
+- **isAIVOnly=true**：纯Vector算子的全核同步，占用模式0、1、2的flagId为14（AIV）。
+- **isAIVOnly=false**：Mix（包含Cube和Vector计算）算子的全核同步，占用情况随NPU架构与核函数（Kernel）类型不同：
+    - **2201架构**：占用模式0、1、2的flagId为11、12、13。
+    - **3510架构**：
+        - 核函数（Kernel）使用`__mix__(1, 1)`修饰时，占用模式0、1、2的flagId为11、12、13。
+        - 核函数（Kernel）使用`__mix__(1, 2)`修饰时，占用模式0、1、2的flagId为11，以及模式4的flagId为12、13、28、29。
+
+    以上`isAIVOnly`模板参数的说明参见[SyncAll](SyncAll.md)；`__mix__(1, 1)`/`__mix__(1, 2)`修饰符的说明参见[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。
+
+#### SetNextTaskStart / WaitPreTaskEnd
+
+- 二者为**SuperKernel**场景专用接口，仅在算子以[SuperKernel](../../../../../guide/programming_guide/advanced_programming/super_kernel/principles.md)方式融合、且子核函数（Kernel）中调用时才生效。
+- **SetNextTaskStart**：占用模式0、1、2的flagId为11（AIC）、14（AIV）。参见[SetNextTaskStart](../inter_task_sync/SetNextTaskStart.md)。
+- **WaitPreTaskEnd**：参见[WaitPreTaskEnd](../inter_task_sync/WaitPreTaskEnd.md)。
+    - **2201架构**：占用模式0、1、2的flagId为11、12、13、14。
+    - **3510架构**：占用模式0、1、2的flagId为11、12、13、14，以及模式4的flagId为12、13、28、29。
+
+#### Matmul
+
+- 占用flagId的范围与定义的**Matmul对象数目N**相关（N最大为4），并且随NPU架构不同而不同，参见[REGIST_MATMUL_OBJ](../../../adv_api/cube_compute/Matmul_Kernel/REGIST_MATMUL_OBJ.md#约束说明)。
+- **2201架构**：占用模式0、1、2的flagId为[0, 2N-1]（N=4时占用`[0,7]`）；SuperKernel融合（1:2配比，即[GetTaskRatio](../../tool_interface/system_resources_and_variables/GetTaskRatio.md)返回2）场景下还占用flagId为15。
+- **3510架构**：占用模式4的flagId为[0, N+17]（N=4时占用`[0,21]`）；A矩阵和B矩阵同时开启[IBSHARE](../../../adv_api/cube_compute/Matmul_Kernel/Matmul_usage.md#p84551411817)的场景下还占用flagId为15。
+
+#### TSCM
+
+- 仅当使用从UB发起的L1 Buffer（TSCM）队列时才触发，参见[TSCM](../../resource_management/TSCM/TSCM.md)。
+- 占用模式4的flagId，范围为**0~11**：第1个TSCM队列占用11，第2个占用10，依次向下递减分配，最多可分配到0。
+
+#### DataCopy（GM→L1）
+
+- 在**3510架构**下占用模式4的flagId为1、17（AIC：1、17；AIV：1）。参见[DataCopy（GMToL1连续数据搬运）](../../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md)。
+
+### 备注
+
+- 5102架构上，SyncAll纯Vector场景（`isAIVOnly=true`）内部占用模式0、1、2的flagId为14，但该架构不对外提供CrossCoreSetFlag/CrossCoreWaitFlag接口，故无flagId冲突避让需求。
+- 3003、3113架构上，TSCM内部使用模式4的flagId，但同样不对外提供CrossCoreSetFlag/CrossCoreWaitFlag接口，故无flagId冲突避让需求。
+
+## 各个核间同步控制实现原理<a id="sync_control_mode"></a>
 如图1所示，本章节将配合时序图介绍CrossCoreSetFlag和CrossCoreWaitFlag配合使用时支持的四种同步控制模式各自实现的原理。
 
 - 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行。
