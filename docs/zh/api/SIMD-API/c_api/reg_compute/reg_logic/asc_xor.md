@@ -43,7 +43,7 @@ def asc_xor(dst, src0, src1, mask):
         dst[i] = src0[i] ^ src1[i] if mask[i] else 0
 ```
 
-本接口为`Reg`矢量计算接口，仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -123,7 +123,7 @@ __simd_callee__ inline void asc_xor(vector_bool& dst,
 
 ## 约束说明
 
-- 本接口非AIV调用直接返回。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `dst`中未被`mask`筛选的位置被置为0。
 
 ## 调用示例

@@ -37,7 +37,7 @@
 
 本接口与[asc_copy](asc_copy.md)的掩码寄存器复制到掩码寄存器模式功能相同，区别在于本接口通过函数返回值返回结果。
 
-本接口为Reg矢量计算接口，仅在AIV上生效。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -92,8 +92,8 @@ __simd_callee__ inline vector_bool asc_mask(vector_bool src)
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，src为矢量数据寄存器或掩码寄存器。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
+- src为矢量数据寄存器或掩码寄存器。
 
 ## 调用示例
 

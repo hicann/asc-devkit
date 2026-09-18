@@ -34,7 +34,7 @@
 - b16模式：每次处理128个元素，用于16 bit数据类型的矢量计算。
 - b32模式：每次处理64个元素，用于32 bit数据类型的矢量计算。
 
-**图1**  asc_update_mask更新流程
+**图1** asc_update_mask更新流程
 
 ![asc_update_mask更新流程](../../figures/capi_update_mask.png)
 
@@ -64,7 +64,7 @@ vector_bool，掩码寄存器。
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 掩码寄存器的数量上限为8，超过上限的掩码寄存器会写入预留的8K Unified Buffer（UB）内存中，可能引起性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若两者均可用，优先复用寄存器。
 - 本接口需在Vector Function（`__simd_vf__`标记的函数）内调用。
 

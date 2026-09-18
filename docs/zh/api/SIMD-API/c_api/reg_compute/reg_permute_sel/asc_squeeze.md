@@ -32,7 +32,7 @@
 
 本接口不会将有效数据大小保存至AR寄存器。如果需要筛选有效元素并将其连续搬出至Unified Buffer（UB），请参考[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)。
 
-本接口仅在AIV上生效。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -82,10 +82,8 @@ __simd_callee__ inline void asc_squeeze(vector_half& dst,
 
 ## 约束说明
 
-- 通过函数返回值返回结果的函数原型在非AIV上调用返回对应矢量类型的默认构造值。
-- 通过引用参数输出结果的函数原型在非AIV上调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，`src`为矢量数据寄存器；无返回值原型中的`dst`为矢量数据寄存器。
-- `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
+- `src`为矢量数据寄存器；无返回值原型中的`dst`为矢量数据寄存器。
 - `mask`比特位为1的`src`元素按原顺序紧凑排列到计算结果低位；`mask`比特位为0的`src`元素不参与压缩，计算结果中压缩结果之后的剩余高位统一写0。
 
 ## 调用示例

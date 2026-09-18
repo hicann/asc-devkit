@@ -33,6 +33,8 @@
 - 对于b16数据类型：从SPR读取mask共128bit数据，将每个bit扩展为2bit，拼成256bit掩码寄存器返回。
 - 对于b32数据类型：从SPR读取mask共64bit数据，将每个bit扩展为4bit，拼成256bit掩码寄存器返回。
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -50,7 +52,7 @@ vector_bool，掩码寄存器。
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 本接口需在Vector Function（`__simd_vf__`标记的函数）内调用。
 
 ## 调用示例

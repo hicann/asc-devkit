@@ -34,7 +34,7 @@
 - **立即数偏移搬入模式**：从相对源起始地址偏移指定距离的位置搬入数据。本接口不会自动更新源地址。
 - **地址寄存器偏移搬入模式**：通过地址寄存器指定相对源起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬入场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 
-本接口仅在AIV上生效，非AIV调用直接返回。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -146,8 +146,7 @@ __simd_callee__ inline void asc_loadalign_brc_elem2datablock(vector_half& dst,
 
 ### 通用约束
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 各功能模式下，b16类型的实际读取地址必须按16字节对齐，b32类型的实际读取地址必须按32字节对齐，且实际读取范围必须在UB地址空间内且不越界，否则会报错。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈 + 2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB～128KB作Data Cache，可用容量进一步减少）。UB地址偏移后不可超过实际可用容量，否则会报错。
 - 如果本指令与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。

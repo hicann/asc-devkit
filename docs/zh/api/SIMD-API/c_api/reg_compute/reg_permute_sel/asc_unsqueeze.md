@@ -94,8 +94,8 @@ __simd_callee__ inline void asc_unsqueeze(vector_int8_t& dst,
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，dst与mask为矢量数据寄存器/掩码寄存器。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
+- dst与mask为矢量数据寄存器/掩码寄存器。
 
 ## 调用示例
 

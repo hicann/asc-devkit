@@ -30,7 +30,7 @@
 
 Reg计算数据搬运接口，用于结束一组[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)连续搬出操作，将暂存在非对齐寄存器中的尾块写入Unified Buffer（UB）。
 
-本接口仅在AIV上生效。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -74,8 +74,7 @@ PIPE_V
 
 ### 通用约束
 
-- 非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化。目的操作数的尾块地址范围不可超过实际可用容量，否则会触发写越界异常。
 - 如果本接口与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化。
 

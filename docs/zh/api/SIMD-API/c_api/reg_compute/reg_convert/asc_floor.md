@@ -32,6 +32,8 @@
 
 关于舍入模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```cpp
@@ -81,9 +83,7 @@ __simd_callee__ inline void asc_floor(vector_half& dst,
 
 ## 约束说明
 
-- 本接口在非AIV上调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
-- `mask`需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `half`和`bfloat16_t`支持饱和模式。`float`类型只支持不饱和模式。
 - `mask`掩码位为0时，`dst`对应元素置0。
 

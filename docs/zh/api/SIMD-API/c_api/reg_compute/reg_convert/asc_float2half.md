@@ -46,6 +46,8 @@ def asc_float2half_rn(dst, src, mask, dst_pos):
             dst[2 * i + offset] = half(src[i])  # float -> half，RINT舍入
 ```
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -103,10 +105,9 @@ __simd_callee__ inline void asc_float2half_rn(vector_half& dst,
 
 ## 约束说明
 
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
 - 位置选择标签选择目的操作数的写入地址，其他位置清零。
-- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
-- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - 结果写入`dst`的奇数索引位置时，偶数索引位置置零；结果写入偶数索引位置时，奇数索引位置置零。

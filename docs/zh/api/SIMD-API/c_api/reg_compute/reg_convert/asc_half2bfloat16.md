@@ -30,6 +30,8 @@
 
 根据`mask`将`src`中的每个参与计算的`half`类型元素转换为`bfloat16_t`类型，结果写入`dst`。
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -77,10 +79,7 @@ __simd_callee__ inline vector_bfloat16_t asc_half2bfloat16_rna(vector_half src,
 
 ## 约束说明
 
-- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
-- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
-- mask需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `mask`掩码位为0时，`dst`对应元素置0。
 
 ## 调用示例

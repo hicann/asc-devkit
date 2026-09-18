@@ -112,8 +112,7 @@ __simd_callee__ inline void asc_deintlv_b32(vector_bool& dst0,
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - src0、src1、dst0、dst1的数据类型需要保持一致。
 - src0和src1可以为同一个矢量数据寄存器或掩码寄存器。
 - dst0与dst1必须为不同的矢量数据寄存器或掩码寄存器，若两者引用同一寄存器将导致两个输出互相覆盖，结果未定义。

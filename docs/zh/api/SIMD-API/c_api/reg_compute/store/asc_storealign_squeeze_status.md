@@ -28,7 +28,7 @@
 
 将[asc_squeeze_and_storeunalign](../reg_permute_sel/asc_squeeze_and_storeunalign.md)操作后保存在AR特殊寄存器中的有效数据长度写入Unified Buffer（UB）。调用无`offset`参数的重载时，写入`dst`；调用带`offset`参数的重载时，写入`dst`加字节偏移`offset`的位置。
 
-本接口仅在AIV上生效。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -54,8 +54,7 @@ __simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst
 
 ## 约束说明
 
-- 非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 实际目的地址需4字节对齐，且不得超出实际可用UB范围；无`offset`参数时实际目的地址为`dst`，带`offset`参数时为`dst`加`offset`字节。
 - 调用本接口前，需使用[asc_squeeze_and_storeunalign](../reg_permute_sel/asc_squeeze_and_storeunalign.md)完成squeeze操作；写入的值是其当前累计的有效数据字节数。
 - 如果本接口与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化。

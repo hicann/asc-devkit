@@ -41,7 +41,7 @@ def asc_float2int32_rn(dst, src, mask):
             dst[i] = 0
 ```
 
-本接口为`reg`矢量计算接口，仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -86,7 +86,7 @@ __simd_callee__ inline void asc_float2int32_rn(vector_int32_t& dst,
 
 ## 约束说明
 
-- 本接口非AIV调用直接返回。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。

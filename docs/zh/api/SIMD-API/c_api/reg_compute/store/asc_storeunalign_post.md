@@ -33,7 +33,7 @@
 - **立即数偏移搬出模式**：通过立即数指定相对目的起始地址的偏移，单位为元素，用户可选择手动更新偏移或更新目的地址，用于配合前序非对齐搬出接口[asc_storeunalign](asc_storeunalign.md)或[asc_storeunalign_postupdate掩码寄存器搬出模式](asc_storeunalign_postupdate.md)收尾。
 - **地址寄存器偏移搬出模式**：通过地址寄存器指定相对目的起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的搬出场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。用于配合前序非对齐搬出接口[asc_storeunalign_postupdate地址寄存器偏移搬出模式](asc_storeunalign_postupdate.md)收尾。
 
-本接口仅在AIV上生效。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -111,8 +111,7 @@ __simd_callee__ inline void asc_storeunalign_post(__ubuf__ uint8_t* dst,
 
 ### 通用约束
 
-- 非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 需要保证目的操作数的地址加上`offset`对应的偏移地址，访问范围须位于实际可用UB范围内。
 - 该接口中的目的地址不需要32B对齐，但数据类型为`dtype`的`dst`需要`sizeof(dtype)`字节对齐。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈+2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少）。目的操作数地址不可超过实际可用容量，否则会报错。

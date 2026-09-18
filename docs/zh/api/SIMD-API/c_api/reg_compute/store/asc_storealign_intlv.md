@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/reg_compute/store/storealign.h"`。
 
-将两个矢量数据寄存器中的数据按元素顺序交织后连续对齐搬出到Unified Buffer（UB）。单次搬出量为`2 × VL`（共512字节），不支持配置掩码。搬运过程中数据格式与内容保持不变。本接口在Vector Function（`__simd_vf__`标记的函数）内使用。
+将两个矢量数据寄存器中的数据按元素顺序交织后连续对齐搬出到Unified Buffer（UB）。单次搬出量为`2 × VL`（共512字节），不支持配置掩码。搬运过程中数据格式与内容保持不变。
 
 本接口提供三种参数列表不同的功能模式：
 
@@ -36,7 +36,7 @@
 - **立即数偏移搬出模式**：通过`int32_t offset`指定相对目的起始地址的偏移，用户可选择更新偏移或更新目的地址。
 - **地址寄存器偏移搬出模式**：通过地址寄存器`addr_reg offset`指定相对目的起始地址的偏移，常用于Hardware Loop内偏移随循环计数变化的对齐搬出场景。需要与[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)配合使用。
 
-本接口仅在AIV上执行有效。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -152,8 +152,7 @@ __simd_callee__ inline void asc_storealign_intlv(__ubuf__ int8_t* dst,
 
 ### 通用约束
 
-- 本接口非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `dst`起始地址需32字节对齐，否则会报错。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈+2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少）。目的操作数地址偏移后不可超过实际可用容量，否则会报错。
 - 通过`offset`参数偏移后的实际访问地址需落在UB地址范围内，且实际访问地址仍需32字节对齐，否则会报错。

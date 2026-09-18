@@ -30,6 +30,8 @@
 
 merge模式下，将src的最低位元素广播到dst中被mask筛选的位置，dst中未被mask筛选的元素保留原值。
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```cpp
@@ -65,7 +67,7 @@ __simd_callee__ inline void asc_duplicate_merge(vector_float& dst, vector_float 
 
 ## 约束说明
 
-无
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 
 ## 调用示例
 

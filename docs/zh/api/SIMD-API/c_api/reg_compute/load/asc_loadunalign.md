@@ -32,6 +32,8 @@
 
 设本次实际读取的起始字节地址为`src_start_addr`，结束字节地址为`src_end_addr`，其中`src_end_addr = src_start_addr + VL`；将`src_start_addr`向低地址方向对齐到32字节边界，得到`aligned_src_start_addr`。`asc_loadunalign_pre`将字节地址范围`[aligned_src_start_addr, aligned_src_start_addr + 32)`的数据缓存到非对齐寄存器，本接口将该缓存与从UB读取的后续数据拼接，得到字节地址范围`[src_start_addr, src_end_addr)`的数据。
 
+本接口为Reg矢量搬运接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -69,8 +71,7 @@ __simd_callee__ inline void asc_loadunalign(vector_int8_t& dst,
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `src1`起始地址必须按dtype对齐，且实际访问范围必须在UB地址空间内，否则会报错。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈 + 2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB～128KB作Data Cache，可用容量进一步减少）。UB地址偏移后不可超过实际可用容量，否则会报错。
 - 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。

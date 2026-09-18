@@ -132,8 +132,8 @@ __simd_callee__ inline void asc_unpack_upper(vector_bool& dst,
 
 ## 约束说明
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，dst与src均为矢量数据寄存器或掩码寄存器。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
+- dst与src均为矢量数据寄存器或掩码寄存器。
 - 低半段解包与高半段解包配合可分别解包源寄存器前半段与后半段，两次调用即可将整个源寄存器的窄类型数据全部扩展为宽类型写入两个目的寄存器。
 
 ## 调用示例

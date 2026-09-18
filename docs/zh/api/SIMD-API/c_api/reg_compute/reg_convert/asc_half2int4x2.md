@@ -34,7 +34,7 @@
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
-本接口为`reg`矢量计算接口，仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -79,10 +79,10 @@ __simd_callee__ inline void asc_half2int4x2_<round_mode>_sat(
 
 ## 约束说明
 
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 位置选择标签参数仅能使用上述编译期常量。
 - 开启饱和模式或非饱和模式时，需配置ctrl寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
-- 本接口仅在AIV上生效，并在Vector Function（`__simd_vf__`标记的函数）内调用。
-- `mask`需通过掩码设置接口预先赋值后再传入；`mask`掩码位为0时，`dst`对应元素置0。
+- `mask`掩码位为0时，`dst`对应元素置0。
 
 ## 调用示例
 

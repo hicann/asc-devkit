@@ -66,5 +66,5 @@ __global__ __vector__ void asc_add_kernel(__gm__ float* dst, __gm__ float* src0,
 
 - 通过引用参数输出结果的Reg矢量计算C API，在非AIV上调用时直接返回。
 - 通过函数返回值输出结果的Reg矢量计算C API，在非AIV上调用时返回对应矢量类型的默认构造值。
-- Reg矢量计算C API接口需要在Vector Function（`__simd_vf__` 标记的函数）内调用。
+- Reg矢量计算C API接口需要在Vector Function（`__simd_vf__` 标记的函数）内调用，不支持在`__aicore__`函数中直接调用，调用关系请参考[SIMD BuiltIn关键字](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)。
 - 对于支持配置`mask`参数的Reg矢量计算C API接口，`mask`需通过[掩码设置接口](./reg_mask/reg_mask.md)预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。

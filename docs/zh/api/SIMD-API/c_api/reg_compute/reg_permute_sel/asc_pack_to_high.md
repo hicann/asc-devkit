@@ -33,6 +33,8 @@
 
 ![](../../../../figures/pack_high_draft.png)
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -77,10 +79,10 @@ __simd_callee__ inline vector_uint8_t asc_pack_to_high(vector_uint16_t src)
 
 **表1** 参数说明
 
-| 参数名       | 输入/输出 | 描述               |
+| 参数名 | 输入/输出 | 描述 |
 | --------- | ----- | ---------------- |
-| dst       | 输出    | 目的操作数（矢量数据寄存器/掩码寄存器）。            |
-| src | 输入    | 源操作数（矢量数据寄存器/掩码寄存器）。            |
+| dst | 输出 | 目的操作数（矢量数据寄存器/掩码寄存器）。 |
+| src | 输入 | 源操作数（矢量数据寄存器/掩码寄存器）。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -91,8 +93,8 @@ __simd_callee__ inline vector_uint8_t asc_pack_to_high(vector_uint16_t src)
 
 ## 约束说明
 
-- 本接口非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用，源操作数和目的操作数为矢量数据寄存器或掩码寄存器。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
+- 源操作数和目的操作数为矢量数据寄存器或掩码寄存器。
 
 ## 调用示例
 

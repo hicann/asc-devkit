@@ -41,7 +41,7 @@
 
 ![](../../figures/capi_loadalign_norm.png)
 
-本接口仅在AIV上生效，非AIV调用直接返回。
+本接口为Reg矢量搬运接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -206,8 +206,7 @@ __simd_callee__ inline void asc_loadalign(vector_float& dst,
 
 ### 通用约束
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 各功能模式下的实际读取地址必须按32字节对齐，且实际读取范围必须在UB地址空间内且不越界，否则会报错。非连续对齐搬入模式中，当某个`DataBlock`的`mask`包含的元素全部无效时，该`DataBlock`即使越界也不会报错。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈 + 2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB～128KB作Data Cache，可用容量进一步减少）。UB地址偏移后不可超过实际可用容量，否则会报错。
 - 如果本指令与其他指令存在UB地址重叠，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。
@@ -220,7 +219,6 @@ __simd_callee__ inline void asc_loadalign(vector_float& dst,
 ### 非连续对齐搬入模式
 
 - 该模式不支持目的操作数为掩码寄存器。
-- `mask`需通过[掩码设置接口](../../defs/type/data_type_definition.md#掩码寄存器)预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
 - 当dtype为`int64_t`时，由于掩码创建接口不支持b64模式，需要先通过[asc_create_mask_b32](../reg_mask/asc_create_mask.md)生成b32掩码，再通过[asc_unpack_lower](../reg_permute_sel/asc_unpack.md)将其展开为适用于b64数据的掩码后传入本接口。展开后的掩码以连续8个bit为一组，仅每组最低位的bit有效，用于控制对应的一个b64元素。
     ```c
     vector_int64_t src_reg;
