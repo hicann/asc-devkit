@@ -13,17 +13,9 @@
 
 部分接口的内部实现也会占用一部分flagId。当开发者同时使用这些接口与CrossCoreSetFlag/CrossCoreWaitFlag时，若flagId发生冲突（即相互独立的同步操作复用了同一个flagId），其对应的计数器会被错误地共享和修改，导致核间同步行为异常：可能出现阻塞无法解除而使程序卡死，或同步提前完成、阻塞提前解除而导致计算结果错误。
 
-因此，当开发者同时调用CrossCoreSetFlag/CrossCoreWaitFlag与这些占用flagId的接口时，应**避开各接口内部已占用的flagId**，选用未被占用的flagId。各接口flagId的占用情况按**所属模式**和**NPU架构版本**分别参见[模式0、1、2的flagId占用](#inter_core_sync_flagid_mode012)和[模式4的flagId占用](#inter_core_sync_flagid_mode4)。
+因此，当开发者同时调用CrossCoreSetFlag/CrossCoreWaitFlag与这些占用flagId的接口时，应**避开各接口内部已占用的flagId**，选用未被占用的flagId。
 
-- **核间同步模式与flagId空间**
-    - 核间同步分为**模式0、1、2**与**模式4**，两者的底层硬件指令不同，flagId相互独立：
-        - 模式0、1、2：每个AIC和每个AIV各自有16个flagId，取值范围为0-15。
-        - 模式4：AIC有32个flagId（0-31），AIV有16个flagId（0-15）。
-    - 因此，避让冲突时需按**所属模式**分别查看对应表格。
-- **适用架构**
-    CrossCoreSetFlag/CrossCoreWaitFlag仅在[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)和[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)两个NPU架构版本上支持，故flagId冲突避让仅需关注以下两个NPU架构：
-    - 2201架构：Atlas A2训练系列产品/Atlas A2推理系列产品、Atlas A3训练系列产品/Atlas A3推理系列产品。
-    - 3510架构：Ascend 950PR/Ascend 950DT。
+核间同步分为**模式0、1、2**与**模式4**，两者的底层硬件指令不同，flagId相互独立，因此各接口flagId的占用情况按**所属模式**和**NPU架构版本**分别参见[模式0、1、2的flagId占用](#inter_core_sync_flagid_mode012)和[模式4的flagId占用](#inter_core_sync_flagid_mode4)。
 
 ### 模式0、1、2的flagId占用<a id="inter_core_sync_flagid_mode012"></a>
 
@@ -86,11 +78,6 @@
 #### DataCopy（GM→L1）
 
 - 在**3510架构**下占用模式4的flagId为1、17（AIC：1、17；AIV：1）。参见[DataCopy（GMToL1连续数据搬运）](../../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md)。
-
-### 备注
-
-- 5102架构上，SyncAll纯Vector场景（`isAIVOnly=true`）内部占用模式0、1、2的flagId为14，但该架构不对外提供CrossCoreSetFlag/CrossCoreWaitFlag接口，故无flagId冲突避让需求。
-- 3003、3113架构上，TSCM内部使用模式4的flagId，但同样不对外提供CrossCoreSetFlag/CrossCoreWaitFlag接口，故无flagId冲突避让需求。
 
 ## 各个核间同步控制实现原理<a id="sync_control_mode"></a>
 如图1所示，本章节将配合时序图介绍CrossCoreSetFlag和CrossCoreWaitFlag配合使用时支持的四种同步控制模式各自实现的原理。
