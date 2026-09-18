@@ -280,9 +280,15 @@ __aicore__ inline void DataCopyL12FBImpl(uint64_t dst, __cbuf__ T* src, const Da
 {
     constexpr uint8_t POS_DST_MEM_BLOCK = 16;
     dst |= static_cast<uint64_t>(intriParams.postProcBufBlock) << POS_DST_MEM_BLOCK;
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
     copy_cbuf_to_fbuf_v2(
         (__fbuf__ void*)dst, (__cbuf__ void*)src, intriParams.blockCount, intriParams.blockLen, intriParams.srcStride,
         intriParams.dstStride);
+#else
+    copy_cbuf_to_fbuf_v2(
+        (__fbuf__ void*)dst, (__cbuf__ void*)src, false, intriParams.blockCount, intriParams.blockLen,
+        intriParams.srcStride, intriParams.dstStride);
+#endif
 }
 
 template <typename T>
