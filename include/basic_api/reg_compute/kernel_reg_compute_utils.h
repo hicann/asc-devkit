@@ -215,8 +215,8 @@ enum class DataCopyMode {
     DATA_BLOCK_COPY,
 };
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || \
-    defined(__ASC_NPU_HOST__)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
+    (__NPU_ARCH__ == 3113) || defined(__ASC_NPU_HOST__)
 struct ExpSpecificMode {
     MaskMergeMode mrgMode = MaskMergeMode::ZEROING;
     ExpAlgo algo = ExpAlgo::INTRINSIC;

@@ -30,9 +30,9 @@
 
 #if defined(__NPU_ARCH__) &&                                                                         \
     (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/frac/frac_3510_impl.h"
 #else
 #include "../../../impl/adv_api/detail/math/frac/frac_common_impl.h"
@@ -66,7 +66,7 @@ __aicore__ inline void Frac(
     }
 #if defined(__NPU_ARCH__) &&                                                                         \
     (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     FracImpl<T, isReuseSource>(dstTensor, srcTensor, sharedTmpBuffer, calCount);
 #endif
 }
@@ -122,7 +122,7 @@ __aicore__ inline void Frac(const LocalTensor<T>& dstTensor, const LocalTensor<T
 {
 #if defined(__NPU_ARCH__) &&                                                                         \
     (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || \
-     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+     __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     FracImpl<T, isReuseSource>(dstTensor, srcTensor, calCount);
 #endif
 }

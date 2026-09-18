@@ -76,19 +76,19 @@ __aicore__ inline void CopyGmToUbufAlignV2(
     if constexpr (sizeof(T) == 8) { // B64
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, 0, blockCount, burstLength, leftPaddingCnt * 2,
-            rigntPaddingCnt * 2, isPad, cacheMode, srcStride310, dstStride310);
+            rigntPaddingCnt * 2, isPad, srcStride310, dstStride310);
     } else if constexpr (sizeof(T) == 4) {
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, 0, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
-            isPad, cacheMode, srcStride310, dstStride310);
+            isPad, srcStride310, dstStride310);
     } else if constexpr (sizeof(T) == 2) {
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint16_t*)dst, (__gm__ uint16_t*)src, 0, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
-            isPad, cacheMode, srcStride310, dstStride310);
+            isPad, srcStride310, dstStride310);
     } else if constexpr (sizeof(T) == 1) {
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint8_t*)dst, (__gm__ uint8_t*)src, 0, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
-            isPad, cacheMode, srcStride310, dstStride310);
+            isPad, srcStride310, dstStride310);
     }
 }
 
@@ -113,7 +113,7 @@ __aicore__ inline void CopyUbufToGmAlignV2(
     }
     uint64_t dstStride310 = dstStride * unitOfBytes + burstLength; // GM   DataCopy:32Bytes, DataCopyPad:1Byte
     copy_ubuf_to_gm_align_v2(
-        (__gm__ void*)dst, (__ubuf__ void*)src, 0, blockCount, burstLength, cacheMode, dstStride310, srcStride310);
+        (__gm__ void*)dst, (__ubuf__ void*)src, 0, blockCount, burstLength, dstStride310, srcStride310);
 }
 
 // only support CubeCore   PIPE_MTE2
@@ -145,19 +145,19 @@ __aicore__ inline void CopyGmToCbufAlignV2(
     if constexpr (sizeof(T) == 8) { // B64
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint32_t*)dst, (__gm__ uint32_t*)src, 0, blockCount, burstLength, leftPaddingCnt * 2,
-            rigntPaddingCnt * 2, true, cacheMode, actSrcStride, actDstStride);
+            rigntPaddingCnt * 2, true, actSrcStride, actDstStride);
     } else if constexpr (sizeof(T) == 4) {
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint32_t*)dst, (__gm__ uint32_t*)src, 0, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
-            true, cacheMode, actSrcStride, actDstStride);
+            true, actSrcStride, actDstStride);
     } else if constexpr (sizeof(T) == 2) {
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint16_t*)dst, (__gm__ uint16_t*)src, 0, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
-            true, cacheMode, actSrcStride, actDstStride);
+            true, actSrcStride, actDstStride);
     } else if constexpr (sizeof(T) == 1) {
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint8_t*)dst, (__gm__ uint8_t*)src, 0, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
-            true, cacheMode, actSrcStride, actDstStride);
+            true, actSrcStride, actDstStride);
     }
 }
 

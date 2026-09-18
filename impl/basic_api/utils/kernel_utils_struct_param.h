@@ -39,9 +39,9 @@ struct ReduceRepeatParams {
         const int32_t srcRepStrideIn)
     {
 #if defined(__NPU_ARCH__) &&                                                                                 \
-    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113) || \
-     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || \
-     (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || \
+     (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || \
+     (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
         normalMask = mask;
         maskMode = 1;
 #else
@@ -70,9 +70,9 @@ struct ReduceRepeatParams {
         const int32_t srcRepStrideIn)
     {
 #if defined(__NPU_ARCH__) &&                                                                                 \
-    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113) || \
-     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || \
-     (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || \
+     (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5101) || \
+     (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
         bitMask[0] = mask[0];
         bitMask[1] = mask[1];
 #else
@@ -211,7 +211,7 @@ struct BlockInfo {
         rsv = rsvIn;
         dumpAddr = dumpAddrIn;
     }
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     volatile uint32_t len = 0;
     volatile uint32_t core = 0;       // current core id
     volatile uint32_t blockNum = 0;   // total core num

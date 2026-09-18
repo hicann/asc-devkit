@@ -25,8 +25,8 @@
 #include "../utils/std/type_traits/enable_if.h"
 
 namespace AscendC {
-#if defined(__NPU_ARCH__) && \
-    ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3510) || \
+                              (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 __aicore__ inline bfloat16_t Cast(const float& fVal)
 {
     constexpr uint32_t fp32SignIdx = 31;
@@ -81,7 +81,7 @@ __aicore__ inline bfloat16_t Cast(const float& fVal)
 // ToBfloat16 has been updated, please use Cast instead.
 __aicore__ inline bfloat16_t ToBfloat16(const float& fVal) { return Cast(fVal); }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 template <
     typename T, typename U = float,
     typename = Std::enable_if_t<

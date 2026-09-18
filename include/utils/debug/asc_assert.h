@@ -33,7 +33,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __trap();
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #if (__NPU_ARCH__ == 2002) || (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3510) || \
-    (__NPU_ARCH__ == 5102)
+    (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
 #include "impl/utils/debug/asc_aicore_assert_impl.h"
 #endif
 #endif

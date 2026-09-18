@@ -10,7 +10,9 @@
 
 #include "include/adv_api/kernel_api.h"
 
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ != 5162
 static void test_host_hccl() { using AscendC::Hccl; }
+#endif
 
 static void test_host_reduce_common()
 {

@@ -29,7 +29,7 @@
 #include "include/adv_api/math/logical_ands_utils.h"
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "../../../impl/adv_api/detail/math/logical_ands/logical_ands_common_impl.h"
 #endif
 
@@ -46,7 +46,7 @@ template <const LogicalAndsConfig& config = DEFAULT_LOGICAL_ANDS_CONFIG, typenam
 __aicore__ inline void LogicalAnds(const LocalTensor<T>& dst, const U& src0, const S& src1, const uint32_t count)
 {
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     LogicalAndsImpl<config, T, U, S>(dst, src0, src1, count);
 #endif
 }

@@ -43,7 +43,7 @@ __aicore__ inline int64_t CountLeadingZero(uint64_t valueIn) { return CountLeadi
 // ScalarCountLeadingZero has been updated, please use CountLeadingZero instead.
 __aicore__ inline int64_t ScalarCountLeadingZero(uint64_t valueIn) { return CountLeadingZero(valueIn); }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 template <typename T>
 __aicore__ inline void GetUintDivMagicAndShift(T& magic, T& shift, T divisor)
 {
@@ -79,7 +79,7 @@ __aicore__ inline U ScalarCast(T valueIn)
     return ScalarCastImpl<T, U, roundMode>(valueIn);
 }
 
-#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
 template <typename T>
 [[deprecated("Deprecated since 9.2.0, will be removed after 2027/12/30, Use WriteGmBypassDCache instead.")]]
 __aicore__ inline void WriteGmByPassDCache(__gm__ T* addr, T value)

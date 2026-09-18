@@ -41,8 +41,9 @@ void GetSinCosMaxMinTmpSize(
     HighLevelApiCheck::IsReuseSourceVerifyingParameters<SINCOS_GET_MAX_MIN>(isReuseSource);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102), return,
-        "Unsupported NpuArch of CosSin API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+         npuArch == NpuArch::DAV_5162),
+        return, "Unsupported NpuArch of CosSin API.");
 
     std::vector<int64_t> shapeDims = srcShape.GetDims();
     uint32_t inputSize = 1;
@@ -61,8 +62,9 @@ void GetSinCosTmpBufferFactorSize(
     HighLevelApiCheck::TypeSizeVerifyingParameters<SINCOS_GET_TMP_BUFFER>(typeSize, SUPPORT_TYPESIZE);
     auto npuArch = ascendcPlatform.GetCurNpuArch();
     ASCENDC_HOST_ASSERT(
-        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102), return,
-        "Unsupported NpuArch of SinCos API.");
+        (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+         npuArch == NpuArch::DAV_5162),
+        return, "Unsupported NpuArch of SinCos API.");
     if (typeSize == sizeof(float)) {
         extraBuf = SINCOS_EXTRA_BUF;
         maxLivedNodeCount = SINCOS_DOUBLE;

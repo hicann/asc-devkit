@@ -31,8 +31,8 @@
 #elif (                                                                                              \
     defined(__NPU_ARCH__) &&                                                                         \
     (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 5102 || \
-     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-     __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
+     __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
+     __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
 #include "../../../impl/adv_api/detail/utils/init_global_memory/init_global_memory_v310_impl.h"
 #endif
 
@@ -69,8 +69,8 @@ __aicore__ inline __in_pipe__(V)
 {
 #if defined(__NPU_ARCH__) &&                                                                         \
     (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 5102 || \
-     __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 5101 || \
-     __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+     __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 2201 || \
+     __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     InitGlobalMemoryImpl<T>(gmWorkspaceAddr, size, value);
 #endif
 }

@@ -31,7 +31,8 @@
 #include "../../api_check/kernel_check/quantization/dequant/dequant_check.h"
 #endif // ASCENDC_CPU_DEBUG
 #include "../../api_check/kernel_api_check.h"
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
 #include "ascend_dequant_3510_impl.h"
 #endif
 
@@ -448,7 +449,8 @@ __aicore__ inline void AscendDequantImpl(
         "current combination of deqScale dtype and dstTensor dtype is not supported, please check the document");
     UpdateDequantParams<dstT, mode>(params);
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
     DequantPerchannelImpl<dstT, scaleT, mode>(dstTensor, srcTensor, deqScale, params);
     return;
 #endif
@@ -539,7 +541,8 @@ __aicore__ inline void AscendDequantScalarImpl(
 
     UpdateDequantParams<dstT, mode>(params);
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
     DequantPertensorImpl<dstT, scaleT, mode>(dstTensor, srcTensor, deqScale, params);
     return;
 #endif
@@ -572,7 +575,8 @@ __aicore__ inline void AscendDequantScalarImpl(
     AscendDequantScalarImpl<dstT, scaleT, true, mode>(dstTensor, srcTensor, deqScale, sharedTmpBuffer, params);
 }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201) || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
 template <
     typename dstT, typename srcT, typename scaleT, const AscendDeQuantConfig& config, const AscendDeQuantPolicy& policy>
 __aicore__ inline void AscendDequantImpl(

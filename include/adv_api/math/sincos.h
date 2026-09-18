@@ -28,7 +28,8 @@
 #include "kernel_tensor.h"
 #include "include/adv_api/math/sincos_utils.h"
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
 #include "../../../impl/adv_api/detail/math/sincos/sincos_3510_impl.h"
 #endif
 
@@ -47,7 +48,8 @@ __aicore__ inline void SinCos(
     const LocalTensor<T>& dst0, const LocalTensor<T>& dst1, const LocalTensor<T>& src,
     const LocalTensor<uint8_t>& sharedTmpBuffer, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
     SinCosRadianReductionImpl<config, T>(dst0, dst1, src, sharedTmpBuffer, count);
 #endif
 }
@@ -64,7 +66,8 @@ template <const SinCosConfig& config = DEFAULT_SINCOS_CONFIG, typename T>
 __aicore__ inline void SinCos(
     const LocalTensor<T>& dst0, const LocalTensor<T>& dst1, const LocalTensor<T>& src, const uint32_t count)
 {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
     SinCosRadianReductionImpl<config, T>(dst0, dst1, src, count);
 #endif
 }

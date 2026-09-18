@@ -30,18 +30,18 @@
 #include "../../api_check/kernel_check/math/log/log_check.h"
 #endif // ASCENDC_CPU_DEBUG
 #include "../../api_check/kernel_api_check.h"
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 #include "log_3510_impl.h"
 #endif
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || \
-                              __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || \
+     __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
 
 namespace AscendC {
 template <typename T>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "Log2 is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "Log2 is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void Log2Compute(const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor)
 {
     // Log2x = Lnx/Ln2
@@ -53,8 +53,7 @@ __aicore__ inline void Log2Compute(const LocalTensor<T>& dstTensor, const LocalT
 }
 
 template <typename T>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "Log2 is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "Log2 is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void Log2Compute(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& tmpTensor)
 {
@@ -85,15 +84,14 @@ __aicore__ inline void Log2Compute(
 }
 
 template <typename T, bool isReuseSource = false>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "Log is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "Log is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void LogImpl(const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, uint32_t calCount)
 {
     // Logx = Lnx
     CHECK_FUNC_HIGHLEVEL_API(Log, (T, isReuseSource), (dstTensor, srcTensor, calCount));
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     LogImpl((__ubuf__ T*)dstTensor.GetPhyAddr(), (__ubuf__ T*)srcTensor.GetPhyAddr(), calCount);
 #else
     const UnaryRepeatParams unaryParams;
@@ -110,8 +108,8 @@ __aicore__ inline void Log2Impl(
     const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const LocalTensor<uint8_t>& sharedTmpBuffer,
     uint32_t calCount)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     const float Ln2Reciprocal = 1.4426950408889634; // 1.0/Ln2;
     LogXImpl((__ubuf__ T*)dstTensor.GetPhyAddr(), (__ubuf__ T*)srcTensor.GetPhyAddr(), calCount, Ln2Reciprocal);
 #else
@@ -142,8 +140,7 @@ __aicore__ inline void Log2Impl(
 }
 
 template <typename T, bool isReuseSource = false>
-__ASC_USE_RESERVED_UBUF__(3510,
-    "Log10 is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
+__ASC_USE_RESERVED_UBUF__(3510, "Log10 is forbidden when compile option --cce-disable-asc-reserved-ubuf is enabled")
 __aicore__ inline void Log10Impl(const LocalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, uint32_t calCount)
 {
     // Log10x = Lnx/Ln10
@@ -152,8 +149,8 @@ __aicore__ inline void Log10Impl(const LocalTensor<T>& dstTensor, const LocalTen
     const T Ln10Reciprocal = 0.43429448190325176; // 1.0/Ln10;
     const UnaryRepeatParams unaryParams;
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || \
+                              __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
     LogXImpl((__ubuf__ T*)dstTensor.GetPhyAddr(), (__ubuf__ T*)srcTensor.GetPhyAddr(), calCount, Ln10Reciprocal);
 #else
     SetMaskCount();

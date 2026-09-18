@@ -123,8 +123,6 @@ template <bool isAIVOnly, pipe_t triggerPipe, pipe_t waitPipe>
 __aicore__ inline void SyncAllImpl()
 {
     PipeBarrier<PIPE_ALL>();
-    ffts_cross_core_sync(PIPE_MTE3, GetffstMsg(0x0, SYNC_AIV_ONLY_ALL));
-    wait_flag_dev(PIPE_S, SYNC_AIV_ONLY_ALL);
     return;
 }
 

@@ -82,7 +82,7 @@
 #include "core_mng/roc/kernel_operator_cube_group_intf.h"
 #include "core_mng/roc/kernel_operator_group_barrier_intf.h"
 
-#if ((__NPU_ARCH__ != 3102) && (__NPU_ARCH__ != 3510)) && (__NPU_ARCH__ != 5102)
+#if ((__NPU_ARCH__ != 3102) && (__NPU_ARCH__ != 3510)) && (__NPU_ARCH__ != 5102) && (__NPU_ARCH__ != 5162)
 #include "include/adv_api/filter/dropout.h"
 #include "include/adv_api/activation/sigmoid.h"
 #include "include/adv_api/activation/softmax.h"

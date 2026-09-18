@@ -54,7 +54,7 @@ enum class TransposeType : uint8_t {
     TRANSPOSE_ND2ND_B16,     // { shape:[16, 16], format:"ND", dataType: B16} -->{ shape:[16, 16], format:"ND"}
     TRANSPOSE_NCHW2NHWC,     // [ N, C, H, W] -> [N, H, W, C]
     TRANSPOSE_NHWC2NCHW,     // [ N, H, W, C] -> [N, C, H, W]
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     TRANSPOSE_ND2ND_021,       // [H, W]->[W, H], [N, H, W]->[N, W, H]
     TRANSPOSE_ND2ND_102,       // [N, H, W]->[H, N, W]
     TRANSPOSE_ND2ND_210,       // [N, H, W]->[W, H, N]

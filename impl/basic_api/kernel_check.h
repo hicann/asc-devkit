@@ -42,7 +42,7 @@ uint64_t GetLoadDataLocalLen(const uint64_t tensorSize)
     // tensorSize is tensor.GetSize()
     if constexpr (IsSameType<PrimT<T>, int4b_t>::value) {
         return tensorSize / INT4_TWO;
-#if (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
     } else if constexpr (IsSameType<PrimT<T>, int2b_t>::value) {
         return tensorSize / INT2_FOUR;
     } else if constexpr (IsSameType<PrimT<T>, uint1b_t>::value) {

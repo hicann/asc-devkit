@@ -53,7 +53,7 @@ const uint32_t DUMP_MESSAGE_HEAD_BUFFERID_POS = 5;
 const uint32_t DUMP_MESSAGE_HEAD_POSITION_POS = 6;
 const uint32_t DUMP_MESSAGE_HEAD_DUMP_SIZE_POS = 7;
 const uint32_t DUMP_SCALAR_POS = 8;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 const uint32_t DUMP_CORE_COUNT = 108;
 #ifdef ASCENDC_RECOGNIZE_SIMT_VF
 constexpr uint32_t DUMP_SIMT_CORE_COUNT = 72;
@@ -107,7 +107,7 @@ enum class DumpTensorDataType : uint32_t {
 };
 }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 namespace ConstantsInternal {
 // L12UBDumpCtrlMessage signal
 const uint32_t L1_2_UB_DUMP_CTRL_SIGNAL_DUMP = 1;

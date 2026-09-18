@@ -25,7 +25,9 @@
 #ifndef LIB_KERNEL_API_H
 #define LIB_KERNEL_API_H
 
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ != 5162
 #include "hccl/hccl.h"
+#endif
 
 #include "index/arithprogression.h"
 #include "activation/sigmoid.h"

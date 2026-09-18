@@ -24,6 +24,8 @@
 #include "dav_3510/kernel_operator_mm_bitmode_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
 #include "dav_m510/kernel_operator_mm_bitmode_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+#include "dav_v516/kernel_operator_mm_bitmode_impl.h"
 #endif
 #endif // ASCENDC_MODULE_OPERATOR_MM_BIT_MODE_STRUCT_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_MM_BITMODE_STRUCT_H__)

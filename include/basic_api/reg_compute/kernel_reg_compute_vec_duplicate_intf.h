@@ -44,8 +44,8 @@ __simd_callee__ inline void Duplicate(S& dstReg, S& srcReg, MaskReg& mask);
 } // namespace AscendC
 
 #include "kernel_reg_compute_vec_data_reorder_intf.h"
-#if defined(__NPU_ARCH__) &&                                                                                      \
-        ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)) || \
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || \
+                              (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)) ||                          \
     defined(__ASC_NPU_HOST__)
 #include "../../../impl/basic_api/reg_compute/kernel_reg_compute_vec_duplicate_intf_impl.h"
 #endif

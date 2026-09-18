@@ -64,6 +64,7 @@ static const std::map<std::string, SocVersion> convertMap{
     {"MC61AM21A", SocVersion::MC61AM21A},
     {"MC62", SocVersion::MC62},
     {"SD3403", SocVersion::SD3403},
+    {"Ascend5162A", SocVersion::ASCEND5162A},
     {"KirinX90", SocVersion::KIRINX90},
     {"Kirin9030", SocVersion::KIRIN9030},
     {"KirinDev0000", SocVersion::KIRINDEV0000},

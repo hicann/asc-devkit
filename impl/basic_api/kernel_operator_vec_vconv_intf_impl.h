@@ -42,6 +42,8 @@
 #include "dav_3510/kernel_operator_vec_vconv_impl.h"
 #elif (__NPU_ARCH__ == 5102)
 #include "dav_m510/kernel_operator_vec_vconv_impl.h"
+#elif (__NPU_ARCH__ == 5162)
+#include "dav_v516/kernel_operator_vec_vconv_impl.h"
 #elif __NPU_ARCH__ == 3003
 #include "dav_l300/kernel_operator_vec_vconv_impl.h"
 #elif __NPU_ARCH__ == 3113
@@ -97,7 +99,7 @@ __aicore__ inline void Cast(
     } else if constexpr (Std::is_same<SrcPrimType, int4b_t>::value) {
         Int4Setter::Instance().SetSrcInt4();
     }
-#if !((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if !((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     if (!CheckFunVecBinaryScalarDiffType(
             dst, src, static_cast<SrcPrimType>(0), mask, repeatTime, repeatParams, "Cast")) {
         ASCENDC_REPORT_CHECK_ERROR("Cast", KernelFuncType::MASK_BIT_MODE);
@@ -134,7 +136,7 @@ __aicore__ inline void Cast(
     } else if constexpr (Std::is_same<SrcPrimType, int4b_t>::value) {
         Int4Setter::Instance().SetSrcInt4();
     }
-#if !((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if !((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     if (!CheckFunVecBinaryScalarDiffType(
             dst, src, static_cast<SrcPrimType>(0), mask, repeatTime, repeatParams, "Cast")) {
         ASCENDC_REPORT_CHECK_ERROR("Cast", KernelFuncType::MASK_COUNT_MODE);
@@ -173,7 +175,7 @@ __aicore__ inline void Cast(
     } else if constexpr (Std::is_same<SrcPrimType, int4b_t>::value) {
         Int4Setter::Instance().SetSrcInt4();
     }
-#if !((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if !((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     if (!CheckFunVecBinaryScalarDiffType(dst, src, static_cast<SrcPrimType>(0), count, "Cast")) {
         ASCENDC_REPORT_CHECK_ERROR("Cast", KernelFuncType::CALCOUNT_MODE);
     }
@@ -654,7 +656,8 @@ __aicore__ inline void SetDeqScale(const LocalTensor<T>& vdeq, const VdeqInfo& v
     SetDeqScaleImpl<T>(vdeq, vdeqInfo);
 }
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
+    (__NPU_ARCH__ == 3113)
 /*
  * @ingroup Truncate Level 2
  * @brief dst[i] = Precision conversion

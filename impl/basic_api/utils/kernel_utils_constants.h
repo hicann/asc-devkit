@@ -94,6 +94,14 @@ constexpr uint32_t INT2_BIT_NUM = 2;
 constexpr uint32_t INT1_BIT_NUM = 1;
 #endif
 
+#if (__NPU_ARCH__ == 5162)
+constexpr uint32_t INT2_FOUR = 4;
+constexpr uint32_t INT1_EIGHT = 8;
+constexpr uint32_t INT3_BIT_NUM = 3;
+constexpr uint32_t INT2_BIT_NUM = 2;
+constexpr uint32_t INT1_BIT_NUM = 1;
+#endif
+
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
                               __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 // int3b_t param
@@ -124,6 +132,17 @@ const uint32_t CACHE_LINE_SIZE = 64;
 const uint32_t TOTAL_L0C_SIZE = 256 * 1024;
 const uint32_t VECTOR_REG_WIDTH = 256;
 const uint32_t VECTOR_REG_WIDTH_2XVL = 512;
+const uint32_t ONE_BLOCK_SIZE = 32;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+const int32_t TOTAL_VEC_LOCAL_SIZE = 120 * 1024;
+const uint32_t TOTAL_UB_SIZE = 120 * 1024;
+const uint32_t TMP_UB_OFFSET = 120 * 1024;
+const uint32_t TOTAL_L1_SIZE = 768 * 1024;
+const uint32_t TOTAL_L0C_SIZE = 32 * 1024;
+const uint32_t SINGLE_MSG_SIZE = 64;
+const uint32_t CACHE_LINE_SIZE = 64;
+const uint32_t VECTOR_REG_WIDTH = 32;
+const uint32_t VECTOR_REG_WIDTH_2XVL = 64;
 const uint32_t ONE_BLOCK_SIZE = 32;
 #elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 1001) || (__NPU_ARCH__ == 2002))
 const int32_t TOTAL_VEC_LOCAL_SIZE = 248 * 1024;
@@ -310,6 +329,12 @@ const uint32_t B4_BYTE_SIZE_PER_REPEAT = 64;
 const uint32_t L1_DUMP_UB_SIZE = TOTAL_UB_SIZE - 32 * 1024;
 #endif
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+const uint32_t B64_DATA_NUM_PER_REPEAT = 4;
+const uint32_t B4_BYTE_SIZE_PER_REPEAT = 8;
+const uint32_t L1_DUMP_UB_SIZE = TOTAL_UB_SIZE - 16 * 1024;
+#endif
+
 const int32_t BLOCK_STRIDE_POS_IN_SM = 16;
 const int32_t PLD_BUFFER_SIZE = 2;
 const uint8_t FIXPIPE_DEQ_TENSOR_SIZE = 16;
@@ -329,7 +354,7 @@ constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
 #elif (__NPU_ARCH__ == 3102)
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
-#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
+#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5162))
 constexpr size_t RESERVED_WORKSPACE = 16 * 1024 * 1024;
 #elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102))
 constexpr size_t RESERVED_WORKSPACE = 1024;
@@ -661,7 +686,7 @@ struct IntegerSubType {
 
 using int4b_t = integer_sub_type<INT4_BIT_NUM, true>;
 
-#if (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
 using int2b_t = IntegerSubType<INT2_BIT_NUM, true>;
 using int1b_t = IntegerSubType<INT1_BIT_NUM, true>;
 using uint1b_t = IntegerSubType<INT1_BIT_NUM, false>;

@@ -61,6 +61,7 @@ __aicore__ static inline void CheckMmadAlign(
     CheckTensorAlign<S>(filter, VALUE_512, "filter", "Mmad");
 }
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ != 5162)
 __aicore__ inline void CheckMmadParamsCommon(const MmadParams& mmadParams, const __gm__ char* apiName)
 {
     CheckValueRange<uint16_t>(mmadParams.m, 0, UINT12_MAX, "m", apiName);
@@ -149,7 +150,8 @@ __aicore__ inline void CheckFixpipeQuantPreCommon(const QuantMode_t quantPre, co
                                                     "Failed to check quantPre value in %s, when src is float and dst "
                                                     "is half, supported value is F322F16.\n",
                                                     apiName));
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && \
+    ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     } else if constexpr (IsSameType<PrimT<U>, float>::value && IsSameType<PrimT<T>, bfloat16_t>::value) {
         ASCENDC_DEBUG_ASSERT(
             (quantPre == QuantMode_t::F322BF16),
@@ -309,6 +311,7 @@ __aicore__ inline void CheckFixpipeTensor(
     CheckFixpipeTensor<T, U, config>(dst, src, intriParams, apiName);
     CheckFixpipeWorkspace(cbufWorkspace, intriParams, apiName);
 }
+#endif
 
 // check LoadData2D datatype
 template <typename T>
@@ -428,7 +431,7 @@ __aicore__ static inline void CheckLoadDataWithTranspose(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const __gm__ char* apiName)
 {
 // dav_c310 + dav_m510 + dav_m310 not support A1 -> A2
-#if __NPU_ARCH__ != 3510 && __NPU_ARCH__ != 5102 && __NPU_ARCH__ != 3102
+#if __NPU_ARCH__ != 3510 && __NPU_ARCH__ != 5102 && __NPU_ARCH__ != 5162 && __NPU_ARCH__ != 3102
     CheckTensorPhyPosition<Hardware::L1>(src, "src", "L1 Buffer(A1/B1)", apiName);
     CheckTensorPhyPosition<Hardware::L0A, Hardware::L0B>(dst, "dst", "L0A Buffer(A2)/L0B Buffer(B2)", apiName);
     if ((TPosition)dst.GetPosition() == TPosition::A2) {
@@ -572,7 +575,7 @@ __aicore__ static inline void CheckLoadData3dv2ChannelSize(const uint16_t channe
     }
 #elif defined(__NPU_ARCH__) &&                                                                               \
     ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 5102) || \
-     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3510))
+     (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 3510))
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3102 || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
     if constexpr (IsSameType<PrimT<T>, half>::value) {
         uint16_t remainderList[] = {0, 4, 8};

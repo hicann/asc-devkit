@@ -60,11 +60,7 @@ __aicore__ inline int64_t GetBlockIdxImpl()
 #endif
 }
 
-__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion)
-{
-    const int32_t coreVersionOffset = 32;
-    coreVersion = static_cast<uint32_t>((static_cast<uint64_t>(get_arch_ver()) >> coreVersionOffset) & 0xFFF);
-}
+__aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion) { coreVersion = 5162U; }
 
 __aicore__ inline int64_t GetSubBlockNumImpl()
 {
@@ -127,17 +123,17 @@ __aicore__ inline void SetPcieRDCtrlImpl(bool isSetPcie, uint8_t maxBurstLen)
 {
     (void)isSetPcie;
     (void)maxBurstLen;
-    static_assert((__NPU_ARCH__ == 5102), "unsupported SetPcieRDCtrl on current device");
+    static_assert((__NPU_ARCH__ == 5162), "unsupported SetPcieRDCtrl on current device");
 }
 
 __aicore__ inline void SetPcieWRCtrlImpl(bool isSetPcie, uint8_t maxBurstLen)
 {
     (void)isSetPcie;
     (void)maxBurstLen;
-    static_assert((__NPU_ARCH__ == 5102), "unsupported SetPcieWRCtrl on current device");
+    static_assert((__NPU_ARCH__ == 5162), "unsupported SetPcieWRCtrl on current device");
 }
 
-__aicore__ inline void TrapImpl() { static_assert((__NPU_ARCH__ == 5102), "unsupported Trap on current device"); }
+__aicore__ inline void TrapImpl() { static_assert((__NPU_ARCH__ == 5162), "unsupported Trap on current device"); }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_SYS_VAR_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_SYS_VAR_IMPL_H__)

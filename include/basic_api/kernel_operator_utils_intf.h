@@ -37,7 +37,8 @@ namespace AscendC {
 template <int count = 1>
 __aicore__ inline void Nop()
 {
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
+    (__NPU_ARCH__ == 3113)
     if (count <= 0) {
         return;
     }

@@ -78,7 +78,6 @@ __aicore__ void DumpTensorGM2GMImpl(
     const GlobalTensor<T>& src, uint32_t desc, uint32_t dumpSize, const uint32_t* shape, const uint32_t shapeDim)
 {
     uint64_t ctrlValue = get_ctrl();
-    set_atomic_none();
     __asc_aicore::asc_dump_gm((__gm__ T*)src.GetPhyAddr(), desc, dumpSize, shape, shapeDim);
     set_ctrl(ctrlValue);
 }
@@ -94,7 +93,6 @@ __aicore__ void DumpTensorLocal2GMImpl(
     const LocalTensor<T>& src, uint32_t desc, uint32_t dumpSize, const uint32_t* shape, const uint32_t shapeDim)
 {
     uint64_t ctrlValue = get_ctrl();
-    set_atomic_none();
     const Hardware position = GetPhyType(static_cast<TPosition>(src.GetPosition()));
     if (position == Hardware::UB) {
         __asc_aicore::asc_dump_ubuf((__ubuf__ T*)src.GetPhyAddr(), desc, dumpSize, shape, shapeDim);
