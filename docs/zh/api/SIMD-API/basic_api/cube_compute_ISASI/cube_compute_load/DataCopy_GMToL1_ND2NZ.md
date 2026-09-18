@@ -151,7 +151,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 - srcNdMatrixStride = 0，只有一个ND矩阵，该值为0。
 - srcDValue = 32，表示源矩阵一行所含元素个数，即32个half数据类型的元素。
 - dstNzC0Stride = 16，NZ矩阵中相邻Z矩阵起始地址的偏移，偏移为16个C0_SIZE。
-- dstNzNStride = 1，表示NZ矩阵中相邻行起始地址的偏移。
+- dstNzNStride = 1，表示NZ矩阵中相邻行起始地址的偏移，偏移为1个C0_SIZE。
 - dstNzMatrixStride = 0，只有一个NZ矩阵，该值为0。
 
 **图2** ND2NZ转换示意图（连续搬运）<a id="zh-cn_topic_0000002566538879_fig7420114233419"></a>
@@ -168,7 +168,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 - srcNdMatrixStride = 384，表示相邻ND矩阵起始地址的偏移，每行32个元素，共12行，偏移为32 * 12 = 384个元素。
 - srcDValue = 32，表示源矩阵一行所含元素个数，即32个half数据类型的元素。
 - dstNzC0Stride = 37，NZ矩阵中相邻Z矩阵起始地址的偏移，偏移为37个C0_SIZE。
-- dstNzNStride = 2，表示NZ矩阵中相邻行起始地址的偏移。
+- dstNzNStride = 2，表示NZ矩阵中相邻行起始地址的偏移，偏移为2个C0_SIZE。
 - dstNzMatrixStride = 320，相邻NZ矩阵起始地址的偏移，每行16个元素，共20行，偏移为16 * 20 = 320个元素。
 
 **图3** ND2NZ转换示意图（非连续搬运）<a id="zh-cn_topic_0000002566538879_fig19978184883316"></a>
