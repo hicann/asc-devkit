@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_gm2l1_sync`、`asc_copy_gm2l1_pad1_sync`、`asc_copy_gm2l1_pad2_sync`、`asc_copy_gm2l1_pad3_sync`、`asc_copy_gm2l1_pad4_sync`、`asc_copy_gm2l1_pad5_sync`、`asc_copy_gm2l1_pad6_sync`、`asc_copy_gm2l1_pad7_sync`和`asc_copy_gm2l1_pad8_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_arch_2201.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_gm2l1_sync`、`asc_copy_gm2l1_pad1_sync`、`asc_copy_gm2l1_pad2_sync`、`asc_copy_gm2l1_pad3_sync`、`asc_copy_gm2l1_pad4_sync`、`asc_copy_gm2l1_pad5_sync`、`asc_copy_gm2l1_pad6_sync`、`asc_copy_gm2l1_pad7_sync`和`asc_copy_gm2l1_pad8_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_arch_2201.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将矩阵数据从Global Memory搬运到L1 Buffer中，并支持不同类型的pad模式。
 

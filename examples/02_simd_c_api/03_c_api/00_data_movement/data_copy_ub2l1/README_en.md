@@ -12,7 +12,7 @@ This example uses the Ascend C C API to move matrix data from UB (Unified Buffer
 
 ## Directory Structure
 
-```
+```text
 ├── data_copy_ub2l1
 │   ├── scripts
 │   │   ├── gen_data.py                // Generates input and golden data

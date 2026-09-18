@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l0c2gm_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_l0c2gm_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 矩阵计算完成后，对结果进行量化处理，之后将处理结果搬运到GM中。量化模式共分为9种，分别为：
 - NoQuant：不开启量化功能。

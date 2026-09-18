@@ -122,7 +122,7 @@ PIPE_MTE1
 - dst起始地址需64字节对齐（BiasTable Buffer对齐要求），src起始地址需32字节对齐（L1 Buffer对齐要求），否则触发异常。
 - BiasTable Buffer容量上限4KB，dst偏移与搬运大小之和不可越界，否则触发写溢出异常。
 - L1 Buffer容量上限512KB，src偏移与搬运大小之和不可越界，否则触发读异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - n_burst为0时不执行搬运，本接口被视为NOP（空操作）。
 - dtype为`float`或`int32_t`时，len_burst与dst_gap均必须2对齐（即取值为偶数），size/32需为偶数，否则触发搬运异常。
 - conv_control开启（非0）时dtype必须为`half`，否则触发搬运异常，传入非0/1的值仅最低位生效（如2等价于0即转换关闭、3等价于1即转换开启）。

@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_repeat_reduce_min_index_value_sync`、`asc_repeat_reduce_min_value_index_sync`、`asc_repeat_reduce_min_only_value_sync`和`asc_repeat_reduce_min_only_index_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_reduce/asc_repeat_reduce_min.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_repeat_reduce_min_index_value_sync`、`asc_repeat_reduce_min_value_index_sync`、`asc_repeat_reduce_min_only_value_sync`和`asc_repeat_reduce_min_only_index_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_reduce/asc_repeat_reduce_min.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 对每个Repeat内所有元素求最小值，以及Repeat内的首个最小值元素在当前Repeat中的索引index。一次Repeat计算256字节。
 

@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_copy_gm2l1_align`的旧常规重载和`asc_copy_gm2l1_align_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_align](../cube_datamove/asc_copy_gm2l1_align.md)接口；同步场景请额外调用[asc_sync](../sync/asc_sync.md)。**
+**`asc_copy_gm2l1_align`的旧常规重载和`asc_copy_gm2l1_align_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_align](../cube_datamove/asc_copy_gm2l1_align.md)接口；同步场景请额外调用[asc_sync](../sync/intra_core_sync/asc_sync.md)。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
@@ -152,7 +152,7 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需32字节对齐（L1 Buffer对齐要求），否则触发异常。
 - `src`起始地址需1字节对齐（Global Memory对齐要求），不满足触发异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，dst偏移与搬运大小之和不可越界，否则触发目的地址越界异常。
 - `len_burst`、`n_burst`、`burst_src_stride`、`burst_dst_stride`、`left_padding_count`与`right_padding_count`需满足参数说明的取值范围，否则会导致搬运结果不符合预期。
 - `data_select_bit`设置为true时，或者左右填充模式（`left_padding_count`和`right_padding_count`任意不为0）时，须先调用[asc_set_gm2l1_pad](../cube_datamove/asc_set_gm2l1_pad.md)配置填充值。

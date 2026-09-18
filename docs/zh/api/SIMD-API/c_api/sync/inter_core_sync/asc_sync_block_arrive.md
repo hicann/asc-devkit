@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/sync/sync.h"`。
 
-本接口与[asc_sync_block_wait](asc_sync_block_wait.md)配对使用，实现单AI Core内AIC与全部AIV之间的同步（[四种核间同步模式](system_sync_overview.md#fig_sync_control_mode)中的模式2），核间同步实现的原理如下：
+本接口与[asc_sync_block_wait](asc_sync_block_wait.md)配对使用，实现单AI Core内AIC与全部AIV之间的同步（[四种核间同步模式](../system_sync_overview.md#fig_sync_control_mode)中的模式2），核间同步实现的原理如下：
 
 - 全部AIV等待单个AIC的场景：
   - 单AI Core内AIC执行`asc_sync_block_arrive`后向调度模块发送通知，接着调度模块将该AI Core内M个AIV各自对应`flag_id`的计数器增加1。
@@ -54,7 +54,7 @@ __aicore__ inline void asc_sync_block_arrive(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
-| pipe | 输入 | 标识在哪条流水的前序指令完成后才允许向调度模块发送通知。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。<br>不同NPU架构中AIC和AIV支持的`pipe`取值存在差异，具体请参考[约束说明](#supported_pipe_combinations)。 |
+| pipe | 输入 | 标识在哪条流水的前序指令完成后才允许向调度模块发送通知。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](../intra_core_sync/intra_core_sync_overview.md#硬件流水类型)。<br>不同NPU架构中AIC和AIV支持的`pipe`取值存在差异，具体请参考[约束说明](#supported_pipe_combinations)。 |
 | flag_id | 输入 | 核间同步的标记，用于标识同一组同步信号。取值范围为[0, 15]，每个`flag_id`各自拥有独立的4位计数器。 |
 
 ## 返回值说明
@@ -67,11 +67,11 @@ PIPE_S
 
 ## 约束说明
 
-- 调用本接口的核函数不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_block_arrive`和`asc_sync_block_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
+- 调用本接口的核函数不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_block_arrive`和`asc_sync_block_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
 - 针对`asc_sync_block_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_block_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体请参考[asc_sync_block_wait](asc_sync_block_wait.md#约束说明)的约束说明。
 - 不同NPU架构中AIC和AIV支持的`pipe`取值存在差异，具体情况如下：<a id="supported_pipe_combinations"></a>
     <!-- npu="950" id9 -->
-    - 针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，AIC和AIV支持的`pipe`取值如[表2](#aic_aiv_supported_pipe_3510)所示。
+    - 针对[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，AIC和AIV支持的`pipe`取值如[表2](#aic_aiv_supported_pipe_3510)所示。
 
         **表2**  NPU架构3510中AIC和AIV支持的`pipe`取值<a id="aic_aiv_supported_pipe_3510"></a>
 
@@ -82,7 +82,7 @@ PIPE_S
     <!-- end id9 -->
 
     <!-- npu="A3,910b" id10 -->
-    - 针对[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，AIC和AIV支持的`pipe`取值如[表3](#aic_aiv_supported_pipe_2201)所示。
+    - 针对[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，AIC和AIV支持的`pipe`取值如[表3](#aic_aiv_supported_pipe_2201)所示。
 
         **表3**  NPU架构2201中AIC和AIV支持的`pipe`取值<a id="aic_aiv_supported_pipe_2201"></a>
 
@@ -100,7 +100,7 @@ PIPE_S
 
 本示例演示两个AIV均执行完数据搬运后，AIC才能开始执行。
 
-将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：

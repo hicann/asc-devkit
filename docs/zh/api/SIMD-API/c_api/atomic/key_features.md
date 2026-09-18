@@ -124,7 +124,7 @@ if (block_idx == 0) {
 
 ## 核内同步
 
-搬运指令和开启原子操作的指令流水类型如下表所示，当上述指令在同一个核内执行时，开发者按需插入[asc_sync_pipe](../sync/asc_sync_pipe.md)或者[asc_sync_notify](../sync/asc_sync_notify.md)与[asc_sync_wait](../sync/asc_sync_wait.md)。
+搬运指令和开启原子操作的指令流水类型如下表所示，当上述指令在同一个核内执行时，开发者按需插入[asc_sync_pipe](../sync/intra_core_sync/asc_sync_pipe.md)或者[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)与[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)。
 
 **表1**  原子操作确定性计算相关指令的流水类型
 

@@ -87,7 +87,7 @@ PIPE_FIX
 - dst起始地址根据功能不同对齐要求不同，对于随路量化场景，起始地址需要128B对齐，对于随路Relu场景起始地址需要64B对齐，否则触发搬运异常。
 - L1 Buffer总容量512KB，src偏移与搬运大小之和不可越界，否则触发地址越界异常。
 - Fixpipe Buffer对于随路量化场景，容量上限为4KB；对于随路Relu场景，容量上限为2KB。dst偏移与搬运大小之和越界时会截断处理，导致搬运结果不符合预期。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../../sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - 对于随路量化场景，`len_burst`与`dst_gap_size`场景取值必须为2的倍数，否则触发搬运异常。
 - `n_burst`或`size`设置为`0`时，不执行搬运，本接口被视为NOP（空操作）。
 

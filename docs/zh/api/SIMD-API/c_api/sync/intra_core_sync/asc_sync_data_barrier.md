@@ -61,7 +61,7 @@ PIPE_S
 
 本示例启动两个AIV，用`asc_sync_data_barrier`保证跨核访问GM时数据的写入顺序。核0先写入数据，再调用`asc_sync_data_barrier(mem_dsb_t::DSB_DDR)`等待写操作完成，最后写入同步标记。核1轮询同步标记，读到标记后再读取数据，把计算结果写入GM。
 
-将代码保存为`example.asc`后，用`bisheng`命令编译运行。`--npu-arch`参数需按实际产品型号指定对应的NPU架构，产品与NPU架构的映射关系见[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，用`bisheng`命令编译运行。`--npu-arch`参数需按实际产品型号指定对应的NPU架构，产品与NPU架构的映射关系见[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：

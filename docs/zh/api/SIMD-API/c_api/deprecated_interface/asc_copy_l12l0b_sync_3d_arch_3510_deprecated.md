@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l12l0b_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_l12l0b_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 3D卷积数据搬运是用于将NC1HWC0格式的Feature Map完成Image to Column展开，按卷积步长、卷积核大小、膨胀系数配置生成img2col二维矩阵，再从展开后的矩阵中选取指定数据块搬运到L0B Buffer，用于3D卷积场景的矩阵计算数据加载。
 
@@ -103,7 +103,7 @@ PIPE_MTE1
 - 本接口非AIC调用直接返回。
 - dst起始地址需512字节对齐（L0B Buffer对齐要求），否则会导致搬运异常。
 - src起始地址需32字节对齐（L1 Buffer对齐要求），否则会导致搬运异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L0B Buffer容量上限：L0B Buffer总容量64KB，dst偏移量与搬运大小之和不可越界，否则触发异常。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，src偏移量与源矩阵占用大小之和不可越界，否则触发异常。
 

@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_min_scalar_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_arith/asc_min_scalar.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_min_scalar_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_arith/asc_min_scalar.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 源操作数矢量逐元素与标量相比，如果比标量值大，则取标量值，比标量值小，则取源操作数值。计算公式如下：
 

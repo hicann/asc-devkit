@@ -117,7 +117,7 @@ __global__ __vector__ void gather_and_adds_kernel(
 
 核函数（Kernel）中先后启动SIMT VF函数simt\_gather和SIMD VF函数simd\_adds：simt\_gather将GM中的离散数据读取到UB，simd\_adds对UB上的gather结果执行加1计算，并将结果原地写回UB。
 
-对于基于SIMD编程计算并写入UB的结果local\_output，调用[asc\_copy\_ub2gm\_align](../../../api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)接口搬出到GM前，需要通过[asc\_sync\_notify](../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)/[asc\_sync\_wait](../../../api/SIMD-API/c_api/sync/asc_sync_wait.md)接口控制Vector计算流水和MTE3搬出流水的同步，确保adds计算结果写入UB后再启动搬出。
+对于基于SIMD编程计算并写入UB的结果local\_output，调用[asc\_copy\_ub2gm\_align](../../../api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)接口搬出到GM前，需要通过[asc\_sync\_notify](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md)/[asc\_sync\_wait](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md)接口控制Vector计算流水和MTE3搬出流水的同步，确保adds计算结果写入UB后再启动搬出。
 
 ## SIMT VF实现
 

@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_float2int64_rn_sync`、`asc_float2int64_rna_sync`、`asc_float2int64_rd_sync`、`asc_float2int64_ru_sync`和`asc_float2int64_rz_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_convert/asc_float2int64.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_float2int64_rn_sync`、`asc_float2int64_rna_sync`、`asc_float2int64_rd_sync`、`asc_float2int64_ru_sync`和`asc_float2int64_rz_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_convert/asc_float2int64.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将float类型转化为int64_t类型，并支持多种舍入模式：
 

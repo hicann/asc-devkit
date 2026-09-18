@@ -2,20 +2,20 @@
 
 在编程中，同步是指协调多个执行单元（如线程、进程等）对共享资源的访问顺序和时机来确保程序的正确性。如果没有同步来严格控制执行顺序，则会出现结果不一致、行为不可预测等多种问题。
 
-AI Core的同步，总共分成2类：[核内同步](intra_core_sync_overview.md)、[核间同步](inter_core_sync_overview.md)。各类同步对应的接口如下。
+AI Core的同步，总共分成2类：[核内同步](intra_core_sync/intra_core_sync_overview.md)、[核间同步](inter_core_sync/inter_core_sync_overview.md)。各类同步对应的接口如下。
 
 **表1**  核内同步接口
 
 | 接口名称 | 功能简述 |
 | --- | --- |
-| [asc_sync_notify](asc_sync_notify.md)/[asc_sync_wait](asc_sync_wait.md) | 多流水同步：同一核内不同流水之间的同步指令。`asc_sync_notify`负责发送通知，`asc_sync_wait`负责阻塞直到`asc_sync_notify`发送通知。 |
-| [asc_sync_pipe](asc_sync_pipe.md) | 单流水同步：同一核内相同流水之间的同步指令（不支持`PIPE_S`单流水同步）。 |
-| [asc_sync_data_barrier](asc_sync_data_barrier.md) | 阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可通过参数控制）执行结束。 |
-| [asc_lock](asc_lock.md)/[asc_unlock](asc_unlock.md) | 多流水同步：用于核内异步流水指令之间的同步处理，其功能类似于传统CPU中的锁机制。通过锁定指定流水再释放流水来完成流水间的同步依赖。 |
-| [asc_sync_vec](asc_sync_vec.md) | 核内同步易用性接口：针对`PIPE_V`执行同步操作，保证`PIPE_V`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
-| [asc_sync_mte2](asc_sync_mte2.md) | 核内同步易用性接口：针对`PIPE_MTE2`执行同步操作，保证`PIPE_MTE2`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
-| [asc_sync_mte3](asc_sync_mte3.md) | 核内同步易用性接口：针对`PIPE_MTE3`执行同步操作，保证`PIPE_MTE3`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
-| [asc_sync](asc_sync.md) | 全部流水同步：同一核内所有流水之间的同步指令，功能与`asc_sync_pipe(PIPE_ALL)`等价。阻塞调用点后所有硬件流水的后序指令，直到调用点之前所有硬件流水的前序指令全部完成。 |
+| [asc_sync_notify](intra_core_sync/asc_sync_notify.md)/[asc_sync_wait](intra_core_sync/asc_sync_wait.md) | 多流水同步：同一核内不同流水之间的同步指令。`asc_sync_notify`负责发送通知，`asc_sync_wait`负责阻塞直到`asc_sync_notify`发送通知。 |
+| [asc_sync_pipe](intra_core_sync/asc_sync_pipe.md) | 单流水同步：同一核内相同流水之间的同步指令（不支持`PIPE_S`单流水同步）。 |
+| [asc_sync_data_barrier](intra_core_sync/asc_sync_data_barrier.md) | 阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可通过参数控制）执行结束。 |
+| [asc_lock](intra_core_sync/asc_lock.md)/[asc_unlock](intra_core_sync/asc_unlock.md) | 多流水同步：用于核内异步流水指令之间的同步处理，其功能类似于传统CPU中的锁机制。通过锁定指定流水再释放流水来完成流水间的同步依赖。 |
+| [asc_sync_vec](intra_core_sync/asc_sync_vec.md) | 核内同步易用性接口：针对`PIPE_V`执行同步操作，保证`PIPE_V`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
+| [asc_sync_mte2](intra_core_sync/asc_sync_mte2.md) | 核内同步易用性接口：针对`PIPE_MTE2`执行同步操作，保证`PIPE_MTE2`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
+| [asc_sync_mte3](intra_core_sync/asc_sync_mte3.md) | 核内同步易用性接口：针对`PIPE_MTE3`执行同步操作，保证`PIPE_MTE3`中前序指令全部完成后，其他流水的后续指令才能开始执行。只能在AIV中调用。 |
+| [asc_sync](intra_core_sync/asc_sync.md) | 全部流水同步：同一核内所有流水之间的同步指令，功能与`asc_sync_pipe(PIPE_ALL)`等价。阻塞调用点后所有硬件流水的后序指令，直到调用点之前所有硬件流水的前序指令全部完成。 |
 
 图1展示了四种同步控制模式，各模式的功能描述如下。该图基于核函数使用`__mix__(1, 2)`修饰、逻辑核数`numBlocks=4`的场景配置。
 
@@ -31,7 +31,7 @@ AI Core的同步，总共分成2类：[核内同步](intra_core_sync_overview.md
 
 | 接口名称 | 同步范围 | 对应模式 | 功能简述 |
 | --- | --- | --- | --- |
-| [asc_sync_inter_arrive](asc_sync_inter_arrive.md)/[asc_sync_inter_wait](asc_sync_inter_wait.md) | 组间同步，即不同group之间所有block（所有AIC或所有AIV）之间的同步。 | 模式0（同步等待全部AIC或全部AIV执行结束） | `asc_sync_inter_arrive`为生产者，负责发送通知；`asc_sync_inter_wait`为消费者，负责阻塞等待通知到达。 |
-| [asc_sync_subblock_arrive](asc_sync_subblock_arrive.md)/[asc_sync_subblock_wait](asc_sync_subblock_wait.md) | 组内subblock间的同步，即同一group内不同subblock（AIV）之间的同步。 | 模式1（单个AI Core内，全部AIV之间的同步） | `asc_sync_subblock_arrive`为生产者，负责发送通知；`asc_sync_subblock_wait`为消费者，负责阻塞等待通知到达。 |
-| [asc_sync_block_arrive](asc_sync_block_arrive.md)/[asc_sync_block_wait](asc_sync_block_wait.md) | 同一group内block（AIC）与所有subblock（AIV）之间的同步。 | 模式2（单个AI Core内，AIC与全部AIV之间的同步） | `asc_sync_block_arrive`为生产者，负责发送通知；`asc_sync_block_wait`为消费者，负责阻塞等待通知到达。 |
-| [asc_sync_intra_arrive](asc_sync_intra_arrive.md)/[asc_sync_intra_wait](asc_sync_intra_wait.md) | 同一group内block（AIC）与单个subblock（AIV）之间的同步。 | 模式4（单个AI Core内，AIC核与单个AIV之间同步） | `asc_sync_intra_arrive`为生产者，负责发送通知；`asc_sync_intra_wait`为消费者，负责阻塞等待通知到达。 |
+| [asc_sync_inter_arrive](inter_core_sync/asc_sync_inter_arrive.md)/[asc_sync_inter_wait](inter_core_sync/asc_sync_inter_wait.md) | 组间同步，即不同group之间所有block（所有AIC或所有AIV）之间的同步。 | 模式0（同步等待全部AIC或全部AIV执行结束） | `asc_sync_inter_arrive`为生产者，负责发送通知；`asc_sync_inter_wait`为消费者，负责阻塞等待通知到达。 |
+| [asc_sync_subblock_arrive](inter_core_sync/asc_sync_subblock_arrive.md)/[asc_sync_subblock_wait](inter_core_sync/asc_sync_subblock_wait.md) | 组内subblock间的同步，即同一group内不同subblock（AIV）之间的同步。 | 模式1（单个AI Core内，全部AIV之间的同步） | `asc_sync_subblock_arrive`为生产者，负责发送通知；`asc_sync_subblock_wait`为消费者，负责阻塞等待通知到达。 |
+| [asc_sync_block_arrive](inter_core_sync/asc_sync_block_arrive.md)/[asc_sync_block_wait](inter_core_sync/asc_sync_block_wait.md) | 同一group内block（AIC）与所有subblock（AIV）之间的同步。 | 模式2（单个AI Core内，AIC与全部AIV之间的同步） | `asc_sync_block_arrive`为生产者，负责发送通知；`asc_sync_block_wait`为消费者，负责阻塞等待通知到达。 |
+| [asc_sync_intra_arrive](inter_core_sync/asc_sync_intra_arrive.md)/[asc_sync_intra_wait](inter_core_sync/asc_sync_intra_wait.md) | 同一group内block（AIC）与单个subblock（AIV）之间的同步。 | 模式4（单个AI Core内，AIC核与单个AIV之间同步） | `asc_sync_intra_arrive`为生产者，负责发送通知；`asc_sync_intra_wait`为消费者，负责阻塞等待通知到达。 |

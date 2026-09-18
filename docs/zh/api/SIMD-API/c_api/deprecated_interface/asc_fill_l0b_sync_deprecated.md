@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_fill_l0b_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_fill_l0b.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_fill_l0b_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_fill_l0b.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将value的二进制值赋值给dst，对L0B Buffer的Local Memory进行初始化。
 

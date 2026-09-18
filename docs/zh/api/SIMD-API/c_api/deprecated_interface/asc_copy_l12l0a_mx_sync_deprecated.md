@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l12l0a_mx_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12l0a_mx.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_l12l0a_mx_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12l0a_mx.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 负责完成MX矩阵计算过程中所需的左矩阵对应的量化系数的搬运，数据通路为L1 Buffer->L0A_MX Buffer。其中左量化系数矩阵以32字节（固定数据类型为`fp8_e8m0_t`、分形大小为16×2的）的数据分形为单位进行搬运。
 
@@ -99,7 +99,7 @@ PIPE_MTE1
 - `dst`起始地址需要按照32字节对齐，否则触发地址对齐异常。
 - `src`起始地址需要按照32字节对齐（L1 Buffer对齐要求），否则触发地址对齐异常。
 - `src`位于L1 Buffer，`dst`指向L0A_MX Buffer，两者分属不同的物理存储单元，不存在源操作数与目的操作数地址重叠的场景。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L0A_MX Buffer容量上限：L0A_MX Buffer总容量4KB，`dst`偏移量与搬运大小之和不可越界，否则触发地址溢出异常。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，`src`偏移量与源矩阵占用大小之和不可越界，否则触发地址溢出异常。
 

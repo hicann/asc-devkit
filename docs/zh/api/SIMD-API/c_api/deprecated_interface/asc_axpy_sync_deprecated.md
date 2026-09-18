@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_axpy_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_fused/asc_axpy.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_axpy_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_fused/asc_axpy.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 源操作数src中每个元素与标量value求积后和目的操作数dst中的对应元素相加计算公式如下：
 

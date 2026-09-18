@@ -130,7 +130,7 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需32字节对齐（L1 Buffer对齐要求），否则触发异常。
 - `src`起始地址需1字节对齐（Global Memory对齐要求），不满足触发异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，dst偏移与搬运大小之和不可越界，否则触发目的地址越界异常。
 - `burst_len`、`burst_count`、`src_stride`、`dst_stride`、`left_padding_count`与`right_padding_count`需满足参数说明的取值范围，否则会导致搬运结果不符合预期。
 - `enable_data_select`设置为true时，或者左右填充模式（`left_padding_count`和`right_padding_count`任意不为0）时，须先调用[asc_set_gm2l1_pad](asc_set_gm2l1_pad.md)配置填充值。

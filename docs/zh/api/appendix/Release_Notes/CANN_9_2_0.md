@@ -74,8 +74,8 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 ### 系统与同步
 
 - [asc_get_arch_ver](../../SIMD-API/c_api/utils/sys_var/asc_get_arch_ver.md)改为返回Ascend C对外使用的架构版本号，2201架构返回`2201`，3510架构返回`3510`，不再直接暴露芯片寄存器中的内部版本字段。
-- [asc_sync_pipe](../../SIMD-API/c_api/sync/asc_sync_pipe.md)补齐2201架构Vector Core的`PIPE_V`单流水同步，并修正3510架构[asc_sync_vec](../../SIMD-API/c_api/sync/asc_sync_vec.md)带`id`重载中的冗余Vector流水屏障。
-- [asc_lock](../../SIMD-API/c_api/sync/asc_lock.md)和[asc_unlock](../../SIMD-API/c_api/sync/asc_unlock.md)新增使用[asc_mutex_execute_mode](../../SIMD-API/c_api/defs/enum/asc_mutex_execute_mode.md)的重载，以强类型参数选择阻塞或非阻塞模式；原`ascMutexExecuteMode`类型名作为兼容别名保留。
+- [asc_sync_pipe](../../SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md)补齐2201架构Vector Core的`PIPE_V`单流水同步，并修正3510架构[asc_sync_vec](../../SIMD-API/c_api/sync/intra_core_sync/asc_sync_vec.md)带`id`重载中的冗余Vector流水屏障。
+- [asc_lock](../../SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)和[asc_unlock](../../SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)新增使用[asc_mutex_execute_mode](../../SIMD-API/c_api/defs/enum/asc_mutex_execute_mode.md)的重载，以强类型参数选择阻塞或非阻塞模式；原`ascMutexExecuteMode`类型名作为兼容别名保留。
 
 ### 公共头文件
 
@@ -94,7 +94,7 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 - 修复[asc_loadalign_postupdate](../../SIMD-API/c_api/reg_compute/load/asc_loadalign_postupdate.md)的`vector_bool`重载缺少`offset`参数的问题，使公开声明与实现保持一致。
 - 修复`vector_int4x2_t`的[asc_loadalign_downsample_postupdate](../../SIMD-API/c_api/reg_compute/load/asc_loadalign_downsample_postupdate.md)和带`block_stride`、`repeat_stride`参数的`asc_loadalign_postupdate`重载只更新局部源指针副本的问题，确保连续调用时源地址更新能够回写调用方并从正确位置继续搬入。
 - 修复`asc_squeeze_and_storeunalign`的目的矢量数据寄存器`dst`按值传递问题，改为引用传递，确保压缩结果可回写调用方。
-- 修复2201架构下[asc_sync_subblock_wait](../../SIMD-API/c_api/sync/asc_sync_subblock_wait.md)宏向底层接口多传`pipe`参数的问题。
+- 修复2201架构下[asc_sync_subblock_wait](../../SIMD-API/c_api/sync/inter_core_sync/asc_sync_subblock_wait.md)宏向底层接口多传`pipe`参数的问题。
 - 修复2201架构下部分[asc_sub_relu_sync](../../SIMD-API/c_api/deprecated_interface/asc_sub_relu_sync_deprecated.md)重载错误调用非同步实现的问题。
 - 修复2201架构下[asc_rsqrt](../../SIMD-API/c_api/vector_compute/vector_arith/asc_rsqrt.md)同步重载误调用非同步实现的问题。
 - 修复[asc_init](../../SIMD-API/c_api/utils/sys_init/asc_init.md)在3510架构下未完整复位`CTRL`、Mask、搬运循环、Padding及数据搬运原子操作类型等状态的问题，避免前序算子遗留状态影响当前算子。
@@ -123,7 +123,7 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 | `asc_and`、`asc_or`的浮点类型重载 | 按相同位宽选择整数类型重载 | 位逻辑运算不再接受浮点矢量类型。 |
 | Reg类型转换中通过接口后缀或隐式规则控制源/目的位置的重载 | 显式传入`asc_position_mode`或`asc_position_quarter_mode`的当前同名重载 | 涉及`float`、`half`、`bfloat16_t`、整数、FP8、HiF8和FP4等类型转换接口；`_v2`、`_v3`、`_v4`位置后缀进入废弃期。 |
 | `asc_mmad`、[asc_mmad_s4](../../SIMD-API/c_api/deprecated_interface/asc_mmad_deprecated.md)、[asc_mmad_sparse](../../SIMD-API/c_api/deprecated_interface/asc_mmad_sparse_deprecated.md)、`asc_mmad_mx`中`unit_flag`为`uint8_t`、带`feat_offset`参数的旧原型 | `unit_flag_mode`为`asc_unit_flag_mode`的当前同名接口 | 使用强类型枚举配置UnitFlag；不再传入无效的兼容参数。 |
-| [asc_transto5hd_b8_sync](../../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)、[asc_transto5hd_b16_sync](../../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)、[asc_transto5hd_b32_sync](../../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md) | 对应的`asc_transto5hd_b8`、`asc_transto5hd_b16`、`asc_transto5hd_b32`接口分别配合[asc_sync](../../SIMD-API/c_api/sync/asc_sync.md) | 将格式转换与同步操作拆分调用。 |
+| [asc_transto5hd_b8_sync](../../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)、[asc_transto5hd_b16_sync](../../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md)、[asc_transto5hd_b32_sync](../../SIMD-API/c_api/deprecated_interface/asc_transto5hd_sync_deprecated.md) | 对应的`asc_transto5hd_b8`、`asc_transto5hd_b16`、`asc_transto5hd_b32`接口分别配合[asc_sync](../../SIMD-API/c_api/sync/intra_core_sync/asc_sync.md) | 将格式转换与同步操作拆分调用。 |
 | 矩阵计算、矩阵搬运、矢量数据搬运和Memory矢量计算的`*_sync`复合接口 | 对应非同步接口配合`asc_sync()` | 包括[asc_mmad*_sync](../../SIMD-API/c_api/deprecated_interface/asc_mmad_deprecated.md)、[asc_copy_*_sync](../deprecated_interface.md)、[asc_fill_*_sync](../deprecated_interface.md)和Memory矢量计算`*_sync`接口族。 |
 | `asc_sync_vec`旧原型 | `asc_sync` | 使用统一的同步接口。 |
 | `asc_copy_gm2ub_align`、`asc_copy_ub2gm_align`、[asc_ndim_copy_gm2ub](../../SIMD-API/c_api/deprecated_interface/asc_ndim_copy_gm2ub_deprecated.md)中以整数参数表达L2 Cache策略的旧重载 | 使用`asc_load_l2_cache_mode`或`asc_store_l2_cache_mode`枚举的当前同名重载 | 使用强类型枚举配置L2 Cache管理策略。 |

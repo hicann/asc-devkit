@@ -93,7 +93,7 @@ The single buffers and shared Mutex force MTE2, MTE1, and M to process one K til
 
 Once MTE1 has read an L1 group, MTE2 can write a later K tile to that group without waiting for MMAD. Because L0 has only one group, MTE1 must still wait for MMAD to finish reading it before loading the next tile.
 
-All scenarios use [asc_lock](../../../../../docs/zh/api/SIMD-API/c_api/sync/asc_lock.md) and [asc_unlock](../../../../../docs/zh/api/SIMD-API/c_api/sync/asc_unlock.md) to control buffer-reuse dependencies. These Mutexes ensure that data is written before it is read and read before it is overwritten; they are not a separate performance optimization.
+All scenarios use [asc_lock](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md) and [asc_unlock](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md) to control buffer-reuse dependencies. These Mutexes ensure that data is written before it is read and read before it is overwritten; they are not a separate performance optimization.
 
 **Table6**  Buffer-Reuse Dependencies
 

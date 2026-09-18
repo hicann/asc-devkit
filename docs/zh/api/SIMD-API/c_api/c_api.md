@@ -85,7 +85,7 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 |[asc_get_system_cycle](utils/sys_var/asc_get_system_cycle.md)|获取当前系统cycle数。|`c_api/utils/sys_var.h`|
 |[asc_get_system_clock](utils/sys_var/asc_get_system_clock.md)|获取当前系统时钟时间值（微秒）。|`c_api/utils/sys_var.h`|
 |[asc_get_vf_len](utils/sys_var/asc_get_vf_len.md)|获取Tensor位宽VL（Vector Length）的大小。|`c_api/utils/sys_var.h`|
-|[asc_set_ffts_base_addr](utils/sys_var/asc_set_ffts_base_addr.md)|在[asc_sync_block_arrive](sync/asc_sync_block_arrive.md)和[asc_sync_block_wait](sync/asc_sync_block_wait.md)之前使用，设置核间同步寄存器的基地址。|`c_api/utils/sys_var.h`|
+|[asc_set_ffts_base_addr](utils/sys_var/asc_set_ffts_base_addr.md)|在[asc_sync_block_arrive](sync/inter_core_sync/asc_sync_block_arrive.md)和[asc_sync_block_wait](sync/inter_core_sync/asc_sync_block_wait.md)之前使用，设置核间同步寄存器的基地址。|`c_api/utils/sys_var.h`|
 
 ## 矩阵计算
 
@@ -697,26 +697,33 @@ C API文档按最细粒度公共头文件归类。除试验接口外，整体使
 
 ## 同步控制
 
+### 核内同步
+
 |API名称|说明|最细粒度公共头文件|
 |---|---|---|
-|[asc_lock](sync/asc_lock.md)|用于AI Core内部异步流水线同步的接口。|`c_api/sync/sync.h`|
-|[asc_sync](sync/asc_sync.md)|等待所有流水线操作完成。|`c_api/sync/sync.h`|
-|[asc_sync_block_arrive](sync/asc_sync_block_arrive.md)|该指令用于发送同步信息数据到核间同步寄存器，设置同步点。|`c_api/sync/sync.h`|
-|[asc_sync_block_wait](sync/asc_sync_block_wait.md)|和[asc_sync_block_arrive](sync/asc_sync_block_arrive.md)配合使用（通过flag_id关联），用于等待所有同步对象到达flag_id对应的同步点。|`c_api/sync/sync.h`|
-|[asc_sync_data_barrier](sync/asc_sync_data_barrier.md)|用于阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可以通过参数控制）执行结束。|`c_api/sync/sync.h`|
-|[asc_sync_inter_arrive](sync/asc_sync_inter_arrive.md)|和[asc_sync_inter_wait](sync/asc_sync_inter_wait.md)配合使用（通过flag_id关联），用于组间block的信号同步。|`c_api/sync/sync.h`|
-|[asc_sync_inter_wait](sync/asc_sync_inter_wait.md)|等待block内同步标志。|`c_api/sync/sync.h`|
-|[asc_sync_intra_arrive](sync/asc_sync_intra_arrive.md)|向核间同步寄存器发送同步信号。|`c_api/sync/sync.h`|
-|[asc_sync_intra_wait](sync/asc_sync_intra_wait.md)|等待核间同步寄存器同步标志。|`c_api/sync/sync.h`|
-|[asc_sync_mte2](sync/asc_sync_mte2.md)|等待PIPE_MTE2流水完成。|`c_api/sync/sync.h`|
-|[asc_sync_mte3](sync/asc_sync_mte3.md)|等待PIPE_MTE3流水完成。|`c_api/sync/sync.h`|
-|[asc_sync_notify](sync/asc_sync_notify.md)|设置同步标志。|`c_api/sync/sync.h`|
-|[asc_sync_pipe](sync/asc_sync_pipe.md)|等待指定流水线操作完成。|`c_api/sync/sync.h`|
-|[asc_sync_subblock_arrive](sync/asc_sync_subblock_arrive.md)|和[asc_sync_subblock_wait](sync/asc_sync_subblock_wait.md)配合使用（通过flag_id关联），用于组内subblock间的信号同步。|`c_api/sync/sync.h`|
-|[asc_sync_subblock_wait](sync/asc_sync_subblock_wait.md)|等待subblock间同步标志。|`c_api/sync/sync.h`|
-|[asc_sync_vec](sync/asc_sync_vec.md)|同步所有流水线。|`c_api/sync/sync.h`|
-|[asc_sync_wait](sync/asc_sync_wait.md)|等待同步标志。|`c_api/sync/sync.h`|
-|[asc_unlock](sync/asc_unlock.md)|释放缓存。|`c_api/sync/sync.h`|
+|[asc_lock](sync/intra_core_sync/asc_lock.md)|用于AI Core内部异步流水线同步的接口。|`c_api/sync/sync.h`|
+|[asc_sync](sync/intra_core_sync/asc_sync.md)|等待所有流水线操作完成。|`c_api/sync/sync.h`|
+|[asc_sync_data_barrier](sync/intra_core_sync/asc_sync_data_barrier.md)|用于阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可以通过参数控制）执行结束。|`c_api/sync/sync.h`|
+|[asc_sync_mte2](sync/intra_core_sync/asc_sync_mte2.md)|等待PIPE_MTE2流水完成。|`c_api/sync/sync.h`|
+|[asc_sync_mte3](sync/intra_core_sync/asc_sync_mte3.md)|等待PIPE_MTE3流水完成。|`c_api/sync/sync.h`|
+|[asc_sync_notify](sync/intra_core_sync/asc_sync_notify.md)|设置同步标志。|`c_api/sync/sync.h`|
+|[asc_sync_pipe](sync/intra_core_sync/asc_sync_pipe.md)|等待指定流水线操作完成。|`c_api/sync/sync.h`|
+|[asc_sync_vec](sync/intra_core_sync/asc_sync_vec.md)|同步所有流水线。|`c_api/sync/sync.h`|
+|[asc_sync_wait](sync/intra_core_sync/asc_sync_wait.md)|等待同步标志。|`c_api/sync/sync.h`|
+|[asc_unlock](sync/intra_core_sync/asc_unlock.md)|释放缓存。|`c_api/sync/sync.h`|
+
+### 核间同步
+
+|API名称|说明|最细粒度公共头文件|
+|---|---|---|
+|[asc_sync_block_arrive](sync/inter_core_sync/asc_sync_block_arrive.md)|该指令用于发送同步信息数据到核间同步寄存器，设置同步点。|`c_api/sync/sync.h`|
+|[asc_sync_block_wait](sync/inter_core_sync/asc_sync_block_wait.md)|和[asc_sync_block_arrive](sync/inter_core_sync/asc_sync_block_arrive.md)配合使用（通过flag_id关联），用于等待所有同步对象到达flag_id对应的同步点。|`c_api/sync/sync.h`|
+|[asc_sync_inter_arrive](sync/inter_core_sync/asc_sync_inter_arrive.md)|和[asc_sync_inter_wait](sync/inter_core_sync/asc_sync_inter_wait.md)配合使用（通过flag_id关联），用于组间block的信号同步。|`c_api/sync/sync.h`|
+|[asc_sync_inter_wait](sync/inter_core_sync/asc_sync_inter_wait.md)|等待block内同步标志。|`c_api/sync/sync.h`|
+|[asc_sync_intra_arrive](sync/inter_core_sync/asc_sync_intra_arrive.md)|向核间同步寄存器发送同步信号。|`c_api/sync/sync.h`|
+|[asc_sync_intra_wait](sync/inter_core_sync/asc_sync_intra_wait.md)|等待核间同步寄存器同步标志。|`c_api/sync/sync.h`|
+|[asc_sync_subblock_arrive](sync/inter_core_sync/asc_sync_subblock_arrive.md)|和[asc_sync_subblock_wait](sync/inter_core_sync/asc_sync_subblock_wait.md)配合使用（通过flag_id关联），用于组内subblock间的信号同步。|`c_api/sync/sync.h`|
+|[asc_sync_subblock_wait](sync/inter_core_sync/asc_sync_subblock_wait.md)|等待subblock间同步标志。|`c_api/sync/sync.h`|
 
 ## 其他操作
 

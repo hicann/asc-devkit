@@ -25,8 +25,8 @@
 | 原子操作 | [原子操作接口扩展](#section_atomic_api) | [AtomicAdd等](../../../api/SIMD-API/basic_api/atomic_operations/AtomicAdd.md) | [asc_atomic_add](../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)、[asc_atomic_max](../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_max.md)、[asc_atomic_min](../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_min.md)、[asc_atomic_exch](../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_exch.md)、[asc_atomic_cas](../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_cas.md) |
 | 缓存 | [新增DCI（数据缓存失效）能力](#section_dci) | – | [asc_dci](../../../api/SIMD-API/c_api/cache_ctrl/asc_dci.md) |
 | 存储 | [新增SSBuffer核内存储单元](#section_ssbuf) | [GetSsbufBaseAddr](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetSsbufBaseAddr.md) | – |
-| 同步 | [新增Mutex核内同步能力](#section_mutex) | [Mutex::Lock/Unlock](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/Mutex_ISASI.md)、[AllocMutexID](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/AllocMutexID_ISASI.md) | [asc_lock](../../../api/SIMD-API/c_api/sync/asc_lock.md)、[asc_unlock](../../../api/SIMD-API/c_api/sync/asc_unlock.md) |
-| 同步 | [新增核间同步控制模式4](#section_crosscore) | [CrossCoreSetFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)、[CrossCoreWaitFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md) | [asc_sync_intra_arrive](../../../api/SIMD-API/c_api/sync/asc_sync_intra_arrive.md)、[asc_sync_intra_wait](../../../api/SIMD-API/c_api/sync/asc_sync_intra_wait.md) |
+| 同步 | [新增Mutex核内同步能力](#section_mutex) | [Mutex::Lock/Unlock](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/Mutex_ISASI.md)、[AllocMutexID](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/AllocMutexID_ISASI.md) | [asc_lock](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)、[asc_unlock](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md) |
+| 同步 | [新增核间同步控制模式4](#section_crosscore) | [CrossCoreSetFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)、[CrossCoreWaitFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md) | [asc_sync_intra_arrive](../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_arrive.md)、[asc_sync_intra_wait](../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_wait.md) |
 
 > [!NOTE]
 > 除上表中所列特性以外，3510架构还新增SIMT编程模型和SIMD与SIMT混合编程，具体说明请参见：
@@ -295,7 +295,7 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
 
 可通过以下两种方式插入DCI指令：
 1. 编译选项方式：编译时配置[`--cce-no-dcache-flush`](../../operator_practice/simd_operator_optimization/overhead_optimization/dci_compile_option.md)，编译框架将在算子尾部插入DCI指令，替代默认的DCCI指令。推荐使用该方式开启DCI能力。详细说明请参考[设置DCI编译选项来减少算子尾开销](../../operator_practice/simd_operator_optimization/overhead_optimization/dci_compile_option.md)。
-2. 接口方式：使用[asc_dci](../../../api/SIMD-API/c_api/cache_ctrl/asc_dci.md)接口执行数据缓存失效，调用前需先通过[asc_sync_data_barrier](../../../api/SIMD-API/c_api/sync/asc_sync_data_barrier.md)插入DSB_ALL指令，等待所有内存访问指令执行结束。
+2. 接口方式：使用[asc_dci](../../../api/SIMD-API/c_api/cache_ctrl/asc_dci.md)接口执行数据缓存失效，调用前需先通过[asc_sync_data_barrier](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md)插入DSB_ALL指令，等待所有内存访问指令执行结束。
 
 ### 新增SSBuffer核内存储单元<a name="section_ssbuf"></a>
 
@@ -392,7 +392,7 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
 
 可参考以下资料：
 - 基础API：[Mutex::Lock](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/Mutex_ISASI.md)、[Mutex::Unlock](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/Mutex_ISASI.md)、[AllocMutexID](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/AllocMutexID_ISASI.md)。
-- C API：[asc_lock](../../../api/SIMD-API/c_api/sync/asc_lock.md)、[asc_unlock](../../../api/SIMD-API/c_api/sync/asc_unlock.md)。
+- C API：[asc_lock](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)、[asc_unlock](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)。
 
 #### 典型样例说明
 
@@ -408,7 +408,7 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
 
 可参考以下资料：
 - 基础API：[CrossCoreSetFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)、[CrossCoreWaitFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md)。
-- C API：[asc_sync_intra_arrive](../../../api/SIMD-API/c_api/sync/asc_sync_intra_arrive.md)、[asc_sync_intra_wait](../../../api/SIMD-API/c_api/sync/asc_sync_intra_wait.md)。
+- C API：[asc_sync_intra_arrive](../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_arrive.md)、[asc_sync_intra_wait](../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_wait.md)。
 
 #### 典型样例说明
 
