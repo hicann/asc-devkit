@@ -1204,6 +1204,134 @@ TEST_F(CcuMc2TestSuite, Mc2SetCcCommEngine_AcceptsCcuEngines)
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
 }
 
+// ---------- CheckOpResSufficient(ccArgs) ----------
+// ccArgs版checkOnly预检：由Mc2GetCcArgs/Mc2SetCc*构造参数，
+// 走与tiling版相同的算法选择与资源校验链路，不落盘OpResCtx
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_NullParameters)
+{
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+
+    EXPECT_EQ(CheckOpResSufficient(nullptr, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs), HCCL_E_PTR);
+    EXPECT_EQ(CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), nullptr), HCCL_E_PTR);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_CcuSufficient)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+
+    HcclResult ret = CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs);
+
+    EXPECT_EQ(ret, HCCL_SUCCESS);
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+// 端到端验证UNAVAIL→RES_NOT_SUFFICIENT映射（ccArgs路径）：
+// 打桩HcclGetAlgRes返回UNAVAIL（模拟CCU通道/实例资源不足），
+// checkOnly场景统一翻译为HCCL_E_RES_NOT_SUFFICIENT
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_ResourceInsufficient)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+    mc2_ops_hccl::g_stubCcuAlgResUnavailable = true;
+
+    EXPECT_EQ(
+        CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs),
+        HCCL_E_RES_NOT_SUFFICIENT);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_UnsupportedDevice)
+{
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+    mc2_ops_hccl::g_stubDeviceType = DevType::DEV_TYPE_910B;
+
+    EXPECT_EQ(
+        CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs), HCCL_E_NOT_SUPPORT);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_UnsupportedCcType)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+
+    // 0xFF非Mc2支持的算子类型，BuildMc2CcTiling拒绝
+    EXPECT_EQ(CheckOpResSufficient(comm_, 0xFFU, ccArgs), HCCL_E_NOT_SUPPORT);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_SingleRankBypass)
+{
+    // 单rank场景资源必然充足：入口层提前返回SUCCESS，不进入算法选择与资源校验
+    auto simComm = static_cast<HcclSim::SimCommunicator*>(comm_);
+    delete simComm;
+    comm_ = nullptr;
+    HcclSim::SimWorld::Global()->Deinit();
+    g_stubRankSize = 1;
+    TopoMeta topoMeta = BuildTopoMeta(g_stubRankSize);
+    HcclSim::SimWorld::Global()->Init(topoMeta, mc2_ops_hccl::g_stubDeviceType);
+    ASSERT_EQ(HcclSim::Sim_HcclCommInitClusterInfo(topoMeta, g_stubRankId, &comm_), HCCL_SUCCESS);
+
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+
+    EXPECT_EQ(CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs), HCCL_SUCCESS);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_AicpuBypass)
+{
+    // 非CCU_SCHED引擎（AICPU等）不做CCU校验，直接返回SUCCESS
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::AICPU), nullptr);
+    ASSERT_NE(ccArgs, nullptr);
+
+    EXPECT_EQ(CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs), HCCL_SUCCESS);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_AlgNotRegistered)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+    mc2_ops_hccl::g_stubCcuAlgorithmRegistered = false;
+
+    EXPECT_EQ(
+        CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs),
+        HCCL_E_ALG_NOT_SUPPORTED);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_ForcedAlgFallbackToSelector)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+    // 强制算法执行器不可用→回退默认selector；桩selector返回另一合法CCU算法
+    mc2_ops_hccl::g_stubCcuAlgExecNull = true;
+    mc2_ops_hccl::g_stubCcuAlgExecNullName = "CcuSchedAllGatherSoleMesh";
+    mc2_ops_hccl::g_stubSelectorAlgName = "CcuAllGatherMeshMem2Mem1D";
+
+    EXPECT_EQ(CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs), HCCL_SUCCESS);
+
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
 TEST_F(CcuMc2TestSuite, Mc2SetCcAlgConfig_ParameterValidation)
 {
     void* ccArgs = nullptr;
@@ -1213,6 +1341,21 @@ TEST_F(CcuMc2TestSuite, Mc2SetCcAlgConfig_ParameterValidation)
     EXPECT_EQ(Mc2SetCcAlgConfig(nullptr, "CcuSchedAllGatherSoleMesh"), HCCL_E_PTR);
     EXPECT_EQ(Mc2SetCcAlgConfig(ccArgs, nullptr), HCCL_E_PTR);
     EXPECT_EQ(Mc2SetCcAlgConfig(ccArgs, "CcuSchedAllGatherSoleMesh"), HCCL_SUCCESS);
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+// algConfig最终要装入Mc2CcTilingInner::algConfig[ALG_CONFIG_SIZE]（128字节），
+// 长度>=128的algConfig应在设置阶段即以HCCL_E_PARA拒绝，不应静默截断
+TEST_F(CcuMc2TestSuite, Mc2SetCcAlgConfig_RejectsOverlongConfig)
+{
+    void* ccArgs = nullptr;
+    ASSERT_EQ(Mc2GetCcArgs(&ccArgs), HCCL_SUCCESS);
+    ASSERT_NE(ccArgs, nullptr);
+
+    const std::string maxValid(HcclApi::ALG_CONFIG_SIZE - 1U, 'a'); // 127字节：合法上限
+    const std::string overlong(HcclApi::ALG_CONFIG_SIZE, 'a');      // 128字节：无NUL终止位，拒绝
+    EXPECT_EQ(Mc2SetCcAlgConfig(ccArgs, maxValid.c_str()), HCCL_SUCCESS);
+    EXPECT_EQ(Mc2SetCcAlgConfig(ccArgs, overlong.c_str()), HCCL_E_PARA);
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
 }
 
