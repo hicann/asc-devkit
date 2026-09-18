@@ -124,7 +124,7 @@ For the complete operator sample, see [matmul_quant sample](https://gitcode.com/
 
 -   Tiling Implementation
 
-    Call the [SetDequantType](../../../../../api/SIMD-API/high-order API/Cube computation/Matmul-Tiling class/SetDequantType.md) API to set the quantization or dequantization mode. Other implementation details are the same as those in the basic scenario.
+    Call the [SetDequantType](../../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-Tiling/SetDequantType.md) API to set the quantization or dequantization mode. Other implementation details are the same as those in the basic scenario.
 
     ```
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
@@ -143,7 +143,7 @@ For the complete operator sample, see [matmul_quant sample](https://gitcode.com/
 
 -   Kernel Implementation
 
-    Based on the specific quantization mode scenario, call the [SetQuantScalar](../../../../../api/SIMD-API/high-order API/Cube computation/Matmul-Kernel side interface/SetQuantScalar.md) or [SetQuantVector](../../../../../api/SIMD-API/high-order API/Cube computation/Matmul-Kernel side interface/SetQuantVector.md) API to set the quantization parameters. Other implementation details are the same as those in the basic scenario.
+    Based on the specific quantization mode scenario, call the [SetQuantScalar](../../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-Kernel/SetQuantScalar.md) or [SetQuantVector](../../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-Kernel/SetQuantVector.md) API to set the quantization parameters. Other implementation details are the same as those in the basic scenario.
 
     -   Same-coefficient quantization/dequantization mode
 

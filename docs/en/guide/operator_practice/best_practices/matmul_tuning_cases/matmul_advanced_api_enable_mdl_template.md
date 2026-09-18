@@ -4,7 +4,7 @@
 
 ## Case Introduction<a name="section5590915836"></a>
 
-This case demonstrates the performance improvement achieved by enabling the MDL template when using the Matmul advanced API for matrix multiplication in a matrix multiplication operator scenario. In the MDL template, the MTE2 pipeline transfers data from Global Memory to A1/B1 in a single large packet, that is, one MTE2 transfer can move multiple base blocks for Matmul computation, improving bandwidth utilization. This allows the subsequent MTE1 pipeline to reuse the cached data of base blocks in A1/B1 as much as possible, reducing the transfer count of MTE2. For details about the MDL template, see [MatmulConfig](../../../../api/SIMD-API/advanced_api/matrix_compute//Matmul-Kernel/MatmulConfig.md).
+This case demonstrates the performance improvement achieved by enabling the MDL template when using the Matmul advanced API for matrix multiplication in a matrix multiplication operator scenario. In the MDL template, the MTE2 pipeline transfers data from Global Memory to A1/B1 in a single large packet, that is, one MTE2 transfer can move multiple base blocks for Matmul computation, improving bandwidth utilization. This allows the subsequent MTE1 pipeline to reuse the cached data of base blocks in A1/B1 as much as possible, reducing the transfer count of MTE2. For details about the MDL template, see [MatmulConfig](../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-Kernel/MatmulConfig.md).
 
 -   Applicable scenarios of the MDL template
 

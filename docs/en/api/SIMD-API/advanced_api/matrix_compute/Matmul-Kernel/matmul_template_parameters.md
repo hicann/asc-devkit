@@ -5,17 +5,11 @@
 ## Applicable Products
 
 - Ascend 950PR/Ascend 950DT: Supported
-
 - Atlas A3 training products/Atlas A3 inference products: Supported
-
 - Atlas A2 training products/Atlas A2 inference products: Supported
-
 - Atlas 200I/500 A2 inference product: Supported
-
 - AI Core of Atlas inference products: Supported
-
 - Vector Core of Atlas inference products: Not supported
-
 - Atlas training products: Not supported
 
 ## Description
@@ -23,7 +17,6 @@
 The following information must be passed when creating a Matmul object:
 
 -   Parameter type information of **A**, **B**, **C**, and **Bias**, which is defined by **MatmulType**, including the logical memory location, data format, data type, whether to transpose, data layout, and whether to enable L1 reuse.
-
 -   **MatmulConfig** information (optional), used to configure the Matmul template information and related configuration parameters. If not configured, the **Norm** template is used by default.
 
     For Atlas 200I/500 A2 inference product, only the default **Norm** template is currently supported.
@@ -53,15 +46,12 @@ The following information must be passed when creating a Matmul object:
 ## Prototype
 
 The Matmul template parameters are as follows:
-
 ```
 template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE = C_TYPE, const auto& MM_CFG = CFG_NORM, class MM_CB = MatmulCallBackFunc<nullptr, nullptr, nullptr>, MATMUL_POLICY_DEFAULT_OF(MatmulPolicy)>
 ```
 
 -   The A\_TYPE, B\_TYPE, and C\_TYPE type information is defined via [MatmulType](matmul_usage.md#table1188045714378).
-
 -   The auto-typed parameter MM\_CFG (optional):
-
     -   Supports the MatmulConfig type:
 
         Matmul template information. For details, see [MatmulConfig](MatmulConfig.md).
@@ -73,9 +63,7 @@ template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE = C_TYPE, co
         The MatmulApiStaticTiling structure includes a set of constantized Tiling parameters and the MatmulConfig structure. This type of parameter is defined as follows: by calling the template acquisition API described in the [MatmulConfig](MatmulConfig.md) chapter, specify the \(singleM, singleN, singleK, baseM, baseN, baseK\) parameters to obtain a custom template; then pass this template to the [GetMatmulApiTiling](GetMatmulApiTiling.md) API to obtain the constantized parameters. This constantization method produces a set of constantized parameters defined in the MatmulApiStaticTiling structure, which can optimize the Scalar computation in Matmul computation. The templates currently supported for Tiling parameters defined as MatmulApiStaticTiling constantization are Norm, IBShare, and MDL templates. In the MxMatmul scenario, the templates supported for Tiling parameters defined as MatmulApiStaticTiling constantization are Norm and MDL templates.
 
 -   MM\_CB (optional), used to support different copy-in and copy-out requirements and implement customized copy-in and copy-out functionality. For details, see [MatmulCallBackFunc](MatmulCallBackFunc.md).
-
 -   MATMUL\_POLICY\_DEFAULT\_OF\(MatmulPolicy\) (optional), used to configure the policy of the Matmul extensible module. Currently supported: not configuring this parameter (using the default template policy) or configuring one MatmulPolicy parameter.
-
 
     MATMUL\_POLICY\_DEFAULT\_OF is defined as follows to simplify the type declaration of MATMUL\_POLICY. For details about how to use this template parameter, see [MatmulPolicy](MatmulPolicy.md).
 

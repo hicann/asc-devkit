@@ -52,7 +52,7 @@
 
 4.  <a name="zh-cn_topic_0000002298767897_li52321325141410"></a>Set the index matrix.
 
-    Pass in the index matrix generated during densification through the [SetSparseIndex](../../../../../api/SIMD-API/high-order API/Cube computation/Matmul-Kernel-side API/SetSparseIndex.md) API.
+    Pass in the index matrix generated during densification through the [SetSparseIndex](../../../../../api/SIMD-API/advanced_api/matrix_compute/Matmul-Kernel/SetSparseIndex.md) API.
 
     ```
     mm.SetTensorA(gm_a);    // Set left matrix A
