@@ -99,6 +99,9 @@ __aicore__ inline void asc_copy_l0c2gm(__gm__ <dst_dtype>* dst,
 
 src dtype与dst dtype支持以下组合：
 
+- `src_dtype`为`int32_t`时，`dst_dtype`支持`int4b_t`、`int8_t`、`uint8_t`、`half`、`bfloat16_t`、`int32_t`。
+- `src_dtype`为`float`时，`dst_dtype`支持`int4b_t`、`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e4m3fn_t`、`half`、`bfloat16_t`、`float`。
+
 ### 函数原型典型示例
 
 ```c
