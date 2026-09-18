@@ -36,15 +36,15 @@ LayoutPattern决定数据在内存中的分形排列方式，不同存储位置�
 
 ```cpp
 template <typename LayoutPattern, typename Trait = Std::ignore_t, typename... Args>
-__aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args)
+__aicore__ inline decltype(auto) make_frame_layout(const Args&... args)
 
 template <typename LayoutPattern, size_t C0Element, typename... Args>
-__aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args)
+__aicore__ inline decltype(auto) make_frame_layout(const Args&... args)
 
 template <typename LayoutPattern, typename Trait = layout_trait_default<>>
 struct frame_layout_format {
     template <typename... Args>
-    __aicore__ inline constexpr decltype(auto) operator()(const Args&... args);
+    __aicore__ inline decltype(auto) operator()(const Args&... args);
 };
 ```
 

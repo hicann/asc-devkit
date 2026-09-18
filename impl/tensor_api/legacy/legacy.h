@@ -215,13 +215,13 @@ ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Crd2Idx(
 }
 
 template <typename LayoutPattern, typename TraitType = Std::ignore_t, typename... Args>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline decltype(auto) MakeFrameLayout(const Args&... args)
 {
     return make_frame_layout<LayoutPattern, TraitType>(args...);
 }
 
 template <typename LayoutPattern, size_t C0Element, typename... Args>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr decltype(auto) MakeFrameLayout(const Args&... args)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline decltype(auto) MakeFrameLayout(const Args&... args)
 {
     return make_frame_layout<LayoutPattern, C0Element>(args...);
 }
@@ -247,20 +247,19 @@ ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto MakeMemPtr(Addr addr
 }
 
 template <typename PtrPattern, typename Iterator, asc::te::enable_make_hardware_ptr<PtrPattern, Iterator> = 0>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto MakeMemPtr(Iterator iterator)
 {
     return make_mem_ptr<PtrPattern>(iterator);
 }
 
 template <typename Iterator, asc::te::enable_make_ptr_by_iter<Iterator> = 0>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto MakeMemPtr(Iterator iterator)
 {
     return make_mem_ptr(iterator);
 }
 
 template <typename Iterator, typename... Args>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto MakeTensor(
-    const Iterator& iterator, const Args&... args)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto MakeTensor(const Iterator& iterator, const Args&... args)
 {
     return make_tensor(iterator, args...);
 }
@@ -269,7 +268,7 @@ template <
     size_t... SqueezeDims, typename Input,
     typename = Std::enable_if_t<
         (asc::te::is_layout_v<Input> || asc::te::is_attr_tensor_v<Input>) && (sizeof...(SqueezeDims) > 0)>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Squeeze(const Input& value)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto Squeeze(const Input& value)
 {
     return squeeze<SqueezeDims...>(value);
 }
@@ -279,8 +278,7 @@ template <
     typename = Std::enable_if_t<
         (asc::te::is_layout_v<Input> || asc::te::is_attr_tensor_v<Input>) &&
         Std::is_tuple_v<Std::remove_cvref_t<Pattern>>>>
-ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline constexpr auto Squeeze(
-    const Input& value, const Pattern& pattern)
+ASCENDC_TENSOR_API_LEGACY_DEPRECATED __aicore__ inline auto Squeeze(const Input& value, const Pattern& pattern)
 {
     return squeeze(value, pattern);
 }

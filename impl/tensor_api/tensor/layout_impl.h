@@ -107,7 +107,7 @@ __aicore__ inline constexpr const Coord& resolve_copy_coord(const LayoutType&, c
 }
 
 template <typename Coord, typename LayoutType>
-__aicore__ inline decltype(auto) make_coord_layout(const Coord& coord, const LayoutType& layout)
+__aicore__ inline constexpr decltype(auto) make_coord_layout(const Coord& coord, const LayoutType& layout)
 {
     using shape_type = Std::remove_cvref_t<decltype(layout.shape())>;
     using coord_type = Std::remove_cvref_t<Coord>;
@@ -123,7 +123,7 @@ __aicore__ inline decltype(auto) make_coord_layout(const Coord& coord, const Lay
 }
 
 template <typename LayoutType, typename CopyShape>
-__aicore__ inline decltype(auto) make_slice_pattern_layout(const LayoutType& layout, const CopyShape& shape)
+__aicore__ inline constexpr decltype(auto) make_slice_pattern_layout(const LayoutType& layout, const CopyShape& shape)
 {
     using trait_type = get_layout_trait<LayoutType>;
     using pattern_type = get_layout_pattern<LayoutType>;
@@ -131,7 +131,7 @@ __aicore__ inline decltype(auto) make_slice_pattern_layout(const LayoutType& lay
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape>
-__aicore__ inline decltype(auto) make_same_slice_shape(
+__aicore__ inline constexpr decltype(auto) make_same_slice_shape(
     const Coord& coord, const LayoutType& layout, const SliceShape& slice_shape)
 {
     auto coord_layout = make_coord_layout(coord, layout);
@@ -139,7 +139,7 @@ __aicore__ inline decltype(auto) make_same_slice_shape(
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape>
-__aicore__ inline decltype(auto) make_4d_slice_shape(
+__aicore__ inline constexpr decltype(auto) make_4d_slice_shape(
     const Coord& coord, const LayoutType& layout, const SliceShape& slice_shape)
 {
     static_assert(nesting_depth_v<SliceShape> == two_dim_data, "SliceShape must be Two Dim when layout is Four Dim");
@@ -161,7 +161,7 @@ __aicore__ inline decltype(auto) make_4d_slice_shape(
 // refractalized against the layout's inner row/col. The batch_num == 1 case covers the classic
 // five-dimensional layout and three-dimensional slice shape.
 template <typename Coord, typename LayoutType, typename SliceShape, size_t... batch_is>
-__aicore__ inline decltype(auto) make_flat_slice_impl(
+__aicore__ inline constexpr decltype(auto) make_flat_slice_impl(
     const Coord& coord, const LayoutType& layout, const SliceShape& slice_shape, Std::index_sequence<batch_is...>)
 {
     constexpr size_t fractal_block_index = sizeof...(batch_is); // last element: the fractal block / logical (x, y)
@@ -181,7 +181,7 @@ __aicore__ inline decltype(auto) make_flat_slice_impl(
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape>
-__aicore__ inline decltype(auto) make_flat_slice_shape(
+__aicore__ inline constexpr decltype(auto) make_flat_slice_shape(
     const Coord& coord, const LayoutType& layout, const SliceShape& slice_shape)
 {
     constexpr size_t batch_num = Std::tuple_size_v<Std::remove_cvref_t<decltype(layout.shape())>> - 1;
@@ -189,7 +189,7 @@ __aicore__ inline decltype(auto) make_flat_slice_shape(
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape, Std::enable_if_t<!is_layout_v<SliceShape>, int> = 0>
-__aicore__ inline decltype(auto) make_slice_shape(
+__aicore__ inline constexpr decltype(auto) make_slice_shape(
     const Coord& coord, const LayoutType& layout, const SliceShape& slice_shape)
 {
     static_assert(is_layout_v<LayoutType>, "LayoutType must be Layout");
@@ -225,7 +225,7 @@ __aicore__ inline decltype(auto) make_slice_shape(
 }
 
 template <typename Coord, typename LayoutType, typename SliceShape, Std::enable_if_t<!is_layout_v<SliceShape>, int> = 0>
-__aicore__ inline decltype(auto) make_slice_layout(
+__aicore__ inline constexpr decltype(auto) make_slice_layout(
     const Coord& coord, const LayoutType& layout, const SliceShape& slice_shape)
 {
     return make_slice_pattern_layout(layout, make_slice_shape(coord, layout, slice_shape));
@@ -234,7 +234,7 @@ __aicore__ inline decltype(auto) make_slice_layout(
 template <
     typename Coord, typename SrcLayoutType, typename DstLayoutType,
     Std::enable_if_t<is_layout_v<DstLayoutType>, int> = 0>
-__aicore__ inline decltype(auto) make_slice_layout(
+__aicore__ inline constexpr decltype(auto) make_slice_layout(
     const Coord& coord, const SrcLayoutType& src_layout, const DstLayoutType& dst_layout)
 {
     static_assert(is_layout_v<SrcLayoutType>, "SrcLayoutType must be Layout");

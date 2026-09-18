@@ -238,7 +238,7 @@ __aicore__ inline constexpr auto capacity(const Layout& layout)
 }
 
 template <typename Tensor, typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) slice(Tensor&& tensor, const Coord& coord, const Info& info)
+__aicore__ inline decltype(auto) slice(Tensor&& tensor, const Coord& coord, const Info& info)
 {
     return static_cast<Tensor&&>(tensor).slice(coord, info);
 }

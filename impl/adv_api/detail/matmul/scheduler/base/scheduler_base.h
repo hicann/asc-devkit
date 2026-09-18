@@ -379,7 +379,7 @@ protected:
         }
     }
 
-    __aicore__ inline constexpr bool IsInTrianMatmul()
+    __aicore__ inline bool IsInTrianMatmul()
     {
         if constexpr (POLICY_TYPE == PolicyType::MATMUL_UPPER_TRIANGULAR) {
             CheckSupportTrianMatmul();

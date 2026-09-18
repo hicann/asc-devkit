@@ -50,8 +50,8 @@ struct base_tensor {
 
     static constexpr int rank = LayoutT::rank_size;
 
-    __aicore__ inline base_tensor();
-    __aicore__ inline base_tensor(const EngineT& engine, const LayoutT& layout);
+    __aicore__ inline constexpr base_tensor();
+    __aicore__ inline constexpr base_tensor(const EngineT& engine, const LayoutT& layout);
 
     __aicore__ inline constexpr decltype(auto) tensor() const;
     __aicore__ inline constexpr decltype(auto) engine() const;
@@ -71,23 +71,22 @@ struct base_tensor {
     __aicore__ inline constexpr decltype(auto) operator[](const Coord& coord) const;
 
     template <typename Coord>
-    __aicore__ inline constexpr decltype(auto) operator()(const Coord& coord);
+    __aicore__ inline decltype(auto) operator()(const Coord& coord);
 
     template <typename Coord>
-    __aicore__ inline constexpr decltype(auto) operator()(const Coord& coord) const;
+    __aicore__ inline decltype(auto) operator()(const Coord& coord) const;
 
     template <typename Coord0, typename Coord1, typename... Coords>
-    __aicore__ inline constexpr decltype(auto) operator()(const Coord0& c0, const Coord1& c1, const Coords&... cs);
+    __aicore__ inline decltype(auto) operator()(const Coord0& c0, const Coord1& c1, const Coords&... cs);
 
     template <typename Coord0, typename Coord1, typename... Coords>
-    __aicore__ inline constexpr decltype(auto) operator()(
-        const Coord0& c0, const Coord1& c1, const Coords&... cs) const;
+    __aicore__ inline decltype(auto) operator()(const Coord0& c0, const Coord1& c1, const Coords&... cs) const;
 
     template <typename Coord, typename Info>
-    __aicore__ inline constexpr decltype(auto) slice(const Coord& coord, const Info& info);
+    __aicore__ inline decltype(auto) slice(const Coord& coord, const Info& info);
 
     template <typename Coord, typename Info>
-    __aicore__ inline constexpr decltype(auto) slice(const Coord& coord, const Info& info) const;
+    __aicore__ inline decltype(auto) slice(const Coord& coord, const Info& info) const;
 
     [[deprecated("Tensor() is deprecated. Please use tensor() instead.")]]
     __aicore__ inline constexpr decltype(auto) Tensor() const;
@@ -112,15 +111,15 @@ struct base_tensor {
 
     template <typename Coord, typename Info>
     [[deprecated("Slice() is deprecated. Please use slice() instead.")]]
-    __aicore__ inline constexpr decltype(auto) Slice(const Coord& coord, const Info& info);
+    __aicore__ inline decltype(auto) Slice(const Coord& coord, const Info& info);
 
     template <typename Coord, typename Info>
     [[deprecated("Slice() is deprecated. Please use slice() instead.")]]
-    __aicore__ inline constexpr decltype(auto) Slice(const Coord& coord, const Info& info) const;
+    __aicore__ inline decltype(auto) Slice(const Coord& coord, const Info& info) const;
 
 private:
     template <typename SliceEngine, typename SliceLayout>
-    __aicore__ inline static constexpr decltype(auto) make_sub_tensor(
+    __aicore__ inline static decltype(auto) make_sub_tensor(
         const SliceEngine& slice_engine, const SliceLayout& slice_layout);
 
     Std::tuple<layout_type, engine_type> rep;
@@ -132,7 +131,7 @@ struct global_tensor : public base_tensor<EngineT, LayoutT> {
     using layoutType = typename tensor_api_base::layout_type;
     using tensor_api_base::tensor_api_base;
 
-    __aicore__ inline global_tensor();
+    __aicore__ inline constexpr global_tensor();
     __aicore__ inline constexpr cache_mode get_cache_mode() const;
     __aicore__ inline constexpr void set_l2_cache_hint(cache_mode mode);
     [[deprecated("SetL2CacheHint() is deprecated. Please use set_l2_cache_hint() instead.")]]
@@ -150,13 +149,13 @@ namespace asc {
 namespace te {
 
 template <typename Iterator, typename... Args>
-__aicore__ inline constexpr auto make_tensor(const Iterator& iter, const Args&... args);
+__aicore__ inline auto make_tensor(const Iterator& iter, const Args&... args);
 
 template <size_t... SqueezeDims, typename Input, typename Enable>
-__aicore__ inline constexpr auto squeeze(const Input& x);
+__aicore__ inline auto squeeze(const Input& x);
 
 template <typename Pattern, typename Input, typename Enable>
-__aicore__ inline constexpr auto squeeze(const Input& x, const Pattern& pattern);
+__aicore__ inline auto squeeze(const Input& x, const Pattern& pattern);
 
 } // namespace te
 } // namespace asc

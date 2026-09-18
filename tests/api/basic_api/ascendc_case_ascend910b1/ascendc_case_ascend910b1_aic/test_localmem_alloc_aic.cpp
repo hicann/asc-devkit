@@ -45,26 +45,22 @@ TEST_F(TEST_ALLOC_AIC, TestCustmizedGen)
 
 TEST_F(TEST_ALLOC_AIC, TestCustmizedGenIllegal)
 {
-    InitSocState();
-    int32_t tmp = g_coreType;
-    g_coreType = AscendC::AIC_TYPE;
-    MOCKER(raise, int32_t(*)(int32_t)).stubs().will(invoke(RaiseStubCreateTensor));
+    EXPECT_DEATH({ AscendC::LocalTensor<float> tensor(AscendC::TPosition::VECIN, 127, 31); }, "");
+}
 
-    uint32_t addr = 127;
-    uint32_t tileSize = 31;
-    AscendC::LocalTensor<float> tensor1 = AscendC::LocalTensor<float>(AscendC::TPosition::VECIN, addr, tileSize);
-    uint32_t tensorSize = tensor1.GetSize();
-    uint32_t tensorLen = tensor1.GetLength();
-    EXPECT_EQ(tensorLen, tileSize * sizeof(float));
-    EXPECT_EQ(tensorSize, tileSize);
-
-    uint32_t addr2 = 128;
-    uint32_t tileSize2 = 16;
-    AscendC::LocalTensor<int4b_t> tensor2 = AscendC::LocalTensor<int4b_t>(AscendC::TPosition::VECIN, addr2, tileSize2);
+TEST_F(TEST_ALLOC_AIC, TestCustmizedGenInt4)
+{
+    constexpr uint32_t tileSize = 64;
+    AscendC::LocalTensor<int4b_t> tensor2 = AscendC::LocalTensor<int4b_t>(AscendC::TPosition::VECIN, 128, tileSize);
     uint32_t tensorSize2 = tensor2.GetSize();
     uint32_t tensorLen2 = tensor2.GetLength();
-    EXPECT_EQ(tensorLen2, tileSize2 / 2);
-    EXPECT_EQ(tensorSize2, tileSize2);
+    EXPECT_EQ(tensorLen2, tileSize / 2);
+    EXPECT_EQ(tensorSize2, tileSize);
+}
+
+TEST_F(TEST_ALLOC_AIC, TestCustmizedGenIllegalInt4Size)
+{
+    EXPECT_DEATH({ AscendC::LocalTensor<int4b_t> tensor(AscendC::TPosition::VECIN, 128, 16); }, "");
 }
 
 template <uint32_t v>

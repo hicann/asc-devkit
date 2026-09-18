@@ -61,13 +61,13 @@ __aicore__ inline auto make_mem_ptr(Addr arg)
 }
 
 template <typename PtrPattern, typename Iterator, enable_make_hardware_ptr<PtrPattern, Iterator> = 0>
-__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
+__aicore__ inline auto make_mem_ptr(Iterator iterator)
 {
     return make_location_mem_ptr<PtrPattern>(iterator);
 }
 
 template <typename Iterator, enable_make_ptr_by_iter<Iterator> = 0>
-__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
+__aicore__ inline auto make_mem_ptr(Iterator iterator)
 {
     using ptr_pattern = get_attribute_location<typename iter_ele<Iterator>::type*>;
     return make_location_mem_ptr<ptr_pattern>(iterator);

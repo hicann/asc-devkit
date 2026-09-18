@@ -141,8 +141,7 @@ __aicore__ inline constexpr auto make_flat_batch_layout(
 // Peels the trailing (row, column) off the argument pack, builds the 2D base layout from them, then
 // lays the leading arguments out as flat batch axes.
 template <typename LayoutPattern, typename Trait, typename Maker, typename ArgsTuple, size_t... batch_is>
-__aicore__ inline constexpr auto make_multi_batch_frame_layout_impl(
-    const ArgsTuple& args, Std::index_sequence<batch_is...>)
+__aicore__ inline auto make_multi_batch_frame_layout_impl(const ArgsTuple& args, Std::index_sequence<batch_is...>)
 {
     constexpr size_t arg_num = Std::tuple_size_v<ArgsTuple>;
     auto base = Maker::template make<Trait>(get<arg_num - 2>(args), get<arg_num - 1>(args));
@@ -151,14 +150,14 @@ __aicore__ inline constexpr auto make_multi_batch_frame_layout_impl(
 }
 
 template <typename LayoutPattern, typename Trait, typename Maker, typename... Args>
-__aicore__ inline constexpr auto make_multi_batch_frame_layout(const Args&... args)
+__aicore__ inline auto make_multi_batch_frame_layout(const Args&... args)
 {
     return make_multi_batch_frame_layout_impl<LayoutPattern, Trait, Maker>(
         Std::make_tuple(args...), Std::make_index_sequence<sizeof...(Args) - 2>{});
 }
 
 template <typename LayoutPattern, typename Trait, typename... Args>
-__aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args)
+__aicore__ inline decltype(auto) make_frame_layout(const Args&... args)
 {
     using trait = typename trait_conversion<LayoutPattern, Trait>::type;
     using layout_maker = typename layout_format_set::template get<LayoutPattern>;
@@ -173,14 +172,14 @@ __aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args
 }
 
 template <typename LayoutPattern, size_t C0Element, typename... Args>
-__aicore__ inline constexpr decltype(auto) make_frame_layout(const Args&... args)
+__aicore__ inline decltype(auto) make_frame_layout(const Args&... args)
 {
     return make_frame_layout<LayoutPattern, Std::Int<C0Element>>(args...);
 }
 
 template <typename LayoutPattern, typename Trait>
 template <typename... Args>
-__aicore__ inline constexpr decltype(auto) frame_layout_format<LayoutPattern, Trait>::operator()(const Args&... args)
+__aicore__ inline decltype(auto) frame_layout_format<LayoutPattern, Trait>::operator()(const Args&... args)
 {
     return make_frame_layout<LayoutPattern, Trait>(args...);
 }

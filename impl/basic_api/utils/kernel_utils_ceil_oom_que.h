@@ -320,21 +320,21 @@ struct GetComplexElementType {
 template <class T>
 struct Complex {
     using EleType = typename GetComplexElementType<T>::Type;
-    __simd_callee__ inline Complex() : real(0), imag(0) {}
-    __simd_callee__ inline Complex(T realTmp, T imagTmp) : real(realTmp), imag(imagTmp) {}
+    __simd_callee__ inline constexpr Complex() : real(0), imag(0) {}
+    __simd_callee__ inline constexpr Complex(T realTmp, T imagTmp) : real(realTmp), imag(imagTmp) {}
 
     template <class U>
-    __simd_callee__ inline Complex(const U realTmp) : real(T(realTmp)), imag(0)
+    __simd_callee__ inline constexpr Complex(const U realTmp) : real(T(realTmp)), imag(0)
     {}
 
-    __simd_callee__ inline Complex(const Complex& other) : real(other.real), imag(other.imag) {}
+    __simd_callee__ inline constexpr Complex(const Complex& other) : real(other.real), imag(other.imag) {}
 
     __simd_callee__ inline bool operator==(const Complex& val) const
     {
         return (real == val.real) && (imag == val.imag);
     }
 
-    __simd_callee__ inline Complex& operator=(const Complex& other)
+    __simd_callee__ inline constexpr Complex& operator=(const Complex& other)
     {
         if (this == &other) {
             return *this;

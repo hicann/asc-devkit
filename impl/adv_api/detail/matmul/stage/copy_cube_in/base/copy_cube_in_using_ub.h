@@ -134,7 +134,7 @@ public:
 
 private:
     template <typename INPUT_TYPE_ALIAS = INPUT_TYPE>
-    __aicore__ constexpr enable_if_t<INPUT_TYPE_ALIAS::TAG == InputTypeTag::A, int32_t> GetIterIndexInner(
+    __aicore__ enable_if_t<INPUT_TYPE_ALIAS::TAG == InputTypeTag::A, int32_t> GetIterIndexInner(
         int32_t curRow, int32_t curCol)
     {
         if constexpr (DoMatmulNorm(MM_CFG) || DoMatmulIBShareNorm(MM_CFG)) {
@@ -161,7 +161,7 @@ private:
     }
 
     template <typename INPUT_TYPE_ALIAS = INPUT_TYPE>
-    __aicore__ constexpr enable_if_t<INPUT_TYPE_ALIAS::TAG == InputTypeTag::B, int32_t> GetIterIndexInner(
+    __aicore__ enable_if_t<INPUT_TYPE_ALIAS::TAG == InputTypeTag::B, int32_t> GetIterIndexInner(
         int32_t curRow, int32_t curCol)
     {
         if constexpr (DoMatmulNorm(MM_CFG) || DoMatmulIBShareNorm(MM_CFG)) {
@@ -187,7 +187,7 @@ private:
     }
 
     template <const auto& MM_CFG_ALIAS = MM_CFG>
-    __aicore__ constexpr enable_if_t<DoMatmulNorm(MM_CFG_ALIAS), int32_t> GetIterIndex(int32_t curRow, int32_t curCol)
+    __aicore__ enable_if_t<DoMatmulNorm(MM_CFG_ALIAS), int32_t> GetIterIndex(int32_t curRow, int32_t curCol)
     {
         if constexpr (GetCubeInBufferType<INPUT_TYPE, MM_CFG>() == CubeInBufferType::SINGLE_BUFFER) {
             return 0;
@@ -200,7 +200,7 @@ private:
     }
 
     template <const auto& MM_CFG_ALIAS = MM_CFG>
-    __aicore__ constexpr enable_if_t<DoMatmulMDL(MM_CFG_ALIAS), int32_t> GetIterIndex(int32_t curRow, int32_t curCol)
+    __aicore__ enable_if_t<DoMatmulMDL(MM_CFG_ALIAS), int32_t> GetIterIndex(int32_t curRow, int32_t curCol)
     {
         return BASE_MODULE::GetIterIndex(curRow, curCol);
     }

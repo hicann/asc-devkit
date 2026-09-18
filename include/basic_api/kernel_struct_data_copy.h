@@ -209,11 +209,11 @@ struct DataCopyExtParams {
 #if defined(__NPU_ARCH__) &&                                                                                 \
     ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 5101) || \
      (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
-    __aicore__ DataCopyExtParams(
+    __aicore__ __callee__ DataCopyExtParams(
         const uint16_t count, const uint32_t len, const int64_t srcStrideIn, const int64_t dstStrideIn,
         const uint32_t rsvIn)
 #else
-    __aicore__ DataCopyExtParams(
+    __aicore__ __callee__ DataCopyExtParams(
         const uint16_t count, const uint32_t len, const uint32_t srcStrideIn, const uint32_t dstStrideIn,
         const uint32_t rsvIn)
 #endif

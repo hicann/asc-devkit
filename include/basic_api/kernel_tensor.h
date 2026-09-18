@@ -240,7 +240,7 @@ public:
 
 private:
     template <typename S>
-    __aicore__ inline void CreateTensor(TPosition pos, uint32_t addr, uint32_t tileSize);
+    __aicore__ inline constexpr void CreateTensor(TPosition pos, uint32_t addr, uint32_t tileSize);
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     inline void PrintTypicalFloat(uint32_t len, uint32_t dataSize);
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))

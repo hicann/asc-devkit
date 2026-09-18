@@ -34,7 +34,7 @@ slice用于从张量指定坐标处切出一个子张量。根据输入的起始
 
 ```cpp
 template <typename Tensor, typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) slice(Tensor&& tensor, const Coord& coord, const Info& info)
+__aicore__ inline decltype(auto) slice(Tensor&& tensor, const Coord& coord, const Info& info)
 ```
 
 ## 参数说明

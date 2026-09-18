@@ -68,7 +68,7 @@ public:
         return MATMUL_MODULE(MLoop)->GetOuterIdx() == MATMUL_MODULE(MLoop)->GetOuterIter() - 1;
     }
 
-    __aicore__ constexpr bool IsBufferKPosEnd(int32_t i)
+    __aicore__ inline bool IsBufferKPosEnd(int32_t i)
     {
         auto tiling = MATMUL_MODULE(MatmulShapeTiling)->GetTiling();
         int32_t stepKaIter =
@@ -76,7 +76,7 @@ public:
         return MATMUL_MODULE(KLoop)->GetOuterKaIdx() + i >= stepKaIter;
     }
 
-    __aicore__ constexpr bool IsBufferKPosEnd()
+    __aicore__ inline bool IsBufferKPosEnd()
     {
         auto tiling = MATMUL_MODULE(MatmulShapeTiling)->GetTiling();
         int32_t stepKaIter =
@@ -333,7 +333,7 @@ public:
         return MATMUL_MODULE(NLoop)->GetOuterIdx() == MATMUL_MODULE(NLoop)->GetOuterIter() - 1;
     }
 
-    __aicore__ constexpr bool IsBufferKPosEnd(int32_t i)
+    __aicore__ inline bool IsBufferKPosEnd(int32_t i)
     {
         auto tiling = MATMUL_MODULE(MatmulShapeTiling)->GetTiling();
         int32_t stepKbIter =
@@ -341,7 +341,7 @@ public:
         return MATMUL_MODULE(KLoop)->GetOuterKbIdx() + i >= stepKbIter;
     }
 
-    __aicore__ constexpr bool IsBufferKPosEnd()
+    __aicore__ inline bool IsBufferKPosEnd()
     {
         auto tiling = MATMUL_MODULE(MatmulShapeTiling)->GetTiling();
         int32_t stepKbIter =

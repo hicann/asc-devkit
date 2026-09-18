@@ -394,7 +394,7 @@ __aicore__ inline constexpr T Ceil(T num1, T num2)
 }
 
 template <typename T>
-__aicore__ inline constexpr T CeilAlign(T num1, T num2)
+__aicore__ inline T CeilAlign(T num1, T num2)
 {
     ASSERT(num2 > 0);
     return Ceil(num1, num2) * num2;

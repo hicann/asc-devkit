@@ -29,10 +29,10 @@ template <typename PtrPattern, typename DataType, typename Addr, enable_make_ptr
 __aicore__ inline auto make_mem_ptr(Addr address);
 
 template <typename PtrPattern, typename Iterator, enable_make_hardware_ptr<PtrPattern, Iterator> Enable>
-__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator);
+__aicore__ inline auto make_mem_ptr(Iterator iterator);
 
 template <typename Iterator, enable_make_ptr_by_iter<Iterator> Enable>
-__aicore__ inline constexpr auto make_mem_ptr(Iterator iterator);
+__aicore__ inline auto make_mem_ptr(Iterator iterator);
 
 } // namespace te
 } // namespace asc

@@ -36,11 +36,11 @@ template <typename LocationType, typename EngineT, typename LayoutT>
 struct make_tensor_result;
 
 template <typename EngineT, typename LayoutT>
-__aicore__ inline base_tensor<EngineT, LayoutT>::base_tensor()
+__aicore__ inline constexpr base_tensor<EngineT, LayoutT>::base_tensor()
 {}
 
 template <typename EngineT, typename LayoutT>
-__aicore__ inline base_tensor<EngineT, LayoutT>::base_tensor(const EngineT& engine, const LayoutT& layout)
+__aicore__ inline constexpr base_tensor<EngineT, LayoutT>::base_tensor(const EngineT& engine, const LayoutT& layout)
     : rep(layout, engine)
 {}
 
@@ -122,7 +122,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operat
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operator()(const Coord& coord)
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::operator()(const Coord& coord)
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, layout(), coord, "tensor operator()");
     auto slice_engine = engine() + layout()(coord);
@@ -132,7 +132,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operat
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operator()(const Coord& coord) const
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::operator()(const Coord& coord) const
 {
     TENSOR_API_DEBUG_CHECK(debug_check_coord, layout(), coord, "tensor operator()");
     auto slice_engine = engine() + layout()(coord);
@@ -142,7 +142,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operat
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord0, typename Coord1, typename... Coords>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operator()(
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::operator()(
     const Coord0& c0, const Coord1& c1, const Coords&... cs)
 {
     return operator()(make_coord(c0, c1, cs...));
@@ -150,7 +150,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operat
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord0, typename Coord1, typename... Coords>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operator()(
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::operator()(
     const Coord0& c0, const Coord1& c1, const Coords&... cs) const
 {
     return operator()(make_coord(c0, c1, cs...));
@@ -158,7 +158,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::operat
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::slice(const Coord& coord, const Info& info)
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::slice(const Coord& coord, const Info& info)
 {
     TENSOR_API_DEBUG_CHECK(debug_check_slice_args, layout(), coord, info);
     auto slice_engine = engine() + layout()(coord);
@@ -168,8 +168,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::slice(
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::slice(
-    const Coord& coord, const Info& info) const
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::slice(const Coord& coord, const Info& info) const
 {
     TENSOR_API_DEBUG_CHECK(debug_check_slice_args, layout(), coord, info);
     auto slice_engine = engine() + layout()(coord);
@@ -239,22 +238,21 @@ __aicore__ inline constexpr auto base_tensor<EngineT, LayoutT>::Capacity() const
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::Slice(const Coord& coord, const Info& info)
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::Slice(const Coord& coord, const Info& info)
 {
     return slice(coord, info);
 }
 
 template <typename EngineT, typename LayoutT>
 template <typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::Slice(
-    const Coord& coord, const Info& info) const
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::Slice(const Coord& coord, const Info& info) const
 {
     return slice(coord, info);
 }
 
 template <typename EngineT, typename LayoutT>
 template <typename SliceEngine, typename SliceLayout>
-__aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::make_sub_tensor(
+__aicore__ inline decltype(auto) base_tensor<EngineT, LayoutT>::make_sub_tensor(
     const SliceEngine& slice_engine, const SliceLayout& slice_layout)
 {
     using location = get_mem_location<SliceEngine>;
@@ -263,7 +261,7 @@ __aicore__ inline constexpr decltype(auto) base_tensor<EngineT, LayoutT>::make_s
 }
 
 template <typename EngineT, typename LayoutT>
-__aicore__ inline global_tensor<EngineT, LayoutT>::global_tensor() = default;
+__aicore__ inline constexpr global_tensor<EngineT, LayoutT>::global_tensor() = default;
 
 template <typename EngineT, typename LayoutT>
 __aicore__ inline constexpr cache_mode global_tensor<EngineT, LayoutT>::get_cache_mode() const
@@ -305,7 +303,7 @@ constexpr bool is_attr_tensor_v = is_attr_tensor<Std::remove_cvref_t<Tensor>>::v
 template <typename Iterator>
 struct make_tensor_builder {
     template <typename MemoryIterator, typename... Args>
-    __aicore__ inline constexpr auto operator()(const MemoryIterator& iterator, const Args&... args) const
+    __aicore__ inline auto operator()(const MemoryIterator& iterator, const Args&... args) const
     {
         using engine = view_engine<MemoryIterator>;
         if constexpr (sizeof...(Args) == 1 && (is_layout_v<Args> && ...)) {
@@ -327,7 +325,7 @@ struct make_tensor_builder {
 };
 
 template <typename Iterator, typename... Args>
-__aicore__ inline constexpr auto make_tensor(const Iterator& iter, const Args&... args)
+__aicore__ inline auto make_tensor(const Iterator& iter, const Args&... args)
 {
     static_assert(
         is_hardware_mem_ptr_v<Iterator>, "make_tensor expects the first argument to be a memory pointer or iterator");
@@ -339,7 +337,7 @@ __aicore__ inline constexpr auto make_tensor(const Iterator& iter, const Args&..
 // and stripping the leading batch axis from the layout. Layout depth 5 -> 4 (e.g. NZ fractal)
 // or 3 -> 2 (e.g. ND row/col). Other depths trigger a compile-time error.
 template <typename Tensor>
-__aicore__ inline constexpr auto make_single_batch_sub_tensor(const Tensor& t, uint32_t batch_idx)
+__aicore__ inline auto make_single_batch_sub_tensor(const Tensor& t, uint32_t batch_idx)
 {
     using layout_type = typename Tensor::layout_type;
     static_assert(
@@ -361,7 +359,7 @@ __aicore__ inline constexpr auto make_single_batch_sub_tensor(const Tensor& t, u
 template <
     size_t... squeeze_dims, typename Tensor,
     typename = Std::enable_if_t<(is_layout_v<Tensor> || is_attr_tensor_v<Tensor>) && (sizeof...(squeeze_dims) > 0)>>
-__aicore__ inline constexpr auto squeeze(const Tensor& x)
+__aicore__ inline auto squeeze(const Tensor& x)
 {
     if constexpr (is_attr_tensor_v<Tensor>) {
         auto new_layout = squeeze_layout<squeeze_dims...>(x.layout());
@@ -382,7 +380,7 @@ template <
     typename Pattern, typename Tensor,
     typename = Std::enable_if_t<
         (is_layout_v<Tensor> || is_attr_tensor_v<Tensor>) && Std::is_tuple_v<Std::remove_cvref_t<Pattern>>>>
-__aicore__ inline constexpr auto squeeze(const Tensor& x, const Pattern& pattern)
+__aicore__ inline auto squeeze(const Tensor& x, const Pattern& pattern)
 {
     if constexpr (is_attr_tensor_v<Tensor>) {
         auto new_layout = squeeze_layout(x.layout(), pattern);

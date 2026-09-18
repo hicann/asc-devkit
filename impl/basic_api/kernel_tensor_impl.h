@@ -1057,39 +1057,29 @@ __aicore__ inline TTagType LocalTensor<T>::GetUserTag() const
 
 template <typename T>
 template <typename U>
-__aicore__ inline void LocalTensor<T>::CreateTensor(AscendC::TPosition pos, uint32_t addr, uint32_t tileSize)
+__aicore__ inline constexpr void LocalTensor<T>::CreateTensor(AscendC::TPosition pos, uint32_t addr, uint32_t tileSize)
 {
 #if ASCENDC_CPU_DEBUG
-    ASCENDC_DEBUG_ASSERT(
-        (pos != AscendC::TPosition::GM) && (pos != AscendC::TPosition::MAX),
-        KERNEL_LOG_INTERNAL(KERNEL_ERROR, "position input should not be GM or MAX"));
+    ASSERT(
+        (pos != AscendC::TPosition::GM) && (pos != AscendC::TPosition::MAX) &&
+        "position input should not be GM or MAX");
     AscendC::Hardware hardPos = ConstDefiner::Instance().positionHardMap.at(pos);
     uint32_t maxLen = ConstDefiner::Instance().bufferInitLen.at(hardPos);
-    ASCENDC_DEBUG_ASSERT(
-        (addr % ONE_BLK_SIZE == 0),
-        KERNEL_LOG_INTERNAL(KERNEL_ERROR, "addr input is %u, which should be 32 bytes align", addr));
+    ASSERT((addr % ONE_BLK_SIZE == 0) && "addr input should be 32 bytes aligned");
     if constexpr (IsHalfByteDataType<PrimType>()) {
-        ASCENDC_DEBUG_ASSERT(
-            ((tileSize > 0) && ((tileSize % INT4_TWO) == 0) && (tileSize / INT4_TWO) <= maxLen),
-            KERNEL_LOG_INTERNAL(
-                KERNEL_ERROR, "tensor size input is %u, which should be even number in range (0, %u]", tileSize,
-                maxLen * INT4_TWO));
+        ASSERT(
+            ((tileSize > 0) && ((tileSize % INT4_TWO) == 0) && (tileSize / INT4_TWO) <= maxLen) &&
+            "tensor size should be a positive even number within the buffer capacity");
     } else {
-        ASCENDC_DEBUG_ASSERT(
-            ((tileSize > 0) && (tileSize * sizeof(U)) <= maxLen),
-            KERNEL_LOG_INTERNAL(
-                KERNEL_ERROR, "tensor size input is %u, which should be in range (0, %u]", tileSize,
-                maxLen / sizeof(U)));
+        ASSERT(
+            ((tileSize > 0) && (tileSize * sizeof(U)) <= maxLen) &&
+            "tensor size should be positive and within the buffer capacity");
     }
     uint32_t tensorLength = tileSize * SizeOfBits<U>::value / SizeOfBits<uint8_t>::value;
-    ASCENDC_DEBUG_ASSERT(
-        (tensorLength % ONE_BLK_SIZE == 0),
-        KERNEL_LOG_INTERNAL(KERNEL_ERROR, "tensor length is %u bytes, which should be 32 bytes align", tensorLength));
-    ASCENDC_DEBUG_ASSERT(
-        ((addr >= 0) && ((addr + tensorLength) <= maxLen)),
-        KERNEL_LOG_INTERNAL(
-            KERNEL_ERROR, "addr input is %u, tensor length is %u bytes, which exceeds max len %u bytes", addr,
-            tensorLength, maxLen));
+    ASSERT((tensorLength % ONE_BLK_SIZE == 0) && "tensor length should be 32 bytes aligned");
+    ASSERT(
+        ((addr >= 0) && ((addr + tensorLength) <= maxLen)) &&
+        "tensor address and length should not exceed the buffer capacity");
     this->address_.bufferHandle = nullptr;
     this->address_.absAddr = GetBaseAddrCpu(static_cast<int8_t>(pos)) + addr;
 #endif
