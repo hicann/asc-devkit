@@ -18,7 +18,6 @@
 #include "executor_v2_base.h"
 #include "alg_type.h"
 #include "execute_selector.h"
-#include "acl/acl_rt.h"
 
 #ifdef __cplusplus
 extern "C" {

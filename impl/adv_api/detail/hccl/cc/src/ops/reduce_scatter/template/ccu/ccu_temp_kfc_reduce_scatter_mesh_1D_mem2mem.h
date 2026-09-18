@@ -47,7 +47,7 @@ public:
         TemplateResource& templateResource) override;
 
     // KFC 路径不消费 per-rank 通道（kernelArg 持有），仅为并发 executor 的 AICPU 分支编译期实例化提供空壳。
-    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels)
+    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels) const
     {
         (void)channels;
         return HCCL_SUCCESS;

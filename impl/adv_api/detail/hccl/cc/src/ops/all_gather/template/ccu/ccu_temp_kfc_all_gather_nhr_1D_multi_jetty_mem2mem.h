@@ -13,7 +13,6 @@
 
 #include "utils.h"
 #include "ccu_alg_template_base.h"
-#include "kernel/ccu_kernel_kfc_all_gather_nhr1d_multi_jetty_mem2mem.h"
 #include "kfc_server_protocol.h"
 
 namespace mc2_ops_hccl {
@@ -66,7 +65,7 @@ public:
     // The generic parallel executor contains an AICPU-only runtime branch.
     // CCU never consumes that channel map; keeping this no-op interface lets
     // the shared executor instantiate without changing its control flow.
-    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels)
+    HcclResult SetchannelsPerRank(const std::map<u32, std::vector<ChannelInfo>>& channels) const
     {
         (void)channels;
         return HCCL_SUCCESS;

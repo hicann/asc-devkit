@@ -38,7 +38,7 @@ HcclResult ExecuteSelector::Run(
         return SelectViaCann(opParam, topoInfo, selectAlgName);
     }
 
-    auto runLocalSelectors = [&]() -> HcclResult {
+    auto runLocalSelectors = [&opParam, &topoInfo, &selectAlgName]() -> HcclResult {
         std::map<u32, AutoSelectorBase*> selectors = SelectorRegistry::Global()->GetSelectorsByOpType(opParam.opType);
         HCCL_INFO(
             "[asc][AlgoSelect][ExecuteSelector::Run] selectorNum[%zu] for opType[%d].", selectors.size(),

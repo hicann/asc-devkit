@@ -50,12 +50,12 @@ private:
     static u32 CalcRankIdIntra(u32 i, u32 j, u32 part1);
     void FillDataMap(
         const u64 sliceCount, const u32 part1, const u32 part2, std::map<u32, std::pair<u64, u64>>& dataMap,
-        bool isInter);
+        bool isInter) const;
     void FillOffsetMaps(
         const std::map<u32, std::pair<u64, u64>>& dataMap, const u32 part1, const u32 part2, std::map<u32, u64>& agMap,
-        bool isInter);
+        bool isInter) const;
     void GetParallelDataSplit(std::vector<float>& splitDataSize) const;
-    uint64_t GetRankSize(const std::vector<std::vector<u32>>& vTopo);
+    uint64_t GetRankSize(const std::vector<std::vector<u32>>& vTopo) const;
     HcclResult PrepareResForTemplate(
         InsAlgTemplate0& tempAlgIntra, InsAlgTemplate1& tempAlgInter, InsAlgTemplate2& tempAlgIntra1);
     HcclResult PrepareResForTemplate23(
@@ -82,11 +82,11 @@ private:
     HcclResult RunTemplateIntra0(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate0& tempAlgInter);
+        InsAlgTemplate0& tempAlgIntra) const;
     HcclResult RunTemplateIntra1(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate0& tempAlgInter);
+        InsAlgTemplate0& tempAlgIntra);
     HcclResult RunTemplateInter0(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
@@ -94,7 +94,7 @@ private:
     HcclResult RunTemplateInter1(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate1& tempAlgInter);
+        InsAlgTemplate1& tempAlgInter) const;
     HcclResult RunTemplateInter01(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
@@ -102,18 +102,18 @@ private:
     HcclResult RunTemplateIntra01(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate2& tempAlgIntra1);
+        InsAlgTemplate2& tempAlgIntra1) const;
     HcclResult RunTemplateIntra11(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate2& tempAlgInter1);
+        InsAlgTemplate2& tempAlgIntra1);
     HcclResult RunTemplateInter11(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate3& tempAlgInter1);
+        InsAlgTemplate3& tempAlgInter1) const;
     HcclResult GenInsQues(
-        const OpParam& param, const AlgResourceCtxSerializable& resCtx, InsAlgTemplate0& tempAlgIntra0,
-        InsAlgTemplate1& tempAlgInter0, InsAlgTemplate2& tempAlgIntra1, InsAlgTemplate3& tempAlgInter1);
+        const OpParam& param, const AlgResourceCtxSerializable& resCtx, InsAlgTemplate0& tempAlgIntra,
+        InsAlgTemplate1& tempAlgInter, InsAlgTemplate2& tempAlgIntra1, InsAlgTemplate3& tempAlgInter1);
     inline u64 RoundDown(u64 dividend, u64 divisor) const
     {
         if (divisor == 0) {

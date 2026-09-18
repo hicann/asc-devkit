@@ -249,7 +249,7 @@ template <
     typename InsAlgTemplate3>
 uint64_t InsAllReduceParallelExecutor<
     AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, InsAlgTemplate2,
-    InsAlgTemplate3>::GetRankSize(const std::vector<std::vector<u32>>& vTopo)
+    InsAlgTemplate3>::GetRankSize(const std::vector<std::vector<u32>>& vTopo) const
 {
     uint64_t count = 1;
     for (const auto& i : vTopo) {
@@ -348,6 +348,8 @@ InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, Ins
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, TemplateResource& intraTempAlgRes,
         TemplateResource& interTempAlgRes, bool isRsStage)
 {
+    (void)param;
+    (void)isRsStage;
     intraTempAlgRes.channels = intraLinks_;
     interTempAlgRes.channels = interLinks_;
     intraTempAlgRes.threads = intraThreads_;
@@ -464,7 +466,7 @@ template <
 void InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, InsAlgTemplate2, InsAlgTemplate3>::
     FillDataMap(
         const u64 sliceCount, const u32 part1, const u32 part2, std::map<u32, std::pair<u64, u64>>& dataMap,
-        bool isInter)
+        bool isInter) const
 {
     u64 sliceSize = sliceCount * dataTypeSize_;
     u64 rankStridePart1 = RoundDown(sliceSize, (part1 * dataTypeSize_)) * dataTypeSize_;
@@ -496,7 +498,7 @@ template <
 void InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, InsAlgTemplate2, InsAlgTemplate3>::
     FillOffsetMaps(
         const std::map<u32, std::pair<u64, u64>>& dataMap, const u32 part1, const u32 part2, std::map<u32, u64>& agMap,
-        bool isInter)
+        bool isInter) const
 {
     u64 baseOffAG = 0;
     u64 accumAG = 0;
@@ -787,7 +789,7 @@ InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, Ins
     RunTemplateIntra0(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate0& tempAlgIntra)
+        InsAlgTemplate0& tempAlgIntra) const
 {
     // step1 - parallel 0: RS mesh
     u64 inputOffset = 0;
@@ -811,7 +813,7 @@ InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, Ins
     RunTemplateInter1(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate1& tempAlgInter)
+        InsAlgTemplate1& tempAlgInter) const
 {
     // step1 - parallel 1: RS nhr
     u64 inputOffset = 0;
@@ -947,7 +949,7 @@ InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, Ins
     RunTemplateIntra01(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate2& tempAlgIntra1)
+        InsAlgTemplate2& tempAlgIntra1) const
 {
     // step4 - parallel 0: AG mesh
     u64 inputOffset = 0;
@@ -971,7 +973,7 @@ InsAllReduceParallelExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, Ins
     RunTemplateInter11(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, const u64 dataOffset, const u64 currCountPart,
         const u64 scratchOffsetCount, TemplateDataParams& dataParams, TemplateResource& templateResource,
-        InsAlgTemplate3& tempAlgInter1)
+        InsAlgTemplate3& tempAlgInter1) const
 {
     // step4 - parallel 1: AG nhr
     u64 inputOffset = 0;
