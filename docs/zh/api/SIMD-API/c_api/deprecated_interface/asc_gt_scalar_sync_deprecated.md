@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_gt_scalar_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_compare/asc_gt_scalar.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_gt_scalar_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_compare/asc_gt_scalar.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 src中的每个元素逐个与标量value比较大小，如果某个位置上的元素大于value，则输出结果dst上的对应比特位为1，否则为0。
 

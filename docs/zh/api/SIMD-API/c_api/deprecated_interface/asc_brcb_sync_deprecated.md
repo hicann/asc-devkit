@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_brcb_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_broadcast/asc_brcb.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_brcb_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_broadcast/asc_brcb.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 给定一个输入矢量，每一次取输入矢量中的8个数填充到结果矢量的8个datablock（32Bytes）中去，每个数对应一个datablock。
 

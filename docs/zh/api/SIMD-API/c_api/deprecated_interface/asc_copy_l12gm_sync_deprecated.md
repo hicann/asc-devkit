@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l12gm_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12gm.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_l12gm_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12gm.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将数据从L1 Buffer搬运到Global Memory。
 

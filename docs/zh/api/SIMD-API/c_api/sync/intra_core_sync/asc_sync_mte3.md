@@ -63,7 +63,7 @@ PIPE_S
 
 本示例展示`asc_sync_mte3`作为易用性接口的价值：每次迭代中，UB->GM搬出计算结果`dst0`与直接搬入的数据`dst1`后，下一轮迭代的`PIPE_MTE2`搬入（重新占用缓冲区）与`PIPE_V`计算都需要依赖该次搬出。对比代码中`PIPE_MTE2`到`PIPE_V`的同步：若手工同步，需对每条流水分别编写`asc_sync_notify`与`asc_sync_wait`；而使用`asc_sync_mte3`一次调用即可同时完成对`PIPE_MTE2`与`PIPE_V`的同步，减少手写代码量。
 
-将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：

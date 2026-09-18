@@ -134,7 +134,7 @@ SIMT流水的顺序保证需要区分线程间和线程内：
 | 顺序一致性（Sequential Consistency，SC） | 所有处理单元观察到的内存访问结果，好像来自一个全局唯一顺序，且每个处理单元内部顺序与程序顺序一致。 | 不支持。NPU默认没有全局唯一读写顺序，不能假设所有流水、AI Core、Stream和Host侧按同一顺序观察到所有写入。 |
 | 全存储排序（Total Store Order，TSO） | 写操作通常按全局存储顺序对外可见，模型强于弱一致性，弱于严格顺序一致性。 | 不支持。NPU不保证普通写操作按全局存储顺序对所有观察者可见，写入完成和对外可见需要结合DSB、同步或MEMBAR处理。 |
 | 弱一致性（Weak Consistency） | 普通读写可以重排或延迟可见，只有同步、栅栏等特殊操作前后才建立明确顺序。 | 类似。NPU普通内存访问默认不建立跨执行域顺序，需要通过核内同步、核间同步、Stream/Event同步、Host-Device同步、DSB等机制显式约束访问完成顺序和可见性。 |
-| Release/Acquire一致性 | 生产者用Release发布数据，消费者用Acquire获取数据；Release之前的写入在Acquire之后对消费者可见。 | 支持类似语义。NPU上通常通过[asc_sync_notify](../../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)和[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/asc_sync_wait.md)的组合建立Release/Acquire关系。 |
+| Release/Acquire一致性 | 生产者用Release发布数据，消费者用Acquire获取数据；Release之前的写入在Acquire之后对消费者可见。 | 支持类似语义。NPU上通常通过[asc_sync_notify](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md)的组合建立Release/Acquire关系。 |
 
 NPU更接近弱一致性模型：普通内存访问默认只具备有限的局部顺序，跨流水、跨核、跨Stream以及Host-Device之间的顺序需要用户显式建立。
 
@@ -163,7 +163,7 @@ NPU更接近弱一致性模型：普通内存访问默认只具备有限的局�
 
 跨流水依赖指前序访问和后序访问不在同一条流水上。不同流水默认可以并行执行，代码顺序中的前序搬运或计算，不一定已经在后序流水访问数据前完成。
 
-跨流水同步的核心是建立“生产流水完成后，消费流水再访问”的先后关系。本文示例中使用`WAIT`表示抽象同步点，实际编码时可根据场景选择[asc_sync_notify](../../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)/[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/asc_sync_wait.md)、[asc_lock](../../../../api/SIMD-API/c_api/sync/asc_lock.md)/[asc_unlock](../../../../api/SIMD-API/c_api/sync/asc_unlock.md)等核内多流水同步原语，接口选择请参考[核内同步原语](#核内同步原语)。
+跨流水同步的核心是建立“生产流水完成后，消费流水再访问”的先后关系。本文示例中使用`WAIT`表示抽象同步点，实际编码时可根据场景选择[asc_sync_notify](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md)/[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md)、[asc_lock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)/[asc_unlock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)等核内多流水同步原语，接口选择请参考[核内同步原语](#核内同步原语)。
 
 以MTE2负责把数据从GM搬入UB，Vector流水负责读取UB并计算，MTE3负责把结果从UB搬出到GM为示例，展示因为跨流水导致的内存一致性问题：
 
@@ -270,7 +270,7 @@ T4                                                                              
 
 反向依赖时，无论是单Buffer还是Double Buffer，维护内存一致性的原则不变：谁先使用Buffer，谁在使用完成后通知；谁后复用Buffer，谁在复用前等待。
 
-如果使用`mutex_id`处理同步，单Buffer场景下所有循环复用同一个`mutex_id`；Double Buffer场景下`buffer1`和`buffer2`分别使用不同`mutex_id`。这样后续循环重新复用某个`Buffer`时，会等待该`Buffer`上一轮最后一个使用者释放对应`mutex_id`。具体示例请参考[asc_lock](../../../../api/SIMD-API/c_api/sync/asc_lock.md)/[asc_unlock](../../../../api/SIMD-API/c_api/sync/asc_unlock.md)。
+如果使用`mutex_id`处理同步，单Buffer场景下所有循环复用同一个`mutex_id`；Double Buffer场景下`buffer1`和`buffer2`分别使用不同`mutex_id`。这样后续循环重新复用某个`Buffer`时，会等待该`Buffer`上一轮最后一个使用者释放对应`mutex_id`。具体示例请参考[asc_lock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)/[asc_unlock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)。
 
 ### 同流水内存一致性
 
@@ -326,8 +326,8 @@ T2        MTE2.STORE_UB(region1)
 
 | 接口 | 使用场景 | 简要说明 |
 | --- | --- | --- |
-| [asc_sync_pipe](../../../../api/SIMD-API/c_api/sync/asc_sync_pipe.md) | 同一流水内部前后操作存在同地址、重叠地址或数据依赖。 | 等待指定流水中前序指令的数据读写全部完成后，该流水后序指令才能开始执行；不支持`PIPE_S`，可传入`PIPE_ALL`等待所有流水，但会扩大同步范围。 |
-| [asc_sync_data_barrier](../../../../api/SIMD-API/c_api/sync/asc_sync_data_barrier.md) | Scalar发起的GM或UB访问需要等待完成。 | 等待Scalar侧前序内存访问完成；`Scalar.DSB`等待GM访问，`DSB_UB`等待UB访问，`DSB_ALL`等待GM和UB访问。 |
+| [asc_sync_pipe](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md) | 同一流水内部前后操作存在同地址、重叠地址或数据依赖。 | 等待指定流水中前序指令的数据读写全部完成后，该流水后序指令才能开始执行；不支持`PIPE_S`，可传入`PIPE_ALL`等待所有流水，但会扩大同步范围。 |
+| [asc_sync_data_barrier](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md) | Scalar发起的GM或UB访问需要等待完成。 | 等待Scalar侧前序内存访问完成；`Scalar.DSB`等待GM访问，`DSB_UB`等待UB访问，`DSB_ALL`等待GM和UB访问。 |
 
 使用时建议优先选择最小同步范围。例如只需要等待MTE2前序搬运完成时，使用`asc_sync_pipe(PIPE_MTE2)`；只有在确实无法精确判断依赖流水时，才使用`PIPE_ALL`或更大范围同步。
 
@@ -339,10 +339,10 @@ Scalar流水不通过`asc_sync_pipe(PIPE_S)`处理，Scalar确保上一个指令
 
 | 接口 | 使用场景 | 简要说明 |
 | --- | --- | --- |
-| [asc_sync_notify](../../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)/[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/asc_sync_wait.md) | 两条流水之间存在明确依赖。 | `notify`在源流水设置同步标志，`wait`在目标流水等待该标志；通过源流水、目标流水和`event_id`配对。 |
-| [asc_lock](../../../../api/SIMD-API/c_api/sync/asc_lock.md)/[asc_unlock](../../../../api/SIMD-API/c_api/sync/asc_unlock.md) | 多流水之间需要按Buffer生命周期或mutex_id管理依赖。 | 使用mutex机制阻塞或释放指定流水，适合复杂流水编排、反向依赖和Double Buffer场景；必须成对使用，避免嵌套相同`mutex_id`。该机制为[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)新增。 |
-| [asc_sync](../../../../api/SIMD-API/c_api/sync/asc_sync.md) | 需要等待所有流水前序操作完成。 | 等待所有流水线操作完成，范围较大，会影响性能；若只依赖单条或少数流水，优先使用更精确的同步接口。|
-| [asc_sync_mte2](../../../../api/SIMD-API/c_api/sync/asc_sync_mte2.md)/[asc_sync_mte3](../../../../api/SIMD-API/c_api/sync/asc_sync_mte3.md)/[asc_sync_vec](../../../../api/SIMD-API/c_api/sync/asc_sync_vec.md) | 需要等待MTE2、MTE3或Vector流水前序操作完成。 | 面向特定流水的便捷等待接口，用于等待指定流水前序操作完成后再启动后续相关操作；这类接口不表达一对源流水和目标流水的精确配对关系。 |
+| [asc_sync_notify](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md)/[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md) | 两条流水之间存在明确依赖。 | `notify`在源流水设置同步标志，`wait`在目标流水等待该标志；通过源流水、目标流水和`event_id`配对。 |
+| [asc_lock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)/[asc_unlock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md) | 多流水之间需要按Buffer生命周期或mutex_id管理依赖。 | 使用mutex机制阻塞或释放指定流水，适合复杂流水编排、反向依赖和Double Buffer场景；必须成对使用，避免嵌套相同`mutex_id`。该机制为[NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)新增。 |
+| [asc_sync](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md) | 需要等待所有流水前序操作完成。 | 等待所有流水线操作完成，范围较大，会影响性能；若只依赖单条或少数流水，优先使用更精确的同步接口。|
+| [asc_sync_mte2](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_mte2.md)/[asc_sync_mte3](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_mte3.md)/[asc_sync_vec](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_vec.md) | 需要等待MTE2、MTE3或Vector流水前序操作完成。 | 面向特定流水的便捷等待接口，用于等待指定流水前序操作完成后再启动后续相关操作；这类接口不表达一对源流水和目标流水的精确配对关系。 |
 
 选择同步原语时，建议先判断依赖关系是否只落在同一条流水内，如果是，优先使用单流水同步。如果跨流水：
 
@@ -498,7 +498,7 @@ T3        sync S->MTE2
                                                 T4  MTE2.LOAD_GM(data)
 ```
 
-其中，`Scalar.DSB`可通过[asc_sync_data_barrier](../../../../api/SIMD-API/c_api/sync/asc_sync_data_barrier.md)实现，用于等待Scalar侧前序GM访问完成；`sync S->MTE2`可通过[asc_sync_notify](../../../../api/SIMD-API/c_api/sync/asc_sync_notify.md)/[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/asc_sync_wait.md)建立Scalar流水到MTE2流水的先后关系：
+其中，`Scalar.DSB`可通过[asc_sync_data_barrier](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md)实现，用于等待Scalar侧前序GM访问完成；`sync S->MTE2`可通过[asc_sync_notify](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md)/[asc_sync_wait](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md)建立Scalar流水到MTE2流水的先后关系：
 
 `DSB`和流水同步只处理访问完成顺序和执行先后关系，保证内存一致性，不负责写回或失效DCache副本。如果Scalar写GM经过DCache，或者后续读取路径可能命中旧Cache副本，还需要参考[缓存一致性](cache_coherence.md)处理DCache相关问题。
 
@@ -635,8 +635,8 @@ T1        LOAD data -> 新值
 
 | 接口 | 同步范围 | 作用边界 |
 | --- | --- | --- |
-| [asc_sync_inter_arrive](../../../../api/SIMD-API/c_api/sync/asc_sync_inter_arrive.md)/[asc_sync_inter_wait](../../../../api/SIMD-API/c_api/sync/asc_sync_inter_wait.md) | 组间block同步，即不同group之间的block同步。 | 通过`flag_id`传递同步信号，适合group之间的生产者-消费者同步。 |
-| [asc_sync_block_arrive](../../../../api/SIMD-API/c_api/sync/asc_sync_block_arrive.md)/[asc_sync_block_wait](../../../../api/SIMD-API/c_api/sync/asc_sync_block_wait.md) | 组内block和subblock同步，即同一个group内AIC和AIV之间同步。 | 通过`flag_id`传递同步信号，适合同一group内部Cube侧和Vector侧建立顺序。 |
+| [asc_sync_inter_arrive](../../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_inter_arrive.md)/[asc_sync_inter_wait](../../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_inter_wait.md) | 组间block同步，即不同group之间的block同步。 | 通过`flag_id`传递同步信号，适合group之间的生产者-消费者同步。 |
+| [asc_sync_block_arrive](../../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_block_arrive.md)/[asc_sync_block_wait](../../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_block_wait.md) | 组内block和subblock同步，即同一个group内AIC和AIV之间同步。 | 通过`flag_id`传递同步信号，适合同一group内部Cube侧和Vector侧建立顺序。 |
 
 `arrive`/`wait`类接口只传递同步信号；`flag_id`需要配对使用，并避免计数器溢出和ID冲突。使用这些接口后，仍需要根据数据访问路径判断是否需要DCCI和DSB。
 

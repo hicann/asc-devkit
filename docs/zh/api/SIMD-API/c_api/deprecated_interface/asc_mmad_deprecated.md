@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/cube_compute/cube_compute.h"`。
 
-**入参`unit_flag`类型为`uint8_t`的`asc_mmad`接口以及`asc_mmad_sync`接口已废弃。请使用入参`unit_flag_mode`类型为`asc_unit_flag_mode`的[asc_mmad](../cube_compute/asc_mmad.md)接口替代；原同步功能请通过新接口和`asc_sync()`实现，具体请参见[asc_sync](../sync/asc_sync.md)。**
+**入参`unit_flag`类型为`uint8_t`的`asc_mmad`接口以及`asc_mmad_sync`接口已废弃。请使用入参`unit_flag_mode`类型为`asc_unit_flag_mode`的[asc_mmad](../cube_compute/asc_mmad.md)接口替代；原同步功能请通过新接口和`asc_sync()`实现，具体请参见[asc_sync](../sync/intra_core_sync/asc_sync.md)。**
 
 <!-- npu="A3,910b" id18 -->
 针对如下产品型号：
@@ -246,7 +246,7 @@ PIPE_M
 
 - 同步约束说明：
 
-  针对输入矩阵沿K轴分块计算，并将结果累加到同一块L0C Buffer的场景，当`(left_height / 16) * (right_width / 16) < 10`时，需在相邻两次矩阵乘加指令之间调用[asc_sync_pipe](../sync/asc_sync_pipe.md)，并将入参`pipe`设置为`PIPE_M`。
+  针对输入矩阵沿K轴分块计算，并将结果累加到同一块L0C Buffer的场景，当`(left_height / 16) * (right_width / 16) < 10`时，需在相邻两次矩阵乘加指令之间调用[asc_sync_pipe](../sync/intra_core_sync/asc_sync_pipe.md)，并将入参`pipe`设置为`PIPE_M`。
 
 - UnitFlag约束说明：
 

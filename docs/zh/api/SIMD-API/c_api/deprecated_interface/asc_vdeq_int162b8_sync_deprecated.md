@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_vdeq_int162b8_h_sync`和`asc_vdeq_int162b8_l_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_fused/asc_vdeq_int162b8.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_vdeq_int162b8_h_sync`和`asc_vdeq_int162b8_l_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_fused/asc_vdeq_int162b8.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将int16_t类型转化为int8_t或uint8_t类型，并将数据存放在每个DataBlock的上半块或下半块。使用该接口前需要调用asc_set_deq_scale设置量化参数。
 

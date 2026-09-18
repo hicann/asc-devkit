@@ -123,7 +123,7 @@ __aicore__ inline void Process()
 
 ### 基于指针的C语言编程方式
 
-采用基于指针的C语言编程方式时，Double Buffer不是单一开关，需要在Kernel中手动申请Ping和Pong两组UB缓冲区，根据数据块序号交替选择缓冲区，并使用[asc_lock](../../../../api/SIMD-API/c_api/sync/asc_lock.md)和[asc_unlock](../../../../api/SIMD-API/c_api/sync/asc_unlock.md)接口约束同一缓冲区的读取、写入和再次复用。
+采用基于指针的C语言编程方式时，Double Buffer不是单一开关，需要在Kernel中手动申请Ping和Pong两组UB缓冲区，根据数据块序号交替选择缓冲区，并使用[asc_lock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)和[asc_unlock](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)接口约束同一缓冲区的读取、写入和再次复用。
 
 下面的代码省略了核间切分、搬运参数配置和Host侧逻辑，只保留Double Buffer所在的Kernel及其关键逻辑。完整的单缓冲区基线和Double Buffer实现请参见[融合向量计算Double Buffer样例](../../../../../../examples/02_simd_c_api/02_features/01_reg_vector_compute/00_add_double_buffer/README.md)。`BLOCK_LENGTH`表示单个数据块的最大元素个数，`currentLength`表示当前数据块的实际元素个数。
 

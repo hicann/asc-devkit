@@ -5,14 +5,14 @@
 以图1为例，AIC需要依赖AIV的`asc_reduce`计算结果。由于整体矢量较大，必须拆分为多个部分，由每个AIV分别完成部分计算。每个AIV将其部分计算结果通过原子累加写入GM。AIC必须读取所有AIV均完成累加后的最终结果，因此需要通过核间同步来保证AIC读取`asc_reduce`结果时的时序正确性。
 
 **图1**  核间同步业务场景示例图（AIC与AIV的比例为1：2）    
-![](../../../figures/inter_core_sync_scenario_example.png)
+![](../../../../figures/inter_core_sync_scenario_example.png)
 
 AIC/AIV多核结构如下图2所示，AIC/AIV按group划分。一个group内包含1个block和N个subblock（N≥1），其中block表示“主核”，每个subblock表示一个“从核”。
 
 算子按计算特征可分为三类：Cube算子（矩阵计算）、Vector算子（矢量计算）和Mix算子（同时包含矩阵和矢量计算）。如表1所示，算子类型决定了其所需的核间同步方式和可选的group配置模式。其中Mix算子通过函数执行空间限定符指定AIC与AIV的block/subblock关系；Cube算子和Vector算子为单类核执行，不涉及block/subblock划分。AIV为block且AIC为subblock的配置（即Vector核为主、Cube核为辅的模式）当前不支持。表2总结了核间同步接口及其支持的同步场景。
 
 **图2**  block和subblock之间关系（灰色部分表示一个group，即1个block和N个subblock）<a id="fig_block_subblock_relationship"></a>    
-![](../../../figures/block_subblock_relationship_3510.png)
+![](../../../../figures/block_subblock_relationship_3510.png)
 
 **表1**  group配置
 

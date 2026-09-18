@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_copy_ub2gm_align_sync`接口已废弃，请使用[asc_copy_ub2gm_align连续数据搬运](../vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md#连续数据搬运)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_ub2gm_align_sync`接口已废弃，请使用[asc_copy_ub2gm_align连续数据搬运](../vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md#连续数据搬运)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 提供数据非对齐搬运的功能，将数据从Unified Buffer（UB）搬运到Global Memory (GM)，并支持8位/16位/32位数据类型搬运。
 
@@ -73,6 +73,6 @@ PIPE_MTE3
 
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
 - 当`size`值为0时，该接口被视为NOP（空操作）。
-- 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)，保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)，保证多个指令串行化，防止出现异常数据。
 - 同步计算包含同步等待。
 - `size`无需32字节对齐。若`size`非32字节对齐，硬件会自动补充dummy假数据至32字节对齐。dummy假数据的值为数据块的第一个元素的值。写入GM时会丢弃补充的dummy假数据。

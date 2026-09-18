@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_copy_l0c2ub`的旧参数形式及`asc_copy_l0c2ub_sync`接口已废弃。请使用[asc_copy_l0c2ub](../cube_datamove/asc_copy_l0c2ub.md)接口和[asc_sync](../sync/asc_sync.md)接口替代。**
+**`asc_copy_l0c2ub`的旧参数形式及`asc_copy_l0c2ub_sync`接口已废弃。请使用[asc_copy_l0c2ub](../cube_datamove/asc_copy_l0c2ub.md)接口和[asc_sync](../sync/intra_core_sync/asc_sync.md)接口替代。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
@@ -208,7 +208,7 @@ PIPE_FIX
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需要按照32字节对齐，否则触发异常。
 - `src`起始地址需要按照64字节对齐，否则触发异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - UB容量上限：UB总容量为256KB，默认预留6KB SIMD VF栈与2KB Ascend C预留空间后可用248KB；SIMD与SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少。dst偏移量与搬运大小之和不可超过实际可用容量，否则触发写溢出异常。
 - L0C Buffer容量上限：L0C Buffer总容量256KB，src偏移量与搬运大小之和不可超过L0C Buffer容量，否则触发读溢出异常。
 - Nz矩阵以16×16个元素为一个基本分形。边界分形中超出`n_size`或`m_size`指定范围的数据不属于有效搬运结果。

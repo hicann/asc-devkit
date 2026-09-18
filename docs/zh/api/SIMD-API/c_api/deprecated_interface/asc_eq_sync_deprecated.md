@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_eq_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_compare/asc_eq.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_eq_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_compare/asc_eq.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 比较src0与src1在对应索引位置的元素大小。若比较结果为真，则输出结果的对应比特位设为1，否则设为0。
 

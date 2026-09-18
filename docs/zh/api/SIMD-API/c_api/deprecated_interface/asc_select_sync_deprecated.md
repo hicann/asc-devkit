@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_select_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_permute_sel/asc_select.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_select_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_permute_sel/asc_select.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 执行矢量选择操作，给定两个源操作数src0和src1，根据条件选择元素，得到目的操作数dst。此接口配合[asc_set_cmp_mask(sel_mask)](../vector_compute/vector_compare/asc_set_cmp_mask.md)设置，规则为：当sel_mask的比特位是1时，从src0选取；当比特位是0时，从src1选择。
 

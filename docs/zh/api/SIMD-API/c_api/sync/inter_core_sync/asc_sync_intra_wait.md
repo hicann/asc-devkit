@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/sync/sync.h"`。
 
-本接口与[asc_sync_intra_arrive](asc_sync_intra_arrive.md)配对使用，实现单AI Core内AIC与单个AIV之间的同步（[四种核间同步模式](system_sync_overview.md#fig_sync_control_mode)中的模式4），核间同步实现的原理如下：
+本接口与[asc_sync_intra_arrive](asc_sync_intra_arrive.md)配对使用，实现单AI Core内AIC与单个AIV之间的同步（[四种核间同步模式](../system_sync_overview.md#fig_sync_control_mode)中的模式4），核间同步实现的原理如下：
 
 - 单个AIV等待AIC的场景：
   - 单AI Core内AIC执行`asc_sync_intra_arrive`后向调度模块发送通知，接着调度模块将该AI Core内单个AIV对应`sync_id`的计数器增加1。
@@ -52,7 +52,7 @@ __aicore__ inline void asc_sync_intra_wait(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
-| pipe | 输入 | 标识阻塞哪条流水的后续指令，直到对应`sync_id`的计数器非0。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。<br>AIC和AIV支持的`pipe`取值请参考[约束说明](#supported_pipe_combinations)。 |
+| pipe | 输入 | 标识阻塞哪条流水的后续指令，直到对应`sync_id`的计数器非0。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](../intra_core_sync/intra_core_sync_overview.md#硬件流水类型)。<br>AIC和AIV支持的`pipe`取值请参考[约束说明](#supported_pipe_combinations)。 |
 | sync_id | 输入 | 核间同步的标记，用于标识同一组同步信号。每个`sync_id`各自拥有独立的4位计数器。一个AI Core由1个AIC与2个AIV构成，AIC侧拥有32个`sync_id`（0~31），每个AIV侧各拥有16个`sync_id`（0~15）。<br>同步时`asc_sync_intra_arrive`与`asc_sync_intra_wait`的`sync_id`对应关系请参考[约束说明](#约束说明)。 |
 
 ## 返回值说明
@@ -65,7 +65,7 @@ PIPE_S
 
 ## 约束说明
 
-- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_intra_arrive`和`asc_sync_intra_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 2)`。
+- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_intra_arrive`和`asc_sync_intra_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 2)`。
 - 针对`asc_sync_intra_arrive`接口，传入的`pipe`参数**生效**，AIC和AIV支持的`pipe`取值如[表2](#aic_aiv_supported_pipe)所示。<a id="supported_pipe_combinations"></a>
 
   **表2**  AIC和AIV支持的`pipe`取值<a id="aic_aiv_supported_pipe"></a>

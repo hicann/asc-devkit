@@ -65,7 +65,7 @@ PIPE_MTE1
 - 本接口非AIC调用直接返回。
 - dst_addr起始地址需32字节对齐（UB对齐要求），否则会导致搬运异常。
 - src_addr起始地址需32字节对齐（L1 Buffer对齐要求），否则会导致搬运异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，src偏移量与搬运大小之和不可超过L1 Buffer容量，否则触发读溢出异常。
 - UB容量上限：UB总容量为256KB，默认预留6KB SIMD VF栈与2KB Ascend C预留空间后可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少。dst偏移量与搬运大小之和不可超过实际可用容量，否则触发写溢出异常。
 - `burst_count`、`burst_len`、`src_gap`、`dst_gap`取值需满足参数说明中取值范围，不满足导致搬运结果不符合预期。

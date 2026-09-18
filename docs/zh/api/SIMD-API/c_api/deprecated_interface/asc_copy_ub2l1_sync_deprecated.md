@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_copy_ub2l1_sync`接口已废弃，请使用[asc_copy_ub2l1](../vector_datamove/asc_copy_ub2l1.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_ub2l1_sync`接口已废弃，请使用[asc_copy_ub2l1](../vector_datamove/asc_copy_ub2l1.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将一段连续数据从Unified Buffer（UB）搬运到L1 Buffer，并在搬运完成后执行同步。
 

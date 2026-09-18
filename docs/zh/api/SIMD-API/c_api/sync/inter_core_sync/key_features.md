@@ -5,15 +5,15 @@
 - 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到`asc_sync_inter_arrive`时，`asc_sync_inter_wait`后续的全部流水或者由`pipe`参数指定的流水（与NPU架构有关）中的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到`asc_sync_inter_arrive`时，`asc_sync_inter_wait`后续的全部流水或者由`pipe`参数指定的流水（与NPU架构有关）中的指令才会执行。
 - 模式1：AI Core内部，AIV核之间的同步控制。如果两个AIV核都运行了`asc_sync_subblock_arrive`，`asc_sync_subblock_wait`后续的全部流水或者由`pipe`参数指定的流水（与NPU架构有关）中的指令才会执行。
 - 模式2：AI Core内部，AIC与AIV之间的同步控制。在AIC核执行`asc_sync_block_arrive`之后，两个AIV上`asc_sync_block_wait`后续的全部流水或者由`pipe`参数指定的流水（与NPU架构有关）中的指令才会继续执行；两个AIV都执行`asc_sync_block_arrive`后，AIC上`asc_sync_block_wait`后续的全部流水或者由`pipe`参数指定的流水（与NPU架构有关）中的指令才能执行。
-- 模式4：AI Core内部，AIC与单个AIV之间的同步控制。在AIC核执行`asc_sync_intra_arrive`之后，单个AIV上`asc_sync_intra_wait`后续的由`pipe`参数指定的流水中的指令才会继续执行；单个AIV执行`asc_sync_intra_arrive`后，AIC上`asc_sync_intra_wait`后续的由`pipe`参数指定的流水中的指令才能执行。该模式仅在[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上支持。
+- 模式4：AI Core内部，AIC与单个AIV之间的同步控制。在AIC核执行`asc_sync_intra_arrive`之后，单个AIV上`asc_sync_intra_wait`后续的由`pipe`参数指定的流水中的指令才会继续执行；单个AIV执行`asc_sync_intra_arrive`后，AIC上`asc_sync_intra_wait`后续的由`pipe`参数指定的流水中的指令才能执行。该模式仅在[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上支持。
 
 > [!NOTE]说明
 > `asc_sync_inter_wait`、`asc_sync_subblock_wait`、`asc_sync_block_wait`接口阻塞的流水类型因NPU架构而异：
-> - 在[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上，上述接口传入的`pipe`参数无效，无论取何值都阻塞全部流水的后续指令。
-> - 在[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上，上述接口传入的`pipe`参数生效，阻塞由`pipe`参数指定的流水的后续指令。
+> - 在[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上，上述接口传入的`pipe`参数无效，无论取何值都阻塞全部流水的后续指令。
+> - 在[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上，上述接口传入的`pipe`参数生效，阻塞由`pipe`参数指定的流水的后续指令。
 
 **图1**  同步控制模式示意图<a id="sync_control_mode_diagram"></a>    
-![](../../../figures/3510_sync_control_mode_diagram.png "同步控制模式示意图")
+![](../../../../figures/3510_sync_control_mode_diagram.png "同步控制模式示意图")
 
 下述同步特性均以如下场景配置为例：核函数（Kernel）使用`__mix__(1, 2)`修饰，即每个AI Core包含1个AIC和2个AIV，并设置逻辑核数`numBlocks=2`，即共启动2个AI Core，因此存在2个AIC和4个AIV。为便于描述，将2个AIC分别编号为AIC0、AIC1；AI Core0中的2个AIV分别编号为AIV0-0、AIV0-1，AI Core1中的2个AIV分别编号为AIV1-0、AIV1-1。**各核中与`flag_id`或`sync_id`对应的计数器初始值均为0。**
 
@@ -22,7 +22,7 @@
 <!-- npu="950" id1 -->
 
 > [!NOTE]说明
-> 以下针对模式0的描述，仅针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)有效。调用相关接口时必须显式传入`pipe`参数，`arrive`和`wait`接口传入的`pipe`参数均生效，`wait`接口会阻塞由`pipe`参数指定的流水的后续指令。
+> 以下针对模式0的描述，仅针对[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)有效。调用相关接口时必须显式传入`pipe`参数，`arrive`和`wait`接口传入的`pipe`参数均生效，`wait`接口会阻塞由`pipe`参数指定的流水的后续指令。
 
 ## 多AI Core中AIC或者AIV全核同步（模式0）<a id="multi_ai_core_aic_aiv_full_sync"></a>
 
@@ -57,13 +57,13 @@ AIC0中在执行`asc_sync_inter_wait`后，此时AIC0 `flag_id=0`的计数器为
 AIC1的`asc_sync_inter_arrive`执行完后，此时调度模块感知到2个AIC均已执行完`asc_sync_inter_arrive`，因此所有AIC各自的`flag_id=0`的计数器值增加为1。AIC0和AIC1检测到各自对应的`flag_id=0`的计数器变为1，都解除PIPE_FIX流水后续指令的阻塞，继续执行后续指令，并且将计数器值减去1。
 
 **图2**  模式0：多AI Core中AIC全核同步<a id="multi_ai_core_aic_full_sync"></a>    
-![](../figures/inter_core_aic_all_sync.png "多AI_Core中AIC全核同步")
+![](../../figures/inter_core_aic_all_sync.png "多AI_Core中AIC全核同步")
 <!-- end id1 -->
 
 <!-- npu="A3,910b" id2 -->
 
 > [!NOTE]说明
-> 以下针对模式1的描述，仅针对[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)有效。调用相关接口时必须显式传入`pipe`参数。其中，`arrive`接口传入的`pipe`参数生效，`wait`接口传入的`pipe`参数不生效，`wait`接口会阻塞全部流水的后续指令。
+> 以下针对模式1的描述，仅针对[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)有效。调用相关接口时必须显式传入`pipe`参数。其中，`arrive`接口传入的`pipe`参数生效，`wait`接口传入的`pipe`参数不生效，`wait`接口会阻塞全部流水的后续指令。
 
 ## 单个AI Core中AIV全核同步（模式1）<a id="single_ai_core_aiv_full_sync"></a>
 
@@ -94,13 +94,13 @@ AIV0-0中在执行`asc_sync_subblock_wait`后，此时AIV0-0 `flag_id=0`的计�
 AIV0-1的`asc_sync_subblock_arrive`执行完后，此时调度模块感知到2个AIV均已执行完`asc_sync_subblock_arrive`，因此将AIV0-0和AIV0-1各自的`flag_id=0`的计数器值增加为1。AIV0-0和AIV0-1检测到各自对应的`flag_id=0`的计数器变为1，都解除所有流水后续指令的阻塞，继续执行后续指令，并且将计数器值减去1。
 
 **图3**  模式1：单个AI Core中AIV全核同步<a id="single_ai_core_aiv_full_sync_diagram"></a>    
-![](../figures/single_core_aiv_all_sync.png "单AI_Core中AIV全核同步")
+![](../../figures/single_core_aiv_all_sync.png "单AI_Core中AIV全核同步")
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
 
 > [!NOTE]说明
-> 以下针对模式2的描述，仅针对[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)有效。调用相关接口时必须显式传入`pipe`参数，`arrive`和`wait`接口传入的`pipe`参数均生效，`wait`接口会阻塞由`pipe`参数指定的流水的后续指令。
+> 以下针对模式2的描述，仅针对[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)有效。调用相关接口时必须显式传入`pipe`参数，`arrive`和`wait`接口传入的`pipe`参数均生效，`wait`接口会阻塞由`pipe`参数指定的流水的后续指令。
 
 ## 单个AI Core中AIC与AIV全核同步（模式2）<a id="single_ai_core_aic_aiv_full_sync"></a>
 
@@ -145,12 +145,12 @@ AIC0中在执行`asc_sync_block_wait`后，此时AIC0 `flag_id=0`的计数器为
 当AIV0-0的Vector指令1、2全部执行完毕后，前置PIPE\_V的指令全部完成，`asc_sync_block_arrive`生效。此时调度模块感知到2个AIV均已执行完`asc_sync_block_arrive`，因此将AIC0 `flag_id=0`的计数器值增加为1。AIC0检测到对应的`flag_id=0`的计数器变为1，则AIC0核解除PIPE_MTE2流水后续指令的阻塞，继续执行后续指令Matrix指令2，并且将计数器值减去1。
 
 **图4**  模式2：单个AI Core中AIC与AIV全核同步（AIV进行asc_sync_block_arrive）<a id="single_ai_core_aic_aiv_full_sync_diagram"></a>    
-![](../figures/single_core_aic_aiv_sync_aiv_setflag.png "单AI_Core中AIC与AIV全核同步（AIV进行asc_sync_block_arrive）")
+![](../../figures/single_core_aic_aiv_sync_aiv_setflag.png "单AI_Core中AIC与AIV全核同步（AIV进行asc_sync_block_arrive）")
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
 > [!NOTE]说明
-> 模式4仅在[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上支持。`asc_sync_intra_wait`传入的`pipe`参数生效，阻塞由`pipe`参数指定的流水的后续指令。
+> 模式4仅在[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)上支持。`asc_sync_intra_wait`传入的`pipe`参数生效，阻塞由`pipe`参数指定的流水的后续指令。
 
 ## 单个AI Core中AIC与单个AIV同步（模式4）<a id="single_ai_core_aic_single_aiv_sync"></a>
 
@@ -192,5 +192,5 @@ AIC0中在执行`asc_sync_intra_wait`后，此时AIC0 `sync_id=16`的计数器�
 - AIV0-1的PIPE_MTE3指令全部执行完毕后，`asc_sync_intra_arrive`生效。此时调度模块感知1个AIV已执行完`asc_sync_intra_arrive`，因此将AIC0 `sync_id=16`的计数器值增加为1。AIC0检测到对应的`sync_id=16`的计数器变为1，则AIC0核解除由`pipe`参数指定的流水后续指令的阻塞，继续执行后续PIPE_FIX的指令，并且将计数器值减去1。
 
 **图5**  模式4：单个AI Core中AIC与单个AIV同步（AIV进行asc_sync_intra_arrive）<a id="single_ai_core_aic_single_aiv_sync_diagram"></a>    
-![](../figures/single_ai_core_aic_single_aiv_sync.png "单AI_Core中AIC与单个AIV同步（AIV进行asc_sync_intra_arrive）")
+![](../../figures/single_ai_core_aic_single_aiv_sync.png "单AI_Core中AIC与单个AIV同步（AIV进行asc_sync_intra_arrive）")
 <!-- end id4 -->

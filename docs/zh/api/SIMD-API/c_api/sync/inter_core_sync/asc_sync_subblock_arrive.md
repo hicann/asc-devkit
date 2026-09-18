@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/sync/sync.h"`。
 
-本接口与[asc_sync_subblock_wait](asc_sync_subblock_wait.md)配对使用，实现同一AI Core内全部AIV（[subblock](inter_core_sync_overview.md#fig_block_subblock_relationship)）之间的同步（[四种核间同步模式](system_sync_overview.md#fig_sync_control_mode)中的模式1），核间同步实现的原理如下：
+本接口与[asc_sync_subblock_wait](asc_sync_subblock_wait.md)配对使用，实现同一AI Core内全部AIV（[subblock](inter_core_sync_overview.md#fig_block_subblock_relationship)）之间的同步（[四种核间同步模式](../system_sync_overview.md#fig_sync_control_mode)中的模式1），核间同步实现的原理如下：
 
 - 同一AI Core内所有AIV（subblock）都执行`asc_sync_subblock_arrive`后向调度模块发送通知，接着调度模块将各AIV（subblock）对应`flag_id`的计数器增加1。
 - 各AIV（subblock）上配对的`asc_sync_subblock_wait`检测到对应`flag_id`的计数器非0后解除阻塞并将计数器减1。
@@ -50,7 +50,7 @@ __aicore__ inline void asc_sync_subblock_arrive(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | :---  | :--- | :--- |
-| pipe | 输入 | 标识在哪条流水的前序指令完成后才允许向调度模块发送通知。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](./intra_core_sync_overview.md#硬件流水类型)。本接口仅支持AIV调用，AIV支持的`pipe`取值请参考[约束说明](#约束说明)。 |
+| pipe | 输入 | 标识在哪条流水的前序指令完成后才允许向调度模块发送通知。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](../intra_core_sync/intra_core_sync_overview.md#硬件流水类型)。本接口仅支持AIV调用，AIV支持的`pipe`取值请参考[约束说明](#约束说明)。 |
 | flag_id | 输入 | 核间同步的标记，用于标识同一组同步信号。取值范围为[0, 15]，每个`flag_id`各自拥有独立的4位计数器。 |
 
 ## 返回值说明
@@ -63,7 +63,7 @@ PIPE_S
 
 ## 约束说明
 
-- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
+- 调用本接口的核函数（Kernel）不能使用`__cube__`或`__vector__`[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)。使用这两种函数执行空间限定符时，硬件不会开启调度模块，无法正常进行核间同步。对于`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`这对接口，支持的函数执行空间限定符为`__mix__(1, 1)`、`__mix__(1, 2)`。
 - 针对`asc_sync_subblock_arrive`接口，传入的`pipe`参数在不同NPU架构中**均生效**；针对`asc_sync_subblock_wait`接口，传入的`pipe`参数**是否生效与NPU架构有关**，具体请参考[asc_sync_subblock_wait](asc_sync_subblock_wait.md#约束说明)的约束说明。
 - 本接口仅支持AIV调用，AIV支持的`pipe`取值如下：`PIPE_MTE2`、`PIPE_MTE3`、`PIPE_V`。
 - 用户需要确保配套使用（`flag_id`必须完全一致）`asc_sync_subblock_arrive`和`asc_sync_subblock_wait`，否则会出现未定义行为。
@@ -75,7 +75,7 @@ PIPE_S
 
 本示例演示两个AIV均执行完数据搬运后，各AIV才能开始读取数据。
 
-将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id17 -->
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：

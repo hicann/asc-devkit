@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_mul_add_relu_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_fused/asc_mul_add_relu.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_mul_add_relu_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_fused/asc_mul_add_relu.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 按元素将src0和dst相乘并加上src1，再进行Relu计算（结果和0对比取较大值），最终结果存放进dst中。计算公式如下：
 

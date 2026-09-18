@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/vector_compute_composite.h"`。
 
-**`asc_max_scalar_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_arith/asc_max_scalar.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_max_scalar_sync`接口已废弃，请使用[对应的非同步接口](../vector_compute/vector_arith/asc_max_scalar.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 矢量src的逐个元素与标量value比较大小，接着按照对应的比特位将最大值存入dst中。计算公式如下：
 

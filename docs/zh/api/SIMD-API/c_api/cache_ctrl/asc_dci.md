@@ -52,7 +52,7 @@ PIPE_S
 
 ## 约束说明
 
-在调用`asc_dci`之前，必须调用[asc_sync_data_barrier](../sync/asc_sync_data_barrier.md)，并将参数设置为`mem_dsb_t::DSB_ALL`，等待此前的内存访问指令执行结束，再使整个数据缓存失效。调用顺序如下：
+在调用`asc_dci`之前，必须调用[asc_sync_data_barrier](../sync/intra_core_sync/asc_sync_data_barrier.md)，并将参数设置为`mem_dsb_t::DSB_ALL`，等待此前的内存访问指令执行结束，再使整个数据缓存失效。调用顺序如下：
 
 ```cpp
 asc_sync_data_barrier(mem_dsb_t::DSB_ALL);

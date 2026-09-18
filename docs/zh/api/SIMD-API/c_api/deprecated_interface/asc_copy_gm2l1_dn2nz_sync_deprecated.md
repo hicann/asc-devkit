@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_gm2l1_dn2nz_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_gm2l1_dn2nz.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_copy_gm2l1_dn2nz_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_gm2l1_dn2nz.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将数据从Global Memory搬运到L1 Buffer，并在搬运过程中进行DN到Nz格式的转换，使其满足后续矩阵计算对分形列连续性的要求。
 
@@ -100,7 +100,7 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`的起始地址要求32字节对齐（L1 Buffer对齐要求），否则会导致搬运异常。
 - `src`的起始地址要求1字节对齐（Global Memory对齐要求），否则会导致搬运异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，`dst`偏移量与搬运大小之和不可越界，否则触发异常。
 
 ### DN2Nz约束

@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_fill_l1_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_fill_l1.md)和同步接口[asc_sync](../sync/asc_sync.md)替代。**
+**`asc_fill_l1_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_fill_l1.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将一个标量填充值写入L1 Buffer的目的地址，并将填充值广播到多个32字节分形块中，可用于L1 Buffer的内存初始化。需要通过[asc_fill_value_config](../defs/union/asc_fill_value_config.md)配置的重复次数、单次分形块数、相邻重复之间的间隔。
 
@@ -85,7 +85,7 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需要按照32字节对齐（L1 Buffer对齐要求），否则触发地址对齐异常。
 - L1 Buffer总容量为512KB。`dst`偏移量与实际占用空间之和不可超过L1 Buffer容量，否则触发地址溢出异常。
-- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/asc_sync_notify.md)和[asc_sync_wait](../sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。调用`asc_fill_l1_sync`时，接口内部完成同步。
+- 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。调用`asc_fill_l1_sync`时，接口内部完成同步。
 - `value`的数据类型需与`dst`的数据类型满足函数原型章节中的组合关系。两者数据类型不相同时，需要根据`dst`的数据类型转换`value`的值，具体请参考调用示例。
 
 ## 调用示例

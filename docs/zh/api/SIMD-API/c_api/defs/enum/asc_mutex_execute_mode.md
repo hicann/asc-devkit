@@ -1,6 +1,6 @@
 # asc_mutex_execute_mode
 
-`asc_mutex_execute_mode`用于选择互斥锁的阻塞或非阻塞执行模式，作为[asc_lock](../../sync/asc_lock.md)和[asc_unlock](../../sync/asc_unlock.md)接口的`mode`参数类型。兼容类型名`ascMutexExecuteMode`是该类型的别名。
+`asc_mutex_execute_mode`用于选择互斥锁的阻塞或非阻塞执行模式，作为[asc_lock](../../sync/intra_core_sync/asc_lock.md)和[asc_unlock](../../sync/intra_core_sync/asc_unlock.md)接口的`mode`参数类型。兼容类型名`ascMutexExecuteMode`是该类型的别名。
 
 头文件路径为：`"c_api/defs/enum.h"`。
 

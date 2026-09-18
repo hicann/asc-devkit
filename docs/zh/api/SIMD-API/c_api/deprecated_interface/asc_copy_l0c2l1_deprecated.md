@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_copy_l0c2l1`的旧参数形式及`asc_copy_l0c2l1_sync`接口已废弃。请使用[asc_copy_l0c2l1](../cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)接口和[asc_sync](../sync/asc_sync.md)接口替代。**
+**`asc_copy_l0c2l1`的旧参数形式及`asc_copy_l0c2l1_sync`接口已废弃。请使用[asc_copy_l0c2l1](../cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)接口和[asc_sync](../sync/intra_core_sync/asc_sync.md)接口替代。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 

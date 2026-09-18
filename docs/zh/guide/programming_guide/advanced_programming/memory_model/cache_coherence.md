@@ -56,7 +56,7 @@ Data Cache Clean and Invalid（[DCCI](../../../../api/SIMD-API/c_api/cache_ctrl/
 
 实际使用时，可根据一致性目标选择不同DCCI接口：使用[`asc_dcci_single`](../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)刷新指定地址所在的单个Cache Line；使用[`asc_dcci_entire_out`](../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)刷新面向GM的一致性目标；原子相关目标按产品支持情况选择[`asc_dcci_entire_atomic`](../../../../api/SIMD-API/c_api/cache_ctrl/asc_dcci.md)等接口。
 
-对于需要等待DCCI触发的写回真正完成的场景，还需要配合Data Sync Barrier（[DSB](../../../../api/SIMD-API/c_api/sync/asc_sync_data_barrier.md)）等待前序内存访问完成，DSB只用于阻塞后续指令执行，直到之前的内存访问指令执行结束，参数可选择`DSB_ALL`、`DSB_DDR`或`DSB_UB`。
+对于需要等待DCCI触发的写回真正完成的场景，还需要配合Data Sync Barrier（[DSB](../../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md)）等待前序内存访问完成，DSB只用于阻塞后续指令执行，直到之前的内存访问指令执行结束，参数可选择`DSB_ALL`、`DSB_DDR`或`DSB_UB`。
 
 Cache写入策略决定写操作是否会形成Dirty副本，常见策略包括直写和写回：
 
