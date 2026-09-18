@@ -15,6 +15,7 @@
 | [data_relayout](./data_relayout) | 本样例基于C API编程接口实现数据重排功能，支持Interleave（asc_intlv交织）和Pack（asc_pack_to_low低位提取）两种场景 |
 | [div](./div) | 本样例基于C API编程接口实现Div运算，主要调用asc_div接口 |
 | [duplicate](./duplicate) | 本样例基于C API编程接口实现Duplicate运算（标量填充模式），主要调用asc_duplicate_scalar接口，将标量值复制多次并填充到向量中 |
+| [elu](./elu) | 本样例基于C API编程接口实现ELU激活运算，主要调用asc_exp/asc_mul_scalar/asc_select接口，支持float/float16两种数据类型 |
 | [gather](./gather) | 本样例基于C API编程接口实现按索引从矢量数据寄存器收集元素功能，主要调用asc_gather接口 |
 | [histogram](./histogram) | 本样例基于C API编程接口实现直方图统计功能，使用了asc_frequency_histogram_bin0/asc_frequency_histogram_bin1接口 |
 | [mergemode](./mergemode) | 本样例基于C API编程接口演示MERGING模式下的数据搬运，使用asc_copy接口在mask激活位搬入src、未激活位保留dst原值 |
