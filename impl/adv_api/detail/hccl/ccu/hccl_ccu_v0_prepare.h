@@ -248,7 +248,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         CalcGoSize(normalSliceSize, loopCount, CCU_MEMSLICE_SIZE, &xnData_[11]);
     }
 
-    constexpr uint64_t arScratchSize = 16 * 1024 * 1024;
+    constexpr uint64_t arScratchSize = 128 * 1024 * 1024; // 与 host 侧 alloc_ctx_res.cc 对齐（双端契约）
     constexpr uint64_t minSliceAlign = 128;
     uint64_t chunkSize = arScratchSize / ccuParam_.rankNum / minSliceAlign * minSliceAlign;
     uint64_t mySliceSize = xnData_[8];
