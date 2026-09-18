@@ -49,11 +49,13 @@ inline float tanpif(float x)
 
 输入数据与π相乘的正切值。
 
--   当`x*π`超出float最大范围，返回值为nan。
--   当x\*π超出float最小范围，返回值为nan。
--   当x为inf时，返回值为nan。
--   当x为-inf时，返回值为nan。
--   当x为nan时，返回值为nan。
+- 当输入x为有限值且Abs\(x\)\>=2^24时，返回值为0.0。
+- 当输入x为整数时，返回值为0.0。
+- 当输入x=n+0.5，n为偶数，返回值为inf。
+- 当输入x=n+0.5，n为奇数，返回值为-inf。
+- 当x为inf时，返回值为nan。
+- 当x为-inf时，返回值为nan。
+- 当x为nan时，返回值为nan。
 
 ## 约束说明
 
