@@ -62,6 +62,59 @@ __simd_callee__ inline reg_tensor<T> max(const reg_tensor<T>& src, const T& scal
 template <typename T>
 __simd_callee__ inline reg_tensor<T> max(const T& scalar, const reg_tensor<T>& src);
 
+template <typename T>
+__simd_callee__ inline reg_tensor<T> abs(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> exp(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> sqrt(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> log2(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> log10(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> relu(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> prelu(const reg_tensor<T>& src, const reg_tensor<T>& slope);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> leaky_relu(const reg_tensor<T>& src, const T& slope);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> addc(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> addc(
+    const reg_tensor<T>& src0, const reg_tensor<T>& src1, const reg_tensor<bool>& carry_src);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> subc(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> subc(
+    const reg_tensor<T>& src0, const reg_tensor<T>& src1, const reg_tensor<bool>& borrow_src);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T> mull(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator/(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> min(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> min(const reg_tensor<T>& src, const T& scalar);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> min(const T& scalar, const reg_tensor<T>& src);
+
 } // namespace experimental
 } // namespace te
 } // namespace asc

@@ -26,6 +26,17 @@ namespace experimental {
 namespace detail {
 
 template <typename T>
+struct reg_tensor_traits;
+
+template <typename T>
+struct reg_tensor_traits<reg_tensor<T>> {
+    using elem_type = T;
+};
+
+template <typename T>
+using reg_elem_t = typename reg_tensor_traits<AscendC::Std::remove_cvref_t<T>>::elem_type;
+
+template <typename T>
 inline constexpr bool is_b4_type_v = AscendC::Std::is_one_of_v<T, fp4x2_e1m2_t, fp4x2_e2m1_t, int4x2_t>;
 
 template <typename T>
@@ -58,8 +69,20 @@ template <typename T>
 inline constexpr bool supports_float_math_v = ::AscendC::Std::is_one_of_v<T, half, float>;
 
 template <typename T>
+inline constexpr bool supports_abs_v = ::AscendC::Std::is_one_of_v<T, int8_t, int16_t, half, int32_t, float>;
+
+template <typename T>
+inline constexpr bool supports_relu_v = ::AscendC::Std::is_one_of_v<T, half, int32_t, float>;
+
+template <typename T>
 inline constexpr bool supports_add_sub_v =
     ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
+
+template <typename T>
+inline constexpr bool supports_carry_v = ::AscendC::Std::is_one_of_v<T, int32_t, uint32_t>;
+
+template <typename T>
+inline constexpr bool supports_mull_v = ::AscendC::Std::is_one_of_v<T, int32_t, uint32_t>;
 
 template <typename T>
 inline constexpr bool supports_mul_v =
@@ -74,8 +97,34 @@ inline constexpr bool supports_min_max_v =
     ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
 
 template <typename T>
+inline constexpr bool supports_div_v =
+    ::AscendC::Std::is_one_of_v<T, int16_t, uint16_t, half, int32_t, uint32_t, float>;
+
+template <typename T>
+inline constexpr bool supports_not_v =
+    ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float>;
+
+template <typename T>
+inline constexpr bool supports_and_v =
+    ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
+
+template <typename T>
 inline constexpr bool supports_or_v =
     ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
+
+template <typename T>
+inline constexpr bool supports_xor_v =
+    ::AscendC::Std::is_one_of_v<T, bool, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
+
+template <typename T>
+inline constexpr bool supports_shift_v =
+    ::AscendC::Std::is_one_of_v<T, int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
+
+template <typename T, typename ShiftType>
+inline constexpr bool supports_shift_pair_v =
+    (::AscendC::Std::is_one_of_v<T, int8_t, uint8_t> && ::AscendC::Std::is_same_v<ShiftType, int8_t>) ||
+    (::AscendC::Std::is_one_of_v<T, int16_t, uint16_t> && ::AscendC::Std::is_same_v<ShiftType, int16_t>) ||
+    (::AscendC::Std::is_one_of_v<T, int32_t, uint32_t> && ::AscendC::Std::is_same_v<ShiftType, int32_t>);
 
 } // namespace detail
 } // namespace experimental

@@ -21,6 +21,25 @@
 namespace asc {
 namespace te {
 namespace experimental {
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator!(const reg_tensor<T>& src)
+{
+    static_assert(detail::supports_not_v<T>, "operator! does not support this element type");
+    reg_tensor<T> dst;
+    asc_not(dst.reg, src.reg, src.mask);
+    dst.mask = src.mask;
+    return dst;
+}
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator&(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_and_v<T>, "operator& does not support this element type");
+    reg_tensor<T> dst;
+    asc_and(dst.reg, src0.reg, src1.reg, src0.mask);
+    dst.mask = src0.mask;
+    return dst;
+}
 
 template <typename T>
 __simd_callee__ inline reg_tensor<T> operator|(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
@@ -29,6 +48,62 @@ __simd_callee__ inline reg_tensor<T> operator|(const reg_tensor<T>& src0, const 
     reg_tensor<T> dst;
     asc_or(dst.reg, src0.reg, src1.reg, src0.mask);
     dst.mask = src0.mask;
+    return dst;
+}
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator^(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_xor_v<T>, "operator^ does not support this element type");
+    reg_tensor<T> dst;
+    asc_xor(dst.reg, src0.reg, src1.reg, src0.mask);
+    dst.mask = src0.mask;
+    return dst;
+}
+
+template <typename T, typename ShiftType>
+__simd_callee__ inline reg_tensor<T> operator<<(const reg_tensor<T>& src, const reg_tensor<ShiftType>& shift)
+{
+    static_assert(detail::supports_shift_v<T>, "operator<< does not support this element type");
+    static_assert(
+        detail::supports_shift_pair_v<T, ShiftType>,
+        "register operator<< requires a signed shift register of the same width");
+    reg_tensor<T> dst;
+    asc_shiftleft(dst.reg, src.reg, shift.reg, src.mask);
+    dst.mask = src.mask;
+    return dst;
+}
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator<<(const reg_tensor<T>& src, const int16_t& shift)
+{
+    static_assert(detail::supports_shift_v<T>, "operator<< does not support this element type");
+    reg_tensor<T> dst;
+    asc_shiftleft_scalar(dst.reg, src.reg, shift, src.mask);
+    dst.mask = src.mask;
+    return dst;
+}
+
+template <typename T, typename ShiftType>
+__simd_callee__ inline reg_tensor<T> operator>>(const reg_tensor<T>& src, const reg_tensor<ShiftType>& shift)
+{
+    static_assert(detail::supports_shift_v<T>, "operator>> does not support this element type");
+    static_assert(
+        detail::supports_shift_pair_v<T, ShiftType>,
+        "register operator>> requires a signed shift register of the same width");
+    reg_tensor<T> dst;
+    asc_shiftright(dst.reg, src.reg, shift.reg, src.mask);
+    dst.mask = src.mask;
+    return dst;
+}
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator>>(const reg_tensor<T>& src, const int16_t& shift)
+{
+    static_assert(detail::supports_shift_v<T>, "operator>> does not support this element type");
+    reg_tensor<T> dst;
+    asc_shiftright_scalar(dst.reg, src.reg, shift, src.mask);
+    dst.mask = src.mask;
     return dst;
 }
 

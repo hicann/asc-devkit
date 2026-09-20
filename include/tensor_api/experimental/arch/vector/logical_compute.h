@@ -24,7 +24,28 @@ namespace te {
 namespace experimental {
 
 template <typename T>
+__simd_callee__ inline reg_tensor<T> operator!(const reg_tensor<T>& src);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator&(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
 __simd_callee__ inline reg_tensor<T> operator|(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator^(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T, typename ShiftType>
+__simd_callee__ inline reg_tensor<T> operator<<(const reg_tensor<T>& src, const reg_tensor<ShiftType>& shift);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator<<(const reg_tensor<T>& src, const int16_t& shift);
+
+template <typename T, typename ShiftType>
+__simd_callee__ inline reg_tensor<T> operator>>(const reg_tensor<T>& src, const reg_tensor<ShiftType>& shift);
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator>>(const reg_tensor<T>& src, const int16_t& shift);
 
 } // namespace experimental
 } // namespace te

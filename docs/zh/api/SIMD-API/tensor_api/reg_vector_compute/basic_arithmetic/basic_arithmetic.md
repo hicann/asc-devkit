@@ -1,7 +1,20 @@
 # 基础算术
 
+- **[abs](abs.md)**
+- **[addc](addc.md)**
+- **[exp](exp.md)**
+- **[leaky_relu](leaky_relu.md)**
 - **[log](log.md)**
+- **[log10](log10.md)**
+- **[log2](log2.md)**
 - **[max](max.md)**
-- **[operator+](operator_add.md)**
-- **[operator-](operator_sub.md)**
-- **[operator*](operator_mul.md)**
+- **[min](min.md)**
+- **[mull](mull.md)**
+- **[+](operator_add.md)**
+- **[-](operator_sub.md)**
+- **[*](operator_mul.md)**
+- **[/](div.md)**
+- **[prelu](prelu.md)**
+- **[relu](relu.md)**
+- **[sqrt](sqrt.md)**
+- **[subc](subc.md)**
