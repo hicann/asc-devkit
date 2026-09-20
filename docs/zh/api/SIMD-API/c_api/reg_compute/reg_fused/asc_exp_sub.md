@@ -118,7 +118,7 @@
 以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+bisheng example.asc -o main --npu-arch=dav-3510 -lm && ./main
 ```
 <!-- end id8 -->
 
@@ -132,6 +132,16 @@ bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 #include "acl/acl.h"
 
 namespace {
+template <typename T>
+void print_data(const char* label, const std::vector<T>& values)
+{
+    std::cout << label << ":";
+    const size_t count = values.size() < 8 ? values.size() : 8;
+    for (size_t i = 0; i < count; ++i) std::cout << ' ' << static_cast<float>(values[i]);
+    if (values.size() > count) std::cout << " ...";
+    std::cout << std::endl;
+}
+
 bool compare_data(const std::vector<float>& actual, const std::vector<float>& expected, double tolerance)
 {
     if (actual.size() != expected.size()) return false;
@@ -266,6 +276,16 @@ int main()
     aclrtMemcpy(half_odd_output.data(), FLOAT_COUNT * sizeof(float), half_odd_dst_device,
         FLOAT_COUNT * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
 
+    print_data("Float src0", float_src0);
+    print_data("Float src1", float_src1);
+    print_data("Float output", float_output);
+    print_data("Float golden", float_golden);
+    print_data("Half src0", half_src0);
+    print_data("Half src1", half_src1);
+    print_data("Half even output", half_even_output);
+    print_data("Half even golden", half_even_golden);
+    print_data("Half odd output", half_odd_output);
+    print_data("Half odd golden", half_odd_golden);
     const bool passed = compare_data(float_output, float_golden, 1e-4) &&
                         compare_data(half_even_output, half_even_golden, 1e-4) &&
                         compare_data(half_odd_output, half_odd_golden, 1e-4);
