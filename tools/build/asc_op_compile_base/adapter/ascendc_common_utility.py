@@ -613,30 +613,6 @@ class CommonUtility:
         return False
 
     @staticmethod
-    def is_l510():
-        """return if current soc version is l510
-
-        Returns:
-            res: True means l510
-        """
-        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-        if short_soc_version in ["KirinDev0000"]:
-            return True
-        return False
-
-    @staticmethod
-    def is_l516():
-        """return if current soc version is l516
-
-        Returns:
-            res: True means l516
-        """
-        short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-        if short_soc_version in ["KirinDev0001", "KirinDev0002", "KirinDev0003"]:
-            return True
-        return False
-
-    @staticmethod
     def get_chip_version():
         """get chip version for (c220/c310)
 

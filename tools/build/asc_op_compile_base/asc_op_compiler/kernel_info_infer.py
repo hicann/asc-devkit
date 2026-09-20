@@ -457,9 +457,7 @@ REGISTER_TILING_DEFAULT"
         dump_info = {"dump_type": ""}
         func_name_exist = False
 
-        need_find_kernel_type = (
-            not CommonUtility.is_l510() and not CommonUtility.is_l516()
-        )
+        need_find_kernel_type = True
         tiling_no_register_flag = False
         try:
             with open(dst_i_file, "r") as fd:

@@ -61,7 +61,7 @@ ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t left_height, uint16_t n_dim,
     uint16_t right_width, uint8_t unit_flag, bool k_direction_align, bool c_matrix_source, bool c_matrix_init_val)
-{
+{ /* asc_mmad_sync overload */
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, k_direction_align,
             c_matrix_source, c_matrix_init_val);

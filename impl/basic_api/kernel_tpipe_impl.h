@@ -111,8 +111,7 @@ __aicore__ inline void TPipe::Init()
 
         SetFlag<HardEvent::M_MTE1>(static_cast<event_t>(enQueEvtID));
     }
-#elif __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || \
-    __NPU_ARCH__ == 5163
+#elif __NPU_ARCH__ == 3002
     auto enQueEvtID = this->AllocEventID<HardEvent::M_MTE1>();
     ASCENDC_DEBUG_ASSERT((enQueEvtID == 0), KERNEL_LOG_INTERNAL(KERNEL_ERROR, "enQueEvtID should be 0"));
     SetFlag<HardEvent::M_MTE1>(static_cast<event_t>(enQueEvtID));
@@ -266,12 +265,6 @@ __aicore__ inline bool TPipe::InitBuffer(T& que, uint8_t num, uint32_t len)
             KERNEL_ERROR, "buffer length is %u, which should be larger than 0, and at least less than or equal to %u",
             len, currentPoolSize));
 #endif
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-    if constexpr (T::dstPosition == TPosition::C2) {
-        len = (len + TWO_BLK_SIZE - MIN_BLOCK_LEN) / TWO_BLK_SIZE * TWO_BLK_SIZE;
-    }
-#endif
     len = (len + ONE_BLK_SIZE - MIN_BLOCK_LEN) / ONE_BLK_SIZE * ONE_BLK_SIZE;
     que.value = num;
     que.bufStart = this->g_tpipeImpl.buf_ + this->g_tpipeImpl.curBufSize_;
@@ -343,12 +336,6 @@ __aicore__ inline bool TPipe::InitBuffer(TBuf<pos>& buf, uint32_t len)
 #endif
 
     len = (len + ONE_BLK_SIZE - MIN_BLOCK_LEN) / ONE_BLK_SIZE * ONE_BLK_SIZE;
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-    if constexpr (pos == TPosition::C2) {
-        len = (len + TWO_BLK_SIZE - MIN_BLOCK_LEN) / TWO_BLK_SIZE * TWO_BLK_SIZE;
-    }
-#endif
     constexpr int32_t bufHandleSize = 1;
     buf.bufStart = this->g_tpipeImpl.buf_ + this->g_tpipeImpl.curBufSize_;
     buf.bufLen = len;
@@ -565,8 +552,7 @@ __aicore__ inline void TPipe::DestroyWithoutPipeAll()
         WaitFlag<HardEvent::M_MTE1>(2);
         ReleaseEventID<HardEvent::M_MTE1>(2);
     }
-#elif __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || \
-    __NPU_ARCH__ == 5163
+#elif __NPU_ARCH__ == 3002
     WaitFlag<HardEvent::M_MTE1>(0);
     ReleaseEventID<HardEvent::M_MTE1>(0);
     WaitFlag<HardEvent::M_MTE1>(1);

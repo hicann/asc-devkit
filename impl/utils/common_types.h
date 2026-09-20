@@ -20,21 +20,7 @@
 #include "sys_macros.h"
 
 namespace AscendC {
-enum class Hardware : uint8_t {
-    GM,
-    UB,
-    L1,
-    L0A,
-    L0B,
-    L0C,
-    BIAS,
-    FIXBUF,
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-    PT,
-#endif
-    MAX
-};
+enum class Hardware : uint8_t { GM, UB, L1, L0A, L0B, L0C, BIAS, FIXBUF, MAX };
 
 enum class ReduceType {
     NONE = -1,

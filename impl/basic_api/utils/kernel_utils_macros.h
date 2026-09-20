@@ -50,39 +50,6 @@
 #define ASCENDC_SHAPE(dimValue, ...) \
     dimValue, (const uint32_t[]) { __VA_ARGS__ }
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-#define SetBitOn(flag, bit) ((flag) = ((flag) | ((uint64_t)(1) << (bit))))
-
-#define GetBit(flag, bit) (((flag) >> (bit)) & (1))
-
-// define macro for deterministic compile options
-enum QuantCfgBit {
-    QUANTPRE_SCALE_VECTOR_CFGBIT = 0,
-    QUANTPOST_SCALE_VECTOR_CFGBIT = 1,
-    PRERELU_SCALE_VECTOR_CFGBIT = 2,
-    POSTREELU_SCALE_VECTOR_CFGBIT,
-    ELTWISEANTIQ_SCALE_VECTOR_CFGBIT,
-    DUMMY_MATMUL_QUANTPRE_SCALE_VECTOR_CFGBIT, // 5
-    QUANTPRE_SCALE_SCALAR_CFGBIT = 16,
-    QUANTPOST_SCALE_SCALAR_CFGBIT,
-    PRERELU_SCALE_SCALAR_CFGBIT,
-    POSTREELU_SCALE_SCALAR_CFGBIT,
-    ELTWISEANTIQ_SCALE_SCALAR_CFGBIT,
-    SCALE_PERGROUP_CFGBIT = 32, // pergroupָʾ
-};
-
-enum SidOutSMMU {
-    SID_OUT_L1 = 0,
-    SID_OUT_L1_FILTER = 1,
-    SID_OUT_L1_SCALE = 2,
-    SID_OUT_L1_BIAS = 3,
-    SID_OUT_L1_IMAGE = 4,
-    SID_L1_TO_OUT = 5,
-    SID_WEIGHT_LLM_DECODER = 9,
-};
-#endif
-
 #ifndef __PLUGIN__KERNEL_META_TYPE_ENUME_DEFINED__
 #define __PLUGIN__KERNEL_META_TYPE_ENUME_DEFINED__
 // define macro for deterministic compile options
@@ -234,9 +201,7 @@ enum class CacheMode { CACHE_MODE_DISABLE = 0, CACHE_MODE_NORMAL = 1, CACHE_MODE
 
 enum class CacheRwMode { READ = 1, WRITE = 2, RW = 3 };
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-                              __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163) ||                        \
-    defined(__ASC_NPU_HOST__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510) || defined(__ASC_NPU_HOST__)
 constexpr uint64_t L2_CACHE_OFFSET = 60;
 constexpr uint64_t L2_CACHE_OFFSET_MASK = (1ul << L2_CACHE_OFFSET) - 1;
 template <class T, CacheRwMode rwMode = CacheRwMode::RW>
@@ -374,16 +339,10 @@ struct SknlKernelMap {
 
 #define ENABLE_DETERMINISTIC() ENABLE_FEATURE_FOR_COMPILE(deterministic, 1)
 
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-#define KERNEL_TASK_TYPE(key, value)
-#define KERNEL_TASK_TYPE_DEFAULT(value)
-#else
 #define KERNEL_TASK_TYPE(key, value) ENABLE_FEATURE_FOR_COMPILE(key, value)
 #ifndef __PLUGIN__KERNEL_TASK_TYPE_DEFAULT_DEFINED__
 #define __PLUGIN__KERNEL_TASK_TYPE_DEFAULT_DEFINED__
 #define KERNEL_TASK_TYPE_DEFAULT(value) ENABLE_FEATURE_FOR_COMPILE(default, value)
-#endif
 #endif
 
 #define REGISTER_TILING_DEFAULT(tiling_struct) ENABLE_FEATURE_FOR_TILING(default, tiling_struct)

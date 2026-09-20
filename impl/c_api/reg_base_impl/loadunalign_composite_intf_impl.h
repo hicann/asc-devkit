@@ -30,7 +30,7 @@ __simd_callee__ inline void asc_load(vector_int8_t& dst, __ubuf__ int8_t* src)
 }
 
 __simd_callee__ inline void asc_load(vector_uint8_t& dst, __ubuf__ uint8_t* src)
-{
+{ /* asc_load overload */
     if ASC_IS_AIV {
         vector_load_unalign ureg;
         vldas(ureg, src);

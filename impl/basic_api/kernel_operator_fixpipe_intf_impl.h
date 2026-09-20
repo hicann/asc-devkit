@@ -41,8 +41,6 @@
 #include "dav_m310/kernel_operator_fixpipe_impl.h"
 #elif __NPU_ARCH__ == 3510
 #include "dav_3510/kernel_operator_fixpipe_impl.h"
-#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-#include "dav_5161/kernel_operator_fixpipe_impl.h"
 #endif
 
 namespace AscendC {
@@ -76,8 +74,7 @@ __aicore__ inline void SetFixPipeConfig(const LocalTensor<T>& preData, bool isUn
     SetFixPipeConfigImpl<T, setRelu>(preData, isUnitFlag);
 }
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-                              __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 __aicore__ inline void SetFixpipeNz2ndFlag(uint16_t ndNum, uint16_t srcNdStride, uint32_t dstNdStride)
 {
     SetFixpipeNz2ndFlagImpl(ndNum, srcNdStride, dstNdStride);

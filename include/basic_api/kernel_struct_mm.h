@@ -32,10 +32,6 @@
 #include "stub_def.h"
 #endif
 
-#if (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)
-#define CANN_ASC_ENABLE_FIX_SHIFT
-#endif
-
 namespace AscendC {
 // MM intr params
 using LoadData2dParams = struct LoadData2DParams;
@@ -420,9 +416,6 @@ struct MmadParams {
     bool cmatrixInitVal = true;
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))
     bool disableGemv = false;
-#endif
-#ifdef CANN_ASC_ENABLE_FIX_SHIFT
-    uint8_t fixShiftVal = 0;
 #endif
 };
 

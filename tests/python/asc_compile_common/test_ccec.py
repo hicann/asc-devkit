@@ -35,6 +35,8 @@ from asc_op_compile_base.common.platform.platform_info import (
     COMPILER_ARCH,
     ASCEND_031,
     ASCEND_910B,
+    KIRIN_X90,
+    KIRIN_9030,
 )
 
 
@@ -61,16 +63,20 @@ class TestCcec(unittest.TestCase):
         self.assertEqual(check_is_regbase_v2(), True)
         get_soc_spec_mock.return_value = ASCEND_910B
         self.assertEqual(enable_sanitizer(), False)
+        for soc in (KIRIN_X90, KIRIN_9030):
+            get_soc_spec_mock.return_value = soc
+            self.assertTrue(check_is_regbase_v2())
 
     @patch("asc_op_compile_base.common.platform.platform_info.get_soc_spec")
     def test_build_aicore_compile_cmd(self, mock_get_soc_spec):
+        mock_map = {
+            COMPILER_ARCH: "dav-l300",
+            "SHORT_SOC_VERSION": "Ascend910B",
+            "AICORE_TYPE": "AiCore",
+            "VECTOR_REG_WIDTH": 128,
+        }
+
         def get_soc_spec_mock(key):
-            mock_map = {
-                COMPILER_ARCH: "dav-l300",
-                "SHORT_SOC_VERSION": "Ascend910B",
-                "AICORE_TYPE": "AiCore",
-                "VECTOR_REG_WIDTH": 128,
-            }
             if key in mock_map.keys():
                 return mock_map[key]
             return None
@@ -99,6 +105,10 @@ class TestCcec(unittest.TestCase):
             "-mllvm",
             "-cce-aicore-mask-opt=false",
         ]
+        cmd = _build_aicore_compile_cmd("test_src", "test_dst", "testname_mix_aic")
+        self.assertEqual(cmd, expect_cmd)
+        mock_map[COMPILER_ARCH] = "dav-l311"
+        expect_cmd[4] = "--cce-aicore-arch=dav-l311"
         cmd = _build_aicore_compile_cmd("test_src", "test_dst", "testname_mix_aic")
         self.assertEqual(cmd, expect_cmd)
 

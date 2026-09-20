@@ -30,8 +30,6 @@
 #include "dav_c100/kernel_operator_list_tensor_impl.h"
 #elif __NPU_ARCH__ == 3510
 #include "dav_3510/kernel_operator_list_tensor_impl.h"
-#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-#include "dav_5161/kernel_operator_list_tensor_impl.h"
 #endif
 
 #endif // ASCENDC_MODULE_OPERATOR_LIST_TENSOR_INTERFACE_IMPL_H

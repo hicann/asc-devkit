@@ -1509,11 +1509,6 @@ p_tilingdata",
         "    copy_gm_to_ubuf(((__ubuf__ void *)tilingdata_in_ub), (__gm__ void *)p_tilingdata, 0, 1, \
 len_burst, 0, 0);\n"
     )
-    class_body += "#elif __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-__NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163\n"
-    class_body += "    copy_gm_to_ubuf_align_v2((__ubuf__ uint8_t *)tilingdata_in_ub, \
-(__gm__ uint8_t *)p_tilingdata, 0, 1, len_burst * 32, 0, 0, false, 0, 0);\n"
-
     class_body += "#elif __NPU_ARCH__ != 3102\n"
     class_body += (
         "    copy_gm_to_ubuf(((__ubuf__ uint8_t *)tilingdata_in_ub), p_tilingdata, 0, 1,\
@@ -1532,15 +1527,7 @@ len_burst, 0, 0);\n"
         "all_bytes", "__ubuf__", "(__ubuf__ uint8_t *)tilingdata_in_ub"
     )
     class_body += "#else\n"
-    class_body += "#if __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-__NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163\n"
-    class_body += (
-        "    constexpr uint64_t bytes_align64 = (all_bytes + 63) / 64 * 64 + 8;\n"
-    )
-    class_body += "    copy_data_align64((uint8_t*)tilingdata, (__ubuf__ uint8_t *)tilingdata_in_ub, bytes_align64);\n"
-    class_body += "#else\n"
     class_body += "    copy_data_align64((uint8_t*)tilingdata, (__ubuf__ uint8_t *)tilingdata_in_ub, all_bytes);\n"
-    class_body += "#endif\n"
     class_body += "#endif\n"
     class_body += "#endif // __ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__ \n"
     class_body += "#endif\n"

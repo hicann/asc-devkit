@@ -235,7 +235,7 @@ if __name__ == "__main__":
                 raise RuntimeError("No value given for --soc-series")
         elif arg.upper().startswith("ASCEND"):
             compute_soc += arg + ";"
-        elif arg.upper().startswith("KIRIN"):
+        elif arg.upper() in ("KIRINX90", "KIRIN9030"):
             compute_soc += arg + ";"
         elif arg.upper().startswith("MC62"):
             compute_soc += arg + ";"

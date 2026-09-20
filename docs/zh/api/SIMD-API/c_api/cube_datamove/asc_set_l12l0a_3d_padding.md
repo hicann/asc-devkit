@@ -130,7 +130,7 @@ __global__ __cube__ void Conv2dForwardCapi(
     __gm__ half* fmap, __gm__ half* weight, __gm__ half* output)
 {
     asc_init();
-    const uint32_t batch_idx = static_cast<uint32_t>(asc_get_block_idx());
+    const uint32_t batch_idx = static_cast<uint32_t>(block_idx);
     if (batch_idx >= BATCH) {
         return;
     }

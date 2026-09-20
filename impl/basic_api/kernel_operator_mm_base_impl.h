@@ -36,8 +36,6 @@
 #include "dav_m310/kernel_operator_mm_impl.h"
 #elif __NPU_ARCH__ == 3510
 #include "dav_3510/kernel_operator_mm_impl.h"
-#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-#include "dav_5161/kernel_operator_mm_impl.h"
 #endif
 #include "kernel_operator_mm_check.h"
 #include "kernel_operator_mm_load2d_impl.h"

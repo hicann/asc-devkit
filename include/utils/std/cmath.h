@@ -26,8 +26,7 @@
 #endif
 
 namespace AscendC {
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-    __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163) || defined(__ASC_NPU_HOST__)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510) || defined(__ASC_NPU_HOST__)
     __aicore__ constexpr inline int32_t CeilDivision(int32_t num1, int32_t num2);
 #else
     __aicore__ inline int32_t CeilDivision(int32_t num1, int32_t num2);

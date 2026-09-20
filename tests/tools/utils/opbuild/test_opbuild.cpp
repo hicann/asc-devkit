@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <cmath>
 #include <stdlib.h>
 #include <iostream>
@@ -1674,32 +1675,29 @@ TEST_F(TEST_OPBUILD, AclnnGenAttrFailed01)
     EXPECT_TRUE(hasErrorMessage);
 }
 
-TEST_F(TEST_OPBUILD, AclnnKirinX90socVersion)
+TEST_F(TEST_OPBUILD, AclnnKirinSocVersion)
 {
-    std::string fileName = "kirinx90_soc_" + std::to_string(getpid()) + ".txt";
-    std::ofstream outfile = std::ofstream(fileName);
-    OpDef opDef("Test");
-    opDef.Input("x1").DataType({ge::DT_FLOAT16});
-    opDef.Output("x2").DataType({ge::DT_FLOAT16});
-    opDef.AICore().AddConfig("kirinx90");
+    for (const auto& soc : {"kirinx90", "kirin9030"}) {
+        std::string fileName = std::string(soc) + "_soc_" + std::to_string(getpid()) + ".txt";
+        std::ofstream outfile(fileName);
+        OpDef opDef("Test");
+        opDef.Input("x1").DataType({ge::DT_FLOAT16});
+        opDef.Output("x2").DataType({ge::DT_FLOAT16});
+        opDef.AICore().AddConfig(soc);
 
-    std::vector<std::string> opsvec({"Test"});
-    AclnnOpGenerator opGen(opsvec);
-    auto socEntries = opGen.BuildUnifiedSocList(opDef);
-    opGen.AclnnOpGenSocSupportList(socEntries, outfile);
-    outfile.close();
+        std::vector<std::string> opsvec({"Test"});
+        AclnnOpGenerator opGen(opsvec);
+        auto socEntries = opGen.BuildUnifiedSocList(opDef);
+        ASSERT_EQ(socEntries.size(), 1U);
+        opGen.AclnnOpGenSocSupportList(socEntries, outfile);
+        outfile.close();
 
-    std::vector<std::string> errMessage = Generator::GetErrorMessage();
-    bool hasErrorMessage = false;
-    const std::string err = "Invalid socVersion kirinx90 of op Test, "
-                            "please check whether AddConfig are correctly configured in Opdef.";
-    for (size_t i = 0U; i < errMessage.size(); i++) {
-        if (errMessage[i] == err) {
-            hasErrorMessage = true;
-            break;
-        }
+        const std::string err = std::string("Invalid socVersion ") + soc +
+                                " of op Test, "
+                                "please check whether AddConfig are correctly configured in Opdef.";
+        const auto errMessages = Generator::GetErrorMessage();
+        EXPECT_EQ(std::find(errMessages.begin(), errMessages.end(), err), errMessages.end());
     }
-    EXPECT_FALSE(hasErrorMessage);
 }
 
 void setInputHasErrorMessage(bool& hasErrorMessage, std::vector<std::string> errMessage)

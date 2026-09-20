@@ -39,7 +39,7 @@ __aicore__ inline void asc_mrgsort4_sync(
     __ubuf__ float* dst, __ubuf__ float* src[ASC_C_API_MRGSORT_ELEMENT_LEN], uint8_t repeat, uint16_t element_length_0,
     uint16_t element_length_1, uint16_t element_length_2, uint16_t element_length_3, bool if_exhausted_suspension,
     uint8_t valid_bit)
-{
+{ /* asc_mrgsort4_sync overload */
     if ASC_IS_AIV {
         vmrgsort4(
             dst, src, repeat, element_length_0, element_length_1, element_length_2, element_length_3,
@@ -62,7 +62,7 @@ __aicore__ inline void asc_bitsort_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_bitsort and asc_sync)
 __aicore__ inline void asc_bitsort_sync(
     __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat)
-{
+{ /* asc_bitsort_sync overload */
     if ASC_IS_AIV {
         uint64_t config = (static_cast<uint64_t>(repeat) & 0xff) << 56;
         vbs(dst, src0, src1, config);
@@ -81,7 +81,7 @@ __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transpose and asc_sync)
 __aicore__ inline void asc_transpose_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src)
-{
+{ /* asc_transpose_sync overload */
     if ASC_IS_AIV {
         vtranspose(dst, src);
         asc_sync_post_process();
@@ -279,7 +279,7 @@ __aicore__ inline void asc_transto5hd_b8_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_transto5hd_b16 and asc_sync)
 __aicore__ inline void asc_transto5hd_b16_sync(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
-{
+{ /* asc_transto5hd overload */
     if ASC_IS_AIV {
         if (dst == ub_addr8_t::VA0) {
             if (src == ub_addr8_t::VA2) {
@@ -376,7 +376,7 @@ __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint8_t* dst, __gm__ u
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
 __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint32_t size)
-{
+{ /* asc_copy_gm2ub_align_sync overload */
     if ASC_IS_AIV {
         copy_gm_to_ubuf_align_v2(
             dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
@@ -520,7 +520,7 @@ __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint8_t* dst, __ubuf__ u
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
 __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int8_t* dst, __ubuf__ int8_t* src, uint32_t size)
-{
+{ /* asc_copy_ub2gm_align_sync overload */
     if ASC_IS_AIV {
         copy_ubuf_to_gm_align_v2(
             (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,

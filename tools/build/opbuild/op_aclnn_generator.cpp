@@ -64,10 +64,6 @@ constexpr const char* OP_ACLNN_SOC_INFO = "enum SocType {\n"
                                           "    SOC_VERSION_KIRINX90 = 14,\n"
                                           "    SOC_VERSION_KIRIN9030 = 15,\n"
                                           "    SOC_VERSION_ASCEND350 = 16,\n"
-                                          "    SOC_VERSION_KIRINDEV0000 = 17,\n"
-                                          "    SOC_VERSION_KIRINDEV0001 = 18,\n"
-                                          "    SOC_VERSION_KIRINDEV0002 = 19,\n"
-                                          "    SOC_VERSION_KIRINDEV0003 = 20,\n"
                                           "    SOC_VERSION_INVALID = 99\n"
                                           "};\n";
 constexpr const char* OP_ACLNN_SOC_MATCH_HELPER =
@@ -164,10 +160,6 @@ const std::map<std::string, std::string> SOC_SUPPORT_MAP = {
     {"ascend910_96", "SOC_VERSION_ASCEND910_96"},
     {"kirinx90", "SOC_VERSION_KIRINX90"},
     {"kirin9030", "SOC_VERSION_KIRIN9030"},
-    {"kirindev0000", "SOC_VERSION_KIRINDEV0000"},
-    {"kirindev0001", "SOC_VERSION_KIRINDEV0001"},
-    {"kirindev0002", "SOC_VERSION_KIRINDEV0002"},
-    {"kirindev0003", "SOC_VERSION_KIRINDEV0003"},
     {"ascend350", "SOC_VERSION_ASCEND350"}};
 
 const std::map<int, std::string> DTYPE_SUPPORT_MAP = {
@@ -1316,9 +1308,6 @@ std::vector<AclnnOpGenerator::SocEntry> AclnnOpGenerator::BuildUnifiedSocList(Op
 
     for (auto iter = map.begin(); iter != map.end(); ++iter) {
         std::string socVer = ToLower(iter->first.GetString());
-        if (socVer.find("kirin") == 0) {
-            continue;
-        }
         SocEntry entry;
         entry.socName = socVer;
         entry.hasAicoreConfig = true;
@@ -1540,7 +1529,7 @@ void AclnnOpGenerator::AclnnOpGenOpSupportListAll(
     const std::string opType = opDef.GetOpType().GetString();
     if (socEntries.empty()) {
         ASCENDLOGW(
-            "Opbuild: op %s has no soc version configured (only kirin or none), "
+            "Opbuild: op %s has no soc version configured, "
             "generating empty supportList.",
             opType.c_str());
         outfile << "OpSocSupportInfo opSocSupportList[1] = {{nullptr, 0}};\n";
@@ -1988,9 +1977,6 @@ std::vector<InputContiguousConfig> AclnnOpGenerator::GetInputContiguousConfigs(O
     // 遍历每个Soc配置，收集每个输入的contiguous类型
     for (auto& aicoreItem : opDef.AICore().GetAICoreConfigs()) {
         std::string socVer = ToLower(aicoreItem.first.GetString());
-        if (socVer.find("kirin") == 0U) {
-            continue;
-        }
         OpAICoreConfig aicoreConfig = aicoreItem.second;
         std::vector<OpParamDef> mergedInputs = opDef.GetMergeInputs(aicoreConfig);
 
@@ -2014,9 +2000,6 @@ std::map<std::string, bool> AclnnOpGenerator::GetSocAutoContiguousMap(OpDef& opD
 
     for (auto& aicoreItem : opDef.AICore().GetAICoreConfigs()) {
         std::string socVer = ToLower(aicoreItem.first.GetString());
-        if (socVer.find("kirin") == 0U) {
-            continue;
-        }
         OpAICoreConfig aicoreConfig = aicoreItem.second;
         std::vector<OpParamDef> mergedInputs = opDef.GetMergeInputs(aicoreConfig);
 

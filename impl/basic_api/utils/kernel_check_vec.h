@@ -147,10 +147,6 @@ bool CheckMmadParams(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<S>& filter, const LocalTensor<V>& bias,
     const MmadParams& mmadParams, const char* intriName)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-    return true;
-#else
     check::MmadApiParams chkParams{
         static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.GetPhyAddr())),
         static_cast<uint64_t>(reinterpret_cast<uintptr_t>(fm.GetPhyAddr())),
@@ -177,17 +173,12 @@ bool CheckMmadParams(
         mmadParams.enWinogradA,
         mmadParams.enWinogradB};
     return CheckFuncMmadImpl(chkParams, intriName);
-#endif
 }
 template <typename T, typename U, typename S>
 bool CheckMmadParams(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<S>& filter, const MmadParams& mmadParams,
     const char* intriName)
 {
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-    return true;
-#else
     check::MmadApiParams chkParams{
         static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.GetPhyAddr())),
         static_cast<uint64_t>(reinterpret_cast<uintptr_t>(fm.GetPhyAddr())),
@@ -210,7 +201,6 @@ bool CheckMmadParams(
         mmadParams.enWinogradA,
         mmadParams.enWinogradB};
     return CheckFuncMmadImpl(chkParams, intriName);
-#endif
 }
 
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510))

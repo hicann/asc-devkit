@@ -39,7 +39,7 @@ __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp4x2_e1m2_t* a_matrix, __cb__ fp4x2_e2m1_t* b_matrix, uint16_t left_height,
     uint16_t n_dim, uint16_t right_width, uint8_t unit_flag, bool disable_gemv, bool c_matrix_source,
     bool c_matrix_init_val)
-{
+{ /* asc_mmad_mx_sync overload */
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,

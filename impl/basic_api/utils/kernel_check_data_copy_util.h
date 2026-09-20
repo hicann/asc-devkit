@@ -307,10 +307,6 @@ inline std::string GetDstIDString(Hardware dstScope, BlockMode blockMode)
     (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510)
     if ((dstScope == Hardware::UB) || (dstScope == Hardware::L1) || (dstScope == Hardware::GM) ||
         (dstScope == Hardware::BIAS) || (dstScope == Hardware::FIXBUF)) {
-#elif defined(__NPU_ARCH__) && \
-    ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
-    if ((dstScope == Hardware::UB) || (dstScope == Hardware::L1) || (dstScope == Hardware::GM) ||
-        (dstScope == Hardware::BIAS) || (dstScope == Hardware::FIXBUF) || (dstScope == Hardware::PT)) {
 #else
     if ((dstScope == Hardware::UB) || (dstScope == Hardware::L1) || (dstScope == Hardware::GM)) {
 #endif

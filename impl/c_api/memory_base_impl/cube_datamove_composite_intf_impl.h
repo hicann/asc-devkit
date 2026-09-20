@@ -59,7 +59,7 @@ __aicore__ inline void asc_copy_l12l0b_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_l12l0b and asc_sync)
 __aicore__ inline void asc_copy_l12l0b_sync(
     __cb__ uint8_t* dst, __cbuf__ uint8_t* src, uint16_t start_index, uint8_t repeat, uint16_t src_stride,
-    uint16_t dst_gap)
+    uint16_t dst_gap) /* asc_copy_l12l0b_sync overload */
 {
     if ASC_IS_AIC {
         load_cbuf_to_cb(dst, src, start_index, repeat, src_stride, dst_gap, 0, false, inc);
@@ -220,7 +220,7 @@ __aicore__ inline void asc_copy_l12l0a_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_l12l0a and asc_sync)
 __aicore__ inline void asc_copy_l12l0a_sync(
     __ca__ uint8_t* dst, __cbuf__ uint8_t* src, uint16_t start_index, uint8_t repeat, uint16_t src_stride,
-    uint16_t dst_gap)
+    uint16_t dst_gap) /* asc_copy_l12l0a_sync overload */
 {
     if ASC_IS_AIC {
         load_cbuf_to_ca(dst, src, start_index, repeat, src_stride, dst_gap, 0, false, inc);
@@ -417,7 +417,8 @@ __aicore__ inline void asc_load_image_to_cbuf_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_load_image_to_cbuf and asc_sync)
 __aicore__ inline void asc_load_image_to_cbuf_sync(
     __cbuf__ int8_t* dst, uint16_t hor_size, uint16_t ver_size, uint16_t hor_start_pos, uint16_t ver_start_pos,
-    uint16_t src_hor_size, uint8_t top_pad_size, uint8_t bot_pad_size, uint16_t left_pad_size, uint16_t right_pad_size)
+    uint16_t src_hor_size, uint8_t top_pad_size, uint8_t bot_pad_size, uint16_t left_pad_size,
+    uint16_t right_pad_size) /* asc_load_image_to_cbuf_sync overload */
 {
     if ASC_IS_AIC {
         load_image_to_cbuf(
@@ -857,7 +858,7 @@ __aicore__ inline void asc_copy_l12l0a_trans_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_l12l0a_trans and asc_sync)
 __aicore__ inline void asc_copy_l12l0a_trans_sync(
     __ca__ float* dst, __cbuf__ float* src, uint16_t index_id, uint8_t repeat, uint16_t src_stride, uint16_t dst_gap,
-    bool enable_addr_decrement, uint16_t dst_frac_gap)
+    bool enable_addr_decrement, uint16_t dst_frac_gap) /* asc_copy_l12l0a_trans_sync overload */
 {
     if ASC_IS_AIC {
         load_cbuf_to_ca_transpose(dst, src, index_id, repeat, src_stride, dst_gap, enable_addr_decrement, dst_frac_gap);
@@ -934,7 +935,7 @@ __aicore__ inline void asc_copy_l12l0b_trans_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_l12l0b_trans and asc_sync)
 __aicore__ inline void asc_copy_l12l0b_trans_sync(
     __cb__ float* dst, __cbuf__ float* src, uint16_t index_id, uint8_t repeat, uint16_t src_stride, uint16_t dst_gap,
-    bool enable_addr_decrement, uint16_t dst_frac_gap)
+    bool enable_addr_decrement, uint16_t dst_frac_gap) /* asc_copy_l12l0b_trans_sync overload */
 {
     if ASC_IS_AIC {
         load_cbuf_to_cb_transpose(dst, src, index_id, repeat, src_stride, dst_gap, enable_addr_decrement, dst_frac_gap);
@@ -1104,7 +1105,7 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz_sync(
     __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint16_t nd_num, uint16_t n_value, uint16_t d_value,
     uint16_t src_nd_matrix_stride, uint16_t src_d_value, uint16_t dst_nz_c0_stride, uint16_t dst_nz_n_stride,
     uint16_t dst_nz_matrix_stride)
-{
+{ /* asc_copy_gm2l1_nd2nz_sync overload */
     if ASC_IS_AIC {
         copy_gm_to_cbuf_multi_nd2nz_b8(
             dst, src, 0, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride,
@@ -1238,7 +1239,7 @@ __aicore__ inline void asc_copy_l0c2gm_sync(
     __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
-{
+{ /* asc_copy_l0c2gm_sync overload */
     if ASC_IS_AIC {
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
@@ -1364,7 +1365,7 @@ __aicore__ inline void asc_copy_l0c2l1_sync(
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool enable_channel_split,
     bool enable_nz2nd)
 {
-    if ASC_IS_AIC {
+    if ASC_IS_AIC { /* asc_copy_l0c2l1_sync overload */
         copy_matrix_cc_to_cbuf(
             dst, src, 0, n_size, m_size, dst_stride, src_stride, unit_flag_mode, static_cast<QuantMode_t>(quant_pre),
             relu_pre, enable_channel_split, enable_nz2nd);
@@ -1530,7 +1531,7 @@ __aicore__ inline void asc_copy_gm2l0a_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2l0a and asc_sync)
 __aicore__ inline void asc_copy_gm2l0a_sync(
     __ca__ uint32_t* dst, __gm__ uint32_t* src, uint16_t base_idx, uint8_t repeat, uint16_t src_stride,
-    uint16_t dst_gap)
+    uint16_t dst_gap) /* asc_copy_gm2l0a_sync overload */
 {
     if ASC_IS_AIC {
         load_gm_to_ca(dst, src, base_idx, repeat, src_stride, dst_gap, 0, inc);
@@ -1592,7 +1593,7 @@ __aicore__ inline void asc_copy_l12l0c_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_l12l0c and asc_sync)
 __aicore__ inline void asc_copy_l12l0c_sync(
     __cc__ bfloat16_t* dst, __cbuf__ float* src, uint16_t n_burst, uint16_t len_burst, uint16_t src_gap,
-    uint16_t dst_gap)
+    uint16_t dst_gap) /* asc_copy_l12l0c_sync overload */
 {
     if ASC_IS_AIC {
         copy_matrix_cbuf_to_cc(dst, src, n_burst, len_burst, src_gap, dst_gap);
@@ -1686,7 +1687,7 @@ __aicore__ inline void asc_copy_gm2l0b_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2l0b and asc_sync)
 __aicore__ inline void asc_copy_gm2l0b_sync(
     __cb__ uint32_t* dst, __gm__ uint32_t* src, uint16_t base_idx, uint8_t repeat, uint16_t src_stride,
-    uint16_t dst_gap)
+    uint16_t dst_gap) /* asc_copy_gm2l0b_sync overload */
 {
     if ASC_IS_AIC {
         load_gm_to_cb(dst, src, base_idx, repeat, src_stride, dst_gap, 0, addr_cal_mode_t::inc);
@@ -1748,7 +1749,7 @@ __aicore__ inline void asc_copy_gm2l1_sync(
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2l1 and asc_sync)
 __aicore__ inline void asc_copy_gm2l1_sync(
     __cbuf__ int32_t* dst, __gm__ int32_t* src, uint16_t base_idx, uint8_t repeat, uint16_t src_stride,
-    uint16_t dst_gap)
+    uint16_t dst_gap) /* asc_copy_gm2l1_sync overload */
 {
     if ASC_IS_AIC {
         load_gm_to_cbuf(dst, src, base_idx, repeat, src_stride, dst_gap, static_cast<uint8_t>(0), addr_cal_mode_t::inc);

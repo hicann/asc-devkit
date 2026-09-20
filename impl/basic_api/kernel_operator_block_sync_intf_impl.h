@@ -48,8 +48,6 @@
 #include "dav_m310/kernel_operator_common_impl.h"
 #elif __NPU_ARCH__ == 3510
 #include "dav_3510/kernel_operator_sync_impl.h"
-#elif (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163)
-#include "dav_5161/kernel_operator_sync_impl.h"
 #endif
 
 namespace AscendC {

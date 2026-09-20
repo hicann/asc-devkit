@@ -22,9 +22,7 @@ extern "C" __global__ __aicore__ void KernelTestDataCachePreload1()
     AscendC::DataCachePreload(src, cacheOffset);
 }
 
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5101 || \
-     __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510)
 // template <typename T, CacheLine entireType, DcciDst dcciDst>
 // __aicore__ inline void DataCacheCleanAndInvalid(const GlobalTensor<T>& dst);
 extern "C" __global__ __aicore__ void KernelTestDataCacheCleanAndInvalid1()
@@ -43,9 +41,8 @@ extern "C" __global__ __aicore__ void KernelTestDataCacheCleanAndInvalid1()
 // }
 #endif
 
-#if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510 || \
-     __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3510)
 // template <typename T, CacheLine entireType>
 // __aicore__ inline void DataCacheCleanAndInvalid(const GlobalTensor<T>& dst);
 extern "C" __global__ __aicore__ void KernelTestDataCacheCleanAndInvalid3()

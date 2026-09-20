@@ -15,7 +15,6 @@ asc-devkit:
       - tests
       - include/**/*.h
       - tools/**/*.h
-      - impl/**/dav_5161/*.h
       - impl/basic_api/kernel_macros.h
       - impl/basic_api/kernel_prof_trace*.h
       - impl/utils/**/*.h
@@ -25,7 +24,6 @@ asc-devkit:
       - impl/basic_api/reg_compute/kernel_reg_compute_common_intf_impl.h
       - impl/basic_api/reg_compute/kernel_reg_compute_intf_impl.h
       - impl/basic_api/reg_compute/dav_3510/kernel_reg_compute_datatype_impl.h
-      - impl/basic_api/*_macro_*.h
       - impl/adv_api/detail/math/**/*.h
       - impl/adv_api/detail/quantization/**/*.h
       - impl/adv_api/detail/activation/**/*.h

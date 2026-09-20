@@ -171,23 +171,6 @@ __aicore__ inline void prof_mark_event(void)
 #define TRACE_START_1(apid) __asc_aicore::asc_mark_stamp<PIPE_S>(static_cast<uint16_t>(apid) | 0x400)
 #define TRACE_STOP_1(apid) __asc_aicore::asc_mark_stamp<PIPE_S>(static_cast<uint16_t>(apid) | 0xc00)
 
-#elif defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-#define TRACE_START_1(apid)                                                \
-    do {                                                                   \
-        uint32_t v = (ASC_PROF_START_EVENT | static_cast<uint32_t>(apid)); \
-        __asm__ __volatile__("");                                          \
-        asm volatile("MOV COND, %0\n" : "+l"(v));                          \
-        __asm__ __volatile__("");                                          \
-    } while (0)
-
-#define TRACE_STOP_1(apid)                                                \
-    do {                                                                  \
-        uint32_t v = (ASC_PROF_STOP_EVENT | static_cast<uint32_t>(apid)); \
-        __asm__ __volatile__("");                                         \
-        asm volatile("MOV COND, %0\n" : "+l"(v));                         \
-        __asm__ __volatile__("");                                         \
-    } while (0)
 #else
 #define TRACE_START_1(apid)                                            \
     do {                                                               \
