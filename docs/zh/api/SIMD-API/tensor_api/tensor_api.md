@@ -1,8 +1,8 @@
 # Tensor API
 
-Tensor API是一套面向Ascend C算子开发的基础编程接口，使用Tensor和Layout统一描述数据的存储位置、数据类型、尺寸大小和排列规则，并基于这些信息完成数据搬运、矩阵计算和矢量计算，减少开发者手工组织硬件指令参数和数据排布的工作量。
+Tensor API是一套面向Ascend C算子开发的基础编程接口，使用Tensor和Layout统一描述数据的存储位置、数据类型、尺寸大小和排列规则，并基于这些信息完成数据搬运和矩阵计算，减少开发者手工组织硬件指令参数和数据排布的工作量。
 
-Tensor API提供基于Tensor的数据搬运、矩阵计算和矢量计算能力。开发者可以在同一个核函数中组合使用Tensor API和C API，以实现完整的算子功能。
+Tensor API提供基于Tensor的数据搬运和矩阵计算能力。开发者可以在同一个核函数中组合使用Tensor API和C API，以实现完整的算子功能。
 
 ## 接口分层
 
@@ -11,7 +11,7 @@ Tensor API提供基于Tensor的数据搬运、矩阵计算和矢量计算能力�
 | 层级 | 作用 | 主要内容 |
 | :--- | :--- | :--- |
 | Tensor+Layout | 描述数据的存储位置、数据类型、尺寸大小和排列规则。 | Tensor、Pointer、Layout、Shape、Stride和Coord。 |
-| Arch | 提供数据搬运和矩阵计算相关的Operation、用于描述编译期特性的Trait、用于描述运行时参数的Params，以及矢量计算接口。 | Operation：`copy_gm_to_l1`、`mmad_operation`<br>Trait：`gm_to_l1_trait`<br>Params：`l0c_to_gm_params`<br>矢量计算：`select`、`fill`。 |
+| Arch | 提供数据搬运和矩阵计算相关的Operation、用于描述编译期特性的Trait、用于描述运行时参数的Params。 | Operation：`copy_gm_to_l1`、`mmad_operation`<br>Trait：`gm_to_l1_trait`<br>Params：`l0c_to_gm_params`。 |
 | Atom | 将Operation、Trait和可选Params组合为数据搬运或矩阵计算的原子对象。 | `copy_atom`、`mmad_atom`。 |
 | Algorithm | 提供面向Tensor的数据搬运和矩阵计算的统一调用入口。 | `copy`、`make_copy`、`mmad`和`make_mmad`。 |
 
@@ -28,13 +28,13 @@ Tensor API提供基于Tensor的数据搬运、矩阵计算和矢量计算能力�
 - [Algorithm](algorithm.md)：介绍数据搬运和矩阵计算中Operation、Trait与Atom的作用、组合关系及使用方式。
 - [数据搬运](data_move/data_move.md)：介绍多种数据搬运通路，包括Global Memory与Unified Buffer之间的双向搬运，Global Memory到L1 Buffer的搬运等。
 - [矩阵计算](matrix_compute/matrix_compute.md)：介绍矩阵数据搬入、矩阵乘加、矩阵结果搬出和相关关键特性。
-- [reg矢量计算](reg_vector_compute/reg_vector_compute.md)：介绍矢量计算的搬入、矢量计算的搬出、寄存器数据搬入搬出、Mask寄存器计算和类型转换。
+- [矢量计算](reg_vector_compute/reg_vector_compute.md)：介绍Global Memory与Unified Buffer之间、Unified Buffer内部以及Unified Buffer到L1 Buffer的数据搬运。
 - [工具接口](utils/tool_functions.md)：介绍编译期整数、维度保留标记和Layout Pattern查询接口，以及Layout、Tensor、Coord、Shape和量化参数的类型判断等工具接口的使用方式。
 - [废弃接口](deprecated_interface/deprecated_interface.md)：介绍用于兼容的大驼峰风格接口。
 
 ## 与C API配合使用
 
-Tensor API提供基于Tensor和Layout的数据组织、数据搬运、矩阵计算和矢量计算能力，适合构建算子的主要数据处理流程。缓存控制、同步控制、系统变量、原子操作和初始化等底层控制能力由C API提供。开发者可以在同一个核函数中组合使用Tensor API和C API，以实现完整的算子功能。
+Tensor API提供基于Tensor和Layout的数据组织、数据搬运和矩阵计算能力，适合构建算子的主要数据处理流程。缓存控制、同步控制、系统变量、原子操作和初始化等底层控制能力由C API提供。开发者可以在同一个核函数中组合使用Tensor API和C API，以实现完整的算子功能。
 
 Tensor API和C API的接口支持范围及参数约束相互独立，混合使用时需要同时满足两类接口的要求。
 

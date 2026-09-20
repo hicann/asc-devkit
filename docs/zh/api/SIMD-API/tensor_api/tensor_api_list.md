@@ -94,40 +94,9 @@
 | [Batch搬运](matrix_compute/cube_store_key_features/batch_copy.md) | 介绍矩阵结果的多Batch搬出能力。 |
 | [L0C到Unified Buffer双目标模式](matrix_compute/cube_store_key_features/l0c_to_ub_dual_dst.md) | 介绍L0C到Unified Buffer的双目标搬出模式。 |
 
-## 矢量计算接口
-
-**表6**  矢量计算接口列表
-
-| 接口或类型名 | 功能描述 |
-| --- | --- |
-| [reg_tensor](reg_vector_compute/reg_tensor/reg_tensor.md) | 封装矢量数据寄存器及其掩码寄存器，用于寄存器数据计算。 |
-| [reg_pair](reg_vector_compute/reg_tensor/reg_pair.md) | 保存两个元素类型相同的`reg_tensor`，用于具有双结果的寄存器接口。 |
-| [all_mask](reg_vector_compute/mask_reg_compute/all_mask.md) | 创建与指定元素类型位宽匹配的全有效Mask寄存器。 |
-| [make_mask](reg_vector_compute/mask_reg_compute/make_mask.md) | 根据Mask模式和数据元素宽度创建Mask寄存器。 |
-| [none_mask](reg_vector_compute/mask_reg_compute/none_mask.md) | 创建与指定元素类型位宽匹配的全无效Mask寄存器。 |
-| [update_mask](reg_vector_compute/mask_reg_compute/update_mask.md) | 根据剩余待处理元素数生成有效位Mask，并更新剩余元素数量。 |
-| [deinterleave（掩码寄存器解交织）](reg_vector_compute/mask_reg_compute/deinterleave.md) | 将两个Mask寄存器按指定元素宽度解交织，返回偶数组和奇数组结果。 |
-| [load](reg_vector_compute/reg_data_load/load.md) | 将Unified Buffer中的数据搬入`reg_tensor`，支持多种数据排列方式。 |
-| [load_broadcast](reg_vector_compute/reg_data_load/load_broadcast.md) | 从Unified Buffer搬入数据，并按指定模式广播到`reg_tensor`。 |
-| [store](reg_vector_compute/reg_data_store/store.md) | 将`reg_tensor`中的数据搬出到Unified Buffer，支持多种数据排列方式。 |
-| [cast](reg_vector_compute/type_conversion/cast.md) | 转换寄存器数据类型，支持配置数据排布、舍入和饱和模式。 |
-| [trunc](reg_vector_compute/type_conversion/trunc.md) | 将Mask选中的浮点元素向零取整，并保留原数据类型。 |
-| [log](reg_vector_compute/basic_arithmetic/log.md) | 对源操作数中的有效元素逐元素计算自然对数。 |
-| [max](reg_vector_compute/basic_arithmetic/max.md) | 对两个源操作数逐元素计算最大值。 |
-| [operator+](reg_vector_compute/basic_arithmetic/operator_add.md) | 对两个源操作数逐元素执行加法计算。 |
-| [operator-](reg_vector_compute/basic_arithmetic/operator_sub.md) | 对两个源操作数逐元素执行减法计算。 |
-| [operator*](reg_vector_compute/basic_arithmetic/operator_mul.md) | 对两个源操作数逐元素执行乘法计算。 |
-| [or](reg_vector_compute/logical_compute/or.md) | 对两个源操作数逐元素执行按位或计算。 |
-| [选择与比较](reg_vector_compute/compare_and_select/compare_and_select.md) | 根据mask的比特位值，从源操作数src0、src1中选择元素，得到目的操作数。 |
-| [select](reg_vector_compute/compare_and_select/select.md) | 根据条件Mask从两个源寄存器中逐元素选择数据。 |
-| [数据填充](reg_vector_compute/data_padding/data_padding.md) | 根据mask将源操作数src的最低位元素或者一个scalar操作数填充到目的操作数。 |
-| [fill](reg_vector_compute/data_padding/fill.md) | 将标量或源寄存器最低位元素广播并填充到目的寄存器。 |
-| [数据重排](reg_vector_compute/data_reorder/data_reorder.md) | 给定源操作数src0和src1，将src0和src1中的元素解交织存入结果操作数。 |
-| [deinterleave（数据寄存器解交织）](reg_vector_compute/data_reorder/deinterleave.md) | 将两个源寄存器中的元素解交织到两个结果寄存器。 |
-
 ## 工具接口
 
-**表7**  工具接口列表
+**表6**  工具接口列表
 
 | 接口或类型名 | 功能描述 |
 | --- | --- |
@@ -138,7 +107,7 @@
 
 ## 废弃接口
 
-**表8**  废弃接口列表
+**表7**  废弃接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |
