@@ -71,6 +71,9 @@ __aicore__ inline void SetAtomicMin()
 - 使用完后，建议通过[DisableDmaAtomic](DisableDmaAtomic.md)关闭原子最小操作，以免影响后续相关功能。
 - 该接口执行前不会自动清零GM数据。开发者需根据算子逻辑判断是否清零，如需清零，请在执行前手动完成。
 - SetAtomicMin内部已集成与[SetAtomicType](SetAtomicType.md)相同的功能。建议调用上述接口时，通过设置模板参数显式指定原子操作的数据类型，无需额外调用SetAtomicType接口。
+<!-- npu="A3,910b" id4 -->
+- 针对[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)，整数类型和bfloat16_t数据类型**默认均为非饱和模式**，原子最小操作时的饱和模式无法通过[SetSaturationStrategy](../special_register_access/SetSaturationStrategy.md)或[SetCtrlSpr](../special_register_access/SetCtrlSpr_ISASI.md)设置，需要通过`npu-smi`命令进行设备级设置，具体设置方法请参考[SetAtomicAdd约束说明](SetAtomicAdd.md#npu_smi_saturation_mode)。
+<!-- end id4 -->
 
 ## 调用示例<a name="section177231425115410"></a>
 
