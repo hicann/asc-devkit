@@ -71,6 +71,23 @@ TEST_F(TQueWithBufIDTest, testAivQueInitBufferWithBufferID)
     EXPECT_EQ(que.HasIdleBuffer(), true);
 }
 
+TEST_F(TQueWithBufIDTest, TBufGetWithOffsetSubByteTest)
+{
+    TBuf<TPosition::VECIN> buf;
+    TPipe pipe;
+    pipe.InitBuffer(buf, 96);
+
+    auto int2Tensor = buf.GetWithOffset<int2b_t>(128, 32);
+    EXPECT_EQ(int2Tensor.address_.bufferAddr, buf.bufStart->address + 32);
+    EXPECT_EQ(int2Tensor.address_.dataLen, 32);
+    EXPECT_EQ(int2Tensor.GetSize(), 128);
+
+    auto uint1Tensor = buf.GetWithOffset<uint1b_t>(256, 64);
+    EXPECT_EQ(uint1Tensor.address_.bufferAddr, buf.bufStart->address + 64);
+    EXPECT_EQ(uint1Tensor.address_.dataLen, 32);
+    EXPECT_EQ(uint1Tensor.GetSize(), 256);
+}
+
 TEST_F(TQueWithBufIDTest, testAivQueInitMultipleBuffers)
 {
     constexpr int32_t size = 28;
