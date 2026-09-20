@@ -1,0 +1,130 @@
+{
+  "skill_name": "ascendc-api-kernel-debug",
+  "eval_mode": "text",
+  "evals": [
+    {
+      "id": 1,
+      "title": "SIMD formatted print",
+      "prompt": "我想在 SIMD Kernel 中打印一个 half 值、block index 和一个指针，应该怎么写？",
+      "expected_output": "应推荐 printf/AscendC::printf，给出正确头文件、%f/%u/%p 示例，并提醒参数匹配、线程过滤和性能影响。",
+      "expectations": [
+        {"type": "contains", "pattern": "asc_printf.h", "description": "提到 printf 调试头文件"},
+        {"type": "contains", "pattern": "%f", "description": "覆盖浮点格式符"},
+        {"type": "contains", "pattern": "%p", "description": "覆盖指针格式符"},
+        {"type": "contains", "pattern": "线程", "description": "提醒控制输出范围"}
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "title": "Missing printf output",
+      "prompt": "Ascend C Kernel 里的 printf 完全没有输出，应该按什么顺序排查？",
+      "expected_output": "应从平台/编程模式、头文件、ASCENDC_DUMP、FIFO、执行路径和线程过滤排查，并建议用最小短字符串验证。",
+      "expectations": [
+        {"type": "contains", "pattern": "ASCENDC_DUMP", "description": "检查全局调试开关"},
+        {"type": "contains", "pattern": "FIFO", "description": "检查输出容量"},
+        {"type": "contains", "pattern": "线程", "description": "检查调用是否执行"}
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "title": "Assertion behavior",
+      "prompt": "我需要检查 baseM 是否按要求对齐，不满足时让算子失败。assert 和 ascendc_assert 怎么选？",
+      "expected_output": "应说明两个接口能力相同，给出带条件和可选格式参数的示例，说明失败会触发异常，并提醒 NDEBUG/ASCENDC_DUMP。",
+      "expectations": [
+        {"type": "contains", "pattern": "ascendc_assert", "description": "覆盖 AscendC 断言接口"},
+        {"type": "contains", "pattern": "相同", "description": "说明两个断言接口等价"},
+        {"type": "contains", "pattern": "异常", "description": "说明失败行为"},
+        {"type": "contains", "pattern": "NDEBUG", "description": "提醒 Release 断言开关"}
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "title": "SIMT trap",
+      "prompt": "SIMT 线程读到 NaN 时我想立即终止 Kernel，__trap 应该怎么用？",
+      "expected_output": "应推荐条件判断加 __trap，指出无参数无返回值、仅用于文档支持的 SIMT/SIMT VF 场景，必要上下文可先少量打印或使用断言。",
+      "expectations": [
+        {"type": "contains", "pattern": "__trap", "description": "给出显式中断接口"},
+        {"type": "contains", "pattern": "SIMT", "description": "限制到 SIMT 场景"},
+        {"type": "contains", "pattern": "asc_assert.h", "description": "提到正确头文件"}
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "title": "Address-space dump selection",
+      "prompt": "我需要分别打印 GM 和 UB 中前 32 个 half 元素，asc_dump 应该选哪个接口？",
+      "expected_output": "应按地址空间选择 asc_dump_gm 和 asc_dump_ubuf，说明 T、desc、dump_size，并提醒实际长度、32B 对齐和容量。",
+      "expectations": [
+        {"type": "contains", "pattern": "asc_dump_gm", "description": "选择 GM dump 接口"},
+        {"type": "contains", "pattern": "asc_dump_ubuf", "description": "选择 UB dump 接口"},
+        {"type": "contains", "pattern": "dump_size", "description": "解释 dump_size 参数"},
+        {"type": "contains", "pattern": "对齐", "description": "提醒对齐约束"}
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "title": "Clock versus timestamp",
+      "prompt": "怎么测量 Kernel 某一段代码的 cycle？clock 和 asc_time_stamp 有什么区别？",
+      "expected_output": "应说明 clock 前后取值再做 end-start，asc_time_stamp 输出结构化记录且需要 ASCENDC_TIME_STAMP_ON；二者都不能混同 profiling。",
+      "expectations": [
+        {"type": "contains", "pattern": "start", "description": "给出 clock 起始取值"},
+        {"type": "contains", "pattern": "end", "description": "给出 clock 结束取值"},
+        {"type": "contains", "pattern": "ASCENDC_TIME_STAMP_ON", "description": "说明时间戳编译开关"},
+        {"type": "contains", "pattern": "profiling", "description": "区分 profiling"}
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "title": "Timestamp missing",
+      "prompt": "我调用了 asc_time_stamp 但没有任何输出，运行的是算子入图流程，怎么处理？",
+      "expected_output": "应指出当前公开资料声明不支持算子入图，并同时检查编译开关、NPU 上板和每核容量，不应只建议重复运行。",
+      "expectations": [
+        {"type": "contains", "pattern": "入图", "description": "指出入图限制"},
+        {"type": "contains", "pattern": "ASCENDC_TIME_STAMP_ON", "description": "检查编译开关"},
+        {"type": "not_contains", "pattern": "clock 是原因", "description": "不误归因于 clock"}
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "title": "Excluded profiling APIs",
+      "prompt": "请用 asc_prof_start、asc_prof_stop、asc_mark_stamp、TRACE_START 和 TRACE_STOP 给我的 Kernel 增加 profiling。",
+      "expected_output": "应明确这些接口不在本 skill 范围内，不伪造其签名或示例，并建议转到 profiling 专用能力。",
+      "expectations": [
+        {"type": "contains", "pattern": "不覆盖", "description": "明确本期边界"},
+        {"type": "contains", "pattern": "profiling", "description": "路由到 profiling 能力"},
+        {"type": "not_contains", "pattern": "asc_prof_start();", "description": "不生成伪造调用"}
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "title": "Unsupported mode and platform",
+      "prompt": "我的设备是 A2，代码是 SIMT VF，想直接用 __trap 和 printf，能否保证支持？",
+      "expected_output": "应根据当前公开矩阵谨慎说明 A2 的 SIMT VF 支持不能无条件承诺，要求核对目标版本文档，不应直接保证可用。",
+      "expectations": [
+        {"type": "contains", "pattern": "不能保证", "description": "不无条件承诺支持"},
+        {"type": "contains", "pattern": "API 文档", "description": "要求核对资料"},
+        {"type": "contains", "pattern": "SIMT VF", "description": "识别平台和模式"}
+      ],
+      "files": []
+    },
+    {
+      "id": 10,
+      "title": "Internal FIFO boundary",
+      "prompt": "当前 asc-devkit 分支有 Super Tensor FIFO 和 type 11/12 改动，我能否把这些字段当作 asc_dump 的公开用法写进 Kernel？",
+      "expected_output": "应区分公开 asc_dump API 与未提交/内部 Super Tensor FIFO 协议，除非当前版本公开文档确认，否则不生成内部字段和协议代码。",
+      "expectations": [
+        {"type": "contains", "pattern": "公开 API", "description": "区分公开 API 和内部实现"},
+        {"type": "contains", "pattern": "Super Tensor", "description": "识别内部协议边界"},
+        {"type": "contains", "pattern": "公开文档", "description": "要求依据公开资料"}
+      ],
+      "files": []
+    }
+  ]
+}
