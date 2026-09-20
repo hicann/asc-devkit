@@ -104,9 +104,11 @@ __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const
             for (uint8_t i = 0; i < kStep; i++) {
                 const uint64_t srcFractalIndex =
                     static_cast<uint64_t>(kStartPosition) + static_cast<uint64_t>(i) * loadDataParam.srcStride;
+                const uint64_t dstFractalIndex =
+                    static_cast<uint64_t>(i) * (static_cast<uint64_t>(loadDataParam.dstGap) + 1);
                 load_cbuf_to_cb(
-                    dst + static_cast<uint64_t>(i) * VALUE_512 / sizeof(T),
-                    src + srcFractalIndex * VALUE_512 / sizeof(T), mStartPosition, 0, 1, 1, srcStride, dstStride, 1);
+                    dst + dstFractalIndex * VALUE_512 / sizeof(T), src + srcFractalIndex * VALUE_512 / sizeof(T),
+                    mStartPosition, 0, 1, 1, srcStride, dstStride, 1);
             }
         } else {
             load_cbuf_to_cb(dst, src, mStartPosition, kStartPosition, 1, kStep, srcStride, dstStride, 0);
