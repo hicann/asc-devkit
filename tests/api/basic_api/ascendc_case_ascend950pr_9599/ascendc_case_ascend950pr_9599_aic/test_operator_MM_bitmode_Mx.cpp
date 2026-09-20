@@ -44,7 +44,7 @@ constexpr QuantMode_t GetQuantMode()
 }
 
 template <typename DstT, typename Src0T, typename Src1T, typename L0cOutT, typename BiasT>
-void MainCpuCmpMmadMxBiasDemo(
+void MainCpuCmpMmadMxBitModeBiasDemo(
     __gm__ uint8_t* __restrict__ featureGm, __gm__ uint8_t* __restrict__ weightGm, __gm__ uint8_t* __restrict__ biasGm,
     __gm__ uint8_t* __restrict__ resultGm, int32_t featureDataSize, int32_t weightDataSize, int32_t biasDataSize,
     int32_t outputDataSize, bool isBias)
@@ -147,7 +147,7 @@ protected:
         uint8_t weightGlobal[weightDataSize * sizeof(src1Type)] = {0};                                              \
         uint8_t biasGlobal[biasDataSize * sizeof(biasT1)] = {0};                                                    \
         uint8_t outputGlobal[outputDataSize * sizeof(L0cOutT)] = {0};                                               \
-        MainCpuCmpMmadMxBiasDemo<dstType, src0Type, src1Type, L0cOutT, biasT1>(                                     \
+        MainCpuCmpMmadMxBitModeBiasDemo<dstType, src0Type, src1Type, L0cOutT, biasT1>(                              \
             featureGlobal, weightGlobal, biasGlobal, outputGlobal, featureDataSize, weightDataSize, biasDataSize,   \
             outputDataSize, biasOp);                                                                                \
         for (int32_t i = 0; i < outputDataSize * sizeof(dstType); i++) {                                            \
