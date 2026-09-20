@@ -446,12 +446,14 @@ the superkernel cannot be integrated with the operator.",
     # updata op_param size by flag of oom
     if "oom" in get_current_build_config("tir.op_debug_config"):
         # tiling need align to 8 bytes, dfx need 8 bytes for dfx point,
-        # oom need allocate 8 * (input + output + shape_tensor+ workspace)
+        # oom needs 8 * (input + output + shape_tensor + workspace) plus its extension header
         op_param_size = (
             ((max_tiling_size + 7) // 8) * 8
             + 8
             + 8 * DFXSectionGenerator().param_placeholder_num
+            + 2  # Optional OOM storage-shape extension header.
         )
+        js["oom"] = {"version": 1, "tensor_version": 1}
     else:
         op_param_size = max_tiling_size + 8
 
