@@ -415,7 +415,7 @@ __aicore__ inline void MmadMx(
     MmadMxImpl(dst, fm, filter, bias, mmadParams);
 }
 
-template <typename T, typename U, typename S, typename R>
+template <typename T, typename U, typename S>
 __aicore__ inline void MmadMx(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<S>& filter,
     const MmadBitModeParams& mmadParams)
@@ -423,7 +423,7 @@ __aicore__ inline void MmadMx(
     MmadMxImpl(dst, fm, filter, mmadParams);
 }
 
-template <typename T, typename U, typename S, typename V, typename R>
+template <typename T, typename U, typename S, typename V>
 __aicore__ inline void MmadMx(
     const LocalTensor<T>& dst, const LocalTensor<U>& fm, const LocalTensor<S>& filter, const LocalTensor<V>& bias,
     const MmadBitModeParams& mmadParams)
