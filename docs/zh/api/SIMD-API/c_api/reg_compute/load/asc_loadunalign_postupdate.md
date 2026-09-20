@@ -38,6 +38,8 @@
 
 - **地址寄存器偏移搬入模式**：设当前UB地址指针为`src_ptr`，循环迭代索引为`i`，步长`stride`的单位为元素个数。[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)生成当前迭代的起始偏移`offset = i * stride`，本次实际读取地址为`src_ptr + offset`。搬入完成后，接口将`offset`更新为`offset + inc`，因此当前循环迭代内下一次实际读取地址为`src_ptr + i * stride + inc`。以上指针和偏移运算均以元素为单位。`src_ptr`保持不变；`inc`只更新当前循环迭代内的地址偏移，不影响下一次循环迭代的起始偏移。
 
+本接口为Reg矢量搬运接口，仅在AIV上生效。
+
 ## 函数原型
 
 ### 连续非对齐搬入模式
@@ -121,8 +123,7 @@ __simd_callee__ inline void asc_loadunalign_postupdate(vector_int8_t& dst,
 
 ### 通用约束
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - `src1`起始地址或`src1`与`offset`确定的实际访问地址必须按dtype对齐，且实际访问范围必须在UB地址空间内，否则会报错。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈 + 2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB～128KB作Data Cache，可用容量进一步减少）。UB地址偏移后不可超过实际可用容量，否则会报错。
 - 如果本指令与其他指令存在UB地址重叠，必须插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。

@@ -34,7 +34,7 @@ $$
 dst_i = \begin{cases} src_i & src_i > 0 \\ src_i \times \alpha & src_i \leq 0 \end{cases}
 $$
 
-本接口仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -79,7 +79,7 @@ __simd_callee__ inline void asc_leakyrelu(vector_half& dst,
 | dst | 输出 | 目的操作数（矢量数据寄存器）。仅无返回值类型接口包含该参数，数据类型须与`src`一致。 |
 | src | 输入 | 源操作数（矢量数据寄存器）。 |
 | alpha | 输入 | 负半轴斜率（标量）。数据类型须与`src`一致。 |
-| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。需通过掩码设置接口预先赋值后再传入。 |
+| mask | 输入 | 源操作数掩码（掩码寄存器），用于指示在计算过程中哪些元素参与计算。对应位置为1时参与计算，为0时不参与计算。`mask`未筛选的元素在输出中置零。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -91,9 +91,7 @@ __simd_callee__ inline void asc_leakyrelu(vector_half& dst,
 
 ### 通用约束
 
-- 非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
-- `mask`需通过掩码设置接口预先赋值后再传入；未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 掩码位为0的元素位置不参与运算，输出结果对应位置写0。
 
 ### 计算约束

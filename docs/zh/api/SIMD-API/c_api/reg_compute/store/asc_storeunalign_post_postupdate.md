@@ -32,6 +32,8 @@
 
 本接口在Vector Function（`__simd_vf__` 标记的函数）内使用。本接口仅在AIV上生效。
 
+本接口为Reg矢量搬运接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -73,7 +75,7 @@ __simd_callee__ inline void asc_storeunalign_post_postupdate(__ubuf__ uint8_t*& 
 
 ### 通用约束
 
-- 本接口仅在AIV上生效，非AIV调用直接返回。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 调用本接口前，须调用[asc_storeunalign_postupdate](asc_storeunalign_postupdate.md)的**立即数偏移搬出模式**，并复用同一个`unalign_reg`。
 - `dst`无需32字节对齐，但须按`sizeof(dtype)`字节对齐。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化（默认预留6KB SIMD VF栈+2KB Ascend C预留，可用248KB；SIMD+SIMT混编时再划分32KB~128KB作Data Cache，可用容量进一步减少）。目的操作数地址更新后不可超过实际可用容量，否则会报错。

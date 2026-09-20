@@ -45,7 +45,7 @@ def asc_float2int64_rn(dst, src, mask, src_pos):
             dst[i] = int64_t(src[2 * i + offset])  # float -> int64_t，RINT舍入
 ```
 
-本接口为`reg`矢量计算接口，仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -104,10 +104,9 @@ __simd_callee__ inline void asc_float2int64_rn(vector_int64_t& dst,
 
 ## 约束说明
 
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
 - 位置选择标签用于选择源操作数中参与转换的元素索引。
-- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
-- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - `src_pos`取`ASC_POSITION_EVEN`时读取`src`的偶数索引，取`ASC_POSITION_ODD`时读取`src`的奇数索引。

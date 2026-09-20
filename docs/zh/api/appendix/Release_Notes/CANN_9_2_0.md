@@ -68,6 +68,7 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 - [asc_set_l13d_rpt](../../SIMD-API/c_api/cube_datamove/asc_set_l13d_rpt.md)、[asc_set_l13d_fmatrix](../../SIMD-API/c_api/cube_datamove/asc_set_l13d_fmatrix.md)和[asc_set_l13d_fmatrix_b](../../SIMD-API/c_api/cube_datamove/asc_set_l13d_fmatrix_b.md)新增参数化重载，分别直接配置3D im2col搬运的repeat步长、次数、方向和目的位置，以及左、右矩阵的Feature Map宽高与四周Padding。上述重载同时支持Atlas A2系列产品和Atlas A3系列产品，以及Ascend 950PR&950DT系列产品，仅在AIC上生效。
 - [asc_copy_l12ub](../../SIMD-API/c_api/cube_datamove/asc_copy_l12ub.md)的`sub_blockid`参数由`bool`调整为`int8_t`，明确使用`0`和`1`选择目的Vector Core；其余搬运参数名称同步调整为与功能含义一致的`burst_count`和`burst_len`。该调整仅涉及Ascend 950PR&950DT系列产品原型。
 - [asc_copy_gm2ub_align](../../SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md)和[asc_ndim_copy_gm2ub](../../SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)新增使用[asc_load_l2_cache_mode](../../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)配置L2 Cache策略的重载；[asc_copy_ub2gm_align](../../SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align.md)新增使用[asc_store_l2_cache_mode](../../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)配置L2 Cache策略的重载。上述强类型重载仅支持Ascend 950PR&950DT系列产品。
+- 新增[asc_ndim_copy_dci](../../SIMD-API/c_api/vector_datamove/asc_ndim_copy_dci.md)接口，用于刷新NDDMA DataCache。在多核场景下，调用[asc_ndim_copy_gm2ub](../../SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)读取可能被其他核更新的GM数据前，可通过该接口保证读取到最新数据。
 - 矩阵与矢量搬运配置新增[asc_load_l2_cache_mode](../../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)、[asc_store_l2_cache_mode](../../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)、[asc_channel_pad_mode](../../SIMD-API/c_api/defs/enum/asc_channel_pad_mode.md)、[asc_l13d_repeat_direction](../../SIMD-API/c_api/defs/enum/asc_l13d_repeat_direction.md)、[asc_unit_flag_mode](../../SIMD-API/c_api/defs/enum/asc_unit_flag_mode.md)、[asc_quant_mode](../../SIMD-API/c_api/defs/enum/asc_quant_mode.md)、[asc_relu_pre_mode](../../SIMD-API/c_api/defs/enum/asc_relu_pre_mode.md)和[asc_dual_dst_mode](../../SIMD-API/c_api/defs/enum/asc_dual_dst_mode.md)等强类型枚举或别名，减少使用无类型整数配置硬件行为的歧义。
 - `asc_hf32_round_mode`统一为`NEAREST_AWAY`和`NEAREST_EVEN`。旧枚举值`NEAREST_ZERO`作为兼容别名保留，其实际行为等同于`NEAREST_AWAY`。
 
@@ -101,6 +102,7 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 - 修复[asc_l13d_fmatrix_config](../../SIMD-API/c_api/defs/union/asc_l13d_fmatrix_config.md)中`l1_width`和`l1_height`字段顺序错误导致配置值与预期不一致的问题。
 - 修复[asc_copy_gm2l1](../../SIMD-API/c_api/cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1.md)和[asc_copy_l0c2l1](../../SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1.md)部分3510实现调用底层CCE指令时缺少参数的问题。
 - 将标量搬出实现中的`ASC_C_API_DEFAULIT_OFFSET`拼写修正为`ASC_C_API_DEFAULT_OFFSET`。
+- 修复`asc_bfloat162half_rn`和`asc_bfloat162half_rn_sat`实现使用错误舍入模式的问题，将底层`vcvt`舍入模式由`ROUND_C`修正为`ROUND_R`。
 
 ## 接口废弃
 

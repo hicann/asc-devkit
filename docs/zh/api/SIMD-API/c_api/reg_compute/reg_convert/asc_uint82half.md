@@ -43,7 +43,7 @@ def asc_uint82half(dst, src, mask, src_pos):
             dst[i] = half(src[2 * i + offset])  # uint8_t -> half
 ```
 
-本接口为`reg`矢量计算接口，仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -89,9 +89,8 @@ __simd_callee__ inline vector_half asc_uint82half(vector_uint8_t src,
 
 ## 约束说明
 
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
-- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
-- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - 选择读取`src`的奇数索引位置时，偶数索引位置的元素不参与计算；选择读取偶数索引位置时，奇数索引位置的元素不参与计算。

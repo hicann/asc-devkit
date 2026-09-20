@@ -47,6 +47,8 @@ def asc_reduce_sum_datablock(dst, src, mask):
         dst[i] = 0                      # 其余位置置0
 ```
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -64,12 +66,12 @@ __simd_callee__ inline void asc_reduce_sum_datablock(vector_<dst_dtype>& dst,
 
 | `src_dtype` | `dst_dtype` |
 | ----------- | ----------- |
-| `int16_t`   | `int32_t`   |
-| `uint16_t`  | `uint32_t`  |
-| `half`      | `half`      |
-| `int32_t`   | `int32_t`   |
-| `uint32_t`  | `uint32_t`  |
-| `float`     | `float`     |
+| `int16_t` | `int32_t` |
+| `uint16_t` | `uint32_t` |
+| `half` | `half` |
+| `int32_t` | `int32_t` |
+| `uint32_t` | `uint32_t` |
+| `float` | `float` |
 
 ### 函数原型典型示例
 
@@ -84,11 +86,11 @@ __simd_callee__ inline void asc_reduce_sum_datablock(vector_half& dst,
 
 **表1** 参数说明
 
-| 参数名 | 输入/输出 | 描述                                     |
+| 参数名 | 输入/输出 | 描述 |
 | ------ | --------- | ---------------------------------------- |
-| dst  | 输出      | 目的操作数（矢量数据寄存器）。           |
-| src  | 输入      | 源操作数（矢量数据寄存器）。             |
-| mask | 输入      | 掩码寄存器，用于控制各元素是否参与归约。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 掩码寄存器，用于控制各元素是否参与归约。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -99,9 +101,7 @@ __simd_callee__ inline void asc_reduce_sum_datablock(vector_half& dst,
 
 ## 约束说明
 
-- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
-- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
-- `mask`需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 指令内累加顺序采用二叉树累加方式，在每个`DataBlock`（32B）内两两相加逐层归约求和，结果连续写入到目的操作数，目的操作数中的其它元素置0。
 - 当`DataBlock`中的元素均不参与计算（`mask`全为0）时，将0写入`dst`对应位置（对于浮点数则为+0）。
 - 对于输入为`uint16_t`/`int16_t`类型的情况，会提升精度到`uint32_t`/`int32_t`进行计算。

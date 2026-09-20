@@ -37,6 +37,8 @@ dst_1 &= \operatorname{argmin}\{src_i \mid mask_i = 1\}
 \end{aligned}
 $$
 
+本接口为Reg矢量计算接口，仅在AIV上生效。
+
 ## 函数原型
 
 ```c
@@ -67,11 +69,11 @@ __simd_callee__ inline void asc_reduce_min(vector_half& dst,
 
 **表1** 参数说明
 
-| 参数名 | 输入/输出 | 描述                                     |
+| 参数名 | 输入/输出 | 描述 |
 | ------ | --------- | ---------------------------------------- |
-| dst  | 输出      | 目的操作数（矢量数据寄存器）。           |
-| src  | 输入      | 源操作数（矢量数据寄存器）。             |
-| mask | 输入      | 掩码寄存器，用于控制各元素是否参与归约。 |
+| dst | 输出 | 目的操作数（矢量数据寄存器）。 |
+| src | 输入 | 源操作数（矢量数据寄存器）。 |
+| mask | 输入 | 掩码寄存器，用于控制各元素是否参与归约。 |
 
 矢量数据寄存器和掩码寄存器的详细说明请参见[reg数据类型定义](../../defs/type/data_type_definition.md)。
 
@@ -82,9 +84,7 @@ __simd_callee__ inline void asc_reduce_min(vector_half& dst,
 
 ## 约束说明
 
-- 通过引用参数输出结果的函数原型在非AIV上调用时直接返回。
-- 通过函数返回值输出结果的函数原型在非AIV上调用时返回对应矢量类型的默认构造值。
-- `mask`需通过掩码设置接口预先赋值后再传入，未赋值的掩码寄存器内容不确定，会导致有效元素位置错误。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 未被`mask`选中的元素被视为对应数据类型的最大值，浮点数类型的最大值为`+inf`。如果`src`中的所有元素均未被`mask`选中，则将该最大值写入`dst`的第0个元素，并将其余元素置0。
 - 比较时遵循$min(-0, +0) = -0$。
 - 如果输入数据中存在nan，则将nan写入`dst`的第0个元素，并将第一个nan的索引写入`dst`的第1个元素。
@@ -93,7 +93,7 @@ __simd_callee__ inline void asc_reduce_min(vector_half& dst,
 
 **规约产生值+索引两个结果，索引值需要强制类型转换**：
 
-`dst`的索引按照`dst`的数据类型存储，比如`dst`为half类型时，索引按照half类型存储，因此读取索引需要使用  reinterpret\_cast方法转换到整数类型。若数据类型是half，需要使用reinterpret\_cast\<uint16_t\*\>；若数据类型是float，需要使用reinterpret\_cast\<uint32\_t\*\>。值+索引的分别提取方式请参见[调用示例](#调用示例)。
+`dst`的索引按照`dst`的数据类型存储，比如`dst`为half类型时，索引按照half类型存储，因此读取索引需要使用reinterpret\_cast方法转换到整数类型。若数据类型是half，需要使用reinterpret\_cast\<uint16_t\*\>；若数据类型是float，需要使用reinterpret\_cast\<uint32\_t\*\>。值+索引的分别提取方式请参见[调用示例](#调用示例)。
 
 ## 调用示例
 

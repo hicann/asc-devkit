@@ -30,7 +30,7 @@
 
 对AR特殊寄存器进行清零操作。AR寄存器用于配合[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)及[asc_squeeze_and_storeunalign_finalize](asc_squeeze_and_storeunalign_finalize.md)使用：当调用asc_squeeze_and_storeunalign后，有效元素的总字节数会被存入AR寄存器用于asc_squeeze_and_storeunalign接口内自动地址偏移。在首次调用asc_squeeze_and_storeunalign之前，需调用本接口将AR寄存器清零。
 
-本接口仅在AIV上生效。
+本接口为Reg矢量计算接口，仅在AIV上生效。
 
 ## 函数原型
 
@@ -48,8 +48,7 @@ __simd_callee__ inline void asc_squeeze_and_storeunalign_init()
 
 ## 约束说明
 
-- 非AIV调用直接返回。
-- 本接口在Vector Function（`__simd_vf__`标记的函数）内调用。
+- Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 每组连续搬出操作开始前，需调用一次本接口，再调用[asc_squeeze_and_storeunalign](asc_squeeze_and_storeunalign.md)。如果在一组连续搬出过程中再次调用本接口，AR寄存器记录的字节偏移会被重置，后续数据可能覆盖已经写入的结果。
 - 开始新一组操作前，需先调用[asc_squeeze_and_storeunalign_finalize](asc_squeeze_and_storeunalign_finalize.md)完成上一组操作，避免上一组暂存在非对齐寄存器中的尾块数据丢失。
 - 本接口执行后，首次调用`asc_squeeze_and_storeunalign`时使用的非对齐寄存器无需预先初始化。

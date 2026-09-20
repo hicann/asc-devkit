@@ -1,6 +1,8 @@
 # Reg矢量计算
 
 - **[概述](./overview.md)**
+- **[关键特性说明](./key_features.md)**
+- **[VF调用](vf_call/asc_vf_call.md)**
 - **[Reg数据搬入](load/load.md)**
 - **[Reg聚合搬入](ub_gather/gather.md)**
 - **[Reg数据搬出](store/store.md)**
