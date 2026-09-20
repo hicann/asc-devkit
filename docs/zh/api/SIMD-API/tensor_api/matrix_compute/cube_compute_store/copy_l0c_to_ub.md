@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 
 ## 功能说明
@@ -36,7 +36,7 @@ L0C Buffer到UB搬运支持不量化输出、`float`到`half`或`bfloat16_t`的�
 
 接口支持batch模式。batch模式用于一次完成多块矩阵计算结果的搬运。layout在原矩阵layout最外层增加Batch维度。源张量为`NZ`格式，分形固定为16×16，可通过`make_frame_layout<nz_layout_ptn>(batch, m, n)`构造。目的张量可通过`make_frame_layout<nd_layout_ptn>(batch, m, n)`、`make_frame_layout<dn_layout_ptn>(batch, m, n)`、`make_frame_layout<nd_ext_layout_ptn>(batch, m, n)`、`make_frame_layout<dn_ext_layout_ptn>(batch, m, n)`或`make_frame_layout<nz_layout_ptn, DstType>(batch, m, n)`构造。`NZ`格式可通过模板参数`DstType`指定目的数据类型，`C0`表示NZ格式的列分形大小，默认为16。
 
-随路量化、随路Relu、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径如下图所示。图中的F32到F16、F32到BF16为非量化模式，仅进行cast。其余路径为不量化、随路scalar或tensor量化模式。针对Ascend 950PR/Ascend 950DT，还支持NZ2DN随路格式转换。
+随路量化、随路Relu、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径如下图所示。图中的F32到F16、F32到BF16为非量化模式，仅进行cast。其余路径为不量化、随路scalar或tensor量化模式。针对Ascend 950PR&950DT系列产品，还支持NZ2DN随路格式转换。
 
 **图1**  L0C2UB流程图
 

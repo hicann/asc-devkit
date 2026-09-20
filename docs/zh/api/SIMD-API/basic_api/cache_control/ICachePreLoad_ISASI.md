@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cache_control/ICachePreLoad_ISASI_res.md#id1 -->
 
@@ -49,13 +49,13 @@ __aicore__ inline void ICachePreLoad(const int64_t preFetchLen)
 <!-- npu="950,A3,910b" id8 -->
 针对如下型号：
 <!-- npu="950" id9 -->
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT系列产品
 <!-- end id9 -->
 <!-- npu="A3" id10 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品
+- Atlas A3系列产品
 <!-- end id10 -->
 <!-- npu="910b" id11 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+- Atlas A2系列产品
 <!-- end id11 -->
 preFetchLen参数单位为2K Byte，取值满足如下要求：
 
@@ -66,7 +66,7 @@ $$
 其中，AIC和AIV的ICache大小分别为32KB和16KB。
 <!-- end id8 -->
 <!-- npu="310p" id110 -->
-针对Atlas 推理系列产品AI Core，传入该参数无效，预取长度均为128Byte。
+针对Atlas推理系列产品AI Core，传入该参数无效，预取长度均为128Byte。
 <!-- end id110 --> 
 
 ## 返回值说明<a name="section640mcpsimp"></a>

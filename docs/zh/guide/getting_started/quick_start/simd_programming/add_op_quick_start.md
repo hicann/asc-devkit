@@ -116,7 +116,7 @@
       > [!NOTE]说明
       > - 该样例支持以下型号：
       >     <!-- npu="950" id3 -->
-      >     - Ascend 950PR/Ascend 950DT
+      >     - Ascend 950PR&950DT系列产品
       >     <!-- end id3 -->
       >     <!-- npu="A3" id4 -->
       >     - Atlas A3训练系列产品/Atlas A3推理系列产品
@@ -210,7 +210,7 @@
 
 <!-- npu="950" id6 -->
 > [!NOTE]说明
-> Ascend 950PR/Ascend 950DT新一代架构在传统[UB](../../../technical_appendix/concepts_and_terms/glossary.md)缓存体系的基础上，开放了寄存器（Register）可编程能力，单个寄存器大小为256B。基于寄存器的矢量计算称为Reg矢量计算，而基于传统UB的矢量计算称为Memory矢量计算。
+> Ascend 950PR&950DT系列产品新一代架构在传统[UB](../../../technical_appendix/concepts_and_terms/glossary.md)缓存体系的基础上，开放了寄存器（Register）可编程能力，单个寄存器大小为256B。基于寄存器的矢量计算称为Reg矢量计算，而基于传统UB的矢量计算称为Memory矢量计算。
 <!-- end id6 -->
 
 若要深入理解Ascend C的SIMD与SIMT编程模型，请参阅[Ascend C编程模型概述](../../../programming_guide/programming_model/programming_model_overview.md)。

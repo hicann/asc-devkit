@@ -5,13 +5,13 @@
 >[!NOTE]说明 
 >该性能优化指导适用于如下产品型号：
 ><!-- npu="950" id1 -->
->- Ascend 950PR/Ascend 950DT
+>- Ascend 950PR&950DT系列产品
 ><!-- end id1 -->
 ><!-- npu="A3" id2 -->
->- Atlas A3 训练系列产品/Atlas A3 推理系列产品
+>- Atlas A3系列产品
 ><!-- end id2 -->
 ><!-- npu="910b" id3 -->
->- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+>- Atlas A2系列产品
 ><!-- end id3 -->
 
 【描述】L2 Cache常用于缓存频繁访问的数据，其物理位置如下图所示：

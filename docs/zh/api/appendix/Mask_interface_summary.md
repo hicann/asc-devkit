@@ -3,10 +3,10 @@
 <!-- npu="A3,910b" id3 -->
 以下内容针对如下型号生效：
 <!-- npu="A3" id1 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品
+- Atlas A3系列产品
 <!-- end id1 -->
 <!-- npu="910b" id2 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+- Atlas A2系列产品
 <!-- end id2 -->
 
 本节汇总了各接口中模板参数isSetMask的支持情况。

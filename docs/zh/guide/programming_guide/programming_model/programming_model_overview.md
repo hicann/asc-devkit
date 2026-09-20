@@ -62,7 +62,7 @@
 - **本地存储**：AI Core内置的高速存储资源，用于缓存实时计算所需数据，可有效规避全局Device Memory的高延迟访问问题，显著提升整体计算效率。
 
 <!-- npu="950" id1 -->
-需重点区分架构差异：Ascend 950PR/Ascend 950DT架构之前的AI Core，仅支持**SIMD**单一执行模型；自Ascend 950PR/Ascend 950DT架构起，AI Core向量处理单元同时兼容SIMD、SIMT两种并行模型，可根据不同计算任务灵活选择并行方案，适配更多复杂业务场景。
+需重点区分架构差异：Ascend 950PR&950DT系列产品架构之前的AI Core，仅支持**SIMD**单一执行模型；自Ascend 950PR&950DT系列产品架构起，AI Core向量处理单元同时兼容SIMD、SIMT两种并行模型，可根据不同计算任务灵活选择并行方案，适配更多复杂业务场景。
 <!-- end id1 -->
 
 > 💡 **为什么要了解AI Core内部结构？**  
@@ -82,7 +82,7 @@
 ### SIMT编程（辅助补充）
 - **能力范围**：仅支持向量计算，不支持矩阵运算或向量与矩阵的融合计算，功能范围相对有限；
 - **适用场景**：离散数据访问、复杂分支控制的向量算子，同时适合熟悉SIMT模型的开发者快速上手Ascend C；
-- **限制**：<!-- npu="950" id3 -->当前仅支持Ascend 950PR/Ascend 950DT。<!-- end id3 -->
+- **限制**：<!-- npu="950" id3 -->当前仅支持Ascend 950PR&950DT系列产品。<!-- end id3 -->
   <!-- @ref: asc-devkit/res/docs/zh/guide/programming_guide/programming_model/programming_model_overview_res.md#id1 -->
 - **学习路径**：详见[AI Core SIMT编程](./ai_core_simt_programming/overview.md)；算子开发参见[SIMT算子实现](../../operator_practice/simt_operator_impl/simt_operator_impl.md)。
 <!-- end id2 -->

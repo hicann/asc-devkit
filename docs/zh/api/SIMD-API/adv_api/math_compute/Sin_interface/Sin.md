@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id3 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id3 -->
 <!-- npu="A3" id4 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id4 -->
 <!-- npu="910b" id5 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id5 -->
 <!-- npu="310b" id6 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id7 -->
 <!-- npu="310p" id8 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id8 -->
 <!-- npu="910" id9 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/math_compute/Sin_interface/Sin_res.md#id1 -->
 
@@ -83,7 +83,7 @@ Sin\(x\)的泰勒展开式为：
 | --- | --- |
 | T | 操作数的数据类型。支持的数据类型为：half、float。 |
 | isReuseSource | 是否允许修改源操作数，默认值为false。该参数仅在输入的数据类型为float时生效。<br>true：开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后本接口内部计算时复用srcTensor的内存空间，节省部分内存空间；false：本接口内部计算时不复用srcTensor的内存空间。 |
-| config | <!-- npu="950" id10 -->该参数仅支持Ascend 950PR/Ascend 950DT。<br><br><!-- end id10 -->Sin算法的相关配置。此参数可选配，SinConfig类型，具体定义如下方代码所示，其中参数的含义为：<br>algo：Sin内部实现使用的算法。SinAlgo类型，支持的取值如下：POLYNOMIAL_APPROXIMATION：默认值。该算法通过简单的多项式逼近实现Sin接口，支持的输入值域范围为[-65504.0, 65504.0]，支持的数据类型为half、float。RADIAN_REDUCTION：该算法通过完整的周期约减实现Sin接口，支持输入全值域，支持的数据类型为half、float。 |
+| config | <!-- npu="950" id10 -->该参数仅支持Ascend 950PR&950DT系列产品。<br><br><!-- end id10 -->Sin算法的相关配置。此参数可选配，SinConfig类型，具体定义如下方代码所示，其中参数的含义为：<br>algo：Sin内部实现使用的算法。SinAlgo类型，支持的取值如下：POLYNOMIAL_APPROXIMATION：默认值。该算法通过简单的多项式逼近实现Sin接口，支持的输入值域范围为[-65504.0, 65504.0]，支持的数据类型为half、float。RADIAN_REDUCTION：该算法通过完整的周期约减实现Sin接口，支持输入全值域，支持的数据类型为half、float。 |
 
 ```
 struct SinConfig {
@@ -108,17 +108,17 @@ enum class SinAlgo { POLYNOMIAL_APPROXIMATION = 0, RADIAN_REDUCTION };
 ## 约束说明
 
 <!-- npu="950" id11 -->
--   对于Ascend 950PR/Ascend 950DT，模板参数config中使用多项式拟合算法POLYNOMIAL\_APPROXIMATION时，必须保证输入源数据的值域在\[-65504.0, 65504.0\]范围内。
+-   对于Ascend 950PR&950DT系列产品，模板参数config中使用多项式拟合算法POLYNOMIAL\_APPROXIMATION时，必须保证输入源数据的值域在\[-65504.0, 65504.0\]范围内。
 <!-- end id11 -->
 -   对于以下产品，输入源数据必须保持值域在\[-65504.0, 65504.0\]范围内。
         <!-- npu="A3" id12 -->
-    -   Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    -   Atlas A3系列产品
         <!-- end id12 -->
         <!-- npu="910b" id13 -->
-    -   Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    -   Atlas A2系列产品
         <!-- end id13 -->
         <!-- npu="310p" id14 -->
-    -   Atlas 推理系列产品AI Core
+    -   Atlas推理系列产品AI Core
         <!-- end id14 -->
 
 -   **不支持源操作数与目的操作数地址重叠。**

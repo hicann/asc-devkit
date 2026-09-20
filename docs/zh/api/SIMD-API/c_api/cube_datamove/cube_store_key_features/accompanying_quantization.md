@@ -12,17 +12,17 @@
 - Tensor/Vector：C矩阵每一列对应一个8B量化参数，参数shape为[N]。先用[asc_copy_l12fb](../asc_copy_l12fb/asc_copy_l12fb.md)从L1 Buffer搬入量化区，再设置起始地址索引。量化地址索引为量化区字节地址除以128，不是元素下标；激活地址索引为激活区字节地址除以64。两个参数区分别寻址，起始地址与长度都不能超过对应区域。
 
 <!-- npu="950" id1 -->
-针对Ascend 950PR/Ascend 950DT产品，Scalar系数使用[asc_set_l0c_copy_prequant(scale, offset, is_signed)](../asc_set_l0c_copy_prequant.md)配置，Vector地址使用[asc_set_l0c_copy_config](../asc_set_l0c_copy_config.md)配置。搬出调用的`quant_pre_mode`使用`asc_quant_mode`枚举。
+针对Ascend 950PR&950DT系列产品产品，Scalar系数使用[asc_set_l0c_copy_prequant(scale, offset, is_signed)](../asc_set_l0c_copy_prequant.md)配置，Vector地址使用[asc_set_l0c_copy_config](../asc_set_l0c_copy_config.md)配置。搬出调用的`quant_pre_mode`使用`asc_quant_mode`枚举。
 <!-- end id1 -->
 
 <!-- npu="910b,A3" id2 -->
 针对如下产品型号：
 
 <!-- npu="A3" id4 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品
+Atlas A3系列产品
 <!-- end id4 -->
 <!-- npu="910b" id5 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品
+Atlas A2系列产品
 <!-- end id5 -->
 
 Scalar系数通过[asc_set_l0c_copy_prequant](../asc_set_l0c_copy_prequant.md)传入打包后的`uint64_t config`，低32位必须是float的位模式，不能将浮点数数值转换成uint64_t；Vector地址使用[asc_set_l0c_copy_config](../asc_set_l0c_copy_config.md)配置。搬出调用的`quant_pre`使用整数，可显式转换`asc_quant_mode`枚举得到模式编码。
@@ -42,7 +42,7 @@ REQ8,                  // ReQuant_int8：int32_t重量化成int8_t/uint8_t，sca
 VREQ8,                 // Vector_ReQuant_int8：int32_t重量化成int8_t/uint8_t，tensor量化
 ```
 <!-- npu="950" id3 -->
-除上述量化模式外，Ascend 950PR/Ascend 950DT产品还额外支持以下量化模式：
+除上述量化模式外，Ascend 950PR&950DT系列产品产品还额外支持以下量化模式：
 
 ```text
 QF322FP8_PRE,          // Quant_Float32_2_FP8: float量化成fp8_e4m3fn_t，scalar量化

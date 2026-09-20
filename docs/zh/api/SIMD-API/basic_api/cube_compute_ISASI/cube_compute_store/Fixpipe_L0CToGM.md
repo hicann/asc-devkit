@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="zh-cn_topic_0000002542828493_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持包含FixpipeParamsV220/FixpipeParamsArch3510参数的接口。
+- Ascend 950PR&950DT系列产品：支持包含FixpipeParamsV220/FixpipeParamsArch3510参数的接口。
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：仅支持包含FixpipeParamsV220参数的接口。
+- Atlas A3系列产品：仅支持包含FixpipeParamsV220参数的接口。
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：仅支持包含FixpipeParamsV220参数的接口。
+- Atlas A2系列产品：仅支持包含FixpipeParamsV220参数的接口。
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：仅支持包含FixpipeParamsM300参数的接口。
+- Atlas 200I/500 A2推理产品：仅支持包含FixpipeParamsM300参数的接口。
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM_res.md#id1 -->
 
@@ -107,17 +107,17 @@
 | 参数名 | 描述 |
 | ---------- | ---------- |
 | T/U | 目的操作数/源操作数的数据类型。支持的数据类型请参考[数据类型](#zh-cn_topic_0000002542828493_section4219135304818)。 |
-| config | Fixpipe相关配置参数，类型为FixpipeConfig。取值如下：<br>&nbsp;&nbsp;&bull; **CFG_ROW_MAJOR（默认取值）**：开启NZ2ND，输出数据格式为ND格式。<br>&nbsp;&nbsp;&bull; CFG_NZ：NZ2NZ，输出数据格式为NZ格式。<br><!-- npu="950" id14 -->&nbsp;&nbsp;&bull; CFG_COLUMN_MAJOR：针对Ascend 950PR/Ascend 950DT，开启NZ2DN，输出数据格式为DN格式。<br><!-- end id14 --><br>struct FixpipeConfig {<br>    CO2Layout format;<br>    bool isToUB; // 用于用户指定目的地址的位置是否是Unified Buffer（UB） <br>};<br>enum class CO2Layout : uint8_t {<br>    NZ = 0, // 输出数据格式仍为NZ格式。<br>    ROW_MAJOR, // 开启NZ2ND，输出数据格式为ND格式。<br><!-- npu="950" id15 -->    COLUMN_MAJOR, // 仅Ascend 950PR/Ascend 950DT支持，开启NZ2DN，输出数据格式为DN格式。<br><!-- end id15 -->};<br>constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ};<br>constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR};<!-- npu="950" id16 --><br>constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR}; // 仅Ascend 950PR/Ascend 950DT支持<!-- end id16 --> |
+| config | Fixpipe相关配置参数，类型为FixpipeConfig。取值如下：<br>&nbsp;&nbsp;&bull; **CFG_ROW_MAJOR（默认取值）**：开启NZ2ND，输出数据格式为ND格式。<br>&nbsp;&nbsp;&bull; CFG_NZ：NZ2NZ，输出数据格式为NZ格式。<br><!-- npu="950" id14 -->&nbsp;&nbsp;&bull; CFG_COLUMN_MAJOR：针对Ascend 950PR&950DT系列产品，开启NZ2DN，输出数据格式为DN格式。<br><!-- end id14 --><br>struct FixpipeConfig {<br>    CO2Layout format;<br>    bool isToUB; // 用于用户指定目的地址的位置是否是Unified Buffer（UB） <br>};<br>enum class CO2Layout : uint8_t {<br>    NZ = 0, // 输出数据格式仍为NZ格式。<br>    ROW_MAJOR, // 开启NZ2ND，输出数据格式为ND格式。<br><!-- npu="950" id15 -->    COLUMN_MAJOR, // 仅Ascend 950PR&950DT系列产品支持，开启NZ2DN，输出数据格式为DN格式。<br><!-- end id15 -->};<br>constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ};<br>constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR};<!-- npu="950" id16 --><br>constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR}; // 仅Ascend 950PR&950DT系列产品支持<!-- end id16 --> |
 | S | 参数cbufWorkspace的数据类型，即随路量化参数的数据类型。<br>&nbsp;&nbsp;&bull; 当目的操作数、源操作数、cbufWorkspace使用基础数据类型时，模板参数S必须为uint64_t类型，否则编译失败。<br>&nbsp;&nbsp;&bull; 当目的操作数、源操作数、cbufWorkspace使用TensorTrait类型时，模板参数S的LiteType必须为uint64_t类型，否则编译失败。<br>模板参数S后一个模板参数仅用于上述数据类型检查，用户无需关注。 |
 
 **表2** Fixpipe参数说明
 
 | 参数名称 | 输入/输出 | 含义 |
 | ---------- | ---------- | ---------- |
-| dst | 输出 | 目的操作数，类型为GlobalTensor。数据格式为NZ、ND格式。ND地址需要满足1字节对齐，NZ地址需满足32字节对齐。<!-- npu="950" id17 --><br>针对Ascend 950PR/Ascend 950DT，还支持数据格式为DN，地址需满足32字节对齐。<!-- end id17 --> |
+| dst | 输出 | 目的操作数，类型为GlobalTensor。数据格式为NZ、ND格式。ND地址需要满足1字节对齐，NZ地址需满足32字节对齐。<!-- npu="950" id17 --><br>针对Ascend 950PR&950DT系列产品，还支持数据格式为DN，地址需满足32字节对齐。<!-- end id17 --> |
 | src | 输入 | 源操作数，类型为LocalTensor，支持的物理地址为L0C Buffer（TPosition为CO1），为Mmad接口计算的结果。数据格式为NZ格式，地址需要满足64字节对齐。 |
 | intriParams | 输入 | Fixpipe搬运参数，具体定义请参考 "basic_api/kernel_struct_fixpipe.h"。<br>参数说明请参考Fixpipe搬运参数（FixpipeParamsArch3510、FixpipeParamsV220、FixpipeParamsM300）结构体说明。 |
-| cbufWorkspace | 输入 | 量化参数，类型为`LocalTensor<uint64_t>`，支持的物理地址为L1 Buffer（TPosition为C1），地址需满足32字节对齐。<br>&nbsp;&nbsp;&bull; 当quantPre为VDEQF16、VQF322B8_PRE、VREQ8时支持。<br><!-- npu="950" id18 -->&nbsp;&nbsp;&bull; 针对Ascend 950PR/Ascend 950DT，除上述外还有VQF322FP8_PRE、VQF322HIF8_PRE、VQF322HIF8_PRE_HYBRID、VQS322BF16_PRE、VQF322F16_PRE、VQF322BF16_PRE、VQF322F32_PRE支持。<br><!-- end id18 -->quantPre介绍请参考Fixpipe搬运参数结构体中quantPre部分。 |
+| cbufWorkspace | 输入 | 量化参数，类型为`LocalTensor<uint64_t>`，支持的物理地址为L1 Buffer（TPosition为C1），地址需满足32字节对齐。<br>&nbsp;&nbsp;&bull; 当quantPre为VDEQF16、VQF322B8_PRE、VREQ8时支持。<br><!-- npu="950" id18 -->&nbsp;&nbsp;&bull; 针对Ascend 950PR&950DT系列产品，除上述外还有VQF322FP8_PRE、VQF322HIF8_PRE、VQF322HIF8_PRE_HYBRID、VQS322BF16_PRE、VQF322F16_PRE、VQF322BF16_PRE、VQF322F32_PRE支持。<br><!-- end id18 -->quantPre介绍请参考Fixpipe搬运参数结构体中quantPre部分。 |
 
 **表3** Fixpipe搬运参数（FixpipeParamsArch3510）结构体说明
 
@@ -175,7 +175,7 @@
 **源矩阵与目的矩阵支持的数据类型组合**
 
 <!-- npu="950" id19 -->
-针对Ascend 950PR/Ascend 950DT，Fixpipe接口支持的数据类型组合如下：
+针对Ascend 950PR&950DT系列产品，Fixpipe接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（GM） |
 | ---------- | ---------- |
@@ -185,7 +185,7 @@
 <!-- end id19 -->
 
 <!-- npu="A3" id20 -->
-针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，Fixpipe接口支持的数据类型组合如下：
+针对Atlas A3系列产品，Fixpipe接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（GM） |
 | ---------- | ---------- |
@@ -195,7 +195,7 @@
 <!-- end id20 -->
 
 <!-- npu="910b" id21 -->
-针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，Fixpipe接口支持的数据类型组合如下：
+针对Atlas A2系列产品，Fixpipe接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（GM） |
 | ---------- | ---------- |
@@ -205,7 +205,7 @@
 <!-- end id21 -->
 
 <!-- npu="310b" id22 -->
-针对Atlas 200I/500 A2 推理产品，Fixpipe接口支持的数据类型组合如下：
+针对Atlas 200I/500 A2推理产品，Fixpipe接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（GM） |
 | ---------- | ---------- |
@@ -235,10 +235,10 @@
 <!-- npu="A3,910b" id27 -->
 - 针对如下产品型号，特殊值/边界值约束说明如下：
     <!-- npu="A3" id25 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    Atlas A3系列产品
     <!-- end id25 -->
     <!-- npu="910b" id26 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    Atlas A2系列产品
     <!-- end id26 -->
     对于浮点类型inf/nan输入输出，可以通过CTRL寄存器（控制寄存器）的CTRL\[48\]比特位进行设置，控制浮点数量化搬出时的饱和模式：
 
@@ -253,7 +253,7 @@
     对于整数类型只有饱和模式。
 <!-- end id27 -->
 <!-- npu="950" id29 -->
-- Ascend 950PR/Ascend 950DT特殊值/边界值约束说明：
+- Ascend 950PR&950DT系列产品特殊值/边界值约束说明：
 
     对于浮点类型inf/nan输入输出，可以通过CTRL寄存器（控制寄存器）的CTRL\[48\]比特位进行设置，控制浮点数量化搬出时的饱和模式；
 

@@ -13,7 +13,7 @@ AI Core内外包含多级存储单元，各存储单元的主要用途如下：
 - Fixpipe Buffer：用于存放Fixpipe搬运所需的量化参数。
 
 <!-- npu="950" id1 -->
-**针对Ascend 950PR/Ascend 950DT：**
+**针对Ascend 950PR&950DT系列产品：**
 
 各存储单元的空间大小和对齐要求请参见[存储单元规格](../../../guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_3510.md#section6500173264510)。如果具体C API中已明确操作数起始地址的对齐要求，则以具体C API中的说明为准。
 
@@ -25,10 +25,10 @@ AI Core内外包含多级存储单元，各存储单元的主要用途如下：
 <!-- npu="A3,910b" id2 -->
 **针对如下型号：**
 <!-- npu="A3" id3 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品
+- Atlas A3系列产品
 <!-- end id3 -->
 <!-- npu="910b" id4 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+- Atlas A2系列产品
 <!-- end id4 -->
 各存储单元的空间大小和对齐要求请参见[存储单元规格](../../../guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_2201.md#section6500173264510)。如果具体C API中已明确操作数起始地址的对齐要求，则以具体C API中的说明为准。
 

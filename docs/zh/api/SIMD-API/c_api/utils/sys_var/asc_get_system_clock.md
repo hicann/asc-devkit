@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 
 ## 功能说明
@@ -29,15 +29,15 @@
 读取当前系统时钟计数器，返回`int64_t`类型的当前时间值（单位：微秒）。该接口在底层读取系统cycle计数器后，按当前芯片的时钟频率进行换算，直接返回微秒级时间值，无需调用方自行换算。
 
 <!-- npu="950" id8 -->
-- 针对Ascend 950PR/Ascend 950DT，时钟频率为1GHz，换算系数为1000，即`clock = cycle / 1000`。
+- 针对Ascend 950PR&950DT系列产品，时钟频率为1GHz，换算系数为1000，即`clock = cycle / 1000`。
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，时钟频率为50MHz，换算系数为50，即`clock = cycle / 50`。
+- 针对Atlas A3系列产品，时钟频率为50MHz，换算系数为50，即`clock = cycle / 50`。
 <!-- end id9 -->
 
 <!-- npu="910b" id10 -->
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，时钟频率为50MHz，换算系数为50，即`clock = cycle / 50`。
+- 针对Atlas A2系列产品，时钟频率为50MHz，换算系数为50，即`clock = cycle / 50`。
 <!-- end id10 -->
 
 本接口与[asc_get_system_cycle](asc_get_system_cycle.md)的区别在于：`asc_get_system_cycle`返回原始cycle计数值，需要调用方根据芯片频率自行换算为时间；`asc_get_system_clock`在接口内部完成换算，直接返回微秒级时间值。本接口在AIC与AIV上均可调用，返回值含义一致。
@@ -71,7 +71,7 @@ PIPE_S
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id11 -->
-以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main

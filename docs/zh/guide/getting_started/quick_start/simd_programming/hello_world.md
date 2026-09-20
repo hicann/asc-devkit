@@ -52,13 +52,13 @@
     > [!NOTE]说明
     >- 该样例支持如下型号：
     >    <!-- npu="950" id1 -->
-    >    - Ascend 950PR/Ascend 950DT
+    >    - Ascend 950PR&950DT系列产品
     >    <!-- end id1 -->
     >    <!-- npu="A3" id2 -->
-    >    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    >    - Atlas A3系列产品
     >    <!-- end id2 -->
     >    <!-- npu="910b" id3 -->
-    >    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    >    - Atlas A2系列产品
     >    <!-- end id3 -->
     > - 编译选项`--npu-arch`用于指定NPU架构版本，`dav-`后为架构版本号，请替换为您实际使用的版本。各AI处理器型号对应的架构版本号请通过[AI处理器型号和 \_\_NPU\_ARCH\_\_ 的对应关系](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)查询。
 

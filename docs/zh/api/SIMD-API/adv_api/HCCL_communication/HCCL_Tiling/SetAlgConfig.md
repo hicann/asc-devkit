@@ -16,7 +16,7 @@ uint32_t SetAlgConfig(const std::string& algConfig)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| algConfig | 输入 | 通信算法配置。string类型，支持的最大长度为128字节。<!-- npu="950" id1 --><br><br>针对Ascend 950PR/Ascend 950DT，该参数为预留字段，配置后不生效，默认仅支持FullMesh算法。FullMesh算法即NPU之间的全连接，任意两个NPU之间可以直接进行数据收发。<!-- end id1 --><!-- npu="A3" id2 --><br><br>针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，当前支持的取值为：<br>"AllReduce=level0:doublering"：AllReduce通信任务。<br>"AllGather=level0:doublering"：AllGather通信任务。<br>"ReduceScatter=level0:doublering"：ReduceScatter通信任务。<br>"AlltoAll=level0:fullmesh;level1:pairwise"：AlltoAllV和AlltoAll通信任务。<br>"BatchWrite=level0:fullmesh"：BatchWrite通信任务。<!-- end id2 --><!-- npu="910b" id3 --><br><br>针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数为预留字段，配置后不生效，默认仅支持FullMesh算法。FullMesh算法即NPU之间的全连接，任意两个NPU之间可以直接进行数据收发。<!-- end id3 --> |
+| algConfig | 输入 | 通信算法配置。string类型，支持的最大长度为128字节。<!-- npu="950" id1 --><br><br>针对Ascend 950PR&950DT系列产品，该参数为预留字段，配置后不生效，默认仅支持FullMesh算法。FullMesh算法即NPU之间的全连接，任意两个NPU之间可以直接进行数据收发。<!-- end id1 --><!-- npu="A3" id2 --><br><br>针对Atlas A3系列产品，当前支持的取值为：<br>"AllReduce=level0:doublering"：AllReduce通信任务。<br>"AllGather=level0:doublering"：AllGather通信任务。<br>"ReduceScatter=level0:doublering"：ReduceScatter通信任务。<br>"AlltoAll=level0:fullmesh;level1:pairwise"：AlltoAllV和AlltoAll通信任务。<br>"BatchWrite=level0:fullmesh"：BatchWrite通信任务。<!-- end id2 --><!-- npu="910b" id3 --><br><br>针对Atlas A2系列产品，该参数为预留字段，配置后不生效，默认仅支持FullMesh算法。FullMesh算法即NPU之间的全连接，任意两个NPU之间可以直接进行数据收发。<!-- end id3 --> |
 
 ## 返回值说明
 

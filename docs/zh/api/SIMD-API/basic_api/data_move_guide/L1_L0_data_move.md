@@ -56,7 +56,7 @@ LoadData（2D矩阵搬运V2）能够实现L1 Buffer到L0A Buffer之间的数据�
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
-- 仅Ascend 950PR/Ascend 950DT支持
+- 仅Ascend 950PR&950DT系列产品支持
 
     ```cpp
     template <typename T>
@@ -78,14 +78,14 @@ LoadData（MX矩阵搬运）负责完成矩阵计算所需的左右矩阵数据�
 
 src和srcMx为源操作数，dst为目的操作数；loadDataParams和loadMxDataParams为搬运参数。
 
-- LoadData（MX矩阵搬运）接口（仅Ascend 950PR/Ascend 950DT支持）
+- LoadData（MX矩阵搬运）接口（仅Ascend 950PR&950DT系列产品支持）
 
     ```cpp
     template <typename T, typename U = T>
     __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
     ```
 
-- LoadData（MX矩阵搬运）接口，支持源操作数和目的操作数数据类型不一致（仅Ascend 950PR/Ascend 950DT支持）
+- LoadData（MX矩阵搬运）接口，支持源操作数和目的操作数数据类型不一致（仅Ascend 950PR&950DT系列产品支持）
 
     ```cpp
     template <typename T, typename U>
@@ -112,7 +112,7 @@ __aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const Lo
 ```
 
 <!-- npu="950" id10 -->
-仅Ascend 950PR/Ascend 950DT支持
+仅Ascend 950PR&950DT系列产品支持
 
 ```cpp
 template <typename T>
@@ -148,7 +148,7 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
     ```
 
 <!-- npu="950" id3 -->
-- LoadData（卷积数据搬运）v2Pro接口（仅Ascend 950PR/Ascend 950DT支持）
+- LoadData（卷积数据搬运）v2Pro接口（仅Ascend 950PR&950DT系列产品支持）
 
     ```cpp
     template <typename T>
@@ -170,7 +170,7 @@ LoadDataWithStride用于将NC1HWC0格式的Feature Map完成Image to Column展�
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
-- 仅Ascend 950PR/Ascend 950DT支持
+- 仅Ascend 950PR&950DT系列产品支持
 
     ```cpp
     template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>,typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
@@ -210,7 +210,7 @@ LoadData（2D矩阵搬运V2）能够实现L1 Buffer到L0B Buffer之间的数据�
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
-- 仅Ascend 950PR/Ascend 950DT支持
+- 仅Ascend 950PR&950DT系列产品支持
 
     ```cpp
     template <typename T>
@@ -232,14 +232,14 @@ LoadData（MX矩阵搬运）负责完成矩阵计算所需的左右矩阵数据�
 
 src和srcMx为源操作数，dst为目的操作数；loadDataParams和loadMxDataParams为搬运参数。
 
-- LoadData（MX矩阵搬运）接口（仅Ascend 950PR/Ascend 950DT支持）
+- LoadData（MX矩阵搬运）接口（仅Ascend 950PR&950DT系列产品支持）
 
     ```cpp
     template <typename T, typename U = T>
     __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
     ```
 
-- LoadData（MX矩阵搬运）接口，支持源操作数和目的操作数数据类型不一致（仅Ascend 950PR/Ascend 950DT支持）
+- LoadData（MX矩阵搬运）接口，支持源操作数和目的操作数数据类型不一致（仅Ascend 950PR&950DT系列产品支持）
 
     ```cpp
     template <typename T, typename U>
@@ -266,7 +266,7 @@ __aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const Lo
 ```
 
 <!-- npu="950" id11 -->
-仅Ascend 950PR/Ascend 950DT支持
+仅Ascend 950PR&950DT系列产品支持
 
 ```cpp
 template <typename T>
@@ -302,7 +302,7 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
     ```
 
 <!-- npu="950" id6 -->
-- LoadData（卷积数据搬运）v2Pro接口（仅Ascend 950PR/Ascend 950DT支持）
+- LoadData（卷积数据搬运）v2Pro接口（仅Ascend 950PR&950DT系列产品支持）
 
     ```cpp
     template <typename T>
@@ -324,7 +324,7 @@ LoadDataWithStride用于将NC1HWC0格式的Feature Map完成Image to Column展�
 
 src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数。
 
-- 仅Ascend 950PR/Ascend 950DT支持
+- 仅Ascend 950PR&950DT系列产品支持
 
     ```cpp
     template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>,typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
@@ -347,11 +347,11 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
 - 仅如下产品型号支持：
 
     <!-- npu="A3" id7 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品；
+    Atlas A3系列产品；
     <!-- end id7 -->
 
     <!-- npu="910b" id8 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品；
+    Atlas A2系列产品；
     <!-- end id8 -->
 
     ```cpp
@@ -387,7 +387,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<U>&
 - L0C Buffer -> L1 Buffer
     - CO1 -> C1
 
-搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR/Ascend 950DT为例，接口示例如下：
+搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR&950DT系列产品为例，接口示例如下：
 
 注意，不同产品型号的接口原型可能不同，具体介绍请参考：[Fixpipe（L0C到L1数据搬运）](../cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1.md)。
 

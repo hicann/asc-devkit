@@ -17,7 +17,7 @@
 | [asc_get_store_atomic_config](scalar_atomic/asc_get_store_atomic_config.md) | 获取数据搬运的原子操作配置。 |
 
 <!-- npu="950" id1 -->
-针对Ascend 950PR/Ascend 950DT，新增Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。对比数据搬运随路原子操作接口，Scalar原子操作接口不会影响后续向GM搬运数据的指令。
+针对Ascend 950PR&950DT系列产品，新增Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。对比数据搬运随路原子操作接口，Scalar原子操作接口不会影响后续向GM搬运数据的指令。
 
 如下图2左侧子图所示，不使用`asc_atomic_add`接口时，多个AI Core同时对同一GM地址执行累加操作会相互覆盖，操作不具备原子性，最终结果不可预期。如右侧子图所示，使用`asc_atomic_add`接口后，各AI Core的累加操作串行化执行，确保每次累加操作的原子性，最终结果符合预期。
 

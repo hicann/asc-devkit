@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id11 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id11 -->
 <!-- npu="A3" id12 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id12 -->
 <!-- npu="910b" id13 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id13 -->
 <!-- npu="310b" id14 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id15 -->
 <!-- npu="910" id16 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/sort_operations/Sort_res.md#id1 -->
 
@@ -30,19 +30,19 @@
     排序函数，按照数值大小进行降序排序。排序后的数据按照如下排布方式进行保存：
 
     <!-- npu="950" id24 -->
-    Ascend 950PR/Ascend 950DT采用方式一。
+    Ascend 950PR&950DT系列产品采用方式一。
     <!-- end id24 -->
 
     <!-- npu="A3" id25 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品采用方式一。
+    Atlas A3系列产品采用方式一。
     <!-- end id25 -->
 
     <!-- npu="910b" id26 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品采用方式一。
+    Atlas A2系列产品采用方式一。
     <!-- end id26 -->
 
     <!-- npu="310p" id27 -->
-    Atlas 推理系列产品AI Core采用方式二。
+    Atlas推理系列产品AI Core采用方式二。
     <!-- end id27 -->
 
 -   排布方式一：
@@ -80,7 +80,7 @@
 -   对应带模板参数SortConfig的函数原型
 
     <!-- npu="950" id28 -->
-    仅在Ascend 950PR/Ascend 950DT上支持。
+    仅在Ascend 950PR&950DT系列产品上支持。
     <!-- end id28 -->
 
     根据模板参数SortConfig，按其中指定的排序算法，对输入数据排序，排序结果可以指定升序或降序排序。
@@ -105,7 +105,7 @@
 -   带SortConfig
 
     <!-- npu="950" id29 -->
-    仅在Ascend 950PR/Ascend 950DT上支持。
+    仅在Ascend 950PR&950DT系列产品上支持。
     <!-- end id29 -->
 
     -   接口框架申请临时空间
@@ -178,7 +178,7 @@
     | concat | 输入 | 源操作数，即接口功能说明中的score，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数的数据类型需要与目的操作数保持一致。 |
     | index | 输入 | 源操作数，shape为[n]。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。<br>    <br>此源操作数固定为uint32_t数据类型。 |
     | tmp | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小BufferSize的获取方式请参考[GetSortTmpSize](GetSortTmpSize.md)。数据类型与源操作数保持一致。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>    <br>LocalTensor的起始地址需要32字节对齐。 |
-    | repeatTime | 输入 | 重复迭代次数，int32_t类型。<!-- npu="950" id17 --><br>    Ascend 950PR/Ascend 950DT：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id17 --><!-- npu="A3" id18 --><br>    Atlas A3 训练系列产品/Atlas A3 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id18 --><!-- npu="910b" id19 --><br> Atlas A2 训练系列产品/Atlas A2 推理系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id19 --><!-- npu="310p" id20 --><br>Atlas 推理系列产品AI Core：每次迭代完成16个region proposal的排序，下次迭代concat和dst各跳过16个region proposal。取值范围：repeatTime∈[0,255]。<!-- end id20 --> |
+    | repeatTime | 输入 | 重复迭代次数，int32_t类型。<!-- npu="950" id17 --><br>    Ascend 950PR&950DT系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id17 --><!-- npu="A3" id18 --><br>    Atlas A3系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id18 --><!-- npu="910b" id19 --><br> Atlas A2系列产品：每次迭代完成32个元素的排序，下次迭代concat和index各跳过32个elements，dst跳过32*8 Byte空间。取值范围：repeatTime∈[0,255]。<!-- end id19 --><!-- npu="310p" id20 --><br>Atlas推理系列产品AI Core：每次迭代完成16个region proposal的排序，下次迭代concat和dst各跳过16个region proposal。取值范围：repeatTime∈[0,255]。<!-- end id20 --> |
 
 -   对应带SortConfig的函数原型
 
@@ -238,15 +238,15 @@
     该样例适用于：
 
     <!-- npu="950" id21 -->
-    Ascend 950PR/Ascend 950DT
+    Ascend 950PR&950DT系列产品
     <!-- end id21 -->
 
     <!-- npu="910b" id22 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    Atlas A2系列产品
     <!-- end id22 -->
 
     <!-- npu="A3" id23 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    Atlas A3系列产品
     <!-- end id23 -->
 
     ```
@@ -289,7 +289,7 @@
     该样例适用于：
 
     <!-- npu="310p" id30 -->
-    Atlas 推理系列产品AI Core
+    Atlas推理系列产品AI Core
     <!-- end id30 -->
 
     ```
@@ -325,7 +325,7 @@
         该样例适用于：
 
         <!-- npu="950" id31 -->
-        Ascend 950PR/Ascend 950DT
+        Ascend 950PR&950DT系列产品
         <!-- end id31 -->
 
         ```

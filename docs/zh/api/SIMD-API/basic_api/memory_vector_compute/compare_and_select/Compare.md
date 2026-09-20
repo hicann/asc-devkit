@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品 AI Core：支持
+- Atlas推理系列产品 AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品 Vector Core：不支持
+- Atlas推理系列产品 Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/compare_and_select/Compare_res.md#id1 -->
 
@@ -59,7 +59,7 @@
     ```
 
     <!-- npu="310b" id10 -->
-    Atlas 200I/500 A2 推理产品暂不支持整个Tensor参与计算的运算符重载。
+    Atlas 200I/500 A2推理产品暂不支持整个Tensor参与计算的运算符重载。
     <!-- end id10 -->
 
 - Tensor前n个数据计算
@@ -111,63 +111,63 @@
 ### mask/mask[]参数说明
 
 <!-- npu="950" id11 -->
-- 针对Ascend 950PR/Ascend 950DT，设置有效。
+- 针对Ascend 950PR&950DT系列产品，设置有效。
 <!-- end id11 -->
 
 <!-- npu="A3" id12 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，保留参数，设置无效。
+- 针对Atlas A3系列产品，保留参数，设置无效。
 <!-- end id12 -->
 
 <!-- npu="910b" id13 -->
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，保留参数，设置无效。
+- 针对Atlas A2系列产品，保留参数，设置无效。
 <!-- end id13 -->
 
 <!-- npu="310b" id14 -->
-- 针对Atlas 200I/500 A2 推理产品，设置有效。
+- 针对Atlas 200I/500 A2推理产品，设置有效。
 <!-- end id14 -->
 
 <!-- npu="310p" id15 -->
-- 针对Atlas 推理系列产品AI Core，保留参数，设置无效。
+- 针对Atlas推理系列产品AI Core，保留参数，设置无效。
 <!-- end id15 -->
 
 <!-- npu="910" id16 -->
-- 针对Atlas 训练系列产品，保留参数，设置无效。
+- 针对Atlas训练系列产品，保留参数，设置无效。
 <!-- end id16 -->
 
 ## 数据类型
 
 <!-- npu="950" id19 -->
-- 针对Ascend 950PR/Ascend 950DT
+- 针对Ascend 950PR&950DT系列产品
     - T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。其中，int8\_t/uint8\_t/int64\_t/uint64\_t/double数据类型仅支持tensor前n个数据计算接口和整个tensor参与计算的运算符重载。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id19 -->
 
 <!-- npu="A3" id20 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品
+- 针对Atlas A3系列产品
     - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id20 -->
 
 <!-- npu="910b" id21 -->
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品
+- 针对Atlas A2系列产品
     - T支持的数据类型为：half（所有CMPMODE都支持）、float（所有CMPMODE都支持）、int32_t（只支持CMPMODE::EQ）。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id21 -->
 
 <!-- npu="310b" id22 -->
-- 针对Atlas 200I/500 A2 推理产品
+- 针对Atlas 200I/500 A2推理产品
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id22 -->
 
 <!-- npu="310p" id23 -->
-- 针对Atlas 推理系列产品 AI Core
+- 针对Atlas推理系列产品 AI Core
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id23 -->
 
 <!-- npu="910" id24 -->
-- 针对Atlas 训练系列产品
+- 针对Atlas训练系列产品
     - T支持的数据类型为：half、float。
     - U支持的数据类型为：int8_t、uint8_t。
 <!-- end id24 -->
@@ -187,14 +187,14 @@
   <!-- npu="A3,910b" id28 -->
   - 针对如下型号，该接口不会执行计算操作，不会对目的操作数进行写入，该接口将被视为NOP（空操作）。
     <!-- npu="A3" id29 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id29 -->
     <!-- npu="910b" id30 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id30 -->
   <!-- end id28 -->
   <!-- npu="950" id31 -->
-  - 针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
+  - 针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
   <!-- end id31 -->
 <!-- end id27 -->
 
@@ -202,10 +202,10 @@
 <!-- npu="A3,910b" id32 -->
 - 针对如下型号，使用tensor前n个数据参与计算的接口，设置count时，需要保证count个元素所占空间256字节对齐。未对齐部分元素不参与计算，仅完整对齐块有效。
   <!-- npu="A3" id33 -->
-  - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+  - Atlas A3系列产品
   <!-- end id33 -->
   <!-- npu="910b" id34 -->
-  - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+  - Atlas A2系列产品
   <!-- end id34 -->
 <!-- end id32 -->
 

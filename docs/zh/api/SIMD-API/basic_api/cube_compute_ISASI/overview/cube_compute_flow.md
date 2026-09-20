@@ -16,7 +16,7 @@ Ascend C针对矩阵计算编程模型提供了四类接口，分别承载Cube�
 <!-- npu="950" id1 -->
 # Mx矩阵计算流程<a name="ZH-CN_TOPIC_0000002568950892"></a>
 
-Mx矩阵计算仅在Ascend 950PR/Ascend 950DT型号支持。
+Mx矩阵计算仅在Ascend 950PR&950DT系列产品型号支持。
 
 MxMmad（全称Microscaling Mmad）为带有量化系数的矩阵乘法，即左矩阵和右矩阵均有对应的量化系数矩阵，左量化系数矩阵scaleA和右量化系数矩阵scaleB。MxMmad场景中，左量化系数矩阵与左矩阵乘积，右量化系数矩阵与右矩阵乘积，对两个乘积的结果做矩阵乘法。Ascend C针对Mx矩阵计算编程模型提供了对应Mx类接口，如下图所示：
 
@@ -64,4 +64,4 @@ Conv2D前向计算的本质是将卷积运算转换为矩阵乘：先通过img2c
 
 3. 通过Mmad接口对L0A Buffer、L0B Buffer上的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[Mmad计算](../mmad_compute/Mmad.md)。
 
-4. 通过Fixpipe接口将L0C Buffer的数据进行处理并按指定格式搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。L0C Buffer上存放的卷积结果为NC1HWC0格式，Fixpipe通过[NZ2ND](../cube_store_key_features/NZ2ND.md)能力将其转为NHWC格式输出。<!-- npu="950" id3 -->特别地，针对Ascend 950PR/Ascend 950DT产品，Fixpipe还支持通过[NZ2DN](../cube_store_key_features/NZ2DN.md)能力将L0C Buffer上的卷积结果转为NCHW格式输出。<!-- end id3 -->详细内容请参考[卷积格式转换](../cube_store_key_features/convolution_format_conversion.md)。更多搬出相关内容请参考[矩阵计算的搬出](../cube_compute_store/cube_compute_store.md)。
+4. 通过Fixpipe接口将L0C Buffer的数据进行处理并按指定格式搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。L0C Buffer上存放的卷积结果为NC1HWC0格式，Fixpipe通过[NZ2ND](../cube_store_key_features/NZ2ND.md)能力将其转为NHWC格式输出。<!-- npu="950" id3 -->特别地，针对Ascend 950PR&950DT系列产品产品，Fixpipe还支持通过[NZ2DN](../cube_store_key_features/NZ2DN.md)能力将L0C Buffer上的卷积结果转为NCHW格式输出。<!-- end id3 -->详细内容请参考[卷积格式转换](../cube_store_key_features/convolution_format_conversion.md)。更多搬出相关内容请参考[矩阵计算的搬出](../cube_compute_store/cube_compute_store.md)。

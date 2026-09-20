@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id11 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id11 -->
 <!-- npu="A3" id12 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id12 -->
 <!-- npu="910b" id13 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id13 -->
 <!-- npu="310b" id14 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id15 -->
 <!-- npu="910" id16 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/quantization/AscendAntiQuant_res.md#id1 -->
 
@@ -103,7 +103,7 @@
 **图2**  isTranspose为False且输出为bfloat16的AscendAntiQuant算法框图  
 ![](../../../figures/ascendantiquant_no_transpose_bfloat16.png "isTranspose为False且输出为bfloat16的AscendAntiQuant算法框图")
 
-在Atlas A2 训练系列产品/Atlas A2 推理系列产品上，当输出为bfloat16时，计算过程分为如下几步：
+在Atlas A2系列产品上，当输出为bfloat16时，计算过程分为如下几步：
 
 1.  src精度转换：将输入的src转换为half类型，再转换为float类型，存放到tmp1；
 2.  offset精度转换：当输入的offset为向量时转换为float类型，存放到tmp2，为scalar时做Cast转换为float类型；
@@ -156,7 +156,7 @@ PER\_TOKEN/PER\_GROUP b8/float4场景的计算逻辑如下：
     -   PER\_GROUP float4场景（按组量化）
 
         <!-- npu="950" id34 -->
-        仅支持Ascend 950PR/Ascend 950DT
+        仅支持Ascend 950PR&950DT系列产品
         <!-- end id34 -->
 
         ```
@@ -167,7 +167,7 @@ PER\_TOKEN/PER\_GROUP b8/float4场景的计算逻辑如下：
     -   PER\_TOKEN/PER\_GROUP b8/float4场景（按token量化）/（按组量化）
 
         <!-- npu="950" id35 -->
-        仅支持Ascend 950PR/Ascend 950DT
+        仅支持Ascend 950PR&950DT系列产品
         <!-- end id35 -->
 
         ```
@@ -193,7 +193,7 @@ PER\_TOKEN/PER\_GROUP b8/float4场景的计算逻辑如下：
     -   PER\_GROUP float4场景（groupSize固定为32）
 
         <!-- npu="950" id36 -->
-        仅支持Ascend 950PR/Ascend 950DT
+        仅支持Ascend 950PR&950DT系列产品
         <!-- end id36 -->
 
         ```
@@ -204,7 +204,7 @@ PER\_TOKEN/PER\_GROUP b8/float4场景的计算逻辑如下：
     -   PER\_TOKEN/PER\_GROUP b8/float4场景（groupSize可配置）
 
         <!-- npu="950" id37 -->
-        仅支持Ascend 950PR/Ascend 950DT
+        仅支持Ascend 950PR&950DT系列产品
         <!-- end id37 -->
 
         ```
@@ -326,92 +326,92 @@ struct AscendAntiQuantParam {
 -   PER\_TOKEN/PER\_GROUP b8/float4场景支持情况如下：
 
     <!-- npu="950" id33 -->
-    - Ascend 950PR/Ascend 950DT：支持。
+    - Ascend 950PR&950DT系列产品：支持。
     <!-- end id33 -->
 
     <!-- npu="A3" id38 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持。
+    - Atlas A3系列产品：不支持。
     <!-- end id38 -->
 
     <!-- npu="910b" id39 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持。
+    - Atlas A2系列产品：不支持。
     <!-- end id39 -->
 
     <!-- npu="310p" id40 -->
-    - Atlas 推理系列产品AI Core：不支持。
+    - Atlas推理系列产品AI Core：不支持。
     <!-- end id40 -->
 
 -   PER\_TOKEN/PER\_GROUP b8/float4场景，连续计算方向（即n方向）的数据量要求32B对齐。
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景dst支持的数据类型<a id="li117871685514"></a>
 
     <!-- npu="950" id17 -->
-    - Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16\_t。
+    - Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id17 -->
 
     <!-- npu="A3" id18 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、bfloat16\_t。
+    - Atlas A3系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id18 -->
 
     <!-- npu="910b" id19 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、bfloat16\_t。
+    - Atlas A2系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id19 -->
 
     <!-- npu="310p" id20 -->
-    - Atlas 推理系列产品AI Core，支持的数据类型为：half。
+    - Atlas推理系列产品AI Core，支持的数据类型为：half。
     <!-- end id20 -->
 
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景src支持的数据类型<a id="li13336025165520"></a>
 
     <!-- npu="950" id21 -->
-    - Ascend 950PR/Ascend 950DT，PER\_CHANNEL和PER\_TENSOR场景下支持的数据类型为：int8\_t、fp8\_e4m3fn\_t、fp8\_e5m2\_t、hifloat8\_t；PER\_GROUP float4场景下支持的数据类型为：fp4x2\_e2m1\_t、fp4x2\_e1m2\_t。
+    - Ascend 950PR&950DT系列产品，PER\_CHANNEL和PER\_TENSOR场景下支持的数据类型为：int8\_t、fp8\_e4m3fn\_t、fp8\_e5m2\_t、hifloat8\_t；PER\_GROUP float4场景下支持的数据类型为：fp4x2\_e2m1\_t、fp4x2\_e1m2\_t。
     <!-- end id21 -->
 
     <!-- npu="A3" id22 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：int8\_t、int4b\_t。
+    - Atlas A3系列产品，支持的数据类型为：int8\_t、int4b\_t。
     <!-- end id22 -->
 
     <!-- npu="910b" id23 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：int8\_t、int4b\_t。
+    - Atlas A2系列产品，支持的数据类型为：int8\_t、int4b\_t。
     <!-- end id23 -->
 
     <!-- npu="310p" id24 -->
-    - Atlas 推理系列产品AI Core，支持的数据类型为：int8\_t。
+    - Atlas推理系列产品AI Core，支持的数据类型为：int8\_t。
     <!-- end id24 -->
 
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景offset支持的数据类型<a id="li5382122225718"></a>
 
     <!-- npu="950" id25 -->
-    - Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16\_t。
+    - Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id25 -->
 
     <!-- npu="A3" id26 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、bfloat16\_t。
+    - Atlas A3系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id26 -->
 
     <!-- npu="910b" id27 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、bfloat16\_t。
+    - Atlas A2系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id27 -->
 
     <!-- npu="310p" id28 -->
-    - Atlas 推理系列产品AI Core，支持的数据类型为：half。
+    - Atlas推理系列产品AI Core，支持的数据类型为：half。
     <!-- end id28 -->
 
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景scale支持的数据类型<a id="li103341450906"></a>
 
     <!-- npu="950" id29 -->
-    - Ascend 950PR/Ascend 950DT，PER\_CHANNEL和PER\_TENSOR场景下支持的数据类型为：half、bfloat16\_t；PER\_GROUP float4场景下支持的数据类型为：fp8\_e8m0\_t。
+    - Ascend 950PR&950DT系列产品，PER\_CHANNEL和PER\_TENSOR场景下支持的数据类型为：half、bfloat16\_t；PER\_GROUP float4场景下支持的数据类型为：fp8\_e8m0\_t。
     <!-- end id29 -->
 
     <!-- npu="A3" id30 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、bfloat16\_t。
+    - Atlas A3系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id30 -->
 
     <!-- npu="910b" id31 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、bfloat16\_t。
+    - Atlas A2系列产品，支持的数据类型为：half、bfloat16\_t。
     <!-- end id31 -->
 
     <!-- npu="310p" id32 -->
-    - Atlas 推理系列产品AI Core，支持的数据类型为：half。
+    - Atlas推理系列产品AI Core，支持的数据类型为：half。
     <!-- end id32 -->
 
 ## 调用示例

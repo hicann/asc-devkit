@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="zh-cn_topic_0000002566538879_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_ND2NZ_res.md#id1 -->
 
@@ -45,7 +45,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 ```
 
 <!-- npu="950" id10 -->
-特别针对Ascend 950PR/Ascend 950DT，函数原型请参考如下：
+特别针对Ascend 950PR&950DT系列产品，函数原型请参考如下：
 
 ```cpp
 template <typename T, bool enableSmallC0 = false>
@@ -65,7 +65,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 ### enableSmallC0参数支持度说明
 
 <!-- npu="950" id11 -->
-- 针对Ascend 950PR/Ascend 950DT，新增enableSmallC0参数，调用该接口必须配置参数enableSmallC0；
+- 针对Ascend 950PR&950DT系列产品，新增enableSmallC0参数，调用该接口必须配置参数enableSmallC0；
 <!-- end id11 -->
 
 - 其他型号不支持该参数。
@@ -96,19 +96,19 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 源矩阵和目的矩阵支持的数据类型保持一致。
 
 <!-- npu="950" id12 -->
-针对Ascend 950PR/Ascend 950DT，支持的数据类型为：bool、int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、fp8_e8m0_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32。
+针对Ascend 950PR&950DT系列产品，支持的数据类型为：bool、int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、fp8_e8m0_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32。
 <!-- end id12 -->
 
 <!-- npu="A3" id13 -->
-针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持数据类型为：b4（int4b_t）、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、half、bfloat16_t、float。
+针对Atlas A3系列产品，支持数据类型为：b4（int4b_t）、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、half、bfloat16_t、float。
 <!-- end id13 -->
 
 <!-- npu="910b" id14 -->
-针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持数据类型为：b4（int4b_t）、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、half、bfloat16_t、float。
+针对Atlas A2系列产品，支持数据类型为：b4（int4b_t）、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、half、bfloat16_t、float。
 <!-- end id14 -->
 
 <!-- npu="310p" id15 -->
-针对Atlas 推理系列产品AI Core，支持数据类型为：int16_t、uint16_t、int32_t、uint32_t、half、float。
+针对Atlas推理系列产品AI Core，支持数据类型为：int16_t、uint16_t、int32_t、uint32_t、half、float。
 <!-- end id15 -->
 
 ## 返回值说明
@@ -137,7 +137,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
     | dstNzMatrixStride | [0, 16384] |
 
 <!-- npu="310p" id18 -->
-- 针对Atlas 推理系列产品AI Core，使用Global Memory -\> Local Memory通路的ND2NZ搬运接口时，需要预留8K的Unified Buffer（UB）空间，作为接口的临时数据存放区。
+- 针对Atlas推理系列产品AI Core，使用Global Memory -\> Local Memory通路的ND2NZ搬运接口时，需要预留8K的Unified Buffer（UB）空间，作为接口的临时数据存放区。
 <!-- end id18 -->
 
 ## 关键特性说明

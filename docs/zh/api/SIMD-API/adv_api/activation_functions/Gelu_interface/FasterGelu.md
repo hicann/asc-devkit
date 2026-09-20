@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id4 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id4 -->
 <!-- npu="A3" id5 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id5 -->
 <!-- npu="910b" id6 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id6 -->
 <!-- npu="310b" id7 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id7 -->
 <!-- npu="310p" id8 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id8 -->
 <!-- npu="910" id9 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/activation_functions/Gelu_interface/FasterGelu_res.md#id1 -->
 
@@ -62,7 +62,7 @@
 | --- | --- |
 | T | 操作数的数据类型。支持的数据类型为：half、float。 |
 | highPrecision | 是否开启高精度模式，以提升运算准确度。默认值为false，表示不开启高精度模式。<br><br>注意：高精度模式只在half数据类型下开启后生效，该参数的取值不影响float数据类型下的接口精度和性能。 |
-| highPerformance | 是否开启高性能模式，以提升运算效率。默认值为false，表示不开启高性能模式。<br><br>注意：开启高性能模式相比于默认不开启高精度和高性能模式会有精度下降，同时开启高精度和高性能模式相比于仅开启高性能模式可能会有性能下降。<!-- npu="950" id3 -->针对Ascend 950PR/Ascend 950DT，该参数保留但不生效，取值为true或者false，接口的精度和性能没有区别。<!-- end id3 --> |
+| highPerformance | 是否开启高性能模式，以提升运算效率。默认值为false，表示不开启高性能模式。<br><br>注意：开启高性能模式相比于默认不开启高精度和高性能模式会有精度下降，同时开启高精度和高性能模式相比于仅开启高性能模式可能会有性能下降。<!-- npu="950" id3 -->针对Ascend 950PR&950DT系列产品，该参数保留但不生效，取值为true或者false，接口的精度和性能没有区别。<!-- end id3 --> |
 
 **表2**  接口参数说明
 
@@ -85,7 +85,7 @@
 -   不支持sharedTmpBuffer与源操作数和目的操作数地址重叠。
 
 <!-- npu="950" id10 -->
--   针对Ascend 950PR/Ascend 950DT，接口内部计算对Subnormal的处理方式受编译选项`--cce-ftz`控制（默认值为`true`）：
+-   针对Ascend 950PR&950DT系列产品，接口内部计算对Subnormal的处理方式受编译选项`--cce-ftz`控制（默认值为`true`）：
     -   配置为`false`时，计算过程中保留Subnormal，并按照其实际数值参与后续计算。
     -   配置为`true`时，启用FTZ（Flush-To-Zero）模式，计算过程中产生或参与运算的Subnormal将按0处理，可能导致计算结果与保留Subnormal时存在精度差异。
 <!-- end id10 -->

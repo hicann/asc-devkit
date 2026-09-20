@@ -5,7 +5,7 @@
 GEMV的核心功能体现为：当矩阵A的维度M取值为1时，接口可以手动启用GEMV功能，该操作退化为1×K维度的行向量与K×N维度矩阵之间的乘法运算。
 
 <!-- npu="950" id1 -->
-针对Ascend 950PR/Ascend 950DT产品，GEMV模式默认关闭。如需启用GEMV模式，需要设置`mmad_trait::disable_gemv`参数为`false`。
+针对Ascend 950PR&950DT系列产品产品，GEMV模式默认关闭。如需启用GEMV模式，需要设置`mmad_trait::disable_gemv`参数为`false`。
 <!-- end id1 -->
 
 ## 特性约束

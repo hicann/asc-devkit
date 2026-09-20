@@ -9,22 +9,22 @@
     \_\_NPU\_ARCH\_\_是Device侧AI Core代码中的预处理宏，用于标识AI处理器的架构版本。通过该宏，开发者可以针对不同AI处理器，差异化进行代码适配和优化。产品型号和NPU架构版本的对应关系如下：
 
     <!-- npu="950" id1 -->
-    - Ascend 950PR/Ascend 950DT：3510
+    - Ascend 950PR&950DT系列产品：3510
     <!-- end id1 -->
     <!-- npu="A3" id2 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：2201
+    - Atlas A3系列产品：2201
     <!-- end id2 -->
     <!-- npu="910b" id3 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：2201
+    - Atlas A2系列产品：2201
     <!-- end id3 -->
     <!-- npu="310b" id4 -->
-    - Atlas 200I/500 A2 推理产品：3002
+    - Atlas 200I/500 A2推理产品：3002
     <!-- end id4 -->
     <!-- npu="310p" id5 -->
-    - Atlas 推理系列产品：2002
+    - Atlas推理系列产品：2002
     <!-- end id5 -->
     <!-- npu="910" id6 -->
-    - Atlas 训练系列产品：1001
+    - Atlas训练系列产品：1001
     <!-- end id6 -->
 
     以下为通过\_\_NPU\_ARCH\_\_控制在不同AI处理器上算子输出值舍入模式的示例。
@@ -506,7 +506,7 @@ $$
 -   使用**基础API**时，应使用GetBlockIdx获取核的逻辑位置，而非直接使用内置变量。
 
     <!-- npu="310p" id7 -->
-    在Atlas 推理系列产品中，当启用KERNEL_TYPE_MIX_VECTOR_CORE时，算子会同时运行在AI Core和Vector Core上。此时，block_idx在这两种核心上都是从0开始计数，用户无法直接通过block_idx来切分数据和控制多核逻辑。而GetBlockIdx在Vector Core上对block_idx增加偏移量（AI Core的block_num），从而保证返回的值能够正确反映多核环境下的实际逻辑。
+    在Atlas推理系列产品中，当启用KERNEL_TYPE_MIX_VECTOR_CORE时，算子会同时运行在AI Core和Vector Core上。此时，block_idx在这两种核心上都是从0开始计数，用户无法直接通过block_idx来切分数据和控制多核逻辑。而GetBlockIdx在Vector Core上对block_idx增加偏移量（AI Core的block_num），从而保证返回的值能够正确反映多核环境下的实际逻辑。
     <!-- end id7 -->
 
 -   使用**C API**时，对于纯Cube/纯Vector/Mix（1,1）场景，应使用内置变量block_idx获取当前核的逻辑位置；对于Mix（1,2）场景，应使用内置变量block_idx、asc_get_sub_block_num和asc_get_sub_block_id按公式计算logic_idx。

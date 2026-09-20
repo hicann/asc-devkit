@@ -26,7 +26,7 @@ uint32_t SetCommBlockNum(uint16_t num)
 ## 约束说明
 
 <!-- npu="A3" id1 -->
-本接口仅在Atlas A3 训练系列产品/Atlas A3 推理系列产品上通信类型为HCCL\_CMD\_BATCH\_WRITE时生效。
+本接口仅在Atlas A3系列产品上通信类型为HCCL\_CMD\_BATCH\_WRITE时生效。
 <!-- end id1 -->
 
 ## 调用示例

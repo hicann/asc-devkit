@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：不支持
+- Ascend 950PR&950DT系列产品：不支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadWithSparse_res.md#id1 -->
 
@@ -118,18 +118,18 @@ __aicore__ inline void MmadWithSparse(const LocalTensor<T>& dst, const LocalTens
 | n | 右矩阵Width，取值范围：n∈[0, 4095]。默认值为0。 |
 | k | 左矩阵Width、右矩阵Height，取值范围：k∈[0, 4095]。默认值为0。 |
 | cmatrixInitVal | 是否开启C矩阵默认初始化清零操作。默认值为 true。<br>&nbsp;&nbsp;&bull; true：C矩阵默认初始化为0；<br>&nbsp;&nbsp;&bull; false：C矩阵不进行默认操作，通过设置cmatrixSource参数进行初始化。 |
-| cmatrixSource | 配置C矩阵初始值是否来源于BT Buffer。默认值为false。<br>&nbsp;&nbsp;&bull; false：不对L0C Buffer进行初始化操作；<br>&nbsp;&nbsp;&bull; true：使用BT Buffer（TPosition:C2）的数据对L0C Buffer进行初始化操作。<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持配置为true/false。<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持配置为true/false。<br>Atlas 200I/500 A2 推理产品，支持配置为true/false。<br>注意：带Bias输入的接口配置该参数无效，会根据Bias输入的位置来判断C矩阵初始值是否来源于BT Buffer。 |
+| cmatrixSource | 配置C矩阵初始值是否来源于BT Buffer。默认值为false。<br>&nbsp;&nbsp;&bull; false：不对L0C Buffer进行初始化操作；<br>&nbsp;&nbsp;&bull; true：使用BT Buffer（TPosition:C2）的数据对L0C Buffer进行初始化操作。<br>Atlas A2系列产品，支持配置为true/false。<br>Atlas A3系列产品，支持配置为true/false。<br>Atlas 200I/500 A2推理产品，支持配置为true/false。<br>注意：带Bias输入的接口配置该参数无效，会根据Bias输入的位置来判断C矩阵初始值是否来源于BT Buffer。 |
 | isBias | 该参数废弃，新开发内容不要使用该参数。如果需要累加初始矩阵，请使用带Bias的接口来实现；也可以通过cmatrixInitVal和cmatrixSource参数配置C矩阵的初始值来源来实现。推荐使用带Bias的接口，相比于配置cmatrixInitVal和cmatrixSource参数更加简单方便。<br>配置是否需要累加初始矩阵，默认值为false，取值说明如下：<br>&nbsp;&nbsp;&bull; false：矩阵乘，无需累加初始矩阵，C = A \* B。<br>&nbsp;&nbsp;&bull; true：矩阵乘加，需要累加初始矩阵，C += A \* B。 |
-| unitFlag | unitFlag是一种Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag；<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位；<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br>该参数仅支持如下型号：<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品；<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品。<br>参数设置方案和特性细节可参考：[UnitFlag](../../cube_compute_ISASI/mmad_compute_key_features/UnitFlag.md#ZH-CN_TOPIC_00000025690709788)。 |
+| unitFlag | unitFlag是一种Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag；<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位；<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br>该参数仅支持如下型号：<br>Atlas A2系列产品；<br>Atlas A3系列产品。<br>参数设置方案和特性细节可参考：[UnitFlag](../../cube_compute_ISASI/mmad_compute_key_features/UnitFlag.md#ZH-CN_TOPIC_00000025690709788)。 |
 | kDirectionAlign | Sparse场景本开关默认为false，不支持配置为true。K方向对齐的核心功能是通过`kDirectionAlign`参数控制在使用float数据类型时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。 |
-| fmOffset | 左矩阵offset（整个左矩阵对应一个值），支持Scalar（应与src_fm.dtype一致）/立即数，默认0。<br>注：未使用，兼容旧款产品接口传入，Atlas A2 训练系列产品/Atlas A2 推理系列产品及往后产品不做处理。 |
-| enSsparse | 开启结构化稀疏特性，默认false；<br>注：未使用，兼容旧款产品接口传入，Atlas A2 训练系列产品/Atlas A2 推理系列产品及往后产品不做处理。 |
-| enWinogradA | 指示矩阵a是否通过winograd_feature_map_transform()生成，用于支持winograd特性，bool类型，默认false；<br>注：未使用，兼容旧款产品接口传入，Atlas A2 训练系列产品/Atlas A2 推理系列产品及往后产品不做处理。 |
-| enWinogradB | 指示矩阵b是否通过winograd_weight_transform()生成，用于支持winograd特性，bool类型，默认false；<br>注：未使用，兼容旧款产品接口传入，Atlas A2 训练系列产品/Atlas A2 推理系列产品及往后产品不做处理。 |
+| fmOffset | 左矩阵offset（整个左矩阵对应一个值），支持Scalar（应与src_fm.dtype一致）/立即数，默认0。<br>注：未使用，兼容旧款产品接口传入，Atlas A2系列产品及往后产品不做处理。 |
+| enSsparse | 开启结构化稀疏特性，默认false；<br>注：未使用，兼容旧款产品接口传入，Atlas A2系列产品及往后产品不做处理。 |
+| enWinogradA | 指示矩阵a是否通过winograd_feature_map_transform()生成，用于支持winograd特性，bool类型，默认false；<br>注：未使用，兼容旧款产品接口传入，Atlas A2系列产品及往后产品不做处理。 |
+| enWinogradB | 指示矩阵b是否通过winograd_weight_transform()生成，用于支持winograd特性，bool类型，默认false；<br>注：未使用，兼容旧款产品接口传入，Atlas A2系列产品及往后产品不做处理。 |
 
 ## 数据类型<a id="zh_cn_topic_mmadsparse_section_datatype"></a>
 
-**表6** A、B、C支持的精度类型组合（Atlas 200I/500 A2 推理产品）（Atlas A2 训练系列产品/Atlas A2 推理系列产品）（Atlas A3 训练系列产品/Atlas A3 推理系列产品）
+**表6** A、B、C支持的精度类型组合（Atlas 200I/500 A2推理产品）（Atlas A2系列产品）（Atlas A3系列产品）
 
 | 左矩阵A | 右矩阵B | 结果矩阵C |
 | ------- | ------- | --------- |

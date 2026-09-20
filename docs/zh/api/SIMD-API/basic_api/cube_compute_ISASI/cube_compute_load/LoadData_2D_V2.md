@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_V2_res.md#id1 -->
 
@@ -74,7 +74,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | srcStride | 以M×K矩阵为例，源矩阵K方向前一个分形起始地址与后一个分形起始地址的间隔，单位：512字节。 |
 | dstStride | 以M×K矩阵为例，目标矩阵K方向前一个分形起始地址与后一个分形起始地址的间隔，单位：512字节。 |
 | ifTranspose | 是否启用转置功能，对每个分形矩阵进行转置，默认为false：<br>&nbsp;&nbsp;&bull; true：启用<br>&nbsp;&nbsp;&bull; false：不启用<br>注意：只有L1 Buffer（TPosition: A1）->L0A Buffer（TPosition: A2）和L1 Buffer（TPosition: B1）->L0B Buffer（TPosition: B2）通路才能开启转置。开启转置功能时，支持b4、b8、b16、b32数据类型。 |
-| sid | 预留参数，配置为0即可。<br>注：兼容旧款产品接口传入，Ascend 950PR/Ascend 950DT产品不做处理。 |
+| sid | 预留参数，配置为0即可。<br>注：兼容旧款产品接口传入，Ascend 950PR&950DT系列产品产品不做处理。 |
 
 LoadData2DParamsV2结构体在不启用转置时，示意图如下，参数设置值和解释说明如下：
 

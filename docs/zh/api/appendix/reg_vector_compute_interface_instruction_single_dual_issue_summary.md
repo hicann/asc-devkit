@@ -5,7 +5,7 @@
 
 本节内容不包含软仿类接口，仅针对如下型号生效：
 
-Ascend 950PR/Ascend 950DT
+Ascend 950PR&950DT系列产品
 
 **表 1**  接口指令双发汇总<a id="table-dual-issue"></a>
 

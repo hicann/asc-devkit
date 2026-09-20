@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride_res.md#id1 -->
 
@@ -29,7 +29,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_mm_intf.h"`。
 
-本接口本质上实现功能和[LoadData（卷积数据搬运）](./LoadData_3D.md)接口一致，用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置。与LoadData（卷积数据搬运）接口的差异在于，本接口仅支持Ascend 950PR/Ascend 950DT产品，支持配置输出矩阵K轴方向偏移量dstStride的能力且必须配置该参数，调用之前必须使用辅助配置接口[SetLoadDataRepeatWithStride](../cube_load_aux_config/SetLoadDataRepeatWithStride.md)配置dstStride参数。此外，相比于LoadData（卷积数据搬运），本接口内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。
+本接口本质上实现功能和[LoadData（卷积数据搬运）](./LoadData_3D.md)接口一致，用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置。与LoadData（卷积数据搬运）接口的差异在于，本接口仅支持Ascend 950PR&950DT系列产品产品，支持配置输出矩阵K轴方向偏移量dstStride的能力且必须配置该参数，调用之前必须使用辅助配置接口[SetLoadDataRepeatWithStride](../cube_load_aux_config/SetLoadDataRepeatWithStride.md)配置dstStride参数。此外，相比于LoadData（卷积数据搬运），本接口内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。
 
 LoadDataWithStride支持的数据通路为：L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer。
 

@@ -2,7 +2,7 @@
 
 在通算融合类算子的实现中，通信操作使用[Hccl高阶API](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md)，矩阵乘计算操作使用[Matmul高阶API](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)。关于更多集合通信的内容和相关概念请参考[《HCCL集合通信库》](https://gitcode.com/cann/hccl/blob/9.2.0/docs/zh/user_guide/README.md)。通算融合算子的开发过程与一般算子相同，但请注意，当前通算融合算子暂不支持[核函数（Kernel）直调](../../../../programming_guide/appendix/kernel_direct_call_from_sample.md)和[入图（GE图）开发](../../../../programming_guide/advanced_programming/operator_graph_development/overview.md)，仅支持[单算子API调用](../../../../programming_guide/advanced_programming/aclnn_operator_development/invocation/single_operator_api_call.md)。
 
-下文将以AllGatherMatmulCustom算子（简称AllGatherMatmul）的实现为例，从算子分析、数据流分析、创建算子工程、原型定义、Tiling实现、核函数（Kernel）实现、编译与运行等方面介绍通算融合算子的设计和实现流程。本样例中算子的完整代码请参见[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/9.2.0/mc2/all_gather_matmul_v2)。该样例仅支持在**Atlas A2 训练系列产品/Atlas A2 推理系列产品**上运行。
+下文将以AllGatherMatmulCustom算子（简称AllGatherMatmul）的实现为例，从算子分析、数据流分析、创建算子工程、原型定义、Tiling实现、核函数（Kernel）实现、编译与运行等方面介绍通算融合算子的设计和实现流程。本样例中算子的完整代码请参见[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/9.2.0/mc2/all_gather_matmul_v2)。该样例仅支持在**Atlas A2系列产品**上运行。
 
 ## 算子分析<a name="zh-cn_topic_0000002400208581_section59611034123213"></a>
 

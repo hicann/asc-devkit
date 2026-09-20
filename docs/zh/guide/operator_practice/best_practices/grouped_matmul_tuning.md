@@ -12,7 +12,7 @@ for i in range(g):
     offset += groupList[i]
 ```
 
-验证平台为Atlas A2 训练系列产品/Atlas A2 推理系列产品。
+验证平台为Atlas A2系列产品。
 
 优化分析以如下算子规格为例：
 

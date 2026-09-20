@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_res.md#id1 -->
 
@@ -33,7 +33,7 @@
 
 - 支持GM->L0A Buffer、GM->L0B Buffer、L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer。
 <!-- npu="950" id10 -->
-- 特别针对Ascend 950PR/Ascend 950DT：仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer。
+- 特别针对Ascend 950PR&950DT系列产品：仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer。
 <!-- end id10 -->
 
 对于不同的数据类型，每个数据分形对应的矩阵如下：
@@ -55,7 +55,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 ```
 
 <!-- npu="950" id11 -->
-针对Ascend 950PR/Ascend 950DT：
+针对Ascend 950PR&950DT系列产品：
 
 ```cpp
 template <typename T>
@@ -88,27 +88,27 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 ## 数据类型
 
 <!-- npu="950" id12 -->
-Ascend 950PR/Ascend 950DT，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
+Ascend 950PR&950DT系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
 <!-- end id12 -->
 
 <!-- npu="A3" id13 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float；**注：int4b_t仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。**
+Atlas A3系列产品，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float；**注：int4b_t仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。**
 <!-- end id13 -->
 
 <!-- npu="910b" id14 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float；**注：int4b_t仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。**
+Atlas A2系列产品，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float；**注：int4b_t仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。**
 <!-- end id14 -->
 
 <!-- npu="310b" id15 -->
-Atlas 200I/500 A2 推理产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
+Atlas 200I/500 A2推理产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
 <!-- end id15 -->
 
 <!-- npu="910" id16 -->
-Atlas 训练系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
+Atlas训练系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
 <!-- end id16 -->
 
 <!-- npu="310p" id17 -->
-Atlas 推理系列产品AI Core，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half；**注：int4b_t仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。**
+Atlas推理系列产品AI Core，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half；**注：int4b_t仅支持L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer通路。**
 <!-- end id17 -->
 
 ## 返回值说明
@@ -123,16 +123,16 @@ Atlas 推理系列产品AI Core，支持数据类型为：int4b_t、uint8_t、in
 - 当源地址位于GM时，指令执行占用的流水为PIPE_MTE2；当源地址位于L1 Buffer时，指令执行占用的流水为PIPE_MTE1。
 - 当srcStride=0时，表示连续的repeat之间读取源操作数中的同一块数据分形。
 <!-- npu="310p" id20 -->
-- 对于Atlas 推理系列产品AI Core，在配合Mmad接口使用、B矩阵数据类型为S4场景下，如果通过ifTranspose参数启用转置，只支持64×64的分形。
+- 对于Atlas推理系列产品AI Core，在配合Mmad接口使用、B矩阵数据类型为S4场景下，如果通过ifTranspose参数启用转置，只支持64×64的分形。
 <!-- end id20 -->
 - 不同型号的物理存储位置不同，开发者可以参考如下：
     - 支持的物理存储位置为Global Memory（TPosition: GM）/L1 Buffer（TPosition: A1/B1）。
     <!-- npu="950" id21 -->
-    - 特别针对Ascend 950PR/Ascend 950DT，支持的物理存储位置为L1 Buffer（TPosition: A1/B1）。
+    - 特别针对Ascend 950PR&950DT系列产品，支持的物理存储位置为L1 Buffer（TPosition: A1/B1）。
     <!-- end id21 -->
 
 <!-- npu="950" id22 -->
-- 特别针对Ascend 950PR/Ascend 950DT，该接口为兼容性实现，相较于Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品，由于L0A Buffer上支持的分形由Zz改为了Nz，所以不能直接复用算子实现代码，需要根据分型变化重新适配，具体适配方案请参考[基础API迁移指导](../../../../../guide/cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/basic_api_migration.md#矩阵计算)中矩阵计算小节。
+- 特别针对Ascend 950PR&950DT系列产品，该接口为兼容性实现，相较于Atlas A3系列产品和Atlas A2系列产品，由于L0A Buffer上支持的分形由Zz改为了Nz，所以不能直接复用算子实现代码，需要根据分型变化重新适配，具体适配方案请参考[基础API迁移指导](../../../../../guide/cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/basic_api_migration.md#矩阵计算)中矩阵计算小节。
 <!-- end id22 -->
 
 ## 关键特性说明

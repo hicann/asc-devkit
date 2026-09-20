@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id3 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id3 -->
 <!-- npu="A3" id4 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id4 -->
 <!-- npu="910b" id5 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id5 -->
 <!-- npu="310b" id6 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id7 -->
 <!-- npu="910" id8 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id8 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateBatch_res.md#id1 -->
 
@@ -136,36 +136,36 @@
 -   **异步模式**不支持IterateBatch搬运到UB上。
 -   当开启MixDualMaster（双主模式）场景时，即模板参数[enableMixDualMaster](MatmulConfig.md#matmulconfig-params)设置为true，不支持使用该接口。
 <!-- npu="950" id9 -->
--   Ascend 950PR/Ascend 950DT上，不支持A、B矩阵内存逻辑位置为TPosition::VECOUT的输入；输出至VECIN的函数原型当前只支持BSNGD Layout格式。
+-   Ascend 950PR&950DT系列产品上，不支持A、B矩阵内存逻辑位置为TPosition::VECOUT的输入；输出至VECIN的函数原型当前只支持BSNGD Layout格式。
 <!-- end id9 -->
 <!-- npu="310p" id10 -->
--   Atlas 推理系列产品AI Core上，只支持NORMAL  Layout格式。
--   Atlas 推理系列产品AI Core上，不支持A、B矩阵内存逻辑位置为TPosition::TSCM的输入。
+-   Atlas推理系列产品AI Core上，只支持NORMAL  Layout格式。
+-   Atlas推理系列产品AI Core上，不支持A、B矩阵内存逻辑位置为TPosition::TSCM的输入。
 <!-- end id10 -->
 <!-- npu="950" id11 -->
--   Ascend 950PR/Ascend 950DT上，A、B矩阵内存逻辑位置为TPosition::TSCM时，只支持NORMAL  Layout格式。
+-   Ascend 950PR&950DT系列产品上，A、B矩阵内存逻辑位置为TPosition::TSCM时，只支持NORMAL  Layout格式。
 <!-- end id11 -->
 <!-- npu="310p" id12 -->
--   Atlas 推理系列产品AI Core上，Bias不支持复用，Bias的shape大小必须为Batch \* N。
+-   Atlas推理系列产品AI Core上，Bias不支持复用，Bias的shape大小必须为Batch \* N。
 <!-- end id12 -->
 -   使用该接口时，A矩阵、B矩阵不支持int4b\_t类型的输入，即BatchMatmul不支持int4b\_t类型的矩阵输入。
 <!-- npu="950,A3,910b,310p" id17 -->
 -   支持的数据类型<a id="li12616155731722"></a>
 
     <!-- npu="950" id13 -->
-    Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16_t、int32_t、float。
+    Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16_t、int32_t、float。
     <!-- end id13 -->
 
     <!-- npu="A3" id14 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、bfloat16_t、int32_t、float。
+    Atlas A3系列产品，支持的数据类型为：half、bfloat16_t、int32_t、float。
     <!-- end id14 -->
 
     <!-- npu="910b" id15 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、bfloat16_t、int32_t、float。
+    Atlas A2系列产品，支持的数据类型为：half、bfloat16_t、int32_t、float。
     <!-- end id15 -->
 
     <!-- npu="310p" id16 -->
-    Atlas 推理系列产品AI Core，支持的数据类型为：half、bfloat16_t、int32_t、float。
+    Atlas推理系列产品AI Core，支持的数据类型为：half、bfloat16_t、int32_t、float。
     <!-- end id16 -->
 
 <!-- end id17 -->

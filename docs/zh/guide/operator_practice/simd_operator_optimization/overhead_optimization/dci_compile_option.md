@@ -3,7 +3,7 @@
 >[!NOTE]说明 
 >该性能优化建议适用于如下型号：
 ><!-- npu="950" id1 -->
->- Ascend 950PR/Ascend 950DT
+>- Ascend 950PR&950DT系列产品
 ><!-- end id1 -->
 
 【优先级】高
@@ -16,4 +16,3 @@
 
 -   算子使用\* \_\_gm\_\_的方式改写GM内存，或者调用GlobalTensor.SetValue函数时，正确的使用DataCacheCleanAndInvalid接口，手动将数据从DCache中回刷到GM上，保证Cache的一致性。不依赖编译框架自动插入DCCI指令来保证一致性。
 -   算子不包含使用\* \_\_gm\_\_的方式改写GM内存，或者调用GlobalTensor.SetValue函数的代码。
-

@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/resource_management/TQue/AllocTensor_res.md#id1 -->
 
@@ -91,25 +91,25 @@
 
 -   同一个TPosition上的所有Queue，连续调用AllocTensor接口申请的Tensor数量，根据AI处理器型号的不同，有数量约束。申请Buffer时，需要满足该约束。
     <!-- npu="950" id10 -->
-    - Ascend 950PR/Ascend 950DT不超过8个。
+    - Ascend 950PR&950DT系列产品不超过8个。
     <!-- end id10 -->
     <!-- npu="A3" id11 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品不超过8个。
+    - Atlas A3系列产品不超过8个。
     <!-- end id11 -->
     <!-- npu="910b" id12 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品不超过8个。
+    - Atlas A2系列产品不超过8个。
     <!-- end id12 -->
     <!-- npu="310b" id13 -->
-    - Atlas 200I/500 A2 推理产品不超过8个。
+    - Atlas 200I/500 A2推理产品不超过8个。
     <!-- end id13 -->
     <!-- npu="310p" id14 -->
-    - Atlas 推理系列产品AI Core不超过8个。
+    - Atlas推理系列产品AI Core不超过8个。
     <!-- end id14 -->
     <!-- npu="310p" id15 -->
-    - Atlas 推理系列产品Vector Core不超过8个。
+    - Atlas推理系列产品Vector Core不超过8个。
     <!-- end id15 -->
     <!-- npu="910" id16 -->
-    - Atlas 训练系列产品不超过4个。
+    - Atlas训练系列产品不超过4个。
     <!-- end id16 -->
 -   non-inplace接口分配的Tensor内容可能包含随机值。
 -   non-inplace接口，需要将TQueBind的depth模板参数设置为非零值；inplace接口，需要将TQueBind的depth模板参数设置为0。

@@ -16,8 +16,8 @@ int32_t SetScaleAType(TPosition scalePos, CubeFormat scaleType, bool isScaleTran
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| scalePos | 输入 | scaleA矩阵的内存逻辑位置。<!-- npu="950" id1 --><br><br>针对Ascend 950PR/Ascend 950DT，scaleA矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM。<!-- end id1 --> |
-| scaleType | 输入 | scaleA矩阵的物理排布格式。<!-- npu="950" id2 --><br><br>针对Ascend 950PR/Ascend 950DT，scaleA矩阵可设置为CubeFormat::ND，CubeFormat::NZ。<!-- end id2 --> |
+| scalePos | 输入 | scaleA矩阵的内存逻辑位置。<!-- npu="950" id1 --><br><br>针对Ascend 950PR&950DT系列产品，scaleA矩阵可设置为TPosition::GM，TPosition::VECOUT，TPosition::TSCM。<!-- end id1 --> |
+| scaleType | 输入 | scaleA矩阵的物理排布格式。<!-- npu="950" id2 --><br><br>针对Ascend 950PR&950DT系列产品，scaleA矩阵可设置为CubeFormat::ND，CubeFormat::NZ。<!-- end id2 --> |
 | isScaleTrans<a name="p2934103115919"></a> | 输入 | scaleA矩阵是否转置。参数支持的取值如下：<br>true：scaleA矩阵转置；<br>false：默认值，scaleA矩阵不转置。 |
 
 ## 返回值说明

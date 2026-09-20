@@ -17,19 +17,19 @@ uint32_t GetCoreNumAiv(void) const
 ## 返回值说明<a name="zh-cn_topic_0000001675101185_zh-cn_topic_0000001442758437_section25791320141317"></a>
 
 <!-- npu="910" id1 -->
-Atlas 训练系列产品，耦合模式，返回AI Core的核数
+Atlas训练系列产品，耦合模式，返回AI Core的核数
 <!-- end id1 -->
 <!-- npu="310p" id2 -->
-Atlas 推理系列产品，耦合模式，返回AI Core的核数
+Atlas推理系列产品，耦合模式，返回AI Core的核数
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品，分离模式，返回Vector Core的核数
+Atlas A2系列产品，分离模式，返回Vector Core的核数
 <!-- end id3 -->
 <!-- npu="A3" id4 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品，分离模式，返回Vector Core的核数
+Atlas A3系列产品，分离模式，返回Vector Core的核数
 <!-- end id4 -->
 <!-- npu="950" id5 -->
-Ascend 950PR/Ascend 950DT，分离模式，返回Vector Core的核数
+Ascend 950PR&950DT系列产品，分离模式，返回Vector Core的核数
 <!-- end id5 -->
 
 ## 约束说明<a name="zh-cn_topic_0000001675101185_zh-cn_topic_0000001442758437_section19165124931511"></a>

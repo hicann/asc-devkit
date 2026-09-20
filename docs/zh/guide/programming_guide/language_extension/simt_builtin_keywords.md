@@ -9,22 +9,22 @@ SIMT会提供内置的宏方便用户编写程序。预定义宏一节着重介�
     \_\_NPU\_ARCH\_\_是Device侧AI Core代码中的预处理宏，用于标识AI处理器的架构版本。通过该宏，开发者可以针对不同AI处理器，差异化进行代码适配和优化。产品型号和NPU架构版本的对应关系如下：
 
     <!-- npu="950" id1 -->
-    - Ascend 950PR/Ascend 950DT：3510
+    - Ascend 950PR&950DT系列产品：3510
     <!-- end id1 -->
     <!-- npu="A3" id2 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持SIMT
+    - Atlas A3系列产品：不支持SIMT
     <!-- end id2 -->
     <!-- npu="910b" id3 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持SIMT
+    - Atlas A2系列产品：不支持SIMT
     <!-- end id3 -->
     <!-- npu="310b" id4 -->
-    - Atlas 200I/500 A2 推理产品：不支持SIMT
+    - Atlas 200I/500 A2推理产品：不支持SIMT
     <!-- end id4 -->
     <!-- npu="310p" id5 -->
-    - Atlas 推理系列产品：不支持SIMT
+    - Atlas推理系列产品：不支持SIMT
     <!-- end id5 -->
     <!-- npu="910" id6 -->
-    - Atlas 训练系列产品：不支持SIMT
+    - Atlas训练系列产品：不支持SIMT
     <!-- end id6 -->
 
 ## 函数执行空间限定符<a name="section204112391232"></a>

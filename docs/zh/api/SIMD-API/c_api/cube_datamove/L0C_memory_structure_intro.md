@@ -5,10 +5,10 @@
 <!-- npu="A3,910b" id1 -->
 以如下产品型号为例：
 <!-- npu="A3" id2 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品
+Atlas A3系列产品
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品
+Atlas A2系列产品
 <!-- end id3 -->
 L0C Buffer的总容量为128K字节，由16个Bank组成。每个Bank的容量为8K字节，由128行组成，每行的宽度为64字节。这16个Bank被进一步组织为16个Bank Group。每个Bank Group包含1个Bank。
 
@@ -27,7 +27,7 @@ L0C_ADDR[16:0] = { BANK_DEPTH[6:0], BANK[3:0], BANK_WIDTH[5:0] }    // bit位顺
 <!-- end id1 -->
 
 <!-- npu="950" id4 -->
-以Ascend 950PR/Ascend 950DT为例，L0C Buffer总容量为256K字节，由16个Bank组成。每个Bank的容量为16K字节，由256行组成，每行的宽度为64字节。这16个Bank被进一步组织为16个Bank Group。每个 Bank Group包含1个Bank。
+以Ascend 950PR&950DT系列产品为例，L0C Buffer总容量为256K字节，由16个Bank组成。每个Bank的容量为16K字节，由256行组成，每行的宽度为64字节。这16个Bank被进一步组织为16个Bank Group。每个 Bank Group包含1个Bank。
 
 L0C Buffer的内存结构如下图2所示，L0C Buffer的地址编码格式及其bit位对应的含义说明如下：
 

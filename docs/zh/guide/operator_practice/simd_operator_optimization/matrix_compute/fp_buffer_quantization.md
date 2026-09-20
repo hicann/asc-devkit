@@ -5,7 +5,7 @@
 【描述】算子实现中对矩阵乘结果进行量化计算时，可将量化参数搬运到Fixpipe Buffer（C2PIPE2GM）上，调用一次Fixpipe接口实现矩阵乘结果的量化计算。相比于将矩阵乘的结果从L0C Buffer（CO1）搬运到GM，再从GM搬运到Unified Buffer（UB），在UB进行量化计算的过程，数据搬运的次数更少，内存使用效率更高。
 
 >[!NOTE]说明 
->本性能优化手段仅针对Atlas A2 训练系列产品/Atlas A2 推理系列产品生效。
+>本性能优化手段仅针对Atlas A2系列产品生效。
 
 **图1**  反例数据流图<a name="fig1775910202351"></a>  
 ![](../../../figures/bad_flow_78.png "反例数据流图-78")

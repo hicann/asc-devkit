@@ -5,10 +5,10 @@
 >[!NOTE]说明 
 >该性能优化建议适用于如下产品型号：
 ><!-- npu="A3" id1 -->
->- Atlas A3 训练系列产品/Atlas A3 推理系列产品
+>- Atlas A3系列产品
 ><!-- end id1 -->
 ><!-- npu="910b" id2 -->
->- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+>- Atlas A2系列产品
 ><!-- end id2 -->
 
 【描述】为了提高数据访问的效率和吞吐量，Unified Buffer（UB）采用了bank（大小相等的内存模块）结构设计。UB总大小为192K，划分为48个bank。每个bank由128行组成，每行长度为32B。这48个bank进一步组织为16个bank group，每个bank group包含3个bank，例如bank15、bank31和bank47组成一个bank group。

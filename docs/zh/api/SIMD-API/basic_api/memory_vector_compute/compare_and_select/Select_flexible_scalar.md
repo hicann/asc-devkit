@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品 AI Core：不支持
+- Atlas推理系列产品 AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品 Vector Core：不支持
+- Atlas推理系列产品 Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/compare_and_select/Select_flexible_scalar_res.md#id1 -->
 
@@ -85,7 +85,7 @@
 | 参数名称 | 输入/输出 | 含义 |
 | :--- | :--- | :--- |
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐 |
-| selMask | 输入 | 选取mask。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>Ascend 950PR/Ascend 950DT，支持的数据类型为：uint8_t/uint16_t/uint32_t/uint64_t。<br>每个比特位表示1个元素的选取，当selMask的比特位为1时，从src0中选取元素；比特位为0时，从src1中选取元素。<br>selMode为模式0时，在每一轮迭代中，根据selMask的有效位数据进行选择操作，每一轮迭代采用的selMask，均为相同数值，即selMask的有效数值。selMode为模式1/2时，多次迭代对selMask连续消耗。<br>- 模式0：根据selMask在两个tensor中选取元素，selMask有位数限制，不管迭代多少次，每次迭代都只根据截取后的固定位数的selMask进行选择。当源操作数的数据类型为8位时，selMask前256比特位有效；当源操作数的数据类型为16位时，selMask前128比特位有效；源操作数的数据类型为32位时，selMask前64比特位有效；源操作数的数据类型为64位时，selMask前32比特位有效。<br>- 模式1：根据selMask在1个tensor和1个scalar标量中选取元素。支持多次迭代，选取方式为，根据selMask的设置值，如果selMask比特值为1，则选择src0内的同位置数值，如果selMask比特值为0，则选择标量值。selMask连续存放，当源操作数的数据类型为8位时，一次比较获取selMask256bit长度的数据；当源操作数的数据类型为16位时，一次比较获取selMask128bit长度的数据；源操作数的数据类型为32位时，一次比较获取selMask64bit长度的数据；源操作数的数据类型为64位时，一次比较获取selMask32bit长度的数据。<br>- 模式2：根据selMask在两个tensor中选取元素。支持多次迭代，选取方式为，根据selMask的设置值，如果selMask比特值为1，则选择src0内的同位置数值，如果selMask比特值为0，则选择src1内的同位置数值。selMask连续存放，当源操作数的数据类型为8位时，一次比较获取selMask256bit长度的数据；当源操作数的数据类型为16位时，一次比较获取selMask128bit长度的数据；源操作数的数据类型为32位时，一次比较获取selMask64bit长度的数据；源操作数的数据类型为64位时，一次比较获取selMask32bit长度的数据。 |
+| selMask | 输入 | 选取mask。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>Ascend 950PR&950DT系列产品，支持的数据类型为：uint8_t/uint16_t/uint32_t/uint64_t。<br>每个比特位表示1个元素的选取，当selMask的比特位为1时，从src0中选取元素；比特位为0时，从src1中选取元素。<br>selMode为模式0时，在每一轮迭代中，根据selMask的有效位数据进行选择操作，每一轮迭代采用的selMask，均为相同数值，即selMask的有效数值。selMode为模式1/2时，多次迭代对selMask连续消耗。<br>- 模式0：根据selMask在两个tensor中选取元素，selMask有位数限制，不管迭代多少次，每次迭代都只根据截取后的固定位数的selMask进行选择。当源操作数的数据类型为8位时，selMask前256比特位有效；当源操作数的数据类型为16位时，selMask前128比特位有效；源操作数的数据类型为32位时，selMask前64比特位有效；源操作数的数据类型为64位时，selMask前32比特位有效。<br>- 模式1：根据selMask在1个tensor和1个scalar标量中选取元素。支持多次迭代，选取方式为，根据selMask的设置值，如果selMask比特值为1，则选择src0内的同位置数值，如果selMask比特值为0，则选择标量值。selMask连续存放，当源操作数的数据类型为8位时，一次比较获取selMask256bit长度的数据；当源操作数的数据类型为16位时，一次比较获取selMask128bit长度的数据；源操作数的数据类型为32位时，一次比较获取selMask64bit长度的数据；源操作数的数据类型为64位时，一次比较获取selMask32bit长度的数据。<br>- 模式2：根据selMask在两个tensor中选取元素。支持多次迭代，选取方式为，根据selMask的设置值，如果selMask比特值为1，则选择src0内的同位置数值，如果selMask比特值为0，则选择src1内的同位置数值。selMask连续存放，当源操作数的数据类型为8位时，一次比较获取selMask256bit长度的数据；当源操作数的数据类型为16位时，一次比较获取selMask128bit长度的数据；源操作数的数据类型为32位时，一次比较获取selMask64bit长度的数据；源操作数的数据类型为64位时，一次比较获取selMask32bit长度的数据。 |
 | src0/src1 | 输入 | 灵活标量位置接口中源操作数。<br>支持类型为LocalTensor或标量。数据类型需要与目的操作数保持一致。<br> 类型为LocalTensor时，支持当作矢量操作数或标量单点元素，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。 |
 | selMode | 输入 | 指令模式，SELMODE类型，取值如下：<br>enum class SELMODE : uint8_t {<br>&nbsp;&nbsp;&nbsp;&nbsp;VSEL_CMPMASK_SPR = 0,<br>&nbsp;&nbsp;&nbsp;&nbsp;VSEL_TENSOR_SCALAR_MODE,<br>&nbsp;&nbsp;&nbsp;&nbsp;VSEL_TENSOR_TENSOR_MODE,<br>};<br>- 模式0：取值为VSEL_CMPMASK_SPR。根据selMask在两个tensor中选取元素。selMask中有效数据的个数存在限制，具体取决于源操作数的数据类型。在每一轮迭代中，根据selMask的有效位数据进行选择操作，每一轮迭代采用的selMask，均为相同数值，即selMask的有效数值。<br>- 模式1：取值为VSEL_TENSOR_SCALAR_MODE。根据selMask在1个tensor和1个scalar标量中选取元素，selMask无有效数据限制。多轮迭代时，每轮迭代连续使用selMask的不同部分。<br>- 模式2：取值为VSEL_TENSOR_TENSOR_MODE。根据selMask在两个tensor中选取元素，selMask无有效数据限制。多轮迭代时，每轮迭代连续使用selMask的不同部分。 |
 | mask/mask[] | 输入 | mask用于控制每次迭代内参与计算的元素。详细设置参考[掩码](../SIMD_compute/mask.md)。 |
@@ -96,7 +96,7 @@
 ## 数据类型
 
 <!-- npu="950" id8 -->
-Ascend 950PR/Ascend 950DT，源操作数dst和目的操作数src支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/float/int32_t/uint32_t/complex32/int64_t/uint64_t/complex64。其中，int8\_t/uint8\_t/uint64\_t/int64\_t/complex32/complex64数据类型仅支持tensor前n个数据计算接口。
+Ascend 950PR&950DT系列产品，源操作数dst和目的操作数src支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/float/int32_t/uint32_t/complex32/int64_t/uint64_t/complex64。其中，int8\_t/uint8\_t/uint64\_t/int64\_t/complex32/complex64数据类型仅支持tensor前n个数据计算接口。
 <!-- end id8 -->
 
 ## 返回值说明<a name="section198548421851"></a>

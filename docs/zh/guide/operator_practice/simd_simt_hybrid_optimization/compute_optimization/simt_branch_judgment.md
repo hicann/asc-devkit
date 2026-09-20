@@ -3,7 +3,7 @@
 >[!NOTE]说明 
 >该性能优化建议适用于如下型号：
      <!-- npu="950" id1 -->
->-   Ascend 950PR/Ascend 950DT
+>-   Ascend 950PR&950DT系列产品
      <!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/guide/operator_practice/simd_simt_hybrid_optimization/compute_optimization/simt_branch_judgment_res.md#id1 -->
 

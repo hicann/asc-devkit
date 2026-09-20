@@ -36,14 +36,14 @@ Matmul量化/反量化包含两种模式：同一系数的量化/反量化模式
 
 | A矩阵 | B矩阵 | C矩阵 | 支持平台 |
 | --- | --- | --- | --- |
-| half | half | int8_t | <!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT<br><br><!-- end id1 --><!-- npu="A3" id2 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><br><!-- end id2 --><!-- npu="910b" id3 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id3 --> |
-| bfloat16_t | bfloat16_t | int8_t | <!-- npu="950" id4 -->Ascend 950PR/Ascend 950DT<br><br><!-- end id4 --><!-- npu="A3" id5 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><br><!-- end id5 --><!-- npu="910b" id6 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id6 --> |
-| int8_t | int8_t | half | <!-- npu="950" id7 -->Ascend 950PR/Ascend 950DT<br><br><!-- end id7 --><!-- npu="A3" id8 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><br><!-- end id8 --><!-- npu="910b" id9 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id9 --> |
-| int4b_t | int4b_t | half | <!-- npu="A3" id10 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><br><!-- end id10 --><!-- npu="910b" id11 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id11 --> |
-| int8_t | int8_t | int8_t | <!-- npu="950" id12 -->Ascend 950PR/Ascend 950DT<br><br><!-- end id12 --><!-- npu="A3" id13 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><br><!-- end id13 --><!-- npu="910b" id14 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<!-- end id14 --> |
-| int8_t | int8_t | bfloat16_t | <!-- npu="950" id15 -->Ascend 950PR/Ascend 950DT<!-- end id15 --> |
-| fp8_e4m3fn_t/fp8_e5m2_t | fp8_e4m3fn_t/fp8_e5m2_t | fp8_e4m3fn_t/half/bfloat16_t/float | <!-- npu="950" id16 -->Ascend 950PR/Ascend 950DT<!-- end id16 --> |
-| hifloat8_t | hifloat8_t | hifloat8_t/half/bfloat16_t/float | <!-- npu="950" id17 -->Ascend 950PR/Ascend 950DT<br><br><!-- end id17 -->注意：<br><br>输出为hifloat8_t时，采用Half to Away Round方式量化。<br><br>量化场景的输出为float类型时，该量化模式精度无法达到双万分之一，可以达到双千分之一。如果有双万分之一的精度要求，建议使用AscendDeQuant高阶API。 |
+| half | half | int8_t | <!-- npu="950" id1 -->Ascend 950PR&950DT系列产品<br><br><!-- end id1 --><!-- npu="A3" id2 -->Atlas A3系列产品<br><br><!-- end id2 --><!-- npu="910b" id3 -->Atlas A2系列产品<!-- end id3 --> |
+| bfloat16_t | bfloat16_t | int8_t | <!-- npu="950" id4 -->Ascend 950PR&950DT系列产品<br><br><!-- end id4 --><!-- npu="A3" id5 -->Atlas A3系列产品<br><br><!-- end id5 --><!-- npu="910b" id6 -->Atlas A2系列产品<!-- end id6 --> |
+| int8_t | int8_t | half | <!-- npu="950" id7 -->Ascend 950PR&950DT系列产品<br><br><!-- end id7 --><!-- npu="A3" id8 -->Atlas A3系列产品<br><br><!-- end id8 --><!-- npu="910b" id9 -->Atlas A2系列产品<!-- end id9 --> |
+| int4b_t | int4b_t | half | <!-- npu="A3" id10 -->Atlas A3系列产品<br><br><!-- end id10 --><!-- npu="910b" id11 -->Atlas A2系列产品<!-- end id11 --> |
+| int8_t | int8_t | int8_t | <!-- npu="950" id12 -->Ascend 950PR&950DT系列产品<br><br><!-- end id12 --><!-- npu="A3" id13 -->Atlas A3系列产品<br><br><!-- end id13 --><!-- npu="910b" id14 -->Atlas A2系列产品<!-- end id14 --> |
+| int8_t | int8_t | bfloat16_t | <!-- npu="950" id15 -->Ascend 950PR&950DT系列产品<!-- end id15 --> |
+| fp8_e4m3fn_t/fp8_e5m2_t | fp8_e4m3fn_t/fp8_e5m2_t | fp8_e4m3fn_t/half/bfloat16_t/float | <!-- npu="950" id16 -->Ascend 950PR&950DT系列产品<!-- end id16 --> |
+| hifloat8_t | hifloat8_t | hifloat8_t/half/bfloat16_t/float | <!-- npu="950" id17 -->Ascend 950PR&950DT系列产品<br><br><!-- end id17 -->注意：<br><br>输出为hifloat8_t时，采用Half to Away Round方式量化。<br><br>量化场景的输出为float类型时，该量化模式精度无法达到双万分之一，可以达到双千分之一。如果有双万分之一的精度要求，建议使用AscendDeQuant高阶API。 |
 
 ## 约束说明
 

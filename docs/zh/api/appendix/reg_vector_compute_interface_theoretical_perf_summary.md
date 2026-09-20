@@ -3,7 +3,7 @@
 本节汇总介绍了Reg矢量计算接口的理论性能，本节内容仅针对如下型号生效：
 
 <!-- npu="950" id1 -->
-Ascend 950PR/Ascend 950DT
+Ascend 950PR&950DT系列产品
 <!-- end id1 -->
 
 本节汇总的理论性能均为单指令理论性能，实际性能还需考虑指令单双发情况，请参考[Reg矢量计算接口指令单双发汇总](../appendix/reg_vector_compute_interface_instruction_single_dual_issue_summary.md)。软仿实现的接口和数据类型不提供理论性能。

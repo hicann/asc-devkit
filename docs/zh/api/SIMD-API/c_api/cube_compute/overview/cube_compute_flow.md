@@ -16,7 +16,7 @@ C API针对矩阵计算编程模型提供了数据搬入、矩阵计算和结果
 <!-- npu="950" id1 -->
 # Mx矩阵计算流程
 
-Mx矩阵计算仅在Ascend 950PR/Ascend 950DT型号支持。
+Mx矩阵计算仅在Ascend 950PR&950DT系列产品型号支持。
 
 MX矩阵乘法（Microscaling矩阵乘加）为带有量化系数的矩阵乘法，即左矩阵和右矩阵均有对应的量化系数矩阵，左量化系数矩阵scaleA和右量化系数矩阵scaleB。MX矩阵乘法场景中，左量化系数矩阵与左矩阵乘积，右量化系数矩阵与右矩阵乘积，对两个乘积的结果做矩阵乘法。C API通过asc_mmad_mx及独立的数据/系数搬运接口支持MX矩阵计算，如下图所示：
 
@@ -64,4 +64,4 @@ Conv2D前向计算的本质是将卷积运算转换为矩阵乘：先通过img2c
 
 3. 使用[asc_mmad](../asc_mmad.md)完成矩阵乘加，结果存放在L0C Buffer。
 
-4. 使用`asc_copy_l0c2gm`的[Nz2ND](../../cube_datamove/cube_store_key_features/NZ2ND.md)能力，将卷积结果输出为NHWC。维度映射见[卷积格式转换](../../cube_datamove/cube_store_key_features/convolution_format_conversion.md)。<!-- npu="950" id3 -->特别地，针对Ascend 950PR/Ascend 950DT产品，还可通过[Nz2DN](../../cube_datamove/cube_store_key_features/NZ2DN.md)将卷积结果输出为NCHW格式。<!-- end id3 -->
+4. 使用`asc_copy_l0c2gm`的[Nz2ND](../../cube_datamove/cube_store_key_features/NZ2ND.md)能力，将卷积结果输出为NHWC。维度映射见[卷积格式转换](../../cube_datamove/cube_store_key_features/convolution_format_conversion.md)。<!-- npu="950" id3 -->特别地，针对Ascend 950PR&950DT系列产品产品，还可通过[Nz2DN](../../cube_datamove/cube_store_key_features/NZ2DN.md)将卷积结果输出为NCHW格式。<!-- end id3 -->

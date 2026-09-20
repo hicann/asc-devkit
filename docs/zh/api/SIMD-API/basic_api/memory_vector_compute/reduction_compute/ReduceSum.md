@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute/ReduceSum_res.md#id1 -->
 
@@ -87,22 +87,22 @@
 支持的数据类型如下：
 
 <!-- npu="950" id10 -->
-- Ascend 950PR/Ascend 950DT，支持half、float、int32_t、uint32_t、int64_t、uint64_t。数据类型int64_t、uint64_t仅支持tensor前n个数据计算接口。
+- Ascend 950PR&950DT系列产品，支持half、float、int32_t、uint32_t、int64_t、uint64_t。数据类型int64_t、uint64_t仅支持tensor前n个数据计算接口。
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持half、float。
+- Atlas A3系列产品，支持half、float。
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持half、float。
+- Atlas A2系列产品，支持half、float。
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- Atlas 200I/500 A2 推理产品，支持half、float。
+- Atlas 200I/500 A2推理产品，支持half、float。
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- Atlas 推理系列产品AI Core，支持half、float。
+- Atlas推理系列产品AI Core，支持half、float。
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- Atlas 训练系列产品，支持half。
+- Atlas训练系列产品，支持half。
 <!-- end id15 -->
 
 ## 返回值说明
@@ -120,15 +120,15 @@
   <!-- npu="A3,910b" id19 -->
   - 针对如下型号，当参数count或repeatTime取值为0时，不会执行计算操作，不会对目的操作数进行写入，该接口将被视为NOP（空操作）。
     <!-- npu="A3" id20 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id20 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id21 -->
   <!-- end id19 -->
 
   <!-- npu="950" id22 -->
-  - 针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算](../../reg_vector_compute/reg_vector_compute.md)API实现兼容，当参数count或repeatTime取值为0时，不保证该接口被视为NOP（空操作）。
+  - 针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算](../../reg_vector_compute/reg_vector_compute.md)API实现兼容，当参数count或repeatTime取值为0时，不保证该接口被视为NOP（空操作）。
   <!-- end id22 -->
 <!-- end id18 -->
 
@@ -137,16 +137,16 @@
 <!-- npu="950,910,310p,310b" id23 -->
 - 针对以下型号，模板参数`isSetMask`参数不生效，保持默认值即可：
   <!-- npu="950" id24 -->
-  - Ascend 950PR/Ascend 950DT
+  - Ascend 950PR&950DT系列产品
   <!-- end id24 -->
   <!-- npu="310b" id25 -->
-  - Atlas 200I/500 A2 推理产品
+  - Atlas 200I/500 A2推理产品
   <!-- end id25 -->
   <!-- npu="310p" id26 -->
-  - Atlas 推理系列产品AI Core
+  - Atlas推理系列产品AI Core
   <!-- end id26 -->
   <!-- npu="910" id27 -->
-  - Atlas 训练系列产品
+  - Atlas训练系列产品
   <!-- end id27 -->
 <!-- end id23 -->
 
@@ -179,25 +179,25 @@
 **不同硬件形态对应的`ReduceSum`相加方式如下：**
 
 <!-- npu="950" id30 -->
-- Ascend 950PR/Ascend 950DT，按场景采用不同的累加方式：
+- Ascend 950PR&950DT系列产品，按场景采用不同的累加方式：
   - int64_t、uint64_t采用方式三。
   - [Counter模式](../SIMD_compute/mask.md#mask-mode)且数据量在256~1024字节之间采用方式三；否则采用方式二。
   - [Normal模式](../SIMD_compute/mask.md#mask-mode)采用方式二。
 <!-- end id30 -->
 <!-- npu="A3" id31 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品，tensor前n个数据计算接口采用方式一，tensor高维切分计算接口采用方式二。
+- Atlas A3系列产品，tensor前n个数据计算接口采用方式一，tensor高维切分计算接口采用方式二。
 <!-- end id31 -->
 <!-- npu="910b" id32 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品，tensor前n个数据计算接口采用方式一，tensor高维切分计算接口采用方式二。
+- Atlas A2系列产品，tensor前n个数据计算接口采用方式一，tensor高维切分计算接口采用方式二。
 <!-- end id32 -->
 <!-- npu="310b" id33 -->
-- Atlas 200I/500 A2 推理产品，采用方式二。
+- Atlas 200I/500 A2推理产品，采用方式二。
 <!-- end id33 -->
 <!-- npu="310p" id34 -->
-- Atlas 推理系列产品AI Core，采用方式二。
+- Atlas推理系列产品AI Core，采用方式二。
 <!-- end id34 -->
 <!-- npu="910" id35 -->
-- Atlas 训练系列产品，采用方式二。
+- Atlas训练系列产品，采用方式二。
 <!-- end id35 -->
 
 ## 调用示例

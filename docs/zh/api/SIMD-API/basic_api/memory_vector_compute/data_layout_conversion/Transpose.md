@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/Transpose_res.md#id1 -->
 
@@ -99,7 +99,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="950" id10 -->
 
-**表**  Ascend 950PR/Ascend 950DT sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Ascend 950PR&950DT系列产品 sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -111,7 +111,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="A3" id11 -->
 
-**表**  Atlas A3 训练系列产品/Atlas A3 推理系列产品sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Atlas A3系列产品sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -123,7 +123,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="910b" id12 -->
 
-**表**  Atlas A2 训练系列产品/Atlas A2 推理系列产品sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Atlas A2系列产品sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -135,7 +135,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="310b" id13 -->
 
-**表**  Atlas 200I/500 A2 推理产品sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Atlas 200I/500 A2推理产品sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -145,7 +145,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="310p" id14 -->
 
-**表**  Atlas 推理系列产品AI Core sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Atlas推理系列产品AI Core sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -160,68 +160,68 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 - 普通转置：
 
   <!-- npu="950" id17 -->
-  Ascend 950PR/Ascend 950DT，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Ascend 950PR&950DT系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id17 -->
 
   <!-- npu="A3" id18 -->
-  Atlas A3 训练系列产品/Atlas A3 推理系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Atlas A3系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id18 -->
 
   <!-- npu="910b" id19 -->
-  Atlas A2 训练系列产品/Atlas A2 推理系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Atlas A2系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id19 -->
 
   <!-- npu="310b" id20 -->
-  Atlas 200I/500 A2 推理产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Atlas 200I/500 A2推理产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id20 -->
 
   <!-- npu="310p" id21 -->
-  Atlas 推理系列产品AI Core，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Atlas推理系列产品AI Core，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id21 -->
 
   <!-- npu="910" id22 -->
-  Atlas 训练系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Atlas训练系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id22 -->
 
 - 增强转置：
   - transposeType为TRANSPOSE\_ND2ND\_B16：
 
     <!-- npu="950" id25 -->
-    Ascend 950PR/Ascend 950DT，操作数支持的数据类型为：int16_t、uint16_t、half。
+    Ascend 950PR&950DT系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
     <!-- end id25 -->
 
     <!-- npu="A3" id26 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，操作数支持的数据类型为：uint16_t。
+    Atlas A3系列产品，操作数支持的数据类型为：uint16_t。
     <!-- end id26 -->
 
     <!-- npu="910b" id27 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，操作数支持的数据类型为：uint16_t。
+    Atlas A2系列产品，操作数支持的数据类型为：uint16_t。
     <!-- end id27 -->
 
     <!-- npu="310b" id28 -->
-    Atlas 200I/500 A2 推理产品，操作数支持的数据类型为：uint16_t。
+    Atlas 200I/500 A2推理产品，操作数支持的数据类型为：uint16_t。
     <!-- end id28 -->
 
     <!-- npu="310p" id29 -->
-    Atlas 推理系列产品AI Core，操作数支持的数据类型为：uint16_t。
+    Atlas推理系列产品AI Core，操作数支持的数据类型为：uint16_t。
     <!-- end id29 -->
 
   - transposeType为TRANSPOSE\_NCHW2NHWC或TRANSPOSE\_NHWC2NCHW：
 
     <!-- npu="950" id30 -->
-    Ascend 950PR/Ascend 950DT，操作数支持的数据类型为：int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int4x2_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32。
+    Ascend 950PR&950DT系列产品，操作数支持的数据类型为：int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int4x2_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32。
     <!-- end id30 -->
 
     <!-- npu="A3" id31 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    Atlas A3系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
     <!-- end id31 -->
 
     <!-- npu="910b" id32 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    Atlas A2系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
     <!-- end id32 -->
 
     <!-- npu="310p" id33 -->
-    Atlas 推理系列产品AI Core，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    Atlas推理系列产品AI Core，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
     <!-- end id33 -->
 
 ## 返回值说明

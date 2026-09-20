@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id7 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id7 -->
 <!-- npu="A3" id8 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id8 -->
 <!-- npu="910b" id9 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id9 -->
 <!-- npu="310b" id10 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id10 -->
 <!-- npu="310p" id11 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id11 -->
 <!-- npu="910" id12 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id12 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/quantization/AscendDequant_res.md#id1 -->
 
@@ -115,7 +115,7 @@ PER\_TOKEN/PER\_GROUP场景的计算逻辑如下：
     -   PER\_TOKEN/PER\_GROUP量化
 
         <!-- npu="950" id21 -->
-        仅支持Ascend 950PR/Ascend 950DT。
+        仅支持Ascend 950PR&950DT系列产品。
         <!-- end id21 -->
 
         -   通过sharedTmpBuffer入参传入临时空间
@@ -285,56 +285,56 @@ struct AscendDeQuantParam {
 -   PER\_TOKEN/PER\_GROUP量化场景支持情况如下：
 
     <!-- npu="950" id22 -->
-    - Ascend 950PR/Ascend 950DT：支持。
+    - Ascend 950PR&950DT系列产品：支持。
     <!-- end id22 -->
 
     <!-- npu="A3" id23 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持。
+    - Atlas A3系列产品：不支持。
     <!-- end id23 -->
 
     <!-- npu="910b" id24 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持。
+    - Atlas A2系列产品：不支持。
     <!-- end id24 -->
 
     <!-- npu="310p" id25 -->
-    - Atlas 推理系列产品AI Core：不支持。
+    - Atlas推理系列产品AI Core：不支持。
     <!-- end id25 -->
 
 -   PER\_TOKEN/PER\_GROUP场景，连续计算方向（即n方向）的数据量要求32B对齐。
 -   非PER\_TOKEN/PER\_GROUP场景dstTensor支持的数据类型<a id="li17926145114504"></a>
 
     <!-- npu="950" id13 -->
-    - Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16\_t、float。
+    - Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16\_t、float。
     <!-- end id13 -->
 
     <!-- npu="A3" id14 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、bfloat16\_t、float。
+    - Atlas A3系列产品，支持的数据类型为：half、bfloat16\_t、float。
     <!-- end id14 -->
 
     <!-- npu="910b" id15 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、bfloat16\_t、float。
+    - Atlas A2系列产品，支持的数据类型为：half、bfloat16\_t、float。
     <!-- end id15 -->
 
     <!-- npu="310p" id16 -->
-    - Atlas 推理系列产品AI Core，支持的数据类型为：half、float。
+    - Atlas推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id16 -->
 
 -   非PER\_TOKEN/PER\_GROUP场景deqScale支持的数据类型<a id="li189021550175211"></a>
 
     <!-- npu="950" id17 -->
-    - Ascend 950PR/Ascend 950DT，当deqScale为矢量时，支持的数据类型为：uint64\_t、float、bfloat16\_t；当deqScale为标量时，支持的数据类型为bfloat16\_t、float。
+    - Ascend 950PR&950DT系列产品，当deqScale为矢量时，支持的数据类型为：uint64\_t、float、bfloat16\_t；当deqScale为标量时，支持的数据类型为bfloat16\_t、float。
     <!-- end id17 -->
 
     <!-- npu="A3" id18 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品，当deqScale为矢量时，支持的数据类型为：uint64\_t、float、bfloat16\_t；当deqScale为标量时，支持的数据类型为bfloat16\_t、float。
+    - Atlas A3系列产品，当deqScale为矢量时，支持的数据类型为：uint64\_t、float、bfloat16\_t；当deqScale为标量时，支持的数据类型为bfloat16\_t、float。
     <!-- end id18 -->
 
     <!-- npu="910b" id19 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品，当deqScale为矢量时，支持的数据类型为：uint64\_t、float、bfloat16\_t；当deqScale为标量时，支持的数据类型为bfloat16\_t、float。
+    - Atlas A2系列产品，当deqScale为矢量时，支持的数据类型为：uint64\_t、float、bfloat16\_t；当deqScale为标量时，支持的数据类型为bfloat16\_t、float。
     <!-- end id19 -->
 
     <!-- npu="310p" id20 -->
-    - Atlas 推理系列产品AI Core，当deqScale为矢量时，支持的数据类型为：uint64\_t、float；当deqScale为标量时，支持的数据类型为float。
+    - Atlas推理系列产品AI Core，当deqScale为矢量时，支持的数据类型为：uint64\_t、float；当deqScale为标量时，支持的数据类型为float。
     <!-- end id20 -->
 
 ## 调用示例

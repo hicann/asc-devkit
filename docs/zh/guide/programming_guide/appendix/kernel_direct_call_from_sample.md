@@ -451,13 +451,13 @@ bash run.sh -r npu  -v <soc_version> -i <install_path> -b Debug -p <install-pref
 基于核函数（Kernel）直调样例工程，通过ACLRT\_LAUNCH\_KERNEL接口调用核函数（Kernel）时，可实现CPU与NPU域的代码的统一，且该方式仅支持以下型号：
 
 <!-- npu="A3" id1 -->
--   Atlas A3 训练系列产品/Atlas A3 推理系列产品
+-   Atlas A3系列产品
 <!-- end id1 -->
 <!-- npu="910b" id2 -->
--   Atlas A2 训练系列产品/Atlas A2 推理系列产品
+-   Atlas A2系列产品
 <!-- end id2 -->
 <!-- npu="310p" id3 -->
--   Atlas 推理系列产品
+-   Atlas推理系列产品
 <!-- end id3 -->
 
 下面代码以add\_custom算子为例，介绍算子核函数（Kernel）在CPU侧验证时，算子调用的应用程序如何编写（通过ACLRT\_LAUNCH\_KERNEL接口调用核函数（Kernel）的方式）。您在实现自己的应用程序时，需要关注由于算子核函数（Kernel）不同带来的修改，包括算子核函数（Kernel）名，入参出参的不同等，合理安排相应的内存分配、内存拷贝和文件读写等，相关API的调用方式直接复用即可。

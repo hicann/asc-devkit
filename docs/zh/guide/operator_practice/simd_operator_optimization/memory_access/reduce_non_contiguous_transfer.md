@@ -5,7 +5,7 @@
 >[!NOTE]说明 
 >该性能优化建议适用于如下产品型号：
 ><!-- npu="950" id1 -->
->- Ascend 950PR/Ascend 950DT
+>- Ascend 950PR&950DT系列产品
 ><!-- end id1 -->
 
 在非连续搬运场景可以使用DataCopyPad接口的Loop模式和DataCopy的多维数据搬运接口来减少搬运次数，优化搬运性能。
@@ -118,7 +118,7 @@ __aicore__ inline void CopyIn5(){
 
 【正例】使用多维数据搬运
 
-DataCopy接口在Ascend 950PR/Ascend 950DT上支持多维数据的搬运，具体可参考[DataCopy（GMToUB多维数据搬运NDDMA）](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md)。以2D场景的搬运为例，代码如下：
+DataCopy接口在Ascend 950PR&950DT系列产品上支持多维数据的搬运，具体可参考[DataCopy（GMToUB多维数据搬运NDDMA）](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md)。以2D场景的搬运为例，代码如下：
 
 ```cpp
 __aicore__ inline void CopyIn6(){

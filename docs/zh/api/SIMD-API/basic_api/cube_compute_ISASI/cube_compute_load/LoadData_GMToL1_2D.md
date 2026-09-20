@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="zh-cn_topic_0000002567745223_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2D_res.md#id1 -->
 
@@ -63,27 +63,27 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 ## 数据类型<a id="zh-cn_topic_0000002567745223_section4219135304818"></a>
 
 <!-- npu="950" id10 -->
-针对Ascend 950PR/Ascend 950DT，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
+针对Ascend 950PR&950DT系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持数据类型为：b8、b16、b32。
+针对Atlas A3系列产品，支持数据类型为：b8、b16、b32。
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持数据类型为：b8、b16、b32。
+针对Atlas A2系列产品，支持数据类型为：b8、b16、b32。
 <!-- end id12 -->
 
 <!-- npu="310b" id13 -->
-针对Atlas 200I/500 A2 推理产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
+针对Atlas 200I/500 A2推理产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half、bfloat16_t、uint32_t、int32_t、float。
 <!-- end id13 -->
 
 <!-- npu="310p" id14 -->
-针对Atlas 推理系列产品AI Core，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
+针对Atlas推理系列产品AI Core，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
 <!-- end id14 -->
 
 <!-- npu="910" id15 -->
-针对Atlas 训练系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
+针对Atlas训练系列产品，支持数据类型为：uint8_t、int8_t、uint16_t、int16_t、half。
 <!-- end id15 -->
 
 ## 返回值说明
@@ -97,7 +97,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 - 目的地址必须32字节对齐。源地址必须1字节对齐，指令执行占用的流水为PIPE_MTE2。
 - 当srcStride=0时，表示连续的repeat之间读取的源操作数中的同一块数据分形。
 <!-- npu="910" id18 -->
-- 针对Atlas 训练系列产品不支持dstGap设置参数。
+- 针对Atlas训练系列产品不支持dstGap设置参数。
 <!-- end id18 -->
 
 ## 调用示例<a id="zh-cn_topic_0000002567745223_section088124295117"></a>

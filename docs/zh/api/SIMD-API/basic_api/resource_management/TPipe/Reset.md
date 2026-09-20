@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/resource_management/TPipe/Reset_res.md#id1 -->
 
@@ -32,7 +32,7 @@
 完成资源的释放与eventId等变量的初始化操作，恢复到TPipe的初始化状态。
 
 <!-- npu="950" id10 -->
-针对Ascend 950PR/Ascend 950DT，调用该接口后，CTRL\[48\]保持原值，CTRL\[60\]复位为1。CTRL寄存器比特位说明请见[SetCtrlSpr](../../special_register_access/SetCtrlSpr_ISASI.md)。
+针对Ascend 950PR&950DT系列产品，调用该接口后，CTRL\[48\]保持原值，CTRL\[60\]复位为1。CTRL寄存器比特位说明请见[SetCtrlSpr](../../special_register_access/SetCtrlSpr_ISASI.md)。
 <!-- end id10 -->
 
 ## 函数原型<a name="section620mcpsimp"></a>

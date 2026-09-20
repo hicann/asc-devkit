@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="zh-cn_topic_0000002566886667_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable_res.md#id1 -->
 
@@ -32,10 +32,10 @@
 DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动到BiasTable Buffer。
 
 <!-- npu="A3,910b" id10 -->
-针对Atlas A2 训练系列产品/Atlas A2 推理系列产品和Atlas A3 训练系列产品/Atlas A3 推理系列产品，BiasTable Buffer总大小为1KB。
+针对Atlas A2系列产品和Atlas A3系列产品，BiasTable Buffer总大小为1KB。
 <!-- end id10 -->
 <!-- npu="950" id11 -->
-针对Ascend 950PR/Ascend 950DT，BiasTable Buffer总大小为4KB。
+针对Ascend 950PR&950DT系列产品，BiasTable Buffer总大小为4KB。
 <!-- end id11 -->
 
 ## 函数原型<a id="zh-cn_topic_0000002566886667_section82039854412"></a>
@@ -93,13 +93,13 @@ DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动�
 源操作数和目的操作数支持数据类型不一样，具体请参考如下：
 
 <!-- npu="950" id19 -->
-针对Ascend 950PR/Ascend 950DT，src支持的数据为：half、bfloat16_t、int32_t、float；dst支持的数据为：int32_t、float。
+针对Ascend 950PR&950DT系列产品，src支持的数据为：half、bfloat16_t、int32_t、float；dst支持的数据为：int32_t、float。
 <!-- end id19 -->
 <!-- npu="A3" id20 -->
-针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，src支持的数据为：half、int32_t、float；dst支持的数据为：int32_t、float。
+针对Atlas A3系列产品，src支持的数据为：half、int32_t、float；dst支持的数据为：int32_t、float。
 <!-- end id20 -->
 <!-- npu="910b" id12 -->
-针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，src支持的数据为：half、int32_t、float；dst支持的数据为：int32_t、float。
+针对Atlas A2系列产品，src支持的数据为：half、int32_t、float；dst支持的数据为：int32_t、float。
 <!-- end id12 -->
 
 ## 返回值说明
@@ -114,23 +114,23 @@ DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动�
 - 如果BiasTable Buffer中的目标dst地址溢出，将引发异常。
 - blockLen对不同型号单位不一样，具体请参考如下：
   <!-- npu="950" id13 -->
-  - 针对Ascend 950PR/Ascend 950DT，单位为32字节，blockLen必须为偶数。
+  - 针对Ascend 950PR&950DT系列产品，单位为32字节，blockLen必须为偶数。
   <!-- end id13 -->
   <!-- npu="A3" id14 -->
-  - 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，单位为64字节。
+  - 针对Atlas A3系列产品，单位为64字节。
   <!-- end id14 -->
   <!-- npu="910b" id15 -->
-  - 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，单位为64字节。
+  - 针对Atlas A2系列产品，单位为64字节。
   <!-- end id15 -->
 - dstGap对不同型号单位不一样，具体请参考如下：
   <!-- npu="950" id16 -->
-  - 针对Ascend 950PR/Ascend 950DT，单位为32字节。
+  - 针对Ascend 950PR&950DT系列产品，单位为32字节。
   <!-- end id16 -->
   <!-- npu="A3" id17 -->
-  - 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，单位为64字节。
+  - 针对Atlas A3系列产品，单位为64字节。
   <!-- end id17 -->
   <!-- npu="910b" id18 -->
-  - 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，单位为64字节。
+  - 针对Atlas A2系列产品，单位为64字节。
   <!-- end id18 -->
 
 ## 调用示例<a id="zh-cn_topic_0000002566886667_section088124295117"></a>

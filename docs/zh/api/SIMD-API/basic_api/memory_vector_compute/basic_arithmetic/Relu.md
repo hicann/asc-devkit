@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Relu_res.md#id1 -->
 
@@ -84,22 +84,22 @@ $dst_i = \max(0, src_i)$
 ## 数据类型
 
 <!-- npu="950" id10 -->
-- 针对Ascend 950PR/Ascend 950DT，T支持的数据类型为：half、int32_t、float、int64_t。数据类型int64_t仅支持tensor前n个数据计算接口。
+- 针对Ascend 950PR&950DT系列产品，T支持的数据类型为：half、int32_t、float、int64_t。数据类型int64_t仅支持tensor前n个数据计算接口。
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，T支持的数据类型为：half、int32_t、float。
+- 针对Atlas A3系列产品，T支持的数据类型为：half、int32_t、float。
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，T支持的数据类型为：half、int32_t、float。
+- 针对Atlas A2系列产品，T支持的数据类型为：half、int32_t、float。
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- 针对Atlas 200I/500 A2 推理产品，T支持的数据类型为：half、int32_t、float。
+- 针对Atlas 200I/500 A2推理产品，T支持的数据类型为：half、int32_t、float。
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- 针对Atlas 推理系列产品AI Core，T支持的数据类型为：half、int32_t、float。
+- 针对Atlas推理系列产品AI Core，T支持的数据类型为：half、int32_t、float。
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- 针对Atlas 训练系列产品，T支持的数据类型为：half。
+- 针对Atlas训练系列产品，T支持的数据类型为：half。
 <!-- end id15 -->
 
 ## 返回值说明<a name="section38228281712"></a>
@@ -116,18 +116,18 @@ $dst_i = \max(0, src_i)$
   <!-- npu="A3,910b" id23 -->
   - 针对如下型号，当参数count或repeatTime取值为0时，不会执行计算操作，不会对目的操作数进行写入，该接口将被视为NOP（空操作）。
     <!-- npu="A3" id24 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id24 -->
     <!-- npu="910b" id26 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id26 -->
   <!-- end id23 -->
   <!-- npu="950" id27 -->
-  - 针对Ascend 950PR/Ascend 950DT：该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，软仿行为不保证该接口被视为NOP（空操作）。
+  - 针对Ascend 950PR&950DT系列产品：该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，软仿行为不保证该接口被视为NOP（空操作）。
   <!-- end id27 -->
 <!-- end id20 -->
 <!-- npu="950" id21 -->
-- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR&950DT系列产品：
   - tensor高维切分计算占用8KB UB。
   - tensor前n个数据连续计算不涉及8KB UB的占用。
 <!-- end id21 -->

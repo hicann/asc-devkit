@@ -23,7 +23,7 @@
 
 <!-- npu="950" id1 -->
 > [!NOTE]说明
-> Ascend 950PR/Ascend 950DT因硬件变更，删除GM到L0A Buffer、L0B Buffer的数据通路。产生的影响是原GM到L0A Buffer和L0B Buffer的数据搬运需要拆分为两步，即从GM到L1 Buffer的数据搬运和从L1 Buffer到L0A Buffer、L0B Buffer的数据搬运。
+> Ascend 950PR&950DT系列产品因硬件变更，删除GM到L0A Buffer、L0B Buffer的数据通路。产生的影响是原GM到L0A Buffer和L0B Buffer的数据搬运需要拆分为两步，即从GM到L1 Buffer的数据搬运和从L1 Buffer到L0A Buffer、L0B Buffer的数据搬运。
 <!-- end id1 -->
 
 ## GM->L1 Buffer的接口分类与使用场景<a name="zh-cn_topic_0000002543771563_section_gm2l1"></a>
@@ -40,7 +40,7 @@
 | [LoadData（GMToL1-2D矩阵搬运）](LoadData_GMToL1_2D.md) | 以512B数据分形为单位，将2D格式矩阵数据从GM搬运至L1 Buffer。 | GM->L1 Buffer | 普通矩阵计算所需的2D分形数据搬入L1 Buffer。 |
 
 <!-- npu="950" id2 -->
-针对Ascend 950PR/Ascend 950DT，新增GM->L1 Buffer如下接口，请开发者参考表3。
+针对Ascend 950PR&950DT系列产品，新增GM->L1 Buffer如下接口，请开发者参考表3。
 
 **表3** **GM->L1 Buffer接口**
 
@@ -77,7 +77,7 @@
 
 <!-- npu="950" id_l12l0_950note -->
 > [!NOTE]说明
-> 针对Ascend 950PR/Ascend 950DT，LoadDataWithTranspose仅支持L1 Buffer->L0B Buffer通路，不支持L1 Buffer->L0A Buffer通路。
+> 针对Ascend 950PR&950DT系列产品，LoadDataWithTranspose仅支持L1 Buffer->L0B Buffer通路，不支持L1 Buffer->L0A Buffer通路。
 <!-- end id_l12l0_950note -->
 
 <!-- npu="910b,A3" id3 -->
@@ -92,7 +92,7 @@
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
-针对Ascend 950PR/Ascend 950DT，新增L1 Buffer->L0A/B Buffer如下接口，请开发者参考表7。
+针对Ascend 950PR&950DT系列产品，新增L1 Buffer->L0A/B Buffer如下接口，请开发者参考表7。
 
 **表7** **L1 Buffer->L0A/B Buffer接口**
 

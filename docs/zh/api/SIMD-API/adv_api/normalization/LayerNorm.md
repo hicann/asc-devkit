@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/normalization/LayerNorm_res.md#id1 -->
 
@@ -157,7 +157,7 @@
     | U | beta，gamma操作数的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li171091334377)。 |
     | T | output，inputX操作数的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li171091334377)。 |
     | isReuseSource | 该参数预留，传入默认值false即可。 |
-    | config | 配置LayerNorm接口中输入输出相关信息。LayerNormConfig类型，定义如下方代码所示。<br>    isNoBeta：计算时，输入beta是否使用。false：默认值，LayerNorm计算中使用输入beta。true：LayerNorm计算中不使用输入beta。此时，公式中与beta相关的计算被省略。<br>    isNoGamma：可选输入gamma是否使用。false：默认值，LayerNorm计算中使用可选输入gamma。true：LayerNorm计算中不使用输入gamma。此时，公式中与gamma相关的计算被省略。<br>    isOnlyOutput：是否只输出y，不输出均值mean与标准差的倒数rstd。当前该参数仅支持取值为false，表示y、mean和rstd的结果全部输出。<!-- npu="950" id7 --><br>isOutputRstd：选择输出标准差的倒数rstd还是方差。该参数仅支持Ascend 950PR/Ascend 950DT。true：默认值，输出标准差的倒数。false：输出方差。<!-- end id7 --> |
+    | config | 配置LayerNorm接口中输入输出相关信息。LayerNormConfig类型，定义如下方代码所示。<br>    isNoBeta：计算时，输入beta是否使用。false：默认值，LayerNorm计算中使用输入beta。true：LayerNorm计算中不使用输入beta。此时，公式中与beta相关的计算被省略。<br>    isNoGamma：可选输入gamma是否使用。false：默认值，LayerNorm计算中使用可选输入gamma。true：LayerNorm计算中不使用输入gamma。此时，公式中与gamma相关的计算被省略。<br>    isOnlyOutput：是否只输出y，不输出均值mean与标准差的倒数rstd。当前该参数仅支持取值为false，表示y、mean和rstd的结果全部输出。<!-- npu="950" id7 --><br>isOutputRstd：选择输出标准差的倒数rstd还是方差。该参数仅支持Ascend 950PR&950DT系列产品。true：默认值，输出标准差的倒数。false：输出方差。<!-- end id7 --> |
 
     ```
     struct LayerNormConfig {
@@ -174,7 +174,7 @@
     | --- | --- | --- |
     | output | 输出 | 目的操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
     | outputMean | 输出 | 均值，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
-    | outputRstd | 输出 | 当模板参数config中的isOutputRstd为true，outputRstd为标准差的倒数，否则isOutputRstd为false时，outputRstd为方差，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<!-- npu="950" id8 --><br>    <br>请注意，该接口仅在Ascend 950PR/Ascend 950DT上支持输出方差。<!-- end id8 --><br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
+    | outputRstd | 输出 | 当模板参数config中的isOutputRstd为true，outputRstd为标准差的倒数，否则isOutputRstd为false时，outputRstd为方差，shape为[A]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。<!-- npu="950" id8 --><br>    <br>请注意，该接口仅在Ascend 950PR&950DT系列产品上支持输出方差。<!-- end id8 --><br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
     | inputX | 输入 | 源操作数，shape为[A, R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。inputX的数据类型需要与目的操作数保持一致，尾轴长度需要32B对齐。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
     | gamma | 输入 | 缩放系数，shape为[R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。gamma的数据类型精度不低于源操作数的数据类型精度。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
     | beta | 输入 | 平移系数，shape为[R]，LocalTensor数据结构的定义请参考[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)。beta的数据类型精度不低于源操作数的数据类型精度。<br>    <br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。 |
@@ -212,24 +212,24 @@
     -   支持的数据类型<a id="li171091334377"></a>
 
         <!-- npu="950" id9 -->
-        Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16\_t、float。
+        Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16\_t、float。
         <!-- end id9 -->
 
         <!-- npu="A3" id10 -->
-        Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为: half、float。
+        Atlas A3系列产品，支持的数据类型为: half、float。
         <!-- end id10 -->
 
         <!-- npu="910b" id11 -->
-        Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为: half、float。
+        Atlas A2系列产品，支持的数据类型为: half、float。
         <!-- end id11 -->
 
         <!-- npu="310p" id12 -->
-        Atlas 推理系列产品AI Core，支持的数据类型为: half、float。
+        Atlas推理系列产品AI Core，支持的数据类型为: half、float。
         <!-- end id12 -->
 
 
 <!-- npu="950" id13 -->
--   针对Ascend 950PR/Ascend 950DT，接口内部计算对Subnormal的处理方式受编译选项`--cce-ftz`控制（默认值为`true`）：
+-   针对Ascend 950PR&950DT系列产品，接口内部计算对Subnormal的处理方式受编译选项`--cce-ftz`控制（默认值为`true`）：
     -   配置为`false`时，计算过程中保留Subnormal，并按照其实际数值参与后续计算。
     -   配置为`true`时，启用FTZ（Flush-To-Zero）模式，计算过程中产生或参与运算的Subnormal将按0处理，可能导致计算结果与保留Subnormal时存在精度差异。
 <!-- end id13 -->

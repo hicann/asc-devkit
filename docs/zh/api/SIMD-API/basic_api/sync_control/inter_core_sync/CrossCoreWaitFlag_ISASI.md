@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI_res.md#id1 -->
 
@@ -52,7 +52,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 ### 模板参数默认值及生效情况<a id="template-parameter-defaults"></a>
 
 <!-- npu="950" id8 -->
-- 针对Ascend 950PR/Ascend 950DT，两个模板参数的使用描述如下：
+- 针对Ascend 950PR&950DT系列产品，两个模板参数的使用描述如下：
 
     - modeId
         - `modeId`不直接作为硬件指令的输入，CrossCoreWaitFlag会根据该参数选择对应的硬件指令。
@@ -67,10 +67,10 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 - 针对如下产品，**参数取值不影响硬件指令功能**，两个模板参数的使用描述如下：
 
     <!-- npu="A3" id10 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id10 -->
     <!-- npu="910b" id11 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id11 -->
 
     `modeId`和`pipe`均不作为硬件指令的输入，建议按如下方式配置：
@@ -89,15 +89,15 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
 不同产品对同步模式的支持情况如下：
 <!-- npu="950" id12 -->
-- 针对Ascend 950PR/Ascend 950DT，支持的同步模式为：模式0、模式1、模式2、模式4。
+- 针对Ascend 950PR&950DT系列产品，支持的同步模式为：模式0、模式1、模式2、模式4。
 <!-- end id12 -->
 <!-- npu="A3,910b" id13 -->
 - 针对如下产品，支持的同步模式为：模式0、模式1、模式2。
     <!-- npu="A3" id14 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id14 -->
     <!-- npu="910b" id15 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id15 -->
 <!-- end id13 -->
 
@@ -105,7 +105,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
 - 核间同步的模式为模式0、1、2时，支持的取值范围为0-15。
 <!-- npu="950" id16 -->
-- 针对Ascend 950PR/Ascend 950DT，核间同步的模式为模式4时，支持的取值范围情况如下：
+- 针对Ascend 950PR&950DT系列产品，核间同步的模式为模式4时，支持的取值范围情况如下：
     - AIV0发起的flagId 0-15的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 0-15的操作。
     - AIV1发起的flagId 0-15的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 16-31的操作。
     - AIC发起的flagId 0-15的CrossCoreSetFlag操作对应AIV0 CrossCoreWaitFlag中flagId 0-15的操作。
@@ -140,7 +140,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 - flagId相关的约束：
     - 对于模式0、1、2，每个AIC和每个AIV都各自有16个flagId，支持的取值范围为0-15。如果flagId的值超出该范围，则截取低4bit（例如，flagId=17时，截取后为1）。
     <!-- npu="950" id17 -->
-    - 针对Ascend 950PR/Ascend 950DT，核间同步的模式为模式4时，AIC有32个flagId，支持的取值范围为0-31，如果flagId的值超出该范围，则截取低5bit（例如，flagId=35时，截取后为3）；AIV有16个flagId，支持的取值范围为0-15，如果flagId的值超出该范围，则截取低4bit（例如，flagId=17时，截取后为1）。
+    - 针对Ascend 950PR&950DT系列产品，核间同步的模式为模式4时，AIC有32个flagId，支持的取值范围为0-31，如果flagId的值超出该范围，则截取低5bit（例如，flagId=35时，截取后为3）；AIV有16个flagId，支持的取值范围为0-15，如果flagId的值超出该范围，则截取低4bit（例如，flagId=17时，截取后为1）。
     <!-- end id17 -->
     - 每个flagId都对应一个计数器，当调用[CrossCoreWaitFlag](CrossCoreWaitFlag_ISASI.md)时，若计数器值为0则会阻塞后续指令下发，已下发指令可正常执行；当调度模块感知到核间同步（CrossCoreSetFlag）全部完成后，会将对应CrossCoreWaitFlag的计数器的值增加1。此时，计数器值为非0，阻塞解除，并且将对应计数器的值减去1进行还原。具体执行逻辑与细节可以参考[关键特性说明](key_features.md)。flagId对应的计数器计数范围为0-15。如果计数器的值超出该范围，则会异常报错，中断流程。
 - 模式0、1、2下，同一个flagId用于不同核间同步模式的约束：

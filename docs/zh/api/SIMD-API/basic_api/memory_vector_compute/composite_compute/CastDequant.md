@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品 AI Core：支持
+- Atlas推理系列产品 AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品 Vector Core：不支持
+- Atlas推理系列产品 Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/composite_compute/CastDequant_res.md#id1 -->
 
@@ -106,7 +106,7 @@
 
 <!-- npu="950" id8 -->
 
-**表**  Ascend 950PR/Ascend 950DT支持的数据类型组合情况
+**表**  Ascend 950PR&950DT系列产品支持的数据类型组合情况
 
 | src数据类型 | dst数据类型 |
 | :---------- | :---------- |
@@ -118,7 +118,7 @@
 
 <!-- npu="A3" id9 -->
 
-**表**  Atlas A3 训练系列产品/Atlas A3 推理系列产品支持的数据类型组合情况
+**表**  Atlas A3系列产品支持的数据类型组合情况
 
 | src数据类型 | dst数据类型 |
 | :---------- | :---------- |
@@ -130,7 +130,7 @@
 
 <!-- npu="910b" id10 -->
 
-**表**  Atlas A2 训练系列产品/Atlas A2 推理系列产品支持的数据类型组合情况
+**表**  Atlas A2系列产品支持的数据类型组合情况
 
 | src数据类型 | dst数据类型 |
 | :---------- | :---------- |
@@ -142,7 +142,7 @@
 
 <!-- npu="310p" id11 -->
 
-**表**  Atlas 推理系列产品AI Core支持的数据类型组合情况
+**表**  Atlas推理系列产品AI Core支持的数据类型组合情况
 
 | src数据类型 | dst数据类型 |
 | :---------- | :---------- |
@@ -166,18 +166,18 @@
   <!-- npu="A3,910b" id13 -->
   - 针对如下型号，该接口不会执行计算操作，不会对目的操作数进行写入，该接口将被视为NOP（空操作）。
     <!-- npu="A3" id14 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id14 -->
     <!-- npu="910b" id15 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id15 -->
   <!-- end id13 -->
   <!-- npu="950" id16 -->
-  - 针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
+  - 针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
   <!-- end id16 -->
 <!-- end id12 -->
 <!-- npu="950" id17 -->
-- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR&950DT系列产品：
   - tensor高维切分计算接口占用8KB UB临时空间。
   - tensor前n个数据连续计算接口不涉及8KB UB临时空间的占用。
 <!-- end id17 -->

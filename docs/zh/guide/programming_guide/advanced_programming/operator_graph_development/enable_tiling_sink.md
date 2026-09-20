@@ -7,13 +7,13 @@
 >- 当前仅融合算子（矢量计算和矩阵计算融合）支持进行Tiling下沉。
 >- Tiling下沉功能仅支持如下产品型号：
 >    <!-- npu="A3" id1 -->
->    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+>    - Atlas A3系列产品
 >    <!-- end id1 -->
 >    <!-- npu="910b" id2 -->
->    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+>    - Atlas A2系列产品
 >    <!-- end id2 -->
 >    <!-- npu="950" id3 -->
->    - Ascend 950PR/Ascend 950DT，暂不支持
+>    - Ascend 950PR&950DT系列产品，暂不支持
 >    <!-- end id3 -->
 
 自定义算子开启Tiling下沉的步骤如下，完整样例请参考[Tiling下沉算子样例](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op)。
@@ -145,4 +145,3 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
         add_custom_tiling_sink/add_custom_tiling_sink_tiling.cpp  # Tiling函数实现代码源文件
     )
     ```
-
