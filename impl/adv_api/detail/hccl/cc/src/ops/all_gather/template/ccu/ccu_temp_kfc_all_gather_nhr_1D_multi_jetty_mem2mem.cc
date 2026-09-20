@@ -48,7 +48,10 @@ HcclResult CcuTempKfcAllGatherNHR1DMultiJettyMem2Mem::CalcRes(
     auto kernelArg = std::make_shared<CcuKernelArgKfcAllGatherNHR1DMultiJettyMem2Mem>();
     kernelArg->rankSize = tempRankSize_;
     kernelArg->rankId = mySubCommRank_;
-    kernelArg->jettyNum = KFC_NHR_JETTY_NUM;
+    kernelArg->jettyNum =
+        (param.algName != nullptr && std::strcmp(param.algName, KFC_PARALLEL_ALL_GATHER_ALG_NAME) == 0) ?
+            1U :
+            KFC_NHR_JETTY_NUM;
     kernelArg->opParam = param;
     kernelArg->subCommRanks = subCommRanks_;
     for (u32 i = 0; i < channelDescs.size(); ++i) {

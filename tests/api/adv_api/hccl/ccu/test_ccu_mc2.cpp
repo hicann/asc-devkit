@@ -223,6 +223,27 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_AllGather)
     EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleMesh));
 }
 
+TEST_F(CcuMc2TestSuite, CcuSelectAlg_ParallelMeshNhrMultiLink)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+
+    OpResCtx resCtx{};
+    ASSERT_EQ(AllocCcuOpResCtx(comm_, "parallel_allgather_ctx", g_stubRankSize, g_stubRankId, resCtx), HCCL_SUCCESS);
+
+    Mc2CcTilingInner ccTiling{};
+    ccTiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
+    ccTiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    ccTiling.srcDataType = HCCL_DATA_TYPE_FP16;
+    ccTiling.dstDataType = HCCL_DATA_TYPE_FP16;
+    strcpy(ccTiling.algConfig, "CcuSchedAllGatherParallelMeshNHRMultiLink");
+    const void* ccTilingList[] = {&ccTiling};
+    std::string topoTag[] = {"parallel_mesh_nhr_tag"};
+
+    EXPECT_EQ(RunCcuSelectAlg(comm_, stream_, topoTag, ccTilingList, 1, resCtx), HCCL_SUCCESS);
+    EXPECT_EQ(resCtx.opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER));
+    EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherParallelMeshNHRMultiLink));
+}
+
 TEST_F(CcuMc2TestSuite, CcuSelectAlg_ReduceScatterKfcMesh1DMem2Mem)
 {
     SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
@@ -472,9 +493,12 @@ TEST_F(CcuMc2TestSuite, algorithmMap_AllEntries)
     EXPECT_EQ(algorithmMap.at("CcuAllGatherMesh1DMem2Mem"), AlgorithmType::CcuAllGatherMeshMem2Mem1D);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherMesh1DMem2Mem"), AlgorithmType::CcuAllGatherMeshMem2Mem1D);
     EXPECT_EQ(
+        algorithmMap.at("CcuSchedAllGatherParallelMeshNHRMultiLink"),
+        AlgorithmType::CcuSchedAllGatherParallelMeshNHRMultiLink);
+    EXPECT_EQ(
         algorithmMap.at("CcuSchedReduceScatterConcurMeshNHRMultiLink"),
         AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink);
-    EXPECT_EQ(algorithmMap.size(), 14U);
+    EXPECT_EQ(algorithmMap.size(), 15U);
 }
 
 TEST_F(CcuMc2TestSuite, AlgorithmType_EnumValues)
@@ -483,6 +507,7 @@ TEST_F(CcuMc2TestSuite, AlgorithmType_EnumValues)
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllGatherMeshMem2Mem1D), 1U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuAllGatherMesh2D), 2U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherConcurMeshNHRMultiLink), 3U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherParallelMeshNHRMultiLink), 4U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMesh1D), 50U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMeshMem2Mem1D), 51U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuReduceScatterMesh2D), 52U);
