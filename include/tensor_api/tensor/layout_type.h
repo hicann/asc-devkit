@@ -23,6 +23,12 @@
 #include "impl/tensor_api/utils/utils_impl.h"
 #include "impl/tensor_api/tensor/layout_size.h"
 
+#if !defined(ASC_DEPRECATED)
+#define ASC_DEPRECATED(version, removal_date, replacement)                                                  \
+    [[deprecated("Deprecated since " #version ", Will be removed after " removal_date ", Use " #replacement \
+                 " instead.")]]
+#endif
+
 namespace asc {
 namespace te {
 
@@ -101,39 +107,39 @@ public:
     __aicore__ inline constexpr decltype(auto) get() const;
 
     template <size_t... I>
-    [[deprecated("Capacity() is deprecated. Please use capacity() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", capacity)
     __aicore__ inline constexpr decltype(auto) Capacity() const;
 
     template <size_t... I>
-    [[deprecated("Shape() is deprecated. Please use shape() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", shape)
     __aicore__ inline constexpr decltype(auto) Shape();
 
     template <size_t... I>
-    [[deprecated("Shape() is deprecated. Please use shape() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", shape)
     __aicore__ inline constexpr decltype(auto) Shape() const;
 
     template <size_t... I>
-    [[deprecated("Stride() is deprecated. Please use stride() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", stride)
     __aicore__ inline constexpr decltype(auto) Stride();
 
     template <size_t... I>
-    [[deprecated("Stride() is deprecated. Please use stride() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", stride)
     __aicore__ inline constexpr decltype(auto) Stride() const;
 
     template <size_t... I>
-    [[deprecated("Rank() is deprecated. Please use rank() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", rank)
     __aicore__ inline constexpr decltype(auto) Rank() const;
 
     template <size_t... I>
-    [[deprecated("Size() is deprecated. Please use size() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", size)
     __aicore__ inline constexpr decltype(auto) Size() const;
 
     template <size_t... I>
-    [[deprecated("Get() is deprecated. Please use get() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", get)
     __aicore__ inline constexpr decltype(auto) Get();
 
     template <size_t... I>
-    [[deprecated("Get() is deprecated. Please use get() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", get)
     __aicore__ inline constexpr decltype(auto) Get() const;
 
 private:

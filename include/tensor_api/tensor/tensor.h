@@ -32,6 +32,12 @@ enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent 
 #include "tensor_api/tensor/pointer.h"
 #include "impl/tensor_api/tensor/tensor_tuple_impl.h"
 
+#if !defined(ASC_DEPRECATED)
+#define ASC_DEPRECATED(version, removal_date, replacement)                                                  \
+    [[deprecated("Deprecated since " #version ", Will be removed after " removal_date ", Use " #replacement \
+                 " instead.")]]
+#endif
+
 namespace asc {
 namespace te {
 
@@ -88,33 +94,33 @@ struct base_tensor {
     template <typename Coord, typename Info>
     __aicore__ inline decltype(auto) slice(const Coord& coord, const Info& info) const;
 
-    [[deprecated("Tensor() is deprecated. Please use tensor() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", tensor)
     __aicore__ inline constexpr decltype(auto) Tensor() const;
-    [[deprecated("Engine() is deprecated. Please use engine() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", engine)
     __aicore__ inline constexpr decltype(auto) Engine() const;
-    [[deprecated("Engine() is deprecated. Please use engine() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", engine)
     __aicore__ inline constexpr decltype(auto) Engine();
-    [[deprecated("Layout() is deprecated. Please use layout() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", layout)
     __aicore__ inline constexpr decltype(auto) Layout() const;
-    [[deprecated("Data() is deprecated. Please use data() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", data)
     __aicore__ inline constexpr decltype(auto) Data() const;
-    [[deprecated("Data() is deprecated. Please use data() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", data)
     __aicore__ inline constexpr decltype(auto) Data();
-    [[deprecated("Shape() is deprecated. Please use shape() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", shape)
     __aicore__ inline constexpr decltype(auto) Shape() const;
-    [[deprecated("Stride() is deprecated. Please use stride() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", stride)
     __aicore__ inline constexpr decltype(auto) Stride() const;
-    [[deprecated("Size() is deprecated. Please use size() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", size)
     __aicore__ inline constexpr auto Size() const;
-    [[deprecated("Capacity() is deprecated. Please use capacity() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", capacity)
     __aicore__ inline constexpr auto Capacity() const;
 
     template <typename Coord, typename Info>
-    [[deprecated("Slice() is deprecated. Please use slice() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", slice)
     __aicore__ inline decltype(auto) Slice(const Coord& coord, const Info& info);
 
     template <typename Coord, typename Info>
-    [[deprecated("Slice() is deprecated. Please use slice() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", slice)
     __aicore__ inline decltype(auto) Slice(const Coord& coord, const Info& info) const;
 
 private:
@@ -134,7 +140,7 @@ struct global_tensor : public base_tensor<EngineT, LayoutT> {
     __aicore__ inline constexpr global_tensor();
     __aicore__ inline constexpr cache_mode get_cache_mode() const;
     __aicore__ inline constexpr void set_l2_cache_hint(cache_mode mode);
-    [[deprecated("SetL2CacheHint() is deprecated. Please use set_l2_cache_hint() instead.")]]
+    ASC_DEPRECATED(9.2.0, "2027/09/07", set_l2_cache_hint)
     __aicore__ inline constexpr void SetL2CacheHint(AscendC::Te::CacheMode mode);
 };
 
