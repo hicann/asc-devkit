@@ -47,6 +47,8 @@
 #include "dav_l300/kernel_operator_vec_transpose_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "dav_l311/kernel_operator_vec_transpose_impl.h"
+#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
+#include "dav_5161/kernel_operator_vec_transpose_impl.h"
 #endif
 
 namespace AscendC {

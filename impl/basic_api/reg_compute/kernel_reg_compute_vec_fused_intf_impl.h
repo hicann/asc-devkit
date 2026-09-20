@@ -27,6 +27,8 @@
 #include "../../basic_api/reg_compute/dav_l300/kernel_reg_compute_vec_fused_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "../../basic_api/reg_compute/dav_l311/kernel_reg_compute_vec_fused_impl.h"
+#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
+#include "../../basic_api/reg_compute/dav_5161/kernel_reg_compute_vec_fused_impl.h"
 #elif __NPU_ARCH__ == 5102
 #include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_vec_fused_impl.h"
 #elif __NPU_ARCH__ == 5162
@@ -37,6 +39,34 @@
 
 namespace AscendC {
 namespace Reg {
+template <typename T0, typename T1, typename T2, RegLayout layout, typename T3, typename T4>
+__simd_callee__ inline void MulsCast(T3& dstReg, T4& srcReg, T2 scalarValue, MaskReg& mask)
+{
+    FusedMulsCastImpl<T0, T1, T2, layout, T3, T4>(dstReg, srcReg, scalarValue, mask);
+}
+
+template <typename T, MaskMergeMode mode, typename U>
+__simd_callee__ inline void AbsSub(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+{
+    FusedAbsSubImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+}
+
+template <typename T, typename U, RegLayout layout, MaskMergeMode mode, typename S, typename V>
+__simd_callee__ inline void ExpSub(S& dstReg, V& srcReg0, V& srcReg1, MaskReg& mask)
+{
+    FusedExpSubImpl<T, U, layout, mode, S, V>(dstReg, srcReg0, srcReg1, mask);
+}
+
+template <typename T, MaskMergeMode mode, typename U>
+__simd_callee__ inline void MulDstAdd(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+{
+    FusedMulDstAddImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+}
+
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
+// Kirin v516 平台不支持如下历史接口
 template <
     typename T0 = DefaultType, typename T1 = DefaultType, typename T2, RegLayout layout = RegLayout::ZERO, typename T3,
     typename T4>
@@ -44,19 +74,9 @@ __simd_callee__ inline void FusedMulsCast(T3& dstReg, T4& srcReg, T2 scalarValue
 {
     FusedMulsCastImpl<T0, T1, T2, layout, T3, T4>(dstReg, srcReg, scalarValue, mask);
 }
-template <typename T0, typename T1, typename T2, RegLayout layout, typename T3, typename T4>
-__simd_callee__ inline void MulsCast(T3& dstReg, T4& srcReg, T2 scalarValue, MaskReg& mask)
-{
-    FusedMulsCastImpl<T0, T1, T2, layout, T3, T4>(dstReg, srcReg, scalarValue, mask);
-}
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void FusedAbsSub(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
-{
-    FusedAbsSubImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
-}
-template <typename T, MaskMergeMode mode, typename U>
-__simd_callee__ inline void AbsSub(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     FusedAbsSubImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
 }
@@ -68,22 +88,13 @@ __simd_callee__ inline void FusedExpSub(S& dstReg, V& srcReg0, V& srcReg1, MaskR
 {
     FusedExpSubImpl<T, U, layout, mode, S, V>(dstReg, srcReg0, srcReg1, mask);
 }
-template <typename T, typename U, RegLayout layout, MaskMergeMode mode, typename S, typename V>
-__simd_callee__ inline void ExpSub(S& dstReg, V& srcReg0, V& srcReg1, MaskReg& mask)
-{
-    FusedExpSubImpl<T, U, layout, mode, S, V>(dstReg, srcReg0, srcReg1, mask);
-}
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void FusedMulDstAdd(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     FusedMulDstAddImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
 }
-template <typename T, MaskMergeMode mode, typename U>
-__simd_callee__ inline void MulDstAdd(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
-{
-    FusedMulDstAddImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
-}
+#endif
 } // namespace Reg
 } // namespace AscendC
 

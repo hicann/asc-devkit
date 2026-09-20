@@ -30,6 +30,8 @@
 #include "../../basic_api/reg_compute/dav_l300/kernel_reg_compute_vec_binary_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "../../basic_api/reg_compute/dav_l311/kernel_reg_compute_vec_binary_impl.h"
+#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
+#include "../../basic_api/reg_compute/dav_5161/kernel_reg_compute_vec_binary_impl.h"
 #elif __NPU_ARCH__ == 5102
 #include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_vec_binary_impl.h"
 #elif __NPU_ARCH__ == 5162
@@ -130,24 +132,42 @@ __simd_callee__ inline void Mula(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mas
     MulAddDstImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
 }
 
-template <typename T = DefaultType, typename U>
-__simd_callee__ inline void AddCarryOut(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
-{
-    AddCarryOutImpl<T, U>(carry, dstReg, srcReg0, srcReg1, mask);
-}
 template <typename T, typename U>
 __simd_callee__ inline void Add(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     AddCarryOutImpl<T, U>(carry, dstReg, srcReg0, srcReg1, mask);
 }
 
-template <typename T = DefaultType, typename U>
-__simd_callee__ inline void SubCarryOut(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+template <typename T, typename U>
+__simd_callee__ inline void Sub(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     SubCarryOutImpl<T, U>(carry, dstReg, srcReg0, srcReg1, mask);
 }
+
 template <typename T, typename U>
-__simd_callee__ inline void Sub(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+__simd_callee__ inline void AddC(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& carrySrc, MaskReg& mask)
+{
+    AddCarryOutsImpl<T, U>(carry, dstReg, srcReg0, srcReg1, carrySrc, mask);
+}
+
+template <typename T, typename U>
+__simd_callee__ inline void SubC(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& carrySrc, MaskReg& mask)
+{
+    SubCarryOutsImpl<T, U>(carry, dstReg, srcReg0, srcReg1, carrySrc, mask);
+}
+
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
+// Kirin v516 平台不支持如下历史接口
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void AddCarryOut(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+{
+    AddCarryOutImpl<T, U>(carry, dstReg, srcReg0, srcReg1, mask);
+}
+
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void SubCarryOut(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     SubCarryOutImpl<T, U>(carry, dstReg, srcReg0, srcReg1, mask);
 }
@@ -158,11 +178,6 @@ __simd_callee__ inline void AddCarryOuts(
 {
     AddCarryOutsImpl<T, U>(carry, dstReg, srcReg0, srcReg1, carrySrc, mask);
 }
-template <typename T, typename U>
-__simd_callee__ inline void AddC(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& carrySrc, MaskReg& mask)
-{
-    AddCarryOutsImpl<T, U>(carry, dstReg, srcReg0, srcReg1, carrySrc, mask);
-}
 
 template <typename T = DefaultType, typename U>
 __simd_callee__ inline void SubCarryOuts(
@@ -170,11 +185,7 @@ __simd_callee__ inline void SubCarryOuts(
 {
     SubCarryOutsImpl<T, U>(carry, dstReg, srcReg0, srcReg1, carrySrc, mask);
 }
-template <typename T, typename U>
-__simd_callee__ inline void SubC(MaskReg& carry, U& dstReg, U& srcReg0, U& srcReg1, MaskReg& carrySrc, MaskReg& mask)
-{
-    SubCarryOutsImpl<T, U>(carry, dstReg, srcReg0, srcReg1, carrySrc, mask);
-}
+#endif
 } // namespace Reg
 } // namespace AscendC
 

@@ -1,0 +1,161 @@
+/**
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/* !
+ * \file kernel_reg_compute_vec_duplicate_impl.h
+ * \brief
+ */
+
+#if !defined(__ASCENDC_INCLUDE_INTERNAL_HEADERS__)
+#pragma message( \
+    "impl/basic/reg_compute/dav_5161/kernel_reg_compute_vec_duplicate_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use \"#include \"reg_compute/kernel_reg_compute_vec_duplicate_intf.h\"\" and use public functions or variables defined in interface headers files.")
+#define __ASCENDC_INCLUDE_INTERNAL_HEADERS__
+#define __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_REG_COMPUTE_VEC_DUPLICATE_IMPL__
+#endif
+
+#ifndef ASCENDC_MODULE_REG_COMPUTE_VEC_DUPLICATE_IMPL_H
+#define ASCENDC_MODULE_REG_COMPUTE_VEC_DUPLICATE_IMPL_H
+
+#include "../../../../include/basic_api/reg_compute/kernel_reg_compute_utils.h"
+#include "kernel_reg_compute_common_impl.h"
+#include "../../../../include/basic_api/reg_compute/kernel_reg_compute_struct_intf.h"
+#include "../../../../include/utils/std/type_traits.h"
+
+namespace AscendC {
+namespace Reg {
+template <typename T = DefaultType, typename U, typename S>
+__simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue)
+{
+    using ActualT = typename S::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(
+        (SupportType<
+            ActualT, bool, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
+            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half>()),
+        "current data type is not supported on current device!");
+    static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
+
+    if constexpr (IsSameType<ActualT, bool>::value) {
+        vbr((RegTensor<int8_t>&)dstReg, (int8_t)scalarValue);
+    } else if constexpr (
+        IsSameType<ActualT, fp4x2_e2m1_t>::value || IsSameType<ActualT, fp4x2_e1m2_t>::value ||
+        IsSameType<ActualT, hifloat8_t>::value || IsSameType<ActualT, fp8_e8m0_t>::value ||
+        IsSameType<ActualT, fp8_e5m2_t>::value || IsSameType<ActualT, fp8_e4m3fn_t>::value) {
+        vbr((RegTensor<int8_t>&)dstReg, (int8_t&)scalarValue);
+    } else {
+        vbr(dstReg, (ActualT)scalarValue);
+    }
+}
+
+template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U, typename S>
+__simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue, MaskReg& mask)
+{
+    using ActualT = typename S::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(
+        (SupportType<
+            ActualT, bool, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
+            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half>()),
+        "current data type is not supported on current device!");
+    static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
+    ASCENDC_ASSERT((mode != MaskMergeMode::UNKNOWN), {
+        KERNEL_LOG(KERNEL_ERROR, "The MergeMode only support: MODE_MERGING, MODE_ZEROING.");
+    });
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    if constexpr (IsSameType<ActualT, bool>::value) {
+        vdup((RegTensor<int8_t>&)dstReg, (int8_t)scalarValue, mask, modeValue);
+    } else if constexpr (
+        IsSameType<ActualT, fp4x2_e2m1_t>::value || IsSameType<ActualT, fp4x2_e1m2_t>::value ||
+        IsSameType<ActualT, hifloat8_t>::value || IsSameType<ActualT, fp8_e8m0_t>::value ||
+        IsSameType<ActualT, fp8_e5m2_t>::value || IsSameType<ActualT, fp8_e4m3fn_t>::value) {
+        vdup((RegTensor<int8_t>&)dstReg, (int8_t&)scalarValue, mask, modeValue);
+    } else {
+        vdup(dstReg, (ActualT)scalarValue, mask, modeValue);
+    }
+}
+
+template <
+    typename T = DefaultType, HighLowPart pos = HighLowPart::LOWEST, MaskMergeMode mode = MaskMergeMode::ZEROING,
+    typename U>
+__simd_callee__ inline void DuplicateImpl(U& dstReg, U& srcReg, MaskReg& mask)
+{
+    using ActualT = typename U::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(
+        (SupportType<
+            ActualT, bool, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
+            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half>()),
+        "current data type is not supported on current device!");
+    ASCENDC_ASSERT((mode != MaskMergeMode::UNKNOWN), {
+        KERNEL_LOG(KERNEL_ERROR, "The MergeMode only support: MODE_MERGING, MODE_ZEROING.");
+    });
+    constexpr auto posValue = std::integral_constant<::Pos, static_cast<::Pos>(pos)>();
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    if constexpr (IsSameType<ActualT, bool>::value) {
+        vdup((RegTensor<int8_t>&)dstReg, (RegTensor<int8_t>&)srcReg, mask, posValue, modeValue);
+    } else if constexpr (
+        IsSameType<ActualT, fp4x2_e2m1_t>::value || IsSameType<ActualT, fp4x2_e1m2_t>::value ||
+        IsSameType<ActualT, hifloat8_t>::value || IsSameType<ActualT, fp8_e8m0_t>::value ||
+        IsSameType<ActualT, fp8_e5m2_t>::value || IsSameType<ActualT, fp8_e4m3fn_t>::value) {
+        vdup((RegTensor<int8_t>&)dstReg, (RegTensor<int8_t>&)srcReg, mask, posValue, modeValue);
+    } else {
+        vdup(dstReg, srcReg, mask, posValue, modeValue);
+    }
+}
+
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void InterleaveImpl(U& dstReg0, U& dstReg1, U& srcReg0, U& srcReg1)
+{
+    using ActualT = typename U::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(SupportBytes<ActualT, 1, 2, 4>(), "Interleave only support type bool/b8/b16/b32 on current device");
+    if constexpr (sizeof(ActualT) == 1) {
+        vintlv(
+            (RegTensor<int8_t>&)dstReg0, (RegTensor<int8_t>&)dstReg1, (RegTensor<int8_t>&)srcReg0,
+            (RegTensor<int8_t>&)srcReg1);
+    } else if constexpr (sizeof(ActualT) == 2) {
+        vintlv(
+            (RegTensor<int16_t>&)dstReg0, (RegTensor<int16_t>&)dstReg1, (RegTensor<int16_t>&)srcReg0,
+            (RegTensor<int16_t>&)srcReg1);
+    } else {
+        vintlv(
+            (RegTensor<int32_t>&)dstReg0, (RegTensor<int32_t>&)dstReg1, (RegTensor<int32_t>&)srcReg0,
+            (RegTensor<int32_t>&)srcReg1);
+    }
+}
+
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void DeInterleaveImpl(U& dstReg0, U& dstReg1, U& srcReg0, U& srcReg1)
+{
+    using ActualT = typename U::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(SupportBytes<ActualT, 1, 2, 4>(), "DeInterleave only support type bool/b8/b16/b32 on current device");
+    if constexpr (sizeof(ActualT) == 1) {
+        vdintlv(
+            (RegTensor<int8_t>&)dstReg0, (RegTensor<int8_t>&)dstReg1, (RegTensor<int8_t>&)srcReg0,
+            (RegTensor<int8_t>&)srcReg1);
+    } else if constexpr (sizeof(ActualT) == 2) {
+        vdintlv(
+            (RegTensor<int16_t>&)dstReg0, (RegTensor<int16_t>&)dstReg1, (RegTensor<int16_t>&)srcReg0,
+            (RegTensor<int16_t>&)srcReg1);
+    } else {
+        vdintlv(
+            (RegTensor<int32_t>&)dstReg0, (RegTensor<int32_t>&)dstReg1, (RegTensor<int32_t>&)srcReg0,
+            (RegTensor<int32_t>&)srcReg1);
+    }
+}
+} // namespace Reg
+} // namespace AscendC
+#endif // ASCENDC_MODULE_REG_COMPUTE_VEC_DUPLICATE_IMPL_H
+
+#if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_REG_COMPUTE_VEC_DUPLICATE_IMPL__)
+#undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
+#undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_REG_COMPUTE_VEC_DUPLICATE_IMPL__
+#endif

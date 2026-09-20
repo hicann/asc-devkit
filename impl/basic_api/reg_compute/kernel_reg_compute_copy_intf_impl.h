@@ -27,6 +27,8 @@
 #include "../../basic_api/reg_compute/dav_l300/kernel_reg_compute_copy_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "../../basic_api/reg_compute/dav_l311/kernel_reg_compute_copy_impl.h"
+#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
+#include "../../basic_api/reg_compute/dav_5161/kernel_reg_compute_copy_impl.h"
 #elif __NPU_ARCH__ == 5102
 #include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_copy_impl.h"
 #elif __NPU_ARCH__ == 5162
@@ -37,27 +39,33 @@
 
 namespace AscendC {
 namespace Reg {
-template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::MERGING, typename U>
-__simd_callee__ inline void Copy(U& dstReg, U& srcReg, MaskReg mask)
-{
-    CopyImpl<T, mode, U>(dstReg, srcReg, mask);
-}
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void Move(U& dstReg, U& srcReg, MaskReg mask)
 {
     CopyImpl<T, mode, U>(dstReg, srcReg, mask);
 }
 
-template <typename T = DefaultType, typename U>
-__simd_callee__ inline void Copy(U& dstReg, U& srcReg)
-{
-    CopyImpl<T, U>(dstReg, srcReg);
-}
 template <typename T, typename U>
 __simd_callee__ inline void Move(U& dstReg, U& srcReg)
 {
     CopyImpl<T, U>(dstReg, srcReg);
 }
+
+#if !(                       \
+    defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
+// Kirin v516 平台不支持如下历史接口
+template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::MERGING, typename U>
+__simd_callee__ inline void Copy(U& dstReg, U& srcReg, MaskReg mask)
+{
+    CopyImpl<T, mode, U>(dstReg, srcReg, mask);
+}
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void Copy(U& dstReg, U& srcReg)
+{
+    CopyImpl<T, U>(dstReg, srcReg);
+}
+#endif
 } // namespace Reg
 } // namespace AscendC
 

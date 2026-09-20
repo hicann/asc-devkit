@@ -24,12 +24,15 @@
 #define ASCENDC_KERNEL_REG_COMPUTE_COMMON_INTERFACE_IMPL_H
 
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
-    (__NPU_ARCH__ == 3113) || defined(__ASC_NPU_HOST__)
+    (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5163) || \
+    (__NPU_ARCH__ == 5165) || defined(__ASC_NPU_HOST__)
 #include "../../../include/basic_api/reg_compute/kernel_reg_compute_maskreg_intf.h"
 #if __NPU_ARCH__ == 3003
 #include "../../basic_api/reg_compute/dav_l300/kernel_reg_compute_common_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "../../basic_api/reg_compute/dav_l311/kernel_reg_compute_common_impl.h"
+#elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
+#include "../../basic_api/reg_compute/dav_5161/kernel_reg_compute_common_impl.h"
 #elif __NPU_ARCH__ == 5102
 #include "../../basic_api/reg_compute/dav_m510/kernel_reg_compute_common_impl.h"
 #elif __NPU_ARCH__ == 5162
