@@ -430,7 +430,7 @@ def add_op_param_to_workspace(
     count = count + 1
     if count > 128:
         raise Exception("input and output num exceed 128")
-    return source
+    return source + "#endif\n"
 
 
 def _gen_compile_cmd(
