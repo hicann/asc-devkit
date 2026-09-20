@@ -40,7 +40,7 @@
 
   其中`Stack size: 32 bytes`表明存在寄存器溢出（栈位于Global Memory），`Used register number: 32`已达到1024线程下的寄存器上限。
 
-  在Ascend 950PR产品上，该实现的性能数据如下：
+  在Ascend 950PR系列产品上，该实现的性能数据如下：
 
   | Task Duration(us) | DCache Read GM | DCache Read Vector | DCache Write Vector |
   |:-----------------:|:--------------:|:------------------:|:-------------------:|
@@ -72,7 +72,7 @@
 
   其中`Stack size: 0 bytes`表明无寄存器溢出，`Used register number: 48`在64个寄存器限制内，所有中间数据保存在寄存器中。
 
-  在Ascend 950PR产品上，使用`__launch_bounds__(512)`后的性能数据如下：
+  在Ascend 950PR系列产品上，使用`__launch_bounds__(512)`后的性能数据如下：
 
   | Task Duration(us) | DCache Read GM | DCache Read Vector | DCache Write Vector |
   |:-----------------:|:--------------:|:------------------:|:-------------------:|

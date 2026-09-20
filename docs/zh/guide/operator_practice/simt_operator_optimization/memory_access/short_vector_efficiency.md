@@ -25,7 +25,7 @@
 
   在上述实现中，由于采用标量half（2B）数据类型，单个Warp（32线程）合并访存所生成的物理连续地址请求宽度仅为64B，128B的Cache Line未被完全占用。
 
-  在Ascend 950PR产品上，该实现的性能数据如下：
+  在Ascend 950PR系列产品上，该实现的性能数据如下：
 
   | Task Duration(μs) | aiv_time(μs) | aiv_total_cycles | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio | aiv_read_hit_rate | aiv_write_hit_rate | aiv_main_mem_read_bw(GB/s) | aiv_main_mem_write_bw(GB/s) |
   |:-----------------:|:------------:|:----------------:|:----------------:|:-------------:|:-------------------:|:----------------:|:-----------------:|:------------------:|:--------------------------:|:---------------------------:|
@@ -64,7 +64,7 @@
 
   上述实现将half类型提升为4字节的half2类型进行计算，单个Warp单次写入的数据量达到`32 * 4B = 128B`，恰好覆盖一行Cache Line。
 
-  在Ascend 950PR产品上，使用half2类型后的性能数据如下：
+  在Ascend 950PR系列产品上，使用half2类型后的性能数据如下：
 
   | Task Duration(μs) | aiv_time(μs) | aiv_total_cycles | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio | aiv_read_hit_rate | aiv_write_hit_rate | aiv_main_mem_read_bw(GB/s) | aiv_main_mem_write_bw(GB/s) |
   |:-----------------:|:------------:|:----------------:|:----------------:|:-------------:|:-------------------:|:----------------:|:-----------------:|:------------------:|:--------------------------:|:---------------------------:|

@@ -19,7 +19,7 @@
 - [Histogram原子操作性能调优样例](../../../../../../examples/03_simt_api/03_best_practices/03_instruction_optimizations/atomic_histogram/README.md)：对形状为[262144]的uint8_t字节流做直方图统计，输出256个桶的uint32_t计数结果。样例启动64个线程块、每个线程块2048个线程，通过对比“全部线程直接更新GM直方图”与“先在各线程块UB上统计再汇总至GM”两种实现，说明分层归约的优化效果。
 
 <!-- npu="950" id1 -->
-下文性能数据均使用msOpProf工具在Ascend 950PR产品上采集，指标为Task Duration（Task整体耗时，即算子端到端耗时）。
+下文性能数据均使用msOpProf工具在Ascend 950PR系列产品上采集，指标为Task Duration（Task整体耗时，即算子端到端耗时）。
 <!-- end id1 -->
 
 ## 通过分层归约将原子操作从GM迁移至UB
