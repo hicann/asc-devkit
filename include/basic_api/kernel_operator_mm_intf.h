@@ -263,6 +263,20 @@ __aicore__ inline void LoadDataWithTranspose(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData2dTransposeParamsV2& loadDataParams);
 
 /* **************************************************************************************************
+ * LoadDataWithDecomp                                             *
+ * ************************************************************************************************* */
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline void EnableS4ToS8();
+
+__aicore__ inline void EnableS3ToS8();
+
+template <typename T>
+__aicore__ inline __inout_pipe__(MTE2) void LoadData(
+    const LocalTensor<T>& dst, const GlobalTensor<T>& src, const LoadData2DDecompParamsV2& loadDataDecompParams);
+#endif
+
+/* **************************************************************************************************
  * Mmad                                             *
  * ************************************************************************************************* */
 /*

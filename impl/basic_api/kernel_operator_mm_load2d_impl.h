@@ -264,6 +264,33 @@ __aicore__ inline __inout_pipe__(MTE2) void LoadDataImpl(
     }
 #endif
 }
+
+/* **************************************************************************************************
+ * LoadDataWithDecomp                                             *
+ * ************************************************************************************************* */
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline void EnableS4ToS8Impl() { EnableS4ToS8Cal(); }
+
+__aicore__ inline void EnableS3ToS8Impl() { EnableS3ToS8Cal(); }
+
+template <typename T>
+__aicore__ inline __inout_pipe__(MTE2) void LoadDataImpl(
+    const LocalTensor<T>& dst, const GlobalTensor<T>& src, const LoadData2DDecompParamsV2& loadDataDecompParams)
+{
+    const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
+    if (dstScope == Hardware::L0B) {
+        LoadData2DGM2L0BDecompCal(
+            (__cb__ PrimT<T>*)dst.GetPhyAddr(), (__gm__ PrimT<T>*)src.GetPhyAddr(), loadDataDecompParams);
+    } else if (dstScope == Hardware::L1) {
+        LoadData2DGM2L1DecompCal(
+            (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__gm__ PrimT<T>*)src.GetPhyAddr(), loadDataDecompParams);
+    } else {
+        ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "unsupported LoadData2DDecomp Dst!"); });
+    }
+}
+#endif
+
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_MM_LOAD2D_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_MM_LOAD2D_IMPL_H__)

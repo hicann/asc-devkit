@@ -214,6 +214,67 @@ __aicore__ inline void LoadData2DL12L0BCal(
 }
 
 /* **************************************************************************************************
+ * LoadDataWithDecomp                                             *
+ * ************************************************************************************************* */
+__aicore__ inline void EnableS4ToS8Cal() { bisheng::cce::enable_s4_expand_s8_datacopy(); }
+
+__aicore__ inline void EnableS3ToS8Cal() { bisheng::cce::enable_s3_expand_s8_datacopy(); }
+
+template <typename T>
+__aicore__ inline void LoadData2DGM2L0BDecompCal(
+    __cb__ T* dst, __gm__ T* src, const LoadData2DDecompParamsV2& loadDataDecompParams)
+{
+    if (loadDataDecompParams.kStep != 1) {
+        set_mte2_src_para(uint64_t(loadDataDecompParams.srcStride));
+    }
+    if constexpr (1 == sizeof(T)) {
+        load_gm_to_cb_2dv2(
+            (__cb__ int8_t*)dst, (__gm__ int8_t*)src, loadDataDecompParams.mStartPosition,
+            loadDataDecompParams.kStartPosition, loadDataDecompParams.dstStride, loadDataDecompParams.mStep,
+            loadDataDecompParams.kStep, loadDataDecompParams.sid, loadDataDecompParams.decomp);
+    } else if constexpr (2 == sizeof(T)) {
+        load_gm_to_cb_2dv2(
+            (__cb__ half*)dst, (__gm__ half*)src, loadDataDecompParams.mStartPosition,
+            loadDataDecompParams.kStartPosition, loadDataDecompParams.dstStride, loadDataDecompParams.mStep,
+            loadDataDecompParams.kStep, loadDataDecompParams.sid, loadDataDecompParams.decomp);
+    } else if constexpr (4 == sizeof(T)) {
+        load_gm_to_cb_2dv2(
+            (__cb__ float*)dst, (__gm__ float*)src, loadDataDecompParams.mStartPosition,
+            loadDataDecompParams.kStartPosition, loadDataDecompParams.dstStride, loadDataDecompParams.mStep,
+            loadDataDecompParams.kStep, loadDataDecompParams.sid, loadDataDecompParams.decomp);
+    } else {
+        ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
+    }
+}
+
+template <typename T>
+__aicore__ inline void LoadData2DGM2L1DecompCal(
+    __cbuf__ T* dst, __gm__ T* src, const LoadData2DDecompParamsV2& loadDataDecompParams)
+{
+    if (loadDataDecompParams.kStep != 1) {
+        set_mte2_src_para(uint64_t(loadDataDecompParams.srcStride));
+    }
+    if constexpr (1 == sizeof(T)) {
+        load_gm_to_cbuf_2dv2(
+            (__cbuf__ int8_t*)dst, (__gm__ int8_t*)src, loadDataDecompParams.mStartPosition,
+            loadDataDecompParams.kStartPosition, loadDataDecompParams.dstStride, loadDataDecompParams.mStep,
+            loadDataDecompParams.kStep, loadDataDecompParams.sid, loadDataDecompParams.decomp);
+    } else if constexpr (2 == sizeof(T)) {
+        load_gm_to_cbuf_2dv2(
+            (__cbuf__ half*)dst, (__gm__ half*)src, loadDataDecompParams.mStartPosition,
+            loadDataDecompParams.kStartPosition, loadDataDecompParams.dstStride, loadDataDecompParams.mStep,
+            loadDataDecompParams.kStep, loadDataDecompParams.sid, loadDataDecompParams.decomp);
+    } else if constexpr (4 == sizeof(T)) {
+        load_gm_to_cbuf_2dv2(
+            (__cbuf__ float*)dst, (__gm__ float*)src, loadDataDecompParams.mStartPosition,
+            loadDataDecompParams.kStartPosition, loadDataDecompParams.dstStride, loadDataDecompParams.mStep,
+            loadDataDecompParams.kStep, loadDataDecompParams.sid, loadDataDecompParams.decomp);
+    } else {
+        ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
+    }
+}
+
+/* **************************************************************************************************
  * Mmad                                             *
  * ************************************************************************************************* */
 
