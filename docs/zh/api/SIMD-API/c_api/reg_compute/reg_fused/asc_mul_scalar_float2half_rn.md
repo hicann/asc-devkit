@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/reg_compute/compute/reg_fused.h"`。
 
-根据`mask`将源操作数`src`（float类型）按元素与标量`value`相乘后，按照RINT舍入模式转换为half类型，得到计算结果。计算公式如下：
+根据`mask`将源操作数`src`（float类型）按元素与标量`value`相乘后，按照ROUND舍入模式转换为half类型，得到计算结果。计算公式如下：
 
 $$
 dst_i = round\_to\_half(src_i \times value)
@@ -66,17 +66,6 @@ __simd_callee__ inline void asc_mul_scalar_float2half_rn(vector_half& dst,
                                                          float value,
                                                          vector_bool mask,
                                                          std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
-```
-
-### 函数原型典型示例
-
-```c
-// 示例：对float矢量数据寄存器与float标量执行乘法后转换为half类型，结果写入偶数位置
-__simd_callee__ inline void asc_mul_scalar_float2half_rn(vector_half& dst,
-                                                         vector_float src,
-                                                         float value,
-                                                         vector_bool mask,
-                                                         std::integral_constant<asc_position_mode, asc_position_mode::EVEN> dst_pos)
 ```
 
 ## 参数说明
@@ -147,9 +136,10 @@ __simd_vf__ inline void compute(__ubuf__ half* dst, __ubuf__ float* src)
     vector_float src_reg;
     uint32_t count = ELEMENT_COUNT;
     vector_bool mask = asc_update_mask_b32(count);
+    vector_bool mask_b16_all = asc_create_mask_b16(PAT_ALL);
     asc_loadalign(src_reg, src);
     asc_mul_scalar_float2half_rn(dst_reg, src_reg, SCALAR_VALUE, mask, ASC_POSITION_EVEN);
-    asc_storealign(dst, dst_reg, mask);
+    asc_storealign(dst, dst_reg, mask_b16_all);
 }
 
 __global__ __vector__ void asc_mul_scalar_float2half_rn_kernel(__gm__ half* dst, __gm__ float* src)
