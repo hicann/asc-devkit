@@ -63,7 +63,7 @@ kernel_name<<<numBlocks, dynUBufSize, stream>>>(argument list);
 
 -   numBlocks：规定了核函数（Kernel）将会在几个核上执行，对于不同的硬件架构和算子类型，numBlocks的设置规则有一些区别，详见[核函数（Kernel）配置](../../language_extension/simd_builtin_keywords.md#核函数配置)。每个执行该核函数（Kernel）的核会被分配一个逻辑ID，即block\_idx，可以在核函数（Kernel）的实现中使用内置变量[block_idx](../../language_extension/simd_builtin_keywords.md#内置变量)获取。需要注意的是，在使用`__mix__`函数执行空间限定符的场景下，处在同一核上的Vector Core的block_idx取值相同，详细说明和示例请参考[内置变量](../../language_extension/simd_builtin_keywords.md#内置变量)；
 -   dynUBufSize：Dynamic Unified Buffer（UB） Size，是配置UB动态内存分配的空间的大小（仅限UB，不包括L1 Buffer等），单位为bytes，默认设置为0；
--   stream：类型为aclrtStream，stream用于维护一些异步操作的执行顺序，确保按照应用程序中的代码调用顺序在device上执行，默认设置为nullptr。stream创建等管理接口请参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+-   stream：类型为aclrtStream，stream用于维护一些异步操作的执行顺序，确保按照应用程序中的代码调用顺序在device上执行，默认设置为nullptr。stream创建等管理接口请参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/9.2.0/docs/zh/api_ref/README.md)。
 
 如下名为add\_custom的核函数（Kernel），实现两个矢量的相加，调用示例如下：
 
@@ -85,7 +85,7 @@ add_kernel<int32_t><<<8, 0, stream>>>(x_int, y_int, z_int);
 aclError aclrtSynchronizeStream(aclrtStream stream);
 ```
 
-aclrtSynchronizeStream的具体用法参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+aclrtSynchronizeStream的具体用法参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/9.2.0/docs/zh/api_ref/README.md)。
 
 ## Blocks索引内置变量
 
