@@ -270,6 +270,16 @@ const bool& GetExternalInputHcclAicpuUnfold()
     return value;
 }
 
+bool GetExternalInputExecTimeout(double& execTimeOut)
+{
+    const char* envValue = std::getenv("HCCL_EXEC_TIMEOUT");
+    if (envValue == nullptr) {
+        return false;
+    }
+    execTimeOut = std::strtod(envValue, nullptr);
+    return true;
+}
+
 HcclResult SetOpParamAlgTag(OpParam& param, const std::string& algName)
 {
     // 生成 algTag: tag_algName_host_dataType_reduceType

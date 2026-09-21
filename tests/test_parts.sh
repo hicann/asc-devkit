@@ -32,6 +32,7 @@ adv_test_two_targets=(
     ascendc_ut_adv_api_hccl_cc_algorithm_ascend950pr_9599_AIC
     ascendc_ut_adv_api_ccu_st
     ascendc_ut_adv_api_hccl_cc_aicpu_alloc_ctx
+    ascendc_ut_adv_api_hccl_cc_aicpu_mc2
     ascendc_ut_adv_api_hccl_ccu_mc2
 )
 

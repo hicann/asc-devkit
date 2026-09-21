@@ -201,6 +201,8 @@ struct CommKfcParamDesc {
     uint64_t isDyn : 48;
 };
 
+constexpr uint64_t MC2_AICPU_SIMPLE_CTX_PROTOCOL = 1ULL << 63;
+
 struct CommKfcApiContext {
     uint64_t version;
     uint64_t workSpace;
@@ -239,6 +241,7 @@ struct OpResCtx {
     uint32_t algorithmType[HCCL_API_MAX_OP_NUM];
     uint64_t opParamSize[HCCL_API_MAX_OP_NUM];
     bool isKfc[HCCL_API_MAX_OP_NUM];
+    uint64_t commEngine;
 };
 
 } // namespace HcclApi

@@ -15,6 +15,7 @@
 #include "acl/acl_base.h"
 #include "runtime/base.h"
 #include "runtime/stream.h"
+#include "rt_external.h"
 #include "hccl/hccl_types.h"
 #include "sim_world.h"
 #include "sim_stream.h"
@@ -378,6 +379,24 @@ aclError aclsysGetVersionNum(char* pkgNname, int32_t* versionNum)
 aclError aclmdlRICaptureThreadExchangeMode(aclmdlRICaptureMode* mode) { return ACL_SUCCESS; }
 
 aclError aclrtGetOpTimeOutInterval(uint64_t* interval) { return ACL_SUCCESS; }
+
+aclError aclrtGetOpExecuteTimeout(uint32_t* const timeoutMs)
+{
+    if (timeoutMs == nullptr) {
+        HCCL_ERROR("[aclrtGetOpExecuteTimeout] invalid input timeoutMs");
+        return ACL_ERROR_INVALID_PARAM;
+    }
+    *timeoutMs = 0;
+    return ACL_SUCCESS;
+}
+
+rtError_t rtAicpuKernelLaunchExWithArgs(
+    const uint32_t kernelType, const char_t* const opName, const uint32_t numBlocks, const rtAicpuArgsEx_t* argsInfo,
+    rtSmDesc_t* const smDesc, const rtStream_t stm, const uint32_t flags)
+{
+    HCCL_WARNING("[%s] not support, numBlocks[%u].", __func__, numBlocks);
+    return RT_ERROR_NONE;
+}
 
 #ifdef __cplusplus
 }

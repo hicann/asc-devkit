@@ -60,7 +60,11 @@ __aicore__ inline bool HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, config>:
     const HcclCMDType commType = param.commType.prepareType;
     uint64_t tiling = 0UL;
     if (commType < HcclCMDType::HCCL_CMD_ALL) {
-        tiling = ccOpTilingDataTable_[static_cast<uint32_t>(commType)];
+        if (curVersion_ == HcclTilingVersion::CONTEXT_DECOUPLE_VERSION) {
+            tiling = ccOpParamTable_[static_cast<uint32_t>(commType)];
+        } else {
+            tiling = ccOpTilingDataTable_[static_cast<uint32_t>(commType)];
+        }
     }
     if (curVersion_ == HcclTilingVersion::NEW_TILING_VERSION ||
         curVersion_ == HcclTilingVersion::ONLINE_COMPILATION_TILING_VERSION ||

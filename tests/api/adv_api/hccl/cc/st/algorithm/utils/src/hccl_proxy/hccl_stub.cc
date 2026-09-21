@@ -37,7 +37,8 @@ using namespace HcclSim;
 
 namespace mc2_ops_hccl {
 uint32_t g_hcclEngineCtxCopyCallCount = 0;
-}
+uint32_t g_stubEndpointBwCoeff = 0;
+} // namespace mc2_ops_hccl
 
 namespace {
 struct SymWinStub {
@@ -197,6 +198,8 @@ HcclResult HcclRankGraphGetEndpointInfo(
     uint32_t* intInfo = static_cast<uint32_t*>(info);
     if (endpointAttr == EndpointAttr::ENDPOINT_ATTR_DIE_ID) {
         *intInfo = (endpointDesc->loc.device.devPhyId >= 4) ? 1 : 0;
+    } else if (endpointAttr == EndpointAttr::ENDPOINT_ATTR_BW_COEFF) {
+        *intInfo = mc2_ops_hccl::g_stubEndpointBwCoeff;
     } else {
         *intInfo = 0;
     }

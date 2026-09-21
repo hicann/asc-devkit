@@ -27,23 +27,6 @@ constexpr uint32_t RANK_NUM = 4U;
 constexpr size_t WORKSPACE_SIZE = sizeof(HcclMsgArea);
 constexpr uint32_t REPEAT_TIME_3 = 3U;
 
-OpResCtx GetOpResCtx(const vector<uint8_t>& workSpace)
-{
-    OpResCtx opResCtx{
-        1, reinterpret_cast<uintptr_t>(workSpace.data()), WORKSPACE_SIZE, 0, RANK_NUM, {{100, 0x1000}, {200, 0x2000}},
-    };
-    return opResCtx;
-}
-
-static HcclMsgArea* GetHcclMsgArea(uint8_t* workspaceGM)
-{
-    uint64_t msgAddr = reinterpret_cast<uintptr_t>(workspaceGM);
-    if (msgAddr & 0x1ff) {
-        msgAddr = (msgAddr & (~((uint64_t)0x1ff))) + 0x200;
-    }
-    return reinterpret_cast<HcclMsgArea*>(msgAddr);
-}
-
 class Mc2InitTilingAicpuTest {
     uint32_t version = 0U;
     uint32_t mc2HcommCnt = 0U;
@@ -72,6 +55,28 @@ class Mc2TilingAicpuTest {
     Mc2InitTilingAicpuTest init;
     Mc2CcTilingAicpuTest cc;
 };
+
+// SetCcTilingV2 looks up ccOpParamTable_ by matching OpResCtx::algInfo[i].offset against the tiling offset.
+constexpr uint64_t CC_TILING_OFFSET = sizeof(Mc2InitTilingAicpuTest);
+constexpr uint64_t CC_OP_PARAM_ADDR = 0x1000UL;
+
+OpResCtx GetOpResCtx(const vector<uint8_t>& workSpace)
+{
+    OpResCtx opResCtx{
+        1,        reinterpret_cast<uintptr_t>(workSpace.data()),         WORKSPACE_SIZE, 0,
+        RANK_NUM, {{CC_TILING_OFFSET, CC_OP_PARAM_ADDR}, {200, 0x2000}},
+    };
+    return opResCtx;
+}
+
+static HcclMsgArea* GetHcclMsgArea(uint8_t* workspaceGM)
+{
+    uint64_t msgAddr = reinterpret_cast<uintptr_t>(workspaceGM);
+    if (msgAddr & 0x1ff) {
+        msgAddr = (msgAddr & (~((uint64_t)0x1ff))) + 0x200;
+    }
+    return reinterpret_cast<HcclMsgArea*>(msgAddr);
+}
 
 TEST_F(HcclSuiteAICPU, AllGather_repeat1_prepare1_commit1_wait1_success)
 {
@@ -319,5 +324,83 @@ TEST_F(HcclSuiteAICPU, AlltoAllV_repeat3_prepare1_commit0_wait3_success)
     for (uint8_t i = 0; i < REPEAT_TIME_3; i++) {
         EXPECT_EQ(hccl.Wait(handleId), HCCL_SUCCESS);
     }
+}
+
+// MC2 AICPU launches without init tiling: InitV2 reads opType and the OpParam address from OpResCtx.
+OpResCtx GetContextSwitchOpResCtx(const vector<uint8_t>& workSpace, HcclCMDType opType)
+{
+    OpResCtx opResCtx = GetOpResCtx(workSpace);
+    opResCtx.opType[0] = static_cast<uint32_t>(opType);
+    return opResCtx;
+}
+
+TEST_F(HcclSuiteAICPU, AllGather_contextSwitchWithoutInitTiling_success)
+{
+    std::vector<uint8_t> workSpace(WORKSPACE_SIZE + 1024);
+    OpResCtx opResCtx = GetContextSwitchOpResCtx(workSpace, HcclCMDType::HCCL_CMD_ALLGATHER);
+
+    Hccl<HcclServerType::HCCL_SERVER_TYPE_AICPU> hccl;
+    hccl.InitV2(reinterpret_cast<GM_ADDR>(&opResCtx));
+    EXPECT_EQ(hccl.GetRankDim(), RANK_NUM);
+    EXPECT_EQ(hccl.impl_.tilingBaseAddr_, 0UL);
+    EXPECT_EQ(hccl.impl_.ccOpParamTable_[static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER)], CC_OP_PARAM_ADDR);
+
+    HcclHandle handleId = hccl.AllGather(
+        reinterpret_cast<__gm__ uint8_t*>(0x1234), reinterpret_cast<__gm__ uint8_t*>(0x4321), 100,
+        HcclDataType::HCCL_DATA_TYPE_INT8, 0, 1);
+    EXPECT_EQ(handleId, 0);
+    hccl.Commit(handleId);
+    EXPECT_EQ(hccl.Wait(handleId), HCCL_SUCCESS);
+}
+
+TEST_F(HcclSuiteAICPU, SetCcTilingV2_afterContextSwitchInit_failed)
+{
+    std::vector<uint8_t> workSpace(WORKSPACE_SIZE + 1024);
+    OpResCtx opResCtx = GetContextSwitchOpResCtx(workSpace, HcclCMDType::HCCL_CMD_ALLGATHER);
+
+    Hccl<HcclServerType::HCCL_SERVER_TYPE_AICPU> hccl;
+    hccl.InitV2(reinterpret_cast<GM_ADDR>(&opResCtx));
+    EXPECT_NE(hccl.SetCcTilingV2(sizeof(Mc2InitTilingAicpuTest)), 0);
+    EXPECT_NE(hccl.SetCcTilingV2(0), 0);
+}
+
+TEST_F(HcclSuiteAICPU, InitV2_contextSwitch_mapsOpParamOfCtxOpType)
+{
+    const HcclCMDType opTypes[] = {
+        HcclCMDType::HCCL_CMD_ALLGATHER, HcclCMDType::HCCL_CMD_ALLREDUCE, HcclCMDType::HCCL_CMD_REDUCE_SCATTER,
+        HcclCMDType::HCCL_CMD_ALLTOALL, HcclCMDType::HCCL_CMD_ALLTOALLV};
+    for (auto opType : opTypes) {
+        std::vector<uint8_t> workSpace(WORKSPACE_SIZE + 1024);
+        OpResCtx opResCtx = GetContextSwitchOpResCtx(workSpace, opType);
+
+        Hccl<HcclServerType::HCCL_SERVER_TYPE_AICPU> hccl;
+        hccl.InitV2(reinterpret_cast<GM_ADDR>(&opResCtx));
+        for (uint32_t idx = 0; idx < static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALL); idx++) {
+            uint64_t expected = (idx == static_cast<uint32_t>(opType)) ? CC_OP_PARAM_ADDR : 0UL;
+            EXPECT_EQ(hccl.impl_.ccOpParamTable_[idx], expected);
+        }
+    }
+}
+
+TEST_F(HcclSuiteAICPU, InitV2_contextSwitch_invalidCtxOpType_prepareFailed)
+{
+    std::vector<uint8_t> workSpace(WORKSPACE_SIZE + 1024);
+    OpResCtx opResCtx = GetContextSwitchOpResCtx(workSpace, HcclCMDType::HCCL_CMD_ALL);
+
+    Hccl<HcclServerType::HCCL_SERVER_TYPE_AICPU> hccl;
+    hccl.InitV2(reinterpret_cast<GM_ADDR>(&opResCtx));
+    EXPECT_EQ(hccl.impl_.ccOpParamTable_[static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER)], 0UL);
+
+    HcclHandle handleId = hccl.AllGather(
+        reinterpret_cast<__gm__ uint8_t*>(0x1234), reinterpret_cast<__gm__ uint8_t*>(0x4321), 100,
+        HcclDataType::HCCL_DATA_TYPE_INT8, 0, 1);
+    EXPECT_NE(handleId, 0);
+}
+
+TEST_F(HcclSuiteAICPU, InitV2_contextSwitch_nullContext_getRankDimInvalid)
+{
+    Hccl<HcclServerType::HCCL_SERVER_TYPE_AICPU> hccl;
+    hccl.InitV2(nullptr);
+    EXPECT_EQ(hccl.GetRankDim(), UINT32_MAX);
 }
 } // namespace
