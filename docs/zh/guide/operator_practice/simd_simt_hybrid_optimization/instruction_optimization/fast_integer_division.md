@@ -9,7 +9,7 @@
 
 【优先级】低
 
-【描述】整数除法指令在AI处理器上相比乘法和移位，执行开销显著更高。当除数固定时，可以使用基于乘法和移位的快速除法算法，在SIMD中根据除数预计算乘法魔数magic和移位量shift，在SIMT并行计算中使用乘法和移位操作，得到与普通整数除法一致的结果，从而降低每次除法的执行开销。
+【描述】整数除法指令在AI处理器上相比乘法和移位，执行开销显著更高。当除数固定时，可以使用基于乘法和移位的快速除法算法，在SIMD标量计算逻辑中调用[asc_get_uintdiv_magic_and_shift](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_get_uintdiv_magic_and_shift.md)接口根据除数预计算乘法魔数magic和移位量shift，在SIMT并行计算中调用[asc_uintdiv](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_uintdiv.md)接口使用乘法和移位操作，得到与普通整数除法一致的结果，从而降低每次除法的执行开销。
 
 【样例介绍】以uint32类型整数除法算子为例，算子功能为将输入input的每个元素除以固定除数divisor，并将结果写入输出output。样例对比在SIMT中直接使用普通除法，以及针对固定除数预计算magic和shift后使用乘法和移位替代普通除法的性能差异。完整的算子实现代码请参考[SIMD与SIMT混合编程实现快速除法算子样例](../../../../../../examples/05_simd_simt_hybrid/02_best_practices/simd_simt_integer_fast_div)。
 
@@ -54,7 +54,7 @@ __simt_vf__ __launch_bounds__(THREAD_LIMIT) inline void simt_normal_div(
 
 【正例】
 
-基于SIMD与SIMT混合编程的快速除法实现：对应样例中的场景1（SCENARIO\_NUM=1）。当除数固定时，可以在SIMD编程中预先计算所需的magic和shift，再在SIMT编程中使用乘法和移位组合运算的方式替代普通除法。
+基于SIMD与SIMT混合编程的快速除法实现：对应样例中的场景1（SCENARIO\_NUM=1）。当除数固定时，可以在SIMD标量计算逻辑中调用快除预计算接口[asc_get_uintdiv_magic_and_shift](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_get_uintdiv_magic_and_shift.md)计算所需的magic和shift，再在SIMT计算中调用快除接口[asc_uintdiv](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_uintdiv.md)以乘法和移位组合运算的方式替代普通除法。
 
 对于uint32类型整数除法，可作如下变形，将除法计算转换为乘法和移位操作：
 
@@ -80,28 +80,43 @@ $$
 \left\lfloor \left(\frac{n \times magic}{2^{32}} + n\right) >> shift \right\rfloor
 $$
 
-其中magic和shift即为快速除法所需的乘法魔数和移位数。magic和shift的计算只与固定除数有关，可以在SIMD中预计算，在SIMT计算过程中复用，相关代码如下。
+其中magic和shift即为快速除法所需的乘法魔数和移位数。magic和shift的计算只与固定除数有关，可以在SIMD标量计算逻辑中调用[asc_get_uintdiv_magic_and_shift](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_get_uintdiv_magic_and_shift.md)接口预计算，在SIMT计算过程中复用，相关代码如下。
 
 ```cpp
-__aicore__ inline void calc_magic_shift(uint32_t& magic_out, uint32_t& shift_out, uint32_t divisor)
+__global__ __vector__ void integer_div_kernel(
+    __gm__ uint32_t* input,
+    __gm__ uint32_t* output,
+    uint32_t divisor,
+    uint32_t total_length)
 {
-    if (divisor == 0) {
-        magic_out = 0;
-        shift_out = 0;
-        return;
-    }
+    // 在标量计算逻辑中，根据固定除数预计算magic和shift。
+    uint32_t magic = 0;
+    uint32_t shift = 0;
+    asc_get_uintdiv_magic_and_shift(&magic, &shift, divisor);
 
-    int64_t pos = BIT_64_LEN - count_leading_zero(divisor);
-    int64_t cnt1 = get_bit_count1(divisor);
-    uint32_t shift = (cnt1 == 1) ? (pos - 1) : pos;
-    uint32_t magic = (1l << BIT_32_LEN) * ((1l << shift) - divisor) / divisor + 1;
+    uint32_t block_offset = block_idx * THREAD_COUNT;
 
-    magic_out = magic;
-    shift_out = shift;
+    __ubuf__ uint32_t input_buf[THREAD_COUNT];
+    __ubuf__ uint32_t output_buf[THREAD_COUNT];
+    uint32_t blk_length = THREAD_COUNT * sizeof(uint32_t);
+    asc_copy_gm2ub_align(
+        input_buf, input + block_offset, 1, blk_length, 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
+
+    asc_sync_notify(PIPE_MTE2, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
+
+    // 将magic和shift传入SIMT VF，完成快速除法计算。
+    asc_vf_call<simt_fast_div>(dim3(THREAD_COUNT), input_buf, output_buf, magic, shift, total_length);
+
+    asc_sync_notify(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    asc_sync_wait(PIPE_V, PIPE_MTE3, EVENT_ID0);
+
+    asc_copy_ub2gm_align(
+        output + block_offset, output_buf, 1, blk_length, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
 }
 ```
 
-在SIMT计算过程中，每个线程读取待处理的被除数value，调用__umulhi(value, magic)获取value与magic乘积的高32位结果q，再对value + q右移shift位，得到与value / divisor等价的结果。关键代码如下。
+在SIMT计算过程中，每个线程读取待处理的被除数value，调用[asc_uintdiv](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_uintdiv.md)接口完成乘法和移位组合运算，得到与value / divisor等价的结果。关键代码如下。
 
 ```cpp
 __simt_vf__ __launch_bounds__(THREAD_LIMIT) inline void simt_fast_div(
@@ -119,8 +134,7 @@ __simt_vf__ __launch_bounds__(THREAD_LIMIT) inline void simt_fast_div(
     }
 
     uint32_t value = input[local_idx];
-    uint32_t q = __umulhi(value, magic);
-    uint32_t result = (value + q) >> shift;
+    uint32_t result = asc_uintdiv(value, magic, shift);
     output[local_idx] = result;
 }
 ```
@@ -138,4 +152,4 @@ __simt_vf__ __launch_bounds__(THREAD_LIMIT) inline void simt_fast_div(
 
 相比场景0，场景1使用乘法和移位替代普通整数除法，Task Duration从117.229μs降低至103.889μs，端到端耗时下降约11.4%。aiv\_vec\_time从0.497μs降低至0.270μs，下降约45.6%，说明将普通除法替换为乘法和移位后，计算指令耗时明显降低。aiv\_scalar\_time从0.128μs增加至0.142μs，主要原因是快速除法需要在Scalar计算单元中额外计算magic和shift；但Task Duration仍然下降，说明快速除法带来的计算收益可以覆盖Scalar计算开销。
 
-【总结】对于除数固定的SIMT整数除法场景，可以在SIMD中预计算乘法魔数magic和移位量shift，并在SIMT计算过程中复用。通过将普通整数除法替换为乘法和移位操作，可以有效降低除法计算开销。
+【总结】对于除数固定的SIMT整数除法场景，可以在SIMD标量计算逻辑中调用[asc_get_uintdiv_magic_and_shift](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_get_uintdiv_magic_and_shift.md)接口预计算乘法魔数magic和移位量shift，并在SIMT计算过程中调用[asc_uintdiv](../../../../../../docs/zh/api/SIMT-API/math_functions/integer_math_functions/asc_uintdiv.md)接口复用该结果完成快速除法。通过将普通整数除法替换为乘法和移位操作，可以有效降低除法计算开销。
