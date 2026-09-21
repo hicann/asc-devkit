@@ -55,9 +55,7 @@ def read_file(source_file):
 def get_link_cmd(link_file):
     contents = read_file(link_file)
     if not contents:
-        raise TooFewLinkCmd(
-            f"There are too few compilation commands in the file: {link_file}"
-        )
+        raise TooFewLinkCmd(f"There are too few compilation commands in the file: {link_file}")
     return contents
 
 
@@ -85,9 +83,7 @@ def run_recompile_cmd(root_dir, compile_cmd):
     print(f"recompile: {compile_cmd}", flush=True)
     result = subprocess.run(cmds, check=True, cwd=root_dir)
     if result.returncode != 0:
-        raise CompileCMDError(
-            f"recompile command failed, return code: {result.returncode}"
-        )
+        raise CompileCMDError(f"recompile command failed, return code: {result.returncode}")
 
 
 def parse_args():
@@ -95,9 +91,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root-dir", required=True, help="target root directory")
     parser.add_argument("--target-name", required=True, help="target name")
-    parser.add_argument(
-        "--add-dir", required=True, help="the directory where the added obj is located"
-    )
+    parser.add_argument("--add-dir", required=True, help="the directory where the added obj is located")
     args = parser.parse_args()
     return args
 

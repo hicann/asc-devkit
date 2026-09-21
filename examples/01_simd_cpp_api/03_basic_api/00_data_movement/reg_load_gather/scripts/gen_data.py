@@ -41,17 +41,13 @@ def gen_golden_data_gatherb_scenario2():
     num_output_blocks = total_length // elements_per_block
     num_src_blocks = src_length // elements_per_block
     x = np.random.uniform(0, 1, [1, src_length]).astype(data_type)
-    block_indices = np.random.randint(0, num_src_blocks, num_output_blocks).astype(
-        np.uint32
-    )
+    block_indices = np.random.randint(0, num_src_blocks, num_output_blocks).astype(np.uint32)
     index = block_indices * 32
     x_flat = x.flatten()
     golden = np.zeros(total_length, dtype=data_type)
     for i, block_idx in enumerate(block_indices):
         start = block_idx * elements_per_block
-        golden[i * elements_per_block : (i + 1) * elements_per_block] = x_flat[
-            start : start + elements_per_block
-        ]
+        golden[i * elements_per_block : (i + 1) * elements_per_block] = x_flat[start : start + elements_per_block]
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
     x.tofile("./input/input_x.bin")

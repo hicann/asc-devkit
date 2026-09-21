@@ -28,26 +28,16 @@ def verify_result(output0, output1, golden0, golden1):
     golden0 = np.fromfile(golden0, dtype=output_type).reshape(-1)
     golden1 = np.fromfile(golden1, dtype=output_type).reshape(-1)
 
-    different0 = np.isclose(
-        output0, golden0, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
-    different1 = np.isclose(
-        output1, golden1, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
+    different0 = np.isclose(output0, golden0, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
+    different1 = np.isclose(output1, golden1, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
 
     diff_idx0 = np.where(different0 == False)[0]
     diff_idx1 = np.where(different1 == False)[0]
 
     for idx in diff_idx0[:100]:
-        print(
-            "dst0 index: %06d, expected: %-.9f, actual: %-.9f"
-            % (idx, golden0[idx], output0[idx])
-        )
+        print("dst0 index: %06d, expected: %-.9f, actual: %-.9f" % (idx, golden0[idx], output0[idx]))
     for idx in diff_idx1[:100]:
-        print(
-            "dst1 index: %06d, expected: %-.9f, actual: %-.9f"
-            % (idx, golden1[idx], output1[idx])
-        )
+        print("dst1 index: %06d, expected: %-.9f, actual: %-.9f" % (idx, golden1[idx], output1[idx]))
 
     error_ratio = float(diff_idx0.size + diff_idx1.size) / (golden0.size + golden1.size)
     print("error ratio: %.4f, tolerance: %.4f" % (error_ratio, ERROR_TOL))

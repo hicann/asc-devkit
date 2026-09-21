@@ -32,10 +32,7 @@ def gen_golden_data():
     x1_gm = np.random.uniform(-1, 1, [m, k]).astype(np.float16)
     x2_gm = np.random.uniform(-1, 1, [k, n]).astype(np.float16)
     bias_gm = np.random.uniform(-10, 10, [n]).reshape([n]).astype(np.float32)
-    golden = (
-        np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32)
-        + bias_gm
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32) + bias_gm
 
     x1_gm = nd_to_nz(x1_gm, [m, k])
 

@@ -26,9 +26,7 @@ from .buildcfg_mapping import (
 from .default_buildcfg import cce_default_static_build_config
 from .global_info import GlobalInfoContainer
 
-_build_cfg = contextvars.ContextVar(
-    "_build_cfg", default=cce_default_static_build_config.copy()
-)
+_build_cfg = contextvars.ContextVar("_build_cfg", default=cce_default_static_build_config.copy())
 
 
 def _check_kwargs(kwargs):

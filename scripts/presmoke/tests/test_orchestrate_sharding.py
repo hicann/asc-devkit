@@ -34,37 +34,19 @@ class OrchestrateShardingTest(unittest.TestCase):
         ]
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            report = write_plan_report(
-                root, [*dependency_group, "case/a", "case/b", "case/c"]
-            )
-            assignments = dict(
-                (example, card)
-                for card, example in shard_examples(report, ["0", "1", "2"])
-            )
+            report = write_plan_report(root, [*dependency_group, "case/a", "case/b", "case/c"])
+            assignments = dict((example, card) for card, example in shard_examples(report, ["0", "1", "2"]))
 
         self.assertEqual(len({assignments[example] for example in dependency_group}), 1)
 
     def test_sharding_can_split_same_source_case_across_cards(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            report = write_plan_report(
-                root,
-                [
-                    "case/source__scenario_1",
-                    "case/source__scenario_2",
-                    "case/c",
-                    "case/d",
-                ],
-            )
+            report = write_plan_report(root, ["case/source__scenario_1", "case/source__scenario_2", "case/c", "case/d"])
 
-            assignments = dict(
-                (example, card) for card, example in shard_examples(report, ["0", "1"])
-            )
+            assignments = dict((example, card) for card, example in shard_examples(report, ["0", "1"]))
 
-        self.assertNotEqual(
-            assignments["case/source__scenario_1"],
-            assignments["case/source__scenario_2"],
-        )
+        self.assertNotEqual(assignments["case/source__scenario_1"], assignments["case/source__scenario_2"])
 
     def test_sharding_uses_duration_report_to_balance_cards(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -85,10 +67,7 @@ class OrchestrateShardingTest(unittest.TestCase):
             )
 
             assignments = dict(
-                (example, card)
-                for card, example in shard_examples(
-                    report, ["0", "1"], schedule_report=timings
-                )
+                (example, card) for card, example in shard_examples(report, ["0", "1"], schedule_report=timings)
             )
 
         self.assertNotEqual(assignments["case/a"], assignments["case/b"])
@@ -113,10 +92,7 @@ class OrchestrateShardingTest(unittest.TestCase):
             )
 
             assignments = dict(
-                (example, card)
-                for card, example in shard_examples(
-                    report, ["0", "1"], schedule_report=timings, jobs=2
-                )
+                (example, card) for card, example in shard_examples(report, ["0", "1"], schedule_report=timings, jobs=2)
             )
 
         self.assertNotEqual(assignments["case/a"], assignments["case/b"])
@@ -133,10 +109,7 @@ class OrchestrateShardingTest(unittest.TestCase):
 
             assignments = shard_examples(report, ["4", "6"], fixed_shards=shards)
 
-        self.assertEqual(
-            assignments,
-            [("4", "case/b"), ("4", "case/a"), ("6", "case/c")],
-        )
+        self.assertEqual(assignments, [("4", "case/b"), ("4", "case/a"), ("6", "case/c")])
 
     def test_fixed_shards_reject_incomplete_case_coverage(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -154,10 +127,7 @@ class OrchestrateShardingTest(unittest.TestCase):
 def write_plan_report(root: Path, examples: list[str]) -> Path:
     report = root / "report.json"
     report.write_text(
-        json.dumps(
-            {"results": [{"example": example, "duration_s": 0} for example in examples]}
-        ),
-        encoding="utf-8",
+        json.dumps({"results": [{"example": example, "duration_s": 0} for example in examples]}), encoding="utf-8"
     )
     return report
 

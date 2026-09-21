@@ -33,15 +33,12 @@ def generate_datablock_gather_data():
     output_length = 256
     elements_per_block = 32 // np.dtype(np.float16).itemsize
     src = np.random.uniform(0, 1, src_length).astype(np.float16)
-    block_index = np.random.randint(
-        0, src_length // elements_per_block, output_length // elements_per_block
-    ).astype(np.uint32)
+    block_index = np.random.randint(0, src_length // elements_per_block, output_length // elements_per_block).astype(
+        np.uint32
+    )
     index = block_index * 32
     golden = np.concatenate(
-        [
-            src[block * elements_per_block : (block + 1) * elements_per_block]
-            for block in block_index
-        ]
+        [src[block * elements_per_block : (block + 1) * elements_per_block] for block in block_index]
     )
     src.tofile("./input/input_x.bin")
     index.tofile("./input/input_y.bin")

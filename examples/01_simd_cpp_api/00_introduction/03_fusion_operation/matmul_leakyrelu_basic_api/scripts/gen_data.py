@@ -22,9 +22,7 @@ def gen_golden_data():
     k = 128
     x1_gm = np.random.randint(-10, 10, [m, k]).astype(np.float16)
     x2_gm = np.random.randint(-10, 10, [k, n]).astype(np.float16)
-    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-        np.float16
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float16)
     golden = np.where(golden >= 0, golden, golden * 0.001)
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

@@ -39,12 +39,7 @@ def extract_archive(archive_path: str, dst_dir: str):
 
 def get_objects_in_archive(archive_path: str) -> List[str]:
     """Get objects in archive."""
-    result = subprocess.run(
-        ["ar", "-t", archive_path],
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
+    result = subprocess.run(["ar", "-t", archive_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     display = result.stdout.decode()
     return display.split()
 
@@ -77,9 +72,7 @@ def main(argv):
 
     objects = get_objects_in_archive(args.archive)
 
-    cmake_config_content = generate_cmake_config_content(
-        args.target, args.dst_dir, objects
-    )
+    cmake_config_content = generate_cmake_config_content(args.target, args.dst_dir, objects)
 
     save_file(os.path.join(args.dst_dir, args.cmake), cmake_config_content)
 

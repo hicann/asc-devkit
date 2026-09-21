@@ -36,9 +36,7 @@ def gen_golden_data(scenario_num):
     values = rng.uniform(-100.0, 100.0, TOTAL_LENGTH).astype(np.float32)
 
     # Include exact integers and values close to zero to demonstrate truncation semantics.
-    values[:8] = np.array(
-        [-3.9, -2.0, -1.1, -0.9, 0.9, 1.1, 2.0, 3.9], dtype=np.float32
-    )
+    values[:8] = np.array([-3.9, -2.0, -1.1, -0.9, 0.9, 1.1, 2.0, 3.9], dtype=np.float32)
 
     if scenario_num == 1:
         x = values.astype(np.float16)

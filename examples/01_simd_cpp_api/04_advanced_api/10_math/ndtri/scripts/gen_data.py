@@ -79,9 +79,7 @@ def gen_golden_data_simple(size=2048, include_special=True):
         right_count = tail_count - left_count
         if right_count > 0:
             right_delta = np.logspace(-7, -2, right_count, dtype=dtype)
-            input_x[fixed_count + left_count : fixed_count + tail_count] = (
-                dtype(1.0) - right_delta
-            )
+            input_x[fixed_count + left_count : fixed_count + tail_count] = dtype(1.0) - right_delta
 
     golden = ndtri(input_x).astype(dtype)
 

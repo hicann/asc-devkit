@@ -272,9 +272,7 @@ class OpDesc:
             self.output_fmt_for_bin.update({self.output_idx: self._parse_str(conf)})
         elif conf.startswith("output{}.initValue".format(int(self.output_idx))):
             self.output_init_value[int(self.output_idx)] = self._parse_str(conf)
-        elif conf.startswith(
-            "output{}.outputShapeDependOnCompute=true".format(int(self.output_idx))
-        ):
+        elif conf.startswith("output{}.outputShapeDependOnCompute=true".format(int(self.output_idx))):
             self.output_shape_depend_on_compute.append(int(self.output_idx))
         else:
             return
@@ -329,9 +327,7 @@ conflicts with the built-in variable name. Use a complex name or prefix the oper
             if self.attr_val.get(attr) is None:
                 self.attr_val[attr] = {}
             if conf.startswith("attr_{}.type".format(attr)):
-                self.attr_val.get(attr)["type"] = self._camel_to_snake(
-                    self._parse_str(conf)
-                )
+                self.attr_val.get(attr)["type"] = self._camel_to_snake(self._parse_str(conf))
             elif conf.startswith("attr_{}.paramType".format(attr)):
                 self.attr_val.get(attr)["paramType"] = self._parse_str(conf)
             elif conf.startswith("attr_{}.defaultValue".format(attr)):
@@ -406,9 +402,7 @@ def _get_op_custom_options(op_descs: list, auto_gen_dir: str):
         for line in lines:
             param_list = str.split(line.rstrip("\n"), ",")
             if len(param_list) != 3:
-                raise Exception(
-                    f"ERROR: custom compile option {param_list} len is not 3"
-                )
+                raise Exception(f"ERROR: custom compile option {param_list} len is not 3")
             op_type = param_list[0]
             if op_type.upper() == "ALL":
                 op_type = OP_ALL
@@ -427,22 +421,13 @@ def _get_op_custom_options(op_descs: list, auto_gen_dir: str):
                     short_ver = _trans_soc_ver_to_short(ver)
                     soc_ver_compile_options[short_ver] = options
             if op_type == OP_ALL:
-                _set_all_options_to_opdescs(
-                    op_descs, soc_ver_compile_options, tmp_impl_mode
-                )
+                _set_all_options_to_opdescs(op_descs, soc_ver_compile_options, tmp_impl_mode)
             else:
-                _set_options_to_opdesc(
-                    op_descs, op_type, soc_ver_compile_options, tmp_impl_mode
-                )
+                _set_options_to_opdesc(op_descs, op_type, soc_ver_compile_options, tmp_impl_mode)
 
 
 def get_op_desc(
-    file: str,
-    batch_list: list,
-    iterator_list: list,
-    builder: any,
-    op_type: list,
-    auto_gen_dir: str = None,
+    file: str, batch_list: list, iterator_list: list, builder: any, op_type: list, auto_gen_dir: str = None
 ) -> list:
     op_descs = []
     op_match = False

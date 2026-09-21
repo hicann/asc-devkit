@@ -660,9 +660,7 @@ _ATTRDEF_LISTVALUE = _descriptor.Descriptor(
     ],
     extensions=[],
     nested_types=[],
-    enum_types=[
-        _ATTRDEF_LISTVALUE_LISTVALUETYPE,
-    ],
+    enum_types=[_ATTRDEF_LISTVALUE_LISTVALUETYPE],
     serialized_options=None,
     is_extendable=False,
     syntax="proto3",
@@ -698,7 +696,7 @@ _ATTRDEF_LISTLISTINT_LISTINT = _descriptor.Descriptor(
             serialized_options=None,
             file=DESCRIPTOR,
             create_key=_descriptor._internal_create_key,
-        ),
+        )
     ],
     extensions=[],
     nested_types=[],
@@ -738,12 +736,10 @@ _ATTRDEF_LISTLISTINT = _descriptor.Descriptor(
             serialized_options=None,
             file=DESCRIPTOR,
             create_key=_descriptor._internal_create_key,
-        ),
+        )
     ],
     extensions=[],
-    nested_types=[
-        _ATTRDEF_LISTLISTINT_LISTINT,
-    ],
+    nested_types=[_ATTRDEF_LISTLISTINT_LISTINT],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -780,7 +776,7 @@ _ATTRDEF_LISTLISTFLOAT_LISTFLOAT = _descriptor.Descriptor(
             serialized_options=None,
             file=DESCRIPTOR,
             create_key=_descriptor._internal_create_key,
-        ),
+        )
     ],
     extensions=[],
     nested_types=[],
@@ -820,12 +816,10 @@ _ATTRDEF_LISTLISTFLOAT = _descriptor.Descriptor(
             serialized_options=None,
             file=DESCRIPTOR,
             create_key=_descriptor._internal_create_key,
-        ),
+        )
     ],
     extensions=[],
-    nested_types=[
-        _ATTRDEF_LISTLISTFLOAT_LISTFLOAT,
-    ],
+    nested_types=[_ATTRDEF_LISTLISTFLOAT_LISTFLOAT],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -1093,11 +1087,7 @@ _ATTRDEF = _descriptor.Descriptor(
         ),
     ],
     extensions=[],
-    nested_types=[
-        _ATTRDEF_LISTVALUE,
-        _ATTRDEF_LISTLISTINT,
-        _ATTRDEF_LISTLISTFLOAT,
-    ],
+    nested_types=[_ATTRDEF_LISTVALUE, _ATTRDEF_LISTLISTINT, _ATTRDEF_LISTLISTFLOAT],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -1111,7 +1101,7 @@ _ATTRDEF = _descriptor.Descriptor(
             containing_type=None,
             create_key=_descriptor._internal_create_key,
             fields=[],
-        ),
+        )
     ],
     serialized_start=26,
     serialized_end=1165,
@@ -1225,9 +1215,7 @@ _NAMEDATTRS = _descriptor.Descriptor(
         ),
     ],
     extensions=[],
-    nested_types=[
-        _NAMEDATTRS_ATTRENTRY,
-    ],
+    nested_types=[_NAMEDATTRS_ATTRENTRY],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -1265,7 +1253,7 @@ _SHAPEDEF = _descriptor.Descriptor(
             serialized_options=None,
             file=DESCRIPTOR,
             create_key=_descriptor._internal_create_key,
-        ),
+        )
     ],
     extensions=[],
     nested_types=[],
@@ -1691,9 +1679,7 @@ _TENSORDESCRIPTOR = _descriptor.Descriptor(
         ),
     ],
     extensions=[],
-    nested_types=[
-        _TENSORDESCRIPTOR_ATTRENTRY,
-    ],
+    nested_types=[_TENSORDESCRIPTOR_ATTRENTRY],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -2214,9 +2200,7 @@ _OPDEF = _descriptor.Descriptor(
         ),
     ],
     extensions=[],
-    nested_types=[
-        _OPDEF_ATTRENTRY,
-    ],
+    nested_types=[_OPDEF_ATTRENTRY],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -2392,9 +2376,7 @@ _GRAPHDEF = _descriptor.Descriptor(
         ),
     ],
     extensions=[],
-    nested_types=[
-        _GRAPHDEF_ATTRENTRY,
-    ],
+    nested_types=[_GRAPHDEF_ATTRENTRY],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -2570,9 +2552,7 @@ _MODELDEF = _descriptor.Descriptor(
         ),
     ],
     extensions=[],
-    nested_types=[
-        _MODELDEF_ATTRENTRY,
-    ],
+    nested_types=[_MODELDEF_ATTRENTRY],
     enum_types=[],
     serialized_options=None,
     is_extendable=False,
@@ -2587,20 +2567,14 @@ _ATTRDEF_LISTVALUE.fields_by_name["td"].message_type = _TENSORDESCRIPTOR
 _ATTRDEF_LISTVALUE.fields_by_name["t"].message_type = _TENSORDEF
 _ATTRDEF_LISTVALUE.fields_by_name["g"].message_type = _GRAPHDEF
 _ATTRDEF_LISTVALUE.fields_by_name["na"].message_type = _NAMEDATTRS
-_ATTRDEF_LISTVALUE.fields_by_name[
-    "val_type"
-].enum_type = _ATTRDEF_LISTVALUE_LISTVALUETYPE
+_ATTRDEF_LISTVALUE.fields_by_name["val_type"].enum_type = _ATTRDEF_LISTVALUE_LISTVALUETYPE
 _ATTRDEF_LISTVALUE.containing_type = _ATTRDEF
 _ATTRDEF_LISTVALUE_LISTVALUETYPE.containing_type = _ATTRDEF_LISTVALUE
 _ATTRDEF_LISTLISTINT_LISTINT.containing_type = _ATTRDEF_LISTLISTINT
-_ATTRDEF_LISTLISTINT.fields_by_name[
-    "list_list_i"
-].message_type = _ATTRDEF_LISTLISTINT_LISTINT
+_ATTRDEF_LISTLISTINT.fields_by_name["list_list_i"].message_type = _ATTRDEF_LISTLISTINT_LISTINT
 _ATTRDEF_LISTLISTINT.containing_type = _ATTRDEF
 _ATTRDEF_LISTLISTFLOAT_LISTFLOAT.containing_type = _ATTRDEF_LISTLISTFLOAT
-_ATTRDEF_LISTLISTFLOAT.fields_by_name[
-    "list_list_f"
-].message_type = _ATTRDEF_LISTLISTFLOAT_LISTFLOAT
+_ATTRDEF_LISTLISTFLOAT.fields_by_name["list_list_f"].message_type = _ATTRDEF_LISTLISTFLOAT_LISTFLOAT
 _ATTRDEF_LISTLISTFLOAT.containing_type = _ATTRDEF
 _ATTRDEF.fields_by_name["list"].message_type = _ATTRDEF_LISTVALUE
 _ATTRDEF.fields_by_name["func"].message_type = _NAMEDATTRS
@@ -2630,17 +2604,11 @@ _ATTRDEF.fields_by_name["t"].containing_oneof = _ATTRDEF.oneofs_by_name["value"]
 _ATTRDEF.oneofs_by_name["value"].fields.append(_ATTRDEF.fields_by_name["g"])
 _ATTRDEF.fields_by_name["g"].containing_oneof = _ATTRDEF.oneofs_by_name["value"]
 _ATTRDEF.oneofs_by_name["value"].fields.append(_ATTRDEF.fields_by_name["list_list_int"])
-_ATTRDEF.fields_by_name["list_list_int"].containing_oneof = _ATTRDEF.oneofs_by_name[
-    "value"
-]
+_ATTRDEF.fields_by_name["list_list_int"].containing_oneof = _ATTRDEF.oneofs_by_name["value"]
 _ATTRDEF.oneofs_by_name["value"].fields.append(_ATTRDEF.fields_by_name["dt"])
 _ATTRDEF.fields_by_name["dt"].containing_oneof = _ATTRDEF.oneofs_by_name["value"]
-_ATTRDEF.oneofs_by_name["value"].fields.append(
-    _ATTRDEF.fields_by_name["list_list_float"]
-)
-_ATTRDEF.fields_by_name["list_list_float"].containing_oneof = _ATTRDEF.oneofs_by_name[
-    "value"
-]
+_ATTRDEF.oneofs_by_name["value"].fields.append(_ATTRDEF.fields_by_name["list_list_float"])
+_ATTRDEF.fields_by_name["list_list_float"].containing_oneof = _ATTRDEF.oneofs_by_name["value"]
 _NAMEDATTRS_ATTRENTRY.fields_by_name["value"].message_type = _ATTRDEF
 _NAMEDATTRS_ATTRENTRY.containing_type = _NAMEDATTRS
 _NAMEDATTRS.fields_by_name["attr"].message_type = _NAMEDATTRS_ATTRENTRY

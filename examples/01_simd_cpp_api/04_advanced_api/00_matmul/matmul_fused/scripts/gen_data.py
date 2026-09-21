@@ -25,9 +25,7 @@ def gen_golden_data_simple():
     input_b = np.random.randint(1, 10, [K, N]).astype(np.float16)
     input_bias = np.random.randint(1, 10, [N]).astype(np.float32)
     alpha = 0.001
-    golden = (
-        np.matmul(input_a.astype(np.float32), input_b.astype(np.float32)) + input_bias
-    ).astype(np.float32)
+    golden = (np.matmul(input_a.astype(np.float32), input_b.astype(np.float32)) + input_bias).astype(np.float32)
     golden = np.where(golden >= 0, golden, golden * alpha)
     os.system("mkdir -p input")
     os.system("mkdir -p output")

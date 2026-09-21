@@ -30,12 +30,8 @@ def softmax_2d_py_float(x, inmax=None, insum=None, update=None, log=None):
     if log:
         x_div = np.log10(x_div)
     if update:
-        x_max_new = np.max(np.concatenate((inmax, x_max), axis=-1), axis=-1).reshape(
-            [orig_shape[0], 1]
-        )
-        x_exp_new = np.exp(
-            x_max.reshape([orig_shape[0], 1]) - x_max_new.reshape([orig_shape[0], 1])
-        )
+        x_max_new = np.max(np.concatenate((inmax, x_max), axis=-1), axis=-1).reshape([orig_shape[0], 1])
+        x_exp_new = np.exp(x_max.reshape([orig_shape[0], 1]) - x_max_new.reshape([orig_shape[0], 1]))
         exp_max = np.exp(inmax - x_max_new)
         x_sum_new = exp_max * insum + x_exp_new * x_sum
         exp_max = exp_max * insum / x_sum_new
@@ -108,9 +104,7 @@ def gen_golden_data_simple():
             orix2[i][j] = x1[i][j]
     max_front = np.zeros([height, 8], dtype=src_dtype)
     sum_front = np.zeros([height, 8], dtype=src_dtype)
-    out_1, max_1, sum_1, exp_max_1 = softmax_2d_py_float(
-        orix2, max_front, sum_front, update=False, log=True
-    )
+    out_1, max_1, sum_1, exp_max_1 = softmax_2d_py_float(orix2, max_front, sum_front, update=False, log=True)
     newout = np.zeros(mkShape, dtype=src_dtype)
     for i in range(oriHeight):
         for j in range(oriWidth):

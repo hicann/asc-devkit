@@ -24,9 +24,7 @@ def verify_result(scenarioNum, output, golden):
     output_type = np.float16 if scenarioNum in (1, 2) else np.float32
     output = np.fromfile(output, dtype=output_type).reshape(-1)
     golden = np.fromfile(golden, dtype=output_type).reshape(-1)
-    different_element_results = np.isclose(
-        output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
+    different_element_results = np.isclose(output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
 
     for index in range(len(different_element_indexes)):

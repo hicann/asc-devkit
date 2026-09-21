@@ -31,49 +31,37 @@ def gen_golden_data(scenario_num=1):
         # int8_t, A不转置B转置: A[m,k], B[n,k]
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.int8)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.int8)
-        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(
-            np.int32
-        )
+        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(np.int32)
         x2_gm = x2_gm.transpose()
     elif scenario_num == 2 or scenario_num == 7:
         # int8_t, A转置B不转置: A[k,m], B[k,n]
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.int8)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.int8)
-        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(
-            np.int32
-        )
+        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(np.int32)
         x1_gm = x1_gm.transpose()
     elif scenario_num == 3:
         # half, A不转置B转置: A[m,k], B[n,k]
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.float16)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.float16)
-        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(
-            np.float32
-        )
+        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(np.float32)
         x2_gm = x2_gm.transpose()
     elif scenario_num == 4:
         # half, A转置B不转置: A[k,m], B[k,n]
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.float16)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.float16)
-        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(
-            np.float32
-        )
+        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(np.float32)
         x1_gm = x1_gm.transpose()
     elif scenario_num == 5:
         # float, A不转置B转置: A[m,k], B[n,k]
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.float32)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.float32)
-        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(
-            np.float32
-        )
+        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(np.float32)
         x2_gm = x2_gm.transpose()
     elif scenario_num == 6:
         # float, A转置B不转置: A[k,m], B[k,n]
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.float32)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.float32)
-        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(
-            np.float32
-        )
+        golden = (np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32))).astype(np.float32)
         x1_gm = x1_gm.transpose()
 
     if scenario_num <= 2 or scenario_num == 7:

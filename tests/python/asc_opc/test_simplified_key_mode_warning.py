@@ -67,20 +67,12 @@ def _custom_op():
 
 
 @pytest.mark.parametrize("requested_mode", [0, 1, None])
-def test_custom_key_warns_when_mode_2_is_selected(
-    monkeypatch, requested_mode, simplified_key_module
-):
+def test_custom_key_warns_when_mode_2_is_selected(monkeypatch, requested_mode, simplified_key_module):
     logger = RecordingLogger()
     monkeypatch.setattr(simplified_key_module, "logger", logger)
-    compile_args = (
-        {}
-        if requested_mode is None
-        else {simplified_key_module.OpcOptions.SIMPLE_KEY_MODE: requested_mode}
-    )
+    compile_args = {} if requested_mode is None else {simplified_key_module.OpcOptions.SIMPLE_KEY_MODE: requested_mode}
 
     result = simplified_key_module.infer_simplified_key_mode(_custom_op(), compile_args)
 
     assert result[0] == 2
-    assert logger.warnings == [
-        "Custom simplified_key is configured; custom mode 2 will be used."
-    ]
+    assert logger.warnings == ["Custom simplified_key is configured; custom mode 2 will be used."]

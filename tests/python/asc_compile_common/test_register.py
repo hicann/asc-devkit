@@ -31,10 +31,7 @@ from asc_op_compile_base.common.register import (
     get_param_generalization,
     get_fusion_buildcfg,
 )
-from asc_op_compile_base.common.register.operation_func_mgr import (
-    _generalization,
-    _op_computes,
-)
+from asc_op_compile_base.common.register.operation_func_mgr import _generalization, _op_computes
 
 
 class TestRegister(unittest.TestCase):
@@ -68,9 +65,7 @@ class TestRegister(unittest.TestCase):
         op_compute = get_op_compute("conv2d")
         self.assertIsNotNone(op_compute)
         self.assertTrue(op_compute.if_support_fusion())
-        self.assertEqual(
-            (op_compute.get_func())([1, 2, 3], [4, 5, 6]), "conv([1, 2, 3], [4, 5, 6])"
-        )
+        self.assertEqual((op_compute.get_func())([1, 2, 3], [4, 5, 6]), "conv([1, 2, 3], [4, 5, 6])")
 
     def test_fusion_buildcfg(self):
         # test set

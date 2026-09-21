@@ -32,9 +32,7 @@ def get_op_debug_config():
 
 def run_local_cmd(cmds, compile_log_path=None):
     output, ret_code = CommonUtility.run_cmd_ascendc(cmds, "compile")
-    CommonUtility.dump_build_log(
-        output.decode(), cmds, CompileStage.SPLIT_SUB_OBJS, ret_code
-    )
+    CommonUtility.dump_build_log(output.decode(), cmds, CompileStage.SPLIT_SUB_OBJS, ret_code)
     CommonUtility.dump_compile_log(cmds, CompileStage.SPLIT_SUB_OBJS, compile_log_path)
 
 
@@ -50,12 +48,8 @@ def check_exist_forbidden_symbols(dst_i_file, forbidden_symbols, allow_path):
     result_symbol_list = []
     path_list = []
     line_result = []
-    forbidden_pattern = re.compile(
-        r"\b(" + "|".join(re.escape(symbol) for symbol in forbidden_symbols) + r")\b"
-    )
-    allow_path_pattern = re.compile(
-        r"\b(" + "|".join(re.escape(path) for path in allow_path) + r")\b"
-    )
+    forbidden_pattern = re.compile(r"\b(" + "|".join(re.escape(symbol) for symbol in forbidden_symbols) + r")\b")
+    allow_path_pattern = re.compile(r"\b(" + "|".join(re.escape(path) for path in allow_path) + r")\b")
     with open(dst_i_file, "r") as f:
         for line in f:
             if line.startswith("#"):
@@ -107,11 +101,7 @@ def check_exist_instrinsic_when_super_kernel(dst_i_file):
             apis = list(dict.fromkeys([a.strip() for a in result.split(",")]))
             replacements = list(
                 dict.fromkeys(
-                    [
-                        _FORBIDDEN_API_REPLACEMENT.get(api, "")
-                        for api in apis
-                        if _FORBIDDEN_API_REPLACEMENT.get(api, "")
-                    ]
+                    [_FORBIDDEN_API_REPLACEMENT.get(api, "") for api in apis if _FORBIDDEN_API_REPLACEMENT.get(api, "")]
                 )
             )
             apis_str = " or ".join(apis)

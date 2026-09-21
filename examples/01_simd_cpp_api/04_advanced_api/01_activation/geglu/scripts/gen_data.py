@@ -29,13 +29,7 @@ def gen_golden_data():
     src0.tofile("./input/input_src0.bin")
     src1.tofile("./input/input_src1.bin")
 
-    golden = src0 * (
-        src1
-        / (
-            1
-            + np.exp(-0.0713548162726 * src1 * (2.2363860002236e1 + np.power(src1, 2)))
-        )
-    )
+    golden = src0 * (src1 / (1 + np.exp(-0.0713548162726 * src1 * (2.2363860002236e1 + np.power(src1, 2)))))
     golden = golden.astype(dtype)
     golden.tofile("./output/golden.bin")
 

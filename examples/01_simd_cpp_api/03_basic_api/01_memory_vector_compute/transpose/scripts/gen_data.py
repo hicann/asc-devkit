@@ -20,11 +20,7 @@ import sys
 
 def get_range_by_dtype(input_type):
     try:
-        if (
-            input_type == np.float16
-            or input_type == np.float32
-            or input_type == np.float64
-        ):
+        if input_type == np.float16 or input_type == np.float32 or input_type == np.float64:
             return np.finfo(input_type).min, np.finfo(input_type).max
         else:
             return np.iinfo(input_type).min, np.iinfo(input_type).max
@@ -69,9 +65,7 @@ def gen_golden_data(scenario_num):
         golden = input_x.reshape(2, 2, 16, 16, 16).transpose(0, 1, 3, 4, 2)
     else:
         print(
-            "Invalid scenario number: {}. Supported scenarios: 1 (common), 2 (enhanced), 3 (5hd)".format(
-                scenario_num
-            )
+            "Invalid scenario number: {}. Supported scenarios: 1 (common), 2 (enhanced), 3 (5hd)".format(scenario_num)
         )
         sys.exit(1)
 

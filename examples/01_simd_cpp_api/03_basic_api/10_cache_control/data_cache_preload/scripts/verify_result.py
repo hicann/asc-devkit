@@ -35,10 +35,7 @@ def verify_result(output, golden):
         real_index = diff[index]
         golden_data = golden[real_index]
         output_data = output[real_index]
-        print(
-            "data index: %06d, expected: %d, actual: %d"
-            % (real_index, golden_data, output_data)
-        )
+        print("data index: %06d, expected: %d, actual: %d" % (real_index, golden_data, output_data))
         if index == 100:
             break
     error_ratio = float(diff.size) / golden.size

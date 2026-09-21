@@ -224,9 +224,7 @@ def insert_simplified_keys(json_file):
     precision = str(get_precision_value(support_info))
     overflow = str(get_overflow_value(support_info))
     input_parameters = get_all_input_parameters(support_info)
-    key = "{}/d={},p={},o={}/{}/".format(
-        op_type, deterministic, precision, overflow, input_parameters
-    )
+    key = "{}/d={},p={},o={}/{}/".format(op_type, deterministic, precision, overflow, input_parameters)
     result = '"simplifiedKey": "' + key + '",\n'
     insert_content_into_file(json_file, result)
 
@@ -240,13 +238,7 @@ def insert_all_simplified_keys(root_dir):
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-p",
-        "--path",
-        nargs="?",
-        required=True,
-        help="Parse the path of the json file.",
-    )
+    parser.add_argument("-p", "--path", nargs="?", required=True, help="Parse the path of the json file.")
     return parser.parse_args()
 
 

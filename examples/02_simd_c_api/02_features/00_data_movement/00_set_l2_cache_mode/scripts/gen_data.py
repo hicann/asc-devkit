@@ -31,9 +31,7 @@ def gen_golden_data(scenario_num):
         input_data = rng.integers(-2, 3, size=m * n, dtype=np.int16).astype(np.float16)
         input_data.tofile("./input/input.bin")
         input_data.tofile("./output/golden.bin")
-        print(
-            f"[INFO] Case {scenario_num}: Generated input.bin, golden.bin with shape [{m}, {n}]"
-        )
+        print(f"[INFO] Case {scenario_num}: Generated input.bin, golden.bin with shape [{m}, {n}]")
     else:
         # Case 3-4: 矩阵加法场景，矩阵 [8192, 8192]，half 类型
         m = 8192
@@ -44,18 +42,12 @@ def gen_golden_data(scenario_num):
         input_x.tofile("./input/input_x.bin")
         input_y.tofile("./input/input_y.bin")
         golden.tofile("./output/golden.bin")
-        print(
-            f"[INFO] Case {scenario_num}: Generated input_x.bin, input_y.bin with shape [{m}, {n}]"
-        )
-        print(
-            f"[INFO] Case {scenario_num}: Generated golden.bin (x + y) for verification"
-        )
+        print(f"[INFO] Case {scenario_num}: Generated input_x.bin, input_y.bin with shape [{m}, {n}]")
+        print(f"[INFO] Case {scenario_num}: Generated golden.bin (x + y) for verification")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-scenarioNum", type=int, default=1, help="Scenario number (1-4)"
-    )
+    parser.add_argument("-scenarioNum", type=int, default=1, help="Scenario number (1-4)")
     args = parser.parse_args()
     gen_golden_data(args.scenarioNum)

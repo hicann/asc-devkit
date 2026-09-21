@@ -28,9 +28,7 @@ from adapter.global_storage import global_var_storage
 
 def SetCurrentSocInfo(soc: str):
     set_current_compile_soc_info(soc)
-    global_var_storage.set_variable(
-        "ascendc_short_soc_version", get_soc_spec("SHORT_SOC_VERSION")
-    )
+    global_var_storage.set_variable("ascendc_short_soc_version", get_soc_spec("SHORT_SOC_VERSION"))
 
 
 class TestLogUtils(unittest.TestCase):
@@ -79,33 +77,17 @@ class TestLogUtils(unittest.TestCase):
         self.assertEqual(LogUtil.fix_string_escapes("\t"), "\t")
         self.assertEqual(LogUtil.fix_string_escapes("\r\n"), "\r\n")
         # test C++ format symbols
-        self.assertEqual(
-            LogUtil.fix_string_escapes("Process 50% complete"), "Process 50%% complete"
-        )
+        self.assertEqual(LogUtil.fix_string_escapes("Process 50% complete"), "Process 50%% complete")
         self.assertEqual(LogUtil.fix_string_escapes("%% in config"), "%%%% in config")
         self.assertEqual(LogUtil.fix_string_escapes("%s %d"), "%%s %%d")
         self.assertEqual(LogUtil.fix_string_escapes(r"%A%%"), "%%A%%%%")
         # test backslash
         self.assertEqual(LogUtil.fix_string_escapes("Path\\to\\file"), "Path\\to\\file")
-        self.assertEqual(
-            LogUtil.fix_string_escapes(r"C:\\Users\test"), "C:\\\\Users\\test"
-        )
+        self.assertEqual(LogUtil.fix_string_escapes(r"C:\\Users\test"), "C:\\\\Users\\test")
         self.assertEqual(LogUtil.fix_string_escapes(r"\n"), "\\n")
         # test control symbols
-        self.assertEqual(
-            LogUtil.fix_string_escapes("\x07\a\x00\0\x0c\f\x05"),
-            "\\a\\a\\0\\0\\f\\f\\x05",
-        )
-        self.assertEqual(
-            LogUtil.fix_string_escapes(r"\x07\a\x00\0\x0c\f\x05"),
-            "\\x07\\a\\x00\\0\\x0c\\f\\x05",
-        )
-        self.assertEqual(
-            LogUtil.fix_string_escapes("\\x00\\0\\x0c\\f\\x05\\r\\n"),
-            "\\x00\\0\\x0c\\f\\x05\\r\\n",
-        )
+        self.assertEqual(LogUtil.fix_string_escapes("\x07\a\x00\0\x0c\f\x05"), "\\a\\a\\0\\0\\f\\f\\x05")
+        self.assertEqual(LogUtil.fix_string_escapes(r"\x07\a\x00\0\x0c\f\x05"), "\\x07\\a\\x00\\0\\x0c\\f\\x05")
+        self.assertEqual(LogUtil.fix_string_escapes("\\x00\\0\\x0c\\f\\x05\\r\\n"), "\\x00\\0\\x0c\\f\\x05\\r\\n")
         # test mix
-        self.assertEqual(
-            LogUtil.fix_string_escapes('%\n%s\\n"100%完成\n结果："'),
-            '%%\n%%s\\n"100%%完成\n结果："',
-        )
+        self.assertEqual(LogUtil.fix_string_escapes('%\n%s\\n"100%完成\n结果："'), '%%\n%%s\\n"100%%完成\n结果："')

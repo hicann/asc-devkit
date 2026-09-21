@@ -16,21 +16,13 @@ import os
 import glob
 import json
 import sys
-from asc_op_compile_base.asc_op_compiler.op_tiling import (
-    _ASCEND_OPP_PATH_ENV,
-    _ASCEND_OPP_PATH_DEFAULT,
-    op_impl_path,
-)
+from asc_op_compile_base.asc_op_compiler.op_tiling import _ASCEND_OPP_PATH_ENV, _ASCEND_OPP_PATH_DEFAULT, op_impl_path
 from asc_op_compile_base.common.utils.log_utils import LogUtil, AscendCLogLevel
 
 
 def check_optype_duplicate(args, ini_optypes):
     opp_path = os.environ.get(_ASCEND_OPP_PATH_ENV, _ASCEND_OPP_PATH_DEFAULT)
-    json_path_base = os.path.join(
-        opp_path,
-        op_impl_path,
-        os.path.join("ai_core", "tbe", "config", args.soc_version),
-    )
+    json_path_base = os.path.join(opp_path, op_impl_path, os.path.join("ai_core", "tbe", "config", args.soc_version))
     LogUtil.print_compile_log(
         "check_optype_duplicate",
         f"json path base is {json_path_base}",
@@ -42,10 +34,7 @@ def check_optype_duplicate(args, ini_optypes):
 
     if len(json_files) == 0:
         LogUtil.print_compile_log(
-            "check_optype_duplicate",
-            "no json files found",
-            AscendCLogLevel.LOG_DEBUG,
-            LogUtil.Option.NON_SOC,
+            "check_optype_duplicate", "no json files found", AscendCLogLevel.LOG_DEBUG, LogUtil.Option.NON_SOC
         )
         return 0
 
@@ -61,10 +50,7 @@ def check_optype_duplicate(args, ini_optypes):
 
     intersection_ops = list(set(ini_optypes) & set(optypes))
     LogUtil.print_compile_log(
-        "check_optype_duplicate",
-        f"custom optypes {ini_optypes}",
-        AscendCLogLevel.LOG_DEBUG,
-        LogUtil.Option.NON_SOC,
+        "check_optype_duplicate", f"custom optypes {ini_optypes}", AscendCLogLevel.LOG_DEBUG, LogUtil.Option.NON_SOC
     )
     LogUtil.print_compile_log(
         "check_optype_duplicate",
@@ -82,10 +68,7 @@ def check_optype_duplicate(args, ini_optypes):
 def get_optypes(args):
     op_config = configparser.ConfigParser()
     LogUtil.print_compile_log(
-        "check_optype_duplicate",
-        f"ini file: {args.ini_file}",
-        AscendCLogLevel.LOG_DEBUG,
-        LogUtil.Option.NON_SOC,
+        "check_optype_duplicate", f"ini file: {args.ini_file}", AscendCLogLevel.LOG_DEBUG, LogUtil.Option.NON_SOC
     )
 
     op_config.read(args.ini_file)

@@ -105,9 +105,7 @@ def parse_coverage_report(report_path: Optional[str]) -> Dict[str, Any]:
         if match:
             return float(match.group(1))
 
-        for row in re.findall(
-            r"<tr\b[^>]*>.*?</tr>", content, re.IGNORECASE | re.DOTALL
-        ):
+        for row in re.findall(r"<tr\b[^>]*>.*?</tr>", content, re.IGNORECASE | re.DOTALL):
             row_text = normalize_html_text(row)
             if not re.search(rf"(?:^|\s){label_re}\s*:", row_text, re.IGNORECASE):
                 continue
@@ -128,13 +126,7 @@ def parse_coverage_report(report_path: Optional[str]) -> Dict[str, Any]:
             "reason": "未在 coverage report 中解析到 Lines / Functions 百分比",
         }
 
-    return {
-        "status": "available",
-        "lines": lines,
-        "functions": functions,
-        "source": report_path,
-        "reason": None,
-    }
+    return {"status": "available", "lines": lines, "functions": functions, "source": report_path, "reason": None}
 
 
 def get_token_usage(args: argparse.Namespace) -> Dict[str, Any]:
@@ -142,16 +134,10 @@ def get_token_usage(args: argparse.Namespace) -> Dict[str, Any]:
     prompt = args.prompt_tokens
     completion = args.completion_tokens
     total = args.total_tokens
-    source = (
-        "cli_args"
-        if any(value is not None for value in [prompt, completion, total])
-        else None
-    )
+    source = "cli_args" if any(value is not None for value in [prompt, completion, total]) else None
     reason = None
 
-    def parse_env_int(
-        value: Optional[str], name: str, invalid: List[str]
-    ) -> Optional[int]:
+    def parse_env_int(value: Optional[str], name: str, invalid: List[str]) -> Optional[int]:
         if value is None:
             return None
 
@@ -173,9 +159,7 @@ def get_token_usage(args: argparse.Namespace) -> Dict[str, Any]:
             source = "env"
             invalid_env = []
             prompt = parse_env_int(env_prompt, "ASC_API_UT_PROMPT_TOKENS", invalid_env)
-            completion = parse_env_int(
-                env_completion, "ASC_API_UT_COMPLETION_TOKENS", invalid_env
-            )
+            completion = parse_env_int(env_completion, "ASC_API_UT_COMPLETION_TOKENS", invalid_env)
             total = parse_env_int(env_total, "ASC_API_UT_TOTAL_TOKENS", invalid_env)
             if invalid_env:
                 reason = "忽略非法 token 环境变量: " + ", ".join(invalid_env)
@@ -224,10 +208,7 @@ def print_generation_report(report: Dict[str, Any], stream) -> None:
     write_line(f"  生成耗时: {report['elapsed_seconds']}s", stream)
 
     if coverage["status"] == "available":
-        write_line(
-            f"  当前覆盖率: Lines={coverage['lines']}%, Functions={coverage['functions']}%",
-            stream,
-        )
+        write_line(f"  当前覆盖率: Lines={coverage['lines']}%, Functions={coverage['functions']}%", stream)
         write_line(f"  覆盖率来源: {coverage['source']}", stream)
     else:
         write_line(f"  当前覆盖率: 未获取 ({coverage['reason']})", stream)
@@ -279,10 +260,7 @@ def default_kernel_params(api_type: str) -> Dict[str, int]:
 
 def default_input_count(api_type: str, api_name: str) -> int:
     """Return the safest CLI default input count for generic templates."""
-    if (
-        api_type == ApiType.AIV.value
-        and api_name.lower() in AIV_GENERIC_SCALAR_TENSOR_DISPATCH_APIS
-    ):
+    if api_type == ApiType.AIV.value and api_name.lower() in AIV_GENERIC_SCALAR_TENSOR_DISPATCH_APIS:
         return 1
     return 2
 
@@ -294,9 +272,7 @@ def validate_config(config: Dict[str, Any]) -> List[str]:
     # 验证 API 类型
     valid_types = API_TYPE_CHOICES
     if config.get("api_type") not in valid_types:
-        errors.append(
-            f"无效的 api_type: {config.get('api_type')}, 有效值: {valid_types}"
-        )
+        errors.append(f"无效的 api_type: {config.get('api_type')}, 有效值: {valid_types}")
 
     # 验证芯片架构
     valid_chips = list(CHIP_ARCH_BY_NAME.keys())
@@ -371,9 +347,7 @@ def get_output_path(config: UTConfig) -> str:
         npu_arch = NPU_ARCH_MAP[config.chip]
         return f"tests/api/c_api/npu_arch_{npu_arch}/vector_compute/test_{config.api_name.lower()}.cpp"
     elif config.api_type == ApiType.ADV:
-        profile_output = get_adv_profile_output_path(
-            config.api_name, config.kernel_params
-        )
+        profile_output = get_adv_profile_output_path(config.api_name, config.kernel_params)
         if profile_output:
             return profile_output
         return f"tests/api/adv_api/{config.api_name.lower()}/test_operator_{config.api_name.lower()}.cpp"
@@ -413,23 +387,15 @@ def main():
 
     parser.add_argument("--type", "-t", choices=API_TYPE_CHOICES, help="API 类型")
 
-    parser.add_argument(
-        "--api", "-a", type=str, help="API 名称 (如: Add, Mmad, asc_add)"
-    )
+    parser.add_argument("--api", "-a", type=str, help="API 名称 (如: Add, Mmad, asc_add)")
 
-    parser.add_argument(
-        "--chip", choices=list(CHIP_ARCH_BY_NAME.keys()), help="目标芯片架构"
-    )
+    parser.add_argument("--chip", choices=list(CHIP_ARCH_BY_NAME.keys()), help="目标芯片架构")
 
     parser.add_argument("--output", "-o", type=str, default=None, help="输出文件路径")
 
-    parser.add_argument(
-        "--output-dir", type=str, default=None, help="输出目录（自动生成文件名）"
-    )
+    parser.add_argument("--output-dir", type=str, default=None, help="输出目录（自动生成文件名）")
 
-    parser.add_argument(
-        "--data-size", "-d", type=int, default=256, help="测试数据大小 (默认: 256)"
-    )
+    parser.add_argument("--data-size", "-d", type=int, default=256, help="测试数据大小 (默认: 256)")
 
     parser.add_argument(
         "--dtype",
@@ -439,53 +405,25 @@ def main():
         help="通用模板可直接初始化的数据类型 (默认: half)",
     )
 
-    parser.add_argument(
-        "--test-count", type=int, default=3, help="生成测试用例数量 (默认: 3)"
-    )
+    parser.add_argument("--test-count", type=int, default=3, help="生成测试用例数量 (默认: 3)")
+
+    parser.add_argument("--template-config", action="store_true", help="输出配置文件模板并退出")
+
+    parser.add_argument("--list-supported", action="store_true", help="列出支持的配置选项")
+
+    parser.add_argument("--validate", action="store_true", help="仅验证配置，不生成代码")
 
     parser.add_argument(
-        "--template-config", action="store_true", help="输出配置文件模板并退出"
+        "--coverage-report", type=str, default=None, help="当前覆盖率报告 HTML 路径，用于报告 Lines / Functions 覆盖率"
     )
 
-    parser.add_argument(
-        "--list-supported", action="store_true", help="列出支持的配置选项"
-    )
+    parser.add_argument("--prompt-tokens", type=int, default=None, help="外部调用环境记录的 prompt token 数")
 
-    parser.add_argument(
-        "--validate", action="store_true", help="仅验证配置，不生成代码"
-    )
+    parser.add_argument("--completion-tokens", type=int, default=None, help="外部调用环境记录的 completion token 数")
 
-    parser.add_argument(
-        "--coverage-report",
-        type=str,
-        default=None,
-        help="当前覆盖率报告 HTML 路径，用于报告 Lines / Functions 覆盖率",
-    )
+    parser.add_argument("--total-tokens", type=int, default=None, help="外部调用环境记录的 total token 数")
 
-    parser.add_argument(
-        "--prompt-tokens",
-        type=int,
-        default=None,
-        help="外部调用环境记录的 prompt token 数",
-    )
-
-    parser.add_argument(
-        "--completion-tokens",
-        type=int,
-        default=None,
-        help="外部调用环境记录的 completion token 数",
-    )
-
-    parser.add_argument(
-        "--total-tokens",
-        type=int,
-        default=None,
-        help="外部调用环境记录的 total token 数",
-    )
-
-    parser.add_argument(
-        "--report-json", type=str, default=None, help="将生成报告写入指定 JSON 文件"
-    )
+    parser.add_argument("--report-json", type=str, default=None, help="将生成报告写入指定 JSON 文件")
 
     args = parser.parse_args()
 
@@ -518,14 +456,8 @@ def main():
 
         write_line("\n=== 文档内置数据类型 ===")
         for dtype, info in DTYPE_MAP.items():
-            init = (
-                "generic-init"
-                if info.get("generic_ut_generation", False)
-                else "api-specific-init"
-            )
-            write_line(
-                f"  - {dtype}: size={info['size']}, bits={info.get('bit_width', 'unknown')}, {init}"
-            )
+            init = "generic-init" if info.get("generic_ut_generation", False) else "api-specific-init"
+            write_line(f"  - {dtype}: size={info['size']}, bits={info.get('bit_width', 'unknown')}, {init}")
 
         write_line("\n=== 通用 UT 生成可直接初始化的数据类型 ===")
         for dtype, info in GENERATOR_DTYPE_MAP.items():

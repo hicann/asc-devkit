@@ -33,10 +33,7 @@ class PackKernel:
             os.makedirs(self.out_path, exist_ok=True)
         except Exception as e:
             LogUtil.print_compile_log(
-                "",
-                f"make {self.out_path} error: {e}!",
-                AscendCLogLevel.LOG_ERROR,
-                LogUtil.Option.NON_SOC,
+                "", f"make {self.out_path} error: {e}!", AscendCLogLevel.LOG_ERROR, LogUtil.Option.NON_SOC
             )
 
     def load_json(self: any, json_file: str):
@@ -69,10 +66,7 @@ class PackKernel:
                 )
             except Exception:
                 LogUtil.print_compile_log(
-                    "",
-                    " ascend610lite execute objcopy fail!",
-                    AscendCLogLevel.LOG_ERROR,
-                    LogUtil.Option.NON_SOC,
+                    "", " ascend610lite execute objcopy fail!", AscendCLogLevel.LOG_ERROR, LogUtil.Option.NON_SOC
                 )
                 return None
             return [sym + "_start", sym + "_end"]
@@ -114,10 +108,7 @@ class PackKernel:
                 subprocess.run(["echo", "unsupported environment!"])
         except Exception as e:
             LogUtil.print_compile_log(
-                "",
-                f"{target_platform} execute objcopy error: {e}!",
-                AscendCLogLevel.LOG_ERROR,
-                LogUtil.Option.NON_SOC,
+                "", f"{target_platform} execute objcopy error: {e}!", AscendCLogLevel.LOG_ERROR, LogUtil.Option.NON_SOC
             )
             return None
         return [sym + "_start", sym + "_end"]
@@ -186,9 +177,7 @@ class PackKernel:
                 for pair_addr in soc_syms:
                     pair_addr1 = ["&" + s for s in pair_addr]
                     op_syms += pair_addr
-                    soc_pairs.append(
-                        "    {{ {} }} ".format(", \\\n      ".join(pair_addr1))
-                    )
+                    soc_pairs.append("    {{ {} }} ".format(", \\\n      ".join(pair_addr1)))
                 soc_res += ", \\\n        ".join(soc_pairs)
                 soc_res += " } }"
                 socs_res.append(soc_res)
@@ -197,20 +186,12 @@ class PackKernel:
             macro_str = '#define {}_RESOURCES {{{{"{}", {}}}}}'.format(
                 op_type, op_type, "{}_OP_RESOURCES".format(op_type)
             )
-            var_str = (
-                "extern gert::OpImplRegisterV2 op_impl_register_optiling_{};\n".format(
-                    op_type
-                )
-            )
+            var_str = "extern gert::OpImplRegisterV2 op_impl_register_optiling_{};\n".format(op_type)
             if len(op_syms) > 0:
-                var_str += (
-                    "extern uint8_t " + ";\nextern uint8_t ".join(op_syms) + ";\n"
-                )
+                var_str += "extern uint8_t " + ";\nextern uint8_t ".join(op_syms) + ";\n"
             head_file = os.path.join(self.out_path, "{}_op_resource.h".format(op_type))
             try:
-                with os.fdopen(
-                    os.open(head_file, const_var.WFLAGS, const_var.WMODES), "w"
-                ) as fd:
+                with os.fdopen(os.open(head_file, const_var.WFLAGS, const_var.WMODES), "w") as fd:
                     fd.write("#include <stdint.h>\n")
                     fd.write("#include <map>\n")
                     fd.write("#include <tuple>\n")
@@ -223,10 +204,7 @@ class PackKernel:
                     fd.write(macro_str)
             except Exception as e:
                 LogUtil.print_compile_log(
-                    "",
-                    f"{op_type}_op_resource.h create error: {e}!",
-                    AscendCLogLevel.LOG_ERROR,
-                    LogUtil.Option.NON_SOC,
+                    "", f"{op_type}_op_resource.h create error: {e}!", AscendCLogLevel.LOG_ERROR, LogUtil.Option.NON_SOC
                 )
 
     def ascendc_gen_lib(self: any):
@@ -244,10 +222,7 @@ class PackKernel:
                 subprocess.run(["ranlib", out_lib])
             except Exception as e:
                 LogUtil.print_compile_log(
-                    "",
-                    f"execute ar/ranlib command error: {e}!",
-                    AscendCLogLevel.LOG_ERROR,
-                    LogUtil.Option.NON_SOC,
+                    "", f"execute ar/ranlib command error: {e}!", AscendCLogLevel.LOG_ERROR, LogUtil.Option.NON_SOC
                 )
 
     def ascendc_gen_opsinfo(self: any):
@@ -256,26 +231,10 @@ class PackKernel:
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-i", "--input-path", nargs="?", help="Input path of compile result."
-    )
-    parser.add_argument(
-        "-o", "--output-path", nargs="?", help="Output path of compile result."
-    )
-    parser.add_argument(
-        "-l",
-        "--enable-library",
-        nargs="?",
-        default=None,
-        help="Whether library is enabled.",
-    )
-    parser.add_argument(
-        "-p",
-        "--platform",
-        nargs="?",
-        default=None,
-        help="target platform is x86_64 or aarch64.",
-    )
+    parser.add_argument("-i", "--input-path", nargs="?", help="Input path of compile result.")
+    parser.add_argument("-o", "--output-path", nargs="?", help="Output path of compile result.")
+    parser.add_argument("-l", "--enable-library", nargs="?", default=None, help="Whether library is enabled.")
+    parser.add_argument("-p", "--platform", nargs="?", default=None, help="target platform is x86_64 or aarch64.")
     return parser.parse_args()
 
 

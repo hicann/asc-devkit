@@ -14,10 +14,7 @@ tbe register API:
 To make it easy to manage operator registration information, TBE provides a set of register APIs.
 """
 
-from asc_op_compile_base.common.register import (
-    operation_func_mgr,
-    fusion_build_config_mgr,
-)
+from asc_op_compile_base.common.register import operation_func_mgr, fusion_build_config_mgr
 
 
 def register_operator(op_type, pattern=None, trans_bool_to_s8=True):
@@ -151,9 +148,7 @@ def register_op_compute(op_type, op_mode="dynamic", support_fusion=True, **kwarg
         decorator to return output_tensor
     """
 
-    return operation_func_mgr.register_op_compute(
-        op_type, op_mode, support_fusion, **kwargs
-    )
+    return operation_func_mgr.register_op_compute(op_type, op_mode, support_fusion, **kwargs)
 
 
 def get_op_compute(op_type, op_mode="dynamic"):

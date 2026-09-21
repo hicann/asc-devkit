@@ -68,9 +68,7 @@ class OpKernelInfo:
         key2_pos = key1_pos.get(key2)
         if key2_pos is None:
             if key1 != "reshapeType" and key2 != "defaultValue":
-                logger.debug(
-                    "Op {} not found {}.{} in OpContent!".format(op_type, key1, key2)
-                )
+                logger.debug("Op {} not found {}.{} in OpContent!".format(op_type, key1, key2))
             return False, key2_pos
 
         return True, key2_pos
@@ -104,9 +102,7 @@ class OpKernelInfo:
         def sort_output_key(x):
             return int(x[6:])
 
-        inout_list.sort(key=sort_input_key) if is_input else inout_list.sort(
-            key=sort_output_key
-        )
+        inout_list.sort(key=sort_input_key) if is_input else inout_list.sort(key=sort_output_key)
         inout_infos = list()
         for inouti in inout_list:
             inout_info = InOrOutputInfo(inouti)
@@ -169,47 +165,30 @@ class OpKernelInfo:
             )
             attr_info.value = attr_content.get("value", None)
             attr_infos.append(attr_info)
-            logger.debug(
-                "op_type: {} add attr_info: {}.".format(op_type, attr_info.name)
-            )
+            logger.debug("op_type: {} add attr_info: {}.".format(op_type, attr_info.name))
         op_kernel_info.attr_infos_ = attr_infos
         return True
 
     def parse_basic_parameter(self, op_type, op_content, op_kernel_info):
-        op_pattern_dict = {
-            "formatAgnostic": 0,
-            "broadcast": 1,
-            "reduce": 2,
-            "dynamic": 3,
-        }
+        op_pattern_dict = {"formatAgnostic": 0, "broadcast": 1, "reduce": 2, "dynamic": 3}
 
         # parse the op.pattern of the op
-        result, op_pattern_str = self.get_str_from_op_content(
-            op_type, op_content, "op", "pattern"
-        )
+        result, op_pattern_str = self.get_str_from_op_content(op_type, op_content, "op", "pattern")
         if result and op_pattern_str is not None:
             op_pattern_iter = op_pattern_dict.get(op_pattern_str)
             if op_pattern_iter is not None:
                 op_kernel_info.op_pattern.append(op_pattern_iter)
 
         # parse the imp_path.path of the op
-        result, op_imp_path_str = self.get_str_from_op_content(
-            op_type, op_content, "imp_path", "path"
-        )
+        result, op_imp_path_str = self.get_str_from_op_content(op_type, op_content, "imp_path", "path")
         res_status = result and op_imp_path_str is not None
         if res_status:
             op_kernel_info.op_imp_path = op_imp_path_str
 
         # parse the dynamic_format.flag of the op
         dynamic_format_str = ""
-        result, dynamic_format_str = self.get_str_from_op_content(
-            op_type, op_content, "dynamicFormat", "flag"
-        )
-        res_status = (
-            result
-            and dynamic_format_str is not None
-            and dynamic_format_str.lower() == "true"
-        )
+        result, dynamic_format_str = self.get_str_from_op_content(op_type, op_content, "dynamicFormat", "flag")
+        res_status = result and dynamic_format_str is not None and dynamic_format_str.lower() == "true"
         if res_status:
             op_kernel_info.op_pattern.append(op_pattern_dict.get("dynamic"))
 
@@ -220,67 +199,36 @@ class OpKernelInfo:
         res_status = result and dynamic_compile_static_str is not None
         if res_status:
             op_kernel_info.dynamic_compile_static = dynamic_compile_static_str
-            logger.debug(
-                "op_type:{} support dynamic_compile_static.".format(
-                    op_kernel_info.op_type
-                )
-            )
+            logger.debug("op_type:{} support dynamic_compile_static.".format(op_kernel_info.op_type))
         else:
             op_kernel_info.dynamic_compile_static = "false"
-            logger.debug(
-                "op_type:{} not support dynamic_compile_static.".format(
-                    op_kernel_info.op_type
-                )
-            )
+            logger.debug("op_type:{} not support dynamic_compile_static.".format(op_kernel_info.op_type))
 
         # parse the dynamic_shape_support of the op
         result, dynamic_shape_support_str = self.get_str_from_op_content(
             op_type, op_content, "dynamicShapeSupport", "flag"
         )
-        res_status = (
-            result
-            and dynamic_shape_support_str is not None
-            and dynamic_shape_support_str.lower() == "true"
-        )
+        res_status = result and dynamic_shape_support_str is not None and dynamic_shape_support_str.lower() == "true"
         if res_status:
             op_kernel_info.is_support_dynamic_shape = True
 
         return True
 
     def parse_basic_parameter_arg(self, op_type, op_content, op_kernel_info):
-        kcore_type_dict = {
-            "Aicore": 0,
-            "VectorCore": 1,
-            "Mix": 2,
-            "mix": 2,
-            "Dynamic": 3,
-            "dynamic": 3,
-        }
+        kcore_type_dict = {"Aicore": 0, "VectorCore": 1, "Mix": 2, "mix": 2, "Dynamic": 3, "dynamic": 3}
 
         # parse the dynamic_rank_support of the op
         result, dynamic_rank_support_str = self.get_str_from_op_content(
             op_type, op_content, "dynamicRankSupport", "flag"
         )
-        res_status = (
-            result
-            and dynamic_rank_support_str is not None
-            and dynamic_rank_support_str.lower() == "true"
-        )
+        res_status = result and dynamic_rank_support_str is not None and dynamic_rank_support_str.lower() == "true"
         if res_status:
-            logger.debug(
-                "op_type:{} is support dynamic rank.".format(op_kernel_info.op_type)
-            )
+            logger.debug("op_type:{} is support dynamic rank.".format(op_kernel_info.op_type))
             op_kernel_info.is_support_dynamic_rank = True
 
         # parse the input_mem_continues.flag
-        result, input_mem_continues_str = self.get_str_from_op_content(
-            op_type, op_content, "inputMemContinues", "flag"
-        )
-        res_status = (
-            result
-            and input_mem_continues_str is not None
-            and input_mem_continues_str.lower() == "true"
-        )
+        result, input_mem_continues_str = self.get_str_from_op_content(op_type, op_content, "inputMemContinues", "flag")
+        res_status = result and input_mem_continues_str is not None and input_mem_continues_str.lower() == "true"
         if res_status:
             op_kernel_info.input_mem_continues = True
 
@@ -288,37 +236,21 @@ class OpKernelInfo:
         result, output_mem_continues_str = self.get_str_from_op_content(
             op_type, op_content, "outputMemContinues", "value"
         )
-        res_status = (
-            result
-            and output_mem_continues_str is not None
-            and output_mem_continues_str.lower() == "true"
-        )
+        res_status = result and output_mem_continues_str is not None and output_mem_continues_str.lower() == "true"
         if res_status:
             op_kernel_info.output_mem_continues = True
 
         # parse the core_type
-        result, core_type_str = self.get_str_from_op_content(
-            op_type, op_content, "coreType", "flag"
-        )
+        result, core_type_str = self.get_str_from_op_content(op_type, op_content, "coreType", "flag")
         core_type_iter = kcore_type_dict.get(core_type_str)
         if core_type_iter is not None:
             op_kernel_info.core_type.append(core_type_iter)
 
         # parse the enable_vector_core of the op
-        result, enable_vector_core_str = self.get_str_from_op_content(
-            op_type, op_content, "enableVectorCore", "flag"
-        )
-        res_status = (
-            result
-            and enable_vector_core_str is not None
-            and enable_vector_core_str.lower() == "true"
-        )
+        result, enable_vector_core_str = self.get_str_from_op_content(op_type, op_content, "enableVectorCore", "flag")
+        res_status = result and enable_vector_core_str is not None and enable_vector_core_str.lower() == "true"
         if res_status:
-            logger.debug(
-                "op_type:{} is support customized vector core.".format(
-                    op_kernel_info.op_type
-                )
-            )
+            logger.debug("op_type:{} is support customized vector core.".format(op_kernel_info.op_type))
             op_kernel_info.enable_vector_core = True
 
         return True
@@ -332,9 +264,7 @@ class OpKernelInfo:
         op_kernel_info.op_info["computeCost"] = 10
 
         # parse op_file
-        result, op_file = self.get_str_from_op_content(
-            op_type, op_content, "opFile", "value"
-        )
+        result, op_file = self.get_str_from_op_content(op_type, op_content, "opFile", "value")
         if result and op_file is not None:
             logger.debug("Op {} get op_file value is {}.".format(op_type, op_file))
             op_kernel_info.op_info["opFileName"] = op_file
@@ -343,28 +273,18 @@ class OpKernelInfo:
             op_kernel_info.op_info["opFileName"] = ""
 
         # parse op_func
-        result, op_interface = self.get_str_from_op_content(
-            op_type, op_content, "opInterface", "value"
-        )
+        result, op_interface = self.get_str_from_op_content(op_type, op_content, "opInterface", "value")
         if result and op_interface is not None:
-            logger.debug(
-                "Op {} get op_interface value is {}.".format(op_type, op_interface)
-            )
+            logger.debug("Op {} get op_interface value is {}.".format(op_type, op_interface))
             op_kernel_info.op_info["opFuncName"] = op_interface
         else:
-            logger.debug(
-                "Op {} can't {} get op_interface value".format(op_type, op_type)
-            )
+            logger.debug("Op {} can't {} get op_interface value".format(op_type, op_type))
             op_kernel_info.op_info["opFuncName"] = ""
 
         # parse op_impl_switch
-        result, op_impl_switch = self.get_str_from_op_content(
-            op_type, op_content, "opImplSwitch", "value"
-        )
+        result, op_impl_switch = self.get_str_from_op_content(op_type, op_content, "opImplSwitch", "value")
         if result and op_impl_switch is not None:
-            logger.debug(
-                "Op {} get op_impl_switch value is {}.".format(op_type, op_impl_switch)
-            )
+            logger.debug("Op {} get op_impl_switch value is {}.".format(op_type, op_impl_switch))
             op_kernel_info.op_info["opImplSwitch"] = op_impl_switch
 
         return True
@@ -390,9 +310,7 @@ class OpKernelInfo:
             logger.debug("init op info did not succeed.")
             return False
 
-        if not self.parse_input_and_output_from_content(
-            op_type, op_content, op_kernel_info
-        ):
+        if not self.parse_input_and_output_from_content(op_type, op_content, op_kernel_info):
             logger.debug("init op input info did not succeed.")
             return False
 
@@ -476,12 +394,8 @@ class SubOpInfoStore:
             logger.debug("op_type:{} is not exist.".format(op_type))
             return False
         else:
-            if not op_kernel_info.initialize_op_kernel_info(
-                op_type, op_content, op_kernel_info
-            ):
-                logger.debug(
-                    "opKernelInfo {} initialize did not succeed.".format(op_type)
-                )
+            if not op_kernel_info.initialize_op_kernel_info(op_type, op_content, op_kernel_info):
+                logger.debug("opKernelInfo {} initialize did not succeed.".format(op_type))
                 return False
 
             logger.debug("opKernelInfo {} initialize success.".format(op_type))
@@ -527,9 +441,7 @@ class OpPathParse(object):
                 self.custom_opp_path_list.append(custom_opp_path.strip())
             else:
                 self.custom_opp_path_list = custom_opp_path.split(":")
-                self.custom_opp_path_list = [
-                    opp_path.strip() for opp_path in self.custom_opp_path_list
-                ]
+                self.custom_opp_path_list = [opp_path.strip() for opp_path in self.custom_opp_path_list]
 
         for index, custom in enumerate(self.custom_opp_path_list):
             logger.debug("index: {} custom_opp_path: {}".format(index, custom))
@@ -603,11 +515,7 @@ def load_op_info_store(soc_version):
     logger.debug("json_path is {}.".format(json_path))
     if not isinstance(json_path, str) or not os.path.exists(json_path):
         json_dir = os.getenv("ASCEND_OPP_INFO_DIR")
-        json_path = (
-            os.path.join(json_dir, os.path.basename(json_path))
-            if isinstance(json_dir, str)
-            else json_path
-        )
+        json_path = os.path.join(json_dir, os.path.basename(json_path)) if isinstance(json_dir, str) else json_path
     load_set_op_content(json_path)
 
     OpPathParse().start_parse()
@@ -615,10 +523,8 @@ def load_op_info_store(soc_version):
     if custom_opp_path_list:
         custom_dict_list = []
         for custom_opp_path in custom_opp_path_list:
-            custom_opp_json_path = (
-                "{}/op_impl/ai_core/tbe/config/{}/aic-{}-ops-info.json".format(
-                    custom_opp_path, short_soc_version, short_soc_version
-                )
+            custom_opp_json_path = "{}/op_impl/ai_core/tbe/config/{}/aic-{}-ops-info.json".format(
+                custom_opp_path, short_soc_version, short_soc_version
             )
             custom_dict = read_json_file(custom_opp_json_path)
             if None:
@@ -631,10 +537,8 @@ def load_op_info_store(soc_version):
     if vendors_opp_path_list:
         vendor_dict_list = []
         for vendor_opp_path in vendors_opp_path_list:
-            vendor_opp_json_path = (
-                "{}/op_impl/ai_core/tbe/config/{}/aic-{}-ops-info.json".format(
-                    vendor_opp_path, short_soc_version, short_soc_version
-                )
+            vendor_opp_json_path = "{}/op_impl/ai_core/tbe/config/{}/aic-{}-ops-info.json".format(
+                vendor_opp_path, short_soc_version, short_soc_version
             )
             vendor_dict = read_json_file(vendor_opp_json_path)
             if None:

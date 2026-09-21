@@ -35,10 +35,7 @@ from .ascendc_compile_dfx import DFXSectionGenerator
 
 def add_time_stamp_codes(desc_id, space_len: int = 1):
     source = "#ifdef ASCENDC_TIME_STAMP_ON\n"
-    source += (
-        "    " * space_len
-        + f"AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::{desc_id}));\n"
-    )
+    source += "    " * space_len + f"AscendC::PrintTimeStamp(static_cast<uint32_t>(AscendC::TimeStampId::{desc_id}));\n"
     source += "#endif\n"
     return source
 
@@ -72,10 +69,7 @@ def gen_usr_origin_kernel_function_call(
         else:
             source += " nullptr, "
 
-    if (
-        opinfo.output_shape_depend_on_compute is not None
-        and len(opinfo.output_shape_depend_on_compute) > 0
-    ):
+    if opinfo.output_shape_depend_on_compute is not None and len(opinfo.output_shape_depend_on_compute) > 0:
         source += "__ascendc_output_shape, "
 
     # static shape need pass nullptr
@@ -91,15 +85,10 @@ def gen_template_tiling_params(compile_info):
     source += "#define TEMPLATE_PARAMS_LEN 0\n\n"
     if not compile_info.template_tiling_info:
         return source
-    for (
-        template_tiling_key,
-        template_tiling_info,
-    ) in compile_info.template_tiling_info.items():
+    for template_tiling_key, template_tiling_info in compile_info.template_tiling_info.items():
         if not template_tiling_info or not template_tiling_info.get("paramArgs", []):
             continue
-        template_tiling_info_str = ", ".join(
-            [str(i) for i in template_tiling_info.get("paramArgs", [])]
-        )
+        template_tiling_info_str = ", ".join([str(i) for i in template_tiling_info.get("paramArgs", [])])
         source += f"#if {TILING_KEY_MACRO} == {template_tiling_key}UL\n"
         source += "#undef TEMPLATE_PARAMS\n"
         source += f"#define TEMPLATE_PARAMS {template_tiling_info_str}\n"
@@ -115,31 +104,41 @@ def gen_global_isolation_macro(compile_info: CompileInfo, tiling_info: TilingInf
         tiling_key = tiling_info.tiling_key
 
     if CommonUtility.is_v220():
-        macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_VEC__) && __NPU_ARCH__ == 2201)\n"
+        macro_branch_statment = (
+            f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_VEC__) && __NPU_ARCH__ == 2201)\n"
+        )
         # judge operator is aic only
         if compile_info.no_set_kernel_type is False:
             kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
             if kernel_type.value in [1, 3, 5, 6, 7]:
-                macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201)\n"
+                macro_branch_statment = (
+                    f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201)\n"
+                )
         elif compile_info.code_channel == CORE_TYPE_CUBE:
-            macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201)\n"
+            macro_branch_statment = (
+                f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201)\n"
+            )
     elif CommonUtility.is_v200():
-        macro_branch_statment = (
-            f"#if {TILING_KEY_MACRO} == {tiling_key}UL && defined(__DAV_M200__)\n"
-        )
+        macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && defined(__DAV_M200__)\n"
         if compile_info.no_set_kernel_type is False:
             kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
             if kernel_type.value in [9]:
                 macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && defined(__DAV_M200_VEC__)\n"
     elif CommonUtility.is_c310():
-        macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_VEC__) && __NPU_ARCH__ == 3510)\n"
+        macro_branch_statment = (
+            f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_VEC__) && __NPU_ARCH__ == 3510)\n"
+        )
         # judge operator is aic only
         if compile_info.no_set_kernel_type is False:
             kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
             if kernel_type.value in [1, 3, 5, 6, 7]:
-                macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 3510)\n"
+                macro_branch_statment = (
+                    f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 3510)\n"
+                )
         elif compile_info.code_channel == CORE_TYPE_CUBE:
-            macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 3510)\n"
+            macro_branch_statment = (
+                f"#if {TILING_KEY_MACRO} == {tiling_key}UL && (defined(__DAV_CUBE__) && __NPU_ARCH__ == 3510)\n"
+            )
     else:
         macro_branch_statment = f"#if {TILING_KEY_MACRO} == {tiling_key}UL\n"
     return macro_branch_statment
@@ -248,9 +247,7 @@ def get_value(key):
         return None
 
 
-def update_tiling_size_for_oom(
-    compile_info: CompileInfo, tiling_info: TilingInfo, dyn_input_shape_offset
-):
+def update_tiling_size_for_oom(compile_info: CompileInfo, tiling_info: TilingInfo, dyn_input_shape_offset):
     content = ""
     # use user-defined tiling struct
     if len(compile_info.tiling_key_struct_map) > 0:
@@ -267,16 +264,12 @@ def update_tiling_size_for_oom(
             content += "#endif\n"
     else:
         if len(tiling_info.tiling_key_data_size) == 0:
-            content += "    uint64_t tmpTilingSizeForOOM = {};\n".format(
-                int(dyn_input_shape_offset)
-            )
+            content += "    uint64_t tmpTilingSizeForOOM = {};\n".format(int(dyn_input_shape_offset))
         else:
             for tiling_key in tiling_info.tiling_key_list:
                 content += f"#if {TILING_KEY_MACRO} == {tiling_key}UL\n"
                 if tiling_key not in tiling_info.tiling_key_data_size:
-                    content += "    uint64_t tmpTilingSizeForOOM = {};\n".format(
-                        int(tiling_info.default_tiling_size)
-                    )
+                    content += "    uint64_t tmpTilingSizeForOOM = {};\n".format(int(tiling_info.default_tiling_size))
                 else:
                     content += "    uint64_t tmpTilingSizeForOOM = {};\n".format(
                         int(tiling_info.tiling_key_data_size[tiling_key])
@@ -289,52 +282,24 @@ def set_workspace_param(opinfo: OpInfo, tiling_info: TilingInfo):
     # set workspace addr && workspace len
     source = ""
     if tiling_info.static_shape_flag:
-        if (
-            opinfo.output_shape_depend_on_compute is not None
-            and len(opinfo.output_shape_depend_on_compute) > 0
-        ):
+        if opinfo.output_shape_depend_on_compute is not None and len(opinfo.output_shape_depend_on_compute) > 0:
             # each output needs 9 uint64 elements
-            output_shape_len = (
-                (9 * 8 * len(opinfo.output_shape_depend_on_compute) + 32 - 1) // 32 * 32
-            )
-            source += (
-                "    AscendC::OOMCheckAddrRange(__ascendc_output_shape, {});\n".format(
-                    output_shape_len
-                )
-            )
-        source += "    AscendC::OOMCheckAddrRange(workspace, {});\n".format(
-            tiling_info.static_workspace_size
-        )
+            output_shape_len = (9 * 8 * len(opinfo.output_shape_depend_on_compute) + 32 - 1) // 32 * 32
+            source += "    AscendC::OOMCheckAddrRange(__ascendc_output_shape, {});\n".format(output_shape_len)
+        source += "    AscendC::OOMCheckAddrRange(workspace, {});\n".format(tiling_info.static_workspace_size)
     else:
-        if (
-            opinfo.output_shape_depend_on_compute is not None
-            and len(opinfo.output_shape_depend_on_compute) > 0
-        ):
-            output_shape_len = (
-                "*((__gm__ uint64_t *)((__gm__ uint8_t *)tiling + tmpTilingSizeForOOM))"
-            )
-            source += (
-                "    AscendC::OOMCheckAddrRange(__ascendc_output_shape, {});\n".format(
-                    output_shape_len
-                )
-            )
+        if opinfo.output_shape_depend_on_compute is not None and len(opinfo.output_shape_depend_on_compute) > 0:
+            output_shape_len = "*((__gm__ uint64_t *)((__gm__ uint8_t *)tiling + tmpTilingSizeForOOM))"
+            source += "    AscendC::OOMCheckAddrRange(__ascendc_output_shape, {});\n".format(output_shape_len)
             source += "    tmpTilingSizeForOOM += 8;\n"
-        workspace_len = (
-            "*((__gm__ uint64_t *)((__gm__ uint8_t *)tiling + tmpTilingSizeForOOM))"
-        )
-        source += "    AscendC::OOMCheckAddrRange(workspace, {});\n".format(
-            workspace_len
-        )
+        workspace_len = "*((__gm__ uint64_t *)((__gm__ uint8_t *)tiling + tmpTilingSizeForOOM))"
+        source += "    AscendC::OOMCheckAddrRange(workspace, {});\n".format(workspace_len)
     source += "#endif\n"
     return source
 
 
 def add_op_param_to_workspace(
-    opinfo: OpInfo,
-    tiling_info: TilingInfo,
-    source: str,
-    compile_options: list,
-    compile_info: CompileInfo,
+    opinfo: OpInfo, tiling_info: TilingInfo, source: str, compile_options: list, compile_info: CompileInfo
 ):
     input_output_info = []
     for io_info in [opinfo.inputs, opinfo.outputs]:
@@ -350,9 +315,7 @@ def add_op_param_to_workspace(
     dtype_char = match_options(options, compile_options)
     dtype_int = list(map(get_value, dtype_char))
 
-    source += update_tiling_size_for_oom(
-        compile_info, tiling_info, dyn_input_shape_offset
-    )
+    source += update_tiling_size_for_oom(compile_info, tiling_info, dyn_input_shape_offset)
     source += skip_mc2_context_size(opinfo)
 
     for io_index, op_param in enumerate(input_output_info):
@@ -365,15 +328,13 @@ def add_op_param_to_workspace(
                 )
         else:
             if tiling_info.static_shape_flag:
-                input_shape_len = reduce(
-                    lambda x, y: x * y, op_param.get("shape")
-                ) * INPUT_OUTPUT_DTYPE_LEN.get(op_param.get("dtype"))
+                input_shape_len = reduce(lambda x, y: x * y, op_param.get("shape")) * INPUT_OUTPUT_DTYPE_LEN.get(
+                    op_param.get("dtype")
+                )
                 input_shape_len = (input_shape_len + 32 - 1) // 32 * 32
             else:
                 input_shape_len = "*((__gm__ uint64_t *)((__gm__ uint8_t *)tiling + tmpTilingSizeForOOM))"
-            source += "    AscendC::OOMCheckAddrRange({}, {});\n".format(
-                op_param.get("param_name"), input_shape_len
-            )
+            source += "    AscendC::OOMCheckAddrRange({}, {});\n".format(op_param.get("param_name"), input_shape_len)
         source += "    tmpTilingSizeForOOM += 8;\n"
         count = count + 1
     source += set_workspace_param(opinfo, tiling_info)
@@ -384,11 +345,7 @@ def add_op_param_to_workspace(
 
 
 def _gen_compile_cmd(
-    src_file: str,
-    dst_file: str,
-    compile_option_tuple,
-    tiling_file: str,
-    with_tiling_file: bool = True,
+    src_file: str, dst_file: str, compile_option_tuple, tiling_file: str, with_tiling_file: bool = True
 ):
     """
     Generate the compile command for the v100/v200 compiler.
@@ -398,9 +355,7 @@ def _gen_compile_cmd(
     :param with_tiling_file: whether with the tiling file
     :return: the compile command
     """
-    jump_expand_flag = (
-        "-cce-aicore-jump-expand=true" in compile_option_tuple.compile_options
-    )
+    jump_expand_flag = "-cce-aicore-jump-expand=true" in compile_option_tuple.compile_options
     compile_cmd = CommonUtility.ascendc_build_aicore_compile_cmd(src_file, dst_file, "")
     if global_var_storage.get_variable("ascendc_enable_ccache") == True:
         compile_cmd = [os.environ.get("ASCENDC_CCACHE_EXECUTABLE")] + compile_cmd
@@ -417,14 +372,11 @@ def _gen_compile_cmd(
             to_del_idx.append(cmd_idx)
         # if customize set op jump open, then change jump expand setting which was auto generated
         elif (
-            jump_expand_flag
-            or global_var_storage.get_variable("ascendc_enable_sanitizer")
+            jump_expand_flag or global_var_storage.get_variable("ascendc_enable_sanitizer")
         ) and "-cce-aicore-jump-expand=false" == cmd:
             compile_cmd[cmd_idx] = "-cce-aicore-jump-expand=true"
         elif cmd == "ccec":
-            compile_cmd[cmd_idx] = global_var_storage.get_variable(
-                "ascendc_compiler_path"
-            )
+            compile_cmd[cmd_idx] = global_var_storage.get_variable("ascendc_compiler_path")
     for idx in reversed(to_del_idx):
         del compile_cmd[idx]
 
@@ -438,12 +390,7 @@ def _gen_compile_cmd(
         compile_cmd += [opt]
     if global_var_storage.get_variable("ascendc_enable_sanitizer"):
         compile_cmd += ["--cce-enable-sanitizer", "-g"]
-        compile_cmd += [
-            "-mllvm",
-            "-cce-aicore-long-call",
-            "-mllvm",
-            "-cce-aicore-jump-expand=true",
-        ]
+        compile_cmd += ["-mllvm", "-cce-aicore-long-call", "-mllvm", "-cce-aicore-jump-expand=true"]
     if with_tiling_file:
         compile_cmd += ["-include", tiling_file]
     compile_cmd += ["-std=c++17"]
@@ -454,9 +401,7 @@ def _gen_compile_cmd(
     return compile_cmd
 
 
-def get_tiling_key_struct_size_map(
-    tiling_key_struct_size_map, name_part, compile_info, dec_data
-):
+def get_tiling_key_struct_size_map(tiling_key_struct_size_map, name_part, compile_info, dec_data):
     if "_" in name_part:
         tiling_struct, tiling_key_value = name_part.rsplit("_", 1)
         if tiling_key_value.endswith("UL"):
@@ -495,9 +440,7 @@ def gen_tiling_struct_size_for_group_key_no_size(compile_info: CompileInfo):
     return source
 
 
-def gen_tiling_struct_size_for_group_key(
-    compile_info: CompileInfo, tiling_key_struct_size_map: dict
-):
+def gen_tiling_struct_size_for_group_key(compile_info: CompileInfo, tiling_key_struct_size_map: dict):
     source = ""
     for tiling_key in compile_info.tiling_key_list:
         tiling_struct_info = tiling_key_struct_size_map.get(str(tiling_key), None)
@@ -514,86 +457,56 @@ def gen_tiling_struct_size_for_group_key(
 
 
 def gen_dfx_section_for_one_tiling_key_static(
-    compile_info: CompileInfo,
-    tiling_key,
-    tiling_info: TilingInfo,
-    tiling_key_struct_size_map: dict,
+    compile_info: CompileInfo, tiling_key, tiling_info: TilingInfo, tiling_key_struct_size_map: dict
 ):
     source = ""
     if compile_info.no_set_kernel_type is False:
         kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
-        if kernel_type in [
-            KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1,
-            KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2,
-        ]:
+        if kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1, KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2]:
             cube_marker = "_mix_aic"
             kernel_name = compile_info.kernel_name + cube_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
             vec_marker = "_mix_aiv"
             kernel_name = compile_info.kernel_name + vec_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
         else:
             current_kernel_name = compile_info.get_kernel_func_name()
             kernel_name = current_kernel_name
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
     else:
         if compile_info.code_channel == CORE_TYPE_MIX:
             cube_marker = "_mix_aic"
             kernel_name = compile_info.kernel_name + cube_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
             vec_marker = "_mix_aiv"
             kernel_name = compile_info.kernel_name + vec_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
-        elif compile_info.hard_sync and compile_info.code_channel in [
-            CORE_TYPE_VEC,
-            CORE_TYPE_CUBE,
-        ]:
-            core_type_marker = (
-                "_mix_aic"
-                if compile_info.code_channel == CORE_TYPE_CUBE
-                else "_mix_aiv"
-            )
+        elif compile_info.hard_sync and compile_info.code_channel in [CORE_TYPE_VEC, CORE_TYPE_CUBE]:
+            core_type_marker = "_mix_aic" if compile_info.code_channel == CORE_TYPE_CUBE else "_mix_aiv"
             kernel_name = compile_info.kernel_name + core_type_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
         else:
             kernel_name = compile_info.get_kernel_func_name()
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
     return source
 
 
 def gen_dfx_section_for_one_tiling_key_dynamic(
-    compile_info: CompileInfo,
-    tiling_key,
-    tiling_info: TilingInfo,
-    tiling_key_struct_size_map: dict,
+    compile_info: CompileInfo, tiling_key, tiling_info: TilingInfo, tiling_key_struct_size_map: dict
 ):
     source = ""
     if compile_info.no_set_kernel_type is False:
@@ -601,72 +514,46 @@ def gen_dfx_section_for_one_tiling_key_dynamic(
         if kernel_type.value >= 6 and kernel_type.value <= 7:
             cube_marker = "_mix_aic"
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key + cube_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
             vec_marker = "_mix_aiv"
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key + vec_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
         elif kernel_type.value >= 2 and kernel_type.value <= 5:
-            if kernel_type in [
-                KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC,
-                KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0,
-            ]:
+            if kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC, KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0]:
                 sub_marker = "_mix_aic"
             else:
                 sub_marker = "_mix_aiv"
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key + sub_marker
         elif kernel_type.value >= 0 and kernel_type.value <= 1:
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
     else:
         if compile_info.code_channel == CORE_TYPE_MIX:
             cube_marker = "_mix_aic"
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key + cube_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
             vec_marker = "_mix_aiv"
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key + vec_marker
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
-        elif compile_info.hard_sync and compile_info.code_channel in [
-            CORE_TYPE_VEC,
-            CORE_TYPE_CUBE,
-        ]:
-            core_type_marker = (
-                "_mix_aic"
-                if compile_info.code_channel == CORE_TYPE_CUBE
-                else "_mix_aiv"
-            )
-            kernel_name = (
-                compile_info.kernel_name + "_%s" % tiling_key + core_type_marker
-            )
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+        elif compile_info.hard_sync and compile_info.code_channel in [CORE_TYPE_VEC, CORE_TYPE_CUBE]:
+            core_type_marker = "_mix_aic" if compile_info.code_channel == CORE_TYPE_CUBE else "_mix_aiv"
+            kernel_name = compile_info.kernel_name + "_%s" % tiling_key + core_type_marker
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
         else:
             kernel_name = compile_info.kernel_name + "_%s" % tiling_key
-            source += (
-                DFXSectionGenerator().generate_dfx_section_without_tiling_register(
-                    tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
-                )
+            source += DFXSectionGenerator().generate_dfx_section_without_tiling_register(
+                tiling_key, tiling_info, tiling_key_struct_size_map, kernel_name
             )
     return source

@@ -32,9 +32,7 @@ def gen_golden_data(scenarioNum=1):
     input_type = np.dtype("float16")
     x1_gm = np.random.uniform(-2, 2, [M, K]).astype(input_type)
     x2_gm = np.random.uniform(-2, 2, [K, N]).astype(input_type)
-    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

@@ -71,9 +71,7 @@ def mx_decompress_b(fp_data, scale_data, block_size=32):
     for row in range(fp_data.shape[0]):
         for col in range(fp_data.shape[1]):
             block_idx = row // block_size
-            result[row, col] = (
-                fp_data[row, col].astype(np.float32) * scale_factor[block_idx, col]
-            )
+            result[row, col] = fp_data[row, col].astype(np.float32) * scale_factor[block_idx, col]
 
     return result
 
@@ -92,9 +90,7 @@ def gen_golden_data_fp4(scenario_num, m, n, k):
     scale_ceil_number = 32
     scale_align_number = 2
     scale_k_unaligned = (k + scale_ceil_number - 1) // scale_ceil_number
-    sk = (
-        (scale_k_unaligned + scale_align_number - 1) // scale_align_number
-    ) * scale_align_number
+    sk = ((scale_k_unaligned + scale_align_number - 1) // scale_align_number) * scale_align_number
 
     if scenario_num == 1:
         a_dtype = fp4_e1m2
@@ -117,9 +113,7 @@ def gen_golden_data_fp4(scenario_num, m, n, k):
     x1_full = mx_decompress(x1_gm.astype(np.float32), x1_scale_gm, 32)
     x2_full = mx_decompress_b(x2_gm.astype(np.float32), x2_scale_gm, 32)
 
-    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(np.float32)
     if scenario_num == 2:
         bias_gm = np.random.randint(-10, 10, [n]).astype(np.float32)
         golden = golden + bias_gm
@@ -143,9 +137,7 @@ def gen_golden_data_fp8(scenario_num, m, n, k):
     scale_ceil_number = 32
     scale_align_number = 2
     scale_k_unaligned = (k + scale_ceil_number - 1) // scale_ceil_number
-    sk = (
-        (scale_k_unaligned + scale_align_number - 1) // scale_align_number
-    ) * scale_align_number
+    sk = ((scale_k_unaligned + scale_align_number - 1) // scale_align_number) * scale_align_number
 
     if scenario_num == 3:
         a_dtype = fp8_e4m3
@@ -168,16 +160,9 @@ def gen_golden_data_fp8(scenario_num, m, n, k):
     x1_full = mx_decompress(x1_gm.astype(np.float32), x1_scale_gm, 32)
     x2_full = mx_decompress_b(x2_gm.astype(np.float32), x2_scale_gm, 32)
 
-    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(np.float32)
     if scenario_num == 3:
-        golden = (
-            np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(
-                np.float32
-            )
-            * 2
-        )
+        golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(np.float32) * 2
     else:
         bias_gm = np.random.randint(-10, 10, [n]).astype(np.float32)
         golden = golden + bias_gm

@@ -39,10 +39,7 @@ def tf_matmul(x1_gm_fp32, x2_gm_fp32, bias_gm_fp32=None):
         res_tf = tf.add(res_tf, bias)
 
     with tf.compat.v1.Session() as sess:
-        feed_dict = {
-            x1: x1_gm_fp32,
-            x2: x2_gm_fp32,
-        }
+        feed_dict = {x1: x1_gm_fp32, x2: x2_gm_fp32}
         if is_bias:
             feed_dict[bias] = bias_gm_fp32
         res_tf = sess.run(res_tf, feed_dict=feed_dict)

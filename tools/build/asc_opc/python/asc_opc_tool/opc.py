@@ -25,12 +25,7 @@ from opc_common import compiling_option_keys, check_and_normalize_impl_mode
 from op_compilation import OpCompilation
 from op_info_store import load_op_info_store
 
-log_level_dict = {
-    "debug": 0,
-    "info": 1,
-    "warning": 2,
-    "error": 3,
-}
+log_level_dict = {"debug": 0, "info": 1, "warning": 2, "error": 3}
 
 FAILED = -1
 SUCCESS = 0
@@ -166,33 +161,19 @@ class OpcOptionParser:
         self.__define_option(OpcOptions.HELP_H, "False", "show help messages", True)
         self.__define_option(OpcOptions.HELP, "False", "show help messages", True)
         self.__define_option(OpcOptions.OUTPUT, "", "output directory of binary files")
-        self.__define_option(
-            OpcOptions.SOC_VERSION, "", "soc version of current hardware"
-        )
+        self.__define_option(OpcOptions.SOC_VERSION, "", "soc version of current hardware")
         self.__define_option(OpcOptions.LOG, "null", "log level")
-        self.__define_option(
-            OpcOptions.INPUT_PARAM, None, "the path of input json file"
-        )
-        self.__define_option(
-            OpcOptions.MAIN_FUNC,
-            None,
-            'the main func name in operator"s implemenatation',
-        )
-        self.__define_option(
-            OpcOptions.CORE_TYPE, None, "the core type of compiling environment"
-        )
+        self.__define_option(OpcOptions.INPUT_PARAM, None, "the path of input json file")
+        self.__define_option(OpcOptions.MAIN_FUNC, None, 'the main func name in operator"s implemenatation')
+        self.__define_option(OpcOptions.CORE_TYPE, None, "the core type of compiling environment")
         self.__define_option(
             OpcOptions.DEBUG_DIR,
             "./",
             "Set the save path of operator compilation \
                              intermediate files. Default value: ./",
         )
-        self.__define_option(
-            OpcOptions.GRAPH, "", "the path of input fusion op file. Default value: ./"
-        )
-        self.__define_option(
-            OpcOptions.BIN_FILENAME, "", "the name of op_kernel. Default valuen: ./"
-        )
+        self.__define_option(OpcOptions.GRAPH, "", "the path of input fusion op file. Default value: ./")
+        self.__define_option(OpcOptions.BIN_FILENAME, "", "the name of op_kernel. Default valuen: ./")
         self.__define_option(
             OpcOptions.IMPL_MODE,
             None,
@@ -206,9 +187,7 @@ class OpcOptionParser:
             "tbe operator compile debug function switch. \
                              Default value: 0",
         )
-        self.__define_option(
-            OpcOptions.OP_DEBUG_CONFIG, "", "tbe operator compile debug config."
-        )
+        self.__define_option(OpcOptions.OP_DEBUG_CONFIG, "", "tbe operator compile debug config.")
         self.__define_option(
             OpcOptions.OPTIONAL_INPUT_MODE,
             None,
@@ -231,21 +210,11 @@ class OpcOptionParser:
         self.__define_option(OpcOptions.SIMPLE_KEY_MODE, None, "simplified key mode.")
         self.__define_option(OpcOptions.DYNAMIC_PARAM_MODE, None, "dynamic param mode.")
         self.__define_option(OpcOptions.TILING_KEY, None, "tiling key list.")
-        self.__define_option(
-            OpcOptions.RELOCATABLE_BIN, "False", "op_relocatable_kernel_binary mode."
-        )
+        self.__define_option(OpcOptions.RELOCATABLE_BIN, "False", "op_relocatable_kernel_binary mode.")
         self.__define_option(OpcOptions.SPK_OPT, "", "SPK sub kernel compile options.")
-        self.__define_option(
-            OpcOptions.KERNEL_TEMPLATE_INPUT, "", "kernel template input."
-        )
-        self.__define_option(
-            OpcOptions.KERNEL_SPEC,
-            "None",
-            "kernel spec mode. Support None, Normal and SK.",
-        )
-        self.__define_option(
-            OpcOptions.KERNEL_SPEC_DIR, None, "kernel spec output directory."
-        )
+        self.__define_option(OpcOptions.KERNEL_TEMPLATE_INPUT, "", "kernel template input.")
+        self.__define_option(OpcOptions.KERNEL_SPEC, "None", "kernel spec mode. Support None, Normal and SK.")
+        self.__define_option(OpcOptions.KERNEL_SPEC_DIR, None, "kernel spec output directory.")
 
     @staticmethod
     def usage():
@@ -385,11 +354,7 @@ class OpcOptionParser:
         help_only = False
         for key, value in opts:
             striped_key = self.strip_key(key)
-            if striped_key in {
-                OpcOptions.AICORE_NUM,
-                OpcOptions.OP_DEBUG_LEVEL,
-                OpcOptions.SIMPLE_KEY_MODE,
-            }:
+            if striped_key in {OpcOptions.AICORE_NUM, OpcOptions.OP_DEBUG_LEVEL, OpcOptions.SIMPLE_KEY_MODE}:
                 if not value.isdigit():
                     logger.error("Invalid params: %s should be digit.", striped_key)
                     sys.exit(1)
@@ -462,9 +427,7 @@ class OpcOptionParser:
             start_opt = 2
 
         try:
-            opts, _ = getopt.getopt(
-                sys.argv[start_opt:], self.__short_options, self.__long_options
-            )
+            opts, _ = getopt.getopt(sys.argv[start_opt:], self.__short_options, self.__long_options)
         except getopt.GetoptError as err:
             logger.error("Failed to get option. %s", err)
             self.usage()
@@ -535,37 +498,17 @@ class OpcOptionParser:
         """
         simplified_key_mode = self.get_option(OpcOptions.SIMPLE_KEY_MODE)
         if simplified_key_mode == 0:
-            self.set_option(
-                OpcOptions.OPTIONAL_INPUT_MODE, OptionalInOutMode.GEN_PLACEHOLDER
-            )
-            self.set_option(
-                OpcOptions.OPTIONAL_OUTPUT_MODE, OptionalInOutMode.GEN_PLACEHOLDER
-            )
-            logger.warn(
-                "simplified_key_mode is [%d], set optional param mode gen_placeholder.",
-                simplified_key_mode,
-            )
+            self.set_option(OpcOptions.OPTIONAL_INPUT_MODE, OptionalInOutMode.GEN_PLACEHOLDER)
+            self.set_option(OpcOptions.OPTIONAL_OUTPUT_MODE, OptionalInOutMode.GEN_PLACEHOLDER)
+            logger.warn("simplified_key_mode is [%d], set optional param mode gen_placeholder.", simplified_key_mode)
             return
         opt_input_mode = self.get_option(OpcOptions.OPTIONAL_INPUT_MODE)
-        if opt_input_mode not in {
-            OptionalInOutMode.DEFAULT,
-            OptionalInOutMode.GEN_PLACEHOLDER,
-            None,
-        }:
-            logger.warn(
-                "Invalid optional_input_mode[%s], will be ignored.", str(opt_input_mode)
-            )
+        if opt_input_mode not in {OptionalInOutMode.DEFAULT, OptionalInOutMode.GEN_PLACEHOLDER, None}:
+            logger.warn("Invalid optional_input_mode[%s], will be ignored.", str(opt_input_mode))
             self.set_option(OpcOptions.OPTIONAL_INPUT_MODE, None)
         opt_output_mode = self.get_option(OpcOptions.OPTIONAL_OUTPUT_MODE)
-        if opt_output_mode not in {
-            OptionalInOutMode.DEFAULT,
-            OptionalInOutMode.GEN_PLACEHOLDER,
-            None,
-        }:
-            logger.warn(
-                "Invalid optional_output_mode[%s], will be ignored.",
-                str(opt_output_mode),
-            )
+        if opt_output_mode not in {OptionalInOutMode.DEFAULT, OptionalInOutMode.GEN_PLACEHOLDER, None}:
+            logger.warn("Invalid optional_output_mode[%s], will be ignored.", str(opt_output_mode))
             self.set_option(OpcOptions.OPTIONAL_OUTPUT_MODE, None)
 
     def check_op_debug_config_valid(self):
@@ -575,16 +518,7 @@ class OpcOptionParser:
         op_debug_config = self.get_option(OpcOptions.OP_DEBUG_CONFIG)
         if op_debug_config is None:
             return False
-        op_debug_tuple = (
-            "oom",
-            "dump_cce",
-            "dump_bin",
-            "dump_loc",
-            "ccec_O0",
-            "ccec_g",
-            "check_flag",
-            "sanitizer",
-        )
+        op_debug_tuple = ("oom", "dump_cce", "dump_bin", "dump_loc", "ccec_O0", "ccec_g", "check_flag", "sanitizer")
         if op_debug_config == "":
             return True
         keep_kernel_meta_config = ("dump_cce", "dump_bin", "dump_loc")
@@ -622,9 +556,7 @@ class OpcOptionParser:
         check_op_relocatable_cfg
         """
         op_relocatable_bin = self.get_option(OpcOptions.RELOCATABLE_BIN)
-        op_relocatable_bin_bool = (
-            True if op_relocatable_bin in ("True", "true") else False
-        )
+        op_relocatable_bin_bool = True if op_relocatable_bin in ("True", "true") else False
         self.set_option(OpcOptions.RELOCATABLE_BIN, op_relocatable_bin_bool)
         logger.info("Save op_relocatable_bin {}.".format(op_relocatable_bin_bool))
         if not op_relocatable_bin_bool:
@@ -638,19 +570,13 @@ class OpcOptionParser:
 
         kernel_spec = self.get_option(OpcOptions.KERNEL_SPEC)
         if kernel_spec not in {"None", "Normal", "SK"}:
-            logger.error(
-                "Invalid kernel-spec option {}, support None/Normal/SK.".format(
-                    kernel_spec
-                )
-            )
+            logger.error("Invalid kernel-spec option {}, support None/Normal/SK.".format(kernel_spec))
             return False
         if kernel_spec == "None":
             return True
 
         if self.get_option(OpcOptions.RELOCATABLE_BIN):
-            logger.error(
-                "kernel-spec cannot be used with op_relocatable_kernel_binary."
-            )
+            logger.error("kernel-spec cannot be used with op_relocatable_kernel_binary.")
             return False
 
         kernel_spec_dir = self.get_option(OpcOptions.KERNEL_SPEC_DIR)
@@ -663,14 +589,9 @@ class OpcOptionParser:
         return True
 
     def check_op_compile_mode(self):
-        if (
-            self.get_option(OpcOptions.OP_COMPILE_MODE)
-            == OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE
-        ):
+        if self.get_option(OpcOptions.OP_COMPILE_MODE) == OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE:
             # check op path: op path must be a valid path
-            if self.get_option(
-                OpcOptions.OP_PATH
-            ) != "" and not self.__check_and_update_file_path(OpcOptions.OP_PATH):
+            if self.get_option(OpcOptions.OP_PATH) != "" and not self.__check_and_update_file_path(OpcOptions.OP_PATH):
                 logger.error("Failed to check and update op_path.")
                 return False
             # check input_param: input_param must be a valid path
@@ -686,11 +607,7 @@ class OpcOptionParser:
     def check_simplified_mode_params(self):
         simplified_key_mode = self.get_option(OpcOptions.SIMPLE_KEY_MODE)
         if simplified_key_mode not in {0, 1, None}:
-            logger.error(
-                "Invalid simplified_key_mode option {}, support 0, 1.".format(
-                    simplified_key_mode
-                )
-            )
+            logger.error("Invalid simplified_key_mode option {}, support 0, 1.".format(simplified_key_mode))
             return False
 
         dynamic_param_mode = self.get_option(OpcOptions.DYNAMIC_PARAM_MODE)
@@ -734,52 +651,30 @@ class OpcOptionParser:
         if impl_mode is not None:
             res, _ = check_and_normalize_impl_mode(impl_mode)
             if not res:
-                logger.info(
-                    "impl mode {}, not in high_precision,high_performance.".format(
-                        impl_mode
-                    )
-                )
+                logger.info("impl mode {}, not in high_precision,high_performance.".format(impl_mode))
 
         deterministic = self.get_option(OpcOptions.DETERMINISTIC)
         if deterministic not in {"all", "true", "false"}:
-            logger.error(
-                "Invalid deterministic option {}, support all/true/false.".format(
-                    deterministic
-                )
-            )
+            logger.error("Invalid deterministic option {}, support all/true/false.".format(deterministic))
             return False
 
         if not self.check_simplified_mode_params():
             return False
 
         core_type = self.get_option(OpcOptions.CORE_TYPE)
-        if core_type not in {
-            "AiCore",
-            "VectorCore",
-            None,
-            "AiCore,VectorCore",
-            "VectorCore,AiCore",
-        }:
+        if core_type not in {"AiCore", "VectorCore", None, "AiCore,VectorCore", "VectorCore,AiCore"}:
             logger.info("core type  is {}.".format(core_type))
             return False
 
         self.check_opt_param_mode()
         op_debug_level = self.get_option(OpcOptions.OP_DEBUG_LEVEL)
         if op_debug_level not in {0, 1, 2, 3}:
-            logger.error(
-                "Invalid op debug level {}, support values: 0 1 2 3.".format(
-                    op_debug_level
-                )
-            )
+            logger.error("Invalid op debug level {}, support values: 0 1 2 3.".format(op_debug_level))
             return False
 
         res = self.check_op_debug_config_valid()
         if not res:
-            logger.error(
-                "Invalid op debug config {}.".format(
-                    self.get_option(OpcOptions.OP_DEBUG_CONFIG)
-                )
-            )
+            logger.error("Invalid op debug config {}.".format(self.get_option(OpcOptions.OP_DEBUG_CONFIG)))
             return False
 
         self.check_and_save_tiling_key()
@@ -809,9 +704,7 @@ def op_compile_classify(opt_parser):
     """
     graph_path = opt_parser.get_option(OpcOptions.GRAPH)
     if graph_path == "":
-        opt_parser.set_option(
-            OpcOptions.OP_COMPILE_MODE, OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE
-        )
+        opt_parser.set_option(OpcOptions.OP_COMPILE_MODE, OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE)
         logger.debug("set compile mode: %s.", OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE)
         return
     logger.error("Cannot set GRAPH.\n")
@@ -829,9 +722,7 @@ def main():
     op_compile_classify(opt_parser)
     op_compile_mode = opt_parser.get_option(OpcOptions.OP_COMPILE_MODE)
     if op_compile_mode == OpcCompileMode.UNKOWN_MODE:
-        raise RuntimeError(
-            "Input command error! opc confuse single or fusion op compile."
-        )
+        raise RuntimeError("Input command error! opc confuse single or fusion op compile.")
 
     if not opt_parser.check_input_params():
         logger.error("Opc tool compile failed.")

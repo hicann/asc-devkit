@@ -71,9 +71,7 @@ def mx_decompress_b(fp_data, scale_data, block_size=32):
     for row in range(fp_data.shape[0]):
         for col in range(fp_data.shape[1]):
             block_idx = row // block_size
-            result[row, col] = (
-                fp_data[row, col].astype(np.float32) * scale_factor[block_idx, col]
-            )
+            result[row, col] = fp_data[row, col].astype(np.float32) * scale_factor[block_idx, col]
 
     return result
 
@@ -92,9 +90,7 @@ def gen_golden_data_fp4(scenario_num, m, n, k):
     scale_ceil_number = 32
     scale_align_number = 2
     scale_k_unaligned = (k + scale_ceil_number - 1) // scale_ceil_number
-    sk = (
-        (scale_k_unaligned + scale_align_number - 1) // scale_align_number
-    ) * scale_align_number
+    sk = ((scale_k_unaligned + scale_align_number - 1) // scale_align_number) * scale_align_number
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -124,12 +120,8 @@ def gen_golden_data_fp4(scenario_num, m, n, k):
     x1_scale_gm = np.random.randint(0, 1, [m, sk]).astype(np.uint8)
     x2_scale_gm = np.random.randint(0, 1, [sk, n]).astype(np.uint8)
 
-    x1_scale_gm_random = np.random.randint(127, 130, [m, scale_k_unaligned]).astype(
-        np.uint8
-    )
-    x2_scale_gm_random = np.random.randint(127, 130, [scale_k_unaligned, n]).astype(
-        np.uint8
-    )
+    x1_scale_gm_random = np.random.randint(127, 130, [m, scale_k_unaligned]).astype(np.uint8)
+    x2_scale_gm_random = np.random.randint(127, 130, [scale_k_unaligned, n]).astype(np.uint8)
 
     x1_scale_gm[:, :scale_k_unaligned] = x1_scale_gm_random
     x2_scale_gm[:scale_k_unaligned, :] = x2_scale_gm_random
@@ -137,9 +129,7 @@ def gen_golden_data_fp4(scenario_num, m, n, k):
     x1_full = mx_decompress(x1_gm.astype(np.float32), x1_scale_gm, 32)
     x2_full = mx_decompress_b(x2_gm.astype(np.float32), x2_scale_gm, 32)
 
-    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(np.float32)
 
     if is_a_trans:
         print("A/scaleA transpose")
@@ -167,9 +157,7 @@ def gen_golden_data_fp8(scenario_num, m, n, k):
     scale_ceil_number = 32
     scale_align_number = 2
     scale_k_unaligned = (k + scale_ceil_number - 1) // scale_ceil_number
-    sk = (
-        (scale_k_unaligned + scale_align_number - 1) // scale_align_number
-    ) * scale_align_number
+    sk = ((scale_k_unaligned + scale_align_number - 1) // scale_align_number) * scale_align_number
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -199,12 +187,8 @@ def gen_golden_data_fp8(scenario_num, m, n, k):
     x1_scale_gm = np.random.randint(0, 1, [m, sk]).astype(np.uint8)
     x2_scale_gm = np.random.randint(0, 1, [sk, n]).astype(np.uint8)
 
-    x1_scale_gm_random = np.random.randint(127, 130, [m, scale_k_unaligned]).astype(
-        np.uint8
-    )
-    x2_scale_gm_random = np.random.randint(127, 130, [scale_k_unaligned, n]).astype(
-        np.uint8
-    )
+    x1_scale_gm_random = np.random.randint(127, 130, [m, scale_k_unaligned]).astype(np.uint8)
+    x2_scale_gm_random = np.random.randint(127, 130, [scale_k_unaligned, n]).astype(np.uint8)
 
     x1_scale_gm[:, :scale_k_unaligned] = x1_scale_gm_random
     x2_scale_gm[:scale_k_unaligned, :] = x2_scale_gm_random
@@ -212,9 +196,7 @@ def gen_golden_data_fp8(scenario_num, m, n, k):
     x1_full = mx_decompress(x1_gm.astype(np.float32), x1_scale_gm, 32)
     x2_full = mx_decompress_b(x2_gm.astype(np.float32), x2_scale_gm, 32)
 
-    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(np.float32)
 
     if is_a_trans:
         print("A/scaleA transpose")

@@ -53,9 +53,7 @@ def gen_data_1():
     os.makedirs("output", exist_ok=True)
     cond.tofile("./input/input_cond.bin")
     golden.tofile("./output/golden.bin")
-    print(
-        f"Scenario 1: Generated input_cond.bin ({total_length} int32) and golden.bin (32 uint8)"
-    )
+    print(f"Scenario 1: Generated input_cond.bin ({total_length} int32) and golden.bin (32 uint8)")
 
 
 def gen_data_2():
@@ -85,9 +83,7 @@ def gen_data_2():
     y.tofile("./input/input_y.bin")
     mask.tofile("./input/input_mask.bin")
     golden.tofile("./output/golden.bin")
-    print(
-        f"Scenario 2: Generated input_x.bin, input_y.bin, input_mask.bin and golden.bin ({total_length} float)"
-    )
+    print(f"Scenario 2: Generated input_x.bin, input_y.bin, input_mask.bin and golden.bin ({total_length} float)")
 
 
 def gen_golden_data(scenario_num):

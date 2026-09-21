@@ -20,11 +20,7 @@ def gen_golden_data_simple():
     input_shape_x = [64, 128]
     input_shape_y = [128, 128]
     dtype = np.float32
-    input_x = (
-        np.arange(1, input_shape_x[0] * input_shape_x[1] + 1)
-        .astype(dtype)
-        .reshape(input_shape_x)
-    )
+    input_x = np.arange(1, input_shape_x[0] * input_shape_x[1] + 1).astype(dtype).reshape(input_shape_x)
     input_y = np.eye(input_shape_y[0]).astype(dtype)
     golden = np.matmul(input_x.astype(dtype), input_y.astype(dtype)).astype(dtype)
     os.makedirs("input", exist_ok=True)

@@ -30,13 +30,7 @@ def detect_arch(explicit: Optional[str] = None) -> Optional[str]:
     if not npu_smi:
         return None
     try:
-        proc = subprocess.run(
-            [npu_smi, "info"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            timeout=5,
-        )
+        proc = subprocess.run([npu_smi, "info"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=5)
     except (OSError, subprocess.TimeoutExpired):
         return None
     text = proc.stdout.lower()

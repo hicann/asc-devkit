@@ -102,9 +102,7 @@ def gen_golden_data(scenarioNum=1):
                 data_src_start = outer // 288 * 160 + inner * 80
                 data_src_end = data_src_start + 80
 
-                golden[dst_start:dst_data_end] = input_flatten[
-                    data_src_start:data_src_end
-                ]
+                golden[dst_start:dst_data_end] = input_flatten[data_src_start:data_src_end]
                 golden[dst_data_end:dst_fill_end] = -1
         golden = golden.reshape(1, dst_cols)
     elif scenarioNum == 5:
@@ -160,9 +158,7 @@ def gen_golden_data(scenarioNum=1):
                 for dim2 in range(2):  # 第2维，搬运2次（loop1）
                     for dim3 in range(64):  # 第3维，搬运64次（从128中选择前64个）
                         # 从第3维的128个中选择第dim3个，搬运第4维的126个数据
-                        golden[golden_row_idx, :126] = input_5d[
-                            dim0, dim1, dim2, dim3, :
-                        ]
+                        golden[golden_row_idx, :126] = input_5d[dim0, dim1, dim2, dim3, :]
                         # 补2个0
                         golden[golden_row_idx, 126:128] = 0
                         golden_row_idx += 1

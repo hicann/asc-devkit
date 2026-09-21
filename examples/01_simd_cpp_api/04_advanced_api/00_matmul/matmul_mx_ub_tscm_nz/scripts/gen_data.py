@@ -63,15 +63,9 @@ def trans_np_fp4_e1m2_tensor_to_bfloat16(in_tensor):
     fp32_tensor = np.zeros(multi_shape * 2).astype(np.float32)
 
     for i in range(multi_shape):
-        bfloat16_tensor[i * 2], bfloat16_tensor[i * 2 + 1] = cvt_fp4_e1m2_to_bfloat16(
-            in_tensor[i]
-        )
-        fp32_tensor[i * 2] = struct.unpack(
-            "!f", struct.pack("!I", bfloat16_tensor[i * 2] << 16)
-        )[0]
-        fp32_tensor[i * 2 + 1] = struct.unpack(
-            "!f", struct.pack("!I", bfloat16_tensor[i * 2 + 1] << 16)
-        )[0]
+        bfloat16_tensor[i * 2], bfloat16_tensor[i * 2 + 1] = cvt_fp4_e1m2_to_bfloat16(in_tensor[i])
+        fp32_tensor[i * 2] = struct.unpack("!f", struct.pack("!I", bfloat16_tensor[i * 2] << 16))[0]
+        fp32_tensor[i * 2 + 1] = struct.unpack("!f", struct.pack("!I", bfloat16_tensor[i * 2 + 1] << 16))[0]
 
     fp32_tensor = fp32_tensor.reshape(bfloat16_shape)
     return fp32_tensor
@@ -123,9 +117,7 @@ def cvt_bfloat16_to_fp4_e1m2(x):
     else:
         eNorm = ef - 127  # the exp bias of bf16 is 127
 
-    if (eNorm > (maxExp - expBias)) or (
-        (eNorm == (maxExp - expBias)) and ((mf >> mLenDelta) == 0b11)
-    ):
+    if (eNorm > (maxExp - expBias)) or ((eNorm == (maxExp - expBias)) and ((mf >> mLenDelta) == 0b11)):
         return (sRet << 3) | 0b111
     elif eNorm <= -(expBias):
         eRet = 0
@@ -218,9 +210,7 @@ def gen_golden_data():
 
     x2_ori = np.random.uniform(0, 2, x2_shape).astype(np.float64).transpose()
     x2_ori_tmp = trans_np_bfloat16_tensor_to_fp4_e1m2(x2_ori.astype(bfloat16))
-    x2_gm = (
-        trans_np_fp4_e1m2_tensor_to_bfloat16(x2_ori_tmp).astype(np.float64).transpose()
-    )
+    x2_gm = trans_np_fp4_e1m2_tensor_to_bfloat16(x2_ori_tmp).astype(np.float64).transpose()
 
     bias_gm = np.random.randint(0, 10, (1, n)).astype(dst_type)
     x1_mx_gm = np.random.randint(127, 130, x1_s_shape).astype(src_scale_type)
@@ -245,43 +235,29 @@ def gen_golden_data():
 
     if a_format == "NZ":
         # x1_gm nz
-        x1_gm = x1_gm.reshape((int(m / 16), 16, int(k / c0_size), c0_size)).transpose(
-            2, 0, 1, 3
-        )
-        x1_gm = x1_gm.reshape(
-            x1_gm.shape[0] * x1_gm.shape[1], x1_gm.shape[2] * x1_gm.shape[3]
-        )
+        x1_gm = x1_gm.reshape((int(m / 16), 16, int(k / c0_size), c0_size)).transpose(2, 0, 1, 3)
+        x1_gm = x1_gm.reshape(x1_gm.shape[0] * x1_gm.shape[1], x1_gm.shape[2] * x1_gm.shape[3])
     if b_format == "NZ":
         # x2_gm nz
-        x2_gm = x2_gm.reshape(
-            (int(x2_gm.shape[0] / 16), 16, int(x2_gm.shape[1] / c0_size), c0_size)
-        ).transpose(2, 0, 1, 3)
-        x2_gm = x2_gm.reshape(
-            x2_gm.shape[0] * x2_gm.shape[1], x2_gm.shape[2] * x2_gm.shape[3]
+        x2_gm = x2_gm.reshape((int(x2_gm.shape[0] / 16), 16, int(x2_gm.shape[1] / c0_size), c0_size)).transpose(
+            2, 0, 1, 3
         )
+        x2_gm = x2_gm.reshape(x2_gm.shape[0] * x2_gm.shape[1], x2_gm.shape[2] * x2_gm.shape[3])
     if scalea_format == "NZ":
         # scalea nz
         if not is_trans_scalea:
-            x1_mx_gm = x1_mx_gm.reshape(int(m / 16), 16, int(sk / 2), 2).transpose(
-                0, 2, 1, 3
-            )
+            x1_mx_gm = x1_mx_gm.reshape(int(m / 16), 16, int(sk / 2), 2).transpose(0, 2, 1, 3)
         else:
-            x1_mx_gm = x1_mx_gm.reshape(int(sk / 2), 2, int(m / 16), 16).transpose(
-                2, 0, 3, 1
-            )
+            x1_mx_gm = x1_mx_gm.reshape(int(sk / 2), 2, int(m / 16), 16).transpose(2, 0, 3, 1)
     else:
         if is_trans_scalea:
             x1_mx_gm = x1_mx_gm.reshape(int(sk / 2), 2, m).transpose(0, 2, 1)
     if scaleb_format == "NZ":
         # scaleb nz
         if not is_trans_scaleb:
-            x2_mx_gm = x2_mx_gm.reshape(int(sk / 2), 2, int(n / 16), 16).transpose(
-                2, 0, 3, 1
-            )
+            x2_mx_gm = x2_mx_gm.reshape(int(sk / 2), 2, int(n / 16), 16).transpose(2, 0, 3, 1)
         else:
-            x2_mx_gm = x2_mx_gm.reshape(int(n / 16), 16, int(sk / 2), 2).transpose(
-                0, 2, 1, 3
-            )
+            x2_mx_gm = x2_mx_gm.reshape(int(n / 16), 16, int(sk / 2), 2).transpose(0, 2, 1, 3)
     else:
         if not is_trans_scaleb:
             x2_mx_gm = x2_mx_gm.reshape(int(sk / 2), 2, n).transpose(0, 2, 1)

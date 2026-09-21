@@ -134,9 +134,7 @@ def generate_host_stub_head_code(has_mix: bool, has_aic: bool, has_aiv: bool) ->
         ascend_kernel_struct.append("__replaced_aic_file_len")
         ascend_kernel_struct.append(r"{0}")
 
-    buff.write(
-        '} __replaced_ascend_kernel __attribute__ ((section ("__replaced_ascend_section"))) = {'
-    )
+    buff.write('} __replaced_ascend_kernel __attribute__ ((section ("__replaced_ascend_section"))) = {')
 
     ascend_kernel_str = ",".join(ascend_kernel_struct)
     buff.write(f"{ascend_kernel_str}")

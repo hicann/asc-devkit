@@ -27,13 +27,9 @@ class BaseFeature(ABC):
 
     def __init__(self, feature_name: str, feature_version: int):
         if not isinstance(feature_name, str):
-            raise TypeError(
-                f"feature_name's type must be str, current type is {type(feature_name).__name__}"
-            )
+            raise TypeError(f"feature_name's type must be str, current type is {type(feature_name).__name__}")
         if not isinstance(feature_version, int):
-            raise TypeError(
-                f"feature_version's type must be int, current type is {type(feature_version).__name__}"
-            )
+            raise TypeError(f"feature_version's type must be int, current type is {type(feature_version).__name__}")
         self.feature_name = feature_name
         self.feature_version = feature_version
 
@@ -75,9 +71,7 @@ class AscendCKernelFeatureManager:
     def __new__(cls, *args, **kwargs):
         with cls._lock:
             if not cls._instance:
-                cls._instance = super(AscendCKernelFeatureManager, cls).__new__(
-                    cls, *args, **kwargs
-                )
+                cls._instance = super(AscendCKernelFeatureManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     def __init__(self, use_ordered: bool = False):
@@ -97,9 +91,7 @@ class AscendCKernelFeatureManager:
         input_features = op_context.get_context().get_addition("feature_list")
         if input_features is None:
             LogUtil.print_compile_log(
-                "AscendC Feature Manager",
-                "get feature versions from te_fusion is None",
-                AscendCLogLevel.LOG_INFO,
+                "AscendC Feature Manager", "get feature versions from te_fusion is None", AscendCLogLevel.LOG_INFO
             )
             return
         else:
@@ -118,25 +110,18 @@ class AscendCKernelFeatureManager:
                 )
             else:
                 feature_instance = self._support_features_instances[feature_name]
-                self._available_feature_version_map[feature_name] = (
-                    feature_instance.get_intersection_version(
-                        input_features[feature_name]
-                    )
+                self._available_feature_version_map[feature_name] = feature_instance.get_intersection_version(
+                    input_features[feature_name]
                 )
 
-                self._enable_features_base[feature_name] = (
-                    feature_instance.get_feature_value_of_version(
-                        self._available_feature_version_map[feature_name]
-                    )
+                self._enable_features_base[feature_name] = feature_instance.get_feature_value_of_version(
+                    self._available_feature_version_map[feature_name]
                 )
 
     def check_feature_valid(self, feature_name: str, feature_value: any):
         available_feature_verison = self._available_feature_version_map[feature_name]
         feature_instance = self._support_features_instances[feature_name]
-        return (
-            feature_instance.get_feature_version_of_value(feature_value)
-            <= available_feature_verison
-        )
+        return feature_instance.get_feature_version_of_value(feature_value) <= available_feature_verison
 
     def register_feature(self, feature_cls: Type[BaseFeature]) -> None:
         """
@@ -145,17 +130,13 @@ class AscendCKernelFeatureManager:
         :raises ValueError: if duplicated or unimplemented
         """
         if not issubclass(feature_cls, BaseFeature):
-            raise ValueError(
-                f"class {feature_cls.__name__} must be inherited from BaseFeature"
-            )
+            raise ValueError(f"class {feature_cls.__name__} must be inherited from BaseFeature")
 
         instance = feature_cls()
         if instance.feature_name in self._support_features_instances:
             raise ValueError(f"feature {instance.feature_name} already existed")
         self._support_features_instances[instance.feature_name] = instance
-        self._support_feature_version_map[instance.feature_name] = (
-            instance.feature_version
-        )
+        self._support_feature_version_map[instance.feature_name] = instance.feature_version
 
     def unregister_feature(self, feature_name: str) -> None:
         if feature_name not in self._support_features_instances:

@@ -20,43 +20,22 @@ from pathlib import Path
 
 from .parser import parse_file, parse_string, render_html
 
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)s] %(message)s", level=logging.INFO
-)
+logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s", level=logging.INFO)
 logger = logging.getLogger("mdparser")
 
-_STATIC_EXTS = {
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".gif",
-    ".svg",
-    ".ico",
-    ".webp",
-    ".bmp",
-    ".pdf",
-    ".zip",
-    ".tar.gz",
-}
+_STATIC_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".webp", ".bmp", ".pdf", ".zip", ".tar.gz"}
 
 
 def _build_parser():
     parser = argparse.ArgumentParser(
-        prog="mdparser",
-        description="High-performance Markdown-to-HTML converter based on cmark-gfm (C).",
+        prog="mdparser", description="High-performance Markdown-to-HTML converter based on cmark-gfm (C)."
     )
-    parser.add_argument(
-        "input", nargs="*", help="Markdown file(s) or directory to parse"
-    )
+    parser.add_argument("input", nargs="*", help="Markdown file(s) or directory to parse")
     parser.add_argument("-o", "--output", help="Output file or directory")
     parser.add_argument("--no-gfm", action="store_true", help="Disable GFM extensions")
     parser.add_argument("--stdin", action="store_true", help="Read from stdin")
-    parser.add_argument(
-        "-s", "--style", action="store_true", help="Embed GitHub-style CSS"
-    )
-    parser.add_argument(
-        "-r", "--recursive", action="store_true", help="Scan recursively"
-    )
+    parser.add_argument("-s", "--style", action="store_true", help="Embed GitHub-style CSS")
+    parser.add_argument("-r", "--recursive", action="store_true", help="Scan recursively")
     return parser
 
 

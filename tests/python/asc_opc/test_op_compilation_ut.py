@@ -41,11 +41,7 @@ from post_compile_base import PostCompilation
 from single_op_post_compile import SingleOpPostCompile
 from single_op_compile import SingleOpCompile
 from op_info_store import SubOpInfoStore, load_op_info_store, load_set_op_content
-from opc_common import (
-    update_compile_info,
-    normalize_optional_impl_mode,
-    get_new_attrs_for_op_compile,
-)
+from opc_common import update_compile_info, normalize_optional_impl_mode, get_new_attrs_for_op_compile
 from op_manager import get_core_type_from_op_content
 from op_compile_info_check import check_op_compilation_json, check_op_compilation_dict
 
@@ -78,34 +74,18 @@ class TestOpCompilationUt(unittest.TestCase):
         # and debug_dir/kernel_meta_matmul_2 when use /stub/files/MatMul.json as input_param, and they will be used
         # in other cases, so delete the files in the end of tests
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
-        if os.path.exists(
-            test_root_dir + "/debug_dir/kernel_meta_matmul_1/kernel_meta/matmul_1.o"
-        ):
-            os.remove(
-                test_root_dir + "/debug_dir/kernel_meta_matmul_1/kernel_meta/matmul_1.o"
-            )
-        if os.path.exists(
-            test_root_dir + "/debug_dir/kernel_meta_matmul_2/kernel_meta/matmul_2.o"
-        ):
-            os.remove(
-                test_root_dir + "/debug_dir/kernel_meta_matmul_2/kernel_meta/matmul_2.o"
-            )
-        if os.path.exists(
-            test_root_dir + "/debug_dir/kernel_meta_matmul_custom_simplified_key"
-        ):
-            shutil.rmtree(
-                test_root_dir + "/debug_dir/kernel_meta_matmul_custom_simplified_key"
-            )
+        if os.path.exists(test_root_dir + "/debug_dir/kernel_meta_matmul_1/kernel_meta/matmul_1.o"):
+            os.remove(test_root_dir + "/debug_dir/kernel_meta_matmul_1/kernel_meta/matmul_1.o")
+        if os.path.exists(test_root_dir + "/debug_dir/kernel_meta_matmul_2/kernel_meta/matmul_2.o"):
+            os.remove(test_root_dir + "/debug_dir/kernel_meta_matmul_2/kernel_meta/matmul_2.o")
+        if os.path.exists(test_root_dir + "/debug_dir/kernel_meta_matmul_custom_simplified_key"):
+            shutil.rmtree(test_root_dir + "/debug_dir/kernel_meta_matmul_custom_simplified_key")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_00_op_compilation_ut(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_00_op_compilation_ut ============"
-        )
+        logger.debug("Start to execute ============ test_00_op_compilation_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/MatMul.json"
@@ -120,8 +100,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "mat_mul",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -143,13 +122,9 @@ class TestOpCompilationUt(unittest.TestCase):
         # execute again, output dir has json files, opc process will check file exist
         ret = op_compile.op_compilation()
         self.assertEqual(ret, True)
-        ret, json_dict = check_op_compilation_json(
-            OpcOptions.INPUT_PARAM, opc_compile_args
-        )
+        ret, json_dict = check_op_compilation_json(OpcOptions.INPUT_PARAM, opc_compile_args)
         self.assertEqual(ret, True)
-        ret = op_compile.check_and_update_core_type(
-            OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict
-        )
+        ret = op_compile.check_and_update_core_type(OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict)
         self.assertEqual(ret, True)
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
@@ -159,19 +134,13 @@ class TestOpCompilationUt(unittest.TestCase):
         op_params_tmp = ["a", "b"]
         ret, _ = check_op_compilation_dict(op_params_tmp, opc_compile_args)
         self.assertEqual(ret, False)
-        logger.debug(
-            "End to execute ============ test_00_op_compilation_ut ============"
-        )
+        logger.debug("End to execute ============ test_00_op_compilation_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_01_op_compilation_st(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_01_op_compilation_st ============"
-        )
+        logger.debug("Start to execute ============ test_01_op_compilation_st ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/sqrt.json"
@@ -181,8 +150,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "sqrt",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -204,9 +172,7 @@ class TestOpCompilationUt(unittest.TestCase):
         logger.debug("Testcase delete files in output dir and debug dir")
         self.del_files(test_root_dir + "/output")
         os.remove(test_root_dir + "/debug_dir/kernel_meta_Sqrt/kernel_meta/Sqrt.o")
-        logger.debug(
-            "End to execute ============ test_01_op_compilation_st ============"
-        )
+        logger.debug("End to execute ============ test_01_op_compilation_st ============")
 
     # @patch('asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info')
     # def test_01_op_compilation(self, mock_set_current_compile_soc_info):
@@ -271,15 +237,11 @@ class TestOpCompilationUt(unittest.TestCase):
     #     self.del_files(test_root_dir + "/output")
     #     logger.debug("End to execute ============ test_02_op_compilation ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_03_op_compilation(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test test_03_op_compilation_ut"""
-        logger.debug(
-            "Start to execute ============ test_03_op_compilation_ut ============"
-        )
+        logger.debug("Start to execute ============ test_03_op_compilation_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/MatMul.json"
@@ -314,18 +276,12 @@ class TestOpCompilationUt(unittest.TestCase):
         self.assertEqual(ret, True)
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
-        logger.debug(
-            "End to execute ============ test_03_op_compilation_ut ============"
-        )
+        logger.debug("End to execute ============ test_03_op_compilation_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_check_and_update_core_type(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
-        logger.debug(
-            "Start to execute ============ test_check_and_update_core_type ============"
-        )
+        logger.debug("Start to execute ============ test_check_and_update_core_type ============")
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/MatMul_no_op_type.json"
         op_path = test_root_dir + "/stub/files/MatMul.py"
@@ -334,8 +290,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "mat_mul",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -347,13 +302,9 @@ class TestOpCompilationUt(unittest.TestCase):
         op_compile = OpCompilation(opc_compile_args)
         ret = op_compile.op_compilation()
         self.assertEqual(ret, False)
-        ret, json_dict = check_op_compilation_json(
-            OpcOptions.INPUT_PARAM, opc_compile_args
-        )
+        ret, json_dict = check_op_compilation_json(OpcOptions.INPUT_PARAM, opc_compile_args)
         self.assertEqual(ret, True)
-        ret = op_compile.check_and_update_core_type(
-            OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict
-        )
+        ret = op_compile.check_and_update_core_type(OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict)
         self.assertEqual(ret, False)
 
         input_param_path = test_root_dir + "/stub/files/MatMul.json"
@@ -366,13 +317,9 @@ class TestOpCompilationUt(unittest.TestCase):
         self.assertEqual(ret, True)
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
-        ret, json_dict = check_op_compilation_json(
-            OpcOptions.INPUT_PARAM, opc_compile_args
-        )
+        ret, json_dict = check_op_compilation_json(OpcOptions.INPUT_PARAM, opc_compile_args)
         self.assertEqual(ret, True)
-        ret = op_compile.check_and_update_core_type(
-            OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict
-        )
+        ret = op_compile.check_and_update_core_type(OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict)
         self.assertEqual(ret, True)
 
         ret = get_core_type_from_op_content("")
@@ -381,26 +328,16 @@ class TestOpCompilationUt(unittest.TestCase):
         self.assertEqual(ret, "AiCore,VectorCore")
         ret = get_core_type_from_op_content("Add")
         self.assertEqual(ret, None)
-        logger.debug(
-            "End to execute ============ test_check_and_update_core_type ============"
-        )
+        logger.debug("End to execute ============ test_check_and_update_core_type ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
-    def test_01_op_compilation_json_file_error_ut(
-        self, mock_set_current_compile_soc_info
-    ):
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
+    def test_01_op_compilation_json_file_error_ut(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation json_file_error"""
-        logger.debug(
-            "Start to execute ============ test_01_op_compilation_json_file_error_ut ============"
-        )
+        logger.debug("Start to execute ============ test_01_op_compilation_json_file_error_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
-        input_param_path = (
-            test_root_dir + "/stub/files/matmul_test.json"
-        )  # json file is none, json load fail
+        input_param_path = test_root_dir + "/stub/files/matmul_test.json"  # json file is none, json load fail
         op_path = test_root_dir + "/stub/files/MatMul.py"
         opc_compile_args = {
             "op_path": op_path,
@@ -419,37 +356,27 @@ class TestOpCompilationUt(unittest.TestCase):
         ret = op_compile.op_compilation()
         self.assertEqual(ret, False)
 
-        input_param_path = (
-            test_root_dir + "/stub/files/matmul_test_notdict.json"
-        )  # json file not dict
+        input_param_path = test_root_dir + "/stub/files/matmul_test_notdict.json"  # json file not dict
         opc_compile_args["input_param"] = input_param_path
         op_compile = OpCompilation(opc_compile_args)
 
         ret = op_compile.op_compilation()
         self.assertEqual(ret, False)
 
-        input_param_path = (
-            test_root_dir + "/stub/files/MatMul_build_res.json"
-        )  # json file has no op_list
+        input_param_path = test_root_dir + "/stub/files/MatMul_build_res.json"  # json file has no op_list
         opc_compile_args["input_param"] = input_param_path
         op_compile = OpCompilation(opc_compile_args)
 
         ret = op_compile.op_compilation()
         self.assertEqual(ret, False)
 
-        logger.debug(
-            "End to execute ============ test_01_op_compilation_json_file_error_ut ============"
-        )
+        logger.debug("End to execute ============ test_01_op_compilation_json_file_error_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_02_op_compilation_mode64_ut(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation mode 64: large shape"""
-        logger.debug(
-            "Start to execute ============ test_02_op_compilation_mode64_ut ============"
-        )
+        logger.debug("Start to execute ============ test_02_op_compilation_mode64_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/MatMul_mode64.json"
@@ -459,8 +386,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "mat_mul",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -481,19 +407,13 @@ class TestOpCompilationUt(unittest.TestCase):
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
 
-        logger.debug(
-            "End to execute ============ test_02_op_compilation_mode64_ut ============"
-        )
+        logger.debug("End to execute ============ test_02_op_compilation_mode64_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_op_compilation_input_options_ut(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation input options mode"""
-        logger.debug(
-            "Start to execute ============ test_op_compilation_input_options_ut ============"
-        )
+        logger.debug("Start to execute ============ test_op_compilation_input_options_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/apply_adam_v2.json"
@@ -503,8 +423,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "apply_adam_v2",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -526,34 +445,24 @@ class TestOpCompilationUt(unittest.TestCase):
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
 
-        logger.debug(
-            "End to execute ============ test_op_compilation_input_options_ut ============"
-        )
+        logger.debug("End to execute ============ test_op_compilation_input_options_ut ============")
 
     def test_03_record_compile_error_info_ut(self):
         """test record_compile_error_info"""
-        logger.debug(
-            "Start to execute ============ test_03_record_compile_error_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_03_record_compile_error_info_ut ============")
         op_info = {"op_type": "matmul", "kernel_name": "kernel_namexxx"}
         idx = 1
         op = {"comment": "ND_float16 with attr = true", "inputs": "inputs"}
         error_info = "errorinfo"
         OpCompilation.record_compile_error_info(op_info, idx, op, error_info)
 
-        logger.debug(
-            "End to execute ============ test_03_record_compile_error_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_03_record_compile_error_info_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_04_create_kernel_meta_dir_ut(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_04_create_kernel_meta_dir_ut ============"
-        )
+        logger.debug("Start to execute ============ test_04_create_kernel_meta_dir_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/matmul_3.json"
@@ -563,8 +472,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "mat_mul",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -588,19 +496,13 @@ class TestOpCompilationUt(unittest.TestCase):
         self.del_files(test_root_dir + "/output")
         shutil.rmtree(test_root_dir + "/debug_dir/kernel_meta_matmul_3")
 
-        logger.debug(
-            "End to execute ============ test_04_create_kernel_meta_dir_ut ============"
-        )
+        logger.debug("End to execute ============ test_04_create_kernel_meta_dir_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_05_verify_kernel_meta_lock_ut(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_05_verify_kernel_meta_lock_ut ============"
-        )
+        logger.debug("Start to execute ============ test_05_verify_kernel_meta_lock_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/matmul_4.json"
@@ -610,8 +512,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "mat_mul",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -637,15 +538,11 @@ class TestOpCompilationUt(unittest.TestCase):
         self.del_files(test_root_dir + "/output")
         shutil.rmtree(test_root_dir + "/debug_dir/kernel_meta_matmul_4")
 
-        logger.debug(
-            "End to execute ============ test_05_verify_kernel_meta_lock_ut ============"
-        )
+        logger.debug("End to execute ============ test_05_verify_kernel_meta_lock_ut ============")
 
     def test_06_verify_opc_common_update_compile_info_ut(self):
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_06_verify_opc_common_update_compile_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_06_verify_opc_common_update_compile_info_ut ============")
 
         test_file_dir = os.path.abspath(os.path.dirname(__file__))
         test_root_dir = os.path.abspath(os.path.join(test_file_dir, "../.."))
@@ -656,8 +553,7 @@ class TestOpCompilationUt(unittest.TestCase):
             "input_param": input_param_path,
             "main_func": "mat_mul",
             "soc_version": "Ascend910A",
-            "output": test_root_dir
-            + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
+            "output": test_root_dir + "/output",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "debug_dir": test_root_dir
             + "/debug_dir",  # path will be used in llt\atc\opcompiler\opc\stub\files\MatMul.py
             "h": "not_exist",
@@ -671,14 +567,10 @@ class TestOpCompilationUt(unittest.TestCase):
         test_debug_dir = test_root_dir + "/debug_dir/kernel_meta/testSupportInfo.json"
         update_compile_info(None, opc_compile_args)
         update_compile_info(test_debug_dir, opc_compile_args)
-        logger.debug(
-            "End to execute ============ test_06_verify_opc_common_update_compile_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_06_verify_opc_common_update_compile_info_ut ============")
 
     def test_construct_op_kernel_info_ut(self):
-        logger.debug(
-            "Start to execute ============ test_construct_op_kernel_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_construct_op_kernel_info_ut ============")
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         json_path = test_root_dir + "/stub/files/ascend910.json"
         with open(json_path, "r") as file_in:
@@ -705,9 +597,7 @@ class TestOpCompilationUt(unittest.TestCase):
         op_type = "Fills_2"
         ret = SubOpInfoStore().construct_op_kernel_info(op_type)
         self.assertEqual(ret, False)
-        logger.debug(
-            "End to execute ============ test_construct_op_kernel_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_construct_op_kernel_info_ut ============")
 
     # def test_get_single_op_operator_ut(self):
     #     logger.debug("Start to excute ============ test_get_single_op_operator_ut ============")
@@ -787,18 +677,12 @@ class TestOpCompilationUt(unittest.TestCase):
     #     self.assertEqual(res, None)
     #     logger.debug("End to excute ============ test_get_custom_op_operator_ut ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     @patch("asc_op_compile_base.common.platform.platform_info.get_soc_spec")
-    def test_get_vendor_and_custom_path_ut(
-        self, mock_set_current_compile_soc_info, mock_get_soc_spec
-    ):
+    def test_get_vendor_and_custom_path_ut(self, mock_set_current_compile_soc_info, mock_get_soc_spec):
         mock_set_current_compile_soc_info.return_value = "success"
         mock_get_soc_spec.return_value = "Ascend910"
-        logger.debug(
-            "Start to excute ============ test_get_vendor_and_custom_path_ut ============"
-        )
+        logger.debug("Start to excute ============ test_get_vendor_and_custom_path_ut ============")
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         ascend_path = test_root_dir + "/stub"
         os.environ["ASCEND_OPP_PATH"] = ascend_path
@@ -814,20 +698,12 @@ class TestOpCompilationUt(unittest.TestCase):
         new_content = content.replace("vendor", "custom,mdc")
         with open(config_path, "w", encoding="utf-8") as file:
             file.write(new_content)
-        logger.debug(
-            "End to excute ============ test_get_vendor_and_custom_path_ut ============"
-        )
+        logger.debug("End to excute ============ test_get_vendor_and_custom_path_ut ============")
 
     def test_get_new_attrs_for_op_compile(self):
-        logger.debug(
-            "Start to execute ============ test_get_new_attrs_for_op_compile ============"
-        )
+        logger.debug("Start to execute ============ test_get_new_attrs_for_op_compile ============")
         attrs = [
-            {
-                "name": "_input_name_key",
-                "dtype": "list_str",
-                "value": ["bias", "filter", "offset_w", "x"],
-            },
+            {"name": "_input_name_key", "dtype": "list_str", "value": ["bias", "filter", "offset_w", "x"]},
             {"name": "_input_name_value", "dtype": "list_int", "value": [2, 1, 3, 0]},
             {"name": "_opt_input", "dtype": "list_str", "value": ["bias", "offset_w"]},
             {"name": "_output_name_key", "dtype": "list_str", "value": ["y"]},
@@ -835,11 +711,7 @@ class TestOpCompilationUt(unittest.TestCase):
             {"name": "data_format", "dtype": "str", "value": "NHWC"},
             {"name": "dilations", "dtype": "list_int", "value": [1, 1, 1, 1]},
             {"name": "groups", "dtype": "int", "value": 1},
-            {
-                "name": "is_input_const",
-                "dtype": "list_bool",
-                "value": [False, True, True],
-            },
+            {"name": "is_input_const", "dtype": "list_bool", "value": [False, True, True]},
             {"name": "offset_x", "dtype": "int", "value": 1},
             {"name": "pads", "dtype": "list_int", "value": [0, 0, 0, 0]},
             {"name": "strides", "dtype": "list_int", "value": [1, 1, 1, 1]},
@@ -868,14 +740,10 @@ class TestOpCompilationUt(unittest.TestCase):
             pass
 
         op_node = {"attrs": attrs}
-        res = get_new_attrs_for_op_compile(
-            op_node, op_func, "single_op_compile_graph_mode"
-        )
+        res = get_new_attrs_for_op_compile(op_node, op_func, "single_op_compile_graph_mode")
         expect_res = [None, [0, 0, 0, 0], None, None, None, None]
         self.assertEqual(res, expect_res)
-        logger.debug(
-            "End to execute ============ test_get_new_attrs_for_op_compile ============"
-        )
+        logger.debug("End to execute ============ test_get_new_attrs_for_op_compile ============")
 
     def test_SingleOpCompile_will_trans_deterministic_option_to_kwargs(self):
         with unittest.mock.patch("single_op_compile.build_config") as build_config:
@@ -927,11 +795,7 @@ class TestOpCompilationUt(unittest.TestCase):
             assert build_config.call_args[1]["enable_deterministic_mode"] is True
 
     def test_single_op_compile_passes_kernel_spec_to_context(self):
-        cases = (
-            ("Normal", False, False),
-            ("SK", False, True),
-            ("None", True, True),
-        )
+        cases = (("Normal", False, False), ("SK", False, True), ("None", True, True))
         for mode, relocatable, expected_enable_sk in cases:
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as output_dir:
                 captured_context = {}
@@ -940,15 +804,9 @@ class TestOpCompilationUt(unittest.TestCase):
                     context = op_context.get_context()
                     captured_context["mode"] = context.get_addition("kernel_spec_mode")
                     captured_context["dir"] = context.get_addition("kernel_spec_dir")
-                    captured_context["sk_sub_combine"] = context.get_addition(
-                        "super_kernel_sub_combine"
-                    )
+                    captured_context["sk_sub_combine"] = context.get_addition("super_kernel_sub_combine")
 
-                op = {
-                    "bin_filename": "Add_3",
-                    "inputs": [],
-                    "outputs": [],
-                }
+                op = {"bin_filename": "Add_3", "inputs": [], "outputs": []}
                 op_info = {
                     OpcOptions.OP_FUNC_ATTR: op_func,
                     OpcOptions.IS_DYNAMIC: "true",
@@ -966,24 +824,11 @@ class TestOpCompilationUt(unittest.TestCase):
 
                 self.assertEqual(captured_context["mode"], mode)
                 self.assertEqual(captured_context["dir"], output_dir)
-                self.assertIs(
-                    captured_context["sk_sub_combine"],
-                    True if mode == "SK" else None,
-                )
-                self.assertIs(
-                    build_config.call_args.kwargs["enable_super_kernel"],
-                    expected_enable_sk,
-                )
+                self.assertIs(captured_context["sk_sub_combine"], True if mode == "SK" else None)
+                self.assertIs(build_config.call_args.kwargs["enable_super_kernel"], expected_enable_sk)
 
     def test_kernel_spec_sk_adds_default_sub_super_kernel_info(self):
-        compiler = SingleOpCompile(
-            {},
-            {},
-            {
-                OpcOptions.KERNEL_SPEC: "SK",
-                OpcOptions.SPK_OPT: "early-start=1",
-            },
-        )
+        compiler = SingleOpCompile({}, {}, {OpcOptions.KERNEL_SPEC: "SK", OpcOptions.SPK_OPT: "early-start=1"})
         with op_context.OpContext() as context:
             compiler.set_kernel_spec_for_context(context)
             self.assertEqual(
@@ -1074,18 +919,12 @@ class TestOpCompilationUt(unittest.TestCase):
         op_json = {
             CompileParam.TYPE: "mat_mul",
             CompileParam.OP_LIST: [
-                {
-                    OpcOptions.BIN_FILENAME: test_bin_name,
-                    CompileParam.INPUTS: [],
-                    CompileParam.OUTPUTS: [],
-                }
+                {OpcOptions.BIN_FILENAME: test_bin_name, CompileParam.INPUTS: [], CompileParam.OUTPUTS: []}
             ],
         }
 
         with patch("op_compilation.SingleOpCompile") as patchSingleOpCompile:
-            with patch(
-                "op_compilation.get_single_op_operator"
-            ) as patch_get_single_op_operator:
+            with patch("op_compilation.get_single_op_operator") as patch_get_single_op_operator:
                 # 由于算子实际不存在，通过patch返回模拟的算子脚本main_func
                 patch_get_single_op_operator.return_value = MagicMock()
 
@@ -1101,9 +940,7 @@ class TestOpCompilationUt(unittest.TestCase):
                     return meta_dir + test_bin_name + ".json"
 
                 patchSingleOpCompile.return_value = MagicMock()
-                patchSingleOpCompile.return_value.op_compile = MagicMock(
-                    side_effect=create_op_bin
-                )
+                patchSingleOpCompile.return_value.op_compile = MagicMock(side_effect=create_op_bin)
 
                 test_op_compilation = OpCompilation(opc_compile_args)
                 test_op_compilation.single_op_compilation(op_json)
@@ -1112,9 +949,7 @@ class TestOpCompilationUt(unittest.TestCase):
 
         del test_output
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     @patch("asc_op_compile_base.common.platform.platform_info.get_soc_spec")
     def test_load_op_info(self, mock_set_current_compile_soc_info, mock_get_soc_spec):
         mock_set_current_compile_soc_info.return_value = "success"
@@ -1123,15 +958,11 @@ class TestOpCompilationUt(unittest.TestCase):
         res = normalize_optional_impl_mode("high_performance, optional")
         self.assertEqual(res, "high_performance")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_implmode_op_compilation_ut_01(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_implmode_op_compilation_ut_01 ============"
-        )
+        logger.debug("Start to execute ============ test_implmode_op_compilation_ut_01 ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/sqrt.json"
@@ -1157,19 +988,13 @@ class TestOpCompilationUt(unittest.TestCase):
         logger.debug("Testcase delete files in output dir and debug dir")
         self.del_files(test_root_dir + "/output")
         os.remove(test_root_dir + "/debug_dir/kernel_meta_Sqrt/kernel_meta/Sqrt.o")
-        logger.debug(
-            "End to execute ============ test_implmode_op_compilation_ut_01 ============"
-        )
+        logger.debug("End to execute ============ test_implmode_op_compilation_ut_01 ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_implmode_op_compilation_ut_02(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_implmode_op_compilation_ut_02 ============"
-        )
+        logger.debug("Start to execute ============ test_implmode_op_compilation_ut_02 ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/MatMul.json"
@@ -1194,19 +1019,13 @@ class TestOpCompilationUt(unittest.TestCase):
         # delete file in output
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
-        logger.debug(
-            "End to execute ============ test_implmode_op_compilation_ut_02 ============"
-        )
+        logger.debug("End to execute ============ test_implmode_op_compilation_ut_02 ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_implmode_op_compilation_st_03(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_implmode_op_compilation_ut_03 ============"
-        )
+        logger.debug("Start to execute ============ test_implmode_op_compilation_ut_03 ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/sqrt.json"
@@ -1231,19 +1050,13 @@ class TestOpCompilationUt(unittest.TestCase):
         # delete file in output
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
-        logger.debug(
-            "End to execute ============ test_implmode_op_compilation_ut_03 ============"
-        )
+        logger.debug("End to execute ============ test_implmode_op_compilation_ut_03 ============")
 
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info.set_current_compile_soc_info")
     def test_implmode_op_compilation_ut_04(self, mock_set_current_compile_soc_info):
         mock_set_current_compile_soc_info.return_value = "success"
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_implmode_op_compilation_ut_04 ============"
-        )
+        logger.debug("Start to execute ============ test_implmode_op_compilation_ut_04 ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         input_param_path = test_root_dir + "/stub/files/MatMul.json"
@@ -1278,15 +1091,11 @@ class TestOpCompilationUt(unittest.TestCase):
         logger.debug("Testcase delete files in output dir")
         self.del_files(test_root_dir + "/output")
 
-        logger.debug(
-            "End to execute ============ test_implmode_op_compilation_ut_04 ============"
-        )
+        logger.debug("End to execute ============ test_implmode_op_compilation_ut_04 ============")
 
     def test_copy_compile_res_files_to_output_ut(self):
         """test op_compilation"""
-        logger.debug(
-            "Start to execute ============ test_copy_compile_res_files_to_output_ut ============"
-        )
+        logger.debug("Start to execute ============ test_copy_compile_res_files_to_output_ut ============")
 
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -1307,34 +1116,20 @@ class TestOpCompilationUt(unittest.TestCase):
         l1_fusion_flag = "false"
         l2_fusion_flag = "false"
         l2_mode_flag = "0"
-        post_compilation = PostCompilation(
-            opc_compile_args, l1_fusion_flag, l2_fusion_flag, l2_mode_flag
-        )
+        post_compilation = PostCompilation(opc_compile_args, l1_fusion_flag, l2_fusion_flag, l2_mode_flag)
 
         ret = post_compilation.copy_compile_res_files_to_output(op_path)
 
-        check_file_suffix = [
-            ".json",
-            "_mix_aic.json",
-            "_mix_aic.txt",
-            "_mix_aiv.json",
-            "_mix_aiv.txt",
-        ]
+        check_file_suffix = [".json", "_mix_aic.json", "_mix_aic.txt", "_mix_aiv.json", "_mix_aiv.txt"]
         for suffix in check_file_suffix:
-            self.assertEqual(
-                os.path.exists(output_dir + "matmul_add_1{}".format(suffix)), True
-            )
+            self.assertEqual(os.path.exists(output_dir + "matmul_add_1{}".format(suffix)), True)
         for suffix in check_file_suffix:
             os.remove(output_dir + "matmul_add_1{}".format(suffix))
 
-        logger.debug(
-            "End to execute ============ test_copy_compile_res_files_to_output_ut ============"
-        )
+        logger.debug("End to execute ============ test_copy_compile_res_files_to_output_ut ============")
 
     def test_check_simplifiedkey_ut(self):
-        logger.debug(
-            "Start to execute ============ test_check_simplifiedkey_ut ============"
-        )
+        logger.debug("Start to execute ============ test_check_simplifiedkey_ut ============")
         test_root_dir = os.path.abspath(os.path.dirname(__file__))
         test_debug_dir = test_root_dir + "/debug_dir/kernel_meta/testSupportInfo.json"
         opc_compile_args = {
@@ -1355,11 +1150,7 @@ class TestOpCompilationUt(unittest.TestCase):
         l2_fusion_flag = "false"
         l2_mode_flag = "0"
         single_post_compilation = SingleOpPostCompile(
-            opc_compile_args,
-            l1_fusion_flag,
-            l2_fusion_flag,
-            l2_mode_flag,
-            fusion_impl_mode,
+            opc_compile_args, l1_fusion_flag, l2_fusion_flag, l2_mode_flag, fusion_impl_mode
         )
         op = {
             "op_type": "Add",
@@ -1377,15 +1168,7 @@ class TestOpCompilationUt(unittest.TestCase):
                 },
                 None,
             ],
-            "outputs": [
-                {
-                    "name": "x1",
-                    "index": 0,
-                    "dtype": "float16",
-                    "format": "FRACTAL_NZ",
-                    "shape": [-2],
-                }
-            ],
+            "outputs": [{"name": "x1", "index": 0, "dtype": "float16", "format": "FRACTAL_NZ", "shape": [-2]}],
             "attrs": [{"name": "adj_x1", "dtype": "bool", "value": False}, None],
         }
         op_info = {"op_type": "Add", "op_func_attr": "add"}
@@ -1393,18 +1176,14 @@ class TestOpCompilationUt(unittest.TestCase):
         with open(test_debug_dir, "r") as output_json:
             out_json = json.load(output_json)
             simplifiedKey = out_json["supportInfo"]["simplifiedKey"]
-            self.assertEqual(
-                simplifiedKey, ["Add/d=0,p=0/1,2/,/1,29/0", "Add/d=0,p=0/0,0/,/1,29/0"]
-            )
+            self.assertEqual(simplifiedKey, ["Add/d=0,p=0/1,2/,/1,29/0", "Add/d=0,p=0/0,0/,/1,29/0"])
 
         del op["inputs"][0]["dtypeForBinQuery"]
         single_post_compilation.update_info_to_json_file(op, op_info, test_debug_dir)
         with open(test_debug_dir, "r") as output_json:
             out_json = json.load(output_json)
             simplifiedKey = out_json["supportInfo"]["simplifiedKey"]
-            self.assertEqual(
-                simplifiedKey, ["Add/d=0,p=0/1,2/,/1,29/0", "Add/d=0,p=0/1,0/,/1,29/0"]
-            )
+            self.assertEqual(simplifiedKey, ["Add/d=0,p=0/1,2/,/1,29/0", "Add/d=0,p=0/1,0/,/1,29/0"])
 
         del op["inputs"][0]["formatForBinQuery"]
         single_post_compilation.update_info_to_json_file(op, op_info, test_debug_dir)
@@ -1413,9 +1192,7 @@ class TestOpCompilationUt(unittest.TestCase):
             simplifiedKey = out_json["supportInfo"]["simplifiedKey"]
             self.assertEqual(simplifiedKey, ["Add/d=0,p=0/1,29/,/1,29/0"])
 
-        logger.debug(
-            "End to execute ============ test_check_simplifiedkey_ut ============"
-        )
+        logger.debug("End to execute ============ test_check_simplifiedkey_ut ============")
 
 
 class TestOpCompilation_WithDeterministic:
@@ -1434,10 +1211,7 @@ class TestOpCompilation_WithDeterministic:
             self.bin_name = bin_name
             self.output_bin = self.meta_dir + self.bin_name
 
-            self.compile_args = {
-                OpcOptions.OUTPUT: self.output_dir,
-                OpcOptions.DEBUG_DIR: self.output_dir,
-            }
+            self.compile_args = {OpcOptions.OUTPUT: self.output_dir, OpcOptions.DEBUG_DIR: self.output_dir}
 
     class DefaultArg:
         def __init__(self):
@@ -1481,9 +1255,7 @@ class TestOpCompilation_WithDeterministic:
             will_output = self.will_output.pop(0)
             assert will_output is not None
 
-            will_output_meta_dir, will_output_bin_path, will_output_json_content = (
-                will_output
-            )
+            will_output_meta_dir, will_output_bin_path, will_output_json_content = will_output
             will_output_json_content["binFileName"] = will_output_bin_path
             will_output_json_content["binFileSuffix"] = ".o"
 
@@ -1502,20 +1274,14 @@ class TestOpCompilation_WithDeterministic:
         opc_compile_args = test_arg.compile_args
         opc_compile_args[OpcOptions.DETERMINISTIC] = "true"
 
-        testMock = self.MockSingleOpCompile(
-            [(test_arg.temp_output.meta_dir, test_arg.temp_output.output_bin, {})]
-        )
+        testMock = self.MockSingleOpCompile([(test_arg.temp_output.meta_dir, test_arg.temp_output.output_bin, {})])
 
         with patch("op_compilation.get_single_op_operator"):
             test_op_compilation = OpCompilation(opc_compile_args)
-            test_compile_result = test_op_compilation.single_op_compilation(
-                test_arg.op_json
-            )
+            test_compile_result = test_op_compilation.single_op_compilation(test_arg.op_json)
             assert test_compile_result is True
 
-        assert (
-            testMock.patch_SingleOpCompile.call_args.args[1]["deterministic"] == "true"
-        )
+        assert testMock.patch_SingleOpCompile.call_args.args[1]["deterministic"] == "true"
 
         testMock.stop()
 
@@ -1526,33 +1292,21 @@ class TestOpCompilation_WithDeterministic:
         opc_compile_args[OpcOptions.DETERMINISTIC] = "true"
 
         testMock = self.MockSingleOpCompile(
-            [
-                (
-                    test_arg.temp_output.meta_dir,
-                    test_arg.temp_output.output_bin,
-                    {"deterministic": "true"},
-                )
-            ]
+            [(test_arg.temp_output.meta_dir, test_arg.temp_output.output_bin, {"deterministic": "true"})]
         )
 
         with patch("op_compilation.get_single_op_operator"):
             test_op_compilation = OpCompilation(opc_compile_args)
-            test_compile_result = test_op_compilation.single_op_compilation(
-                test_arg.op_json
-            )
+            test_compile_result = test_op_compilation.single_op_compilation(test_arg.op_json)
 
         assert test_compile_result is True
-        with open(
-            test_arg.temp_output.output_bin + ".json", "r"
-        ) as test_output_json_file:
+        with open(test_arg.temp_output.output_bin + ".json", "r") as test_output_json_file:
             test_output_json = json.load(test_output_json_file)
             assert test_output_json["supportInfo"]["deterministic"] == "true"
 
         testMock.stop()
 
-    def test_deterministic_true__when_kernelist_true__will_insert_deterministic_to_support_info(
-        self,
-    ):
+    def test_deterministic_true__when_kernelist_true__will_insert_deterministic_to_support_info(self):
         test_arg = self.DefaultArg()
 
         opc_compile_args = test_arg.compile_args
@@ -1563,24 +1317,17 @@ class TestOpCompilation_WithDeterministic:
                 (
                     test_arg.temp_output.meta_dir,
                     test_arg.temp_output.output_bin,
-                    {
-                        "deterministic": "ignore",
-                        "kernelList": [{"deterministic": "true"}],
-                    },
+                    {"deterministic": "ignore", "kernelList": [{"deterministic": "true"}]},
                 )
             ]
         )
 
         with patch("op_compilation.get_single_op_operator"):
             test_op_compilation = OpCompilation(opc_compile_args)
-            test_compile_result = test_op_compilation.single_op_compilation(
-                test_arg.op_json
-            )
+            test_compile_result = test_op_compilation.single_op_compilation(test_arg.op_json)
 
         assert test_compile_result is True
-        with open(
-            test_arg.temp_output.output_bin + ".json", "r"
-        ) as test_output_json_file:
+        with open(test_arg.temp_output.output_bin + ".json", "r") as test_output_json_file:
             test_output_json = json.load(test_output_json_file)
             assert test_output_json["supportInfo"]["deterministic"] == "true"
 
@@ -1593,31 +1340,19 @@ class TestOpCompilation_WithDeterministic:
         opc_compile_args[OpcOptions.DETERMINISTIC] = "all"
 
         testMock = self.MockSingleOpCompile(
-            [
-                (
-                    test_arg.temp_output.meta_dir,
-                    test_arg.temp_output.output_bin,
-                    {"deterministic": "ignore"},
-                )
-            ]
+            [(test_arg.temp_output.meta_dir, test_arg.temp_output.output_bin, {"deterministic": "ignore"})]
         )
 
         with patch("op_compilation.get_single_op_operator"):
             test_op_compilation = OpCompilation(opc_compile_args)
-            test_compile_result = test_op_compilation.single_op_compilation(
-                test_arg.op_json
-            )
+            test_compile_result = test_op_compilation.single_op_compilation(test_arg.op_json)
 
         assert test_compile_result is True
-        assert (
-            testMock.patch_SingleOpCompile.call_args.args[1]["deterministic"] == "true"
-        )
+        assert testMock.patch_SingleOpCompile.call_args.args[1]["deterministic"] == "true"
 
         testMock.stop()
 
-    def test_deterministic_all__when_op_support__will_rename_binfile__and_compile_nondeterministic(
-        self,
-    ):
+    def test_deterministic_all__when_op_support__will_rename_binfile__and_compile_nondeterministic(self):
         test_arg = self.DefaultArg()
 
         opc_compile_args = test_arg.compile_args
@@ -1625,40 +1360,25 @@ class TestOpCompilation_WithDeterministic:
 
         testMock = self.MockSingleOpCompile(
             [
-                (
-                    test_arg.temp_output.meta_dir,
-                    test_arg.temp_output.output_bin,
-                    {"deterministic": "true"},
-                ),
-                (
-                    test_arg.temp_output.meta_dir,
-                    test_arg.temp_output.output_bin,
-                    {"deterministic": "false"},
-                ),
+                (test_arg.temp_output.meta_dir, test_arg.temp_output.output_bin, {"deterministic": "true"}),
+                (test_arg.temp_output.meta_dir, test_arg.temp_output.output_bin, {"deterministic": "false"}),
             ]
         )
 
         with patch("op_compilation.get_single_op_operator"):
             test_op_compilation = OpCompilation(opc_compile_args)
-            test_compile_result = test_op_compilation.single_op_compilation(
-                test_arg.op_json
-            )
+            test_compile_result = test_op_compilation.single_op_compilation(test_arg.op_json)
 
         assert test_compile_result is True
 
-        output_bin = (
-            test_arg.temp_output.output_dir + "/" + test_arg.temp_output.bin_name
-        )
+        output_bin = test_arg.temp_output.output_dir + "/" + test_arg.temp_output.bin_name
 
         assert Path(output_bin + "_deterministic.json").is_file()
         assert Path(output_bin + "_deterministic.o").is_file()
         with open(output_bin + "_deterministic.json", "r") as output_deterministic_json:
             output_json = json.load(output_deterministic_json)
             assert output_json.get("deterministic") == "true"
-            assert (
-                output_json.get("binFileName")
-                == test_arg.temp_output.bin_name + "_deterministic"
-            )
+            assert output_json.get("binFileName") == test_arg.temp_output.bin_name + "_deterministic"
 
         assert Path(output_bin + ".json").is_file()
         assert Path(output_bin + ".o").is_file()

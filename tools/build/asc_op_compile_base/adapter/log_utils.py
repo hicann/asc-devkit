@@ -97,9 +97,7 @@ class LogUtil:
                 f.write(" ".join(str(cmd) for cmd in compile_cmd))
                 f.write("\n\n")
         except Exception as err:
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE, ("write log failed, reason:", err)
-            )
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("write log failed, reason:", err))
 
     @staticmethod
     def set_soc_version(soc_version):
@@ -117,18 +115,11 @@ class LogUtil:
                 f.write(f"{level} {log_str}")
                 f.write("\n\n")
         except Exception as err:
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE, ("write log failed, reason:", err)
-            )
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("write log failed, reason:", err))
 
     # print log with level judge
     @staticmethod
-    def print_compile_log(
-        kernel_name: str,
-        msg_info: str,
-        log_level: AscendCLogLevel,
-        option: Option = Option.DEFAULT,
-    ):
+    def print_compile_log(kernel_name: str, msg_info: str, log_level: AscendCLogLevel, option: Option = Option.DEFAULT):
         default_log_level = AscendCLogLevel.LOG_WARNING.value
         plog_switch = os.environ.get("ASCEND_SLOG_PRINT_TO_STDOUT")
         plog_level = os.environ.get("ASCEND_GLOBAL_LOG_LEVEL")
@@ -139,23 +130,14 @@ class LogUtil:
         LogUtil.plog_print(kernel_name, msg_info, log_level, option)
         if plog_switch is None and log_level.value < default_log_level:
             return
-        if (
-            plog_switch is not None
-            and int(plog_switch) == 0
-            and log_level.value < default_log_level
-        ):
+        if plog_switch is not None and int(plog_switch) == 0 and log_level.value < default_log_level:
             return
         LogUtil.log_print(kernel_name, msg_info, log_level, option)
         return
 
     # print log without level judge
     @staticmethod
-    def log_print(
-        kernel_name: str,
-        msg_info: str,
-        log_level: AscendCLogLevel,
-        option: Option = Option.DEFAULT,
-    ):
+    def log_print(kernel_name: str, msg_info: str, log_level: AscendCLogLevel, option: Option = Option.DEFAULT):
         short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
         tim_head = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
         level_info = " [{}]".format(LOG_LEVEL_TO_STR[log_level])
@@ -168,12 +150,7 @@ class LogUtil:
         print(log_msg, flush=True)
 
     @staticmethod
-    def detail_log_print(
-        kernel_name: str,
-        msg_info: str,
-        log_level: AscendCLogLevel,
-        option: Option = Option.DEFAULT,
-    ):
+    def detail_log_print(kernel_name: str, msg_info: str, log_level: AscendCLogLevel, option: Option = Option.DEFAULT):
         plog_switch = os.environ.get("ASCEND_GLOBAL_EVENT_ENABLE")
         if plog_switch is not None and int(plog_switch) == 1:
             logpid = os.getpid()
@@ -202,12 +179,7 @@ class LogUtil:
             print(log_msg, flush=True)
 
     @staticmethod
-    def plog_print(
-        kernel_name: str,
-        msg_info: str,
-        log_level: AscendCLogLevel,
-        option: Option = Option.DEFAULT,
-    ):
+    def plog_print(kernel_name: str, msg_info: str, log_level: AscendCLogLevel, option: Option = Option.DEFAULT):
         # plog print
         short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
         plog_log_msg = "[AscendCCompiler] "
@@ -228,17 +200,7 @@ class LogUtil:
 
     @staticmethod
     def fix_string_escapes(log_message: str) -> str:
-        common_escapes = {
-            0: r"\0",
-            7: r"\a",
-            8: r"\b",
-            9: r"\t",
-            10: r"\n",
-            11: r"\v",
-            12: r"\f",
-            13: r"\r",
-            27: r"\e",
-        }
+        common_escapes = {0: r"\0", 7: r"\a", 8: r"\b", 9: r"\t", 10: r"\n", 11: r"\v", 12: r"\f", 13: r"\r", 27: r"\e"}
 
         # process control symbols
         def escape_control_symbols(match):

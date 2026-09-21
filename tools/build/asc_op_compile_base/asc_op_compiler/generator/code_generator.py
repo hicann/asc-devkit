@@ -48,15 +48,7 @@ class CodeGeneratorConfig:
 
 
 class CodeGeneratorParams:
-    def __init__(
-        self,
-        compile_info,
-        op_info,
-        compile_option_tuple,
-        tiling_info,
-        configuration,
-        kernel_func_name,
-    ):
+    def __init__(self, compile_info, op_info, compile_option_tuple, tiling_info, configuration, kernel_func_name):
         pass
 
 

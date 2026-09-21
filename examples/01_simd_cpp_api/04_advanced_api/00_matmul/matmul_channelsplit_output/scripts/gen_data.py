@@ -31,9 +31,7 @@ def gen_c_data_nz_format(y_gm_in):
     y_gm_pad[0:M, 0:N] = y_gm_in
     y_gm = y_gm_pad.astype(np.float32)
     y_gm = (
-        y_gm.reshape((int(align_m / 16), 16, int(align_n / c0_size), c0_size))
-        .transpose(2, 0, 1, 3)
-        .astype(np.float32)
+        y_gm.reshape((int(align_m / 16), 16, int(align_n / c0_size), c0_size)).transpose(2, 0, 1, 3).astype(np.float32)
     )
     return y_gm
 
@@ -42,10 +40,7 @@ def gen_golden_data():
     x1_gm = np.random.uniform(-1, 1, [M, K]).astype(np.float16)
     x2_gm = np.random.uniform(-1, 1, [K, N]).astype(np.float16)
     bias_gm = np.random.uniform(-10, 10, [N]).reshape([N]).astype(np.float32)
-    golden = (
-        np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32)
-        + bias_gm
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32) + bias_gm
 
     golden_nz = gen_c_data_nz_format(golden)
 

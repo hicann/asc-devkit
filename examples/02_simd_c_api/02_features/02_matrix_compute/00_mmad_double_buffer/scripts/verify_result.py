@@ -22,23 +22,14 @@ def verify_result(output_path, golden_path):
     output = np.fromfile(output_path, dtype=np.float32)
     golden = np.fromfile(golden_path, dtype=np.float32)
     if output.size != EXPECTED_ELEMENTS or golden.size != EXPECTED_ELEMENTS:
-        raise ValueError(
-            f"size mismatch: expected={EXPECTED_ELEMENTS}, output={output.size}, golden={golden.size}"
-        )
+        raise ValueError(f"size mismatch: expected={EXPECTED_ELEMENTS}, output={output.size}, golden={golden.size}")
 
-    matched = np.isclose(
-        output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
+    matched = np.isclose(output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
     mismatch_indices = np.flatnonzero(~matched)
     for index in mismatch_indices[:10]:
-        print(
-            f"index {index}: expected={golden[index]:.9f}, actual={output[index]:.9f}"
-        )
+        print(f"index {index}: expected={golden[index]:.9f}, actual={output[index]:.9f}")
 
-    print(
-        f"mismatched elements: {mismatch_indices.size}, "
-        f"rtol: {RELATIVE_TOL}, atol: {ABSOLUTE_TOL}, equal_nan: True"
-    )
+    print(f"mismatched elements: {mismatch_indices.size}, rtol: {RELATIVE_TOL}, atol: {ABSOLUTE_TOL}, equal_nan: True")
     return mismatch_indices.size == 0
 
 

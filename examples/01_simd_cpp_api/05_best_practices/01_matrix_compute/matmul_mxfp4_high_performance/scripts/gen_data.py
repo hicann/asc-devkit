@@ -58,9 +58,7 @@ def gen_golden_data():
         x1_full[:, i] = x1_gm[:, i] * x1_mx[:, i // 32]
         x2_full[i, :] = x2_gm[i, :] * x2_mx[i // 32, :]
 
-    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(
-        bfloat16
-    )
+    golden = np.matmul(x1_full.astype(np.float64), x2_full.astype(np.float64)).astype(bfloat16)
 
     x2_scale_gm = x2_scale_gm.reshape(int(sk / 2), 2, n).transpose(0, 2, 1)
     x1_gm_packed = pack_two_fp4(x1_gm)

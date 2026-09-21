@@ -45,41 +45,29 @@ def _get_binary_json_op_list(binary_json):
 def _check_binary_json(binary_json, expected_op_type):
     op_list = _get_binary_json_op_list(binary_json)
     if binary_json.get("op_type") != expected_op_type:
-        raise ValueError(
-            f"op_type: expected '{expected_op_type}', got '{binary_json.get('op_type')}'"
-        )
+        raise ValueError(f"op_type: expected '{expected_op_type}', got '{binary_json.get('op_type')}'")
 
     bin_filenames = set()
     simplified_keys = set()
     for index, op in enumerate(op_list):
         op_path = f"op_list[{index}]"
         bin_filename = op.get("bin_filename")
-        if (
-            not isinstance(bin_filename, str)
-            or not bin_filename
-            or os.path.basename(bin_filename) != bin_filename
-        ):
+        if not isinstance(bin_filename, str) or not bin_filename or os.path.basename(bin_filename) != bin_filename:
             raise ValueError(f"{op_path}.bin_filename: invalid value '{bin_filename}'")
         output_name = os.path.splitext(bin_filename)[0]
-        if output_name != expected_op_type and not output_name.startswith(
-            f"{expected_op_type}_"
-        ):
+        if output_name != expected_op_type and not output_name.startswith(f"{expected_op_type}_"):
             raise ValueError(
                 f"{op_path}.bin_filename: expected '{expected_op_type}' or "
                 f"prefix '{expected_op_type}_', got '{bin_filename}'"
             )
         if output_name in bin_filenames:
-            raise ValueError(
-                f"{op_path}.bin_filename: duplicate output '{output_name}'"
-            )
+            raise ValueError(f"{op_path}.bin_filename: duplicate output '{output_name}'")
         bin_filenames.add(output_name)
         simplified_key = op.get("simplified_key")
         if not isinstance(simplified_key, str) or not simplified_key:
             raise ValueError(f"{op_path}.simplified_key: expected non-empty string")
         if simplified_key in simplified_keys:
-            raise ValueError(
-                f"{op_path}.simplified_key: duplicate value '{simplified_key}'"
-            )
+            raise ValueError(f"{op_path}.simplified_key: duplicate value '{simplified_key}'")
         simplified_keys.add(simplified_key)
 
 

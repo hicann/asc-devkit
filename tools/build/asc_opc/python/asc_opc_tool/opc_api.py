@@ -29,9 +29,7 @@ def compile_op(op_params, build_options):
     res = opt_parser.parse_build_options(build_options)
     if not res:
         logger.error("parse_build_options is failed.")
-    opt_parser.set_option(
-        OpcOptions.OP_COMPILE_MODE, OpcCompileMode.SINGLE_OP_DICT_MODE
-    )
+    opt_parser.set_option(OpcOptions.OP_COMPILE_MODE, OpcCompileMode.SINGLE_OP_DICT_MODE)
 
     if not opt_parser.check_input_params():
         logger.error("Opc tool compile failed.")

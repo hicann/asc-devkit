@@ -33,9 +33,7 @@ def gen_golden_data():
     for idx in range(b):
         x1_gm_left = np.random.uniform(-1, 1, [m, k]).astype(src_type)
         x2_gm_right = np.random.uniform(-1, 1, [k, n]).astype(src_type)
-        golden_one = np.matmul(
-            x1_gm_left.astype(dst_type), x2_gm_right.astype(dst_type)
-        ).astype(dst_type)
+        golden_one = np.matmul(x1_gm_left.astype(dst_type), x2_gm_right.astype(dst_type)).astype(dst_type)
         if is_bias:
             golden_one = golden_one + bias_gm.astype(dst_type)
         if is_trans_a:

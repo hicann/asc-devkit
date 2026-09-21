@@ -36,9 +36,7 @@ class TilingInfoGeneratorParams:
 
 
 class TilingInfoGenerator(object):
-    def __init__(
-        self, params: TilingInfoGeneratorParams, config: TilingInfoGeneratorConfig
-    ):
+    def __init__(self, params: TilingInfoGeneratorParams, config: TilingInfoGeneratorConfig):
         pass
 
     def parse(self):

@@ -13,9 +13,7 @@ from ..ascendc_constants import CompileOptionTuple
 
 
 class InitializerConfig:
-    def __init__(
-        self, support_impl_mode: bool, is_support_dfx: bool, support_super_kernel: bool
-    ):
+    def __init__(self, support_impl_mode: bool, is_support_dfx: bool, support_super_kernel: bool):
         self.support_impl_mode = support_impl_mode
         self.is_support_dfx = is_support_dfx
         self.support_super_kernel = support_super_kernel

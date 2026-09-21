@@ -40,20 +40,14 @@ def pad_matrix(data_nd, rows, columns):
 
 def nd_to_nz(data_nd):
     rows, columns = data_nd.shape
-    return (
-        data_nd.reshape(rows // C0_SIZE, C0_SIZE, columns // C0_SIZE, C0_SIZE)
-        .transpose(2, 0, 1, 3)
-        .copy()
-    )
+    return data_nd.reshape(rows // C0_SIZE, C0_SIZE, columns // C0_SIZE, C0_SIZE).transpose(2, 0, 1, 3).copy()
 
 
 def generate_data(scenario_num=1):
     np.random.seed(9)
     a_nd = np.random.uniform(-1, 1, (M, K)).astype(np.float16)
     b_nd = np.random.uniform(-1, 1, (K, N)).astype(np.float16)
-    golden = np.matmul(a_nd.astype(np.float32), b_nd.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(a_nd.astype(np.float32), b_nd.astype(np.float32)).astype(np.float32)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

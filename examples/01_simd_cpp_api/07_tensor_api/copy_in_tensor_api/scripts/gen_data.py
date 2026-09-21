@@ -31,9 +31,7 @@ def gen_golden_data(scenario_num):
     bias = np.random.uniform(-2, 2, [N]).astype(np.float32)
 
     # 计算golden: C = A @ B + bias, float
-    golden = np.matmul(input_x.astype(np.float32), input_y.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(input_x.astype(np.float32), input_y.astype(np.float32)).astype(np.float32)
     golden = golden + bias
 
     os.makedirs("input", exist_ok=True)

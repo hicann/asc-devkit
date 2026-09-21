@@ -24,10 +24,7 @@ def verify_result(output_file, golden_file):
     output = output[: golden.size]
     different_indexes = np.where(output != golden)[0]
     for index in different_indexes[:100]:
-        print(
-            "data index: %06d, expected: %d, actual: %d"
-            % (index, golden[index], output[index])
-        )
+        print("data index: %06d, expected: %d, actual: %d" % (index, golden[index], output[index]))
 
     error_ratio = float(different_indexes.size) / golden.size
     print("error ratio: %.4f, tolerance: %.4f" % (error_ratio, 0.0))

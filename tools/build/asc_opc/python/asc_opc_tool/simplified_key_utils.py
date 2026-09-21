@@ -12,18 +12,8 @@
 
 
 from asc_op_compile_base.common.utils import log as logger
-from constant import (
-    OpcOptions,
-    CompileParam,
-    OpImplType,
-    OpFormatType,
-    OpDataType,
-    OpParamType,
-)
-from opc_common import (
-    check_input_and_output_for_simplified_key,
-    check_attr_for_simpilified_key,
-)
+from constant import OpcOptions, CompileParam, OpImplType, OpFormatType, OpDataType, OpParamType
+from opc_common import check_input_and_output_for_simplified_key, check_attr_for_simpilified_key
 
 
 SIMPLIFIED_KEY_MAX_LEN = 1024
@@ -33,11 +23,7 @@ CUSTOM_SIMPLIFIED_KEY_MAX_LEN = 256
 def _check_simplified_key_length(simplified_key, max_len, key_name):
     key_len = len(simplified_key.encode("utf-8"))
     if key_len >= max_len:
-        raise ValueError(
-            "{} length must be less than {} bytes, but got {} bytes.".format(
-                key_name, max_len, key_len
-            )
-        )
+        raise ValueError("{} length must be less than {} bytes, but got {} bytes.".format(key_name, max_len, key_len))
 
 
 def init_dynamic_param_and_optional_input(simplified_key_mode):
@@ -57,11 +43,7 @@ def init_dynamic_param_and_optional_input(simplified_key_mode):
 
 
 def generate_simplified_key_mode_0(tmp_tuple, simplified_key_mode):
-    has_dynamic_param, dynamic_param_mode, has_optional_param = (
-        tmp_tuple[0],
-        tmp_tuple[1],
-        tmp_tuple[2],
-    )
+    has_dynamic_param, dynamic_param_mode, has_optional_param = (tmp_tuple[0], tmp_tuple[1], tmp_tuple[2])
     optional_param_mode, has_non_null_attr = tmp_tuple[3], tmp_tuple[4]
     dynamic_param_condition = (not has_dynamic_param) or (
         has_dynamic_param and dynamic_param_mode == "folded_with_desc"
@@ -83,11 +65,7 @@ def generate_simplified_key_mode_0(tmp_tuple, simplified_key_mode):
 
 
 def generate_simplified_key_mode_1(tmp_tuple, simplified_key_mode):
-    has_dynamic_param, dynamic_param_mode, has_optional_param = (
-        tmp_tuple[0],
-        tmp_tuple[1],
-        tmp_tuple[2],
-    )
+    has_dynamic_param, dynamic_param_mode, has_optional_param = (tmp_tuple[0], tmp_tuple[1], tmp_tuple[2])
     optional_param_mode, has_non_null_attr = tmp_tuple[3], tmp_tuple[4]
     dynamic_param_condition = (not has_dynamic_param) or (
         has_dynamic_param and dynamic_param_mode != "folded_with_desc"
@@ -97,12 +75,8 @@ def generate_simplified_key_mode_1(tmp_tuple, simplified_key_mode):
     )
     if has_non_null_attr or dynamic_param_condition or optional_param_condition:
         infer_key_mode = 1
-        dynamic_param_mode = (
-            "unfolded" if dynamic_param_mode is None else dynamic_param_mode
-        )
-        optional_param_mode = (
-            "no_placeholder" if optional_param_mode is None else optional_param_mode
-        )
+        dynamic_param_mode = "unfolded" if dynamic_param_mode is None else dynamic_param_mode
+        optional_param_mode = "no_placeholder" if optional_param_mode is None else optional_param_mode
         logger.info(
             "simplified_key_mode is 1, dynamic_param_mode: %s, optional_param_mode: %s",
             dynamic_param_mode,
@@ -113,34 +87,21 @@ def generate_simplified_key_mode_1(tmp_tuple, simplified_key_mode):
         return simplified_key_mode, optional_param_mode, dynamic_param_mode
 
 
-def generate_simplified_key_mode(
-    opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_param
-):
+def generate_simplified_key_mode(opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_param):
     simplified_key_mode = opc_compile_args.get(OpcOptions.SIMPLE_KEY_MODE)
     if simplified_key_mode == 2:
         return (simplified_key_mode, None, None)
 
     # when simplified_key_mode has been configured as 0 or 1, we need confirm optional_param_mode and dynamic_param_mode
     # when simplified_key_mode has not been configured, we need infer simplified_key_mode by configured param mode
-    dynamic_param_mode, optional_param_mode = init_dynamic_param_and_optional_input(
-        simplified_key_mode
-    )
-    optional_input_mode_config_value = opc_compile_args.get(
-        OpcOptions.OPTIONAL_INPUT_MODE
-    )
-    if (
-        optional_input_mode_config_value is not None
-        and optional_input_mode_config_value != optional_param_mode
-    ):
+    dynamic_param_mode, optional_param_mode = init_dynamic_param_and_optional_input(simplified_key_mode)
+    optional_input_mode_config_value = opc_compile_args.get(OpcOptions.OPTIONAL_INPUT_MODE)
+    if optional_input_mode_config_value is not None and optional_input_mode_config_value != optional_param_mode:
         optional_param_mode = optional_input_mode_config_value
     logger.info("optional_input_mode: %s", optional_param_mode)
 
-    dynamic_param_mode_config_value = opc_compile_args.get(
-        OpcOptions.DYNAMIC_PARAM_MODE
-    )
-    if (dynamic_param_mode_config_value is not None) and (
-        dynamic_param_mode_config_value != dynamic_param_mode
-    ):
+    dynamic_param_mode_config_value = opc_compile_args.get(OpcOptions.DYNAMIC_PARAM_MODE)
+    if (dynamic_param_mode_config_value is not None) and (dynamic_param_mode_config_value != dynamic_param_mode):
         dynamic_param_mode = dynamic_param_mode_config_value
         logger.info("dynamic_param_mode is defined: %s", dynamic_param_mode)
 
@@ -159,22 +120,16 @@ def generate_simplified_key_mode(
         )
         return (simplified_key_mode, optional_param_mode, dynamic_param_mode)
 
-    tmp_tuple = (
-        has_dynamic_param,
-        dynamic_param_mode,
-        has_optional_param,
-        optional_param_mode,
-        has_non_null_attr,
-    )
+    tmp_tuple = (has_dynamic_param, dynamic_param_mode, has_optional_param, optional_param_mode, has_non_null_attr)
     logger.info("tmp_tuple is {}".format(tmp_tuple))
-    infer_key_mode, optional_param_mode, dynamic_param_mode = (
-        generate_simplified_key_mode_0(tmp_tuple, simplified_key_mode)
+    infer_key_mode, optional_param_mode, dynamic_param_mode = generate_simplified_key_mode_0(
+        tmp_tuple, simplified_key_mode
     )
     if infer_key_mode == 0:
         return (infer_key_mode, optional_param_mode, dynamic_param_mode)
 
-    infer_key_mode, optional_param_mode, dynamic_param_mode = (
-        generate_simplified_key_mode_1(tmp_tuple, simplified_key_mode)
+    infer_key_mode, optional_param_mode, dynamic_param_mode = generate_simplified_key_mode_1(
+        tmp_tuple, simplified_key_mode
     )
     if infer_key_mode == 1:
         return (infer_key_mode, optional_param_mode, dynamic_param_mode)
@@ -186,16 +141,10 @@ def generate_simplified_key_mode(
 def infer_simplified_key_mode(op, opc_compile_args):
     simplified_key_configured = op.get(OpcOptions.SIMPLE_KEY, None)
     if simplified_key_configured is not None and simplified_key_configured != "":
-        _check_simplified_key_length(
-            simplified_key_configured,
-            CUSTOM_SIMPLIFIED_KEY_MAX_LEN,
-            "custom simplified_key",
-        )
+        _check_simplified_key_length(simplified_key_configured, CUSTOM_SIMPLIFIED_KEY_MAX_LEN, "custom simplified_key")
         logger.warn("Custom simplified_key is configured; custom mode 2 will be used.")
         return (2, None, None, None, None)
-    has_invalid_option, has_non_null_attr, attr_str = check_attr_for_simpilified_key(
-        op.get(CompileParam.ATTRS)
-    )
+    has_invalid_option, has_non_null_attr, attr_str = check_attr_for_simpilified_key(op.get(CompileParam.ATTRS))
 
     if has_invalid_option and opc_compile_args.get(OpcOptions.SIMPLE_KEY_MODE) != 0:
         return (None, None, None, None, None)
@@ -205,17 +154,9 @@ def infer_simplified_key_mode(op, opc_compile_args):
     )
     if has_invalid_option:
         return (None, None, None, None, None)
-    res_list = generate_simplified_key_mode(
-        opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_input
-    )
+    res_list = generate_simplified_key_mode(opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_input)
     has_optional_param = has_optional_input or has_optional_output
-    return (
-        res_list[0],
-        res_list[1],
-        has_optional_param,
-        res_list[2],
-        has_dynamic_param,
-    )
+    return (res_list[0], res_list[1], has_optional_param, res_list[2], has_dynamic_param)
 
 
 def generate_deterministic_for_simpilified_key(deterministic):
@@ -241,35 +182,15 @@ def generate_deterministic_for_simpilified_key(deterministic):
     return determi_list
 
 
-def generate_custom_mode_simplified_key(
-    op_type, op_simplified_key, deterministic_list, impl_mode_list
-):
-    _check_simplified_key_length(
-        op_simplified_key,
-        CUSTOM_SIMPLIFIED_KEY_MAX_LEN,
-        "custom simplified_key",
-    )
+def generate_custom_mode_simplified_key(op_type, op_simplified_key, deterministic_list, impl_mode_list):
+    _check_simplified_key_length(op_simplified_key, CUSTOM_SIMPLIFIED_KEY_MAX_LEN, "custom simplified_key")
     simplified_key = []
     for deterministic_str in deterministic_list:
         for impl_mode_str in impl_mode_list:
-            simplified_key_str = (
-                op_type
-                + "/"
-                + deterministic_str
-                + ","
-                + impl_mode_str
-                + "/"
-                + op_simplified_key
-            )
-            _check_simplified_key_length(
-                simplified_key_str, SIMPLIFIED_KEY_MAX_LEN, "simplified_key"
-            )
+            simplified_key_str = op_type + "/" + deterministic_str + "," + impl_mode_str + "/" + op_simplified_key
+            _check_simplified_key_length(simplified_key_str, SIMPLIFIED_KEY_MAX_LEN, "simplified_key")
             simplified_key.append(simplified_key_str)
-            logger.info(
-                "simplified_key_str=[%s], simplified_key=[%s]",
-                simplified_key_str,
-                str(simplified_key),
-            )
+            logger.info("simplified_key_str=[%s], simplified_key=[%s]", simplified_key_str, str(simplified_key))
     return simplified_key
 
 
@@ -280,18 +201,10 @@ def generate_inputs_outputs_simpilified_key_str(
 
     for index in range(0, final_num):
         inputs_str = generate_input_or_output_for_simpilified_key(
-            op.get(CompileParam.INPUTS),
-            simplified_key_mode,
-            optional_input_mode,
-            dynamic_param_mode,
-            index,
+            op.get(CompileParam.INPUTS), simplified_key_mode, optional_input_mode, dynamic_param_mode, index
         )
         outputs_str = generate_input_or_output_for_simpilified_key(
-            op.get(CompileParam.OUTPUTS),
-            simplified_key_mode,
-            optional_input_mode,
-            dynamic_param_mode,
-            index,
+            op.get(CompileParam.OUTPUTS), simplified_key_mode, optional_input_mode, dynamic_param_mode, index
         )
 
         input_list.append(inputs_str)
@@ -300,21 +213,14 @@ def generate_inputs_outputs_simpilified_key_str(
     return input_list, output_list
 
 
-def assemble_simplified_key(
-    simlified_info_tuple, op_type, input_list, output_list, attr_str
-):
+def assemble_simplified_key(simlified_info_tuple, op_type, input_list, output_list, attr_str):
     final_num = len(input_list)
     simplified_key = []
-    deterministic_list, impl_mode_list = (
-        simlified_info_tuple[0],
-        simlified_info_tuple[1],
-    )
+    deterministic_list, impl_mode_list = (simlified_info_tuple[0], simlified_info_tuple[1])
     for deterministic_str in deterministic_list:
         for impl_mode_str in impl_mode_list:
             for index in range(0, final_num):
-                simplified_key_str = (
-                    op_type + "/" + deterministic_str + "," + impl_mode_str
-                )
+                simplified_key_str = op_type + "/" + deterministic_str + "," + impl_mode_str
                 if input_list:
                     simplified_key_str = simplified_key_str + input_list[index]
                 if output_list:
@@ -322,20 +228,12 @@ def assemble_simplified_key(
                 if attr_str:
                     simplified_key_str = simplified_key_str + attr_str
                 simplified_key.append(simplified_key_str)
-                logger.info(
-                    "simplified_key_str=[%s], simplified_key=[%s]",
-                    simplified_key_str,
-                    str(simplified_key),
-                )
+                logger.info("simplified_key_str=[%s], simplified_key=[%s]", simplified_key_str, str(simplified_key))
     return simplified_key
 
 
 def generate_simplified_key_str(res_tuple, simlified_info_tuple, op, op_type):
-    simplified_key_mode, optional_input_mode, dynamic_param_mode = (
-        res_tuple[0],
-        res_tuple[1],
-        res_tuple[2],
-    )
+    simplified_key_mode, optional_input_mode, dynamic_param_mode = (res_tuple[0], res_tuple[1], res_tuple[2])
     attr_str = simlified_info_tuple[2]
     if simplified_key_mode == 0:
         attr_str = str()
@@ -351,8 +249,7 @@ def generate_simplified_key_str(res_tuple, simlified_info_tuple, op, op_type):
                 final_num = dtype_num
         else:
             raise ValueError(
-                "invalid dtypeForBinQuery and formatForBinQuery configuration,"
-                "will not generate simplified_key"
+                "invalid dtypeForBinQuery and formatForBinQuery configuration,will not generate simplified_key"
             )
 
         logger.debug("final_num is [%d]", final_num)
@@ -361,12 +258,8 @@ def generate_simplified_key_str(res_tuple, simlified_info_tuple, op, op_type):
             final_num, op, simplified_key_mode, optional_input_mode, dynamic_param_mode
         )
 
-        logger.debug(
-            "input_list is {}, output_list is {}".format(input_list, output_list)
-        )
-        simplified_key = assemble_simplified_key(
-            simlified_info_tuple, op_type, input_list, output_list, attr_str
-        )
+        logger.debug("input_list is {}, output_list is {}".format(input_list, output_list))
+        simplified_key = assemble_simplified_key(simlified_info_tuple, op_type, input_list, output_list, attr_str)
 
     return simplified_key
 
@@ -424,26 +317,11 @@ def get_normalized_dtype(dtype):
         OpDataType.DT_FLOAT8_E4M3FN,
     ]
     logger.debug("Curent dtype is [%s]", str(dtype))
-    if dtype in [
-        OpDataType.DT_INT64,
-        OpDataType.DT_UINT64,
-        OpDataType.DT_DOUBLE,
-        OpDataType.DT_COMPLEX64,
-    ]:
+    if dtype in [OpDataType.DT_INT64, OpDataType.DT_UINT64, OpDataType.DT_DOUBLE, OpDataType.DT_COMPLEX64]:
         normalized_dtype = OpDataType.DT_INT64
-    elif dtype in [
-        OpDataType.DT_INT32,
-        OpDataType.DT_UINT32,
-        OpDataType.DT_FLOAT,
-        OpDataType.DT_COMPLEX32,
-    ]:
+    elif dtype in [OpDataType.DT_INT32, OpDataType.DT_UINT32, OpDataType.DT_FLOAT, OpDataType.DT_COMPLEX32]:
         normalized_dtype = OpDataType.DT_INT32
-    elif dtype in [
-        OpDataType.DT_INT16,
-        OpDataType.DT_UINT16,
-        OpDataType.DT_FLOAT16,
-        OpDataType.DT_BF16,
-    ]:
+    elif dtype in [OpDataType.DT_INT16, OpDataType.DT_UINT16, OpDataType.DT_FLOAT16, OpDataType.DT_BF16]:
         normalized_dtype = OpDataType.DT_INT16
     elif dtype in dtype_mode_8_set:
         normalized_dtype = OpDataType.DT_INT8
@@ -497,9 +375,7 @@ def check_dtype_num_is_same(input_or_output, dtype_num, dtype_list_num):
         if dtype_list is not None:
             dtype_list_num = len(dtype_list)
     if dtype_num != 1 and dtype_list_num != 1 and dtype_list_num != dtype_num:
-        logger.error(
-            "current input dtype num is not same as previous input dtype num, won't generate simplifiedKey"
-        )
+        logger.error("current input dtype num is not same as previous input dtype num, won't generate simplifiedKey")
         return False, dtype_num
 
     return True, dtype_list_num
@@ -513,25 +389,15 @@ def check_format_num_is_same(input_or_output, format_num, op_format_list_num):
             op_format_list_num = len(op_format_list)
 
     if format_num != 1 and op_format_list_num != 1 and op_format_list_num != format_num:
-        logger.error(
-            "current input format num is not same as previous input format num, won't generate simplifiedKey"
-        )
+        logger.error("current input format num is not same as previous input format num, won't generate simplifiedKey")
         return False, format_num
 
     return True, op_format_list_num
 
 
-def check_format_dtype_num_is_same(
-    dtype_num, format_num, dtype_list_num, op_format_list_num
-):
-    if (
-        dtype_list_num != 1
-        and op_format_list_num != 1
-        and dtype_list_num != op_format_list_num
-    ):
-        logger.error(
-            "current input format num is not same as dtype num, won't generate simplifiedKey"
-        )
+def check_format_dtype_num_is_same(dtype_num, format_num, dtype_list_num, op_format_list_num):
+    if dtype_list_num != 1 and op_format_list_num != 1 and dtype_list_num != op_format_list_num:
+        logger.error("current input format num is not same as dtype num, won't generate simplifiedKey")
         return False, dtype_num, format_num
 
     if dtype_list_num > dtype_num:
@@ -545,15 +411,11 @@ def check_format_dtype_num_is_same(
 
 def check_single_input_or_output_is_valid(input_or_output, dtype_num, format_num):
     dtype_list_num, op_format_list_num = 1, 1
-    res, dtype_list_num = check_dtype_num_is_same(
-        input_or_output, dtype_num, dtype_list_num
-    )
+    res, dtype_list_num = check_dtype_num_is_same(input_or_output, dtype_num, dtype_list_num)
     if not res:
         return False, dtype_num, format_num
 
-    res, op_format_list_num = check_format_num_is_same(
-        input_or_output, format_num, op_format_list_num
-    )
+    res, op_format_list_num = check_format_num_is_same(input_or_output, format_num, op_format_list_num)
     if not res:
         return False, dtype_num, format_num
 
@@ -573,15 +435,11 @@ def check_in_and_out_is_valid(inputs_or_outputs):
             continue
         if isinstance(input_or_output, list):
             for in_or_out in input_or_output:
-                res, dtype_num, format_num = check_single_input_or_output_is_valid(
-                    in_or_out, dtype_num, format_num
-                )
+                res, dtype_num, format_num = check_single_input_or_output_is_valid(in_or_out, dtype_num, format_num)
                 if not res:
                     return False, dtype_num, format_num
         else:
-            res, dtype_num, format_num = check_single_input_or_output_is_valid(
-                input_or_output, dtype_num, format_num
-            )
+            res, dtype_num, format_num = check_single_input_or_output_is_valid(input_or_output, dtype_num, format_num)
             if not res:
                 return False, dtype_num, format_num
 
@@ -589,11 +447,7 @@ def check_in_and_out_is_valid(inputs_or_outputs):
 
 
 def generate_input_or_output_for_simpilified_key(
-    inputs_or_outputs,
-    simplified_key_mode,
-    optional_input_mode,
-    dynamic_param_mode,
-    index,
+    inputs_or_outputs, simplified_key_mode, optional_input_mode, dynamic_param_mode, index
 ):
     inputs_or_outputs_str = str()
     dynamic_param_count = 0
@@ -616,30 +470,19 @@ def generate_input_or_output_for_simpilified_key(
 
         param_type = input_or_output.get(CompileParam.PARAM_TYPE)
         if param_type == OpParamType.OPT and (
-            simplified_key_mode == 0
-            or (simplified_key_mode == 1 and optional_input_mode == "gen_placeholder")
+            simplified_key_mode == 0 or (simplified_key_mode == 1 and optional_input_mode == "gen_placeholder")
         ):
             logger.info("paramType is optional, don't need generate input/output str.")
             continue
 
-        inputs_or_outputs_str = (
-            inputs_or_outputs_str + "/" + str(dtype_value) + "," + str(op_format_value)
-        )
-        if (
-            simplified_key_mode == 1
-            and dynamic_param_mode == "unfolded"
-            and dynamic_param_count != 0
-        ):
-            inputs_or_outputs_str = (
-                inputs_or_outputs_str + "," + str(dynamic_param_count)
-            )
+        inputs_or_outputs_str = inputs_or_outputs_str + "/" + str(dtype_value) + "," + str(op_format_value)
+        if simplified_key_mode == 1 and dynamic_param_mode == "unfolded" and dynamic_param_count != 0:
+            inputs_or_outputs_str = inputs_or_outputs_str + "," + str(dynamic_param_count)
 
     return inputs_or_outputs_str
 
 
-def generate_simplified_key(
-    opc_compile_args, op, op_info, deterministic, simplified_key_mode
-):
+def generate_simplified_key(opc_compile_args, op, op_info, deterministic, simplified_key_mode):
     """
     generate simplified key from op info
     """
@@ -675,27 +518,19 @@ def generate_simplified_key(
         has_non_null_attr = False
         logger.info("simple_key_mode is 0, ignore attr values")
     else:
-        has_invalid_option, has_non_null_attr, attr_str = (
-            check_attr_for_simpilified_key(op.get(CompileParam.ATTRS))
-        )
+        has_invalid_option, has_non_null_attr, attr_str = check_attr_for_simpilified_key(op.get(CompileParam.ATTRS))
 
     if has_invalid_option and opc_compile_args.get(OpcOptions.SIMPLE_KEY_MODE) != 0:
         simplified_key_mode = None
         return simplified_key, simplified_key_mode
 
-    has_invalid_option, has_dynamic_param, has_optional_input, _ = (
-        check_input_and_output_for_simplified_key(op)
-    )
+    has_invalid_option, has_dynamic_param, has_optional_input, _ = check_input_and_output_for_simplified_key(op)
     if has_invalid_option:
         simplified_key_mode = None
         return simplified_key, simplified_key_mode
-    res_tuple = generate_simplified_key_mode(
-        opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_input
-    )
+    res_tuple = generate_simplified_key_mode(opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_input)
     simplified_key_mode = res_tuple[0]
     simlified_info_tuple = (deterministic_list, impl_mode_list, attr_str)
-    simplified_key = generate_simplified_key_str(
-        res_tuple, simlified_info_tuple, op, op_type
-    )
+    simplified_key = generate_simplified_key_str(res_tuple, simlified_info_tuple, op, op_type)
 
     return simplified_key, simplified_key_mode

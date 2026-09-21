@@ -41,10 +41,7 @@ class OrchestrateShellTest(unittest.TestCase):
 
         presmoke_pkg = root / "scripts/presmoke"
         presmoke_pkg.mkdir(parents=True)
-        shutil.copy(
-            project_root / "scripts/presmoke/orchestrate_report.py",
-            presmoke_pkg / "orchestrate_report.py",
-        )
+        shutil.copy(project_root / "scripts/presmoke/orchestrate_report.py", presmoke_pkg / "orchestrate_report.py")
         (presmoke_pkg / "__init__.py").write_text("", encoding="utf-8")
 
         fake_bin = root / "bin"
@@ -211,13 +208,7 @@ EOF
                 NPU_CARDS="0",
             )
 
-            result = subprocess.run(
-                ["bash", str(script)],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
-            )
+            result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse(stale.exists())
@@ -233,45 +224,24 @@ EOF
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             script = self.copy_orchestrate_fixture(root)
-            env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                ARCH="dav-2201",
-                ASCEND_OPP_PATH=str(root / "opp"),
-            )
+            env = self.base_env(root, PROJECT_ROOT=str(root), ARCH="dav-2201", ASCEND_OPP_PATH=str(root / "opp"))
 
             result = subprocess.run(
-                ["bash", str(script), "--dry-run"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--dry-run"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn(
-                f"out_root={root / 'presmoke_reports' / 'presmoke_dav-2201_'}",
-                result.stdout,
-            )
+            self.assertIn(f"out_root={root / 'presmoke_reports' / 'presmoke_dav-2201_'}", result.stdout)
             self.assertFalse((root / "presmoke_results").exists())
 
     def test_cpu_mode_uses_default_schedule(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             script = self.copy_orchestrate_fixture(root)
-            env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                MODES="cpu",
-                ASCEND_OPP_PATH=str(root / "opp"),
-            )
+            env = self.base_env(root, PROJECT_ROOT=str(root), MODES="cpu", ASCEND_OPP_PATH=str(root / "opp"))
 
             result = subprocess.run(
-                ["bash", str(script), "--dry-run"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--dry-run"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -281,19 +251,10 @@ EOF
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             script = self.copy_orchestrate_fixture(root)
-            env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                MODE="cpu",
-                ASCEND_OPP_PATH=str(root / "opp"),
-            )
+            env = self.base_env(root, PROJECT_ROOT=str(root), MODE="cpu", ASCEND_OPP_PATH=str(root / "opp"))
 
             result = subprocess.run(
-                ["bash", str(script), "--dry-run"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--dry-run"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -309,18 +270,11 @@ EOF
             stale.mkdir(parents=True)
             (stale / "old.txt").write_text("old", encoding="utf-8")
             env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                OUT_ROOT=str(root / "out"),
-                ASCEND_OPP_PATH=str(root / "opp"),
+                root, PROJECT_ROOT=str(root), OUT_ROOT=str(root / "out"), ASCEND_OPP_PATH=str(root / "opp")
             )
 
             result = subprocess.run(
-                ["bash", str(script), "--filter", "x"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--filter", "x"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -336,18 +290,11 @@ EOF
             stale.mkdir(parents=True)
             (stale / "old.txt").write_text("old", encoding="utf-8")
             env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                OUT_ROOT=str(root / "out"),
-                ASCEND_OPP_PATH=str(root / "opp"),
+                root, PROJECT_ROOT=str(root), OUT_ROOT=str(root / "out"), ASCEND_OPP_PATH=str(root / "opp")
             )
 
             result = subprocess.run(
-                ["bash", str(script), "--dry-run"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--dry-run"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -367,13 +314,7 @@ EOF
                 NPU_CARDS="0",
             )
 
-            result = subprocess.run(
-                ["bash", str(script)],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
-            )
+            result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
             self.assertEqual(result.returncode, 1)
             self.assertIn("Presmoke Summary:", result.stdout)
@@ -385,19 +326,10 @@ EOF
             root = Path(tmp)
             script = self.copy_orchestrate_fixture(root)
             env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                OUT_ROOT=str(root / "out"),
-                ASCEND_OPP_PATH=str(root / "opp"),
+                root, PROJECT_ROOT=str(root), OUT_ROOT=str(root / "out"), ASCEND_OPP_PATH=str(root / "opp")
             )
 
-            result = subprocess.run(
-                ["bash", str(script)],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
-            )
+            result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertTrue((root / "out/full_card0/results/report.json").exists())
@@ -408,35 +340,14 @@ EOF
             self.assertFalse((root / "out/.state").exists())
             self.assertIn("multi_card_start cards=0 1 2 cases=5", result.stdout)
             self.assertIn(
-                f"project_root={root}",
-                (root / "out/full_card0/meta.txt")
-                .read_text(encoding="utf-8")
-                .splitlines(),
+                f"project_root={root}", (root / "out/full_card0/meta.txt").read_text(encoding="utf-8").splitlines()
             )
-            self.assertIn(
-                "device=0",
-                (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "device=1",
-                (root / "out/full_card1/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "device=2",
-                (root / "out/full_card2/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "filters=case/a case/d",
-                (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "filters=case/b case/e",
-                (root / "out/full_card1/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "filters=case/c",
-                (root / "out/full_card2/run_env.txt").read_text(encoding="utf-8"),
-            )
+            self.assertIn("device=0", (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("device=1", (root / "out/full_card1/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("device=2", (root / "out/full_card2/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("filters=case/a case/d", (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("filters=case/b case/e", (root / "out/full_card1/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("filters=case/c", (root / "out/full_card2/run_env.txt").read_text(encoding="utf-8"))
             self.assertIn("Cases: total=5 pass=5 fail=0 skip=0", result.stdout)
 
     def test_matching_fixed_shards_override_dynamic_balancing(self) -> None:
@@ -449,52 +360,27 @@ EOF
             (shards / "card_1.txt").write_text("case/d\ncase/c\n", encoding="utf-8")
             (shards / "card_2.txt").write_text("case/b\ncase/a\n", encoding="utf-8")
             env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                OUT_ROOT=str(root / "out"),
-                ASCEND_OPP_PATH=str(root / "opp"),
+                root, PROJECT_ROOT=str(root), OUT_ROOT=str(root / "out"), ASCEND_OPP_PATH=str(root / "opp")
             )
 
-            result = subprocess.run(
-                ["bash", str(script)],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
-            )
+            result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("multi_card_fixed_shards", result.stdout)
-            self.assertIn(
-                "filters=case/e",
-                (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "filters=case/d case/c",
-                (root / "out/full_card1/run_env.txt").read_text(encoding="utf-8"),
-            )
-            self.assertIn(
-                "filters=case/b case/a",
-                (root / "out/full_card2/run_env.txt").read_text(encoding="utf-8"),
-            )
+            self.assertIn("filters=case/e", (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("filters=case/d case/c", (root / "out/full_card1/run_env.txt").read_text(encoding="utf-8"))
+            self.assertIn("filters=case/b case/a", (root / "out/full_card2/run_env.txt").read_text(encoding="utf-8"))
 
     def test_build_only_uses_single_run_and_forwards_stage(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             script = self.copy_orchestrate_fixture(root)
             env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                OUT_ROOT=str(root / "out"),
-                ASCEND_OPP_PATH=str(root / "opp"),
+                root, PROJECT_ROOT=str(root), OUT_ROOT=str(root / "out"), ASCEND_OPP_PATH=str(root / "opp")
             )
 
             result = subprocess.run(
-                ["bash", str(script), "--stages", "build"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--stages", "build"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -508,18 +394,11 @@ EOF
             root = Path(tmp)
             script = self.copy_orchestrate_fixture(root)
             env = self.base_env(
-                root,
-                PROJECT_ROOT=str(root),
-                OUT_ROOT=str(root / "out"),
-                ASCEND_OPP_PATH=str(root / "opp"),
+                root, PROJECT_ROOT=str(root), OUT_ROOT=str(root / "out"), ASCEND_OPP_PATH=str(root / "opp")
             )
 
             result = subprocess.run(
-                ["bash", str(script), "--stages", "all"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--stages", "all"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -541,13 +420,7 @@ EOF
                 NPU_CARDS="0",
             )
 
-            result = subprocess.run(
-                ["bash", str(script)],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
-            )
+            result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
             self.assertEqual(result.returncode, 1)
             self.assertTrue((root / "out/FINAL_REPORT.md").exists())
@@ -570,13 +443,7 @@ EOF
                 NPU_CARD_DEV_GLOB=str(dev_dir / "davinci[0-9]*"),
             )
 
-            result = subprocess.run(
-                ["bash", str(script)],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
-            )
+            result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertTrue((root / "out/full_card4/results/report.json").exists())
@@ -600,20 +467,13 @@ EOF
             )
 
             result = subprocess.run(
-                ["bash", str(script), "--filter", "case/a"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                ["bash", str(script), "--filter", "case/a"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertTrue((root / "out/full_card7/results/report.json").exists())
             self.assertFalse((root / "out/full_card0/results/report.json").exists())
-            self.assertIn(
-                "device=7",
-                (root / "out/full_card7/run_env.txt").read_text(encoding="utf-8"),
-            )
+            self.assertIn("device=7", (root / "out/full_card7/run_env.txt").read_text(encoding="utf-8"))
 
     def test_make_wrapper_limits_explicit_parallel_jobs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -622,10 +482,7 @@ EOF
             fake_bin.mkdir()
             capture = root / "args.txt"
             fake_make = fake_bin / "make"
-            fake_make.write_text(
-                f"#!/usr/bin/env bash\nprintf '%s\\n' \"$@\" > {capture}\n",
-                encoding="utf-8",
-            )
+            fake_make.write_text(f"#!/usr/bin/env bash\nprintf '%s\\n' \"$@\" > {capture}\n", encoding="utf-8")
             fake_make.chmod(0o755)
             project_root = Path(__file__).resolve().parents[3]
             wrapper = project_root / "scripts/presmoke/wrappers/make"
@@ -636,31 +493,18 @@ EOF
             }
 
             result = subprocess.run(
-                [str(wrapper), "-j", "binary", "package"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                [str(wrapper), "-j", "binary", "package"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                capture.read_text(encoding="utf-8").splitlines(),
-                ["-j16", "binary", "package"],
-            )
+            self.assertEqual(capture.read_text(encoding="utf-8").splitlines(), ["-j16", "binary", "package"])
 
             result = subprocess.run(
-                [str(wrapper), "-j", "8", "binary"],
-                text=True,
-                capture_output=True,
-                env=env,
-                check=False,
+                [str(wrapper), "-j", "8", "binary"], text=True, capture_output=True, env=env, check=False
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(
-                capture.read_text(encoding="utf-8").splitlines(), ["-j16", "binary"]
-            )
+            self.assertEqual(capture.read_text(encoding="utf-8").splitlines(), ["-j16", "binary"])
 
 
 if __name__ == "__main__":

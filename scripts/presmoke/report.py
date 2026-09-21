@@ -64,9 +64,7 @@ def markdown_header(report: RunReport) -> List[str]:
             ]
         )
     if report.npu_stats:
-        metric_prefix = (
-            "cpu_run_queue" if report.npu_stats.queue_model == "pipeline-cpu" else "npu"
-        )
+        metric_prefix = "cpu_run_queue" if report.npu_stats.queue_model == "pipeline-cpu" else "npu"
         lines.extend(
             [
                 f"- {metric_prefix}_slots: `{report.npu_stats.slots}`",
@@ -104,17 +102,9 @@ def markdown_result_table(results: Iterable[RunResult]) -> List[str]:
 
 
 def markdown_suggestions(suggestions: Iterable[Suggestion]) -> List[str]:
-    lines = [
-        "",
-        "## Suggestions",
-        "",
-        "| example | severity | category | message | hint |",
-        "|---|---|---|---|---|",
-    ]
+    lines = ["", "## Suggestions", "", "| example | severity | category | message | hint |", "|---|---|---|---|---|"]
     for item in suggestions:
-        lines.append(
-            f"| {item.example} | {item.severity} | {item.category} | {item.message} | {item.hint} |"
-        )
+        lines.append(f"| {item.example} | {item.severity} | {item.category} | {item.message} | {item.hint} |")
     return lines
 
 
@@ -127,18 +117,14 @@ def write_suggestions(suggestions: Iterable[Suggestion], path: Path) -> None:
         "|---|---|---|---|---|",
     ]
     for item in suggestions:
-        lines.append(
-            f"| {item.example} | {item.severity} | {item.category} | {item.message} | {item.hint} |"
-        )
+        lines.append(f"| {item.example} | {item.severity} | {item.category} | {item.message} | {item.hint} |")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def print_console(report: RunReport) -> None:
     summary = summarize(report.results)
     LOG.info("Presmoke v2: arch=%s modes=%s", report.host_arch, ",".join(report.modes))
-    LOG.info(
-        "PASS=%s FAIL=%s SKIP=%s", summary["PASS"], summary["FAIL"], summary["SKIP"]
-    )
+    LOG.info("PASS=%s FAIL=%s SKIP=%s", summary["PASS"], summary["FAIL"], summary["SKIP"])
     if report.parallel_config:
         LOG.info(
             "PARALLEL jobs=%s npu_slots=%s cpu_run_slots=%s make_jobs=%s",
@@ -148,9 +134,7 @@ def print_console(report: RunReport) -> None:
             report.parallel_config.get("make_jobs", ""),
         )
     if report.npu_stats:
-        metric_label = (
-            "CPU_RUN_QUEUE" if report.npu_stats.queue_model == "pipeline-cpu" else "NPU"
-        )
+        metric_label = "CPU_RUN_QUEUE" if report.npu_stats.queue_model == "pipeline-cpu" else "NPU"
         LOG.info(
             "%s slots=%s model=%s busy_s=%.3f idle_s=%.3f utilization=%.3f",
             metric_label,

@@ -93,9 +93,7 @@ cmake --build build -j
 
         self.assertEqual(spec.archs, ["dav-2201", "dav-3510"])
 
-    def test_support_product_section_restricts_arch_even_if_option_table_mentions_more(
-        self,
-    ) -> None:
+    def test_support_product_section_restricts_arch_even_if_option_table_mentions_more(self) -> None:
         text = """# sample
 
 ## 支持的产品
@@ -151,9 +149,7 @@ cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..;make -j;
             ex = root / "x"
             ex.mkdir(parents=True)
             (ex / "README.md").write_text(text, encoding="utf-8")
-            (ex / "CMakeLists.txt").write_text(
-                "add_executable(demo main.cpp)", encoding="utf-8"
-            )
+            (ex / "CMakeLists.txt").write_text("add_executable(demo main.cpp)", encoding="utf-8")
             spec = parse_readme(ex, root)
         self.assertIn("cmake", " ".join(c.raw for c in spec.commands))
         self.assertNotIn("-lfoo", " ".join(c.raw for c in spec.commands))

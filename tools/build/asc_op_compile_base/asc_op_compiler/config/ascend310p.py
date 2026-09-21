@@ -15,25 +15,13 @@ ArchRuntimeConfig ascend310p
 
 from asc_op_compile_base.asc_op_compiler.config.run_settings import RuntimeConfig
 from asc_op_compile_base.asc_op_compiler.generator.initialize import InitializerConfig
-from asc_op_compile_base.asc_op_compiler.generator.compile_info_generator import (
-    CompileInfoGeneratorConfig,
-)
-from asc_op_compile_base.asc_op_compiler.generator.tiling_info_generator import (
-    TilingInfoGeneratorConfig,
-)
-from asc_op_compile_base.asc_op_compiler.generator.code_generator import (
-    CodeGeneratorConfig,
-)
+from asc_op_compile_base.asc_op_compiler.generator.compile_info_generator import CompileInfoGeneratorConfig
+from asc_op_compile_base.asc_op_compiler.generator.tiling_info_generator import TilingInfoGeneratorConfig
+from asc_op_compile_base.asc_op_compiler.generator.code_generator import CodeGeneratorConfig
 from asc_op_compile_base.asc_op_compiler.generator.op_compiler import OpCompilerConfig
-from asc_op_compile_base.asc_op_compiler.generator.kernel_compiler import (
-    KernelCompilerConfig,
-)
+from asc_op_compile_base.asc_op_compiler.generator.kernel_compiler import KernelCompilerConfig
 from asc_op_compile_base.asc_op_compiler.generator.cmd_compiler import CmdCompilerConfig
-from asc_op_compile_base.asc_op_compiler.ascendc_constants import (
-    PreCompileType,
-    CompileType,
-    IsolationMacroType,
-)
+from asc_op_compile_base.asc_op_compiler.ascendc_constants import PreCompileType, CompileType, IsolationMacroType
 
 
 class ArchRuntimeConfig(RuntimeConfig):
@@ -96,9 +84,7 @@ class ArchRuntimeConfig(RuntimeConfig):
         compile_type = CompileType.COMPILE_TYPE_DEFAULT
 
         # Genrate Config
-        initializer_config = InitializerConfig(
-            support_impl_mode, is_support_dfx, support_super_kernel
-        )
+        initializer_config = InitializerConfig(support_impl_mode, is_support_dfx, support_super_kernel)
         compile_info_generator_config = CompileInfoGeneratorConfig(
             pre_compile_type,
             set_default_code_channel,

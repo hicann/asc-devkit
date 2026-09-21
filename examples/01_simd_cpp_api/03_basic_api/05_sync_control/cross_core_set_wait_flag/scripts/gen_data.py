@@ -35,9 +35,7 @@ def gen_golden_data_scenario0():
     data_type = np.float32
 
     input_x = np.full(total_length, value_x, dtype=data_type)
-    golden = np.full(
-        total_length, value_x * (0 + num_blocks * 2 - 1) * num_blocks, dtype=data_type
-    )
+    golden = np.full(total_length, value_x * (0 + num_blocks * 2 - 1) * num_blocks, dtype=data_type)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -85,9 +83,7 @@ def gen_golden_data_scenario2():
     x11_gm = np.zeros_like(x1_gm).astype(np.half)
     x22_gm = np.zeros_like(x2_gm).astype(np.half)
 
-    golden = leaky_relu(
-        np.matmul(x1_gm.astype(output_type), x2_gm.astype(output_type))
-    ).astype(output_type)
+    golden = leaky_relu(np.matmul(x1_gm.astype(output_type), x2_gm.astype(output_type))).astype(output_type)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -114,12 +110,6 @@ def gen_golden_data(scenario_num):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-scenarioNum",
-        type=int,
-        default=0,
-        choices=[0, 1, 2],
-        help="Scenario number: 0, 1, or 2",
-    )
+    parser.add_argument("-scenarioNum", type=int, default=0, choices=[0, 1, 2], help="Scenario number: 0, 1, or 2")
     args = parser.parse_args()
     gen_golden_data(args.scenarioNum)

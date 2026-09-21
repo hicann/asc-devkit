@@ -19,17 +19,11 @@ import shutil
 import subprocess
 from dataclasses import dataclass
 from asc_op_compile_base.common.context import get_context
-from asc_op_compile_base.common.error_mgr import (
-    raise_tbe_python_err,
-    TBE_DEFAULT_PYTHON_ERROR_CODE,
-)
+from asc_op_compile_base.common.error_mgr import raise_tbe_python_err, TBE_DEFAULT_PYTHON_ERROR_CODE
 from .global_storage import global_var_storage
 from .get_op_tiling import OpInfo
 from .ascendc_compile_dfx import DFXSectionGenerator
-from .compile_op import (
-    _compile_ascendc_cce_v220_with_kernel_type_for_static,
-    _json_post_process,
-)
+from .compile_op import _compile_ascendc_cce_v220_with_kernel_type_for_static, _json_post_process
 from .ascendc_constants import CompileOptionTuple, KernelMetaType
 from .ascendc_common_utility import CommonUtility, CompileInfo
 from .ascendc_compile_base import fatbin_objs, link_relocatable, compile_pre_process
@@ -50,9 +44,7 @@ def gen_super_kernel_compile_info(kernel_info, compile_log_path):
     kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
     compile_info = CompileInfo()
     compile_info.src_file = kernel_info["kernel_file"]
-    compile_info.dst_file = os.path.join(
-        kernel_meta_dir, kernel_info["kernel_name"] + ".o"
-    )
+    compile_info.dst_file = os.path.join(kernel_meta_dir, kernel_info["kernel_name"] + ".o")
     compile_info.kernel_name = kernel_info["kernel_name"]
     compile_info.origin_func_name = kernel_info["kernel_name"]
     compile_info.op_type = kernel_info["kernel_name"]
@@ -76,16 +68,10 @@ def gen_super_kernel_compile_info(kernel_info, compile_log_path):
 
 
 def gen_super_kernel_link_obj_sequence(
-    compile_info: CompileInfo,
-    sub_op_kernel_info,
-    link_mode: SuperKernelLinkMode,
-    split_mode,
-    compile_log_path=None,
+    compile_info: CompileInfo, sub_op_kernel_info, link_mode: SuperKernelLinkMode, split_mode, compile_log_path=None
 ):
     super_kernl_files = (
-        compile_info.super_kernel_objs
-        if len(compile_info.super_kernel_objs) != 0
-        else [compile_info.dst_file]
+        compile_info.super_kernel_objs if len(compile_info.super_kernel_objs) != 0 else [compile_info.dst_file]
     )
     objs_vec = []
     objs_cube = []
@@ -124,9 +110,7 @@ def gen_super_kernel_link_obj_sequence(
             objs.append(sp_vec)
             objs += objs_vec
     else:
-        CommonUtility().ascendc_raise_python_err(
-            ERR_CODE, "[Super Kernel] Invalid link mode type"
-        )
+        CommonUtility().ascendc_raise_python_err(ERR_CODE, "[Super Kernel] Invalid link mode type")
     # add dynamic bin at the end of objs
     objs += objs_dynamic
     unique_lst = list(dict.fromkeys(objs))
@@ -135,10 +119,7 @@ def gen_super_kernel_link_obj_sequence(
 
 def gen_system_run_cfg(kernel_type):
     file_header = ""
-    if (
-        kernel_type == KernelMetaType.KERNEL_TYPE_AIV_ONLY
-        or kernel_type == KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0
-    ):
+    if kernel_type == KernelMetaType.KERNEL_TYPE_AIV_ONLY or kernel_type == KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0:
         file_header += "#if (defined(__DAV_VEC__) && __NPU_ARCH__ == 2201)\n"
     else:
         file_header += "#if (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201)\n"
@@ -204,14 +185,10 @@ def super_kernel_gen_entry(entry, sk_fun, split_mode, kernel_type):
     return code
 
 
-def gen_spk_kernel_call(
-    super_split_info: SuperSplitInfo, split_mode, kernel_type, compile_log_path=None
-):
+def gen_spk_kernel_call(super_split_info: SuperSplitInfo, split_mode, kernel_type, compile_log_path=None):
     sk_out = []
     for i, item in enumerate(super_split_info.sk_new):
-        _sk_code = super_kernel_gen_entry(
-            super_split_info.sk_funs[i], item, split_mode, kernel_type
-        )
+        _sk_code = super_kernel_gen_entry(super_split_info.sk_funs[i], item, split_mode, kernel_type)
         _sk_e_file = super_split_info.sk_path + f"/sk_{i}.cpp"
         _sk_o_file = super_split_info.sk_path + f"/sk_{i}.o"
         CommonUtility().ascendc_write_file(_sk_e_file, _sk_code)
@@ -232,24 +209,16 @@ def gen_spk_kernel_call(
             if asc_opc_path is not None:
                 asc_opc_path_link = os.path.dirname(asc_opc_path)
                 asc_opc_real_path = os.path.realpath(asc_opc_path_link)
-                ascend_home_path = os.path.realpath(
-                    os.path.join(asc_opc_real_path, "..", "..")
-                )
+                ascend_home_path = os.path.realpath(os.path.join(asc_opc_real_path, "..", ".."))
             else:
                 ascend_home_path = "/usr/local/Ascend/cann"
 
         if "x86" in archlinux:
-            asc_path = os.path.realpath(
-                os.path.join(ascend_home_path, "x86_64-linux", "asc")
-            )
+            asc_path = os.path.realpath(os.path.join(ascend_home_path, "x86_64-linux", "asc"))
         else:
-            asc_path = os.path.realpath(
-                os.path.join(ascend_home_path, "aarch64-linux", "asc")
-            )
+            asc_path = os.path.realpath(os.path.join(ascend_home_path, "aarch64-linux", "asc"))
         if asc_path is None:
-            asc_path = os.path.realpath(
-                os.path.join(ascend_home_path, "compiler", "asc")
-            )
+            asc_path = os.path.realpath(os.path.join(ascend_home_path, "compiler", "asc"))
 
         cmds.append("-I" + os.path.join(asc_path, "impl", "adv_api"))
         cmds.append("-I" + os.path.join(asc_path, "impl", "basic_api"))
@@ -262,9 +231,7 @@ def gen_spk_kernel_call(
         cmds.append("-I" + os.path.join(asc_path, "include", "basic_api"))
         cmds.append("-I" + os.path.join(asc_path, "include", "aicpu_api"))
         cmds.append("-I" + os.path.join(asc_path, "include", "c_api"))
-        cmds.append(
-            "-I" + os.path.join(asc_path, "include", "basic_api", "reg_compute")
-        )
+        cmds.append("-I" + os.path.join(asc_path, "include", "basic_api", "reg_compute"))
         cmds.append("-I" + os.path.join(asc_path, "include", "simt_api"))
         cmds.append("-I" + os.path.join(asc_path, "include", "utils"))
         cmds.append("-I" + os.path.join(asc_path, "..", "ascendc", "act"))
@@ -275,9 +242,7 @@ def gen_spk_kernel_call(
         cmds.append("-I" + os.path.join(asc_path, "..", "..", "include", "ascendc"))
         cmds.append("-I" + os.path.join(asc_path, "..", "tikcpp", "tikcfw"))
         cmds.append("-I" + os.path.join(asc_path, "..", "tikcpp", "tikcfw", "impl"))
-        cmds.append(
-            "-I" + os.path.join(asc_path, "..", "tikcpp", "tikcfw", "interface")
-        )
+        cmds.append("-I" + os.path.join(asc_path, "..", "tikcpp", "tikcfw", "interface"))
 
         if CommonUtility.is_c310():
             cmds += ["-D__DAV_C310__"]
@@ -303,9 +268,7 @@ def gen_spk_kernel_call(
     return sk_out
 
 
-def split_spk_kernel_objs(
-    sub_objs: list, split_mode, kernel_type, compile_log_path=None
-):
+def split_spk_kernel_objs(sub_objs: list, split_mode, kernel_type, compile_log_path=None):
     _sk_objs = []
     _sk_funs = []
     _sk_new = []
@@ -329,29 +292,16 @@ def split_spk_kernel_objs(
                     "{}.split{}.o".format(_obj, i),
                 ]
                 run_local_cmd(redefine_sym_cmd, compile_log_path)
-                strip_sym_cmd = [
-                    "llvm-objcopy",
-                    "--strip-symbol=g_opSystemRunCfg",
-                    "{}.split{}.o".format(_obj, i),
-                ]
+                strip_sym_cmd = ["llvm-objcopy", "--strip-symbol=g_opSystemRunCfg", "{}.split{}.o".format(_obj, i)]
                 run_local_cmd(strip_sym_cmd, compile_log_path)
-            redefine_sym_cmd = [
-                "llvm-objcopy",
-                "--redefine-sym",
-                "{}={}".format(_k_name, _n_name),
-                "{}".format(_obj),
-            ]
+            redefine_sym_cmd = ["llvm-objcopy", "--redefine-sym", "{}={}".format(_k_name, _n_name), "{}".format(_obj)]
             run_local_cmd(redefine_sym_cmd, compile_log_path)
             _sk_objs.append(_obj)
             _sk_funs.append(_k_name)
             _sk_new.append(_n_name)
             _sk_path = os.path.dirname(_obj)
-    super_split_info = SuperSplitInfo(
-        sk_new=_sk_new, sk_funs=_sk_funs, sk_path=_sk_path
-    )
-    _sk_out = gen_spk_kernel_call(
-        super_split_info, split_mode, kernel_type, compile_log_path
-    )
+    super_split_info = SuperSplitInfo(sk_new=_sk_new, sk_funs=_sk_funs, sk_path=_sk_path)
+    _sk_out = gen_spk_kernel_call(super_split_info, split_mode, kernel_type, compile_log_path)
     _sk_all = ":".join(sub_objs)
     for i in range(0, len(_sk_new)):
         _sk_new_files = [
@@ -378,18 +328,11 @@ def localization_sub_op_func_sym(dst_file: str, sub_op_kernel_info):
         for i in range(0, length_symbols, 256):
             end_idx = min(i + 256, length_symbols)
             localization_symbols_cmd = (
-                ["llvm-objcopy"]
-                + [
-                    f"--localize-symbol={symbol}"
-                    for symbol in unique_symbols[i:end_idx]
-                ]
-                + [dst_file]
+                ["llvm-objcopy"] + [f"--localize-symbol={symbol}" for symbol in unique_symbols[i:end_idx]] + [dst_file]
             )
             subprocess.run(localization_symbols_cmd)
     except Exception as err:
-        raise_tbe_python_err(
-            TBE_DEFAULT_PYTHON_ERROR_CODE, ("localize sub op func sym failed", err)
-        )
+        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("localize sub op func sym failed", err))
 
 
 def localize_symbol_of_sk(split_mode, sks, spk_dst_file, compile_log_path):
@@ -399,11 +342,7 @@ def localize_symbol_of_sk(split_mode, sks, spk_dst_file, compile_log_path):
                 _sk_sym = _sk_n
             else:
                 _sk_sym = f"{_sk_n}_{i}"
-            local_synbol_cmds = [
-                "llvm-objcopy",
-                "--localize-symbol={}".format(_sk_sym),
-                "{}".format(spk_dst_file),
-            ]
+            local_synbol_cmds = ["llvm-objcopy", "--localize-symbol={}".format(_sk_sym), "{}".format(spk_dst_file)]
             run_local_cmd(local_synbol_cmds, compile_log_path)
 
 
@@ -419,12 +358,8 @@ def compile_super_kernel(kernel_info, compile_log_path, enable_features: dict = 
         get_context().add_workspace("total_workspace", size=1)
     json_str = json.dumps(kernel_info["op_list"], indent=4)
     CommonUtility.dump_compile_log([json_str], CompileStage.SPK_INPUT, compile_log_path)
-    compile_info, tiling_info = gen_super_kernel_compile_info(
-        kernel_info, compile_log_path
-    )
-    compile_option_tuple = CompileOptionTuple(
-        [] if compile_options is None else compile_options, []
-    )
+    compile_info, tiling_info = gen_super_kernel_compile_info(kernel_info, compile_log_path)
+    compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
     if kernel_info["split_mode"] is not None and kernel_info["split_mode"] > 1:
         compile_option_tuple.mllvm_options.append("-mllvm")
         compile_option_tuple.mllvm_options.append("-cce-aicore-jump-expand=true")
@@ -436,14 +371,9 @@ def compile_super_kernel(kernel_info, compile_log_path, enable_features: dict = 
     if kernel_info["timestamp_option"]:
         compile_options.append(
             "-DONE_CORE_DUMP_SIZE="
-            + str(
-                compile_info.super_kernel_info["debug_size"]
-                / CommonUtility.get_dump_core_num()
-            )
+            + str(compile_info.super_kernel_info["debug_size"] / CommonUtility.get_dump_core_num())
         )
-    _compile_ascendc_cce_v220_with_kernel_type_for_static(
-        compile_info, compile_option_tuple, tiling_info
-    )
+    _compile_ascendc_cce_v220_with_kernel_type_for_static(compile_info, compile_option_tuple, tiling_info)
     sub_objs = gen_super_kernel_link_obj_sequence(
         compile_info,
         kernel_info["sub_operator"],
@@ -453,29 +383,14 @@ def compile_super_kernel(kernel_info, compile_log_path, enable_features: dict = 
     )
     ## begin add superkernel split
     sub_objs, _sk_new = split_spk_kernel_objs(
-        sub_objs,
-        kernel_info["split_mode"],
-        kernel_info["kernel_type"],
-        compile_info.compile_log_path,
+        sub_objs, kernel_info["split_mode"], kernel_info["kernel_type"], compile_info.compile_log_path
     )
-    fatbin_objs(
-        sub_objs,
-        compile_info.dst_file,
-        compile_info.is_debug,
-        compile_info.compile_log_path,
-    )
+    fatbin_objs(sub_objs, compile_info.dst_file, compile_info.is_debug, compile_info.compile_log_path)
     op_info = OpInfo()
     link_relocatable(compile_info.dst_file, compile_info.compile_log_path)
     localization_sub_op_func_sym(compile_info.dst_file, kernel_info["sub_operator"])
-    _json_post_process(
-        compile_info, op_info, tiling_info, True, True, compile_info.compile_log_path
-    )
-    localize_symbol_of_sk(
-        kernel_info["split_mode"],
-        _sk_new,
-        compile_info.dst_file,
-        compile_info.compile_log_path,
-    )
+    _json_post_process(compile_info, op_info, tiling_info, True, True, compile_info.compile_log_path)
+    localize_symbol_of_sk(kernel_info["split_mode"], _sk_new, compile_info.dst_file, compile_info.compile_log_path)
 
 
 def super_kernel_compile(kernel_info, compile_log_path):

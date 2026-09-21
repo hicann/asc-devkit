@@ -22,17 +22,13 @@ class BuildConfig:
         # if self.dump_pass_ir:
         # BuildConfig._dump_ir.enter()
         # return self
-        print(
-            "stub llt atc opcompiler opc stub tbe common buildcfg buildcfg.py __enter__"
-        )
+        print("stub llt atc opcompiler opc stub tbe common buildcfg buildcfg.py __enter__")
 
     def __exit__(self, ptype, value, trace):
         # if self.dump_pass_ir:
         # BuildConfig._dump_ir.exit()
         # _api_internal._ExitBuildConfigScope(self)
-        print(
-            "stub llt atc opcompiler opc stub tbe common buildcfg buildcfg.py __exit__"
-        )
+        print("stub llt atc opcompiler opc stub tbe common buildcfg buildcfg.py __exit__")
 
 
 def build_config(**kwargs):

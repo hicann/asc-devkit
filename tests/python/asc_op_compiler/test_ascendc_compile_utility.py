@@ -80,17 +80,9 @@ class TestCompileUtility(unittest.TestCase):
 
     def test_parse_super_kernel_options(self):
         # parse_super_kernel_options("func-align:early-start=:")
-        self.assertRaises(
-            Exception, parse_super_kernel_options, "func-align:early-start=:"
-        )
-        self.assertRaises(
-            Exception,
-            parse_super_kernel_options,
-            "func-align:early-start=1:early-start=1",
-        )
-        self.assertRaises(
-            Exception, parse_super_kernel_options, "func-align:early-start=1:test=1"
-        )
+        self.assertRaises(Exception, parse_super_kernel_options, "func-align:early-start=:")
+        self.assertRaises(Exception, parse_super_kernel_options, "func-align:early-start=1:early-start=1")
+        self.assertRaises(Exception, parse_super_kernel_options, "func-align:early-start=1:test=1")
 
     def test_parse_super_kernel_options_none_and_empty(self):
         # None should return {} without AttributeError
@@ -105,9 +97,7 @@ class TestCompileUtility(unittest.TestCase):
 
     def test_parse_super_kernel_options_strip_quotes(self):
         res = parse_super_kernel_options('"early-start=1"')
-        self.assertEqual(
-            res, {"early-start": SuperKernelEarlyStartMode.EarlyStartEnableV2}
-        )
+        self.assertEqual(res, {"early-start": SuperKernelEarlyStartMode.EarlyStartEnableV2})
 
     def test_aclgraph_options_accept_dcci_underscore_keys(self):
         with OpContext() as ctx:
@@ -115,14 +105,7 @@ class TestCompileUtility(unittest.TestCase):
             res = parse_super_kernel_options(
                 "early_start=1:dcci_before_kernel_start=MatMul.*:stream_fusion=1:debug_sync_all=1"
             )
-        self.assertEqual(
-            res,
-            {
-                "early-start": "1",
-                "dcci-before-kernel-start": "MatMul.*",
-                "debug-sync-all": "1",
-            },
-        )
+        self.assertEqual(res, {"early-start": "1", "dcci-before-kernel-start": "MatMul.*", "debug-sync-all": "1"})
 
     def test_aclgraph_options_accept_debug_per_op_max_core_num(self):
         with OpContext() as ctx:
@@ -153,9 +136,7 @@ class TestCompileUtility(unittest.TestCase):
         self.assertRaises(Exception, check_func_align, -5)
 
     def test_gen_func_align_attribute(self):
-        self.assertEqual(
-            gen_func_align_attribute("512"), "__attribute__((aligned(512)))"
-        )
+        self.assertEqual(gen_func_align_attribute("512"), "__attribute__((aligned(512)))")
         self.assertEqual(gen_func_align_attribute(0), "")
         self.assertRaises(Exception, gen_func_align_attribute, "xxx")
         self.assertRaises(Exception, gen_func_align_attribute, 10)
@@ -186,18 +167,14 @@ class TestCompileUtility(unittest.TestCase):
         type(mock_popen).communicate = mock_communicate
         type(mock_popen).returncode = 0
         with mock.patch("os.path.exists", return_value=True):
-            with mock.patch(
-                "subprocess.Popen", return_value=mock_popen
-            ) as mock_popen_cls:
+            with mock.patch("subprocess.Popen", return_value=mock_popen) as mock_popen_cls:
                 compile_options = ["/tmp/testcase/../ascendc/common"]
                 extend_options = {"opp_kernel_hidden_dat_path": "./test.dat"}
                 process_ascendc_api_version(cce_file, compile_options, extend_options)
                 self.assertIn("-DASCENDC_API_VERSION=80", compile_options)
 
         with mock.patch("os.path.exists", return_value=True):
-            with mock.patch(
-                "subprocess.Popen", return_value=mock_popen
-            ) as mock_popen_cls:
+            with mock.patch("subprocess.Popen", return_value=mock_popen) as mock_popen_cls:
                 compile_options = ["/tmp/testcase/../ascendc/common"]
                 extend_options = {}
                 process_ascendc_api_version(cce_file, compile_options, extend_options)
@@ -207,9 +184,7 @@ class TestCompileUtility(unittest.TestCase):
             res = get_op_tiling_so_path(
                 "/usr/local/Ascend/CANN-7.8/opp/vendors/customize/op_impl/ai_core/tbe/customize_impl/dynamic/test.cpp"
             )
-            self.assertIn(
-                f"op_tiling/lib/linux/{platform.machine()}/liboptiling.so", res
-            )
+            self.assertIn(f"op_tiling/lib/linux/{platform.machine()}/liboptiling.so", res)
 
         mock_communicate = mock.Mock(
             return_value=(
@@ -220,9 +195,7 @@ class TestCompileUtility(unittest.TestCase):
         type(mock_popen).communicate = mock_communicate
         type(mock_popen).returncode = 0
         with mock.patch("os.path.exists", return_value=True):
-            with mock.patch(
-                "subprocess.Popen", return_value=mock_popen
-            ) as mock_popen_cls:
+            with mock.patch("subprocess.Popen", return_value=mock_popen) as mock_popen_cls:
                 compile_options = ["/tmp/testcase/../ascendc/common"]
                 extend_options = {}
                 process_ascendc_api_version(cce_file, compile_options, extend_options)

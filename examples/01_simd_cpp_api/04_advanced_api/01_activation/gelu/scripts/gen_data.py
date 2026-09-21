@@ -27,9 +27,7 @@ def gen_golden_data_simple():
     os.makedirs("output", exist_ok=True)
     src.tofile("./input/input_src.bin")
 
-    golden = src / (
-        1 + np.exp(-1.5957691216057308 * (src + 0.044715 * np.power(src, 3)))
-    )
+    golden = src / (1 + np.exp(-1.5957691216057308 * (src + 0.044715 * np.power(src, 3))))
     golden = golden.astype(dtype)
 
     golden.tofile("./output/golden.bin")

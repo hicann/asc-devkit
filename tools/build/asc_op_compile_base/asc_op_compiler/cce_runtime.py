@@ -18,10 +18,7 @@ import stat
 import threading
 
 from asc_op_compile_base.common import ccec
-from asc_op_compile_base.common.error_mgr import (
-    raise_tbe_python_err,
-    TBE_DEFAULT_PYTHON_ERROR_CODE,
-)
+from asc_op_compile_base.common.error_mgr import raise_tbe_python_err, TBE_DEFAULT_PYTHON_ERROR_CODE
 
 # save tik gm tensor whether is workspace in to a list
 TIK_WORKSPACE_SIZE_LIST = threading.local()
@@ -81,13 +78,9 @@ def write_code(js_dict, fname):
         with open(fname, "w") as nwe_file:
             # Only the owner and group have rights
             os.chmod(fname, stat.S_IRUSR + stat.S_IWUSR + stat.S_IRGRP)
-            json.dump(
-                js_dict, nwe_file, sort_keys=True, indent=4, separators=(",", ":")
-            )
+            json.dump(js_dict, nwe_file, sort_keys=True, indent=4, separators=(",", ":"))
     except Exception as err:
-        raise_tbe_python_err(
-            TBE_DEFAULT_PYTHON_ERROR_CODE, ("open file error, reason:" + err)
-        )
+        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("open file error, reason:" + err))
 
 
 def add_json_info(title_dict, json_info, json_info_tuple):
@@ -124,10 +117,7 @@ def _get_kernel_magic_ascend_310B(aicore_type: str, mix: str = None) -> dict:
 
     value = get_soc_spec("cube_vector_combine")
     value_str_list = value.split(",")
-    if (
-        value_str_list[0] == "unknown"
-        or ("fuse" in value_str_list and len(value_str_list)) == 1
-    ):
+    if value_str_list[0] == "unknown" or ("fuse" in value_str_list and len(value_str_list)) == 1:
         title_dict = {"magic": "RT_DEV_BINARY_MAGIC_ELF"}
     elif mix == "MIX":
         title_dict = {"magic": "RT_DEV_BINARY_MAGIC_ELF"}
@@ -141,10 +131,7 @@ def _get_kernel_magic_ascend_310B(aicore_type: str, mix: str = None) -> dict:
 
 
 def _get_kernel_magic_asecnd_910B(
-    aicore_type: str,
-    mix: str = None,
-    compatible_needed: bool = False,
-    mix_type_info: str = None,
+    aicore_type: str, mix: str = None, compatible_needed: bool = False, mix_type_info: str = None
 ) -> dict:
     """
     get the magic info for Ascend910B / Ascend910_93 / Ascend950 / MC62 / MC32DM11A
@@ -177,16 +164,12 @@ def _get_kernel_magic_asecnd_910B(
         return {"magic": "RT_DEV_BINARY_MAGIC_ELF"}
     if aicore_type == "VectorCore" and org_mix_flag != "MIX":
         if mix == "MIX":
-            title_dict = magic_dict.get(
-                mix_type_info, {"magic": "FFTS_BINARY_MAGIC_ELF_MIX_AIV"}
-            )
+            title_dict = magic_dict.get(mix_type_info, {"magic": "FFTS_BINARY_MAGIC_ELF_MIX_AIV"})
         else:
             title_dict = {"magic": "RT_DEV_BINARY_MAGIC_ELF_AIVEC"}
     elif aicore_type == "AiCore" and org_mix_flag != "MIX":
         if mix == "MIX":
-            title_dict = magic_dict.get(
-                mix_type_info, {"magic": "FFTS_BINARY_MAGIC_ELF_MIX_AIC"}
-            )
+            title_dict = magic_dict.get(mix_type_info, {"magic": "FFTS_BINARY_MAGIC_ELF_MIX_AIC"})
         else:
             title_dict = {"magic": "RT_DEV_BINARY_MAGIC_ELF_AICUBE"}
     else:
@@ -215,22 +198,10 @@ def _add_kernel_magic(
     the magic dict
 
     """
-    if (
-        short_soc_version in ["Ascend610", "BS9SX1A", "Ascend610B", "Ascend310P"]
-        and aicore_type == "VectorCore"
-    ):
+    if short_soc_version in ["Ascend610", "BS9SX1A", "Ascend610B", "Ascend310P"] and aicore_type == "VectorCore":
         title_dict = {"magic": "RT_DEV_BINARY_MAGIC_ELF_AIVEC"}
-    elif short_soc_version in [
-        "Ascend910B",
-        "Ascend910_93",
-        "Ascend950",
-        "MC62",
-        "MC32DM11A",
-        "Ascend350",
-    ]:
-        title_dict = _get_kernel_magic_asecnd_910B(
-            aicore_type, mix, compatible_needed, mix_type_info
-        )
+    elif short_soc_version in ["Ascend910B", "Ascend910_93", "Ascend950", "MC62", "MC32DM11A", "Ascend350"]:
+        title_dict = _get_kernel_magic_asecnd_910B(aicore_type, mix, compatible_needed, mix_type_info)
     elif short_soc_version == "Ascend310B" or short_soc_version == "AS31XM1":
         title_dict = _get_kernel_magic_ascend_310B(aicore_type, mix)
     elif short_soc_version == "Ascend031":
@@ -272,18 +243,14 @@ def init_json_info(
 
     is_aicpu = False
     if target == "cce_core":
-        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-            enable_vector_core,
-        )
+        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_vector_core
 
         if ccec.current_build_config().get(enable_vector_core):
             kernel_name = update_kernel_name_by_enable_vector_core(kernel_name)
 
         short_soc_version = get_soc_spec("SHORT_SOC_VERSION")
         aicore_type = get_soc_spec("AICORE_TYPE")
-        title_dict = _add_kernel_magic(
-            short_soc_version, aicore_type, compatible_needed, mix, mix_type
-        )
+        title_dict = _add_kernel_magic(short_soc_version, aicore_type, compatible_needed, mix, mix_type)
         title_dict = _add_core_type(title_dict, core_type_info, mix)
     elif target == "cce_cpu":
         title_dict = {"magic": "RT_DEV_BINARY_MAGIC_ELF_AICPU"}
@@ -299,9 +266,7 @@ def init_json_info(
         kernel_name = kernel_name[1:]
         is_aicpu = True
     else:
-        raise_tbe_python_err(
-            TBE_DEFAULT_PYTHON_ERROR_CODE, "Unknown architecture, does not support now"
-        )
+        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, "Unknown architecture, does not support now")
     return is_aicpu, kernel_name, title_dict
 
 
@@ -312,23 +277,16 @@ def _add_kernel_name(kernel_name, title_dict, kernel_list, kernel_list_determini
         title_dict["kernelName"] = kernel_name
         if len(kernel_list) != len(kernel_list_deterministic):
             raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE,
-                "kernel_list size is not equal to kernel_list_deterministic size",
+                TBE_DEFAULT_PYTHON_ERROR_CODE, "kernel_list size is not equal to kernel_list_deterministic size"
             )
         if kernel_list:
             title_dict["kernelList"] = []
             for idx, name in enumerate(kernel_list):
                 name = str(name).rstrip('"').lstrip('"')
-                deterministic = (
-                    str(kernel_list_deterministic[idx]).rstrip('"').lstrip('"')
-                )
-                title_dict["kernelList"].append(
-                    {"kernelName": name, "deterministic": deterministic}
-                )
+                deterministic = str(kernel_list_deterministic[idx]).rstrip('"').lstrip('"')
+                title_dict["kernelList"].append({"kernelName": name, "deterministic": deterministic})
         else:
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE, "kernelList must have kernel_tilingkey"
-            )
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, "kernelList must have kernel_tilingkey")
     else:
         title_dict["kernelName"] = kernel_name + "__kernel0"
 
@@ -337,62 +295,35 @@ def _add_context_info(workspace_dict, fake_name="workspace_"):
     from asc_op_compile_base.common.context import get_context
 
     context = get_context()
-    if workspace_dict["num"] == len(workspace_dict["type"]) and workspace_dict[
-        "num"
-    ] == len(workspace_dict["size"]):
+    if workspace_dict["num"] == len(workspace_dict["type"]) and workspace_dict["num"] == len(workspace_dict["size"]):
         for idx in range(workspace_dict["num"]):
-            context.add_workspace(
-                fake_name + str(idx),
-                workspace_dict["size"][idx],
-                workspace_dict["type"][idx],
-            )
+            context.add_workspace(fake_name + str(idx), workspace_dict["size"][idx], workspace_dict["type"][idx])
     else:
         raise_tbe_python_err(
-            TBE_DEFAULT_PYTHON_ERROR_CODE,
-            "size and type in workspace dict should share the same size " + "as num",
+            TBE_DEFAULT_PYTHON_ERROR_CODE, "size and type in workspace dict should share the same size " + "as num"
         )
 
 
-def _add_workspace_info(
-    title_dict, workspace_list, is_context=False, fake_name="workspace_"
-):
+def _add_workspace_info(title_dict, workspace_list, is_context=False, fake_name="workspace_"):
     # compute workspace info from workspace_list
     ori_num = len(workspace_list)
-    ori_type_list = [
-        (val[2] if isinstance(val, tuple) and len(val) > 2 else 0)
-        for val in workspace_list
-    ]
+    ori_type_list = [(val[2] if isinstance(val, tuple) and len(val) > 2 else 0) for val in workspace_list]
     ori_size_list = [
-        (val if not isinstance(val, tuple) else val[1] if len(val) > 1 else val[0])
-        for val in workspace_list
+        (val if not isinstance(val, tuple) else val[1] if len(val) > 1 else val[0]) for val in workspace_list
     ]
     ori_name_list = [
-        (
-            val[0]
-            if isinstance(val, tuple) and len(val) > 1 and val[0]
-            else fake_name + str(i)
-        )
+        (val[0] if isinstance(val, tuple) and len(val) > 1 and val[0] else fake_name + str(i))
         for i, val in enumerate(workspace_list)
     ]
 
     # workspace_list check
     for idx in range(ori_num):
-        if not isinstance(ori_type_list[idx], int) or (
-            ori_type_list[idx] != 0 and ori_type_list[idx] != 1
-        ):
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE,
-                "workspace type size should be int value 0 or 1",
-            )
+        if not isinstance(ori_type_list[idx], int) or (ori_type_list[idx] != 0 and ori_type_list[idx] != 1):
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, "workspace type size should be int value 0 or 1")
         if not isinstance(ori_size_list[idx], int) or ori_size_list[idx] < -1:
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE,
-                "workspace size should be int value >= -1",
-            )
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, "workspace size should be int value >= -1")
         if not isinstance(ori_name_list[idx], str):
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE, "workspace name should be string type"
-            )
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, "workspace name should be string type")
 
     # remove the element in workspace_list, if its name is the same as element in context.
     from asc_op_compile_base.common.context import get_context
@@ -420,11 +351,7 @@ def _add_workspace_info(
 
     # add workspace info to title_dict for json file output
     if "workspace" in title_dict:
-        if (
-            "num" in title_dict["workspace"]
-            and "size" in title_dict["workspace"]
-            and "type" in title_dict["workspace"]
-        ):
+        if "num" in title_dict["workspace"] and "size" in title_dict["workspace"] and "type" in title_dict["workspace"]:
             title_dict["workspace"] = {
                 "num": (title_dict["workspace"]["num"] + num),
                 "size": (title_dict["workspace"]["size"] + size_list),
@@ -444,9 +371,7 @@ def _add_pass_workspace(title_dict):
         hasattr(MULTI_CORE_SYNC_WORKSPACE_SIZE_LIST, "local_list")
         and len(MULTI_CORE_SYNC_WORKSPACE_SIZE_LIST.local_list) > 0
     ):
-        _add_workspace_info(
-            title_dict, MULTI_CORE_SYNC_WORKSPACE_SIZE_LIST.local_list, True, "pass_"
-        )
+        _add_workspace_info(title_dict, MULTI_CORE_SYNC_WORKSPACE_SIZE_LIST.local_list, True, "pass_")
     return title_dict
 
 
@@ -464,27 +389,14 @@ def _add_workspace_to_title_dict(title_dict):
             TBE_WORKSPACE_SIZE_LIST
     """
     # set parameters info
-    tbe_worksapce = (
-        hasattr(TBE_WORKSPACE_SIZE_LIST, "local_list")
-        and len(TBE_WORKSPACE_SIZE_LIST.local_list) > 0
-    )
-    tik_workspace = (
-        hasattr(TIK_WORKSPACE_SIZE_LIST, "local_list")
-        and len(TIK_WORKSPACE_SIZE_LIST.local_list) > 0
-    )
+    tbe_worksapce = hasattr(TBE_WORKSPACE_SIZE_LIST, "local_list") and len(TBE_WORKSPACE_SIZE_LIST.local_list) > 0
+    tik_workspace = hasattr(TIK_WORKSPACE_SIZE_LIST, "local_list") and len(TIK_WORKSPACE_SIZE_LIST.local_list) > 0
 
-    from asc_op_compile_base.common.platform.platform_info import (
-        get_soc_spec,
-        ASCEND_910B,
-        ASCEND_910_93,
-    )
+    from asc_op_compile_base.common.platform.platform_info import get_soc_spec, ASCEND_910B, ASCEND_910_93
 
     is_c220 = get_soc_spec("SHORT_SOC_VERSION") in [ASCEND_910B, ASCEND_910_93]
     if tbe_worksapce:  # use create_block_sync()
-        if (
-            hasattr(TIK_ATOMIC_ADD_LIST, "local_list")
-            and len(TIK_ATOMIC_ADD_LIST.local_list) > 0
-        ):
+        if hasattr(TIK_ATOMIC_ADD_LIST, "local_list") and len(TIK_ATOMIC_ADD_LIST.local_list) > 0:
             # 2. TIK TBE hybrid: a. use create_block_sync()
             for _ in range(len(TBE_WORKSPACE_SIZE_LIST.local_list)):
                 # need atomic_clean
@@ -494,26 +406,16 @@ def _add_workspace_to_title_dict(title_dict):
             for i in TBE_WORKSPACE_IND_LIST.local_list:
                 # need atomic_clean
                 if i < len(title_dict["parameters"]):
-                    title_dict["parameters"][i] = {
-                        "init_value": 0.0,
-                        "dtype": "float32",
-                    }
+                    title_dict["parameters"][i] = {"init_value": 0.0, "dtype": "float32"}
 
     # add tik workspace info
     if tik_workspace:
-        _add_workspace_info(
-            title_dict, TIK_WORKSPACE_SIZE_LIST.local_list, True, "tik_"
-        )
+        _add_workspace_info(title_dict, TIK_WORKSPACE_SIZE_LIST.local_list, True, "tik_")
     # add tbe workspace from block sync
     if tbe_worksapce:  # use create_block_sync()
-        _add_workspace_info(
-            title_dict, TBE_WORKSPACE_SIZE_LIST.local_list, True, "tbe_"
-        )
+        _add_workspace_info(title_dict, TBE_WORKSPACE_SIZE_LIST.local_list, True, "tbe_")
 
-    if (
-        hasattr(TBE_ATUO_ATOMIC_IND_LIST, "local_list")
-        and len(TBE_ATUO_ATOMIC_IND_LIST.local_list) > 0
-    ):
+    if hasattr(TBE_ATUO_ATOMIC_IND_LIST, "local_list") and len(TBE_ATUO_ATOMIC_IND_LIST.local_list) > 0:
         for i in TBE_ATUO_ATOMIC_IND_LIST.local_list:
             title_dict["parameters"][i] = {"init_value": 0.0, "dtype": "float32"}
 
@@ -529,15 +431,12 @@ def _add_global_tensor_title_to_dict(tensor_size_dict):
     :return: no return
     :rtype None
     """
-    if (
-        hasattr(TIK_GLOBAL_TENSOR_LIST, "local_list")
-        and len(TIK_GLOBAL_TENSOR_LIST.local_list) > 0
-    ):
+    if hasattr(TIK_GLOBAL_TENSOR_LIST, "local_list") and len(TIK_GLOBAL_TENSOR_LIST.local_list) > 0:
         for global_workspace_tensor in TIK_GLOBAL_TENSOR_LIST.local_list:
             if global_workspace_tensor:
-                tensor_size_dict[
-                    "".join(["globalworkspace_", global_workspace_tensor[0]])
-                ] = {"size": global_workspace_tensor[1]}
+                tensor_size_dict["".join(["globalworkspace_", global_workspace_tensor[0]])] = {
+                    "size": global_workspace_tensor[1]
+                }
 
 
 def _mkdir_json_path(dir_path: str, kernel_name: str):
@@ -579,30 +478,17 @@ def _add_mem_stamp_tensor_to_dict(tensor_size_dict):
 
 
 def _save_operator_json_info(
-    kernel_name,
-    is_aicpu,
-    title_dict,
-    kernel_list,
-    kernel_list_deterministic,
-    mix,
-    is_ffts_id_needed,
+    kernel_name, is_aicpu, title_dict, kernel_list, kernel_list_deterministic, mix, is_ffts_id_needed
 ):
     from asc_op_compile_base.common.platform.platform_info import get_soc_spec
     from asc_op_compile_base.common.platform.platform_info import COMPILER_ARCH
     from asc_op_compile_base.common.platform.platform_info import KernelName
-    from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-        kernel_meta_parent_dir,
-    )
+    from asc_op_compile_base.common.buildcfg.buildcfg_mapping import kernel_meta_parent_dir
     from asc_op_compile_base.common.buildcfg.buildcfg_mapping import build_fatbin
     from asc_op_compile_base.common.buildcfg.buildcfg_mapping import tbe_debug_level
     from asc_op_compile_base.common.buildcfg.buildcfg_mapping import output_dir
     from asc_op_compile_base.common.buildcfg.buildcfg_mapping import status_check
-    from asc_op_compile_base.common.platform.platform_info import (
-        ASCEND_910,
-        ASCEND_310P,
-        HI3796CV300ES,
-        HI3796CV300CS,
-    )
+    from asc_op_compile_base.common.platform.platform_info import ASCEND_910, ASCEND_310P, HI3796CV300ES, HI3796CV300CS
 
     # for aicpu supports os only
     aicpu_support_os = get_soc_spec(COMPILER_ARCH) == "true"
@@ -622,11 +508,7 @@ def _save_operator_json_info(
     parent_dir = CommonUtility.get_kernel_meta_parent_dir()
     dir_path = os.path.join(parent_dir, "kernel_meta")
     if ccec.current_build_config().get(build_fatbin):
-        dir_path = os.path.join(
-            parent_dir,
-            "kernel_meta",
-            KernelName.get_kernel_name(),
-        )
+        dir_path = os.path.join(parent_dir, "kernel_meta", KernelName.get_kernel_name())
     if (
         ccec.current_build_config().get(tbe_debug_level) > 0
         and output_dir in ccec.current_build_config()
@@ -637,22 +519,17 @@ def _save_operator_json_info(
     # compute the sha256 of a given tvm_cce_op file used by domi
     sha256_hash = ""
     bin_file_path = os.path.join(dir_path, bin_file_name + bin_file_suffix)
-    from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-        tbe_debug_level,
-        op_debug_config,
-    )
+    from asc_op_compile_base.common.buildcfg.buildcfg_mapping import tbe_debug_level, op_debug_config
 
     if os.path.exists(bin_file_path):
         with open(bin_file_path, "rb") as nwe_file:
             # Only the owner and group have rights
             os.chmod(bin_file_path, stat.S_IRUSR + stat.S_IWUSR + stat.S_IRGRP)
             sha256_hash = hashlib.sha256(nwe_file.read()).hexdigest()
-    elif ccec.current_build_config().get(
-        tbe_debug_level
-    ) > 0 or "dump_bin" in ccec.current_build_config().get(op_debug_config):
-        raise_tbe_python_err(
-            TBE_DEFAULT_PYTHON_ERROR_CODE, "Open operator file failed."
-        )
+    elif ccec.current_build_config().get(tbe_debug_level) > 0 or "dump_bin" in ccec.current_build_config().get(
+        op_debug_config
+    ):
+        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, "Open operator file failed.")
 
     # new parameters in aicpuos feature
     _add_kernel_name(kernel_name, title_dict, kernel_list, kernel_list_deterministic)
@@ -665,10 +542,7 @@ def _save_operator_json_info(
     title_dict["sha256"] = sha256_hash
     short_soc_version = get_soc_spec("SHORT_SOC_VERSION")
     support_soc_list = [ASCEND_310P, ASCEND_910, HI3796CV300ES, HI3796CV300CS]
-    if (
-        ccec.current_build_config().get(status_check)
-        and short_soc_version in support_soc_list
-    ):
+    if ccec.current_build_config().get(status_check) and short_soc_version in support_soc_list:
         title_dict["globalworkspace_spec_workspace"] = {"size": 32, "type": 0}
     # add workspace info to .json
     _add_workspace_to_title_dict(title_dict)
@@ -723,9 +597,7 @@ def _save_operator_json_info(
 
 def compile_buffer_random(kernel_name):
     from asc_op_compile_base.common.context import get_context
-    from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-        kernel_meta_parent_dir,
-    )
+    from asc_op_compile_base.common.buildcfg.buildcfg_mapping import kernel_meta_parent_dir
 
     context = get_context()
     if not context:
@@ -734,17 +606,8 @@ def compile_buffer_random(kernel_name):
         return False
     else:
         buffer_type = context.get_addition("compile_reset_op")
-        bin_path = (
-            ccec.current_build_config().get(kernel_meta_parent_dir)
-            + "/kernel_meta/"
-            + kernel_name
-            + ".o"
-        )
-        reset_op_info = {
-            "type": buffer_type,
-            "bin_path": bin_path,
-            "kernel_name": kernel_name,
-        }
+        bin_path = ccec.current_build_config().get(kernel_meta_parent_dir) + "/kernel_meta/" + kernel_name + ".o"
+        reset_op_info = {"type": buffer_type, "bin_path": bin_path, "kernel_name": kernel_name}
         if context.get_addition("reset_op_info"):
             context.get_addition("reset_op_info").append(reset_op_info)
         else:
@@ -812,11 +675,7 @@ def tvm_callback_cce_postproc(
 
     short_soc_version = get_soc_spec("SHORT_SOC_VERSION")
     if short_soc_version in [ASCEND_910B, ASCEND_910_93, ASCEND_950, MC62, MC32DM11A]:
-        if (
-            is_ffts_id_needed
-            or mix == "MIX"
-            or ccec.current_build_config().get(enforce_mix_mode)
-        ):
+        if is_ffts_id_needed or mix == "MIX" or ccec.current_build_config().get(enforce_mix_mode):
             title_dict["coreType"] = "MIX"
             from asc_op_compile_base.common import cce_params
 
@@ -828,13 +687,7 @@ def tvm_callback_cce_postproc(
     title_dict["blockDim"] = numblocks
     title_dict["opParaSize"] = args_size
 
-    if short_soc_version in [
-        "Ascend910B",
-        "Ascend910_93",
-        "Ascend950",
-        "MC62",
-        "MC32DM11A",
-    ]:
+    if short_soc_version in ["Ascend910B", "Ascend910_93", "Ascend950", "MC62", "MC32DM11A"]:
         mode_in_args_first_field = 0
         if is_ffts_id_needed or ccec.current_build_config().get(enforce_mix_mode):
             mode_in_args_first_field = 1
@@ -845,10 +698,7 @@ def tvm_callback_cce_postproc(
     if atomic_args:
         list_value = _get_atomic_init_args(atomic_args)
     title_dict["parameters"] = list_value
-    if (
-        hasattr(TIK_ATOMIC_ADD_LIST, "local_list")
-        and len(TIK_ATOMIC_ADD_LIST.local_list) > 0
-    ):
+    if hasattr(TIK_ATOMIC_ADD_LIST, "local_list") and len(TIK_ATOMIC_ADD_LIST.local_list) > 0:
         title_dict["parameters"] = TIK_ATOMIC_ADD_LIST.local_list
     from asc_op_compile_base.common.context import get_context
 
@@ -868,19 +718,9 @@ def tvm_callback_cce_postproc(
 
         # add workspace info to context if the info comes from get_build_json_result
         if if_get_workspace_from_json:
-            if (
-                "size" in jsons["workspace"]
-                and "type" in jsons["workspace"]
-                and "num" in jsons["workspace"]
-            ):
+            if "size" in jsons["workspace"] and "type" in jsons["workspace"] and "num" in jsons["workspace"]:
                 _add_context_info(jsons["workspace"])
 
     _save_operator_json_info(
-        kernel_name,
-        is_aicpu,
-        title_dict,
-        kernel_list,
-        kernel_list_deterministic,
-        mix,
-        is_ffts_id_needed,
+        kernel_name, is_aicpu, title_dict, kernel_list, kernel_list_deterministic, mix, is_ffts_id_needed
     )

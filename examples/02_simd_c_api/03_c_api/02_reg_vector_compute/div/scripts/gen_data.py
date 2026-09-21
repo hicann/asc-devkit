@@ -26,17 +26,9 @@ def gen_golden_data():
     # 5. S / S = N
     # 5. S / S = S
     x_small = np.array(
-        [
-            np.power(2.0, -126),
-            np.power(2.0, -125),
-            np.power(2.0, -130),
-            np.power(2.0, -130),
-            np.power(2.0, -140),
-        ]
+        [np.power(2.0, -126), np.power(2.0, -125), np.power(2.0, -130), np.power(2.0, -130), np.power(2.0, -140)]
     )
-    y_small = np.array(
-        [4.0, np.power(2.0, -127), 2.0, np.power(2.0, -20), np.power(2.0, -145)]
-    )
+    y_small = np.array([4.0, np.power(2.0, -127), 2.0, np.power(2.0, -20), np.power(2.0, -145)])
     reps = int(np.ceil(total_length / len(x_small)))
     x = (np.tile(x_small, reps)[:total_length]).astype(np.float32)
     y = (np.tile(y_small, reps)[:total_length]).astype(np.float32)

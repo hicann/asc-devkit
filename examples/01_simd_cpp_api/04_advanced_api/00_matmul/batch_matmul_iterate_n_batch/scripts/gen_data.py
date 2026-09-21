@@ -26,35 +26,13 @@ def gen_golden_data():
     b_layout_info = {"b": 1, "s": n, "n": 1, "g": b, "d": k}
     c_layout_info = {"b": 1, "n": 1, "g": 1, "d": n}
 
-    x1_gm = np.random.uniform(
-        -1, 1, [a_layout_info["s"] * a_layout_info["g"], a_layout_info["d"]]
-    ).astype(src_type)
-    x2_gm = np.random.uniform(
-        -1, 1, [b_layout_info["d"], b_layout_info["g"] * b_layout_info["s"]]
-    ).astype(src_type)
+    x1_gm = np.random.uniform(-1, 1, [a_layout_info["s"] * a_layout_info["g"], a_layout_info["d"]]).astype(src_type)
+    x2_gm = np.random.uniform(-1, 1, [b_layout_info["d"], b_layout_info["g"] * b_layout_info["s"]]).astype(src_type)
     input_bias = np.random.uniform(-1, 1, [1, n]).astype(dst_type)
 
-    a_shape = [
-        a_layout_info["b"],
-        a_layout_info["s"],
-        a_layout_info["n"],
-        a_layout_info["g"],
-        a_layout_info["d"],
-    ]
-    b_shape = [
-        b_layout_info["b"],
-        b_layout_info["s"],
-        b_layout_info["n"],
-        b_layout_info["g"],
-        b_layout_info["d"],
-    ]
-    bias_shape = [
-        c_layout_info["b"],
-        1,
-        c_layout_info["n"],
-        c_layout_info["g"],
-        c_layout_info["d"],
-    ]
+    a_shape = [a_layout_info["b"], a_layout_info["s"], a_layout_info["n"], a_layout_info["g"], a_layout_info["d"]]
+    b_shape = [b_layout_info["b"], b_layout_info["s"], b_layout_info["n"], b_layout_info["g"], b_layout_info["d"]]
+    bias_shape = [c_layout_info["b"], 1, c_layout_info["n"], c_layout_info["g"], c_layout_info["d"]]
 
     a = x1_gm.astype(dst_type).reshape(a_shape)
     b = x2_gm.astype(dst_type).reshape(b_shape)

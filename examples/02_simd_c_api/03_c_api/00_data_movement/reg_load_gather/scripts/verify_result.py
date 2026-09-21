@@ -20,18 +20,12 @@ def verify_result(output_path, golden_path):
     output = np.fromfile(output_path, dtype=np.float16).reshape(-1)
     golden = np.fromfile(golden_path, dtype=np.float16).reshape(-1)
     if output.size != golden.size:
-        print(
-            "element count mismatch: expected %d, actual %d"
-            % (golden.size, output.size)
-        )
+        print("element count mismatch: expected %d, actual %d" % (golden.size, output.size))
         return False
 
     mismatch_indices = np.where(output != golden)[0]
     for index in mismatch_indices[:101]:
-        print(
-            "data index: %06d, expected: %-.9f, actual: %-.9f"
-            % (index, golden[index], output[index])
-        )
+        print("data index: %06d, expected: %-.9f, actual: %-.9f" % (index, golden[index], output[index]))
     return mismatch_indices.size == 0
 
 

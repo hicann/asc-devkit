@@ -23,10 +23,7 @@ from collections import namedtuple
 from dataclasses import dataclass
 from asc_op_compile_base.asc_op_compiler import cce_runtime
 from asc_op_compile_base.common.buildcfg import get_current_build_config
-from asc_op_compile_base.common.error_mgr import (
-    raise_tbe_python_err,
-    TBE_DEFAULT_PYTHON_ERROR_CODE,
-)
+from asc_op_compile_base.common.error_mgr import raise_tbe_python_err, TBE_DEFAULT_PYTHON_ERROR_CODE
 from asc_op_compile_base.common.ccec import CCECInfo
 from .ascendc_common_utility import (
     CommonUtility,
@@ -38,12 +35,7 @@ from .ascendc_common_utility import (
 from .global_storage import global_var_storage
 from asc_op_compile_base.common.utils.log_utils import AscendCLogLevel, CompileStage
 from .get_op_tiling import OpInfo
-from .ascendc_constants import (
-    KernelMetaType,
-    CORE_TYPE_MIX,
-    CORE_TYPE_CUBE,
-    CORE_TYPE_VEC,
-)
+from .ascendc_constants import KernelMetaType, CORE_TYPE_MIX, CORE_TYPE_CUBE, CORE_TYPE_VEC
 from .ascendc_kernel_feature_manager import global_ascendc_kernel_feature_manager
 
 
@@ -66,34 +58,19 @@ def compile_pre_process(op_info: OpInfo, compile_options: list):
     global_var_storage.set_variable("ascendc_sub_super_kernel_params", "")
     global_var_storage.set_variable("ascendc_sub_super_kernel_type", "")
     global_var_storage.set_variable("ascendc_sub_super_kernel_fun_names", {})
-    global_var_storage.set_variable(
-        "ascendc_compile_debug_config", "dump_cce" in op_debug_config_val
-    )
-    global_var_storage.set_variable(
-        "ascendc_dump_disable_compile_options", "-DASCENDC_DUMP=0" in compile_options
-    )
-    global_var_storage.set_variable(
-        "ascendc_debug_compile_options", "-DASCENDC_DEBUG" in compile_options
-    )
-    global_var_storage.set_variable(
-        "ascendc_enable_sanitizer", is_enable_sanitizer(compile_options)
-    )
+    global_var_storage.set_variable("ascendc_compile_debug_config", "dump_cce" in op_debug_config_val)
+    global_var_storage.set_variable("ascendc_dump_disable_compile_options", "-DASCENDC_DUMP=0" in compile_options)
+    global_var_storage.set_variable("ascendc_debug_compile_options", "-DASCENDC_DEBUG" in compile_options)
+    global_var_storage.set_variable("ascendc_enable_sanitizer", is_enable_sanitizer(compile_options))
     global_var_storage.set_variable("ascendc_enable_build_log", is_enable_build_log())
     global_var_storage.set_variable("ascendc_enable_coverage", is_enable_ascendc_cov())
-    global_var_storage.set_variable(
-        "ascendc_time_stamp_compile_options",
-        "-DASCENDC_TIME_STAMP_ON" in compile_options,
-    )
+    global_var_storage.set_variable("ascendc_time_stamp_compile_options", "-DASCENDC_TIME_STAMP_ON" in compile_options)
     global_var_storage.set_variable(
         "ascendc_enable_super_kernel",
-        (
-            bool(get_current_build_config("enable_super_kernel"))
-            and CommonUtility.is_support_super_kernel()
-        ),
+        (bool(get_current_build_config("enable_super_kernel")) and CommonUtility.is_support_super_kernel()),
     )
     global_var_storage.set_variable(
-        "ascendc_enable_aicore_exception_restart",
-        "-DAICORE_EXCEPTION_RESTART" in compile_options,
+        "ascendc_enable_aicore_exception_restart", "-DAICORE_EXCEPTION_RESTART" in compile_options
     )
     if global_var_storage.get_variable("ascendc_enable_coverage"):
         compile_options.append("-g")
@@ -119,48 +96,32 @@ def get_actual_kernel_type(tiling_key, compile_info, need_ffts, kernel_name):
         return code_type
     else:
         CommonUtility.print_compile_log(
-            kernel_name,
-            "Aicore Exception Restart not support this kernel type",
-            AscendCLogLevel.LOG_ERROR,
+            kernel_name, "Aicore Exception Restart not support this kernel type", AscendCLogLevel.LOG_ERROR
         )
         raise Exception("Aicore Exception Restart not support this kernel type")
 
 
 SingleTilingKeyCompileParams = namedtuple(
     "SingleTilingKeyCompileParams",
-    [
-        "tiling_key",
-        "compile_info",
-        "sub_arch",
-        "tiling_info",
-        "code_channel",
-        "compile_option_tuple",
-    ],
+    ["tiling_key", "compile_info", "sub_arch", "tiling_info", "code_channel", "compile_option_tuple"],
 )
 
 
 def fatbin_objs(obj_files: list, dst_file: str, is_debug: bool, compile_log_path=None):
-    if global_var_storage.get_variable(
-        "ascendc_enable_super_kernel"
-    ) is True and global_var_storage.get_variable("ascendc_is_static_op"):
+    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True and global_var_storage.get_variable(
+        "ascendc_is_static_op"
+    ):
         return
-    compile_cmd = [
-        CCECInfo.get_exe("ld.lld"),
-        "-m",
-        "aicorelinux",
-        "-r",
-        "-Ttext=0",
-        "-q",
-    ]
+    compile_cmd = [CCECInfo.get_exe("ld.lld"), "-m", "aicorelinux", "-r", "-Ttext=0", "-q"]
     if not is_debug:
         compile_cmd.append("-x")
     for obj in obj_files:
         compile_cmd += [obj]
     compile_cmd += ["-static", "-o", "%s" % dst_file]
     CommonUtility.run_cmd_inner(compile_cmd, CompileStage.FATBIN, compile_log_path)
-    if not global_var_storage.get_variable(
-        "ascendc_compile_debug_config"
-    ) and not global_var_storage.get_variable("super_kenel_save_sub_op_files"):
+    if not global_var_storage.get_variable("ascendc_compile_debug_config") and not global_var_storage.get_variable(
+        "super_kenel_save_sub_op_files"
+    ):
         for obj in obj_files:
             os.remove(obj)
 
@@ -210,47 +171,27 @@ def link_relocatable_meta_file(bin_file_path, meta_file_path, compile_log_path=N
     CommonUtility.run_cmd_inner(link_cmd, CompileStage.LINKRELOCATE, compile_log_path)
 
 
-def link_sk_norm_combine(
-    sk_bin_file,
-    norm_bin_file,
-    sk_bind_dst_file,
-    meta_file_path,
-    compile_log_path=None,
-):
+def link_sk_norm_combine(sk_bin_file, norm_bin_file, sk_bind_dst_file, meta_file_path, compile_log_path=None):
     # Step 1: 解压 sk_bin_file (它是由 ar crs 打包的 .o 文件)
     # 创建临时目录用于解压
-    temp_extract_dir = os.path.join(
-        os.path.dirname(sk_bin_file), "temp_extract_" + str(os.getpid())
-    )
+    temp_extract_dir = os.path.join(os.path.dirname(sk_bin_file), "temp_extract_" + str(os.getpid()))
     os.makedirs(temp_extract_dir, exist_ok=True)
 
     try:
         # 解压 sk_bin_file 到临时目录
         CommonUtility.print_compile_log(
-            "",
-            f"Extracting sk_bin_file: {sk_bin_file} to {temp_extract_dir}",
-            AscendCLogLevel.LOG_DEBUG,
+            "", f"Extracting sk_bin_file: {sk_bin_file} to {temp_extract_dir}", AscendCLogLevel.LOG_DEBUG
         )
         extract_cmd = ["ar", "x", sk_bin_file]
-        CommonUtility.dump_compile_log(
-            extract_cmd, CompileStage.LINKRELOCATE, compile_log_path
-        )
-        result = subprocess.run(
-            extract_cmd, cwd=temp_extract_dir, capture_output=True, text=True
-        )
+        CommonUtility.dump_compile_log(extract_cmd, CompileStage.LINKRELOCATE, compile_log_path)
+        result = subprocess.run(extract_cmd, cwd=temp_extract_dir, capture_output=True, text=True)
         if result.returncode != 0:
             raise Exception(f"Failed to extract sk_bin_file: {result.stderr}")
 
         # 列出解压出的所有 .o 文件
-        extracted_objs = [
-            os.path.join(temp_extract_dir, f)
-            for f in os.listdir(temp_extract_dir)
-            if f.endswith(".o")
-        ]
+        extracted_objs = [os.path.join(temp_extract_dir, f) for f in os.listdir(temp_extract_dir) if f.endswith(".o")]
         CommonUtility.print_compile_log(
-            "",
-            f"Extracted object files: {[os.path.basename(f) for f in extracted_objs]}",
-            AscendCLogLevel.LOG_DEBUG,
+            "", f"Extracted object files: {[os.path.basename(f) for f in extracted_objs]}", AscendCLogLevel.LOG_DEBUG
         )
 
         # Step 2: 将解压的 .o 文件、norm_bin_file、sk_bind_dst_file 和可选的 meta_file_path 合并
@@ -260,9 +201,7 @@ def link_sk_norm_combine(
         link_cmd.extend([norm_bin_file, sk_bind_dst_file])
         if meta_file_path:
             link_cmd.append(meta_file_path)
-        CommonUtility.dump_compile_log(
-            link_cmd, CompileStage.LINKRELOCATE, compile_log_path
-        )
+        CommonUtility.dump_compile_log(link_cmd, CompileStage.LINKRELOCATE, compile_log_path)
         result = subprocess.run(link_cmd, capture_output=True, text=True)
         if result.returncode != 0:
             raise Exception(f"Failed to link merged objects: {result.stderr}")
@@ -279,23 +218,17 @@ def link_sk_norm_combine(
             sk_bin_file,
             "-q",
         ]
-        CommonUtility.dump_compile_log(
-            link_cmd, CompileStage.LINKRELOCATE, compile_log_path
-        )
+        CommonUtility.dump_compile_log(link_cmd, CompileStage.LINKRELOCATE, compile_log_path)
         result = subprocess.run(link_cmd, capture_output=True, text=True)
         if result.returncode != 0:
             raise Exception(f"Failed to self-link: {result.stderr}")
 
         CommonUtility.print_compile_log(
-            "",
-            f"Successfully created final sk_bin_file: {sk_bin_file}",
-            AscendCLogLevel.LOG_INFO,
+            "", f"Successfully created final sk_bin_file: {sk_bin_file}", AscendCLogLevel.LOG_INFO
         )
 
     finally:
-        CommonUtility.print_compile_log(
-            "", "Successfully sk combine link", AscendCLogLevel.LOG_INFO
-        )
+        CommonUtility.print_compile_log("", "Successfully sk combine link", AscendCLogLevel.LOG_INFO)
 
 
 def _get_max_parallel_num():
@@ -341,9 +274,7 @@ please use TILINGKEY_PARALLEL_JOB instead!",
         if ascendc_self_par_job_num == 1:
             ascendc_self_par_job_num = max_job_num
         else:
-            ascendc_self_par_job_num = min(
-                max(1, ascendc_self_par_job_num), max_job_num
-            )
+            ascendc_self_par_job_num = min(max(1, ascendc_self_par_job_num), max_job_num)
     elif ascend_self_par_job is not None:
         ascendc_self_par_job_num = min(max(1, int(ascend_self_par_job)), max_job_num)
     else:
@@ -369,25 +300,19 @@ TILINGKEY_PAR_COMPILE is {}".format(parallel_compile_check),
             AscendCLogLevel.LOG_WARNING,
         )
 
-    dstfile_with_pid = os.path.join(
-        CommonUtility.get_kernel_meta_dir(), dstfile_name + "_" + str(os.getpid())
-    )
+    dstfile_with_pid = os.path.join(CommonUtility.get_kernel_meta_dir(), dstfile_name + "_" + str(os.getpid()))
     write_mk(tiling_key_list, cmds_list, dstfile_with_pid, compile_log_path)
     mk_file = f"{dstfile_with_pid}.mk"
     if parallel_compile_check == "1":
         _ignore_parallel_job_self_set()
         cmd = ["make", "-f", mk_file]
     else:
-        ascendc_self_par_job_num = _get_parallel_job_without_op_project(
-            len(tiling_key_list)
-        )
+        ascendc_self_par_job_num = _get_parallel_job_without_op_project(len(tiling_key_list))
         cmd = ["make", "-f", mk_file, "-j", f"{ascendc_self_par_job_num}"]
     cmd_str = " ".join(cmd)
     file_name = ""
     if global_var_storage.get_variable("ascendc_enable_build_log") is True:
-        file_name, kernel_name, hash_name = CommonUtility.get_build_file_name(
-            cmds_list[0], CompileStage.COMPILE
-        )
+        file_name, kernel_name, hash_name = CommonUtility.get_build_file_name(cmds_list[0], CompileStage.COMPILE)
         try:
             with open(file_name, mode="at") as f:
                 os.chmod(file_name, stat.S_IRUSR + stat.S_IWUSR)
@@ -398,9 +323,7 @@ TILINGKEY_PAR_COMPILE is {}".format(parallel_compile_check),
                 cmd.append(file_name)
                 cmd_str = " ".join(cmd)
         except Exception as err:
-            raise_tbe_python_err(
-                TBE_DEFAULT_PYTHON_ERROR_CODE, ("write log failed, reason is:", err)
-            )
+            raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("write log failed, reason is:", err))
     ret = os.system(f"{cmd_str} > /dev/null")
     if ret != 0 and global_var_storage.get_variable("ascendc_enable_build_log") is True:
         file_name_parts = file_name.split(".")
@@ -409,24 +332,16 @@ TILINGKEY_PAR_COMPILE is {}".format(parallel_compile_check),
         CommonUtility.print_compile_log(
             "",
             "Operator {}_{}: errors occurred during compile phase \
-of {}, See also {}".format(
-                kernel_name, hash_name, str(CompileStage.COMPILE), new_file_name
-            ),
+of {}, See also {}".format(kernel_name, hash_name, str(CompileStage.COMPILE), new_file_name),
             AscendCLogLevel.LOG_ERROR,
         )
-        raise Exception(
-            "An error occurred during compile phases of {}".format(
-                str(CompileStage.COMPILE)
-            )
-        )
+        raise Exception("An error occurred during compile phases of {}".format(str(CompileStage.COMPILE)))
     if not global_var_storage.get_variable("ascendc_compile_debug_config"):
         CommonUtility.remove_temp_file(mk_file)
 
 
 def search_in_line(line, keywords):
-    pattern = re.compile(
-        r"\b(" + "|".join(re.escape(keyword) for keyword in keywords) + r")\b"
-    )
+    pattern = re.compile(r"\b(" + "|".join(re.escape(keyword) for keyword in keywords) + r")\b")
     matches = pattern.findall(line)
     if matches:
         return True, f"{', '.join(matches)}"

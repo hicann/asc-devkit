@@ -42,11 +42,6 @@ def gen_golden_data_simple(clamp_type):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--scenario",
-        type=int,
-        choices=(0, 1),
-        help="指定clampmin或者clampmax，取值0或1",
-    )
+    parser.add_argument("--scenario", type=int, choices=(0, 1), help="指定clampmin或者clampmax，取值0或1")
     args = parser.parse_args()
     gen_golden_data_simple(args.scenario if args.scenario else 0)

@@ -18,9 +18,7 @@ import random
 import numpy as np
 
 
-def random_num_spec_range(
-    max_val, min_val, size, dtype, range_ls=None, range_ratio=None
-):
+def random_num_spec_range(max_val, min_val, size, dtype, range_ls=None, range_ratio=None):
     """ """
     x = np.random.uniform(min_val, max_val, size=(size,)).astype(dtype)
 
@@ -46,9 +44,7 @@ def random_set_inf(src_seq, src_cpp_type):
             elif "bfloat16_t" in str(src_cpp_type):
 
                 def to_bfloat16(x):
-                    return np.frombuffer(
-                        np.array(x, dtype=np.float32).tobytes()[::2], dtype=np.uint16
-                    )
+                    return np.frombuffer(np.array(x, dtype=np.float32).tobytes()[::2], dtype=np.uint16)
 
     return
 
@@ -73,9 +69,7 @@ def gen_golden_data_simple():
     max_val = 65504
     min_val = -65504
 
-    src = random_num_spec_range(
-        max_val, min_val, data_size, dtype, range_ls=[(-10, 10)], range_ratio=[0.2]
-    )
+    src = random_num_spec_range(max_val, min_val, data_size, dtype, range_ls=[(-10, 10)], range_ratio=[0.2])
     random_set_inf([src], src_type)
     random_set_nan([src], src_type, dst_type)
     golden = np.zeros(data_size).astype(dst_type)

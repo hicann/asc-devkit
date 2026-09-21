@@ -26,9 +26,7 @@ PADDING_VALUE = -9
 
 def gen_golden_data(scenario_num):
     input_col = COL - LEFT_PADDING - RIGHT_PADDING if scenario_num == 5 else COL
-    data = ((np.arange(ROW * input_col, dtype=np.int16) * 13 + 7) % 251 - 125).astype(
-        np.int8
-    )
+    data = ((np.arange(ROW * input_col, dtype=np.int16) * 13 + 7) % 251 - 125).astype(np.int8)
 
     golden = data
     if scenario_num == 5:

@@ -29,28 +29,14 @@ SUPPORTED_PATTERNS = (
     ("printf", re.compile(r"\b(?:AscendC::)?(?:printf|PRINTF)\s*\(")),
     ("assert", re.compile(r"\b(?:assert|ascendc_assert)\s*\(")),
     ("__trap", re.compile(r"\b__trap\s*\(")),
-    (
-        "asc_dump",
-        re.compile(
-            r"\basc_dump(?:_(?:gm|ubuf|l1buf|cbuf|reg))?\s*(?:<[^;{}()]*>)?\s*\("
-        ),
-    ),
+    ("asc_dump", re.compile(r"\basc_dump(?:_(?:gm|ubuf|l1buf|cbuf|reg))?\s*(?:<[^;{}()]*>)?\s*\(")),
     ("clock", re.compile(r"\bclock\s*\(")),
     ("asc_time_stamp", re.compile(r"\basc_time_stamp\s*\(")),
 )
 
-EXCLUDED_APIS = {
-    "asc_prof_start",
-    "asc_prof_stop",
-    "asc_mark_stamp",
-    "TRACE_START",
-    "TRACE_STOP",
-}
+EXCLUDED_APIS = {"asc_prof_start", "asc_prof_stop", "asc_mark_stamp", "TRACE_START", "TRACE_STOP"}
 
-EXCLUDED_PATTERNS = {
-    api: re.compile(r"\b" + re.escape(api) + r"(?:\s*<[^;{}()]*>)?\s*\(")
-    for api in EXCLUDED_APIS
-}
+EXCLUDED_PATTERNS = {api: re.compile(r"\b" + re.escape(api) + r"(?:\s*<[^;{}()]*>)?\s*\(") for api in EXCLUDED_APIS}
 
 REQUIRED_HEADERS = {
     "printf": "utils/debug/asc_printf.h",
@@ -63,11 +49,7 @@ REQUIRED_HEADERS = {
 
 
 def _line_numbers(text: str, pattern: re.Pattern[str]) -> List[int]:
-    return [
-        index
-        for index, line in enumerate(text.splitlines(), start=1)
-        if pattern.search(line)
-    ]
+    return [index for index, line in enumerate(text.splitlines(), start=1) if pattern.search(line)]
 
 
 def scan_text(text: str, filename: str = "<memory>") -> Dict[str, object]:
@@ -95,11 +77,7 @@ def scan_text(text: str, filename: str = "<memory>") -> Dict[str, object]:
     missing_headers = (
         {}
         if "kernel_operator.h" in headers
-        else {
-            api: REQUIRED_HEADERS[api]
-            for api in supported
-            if REQUIRED_HEADERS[api] not in headers
-        }
+        else {api: REQUIRED_HEADERS[api] for api in supported if REQUIRED_HEADERS[api] not in headers}
     )
 
     return {
@@ -131,25 +109,15 @@ def _merge_reports(reports: Iterable[Dict[str, object]]) -> Dict[str, object]:
         for api in report["excluded"]:  # type: ignore[index]
             if api not in excluded:
                 excluded.append(api)
-    return {
-        "files": report_list,
-        "supported": supported,
-        "excluded": sorted(excluded),
-    }
+    return {"files": report_list, "supported": supported, "excluded": sorted(excluded)}
 
 
 def main(argv: List[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("paths", nargs="*", type=Path, help="AscendC source files to scan")
+    parser.add_argument("--json", action="store_true", help="write a machine-readable JSON report")
     parser.add_argument(
-        "paths", nargs="*", type=Path, help="AscendC source files to scan"
-    )
-    parser.add_argument(
-        "--json", action="store_true", help="write a machine-readable JSON report"
-    )
-    parser.add_argument(
-        "--fail-on-excluded",
-        action="store_true",
-        help="return 1 when an excluded profiling API is found",
+        "--fail-on-excluded", action="store_true", help="return 1 when an excluded profiling API is found"
     )
     args = parser.parse_args(argv)
 

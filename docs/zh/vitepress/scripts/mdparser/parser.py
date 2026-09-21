@@ -31,17 +31,9 @@ def _load_css():
     if _CSS is not None:
         return _CSS
     candidates = [
-        pathlib.Path(__file__).parent.parent.parent
-        / "node_modules"
-        / "github-markdown-css"
-        / "github-markdown.css",
-        pathlib.Path(__file__).parent.parent
-        / "node_modules"
-        / "github-markdown-css"
-        / "github-markdown.css",
-        pathlib.Path(
-            "/home/zjj/md-parser/node_modules/github-markdown-css/github-markdown.css"
-        ),
+        pathlib.Path(__file__).parent.parent.parent / "node_modules" / "github-markdown-css" / "github-markdown.css",
+        pathlib.Path(__file__).parent.parent / "node_modules" / "github-markdown-css" / "github-markdown.css",
+        pathlib.Path("/home/zjj/md-parser/node_modules/github-markdown-css/github-markdown.css"),
     ]
     for p in candidates:
         if p.exists():
@@ -55,32 +47,17 @@ _OPTIONS = cmarkgfm.Options.CMARK_OPT_UNSAFE
 
 _MD_LINK_RE = re.compile(r'(href|src)="((?!https?:|//)[^"]+)\.md(#[^"]*)?"')
 
-_CANN_OPEN_RE = re.compile(
-    r'<cann-filter\b[^>]*npu[_-]type\s*=\s*"([^"]+)"[^>]*>',
-    re.IGNORECASE,
-)
+_CANN_OPEN_RE = re.compile(r'<cann-filter\b[^>]*npu[_-]type\s*=\s*"([^"]+)"[^>]*>', re.IGNORECASE)
 
-_CANN_CLOSE_RE = re.compile(
-    r"</cann-filter\b[^>]*>",
-    re.IGNORECASE,
-)
+_CANN_CLOSE_RE = re.compile(r"</cann-filter\b[^>]*>", re.IGNORECASE)
 
 _OTHER_TAG_NAMES = r"term|ph|__gm__|__ubuf__"
 
-_OTHER_TAG_LINE_RE = re.compile(
-    r"^[ \t]*</?(" + _OTHER_TAG_NAMES + r")\b[^>]*>[ \t]*$",
-    re.IGNORECASE,
-)
+_OTHER_TAG_LINE_RE = re.compile(r"^[ \t]*</?(" + _OTHER_TAG_NAMES + r")\b[^>]*>[ \t]*$", re.IGNORECASE)
 
-_OTHER_TAG_WRAP_RE = re.compile(
-    r"<(" + _OTHER_TAG_NAMES + r")\b[^>]*>([\s\S]*?)</\1>",
-    re.IGNORECASE,
-)
+_OTHER_TAG_WRAP_RE = re.compile(r"<(" + _OTHER_TAG_NAMES + r")\b[^>]*>([\s\S]*?)</\1>", re.IGNORECASE)
 
-_OTHER_TAG_ANY_RE = re.compile(
-    r"</?(" + _OTHER_TAG_NAMES + r")\b[^>]*>",
-    re.IGNORECASE,
-)
+_OTHER_TAG_ANY_RE = re.compile(r"</?(" + _OTHER_TAG_NAMES + r")\b[^>]*>", re.IGNORECASE)
 
 
 _FENCE_OPEN_RE = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})", re.MULTILINE)
@@ -98,19 +75,12 @@ _HTML_BLOCK_TAG_NAMES = (
     r"search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul"
 )
 
-_HTML_BLOCK_TAG_RE = re.compile(
-    rf"^</?(?:{_HTML_BLOCK_TAG_NAMES})(?:[ \t\n\f\r]|/?>)",
-    re.IGNORECASE,
-)
+_HTML_BLOCK_TAG_RE = re.compile(rf"^</?(?:{_HTML_BLOCK_TAG_NAMES})(?:[ \t\n\f\r]|/?>)", re.IGNORECASE)
 
-_HTML_BLOCK_TYPE1_RE = re.compile(
-    r"^<(script|pre|style|textarea)(?:[ \t\n\f\r]|>|$)",
-    re.IGNORECASE,
-)
+_HTML_BLOCK_TYPE1_RE = re.compile(r"^<(script|pre|style|textarea)(?:[ \t\n\f\r]|>|$)", re.IGNORECASE)
 
 _HTML_BLOCK_TYPE1_END_RE = {
-    tag: re.compile(rf"</{tag}[ \t]*>", re.IGNORECASE)
-    for tag in ("script", "pre", "style", "textarea")
+    tag: re.compile(rf"</{tag}[ \t]*>", re.IGNORECASE) for tag in ("script", "pre", "style", "textarea")
 }
 
 _HTML_BLOCK_SPECIAL_RE = (
@@ -183,9 +153,7 @@ def _escape_lone_tildes(md_text: str) -> str:
 
         if in_fence:
             result.append(line)
-            if fence_char and re.match(
-                rf"^{re.escape(fence_char)}{{3,}}[ \t]*$", stripped
-            ):
+            if fence_char and re.match(rf"^{re.escape(fence_char)}{{3,}}[ \t]*$", stripped):
                 in_fence = False
                 fence_char = None
             previous_line_blank = not stripped
@@ -248,9 +216,7 @@ def _split_by_fences(md_text: str):
 
         if is_code:
             current.append(line)
-            if fence_char and re.match(
-                rf"^{re.escape(fence_char)}{{3,}}[ \t]*$", stripped
-            ):
+            if fence_char and re.match(rf"^{re.escape(fence_char)}{{3,}}[ \t]*$", stripped):
                 is_code = False
                 fence_char = None
                 segments.append((True, "\n".join(current)))
@@ -355,8 +321,7 @@ def _strip_other_tags(md_text: str) -> str:
 
 
 _CALLOUT_RE = re.compile(
-    r"<blockquote>\s*\n<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](.*?)</p>\s*\n(.*?)</blockquote>",
-    re.DOTALL,
+    r"<blockquote>\s*\n<p>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](.*?)</p>\s*\n(.*?)</blockquote>", re.DOTALL
 )
 
 _CALLOUT_ICONS = {
@@ -519,9 +484,7 @@ def _fix_links(html: str, source_path=None) -> str:
     def _replace_markdown_link(match):
         link_path = match.group(2)
         if match.group(1).lower() == "href" and repo_root is not None:
-            target = (
-                pathlib.Path(source_path).resolve().parent / unquote(link_path)
-            ).resolve()
+            target = (pathlib.Path(source_path).resolve().parent / unquote(link_path)).resolve()
             if _is_within(target, repo_root) and not _is_within(target, docs_root):
                 return match.group(0)
         return f'{match.group(1)}="{link_path}.html{match.group(3) or ""}"'
@@ -536,13 +499,9 @@ def _fix_callouts(html: str) -> str:
         title = m.group(2).strip()
         body_content = m.group(3).strip()
         icon = _CALLOUT_ICONS.get(callout_type, "")
-        type_label = dict(
-            NOTE="Note",
-            TIP="Tip",
-            IMPORTANT="Important",
-            WARNING="Warning",
-            CAUTION="Caution",
-        ).get(callout_type, callout_type)
+        type_label = dict(NOTE="Note", TIP="Tip", IMPORTANT="Important", WARNING="Warning", CAUTION="Caution").get(
+            callout_type, callout_type
+        )
         if not body_content and "\n" in title:
             title, body_content = title.split("\n", 1)
             title = title.strip()
@@ -607,9 +566,7 @@ def _get_pygments_css() -> str:
     global _PYGMENTS_CSS
     if _PYGMENTS_CSS is not None:
         return _PYGMENTS_CSS
-    _PYGMENTS_CSS = HtmlFormatter(style="default").get_style_defs(
-        ".markdown-body .highlight"
-    )
+    _PYGMENTS_CSS = HtmlFormatter(style="default").get_style_defs(".markdown-body .highlight")
     return _PYGMENTS_CSS
 
 
@@ -670,10 +627,7 @@ _HIGHLIGHT_CSS = """
 }
 """
 
-_CODEFENCE_RE = re.compile(
-    r'<pre(?:\s+lang="([^"]*)")?>\s*<code>(.*?)</code>\s*</pre>',
-    re.DOTALL,
-)
+_CODEFENCE_RE = re.compile(r'<pre(?:\s+lang="([^"]*)")?>\s*<code>(.*?)</code>\s*</pre>', re.DOTALL)
 
 
 def _highlight_code(html: str) -> str:

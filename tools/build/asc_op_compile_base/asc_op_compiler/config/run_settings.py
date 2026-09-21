@@ -13,25 +13,13 @@
 run_settings
 """
 
-from asc_op_compile_base.asc_op_compiler.ascendc_constants import (
-    PreCompileType,
-    CompileType,
-    IsolationMacroType,
-)
+from asc_op_compile_base.asc_op_compiler.ascendc_constants import PreCompileType, CompileType, IsolationMacroType
 from asc_op_compile_base.asc_op_compiler.generator.initialize import InitializerConfig
-from asc_op_compile_base.asc_op_compiler.generator.compile_info_generator import (
-    CompileInfoGeneratorConfig,
-)
-from asc_op_compile_base.asc_op_compiler.generator.tiling_info_generator import (
-    TilingInfoGeneratorConfig,
-)
-from asc_op_compile_base.asc_op_compiler.generator.code_generator import (
-    CodeGeneratorConfig,
-)
+from asc_op_compile_base.asc_op_compiler.generator.compile_info_generator import CompileInfoGeneratorConfig
+from asc_op_compile_base.asc_op_compiler.generator.tiling_info_generator import TilingInfoGeneratorConfig
+from asc_op_compile_base.asc_op_compiler.generator.code_generator import CodeGeneratorConfig
 from asc_op_compile_base.asc_op_compiler.generator.op_compiler import OpCompilerConfig
-from asc_op_compile_base.asc_op_compiler.generator.kernel_compiler import (
-    KernelCompilerConfig,
-)
+from asc_op_compile_base.asc_op_compiler.generator.kernel_compiler import KernelCompilerConfig
 from asc_op_compile_base.asc_op_compiler.generator.cmd_compiler import CmdCompilerConfig
 
 

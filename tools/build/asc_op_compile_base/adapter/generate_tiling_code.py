@@ -16,9 +16,7 @@ generate tiling code
 from .global_storage import global_var_storage
 
 
-def generate_pointer_directly_assess_data(
-    is_dynamic: bool = True, is_micro=True, tiling_assign_str: str = ""
-):
+def generate_pointer_directly_assess_data(is_dynamic: bool = True, is_micro=True, tiling_assign_str: str = ""):
     """generate code to access data directly by pointer"""
 
     short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")

@@ -41,9 +41,7 @@ def gen_data():
     bias = np.arange(MATMUL_N, dtype=np.float32)
     scale = np.where(np.arange(MATMUL_N) % 2 == 0, 1.0, 0.5).astype(np.float32)
     scale_bits = scale.view(np.uint32).astype(np.uint64)
-    quant = np.uint64(FIXPIPE_QUANT_META_BIT) | (
-        scale_bits & np.uint64(FIXPIPE_SCALE_MASK)
-    )
+    quant = np.uint64(FIXPIPE_QUANT_META_BIT) | (scale_bits & np.uint64(FIXPIPE_SCALE_MASK))
 
     # The raw HiFloat8 value 0x08 represents 1.0 for both input matrices.
     a_value = np.ones((MATMUL_M, MATMUL_K), dtype=np.float32)

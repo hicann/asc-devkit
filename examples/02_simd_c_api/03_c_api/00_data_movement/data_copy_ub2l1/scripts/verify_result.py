@@ -26,9 +26,7 @@ def verify_result(output_path, golden_path, scenario_num):
     output_size = os.path.getsize(output_path)
     golden_size = os.path.getsize(golden_path)
     if output_size != golden_size:
-        print(
-            "output and golden file sizes differ: %d != %d" % (output_size, golden_size)
-        )
+        print("output and golden file sizes differ: %d != %d" % (output_size, golden_size))
         return False
     if golden_size == 0 or golden_size % np.dtype(dtype).itemsize != 0:
         print("output and golden files must contain complete %s data" % np.dtype(dtype))
@@ -41,18 +39,13 @@ def verify_result(output_path, golden_path, scenario_num):
         for index in different_indices[:101]:
             golden_value = golden[index]
             output_value = output[index]
-            print(
-                "data index: %06d, expected: %-.9f, actual: %-.9f"
-                % (index, golden_value, output_value)
-            )
+            print("data index: %06d, expected: %-.9f, actual: %-.9f" % (index, golden_value, output_value))
         return different_indices.size == 0
 
     absolute_difference = np.abs(output - golden)
     with np.errstate(divide="ignore", invalid="ignore"):
         relative_difference = absolute_difference / np.abs(golden)
-    different_indices = np.where(
-        (absolute_difference > EPSILON) & (relative_difference > EPSILON)
-    )[0]
+    different_indices = np.where((absolute_difference > EPSILON) & (relative_difference > EPSILON))[0]
     for index in different_indices[:101]:
         golden_value = golden[index]
         output_value = output[index]

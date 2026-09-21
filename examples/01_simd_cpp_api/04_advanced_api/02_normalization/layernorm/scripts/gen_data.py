@@ -42,9 +42,7 @@ def gen_layernorm_data():
     # 2. LayerNorm前向计算
     reduce_axis = 2
     mean = np.mean(inputX, axis=reduce_axis, keepdims=True)  # [B, S, 1]
-    variance = np.mean(
-        np.power((inputX - mean), 2), axis=reduce_axis, keepdims=True
-    )  # [B, S, 1]
+    variance = np.mean(np.power((inputX - mean), 2), axis=reduce_axis, keepdims=True)  # [B, S, 1]
 
     # 归一化
     x_minus_mean = inputX - mean
@@ -58,31 +56,22 @@ def gen_layernorm_data():
 
     # 计算pd_var
     pd_var = np.sum(
-        np.multiply(
-            np.multiply(np.multiply(-0.5, pd_xl), x_minus_mean),
-            np.power(np.add(variance, eps), -1.5),
-        ),
+        np.multiply(np.multiply(np.multiply(-0.5, pd_xl), x_minus_mean), np.power(np.add(variance, eps), -1.5)),
         axis=reduce_axis,
         keepdims=True,
     )
 
     # 计算pd_mean
     pd_mean = np.add(
-        np.sum(
-            np.multiply(np.multiply(-1.0, pd_xl), tmp2), axis=reduce_axis, keepdims=True
-        ),
+        np.sum(np.multiply(np.multiply(-1.0, pd_xl), tmp2), axis=reduce_axis, keepdims=True),
         np.multiply(
-            np.multiply(pd_var, reciprocal),
-            np.sum(np.multiply(-2.0, x_minus_mean), axis=reduce_axis, keepdims=True),
+            np.multiply(pd_var, reciprocal), np.sum(np.multiply(-2.0, x_minus_mean), axis=reduce_axis, keepdims=True)
         ),
     )
 
     # 计算pd_x
     pd_x = np.add(
-        np.add(
-            np.multiply(pd_mean, reciprocal),
-            np.multiply(np.multiply(pd_var, 2.0 * reciprocal), x_minus_mean),
-        ),
+        np.add(np.multiply(pd_mean, reciprocal), np.multiply(np.multiply(pd_var, 2.0 * reciprocal), x_minus_mean)),
         np.multiply(pd_xl, tmp2),
     )
 

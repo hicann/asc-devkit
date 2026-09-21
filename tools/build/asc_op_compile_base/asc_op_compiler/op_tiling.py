@@ -64,26 +64,14 @@ scene_info_mdc = os.path.join(_ASCEND_OPP_PATH_DEFAULT_MDC, "scene.info")
 # all in one default path
 scene_info_path_default = os.path.join(_ASCEND_OPP_PATH_DEFAULT, "scene.info")
 # first choose all in one default path
-scene_info_default_path = (
-    scene_info_path_default
-    if os.path.exists(scene_info_path_default)
-    else scene_info_mdc
-)
+scene_info_default_path = scene_info_path_default if os.path.exists(scene_info_path_default) else scene_info_mdc
 # first use opp path env path
 scene_info_path = scene_info if os.path.exists(scene_info) else scene_info_default_path
 conf_dir = os.path.join(opp_dir, "vendors")
 config = os.path.join(opp_dir, "vendors", "config.ini")
-op_impl_path = (
-    os.path.join("built-in", "op_impl")
-    if os.path.exists(conf_dir)
-    else os.path.join("op_impl", "built-in")
-)
-tiling_full_path = os.path.join(
-    opp_dir, op_impl_path, "ai_core", "tbe", "op_tiling", "liboptiling.so"
-)
-tiling_so_path = os.path.join(
-    op_impl_path, "ai_core", "tbe", "op_tiling", "liboptiling.so"
-)
+op_impl_path = os.path.join("built-in", "op_impl") if os.path.exists(conf_dir) else os.path.join("op_impl", "built-in")
+tiling_full_path = os.path.join(opp_dir, op_impl_path, "ai_core", "tbe", "op_tiling", "liboptiling.so")
+tiling_so_path = os.path.join(op_impl_path, "ai_core", "tbe", "op_tiling", "liboptiling.so")
 tiling_cust_path = os.path.join("ai_core", "tbe", "op_tiling", "liboptiling.so")
 # Get system info
 if os.path.exists(scene_info_path):
@@ -95,49 +83,27 @@ if os.path.exists(scene_info_path):
                 sys_version = item_info.split("=")[-1]
                 os_state = True
         if os_state is False:
-            raise RuntimeError(
-                {"errCode": "E80001", "config_name": "os", "file_name": "scene.info"}
-            )
+            raise RuntimeError({"errCode": "E80001", "config_name": "os", "file_name": "scene.info"})
 else:
     sys_version = sys.platform
-tiling_so_arch_path = os.path.join(
-    "ai_core", "tbe", "op_tiling", "lib", sys_version, platform_arch, "liboptiling.so"
-)
+tiling_so_arch_path = os.path.join("ai_core", "tbe", "op_tiling", "lib", sys_version, platform_arch, "liboptiling.so")
 tiling_so_arch_path2 = os.path.join(
-    "ai_core",
-    "tbe",
-    "op_tiling",
-    "lib",
-    sys_version,
-    platform_arch,
-    "libopmaster_rt2.0.so",
+    "ai_core", "tbe", "op_tiling", "lib", sys_version, platform_arch, "libopmaster_rt2.0.so"
 )
 so_arch_path = os.path.join(op_impl_path, tiling_so_arch_path)
 so_arch_path2 = os.path.join(op_impl_path, tiling_so_arch_path2)
 tiling_rtso_arch_path2 = os.path.join(
-    "ai_core",
-    "tbe",
-    "op_tiling",
-    "lib",
-    sys_version,
-    platform_arch,
-    "libopmaster_rt.so",
+    "ai_core", "tbe", "op_tiling", "lib", sys_version, platform_arch, "libopmaster_rt.so"
 )
 rtso_arch_path2 = os.path.join(op_impl_path, tiling_rtso_arch_path2)
-tiling_open_arch_path = os.path.join(
-    "ai_core", "tbe", "op_host", "lib", sys_version, platform_arch
-)
+tiling_open_arch_path = os.path.join("ai_core", "tbe", "op_host", "lib", sys_version, platform_arch)
 open_arch_path = os.path.join(op_impl_path, tiling_open_arch_path)
-_BUILTIN_TILING_PATH = (
-    tiling_so_path if os.path.exists(tiling_full_path) else so_arch_path
-)
+_BUILTIN_TILING_PATH = tiling_so_path if os.path.exists(tiling_full_path) else so_arch_path
 
 if os.path.exists(config):
     with open(config) as f:
         _VENDOR_NAME = f.readline().split("=")[1].split(",")[0].strip()
-        _CUSTOM_TILING_PATH_DEFAULT = os.path.join(
-            "vendors", _VENDOR_NAME, "op_impl", tiling_cust_path
-        )
+        _CUSTOM_TILING_PATH_DEFAULT = os.path.join("vendors", _VENDOR_NAME, "op_impl", tiling_cust_path)
 else:
     _VENDOR_NAME = "customize"
     _CUSTOM_TILING_PATH_DEFAULT = os.path.join("op_impl", "custom", tiling_cust_path)
@@ -153,9 +119,7 @@ def _get_default_optiling_pathlist():
                 vendor_name = vdr.strip()
                 if vendor_name not in vendor_list:
                     vendor_list.append(vendor_name)
-                    full_path = os.path.join(
-                        opp_dir, "vendors", vendor_name, "op_impl", tiling_cust_path
-                    )
+                    full_path = os.path.join(opp_dir, "vendors", vendor_name, "op_impl", tiling_cust_path)
                     default_custom_tiling_full_path_list.append(full_path)
         return default_custom_tiling_full_path_list
     else:
@@ -256,15 +220,7 @@ def _attrs_pre_process(attrs):
                 single_attr[_ATTR_VALUE] = attr_value_list
 
 
-def do_op_tiling(
-    optype,
-    compile_info,
-    inputs,
-    outputs,
-    compile_info_hash=None,
-    timer=None,
-    attrs=None,
-):
+def do_op_tiling(optype, compile_info, inputs, outputs, compile_info_hash=None, timer=None, attrs=None):
     """
     do op tilinng
     """
@@ -286,9 +242,7 @@ def do_op_tiling(
             try:
                 lib_optiling = ctypes.CDLL(custom_tiling_so_path)
                 custom_opp_so_path_str = str(custom_tiling_so_path)
-                lib_optiling.TbeLoadSoAndSaveToRegistry(
-                    custom_opp_so_path_str.encode("utf_8")
-                )
+                lib_optiling.TbeLoadSoAndSaveToRegistry(custom_opp_so_path_str.encode("utf_8"))
             except OSError:
                 # Custom op tiling lib may not exists
                 pass
@@ -302,15 +256,11 @@ def do_op_tiling(
         if os.path.exists(builtin_optiling_rtlib_path2):
             lib_optiling_builtin = ctypes.CDLL(builtin_optiling_rtlib_path2)
             builtin_optiling_rtlib_path2_str = str(builtin_optiling_rtlib_path2)
-            lib_optiling_builtin.TbeLoadSoAndSaveToRegistry(
-                builtin_optiling_rtlib_path2_str.encode("utf_8")
-            )
+            lib_optiling_builtin.TbeLoadSoAndSaveToRegistry(builtin_optiling_rtlib_path2_str.encode("utf_8"))
         elif os.path.exists(builtin_optiling_lib_path2):
             lib_optiling_builtin = ctypes.CDLL(builtin_optiling_lib_path2)
             builtin_optiling_lib_path2_str = str(builtin_optiling_lib_path2)
-            lib_optiling_builtin.TbeLoadSoAndSaveToRegistry(
-                builtin_optiling_lib_path2_str.encode("utf_8")
-            )
+            lib_optiling_builtin.TbeLoadSoAndSaveToRegistry(builtin_optiling_lib_path2_str.encode("utf_8"))
         elif os.path.exists(builtin_optiling_open_path):
             so_files = glob.glob(os.path.join(builtin_optiling_open_path, "*.so"))
             # make libophost_legacy.so loading lastly
@@ -319,9 +269,7 @@ def do_op_tiling(
                 if "libophost_legacy.so" in so_path:
                     lib_optiling_builtin = ctypes.CDLL(so_path)
                     so_path_str = str(so_path)
-                    lib_optiling_builtin.TbeLoadSoAndSaveToRegistry(
-                        so_path_str.encode("utf_8")
-                    )
+                    lib_optiling_builtin.TbeLoadSoAndSaveToRegistry(so_path_str.encode("utf_8"))
                 else:
                     lib_optiling = ctypes.CDLL(so_path)
                     so_path_str = str(so_path)
@@ -351,10 +299,7 @@ def do_op_tiling(
             for private_attr in opinfo_list[0].private_attrs:
                 if not isinstance(private_attr, dict):
                     continue
-                if (
-                    private_attr.get(_KEY_NAME)
-                    and private_attr.get(_KEY_NAME) not in attr_dict
-                ):
+                if private_attr.get(_KEY_NAME) and private_attr.get(_KEY_NAME) not in attr_dict:
                     attrs.append(private_attr)
                     attr_dict[private_attr[_KEY_NAME]] = private_attr
 
@@ -381,9 +326,7 @@ def do_op_tiling(
     enable_deterministic = get_current_build_config("enable_deterministic_mode")
     extra_params = {"op_name": op_name, "deterministic": enable_deterministic}
 
-    deterministic_level = _safe_int_conversion(
-        get_current_build_config("deterministic_level")
-    )
+    deterministic_level = _safe_int_conversion(get_current_build_config("deterministic_level"))
     if deterministic_level != -1:
         extra_params["deterministic_level"] = deterministic_level
 
@@ -413,14 +356,10 @@ def do_op_tiling(
         optype_c = optype.encode("utf_8")
         rt_bank_cache_str = str(_RT_BANK_CACHE).replace("'", '"')
         tiling_c = rt_bank_cache_str.encode("utf_8")
-        log.info(
-            f"Start to do SetTuningTiling for {optype}, tiling: {rt_bank_cache_str}."
-        )
+        log.info(f"Start to do SetTuningTiling for {optype}, tiling: {rt_bank_cache_str}.")
         set_tiling_func = lib_optiling_builtin.SetTuningTiling
         if set_tiling_func(pid_c, optype_c, tiling_c) != 0:
-            log.error(
-                f"SetTuningTiling of {optype} failed, tiling: {rt_bank_cache_str}."
-            )
+            log.error(f"SetTuningTiling of {optype} failed, tiling: {rt_bank_cache_str}.")
         compile_info.update({"enable_rt_bank_cache": True})
 
     _inputs_pre_process(inputs)

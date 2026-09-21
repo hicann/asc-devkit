@@ -34,10 +34,7 @@ def get_kernel_meta_type(value):
 
 def check_custom_dcci_end_false(compile_option_tuple):
     has_dcci_end_false: bool = False
-    for option_list in [
-        compile_option_tuple.mllvm_options,
-        compile_option_tuple.compile_options,
-    ]:
+    for option_list in [compile_option_tuple.mllvm_options, compile_option_tuple.compile_options]:
         del_ids = []
         for opt_id, option in enumerate(option_list):
             if not option.startswith("-cce-aicore-dcci-before-kernel-end=false"):
@@ -69,16 +66,12 @@ def check_if_gen_placehoder(op_info: OpInfo, is_input: bool) -> bool:
                 f"[ERROR] : context is {GEN_PLACE_HOLDER_STR}, but have null input, "
                 f"params are not full, inputs is: {input_output_info}"
             )
-            CommonUtility.print_compile_log(
-                op_info.kernel_name, err_msg, AscendCLogLevel.LOG_ERROR
-            )
+            CommonUtility.print_compile_log(op_info.kernel_name, err_msg, AscendCLogLevel.LOG_ERROR)
             raise Exception(err_msg)
     return True
 
 
-def tpl_tilingkey_kernel_type_check(
-    tiling_key_list, decode_tiling_result, tiling_key_kernel_type
-):
+def tpl_tilingkey_kernel_type_check(tiling_key_list, decode_tiling_result, tiling_key_kernel_type):
     tpl_set_kernel_type_cnt = 0
     for k in decode_tiling_result.keys():
         internal_dict = decode_tiling_result[k]
@@ -105,9 +98,7 @@ def tpl_tilingkey_kernel_type_check(
     return tiling_key_list, decode_tiling_result
 
 
-def tpl_tilingkey_deterministic_extract(
-    tiling_key_list, decode_tiling_result, tiling_key_deterministic
-):
+def tpl_tilingkey_deterministic_extract(tiling_key_list, decode_tiling_result, tiling_key_deterministic):
     expect_tilingkey_set = set()
     cur_deterministic_flag = get_current_build_config("enable_deterministic_mode") == 1
     deter_flag = False
@@ -123,21 +114,13 @@ def tpl_tilingkey_deterministic_extract(
         expect_tilingkey_set.clear()
     if len(expect_tilingkey_set) > 0 and len(decode_tiling_result) > 0:
         tiling_key_list = [x for x in tiling_key_list if x in expect_tilingkey_set]
-        decode_tiling_result = {
-            k: v
-            for k, v in decode_tiling_result.items()
-            if str(k) in expect_tilingkey_set
-        }
+        decode_tiling_result = {k: v for k, v in decode_tiling_result.items() if str(k) in expect_tilingkey_set}
     return tiling_key_list, decode_tiling_result
 
 
 def tpl_tilingkey_native_extract(tiling_key_list, decode_tiling_result, op_info):
-    decl_dtype_indexes, decl_dtype_select_indexes = extract_decl_param_options(
-        op_info, "dtype"
-    )
-    decl_format_indexes, decl_format_select_indexes = extract_decl_param_options(
-        op_info, "format"
-    )
+    decl_dtype_indexes, decl_dtype_select_indexes = extract_decl_param_options(op_info, "dtype")
+    decl_format_indexes, decl_format_select_indexes = extract_decl_param_options(op_info, "format")
     post_filter_tilingkey_list = []
     for x in tiling_key_list:
         if _filter_sel_match_by_verify_option(
@@ -155,9 +138,7 @@ def tpl_tilingkey_native_extract(tiling_key_list, decode_tiling_result, op_info)
         ):
             post_filter_tilingkey_list.append(x)
     tiling_key_list = post_filter_tilingkey_list
-    decode_tiling_result = {
-        k: v for k, v in decode_tiling_result.items() if str(k) in tiling_key_list
-    }
+    decode_tiling_result = {k: v for k, v in decode_tiling_result.items() if str(k) in tiling_key_list}
     return tiling_key_list, decode_tiling_result
 
 
@@ -179,9 +160,7 @@ def _filter_sel_match_by_verify_option(
     target_params = value_list
     verify_params = decode_tiling_map[int(tiling_key)][verify_params]
     if verify_indexes is not None:
-        verify_params = [
-            verify_params[i] for i, x in enumerate(verify_indexes) if x == True
-        ]
+        verify_params = [verify_params[i] for i, x in enumerate(verify_indexes) if x == True]
     if "unknown" in verify_params:
         CommonUtility.print_compile_log(
             "",

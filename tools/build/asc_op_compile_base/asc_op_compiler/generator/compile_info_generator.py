@@ -37,16 +37,12 @@ class CompileInfoGeneratorConfig:
 
 
 class CompileInfoGeneratorParams:
-    def __init__(
-        self, kernel_file, kernel_func_name, op_info, compile_option_tuple, cmd_compiler
-    ):
+    def __init__(self, kernel_file, kernel_func_name, op_info, compile_option_tuple, cmd_compiler):
         pass
 
 
 class CompileInfoGenerator(object):
-    def __init__(
-        self, params: CompileInfoGeneratorParams, config: CompileInfoGeneratorConfig
-    ):
+    def __init__(self, params: CompileInfoGeneratorParams, config: CompileInfoGeneratorConfig):
         pass
 
     def collect_by_precompile(self):

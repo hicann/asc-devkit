@@ -31,11 +31,7 @@ from asc_op_compile_base.common.ccec import (
     _build_aicore_compile_cmd,
 )
 from asc_op_compile_base.common.buildcfg.buildcfg_mapping import dynamic_shape
-from asc_op_compile_base.common.platform.platform_info import (
-    COMPILER_ARCH,
-    ASCEND_031,
-    ASCEND_910B,
-)
+from asc_op_compile_base.common.platform.platform_info import COMPILER_ARCH, ASCEND_031, ASCEND_910B
 
 
 class TestCcec(unittest.TestCase):
@@ -51,12 +47,8 @@ class TestCcec(unittest.TestCase):
     def test_get_and_set(self, get_soc_spec_mock):
         self.assertEqual(current_build_config()[dynamic_shape], False)
         switching_compilation_mode()
-        self.assertEqual(
-            _set_vector_fp_ceiling([]), ["-mllvm", "-cce-aicore-fp-ceiling=2"]
-        )
-        self.assertEqual(
-            _set_cce_overflow([]), ["-mllvm", "-cce-aicore-record-overflow=false"]
-        )
+        self.assertEqual(_set_vector_fp_ceiling([]), ["-mllvm", "-cce-aicore-fp-ceiling=2"])
+        self.assertEqual(_set_cce_overflow([]), ["-mllvm", "-cce-aicore-record-overflow=false"])
         get_soc_spec_mock.return_value = ASCEND_031
         self.assertEqual(check_is_regbase_v2(), True)
         get_soc_spec_mock.return_value = ASCEND_910B

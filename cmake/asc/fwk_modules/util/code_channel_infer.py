@@ -33,15 +33,7 @@ def _is_v220(op_product: str):
 
 
 InfoCodeChannelParams = collections.namedtuple(
-    "InfoCodeChannelParams",
-    [
-        "src_file",
-        "tiling_header",
-        "kernel_name",
-        "outdir",
-        "op_product",
-        "compile_options",
-    ],
+    "InfoCodeChannelParams", ["src_file", "tiling_header", "kernel_name", "outdir", "op_product", "compile_options"]
 )
 
 

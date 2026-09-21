@@ -26,10 +26,7 @@ class CaseCommonTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            custom_op = (
-                root
-                / "examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op"
-            )
+            custom_op = root / "examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op"
             custom_op.mkdir(parents=True)
             opp = root / "opp"
             state = root / "state"
@@ -86,9 +83,7 @@ wait "$second"; second_rc=$?
 [[ "$first_rc" -eq 0 && "$second_rc" -eq 0 && ! -e {collision} ]]
 """
 
-            result = subprocess.run(
-                ["bash", "-c", script], text=True, capture_output=True, check=False
-            )
+            result = subprocess.run(["bash", "-c", script], text=True, capture_output=True, check=False)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse(collision.exists())

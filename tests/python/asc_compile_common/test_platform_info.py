@@ -21,11 +21,7 @@ TOP_PATH = os.path.join(FILE_PATH, "../../../")
 FRAMEWORK_PATH = os.path.join(TOP_PATH, "tools/build/")
 sys.path.insert(0, FRAMEWORK_PATH)
 
-from asc_op_compile_base.common.platform import (
-    get_soc_spec,
-    set_current_compile_soc_info,
-    get_block_size,
-)
+from asc_op_compile_base.common.platform import get_soc_spec, set_current_compile_soc_info, get_block_size
 from asc_op_compile_base.common.platform.platform_info import (
     set_soc_spec,
     te_update_version,
@@ -86,14 +82,9 @@ class TestPlatformInfo(unittest.TestCase):
 
     @patch("asc_op_compile_base.common.platform.platform_info._te_update_version")
     @patch("asc_op_compile_base.common.platform.platform_info._set_platform_info_res")
-    @patch(
-        "asc_op_compile_base.common.platform.platform_info._set_core_num_by_core_type"
-    )
+    @patch("asc_op_compile_base.common.platform.platform_info._set_core_num_by_core_type")
     def test_update_soc_infos(
-        self,
-        _set_core_num_by_core_type_mock,
-        _set_platform_info_res_mock,
-        _te_update_version_mock,
+        self, _set_core_num_by_core_type_mock, _set_platform_info_res_mock, _te_update_version_mock
     ):
         _te_update_version_mock.return_value = "success"
         _set_platform_info_res_mock.return_value = "success"

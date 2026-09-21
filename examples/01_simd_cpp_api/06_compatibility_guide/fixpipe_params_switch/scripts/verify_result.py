@@ -27,9 +27,7 @@ def nd2nz(matrix, cube_block=16):
     n_align = (n + cube_block - 1) // cube_block * cube_block
     padded = np.zeros((m_align, n_align), dtype=matrix.dtype)
     padded[:m, :n] = matrix
-    nz = padded.reshape(
-        m_align // cube_block, cube_block, n_align // cube_block, cube_block
-    )
+    nz = padded.reshape(m_align // cube_block, cube_block, n_align // cube_block, cube_block)
     nz = nz.transpose(2, 0, 1, 3).reshape(-1)
     return nz
 
@@ -45,16 +43,11 @@ def verify_result(output, golden):
         golden = golden.reshape(-1)
 
     output = output[: golden.size]
-    different_element_results = np.isclose(
-        output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True
-    )
+    different_element_results = np.isclose(output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
     for index in range(min(len(different_element_indexes), 100)):
         real_index = different_element_indexes[index]
-        print(
-            "data index: %06d, expected: %-.9f, actual: %-.9f"
-            % (real_index, golden[real_index], output[real_index])
-        )
+        print("data index: %06d, expected: %-.9f, actual: %-.9f" % (real_index, golden[real_index], output[real_index]))
     error_ratio = float(different_element_indexes.size) / golden.size
     print("error ratio: %.4f, tolerance: %.4f" % (error_ratio, error_tol))
     return error_ratio <= error_tol

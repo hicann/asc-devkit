@@ -21,11 +21,7 @@ def gen_elu_golden(x, alpha, scale, input_scale):
     x_float = x.astype(np.float32)
     # np.where 会先计算两个分支，正数部分 exp 可能溢出为 inf，但不会被选中，用 errstate 屏蔽告警
     with np.errstate(over="ignore", invalid="ignore"):
-        golden = np.where(
-            x_float > 0,
-            scale * x_float,
-            alpha * scale * (np.exp(x_float * input_scale) - 1),
-        )
+        golden = np.where(x_float > 0, scale * x_float, alpha * scale * (np.exp(x_float * input_scale) - 1))
     return golden
 
 

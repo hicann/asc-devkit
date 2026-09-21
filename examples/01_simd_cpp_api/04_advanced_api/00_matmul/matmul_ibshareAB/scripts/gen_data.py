@@ -23,9 +23,7 @@ def gen_golden_data():
 
     input_a = np.random.randint(1, 10, [M, K]).astype(np.float16)
     input_b = np.random.randint(1, 10, [K, N]).astype(np.float16)
-    golden = (np.matmul(input_a.astype(np.float32), input_b.astype(np.float32))).astype(
-        np.float32
-    )
+    golden = (np.matmul(input_a.astype(np.float32), input_b.astype(np.float32))).astype(np.float32)
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     input_a.tofile("./input/x1_gm.bin")

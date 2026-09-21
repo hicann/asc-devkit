@@ -16,17 +16,7 @@ import os
 import numpy as np
 
 
-def softmax_flash_v3(
-    x,
-    height,
-    width,
-    cnt,
-    inmax=None,
-    insum=None,
-    inmean=None,
-    update=False,
-    is_fp16=False,
-):
+def softmax_flash_v3(x, height, width, cnt, inmax=None, insum=None, inmean=None, update=False, is_fp16=False):
     rowMeanLocal = np.zeros([height, 8], dtype=(np.float32))
     rowMeanGlobal = np.zeros([height, 8], dtype=(np.float32))
     tmp = np.zeros([height, 8], dtype=(np.float32))
@@ -98,9 +88,7 @@ def softmax_flash_v3(
         shiftPrev = (inmean - x_mean) * scalar
         x_max = shiftCurr + maxTmp
         maxTmp = shiftPrev + inmax
-        x_max = np.max(
-            np.concatenate((x_max, maxTmp), axis=(-1)), axis=(-1), keepdims=True
-        )
+        x_max = np.max(np.concatenate((x_max, maxTmp), axis=(-1)), axis=(-1), keepdims=True)
 
     if update == False:
         maxTmp = x_max - shiftCurr
@@ -172,29 +160,13 @@ def gen_golden_data_simple():
         if en_update == False:
             x1.tofile("./input/input.bin")
             out_1, max_1, sum_1, mean_1, exp_max_1 = softmax_flash_v3(
-                x1,
-                height,
-                width,
-                loopcnt,
-                max_front,
-                sum_front,
-                mean_front,
-                update=False,
-                is_fp16=True,
+                x1, height, width, loopcnt, max_front, sum_front, mean_front, update=False, is_fp16=True
             )
             out_1.astype(np.float32).tofile("./output/golden.bin")
         else:
             x2.tofile("./input/input.bin")
             out_2, max_2, sum_2, mean_2, exp_max_2 = softmax_flash_v3(
-                x2,
-                height,
-                width,
-                loopcnt,
-                max_front,
-                sum_front,
-                mean_front,
-                update=True,
-                is_fp16=True,
+                x2, height, width, loopcnt, max_front, sum_front, mean_front, update=True, is_fp16=True
             )
             out_2.astype(np.float32).tofile("./output/golden.bin")
 

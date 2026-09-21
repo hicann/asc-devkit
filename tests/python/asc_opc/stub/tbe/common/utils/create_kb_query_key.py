@@ -14,9 +14,7 @@ provides the function of generating the tiling key for tik optimization
 """
 
 
-def get_op_compile_unique_key(
-    op_type, inputs, outputs, attrs, extra_params, is_sha=True
-):
+def get_op_compile_unique_key(op_type, inputs, outputs, attrs, extra_params, is_sha=True):
     """
     get_op_compile_unique_key
     """

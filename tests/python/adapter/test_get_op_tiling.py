@@ -36,9 +36,7 @@ from adapter.global_storage import global_var_storage
 
 def SetCurrentSocInfo(soc: str):
     set_current_compile_soc_info(soc)
-    global_var_storage.set_variable(
-        "ascendc_short_soc_version", get_soc_spec("SHORT_SOC_VERSION")
-    )
+    global_var_storage.set_variable("ascendc_short_soc_version", get_soc_spec("SHORT_SOC_VERSION"))
 
 
 class TestGetOpTiling(unittest.TestCase):
@@ -54,27 +52,21 @@ class TestGetOpTiling(unittest.TestCase):
     @mock.patch("adapter.get_op_tiling.get_custom_opp_pathlist")
     @mock.patch("adapter.get_op_tiling.get_default_optiling_pathlist")
     @mock.patch("os.path.exists")
-    def test_load_lib(
-        self, mock_exist, mock_get_dft_pathlist, mock_get_opp_pathlist, mock_cdll
-    ):
+    def test_load_lib(self, mock_exist, mock_get_dft_pathlist, mock_get_opp_pathlist, mock_cdll):
         mock_exist.return_value = True
         mock_get_dft_pathlist.return_value = []
         mock_get_opp_pathlist.return_value = []
         mock_cdll.return_value = None
         self.assertIsNone(load_lib())
 
-    @mock.patch(
-        "os.environ", {"ASCEND_CUSTOM_OPP_PATH": ["path_1", "path_2", "path_3"]}
-    )
+    @mock.patch("os.environ", {"ASCEND_CUSTOM_OPP_PATH": ["path_1", "path_2", "path_3"]})
     @mock.patch("os.path.exists")
     def test_get_custom_opp_pathlist(self, mock_exist):
         mock_exist.return_value = True
         self.assertEqual(get_custom_opp_pathlist(), ["['path_1', 'path_2', 'path_3']"])
 
     def test_gen_static_shape_v2(self):
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", True)
         optype = "AddCustom"
         tiling_struct = "optiling::TilingData"
         tiling_raw_data = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00W\x04\x00\x00\x00@\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -98,9 +90,7 @@ class TestGetOpTiling(unittest.TestCase):
 
         self.assertEqual(class_body, compare_str)
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", False)
         class_body = gen_static_shape_v2(optype, tiling_struct, tiling_raw_data)
 
     def test_get_tiling_info_v2(self):
@@ -189,26 +179,15 @@ class TestGetOpTiling(unittest.TestCase):
             tbe.common.context.op_context.OpContext(),
             buildcfg.build_config(),
             mock.patch("adapter.get_op_tiling.get_struct_shape", return_value=""),
-            mock.patch(
-                "adapter.get_op_tiling.get_dynamic_tiling_struct", return_value=""
-            ),
-            mock.patch(
-                "adapter.get_op_tiling.get_tiling_copy_func_and_micro", return_value=""
-            ),
+            mock.patch("adapter.get_op_tiling.get_dynamic_tiling_struct", return_value=""),
+            mock.patch("adapter.get_op_tiling.get_tiling_copy_func_and_micro", return_value=""),
         ):
-            tiling_def = TilingDef(
-                {"class_name": "add_custiom", "data_size": 0, "fields": []}
-            )
+            tiling_def = TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": []})
             gen_dynamic_shape(tiling_def, {})
             get_header_and_sub_struct_def(tiling_def, {})
 
-        with (
-            tbe.common.context.op_context.OpContext(),
-            buildcfg.build_config(),
-        ):
-            tiling_info = get_tiling_info_v2(
-                op_info, tiling_key_list, default_tiling_struct, tiling_struct_expr_map
-            )
+        with tbe.common.context.op_context.OpContext(), buildcfg.build_config():
+            tiling_info = get_tiling_info_v2(op_info, tiling_key_list, default_tiling_struct, tiling_struct_expr_map)
             self.assertEqual(tiling_info.static_shape_flag, False)
 
         with (
@@ -230,9 +209,7 @@ class TestGetOpTiling(unittest.TestCase):
                 },
             ),
         ):
-            tiling_info = get_tiling_info_v2(
-                op_info, tiling_key_list, default_tiling_struct, tiling_struct_expr_map
-            )
+            tiling_info = get_tiling_info_v2(op_info, tiling_key_list, default_tiling_struct, tiling_struct_expr_map)
             self.assertEqual(tiling_info.static_shape_flag, True)
 
         with (
@@ -255,9 +232,7 @@ class TestGetOpTiling(unittest.TestCase):
             ),
             mock.patch("adapter.get_op_tiling.raise_tbe_python_err", return_value=None),
         ):
-            tiling_info = get_tiling_info_v2(
-                op_info, tiling_key_list, default_tiling_struct, tiling_struct_expr_map
-            )
+            tiling_info = get_tiling_info_v2(op_info, tiling_key_list, default_tiling_struct, tiling_struct_expr_map)
             self.assertEqual(tiling_info.static_shape_flag, True)
 
             self.assertIsNotNone(tiling_info.local_memory_size)
@@ -269,28 +244,17 @@ class TestGetOpTiling(unittest.TestCase):
 
     def test_load_so_fail(self):
         with mock.patch("os.environ", {"_TILING_SO_PATH": "abcd"}):
-            with mock.patch(
-                "adapter.get_op_tiling.get_default_optiling_pathlist",
-                return_value=list("aabbcc"),
-            ):
+            with mock.patch("adapter.get_op_tiling.get_default_optiling_pathlist", return_value=list("aabbcc")):
                 self.assertIsNotNone(load_lib())
         with mock.patch("os.environ", {"_TILING_SO_PATH": "abcd"}):
-            with mock.patch(
-                "adapter.get_op_tiling.get_default_optiling_pathlist",
-                return_value=list("aabbcc"),
-            ):
+            with mock.patch("adapter.get_op_tiling.get_default_optiling_pathlist", return_value=list("aabbcc")):
                 with mock.patch("os.path.exists", return_value=True):
                     with mock.patch("ctypes.CDLL") as MockClass:
                         self.assertIsNotNone(load_lib())
 
     def test_gen_static_shape(self):
         field_0 = {"classType": "0", "name": "testDefault", "dtype": "uint8_t"}
-        field_1 = {
-            "classType": "1",
-            "name": "testArr",
-            "dtype": "uint8_t",
-            "arrSize": "256",
-        }
+        field_1 = {"classType": "1", "name": "testArr", "dtype": "uint8_t", "arrSize": "256"}
         field_2 = {
             "classType": "2",
             "name": "testStruct",
@@ -298,34 +262,17 @@ class TestGetOpTiling(unittest.TestCase):
             "structType": "uint8_t",
             "structSize": "256",
         }
-        tiling_def = TilingDef(
-            {
-                "class_name": "add_custiom",
-                "data_size": 4096,
-                "fields": [field_0, field_1, field_2],
-            }
-        )
+        tiling_def = TilingDef({"class_name": "add_custiom", "data_size": 4096, "fields": [field_0, field_1, field_2]})
         all_dynamic_struct_def_except_self = gen_all_dynamic_struct_def_except_self(
             False, None, None, "AddCustom", None
         )
         with mock.patch(
             "asc_op_compile_base.asc_op_compiler.get_op_tiling.get_tiling_def",
-            return_value=TilingDef(
-                {
-                    "class_name": "add_custiom",
-                    "data_size": 0,
-                    "fields": [field_0, field_1],
-                }
-            ),
+            return_value=TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": [field_0, field_1]}),
         ) as mock_get_tiling_def:
             struct_base = get_struct_tiling_info(tiling_def, {})
         self.assertRaises(
-            Exception,
-            gen_static_shape,
-            tiling_def,
-            {""},
-            struct_base,
-            all_dynamic_struct_def_except_self,
+            Exception, gen_static_shape, tiling_def, {""}, struct_base, all_dynamic_struct_def_except_self
         )
         tiling_data = {
             "testDefault": b"\x01\x00\x02\x00\n\x00\x02\x00\x08\x00",
@@ -338,38 +285,25 @@ class TestGetOpTiling(unittest.TestCase):
         source = " "
 
         tiling_raw_data = tiling_data["testDefault"]
-        code = gen_static_shape(
-            tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self
-        )
+        code = gen_static_shape(tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self)
         self.assertNotEqual(source, code)
 
         tiling_raw_data = tiling_data["testArr"]
-        code = gen_static_shape(
-            tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self
-        )
+        code = gen_static_shape(tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self)
         self.assertNotEqual(source, code)
 
         SetCurrentSocInfo("Ascend310P1")
         tiling_raw_data = tiling_data["testDefault"]
-        gen_static_shape(
-            tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self
-        )
+        gen_static_shape(tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self)
         self.assertNotEqual(source, code)
 
         tiling_raw_data = tiling_data["testArr"]
-        gen_static_shape(
-            tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self
-        )
+        gen_static_shape(tiling_def, tiling_raw_data, struct_base, all_dynamic_struct_def_except_self)
         self.assertNotEqual(source, code)
 
     def test_get_struct_shape(self):
         field_0 = {"classType": "0", "name": "testDefault", "dtype": "uint8_t"}
-        field_1 = {
-            "classType": "1",
-            "name": "testArr",
-            "dtype": "uint8_t",
-            "arrSize": "256",
-        }
+        field_1 = {"classType": "1", "name": "testArr", "dtype": "uint8_t", "arrSize": "256"}
         field_2 = {
             "classType": "2",
             "name": "testStruct",
@@ -377,15 +311,11 @@ class TestGetOpTiling(unittest.TestCase):
             "structType": "CustStruct",
             "structSize": "256",
         }
-        tiling_def = TilingDef(
-            {"class_name": "add_custiom", "data_size": 4096, "fields": [field_2]}
-        )
+        tiling_def = TilingDef({"class_name": "add_custiom", "data_size": 4096, "fields": [field_2]})
         with mock.patch("adapter.get_op_tiling.get_tiling_def") as mock_get_tiling_def:
             mock_get_tiling_def.side_effect = [
                 None,
-                TilingDef(
-                    {"class_name": "add_custiom", "data_size": 0, "fields": [field_0]}
-                ),
+                TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": [field_0]}),
             ]
             struct_base = get_struct_tiling_info(tiling_def, {})
             source = " "
@@ -406,14 +336,10 @@ public:
             "structType": "ApiStruct",
             "structSize": "256",
         }
-        cust_tiling_def = TilingDef(
-            {"class_name": "CustStruct", "data_size": 0, "fields": [field_0, field_3]}
-        )
+        cust_tiling_def = TilingDef({"class_name": "CustStruct", "data_size": 0, "fields": [field_0, field_3]})
         cust_tiling_def.depth = 1
 
-        api_tiling_def = TilingDef(
-            {"class_name": "ApiStruct", "data_size": 256, "fields": [field_0]}
-        )
+        api_tiling_def = TilingDef({"class_name": "ApiStruct", "data_size": 256, "fields": [field_0]})
         api_tiling_def.is_api = True
         api_tiling_def.depth = 2
         struct_base = {"CustStruct": cust_tiling_def, "ApiStruct": api_tiling_def}
@@ -421,12 +347,7 @@ public:
 
     def test_get_dynamic_tiling_struct(self):
         field_0 = {"classType": "0", "name": "testDefault", "dtype": "uint8_t"}
-        field_1 = {
-            "classType": "1",
-            "name": "testArr",
-            "dtype": "uint8_t",
-            "arrSize": "256",
-        }
+        field_1 = {"classType": "1", "name": "testArr", "dtype": "uint8_t", "arrSize": "256"}
         field_2 = {
             "classType": "2",
             "name": "testStruct",
@@ -441,13 +362,7 @@ public:
             "structType": "ApiStruct",
             "structSize": "256",
         }
-        tiling_def = TilingDef(
-            {
-                "class_name": "add_custiom",
-                "data_size": 4096,
-                "fields": [field_0, field_2, field_3],
-            }
-        )
+        tiling_def = TilingDef({"class_name": "add_custiom", "data_size": 4096, "fields": [field_0, field_2, field_3]})
         compare_str = """class add_custiom
 {
 public:
@@ -457,21 +372,15 @@ public:
 }__attribute__((__may_alias__));
 
 """
-        cust_tiling_def = TilingDef(
-            {"class_name": "CustStruct", "data_size": 0, "fields": [field_0, field_3]}
-        )
+        cust_tiling_def = TilingDef({"class_name": "CustStruct", "data_size": 0, "fields": [field_0, field_3]})
         cust_tiling_def.depth = 1
 
-        api_tiling_def = TilingDef(
-            {"class_name": "ApiStruct", "data_size": 256, "fields": [field_0]}
-        )
+        api_tiling_def = TilingDef({"class_name": "ApiStruct", "data_size": 256, "fields": [field_0]})
         api_tiling_def.is_api = True
         api_tiling_def.depth = 2
 
         struct_base = {"CustStruct": cust_tiling_def, "ApiStruct": api_tiling_def}
-        self.assertEqual(
-            compare_str, get_dynamic_tiling_struct(tiling_def, struct_base)
-        )
+        self.assertEqual(compare_str, get_dynamic_tiling_struct(tiling_def, struct_base))
 
     def test_get_tiling_info(self):
         SetCurrentSocInfo("Ascend910B1")
@@ -716,12 +625,7 @@ public:
         )
 
         field_0 = {"classType": "0", "name": "testDefault", "dtype": "uint8_t"}
-        field_1 = {
-            "classType": "1",
-            "name": "testArr",
-            "dtype": "uint8_t",
-            "arrSize": "256",
-        }
+        field_1 = {"classType": "1", "name": "testArr", "dtype": "uint8_t", "arrSize": "256"}
         field_2 = {
             "classType": "2",
             "name": "testStruct",
@@ -737,9 +641,7 @@ public:
         with (
             tbe.common.context.op_context.OpContext(),
             buildcfg.build_config(),
-            mock.patch(
-                "adapter.get_op_tiling.get_tiling_def", return_value=None
-            ) as mock_get_tiling_def,
+            mock.patch("adapter.get_op_tiling.get_tiling_def", return_value=None) as mock_get_tiling_def,
             mock.patch(
                 "adapter.get_op_tiling.do_op_tiling",
                 return_value={
@@ -759,9 +661,7 @@ public:
             self.assertEqual(tiling_info.clear_atomic, 1)
             self.assertEqual(tiling_info.schedule_mode, 0)
 
-            mock_get_tiling_def.return_value = TilingDef(
-                {"class_name": "add_custiom", "data_size": 0, "fields": []}
-            )
+            mock_get_tiling_def.return_value = TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": []})
             mock_do_op_tiling.return_value = {
                 "tiling_data": b"\x00",
                 "tiling_key": "0",
@@ -777,11 +677,7 @@ public:
             self.assertEqual(tiling_info.schedule_mode, 0)
 
             mock_get_tiling_def.return_value = TilingDef(
-                {
-                    "class_name": "add_custiom",
-                    "data_size": 4096,
-                    "fields": [field_0, field_1],
-                }
+                {"class_name": "add_custiom", "data_size": 4096, "fields": [field_0, field_1]}
             )
             mock_do_op_tiling.return_value = {
                 "tiling_data": b"\x01\x00\x02\x00\n\x00\x02\x00\x08\x00" * 1024,
@@ -1070,12 +966,7 @@ public:
         )
 
         field_0 = {"classType": "0", "name": "testDefault", "dtype": "uint8_t"}
-        field_1 = {
-            "classType": "1",
-            "name": "testArr",
-            "dtype": "uint8_t",
-            "arrSize": "256",
-        }
+        field_1 = {"classType": "1", "name": "testArr", "dtype": "uint8_t", "arrSize": "256"}
         field_2 = {
             "classType": "2",
             "name": "testStruct",
@@ -1091,9 +982,7 @@ public:
         with (
             tbe.common.context.op_context.OpContext(),
             buildcfg.build_config(),
-            mock.patch(
-                "adapter.get_op_tiling.get_tiling_def", return_value=None
-            ) as mock_get_tiling_def,
+            mock.patch("adapter.get_op_tiling.get_tiling_def", return_value=None) as mock_get_tiling_def,
             mock.patch(
                 "adapter.get_op_tiling.do_op_tiling",
                 return_value={
@@ -1114,9 +1003,7 @@ public:
             self.assertEqual(tiling_info.clear_atomic, 1)
             self.assertEqual(tiling_info.schedule_mode, 0)
 
-            mock_get_tiling_def.return_value = TilingDef(
-                {"class_name": "add_custiom", "data_size": 0, "fields": []}
-            )
+            mock_get_tiling_def.return_value = TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": []})
             mock_do_op_tiling.return_value = {
                 "tiling_data": b"\x00",
                 "tiling_key": "0",
@@ -1132,11 +1019,7 @@ public:
             self.assertEqual(tiling_info.schedule_mode, 0)
 
             mock_get_tiling_def.return_value = TilingDef(
-                {
-                    "class_name": "add_custiom",
-                    "data_size": 4096,
-                    "fields": [field_0, field_1],
-                }
+                {"class_name": "add_custiom", "data_size": 4096, "fields": [field_0, field_1]}
             )
             mock_do_op_tiling.return_value = {
                 "tiling_data": b"\x01\x00\x02\x00\n\x00\x02\x00\x08\x00" * 1024,
@@ -1186,9 +1069,7 @@ public:
         get_tiling_declaration("AddCustom")
         with mock.patch(
             "adapter.get_op_tiling.get_tiling_def",
-            return_value=TilingDef(
-                {"class_name": "add_custiom", "data_size": 0, "fields": []}
-            ),
+            return_value=TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": []}),
         ) as mock_get_tiling_def:
             tiling_info = TilingInfo()
             self.assertNotEqual(tiling_info, get_tiling_declaration("AddCustom"))
@@ -1200,19 +1081,13 @@ public:
     # inf + nan 场景
     def test_decode_inf(self):
         tiling_data = b"\x00@\x00\x00\x08\x00\x00\x00\x00\x00\x80\x7f\x00\x00\xc0\x7f\x00\x00\x80\x7f\x00\x00\x80\xff"
-        fmt = {
-            "totalLength": "uint",
-            "tileNum": "uint",
-            "testValue": "float",
-            "testValueArray": [3, "float"],
-        }
+        fmt = {"totalLength": "uint", "tileNum": "uint", "testValue": "float", "testValueArray": [3, "float"]}
         res, offset = decode(tiling_data, fmt)
         # dict_res = {'totalLength': 16384, 'tileNum': 8, 'testValue': 'float(1.0 / 0.0)',
         #             'testValueArray': ('float(0.0 / 0.0)', 'float(1.0 / 0.0)', 'float(-1.0 / 0.0)')}
         self.assertEqual(res["testValue"], "float(1.0 / 0.0)")  # inf
         self.assertEqual(
-            res["testValueArray"],
-            ("float(0.0 / 0.0)", "float(1.0 / 0.0)", "float(-1.0 / 0.0)"),
+            res["testValueArray"], ("float(0.0 / 0.0)", "float(1.0 / 0.0)", "float(-1.0 / 0.0)")
         )  # nan, inf, -inf
 
     def test_get_dynamic_assign_tiling_data_by_bytes(self):
@@ -1220,19 +1095,11 @@ public:
         prefix_0 = "__test_0__"
         prefix_1 = "__test_1__"
         source = ""
-        self.assertNotEqual(
-            source,
-            get_dynamic_assign_tiling_data_by_bytes(total_bytes, prefix_0, prefix_1),
-        )
+        self.assertNotEqual(source, get_dynamic_assign_tiling_data_by_bytes(total_bytes, prefix_0, prefix_1))
 
     def test_get_dynamic_assign_tiling_data(self):
         field_0 = {"classType": "0", "name": "testDefault", "dtype": "uint8_t"}
-        field_1 = {
-            "classType": "1",
-            "name": "testArr",
-            "dtype": "uint8_t",
-            "arrSize": "4096",
-        }
+        field_1 = {"classType": "1", "name": "testArr", "dtype": "uint8_t", "arrSize": "4096"}
         field_2 = {
             "classType": "2",
             "name": "testStruct",
@@ -1244,30 +1111,14 @@ public:
         Field1 = Field(field_1)
         Field2 = Field(field_2)
 
-        tiling_def = TilingDef(
-            {
-                "class_name": "add_custiom",
-                "data_size": 0,
-                "fields": [field_0, field_1, field_2],
-            }
-        )
+        tiling_def = TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": [field_0, field_1, field_2]})
         with mock.patch(
             "adapter.get_op_tiling.get_tiling_def",
-            return_value=TilingDef(
-                {
-                    "class_name": "add_custiom",
-                    "data_size": 0,
-                    "fields": [field_0, field_1],
-                }
-            ),
+            return_value=TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": [field_0, field_1]}),
         ) as mock_get_tiling_def:
             struct_base = get_struct_tiling_info(tiling_def, {})
-        _, offset_npu = get_dynamic_npu_assign_tiling_data(
-            struct_base, [Field0, Field1, Field2], "__test__"
-        )
-        _, offset_cpu = get_dynamic_cpu_assign_tiling_data(
-            struct_base, [Field0, Field1, Field2], "__test__"
-        )
+        _, offset_npu = get_dynamic_npu_assign_tiling_data(struct_base, [Field0, Field1, Field2], "__test__")
+        _, offset_cpu = get_dynamic_cpu_assign_tiling_data(struct_base, [Field0, Field1, Field2], "__test__")
         self.assertEqual(8194, offset_npu)
         self.assertEqual(8194, offset_cpu)
 
@@ -1860,27 +1711,11 @@ public:
         self.assertEqual(res, False)
 
         value_depends = {0: "required"}
-        self.assertRaises(
-            Exception,
-            is_static_shape,
-            origin_inputs,
-            outputs,
-            value_depends,
-            param_list,
-            True,
-        )
+        self.assertRaises(Exception, is_static_shape, origin_inputs, outputs, value_depends, param_list, True)
 
         param_list = ["optional"]
         value_depends = {0: "required"}
-        self.assertRaises(
-            Exception,
-            is_static_shape,
-            origin_inputs,
-            outputs,
-            value_depends,
-            param_list,
-            True,
-        )
+        self.assertRaises(Exception, is_static_shape, origin_inputs, outputs, value_depends, param_list, True)
 
     @mock.patch("ctypes.CDLL")
     @mock.patch("os.path.exists")
@@ -1904,31 +1739,23 @@ public:
     def test_get_tiling_data_without_time_stamp(self):
         from adapter.get_op_tiling import _get_tiling_data_without_time_stamp
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", True)
         class_name = "AddCustomTiling"
         _get_tiling_data_without_time_stamp(class_name)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", False)
         _get_tiling_data_without_time_stamp(class_name)
 
     def test_get_tiling_data_with_time_stamp(self):
         from adapter.get_op_tiling import _get_tiling_data_with_time_stamp
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", False)
         class_name = "AddCustomTiling"
         _get_tiling_data_with_time_stamp(class_name)
 
     def test_gen_dynamic_shape_v2(self):
         from adapter.get_op_tiling import gen_dynamic_shape_v2
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", True)
         optype = "AddCustom"
         tiling_struct = "optiling::TilingData"
         gen_dynamic_shape_v2(optype, tiling_struct)

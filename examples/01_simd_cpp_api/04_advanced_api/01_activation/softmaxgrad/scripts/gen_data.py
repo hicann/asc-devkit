@@ -49,21 +49,13 @@ def gen_golden_data_simple(front_mode=False):
     workspace.tofile("./input/workspace.bin")
 
     if front_mode:
-        print(
-            f"Generated data for SoftmaxGradFront mode: input {x_shape}, output {golden.shape}"
-        )
+        print(f"Generated data for SoftmaxGradFront mode: input {x_shape}, output {golden.shape}")
     else:
-        print(
-            f"Generated data for SoftmaxGrad mode: input {x_shape}, output {golden.shape}"
-        )
+        print(f"Generated data for SoftmaxGrad mode: input {x_shape}, output {golden.shape}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate test data for SoftmaxGrad/SoftmaxGradFront"
-    )
-    parser.add_argument(
-        "--front-mode", action="store_true", help="Enable SoftmaxGradFront mode"
-    )
+    parser = argparse.ArgumentParser(description="Generate test data for SoftmaxGrad/SoftmaxGradFront")
+    parser.add_argument("--front-mode", action="store_true", help="Enable SoftmaxGradFront mode")
     args = parser.parse_args()
     gen_golden_data_simple(front_mode=args.front_mode)

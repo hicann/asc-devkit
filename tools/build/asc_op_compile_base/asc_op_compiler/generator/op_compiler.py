@@ -38,9 +38,7 @@ class OpCompilerConfig:
 
 
 class OpCompilerParams:
-    def __init__(
-        self, compile_info, op_info, compile_option_tuple, tiling_info, cmd_compiler
-    ):
+    def __init__(self, compile_info, op_info, compile_option_tuple, tiling_info, cmd_compiler):
         pass
 
 

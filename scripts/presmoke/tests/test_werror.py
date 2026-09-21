@@ -70,13 +70,7 @@ bash -lc 'cmake --build build -j'
 """
             env = os.environ.copy()
             env.pop("PRESMOKE_WERROR", None)
-            result = subprocess.run(
-                ["bash", "-c", script],
-                env=env,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
+            result = subprocess.run(["bash", "-c", script], env=env, text=True, capture_output=True, check=False)
 
             self.assertEqual(result.returncode, 0, result.stderr)
             lines = cmake_log.read_text(encoding="utf-8").splitlines()

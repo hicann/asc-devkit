@@ -36,11 +36,7 @@ def verify_result(output, golden, scenarioNum=1):
     golden = np.fromfile(golden, dtype=output_type).reshape(-1)
 
     different_element_results = np.isclose(
-        output.flatten(),
-        golden.flatten(),
-        rtol=RELATIVE_TOL,
-        atol=ABSOLUTE_TOL,
-        equal_nan=True,
+        output.flatten(), golden.flatten(), rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
     )
     different_element_indexes = np.where(different_element_results == False)[0]
 
@@ -48,10 +44,7 @@ def verify_result(output, golden, scenarioNum=1):
         real_index = different_element_indexes[index]
         golden_data = golden.flatten()[real_index]
         output_data = output.flatten()[real_index]
-        print(
-            "data index: %06d, expected: %-.9f, actual: %-.9f"
-            % (real_index, golden_data, output_data)
-        )
+        print("data index: %06d, expected: %-.9f, actual: %-.9f" % (real_index, golden_data, output_data))
         if index == 100:
             break
 
@@ -64,13 +57,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("output_file", help="Output file path")
     parser.add_argument("golden_file", help="Golden file path")
-    parser.add_argument(
-        "-scenarioNum",
-        type=int,
-        default=1,
-        choices=[1, 2, 3, 4, 5, 6],
-        help="Scenario number",
-    )
+    parser.add_argument("-scenarioNum", type=int, default=1, choices=[1, 2, 3, 4, 5, 6], help="Scenario number")
     args = parser.parse_args()
 
     try:

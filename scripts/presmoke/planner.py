@@ -22,20 +22,14 @@ from .werror import command_env as werror_command_env
 
 
 def build_cells(
-    specs: Sequence[ExampleSpec],
-    arch: str,
-    modes: Iterable[str],
-    werror: bool = False,
+    specs: Sequence[ExampleSpec], arch: str, modes: Iterable[str], werror: bool = False
 ) -> Tuple[List[Cell], List[Suggestion]]:
     cells, suggestions, _ = build_cells_with_skips(specs, arch, modes, werror=werror)
     return cells, suggestions
 
 
 def build_cells_with_skips(
-    specs: Sequence[ExampleSpec],
-    arch: str,
-    modes: Iterable[str],
-    werror: bool = False,
+    specs: Sequence[ExampleSpec], arch: str, modes: Iterable[str], werror: bool = False
 ) -> Tuple[List[Cell], List[Suggestion], List[RunResult]]:
     mode_list = list(dict.fromkeys(modes))
     requested_modes = set(mode_list)
@@ -68,18 +62,13 @@ def build_cells_with_skips(
                     )
                 )
                 continue
-            rewritten = [
-                rewrite_command(command, arch, mode, werror=werror)
-                for command in spec.commands
-            ]
+            rewritten = [rewrite_command(command, arch, mode, werror=werror) for command in spec.commands]
             build_dir = spec.path / f"build_{mode}"
             cells.append(Cell(spec, arch, mode, rewritten, build_dir))
     return cells, suggestions, skipped
 
 
-def rewrite_command(
-    command: Command, arch: str, mode: str, werror: bool = False
-) -> Command:
+def rewrite_command(command: Command, arch: str, mode: str, werror: bool = False) -> Command:
     raw = command.raw.strip()
     kind = command.kind
     if raw.startswith("mkdir ") or raw.startswith("cd "):
@@ -97,10 +86,7 @@ def is_cmake_configure(command: str) -> bool:
         parts = command.split()
     if not parts or parts[0] != "cmake":
         return False
-    return not any(
-        part in {"--build", "--install", "--open", "--workflow", "-E"}
-        for part in parts[1:]
-    )
+    return not any(part in {"--build", "--install", "--open", "--workflow", "-E"} for part in parts[1:])
 
 
 def rewrite_cmake(command: str, arch: str, mode: str, werror: bool = False) -> str:
@@ -126,9 +112,7 @@ def rewrite_cmake(command: str, arch: str, mode: str, werror: bool = False) -> s
     out.append(f"-DCMAKE_ASC_ARCHITECTURES={arch}")
     if mode != "npu":
         out.append(f"-DCMAKE_ASC_RUN_MODE={mode}")
-    out.extend(
-        arg for arg in werror_cmake_args(werror) if not _has_cmake_cache_arg(out, arg)
-    )
+    out.extend(arg for arg in werror_cmake_args(werror) if not _has_cmake_cache_arg(out, arg))
     return " ".join(_quote_cmake_part(x) for x in out)
 
 

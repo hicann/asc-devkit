@@ -34,14 +34,10 @@ def gen_golden_data_int():
         self_chunk = self_data[start:end].astype(np.int64)
         other_chunk = other_data[start:end].astype(np.int64)
         quotient = np.abs(self_chunk) // np.abs(other_chunk)
-        quotient = np.where(
-            (self_chunk >= 0) == (other_chunk >= 0), quotient, -quotient
-        )
+        quotient = np.where((self_chunk >= 0) == (other_chunk >= 0), quotient, -quotient)
         rem = self_chunk - quotient * other_chunk
         signs_differ = (rem < 0) != (other_chunk < 0)
-        golden[start:end] = np.where(
-            (signs_differ) & (rem != 0), rem + other_chunk, rem
-        ).astype(np.int32)
+        golden[start:end] = np.where((signs_differ) & (rem != 0), rem + other_chunk, rem).astype(np.int32)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
