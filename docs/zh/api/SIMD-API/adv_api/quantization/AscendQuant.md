@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id3 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id3 -->
 <!-- npu="A3" id4 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id4 -->
 <!-- npu="910b" id5 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id5 -->
 <!-- npu="310b" id6 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id7 -->
 <!-- npu="910" id8 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id8 -->
 <!-- npu="x90" id1 -->
 - Kirin X90：支持
@@ -185,7 +185,7 @@ PER\_TOKEN/PER\_GROUP场景的计算逻辑如下：
 
 -   dstTensor非固定数据类型
 
-    <!-- npu="950" id9 -->仅支持Ascend 950PR/Ascend 950DT。<!-- end id9 -->
+    <!-- npu="950" id9 -->仅支持Ascend 950PR&950DT系列产品。<!-- end id9 -->
 
     -   PER\_TENSOR量化：
         -   通过sharedTmpBuffer入参传入临时空间
@@ -439,44 +439,44 @@ struct AscendQuantParam {
 -   当Scale为float类型时，其取值范围仍为half类型的取值范围。
 -   dstTensor非固定数据类型的函数原型支持情况如下：
     <!-- npu="950" id12 -->
-    - Ascend 950PR/Ascend 950DT：支持。
+    - Ascend 950PR&950DT系列产品：支持。
     <!-- end id12 -->
     <!-- npu="A3" id13 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持。
+    - Atlas A3系列产品：不支持。
     <!-- end id13 -->
     <!-- npu="910b" id14 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持。
+    - Atlas A2系列产品：不支持。
     <!-- end id14 -->
     <!-- npu="310p" id15 -->
-    - Atlas 推理系列产品AI Core：不支持。
+    - Atlas推理系列产品AI Core：不支持。
     <!-- end id15 -->
     <!-- npu="910" id16 -->
-    - Atlas 训练系列产品：不支持。
+    - Atlas训练系列产品：不支持。
     <!-- end id16 -->
 <!-- npu="910" id10 -->
--   Atlas 训练系列产品仅支持PER\_TENSOR量化，不支持PER\_CHANNEL量化、PER\_TOKEN量化、PER\_GROUP量化。
+-   Atlas训练系列产品仅支持PER\_TENSOR量化，不支持PER\_CHANNEL量化、PER\_TOKEN量化、PER\_GROUP量化。
 <!-- end id10 -->
 
 -   PER\_TOKEN/PER\_GROUP量化场景支持情况如下：
 
     <!-- npu="950" id11 -->
-    - Ascend 950PR/Ascend 950DT：支持。
+    - Ascend 950PR&950DT系列产品：支持。
     <!-- end id11 -->
 
     <!-- npu="A3" id17 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持。
+    - Atlas A3系列产品：不支持。
     <!-- end id17 -->
 
     <!-- npu="910b" id18 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持。
+    - Atlas A2系列产品：不支持。
     <!-- end id18 -->
 
     <!-- npu="310p" id19 -->
-    - Atlas 推理系列产品AI Core：不支持。
+    - Atlas推理系列产品AI Core：不支持。
     <!-- end id19 -->
 
     <!-- npu="910" id20 -->
-    - Atlas 训练系列产品：不支持。
+    - Atlas训练系列产品：不支持。
     <!-- end id20 -->
 
 -   PER\_TOKEN/PER\_GROUP场景，连续计算方向（即n方向）的数据量要求32B对齐。

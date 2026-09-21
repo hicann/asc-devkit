@@ -20,7 +20,7 @@
 
 <!-- npu="950" id4 -->
 - Nz × Zn = Nz（A × B = C）组合
-  针对Ascend 950PR/Ascend 950DT，矩阵乘法C = A×B要求：左矩阵A使用Nz格式，右矩阵B使用Zn格式，结果矩阵C使用Nz格式，如图2所示：
+  针对Ascend 950PR&950DT系列产品，矩阵乘法C = A×B要求：左矩阵A使用Nz格式，右矩阵B使用Zn格式，结果矩阵C使用Nz格式，如图2所示：
 
   **图2** 矩阵乘法场景涉及的数据格式  
   ![](../../../../figures/fractals_involved_in_matrix_calculation_950.png "矩阵乘法场景涉及的数据格式-27")
@@ -57,7 +57,7 @@
     ![列优先排布](../../../../figures/column_major_layout.png)
 - 场景：通常存在于Global Memory（GM）中。若此输入要作为矩阵计算的输入，需要转换成Nz格式。
 <!-- npu="950" id5 -->
-- 转换示例：针对Ascend 950PR/Ascend 950DT，可以使用[矩阵搬入数据搬运 DN2Nz接口](../../cube_datamove/asc_copy_gm2l1_dn2nz.md)将其转换为Nz格式以适配Cube单元。
+- 转换示例：针对Ascend 950PR&950DT系列产品，可以使用[矩阵搬入数据搬运 DN2Nz接口](../../cube_datamove/asc_copy_gm2l1_dn2nz.md)将其转换为Nz格式以适配Cube单元。
 <!-- end id5 -->
 
 <!-- npu="910b,A3" id6 -->
@@ -127,7 +127,7 @@
     - **L0C Buffer：** 存储矩阵乘法的结果（分形固定为16x16）。
     - **L1 Buffer / GM：** 数据流转的通用中间格式（分形为16xK0，K0的大小取决于数据类型位宽）。
     <!-- npu="950" id7 -->
-    - **L0A Buffer：** 仅Ascend 950PR/Ascend 950DT下使用，用于存储左矩阵（分形为16xK0，K0的大小取决于数据类型位宽）。
+    - **L0A Buffer：** 仅Ascend 950PR&950DT系列产品下使用，用于存储左矩阵（分形为16xK0，K0的大小取决于数据类型位宽）。
     <!-- end id7 -->
 - **设计原理：**
     - Nz是昇腾芯片架构内部的“中间标准格式”。它是对“线性数据（ND）”和“计算专用数据（Zz/Zn）”的一种折中。
@@ -140,7 +140,7 @@
 >- 在L1 Buffer中，Nz格式被采用以便于将数据搬运到L0A Buffer和L0B Buffer时，能够方便地转换为对应的Zz和Zn格式。此时，分形形状为16 x \(32B / sizeof\(Datatype\)\)，大小为512字节。
 >因此，当数据从L0C Buffer搬运到L1 Buffer时，其分形大小可能会发生变化。
 <!-- npu="950" id8 -->
->- 针对Ascend 950PR/Ascend 950DT，Nz格式在L0A Buffer中用于存储左矩阵。
+>- 针对Ascend 950PR&950DT系列产品，Nz格式在L0A Buffer中用于存储左矩阵。
 <!-- end id8 -->
 
 ## Nz格式转换详解与示例

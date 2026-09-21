@@ -16,7 +16,7 @@ uint32_t SetOpType(uint32_t opType)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| opType | 输入 | 表示通信任务类型。uint32_t类型。HCCL API提供[HcclCMDType](HCCL_Tiling_constructor.md#table2469980529)枚举定义作为该参数的取值。<!-- npu="950" id1 --><br><br>针对Ascend 950PR/Ascend 950DT，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_ALLTOALLV、HCCL_CMD_HALF_ALLTOALLV。<!-- end id1 --><!-- npu="A3" id2 --><br><br>针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_ALLTOALLV、HCCL_CMD_BATCH_WRITE。<!-- end id2 --><!-- npu="910b" id3 --><br><br>针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_BATCH_WRITE。<!-- end id3 --> |
+| opType | 输入 | 表示通信任务类型。uint32_t类型。HCCL API提供[HcclCMDType](HCCL_Tiling_constructor.md#table2469980529)枚举定义作为该参数的取值。<!-- npu="950" id1 --><br><br>针对Ascend 950PR&950DT系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_ALLTOALLV、HCCL_CMD_HALF_ALLTOALLV。<!-- end id1 --><!-- npu="A3" id2 --><br><br>针对Atlas A3系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_ALLTOALLV、HCCL_CMD_BATCH_WRITE。<!-- end id2 --><!-- npu="910b" id3 --><br><br>针对Atlas A2系列产品，当前支持的通信任务类型为HCCL_CMD_ALLREDUCE、HCCL_CMD_ALLGATHER、HCCL_CMD_REDUCE_SCATTER、HCCL_CMD_ALLTOALL、HCCL_CMD_BATCH_WRITE。<!-- end id3 --> |
 
 ## 返回值说明
 

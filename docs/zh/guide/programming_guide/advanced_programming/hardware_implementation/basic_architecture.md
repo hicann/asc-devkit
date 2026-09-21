@@ -10,11 +10,11 @@ AI Core负责执行矩阵、矢量计算密集的任务，其包括以下组成�
 -   **存储单元**：包括L1 Buffer、L0A Buffer、L0B Buffer、L0C Buffer、Unified Buffer（UB）、BiasTable Buffer、Fixpipe Buffer等专为高效计算设计的存储单元。
 -   **搬运单元**：包括MTE1、MTE2、MTE3和FixPipe，用于数据在不同存储单元之间的高效传输。
 
-以Atlas A2 训练系列产品/Atlas A2 推理系列产品为例，硬件架构图如下：
+以Atlas A2系列产品为例，硬件架构图如下：
 
 ![](../../../figures/sep_arch.png)
 
-本章节首先介绍硬件架构相关的关键概念和术语，以及AI Core的工作模式，为理解后续内容奠定基础。随后以Atlas A2 训练系列产品/Atlas A2 推理系列产品为例，提供AI Core基本架构的介绍：首先介绍计算单元、存储单元和搬运单元的基本功能与结构，然后通过典型的数据流和控制流示例，帮助开发者深入理解硬件架构的工作原理。针对不同产品型号对应的具体架构规格和细节说明需要参考后续[架构规格](./architecture_spec/architecture_spec.md)章节。
+本章节首先介绍硬件架构相关的关键概念和术语，以及AI Core的工作模式，为理解后续内容奠定基础。随后以Atlas A2系列产品为例，提供AI Core基本架构的介绍：首先介绍计算单元、存储单元和搬运单元的基本功能与结构，然后通过典型的数据流和控制流示例，帮助开发者深入理解硬件架构的工作原理。针对不同产品型号对应的具体架构规格和细节说明需要参考后续[架构规格](./architecture_spec/architecture_spec.md)章节。
 
 ## 关键概念和术语<a name="section16011278116"></a>
 
@@ -64,21 +64,21 @@ AI Core负责执行矩阵、矢量计算密集的任务，其包括以下组成�
 >- Atlas 推理系列产品：耦合模式
 ><!-- end id1 -->
 ><!-- npu="910" id2 -->
->- Atlas 训练系列产品：耦合模式
+>- Atlas训练系列产品：耦合模式
 ><!-- end id2 -->
 ><!-- npu="910b" id3 -->
->- Atlas A2 训练系列产品/Atlas A2 推理系列产品：分离模式
+>- Atlas A2系列产品：分离模式
 ><!-- end id3 -->
 ><!-- npu="A3" id4 -->
->- Atlas A3 训练系列产品/Atlas A3 推理系列产品：分离模式
+>- Atlas A3系列产品：分离模式
 ><!-- end id4 -->
 ><!-- npu="950" id5 -->
->- Ascend 950PR/Ascend 950DT：分离模式
+>- Ascend 950PR&950DT系列产品：分离模式
 ><!-- end id5 -->
 ><!-- npu="310b" id6 -->
->- Atlas 200I/500 A2 推理产品：耦合模式
+>- Atlas 200I/500 A2推理产品：耦合模式
 ><!-- end id6 -->
->注意：针对Atlas 200I/500 A2 推理产品，硬件的工作模式既可以支持耦合模式，又可以支持分离模式。耦合模式下，开发者仅需关注AI Core数量，无需关注Vector Core和Cube Core数量；分离模式下，需要关注AI Core、Vector Core、Cube Core的数量。Ascend C编程场景下，仅支持耦合模式。
+>注意：针对Atlas 200I/500 A2推理产品，硬件的工作模式既可以支持耦合模式，又可以支持分离模式。耦合模式下，开发者仅需关注AI Core数量，无需关注Vector Core和Cube Core数量；分离模式下，需要关注AI Core、Vector Core、Cube Core的数量。Ascend C编程场景下，仅支持耦合模式。
 
 ## 计算单元<a name="section2853918419"></a>
 

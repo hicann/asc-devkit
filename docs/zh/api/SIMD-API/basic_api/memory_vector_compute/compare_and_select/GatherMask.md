@@ -3,16 +3,16 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
 - Atlas 推理系列产品 AI Core：支持
@@ -21,7 +21,7 @@
 - Atlas 推理系列产品 Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/compare_and_select/GatherMask_res.md#id1 -->
 
@@ -41,23 +41,23 @@
     - 7：11111111…1111 \# 每个repeat内取全部元素
 
     <!-- npu="950" id8 -->
-    Ascend 950PR/Ascend 950DT，支持模式1-7。
+    Ascend 950PR&950DT系列产品，支持模式1-7。
     <!-- end id8 -->
 
     <!-- npu="A3" id9 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持模式1-7。
+    Atlas A3系列产品，支持模式1-7。
     <!-- end id9 -->
 
     <!-- npu="910b" id10 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持模式1-7。
+    Atlas A2系列产品，支持模式1-7。
     <!-- end id10 -->
 
     <!-- npu="310p" id11 -->
-    Atlas 推理系列产品AI Core，支持模式1-6。
+    Atlas推理系列产品AI Core，支持模式1-6。
     <!-- end id11 -->
 
     <!-- npu="310b" id12 -->
-    Atlas 200I/500 A2 推理产品，支持模式1-7。
+    Atlas 200I/500 A2推理产品，支持模式1-7。
     <!-- end id12 -->
 
 - 用户自定义模式：对应函数原型中src1Pattern的数据类型为LocalTensor，迭代间间隔由src1RepeatStride决定，迭代内src1Pattern连续消耗。
@@ -72,23 +72,23 @@ GatherMask接口计算过程如下图所示，参数设置为：mask=70，repeat
 repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决定。
 
     <!-- npu="950" id13 -->
-    Ascend 950PR/Ascend 950DT，支持配置方式一。
+    Ascend 950PR&950DT系列产品，支持配置方式一。
     <!-- end id13 -->
 
     <!-- npu="A3" id14 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持配置方式一。
+    Atlas A3系列产品，支持配置方式一。
     <!-- end id14 -->
 
     <!-- npu="910b" id15 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持配置方式一。
+    Atlas A2系列产品，支持配置方式一。
     <!-- end id15 -->
 
     <!-- npu="310b" id16 -->
-    Atlas 200I/500 A2 推理产品，支持配置方式一。
+    Atlas 200I/500 A2推理产品，支持配置方式一。
     <!-- end id16 -->
 
     <!-- npu="310p" id17 -->
-    Atlas 推理系列产品AI Core，支持配置方式二。
+    Atlas推理系列产品AI Core，支持配置方式二。
     <!-- end id17 -->
 
 图1采用内置固定模式2进行计算，每个repeat取奇数索引元素。
@@ -163,7 +163,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 
 <!-- npu="950" id20 -->
 
-**表**  Ascend 950PR/Ascend 950DT数据类型组合情况
+**表**  Ascend 950PR&950DT系列产品数据类型组合情况
 
 | src0数据类型 | src1Pattern数据类型 | dst数据类型 |
 | --- | --- | --- |
@@ -181,7 +181,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 
 <!-- npu="A3" id21 -->
 
-**表**  Atlas A3 训练系列产品/Atlas A3 推理系列产品数据类型组合情况
+**表**  Atlas A3系列产品数据类型组合情况
 
 | src0数据类型 | src1Pattern数据类型 | dst数据类型 |
 | --- | --- | --- |
@@ -197,7 +197,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 
 <!-- npu="910b" id22 -->
 
-**表**  Atlas A2 训练系列产品/Atlas A2 推理系列产品数据类型组合情况
+**表**  Atlas A2系列产品数据类型组合情况
 
 | src0数据类型 | src1Pattern数据类型 | dst数据类型 |
 | --- | --- | --- |
@@ -213,7 +213,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 
 <!-- npu="310b" id23 -->
 
-**表**  Atlas 200I/500 A2 推理产品数据类型组合情况
+**表**  Atlas 200I/500 A2推理产品数据类型组合情况
 
 | src0数据类型 | src1Pattern数据类型 | dst数据类型 |
 | --- | --- | --- |
@@ -228,7 +228,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 
 <!-- npu="310p" id24 -->
 
-**表**  Atlas 推理系列产品AI Core数据类型组合情况
+**表**  Atlas推理系列产品AI Core数据类型组合情况
 
 | src0数据类型 | src1Pattern数据类型 | dst数据类型 |
 | --- | --- | --- |
@@ -263,7 +263,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 - 若调用该接口前为Counter模式，在调用该接口后需要显式设置回Counter模式（接口内部执行结束后会设置为Normal模式）。
 
 <!-- npu="950" id26 -->
-- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR/Ascend 950DT：
+- 对Unified Buffer（UB）空间的占用说明。针对Ascend 950PR&950DT系列产品：
   - 内置固定模式占用8KB UB临时空间。
   - 用户自定义模式不涉及8KB UB临时空间的占用。
 <!-- end id26 -->

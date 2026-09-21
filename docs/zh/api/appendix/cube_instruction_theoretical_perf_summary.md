@@ -4,13 +4,13 @@
 本节汇总介绍了主要的Cube指令的理论性能，以下内容针对如下型号生效：
 
 <!-- npu="950" id2 -->
-Ascend 950PR/Ascend 950DT
+Ascend 950PR&950DT系列产品
 <!-- end id2 -->
 <!-- npu="A3" id3 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品
+Atlas A3系列产品
 <!-- end id3 -->
 <!-- npu="910b" id4 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品
+Atlas A2系列产品
 <!-- end id4 -->
 
 ## Mmad计算类指令理论性能汇总
@@ -138,7 +138,7 @@ $$
 | [DataCopy（L1 Buffer->BiasTable Buffer）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable.md) | 32 |
 | [DataCopy（L1 Buffer->Fixpipe Buffer）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToFixpipe.md) | 32 |
 
-针对Ascend 950PR/Ascend 950DT，LoadData（2D矩阵搬运）接口仅为兼容实现，内部使用了LoadData（2D矩阵搬运V2）接口实现，相关理论性能可参考LoadData（2D矩阵搬运V2）接口，但需要注意，该兼容实现会造成性能损失。
+针对Ascend 950PR&950DT系列产品，LoadData（2D矩阵搬运）接口仅为兼容实现，内部使用了LoadData（2D矩阵搬运V2）接口实现，相关理论性能可参考LoadData（2D矩阵搬运V2）接口，但需要注意，该兼容实现会造成性能损失。
 
 由于LoadData（MX矩阵搬运）接口内部实现涉及两条数据通路的搬运，其占用cycle数的理论计算公式有所不同，具体公式如下：
 
@@ -154,7 +154,7 @@ $$
 - $bandwidth\_mx$：搬运scale矩阵的带宽，单位为Byte/cycle。
 - $\Delta T$：搬运过程中的带宽延迟等额外开销。
 
-针对Ascend 950PR/Ascend 950DT，[LoadData（卷积数据搬运）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)和[LoadDataWithStride](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)。此外，LoadDataWithStride接口相比于LoadData（卷积数据搬运）接口，内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。两个接口的理论性能说明见下表：
+针对Ascend 950PR&950DT系列产品，[LoadData（卷积数据搬运）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md)和[LoadDataWithStride](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md)指令的理论性能与参数相关，相关参数说明见[LoadData3DParamsV2结构体内参数说明](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419)。此外，LoadDataWithStride接口相比于LoadData（卷积数据搬运）接口，内部不包含针对其他芯片版本的兼容性实现，减少了兼容造成的额外开销，性能表现有所优化。两个接口的理论性能说明见下表：
 
 **表6** LoadData（卷积数据搬运）和LoadDataWithStride理论性能说明（[NPU架构版本3510](../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="table1877123821313"></a>  
 

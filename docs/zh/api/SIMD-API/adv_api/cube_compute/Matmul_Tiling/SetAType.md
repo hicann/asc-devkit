@@ -19,7 +19,7 @@ int32_t SetAType(TPosition pos, CubeFormat type, DataType dataType, bool isTrans
 | pos | 输入 | A矩阵所在的buffer位置，可设置为：TPosition::GM, TPosition::VECOUT, TPosition::TSCM。 |
 | type | 输入 | A矩阵的数据格式，可设置为：CubeFormat::ND，CubeFormat::NZ，CubeFormat::VECTOR。 |
 | dataType | 输入 | A矩阵的数据类型，可设置为：DataType::DT_FLOAT、DataType::DT_FLOAT16、DataType::DT_BFLOAT16、DataType::DT_INT8、DataType::DT_INT4、DataType::DT_FLOAT8_E4M3FN、DataType::DT_FLOAT8_E5M2、DataType::DT_HIFLOAT8。 |
-| isTrans | 输入 | A矩阵是否转置。<br><br>参数取值：<br>true：A矩阵转置；false：A矩阵不转置。<!-- npu="310p" id1 --><br><br>Atlas 推理系列产品AI Core，A矩阵为DataType::DT_INT8数据类型时不支持转置，即不支持该参数设置为true。<!-- end id1 --> |
+| isTrans | 输入 | A矩阵是否转置。<br><br>参数取值：<br>true：A矩阵转置；false：A矩阵不转置。<!-- npu="310p" id1 --><br><br>Atlas推理系列产品AI Core，A矩阵为DataType::DT_INT8数据类型时不支持转置，即不支持该参数设置为true。<!-- end id1 --> |
 
 ## 返回值说明
 

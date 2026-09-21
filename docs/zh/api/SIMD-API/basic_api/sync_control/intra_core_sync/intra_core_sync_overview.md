@@ -64,7 +64,7 @@ AI Core内部并行的指令流水类型和解释如下所示：
     - WaitFlag：当目的流水执行到该指令时，如果发现硬件中对应标志位为0，目的流水的后续指令将一直被阻塞；如果发现硬件中对应标志位为1，则将硬件中对应标志位设置为0，同时目的流水的后续指令开始执行。
 
      <!-- npu="950" id3 -->
-     Ascend 950PR/Ascend 950DT新增通过[Lock](Lock.md)/[Unlock](Unlock.md)接口进行不同流水线间的同步控制。通过Lock锁定指定流水（阻塞后续指令），再通过Unlock释放流水，来完成流水间的同步依赖。
+     Ascend 950PR&950DT系列产品新增通过[Lock](Lock.md)/[Unlock](Unlock.md)接口进行不同流水线间的同步控制。通过Lock锁定指定流水（阻塞后续指令），再通过Unlock释放流水，来完成流水间的同步依赖。
      - Lock：根据MutexID获取Mutex，若Mutex已被锁定，将阻塞后续指定流水指令队列，直到前序指令中对应MutexID的Mutex被Unlock。
      - Unlock：当前流水的前置指令退出后，根据MutexID释放对应Mutex。
      <!-- end id3 -->

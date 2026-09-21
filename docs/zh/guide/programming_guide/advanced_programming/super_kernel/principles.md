@@ -11,13 +11,13 @@ SuperKernel是一种算子的二进制融合技术。与源码融合不同，它
 >[!NOTE]说明
 >SuperKernel适用于如下型号：
 > <!-- npu="A3" id1 -->
-> - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+> - Atlas A3系列产品
 > <!-- end id1 -->
 > <!-- npu="910b" id2 -->
-> - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+> - Atlas A2系列产品
 > <!-- end id2 -->
 > <!-- npu="950" id3 -->
-> - Ascend 950PR/Ascend 950DT，该型号下SuperKernel特性是试验特性，在后续版本中会调整或改进，不保证后续兼容性，请开发者在使用过程中关注后续版本更新。
+> - Ascend 950PR&950DT系列产品，该型号下SuperKernel特性是试验特性，在后续版本中会调整或改进，不保证后续兼容性，请开发者在使用过程中关注后续版本更新。
 > <!-- end id3 -->
 
 ## 性能收益来源

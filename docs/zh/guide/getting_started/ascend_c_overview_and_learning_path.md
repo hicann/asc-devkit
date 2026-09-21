@@ -14,7 +14,7 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 
 <img src="../figures/architecture_ascendc.png" alt="架构图" width="1000px">
 
-- **语言扩展层C API**：纯C接口，提供数组内存分配、基于指针的计算接口，延续业界熟悉的C编程体验，并完整开放芯片能力。<!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT新增SIMT、SIMD/SIMT混合编程能力。<!-- end id1 -->
+- **语言扩展层C API**：纯C接口，提供数组内存分配、基于指针的计算接口，延续业界熟悉的C编程体验，并完整开放芯片能力。<!-- npu="950" id1 -->Ascend 950PR&950DT系列产品新增SIMT、SIMD/SIMT混合编程能力。<!-- end id1 -->
 - **基础API**：以单指令为抽象的C++类库，一般基于Tensor编程，并逐步通过Layout完善Tensor编程体验。
 - **高阶API**：对单核常见算法进行抽象与封装，提供开箱即用的公共算法实现。
 - **算子模板库**：基于模板提供算子的完整实现参考，降低Tiling开发复杂度，支持用户自定义扩展。
@@ -25,22 +25,22 @@ CANN基于分层架构设计，实现了上层应用与底层硬件的无缝衔�
 > [!NOTE]说明
 > Ascend C支持在如下AI处理器型号上使用：
 > <!-- npu="950" id2 -->
-> - Ascend 950PR/Ascend 950DT
+> - Ascend 950PR&950DT系列产品
 > <!-- end id2 -->
 > <!-- npu="A3" id3 -->
-> - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+> - Atlas A3系列产品
 > <!-- end id3 -->
 > <!-- npu="910b" id4 -->
-> - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+> - Atlas A2系列产品
 > <!-- end id4 -->
 > <!-- npu="310b" id5 -->
-> - Atlas 200I/500 A2 推理产品
+> - Atlas 200I/500 A2推理产品
 > <!-- end id5 -->
 > <!-- npu="310p" id6 -->
 > - Atlas 推理系列产品
 > <!-- end id6 -->
 > <!-- npu="910" id7 -->
-> - Atlas 训练系列产品
+> - Atlas训练系列产品
 > <!-- end id7 -->
 > <!-- npu="x90" id8 -->
 > - Kirin X90：支持

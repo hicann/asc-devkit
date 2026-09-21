@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/special_register_access/SetCtrlSpr_ISASI_res.md#id1 -->
 
@@ -55,7 +55,7 @@ __aicore__ static inline void SetCtrlSpr(int64_t value)
 
 <!-- npu="950" id10 -->
 
-**表3** Ascend 950PR/Ascend 950DT常用CTRL寄存器比特位说明<a id="tab-950"></a>
+**表3** Ascend 950PR&950DT系列产品常用CTRL寄存器比特位说明<a id="tab-950"></a>
 
 | CTRL寄存器比特位 | 功能 | 默认值 | 配合使用的API |
 | --- | --- | --- | --- |
@@ -66,37 +66,37 @@ __aicore__ static inline void SetCtrlSpr(int64_t value)
 | CTRL[50] | 用于控制浮点数精度转换时的NaN饱和模式，在CTRL[48]设置为饱和模式时生效。<br>&bull; 1'b0：NaN输出会被转换为0.0；<br>&bull; 1'b1：NaN输出会保持NaN。<br><br>该控制位仅支持如下数据类型：<br>fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t。 | 1'b0 | 精度转换指令（需要满足数据类型限制）。 |
 | CTRL[53] | 用于控制整数计算指令的饱和模式。<br>&bull; 1'b0：截断模式，溢出值按目标数据类型位数截断，保留低位，舍弃高位；<br>&bull; 1'b1：饱和模式，溢出值饱和到±MAX。 | 1'b0 | 矢量计算API（输入输出数据类型为整数）。 |
 | CTRL[59] | 用于控制浮点数转整数或整数转整数时的精度转换饱和模式，仅在CTRL[60]开启时生效。<br>&bull; 1'b0：饱和模式：溢出值饱和到±MAX；<br>&bull; 1'b1：截断模式：溢出值按目标数据类型位数截断，保留低位，舍弃高位。 | 1'b0 | 精度转换指令。 |
-| CTRL[60] | 用于控制饱和模式的全局生效方式。<br>&bull; 1'b0：单指令设置饱和；<br>&bull; 1'b1：全局设置饱和。 | 1'b1 | 该控制位可与Reg矢量计算API [Cast](../reg_vector_compute/type_conversion/Cast.md)配合使用，或与CTRL[48]、CTRL[59]配合使用，具体配置信息参考[Ascend 950PR/Ascend 950DT饱和模式全局或单指令生效配置表](#table231122118201)。 |
+| CTRL[60] | 用于控制饱和模式的全局生效方式。<br>&bull; 1'b0：单指令设置饱和；<br>&bull; 1'b1：全局设置饱和。 | 1'b1 | 该控制位可与Reg矢量计算API [Cast](../reg_vector_compute/type_conversion/Cast.md)配合使用，或与CTRL[48]、CTRL[59]配合使用，具体配置信息参考[Ascend 950PR&950DT系列产品饱和模式全局或单指令生效配置表](#table231122118201)。 |
 
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
 
-**表4** Atlas A3 训练系列产品/Atlas A3 推理系列产品常用CTRL寄存器比特位说明
+**表4** Atlas A3系列产品常用CTRL寄存器比特位说明
 
 | CTRL寄存器比特位 | 功能 | 默认值 | 配合使用的API |
 | --- | --- | --- | --- |
 | CTRL[48] | 用于控制浮点数计算和浮点数精度转换时的饱和模式。<br>&bull; 1'b0：饱和模式，inf输出会被饱和为±MAX， NaN输出会被饱和为0；<br>&bull; 1'b1：非饱和模式，inf/NaN保持原输出。<br><br>该控制位仅支持如下数据类型：<br>&bull;浮点数计算时支持half、bfloat16_t数据类型；<br>&bull;浮点数精度转换时支持如下数据类型：half、bfloat16_t。 | 1'b0 | 不涉及 |
 
-**注：针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，推荐使用[SetSaturationFlag](./SetSaturationFlag_ISASI.md)和[GetSaturationFlag](./GetSaturationFlag_ISASI.md)来设置和获取CTRL[48]以控制饱和模式。**
+**注：针对Atlas A3系列产品，推荐使用[SetSaturationFlag](./SetSaturationFlag_ISASI.md)和[GetSaturationFlag](./GetSaturationFlag_ISASI.md)来设置和获取CTRL[48]以控制饱和模式。**
 
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
 
-**表5** Atlas A2 训练系列产品/Atlas A2 推理系列产品常用CTRL寄存器比特位说明
+**表5** Atlas A2系列产品常用CTRL寄存器比特位说明
 
 | CTRL寄存器比特位 | 功能 | 默认值 | 配合使用的API |
 | --- | --- | --- | --- |
 | CTRL[48] | 用于控制浮点数计算和浮点数精度转换时的饱和模式。<br>&bull; 1'b0：饱和模式，inf输出会被饱和为±MAX， NaN输出会被饱和为0；<br>&bull; 1'b1：非饱和模式，inf/NaN保持原输出。<br><br>该控制位仅支持如下数据类型：<br>&bull;浮点数计算时支持half、bfloat16_t数据类型；<br>&bull;浮点数精度转换时支持如下数据类型：half、bfloat16_t。 | 1'b0 | 不涉及 |
 
-**注：针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，推荐使用[SetSaturationFlag](./SetSaturationFlag_ISASI.md)和[GetSaturationFlag](./GetSaturationFlag_ISASI.md)来设置和获取CTRL[48]以控制饱和模式。**
+**注：针对Atlas A2系列产品，推荐使用[SetSaturationFlag](./SetSaturationFlag_ISASI.md)和[GetSaturationFlag](./GetSaturationFlag_ISASI.md)来设置和获取CTRL[48]以控制饱和模式。**
 
 <!-- end id12 -->
 
 <!-- npu="950" id13 -->
 
-**表6** Ascend 950PR/Ascend 950DT饱和模式全局或单指令生效配置表<a id="table231122118201"></a>
+**表6** Ascend 950PR&950DT系列产品饱和模式全局或单指令生效配置表<a id="table231122118201"></a>
 
 | 全局开启位 | 控制位 | 功能描述 |
 | --- | --- | --- |
@@ -120,16 +120,16 @@ __aicore__ static inline void SetCtrlSpr(int64_t value)
 ## 约束说明
 
 <!-- npu="950" id14 -->
-- Ascend 950PR/Ascend 950DT仅支持CTRL[8:6]、CTRL[10:9]、CTRL[45]、CTRL[48]、CTRL[50]、CTRL[53]、CTRL[59]、CTRL[60]比特位。
+- Ascend 950PR&950DT系列产品仅支持CTRL[8:6]、CTRL[10:9]、CTRL[45]、CTRL[48]、CTRL[50]、CTRL[53]、CTRL[59]、CTRL[60]比特位。
 <!-- end id14 -->
 <!-- npu="A3" id15 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品仅支持CTRL[48]比特位。
+- Atlas A3系列产品仅支持CTRL[48]比特位。
 <!-- end id15 -->
 <!-- npu="910b" id16 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品仅支持CTRL[48]比特位。
+- Atlas A2系列产品仅支持CTRL[48]比特位。
 <!-- end id16 -->
 <!-- npu="950" id17 -->
-- Ascend 950PR/Ascend 950DT对于CTRL[8:6]和CTRL[10:9]的设置，已封装原子操作API，建议通过这些原子操作API进行配置。
+- Ascend 950PR&950DT系列产品对于CTRL[8:6]和CTRL[10:9]的设置，已封装原子操作API，建议通过这些原子操作API进行配置。
   - [SetAtomicType](../atomic_operations/SetAtomicType.md)
   - [DisableDmaAtomic](../atomic_operations/DisableDmaAtomic.md)
   - [SetAtomicAdd](../atomic_operations/SetAtomicAdd.md)

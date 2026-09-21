@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_load_aux_config/LoadImageToLocal_res.md#id1 -->
 
@@ -63,11 +63,11 @@ __aicore__ inline void LoadImageToLocal(const LocalTensor<T>& dst, const LoadIma
 
 ## 数据类型
 
-<!-- npu="950" id8 -->Ascend 950PR/Ascend 950DT，支持的数据类型为：int8_t、uint8_t、half。<!-- end id8 --><br>
+<!-- npu="950" id8 -->Ascend 950PR&950DT系列产品，支持的数据类型为：int8_t、uint8_t、half。<!-- end id8 --><br>
 <!-- npu="A3" id9 -->Atlas A3训练系列产品/Atlas A3推理系列产品，支持数据类型：int8_t、half。<!-- end id9 --><br>
 <!-- npu="910b" id10 -->Atlas A2训练系列产品/Atlas A2推理系列产品，支持数据类型：int8_t、half。<!-- end id10 --><br>
-<!-- npu="310b" id11 -->Atlas 200I/500 A2 推理产品，支持数据类型为：int8_t、uint8_t、half。<!-- end id11 --><br>
-<!-- npu="310p" id12 -->Atlas 推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、half。<!-- end id12 -->
+<!-- npu="310b" id11 -->Atlas 200I/500 A2推理产品，支持数据类型为：int8_t、uint8_t、half。<!-- end id11 --><br>
+<!-- npu="310p" id12 -->Atlas推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、half。<!-- end id12 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 
@@ -80,13 +80,13 @@ __aicore__ inline void LoadImageToLocal(const LocalTensor<T>& dst, const LoadIma
 - 当通过[SetAippFunctions](SetAippFunctions.md)配置padding模式为块填充模式或者镜像块填充模式时，因为padding的数据来自于抠出的图片，左右padding的长度（leftPadSize、rightPadSize）必须小于或等于抠图的水平长度（horizSize），上下padding的长度（topPadSize、botPadSize）必须小于或等于抠图的垂直的长度（vertSize）。
 - 支持的物理存储位置为：L1 Buffer（TPosition: A1/B1）。
     <!-- npu="950" id13 -->
-    - 特别针对Ascend 950PR/Ascend 950DT，支持物理存储位置为：VECIN、VECCALC、VECOUT。
+    - 特别针对Ascend 950PR&950DT系列产品，支持物理存储位置为：VECIN、VECCALC、VECOUT。
     <!-- end id13 -->
 
 ## 调用示例<a name="section22811728184217"></a>
 
 <!-- npu="310p" id14 -->
-该调用示例支持的运行平台为Atlas 推理系列产品AI Core，示例图片格式为YUV420SP。
+该调用示例支持的运行平台为Atlas推理系列产品AI Core，示例图片格式为YUV420SP。
 
 ```cpp
 constexpr uint16_t imageWidth = 32;

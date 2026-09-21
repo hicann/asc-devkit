@@ -13,7 +13,7 @@
 以下内容针对如下型号生效：
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT系列产品
 <!-- end id1 -->
 
 ## 概述

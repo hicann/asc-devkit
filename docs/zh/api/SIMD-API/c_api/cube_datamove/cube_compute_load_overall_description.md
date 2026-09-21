@@ -21,7 +21,7 @@
 
 <!-- npu="950" id1 -->
 > [!NOTE]说明
-> Ascend 950PR/Ascend 950DT因硬件变更，删除GM到L0A Buffer、L0B Buffer的数据通路。产生的影响是原GM到L0A Buffer和L0B Buffer的数据搬运需要拆分为两步，即从GM到L1 Buffer的数据搬运和从L1 Buffer到L0A Buffer、L0B Buffer的数据搬运。
+> Ascend 950PR&950DT系列产品因硬件变更，删除GM到L0A Buffer、L0B Buffer的数据通路。产生的影响是原GM到L0A Buffer和L0B Buffer的数据搬运需要拆分为两步，即从GM到L1 Buffer的数据搬运和从L1 Buffer到L0A Buffer、L0B Buffer的数据搬运。
 <!-- end id1 -->
 
 ## GM->L1 Buffer的接口分类与使用场景
@@ -35,7 +35,7 @@
 | [asc_copy_gm2l1](asc_copy_gm2l1/asc_copy_gm2l1.md)，2D分形重载 | 按分形搬运 | GM-\>L1 Buffer | 离线分形数据 |
 
 <!-- npu="950" id2 -->
-针对Ascend 950PR/Ascend 950DT，新增GM->L1 Buffer如下接口，请开发者参考表3。
+针对Ascend 950PR&950DT系列产品，新增GM->L1 Buffer如下接口，请开发者参考表3。
 
 **表3** GM->L1 Buffer接口
 
@@ -81,7 +81,7 @@
 <!-- end id8 -->
 
 <!-- npu="950" id9 -->
-针对Ascend 950PR/Ascend 950DT，新增如下接口，请开发者参考表7。
+针对Ascend 950PR&950DT系列产品，新增如下接口，请开发者参考表7。
 
 **表7** 3510二维和MX扩展
 

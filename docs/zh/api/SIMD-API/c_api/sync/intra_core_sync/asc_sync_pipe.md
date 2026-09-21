@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 
 ## 功能说明
@@ -64,7 +64,7 @@ PIPE_S
 
 - Scalar流水之间的同步由硬件自动保证，`asc_sync_pipe`接口不支持`PIPE_S`单流水的同步。
 <!-- npu="950" id9 -->
-- 针对Ascend 950PR/Ascend 950DT，`PIPE_V`之间的同步由硬件自动保证。
+- 针对Ascend 950PR&950DT系列产品，`PIPE_V`之间的同步由硬件自动保证。
 <!-- end id9 -->
 - `asc_sync_pipe(PIPE_ALL)`会等待所有流水中所有先前提交的接口完成，这会对性能产生影响。若仅阻塞单条流水即可解决问题，应避免随意调用`asc_sync_pipe(PIPE_ALL)`。
 - `PIPE_MTE2`/`PIPE_MTE3`在搬运的目的地址有重叠的情况下需要开发者插入同步，保证多个搬运指令的串行化，防止出现异常数据。
@@ -74,7 +74,7 @@ PIPE_S
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
-以Ascend 950PR/Ascend 950DT产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main

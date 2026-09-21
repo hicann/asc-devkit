@@ -10,18 +10,18 @@
 - 针对如下产品型号：
 
     <!-- npu="A3" id4 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    Atlas A3系列产品
     <!-- end id4 -->
 
     <!-- npu="910b" id5 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    Atlas A2系列产品
     <!-- end id5 -->
 
     当Fixpipe指令的输入和输出数据类型都为float，Nz输出到GM，并且不开启Nz2ND与unitFlag时，才能够开启Channel Split功能。
 <!-- end id3 -->
 
 <!-- npu="950" id6 -->
-- 针对Ascend 950PR/Ascend 950DT，当Fixpipe指令的输入和输出数据类型都为float,Nz输出到GM，并且不开启Nz2ND、Nz2DN与unitFlag时，才能够开启Channel Split功能。当前搬出到L1 Buffer和Unified Buffer（UB）不支持该功能。
+- 针对Ascend 950PR&950DT系列产品，当Fixpipe指令的输入和输出数据类型都为float,Nz输出到GM，并且不开启Nz2ND、Nz2DN与unitFlag时，才能够开启Channel Split功能。当前搬出到L1 Buffer和Unified Buffer（UB）不支持该功能。
 <!-- end id6 -->
 
 ## 使用示例

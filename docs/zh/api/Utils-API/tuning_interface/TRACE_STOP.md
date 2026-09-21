@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/TRACE_STOP_res.md#id1 -->
 
@@ -52,7 +52,7 @@ SIMD场景下，通过仿真器进行算子性能仿真时，可对算子任意�
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | apid | 输入 | 取值需与[TRACE_START](TRACE_START.md)参数取值保持一致，否则影响打点结果。 |
-| pipe | 输入 | 取值需与[TRACE_START](TRACE_START.md)的pipe参数取值保持一致，pipe取值请参考[硬件流水类型](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459)，否则影响打点结果。<!-- npu="950" id7 --><br>仅Ascend 950PR/Ascend 950DT生效，其他产品上不生效。<!-- end id7 --> |
+| pipe | 输入 | 取值需与[TRACE_START](TRACE_START.md)的pipe参数取值保持一致，pipe取值请参考[硬件流水类型](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459)，否则影响打点结果。<!-- npu="950" id7 --><br>仅Ascend 950PR&950DT系列产品生效，其他产品上不生效。<!-- end id7 --> |
 
 ## 返回值说明
 

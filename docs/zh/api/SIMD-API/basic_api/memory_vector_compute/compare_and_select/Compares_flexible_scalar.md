@@ -3,16 +3,16 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
 - Atlas 推理系列产品 AI Core：不支持
@@ -21,7 +21,7 @@
 - Atlas 推理系列产品 Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/compare_and_select/Compares_flexible_scalar_res.md#id1 -->
 
@@ -100,7 +100,7 @@ $dst_i = Compares(scalar_{idx}, src_i)$
 ## 数据类型
 
 <!-- npu="950" id8 -->
-Ascend 950PR/Ascend 950DT，目的操作数dst支持的数据类型为：uint8_t。源操作数src支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、float、int32_t、uint32_t、int64_t、uint64_t、double。其中，int8\_t、uint8\_t、uint64\_t、int64\_t、double数据类型仅支持tensor前n个数据计算接口，double数据类型只支持CMPMODE::EQ。
+Ascend 950PR&950DT系列产品，目的操作数dst支持的数据类型为：uint8_t。源操作数src支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、float、int32_t、uint32_t、int64_t、uint64_t、double。其中，int8\_t、uint8\_t、uint64\_t、int64\_t、double数据类型仅支持tensor前n个数据计算接口，double数据类型只支持CMPMODE::EQ。
 <!-- end id8 -->
 
 ## 返回值说明<a name="section128671456102513"></a>

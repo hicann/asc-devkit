@@ -3,28 +3,28 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 >**说明：**
-> 本接口搬运功能仅在Atlas 推理系列产品AI Core产品型号的L0C Buffer-\>UB（CO1 -\> CO2）通路支持。其他型号和其他通路支持接口调用但功能不生效，功能等同于基础数据搬运。
+> 本接口搬运功能仅在Atlas推理系列产品AI Core产品型号的L0C Buffer-\>UB（CO1 -\> CO2）通路支持。其他型号和其他通路支持接口调用但功能不生效，功能等同于基础数据搬运。
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：不支持
+- Ascend 950PR&950DT系列产品：不支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopy_L0CToUB_res.md#id1 -->
 
@@ -170,7 +170,7 @@
 - Local Memory -\> Local Memory，源操作数与目的操作数类型不一致
 
     ```cpp
-    // 以下示例为L0C Buffer -> UB通路的数据搬运，仅在Atlas 推理系列产品AI Core场景下支持。srcLocal为int32_t类型的L0C Buffer上的LocalTensor，dstLocal为int8_t类型的UB上的LocalTensor
+    // 以下示例为L0C Buffer -> UB通路的数据搬运，仅在Atlas推理系列产品AI Core场景下支持。srcLocal为int32_t类型的L0C Buffer上的LocalTensor，dstLocal为int8_t类型的UB上的LocalTensor
     // 使用传入DataCopyParams参数的搬运接口，支持连续和非连续搬运
     DataCopyParams intriParams;
     intriParams.blockCount = 1; // 连续数据块个数为1

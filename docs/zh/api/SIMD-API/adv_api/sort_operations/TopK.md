@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id13 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id13 -->
 <!-- npu="A3" id14 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id14 -->
 <!-- npu="910b" id15 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id16 -->
 <!-- npu="310p" id17 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id17 -->
 <!-- npu="910" id18 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id18 -->
 <!-- npu="x90" id1 -->
 - Kirin X90：支持
@@ -74,15 +74,15 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
         1.  模板参数isInitIndex为false，需生成0到inner - 1的索引；
 
             <!-- npu="950" id29 -->
-            Ascend 950PR/Ascend 950DT采用方式一。
+            Ascend 950PR&950DT系列产品采用方式一。
             <!-- end id29 -->
 
             <!-- npu="A3" id30 -->
-            Atlas A3 训练系列产品/Atlas A3 推理系列产品采用方式二。
+            Atlas A3系列产品采用方式二。
             <!-- end id30 -->
 
             <!-- npu="910b" id31 -->
-            Atlas A2 训练系列产品/Atlas A2 推理系列产品采用方式二。
+            Atlas A2系列产品采用方式二。
             <!-- end id31 -->
 
             <!-- npu="310p" id32 -->
@@ -104,15 +104,15 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
         3.  对输入数据完成全排序。
 
             <!-- npu="950" id33 -->
-            Ascend 950PR/Ascend 950DT采用方式一。
+            Ascend 950PR&950DT系列产品采用方式一。
             <!-- end id33 -->
 
             <!-- npu="A3" id34 -->
-            Atlas A3 训练系列产品/Atlas A3 推理系列产品采用方式二。
+            Atlas A3系列产品采用方式二。
             <!-- end id34 -->
 
             <!-- npu="910b" id35 -->
-            Atlas A2 训练系列产品/Atlas A2 推理系列产品采用方式二。
+            Atlas A2系列产品采用方式二。
             <!-- end id35 -->
 
             <!-- npu="310p" id36 -->
@@ -149,15 +149,15 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
         1.  模板参数isInitIndex为false，需生成0到inner - 1的索引，并使用Copy指令将数据复制为outter条；
 
             <!-- npu="950" id37 -->
-            Ascend 950PR/Ascend 950DT采用方式一。
+            Ascend 950PR&950DT系列产品采用方式一。
             <!-- end id37 -->
 
             <!-- npu="A3" id38 -->
-            Atlas A3 训练系列产品/Atlas A3 推理系列产品采用方式二。
+            Atlas A3系列产品采用方式二。
             <!-- end id38 -->
 
             <!-- npu="910b" id39 -->
-            Atlas A2 训练系列产品/Atlas A2 推理系列产品采用方式二。
+            Atlas A2系列产品采用方式二。
             <!-- end id39 -->
 
             <!-- npu="310p" id40 -->
@@ -187,7 +187,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
 -   **RADIX\_SELECT算法**
 
     <!-- npu="950" id43 -->
-    该算法仅在Ascend 950PR/Ascend 950DT上支持。
+    该算法仅在Ascend 950PR&950DT系列产品上支持。
     <!-- end id43 -->
 
     **图3**  TopK算法框图  
@@ -246,10 +246,10 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
 | --- | --- |
 | T | 待排序数据的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li197551749192811)。 |
 | isInitIndex | 是否传入输入数据的索引。<br>true表示传入，设置为true时，需要通过srcIndexLocal参数传入输入数据的索引，具体规则请参考表2中的srcIndexLocal参数说明。<br>false表示不传入，TopK API输出的索引不可用。 |
-| isHasfinish | Topk接口支持开发者通过finishLocal参数来指定某些行的排序是无效排序。该模板参数用于控制是否启用上述功能，true表示启用，false表示不启用。<br>Normal模式支持的取值：true / false。<br>Small模式支持的取值：false。<br>isHasfinish参数和finishLocal的配套使用方法请参考表2中的finishLocal参数说明。<!-- npu="950" id19 --><br><br>Ascend 950PR/Ascend 950DT，对于RADIX_SELECT算法，该参数为预留参数，暂未启用，为后续的功能扩展做保留，保持默认值即可。<!-- end id19 --> |
-| isReuseSrc | 是否允许修改源操作数，默认值为false。<!-- npu="950" id20 --><br>Ascend 950PR/Ascend 950DT，该参数仅在输入的数据类型为float时生效，取值如下：<br>true：开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后本接口内部计算时复用srcTensor的内存空间，节省部分内存空间；<br>false：本接口内部计算时不复用srcTensor的内存空间。<!-- end id20 --><!-- npu="A3" id21 --><br>Atlas A3 训练系列产品/Atlas A3 推理系列产品，该参数预留，传入默认值false即可。<!-- end id21 --><!-- npu="910b" id22 --><br>Atlas A2 训练系列产品/Atlas A2 推理系列产品，该参数预留，传入默认值false即可。<!-- end id22 --><!-- npu="310p" id23 --><br>Atlas 推理系列产品AI Core，该参数预留，传入默认值false即可。<!-- end id23 --><!-- npu="x90" id9 --><br>Kirin X90，该参数预留，传入默认值false即可。<!-- end id9 --><!-- npu="9030" id10 --><br>Kirin 9030，该参数预留，传入默认值false即可。<!-- end id10 --> |
+| isHasfinish | Topk接口支持开发者通过finishLocal参数来指定某些行的排序是无效排序。该模板参数用于控制是否启用上述功能，true表示启用，false表示不启用。<br>Normal模式支持的取值：true / false。<br>Small模式支持的取值：false。<br>isHasfinish参数和finishLocal的配套使用方法请参考表2中的finishLocal参数说明。<!-- npu="950" id19 --><br><br>Ascend 950PR&950DT系列产品，对于RADIX_SELECT算法，该参数为预留参数，暂未启用，为后续的功能扩展做保留，保持默认值即可。<!-- end id19 --> |
+| isReuseSrc | 是否允许修改源操作数，默认值为false。<!-- npu="950" id20 --><br>Ascend 950PR&950DT系列产品，该参数仅在输入的数据类型为float时生效，取值如下：<br>true：开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后本接口内部计算时复用srcTensor的内存空间，节省部分内存空间；<br>false：本接口内部计算时不复用srcTensor的内存空间。<!-- end id20 --><!-- npu="A3" id21 --><br>Atlas A3系列产品，该参数预留，传入默认值false即可。<!-- end id21 --><!-- npu="910b" id22 --><br>Atlas A2系列产品，该参数预留，传入默认值false即可。<!-- end id22 --><!-- npu="310p" id23 --><br>Atlas推理系列产品AI Core，该参数预留，传入默认值false即可。<!-- end id23 --><!-- npu="x90" id9 --><br>Kirin X90，该参数预留，传入默认值false即可。<!-- end id9 --><!-- npu="9030" id10 --><br>Kirin 9030，该参数预留，传入默认值false即可。<!-- end id10 --> |
 | topkMode | Topk的模式选择，取值如下：<br>TopKMode::TOPK_NORMAL：Normal模式。<br>TopKMode::TOPK_NSMALL：Small模式。 |
-| config | <!-- npu="950" id24 -->该参数仅支持Ascend 950PR/Ascend 950DT。<br><br><!-- end id24 -->TopK计算的相关配置，包括算法选择、取最大值或最小值、是否对结果排序。此参数可选配，TopKConfig类型，具体定义如下方代码所示：<br>algo：选择的排序算法。默认为MERGE_SORT算法，当前仅支持RADIX_SELECT算法，用户需要显式指定algo为TopKAlgo::RADIX_SELECT。<br>order：表示获取前k个最大值或者获取前k个最小值，取值如下：UNSET：默认值，按照函数参数isLargest的配置实现。isLargest为true时，取前k个最大值及其对应的索引，isLargest为false，取前k个最小值及其对应的索引。LARGEST：表示取前k个最大值及其对应的索引。取值为LARGEST时，函数参数isLargest的配置不生效。SMALLEST：表示取前k个最小值及其对应的索引。取值为SMALLEST时，函数参数isLargest的配置不生效。<br>sorted：表示是否对输出结果进行排序。取值为true，对输出结果进行排序；取值为false，不对输出结果进行排序。<br><br>该参数的默认值defaultTopKConfig的取值为：TopKAlgo::MERGE_SORT、TopKOrder::UNSET、true。 |
+| config | <!-- npu="950" id24 -->该参数仅支持Ascend 950PR&950DT系列产品。<br><br><!-- end id24 -->TopK计算的相关配置，包括算法选择、取最大值或最小值、是否对结果排序。此参数可选配，TopKConfig类型，具体定义如下方代码所示：<br>algo：选择的排序算法。默认为MERGE_SORT算法，当前仅支持RADIX_SELECT算法，用户需要显式指定algo为TopKAlgo::RADIX_SELECT。<br>order：表示获取前k个最大值或者获取前k个最小值，取值如下：UNSET：默认值，按照函数参数isLargest的配置实现。isLargest为true时，取前k个最大值及其对应的索引，isLargest为false，取前k个最小值及其对应的索引。LARGEST：表示取前k个最大值及其对应的索引。取值为LARGEST时，函数参数isLargest的配置不生效。SMALLEST：表示取前k个最小值及其对应的索引。取值为SMALLEST时，函数参数isLargest的配置不生效。<br>sorted：表示是否对输出结果进行排序。取值为true，对输出结果进行排序；取值为false，不对输出结果进行排序。<br><br>该参数的默认值defaultTopKConfig的取值为：TopKAlgo::MERGE_SORT、TopKOrder::UNSET、true。 |
 
 ```
 struct TopKConfig {
@@ -267,9 +267,9 @@ enum class TopKOrder { UNSET, LARGEST, SMALLEST };
 | --- | --- | --- |
 | dstValueLocal | 输出 | 目的操作数。用于保存排序出的k个值。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>Normal模式：<br>输出shape为outter * k_pad，即输出outter条数据，每条数据的长度是k_pad。k_pad是根据输入的数据类型将k向上32Byte对齐后的值。<br>开发者需要为dstValueLocal开辟k_pad * outter * sizeof(T)大小的空间。<br>输出每条数据的前k个值就是该条的前k个最大值/最小值。每条数据的k+1~k_pad个元素不填值，是一些随机值。<br>k_pad计算方式为：<br>当输入的srcLocal和dstValueLocal的类型是float时，float是4字节，因此将k向上取整设置为8的倍数k_pad，即可满足32Byte对齐。<br>k_pad = (k + 7) / 8 * 8<br>当输入的srcLocal和dstValueLocal的类型是half时，half是2字节，因此将k向上取整设置为16的倍数k_pad，即可满足32Byte对齐。<br>    k_pad = (k + 15) / 16 * 16<br><br>Small模式：<br>输出shape为outter * k，即输出outter条数据，每条数据的长度是k。<br>输出值需要k * outter * sizeof(T)大小的空间来进行保存。开发者要根据该大小和框架的对齐要求来为dstValueLocal分配实际的内存空间。 <br>**此处需要注意：遵循框架对内存申请的要求（开辟内存的大小满足32Byte对齐），即k * outter * sizeof(T)不是32Byte对齐时，需要向上进行32Byte对齐。为了对齐而多开辟的内存空间不填值，为一些随机值。** |
 | dstIndexLocal | 输出 | 目的操作数。用于保存排序出的k个值对应的索引。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>Normal模式：<br>输出shape为outter *kpad_index，即输出outter条数据，每条数据的长度是kpad_index。kpad_index是根据输入的索引类型将k向上32Byte对齐后的值。<br>开发者需要为dstIndexLocal开辟kpad_index * outter * sizeof(int32_t)大小的空间。<br>其中每条数据的前k个值就是该条的前k个最大值/最小值对应的索引。每条数据的k+1~kpad_index个索引不填值，是一些随机值。<br>k_pad计算方式为：由于dstIndexLocal是int32_t类型，是4字节。因此将k向上取整设置为8的倍数kpad_index，即可满足32Byte对齐。<br>kpad_index = (k + 7) / 8 * 8<br><br>Small模式：<br>输出shape为outter *k，即输出outter条数据，每条数据的长度是k。<br>输出索引需要k * outter * sizeof(int32_t)大小的空间来进行保存。开发者要根据该大小和框架的对齐要求来为dstIndexLocal分配实际的内存空间。<br>**注意：遵循框架对内存开辟的要求（开辟内存的大小满足32Byte对齐），即k * outter * sizeof(int32_t)不是32Byte对齐时，需要向上进行32Byte对齐。为了对齐而多开辟的内存空间不填值，为一些随机值。** |
-| srcLocal | 输入 | 源操作数。用于保存待排序的值。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<!-- npu="310p" id44 --><br>Atlas 推理系列产品AI Core上：<br>输入数据的shape为outter * inner。开发者需要为其开辟outter * inner * sizeof(T)大小的空间。<br>当n < inner时，开发者需要对srcLocal里outter条数据进行补齐操作，每条数据都需要从n补齐到inner长度。<br>补齐的规则：要求填充的数据不能影响整体排序。建议使用如下的填充方法：在取前k个最大值的时候，填充的值需要是**输入数据类型**的最小值；在取前k个最小值的时候，填充的值需要是**输入数据类型**的最大值。<!-- end id44 --> |
+| srcLocal | 输入 | 源操作数。用于保存待排序的值。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<!-- npu="310p" id44 --><br>Atlas推理系列产品AI Core上：<br>输入数据的shape为outter * inner。开发者需要为其开辟outter * inner * sizeof(T)大小的空间。<br>当n < inner时，开发者需要对srcLocal里outter条数据进行补齐操作，每条数据都需要从n补齐到inner长度。<br>补齐的规则：要求填充的数据不能影响整体排序。建议使用如下的填充方法：在取前k个最大值的时候，填充的值需要是**输入数据类型**的最小值；在取前k个最小值的时候，填充的值需要是**输入数据类型**的最大值。<!-- end id44 --> |
 | srcIndexLocal | 输入 | 源操作数。用于保存待排序的值对应的索引。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br><br>该参数和模板参数isInitIndex配合使用，isInitIndex为false时，srcIndexLocal只需进行定义，不需要赋值，将定义后的srcIndexLocal传入接口即可；isInitIndex为true时，开发者需要通过srcIndexLocal参数传入索引值。srcIndexLocal参数设置的规则如下：<br><br>Normal模式：<br>输入索引数据的shape为1 * inner，此处outter条数据都使用相同的索引。开发者需要为其开辟inner * sizeof(int32_t)大小的空间。<br>当n < inner时，开发者需要对索引数据进行补齐操作，将该条数据从n补齐到inner长度。<br>补齐的规则：要求填充的索引不能影响整体排序。建议使用如下的填充方法：填充的值在原始索引的基础上递增。例如，原始索引为0，1，2，...，n-1，填充后的索引为0，1，2，...， n ，n + 1，...，inner-1。<br><br>Small模式：<br>输入索引数据的shape为outter * inner。开发者需要为其开辟outter * inner * sizeof(int32_t)大小的空间。<br>当n < 32时，开发者需要对outter条数据进行补齐操作，每条数据都需要从n补齐到32的长度。<br>补齐的规则：要求填充的数据不能影响整体排序。建议使用如下的填充方法：填充的值在原始索引的基础上递增例如，原始索引为0，1，2，...，n-1，填充后的索引为0， 1，2，...， n ，n + 1，...，inner-1。 |
-| finishLocal | 输入 | 源操作数。用于指定某些行的排序是无效排序，其shape为(outter, 1)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<!-- npu="950" id45 --><br><br>针对Ascend 950PR/Ascend 950DT，该参数为预留参数，暂未启用，为后续的功能扩展做保留，取值为false。<!-- end id45 --><br><br>该参数和模板参数isHasfinish配合使用，Normal模式下支持isHasfinish配置为true/false，Small模式下仅支持isHasfinish配置为false。<br>isHasfinish配置为true：<br>finishLocal对应的outter行的值为true时，该行排序无效，排序后输出的dstIndexLocal的k个索引值会全部被置为n。<br>finishLocal对应的outter行的值为false时，该行排序有效。<br><br>isHasfinish配置为false时，finishLocal只需进行定义，不需要赋值，将定义后的finishLocal传入接口即可。定义样例如下：`LocalTensor<bool> finishLocal;` |
+| finishLocal | 输入 | 源操作数。用于指定某些行的排序是无效排序，其shape为(outter, 1)。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<!-- npu="950" id45 --><br><br>针对Ascend 950PR&950DT系列产品，该参数为预留参数，暂未启用，为后续的功能扩展做保留，取值为false。<!-- end id45 --><br><br>该参数和模板参数isHasfinish配合使用，Normal模式下支持isHasfinish配置为true/false，Small模式下仅支持isHasfinish配置为false。<br>isHasfinish配置为true：<br>finishLocal对应的outter行的值为true时，该行排序无效，排序后输出的dstIndexLocal的k个索引值会全部被置为n。<br>finishLocal对应的outter行的值为false时，该行排序有效。<br><br>isHasfinish配置为false时，finishLocal只需进行定义，不需要赋值，将定义后的finishLocal传入接口即可。定义样例如下：`LocalTensor<bool> finishLocal;` |
 | tmpLocal | 输入 | 临时空间。接口内部复杂计算时用于存储中间变量，由开发者提供，临时空间大小的获取方式请参考[TopK Tiling](TopK-Tiling.md)。数据类型固定uint8_t。<br><br>类型为[LocalTensor](../../basic_api/data_structures/LocalTensor/LocalTensor.md)，**逻辑位置仅支持VECCALC，不支持其他逻辑位置。** |
 | k | 输入 | 获取前k个最大值或最小值及其对应的索引。数据类型为int32_t。<br><br>k的大小应该满足：1 <= k <= n。 |
 | tiling | 输入 | Topk计算所需Tiling信息，Tiling信息的获取请参考[TopK Tiling](TopK-Tiling.md)。 |
@@ -296,7 +296,7 @@ struct TopKInfo {
 -   inf在Topk中被认为是极大值。
 -   nan在topk中排序时无论是降序还是升序，均被排在前面。
 <!-- npu="310p" id46 -->
--   对于Atlas 推理系列产品AI Core：
+-   对于Atlas推理系列产品AI Core：
     -   输入srcLocal类型是half，模板参数isInitIndex值为false时，传入的topKInfo.inner不能大于2048。
 
     -   输入srcLocal类型是half，模板参数isInitIndex值为true时，传入的srcIndexLocal中的索引值不能大于2048。
@@ -305,19 +305,19 @@ struct TopKInfo {
 -   支持的数据类型<a id="li197551749192811"></a>
 
     <!-- npu="950" id25 -->
-    Ascend 950PR/Ascend 950DT，MERGE\_SORT算法当前支持的数据类型为half、float。RADIX\_SELECT算法当前支持的数据类型为uint8\_t、int8\_t、uint16\_t、int16\_t、uint32\_t、int32\_t、bfloat16\_t、half、float、uint64\_t、int64\_t。
+    Ascend 950PR&950DT系列产品，MERGE\_SORT算法当前支持的数据类型为half、float。RADIX\_SELECT算法当前支持的数据类型为uint8\_t、int8\_t、uint16\_t、int16\_t、uint32\_t、int32\_t、bfloat16\_t、half、float、uint64\_t、int64\_t。
     <!-- end id25 -->
 
     <!-- npu="A3" id26 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、float。
+    Atlas A3系列产品，支持的数据类型为：half、float。
     <!-- end id26 -->
 
     <!-- npu="910b" id27 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、float。
+    Atlas A2系列产品，支持的数据类型为：half、float。
     <!-- end id27 -->
 
     <!-- npu="310p" id28 -->
-    Atlas 推理系列产品AI Core，支持的数据类型为：half、float。
+    Atlas推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id28 -->
 
     <!-- npu="x90" id11 -->

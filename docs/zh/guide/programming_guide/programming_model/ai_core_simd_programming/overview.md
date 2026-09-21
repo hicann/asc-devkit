@@ -19,7 +19,7 @@ AI Core是昇腾NPU的基础核心计算单元，采用「控制单元\+异构�
 - **向量处理单元[Vector](../../advanced_programming/hardware_implementation/basic_architecture.md)**：遵循标准SIMD并行计算逻辑，专职执行各类向量指令，支持单指令多数据并行运算，适配元素级计算、逻辑运算、数据重组等灵活性要求高的计算场景。
 - **矩阵运算单元[Cube](../../advanced_programming/hardware_implementation/basic_architecture.md)**：高密度张量专用算力单元，面向矩阵乘加、高维张量卷积等算力密集型场景深度优化。硬件原生支持批量矩阵运算，典型能力为单次完成一组float16类型16×16矩阵乘法，是AI模型训练与推理场景的核心算力支撑。
 
-- **本地存储**：AI Core片内高速存储体系，用于缓存计算中间数据，规避频繁访问低速全局内存的性能损耗，降低访存延迟。其中Cube计算单元配套[L1 Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)、[L0C Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)等；Vector计算单元配套统一缓存[Unified Buffer（UB）](../../advanced_programming/hardware_implementation/basic_architecture.md)。<!-- npu="950" id1 -->Ascend 950PR/Ascend 950DT的AI Core向量单元新增可编程向量寄存器（Register），单寄存器大小为256B。<!-- end id1 -->
+- **本地存储**：AI Core片内高速存储体系，用于缓存计算中间数据，规避频繁访问低速全局内存的性能损耗，降低访存延迟。其中Cube计算单元配套[L1 Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)、[L0C Buffer](../../advanced_programming/hardware_implementation/basic_architecture.md)等；Vector计算单元配套统一缓存[Unified Buffer（UB）](../../advanced_programming/hardware_implementation/basic_architecture.md)。<!-- npu="950" id1 -->Ascend 950PR&950DT系列产品的AI Core向量单元新增可编程向量寄存器（Register），单寄存器大小为256B。<!-- end id1 -->
 
 
 ### 基于硬件单元的三类标准算子
@@ -46,7 +46,7 @@ AI Core是昇腾NPU的基础核心计算单元，采用「控制单元\+异构�
 > 📌 **提示**：AI Core片内本地存储空间有限，无法一次性加载超大尺寸张量。实际开发中普遍采用「迭代分块搬运、分批计算、结果累加」的策略完成全域数据计算，同时搭配流水线技术屏蔽数据搬运耗时，提升整体运算效率。
 
 ### 新架构双模式矢量计算结构
-Ascend 950PR/Ascend 950DT新一代架构在传统UB缓存体系的基础上，开放寄存器（Register）可编程能力，构建出「Global Memory → UB → Register」的三级内存层级，衍生出两套适配不同性能诉求的矢量计算模式，实现通用场景与极致性能场景的全覆盖。其内存层级结构如下图所示：
+Ascend 950PR&950DT系列产品新一代架构在传统UB缓存体系的基础上，开放寄存器（Register）可编程能力，构建出「Global Memory → UB → Register」的三级内存层级，衍生出两套适配不同性能诉求的矢量计算模式，实现通用场景与极致性能场景的全覆盖。其内存层级结构如下图所示：
 
 **图1**  SIMD Reg矢量计算内存层级  
 <img src="../../../figures/simd_reg_2.png" alt="SIMD-Reg矢量计算内存层级" width="520px">

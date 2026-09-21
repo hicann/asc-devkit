@@ -71,5 +71,5 @@ NPU内部有不同的计算单元，在计算时往往需要把计算数据搬�
 
 ## 参考样例
 
-Atlas A3 训练系列产品/Atlas A3 推理系列产品的C API样例请参考[C API Add样例](../../../../../examples/02_simd_c_api/00_introduction/01_add)。
-Ascend 950PR/Ascend 950DT的C API样例请参考[C API Add样例](../../../../../examples/02_simd_c_api/00_introduction/04_reg_base_add_compute)。
+Atlas A3系列产品的C API样例请参考[C API Add样例](../../../../../examples/02_simd_c_api/00_introduction/01_add)。
+Ascend 950PR&950DT系列产品的C API样例请参考[C API Add样例](../../../../../examples/02_simd_c_api/00_introduction/04_reg_base_add_compute)。

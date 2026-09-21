@@ -5,7 +5,7 @@
 >[!NOTE]说明 
 >该编程模型适用于如下型号：
      <!-- npu="950" id1 -->
->-   Ascend 950PR/Ascend 950DT
+>-   Ascend 950PR&950DT系列产品
      <!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/overview_res.md#id1 -->
 

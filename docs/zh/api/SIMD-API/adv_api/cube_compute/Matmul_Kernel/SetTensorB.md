@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id7 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id7 -->
 <!-- npu="A3" id8 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id8 -->
 <!-- npu="910b" id9 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id9 -->
 <!-- npu="310b" id10 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id10 -->
 <!-- npu="310p" id11 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id11 -->
 <!-- npu="910" id12 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id12 -->
 <!-- npu="x90" id1 -->
 - Kirin X90：支持
@@ -48,11 +48,11 @@ __aicore__ inline void SetTensorB(SrcBT bScalar)
 ```
 
 <!-- npu="310p" id13 -->
-Atlas 推理系列产品AI Core不支持SetTensorB\(SrcBT bScalar\)接口原型。
+Atlas推理系列产品AI Core不支持SetTensorB\(SrcBT bScalar\)接口原型。
 <!-- end id13 -->
 
 <!-- npu="310b" id14 -->
-Atlas 200I/500 A2 推理产品，不支持SetTensorB\(SrcBT bScalar\)接口原型。
+Atlas 200I/500 A2推理产品，不支持SetTensorB\(SrcBT bScalar\)接口原型。
 <!-- end id14 -->
 
 ## 参数说明
@@ -83,23 +83,23 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorB\(SrcBT bScalar\)接口原�
 -   gm和rightMatrix支持的数据类型<a id="li12616155731720"></a>
 
     <!-- npu="950" id15 -->
-    Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16_t、int8_t、float、fp8_e4m3fn_t、fp8_e5m2_t、hifloat8_t。
+    Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16_t、int8_t、float、fp8_e4m3fn_t、fp8_e5m2_t、hifloat8_t。
     <!-- end id15 -->
 
     <!-- npu="A3" id16 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：int4b_t、half、bfloat16_t、int8_t、float。
+    Atlas A3系列产品，支持的数据类型为：int4b_t、half、bfloat16_t、int8_t、float。
     <!-- end id16 -->
 
     <!-- npu="910b" id17 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：int4b_t、half、bfloat16_t、int8_t、float。
+    Atlas A2系列产品，支持的数据类型为：int4b_t、half、bfloat16_t、int8_t、float。
     <!-- end id17 -->
 
     <!-- npu="310p" id18 -->
-    Atlas 推理系列产品AI Core，支持的数据类型为：half、int8_t、float。
+    Atlas推理系列产品AI Core，支持的数据类型为：half、int8_t、float。
     <!-- end id18 -->
 
     <!-- npu="310b" id19 -->
-    Atlas 200I/500 A2 推理产品，支持的数据类型为：half、bfloat16_t、int8_t、float。
+    Atlas 200I/500 A2推理产品，支持的数据类型为：half、bfloat16_t、int8_t、float。
     <!-- end id19 -->
 
     <!-- npu="x90" id3 -->
@@ -113,23 +113,23 @@ Atlas 200I/500 A2 推理产品，不支持SetTensorB\(SrcBT bScalar\)接口原�
 -   bScalar支持的数据类型<a id="li12616155731723"></a>
 
     <!-- npu="950" id20 -->
-    Ascend 950PR/Ascend 950DT，支持的数据类型为：half、float。
+    Ascend 950PR&950DT系列产品，支持的数据类型为：half、float。
     <!-- end id20 -->
 
     <!-- npu="A3" id21 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、float。
+    Atlas A3系列产品，支持的数据类型为：half、float。
     <!-- end id21 -->
 
     <!-- npu="910b" id22 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、float。
+    Atlas A2系列产品，支持的数据类型为：half、float。
     <!-- end id22 -->
 
     <!-- npu="310p" id23 -->
-    Atlas 推理系列产品AI Core，不支持该参数。
+    Atlas推理系列产品AI Core，不支持该参数。
     <!-- end id23 -->
 
     <!-- npu="310b" id24 -->
-    Atlas 200I/500 A2 推理产品，不支持该参数。
+    Atlas 200I/500 A2推理产品，不支持该参数。
     <!-- end id24 -->
 
     <!-- npu="x90" id5 -->

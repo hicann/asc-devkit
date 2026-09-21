@@ -2,7 +2,7 @@
 
 ## 产品支持情况
 
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 - Atlas A3训练系列产品/Atlas A3推理系列产品：不支持
 - Atlas A2训练系列产品/Atlas A2推理系列产品：不支持
 - Atlas 200I/500 A2推理产品：不支持

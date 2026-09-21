@@ -4,13 +4,13 @@
 
 目前，编译器支持如下型号：
 <!-- npu="950" id1 -->
--   Ascend 950PR/Ascend 950DT
+-   Ascend 950PR&950DT系列产品
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
--   Atlas A3 训练系列产品/Atlas A3 推理系列产品
+-   Atlas A3系列产品
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
--   Atlas A2 训练系列产品/Atlas A2 推理系列产品
+-   Atlas A2系列产品
 <!-- end id3 -->
 <!-- npu="310p" id4 -->
 -   Atlas 推理系列产品

@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/math_compute/CumSum_interface/CumSum_res.md#id1 -->
 
@@ -46,7 +46,7 @@
 
 -   Sklansky二分累加算法
 
-    <!-- npu="950" id7 -->仅支持Ascend 950PR/Ascend 950DT。<!-- end id7 -->
+    <!-- npu="950" id7 -->仅支持Ascend 950PR&950DT系列产品。<!-- end id7 -->
 
     Sklansky二分累加算法是基于Sklansky Adder的并行前缀和逻辑实现的。[图1](#fig45153311379)为一维二进制的并行前缀和算法示意图。将该算法扩展至二维张量的累加和算法，以按行累加为例，[图2](#fig7422174293712)为该算法的执行步骤示意图，通过并行计算多行的加和，实现Sklansky二分累加算法下的按行累加和。
 
@@ -87,7 +87,7 @@
 | 参数名 | 描述 |
 | --- | --- |
 | T | 操作数的数据类型。支持的数据类型为：half、float。 |
-| config | 定义CumSum接口编译时config参数。CumSumConfig类型，具体定义如下方代码所示，其中参数的含义为：<br><br>isLastAxis：取值为true表示计算按last轴处理，取值为false表示计算按first轴处理；<br><br>isReuseSource：是否可以复用srcTensor的内存空间；该参数预留，传入默认值false即可。<br><br>outputLastRow：是否输出最后一行数据。<br>algorithm：CumSum内部实现使用的累加和算法，<!-- npu="950" id8 -->该参数仅支持Ascend 950PR/Ascend 950DT，<!-- end id8 -->支持的取值如下：CumSumAlgorithm::CUMSUM_ALGORITHM_LINEBYLINE：逐行累加算法。CumSumAlgorithm::CUMSUM_ALGORITHM_SKLANSKY：Sklansky二分累加算法。 |
+| config | 定义CumSum接口编译时config参数。CumSumConfig类型，具体定义如下方代码所示，其中参数的含义为：<br><br>isLastAxis：取值为true表示计算按last轴处理，取值为false表示计算按first轴处理；<br><br>isReuseSource：是否可以复用srcTensor的内存空间；该参数预留，传入默认值false即可。<br><br>outputLastRow：是否输出最后一行数据。<br>algorithm：CumSum内部实现使用的累加和算法，<!-- npu="950" id8 -->该参数仅支持Ascend 950PR&950DT系列产品，<!-- end id8 -->支持的取值如下：CumSumAlgorithm::CUMSUM_ALGORITHM_LINEBYLINE：逐行累加算法。CumSumAlgorithm::CUMSUM_ALGORITHM_SKLANSKY：Sklansky二分累加算法。 |
 
 ```
 struct CumSumConfig {

@@ -2,7 +2,7 @@
 
 矩阵计算的搬出接口主要实现L0C Buffer与Global Memory、Unified Buffer（UB）之间的数据高效传输。
 
-针对Ascend 950PR/Ascend 950DT：
+针对Ascend 950PR&950DT系列产品：
 
 **图1**  矩阵计算搬出整体流程图
 

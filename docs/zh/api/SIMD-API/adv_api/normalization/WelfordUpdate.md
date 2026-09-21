@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/normalization/WelfordUpdate_res.md#id1 -->
 
@@ -79,7 +79,7 @@ Meant<sub>n</sub>的计算过程示意如下图，调用n次本接口后，得�
 | --- | --- |
 | T | inputX操作数的数据类型。不同型号支持的数据类型请参考[支持的数据类型](#li1773114612461)。 |
 | U | outputMean、outputVariance、inputMean、inputVariance操作数的数据类型。支持的数据类型为：float。 |
-| isReuseSource | 是否允许修改源操作数，默认值为false。如果开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后能够节省部分内存空间。<br><br>设置为true，则本接口内部计算时复用inputX的内存空间，节省内存空间；设置为false，则本接口内部计算时不复用inputX的内存空间。<!-- npu="310p" id7 --><br><br>在Atlas 推理系列产品AI Core中，该参数预留，传入默认值false即可。<!-- end id7 --><br><br>isReuseSource的使用样例请参考[更多样例](../math_compute/more_examples.md#section639165323915)。 |
+| isReuseSource | 是否允许修改源操作数，默认值为false。如果开发者允许源操作数被改写，可以设置该参数取值为true开启，开启后能够节省部分内存空间。<br><br>设置为true，则本接口内部计算时复用inputX的内存空间，节省内存空间；设置为false，则本接口内部计算时不复用inputX的内存空间。<!-- npu="310p" id7 --><br><br>在Atlas推理系列产品AI Core中，该参数预留，传入默认值false即可。<!-- end id7 --><br><br>isReuseSource的使用样例请参考[更多样例](../math_compute/more_examples.md#section639165323915)。 |
 | config | 配置非指定计算范围内的目的操作数与源操作数的复用关系。WelfordUpdateConfig类型，定义如下方代码所示，其中参数的含义如下。<br>isInplace：接口参数para中的abComputeLength参数指定了输入数据内层轴的计算长度，在该指定计算长度之外的输出数据具体为何值，通过本参数设置。本参数表示，在指定计算长度之外的目的操作数是否复用源操作数；若复用，对于指定计算长度之外的输出，直接使用对应位置的源操作数代替输出目的操作数；若不复用，则本接口不会输出计算范围外的目的操作数。<br>false：默认值。表示目的操作数不复用源操作数。<br>true：表示目的操作数复用源操作数。outputMean复用inputMean，outputVariance复用inputVariance。<br><br>此参数一般用于配合核函数（Kernel）侧tiling计算的接口使用。 |
 
 ```
@@ -129,19 +129,19 @@ struct WelfordUpdateParam {
 -   支持的数据类型<a id="li1773114612461"></a>
 
     <!-- npu="950" id8 -->
-    Ascend 950PR/Ascend 950DT，支持的数据类型为：half、bfloat16\_t、float。
+    Ascend 950PR&950DT系列产品，支持的数据类型为：half、bfloat16\_t、float。
     <!-- end id8 -->
 
     <!-- npu="A3" id9 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half、float。
+    Atlas A3系列产品，支持的数据类型为：half、float。
     <!-- end id9 -->
 
     <!-- npu="910b" id10 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half、float。
+    Atlas A2系列产品，支持的数据类型为：half、float。
     <!-- end id10 -->
 
     <!-- npu="310p" id11 -->
-    Atlas 推理系列产品AI Core，支持的数据类型为：half、float。
+    Atlas推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id11 -->
 
 ## 调用示例

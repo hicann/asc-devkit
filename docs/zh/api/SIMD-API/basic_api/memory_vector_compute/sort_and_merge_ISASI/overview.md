@@ -3,7 +3,7 @@
 Region Proposal（简称RP）是目标检测算法中用于定位潜在目标区域的候选框。Region Proposal采用特定的数据结构进行存储和管理，以支持高效的排序和筛选操作。在业务场景下，为了从大量Region Proposals中筛选出最有可能包含目标的区域，需要根据每个RP的置信度score进行排序。
 
 <!-- npu="A3,910b" id1 -->
-以Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品为例：
+以Atlas A3系列产品和Atlas A2系列产品为例：
 
 Region Proposal支持两种数据类型：half/float。
 

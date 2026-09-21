@@ -57,25 +57,25 @@ Ascend C提供b8\~b64（8bit\~64bit）四种不同位宽的数据类型，不同
 各产品支持的数据类型如下：
 
 <!-- npu="950" id2 -->
-- Ascend 950PR/Ascend 950DT：bool、int4b_t、int4x2_t、int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32、int64_t、uint64_t、double、complex64。
+- Ascend 950PR&950DT系列产品：bool、int4b_t、int4x2_t、int8_t、uint8_t、fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32、int64_t、uint64_t、double、complex64。
 <!-- end id2 -->
 <!-- npu="A3" id3 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas A3系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id3 -->
 <!-- npu="910b" id4 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas A2系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id4 -->
 <!-- npu="310b" id5 -->
-- Atlas 200I/500 A2 推理产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas 200I/500 A2推理产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品AI Core：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas推理系列产品AI Core：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- Atlas 推理系列产品Vector Core：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas推理系列产品Vector Core：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id7 -->
 <!-- npu="910" id8 -->
-- Atlas 训练系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas训练系列产品：bool、int4b_t、int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id8 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/data_structures/builtin_data_types_res.md#id1 -->
 
@@ -409,5 +409,5 @@ complex64 value2 = 4;
 // value2将代表实部为4，虚部为0的复数，即4+0j
 ```
 
-当前仅Ascend 950PR/Ascend 950DT支持。
+当前仅Ascend 950PR&950DT系列产品支持。
 <!-- end id1 -->

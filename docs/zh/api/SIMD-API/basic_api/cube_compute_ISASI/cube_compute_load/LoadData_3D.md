@@ -5,25 +5,25 @@
 ### LoadData（卷积数据搬运） v1接口
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：不支持
+- Ascend 950PR&950DT系列产品：不支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
 - Kirin X90：不支持
@@ -36,25 +36,25 @@
 ### LoadData（卷积数据搬运） v2接口和LoadData（卷积数据搬运） v2 Pro接口
 
 <!-- npu="950" id10 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id15 -->
 <!-- npu="910" id16 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id17 -->
 - Kirin X90：支持
@@ -191,11 +191,11 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 **LoadData（卷积数据搬运） v1接口：**
 
 <!-- npu="310p" id20 -->
-- Atlas 推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、half。
+- Atlas推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、half。
 <!-- end id20 -->
 
 <!-- npu="910" id21 -->
-- Atlas 训练系列产品，支持的数据类型为：int8_t、uint8_t、half。
+- Atlas训练系列产品，支持的数据类型为：int8_t、uint8_t、half。
 <!-- end id21 -->
 <!-- end id19 -->
 
@@ -203,29 +203,29 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 **LoadData（卷积数据搬运） v2接口、LoadData（卷积数据搬运） v2 Pro接口：**
 
 <!-- npu="950" id23 -->
-- Ascend 950PR/Ascend 950DT，支持数据类型为：int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、half、bfloat16_t、int32_t、uint32_t、float。
+- Ascend 950PR&950DT系列产品，支持数据类型为：int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、half、bfloat16_t、int32_t、uint32_t、float。
 <!-- end id23 -->
 
 <!-- npu="A3" id24 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：
+- Atlas A3系列产品：
     - TPosition为A1/A2时，支持数据类型为：int4b_t、int8_t、uint8_t、half、bfloat16_t、int32_t、uint32_t、float。
     - TPosition为B1/B2时，支持数据类型为：half、bfloat16_t、int32_t、uint32_t、float。
 <!-- end id24 -->
 
 <!-- npu="910b" id25 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：
+- Atlas A2系列产品：
     - TPosition为A1/A2时，支持数据类型为：int4b_t、int8_t、uint8_t、half、bfloat16_t、int32_t、uint32_t、float。
     - TPosition为B1/B2时，支持数据类型为：half、bfloat16_t、int32_t、uint32_t、float。
 <!-- end id25 -->
 
 <!-- npu="310b" id26 -->
-- Atlas 200I/500 A2 推理产品：
+- Atlas 200I/500 A2推理产品：
     - TPosition为A1/A2时，支持数据类型为：int4b_t、int8_t、uint8_t、half、bfloat16_t、int32_t、uint32_t、float。
     - TPosition为B1/B2时，支持数据类型为：half、bfloat16_t、int32_t、uint32_t、float。
 <!-- end id26 -->
 
 <!-- npu="310p" id27 -->
-- Atlas 推理系列产品AI Core，支持的数据类型为：int4b_t、int8_t、uint8_t、half。
+- Atlas推理系列产品AI Core，支持的数据类型为：int4b_t、int8_t、uint8_t、half。
 <!-- end id27 -->
 
 <!-- npu="x90" id28 -->
@@ -244,17 +244,17 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 - 非转置场景下，L1 Buffer->L0B Buffer通路不支持。L1 Buffer->L0B Buffer通路下会自动进行转置，不需要配置enTranspose，此时enTranspose参数无效。
 
 <!-- npu="950" id29 -->
-- 针对Ascend 950PR/Ascend 950DT：必须使用辅助配置接口SetLoadDataRepeat配置dstStride参数，若不开启repeat模式，接口内repeat相关参数使用默认构造值。
+- 针对Ascend 950PR&950DT系列产品：必须使用辅助配置接口SetLoadDataRepeat配置dstStride参数，若不开启repeat模式，接口内repeat相关参数使用默认构造值。
 <!-- end id29 -->
 
 <!-- npu="A3,910b" id30 -->
 - 针对如下产品型号：
 
     <!-- npu="A3" id31 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品；
+    Atlas A3系列产品；
     <!-- end id31 -->
     <!-- npu="910b" id32 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品；
+    Atlas A2系列产品；
     <!-- end id32 -->
 
     L1 Buffer-\>L0B Buffer通路不支持b4/b8类型数据；转置场景下，L1 Buffer-\>L0A Buffer通路不支持b8数据类型。
@@ -270,13 +270,13 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 - 数据连续排列顺序由目的操作数所在物理存储位置决定，具体约束如下：<a id="zh-cn_topic_0000002512171652_dst_layout"></a>
 
     <!-- npu="A3,910b" id34 -->
-    - 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品：
+    - 针对Atlas A3系列产品、Atlas A2系列产品：
         - L0A Buffer（TPosition: A2）：ZZ格式；
         - L0B Buffer（TPosition: B2）：ZN格式。
     <!-- end id34 -->
 
     <!-- npu="950" id35 -->
-    - 针对Ascend 950PR/Ascend 950DT：
+    - 针对Ascend 950PR&950DT系列产品：
         - L0A Buffer（TPosition: A2）：NZ格式；
         - L0B Buffer（TPosition: B2）：ZN格式。
     <!-- end id35 -->
@@ -284,21 +284,21 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 - LoadData3DParamsV2结构体中channelSize的取值约束如下：<a id="zh-cn_topic_0000002512171652_channelsize_constraint"></a>
 
     <!-- npu="310p" id36 -->
-    - 针对Atlas 推理系列产品AI Core：对于half，channelSize可取值为4，8，16，N\*16+4，N\*16+8；对于int8_t/uint8_t，channelSize可取值为4，8，16，32，N\*32+4，N\*32+8，N\*32+16；对于int4b_t，channelSize可取值为8，16，32，N\*64，N\*64+8，N\*64+16，N\*64+32。N为正整数。
+    - 针对Atlas推理系列产品AI Core：对于half，channelSize可取值为4，8，16，N\*16+4，N\*16+8；对于int8_t/uint8_t，channelSize可取值为4，8，16，32，N\*32+4，N\*32+8，N\*32+16；对于int4b_t，channelSize可取值为8，16，32，N\*64，N\*64+8，N\*64+16，N\*64+32。N为正整数。
     <!-- end id36 -->
 
     <!-- npu="950,A3,910b,310b,x90" id37 -->
-    - 针对Ascend 950PR/Ascend 950DT、Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas 200I/500 A2 推理产品、Kirin X90：对于uint32_t/int32_t/float，channelSize可取值为4，N\*8，N\*8+4；对于half/bfloat16，channelSize可取值为4，8，N\*16，N\*16 + 4，N\*16+8；对于int8_t/uint8_t，channelSize可取值为4，8，16，32\*N，N\*32+4，N\*32+8，N\*32+16；对于int4b_t，channelSize可取值为8，16，32，N\*64，N\*64+8，N\*64+16，N\*64+32。N为正整数。
+    - 针对Ascend 950PR&950DT系列产品、Atlas A3系列产品、Atlas A2系列产品、Atlas 200I/500 A2推理产品、Kirin X90：对于uint32_t/int32_t/float，channelSize可取值为4，N\*8，N\*8+4；对于half/bfloat16，channelSize可取值为4，8，N\*16，N\*16 + 4，N\*16+8；对于int8_t/uint8_t，channelSize可取值为4，8，16，32\*N，N\*32+4，N\*32+8，N\*32+16；对于int4b_t，channelSize可取值为8，16，32，N\*64，N\*64+8，N\*64+16，N\*64+32。N为正整数。
     <!-- end id37 -->
 
 - LoadData3DParamsV2结构体中enTranspose的有效条件如下：<a id="zh-cn_topic_0000002512171652_entranspose_constraint"></a>
 
     <!-- npu="A3,910b" id38 -->
-    - 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品：在目的操作数的物理存储位置为L0A Buffer（TPosition: A2），且源操作数为b16/b32类型时有效。
+    - 针对Atlas A3系列产品、Atlas A2系列产品：在目的操作数的物理存储位置为L0A Buffer（TPosition: A2），且源操作数为b16/b32类型时有效。
     <!-- end id38 -->
 
     <!-- npu="950" id39 -->
-    - 针对Ascend 950PR/Ascend 950DT：在目的操作数的物理存储位置为L0A Buffer（TPosition: A2），且源操作数为b8/b16/b32类型时有效。
+    - 针对Ascend 950PR&950DT系列产品：在目的操作数的物理存储位置为L0A Buffer（TPosition: A2），且源操作数为b8/b16/b32类型时有效。
     <!-- end id39 -->
 
 ## 关键特性说明<a id="zh-cn_topic_0000002512171652_section102629572045"></a>
@@ -314,7 +314,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 首先L1 Buffer->L0B Buffer通路不支持非转置场景；而对于L1 Buffer->L0A Buffer通路，根据不同的产品形态有不同的分形排布转换：
 
 <!-- npu="A3,910b" id40 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品：
+- 针对Atlas A3系列产品、Atlas A2系列产品：
 
     LoadData（卷积数据搬运）会自动完成分形的变换，从L1 Buffer上的NZ分形排布转换成L0A Buffer中所需的ZZ分形排布，如下b16类型场景的示意图所示：
 
@@ -322,7 +322,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- end id40 -->
 
 <!-- npu="950" id41 -->
-- 针对Ascend 950PR/Ascend 950DT：
+- 针对Ascend 950PR&950DT系列产品：
 
     L1 Buffer上的分形排布就是L0A Buffer中所需的NZ分形排布，LoadData（卷积数据搬运）不会进行分形排布转换，如下b16类型场景的示意图所示：
 
@@ -332,7 +332,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 #### 转置场景
 
 <!-- npu="A3,910b" id42 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品：
+- 针对Atlas A3系列产品、Atlas A2系列产品：
 
     LoadData（卷积数据搬运）仅在b16/b32数据类型下支持转置（enTranspose=True），按照类型详细说明：
 
@@ -358,7 +358,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- end id42 -->
 
 <!-- npu="950" id43 -->
-- 针对Ascend 950PR/Ascend 950DT：
+- 针对Ascend 950PR&950DT系列产品：
 
     LoadData（卷积数据搬运）在b8/b16/b32数据类型下均支持转置，其中，L1 Buffer->L0A Buffer通路通过开启enTranspose参数开启转置，L1 Buffer->L0B Buffer通路下会自动完成转置，不需要配置enTranspose参数，enTranspose参数此时无效。下面按照类型详细说明。
 
@@ -401,11 +401,11 @@ LoadData（卷积数据搬运）接口可以通过配置mExtension和kExtension�
 针对如下产品型号：
 
 <!-- npu="A3" id45 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品；
+Atlas A3系列产品；
 <!-- end id45 -->
 
 <!-- npu="910b" id46 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品；
+Atlas A2系列产品；
 <!-- end id46 -->
 
 M方向repeat示意图：
@@ -426,7 +426,7 @@ K方向repeat示意图：
 <!-- end id44 -->
 
 <!-- npu="950" id47 -->
-针对Ascend 950PR/Ascend 950DT：
+针对Ascend 950PR&950DT系列产品：
 
 **M方向repeat示意图：**
 

@@ -3,7 +3,7 @@
 本节汇总介绍了MmadMx计算接口在边界值输入下的输出结果，数据类型见基础API下的[MmadMx](../SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx.md#数据类型)，以下内容针对如下型号生效：
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT系列产品
 <!-- end id1 -->
 
 ## 边界值说明

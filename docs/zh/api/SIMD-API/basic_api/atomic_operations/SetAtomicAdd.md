@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id13 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id13 -->
 <!-- npu="A3" id14 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id14 -->
 <!-- npu="910b" id15 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id16 -->
 <!-- npu="310p" id17 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id17 -->
 <!-- npu="310p" id18 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id18 -->
 <!-- npu="910" id19 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id19 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/atomic_operations/SetAtomicAdd_res.md#id1 -->
 
@@ -49,27 +49,27 @@ __aicore__ inline void SetAtomicAdd()
 ## 数据类型
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT，支持的数据类型为int8_t、int16_t、half、bfloat16_t、int32_t、float。
+- Ascend 950PR&950DT系列产品，支持的数据类型为int8_t、int16_t、half、bfloat16_t、int32_t、float。
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为int8_t、int16_t、half、bfloat16_t、int32_t、float。
+- Atlas A3系列产品，支持的数据类型为int8_t、int16_t、half、bfloat16_t、int32_t、float。
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为int8_t、int16_t、half、bfloat16_t、int32_t、float。
+- Atlas A2系列产品，支持的数据类型为int8_t、int16_t、half、bfloat16_t、int32_t、float。
 <!-- end id3 -->
 
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品，支持的数据类型为int16_t、half、int32_t、float。
+- Atlas 200I/500 A2推理产品，支持的数据类型为int16_t、half、int32_t、float。
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core，支持的数据类型为int16_t、half、float。
+- Atlas推理系列产品AI Core，支持的数据类型为int16_t、half、float。
 <!-- end id5 -->
 
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品，支持的数据类型为float。
+- Atlas训练系列产品，支持的数据类型为float。
 <!-- end id6 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>
@@ -79,27 +79,27 @@ __aicore__ inline void SetAtomicAdd()
 ## 约束说明<a name="section633mcpsimp"></a>
 
 <!-- npu="950" id7 -->
-- Ascend 950PR/Ascend 950DT，支持的数据通路为UB/L0C Buffer-\>GM。
+- Ascend 950PR&950DT系列产品，支持的数据通路为UB/L0C Buffer-\>GM。
 <!-- end id7 -->
 
 <!-- npu="A3" id8 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据通路为UB/L0C Buffer/L1 Buffer-\>GM。
+- Atlas A3系列产品，支持的数据通路为UB/L0C Buffer/L1 Buffer-\>GM。
 <!-- end id8 -->
 
 <!-- npu="910b" id9 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据通路为UB/L0C Buffer/L1 Buffer-\>GM。
+- Atlas A2系列产品，支持的数据通路为UB/L0C Buffer/L1 Buffer-\>GM。
 <!-- end id9 -->
 
 <!-- npu="310b" id10 -->
-- Atlas 200I/500 A2 推理产品，支持的数据通路为UB/L0C Buffer/L1 Buffer-\>GM。
+- Atlas 200I/500 A2推理产品，支持的数据通路为UB/L0C Buffer/L1 Buffer-\>GM。
 <!-- end id10 -->
 
 <!-- npu="310p" id11 -->
-- Atlas 推理系列产品AI Core，支持的数据通路为UB-\>GM。
+- Atlas推理系列产品AI Core，支持的数据通路为UB-\>GM。
 <!-- end id11 -->
 
 <!-- npu="910" id12 -->
-- Atlas 训练系列产品，支持的数据通路为UB-\>GM。
+- Atlas训练系列产品，支持的数据通路为UB-\>GM。
 <!-- end id12 -->
 
 - 累加操作完成后，建议通过[DisableDmaAtomic](DisableDmaAtomic.md)关闭原子累加，以免影响后续相关指令功能。

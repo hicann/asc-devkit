@@ -103,7 +103,7 @@ __aicore__ inline void DataCopyPad(const LocalTensor<T>& dst, const LocalTensor<
 
 搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[DataCopy（L0C到UB数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopy_L0CToUB.md)。
 
-该接口仅Atlas 推理系列产品AI Core支持。
+该接口仅Atlas推理系列产品AI Core支持。
 
 src和dst分别为源操作数和目的操作数；intriParams和enhancedParams为搬运参数。
 
@@ -131,7 +131,7 @@ src和dst分别为源操作数和目的操作数；intriParams和enhancedParams�
 - L0C Buffer -> UB
     - CO1 -> UB
 
-搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR/Ascend 950DT为例，接口示例如下：
+搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，以Ascend 950PR&950DT系列产品为例，接口示例如下：
 
 注意，不同产品型号的接口原型可能不同，具体介绍请参考：[Fixpipe（L0C到UB数据搬运）](../cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md)。
 
@@ -163,7 +163,7 @@ DataCopyL1ToUB能够实现L1 Buffer到UB的连续数据搬运，数据搬运时�
 
 搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyL1ToUB（L1到UB数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md)。
 
-该接口仅Ascend 950PR/Ascend 950DT支持。
+该接口仅Ascend 950PR&950DT系列产品支持。
 
 src和dst分别为源操作数和目的操作数；count为连续搬运的元素个数。
 
@@ -187,7 +187,7 @@ DataCopyL1ToUB能够实现L1 Buffer到UB的连续数据搬运和非连续数据�
 
 搬运的数据用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)，接口具体介绍请参考：[DataCopyL1ToUB（L1到UB数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md)。
 
-该接口仅Ascend 950PR/Ascend 950DT支持。
+该接口仅Ascend 950PR&950DT系列产品支持。
 
 src和dst分别为源操作数和目的操作数；repeatParams为搬运参数。
 

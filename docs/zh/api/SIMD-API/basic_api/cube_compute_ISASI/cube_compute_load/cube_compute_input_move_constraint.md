@@ -119,7 +119,7 @@ LoadDataWithSparse主要用于搬运以512Byte为单位存放的稠密权重矩�
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
-### 针对Ascend 950PR/Ascend 950DT
+### 针对Ascend 950PR&950DT系列产品
 
 DataCopy（GM-\>L1 Buffer）支持使能随路进行DN到NZ转换，一定会改变分形排布。
 
@@ -251,7 +251,7 @@ LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置�
 <!-- end id4 -->
 
 <!-- npu="950" id5 -->
-针对Ascend 950PR/Ascend 950DT，数据类型约束如表4所示：
+针对Ascend 950PR&950DT系列产品，数据类型约束如表4所示：
 
 **表4** 数据类型约束
 
@@ -268,7 +268,7 @@ LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置�
 <!-- end id5 -->
 
 <!-- npu="950" id6 -->
-- 针对Ascend 950PR/Ascend 950DT，LoadData（2D矩阵搬运V2）以大小为512Byte的分形为单位进行搬运。LoadData（MX矩阵搬运）包含两种矩阵数据搬运，左右矩阵大小以512Byte的分形单位，左右量化系数矩阵大小以32Byte的分形为单位。
+- 针对Ascend 950PR&950DT系列产品，LoadData（2D矩阵搬运V2）以大小为512Byte的分形为单位进行搬运。LoadData（MX矩阵搬运）包含两种矩阵数据搬运，左右矩阵大小以512Byte的分形单位，左右量化系数矩阵大小以32Byte的分形为单位。
 <!-- end id6 -->
 
 ## 搬运指令总结
@@ -295,5 +295,5 @@ LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置�
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
-针对Ascend 950PR/Ascend 950DT，LoadData（2D矩阵搬运V2）可以支持b4（fp4）/b8/b16/b32数据类型以及转置场景搬运，通过配置mStep和kStep来完成多个方向的数据块搬运，并且相比LoadData（卷积数据搬运），指令的带宽延时更小，因此不带量化系数的矩阵乘法过程中L1 Buffer->L0A Buffer/L0B Buffer通路，都推荐使用LoadData（2D矩阵搬运V2）指令来实现数据搬运。而带量化系数的矩阵乘法过程中，需要使用LoadData（MX矩阵搬运）指令来实现数据搬运，不仅能完成L1 Buffer->L0A Buffer/L0B Buffer通路搬运，还能完成L1 Buffer->L0A\_MX/L0B\_MX Buffer通路的数据搬运。
+针对Ascend 950PR&950DT系列产品，LoadData（2D矩阵搬运V2）可以支持b4（fp4）/b8/b16/b32数据类型以及转置场景搬运，通过配置mStep和kStep来完成多个方向的数据块搬运，并且相比LoadData（卷积数据搬运），指令的带宽延时更小，因此不带量化系数的矩阵乘法过程中L1 Buffer->L0A Buffer/L0B Buffer通路，都推荐使用LoadData（2D矩阵搬运V2）指令来实现数据搬运。而带量化系数的矩阵乘法过程中，需要使用LoadData（MX矩阵搬运）指令来实现数据搬运，不仅能完成L1 Buffer->L0A Buffer/L0B Buffer通路搬运，还能完成L1 Buffer->L0A\_MX/L0B\_MX Buffer通路的数据搬运。
 <!-- end id8 -->

@@ -19,9 +19,9 @@
 
     此接口后续版本会废弃，请使用[asc_atomic_add](../SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)接口。
 
-- [asc_get_store_atomic_config](../SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md)接口（仅Ascend 950PR/Ascend 950DT）
+- [asc_get_store_atomic_config](../SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md)接口（仅Ascend 950PR&950DT系列产品）
 
-    Ascend 950PR/Ascend 950DT上该接口已废弃，请使用[asc_atomic_add](../SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)接口。
+    Ascend 950PR&950DT系列产品上该接口已废弃，请使用[asc_atomic_add](../SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)接口。
 <!-- end id1 -->
 
 - [asc_set_atomic_none](../SIMD-API/c_api/deprecated_interface/asc_set_atomic_none_deprecated.md)接口
@@ -659,15 +659,15 @@
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
-- [asc_copy_gm2ub_align](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_align_arch_3510_deprecated.md)接口（仅Ascend 950PR/Ascend 950DT上原高维切分搬运形式函数原型）
+- [asc_copy_gm2ub_align](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_align_arch_3510_deprecated.md)接口（仅Ascend 950PR&950DT系列产品上原高维切分搬运形式函数原型）
 
-    Ascend 950PR/Ascend 950DT上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
+    Ascend 950PR&950DT系列产品上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
 <!-- end id8 -->
 
 <!-- npu="950" id9 -->
-- [asc_copy_ub2gm_align](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_align_arch_3510_deprecated.md)接口（仅Ascend 950PR/Ascend 950DT上原高维切分搬运形式函数原型）
+- [asc_copy_ub2gm_align](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_align_arch_3510_deprecated.md)接口（仅Ascend 950PR&950DT系列产品上原高维切分搬运形式函数原型）
 
-    Ascend 950PR/Ascend 950DT上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_store_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
+    Ascend 950PR&950DT系列产品上此接口的原高维切分搬运形式函数原型已废弃，请使用[asc_store_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md)类型枚举值进行L2 Cache管理策略配置。
 <!-- end id9 -->
 
 <!-- npu="950" id10 -->

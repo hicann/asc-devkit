@@ -3,25 +3,25 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/data_structures/GlobalTensor/SetL2CacheHint_res.md#id1 -->
 
@@ -84,7 +84,7 @@ CACHE_MODE_NORMAL = 1,  // 启用L2 Cache
 CACHE_MODE_PERSISTENT = 4,  // 启用L2 Cache驻留模式
 };</pre>
 <p id="p595815581177"><a name="p595815581177"></a><a name="p595815581177"></a>当特定GlobalTensor启用L2 Cache后实测性能反而下降时，可考虑手动禁用该GlobalTensor的L2 Cache功能。例如，若某算子仅对特定GlobalTensor执行单次读取操作，将其数据缓存至L2 Cache不仅无法带来性能收益，反而可能因数据频繁搬运至L2 Cache而引入额外的开销，此时建议关闭该GlobalTensor的L2 Cache。</p>
-<p id="p595815581177"><a name="p595815581177"></a><a name="p595815581177"></a>通常情况下，L2 Cache可采用CACHE_MODE_NORMAL模式运行。在此模式下，当L2 Cache容量耗尽时会触发数据置换机制，已存入L2 Cache中的数据可能被替换。若需确保特定GlobalTensor的数据始终保留在L2 Cache中，可采用驻留模式。目前该驻留模式功能尚在开发中，暂不支持，计划于Ascend 950PR/Ascend 950DT产品上提供支持。</p>
+<p id="p595815581177"><a name="p595815581177"></a><a name="p595815581177"></a>通常情况下，L2 Cache可采用CACHE_MODE_NORMAL模式运行。在此模式下，当L2 Cache容量耗尽时会触发数据置换机制，已存入L2 Cache中的数据可能被替换。若需确保特定GlobalTensor的数据始终保留在L2 Cache中，可采用驻留模式。目前该驻留模式功能尚在开发中，暂不支持，计划于Ascend 950PR&950DT系列产品产品上提供支持。</p>
 <p id="p165951277168"><a name="p165951277168"></a><a name="p165951277168"></a>如果不调用该接口，默认为CacheMode::CACHE_MODE_NORMAL，即GlobalTensor会启用L2 Cache。</p>
 </td>
 </tr>

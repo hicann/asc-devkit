@@ -1,6 +1,6 @@
 # C API
 
-CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢量计算、数据搬运、标量操作、矩阵计算、同步控制、系统变量和缓存控制接口，并修复9.0.0中的函数命名、类型声明和地址自更新签名问题。
+CANN 9.1.0继续完善Ascend 950PR&950DT系列产品（3510架构）C API，新增矢量计算、数据搬运、标量操作、矩阵计算、同步控制、系统变量和缓存控制接口，并修复9.0.0中的函数命名、类型声明和地址自更新签名问题。
 
 ## 新增特性
 
@@ -18,7 +18,7 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 - `asc_copy_ub2gm`、`asc_copy_ub2gm_sync`：将数据从UB搬运到Global Memory。
 - `asc_copy_ub2ub`、`asc_copy_ub2ub_sync`：将数据从UB搬运到UB。
 - `asc_copy_ub2l1`、`asc_copy_ub2l1_sync`：将数据从UB搬运到L1 Buffer。
-- `asc_set_copy_pad_val`：与`asc_copy_gm2ub_align`配合使用，设置连续搬运数据块左右两侧需要填充的数据值。Ascend 950PR/Ascend 950DT支持`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`数据需要先转换为`int8_t`再传入。
+- `asc_set_copy_pad_val`：与`asc_copy_gm2ub_align`配合使用，设置连续搬运数据块左右两侧需要填充的数据值。Ascend 950PR&950DT系列产品支持`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。`fp4x2_e2m1_t`、`fp4x2_e1m2_t`、`hifloat8_t`、`fp8_e8m0_t`、`fp8_e5m2_t`、`fp8_e4m3fn_t`数据需要先转换为`int8_t`再传入。
 - `asc_ndim_copy_dci`：执行N维搬运场景所需的数据缓存失效（Data Cache Invalidate，DCI）操作。
 - `asc_copy_gm2l1`、`asc_copy_gm2l1_sync`：将数据从Global Memory搬运到L1 Buffer。
 - `asc_copy_gm2l1_align`、`asc_copy_gm2l1_align_sync`：将Global Memory中的数据填充后搬运到L1 Buffer。
@@ -137,7 +137,7 @@ CANN 9.1.0继续完善Ascend 950PR/Ascend 950DT（3510架构）C API，新增矢
 | 废弃接口或重载 | 替代接口 | 说明 |
 | :--- | :--- | :--- |
 | `asc_set_gm2ub_pad` | `asc_set_copy_pad_val` | 使用通用搬运填充值配置接口。 |
-| `asc_get_store_atomic_config`（Ascend 950PR/Ascend 950DT） | `asc_atomic_add` | 标量原子加无需预先配置和查询数据搬运原子状态。 |
+| `asc_get_store_atomic_config`（Ascend 950PR&950DT系列产品） | `asc_atomic_add` | 标量原子加无需预先配置和查询数据搬运原子状态。 |
 | `asc_set_store_atomic_config_v2` | `asc_atomic_add` | 标量原子加改为直接调用原子接口。 |
 | 源矢量寄存器在前、目的UB地址在后的`asc_scatter`重载 | 目的UB地址在前、源矢量寄存器在后的`asc_scatter`重载 | 支持的数据类型不变，仅调整参数顺序。 |
 | `asc_exp_sub_v2(vector_float&, vector_float, vector_float, vector_bool)` | `asc_exp_sub` | `half`输入的`asc_exp_sub_v2`仍保留，用于读取源操作数的奇数索引元素；仅`float`输入的该重载废弃。 |

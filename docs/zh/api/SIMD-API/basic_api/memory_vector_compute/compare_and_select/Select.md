@@ -3,16 +3,16 @@
 ## 产品支持情况<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
 - Atlas 推理系列产品 AI Core：支持
@@ -21,7 +21,7 @@
 - Atlas 推理系列产品 Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
 - Kirin X90：支持
@@ -58,27 +58,27 @@
     ![](../../../../figures/select_mode2.png)
 
 <!-- npu="950" id17 -->
-Ascend 950PR/Ascend 950DT，支持模式0、1、2。
+Ascend 950PR&950DT系列产品，支持模式0、1、2。
 <!-- end id17 -->
 
 <!-- npu="A3" id18 -->
-Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持模式0、1、2。
+Atlas A3系列产品，支持模式0、1、2。
 <!-- end id18 -->
 
 <!-- npu="910b" id19 -->
-Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持模式0、1、2。
+Atlas A2系列产品，支持模式0、1、2。
 <!-- end id19 -->
 
 <!-- npu="310b" id20 -->
-Atlas 200I/500 A2 推理产品，支持模式0、1、2。
+Atlas 200I/500 A2推理产品，支持模式0、1、2。
 <!-- end id20 -->
 
 <!-- npu="310p" id21 -->
-Atlas 推理系列产品AI Core，支持模式0、1、2。
+Atlas推理系列产品AI Core，支持模式0、1、2。
 <!-- end id21 -->
 
 <!-- npu="910" id22 -->
-Atlas 训练系列产品，仅支持模式0。
+Atlas训练系列产品，仅支持模式0。
 <!-- end id22 -->
 
 <!-- npu="x90" id23 -->
@@ -180,27 +180,27 @@ Kirin 9030，支持模式0、1、2。
 
 - T支持的数据类型为：
   <!-- npu="950" id25 -->
-  - Ascend 950PR/Ascend 950DT，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float/complex32/int64_t/uint64_t/complex64。其中，int8\_t/uint8\_t/complex32/int64\_t/uint64\_t/complex64数据类型仅支持tensor前n个数据计算接口。
+  - Ascend 950PR&950DT系列产品，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float/complex32/int64_t/uint64_t/complex64。其中，int8\_t/uint8\_t/complex32/int64\_t/uint64\_t/complex64数据类型仅支持tensor前n个数据计算接口。
   <!-- end id25 -->
     
   <!-- npu="A3" id26 -->
-  - Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：half/float。
+  - Atlas A3系列产品，支持的数据类型为：half/float。
   <!-- end id26 -->
     
   <!-- npu="910b" id27 -->
-  - Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：half/float。
+  - Atlas A2系列产品，支持的数据类型为：half/float。
   <!-- end id27 -->
     
   <!-- npu="310b" id28 -->
-  - Atlas 200I/500 A2 推理产品，支持的数据类型为：half/float。
+  - Atlas 200I/500 A2推理产品，支持的数据类型为：half/float。
   <!-- end id28 -->
     
   <!-- npu="310p" id29 -->
-  - Atlas 推理系列产品AI Core，支持的数据类型为：half/float。
+  - Atlas推理系列产品AI Core，支持的数据类型为：half/float。
   <!-- end id29 -->
     
   <!-- npu="910" id30 -->
-  - Atlas 训练系列产品，支持的数据类型为：half/float。
+  - Atlas训练系列产品，支持的数据类型为：half/float。
   <!-- end id30 -->
     
   <!-- npu="x90" id31 -->
@@ -224,30 +224,30 @@ Kirin 9030，支持模式0、1、2。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md)。
 
 <!-- npu="950" id10 -->
-- 当参数count或repeatTime取值为0时，针对Ascend 950PR/Ascend 950DT，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，不保证该接口将被视为NOP（空操作）。
+- 当参数count或repeatTime取值为0时，针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，不保证该接口将被视为NOP（空操作）。
 <!-- end id10 -->
 <!-- npu="A3,910b,310p,950" id11 -->
 - 对Unified Buffer（UB）空间的占用说明。
   <!-- npu="A3,910b,310p" id12 -->
   - 针对如下型号，对于模式1和模式2，使用时需要预留8KB的UB空间，作为接口的临时数据存放区：
     <!-- npu="A3" id13 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id13 -->
     <!-- npu="910b" id14 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id14 -->
     <!-- npu="310p" id15 -->
-    - Atlas 推理系列产品AI Core
+    - Atlas推理系列产品AI Core
     <!-- end id15 -->
   <!-- end id12 -->
     <!-- npu="950" id16 -->
-  - 针对Ascend 950PR/Ascend 950DT：
+  - 针对Ascend 950PR&950DT系列产品：
     - 不传入mask参数的tensor高维切分计算接口占用8KB UB临时空间。
     - tensor前n个数据计算接口以及传入mask参数的tensor高维切分计算接口不涉及8KB UB临时空间的占用。
     <!-- end id16 -->
 <!-- end id11 -->
 <!-- npu="310b" id33 -->
-- Atlas 200I/500 A2 推理产品不支持如下函数原型：
+- Atlas 200I/500 A2推理产品不支持如下函数原型：
   - tensor高维切分计算Select模式1中，不传入mask参数的函数原型（需配合[SetVectorMask](../mask_operations/SetVectorMask.md)、[SetCmpMask_ISASI](SetCmpMask_ISASI.md)使用）。
   - tensor高维切分计算Select模式0和模式2中，不传入mask参数的函数原型（需配合[SetVectorMask](../mask_operations/SetVectorMask.md)、[SetCmpMask_ISASI](SetCmpMask_ISASI.md)使用）。
 <!-- end id33 -->

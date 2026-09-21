@@ -61,7 +61,7 @@ AI CPU启动下发通信任务前，需获取固定的通信配置[Mc2Msg](#tabl
 -   算子的Tiling Data结构需要按顺序完整包含[Mc2Msg参数](#table4835205712588)。
 -   AI CPU需获取固定数据结构的通信配置，算子注册Tiling Data时保持该结构的一致性。
 <!-- npu="A3" id1 -->
--   Atlas A3 训练系列产品/Atlas A3 推理系列产品暂不支持该版本TilingData。
+-   Atlas A3系列产品暂不支持该版本TilingData。
 <!-- end id1 -->
 
 ## 调用示例

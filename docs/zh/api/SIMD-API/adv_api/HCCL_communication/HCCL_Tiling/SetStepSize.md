@@ -26,7 +26,7 @@ uint32_t SetStepSize(uint8_t stepSize)
 ## 约束说明
 
 <!-- npu="A3" id1 -->
-目前仅支持Atlas A3 训练系列产品/Atlas A3 推理系列产品。
+目前仅支持Atlas A3系列产品。
 <!-- end id1 -->
 
 ## 调用示例

@@ -29,17 +29,17 @@ Ascend C提供了[三层梯度化SIMD编程接口](../../../../../../zh/guide/pr
 ## 硬件保证的同步
 
 <!-- npu="950" id1 -->
-- 针对Ascend 950PR/Ascend 950DT，PIPE\_V与PIPE\_V间的单流水同步由硬件保证。
+- 针对Ascend 950PR&950DT系列产品，PIPE\_V与PIPE\_V间的单流水同步由硬件保证。
 <!-- end id1 -->
 
 <!-- npu="A3,910b" id2 -->
 - 以下接口都属于PIPE_S，这些接口与其它流水的接口之间的多流水同步由硬件保证：
 
     <!-- npu="A3" id3 -->
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A3系列产品
     <!-- end id3 -->
     <!-- npu="910b" id4 -->
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    - Atlas A2系列产品
     <!-- end id4 -->
 
     具体接口如下：
@@ -141,7 +141,7 @@ TPipe-TQue框架编程范式的自动同步功能需满足以下前提条件方�
 
     不在以上集合中的PIPE\_S接口，毕昇编译器无法自动插入同步：
     <!-- npu="950" id6 -->
-    例如，针对Ascend 950PR/Ascend 950DT，标量原子操作接口均不在以上接口集合内（包括[AtomicAdd](../../atomic_operations/AtomicAdd.md)、[AtomicCas](../../atomic_operations/AtomicCas.md)、[AtomicExch](../../atomic_operations/AtomicExch.md)、[AtomicMax](../../atomic_operations/AtomicMax.md)、[AtomicMin](../../atomic_operations/AtomicMin.md)），因此，当这些接口与属于PIPE\_MTE2、PIPE\_MTE3的接口在读写GM时存在数据依赖，毕昇编译器无法自动插入同步，开发者需根据实际情况手动插入同步。
+    例如，针对Ascend 950PR&950DT系列产品，标量原子操作接口均不在以上接口集合内（包括[AtomicAdd](../../atomic_operations/AtomicAdd.md)、[AtomicCas](../../atomic_operations/AtomicCas.md)、[AtomicExch](../../atomic_operations/AtomicExch.md)、[AtomicMax](../../atomic_operations/AtomicMax.md)、[AtomicMin](../../atomic_operations/AtomicMin.md)），因此，当这些接口与属于PIPE\_MTE2、PIPE\_MTE3的接口在读写GM时存在数据依赖，毕昇编译器无法自动插入同步，开发者需根据实际情况手动插入同步。
     <!-- end id6 -->
 
 ### 支持的同步类型

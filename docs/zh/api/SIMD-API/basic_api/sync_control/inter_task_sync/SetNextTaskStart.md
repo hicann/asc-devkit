@@ -6,25 +6,25 @@
 ## 产品支持情况<a name="section17196114513104"></a>
 
 <!-- npu="950" id21 -->
-- Ascend 950PR/Ascend 950DT：支持，该接口生效
+- Ascend 950PR&950DT系列产品：支持，该接口生效
 <!-- end id21 -->
 <!-- npu="A3" id22 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持，该接口生效
+- Atlas A3系列产品：支持，该接口生效
 <!-- end id22 -->
 <!-- npu="910b" id23 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持，仅保证编译兼容，实际功能不生效。
+- Atlas A2系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id23 -->
 <!-- npu="310b" id24 -->
-- Atlas 200I/500 A2 推理产品：支持，仅保证编译兼容，实际功能不生效。
+- Atlas 200I/500 A2推理产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id24 -->
 <!-- npu="310p" id25 -->
-- Atlas 推理系列产品AI Core：支持，仅保证编译兼容，实际功能不生效。
+- Atlas推理系列产品AI Core：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id25 -->
 <!-- npu="310p" id26 -->
-- Atlas 推理系列产品Vector Core：支持，仅保证编译兼容，实际功能不生效。
+- Atlas推理系列产品Vector Core：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id26 -->
 <!-- npu="910" id27 -->
-- Atlas 训练系列产品：支持，仅保证编译兼容，实际功能不生效。
+- Atlas训练系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id27 -->
 <!-- npu="x90" id28 -->
 - Kirin X90：支持，仅保证编译兼容，实际功能不生效。
@@ -55,19 +55,19 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
 - 该原型支持如下产品型号：
 
     <!-- npu="950" id1 -->
-    Ascend 950PR/Ascend 950DT 
+    Ascend 950PR&950DT系列产品 
     <!-- end id1 -->
 
     <!-- npu="A3" id2 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品 
+    Atlas A3系列产品 
     <!-- end id2 -->
 
     <!-- npu="910b" id3 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品 
+    Atlas A2系列产品 
     <!-- end id3 -->
 
     <!-- npu="310b" id4 -->
-    Atlas 200I/500 A2 推理产品 
+    Atlas 200I/500 A2推理产品 
     <!-- end id4 -->
 
     <!-- npu="x90" id5 -->
@@ -88,15 +88,15 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
 - 该原型支持如下产品型号：
 
     <!-- npu="310p" id7 -->
-    Atlas 推理系列产品AI Core 
+    Atlas推理系列产品AI Core 
     <!-- end id7 -->
 
     <!-- npu="310p" id8 -->
-    Atlas 推理系列产品Vector Core 
+    Atlas推理系列产品Vector Core 
     <!-- end id8 -->
 
     <!-- npu="910" id9 -->
-    Atlas 训练系列产品 
+    Atlas训练系列产品 
     <!-- end id9 -->
 
     ```cpp

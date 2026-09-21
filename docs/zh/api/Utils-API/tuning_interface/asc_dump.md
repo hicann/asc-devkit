@@ -3,23 +3,23 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品AI Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/asc_dump_res.md#id1 -->
 
@@ -70,7 +70,7 @@ __aicore__ static __attribute__((noinline)) void asc_dump(__cc__ T* input, uint3
 ```
 
 <!-- npu="950" id13 -->
-以下接口仅支持Ascend 950PR/Ascend 950DT。
+以下接口仅支持Ascend 950PR&950DT系列产品。
 
 ```cpp
 // BiasTable Buffer上的数据打印
@@ -84,7 +84,7 @@ __aicore__ static __attribute__((noinline)) void asc_dump(__fbuf__ T* input, uin
 <!-- end id13 -->
 
 <!-- npu="950" id7 -->
-以下接口为simd\_vf中所使用的asc\_dump接口，仅支持Ascend 950PR/Ascend 950DT。
+以下接口为simd\_vf中所使用的asc\_dump接口，仅支持Ascend 950PR&950DT系列产品。
 
 ```cpp
 // 寄存器上的数据打印
@@ -119,13 +119,13 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 
 ## 数据类型
 <!-- npu="950" id10 -->
-- 针对Ascend 950PR/Ascend 950DT ：bool、int8_t、uint8_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
+- 针对Ascend 950PR&950DT系列产品 ：bool、int8_t、uint8_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- 针对Atlas A3 训练系列产品/Atlas A3 推理系列产品 ：bool、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
+- 针对Atlas A3系列产品 ：bool、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- 针对Atlas A2 训练系列产品/Atlas A2 推理系列产品 ：bool、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
+- 针对Atlas A2系列产品 ：bool、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
 <!-- end id12 -->
 
 ## 返回值说明
@@ -135,10 +135,10 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 ## 约束说明
 
 <!-- npu="950" id8 -->
--   针对Ascend 950PR/Ascend 950DT，在使用该接口打印L1 Buffer、BiasTable Buffer或Fixpipe Buffer数据时，HDK版本需要至少升级到25.7.RC1.6以上。
+-   针对Ascend 950PR&950DT系列产品，在使用该接口打印L1 Buffer、BiasTable Buffer或Fixpipe Buffer数据时，HDK版本需要至少升级到25.7.RC1.6以上。
 <!-- end id8 -->
 <!-- npu="950" id15 -->
--   针对Ascend 950PR/Ascend 950DT，打印Fixpipe Buffer中的Tensor信息场景：
+-   针对Ascend 950PR&950DT系列产品，打印Fixpipe Buffer中的Tensor信息场景：
     -   Fixpipe Buffer保存的是硬件参数位域，打印结果不一定与L1 Buffer中的原始数据按位相同。前级Quant参数每8字节保留bit[7:0]、bit[31:13]和bit[46:37]，期望值为`input & 0x00007fe0ffffe0ffULL`；前级ReLU参数每4字节保留bit[31:13]，期望值为`word & 0xffffe000U`。
 <!-- end id15 -->
 -   使用该接口时，在每个核上dump的数据总量不能大于30KB，请开发者自行控制打印的内容数据量，超出则不会打印。

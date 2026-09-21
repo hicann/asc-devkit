@@ -15,22 +15,22 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
 - Atlas 推理系列产品：支持
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/guide/programming_guide/appendix/msobjdump_tool_res.md#id1 -->
 
@@ -111,7 +111,7 @@
 | `VERSION` | 表示版本号。 | 是 | 不设置`--verbose`，默认打印。 |
 | `RUNTIME_IMPLICIT_INFO` | 表示运行时隐式信息标志。取值如下：<br>`1`：`SIMD Printf Flag`，表示SIMD侧Printf标志。<br>`2`：`Hardware Sync Flag`，表示硬同步标志。<br>`3`：`L2Cache Hint Flag`，表示L2 Cache命中标志。<br>`4`：`SIMT Printf Flag`，表示SIMT侧Printf标志。<br>`5`：`SIMD Assert Flag`，表示SIMD侧Assert标志。<br>其他取值打印原始数值。 | 否 | 不设置`--verbose`，默认打印。 |
 | `KERNEL_TYPE` | 表示核函数（Kernel）运行时core类型，取值参见<a href="#table187419221164">表6</a>。 | 否 | 不设置`--verbose`，默认打印。 |
-| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。<br><!-- npu="950" id7 -->Ascend 950PR/Ascend 950DT：不支持<br><!-- end id7 --><!-- npu="A3" id8 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持<br><!-- end id8 --><!-- npu="910b" id9 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持<br><!-- end id9 --><!-- npu="310b" id10 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id10 --><!-- npu="310p" id11 -->Atlas 推理系列产品：不支持<br><!-- end id11 --><!-- npu="910" id12 -->Atlas 训练系列产品：不支持<!-- end id12 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。<br><!-- npu="950" id7 -->Ascend 950PR&950DT系列产品：不支持<br><!-- end id7 --><!-- npu="A3" id8 -->Atlas A3系列产品：支持<br><!-- end id8 --><!-- npu="910b" id9 -->Atlas A2系列产品：支持<br><!-- end id9 --><!-- npu="310b" id10 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id10 --><!-- npu="310p" id11 -->Atlas 推理系列产品：不支持<br><!-- end id11 --><!-- npu="910" id12 -->Atlas训练系列产品：不支持<!-- end id12 --> | 否 | 不设置`--verbose`，默认打印。 |
 | `MIX_TASK_RATION` | 表示核函数（Kernel）运行时的Cube核/Vector核占比分配类型。 | 否 | 不设置`--verbose`，默认打印。 |
 | `elf header infos` | 包括ELF Header、Section Headers、Key to Flags、Program Headers、Symbol表等信息。 | 否 | 设置`--verbose`，开启全量打印。 |
 
@@ -120,17 +120,17 @@
 | 字段名 | 含义 | 是否必选 | 打印说明 |
 | ---- | ---- | ---- | ---- |
 | `.ascend.meta. ${id}` | 表示算子核函数（Kernel）名称，其中`${id}`表示meta信息的索引值。 | 是 | 不设置`--verbose`，默认打印。 |
-| `VERSION` | 表示版本号。<br><!-- npu="950" id13 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id13 --><!-- npu="A3" id14 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id14 --><!-- npu="910b" id15 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id15 --><!-- npu="310b" id16 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id16 --><!-- npu="310p" id17 -->Atlas 推理系列产品：不支持<br><!-- end id17 --><!-- npu="910" id18 -->Atlas 训练系列产品：不支持<!-- end id18 --> | 否 | 不设置`--verbose`，默认打印。 |
-| `DEBUG` | 调试相关信息，包含如下两部分内容：<br>`debugBufSize`：调试信息需要的内存空间。<br>`debugOptions`：调试开关状态。取值如下：<br>`0`：调试开关关闭。<br>`1`：通过DumpTensor、printf打印进行调试。<br>`2`：通过assert断言进行调试。<br>`4`：通过时间戳打点功能进行调试。<br>`8`：通过内存越界检测进行调试。<br><!-- npu="950" id19 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id19 --><!-- npu="A3" id20 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id20 --><!-- npu="910b" id21 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id21 --><!-- npu="310b" id22 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id22 --><!-- npu="310p" id23 -->Atlas 推理系列产品：不支持<br><!-- end id23 --><!-- npu="910" id24 -->Atlas 训练系列产品：不支持<!-- end id24 --> | 否 | 不设置`--verbose`，默认打印。 |
-| `DYNAMIC_PARAM` | 算子核函数（Kernel）是否启用动态参数。取值分别为：<br>`0`：关闭动态参数模式。<br>`1`：开启动态参数模式。<br><!-- npu="950" id25 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id25 --><!-- npu="A3" id26 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id26 --><!-- npu="910b" id27 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id27 --><!-- npu="310b" id28 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id28 --><!-- npu="310p" id29 -->Atlas 推理系列产品：不支持<br><!-- end id29 --><!-- npu="910" id30 -->Atlas 训练系列产品：不支持<!-- end id30 --> | 否 | 不设置`--verbose`，默认打印。 |
-| `OPTIONAL_PARAM` | 可选参数信息，包含如下两部分内容：<br>`optionalInputMode`：可选输入在算子核函数（Kernel）中是否需要占位。<br>`0`：可选输入不占位。<br>`1`：可选输入占位。<br>`optionalOutputMode`：可选输出在算子核函数（Kernel）中是否需要占位。<br>`0`：可选输出不占位。<br>`1`：可选输出占位。<br><!-- npu="950" id31 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id31 --><!-- npu="A3" id32 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id32 --><!-- npu="910b" id33 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id33 --><!-- npu="310b" id34 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id34 --><!-- npu="310p" id35 -->Atlas 推理系列产品：不支持<br><!-- end id35 --><!-- npu="910" id36 -->Atlas 训练系列产品：不支持<!-- end id36 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `VERSION` | 表示版本号。<br><!-- npu="950" id13 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id13 --><!-- npu="A3" id14 -->Atlas A3系列产品：不支持<br><!-- end id14 --><!-- npu="910b" id15 -->Atlas A2系列产品：不支持<br><!-- end id15 --><!-- npu="310b" id16 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id16 --><!-- npu="310p" id17 -->Atlas 推理系列产品：不支持<br><!-- end id17 --><!-- npu="910" id18 -->Atlas训练系列产品：不支持<!-- end id18 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `DEBUG` | 调试相关信息，包含如下两部分内容：<br>`debugBufSize`：调试信息需要的内存空间。<br>`debugOptions`：调试开关状态。取值如下：<br>`0`：调试开关关闭。<br>`1`：通过DumpTensor、printf打印进行调试。<br>`2`：通过assert断言进行调试。<br>`4`：通过时间戳打点功能进行调试。<br>`8`：通过内存越界检测进行调试。<br><!-- npu="950" id19 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id19 --><!-- npu="A3" id20 -->Atlas A3系列产品：不支持<br><!-- end id20 --><!-- npu="910b" id21 -->Atlas A2系列产品：不支持<br><!-- end id21 --><!-- npu="310b" id22 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id22 --><!-- npu="310p" id23 -->Atlas 推理系列产品：不支持<br><!-- end id23 --><!-- npu="910" id24 -->Atlas训练系列产品：不支持<!-- end id24 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `DYNAMIC_PARAM` | 算子核函数（Kernel）是否启用动态参数。取值分别为：<br>`0`：关闭动态参数模式。<br>`1`：开启动态参数模式。<br><!-- npu="950" id25 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id25 --><!-- npu="A3" id26 -->Atlas A3系列产品：不支持<br><!-- end id26 --><!-- npu="910b" id27 -->Atlas A2系列产品：不支持<br><!-- end id27 --><!-- npu="310b" id28 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id28 --><!-- npu="310p" id29 -->Atlas 推理系列产品：不支持<br><!-- end id29 --><!-- npu="910" id30 -->Atlas训练系列产品：不支持<!-- end id30 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `OPTIONAL_PARAM` | 可选参数信息，包含如下两部分内容：<br>`optionalInputMode`：可选输入在算子核函数（Kernel）中是否需要占位。<br>`0`：可选输入不占位。<br>`1`：可选输入占位。<br>`optionalOutputMode`：可选输出在算子核函数（Kernel）中是否需要占位。<br>`0`：可选输出不占位。<br>`1`：可选输出占位。<br><!-- npu="950" id31 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id31 --><!-- npu="A3" id32 -->Atlas A3系列产品：不支持<br><!-- end id32 --><!-- npu="910b" id33 -->Atlas A2系列产品：不支持<br><!-- end id33 --><!-- npu="310b" id34 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id34 --><!-- npu="310p" id35 -->Atlas 推理系列产品：不支持<br><!-- end id35 --><!-- npu="910" id36 -->Atlas训练系列产品：不支持<!-- end id36 --> | 否 | 不设置`--verbose`，默认打印。 |
 | `RUNTIME_IMPLICIT_INFO` | 表示运行时隐式信息标志。取值如下：<br>`1`：`SIMD Printf Flag`，表示SIMD侧Printf标志。<br>`2`：`Hardware Sync Flag`，表示硬同步标志。<br>`3`：`L2Cache Hint Flag`，表示L2 Cache命中标志。<br>`4`：`SIMT Printf Flag`，表示SIMT侧Printf标志。<br>`5`：`SIMD Assert Flag`，表示SIMD侧Assert标志。<br>其他取值打印原始数值。 | 否 | 不设置`--verbose`，默认打印。 |
 | `KERNEL_TYPE` | 表示核函数（Kernel）运行时core类型，取值参见<a href="#table187419221164">表6</a>。 | 否 | 不设置`--verbose`，默认打印。 |
-| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。<br><!-- npu="950" id37 -->Ascend 950PR/Ascend 950DT：不支持<br><!-- end id37 --><!-- npu="A3" id38 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持<br><!-- end id38 --><!-- npu="910b" id39 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持<br><!-- end id39 --><!-- npu="310b" id40 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id40 --><!-- npu="310p" id41 -->Atlas 推理系列产品：不支持<br><!-- end id41 --><!-- npu="910" id42 -->Atlas 训练系列产品：不支持<!-- end id42 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `CROSS_CORE_SYNC` | 表示硬同步syncall类型。<br>`USE_SYNC`：使用硬同步。<br>`NO_USE_SYNC`：不使用硬同步。<br><!-- npu="950" id37 -->Ascend 950PR&950DT系列产品：不支持<br><!-- end id37 --><!-- npu="A3" id38 -->Atlas A3系列产品：支持<br><!-- end id38 --><!-- npu="910b" id39 -->Atlas A2系列产品：支持<br><!-- end id39 --><!-- npu="310b" id40 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id40 --><!-- npu="310p" id41 -->Atlas 推理系列产品：不支持<br><!-- end id41 --><!-- npu="910" id42 -->Atlas训练系列产品：不支持<!-- end id42 --> | 否 | 不设置`--verbose`，默认打印。 |
 | `MIX_TASK_RATION` | 表示核函数（Kernel）运行时的Cube核/Vector核占比分配类型。 | 否 | 不设置`--verbose`，默认打印。 |
-| `DETERMINISTIC_INFO` | 表示算子是否为确定性计算。<br>`0`：不确定计算。<br>`1`：确定性计算。<br><!-- npu="950" id43 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id43 --><!-- npu="A3" id44 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id44 --><!-- npu="910b" id45 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id45 --><!-- npu="310b" id46 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id46 --><!-- npu="310p" id47 -->Atlas 推理系列产品：不支持<br><!-- end id47 --><!-- npu="910" id48 -->Atlas 训练系列产品：不支持<!-- end id48 --> | 否 | 不设置`--verbose`，默认打印。 |
-| `BLOCK_NUM` | 表示算子执行核数，该字段当前暂不支持实际执行核数的打印，只打印默认值`0xFFFFFFFF`。<br><!-- npu="950" id49 -->Ascend 950PR/Ascend 950DT：支持打印默认值<br><!-- end id49 --><!-- npu="A3" id50 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id50 --><!-- npu="910b" id51 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id51 --><!-- npu="310b" id52 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id52 --><!-- npu="310p" id53 -->Atlas 推理系列产品：不支持<br><!-- end id53 --><!-- npu="910" id54 -->Atlas 训练系列产品：不支持<!-- end id54 --> | 否 | 不设置`--verbose`，默认打印。 |
-| `FUNCTION_ENTRY` | 算子TilingKey的值。<br><!-- npu="950" id55 -->Ascend 950PR/Ascend 950DT：支持<br><!-- end id55 --><!-- npu="A3" id56 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持<br><!-- end id56 --><!-- npu="910b" id57 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持<br><!-- end id57 --><!-- npu="310b" id58 -->Atlas 200I/500 A2 推理产品：不支持<br><!-- end id58 --><!-- npu="310p" id59 -->Atlas 推理系列产品：不支持<br><!-- end id59 --><!-- npu="910" id60 -->Atlas 训练系列产品：不支持<!-- end id60 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `DETERMINISTIC_INFO` | 表示算子是否为确定性计算。<br>`0`：不确定计算。<br>`1`：确定性计算。<br><!-- npu="950" id43 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id43 --><!-- npu="A3" id44 -->Atlas A3系列产品：不支持<br><!-- end id44 --><!-- npu="910b" id45 -->Atlas A2系列产品：不支持<br><!-- end id45 --><!-- npu="310b" id46 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id46 --><!-- npu="310p" id47 -->Atlas 推理系列产品：不支持<br><!-- end id47 --><!-- npu="910" id48 -->Atlas训练系列产品：不支持<!-- end id48 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `BLOCK_NUM` | 表示算子执行核数，该字段当前暂不支持实际执行核数的打印，只打印默认值`0xFFFFFFFF`。<br><!-- npu="950" id49 -->Ascend 950PR&950DT系列产品：支持打印默认值<br><!-- end id49 --><!-- npu="A3" id50 -->Atlas A3系列产品：不支持<br><!-- end id50 --><!-- npu="910b" id51 -->Atlas A2系列产品：不支持<br><!-- end id51 --><!-- npu="310b" id52 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id52 --><!-- npu="310p" id53 -->Atlas 推理系列产品：不支持<br><!-- end id53 --><!-- npu="910" id54 -->Atlas训练系列产品：不支持<!-- end id54 --> | 否 | 不设置`--verbose`，默认打印。 |
+| `FUNCTION_ENTRY` | 算子TilingKey的值。<br><!-- npu="950" id55 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id55 --><!-- npu="A3" id56 -->Atlas A3系列产品：不支持<br><!-- end id56 --><!-- npu="910b" id57 -->Atlas A2系列产品：不支持<br><!-- end id57 --><!-- npu="310b" id58 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id58 --><!-- npu="310p" id59 -->Atlas 推理系列产品：不支持<br><!-- end id59 --><!-- npu="910" id60 -->Atlas训练系列产品：不支持<!-- end id60 --> | 否 | 不设置`--verbose`，默认打印。 |
 | `elf header infos` | 包括ELF Header、Section Headers、Key to Flags、Program Headers、Symbol表等信息。 | 否 | 设置`--verbose`，开启全量打印。 |
 
 **表6**  核函数（Kernel）类型信息

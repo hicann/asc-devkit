@@ -3,25 +3,25 @@
 ## 产品支持情况<a id="zh-cn_topic_0000002511188540_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopy_L0CToL1_res.md#id1 -->
 
@@ -65,7 +65,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 - [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路NZ2ND格式转换配置，使用随路NZ2ND需要设置。
 
 <!-- npu="310b" id12 -->
-针对Atlas 200I/500 A2 推理产品，还支持如下两个接口：
+针对Atlas 200I/500 A2推理产品，还支持如下两个接口：
 
 - [SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md)：寄存器设置接口，通过调用该接口设置ClipReLU操作的最大值。
 
@@ -85,7 +85,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 
 | 参数名称 | 输入/输出 | 含义 |
 | ---------- | ---------- | ---------- |
-| dst | 输出 | 目的操作数，类型为LocalTensor，数据格式为NZ<!-- npu="950" id10 -->、ND（仅Ascend 950PR/Ascend 950DT支持）<!-- end id10 -->格式，地址需要满足32字节对齐。 |
+| dst | 输出 | 目的操作数，类型为LocalTensor，数据格式为NZ<!-- npu="950" id10 -->、ND（仅Ascend 950PR&950DT系列产品支持）<!-- end id10 -->格式，地址需要满足32字节对齐。 |
 | src | 输入 | 源操作数，类型为LocalTensor，支持的物理地址为L0C Buffer（TPosition为CO1），为Mmad接口计算的结果。数据格式为NZ格式，地址需要满足64字节对齐。 |
 | intriParams | 输入 | 搬运参数，类型为[DataCopyCO12DstParams](#zh-cn_topic_0000002511188540_table35908519282)。<br>具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。 |
 
@@ -95,23 +95,23 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 | ---------- | ---------- |
 | sid | 此参数用户无需关注，设置为0即可。 |
 | nSize | 源NZ矩阵在N方向上的大小。取值范围nSize∈[0, 4095]，nSize必须为16的倍数。<br>**注：nSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
-| mSize | 源NZ矩阵在M方向上的大小。<br>&nbsp;&nbsp;&bull;不开启随路NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：取值范围为mSize∈[0, 65535]。<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR/Ascend 950DT支持）：取值范围为mSize∈[0, 8192]。<br><!-- end id25 -->**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
-| dstStride | &bull;不开启NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为datablock（32字节）。<br><!-- npu="950" id26 -->&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR/Ascend 950DT支持）：目的ND矩阵每一行中的元素个数，取值不为0 ，单位为element。<!-- end id26 --> |
+| mSize | 源NZ矩阵在M方向上的大小。<br>&nbsp;&nbsp;&bull;不开启随路NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：取值范围为mSize∈[0, 65535]。<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR&950DT系列产品支持）：取值范围为mSize∈[0, 8192]。<br><!-- end id25 -->**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
+| dstStride | &bull;不开启NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为datablock（32字节）。<br><!-- npu="950" id26 -->&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR&950DT系列产品支持）：目的ND矩阵每一行中的元素个数，取值不为0 ，单位为element。<!-- end id26 --> |
 | srcStride | 源NZ矩阵中相邻Z排布的起始地址偏移，取值范围为srcStride∈[0, 65535]，单位为C0_Size（16*sizeof(T)），T为src的数据类型，其值应填成mSize对16向上取整。 |
 | unitFlag | unitFlag是一种Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag。<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位。<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br>参数设置方案和特性细节可参考：Mmad计算中关键特性说明的[UnitFlag](../mmad_compute_key_features/UnitFlag.md)章节。 |
-| clipReluPre | <!-- npu="950,A3,910b" id13 -->该参数仅在Atlas 200I/500 A2 推理产品支持。<br><!-- end id13 --><!-- npu="310b" id14 -->用于配置是否开启ClipReLU操作，参数类型为uint8_t，取值如下：0，不开启ClipReLU；1，开启ClipReLU，此时需要调用[SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md)来设置ClipReLU的最大值。<br>&nbsp;&nbsp;&bull;该操作在随路量化后进行，quantPre配置后才能使用，当前支持的量化模式有F322F16/DEQF16/VDEQF16/QF322B8_PRE/VQF322B8_PRE/REQ8/VREQ8。<br><!-- end id14 --> |
-| eltWiseOp | <!-- npu="950,A3,910b" id15 -->该参数仅在Atlas 200I/500 A2 推理产品支持。<br><!-- end id15 --><!-- npu="310b" id16 -->用于配置是否开启Elementwise操作及操作模式。Elementwise操作是指进行随路量化后，可以逐个元素加/减一个LocalTensor，大小为mSize * nSize，具体LocalTensor地址相关参数需要调用[SetFixPipeAddr](../cube_store_aux_config/SetFixPipeAddr.md)来设置。<br>eltWiseOp参数类型为uint8_t，取值如下：<br>&nbsp;&nbsp;&bull; 0：不开启Elementwise；<br>&nbsp;&nbsp;&bull; 1：Elementwise Addition；<br>&nbsp;&nbsp;&bull; 2：Elementwise Subtraction。<br><!-- end id16 --> |
+| clipReluPre | <!-- npu="950,A3,910b" id13 -->该参数仅在Atlas 200I/500 A2推理产品支持。<br><!-- end id13 --><!-- npu="310b" id14 -->用于配置是否开启ClipReLU操作，参数类型为uint8_t，取值如下：0，不开启ClipReLU；1，开启ClipReLU，此时需要调用[SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md)来设置ClipReLU的最大值。<br>&nbsp;&nbsp;&bull;该操作在随路量化后进行，quantPre配置后才能使用，当前支持的量化模式有F322F16/DEQF16/VDEQF16/QF322B8_PRE/VQF322B8_PRE/REQ8/VREQ8。<br><!-- end id14 --> |
+| eltWiseOp | <!-- npu="950,A3,910b" id15 -->该参数仅在Atlas 200I/500 A2推理产品支持。<br><!-- end id15 --><!-- npu="310b" id16 -->用于配置是否开启Elementwise操作及操作模式。Elementwise操作是指进行随路量化后，可以逐个元素加/减一个LocalTensor，大小为mSize * nSize，具体LocalTensor地址相关参数需要调用[SetFixPipeAddr](../cube_store_aux_config/SetFixPipeAddr.md)来设置。<br>eltWiseOp参数类型为uint8_t，取值如下：<br>&nbsp;&nbsp;&bull; 0：不开启Elementwise；<br>&nbsp;&nbsp;&bull; 1：Elementwise Addition；<br>&nbsp;&nbsp;&bull; 2：Elementwise Subtraction。<br><!-- end id16 --> |
 | quantPre | 用于控制量化模式，QuantMode_t类型，具体定义如下：<br>&nbsp;&nbsp;&bull; half/bfloat16_t输出，此参数需配置为QuantMode_t::F322F16/QuantMode_t::F322BF16。<br>&nbsp;&nbsp;&bull;配置为scalar量化时，需要调用[SetFixpipePreQuantFlag](../cube_store_aux_config/SetFixpipePreQuantFlag.md)接口来设置scalar量化参数。<br>&nbsp;&nbsp;&bull;配置为tensor量化时，需要调用[SetFixPipeConfig](../cube_store_aux_config/SetFixPipeConfig.md)来设置tensor量化参数，其中tensor量化参数需要通过DataCopy从L1 Buffer搬运至Fixpipe Buffer。<br>注：此参数需要用户手动配置，不会自动推导配置对应量化模式。此通路不支持NoQuant模式。<br>enum QuantMode_t<br>{<br>    NoQuant,      // 不开启量化功能，此通路不支持<br>    F322F16,      // Float32_2_Float16：float cast成half，cast mode为CAST_RINT模式<br>    F322BF16,     // Float32_2_BFloat16：float cast成bfloat16_t，cast mode为CAST_RINT模式<br>    DEQF16,       // DeQuant_Float16：int32_t量化成half，scalar量化<br>    VDEQF16,      // Vector_DeQuant_Float16：int32_t量化成half，tensor量化<br>    QF322B8_PRE,  // Quant_Float32_2_B8：float量化成int8_t/uint8_t，scalar量化<br>    VQF322B8_PRE, // Vector_Quant_Float32_2_B8：float量化成int8_t/uint8_t，tensor量化<br>    REQ8,         // ReQuant_int8：int32_t量化成int8_t/uint8_t，scalar量化<br>    VREQ8,        // Vector_ReQuant_int8：int32_t量化成int8_t/uint8_t，tensor量化<br>}; |
 | reluPre | 用于配置ReLU操作的模式，类型为uint8_t，取值如下：<br>&nbsp;&nbsp;&bull; 0：不开启ReLU<br>&nbsp;&nbsp;&bull; 1：Normal ReLU |
-| channelSplit | <!-- npu="950" id27 -->**该参数仅在Ascend 950PR/Ascend 950DT上生效**，仅在NZ格式float类型输出时生效，类型为bool，配置是否开启通道切分功能。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id27 --><!-- npu="A3,910b,310b" id29 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id30 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id30 --><!-- npu="910b" id31 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<br><!-- end id31 --><!-- npu="310b" id32 -->Atlas 200I/500 A2 推理产品<!-- end id32 --><!-- end id29 --> |
-| nz2ndEn | <!-- npu="950" id28 -->**该参数仅在Ascend 950PR/Ascend 950DT上生效**，类型为bool，配置是否开启NZ2ND的格式转换。<br>如果要开启NZ2ND的功能需要同步调用[SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)来设置格式转换的相关配置信息。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id28 --><!-- npu="A3,910b,310b" id33 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id34 -->Atlas A3 训练系列产品/Atlas A3 推理系列产品<br><!-- end id34 --><!-- npu="910b" id35 -->Atlas A2 训练系列产品/Atlas A2 推理系列产品<br><!-- end id35 --><!-- npu="310b" id36 -->Atlas 200I/500 A2 推理产品<!-- end id36 --><!-- end id33 --> |
+| channelSplit | <!-- npu="950" id27 -->**该参数仅在Ascend 950PR&950DT系列产品上生效**，仅在NZ格式float类型输出时生效，类型为bool，配置是否开启通道切分功能。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id27 --><!-- npu="A3,910b,310b" id29 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id30 -->Atlas A3系列产品<br><!-- end id30 --><!-- npu="910b" id31 -->Atlas A2系列产品<br><!-- end id31 --><!-- npu="310b" id32 -->Atlas 200I/500 A2推理产品<!-- end id32 --><!-- end id29 --> |
+| nz2ndEn | <!-- npu="950" id28 -->**该参数仅在Ascend 950PR&950DT系列产品上生效**，类型为bool，配置是否开启NZ2ND的格式转换。<br>如果要开启NZ2ND的功能需要同步调用[SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)来设置格式转换的相关配置信息。<br>&nbsp;&nbsp;&bull; false：不开启；<br>&nbsp;&nbsp;&bull; true：开启。<br><!-- end id28 --><!-- npu="A3,910b,310b" id33 -->针对如下产品型号，此通路上该参数不生效，设置为false即可。<br><!-- npu="A3" id34 -->Atlas A3系列产品<br><!-- end id34 --><!-- npu="910b" id35 -->Atlas A2系列产品<br><!-- end id35 --><!-- npu="310b" id36 -->Atlas 200I/500 A2推理产品<!-- end id36 --><!-- end id33 --> |
 
 ## 数据类型<a id="zh-cn_topic_0000002511188540_section4219135304818"></a>
 
 **源矩阵与目的矩阵支持的数据类型组合**
 
 <!-- npu="950" id17 -->
-针对Ascend 950PR/Ascend 950DT，DataCopy接口支持的数据类型组合如下：
+针对Ascend 950PR&950DT系列产品，DataCopy接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（L1 Buffer） |
 | ---------- | ---------- |
@@ -121,7 +121,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 <!-- end id17 -->
 
 <!-- npu="A3" id18 -->
-针对Atlas A3 训练系列产品/Atlas A3 推理系列产品，DataCopy接口支持的数据类型组合如下：
+针对Atlas A3系列产品，DataCopy接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（L1 Buffer） |
 | ---------- | ---------- |
@@ -131,7 +131,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 <!-- end id18 -->
 
 <!-- npu="910b" id19 -->
-针对Atlas A2 训练系列产品/Atlas A2 推理系列产品，DataCopy接口支持的数据类型组合如下：
+针对Atlas A2系列产品，DataCopy接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（L1 Buffer） |
 | ---------- | ---------- |
@@ -141,7 +141,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 <!-- end id19 -->
 
 <!-- npu="310b" id20 -->
-针对Atlas 200I/500 A2 推理产品，DataCopy接口支持的数据类型组合如下：
+针对Atlas 200I/500 A2推理产品，DataCopy接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（L1 Buffer） |
 | ---------- | ---------- |
@@ -167,10 +167,10 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 <!-- npu="A3,910b" id21 -->
 - 针对如下产品型号，特殊值/边界值约束说明如下：
     <!-- npu="A3" id22 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    Atlas A3系列产品
     <!-- end id22 -->
     <!-- npu="910b" id23 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品
+    Atlas A2系列产品
     <!-- end id23 -->
     对于浮点类型inf/nan输入输出，可以通过CTRL寄存器（控制寄存器）的CTRL\[48\]比特位进行设置，控制浮点数量化搬出时的饱和模式：
 
@@ -185,7 +185,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
     对于整数类型只有饱和模式。
 <!-- end id21 -->
 <!-- npu="950" id24 -->
-- Ascend 950PR/Ascend 950DT特殊值/边界值约束说明：
+- Ascend 950PR&950DT系列产品特殊值/边界值约束说明：
 
     对于浮点类型inf/nan输入输出，可以通过CTRL寄存器（控制寄存器）的CTRL\[48\]比特位进行设置，控制浮点数量化搬出时的饱和模式；
 

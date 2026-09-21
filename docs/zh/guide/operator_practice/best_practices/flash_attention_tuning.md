@@ -57,7 +57,7 @@
 
     ![](../../figures/zh-cn_formulaimage_0000002062439090.png)
 
-本案例的验证平台为Atlas A2 训练系列产品/Atlas A2 推理系列产品，以两个场景为例，第一个场景的输入维度信息为：B=1，N1=12，N2=12，S1=6144，S2=6144，D=128，causal场景，即atten\_mask的形状为下三角，如[图2](#fig9977418514)。第二个场景的输入维度信息为：B=24，N1=5，N2=5，S1=9216，S2=9216，D=64，不带atten\_mask和drop\_mask输入。主要涉及的优化手段包括tiling基本块大小调整，核间负载均衡，CV流水并行，MTE2流水优化以及FixPipe流水优化等优化手段。
+本案例的验证平台为Atlas A2系列产品，以两个场景为例，第一个场景的输入维度信息为：B=1，N1=12，N2=12，S1=6144，S2=6144，D=128，causal场景，即atten\_mask的形状为下三角，如[图2](#fig9977418514)。第二个场景的输入维度信息为：B=24，N1=5，N2=5，S1=9216，S2=9216，D=64，不带atten\_mask和drop\_mask输入。主要涉及的优化手段包括tiling基本块大小调整，核间负载均衡，CV流水并行，MTE2流水优化以及FixPipe流水优化等优化手段。
 
 **图2**  causal场景atten\_mask形状<a name="fig9977418514"></a>  
 ![](../../figures/causal_mask.png "causal场景atten_mask形状")
